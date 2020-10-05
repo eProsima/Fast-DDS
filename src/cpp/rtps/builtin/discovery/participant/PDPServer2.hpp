@@ -147,8 +147,8 @@ protected:
             fastrtps::rtps::StatefulWriter* writer,
             fastrtps::rtps::WriterHistory* writer_history);
 
-    bool process_change_acknowledgement(
-            fastrtps::rtps::CacheChange_t* c,
+    fastrtps::rtps::History::iterator process_change_acknowledgement(
+            fastrtps::rtps::History::iterator c,
             fastrtps::rtps::StatefulWriter* writer,
             fastrtps::rtps::WriterHistory* writer_history);
 
@@ -161,7 +161,8 @@ protected:
     bool remove_change_from_writer_history(
             fastrtps::rtps::RTPSWriter* writer,
             fastrtps::rtps::WriterHistory* history,
-            fastrtps::rtps::CacheChange_t* change);
+            fastrtps::rtps::CacheChange_t* change,
+            bool release_change = true);
 
 
     // Remove from writer_history all the changes whose original sender was entity_guid_prefix
@@ -182,9 +183,12 @@ protected:
 
     bool remove_change_from_history_nts(
             fastrtps::rtps::WriterHistory* history,
-            fastrtps::rtps::CacheChange_t* change);
+            fastrtps::rtps::CacheChange_t* change,
+            bool release_change = true);
 
     bool process_dirty_topics();
+
+    bool pending_ack();
 
 private:
 
@@ -196,6 +200,9 @@ private:
     //! Discovery database
     fastdds::rtps::ddb::DiscoveryDataBase discovery_db_;
 
+    //! Temporary locator list to solve new Writer API issue
+    // TODO: remove when the Writer API issue is resolved
+    std::map<fastrtps::rtps::GUID_t, fastrtps::rtps::ReaderProxyData> clients_;
 };
 
 } // namespace rtps

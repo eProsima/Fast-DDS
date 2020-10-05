@@ -50,7 +50,9 @@ void PDPServerListener2::onNewCacheChangeAdded(
         RTPSReader* reader,
         const CacheChange_t* const change_in)
 {
-    logInfo(RTPS_PDP, "PDP Server Message received");
+    logInfo(RTPS_PDP_LISTENER, "");
+    logInfo(RTPS_PDP_LISTENER, "------------------ PDP SERVER LISTENER START ------------------");
+    logInfo(RTPS_PDP_LISTENER, "PDP Server Message received: " << change_in->instanceHandle);
 
     // Get PDP reader history
     auto pdp_history = pdp_server()->mp_PDPReaderHistory;
@@ -73,7 +75,9 @@ void PDPServerListener2::onNewCacheChangeAdded(
     if (change->instanceHandle == c_InstanceHandle_Unknown
             && !this->get_key(change.get()))
     {
-        logWarning(RTPS_PDP, "Problem getting the key of the change, removing");
+        logWarning(RTPS_PDP_LISTENER, "Problem getting the key of the change, removing");
+        logInfo(RTPS_PDP_LISTENER, "------------------ PDP SERVER LISTENER END ------------------");
+        logInfo(RTPS_PDP_LISTENER, "");
         return;
     }
 
@@ -83,7 +87,9 @@ void PDPServerListener2::onNewCacheChangeAdded(
     // DATA(p|Up) sample identity should not be unknown
     if (change->write_params.sample_identity() == SampleIdentity::unknown())
     {
-        logWarning(RTPS_PDP, "CacheChange_t is not properly identified for client-server operation");
+        logWarning(RTPS_PDP_LISTENER, "CacheChange_t is not properly identified for client-server operation");
+        logInfo(RTPS_PDP_LISTENER, "------------------ PDP SERVER LISTENER END ------------------");
+        logInfo(RTPS_PDP_LISTENER, "");
         return;
     }
 
@@ -93,7 +99,9 @@ void PDPServerListener2::onNewCacheChangeAdded(
         // Ignore announcement from own RTPSParticipant
         if (guid == pdp_server()->getRTPSParticipant()->getGuid())
         {
-            logInfo(RTPS_PDP, "Message from own RTPSParticipant, ignoring");
+            logInfo(RTPS_PDP_LISTENER, "Message from own RTPSParticipant, ignoring");
+            logInfo(RTPS_PDP_LISTENER, "------------------ PDP SERVER LISTENER END ------------------");
+            logInfo(RTPS_PDP_LISTENER, "");
             return;
         }
 
@@ -107,12 +115,12 @@ void PDPServerListener2::onNewCacheChangeAdded(
                     pdp_server()->getRTPSParticipant()->network_factory(),
                     pdp_server()->getRTPSParticipant()->has_shm_transport()))
         {
-            // Key should not match instance handle
-            if (change->instanceHandle == temp_participant_data_.m_key)
-            {
-                logInfo(RTPS_PDP, "Malformed PDP payload received, ignoring");
-                return;
-            }
+            // // Key should not match instance handle
+            // if (change->instanceHandle == temp_participant_data_.m_key)
+            // {
+            //     logInfo(RTPS_PDP_LISTENER, "Malformed PDP payload received, ignoring: " << change->instanceHandle);
+            //     return;
+            // }
 
             // Notify the DiscoveryDataBase
             if (pdp_server()->discovery_db().update(change.get()))
@@ -120,7 +128,7 @@ void PDPServerListener2::onNewCacheChangeAdded(
                 // Remove change from PDP reader history, but do not return it to the pool. From here on, the discovery
                 // database takes ownership of the CacheChange_t. Henceforth there are no references to the change.
                 // Take change ownership away from the unique pointer, so that its destruction does not destroy the data
-                pdp_history->remove_change_and_reuse(change.release());
+                pdp_history->remove_change(pdp_history->find_change(change.release()), false);
 
                 // Ensure processing time for the cache by triggering the Server thread (which process the updates
                 pdp_server()->awakeServerThread();
@@ -154,7 +162,7 @@ void PDPServerListener2::onNewCacheChangeAdded(
             {
                 // TODO: pending avoid builtin connections on client info relayed by other server
 
-                logInfo(RTPS_PDP, "Registering a new participant: " << guid);
+                logInfo(RTPS_PDP_LISTENER, "Registering a new participant: " << guid);
 
                 // Create a new participant proxy entry
                 pdata = pdp_server()->createParticipantProxyData(temp_participant_data_, writer_guid);
@@ -211,7 +219,7 @@ void PDPServerListener2::onNewCacheChangeAdded(
     {
         // remove_remote_participant will try to remove the cache from the history and destroy it. We do it beforehand
         // to grant DiscoveryDatabase ownership by not returning the change to the pool.
-        pdp_history->remove_change_and_reuse(change.get());
+        pdp_history->remove_change(pdp_history->find_change(change.get()), false);
 
         // Notify the DiscoveryDatabase
         if (pdp_server()->discovery_db().update(change.get()))
@@ -237,6 +245,9 @@ void PDPServerListener2::onNewCacheChangeAdded(
     // cache is removed from history (if it's still there) and returned to the pool on leaving the scope, since the
     // unique pointer destruction grants it. If the ownership has been taken away from the unique pointer, then nothing
     // happens at this point
+
+    logInfo(RTPS_PDP_LISTENER, "------------------ PDP SERVER LISTENER END ------------------");
+    logInfo(RTPS_PDP_LISTENER, "");
 }
 
 } /* namespace rtps */
