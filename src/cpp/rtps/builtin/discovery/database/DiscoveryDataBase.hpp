@@ -64,7 +64,7 @@ public:
 
     class AckedFunctor
     {
-        using argument_type = eprosima::fastrtps::rtps::ReaderProxy*;
+        using argument_type = eprosima::fastrtps::rtps::ReaderProxy *;
         using result_type = void;
 
         // friend class DiscoveryDataBase;
@@ -232,7 +232,8 @@ public:
         return server_acked_by_all_;
     }
 
-    void server_acked_by_all(bool s)
+    void server_acked_by_all(
+            bool s)
     {
         server_acked_by_all_ = s;
     }
@@ -309,7 +310,7 @@ protected:
     // guid from own server
     const fastrtps::rtps::GuidPrefix_t server_guid_prefix_;
 
-    // is own server DATA(p) acked by all other clients    
+    // is own server DATA(p) acked by all other clients
     std::atomic<bool> server_acked_by_all_;
 
 };

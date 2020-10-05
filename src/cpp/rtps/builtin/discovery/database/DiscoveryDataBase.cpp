@@ -31,7 +31,8 @@ namespace ddb {
 
 DiscoveryDataBase::DiscoveryDataBase(
         fastrtps::rtps::GuidPrefix_t server_guid_prefix)
-    : server_guid_prefix_(server_guid_prefix), server_acked_by_all_(false)
+    : server_guid_prefix_(server_guid_prefix)
+    , server_acked_by_all_(false)
 {
 }
 
@@ -371,7 +372,9 @@ void DiscoveryDataBase::create_participant_from_change(
                         << ch->instanceHandle);
                 pdp_to_send_.push_back(ch);
             }
-        }else{
+        }
+        else
+        {
             // if it is a new participant, we have to wait to make ack to our DATA(P)
             server_acked_by_all(false);
         }
