@@ -53,6 +53,11 @@ public:
 
     virtual ~PublisherHistory();
 
+    /**
+     * Rebuild instances loaded from DB. Does nothing if the topic doesn't have key.
+     */
+    void rebuild_instances();
+
     /*!
      * @brief Tries to reserve resources for the new instance.
      * @param instance_handle Instance's key.
@@ -164,5 +169,6 @@ private:
 
 } /* namespace fastrtps */
 } /* namespace eprosima */
-#endif
-#endif /* PUBLISHERHISTORY_H_ */
+
+#endif // ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
+#endif // PUBLISHERHISTORY_H_

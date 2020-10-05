@@ -23,19 +23,24 @@
 #include <fastrtps_deprecated/participant/ParticipantImpl.h>
 
 namespace eprosima {
-namespace fastrtps{
+namespace fastrtps {
 namespace rtps {
 
 
- StatefulPersistentWriter::StatefulPersistentWriter(RTPSParticipantImpl* pimpl,GUID_t& guid,
-        WriterAttributes& att,WriterHistory* hist,WriterListener* listen,
-     IPersistenceService* persistence):
-     StatefulWriter(pimpl,guid,att,hist,listen),
-     PersistentWriter(guid,att,hist,persistence)
+StatefulPersistentWriter::StatefulPersistentWriter(
+        RTPSParticipantImpl* pimpl,
+        GUID_t& guid,
+        WriterAttributes& att,
+        WriterHistory* hist,
+        WriterListener* listen,
+        IPersistenceService* persistence)
+    : StatefulWriter(pimpl, guid, att, hist, listen)
+    , PersistentWriter(guid, att, hist, persistence)
 {
+    rebuild_status_after_load();
 }
 
- StatefulPersistentWriter::~StatefulPersistentWriter()
+StatefulPersistentWriter::~StatefulPersistentWriter()
 {
 }
 
@@ -51,12 +56,13 @@ void StatefulPersistentWriter::unsent_change_added_to_history(
     StatefulWriter::unsent_change_added_to_history(cptr, max_blocking_time);
 }
 
-bool StatefulPersistentWriter::change_removed_by_history(CacheChange_t* change)
+bool StatefulPersistentWriter::change_removed_by_history(
+        CacheChange_t* change)
 {
     remove_persistent_change(change);
     return StatefulWriter::change_removed_by_history(change);
 }
 
-} /* namespace rtps */
-} /* namespace eprosima */
-}
+} // namespace rtps
+} // namespace fastrtps
+} // namespace eprosima

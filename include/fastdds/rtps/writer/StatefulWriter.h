@@ -57,6 +57,8 @@ protected:
             WriterHistory* hist,
             WriterListener* listen = nullptr);
 
+    void rebuild_status_after_load();
+
 private:
 
     //!Timed Event to manage the periodic HB to the Reader.
@@ -357,7 +359,7 @@ private:
     //! True to disable positive ACKs
     bool disable_positive_acks_;
     //! Keep duration for disable positive ACKs QoS, in microseconds
-    std::chrono::duration<double, std::ratio<1, 1000000> > keep_duration_us_;
+    std::chrono::duration<double, std::ratio<1, 1000000>> keep_duration_us_;
     //! Last acknowledged cache change (only used if using disable positive ACKs QoS)
     SequenceNumber_t last_sequence_number_;
     //! Biggest sequence number removed from history
@@ -367,7 +369,7 @@ private:
 
     int32_t currentUsageSendBufferSize_;
 
-    std::vector<std::unique_ptr<FlowController> > m_controllers;
+    std::vector<std::unique_ptr<FlowController>> m_controllers;
 
     bool there_are_remote_readers_ = false;
     bool there_are_local_readers_ = false;

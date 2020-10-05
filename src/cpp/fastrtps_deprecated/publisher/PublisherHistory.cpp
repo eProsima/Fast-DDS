@@ -72,6 +72,21 @@ PublisherHistory::~PublisherHistory()
 {
 }
 
+void PublisherHistory::rebuild_instances()
+{
+    if (topic_att_.getTopicKind() == WITH_KEY)
+    {
+        for (CacheChange_t* change : m_changes)
+        {
+            t_m_Inst_Caches::iterator vit;
+            if (find_or_add_key(change->instanceHandle, &vit))
+            {
+                vit->second.cache_changes.push_back(change);
+            }
+        }
+    }
+}
+
 bool PublisherHistory::register_instance(
         const InstanceHandle_t& instance_handle,
         std::unique_lock<RecursiveTimedMutex>&,
