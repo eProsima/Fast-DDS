@@ -33,7 +33,7 @@ std::basic_string<ochar> string_convert(
     using ostring = std::basic_string<ochar>;
 
     locale loc;
-    auto& conv_facet = use_facet<codecvt<ochar, ichar, mbstate_t> >(loc);
+    auto& conv_facet = use_facet<codecvt<ochar, ichar, mbstate_t>>(loc);
 
     const unsigned int buffer_size = 256;
     ochar buffer[buffer_size];
@@ -92,7 +92,7 @@ std::string string_convert(
 
     locale loc;
     // on mac STL ALL codecvt partial specializations use char as external type
-    auto& conv_facet = use_facet<codecvt<wchar_t, char, mbstate_t> >(loc);
+    auto& conv_facet = use_facet<codecvt<wchar_t, char, mbstate_t>>(loc);
 
     const unsigned int buffer_size = 256;
     char buffer[buffer_size];

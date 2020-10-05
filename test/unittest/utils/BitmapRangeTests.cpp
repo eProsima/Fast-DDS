@@ -122,7 +122,7 @@ template<
 struct TestCase
 {
     TestResult initialization;
-    std::vector<TestStep<InputType> > steps;
+    std::vector<TestStep<InputType>> steps;
 
     void Test(
             ValueType base,

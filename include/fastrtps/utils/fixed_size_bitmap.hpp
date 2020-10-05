@@ -45,6 +45,7 @@ struct DiffFunction
     {
         return a - b;
     }
+
 };
 
 /**
@@ -259,7 +260,7 @@ public:
             num_bits_ = std::max(diff + 1, num_bits_);
             uint32_t pos = diff >> 5;
             diff &= 31UL;
-            bitmap_[pos] |= (1UL << (31UL - diff) );
+            bitmap_[pos] |= (1UL << (31UL - diff));
             return true;
         }
 

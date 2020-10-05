@@ -74,7 +74,7 @@ DynamicData::DynamicData()
     , char16_value_(0)
     , byte_value_(0)
     , bool_value_(false)
-#endif
+#endif // ifdef DYNAMIC_TYPES_CHECKING
     , key_element_(false)
     , default_array_value_(nullptr)
     , union_label_(UINT64_MAX)
@@ -100,7 +100,7 @@ DynamicData::DynamicData(
     , char16_value_(0)
     , byte_value_(0)
     , bool_value_(false)
-#endif
+#endif // ifdef DYNAMIC_TYPES_CHECKING
     , key_element_(false)
     , default_array_value_(nullptr)
     , union_label_(UINT64_MAX)
@@ -129,7 +129,7 @@ DynamicData::DynamicData(
     , bool_value_(pData->bool_value_)
     , string_value_(pData->string_value_)
     , wstring_value_(pData->wstring_value_)
-#endif
+#endif // ifdef DYNAMIC_TYPES_CHECKING
     , key_element_(pData->key_element_)
     , default_array_value_(pData->default_array_value_)
     , union_label_(pData->union_label_)
@@ -177,7 +177,7 @@ void DynamicData::create_members(
     {
         values_.insert(std::make_pair(MEMBER_ID_INVALID, pData->clone_value(MEMBER_ID_INVALID, pData->get_kind())));
     }
-#endif
+#endif // ifdef DYNAMIC_TYPES_CHECKING
 }
 
 void DynamicData::create_members(
@@ -220,7 +220,7 @@ void DynamicData::create_members(
                         complex_values_.insert(std::make_pair(it->first, data));
 #else
                         values_.insert(std::make_pair(it->first, data));
-#endif
+#endif // ifdef DYNAMIC_TYPES_CHECKING
                     }
                 }
                 else
@@ -327,7 +327,7 @@ bool DynamicData::equals(
 #else
                     auto it = values_.find(union_id_);
                     auto otherIt = other->values_.find(union_id_);
-#endif
+#endif // ifdef DYNAMIC_TYPES_CHECKING
                     if (!((DynamicData*)it->second)->equals((DynamicData*)otherIt->second))
                     {
                         return false;
@@ -423,7 +423,7 @@ bool DynamicData::equals(
                         return false;
                     }
                 }
-#endif
+#endif // ifdef DYNAMIC_TYPES_CHECKING
             }
             return true;
         }
@@ -470,7 +470,7 @@ uint32_t DynamicData::get_item_count() const
         return static_cast<uint32_t>(complex_values_.size() / 2);
 #else
         return static_cast<uint32_t>(values_.size() / 2);
-#endif
+#endif // ifdef DYNAMIC_TYPES_CHECKING
     }
     else if (get_kind() == TK_ARRAY)
     {
@@ -482,7 +482,7 @@ uint32_t DynamicData::get_item_count() const
         return static_cast<uint32_t>(complex_values_.size());
 #else
         return static_cast<uint32_t>(values_.size());
-#endif
+#endif // ifdef DYNAMIC_TYPES_CHECKING
     }
 }
 
@@ -503,119 +503,119 @@ void DynamicData::add_value(
         {
 #ifndef DYNAMIC_TYPES_CHECKING
             values_.insert(std::make_pair(id, new int32_t()));
-#endif
+#endif // ifndef DYNAMIC_TYPES_CHECKING
         }
         break;
         case TK_UINT32:
         {
 #ifndef DYNAMIC_TYPES_CHECKING
             values_.insert(std::make_pair(id, new uint32_t()));
-#endif
+#endif // ifndef DYNAMIC_TYPES_CHECKING
         }
         break;
         case TK_INT16:
         {
 #ifndef DYNAMIC_TYPES_CHECKING
             values_.insert(std::make_pair(id, new int16_t()));
-#endif
+#endif // ifndef DYNAMIC_TYPES_CHECKING
         }
         break;
         case TK_UINT16:
         {
 #ifndef DYNAMIC_TYPES_CHECKING
             values_.insert(std::make_pair(id, new uint16_t()));
-#endif
+#endif // ifndef DYNAMIC_TYPES_CHECKING
         }
         break;
         case TK_INT64:
         {
 #ifndef DYNAMIC_TYPES_CHECKING
             values_.insert(std::make_pair(id, new int64_t()));
-#endif
+#endif // ifndef DYNAMIC_TYPES_CHECKING
         }
         break;
         case TK_UINT64:
         {
 #ifndef DYNAMIC_TYPES_CHECKING
             values_.insert(std::make_pair(id, new uint64_t()));
-#endif
+#endif // ifndef DYNAMIC_TYPES_CHECKING
         }
         break;
         case TK_FLOAT32:
         {
 #ifndef DYNAMIC_TYPES_CHECKING
             values_.insert(std::make_pair(id, new float()));
-#endif
+#endif // ifndef DYNAMIC_TYPES_CHECKING
         }
         break;
         case TK_FLOAT64:
         {
 #ifndef DYNAMIC_TYPES_CHECKING
             values_.insert(std::make_pair(id, new double()));
-#endif
+#endif // ifndef DYNAMIC_TYPES_CHECKING
         }
         break;
         case TK_FLOAT128:
         {
 #ifndef DYNAMIC_TYPES_CHECKING
             values_.insert(std::make_pair(id, new long double()));
-#endif
+#endif // ifndef DYNAMIC_TYPES_CHECKING
         }
         break;
         case TK_CHAR8:
         {
 #ifndef DYNAMIC_TYPES_CHECKING
             values_.insert(std::make_pair(id, new char()));
-#endif
+#endif // ifndef DYNAMIC_TYPES_CHECKING
         }
         break;
         case TK_CHAR16:
         {
 #ifndef DYNAMIC_TYPES_CHECKING
             values_.insert(std::make_pair(id, new wchar_t()));
-#endif
+#endif // ifndef DYNAMIC_TYPES_CHECKING
         }
         break;
         case TK_BOOLEAN:
         {
 #ifndef DYNAMIC_TYPES_CHECKING
             values_.insert(std::make_pair(id, new bool()));
-#endif
+#endif // ifndef DYNAMIC_TYPES_CHECKING
         }
         break;
         case TK_BYTE:
         {
 #ifndef DYNAMIC_TYPES_CHECKING
             values_.insert(std::make_pair(id, new octet()));
-#endif
+#endif // ifndef DYNAMIC_TYPES_CHECKING
         }
         break;
         case TK_STRING8:
         {
 #ifndef DYNAMIC_TYPES_CHECKING
             values_.insert(std::make_pair(id, new std::string()));
-#endif
+#endif // ifndef DYNAMIC_TYPES_CHECKING
         }
         break;
         case TK_STRING16:
         {
 #ifndef DYNAMIC_TYPES_CHECKING
             values_.insert(std::make_pair(id, new std::wstring()));
-#endif
+#endif // ifndef DYNAMIC_TYPES_CHECKING
         }
         break;
         case TK_ENUM:
         {
 #ifndef DYNAMIC_TYPES_CHECKING
             values_.insert(std::make_pair(id, new uint32_t()));
-#endif
+#endif // ifndef DYNAMIC_TYPES_CHECKING
         }
         break;
         case TK_BITMASK:
         {
 #ifndef DYNAMIC_TYPES_CHECKING
             values_.insert(std::make_pair(id, new uint64_t()));
-#endif
+#endif // ifndef DYNAMIC_TYPES_CHECKING
         }
     }
     set_default_value(id);
@@ -670,7 +670,7 @@ ReturnCode_t DynamicData::clear_all_values()
                 {
                     ((DynamicData*)itValue->second)->clear_all_values();
                 }
-#endif
+#endif // ifdef DYNAMIC_TYPES_CHECKING
             }
         }
     }
@@ -708,7 +708,7 @@ void DynamicData::clean_members()
 #ifndef DYNAMIC_TYPES_CHECKING
                 auto it = values_.begin();
                 delete ((int32_t*)it->second);
-#endif
+#endif // ifndef DYNAMIC_TYPES_CHECKING
                 break;
             }
             case TK_UINT32:
@@ -716,7 +716,7 @@ void DynamicData::clean_members()
 #ifndef DYNAMIC_TYPES_CHECKING
                 auto it = values_.begin();
                 delete ((uint32_t*)it->second);
-#endif
+#endif // ifndef DYNAMIC_TYPES_CHECKING
                 break;
             }
             case TK_INT16:
@@ -724,7 +724,7 @@ void DynamicData::clean_members()
 #ifndef DYNAMIC_TYPES_CHECKING
                 auto it = values_.begin();
                 delete ((int16_t*)it->second);
-#endif
+#endif // ifndef DYNAMIC_TYPES_CHECKING
                 break;
             }
             case TK_UINT16:
@@ -732,7 +732,7 @@ void DynamicData::clean_members()
 #ifndef DYNAMIC_TYPES_CHECKING
                 auto it = values_.begin();
                 delete ((uint16_t*)it->second);
-#endif
+#endif // ifndef DYNAMIC_TYPES_CHECKING
                 break;
             }
             case TK_INT64:
@@ -740,7 +740,7 @@ void DynamicData::clean_members()
 #ifndef DYNAMIC_TYPES_CHECKING
                 auto it = values_.begin();
                 delete ((int64_t*)it->second);
-#endif
+#endif // ifndef DYNAMIC_TYPES_CHECKING
                 break;
             }
             case TK_UINT64:
@@ -748,7 +748,7 @@ void DynamicData::clean_members()
 #ifndef DYNAMIC_TYPES_CHECKING
                 auto it = values_.begin();
                 delete ((uint64_t*)it->second);
-#endif
+#endif // ifndef DYNAMIC_TYPES_CHECKING
                 break;
             }
             case TK_FLOAT32:
@@ -756,7 +756,7 @@ void DynamicData::clean_members()
 #ifndef DYNAMIC_TYPES_CHECKING
                 auto it = values_.begin();
                 delete ((float*)it->second);
-#endif
+#endif // ifndef DYNAMIC_TYPES_CHECKING
                 break;
             }
             case TK_FLOAT64:
@@ -764,7 +764,7 @@ void DynamicData::clean_members()
 #ifndef DYNAMIC_TYPES_CHECKING
                 auto it = values_.begin();
                 delete ((double*)it->second);
-#endif
+#endif // ifndef DYNAMIC_TYPES_CHECKING
                 break;
             }
             case TK_FLOAT128:
@@ -772,7 +772,7 @@ void DynamicData::clean_members()
 #ifndef DYNAMIC_TYPES_CHECKING
                 auto it = values_.begin();
                 delete ((long double*)it->second);
-#endif
+#endif // ifndef DYNAMIC_TYPES_CHECKING
                 break;
             }
             case TK_CHAR8:
@@ -780,7 +780,7 @@ void DynamicData::clean_members()
 #ifndef DYNAMIC_TYPES_CHECKING
                 auto it = values_.begin();
                 delete ((char*)it->second);
-#endif
+#endif // ifndef DYNAMIC_TYPES_CHECKING
                 break;
             }
             case TK_CHAR16:
@@ -788,7 +788,7 @@ void DynamicData::clean_members()
 #ifndef DYNAMIC_TYPES_CHECKING
                 auto it = values_.begin();
                 delete ((wchar_t*)it->second);
-#endif
+#endif // ifndef DYNAMIC_TYPES_CHECKING
                 break;
             }
             case TK_BOOLEAN:
@@ -796,7 +796,7 @@ void DynamicData::clean_members()
 #ifndef DYNAMIC_TYPES_CHECKING
                 auto it = values_.begin();
                 delete ((bool*)it->second);
-#endif
+#endif // ifndef DYNAMIC_TYPES_CHECKING
                 break;
             }
             case TK_BYTE:
@@ -804,7 +804,7 @@ void DynamicData::clean_members()
 #ifndef DYNAMIC_TYPES_CHECKING
                 auto it = values_.begin();
                 delete ((octet*)it->second);
-#endif
+#endif // ifndef DYNAMIC_TYPES_CHECKING
                 break;
             }
             case TK_STRING8:
@@ -812,7 +812,7 @@ void DynamicData::clean_members()
 #ifndef DYNAMIC_TYPES_CHECKING
                 auto it = values_.begin();
                 delete ((std::string*)it->second);
-#endif
+#endif // ifndef DYNAMIC_TYPES_CHECKING
                 break;
             }
             case TK_STRING16:
@@ -820,7 +820,7 @@ void DynamicData::clean_members()
 #ifndef DYNAMIC_TYPES_CHECKING
                 auto it = values_.begin();
                 delete ((std::wstring*)it->second);
-#endif
+#endif // ifndef DYNAMIC_TYPES_CHECKING
                 break;
             }
             case TK_ENUM:
@@ -828,7 +828,7 @@ void DynamicData::clean_members()
 #ifndef DYNAMIC_TYPES_CHECKING
                 auto it = values_.begin();
                 delete ((uint32_t*)it->second);
-#endif
+#endif // ifndef DYNAMIC_TYPES_CHECKING
                 break;
             }
             case TK_BITMASK:
@@ -836,7 +836,7 @@ void DynamicData::clean_members()
 #ifndef DYNAMIC_TYPES_CHECKING
                 auto it = values_.begin();
                 delete ((uint64_t*)it->second);
-#endif
+#endif // ifndef DYNAMIC_TYPES_CHECKING
                 break;
             }
             case TK_UNION:
@@ -852,7 +852,7 @@ void DynamicData::clean_members()
         }
     }
     values_.clear();
-#endif
+#endif // ifdef DYNAMIC_TYPES_CHECKING
 }
 
 ReturnCode_t DynamicData::clear_nonkey_values()
@@ -873,7 +873,7 @@ ReturnCode_t DynamicData::clear_nonkey_values()
             {
                 ((DynamicData*)itValue->second)->clear_nonkey_values();
             }
-#endif
+#endif // ifdef DYNAMIC_TYPES_CHECKING
         }
     }
     else
@@ -906,7 +906,7 @@ ReturnCode_t DynamicData::clear_value(
             {
                 ((DynamicData*)itValue->second)->clear_all_values();
             }
-#endif
+#endif // ifdef DYNAMIC_TYPES_CHECKING
         }
         else
         {
@@ -1059,22 +1059,54 @@ bool DynamicData::compare_values(
     {
         default:
             break;
-        case TK_INT32:      {   return *((int32_t*)left) == *((int32_t*)right);    }
-        case TK_UINT32:     {   return *((uint32_t*)left) == *((uint32_t*)right);    }
-        case TK_INT16:      {   return *((int16_t*)left) == *((int16_t*)right);    }
-        case TK_UINT16:     {   return *((uint16_t*)left) == *((uint16_t*)right);    }
-        case TK_INT64:      {   return *((int64_t*)left) == *((int64_t*)right);    }
-        case TK_UINT64:     {   return *((uint64_t*)left) == *((uint64_t*)right);    }
-        case TK_FLOAT32:    {   return *((float*)left) == *((float*)right);    }
-        case TK_FLOAT64:    {   return *((double*)left) == *((double*)right);    }
-        case TK_FLOAT128:   {   return *((long double*)left) == *((long double*)right);    }
-        case TK_CHAR8:      {   return *((char*)left) == *((char*)right);    }
-        case TK_CHAR16:     {   return *((wchar_t*)left) == *((wchar_t*)right);    }
-        case TK_BOOLEAN:    {   return *((bool*)left) == *((bool*)right);    }
-        case TK_BYTE:       {   return *((octet*)left) == *((octet*)right);    }
-        case TK_STRING8:    {   return *((std::string*)left) == *((std::string*)right);    }
-        case TK_STRING16:   {   return *((std::wstring*)left) == *((std::wstring*)right);    }
-        case TK_ENUM:       {   return *((uint32_t*)left) == *((uint32_t*)right);    }
+        case TK_INT32:      {
+            return *((int32_t*)left) == *((int32_t*)right);
+        }
+        case TK_UINT32:     {
+            return *((uint32_t*)left) == *((uint32_t*)right);
+        }
+        case TK_INT16:      {
+            return *((int16_t*)left) == *((int16_t*)right);
+        }
+        case TK_UINT16:     {
+            return *((uint16_t*)left) == *((uint16_t*)right);
+        }
+        case TK_INT64:      {
+            return *((int64_t*)left) == *((int64_t*)right);
+        }
+        case TK_UINT64:     {
+            return *((uint64_t*)left) == *((uint64_t*)right);
+        }
+        case TK_FLOAT32:    {
+            return *((float*)left) == *((float*)right);
+        }
+        case TK_FLOAT64:    {
+            return *((double*)left) == *((double*)right);
+        }
+        case TK_FLOAT128:   {
+            return *((long double*)left) == *((long double*)right);
+        }
+        case TK_CHAR8:      {
+            return *((char*)left) == *((char*)right);
+        }
+        case TK_CHAR16:     {
+            return *((wchar_t*)left) == *((wchar_t*)right);
+        }
+        case TK_BOOLEAN:    {
+            return *((bool*)left) == *((bool*)right);
+        }
+        case TK_BYTE:       {
+            return *((octet*)left) == *((octet*)right);
+        }
+        case TK_STRING8:    {
+            return *((std::string*)left) == *((std::string*)right);
+        }
+        case TK_STRING16:   {
+            return *((std::wstring*)left) == *((std::wstring*)right);
+        }
+        case TK_ENUM:       {
+            return *((uint32_t*)left) == *((uint32_t*)right);
+        }
     }
     return false;
 }
@@ -1627,7 +1659,7 @@ void DynamicData::set_default_value(
                     ((DynamicData*)itValue->second)->set_default_value(MEMBER_ID_INVALID);
                 }
             }
-#endif
+#endif // ifdef DYNAMIC_TYPES_CHECKING
         }
         break;
     }
@@ -1695,7 +1727,7 @@ DynamicData* DynamicData::loan_value(
                 }
             }
 
-#endif
+#endif // ifdef DYNAMIC_TYPES_CHECKING
             else
             {
                 logError(DYN_TYPES, "Error loaning Value. MemberId not found.");
@@ -1732,7 +1764,7 @@ ReturnCode_t DynamicData::return_loaned_value(
             loaned_values_.erase(loanIt);
             return ReturnCode_t::RETCODE_OK;
         }
-#endif
+#endif // ifdef DYNAMIC_TYPES_CHECKING
     }
 
     logError(DYN_TYPES, "Error returning loaned Value. The value hasn't been loaned.");
@@ -1787,7 +1819,7 @@ ReturnCode_t DynamicData::get_int32_value(
         return default_array_value_->get_int32_value(value, MEMBER_ID_INVALID);
     }
     return ReturnCode_t::RETCODE_BAD_PARAMETER;
-#endif
+#endif // ifdef DYNAMIC_TYPES_CHECKING
 }
 
 ReturnCode_t DynamicData::set_int32_value(
@@ -1881,7 +1913,7 @@ ReturnCode_t DynamicData::set_int32_value(
     }
 
     return ReturnCode_t::RETCODE_BAD_PARAMETER;
-#endif
+#endif // ifdef DYNAMIC_TYPES_CHECKING
 }
 
 ReturnCode_t DynamicData::get_uint32_value(
@@ -1932,7 +1964,7 @@ ReturnCode_t DynamicData::get_uint32_value(
         return default_array_value_->get_uint32_value(value, MEMBER_ID_INVALID);
     }
     return ReturnCode_t::RETCODE_BAD_PARAMETER;
-#endif
+#endif // ifdef DYNAMIC_TYPES_CHECKING
 }
 
 ReturnCode_t DynamicData::set_uint32_value(
@@ -2026,7 +2058,7 @@ ReturnCode_t DynamicData::set_uint32_value(
     }
 
     return ReturnCode_t::RETCODE_BAD_PARAMETER;
-#endif
+#endif // ifdef DYNAMIC_TYPES_CHECKING
 }
 
 ReturnCode_t DynamicData::get_int16_value(
@@ -2077,7 +2109,7 @@ ReturnCode_t DynamicData::get_int16_value(
         return default_array_value_->get_int16_value(value, MEMBER_ID_INVALID);
     }
     return ReturnCode_t::RETCODE_BAD_PARAMETER;
-#endif
+#endif // ifdef DYNAMIC_TYPES_CHECKING
 }
 
 ReturnCode_t DynamicData::set_int16_value(
@@ -2171,7 +2203,7 @@ ReturnCode_t DynamicData::set_int16_value(
     }
 
     return ReturnCode_t::RETCODE_BAD_PARAMETER;
-#endif
+#endif // ifdef DYNAMIC_TYPES_CHECKING
 }
 
 ReturnCode_t DynamicData::get_uint16_value(
@@ -2222,7 +2254,7 @@ ReturnCode_t DynamicData::get_uint16_value(
         return default_array_value_->get_uint16_value(value, MEMBER_ID_INVALID);
     }
     return ReturnCode_t::RETCODE_BAD_PARAMETER;
-#endif
+#endif // ifdef DYNAMIC_TYPES_CHECKING
 }
 
 ReturnCode_t DynamicData::set_uint16_value(
@@ -2315,7 +2347,7 @@ ReturnCode_t DynamicData::set_uint16_value(
         return insertResult;
     }
     return ReturnCode_t::RETCODE_BAD_PARAMETER;
-#endif
+#endif // ifdef DYNAMIC_TYPES_CHECKING
 }
 
 ReturnCode_t DynamicData::get_int64_value(
@@ -2366,7 +2398,7 @@ ReturnCode_t DynamicData::get_int64_value(
         return default_array_value_->get_int64_value(value, MEMBER_ID_INVALID);
     }
     return ReturnCode_t::RETCODE_BAD_PARAMETER;
-#endif
+#endif // ifdef DYNAMIC_TYPES_CHECKING
 }
 
 ReturnCode_t DynamicData::set_int64_value(
@@ -2460,7 +2492,7 @@ ReturnCode_t DynamicData::set_int64_value(
     }
 
     return ReturnCode_t::RETCODE_BAD_PARAMETER;
-#endif
+#endif // ifdef DYNAMIC_TYPES_CHECKING
 }
 
 ReturnCode_t DynamicData::get_uint64_value(
@@ -2511,7 +2543,7 @@ ReturnCode_t DynamicData::get_uint64_value(
         return default_array_value_->get_uint64_value(value, MEMBER_ID_INVALID);
     }
     return ReturnCode_t::RETCODE_BAD_PARAMETER;
-#endif
+#endif // ifdef DYNAMIC_TYPES_CHECKING
 }
 
 ReturnCode_t DynamicData::set_uint64_value(
@@ -2605,7 +2637,7 @@ ReturnCode_t DynamicData::set_uint64_value(
     }
 
     return ReturnCode_t::RETCODE_BAD_PARAMETER;
-#endif
+#endif // ifdef DYNAMIC_TYPES_CHECKING
 }
 
 ReturnCode_t DynamicData::get_float32_value(
@@ -2656,7 +2688,7 @@ ReturnCode_t DynamicData::get_float32_value(
         return default_array_value_->get_float32_value(value, MEMBER_ID_INVALID);
     }
     return ReturnCode_t::RETCODE_BAD_PARAMETER;
-#endif
+#endif // ifdef DYNAMIC_TYPES_CHECKING
 }
 
 ReturnCode_t DynamicData::set_float32_value(
@@ -2723,7 +2755,7 @@ ReturnCode_t DynamicData::set_float32_value(
     }
 
     return ReturnCode_t::RETCODE_BAD_PARAMETER;
-#endif
+#endif // ifdef DYNAMIC_TYPES_CHECKING
 }
 
 ReturnCode_t DynamicData::get_float64_value(
@@ -2774,7 +2806,7 @@ ReturnCode_t DynamicData::get_float64_value(
         return default_array_value_->get_float64_value(value, MEMBER_ID_INVALID);
     }
     return ReturnCode_t::RETCODE_BAD_PARAMETER;
-#endif
+#endif // ifdef DYNAMIC_TYPES_CHECKING
 }
 
 ReturnCode_t DynamicData::set_float64_value(
@@ -2840,7 +2872,7 @@ ReturnCode_t DynamicData::set_float64_value(
     }
 
     return ReturnCode_t::RETCODE_BAD_PARAMETER;
-#endif
+#endif // ifdef DYNAMIC_TYPES_CHECKING
 }
 
 ReturnCode_t DynamicData::get_float128_value(
@@ -2891,7 +2923,7 @@ ReturnCode_t DynamicData::get_float128_value(
         return default_array_value_->get_float128_value(value, MEMBER_ID_INVALID);
     }
     return ReturnCode_t::RETCODE_BAD_PARAMETER;
-#endif
+#endif // ifdef DYNAMIC_TYPES_CHECKING
 }
 
 ReturnCode_t DynamicData::set_float128_value(
@@ -2957,7 +2989,7 @@ ReturnCode_t DynamicData::set_float128_value(
     }
 
     return ReturnCode_t::RETCODE_BAD_PARAMETER;
-#endif
+#endif // ifdef DYNAMIC_TYPES_CHECKING
 }
 
 ReturnCode_t DynamicData::get_char8_value(
@@ -3008,7 +3040,7 @@ ReturnCode_t DynamicData::get_char8_value(
         return default_array_value_->get_char8_value(value, MEMBER_ID_INVALID);
     }
     return ReturnCode_t::RETCODE_BAD_PARAMETER;
-#endif
+#endif // ifdef DYNAMIC_TYPES_CHECKING
 }
 
 ReturnCode_t DynamicData::set_char8_value(
@@ -3074,7 +3106,7 @@ ReturnCode_t DynamicData::set_char8_value(
     }
 
     return ReturnCode_t::RETCODE_BAD_PARAMETER;
-#endif
+#endif // ifdef DYNAMIC_TYPES_CHECKING
 }
 
 ReturnCode_t DynamicData::get_char16_value(
@@ -3125,7 +3157,7 @@ ReturnCode_t DynamicData::get_char16_value(
         return default_array_value_->get_char16_value(value, MEMBER_ID_INVALID);
     }
     return ReturnCode_t::RETCODE_BAD_PARAMETER;
-#endif
+#endif // ifdef DYNAMIC_TYPES_CHECKING
 }
 
 ReturnCode_t DynamicData::set_char16_value(
@@ -3192,7 +3224,7 @@ ReturnCode_t DynamicData::set_char16_value(
     }
 
     return ReturnCode_t::RETCODE_BAD_PARAMETER;
-#endif
+#endif // ifdef DYNAMIC_TYPES_CHECKING
 }
 
 ReturnCode_t DynamicData::get_byte_value(
@@ -3243,7 +3275,7 @@ ReturnCode_t DynamicData::get_byte_value(
         return default_array_value_->get_byte_value(value, MEMBER_ID_INVALID);
     }
     return ReturnCode_t::RETCODE_BAD_PARAMETER;
-#endif
+#endif // ifdef DYNAMIC_TYPES_CHECKING
 }
 
 ReturnCode_t DynamicData::set_byte_value(
@@ -3337,7 +3369,7 @@ ReturnCode_t DynamicData::set_byte_value(
     }
 
     return ReturnCode_t::RETCODE_BAD_PARAMETER;
-#endif
+#endif // ifdef DYNAMIC_TYPES_CHECKING
 }
 
 ReturnCode_t DynamicData::get_bool_value(
@@ -3409,7 +3441,7 @@ ReturnCode_t DynamicData::get_bool_value(
         return default_array_value_->get_bool_value(value, MEMBER_ID_INVALID);
     }
     return ReturnCode_t::RETCODE_BAD_PARAMETER;
-#endif
+#endif // ifdef DYNAMIC_TYPES_CHECKING
 }
 
 ReturnCode_t DynamicData::set_bool_value(
@@ -3550,7 +3582,7 @@ ReturnCode_t DynamicData::set_bool_value(
     }
 
     return ReturnCode_t::RETCODE_BAD_PARAMETER;
-#endif
+#endif // ifdef DYNAMIC_TYPES_CHECKING
 }
 
 ReturnCode_t DynamicData::get_string_value(
@@ -3601,7 +3633,7 @@ ReturnCode_t DynamicData::get_string_value(
         return default_array_value_->get_string_value(value, MEMBER_ID_INVALID);
     }
     return ReturnCode_t::RETCODE_BAD_PARAMETER;
-#endif
+#endif // ifdef DYNAMIC_TYPES_CHECKING
 }
 
 ReturnCode_t DynamicData::set_string_value(
@@ -3683,7 +3715,7 @@ ReturnCode_t DynamicData::set_string_value(
     }
 
     return ReturnCode_t::RETCODE_BAD_PARAMETER;
-#endif
+#endif // ifdef DYNAMIC_TYPES_CHECKING
 }
 
 void DynamicData::set_type_name(
@@ -3810,7 +3842,7 @@ ReturnCode_t DynamicData::get_wstring_value(
         return default_array_value_->get_wstring_value(value, MEMBER_ID_INVALID);
     }
     return ReturnCode_t::RETCODE_BAD_PARAMETER;
-#endif
+#endif // ifdef DYNAMIC_TYPES_CHECKING
 }
 
 ReturnCode_t DynamicData::set_wstring_value(
@@ -3892,7 +3924,7 @@ ReturnCode_t DynamicData::set_wstring_value(
     }
 
     return ReturnCode_t::RETCODE_BAD_PARAMETER;
-#endif
+#endif // ifdef DYNAMIC_TYPES_CHECKING
 }
 
 ReturnCode_t DynamicData::get_enum_value(
@@ -3943,7 +3975,7 @@ ReturnCode_t DynamicData::get_enum_value(
         return default_array_value_->get_enum_value(value, MEMBER_ID_INVALID);
     }
     return ReturnCode_t::RETCODE_BAD_PARAMETER;
-#endif
+#endif // ifdef DYNAMIC_TYPES_CHECKING
 }
 
 ReturnCode_t DynamicData::set_enum_value(
@@ -4015,7 +4047,7 @@ ReturnCode_t DynamicData::set_enum_value(
     }
 
     return ReturnCode_t::RETCODE_BAD_PARAMETER;
-#endif
+#endif // ifdef DYNAMIC_TYPES_CHECKING
 }
 
 ReturnCode_t DynamicData::get_enum_value(
@@ -4074,7 +4106,7 @@ ReturnCode_t DynamicData::get_enum_value(
         return default_array_value_->get_enum_value(value, MEMBER_ID_INVALID);
     }
     return ReturnCode_t::RETCODE_BAD_PARAMETER;
-#endif
+#endif // ifdef DYNAMIC_TYPES_CHECKING
 }
 
 ReturnCode_t DynamicData::set_enum_value(
@@ -4152,7 +4184,7 @@ ReturnCode_t DynamicData::set_enum_value(
     }
 
     return ReturnCode_t::RETCODE_BAD_PARAMETER;
-#endif
+#endif // ifdef DYNAMIC_TYPES_CHECKING
 }
 
 ReturnCode_t DynamicData::set_bitmask_value(
@@ -4213,7 +4245,7 @@ void DynamicData::sort_member_ids(
         ++index;
         ++curID;
     }
-#endif
+#endif // ifdef DYNAMIC_TYPES_CHECKING
 }
 
 MemberId DynamicData::get_array_index(
@@ -4275,7 +4307,7 @@ ReturnCode_t DynamicData::insert_array_data(
             values_.insert(std::make_pair(indexId, value));
             return ReturnCode_t::RETCODE_OK;
         }
-#endif
+#endif // ifdef DYNAMIC_TYPES_CHECKING
         else
         {
             logError(DYN_TYPES, "Error inserting data. Index out of bounds");
@@ -4315,7 +4347,7 @@ ReturnCode_t DynamicData::clear_array_data(
             }
             return ReturnCode_t::RETCODE_OK;
         }
-#endif
+#endif // ifdef DYNAMIC_TYPES_CHECKING
         else
         {
             logError(DYN_TYPES, "Error removing data. Index out of bounds");
@@ -4664,7 +4696,7 @@ ReturnCode_t DynamicData::insert_complex_value(
             outId = static_cast<MemberId>(values_.size());
             values_.insert(std::make_pair(outId, DynamicDataFactory::get_instance()->create_copy(value)));
             return ReturnCode_t::RETCODE_OK;
-#endif
+#endif // ifdef DYNAMIC_TYPES_CHECKING
         }
         else
         {
@@ -4695,7 +4727,7 @@ ReturnCode_t DynamicData::insert_complex_value(
             outId = static_cast<MemberId>(values_.size());
             values_.insert(std::make_pair(outId, DynamicDataFactory::get_instance()->create_copy(value.get())));
             return ReturnCode_t::RETCODE_OK;
-#endif
+#endif // ifdef DYNAMIC_TYPES_CHECKING
         }
         else
         {
@@ -4726,7 +4758,7 @@ ReturnCode_t DynamicData::insert_complex_value(
             outId = static_cast<MemberId>(values_.size());
             values_.insert(std::make_pair(outId, value));
             return ReturnCode_t::RETCODE_OK;
-#endif
+#endif // ifdef DYNAMIC_TYPES_CHECKING
         }
         else
         {
@@ -4759,7 +4791,7 @@ ReturnCode_t DynamicData::insert_sequence_data(
             outId = static_cast<MemberId>(values_.size());
             values_.insert(std::make_pair(outId, new_element));
             return ReturnCode_t::RETCODE_OK;
-#endif
+#endif // ifdef DYNAMIC_TYPES_CHECKING
         }
         else
         {
@@ -4797,7 +4829,7 @@ ReturnCode_t DynamicData::remove_sequence_data(
             sort_member_ids(id);
             return ReturnCode_t::RETCODE_OK;
         }
-#endif
+#endif // ifdef DYNAMIC_TYPES_CHECKING
         logError(DYN_TYPES, "Error removing data. Member not found");
         return ReturnCode_t::RETCODE_BAD_PARAMETER;
     }
@@ -4853,7 +4885,7 @@ ReturnCode_t DynamicData::insert_map_data(
             outValueId = static_cast<MemberId>(values_.size());
             values_.insert(std::make_pair(outValueId, new_element));
             return ReturnCode_t::RETCODE_OK;
-#endif
+#endif // ifdef DYNAMIC_TYPES_CHECKING
         }
         else
         {
@@ -4914,7 +4946,7 @@ ReturnCode_t DynamicData::insert_map_data(
             outValue = static_cast<MemberId>(values_.size());
             values_.insert(std::make_pair(outValue, value));
             return ReturnCode_t::RETCODE_OK;
-#endif
+#endif // ifdef DYNAMIC_TYPES_CHECKING
         }
         else
         {
@@ -4977,7 +5009,7 @@ ReturnCode_t DynamicData::insert_map_data(
             DynamicData* valueCopy = DynamicDataFactory::get_instance()->create_copy(value);
             values_.insert(std::make_pair(outValue, valueCopy));
             return ReturnCode_t::RETCODE_OK;
-#endif
+#endif // ifdef DYNAMIC_TYPES_CHECKING
         }
         else
         {
@@ -5031,7 +5063,7 @@ ReturnCode_t DynamicData::remove_map_data(
             sort_member_ids(keyId);
             return ReturnCode_t::RETCODE_OK;
         }
-#endif
+#endif // ifdef DYNAMIC_TYPES_CHECKING
         else
         {
             logError(DYN_TYPES, "Error removing from map. Invalid input KeyId");
@@ -5062,7 +5094,7 @@ ReturnCode_t DynamicData::clear_data()
             DynamicDataFactory::get_instance()->delete_data((DynamicData*)it->second);
         }
         values_.clear();
-#endif
+#endif // ifdef DYNAMIC_TYPES_CHECKING
         return ReturnCode_t::RETCODE_OK;
     }
 
@@ -5096,7 +5128,7 @@ ReturnCode_t DynamicData::get_complex_value(
             return ReturnCode_t::RETCODE_OK;
         }
         return ReturnCode_t::RETCODE_BAD_PARAMETER;
-#endif
+#endif // ifdef DYNAMIC_TYPES_CHECKING
     }
     else
     {
@@ -5175,7 +5207,7 @@ ReturnCode_t DynamicData::set_complex_value(
                 values_.insert(std::make_pair(id, value));
                 return ReturnCode_t::RETCODE_OK;
             }
-#endif
+#endif // ifdef DYNAMIC_TYPES_CHECKING
         }
         else
         {
@@ -5234,7 +5266,7 @@ bool DynamicData::deserialize(
 #else
             auto it = values_.begin();
             cdr >> *((int32_t*)it->second);
-#endif
+#endif // ifdef DYNAMIC_TYPES_CHECKING
             break;
         }
         case TK_UINT32:
@@ -5245,7 +5277,7 @@ bool DynamicData::deserialize(
 #else
             auto it = values_.begin();
             cdr >> *((uint32_t*)it->second);
-#endif
+#endif // ifdef DYNAMIC_TYPES_CHECKING
             break;
         }
         case TK_INT16:
@@ -5256,7 +5288,7 @@ bool DynamicData::deserialize(
 #else
             auto it = values_.begin();
             cdr >> *((int16_t*)it->second);
-#endif
+#endif // ifdef DYNAMIC_TYPES_CHECKING
             break;
         }
         case TK_UINT16:
@@ -5267,7 +5299,7 @@ bool DynamicData::deserialize(
 #else
             auto it = values_.begin();
             cdr >> *((uint16_t*)it->second);
-#endif
+#endif // ifdef DYNAMIC_TYPES_CHECKING
             break;
         }
         case TK_INT64:
@@ -5278,7 +5310,7 @@ bool DynamicData::deserialize(
 #else
             auto it = values_.begin();
             cdr >> *((int64_t*)it->second);
-#endif
+#endif // ifdef DYNAMIC_TYPES_CHECKING
             break;
         }
         case TK_UINT64:
@@ -5289,7 +5321,7 @@ bool DynamicData::deserialize(
 #else
             auto it = values_.begin();
             cdr >> *((uint64_t*)it->second);
-#endif
+#endif // ifdef DYNAMIC_TYPES_CHECKING
             break;
         }
         case TK_FLOAT32:
@@ -5299,7 +5331,7 @@ bool DynamicData::deserialize(
 #else
             auto it = values_.begin();
             cdr >> *((float*)it->second);
-#endif
+#endif // ifdef DYNAMIC_TYPES_CHECKING
             break;
         }
         case TK_FLOAT64:
@@ -5310,7 +5342,7 @@ bool DynamicData::deserialize(
 #else
             auto it = values_.begin();
             cdr >> *((double*)it->second);
-#endif
+#endif // ifdef DYNAMIC_TYPES_CHECKING
             break;
         }
         case TK_FLOAT128:
@@ -5321,7 +5353,7 @@ bool DynamicData::deserialize(
 #else
             auto it = values_.begin();
             cdr >> *((long double*)it->second);
-#endif
+#endif // ifdef DYNAMIC_TYPES_CHECKING
             break;
         }
         case TK_CHAR8:
@@ -5332,7 +5364,7 @@ bool DynamicData::deserialize(
 #else
             auto it = values_.begin();
             cdr >> *((char*)it->second);
-#endif
+#endif // ifdef DYNAMIC_TYPES_CHECKING
             break;
         }
         case TK_CHAR16:
@@ -5343,7 +5375,7 @@ bool DynamicData::deserialize(
 #else
             auto it = values_.begin();
             cdr >> *((wchar_t*)it->second);
-#endif
+#endif // ifdef DYNAMIC_TYPES_CHECKING
             break;
         }
         case TK_BOOLEAN:
@@ -5354,7 +5386,7 @@ bool DynamicData::deserialize(
 #else
             auto it = values_.begin();
             cdr >> *((bool*)it->second);
-#endif
+#endif // ifdef DYNAMIC_TYPES_CHECKING
             break;
         }
         case TK_BYTE:
@@ -5365,7 +5397,7 @@ bool DynamicData::deserialize(
 #else
             auto it = values_.begin();
             cdr >> *((octet*)it->second);
-#endif
+#endif // ifdef DYNAMIC_TYPES_CHECKING
             break;
         }
         case TK_STRING8:
@@ -5376,7 +5408,7 @@ bool DynamicData::deserialize(
 #else
             auto it = values_.begin();
             cdr >> *((std::string*)it->second);
-#endif
+#endif // ifdef DYNAMIC_TYPES_CHECKING
             break;
         }
         case TK_STRING16:
@@ -5387,7 +5419,7 @@ bool DynamicData::deserialize(
 #else
             auto it = values_.begin();
             cdr >> *((std::wstring*)it->second);
-#endif
+#endif // ifdef DYNAMIC_TYPES_CHECKING
             break;
         }
         case TK_ENUM:
@@ -5398,7 +5430,7 @@ bool DynamicData::deserialize(
 #else
             auto it = values_.begin();
             cdr >> *((uint32_t*)it->second);
-#endif
+#endif // ifdef DYNAMIC_TYPES_CHECKING
             break;
         }
         case TK_BITMASK:
@@ -5441,7 +5473,7 @@ bool DynamicData::deserialize(
                 case 4: cdr >> *((uint64_t*)it->second); break;
                 default: logError(DYN_TYPES, "Cannot deserialize bitmask of size " << type_size);
             }
-#endif
+#endif // ifdef DYNAMIC_TYPES_CHECKING
             break;
         }
         case TK_UNION:
@@ -5464,7 +5496,7 @@ bool DynamicData::deserialize(
                 {
                     ((DynamicData*)it->second)->deserialize(cdr);
                 }
-#endif
+#endif // ifdef DYNAMIC_TYPES_CHECKING
             }
             break;
         }
@@ -5529,7 +5561,7 @@ bool DynamicData::deserialize(
                     logError(DYN_TYPES, "Missing MemberDescriptor " << i);
                 }
             }
-#endif
+#endif // ifdef DYNAMIC_TYPES_CHECKING
         }
         break;
         case TK_ARRAY:
@@ -5580,7 +5612,7 @@ bool DynamicData::deserialize(
                             inputData = nullptr;
                         }
                     }
-#endif
+#endif // ifdef DYNAMIC_TYPES_CHECKING
                 }
                 if (inputData != nullptr)
                 {
@@ -5652,7 +5684,7 @@ bool DynamicData::deserialize(
                     pData->key_element_ = bKeyElement;
                     values_.insert(std::make_pair(i, pData));
                 }
-#endif
+#endif // ifdef DYNAMIC_TYPES_CHECKING
             }
             break;
         }
@@ -5830,7 +5862,7 @@ size_t DynamicData::getCdrSerializedSize(
             // string content (length + characters + 1)
             current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4) +
                     ((std::string*)it->second)->length() + 1;
-#endif
+#endif // ifdef DYNAMIC_TYPES_CHECKING
             break;
         }
         case TK_STRING16:
@@ -5844,7 +5876,7 @@ size_t DynamicData::getCdrSerializedSize(
             // string content (length + (characters * 4) )
             current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4) +
                     (((std::wstring*)it->second)->length() * 4);
-#endif
+#endif // ifdef DYNAMIC_TYPES_CHECKING
             break;
         }
         case TK_UNION:
@@ -5858,7 +5890,7 @@ size_t DynamicData::getCdrSerializedSize(
                 auto it = data->complex_values_.at(data->union_id_);
 #else
                 auto it = (DynamicData*)data->values_.at(data->union_id_);
-#endif
+#endif // ifdef DYNAMIC_TYPES_CHECKING
                 current_alignment += getCdrSerializedSize(it, current_alignment);
             }
             break;
@@ -5919,7 +5951,7 @@ size_t DynamicData::getCdrSerializedSize(
                     logError(DYN_TYPES, "Missing MemberDescriptor " << i);
                 }
             }
-#endif
+#endif // ifdef DYNAMIC_TYPES_CHECKING
             break;
         }
         case TK_ARRAY:
@@ -5935,7 +5967,7 @@ size_t DynamicData::getCdrSerializedSize(
 #else
                 auto it = data->values_.find(idx);
                 if (it != data->values_.end())
-#endif
+#endif // ifdef DYNAMIC_TYPES_CHECKING
                 {
                     // Element Size
                     current_alignment += getCdrSerializedSize((DynamicData*)it->second, current_alignment);
@@ -5964,7 +5996,7 @@ size_t DynamicData::getCdrSerializedSize(
                 // Element Size
                 current_alignment += getCdrSerializedSize((DynamicData*)it->second, current_alignment);
             }
-#endif
+#endif // ifdef DYNAMIC_TYPES_CHECKING
             break;
         }
         case TK_ALIAS:
@@ -6158,7 +6190,7 @@ void DynamicData::serialize(
 #else
             auto it = values_.begin();
             cdr << *((int32_t*)it->second);
-#endif
+#endif // ifdef DYNAMIC_TYPES_CHECKING
             break;
         }
         case TK_UINT32:
@@ -6168,7 +6200,7 @@ void DynamicData::serialize(
 #else
             auto it = values_.begin();
             cdr << *((uint32_t*)it->second);
-#endif
+#endif // ifdef DYNAMIC_TYPES_CHECKING
             break;
         }
         case TK_INT16:
@@ -6178,7 +6210,7 @@ void DynamicData::serialize(
 #else
             auto it = values_.begin();
             cdr << *((int16_t*)it->second);
-#endif
+#endif // ifdef DYNAMIC_TYPES_CHECKING
             break;
         }
         case TK_UINT16:
@@ -6188,7 +6220,7 @@ void DynamicData::serialize(
 #else
             auto it = values_.begin();
             cdr << *((uint16_t*)it->second);
-#endif
+#endif // ifdef DYNAMIC_TYPES_CHECKING
             break;
         }
         case TK_INT64:
@@ -6198,7 +6230,7 @@ void DynamicData::serialize(
 #else
             auto it = values_.begin();
             cdr << *((int64_t*)it->second);
-#endif
+#endif // ifdef DYNAMIC_TYPES_CHECKING
             break;
         }
         case TK_UINT64:
@@ -6208,7 +6240,7 @@ void DynamicData::serialize(
 #else
             auto it = values_.begin();
             cdr << *((uint64_t*)it->second);
-#endif
+#endif // ifdef DYNAMIC_TYPES_CHECKING
             break;
         }
         case TK_FLOAT32:
@@ -6218,7 +6250,7 @@ void DynamicData::serialize(
 #else
             auto it = values_.begin();
             cdr << *((float*)it->second);
-#endif
+#endif // ifdef DYNAMIC_TYPES_CHECKING
             break;
         }
         case TK_FLOAT64:
@@ -6228,7 +6260,7 @@ void DynamicData::serialize(
 #else
             auto it = values_.begin();
             cdr << *((double*)it->second);
-#endif
+#endif // ifdef DYNAMIC_TYPES_CHECKING
             break;
         }
         case TK_FLOAT128:
@@ -6238,7 +6270,7 @@ void DynamicData::serialize(
 #else
             auto it = values_.begin();
             cdr << *((long double*)it->second);
-#endif
+#endif // ifdef DYNAMIC_TYPES_CHECKING
             break;
         }
         case TK_CHAR8:
@@ -6248,7 +6280,7 @@ void DynamicData::serialize(
 #else
             auto it = values_.begin();
             cdr << *((char*)it->second);
-#endif
+#endif // ifdef DYNAMIC_TYPES_CHECKING
             break;
         }
         case TK_CHAR16:
@@ -6258,7 +6290,7 @@ void DynamicData::serialize(
 #else
             auto it = values_.begin();
             cdr << *((wchar_t*)it->second);
-#endif
+#endif // ifdef DYNAMIC_TYPES_CHECKING
             break;
         }
         case TK_BOOLEAN:
@@ -6268,7 +6300,7 @@ void DynamicData::serialize(
 #else
             auto it = values_.begin();
             cdr << *((bool*)it->second);
-#endif
+#endif // ifdef DYNAMIC_TYPES_CHECKING
             break;
         }
         case TK_BYTE:
@@ -6278,7 +6310,7 @@ void DynamicData::serialize(
 #else
             auto it = values_.begin();
             cdr << *((octet*)it->second);
-#endif
+#endif // ifdef DYNAMIC_TYPES_CHECKING
             break;
         }
         case TK_STRING8:
@@ -6288,7 +6320,7 @@ void DynamicData::serialize(
 #else
             auto it = values_.begin();
             cdr << *((std::string*)it->second);
-#endif
+#endif // ifdef DYNAMIC_TYPES_CHECKING
             break;
         }
         case TK_STRING16:
@@ -6298,7 +6330,7 @@ void DynamicData::serialize(
 #else
             auto it = values_.begin();
             cdr << *((std::wstring*)it->second);
-#endif
+#endif // ifdef DYNAMIC_TYPES_CHECKING
             break;
         }
         case TK_ENUM:
@@ -6308,7 +6340,7 @@ void DynamicData::serialize(
 #else
             auto it = values_.begin();
             cdr << *((uint32_t*)it->second);
-#endif
+#endif // ifdef DYNAMIC_TYPES_CHECKING
             break;
         }
         case TK_BITMASK:
@@ -6333,7 +6365,7 @@ void DynamicData::serialize(
                 case 4: cdr << *((uint64_t*)it->second); break;
                 default: logError(DYN_TYPES, "Cannot serialize bitmask of size " << type_size);
             }
-#endif
+#endif // ifdef DYNAMIC_TYPES_CHECKING
             break;
         }
         case TK_UNION:
@@ -6346,7 +6378,7 @@ void DynamicData::serialize(
                 auto it = complex_values_.at(union_id_);
 #else
                 auto it = (DynamicData*) values_.at(union_id_);
-#endif
+#endif // ifdef DYNAMIC_TYPES_CHECKING
                 it->serialize(cdr);
             }
             break;
@@ -6367,7 +6399,7 @@ void DynamicData::serialize(
                 auto it = values_.at(idx);
                 ((DynamicData*)it)->serialize(cdr);
             }
-#endif
+#endif // ifdef DYNAMIC_TYPES_CHECKING
             break;
         }
         case TK_STRUCTURE:
@@ -6409,7 +6441,7 @@ void DynamicData::serialize(
                     logError(DYN_TYPES, "Missing MemberDescriptor " << idx);
                 }
             }
-#endif
+#endif // ifdef DYNAMIC_TYPES_CHECKING
             break;
         }
         case TK_ARRAY:
@@ -6423,7 +6455,7 @@ void DynamicData::serialize(
 #else
                 auto it = values_.find(idx);
                 if (it != values_.end())
-#endif
+#endif // ifdef DYNAMIC_TYPES_CHECKING
                 {
                     ((DynamicData*)it->second)->serialize(cdr);
                 }
@@ -6448,7 +6480,7 @@ void DynamicData::serialize(
             {
                 ((DynamicData*)it->second)->serialize(cdr);
             }
-#endif
+#endif // ifdef DYNAMIC_TYPES_CHECKING
             break;
         }
         case TK_ALIAS:
@@ -6561,7 +6593,7 @@ void DynamicData::serializeKey(
         {
             ((DynamicData*)it->second)->serializeKey(cdr);
         }
-#endif
+#endif // ifdef DYNAMIC_TYPES_CHECKING
     }
     else if (type_->is_key_defined_)
     {

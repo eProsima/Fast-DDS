@@ -1055,7 +1055,7 @@ void RTPSParticipantImpl::createReceiverResources(
         bool ApplyMutation,
         bool RegisterReceiver)
 {
-    std::vector<std::shared_ptr<ReceiverResource> > newItemsBuffer;
+    std::vector<std::shared_ptr<ReceiverResource>> newItemsBuffer;
 
 #if HAVE_SECURITY
     // An auxilary buffer is needed in the ReceiverResource to to decrypt the message,
@@ -1531,7 +1531,7 @@ bool RTPSParticipantImpl::did_mutation_took_place_on_meta(
         // using argument_type = Locator_t;
         // using result_type   = Locator_t&;
 
-        typedef std::vector<std::shared_ptr<fastdds::rtps::TransportDescriptorInterface> > Transports;
+        typedef std::vector<std::shared_ptr<fastdds::rtps::TransportDescriptorInterface>> Transports;
 
         ResetLogical(
                 const Transports& tp)

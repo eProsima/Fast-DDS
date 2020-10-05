@@ -150,7 +150,7 @@ public:
 
         for (size_t i = 0; i < entries_.size(); ++i)
         {
-            if (last_state_.at(i) != (entries_.at(i)->enabled ? 1 : 0) )
+            if (last_state_.at(i) != (entries_.at(i)->enabled ? 1 : 0))
             {
                 return true;
             }
