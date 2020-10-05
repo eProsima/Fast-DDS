@@ -193,6 +193,11 @@ private:
      */
     ~RTPSDomain() = delete;
 
+    template<typename Functor>
+    static RTPSWriter* create_writer(
+            const GUID_t& participant_guid,
+            const Functor& callback);
+
     /**
      * @brief Get Id to create a RTPSParticipant.
      * @return Different ID for each call.

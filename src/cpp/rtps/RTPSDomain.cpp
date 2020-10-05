@@ -278,9 +278,11 @@ RTPSWriter* RTPSDomain::createRTPSWriter(
         WriterHistory* hist,
         WriterListener* listen)
 {
-    return RTPSDomain::createRTPSWriter(p, watt,
-                   BasicPayloadPool::get(PoolConfig::from_history_attributes(hist->m_att)),
-                   hist, listen);
+    auto callback = [p, &watt, hist, listen](t_p_RTPSParticipant& participant, RTPSWriter** writ)
+            {
+                return participant.second->createWriter(writ, watt, hist, listen);
+            };
+    return create_writer(p->getGuid(), callback);
 }
 
 RTPSWriter* RTPSDomain::createRTPSWriter(
@@ -290,15 +292,27 @@ RTPSWriter* RTPSDomain::createRTPSWriter(
         WriterHistory* hist,
         WriterListener* listen)
 {
+    auto callback = [p, &watt, &payload_pool, hist, listen](t_p_RTPSParticipant& participant, RTPSWriter** writ)
+            {
+                return participant.second->createWriter(writ, watt, payload_pool, hist, listen);
+            };
+    return create_writer(p->getGuid(), callback);
+}
+
+template<typename Functor>
+RTPSWriter* RTPSDomain::create_writer(
+        const GUID_t& participant_guid,
+        const Functor& callback)
+{
     std::unique_lock<std::mutex> lock(m_mutex);
     for (auto it = m_RTPSParticipants.begin(); it != m_RTPSParticipants.end(); ++it)
     {
-        if (it->first->getGuid().guidPrefix == p->getGuid().guidPrefix)
+        if (it->first->getGuid().guidPrefix == participant_guid.guidPrefix)
         {
             t_p_RTPSParticipant participant = *it;
             lock.unlock();
             RTPSWriter* writ;
-            if (participant.second->createWriter(&writ, watt, payload_pool, hist, listen))
+            if (callback(participant, &writ))
             {
                 return writ;
             }

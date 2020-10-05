@@ -592,6 +592,14 @@ private:
     IPersistenceService* get_persistence_service(
             const EndpointAttributes& param);
 
+    template<typename Functor>
+    bool create_writer(
+        RTPSWriter** WriterOut,
+        WriterAttributes& param,
+        const EntityId_t& entityId,
+        bool isBuiltin,
+        const Functor& callback);
+
 public:
 
     const RTPSParticipantAttributes& getRTPSParticipantAttributes() const
