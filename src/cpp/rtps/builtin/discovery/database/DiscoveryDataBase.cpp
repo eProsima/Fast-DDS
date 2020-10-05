@@ -390,7 +390,7 @@ void DiscoveryDataBase::create_writers_from_change(
 
     // Update writers_
     DiscoveryEndpointInfo tmp_writer(ch, topic_name, server_guid_prefix_);
-    
+
     std::pair<std::map<eprosima::fastrtps::rtps::GUID_t, DiscoveryEndpointInfo>::iterator, bool> ret =
             writers_.insert(std::make_pair(writer_guid, tmp_writer));
 
@@ -491,7 +491,7 @@ void DiscoveryDataBase::create_readers_from_change(
     }
 
     DiscoveryEndpointInfo tmp_reader(ch, topic_name, server_guid_prefix_);
-    
+
     std::pair<std::map<eprosima::fastrtps::rtps::GUID_t, DiscoveryEndpointInfo>::iterator, bool> ret =
             readers_.insert(std::make_pair(reader_guid, tmp_reader));
 
