@@ -404,7 +404,7 @@ void PDP::announceParticipantState(
         bool dispose,
         WriteParams& wparams)
 {
-    logInfo(RTPS_PDP, "Announcing RTPSParticipant State (new change: " << new_change << ")");
+    // logInfo(RTPS_PDP, "Announcing RTPSParticipant State (new change: " << new_change << ")");
     CacheChange_t* change = nullptr;
 
     if (!dispose)

@@ -1076,7 +1076,7 @@ void PDPServer::announceParticipantState(
         bool dispose /* = false */,
         WriteParams& )
 {
-    logInfo(RTPS_PDP, "Announcing RTPSParticipant State (new change: " << new_change << ")");
+    // logInfo(RTPS_PDP, "Announcing RTPSParticipant State (new change: " << new_change << ")");
 
     StatefulWriter* pW = dynamic_cast<StatefulWriter*>(mp_PDPWriter);
     assert(pW);

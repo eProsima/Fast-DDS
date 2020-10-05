@@ -40,9 +40,7 @@ namespace fastdds {
 namespace rtps {
 namespace ddb {
 
-//typedef std::shared_timed_mutex share_mutex_t;
-// only working in C++14
-typedef std::shared_timed_mutex share_mutex_t;
+typedef std::recursive_mutex share_mutex_t;
 
 /**
  * Class to manage the discovery data base
@@ -56,34 +54,64 @@ class DiscoveryDataBase
 
 public:
 
+    class AckedFunctor;
+
+    ////////////
+    // Functions to process_writers_acknowledgements()
+    // Return the functor, class that works as a lambda
+    AckedFunctor functor(
+            eprosima::fastrtps::rtps::CacheChange_t* );
+
     class AckedFunctor
     {
         using argument_type = eprosima::fastrtps::rtps::ReaderProxy*;
         using result_type = void;
 
-    public:
+        // friend class DiscoveryDataBase;
+        friend AckedFunctor DiscoveryDataBase::functor(
+                eprosima::fastrtps::rtps::CacheChange_t* );
 
+        // Stateful constructor
+        // This constructor generates the only object that keeps the state
+        // all other constructors reference this object state
         AckedFunctor(
                 DiscoveryDataBase* db,
                 eprosima::fastrtps::rtps::CacheChange_t* change);
+
+    public:
+
+        // Stateless constructors
+        AckedFunctor(
+                const AckedFunctor&);
+
+        AckedFunctor(
+                AckedFunctor&& r)
+        // delegates in copy constructor
+            : AckedFunctor(r)
+        {
+        }
+
+        AckedFunctor() = delete;
 
         ~AckedFunctor();
 
         void operator () (
                 eprosima::fastrtps::rtps::ReaderProxy* reader_proxy);
 
-        bool pending()
+        operator bool() const
         {
-            return pending_;
+            return external_pending_;
         }
 
     private:
 
         DiscoveryDataBase* db_;
         eprosima::fastrtps::rtps::CacheChange_t* change_;
-        bool pending_ = false;
-
+        // stateful functor is the one contructed form the database
+        bool pending_; // stateful functor state
+        bool& external_pending_; // references stateful functor
     };
+
     friend class AckedFunctor;
 
     DiscoveryDataBase(
@@ -98,7 +126,7 @@ public:
      */
     bool update(
             eprosima::fastrtps::rtps::CacheChange_t* change,
-            eprosima::fastrtps::string_255 topic_name = "");
+            std::string topic_name = "");
 
 
     ////////////
@@ -118,16 +146,6 @@ public:
             const eprosima::fastrtps::rtps::CacheChange_t& change,
             const eprosima::fastrtps::rtps::GUID_t& reader_guid) const;
 
-
-    ////////////
-    // Functions to process_writers_acknowledgements()
-    // Return the functor, class that works as a lambda
-    AckedFunctor functor(
-            eprosima::fastrtps::rtps::CacheChange_t* change)
-    {
-        return DiscoveryDataBase::AckedFunctor(this, change);
-    }
-
     /* Delete all information relative to the entity that produced a CacheChange
      * @change: That entity's CacheChange.
      * @return: True if the entity was deleted, false otherwise.
@@ -145,22 +163,22 @@ public:
 
     void create_writers_from_change(
             eprosima::fastrtps::rtps::CacheChange_t* ch,
-            const eprosima::fastrtps::string_255& topic_name);
+            const std::string& topic_name);
 
     void create_readers_from_change(
             eprosima::fastrtps::rtps::CacheChange_t* ch,
-            const eprosima::fastrtps::string_255& topic_name);
+            const std::string& topic_name);
 
     void process_dispose_participant(
             eprosima::fastrtps::rtps::CacheChange_t* ch);
 
     void process_dispose_writer(
             eprosima::fastrtps::rtps::CacheChange_t* ch,
-            const eprosima::fastrtps::string_255& topic_name);
+            const std::string& topic_name);
 
     void process_dispose_reader(
             eprosima::fastrtps::rtps::CacheChange_t* ch,
-            const eprosima::fastrtps::string_255& topic_name);
+            const std::string& topic_name);
 
     ////////////
     // Functions to process_dirty_topics()
@@ -207,6 +225,8 @@ public:
 
     fastrtps::rtps::CacheChange_t* cache_change_own_participant();
 
+    const std::vector<fastrtps::rtps::GuidPrefix_t> remote_participants();
+
 protected:
 
     // update the acks
@@ -224,7 +244,7 @@ protected:
 
     void shared_lock_()
     {
-        sh_mtx_.lock_shared();
+        sh_mtx_.lock();
         //sh_mtx_.lock();
     }
 
@@ -235,38 +255,48 @@ protected:
 
     void shared_unlock_()
     {
-        sh_mtx_.unlock_shared();
+        sh_mtx_.unlock();
         //sh_mtx_.unlock();
     }
 
+    //! Incoming discovery traffic populated by the listeners, PDP database is already updated on notify
     fastrtps::DBQueue<eprosima::fastdds::rtps::ddb::DiscoveryDataQueueInfo> data_queue_;
 
-    std::map<eprosima::fastrtps::string_255, std::vector<eprosima::fastrtps::rtps::GUID_t> > readers_by_topic_;
+    //! Covenient per-topic mapping of readers and writers to speed-up queries
+    std::map<std::string, std::vector<eprosima::fastrtps::rtps::GUID_t>> readers_by_topic_;
+    std::map<std::string, std::vector<eprosima::fastrtps::rtps::GUID_t>> writers_by_topic_;
 
-    std::map<eprosima::fastrtps::string_255, std::vector<eprosima::fastrtps::rtps::GUID_t> > writers_by_topic_;
-
+    //! Collection of participant proxies that:
+    //  - stores the CacheChange_t
+    //  - keeps track of its acknowledgement status
+    //  - keeps an account of participant's readers and writers
     std::map<eprosima::fastrtps::rtps::GuidPrefix_t, DiscoveryParticipantInfo> participants_;
 
+    //! Collection of reader and writer proxies that:
+    //  - stores the CacheChange_t
+    //  - keeps track of its acknowledgement status
+    //  - stores the topic name (only matching criteria available)
     std::map<eprosima::fastrtps::rtps::GUID_t, DiscoveryEndpointInfo> readers_;
-
     std::map<eprosima::fastrtps::rtps::GUID_t, DiscoveryEndpointInfo> writers_;
 
+    //! Collection of topics whose related endpoints have changed and require a match recalculation
+    std::vector<std::string> dirty_topics_;
+
+    //! Collection of changes to take out of the server builtin writers
     std::vector<eprosima::fastrtps::rtps::CacheChange_t*> disposals_;
 
-    std::vector<eprosima::fastrtps::string_255> dirty_topics_;
-
+    //! Collection of changes to put into the server builtin writers
     std::vector<eprosima::fastrtps::rtps::CacheChange_t*> pdp_to_send_;
-
     std::vector<eprosima::fastrtps::rtps::CacheChange_t*> edp_publications_to_send_;
-
     std::vector<eprosima::fastrtps::rtps::CacheChange_t*> edp_subscriptions_to_send_;
+
+    //! changes that are no longer associated to living endpoints and should be returned to it's pool
+    std::vector<eprosima::fastrtps::rtps::CacheChange_t*> changes_to_release_;
 
     // mutexes
     mutable share_mutex_t sh_mtx_;
 
     fastrtps::rtps::GuidPrefix_t server_guid_prefix_;
-
-    std::vector<eprosima::fastrtps::rtps::CacheChange_t*> changes_to_release_;
 
 };
 

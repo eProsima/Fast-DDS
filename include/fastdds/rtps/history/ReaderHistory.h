@@ -72,28 +72,27 @@ public:
             CacheChange_t* a_change);
 
     /**
-     * Remove a CacheChange_t from the ReaderHistory, returning it to the pool.
-     * @param a_change Pointer to the CacheChange to remove.
-     * @return True if removed.
+     * Remove a specific change from the history.
+     * @param removal iterator to the change for removal
+     * @param release specifies if the change must be returned to the pool
+     * @return iterator to the next change if any
      */
-    RTPS_DllAPI bool remove_change(
-            CacheChange_t* a_change) override;
+    RTPS_DllAPI iterator remove_change(
+            const_iterator removal,
+            bool release = true) override;
 
     /**
-     * Remove CacheChange_t from the ReaderHistory without returning a_change to the pool.
-     * @param a_change Pointer to the CacheChange to remove.
-     * @return True removed from history.
+     * Criteria to search a specific CacheChange_t on history
+     * @param inner change to compare
+     * @param outer change for comparisson
+     * @return true if chi matches cho criteria
      */
-    RTPS_DllAPI bool remove_change_and_reuse(
-            CacheChange_t* a_change);
+    RTPS_DllAPI bool matches_change(
+            const CacheChange_t* inner,
+            CacheChange_t* outer) override;
 
-    /**
-     * Remove the CacheChange_t with a given sequence number from the ReaderHistory without returning it to the pool.
-     * @param sequence_number The sequence number of the CacheChange to remove.
-     * @return True if removed.
-     */
-    RTPS_DllAPI CacheChange_t* remove_change_and_reuse(
-            const SequenceNumber_t& sequence_number);
+    //! Introduce base class method into scope
+    using History::remove_change;
 
     /**
      * Remove a specific change from the history.
