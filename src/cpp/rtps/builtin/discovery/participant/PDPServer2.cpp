@@ -473,8 +473,8 @@ void PDPServer2::announceParticipantState(
 
                 // Update the database with our own data
                 if (discovery_db().update(
-                    change,
-                    ddb::DiscoveryParticipantChangeData(metatraffic_locators, false, false, false)))
+                            change,
+                            ddb::DiscoveryParticipantChangeData(metatraffic_locators, false, false, false)))
                 {
                     // Distribute
                     awake_server_thread();
@@ -1017,7 +1017,6 @@ const RemoteServerList_t& PDPServer2::servers()
 {
     return mp_builtin->m_DiscoveryServers;
 }
-
 
 bool PDPServer2::process_to_send_lists()
 {

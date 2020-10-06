@@ -30,8 +30,8 @@ namespace rtps {
 namespace ddb {
 
 eprosima::fastrtps::rtps::CacheChange_t* DiscoveryParticipantInfo::update(
-    eprosima::fastrtps::rtps::CacheChange_t* change,
-    DiscoveryParticipantChangeData participant_change_data)
+        eprosima::fastrtps::rtps::CacheChange_t* change,
+        DiscoveryParticipantChangeData participant_change_data)
 {
     eprosima::fastrtps::rtps::CacheChange_t* old_change = change_;
     change_ = change;

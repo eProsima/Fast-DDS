@@ -168,12 +168,12 @@ void PDPServerListener2::onNewCacheChangeAdded(
 
             // Notify the DiscoveryDataBase
             if (pdp_server()->discovery_db().update(
-                change.get(),
-                ddb::DiscoveryParticipantChangeData(
-                    temp_participant_data_.metatraffic_locators,
-                    is_client,
-                    is_my_client,
-                    is_my_server)))
+                        change.get(),
+                        ddb::DiscoveryParticipantChangeData(
+                            temp_participant_data_.metatraffic_locators,
+                            is_client,
+                            is_my_client,
+                            is_my_server)))
             {
                 // Remove change from PDP reader history, but do not return it to the pool. From here on, the discovery
                 // database takes ownership of the CacheChange_t. Henceforth there are no references to the change.

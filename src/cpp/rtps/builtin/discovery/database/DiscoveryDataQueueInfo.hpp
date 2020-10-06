@@ -54,7 +54,7 @@ protected:
 
 };
 
-class DiscoveryPDPDataQueueInfo: public DiscoveryDataQueueInfo
+class DiscoveryPDPDataQueueInfo : public DiscoveryDataQueueInfo
 {
 public:
 
@@ -81,7 +81,7 @@ private:
 
 };
 
-class DiscoveryEDPDataQueueInfo: public DiscoveryDataQueueInfo
+class DiscoveryEDPDataQueueInfo : public DiscoveryDataQueueInfo
 {
 public:
 
