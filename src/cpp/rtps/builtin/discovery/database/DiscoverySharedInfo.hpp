@@ -48,6 +48,12 @@ public:
     {
     }
 
+    virtual eprosima::fastrtps::rtps::CacheChange_t* update_and_unmatch(
+            eprosima::fastrtps::rtps::CacheChange_t* change);
+
+    virtual eprosima::fastrtps::rtps::CacheChange_t* update(
+            eprosima::fastrtps::rtps::CacheChange_t* change);
+
     void add_or_update_ack_participant(
             const eprosima::fastrtps::rtps::GuidPrefix_t& guid_p,
             bool status = false)
@@ -62,12 +68,6 @@ public:
     {
         relevant_participants_builtin_ack_status_.remove_participant(guid_p);
     }
-
-    eprosima::fastrtps::rtps::CacheChange_t* set_change_and_unmatch(
-            eprosima::fastrtps::rtps::CacheChange_t* change);
-
-    eprosima::fastrtps::rtps::CacheChange_t* change_info(
-            eprosima::fastrtps::rtps::CacheChange_t* change);
 
     bool is_matched(
             const eprosima::fastrtps::rtps::GuidPrefix_t& guid_p) const
@@ -86,7 +86,7 @@ public:
         return change_;
     }
 
-private:
+protected:
 
     eprosima::fastrtps::rtps::CacheChange_t* change_;
 
