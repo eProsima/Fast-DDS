@@ -79,14 +79,16 @@ bool PDPServer2::init(
         return false;
     }
 
+    // Initialize server dedicated thread.
+    resource_event_thread_.init_thread();
+
     /*
         Given the fact that a participant is either a client or a server the
         discoveryServer_client_syncperiod parameter has a context defined meaning.
      */
     mp_sync = new DServerEvent2(this,
-                    TimeConv::Duration_t2MilliSecondsDouble(m_discovery.discovery_config.
-                    discoveryServer_client_syncperiod));
-    awakeServerThread();
+                    TimeConv::Duration_t2MilliSecondsDouble(
+                        m_discovery.discovery_config.discoveryServer_client_syncperiod));
 
     return true;
 }
@@ -471,7 +473,7 @@ void PDPServer2::announceParticipantState(
                 if (discovery_db().update(change))
                 {
                     // distribute
-                    awakeServerThread();
+                    awake_server_thread();
                 }
                 else
                 {
@@ -538,7 +540,7 @@ void PDPServer2::announceParticipantState(
             if (discovery_db().update(change))
             {
                 // distribute
-                awakeServerThread();
+                awake_server_thread();
             }
             else
             {
@@ -656,7 +658,7 @@ bool PDPServer2::remove_remote_participant(
             if (discovery_db_.update(pC))
             {
                 // assure processing time for the cache
-                awakeServerThread();
+                awake_server_thread();
 
                 // the discovery database takes ownership of the CacheChange_t
                 // henceforth there are no references to the CacheChange_t
@@ -679,20 +681,39 @@ bool PDPServer2::process_data_queue()
     return discovery_db_.process_data_queue();
 }
 
+void PDPServer2::awake_server_thread(
+        double interval_ms /*= 0*/)
+{
+    mp_sync->update_interval_millisec(interval_ms);
+    mp_sync->cancel_timer();
+    mp_sync->restart_timer();
+}
+
 bool PDPServer2::server_update_routine()
 {
-    logInfo(RTPS_PDP_SERVER, "");
-    logInfo(RTPS_PDP_SERVER, "-------------------- Server routine start --------------------");
-    bool result = process_writers_acknowledgements(); // server + ddb(functor_with_ddb)
-    process_data_queue();                             // all ddb
-    result |= process_disposals();                    // server + ddb(changes_to_dispose(), clear_changes_to_disposes())
-    result |= process_dirty_topics();                 // all ddb
-    result |= process_to_send_lists();                // server + ddb(get_to_send, remove_to_send_this)
-    result |= process_changes_release();              // server + ddb(changes_to_release(), clear_changes_to_release())
-    result |= pending_ack();                          // all server
-    logInfo(RTPS_PDP_SERVER, "-------------------- Server routine end --------------------");
-    logInfo(RTPS_PDP_SERVER, "");
-    return result;
+    // There is pending work to be done by the server if there are changes that have not been acknowledged.
+    bool pending_work = true;
+
+    // Execute the server routine
+    do
+    {
+        logInfo(RTPS_PDP_SERVER, "");
+        logInfo(RTPS_PDP_SERVER, "-------------------- Server routine start --------------------");
+        process_writers_acknowledgements();     // server + ddb(functor_with_ddb)
+        process_data_queue();                   // all ddb
+        process_disposals();                    // server + ddb(changes_to_dispose(), clear_changes_to_disposes())
+        process_dirty_topics();                 // all ddb
+        process_to_send_lists();                // server + ddb(get_to_send, remove_to_send_this)
+        process_changes_release();              // server + ddb(changes_to_release(), clear_changes_to_release())
+        pending_work = pending_ack();           // all server
+        logInfo(RTPS_PDP_SERVER, "-------------------- Server routine end --------------------");
+        logInfo(RTPS_PDP_SERVER, "");
+    }
+    // If the data queue is not empty re-start the routine.
+    // A non-empty queue means that the server has received a change while it is running the processing routine.
+    while (!discovery_db_.data_queue_empty());
+
+    return pending_work;
 }
 
 bool PDPServer2::process_writers_acknowledgements()
@@ -1111,6 +1132,11 @@ bool PDPServer2::pending_ack()
             edp->subscriptions_writer_.second->getHistorySize() > 0);
     logInfo(RTPS_PDP_SERVER, "Are there pending changes? " << ret);
     return ret;
+}
+
+eprosima::fastrtps::rtps::ResourceEvent& PDPServer2::get_resource_event_thread()
+{
+    return resource_event_thread_;
 }
 
 } // namespace rtps
