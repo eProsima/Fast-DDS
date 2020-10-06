@@ -130,8 +130,11 @@ void PDPServerListener2::onNewCacheChangeAdded(
                 // Take change ownership away from the unique pointer, so that its destruction does not destroy the data
                 pdp_history->remove_change(pdp_history->find_change(change.release()), false);
 
-                // Ensure processing time for the cache by triggering the Server thread (which process the updates
-                pdp_server()->awakeServerThread();
+                // Ensure processing time for the cache by triggering the Server thread (which process the updates)
+                // The server does not have to postpone the execution of the routine if a change is received, i.e.
+                // the server routine is triggered instantly as the default value of the interval that the server has
+                // to wait is 0.
+                pdp_server()->awake_server_thread();
 
                 // TODO: when the DiscoveryDataBase allows updating capabilities we can dismissed old PDP processing
             }
@@ -225,7 +228,10 @@ void PDPServerListener2::onNewCacheChangeAdded(
         if (pdp_server()->discovery_db().update(change.get()))
         {
             // Ensure processing time for the cache by triggering the Server thread (which process the updates
-            pdp_server()->awakeServerThread();
+            // The server does not have to postpone the execution of the routine if a change is received, i.e.
+            // the server routine is triggered instantly as the default value of the interval that the server has
+            // to wait is 0.
+            pdp_server()->awake_server_thread();
 
             // From here on, the discovery database takes ownership of the CacheChange_t. Henceforth there are no
             // references to the change. Take change ownership away from the unique pointer, so that its destruction

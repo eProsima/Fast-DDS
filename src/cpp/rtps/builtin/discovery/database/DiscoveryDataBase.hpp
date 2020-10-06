@@ -238,6 +238,12 @@ public:
         server_acked_by_all_ = s;
     }
 
+    ////////////
+    // Data structures utils
+
+    // Check if the data queue is empty
+    bool data_queue_empty();
+
 protected:
 
     // update the acks
