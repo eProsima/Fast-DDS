@@ -109,13 +109,11 @@ bool TopicPayloadPool::release_payload(
 {
     assert(cache_change.payload_owner() == this);
 
+    if (PayloadNode::dereference(cache_change.serializedPayload.data))
     {
         std::lock_guard<std::mutex> lock(mutex_);
         PayloadNode* payload = all_payloads_.at(PayloadNode::data_index(cache_change.serializedPayload.data));
-        if (!payload->dereference())
-        {
-            free_payloads_.push_back(payload);
-        }
+        free_payloads_.push_back(payload);
     }
 
     cache_change.serializedPayload.length = 0;

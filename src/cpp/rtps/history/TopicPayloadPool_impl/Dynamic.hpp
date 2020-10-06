@@ -35,7 +35,7 @@ public:
         assert(cache_change.payload_owner() == this);
 
         {
-            if (!PayloadNode::dereference(cache_change.serializedPayload.data))
+            if (PayloadNode::dereference(cache_change.serializedPayload.data))
             {
                 //First remove it from all_payloads
                 std::unique_lock<std::mutex> lock(mutex_);
