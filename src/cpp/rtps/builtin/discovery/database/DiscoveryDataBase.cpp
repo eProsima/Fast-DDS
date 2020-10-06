@@ -308,12 +308,13 @@ void DiscoveryDataBase::process_pdp_data_queue()
         {
             // Update participants map
             logInfo(DISCOVERY_DATABASE, "DATA(p) received from: " << data_queue_info.change()->instanceHandle);
-            create_participant_from_change(data_queue_info.change(), data_queue_info.participant_change_data());
+            create_participant_from_change_(data_queue_info.change(), data_queue_info.participant_change_data());
         }
         // If the change is a DATA(Up)
         else
         {
-            process_dispose_participant(data_queue_info.change());
+            logInfo(DISCOVERY_DATABASE, "DATA(Up) received from: " << data_queue_info.change()->instanceHandle);
+            process_dispose_participant_(data_queue_info.change());
         }
 
         // Pop the message from the queue
@@ -396,7 +397,7 @@ bool DiscoveryDataBase::process_edp_data_queue()
     return is_dirty_topic;
 }
 
-void DiscoveryDataBase::create_participant_from_change(
+void DiscoveryDataBase::create_participant_from_change_(
         eprosima::fastrtps::rtps::CacheChange_t* ch,
         const DiscoveryParticipantChangeData& change_data)
 {
@@ -454,6 +455,17 @@ void DiscoveryDataBase::create_writers_from_change_(
     // If writer does not exists, create the change
     if (ret.second)
     {
+        // Update participants_::writers
+        std::map<eprosima::fastrtps::rtps::GuidPrefix_t, DiscoveryParticipantInfo>::iterator w_pit =
+                participants_.find(writer_guid.guidPrefix);
+        if (w_pit != participants_.end())
+        {
+            w_pit->second.add_writer(writer_guid);
+        }
+
+        // Update writers_by_topic
+        add_writer_to_topic_(writer_guid, topic_name);
+
         std::map<std::string, std::vector<eprosima::fastrtps::rtps::GUID_t>>::iterator readers_it =
                 readers_by_topic_.find(topic_name);
 
@@ -492,17 +504,6 @@ void DiscoveryDataBase::create_writers_from_change_(
                 }
             }
         }
-
-        // Update participants_::writers
-        std::map<eprosima::fastrtps::rtps::GuidPrefix_t, DiscoveryParticipantInfo>::iterator w_pit =
-                participants_.find(writer_guid.guidPrefix);
-        if (w_pit != participants_.end())
-        {
-            w_pit->second.add_writer(writer_guid);
-        }
-
-        // Update writers_by_topic
-        add_writer_to_topic_(writer_guid, topic_name);
     }
     // If writer exists, update the change and set all participant ack status to false
     else
@@ -518,14 +519,6 @@ void DiscoveryDataBase::create_readers_from_change_(
 {
     const eprosima::fastrtps::rtps::GUID_t& reader_guid = guid_from_change(ch);
 
-    // Update participants_::readers
-    std::map<eprosima::fastrtps::rtps::GuidPrefix_t, DiscoveryParticipantInfo>::iterator r_pit =
-            participants_.find(reader_guid.guidPrefix);
-    if (r_pit != participants_.end())
-    {
-        r_pit->second.add_reader(reader_guid);
-    }
-
     DiscoveryEndpointInfo tmp_reader(ch, topic_name, server_guid_prefix_);
 
     std::pair<std::map<eprosima::fastrtps::rtps::GUID_t, DiscoveryEndpointInfo>::iterator, bool> ret =
@@ -534,6 +527,17 @@ void DiscoveryDataBase::create_readers_from_change_(
     // If reader does not exists, create the change
     if (ret.second)
     {
+        // Update participants_::readers
+        std::map<eprosima::fastrtps::rtps::GuidPrefix_t, DiscoveryParticipantInfo>::iterator r_pit =
+                participants_.find(reader_guid.guidPrefix);
+        if (r_pit != participants_.end())
+        {
+            r_pit->second.add_reader(reader_guid);
+        }
+
+        // Update readers_by_topic
+        add_reader_to_topic_(reader_guid, topic_name);
+
         std::map<std::string, std::vector<eprosima::fastrtps::rtps::GUID_t>>::iterator writers_it =
                 writers_by_topic_.find(topic_name);
         if (writers_it != writers_by_topic_.end())
@@ -574,17 +578,6 @@ void DiscoveryDataBase::create_readers_from_change_(
                 }
             }
         }
-
-        // Update participants_::readers
-        std::map<eprosima::fastrtps::rtps::GuidPrefix_t, DiscoveryParticipantInfo>::iterator pit =
-                participants_.find(reader_guid.guidPrefix);
-        if (pit != participants_.end())
-        {
-            pit->second.add_reader(reader_guid);
-        }
-
-        // Update readers_by_topic
-        add_reader_to_topic_(reader_guid, topic_name);
     }
     // If reader exists, update the change and set all participant ack status to false
     else
@@ -603,19 +596,16 @@ void DiscoveryDataBase::process_dispose_participant_(
             participants_.find(participant_guid.guidPrefix);
     if (pit != participants_.end())
     {
-<<<<<<< HEAD
         // Only update DATA(p), leaving the change info untouched. This is because DATA(Up) does not have the
         // participant's meta-information, but we don't want to loose it here.
         changes_to_release_.push_back(pit->second.update_and_unmatch(ch));
+    }else{
+        logError(DISCOVERY_DATABASE, "Processing disposal from an unexisting Participant"
+                << participant_guid.guidPrefix);
+    }
+
     // Delete entries from writers_ belonging to the participant
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
-    for (auto writer : pit->second.writers())
->>>>>>> 7cb576923... Refs #9445: disposals and erase functions implemented, not working properly
-=======
     while (!pit->second.writers().empty())
->>>>>>> 300b99407... Refs #9445: Disposals tested and working
     {
         auto writer = pit->second.writers().front();
 
@@ -659,54 +649,17 @@ void DiscoveryDataBase::process_dispose_writer_(
     std::map<eprosima::fastrtps::rtps::GUID_t, DiscoveryEndpointInfo>::iterator wit = writers_.find(writer_guid);
     if (wit != writers_.end())
     {
-<<<<<<< HEAD
-        changes_to_release_.push_back(wit->second.update_and_unmatch(ch));
-=======
         update_change_and_unmatch_(ch, wit->second);
->>>>>>> b701c4bae... Refs #9445: functions signature
     }
 
-<<<<<<< HEAD
-    // Update own entry participants_::writers
-    std::map<eprosima::fastrtps::rtps::GuidPrefix_t, DiscoveryParticipantInfo>::iterator pit =
-            participants_.find(writer_guid.guidPrefix);
-    if (pit != participants_.end())
-    {
-        pit->second.remove_writer(writer_guid);
-    }
-
-    // Update own entry writers_by_topic_
-    std::map<std::string, std::vector<eprosima::fastrtps::rtps::GUID_t>>::iterator tit =
-            writers_by_topic_.find(topic_name);
-    if (tit != writers_by_topic_.end())
-    {
-        for (std::vector<eprosima::fastrtps::rtps::GUID_t>::iterator writer_it = tit->second.begin();
-                writer_it != tit->second.end();
-                ++writer_it)
-        {
-            if (*writer_it == writer_guid)
-            {
-                tit->second.erase(writer_it);
-                break;
-            }
-        }
-
-        if (tit->second.empty())
-        {
-            writers_by_topic_.erase(tit);
-        }
-    }
-=======
     // Update writer matches
     unmatch_writer_(writer_guid);
->>>>>>> 7cb576923... Refs #9445: disposals and erase functions implemented, not working properly
 
     // Add entry to disposals_
     if (std::find(disposals_.begin(), disposals_.end(), ch) == disposals_.end())
     {
         disposals_.push_back(ch);
     }
-
 }
 
 void DiscoveryDataBase::process_dispose_reader_(
@@ -718,47 +671,11 @@ void DiscoveryDataBase::process_dispose_reader_(
     std::map<eprosima::fastrtps::rtps::GUID_t, DiscoveryEndpointInfo>::iterator rit = readers_.find(reader_guid);
     if (rit != readers_.end())
     {
-<<<<<<< HEAD
-        changes_to_release_.push_back(rit->second.update_and_unmatch(ch));
-=======
         update_change_and_unmatch_(ch, rit->second);
->>>>>>> b701c4bae... Refs #9445: functions signature
     }
 
-<<<<<<< HEAD
-    // Update own entry participants_::readers
-    std::map<eprosima::fastrtps::rtps::GuidPrefix_t, DiscoveryParticipantInfo>::iterator pit =
-            participants_.find(reader_guid.guidPrefix);
-    if (pit != participants_.end())
-    {
-        pit->second.remove_reader(reader_guid);
-    }
-
-    // Update own entry readers_by_topic_
-    std::map<std::string, std::vector<eprosima::fastrtps::rtps::GUID_t>>::iterator tit =
-            readers_by_topic_.find(topic_name);
-    if (tit != readers_by_topic_.end())
-    {
-        for (std::vector<eprosima::fastrtps::rtps::GUID_t>::iterator reader_it = tit->second.begin();
-                reader_it != tit->second.end();
-                ++reader_it)
-        {
-            if (*reader_it == reader_guid)
-            {
-                tit->second.erase(reader_it);
-                break;
-            }
-        }
-
-        if (tit->second.empty())
-        {
-            readers_by_topic_.erase(tit);
-        }
-    }
-=======
     // Update matches
     unmatch_reader_(reader_guid);
->>>>>>> 7cb576923... Refs #9445: disposals and erase functions implemented, not working properly
 
     // Add entry to disposals_
     if (std::find(disposals_.begin(), disposals_.end(), ch) == disposals_.end())
@@ -906,8 +823,8 @@ bool DiscoveryDataBase::process_dirty_topics()
 
     // Return whether there still are dirty topics
     logInfo(DISCOVERY_DATABASE, "Are there dirty topics? " << !dirty_topics_.empty());
-    logInfo(DISCOVERY_DATABASE, "readers_by_topic: " << readers_by_topic_.size());
-    logInfo(DISCOVERY_DATABASE, "writers_by_topic: " << writers_by_topic_.size());
+    // logInfo(DISCOVERY_DATABASE, "readers_by_topic: " << readers_by_topic_.size());
+    // logInfo(DISCOVERY_DATABASE, "writers_by_topic: " << writers_by_topic_.size());
     
     return !dirty_topics_.empty();
 }
@@ -1118,7 +1035,7 @@ void DiscoveryDataBase::unmatch_writer_(const eprosima::fastrtps::rtps::GUID_t& 
     remove_writer_from_topic_(guid, topic);
 
     // it there are more than one writer in this topic in the same participant we do not unmatch the endpoints
-    if (repeated_writer_topic_(guid.guidPrefix, topic))
+    if (!repeated_writer_topic_(guid.guidPrefix, topic))
     {
         // for each reader in same topic make not relevant. It could be none in readers
         auto tit = readers_by_topic_.find(topic);
@@ -1169,7 +1086,7 @@ void DiscoveryDataBase::unmatch_reader_(const eprosima::fastrtps::rtps::GUID_t& 
     remove_reader_from_topic_(guid, topic);
 
     // it there are more than one reader in this topic in the same participant we do not unmatch the endpoints
-    if (repeated_reader_topic_(guid.guidPrefix, topic))
+    if (!repeated_reader_topic_(guid.guidPrefix, topic))
     {
         // for each writer in same topic make not relevant. It could be none in writers
         auto tit = writers_by_topic_.find(topic);

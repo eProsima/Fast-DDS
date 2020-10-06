@@ -155,29 +155,6 @@ public:
 
     bool process_edp_data_queue();
 
-    void create_participant_from_change(
-            eprosima::fastrtps::rtps::CacheChange_t* ch,
-            const DiscoveryParticipantChangeData& change_data);
-
-    void create_writers_from_change(
-            eprosima::fastrtps::rtps::CacheChange_t* ch,
-            const std::string& topic_name);
-
-    void create_readers_from_change(
-            eprosima::fastrtps::rtps::CacheChange_t* ch,
-            const std::string& topic_name);
-
-    void process_dispose_participant(
-            eprosima::fastrtps::rtps::CacheChange_t* ch);
-
-    void process_dispose_writer(
-            eprosima::fastrtps::rtps::CacheChange_t* ch,
-            const std::string& topic_name);
-
-    void process_dispose_reader(
-            eprosima::fastrtps::rtps::CacheChange_t* ch,
-            const std::string& topic_name);
-
     ////////////
     // Functions to process_dirty_topics()
     bool process_dirty_topics();
@@ -267,7 +244,7 @@ protected:
             fastrtps::rtps::CacheChange_t* new_change,
             ddb::DiscoverySharedInfo& entity)
     {
-        changes_to_release_.push_back(entity.set_change_and_unmatch(new_change));
+        changes_to_release_.push_back(entity.update_and_unmatch(new_change));
     }
 
     // update the acks
@@ -305,7 +282,8 @@ protected:
     // functions to manage new cacheChanges in update
 
     void create_participant_from_change_(
-            eprosima::fastrtps::rtps::CacheChange_t* ch);
+            eprosima::fastrtps::rtps::CacheChange_t* ch,
+            const DiscoveryParticipantChangeData& change_data);
 
     void create_writers_from_change_(
             eprosima::fastrtps::rtps::CacheChange_t* ch,

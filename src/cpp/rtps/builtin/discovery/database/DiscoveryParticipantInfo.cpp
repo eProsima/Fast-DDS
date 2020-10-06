@@ -33,18 +33,16 @@ eprosima::fastrtps::rtps::CacheChange_t* DiscoveryParticipantInfo::update(
         eprosima::fastrtps::rtps::CacheChange_t* change,
         DiscoveryParticipantChangeData participant_change_data)
 {
-    eprosima::fastrtps::rtps::CacheChange_t* old_change = change_;
-    change_ = change;
     participant_change_data_ = participant_change_data;
-    return old_change;
+    return update(change);
 }
 
 eprosima::fastrtps::rtps::CacheChange_t* DiscoveryParticipantInfo::update_and_unmatch(
         eprosima::fastrtps::rtps::CacheChange_t* change,
         DiscoveryParticipantChangeData participant_change_data)
 {
-    relevant_participants_builtin_ack_status_.unmatch_all();
-    return update(change, participant_change_data);
+    participant_change_data_ = participant_change_data;
+    return update_and_unmatch(change);
 }
 
 void DiscoveryParticipantInfo::add_reader(
