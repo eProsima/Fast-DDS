@@ -65,7 +65,7 @@ bool EDPServer::createSEDPEndpoints()
     watt.endpoint.properties.properties().push_back(Property("dds.persistence.plugin", "builtin.SQLITE3"));
     watt.endpoint.properties.properties().push_back(Property("dds.persistence.sqlite3.filename",
             pPDP->GetPersistenceFileName()));
-#endif
+#endif // if HAVE_SQLITE3
     watt.endpoint.durabilityKind = _durability;
 
     publications_listener_ = new EDPServerPUBListener(this);
@@ -148,7 +148,7 @@ bool EDPServer::trimWriterHistory(
         WriterHistory& history,
         ProxyCont ParticipantProxyData::* pC)
 {
-    logInfo(RTPS_PDPSERVER_TRIM,"In trimWriteHistory EDP history count: " << history.getHistorySize());
+    logInfo(RTPS_PDPSERVER_TRIM, "In trimWriteHistory EDP history count: " << history.getHistorySize());
 
     // trim demises container
     key_list disposal, aux;
@@ -182,13 +182,13 @@ bool EDPServer::trimWriterHistory(
     std::lock_guard<RecursiveTimedMutex> guardW(writer.getMutex());
 
     std::copy_if(history.changesBegin(), history.changesEnd(), std::front_inserter(removal),
-        [_demises](const CacheChange_t* chan)
-        {
-            return _demises.find(chan->instanceHandle) != _demises.cend();
-        });
+            [_demises](const CacheChange_t* chan)
+            {
+                return _demises.find(chan->instanceHandle) != _demises.cend();
+            });
 
-    logInfo(RTPS_PDPSERVER_TRIM,"I've classified the following EDP history data for removal "
-        << std::distance(removal.begin(), removal.end()) );
+    logInfo(RTPS_PDPSERVER_TRIM, "I've classified the following EDP history data for removal "
+            << std::distance(removal.begin(), removal.end()));
 
     if (removal.empty())
     {
@@ -204,16 +204,16 @@ bool EDPServer::trimWriterHistory(
         if (writer.is_acked_by_all(pCh))
         {
             logInfo(RTPS_PDPSERVER_TRIM, "EDPServer is removing DATA("
-                << (pCh->kind == ALIVE ? "w|r" : "w|r[UD]" ) << ") of participant "
-                << pCh->instanceHandle << " from history");
+                    << (pCh->kind == ALIVE ? "w|r" : "w|r[UD]" ) << ") of participant "
+                    << pCh->instanceHandle << " from history");
 
             history.remove_change(pCh);
         }
         else
         {
             logInfo(RTPS_PDPSERVER_TRIM, "EDPServer is procrastinating DATA("
-                << (pCh->kind == ALIVE ? "w|r" : "w|r[UD]" ) << ") of participant "
-                << pCh->instanceHandle << " from history");
+                    << (pCh->kind == ALIVE ? "w|r" : "w|r[UD]" ) << ") of participant "
+                    << pCh->instanceHandle << " from history");
 
             pending.insert(pCh->instanceHandle);
         }
@@ -222,7 +222,7 @@ bool EDPServer::trimWriterHistory(
     // update demises
     _demises.swap(pending);
 
-    logInfo(RTPS_PDPSERVER_TRIM,"After trying to trim EDP we still must remove " << _demises.size() );
+    logInfo(RTPS_PDPSERVER_TRIM, "After trying to trim EDP we still must remove " << _demises.size());
 
     return _demises.empty(); // is finished?
 
@@ -247,7 +247,7 @@ bool EDPServer::addEndpointFromHistory(
     std::lock_guard<RecursiveTimedMutex> guardW(writer.getMutex());
     CacheChange_t* pCh = nullptr;
 
-    if(ongoingDeserialization())
+    if (ongoingDeserialization())
     {
         return true;
     }
@@ -261,8 +261,8 @@ bool EDPServer::addEndpointFromHistory(
         sid.sequence_number(c.sequenceNumber);
         logError(RTPS_EDP,
                 "A DATA(r|w) received by server " << writer.getGuid()
-                    << " from participant " << c.writerGUID
-                    << " without a valid SampleIdentity");
+                                                  << " from participant " << c.writerGUID
+                                                  << " without a valid SampleIdentity");
         return false;
     }
 
@@ -274,14 +274,19 @@ bool EDPServer::addEndpointFromHistory(
     // See if this sample is already in the cache.
     // TODO: Accelerate this search by using a PublisherHistory as mp_PDPWriterHistory
     auto it = std::find_if(history.changesRbegin(), history.changesRend(),
-            [&sid](CacheChange_t* c)
-            {
-                return sid == c->write_params.sample_identity();
-            });
+                    [&sid](CacheChange_t* c)
+                    {
+                        return sid == c->write_params.sample_identity();
+                    });
 
     if ( it == history.changesRend())
     {
-        if (history.reserve_Cache(&pCh, c.serializedPayload.max_size) && pCh && pCh->copy(&c))
+        pCh = writer.new_change(
+            [&c]()
+            {
+                return c.serializedPayload.max_size;
+            }, ALIVE);
+        if (pCh && pCh->copy(&c))
         {
             pCh->writerGUID = writer.getGuid();
             return history.add_change(pCh, pCh->write_params);
@@ -299,7 +304,7 @@ void EDPServer::removePublisherFromHistory(
         _PUBdemises.insert(key);
     }
 
-    if ( !trimPUBWriterHistory() )
+    if ( !trimPUBWriterHistory())
     {
         PDPServer* pS = dynamic_cast<PDPServer*>(mp_PDP);
         assert(pS); // EDPServer should always be associated with a PDPServer

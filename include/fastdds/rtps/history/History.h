@@ -67,48 +67,42 @@ public:
     /**
      * Reserve a CacheChange_t from the CacheChange pool.
      * @param[out] change Pointer to pointer to the CacheChange_t to reserve
-     * @param[in] calculateSizeFunc Function to calculate the size of the change.
-     * @return True is reserved
+     * @param[in] calculateSizeFunc Function to calculate the size of the payload.
+     * @return True if reserved
+     * @warn This method has been deprecated and will be removed on v3.0.0
      */
+    FASTRTPS_DEPRECATED("Use new_change on RTPSWriter or reserveCache on RTPSReader")
     RTPS_DllAPI inline bool reserve_Cache(
             CacheChange_t** change,
             const std::function<uint32_t()>& calculateSizeFunc)
     {
-        std::lock_guard<RecursiveTimedMutex> guard(*mp_mutex);
-        CacheChange_t* reserved_change = nullptr;
-        if (change_pool_->reserve_cache(reserved_change))
-        {
-            uint32_t payload_size = get_payload_size(calculateSizeFunc);
-            if (payload_pool_->get_payload(payload_size, *reserved_change))
-            {
-                *change = reserved_change;
-                return true;
-            }
-
-            change_pool_->release_cache(reserved_change);
-        }
-
-        return false;
+        return do_reserve_cache(change, calculateSizeFunc());
     }
 
+    /**
+     * Reserve a CacheChange_t from the CacheChange pool.
+     * @param[out] change Pointer to pointer to the CacheChange_t to reserve
+     * @param[in] dataSize Required size for the payload.
+     * @return True if reserved
+     * @warn This method has been deprecated and will be removed on v3.0.0
+     */
+    FASTRTPS_DEPRECATED("Use new_change on RTPSWriter or reserveCache on RTPSReader")
     RTPS_DllAPI inline bool reserve_Cache(
             CacheChange_t** change,
             uint32_t dataSize)
     {
-        return reserve_Cache(change, [dataSize]()
-                       {
-                           return dataSize;
-                       });
+        return do_reserve_cache(change, dataSize);
     }
 
     /**
      * release a previously reserved CacheChange_t.
      * @param ch Pointer to the CacheChange_t.
+     * @warn This method has been deprecated and will be removed on v3.0.0
      */
+    FASTRTPS_DEPRECATED("Use release_change on RTPSWriter or releaseCache on RTPSReader")
     RTPS_DllAPI inline void release_Cache(
             CacheChange_t* ch)
     {
-        std::lock_guard<RecursiveTimedMutex> guard(*mp_mutex);
         do_release_cache(ch);
     }
 
@@ -235,33 +229,23 @@ protected:
     //!Variable to know if the history is full without needing to block the History mutex.
     bool m_isHistoryFull = false;
 
-    //!Pool of serialized payloads.
-    std::shared_ptr<IPayloadPool> payload_pool_;
-
-    //!Pool of cache changes reserved when the History is created.
-    std::shared_ptr<IChangePool> change_pool_;
-
     //!Mutex for the History.
     RecursiveTimedMutex* mp_mutex = nullptr;
 
     //!Print the seqNum of the changes in the History (for debuggisi, mng purposes).
     void print_changes_seqNum2();
 
-    void do_release_cache(
-            CacheChange_t* ch);
+    RTPS_DllAPI virtual bool do_reserve_cache(
+            CacheChange_t** change,
+            uint32_t size) = 0;
 
-    template<class SizeFunctor>
-    uint32_t get_payload_size(
-            SizeFunctor size_fun)
-    {
-        return m_att.memoryPolicy == MemoryManagementPolicy_t::PREALLOCATED_MEMORY_MODE ?
-               m_att.payloadMaxSize : size_fun();
-    }
+    RTPS_DllAPI virtual void do_release_cache(
+            CacheChange_t* ch) = 0;
 
 };
 
 } // namespace rtps
-} /* namespace rtps */
-} /* namespace eprosima */
+} // namespace fastrtps
+} // namespace eprosima
 
 #endif /* _FASTDDS_RTPS_HISTORY_H_ */

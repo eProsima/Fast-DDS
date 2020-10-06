@@ -504,7 +504,7 @@ bool PDPServer::trimWriterHistory()
 bool PDPServer::trimPDPWriterHistory()
 {
     logInfo(RTPS_PDPSERVER_TRIM, "In trimPDPWriteHistory PDP history count: " << mp_PDPWriterHistory->getHistorySize()
-                                                                              << " demises:" << _demises.size() );
+                                                                              << " demises:" << _demises.size());
 
     // trim demises container
     key_list disposal, aux;
@@ -541,7 +541,7 @@ bool PDPServer::trimPDPWriterHistory()
             });
 
     logInfo(RTPS_PDPSERVER_TRIM, "I've classified the following PDP history data for removal "
-            << std::distance(removal.begin(), removal.end()) );
+            << std::distance(removal.begin(), removal.end()));
 
     if (removal.empty())
     {
@@ -575,7 +575,7 @@ bool PDPServer::trimPDPWriterHistory()
     // update demises
     _demises.swap(pending);
 
-    logInfo(RTPS_PDPSERVER_TRIM, "After trying to trim PDP we still must remove " << _demises.size() );
+    logInfo(RTPS_PDPSERVER_TRIM, "After trying to trim PDP we still must remove " << _demises.size());
 
     return _demises.empty(); // finish?
 }
@@ -625,7 +625,12 @@ bool PDPServer::addRelayedChangeToHistory(
 
     if (it == mp_PDPWriterHistory->changesRend())
     {
-        if (mp_PDPWriterHistory->reserve_Cache(&pCh, c.serializedPayload.max_size) && pCh && pCh->copy(&c))
+        pCh = mp_PDPWriter->new_change(
+            [&c]()
+            {
+                return c.serializedPayload.max_size;
+            }, ALIVE);
+        if (pCh && pCh->copy(&c))
         {
             pCh->writerGUID = mp_PDPWriter->getGuid();
             // keep the original sample identity by using wp
@@ -925,7 +930,7 @@ void PDPServer::announceParticipantState(
             }
 
             // free change
-            mp_PDPWriterHistory->release_Cache(change);
+            mp_PDPWriter->release_change(change);
         }
 
     }
