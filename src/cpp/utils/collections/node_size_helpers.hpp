@@ -100,7 +100,7 @@ private:
         // Node size with minimum, plus debug space
         return
             additional_size_per_node +
-            ( (node_size > Pool::min_node_size) ? node_size : Pool::min_node_size);
+            ((node_size > Pool::min_node_size) ? node_size : Pool::min_node_size);
     }
 
     static constexpr size_t additional_size_per_node =
