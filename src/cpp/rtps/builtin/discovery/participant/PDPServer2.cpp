@@ -716,7 +716,7 @@ bool PDPServer2::process_history_acknowledgement(
         StatefulWriter* writer,
         WriterHistory* writer_history)
 {
-    std::unique_lock<fastrtps::RecursiveTimedMutex> lock(writer->getMutex());
+    std::lock_guard<RecursiveTimedMutex> lock(writer->getMutex());
 
     // Iterate over changes in writer's history
     for (auto it = writer_history->changesBegin(); it != writer_history->changesEnd();)
@@ -763,7 +763,7 @@ History::iterator PDPServer2::process_change_acknowledgement(
             // Remove entry from `participants_|writers_|readers_`
             discovery_db_.delete_entity_of_change(c);
             // Remove from writer's history
-            return writer_history->remove_change(cit);
+            return writer_history->remove_change(cit, false);
         }
     }
 
