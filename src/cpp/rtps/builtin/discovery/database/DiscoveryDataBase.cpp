@@ -619,7 +619,7 @@ void DiscoveryDataBase::process_dispose_participant_(
     // Delete entries from readers_ belonging to the participant
     while (!pit->second.readers().empty())
     {
-        auto reader = pit->second.writers().front();
+        auto reader = pit->second.readers().front();
 
         // this unmatch must erase the entity from writers
         unmatch_reader_(reader);
@@ -825,7 +825,7 @@ bool DiscoveryDataBase::process_dirty_topics()
     logInfo(DISCOVERY_DATABASE, "Are there dirty topics? " << !dirty_topics_.empty());
     // logInfo(DISCOVERY_DATABASE, "readers_by_topic: " << readers_by_topic_.size());
     // logInfo(DISCOVERY_DATABASE, "writers_by_topic: " << writers_by_topic_.size());
-    
+
     return !dirty_topics_.empty();
 }
 
@@ -1267,7 +1267,7 @@ void DiscoveryDataBase::add_writer_to_topic_(const eprosima::fastrtps::rtps::GUI
         {
             logInfo(DISCOVERY_DATABASE, "New topic in readers_by_topic: " << topic_name);
         }
-        
+
     }
 }
 
@@ -1304,7 +1304,7 @@ void DiscoveryDataBase::add_reader_to_topic_(const eprosima::fastrtps::rtps::GUI
         else
         {
             logInfo(DISCOVERY_DATABASE, "New topic in readers_by_topic: " << topic_name);
-        }        
+        }
     }
 }
 

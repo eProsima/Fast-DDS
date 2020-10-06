@@ -981,13 +981,15 @@ void PDPServer2::remove_related_alive_from_history_nts(
         const fastrtps::rtps::GuidPrefix_t& entity_guid_prefix)
 {
     // Iterate over changes in writer_history
-    for (auto chit = writer_history->changesBegin(); chit != writer_history->changesEnd(); chit++)
+    for (auto chit = writer_history->changesBegin(); chit != writer_history->changesEnd();)
     {
         // Remove all DATA whose original sender was entity_guid_prefix from writer_history
         if (entity_guid_prefix == discovery_db_.guid_from_change(*chit).guidPrefix)
         {
-            writer_history->remove_change(*chit);
+            chit = writer_history->remove_change(chit);
+            continue;
         }
+        chit++;
     }
 }
 
