@@ -111,7 +111,7 @@ void EDPServerPUBListener2::onNewCacheChangeAdded(
         // From here on, the discovery database takes ownership of the CacheChange_t. Henceforth there are no
         // references to the CacheChange_t.
         // Ensure processing time for the cache by triggering the Server thread (which process the updates
-        get_pdp()->awakeServerThread();
+        get_pdp()->awake_server_thread();
     }
     else
     {
@@ -199,7 +199,7 @@ void EDPServerSUBListener2::onNewCacheChangeAdded(
         // From here on, the discovery database takes ownership of the CacheChange_t. Henceforth there are no
         // references to the CacheChange_t.
         // Ensure processing time for the cache by triggering the Server thread (which process the updates
-        get_pdp()->awakeServerThread();
+        get_pdp()->awake_server_thread();
     }
     else
     {
