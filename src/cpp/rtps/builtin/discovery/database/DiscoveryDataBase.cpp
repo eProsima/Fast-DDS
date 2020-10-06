@@ -1214,7 +1214,7 @@ DiscoveryDataBase::AckedFunctor::~AckedFunctor()
 }
 
 void DiscoveryDataBase::AckedFunctor::operator () (
-        ReaderProxy* reader_proxy)
+        const ReaderProxy* reader_proxy)
 {
     // Check whether the change has been acknowledged by a given reader
     if (reader_proxy->rtps_is_relevant(change_))

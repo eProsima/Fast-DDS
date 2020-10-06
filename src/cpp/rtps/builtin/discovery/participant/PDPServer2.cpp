@@ -700,7 +700,7 @@ bool PDPServer2::process_writers_acknowledgements()
     // logInfo(RTPS_PDP_SERVER, "process_writers_acknowledgements start");
     /* PDP Writer's History */
     bool pending = process_history_acknowledgement(
-        static_cast<fastrtps::rtps::StatefulWriter*>(mp_PDPWriter), mp_PDPWriterHistory);
+        static_cast<StatefulWriter*>(mp_PDPWriter), mp_PDPWriterHistory);
 
     /* EDP Publications Writer's History */
     EDPServer2* edp = static_cast<EDPServer2*>(mp_EDP);
@@ -713,8 +713,8 @@ bool PDPServer2::process_writers_acknowledgements()
 }
 
 bool PDPServer2::process_history_acknowledgement(
-        fastrtps::rtps::StatefulWriter* writer,
-        fastrtps::rtps::WriterHistory* writer_history)
+        StatefulWriter* writer,
+        WriterHistory* writer_history)
 {
     std::unique_lock<fastrtps::RecursiveTimedMutex> lock(writer->getMutex());
 
@@ -730,23 +730,20 @@ bool PDPServer2::process_history_acknowledgement(
 }
 
 History::iterator PDPServer2::process_change_acknowledgement(
-        fastrtps::rtps::History::iterator cit,
-        fastrtps::rtps::StatefulWriter* writer,
-        fastrtps::rtps::WriterHistory* writer_history)
+        History::iterator cit,
+        StatefulWriter* writer,
+        WriterHistory* writer_history)
 {
     // DATA(p|w|r) case
     CacheChange_t* c = *cit;
 
-    if (c->kind == fastrtps::rtps::ChangeKind_t::ALIVE)
+    if (c->kind == ChangeKind_t::ALIVE)
     {
         // Call to `StatefulWriter::for_each_reader_proxy()`. This will update
         // `participants_|writers_|readers_[guid_prefix]::relevant_participants_builtin_ack_status`, and will also set
         // `pending` to whether the change is has been acknowledged by all readers.
-        fastdds::rtps::ddb::DiscoveryDataBase::AckedFunctor func = discovery_db_.functor(c);
-        writer->for_each_reader_proxy(c, func);
-
         // If the change has been acknowledge by everyone
-        if (!func &&
+        if (!writer->for_each_reader_proxy(discovery_db_.functor(c)) &&
                 !(discovery_db_.is_participant(c) &&
                 discovery_db_.guid_from_change(c) == mp_builtin->mp_participantImpl->getGuid()))
         {
@@ -778,11 +775,11 @@ bool PDPServer2::process_disposals()
 {
     // logInfo(RTPS_PDP_SERVER, "process_disposals start");
     EDPServer2* edp = static_cast<EDPServer2*>(mp_EDP);
-    fastrtps::rtps::WriterHistory* pubs_history = edp->publications_writer_.second;
-    fastrtps::rtps::WriterHistory* subs_history = edp->subscriptions_writer_.second;
+    WriterHistory* pubs_history = edp->publications_writer_.second;
+    WriterHistory* subs_history = edp->subscriptions_writer_.second;
 
     // Get list of disposals from database
-    std::vector<fastrtps::rtps::CacheChange_t*> disposals = discovery_db_.changes_to_dispose();
+    std::vector<CacheChange_t*> disposals = discovery_db_.changes_to_dispose();
     // Iterate over disposals
     for (auto change: disposals)
     {
@@ -790,7 +787,7 @@ bool PDPServer2::process_disposals()
         // populating the disposals list to discovery_db_.process_data_queue().
 
         // Get the identity of the participant from which the change came.
-        fastrtps::rtps::GuidPrefix_t change_guid_prefix = discovery_db_.guid_from_change(change).guidPrefix;
+        GuidPrefix_t change_guid_prefix = discovery_db_.guid_from_change(change).guidPrefix;
 
         change->writerGUID.guidPrefix = mp_PDPWriter->getGuid().guidPrefix;
 
@@ -867,7 +864,7 @@ bool PDPServer2::process_changes_release()
             {
                 // DATA(Up) will not be in the history, since they are only added here once the change is acked by
                 // everyone, time at which it is removed from history.
-                if (ch->kind == fastrtps::rtps::ChangeKind_t::ALIVE)
+                if (ch->kind == ChangeKind_t::ALIVE)
                 {
                     // The change must return to the pool even if not present in the history
                     if (!remove_change_from_writer_history(mp_PDPWriter, mp_PDPWriterHistory, ch))
@@ -884,7 +881,7 @@ bool PDPServer2::process_changes_release()
             {
                 // DATA(Uw) will not be in the history, since they are only added here once the change is acked by
                 // everyone, time at which it is removed from history.
-                if (ch->kind == fastrtps::rtps::ChangeKind_t::ALIVE)
+                if (ch->kind == ChangeKind_t::ALIVE)
                 {
                     // The change must return to the pool even if not present in the history
                     if (!remove_change_from_writer_history(
@@ -904,7 +901,7 @@ bool PDPServer2::process_changes_release()
             {
                 // DATA(Ur) will not be in the history, since they are only added here once the change is acked by
                 // everyone, time at which it is removed from history.
-                if (ch->kind == fastrtps::rtps::ChangeKind_t::ALIVE)
+                if (ch->kind == ChangeKind_t::ALIVE)
                 {
                     // The change must return to the pool even if not present in the history
                     if (!remove_change_from_writer_history(
@@ -964,8 +961,8 @@ bool PDPServer2::process_changes_release()
 }
 
 void PDPServer2::remove_related_alive_from_history_nts(
-        fastrtps::rtps::WriterHistory* writer_history,
-        const fastrtps::rtps::GuidPrefix_t& entity_guid_prefix)
+        WriterHistory* writer_history,
+        const GuidPrefix_t& entity_guid_prefix)
 {
     // Iterate over changes in writer_history
     for (auto chit = writer_history->changesBegin(); chit != writer_history->changesEnd(); chit++)
@@ -979,8 +976,8 @@ void PDPServer2::remove_related_alive_from_history_nts(
 }
 
 bool PDPServer2::announcement_from_same_participant_in_disposals(
-        const std::vector<fastrtps::rtps::CacheChange_t*>& disposals,
-        const fastrtps::rtps::GuidPrefix_t& participant)
+        const std::vector<CacheChange_t*>& disposals,
+        const GuidPrefix_t& participant)
 {
     for (auto change_: disposals)
     {
@@ -999,7 +996,7 @@ bool PDPServer2::process_dirty_topics()
     return discovery_db_.process_dirty_topics();
 }
 
-fastdds::rtps::ddb::DiscoveryDataBase& PDPServer2::discovery_db()
+ddb::DiscoveryDataBase& PDPServer2::discovery_db()
 {
     return discovery_db_;
 }
@@ -1033,9 +1030,9 @@ bool PDPServer2::process_to_send_lists()
 }
 
 bool PDPServer2::process_to_send_list(
-        const std::vector<eprosima::fastrtps::rtps::CacheChange_t*>& send_list,
-        fastrtps::rtps::RTPSWriter* writer,
-        fastrtps::rtps::WriterHistory* history)
+        const std::vector<CacheChange_t*>& send_list,
+        RTPSWriter* writer,
+        WriterHistory* history)
 {
     // Iterate over DATAs in send_list
     std::unique_lock<fastrtps::RecursiveTimedMutex> lock(writer->getMutex());
@@ -1051,9 +1048,9 @@ bool PDPServer2::process_to_send_list(
 }
 
 bool PDPServer2::remove_change_from_writer_history(
-        fastrtps::rtps::RTPSWriter* writer,
-        fastrtps::rtps::WriterHistory* history,
-        fastrtps::rtps::CacheChange_t* change,
+        RTPSWriter* writer,
+        WriterHistory* history,
+        CacheChange_t* change,
         bool release_change /*= true*/)
 {
     std::unique_lock<fastrtps::RecursiveTimedMutex> lock(writer->getMutex());
@@ -1061,8 +1058,8 @@ bool PDPServer2::remove_change_from_writer_history(
 }
 
 bool PDPServer2::remove_change_from_history_nts(
-        fastrtps::rtps::WriterHistory* history,
-        fastrtps::rtps::CacheChange_t* change,
+        WriterHistory* history,
+        CacheChange_t* change,
         bool release_change /*= true*/)
 {
     for (auto chit = history->changesRbegin(); chit != history->changesRend(); chit++)

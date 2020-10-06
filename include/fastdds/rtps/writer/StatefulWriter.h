@@ -24,6 +24,7 @@
 #include <fastdds/rtps/writer/RTPSWriter.h>
 #include <fastdds/rtps/writer/IReaderDataFilter.hpp>
 #include <fastrtps/utils/collections/ResourceLimitedVector.hpp>
+#include <algorithm>
 #include <condition_variable>
 #include <mutex>
 
@@ -166,10 +167,16 @@ public:
     bool is_acked_by_all(
             const CacheChange_t* a_change) const override;
 
-    template <class Function>
-    bool for_each_reader_proxy(
-            const CacheChange_t* a_change,
-            Function f);
+    template <typename Function>
+    constexpr Function for_each_reader_proxy(
+            Function f) const
+    {
+        // we cannot directly pass iterators neither const_iterators to matched_readers_ because then the functor would
+        // be able to modify ReaderProxy elements
+        const ReaderProxy* const* beg = std::data(matched_readers_);
+        const ReaderProxy* const* end = beg + matched_readers_.size();
+        return std::for_each(beg, end, f);
+    }
 
     bool wait_for_all_acked(
             const Duration_t& max_wait) override;

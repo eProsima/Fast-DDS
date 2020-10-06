@@ -74,6 +74,8 @@ public:
         friend AckedFunctor DiscoveryDataBase::functor(
                 CacheChange_t* );
 
+        AckedFunctor() = delete;
+
         // Stateful constructor
         // This constructor generates the only object that keeps the state
         // all other constructors reference this object state
@@ -94,12 +96,10 @@ public:
         {
         }
 
-        AckedFunctor() = delete;
-
         ~AckedFunctor();
 
         void operator () (
-                ReaderProxy* reader_proxy);
+                const ReaderProxy* reader_proxy);
 
         operator bool() const
         {
