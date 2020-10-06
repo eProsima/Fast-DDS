@@ -457,7 +457,7 @@ bool DataWriterImpl::perform_create_new_change(
                 if (!type_->serialize(data, &ch->serializedPayload))
                 {
                     logWarning(RTPS_WRITER, "RTPSWriter:Serialization returns false"; );
-                    history_.release_Cache(ch);
+                    writer_->release_change(ch);
                     return false;
                 }
             }
@@ -466,7 +466,7 @@ bool DataWriterImpl::perform_create_new_change(
 
             if (!this->history_.add_pub_change(ch, wparams, lock, max_blocking_time))
             {
-                history_.release_Cache(ch);
+                writer_->release_change(ch);
                 return false;
             }
 

@@ -41,6 +41,8 @@ protected:
     PersistentWriter(
             const GUID_t& guid,
             const WriterAttributes& att,
+            const std::shared_ptr<IPayloadPool>& payload_pool,
+            const std::shared_ptr<IChangePool>& change_pool,
             WriterHistory* hist,
             IPersistenceService* persistence);
 

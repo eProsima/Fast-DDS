@@ -66,8 +66,7 @@ protected:
 
             for (uint32_t j = 1; j <= num_sequence_numbers; j++)
             {
-                CacheChange_t* ch = nullptr;
-                history->reserve_Cache(&ch, 0);
+                CacheChange_t* ch = new CacheChange_t(0);
                 ch->writerGUID = writer_guid;
                 ch->sequenceNumber = SequenceNumber_t(0, j);
                 ch->sourceTimestamp = rtps::Time_t(0, t);
@@ -81,6 +80,11 @@ protected:
 
     virtual void TearDown()
     {
+        for (CacheChange_t* ch : changes_list)
+        {
+            delete ch;
+        }
+
         delete history;
         delete readerMock;
     }
@@ -90,7 +94,7 @@ protected:
 TEST_F(ReaderHistoryTests, add_and_remove_changes)
 {
     EXPECT_CALL(*readerMock, change_removed_by_history(_)).Times(num_changes).
-            WillRepeatedly(Return(true));
+    WillRepeatedly(Return(true));
     EXPECT_CALL(*readerMock, releaseCache(_)).Times(num_changes);
 
     for (uint32_t i = 0; i < num_changes; i++)
@@ -204,7 +208,7 @@ TEST_F(ReaderHistoryTests, remove_changes_with_guid)
     }
 
     EXPECT_CALL(*readerMock, change_removed_by_history(_)).Times(2).
-            WillRepeatedly(Return(true));
+    WillRepeatedly(Return(true));
     EXPECT_CALL(*readerMock, releaseCache(_)).Times(2);
 
     ASSERT_EQ(history->getHistorySize(), num_changes);

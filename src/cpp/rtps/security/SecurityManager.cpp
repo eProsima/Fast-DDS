@@ -198,7 +198,7 @@ bool SecurityManager::init(
             }
 
             if (!( logging_plugin_->set_log_options(log_options, exception) &&
-                    logging_plugin_->enable_logging(exception) ))
+                    logging_plugin_->enable_logging(exception)))
             {
                 return init_logging_fail(exception);
             }
@@ -2038,13 +2038,13 @@ void SecurityManager::exchange_participant_crypto(
                 // Send
                 if (!participant_volatile_message_secure_writer_history_->add_change(change))
                 {
-                    participant_volatile_message_secure_writer_history_->release_Cache(change);
+                    participant_volatile_message_secure_writer_->release_change(change);
                     logError(SECURITY, "WriterHistory cannot add the CacheChange_t");
                 }
             }
             else
             {
-                participant_volatile_message_secure_writer_history_->release_Cache(change);
+                participant_volatile_message_secure_writer_->release_change(change);
                 logError(SECURITY, "Cannot serialize ParticipantGenericMessage");
             }
         }
@@ -2806,13 +2806,13 @@ bool SecurityManager::discovered_reader(
                                         }
                                         else
                                         {
-                                            participant_volatile_message_secure_writer_history_->release_Cache(change);
+                                            participant_volatile_message_secure_writer_->release_change(change);
                                             logError(SECURITY, "WriterHistory cannot add the CacheChange_t");
                                         }
                                     }
                                     else
                                     {
-                                        participant_volatile_message_secure_writer_history_->release_Cache(change);
+                                        participant_volatile_message_secure_writer_->release_change(change);
                                         logError(SECURITY, "Cannot serialize ParticipantGenericMessage");
                                     }
                                 }
@@ -3137,13 +3137,13 @@ bool SecurityManager::discovered_writer(
                                         }
                                         else
                                         {
-                                            participant_volatile_message_secure_writer_history_->release_Cache(change);
+                                            participant_volatile_message_secure_writer_->release_change(change);
                                             logError(SECURITY, "WriterHistory cannot add the CacheChange_t");
                                         }
                                     }
                                     else
                                     {
-                                        participant_volatile_message_secure_writer_history_->release_Cache(change);
+                                        participant_volatile_message_secure_writer_->release_change(change);
                                         logError(SECURITY, "Cannot serialize ParticipantGenericMessage");
                                     }
                                 }
@@ -3625,8 +3625,8 @@ bool SecurityManager::participant_authorized(
     if (access_plugin_ == nullptr || remote_permissions != nullptr)
     {
 
-        std::list<std::pair<ReaderProxyData, GUID_t> > temp_readers;
-        std::list<std::pair<WriterProxyData, GUID_t> > temp_writers;
+        std::list<std::pair<ReaderProxyData, GUID_t>> temp_readers;
+        std::list<std::pair<WriterProxyData, GUID_t>> temp_writers;
 
         if (crypto_plugin_ != nullptr)
         {
