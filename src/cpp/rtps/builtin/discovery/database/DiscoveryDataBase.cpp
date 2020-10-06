@@ -144,7 +144,12 @@ void DiscoveryDataBase::add_ack_(
         auto it = participants_.find(guid_from_change(change).guidPrefix);
         if (it != participants_.end())
         {
-            it->second.add_or_update_ack_participant(acked_entity, true);
+            // Only add ACK if the change in the database is the same as the incoming change. Else, the change in the
+            // database has been updated, so this ACK is not relevant anymore
+            if (it->second.change()->write_params.sample_identity() == change->write_params.sample_identity())
+            {
+                it->second.add_or_update_ack_participant(acked_entity, true);
+            }
         }
     }
     else if (is_writer(change))
@@ -154,7 +159,12 @@ void DiscoveryDataBase::add_ack_(
         auto it = writers_.find(guid_from_change(change));
         if (it != writers_.end())
         {
-            it->second.add_or_update_ack_participant(acked_entity, true);
+            // Only add ACK if the change in the database is the same as the incoming change. Else, the change in the
+            // database has been updated, so this ACK is not relevant anymore
+            if (it->second.change()->write_params.sample_identity() == change->write_params.sample_identity())
+            {
+                it->second.add_or_update_ack_participant(acked_entity, true);
+            }
         }
     }
     else if (is_reader(change))
@@ -164,7 +174,12 @@ void DiscoveryDataBase::add_ack_(
         auto it = readers_.find(guid_from_change(change));
         if (it != readers_.end())
         {
-            it->second.add_or_update_ack_participant(acked_entity, true);
+            // Only add ACK if the change in the database is the same as the incoming change. Else, the change in the
+            // database has been updated, so this ACK is not relevant anymore
+            if (it->second.change()->write_params.sample_identity() == change->write_params.sample_identity())
+            {
+                it->second.add_or_update_ack_participant(acked_entity, true);
+            }
         }
     }
 }
