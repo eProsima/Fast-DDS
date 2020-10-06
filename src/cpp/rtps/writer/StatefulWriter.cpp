@@ -745,7 +745,7 @@ void StatefulWriter::send_any_unsent_changes()
                     }
 
                     for (std::pair<std::vector<ReaderProxy*>,
-                            std::set<SequenceNumber_t> > pair : notRelevantChanges.elements())
+                            std::set<SequenceNumber_t>> pair : notRelevantChanges.elements())
                     {
                         locator_selector_.reset(false);
 
