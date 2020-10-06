@@ -139,6 +139,8 @@ public:
 
     fastdds::rtps::ddb::DiscoveryDataBase& discovery_db();
 
+    const RemoteServerList_t& servers();
+
 protected:
 
     /*
@@ -159,7 +161,7 @@ protected:
             fastrtps::rtps::StatefulWriter* writer,
             fastrtps::rtps::WriterHistory* writer_history);
 
-    bool process_data_queue();
+    bool process_data_queues();
 
     bool process_disposals();
 
@@ -210,9 +212,6 @@ private:
     //! Discovery database
     fastdds::rtps::ddb::DiscoveryDataBase discovery_db_;
 
-    //! Temporary locator list to solve new Writer API issue
-    // TODO: remove when the Writer API issue is resolved
-    std::map<fastrtps::rtps::GUID_t, fastrtps::rtps::ReaderProxyData> clients_;
 };
 
 } // namespace rtps
