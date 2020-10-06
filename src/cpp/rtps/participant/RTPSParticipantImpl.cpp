@@ -550,10 +550,11 @@ bool RTPSParticipantImpl::createWriter(
                 entityId);
         }
     }
-
+    // Check if also support persistence with TRANSIENT_LOCAL.
+    DurabilityKind_t durability_red_line = get_persistence_durability_red_line(isBuiltin);
     // Get persistence service
     IPersistenceService* persistence = nullptr;
-    if (param.endpoint.durabilityKind >= TRANSIENT)
+    if (param.endpoint.durabilityKind >= durability_red_line)
     {
         if (param.endpoint.persistence_guid == c_Guid_Unknown)
         {
@@ -705,9 +706,11 @@ bool RTPSParticipantImpl::createReader(
         return false;
     }
 
+    // Check if also support persistence with TRANSIENT_LOCAL.
+    DurabilityKind_t durability_red_line = get_persistence_durability_red_line(isBuiltin);
     // Get persistence service
     IPersistenceService* persistence = nullptr;
-    if (param.endpoint.durabilityKind >= TRANSIENT)
+    if (param.endpoint.durabilityKind >= durability_red_line)
     {
         // Check if persistence guid needs to be set from property
         if (param.endpoint.persistence_guid == c_Guid_Unknown)
@@ -1613,6 +1616,24 @@ bool RTPSParticipantImpl::did_mutation_took_place_on_meta(
 
     // if equal then no mutation took place on physical ports
     return !(update_attributes == original_ones);
+}
+
+DurabilityKind_t RTPSParticipantImpl::get_persistence_durability_red_line(
+        bool is_builtin_endpoint)
+{
+    DurabilityKind_t durability_red_line = TRANSIENT;
+    if (!is_builtin_endpoint)
+    {
+        std::string* persistence_support_transient_local_property = PropertyPolicyHelper::find_property(
+            m_att.properties, "dds.persistence.also-support-transient-local");
+        if (nullptr != persistence_support_transient_local_property &&
+                0 == persistence_support_transient_local_property->compare("true"))
+        {
+            durability_red_line = TRANSIENT_LOCAL;
+        }
+    }
+
+    return durability_red_line;
 }
 
 } /* namespace rtps */
