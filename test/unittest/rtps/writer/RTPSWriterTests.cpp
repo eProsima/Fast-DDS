@@ -46,7 +46,7 @@ public:
     }
 
     MOCK_METHOD2(get_payload_delegate,
-            bool(uint32_t size, CacheChange_t& cache_change));
+            bool(uint32_t size, CacheChange_t & cache_change));
 
 
     bool get_payload(
@@ -63,7 +63,7 @@ public:
     }
 
     MOCK_METHOD3(get_payload_delegate,
-            bool(SerializedPayload_t& data, IPayloadPool*& data_owner, CacheChange_t& cache_change));
+            bool(SerializedPayload_t & data, IPayloadPool * &data_owner, CacheChange_t & cache_change));
 
     bool release_payload (
             CacheChange_t& cache_change) override
@@ -77,12 +77,13 @@ public:
     }
 
     MOCK_METHOD1(release_payload_delegate,
-            bool(CacheChange_t& cache_change));
+            bool(CacheChange_t & cache_change));
 };
 
 class TestDataType
 {
 public:
+
     constexpr static size_t data_size = 250;
 
     static size_t getCdrSerializedSize(
@@ -90,6 +91,7 @@ public:
     {
         return TestDataType::data_size;
     }
+
 };
 
 void pool_initialization_test (
@@ -114,9 +116,9 @@ void pool_initialization_test (
 
     // Creating the Writer initializes the PayloadPool with the initial reserved size
     EXPECT_CALL(*pool, get_payload_delegate(TestDataType::data_size, _))
-        .Times(0);
+    .Times(0);
     EXPECT_CALL(*pool, release_payload_delegate(_))
-        .Times(0);
+    .Times(0);
 
     WriterAttributes w_attr;
     RTPSWriter* writer = RTPSDomain::createRTPSWriter(
@@ -126,8 +128,8 @@ void pool_initialization_test (
 
     // Changes requested to the writer have a payload taken from the pool
     EXPECT_CALL(*pool, get_payload_delegate(TestDataType::data_size, _))
-        .Times(1)
-        .WillOnce(Return(true));
+    .Times(1)
+    .WillOnce(Return(true));
 
     TestDataType data;
     CacheChange_t* ch = writer->new_change(data, ALIVE);
@@ -135,8 +137,8 @@ void pool_initialization_test (
 
     // Changes released to the writer have the payload returned to the pool
     EXPECT_CALL(*pool, release_payload_delegate(_))
-        .Times(1)
-        .WillOnce(Return(true));
+    .Times(1)
+    .WillOnce(Return(true));
 
     writer->release_change(ch);
 
@@ -171,9 +173,8 @@ TEST(RTPSWriterTests, WriterWithCustomPayloadPool_DoesNotInitializePool_WhenDyna
 
 int main(
         int argc,
-        char **argv)
+        char** argv)
 {
     testing::InitGoogleMock(&argc, argv);
     return RUN_ALL_TESTS();
 }
-

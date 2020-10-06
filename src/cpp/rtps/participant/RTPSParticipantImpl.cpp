@@ -643,7 +643,8 @@ bool RTPSParticipantImpl::createWriter(
         bool isBuiltin)
 {
     auto callback = [hist, listen, this]
-            (const GUID_t& guid, WriterAttributes& param, IPersistenceService* persistence, bool is_reliable) -> RTPSWriter*
+                (const GUID_t& guid, WriterAttributes& param, IPersistenceService* persistence,
+                    bool is_reliable) -> RTPSWriter*
             {
                 if (is_reliable)
                 {
@@ -681,7 +682,8 @@ bool RTPSParticipantImpl::createWriter(
         bool isBuiltin)
 {
     auto callback = [hist, listen, &payload_pool, this]
-            (const GUID_t& guid, WriterAttributes& param, IPersistenceService* persistence, bool is_reliable) -> RTPSWriter*
+                (const GUID_t& guid, WriterAttributes& param, IPersistenceService* persistence,
+                    bool is_reliable) -> RTPSWriter*
             {
                 if (is_reliable)
                 {
@@ -698,7 +700,8 @@ bool RTPSParticipantImpl::createWriter(
                 {
                     if (persistence != nullptr)
                     {
-                        return new StatelessPersistentWriter(this, guid, param, payload_pool, hist, listen, persistence);
+                        return new StatelessPersistentWriter(this, guid, param, payload_pool, hist, listen,
+                                       persistence);
                     }
                     else
                     {
@@ -1122,7 +1125,7 @@ void RTPSParticipantImpl::createReceiverResources(
         bool ApplyMutation,
         bool RegisterReceiver)
 {
-    std::vector<std::shared_ptr<ReceiverResource> > newItemsBuffer;
+    std::vector<std::shared_ptr<ReceiverResource>> newItemsBuffer;
 
 #if HAVE_SECURITY
     // An auxilary buffer is needed in the ReceiverResource to to decrypt the message,
@@ -1594,7 +1597,7 @@ bool RTPSParticipantImpl::did_mutation_took_place_on_meta(
     // TCP is a special case because physical ports are taken from the TransportDescriptors
     struct ResetLogical : public std::unary_function<Locator_t, const Locator_t&>
     {
-        typedef std::vector<std::shared_ptr<fastdds::rtps::TransportDescriptorInterface> > Transports;
+        typedef std::vector<std::shared_ptr<fastdds::rtps::TransportDescriptorInterface>> Transports;
 
         ResetLogical(
                 const Transports& tp)

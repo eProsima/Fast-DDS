@@ -316,7 +316,7 @@ public:
         return mp_userParticipant;
     }
 
-    std::vector<std::unique_ptr<FlowController> >& getFlowControllers()
+    std::vector<std::unique_ptr<FlowController>>& getFlowControllers()
     {
         return m_controllers;
     }
@@ -576,7 +576,7 @@ private:
     /*
      * Flow controllers for this participant.
      */
-    std::vector<std::unique_ptr<FlowController> > m_controllers;
+    std::vector<std::unique_ptr<FlowController>> m_controllers;
 
 #if HAVE_SECURITY
     security::ParticipantSecurityAttributes security_attributes_;
@@ -594,11 +594,11 @@ private:
 
     template<typename Functor>
     bool create_writer(
-        RTPSWriter** WriterOut,
-        WriterAttributes& param,
-        const EntityId_t& entityId,
-        bool isBuiltin,
-        const Functor& callback);
+            RTPSWriter** WriterOut,
+            WriterAttributes& param,
+            const EntityId_t& entityId,
+            bool isBuiltin,
+            const Functor& callback);
 
 public:
 
