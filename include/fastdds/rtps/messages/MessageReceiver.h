@@ -202,9 +202,11 @@ private:
      * @param[in] change    The CacheChange with the received data to process
      */
     ///@{
+ #if HAVE_SECURITY
     void process_data_message_with_security(
             const EntityId_t& reader_id,
             CacheChange_t& change);
+#endif // HAVE_SECURITY
 
     void process_data_message_without_security(
             const EntityId_t& reader_id,
@@ -222,12 +224,14 @@ private:
      * @param[in] fragments_in_submessage The number of fragments in the message
      */
     ///@{
+ #if HAVE_SECURITY
     void process_data_fragment_message_with_security(
             const EntityId_t& reader_id,
             CacheChange_t& change,
             uint32_t sample_size,
             uint32_t fragment_starting_num,
             uint32_t fragments_in_submessage);
+#endif // HAVE_SECURITY
 
     void process_data_fragment_message_without_security(
             const EntityId_t& reader_id,

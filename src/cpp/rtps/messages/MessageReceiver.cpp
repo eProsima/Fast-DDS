@@ -107,6 +107,7 @@ MessageReceiver::~MessageReceiver()
     assert(associated_readers_.empty());
 }
 
+ #if HAVE_SECURITY
 void MessageReceiver::process_data_message_with_security(
         const EntityId_t& reader_id,
         CacheChange_t& change)
@@ -135,18 +136,6 @@ void MessageReceiver::process_data_message_with_security(
                 reader->processDataMsg(&change);
                 std::swap(change.serializedPayload.data, crypto_payload_.data);
                 std::swap(change.serializedPayload.length, crypto_payload_.length);
-            };
-
-    findAllReaders(reader_id, process_message);
-}
-
-void MessageReceiver::process_data_message_without_security(
-        const EntityId_t& reader_id,
-        CacheChange_t& change)
-{
-    auto process_message = [&change](RTPSReader* reader)
-            {
-                reader->processDataMsg(&change);
             };
 
     findAllReaders(reader_id, process_message);
@@ -184,6 +173,20 @@ void MessageReceiver::process_data_fragment_message_with_security(
                 reader->processDataFragMsg(&change, sample_size, fragment_starting_num, fragments_in_submessage);
                 std::swap(change.serializedPayload.data, crypto_payload_.data);
                 std::swap(change.serializedPayload.length, crypto_payload_.length);
+            };
+
+    findAllReaders(reader_id, process_message);
+}
+
+#endif // if HAVE SECURITY
+
+void MessageReceiver::process_data_message_without_security(
+        const EntityId_t& reader_id,
+        CacheChange_t& change)
+{
+    auto process_message = [&change](RTPSReader* reader)
+            {
+                reader->processDataMsg(&change);
             };
 
     findAllReaders(reader_id, process_message);
