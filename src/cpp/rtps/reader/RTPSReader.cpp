@@ -113,8 +113,6 @@ void RTPSReader::init(
 
     mp_history->mp_reader = this;
     mp_history->mp_mutex = &mp_mutex;
-    mp_history->change_pool_ = change_pool_;
-    mp_history->payload_pool_ = payload_pool_;
 
     logInfo(RTPS_READER, "RTPSReader created correctly");
 }

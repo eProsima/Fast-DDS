@@ -34,7 +34,7 @@ StatelessPersistentWriter::StatelessPersistentWriter(
         WriterListener* listen,
         IPersistenceService* persistence)
     : StatelessWriter(pimpl, guid, att, hist, listen)
-    , PersistentWriter(guid, att, hist, persistence)
+    , PersistentWriter(guid, att, payload_pool_, change_pool_, hist, persistence)
 {
 }
 
@@ -47,7 +47,7 @@ StatelessPersistentWriter::StatelessPersistentWriter(
         WriterListener* listen,
         IPersistenceService* persistence)
     : StatelessWriter(pimpl, guid, att, payload_pool, hist, listen)
-    , PersistentWriter(guid, att, hist, persistence)
+    , PersistentWriter(guid, att, payload_pool_, change_pool_, hist, persistence)
 {
 }
 
@@ -61,7 +61,7 @@ StatelessPersistentWriter::StatelessPersistentWriter(
         WriterListener* listen,
         IPersistenceService* persistence)
     : StatelessWriter(pimpl, guid, att, payload_pool, change_pool, hist, listen)
-    , PersistentWriter(guid, att, hist, persistence)
+    , PersistentWriter(guid, att, payload_pool_, change_pool_, hist, persistence)
 {
 }
 

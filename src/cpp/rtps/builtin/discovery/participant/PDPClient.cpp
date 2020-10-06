@@ -494,7 +494,7 @@ void PDPClient::announceParticipantState(
         }
 
         // free change
-        mp_PDPWriterHistory->release_Cache(change);
+        mp_PDPWriter->release_change(change);
     }
     else
     {

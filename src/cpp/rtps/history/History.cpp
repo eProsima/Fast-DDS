@@ -36,56 +36,13 @@ History::History(
         const HistoryAttributes& att)
     : m_att(att)
 {
-    PoolConfig pool_config = PoolConfig::from_history_attributes(att);
-
-    m_changes.reserve(static_cast<size_t>(pool_config.initial_size));
-
-    payload_pool_ = BasicPayloadPool::get(pool_config);
-
-    if ((att.memoryPolicy == PREALLOCATED_MEMORY_MODE) || (att.memoryPolicy == PREALLOCATED_WITH_REALLOC_MEMORY_MODE))
-    {
-        auto init_cache = [this](
-            CacheChange_t* item)
-                {
-                    if (payload_pool_->get_payload(m_att.payloadMaxSize, *item))
-                    {
-                        payload_pool_->release_payload(*item);
-                    }
-                };
-
-        change_pool_ = std::make_shared<CacheChangePool>(pool_config, init_cache);
-    }
-    else
-    {
-        change_pool_ = std::make_shared<CacheChangePool>(pool_config);
-    }
+    uint32_t initial_size = static_cast<uint32_t>(att.initialReservedCaches < 0 ? 0 : att.initialReservedCaches);
+    m_changes.reserve(static_cast<size_t>(initial_size));
 }
 
 History::~History()
 {
     logInfo(RTPS_HISTORY, "");
-
-    for (auto change : m_changes)
-    {
-        do_release_cache(change);
-    }
-
-    // As releasing the change pool will delete the cache changes it owns,
-    // the payload pool may be called to release their payloads, so we should
-    // ensure that the payload pool is destroyed after the change pool.
-    change_pool_.reset();
-    payload_pool_.reset();
-}
-
-void History::do_release_cache(
-        CacheChange_t* ch)
-{
-    IPayloadPool* pool = ch->payload_owner();
-    if (pool)
-    {
-        pool->release_payload(*ch);
-    }
-    change_pool_->release_cache(ch);
 }
 
 History::const_iterator History::find_change_nts(

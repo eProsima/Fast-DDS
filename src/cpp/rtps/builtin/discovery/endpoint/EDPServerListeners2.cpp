@@ -20,6 +20,7 @@
 #include <fastdds/rtps/writer/StatefulWriter.h>
 #include <fastdds/rtps/history/WriterHistory.h>
 #include <fastdds/rtps/history/ReaderHistory.h>
+#include <fastdds/rtps/reader/RTPSReader.h>
 
 #include <fastrtps/utils/fixed_size_string.hpp>
 
@@ -116,7 +117,7 @@ void EDPServerPUBListener2::onNewCacheChangeAdded(
     else
     {
         // If the database doesn't take the ownership, then return the CacheChante_t to the pool.
-        reader_history->release_Cache(change);
+        reader->releaseCache(change);
     }
     logInfo(RTPS_PDP_LISTENER, "------------------ EDP PUB SERVER LISTENER END ------------------");
     logInfo(RTPS_PDP_LISTENER, "");
@@ -204,7 +205,7 @@ void EDPServerSUBListener2::onNewCacheChangeAdded(
     else
     {
         // If the database doesn't take the ownership, then return the CacheChante_t to the pool.
-        reader_history->release_Cache(change);
+        reader->releaseCache(change);
     }
     logInfo(RTPS_PDP_LISTENER, "------------------ EDP SUB SERVER LISTENER END ------------------");
     logInfo(RTPS_PDP_LISTENER, "");
