@@ -405,9 +405,6 @@ void DiscoveryDataBase::create_writers_from_change(
     // If writer does not exists, create the change
     if (ret.second)
     {
-        std::map<eprosima::fastrtps::rtps::GUID_t, DiscoveryEndpointInfo>::iterator writer_it =
-                writers_.find(writer_guid);
-
         std::map<std::string, std::vector<eprosima::fastrtps::rtps::GUID_t>>::iterator readers_it =
                 readers_by_topic_.find(topic_name);
 
@@ -416,7 +413,7 @@ void DiscoveryDataBase::create_writers_from_change(
             for (eprosima::fastrtps::rtps::GUID_t reader_it: readers_it->second)
             {
                 // Update the participant ack status list from writers_
-                writer_it->second.add_or_update_ack_participant(reader_it.guidPrefix);
+                ret.first->second.add_or_update_ack_participant(reader_it.guidPrefix);
 
                 // Update the participant ack status list from readers_
                 std::map<eprosima::fastrtps::rtps::GUID_t, DiscoveryEndpointInfo>::iterator rit =
@@ -506,9 +503,6 @@ void DiscoveryDataBase::create_readers_from_change(
     // If reader does not exists, create the change
     if (ret.second)
     {
-        std::map<eprosima::fastrtps::rtps::GUID_t, DiscoveryEndpointInfo>::iterator reader_it =
-                readers_.find(reader_guid);
-
         std::map<std::string, std::vector<eprosima::fastrtps::rtps::GUID_t>>::iterator writers_it =
                 writers_by_topic_.find(topic_name);
         if (writers_it != writers_by_topic_.end())
@@ -516,7 +510,7 @@ void DiscoveryDataBase::create_readers_from_change(
             for (eprosima::fastrtps::rtps::GUID_t writer_it: writers_it->second)
             {
                 // Update the participant ack status list from readers_
-                reader_it->second.add_or_update_ack_participant(writer_it.guidPrefix);
+                ret.first->second.add_or_update_ack_participant(writer_it.guidPrefix);
 
                 // Update the participant ack status list from writers_
                 std::map<eprosima::fastrtps::rtps::GUID_t, DiscoveryEndpointInfo>::iterator wit =
