@@ -298,16 +298,6 @@ void PDPServer2::assignRemoteEndpoints(
         temp_reader_data_.m_qos.m_reliability.kind = dds::RELIABLE_RELIABILITY_QOS;
         temp_reader_data_.m_qos.m_durability.kind = dds::TRANSIENT_LOCAL_DURABILITY_QOS;
         mp_PDPWriter->matched_reader_add(temp_reader_data_);
-
-        // TODO: remove when the Writer API issue is resolved
-        std::lock_guard<std::recursive_mutex> lock(*getMutex());
-        // Waiting till we remove C++11 restriction:
-        // clients_.insert_or_assign(temp_reader_data_.guid(), temp_reader_data_);
-        auto emplace_result = clients_.emplace(temp_reader_data_.guid(), temp_reader_data_);
-        if (!emplace_result.second)
-        {
-            emplace_result.first->second = temp_reader_data_;
-        }
     }
     else
     {
@@ -364,10 +354,6 @@ void PDPServer2::removeRemoteEndpoints(
                                                  << " did not send information about builtin readers");
         return;
     }
-
-    std::unique_lock<std::recursive_mutex> lock(*getMutex());
-    // TODO: remove when the Writer API issue is resolved
-    clients_.erase(pdata->m_guid);
 }
 
 #if HAVE_SQLITE3
@@ -395,7 +381,7 @@ void PDPServer2::announceParticipantState(
         bool dispose /* = false */,
         WriteParams& )
 {
-    // logInfo(RTPS_PDP_SERVER, "Announcing Server (new change: " << new_change << ")");
+    logInfo(RTPS_PDP_SERVER, "Announcing Server (new change: " << new_change << ")");
     CacheChange_t* change = nullptr;
 
     StatefulWriter* pW = dynamic_cast<StatefulWriter*>(mp_PDPWriter);
@@ -469,15 +455,33 @@ void PDPServer2::announceParticipantState(
                 change->sequenceNumber = sn;
                 change->write_params = std::move(wp);
 
-                // Update the database with our own data
-                if (discovery_db().update(change))
+                // Create a RemoteLocatorList for metatraffic_locators
+                fastrtps::rtps::RemoteLocatorList metatraffic_locators(
+                    mp_builtin->m_metatrafficUnicastLocatorList.size(),
+                    mp_builtin->m_metatrafficMulticastLocatorList.size());
+
+                // Populate with server's unicast locators
+                for (auto locator : mp_builtin->m_metatrafficUnicastLocatorList)
                 {
-                    // distribute
+                    metatraffic_locators.add_unicast_locator(locator);
+                }
+                // Populate with server's multicast locators
+                for (auto locator : mp_builtin->m_metatrafficMulticastLocatorList)
+                {
+                    metatraffic_locators.add_multicast_locator(locator);
+                }
+
+                // Update the database with our own data
+                if (discovery_db().update(
+                            change,
+                            ddb::DiscoveryParticipantChangeData(metatraffic_locators, false, false, false)))
+                {
+                    // Distribute
                     awake_server_thread();
                 }
                 else
                 {
-                    // already there, dispose
+                    // Already there, dispose
                     logError(RTPS_PDP_SERVER, "DiscoveryDatabase already initialized with local DATA(p) on creation");
                     mp_PDPWriterHistory->release_Cache(change);
                 }
@@ -537,7 +541,7 @@ void PDPServer2::announceParticipantState(
             change->write_params = std::move(wp);
 
             // Update the database with our own data
-            if (discovery_db().update(change))
+            if (discovery_db().update(change, ddb::DiscoveryParticipantChangeData()))
             {
                 // distribute
                 awake_server_thread();
@@ -561,57 +565,20 @@ void PDPServer2::announceParticipantState(
 
     // Force send the announcement
 
-    // Create a list of receivers based on the remote participants known by the discovery database. Add the locators
-    // of those remote participants.
-    LocatorList_t locators;
+    // Create a list of receivers based on the remote participants known by the discovery database that are direct
+    // clients or servers of this server. Add the locators of those remote participants.
     std::vector<GUID_t> remote_readers;
+    LocatorList_t locators;
 
-    // // Iterate over clients
-    // for (auto client: clients_)
-    // {
-    //     fastrtps::rtps::ReaderProxyData& rat = client.second;
-    //     remote_readers.push_back(rat.guid());
+    std::vector<GuidPrefix_t> direct_clients_and_servers = discovery_db_.direct_clients_and_servers();
+    for (GuidPrefix_t participant_prefix: direct_clients_and_servers)
+    {
+        // Add remote reader
+        GUID_t remote_guid(participant_prefix, c_EntityId_SPDPReader);
+        remote_readers.push_back(remote_guid);
 
-    //     // Add default unicast locators of the remote reader
-    //     for (const Locator_t& locator: client.second.remote_locators().unicast)
-    //     {
-    //         locators.push_back(locator);
-    //     }
-    // }
-
-    // std::vector<GuidPrefix_t> remote_participants = discovery_db_.remote_participants();
-    // for (GuidPrefix_t participant_prefix: remote_participants)
-    // {
-    //     // Add remote reader
-    //     GUID_t remote_guid(participant_prefix, c_EntityId_SPDPReader);
-    //     remote_readers.push_back(remote_guid);
-
-    //     // Iterate over participant_proxies to find the reader
-    //     for (ParticipantProxyData* proxy: participant_proxies_)
-    //     {
-    //         // Check if this is the participant for which we are looking
-    //         if (proxy->m_guid == remote_guid)
-    //         {
-    //             // Add default unicast locators of the remote reader
-    //             for (Locator_t locator: proxy->metatraffic_locators.unicast)
-    //             {
-    //                 locators.push_back(locator);
-    //             }
-    //             // The participant will be there only once, so we can stop looking when found
-    //             break;
-    //         }
-    //     }
-    // }
-
-    // // Add own default multicast address
-    // for (Locator_t locator: participant_proxies_[0]->metatraffic_locators.multicast)
-    // {
-    //     locators.push_back(locator);
-    // }
-    // for (Locator_t locator: participant_proxies_[0]->metatraffic_locators.unicast)
-    // {
-    //     locators.push_back(locator);
-    // }
+        locators.push_back(discovery_db_.participant_metatraffic_locators(participant_prefix));
+    }
 
     DirectMessageSender sender(getRTPSParticipant(), &remote_readers, &locators);
     RTPSMessageGroup group(getRTPSParticipant(), mp_PDPWriter, sender);
@@ -654,8 +621,8 @@ bool PDPServer2::remove_remote_participant(
             wp.sample_identity(local);
             wp.related_sample_identity(local);
 
-            // notify the database
-            if (discovery_db_.update(pC))
+            // Notify the database
+            if (discovery_db_.update(pC, ddb::DiscoveryParticipantChangeData()))
             {
                 // assure processing time for the cache
                 awake_server_thread();
@@ -675,10 +642,11 @@ bool PDPServer2::remove_remote_participant(
     return PDP::remove_remote_participant(partGUID, reason);
 }
 
-bool PDPServer2::process_data_queue()
+bool PDPServer2::process_data_queues()
 {
-    logInfo(RTPS_PDP_SERVER, "process_data_queue start");
-    return discovery_db_.process_data_queue();
+    logInfo(RTPS_PDP_SERVER, "process_data_queues start");
+    discovery_db_.process_pdp_data_queue();
+    return discovery_db_.process_edp_data_queue();
 }
 
 void PDPServer2::awake_server_thread(
@@ -700,7 +668,7 @@ bool PDPServer2::server_update_routine()
         logInfo(RTPS_PDP_SERVER, "");
         logInfo(RTPS_PDP_SERVER, "-------------------- Server routine start --------------------");
         process_writers_acknowledgements();     // server + ddb(functor_with_ddb)
-        process_data_queue();                   // all ddb
+        process_data_queues();                  // all ddb
         process_disposals();                    // server + ddb(changes_to_dispose(), clear_changes_to_disposes())
         process_dirty_topics();                 // all ddb
         process_to_send_lists();                // server + ddb(get_to_send, remove_to_send_this)
@@ -1045,6 +1013,11 @@ fastdds::rtps::ddb::DiscoveryDataBase& PDPServer2::discovery_db()
     return discovery_db_;
 }
 
+const RemoteServerList_t& PDPServer2::servers()
+{
+    return mp_builtin->m_DiscoveryServers;
+}
+
 bool PDPServer2::process_to_send_lists()
 {
     logInfo(RTPS_PDP_SERVER, "process_to_send_lists start");
@@ -1082,8 +1055,8 @@ bool PDPServer2::process_to_send_list(
     std::unique_lock<fastrtps::RecursiveTimedMutex> lock(writer->getMutex());
     for (auto change: send_list)
     {
-        // If the DATA is already in the writer's history, then remove it.
-        remove_change_from_history_nts(history, change);
+        // If the DATA is already in the writer's history, then remove it, but do not release the change.
+        remove_change_from_history_nts(history, change, false);
         // Add DATA to writer's history.
         change->writerGUID.guidPrefix = mp_PDPWriter->getGuid().guidPrefix;
         history->add_change(change);

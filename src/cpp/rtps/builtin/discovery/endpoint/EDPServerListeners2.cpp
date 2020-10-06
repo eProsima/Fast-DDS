@@ -69,7 +69,7 @@ void EDPServerPUBListener2::onNewCacheChangeAdded(
     ReaderHistory* reader_history = sedp_->publications_reader_.second;
 
     // String to store the topic of the writer
-    std::string topic_name;
+    std::string topic_name = "";
 
     // DATA(w) case: new writer or updated information about an existing writer
     if (change->kind == ALIVE)
@@ -156,7 +156,7 @@ void EDPServerSUBListener2::onNewCacheChangeAdded(
     ReaderHistory* reader_history = sedp_->subscriptions_reader_.second;
 
     // String to store the topic of the reader
-    std::string topic_name;
+    std::string topic_name = "";
 
     // DATA(r) case: new reader or updated information about an existing reader
     if (change->kind == ALIVE)

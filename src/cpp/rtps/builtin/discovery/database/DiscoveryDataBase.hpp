@@ -126,8 +126,11 @@ public:
      */
     bool update(
             eprosima::fastrtps::rtps::CacheChange_t* change,
-            std::string topic_name = "");
+            std::string topic_name);
 
+    bool update(
+            eprosima::fastrtps::rtps::CacheChange_t* change,
+            DiscoveryParticipantChangeData participant_change_data);
 
     ////////////
     // Functions to is_relevant
@@ -155,11 +158,14 @@ public:
 
 
     ////////////
-    // Functions to process_data_queue()
-    bool process_data_queue();
+    // Functions to process PDP and EDP data queues
+    void process_pdp_data_queue();
+
+    bool process_edp_data_queue();
 
     void create_participant_from_change(
-            eprosima::fastrtps::rtps::CacheChange_t* ch);
+            eprosima::fastrtps::rtps::CacheChange_t* ch,
+            const DiscoveryParticipantChangeData& change_data);
 
     void create_writers_from_change(
             eprosima::fastrtps::rtps::CacheChange_t* ch,
@@ -225,7 +231,10 @@ public:
 
     fastrtps::rtps::CacheChange_t* cache_change_own_participant();
 
-    const std::vector<fastrtps::rtps::GuidPrefix_t> remote_participants();
+    const std::vector<fastrtps::rtps::GuidPrefix_t> direct_clients_and_servers();
+
+    fastrtps::rtps::LocatorList_t participant_metatraffic_locators(
+            fastrtps::rtps::GuidPrefix_t participant_guid_prefix);
 
     bool server_acked_by_all() const
     {
@@ -276,8 +285,9 @@ protected:
         //sh_mtx_.unlock();
     }
 
-    //! Incoming discovery traffic populated by the listeners, PDP database is already updated on notify
-    fastrtps::DBQueue<eprosima::fastdds::rtps::ddb::DiscoveryDataQueueInfo> data_queue_;
+    fastrtps::DBQueue<eprosima::fastdds::rtps::ddb::DiscoveryPDPDataQueueInfo> pdp_data_queue_;
+
+    fastrtps::DBQueue<eprosima::fastdds::rtps::ddb::DiscoveryEDPDataQueueInfo> edp_data_queue_;
 
     //! Covenient per-topic mapping of readers and writers to speed-up queries
     std::map<std::string, std::vector<eprosima::fastrtps::rtps::GUID_t>> readers_by_topic_;
