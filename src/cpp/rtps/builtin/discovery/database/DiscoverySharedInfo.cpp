@@ -35,7 +35,7 @@ CacheChange_t* DiscoverySharedInfo::set_change_and_unmatch(
 CacheChange_t* DiscoverySharedInfo::change_info(
         CacheChange_t* change)
 {
-    eprosima::fastrtps::rtps::CacheChange_t* old_change = change_;
+    CacheChange_t* old_change = change_;
     change_ = change;
     return old_change;
 }

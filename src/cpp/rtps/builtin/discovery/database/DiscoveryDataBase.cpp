@@ -553,7 +553,7 @@ void DiscoveryDataBase::create_writers_from_change(
         }
     }
     // If writer exists, update the change and set all participant ack status to false
-    // In this case only the DATA(w) data changes all other DATA(w) and DATA(p)s are already processed
+    // In this case only the DATA(w) data changes all other DATA(r) and DATA(p)s are already processed
     else
     {
         changes_to_release_.push_back(ret.first->second.set_change_and_unmatch(ch));
@@ -567,21 +567,33 @@ void DiscoveryDataBase::create_readers_from_change(
 {
     std::lock_guard<share_mutex_t> lock(sh_mtx_);
 
-    const GUID_t& reader_guid = guid_from_change(ch);
+    const GUID_t reader_guid = guid_from_change(ch);
 
-    // Update participants_::readers
+    // Update participants_::readers. The participant Discovery ancillary should be there and updated
     std::map<GuidPrefix_t, DiscoveryParticipantInfo>::iterator r_pit =
             participants_.find(reader_guid.guidPrefix);
     if (r_pit != participants_.end())
     {
+        // The collection of relevant participants for this DiscoveryParticipantInfo will be populated below
         r_pit->second.add_reader(reader_guid);
+    }
+    else
+    {
+        // the participant should be there because DATA(p)s always precede DATA(r|w) in the design either by builtin
+        // endpoint matching like in clients our using the relevance mechanism like in servers.
+        logError(DISCOVERY_DATABASE, "Processing DATA(r) " << reader_guid << " before corresponding DATA(p)");
+        return;
     }
 
     DiscoveryEndpointInfo tmp_reader(ch, topic_name);
     std::pair<std::map<GUID_t, DiscoveryEndpointInfo>::iterator, bool> ret =
             readers_.insert(std::make_pair(reader_guid, tmp_reader));
 
-    // If reader does not exists, create the change
+    // If the subscriber info does not exists, create the Discovery ancillary and update the matching state.
+    // The writers suitable for matching can be retrieved using the per topic writer collection.
+    // Note that we must update relevance for:
+    // - suitable publishers DATA(w) and it's corresponding participants DATA(p)
+    // - new subscriber DATA(r) and it's corresponding participant DATA(p)
     if (ret.second)
     {
         std::map<GUID_t, DiscoveryEndpointInfo>::iterator reader_it =
@@ -589,11 +601,15 @@ void DiscoveryDataBase::create_readers_from_change(
 
         std::map<std::string, std::vector<GUID_t>>::iterator writers_it =
                 writers_by_topic_.find(topic_name);
+
         if (writers_it != writers_by_topic_.end())
         {
             for (GUID_t writer_it: writers_it->second)
             {
-                // Update the participant ack status list from readers_
+                // New Subscriber DATA(r):
+                // Each participant of a suitable publisher must acknowledge the new subscriber's info:
+                // the DiscoveryEndpointInfo corresponding to reader_guid must have false entries for the suitable
+                // publishers.
                 reader_it->second.add_or_update_ack_participant(writer_it.guidPrefix);
 
                 // Update the participant ack status list from writers_
@@ -601,7 +617,14 @@ void DiscoveryDataBase::create_readers_from_change(
                         writers_.find(writer_it);
                 if (wit != writers_.end())
                 {
-                    wit->second.add_or_update_ack_participant(reader_guid.guidPrefix);
+                    // Suitable publishers DATA(w):
+                    // The new subscriber's participant must acknowledge the suitable publishers' info:
+                    // the DiscoveryEndpointInfo corresponding to each publisher must have an entry for the
+                    // reader_guid.guidPrefix participant if not relevant yet.
+                    if (!wit->second.is_matched(reader_guid.guidPrefix))
+                    {
+                        wit->second.add_or_update_ack_participant(reader_guid.guidPrefix);
+                    }
                 }
 
                 // Update the participant ack status list from participants_
@@ -609,12 +632,20 @@ void DiscoveryDataBase::create_readers_from_change(
                         participants_.find(writer_it.guidPrefix);
                 if (pit != participants_.end())
                 {
+                    // Suitable publishers' participant DATA(p):
+                    // Each participant of a suitable publisher must be acknowledge by the new subscriber's participant.
+                    // the DiscoveryParticipantInfo corresponding to each publisher's participant must have an entry for
+                    // the reader_guid.guidPrefix participant if not there yet.
                     if (!pit->second.is_matched(reader_guid.guidPrefix))
                     {
                         pit->second.add_or_update_ack_participant(reader_guid.guidPrefix);
                     }
                 }
 
+                // New Subscriber's participant DATA(p):
+                // Each participant of a suitable publisher must acknowledge the new subscriber's participant info:
+                // the DiscoveryParticipantInfo corresponding to reader_guid.guidPrefix must have an entry for each
+                // suitable publisher participant if not yet.
                 if (r_pit != participants_.end())
                 {
                     if (!r_pit->second.is_matched(writer_it.guidPrefix))
@@ -631,16 +662,18 @@ void DiscoveryDataBase::create_readers_from_change(
 
         if (topic_it != readers_by_topic_.end())
         {
+#if (defined(__INTERNALDEBUG) || defined(_INTERNALDEBUG))
             std::vector<GUID_t>::iterator reader_by_topic_it =
                     std::find(topic_it->second.begin(), topic_it->second.end(), reader_guid);
-            if (reader_by_topic_it == topic_it->second.end())
+            if (reader_by_topic_it != topic_it->second.end())
             {
-                topic_it->second.push_back(reader_guid);
+                logError(DISCOVERY_DATABASE, "The subscriber " << reader_guid << " was already in topic " << topic_name
+                        << " collection.");
+                return;
             }
-            else
-            {
-                *reader_by_topic_it = reader_guid;
-            }
+#endif
+            // add the new publisher to this topic list
+            topic_it->second.push_back(reader_guid);
         }
         // This is the first reader in the topic
         else
@@ -655,6 +688,7 @@ void DiscoveryDataBase::create_readers_from_change(
         }
     }
     // If reader exists, update the change and set all participant ack status to false
+    // In this case only the DATA(r) data changes all other DATA(w) and DATA(p)s are already processed
     else
     {
         changes_to_release_.push_back(ret.first->second.set_change_and_unmatch(ch));
@@ -666,7 +700,7 @@ void DiscoveryDataBase::process_dispose_participant(
 {
     std::lock_guard<share_mutex_t> lock(sh_mtx_);
 
-    const GUID_t& participant_guid = guid_from_change(ch);
+    const GUID_t participant_guid = guid_from_change(ch);
 
     // Change DATA(p) with DATA(Up) in participants map
     std::map<GuidPrefix_t, DiscoveryParticipantInfo>::iterator pit =
@@ -773,7 +807,7 @@ void DiscoveryDataBase::process_dispose_writer(
 {
     std::lock_guard<share_mutex_t> lock(sh_mtx_);
 
-    const GUID_t& writer_guid = guid_from_change(ch);
+    const GUID_t writer_guid = guid_from_change(ch);
 
     // Change DATA(w) with DATA(Uw)
     std::map<GUID_t, DiscoveryEndpointInfo>::iterator wit = writers_.find(writer_guid);
@@ -826,7 +860,7 @@ void DiscoveryDataBase::process_dispose_reader(
 {
     std::lock_guard<share_mutex_t> lock(sh_mtx_);
 
-    const GUID_t& reader_guid = guid_from_change(ch);
+    const GUID_t reader_guid = guid_from_change(ch);
 
     // Change DATA(r) with DATA(Ur)
     std::map<GUID_t, DiscoveryEndpointInfo>::iterator rit = readers_.find(reader_guid);
@@ -891,27 +925,28 @@ bool DiscoveryDataBase::process_dirty_topics()
         // Flag to store whether a topic can be cleared.
         bool is_clearable = true;
 
-        // Get all the writers in the topic
-        std::vector<GUID_t> writers;
-        auto ret = writers_by_topic_.find(*topic_it);
-        if (ret != writers_by_topic_.end())
+        // Get all the endpoints in the topic
+        auto wret = writers_by_topic_.find(*topic_it);
+        auto rret = readers_by_topic_.find(*topic_it);
+
+        // If there cannot be match skip
+        if ( wret == writers_by_topic_.end()
+                || rret == readers_by_topic_.end() )
         {
-            writers = ret->second;
-        }
-        // Get all the readers in the topic
-        std::vector<GUID_t> readers;
-        ret = readers_by_topic_.find(*topic_it);
-        if (ret != readers_by_topic_.end())
-        {
-            readers = ret->second;
+            ++topic_it;
+            continue;
         }
 
-        for (GUID_t writer: writers)
+        // Traverse the collections assessing which DATAs should be add to the server's builtin writers
+        std::vector<GUID_t>& writers = wret->second;
+        std::vector<GUID_t>& readers = rret->second;
+
+        for (GUID_t& writer: writers)
         // Iterate over writers in the topic:
         {
             logInfo(DISCOVERY_DATABASE, "[" << *topic_it << "]" << " Processing writer: " << writer);
             // Iterate over readers in the topic:
-            for (GUID_t reader : readers)
+            for (GUID_t& reader : readers)
             {
                 logInfo(DISCOVERY_DATABASE, "[" << *topic_it << "]" << " Processing reader: " << reader);
                 // Find participants with writer info and participant with reader info in participants_
@@ -922,49 +957,25 @@ bool DiscoveryDataBase::process_dirty_topics()
                 // Find writer info in writers_
                 writers_it = writers_.find(writer);
 
-                // Check in `participants_` whether the client with the reader has acknowledge the PDP of the client
-                // with the writer.
-                if (parts_reader_it != participants_.end() && parts_reader_it->second.is_matched(writer.guidPrefix))
+                if ( parts_reader_it == participants_.end()
+                        || parts_writer_it == participants_.end()
+                        || readers_it == readers_.end()
+                        || writers_it == writers_.end() )
                 {
-                    // Check the status of the writer in `readers_[reader]::relevant_participants_builtin_ack_status`.
-                    if (readers_it != readers_.end() && !readers_it->second.is_matched(writer.guidPrefix))
-                    {
-                        // If the status is 0, add DATA(w) to a `edp_publications_to_send_` (if it's not there).
-                        if (std::find(
-                                    edp_publications_to_send_.begin(),
-                                    edp_publications_to_send_.end(),
-                                    writers_it->second.change()) == edp_publications_to_send_.end())
-                        {
-                            logInfo(DISCOVERY_DATABASE, "Addind DATA(w) to send: "
-                                    << writers_it->second.change()->instanceHandle);
-                            edp_publications_to_send_.push_back(writers_it->second.change());
-                        }
-                    }
-                }
-                else
-                {
-                    // Add DATA(p) of the client with the writer to `pdp_to_send_` (if it's not there).
-                    if (std::find(
-                                pdp_to_send_.begin(),
-                                pdp_to_send_.end(),
-                                parts_writer_it->second.change()) == pdp_to_send_.end())
-                    {
-                        logInfo(DISCOVERY_DATABASE, "Addind writer's DATA(p) to send: "
-                                << parts_writer_it->second.change()->instanceHandle);
-                        pdp_to_send_.push_back(parts_writer_it->second.change());
-                    }
-                    // Set topic as not-clearable.
-                    is_clearable = false;
+                    // The relationship between the different collections should not be broken. If they are it hints
+                    // possible synchronization issues
+                    logError(DISCOVERY_DATABASE, "process_dirty_topics found incoherent database state.");
+                    continue;
                 }
 
-                // Check in `participants_` whether the client with the writer has acknowledge the PDP of the client
-                // with the reader.
-                if (parts_writer_it != participants_.end() && parts_writer_it->second.is_matched(reader.guidPrefix))
+                // Check if the writer's participant knows alreay the reader's participant. If not, keep or add the
+                // reader's participant DATA(p) in the server's PDP writer
+                if (parts_reader_it->second.is_matched(writer.guidPrefix))
                 {
-                    // Check the status of the reader in `writers_[writer]::relevant_participants_builtin_ack_status`.
-                    if (writers_it != writers_.end() && !writers_it->second.is_matched(reader.guidPrefix))
+                    // If writer's participant knows reader's one check if the reader is know to writer's participant
+                    // If it's not acknowledge we add or keep the DATA(r) in the server's EDP sub writer
+                    if (!readers_it->second.is_matched(writer.guidPrefix))
                     {
-                        // If the status is 0, add DATA(r) to a `edp_subscriptions_to_send_` (if it's not there).
                         if (std::find(
                                     edp_subscriptions_to_send_.begin(),
                                     edp_subscriptions_to_send_.end(),
@@ -974,6 +985,8 @@ bool DiscoveryDataBase::process_dirty_topics()
                                     << readers_it->second.change()->instanceHandle);
                             edp_subscriptions_to_send_.push_back(readers_it->second.change());
                         }
+                        // pending acknowledgements on this topic
+                        is_clearable = false;
                     }
                 }
                 else
@@ -988,7 +1001,45 @@ bool DiscoveryDataBase::process_dirty_topics()
                                 << parts_reader_it->second.change()->instanceHandle);
                         pdp_to_send_.push_back(parts_reader_it->second.change());
                     }
-                    // Set topic as not-clearable.
+
+                    // pending acknowledgements on this topic
+                    is_clearable = false;
+                }
+
+                // Check if the reader's participant knows alreay the writers's participant. If not, keep or add the
+                // writer's participant DATA(p) in the server's PDP writer
+                if (parts_writer_it->second.is_matched(reader.guidPrefix))
+                {
+                   // If reader's participant knows writer's one check if the writer is know to reader's participant
+                   // If it's not acknowledge we add or keep the DATA(w) in the server's EDP pub writer
+                   if (!writers_it->second.is_matched(reader.guidPrefix))
+                    {
+                        if (std::find(
+                                    edp_publications_to_send_.begin(),
+                                    edp_publications_to_send_.end(),
+                                    writers_it->second.change()) == edp_publications_to_send_.end())
+                        {
+                            logInfo(DISCOVERY_DATABASE, "Addind DATA(w) to send: "
+                                    << writers_it->second.change()->instanceHandle);
+                            edp_publications_to_send_.push_back(writers_it->second.change());
+                        }
+                        // pending acknowledgements on this topic
+                        is_clearable = false;
+                   }
+                }
+                else
+                {
+                    // Add DATA(p) of the client with the writer to `pdp_to_send_` (if it's not there).
+                    if (std::find(
+                                pdp_to_send_.begin(),
+                                pdp_to_send_.end(),
+                                parts_writer_it->second.change()) == pdp_to_send_.end())
+                    {
+                        logInfo(DISCOVERY_DATABASE, "Addind writer's DATA(p) to send: "
+                                << parts_writer_it->second.change()->instanceHandle);
+                        pdp_to_send_.push_back(parts_writer_it->second.change());
+                    }
+                    // pending acknowledgements on this topic
                     is_clearable = false;
                 }
             }
