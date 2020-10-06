@@ -996,23 +996,15 @@ bool DiscoveryDataBase::is_participant(
 bool DiscoveryDataBase::is_writer(
         const eprosima::fastrtps::rtps::CacheChange_t* ch)
 {
-    if (is_participant(ch))
-    {
-        return false;
-    }
     constexpr uint8_t entity_id_is_writer_bit = 0x03;
-    return ((guid_from_change(ch).entityId.value[3] & entity_id_is_writer_bit) != 0);
+    return ((guid_from_change(ch).entityId.value[3] & ~entity_id_is_writer_bit) == 0);
 }
 
 bool DiscoveryDataBase::is_reader(
         const eprosima::fastrtps::rtps::CacheChange_t* ch)
 {
-    if (is_participant(ch))
-    {
-        return false;
-    }
     constexpr uint8_t entity_id_is_reader_bit = 0x04;
-    return ((guid_from_change(ch).entityId.value[3] & entity_id_is_reader_bit) != 0);
+    return ((guid_from_change(ch).entityId.value[3] & ~entity_id_is_reader_bit) == 0);
 }
 
 eprosima::fastrtps::rtps::GUID_t DiscoveryDataBase::guid_from_change(
