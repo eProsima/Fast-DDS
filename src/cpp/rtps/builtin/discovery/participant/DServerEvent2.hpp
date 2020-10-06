@@ -39,21 +39,24 @@ public:
 
     /**
      * Constructor.
-     * @param p_PDP Pointer to the PDPServer.
-     * @param interval Interval in ms.
+     * @param pdp Pointer to the PDPServer.
+     * @param server_routine_period Interval in ms.
      */
     DServerEvent2(
-            PDPServer2* p_PDP,
-            double interval);
+            PDPServer2* pdp,
+            double server_routine_period);
     ~DServerEvent2();
 
     /**
-     * Method invoked when the event occurs.
+     * Method invoked when the server routine event occurs.
      */
-    bool event();
+    bool server_routine_event();
 
     //!Pointer to the PDPServer object.
-    PDPServer2* mp_PDP;
+    PDPServer2* pdp_;
+
+    //! The period in milliseconds for the server to wait for ACK and execute the server routine.
+    double server_routine_period_;
 };
 
 } // namespace rtps
