@@ -63,39 +63,40 @@ MessageReceiver::MessageReceiver(
     if (participant->is_secure())
     {
         process_data_message_function_ = std::bind(
-                &MessageReceiver::process_data_message_with_security,
-                this,
-                std::placeholders::_1,
-                std::placeholders::_2);
+            &MessageReceiver::process_data_message_with_security,
+            this,
+            std::placeholders::_1,
+            std::placeholders::_2);
 
         process_data_fragment_message_function_ = std::bind(
-                &MessageReceiver::process_data_fragment_message_with_security,
-                this,
-                std::placeholders::_1,
-                std::placeholders::_2,
-                std::placeholders::_3,
-                std::placeholders::_4,
-                std::placeholders::_5);
+            &MessageReceiver::process_data_fragment_message_with_security,
+            this,
+            std::placeholders::_1,
+            std::placeholders::_2,
+            std::placeholders::_3,
+            std::placeholders::_4,
+            std::placeholders::_5);
     }
     else
     {
 #endif // if HAVE SECURITY
-        process_data_message_function_ = std::bind(
-                &MessageReceiver::process_data_message_without_security,
-                this,
-                std::placeholders::_1,
-                std::placeholders::_2);
+    process_data_message_function_ = std::bind(
+        &MessageReceiver::process_data_message_without_security,
+        this,
+        std::placeholders::_1,
+        std::placeholders::_2);
 
-        process_data_fragment_message_function_ = std::bind(
-                &MessageReceiver::process_data_fragment_message_without_security,
-                this,
-                std::placeholders::_1,
-                std::placeholders::_2,
-                std::placeholders::_3,
-                std::placeholders::_4,
-                std::placeholders::_5);
+    process_data_fragment_message_function_ = std::bind(
+        &MessageReceiver::process_data_fragment_message_without_security,
+        this,
+        std::placeholders::_1,
+        std::placeholders::_2,
+        std::placeholders::_3,
+        std::placeholders::_4,
+        std::placeholders::_5);
 #if HAVE_SECURITY
-    }
+}
+
 #endif // if HAVE SECURITY
 }
 
@@ -152,13 +153,14 @@ void MessageReceiver::process_data_message_without_security(
 }
 
 void MessageReceiver::process_data_fragment_message_with_security(
-            const EntityId_t& reader_id,
-            CacheChange_t& change,
-            uint32_t sample_size,
-            uint32_t fragment_starting_num,
-            uint32_t fragments_in_submessage)
+        const EntityId_t& reader_id,
+        CacheChange_t& change,
+        uint32_t sample_size,
+        uint32_t fragment_starting_num,
+        uint32_t fragments_in_submessage)
 {
-    auto process_message = [&change, sample_size, fragment_starting_num, fragments_in_submessage, this](RTPSReader* reader)
+    auto process_message =
+            [&change, sample_size, fragment_starting_num, fragments_in_submessage, this](RTPSReader* reader)
             {
                 if (!reader->getAttributes().security_attributes().is_payload_protected)
                 {
@@ -188,11 +190,11 @@ void MessageReceiver::process_data_fragment_message_with_security(
 }
 
 void MessageReceiver::process_data_fragment_message_without_security(
-            const EntityId_t& reader_id,
-            CacheChange_t& change,
-            uint32_t sample_size,
-            uint32_t fragment_starting_num,
-            uint32_t fragments_in_submessage)
+        const EntityId_t& reader_id,
+        CacheChange_t& change,
+        uint32_t sample_size,
+        uint32_t fragment_starting_num,
+        uint32_t fragments_in_submessage)
 {
     auto process_message = [&change, sample_size, fragment_starting_num, fragments_in_submessage](RTPSReader* reader)
             {

@@ -73,7 +73,7 @@ private:
 
     std::mutex mtx_;
     std::vector<RTPSWriter*> associated_writers_;
-    std::unordered_map<EntityId_t, std::vector<RTPSReader*> > associated_readers_;
+    std::unordered_map<EntityId_t, std::vector<RTPSReader*>> associated_readers_;
 
     RTPSParticipantImpl* participant_;
     //!Protocol version of the message
@@ -96,15 +96,15 @@ private:
 
     //! Function used to process a received message
     std::function<void(
-            const EntityId_t&,
-            CacheChange_t&)> process_data_message_function_;
+                const EntityId_t&,
+                CacheChange_t&)> process_data_message_function_;
     //! Function used to process a received fragment message
     std::function<void(
-            const EntityId_t&,
-            CacheChange_t&,
-            uint32_t,
-            uint32_t,
-            uint32_t)> process_data_fragment_message_function_;
+                const EntityId_t&,
+                CacheChange_t&,
+                uint32_t,
+                uint32_t,
+                uint32_t)> process_data_fragment_message_function_;
 
 
     //!Reset the MessageReceiver to process a new message.
@@ -197,7 +197,7 @@ private:
 
     /**
      * @name Variants of received data message processing functions.
-     * 
+     *
      * @param[in] reader_id The ID of the reader to which the changes is addressed
      * @param[in] change    The CacheChange with the received data to process
      */
@@ -213,10 +213,10 @@ private:
 
     /**
      * @name Variants of received data fragment message processing functions.
-     * 
+     *
      * @param[in] reader_id The ID of the reader to which the changes is addressed
      * @param[in] change    The CacheChange with the received data to process
-     * 
+     *
      * @param[in] sample_size             The size of the message
      * @param[in] fragment_starting_num   The index of the first fragment in the message
      * @param[in] fragments_in_submessage The number of fragments in the message
