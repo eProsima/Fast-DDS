@@ -668,7 +668,7 @@ bool PDPServer2::server_update_routine()
         logInfo(RTPS_PDP_SERVER, "");
         logInfo(RTPS_PDP_SERVER, "-------------------- Server routine start --------------------");
         process_writers_acknowledgements();     // server + ddb(functor_with_ddb)
-        process_data_queues();                   // all ddb
+        process_data_queues();                  // all ddb
         process_disposals();                    // server + ddb(changes_to_dispose(), clear_changes_to_disposes())
         process_dirty_topics();                 // all ddb
         process_to_send_lists();                // server + ddb(get_to_send, remove_to_send_this)
@@ -1056,8 +1056,8 @@ bool PDPServer2::process_to_send_list(
     std::unique_lock<fastrtps::RecursiveTimedMutex> lock(writer->getMutex());
     for (auto change: send_list)
     {
-        // If the DATA is already in the writer's history, then remove it.
-        remove_change_from_history_nts(history, change);
+        // If the DATA is already in the writer's history, then remove it, but do not release the change.
+        remove_change_from_history_nts(history, change, false);
         // Add DATA to writer's history.
         change->writerGUID.guidPrefix = mp_PDPWriter->getGuid().guidPrefix;
         history->add_change(change);

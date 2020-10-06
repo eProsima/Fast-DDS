@@ -1079,7 +1079,7 @@ const std::vector<fastrtps::rtps::GuidPrefix_t> DiscoveryDataBase::direct_client
     // Iterate over participants to add the remote ones that are direct clients or servers
     for (auto participant: participants_)
     {
-        // Only add participants other than the sever
+        // Only add participants other than the server
         if (server_guid_prefix_ != participant.first)
         {
             // Only add direct clients or server, not relayed ones.
