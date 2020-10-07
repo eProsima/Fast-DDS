@@ -2130,7 +2130,7 @@ void StatefulWriter::print_inconsistent_acknack(
 {
     logWarning(RTPS_WRITER, "Inconsistent acknack received. Local Writer "
             << writer_guid << " expected SequenceNumber " << next_sequence_number << ". Remote Reader "
-            << reader_guid << "sent SequenceNumberSet [" << sn_set.base()
+            << reader_guid << " sent SequenceNumberSet [" << sn_set.base()
             << ", " << sn_set.max() << "].");
 }
 
