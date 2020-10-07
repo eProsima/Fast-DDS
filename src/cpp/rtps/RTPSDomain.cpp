@@ -19,12 +19,12 @@
 
 #include <fastdds/rtps/RTPSDomain.h>
 
-#include <fastdds/rtps/participant/RTPSParticipant.h>
-#include <rtps/participant/RTPSParticipantImpl.h>
-#include <rtps/history/BasicPayloadPool.hpp>
-#include <fastdds/rtps/history/WriterHistory.h>
-
 #include <fastdds/dds/log/Log.hpp>
+
+#include <fastdds/rtps/history/WriterHistory.h>
+#include <fastdds/rtps/participant/RTPSParticipant.h>
+#include <fastdds/rtps/reader/RTPSReader.h>
+#include <fastdds/rtps/writer/RTPSWriter.h>
 
 #include <fastdds/rtps/transport/UDPv4Transport.h>
 #include <fastdds/rtps/transport/UDPv6Transport.h>
@@ -35,12 +35,11 @@
 #include <fastrtps/utils/System.h>
 #include <fastrtps/utils/md5.h>
 
-#include <fastdds/rtps/writer/RTPSWriter.h>
-#include <fastdds/rtps/reader/RTPSReader.h>
-
 #include <fastrtps/xmlparser/XMLProfileManager.h>
 
-#include "RTPSDomainImpl.hpp"
+#include <rtps/RTPSDomainImpl.hpp>
+#include <rtps/participant/RTPSParticipantImpl.h>
+
 #include <utils/Host.hpp>
 
 #include <chrono>
@@ -278,11 +277,17 @@ RTPSWriter* RTPSDomain::createRTPSWriter(
         WriterHistory* hist,
         WriterListener* listen)
 {
-    auto callback = [p, &watt, hist, listen](t_p_RTPSParticipant& participant, RTPSWriter** writ)
-            {
-                return participant.second->createWriter(writ, watt, hist, listen);
-            };
-    return create_writer(p->getGuid(), callback);
+    RTPSParticipantImpl* impl = RTPSDomainImpl::find_local_participant(p->getGuid());
+    if (impl)
+    {
+        RTPSWriter* ret_val = nullptr;
+        if (impl->createWriter(&ret_val, watt, hist, listen))
+        {
+            return ret_val;
+        }
+    }
+
+    return nullptr;
 }
 
 RTPSWriter* RTPSDomain::createRTPSWriter(
@@ -292,33 +297,16 @@ RTPSWriter* RTPSDomain::createRTPSWriter(
         WriterHistory* hist,
         WriterListener* listen)
 {
-    auto callback = [p, &watt, &payload_pool, hist, listen](t_p_RTPSParticipant& participant, RTPSWriter** writ)
-            {
-                return participant.second->createWriter(writ, watt, payload_pool, hist, listen);
-            };
-    return create_writer(p->getGuid(), callback);
-}
-
-template<typename Functor>
-RTPSWriter* RTPSDomain::create_writer(
-        const GUID_t& participant_guid,
-        const Functor& callback)
-{
-    std::unique_lock<std::mutex> lock(m_mutex);
-    for (auto it = m_RTPSParticipants.begin(); it != m_RTPSParticipants.end(); ++it)
+    RTPSParticipantImpl* impl = RTPSDomainImpl::find_local_participant(p->getGuid());
+    if (impl)
     {
-        if (it->first->getGuid().guidPrefix == participant_guid.guidPrefix)
+        RTPSWriter* ret_val = nullptr;
+        if (impl->createWriter(&ret_val, watt, payload_pool, hist, listen))
         {
-            t_p_RTPSParticipant participant = *it;
-            lock.unlock();
-            RTPSWriter* writ;
-            if (callback(participant, &writ))
-            {
-                return writ;
-            }
-            return nullptr;
+            return ret_val;
         }
     }
+
     return nullptr;
 }
 
