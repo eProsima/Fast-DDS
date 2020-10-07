@@ -402,6 +402,12 @@ protected:
 
     //! List of GUID prefixes of the remote servers
     std::vector<fastrtps::rtps::GuidPrefix_t> servers_;
+    
+    // The number of local servers known by the database
+    uint16_t local_servers_count_ = 0;
+
+    // The virtual topic associated with virtual writers and readers
+    const std::string virtual_topic_ = "eprosima_server_virtual_topic";
 
 };
 
