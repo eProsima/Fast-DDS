@@ -600,6 +600,15 @@ private:
             bool is_builtin,
             const Functor& callback);
 
+    template<typename Functor>
+    bool create_reader(
+            RTPSReader** reader_out,
+            ReaderAttributes& param,
+            const EntityId_t& entity_id,
+            bool is_builtin,
+            bool enable,
+            const Functor& callback);
+
 public:
 
     const RTPSParticipantAttributes& getRTPSParticipantAttributes() const
@@ -656,6 +665,25 @@ public:
     bool createReader(
             RTPSReader** Reader,
             ReaderAttributes& param,
+            ReaderHistory* hist,
+            ReaderListener* listen,
+            const EntityId_t& entityId = c_EntityId_Unknown,
+            bool isBuiltin = false,
+            bool enable = true);
+
+    /**
+     * Create a Reader in this RTPSParticipant with a custom payload pool.
+     * @param Reader Pointer to pointer of the Reader, used as output. Only valid if return==true.
+     * @param param ReaderAttributes to define the Reader.
+     * @param payload_pool Shared pointer to the IPayloadPool
+     * @param entityId EntityId assigned to the Reader.
+     * @param isBuiltin Bool value indicating if the Reader is builtin (Discovery or Liveliness protocol) or is created for the end user.
+     * @return True if the Reader was correctly created.
+     */
+    bool createReader(
+            RTPSReader** Reader,
+            ReaderAttributes& param,
+            const std::shared_ptr<IPayloadPool>& payload_pool,
             ReaderHistory* hist,
             ReaderListener* listen,
             const EntityId_t& entityId = c_EntityId_Unknown,

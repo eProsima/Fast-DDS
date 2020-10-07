@@ -629,6 +629,169 @@ bool RTPSParticipantImpl::create_writer(
     return true;
 }
 
+template <typename Functor>
+bool RTPSParticipantImpl::create_reader(
+        RTPSReader** reader_out,
+        ReaderAttributes& param,
+        const EntityId_t& entity_id,
+        bool is_builtin,
+        bool enable,
+        const Functor& callback)
+{
+    std::string type = (param.endpoint.reliabilityKind == RELIABLE) ? "RELIABLE" : "BEST_EFFORT";
+    logInfo(RTPS_PARTICIPANT, " of type " << type);
+    EntityId_t entId;
+    if (entity_id == c_EntityId_Unknown)
+    {
+        if (param.endpoint.topicKind == NO_KEY)
+        {
+            entId.value[3] = 0x04;
+        }
+        else if (param.endpoint.topicKind == WITH_KEY)
+        {
+            entId.value[3] = 0x07;
+        }
+        uint32_t idnum;
+        if (param.endpoint.getEntityID() > 0)
+        {
+            idnum = static_cast<uint32_t>(param.endpoint.getEntityID());
+        }
+        else
+        {
+            IdCounter++;
+            idnum = IdCounter;
+        }
+
+        octet* c = reinterpret_cast<octet*>(&idnum);
+        entId.value[2] = c[0];
+        entId.value[1] = c[1];
+        entId.value[0] = c[2];
+        if (this->existsEntityId(entId, READER))
+        {
+            logError(RTPS_PARTICIPANT, "A reader with the same entityId already exists in this RTPSParticipant");
+            return false;
+        }
+    }
+    else
+    {
+        entId = entity_id;
+    }
+    if (!param.endpoint.unicastLocatorList.isValid())
+    {
+        logError(RTPS_PARTICIPANT, "Unicast Locator List for Reader contains invalid Locator");
+        return false;
+    }
+    if (!param.endpoint.multicastLocatorList.isValid())
+    {
+        logError(RTPS_PARTICIPANT, "Multicast Locator List for Reader contains invalid Locator");
+        return false;
+    }
+    if (!param.endpoint.remoteLocatorList.isValid())
+    {
+        logError(RTPS_PARTICIPANT, "Remote Locator List for Reader contains invalid Locator");
+        return false;
+    }
+
+    // Get persistence service
+    IPersistenceService* persistence = nullptr;
+    if (param.endpoint.durabilityKind >= TRANSIENT)
+    {
+        // Check if persistence guid needs to be set from property
+        if (param.endpoint.persistence_guid == c_Guid_Unknown)
+        {
+            // Try to load persistence_guid from property
+            std::string* persistence_guid_property = PropertyPolicyHelper::find_property(
+                param.endpoint.properties, "dds.persistence.guid");
+            if (persistence_guid_property != nullptr)
+            {
+                // Load persistence_guid from property
+                std::istringstream(persistence_guid_property->c_str()) >> param.endpoint.persistence_guid;
+                if (param.endpoint.persistence_guid == c_Guid_Unknown)
+                {
+                    // Wrongly configured property
+                    logError(RTPS_PARTICIPANT, "Cannot configure readers's persistence GUID from '"
+                            << persistence_guid_property->c_str() << "'. Wrong input");
+                    return false;
+                }
+            }
+            else
+            {
+                logError(RTPS_PARTICIPANT, "Cannot create reader persistence service. Persistence GUID not specified");
+                return false;
+            }
+        }
+
+        persistence = get_persistence_service(param.endpoint);
+        if (persistence == nullptr)
+        {
+            logError(RTPS_PARTICIPANT, "Couldn't create persistence service for transient/persistent reader");
+            return false;
+        }
+    }
+
+    normalize_endpoint_locators(param.endpoint);
+
+    RTPSReader* SReader = nullptr;
+    GUID_t guid(m_guid.guidPrefix, entId);
+    SReader = callback(guid, param, persistence, param.endpoint.reliabilityKind == RELIABLE);
+
+    if (SReader == nullptr)
+    {
+        return false;
+    }
+
+#if HAVE_SECURITY
+
+    if (!is_builtin)
+    {
+        if (!m_security_manager.register_local_reader(SReader->getGuid(),
+                param.endpoint.properties, SReader->getAttributes().security_attributes()))
+        {
+            delete(SReader);
+            return false;
+        }
+    }
+    else
+    {
+        if (!m_security_manager.register_local_builtin_reader(SReader->getGuid(),
+                SReader->getAttributes().security_attributes()))
+        {
+            delete(SReader);
+            return false;
+        }
+    }
+#endif // if HAVE_SECURITY
+
+    if (param.endpoint.reliabilityKind == RELIABLE)
+    {
+        createSendResources(SReader);
+    }
+
+    if (is_builtin)
+    {
+        SReader->setTrustedWriter(TrustedWriter(SReader->getGuid().entityId));
+    }
+
+    if (enable)
+    {
+        if (!createAndAssociateReceiverswithEndpoint(SReader))
+        {
+            delete(SReader);
+            return false;
+        }
+    }
+
+    std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
+    m_allReaderList.push_back(SReader);
+    if (!is_builtin)
+    {
+        m_userReaderList.push_back(SReader);
+    }
+    *reader_out = SReader;
+
+    return true;
+}
+
 /*
  *
  * MAIN RTPSParticipant IMPL API
@@ -721,169 +884,75 @@ bool RTPSParticipantImpl::createReader(
         bool isBuiltin,
         bool enable)
 {
-    std::string type = (param.endpoint.reliabilityKind == RELIABLE) ? "RELIABLE" : "BEST_EFFORT";
-    logInfo(RTPS_PARTICIPANT, " of type " << type);
-    EntityId_t entId;
-    if (entityId == c_EntityId_Unknown)
-    {
-        if (param.endpoint.topicKind == NO_KEY)
-        {
-            entId.value[3] = 0x04;
-        }
-        else if (param.endpoint.topicKind == WITH_KEY)
-        {
-            entId.value[3] = 0x07;
-        }
-        uint32_t idnum;
-        if (param.endpoint.getEntityID() > 0)
-        {
-            idnum = static_cast<uint32_t>(param.endpoint.getEntityID());
-        }
-        else
-        {
-            IdCounter++;
-            idnum = IdCounter;
-        }
-
-        octet* c = reinterpret_cast<octet*>(&idnum);
-        entId.value[2] = c[0];
-        entId.value[1] = c[1];
-        entId.value[0] = c[2];
-        if (this->existsEntityId(entId, WRITER))
-        {
-            logError(RTPS_PARTICIPANT, "A reader with the same entityId already exists in this RTPSParticipant");
-            return false;
-        }
-    }
-    else
-    {
-        entId = entityId;
-    }
-    if (!param.endpoint.unicastLocatorList.isValid())
-    {
-        logError(RTPS_PARTICIPANT, "Unicast Locator List for Reader contains invalid Locator");
-        return false;
-    }
-    if (!param.endpoint.multicastLocatorList.isValid())
-    {
-        logError(RTPS_PARTICIPANT, "Multicast Locator List for Reader contains invalid Locator");
-        return false;
-    }
-    if (!param.endpoint.remoteLocatorList.isValid())
-    {
-        logError(RTPS_PARTICIPANT, "Remote Locator List for Reader contains invalid Locator");
-        return false;
-    }
-
-    // Get persistence service
-    IPersistenceService* persistence = nullptr;
-    if (param.endpoint.durabilityKind >= TRANSIENT)
-    {
-        // Check if persistence guid needs to be set from property
-        if (param.endpoint.persistence_guid == c_Guid_Unknown)
-        {
-            // Try to load persistence_guid from property
-            std::string* persistence_guid_property = PropertyPolicyHelper::find_property(
-                param.endpoint.properties, "dds.persistence.guid");
-            if (persistence_guid_property != nullptr)
+    auto callback = [hist, listen, this]
+                (const GUID_t& guid, ReaderAttributes& param, IPersistenceService* persistence,
+                    bool is_reliable) -> RTPSReader*
             {
-                // Load persistence_guid from property
-                std::istringstream(persistence_guid_property->c_str()) >> param.endpoint.persistence_guid;
-                if (param.endpoint.persistence_guid == c_Guid_Unknown)
+                if (is_reliable)
                 {
-                    // Wrongly configured property
-                    logError(RTPS_PARTICIPANT, "Cannot configure readers's persistence GUID from '"
-                            << persistence_guid_property->c_str() << "'. Wrong input");
-                    return false;
+                    if (persistence != nullptr)
+                    {
+                        return new StatefulPersistentReader(this, guid, param, hist, listen, persistence);
+                    }
+                    else
+                    {
+                        return new StatefulReader(this, guid, param, hist, listen);
+                    }
                 }
-            }
-            else
+                else
+                {
+                    if (persistence != nullptr)
+                    {
+                        return new StatelessPersistentReader(this, guid, param, hist, listen, persistence);
+                    }
+                    else
+                    {
+                        return new StatelessReader(this, guid, param, hist, listen);
+                    }
+                }
+            };
+    return create_reader(ReaderOut, param, entityId, isBuiltin, enable, callback);
+}
+
+bool RTPSParticipantImpl::createReader(
+        RTPSReader** ReaderOut,
+        ReaderAttributes& param,
+        const std::shared_ptr<IPayloadPool>& payload_pool,
+        ReaderHistory* hist,
+        ReaderListener* listen,
+        const EntityId_t& entityId,
+        bool isBuiltin,
+        bool enable)
+{
+    auto callback = [hist, listen, &payload_pool, this]
+                (const GUID_t& guid, ReaderAttributes& param, IPersistenceService* persistence,
+                    bool is_reliable) -> RTPSReader*
             {
-                logError(RTPS_PARTICIPANT, "Cannot create reader persistence service. Persistence GUID not specified");
-                return false;
-            }
-        }
-
-        persistence = get_persistence_service(param.endpoint);
-        if (persistence == nullptr)
-        {
-            logError(RTPS_PARTICIPANT, "Couldn't create persistence service for transient/persistent reader");
-            return false;
-        }
-    }
-
-    normalize_endpoint_locators(param.endpoint);
-
-    RTPSReader* SReader = nullptr;
-    GUID_t guid(m_guid.guidPrefix, entId);
-    if (param.endpoint.reliabilityKind == BEST_EFFORT)
-    {
-        SReader = (persistence == nullptr) ?
-                new StatelessReader(this, guid, param, hist, listen) :
-                new StatelessPersistentReader(this, guid, param, hist, listen, persistence);
-    }
-    else if (param.endpoint.reliabilityKind == RELIABLE)
-    {
-        SReader = (persistence == nullptr) ?
-                new StatefulReader(this, guid, param, hist, listen) :
-                new StatefulPersistentReader(this, guid, param, hist, listen, persistence);
-    }
-
-    if (SReader == nullptr)
-    {
-        return false;
-    }
-
-#if HAVE_SECURITY
-
-    if (!isBuiltin)
-    {
-        if (!m_security_manager.register_local_reader(SReader->getGuid(),
-                param.endpoint.properties, SReader->getAttributes().security_attributes()))
-        {
-            delete(SReader);
-            return false;
-        }
-    }
-    else
-    {
-        if (!m_security_manager.register_local_builtin_reader(SReader->getGuid(),
-                SReader->getAttributes().security_attributes()))
-        {
-            delete(SReader);
-            return false;
-        }
-    }
-#endif // if HAVE_SECURITY
-
-    if (param.endpoint.reliabilityKind == RELIABLE)
-    {
-        createSendResources(SReader);
-    }
-
-    if (isBuiltin)
-    {
-        SReader->setTrustedWriter(TrustedWriter(SReader->getGuid().entityId));
-    }
-
-    if (enable)
-    {
-        if (!createAndAssociateReceiverswithEndpoint(SReader))
-        {
-            delete(SReader);
-            return false;
-        }
-    }
-
-    std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
-    m_allReaderList.push_back(SReader);
-    if (!isBuiltin)
-    {
-        m_userReaderList.push_back(SReader);
-    }
-    *ReaderOut = SReader;
-
-    return true;
+                if (is_reliable)
+                {
+                    if (persistence != nullptr)
+                    {
+                        return new StatefulPersistentReader(this, guid, param, payload_pool, hist, listen, persistence);
+                    }
+                    else
+                    {
+                        return new StatefulReader(this, guid, param, payload_pool, hist, listen);
+                    }
+                }
+                else
+                {
+                    if (persistence != nullptr)
+                    {
+                        return new StatelessPersistentReader(this, guid, param, payload_pool, hist, listen,
+                                       persistence);
+                    }
+                    else
+                    {
+                        return new StatelessReader(this, guid, param, payload_pool, hist, listen);
+                    }
+                }
+            };
+    return create_reader(ReaderOut, param, entityId, isBuiltin, enable, callback);
 }
 
 RTPSReader* RTPSParticipantImpl::find_local_reader(
