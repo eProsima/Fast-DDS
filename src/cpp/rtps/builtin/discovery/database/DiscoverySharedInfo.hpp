@@ -59,7 +59,7 @@ public:
             bool status = false)
     {
         logInfo(DISCOVERY_DATABASE, "Adding relevant participant " << guid_p << " with status " << status << " to " <<
-                fastrtps::rtps::iHandle2GUID(change_->instanceHandle).guidPrefix);
+                fastrtps::rtps::iHandle2GUID(change_->instanceHandle));
         relevant_participants_builtin_ack_status_.add_or_update_participant(guid_p, status);
     }
 

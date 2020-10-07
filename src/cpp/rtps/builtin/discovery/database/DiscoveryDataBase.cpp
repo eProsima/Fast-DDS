@@ -508,6 +508,8 @@ void DiscoveryDataBase::create_writers_from_change_(
     // If writer exists, update the change and set all participant ack status to false
     else
     {
+        // TODO(Paris) when updating, be careful of not to do unmatch if the only endpoint in the other participant
+        //  is NOT ALIVE. This means that you still have to send your Data(Ux) to him but not the updates
         update_change_and_unmatch_(ch, ret.first->second);
     }
 
@@ -582,6 +584,8 @@ void DiscoveryDataBase::create_readers_from_change_(
     // If reader exists, update the change and set all participant ack status to false
     else
     {
+        // TODO(Paris) when updating, be careful of not to do unmatch if the only endpoint in the other participant
+        //  is NOT ALIVE. This means that you still have to send your Data(Ux) to him but not the updates
         update_change_and_unmatch_(ch, ret.first->second);
     }
 }
@@ -607,25 +611,25 @@ void DiscoveryDataBase::process_dispose_participant_(
     // Delete entries from writers_ belonging to the participant
     while (!pit->second.writers().empty())
     {
-        auto writer = pit->second.writers().front();
+        auto writer_guid = pit->second.writers().front();
 
-        // this unmatch must erase the entity from writers
-        unmatch_writer_(writer);
+        // erase writer from topic
+        unmatch_writer_(writer_guid);
 
         // release the change and remove entity without setting Data(Uw)
-        delete_writer_entity_(writer);
+        delete_writer_entity_(writer_guid);
     }
 
     // Delete entries from readers_ belonging to the participant
     while (!pit->second.readers().empty())
     {
-        auto reader = pit->second.readers().front();
+        auto reader_guid = pit->second.readers().front();
 
         // this unmatch must erase the entity from writers
-        unmatch_reader_(reader);
+        unmatch_reader_(reader_guid);
 
         // release the change and remove entity without setting Data(Ur)
-        delete_reader_entity_(reader);
+        delete_reader_entity_(reader_guid);
     }
 
     // all participant endoints must be already unmatched in others endopoints relevant_ack maps
@@ -652,8 +656,8 @@ void DiscoveryDataBase::process_dispose_writer_(
         update_change_and_unmatch_(ch, wit->second);
     }
 
-    // Update writer matches
-    unmatch_writer_(writer_guid);
+    // remove writer from topic
+    remove_writer_from_topic_(writer_guid, wit->second.topic());
 
     // Add entry to disposals_
     if (std::find(disposals_.begin(), disposals_.end(), ch) == disposals_.end())
@@ -674,8 +678,8 @@ void DiscoveryDataBase::process_dispose_reader_(
         update_change_and_unmatch_(ch, rit->second);
     }
 
-    // Update matches
-    unmatch_reader_(reader_guid);
+    // remove reader from topic
+    remove_reader_from_topic_(reader_guid, rit->second.topic());
 
     // Add entry to disposals_
     if (std::find(disposals_.begin(), disposals_.end(), ch) == disposals_.end())
@@ -845,6 +849,7 @@ bool DiscoveryDataBase::delete_entity_of_change(
     if (is_participant(change))
     {
         // The information related to this participant is cleaned up in process_data_queue()
+        // when a disposal arrives, and it cleans also its children entities
         return delete_participant_entity_(guid_from_change(change).guidPrefix);
     }
     else if (is_reader(change))
@@ -1054,17 +1059,6 @@ void DiscoveryDataBase::unmatch_writer_(const eprosima::fastrtps::rtps::GUID_t& 
             }
         }
     }
-
-    // remove this writer from its participant
-    auto pit = participants_.find(guid.guidPrefix);
-    if (pit == participants_.end())
-    {
-        logError(DISCOVERY_DATABASE,
-                "Unexisting participant " << guid.guidPrefix << " for writer: " << guid);
-        return;
-    }
-
-    pit->second.remove_writer(guid);
 }
 
 void DiscoveryDataBase::unmatch_reader_(const eprosima::fastrtps::rtps::GUID_t& guid)
@@ -1105,16 +1099,6 @@ void DiscoveryDataBase::unmatch_reader_(const eprosima::fastrtps::rtps::GUID_t& 
             }
         }
     }
-
-    // remove this reader from its participant
-    auto pit = participants_.find(guid.guidPrefix);
-    if (pit == participants_.end())
-    {
-        logError(DISCOVERY_DATABASE,
-                "Unexisting participant " << guid.guidPrefix << " for reader: " << guid);
-        return;
-    }
-    pit->second.remove_reader(guid);
 }
 
 
@@ -1328,13 +1312,28 @@ bool DiscoveryDataBase::delete_reader_entity_(
 {
     logInfo(DISCOVERY_DATABASE, "Deleting reader: " << guid);
 
+    // find own reader
     auto it = readers_.find(guid);
     if (it == readers_.end())
     {
         return false;
     }
+
+    // release change
     changes_to_release_.push_back(it->second.change());
+
+    // remove entity in readers vector
     readers_.erase(it);
+
+    // remove entity from participant readers vector
+    auto pit = participants_.find(guid.guidPrefix);
+    if (pit == participants_.end())
+    {
+        return false;
+    }
+
+    pit->second.remove_reader(guid);
+
     return true;
 }
 
@@ -1343,13 +1342,28 @@ bool DiscoveryDataBase::delete_writer_entity_(
 {
     logInfo(DISCOVERY_DATABASE, "Deleting writer: " << guid);
 
+    // find own writer
     auto it = writers_.find(guid);
     if (it == writers_.end())
     {
         return false;
     }
+
+    // release change
     changes_to_release_.push_back(it->second.change());
+
+    // remove entity in writers vector
     writers_.erase(it);
+
+    // remove entity from participant writers vector
+    auto pit = participants_.find(guid.guidPrefix);
+    if (pit == participants_.end())
+    {
+        return false;
+    }
+
+    pit->second.remove_writer(guid);
+
     return true;
 }
 
