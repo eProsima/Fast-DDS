@@ -41,7 +41,7 @@ public:
             uint32_t /* size */,
             CacheChange_t& cache_change) override
     {
-        return TopicPayloadPool::get_payload(payload_size_, cache_change);
+        return do_get_payload(payload_size_, cache_change, false);
     }
 
     bool reserve_history(

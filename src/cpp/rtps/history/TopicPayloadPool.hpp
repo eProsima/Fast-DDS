@@ -311,6 +311,33 @@ protected:
             uint32_t& size,
             uint32_t new_size);
 
+    /**
+     * @brief Get a serialized payload for a new sample.
+     * 
+     * If the payload is recycled from the pool, @c resizable controls whether it can
+     * be reallocated to accomodate larger sizes.
+     * If @c resizable is false and there is at least one free payload in the pool, that payload will
+     * be returned even though it may not reach the requested size.
+     * 
+     * If @c resizable is true and the reallocation fails, the operation returns false and
+     * the payload is returned to the pool.
+     * 
+     * @param [in]     size          Number of bytes required for the serialized payload
+     * @param [in,out] cache_change  Cache change to assign the payload to
+     * @param [in]     resizable     Whether payloads recycled from the pool are resizable to accomodate larger sizes
+     *
+     * @returns whether the operation succeeded or not
+     *
+     * @post
+     *   On success:
+     *     @li Field @c cache_change.payload_owner equals this
+     *     @li Field @c serializedPayload.data points to a buffer of at least @c size bytes
+     *     @li Field @c serializedPayload.max_size is greater than or equal to @c size
+     */    virtual bool do_get_payload(
+            uint32_t size,
+            CacheChange_t& cache_change,
+            bool resizeable);
+
     virtual MemoryManagementPolicy_t memory_policy() const = 0;
 
     uint32_t max_pool_size_             = 0;  //< Maximum size of the pool

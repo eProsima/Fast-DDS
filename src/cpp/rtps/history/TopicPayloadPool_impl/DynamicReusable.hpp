@@ -31,23 +31,7 @@ class DynamicReusableTopicPayloadPool : public TopicPayloadPool
             uint32_t size,
             CacheChange_t& cache_change) override
     {
-        if (!TopicPayloadPool::get_payload(size, cache_change))
-        {
-            return false;
-        }
-
-        // Resize if needed
-        if (size > cache_change.serializedPayload.max_size)
-        {
-            if (!resize_payload(cache_change.serializedPayload.data, cache_change.serializedPayload.max_size, size))
-            {
-                logError(RTPS_HISTORY, "Failed to resize the payload");
-                release_payload(cache_change);
-                return false;
-            }
-        }
-
-        return true;
+        return do_get_payload(size, cache_change, true);
     }
 
 protected:

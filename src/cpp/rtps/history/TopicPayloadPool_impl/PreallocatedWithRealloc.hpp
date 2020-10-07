@@ -41,23 +41,7 @@ public:
             uint32_t size,
             CacheChange_t& cache_change) override
     {
-        if (!TopicPayloadPool::get_payload(std::max(size, min_payload_size_), cache_change))
-        {
-            return false;
-        }
-
-        // Resize if needed
-        if (size > cache_change.serializedPayload.max_size)
-        {
-            if (!resize_payload(cache_change.serializedPayload.data, cache_change.serializedPayload.max_size, size))
-            {
-                logError(RTPS_HISTORY, "Failed to resize the payload");
-                release_payload(cache_change);
-                return false;
-            }
-        }
-
-        return true;
+        return do_get_payload(std::max(size, min_payload_size_), cache_change, true);
     }
 
     bool reserve_history(

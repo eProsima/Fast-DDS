@@ -34,6 +34,14 @@ bool TopicPayloadPool::get_payload(
         uint32_t size,
         CacheChange_t& cache_change)
 {
+    return do_get_payload(size, cache_change, false);
+}
+
+bool TopicPayloadPool::do_get_payload(
+        uint32_t size,
+        CacheChange_t& cache_change,
+        bool resizeable)
+{
     PayloadNode* payload = nullptr;
 
     std::unique_lock<std::mutex> lock(mutex_);
@@ -55,11 +63,29 @@ bool TopicPayloadPool::get_payload(
         free_payloads_.pop_back();
     }
 
+    // Resize if needed
+    if (resizeable && size > payload->data_size())
+    {
+        if (!payload->resize(size))
+        {
+            // Failed to resize, but we can still keep it for later.
+            free_payloads_.push_back(payload);
+            lock.unlock();
+            logError(RTPS_HISTORY, "Failed to resize the payload");
+
+            cache_change.serializedPayload.data = nullptr;
+            cache_change.serializedPayload.max_size = 0;
+            cache_change.payload_owner(nullptr);
+            return false;
+        }
+    }
+
     lock.unlock();
     payload->reference();
     cache_change.serializedPayload.data = payload->data();
     cache_change.serializedPayload.max_size = payload->data_size();
     cache_change.payload_owner(this);
+
     return true;
 }
 
