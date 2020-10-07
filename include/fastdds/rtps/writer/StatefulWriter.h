@@ -173,9 +173,12 @@ public:
     {
         // we cannot directly pass iterators neither const_iterators to matched_readers_ because then the functor would
         // be able to modify ReaderProxy elements
-        const ReaderProxy* const* beg = std::data(matched_readers_);
-        const ReaderProxy* const* end = beg + matched_readers_.size();
-        return std::for_each(beg, end, f);
+        for( const ReaderProxy* rp : matched_readers_ )
+        {
+            f(rp);
+        }
+
+        return f;
     }
 
     bool wait_for_all_acked(
