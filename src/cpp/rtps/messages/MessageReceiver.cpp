@@ -146,7 +146,7 @@ void MessageReceiver::process_data_fragment_message_with_security(
         CacheChange_t& change,
         uint32_t sample_size,
         uint32_t fragment_starting_num,
-        uint32_t fragments_in_submessage)
+        uint16_t fragments_in_submessage)
 {
     auto process_message =
             [&change, sample_size, fragment_starting_num, fragments_in_submessage, this](RTPSReader* reader)
@@ -197,7 +197,7 @@ void MessageReceiver::process_data_fragment_message_without_security(
         CacheChange_t& change,
         uint32_t sample_size,
         uint32_t fragment_starting_num,
-        uint32_t fragments_in_submessage)
+        uint16_t fragments_in_submessage)
 {
     auto process_message = [&change, sample_size, fragment_starting_num, fragments_in_submessage](RTPSReader* reader)
             {

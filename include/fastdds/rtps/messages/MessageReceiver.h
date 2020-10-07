@@ -104,7 +104,7 @@ private:
                 CacheChange_t&,
                 uint32_t,
                 uint32_t,
-                uint32_t)> process_data_fragment_message_function_;
+                uint16_t)> process_data_fragment_message_function_;
 
 
     //!Reset the MessageReceiver to process a new message.
@@ -230,7 +230,7 @@ private:
             CacheChange_t& change,
             uint32_t sample_size,
             uint32_t fragment_starting_num,
-            uint32_t fragments_in_submessage);
+            uint16_t fragments_in_submessage);
 #endif // HAVE_SECURITY
 
     void process_data_fragment_message_without_security(
@@ -238,7 +238,7 @@ private:
             CacheChange_t& change,
             uint32_t sample_size,
             uint32_t fragment_starting_num,
-            uint32_t fragments_in_submessage);
+            uint16_t fragments_in_submessage);
     ///@}
 };
 
