@@ -594,10 +594,10 @@ private:
 
     template<typename Functor>
     bool create_writer(
-            RTPSWriter** WriterOut,
+            RTPSWriter** writer_out,
             WriterAttributes& param,
-            const EntityId_t& entityId,
-            bool isBuiltin,
+            const EntityId_t& entity_id,
+            bool is_builtin,
             const Functor& callback);
 
 public:
@@ -626,7 +626,7 @@ public:
             bool isBuiltin = false);
 
     /**
-     * Create a Writer in this RTPSParticipant.
+     * Create a Writer in this RTPSParticipant with a custom payload pool.
      * @param Writer Pointer to pointer of the Writer, used as output. Only valid if return==true.
      * @param param WriterAttributes to define the Writer.
      * @param payload_pool Shared pointer to the IPayloadPool

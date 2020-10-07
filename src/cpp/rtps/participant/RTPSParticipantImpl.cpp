@@ -450,16 +450,16 @@ RTPSParticipantImpl::~RTPSParticipantImpl()
 
 template<typename Functor>
 bool RTPSParticipantImpl::create_writer(
-        RTPSWriter** WriterOut,
+        RTPSWriter** writer_out,
         WriterAttributes& param,
-        const EntityId_t& entityId,
-        bool isBuiltin,
+        const EntityId_t& entity_id,
+        bool is_builtin,
         const Functor& callback)
 {
     std::string type = (param.endpoint.reliabilityKind == RELIABLE) ? "RELIABLE" : "BEST_EFFORT";
-    logInfo(RTPS_PARTICIPANT, " of type " << type);
+    logInfo(RTPS_PARTICIPANT, "Creating writer of type " << type);
     EntityId_t entId;
-    if (entityId == c_EntityId_Unknown)
+    if (entity_id == c_EntityId_Unknown)
     {
         if (param.endpoint.topicKind == NO_KEY)
         {
@@ -492,7 +492,7 @@ bool RTPSParticipantImpl::create_writer(
     }
     else
     {
-        entId = entityId;
+        entId = entity_id;
     }
     if (!param.endpoint.unicastLocatorList.isValid())
     {
@@ -545,7 +545,7 @@ bool RTPSParticipantImpl::create_writer(
             // Generate persistence guid from participant persistence guid
             param.endpoint.persistence_guid = GUID_t(
                 m_persistence_guid.guidPrefix,
-                entityId);
+                entity_id);
         }
     }
 
@@ -581,7 +581,7 @@ bool RTPSParticipantImpl::create_writer(
     }
 
 #if HAVE_SECURITY
-    if (!isBuiltin)
+    if (!is_builtin)
     {
         if (!m_security_manager.register_local_writer(SWriter->getGuid(),
                 param.endpoint.properties, SWriter->getAttributes().security_attributes()))
@@ -613,11 +613,11 @@ bool RTPSParticipantImpl::create_writer(
 
     std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
     m_allWriterList.push_back(SWriter);
-    if (!isBuiltin)
+    if (!is_builtin)
     {
         m_userWriterList.push_back(SWriter);
     }
-    *WriterOut = SWriter;
+    *writer_out = SWriter;
 
     // If the terminal throughput controller has proper user defined values, instantiate it
     if (param.throughputController.bytesPerPeriod != UINT32_MAX && param.throughputController.periodMillisecs != 0)
