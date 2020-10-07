@@ -87,6 +87,10 @@ private:
             {
                 reader_.matched();
             }
+            else if (info.status == eprosima::fastrtps::rtps::REMOVED_MATCHING)
+            {
+                reader_.unmatched();
+            }
         }
 
     private:
@@ -283,6 +287,23 @@ public:
                         return matched_ != 0;
                     });
         }
+
+        EXPECT_NE(matched_, 0u);
+    }
+
+    void wait_undiscovery()
+    {
+        std::unique_lock<std::mutex> lock(mutexDiscovery_);
+
+        if (matched_ != 0)
+        {
+            cvDiscovery_.wait(lock, [this]() -> bool
+                    {
+                        return matched_ == 0;
+                    });
+        }
+
+        EXPECT_EQ(matched_, 0u);
     }
 
     void check_seq_number_greater_or_equal(
@@ -295,6 +316,13 @@ public:
     {
         std::unique_lock<std::mutex> lock(mutexDiscovery_);
         ++matched_;
+        cvDiscovery_.notify_one();
+    }
+
+    void unmatched()
+    {
+        std::unique_lock<std::mutex> lock(mutexDiscovery_);
+        --matched_;
         cvDiscovery_.notify_one();
     }
 
