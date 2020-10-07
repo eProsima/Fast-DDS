@@ -38,6 +38,15 @@ class StatefulPersistentWriter : public StatefulWriter, private PersistentWriter
     friend class RTPSParticipantImpl;
 
     StatefulPersistentWriter(RTPSParticipantImpl*,GUID_t& guid,WriterAttributes& att,WriterHistory* hist,WriterListener* listen=nullptr, IPersistenceService* persistence = nullptr);
+
+    void print_inconsistent_acknack(
+        const GUID_t& writer_guid,
+        const GUID_t& reader_guid,
+        const SequenceNumberSet_t& sn_set,
+        const SequenceNumber_t& next_sequence_number);
+
+    bool log_error_printed = false;
+
     public:
     virtual ~StatefulPersistentWriter();
 

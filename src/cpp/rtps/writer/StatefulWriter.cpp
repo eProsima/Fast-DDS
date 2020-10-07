@@ -1983,55 +1983,78 @@ bool StatefulWriter::process_acknack(
 {
     std::unique_lock<RecursiveTimedMutex> lock(mp_mutex);
     result = (m_guid == writer_guid);
+
     if (result)
     {
-        for (ReaderProxy* remote_reader : matched_readers_)
+        SequenceNumber_t received_sequence_number = sn_set.empty() ? sn_set.base() : sn_set.max();
+//        std::cout << "Future: " << (received_sequence_number > next_sequence_number()) << std::endl;
+        if (received_sequence_number <= next_sequence_number())
         {
-            if (remote_reader->guid() == reader_guid)
+            for (ReaderProxy* remote_reader : matched_readers_)
             {
-                if (remote_reader->check_and_set_acknack_count(ack_count))
+                if (remote_reader->guid() == reader_guid)
                 {
-                    // Sequence numbers before Base are set as Acknowledged.
-                    remote_reader->acked_changes_set(sn_set.base());
-                    if (sn_set.base() > SequenceNumber_t(0, 0))
+                    if (remote_reader->check_and_set_acknack_count(ack_count))
                     {
-                        if (remote_reader->requested_changes_set(sn_set) || remote_reader->are_there_gaps())
+                        // Sequence numbers before Base are set as Acknowledged.
+                        remote_reader->acked_changes_set(sn_set.base());
+                        if (sn_set.base() > SequenceNumber_t(0, 0))
                         {
-                            nack_response_event_->restart_timer();
+                            if (remote_reader->requested_changes_set(sn_set) || remote_reader->are_there_gaps())
+                            {
+                                nack_response_event_->restart_timer();
+                            }
+                            else if (!final_flag)
+                            {
+                                periodic_hb_event_->restart_timer();
+                            }
                         }
-                        else if (!final_flag)
+                        else if (sn_set.empty() && !final_flag)
                         {
-                            periodic_hb_event_->restart_timer();
-                        }
-                    }
-                    else if (sn_set.empty() && !final_flag)
-                    {
-                        // This is the preemptive acknack.
-                        if (remote_reader->process_initial_acknack())
-                        {
+                            // This is the preemptive acknack.
+                            if (remote_reader->process_initial_acknack())
+                            {
+                                if (remote_reader->is_local_reader())
+                                {
+                                    mp_RTPSParticipant->async_thread().wake_up(this);
+                                }
+                                else
+                                {
+                                    // Send heartbeat if requested
+                                    send_heartbeat_to_nts(*remote_reader);
+                                }
+                            }
+
                             if (remote_reader->is_local_reader())
                             {
-                                mp_RTPSParticipant->async_thread().wake_up(this);
-                            }
-                            else
-                            {
-                                // Send heartbeat if requested
-                                send_heartbeat_to_nts(*remote_reader);
+                                intraprocess_heartbeat(remote_reader);
                             }
                         }
 
-                        if (remote_reader->is_local_reader())
-                        {
-                            intraprocess_heartbeat(remote_reader);
-                        }
+                        // Check if all CacheChange are acknowledge, because a user could be waiting
+                        // for this, of if VOLATILE should be removed CacheChanges
+                        check_acked_status();
                     }
-
-                    // Check if all CacheChange are acknowledge, because a user could be waiting
-                    // for this, of if VOLATILE should be removed CacheChanges
-                    check_acked_status();
+                    break;
                 }
-                break;
             }
+        }
+        else
+        {
+            print_inconsistent_acknack(writer_guid, reader_guid, sn_set, next_sequence_number());
+/*            // Check persistence QoS
+            PropertyPolicy property_policies = this->getAttributes().properties;
+            std::string* persistence_plugin = PropertyPolicyHelper::find_property(property_policies,
+                    "dds.persistence.plugin");
+            if (persistence_plugin != nullptr)
+            {
+                logError(RTPS_WRITER, "Received remote ACK greater than the local sent one. Maybe the persistent \
+                        database have been erased locally.");
+            }
+            else
+            {
+                logWarning(RTPS_WRITER, "Not persistence.");
+            }*/
         }
     }
 
@@ -2111,6 +2134,17 @@ bool StatefulWriter::ack_timer_expired()
 
     ack_event_->update_interval_millisec((double)duration_cast<milliseconds>(interval).count());
     return true;
+}
+
+void StatefulWriter::print_inconsistent_acknack(
+        const GUID_t& writer_guid,
+        const GUID_t& reader_guid,
+        const SequenceNumberSet_t& sn_set,
+        const SequenceNumber_t& next_sequence_number)
+{
+    logWarning(RTPS_WRITER, "Inconsistent acknack received. Local Writer " << writer_guid << " expected SequenceNumber "
+            << next_sequence_number << ". Remote Reader " << reader_guid << "sent SequenceNumberSet [" << sn_set.base() 
+            << ", " << sn_set.max() << "].");
 }
 
 }  // namespace rtps

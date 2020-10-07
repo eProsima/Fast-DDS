@@ -63,6 +63,21 @@ bool StatefulPersistentWriter::change_removed_by_history(
     return StatefulWriter::change_removed_by_history(change);
 }
 
+void StatefulPersistentWriter::print_inconsistent_acknack(
+        const GUID_t& writer_guid,
+        const GUID_t& reader_guid,
+        const SequenceNumberSet_t& sn_set,
+        const SequenceNumber_t& next_sequence_number)
+{
+    if (!log_error_printed)
+    {
+        log_error_printed = true;
+        logError(RTPS_WRITER, "Inconsistent acknack received in Local Writer " << writer_guid
+            << ". Maybe the persistent database have been erased locally.");
+    }
+    StatefulWriter::print_inconsistent_acknack(writer_guid, reader_guid, sn_set, next_sequence_number);
+}
+
 } // namespace rtps
 } // namespace fastrtps
 } // namespace eprosima

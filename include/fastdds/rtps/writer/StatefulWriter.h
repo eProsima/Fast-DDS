@@ -59,6 +59,12 @@ protected:
 
     void rebuild_status_after_load();
 
+    virtual void print_inconsistent_acknack(
+        const GUID_t& writer_guid,
+        const GUID_t& reader_guid,
+        const SequenceNumberSet_t& sn_set,
+        const SequenceNumber_t& next_sequence_number);
+
 private:
 
     //!Timed Event to manage the periodic HB to the Reader.
