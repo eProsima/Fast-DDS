@@ -72,8 +72,8 @@ void StatefulPersistentWriter::print_inconsistent_acknack(
     if (!log_error_printed)
     {
         log_error_printed = true;
-        logError(RTPS_WRITER, "Inconsistent acknack received in Local Writer " << writer_guid
-            << ". Maybe the persistent database have been erased locally.");
+        logError(RTPS_WRITER, "Inconsistent acknack received in Local Writer "
+                << writer_guid << ". Maybe the persistent database have been erased locally.");
     }
     StatefulWriter::print_inconsistent_acknack(writer_guid, reader_guid, sn_set, next_sequence_number);
 }

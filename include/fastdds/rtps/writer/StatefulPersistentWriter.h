@@ -24,7 +24,7 @@
 #include <fastdds/rtps/writer/PersistentWriter.h>
 
 namespace eprosima {
-namespace fastrtps{
+namespace fastrtps {
 namespace rtps {
 
 class IPersistenceService;
@@ -37,17 +37,24 @@ class StatefulPersistentWriter : public StatefulWriter, private PersistentWriter
 {
     friend class RTPSParticipantImpl;
 
-    StatefulPersistentWriter(RTPSParticipantImpl*,GUID_t& guid,WriterAttributes& att,WriterHistory* hist,WriterListener* listen=nullptr, IPersistenceService* persistence = nullptr);
+    StatefulPersistentWriter(
+            RTPSParticipantImpl*,
+            GUID_t& guid,
+            WriterAttributes& att,
+            WriterHistory* hist,
+            WriterListener* listen = nullptr,
+            IPersistenceService* persistence = nullptr);
 
     void print_inconsistent_acknack(
-        const GUID_t& writer_guid,
-        const GUID_t& reader_guid,
-        const SequenceNumberSet_t& sn_set,
-        const SequenceNumber_t& next_sequence_number);
+            const GUID_t& writer_guid,
+            const GUID_t& reader_guid,
+            const SequenceNumberSet_t& sn_set,
+            const SequenceNumber_t& next_sequence_number);
 
     bool log_error_printed = false;
 
-    public:
+public:
+
     virtual ~StatefulPersistentWriter();
 
     /**
@@ -64,11 +71,12 @@ class StatefulPersistentWriter : public StatefulWriter, private PersistentWriter
      * @param a_change Pointer to the change that is going to be removed.
      * @return True if removed correctly.
      */
-    bool change_removed_by_history(CacheChange_t* a_change) override;
+    bool change_removed_by_history(
+            CacheChange_t* a_change) override;
 };
-}
+} // namespace rtps
 } /* namespace rtps */
 } /* namespace eprosima */
 
-#endif
+#endif // ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 #endif /* _FASTDDS_RTPS_STATEFULPERSISTENTWRITER_H_ */
