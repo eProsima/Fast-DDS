@@ -152,11 +152,6 @@ protected:
             new (buffer + reference_offset) std::atomic<uint32_t>(0);
         }
 
-        explicit PayloadNode(
-                octet* data)
-        {
-            buffer = data - data_offset;
-        }
 
         ~PayloadNode()
         {
@@ -289,29 +284,6 @@ protected:
             uint32_t max_num_payloads);
 
     /**
-     * Resizes a payload to have @c size octets, and updates the buffer of the pool accordingly.
-     *
-     * @param [IN,OUT] payload   Payload buffer to resize
-     * @param [IN,OUT] size      Size of the payload buffer, will be updated with the final size
-     * @param [IN]     new_size  Number of octets that the Payload needs to fit
-     *
-     * @return @c true on success, @c false otherwise
-     *
-     * @pre
-     *   - @c payload is allocated in the pool
-     *   - @c payload is not in the buffer of free payloads. Only payloads marked as 'used' can be resized.
-     * @post
-     *   - On success, @c payload has @c size octets
-     *   - On failure, nothing has changed
-     *   - If the buffer is enlarged, newly allocated octets are initialized to zero.
-     */
-
-    bool resize_payload (
-            octet*& payload,
-            uint32_t& size,
-            uint32_t new_size);
-
-    /**
      * @brief Get a serialized payload for a new sample.
      * 
      * If the payload is recycled from the pool, @c resizable controls whether it can
@@ -321,7 +293,7 @@ protected:
      * 
      * If @c resizable is true and the reallocation fails, the operation returns false and
      * the payload is returned to the pool.
-     * 
+     *
      * @param [in]     size          Number of bytes required for the serialized payload
      * @param [in,out] cache_change  Cache change to assign the payload to
      * @param [in]     resizable     Whether payloads recycled from the pool are resizable to accomodate larger sizes

@@ -267,22 +267,6 @@ bool TopicPayloadPool::shrink (
     return true;
 }
 
-bool TopicPayloadPool::resize_payload (
-        octet*& data,
-        uint32_t& size,
-        uint32_t new_size)
-{
-    std::lock_guard<std::mutex> lock(mutex_);
-    PayloadNode* payload = all_payloads_.at(PayloadNode::data_index(data));
-    if (payload->resize(new_size))
-    {
-        data = payload->data();
-        size = payload->data_size();
-        return true;
-    }
-    return false;
-}
-
 std::shared_ptr<ITopicPayloadPool> TopicPayloadPool::get(
         PoolConfig config)
 {
