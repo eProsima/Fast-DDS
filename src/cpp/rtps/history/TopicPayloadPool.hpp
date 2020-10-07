@@ -140,9 +140,9 @@ protected:
         // Second metadata: size of memory allocated for the payload data (uint32_t)
         static constexpr size_t size_offset = sizeof(std::atomic<uint32_t>);
         // Third metadata: index of this node in the all_payloads_ buffer (uint32_t)
-        static constexpr size_t index_offset = sizeof(std::atomic<uint32_t>) + sizeof(uint32_t);
+        static constexpr size_t index_offset = size_offset + sizeof(uint32_t);
         // Payload data comes after the metadata
-        static constexpr size_t data_offset = sizeof(std::atomic<uint32_t>) + (2 * sizeof(uint32_t));
+        static constexpr size_t data_offset = index_offset + sizeof(uint32_t);
 
         explicit PayloadNode(
                 uint32_t size)
