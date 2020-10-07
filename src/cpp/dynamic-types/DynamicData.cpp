@@ -1264,7 +1264,9 @@ void DynamicData::set_value(
             {
                 value = stoi(sValue);
             }
-            catch (...){}
+            catch (...)
+            {
+            }
             set_int32_value(value, id);
         }
         break;
@@ -1275,7 +1277,9 @@ void DynamicData::set_value(
             {
                 value = stoul(sValue);
             }
-            catch (...){}
+            catch (...)
+            {
+            }
             set_uint32_value(value, id);
         }
         break;
@@ -1286,7 +1290,9 @@ void DynamicData::set_value(
             {
                 value = static_cast<int16_t>(stoi(sValue));
             }
-            catch (...){}
+            catch (...)
+            {
+            }
             set_int16_value(value, id);
         }
         break;
@@ -1297,7 +1303,9 @@ void DynamicData::set_value(
             {
                 value = static_cast<uint16_t>(stoul(sValue));
             }
-            catch (...){}
+            catch (...)
+            {
+            }
             set_uint16_value(value, id);
         }
         break;
@@ -1308,7 +1316,9 @@ void DynamicData::set_value(
             {
                 value = stoll(sValue);
             }
-            catch (...){}
+            catch (...)
+            {
+            }
             set_int64_value(value, id);
         }
         break;
@@ -1319,7 +1329,9 @@ void DynamicData::set_value(
             {
                 value = stoul(sValue);
             }
-            catch (...){}
+            catch (...)
+            {
+            }
             set_uint64_value(value, id);
         }
         break;
@@ -1330,7 +1342,9 @@ void DynamicData::set_value(
             {
                 value = stof(sValue);
             }
-            catch (...){}
+            catch (...)
+            {
+            }
             set_float32_value(value, id);
         }
         break;
@@ -1341,7 +1355,9 @@ void DynamicData::set_value(
             {
                 value = stod(sValue);
             }
-            catch (...){}
+            catch (...)
+            {
+            }
             set_float64_value(value, id);
         }
         break;
@@ -1352,7 +1368,9 @@ void DynamicData::set_value(
             {
                 value = stold(sValue);
             }
-            catch (...){}
+            catch (...)
+            {
+            }
             set_float128_value(value, id);
         }
         break;
@@ -1372,7 +1390,9 @@ void DynamicData::set_value(
                 std::wstring temp = std::wstring(sValue.begin(), sValue.end());
                 value = temp[0];
             }
-            catch (...){}
+            catch (...)
+            {
+            }
 
             set_char16_value(value, id);
         }
@@ -1384,7 +1404,9 @@ void DynamicData::set_value(
             {
                 value = stoi(sValue);
             }
-            catch (...){}
+            catch (...)
+            {
+            }
             set_bool_value(value == 1 ? true : false, id);
         }
         break;
@@ -1397,7 +1419,9 @@ void DynamicData::set_value(
                 {
                     value = static_cast<uint8_t>(stoul(sValue));
                 }
-                catch (...){}
+                catch (...)
+                {
+                }
                 set_byte_value(value, id);
             }
         }
@@ -1419,7 +1443,9 @@ void DynamicData::set_value(
             {
                 value = stoul(sValue);
             }
-            catch (...){}
+            catch (...)
+            {
+            }
             set_enum_value(value, id);
         }
         break;
@@ -1430,7 +1456,9 @@ void DynamicData::set_value(
             {
                 value = stoul(sValue);
             }
-            catch (...){}
+            catch (...)
+            {
+            }
             set_uint64_value(value, id);
         }
         break;
@@ -1466,7 +1494,9 @@ void DynamicData::set_default_value(
             {
                 value = stoi(defaultValue);
             }
-            catch (...){}
+            catch (...)
+            {
+            }
             set_int32_value(value, id);
         }
         break;
@@ -1477,7 +1507,9 @@ void DynamicData::set_default_value(
             {
                 value = stoul(defaultValue);
             }
-            catch (...){}
+            catch (...)
+            {
+            }
             set_uint32_value(value, id);
         }
         break;
@@ -1488,7 +1520,9 @@ void DynamicData::set_default_value(
             {
                 value = static_cast<int16_t>(stoi(defaultValue));
             }
-            catch (...){}
+            catch (...)
+            {
+            }
             set_int16_value(value, id);
         }
         break;
@@ -1499,7 +1533,9 @@ void DynamicData::set_default_value(
             {
                 value = static_cast<uint16_t>(stoul(defaultValue));
             }
-            catch (...){}
+            catch (...)
+            {
+            }
             set_uint16_value(value, id);
         }
         break;
@@ -1510,7 +1546,9 @@ void DynamicData::set_default_value(
             {
                 value = stoll(defaultValue);
             }
-            catch (...){}
+            catch (...)
+            {
+            }
             set_int64_value(value, id);
         }
         break;
@@ -1521,7 +1559,9 @@ void DynamicData::set_default_value(
             {
                 value = stoul(defaultValue);
             }
-            catch (...){}
+            catch (...)
+            {
+            }
             set_uint64_value(value, id);
         }
         break;
@@ -1532,7 +1572,9 @@ void DynamicData::set_default_value(
             {
                 value = stof(defaultValue);
             }
-            catch (...){}
+            catch (...)
+            {
+            }
             set_float32_value(value, id);
         }
         break;
@@ -1543,7 +1585,9 @@ void DynamicData::set_default_value(
             {
                 value = stod(defaultValue);
             }
-            catch (...){}
+            catch (...)
+            {
+            }
             set_float64_value(value, id);
         }
         break;
@@ -1554,7 +1598,9 @@ void DynamicData::set_default_value(
             {
                 value = stold(defaultValue);
             }
-            catch (...){}
+            catch (...)
+            {
+            }
             set_float128_value(value, id);
         }
         break;
@@ -1574,7 +1620,9 @@ void DynamicData::set_default_value(
                 std::wstring temp = std::wstring(defaultValue.begin(), defaultValue.end());
                 value = temp[0];
             }
-            catch (...){}
+            catch (...)
+            {
+            }
 
             set_char16_value(value, id);
         }
@@ -1586,7 +1634,9 @@ void DynamicData::set_default_value(
             {
                 value = stoi(defaultValue);
             }
-            catch (...){}
+            catch (...)
+            {
+            }
             set_bool_value(value == 1 ? true : false, id);
         }
         break;
@@ -1599,7 +1649,9 @@ void DynamicData::set_default_value(
                 {
                     value = static_cast<uint8_t>(stoul(defaultValue));
                 }
-                catch (...){}
+                catch (...)
+                {
+                }
                 set_byte_value(value, id);
             }
         }
@@ -1621,7 +1673,9 @@ void DynamicData::set_default_value(
             {
                 value = stoul(defaultValue);
             }
-            catch (...){}
+            catch (...)
+            {
+            }
             set_enum_value(value, id);
         }
         break;
@@ -1632,7 +1686,9 @@ void DynamicData::set_default_value(
             {
                 value = stoul(defaultValue);
             }
-            catch (...){}
+            catch (...)
+            {
+            }
             set_uint64_value(value, id);
         }
         break;
