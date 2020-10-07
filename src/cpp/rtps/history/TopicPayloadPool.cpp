@@ -190,7 +190,16 @@ TopicPayloadPool::PayloadNode* TopicPayloadPool::do_allocate(
 {
     PayloadNode* payload = nullptr;
 
-    payload = new PayloadNode(size);
+    try
+    {
+        payload = new PayloadNode(size);
+    }
+    catch (std::bad_alloc& exception)
+    {
+        logWarning(RTPS_HISTORY, "Failure to create a new payload " << exception.what());
+        return nullptr;
+    }
+
     payload->data_index(static_cast<uint32_t>(all_payloads_.size()));
     all_payloads_.push_back(payload);
     return payload;

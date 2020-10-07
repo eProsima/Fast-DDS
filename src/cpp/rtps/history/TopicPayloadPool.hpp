@@ -148,10 +148,15 @@ protected:
                 uint32_t size)
         {
             buffer = (octet*)calloc(size + data_offset, sizeof(octet));
+            if (buffer == nullptr)
+            {
+                throw std::bad_alloc();
+            }
             data_size(size);
+
+            // The atomic may need some initialization depending on the platform
             new (buffer + reference_offset) std::atomic<uint32_t>(0);
         }
-
 
         ~PayloadNode()
         {
