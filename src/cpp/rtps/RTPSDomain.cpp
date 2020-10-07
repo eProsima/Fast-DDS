@@ -465,6 +465,22 @@ void RTPSDomainImpl::create_participant_guid(
     guid.entityId = c_EntityId_RTPSParticipant;
 }
 
+RTPSParticipantImpl* RTPSDomainImpl::find_local_participant(
+        const GUID_t& guid)
+{
+    std::lock_guard<std::mutex> guard(RTPSDomain::m_mutex);
+    for (const RTPSDomain::t_p_RTPSParticipant& participant : RTPSDomain::m_RTPSParticipants)
+    {
+        if (participant.second->getGuid().guidPrefix == guid.guidPrefix)
+        {
+            // Participant found, forward the query
+            return participant.second;
+        }
+    }
+
+    return nullptr;
+}
+
 RTPSReader* RTPSDomainImpl::find_local_reader(
         const GUID_t& reader_guid)
 {
