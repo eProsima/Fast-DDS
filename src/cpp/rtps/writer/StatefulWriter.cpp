@@ -1987,7 +1987,6 @@ bool StatefulWriter::process_acknack(
     if (result)
     {
         SequenceNumber_t received_sequence_number = sn_set.empty() ? sn_set.base() : sn_set.max();
-//        std::cout << "Future: " << (received_sequence_number > next_sequence_number()) << std::endl;
         if (received_sequence_number <= next_sequence_number())
         {
             for (ReaderProxy* remote_reader : matched_readers_)
@@ -2042,19 +2041,6 @@ bool StatefulWriter::process_acknack(
         else
         {
             print_inconsistent_acknack(writer_guid, reader_guid, sn_set, next_sequence_number());
-/*            // Check persistence QoS
-            PropertyPolicy property_policies = this->getAttributes().properties;
-            std::string* persistence_plugin = PropertyPolicyHelper::find_property(property_policies,
-                    "dds.persistence.plugin");
-            if (persistence_plugin != nullptr)
-            {
-                logError(RTPS_WRITER, "Received remote ACK greater than the local sent one. Maybe the persistent \
-                        database have been erased locally.");
-            }
-            else
-            {
-                logWarning(RTPS_WRITER, "Not persistence.");
-            }*/
         }
     }
 
@@ -2142,8 +2128,9 @@ void StatefulWriter::print_inconsistent_acknack(
         const SequenceNumberSet_t& sn_set,
         const SequenceNumber_t& next_sequence_number)
 {
-    logWarning(RTPS_WRITER, "Inconsistent acknack received. Local Writer " << writer_guid << " expected SequenceNumber "
-            << next_sequence_number << ". Remote Reader " << reader_guid << "sent SequenceNumberSet [" << sn_set.base() 
+    logWarning(RTPS_WRITER, "Inconsistent acknack received. Local Writer "
+            << writer_guid << " expected SequenceNumber " << next_sequence_number << ". Remote Reader "
+            << reader_guid << "sent SequenceNumberSet [" << sn_set.base() 
             << ", " << sn_set.max() << "].");
 }
 
