@@ -103,6 +103,11 @@ public:
         return participant_change_data_.is_my_server;
     }
 
+    bool is_local_server()
+    {
+        return (is_my_server() || (!is_client() && is_my_client()));
+    }
+
     fastrtps::rtps::RemoteLocatorList metatraffic_locators()
     {
         return participant_change_data_.metatraffic_locators;
