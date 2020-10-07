@@ -335,20 +335,32 @@ RTPSReader* RTPSDomain::createRTPSReader(
         ReaderHistory* rhist,
         ReaderListener* rlisten)
 {
-    std::unique_lock<std::mutex> lock(m_mutex);
-    for (auto it = m_RTPSParticipants.begin(); it != m_RTPSParticipants.end(); ++it)
+    RTPSParticipantImpl* impl = RTPSDomainImpl::find_local_participant(p->getGuid());
+    if (impl)
     {
-        if (it->first->getGuid().guidPrefix == p->getGuid().guidPrefix)
+        RTPSReader* reader;
+        if (impl->createReader(&reader, ratt, rhist, rlisten))
         {
-            t_p_RTPSParticipant participant = *it;
-            lock.unlock();
-            RTPSReader* reader;
-            if (participant.second->createReader(&reader, ratt, rhist, rlisten))
-            {
-                return reader;
-            }
+            return reader;
+        }
+    }
+    return nullptr;
+}
 
-            return nullptr;
+RTPSReader* RTPSDomain::createRTPSReader(
+        RTPSParticipant* p,
+        ReaderAttributes& ratt,
+        const std::shared_ptr<IPayloadPool>& payload_pool,
+        ReaderHistory* rhist,
+        ReaderListener* rlisten)
+{
+    RTPSParticipantImpl* impl = RTPSDomainImpl::find_local_participant(p->getGuid());
+    if (impl)
+    {
+        RTPSReader* reader;
+        if (impl->createReader(&reader, ratt, payload_pool, rhist, rlisten))
+        {
+            return reader;
         }
     }
     return nullptr;
