@@ -39,9 +39,10 @@ public:
             {
                 //First remove it from all_payloads
                 std::unique_lock<std::mutex> lock(mutex_);
-                PayloadNode* payload = all_payloads_.at(PayloadNode::data_index(cache_change.serializedPayload.data));
-                all_payloads_.at(payload->data_index()) = all_payloads_.back();
-                all_payloads_.back()->data_index(payload->data_index());
+                uint32_t data_index = PayloadNode::data_index(cache_change.serializedPayload.data);
+                PayloadNode* payload = all_payloads_.at(data_index);
+                all_payloads_.at(data_index) = all_payloads_.back();
+                all_payloads_.back()->data_index(data_index);
                 all_payloads_.pop_back();
                 lock.unlock();
 

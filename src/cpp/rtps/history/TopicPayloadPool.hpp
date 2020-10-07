@@ -69,6 +69,7 @@ public:
      *
      * @param [in]  config              The new history's pool requirements.
      * @param [in]  is_reader_history   True if the new history is for a reader. False otherwise.
+     * @return Whether the operation was succesful or not.
      *
      * @pre
      *   - Current pool is configured for the same memory policy as @c config.memory_policy.
@@ -94,7 +95,8 @@ public:
      *
      * @param [in]  config              The old history's pool requirements, which are no longer active.
      * @param [in]  is_reader_history   True if the history was for a reader. False otherwise.
-     *
+     * @return Whether the operation was succesful or not.
+     * 
      * @pre
      *   - Current pool is configured for the same memory policy as @c config.memory_policy.
      *   - If all remaining histories were reserved with non zero @c config.maximum_size
@@ -167,6 +169,8 @@ protected:
         bool resize (
                 uint32_t size)
         {
+            assert(size > data_size());
+
             octet* old_buffer = buffer;
             buffer = (octet*)realloc(buffer, size + data_offset);
             if (!buffer)
@@ -248,6 +252,13 @@ protected:
 
     /**
      * Adds a new payload in the pool, but does not add it to the list of free payloads
+     * 
+     * @param [IN] size  Minimum size required for the payload data
+     * @return The node representing the newly allocated payload.
+     * 
+     * @post
+     *   - @c payload_pool_allocated_size() increases by one
+     *   - @c payload_pool_available_size() does not change
      */
     virtual PayloadNode* allocate(
             uint32_t size);
@@ -266,9 +277,9 @@ protected:
      * @param [IN] size             Size to allocate for the payloads that need to be added to the pool
      *
      * @pre
-     *   - @c size <= @c max_pool_size_
+     *   - @c min_num_payloads <= @c max_pool_size_
      * @post
-     *   - @c get_allPayloadsSize() >= @c min_num_payloads
+     *   - @c payload_pool_allocated_size() >= @c min_num_payloads
      */
     virtual void reserve (
             uint32_t min_num_payloads,
@@ -282,8 +293,8 @@ protected:
      * @return @c true on success, @c false otherwise
      *
      * @post
-     *   - On success, get_allPayloadsSize() <= max_num_payloads
-     *   - On failure, memory for some payloads may have been released, but get_allPayloadsSize() > min_num_payloads
+     *   - On success, payload_pool_allocated_size() <= max_num_payloads
+     *   - On failure, memory for some payloads may have been released, but payload_pool_allocated_size() > min_num_payloads
      */
     bool shrink (
             uint32_t max_num_payloads);
