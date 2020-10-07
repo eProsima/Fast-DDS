@@ -582,6 +582,70 @@ TEST_P(PubSubHistory, ReliableTransientLocalKeepLast1Data300Kb)
     ASSERT_EQ(reader.get_last_sequence_received().low, 10u);
 }
 
+// Test created to check bug #8945
+/*!
+ * @fn TEST(PubSubHistory, WriterWithoutReadersTransientLocal)
+ * @brief This test checks that the writer doesn't fill its history while there are no readers matched.
+ *
+ * The test creates a Reliable, Transient Local Writer with a Keep All history, and its resources limited to
+ * 13 samples.
+ * Then it creates a Reliable, Transient Local Reader with a Keep Last 1 history and waits until both of them discover
+ * each other.
+ * When both of them are matched, the writer sends 13 samples, asserting that all of them have been sent and the
+ * reader starts its reception.
+ * After that, the reader is destroyed, meaning that the writer runs out of readers. Even if there are no readers,
+ * it has to continue sending the remaining samples, deleting the old ones if the history is filled up.
+ */
+TEST_P(PubSubHistory, WriterWithoutReadersTransientLocal)
+{
+    PubSubWriter<Data1mbType> writer(TEST_TOPIC_NAME);
+
+    writer
+    .history_kind(KEEP_ALL_HISTORY_QOS)
+    .durability_kind(TRANSIENT_LOCAL_DURABILITY_QOS)
+    .asynchronously(ASYNCHRONOUS_PUBLISH_MODE)
+    .reliability(RELIABLE_RELIABILITY_QOS)
+    .resource_limits_allocated_samples(13)
+    .resource_limits_max_samples(13)
+    .init();
+
+    ASSERT_TRUE(writer.isInitialized());
+
+    // Remove the reader
+    PubSubReader<Data1mbType> reader(TEST_TOPIC_NAME);
+    reader
+    .reliability(RELIABLE_RELIABILITY_QOS)
+    .durability_kind(TRANSIENT_LOCAL_DURABILITY_QOS)
+    .init();
+
+    ASSERT_TRUE(reader.isInitialized());
+
+    // Wait for discovery.
+    writer.wait_discovery();
+    reader.wait_discovery();
+
+    auto data1 = default_data300kb_data_generator(13);
+    auto data2 = default_data300kb_data_generator(14);
+
+    auto unreceived_data = default_data300kb_data_generator(27);
+
+    // Send data
+    writer.send(data1);
+
+    // In this test all data should be sent.
+    ASSERT_TRUE(data1.empty());
+
+    reader.startReception(unreceived_data);
+
+    reader.destroy();
+
+    // Send data
+    writer.send(data2);
+    // In this test all data should be sent.
+    ASSERT_TRUE(data2.empty());
+
+}
+
 INSTANTIATE_TEST_CASE_P(PubSubHistory,
         PubSubHistory,
         testing::Values(false, true),

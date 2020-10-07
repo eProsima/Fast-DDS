@@ -83,41 +83,41 @@ StatefulWriter::StatefulWriter(
     const RTPSParticipantAttributes& part_att = pimpl->getRTPSParticipantAttributes();
 
     periodic_hb_event_ = new TimedEvent(pimpl->getEventResource(), [&](TimedEvent::EventCode code) -> bool
-    {
-        if (TimedEvent::EVENT_SUCCESS == code)
-        {
-            if (send_periodic_heartbeat())
-            {
-                return true;
-            }
-        }
+                    {
+                        if (TimedEvent::EVENT_SUCCESS == code)
+                        {
+                            if (send_periodic_heartbeat())
+                            {
+                                return true;
+                            }
+                        }
 
-        return false;
-    },
+                        return false;
+                    },
                     TimeConv::Time_t2MilliSecondsDouble(m_times.heartbeatPeriod));
 
     nack_response_event_ = new TimedEvent(pimpl->getEventResource(), [&](TimedEvent::EventCode code) -> bool
-    {
-        if (TimedEvent::EVENT_SUCCESS == code)
-        {
-            perform_nack_response();
-        }
+                    {
+                        if (TimedEvent::EVENT_SUCCESS == code)
+                        {
+                            perform_nack_response();
+                        }
 
-        return false;
-    },
+                        return false;
+                    },
                     TimeConv::Time_t2MilliSecondsDouble(m_times.nackResponseDelay));
 
     if (disable_positive_acks_)
     {
         ack_event_ = new TimedEvent(pimpl->getEventResource(), [&](TimedEvent::EventCode code) -> bool
-        {
-            if (TimedEvent::EVENT_SUCCESS == code)
-            {
-                return ack_timer_expired();
-            }
+                        {
+                            if (TimedEvent::EVENT_SUCCESS == code)
+                            {
+                                return ack_timer_expired();
+                            }
 
-            return false;
-        },
+                            return false;
+                        },
                         att.keep_duration.to_ns() * 1e-6); // in milliseconds
     }
 
@@ -193,7 +193,7 @@ void StatefulWriter::unsent_change_added_to_history(
 
 #if HAVE_SECURITY
     encrypt_cachechange(change);
-#endif
+#endif // if HAVE_SECURITY
 
     if (!matched_readers_.empty())
     {
@@ -290,15 +290,13 @@ void StatefulWriter::unsent_change_added_to_history(
                 {
                     periodic_hb_event_->restart_timer(max_blocking_time);
                 }
-                if ( (mp_listener != nullptr) && this->is_acked_by_all(change) )
-                {
-                    mp_listener->onWriterChangeReceivedByAll(this, change);
-                }
 
                 if (disable_positive_acks_ && last_sequence_number_ == SequenceNumber_t())
                 {
                     last_sequence_number_ = change->sequenceNumber;
                 }
+
+                check_acked_status();
             }
             catch (const RTPSMessageGroup::timeout&)
             {
@@ -351,10 +349,7 @@ void StatefulWriter::unsent_change_added_to_history(
     else
     {
         logInfo(RTPS_WRITER, "No reader proxy to add change.");
-        if (mp_listener != nullptr)
-        {
-            mp_listener->onWriterChangeReceivedByAll(this, change);
-        }
+        check_acked_status();
     }
 }
 
@@ -750,7 +745,7 @@ void StatefulWriter::send_any_unsent_changes()
                     }
 
                     for (std::pair<std::vector<ReaderProxy*>,
-                            std::set<SequenceNumber_t> > pair : notRelevantChanges.elements())
+                            std::set<SequenceNumber_t>> pair : notRelevantChanges.elements())
                     {
                         locator_selector_.reset(false);
 
@@ -815,9 +810,9 @@ void StatefulWriter::update_reader_info(
     {
         RTPSParticipantImpl* part = getRTPSParticipant();
         locator_selector_.for_each([part](const Locator_t& loc)
-        {
-            part->createSenderResources(loc);
-        });
+                {
+                    part->createSenderResources(loc);
+                });
     }
 
     there_are_remote_readers_ = false;
@@ -1097,9 +1092,9 @@ bool StatefulWriter::is_acked_by_all(
     assert(mp_history->next_sequence_number() > change->sequenceNumber);
     return std::all_of(matched_readers_.begin(), matched_readers_.end(),
                    [change](const ReaderProxy* reader)
-    {
-        return reader->change_is_acked(change->sequenceNumber);
-    });
+                   {
+                       return reader->change_is_acked(change->sequenceNumber);
+                   });
 }
 
 bool StatefulWriter::all_readers_updated()
@@ -1125,17 +1120,18 @@ bool StatefulWriter::wait_for_all_acked(
 
     all_acked_ = std::none_of(matched_readers_.begin(), matched_readers_.end(),
                     [](const ReaderProxy* reader)
-    {
-        return reader->has_changes();
-    });
+                    {
+                        return reader->has_changes();
+                    });
     lock.unlock();
 
     if (!all_acked_)
     {
         std::chrono::microseconds max_w(::TimeConv::Duration_t2MicroSecondsInt64(max_wait));
-        all_acked_cond_.wait_for(all_acked_lock, max_w, [&]() {
-            return all_acked_;
-        });
+        all_acked_cond_.wait_for(all_acked_lock, max_w, [&]()
+                {
+                    return all_acked_;
+                });
     }
 
     return all_acked_;
@@ -1147,7 +1143,8 @@ void StatefulWriter::check_acked_status()
 
     bool all_acked = true;
     bool has_min_low_mark = false;
-    SequenceNumber_t min_low_mark;
+    // #8945 If no readers matched, notify all old changes.
+    SequenceNumber_t min_low_mark = mp_history->next_sequence_number() - 1;
 
     for (const ReaderProxy* it : matched_readers_)
     {
@@ -1180,9 +1177,9 @@ void StatefulWriter::check_acked_status()
                                 [](
                                     const CacheChange_t* change,
                                     const SequenceNumber_t& seq)
-                {
-                    return change->sequenceNumber < seq;
-                });
+                                {
+                                    return change->sequenceNumber < seq;
+                                });
                 if (cit != history_end && (*cit)->sequenceNumber == current_seq)
                 {
                     mp_listener->onWriterChangeReceivedByAll(this, *cit);
@@ -1219,14 +1216,7 @@ bool StatefulWriter::try_remove_change(
 
     {
         std::lock_guard<RecursiveTimedMutex> guard(mp_mutex);
-        for (ReaderProxy* it : matched_readers_)
-        {
-            SequenceNumber_t reader_low_mark = it->changes_low_mark();
-            if (min_low_mark == SequenceNumber_t() || reader_low_mark < min_low_mark)
-            {
-                min_low_mark = reader_low_mark;
-            }
-        }
+        min_low_mark = next_all_acked_notify_sequence_ - 1;
     }
 
     SequenceNumber_t calc = min_low_mark < get_seq_num_min() ? SequenceNumber_t() :
@@ -1237,9 +1227,10 @@ bool StatefulWriter::try_remove_change(
     {
         may_remove_change_ = 0;
         may_remove_change_cond_.wait_until(lock, max_blocking_time_point,
-                [&]() {
-            return may_remove_change_ > 0;
-        });
+                [&]()
+                {
+                    return may_remove_change_ > 0;
+                });
         may_remove_change = may_remove_change_;
     }
 
@@ -1341,9 +1332,9 @@ bool StatefulWriter::send_periodic_heartbeat(
 
             unacked_changes = std::any_of(matched_readers_.begin(), matched_readers_.end(),
                             [](const ReaderProxy* reader)
-            {
-                return reader->has_unacknowledged();
-            });
+                            {
+                                return reader->has_unacknowledged();
+                            });
 
             if (unacked_changes)
             {
