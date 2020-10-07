@@ -985,8 +985,7 @@ bool DiscoveryDataBase::process_dirty_topics()
                                     << readers_it->second.change()->instanceHandle);
                             edp_subscriptions_to_send_.push_back(readers_it->second.change());
                         }
-                        // pending acknowledgements on this topic
-                        is_clearable = false;
+                        // The topic can now be cleared because nothing more will be added to the builitin writers
                     }
                 }
                 else
@@ -996,6 +995,7 @@ bool DiscoveryDataBase::process_dirty_topics()
                                 pdp_to_send_.begin(),
                                 pdp_to_send_.end(),
                                 parts_reader_it->second.change()) == pdp_to_send_.end())
+
                     {
                         logInfo(DISCOVERY_DATABASE, "Addind readers's DATA(p) to send: "
                                 << parts_reader_it->second.change()->instanceHandle);
@@ -1023,8 +1023,7 @@ bool DiscoveryDataBase::process_dirty_topics()
                                     << writers_it->second.change()->instanceHandle);
                             edp_publications_to_send_.push_back(writers_it->second.change());
                         }
-                        // pending acknowledgements on this topic
-                        is_clearable = false;
+                        // The topic can now be cleared because nothing more will be added to the builitin writers
                    }
                 }
                 else
@@ -1130,8 +1129,11 @@ bool DiscoveryDataBase::is_writer(
     {
         return false;
     }
-    constexpr uint8_t entity_id_is_writer_bit = 0x03;
-    return ((guid_from_change(ch).entityId.value[3] & entity_id_is_writer_bit) != 0);
+
+    // For writers: NO_KEY = 0x03, WITH_KEY = 0x02
+    // For readers: NO_KEY = 0x04, WITH_KEY = 0x07
+    constexpr uint8_t entity_id_is_reader_bit = 0x04;
+    return !(guid_from_change(ch).entityId.value[3] & entity_id_is_reader_bit);
 }
 
 bool DiscoveryDataBase::is_reader(
@@ -1141,8 +1143,10 @@ bool DiscoveryDataBase::is_reader(
     {
         return false;
     }
+    // For writers: NO_KEY = 0x03, WITH_KEY = 0x02
+    // For readers: NO_KEY = 0x04, WITH_KEY = 0x07
     constexpr uint8_t entity_id_is_reader_bit = 0x04;
-    return ((guid_from_change(ch).entityId.value[3] & entity_id_is_reader_bit) != 0);
+    return guid_from_change(ch).entityId.value[3] & entity_id_is_reader_bit;
 }
 
 GUID_t DiscoveryDataBase::guid_from_change(
@@ -1164,6 +1168,14 @@ CacheChange_t* DiscoveryDataBase::cache_change_own_participant()
 const std::vector<GuidPrefix_t> DiscoveryDataBase::remote_participants()
 {
     std::vector<GuidPrefix_t> remote_participants;
+
+    // avoid multiple allocations
+    std::size_t alloc = participants_.size();
+    if (--alloc)
+    {
+        remote_participants.reserve(alloc);
+    }
+
     // Iterate over participants to add the remote ones
     for (auto participant: participants_)
     {

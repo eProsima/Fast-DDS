@@ -47,6 +47,7 @@ namespace eprosima {
 namespace fastdds {
 namespace rtps {
 
+using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
 
 PDPServer2::PDPServer2(
@@ -407,7 +408,7 @@ void PDPServer2::announceParticipantState(
         - DSClientEvent (own thread)
         - ResendParticipantProxyDataPeriod (participant event thread)
      */
-    std::lock_guard<fastrtps::RecursiveTimedMutex> wlock(pW->getMutex());
+    std::lock_guard<RecursiveTimedMutex> wlock(pW->getMutex());
 
     if (!dispose)
     {
@@ -795,7 +796,7 @@ bool PDPServer2::process_disposals()
         if (discovery_db_.is_participant(change))
         {
             // Lock PDP writer
-            std::unique_lock<fastrtps::RecursiveTimedMutex> lock(mp_PDPWriter->getMutex());
+            std::unique_lock<RecursiveTimedMutex> lock(mp_PDPWriter->getMutex());
 
             // Remove all DATA(p) with the same sample identity as the DATA(Up) from PDP writer's history.
             remove_related_alive_from_history_nts(mp_PDPWriterHistory, change_guid_prefix);
@@ -807,7 +808,7 @@ bool PDPServer2::process_disposals()
         else if (discovery_db_.is_writer(change))
         {
             // Lock EDP publications writer
-            std::unique_lock<fastrtps::RecursiveTimedMutex> lock(edp->publications_writer_.first->getMutex());
+            std::unique_lock<RecursiveTimedMutex> lock(edp->publications_writer_.first->getMutex());
 
             // Remove all DATA(w) with the same sample identity as the DATA(Uw) from EDP publications writer's history
             remove_related_alive_from_history_nts(pubs_history, change_guid_prefix);
@@ -824,7 +825,7 @@ bool PDPServer2::process_disposals()
         else if (discovery_db_.is_reader(change))
         {
             // Lock EDP subscriptions writer
-            std::unique_lock<fastrtps::RecursiveTimedMutex> lock(edp->subscriptions_writer_.first->getMutex());
+            std::unique_lock<RecursiveTimedMutex> lock(edp->subscriptions_writer_.first->getMutex());
 
             // Remove all DATA(r) with the same sample identity as the DATA(Ur) from EDP subscriptions writer's history
             remove_related_alive_from_history_nts(subs_history, change_guid_prefix);
@@ -1035,7 +1036,7 @@ bool PDPServer2::process_to_send_list(
         WriterHistory* history)
 {
     // Iterate over DATAs in send_list
-    std::unique_lock<fastrtps::RecursiveTimedMutex> lock(writer->getMutex());
+    std::unique_lock<RecursiveTimedMutex> lock(writer->getMutex());
     for (auto change: send_list)
     {
         // If the DATA is already in the writer's history, then remove it.
@@ -1053,7 +1054,7 @@ bool PDPServer2::remove_change_from_writer_history(
         CacheChange_t* change,
         bool release_change /*= true*/)
 {
-    std::unique_lock<fastrtps::RecursiveTimedMutex> lock(writer->getMutex());
+    std::unique_lock<RecursiveTimedMutex> lock(writer->getMutex());
     return remove_change_from_history_nts(history, change, release_change);
 }
 
