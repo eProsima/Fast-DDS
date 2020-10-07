@@ -59,7 +59,8 @@ public:
      *
      * @param entries_allocation Allocation configuration regarding the number of remote entities.
      */
-    LocatorSelector(const ResourceLimitedContainerConfig& entries_allocation)
+    LocatorSelector(
+            const ResourceLimitedContainerConfig& entries_allocation)
         : entries_(entries_allocation)
         , selections_(entries_allocation)
         , last_state_(entries_allocation)
@@ -81,7 +82,8 @@ public:
      *
      * @param entry Pointer to the LocatorSelectorEntry to add.
      */
-    bool add_entry(LocatorSelectorEntry* entry)
+    bool add_entry(
+            LocatorSelectorEntry* entry)
     {
         return entries_.push_back(entry) != nullptr;
     }
@@ -90,10 +92,11 @@ public:
      * Remove an entry from this selector.
      * @param guid Identifier of the entry to be removed.
      */
-    bool remove_entry(const GUID_t& guid)
+    bool remove_entry(
+            const GUID_t& guid)
     {
         return entries_.remove_if(
-            [& guid](LocatorSelectorEntry* entry)
+            [&guid](LocatorSelectorEntry* entry)
             {
                 return entry->remote_guid == guid;
             });
@@ -104,10 +107,11 @@ public:
      *
      * @param enable_all Indicates whether entries should be initially enabled.
      */
-    void reset(bool enable_all)
+    void reset(
+            bool enable_all)
     {
         last_state_.clear();
-        for(LocatorSelectorEntry* entry : entries_)
+        for (LocatorSelectorEntry* entry : entries_)
         {
             last_state_.push_back(entry->enabled ? 1 : 0);
             entry->enable(enable_all);
@@ -119,7 +123,8 @@ public:
      *
      * @param guid GUID of the entry to enable.
      */
-    void enable(const GUID_t& guid)
+    void enable(
+            const GUID_t& guid)
     {
         for (LocatorSelectorEntry* entry : entries_)
         {
@@ -145,7 +150,7 @@ public:
 
         for (size_t i = 0; i < entries_.size(); ++i)
         {
-            if (last_state_.at(i) != (entries_.at(i)->enabled ? 1 : 0) )
+            if (last_state_.at(i) != (entries_.at(i)->enabled ? 1 : 0))
             {
                 return true;
             }
@@ -188,10 +193,11 @@ public:
      *
      * @param index The index of the entry to mark as selected.
      */
-    void select(size_t index)
+    void select(
+            size_t index)
     {
         if (index < entries_.size() &&
-            std::find(selections_.begin(), selections_.end(), index) == selections_.end())
+                std::find(selections_.begin(), selections_.end(), index) == selections_.end())
         {
             selections_.push_back(index);
         }
@@ -223,9 +229,10 @@ public:
      *
      * @return True if the locator has been selected, false otherwise.
      */
-    bool is_selected(const Locator_t locator) const
+    bool is_selected(
+            const Locator_t locator) const
     {
-        if(IPLocator::isMulticast(locator))
+        if (IPLocator::isMulticast(locator))
         {
             for (size_t index : selections_)
             {
@@ -264,7 +271,8 @@ public:
      *                 This can either be a function pointer or a function object.
      */
     template<class UnaryPredicate>
-    void for_each(UnaryPredicate action) const
+    void for_each(
+            UnaryPredicate action) const
     {
         for (size_t index : selections_)
         {
@@ -288,14 +296,16 @@ public:
         Locator_t* locator;
     };
 
-    class iterator : public std::iterator<
-            std::input_iterator_tag,                    // iterator_category
-            Locator_t,                                  // value_type
-            IteratorIndex,                              // difference_type
-            Locator_t*,                                 // pointer
-            Locator_t&>,                                 // reference
+    class iterator :
         public LocatorsIterator
     {
+        // use of std::iterator to introduce the following aliases is deprecated
+        using iterator_category = std::input_iterator_tag;
+        using value_type        = Locator_t;
+        using difference_type   = IteratorIndex;
+        using pointer           = Locator_t*;
+        using reference         = Locator_t&;
+
         const LocatorSelector& locator_selector_;
         IteratorIndex current_;
 
@@ -341,7 +351,7 @@ public:
                 Position index_pos)
             : locator_selector_(locator_selector)
         {
-            current_ = {std::numeric_limits<size_t>::max(),0,true, nullptr};
+            current_ = {std::numeric_limits<size_t>::max(), 0, true, nullptr};
 
             if (index_pos == Position::Begin)
             {
@@ -349,13 +359,14 @@ public:
             }
         }
 
-        iterator(const iterator& other)
+        iterator(
+                const iterator& other)
             : locator_selector_(other.locator_selector_)
             , current_(other.current_)
         {
         }
 
-        iterator& operator++()
+        iterator& operator ++()
         {
             // Shouldn't call ++ when index already at the end
             assert(current_.selections_index < locator_selector_.selections_.size());
@@ -404,39 +415,40 @@ public:
             return *this;
         }
 
-        bool operator==(
+        bool operator ==(
                 const LocatorsIterator& other) const
         {
             return *this == static_cast<const iterator&>(other);
         }
 
-        bool operator!=(
+        bool operator !=(
                 const LocatorsIterator& other) const
         {
             return !(*this == other);
         }
 
-        bool operator==(
+        bool operator ==(
                 const iterator& other) const
         {
             return (current_.locator == other.current_.locator);
         }
 
-        bool operator!=(
+        bool operator !=(
                 const iterator& other) const
         {
             return !(*this == other);
         }
 
-        pointer operator->() const
+        pointer operator ->() const
         {
             return current_.locator;
         }
 
-        reference operator*() const
+        reference operator *() const
         {
             return *current_.locator;
         }
+
     };
 
     iterator begin() const
@@ -450,6 +462,7 @@ public:
     }
 
 private:
+
     //! Entries collection.
     ResourceLimitedVector<LocatorSelectorEntry*> entries_;
     //! List of selected indexes.

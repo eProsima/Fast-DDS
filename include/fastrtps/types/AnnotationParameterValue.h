@@ -24,24 +24,20 @@
 
 #include <fastrtps/types/TypesBase.h>
 #include <fastrtps/types/TypeIdentifier.h>
+#include <fastrtps/utils/string_convert.hpp>
 #include <stdint.h>
 #include <array>
-#include <string>
 #include <vector>
-#include <codecvt>
-#include <locale>
 
-namespace eprosima
-{
-    namespace fastcdr
-    {
-        class Cdr;
-    }
-}
-namespace eprosima{
-namespace fastrtps{
+namespace eprosima {
+namespace fastcdr {
+class Cdr;
+} // namespace fastcdr
+} // namespace eprosima
+namespace eprosima {
+namespace fastrtps {
 
-namespace types{
+namespace types {
 
 /*!
  * @brief This class represents the structure ExtendedAnnotationParameterValue defined by the user in the IDL file.
@@ -65,25 +61,29 @@ public:
      * @brief Copy constructor.
      * @param x Reference to the object ExtendedAnnotationParameterValue that will be copied.
      */
-    ExtendedAnnotationParameterValue(const ExtendedAnnotationParameterValue &x);
+    ExtendedAnnotationParameterValue(
+            const ExtendedAnnotationParameterValue& x);
 
     /*!
      * @brief Move constructor.
      * @param x Reference to the object ExtendedAnnotationParameterValue that will be copied.
      */
-    ExtendedAnnotationParameterValue(ExtendedAnnotationParameterValue &&x);
+    ExtendedAnnotationParameterValue(
+            ExtendedAnnotationParameterValue&& x);
 
     /*!
      * @brief Copy assignment.
      * @param x Reference to the object ExtendedAnnotationParameterValue that will be copied.
      */
-    ExtendedAnnotationParameterValue& operator=(const ExtendedAnnotationParameterValue &x);
+    ExtendedAnnotationParameterValue& operator =(
+            const ExtendedAnnotationParameterValue& x);
 
     /*!
      * @brief Move assignment.
      * @param x Reference to the object ExtendedAnnotationParameterValue that will be copied.
      */
-    ExtendedAnnotationParameterValue& operator=(ExtendedAnnotationParameterValue &&x);
+    ExtendedAnnotationParameterValue& operator =(
+            ExtendedAnnotationParameterValue&& x);
 
     /*!
      * @brief This function returns the serialized size of a data depending on the buffer alignment.
@@ -91,20 +91,24 @@ public:
      * @param current_alignment Buffer alignment.
      * @return Serialized size.
      */
-    static size_t getCdrSerializedSize(const ExtendedAnnotationParameterValue& data, size_t current_alignment = 0);
+    static size_t getCdrSerializedSize(
+            const ExtendedAnnotationParameterValue& data,
+            size_t current_alignment = 0);
 
 
     /*!
      * @brief This function serializes an object using CDR serialization.
      * @param cdr CDR serialization object.
      */
-    void serialize(eprosima::fastcdr::Cdr &cdr) const;
+    void serialize(
+            eprosima::fastcdr::Cdr& cdr) const;
 
     /*!
      * @brief This function deserializes an object using CDR serialization.
      * @param cdr CDR serialization object.
      */
-    void deserialize(eprosima::fastcdr::Cdr &cdr);
+    void deserialize(
+            eprosima::fastcdr::Cdr& cdr);
 
 
 
@@ -114,7 +118,8 @@ public:
      * @param current_alignment Buffer alignment.
      * @return Maximum serialized size.
      */
-    static size_t getKeyMaxCdrSerializedSize(size_t current_alignment = 0);
+    static size_t getKeyMaxCdrSerializedSize(
+            size_t current_alignment = 0);
 
     /*!
      * @brief This function tells you if the Key has been defined for this type
@@ -125,9 +130,14 @@ public:
      * @brief This function serializes the key members of an object using CDR serialization.
      * @param cdr CDR serialization object.
      */
-    void serializeKey(eprosima::fastcdr::Cdr &cdr) const;
+    void serializeKey(
+            eprosima::fastcdr::Cdr& cdr) const;
 
-    bool operator==(const ExtendedAnnotationParameterValue&) const { return true; }
+    bool operator ==(
+            const ExtendedAnnotationParameterValue&) const
+    {
+        return true;
+    }
 
 private:
 };
@@ -153,32 +163,37 @@ public:
      * @brief Copy constructor.
      * @param x Reference to the object AnnotationParameterValue that will be copied.
      */
-    AnnotationParameterValue(const AnnotationParameterValue &x);
+    AnnotationParameterValue(
+            const AnnotationParameterValue& x);
 
     /*!
      * @brief Move constructor.
      * @param x Reference to the object AnnotationParameterValue that will be copied.
      */
-    AnnotationParameterValue(AnnotationParameterValue &&x);
+    AnnotationParameterValue(
+            AnnotationParameterValue&& x);
 
     /*!
      * @brief Copy assignment.
      * @param x Reference to the object AnnotationParameterValue that will be copied.
      */
-    AnnotationParameterValue& operator=(const AnnotationParameterValue &x);
+    AnnotationParameterValue& operator =(
+            const AnnotationParameterValue& x);
 
     /*!
      * @brief Move assignment.
      * @param x Reference to the object AnnotationParameterValue that will be copied.
      */
-    AnnotationParameterValue& operator=(AnnotationParameterValue &&x);
+    AnnotationParameterValue& operator =(
+            AnnotationParameterValue&& x);
 
     /*!
      * @brief This function sets the discriminator value.
      * @param __d New value for the discriminator.
      * @exception eprosima::fastcdr::BadParamException This exception is thrown if the new value doesn't correspond to the selected union member.
      */
-    void _d(char __d);
+    void _d(
+            char __d);
 
     /*!
      * @brief This function returns the value of the discriminator.
@@ -196,7 +211,8 @@ public:
      * @brief This function sets a value in member boolean_value
      * @param _boolean_value New value for member boolean_value
      */
-    void boolean_value(bool _boolean_value);
+    void boolean_value(
+            bool _boolean_value);
 
     /*!
      * @brief This function returns the value of member boolean_value
@@ -215,7 +231,8 @@ public:
      * @brief This function sets a value in member byte_value
      * @param _byte_value New value for member byte_value
      */
-    void byte_value(uint8_t _byte_value);
+    void byte_value(
+            uint8_t _byte_value);
 
     /*!
      * @brief This function returns the value of member byte_value
@@ -234,7 +251,8 @@ public:
      * @brief This function sets a value in member int16_value
      * @param _int16_value New value for member int16_value
      */
-    void int16_value(int16_t _int16_value);
+    void int16_value(
+            int16_t _int16_value);
 
     /*!
      * @brief This function returns the value of member int16_value
@@ -253,7 +271,8 @@ public:
      * @brief This function sets a value in member uint_16_value
      * @param _uint_16_value New value for member uint_16_value
      */
-    void uint_16_value(uint16_t _uint_16_value);
+    void uint_16_value(
+            uint16_t _uint_16_value);
 
     /*!
      * @brief This function returns the value of member uint_16_value
@@ -272,7 +291,8 @@ public:
      * @brief This function sets a value in member int32_value
      * @param _int32_value New value for member int32_value
      */
-    void int32_value(int32_t _int32_value);
+    void int32_value(
+            int32_t _int32_value);
 
     /*!
      * @brief This function returns the value of member int32_value
@@ -291,7 +311,8 @@ public:
      * @brief This function sets a value in member uint32_value
      * @param _uint32_value New value for member uint32_value
      */
-    void uint32_value(uint32_t _uint32_value);
+    void uint32_value(
+            uint32_t _uint32_value);
 
     /*!
      * @brief This function returns the value of member uint32_value
@@ -310,7 +331,8 @@ public:
      * @brief This function sets a value in member int64_value
      * @param _int64_value New value for member int64_value
      */
-    void int64_value(int64_t _int64_value);
+    void int64_value(
+            int64_t _int64_value);
 
     /*!
      * @brief This function returns the value of member int64_value
@@ -329,7 +351,8 @@ public:
      * @brief This function sets a value in member uint64_value
      * @param _uint64_value New value for member uint64_value
      */
-    void uint64_value(uint64_t _uint64_value);
+    void uint64_value(
+            uint64_t _uint64_value);
 
     /*!
      * @brief This function returns the value of member uint64_value
@@ -348,7 +371,8 @@ public:
      * @brief This function sets a value in member float32_value
      * @param _float32_value New value for member float32_value
      */
-    void float32_value(float _float32_value);
+    void float32_value(
+            float _float32_value);
 
     /*!
      * @brief This function returns the value of member float32_value
@@ -367,7 +391,8 @@ public:
      * @brief This function sets a value in member float64_value
      * @param _float64_value New value for member float64_value
      */
-    void float64_value(double _float64_value);
+    void float64_value(
+            double _float64_value);
 
     /*!
      * @brief This function returns the value of member float64_value
@@ -386,7 +411,8 @@ public:
      * @brief This function sets a value in member float128_value
      * @param _float128_value New value for member float128_value
      */
-    void float128_value(long double _float128_value);
+    void float128_value(
+            long double _float128_value);
 
     /*!
      * @brief This function returns the value of member float128_value
@@ -405,7 +431,8 @@ public:
      * @brief This function sets a value in member char_value
      * @param _char_value New value for member char_value
      */
-    void char_value(char _char_value);
+    void char_value(
+            char _char_value);
 
     /*!
      * @brief This function returns the value of member char_value
@@ -424,7 +451,8 @@ public:
      * @brief This function sets a value in member wchar_value
      * @param _wchar_value New value for member wchar_value
      */
-    void wchar_value(wchar_t _wchar_value);
+    void wchar_value(
+            wchar_t _wchar_value);
 
     /*!
      * @brief This function returns the value of member wchar_value
@@ -443,7 +471,8 @@ public:
      * @brief This function sets a value in member enumerated_value
      * @param _enumerated_value New value for member enumerated_value
      */
-    void enumerated_value(int32_t _enumerated_value);
+    void enumerated_value(
+            int32_t _enumerated_value);
 
     /*!
      * @brief This function returns the value of member enumerated_value
@@ -462,13 +491,15 @@ public:
      * @brief This function copies the value in member string8_value
      * @param _string8_value New value to be copied in member string8_value
      */
-    void string8_value(const std::string &_string8_value);
+    void string8_value(
+            const std::string& _string8_value);
 
     /*!
      * @brief This function moves the value in member string8_value
      * @param _string8_value New value to be moved in member string8_value
      */
-    void string8_value(std::string &&_string8_value);
+    void string8_value(
+            std::string&& _string8_value);
 
     /*!
      * @brief This function returns a constant reference to member string8_value
@@ -487,13 +518,15 @@ public:
      * @brief This function copies the value in member string16_value
      * @param _string16_value New value to be copied in member string16_value
      */
-    void string16_value(const std::wstring &_string16_value);
+    void string16_value(
+            const std::wstring& _string16_value);
 
     /*!
      * @brief This function moves the value in member string16_value
      * @param _string16_value New value to be moved in member string16_value
      */
-    void string16_value(std::wstring &&_string16_value);
+    void string16_value(
+            std::wstring&& _string16_value);
 
     /*!
      * @brief This function returns a constant reference to member string16_value
@@ -512,13 +545,15 @@ public:
      * @brief This function copies the value in member extended_value
      * @param _extended_value New value to be copied in member extended_value
      */
-    void extended_value(const ExtendedAnnotationParameterValue &_extended_value);
+    void extended_value(
+            const ExtendedAnnotationParameterValue& _extended_value);
 
     /*!
      * @brief This function moves the value in member extended_value
      * @param _extended_value New value to be moved in member extended_value
      */
-    void extended_value(ExtendedAnnotationParameterValue &&_extended_value);
+    void extended_value(
+            ExtendedAnnotationParameterValue&& _extended_value);
 
     /*!
      * @brief This function returns a constant reference to member extended_value
@@ -540,20 +575,24 @@ public:
      * @param current_alignment Buffer alignment.
      * @return Serialized size.
      */
-    static size_t getCdrSerializedSize(const AnnotationParameterValue& data, size_t current_alignment = 0);
+    static size_t getCdrSerializedSize(
+            const AnnotationParameterValue& data,
+            size_t current_alignment = 0);
 
 
     /*!
      * @brief This function serializes an object using CDR serialization.
      * @param cdr CDR serialization object.
      */
-    void serialize(eprosima::fastcdr::Cdr &cdr) const;
+    void serialize(
+            eprosima::fastcdr::Cdr& cdr) const;
 
     /*!
      * @brief This function deserializes an object using CDR serialization.
      * @param cdr CDR serialization object.
      */
-    void deserialize(eprosima::fastcdr::Cdr &cdr);
+    void deserialize(
+            eprosima::fastcdr::Cdr& cdr);
 
 
 
@@ -563,7 +602,8 @@ public:
      * @param current_alignment Buffer alignment.
      * @return Maximum serialized size.
      */
-    static size_t getKeyMaxCdrSerializedSize(size_t current_alignment = 0);
+    static size_t getKeyMaxCdrSerializedSize(
+            size_t current_alignment = 0);
 
     /*!
      * @brief This function tells you if the Key has been defined for this type
@@ -574,16 +614,18 @@ public:
      * @brief This function serializes the key members of an object using CDR serialization.
      * @param cdr CDR serialization object.
      */
-    void serializeKey(eprosima::fastcdr::Cdr &cdr) const;
+    void serializeKey(
+            eprosima::fastcdr::Cdr& cdr) const;
 
-    bool operator==(const AnnotationParameterValue& other) const;
+    bool operator ==(
+            const AnnotationParameterValue& other) const;
 
     /**
      * Aux method to return value as its string representation.
      */
     std::string to_string() const
     {
-        switch(m__d)
+        switch (m__d)
         {
             case TK_BOOLEAN:
                 return (m_boolean_value) ? "true" : "false";
@@ -615,8 +657,7 @@ public:
                 return std::to_string(m_enumerated_value);
             case TK_STRING16:
             {
-                std::wstring_convert<std::codecvt_utf8<wchar_t>> conv;
-                return conv.to_bytes(m_string16_value);
+                return wstring_to_bytes(m_string16_value);
             }
             case TK_STRING8:
             case TK_NONE: // Cheat!
@@ -629,15 +670,19 @@ public:
     /**
      * Aux method to set value from its string representation.
      */
-    void from_string(const std::string& value)
+    void from_string(
+            const std::string& value)
     {
-        switch(m__d)
+        switch (m__d)
         {
             case TK_BOOLEAN:
             {
                 std::string val_ = value;
-                std::transform(val_.begin(), val_.end(), val_.begin(), 
-                    [](unsigned char c){ return static_cast<char>(std::tolower(c));});
+                std::transform(val_.begin(), val_.end(), val_.begin(),
+                        [](unsigned char c)
+                        {
+                            return static_cast<char>(std::tolower(c));
+                        });
                 boolean_value(val_.compare("0") != 0 || val_.compare(CONST_TRUE) == 0);
             }
             break;
@@ -698,8 +743,7 @@ public:
             break;
             case TK_CHAR16:
             {
-                std::wstring_convert<std::codecvt_utf8<wchar_t>> conv;
-                wchar_value(conv.from_bytes(value).c_str()[0]);
+                wchar_value(wstring_from_bytes(value).c_str()[0]);
             }
             break;
             case TK_STRING8:
@@ -710,8 +754,7 @@ public:
             break;
             case TK_STRING16:
             {
-                std::wstring_convert<std::codecvt_utf8<wchar_t>> conv;
-                string16_value(conv.from_bytes(value));
+                string16_value(wstring_from_bytes(value));
             }
             break;
             case TK_ENUM:
@@ -721,11 +764,12 @@ public:
             }
             break;
             default:
-            break;
+                break;
         }
     }
 
 private:
+
     char m__d;
 
     bool m_boolean_value;
@@ -768,31 +812,36 @@ public:
      * @brief Copy constructor.
      * @param x Reference to the object AppliedAnnotationParameter that will be copied.
      */
-    AppliedAnnotationParameter(const AppliedAnnotationParameter &x);
+    AppliedAnnotationParameter(
+            const AppliedAnnotationParameter& x);
 
     /*!
      * @brief Move constructor.
      * @param x Reference to the object AppliedAnnotationParameter that will be copied.
      */
-    AppliedAnnotationParameter(AppliedAnnotationParameter &&x);
+    AppliedAnnotationParameter(
+            AppliedAnnotationParameter&& x);
 
     /*!
      * @brief Copy assignment.
      * @param x Reference to the object AppliedAnnotationParameter that will be copied.
      */
-    AppliedAnnotationParameter& operator=(const AppliedAnnotationParameter &x);
+    AppliedAnnotationParameter& operator =(
+            const AppliedAnnotationParameter& x);
 
     /*!
      * @brief Move assignment.
      * @param x Reference to the object AppliedAnnotationParameter that will be copied.
      */
-    AppliedAnnotationParameter& operator=(AppliedAnnotationParameter &&x);
+    AppliedAnnotationParameter& operator =(
+            AppliedAnnotationParameter&& x);
 
     /*!
      * @brief This function copies the value in member paramname_hash
      * @param _paramname_hash New value to be copied in member paramname_hash
      */
-    inline void paramname_hash(const NameHash &_paramname_hash)
+    inline void paramname_hash(
+            const NameHash& _paramname_hash)
     {
         m_paramname_hash = _paramname_hash;
     }
@@ -801,7 +850,8 @@ public:
      * @brief This function moves the value in member paramname_hash
      * @param _paramname_hash New value to be moved in member paramname_hash
      */
-    inline void paramname_hash(NameHash &&_paramname_hash)
+    inline void paramname_hash(
+            NameHash&& _paramname_hash)
     {
         m_paramname_hash = std::move(_paramname_hash);
     }
@@ -823,11 +873,13 @@ public:
     {
         return m_paramname_hash;
     }
+
     /*!
      * @brief This function copies the value in member value
      * @param _value New value to be copied in member value
      */
-    inline void value(const AnnotationParameterValue &_value)
+    inline void value(
+            const AnnotationParameterValue& _value)
     {
         m_value = _value;
     }
@@ -836,7 +888,8 @@ public:
      * @brief This function moves the value in member value
      * @param _value New value to be moved in member value
      */
-    inline void value(AnnotationParameterValue &&_value)
+    inline void value(
+            AnnotationParameterValue&& _value)
     {
         m_value = std::move(_value);
     }
@@ -865,20 +918,24 @@ public:
      * @param current_alignment Buffer alignment.
      * @return Serialized size.
      */
-    static size_t getCdrSerializedSize(const AppliedAnnotationParameter& data, size_t current_alignment = 0);
+    static size_t getCdrSerializedSize(
+            const AppliedAnnotationParameter& data,
+            size_t current_alignment = 0);
 
 
     /*!
      * @brief This function serializes an object using CDR serialization.
      * @param cdr CDR serialization object.
      */
-    void serialize(eprosima::fastcdr::Cdr &cdr) const;
+    void serialize(
+            eprosima::fastcdr::Cdr& cdr) const;
 
     /*!
      * @brief This function deserializes an object using CDR serialization.
      * @param cdr CDR serialization object.
      */
-    void deserialize(eprosima::fastcdr::Cdr &cdr);
+    void deserialize(
+            eprosima::fastcdr::Cdr& cdr);
 
 
 
@@ -888,7 +945,8 @@ public:
      * @param current_alignment Buffer alignment.
      * @return Maximum serialized size.
      */
-    static size_t getKeyMaxCdrSerializedSize(size_t current_alignment = 0);
+    static size_t getKeyMaxCdrSerializedSize(
+            size_t current_alignment = 0);
 
     /*!
      * @brief This function tells you if the Key has been defined for this type
@@ -899,11 +957,14 @@ public:
      * @brief This function serializes the key members of an object using CDR serialization.
      * @param cdr CDR serialization object.
      */
-    void serializeKey(eprosima::fastcdr::Cdr &cdr) const;
+    void serializeKey(
+            eprosima::fastcdr::Cdr& cdr) const;
 
-    bool operator==(const AppliedAnnotationParameter& other) const;
+    bool operator ==(
+            const AppliedAnnotationParameter& other) const;
 
 private:
+
     NameHash m_paramname_hash;
     AnnotationParameterValue m_value;
 };
@@ -911,13 +972,13 @@ private:
 
 // The application of an annotation to some type or type member
 /*struct AppliedAnnotationParameter {
-	NameHash                  paramname_hash;
-	AnnotationParameterValue  value;
-};*/
+    NameHash                  paramname_hash;
+    AnnotationParameterValue  value;
+   };*/
 /*
-class AppliedAnnotationParameter
-{
-public:
+   class AppliedAnnotationParameter
+   {
+   public:
     AppliedAnnotationParameter();
     ~AppliedAnnotationParameter();
     AppliedAnnotationParameter(const AppliedAnnotationParameter &x);
@@ -942,48 +1003,95 @@ public:
     static bool isKeyDefined();
     void serializeKey(eprosima::fastcdr::Cdr &cdr) const;
 
-private:
+   private:
     NameHash m_paramname_hash;
     AnnotationParameterValue m_value;
-};
-*/
+   };
+ */
 // Sorted by AppliedAnnotationParameter.paramname_hash
 typedef std::vector<AppliedAnnotationParameter> AppliedAnnotationParameterSeq;
 
 /*struct AppliedAnnotation {
-	TypeIdentifier                     annotation_typeid;
-	AppliedAnnotationParameterSeq   param_seq;  // @Optional
-};*/
+    TypeIdentifier                     annotation_typeid;
+    AppliedAnnotationParameterSeq   param_seq;  // @Optional
+   };*/
 class AppliedAnnotation
 {
 public:
+
     AppliedAnnotation();
     ~AppliedAnnotation();
-    AppliedAnnotation(const AppliedAnnotation &x);
-    AppliedAnnotation(AppliedAnnotation &&x);
-    AppliedAnnotation& operator=(const AppliedAnnotation &x);
-    AppliedAnnotation& operator=(AppliedAnnotation &&x);
+    AppliedAnnotation(
+            const AppliedAnnotation& x);
+    AppliedAnnotation(
+            AppliedAnnotation&& x);
+    AppliedAnnotation& operator =(
+            const AppliedAnnotation& x);
+    AppliedAnnotation& operator =(
+            AppliedAnnotation&& x);
 
-    inline void annotation_typeid(const TypeIdentifier &_annotation_typeid) { m_annotation_typeid = _annotation_typeid; }
-    inline void annotation_typeid(TypeIdentifier &&_annotation_typeid) { m_annotation_typeid = std::move(_annotation_typeid); }
-    inline const TypeIdentifier& annotation_typeid() const { return m_annotation_typeid; }
-    inline TypeIdentifier& annotation_typeid() { return m_annotation_typeid; }
+    inline void annotation_typeid(
+            const TypeIdentifier& _annotation_typeid)
+    {
+        m_annotation_typeid = _annotation_typeid;
+    }
 
-    inline void param_seq(const AppliedAnnotationParameterSeq &_param_seq) { m_param_seq = _param_seq; }
-    inline void param_seq(AppliedAnnotationParameterSeq &&_param_seq) { m_param_seq = std::move(_param_seq); }
-    inline const AppliedAnnotationParameterSeq& param_seq() const { return m_param_seq; }
-    inline AppliedAnnotationParameterSeq& param_seq() { return m_param_seq; }
+    inline void annotation_typeid(
+            TypeIdentifier&& _annotation_typeid)
+    {
+        m_annotation_typeid = std::move(_annotation_typeid);
+    }
 
-    static size_t getCdrSerializedSize(const AppliedAnnotation& data, size_t current_alignment = 0);
-    void serialize(eprosima::fastcdr::Cdr &cdr) const;
-    void deserialize(eprosima::fastcdr::Cdr &cdr);
-    static size_t getKeyMaxCdrSerializedSize(size_t current_alignment = 0);
+    inline const TypeIdentifier& annotation_typeid() const
+    {
+        return m_annotation_typeid;
+    }
+
+    inline TypeIdentifier& annotation_typeid()
+    {
+        return m_annotation_typeid;
+    }
+
+    inline void param_seq(
+            const AppliedAnnotationParameterSeq& _param_seq)
+    {
+        m_param_seq = _param_seq;
+    }
+
+    inline void param_seq(
+            AppliedAnnotationParameterSeq&& _param_seq)
+    {
+        m_param_seq = std::move(_param_seq);
+    }
+
+    inline const AppliedAnnotationParameterSeq& param_seq() const
+    {
+        return m_param_seq;
+    }
+
+    inline AppliedAnnotationParameterSeq& param_seq()
+    {
+        return m_param_seq;
+    }
+
+    static size_t getCdrSerializedSize(
+            const AppliedAnnotation& data,
+            size_t current_alignment = 0);
+    void serialize(
+            eprosima::fastcdr::Cdr& cdr) const;
+    void deserialize(
+            eprosima::fastcdr::Cdr& cdr);
+    static size_t getKeyMaxCdrSerializedSize(
+            size_t current_alignment = 0);
     static bool isKeyDefined();
-    void serializeKey(eprosima::fastcdr::Cdr &cdr) const;
+    void serializeKey(
+            eprosima::fastcdr::Cdr& cdr) const;
 
-    bool operator==(const AppliedAnnotation& other) const;
+    bool operator ==(
+            const AppliedAnnotation& other) const;
 
 private:
+
     TypeIdentifier m_annotation_typeid;
     AppliedAnnotationParameterSeq m_param_seq;
 };
@@ -993,45 +1101,109 @@ typedef std::vector<AppliedAnnotation> AppliedAnnotationSeq;
 
 // @verbatim(placement="<placement>", language="<lang>", text="<text>")
 /*struct AppliedVerbatimAnnotation {
-	std::string placement; // 32
-	std::string language; // 32
-	std::string     text;
-};*/
+    std::string placement; // 32
+    std::string language; // 32
+    std::string     text;
+   };*/
 class AppliedVerbatimAnnotation
 {
 public:
+
     AppliedVerbatimAnnotation();
     ~AppliedVerbatimAnnotation();
-    AppliedVerbatimAnnotation(const AppliedVerbatimAnnotation &x);
-    AppliedVerbatimAnnotation(AppliedVerbatimAnnotation &&x);
-    AppliedVerbatimAnnotation& operator=(const AppliedVerbatimAnnotation &x);
-    AppliedVerbatimAnnotation& operator=(AppliedVerbatimAnnotation &&x);
+    AppliedVerbatimAnnotation(
+            const AppliedVerbatimAnnotation& x);
+    AppliedVerbatimAnnotation(
+            AppliedVerbatimAnnotation&& x);
+    AppliedVerbatimAnnotation& operator =(
+            const AppliedVerbatimAnnotation& x);
+    AppliedVerbatimAnnotation& operator =(
+            AppliedVerbatimAnnotation&& x);
 
-    inline void placement(const std::string &_placement) { m_placement = _placement; }
-    inline void placement(std::string &&_placement) { m_placement = std::move(_placement); }
-    inline const std::string& placement() const { return m_placement; }
-    inline std::string& placement() { return m_placement; }
+    inline void placement(
+            const std::string& _placement)
+    {
+        m_placement = _placement;
+    }
 
-    inline void language(const std::string &_language) { m_language = _language; }
-    inline void language(std::string &&_language) { m_language = std::move(_language); }
-    inline const std::string& language() const { return m_language; }
-    inline std::string& language() { return m_language; }
+    inline void placement(
+            std::string&& _placement)
+    {
+        m_placement = std::move(_placement);
+    }
 
-    inline void text(const std::string &_text) { m_text = _text; }
-    inline void text(std::string &&_text) { m_text = std::move(_text); }
-    inline const std::string& text() const { return m_text; }
-    inline std::string& text() { return m_text; }
+    inline const std::string& placement() const
+    {
+        return m_placement;
+    }
 
-    static size_t getCdrSerializedSize(const AppliedVerbatimAnnotation& data, size_t current_alignment = 0);
-    void serialize(eprosima::fastcdr::Cdr &cdr) const;
-    void deserialize(eprosima::fastcdr::Cdr &cdr);
-    static size_t getKeyMaxCdrSerializedSize(size_t current_alignment = 0);
+    inline std::string& placement()
+    {
+        return m_placement;
+    }
+
+    inline void language(
+            const std::string& _language)
+    {
+        m_language = _language;
+    }
+
+    inline void language(
+            std::string&& _language)
+    {
+        m_language = std::move(_language);
+    }
+
+    inline const std::string& language() const
+    {
+        return m_language;
+    }
+
+    inline std::string& language()
+    {
+        return m_language;
+    }
+
+    inline void text(
+            const std::string& _text)
+    {
+        m_text = _text;
+    }
+
+    inline void text(
+            std::string&& _text)
+    {
+        m_text = std::move(_text);
+    }
+
+    inline const std::string& text() const
+    {
+        return m_text;
+    }
+
+    inline std::string& text()
+    {
+        return m_text;
+    }
+
+    static size_t getCdrSerializedSize(
+            const AppliedVerbatimAnnotation& data,
+            size_t current_alignment = 0);
+    void serialize(
+            eprosima::fastcdr::Cdr& cdr) const;
+    void deserialize(
+            eprosima::fastcdr::Cdr& cdr);
+    static size_t getKeyMaxCdrSerializedSize(
+            size_t current_alignment = 0);
     static bool isKeyDefined();
-    void serializeKey(eprosima::fastcdr::Cdr &cdr) const;
+    void serializeKey(
+            eprosima::fastcdr::Cdr& cdr) const;
 
-    bool operator==(const AppliedVerbatimAnnotation& other) const;
+    bool operator ==(
+            const AppliedVerbatimAnnotation& other) const;
 
 private:
+
     std::string m_placement;
     std::string m_language;
     std::string m_text;
@@ -1039,52 +1211,133 @@ private:
 
 // --- Aggregate types: -----------------------------------------------
 /*struct AppliedBuiltinMemberAnnotations {
-	std::string                  unit; // @unit("<unit>") // @Optional
-	AnnotationParameterValue min; // @min , @range // @Optional
-	AnnotationParameterValue max; // @max , @range // @Optional
-	std::string               hash_id; // @hash_id("<membername>") // @Optional
-};
-*/
+    std::string                  unit; // @unit("<unit>") // @Optional
+    AnnotationParameterValue min; // @min , @range // @Optional
+    AnnotationParameterValue max; // @max , @range // @Optional
+    std::string               hash_id; // @hash_id("<membername>") // @Optional
+   };
+ */
 class AppliedBuiltinMemberAnnotations
 {
 public:
+
     AppliedBuiltinMemberAnnotations();
     ~AppliedBuiltinMemberAnnotations();
-    AppliedBuiltinMemberAnnotations(const AppliedBuiltinMemberAnnotations &x);
-    AppliedBuiltinMemberAnnotations(AppliedBuiltinMemberAnnotations &&x);
-    AppliedBuiltinMemberAnnotations& operator=(const AppliedBuiltinMemberAnnotations &x);
-    AppliedBuiltinMemberAnnotations& operator=(AppliedBuiltinMemberAnnotations &&x);
+    AppliedBuiltinMemberAnnotations(
+            const AppliedBuiltinMemberAnnotations& x);
+    AppliedBuiltinMemberAnnotations(
+            AppliedBuiltinMemberAnnotations&& x);
+    AppliedBuiltinMemberAnnotations& operator =(
+            const AppliedBuiltinMemberAnnotations& x);
+    AppliedBuiltinMemberAnnotations& operator =(
+            AppliedBuiltinMemberAnnotations&& x);
 
-    inline void unit(const std::string &_unit) { m_unit = _unit; }
-    inline void unit(std::string &&_unit) { m_unit = std::move(_unit); }
-    inline const std::string& unit() const { return m_unit; }
-    inline std::string& unit() { return m_unit; }
+    inline void unit(
+            const std::string& _unit)
+    {
+        m_unit = _unit;
+    }
 
-    inline void min(const AnnotationParameterValue &_min) { m_min = _min; }
-    inline void min(AnnotationParameterValue &&_min) { m_min = std::move(_min); }
-    inline const AnnotationParameterValue& min() const { return m_min; }
-    inline AnnotationParameterValue& min() { return m_min; }
+    inline void unit(
+            std::string&& _unit)
+    {
+        m_unit = std::move(_unit);
+    }
 
-    inline void max(const AnnotationParameterValue &_max) { m_max = _max; }
-    inline void max(AnnotationParameterValue &&_max) { m_max = std::move(_max); }
-    inline const AnnotationParameterValue& max() const { return m_max; }
-    inline AnnotationParameterValue& max() { return m_max; }
+    inline const std::string& unit() const
+    {
+        return m_unit;
+    }
 
-    inline void hash_id(const std::string &_hash_id) { m_hash_id = _hash_id; }
-    inline void hash_id(std::string &&_hash_id) { m_hash_id = std::move(_hash_id); }
-    inline const std::string& hash_id() const { return m_hash_id; }
-    inline std::string& hash_id() { return m_hash_id; }
+    inline std::string& unit()
+    {
+        return m_unit;
+    }
 
-    static size_t getCdrSerializedSize(const AppliedBuiltinMemberAnnotations& data, size_t current_alignment = 0);
-    void serialize(eprosima::fastcdr::Cdr &cdr) const;
-    void deserialize(eprosima::fastcdr::Cdr &cdr);
-    static size_t getKeyMaxCdrSerializedSize(size_t current_alignment = 0);
+    inline void min(
+            const AnnotationParameterValue& _min)
+    {
+        m_min = _min;
+    }
+
+    inline void min(
+            AnnotationParameterValue&& _min)
+    {
+        m_min = std::move(_min);
+    }
+
+    inline const AnnotationParameterValue& min() const
+    {
+        return m_min;
+    }
+
+    inline AnnotationParameterValue& min()
+    {
+        return m_min;
+    }
+
+    inline void max(
+            const AnnotationParameterValue& _max)
+    {
+        m_max = _max;
+    }
+
+    inline void max(
+            AnnotationParameterValue&& _max)
+    {
+        m_max = std::move(_max);
+    }
+
+    inline const AnnotationParameterValue& max() const
+    {
+        return m_max;
+    }
+
+    inline AnnotationParameterValue& max()
+    {
+        return m_max;
+    }
+
+    inline void hash_id(
+            const std::string& _hash_id)
+    {
+        m_hash_id = _hash_id;
+    }
+
+    inline void hash_id(
+            std::string&& _hash_id)
+    {
+        m_hash_id = std::move(_hash_id);
+    }
+
+    inline const std::string& hash_id() const
+    {
+        return m_hash_id;
+    }
+
+    inline std::string& hash_id()
+    {
+        return m_hash_id;
+    }
+
+    static size_t getCdrSerializedSize(
+            const AppliedBuiltinMemberAnnotations& data,
+            size_t current_alignment = 0);
+    void serialize(
+            eprosima::fastcdr::Cdr& cdr) const;
+    void deserialize(
+            eprosima::fastcdr::Cdr& cdr);
+    static size_t getKeyMaxCdrSerializedSize(
+            size_t current_alignment = 0);
     static bool isKeyDefined();
-    void serializeKey(eprosima::fastcdr::Cdr &cdr) const;
+    void serializeKey(
+            eprosima::fastcdr::Cdr& cdr) const;
 
-    bool operator==(const AppliedBuiltinMemberAnnotations& other) const;
+    bool operator ==(
+            const AppliedBuiltinMemberAnnotations& other) const;
 
 private:
+
     std::string m_unit;
     AnnotationParameterValue m_min;
     AnnotationParameterValue m_max;

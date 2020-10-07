@@ -1055,7 +1055,7 @@ void RTPSParticipantImpl::createReceiverResources(
         bool ApplyMutation,
         bool RegisterReceiver)
 {
-    std::vector<std::shared_ptr<ReceiverResource> > newItemsBuffer;
+    std::vector<std::shared_ptr<ReceiverResource>> newItemsBuffer;
 
 #if HAVE_SECURITY
     // An auxilary buffer is needed in the ReceiverResource to to decrypt the message,
@@ -1525,9 +1525,13 @@ bool RTPSParticipantImpl::did_mutation_took_place_on_meta(
     } while (it != UnicastLocatorList.end());
 
     // TCP is a special case because physical ports are taken from the TransportDescriptors
-    struct ResetLogical : public std::unary_function<Locator_t, const Locator_t&>
+    struct ResetLogical
     {
-        typedef std::vector<std::shared_ptr<fastdds::rtps::TransportDescriptorInterface> > Transports;
+        // use of std::unary_function to introduce the following aliases is deprecated
+        // using argument_type = Locator_t;
+        // using result_type   = Locator_t&;
+
+        typedef std::vector<std::shared_ptr<fastdds::rtps::TransportDescriptorInterface>> Transports;
 
         ResetLogical(
                 const Transports& tp)

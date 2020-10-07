@@ -200,6 +200,7 @@ set(${PROJECT_NAME}_source_files
     utils/IPLocator.cpp
     utils/System.cpp
     utils/TimedConditionVariable.cpp
+    utils/string_convert.cpp
 
     dds/core/types.cpp
     dds/core/Exception.cpp
