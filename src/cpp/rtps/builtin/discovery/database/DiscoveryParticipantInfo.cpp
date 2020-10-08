@@ -57,10 +57,12 @@ void DiscoveryParticipantInfo::add_reader(
 void DiscoveryParticipantInfo::remove_reader(
         const eprosima::fastrtps::rtps::GUID_t& guid)
 {
-    auto it = std::find(readers_.begin(), readers_.end(), guid);
-    if (it != readers_.end())
+    // erase it from the back to accelerate participant removal
+    auto rit = std::find(readers_.rbegin(), readers_.rend(), guid);
+    if (rit != readers_.rend())
     {
-        readers_.erase(it);
+        // prev because the inverse iterator
+        readers_.erase(std::prev(rit.base()));
     }
 }
 
@@ -76,10 +78,12 @@ void DiscoveryParticipantInfo::add_writer(
 void DiscoveryParticipantInfo::remove_writer(
         const eprosima::fastrtps::rtps::GUID_t& guid)
 {
-    auto it = std::find(writers_.begin(), writers_.end(), guid);
-    if (it != writers_.end())
+    // erase it from the back to accelerate participant removal
+    auto rit = std::find(writers_.rbegin(), writers_.rend(), guid);
+    if (rit != writers_.rend())
     {
-        writers_.erase(it);
+        // prev because the inverse iterator
+        writers_.erase(std::prev(rit.base()));
     }
 }
 
