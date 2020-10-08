@@ -53,14 +53,16 @@ PDPServer2::PDPServer2(
         BuiltinProtocols* builtin,
         const RTPSParticipantAllocationAttributes& allocation)
     : PDP(builtin, allocation)
-    , mp_sync(nullptr)
+    , mp_routine(nullptr)
+    , mp_ping(nullptr)
     , discovery_db_(builtin->mp_participantImpl->getGuid().guidPrefix)
 {
 }
 
 PDPServer2::~PDPServer2()
 {
-    delete(mp_sync);
+    delete(mp_routine);
+    delete(mp_ping);
 }
 
 bool PDPServer2::init(
@@ -86,9 +88,19 @@ bool PDPServer2::init(
         Given the fact that a participant is either a client or a server the
         discoveryServer_client_syncperiod parameter has a context defined meaning.
      */
-    mp_sync = new DServerEvent2(this,
+    mp_routine = new DServerRoutineEvent2(this,
                     TimeConv::Duration_t2MilliSecondsDouble(
                         m_discovery.discovery_config.discoveryServer_client_syncperiod));
+    mp_routine->restart_timer();
+
+    /*
+        Given the fact that a participant is either a client or a server the
+        discoveryServer_client_syncperiod parameter has a context defined meaning.
+     */
+    mp_ping = new DServerPingEvent2(this,
+                    TimeConv::Duration_t2MilliSecondsDouble(
+                        m_discovery.discovery_config.discoveryServer_client_syncperiod));   
+    mp_ping->restart_timer();
 
     return true;
 }
@@ -477,7 +489,7 @@ void PDPServer2::announceParticipantState(
                             ddb::DiscoveryParticipantChangeData(metatraffic_locators, false, false, false)))
                 {
                     // Distribute
-                    awake_server_thread();
+                    awake_routine_thread();
                 }
                 else
                 {
@@ -544,7 +556,7 @@ void PDPServer2::announceParticipantState(
             if (discovery_db().update(change, ddb::DiscoveryParticipantChangeData()))
             {
                 // distribute
-                awake_server_thread();
+                awake_routine_thread();
             }
             else
             {
@@ -579,14 +591,7 @@ void PDPServer2::announceParticipantState(
 
         locators.push_back(discovery_db_.participant_metatraffic_locators(participant_prefix));
     }
-
-    DirectMessageSender sender(getRTPSParticipant(), &remote_readers, &locators);
-    RTPSMessageGroup group(getRTPSParticipant(), mp_PDPWriter, sender);
-
-    if (!group.add_data(*change, false))
-    {
-        logError(RTPS_PDP_SERVER, "Error sending announcement from server to clients");
-    }
+    send_announce(change, remote_readers, locators);
 }
 
 /**
@@ -625,7 +630,7 @@ bool PDPServer2::remove_remote_participant(
             if (discovery_db_.update(pC, ddb::DiscoveryParticipantChangeData()))
             {
                 // assure processing time for the cache
-                awake_server_thread();
+                awake_routine_thread();
 
                 // the discovery database takes ownership of the CacheChange_t
                 // henceforth there are no references to the CacheChange_t
@@ -638,6 +643,9 @@ bool PDPServer2::remove_remote_participant(
         }
     }
 
+    // check if is a server who has been disposed
+    awake_ping_thread();
+
     // delegate into the base class for inherited proxy database removal
     return PDP::remove_remote_participant(partGUID, reason);
 }
@@ -649,12 +657,17 @@ bool PDPServer2::process_data_queues()
     return discovery_db_.process_edp_data_queue();
 }
 
-void PDPServer2::awake_server_thread(
+void PDPServer2::awake_routine_thread(
         double interval_ms /*= 0*/)
 {
-    mp_sync->update_interval_millisec(interval_ms);
-    mp_sync->cancel_timer();
-    mp_sync->restart_timer();
+    mp_routine->update_interval_millisec(interval_ms);
+    mp_routine->cancel_timer();
+    mp_routine->restart_timer();
+}
+
+void PDPServer2::awake_ping_thread()
+{
+    mp_ping->restart_timer();
 }
 
 bool PDPServer2::server_update_routine()
@@ -1112,6 +1125,66 @@ eprosima::fastrtps::rtps::ResourceEvent& PDPServer2::get_resource_event_thread()
 {
     return resource_event_thread_;
 }
+
+
+bool PDPServer2::all_servers_acknowledge_PDP()
+{
+    // check if already initialized
+    assert(mp_PDPWriterHistory && mp_PDPWriter);
+
+    // First check if all servers have been discovered
+    bool discovered = true;
+
+    for (auto& s : mp_builtin->m_DiscoveryServers)
+    {
+        discovered &= (s.proxy != nullptr);
+    }
+
+    if (!discovered)
+    {
+        // The first change in the PDP WriterHistory is this server ParticipantProxyData
+        // see BuiltinProtocols::initBuiltinProtocols call to PDPXXX::announceParticipantState(true)
+        CacheChange_t* pPD = discovery_db().cache_change_own_participant();
+
+        // TODO(Paris) implement is_acked_by_all_servers
+        // This answer includes also clients but is accurate enough
+        return mp_PDPWriter->is_acked_by_all(pPD);
+    }
+
+    return false;
+}
+
+void PDPServer2::ping_remote_server()
+{
+    std::vector<GUID_t> remote_readers;
+    LocatorList_t locators;
+    
+    // set a list to send the message
+    for (auto& s : mp_builtin->m_DiscoveryServers)
+    {
+        if (s.proxy == nullptr){
+            remote_readers.push_back(s.proxy->m_guid);
+            // TODO(Paris) check where these locators are
+            locators.push_back(s.metatrafficUnicastLocatorList);
+        }
+    }
+    send_announce(discovery_db().cache_change_own_participant(), remote_readers, locators);
+}
+
+void PDPServer2::send_announce(
+        CacheChange_t* change,
+        std::vector<GUID_t> remote_readers,
+        LocatorList_t locators)
+{
+    DirectMessageSender sender(getRTPSParticipant(), &remote_readers, &locators);
+    RTPSMessageGroup group(getRTPSParticipant(), mp_PDPWriter, sender);
+
+    if (!group.add_data(*change, false))
+    {
+        logError(RTPS_PDP_SERVER, "Error sending announcement from server to clients");
+    }
+}
+
 
 } // namespace rtps
 } // namespace fastdds

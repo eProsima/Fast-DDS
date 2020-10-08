@@ -242,7 +242,7 @@ bool EDPServer2::removeLocalReader(
                 // From here on, the discovery database takes ownership of the CacheChange_t. Henceforth there are no
                 // references to the CacheChange_t.
                 // Ensure processing time for the cache by triggering the Server thread (which process the updates)
-                get_pdp()->awake_server_thread();
+                get_pdp()->awake_routine_thread();
             }
             else
             {
@@ -302,7 +302,7 @@ bool EDPServer2::removeLocalWriter(
                 // From here on, the discovery database takes ownership of the CacheChange_t. Henceforth there are no
                 // references to the CacheChange_t.
                 // Ensure processing time for the cache by triggering the Server thread (which process the updates)
-                get_pdp()->awake_server_thread();
+                get_pdp()->awake_routine_thread();
             }
             else
             {
@@ -349,7 +349,7 @@ bool EDPServer2::processLocalWriterProxyData(
             // From here on, the discovery database takes ownership of the CacheChange_t. Henceforth there are no
             // references to the CacheChange_t.
             // Ensure processing time for the cache by triggering the Server thread (which process the updates)
-            get_pdp()->awake_server_thread();
+            get_pdp()->awake_routine_thread();
         }
         else
         {
@@ -399,7 +399,7 @@ bool EDPServer2::processLocalReaderProxyData(
             // From here on, the discovery database takes ownership of the CacheChange_t. Henceforth there are no
             // references to the CacheChange_t.
             // Ensure processing time for the cache by triggering the Server thread (which process the updates)
-            get_pdp()->awake_server_thread();
+            get_pdp()->awake_routine_thread();
         }
         else
         {
