@@ -101,27 +101,31 @@ public:
             ++num_references_;
 
             cache_change.serializedPayload.data = payload;
+            cache_change.serializedPayload.length = data.length;
             cache_change.serializedPayload.max_size = data.max_size;
             cache_change.payload_owner(this);
             return true;
         }
-
-        EXPECT_EQ(nullptr, data_owner);
 
         if (!do_get_payload(data.max_size, cache_change))
         {
             return false;
         }
 
-        cache_change.serializedPayload.copy(&data, true);
-        payload = cache_change.serializedPayload.data;
-        uint32_t& refs = all_payloads_[payload];
-        ++refs;
-        ++num_reserves_;
         ++num_copies_;
+        cache_change.serializedPayload.copy(&data, true);
 
-        data_owner = this;
-        data.data = payload;
+        if (data_owner == nullptr)
+        {
+            payload = cache_change.serializedPayload.data;
+            uint32_t& refs = all_payloads_[payload];
+            ++refs;
+            ++num_reserves_;
+
+            data_owner = this;
+            data.data = payload;
+            data.max_size = cache_change.serializedPayload.max_size;
+        }
 
         return true;
     }
@@ -195,6 +199,8 @@ private:
 
         cache_change.serializedPayload.data = payload;
         cache_change.serializedPayload.max_size = payload_size_;
+        cache_change.serializedPayload.length = 0;
+        cache_change.serializedPayload.pos = 0;
         cache_change.payload_owner(this);
 
         return true;
