@@ -35,30 +35,34 @@ namespace security {
 
 class AccessPermissions
 {
-    public:
+public:
 
-        AccessPermissions() : store_(nullptr), there_are_crls_(false)  {}
+    AccessPermissions()
+        : store_(nullptr)
+        , there_are_crls_(false)
+    {
+    }
 
-        ~AccessPermissions()
+    ~AccessPermissions()
+    {
+        if (store_ != nullptr)
         {
-            if(store_ != nullptr)
-            {
-                X509_STORE_free(store_);
-            }
+            X509_STORE_free(store_);
         }
+    }
 
-        static const char* const class_id_;
+    static const char* const class_id_;
 
-        X509_STORE* store_;
-        std::string sn;
-        std::string algo;
-        bool there_are_crls_;
-        PermissionsToken permissions_token_;
-        PermissionsCredentialToken permissions_credential_token_;
-        ParticipantSecurityAttributes governance_rule_;
-        std::vector<std::pair<std::string, EndpointSecurityAttributes>> governance_reader_topic_rules_;
-        std::vector<std::pair<std::string, EndpointSecurityAttributes>> governance_writer_topic_rules_;
-        Grant grant;
+    X509_STORE* store_;
+    std::string sn;
+    std::string algo;
+    bool there_are_crls_;
+    PermissionsToken permissions_token_;
+    PermissionsCredentialToken permissions_credential_token_;
+    ParticipantSecurityAttributes governance_rule_;
+    std::vector<std::pair<std::string, EndpointSecurityAttributes>> governance_reader_topic_rules_;
+    std::vector<std::pair<std::string, EndpointSecurityAttributes>> governance_writer_topic_rules_;
+    Grant grant;
 };
 
 typedef HandleImpl<AccessPermissions> AccessPermissionsHandle;
