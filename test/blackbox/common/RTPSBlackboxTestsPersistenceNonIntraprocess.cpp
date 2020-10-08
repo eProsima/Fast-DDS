@@ -21,7 +21,7 @@
 
 #include "RTPSWithRegistrationReader.hpp"
 #include "RTPSWithRegistrationWriter.hpp"
-#include "../../unittest/logging/mock/MockConsumer.h"
+#include "mock/BlackboxMockConsumer.h"
 
 #include <gtest/gtest.h>
 
@@ -47,21 +47,6 @@ public:
         return guid_prefix_;
     }
 
-    std::vector<Log::Entry> helper_wait_for_entries(uint32_t amount)
-    {
-        size_t entries = 0;
-        for (uint32_t i = 0; i != async_tries_; i++)
-        {
-            entries = mock_consumer_->ConsumedEntries().size();
-            if (entries == amount)
-            {
-                break;
-            }
-            std::this_thread::sleep_for(std::chrono::milliseconds(async_waits_ms_));
-        }
-        return mock_consumer_->ConsumedEntries();
-    }
-
     void run_partial_send_recv_test(
             RTPSWithRegistrationReader<HelloWorldType>& reader,
             RTPSWithRegistrationWriter<HelloWorldType>& writer)
@@ -72,18 +57,17 @@ public:
 
         std::cout << "Discovery finished." << std::endl;
 
-        auto data = default_helloworld_data_generator();
-        auto data_aux = default_helloworld_data_generator();
-        size_t n_samples = data.size();
-        not_received_data.insert(not_received_data.end(), data.begin(), data.end());
+        auto partial_data = default_helloworld_data_generator(5);
+        auto complete_data = default_helloworld_data_generator();
+        size_t n_samples = complete_data.size();
+        not_received_data.insert(not_received_data.end(), complete_data.begin(), complete_data.end());
 
         reader.expected_data(not_received_data);
         reader.startReception();
 
         // Send data
-        writer.send(data, 5);
-        // In this test not all data should be sent.
-        EXPECT_FALSE(data.empty());
+        writer.send(partial_data);
+        EXPECT_TRUE(partial_data.empty());
         std::cout << "First batch of data sent." << std::endl;
 
         writer.destroy();
@@ -103,10 +87,10 @@ public:
 
         std::cout << "Rediscovery finished." << std::endl;
 
-        std::this_thread::sleep_for(std::chrono::seconds(1));
+        auto consumed_entries = helper_block_for_at_least_entries(2);
 
-        writer.send(data_aux);
-        EXPECT_TRUE(data_aux.empty());
+        writer.send(complete_data);
+        EXPECT_TRUE(complete_data.empty());
 
         std::cout << "Reader waiting for " << n_samples << " samples." << std::endl;
         reader.block_for_all();
@@ -118,21 +102,50 @@ public:
         std::cout << "Destroying writer..." << std::endl;
         writer.destroy();
 
-        data = reader.not_received_data();
-        print_non_received_messages(data, default_helloworld_print);
-        not_received_data = data;
-    }
+        complete_data = reader.not_received_data();
+        print_non_received_messages(complete_data, default_helloworld_print);
+        not_received_data = complete_data;
+
+        // Expect at least 2 log messages: LogError (PersistentStatefulWriter) and LogWarning (StatefulWriter)
+        EXPECT_GE(consumed_entries.size(), 2u);
+        // Expect only 1 log error.
+        uint32_t num_errors = 0;
+        for (const auto& entry : consumed_entries)
+        {
+            if (entry.kind == Log::Kind::Error)
+            {
+                num_errors++;
+            }
+        }
+        EXPECT_EQ(num_errors, 1u);
+}
 
 protected:
 
     std::list<HelloWorld> not_received_data;
-    MockConsumer* mock_consumer_;
+    BlackboxMockConsumer* mock_consumer_;
     const uint32_t async_tries_ = 5;
     const uint32_t async_waits_ms_ = 25;
 
     std::string db_file_name_writer_;
     std::string db_file_name_reader_;
     GuidPrefix_t guid_prefix_;
+
+    void block(
+            std::function<bool()> checker)
+    {
+        std::unique_lock<std::mutex> lock(mutex_);
+        mock_consumer_->cv().wait(lock, checker);
+    }
+
+    std::vector<Log::Entry> helper_block_for_at_least_entries(uint32_t amount)
+    {
+        block([this, amount]() -> bool
+                {
+                    return mock_consumer_->ConsumedEntries().size() >= amount;
+                });
+        return mock_consumer_->ConsumedEntries();
+    }
 
     virtual void SetUp()
     {
@@ -176,14 +189,20 @@ protected:
         std::remove(db_file_name_reader_.c_str());
         std::remove(db_file_name_writer_.c_str());
     }
+
+private:
+
+    std::mutex mutex_;
 };
 
 TEST_F(PersistenceNonIntraprocess, InconsistentAcknackReceived)
 {
-    mock_consumer_ = new MockConsumer();
+    mock_consumer_ = new BlackboxMockConsumer();
 
     Log::RegisterConsumer(std::unique_ptr<LogConsumer>(mock_consumer_));
     Log::SetVerbosity(Log::Warning);
+    Log::SetCategoryFilter(std::regex("(RTPS_WRITER)"));
+    Log::SetErrorStringFilter(std::regex("(Inconsistent acknack)"));
 
     RTPSWithRegistrationReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     RTPSWithRegistrationWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
@@ -200,10 +219,6 @@ TEST_F(PersistenceNonIntraprocess, InconsistentAcknackReceived)
 
     // Discover, send and receive
     run_partial_send_recv_test(reader, writer);
-
-    auto consumed_entries = helper_wait_for_entries(2);
-    // Expect at least 2 log messages: LogError (PersistentStatefulWriter) and LogWarning (StatefulWriter)
-    EXPECT_GE(2u, consumed_entries.size());
 
     std::cout << "Round finished." << std::endl;
 
