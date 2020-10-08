@@ -149,42 +149,11 @@ public:
             const eprosima::fastrtps::rtps::CacheChange_t& change,
             const eprosima::fastrtps::rtps::GUID_t& reader_guid) const;
 
-    /* Delete all information relative to the entity that produced a CacheChange
-     * @change: That entity's CacheChange.
-     * @return: True if the entity was deleted, false otherwise.
-     */
-    bool delete_entity_of_change(
-            fastrtps::rtps::CacheChange_t* change);
-
-
     ////////////
     // Functions to process PDP and EDP data queues
     void process_pdp_data_queue();
 
     bool process_edp_data_queue();
-
-    void create_participant_from_change(
-            eprosima::fastrtps::rtps::CacheChange_t* ch,
-            const DiscoveryParticipantChangeData& change_data);
-
-    void create_writers_from_change(
-            eprosima::fastrtps::rtps::CacheChange_t* ch,
-            const std::string& topic_name);
-
-    void create_readers_from_change(
-            eprosima::fastrtps::rtps::CacheChange_t* ch,
-            const std::string& topic_name);
-
-    void process_dispose_participant(
-            eprosima::fastrtps::rtps::CacheChange_t* ch);
-
-    void process_dispose_writer(
-            eprosima::fastrtps::rtps::CacheChange_t* ch,
-            const std::string& topic_name);
-
-    void process_dispose_reader(
-            eprosima::fastrtps::rtps::CacheChange_t* ch,
-            const std::string& topic_name);
 
     ////////////
     // Functions to process_dirty_topics()
@@ -195,6 +164,13 @@ public:
     const std::vector<eprosima::fastrtps::rtps::CacheChange_t*> changes_to_dispose();
 
     void clear_changes_to_dispose();
+
+    /* Delete all information relative to the entity that produced a CacheChange
+     * @change: That entity's CacheChange.
+     * @return: True if the entity was deleted, false otherwise.
+     */
+    bool delete_entity_of_change(
+            fastrtps::rtps::CacheChange_t* change);
 
     ////////////
     // Functions to process_to_send_lists()
@@ -229,6 +205,10 @@ public:
     static eprosima::fastrtps::rtps::GUID_t guid_from_change(
             const eprosima::fastrtps::rtps::CacheChange_t* ch);
 
+    ////////////
+    // Functions to work with own server
+
+    // return the cache change of the server
     fastrtps::rtps::CacheChange_t* cache_change_own_participant();
 
     const std::vector<fastrtps::rtps::GuidPrefix_t> direct_clients_and_servers();
@@ -236,15 +216,19 @@ public:
     fastrtps::rtps::LocatorList_t participant_metatraffic_locators(
             fastrtps::rtps::GuidPrefix_t participant_guid_prefix);
 
+    // return a list of participants that are not the server one
+    const std::vector<fastrtps::rtps::GuidPrefix_t> remote_participants();
+
+    // set if the server has been acked by all the reader proxys in server
     bool server_acked_by_all() const
     {
-        return server_acked_by_all_;
+        return server_acked_by_all_.load();
     }
 
     void server_acked_by_all(
             bool s)
     {
-        server_acked_by_all_ = s;
+        server_acked_by_all_.store(s);
     }
 
     ////////////
@@ -254,6 +238,14 @@ public:
     bool data_queue_empty();
 
 protected:
+
+    // change a cacheChange by update or new disposal
+    void update_change_and_unmatch_(
+            fastrtps::rtps::CacheChange_t* new_change,
+            ddb::DiscoverySharedInfo& entity)
+    {
+        changes_to_release_.push_back(entity.update_and_unmatch(new_change));
+    }
 
     // update the acks
     void add_ack_(
@@ -284,6 +276,83 @@ protected:
         sh_mtx_.unlock();
         //sh_mtx_.unlock();
     }
+
+    ////////////
+    // functions to manage new cacheChanges in update
+
+    void create_participant_from_change_(
+            eprosima::fastrtps::rtps::CacheChange_t* ch,
+            const DiscoveryParticipantChangeData& change_data);
+
+    void create_writers_from_change_(
+            eprosima::fastrtps::rtps::CacheChange_t* ch,
+            const std::string& topic_name);
+
+    void create_readers_from_change_(
+            eprosima::fastrtps::rtps::CacheChange_t* ch,
+            const std::string& topic_name);
+
+    void process_dispose_participant_(
+            eprosima::fastrtps::rtps::CacheChange_t* ch);
+
+    void process_dispose_writer_(
+            eprosima::fastrtps::rtps::CacheChange_t* ch);
+
+    void process_dispose_reader_(
+            eprosima::fastrtps::rtps::CacheChange_t* ch);
+
+    ////////////
+    // functions to manage disposals and clean entities
+
+    // unmatch in every other entity including its readers and writers
+    void unmatch_participant_(
+            const eprosima::fastrtps::rtps::GuidPrefix_t& guid_prefix);
+
+    // unmatch all the readers and erase it from writers_by_topic
+    void unmatch_writer_(
+            const eprosima::fastrtps::rtps::GUID_t& guid);
+
+    // unmatch all the writers and erase it from readers_by_topic
+    void unmatch_reader_(
+            const eprosima::fastrtps::rtps::GUID_t& guid);
+
+    // delete an entity and set its change to release. Assumes the entity has been unmatched before
+    bool delete_participant_entity_(
+            const fastrtps::rtps::GuidPrefix_t& guid_prefix);
+
+    // delete an entity and set its change to release. Assumes the entity has been unmatched before
+    bool delete_writer_entity_(
+            const fastrtps::rtps::GUID_t& guid);
+
+    // delete an entity and set its change to release. Assumes the entity has been unmatched before
+    bool delete_reader_entity_(
+            const fastrtps::rtps::GUID_t& guid);
+
+    // return if there are more than one writer in the participant in the same topic
+    bool repeated_writer_topic_(
+            const eprosima::fastrtps::rtps::GuidPrefix_t& participant,
+            const std::string& topic_name);
+
+    // return if there are more than one reader in the participant in the same topic
+    bool repeated_reader_topic_(
+            const eprosima::fastrtps::rtps::GuidPrefix_t& participant,
+            const std::string& topic_name);
+
+    void remove_writer_from_topic_(
+            const eprosima::fastrtps::rtps::GUID_t& writer_guid,
+            const std::string& topic_name);
+
+    void remove_reader_from_topic_(
+            const eprosima::fastrtps::rtps::GUID_t& reader_guid,
+            const std::string& topic_name);
+
+    void add_writer_to_topic_(
+            const eprosima::fastrtps::rtps::GUID_t& writer_guid,
+            const std::string& topic_name);
+
+    void add_reader_to_topic_(
+            const eprosima::fastrtps::rtps::GUID_t& reader_guid,
+            const std::string& topic_name);
 
     fastrtps::DBQueue<eprosima::fastdds::rtps::ddb::DiscoveryPDPDataQueueInfo> pdp_data_queue_;
 
@@ -328,7 +397,6 @@ protected:
 
     // is own server DATA(p) acked by all other clients
     std::atomic<bool> server_acked_by_all_;
-
 };
 
 

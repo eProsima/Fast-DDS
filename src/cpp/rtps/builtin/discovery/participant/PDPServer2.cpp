@@ -772,9 +772,11 @@ History::iterator PDPServer2::process_change_acknowledgement(
         if (writer->is_acked_by_all(c))
         {
             // Remove entry from `participants_|writers_|readers_`
+            // AND put the change in changes_release
             discovery_db_.delete_entity_of_change(c);
             // Remove from writer's history
-            return writer_history->remove_change(cit);
+            // remove false because the clean of the change is made by release_change of ddb
+            return writer_history->remove_change(cit, false);
         }
     }
 
@@ -784,6 +786,7 @@ History::iterator PDPServer2::process_change_acknowledgement(
 
 bool PDPServer2::process_disposals()
 {
+    logInfo(RTPS_PDP_SERVER, "process_disposals start");
     // logInfo(RTPS_PDP_SERVER, "process_disposals start");
     EDPServer2* edp = static_cast<EDPServer2*>(mp_EDP);
     fastrtps::rtps::WriterHistory* pubs_history = edp->publications_writer_.second;
@@ -860,7 +863,7 @@ bool PDPServer2::process_disposals()
 
 bool PDPServer2::process_changes_release()
 {
-    // logInfo(RTPS_PDP_SERVER, "process_changes_release start");
+    logInfo(RTPS_PDP_SERVER, "process_changes_release start");
     // We will need the EDP publications/subscriptions writers, readers, and histories
     EDPServer2* edp = static_cast<EDPServer2*>(mp_EDP);
 
@@ -873,57 +876,33 @@ bool PDPServer2::process_changes_release()
         {
             if (discovery_db_.is_participant(ch))
             {
-                // DATA(Up) will not be in the history, since they are only added here once the change is acked by
-                // everyone, time at which it is removed from history.
-                if (ch->kind == fastrtps::rtps::ChangeKind_t::ALIVE)
-                {
-                    // The change must return to the pool even if not present in the history
-                    if (!remove_change_from_writer_history(mp_PDPWriter, mp_PDPWriterHistory, ch))
-                    {
-                        mp_PDPWriterHistory->release_Cache(ch);
-                    }
-                }
-                else
+                // The change must return to the pool even if not present in the history
+                // Normally Data(Up) will not be in history except in Own Server destruction
+                if (!remove_change_from_writer_history(mp_PDPWriter, mp_PDPWriterHistory, ch))
                 {
                     mp_PDPWriterHistory->release_Cache(ch);
                 }
             }
             else if (discovery_db_.is_writer(ch))
             {
-                // DATA(Uw) will not be in the history, since they are only added here once the change is acked by
-                // everyone, time at which it is removed from history.
-                if (ch->kind == fastrtps::rtps::ChangeKind_t::ALIVE)
-                {
-                    // The change must return to the pool even if not present in the history
-                    if (!remove_change_from_writer_history(
-                                edp->publications_writer_.first,
-                                edp->publications_writer_.second,
-                                ch))
-                    {
-                        edp->publications_writer_.second->release_Cache(ch);
-                    }
-                }
-                else
+                // The change must return to the pool even if not present in the history
+                // Normally Data(Uw) will not be in history except in Own Server destruction
+                if (!remove_change_from_writer_history(
+                            edp->publications_writer_.first,
+                            edp->publications_writer_.second,
+                            ch))
                 {
                     edp->publications_writer_.second->release_Cache(ch);
                 }
             }
             else if (discovery_db_.is_reader(ch))
             {
-                // DATA(Ur) will not be in the history, since they are only added here once the change is acked by
-                // everyone, time at which it is removed from history.
-                if (ch->kind == fastrtps::rtps::ChangeKind_t::ALIVE)
-                {
-                    // The change must return to the pool even if not present in the history
-                    if (!remove_change_from_writer_history(
-                                edp->subscriptions_writer_.first,
-                                edp->subscriptions_writer_.second,
-                                ch))
-                    {
-                        edp->subscriptions_writer_.second->release_Cache(ch);
-                    }
-                }
-                else
+                // The change must return to the pool even if not present in the history
+                // Normally Data(Ur) will not be in history except in Own Server destruction
+                if (!remove_change_from_writer_history(
+                            edp->subscriptions_writer_.first,
+                            edp->subscriptions_writer_.second,
+                            ch))
                 {
                     edp->subscriptions_writer_.second->release_Cache(ch);
                 }
@@ -937,34 +916,51 @@ bool PDPServer2::process_changes_release()
         // publications or EDP subscriptions)
         else
         {
-            // If the change is from a remote participant, then it is never on any of the readers' histories, since we
-            // take it out upon reading it in the listeners
-            if (discovery_db_.is_participant(ch))
+            // TODO(Paris)
+            if (ch->kind == ChangeKind_t::ALIVE ||
+                    ch->write_params.sample_identity().writer_guid() != mp_PDPWriter->getGuid())
             {
-                remove_change_from_writer_history(mp_PDPWriter, mp_PDPWriterHistory, ch, false);
-                mp_PDPReaderHistory->release_Cache(ch);
-            }
-            else if (discovery_db_.is_writer(ch))
-            {
-                remove_change_from_writer_history(
-                    edp->publications_writer_.first,
-                    edp->publications_writer_.second,
-                    ch,
-                    false);
-                edp->publications_reader_.second->release_Cache(ch);
-            }
-            else if (discovery_db_.is_reader(ch))
-            {
-                remove_change_from_writer_history(
-                    edp->subscriptions_writer_.first,
-                    edp->subscriptions_writer_.second,
-                    ch,
-                    false);
-                edp->subscriptions_reader_.second->release_Cache(ch);
+                // If the change is from a remote participant, then it is never on any of the readers' histories, since we
+                // take it out upon reading it in the listeners
+                if (discovery_db_.is_participant(ch))
+                {
+                    remove_change_from_writer_history(mp_PDPWriter, mp_PDPWriterHistory, ch, false);
+                    mp_PDPReaderHistory->release_Cache(ch);
+                }
+                else if (discovery_db_.is_writer(ch))
+                {
+                    remove_change_from_writer_history(
+                        edp->publications_writer_.first,
+                        edp->publications_writer_.second,
+                        ch,
+                        false);
+                    edp->publications_reader_.second->release_Cache(ch);
+                }
+                else if (discovery_db_.is_reader(ch))
+                {
+                    remove_change_from_writer_history(
+                        edp->subscriptions_writer_.first,
+                        edp->subscriptions_writer_.second,
+                        ch,
+                        false);
+                    edp->subscriptions_reader_.second->release_Cache(ch);
+                }
+                else
+                {
+                    logError(PDPServer2, "Wrong DATA received to remove");
+                }
             }
             else
             {
-                logError(PDPServer2, "Wrong DATA received to remove");
+
+                // this case is only when is a disposal built for us, so it is a DATA(Up) of a participant
+                // that we have drop for liveliness
+                // this changes goes to Participant Writer
+                if (!remove_change_from_writer_history(mp_PDPWriter, mp_PDPWriterHistory, ch))
+                {
+                    mp_PDPWriterHistory->release_Cache(ch);
+                }
+
             }
         }
     }
@@ -977,13 +973,15 @@ void PDPServer2::remove_related_alive_from_history_nts(
         const fastrtps::rtps::GuidPrefix_t& entity_guid_prefix)
 {
     // Iterate over changes in writer_history
-    for (auto chit = writer_history->changesBegin(); chit != writer_history->changesEnd(); chit++)
+    for (auto chit = writer_history->changesBegin(); chit != writer_history->changesEnd();)
     {
         // Remove all DATA whose original sender was entity_guid_prefix from writer_history
         if (entity_guid_prefix == discovery_db_.guid_from_change(*chit).guidPrefix)
         {
-            writer_history->remove_change(*chit);
+            chit = writer_history->remove_change(chit);
+            continue;
         }
+        chit++;
     }
 }
 
