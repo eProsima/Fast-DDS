@@ -808,6 +808,12 @@ bool MessageReceiver::proc_Submsg_Data(
     //Look for the correct reader to add the change
     process_data_message_function_(readerID, ch);
 
+    IPayloadPool* payload_pool = ch.payload_owner();
+    if (payload_pool)
+    {
+        payload_pool->release_payload(ch);
+    }
+
     //TODO(Ricardo) If a exception is thrown (ex, by fastcdr), this line is not executed -> segmentation fault
     ch.serializedPayload.data = nullptr;
 
