@@ -98,6 +98,7 @@ public:
             EXPECT_LT(0u, refs);
             ++refs;
             ++num_reserves_;
+            ++num_references_;
 
             cache_change.serializedPayload.data = payload;
             cache_change.serializedPayload.max_size = data.max_size;
@@ -112,10 +113,12 @@ public:
             return false;
         }
 
+        cache_change.serializedPayload.copy(&data, true);
         payload = cache_change.serializedPayload.data;
         uint32_t& refs = all_payloads_[payload];
         ++refs;
         ++num_reserves_;
+        ++num_copies_;
 
         data_owner = this;
         data.data = payload;
@@ -159,6 +162,16 @@ public:
         return num_releases_;
     }
 
+    size_t num_references() const
+    {
+        return num_references_;
+    }
+
+    size_t num_copies() const
+    {
+        return num_copies_;
+    }
+
 private:
 
     bool do_get_payload(
@@ -191,6 +204,8 @@ private:
 
     size_t num_reserves_ = 0;
     size_t num_releases_ = 0;
+    size_t num_references_ = 0;
+    size_t num_copies_ = 0;
 
     std::mutex mutex_;
     std::unordered_map<octet*, uint32_t> all_payloads_;
