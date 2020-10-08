@@ -96,7 +96,7 @@ public:
      * @param [in]  config              The old history's pool requirements, which are no longer active.
      * @param [in]  is_reader_history   True if the history was for a reader. False otherwise.
      * @return Whether the operation was succesful or not.
-     * 
+     *
      * @pre
      *   - Current pool is configured for the same memory policy as @c config.memory_policy.
      *   - If all remaining histories were reserved with non zero @c config.maximum_size
@@ -252,10 +252,10 @@ protected:
 
     /**
      * Adds a new payload in the pool, but does not add it to the list of free payloads
-     * 
+     *
      * @param [IN] size  Minimum size required for the payload data
      * @return The node representing the newly allocated payload.
-     * 
+     *
      * @post
      *   - @c payload_pool_allocated_size() increases by one
      *   - @c payload_pool_available_size() does not change
@@ -301,12 +301,12 @@ protected:
 
     /**
      * @brief Get a serialized payload for a new sample.
-     * 
+     *
      * If the payload is recycled from the pool, @c resizable controls whether it can
      * be reallocated to accomodate larger sizes.
      * If @c resizable is false and there is at least one free payload in the pool, that payload will
      * be returned even though it may not reach the requested size.
-     * 
+     *
      * If @c resizable is true and the reallocation fails, the operation returns false and
      * the payload is returned to the pool.
      *
@@ -321,7 +321,8 @@ protected:
      *     @li Field @c cache_change.payload_owner equals this
      *     @li Field @c serializedPayload.data points to a buffer of at least @c size bytes
      *     @li Field @c serializedPayload.max_size is greater than or equal to @c size
-     */    virtual bool do_get_payload(
+     */
+    virtual bool do_get_payload(
             uint32_t size,
             CacheChange_t& cache_change,
             bool resizeable);
