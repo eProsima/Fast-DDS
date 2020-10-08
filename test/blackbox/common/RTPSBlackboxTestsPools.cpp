@@ -277,6 +277,30 @@ TEST_P(RTPSCustomPools, RTPSAsReliableWithRegistrationBothPools)
     do_test<HelloWorld, HelloWorldType>(TEST_TOPIC_NAME, data, true, true);
 }
 
+TEST_P(RTPSCustomPools, RTPSAsReliableWithRegistrationNoPools300Kb)
+{
+    auto data = default_data300kb_data_generator(PoolForTest::NUM_SAMPLES);
+    do_test<Data1mb, Data1mbType>(TEST_TOPIC_NAME, data, false, false);
+}
+
+TEST_P(RTPSCustomPools, RTPSAsReliableWithRegistrationReaderPool300Kb)
+{
+    auto data = default_data300kb_data_generator(PoolForTest::NUM_SAMPLES);
+    do_test<Data1mb, Data1mbType>(TEST_TOPIC_NAME, data, false, true);
+}
+
+TEST_P(RTPSCustomPools, RTPSAsReliableWithRegistrationWriterPool300Kb)
+{
+    auto data = default_data300kb_data_generator(PoolForTest::NUM_SAMPLES);
+    do_test<Data1mb, Data1mbType>(TEST_TOPIC_NAME, data, true, false);
+}
+
+TEST_P(RTPSCustomPools, RTPSAsReliableWithRegistrationBothPools300Kb)
+{
+    auto data = default_data300kb_data_generator(PoolForTest::NUM_SAMPLES);
+    do_test<Data1mb, Data1mbType>(TEST_TOPIC_NAME, data, true, true);
+}
+
 INSTANTIATE_TEST_CASE_P(RTPSCustomPools,
         RTPSCustomPools,
         testing::Values(false, true),
