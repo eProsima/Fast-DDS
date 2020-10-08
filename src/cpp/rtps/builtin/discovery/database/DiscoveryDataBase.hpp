@@ -215,7 +215,7 @@ public:
 
     fastrtps::rtps::LocatorList_t participant_metatraffic_locators(
             fastrtps::rtps::GuidPrefix_t participant_guid_prefix);
-            
+
     // return a list of participants that are not the server one
     const std::vector<fastrtps::rtps::GuidPrefix_t> remote_participants();
 
@@ -277,7 +277,6 @@ protected:
         //sh_mtx_.unlock();
     }
 
-
     ////////////
     // functions to manage new cacheChanges in update
 
@@ -306,13 +305,16 @@ protected:
     // functions to manage disposals and clean entities
 
     // unmatch in every other entity including its readers and writers
-    void unmatch_participant_(const eprosima::fastrtps::rtps::GuidPrefix_t& guid_prefix);
+    void unmatch_participant_(
+            const eprosima::fastrtps::rtps::GuidPrefix_t& guid_prefix);
 
     // unmatch all the readers and erase it from writers_by_topic
-    void unmatch_writer_(const eprosima::fastrtps::rtps::GUID_t& guid);
+    void unmatch_writer_(
+            const eprosima::fastrtps::rtps::GUID_t& guid);
 
     // unmatch all the writers and erase it from readers_by_topic
-    void unmatch_reader_(const eprosima::fastrtps::rtps::GUID_t& guid);
+    void unmatch_reader_(
+            const eprosima::fastrtps::rtps::GUID_t& guid);
 
     // delete an entity and set its change to release. Assumes the entity has been unmatched before
     bool delete_participant_entity_(
@@ -327,23 +329,29 @@ protected:
             const fastrtps::rtps::GUID_t& guid);
 
     // return if there are more than one writer in the participant in the same topic
-    bool repeated_writer_topic_(const eprosima::fastrtps::rtps::GuidPrefix_t& participant,
+    bool repeated_writer_topic_(
+            const eprosima::fastrtps::rtps::GuidPrefix_t& participant,
             const std::string& topic_name);
 
     // return if there are more than one reader in the participant in the same topic
-    bool repeated_reader_topic_(const eprosima::fastrtps::rtps::GuidPrefix_t& participant,
+    bool repeated_reader_topic_(
+            const eprosima::fastrtps::rtps::GuidPrefix_t& participant,
             const std::string& topic_name);
 
-    void remove_writer_from_topic_(const eprosima::fastrtps::rtps::GUID_t& writer_guid,
+    void remove_writer_from_topic_(
+            const eprosima::fastrtps::rtps::GUID_t& writer_guid,
             const std::string& topic_name);
 
-    void remove_reader_from_topic_(const eprosima::fastrtps::rtps::GUID_t& reader_guid,
+    void remove_reader_from_topic_(
+            const eprosima::fastrtps::rtps::GUID_t& reader_guid,
             const std::string& topic_name);
 
-    void add_writer_to_topic_(const eprosima::fastrtps::rtps::GUID_t& writer_guid,
+    void add_writer_to_topic_(
+            const eprosima::fastrtps::rtps::GUID_t& writer_guid,
             const std::string& topic_name);
 
-    void add_reader_to_topic_(const eprosima::fastrtps::rtps::GUID_t& reader_guid,
+    void add_reader_to_topic_(
+            const eprosima::fastrtps::rtps::GUID_t& reader_guid,
             const std::string& topic_name);
 
     fastrtps::DBQueue<eprosima::fastdds::rtps::ddb::DiscoveryPDPDataQueueInfo> pdp_data_queue_;
