@@ -147,9 +147,17 @@ public:
         history_ = new eprosima::fastrtps::rtps::ReaderHistory(hattr_);
         ASSERT_NE(history_, nullptr);
 
-        //Create reader
-        reader_ = eprosima::fastrtps::rtps::RTPSDomain::createRTPSReader(participant_, reader_attr_, history_,
-                        &listener_);
+        // Create reader
+        if (payload_pool_)
+        {
+            reader_ = eprosima::fastrtps::rtps::RTPSDomain::createRTPSReader(participant_, reader_attr_, payload_pool_,
+                history_, &listener_);
+        }
+        else
+        {
+            reader_ = eprosima::fastrtps::rtps::RTPSDomain::createRTPSReader(participant_, reader_attr_, history_,
+                &listener_);
+        }
         ASSERT_NE(reader_, nullptr);
 
         ASSERT_EQ(participant_->registerReader(reader_, topic_attr_, reader_qos_), true);
@@ -303,6 +311,13 @@ public:
     }
 
     /*** Function to change QoS ***/
+    RTPSWithRegistrationReader& payload_pool(
+            const std::shared_ptr<eprosima::fastrtps::rtps::IPayloadPool>& pool)
+    {
+        payload_pool_ = pool;
+        return *this;
+    }
+
     RTPSWithRegistrationReader& memoryMode(
             const eprosima::fastrtps::rtps::MemoryManagementPolicy_t memoryPolicy)
     {
@@ -441,6 +456,7 @@ private:
     size_t current_received_count_;
     size_t number_samples_expected_;
     type_support type_;
+    std::shared_ptr<eprosima::fastrtps::rtps::IPayloadPool> payload_pool_;
 };
 
 #endif // _TEST_BLACKBOX_RTPSWITHREGISTRATIONREADER_HPP_
