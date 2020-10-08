@@ -192,6 +192,10 @@ public:
             cdr << *it;
 
             ch->serializedPayload.length = static_cast<uint32_t>(cdr.getSerializedDataLength());
+            if (ch->serializedPayload.length > 65000u)
+            {
+                ch->setFragmentSize(65000u);
+            }
 
             history_->add_change(ch);
             it = msgs.erase(it);
