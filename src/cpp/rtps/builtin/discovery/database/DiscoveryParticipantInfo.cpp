@@ -33,55 +33,57 @@ eprosima::fastrtps::rtps::CacheChange_t* DiscoveryParticipantInfo::update(
         eprosima::fastrtps::rtps::CacheChange_t* change,
         DiscoveryParticipantChangeData participant_change_data)
 {
-    eprosima::fastrtps::rtps::CacheChange_t* old_change = change_;
-    change_ = change;
     participant_change_data_ = participant_change_data;
-    return old_change;
+    return update(change);
 }
 
 eprosima::fastrtps::rtps::CacheChange_t* DiscoveryParticipantInfo::update_and_unmatch(
         eprosima::fastrtps::rtps::CacheChange_t* change,
         DiscoveryParticipantChangeData participant_change_data)
 {
-    relevant_participants_builtin_ack_status_.unmatch_all();
-    return update(change, participant_change_data);
+    participant_change_data_ = participant_change_data;
+    return update_and_unmatch(change);
 }
 
 void DiscoveryParticipantInfo::add_reader(
         const eprosima::fastrtps::rtps::GUID_t& guid)
 {
-    if (std::find(readers.begin(), readers.end(), guid) == readers.end())
+    if (std::find(readers_.begin(), readers_.end(), guid) == readers_.end())
     {
-        readers.push_back(guid);
+        readers_.push_back(guid);
     }
 }
 
 void DiscoveryParticipantInfo::remove_reader(
         const eprosima::fastrtps::rtps::GUID_t& guid)
 {
-    auto it = std::find(readers.begin(), readers.end(), guid);
-    if (it != readers.end())
+    // erase it from the back to accelerate participant removal
+    auto rit = std::find(readers_.rbegin(), readers_.rend(), guid);
+    if (rit != readers_.rend())
     {
-        readers.erase(it);
+        // prev because the inverse iterator
+        readers_.erase(std::prev(rit.base()));
     }
 }
 
 void DiscoveryParticipantInfo::add_writer(
         const eprosima::fastrtps::rtps::GUID_t& guid)
 {
-    if (std::find(writers.begin(), writers.end(), guid) == writers.end())
+    if (std::find(writers_.begin(), writers_.end(), guid) == writers_.end())
     {
-        writers.push_back(guid);
+        writers_.push_back(guid);
     }
 }
 
 void DiscoveryParticipantInfo::remove_writer(
         const eprosima::fastrtps::rtps::GUID_t& guid)
 {
-    auto it = std::find(writers.begin(), writers.end(), guid);
-    if (it != writers.end())
+    // erase it from the back to accelerate participant removal
+    auto rit = std::find(writers_.rbegin(), writers_.rend(), guid);
+    if (rit != writers_.rend())
     {
-        writers.erase(it);
+        // prev because the inverse iterator
+        writers_.erase(std::prev(rit.base()));
     }
 }
 
