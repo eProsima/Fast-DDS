@@ -20,6 +20,7 @@
 #define _FASTDDS_RTPS_DOMAIN_H_
 
 #include <fastdds/rtps/common/Types.h>
+#include <fastdds/rtps/history/IPayloadPool.h>
 
 #include <fastdds/rtps/attributes/RTPSParticipantAttributes.h>
 
@@ -104,6 +105,22 @@ public:
             WriterListener* listen = nullptr);
 
     /**
+     * Create a RTPSWriter in a participant using a custom payload pool.
+     * @param p Pointer to the RTPSParticipant.
+     * @param watt Writer Attributes.
+     * @param payload_pool Shared pointer to the IPayloadPool
+     * @param hist Pointer to the WriterHistory.
+     * @param listen Pointer to the WriterListener.
+     * @return Pointer to the created RTPSWriter.
+     */
+    RTPS_DllAPI static RTPSWriter* createRTPSWriter(
+            RTPSParticipant* p,
+            WriterAttributes& watt,
+            const std::shared_ptr<IPayloadPool>& payload_pool,
+            WriterHistory* hist,
+            WriterListener* listen = nullptr);
+
+    /**
      * Remove a RTPSWriter.
      * @param writer Pointer to the writer you want to remove.
      * @return  True if correctly removed.
@@ -175,6 +192,11 @@ private:
      * DomainRTPSParticipant destructor
      */
     ~RTPSDomain() = delete;
+
+    template<typename Functor>
+    static RTPSWriter* create_writer(
+            const GUID_t& participant_guid,
+            const Functor& callback);
 
     /**
      * @brief Get Id to create a RTPSParticipant.

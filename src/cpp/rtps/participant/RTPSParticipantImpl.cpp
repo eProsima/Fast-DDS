@@ -21,8 +21,11 @@
 
 #include <rtps/flowcontrol/ThroughputController.h>
 #include <rtps/persistence/PersistenceService.h>
+#include <rtps/history/BasicPayloadPool.hpp>
 
 #include <fastdds/rtps/messages/MessageReceiver.h>
+
+#include <fastdds/rtps/history/WriterHistory.h>
 
 #include <fastdds/rtps/writer/StatelessWriter.h>
 #include <fastdds/rtps/writer/StatefulWriter.h>
@@ -445,18 +448,13 @@ RTPSParticipantImpl::~RTPSParticipantImpl()
     delete mp_mutex;
 }
 
-/*
- *
- * MAIN RTPSParticipant IMPL API
- *
- */
-bool RTPSParticipantImpl::createWriter(
+template<typename Functor>
+bool RTPSParticipantImpl::create_writer(
         RTPSWriter** WriterOut,
         WriterAttributes& param,
-        WriterHistory* hist,
-        WriterListener* listen,
         const EntityId_t& entityId,
-        bool isBuiltin)
+        bool isBuiltin,
+        const Functor& callback)
 {
     std::string type = (param.endpoint.reliabilityKind == RELIABLE) ? "RELIABLE" : "BEST_EFFORT";
     logInfo(RTPS_PARTICIPANT, " of type " << type);
@@ -572,18 +570,7 @@ bool RTPSParticipantImpl::createWriter(
 
     RTPSWriter* SWriter = nullptr;
     GUID_t guid(m_guid.guidPrefix, entId);
-    if (param.endpoint.reliabilityKind == BEST_EFFORT)
-    {
-        SWriter = (persistence == nullptr) ?
-                new StatelessWriter(this, guid, param, hist, listen) :
-                new StatelessPersistentWriter(this, guid, param, hist, listen, persistence);
-    }
-    else if (param.endpoint.reliabilityKind == RELIABLE)
-    {
-        SWriter = (persistence == nullptr) ?
-                new StatefulWriter(this, guid, param, hist, listen) :
-                new StatefulPersistentWriter(this, guid, param, hist, listen, persistence);
-    }
+    SWriter = callback(guid, param, persistence, param.endpoint.reliabilityKind == RELIABLE);
 
     // restore attributes
     param.endpoint.persistence_guid = former_persistence_guid;
@@ -640,6 +627,89 @@ bool RTPSParticipantImpl::createWriter(
     }
 
     return true;
+}
+
+/*
+ *
+ * MAIN RTPSParticipant IMPL API
+ *
+ */
+bool RTPSParticipantImpl::createWriter(
+        RTPSWriter** WriterOut,
+        WriterAttributes& param,
+        WriterHistory* hist,
+        WriterListener* listen,
+        const EntityId_t& entityId,
+        bool isBuiltin)
+{
+    auto callback = [hist, listen, this]
+                (const GUID_t& guid, WriterAttributes& param, IPersistenceService* persistence,
+                    bool is_reliable) -> RTPSWriter*
+            {
+                if (is_reliable)
+                {
+                    if (persistence != nullptr)
+                    {
+                        return new StatefulPersistentWriter(this, guid, param, hist, listen, persistence);
+                    }
+                    else
+                    {
+                        return new StatefulWriter(this, guid, param, hist, listen);
+                    }
+                }
+                else
+                {
+                    if (persistence != nullptr)
+                    {
+                        return new StatelessPersistentWriter(this, guid, param, hist, listen, persistence);
+                    }
+                    else
+                    {
+                        return new StatelessWriter(this, guid, param, hist, listen);
+                    }
+                }
+            };
+    return create_writer(WriterOut, param, entityId, isBuiltin, callback);
+}
+
+bool RTPSParticipantImpl::createWriter(
+        RTPSWriter** WriterOut,
+        WriterAttributes& param,
+        const std::shared_ptr<IPayloadPool>& payload_pool,
+        WriterHistory* hist,
+        WriterListener* listen,
+        const EntityId_t& entityId,
+        bool isBuiltin)
+{
+    auto callback = [hist, listen, &payload_pool, this]
+                (const GUID_t& guid, WriterAttributes& param, IPersistenceService* persistence,
+                    bool is_reliable) -> RTPSWriter*
+            {
+                if (is_reliable)
+                {
+                    if (persistence != nullptr)
+                    {
+                        return new StatefulPersistentWriter(this, guid, param, payload_pool, hist, listen, persistence);
+                    }
+                    else
+                    {
+                        return new StatefulWriter(this, guid, param, payload_pool, hist, listen);
+                    }
+                }
+                else
+                {
+                    if (persistence != nullptr)
+                    {
+                        return new StatelessPersistentWriter(this, guid, param, payload_pool, hist, listen,
+                                       persistence);
+                    }
+                    else
+                    {
+                        return new StatelessWriter(this, guid, param, payload_pool, hist, listen);
+                    }
+                }
+            };
+    return create_writer(WriterOut, param, entityId, isBuiltin, callback);
 }
 
 bool RTPSParticipantImpl::createReader(
@@ -1055,7 +1125,7 @@ void RTPSParticipantImpl::createReceiverResources(
         bool ApplyMutation,
         bool RegisterReceiver)
 {
-    std::vector<std::shared_ptr<ReceiverResource> > newItemsBuffer;
+    std::vector<std::shared_ptr<ReceiverResource>> newItemsBuffer;
 
 #if HAVE_SECURITY
     // An auxilary buffer is needed in the ReceiverResource to to decrypt the message,
@@ -1527,7 +1597,7 @@ bool RTPSParticipantImpl::did_mutation_took_place_on_meta(
     // TCP is a special case because physical ports are taken from the TransportDescriptors
     struct ResetLogical : public std::unary_function<Locator_t, const Locator_t&>
     {
-        typedef std::vector<std::shared_ptr<fastdds::rtps::TransportDescriptorInterface> > Transports;
+        typedef std::vector<std::shared_ptr<fastdds::rtps::TransportDescriptorInterface>> Transports;
 
         ResetLogical(
                 const Transports& tp)

@@ -32,7 +32,7 @@
 #include <process.h>
 #else
 #include <unistd.h>
-#endif
+#endif // if defined(_WIN32)
 
 #include <fastdds/rtps/attributes/RTPSParticipantAttributes.h>
 #include <fastdds/rtps/common/Guid.h>
@@ -54,7 +54,7 @@
 #include <fastdds/rtps/Endpoint.h>
 #include <fastdds/rtps/security/accesscontrol/ParticipantSecurityAttributes.h>
 #include <rtps/security/SecurityManager.h>
-#endif
+#endif // if HAVE_SECURITY
 
 namespace eprosima {
 
@@ -136,7 +136,7 @@ class RTPSParticipantImpl
             }
         }
 
-private:
+    private:
 
         ReceiverControlBlock(
                 const ReceiverControlBlock&) = delete;
@@ -316,7 +316,7 @@ public:
         return mp_userParticipant;
     }
 
-    std::vector<std::unique_ptr<FlowController> >& getFlowControllers()
+    std::vector<std::unique_ptr<FlowController>>& getFlowControllers()
     {
         return m_controllers;
     }
@@ -367,7 +367,7 @@ public:
             const GUID_t& local_reader,
             const WriterProxyData& remote_writer_data);
 
-#endif
+#endif // if HAVE_SECURITY
 
     PDPSimple* pdpsimple();
 
@@ -442,8 +442,8 @@ public:
 
     //!Compare metatraffic locators list searching for mutations
     bool did_mutation_took_place_on_meta(
-        const LocatorList_t& MulticastLocatorList,
-        const LocatorList_t& UnicastLocatorList) const;
+            const LocatorList_t& MulticastLocatorList,
+            const LocatorList_t& UnicastLocatorList) const;
 
 private:
 
@@ -490,7 +490,7 @@ private:
     bool m_security_manager_initialized;
     // Security activation flag
     bool m_is_security_active;
-#endif
+#endif // if HAVE_SECURITY
 
     //! Encapsulates all associated resources on a Receiving element.
     std::list<ReceiverControlBlock> m_receiverResourcelist;
@@ -576,11 +576,11 @@ private:
     /*
      * Flow controllers for this participant.
      */
-    std::vector<std::unique_ptr<FlowController> > m_controllers;
+    std::vector<std::unique_ptr<FlowController>> m_controllers;
 
 #if HAVE_SECURITY
     security::ParticipantSecurityAttributes security_attributes_;
-#endif
+#endif // if HAVE_SECURITY
 
     //! Indicates whether the participant has shared-memory transport
     bool has_shm_transport_;
@@ -591,6 +591,14 @@ private:
      */
     IPersistenceService* get_persistence_service(
             const EndpointAttributes& param);
+
+    template<typename Functor>
+    bool create_writer(
+            RTPSWriter** WriterOut,
+            WriterAttributes& param,
+            const EntityId_t& entityId,
+            bool isBuiltin,
+            const Functor& callback);
 
 public:
 
@@ -603,6 +611,8 @@ public:
      * Create a Writer in this RTPSParticipant.
      * @param Writer Pointer to pointer of the Writer, used as output. Only valid if return==true.
      * @param param WriterAttributes to define the Writer.
+     * @param hist Pointer to the WriterHistory.
+     * @param listen Pointer to the WriterListener.
      * @param entityId EntityId assigned to the Writer.
      * @param isBuiltin Bool value indicating if the Writer is builtin (Discovery or Liveliness protocol) or is created for the end user.
      * @return True if the Writer was correctly created.
@@ -610,6 +620,26 @@ public:
     bool createWriter(
             RTPSWriter** Writer,
             WriterAttributes& param,
+            WriterHistory* hist,
+            WriterListener* listen,
+            const EntityId_t& entityId = c_EntityId_Unknown,
+            bool isBuiltin = false);
+
+    /**
+     * Create a Writer in this RTPSParticipant.
+     * @param Writer Pointer to pointer of the Writer, used as output. Only valid if return==true.
+     * @param param WriterAttributes to define the Writer.
+     * @param payload_pool Shared pointer to the IPayloadPool
+     * @param hist Pointer to the WriterHistory.
+     * @param listen Pointer to the WriterListener.
+     * @param entityId EntityId assigned to the Writer.
+     * @param isBuiltin Bool value indicating if the Writer is builtin (Discovery or Liveliness protocol) or is created for the end user.
+     * @return True if the Writer was correctly created.
+     */
+    bool createWriter(
+            RTPSWriter** Writer,
+            WriterAttributes& param,
+            const std::shared_ptr<IPayloadPool>& payload_pool,
             WriterHistory* hist,
             WriterListener* listen,
             const EntityId_t& entityId = c_EntityId_Unknown,
@@ -764,10 +794,10 @@ public:
         endpoint->supports_rtps_protection_ = support;
     }
 
-#endif
+#endif // if HAVE_SECURITY
 };
-}
+} // namespace rtps
 } /* namespace rtps */
 } /* namespace eprosima */
-#endif
+#endif // ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 #endif //_RTPS_PARTICIPANT_RTPSPARTICIPANTIMPL_H_
