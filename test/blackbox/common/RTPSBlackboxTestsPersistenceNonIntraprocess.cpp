@@ -78,8 +78,8 @@ public:
         // Wait for undiscovery
         reader.wait_undiscovery();
 
-        writer.make_persistent(db_file_name_writer(), guid_prefix()).
-                reliability(ReliabilityKind_t::RELIABLE).init();
+        writer.make_persistent(db_file_name_writer(), guid_prefix())
+                .reliability(ReliabilityKind_t::RELIABLE).init();
 
         // Wait for discovery
         writer.wait_discovery();
@@ -118,7 +118,7 @@ public:
             }
         }
         EXPECT_EQ(num_errors, 1u);
-}
+    }
 
 protected:
 
@@ -138,7 +138,8 @@ protected:
         mock_consumer_->cv().wait(lock, checker);
     }
 
-    std::vector<Log::Entry> helper_block_for_at_least_entries(uint32_t amount)
+    std::vector<Log::Entry> helper_block_for_at_least_entries(
+            uint32_t amount)
     {
         block([this, amount]() -> bool
                 {

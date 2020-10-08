@@ -24,35 +24,39 @@ namespace eprosima {
 namespace fastdds {
 namespace dds {
 
-class BlackboxMockConsumer: public LogConsumer {
+class BlackboxMockConsumer : public LogConsumer
+{
 public:
-   virtual void Consume(const Log::Entry& entry)
-   {
-      std::unique_lock<std::mutex> guard(mMutex);
-      mEntriesConsumed.push_back(entry);
-      cv_.notify_one();
-   }
 
-   const std::vector<Log::Entry> ConsumedEntries() const
-   {
-      std::unique_lock<std::mutex> guard(mMutex);
-      return mEntriesConsumed;
-   }
+    virtual void Consume(
+            const Log::Entry& entry)
+    {
+        std::unique_lock<std::mutex> guard(mMutex);
+        mEntriesConsumed.push_back(entry);
+        cv_.notify_one();
+    }
 
-   std::condition_variable& cv()
-   {
-      return cv_;
-   }
+    const std::vector<Log::Entry> ConsumedEntries() const
+    {
+        std::unique_lock<std::mutex> guard(mMutex);
+        return mEntriesConsumed;
+    }
+
+    std::condition_variable& cv()
+    {
+        return cv_;
+    }
 
 private:
-   std::vector<Log::Entry> mEntriesConsumed;
-   mutable std::mutex mMutex;
-   std::condition_variable cv_;
+
+    std::vector<Log::Entry> mEntriesConsumed;
+    mutable std::mutex mMutex;
+    std::condition_variable cv_;
 };
 
 } // namespace dds
 } // namespace fastdds
 } // namespace eprosima
 
-#endif
+#endif // ifndef MOCK_BLACKBOX_LOG_CONSUMER_H
 
