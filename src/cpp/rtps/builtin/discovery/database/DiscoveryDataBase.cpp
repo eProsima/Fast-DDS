@@ -569,7 +569,7 @@ void DiscoveryDataBase::create_participant_from_change_(
                 // Create a populate the Cache Change with the necessary information.
                 fastrtps::rtps::CacheChange_t* virtual_writer_change = new fastrtps::rtps::CacheChange_t();
                 virtual_writer_change->kind = fastrtps::rtps::ChangeKind_t::ALIVE;
-                virtual_writer_change->writerGUID = virtual_writer_change->writerGUID;
+                virtual_writer_change->writerGUID = ch->writerGUID;
                 virtual_writer_change->instanceHandle = fastrtps::rtps::InstanceHandle_t(virtual_writer_guid);
                 // Populate sample identity
                 fastrtps::rtps::SampleIdentity virtual_writer_sample_id;
@@ -582,8 +582,6 @@ void DiscoveryDataBase::create_participant_from_change_(
                 virtual_writer_change->write_params = std::move(virtual_writer_writer_params);
                 // Create the virtual writer
                 create_writers_from_change_(virtual_writer_change, virtual_topic_);
-                // TODO: Delete this Cache Change upon participant destruction. Make sure ~DiscoveryDataBase() deletes
-                // the ones remaining.
 
                 /* Create virtual reader */
                 // Create a GUID for the virtual reader from the local server GUID prefix and the virtual reader entity
@@ -593,7 +591,7 @@ void DiscoveryDataBase::create_participant_from_change_(
                 // Create a populate the Cache Change with the necessary information.
                 fastrtps::rtps::CacheChange_t* virtual_reader_change = new fastrtps::rtps::CacheChange_t();
                 virtual_reader_change->kind = fastrtps::rtps::ChangeKind_t::ALIVE;
-                virtual_reader_change->writerGUID = virtual_reader_change->writerGUID;
+                virtual_reader_change->writerGUID = ch->writerGUID;
                 virtual_reader_change->instanceHandle = fastrtps::rtps::InstanceHandle_t(virtual_reader_guid);
                 // Populate sample identity
                 fastrtps::rtps::SampleIdentity virtual_reader_sample_id;
@@ -603,11 +601,9 @@ void DiscoveryDataBase::create_participant_from_change_(
                 eprosima::fastrtps::rtps::WriteParams virtual_reader_writer_params;
                 virtual_reader_writer_params.sample_identity(virtual_reader_sample_id);
                 virtual_reader_writer_params.related_sample_identity(virtual_reader_sample_id);
-                virtual_writer_change->write_params = std::move(virtual_reader_writer_params);
+                virtual_reader_change->write_params = std::move(virtual_reader_writer_params);
                 // Create the virtual reader
                 create_readers_from_change_(virtual_reader_change, virtual_topic_);
-                // TODO: Delete this Cache Change upon participant destruction. Make sure ~DiscoveryDataBase() deletes
-                // the ones remaining.
             }
         }
         else
@@ -1792,6 +1788,7 @@ bool DiscoveryDataBase::delete_reader_entity_(
     return true;
 }
 
+
 std::map<eprosima::fastrtps::rtps::GUID_t, DiscoveryEndpointInfo>::iterator DiscoveryDataBase::delete_reader_entity_(
         std::map<eprosima::fastrtps::rtps::GUID_t, DiscoveryEndpointInfo>::iterator it)
 {
@@ -1809,9 +1806,18 @@ std::map<eprosima::fastrtps::rtps::GUID_t, DiscoveryEndpointInfo>::iterator Disc
     }
     pit->second.remove_reader(it->first);
 
-    changes_to_release_.push_back(it->second.change());
+    if (it->second.is_virtual())
+    {
+        // If the change is virtual, we can simply delete it
+        delete it->second.change();
+    }
+    else
+    {
+        // Mark change to release
+        changes_to_release_.push_back(it->second.change());
+    }
 
-    // remove entity in readers_ map
+    // remove entity in readers vector
     return readers_.erase(it);
 }
 
@@ -1828,6 +1834,7 @@ bool DiscoveryDataBase::delete_writer_entity_(
     delete_writer_entity_(it);
     return true;
 }
+
 
 std::map<eprosima::fastrtps::rtps::GUID_t, DiscoveryEndpointInfo>::iterator DiscoveryDataBase::delete_writer_entity_(
         std::map<eprosima::fastrtps::rtps::GUID_t, DiscoveryEndpointInfo>::iterator it)
@@ -1846,9 +1853,18 @@ std::map<eprosima::fastrtps::rtps::GUID_t, DiscoveryEndpointInfo>::iterator Disc
     }
     pit->second.remove_writer(it->first);
 
-    changes_to_release_.push_back(it->second.change());
+    if (it->second.is_virtual())
+    {
+        // If the change is virtual, we can simply delete it
+        delete it->second.change();
+    }
+    else
+    {
+        // Mark change to release
+        changes_to_release_.push_back(it->second.change());
+    }
 
-    // remove entity in writers_ map
+    // remove entity in writers vector
     return writers_.erase(it);
 }
 
