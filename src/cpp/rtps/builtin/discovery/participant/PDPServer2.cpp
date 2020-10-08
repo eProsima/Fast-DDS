@@ -1044,7 +1044,7 @@ bool PDPServer2::remove_change_from_writer_history(
         CacheChange_t* change,
         bool release_change /*= true*/)
 {
-    std::unique_lock<RecursiveTimedMutex> lock(writer->getMutex());
+    std::lock_guard<RecursiveTimedMutex> lock(writer->getMutex());
     return remove_change_from_history_nts(history, change, release_change);
 }
 
