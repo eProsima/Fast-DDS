@@ -396,7 +396,7 @@ inline void shared_memory_object::truncate(offset_t length)
 {
 #ifdef BOOST_FASTDDS_PATCHES
 
-   if (0 != fallocate(m_handle, 0, 0, length))
+   if (0 != posix_fallocate(m_handle, 0, length))
    {
        error_info err(system_error_code());
        throw interprocess_exception(err);
