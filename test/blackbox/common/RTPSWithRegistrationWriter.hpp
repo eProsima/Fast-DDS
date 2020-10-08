@@ -174,12 +174,11 @@ public:
     }
 
     void send(
-            std::list<type>& msgs,
-            uint32_t msgs_to_send = UINT32_MAX)
+            std::list<type>& msgs)
     {
         auto it = msgs.begin();
 
-        while (it != msgs.end() && msgs_to_send > 0)
+        while (it != msgs.end())
         {
             eprosima::fastrtps::rtps::CacheChange_t* ch = writer_->new_change(*it, eprosima::fastrtps::rtps::ALIVE);
 
@@ -192,7 +191,6 @@ public:
 
             history_->add_change(ch);
             it = msgs.erase(it);
-            msgs_to_send--;
         }
     }
 
