@@ -738,34 +738,24 @@ History::iterator PDPServer2::process_change_acknowledgement(
     // DATA(p|w|r) case
     CacheChange_t* c = *cit;
 
-    if (c->kind == ChangeKind_t::ALIVE)
+    // Call to `StatefulWriter::for_each_reader_proxy()`. This will update
+    // `participants_|writers_|readers_[guid_prefix]::relevant_participants_builtin_ack_status`, and will also set
+    // `pending` to whether the change is has been acknowledged by all readers.
+    // If the change has been acknowledge by everyone
+    if (!writer->for_each_reader_proxy(discovery_db_.functor(c)) &&
+            !(discovery_db_.is_participant(c) &&
+            discovery_db_.guid_from_change(c) == mp_builtin->mp_participantImpl->getGuid()))
     {
-        // Call to `StatefulWriter::for_each_reader_proxy()`. This will update
-        // `participants_|writers_|readers_[guid_prefix]::relevant_participants_builtin_ack_status`, and will also set
-        // `pending` to whether the change is has been acknowledged by all readers.
-        // If the change has been acknowledge by everyone
-        if (!writer->for_each_reader_proxy(discovery_db_.functor(c)) &&
-                !(discovery_db_.is_participant(c) &&
-                discovery_db_.guid_from_change(c) == mp_builtin->mp_participantImpl->getGuid()))
+
+        if (c->kind != ChangeKind_t::ALIVE)
         {
-            // Remove the entry from writer history, but do not release the cache.
-            // This CacheChange will only be released in the case that is substituted by a DATA(Up|Uw|Ur).
-            return writer_history->remove_change(cit, false);
-        }
-    }
-    // DATA(Up|Uw|Ur) case. Currently, Fast DDS only considers CacheChange kinds ALIVE and NOT_ALIVE_DISPOSED, so if the
-    // kind is not ALIVE, then we know is NOT_ALIVE_DISPOSED and so a DATA(Up|Uw|Ur). In the future we should handle the
-    // cases where kind is NOT_ALIVE_UNREGISTERED or NOT_ALIVE_DISPOSED_UNREGISTERED.
-    else
-    {
-        // If `StatefulWriter::is_acked_by_all()`:
-        if (writer->is_acked_by_all(c))
-        {
-            // Remove entry from `participants_|writers_|readers_`
+            // For disposals the DiscoverySharedInfo objects should be removed
             discovery_db_.delete_entity_of_change(c);
-            // Remove from writer's history
-            return writer_history->remove_change(cit, false);
         }
+
+        // Remove the entry from writer history, but do not release the cache.
+        // This CacheChange will only be released in the case that is substituted by a DATA(Up|Uw|Ur).
+        return writer_history->remove_change(cit, false);
     }
 
     // proceed to the next change
@@ -796,7 +786,7 @@ bool PDPServer2::process_disposals()
         if (discovery_db_.is_participant(change))
         {
             // Lock PDP writer
-            std::unique_lock<RecursiveTimedMutex> lock(mp_PDPWriter->getMutex());
+            std::lock_guard<RecursiveTimedMutex> lock(mp_PDPWriter->getMutex());
 
             // Remove all DATA(p) with the same sample identity as the DATA(Up) from PDP writer's history.
             remove_related_alive_from_history_nts(mp_PDPWriterHistory, change_guid_prefix);
@@ -808,7 +798,7 @@ bool PDPServer2::process_disposals()
         else if (discovery_db_.is_writer(change))
         {
             // Lock EDP publications writer
-            std::unique_lock<RecursiveTimedMutex> lock(edp->publications_writer_.first->getMutex());
+            std::lock_guard<RecursiveTimedMutex> lock(edp->publications_writer_.first->getMutex());
 
             // Remove all DATA(w) with the same sample identity as the DATA(Uw) from EDP publications writer's history
             remove_related_alive_from_history_nts(pubs_history, change_guid_prefix);
@@ -971,7 +961,7 @@ void PDPServer2::remove_related_alive_from_history_nts(
         // Remove all DATA whose original sender was entity_guid_prefix from writer_history
         if (entity_guid_prefix == discovery_db_.guid_from_change(*chit).guidPrefix)
         {
-            writer_history->remove_change(*chit);
+            writer_history->remove_change(chit, false);
         }
     }
 }
