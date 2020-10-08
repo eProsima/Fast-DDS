@@ -308,12 +308,13 @@ void DiscoveryDataBase::process_pdp_data_queue()
         {
             // Update participants map
             logInfo(DISCOVERY_DATABASE, "DATA(p) received from: " << data_queue_info.change()->instanceHandle);
-            create_participant_from_change(data_queue_info.change(), data_queue_info.participant_change_data());
+            create_participant_from_change_(data_queue_info.change(), data_queue_info.participant_change_data());
         }
         // If the change is a DATA(Up)
         else
         {
-            process_dispose_participant(data_queue_info.change());
+            logInfo(DISCOVERY_DATABASE, "DATA(Up) received from: " << data_queue_info.change()->instanceHandle);
+            process_dispose_participant_(data_queue_info.change());
         }
 
         // Pop the message from the queue
@@ -351,14 +352,14 @@ bool DiscoveryDataBase::process_edp_data_queue()
             {
                 logInfo(DISCOVERY_DATABASE, "DATA(w) in topic " << topic_name << " received from: "
                                                                 << change->instanceHandle);
-                create_writers_from_change(change, topic_name);
+                create_writers_from_change_(change, topic_name);
             }
             // DATA(r) case
             else if (is_reader(change))
             {
                 logInfo(DISCOVERY_DATABASE, "DATA(r) in topic " << topic_name << " received from: "
                                                                 << change->instanceHandle);
-                create_readers_from_change(change, topic_name);
+                create_readers_from_change_(change, topic_name);
             }
 
             // Update set of dirty_topics
@@ -378,12 +379,14 @@ bool DiscoveryDataBase::process_edp_data_queue()
             // DATA(Uw) case
             if (is_writer(change))
             {
-                process_dispose_writer(change, topic_name);
+                logInfo(DISCOVERY_DATABASE, "DATA(Uw) received from: " << change->instanceHandle);
+                process_dispose_writer_(change);
             }
             // DATA(Ur) case
             else if (is_reader(change))
             {
-                process_dispose_reader(change, topic_name);
+                logInfo(DISCOVERY_DATABASE, "DATA(Ur) received from: " << change->instanceHandle);
+                process_dispose_reader_(change);
             }
         }
 
@@ -394,7 +397,7 @@ bool DiscoveryDataBase::process_edp_data_queue()
     return is_dirty_topic;
 }
 
-void DiscoveryDataBase::create_participant_from_change(
+void DiscoveryDataBase::create_participant_from_change_(
         eprosima::fastrtps::rtps::CacheChange_t* ch,
         const DiscoveryParticipantChangeData& change_data)
 {
@@ -408,7 +411,7 @@ void DiscoveryDataBase::create_participant_from_change(
     {
         // Add old change to changes_to_release_
         logInfo(DISCOVERY_DATABASE, "Participant updating. Marking old change to release");
-        changes_to_release_.push_back(ret.first->second.update_and_unmatch(ch, change_data));
+        update_change_and_unmatch_(ch, ret.first->second);
     }
     else
     {
@@ -437,19 +440,11 @@ void DiscoveryDataBase::create_participant_from_change(
 
 }
 
-void DiscoveryDataBase::create_writers_from_change(
+void DiscoveryDataBase::create_writers_from_change_(
         eprosima::fastrtps::rtps::CacheChange_t* ch,
         const std::string& topic_name)
 {
     const eprosima::fastrtps::rtps::GUID_t& writer_guid = guid_from_change(ch);
-
-    // Update participants_::writers
-    std::map<eprosima::fastrtps::rtps::GuidPrefix_t, DiscoveryParticipantInfo>::iterator w_pit =
-            participants_.find(writer_guid.guidPrefix);
-    if (w_pit != participants_.end())
-    {
-        w_pit->second.add_writer(writer_guid);
-    }
 
     // Update writers_
     DiscoveryEndpointInfo tmp_writer(ch, topic_name, server_guid_prefix_);
@@ -460,6 +455,17 @@ void DiscoveryDataBase::create_writers_from_change(
     // If writer does not exists, create the change
     if (ret.second)
     {
+        // Update participants_::writers
+        std::map<eprosima::fastrtps::rtps::GuidPrefix_t, DiscoveryParticipantInfo>::iterator w_pit =
+                participants_.find(writer_guid.guidPrefix);
+        if (w_pit != participants_.end())
+        {
+            w_pit->second.add_writer(writer_guid);
+        }
+
+        // Update writers_by_topic
+        add_writer_to_topic_(writer_guid, topic_name);
+
         std::map<std::string, std::vector<eprosima::fastrtps::rtps::GUID_t>>::iterator readers_it =
                 readers_by_topic_.find(topic_name);
 
@@ -498,57 +504,22 @@ void DiscoveryDataBase::create_writers_from_change(
                 }
             }
         }
-
-        // Update writers_by_topic
-        std::map<std::string, std::vector<eprosima::fastrtps::rtps::GUID_t>>::iterator topic_it =
-                writers_by_topic_.find(topic_name);
-
-        if (topic_it != writers_by_topic_.end())
-        {
-            std::vector<eprosima::fastrtps::rtps::GUID_t>::iterator writer_by_topic_it =
-                    std::find(topic_it->second.begin(), topic_it->second.end(), writer_guid);
-            if (writer_by_topic_it == topic_it->second.end())
-            {
-                topic_it->second.push_back(writer_guid);
-            }
-            else
-            {
-                *writer_by_topic_it = writer_guid;
-            }
-        }
-        // This is the first writer in the topic
-        else
-        {
-            std::vector<fastrtps::rtps::GUID_t> writers_in_topic = {writer_guid};
-            auto topic_iterator = writers_by_topic_.insert(
-                std::pair<std::string, std::vector<fastrtps::rtps::GUID_t>>(topic_name, writers_in_topic));
-            if (!topic_iterator.second)
-            {
-                logError(DISCOVERY_DATABASE, "Could not insert writer " << writer_guid << " in topic " << topic_name);
-            }
-        }
     }
     // If writer exists, update the change and set all participant ack status to false
     else
     {
-        changes_to_release_.push_back(ret.first->second.update_and_unmatch(ch));
+        // TODO(Paris) when updating, be careful of not to do unmatch if the only endpoint in the other participant
+        //  is NOT ALIVE. This means that you still have to send your Data(Ux) to him but not the updates
+        update_change_and_unmatch_(ch, ret.first->second);
     }
 
 }
 
-void DiscoveryDataBase::create_readers_from_change(
+void DiscoveryDataBase::create_readers_from_change_(
         eprosima::fastrtps::rtps::CacheChange_t* ch,
         const std::string& topic_name)
 {
     const eprosima::fastrtps::rtps::GUID_t& reader_guid = guid_from_change(ch);
-
-    // Update participants_::readers
-    std::map<eprosima::fastrtps::rtps::GuidPrefix_t, DiscoveryParticipantInfo>::iterator r_pit =
-            participants_.find(reader_guid.guidPrefix);
-    if (r_pit != participants_.end())
-    {
-        r_pit->second.add_reader(reader_guid);
-    }
 
     DiscoveryEndpointInfo tmp_reader(ch, topic_name, server_guid_prefix_);
 
@@ -558,12 +529,26 @@ void DiscoveryDataBase::create_readers_from_change(
     // If reader does not exists, create the change
     if (ret.second)
     {
+        // Update participants_::readers
+        std::map<eprosima::fastrtps::rtps::GuidPrefix_t, DiscoveryParticipantInfo>::iterator r_pit =
+                participants_.find(reader_guid.guidPrefix);
+        if (r_pit != participants_.end())
+        {
+            r_pit->second.add_reader(reader_guid);
+        }
+
+        // Update readers_by_topic
+        add_reader_to_topic_(reader_guid, topic_name);
+
         std::map<std::string, std::vector<eprosima::fastrtps::rtps::GUID_t>>::iterator writers_it =
                 writers_by_topic_.find(topic_name);
         if (writers_it != writers_by_topic_.end())
         {
             for (eprosima::fastrtps::rtps::GUID_t writer_it: writers_it->second)
             {
+                logInfo(DISCOVERY_DATABASE, "Matching Data(r): " << reader_guid << " with writer: "
+                                                                 << writer_it);
+
                 // Update the participant ack status list from readers_
                 ret.first->second.add_or_update_ack_participant(writer_it.guidPrefix);
 
@@ -595,44 +580,17 @@ void DiscoveryDataBase::create_readers_from_change(
                 }
             }
         }
-
-        // Update readers_by_topic
-        std::map<std::string, std::vector<eprosima::fastrtps::rtps::GUID_t>>::iterator topic_it =
-                readers_by_topic_.find(topic_name);
-
-        if (topic_it != readers_by_topic_.end())
-        {
-            std::vector<eprosima::fastrtps::rtps::GUID_t>::iterator reader_by_topic_it =
-                    std::find(topic_it->second.begin(), topic_it->second.end(), reader_guid);
-            if (reader_by_topic_it == topic_it->second.end())
-            {
-                topic_it->second.push_back(reader_guid);
-            }
-            else
-            {
-                *reader_by_topic_it = reader_guid;
-            }
-        }
-        // This is the first reader in the topic
-        else
-        {
-            std::vector<fastrtps::rtps::GUID_t> readers_in_topic = {reader_guid};
-            auto topic_iterator = readers_by_topic_.insert(
-                std::pair<std::string, std::vector<fastrtps::rtps::GUID_t>>(topic_name, readers_in_topic));
-            if (!topic_iterator.second)
-            {
-                logError(DISCOVERY_DATABASE, "Could not insert reader " << reader_guid << " in topic " << topic_name);
-            }
-        }
     }
     // If reader exists, update the change and set all participant ack status to false
     else
     {
-        changes_to_release_.push_back(ret.first->second.update_and_unmatch(ch));
+        // TODO(Paris) when updating, be careful of not to do unmatch if the only endpoint in the other participant
+        //  is NOT ALIVE. This means that you still have to send your Data(Ux) to him but not the updates
+        update_change_and_unmatch_(ch, ret.first->second);
     }
 }
 
-void DiscoveryDataBase::process_dispose_participant(
+void DiscoveryDataBase::process_dispose_participant_(
         eprosima::fastrtps::rtps::CacheChange_t* ch)
 {
     const eprosima::fastrtps::rtps::GUID_t& participant_guid = guid_from_change(ch);
@@ -646,90 +604,40 @@ void DiscoveryDataBase::process_dispose_participant(
         // participant's meta-information, but we don't want to loose it here.
         changes_to_release_.push_back(pit->second.update_and_unmatch(ch));
     }
+    else
+    {
+        logError(DISCOVERY_DATABASE, "Processing disposal from an unexisting Participant"
+                << participant_guid.guidPrefix);
+    }
 
     // Delete entries from writers_ belonging to the participant
-    for (auto wit = writers_.begin(); wit != writers_.end();)
+    while (!pit->second.writers().empty())
     {
-        if (wit->first.guidPrefix == participant_guid.guidPrefix)
-        {
-            changes_to_release_.push_back(wit->second.change());
-            wit = writers_.erase(wit);
-            continue;
-        }
-        ++wit;
+        auto writer_guid = pit->second.writers().back();
+
+        // erase writer from topic
+        unmatch_writer_(writer_guid);
+
+        // release the change and remove entity without setting Data(Uw)
+        delete_writer_entity_(writer_guid);
     }
 
     // Delete entries from readers_ belonging to the participant
-    for (auto rit = readers_.begin(); rit != readers_.end();)
+    while (!pit->second.readers().empty())
     {
-        if (rit->first.guidPrefix == participant_guid.guidPrefix)
-        {
-            changes_to_release_.push_back(rit->second.change());
-            rit = readers_.erase(rit);
-            continue;
-        }
-        ++rit;
+        auto reader_guid = pit->second.readers().back();
+
+        // this unmatch must erase the entity from writers
+        unmatch_reader_(reader_guid);
+
+        // release the change and remove entity without setting Data(Ur)
+        delete_reader_entity_(reader_guid);
     }
 
-    // Delete Participant entries from writers_by_topic_
-    for (auto tit = writers_by_topic_.begin(); tit != writers_by_topic_.end();)
-    {
-        for (auto wit = tit->second.begin(); wit != tit->second.end();)
-        {
-            if (wit->guidPrefix == participant_guid.guidPrefix)
-            {
-                wit = tit->second.erase(wit);
-                continue;
-            }
-            ++wit;
-        }
+    // all participant endoints must be already unmatched in others endopoints relevant_ack maps
 
-        if (tit->second.empty())
-        {
-            tit = writers_by_topic_.erase(tit);
-            continue;
-        }
-        ++tit;
-    }
-
-    // Delete Participant entries from readers_by_topic_
-    for (auto tit = readers_by_topic_.begin(); tit != readers_by_topic_.end();)
-    {
-        for (auto rit = tit->second.begin(); rit != tit->second.end();)
-        {
-            if (rit->guidPrefix == participant_guid.guidPrefix)
-            {
-                rit = tit->second.erase(rit);
-                continue;
-            }
-            ++rit;
-        }
-
-        if (tit->second.empty())
-        {
-            tit = readers_by_topic_.erase(tit);
-            continue;
-        }
-        ++tit;
-    }
-
-    // Remove participant from others participants_[]::relevant_participants_builtin_ack_status
-    for (pit = participants_.begin(); pit != participants_.end(); ++pit)
-    {
-        pit->second.remove_participant(participant_guid.guidPrefix);
-    }
-
-    // Remove participant from others writers_[]::relevant_participants_builtin_ack_status
-    for (auto wit = writers_.begin(); wit != writers_.end(); ++wit)
-    {
-        wit->second.remove_participant(participant_guid.guidPrefix);
-    }
-
-    // Remove participant from others readers_[]::relevant_participants_builtin_ack_status
-    for (auto rit = readers_.begin(); rit != readers_.end(); ++rit)
-    {
-        rit->second.remove_participant(participant_guid.guidPrefix);
-    }
+    // unmatch own participant
+    unmatch_participant_(participant_guid.guidPrefix);
 
     // Add entry to disposals_
     if (std::find(disposals_.begin(), disposals_.end(), ch) == disposals_.end())
@@ -738,104 +646,50 @@ void DiscoveryDataBase::process_dispose_participant(
     }
 }
 
-void DiscoveryDataBase::process_dispose_writer(
-        eprosima::fastrtps::rtps::CacheChange_t* ch,
-        const std::string& topic_name)
+void DiscoveryDataBase::process_dispose_writer_(
+        eprosima::fastrtps::rtps::CacheChange_t* ch)
 {
     const eprosima::fastrtps::rtps::GUID_t& writer_guid = guid_from_change(ch);
 
-    // Change DATA(w) with DATA(Uw)
+    // check if the writer is still alive (if DATA(Up) is processed before it will be erased)
     std::map<eprosima::fastrtps::rtps::GUID_t, DiscoveryEndpointInfo>::iterator wit = writers_.find(writer_guid);
     if (wit != writers_.end())
     {
-        changes_to_release_.push_back(wit->second.update_and_unmatch(ch));
-    }
+        // Change DATA(w) with DATA(Uw)
+        update_change_and_unmatch_(ch, wit->second);
 
-    // Update own entry participants_::writers
-    std::map<eprosima::fastrtps::rtps::GuidPrefix_t, DiscoveryParticipantInfo>::iterator pit =
-            participants_.find(writer_guid.guidPrefix);
-    if (pit != participants_.end())
-    {
-        pit->second.remove_writer(writer_guid);
-    }
+        // remove writer from topic
+        remove_writer_from_topic_(writer_guid, wit->second.topic());
 
-    // Update own entry writers_by_topic_
-    std::map<std::string, std::vector<eprosima::fastrtps::rtps::GUID_t>>::iterator tit =
-            writers_by_topic_.find(topic_name);
-    if (tit != writers_by_topic_.end())
-    {
-        for (std::vector<eprosima::fastrtps::rtps::GUID_t>::iterator writer_it = tit->second.begin();
-                writer_it != tit->second.end();
-                ++writer_it)
+        // Add entry to disposals_
+        if (std::find(disposals_.begin(), disposals_.end(), ch) == disposals_.end())
         {
-            if (*writer_it == writer_guid)
-            {
-                tit->second.erase(writer_it);
-                break;
-            }
-        }
-
-        if (tit->second.empty())
-        {
-            writers_by_topic_.erase(tit);
+            disposals_.push_back(ch);
         }
     }
-
-    // Add entry to disposals_
-    if (std::find(disposals_.begin(), disposals_.end(), ch) == disposals_.end())
-    {
-        disposals_.push_back(ch);
-    }
-
 }
 
-void DiscoveryDataBase::process_dispose_reader(
-        eprosima::fastrtps::rtps::CacheChange_t* ch,
-        const std::string& topic_name)
+void DiscoveryDataBase::process_dispose_reader_(
+        eprosima::fastrtps::rtps::CacheChange_t* ch)
 {
     const eprosima::fastrtps::rtps::GUID_t& reader_guid = guid_from_change(ch);
 
-    // Change DATA(r) with DATA(Ur)
+    // check if the writer is still alive (if DATA(Up) is processed before it will be erased)
+
     std::map<eprosima::fastrtps::rtps::GUID_t, DiscoveryEndpointInfo>::iterator rit = readers_.find(reader_guid);
     if (rit != readers_.end())
     {
-        changes_to_release_.push_back(rit->second.update_and_unmatch(ch));
-    }
+        // Change DATA(r) with DATA(Ur)
+        update_change_and_unmatch_(ch, rit->second);
 
-    // Update own entry participants_::readers
-    std::map<eprosima::fastrtps::rtps::GuidPrefix_t, DiscoveryParticipantInfo>::iterator pit =
-            participants_.find(reader_guid.guidPrefix);
-    if (pit != participants_.end())
-    {
-        pit->second.remove_reader(reader_guid);
-    }
+        // remove reader from topic
+        remove_reader_from_topic_(reader_guid, rit->second.topic());
 
-    // Update own entry readers_by_topic_
-    std::map<std::string, std::vector<eprosima::fastrtps::rtps::GUID_t>>::iterator tit =
-            readers_by_topic_.find(topic_name);
-    if (tit != readers_by_topic_.end())
-    {
-        for (std::vector<eprosima::fastrtps::rtps::GUID_t>::iterator reader_it = tit->second.begin();
-                reader_it != tit->second.end();
-                ++reader_it)
+        // Add entry to disposals_
+        if (std::find(disposals_.begin(), disposals_.end(), ch) == disposals_.end())
         {
-            if (*reader_it == reader_guid)
-            {
-                tit->second.erase(reader_it);
-                break;
-            }
+            disposals_.push_back(ch);
         }
-
-        if (tit->second.empty())
-        {
-            readers_by_topic_.erase(tit);
-        }
-    }
-
-    // Add entry to disposals_
-    if (std::find(disposals_.begin(), disposals_.end(), ch) == disposals_.end())
-    {
-        disposals_.push_back(ch);
     }
 }
 
@@ -978,6 +832,7 @@ bool DiscoveryDataBase::process_dirty_topics()
 
     // Return whether there still are dirty topics
     logInfo(DISCOVERY_DATABASE, "Are there dirty topics? " << !dirty_topics_.empty());
+
     return !dirty_topics_.empty();
 }
 
@@ -997,38 +852,18 @@ bool DiscoveryDataBase::delete_entity_of_change(
     if (is_participant(change))
     {
         // The information related to this participant is cleaned up in process_data_queue()
-        auto it = participants_.find(guid_from_change(change).guidPrefix);
-        if (it == participants_.end())
-        {
-            return false;
-        }
-        changes_to_release_.push_back(it->second.change());
-        participants_.erase(it);
-        return true;
+        // when a disposal arrives, and it cleans also its children entities
+        return delete_participant_entity_(guid_from_change(change).guidPrefix);
     }
     else if (is_reader(change))
     {
         // The information related to this reader is cleaned up in process_data_queue()
-        auto it = readers_.find(guid_from_change(change));
-        if (it == readers_.end())
-        {
-            return false;
-        }
-        changes_to_release_.push_back(it->second.change());
-        readers_.erase(it);
-        return true;
+        return delete_reader_entity_(guid_from_change(change));
     }
     else if (is_writer(change))
     {
         // The information related to this writer is cleaned up in process_data_queue()
-        auto it = writers_.find(guid_from_change(change));
-        if (it == writers_.end())
-        {
-            return false;
-        }
-        changes_to_release_.push_back(it->second.change());
-        writers_.erase(it);
-        return true;
+        return delete_writer_entity_(guid_from_change(change));
     }
     return false;
 }
@@ -1162,6 +997,376 @@ void DiscoveryDataBase::AckedFunctor::operator () (
             external_pending_ = true;
         }
     }
+}
+
+void DiscoveryDataBase::unmatch_participant_(
+        const eprosima::fastrtps::rtps::GuidPrefix_t& guid_prefix)
+{
+    logInfo(DISCOVERY_DATABASE, "unmatching participant: " << guid_prefix);
+
+    auto pit = participants_.find(guid_prefix);
+    if (pit == participants_.end())
+    {
+        logWarning(DISCOVERY_DATABASE,
+                "Attempting to unmatch an unexisting participant: " << guid_prefix);
+    }
+
+    // for each relevant participant make not relevant
+    for (eprosima::fastrtps::rtps::GuidPrefix_t relevant_participant : pit->second.relevant_participants())
+    {
+        auto rpit = participants_.find(relevant_participant);
+        if (rpit == participants_.end())
+        {
+            logWarning(DISCOVERY_DATABASE,
+                    "Matched with an unexisting participant: " << guid_prefix);
+        }
+
+        rpit->second.remove_participant(guid_prefix);
+    }
+}
+
+void DiscoveryDataBase::unmatch_writer_(
+        const eprosima::fastrtps::rtps::GUID_t& guid)
+{
+    logInfo(DISCOVERY_DATABASE, "unmatching writer: " << guid);
+
+    auto wit = writers_.find(guid);
+    if (wit == writers_.end())
+    {
+        logWarning(DISCOVERY_DATABASE,
+                "Attempting to unmatch an unexisting writer: " << guid);
+        return;
+    }
+
+    // get writer topic
+    std::string topic = wit->second.topic();
+
+    // remove it from writer by topic
+    remove_writer_from_topic_(guid, topic);
+
+    // it there are more than one writer in this topic in the same participant we do not unmatch the endpoints
+    if (!repeated_writer_topic_(guid.guidPrefix, topic))
+    {
+        // for each reader in same topic make not relevant. It could be none in readers
+        auto tit = readers_by_topic_.find(topic);
+        if (tit != readers_by_topic_.end())
+        {
+            for (auto reader : tit->second)
+            {
+                auto rit = readers_.find(reader);
+                if (rit == readers_.end())
+                {
+                    logWarning(DISCOVERY_DATABASE,
+                            "Unexisting reader " << reader << " in topic: " << topic);
+                }
+
+                rit->second.remove_participant(guid.guidPrefix);
+            }
+        }
+    }
+}
+
+void DiscoveryDataBase::unmatch_reader_(
+        const eprosima::fastrtps::rtps::GUID_t& guid)
+{
+    logInfo(DISCOVERY_DATABASE, "unmatching reader: " << guid);
+
+    auto rit = readers_.find(guid);
+    if (rit == readers_.end())
+    {
+        logWarning(DISCOVERY_DATABASE,
+                "Attempting to unmatch an unexisting reader: " << guid);
+        return;
+    }
+
+    // get reader topic
+    std::string topic = rit->second.topic();
+
+    // remove it from reader by topic
+    remove_reader_from_topic_(guid, topic);
+
+    // it there are more than one reader in this topic in the same participant we do not unmatch the endpoints
+    if (!repeated_reader_topic_(guid.guidPrefix, topic))
+    {
+        // for each writer in same topic make not relevant. It could be none in writers
+        auto tit = writers_by_topic_.find(topic);
+        if (tit != writers_by_topic_.end())
+        {
+            for (auto writer : tit->second)
+            {
+                auto wit = writers_.find(writer);
+                if (wit == writers_.end())
+                {
+                    logWarning(DISCOVERY_DATABASE,
+                            "Unexisting writer " << writer << " in topic: " << topic);
+                }
+
+                wit->second.remove_participant(guid.guidPrefix);
+            }
+        }
+    }
+}
+
+bool DiscoveryDataBase::repeated_writer_topic_(
+        const eprosima::fastrtps::rtps::GuidPrefix_t& participant,
+        const std::string& topic_name)
+{
+    int count = 0;
+
+    auto pit = participants_.find(participant);
+    if (pit == participants_.end())
+    {
+        logWarning(DISCOVERY_DATABASE,
+                "Checking repeated writer topics in an unexisting participant: " << participant);
+        return false;
+    }
+
+    for (auto writer_guid : pit->second.writers())
+    {
+        auto wit = writers_.find(writer_guid);
+        if (wit == writers_.end())
+        {
+            logWarning(DISCOVERY_DATABASE,
+                    "writer missing: " << writer_guid);
+        }
+
+        if (wit->second.topic() == topic_name)
+        {
+            ++count;
+            if (count > 1)
+            {
+                return true;
+            }
+        }
+    }
+
+    // we already know is false. Safety check
+    return count > 1;
+}
+
+// return if there are more than one reader in the participant in the same topic
+bool DiscoveryDataBase::repeated_reader_topic_(
+        const eprosima::fastrtps::rtps::GuidPrefix_t& participant,
+        const std::string& topic_name)
+{
+    int count = 0;
+
+    auto pit = participants_.find(participant);
+    if (pit == participants_.end())
+    {
+        logWarning(DISCOVERY_DATABASE,
+                "Checking repeated reader topics in an unexisting participant: " << participant);
+        return false;
+    }
+
+    for (auto reader_guid : pit->second.readers())
+    {
+        auto rit = readers_.find(reader_guid);
+        if (rit == readers_.end())
+        {
+            logWarning(DISCOVERY_DATABASE,
+                    "reader missing: " << reader_guid);
+        }
+
+        if (rit->second.topic() == topic_name)
+        {
+            ++count;
+            if (count > 1)
+            {
+                return true;
+            }
+        }
+    }
+
+    // we already know is false. Safety check
+    return count > 1;
+}
+
+void DiscoveryDataBase::remove_writer_from_topic_(
+        const eprosima::fastrtps::rtps::GUID_t& writer_guid,
+        const std::string& topic_name)
+{
+    std::map<std::string, std::vector<eprosima::fastrtps::rtps::GUID_t>>::iterator tit =
+            writers_by_topic_.find(topic_name);
+    if (tit != writers_by_topic_.end())
+    {
+        for (std::vector<eprosima::fastrtps::rtps::GUID_t>::iterator writer_it = tit->second.begin();
+                writer_it != tit->second.end();
+                ++writer_it)
+        {
+            if (*writer_it == writer_guid)
+            {
+                tit->second.erase(writer_it);
+                break;
+            }
+        }
+
+        if (tit->second.empty())
+        {
+            writers_by_topic_.erase(tit);
+        }
+    }
+}
+
+void DiscoveryDataBase::remove_reader_from_topic_(
+        const eprosima::fastrtps::rtps::GUID_t& reader_guid,
+        const std::string& topic_name)
+{
+    logInfo(DISCOVERY_DATABASE, "removing: " << reader_guid << " from topic " << topic_name);
+
+    std::map<std::string, std::vector<eprosima::fastrtps::rtps::GUID_t>>::iterator tit =
+            readers_by_topic_.find(topic_name);
+    if (tit != readers_by_topic_.end())
+    {
+        for (std::vector<eprosima::fastrtps::rtps::GUID_t>::iterator reader_it = tit->second.begin();
+                reader_it != tit->second.end();
+                ++reader_it)
+        {
+            if (*reader_it == reader_guid)
+            {
+                tit->second.erase(reader_it);
+                break;
+            }
+        }
+
+        if (tit->second.empty())
+        {
+            readers_by_topic_.erase(tit);
+        }
+    }
+}
+
+void DiscoveryDataBase::add_writer_to_topic_(
+        const eprosima::fastrtps::rtps::GUID_t& writer_guid,
+        const std::string& topic_name)
+{
+    // Update writers by topic
+    std::map<std::string, std::vector<eprosima::fastrtps::rtps::GUID_t>>::iterator topic_it =
+            writers_by_topic_.find(topic_name);
+    if (topic_it != writers_by_topic_.end())
+    {
+        std::vector<eprosima::fastrtps::rtps::GUID_t>::iterator writer_by_topic_it =
+                std::find(topic_it->second.begin(), topic_it->second.end(), writer_guid);
+        if (writer_by_topic_it == topic_it->second.end())
+        {
+            logInfo(DISCOVERY_DATABASE, "New writer " << writer_guid << " in writers_by_topic: " << topic_name);
+            topic_it->second.push_back(writer_guid);
+        }
+        else
+        {
+            *writer_by_topic_it = writer_guid;
+        }
+    }
+    // This is the first writer in the topic
+    else
+    {
+        writers_by_topic_[topic_name] = std::vector<fastrtps::rtps::GUID_t>{writer_guid};
+        logInfo(DISCOVERY_DATABASE, "New topic in readers_by_topic: " << topic_name);
+    }
+}
+
+void DiscoveryDataBase::add_reader_to_topic_(
+        const eprosima::fastrtps::rtps::GUID_t& reader_guid,
+        const std::string& topic_name)
+{
+    // Update readers_by_topic
+    std::map<std::string, std::vector<eprosima::fastrtps::rtps::GUID_t>>::iterator topic_it =
+            readers_by_topic_.find(topic_name);
+    if (topic_it != readers_by_topic_.end())
+    {
+        std::vector<eprosima::fastrtps::rtps::GUID_t>::iterator reader_by_topic_it =
+                std::find(topic_it->second.begin(), topic_it->second.end(), reader_guid);
+        if (reader_by_topic_it == topic_it->second.end())
+        {
+            logInfo(DISCOVERY_DATABASE, "New reader " << reader_guid << " in readers_by_topic: " << topic_name);
+            topic_it->second.push_back(reader_guid);
+        }
+        else
+        {
+            *reader_by_topic_it = reader_guid;
+        }
+    }
+    // This is the first reader in the topic
+    else
+    {
+        readers_by_topic_[topic_name] = std::vector<fastrtps::rtps::GUID_t>{reader_guid};
+        logInfo(DISCOVERY_DATABASE, "New topic in readers_by_topic: " << topic_name);
+    }
+}
+
+bool DiscoveryDataBase::delete_participant_entity_(
+        const fastrtps::rtps::GuidPrefix_t& guid_prefix)
+{
+    logInfo(DISCOVERY_DATABASE, "Deleting participant: " << guid_prefix);
+
+    auto it = participants_.find(guid_prefix);
+    if (it == participants_.end())
+    {
+        return false;
+    }
+    changes_to_release_.push_back(it->second.change());
+    participants_.erase(it);
+    return true;
+}
+
+bool DiscoveryDataBase::delete_reader_entity_(
+        const fastrtps::rtps::GUID_t& guid)
+{
+    logInfo(DISCOVERY_DATABASE, "Deleting reader: " << guid);
+
+    // find own reader
+    auto it = readers_.find(guid);
+    if (it == readers_.end())
+    {
+        return false;
+    }
+
+    // release change
+    changes_to_release_.push_back(it->second.change());
+
+    // remove entity in readers vector
+    readers_.erase(it);
+
+    // remove entity from participant readers vector
+    auto pit = participants_.find(guid.guidPrefix);
+    if (pit == participants_.end())
+    {
+        return false;
+    }
+
+    pit->second.remove_reader(guid);
+
+    return true;
+}
+
+bool DiscoveryDataBase::delete_writer_entity_(
+        const fastrtps::rtps::GUID_t& guid)
+{
+    logInfo(DISCOVERY_DATABASE, "Deleting writer: " << guid);
+
+    // find own writer
+    auto it = writers_.find(guid);
+    if (it == writers_.end())
+    {
+        return false;
+    }
+
+    // release change
+    changes_to_release_.push_back(it->second.change());
+
+    // remove entity in writers vector
+    writers_.erase(it);
+
+    // remove entity from participant writers vector
+    auto pit = participants_.find(guid.guidPrefix);
+    if (pit == participants_.end())
+    {
+        return false;
+    }
+
+    pit->second.remove_writer(guid);
+
+    return true;
 }
 
 } // namespace ddb
