@@ -778,6 +778,12 @@ bool RTPSParticipantImpl::createWriter(
         const EntityId_t& entityId,
         bool isBuiltin)
 {
+    if (!payload_pool)
+    {
+        logError(RTPS_PARTICIPANT, "Trying to create writer with null payload pool");
+        return false;
+    }
+
     auto callback = [hist, listen, &payload_pool, this]
                 (const GUID_t& guid, WriterAttributes& param, IPersistenceService* persistence,
                     bool is_reliable) -> RTPSWriter*
@@ -858,6 +864,12 @@ bool RTPSParticipantImpl::createReader(
         bool isBuiltin,
         bool enable)
 {
+    if (!payload_pool)
+    {
+        logError(RTPS_PARTICIPANT, "Trying to create reader with null payload pool");
+        return false;
+    }
+
     auto callback = [hist, listen, &payload_pool, this]
                 (const GUID_t& guid, ReaderAttributes& param, IPersistenceService* persistence,
                     bool is_reliable) -> RTPSReader*
