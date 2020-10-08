@@ -58,9 +58,20 @@ public:
         return topic_;
     }
 
+    void is_virtual(bool is_virtual)
+    {
+        is_virtual_ = is_virtual;
+    }
+
+    bool is_virtual()
+    {
+        return is_virtual_;
+    }
+
 private:
 
     std::string topic_;
+    bool is_virtual_ = false;
 
 };
 

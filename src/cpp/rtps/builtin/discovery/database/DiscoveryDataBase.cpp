@@ -210,6 +210,8 @@ void DiscoveryDataBase::update_change_and_unmatch_(
         ddb::DiscoverySharedInfo& entity)
 {
     changes_to_release_.push_back(entity.update_and_unmatch(new_change));
+    // Manually set relevant participants ACK status of this server, and of the participant that sent the
+    // change, to 1. This way, we avoid backprogation of the data.
     entity.add_or_update_ack_participant(server_guid_prefix_, true);
     entity.add_or_update_ack_participant(new_change->writerGUID.guidPrefix, true);
 }
@@ -474,15 +476,7 @@ bool DiscoveryDataBase::process_edp_data_queue()
             }
 
             // Update set of dirty_topics
-            if (std::find(
-                        dirty_topics_.begin(),
-                        dirty_topics_.end(),
-                        topic_name) == dirty_topics_.end())
-            {
-                logInfo(DISCOVERY_DATABASE, "Setting topic " << topic_name << " as dirty");
-                dirty_topics_.push_back(topic_name);
-                is_dirty_topic = true;
-            }
+            set_dirty_topic_(topic_name);
         }
         // If the change is a DATA(Uw|Ur)
         else
@@ -522,23 +516,11 @@ void DiscoveryDataBase::create_participant_from_change_(
         if (ch->write_params.sample_identity().sequence_number() >
             participant_it->second.change()->write_params.sample_identity().sequence_number())
         {
-            DiscoveryParticipantInfo part(ch, server_guid_prefix_, change_data);
-            std::pair<std::map<eprosima::fastrtps::rtps::GuidPrefix_t, DiscoveryParticipantInfo>::iterator, bool> ret =
-                    participants_.insert(std::make_pair(change_guid.guidPrefix, part));
-
-            // If insert resturns false, means that the participant already existed (DATA(p) is an update). In that case
-            // we need to update the change related to the participant and return the old change to the pool
-            if (!ret.second)
-            {
-                logInfo(DISCOVERY_DATABASE, "Participant updating. Marking old change to release");
-                // Update participant's change in the database, set all relevant participants ACK status to 0, and add
-                // old change to changes_to_release_.
-                update_change_and_unmatch_(ch, ret.first->second);
-                // Manually set relevant participants ACK status of this server, and of the participant that sent the
-                // change, to 1. This way, we avoid backprogation of the data.
-                ret.first->second.add_or_update_ack_participant(server_guid_prefix_, true);
-                ret.first->second.add_or_update_ack_participant(ch->writerGUID.guidPrefix, true);
-            }
+            // Update the change related to the participant and return the old change to the pool
+            logInfo(DISCOVERY_DATABASE, "Participant updating. Marking old change to release");
+            // Update participant's change in the database, set all relevant participants ACK status to 0, and add
+            // old change to changes_to_release_.
+            update_change_and_unmatch_(ch, participant_it->second);
         }
     }
     // New participant
@@ -552,9 +534,8 @@ void DiscoveryDataBase::create_participant_from_change_(
         {
             logInfo(DISCOVERY_DATABASE, "New participant added: " << change_guid.guidPrefix);
 
-            // Manually set relevant participants ACK status of this server, and of the participant that sent the
-            // change, to 1. This way, we avoid backprogation of the data.
-            ret.first->second.add_or_update_ack_participant(server_guid_prefix_, true);
+            // Manually set to 1 the relevant participants ACK status of the participant that sent the change. This way,
+            // we avoid backprogation of the data.
             ret.first->second.add_or_update_ack_participant(ch->writerGUID.guidPrefix, true);
 
             // If the DATA(p) it's from this server, put the DATA(p) in the history
@@ -641,6 +622,7 @@ void DiscoveryDataBase::create_writers_from_change_(
         const std::string& topic_name)
 {
     const eprosima::fastrtps::rtps::GUID_t& writer_guid = guid_from_change(ch);
+    auto writer_it = writers_.find(writer_guid);
 
     // Update writers_
     DiscoveryEndpointInfo tmp_writer(ch, topic_name, server_guid_prefix_);
@@ -652,23 +634,42 @@ void DiscoveryDataBase::create_writers_from_change_(
     // If writer does not exists, create the change
     if (ret.second)
     {
-        // Update participants_::writers
-        std::map<eprosima::fastrtps::rtps::GuidPrefix_t, DiscoveryParticipantInfo>::iterator w_pit =
-                participants_.find(writer_guid.guidPrefix);
-        if (w_pit != participants_.end())
+        // Add entry to writers_
+        DiscoveryEndpointInfo tmp_writer(ch, topic_name, server_guid_prefix_);
+        std::pair<std::map<eprosima::fastrtps::rtps::GUID_t, DiscoveryEndpointInfo>::iterator, bool> ret =
+                writers_.insert(std::make_pair(writer_guid, tmp_writer));
+        if (!ret.second)
         {
-            w_pit->second.add_writer(writer_guid);
+            logError(DISCOVERY_DATABASE, "Error inserting writer " << writer_guid);
+            return;
+        }
+        writer_it = ret.first;
+
+        // Add entry to participants_[guid_prefix]::writers
+        std::map<eprosima::fastrtps::rtps::GuidPrefix_t, DiscoveryParticipantInfo>::iterator writer_part_it =
+                participants_.find(writer_guid.guidPrefix);
+        if (writer_part_it != participants_.end())
+        {
+            writer_part_it->second.add_writer(writer_guid);
+        }
+        else
+        {
+            logError(DISCOVERY_DATABASE, "Writer " << writer_guid << " as no associated participant. Skipping");
+            return;
         }
 
-        // Update writers_by_topic
-        add_writer_to_topic_(writer_guid, topic_name);
+        // Manually set to 1 the relevant participants ACK status of the participant that sent the change. This way,
+        // we avoid backprogation of the data.
+        writer_it->second.add_or_update_ack_participant(ch->writerGUID.guidPrefix, true);
 
+        // Get all readers in the topic
         std::map<std::string, std::vector<eprosima::fastrtps::rtps::GUID_t>>::iterator readers_it =
                 readers_by_topic_.find(topic_name);
 
         if (readers_it != readers_by_topic_.end())
         {
-            for (eprosima::fastrtps::rtps::GUID_t reader_it: readers_it->second)
+            // Iterate over readers in the topic
+            for (eprosima::fastrtps::rtps::GUID_t reader_guid: readers_it->second)
             {
                 // Update the participant ack status list from writers_ (if needed). The reader will only know the
                 // new writer if the reader is a server endpoint, or if the reader and writer are from the same
@@ -683,38 +684,75 @@ void DiscoveryDataBase::create_writers_from_change_(
                         readers_.find(reader_it);
                 if (rit != readers_.end() && !rit->second.is_matched(writer_guid.guidPrefix))
                 {
-                    rit->second.add_or_update_ack_participant(writer_guid.guidPrefix);
+                    logError(DISCOVERY_DATABASE, "Reader " << reader_guid << " as no associated participant. Skipping");
+                    continue;
                 }
 
-                // Update the participant ack status list from participants_
-                std::map<eprosima::fastrtps::rtps::GuidPrefix_t, DiscoveryParticipantInfo>::iterator pit =
-                        participants_.find(reader_it.guidPrefix);
-                if (pit != participants_.end())
+                /* The writer is from a local CLIENT */
+                if (writer_part_it->second.is_local_client())
                 {
-                    if (!pit->second.is_matched(writer_guid.guidPrefix))
+                    /* The reader is from a local CLIENT or SERVER */
+                    if (!reader_part_it->second.is_external())
                     {
-                        pit->second.add_or_update_ack_participant(writer_guid.guidPrefix);
+                        // Add reader's participant to writer's participant ACK list with status 0 (unless already
+                        // matched)
+                        if (!writer_part_it->second.is_matched(reader_guid.guidPrefix))
+                        {
+                            writer_part_it->second.add_or_update_ack_participant(reader_guid.guidPrefix);
+                        }
+
+                        // Add reader's participant to writer's ACK list with status 0.
+                        writer_it->second.add_or_update_ack_participant(reader_guid.guidPrefix);
+                    }
+
+                    /* The reader is a real endpoint (not virtual) */
+                    if (!reader_it->second.is_virtual())
+                    {
+                        // Add writer's participant to reader's participant ACK list with status 0 (unless already
+                        // matched)
+                        if (!reader_part_it->second.is_matched(writer_guid.guidPrefix))
+                        {
+                            reader_part_it->second.add_or_update_ack_participant(writer_guid.guidPrefix);
+                        }
+                        // Add writer's participant to reader's ACK list with status 0
+                        reader_it->second.add_or_update_ack_participant(writer_guid.guidPrefix);
                     }
                 }
-
-                if (w_pit != participants_.end())
+                /* The writer is virtual (therefore associated with a local SERVER) */
+                else if (topic_name == virtual_topic_)
                 {
-                    if (!w_pit->second.is_matched(reader_it.guidPrefix))
+                    writer_it->second.is_virtual(true);
+                    /* The reader is a real endpoint (not virtual) */
+                    if (!reader_it->second.is_virtual())
                     {
-                        w_pit->second.add_or_update_ack_participant(reader_it.guidPrefix);
+                        // Add writer's participant to reader's participant ACK list with status 0 (if will never be
+                        // there, since this case only happens upon local SERVER DATA(p) reception)
+                        reader_part_it->second.add_or_update_ack_participant(writer_guid.guidPrefix);
+                        // Add writer's participant to reader's ACK list with status 0
+                        reader_it->second.add_or_update_ack_participant(writer_guid.guidPrefix);
+                        // Set reader's topic to dirty.
+                        set_dirty_topic_(reader_it->second.topic());
                     }
+                }
+                /* The writer is from a external CLIENT or SERVER */
+                else if (writer_part_it->second.is_external())
+                {
+                    // Add reader's participant to writer's participant ACK list with status 0 (unless already
+                    // matched)
+                    if (!writer_part_it->second.is_matched(reader_guid.guidPrefix))
+                    {
+                        writer_part_it->second.add_or_update_ack_participant(reader_guid.guidPrefix);
+                    }
+
+                    // Add reader's participant to writer's ACK list with status 0.
+                    writer_it->second.add_or_update_ack_participant(reader_guid.guidPrefix);
                 }
             }
         }
-    }
-    // If writer exists, update the change and set all participant ack status to false
-    else
-    {
-        // TODO(Paris) when updating, be careful of not to do unmatch if the only endpoint in the other participant
-        //  is NOT ALIVE. This means that you still have to send your Data(Ux) to him but not the updates
-        update_change_and_unmatch_(ch, ret.first->second);
-    }
 
+        // Add writer to writers_by_topic_[topic_name]
+        add_writer_to_topic_(writer_guid, topic_name);
+    }
 }
 
 void DiscoveryDataBase::create_readers_from_change_(
@@ -722,6 +760,7 @@ void DiscoveryDataBase::create_readers_from_change_(
         const std::string& topic_name)
 {
     const eprosima::fastrtps::rtps::GUID_t& reader_guid = guid_from_change(ch);
+    auto reader_it = readers_.find(reader_guid);
 
     DiscoveryEndpointInfo tmp_reader(ch, topic_name, server_guid_prefix_);
     tmp_reader.add_or_update_ack_participant(ch->writerGUID.guidPrefix, true);
@@ -732,22 +771,42 @@ void DiscoveryDataBase::create_readers_from_change_(
     // If reader does not exists, create the change
     if (ret.second)
     {
-        // Update participants_::readers
-        std::map<eprosima::fastrtps::rtps::GuidPrefix_t, DiscoveryParticipantInfo>::iterator r_pit =
-                participants_.find(reader_guid.guidPrefix);
-        if (r_pit != participants_.end())
+        // Add entry to readers_
+        DiscoveryEndpointInfo tmp_reader(ch, topic_name, server_guid_prefix_);
+        std::pair<std::map<eprosima::fastrtps::rtps::GUID_t, DiscoveryEndpointInfo>::iterator, bool> ret =
+                readers_.insert(std::make_pair(reader_guid, tmp_reader));
+        if (!ret.second)
         {
-            r_pit->second.add_reader(reader_guid);
+            logError(DISCOVERY_DATABASE, "Error inserting reader " << reader_guid);
+            return;
+        }
+        reader_it = ret.first;
+
+        // Add entry to participants_[guid_prefix]::readers
+        std::map<eprosima::fastrtps::rtps::GuidPrefix_t, DiscoveryParticipantInfo>::iterator reader_part_it =
+                participants_.find(reader_guid.guidPrefix);
+        if (reader_part_it != participants_.end())
+        {
+            reader_part_it->second.add_reader(reader_guid);
+        }
+        else
+        {
+            logError(DISCOVERY_DATABASE, "Reader " << reader_guid << " as no associated participant. Skipping");
+            return;
         }
 
-        // Update readers_by_topic
-        add_reader_to_topic_(reader_guid, topic_name);
+        // Manually set to 1 the relevant participants ACK status of the participant that sent the change. This way,
+        // we avoid backprogation of the data.
+        reader_it->second.add_or_update_ack_participant(ch->writerGUID.guidPrefix, true);
 
+        // Get all writers in the topic
         std::map<std::string, std::vector<eprosima::fastrtps::rtps::GUID_t>>::iterator writers_it =
                 writers_by_topic_.find(topic_name);
+
         if (writers_it != writers_by_topic_.end())
         {
-            for (eprosima::fastrtps::rtps::GUID_t writer_it: writers_it->second)
+            // Iterate over readers in the topic
+            for (eprosima::fastrtps::rtps::GUID_t writer_guid: writers_it->second)
             {
                 logInfo(DISCOVERY_DATABASE, "Matching Data(r): " << reader_guid << " with writer: "
                                                                  << writer_it);
@@ -765,38 +824,91 @@ void DiscoveryDataBase::create_readers_from_change_(
                         writers_.find(writer_it);
                 if (wit != writers_.end() && !wit->second.is_matched(reader_guid.guidPrefix))
                 {
-                    wit->second.add_or_update_ack_participant(reader_guid.guidPrefix);
+                    logError(DISCOVERY_DATABASE, "Writer " << writer_guid << " as no associated participant. Skipping");
+                    continue;
                 }
 
-                // Update the participant ack status list from participants_
-                std::map<eprosima::fastrtps::rtps::GuidPrefix_t, DiscoveryParticipantInfo>::iterator pit =
-                        participants_.find(writer_it.guidPrefix);
-                if (pit != participants_.end())
+                /* The reader is from a local CLIENT */
+                if (reader_part_it->second.is_local_client())
                 {
-                    if (!pit->second.is_matched(reader_guid.guidPrefix))
+                    /* The writer is from a local CLIENT or SERVER */
+                    if (!writer_part_it->second.is_external())
                     {
-                        pit->second.add_or_update_ack_participant(reader_guid.guidPrefix);
+                        // Add writer's participant to writer's participant ACK list with status 0 (unless already
+                        // matched)
+                        if (!reader_part_it->second.is_matched(writer_guid.guidPrefix))
+                        {
+                            reader_part_it->second.add_or_update_ack_participant(writer_guid.guidPrefix);
+                        }
+
+                        // Add writer's participant to writer's ACK list with status 0.
+                        reader_it->second.add_or_update_ack_participant(writer_guid.guidPrefix);
+                    }
+
+                    /* The writer is a real endpoint (not virtual) */
+                    if (!writer_it->second.is_virtual())
+                    {
+                        // Add reader's participant to writer's participant ACK list with status 0 (unless already
+                        // matched)
+                        if (!writer_part_it->second.is_matched(reader_guid.guidPrefix))
+                        {
+                            writer_part_it->second.add_or_update_ack_participant(reader_guid.guidPrefix);
+                        }
+                        // Add reader's participant to writer's ACK list with status 0
+                        writer_it->second.add_or_update_ack_participant(reader_guid.guidPrefix);
                     }
                 }
-
-                if (r_pit != participants_.end())
+                /* The reader is virtual (therefore associated with a local SERVER) */
+                else if (topic_name == virtual_topic_)
                 {
-                    if (!r_pit->second.is_matched(writer_it.guidPrefix))
+                    reader_it->second.is_virtual(true);
+                    /* The writer is a real endpoint (not virtual) */
+                    if (!writer_it->second.is_virtual())
                     {
-                        r_pit->second.add_or_update_ack_participant(writer_it.guidPrefix);
+                        // Add reader's participant to writers's participant ACK list with status 0 (if will never be
+                        // there, since this case only happens upon local SERVER DATA(p) reception)
+                        writer_part_it->second.add_or_update_ack_participant(reader_guid.guidPrefix);
+                        // Add reader's participant to writers's ACK list with status 0
+                        writer_it->second.add_or_update_ack_participant(reader_guid.guidPrefix);
+                        // Set writer's topic to dirty.
+                        set_dirty_topic_(writer_it->second.topic());
                     }
+                }
+                /* The reader is from a external CLIENT or SERVER */
+                else if (reader_part_it->second.is_external())
+                {
+                    // Add writer's participant to reader's participant ACK list with status 0 (unless already
+                    // matched)
+                    if (!reader_part_it->second.is_matched(writer_guid.guidPrefix))
+                    {
+                        reader_part_it->second.add_or_update_ack_participant(writer_guid.guidPrefix);
+                    }
+
+                    // Add writer's participant to reader's ACK list with status 0.
+                    reader_it->second.add_or_update_ack_participant(writer_guid.guidPrefix);
                 }
             }
         }
-    }
-    // If reader exists, update the change and set all participant ack status to false
-    else
-    {
-        // TODO(Paris) when updating, be careful of not to do unmatch if the only endpoint in the other participant
-        //  is NOT ALIVE. This means that you still have to send your Data(Ux) to him but not the updates
-        update_change_and_unmatch_(ch, ret.first->second);
+
+        // Add reader to readers_by_topic_[topic_name]
+        add_reader_to_topic_(reader_guid, topic_name);
     }
 }
+
+bool DiscoveryDataBase::set_dirty_topic_(std::string topic)
+{
+    if (std::find(
+                dirty_topics_.begin(),
+                dirty_topics_.end(),
+                topic) == dirty_topics_.end())
+    {
+        logInfo(DISCOVERY_DATABASE, "Setting topic " << topic << " as dirty");
+        dirty_topics_.push_back(topic);
+        return true;
+    }
+    return false;
+}
+
 
 void DiscoveryDataBase::process_dispose_participant_(
         eprosima::fastrtps::rtps::CacheChange_t* ch)
@@ -1506,11 +1618,101 @@ void DiscoveryDataBase::add_writer_to_topic_(
         const eprosima::fastrtps::rtps::GUID_t& writer_guid,
         const std::string& topic_name)
 {
-    // Update writers by topic
-    std::map<std::string, std::vector<eprosima::fastrtps::rtps::GUID_t>>::iterator topic_it =
-            writers_by_topic_.find(topic_name);
-    if (topic_it != writers_by_topic_.end())
+    /* Manage adding a virtual writer */
+    bool virtual_topic_is_new = true;
+    // If the topic is virtual, add  the writer to all existing topics
+    if (topic_name == virtual_topic_)
     {
+        // Add writer to all topics
+        for (auto topic: writers_by_topic_)
+        {
+            // Check if the writer is already there before adding it
+            auto topic_it = std::find(topic.second.begin(), topic.second.end(), writer_guid);
+            if (topic_it == topic.second.end())
+            {
+                logInfo(DISCOVERY_DATABASE,
+                    "Adding virtual writer " << writer_guid << " to writers_by_topic_[ " << topic_name << "]");
+                topic.second.push_back(writer_guid);
+            }
+            // We should never try to add a new entry if the writer was already in the topic
+            else
+            {
+                logWarning(DISCOVERY_DATABASE,
+                    "Trying to add already present virtual writer " << writer_guid << " to writers_by_topic_[ "
+                    << topic_name << "]. Ignored");
+            }
+
+            // The virtual topic already existed, so we don't need to create the entry for it later on
+            if (topic.first == virtual_topic_)
+            {
+                virtual_topic_is_new = false;
+            }
+        }
+
+        // There is no virtual_topic_ entry in writers_by_topic_. Therefore, we need to create one and add this virutal
+        // writer
+        if (virtual_topic_is_new)
+        {
+            // Try to insert the writer
+            auto retu = writers_by_topic_.insert(
+                std::pair<std::string, std::vector<fastrtps::rtps::GUID_t>>(
+                    topic_name,
+                    std::vector<fastrtps::rtps::GUID_t>({writer_guid})
+                )
+            );
+            if (!retu.second)
+            {
+                logError(DISCOVERY_DATABASE, "Could not insert writer " << writer_guid << " in topic " << topic_name);
+            }
+            else
+            {
+                logInfo(DISCOVERY_DATABASE, "New topic in writers_by_topic_: " << topic_name);
+            }
+        }
+        // If the topic was virtual, then there is no extra work to do
+        return;
+    }
+
+    /* Update writers by topic */
+    // At this point we know that the topic is real (NOT virutal)
+    // Find the topic_name entry in writers_by_topic_
+    std::map<std::string, std::vector<eprosima::fastrtps::rtps::GUID_t> >::iterator topic_it =
+            writers_by_topic_.find(topic_name);
+
+    // There was not topic_name entry in writers_by_topic_, so the topic is new
+    if (topic_it == writers_by_topic_.end())
+    {
+        // Try to insert the writer
+        auto retu = writers_by_topic_.insert(
+            std::pair<std::string, std::vector<fastrtps::rtps::GUID_t>>(
+                topic_name,
+                std::vector<fastrtps::rtps::GUID_t>({writer_guid})
+            )
+        );
+        if (!retu.second)
+        {
+            logError(DISCOVERY_DATABASE, "Could not insert writer " << writer_guid << " in topic " << topic_name);
+        }
+        else
+        {
+            logInfo(DISCOVERY_DATABASE, "New topic in writers_by_topic_: " << topic_name);
+
+            // Add all known virtual writers to this new topic
+            auto virtual_topic_it = writers_by_topic_.find(virtual_topic_);
+            if (virtual_topic_it != writers_by_topic_.end())
+            {
+                for (auto writer: virtual_topic_it->second)
+                {
+                    logInfo(DISCOVERY_DATABASE, "Adding virtual writer " << writer << " to topic " << topic_name);
+                    retu.first->second.push_back(writer);
+                }
+            }
+        }
+    }
+    // The topic entry already existed
+    else
+    {
+        // Check if the writer was already present in the collection before adding it
         std::vector<eprosima::fastrtps::rtps::GUID_t>::iterator writer_by_topic_it =
                 std::find(topic_it->second.begin(), topic_it->second.end(), writer_guid);
         if (writer_by_topic_it == topic_it->second.end())
@@ -1518,16 +1720,6 @@ void DiscoveryDataBase::add_writer_to_topic_(
             logInfo(DISCOVERY_DATABASE, "New writer " << writer_guid << " in writers_by_topic: " << topic_name);
             topic_it->second.push_back(writer_guid);
         }
-        else
-        {
-            *writer_by_topic_it = writer_guid;
-        }
-    }
-    // This is the first writer in the topic
-    else
-    {
-        writers_by_topic_[topic_name] = std::vector<fastrtps::rtps::GUID_t>{writer_guid};
-        logInfo(DISCOVERY_DATABASE, "New topic in readers_by_topic: " << topic_name);
     }
 }
 
