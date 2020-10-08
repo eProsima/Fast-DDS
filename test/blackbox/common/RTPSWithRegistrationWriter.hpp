@@ -137,8 +137,16 @@ public:
         history_ = new eprosima::fastrtps::rtps::WriterHistory(hattr_);
 
         //Create writer
-        writer_ = eprosima::fastrtps::rtps::RTPSDomain::createRTPSWriter(
-            participant_, writer_attr_, history_, &listener_);
+        if (payload_pool_)
+        {
+            writer_ = eprosima::fastrtps::rtps::RTPSDomain::createRTPSWriter(
+                participant_, writer_attr_, payload_pool_, history_, &listener_);
+        }
+        else
+        {
+            writer_ = eprosima::fastrtps::rtps::RTPSDomain::createRTPSWriter(
+                participant_, writer_attr_, history_, &listener_);
+        }
         ASSERT_NE(writer_, nullptr);
 
         ASSERT_EQ(participant_->registerWriter(writer_, topic_attr_, writer_qos_), true);
@@ -228,6 +236,13 @@ public:
     }
 
     /*** Function to change QoS ***/
+    RTPSWithRegistrationWriter& payload_pool(
+            const std::shared_ptr<eprosima::fastrtps::rtps::IPayloadPool>& pool)
+    {
+        payload_pool_ = pool;
+        return *this;
+    }
+
     RTPSWithRegistrationWriter& memoryMode(
             const eprosima::fastrtps::rtps::MemoryManagementPolicy_t memoryPolicy)
     {
@@ -366,6 +381,7 @@ private:
     std::condition_variable cv_;
     unsigned int matched_;
     type_support type_;
+    std::shared_ptr<eprosima::fastrtps::rtps::IPayloadPool> payload_pool_;
 };
 
 #endif // _TEST_BLACKBOX_RTPSWITHREGISTRATIONWRITER_HPP_
