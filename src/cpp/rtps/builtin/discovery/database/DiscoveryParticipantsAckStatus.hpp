@@ -21,6 +21,7 @@
 #define _FASTDDS_RTPS_DISCOVERY_PARTICIPANT_ACK_STATUS_H_
 
 #include <map>
+#include <vector>
 
 #include <fastdds/rtps/common/GuidPrefix_t.hpp>
 
@@ -60,6 +61,8 @@ public:
 
     bool is_relevant_participant(
             const eprosima::fastrtps::rtps::GuidPrefix_t& guid_p) const;
+
+    std::vector<eprosima::fastrtps::rtps::GuidPrefix_t> relevant_participants() const;
 
 private:
 
