@@ -37,7 +37,7 @@
 #else
 #define IS_OPENSSL_1_1 0
 #define OPENSSL_CONST
-#endif
+#endif // if OPENSSL_VERSION_NUMBER >= 0x10100000L
 
 #include <openssl/pem.h>
 #include <openssl/err.h>
@@ -55,15 +55,17 @@ using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
 using namespace eprosima::fastrtps::rtps::security;
 
-static bool is_domain_in_set(const uint32_t domain_id, const Domains& domains)
+static bool is_domain_in_set(
+        const uint32_t domain_id,
+        const Domains& domains)
 {
     bool returned_value = false;
 
-    for(auto range : domains.ranges)
+    for (auto range : domains.ranges)
     {
-        if(range.second == 0)
+        if (range.second == 0)
         {
-            if(domain_id == range.first)
+            if (domain_id == range.first)
             {
                 returned_value = true;
                 break;
@@ -71,7 +73,7 @@ static bool is_domain_in_set(const uint32_t domain_id, const Domains& domains)
         }
         else
         {
-            if(domain_id >= range.first &&
+            if (domain_id >= range.first &&
                     domain_id <= range.second)
             {
                 returned_value = true;
@@ -83,14 +85,15 @@ static bool is_domain_in_set(const uint32_t domain_id, const Domains& domains)
     return returned_value;
 }
 
-static const EndpointSecurityAttributes* is_topic_in_sec_attributes(const char* topic_name,
+static const EndpointSecurityAttributes* is_topic_in_sec_attributes(
+        const char* topic_name,
         const std::vector<std::pair<std::string, EndpointSecurityAttributes>>& attributes)
 {
     const EndpointSecurityAttributes* returned_value = nullptr;
 
-    for(auto& topic : attributes)
+    for (auto& topic : attributes)
     {
-        if(StringMatching::matchString(topic.first.c_str(), topic_name))
+        if (StringMatching::matchString(topic.first.c_str(), topic_name))
         {
             returned_value = &topic.second;
             break;
@@ -100,16 +103,18 @@ static const EndpointSecurityAttributes* is_topic_in_sec_attributes(const char* 
     return returned_value;
 }
 
-static bool is_topic_in_criterias(const char * topic_name, const std::vector<Criteria>& criterias)
+static bool is_topic_in_criterias(
+        const char* topic_name,
+        const std::vector<Criteria>& criterias)
 {
     bool returned_value = false;
 
-    for(auto criteria_it = criterias.begin(); !returned_value &&
+    for (auto criteria_it = criterias.begin(); !returned_value &&
             criteria_it != criterias.end(); ++criteria_it)
     {
-        for(auto topic : (*criteria_it).topics)
+        for (auto topic : (*criteria_it).topics)
         {
-            if(StringMatching::matchString(topic.c_str(), topic_name))
+            if (StringMatching::matchString(topic.c_str(), topic_name))
             {
                 returned_value = true;
                 break;
@@ -120,16 +125,18 @@ static bool is_topic_in_criterias(const char * topic_name, const std::vector<Cri
     return returned_value;
 }
 
-static bool is_partition_in_criterias(const std::string& partition, const std::vector<Criteria>& criterias)
+static bool is_partition_in_criterias(
+        const std::string& partition,
+        const std::vector<Criteria>& criterias)
 {
     bool returned_value = false;
 
-    for(auto criteria_it = criterias.begin(); !returned_value &&
+    for (auto criteria_it = criterias.begin(); !returned_value &&
             criteria_it != criterias.end(); ++criteria_it)
     {
-        for(auto part : (*criteria_it).partitions)
+        for (auto part : (*criteria_it).partitions)
         {
-            if(StringMatching::matchString(partition.c_str(), part.c_str()))
+            if (StringMatching::matchString(partition.c_str(), part.c_str()))
             {
                 returned_value = true;
                 break;
@@ -140,15 +147,16 @@ static bool is_partition_in_criterias(const std::string& partition, const std::v
     return returned_value;
 }
 
-static bool is_validation_in_time(const Validity& validity)
+static bool is_validation_in_time(
+        const Validity& validity)
 {
 #if _MSC_VER != 1800
     bool returned_value = false;
     std::time_t current_time = std::time(nullptr);
 
-    if(std::difftime(current_time, validity.not_before) >= 0)
+    if (std::difftime(current_time, validity.not_before) >= 0)
     {
-        if(std::difftime(validity.not_after, current_time) >= 0)
+        if (std::difftime(validity.not_after, current_time) >= 0)
         {
             returned_value = true;
         }
@@ -158,31 +166,34 @@ static bool is_validation_in_time(const Validity& validity)
 #else
     (void)validity;
     return true;
-#endif
+#endif // if _MSC_VER != 1800
 }
 
-static bool get_signature_algorithm(X509* certificate, std::string& signature_algorithm, SecurityException& exception)
+static bool get_signature_algorithm(
+        X509* certificate,
+        std::string& signature_algorithm,
+        SecurityException& exception)
 {
     bool returnedValue = false;
     BUF_MEM* ptr = nullptr;
     OPENSSL_CONST X509_ALGOR* sigalg = nullptr;
     OPENSSL_CONST ASN1_BIT_STRING* sig = nullptr;
 
-    BIO *out = BIO_new(BIO_s_mem());
+    BIO* out = BIO_new(BIO_s_mem());
 
-    if(out != nullptr)
+    if (out != nullptr)
     {
         X509_get0_signature(&sig, &sigalg, certificate);
 
-        if(sigalg != nullptr)
+        if (sigalg != nullptr)
         {
-            if(i2a_ASN1_OBJECT(out, sigalg->algorithm) > 0)
+            if (i2a_ASN1_OBJECT(out, sigalg->algorithm) > 0)
             {
                 BIO_get_mem_ptr(out, &ptr);
 
-                if(ptr != nullptr)
+                if (ptr != nullptr)
                 {
-                    if(strncmp(ptr->data, "ecdsa-with-SHA256", ptr->length) == 0)
+                    if (strncmp(ptr->data, "ecdsa-with-SHA256", ptr->length) == 0)
                     {
                         signature_algorithm = ECDSA_SHA256;
                         returnedValue = true;
@@ -199,49 +210,69 @@ static bool get_signature_algorithm(X509* certificate, std::string& signature_al
                     }
                 }
                 else
+                {
                     exception = _SecurityException_("OpenSSL library cannot retrieve mem ptr");
+                }
             }
         }
         else
+        {
             exception = _SecurityException_("OpenSSL library cannot write cert");
+        }
 
         BIO_free(out);
     }
     else
+    {
         exception = _SecurityException_("OpenSSL library cannot allocate mem");
+    }
 
     return returnedValue;
 }
 
-static bool rfc2253_string_compare(const std::string& str1, const std::string& str2)
+static bool rfc2253_string_compare(
+        const std::string& str1,
+        const std::string& str2)
 {
     bool returned_value = true;
 
     size_t str1_mark_low = 0, str1_mark_high = 0, str2_mark_low = 0, str2_mark_high = 0;
 
     str1_mark_high = str1.find_first_of(',');
-    if(str1_mark_high == std::string::npos)
+    if (str1_mark_high == std::string::npos)
     {
         str1_mark_high = str1.length();
     }
     str2_mark_high = str2.find_first_of(',');
-    if(str2_mark_high == std::string::npos)
+    if (str2_mark_high == std::string::npos)
     {
         str2_mark_high = str2.length();
     }
 
-    while(str1_mark_low < str1_mark_high && str2_mark_low < str2_mark_high)
+    while (str1_mark_low < str1_mark_high && str2_mark_low < str2_mark_high)
     {
         // Trim
         size_t str1_trim_high = str1_mark_high - 1, str2_trim_high = str2_mark_high - 1;
 
-        while(str1.at(str1_mark_low) == ' ' && (str1_mark_low + 1) != str1_trim_high) ++str1_mark_low;
-        while(str2.at(str2_mark_low) == ' ' && (str2_mark_low + 1) != str2_trim_high) ++str2_mark_low;
-        while(str1.at(str1_trim_high) == ' ' && (str1_trim_high - 1) != str1_mark_low) --str1_trim_high;
-        while(str2.at(str2_trim_high) == ' ' && (str2_trim_high - 1) != str2_mark_low) --str2_trim_high;
+        while (str1.at(str1_mark_low) == ' ' && (str1_mark_low + 1) != str1_trim_high)
+        {
+            ++str1_mark_low;
+        }
+        while (str2.at(str2_mark_low) == ' ' && (str2_mark_low + 1) != str2_trim_high)
+        {
+            ++str2_mark_low;
+        }
+        while (str1.at(str1_trim_high) == ' ' && (str1_trim_high - 1) != str1_mark_low)
+        {
+            --str1_trim_high;
+        }
+        while (str2.at(str2_trim_high) == ' ' && (str2_trim_high - 1) != str2_mark_low)
+        {
+            --str2_trim_high;
+        }
 
-        if(str1.compare(str1_mark_low, str1_trim_high - str1_mark_low + 1, str2,
-                    str2_mark_low, str2_trim_high - str2_mark_low + 1) != 0)
+        if (str1.compare(str1_mark_low, str1_trim_high - str1_mark_low + 1, str2,
+                str2_mark_low, str2_trim_high - str2_mark_low + 1) != 0)
         {
             returned_value = false;
             break;
@@ -250,18 +281,18 @@ static bool rfc2253_string_compare(const std::string& str1, const std::string& s
         str1_mark_low = str1_mark_high + 1;
         str2_mark_low = str2_mark_high + 1;
         str1_mark_high = str1.find_first_of(',', str1_mark_low);
-        if(str1_mark_high == std::string::npos)
+        if (str1_mark_high == std::string::npos)
         {
             str1_mark_high = str1.length();
         }
         str2_mark_high = str2.find_first_of(',', str2_mark_low);
-        if(str2_mark_high == std::string::npos)
+        if (str2_mark_high == std::string::npos)
         {
             str2_mark_high = str2.length();
         }
     }
 
-    if(str1_mark_low < str1_mark_high || str2_mark_low < str2_mark_high)
+    if (str1_mark_low < str1_mark_high || str2_mark_low < str2_mark_high)
     {
         returned_value = false;
     }
@@ -270,24 +301,28 @@ static bool rfc2253_string_compare(const std::string& str1, const std::string& s
 }
 
 // Auxiliary functions
-static X509_STORE* load_permissions_ca(const std::string& permissions_ca, bool& there_are_crls,
-        std::string& ca_sn, std::string& ca_algo, SecurityException& exception)
+static X509_STORE* load_permissions_ca(
+        const std::string& permissions_ca,
+        bool& there_are_crls,
+        std::string& ca_sn,
+        std::string& ca_algo,
+        SecurityException& exception)
 {
     X509_STORE* store = X509_STORE_new();
 
-    if(store != nullptr)
+    if (store != nullptr)
     {
-        if(permissions_ca.size() >= 7 && permissions_ca.compare(0, 7, "file://") == 0)
+        if (permissions_ca.size() >= 7 && permissions_ca.compare(0, 7, "file://") == 0)
         {
             BIO* in = BIO_new(BIO_s_file());
 
-            if(in != nullptr)
+            if (in != nullptr)
             {
-                if(BIO_read_filename(in, permissions_ca.substr(7).c_str()) > 0)
+                if (BIO_read_filename(in, permissions_ca.substr(7).c_str()) > 0)
                 {
-                    STACK_OF(X509_INFO)* inf = PEM_X509_INFO_read_bio(in, NULL, NULL, NULL);
+                    STACK_OF(X509_INFO) * inf = PEM_X509_INFO_read_bio(in, NULL, NULL, NULL);
 
-                    if(inf != nullptr)
+                    if (inf != nullptr)
                     {
                         int i, count = 0;
                         there_are_crls = false;
@@ -299,7 +334,7 @@ static X509_STORE* load_permissions_ca(const std::string& permissions_ca, bool& 
                             if (itmp->x509)
                             {
                                 // Retrieve subject name for future use.
-                                if(ca_sn.empty())
+                                if (ca_sn.empty())
                                 {
                                     X509_NAME* ca_subject_name = X509_get_subject_name(itmp->x509);
                                     assert(ca_subject_name != nullptr);
@@ -310,9 +345,9 @@ static X509_STORE* load_permissions_ca(const std::string& permissions_ca, bool& 
                                 }
 
                                 // Retrieve signature algorithm
-                                if(ca_algo.empty())
+                                if (ca_algo.empty())
                                 {
-                                    if(get_signature_algorithm(itmp->x509, ca_algo, exception))
+                                    if (get_signature_algorithm(itmp->x509, ca_algo, exception))
                                     {
                                         X509_STORE_add_cert(store, itmp->x509);
                                         count++;
@@ -333,7 +368,7 @@ static X509_STORE* load_permissions_ca(const std::string& permissions_ca, bool& 
 
                         sk_X509_INFO_pop_free(inf, X509_INFO_free);
 
-                        if(count > 0)
+                        if (count > 0)
                         {
                             BIO_free(in);
 
@@ -342,12 +377,15 @@ static X509_STORE* load_permissions_ca(const std::string& permissions_ca, bool& 
                     }
                     else
                     {
-                        exception = _SecurityException_(std::string("OpenSSL library cannot read X509 info in file ") + permissions_ca.substr(7));
+                        exception = _SecurityException_(std::string(
+                                            "OpenSSL library cannot read X509 info in file ") +
+                                        permissions_ca.substr(7));
                     }
                 }
                 else
                 {
-                    exception = _SecurityException_(std::string("OpenSSL library cannot read file ") + permissions_ca.substr(7));
+                    exception = _SecurityException_(std::string(
+                                        "OpenSSL library cannot read file ") + permissions_ca.substr(7));
                 }
 
                 BIO_free(in);
@@ -372,24 +410,27 @@ static X509_STORE* load_permissions_ca(const std::string& permissions_ca, bool& 
     return nullptr;
 }
 
-static BIO* load_signed_file(X509_STORE* store, std::string& file, SecurityException& exception)
+static BIO* load_signed_file(
+        X509_STORE* store,
+        std::string& file,
+        SecurityException& exception)
 {
     assert(store);
     BIO* out = nullptr;
 
-    if(file.size() >= 7 && file.compare(0, 7, "file://") == 0)
+    if (file.size() >= 7 && file.compare(0, 7, "file://") == 0)
     {
         BIO* in = BIO_new_file(file.substr(7).c_str(), "r");
 
-        if(in != nullptr)
+        if (in != nullptr)
         {
             BIO* indata = nullptr;
             PKCS7* p7 = SMIME_read_PKCS7(in, &indata);
 
-            if(p7 != nullptr)
+            if (p7 != nullptr)
             {
                 out = BIO_new(BIO_s_mem());
-                if(!PKCS7_verify(p7, nullptr, store, indata, out, PKCS7_TEXT))
+                if (!PKCS7_verify(p7, nullptr, store, indata, out, PKCS7_TEXT))
                 {
                     exception = _SecurityException_(std::string("Failed verification of the file ") + file);
                     BIO_free(out);
@@ -403,7 +444,7 @@ static BIO* load_signed_file(X509_STORE* store, std::string& file, SecurityExcep
                 exception = _SecurityException_(std::string("Cannot read as PKCS7 the file ") + file);
             }
 
-            if(indata != nullptr)
+            if (indata != nullptr)
             {
                 BIO_free(indata);
             }
@@ -423,22 +464,25 @@ static BIO* load_signed_file(X509_STORE* store, std::string& file, SecurityExcep
     return out;
 }
 
-static bool load_governance_file(AccessPermissionsHandle& ah, std::string& governance_file, DomainAccessRules& rules,
+static bool load_governance_file(
+        AccessPermissionsHandle& ah,
+        std::string& governance_file,
+        DomainAccessRules& rules,
         SecurityException& exception)
 {
     bool returned_value = false;
 
     BIO* file_mem = load_signed_file(ah->store_, governance_file, exception);
 
-    if(file_mem != nullptr)
+    if (file_mem != nullptr)
     {
         BUF_MEM* ptr = nullptr;
         BIO_get_mem_ptr(file_mem, &ptr);
 
-        if(ptr != nullptr)
+        if (ptr != nullptr)
         {
             GovernanceParser parser;
-            if((returned_value = parser.parse_stream(ptr->data, ptr->length)) == true)
+            if ((returned_value = parser.parse_stream(ptr->data, ptr->length)) == true)
             {
                 parser.swap(rules);
             }
@@ -450,7 +494,7 @@ static bool load_governance_file(AccessPermissionsHandle& ah, std::string& gover
         else
         {
             exception = _SecurityException_(std::string("OpenSSL library cannot retrieve mem ptr from file ")
-                    + governance_file);
+                            + governance_file);
         }
 
         BIO_free(file_mem);
@@ -459,22 +503,25 @@ static bool load_governance_file(AccessPermissionsHandle& ah, std::string& gover
     return returned_value;
 }
 
-static bool load_permissions_file(AccessPermissionsHandle& ah, std::string& permissions_file,
-        PermissionsData& permissions, SecurityException& exception)
+static bool load_permissions_file(
+        AccessPermissionsHandle& ah,
+        std::string& permissions_file,
+        PermissionsData& permissions,
+        SecurityException& exception)
 {
     bool returned_value = false;
 
     BIO* file_mem = load_signed_file(ah->store_, permissions_file, exception);
 
-    if(file_mem != nullptr)
+    if (file_mem != nullptr)
     {
         BUF_MEM* ptr = nullptr;
         BIO_get_mem_ptr(file_mem, &ptr);
 
-        if(ptr != nullptr)
+        if (ptr != nullptr)
         {
             PermissionsParser parser;
-            if((returned_value = parser.parse_stream(ptr->data, ptr->length)) == true)
+            if ((returned_value = parser.parse_stream(ptr->data, ptr->length)) == true)
             {
                 parser.swap(permissions);
             }
@@ -486,7 +533,7 @@ static bool load_permissions_file(AccessPermissionsHandle& ah, std::string& perm
         else
         {
             exception = _SecurityException_(std::string("OpenSSL library cannot retrieve mem ptr from file ")
-                    + permissions_file);
+                            + permissions_file);
         }
 
         BIO_free(file_mem);
@@ -495,39 +542,43 @@ static bool load_permissions_file(AccessPermissionsHandle& ah, std::string& perm
     return returned_value;
 }
 
-static bool verify_permissions_file(const AccessPermissionsHandle& local_handle, const std::string& permissions_file,
-        PermissionsData& permissions, SecurityException& exception)
+static bool verify_permissions_file(
+        const AccessPermissionsHandle& local_handle,
+        const std::string& permissions_file,
+        PermissionsData& permissions,
+        SecurityException& exception)
 {
     bool returned_value = false;
 
-    if(permissions_file.size() <= static_cast<size_t>(std::numeric_limits<int>::max()))
+    if (permissions_file.size() <= static_cast<size_t>(std::numeric_limits<int>::max()))
     {
         BIO* permissions_buf = BIO_new_mem_buf(permissions_file.data(), static_cast<int>(permissions_file.size()));
 
-        if(permissions_buf != nullptr)
+        if (permissions_buf != nullptr)
         {
             BIO* indata = nullptr;
             PKCS7* p7 = SMIME_read_PKCS7(permissions_buf, &indata);
 
-            if(p7 != nullptr)
+            if (p7 != nullptr)
             {
                 BIO* out = BIO_new(BIO_s_mem());
-                if(PKCS7_verify(p7, nullptr, local_handle->store_, indata, out, PKCS7_TEXT))
+                if (PKCS7_verify(p7, nullptr, local_handle->store_, indata, out, PKCS7_TEXT))
                 {
                     BUF_MEM* ptr = nullptr;
                     BIO_get_mem_ptr(out, &ptr);
 
-                    if(ptr != nullptr)
+                    if (ptr != nullptr)
                     {
                         PermissionsParser parser;
-                        if((returned_value = parser.parse_stream(ptr->data, ptr->length)) == true)
+                        if ((returned_value = parser.parse_stream(ptr->data, ptr->length)) == true)
                         {
                             parser.swap(permissions);
                             returned_value = true;
                         }
                         else
                         {
-                            exception = _SecurityException_(std::string("Malformed permissions file ") + permissions_file);
+                            exception = _SecurityException_(std::string(
+                                                "Malformed permissions file ") + permissions_file);
                         }
                     }
                     else
@@ -548,7 +599,7 @@ static bool verify_permissions_file(const AccessPermissionsHandle& local_handle,
                 exception = _SecurityException_("Cannot read as PKCS7 the permissions file.");
             }
 
-            if(indata != nullptr)
+            if (indata != nullptr)
             {
                 BIO_free(indata);
             }
@@ -560,36 +611,45 @@ static bool verify_permissions_file(const AccessPermissionsHandle& local_handle,
     return returned_value;
 }
 
-static void process_protection_kind(const ProtectionKind kind, bool& protected_flag, bool& encrypted_flag, bool& orig_auth_flag)
+static void process_protection_kind(
+        const ProtectionKind kind,
+        bool& protected_flag,
+        bool& encrypted_flag,
+        bool& orig_auth_flag)
 {
     protected_flag = kind != ProtectionKind::NONE;
     encrypted_flag = (kind == ProtectionKind::ENCRYPT) || (kind == ProtectionKind::ENCRYPT_WITH_ORIGIN_AUTHENTICATION);
     orig_auth_flag = (kind == ProtectionKind::ENCRYPT_WITH_ORIGIN_AUTHENTICATION) ||
-        (kind == ProtectionKind::SIGN_WITH_ORIGIN_AUTHENTICATION);
+            (kind == ProtectionKind::SIGN_WITH_ORIGIN_AUTHENTICATION);
 }
 
-static bool check_subject_name(const IdentityHandle& ih, AccessPermissionsHandle& ah, const uint32_t domain_id,
-        DomainAccessRules& governance, PermissionsData& permissions, SecurityException& exception)
+static bool check_subject_name(
+        const IdentityHandle& ih,
+        AccessPermissionsHandle& ah,
+        const uint32_t domain_id,
+        DomainAccessRules& governance,
+        PermissionsData& permissions,
+        SecurityException& exception)
 {
     bool returned_value = false;
     const PKIIdentityHandle& lih = PKIIdentityHandle::narrow(ih);
 
-    if(!lih.nil())
+    if (!lih.nil())
     {
-        for(auto grant : permissions.grants)
+        for (auto grant : permissions.grants)
         {
-            if(is_validation_in_time(grant.validity))
+            if (is_validation_in_time(grant.validity))
             {
-                if(rfc2253_string_compare(grant.subject_name, lih->cert_sn_rfc2253_))
+                if (rfc2253_string_compare(grant.subject_name, lih->cert_sn_rfc2253_))
                 {
                     ah->grant = std::move(grant);
                     returned_value = true;
 
                     // Remove rules not apply to my domain
                     auto iterator = grant.rules.begin();
-                    while(iterator != grant.rules.end())
+                    while (iterator != grant.rules.end())
                     {
-                        if(!is_domain_in_set(domain_id, iterator->domains))
+                        if (!is_domain_in_set(domain_id, iterator->domains))
                         {
                             iterator = grant.rules.erase(iterator);
                         }
@@ -604,35 +664,35 @@ static bool check_subject_name(const IdentityHandle& ih, AccessPermissionsHandle
             }
         }
 
-        if(returned_value)
+        if (returned_value)
         {
             // Retry governance info.
-            for(auto rule : governance.rules)
+            for (auto rule : governance.rules)
             {
-                if(is_domain_in_set(domain_id, rule.domains))
+                if (is_domain_in_set(domain_id, rule.domains))
                 {
                     ah->governance_rule_.is_access_protected = rule.enable_join_access_control;
 
                     PluginParticipantSecurityAttributes plug_part_attr;
 
                     process_protection_kind(rule.discovery_protection_kind,
-                        ah->governance_rule_.is_discovery_protected,
-                        plug_part_attr.is_discovery_encrypted,
-                        plug_part_attr.is_discovery_origin_authenticated);
+                            ah->governance_rule_.is_discovery_protected,
+                            plug_part_attr.is_discovery_encrypted,
+                            plug_part_attr.is_discovery_origin_authenticated);
 
                     process_protection_kind(rule.rtps_protection_kind,
-                        ah->governance_rule_.is_rtps_protected,
-                        plug_part_attr.is_rtps_encrypted,
-                        plug_part_attr.is_rtps_origin_authenticated);
+                            ah->governance_rule_.is_rtps_protected,
+                            plug_part_attr.is_rtps_encrypted,
+                            plug_part_attr.is_rtps_origin_authenticated);
 
                     process_protection_kind(rule.liveliness_protection_kind,
-                        ah->governance_rule_.is_liveliness_protected,
-                        plug_part_attr.is_liveliness_encrypted,
-                        plug_part_attr.is_liveliness_origin_authenticated);
+                            ah->governance_rule_.is_liveliness_protected,
+                            plug_part_attr.is_liveliness_encrypted,
+                            plug_part_attr.is_liveliness_origin_authenticated);
 
                     ah->governance_rule_.plugin_participant_attributes = plug_part_attr.mask();
 
-                    for(auto topic_rule : rule.topic_rules)
+                    for (auto topic_rule : rule.topic_rules)
                     {
                         std::string topic_expression = topic_rule.topic_expression;
                         EndpointSecurityAttributes reader_attributes;
@@ -649,24 +709,27 @@ static bool check_subject_name(const IdentityHandle& ih, AccessPermissionsHandle
                         writer_attributes.is_write_protected = topic_rule.enable_write_access_control;
 
                         bool hasEncryption =
-                            (topic_rule.metadata_protection_kind == ProtectionKind::ENCRYPT) ||
-                            (topic_rule.metadata_protection_kind == ProtectionKind::ENCRYPT_WITH_ORIGIN_AUTHENTICATION);
+                                (topic_rule.metadata_protection_kind == ProtectionKind::ENCRYPT) ||
+                                (topic_rule.metadata_protection_kind ==
+                                ProtectionKind::ENCRYPT_WITH_ORIGIN_AUTHENTICATION);
                         bool hasOriginAuth =
-                            (topic_rule.metadata_protection_kind == ProtectionKind::ENCRYPT_WITH_ORIGIN_AUTHENTICATION) ||
-                            (topic_rule.metadata_protection_kind == ProtectionKind::SIGN_WITH_ORIGIN_AUTHENTICATION);
+                                (topic_rule.metadata_protection_kind ==
+                                ProtectionKind::ENCRYPT_WITH_ORIGIN_AUTHENTICATION) ||
+                                (topic_rule.metadata_protection_kind ==
+                                ProtectionKind::SIGN_WITH_ORIGIN_AUTHENTICATION);
                         plugin_attributes.is_submessage_encrypted = hasEncryption;
                         plugin_attributes.is_submessage_origin_authenticated = hasOriginAuth;
 
                         reader_attributes.is_submessage_protected =
-                            writer_attributes.is_submessage_protected =
-                            (topic_rule.metadata_protection_kind != ProtectionKind::NONE);
+                                writer_attributes.is_submessage_protected =
+                                (topic_rule.metadata_protection_kind != ProtectionKind::NONE);
 
                         plugin_attributes.is_payload_encrypted =
-                            reader_attributes.is_key_protected =
-                            writer_attributes.is_key_protected =
-                            (topic_rule.data_protection_kind == ProtectionKind::ENCRYPT);
+                                reader_attributes.is_key_protected =
+                                writer_attributes.is_key_protected =
+                                (topic_rule.data_protection_kind == ProtectionKind::ENCRYPT);
                         reader_attributes.is_payload_protected =
-                            writer_attributes.is_payload_protected =
+                                writer_attributes.is_payload_protected =
                                 (topic_rule.data_protection_kind != ProtectionKind::NONE);
 
                         reader_attributes.plugin_endpoint_attributes = plugin_attributes.mask();
@@ -684,8 +747,10 @@ static bool check_subject_name(const IdentityHandle& ih, AccessPermissionsHandle
         }
         else
         {
-            exception = _SecurityException_(std::string("Not found the identity subject name in permissions file. Subject name: ") +
-                    lih->cert_sn_rfc2253_);
+            exception =
+                    _SecurityException_(std::string(
+                                "Not found the identity subject name in permissions file. Subject name: ") +
+                            lih->cert_sn_rfc2253_);
         }
     }
     else
@@ -696,7 +761,8 @@ static bool check_subject_name(const IdentityHandle& ih, AccessPermissionsHandle
     return returned_value;
 }
 
-static bool generate_permissions_token(AccessPermissionsHandle& handle)
+static bool generate_permissions_token(
+        AccessPermissionsHandle& handle)
 {
     Property property;
     PermissionsToken& token = handle->permissions_token_;
@@ -715,7 +781,9 @@ static bool generate_permissions_token(AccessPermissionsHandle& handle)
     return true;
 }
 
-static bool generate_credentials_token(AccessPermissionsHandle& handle, const std::string& file,
+static bool generate_credentials_token(
+        AccessPermissionsHandle& handle,
+        const std::string& file,
         SecurityException& exception)
 {
     bool returned_value = false;
@@ -723,7 +791,7 @@ static bool generate_credentials_token(AccessPermissionsHandle& handle, const st
     PermissionsCredentialToken& token = handle->permissions_credential_token_;
     token.class_id("DDS:Access:PermissionsCredential");
 
-    if(file.size() >= 7 && file.compare(0, 7, "file://") == 0)
+    if (file.size() >= 7 && file.compare(0, 7, "file://") == 0)
     {
         try
         {
@@ -731,12 +799,12 @@ static bool generate_credentials_token(AccessPermissionsHandle& handle, const st
             Property property;
             property.name("dds.perm.cert");
             property.value().assign((std::istreambuf_iterator<char>(ifs)),
-                (std::istreambuf_iterator<char>()));
+                    (std::istreambuf_iterator<char>()));
             property.propagate(true);
             token.properties().push_back(std::move(property));
             returned_value = true;
         }
-        catch(std::exception&)
+        catch (std::exception&)
         {
             exception = _SecurityException_(std::string("Cannot find file ") + file);
         }
@@ -749,15 +817,17 @@ static bool generate_credentials_token(AccessPermissionsHandle& handle, const st
     return returned_value;
 }
 
-PermissionsHandle* Permissions::validate_local_permissions(Authentication&,
+PermissionsHandle* Permissions::validate_local_permissions(
+        Authentication&,
         const IdentityHandle& identity,
         const uint32_t domain_id,
         const RTPSParticipantAttributes& participant_attr,
         SecurityException& exception)
 {
-    PropertyPolicy access_properties = PropertyPolicyHelper::get_properties_with_prefix(participant_attr.properties, "dds.sec.access.builtin.Access-Permissions.");
+    PropertyPolicy access_properties = PropertyPolicyHelper::get_properties_with_prefix(participant_attr.properties,
+                    "dds.sec.access.builtin.Access-Permissions.");
 
-    if(PropertyPolicyHelper::length(access_properties) == 0)
+    if (PropertyPolicyHelper::length(access_properties) == 0)
     {
         exception = _SecurityException_("Not found any dds.sec.access.builtin.Access-Permissions property");
         EMERGENCY_SECURITY_LOGGING("Permissions", exception.what());
@@ -766,7 +836,7 @@ PermissionsHandle* Permissions::validate_local_permissions(Authentication&,
 
     std::string* permissions_ca = PropertyPolicyHelper::find_property(access_properties, "permissions_ca");
 
-    if(permissions_ca == nullptr)
+    if (permissions_ca == nullptr)
     {
         exception = _SecurityException_("Not found dds.sec.access.builtin.Access-Permissions.permissions_ca property");
         EMERGENCY_SECURITY_LOGGING("Permissions", exception.what());
@@ -775,7 +845,7 @@ PermissionsHandle* Permissions::validate_local_permissions(Authentication&,
 
     std::string* governance = PropertyPolicyHelper::find_property(access_properties, "governance");
 
-    if(governance == nullptr)
+    if (governance == nullptr)
     {
         exception = _SecurityException_("Not found dds.sec.access.builtin.Access-Permissions.governance property");
         EMERGENCY_SECURITY_LOGGING("Permissions", exception.what());
@@ -784,7 +854,7 @@ PermissionsHandle* Permissions::validate_local_permissions(Authentication&,
 
     std::string* permissions = PropertyPolicyHelper::find_property(access_properties, "permissions");
 
-    if(permissions == nullptr)
+    if (permissions == nullptr)
     {
         exception = _SecurityException_("Not found dds.sec.access.builtin.Access-Permissions.permissions property");
         EMERGENCY_SECURITY_LOGGING("Permissions", exception.what());
@@ -795,20 +865,20 @@ PermissionsHandle* Permissions::validate_local_permissions(Authentication&,
 
     (*ah)->store_ = load_permissions_ca(*permissions_ca, (*ah)->there_are_crls_, (*ah)->sn, (*ah)->algo, exception);
 
-    if((*ah)->store_ != nullptr)
+    if ((*ah)->store_ != nullptr)
     {
         DomainAccessRules rules;
-        if(load_governance_file(*ah, *governance, rules, exception))
+        if (load_governance_file(*ah, *governance, rules, exception))
         {
             PermissionsData permissions_data;
-            if(load_permissions_file(*ah, *permissions, permissions_data, exception))
+            if (load_permissions_file(*ah, *permissions, permissions_data, exception))
             {
                 // Check subject name.
-                if(check_subject_name(identity, *ah, domain_id, rules, permissions_data, exception))
+                if (check_subject_name(identity, *ah, domain_id, rules, permissions_data, exception))
                 {
-                    if(generate_permissions_token(*ah))
+                    if (generate_permissions_token(*ah))
                     {
-                        if(generate_credentials_token(*ah, *permissions, exception))
+                        if (generate_credentials_token(*ah, *permissions, exception))
                         {
                             return ah;
                         }
@@ -823,13 +893,14 @@ PermissionsHandle* Permissions::validate_local_permissions(Authentication&,
     return nullptr;
 }
 
-bool Permissions::get_permissions_token(PermissionsToken** permissions_token,
+bool Permissions::get_permissions_token(
+        PermissionsToken** permissions_token,
         const PermissionsHandle& handle,
         SecurityException& exception)
 {
     const AccessPermissionsHandle& phandle = AccessPermissionsHandle::narrow(handle);
 
-    if(!phandle.nil())
+    if (!phandle.nil())
     {
         *permissions_token = new PermissionsToken(phandle->permissions_token_);
         return true;
@@ -843,19 +914,22 @@ bool Permissions::get_permissions_token(PermissionsToken** permissions_token,
     return false;
 }
 
-bool Permissions::return_permissions_token(PermissionsToken* token,
+bool Permissions::return_permissions_token(
+        PermissionsToken* token,
         SecurityException& /*exception*/)
 {
     delete token;
     return true;
 }
 
-bool Permissions::get_permissions_credential_token(PermissionsCredentialToken** permissions_credential_token,
-        const PermissionsHandle& handle, SecurityException& exception)
+bool Permissions::get_permissions_credential_token(
+        PermissionsCredentialToken** permissions_credential_token,
+        const PermissionsHandle& handle,
+        SecurityException& exception)
 {
     const AccessPermissionsHandle& phandle = AccessPermissionsHandle::narrow(handle);
 
-    if(!phandle.nil())
+    if (!phandle.nil())
     {
         *permissions_credential_token = new PermissionsCredentialToken(phandle->permissions_credential_token_);
         return true;
@@ -869,19 +943,21 @@ bool Permissions::get_permissions_credential_token(PermissionsCredentialToken** 
     return false;
 }
 
-bool Permissions::return_permissions_credential_token(PermissionsCredentialToken* token,
+bool Permissions::return_permissions_credential_token(
+        PermissionsCredentialToken* token,
         SecurityException&)
 {
     delete token;
     return true;
 }
 
-bool Permissions::return_permissions_handle(PermissionsHandle* permissions_handle,
-                SecurityException&)
+bool Permissions::return_permissions_handle(
+        PermissionsHandle* permissions_handle,
+        SecurityException&)
 {
     AccessPermissionsHandle* handle = &AccessPermissionsHandle::narrow(*permissions_handle);
 
-    if(!handle->nil())
+    if (!handle->nil())
     {
         delete handle;
         return true;
@@ -890,7 +966,8 @@ bool Permissions::return_permissions_handle(PermissionsHandle* permissions_handl
     return false;
 }
 
-PermissionsHandle* Permissions::validate_remote_permissions(Authentication&,
+PermissionsHandle* Permissions::validate_remote_permissions(
+        Authentication&,
         const IdentityHandle& local_identity_handle,
         const PermissionsHandle& local_permissions_handle,
         const IdentityHandle& remote_identity_handle,
@@ -902,7 +979,7 @@ PermissionsHandle* Permissions::validate_remote_permissions(Authentication&,
     const AccessPermissionsHandle& lph = AccessPermissionsHandle::narrow(local_permissions_handle);
     const PKIIdentityHandle& rih = PKIIdentityHandle::narrow(remote_identity_handle);
 
-    if(lih.nil() || lph.nil() || rih.nil())
+    if (lih.nil() || lph.nil() || rih.nil())
     {
         exception = _SecurityException_("Bad precondition");
         EMERGENCY_SECURITY_LOGGING("Permissions", exception.what());
@@ -913,9 +990,9 @@ PermissionsHandle* Permissions::validate_remote_permissions(Authentication&,
     // Check c.id
     const std::string* sn = DataHolderHelper::find_property_value(remote_permissions_token, "dds.perm_ca.sn");
 
-    if(sn != nullptr)
+    if (sn != nullptr)
     {
-        if(sn->compare(lph->sn) != 0)
+        if (sn->compare(lph->sn) != 0)
         {
             exception = _SecurityException_("Remote participant PermissionsCA differs from local");
             EMERGENCY_SECURITY_LOGGING("Permissions", exception.what());
@@ -925,9 +1002,9 @@ PermissionsHandle* Permissions::validate_remote_permissions(Authentication&,
 
     const std::string* algo = DataHolderHelper::find_property_value(remote_permissions_token, "dds.perm_ca.algo");
 
-    if(algo != nullptr)
+    if (algo != nullptr)
     {
-        if(algo->compare(lph->algo) != 0)
+        if (algo->compare(lph->algo) != 0)
         {
             exception = _SecurityException_("Remote participant PermissionsCA algorithm differs from local");
             EMERGENCY_SECURITY_LOGGING("Permissions", exception.what());
@@ -936,9 +1013,9 @@ PermissionsHandle* Permissions::validate_remote_permissions(Authentication&,
     }
 
     const std::string* permissions_file = DataHolderHelper::find_property_value(remote_credential_token,
-            "dds.perm.cert");
+                    "dds.perm.cert");
 
-    if(permissions_file == nullptr)
+    if (permissions_file == nullptr)
     {
         exception = _SecurityException_("Remote participant doesn't sent the signed permissions file");
         EMERGENCY_SECURITY_LOGGING("Permissions", exception.what());
@@ -946,18 +1023,18 @@ PermissionsHandle* Permissions::validate_remote_permissions(Authentication&,
     }
 
     PermissionsData data;
-    if(!verify_permissions_file(lph, *permissions_file, data, exception))
+    if (!verify_permissions_file(lph, *permissions_file, data, exception))
     {
         return nullptr;
     }
 
     Grant remote_grant;
-    for(auto grant : data.grants)
+    for (auto grant : data.grants)
     {
-        if(is_validation_in_time(grant.validity))
+        if (is_validation_in_time(grant.validity))
         {
-            if(rfc2253_string_compare(grant.subject_name, rih->cert_sn_rfc2253_) ||
-               strcmp(grant.subject_name.c_str(), rih->cert_sn_.c_str()) == 0)
+            if (rfc2253_string_compare(grant.subject_name, rih->cert_sn_rfc2253_) ||
+                    strcmp(grant.subject_name.c_str(), rih->cert_sn_.c_str()) == 0)
             {
                 remote_grant = std::move(grant);
                 break;
@@ -965,7 +1042,7 @@ PermissionsHandle* Permissions::validate_remote_permissions(Authentication&,
         }
     }
 
-    if(remote_grant.subject_name.empty())
+    if (remote_grant.subject_name.empty())
     {
         exception = _SecurityException_("Remote participant doesn't found in its permissions file");
         EMERGENCY_SECURITY_LOGGING("Permissions", exception.what());
@@ -981,13 +1058,16 @@ PermissionsHandle* Permissions::validate_remote_permissions(Authentication&,
     return handle;
 }
 
-bool Permissions::check_create_participant(const PermissionsHandle& local_handle, const uint32_t /*domain_id*/,
-                const RTPSParticipantAttributes&, SecurityException& exception)
+bool Permissions::check_create_participant(
+        const PermissionsHandle& local_handle,
+        const uint32_t /*domain_id*/,
+        const RTPSParticipantAttributes&,
+        SecurityException& exception)
 {
     bool returned_value = false;
     const AccessPermissionsHandle& lah = AccessPermissionsHandle::narrow(local_handle);
 
-    if(lah.nil())
+    if (lah.nil())
     {
         exception = _SecurityException_("Bad precondition");
         EMERGENCY_SECURITY_LOGGING("Permissions", exception.what());
@@ -995,16 +1075,16 @@ bool Permissions::check_create_participant(const PermissionsHandle& local_handle
     }
 
     //Search an allow rule with my domain
-    for(auto rule : lah->grant.rules)
+    for (auto rule : lah->grant.rules)
     {
-        if(rule.allow)
+        if (rule.allow)
         {
             returned_value = true;
             break;
         }
     }
 
-    if(!returned_value)
+    if (!returned_value)
     {
         exception = _SecurityException_("Not found a rule allowing to use the domain_id");
         EMERGENCY_SECURITY_LOGGING("Permissions", exception.what());
@@ -1013,30 +1093,33 @@ bool Permissions::check_create_participant(const PermissionsHandle& local_handle
     return returned_value;
 }
 
-bool Permissions::check_remote_participant(const PermissionsHandle& remote_handle, const uint32_t domain_id,
-                const ParticipantProxyData&, SecurityException& exception)
+bool Permissions::check_remote_participant(
+        const PermissionsHandle& remote_handle,
+        const uint32_t domain_id,
+        const ParticipantProxyData&,
+        SecurityException& exception)
 {
     bool returned_value = false;
     const AccessPermissionsHandle& rah = AccessPermissionsHandle::narrow(remote_handle);
 
-    if(rah.nil())
+    if (rah.nil())
     {
         exception = _SecurityException_("Bad precondition");
         EMERGENCY_SECURITY_LOGGING("Permissions", exception.what());
         return false;
     }
 
-    if(!rah->governance_rule_.is_access_protected)
+    if (!rah->governance_rule_.is_access_protected)
     {
         return true;
     }
 
     //Search an allow rule with my domain
-    for(auto rule : rah->grant.rules)
+    for (auto rule : rah->grant.rules)
     {
-        if(rule.allow)
+        if (rule.allow)
         {
-            if(is_domain_in_set(domain_id, rule.domains))
+            if (is_domain_in_set(domain_id, rule.domains))
             {
                 returned_value = true;
                 break;
@@ -1044,7 +1127,7 @@ bool Permissions::check_remote_participant(const PermissionsHandle& remote_handl
         }
     }
 
-    if(!returned_value)
+    if (!returned_value)
     {
         exception = _SecurityException_("Not found a rule allowing to use the domain_id");
         EMERGENCY_SECURITY_LOGGING("Permissions", exception.what());
@@ -1053,14 +1136,17 @@ bool Permissions::check_remote_participant(const PermissionsHandle& remote_handl
     return returned_value;
 }
 
-bool Permissions::check_create_datawriter(const PermissionsHandle& local_handle,
-        const uint32_t /*domain_id*/, const std::string& topic_name,
-        const std::vector<std::string>& partitions, SecurityException& exception)
+bool Permissions::check_create_datawriter(
+        const PermissionsHandle& local_handle,
+        const uint32_t /*domain_id*/,
+        const std::string& topic_name,
+        const std::vector<std::string>& partitions,
+        SecurityException& exception)
 {
     bool returned_value = false;
     const AccessPermissionsHandle& lah = AccessPermissionsHandle::narrow(local_handle);
 
-    if(lah.nil())
+    if (lah.nil())
     {
         exception = _SecurityException_("Bad precondition");
         EMERGENCY_SECURITY_LOGGING("Permissions", exception.what());
@@ -1069,9 +1155,9 @@ bool Permissions::check_create_datawriter(const PermissionsHandle& local_handle,
 
     const EndpointSecurityAttributes* attributes = nullptr;
 
-    if((attributes = is_topic_in_sec_attributes(topic_name.c_str(), lah->governance_writer_topic_rules_)) != nullptr)
+    if ((attributes = is_topic_in_sec_attributes(topic_name.c_str(), lah->governance_writer_topic_rules_)) != nullptr)
     {
-        if(!attributes->is_write_protected)
+        if (!attributes->is_write_protected)
         {
             return true;
         }
@@ -1084,11 +1170,11 @@ bool Permissions::check_create_datawriter(const PermissionsHandle& local_handle,
     }
 
     // Search topic
-    for(auto rule : lah->grant.rules)
+    for (auto rule : lah->grant.rules)
     {
-        if(is_topic_in_criterias(topic_name.c_str(), rule.publishes))
+        if (is_topic_in_criterias(topic_name.c_str(), rule.publishes))
         {
-            if(rule.allow)
+            if (rule.allow)
             {
                 returned_value = true;
 
@@ -1105,12 +1191,13 @@ bool Permissions::check_create_datawriter(const PermissionsHandle& local_handle,
                 {
                     // Search partitions
                     for (auto partition_it = partitions.begin(); returned_value && partition_it != partitions.end();
-                        ++partition_it)
+                            ++partition_it)
                     {
                         if (!is_partition_in_criterias(*partition_it, rule.publishes))
                         {
                             returned_value = false;
-                            exception = _SecurityException_(*partition_it + std::string(" partition not found in rule."));
+                            exception =
+                                    _SecurityException_(*partition_it + std::string(" partition not found in rule."));
                             EMERGENCY_SECURITY_LOGGING("Permissions", exception.what());
                         }
                     }
@@ -1126,7 +1213,7 @@ bool Permissions::check_create_datawriter(const PermissionsHandle& local_handle,
         }
     }
 
-    if(!returned_value && strlen(exception.what()) == 0)
+    if (!returned_value && strlen(exception.what()) == 0)
     {
         exception = _SecurityException_(topic_name + std::string(" topic not found in allow rule."));
         EMERGENCY_SECURITY_LOGGING("Permissions", exception.what());
@@ -1135,14 +1222,17 @@ bool Permissions::check_create_datawriter(const PermissionsHandle& local_handle,
     return returned_value;
 }
 
-bool Permissions::check_create_datareader(const PermissionsHandle& local_handle,
-        const uint32_t /*domain_id*/, const std::string& topic_name,
-        const std::vector<std::string>& partitions, SecurityException& exception)
+bool Permissions::check_create_datareader(
+        const PermissionsHandle& local_handle,
+        const uint32_t /*domain_id*/,
+        const std::string& topic_name,
+        const std::vector<std::string>& partitions,
+        SecurityException& exception)
 {
     bool returned_value = false;
     const AccessPermissionsHandle& lah = AccessPermissionsHandle::narrow(local_handle);
 
-    if(lah.nil())
+    if (lah.nil())
     {
         exception = _SecurityException_("Bad precondition");
         EMERGENCY_SECURITY_LOGGING("Permissions", exception.what());
@@ -1153,7 +1243,7 @@ bool Permissions::check_create_datareader(const PermissionsHandle& local_handle,
 
     if ((attributes = is_topic_in_sec_attributes(topic_name.c_str(), lah->governance_reader_topic_rules_)) != nullptr)
     {
-        if(!attributes->is_read_protected)
+        if (!attributes->is_read_protected)
         {
             return true;
         }
@@ -1165,11 +1255,11 @@ bool Permissions::check_create_datareader(const PermissionsHandle& local_handle,
         return false;
     }
 
-    for(auto rule : lah->grant.rules)
+    for (auto rule : lah->grant.rules)
     {
-        if(is_topic_in_criterias(topic_name.c_str(), rule.subscribes))
+        if (is_topic_in_criterias(topic_name.c_str(), rule.subscribes))
         {
-            if(rule.allow)
+            if (rule.allow)
             {
                 returned_value = true;
 
@@ -1186,12 +1276,13 @@ bool Permissions::check_create_datareader(const PermissionsHandle& local_handle,
                 {
                     // Search partitions
                     for (auto partition_it = partitions.begin(); returned_value && partition_it != partitions.end();
-                        ++partition_it)
+                            ++partition_it)
                     {
                         if (!is_partition_in_criterias(*partition_it, rule.subscribes))
                         {
                             returned_value = false;
-                            exception = _SecurityException_(*partition_it + std::string(" partition not found in rule."));
+                            exception =
+                                    _SecurityException_(*partition_it + std::string(" partition not found in rule."));
                             EMERGENCY_SECURITY_LOGGING("Permissions", exception.what());
                         }
                     }
@@ -1207,7 +1298,7 @@ bool Permissions::check_create_datareader(const PermissionsHandle& local_handle,
         }
     }
 
-    if(!returned_value && strlen(exception.what()) == 0)
+    if (!returned_value && strlen(exception.what()) == 0)
     {
         exception = _SecurityException_(topic_name + std::string(" topic not found in allow rule."));
         EMERGENCY_SECURITY_LOGGING("Permissions", exception.what());
@@ -1216,14 +1307,16 @@ bool Permissions::check_create_datareader(const PermissionsHandle& local_handle,
     return returned_value;
 }
 
-bool Permissions::check_remote_datawriter(const PermissionsHandle& remote_handle,
-        const uint32_t domain_id, const WriterProxyData& publication_data,
+bool Permissions::check_remote_datawriter(
+        const PermissionsHandle& remote_handle,
+        const uint32_t domain_id,
+        const WriterProxyData& publication_data,
         SecurityException& exception)
 {
     bool returned_value = false;
     const AccessPermissionsHandle& rah = AccessPermissionsHandle::narrow(remote_handle);
 
-    if(rah.nil())
+    if (rah.nil())
     {
         exception = _SecurityException_("Bad precondition");
         EMERGENCY_SECURITY_LOGGING("Permissions", exception.what());
@@ -1232,35 +1325,37 @@ bool Permissions::check_remote_datawriter(const PermissionsHandle& remote_handle
 
     const EndpointSecurityAttributes* attributes = nullptr;
 
-    if((attributes = is_topic_in_sec_attributes(publication_data.topicName().c_str(),rah->governance_writer_topic_rules_))
+    if ((attributes =
+            is_topic_in_sec_attributes(publication_data.topicName().c_str(), rah->governance_writer_topic_rules_))
             != nullptr)
     {
-        if(!attributes->is_write_protected)
+        if (!attributes->is_write_protected)
         {
             return true;
         }
     }
     else
     {
-        exception = _SecurityException_("Not found topic access rule for topic " + publication_data.topicName().to_string());
+        exception = _SecurityException_(
+            "Not found topic access rule for topic " + publication_data.topicName().to_string());
         EMERGENCY_SECURITY_LOGGING("Permissions", exception.what());
         return false;
     }
 
-    for(auto rule : rah->grant.rules)
+    for (auto rule : rah->grant.rules)
     {
-        if(is_domain_in_set(domain_id, rule.domains))
+        if (is_domain_in_set(domain_id, rule.domains))
         {
-            if(is_topic_in_criterias(publication_data.topicName().c_str(), rule.publishes))
+            if (is_topic_in_criterias(publication_data.topicName().c_str(), rule.publishes))
             {
-                if(rule.allow)
+                if (rule.allow)
                 {
                     returned_value = true;
                 }
                 else
                 {
                     exception = _SecurityException_(publication_data.topicName().to_string() +
-                            std::string(" topic denied by deny rule."));
+                                    std::string(" topic denied by deny rule."));
                     EMERGENCY_SECURITY_LOGGING("Permissions", exception.what());
                 }
 
@@ -1269,26 +1364,29 @@ bool Permissions::check_remote_datawriter(const PermissionsHandle& remote_handle
         }
     }
 
-    if(!returned_value && strlen(exception.what()) == 0)
+    if (!returned_value && strlen(exception.what()) == 0)
     {
         exception = _SecurityException_(publication_data.topicName().to_string() +
-                std::string(" topic not found in allow rule."));
+                        std::string(" topic not found in allow rule."));
         EMERGENCY_SECURITY_LOGGING("Permissions", exception.what());
     }
 
     return returned_value;
 }
 
-bool Permissions::check_remote_datareader(const PermissionsHandle& remote_handle,
-        const uint32_t domain_id, const ReaderProxyData& subscription_data,
-        bool& relay_only, SecurityException& exception)
+bool Permissions::check_remote_datareader(
+        const PermissionsHandle& remote_handle,
+        const uint32_t domain_id,
+        const ReaderProxyData& subscription_data,
+        bool& relay_only,
+        SecurityException& exception)
 {
     bool returned_value = false;
     const AccessPermissionsHandle& rah = AccessPermissionsHandle::narrow(remote_handle);
 
     relay_only = false;
 
-    if(rah.nil())
+    if (rah.nil())
     {
         exception = _SecurityException_("Bad precondition");
         EMERGENCY_SECURITY_LOGGING("Permissions", exception.what());
@@ -1297,35 +1395,37 @@ bool Permissions::check_remote_datareader(const PermissionsHandle& remote_handle
 
     const EndpointSecurityAttributes* attributes = nullptr;
 
-    if((attributes = is_topic_in_sec_attributes(subscription_data.topicName().c_str(),rah->governance_reader_topic_rules_))
+    if ((attributes =
+            is_topic_in_sec_attributes(subscription_data.topicName().c_str(), rah->governance_reader_topic_rules_))
             != nullptr)
     {
-        if(!attributes->is_read_protected)
+        if (!attributes->is_read_protected)
         {
             return true;
         }
     }
     else
     {
-        exception = _SecurityException_("Not found topic access rule for topic " + subscription_data.topicName().to_string());
+        exception = _SecurityException_(
+            "Not found topic access rule for topic " + subscription_data.topicName().to_string());
         EMERGENCY_SECURITY_LOGGING("Permissions", exception.what());
         return false;
     }
 
-    for(auto rule : rah->grant.rules)
+    for (auto rule : rah->grant.rules)
     {
-        if(is_domain_in_set(domain_id, rule.domains))
+        if (is_domain_in_set(domain_id, rule.domains))
         {
-            if(is_topic_in_criterias(subscription_data.topicName(), rule.subscribes))
+            if (is_topic_in_criterias(subscription_data.topicName(), rule.subscribes))
             {
-                if(rule.allow)
+                if (rule.allow)
                 {
                     returned_value = true;
                 }
                 else
                 {
                     exception = _SecurityException_(subscription_data.topicName().to_string() +
-                            std::string(" topic denied by deny rule."));
+                                    std::string(" topic denied by deny rule."));
                     EMERGENCY_SECURITY_LOGGING("Permissions", exception.what());
                 }
 
@@ -1345,22 +1445,24 @@ bool Permissions::check_remote_datareader(const PermissionsHandle& remote_handle
         }
     }
 
-    if(!returned_value && strlen(exception.what()) == 0)
+    if (!returned_value && strlen(exception.what()) == 0)
     {
         exception = _SecurityException_(subscription_data.topicName().to_string() +
-                std::string(" topic not found in allow rule."));
+                        std::string(" topic not found in allow rule."));
         EMERGENCY_SECURITY_LOGGING("Permissions", exception.what());
     }
 
     return returned_value;
 }
 
-bool Permissions::get_participant_sec_attributes(const PermissionsHandle& local_handle,
-        ParticipantSecurityAttributes& attributes, SecurityException& exception)
+bool Permissions::get_participant_sec_attributes(
+        const PermissionsHandle& local_handle,
+        ParticipantSecurityAttributes& attributes,
+        SecurityException& exception)
 {
     const AccessPermissionsHandle& lah = AccessPermissionsHandle::narrow(local_handle);
 
-    if(lah.nil())
+    if (lah.nil())
     {
         exception = _SecurityException_("Bad precondition");
         EMERGENCY_SECURITY_LOGGING("Permissions", exception.what());
@@ -1371,15 +1473,17 @@ bool Permissions::get_participant_sec_attributes(const PermissionsHandle& local_
     return true;
 }
 
-
-bool Permissions::get_datawriter_sec_attributes(const PermissionsHandle& permissions_handle,
-        const std::string& topic_name, const std::vector<std::string>& /*partitions*/,
-        EndpointSecurityAttributes& attributes, SecurityException& exception)
+bool Permissions::get_datawriter_sec_attributes(
+        const PermissionsHandle& permissions_handle,
+        const std::string& topic_name,
+        const std::vector<std::string>& /*partitions*/,
+        EndpointSecurityAttributes& attributes,
+        SecurityException& exception)
 {
     const AccessPermissionsHandle& lah = AccessPermissionsHandle::narrow(permissions_handle);
     const EndpointSecurityAttributes* attr = nullptr;
 
-    if((attr = is_topic_in_sec_attributes(topic_name.c_str(), lah->governance_writer_topic_rules_))
+    if ((attr = is_topic_in_sec_attributes(topic_name.c_str(), lah->governance_writer_topic_rules_))
             != nullptr)
     {
         attributes = *attr;
@@ -1394,14 +1498,17 @@ bool Permissions::get_datawriter_sec_attributes(const PermissionsHandle& permiss
     return false;
 }
 
-bool Permissions::get_datareader_sec_attributes(const PermissionsHandle& permissions_handle,
-        const std::string& topic_name, const std::vector<std::string>& /*partitions*/,
-        EndpointSecurityAttributes& attributes, SecurityException& exception)
+bool Permissions::get_datareader_sec_attributes(
+        const PermissionsHandle& permissions_handle,
+        const std::string& topic_name,
+        const std::vector<std::string>& /*partitions*/,
+        EndpointSecurityAttributes& attributes,
+        SecurityException& exception)
 {
     const AccessPermissionsHandle& lah = AccessPermissionsHandle::narrow(permissions_handle);
     const EndpointSecurityAttributes* attr = nullptr;
 
-    if((attr = is_topic_in_sec_attributes(topic_name.c_str(), lah->governance_reader_topic_rules_))
+    if ((attr = is_topic_in_sec_attributes(topic_name.c_str(), lah->governance_reader_topic_rules_))
             != nullptr)
     {
         attributes = *attr;
