@@ -84,7 +84,7 @@ static bool is_domain_in_set(const uint32_t domain_id, const Domains& domains)
 }
 
 static const EndpointSecurityAttributes* is_topic_in_sec_attributes(const char* topic_name,
-        const std::map<std::string, EndpointSecurityAttributes>& attributes)
+        const std::vector<std::pair<std::string, EndpointSecurityAttributes>>& attributes)
 {
     const EndpointSecurityAttributes* returned_value = nullptr;
 
@@ -672,9 +672,9 @@ static bool check_subject_name(const IdentityHandle& ih, AccessPermissionsHandle
                         reader_attributes.plugin_endpoint_attributes = plugin_attributes.mask();
                         writer_attributes.plugin_endpoint_attributes = plugin_attributes.mask();
 
-                        ah->governance_reader_topic_rules_.insert(std::pair<std::string, EndpointSecurityAttributes>(
+                        ah->governance_reader_topic_rules_.push_back(std::pair<std::string, EndpointSecurityAttributes>(
                                     topic_expression, std::move(reader_attributes)));
-                        ah->governance_writer_topic_rules_.insert(std::pair<std::string, EndpointSecurityAttributes>(
+                        ah->governance_writer_topic_rules_.push_back(std::pair<std::string, EndpointSecurityAttributes>(
                                     std::move(topic_expression), std::move(writer_attributes)));
                     }
 
