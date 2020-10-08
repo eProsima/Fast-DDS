@@ -1101,7 +1101,7 @@ bool StatefulWriter::send_hole_gaps_to_group(
     SequenceNumber_t last_sequence = mp_history->next_sequence_number();
     SequenceNumber_t min_history_seq = get_seq_num_min();
     uint32_t history_size = static_cast<uint32_t>(mp_history->getHistorySize());
-    if ( (min_readers_low_mark_ < max_removed) &&    // some holes pending acknowledgement
+    if ((min_readers_low_mark_ < max_removed) &&     // some holes pending acknowledgement
             (min_history_seq + history_size != last_sequence)) // There is a hole in the history
     {
         try
@@ -1267,7 +1267,14 @@ bool StatefulWriter::matched_reader_add(
     RTPSMessageGroup group(mp_RTPSParticipant, this, rp->message_sender());
 
     // Add initial heartbeat to message group
-    send_heartbeat_nts_(1u, group, disable_positive_acks_);
+    if (rp->is_local_reader())
+    {
+        intraprocess_heartbeat(rp);
+    }
+    else
+    {
+        send_heartbeat_nts_(1u, group, disable_positive_acks_);
+    }
 
     SequenceNumber_t current_seq = get_seq_num_min();
     SequenceNumber_t last_seq = get_seq_num_max();
@@ -1391,14 +1398,17 @@ bool StatefulWriter::matched_reader_add(
         periodic_hb_event_->restart_timer();
     }
 
-    try
+    if (!rp->is_local_reader())
     {
-        // Send all messages
-        group.flush_and_reset();
-    }
-    catch (const RTPSMessageGroup::timeout&)
-    {
-        logError(RTPS_WRITER, "Max blocking time reached");
+        try
+        {
+            // Send all messages
+            group.flush_and_reset();
+        }
+        catch (const RTPSMessageGroup::timeout&)
+        {
+            logError(RTPS_WRITER, "Max blocking time reached");
+        }
     }
 
     logInfo(RTPS_WRITER, "Reader Proxy " << rp->guid() << " added to " << this->m_guid.entityId << " with "
@@ -1573,7 +1583,7 @@ void StatefulWriter::check_acked_status()
         // min_low_mark will be zero, and no change will be notified as received by all
         if (next_all_acked_notify_sequence_ <= min_low_mark)
         {
-            if ( (mp_listener != nullptr) && (min_low_mark >= get_seq_num_min()))
+            if ((mp_listener != nullptr) && (min_low_mark >= get_seq_num_min()))
             {
                 // We will inform backwards about the changes received by all readers, starting
                 // on min_low_mark down until next_all_acked_notify_sequence_. This way we can
@@ -1846,6 +1856,10 @@ void StatefulWriter::send_heartbeat_nts_(
         bool final,
         bool liveliness)
 {
+    if (!number_of_readers)
+    {
+        return;
+    }
 
     SequenceNumber_t firstSeq = get_seq_num_min();
     SequenceNumber_t lastSeq = get_seq_num_max();
