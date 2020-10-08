@@ -356,6 +356,10 @@ protected:
             const eprosima::fastrtps::rtps::GUID_t& reader_guid,
             const std::string& topic_name);
 
+    //! Add a topic to the list of dirty topics, unless it's already present
+    // Return true if added, false if already there
+    bool set_dirty_topic_(std::string topic);
+
     fastrtps::DBQueue<eprosima::fastdds::rtps::ddb::DiscoveryPDPDataQueueInfo> pdp_data_queue_;
 
     fastrtps::DBQueue<eprosima::fastdds::rtps::ddb::DiscoveryEDPDataQueueInfo> edp_data_queue_;
