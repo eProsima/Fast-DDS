@@ -379,29 +379,39 @@ bool StatefulReader::processDataMsg(
             logInfo(RTPS_MSG_IN,
                     IDSTRING "Trying to add change " << change->sequenceNumber << " TO reader: " << getGuid().entityId);
 
-            CacheChange_t* change_to_add;
-
-            if (reserveCache(&change_to_add, change->serializedPayload.length)) //Reserve a new cache from the corresponding cache pool
+            // Ask the pool for a cache change
+            CacheChange_t* change_to_add = nullptr;
+            if (!change_pool_->reserve_cache(change_to_add))
             {
-                if (!change_to_add->copy(change))
-                {
-                    logWarning(RTPS_MSG_IN, IDSTRING "Problem copying CacheChange, received data is: " << change->serializedPayload.length
-                                                                                                       << " bytes and max size in reader " << getGuid().entityId << " is " <<
-                            change_to_add->serializedPayload.max_size);
-                    releaseCache(change_to_add);
-                    return false;
-                }
-            }
-            else
-            {
-                logError(RTPS_MSG_IN, IDSTRING "Problem reserving CacheChange in reader: " << getGuid().entityId);
+                logError(RTPS_MSG_IN, IDSTRING "Problem reserving CacheChange in reader: " << m_guid);
                 return false;
             }
 
+            // Copy metadata to reserved change
+            change_to_add->copy_not_memcpy(change);
+
+            // Ask payload pool to copy the payload
+            IPayloadPool* payload_owner = change->payload_owner();
+            if (payload_pool_->get_payload(change->serializedPayload, payload_owner, *change_to_add))
+            {
+                change->payload_owner(payload_owner);
+            }
+            else
+            {
+                logWarning(RTPS_MSG_IN, IDSTRING "Problem copying CacheChange, received data is: "
+                        << change->serializedPayload.length << " bytes and max size in reader "
+                        << m_guid << " is "
+                        << (fixed_payload_size_ > 0 ? fixed_payload_size_ : std::numeric_limits<uint32_t>::max()));
+                change_pool_->release_cache(change_to_add);
+                return false;
+            }
+
+            // Perform reception of cache change
             if (!change_received(change_to_add, pWP))
             {
                 logInfo(RTPS_MSG_IN, IDSTRING "MessageReceiver not add change " << change_to_add->sequenceNumber);
-                releaseCache(change_to_add);
+                payload_pool_->release_payload(*change_to_add);
+                change_pool_->release_cache(change_to_add);
             }
         }
         return true;
