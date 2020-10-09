@@ -49,9 +49,9 @@ class StatefulPersistentWriter : public StatefulWriter, private PersistentWriter
             const GUID_t& writer_guid,
             const GUID_t& reader_guid,
             const SequenceNumberSet_t& sn_set,
-            const SequenceNumber_t& next_sequence_number);
+            const SequenceNumber_t& next_sequence_number) override;
 
-    bool log_error_printed = false;
+    bool log_error_printed_ = false;
 
 public:
 
