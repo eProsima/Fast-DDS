@@ -24,6 +24,7 @@
 #include <vector>
 
 using namespace eprosima::fastrtps;
+using namespace eprosima::fastrtps::rtps;
 
 class RTPSCustomPools : public testing::TestWithParam<bool>
 {
@@ -50,10 +51,6 @@ public:
     }
 
 };
-
-namespace {
-
-using namespace eprosima::fastrtps::rtps;
 
 class PoolForTest : public IPayloadPool
 {
@@ -217,8 +214,6 @@ private:
     std::unordered_map<octet*, uint32_t> all_payloads_;
     std::vector<octet*> free_payloads_;
 };
-
-} // namespace
 
 template <class TData, class TType>
 void do_test(
