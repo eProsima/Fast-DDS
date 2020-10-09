@@ -695,18 +695,13 @@ static bool check_subject_name(
                     for (auto topic_rule : rule.topic_rules)
                     {
                         std::string topic_expression = topic_rule.topic_expression;
-                        EndpointSecurityAttributes reader_attributes;
-                        EndpointSecurityAttributes writer_attributes;
+                        EndpointSecurityAttributes security_attributes;
                         PluginEndpointSecurityAttributes plugin_attributes;
 
-                        reader_attributes.is_discovery_protected = topic_rule.enable_discovery_protection;
-                        writer_attributes.is_discovery_protected = topic_rule.enable_discovery_protection;
-                        reader_attributes.is_liveliness_protected = topic_rule.enable_liveliness_protection;
-                        writer_attributes.is_liveliness_protected = topic_rule.enable_liveliness_protection;
-                        reader_attributes.is_read_protected = topic_rule.enable_read_access_control;
-                        reader_attributes.is_write_protected = topic_rule.enable_write_access_control;
-                        writer_attributes.is_read_protected = topic_rule.enable_read_access_control;
-                        writer_attributes.is_write_protected = topic_rule.enable_write_access_control;
+                        security_attributes.is_discovery_protected = topic_rule.enable_discovery_protection;
+                        security_attributes.is_liveliness_protected = topic_rule.enable_liveliness_protection;
+                        security_attributes.is_read_protected = topic_rule.enable_read_access_control;
+                        security_attributes.is_write_protected = topic_rule.enable_write_access_control;
 
                         bool hasEncryption =
                                 (topic_rule.metadata_protection_kind == ProtectionKind::ENCRYPT) ||
@@ -720,25 +715,19 @@ static bool check_subject_name(
                         plugin_attributes.is_submessage_encrypted = hasEncryption;
                         plugin_attributes.is_submessage_origin_authenticated = hasOriginAuth;
 
-                        reader_attributes.is_submessage_protected =
-                                writer_attributes.is_submessage_protected =
+                        security_attributes.is_submessage_protected =
                                 (topic_rule.metadata_protection_kind != ProtectionKind::NONE);
 
                         plugin_attributes.is_payload_encrypted =
-                                reader_attributes.is_key_protected =
-                                writer_attributes.is_key_protected =
+                                security_attributes.is_key_protected =
                                 (topic_rule.data_protection_kind == ProtectionKind::ENCRYPT);
-                        reader_attributes.is_payload_protected =
-                                writer_attributes.is_payload_protected =
+                        security_attributes.is_payload_protected =
                                 (topic_rule.data_protection_kind != ProtectionKind::NONE);
 
-                        reader_attributes.plugin_endpoint_attributes = plugin_attributes.mask();
-                        writer_attributes.plugin_endpoint_attributes = plugin_attributes.mask();
+                        security_attributes.plugin_endpoint_attributes = plugin_attributes.mask();
 
-                        ah->governance_reader_topic_rules_.push_back(std::pair<std::string, EndpointSecurityAttributes>(
-                                    topic_expression, std::move(reader_attributes)));
-                        ah->governance_writer_topic_rules_.push_back(std::pair<std::string, EndpointSecurityAttributes>(
-                                    std::move(topic_expression), std::move(writer_attributes)));
+                        ah->governance_topic_rules_.push_back(std::pair<std::string, EndpointSecurityAttributes>(
+                                    std::move(topic_expression), std::move(security_attributes)));
                     }
 
                     break;
@@ -1052,8 +1041,7 @@ PermissionsHandle* Permissions::validate_remote_permissions(
     AccessPermissionsHandle* handle =  new AccessPermissionsHandle();
     (*handle)->grant = std::move(remote_grant);
     (*handle)->governance_rule_ = lph->governance_rule_;
-    (*handle)->governance_reader_topic_rules_ = lph->governance_reader_topic_rules_;
-    (*handle)->governance_writer_topic_rules_ = lph->governance_writer_topic_rules_;
+    (*handle)->governance_topic_rules_ = lph->governance_topic_rules_;
 
     return handle;
 }
@@ -1155,7 +1143,7 @@ bool Permissions::check_create_datawriter(
 
     const EndpointSecurityAttributes* attributes = nullptr;
 
-    if ((attributes = is_topic_in_sec_attributes(topic_name.c_str(), lah->governance_writer_topic_rules_)) != nullptr)
+    if ((attributes = is_topic_in_sec_attributes(topic_name.c_str(), lah->governance_topic_rules_)) != nullptr)
     {
         if (!attributes->is_write_protected)
         {
@@ -1241,7 +1229,7 @@ bool Permissions::check_create_datareader(
 
     const EndpointSecurityAttributes* attributes = nullptr;
 
-    if ((attributes = is_topic_in_sec_attributes(topic_name.c_str(), lah->governance_reader_topic_rules_)) != nullptr)
+    if ((attributes = is_topic_in_sec_attributes(topic_name.c_str(), lah->governance_topic_rules_)) != nullptr)
     {
         if (!attributes->is_read_protected)
         {
@@ -1325,8 +1313,7 @@ bool Permissions::check_remote_datawriter(
 
     const EndpointSecurityAttributes* attributes = nullptr;
 
-    if ((attributes =
-            is_topic_in_sec_attributes(publication_data.topicName().c_str(), rah->governance_writer_topic_rules_))
+    if ((attributes = is_topic_in_sec_attributes(publication_data.topicName().c_str(), rah->governance_topic_rules_))
             != nullptr)
     {
         if (!attributes->is_write_protected)
@@ -1395,8 +1382,7 @@ bool Permissions::check_remote_datareader(
 
     const EndpointSecurityAttributes* attributes = nullptr;
 
-    if ((attributes =
-            is_topic_in_sec_attributes(subscription_data.topicName().c_str(), rah->governance_reader_topic_rules_))
+    if ((attributes = is_topic_in_sec_attributes(subscription_data.topicName().c_str(), rah->governance_topic_rules_))
             != nullptr)
     {
         if (!attributes->is_read_protected)
@@ -1483,7 +1469,7 @@ bool Permissions::get_datawriter_sec_attributes(
     const AccessPermissionsHandle& lah = AccessPermissionsHandle::narrow(permissions_handle);
     const EndpointSecurityAttributes* attr = nullptr;
 
-    if ((attr = is_topic_in_sec_attributes(topic_name.c_str(), lah->governance_writer_topic_rules_))
+    if ((attr = is_topic_in_sec_attributes(topic_name.c_str(), lah->governance_topic_rules_))
             != nullptr)
     {
         attributes = *attr;
@@ -1508,7 +1494,7 @@ bool Permissions::get_datareader_sec_attributes(
     const AccessPermissionsHandle& lah = AccessPermissionsHandle::narrow(permissions_handle);
     const EndpointSecurityAttributes* attr = nullptr;
 
-    if ((attr = is_topic_in_sec_attributes(topic_name.c_str(), lah->governance_reader_topic_rules_))
+    if ((attr = is_topic_in_sec_attributes(topic_name.c_str(), lah->governance_topic_rules_))
             != nullptr)
     {
         attributes = *attr;

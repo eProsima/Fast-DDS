@@ -60,8 +60,7 @@ public:
     PermissionsToken permissions_token_;
     PermissionsCredentialToken permissions_credential_token_;
     ParticipantSecurityAttributes governance_rule_;
-    std::vector<std::pair<std::string, EndpointSecurityAttributes>> governance_reader_topic_rules_;
-    std::vector<std::pair<std::string, EndpointSecurityAttributes>> governance_writer_topic_rules_;
+    std::vector<std::pair<std::string, EndpointSecurityAttributes>> governance_topic_rules_;
     Grant grant;
 };
 
