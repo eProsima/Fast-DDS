@@ -13,7 +13,7 @@
 // limitations under the License.
 
 /**
- * @file Base.hpp
+ * @file TopicPayloadPool.hpp
  */
 
 #ifndef RTPS_HISTORY_TOPICPAYLOADPOOL_HPP
