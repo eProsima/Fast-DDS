@@ -40,6 +40,12 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/StdoutConsumer.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/Time_t.cpp)
 
+        set(TOPICPAYLOADPOOLTESTS_SOURCE TopicPayloadPoolTests.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/rtps/history/TopicPayloadPool.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/Log.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/StdoutConsumer.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/Time_t.cpp)
+
         if(WIN32)
             add_definitions(-D_WIN32_WINNT=0x0601)
         endif()
@@ -79,6 +85,17 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             ${GTEST_LIBRARIES}
             ${CMAKE_THREAD_LIBS_INIT} ${CMAKE_DL_LIBS})
         add_gtest(CacheChangePoolTests SOURCES ${CACHECHANGEPOOLTESTS_SOURCE})
+
+        add_executable(TopicPayloadPoolTests ${TOPICPAYLOADPOOLTESTS_SOURCE})
+        target_compile_definitions(TopicPayloadPoolTests PRIVATE FASTRTPS_NO_LIB)
+        target_include_directories(TopicPayloadPoolTests PRIVATE
+            ${GTEST_INCLUDE_DIRS}
+            ${PROJECT_SOURCE_DIR}/src/cpp
+            ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include)
+        target_link_libraries(TopicPayloadPoolTests
+            ${GTEST_LIBRARIES}
+            ${CMAKE_THREAD_LIBS_INIT} ${CMAKE_DL_LIBS})
+        add_gtest(TopicPayloadPoolTests SOURCES ${TOPICPAYLOADPOOLTESTS_SOURCE})
 
     endif()
 endif()
