@@ -63,7 +63,7 @@ public:
         is_virtual_ = is_virtual;
     }
 
-    bool is_virtual()
+    bool is_virtual() const
     {
         return is_virtual_;
     }

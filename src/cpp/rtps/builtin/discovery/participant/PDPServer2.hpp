@@ -186,6 +186,8 @@ protected:
 
     bool process_changes_release();
 
+    void process_changes_release_(const std::vector<fastrtps::rtps::CacheChange_t*>& changes);
+
     bool remove_change_from_writer_history(
             fastrtps::rtps::RTPSWriter* writer,
             fastrtps::rtps::WriterHistory* history,

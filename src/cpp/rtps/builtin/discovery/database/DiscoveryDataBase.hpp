@@ -118,6 +118,8 @@ public:
             fastrtps::rtps::GuidPrefix_t server_guid_prefix,
             std::vector<fastrtps::rtps::GuidPrefix_t> servers);
 
+    ~DiscoveryDataBase();
+
     ////////////
     // Functions to update queue from listener
     /* Add a new CacheChange_t to database queue
@@ -132,6 +134,29 @@ public:
     bool update(
             eprosima::fastrtps::rtps::CacheChange_t* change,
             DiscoveryParticipantChangeData participant_change_data);
+
+    //! Enables the possibility to add new entries to the database. Enable by default.
+    void enable()
+    {
+        enabled_ = true;
+    }
+
+    //! Disable the possibility to add new entries to the database
+    void disable()
+    {
+        enabled_ = false;
+    }
+
+    //! Check whether the database is enabled
+    bool is_enabled()
+    {
+        return enabled_;
+    }
+
+    /* Clear all the collections in the database
+     * @return: The changes that can be released
+     */
+    std::vector<fastrtps::rtps::CacheChange_t*> clear();
 
     ////////////
     // Functions to is_relevant
@@ -322,13 +347,22 @@ protected:
     bool delete_participant_entity_(
             const fastrtps::rtps::GuidPrefix_t& guid_prefix);
 
+    std::map<eprosima::fastrtps::rtps::GuidPrefix_t, DiscoveryParticipantInfo>::iterator delete_participant_entity_(
+            std::map<eprosima::fastrtps::rtps::GuidPrefix_t, DiscoveryParticipantInfo>::const_iterator it);
+
     // delete an entity and set its change to release. Assumes the entity has been unmatched before
     bool delete_writer_entity_(
             const fastrtps::rtps::GUID_t& guid);
 
+    std::map<eprosima::fastrtps::rtps::GUID_t, DiscoveryEndpointInfo>::iterator delete_writer_entity_(
+            std::map<eprosima::fastrtps::rtps::GUID_t, DiscoveryEndpointInfo>::const_iterator it);
+
     // delete an entity and set its change to release. Assumes the entity has been unmatched before
     bool delete_reader_entity_(
             const fastrtps::rtps::GUID_t& guid);
+
+    std::map<eprosima::fastrtps::rtps::GUID_t, DiscoveryEndpointInfo>::iterator delete_reader_entity_(
+            std::map<eprosima::fastrtps::rtps::GUID_t, DiscoveryEndpointInfo>::iterator it);
 
     // return if there are more than one writer in the participant in the same topic
     bool repeated_writer_topic_(
@@ -412,6 +446,9 @@ protected:
 
     // The virtual topic associated with virtual writers and readers
     const std::string virtual_topic_ = "eprosima_server_virtual_topic";
+
+    // Whether the database is enabled
+    std::atomic<bool> enabled_;
 
 };
 

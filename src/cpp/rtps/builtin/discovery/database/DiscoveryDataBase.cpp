@@ -36,7 +36,86 @@ DiscoveryDataBase::DiscoveryDataBase(
     : server_guid_prefix_(server_guid_prefix)
     , server_acked_by_all_((servers.size() > 0) ? false : true)
     , servers_(servers)
+    , enabled_(true)
 {
+}
+
+DiscoveryDataBase::~DiscoveryDataBase()
+{
+    if (!clear().empty())
+    {
+        logError(DISCOVERY_DATABASE, "Destroying a NOT cleared database");
+    }
+}
+
+std::vector<fastrtps::rtps::CacheChange_t*> DiscoveryDataBase::clear()
+{
+    std::unique_lock<share_mutex_t> lock(sh_mtx_);
+
+    // Cannot clear an enabled database, since there could be inconsistencies after the process
+    if (enabled_)
+    {
+        logError(DISCOVERY_DATABASE, "Cannot clear an enabled database");
+        return std::vector<fastrtps::rtps::CacheChange_t*>({});
+    }
+    logInfo(DISCOVERY_DATABASE, "Clearing DiscoveryDataBase");
+
+    /* Clear receive queues */
+    pdp_data_queue_.Clear();
+    edp_data_queue_.Clear();
+
+    /* Clear by_topic collections */
+    writers_by_topic_.clear();
+    readers_by_topic_.clear();
+
+    /* Clear list of dirty topics */
+    dirty_topics_.clear();
+
+    /* Clear disposals list */
+    disposals_.clear();
+
+    /* Clear to_send collections */
+    pdp_to_send_.clear();
+    edp_publications_to_send_.clear();
+    edp_subscriptions_to_send_.clear();
+
+    /* Unmatch and clear writers_ */
+    for (auto writers_it = writers_.begin(); writers_it != writers_.end();)
+    {
+        unmatch_writer_(writers_it->first);
+        writers_it = delete_writer_entity_(writers_it);
+    }
+
+    /* Unmatch and clear readers_ */
+    for (auto readers_it = readers_.begin(); readers_it != readers_.end();)
+    {
+        unmatch_reader_(readers_it->first);
+        readers_it = delete_reader_entity_(readers_it);
+    }
+
+    /* Unmatch and clear participants_ */
+    // Unmatching a participant also changes the ACK status on the relevant participants, so all participants need to be
+    // unmatched first to avoid unmatching already deleted participants
+    for (auto participant: participants_)
+    {
+        unmatch_participant_(participant.first);
+    }
+    // Once all partiicipants have been unmatched, the it is safe to delete them
+    for (auto participants_it = participants_.begin(); participants_it != participants_.end();)
+    {
+        participants_it = delete_participant_entity_(participants_it);
+    }
+
+    /* Reset state parameters */
+    server_acked_by_all_ = false;
+    local_servers_count_ = 0;
+
+    /* Clear changes to release */
+    std::vector<fastrtps::rtps::CacheChange_t*> changes_to_release = changes_to_release_;
+    changes_to_release_.clear();
+
+    /* Return the collection of changes that are no longer owned by the database */
+    return changes_to_release;
 }
 
 bool DiscoveryDataBase::pdp_is_relevant(
@@ -202,6 +281,12 @@ bool DiscoveryDataBase::update(
         eprosima::fastrtps::rtps::CacheChange_t* change,
         DiscoveryParticipantChangeData participant_change_data)
 {
+    if (!enabled_)
+    {
+        logWarning(DISCOVERY_DATABASE, "Ignoring attempt on updating a disabled database");
+        return false;
+    }
+
     if (!is_participant(change))
     {
         logError(DISCOVERY_DATABASE, "Change is not a DATA(p|Up): " << change->instanceHandle);
@@ -217,6 +302,12 @@ bool DiscoveryDataBase::update(
         eprosima::fastrtps::rtps::CacheChange_t* change,
         std::string topic_name)
 {
+    if (!enabled_)
+    {
+        logWarning(DISCOVERY_DATABASE, "Ignoring attempt on updating a disabled database");
+        return false;
+    }
+
     if (!is_writer(change) && !is_reader(change))
     {
         logError(DISCOVERY_DATABASE, "Change is not a DATA(w|Uw|r|Ur): " << change->instanceHandle);
@@ -1640,29 +1731,56 @@ void DiscoveryDataBase::add_reader_to_topic_(
 bool DiscoveryDataBase::delete_participant_entity_(
         const fastrtps::rtps::GuidPrefix_t& guid_prefix)
 {
-    logInfo(DISCOVERY_DATABASE, "Deleting participant: " << guid_prefix);
-
     auto it = participants_.find(guid_prefix);
     if (it == participants_.end())
     {
         return false;
     }
-    changes_to_release_.push_back(it->second.change());
-    participants_.erase(it);
+    delete_participant_entity_(it);
     return true;
+}
+
+std::map<eprosima::fastrtps::rtps::GuidPrefix_t, DiscoveryParticipantInfo>::iterator
+DiscoveryDataBase::delete_participant_entity_(
+            std::map<eprosima::fastrtps::rtps::GuidPrefix_t, DiscoveryParticipantInfo>::const_iterator it)
+{
+    logInfo(DISCOVERY_DATABASE, "Deleting participant: " << it->first);
+    if (it == participants_.end())
+    {
+        return participants_.end();
+    }
+    changes_to_release_.push_back(it->second.change());
+    return participants_.erase(it);
 }
 
 bool DiscoveryDataBase::delete_reader_entity_(
         const fastrtps::rtps::GUID_t& guid)
 {
-    logInfo(DISCOVERY_DATABASE, "Deleting reader: " << guid);
-
-    // find own reader
     auto it = readers_.find(guid);
     if (it == readers_.end())
     {
         return false;
     }
+    delete_reader_entity_(it);
+    return true;
+}
+
+std::map<eprosima::fastrtps::rtps::GUID_t, DiscoveryEndpointInfo>::iterator DiscoveryDataBase::delete_reader_entity_(
+            std::map<eprosima::fastrtps::rtps::GUID_t, DiscoveryEndpointInfo>::iterator it)
+{
+    logInfo(DISCOVERY_DATABASE, "Deleting reader: " << it->first.guidPrefix);
+    if (it == readers_.end())
+    {
+        return readers_.end();
+    }
+    // Remove entity from participant readers vector
+    auto pit = participants_.find(it->first.guidPrefix);
+    if (pit == participants_.end())
+    {
+        logError(DISCOVERY_DATABASE, "Attempting to delete and orphan reader");
+        return it;
+    }
+    pit->second.remove_reader(it->first);
 
     if (it->second.is_virtual())
     {
@@ -1675,31 +1793,39 @@ bool DiscoveryDataBase::delete_reader_entity_(
         changes_to_release_.push_back(it->second.change());
     }
 
-    // remove entity in readers vector
-    readers_.erase(it);
-
-    // remove entity from participant readers vector
-    auto pit = participants_.find(guid.guidPrefix);
-    if (pit == participants_.end())
-    {
-        return false;
-    }
-
-    pit->second.remove_reader(guid);
-
-    return true;
+    // remove entity in readers_ map
+    return readers_.erase(it);
 }
 
 bool DiscoveryDataBase::delete_writer_entity_(
         const fastrtps::rtps::GUID_t& guid)
 {
-    logInfo(DISCOVERY_DATABASE, "Deleting writer: " << guid);
-
-    // find own writer
     auto it = writers_.find(guid);
     if (it == writers_.end())
     {
         return false;
+    }
+    delete_writer_entity_(it);
+    return true;
+}
+
+std::map<eprosima::fastrtps::rtps::GUID_t, DiscoveryEndpointInfo>::iterator DiscoveryDataBase::delete_writer_entity_(
+            std::map<eprosima::fastrtps::rtps::GUID_t, DiscoveryEndpointInfo>::const_iterator it)
+{
+    logInfo(DISCOVERY_DATABASE, "Deleting writer: " << it->first.guidPrefix);
+    if (it == writers_.end())
+    {
+        return writers_.end();
+    }
+    // Remove entity from participant writers vector
+    auto pit = participants_.find(it->first.guidPrefix);
+    if (pit == participants_.end())
+    {
+        logError(DISCOVERY_DATABASE, "Attempting to delete and orphan writer");
+    }
+    else
+    {
+        pit->second.remove_writer(it->first);
     }
 
     if (it->second.is_virtual())
@@ -1713,19 +1839,8 @@ bool DiscoveryDataBase::delete_writer_entity_(
         changes_to_release_.push_back(it->second.change());
     }
 
-    // remove entity in writers vector
-    writers_.erase(it);
-
-    // remove entity from participant writers vector
-    auto pit = participants_.find(guid.guidPrefix);
-    if (pit == participants_.end())
-    {
-        return false;
-    }
-
-    pit->second.remove_writer(guid);
-
-    return true;
+    // remove entity in writers_ map
+    return writers_.erase(it);
 }
 
 } // namespace ddb
