@@ -225,7 +225,8 @@ void do_test(
         const std::string& topic_name,
         std::list<TData>& data,
         bool pool_on_writer,
-        bool pool_on_reader)
+        bool pool_on_reader,
+        bool should_not_copy)
 {
     uint32_t num_endpoints = (uint32_t)pool_on_reader + (uint32_t)pool_on_writer;
     uint32_t payload_size = static_cast<uint32_t>(TData::getMaxCdrSerializedSize());
@@ -270,56 +271,61 @@ void do_test(
     }
 
     ASSERT_EQ(pool->num_releases(), pool->num_reserves());
-    ASSERT_GE(pool->num_reserves(), num_endpoints * PoolForTest::NUM_SAMPLES);
+    EXPECT_GE(pool->num_reserves(), num_endpoints * PoolForTest::NUM_SAMPLES);
 
+    if (should_not_copy)
+    {
+        EXPECT_GE(pool->num_references(), PoolForTest::NUM_SAMPLES);
+        EXPECT_EQ(pool->num_copies(), 0u);
+    }
 }
 
 TEST_P(RTPSCustomPools, RTPSAsReliableWithRegistrationNoPools)
 {
     auto data = default_helloworld_data_generator(PoolForTest::NUM_SAMPLES);
-    do_test<HelloWorld, HelloWorldType>(TEST_TOPIC_NAME, data, false, false);
+    do_test<HelloWorld, HelloWorldType>(TEST_TOPIC_NAME, data, false, false, false);
 }
 
 TEST_P(RTPSCustomPools, RTPSAsReliableWithRegistrationReaderPool)
 {
     auto data = default_helloworld_data_generator(PoolForTest::NUM_SAMPLES);
-    do_test<HelloWorld, HelloWorldType>(TEST_TOPIC_NAME, data, false, true);
+    do_test<HelloWorld, HelloWorldType>(TEST_TOPIC_NAME, data, false, true, false);
 }
 
 TEST_P(RTPSCustomPools, RTPSAsReliableWithRegistrationWriterPool)
 {
     auto data = default_helloworld_data_generator(PoolForTest::NUM_SAMPLES);
-    do_test<HelloWorld, HelloWorldType>(TEST_TOPIC_NAME, data, true, false);
+    do_test<HelloWorld, HelloWorldType>(TEST_TOPIC_NAME, data, true, false, false);
 }
 
 TEST_P(RTPSCustomPools, RTPSAsReliableWithRegistrationBothPools)
 {
     auto data = default_helloworld_data_generator(PoolForTest::NUM_SAMPLES);
-    do_test<HelloWorld, HelloWorldType>(TEST_TOPIC_NAME, data, true, true);
+    do_test<HelloWorld, HelloWorldType>(TEST_TOPIC_NAME, data, true, true, GetParam());
 }
 
 TEST_P(RTPSCustomPools, RTPSAsReliableWithRegistrationNoPools300Kb)
 {
     auto data = default_data300kb_data_generator(PoolForTest::NUM_SAMPLES);
-    do_test<Data1mb, Data1mbType>(TEST_TOPIC_NAME, data, false, false);
+    do_test<Data1mb, Data1mbType>(TEST_TOPIC_NAME, data, false, false, false);
 }
 
 TEST_P(RTPSCustomPools, RTPSAsReliableWithRegistrationReaderPool300Kb)
 {
     auto data = default_data300kb_data_generator(PoolForTest::NUM_SAMPLES);
-    do_test<Data1mb, Data1mbType>(TEST_TOPIC_NAME, data, false, true);
+    do_test<Data1mb, Data1mbType>(TEST_TOPIC_NAME, data, false, true, false);
 }
 
 TEST_P(RTPSCustomPools, RTPSAsReliableWithRegistrationWriterPool300Kb)
 {
     auto data = default_data300kb_data_generator(PoolForTest::NUM_SAMPLES);
-    do_test<Data1mb, Data1mbType>(TEST_TOPIC_NAME, data, true, false);
+    do_test<Data1mb, Data1mbType>(TEST_TOPIC_NAME, data, true, false, false);
 }
 
 TEST_P(RTPSCustomPools, RTPSAsReliableWithRegistrationBothPools300Kb)
 {
     auto data = default_data300kb_data_generator(PoolForTest::NUM_SAMPLES);
-    do_test<Data1mb, Data1mbType>(TEST_TOPIC_NAME, data, true, true);
+    do_test<Data1mb, Data1mbType>(TEST_TOPIC_NAME, data, true, true, false);
 }
 
 INSTANTIATE_TEST_CASE_P(RTPSCustomPools,
