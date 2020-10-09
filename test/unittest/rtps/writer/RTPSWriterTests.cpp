@@ -117,14 +117,14 @@ void pool_initialization_test (
     WriterAttributes w_attr;
     RTPSWriter* writer = RTPSDomain::createRTPSWriter(participant, w_attr, pool, history);
     EXPECT_EQ(nullptr, writer);
-    
+
     pool = std::make_shared<TestPayloadPool>();
 
     // Creating the Writer initializes the PayloadPool with the initial reserved size
     EXPECT_CALL(*pool, get_payload_delegate(TestDataType::data_size, _))
-    .Times(0);
+            .Times(0);
     EXPECT_CALL(*pool, release_payload_delegate(_))
-    .Times(0);
+            .Times(0);
 
     writer = RTPSDomain::createRTPSWriter(participant, w_attr, pool, history);
 
@@ -132,8 +132,8 @@ void pool_initialization_test (
 
     // Changes requested to the writer have a payload taken from the pool
     EXPECT_CALL(*pool, get_payload_delegate(TestDataType::data_size, _))
-    .Times(1)
-    .WillOnce(Return(true));
+            .Times(1)
+            .WillOnce(Return(true));
 
     TestDataType data;
     CacheChange_t* ch = writer->new_change(data, ALIVE);
@@ -141,8 +141,8 @@ void pool_initialization_test (
 
     // Changes released to the writer have the payload returned to the pool
     EXPECT_CALL(*pool, release_payload_delegate(_))
-    .Times(1)
-    .WillOnce(Return(true));
+            .Times(1)
+            .WillOnce(Return(true));
 
     writer->release_change(ch);
 

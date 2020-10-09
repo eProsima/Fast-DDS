@@ -522,7 +522,7 @@ bool RTPSParticipantImpl::preprocess_endpoint_attributes(
                 // Wrongly configured property
                 logError(RTPS_PARTICIPANT, "Cannot configure " << debug_label << "'s persistence GUID from '"
                                                                << persistence_guid_property->c_str() <<
-                                    "'. Wrong input");
+                        "'. Wrong input");
                 return false;
             }
         }
@@ -1532,7 +1532,8 @@ bool RTPSParticipantImpl::get_persistence_service(
         service = get_persistence_service(param);
         if (service == nullptr)
         {
-            logError(RTPS_PARTICIPANT, "Couldn't create writer persistence service for transient/persistent " << debug_label);
+            logError(RTPS_PARTICIPANT,
+                    "Couldn't create writer persistence service for transient/persistent " << debug_label);
             return false;
         }
     }

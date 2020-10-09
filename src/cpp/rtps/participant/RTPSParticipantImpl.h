@@ -601,7 +601,7 @@ private:
      * @param [in]  is_builtin  Whether the enpoint being created is a builtin one.
      * @param [in]  param       Attributes of the endpoint being created.
      * @param [out] service     Pointer to the persistence service.
-     * 
+     *
      * @return false if parameters are not consistent or the service should be created and couldn't
      * @return true if persistence service is not required
      * @return true if persistence service is created
