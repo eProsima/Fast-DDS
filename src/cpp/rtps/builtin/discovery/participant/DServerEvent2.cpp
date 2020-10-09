@@ -92,7 +92,7 @@ bool DServerPingEvent2::server_ping_event()
     {
         // Not all servers have yet received our DATA(p) thus resend
         pdp_->ping_remote_server();
-        logInfo(SERVER_PDP_THREAD, "Server " << pdp_->getRTPSParticipant()->getGuid() << " PDP announcement")
+        logInfo(SERVER_PDP_THREAD, "Server " << pdp_->getRTPSParticipant()->getGuid() << " PDP announcement");
 
         // restart
         return true;

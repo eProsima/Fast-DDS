@@ -432,15 +432,15 @@ void DiscoveryDataBase::create_participant_from_change_(
         // if its our own server guid, we put the DATA(P) in the history
         if (change_guid.guidPrefix == server_guid_prefix_)
         {
-            if (std::find(
-                        pdp_to_send_.begin(),
-                        pdp_to_send_.end(),
-                        ch) == pdp_to_send_.end())
-            {
-                logInfo(DISCOVERY_DATABASE, "Addind Server DATA(p) to send: "
-                        << ch->instanceHandle);
-                pdp_to_send_.push_back(ch);
-            }
+            // if (std::find(
+            //             pdp_to_send_.begin(),
+            //             pdp_to_send_.end(),
+            //             ch) == pdp_to_send_.end())
+            // {
+            //     logInfo(DISCOVERY_DATABASE, "Addind Server DATA(p) to send: "
+            //             << ch->instanceHandle);
+            //     pdp_to_send_.push_back(ch);
+            // }
         }
         else
         {
