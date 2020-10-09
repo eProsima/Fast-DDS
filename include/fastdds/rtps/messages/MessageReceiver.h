@@ -24,6 +24,7 @@
 
 #include <unordered_map>
 #include <mutex>
+#include <functional>
 
 namespace eprosima {
 namespace fastrtps {
@@ -72,7 +73,7 @@ private:
 
     std::mutex mtx_;
     std::vector<RTPSWriter*> associated_writers_;
-    std::unordered_map<EntityId_t, std::vector<RTPSReader*> > associated_readers_;
+    std::unordered_map<EntityId_t, std::vector<RTPSReader*>> associated_readers_;
 
     RTPSParticipantImpl* participant_;
     //!Protocol version of the message
@@ -92,6 +93,19 @@ private:
     CDRMessage_t crypto_msg_;
     SerializedPayload_t crypto_payload_;
 #endif // if HAVE_SECURITY
+
+    //! Function used to process a received message
+    std::function<void(
+                const EntityId_t&,
+                CacheChange_t&)> process_data_message_function_;
+    //! Function used to process a received fragment message
+    std::function<void(
+                const EntityId_t&,
+                CacheChange_t&,
+                uint32_t,
+                uint32_t,
+                uint16_t)> process_data_fragment_message_function_;
+
 
     //!Reset the MessageReceiver to process a new message.
     void reset();
@@ -178,6 +192,53 @@ private:
     bool proc_Submsg_HeartbeatFrag(
             CDRMessage_t* msg,
             SubmessageHeader_t* smh);
+    ///@}
+
+
+    /**
+     * @name Variants of received data message processing functions.
+     *
+     * @param[in] reader_id The ID of the reader to which the changes is addressed
+     * @param[in] change    The CacheChange with the received data to process
+     */
+    ///@{
+ #if HAVE_SECURITY
+    void process_data_message_with_security(
+            const EntityId_t& reader_id,
+            CacheChange_t& change);
+#endif // HAVE_SECURITY
+
+    void process_data_message_without_security(
+            const EntityId_t& reader_id,
+            CacheChange_t& change);
+    ///@}
+
+    /**
+     * @name Variants of received data fragment message processing functions.
+     *
+     * @param[in] reader_id The ID of the reader to which the changes is addressed
+     * @param[in] change    The CacheChange with the received data to process
+     *
+     * @param[in] sample_size             The size of the message
+     * @param[in] fragment_starting_num   The index of the first fragment in the message
+     * @param[in] fragments_in_submessage The number of fragments in the message
+     */
+    ///@{
+ #if HAVE_SECURITY
+    void process_data_fragment_message_with_security(
+            const EntityId_t& reader_id,
+            CacheChange_t& change,
+            uint32_t sample_size,
+            uint32_t fragment_starting_num,
+            uint16_t fragments_in_submessage);
+#endif // HAVE_SECURITY
+
+    void process_data_fragment_message_without_security(
+            const EntityId_t& reader_id,
+            CacheChange_t& change,
+            uint32_t sample_size,
+            uint32_t fragment_starting_num,
+            uint16_t fragments_in_submessage);
     ///@}
 };
 
