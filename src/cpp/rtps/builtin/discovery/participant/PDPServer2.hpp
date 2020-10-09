@@ -140,7 +140,7 @@ public:
     void awake_routine_thread(
             double interval_ms = 0);
 
-    void awake_ping_thread();
+    void awake_server_thread();
 
     /**
      * Check if all servers have acknowledge this server PDP data

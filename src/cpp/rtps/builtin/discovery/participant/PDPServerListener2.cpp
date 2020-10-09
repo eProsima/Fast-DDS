@@ -184,7 +184,7 @@ void PDPServerListener2::onNewCacheChangeAdded(
                 // The server does not have to postpone the execution of the routine if a change is received, i.e.
                 // the server routine is triggered instantly as the default value of the interval that the server has
                 // to wait is 0.
-                pdp_server()->awake_ping_thread();
+                pdp_server()->awake_server_thread();
                 pdp_server()->awake_routine_thread();
 
                 // TODO: when the DiscoveryDataBase allows updating capabilities we can dismissed old PDP processing

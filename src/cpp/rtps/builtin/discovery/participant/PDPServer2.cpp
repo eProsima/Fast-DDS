@@ -644,7 +644,7 @@ bool PDPServer2::remove_remote_participant(
     }
 
     // check if is a server who has been disposed
-    awake_ping_thread();
+    awake_server_thread();
 
     // delegate into the base class for inherited proxy database removal
     return PDP::remove_remote_participant(partGUID, reason);
@@ -665,7 +665,7 @@ void PDPServer2::awake_routine_thread(
     mp_routine->restart_timer();
 }
 
-void PDPServer2::awake_ping_thread()
+void PDPServer2::awake_server_thread()
 {
     mp_ping->restart_timer();
 }
