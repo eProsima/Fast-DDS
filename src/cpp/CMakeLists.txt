@@ -56,6 +56,7 @@ set(${PROJECT_NAME}_source_files
     rtps/history/History.cpp
     rtps/history/WriterHistory.cpp
     rtps/history/ReaderHistory.cpp
+    rtps/history/TopicPayloadPool.cpp
     rtps/reader/WriterProxy.cpp
     rtps/reader/StatefulReader.cpp
     rtps/reader/StatelessReader.cpp
