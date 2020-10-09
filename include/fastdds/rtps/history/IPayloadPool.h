@@ -99,6 +99,7 @@ public:
      *     @li Field @c cache_change.serializedPayload.data points to a buffer of at least @c data.length bytes
      *     @li Field @c cache_change.serializedPayload.length is equal to @c data.length
      *     @li Field @c cache_change.serializedPayload.max_size is greater than or equal to @c data.length
+     *     @li Content of @c cache_change.serializedPayload.data is the same as @c data.data
      */
     virtual bool get_payload(
             SerializedPayload_t& data,
