@@ -151,14 +151,14 @@ public:
         if (has_payload_pool_)
         {
             reader_ = eprosima::fastrtps::rtps::RTPSDomain::createRTPSReader(participant_, reader_attr_, payload_pool_,
-                history_, &listener_);
+                            history_, &listener_);
         }
         else
         {
-            reader_ = eprosima::fastrtps::rtps::RTPSDomain::createRTPSReader(participant_, reader_attr_, history_,
-                &listener_);
+            reader_ = eprosima::fastrtps::rtps::RTPSDomain::createRTPSReader(participant_, reader_attr_,
+                            history_, &listener_);
         }
-        
+
         if (reader_ == nullptr)
         {
             return;
@@ -398,8 +398,8 @@ public:
             filename << std::endl;
 
         return durability(eprosima::fastrtps::rtps::DurabilityKind_t::TRANSIENT)
-               .add_property("dds.persistence.plugin", "builtin.SQLITE3")
-               .add_property("dds.persistence.sqlite3.filename", filename);
+                       .add_property("dds.persistence.plugin", "builtin.SQLITE3")
+                       .add_property("dds.persistence.sqlite3.filename", filename);
     }
 
 #endif // if HAVE_SQLITE3

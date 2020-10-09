@@ -346,8 +346,8 @@ public:
                   << " with file " << filename << std::endl;
 
         return durability(eprosima::fastrtps::rtps::DurabilityKind_t::PERSISTENT)
-               .add_property("dds.persistence.plugin", "builtin.SQLITE3")
-               .add_property("dds.persistence.sqlite3.filename", filename);
+                       .add_property("dds.persistence.plugin", "builtin.SQLITE3")
+                       .add_property("dds.persistence.sqlite3.filename", filename);
     }
 
 #endif // if HAVE_SQLITE3
