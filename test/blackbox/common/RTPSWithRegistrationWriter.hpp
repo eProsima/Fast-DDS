@@ -73,6 +73,10 @@ private:
             {
                 writer_.matched();
             }
+            else if (info.status == eprosima::fastrtps::rtps::REMOVED_MATCHING)
+            {
+                writer_.unmatched();
+            }
         }
 
     private:
@@ -203,6 +207,13 @@ public:
         cv_.notify_one();
     }
 
+    void unmatched()
+    {
+        std::unique_lock<std::mutex> lock(mutex_);
+        --matched_;
+        cv_.notify_one();
+    }
+
     void wait_discovery()
     {
         std::unique_lock<std::mutex> lock(mutex_);
@@ -216,6 +227,21 @@ public:
         }
 
         ASSERT_NE(matched_, 0u);
+    }
+
+    void wait_undiscovery()
+    {
+        std::unique_lock<std::mutex> lock(mutex_);
+
+        if (matched_ != 0)
+        {
+            cv_.wait(lock, [this]() -> bool
+                    {
+                        return matched_ == 0;
+                    });
+        }
+
+        EXPECT_EQ(matched_, 0u);
     }
 
     template<class _Rep,
@@ -321,9 +347,9 @@ public:
         std::cout << "Initializing persistent WRITER " << writer_attr_.endpoint.persistence_guid
                   << " with file " << filename << std::endl;
 
-        return durability(eprosima::fastrtps::rtps::DurabilityKind_t::PERSISTENT)
-               .add_property("dds.persistence.plugin", "builtin.SQLITE3")
-               .add_property("dds.persistence.sqlite3.filename", filename);
+        return durability(eprosima::fastrtps::rtps::DurabilityKind_t::TRANSIENT).
+                       add_property("dds.persistence.plugin", "builtin.SQLITE3").
+                       add_property("dds.persistence.sqlite3.filename", filename);
     }
 
 #endif // if HAVE_SQLITE3

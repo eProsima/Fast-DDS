@@ -39,7 +39,7 @@ public:
         return db_file_name_;
     }
 
-    const eprosima::fastrtps::rtps::GuidPrefix_t& guid_prefix() const
+    const GuidPrefix_t& guid_prefix() const
     {
         return guid_prefix_;
     }
@@ -105,7 +105,7 @@ public:
 protected:
 
     std::string db_file_name_;
-    eprosima::fastrtps::rtps::GuidPrefix_t guid_prefix_;
+    GuidPrefix_t guid_prefix_;
 
     virtual void SetUp()
     {
@@ -135,8 +135,8 @@ protected:
         memcpy(guid_prefix_.value + 4, &pid, sizeof(pid));
         guid_prefix_.value[8] = HAVE_SECURITY;
         guid_prefix_.value[9] = 3; //PREALLOCATED_MEMORY_MODE
-        eprosima::fastrtps::rtps::LocatorList_t loc;
-        eprosima::fastrtps::rtps::IPFinder::getIP4Address(&loc);
+        LocatorList_t loc;
+        IPFinder::getIP4Address(&loc);
         if (loc.size() > 0)
         {
             guid_prefix_.value[10] = loc.begin()->address[14];
@@ -172,8 +172,7 @@ TEST_P(Persistence, RTPSAsNonReliableWithPersistence)
 
     ASSERT_TRUE(reader.isInitialized());
 
-    writer.make_persistent(db_file_name(), guid_prefix()).
-    reliability(eprosima::fastrtps::rtps::ReliabilityKind_t::BEST_EFFORT).init();
+    writer.make_persistent(db_file_name(), guid_prefix()).reliability(ReliabilityKind_t::BEST_EFFORT).init();
 
     ASSERT_TRUE(writer.isInitialized());
 
@@ -190,8 +189,6 @@ TEST_P(Persistence, RTPSAsNonReliableWithPersistence)
 
     // Discover, send and receive
     run_one_send_recv_test(reader, writer, 13, false);
-    reader.destroy();
-    writer.destroy();
 
     std::cout << "Second round finished." << std::endl;
 }
@@ -206,9 +203,8 @@ TEST_P(Persistence, AsyncRTPSAsNonReliableWithPersistence)
 
     ASSERT_TRUE(reader.isInitialized());
 
-    writer.make_persistent(db_file_name(), guid_prefix()).
-    reliability(eprosima::fastrtps::rtps::ReliabilityKind_t::BEST_EFFORT).
-    asynchronously(eprosima::fastrtps::rtps::RTPSWriterPublishMode::ASYNCHRONOUS_WRITER).init();
+    writer.make_persistent(db_file_name(), guid_prefix()).reliability(ReliabilityKind_t::BEST_EFFORT).
+            asynchronously(RTPSWriterPublishMode::ASYNCHRONOUS_WRITER).init();
 
     ASSERT_TRUE(writer.isInitialized());
 
@@ -236,7 +232,7 @@ TEST_P(Persistence, RTPSAsReliableWithPersistence)
     std::string ip("239.255.1.4");
 
     reader.make_persistent(db_file_name(), guid_prefix()).add_to_multicast_locator_list(ip, global_port).
-    reliability(eprosima::fastrtps::rtps::ReliabilityKind_t::RELIABLE).init();
+            reliability(ReliabilityKind_t::RELIABLE).init();
 
     ASSERT_TRUE(reader.isInitialized());
 
@@ -268,12 +264,12 @@ TEST_P(Persistence, AsyncRTPSAsReliableWithPersistence)
     std::string ip("239.255.1.4");
 
     reader.make_persistent(db_file_name(), guid_prefix()).add_to_multicast_locator_list(ip, global_port).
-    reliability(eprosima::fastrtps::rtps::ReliabilityKind_t::RELIABLE).init();
+            reliability(ReliabilityKind_t::RELIABLE).init();
 
     ASSERT_TRUE(reader.isInitialized());
 
     writer.make_persistent(db_file_name(), guid_prefix()).history_depth(10).
-    asynchronously(eprosima::fastrtps::rtps::RTPSWriterPublishMode::ASYNCHRONOUS_WRITER).init();
+            asynchronously(RTPSWriterPublishMode::ASYNCHRONOUS_WRITER).init();
 
     ASSERT_TRUE(writer.isInitialized());
 
@@ -290,8 +286,6 @@ TEST_P(Persistence, AsyncRTPSAsReliableWithPersistence)
 
     // Discover, send and receive
     run_one_send_recv_test(reader, writer, 20, true);
-    reader.destroy();
-    writer.destroy();
 
     std::cout << "Second round finished." << std::endl;
 }
