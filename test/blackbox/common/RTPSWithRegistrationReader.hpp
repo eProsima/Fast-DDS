@@ -148,7 +148,7 @@ public:
         ASSERT_NE(history_, nullptr);
 
         // Create reader
-        if (payload_pool_)
+        if (has_payload_pool_)
         {
             reader_ = eprosima::fastrtps::rtps::RTPSDomain::createRTPSReader(participant_, reader_attr_, payload_pool_,
                 history_, &listener_);
@@ -158,7 +158,11 @@ public:
             reader_ = eprosima::fastrtps::rtps::RTPSDomain::createRTPSReader(participant_, reader_attr_, history_,
                 &listener_);
         }
-        ASSERT_NE(reader_, nullptr);
+        
+        if (reader_ == nullptr)
+        {
+            return;
+        }
 
         ASSERT_EQ(participant_->registerReader(reader_, topic_attr_, reader_qos_), true);
 
@@ -315,6 +319,7 @@ public:
             const std::shared_ptr<eprosima::fastrtps::rtps::IPayloadPool>& pool)
     {
         payload_pool_ = pool;
+        has_payload_pool_ = true;
         return *this;
     }
 
@@ -457,6 +462,7 @@ private:
     size_t number_samples_expected_;
     type_support type_;
     std::shared_ptr<eprosima::fastrtps::rtps::IPayloadPool> payload_pool_;
+    bool has_payload_pool_ = false;
 };
 
 #endif // _TEST_BLACKBOX_RTPSWITHREGISTRATIONREADER_HPP_

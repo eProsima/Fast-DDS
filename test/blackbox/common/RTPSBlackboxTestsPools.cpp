@@ -280,6 +280,19 @@ void do_test(
     }
 }
 
+TEST_P(RTPSCustomPools, CreateFailsWithInvalidPool)
+{
+    std::shared_ptr<IPayloadPool> no_pool;
+    RTPSWithRegistrationReader<HelloWorldType> reader(TEST_TOPIC_NAME);
+    RTPSWithRegistrationWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
+
+    reader.payload_pool(no_pool).init();
+    EXPECT_FALSE(reader.isInitialized());
+
+    writer.payload_pool(no_pool).init();
+    EXPECT_FALSE(writer.isInitialized());
+}
+
 TEST_P(RTPSCustomPools, RTPSAsReliableWithRegistrationNoPools)
 {
     auto data = default_helloworld_data_generator(PoolForTest::NUM_SAMPLES);
