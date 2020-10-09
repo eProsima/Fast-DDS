@@ -102,6 +102,7 @@ bool TopicPayloadPool::get_payload(
         PayloadNode::reference(data.data);
 
         cache_change.serializedPayload.data = data.data;
+        cache_change.serializedPayload.length = data.length;
         cache_change.serializedPayload.max_size = PayloadNode::data_size(data.data);
         cache_change.payload_owner(this);
         return true;
