@@ -2040,7 +2040,8 @@ bool StatefulWriter::process_acknack(
         }
         else
         {
-            print_inconsistent_acknack(writer_guid, reader_guid, sn_set.base(), received_sequence_number, next_sequence_number());
+            print_inconsistent_acknack(writer_guid, reader_guid, sn_set.base(), received_sequence_number,
+                    next_sequence_number());
         }
     }
 
