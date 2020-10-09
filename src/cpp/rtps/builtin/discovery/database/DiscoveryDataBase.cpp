@@ -882,15 +882,27 @@ bool DiscoveryDataBase::is_participant(
 bool DiscoveryDataBase::is_writer(
         const eprosima::fastrtps::rtps::CacheChange_t* ch)
 {
-    constexpr uint8_t entity_id_is_writer_bit = 0x03;
-    return ((guid_from_change(ch).entityId.value[3] & ~entity_id_is_writer_bit) == 0);
+    // RTPS Specification v2.3
+    // For writers: NO_KEY = 0x03, WITH_KEY = 0x02
+    // For built-in writers: NO_KEY = 0xc3, WITH_KEY = 0xc2
+    const eprosima::fastrtps::rtps::octet identifier = guid_from_change(ch).entityId.value[3];
+    return ((identifier == 0x02) ||
+           (identifier == 0xc2) ||
+           (identifier == 0x03) ||
+           (identifier == 0xc3));
 }
 
 bool DiscoveryDataBase::is_reader(
         const eprosima::fastrtps::rtps::CacheChange_t* ch)
 {
-    constexpr uint8_t entity_id_is_reader_bit = 0x04;
-    return ((guid_from_change(ch).entityId.value[3] & ~entity_id_is_reader_bit) == 0);
+    // RTPS Specification v2.3
+    // For readers: NO_KEY = 0x04, WITH_KEY = 0x07
+    // For built-in readers: NO_KEY = 0xc4, WITH_KEY = 0xc7
+    const eprosima::fastrtps::rtps::octet identifier = guid_from_change(ch).entityId.value[3];
+    return ((identifier == 0x04) ||
+           (identifier == 0xc4) ||
+           (identifier == 0x07) ||
+           (identifier == 0xc7));
 }
 
 eprosima::fastrtps::rtps::GUID_t DiscoveryDataBase::guid_from_change(
