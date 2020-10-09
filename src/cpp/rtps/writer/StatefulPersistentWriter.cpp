@@ -66,7 +66,8 @@ bool StatefulPersistentWriter::change_removed_by_history(
 void StatefulPersistentWriter::print_inconsistent_acknack(
         const GUID_t& writer_guid,
         const GUID_t& reader_guid,
-        const SequenceNumberSet_t& sn_set,
+        const SequenceNumber_t& min_requested_sequence_number,
+        const SequenceNumber_t& max_requested_sequence_number,
         const SequenceNumber_t& next_sequence_number)
 {
     if (!log_error_printed_)
@@ -75,7 +76,8 @@ void StatefulPersistentWriter::print_inconsistent_acknack(
         logError(RTPS_WRITER, "Inconsistent acknack received in Local Writer "
                 << writer_guid << ". Maybe the persistent database has been erased locally.");
     }
-    StatefulWriter::print_inconsistent_acknack(writer_guid, reader_guid, sn_set, next_sequence_number);
+    StatefulWriter::print_inconsistent_acknack(writer_guid, reader_guid, min_requested_sequence_number,
+            max_requested_sequence_number, next_sequence_number);
 }
 
 } // namespace rtps

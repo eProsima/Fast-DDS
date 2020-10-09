@@ -2040,7 +2040,7 @@ bool StatefulWriter::process_acknack(
         }
         else
         {
-            print_inconsistent_acknack(writer_guid, reader_guid, sn_set, next_sequence_number());
+            print_inconsistent_acknack(writer_guid, reader_guid, sn_set.base(), sn_set.max(), next_sequence_number());
         }
     }
 
@@ -2125,13 +2125,14 @@ bool StatefulWriter::ack_timer_expired()
 void StatefulWriter::print_inconsistent_acknack(
         const GUID_t& writer_guid,
         const GUID_t& reader_guid,
-        const SequenceNumberSet_t& sn_set,
+        const SequenceNumber_t& min_requested_sequence_number,
+        const SequenceNumber_t& max_requested_sequence_number,
         const SequenceNumber_t& next_sequence_number)
 {
     logWarning(RTPS_WRITER, "Inconsistent acknack received. Local Writer "
-            << writer_guid << " expected SequenceNumber " << next_sequence_number << ". Remote Reader "
-            << reader_guid << " sent SequenceNumberSet [" << sn_set.base()
-            << ", " << sn_set.max() << "].");
+            << writer_guid << " next SequenceNumber " << next_sequence_number << ". Remote Reader "
+            << reader_guid << " requested range is  [" << min_requested_sequence_number
+            << ", " << max_requested_sequence_number << "].");
 }
 
 }  // namespace rtps

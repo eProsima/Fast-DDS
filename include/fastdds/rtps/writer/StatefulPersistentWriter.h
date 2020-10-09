@@ -48,7 +48,8 @@ class StatefulPersistentWriter : public StatefulWriter, private PersistentWriter
     void print_inconsistent_acknack(
             const GUID_t& writer_guid,
             const GUID_t& reader_guid,
-            const SequenceNumberSet_t& sn_set,
+            const SequenceNumber_t& min_requested_sequence_number,
+            const SequenceNumber_t& max_requested_sequence_number,
             const SequenceNumber_t& next_sequence_number) override;
 
     bool log_error_printed_ = false;
@@ -75,7 +76,7 @@ public:
             CacheChange_t* a_change) override;
 };
 } // namespace rtps
-} /* namespace rtps */
+} /* namespace fastrtps */
 } /* namespace eprosima */
 
 #endif // ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
