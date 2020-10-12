@@ -23,6 +23,7 @@
 #include <fastdds/rtps/common/GuidPrefix_t.hpp>
 
 #include "./DiscoveryParticipantInfo.hpp"
+#include "../json_dump/SharedDumpFunctions.hpp"
 
 namespace eprosima {
 namespace fastdds {
@@ -86,6 +87,22 @@ void DiscoveryParticipantInfo::remove_writer(
         writers_.erase(std::prev(rit.base()));
     }
 }
+
+nlohmann::json DiscoveryParticipantInfo::json_dump() const
+{
+    nlohmann::json j = DiscoverySharedInfo::json_dump();
+    
+    j["writers"] = eprosima::fastdds::rtps::vectorToJson(writers_);
+    j["writers"]["len"] = writers_.size();
+
+    j["readers"] = eprosima::fastdds::rtps::vectorToJson(readers_);
+    j["readers"]["len"] = readers_.size();
+
+    // TODO add DiscoveryParticipantChangeData
+
+    return j;
+}
+
 
 } /* namespace ddb */
 } /* namespace rtps */

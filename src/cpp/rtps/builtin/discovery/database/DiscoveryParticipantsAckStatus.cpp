@@ -23,6 +23,7 @@
 #include <fastdds/rtps/common/GuidPrefix_t.hpp>
 
 #include "./DiscoveryParticipantsAckStatus.hpp"
+#include "../json_dump/SharedDumpFunctions.hpp"
 
 namespace eprosima {
 namespace fastdds {
@@ -80,6 +81,18 @@ std::vector<eprosima::fastrtps::rtps::GuidPrefix_t> DiscoveryParticipantsAckStat
         res.push_back(it->first);
     }
     return res;
+}
+
+nlohmann::json DiscoveryParticipantsAckStatus::json_dump() const
+{
+    nlohmann::json j;
+    auto it = relevant_participants_map_.begin();
+    while (it != relevant_participants_map_.end())
+    {
+        j[eprosima::fastdds::rtps::objectToString(it->first)] = it->second;
+        ++it;
+    }
+    return j;
 }
 
 } /* namespace ddb */

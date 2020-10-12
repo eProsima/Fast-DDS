@@ -225,6 +225,9 @@ protected:
 
 private:
 
+    // dump the ddb state into a file
+    void ddb_json_dump_();
+
     //! Server thread
     eprosima::fastrtps::rtps::ResourceEvent resource_event_thread_;
 

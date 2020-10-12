@@ -118,6 +118,8 @@ public:
         return writers_;
     }
 
+    virtual nlohmann::json json_dump() const;
+
 private:
 
     std::vector<eprosima::fastrtps::rtps::GUID_t> readers_;

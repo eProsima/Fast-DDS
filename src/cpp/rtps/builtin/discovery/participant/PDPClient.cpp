@@ -61,6 +61,7 @@ PDPClient::PDPClient(
 
 PDPClient::~PDPClient()
 {
+    logInfo(RTPS_PDP, "Destroying Client: " << getRTPSParticipant()->getGuid())
     if (mp_sync != nullptr)
     {
         delete mp_sync;

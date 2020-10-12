@@ -91,6 +91,9 @@ public:
         return relevant_participants_builtin_ack_status_.relevant_participants();
     }
 
+    virtual nlohmann::json json_dump() const;
+
+
 private:
 
     eprosima::fastrtps::rtps::CacheChange_t* change_;

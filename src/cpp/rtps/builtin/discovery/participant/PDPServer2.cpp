@@ -17,6 +17,10 @@
  *
  */
 
+#include <iostream>
+#include <fstream>
+#include <chrono>
+
 #include <fastrtps/utils/TimedMutex.hpp>
 
 #include <fastdds/rtps/builtin/BuiltinProtocols.h>
@@ -722,6 +726,9 @@ bool PDPServer2::server_update_routine()
         process_writers_acknowledgements();     // server + ddb(functor_with_ddb)
         process_data_queues();                  // all ddb
         process_dirty_topics();                 // all ddb
+
+        ddb_json_dump_();
+        
         process_changes_release();              // server + ddb(changes_to_release(), clear_changes_to_release())
         process_disposals();                    // server + ddb(changes_to_dispose(), clear_changes_to_disposes())
         process_to_send_lists();                // server + ddb(get_to_send, remove_to_send_this)
@@ -778,6 +785,8 @@ History::iterator PDPServer2::process_change_acknowledgement(
 {
     // DATA(p|w|r) case
     CacheChange_t* c = *cit;
+
+    logInfo(RTPS_PDP_SERVER, "Process ack in change: " << discovery_db_.guid_from_change(c));
 
     if (c->kind == fastrtps::rtps::ChangeKind_t::ALIVE)
     {
@@ -850,6 +859,8 @@ bool PDPServer2::process_disposals()
     // Iterate over disposals
     for (auto change: disposals)
     {
+        logInfo(RTPS_PDP_SERVER, "Process dispose: " << discovery_db_.guid_from_change(change));
+
         // No check is performed on whether the change is an actual disposal, leaving the responsability of correctly
         // populating the disposals list to discovery_db_.process_data_queue().
 
@@ -934,6 +945,8 @@ void PDPServer2::process_changes_release_(
     // For each change to erase, first try to erase in case is in writer history and then it releases it
     for (auto ch : changes)
     {
+
+        logInfo(RTPS_PDP_SERVER, "Releasing change from entity: " << discovery_db_.guid_from_change(ch));
         // Check if change owner is this participant. In that case, the change comes from a writer pool (PDP, EDP
         // publications or EDP subscriptions)
         if (discovery_db_.guid_from_change(ch).guidPrefix == mp_builtin->mp_participantImpl->getGuid().guidPrefix)
@@ -1115,6 +1128,7 @@ bool PDPServer2::process_to_send_list(
     std::unique_lock<fastrtps::RecursiveTimedMutex> lock(writer->getMutex());
     for (auto change: send_list)
     {
+        logInfo(RTPS_PDP_SERVER, "Processing sending of entity: " << discovery_db_.guid_from_change(change));
         // If the DATA is already in the writer's history, then remove it, but do not release the change.
         remove_change_from_history_nts(history, change, false);
         // Add DATA to writer's history.
@@ -1233,6 +1247,16 @@ void PDPServer2::send_announcement(
     {
         logError(RTPS_PDP_SERVER, "Error sending announcement from server to clients");
     }
+}
+
+void PDPServer2::ddb_json_dump_()
+{
+    std::ofstream myfile;
+    myfile.open ("ddb_dump.tmp.json", std::ios_base::app);
+    myfile << discovery_db_.json_dump()<< std::endl;
+    // json std files are in one line each object
+    // myfile << std::setw(4) << discovery_db_.json_dump() << std::endl;
+    myfile.close();
 }
 
 } // namespace rtps

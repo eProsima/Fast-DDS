@@ -269,6 +269,9 @@ public:
     // Check if the data queue is empty
     bool data_queue_empty();
 
+    nlohmann::json json_dump() const;
+
+
 protected:
 
     // change a cacheChange by update or new disposal

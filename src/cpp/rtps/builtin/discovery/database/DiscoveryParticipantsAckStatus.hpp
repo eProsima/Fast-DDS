@@ -25,6 +25,8 @@
 
 #include <fastdds/rtps/common/GuidPrefix_t.hpp>
 
+#include "../json_dump/json.hpp"
+
 namespace eprosima {
 namespace fastdds {
 namespace rtps {
@@ -63,6 +65,8 @@ public:
             const eprosima::fastrtps::rtps::GuidPrefix_t& guid_p) const;
 
     std::vector<eprosima::fastrtps::rtps::GuidPrefix_t> relevant_participants() const;
+
+    nlohmann::json json_dump() const;
 
 private:
 

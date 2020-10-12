@@ -24,6 +24,8 @@
 
 #include "./DiscoveryDataBase.hpp"
 
+#include "../json_dump/SharedDumpFunctions.hpp"
+
 namespace eprosima {
 namespace fastdds {
 namespace rtps {
@@ -226,7 +228,7 @@ void DiscoveryDataBase::add_ack_(
     if (is_participant(change))
     {
         logInfo(DISCOVERY_DATABASE,
-                "Adding DATA(p) ACK for change " << change->instanceHandle << " to " << acked_entity);
+                "DATA(p) Change " << change->instanceHandle << " acked by entity " << acked_entity);
         auto it = participants_.find(guid_from_change(change).guidPrefix);
         if (it != participants_.end())
         {
@@ -241,7 +243,7 @@ void DiscoveryDataBase::add_ack_(
     else if (is_writer(change))
     {
         logInfo(DISCOVERY_DATABASE,
-                "Adding DATA(w) ACK for change " << change->instanceHandle << " to " << acked_entity);
+                "DATA(w) Change " << change->instanceHandle << " acked by entity " << acked_entity);
         auto it = writers_.find(guid_from_change(change));
         if (it != writers_.end())
         {
@@ -256,7 +258,7 @@ void DiscoveryDataBase::add_ack_(
     else if (is_reader(change))
     {
         logInfo(DISCOVERY_DATABASE,
-                "Adding DATA(r) ACK for change " << change->instanceHandle << " to " << acked_entity);
+                "DATA(r) Change " << change->instanceHandle << " acked by entity " << acked_entity);
         auto it = readers_.find(guid_from_change(change));
         if (it != readers_.end())
         {
@@ -513,6 +515,7 @@ void DiscoveryDataBase::create_participant_from_change_(
 {
     DiscoveryParticipantInfo part(ch, server_guid_prefix_, change_data);
     // The change must be acked also by the entity that has sent the data (in local entities, itself)
+
     part.add_or_update_ack_participant(ch->writerGUID.guidPrefix, true);
     std::pair<std::map<eprosima::fastrtps::rtps::GuidPrefix_t, DiscoveryParticipantInfo>::iterator, bool> ret =
             participants_.insert(std::make_pair(guid_from_change(ch).guidPrefix, part));
@@ -710,6 +713,8 @@ void DiscoveryDataBase::process_dispose_participant_(
     {
         // Only update DATA(p), leaving the change info untouched. This is because DATA(Up) does not have the
         // participant's meta-information, but we don't want to loose it here.
+
+        // TODO review this comment
         update_change_and_unmatch_(ch, pit->second);
     }
     else
@@ -961,6 +966,8 @@ bool DiscoveryDataBase::delete_entity_of_change(
 
     // Lock(exclusive mode) mutex locally
     std::unique_lock<share_mutex_t> lock(sh_mtx_);
+
+    logInfo(DISCOVERY_DATABASE, "Deleting entity of change: " << guid_from_change(change));
 
     if (change->kind == fastrtps::rtps::ChangeKind_t::ALIVE)
     {
@@ -1559,6 +1566,61 @@ std::map<eprosima::fastrtps::rtps::GUID_t, DiscoveryEndpointInfo>::iterator Disc
     // remove entity in writers_ map
     return writers_.erase(it);
 }
+
+nlohmann::json DiscoveryDataBase::json_dump() const
+{
+    nlohmann::json j;
+    
+    auto pit = participants_.begin();
+    while(pit != participants_.end())
+    {
+        j["participants"][eprosima::fastdds::rtps::objectToString(pit->first)] = pit->second.json_dump();
+        ++pit;
+    }
+
+    auto wit = writers_.begin();
+    while(wit != writers_.end())
+    {
+        j["writers"][eprosima::fastdds::rtps::objectToString(wit->first)] = wit->second.json_dump();
+        ++wit;
+    }
+
+    auto rit = readers_.begin();
+    while(rit != readers_.end())
+    {
+        j["readers"][eprosima::fastdds::rtps::objectToString(rit->first)] = rit->second.json_dump();
+        ++rit;
+    }
+
+    auto rtit = readers_by_topic_.begin();
+    while(rtit != readers_by_topic_.end())
+    {
+        j["readers_by_topic"][rtit->first] = eprosima::fastdds::rtps::vectorToJson(rtit->second);
+        rtit++;
+    }
+
+    auto wtit = writers_by_topic_.begin();
+    while(wtit != writers_by_topic_.end())
+    {
+        j["writers_by_topic"][wtit->first] = eprosima::fastdds::rtps::vectorToJson(wtit->second);
+        wtit++;
+    }
+
+    j["dirty_topics"] = eprosima::fastdds::rtps::vectorToJson(dirty_topics_);
+
+    j["pdp_to_send"] = eprosima::fastdds::rtps::changeVectorToJson(pdp_to_send_);
+    j["edp_publication_to_send"] = eprosima::fastdds::rtps::changeVectorToJson(edp_publications_to_send_);
+    j["edp_subscription_to_send"] = eprosima::fastdds::rtps::changeVectorToJson(edp_subscriptions_to_send_);
+    j["disposals_to_send"] = eprosima::fastdds::rtps::changeVectorToJson(disposals_);
+
+    j["server_guid"] = eprosima::fastdds::rtps::objectToString(server_guid_prefix_);
+    j["server_acked_by_all"] = server_acked_by_all();
+
+    j["changes_to_release"] = eprosima::fastdds::rtps::changeVectorToJson(changes_to_release_);
+
+    return j;
+}
+
 
 } // namespace ddb
 } // namespace rtps

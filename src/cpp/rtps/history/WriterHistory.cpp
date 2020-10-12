@@ -108,7 +108,8 @@ bool WriterHistory::add_change_(
     }
 
     logInfo(RTPS_WRITER_HISTORY,
-            "Change " << a_change->sequenceNumber << " added with " << a_change->serializedPayload.length << " bytes");
+            "Change " << a_change->sequenceNumber << " from participant " << a_change->instanceHandle <<
+            " added with " << a_change->serializedPayload.length << " bytes");
 
     mp_writer->unsent_change_added_to_history(a_change, max_blocking_time);
 
@@ -140,6 +141,10 @@ History::iterator WriterHistory::remove_change(
         const_iterator removal,
         bool release)
 {
+
+    logInfo(RTPS_WRITER_HISTORY,
+            "Removing change from entity:  " << (*removal)->instanceHandle);
+
     if (mp_writer == nullptr || mp_mutex == nullptr)
     {
         logError(RTPS_WRITER_HISTORY, "You need to create a Writer with this History before removing any changes");

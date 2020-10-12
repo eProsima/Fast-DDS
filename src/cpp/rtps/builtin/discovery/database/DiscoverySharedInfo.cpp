@@ -21,6 +21,7 @@
 #include <fastdds/rtps/common/GuidPrefix_t.hpp>
 
 #include "./DiscoverySharedInfo.hpp"
+#include "../json_dump/SharedDumpFunctions.hpp"
 
 namespace eprosima {
 namespace fastdds {
@@ -49,6 +50,16 @@ eprosima::fastrtps::rtps::CacheChange_t* DiscoverySharedInfo::update(
     eprosima::fastrtps::rtps::CacheChange_t* old_change = change_;
     change_ = change;
     return old_change;
+}
+
+nlohmann::json DiscoverySharedInfo::json_dump() const
+{
+    nlohmann::json j;
+    
+    j["relevant_participants_map"] = relevant_participants_builtin_ack_status_.json_dump();
+    j["change"] = eprosima::fastdds::rtps::cacheChangeToJson(change_);
+
+    return j;
 }
 
 } /* namespace ddb */

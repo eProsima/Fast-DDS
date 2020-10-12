@@ -58,6 +58,8 @@ public:
         return topic_;
     }
 
+    virtual nlohmann::json json_dump() const;
+
 private:
 
     std::string topic_;
