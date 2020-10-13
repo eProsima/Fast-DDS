@@ -42,6 +42,7 @@ public:
         : topic_name_(topic_name)
         , policy_(config.memory_policy)
         , inner_pool_(TopicPayloadPool::get(config))
+        , num_refs_(0)
     {
     }
 
@@ -100,11 +101,22 @@ public:
         return inner_pool_->payload_pool_available_size();
     }
 
+    void inc_references()
+    {
+        ++num_refs_;
+    }
+
+    bool dec_references()
+    {
+        return !(--num_refs_);
+    }
+
 private:
 
     std::string topic_name_;
     MemoryManagementPolicy_t policy_;
     std::shared_ptr<ITopicPayloadPool> inner_pool_;
+    std::size_t num_refs_;
 
 };
 
