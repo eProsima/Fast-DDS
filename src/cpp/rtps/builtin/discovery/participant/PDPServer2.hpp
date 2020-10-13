@@ -42,7 +42,8 @@ namespace rtps {
  */
 class PDPServer2 : public aux::PDP
 {
-    friend class DServerEvent2;
+    friend class DServerRoutineEvent2;
+    friend class DServerPingEvent2;
     friend class EDPServer2;
     friend class PDPServerListener2;
 
@@ -107,6 +108,15 @@ public:
             bool dispose = false,
             aux::WriteParams& wparams = aux::WriteParams::WRITE_PARAM_DEFAULT) override;
 
+    // Force the sending of our DATA(p) to those servers that has not acked yet
+    void ping_remote_servers();
+
+    // send a specific Data to specific locators
+    void send_announcement(
+            fastrtps::rtps::CacheChange_t* change,
+            std::vector<aux::GUID_t> remote_readers,
+            fastrtps::rtps::LocatorList_t locators);
+
     /**
      * These methods wouldn't be needed under perfect server operation (no need of dynamic endpoint allocation)
      * but must be implemented to solve server shutdown situations.
@@ -125,11 +135,20 @@ public:
 #endif // if HAVE_SQLITE3
 
     /*
-     * Wakes up the DServerEvent2 for new matching or trimming
+     * Wakes up the DServerRoutineEvent2 for new matching or trimming
      * By default the server execute the routine instantly
      */
-    void awake_server_thread(
+    void awake_routine_thread(
             double interval_ms = 0);
+
+    void awake_server_thread();
+
+    /**
+     * Check if all servers have acknowledge this server PDP data
+     * This method must be called from a mutex protected context.
+     * @return True if all can reach the client
+     */
+    bool all_servers_acknowledge_pdp();
 
     /* The server's main routine. This includes all the discovery related tasks that the server needs to run
      * periodically to keep the discovery graph updated.
@@ -199,15 +218,23 @@ protected:
 
     bool pending_ack();
 
+    std::vector<fastrtps::rtps::GuidPrefix_t> servers_prefixes();
+
 private:
 
     //! Server thread
     eprosima::fastrtps::rtps::ResourceEvent resource_event_thread_;
 
     /**
-     * TimedEvent for server synchronization
+     * TimedEvent for server routine
      */
-    DServerEvent2* mp_sync;
+    DServerRoutineEvent2* routine_;
+
+    /**
+     * TimedEvent for server ping to other servers
+     */
+    DServerPingEvent2* ping_;
+
 
     //! Discovery database
     fastdds::rtps::ddb::DiscoveryDataBase discovery_db_;
