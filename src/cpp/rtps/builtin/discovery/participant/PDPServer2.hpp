@@ -228,12 +228,12 @@ private:
     /**
      * TimedEvent for server routine
      */
-    DServerRoutineEvent2* mp_routine;
+    DServerRoutineEvent2* routine_;
 
     /**
      * TimedEvent for server ping to other servers
      */
-    DServerPingEvent2* mp_ping;
+    DServerPingEvent2* ping_;
 
 
     //! Discovery database

@@ -53,16 +53,16 @@ PDPServer2::PDPServer2(
         BuiltinProtocols* builtin,
         const RTPSParticipantAllocationAttributes& allocation)
     : PDP(builtin, allocation)
-    , mp_routine(nullptr)
-    , mp_ping(nullptr)
+    , routine_(nullptr)
+    , ping_(nullptr)
     , discovery_db_(builtin->mp_participantImpl->getGuid().guidPrefix, servers_prefixes())
 {
 }
 
 PDPServer2::~PDPServer2()
 {
-    delete(mp_routine);
-    delete(mp_ping);
+    delete(routine_);
+    delete(ping_);
 }
 
 bool PDPServer2::init(
@@ -88,7 +88,7 @@ bool PDPServer2::init(
         Given the fact that a participant is either a client or a server the
         discoveryServer_client_syncperiod parameter has a context defined meaning.
      */
-    mp_routine = new DServerRoutineEvent2(this,
+    routine_ = new DServerRoutineEvent2(this,
                     TimeConv::Duration_t2MilliSecondsDouble(
                         m_discovery.discovery_config.discoveryServer_client_syncperiod));
 
@@ -96,10 +96,10 @@ bool PDPServer2::init(
         Given the fact that a participant is either a client or a server the
         discoveryServer_client_syncperiod parameter has a context defined meaning.
      */
-    mp_ping = new DServerPingEvent2(this,
+    ping_ = new DServerPingEvent2(this,
                     TimeConv::Duration_t2MilliSecondsDouble(
                         m_discovery.discovery_config.discoveryServer_client_syncperiod));
-    mp_ping->restart_timer();
+    ping_->restart_timer();
 
     return true;
 }
@@ -689,14 +689,14 @@ bool PDPServer2::process_data_queues()
 void PDPServer2::awake_routine_thread(
         double interval_ms /*= 0*/)
 {
-    mp_routine->update_interval_millisec(interval_ms);
-    mp_routine->cancel_timer();
-    mp_routine->restart_timer();
+    routine_->update_interval_millisec(interval_ms);
+    routine_->cancel_timer();
+    routine_->restart_timer();
 }
 
 void PDPServer2::awake_server_thread()
 {
-    mp_ping->restart_timer();
+    ping_->restart_timer();
 }
 
 bool PDPServer2::server_update_routine()
@@ -709,7 +709,7 @@ bool PDPServer2::server_update_routine()
     {
         logInfo(RTPS_PDP_SERVER, "");
         logInfo(RTPS_PDP_SERVER, "-------------------- Server routine start --------------------");
-        
+
         process_writers_acknowledgements();     // server + ddb(functor_with_ddb)
         process_data_queues();                  // all ddb
         process_dirty_topics();                 // all ddb
@@ -1169,7 +1169,6 @@ eprosima::fastrtps::rtps::ResourceEvent& PDPServer2::get_resource_event_thread()
     return resource_event_thread_;
 }
 
-
 bool PDPServer2::all_servers_acknowledge_pdp()
 {
     // check if already initialized
@@ -1220,7 +1219,6 @@ void PDPServer2::send_announcement(
         logError(RTPS_PDP_SERVER, "Error sending announcement from server to clients");
     }
 }
-
 
 } // namespace rtps
 } // namespace fastdds
