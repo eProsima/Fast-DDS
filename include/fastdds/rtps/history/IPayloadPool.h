@@ -77,7 +77,7 @@ public:
      *
      * @returns whether the operation succeeded or not
      *
-     * @note @c data and @c data_owner are received as references to accomodate the case where several readers
+     * @note @c data and @c data_owner are received as references to accommodate the case where several readers
      * receive the same payload. If the payload has no owner, it means it is allocated on the stack of a
      * reception thread, and a copy should be performed. The pool may decide in that case to point @c data.data
      * to the new copy and take ownership of the payload. In that case, when the reception thread is done with
