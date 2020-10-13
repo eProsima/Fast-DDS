@@ -55,7 +55,7 @@ PDPServer2::PDPServer2(
     : PDP(builtin, allocation)
     , mp_routine(nullptr)
     , mp_ping(nullptr)
-    , discovery_db_(builtin->mp_participantImpl->getGuid().guidPrefix)
+    , discovery_db_(builtin->mp_participantImpl->getGuid().guidPrefix, servers_prefixes())
 {
 }
 
@@ -91,7 +91,6 @@ bool PDPServer2::init(
     mp_routine = new DServerRoutineEvent2(this,
                     TimeConv::Duration_t2MilliSecondsDouble(
                         m_discovery.discovery_config.discoveryServer_client_syncperiod));
-    // mp_routine->restart_timer();
 
     /*
         Given the fact that a participant is either a client or a server the
@@ -99,7 +98,7 @@ bool PDPServer2::init(
      */
     mp_ping = new DServerPingEvent2(this,
                     TimeConv::Duration_t2MilliSecondsDouble(
-                        m_discovery.discovery_config.discoveryServer_client_syncperiod));   
+                        m_discovery.discovery_config.discoveryServer_client_syncperiod));
     mp_ping->restart_timer();
 
     return true;
@@ -180,7 +179,7 @@ bool PDPServer2::createPDPEndpoints()
     {
         // Enable unknown clients to reach this reader
         mp_PDPReader->enableMessagesFromUnkownWriters(true);
-        
+
         // Initial peer list doesn't make sense in server scenario. Client should match its server list
         for (const eprosima::fastdds::rtps::RemoteServerAttributes& it : mp_builtin->m_DiscoveryServers)
         {
@@ -450,7 +449,6 @@ void PDPServer2::announceParticipantState(
 
             // Prepare identity
             WriteParams wp;
-            // TODO: Make sure in the database that this CacheChange_t is given this sequence number
             SequenceNumber_t sn = mp_PDPWriterHistory->next_sequence_number();
             {
                 SampleIdentity local;
@@ -494,7 +492,6 @@ void PDPServer2::announceParticipantState(
 
                 // assign identity
                 change->sequenceNumber = sn;
-                // change->write_params = std::move(wp);
 
                 // Create a RemoteLocatorList for metatraffic_locators
                 fastrtps::rtps::RemoteLocatorList metatraffic_locators(
@@ -512,7 +509,7 @@ void PDPServer2::announceParticipantState(
                     metatraffic_locators.add_multicast_locator(locator);
                 }
 
-                // add our chnge to PDPWrtierHistory
+                // Add our change to PDPWriterHistory
                 mp_PDPWriterHistory->add_change(change, wp);
                 change->write_params.sample_identity().sequence_number(change->sequenceNumber);
 
@@ -531,7 +528,6 @@ void PDPServer2::announceParticipantState(
                     mp_PDPWriterHistory->release_Cache(change);
                 }
             }
-
             // Doesn't make sense to send the DATA directly if it hasn't been introduced in the history yet (missing
             // sequence number.
             return;
@@ -624,7 +620,7 @@ void PDPServer2::announceParticipantState(
 
         locators.push_back(discovery_db_.participant_metatraffic_locators(participant_prefix));
     }
-    send_announce(change, remote_readers, locators);
+    send_announcement(change, remote_readers, locators);
 }
 
 /**
@@ -1158,50 +1154,54 @@ bool PDPServer2::pending_ack()
     return ret;
 }
 
+std::vector<fastrtps::rtps::GuidPrefix_t> PDPServer2::servers_prefixes()
+{
+    std::vector<GuidPrefix_t> servers;
+    for (const eprosima::fastdds::rtps::RemoteServerAttributes& it : mp_builtin->m_DiscoveryServers)
+    {
+        servers.push_back(it.guidPrefix);
+    }
+    return servers;
+}
+
 eprosima::fastrtps::rtps::ResourceEvent& PDPServer2::get_resource_event_thread()
 {
     return resource_event_thread_;
 }
 
 
-bool PDPServer2::all_servers_acknowledge_PDP()
+bool PDPServer2::all_servers_acknowledge_pdp()
 {
     // check if already initialized
     assert(mp_PDPWriterHistory && mp_PDPWriter);
 
-    // The first change in the PDP WriterHistory is this server ParticipantProxyData
-    // see BuiltinProtocols::initBuiltinProtocols call to PDPXXX::announceParticipantState(true)
-    CacheChange_t* own_change = discovery_db().cache_change_own_participant();
-
-    if (nullptr != own_change)
-    {
-        // TODO(Paris) implement is_acked_by_all_servers
-        // This answer includes also clients but is accurate enough
-        return mp_PDPWriter->is_acked_by_all(own_change);
-    }
-    // own changed still has not been updated in DDB
-    return false;
+    return discovery_db_.server_acked_by_my_servers();
 }
 
-void PDPServer2::ping_remote_server()
+void PDPServer2::ping_remote_servers()
 {
+    // Get the servers that have not ACKed this server's DATA(p)
+    std::vector<GuidPrefix_t> ack_pending_servers = discovery_db_.ack_pending_servers();
     std::vector<GUID_t> remote_readers;
     LocatorList_t locators;
-    
-    // set a list to send the message
-    for (auto& s : mp_builtin->m_DiscoveryServers)
+
+    // Iterate over the list of servers
+    for (auto& server : mp_builtin->m_DiscoveryServers)
     {
-        // the server has not been connected yet
-        if (s.proxy == nullptr){
+
+        // If the server is the the ack_pending list, then add its GUID and locator to send the announcement
+        auto server_it = std::find(ack_pending_servers.begin(), ack_pending_servers.end(), server.guidPrefix);
+        if (server_it != ack_pending_servers.end())
+        {
             // get the info to send to this already known locators
-            remote_readers.push_back(GUID_t(s.guidPrefix, c_EntityId_SPDPReader));
-            locators.push_back(s.metatrafficUnicastLocatorList);
+            remote_readers.push_back(GUID_t(server.guidPrefix, c_EntityId_SPDPReader));
+            locators.push_back(server.metatrafficUnicastLocatorList);
         }
     }
-    send_announce(discovery_db().cache_change_own_participant(), remote_readers, locators);
+    send_announcement(discovery_db().cache_change_own_participant(), remote_readers, locators);
 }
 
-void PDPServer2::send_announce(
+void PDPServer2::send_announcement(
         CacheChange_t* change,
         std::vector<GUID_t> remote_readers,
         LocatorList_t locators)

@@ -43,6 +43,7 @@ namespace rtps {
 class PDPServer2 : public aux::PDP
 {
     friend class DServerRoutineEvent2;
+    friend class DServerPingEvent2;
     friend class EDPServer2;
     friend class PDPServerListener2;
 
@@ -107,11 +108,11 @@ public:
             bool dispose = false,
             aux::WriteParams& wparams = aux::WriteParams::WRITE_PARAM_DEFAULT) override;
 
-    // force the sending of our DATA(p) to those servers that has not acked yet
-    void ping_remote_server();
+    // Force the sending of our DATA(p) to those servers that has not acked yet
+    void ping_remote_servers();
 
     // send a specific Data to specific locators
-    void send_announce(
+    void send_announcement(
             fastrtps::rtps::CacheChange_t* change,
             std::vector<aux::GUID_t> remote_readers,
             fastrtps::rtps::LocatorList_t locators);
@@ -147,7 +148,7 @@ public:
      * This method must be called from a mutex protected context.
      * @return True if all can reach the client
      */
-    bool all_servers_acknowledge_PDP();
+    bool all_servers_acknowledge_pdp();
 
     /* The server's main routine. This includes all the discovery related tasks that the server needs to run
      * periodically to keep the discovery graph updated.
@@ -216,6 +217,8 @@ protected:
     bool process_dirty_topics();
 
     bool pending_ack();
+
+    std::vector<fastrtps::rtps::GuidPrefix_t> servers_prefixes();
 
 private:
 

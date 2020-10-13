@@ -54,10 +54,6 @@ bool DServerRoutineEvent2::server_routine_event()
 {
     // logInfo(SERVER_PDP_THREAD, "Server " << pdp->getRTPSParticipant()->getGuid() << " DServerEvent Period");
 
-    /*
-     * TODO: Management of other server should be done here
-     */
-
     bool pending_work = pdp_->server_update_routine();
     if (pending_work)
     {
@@ -88,11 +84,11 @@ DServerPingEvent2::~DServerPingEvent2()
 bool DServerPingEvent2::server_ping_event()
 {
     // Check if all servers received my discovery data
-    if (!pdp_->all_servers_acknowledge_PDP())
+    if (!pdp_->all_servers_acknowledge_pdp())
     {
         // Not all servers have yet received our DATA(p) thus resend
-        pdp_->ping_remote_server();
-        logInfo(SERVER_PDP_THREAD, "Server " << pdp_->getRTPSParticipant()->getGuid() << " PDP announcement");
+        pdp_->ping_remote_servers();
+        logInfo(SERVER_PING_THREAD, "Server " << pdp_->getRTPSParticipant()->getGuid() << " PDP announcement");
 
         // restart
         return true;
