@@ -19,7 +19,7 @@
 #ifndef RTPS_HISTORY_TOPICPAYLOADPOOLREGISTRY_HPP
 #define RTPS_HISTORY_TOPICPAYLOADPOOLREGISTRY_HPP
 
-#include <fastdds/rtps/history/IPayloadPool.h>
+#include <rtps/history/ITopicPayloadPool.h>
 
 #include <rtps/history/PoolConfig.h>
 
@@ -35,12 +35,12 @@ class TopicPayloadPoolRegistry
 
 public:
 
-    static std::shared_ptr<IPayloadPool> get(
+    static std::shared_ptr<ITopicPayloadPool> get(
             const std::string& topic_name,
             const PoolConfig& config);
 
     static void release(
-            std::shared_ptr<IPayloadPool>& pool);
+            std::shared_ptr<ITopicPayloadPool>& pool);
 };
 
 }  // namespace rtps

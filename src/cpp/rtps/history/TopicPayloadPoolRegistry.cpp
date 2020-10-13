@@ -28,7 +28,7 @@ namespace eprosima {
 namespace fastrtps {
 namespace rtps {
 
-std::shared_ptr<IPayloadPool> TopicPayloadPoolRegistry::get(
+std::shared_ptr<ITopicPayloadPool> TopicPayloadPoolRegistry::get(
         const std::string& topic_name,
         const PoolConfig& config)
 {
@@ -36,7 +36,7 @@ std::shared_ptr<IPayloadPool> TopicPayloadPoolRegistry::get(
 }
 
 void TopicPayloadPoolRegistry::release(
-        std::shared_ptr<IPayloadPool>& pool)
+        std::shared_ptr<ITopicPayloadPool>& pool)
 {
     auto topic_pool = std::static_pointer_cast<detail::TopicPayloadPoolProxy, IPayloadPool>(pool);
     pool.reset();
