@@ -137,14 +137,16 @@ ReturnCode_t DataWriterImpl::enable()
         w_att.keep_duration = qos_.reliable_writer_qos().disable_positive_acks.duration;
     }
 
+    auto pool = get_payload_pool();
     RTPSWriter* writer = RTPSDomain::createRTPSWriter(
         publisher_->rtps_participant(),
-        w_att,
+        w_att, pool,
         static_cast<WriterHistory*>(&history_),
         static_cast<WriterListener*>(&writer_listener_));
 
     if (writer == nullptr)
     {
+        release_payload_pool();
         logError(DATA_WRITER, "Problem creating associated Writer");
         return ReturnCode_t::RETCODE_ERROR;
     }
@@ -216,6 +218,7 @@ DataWriterImpl::~DataWriterImpl()
     {
         logInfo(PUBLISHER, guid().entityId << " in topic: " << type_->getName());
         RTPSDomain::removeRTPSWriter(writer_);
+        release_payload_pool();
     }
 
     delete user_datawriter_;
