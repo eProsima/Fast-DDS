@@ -32,7 +32,7 @@ namespace ddb {
 DiscoveryDataBase::DiscoveryDataBase(
         fastrtps::rtps::GuidPrefix_t server_guid_prefix)
     : server_guid_prefix_(server_guid_prefix)
-    , server_acked_by_all_(true)
+    , server_acked_by_all_(false)
 {
 }
 
@@ -411,13 +411,13 @@ void DiscoveryDataBase::create_participant_from_change_(
         const DiscoveryParticipantChangeData& change_data)
 {
     DiscoveryParticipantInfo part(ch, server_guid_prefix_, change_data);
-    // must be acked also by the entity that has sent the data (in local entities, itself)
+    // The change must be acked also by the entity that has sent the data (in local entities, itself)
     part.add_or_update_ack_participant(ch->writerGUID.guidPrefix, true);
     std::pair<std::map<eprosima::fastrtps::rtps::GuidPrefix_t, DiscoveryParticipantInfo>::iterator, bool> ret =
             participants_.insert(std::make_pair(guid_from_change(ch).guidPrefix, part));
 
 
-    // If insert resturn false, means that the participant already existed (DATA(p) is an update). In that case
+    // If insert returns false, means that the participant already existed (DATA(p) is an update). In that case
     // we need to update the change related to the participant and return the old change to the pool
     if (!ret.second)
     {
