@@ -242,10 +242,7 @@ protected:
     // change a cacheChange by update or new disposal
     void update_change_and_unmatch_(
             fastrtps::rtps::CacheChange_t* new_change,
-            ddb::DiscoverySharedInfo& entity)
-    {
-        changes_to_release_.push_back(entity.update_and_unmatch(new_change));
-    }
+            ddb::DiscoverySharedInfo& entity);
 
     // update the acks
     void add_ack_(
