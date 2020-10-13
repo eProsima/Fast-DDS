@@ -598,12 +598,48 @@ private:
     DurabilityKind_t get_persistence_durability_red_line(
             bool is_builtin_endpoint);
 
+    /**
+     * Check if persistence is required and return persistence service from factory,
+     * using endpoint attributes (or participant
+     * attributes if endpoint does not define a persistence service config)
+     *
+     * @param [in]  debug_label Label indicating enpoint kind (reader or writer) for logs.
+     * @param [in]  is_builtin  Whether the enpoint being created is a builtin one.
+     * @param [in]  param       Attributes of the endpoint being created.
+     * @param [out] service     Pointer to the persistence service.
+     *
+     * @return false if parameters are not consistent or the service should be created and couldn't
+     * @return true if persistence service is not required
+     * @return true if persistence service is created
+     */
+    bool get_persistence_service(
+            const char* debug_label,
+            bool is_builtin,
+            const EndpointAttributes& param,
+            IPersistenceService*& service);
+
+    template <EndpointKind_t kind, octet no_key, octet with_key>
+    bool preprocess_endpoint_attributes(
+            const char* debug_label,
+            const EntityId_t& entity_id,
+            EndpointAttributes& att,
+            EntityId_t& entId);
+
     template<typename Functor>
     bool create_writer(
-            RTPSWriter** WriterOut,
+            RTPSWriter** writer_out,
             WriterAttributes& param,
-            const EntityId_t& entityId,
-            bool isBuiltin,
+            const EntityId_t& entity_id,
+            bool is_builtin,
+            const Functor& callback);
+
+    template<typename Functor>
+    bool create_reader(
+            RTPSReader** reader_out,
+            ReaderAttributes& param,
+            const EntityId_t& entity_id,
+            bool is_builtin,
+            bool enable,
             const Functor& callback);
 
 public:
@@ -632,7 +668,7 @@ public:
             bool isBuiltin = false);
 
     /**
-     * Create a Writer in this RTPSParticipant.
+     * Create a Writer in this RTPSParticipant with a custom payload pool.
      * @param Writer Pointer to pointer of the Writer, used as output. Only valid if return==true.
      * @param param WriterAttributes to define the Writer.
      * @param payload_pool Shared pointer to the IPayloadPool
@@ -655,13 +691,38 @@ public:
      * Create a Reader in this RTPSParticipant.
      * @param Reader Pointer to pointer of the Reader, used as output. Only valid if return==true.
      * @param param ReaderAttributes to define the Reader.
+     * @param hist Pointer to the ReaderHistory.
+     * @param listen Pointer to the ReaderListener.
      * @param entityId EntityId assigned to the Reader.
      * @param isBuiltin Bool value indicating if the Reader is builtin (Discovery or Liveliness protocol) or is created for the end user.
+     * @param enable Whether the reader should be automatically enabled.
      * @return True if the Reader was correctly created.
      */
     bool createReader(
             RTPSReader** Reader,
             ReaderAttributes& param,
+            ReaderHistory* hist,
+            ReaderListener* listen,
+            const EntityId_t& entityId = c_EntityId_Unknown,
+            bool isBuiltin = false,
+            bool enable = true);
+
+    /**
+     * Create a Reader in this RTPSParticipant with a custom payload pool.
+     * @param Reader Pointer to pointer of the Reader, used as output. Only valid if return==true.
+     * @param param ReaderAttributes to define the Reader.
+     * @param payload_pool Shared pointer to the IPayloadPool
+     * @param hist Pointer to the ReaderHistory.
+     * @param listen Pointer to the ReaderListener.
+     * @param entityId EntityId assigned to the Reader.
+     * @param isBuiltin Bool value indicating if the Reader is builtin (Discovery or Liveliness protocol) or is created for the end user.
+     * @param enable Whether the reader should be automatically enabled.
+     * @return True if the Reader was correctly created.
+     */
+    bool createReader(
+            RTPSReader** Reader,
+            ReaderAttributes& param,
+            const std::shared_ptr<IPayloadPool>& payload_pool,
             ReaderHistory* hist,
             ReaderListener* listen,
             const EntityId_t& entityId = c_EntityId_Unknown,

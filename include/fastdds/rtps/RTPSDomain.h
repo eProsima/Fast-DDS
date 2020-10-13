@@ -143,6 +143,22 @@ public:
             ReaderListener* listen = nullptr);
 
     /**
+     * Create a RTPSWriter in a participant using a custom payload pool.
+     * @param p Pointer to the RTPSParticipant.
+     * @param ratt Reader Attributes.
+     * @param payload_pool Shared pointer to the IPayloadPool
+     * @param hist Pointer to the ReaderHistory.
+     * @param listen Pointer to the ReaderListener.
+     * @return Pointer to the created RTPSReader.
+     */
+    RTPS_DllAPI static RTPSReader* createRTPSReader(
+            RTPSParticipant* p,
+            ReaderAttributes& ratt,
+            const std::shared_ptr<IPayloadPool>& payload_pool,
+            ReaderHistory* hist,
+            ReaderListener* listen = nullptr);
+
+    /**
      * Remove a RTPSReader.
      * @param reader Pointer to the reader you want to remove.
      * @return  True if correctly removed.
@@ -192,11 +208,6 @@ private:
      * DomainRTPSParticipant destructor
      */
     ~RTPSDomain() = delete;
-
-    template<typename Functor>
-    static RTPSWriter* create_writer(
-            const GUID_t& participant_guid,
-            const Functor& callback);
 
     /**
      * @brief Get Id to create a RTPSParticipant.
