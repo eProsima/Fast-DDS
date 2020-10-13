@@ -271,7 +271,7 @@ public:
             const SubscriberQos& qos);
 
     void reset_default_subscriber_qos();
-    
+
     const SubscriberQos& get_default_subscriber_qos() const;
 
     const SubscriberQos get_subscriber_qos_from_profile(
