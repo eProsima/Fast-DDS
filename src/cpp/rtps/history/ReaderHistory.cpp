@@ -127,7 +127,7 @@ History::iterator ReaderHistory::remove_change(
     mp_reader->change_removed_by_history(change);
     if ( release )
     {
-        m_changePool.release_Cache(change);
+        do_release_cache(change);
     }
 
     return m_changes.erase(removal);

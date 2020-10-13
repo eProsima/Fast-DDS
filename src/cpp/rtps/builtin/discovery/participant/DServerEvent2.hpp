@@ -29,11 +29,12 @@ namespace rtps {
 
 class PDPServer2;
 
+// is keep the 2 in class name to remember that is new version
 /**
- * Class DServerEvent2, TimedEvent used to synchronize discover-server servers
+ * Class DServerRoutineEvent2, TimedEvent used to synchronize discover-server servers
  *@ingroup DISCOVERY_MODULE
  */
-class DServerEvent2 : public fastrtps::rtps::TimedEvent
+class DServerRoutineEvent2 : public fastrtps::rtps::TimedEvent
 {
 public:
 
@@ -42,10 +43,10 @@ public:
      * @param pdp Pointer to the PDPServer.
      * @param server_routine_period Interval in ms.
      */
-    DServerEvent2(
+    DServerRoutineEvent2(
             PDPServer2* pdp,
             double server_routine_period);
-    ~DServerEvent2();
+    ~DServerRoutineEvent2();
 
     /**
      * Method invoked when the server routine event occurs.
@@ -57,6 +58,29 @@ public:
 
     //! The period in milliseconds for the server to wait for ACK and execute the server routine.
     double server_routine_period_;
+};
+
+class DServerPingEvent2 : public fastrtps::rtps::TimedEvent
+{
+public:
+
+    /**
+     * Constructor.
+     * @param pdp Pointer to the PDPServer.
+     * @param interval Interval in ms.
+     */
+    DServerPingEvent2(
+            PDPServer2* pdp,
+            double interval);
+    ~DServerPingEvent2();
+
+    /**
+     * Method invoked when the server routine event occurs.
+     */
+    bool server_ping_event();
+
+    //!Pointer to the PDPServer object.
+    PDPServer2* pdp_;
 };
 
 } // namespace rtps
