@@ -300,7 +300,7 @@ ReturnCode_t DomainParticipantFactory::get_participant_qos_from_profile(
         return ReturnCode_t::RETCODE_OK;
     }
 
-    return ReturnCode_t::RETCODE_ERROR;
+    return ReturnCode_t::RETCODE_BAD_PARAMETER;
 }
 
 ReturnCode_t DomainParticipantFactory::load_profiles()
