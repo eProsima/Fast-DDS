@@ -83,7 +83,7 @@ public:
      */
     bool BuildReceiverResources(
             Locator_t& local,
-            std::vector<std::shared_ptr<ReceiverResource> >& returned_resources_list,
+            std::vector<std::shared_ptr<ReceiverResource>>& returned_resources_list,
             uint32_t receiver_max_message_size);
 
     void NormalizeLocators(
@@ -195,10 +195,11 @@ public:
     /**
      * Fills the locator with the default unicast configuration.
      * */
-    bool fillDefaultUnicastLocator(
+    bool fill_default_locator_port(
             uint32_t domain_id,
             Locator_t& locator,
-            const RTPSParticipantAttributes& m_att) const;
+            const RTPSParticipantAttributes& m_att,
+            bool is_multicast) const;
 
     /**
      * Shutdown method to close the connections of the transports.
@@ -207,7 +208,7 @@ public:
 
 private:
 
-    std::vector<std::unique_ptr<fastdds::rtps::TransportInterface> > mRegisteredTransports;
+    std::vector<std::unique_ptr<fastdds::rtps::TransportInterface>> mRegisteredTransports;
 
     uint32_t maxMessageSizeBetweenTransports_;
 
@@ -216,9 +217,10 @@ private:
     /**
      * Calculates well-known ports.
      */
-    uint16_t calculateWellKnownPort(
+    uint16_t calculate_well_known_port(
             uint32_t domain_id,
-            const RTPSParticipantAttributes& att) const;
+            const RTPSParticipantAttributes& att,
+            bool is_multicast) const;
 };
 
 } // namespace rtps

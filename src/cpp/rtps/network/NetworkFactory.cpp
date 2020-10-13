@@ -52,7 +52,7 @@ bool NetworkFactory::build_send_resources(
 
 bool NetworkFactory::BuildReceiverResources(
         Locator_t& local,
-        std::vector<std::shared_ptr<ReceiverResource> >& returned_resources_list,
+        std::vector<std::shared_ptr<ReceiverResource>>& returned_resources_list,
         uint32_t receiver_max_message_size)
 {
     bool returnedValue = false;
@@ -123,26 +123,27 @@ void NetworkFactory::NormalizeLocators(
 {
     LocatorList_t normalizedLocators;
 
-    std::for_each(locators.begin(), locators.end(), [&](Locator_t& loc) {
-                    bool normalized = false;
-                    for (auto& transport : mRegisteredTransports)
+    std::for_each(locators.begin(), locators.end(), [&](Locator_t& loc)
+            {
+                bool normalized = false;
+                for (auto& transport : mRegisteredTransports)
+                {
+                    // Check if the locator is supported and filter unicast locators.
+                    if (transport->IsLocatorSupported(loc) &&
+                    (IPLocator::isMulticast(loc) ||
+                    transport->is_locator_allowed(loc)))
                     {
-                        // Check if the locator is supported and filter unicast locators.
-                        if (transport->IsLocatorSupported(loc) &&
-                        (IPLocator::isMulticast(loc) ||
-                        transport->is_locator_allowed(loc)))
-                        {
-                            // First found transport that supports it, this will normalize the locator.
-                            normalizedLocators.push_back(transport->NormalizeLocator(loc));
-                            normalized = true;
-                        }
+                        // First found transport that supports it, this will normalize the locator.
+                        normalizedLocators.push_back(transport->NormalizeLocator(loc));
+                        normalized = true;
                     }
+                }
 
-                    if (!normalized)
-                    {
-                        normalizedLocators.push_back(loc);
-                    }
-                });
+                if (!normalized)
+                {
+                    normalizedLocators.push_back(loc);
+                }
+            });
 
     locators.swap(normalizedLocators);
 }
@@ -239,7 +240,7 @@ bool NetworkFactory::getDefaultMetatrafficMulticastLocators(
 
     for (auto& transport : mRegisteredTransports)
     {
-        // For better fault-tolerance reasons, SHM multicast metatraffic is avoided if it is already provided 
+        // For better fault-tolerance reasons, SHM multicast metatraffic is avoided if it is already provided
         // by another transport
         if (transport->kind() != LOCATOR_KIND_SHM)
         {
@@ -251,7 +252,7 @@ bool NetworkFactory::getDefaultMetatrafficMulticastLocators(
         }
     }
 
-    if(locators.size() == 0 && shm_transport)
+    if (locators.size() == 0 && shm_transport)
     {
         result |= shm_transport->getDefaultMetatrafficMulticastLocators(locators, metatraffic_multicast_port);
     }
@@ -326,22 +327,23 @@ bool NetworkFactory::getDefaultUnicastLocators(
     bool result = false;
     for (auto& transport : mRegisteredTransports)
     {
-        result |= transport->getDefaultUnicastLocators(locators, calculateWellKnownPort(domain_id, m_att));
+        result |= transport->getDefaultUnicastLocators(locators, calculate_well_known_port(domain_id, m_att, false));
     }
     return result;
 }
 
-bool NetworkFactory::fillDefaultUnicastLocator(
+bool NetworkFactory::fill_default_locator_port(
         uint32_t domain_id,
         Locator_t& locator,
-        const RTPSParticipantAttributes& m_att) const
+        const RTPSParticipantAttributes& m_att,
+        bool is_multicast) const
 {
     bool result = false;
     for (auto& transport : mRegisteredTransports)
     {
         if (transport->IsLocatorSupported(locator))
         {
-            result |= transport->fillUnicastLocator(locator, calculateWellKnownPort(domain_id, m_att));
+            result |= transport->fillUnicastLocator(locator, calculate_well_known_port(domain_id, m_att, is_multicast));
         }
     }
     return result;
@@ -355,15 +357,17 @@ void NetworkFactory::Shutdown()
     }
 }
 
-uint16_t NetworkFactory::calculateWellKnownPort(
+uint16_t NetworkFactory::calculate_well_known_port(
         uint32_t domain_id,
-        const RTPSParticipantAttributes& att) const
+        const RTPSParticipantAttributes& att,
+        bool is_multicast) const
 {
 
     uint32_t port = att.port.portBase +
             att.port.domainIDGain * domain_id +
-            att.port.offsetd3 +
-            att.port.participantIDGain * att.participantID;
+            (is_multicast ?
+            att.port.offsetd2 :
+            att.port.offsetd3 + att.port.participantIDGain * att.participantID);
 
     if (port > 65535)
     {

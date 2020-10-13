@@ -286,7 +286,7 @@ RTPSParticipantImpl::RTPSParticipantImpl(
         std::for_each(m_att.defaultUnicastLocatorList.begin(), m_att.defaultUnicastLocatorList.end(),
                 [&](Locator_t& loc)
                 {
-                    m_network_Factory.fillDefaultUnicastLocator(domain_id_, loc, m_att);
+                    m_network_Factory.fill_default_locator_port(domain_id_, loc, m_att, false);
                 });
 
     }
@@ -1221,11 +1221,11 @@ void RTPSParticipantImpl::normalize_endpoint_locators(
     // Locators with port 0, calculate port.
     for (Locator_t& loc : endpoint_att.unicastLocatorList)
     {
-        m_network_Factory.fillDefaultUnicastLocator(domain_id_, loc, m_att);
+        m_network_Factory.fill_default_locator_port(domain_id_, loc, m_att, false);
     }
     for (Locator_t& loc : endpoint_att.multicastLocatorList)
     {
-        m_network_Factory.fillDefaultUnicastLocator(domain_id_, loc, m_att);
+        m_network_Factory.fill_default_locator_port(domain_id_, loc, m_att, true);
     }
 
     // Normalize unicast locators
