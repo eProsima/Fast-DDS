@@ -13,33 +13,31 @@
 // limitations under the License.
 
 /**
- * @file TopicPayloadPoolRegistry.cpp
+ * @file TopicPayloadPoolRegistryEntry.hpp
  */
 
-#include <rtps/history/TopicPayloadPoolRegistry.hpp>
+#ifndef RTPS_HISTORY_TOPICPAYLOADPOOLREGISTRY_IMPL_TOPICPAYLOADPOOLREGISTRYENTRY_HPP
+#define RTPS_HISTORY_TOPICPAYLOADPOOLREGISTRY_IMPL_TOPICPAYLOADPOOLREGISTRYENTRY_HPP
 
-#include <rtps/history/TopicPayloadPool.hpp>
-
-#include "./TopicPayloadPoolRegistry_impl/TopicPayloadPoolProxy.hpp"
-#include "./TopicPayloadPoolRegistry_impl/TopicPayloadPoolRegistryEntry.hpp"
+#include <memory>
+#include <string>
 
 namespace eprosima {
 namespace fastrtps {
 namespace rtps {
+namespace detail {
 
-std::shared_ptr<IPayloadPool> TopicPayloadPoolRegistry::get(
-        const std::string& /*topic_name*/,
-        const PoolConfig& /*config*/)
+struct TopicPayloadPoolRegistryEntry
 {
-    return std::shared_ptr<IPayloadPool>();
-}
+    std::shared_ptr<TopicPayloadPoolProxy> pool_for_preallocated;
+    std::shared_ptr<TopicPayloadPoolProxy> pool_for_preallocated_realloc;
+    std::shared_ptr<TopicPayloadPoolProxy> pool_for_dynamic;
+    std::shared_ptr<TopicPayloadPoolProxy> pool_for_dynamic_reusable;
+};
 
-void release(
-        std::shared_ptr<IPayloadPool>& pool)
-{
-    pool.reset();
-}
-
+}  // namespace detail
 }  // namespace rtps
 }  // namespace fastrtps
 }  // namespace eprosima
+
+#endif  // RTPS_HISTORY_TOPICPAYLOADPOOLREGISTRY_IMPL_TOPICPAYLOADPOOLREGISTRYENTRY_HPP
