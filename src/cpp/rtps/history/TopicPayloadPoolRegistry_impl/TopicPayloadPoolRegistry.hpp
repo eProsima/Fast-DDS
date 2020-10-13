@@ -88,7 +88,7 @@ private:
     {
         if (!ptr)
         {
-            ptr = std::make_shared<TopicPayloadPoolProxy>(topic_name, TopicPayloadPool::get(config));
+            ptr = std::make_shared<TopicPayloadPoolProxy>(topic_name, config);
         }
 
         return ptr;

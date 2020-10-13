@@ -38,15 +38,21 @@ public:
 
     TopicPayloadPoolProxy(
             const std::string& topic_name,
-            const std::shared_ptr<ITopicPayloadPool>& inner_pool)
+            const PoolConfig& config)
         : topic_name_(topic_name)
-        , inner_pool_(inner_pool)
+        , policy_(config.memory_policy)
+        , inner_pool_(TopicPayloadPool::get(config))
     {
     }
 
     const std::string& topic_name() const
     {
         return topic_name_;
+    }
+
+    MemoryManagementPolicy_t memory_policy() const
+    {
+        return policy_;
     }
 
     bool get_payload(
@@ -97,6 +103,7 @@ public:
 private:
 
     std::string topic_name_;
+    MemoryManagementPolicy_t policy_;
     std::shared_ptr<ITopicPayloadPool> inner_pool_;
 
 };
