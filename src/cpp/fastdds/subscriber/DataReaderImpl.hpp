@@ -37,6 +37,8 @@
 #include <fastrtps/qos/LivelinessChangedStatus.h>
 #include <fastrtps/types/TypesBase.h>
 
+#include <rtps/history/ITopicPayloadPool.h>
+
 using eprosima::fastrtps::types::ReturnCode_t;
 
 namespace eprosima {
@@ -65,6 +67,7 @@ class DataReaderImpl
 {
 protected:
 
+    using ITopicPayloadPool = eprosima::fastrtps::rtps::ITopicPayloadPool;
     using IPayloadPool = eprosima::fastrtps::rtps::IPayloadPool;
 
     friend class SubscriberImpl;
@@ -301,7 +304,7 @@ protected:
 
     DataReader* user_datareader_ = nullptr;
 
-    std::shared_ptr<IPayloadPool> payload_pool_;
+    std::shared_ptr<ITopicPayloadPool> payload_pool_;
 
     /**
      * @brief A method called when a new cache change is added
