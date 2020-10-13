@@ -196,8 +196,7 @@ ReturnCode_t Subscriber::get_datareader_qos_from_profile(
         const std::string& profile_name,
         DataReaderQos& qos) const
 {
-    qos = impl_->get_datareader_qos_from_profile(profile_name);
-    return ReturnCode_t::RETCODE_OK;
+    return impl_->get_datareader_qos_from_profile(profile_name, qos);
 }
 
 /* TODO

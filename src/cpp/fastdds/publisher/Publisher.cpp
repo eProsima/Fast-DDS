@@ -217,8 +217,7 @@ ReturnCode_t Publisher::get_datawriter_qos_from_profile(
         const std::string& profile_name,
         DataWriterQos& qos) const
 {
-    qos = impl_->get_datawriter_qos_from_profile(profile_name);
-    return ReturnCode_t::RETCODE_OK;
+    return impl_->get_datawriter_qos_from_profile(profile_name, qos);
 }
 
 /* TODO

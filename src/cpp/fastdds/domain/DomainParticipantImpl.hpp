@@ -264,8 +264,9 @@ public:
 
     const PublisherQos& get_default_publisher_qos() const;
 
-    const PublisherQos get_publisher_qos_from_profile(
-            const std::string& profile_name) const;
+    const ReturnCode_t get_publisher_qos_from_profile(
+            const std::string& profile_name,
+            PublisherQos& qos) const;
 
     ReturnCode_t set_default_subscriber_qos(
             const SubscriberQos& qos);
@@ -274,8 +275,9 @@ public:
 
     const SubscriberQos& get_default_subscriber_qos() const;
 
-    const SubscriberQos get_subscriber_qos_from_profile(
-            const std::string& profile_name) const;
+    const ReturnCode_t get_subscriber_qos_from_profile(
+            const std::string& profile_name,
+            SubscriberQos& qos) const;
 
     ReturnCode_t set_default_topic_qos(
             const TopicQos& qos);
@@ -284,8 +286,9 @@ public:
 
     const TopicQos& get_default_topic_qos() const;
 
-    const TopicQos get_topic_qos_from_profile(
-            const std::string& profile_name) const;
+    const ReturnCode_t get_topic_qos_from_profile(
+            const std::string& profile_name,
+            TopicQos& qos) const;
 
     /* TODO
        bool get_discovered_participants(

@@ -153,8 +153,9 @@ public:
      * @param qos DataReadrQos object where the qos is returned.
      * @return RETCODE_OK
      */
-    const DataReaderQos get_datareader_qos_from_profile(
-            const std::string& profile_name) const;
+    const ReturnCode_t get_datareader_qos_from_profile(
+            const std::string& profile_name,
+            DataReaderQos& qos) const;
 
     /* TODO
        bool copy_from_topic_qos(
