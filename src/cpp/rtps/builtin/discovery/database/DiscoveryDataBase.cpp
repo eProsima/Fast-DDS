@@ -133,6 +133,15 @@ bool DiscoveryDataBase::edp_subscriptions_is_relevant(
     return false;
 }
 
+void DiscoveryDataBase::update_change_and_unmatch_(
+        fastrtps::rtps::CacheChange_t* new_change,
+        ddb::DiscoverySharedInfo& entity)
+{
+    changes_to_release_.push_back(entity.update_and_unmatch(new_change));
+    entity.add_or_update_ack_participant(server_guid_prefix_, true);
+    entity.add_or_update_ack_participant(new_change->writerGUID.guidPrefix, true);
+}
+
 void DiscoveryDataBase::add_ack_(
         const eprosima::fastrtps::rtps::CacheChange_t* change,
         const eprosima::fastrtps::rtps::GuidPrefix_t& acked_entity)
@@ -402,10 +411,12 @@ void DiscoveryDataBase::create_participant_from_change_(
         const DiscoveryParticipantChangeData& change_data)
 {
     DiscoveryParticipantInfo part(ch, server_guid_prefix_, change_data);
+    // The change must be acked also by the entity that has sent the data (in local entities, itself)
+    part.add_or_update_ack_participant(ch->writerGUID.guidPrefix, true);
     std::pair<std::map<eprosima::fastrtps::rtps::GuidPrefix_t, DiscoveryParticipantInfo>::iterator, bool> ret =
             participants_.insert(std::make_pair(guid_from_change(ch).guidPrefix, part));
 
-    // If insert resturn false, means that the participant already existed (DATA(p) is an update). In that case
+    // If insert returns false, means that the participant already existed (DATA(p) is an update). In that case
     // we need to update the change related to the participant and return the old change to the pool
     if (!ret.second)
     {
@@ -602,7 +613,7 @@ void DiscoveryDataBase::process_dispose_participant_(
     {
         // Only update DATA(p), leaving the change info untouched. This is because DATA(Up) does not have the
         // participant's meta-information, but we don't want to loose it here.
-        changes_to_release_.push_back(pit->second.update_and_unmatch(ch));
+        update_change_and_unmatch_(ch, pit->second);
     }
     else
     {
