@@ -43,6 +43,16 @@ public:
             GUID_t& guid);
 
     /**
+     * Find a participant given its GUID.
+     *
+     * @param [in] guid GUID of the participant to find
+     *
+     * @return The pointer to the corresponding participant implementation, nullptr if not found.
+     */
+    static RTPSParticipantImpl* find_local_participant(
+            const GUID_t& guid);
+
+    /**
      * Apply a predicate to every local participant.
      *
      * Will apply the predicate to all the participants registered by a call to RTPSDomain::createParticipant.
