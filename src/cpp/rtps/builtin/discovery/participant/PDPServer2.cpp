@@ -671,12 +671,9 @@ bool PDPServer2::server_update_routine()
         process_writers_acknowledgements();     // server + ddb(functor_with_ddb)
         process_data_queues();                  // all ddb
         process_dirty_topics();                 // all ddb
-
         process_changes_release();              // server + ddb(changes_to_release(), clear_changes_to_release())
-
         process_disposals();                    // server + ddb(changes_to_dispose(), clear_changes_to_disposes())
         process_to_send_lists();                // server + ddb(get_to_send, remove_to_send_this)
-
         pending_work = pending_ack();           // all server
 
         logInfo(RTPS_PDP_SERVER, "-------------------- Server routine end --------------------");
