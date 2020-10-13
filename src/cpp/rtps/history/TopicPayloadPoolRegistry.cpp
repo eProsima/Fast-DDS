@@ -18,6 +18,10 @@
 
 #include <rtps/history/TopicPayloadPoolRegistry.hpp>
 
+#include <rtps/history/TopicPayloadPool.hpp>
+
+#include "./TopicPayloadPoolRegistry_impl/TopicPayloadPoolProxy.hpp"
+
 namespace eprosima {
 namespace fastrtps {
 namespace rtps {
