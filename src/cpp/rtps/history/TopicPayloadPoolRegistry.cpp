@@ -22,22 +22,25 @@
 
 #include "./TopicPayloadPoolRegistry_impl/TopicPayloadPoolProxy.hpp"
 #include "./TopicPayloadPoolRegistry_impl/TopicPayloadPoolRegistryEntry.hpp"
+#include "./TopicPayloadPoolRegistry_impl/TopicPayloadPoolRegistry.hpp"
 
 namespace eprosima {
 namespace fastrtps {
 namespace rtps {
 
 std::shared_ptr<IPayloadPool> TopicPayloadPoolRegistry::get(
-        const std::string& /*topic_name*/,
-        const PoolConfig& /*config*/)
+        const std::string& topic_name,
+        const PoolConfig& config)
 {
-    return std::shared_ptr<IPayloadPool>();
+    return detail::TopicPayloadPoolRegistry::instance().get(topic_name, config);
 }
 
-void release(
+void TopicPayloadPoolRegistry::release(
         std::shared_ptr<IPayloadPool>& pool)
 {
+    auto topic_pool = std::static_pointer_cast<detail::TopicPayloadPoolProxy, IPayloadPool>(pool);
     pool.reset();
+    detail::TopicPayloadPoolRegistry::instance().release(topic_pool);
 }
 
 }  // namespace rtps
