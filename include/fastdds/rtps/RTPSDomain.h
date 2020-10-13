@@ -153,7 +153,7 @@ public:
      */
     RTPS_DllAPI static RTPSReader* createRTPSReader(
             RTPSParticipant* p,
-            ReaderAttributes& watt,
+            ReaderAttributes& ratt,
             const std::shared_ptr<IPayloadPool>& payload_pool,
             ReaderHistory* hist,
             ReaderListener* listen = nullptr);

@@ -593,8 +593,8 @@ private:
             const EndpointAttributes& param);
 
     /**
-     * Check if persistence is required and return persistence service from factory.
-     * , using endpoint attributes (or participant
+     * Check if persistence is required and return persistence service from factory,
+     * using endpoint attributes (or participant
      * attributes if endpoint does not define a persistence service config)
      *
      * @param [in]  debug_label Label indicating enpoint kind (reader or writer) for logs.
@@ -685,8 +685,11 @@ public:
      * Create a Reader in this RTPSParticipant.
      * @param Reader Pointer to pointer of the Reader, used as output. Only valid if return==true.
      * @param param ReaderAttributes to define the Reader.
+     * @param hist Pointer to the ReaderHistory.
+     * @param listen Pointer to the ReaderListener.
      * @param entityId EntityId assigned to the Reader.
      * @param isBuiltin Bool value indicating if the Reader is builtin (Discovery or Liveliness protocol) or is created for the end user.
+     * @param enable Whether the reader should be automatically enabled.
      * @return True if the Reader was correctly created.
      */
     bool createReader(
@@ -703,8 +706,11 @@ public:
      * @param Reader Pointer to pointer of the Reader, used as output. Only valid if return==true.
      * @param param ReaderAttributes to define the Reader.
      * @param payload_pool Shared pointer to the IPayloadPool
+     * @param hist Pointer to the ReaderHistory.
+     * @param listen Pointer to the ReaderListener.
      * @param entityId EntityId assigned to the Reader.
      * @param isBuiltin Bool value indicating if the Reader is builtin (Discovery or Liveliness protocol) or is created for the end user.
+     * @param enable Whether the reader should be automatically enabled.
      * @return True if the Reader was correctly created.
      */
     bool createReader(

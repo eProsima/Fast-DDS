@@ -521,8 +521,8 @@ bool RTPSParticipantImpl::preprocess_endpoint_attributes(
             {
                 // Wrongly configured property
                 logError(RTPS_PARTICIPANT, "Cannot configure " << debug_label << "'s persistence GUID from '"
-                                                               << persistence_guid_property->c_str() <<
-                        "'. Wrong input");
+                                                               << persistence_guid_property->c_str()
+                                                               << "'. Wrong input");
                 return false;
             }
         }
@@ -658,7 +658,7 @@ bool RTPSParticipantImpl::create_reader(
 
     // Get persistence service
     IPersistenceService* persistence = nullptr;
-    if (!get_persistence_service("writer", is_builtin, param.endpoint, persistence))
+    if (!get_persistence_service("reader", is_builtin, param.endpoint, persistence))
     {
         return false;
     }
