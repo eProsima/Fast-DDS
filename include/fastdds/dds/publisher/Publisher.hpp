@@ -289,7 +289,7 @@ public:
     RTPS_DllAPI ReturnCode_t get_default_datawriter_qos(
             DataWriterQos& qos) const;
 
-     /**
+    /**
      * Fills the DataWriterQos with the values of the XML profile.
      * @param profile_name DataWriter profile name.
      * @param qos DataWriterQos object where the qos is returned.

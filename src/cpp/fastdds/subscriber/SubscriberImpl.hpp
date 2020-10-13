@@ -147,7 +147,7 @@ public:
 
     DataReaderQos& get_default_datareader_qos();
 
-     /**
+    /**
      * Fills the DataReadrQos with the values of the XML profile.
      * @param profile_name DataReadr profile name.
      * @param qos DataReadrQos object where the qos is returned.
@@ -232,7 +232,7 @@ protected:
     SubscriberQos qos_;
 
     //!Map of Pointer to associated DataReaders. Topic name is the key.
-    std::map<std::string, std::vector<DataReaderImpl*> > readers_;
+    std::map<std::string, std::vector<DataReaderImpl*>> readers_;
 
     mutable std::mutex mtx_readers_;
 

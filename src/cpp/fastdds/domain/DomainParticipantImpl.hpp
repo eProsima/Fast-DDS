@@ -439,13 +439,13 @@ protected:
     std::map<fastrtps::rtps::SampleIdentity,
             std::pair<std::string, std::function<void(
                 const std::string& name,
-                const fastrtps::types::DynamicType_ptr)> > > register_callbacks_;
+                const fastrtps::types::DynamicType_ptr)>>> register_callbacks_;
 
     // Relationship between child and parent request
     std::map<fastrtps::rtps::SampleIdentity, fastrtps::rtps::SampleIdentity> child_requests_;
 
     // All parent's child requests
-    std::map<fastrtps::rtps::SampleIdentity, std::vector<fastrtps::rtps::SampleIdentity> > parent_requests_;
+    std::map<fastrtps::rtps::SampleIdentity, std::vector<fastrtps::rtps::SampleIdentity>> parent_requests_;
 
     class MyRTPSParticipantListener : public fastrtps::rtps::RTPSParticipantListener
     {

@@ -192,7 +192,7 @@ protected:
     PublisherQos qos_;
 
     //! Map of Pointers to the associated Data Writers. Topic name is the key.
-    std::map<std::string, std::vector<DataWriterImpl*> > writers_;
+    std::map<std::string, std::vector<DataWriterImpl*>> writers_;
 
     mutable std::mutex mtx_writers_;
 

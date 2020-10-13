@@ -153,7 +153,7 @@ public:
     RTPS_DllAPI ReturnCode_t set_default_participant_qos(
             const DomainParticipantQos& qos);
 
-     /**
+    /**
      * Fills the DomainParticipantQos with the values of the XML profile.
      * @param profile_name DomainParticipant profile name.
      * @param qos DomainParticipantQos object where the qos is returned.
@@ -213,7 +213,7 @@ protected:
 
     friend class DomainParticipant;
 
-    std::map<DomainId_t, std::vector<DomainParticipantImpl*> > participants_;
+    std::map<DomainId_t, std::vector<DomainParticipantImpl*>> participants_;
 
     DomainParticipantFactory();
 

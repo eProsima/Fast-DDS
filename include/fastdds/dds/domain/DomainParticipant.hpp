@@ -453,7 +453,7 @@ public:
     RTPS_DllAPI ReturnCode_t get_default_topic_qos(
             TopicQos& qos) const;
 
-     /**
+    /**
      * Fills the TopicQos with the values of the XML profile.
      * @param profile_name Topic profile name.
      * @param qos TopicQos object where the qos is returned.
