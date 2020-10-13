@@ -53,14 +53,16 @@ PDPServer2::PDPServer2(
         BuiltinProtocols* builtin,
         const RTPSParticipantAllocationAttributes& allocation)
     : PDP(builtin, allocation)
-    , mp_sync(nullptr)
-    , discovery_db_(builtin->mp_participantImpl->getGuid().guidPrefix)
+    , routine_(nullptr)
+    , ping_(nullptr)
+    , discovery_db_(builtin->mp_participantImpl->getGuid().guidPrefix, servers_prefixes())
 {
 }
 
 PDPServer2::~PDPServer2()
 {
-    delete(mp_sync);
+    delete(routine_);
+    delete(ping_);
 }
 
 bool PDPServer2::init(
@@ -86,9 +88,18 @@ bool PDPServer2::init(
         Given the fact that a participant is either a client or a server the
         discoveryServer_client_syncperiod parameter has a context defined meaning.
      */
-    mp_sync = new DServerEvent2(this,
+    routine_ = new DServerRoutineEvent2(this,
                     TimeConv::Duration_t2MilliSecondsDouble(
                         m_discovery.discovery_config.discoveryServer_client_syncperiod));
+
+    /*
+        Given the fact that a participant is either a client or a server the
+        discoveryServer_client_syncperiod parameter has a context defined meaning.
+     */
+    ping_ = new DServerPingEvent2(this,
+                    TimeConv::Duration_t2MilliSecondsDouble(
+                        m_discovery.discovery_config.discoveryServer_client_syncperiod));
+    ping_->restart_timer();
 
     return true;
 }
@@ -136,6 +147,8 @@ bool PDPServer2::createPDPEndpoints()
 {
     logInfo(RTPS_PDP_SERVER, "Beginning PDPServer Endpoints creation");
 
+    const NetworkFactory& network = mp_RTPSParticipant->network_factory();
+
     /***********************************
     * PDP READER
     ***********************************/
@@ -166,6 +179,20 @@ bool PDPServer2::createPDPEndpoints()
     {
         // Enable unknown clients to reach this reader
         mp_PDPReader->enableMessagesFromUnkownWriters(true);
+
+        // Initial peer list doesn't make sense in server scenario. Client should match its server list
+        for (const eprosima::fastdds::rtps::RemoteServerAttributes& it : mp_builtin->m_DiscoveryServers)
+        {
+            std::lock_guard<std::mutex> data_guard(temp_data_lock_);
+            temp_writer_data_.clear();
+            temp_writer_data_.guid(it.GetPDPWriter());
+            temp_writer_data_.set_multicast_locators(it.metatrafficMulticastLocatorList, network);
+            temp_writer_data_.set_remote_unicast_locators(it.metatrafficUnicastLocatorList, network);
+            temp_writer_data_.m_qos.m_durability.kind = fastrtps::TRANSIENT_DURABILITY_QOS;  // Server Information must be persistent
+            temp_writer_data_.m_qos.m_reliability.kind = fastrtps::RELIABLE_RELIABILITY_QOS;
+
+            mp_PDPReader->matched_writer_add(temp_writer_data_);
+        }
     }
     // Could not create PDP Reader, so return false
     else
@@ -213,6 +240,19 @@ bool PDPServer2::createPDPEndpoints()
         static_cast<StatefulWriter*>(mp_PDPWriter)->reader_data_filter(pdp_filter);
         // Enable separate sending so the filter can be called for each change and reader proxy
         mp_PDPWriter->set_separate_sending(true);
+
+        for (const eprosima::fastdds::rtps::RemoteServerAttributes& it : mp_builtin->m_DiscoveryServers)
+        {
+            std::lock_guard<std::mutex> data_guard(temp_data_lock_);
+            temp_reader_data_.clear();
+            temp_reader_data_.guid(it.GetPDPReader());
+            temp_reader_data_.set_multicast_locators(it.metatrafficMulticastLocatorList, network);
+            temp_reader_data_.set_remote_unicast_locators(it.metatrafficUnicastLocatorList, network);
+            temp_reader_data_.m_qos.m_durability.kind = fastrtps::TRANSIENT_LOCAL_DURABILITY_QOS;
+            temp_reader_data_.m_qos.m_reliability.kind = fastrtps::RELIABLE_RELIABILITY_QOS;
+
+            mp_PDPWriter->matched_reader_add(temp_reader_data_);
+        }
     }
     // Could not create PDP Writer, so return false
     else
@@ -409,7 +449,6 @@ void PDPServer2::announceParticipantState(
 
             // Prepare identity
             WriteParams wp;
-            // TODO: Make sure in the database that this CacheChange_t is given this sequence number
             SequenceNumber_t sn = mp_PDPWriterHistory->next_sequence_number();
             {
                 SampleIdentity local;
@@ -453,7 +492,6 @@ void PDPServer2::announceParticipantState(
 
                 // assign identity
                 change->sequenceNumber = sn;
-                change->write_params = std::move(wp);
 
                 // Create a RemoteLocatorList for metatraffic_locators
                 fastrtps::rtps::RemoteLocatorList metatraffic_locators(
@@ -471,13 +509,17 @@ void PDPServer2::announceParticipantState(
                     metatraffic_locators.add_multicast_locator(locator);
                 }
 
+                // Add our change to PDPWriterHistory
+                mp_PDPWriterHistory->add_change(change, wp);
+                change->write_params.sample_identity().sequence_number(change->sequenceNumber);
+
                 // Update the database with our own data
                 if (discovery_db().update(
                             change,
                             ddb::DiscoveryParticipantChangeData(metatraffic_locators, false, false, false)))
                 {
                     // Distribute
-                    awake_server_thread();
+                    awake_routine_thread();
                 }
                 else
                 {
@@ -486,7 +528,6 @@ void PDPServer2::announceParticipantState(
                     mp_PDPWriterHistory->release_Cache(change);
                 }
             }
-
             // Doesn't make sense to send the DATA directly if it hasn't been introduced in the history yet (missing
             // sequence number.
             return;
@@ -544,7 +585,7 @@ void PDPServer2::announceParticipantState(
             if (discovery_db().update(change, ddb::DiscoveryParticipantChangeData()))
             {
                 // distribute
-                awake_server_thread();
+                awake_routine_thread();
             }
             else
             {
@@ -579,14 +620,7 @@ void PDPServer2::announceParticipantState(
 
         locators.push_back(discovery_db_.participant_metatraffic_locators(participant_prefix));
     }
-
-    DirectMessageSender sender(getRTPSParticipant(), &remote_readers, &locators);
-    RTPSMessageGroup group(getRTPSParticipant(), mp_PDPWriter, sender);
-
-    if (!group.add_data(*change, false))
-    {
-        logError(RTPS_PDP_SERVER, "Error sending announcement from server to clients");
-    }
+    send_announcement(change, remote_readers, locators);
 }
 
 /**
@@ -625,7 +659,7 @@ bool PDPServer2::remove_remote_participant(
             if (discovery_db_.update(pC, ddb::DiscoveryParticipantChangeData()))
             {
                 // assure processing time for the cache
-                awake_server_thread();
+                awake_routine_thread();
 
                 // the discovery database takes ownership of the CacheChange_t
                 // henceforth there are no references to the CacheChange_t
@@ -638,6 +672,9 @@ bool PDPServer2::remove_remote_participant(
         }
     }
 
+    // check if is a server who has been disposed
+    awake_server_thread();
+
     // delegate into the base class for inherited proxy database removal
     return PDP::remove_remote_participant(partGUID, reason);
 }
@@ -649,12 +686,17 @@ bool PDPServer2::process_data_queues()
     return discovery_db_.process_edp_data_queue();
 }
 
-void PDPServer2::awake_server_thread(
+void PDPServer2::awake_routine_thread(
         double interval_ms /*= 0*/)
 {
-    mp_sync->update_interval_millisec(interval_ms);
-    mp_sync->cancel_timer();
-    mp_sync->restart_timer();
+    routine_->update_interval_millisec(interval_ms);
+    routine_->cancel_timer();
+    routine_->restart_timer();
+}
+
+void PDPServer2::awake_server_thread()
+{
+    ping_->restart_timer();
 }
 
 bool PDPServer2::server_update_routine()
@@ -817,7 +859,8 @@ bool PDPServer2::process_disposals()
             remove_related_alive_from_history_nts(mp_PDPWriterHistory, change_guid_prefix);
 
             // Add DATA(Up) to PDP writer's history
-            mp_PDPWriterHistory->add_change(change);
+            eprosima::fastrtps::rtps::WriteParams wp = change->write_params;
+            mp_PDPWriterHistory->add_change(change, wp);
         }
         // DATA(Uw) case
         else if (discovery_db_.is_writer(change))
@@ -833,7 +876,8 @@ bool PDPServer2::process_disposals()
             if (!announcement_from_same_participant_in_disposals(disposals, change_guid_prefix))
             {
                 // Add DATA(Uw) to EDP publications writer's history.
-                pubs_history->add_change(change);
+                eprosima::fastrtps::rtps::WriteParams wp = change->write_params;
+                pubs_history->add_change(change, wp);
             }
         }
         // DATA(Ur) case
@@ -850,7 +894,8 @@ bool PDPServer2::process_disposals()
             if (!announcement_from_same_participant_in_disposals(disposals, change_guid_prefix))
             {
                 // Add DATA(Ur) to EDP subscriptions writer's history.
-                subs_history->add_change(change);
+                eprosima::fastrtps::rtps::WriteParams wp = change->write_params;
+                subs_history->add_change(change, wp);
             }
         }
         else
@@ -918,11 +963,11 @@ bool PDPServer2::process_changes_release()
         // publications or EDP subscriptions)
         else
         {
-            // TODO(Paris)
             if (ch->kind == ChangeKind_t::ALIVE ||
                     ch->write_params.sample_identity().writer_guid() != mp_PDPWriter->getGuid())
             {
-                // If the change is from a remote participant, then it is never on any of the readers' histories, since we
+                // If the change is from a remote participant,
+                // then it is never on any of the readers' histories, since we
                 // take it out upon reading it in the listeners
                 if (discovery_db_.is_participant(ch))
                 {
@@ -1059,7 +1104,8 @@ bool PDPServer2::process_to_send_list(
         remove_change_from_history_nts(history, change, false);
         // Add DATA to writer's history.
         change->writerGUID.guidPrefix = mp_PDPWriter->getGuid().guidPrefix;
-        history->add_change(change);
+        eprosima::fastrtps::rtps::WriteParams wp = change->write_params;
+        history->add_change(change, wp);
     }
     return true;
 }
@@ -1108,9 +1154,70 @@ bool PDPServer2::pending_ack()
     return ret;
 }
 
+std::vector<fastrtps::rtps::GuidPrefix_t> PDPServer2::servers_prefixes()
+{
+    std::vector<GuidPrefix_t> servers;
+    for (const eprosima::fastdds::rtps::RemoteServerAttributes& it : mp_builtin->m_DiscoveryServers)
+    {
+        servers.push_back(it.guidPrefix);
+    }
+    return servers;
+}
+
 eprosima::fastrtps::rtps::ResourceEvent& PDPServer2::get_resource_event_thread()
 {
     return resource_event_thread_;
+}
+
+bool PDPServer2::all_servers_acknowledge_pdp()
+{
+    // check if already initialized
+    assert(mp_PDPWriterHistory && mp_PDPWriter);
+
+    return discovery_db_.server_acked_by_my_servers();
+}
+
+void PDPServer2::ping_remote_servers()
+{
+    // Get the servers that have not ACKed this server's DATA(p)
+    std::vector<GuidPrefix_t> ack_pending_servers = discovery_db_.ack_pending_servers();
+    std::vector<GUID_t> remote_readers;
+    LocatorList_t locators;
+
+    // Iterate over the list of servers
+    for (auto& server : mp_builtin->m_DiscoveryServers)
+    {
+
+        // If the server is the the ack_pending list, then add its GUID and locator to send the announcement
+        auto server_it = std::find(ack_pending_servers.begin(), ack_pending_servers.end(), server.guidPrefix);
+        if (server_it != ack_pending_servers.end())
+        {
+            // get the info to send to this already known locators
+            remote_readers.push_back(GUID_t(server.guidPrefix, c_EntityId_SPDPReader));
+            locators.push_back(server.metatrafficUnicastLocatorList);
+        }
+    }
+    send_announcement(discovery_db().cache_change_own_participant(), remote_readers, locators);
+}
+
+void PDPServer2::send_announcement(
+        CacheChange_t* change,
+        std::vector<GUID_t> remote_readers,
+        LocatorList_t locators)
+{
+
+    if (nullptr == change)
+    {
+        return;
+    }
+
+    DirectMessageSender sender(getRTPSParticipant(), &remote_readers, &locators);
+    RTPSMessageGroup group(getRTPSParticipant(), mp_PDPWriter, sender);
+
+    if (!group.add_data(*change, false))
+    {
+        logError(RTPS_PDP_SERVER, "Error sending announcement from server to clients");
+    }
 }
 
 } // namespace rtps
