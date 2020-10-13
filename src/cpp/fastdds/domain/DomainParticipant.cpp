@@ -275,6 +275,14 @@ ReturnCode_t DomainParticipant::get_default_publisher_qos(
     return ReturnCode_t::RETCODE_OK;
 }
 
+ReturnCode_t DomainParticipant::get_publisher_qos_from_profile(
+        const std::string& profile_name,
+        PublisherQos& qos) const
+{
+    qos = impl_->get_publisher_qos_from_profile(profile_name);
+    return ReturnCode_t::RETCODE_OK;
+}
+
 ReturnCode_t DomainParticipant::set_default_subscriber_qos(
         const SubscriberQos& qos)
 {
@@ -290,6 +298,14 @@ ReturnCode_t DomainParticipant::get_default_subscriber_qos(
         SubscriberQos& qos) const
 {
     qos = impl_->get_default_subscriber_qos();
+    return ReturnCode_t::RETCODE_OK;
+}
+
+ReturnCode_t DomainParticipant::get_subscriber_qos_from_profile(
+        const std::string& profile_name,
+        SubscriberQos& qos) const
+{
+    qos = impl_->get_subscriber_qos_from_profile(profile_name);
     return ReturnCode_t::RETCODE_OK;
 }
 

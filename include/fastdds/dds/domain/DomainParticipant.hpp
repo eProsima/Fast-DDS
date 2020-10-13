@@ -373,6 +373,16 @@ public:
             PublisherQos& qos) const;
 
     /**
+     * Fills the PublisherQos with the values of the XML profile.
+     * @param profile_name Publisher profile name.
+     * @param qos PublisherQos object where the qos is returned.
+     * @return RETCODE_OK
+     */
+    RTPS_DllAPI ReturnCode_t get_publisher_qos_from_profile(
+            const std::string& profile_name,
+            PublisherQos& qos) const;
+
+    /**
      * This operation sets a default value of the Subscriber QoS policies that will be used for newly created
      * Subscriber entities in the case where the QoS policies are defaulted in the create_subscriber operation.
      *
@@ -412,6 +422,15 @@ public:
     RTPS_DllAPI ReturnCode_t get_default_subscriber_qos(
             SubscriberQos& qos) const;
 
+    /**
+     * Fills the SubscriberQos with the values of the XML profile.
+     * @param profile_name Subscriber profile name.
+     * @param qos SubscriberQos object where the qos is returned.
+     * @return RETCODE_OK
+     */
+    RTPS_DllAPI ReturnCode_t get_subscriber_qos_from_profile(
+            const std::string& profile_name,
+            SubscriberQos& qos) const;
 
     /**
      * This operation sets a default value of the Topic QoS policies which will be used for newly created
