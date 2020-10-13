@@ -667,13 +667,15 @@ bool PDPServer2::server_update_routine()
     {
         logInfo(RTPS_PDP_SERVER, "");
         logInfo(RTPS_PDP_SERVER, "-------------------- Server routine start --------------------");
+
         process_writers_acknowledgements();     // server + ddb(functor_with_ddb)
         process_data_queues();                  // all ddb
-        process_disposals();                    // server + ddb(changes_to_dispose(), clear_changes_to_disposes())
         process_dirty_topics();                 // all ddb
-        process_to_send_lists();                // server + ddb(get_to_send, remove_to_send_this)
         process_changes_release();              // server + ddb(changes_to_release(), clear_changes_to_release())
+        process_disposals();                    // server + ddb(changes_to_dispose(), clear_changes_to_disposes())
+        process_to_send_lists();                // server + ddb(get_to_send, remove_to_send_this)
         pending_work = pending_ack();           // all server
+
         logInfo(RTPS_PDP_SERVER, "-------------------- Server routine end --------------------");
         logInfo(RTPS_PDP_SERVER, "");
     }
@@ -1079,7 +1081,8 @@ bool PDPServer2::remove_change_from_history_nts(
 {
     for (auto chit = history->changesRbegin(); chit != history->changesRend(); chit++)
     {
-        if (change->instanceHandle == (*chit)->instanceHandle)
+        if (change->instanceHandle == (*chit)->instanceHandle &&
+                change->write_params.sample_identity() == (*chit)->write_params.sample_identity())
         {
             if (release_change)
             {
