@@ -76,7 +76,27 @@ public:
     void release(
             std::shared_ptr<TopicPayloadPoolProxy>& pool)
     {
-        pool.reset();
+        std::lock_guard<std::mutex> lock(mutex_);
+        if (pool->dec_references())
+        {
+            auto it = pool_map_.find(pool->topic_name());
+            assert(it != pool_map_.end());
+            switch (pool->memory_policy())
+            {
+                case PREALLOCATED_MEMORY_MODE:
+                    it->second.pool_for_preallocated.reset();
+                    break;
+                case PREALLOCATED_WITH_REALLOC_MEMORY_MODE:
+                    it->second.pool_for_preallocated_realloc.reset();
+                    break;
+                case DYNAMIC_RESERVE_MEMORY_MODE:
+                    it->second.pool_for_dynamic.reset();
+                    break;
+                case DYNAMIC_REUSABLE_MEMORY_MODE:
+                    it->second.pool_for_dynamic_reusable.reset();
+                    break;
+            }
+        }
     }
 
 private:
@@ -91,6 +111,7 @@ private:
             ptr = std::make_shared<TopicPayloadPoolProxy>(topic_name, config);
         }
 
+        ptr->inc_references();
         return ptr;
     }
 

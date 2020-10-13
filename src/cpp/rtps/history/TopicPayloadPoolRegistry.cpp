@@ -40,7 +40,11 @@ void TopicPayloadPoolRegistry::release(
 {
     auto topic_pool = std::static_pointer_cast<detail::TopicPayloadPoolProxy, IPayloadPool>(pool);
     pool.reset();
-    detail::TopicPayloadPoolRegistry::instance().release(topic_pool);
+
+    if (topic_pool)
+    {
+        detail::TopicPayloadPoolRegistry::instance().release(topic_pool);
+    }
 }
 
 }  // namespace rtps
