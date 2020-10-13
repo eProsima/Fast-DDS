@@ -115,7 +115,8 @@ public:
     friend class AckedFunctor;
 
     DiscoveryDataBase(
-            fastrtps::rtps::GuidPrefix_t server_guid_prefix);
+            fastrtps::rtps::GuidPrefix_t server_guid_prefix,
+            std::vector<fastrtps::rtps::GuidPrefix_t> servers);
 
     ////////////
     // Functions to update queue from listener
@@ -230,6 +231,10 @@ public:
     {
         server_acked_by_all_.store(s);
     }
+
+    bool server_acked_by_my_servers();
+
+    std::vector<fastrtps::rtps::GuidPrefix_t> ack_pending_servers();
 
     ////////////
     // Data structures utils
@@ -386,14 +391,18 @@ protected:
     //! changes that are no longer associated to living endpoints and should be returned to it's pool
     std::vector<eprosima::fastrtps::rtps::CacheChange_t*> changes_to_release_;
 
-    // mutex
+    //! Mutex
     mutable share_mutex_t sh_mtx_;
 
-    // guid from own server
+    //! GUID prefix from own server
     const fastrtps::rtps::GuidPrefix_t server_guid_prefix_;
 
-    // is own server DATA(p) acked by all other clients
+    //! Is own server DATA(p) acked by all other clients
     std::atomic<bool> server_acked_by_all_;
+
+    //! List of GUID prefixes of the remote servers
+    std::vector<fastrtps::rtps::GuidPrefix_t> servers_;
+
 };
 
 

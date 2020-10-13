@@ -32,7 +32,7 @@ namespace eprosima {
 namespace fastdds {
 namespace rtps {
 
-DServerEvent2::DServerEvent2(
+DServerRoutineEvent2::DServerRoutineEvent2(
         PDPServer2* pdp,
         double server_routine_period)
     : TimedEvent(pdp->get_resource_event_thread(),
@@ -46,26 +46,56 @@ DServerEvent2::DServerEvent2(
 
 }
 
-DServerEvent2::~DServerEvent2()
+DServerRoutineEvent2::~DServerRoutineEvent2()
 {
 }
 
-bool DServerEvent2::server_routine_event()
+bool DServerRoutineEvent2::server_routine_event()
 {
     // logInfo(SERVER_PDP_THREAD, "Server " << pdp->getRTPSParticipant()->getGuid() << " DServerEvent Period");
-
-    /*
-     * TODO: Management of other server should be done here
-     */
 
     bool pending_work = pdp_->server_update_routine();
     if (pending_work)
     {
         // Update timer to the server routine period (Default: 450 ms)
-        pdp_->awake_server_thread(server_routine_period_);
+        pdp_->awake_routine_thread(server_routine_period_);
     }
 
     return pending_work;
+}
+
+DServerPingEvent2::DServerPingEvent2(
+        PDPServer2* pdp,
+        double interval)
+    : TimedEvent(pdp->getRTPSParticipant()->getEventResource(),
+            [this]()
+            {
+                return server_ping_event();
+            }, interval)
+    , pdp_(pdp)
+{
+
+}
+
+DServerPingEvent2::~DServerPingEvent2()
+{
+}
+
+bool DServerPingEvent2::server_ping_event()
+{
+    // Check if all servers received my discovery data
+    if (!pdp_->all_servers_acknowledge_pdp())
+    {
+        // Not all servers have yet received our DATA(p) thus resend
+        pdp_->ping_remote_servers();
+        logInfo(SERVER_PING_THREAD, "Server " << pdp_->getRTPSParticipant()->getGuid() << " PDP announcement");
+
+        // restart
+        return true;
+    }
+
+    // do not restart
+    return false;
 }
 
 } // namespace rtps
