@@ -416,7 +416,6 @@ void DiscoveryDataBase::create_participant_from_change_(
     std::pair<std::map<eprosima::fastrtps::rtps::GuidPrefix_t, DiscoveryParticipantInfo>::iterator, bool> ret =
             participants_.insert(std::make_pair(guid_from_change(ch).guidPrefix, part));
 
-
     // If insert returns false, means that the participant already existed (DATA(p) is an update). In that case
     // we need to update the change related to the participant and return the old change to the pool
     if (!ret.second)
