@@ -45,6 +45,11 @@ TEST(TopicPayloadPoolRegistryTests, basic_checks)
 	// And be different from the other topic.
 	EXPECT_NE(pool_b1, pool_a3);
 
+	// Backups to check reference counts
+	auto pool_backup_a1 = pool_a1;
+	auto pool_backup_a3 = pool_a3;
+	auto pool_backup_b1 = pool_b1;
+
 	// Releasing pointers should reset them
 	TopicPayloadPoolRegistry::release(pool_a1);
 	EXPECT_FALSE(pool_a1);
@@ -68,4 +73,9 @@ TEST(TopicPayloadPoolRegistryTests, basic_checks)
 	EXPECT_FALSE(pool_b1);
 	EXPECT_NO_THROW(TopicPayloadPoolRegistry::release(pool_b2));
 	EXPECT_FALSE(pool_b2);
+
+	// Check backups only have one reference
+	EXPECT_EQ(pool_backup_a1.use_count(), 1);
+	EXPECT_EQ(pool_backup_a3.use_count(), 1);
+	EXPECT_EQ(pool_backup_b1.use_count(), 1);
 }
