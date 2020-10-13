@@ -30,9 +30,11 @@ namespace rtps {
 namespace ddb {
 
 DiscoveryDataBase::DiscoveryDataBase(
-        fastrtps::rtps::GuidPrefix_t server_guid_prefix)
+        fastrtps::rtps::GuidPrefix_t server_guid_prefix,
+        std::vector<fastrtps::rtps::GuidPrefix_t> servers)
     : server_guid_prefix_(server_guid_prefix)
-    , server_acked_by_all_(false)
+    , server_acked_by_all_((servers.size() > 0) ? false : true)
+    , servers_(servers)
 {
 }
 
@@ -429,26 +431,12 @@ void DiscoveryDataBase::create_participant_from_change_(
         fastrtps::rtps::GUID_t change_guid = guid_from_change(ch);
         logInfo(DISCOVERY_DATABASE, "New participant added: " << change_guid.guidPrefix);
 
-        // if its our own server guid, we put the DATA(P) in the history
-        if (change_guid.guidPrefix == server_guid_prefix_)
+        if (change_guid.guidPrefix != server_guid_prefix_)
         {
-            if (std::find(
-                        pdp_to_send_.begin(),
-                        pdp_to_send_.end(),
-                        ch) == pdp_to_send_.end())
-            {
-                logInfo(DISCOVERY_DATABASE, "Addind Server DATA(p) to send: "
-                        << ch->instanceHandle);
-                pdp_to_send_.push_back(ch);
-            }
-        }
-        else
-        {
-            // if it is a new participant, we have to wait to make ack to our DATA(P)
+            // If it is a new participant, we have to wait to make ack to our DATA(p)
             server_acked_by_all(false);
         }
     }
-
 }
 
 void DiscoveryDataBase::create_writers_from_change_(
@@ -949,6 +937,40 @@ const std::vector<fastrtps::rtps::GuidPrefix_t> DiscoveryDataBase::direct_client
         }
     }
     return direct_clients_and_servers;
+}
+
+bool DiscoveryDataBase::server_acked_by_my_servers()
+{
+    if (servers_.size() == 0)
+    {
+        return true;
+    }
+
+    // Find the server's participant and check whether all its servers have ACKed the server's DATA(p)
+    auto this_server = participants_.find(server_guid_prefix_);
+    for (auto prefix : servers_)
+    {
+        if (!this_server->second.is_matched(prefix))
+        {
+            return false;
+        }
+    }
+    return true;
+}
+
+std::vector<fastrtps::rtps::GuidPrefix_t> DiscoveryDataBase::ack_pending_servers()
+{
+    std::vector<fastrtps::rtps::GuidPrefix_t> ack_pending_servers;
+    // Find the server's participant and check whether all its servers have ACKed the server's DATA(p)
+    auto this_server = participants_.find(server_guid_prefix_);
+    for (auto prefix : servers_)
+    {
+        if (!this_server->second.is_matched(prefix))
+        {
+            ack_pending_servers.push_back(prefix);
+        }
+    }
+    return ack_pending_servers;
 }
 
 fastrtps::rtps::LocatorList_t DiscoveryDataBase::participant_metatraffic_locators(
