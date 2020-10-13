@@ -192,6 +192,14 @@ ReturnCode_t Subscriber::get_default_datareader_qos(
     return ReturnCode_t::RETCODE_OK;
 }
 
+ReturnCode_t Subscriber::get_datareader_qos_from_profile(
+            const std::string& profile_name,
+            DataReaderQos& qos) const
+{
+    qos = impl_->get_datareader_qos_from_profile(profile_name);
+    return ReturnCode_t::RETCODE_OK;
+}
+
 /* TODO
 bool Subscriber::copy_from_topic_qos(
         DataReaderQos& reader_qos,

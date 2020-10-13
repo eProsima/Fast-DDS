@@ -689,6 +689,20 @@ const TopicQos& DomainParticipantImpl::get_default_topic_qos() const
     return default_topic_qos_;
 }
 
+const TopicQos DomainParticipantImpl::get_topic_qos_from_profile(
+        const std::string& profile_name) const
+{
+    TopicAttributes attr;
+    if (XMLP_ret::XML_OK == XMLProfileManager::fillTopicAttributes(profile_name, attr))
+    {
+        TopicQos qos = default_topic_qos_;
+        set_qos_from_attributes(qos, attr);
+        return qos;
+    }
+
+    return default_topic_qos_;
+}
+
 /* TODO
    bool DomainParticipantImpl::get_discovered_participants(
         std::vector<fastrtps::rtps::InstanceHandle_t>& participant_handles) const

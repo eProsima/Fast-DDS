@@ -153,6 +153,9 @@ public:
 
     const DataWriterQos& get_default_datawriter_qos() const;
 
+    const DataWriterQos get_datawriter_qos_from_profile(
+            const std::string& profile_name) const;
+
     /* TODO
        bool copy_from_topic_qos(
             WriterQos& writer_qos,

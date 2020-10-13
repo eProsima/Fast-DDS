@@ -453,6 +453,17 @@ public:
     RTPS_DllAPI ReturnCode_t get_default_topic_qos(
             TopicQos& qos) const;
 
+     /**
+     * Fills the TopicQos with the values of the XML profile.
+     * @param profile_name Topic profile name.
+     * @param qos TopicQos object where the qos is returned.
+     * @return RETCODE_OK
+     */
+    RTPS_DllAPI ReturnCode_t get_topic_qos_from_profile(
+            const std::string& profile_name,
+            TopicQos& qos) const;
+
+
     /* TODO
        bool get_discovered_participants(
             std::vector<fastrtps::rtps::InstanceHandle_t>& participant_handles) const;

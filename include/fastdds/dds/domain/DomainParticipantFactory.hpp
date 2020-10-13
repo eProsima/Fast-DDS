@@ -153,6 +153,16 @@ public:
     RTPS_DllAPI ReturnCode_t set_default_participant_qos(
             const DomainParticipantQos& qos);
 
+     /**
+     * Fills the DomainParticipantQos with the values of the XML profile.
+     * @param profile_name DomainParticipant profile name.
+     * @param qos DomainParticipantQos object where the qos is returned.
+     * @return RETCODE_OK
+     */
+    RTPS_DllAPI ReturnCode_t get_participant_qos_from_profile(
+            const std::string& profile_name,
+            DomainParticipantQos& qos) const;
+
     /**
      * Remove a Participant and all associated publishers and subscribers.
      * @param part Pointer to the participant.

@@ -311,6 +311,14 @@ ReturnCode_t DomainParticipant::get_default_topic_qos(
     return ReturnCode_t::RETCODE_OK;
 }
 
+ReturnCode_t DomainParticipant::get_topic_qos_from_profile(
+            const std::string& profile_name,
+            TopicQos& qos) const
+{
+    qos = impl_->get_topic_qos_from_profile(profile_name);
+    return ReturnCode_t::RETCODE_OK;
+}
+
 /* TODO
    bool DomainParticipant::get_discovered_participants(
         std::vector<fastrtps::rtps::InstanceHandle_t>& participant_handles) const

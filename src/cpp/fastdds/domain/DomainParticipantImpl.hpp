@@ -278,6 +278,9 @@ public:
 
     const TopicQos& get_default_topic_qos() const;
 
+    const TopicQos get_topic_qos_from_profile(
+            const std::string& profile_name) const;
+
     /* TODO
        bool get_discovered_participants(
             std::vector<fastrtps::rtps::InstanceHandle_t>& participant_handles) const;

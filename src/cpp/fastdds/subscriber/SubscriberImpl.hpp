@@ -147,6 +147,15 @@ public:
 
     DataReaderQos& get_default_datareader_qos();
 
+     /**
+     * Fills the DataReadrQos with the values of the XML profile.
+     * @param profile_name DataReadr profile name.
+     * @param qos DataReadrQos object where the qos is returned.
+     * @return RETCODE_OK
+     */
+    const DataReaderQos get_datareader_qos_from_profile(
+            const std::string& profile_name) const;
+
     /* TODO
        bool copy_from_topic_qos(
             ReaderQos& reader_qos,
