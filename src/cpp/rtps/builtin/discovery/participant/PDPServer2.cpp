@@ -61,6 +61,8 @@ PDPServer2::PDPServer2(
 
 PDPServer2::~PDPServer2()
 {
+    ping_->cancel_timer();
+    routine_->cancel_timer();
     discovery_db_.disable();
     process_changes_release_(discovery_db_.clear());
     delete(routine_);

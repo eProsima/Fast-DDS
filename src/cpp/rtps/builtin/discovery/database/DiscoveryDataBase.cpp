@@ -79,28 +79,19 @@ std::vector<fastrtps::rtps::CacheChange_t*> DiscoveryDataBase::clear()
     edp_publications_to_send_.clear();
     edp_subscriptions_to_send_.clear();
 
-    /* Unmatch and clear writers_ */
+    /* Clear writers_ */
     for (auto writers_it = writers_.begin(); writers_it != writers_.end();)
     {
-        unmatch_writer_(writers_it->first);
         writers_it = delete_writer_entity_(writers_it);
     }
 
-    /* Unmatch and clear readers_ */
+    /* Clear readers_ */
     for (auto readers_it = readers_.begin(); readers_it != readers_.end();)
     {
-        unmatch_reader_(readers_it->first);
         readers_it = delete_reader_entity_(readers_it);
     }
 
-    /* Unmatch and clear participants_ */
-    // Unmatching a participant also changes the ACK status on the relevant participants, so all participants need to be
-    // unmatched first to avoid unmatching already deleted participants
-    for (auto participant: participants_)
-    {
-        unmatch_participant_(participant.first);
-    }
-    // Once all partiicipants have been unmatched, the it is safe to delete them
+    /* Clear participants_ */
     for (auto participants_it = participants_.begin(); participants_it != participants_.end();)
     {
         participants_it = delete_participant_entity_(participants_it);
@@ -111,11 +102,11 @@ std::vector<fastrtps::rtps::CacheChange_t*> DiscoveryDataBase::clear()
     local_servers_count_ = 0;
 
     /* Clear changes to release */
-    std::vector<fastrtps::rtps::CacheChange_t*> changes_to_release = changes_to_release_;
+    std::vector<fastrtps::rtps::CacheChange_t*> leftover_changes = changes_to_release_;
     changes_to_release_.clear();
 
     /* Return the collection of changes that are no longer owned by the database */
-    return changes_to_release;
+    return leftover_changes;
 }
 
 bool DiscoveryDataBase::pdp_is_relevant(
@@ -230,6 +221,12 @@ void DiscoveryDataBase::add_ack_(
         const eprosima::fastrtps::rtps::CacheChange_t* change,
         const eprosima::fastrtps::rtps::GuidPrefix_t& acked_entity)
 {
+    if (!enabled_)
+    {
+        logWarning(DISCOVERY_DATABASE, "Discovery Database is disabled");
+        return;
+    }
+
     if (is_participant(change))
     {
         logInfo(DISCOVERY_DATABASE,
@@ -283,7 +280,7 @@ bool DiscoveryDataBase::update(
 {
     if (!enabled_)
     {
-        logWarning(DISCOVERY_DATABASE, "Ignoring attempt on updating a disabled database");
+        logWarning(DISCOVERY_DATABASE, "Discovery Database is disabled");
         return false;
     }
 
@@ -304,7 +301,7 @@ bool DiscoveryDataBase::update(
 {
     if (!enabled_)
     {
-        logWarning(DISCOVERY_DATABASE, "Ignoring attempt on updating a disabled database");
+        logWarning(DISCOVERY_DATABASE, "Discovery Database is disabled");
         return false;
     }
 
@@ -396,6 +393,12 @@ void DiscoveryDataBase::clear_changes_to_release()
 // Functions to process PDP and EDP data queues
 void DiscoveryDataBase::process_pdp_data_queue()
 {
+    if (!enabled_)
+    {
+        logWarning(DISCOVERY_DATABASE, "Discovery Database is disabled");
+        return;
+    }
+
     // Lock(exclusive mode) mutex locally
     std::unique_lock<share_mutex_t> lock(sh_mtx_);
 
@@ -429,6 +432,12 @@ void DiscoveryDataBase::process_pdp_data_queue()
 
 bool DiscoveryDataBase::process_edp_data_queue()
 {
+    if (!enabled_)
+    {
+        logWarning(DISCOVERY_DATABASE, "Discovery Database is disabled");
+        return false;
+    }
+
     bool is_dirty_topic = false;
 
     // Lock(exclusive mode) mutex locally
@@ -1003,6 +1012,11 @@ void DiscoveryDataBase::process_dispose_reader_(
 
 bool DiscoveryDataBase::process_dirty_topics()
 {
+    if (!enabled_)
+    {
+        logWarning(DISCOVERY_DATABASE, "Discovery Database is disabled");
+        return false;
+    }
     // logInfo(DISCOVERY_DATABASE, "process_dirty_topics start");
     // Get shared lock
     std::unique_lock<share_mutex_t> lock(sh_mtx_);
@@ -1147,6 +1161,11 @@ bool DiscoveryDataBase::process_dirty_topics()
 bool DiscoveryDataBase::delete_entity_of_change(
         fastrtps::rtps::CacheChange_t* change)
 {
+    if (!enabled_)
+    {
+        logWarning(DISCOVERY_DATABASE, "Discovery Database is disabled");
+        return false;
+    }
     // Lock(exclusive mode) mutex locally
     std::unique_lock<share_mutex_t> lock(sh_mtx_);
 
