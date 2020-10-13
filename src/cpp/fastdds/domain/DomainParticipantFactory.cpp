@@ -39,7 +39,6 @@ using eprosima::fastdds::dds::Log;
 
 using eprosima::fastrtps::rtps::RTPSDomain;
 using eprosima::fastrtps::rtps::RTPSParticipant;
-using eprosima::fastrtps::rtps::RTPSParticipantAttributes;
 
 namespace eprosima {
 namespace fastdds {
