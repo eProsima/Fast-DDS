@@ -33,7 +33,7 @@ namespace rtps {
 using json = nlohmann::json;
 
 template <typename T>
-std::string objectToString(T& t)
+std::string objectToString(const T& t)
 {
     std::ostringstream stream;
     stream << t;
@@ -41,7 +41,7 @@ std::string objectToString(T& t)
 }
 
 template <typename T>
-std::string vectorToString(std::vector<T> v)
+std::string vectorToString(const std::vector<T> v)
 {
     std::ostringstream stream;
     std::vector<std::string> str_vec;
@@ -53,11 +53,12 @@ std::string vectorToString(std::vector<T> v)
 }
 
 template <typename T>
-json vectorToJson(std::vector<T> v)
+json vectorToJson(const std::vector<T> v)
 {
     json j;
     std::vector<std::string> str_vec;
     int i = 0;
+    // it creates a map to make every collection maps
     for (T t : v)
     {
         j[std::to_string(i)] = objectToString(t);
@@ -71,7 +72,7 @@ json vectorToJson(std::vector<T> v)
 static json cacheChangeToJson(eprosima::fastrtps::rtps::CacheChange_t* change)
 {
     json j;
-    j["entity_guid"] = objectToString(change->instanceHandle);
+    j["entity_guid"] = objectToString(fastrtps::rtps::iHandle2GUID(change->instanceHandle));
     j["writer_guid"] = objectToString(change->write_params.sample_identity().writer_guid());
     j["origin_sequence_number"] = objectToString(change->write_params.sample_identity().sequence_number());
     j["sequence_number"] = objectToString(change->sequenceNumber);

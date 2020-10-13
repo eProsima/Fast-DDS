@@ -1572,6 +1572,10 @@ nlohmann::json DiscoveryDataBase::json_dump() const
     nlohmann::json j;
     
     auto pit = participants_.begin();
+    if (pit == participants_.end())
+    {
+        j["participants"] = nlohmann::json();
+    }
     while(pit != participants_.end())
     {
         j["participants"][eprosima::fastdds::rtps::objectToString(pit->first)] = pit->second.json_dump();
@@ -1579,6 +1583,10 @@ nlohmann::json DiscoveryDataBase::json_dump() const
     }
 
     auto wit = writers_.begin();
+    if (wit == writers_.end())
+    {
+        j["writers"] = nlohmann::json();
+    }
     while(wit != writers_.end())
     {
         j["writers"][eprosima::fastdds::rtps::objectToString(wit->first)] = wit->second.json_dump();
@@ -1586,6 +1594,10 @@ nlohmann::json DiscoveryDataBase::json_dump() const
     }
 
     auto rit = readers_.begin();
+    if (rit == readers_.end())
+    {
+        j["readers"] = nlohmann::json();
+    }
     while(rit != readers_.end())
     {
         j["readers"][eprosima::fastdds::rtps::objectToString(rit->first)] = rit->second.json_dump();
@@ -1593,6 +1605,10 @@ nlohmann::json DiscoveryDataBase::json_dump() const
     }
 
     auto rtit = readers_by_topic_.begin();
+    if (rtit == readers_by_topic_.end())
+    {
+        j["readers_by_topic"] = nlohmann::json();
+    }
     while(rtit != readers_by_topic_.end())
     {
         j["readers_by_topic"][rtit->first] = eprosima::fastdds::rtps::vectorToJson(rtit->second);
@@ -1600,6 +1616,10 @@ nlohmann::json DiscoveryDataBase::json_dump() const
     }
 
     auto wtit = writers_by_topic_.begin();
+    if (wtit == writers_by_topic_.end())
+    {
+        j["writers_by_topic"] = nlohmann::json();
+    }
     while(wtit != writers_by_topic_.end())
     {
         j["writers_by_topic"][wtit->first] = eprosima::fastdds::rtps::vectorToJson(wtit->second);

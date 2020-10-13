@@ -93,10 +93,8 @@ nlohmann::json DiscoveryParticipantInfo::json_dump() const
     nlohmann::json j = DiscoverySharedInfo::json_dump();
     
     j["writers"] = eprosima::fastdds::rtps::vectorToJson(writers_);
-    j["writers"]["len"] = writers_.size();
 
     j["readers"] = eprosima::fastdds::rtps::vectorToJson(readers_);
-    j["readers"]["len"] = readers_.size();
 
     // TODO add DiscoveryParticipantChangeData
 
