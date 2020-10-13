@@ -19,9 +19,10 @@
 #ifndef RTPS_HISTORY_TOPICPAYLOADPOOLREGISTRY_IMPL_TOPICPAYLOADPOOLREGISTRY_HPP
 #define RTPS_HISTORY_TOPICPAYLOADPOOLREGISTRY_IMPL_TOPICPAYLOADPOOLREGISTRY_HPP
 
-#include <map>
 #include <memory>
+#include <mutex>
 #include <string>
+#include <unordered_map>
 
 namespace eprosima {
 namespace fastrtps {
@@ -49,8 +50,27 @@ public:
             const std::string& topic_name,
             const PoolConfig& config)
     {
-        auto inner_pool = TopicPayloadPool::get(config);
-        return std::make_shared<TopicPayloadPoolProxy>(topic_name, inner_pool);
+        std::lock_guard<std::mutex> lock(mutex_);
+
+        auto it = pool_map_.find(topic_name);
+        if (it == pool_map_.end())
+        {
+            it = pool_map_.emplace(topic_name, TopicPayloadPoolRegistryEntry()).first;
+        }
+
+        switch (config.memory_policy)
+        {
+            case PREALLOCATED_MEMORY_MODE:
+                return do_get(it->second.pool_for_preallocated, topic_name, config);
+            case PREALLOCATED_WITH_REALLOC_MEMORY_MODE:
+                return do_get(it->second.pool_for_preallocated_realloc, topic_name, config);
+            case DYNAMIC_RESERVE_MEMORY_MODE:
+                return do_get(it->second.pool_for_dynamic, topic_name, config);
+            case DYNAMIC_REUSABLE_MEMORY_MODE:
+                return do_get(it->second.pool_for_dynamic_reusable, topic_name, config);
+        }
+
+        return nullptr;
     }
 
     void release(
@@ -58,6 +78,24 @@ public:
     {
         pool.reset();
     }
+
+private:
+
+    std::shared_ptr<TopicPayloadPoolProxy> do_get(
+            std::shared_ptr<TopicPayloadPoolProxy>& ptr,
+            const std::string& topic_name,
+            const PoolConfig& config)
+    {
+        if (!ptr)
+        {
+            ptr = std::make_shared<TopicPayloadPoolProxy>(topic_name, TopicPayloadPool::get(config));
+        }
+
+        return ptr;
+    }
+
+    std::mutex mutex_;
+    std::unordered_map<std::string, TopicPayloadPoolRegistryEntry> pool_map_;
 
 };
 
