@@ -71,6 +71,14 @@ public:
         }
     }
 
+    ~PoolForTest()
+    {
+        for (auto it : all_payloads_)
+        {
+            free(it.first);
+        }
+    }
+
     bool get_payload(
             uint32_t size,
             CacheChange_t& cache_change) override
