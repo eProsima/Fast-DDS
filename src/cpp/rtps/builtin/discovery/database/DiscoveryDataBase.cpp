@@ -87,8 +87,9 @@ bool DiscoveryDataBase::edp_publications_is_relevant(
     }
     else if (!itp->second.is_matched(reader_guid.guidPrefix))
     {
-        // Reader client hasn't matched with the writer client
-        return false;
+        // participant still not matched, the publisher is relevant to avoid it from
+        // being removed from the writer history
+        return true;
     }
 
     auto itw = writers_.find(change_guid);
@@ -120,8 +121,9 @@ bool DiscoveryDataBase::edp_subscriptions_is_relevant(
     }
     else if (!itp->second.is_matched(reader_guid.guidPrefix))
     {
-        // participant still not matched
-        return false;
+        // participant still not matched, the subscriber is relevant to avoid it from
+        // being removed from the writer history
+        return true;
     }
 
     auto itr = readers_.find(change_guid);
@@ -751,13 +753,13 @@ bool DiscoveryDataBase::process_dirty_topics()
                     {
                         // If the status is 0, add DATA(w) to a `edp_publications_to_send_` (if it's not there).
                         if (std::find(
-                                    edp_publications_to_send_.begin(),
-                                    edp_publications_to_send_.end(),
-                                    writers_it->second.change()) == edp_publications_to_send_.end())
+                                    edp_subscriptions_to_send_.begin(),
+                                    edp_subscriptions_to_send_.end(),
+                                    readers_it->second.change()) == edp_subscriptions_to_send_.end())
                         {
-                            logInfo(DISCOVERY_DATABASE, "Addind DATA(w) to send: "
-                                    << writers_it->second.change()->instanceHandle);
-                            edp_publications_to_send_.push_back(writers_it->second.change());
+                            logInfo(DISCOVERY_DATABASE, "Addind DATA(r) to send: "
+                                    << readers_it->second.change()->instanceHandle);
+                            edp_subscriptions_to_send_.push_back(readers_it->second.change());
                         }
                     }
                 }
@@ -767,11 +769,11 @@ bool DiscoveryDataBase::process_dirty_topics()
                     if (std::find(
                                 pdp_to_send_.begin(),
                                 pdp_to_send_.end(),
-                                parts_writer_it->second.change()) == pdp_to_send_.end())
+                                parts_reader_it->second.change()) == pdp_to_send_.end())
                     {
-                        logInfo(DISCOVERY_DATABASE, "Addind writer's DATA(p) to send: "
-                                << parts_writer_it->second.change()->instanceHandle);
-                        pdp_to_send_.push_back(parts_writer_it->second.change());
+                        logInfo(DISCOVERY_DATABASE, "Addind readers' DATA(p) to send: "
+                                << parts_reader_it->second.change()->instanceHandle);
+                        pdp_to_send_.push_back(parts_reader_it->second.change());
                     }
                     // Set topic as not-clearable.
                     is_clearable = false;
@@ -786,13 +788,13 @@ bool DiscoveryDataBase::process_dirty_topics()
                     {
                         // If the status is 0, add DATA(r) to a `edp_subscriptions_to_send_` (if it's not there).
                         if (std::find(
-                                    edp_subscriptions_to_send_.begin(),
-                                    edp_subscriptions_to_send_.end(),
-                                    readers_it->second.change()) == edp_subscriptions_to_send_.end())
+                                    edp_publications_to_send_.begin(),
+                                    edp_publications_to_send_.end(),
+                                    writers_it->second.change()) == edp_publications_to_send_.end())
                         {
-                            logInfo(DISCOVERY_DATABASE, "Addind DATA(r) to send: "
-                                    << readers_it->second.change()->instanceHandle);
-                            edp_subscriptions_to_send_.push_back(readers_it->second.change());
+                            logInfo(DISCOVERY_DATABASE, "Addind DATA(w) to send: "
+                                    << writers_it->second.change()->instanceHandle);
+                            edp_publications_to_send_.push_back(writers_it->second.change());
                         }
                     }
                 }
@@ -802,11 +804,11 @@ bool DiscoveryDataBase::process_dirty_topics()
                     if (std::find(
                                 pdp_to_send_.begin(),
                                 pdp_to_send_.end(),
-                                parts_reader_it->second.change()) == pdp_to_send_.end())
+                                parts_writer_it->second.change()) == pdp_to_send_.end())
                     {
-                        logInfo(DISCOVERY_DATABASE, "Addind readers's DATA(p) to send: "
-                                << parts_reader_it->second.change()->instanceHandle);
-                        pdp_to_send_.push_back(parts_reader_it->second.change());
+                        logInfo(DISCOVERY_DATABASE, "Addind writers' DATA(p) to send: "
+                                << parts_writer_it->second.change()->instanceHandle);
+                        pdp_to_send_.push_back(parts_writer_it->second.change());
                     }
                     // Set topic as not-clearable.
                     is_clearable = false;
