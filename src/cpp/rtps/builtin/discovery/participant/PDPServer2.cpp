@@ -61,6 +61,15 @@ PDPServer2::PDPServer2(
 
 PDPServer2::~PDPServer2()
 {
+    // stop routines
+    routine_->cancel_timer();
+    ping_->cancel_timer();
+
+    // disable and clear ddb
+    discovery_db_.disable();
+    process_changes_release_(discovery_db_.clear());
+
+    // delete routines
     delete(routine_);
     delete(ping_);
 }
@@ -911,11 +920,19 @@ bool PDPServer2::process_disposals()
 bool PDPServer2::process_changes_release()
 {
     logInfo(RTPS_PDP_SERVER, "process_changes_release start");
+    process_changes_release_(discovery_db_.changes_to_release());
+    discovery_db_.clear_changes_to_release();
+    return false;
+}
+
+void PDPServer2::process_changes_release_(
+        const std::vector<fastrtps::rtps::CacheChange_t*>& changes)
+{
     // We will need the EDP publications/subscriptions writers, readers, and histories
     EDPServer2* edp = static_cast<EDPServer2*>(mp_EDP);
 
     // For each change to erase, first try to erase in case is in writer history and then it releases it
-    for (auto ch : discovery_db_.changes_to_release())
+    for (auto ch : changes)
     {
         // Check if change owner is this participant. In that case, the change comes from a writer pool (PDP, EDP
         // publications or EDP subscriptions)
@@ -1011,8 +1028,6 @@ bool PDPServer2::process_changes_release()
             }
         }
     }
-    discovery_db_.clear_changes_to_release();
-    return false;
 }
 
 void PDPServer2::remove_related_alive_from_history_nts(
