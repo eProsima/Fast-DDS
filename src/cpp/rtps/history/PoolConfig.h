@@ -70,8 +70,10 @@ struct PoolConfig : public BasicPoolConfig
             {
                 history_attr.memoryPolicy,
                 history_attr.payloadMaxSize,
-                static_cast<uint32_t>(history_attr.initialReservedCaches <= 0 ? 0 : history_attr.initialReservedCaches),
-                static_cast<uint32_t>(history_attr.maximumReservedCaches <= 0 ? 0 : history_attr.maximumReservedCaches + 1)
+                static_cast<uint32_t>(
+                    history_attr.initialReservedCaches <= 0 ? 0 : history_attr.initialReservedCaches),
+                static_cast<uint32_t>(
+                    history_attr.maximumReservedCaches <= 0 ? 0 : history_attr.maximumReservedCaches + 1)
             };
     }
 

@@ -25,7 +25,7 @@ using namespace eprosima::fastrtps::rtps;
 using namespace ::testing;
 using namespace std;
 
-class CacheChangePoolTests : public TestWithParam<tuple<uint32_t, uint32_t, MemoryManagementPolicy_t> >
+class CacheChangePoolTests : public TestWithParam<tuple<uint32_t, uint32_t, MemoryManagementPolicy_t>>
 {
 protected:
 
