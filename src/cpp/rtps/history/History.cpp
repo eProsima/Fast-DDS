@@ -65,6 +65,41 @@ History::const_iterator History::find_change(
                    });
 }
 
+bool History::matches_change(
+        const CacheChange_t* ch_inner,
+        CacheChange_t* ch_outer)
+{
+    return ch_inner->sequenceNumber == ch_outer->sequenceNumber;
+}
+
+History::iterator History::remove_change(
+        const_iterator removal,
+        bool release)
+{
+    if (mp_mutex == nullptr)
+    {
+        return changesEnd();
+    }
+
+    if (removal == changesEnd())
+    {
+        logInfo(RTPS_WRITER_HISTORY, "Trying to remove without a proper CacheChange_t referenced");
+        return changesEnd();
+    }
+
+    std::lock_guard<RecursiveTimedMutex> guard(*mp_mutex);
+
+    CacheChange_t* change = *removal;
+    m_isHistoryFull = false;
+
+    if (release)
+    {
+        do_release_cache(change);
+    }
+
+    return m_changes.erase(removal);
+}
+
 bool History::remove_change(
         CacheChange_t* ch)
 {

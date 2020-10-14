@@ -122,7 +122,7 @@ public:
      * @param ch Pointer to the CacheChange_t.
      * @return True if removed.
      */
-    RTPS_DllAPI bool remove_change(
+    RTPS_DllAPI virtual bool remove_change(
             CacheChange_t* ch);
 
     /**
@@ -142,7 +142,7 @@ public:
      */
     RTPS_DllAPI virtual bool matches_change(
             const CacheChange_t* ch_inner,
-            CacheChange_t* ch_outer) = 0;
+            CacheChange_t* ch_outer);
     /**
      * Remove a specific change from the history.
      * @param removal iterator to the CacheChange_t to remove.
@@ -151,7 +151,7 @@ public:
      */
     RTPS_DllAPI virtual iterator remove_change(
             const_iterator removal,
-            bool release = true) = 0;
+            bool release = true);
 
     /**
      * Get the beginning of the changes history iterator.
