@@ -231,6 +231,11 @@ protected:
             const HistoryAttributes& history_attr,
             bool is_reader);
 
+    std::shared_ptr<ITopicPayloadPool> pub_writer_payload_pool_;
+    std::shared_ptr<ITopicPayloadPool> pub_reader_payload_pool_;
+    std::shared_ptr<ITopicPayloadPool> sub_writer_payload_pool_;
+    std::shared_ptr<ITopicPayloadPool> sub_reader_payload_pool_;
+
 private:
 
     /**

@@ -100,23 +100,31 @@ EDPSimple::~EDPSimple()
 
     if (this->publications_reader_.first != nullptr)
     {
+        HistoryAttributes hattr = publications_reader_.second->m_att;
         this->mp_RTPSParticipant->deleteUserEndpoint(publications_reader_.first);
         delete(publications_reader_.second);
+        release_payload_pool(pub_reader_payload_pool_, hattr, true);
     }
     if (this->subscriptions_reader_.first != nullptr)
     {
+        HistoryAttributes hattr = subscriptions_reader_.second->m_att;
         this->mp_RTPSParticipant->deleteUserEndpoint(subscriptions_reader_.first);
         delete(subscriptions_reader_.second);
+        release_payload_pool(sub_reader_payload_pool_, hattr, true);
     }
     if (this->publications_writer_.first != nullptr)
     {
+        HistoryAttributes hattr = publications_writer_.second->m_att;
         this->mp_RTPSParticipant->deleteUserEndpoint(publications_writer_.first);
         delete(publications_writer_.second);
+        release_payload_pool(pub_writer_payload_pool_, hattr, false);
     }
     if (this->subscriptions_writer_.first != nullptr)
     {
+        HistoryAttributes hattr = subscriptions_writer_.second->m_att;
         this->mp_RTPSParticipant->deleteUserEndpoint(subscriptions_writer_.first);
         delete(subscriptions_writer_.second);
+        release_payload_pool(sub_writer_payload_pool_, hattr, false);
     }
 
     if (nullptr != publications_listener_)
@@ -320,9 +328,10 @@ bool EDPSimple::createSEDPEndpoints()
 
     if (m_discovery.discovery_config.m_simpleEDP.use_PublicationWriterANDSubscriptionReader)
     {
+        pub_writer_payload_pool_ = create_payload_pool("DCPSPublications", writer_history_att, false);
         publications_writer_.second = new WriterHistory(writer_history_att);
-        created &= this->mp_RTPSParticipant->createWriter(&waux, watt, publications_writer_.second,
-                        publications_listener_, c_EntityId_SEDPPubWriter, true);
+        created &= this->mp_RTPSParticipant->createWriter(&waux, watt, pub_writer_payload_pool_,
+                        publications_writer_.second, publications_listener_, c_EntityId_SEDPPubWriter, true);
 
         if (created)
         {
@@ -333,11 +342,13 @@ bool EDPSimple::createSEDPEndpoints()
         {
             delete(publications_writer_.second);
             publications_writer_.second = nullptr;
+            release_payload_pool(pub_writer_payload_pool_, writer_history_att, false);
         }
 
+        sub_reader_payload_pool_ = create_payload_pool("DCPSSubscriptions", reader_history_att, true);
         subscriptions_reader_.second = new ReaderHistory(reader_history_att);
-        created &= this->mp_RTPSParticipant->createReader(&raux, ratt, subscriptions_reader_.second,
-                        subscriptions_listener_, c_EntityId_SEDPSubReader, true);
+        created &= this->mp_RTPSParticipant->createReader(&raux, ratt, sub_reader_payload_pool_,
+                        subscriptions_reader_.second, subscriptions_listener_, c_EntityId_SEDPSubReader, true);
 
         if (created)
         {
@@ -348,29 +359,32 @@ bool EDPSimple::createSEDPEndpoints()
         {
             delete(subscriptions_reader_.second);
             subscriptions_reader_.second = nullptr;
+            release_payload_pool(sub_reader_payload_pool_, reader_history_att, true);
         }
     }
     if (m_discovery.discovery_config.m_simpleEDP.use_PublicationReaderANDSubscriptionWriter)
     {
+        pub_reader_payload_pool_ = create_payload_pool("DCPSPublications", reader_history_att, true);
         publications_reader_.second = new ReaderHistory(reader_history_att);
-        created &= this->mp_RTPSParticipant->createReader(&raux, ratt, publications_reader_.second,
-                        publications_listener_, c_EntityId_SEDPPubReader, true);
+        created &= this->mp_RTPSParticipant->createReader(&raux, ratt, pub_reader_payload_pool_,
+                        publications_reader_.second, publications_listener_, c_EntityId_SEDPPubReader, true);
 
         if (created)
         {
             publications_reader_.first = dynamic_cast<StatefulReader*>(raux);
             logInfo(RTPS_EDP, "SEDP Publication Reader created");
-
         }
         else
         {
             delete(publications_reader_.second);
             publications_reader_.second = nullptr;
+            release_payload_pool(pub_reader_payload_pool_, reader_history_att, true);
         }
 
+        sub_writer_payload_pool_ = create_payload_pool("DCPSSubscriptions", writer_history_att, false);
         subscriptions_writer_.second = new WriterHistory(writer_history_att);
-        created &= this->mp_RTPSParticipant->createWriter(&waux, watt, subscriptions_writer_.second,
-                        subscriptions_listener_, c_EntityId_SEDPSubWriter, true);
+        created &= this->mp_RTPSParticipant->createWriter(&waux, watt, sub_writer_payload_pool_,
+                        subscriptions_writer_.second, subscriptions_listener_, c_EntityId_SEDPSubWriter, true);
 
         if (created)
         {
@@ -382,6 +396,7 @@ bool EDPSimple::createSEDPEndpoints()
         {
             delete(subscriptions_writer_.second);
             subscriptions_writer_.second = nullptr;
+            release_payload_pool(sub_writer_payload_pool_, writer_history_att, false);
         }
     }
     logInfo(RTPS_EDP, "Creation finished");
