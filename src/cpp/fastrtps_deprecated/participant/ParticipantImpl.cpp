@@ -352,7 +352,7 @@ Subscriber* ParticipantImpl::createSubscriber(
     }
 
     RTPSReader* reader = RTPSDomain::createRTPSReader(this->mp_rtpsParticipant,
-                    ratt,
+                    ratt, subimpl->payload_pool(),
                     (ReaderHistory*)&subimpl->m_history,
                     (ReaderListener*)&subimpl->m_readerListener);
     if (reader == nullptr)
