@@ -236,9 +236,7 @@ protected:
 
         if (is_reader)
         {
-            expected_pool_size_for_readers =
-                    (new_reserved_size > expected_pool_size_for_readers) ?
-                    new_reserved_size : expected_pool_size_for_readers;
+            expected_pool_size_for_readers += new_reserved_size;
         }
         else
         {
@@ -264,6 +262,15 @@ protected:
         {
             expected_finite_max_pool_size -=
                     (new_released_max_size < new_released_size ? new_released_size : new_released_max_size);
+        }
+
+        if (is_reader)
+        {
+            expected_pool_size_for_readers -= new_released_size;
+        }
+        else
+        {
+            expected_pool_size_for_writers -= new_released_size;
         }
     }
 
