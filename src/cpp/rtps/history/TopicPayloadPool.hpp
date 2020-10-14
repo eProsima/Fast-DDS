@@ -127,7 +127,7 @@ public:
     }
 
     static std::shared_ptr<ITopicPayloadPool> get(
-            const PoolConfig& config);
+            const BasicPoolConfig& config);
 
 protected:
 
