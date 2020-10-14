@@ -26,13 +26,29 @@ namespace eprosima {
 namespace fastrtps {
 namespace rtps {
 
-struct PoolConfig
+struct BasicPoolConfig
 {
     //! Memory management policy.
     MemoryManagementPolicy_t memory_policy;
 
     //! Payload size when preallocating data.
     uint32_t payload_initial_size;
+};
+
+struct PoolConfig : public BasicPoolConfig
+{
+    PoolConfig() = default;
+
+    constexpr PoolConfig(
+            MemoryManagementPolicy_t policy,
+            uint32_t payload_size,
+            uint32_t ini_size,
+            uint32_t max_size) noexcept
+        : BasicPoolConfig {policy, payload_size}
+        , initial_size(ini_size)
+        , maximum_size(max_size)
+    {
+    }
 
     //! Initial number of elements when preallocating data.
     uint32_t initial_size;

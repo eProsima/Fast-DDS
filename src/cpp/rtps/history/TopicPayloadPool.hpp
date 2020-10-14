@@ -13,7 +13,7 @@
 // limitations under the License.
 
 /**
- * @file Base.hpp
+ * @file TopicPayloadPool.hpp
  */
 
 #ifndef RTPS_HISTORY_TOPICPAYLOADPOOL_HPP
@@ -127,7 +127,7 @@ public:
     }
 
     static std::shared_ptr<ITopicPayloadPool> get(
-            PoolConfig config);
+            const BasicPoolConfig& config);
 
 protected:
 
