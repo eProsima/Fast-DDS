@@ -574,7 +574,7 @@ void SubscriberImpl::set_qos(
         to.partition() = from.partition();
         to.partition().hasChanged = true;
     }
-    if (to.group_data().getValue() != from.group_data().getValue() )
+    if (to.group_data().getValue() != from.group_data().getValue())
     {
         to.group_data() = from.group_data();
         to.group_data().hasChanged = true;
