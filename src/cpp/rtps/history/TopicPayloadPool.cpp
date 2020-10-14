@@ -278,7 +278,7 @@ bool TopicPayloadPool::shrink (
 }
 
 std::shared_ptr<ITopicPayloadPool> TopicPayloadPool::get(
-        PoolConfig config)
+        const BasicPoolConfig& config)
 {
     switch (config.memory_policy)
     {
