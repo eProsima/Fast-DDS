@@ -49,8 +49,6 @@ DiscoveryDataBase::~DiscoveryDataBase()
 
 std::vector<fastrtps::rtps::CacheChange_t*> DiscoveryDataBase::clear()
 {
-    std::unique_lock<share_mutex_t> lock(sh_mtx_);
-
     // Cannot clear an enabled database, since there could be inconsistencies after the process
     if (enabled_)
     {
@@ -58,6 +56,8 @@ std::vector<fastrtps::rtps::CacheChange_t*> DiscoveryDataBase::clear()
         return std::vector<fastrtps::rtps::CacheChange_t*>({});
     }
     logInfo(DISCOVERY_DATABASE, "Clearing DiscoveryDataBase");
+
+    std::unique_lock<share_mutex_t> lock(sh_mtx_);
 
     /* Clear receive queues */
     pdp_data_queue_.Clear();
@@ -98,7 +98,6 @@ std::vector<fastrtps::rtps::CacheChange_t*> DiscoveryDataBase::clear()
 
     /* Reset state parameters */
     server_acked_by_all_ = false;
-    // local_servers_count_ = 0;
 
     /* Clear changes to release */
     std::vector<fastrtps::rtps::CacheChange_t*> leftover_changes = changes_to_release_;
