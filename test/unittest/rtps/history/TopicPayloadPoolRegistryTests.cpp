@@ -78,4 +78,14 @@ TEST(TopicPayloadPoolRegistryTests, basic_checks)
     EXPECT_EQ(pool_backup_a1.use_count(), 1);
     EXPECT_EQ(pool_backup_a3.use_count(), 1);
     EXPECT_EQ(pool_backup_b1.use_count(), 1);
+
+    // Repeat allocations and check a different pointer is returned
+    cfg.memory_policy = PREALLOCATED_MEMORY_MODE;
+    pool_a1 = TopicPayloadPoolRegistry::get("topic_a", cfg);
+    EXPECT_NE(pool_a1, pool_backup_a1);
+    pool_b1 = TopicPayloadPoolRegistry::get("topic_b", cfg);
+    EXPECT_NE(pool_b1, pool_backup_b1);
+    cfg.memory_policy = DYNAMIC_RESERVE_MEMORY_MODE;
+    pool_a3 = TopicPayloadPoolRegistry::get("topic_a", cfg);
+    EXPECT_NE(pool_a3, pool_backup_a3);
 }
