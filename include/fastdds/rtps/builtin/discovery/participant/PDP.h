@@ -32,6 +32,7 @@
 #include <fastrtps/utils/collections/ResourceLimitedVector.hpp>
 #include <fastdds/rtps/participant/ParticipantDiscoveryInfo.h>
 
+#include <rtps/history/ITopicPayloadPool.h>
 
 namespace eprosima {
 namespace fastrtps {
@@ -65,18 +66,20 @@ class PDP
     friend class PDPServerListener;
 
 public:
+
     /**
      * Constructor
      * @param builtin Pointer to the BuiltinProcols object.
      * @param allocation Participant allocation parameters.
      */
     PDP(
-        BuiltinProtocols* builtin,
-        const RTPSParticipantAllocationAttributes& allocation);
+            BuiltinProtocols* builtin,
+            const RTPSParticipantAllocationAttributes& allocation);
 
     virtual ~PDP();
 
-    virtual void initializeParticipantProxyData(ParticipantProxyData* participant_data);
+    virtual void initializeParticipantProxyData(
+            ParticipantProxyData* participant_data);
 
     /**
      * Initialize the PDP.
@@ -88,7 +91,8 @@ public:
 
     bool enable();
 
-    virtual bool init(RTPSParticipantImpl* part) = 0;
+    virtual bool init(
+            RTPSParticipantImpl* part) = 0;
 
     /**
      * Creates an initializes a new participant proxy from a DATA(p) raw info
@@ -149,7 +153,8 @@ public:
      * @param [in] reader GUID_t of the reader we are looking for.
      * @return True if found.
      */
-    bool has_reader_proxy_data(const GUID_t& reader);
+    bool has_reader_proxy_data(
+            const GUID_t& reader);
 
     /**
      * This method gets a copy of a ReaderProxyData object if it is found among the registered RTPSParticipants
@@ -168,7 +173,8 @@ public:
      * @param [in] writer GUID_t of the writer we are looking for.
      * @return True if found.
      */
-    bool has_writer_proxy_data(const GUID_t& writer);
+    bool has_writer_proxy_data(
+            const GUID_t& writer);
 
     /**
      * This method gets a copy of a WriterProxyData object if it is found among the registered RTPSParticipants
@@ -196,14 +202,16 @@ public:
      * @param reader_guid GUID_t of the reader to remove.
      * @return true if found and deleted.
      */
-    bool removeReaderProxyData(const GUID_t& reader_guid);
+    bool removeReaderProxyData(
+            const GUID_t& reader_guid);
 
     /**
      * This method removes and deletes a WriterProxyData object from its corresponding RTPSParticipant.
      * @param writer_guid GUID_t of the wtiter to remove.
      * @return true if found and deleted.
      */
-    bool removeWriterProxyData(const GUID_t& writer_guid);
+    bool removeWriterProxyData(
+            const GUID_t& writer_guid);
 
     /**
      * Create the SPDP Writer and Reader
@@ -215,25 +223,31 @@ public:
      * This method assigns remote endpoints to the builtin endpoints defined in this protocol. It also calls the corresponding methods in EDP and WLP.
      * @param pdata Pointer to the RTPSParticipantProxyData object.
      */
-    virtual void assignRemoteEndpoints(ParticipantProxyData* pdata) = 0;
+    virtual void assignRemoteEndpoints(
+            ParticipantProxyData* pdata) = 0;
 
     /**
      * Override to match additional endpoints to PDP. Like EDP or WLP.
      * @param pdata Pointer to the ParticipantProxyData object.
      */
-    virtual void notifyAboveRemoteEndpoints(const ParticipantProxyData& pdata) = 0;
+    virtual void notifyAboveRemoteEndpoints(
+            const ParticipantProxyData& pdata) = 0;
 
     /**
      * Some PDP classes require EDP matching with update PDP DATAs like EDPStatic
      * @return true if EDP endpoinst must be match
      */
-    virtual bool updateInfoMatchesEDP() { return false; }
+    virtual bool updateInfoMatchesEDP()
+    {
+        return false;
+    }
 
     /**
      * Remove remote endpoints from the participant discovery protocol
      * @param pdata Pointer to the ParticipantProxyData to remove
      */
-    virtual void removeRemoteEndpoints(ParticipantProxyData* pdata) = 0;
+    virtual void removeRemoteEndpoints(
+            ParticipantProxyData* pdata) = 0;
 
     /**
      * This method removes a remote RTPSParticipant and all its writers and readers.
@@ -264,7 +278,10 @@ public:
      * Get a pointer to the EDP object.
      * @return pointer to the EDP object.
      */
-    inline EDP* getEDP(){return mp_EDP;}
+    inline EDP* getEDP()
+    {
+        return mp_EDP;
+    }
 
     /**
      * Get a const_iterator to the beginning of the RTPSParticipant Proxies.
@@ -295,17 +312,25 @@ public:
      * Get the RTPS participant
      * @return RTPS participant
      */
-    inline RTPSParticipantImpl* getRTPSParticipant() const {return mp_RTPSParticipant;};
+    inline RTPSParticipantImpl* getRTPSParticipant() const
+    {
+        return mp_RTPSParticipant;
+    }
 
     /**
      * Get the mutex.
      * @return Pointer to the Mutex
      */
-    inline std::recursive_mutex* getMutex() const {return mp_mutex;}
+    inline std::recursive_mutex* getMutex() const
+    {
+        return mp_mutex;
+    }
 
-    CDRMessage_t get_participant_proxy_data_serialized(Endianness_t endian);
+    CDRMessage_t get_participant_proxy_data_serialized(
+            Endianness_t endian);
 
 protected:
+
     //!Pointer to the builtin protocols object.
     BuiltinProtocols* mp_builtin;
     //!Pointer to the local RTPSParticipant.
@@ -338,8 +363,12 @@ protected:
     ReaderListener* mp_listener;
     //!WriterHistory
     WriterHistory* mp_PDPWriterHistory;
+    //!Writer payload pool
+    std::shared_ptr<ITopicPayloadPool> writer_payload_pool_;
     //!Reader History
     ReaderHistory* mp_PDPReaderHistory;
+    //!Reader payload pool
+    std::shared_ptr<ITopicPayloadPool> reader_payload_pool_;
     //!ReaderProxyData to allow preallocation of remote locators
     ReaderProxyData temp_reader_data_;
     //!WriterProxyData to allow preallocation of remote locators
@@ -428,5 +457,5 @@ extern const int32_t pdp_initial_reserved_caches;
 } /* namespace fastrtps */
 } /* namespace eprosima */
 
-#endif
+#endif // ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 #endif /* _FASTDDS_RTPS_PDP_H_ */
