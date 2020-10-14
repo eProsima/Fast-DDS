@@ -227,7 +227,7 @@ Publisher* ParticipantImpl::createPublisher(
 
     RTPSWriter* writer = RTPSDomain::createRTPSWriter(
         this->mp_rtpsParticipant,
-        watt,
+        watt, pubimpl->payload_pool(),
         (WriterHistory*)&pubimpl->m_history,
         (WriterListener*)&pubimpl->m_writerListener);
     if (writer == nullptr)
