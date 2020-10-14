@@ -39,6 +39,7 @@
 #include <fastrtps/utils/TimeConversion.h>
 #include <fastdds/rtps/resources/TimedEvent.h>
 
+#include <rtps/history/TopicPayloadPoolRegistry.hpp>
 
 #include <mutex>
 
@@ -55,8 +56,8 @@ static void set_builtin_reader_history_attributes(
 
     hatt.payloadMaxSize = is_secure ? 128 : 28;
 
-    if ( (allocation.maximum < c_upper_limit) &&
-            (allocation.initial < c_upper_limit) )
+    if ((allocation.maximum < c_upper_limit) &&
+            (allocation.initial < c_upper_limit))
     {
         hatt.initialReservedCaches = static_cast<uint32_t>(allocation.initial) * 2;
         hatt.maximumReservedCaches = static_cast<uint32_t>(allocation.maximum) * 2;
@@ -138,18 +139,48 @@ WLP::~WLP()
     {
         mp_participant->deleteUserEndpoint(mp_builtinReaderSecure);
         mp_participant->deleteUserEndpoint(mp_builtinWriterSecure);
-        delete this->mp_builtinReaderSecureHistory;
-        delete this->mp_builtinWriterSecureHistory;
+
+        if (mp_builtinReaderSecureHistory)
+        {
+            PoolConfig sreader_pool_cfg = PoolConfig::from_history_attributes(mp_builtinReaderSecureHistory->m_att);
+            delete mp_builtinReaderSecureHistory;
+            secure_payload_pool_->release_history(sreader_pool_cfg, true);
+        }
+
+        if (mp_builtinWriterSecureHistory)
+        {
+            PoolConfig swriter_pool_cfg = PoolConfig::from_history_attributes(mp_builtinWriterSecureHistory->m_att);
+            delete mp_builtinWriterSecureHistory;
+            secure_payload_pool_->release_history(swriter_pool_cfg, false);
+        }
+
+        TopicPayloadPoolRegistry::release(secure_payload_pool_);
     }
 #endif // if HAVE_SECURITY
+
     mp_participant->deleteUserEndpoint(mp_builtinReader);
     mp_participant->deleteUserEndpoint(mp_builtinWriter);
-    delete this->mp_builtinReaderHistory;
-    delete this->mp_builtinWriterHistory;
-    delete this->mp_listener;
+
+    if (mp_builtinReaderHistory)
+    {
+        PoolConfig reader_pool_cfg = PoolConfig::from_history_attributes(mp_builtinReaderHistory->m_att);
+        delete mp_builtinReaderHistory;
+        payload_pool_->release_history(reader_pool_cfg, true);
+    }
+
+    if (mp_builtinWriterHistory)
+    {
+        PoolConfig writer_pool_cfg = PoolConfig::from_history_attributes(mp_builtinWriterHistory->m_att);
+        delete mp_builtinWriterHistory;
+        payload_pool_->release_history(writer_pool_cfg, false);
+    }
+
+    delete mp_listener;
 
     delete pub_liveliness_manager_;
     delete sub_liveliness_manager_;
+
+    TopicPayloadPoolRegistry::release(payload_pool_);
 }
 
 bool WLP::initWL(
@@ -212,6 +243,10 @@ bool WLP::createEndpoints()
     set_builtin_writer_history_attributes(hatt, false);
     mp_builtinWriterHistory = new WriterHistory(hatt);
 
+    PoolConfig writer_pool_cfg = PoolConfig::from_history_attributes(hatt);
+    payload_pool_ = TopicPayloadPoolRegistry::get("DCPSParticipantMessage", writer_pool_cfg);
+    payload_pool_->reserve_history(writer_pool_cfg, false);
+
     // Built-in writer
     WriterAttributes watt;
     watt.endpoint.unicastLocatorList = mp_builtinProtocols->m_metatrafficUnicastLocatorList;
@@ -230,6 +265,7 @@ bool WLP::createEndpoints()
     if (mp_participant->createWriter(
                 &wout,
                 watt,
+                payload_pool_,
                 mp_builtinWriterHistory,
                 nullptr,
                 c_EntityId_WriterLiveliness,
@@ -243,12 +279,16 @@ bool WLP::createEndpoints()
         logError(RTPS_LIVELINESS, "Liveliness Writer Creation failed ");
         delete(mp_builtinWriterHistory);
         mp_builtinWriterHistory = nullptr;
+        payload_pool_->release_history(writer_pool_cfg, false);
         return false;
     }
 
     // Built-in reader history
     set_builtin_reader_history_attributes(hatt, participants_allocation, false);
     mp_builtinReaderHistory = new ReaderHistory(hatt);
+
+    PoolConfig reader_pool_cfg = PoolConfig::from_history_attributes(hatt);
+    payload_pool_->reserve_history(reader_pool_cfg, true);
 
     // WLP listener
 
@@ -270,6 +310,7 @@ bool WLP::createEndpoints()
     if (mp_participant->createReader(
                 &rout,
                 ratt,
+                payload_pool_,
                 mp_builtinReaderHistory,
                 (ReaderListener*)mp_listener,
                 c_EntityId_ReaderLiveliness,
@@ -285,6 +326,7 @@ bool WLP::createEndpoints()
         mp_builtinReaderHistory = nullptr;
         delete(mp_listener);
         mp_listener = nullptr;
+        payload_pool_->release_history(reader_pool_cfg, true);
         return false;
     }
 
@@ -302,6 +344,10 @@ bool WLP::createSecureEndpoints()
     HistoryAttributes hatt;
     set_builtin_writer_history_attributes(hatt, true);
     mp_builtinWriterSecureHistory = new WriterHistory(hatt);
+
+    PoolConfig writer_pool_cfg = PoolConfig::from_history_attributes(hatt);
+    secure_payload_pool_ = TopicPayloadPoolRegistry::get("DCPSParticipantMessageSecure", writer_pool_cfg);
+    secure_payload_pool_->reserve_history(writer_pool_cfg, false);
 
     WriterAttributes watt;
     watt.endpoint.unicastLocatorList = mp_builtinProtocols->m_metatrafficUnicastLocatorList;
@@ -337,7 +383,7 @@ bool WLP::createSecureEndpoints()
     }
 
     RTPSWriter* wout;
-    if (mp_participant->createWriter(&wout, watt, mp_builtinWriterSecureHistory, nullptr,
+    if (mp_participant->createWriter(&wout, watt, secure_payload_pool_, mp_builtinWriterSecureHistory, nullptr,
             c_EntityId_WriterLivelinessSecure, true))
     {
         mp_builtinWriterSecure = dynamic_cast<StatefulWriter*>(wout);
@@ -348,10 +394,14 @@ bool WLP::createSecureEndpoints()
         logError(RTPS_LIVELINESS, "Secure Liveliness Writer Creation failed ");
         delete(mp_builtinWriterSecureHistory);
         mp_builtinWriterSecureHistory = nullptr;
+        secure_payload_pool_->release_history(writer_pool_cfg, false);
         return false;
     }
 
     set_builtin_reader_history_attributes(hatt, participants_allocation, true);
+
+    PoolConfig reader_pool_cfg = PoolConfig::from_history_attributes(hatt);
+    secure_payload_pool_->reserve_history(reader_pool_cfg, true);
 
     mp_builtinReaderSecureHistory = new ReaderHistory(hatt);
     ReaderAttributes ratt;
@@ -383,7 +433,7 @@ bool WLP::createSecureEndpoints()
     RTPSReader* rout;
     if (mp_participant->createReader(
                 &rout,
-                ratt,
+                ratt, secure_payload_pool_,
                 mp_builtinReaderSecureHistory,
                 (ReaderListener*)mp_listener,
                 c_EntityId_ReaderLivelinessSecure,
@@ -397,6 +447,7 @@ bool WLP::createSecureEndpoints()
         logError(RTPS_LIVELINESS, "Liveliness Reader Creation failed.");
         delete(mp_builtinReaderSecureHistory);
         mp_builtinReaderSecureHistory = nullptr;
+        secure_payload_pool_->release_history(reader_pool_cfg, true);
         return false;
     }
 
