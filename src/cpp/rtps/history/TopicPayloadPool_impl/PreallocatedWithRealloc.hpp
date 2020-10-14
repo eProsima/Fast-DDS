@@ -32,8 +32,7 @@ public:
     explicit PreallocatedReallocTopicPayloadPool(
             uint32_t payload_size)
         : min_payload_size_(payload_size)
-        , minimum_pool_size_for_writers(0)
-        , minimum_pool_size_for_readers(0)
+        , minimum_pool_size_(0)
     {
     }
 
@@ -54,18 +53,21 @@ public:
         }
 
         std::lock_guard<std::mutex> lock(mutex_);
-        if (is_reader)
+        minimum_pool_size_ += config.initial_size;
+        reserve(minimum_pool_size_, min_payload_size_);
+        return true;
+    }
+
+    bool release_history(
+            const PoolConfig& config,
+            bool is_reader) override
+    {
         {
-            minimum_pool_size_for_readers =
-                    std::max(minimum_pool_size_for_readers, config.initial_size);
-        }
-        else
-        {
-            minimum_pool_size_for_writers += config.initial_size;
+            std::lock_guard<std::mutex> lock(mutex_);
+            minimum_pool_size_ -= config.initial_size;
         }
 
-        reserve(minimum_pool_size_for_writers + minimum_pool_size_for_readers, min_payload_size_);
-        return true;
+        return TopicPayloadPool::release_history(config, is_reader);
     }
 
 protected:
@@ -78,8 +80,7 @@ protected:
 private:
 
     uint32_t min_payload_size_;
-    uint32_t minimum_pool_size_for_writers;    //< Initial pool size due to writers (sum of all writers)
-    uint32_t minimum_pool_size_for_readers;    //< Initial pool size due to readers (max of all readers)
+    uint32_t minimum_pool_size_;    //< Minimum initial pool size (sum of all histories)
 };
 
 }  // namespace rtps
