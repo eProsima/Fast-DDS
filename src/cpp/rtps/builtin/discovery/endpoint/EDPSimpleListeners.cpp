@@ -51,9 +51,9 @@ using ParameterList = eprosima::fastdds::dds::ParameterList;
     std::unique_lock<std::recursive_mutex> lock(*((pdp)->getMutex()));    \
     (reader)->getMutex().lock();                                          \
                                                                           \
-    if ( (ALIVE != (change)->kind) ||                                     \
+    if ((ALIVE != (change)->kind) ||                                      \
             (seq_num != (change)->sequenceNumber) ||                      \
-            (writer_guid != (change)->writerGUID) )                       \
+            (writer_guid != (change)->writerGUID))                        \
     {                                                                     \
         return;                                                           \
     }                                                                     \
