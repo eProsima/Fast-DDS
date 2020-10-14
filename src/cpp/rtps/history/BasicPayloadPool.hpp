@@ -77,7 +77,7 @@ public:
 private:
 
     static std::shared_ptr<IPayloadPool> get(
-            const PoolConfig& config)
+            const BasicPoolConfig& config)
     {
         switch (config.memory_policy)
         {

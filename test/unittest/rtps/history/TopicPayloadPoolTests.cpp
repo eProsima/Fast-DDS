@@ -236,9 +236,7 @@ protected:
 
         if (is_reader)
         {
-            expected_pool_size_for_readers =
-                    (new_reserved_size > expected_pool_size_for_readers) ?
-                    new_reserved_size : expected_pool_size_for_readers;
+            expected_pool_size_for_readers += new_reserved_size;
         }
         else
         {
@@ -265,6 +263,15 @@ protected:
             expected_finite_max_pool_size -=
                     (new_released_max_size < new_released_size ? new_released_size : new_released_max_size);
         }
+
+        if (is_reader)
+        {
+            expected_pool_size_for_readers -= new_released_size;
+        }
+        else
+        {
+            expected_pool_size_for_writers -= new_released_size;
+        }
     }
 
     /**
@@ -278,21 +285,32 @@ protected:
     void do_history_test (
             uint32_t size,
             uint32_t max_size,
-            bool is_reader)
+            bool is_reader,
+            uint32_t num_times = 2u)
     {
-        // First history reserved for a reader.
-        do_reserve_history(test_input_pool_size, test_input_max_pool_size, true);
+        for (uint32_t i = 0; i < num_times; i++)
+        {
+            // First history reserved for a reader.
+            do_reserve_history(test_input_pool_size, test_input_max_pool_size, true);
 
-        // Another history reserved for a writer.
-        do_reserve_history(test_input_pool_size, test_input_max_pool_size, false);
+            // Another history reserved for a writer.
+            do_reserve_history(test_input_pool_size, test_input_max_pool_size, false);
 
-        // Another history reserved requested limits.
-        do_reserve_history(size, max_size, is_reader);
-        check_initial_sizes();
+            // Another history reserved requested limits.
+            do_reserve_history(size, max_size, is_reader);
+            check_initial_sizes();
 
-        // Release the last history
-        do_release_history(size, max_size, is_reader);
-        check_final_sizes();
+            // Release the last history
+            do_release_history(size, max_size, is_reader);
+            check_final_sizes();
+
+            // Release the first two histories
+            do_release_history(test_input_pool_size, test_input_max_pool_size, true);
+            do_release_history(test_input_pool_size, test_input_max_pool_size, false);
+        }
+
+        EXPECT_EQ(pool->payload_pool_available_size(), 0u);
+        EXPECT_EQ(pool->payload_pool_allocated_size(), 0u);
     }
 
     std::shared_ptr<ITopicPayloadPool> pool;    //< The pool under test
