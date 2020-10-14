@@ -43,6 +43,7 @@
 #include <fastrtps/utils/TimeConversion.h>
 #include <fastrtps/utils/IPLocator.h>
 
+#include <rtps/history/TopicPayloadPoolRegistry.hpp>
 #include <rtps/participant/RTPSParticipantImpl.h>
 
 #include <fastdds/dds/log/Log.hpp>
@@ -73,17 +74,17 @@ void PDPSimple::initializeParticipantProxyData(
     PDP::initializeParticipantProxyData(participant_data);
 
     if (getRTPSParticipant()->getAttributes().builtin.discovery_config.
-            use_SIMPLE_EndpointDiscoveryProtocol)
+                    use_SIMPLE_EndpointDiscoveryProtocol)
     {
         if (getRTPSParticipant()->getAttributes().builtin.discovery_config.m_simpleEDP.
-                use_PublicationWriterANDSubscriptionReader)
+                        use_PublicationWriterANDSubscriptionReader)
         {
             participant_data->m_availableBuiltinEndpoints |= DISC_BUILTIN_ENDPOINT_PUBLICATION_ANNOUNCER;
             participant_data->m_availableBuiltinEndpoints |= DISC_BUILTIN_ENDPOINT_SUBSCRIPTION_DETECTOR;
         }
 
         if (getRTPSParticipant()->getAttributes().builtin.discovery_config.m_simpleEDP.
-                use_PublicationReaderANDSubscriptionWriter)
+                        use_PublicationReaderANDSubscriptionWriter)
         {
             participant_data->m_availableBuiltinEndpoints |= DISC_BUILTIN_ENDPOINT_PUBLICATION_DETECTOR;
             participant_data->m_availableBuiltinEndpoints |= DISC_BUILTIN_ENDPOINT_SUBSCRIPTION_ANNOUNCER;
@@ -91,22 +92,22 @@ void PDPSimple::initializeParticipantProxyData(
 
 #if HAVE_SECURITY
         if (getRTPSParticipant()->getAttributes().builtin.discovery_config.m_simpleEDP.
-                enable_builtin_secure_publications_writer_and_subscriptions_reader)
+                        enable_builtin_secure_publications_writer_and_subscriptions_reader)
         {
             participant_data->m_availableBuiltinEndpoints |= DISC_BUILTIN_ENDPOINT_PUBLICATION_SECURE_ANNOUNCER;
             participant_data->m_availableBuiltinEndpoints |= DISC_BUILTIN_ENDPOINT_SUBSCRIPTION_SECURE_DETECTOR;
         }
 
         if (getRTPSParticipant()->getAttributes().builtin.discovery_config.m_simpleEDP.
-                enable_builtin_secure_subscriptions_writer_and_publications_reader)
+                        enable_builtin_secure_subscriptions_writer_and_publications_reader)
         {
             participant_data->m_availableBuiltinEndpoints |= DISC_BUILTIN_ENDPOINT_SUBSCRIPTION_SECURE_ANNOUNCER;
             participant_data->m_availableBuiltinEndpoints |= DISC_BUILTIN_ENDPOINT_PUBLICATION_SECURE_DETECTOR;
         }
-#endif
+#endif // if HAVE_SECURITY
     }
-    else if(!getRTPSParticipant()->getAttributes().builtin.discovery_config.
-            use_STATIC_EndpointDiscoveryProtocol)
+    else if (!getRTPSParticipant()->getAttributes().builtin.discovery_config.
+                    use_STATIC_EndpointDiscoveryProtocol)
     {
         logError(RTPS_PDP, "Neither EDP simple nor EDP static enabled. Endpoints will not be discovered.");
     }
@@ -250,6 +251,10 @@ bool PDPSimple::createPDPEndpoints()
         hatt.maximumReservedCaches = (int32_t)allocation.participants.maximum;
     }
 
+    PoolConfig reader_pool_cfg = PoolConfig::from_history_attributes(hatt);
+    reader_payload_pool_ = TopicPayloadPoolRegistry::get("DCPSParticipant", reader_pool_cfg);
+    reader_payload_pool_->reserve_history(reader_pool_cfg, true);
+
     mp_PDPReaderHistory = new ReaderHistory(hatt);
     ReaderAttributes ratt;
     ratt.endpoint.multicastLocatorList = mp_builtin->m_metatrafficMulticastLocatorList;
@@ -259,12 +264,12 @@ bool PDPSimple::createPDPEndpoints()
     ratt.endpoint.reliabilityKind = BEST_EFFORT;
     ratt.matched_writers_allocation = allocation.participants;
     mp_listener = new PDPListener(this);
-    if (mp_RTPSParticipant->createReader(&mp_PDPReader, ratt, mp_PDPReaderHistory, mp_listener, c_EntityId_SPDPReader,
-            true, false))
+    if (mp_RTPSParticipant->createReader(&mp_PDPReader, ratt, reader_payload_pool_, mp_PDPReaderHistory, mp_listener,
+            c_EntityId_SPDPReader, true, false))
     {
 #if HAVE_SECURITY
         mp_RTPSParticipant->set_endpoint_rtps_protection_supports(mp_PDPReader, false);
-#endif
+#endif // if HAVE_SECURITY
     }
     else
     {
@@ -273,6 +278,7 @@ bool PDPSimple::createPDPEndpoints()
         mp_PDPReaderHistory = nullptr;
         delete mp_listener;
         mp_listener = nullptr;
+        reader_payload_pool_->release_history(reader_pool_cfg, true);
         return false;
     }
 
@@ -281,6 +287,11 @@ bool PDPSimple::createPDPEndpoints()
     hatt.initialReservedCaches = 1;
     hatt.maximumReservedCaches = 1;
     hatt.memoryPolicy = mp_builtin->m_att.writerHistoryMemoryPolicy;
+
+    PoolConfig writer_pool_cfg = PoolConfig::from_history_attributes(hatt);
+    writer_payload_pool_ = TopicPayloadPoolRegistry::get("DCPSParticipant", writer_pool_cfg);
+    writer_payload_pool_->reserve_history(writer_pool_cfg, false);
+
     mp_PDPWriterHistory = new WriterHistory(hatt);
     WriterAttributes watt;
     watt.endpoint.endpointKind = WRITER;
@@ -297,11 +308,12 @@ bool PDPSimple::createPDPEndpoints()
     }
 
     RTPSWriter* wout;
-    if (mp_RTPSParticipant->createWriter(&wout, watt, mp_PDPWriterHistory, nullptr, c_EntityId_SPDPWriter, true))
+    if (mp_RTPSParticipant->createWriter(&wout, watt, writer_payload_pool_, mp_PDPWriterHistory, nullptr,
+            c_EntityId_SPDPWriter, true))
     {
 #if HAVE_SECURITY
         mp_RTPSParticipant->set_endpoint_rtps_protection_supports(wout, false);
-#endif
+#endif // if HAVE_SECURITY
         mp_PDPWriter = wout;
         if (mp_PDPWriter != nullptr)
         {
@@ -323,6 +335,7 @@ bool PDPSimple::createPDPEndpoints()
         logError(RTPS_PDP, "SimplePDP Writer creation failed");
         delete mp_PDPWriterHistory;
         mp_PDPWriterHistory = nullptr;
+        writer_payload_pool_->release_history(writer_pool_cfg, false);
         return false;
     }
     logInfo(RTPS_PDP, "SPDP Endpoints creation finished");
@@ -374,7 +387,7 @@ void PDPSimple::assignRemoteEndpoints(
 #else
     //Inform EDP of new RTPSParticipant data:
     notifyAboveRemoteEndpoints(*pdata);
-#endif
+#endif // if HAVE_SECURITY
 }
 
 void PDPSimple::removeRemoteEndpoints(
