@@ -309,8 +309,8 @@ protected:
             do_release_history(test_input_pool_size, test_input_max_pool_size, false);
         }
 
-        EXPECT_EQ(pool->payload_pool_available_size(), 0);
-        EXPECT_EQ(pool->payload_pool_allocated_size(), 0);
+        EXPECT_EQ(pool->payload_pool_available_size(), 0u);
+        EXPECT_EQ(pool->payload_pool_allocated_size(), 0u);
     }
 
     std::shared_ptr<ITopicPayloadPool> pool;    //< The pool under test
