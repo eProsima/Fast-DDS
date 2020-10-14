@@ -25,6 +25,8 @@
 #include <fastdds/rtps/builtin/data/WriterProxyData.h>
 #include <fastdds/rtps/builtin/data/ReaderProxyData.h>
 
+#include <rtps/history/ITopicPayloadPool.h>
+
 namespace eprosima {
 namespace fastrtps {
 namespace rtps {
@@ -218,6 +220,16 @@ protected:
     static void processPersistentData(
             t_p_StatefulReader& reader,
             t_p_StatefulWriter& writer);
+
+    std::shared_ptr<ITopicPayloadPool> create_payload_pool(
+            const std::string& topic_name,
+            const HistoryAttributes& history_attr,
+            bool is_reader);
+
+    void release_payload_pool(
+            std::shared_ptr<ITopicPayloadPool>& pool,
+            const HistoryAttributes& history_attr,
+            bool is_reader);
 
 private:
 

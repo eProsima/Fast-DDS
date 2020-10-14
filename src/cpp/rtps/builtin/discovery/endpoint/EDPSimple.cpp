@@ -33,8 +33,9 @@
 #include <fastdds/rtps/builtin/data/ParticipantProxyData.h>
 #include <fastdds/rtps/builtin/BuiltinProtocols.h>
 
-
 #include <fastdds/dds/log/Log.hpp>
+
+#include <rtps/history/TopicPayloadPoolRegistry.hpp>
 
 #include <mutex>
 
@@ -1062,6 +1063,27 @@ bool EDPSimple::pairing_remote_reader_with_local_builtin_writer_after_security(
 }
 
 #endif // if HAVE_SECURITY
+
+std::shared_ptr<ITopicPayloadPool> EDPSimple::create_payload_pool(
+        const std::string& topic_name,
+        const HistoryAttributes& history_attr,
+        bool is_reader)
+{
+    PoolConfig pool_cfg = PoolConfig::from_history_attributes(history_attr);
+    auto pool = TopicPayloadPoolRegistry::get(topic_name, pool_cfg);
+    pool->reserve_history(pool_cfg, is_reader);
+    return pool;
+}
+
+void EDPSimple::release_payload_pool(
+        std::shared_ptr<ITopicPayloadPool>& pool,
+        const HistoryAttributes& history_attr,
+        bool is_reader)
+{
+    PoolConfig pool_cfg = PoolConfig::from_history_attributes(history_attr);
+    pool->release_history(pool_cfg, is_reader);
+    TopicPayloadPoolRegistry::release(pool);
+}
 
 } /* namespace rtps */
 } /* namespace fastrtps */
