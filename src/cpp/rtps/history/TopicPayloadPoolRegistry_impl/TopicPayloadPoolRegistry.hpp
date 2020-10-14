@@ -48,7 +48,7 @@ public:
 
     std::shared_ptr<TopicPayloadPoolProxy> get(
             const std::string& topic_name,
-            const PoolConfig& config)
+            const BasicPoolConfig& config)
     {
         std::lock_guard<std::mutex> lock(mutex_);
 
@@ -104,7 +104,7 @@ private:
     std::shared_ptr<TopicPayloadPoolProxy> do_get(
             std::shared_ptr<TopicPayloadPoolProxy>& ptr,
             const std::string& topic_name,
-            const PoolConfig& config)
+            const BasicPoolConfig& config)
     {
         if (!ptr)
         {

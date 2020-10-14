@@ -30,7 +30,7 @@ namespace rtps {
 
 std::shared_ptr<ITopicPayloadPool> TopicPayloadPoolRegistry::get(
         const std::string& topic_name,
-        const PoolConfig& config)
+        const BasicPoolConfig& config)
 {
     return detail::TopicPayloadPoolRegistry::instance().get(topic_name, config);
 }

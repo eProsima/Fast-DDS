@@ -38,7 +38,7 @@ public:
 
     TopicPayloadPoolProxy(
             const std::string& topic_name,
-            const PoolConfig& config)
+            const BasicPoolConfig& config)
         : topic_name_(topic_name)
         , policy_(config.memory_policy)
         , inner_pool_(TopicPayloadPool::get(config))

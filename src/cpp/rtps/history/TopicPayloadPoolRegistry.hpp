@@ -37,7 +37,7 @@ public:
 
     static std::shared_ptr<ITopicPayloadPool> get(
             const std::string& topic_name,
-            const PoolConfig& config);
+            const BasicPoolConfig& config);
 
     static void release(
             std::shared_ptr<ITopicPayloadPool>& pool);
