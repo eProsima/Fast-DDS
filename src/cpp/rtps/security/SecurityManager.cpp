@@ -198,7 +198,7 @@ bool SecurityManager::init(
             }
 
             if (!( logging_plugin_->set_log_options(log_options, exception) &&
-                    logging_plugin_->enable_logging(exception) ))
+                    logging_plugin_->enable_logging(exception)))
             {
                 return init_logging_fail(exception);
             }
@@ -1680,7 +1680,8 @@ void SecurityManager::process_participant_volatile_message_secure(
             }
             else
             {
-                remote_reader_pending_messages_.emplace(std::make_pair(message.source_endpoint_key(), message.destination_endpoint_key()),
+                remote_reader_pending_messages_.emplace(std::make_pair(message.source_endpoint_key(),
+                        message.destination_endpoint_key()),
                         std::move(message.message_data()));
             }
         }
@@ -1752,7 +1753,8 @@ void SecurityManager::process_participant_volatile_message_secure(
             }
             else
             {
-                remote_writer_pending_messages_.emplace(std::make_pair(message.source_endpoint_key(), message.destination_endpoint_key()),
+                remote_writer_pending_messages_.emplace(std::make_pair(message.source_endpoint_key(),
+                        message.destination_endpoint_key()),
                         std::move(message.message_data()));
             }
         }
@@ -3099,7 +3101,8 @@ bool SecurityManager::discovered_writer(
                                     {
                                         // Store in pendings.
                                         remote_reader_pending_messages_.emplace(
-                                            std::make_pair(reader_guid, local_writer->first), std::move(local_reader_crypto_tokens));
+                                            std::make_pair(reader_guid, local_writer->first),
+                                            std::move(local_reader_crypto_tokens));
                                     }
                                 }
                                 else
@@ -3650,8 +3653,8 @@ bool SecurityManager::participant_authorized(
     if (access_plugin_ == nullptr || remote_permissions != nullptr)
     {
 
-        std::list<std::pair<ReaderProxyData, GUID_t> > temp_readers;
-        std::list<std::pair<WriterProxyData, GUID_t> > temp_writers;
+        std::list<std::pair<ReaderProxyData, GUID_t>> temp_readers;
+        std::list<std::pair<WriterProxyData, GUID_t>> temp_writers;
 
         if (crypto_plugin_ != nullptr)
         {
