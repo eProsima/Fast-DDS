@@ -632,6 +632,7 @@ void DiscoveryDataBase::create_participant_from_change_(
     }
 }
 
+
 void DiscoveryDataBase::create_writers_from_change_(
         eprosima::fastrtps::rtps::CacheChange_t* ch,
         const std::string& topic_name)
@@ -639,15 +640,36 @@ void DiscoveryDataBase::create_writers_from_change_(
     const eprosima::fastrtps::rtps::GUID_t& writer_guid = guid_from_change(ch);
     auto writer_it = writers_.find(writer_guid);
 
-    // Update writers_
-    DiscoveryEndpointInfo tmp_writer(ch, topic_name, server_guid_prefix_);
-    tmp_writer.add_or_update_ack_participant(ch->writerGUID.guidPrefix, true);
+    // The writer was already known in the database
+    if (writer_it != writers_.end())
+    {
+        // Only update database if the change is newer than the one we already have
+        if (ch->write_params.sample_identity().sequence_number() >
+            writer_it->second.change()->write_params.sample_identity().sequence_number())
+        {
+            // Update the change related to the writer and return the old change to the pool
+            // TODO (Paris): when updating, be careful of not to do unmatch if the only endpoint in the other
+            // participant is NOT ALIVE. This means that you still have to send your Data(Ux) to him but not the
+            // updates
+            update_change_and_unmatch_(ch, writer_it->second);
+        }
+        // if the cache is not new we have to release it, because it is repeated or outdated
+        else 
+        {
+            // if the change is the same that we already have, we update the ack list. This is because we have
+            //  received the data from two servers, so we have to set that both of them already know this data
+            if (ch->write_params.sample_identity().sequence_number() ==
+                writer_it->second.change()->write_params.sample_identity().sequence_number())
+            {
+                writer_it->second.add_or_update_ack_participant(ch->writerGUID.guidPrefix, true);
+            }
 
-    std::pair<std::map<eprosima::fastrtps::rtps::GUID_t, DiscoveryEndpointInfo>::iterator, bool> ret =
-            writers_.insert(std::make_pair(writer_guid, tmp_writer));
-
-    // If writer does not exists, create the change
-    if (ret.second)
+            // we release it if it's the same or if it is lower
+            changes_to_release_.push_back(ch);
+        }
+    }
+    // The writer was NOT known by the database
+    else
     {
         // Add entry to writers_
         DiscoveryEndpointInfo tmp_writer(
@@ -690,82 +712,20 @@ void DiscoveryDataBase::create_writers_from_change_(
         {
             for (auto reader_it : readers_)
             {
-                // Update the participant ack status list from writers_ (if needed). The reader will only know the
-                // new writer if the reader is a server endpoint, or if the reader and writer are from the same
-                // participant.
-                if (!ret.first->second.is_matched(reader_it.guidPrefix))
-                {
-                    ret.first->second.add_or_update_ack_participant(reader_it.guidPrefix);
-                }
-
-                // Update the participant ack status list from readers_
-                std::map<eprosima::fastrtps::rtps::GUID_t, DiscoveryEndpointInfo>::iterator rit =
-                        readers_.find(reader_it);
-                if (rit != readers_.end() && !rit->second.is_matched(writer_guid.guidPrefix))
-                {
-                    logError(DISCOVERY_DATABASE, "Reader " << reader_guid << " as no associated participant. Skipping");
-                    continue;
-                }
-
-                /* The writer is from a local CLIENT */
-                if (writer_part_it->second.is_local_client())
-                {
-                    /* The reader is from a local CLIENT or SERVER */
-                    if (!reader_part_it->second.is_external())
-                    {
-                        // Add reader's participant to writer's participant ACK list with status 0 (unless already
-                        // matched)
-                        if (!writer_part_it->second.is_matched(reader_guid.guidPrefix))
-                        {
-                            writer_part_it->second.add_or_update_ack_participant(reader_guid.guidPrefix);
-                        }
-
-                        // Add reader's participant to writer's ACK list with status 0.
-                        writer_it->second.add_or_update_ack_participant(reader_guid.guidPrefix);
-                    }
-
-                    /* The reader is a real endpoint (not virtual) */
-                    if (!reader_it->second.is_virtual())
-                    {
-                        // Add writer's participant to reader's participant ACK list with status 0 (unless already
-                        // matched)
-                        if (!reader_part_it->second.is_matched(writer_guid.guidPrefix))
-                        {
-                            reader_part_it->second.add_or_update_ack_participant(writer_guid.guidPrefix);
-                        }
-                        // Add writer's participant to reader's ACK list with status 0
-                        reader_it->second.add_or_update_ack_participant(writer_guid.guidPrefix);
-                    }
-                }
-                /* The writer is virtual (therefore associated with a local SERVER) */
-                else if (topic_name == virtual_topic_)
-                {
-                    writer_it->second.is_virtual(true);
-                    /* The reader is a real endpoint (not virtual) */
-                    if (!reader_it->second.is_virtual())
-                    {
-                        // Add writer's participant to reader's participant ACK list with status 0 (if will never be
-                        // there, since this case only happens upon local SERVER DATA(p) reception)
-                        reader_part_it->second.add_or_update_ack_participant(writer_guid.guidPrefix);
-                        // Add writer's participant to reader's ACK list with status 0
-                        reader_it->second.add_or_update_ack_participant(writer_guid.guidPrefix);
-                        // Set reader's topic to dirty.
-                        set_dirty_topic_(reader_it->second.topic());
-                    }
-                }
-                /* The writer is from a external CLIENT or SERVER */
-                else if (writer_part_it->second.is_external())
-                {
-                    // Add reader's participant to writer's participant ACK list with status 0 (unless already
-                    // matched)
-                    if (!writer_part_it->second.is_matched(reader_guid.guidPrefix))
-                    {
-                        writer_part_it->second.add_or_update_ack_participant(reader_guid.guidPrefix);
-                    }
-
-                    // Add reader's participant to writer's ACK list with status 0.
-                    writer_it->second.add_or_update_ack_participant(reader_guid.guidPrefix);
-                }
+                match_writer_reader_(writer_guid, reader_it.first);
+            }
+        }
+        else
+        {
+            auto readers_it = readers_by_topic_.find(topic_name);
+            if (readers_it == readers_by_topic_.end())
+            {
+                logError(DISCOVERY_DATABASE, "Topic error: " << topic_name << ". Must exist.");
+                return;
+            }
+            for (auto reader : readers_it->second)
+            {
+                match_writer_reader_(writer_guid, reader);
             }
         }
 
@@ -781,14 +741,36 @@ void DiscoveryDataBase::create_readers_from_change_(
     const eprosima::fastrtps::rtps::GUID_t& reader_guid = guid_from_change(ch);
     auto reader_it = readers_.find(reader_guid);
 
-    DiscoveryEndpointInfo tmp_reader(ch, topic_name, server_guid_prefix_);
-    tmp_reader.add_or_update_ack_participant(ch->writerGUID.guidPrefix, true);
+    // The reader was already known in the database
+    if (reader_it != readers_.end())
+    {
+        // Only update database if the change is newer than the one we already have
+        if (ch->write_params.sample_identity().sequence_number() >
+            reader_it->second.change()->write_params.sample_identity().sequence_number())
+        {
+            // Update the change related to the reader and return the old change to the pool
+            // TODO (Paris): when updating, be careful of not to do unmatch if the only endpoint in the other
+            // participant is NOT ALIVE. This means that you still have to send your Data(Ux) to him but not the
+            // updates
+            update_change_and_unmatch_(ch, reader_it->second);
+        }
+        // if the cache is not new we have to release it, because it is repeated or outdated
+        else 
+        {
+            // if the change is the same that we already have, we update the ack list. This is because we have
+            //  received the data from two servers, so we have to set that both of them already know this data
+            if (ch->write_params.sample_identity().sequence_number() ==
+                reader_it->second.change()->write_params.sample_identity().sequence_number())
+            {
+                reader_it->second.add_or_update_ack_participant(ch->writerGUID.guidPrefix, true);
+            }
 
-    std::pair<std::map<eprosima::fastrtps::rtps::GUID_t, DiscoveryEndpointInfo>::iterator, bool> ret =
-            readers_.insert(std::make_pair(reader_guid, tmp_reader));
-
-    // If reader does not exists, create the change
-    if (ret.second)
+            // we release it if it's the same or if it is lower
+            changes_to_release_.push_back(ch);
+        }
+    }
+    // The reader was NOT known by the database
+    else
     {
         // Add entry to readers_
         DiscoveryEndpointInfo tmp_reader(
@@ -831,25 +813,22 @@ void DiscoveryDataBase::create_readers_from_change_(
         {
             for (auto writer_it : writers_)
             {
-                logInfo(DISCOVERY_DATABASE, "Matching Data(r): " << reader_guid << " with writer: "
-                                                                 << writer_it);
-
-                // Update the participant ack status list from readers_ (if needed). The writer will only know the
-                // new reader if the writier is a server endpoint, or if the reader and writer are from the same
-                // participant.
-                if (!ret.first->second.is_matched(writer_it.guidPrefix))
-                {
-                    ret.first->second.add_or_update_ack_participant(writer_it.guidPrefix);
-                }
-
-                // Update the participant ack status list from writers_
-                std::map<eprosima::fastrtps::rtps::GUID_t, DiscoveryEndpointInfo>::iterator wit =
-                        writers_.find(writer_it);
-                if (wit != writers_.end() && !wit->second.is_matched(reader_guid.guidPrefix))
-                {
-                    logError(DISCOVERY_DATABASE, "Writer " << writer_guid << " as no associated participant. Skipping");
-                    continue;
-                }
+                match_writer_reader_(writer_it.first, reader_guid);
+            }
+        }
+        else
+        {
+            auto writers_it = writers_by_topic_.find(topic_name);
+            if (writers_it == writers_by_topic_.end())
+            {
+                logError(DISCOVERY_DATABASE, "Topic error: " << topic_name << ". Must exist.");
+                return;
+            }
+            for (auto writer : writers_it->second)
+            {
+                match_writer_reader_(writer, reader_guid);
+            }
+        }
 
         // set topic as dirty (if virtual, all topics)
         set_dirty_topic_(topic_name);
