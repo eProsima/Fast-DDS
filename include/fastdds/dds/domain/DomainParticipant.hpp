@@ -376,7 +376,7 @@ public:
      * Fills the PublisherQos with the values of the XML profile.
      * @param profile_name Publisher profile name.
      * @param qos PublisherQos object where the qos is returned.
-     * @return RETCODE_OK
+     * @return RETCODE_OK if the profile exists. RETCODE_BAD_PARAMETER otherwise.
      */
     RTPS_DllAPI ReturnCode_t get_publisher_qos_from_profile(
             const std::string& profile_name,
@@ -426,7 +426,7 @@ public:
      * Fills the SubscriberQos with the values of the XML profile.
      * @param profile_name Subscriber profile name.
      * @param qos SubscriberQos object where the qos is returned.
-     * @return RETCODE_OK
+     * @return RETCODE_OK if the profile exists. RETCODE_BAD_PARAMETER otherwise.
      */
     RTPS_DllAPI ReturnCode_t get_subscriber_qos_from_profile(
             const std::string& profile_name,
@@ -476,7 +476,7 @@ public:
      * Fills the TopicQos with the values of the XML profile.
      * @param profile_name Topic profile name.
      * @param qos TopicQos object where the qos is returned.
-     * @return RETCODE_OK
+     * @return RETCODE_OK if the profile exists. RETCODE_BAD_PARAMETER otherwise.
      */
     RTPS_DllAPI ReturnCode_t get_topic_qos_from_profile(
             const std::string& profile_name,

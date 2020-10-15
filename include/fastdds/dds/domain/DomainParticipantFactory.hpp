@@ -157,7 +157,7 @@ public:
      * Fills the DomainParticipantQos with the values of the XML profile.
      * @param profile_name DomainParticipant profile name.
      * @param qos DomainParticipantQos object where the qos is returned.
-     * @return RETCODE_OK
+     * @return RETCODE_OK if the profile exists. RETCODE_BAD_PARAMETER otherwise.
      */
     RTPS_DllAPI ReturnCode_t get_participant_qos_from_profile(
             const std::string& profile_name,

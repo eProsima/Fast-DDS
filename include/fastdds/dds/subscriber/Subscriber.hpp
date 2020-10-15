@@ -289,7 +289,7 @@ public:
      * Fills the DataReaderQos with the values of the XML profile.
      * @param profile_name DataReader profile name.
      * @param qos DataReaderQos object where the qos is returned.
-     * @return RETCODE_OK
+     * @return RETCODE_OK if the profile exists. RETCODE_BAD_PARAMETER otherwise.
      */
     RTPS_DllAPI ReturnCode_t get_datareader_qos_from_profile(
             const std::string& profile_name,
