@@ -25,7 +25,7 @@ using namespace eprosima::fastrtps::rtps;
 using namespace ::testing;
 using namespace std;
 
-class CacheChangePoolTests : public TestWithParam<tuple<uint32_t, uint32_t, MemoryManagementPolicy_t> >
+class CacheChangePoolTests : public TestWithParam<tuple<uint32_t, uint32_t, MemoryManagementPolicy_t>>
 {
 protected:
 
@@ -74,7 +74,7 @@ TEST_P(CacheChangePoolTests, init_pool)
     }
     else
     {
-        expected_size = static_cast<size_t>(pool_size + 1U);
+        expected_size = static_cast<size_t>(pool_size ? pool_size : 1u);
     }
 
     ASSERT_EQ(pool->get_allCachesSize(), expected_size);
@@ -96,11 +96,11 @@ TEST_P(CacheChangePoolTests, reserve_cache)
     else if (max_size <= size)
     {
         max_size = size;
-        num_inserts = size + 1;
+        num_inserts = size;
     }
     else // max_size > size
     {
-        num_inserts = max_size + 1;
+        num_inserts = max_size;
     }
 
     for (uint32_t i = 0; i < num_inserts; i++)
@@ -110,7 +110,7 @@ TEST_P(CacheChangePoolTests, reserve_cache)
 
         if (max_size > 0)
         {
-            ASSERT_LE(pool->get_allCachesSize(), max_size + 1U);
+            ASSERT_LE(pool->get_allCachesSize(), max_size);
         }
     }
 

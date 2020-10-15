@@ -38,6 +38,8 @@
 #include <fastdds/rtps/builtin/BuiltinProtocols.h>
 #include <fastdds/rtps/builtin/liveliness/WLP.h>
 
+#include <rtps/history/TopicPayloadPoolRegistry.hpp>
+
 using namespace eprosima::fastrtps;
 using namespace ::rtps;
 using namespace std::chrono;
@@ -73,6 +75,11 @@ PublisherImpl::PublisherImpl(
     , deadline_missed_status_()
     , lifespan_duration_us_(m_att.qos.m_lifespan.duration.to_ns() * 1e-3)
 {
+    std::string topic_name = m_att.topic.getTopicName().to_string();
+    PoolConfig pool_cfg = PoolConfig::from_history_attributes(m_history.m_att);
+    payload_pool_ = TopicPayloadPoolRegistry::get(topic_name, pool_cfg);
+    payload_pool_->reserve_history(pool_cfg, false);
+
     deadline_timer_ = new TimedEvent(mp_participant->get_resource_event(),
                     [&]() -> bool
                     {
@@ -100,6 +107,11 @@ PublisherImpl::~PublisherImpl()
 
     RTPSDomain::removeRTPSWriter(mp_writer);
     delete(this->mp_userPublisher);
+
+    std::string topic_name = m_att.topic.getTopicName().to_string();
+    PoolConfig pool_cfg = PoolConfig::from_history_attributes(m_history.m_att);
+    payload_pool_->release_history(pool_cfg, false);
+    TopicPayloadPoolRegistry::release(payload_pool_);
 }
 
 bool PublisherImpl::create_new_change(
@@ -648,4 +660,9 @@ void PublisherImpl::assert_liveliness()
             stateful_writer->send_periodic_heartbeat(true, true);
         }
     }
+}
+
+std::shared_ptr<rtps::IPayloadPool> PublisherImpl::payload_pool()
+{
+    return payload_pool_;
 }
