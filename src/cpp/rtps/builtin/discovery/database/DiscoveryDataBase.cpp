@@ -128,6 +128,8 @@ bool DiscoveryDataBase::pdp_is_relevant(
     // Lock(shared mode) mutex locally
     std::unique_lock<std::recursive_mutex> lock(mutex_);
 
+    logInfo(DISCOVERY_DATABASE, "PDP is " << change.instanceHandle << " relevant to " << reader_guid);
+
     auto it = participants_.find(change_guid_prefix);
     if (it != participants_.end())
     {
@@ -136,6 +138,7 @@ bool DiscoveryDataBase::pdp_is_relevant(
         return (it->second.is_relevant_participant(reader_guid.guidPrefix) &&
                !it->second.is_matched(reader_guid.guidPrefix));
     }
+    logError(DISCOVERY_DATABASE, "PDP is relevant");
     // Not relevant
     return false;
 }
@@ -846,7 +849,7 @@ void DiscoveryDataBase::match_writer_reader_(
         logError(DISCOVERY_DATABASE, "Matching unexisting writer " << writer_guid);
         return;
     }
-    auto writer_info = wit->second;
+    DiscoveryEndpointInfo& writer_info = wit->second;
 
     // writer participant
     auto p_wit = participants_.find(writer_guid.guidPrefix);
@@ -855,7 +858,7 @@ void DiscoveryDataBase::match_writer_reader_(
         logError(DISCOVERY_DATABASE, "Matching unexisting participant from writer " << writer_guid);
         return;
     }
-    auto writer_participant_info = p_wit->second;
+    DiscoveryParticipantInfo& writer_participant_info = p_wit->second;
 
     // reader entity
     auto rit = readers_.find(reader_guid);
@@ -864,7 +867,7 @@ void DiscoveryDataBase::match_writer_reader_(
         logError(DISCOVERY_DATABASE, "Matching unexisting reader " << reader_guid);
         return;
     }
-    auto reader_info = rit->second;
+    DiscoveryEndpointInfo& reader_info = rit->second;
 
     // reader participant
     auto p_rit = participants_.find(reader_guid.guidPrefix);
@@ -873,7 +876,7 @@ void DiscoveryDataBase::match_writer_reader_(
         logError(DISCOVERY_DATABASE, "Matching unexisting participant from reader " << reader_guid);
         return;
     }
-    auto reader_participant_info = p_wit->second;
+    DiscoveryParticipantInfo& reader_participant_info = p_rit->second;
 
     // virtual              - needs info and give none
     // local                - needs info and give info
@@ -1177,28 +1180,20 @@ bool DiscoveryDataBase::process_dirty_topics()
                     if (readers_it != readers_.end() && !readers_it->second.is_matched(writer.guidPrefix))
                     {
                         // If the status is 0, add DATA(w) to a `edp_publications_to_send_` (if it's not there).
-                        if (std::find(
-                                    edp_subscriptions_to_send_.begin(),
-                                    edp_subscriptions_to_send_.end(),
-                                    readers_it->second.change()) == edp_subscriptions_to_send_.end())
+                        if (add_edp_subscriptions_to_send_(readers_it->second.change()))
                         {
                             logInfo(DISCOVERY_DATABASE, "Addind DATA(r) to send: "
                                     << readers_it->second.change()->instanceHandle);
-                            edp_subscriptions_to_send_.push_back(readers_it->second.change());
                         }
                     }
                 }
                 else
                 {
                     // Add DATA(p) of the client with the writer to `pdp_to_send_` (if it's not there).
-                    if (std::find(
-                                pdp_to_send_.begin(),
-                                pdp_to_send_.end(),
-                                parts_reader_it->second.change()) == pdp_to_send_.end())
+                    if (add_pdp_to_send_(parts_reader_it->second.change()))
                     {
                         logInfo(DISCOVERY_DATABASE, "Addind readers' DATA(p) to send: "
                                 << parts_reader_it->second.change()->instanceHandle);
-                        pdp_to_send_.push_back(parts_reader_it->second.change());
                     }
                     // Set topic as not-clearable.
                     is_clearable = false;
@@ -1212,28 +1207,20 @@ bool DiscoveryDataBase::process_dirty_topics()
                     if (writers_it != writers_.end() && !writers_it->second.is_matched(reader.guidPrefix))
                     {
                         // If the status is 0, add DATA(r) to a `edp_subscriptions_to_send_` (if it's not there).
-                        if (std::find(
-                                    edp_publications_to_send_.begin(),
-                                    edp_publications_to_send_.end(),
-                                    writers_it->second.change()) == edp_publications_to_send_.end())
+                        if (add_edp_publications_to_send_(writers_it->second.change()))
                         {
                             logInfo(DISCOVERY_DATABASE, "Addind DATA(w) to send: "
                                     << writers_it->second.change()->instanceHandle);
-                            edp_publications_to_send_.push_back(writers_it->second.change());
                         }
                     }
                 }
                 else
                 {
                     // Add DATA(p) of the client with the reader to `pdp_to_send_` (if it's not there).
-                    if (std::find(
-                                pdp_to_send_.begin(),
-                                pdp_to_send_.end(),
-                                parts_writer_it->second.change()) == pdp_to_send_.end())
+                    if (add_pdp_to_send_(parts_writer_it->second.change()))
                     {
                         logInfo(DISCOVERY_DATABASE, "Addind writers' DATA(p) to send: "
                                 << parts_writer_it->second.change()->instanceHandle);
-                        pdp_to_send_.push_back(parts_writer_it->second.change());
                     }
                     // Set topic as not-clearable.
                     is_clearable = false;
@@ -1461,9 +1448,12 @@ DiscoveryDataBase::AckedFunctor::~AckedFunctor()
 void DiscoveryDataBase::AckedFunctor::operator () (
         eprosima::fastrtps::rtps::ReaderProxy* reader_proxy)
 {
+    logInfo(DISCOVERY_DATABASE, "functor operator in change: " << change_->instanceHandle);
+    logInfo(DISCOVERY_DATABASE, "for reader proxy: " << reader_proxy->guid());
     // Check whether the change has been acknowledged by a given reader
     if (reader_proxy->rtps_is_relevant(change_))
     {
+        logInfo(DISCOVERY_DATABASE, "is relevant");
         if (reader_proxy->change_is_acked(change_->sequenceNumber))
         {
             // In the discovery database, mark the change as acknowledged by the reader
@@ -1962,7 +1952,7 @@ bool DiscoveryDataBase::add_pdp_to_send_(eprosima::fastrtps::rtps::CacheChange_t
                 pdp_to_send_.end(),
                 change) == pdp_to_send_.end())
     {
-        logInfo(DISCOVERY_DATABASE, "Addind Server DATA(p) to send: "
+        logInfo(DISCOVERY_DATABASE, "Addind DATA(p) to send: "
                 << change->instanceHandle);
         pdp_to_send_.push_back(change);
         return true;
@@ -1978,7 +1968,7 @@ bool DiscoveryDataBase::add_edp_publications_to_send_(eprosima::fastrtps::rtps::
                 edp_publications_to_send_.end(),
                 change) == edp_publications_to_send_.end())
     {
-        logInfo(DISCOVERY_DATABASE, "Addind Server DATA(w) to send: "
+        logInfo(DISCOVERY_DATABASE, "Addind DATA(w) to send: "
                 << change->instanceHandle);
         edp_publications_to_send_.push_back(change);
         return true;
@@ -1994,7 +1984,7 @@ bool DiscoveryDataBase::add_edp_subscriptions_to_send_(eprosima::fastrtps::rtps:
                 edp_subscriptions_to_send_.end(),
                 change) == edp_subscriptions_to_send_.end())
     {
-        logInfo(DISCOVERY_DATABASE, "Addind Server DATA(r) to send: "
+        logInfo(DISCOVERY_DATABASE, "Addind DATA(r) to send: "
                 << change->instanceHandle);
         edp_subscriptions_to_send_.push_back(change);
         return true;

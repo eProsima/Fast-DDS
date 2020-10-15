@@ -729,6 +729,8 @@ bool PDPServer2::server_update_routine()
 
         logInfo(RTPS_PDP_SERVER, "-------------------- Server routine end --------------------");
         logInfo(RTPS_PDP_SERVER, "");
+
+        logInfo(RTPS_PDP_SERVER, "PDP history size " << mp_PDPWriterHistory->getHistorySize());
     }
     // If the data queue is not empty re-start the routine.
     // A non-empty queue means that the server has received a change while it is running the processing routine.
@@ -781,6 +783,8 @@ History::iterator PDPServer2::process_change_acknowledgement(
 
     if (c->kind == fastrtps::rtps::ChangeKind_t::ALIVE)
     {
+
+        logInfo(RTPS_PDP_SERVER, "Processing ack data alive " << c->instanceHandle);
 
         // If the change is a DATA(p), and it's the server's DATA(p), and the database knows that
         // it had been acked by all, then skip the change acked check for every reader proxy
@@ -1120,6 +1124,7 @@ bool PDPServer2::process_to_send_list(
         // Add DATA to writer's history.
         change->writerGUID.guidPrefix = mp_PDPWriter->getGuid().guidPrefix;
         eprosima::fastrtps::rtps::WriteParams wp = change->write_params;
+        logInfo(RTPS_PDP_SERVER, "Adding change from " << change->instanceHandle << " to history");
         history->add_change(change, wp);
     }
     return true;
