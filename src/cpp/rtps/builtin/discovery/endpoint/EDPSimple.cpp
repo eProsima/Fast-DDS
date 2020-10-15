@@ -417,7 +417,7 @@ bool EDPSimple::createSEDPEndpoints()
         logInfo(RTPS_EDP, "SEDP Publication Writer created");
 
         if (!create_edp_reader(mp_RTPSParticipant, "DCPSSubscriptions", c_EntityId_SEDPSubReader, reader_history_att,
-            ratt, subscriptions_listener_, sub_reader_payload_pool_, subscriptions_reader_))
+                ratt, subscriptions_listener_, sub_reader_payload_pool_, subscriptions_reader_))
         {
             return false;
         }
@@ -428,7 +428,7 @@ bool EDPSimple::createSEDPEndpoints()
     if (m_discovery.discovery_config.m_simpleEDP.use_PublicationReaderANDSubscriptionWriter)
     {
         if (!create_edp_reader(mp_RTPSParticipant, "DCPSPublications", c_EntityId_SEDPPubReader, reader_history_att,
-            ratt, publications_listener_, pub_reader_payload_pool_, publications_reader_))
+                ratt, publications_listener_, pub_reader_payload_pool_, publications_reader_))
         {
             return false;
         }
@@ -436,7 +436,7 @@ bool EDPSimple::createSEDPEndpoints()
         logInfo(RTPS_EDP, "SEDP Publication Reader created");
 
         if (!create_edp_writer(mp_RTPSParticipant, "DCPSSubscriptions", c_EntityId_SEDPSubWriter, writer_history_att,
-            watt, subscriptions_listener_, sub_writer_payload_pool_, subscriptions_writer_))
+                watt, subscriptions_listener_, sub_writer_payload_pool_, subscriptions_writer_))
         {
             return false;
         }
@@ -492,15 +492,17 @@ bool EDPSimple::create_sedp_secure_endpoints()
     if (m_discovery.discovery_config.m_simpleEDP.enable_builtin_secure_publications_writer_and_subscriptions_reader)
     {
         if (!create_edp_writer(mp_RTPSParticipant, "DCPSPublicationsSecure", sedp_builtin_publications_secure_writer,
-            writer_history_att, watt, publications_listener_, sec_pub_writer_payload_pool_, publications_secure_writer_))
+                writer_history_att, watt, publications_listener_, sec_pub_writer_payload_pool_,
+                publications_secure_writer_))
         {
             return false;
         }
 
         logInfo(RTPS_EDP, "SEDP Publication Writer created");
 
-        if (!create_edp_reader(mp_RTPSParticipant, "DCPSSubscriptionsSecure", sedp_builtin_subscriptions_secure_reader, reader_history_att,
-            ratt, subscriptions_listener_, sec_sub_reader_payload_pool_, subscriptions_secure_reader_))
+        if (!create_edp_reader(mp_RTPSParticipant, "DCPSSubscriptionsSecure", sedp_builtin_subscriptions_secure_reader,
+                reader_history_att, ratt, subscriptions_listener_, sec_sub_reader_payload_pool_,
+                subscriptions_secure_reader_))
         {
             return false;
         }
@@ -510,8 +512,9 @@ bool EDPSimple::create_sedp_secure_endpoints()
 
     if (m_discovery.discovery_config.m_simpleEDP.enable_builtin_secure_subscriptions_writer_and_publications_reader)
     {
-        if (!create_edp_reader(mp_RTPSParticipant, "DCPSPublicationsSecure", sedp_builtin_publications_secure_reader, reader_history_att,
-            ratt, publications_listener_, sec_pub_reader_payload_pool_, publications_secure_reader_))
+        if (!create_edp_reader(mp_RTPSParticipant, "DCPSPublicationsSecure", sedp_builtin_publications_secure_reader,
+                reader_history_att, ratt, publications_listener_, sec_pub_reader_payload_pool_,
+                publications_secure_reader_))
         {
             return false;
         }
@@ -519,7 +522,8 @@ bool EDPSimple::create_sedp_secure_endpoints()
         logInfo(RTPS_EDP, "SEDP Publication Reader created");
 
         if (!create_edp_writer(mp_RTPSParticipant, "DCPSSubscriptionsSecure", sedp_builtin_subscriptions_secure_writer,
-            writer_history_att, watt, subscriptions_listener_, sec_sub_writer_payload_pool_, subscriptions_secure_writer_))
+                writer_history_att, watt, subscriptions_listener_, sec_sub_writer_payload_pool_,
+                subscriptions_secure_writer_))
         {
             return false;
         }
