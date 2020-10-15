@@ -53,6 +53,7 @@ static const int32_t edp_reader_initial_reserved_caches = 1;
 static const int32_t edp_writer_initial_reserved_caches = 20;
 
 using WriterHistoryPair = std::pair<StatefulWriter*, WriterHistory*>;
+using ReaderHistoryPair = std::pair<StatefulReader*, ReaderHistory*>;
 
 static std::shared_ptr<ITopicPayloadPool> create_payload_pool(
         const std::string& topic_name,
@@ -73,6 +74,36 @@ static void release_payload_pool(
     PoolConfig pool_cfg = PoolConfig::from_history_attributes(history_attr);
     pool->release_history(pool_cfg, is_reader);
     TopicPayloadPoolRegistry::release(pool);
+}
+
+static bool create_edp_reader(
+        RTPSParticipantImpl* participant,
+        const std::string& topic_name,
+        const EntityId_t& entity_id,
+        const HistoryAttributes& history_att,
+        ReaderAttributes& ratt,
+        ReaderListener* listener,
+        std::shared_ptr<ITopicPayloadPool>& payload_pool,
+        ReaderHistoryPair& edp_reader)
+{
+    RTPSReader* raux = nullptr;
+
+    payload_pool = create_payload_pool(topic_name, history_att, true);
+    edp_reader.second = new ReaderHistory(history_att);
+    bool created = participant->createReader(&raux, ratt, payload_pool, edp_reader.second, listener, entity_id, true);
+
+    if (created)
+    {
+        edp_reader.first = dynamic_cast<StatefulReader*>(raux);
+    }
+    else
+    {
+        delete(edp_reader.second);
+        edp_reader.second = nullptr;
+        release_payload_pool(payload_pool, history_att, true);
+    }
+
+    return created;
 }
 
 static bool create_edp_writer(
@@ -366,8 +397,6 @@ bool EDPSimple::createSEDPEndpoints()
     ReaderAttributes ratt;
     HistoryAttributes reader_history_att;
     HistoryAttributes writer_history_att;
-    bool created = true;
-    RTPSReader* raux = nullptr;
 
     set_builtin_reader_history_attributes(reader_history_att);
     set_builtin_writer_history_attributes(writer_history_att);
@@ -387,41 +416,24 @@ bool EDPSimple::createSEDPEndpoints()
 
         logInfo(RTPS_EDP, "SEDP Publication Writer created");
 
-        sub_reader_payload_pool_ = create_payload_pool("DCPSSubscriptions", reader_history_att, true);
-        subscriptions_reader_.second = new ReaderHistory(reader_history_att);
-        created &= this->mp_RTPSParticipant->createReader(&raux, ratt, sub_reader_payload_pool_,
-                        subscriptions_reader_.second, subscriptions_listener_, c_EntityId_SEDPSubReader, true);
+        if (!create_edp_reader(mp_RTPSParticipant, "DCPSSubscriptions", c_EntityId_SEDPSubReader, reader_history_att,
+            ratt, subscriptions_listener_, sub_reader_payload_pool_, subscriptions_reader_))
+        {
+            return false;
+        }
 
-        if (created)
-        {
-            subscriptions_reader_.first = dynamic_cast<StatefulReader*>(raux);
-            logInfo(RTPS_EDP, "SEDP Subscription Reader created");
-        }
-        else
-        {
-            delete(subscriptions_reader_.second);
-            subscriptions_reader_.second = nullptr;
-            release_payload_pool(sub_reader_payload_pool_, reader_history_att, true);
-        }
+        logInfo(RTPS_EDP, "SEDP Subscription Reader created");
     }
+
     if (m_discovery.discovery_config.m_simpleEDP.use_PublicationReaderANDSubscriptionWriter)
     {
-        pub_reader_payload_pool_ = create_payload_pool("DCPSPublications", reader_history_att, true);
-        publications_reader_.second = new ReaderHistory(reader_history_att);
-        created &= this->mp_RTPSParticipant->createReader(&raux, ratt, pub_reader_payload_pool_,
-                        publications_reader_.second, publications_listener_, c_EntityId_SEDPPubReader, true);
+        if (!create_edp_reader(mp_RTPSParticipant, "DCPSPublications", c_EntityId_SEDPPubReader, reader_history_att,
+            ratt, publications_listener_, pub_reader_payload_pool_, publications_reader_))
+        {
+            return false;
+        }
 
-        if (created)
-        {
-            publications_reader_.first = dynamic_cast<StatefulReader*>(raux);
-            logInfo(RTPS_EDP, "SEDP Publication Reader created");
-        }
-        else
-        {
-            delete(publications_reader_.second);
-            publications_reader_.second = nullptr;
-            release_payload_pool(pub_reader_payload_pool_, reader_history_att, true);
-        }
+        logInfo(RTPS_EDP, "SEDP Publication Reader created");
 
         if (!create_edp_writer(mp_RTPSParticipant, "DCPSSubscriptions", c_EntityId_SEDPSubWriter, writer_history_att,
             watt, subscriptions_listener_, sub_writer_payload_pool_, subscriptions_writer_))
@@ -431,8 +443,9 @@ bool EDPSimple::createSEDPEndpoints()
 
         logInfo(RTPS_EDP, "SEDP Subscription Writer created");
     }
+
     logInfo(RTPS_EDP, "Creation finished");
-    return created;
+    return true;
 }
 
 #if HAVE_SECURITY
@@ -442,8 +455,6 @@ bool EDPSimple::create_sedp_secure_endpoints()
     ReaderAttributes ratt;
     HistoryAttributes reader_history_att;
     HistoryAttributes writer_history_att;
-    bool created = true;
-    RTPSReader* raux = nullptr;
 
     set_builtin_reader_history_attributes(reader_history_att);
     set_builtin_writer_history_attributes(writer_history_att);
@@ -488,43 +499,24 @@ bool EDPSimple::create_sedp_secure_endpoints()
 
         logInfo(RTPS_EDP, "SEDP Publication Writer created");
 
-        sec_sub_reader_payload_pool_ = create_payload_pool("DCPSSubscriptionsSecure", reader_history_att, true);
-        subscriptions_secure_reader_.second = new ReaderHistory(reader_history_att);
-        created &= this->mp_RTPSParticipant->createReader(&raux, ratt, subscriptions_secure_reader_.second,
-                        subscriptions_listener_, sedp_builtin_subscriptions_secure_reader, true);
+        if (!create_edp_reader(mp_RTPSParticipant, "DCPSSubscriptionsSecure", sedp_builtin_subscriptions_secure_reader, reader_history_att,
+            ratt, subscriptions_listener_, sec_sub_reader_payload_pool_, subscriptions_secure_reader_))
+        {
+            return false;
+        }
 
-        if (created)
-        {
-            subscriptions_secure_reader_.first = dynamic_cast<StatefulReader*>(raux);
-            logInfo(RTPS_EDP, "SEDP Subscription Reader created");
-        }
-        else
-        {
-            delete(subscriptions_secure_reader_.second);
-            subscriptions_secure_reader_.second = nullptr;
-            release_payload_pool(sec_sub_reader_payload_pool_, reader_history_att, true);
-        }
+        logInfo(RTPS_EDP, "SEDP Subscription Reader created");
     }
 
     if (m_discovery.discovery_config.m_simpleEDP.enable_builtin_secure_subscriptions_writer_and_publications_reader)
     {
-        sec_pub_reader_payload_pool_ = create_payload_pool("DCPSPublicationsSecure", reader_history_att, true);
-        publications_secure_reader_.second = new ReaderHistory(reader_history_att);
-        created &= this->mp_RTPSParticipant->createReader(&raux, ratt, publications_secure_reader_.second,
-                        publications_listener_, sedp_builtin_publications_secure_reader, true);
-
-        if (created)
+        if (!create_edp_reader(mp_RTPSParticipant, "DCPSPublicationsSecure", sedp_builtin_publications_secure_reader, reader_history_att,
+            ratt, publications_listener_, sec_pub_reader_payload_pool_, publications_secure_reader_))
         {
-            publications_secure_reader_.first = dynamic_cast<StatefulReader*>(raux);
-            logInfo(RTPS_EDP, "SEDP Publication Reader created");
+            return false;
+        }
 
-        }
-        else
-        {
-            delete(publications_secure_reader_.second);
-            publications_secure_reader_.second = nullptr;
-            release_payload_pool(sec_pub_reader_payload_pool_, reader_history_att, true);
-        }
+        logInfo(RTPS_EDP, "SEDP Publication Reader created");
 
         if (!create_edp_writer(mp_RTPSParticipant, "DCPSSubscriptionsSecure", sedp_builtin_subscriptions_secure_writer,
             writer_history_att, watt, subscriptions_listener_, sec_sub_writer_payload_pool_, subscriptions_secure_writer_))
@@ -534,8 +526,9 @@ bool EDPSimple::create_sedp_secure_endpoints()
 
         logInfo(RTPS_EDP, "SEDP Subscription Writer created");
     }
-    logInfo(RTPS_EDP, "Creation finished");
-    return created;
+
+    logInfo(RTPS_EDP, "SEDP Endpoints creation finished");
+    return true;
 }
 
 #endif // if HAVE_SECURITY
