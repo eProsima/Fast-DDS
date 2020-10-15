@@ -546,6 +546,7 @@ void DiscoveryDataBase::create_writers_from_change_(
 
     // Update writers_
     DiscoveryEndpointInfo tmp_writer(ch, topic_name, server_guid_prefix_);
+    tmp_writer.add_or_update_ack_participant(ch->writerGUID.guidPrefix, true);
 
     std::pair<std::map<eprosima::fastrtps::rtps::GUID_t, DiscoveryEndpointInfo>::iterator, bool> ret =
             writers_.insert(std::make_pair(writer_guid, tmp_writer));
@@ -582,7 +583,7 @@ void DiscoveryDataBase::create_writers_from_change_(
                 // Update the participant ack status list from readers_
                 std::map<eprosima::fastrtps::rtps::GUID_t, DiscoveryEndpointInfo>::iterator rit =
                         readers_.find(reader_it);
-                if (rit != readers_.end())
+                if (rit != readers_.end() && !rit->second.is_matched(writer_guid.guidPrefix))
                 {
                     rit->second.add_or_update_ack_participant(writer_guid.guidPrefix);
                 }
@@ -625,6 +626,7 @@ void DiscoveryDataBase::create_readers_from_change_(
     const eprosima::fastrtps::rtps::GUID_t& reader_guid = guid_from_change(ch);
 
     DiscoveryEndpointInfo tmp_reader(ch, topic_name, server_guid_prefix_);
+    tmp_reader.add_or_update_ack_participant(ch->writerGUID.guidPrefix, true);
 
     std::pair<std::map<eprosima::fastrtps::rtps::GUID_t, DiscoveryEndpointInfo>::iterator, bool> ret =
             readers_.insert(std::make_pair(reader_guid, tmp_reader));
@@ -663,7 +665,7 @@ void DiscoveryDataBase::create_readers_from_change_(
                 // Update the participant ack status list from writers_
                 std::map<eprosima::fastrtps::rtps::GUID_t, DiscoveryEndpointInfo>::iterator wit =
                         writers_.find(writer_it);
-                if (wit != writers_.end())
+                if (wit != writers_.end() && !wit->second.is_matched(reader_guid.guidPrefix))
                 {
                     wit->second.add_or_update_ack_participant(reader_guid.guidPrefix);
                 }
