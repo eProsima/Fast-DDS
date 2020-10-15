@@ -78,6 +78,8 @@ public:
         return mp_mutex;
     }
 
+    HistoryAttributes m_att;
+
 protected:
 
     RTPSReader* mp_reader;
@@ -87,8 +89,6 @@ protected:
     std::mutex samples_number_mutex_;
     unsigned int samples_number_;
     SequenceNumber_t last_sequence_number_;
-    HistoryAttributes m_att;
-
 };
 
 } // namespace rtps

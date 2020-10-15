@@ -38,6 +38,8 @@
 
 #include <fastdds/dds/log/Log.hpp>
 
+#include <rtps/history/TopicPayloadPoolRegistry.hpp>
+
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
 using namespace std::chrono;
@@ -153,14 +155,16 @@ ReturnCode_t DataReaderImpl::enable()
         att.endpoint.properties.properties().push_back(std::move(property));
     }
 
+    std::shared_ptr<IPayloadPool> pool = get_payload_pool();
     RTPSReader* reader = RTPSDomain::createRTPSReader(
         subscriber_->rtps_participant(),
-        att,
+        att, pool,
         static_cast<ReaderHistory*>(&history_),
         static_cast<ReaderListener*>(&reader_listener_));
 
     if (reader == nullptr)
     {
+        release_payload_pool();
         logError(DATA_READER, "Problem creating associated Reader");
         return ReturnCode_t::RETCODE_ERROR;
     }
@@ -206,6 +210,7 @@ DataReaderImpl::~DataReaderImpl()
     {
         logInfo(DATA_READER, guid().entityId << " in topic: " << topic_->get_name());
         RTPSDomain::removeRTPSReader(reader_);
+        release_payload_pool();
     }
 
     delete user_datareader_;
@@ -353,7 +358,7 @@ ReturnCode_t DataReaderImpl::set_qos(
         // Deadline
         if (qos_.deadline().period != c_TimeInfinite)
         {
-            deadline_duration_us_ = duration<double, std::ratio<1, 1000000> >(qos_.deadline().period.to_ns() * 1e-3);
+            deadline_duration_us_ = duration<double, std::ratio<1, 1000000>>(qos_.deadline().period.to_ns() * 1e-3);
             deadline_timer_->update_interval_millisec(qos_.deadline().period.to_ns() * 1e-6);
         }
         else
@@ -365,7 +370,7 @@ ReturnCode_t DataReaderImpl::set_qos(
         if (qos_.lifespan().duration != c_TimeInfinite)
         {
             lifespan_duration_us_ =
-                    std::chrono::duration<double, std::ratio<1, 1000000> >(qos_.lifespan().duration.to_ns() * 1e-3);
+                    std::chrono::duration<double, std::ratio<1, 1000000>>(qos_.lifespan().duration.to_ns() * 1e-3);
             lifespan_timer_->update_interval_millisec(qos_.lifespan().duration.to_ns() * 1e-6);
         }
         else
@@ -980,6 +985,29 @@ DataReaderListener* DataReaderImpl::get_listener_for(
         return listener_;
     }
     return subscriber_->get_listener_for(status);
+}
+
+std::shared_ptr<IPayloadPool> DataReaderImpl::get_payload_pool()
+{
+    PoolConfig config = PoolConfig::from_history_attributes(history_.m_att );
+
+    if (!payload_pool_)
+    {
+        payload_pool_ = TopicPayloadPoolRegistry::get(topic_->get_name(), config);
+    }
+
+    payload_pool_->reserve_history(config, true);
+    return payload_pool_;
+}
+
+void DataReaderImpl::release_payload_pool()
+{
+    assert(payload_pool_);
+
+    PoolConfig config = PoolConfig::from_history_attributes(history_.m_att);
+    payload_pool_->release_history(config, true);
+
+    TopicPayloadPoolRegistry::release(payload_pool_);
 }
 
 } /* namespace dds */
