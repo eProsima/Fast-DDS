@@ -43,9 +43,11 @@ public:
     DiscoveryEndpointInfo(
             eprosima::fastrtps::rtps::CacheChange_t* change,
             std::string topic,
+            bool is_virtual,
             const eprosima::fastrtps::rtps::GuidPrefix_t& known_participant)
         : DiscoverySharedInfo(change, known_participant)
         , topic_(topic)
+        , is_virtual_(is_virtual)
     {
     }
 
@@ -71,7 +73,7 @@ public:
 private:
 
     std::string topic_;
-    bool is_virtual_ = false;
+    bool is_virtual_;
 
 };
 

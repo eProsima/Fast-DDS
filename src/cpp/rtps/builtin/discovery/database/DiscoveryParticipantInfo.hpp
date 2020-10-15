@@ -93,38 +93,23 @@ public:
         return participant_change_data_.is_client;
     }
 
-    bool is_my_client()
+    bool is_local()
     {
-        return participant_change_data_.is_my_client;
+        return participant_change_data_.is_local;
     }
 
-    bool is_my_server()
-    {
-        return participant_change_data_.is_my_server;
-    }
-
-    bool is_local_server()
-    {
-        return (is_my_server() || (!is_client() && is_my_client()));
-    }
-
-    bool is_local_client()
-    {
-        return (is_client() && is_my_client());
-    }
-
-    bool is_self_server()
-    {
-        // The server itself is the only participant that verifies (all at the same time):
-        //  1. Not a client
-        //  2. Not my client
-        //  3. Not my server
-        return (!is_client() && !is_my_client() && !is_my_server());
-    }
+    // bool is_self_server()
+    // {
+    //     // The server itself is the only participant that verifies (all at the same time):
+    //     //  1. Not a client
+    //     //  2. Not my client
+    //     //  3. Not my server
+    //     return (!is_client() && !is_local());
+    // }
 
     bool is_external()
     {
-        return (!is_self_server() && !is_local_client() && !is_local_server());
+        return (!is_local());
     }
 
     fastrtps::rtps::RemoteLocatorList metatraffic_locators()
