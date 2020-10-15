@@ -156,9 +156,8 @@ bool DiscoveryDataBase::edp_publications_is_relevant(
     }
     else if (!itp->second.is_matched(reader_guid.guidPrefix))
     {
-        // participant still not matched, the publisher is relevant to avoid it from
-        // being removed from the writer history
-        return true;
+        // not relevant
+        return false;
     }
 
     auto itw = writers_.find(change_guid);
@@ -190,9 +189,8 @@ bool DiscoveryDataBase::edp_subscriptions_is_relevant(
     }
     else if (!itp->second.is_matched(reader_guid.guidPrefix))
     {
-        // participant still not matched, the subscriber is relevant to avoid it from
-        // being removed from the writer history
-        return true;
+        // not relevant
+        return false;
     }
 
     auto itr = readers_.find(change_guid);
@@ -573,8 +571,13 @@ void DiscoveryDataBase::create_writers_from_change_(
         {
             for (eprosima::fastrtps::rtps::GUID_t reader_it: readers_it->second)
             {
-                // Update the participant ack status list from writers_
-                ret.first->second.add_or_update_ack_participant(reader_it.guidPrefix);
+                // Update the participant ack status list from writers_ (if needed). The reader will only know the
+                // new writer if the reader is a server endpoint, or if the reader and writer are from the same
+                // participant.
+                if (!ret.first->second.is_matched(reader_it.guidPrefix))
+                {
+                    ret.first->second.add_or_update_ack_participant(reader_it.guidPrefix);
+                }
 
                 // Update the participant ack status list from readers_
                 std::map<eprosima::fastrtps::rtps::GUID_t, DiscoveryEndpointInfo>::iterator rit =
@@ -649,8 +652,13 @@ void DiscoveryDataBase::create_readers_from_change_(
                 logInfo(DISCOVERY_DATABASE, "Matching Data(r): " << reader_guid << " with writer: "
                                                                  << writer_it);
 
-                // Update the participant ack status list from readers_
-                ret.first->second.add_or_update_ack_participant(writer_it.guidPrefix);
+                // Update the participant ack status list from readers_ (if needed). The writer will only know the
+                // new reader if the writier is a server endpoint, or if the reader and writer are from the same
+                // participant.
+                if (!ret.first->second.is_matched(writer_it.guidPrefix))
+                {
+                    ret.first->second.add_or_update_ack_participant(writer_it.guidPrefix);
+                }
 
                 // Update the participant ack status list from writers_
                 std::map<eprosima::fastrtps::rtps::GUID_t, DiscoveryEndpointInfo>::iterator wit =
