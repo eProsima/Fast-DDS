@@ -109,11 +109,11 @@ TEST_P(BasicPoolsTest, reserve_cache)
     else if (max_size <= size)
     {
         max_size = size;
-        num_inserts = size + 1;
+        num_inserts = size;
     }
     else // max_size > size
     {
-        num_inserts = max_size + 1;
+        num_inserts = max_size;
     }
 
     for (uint32_t i = 0; i < num_inserts; i++)

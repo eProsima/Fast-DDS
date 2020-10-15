@@ -50,7 +50,6 @@ CacheChangePool::CacheChangePool(
     uint32_t pool_size = config.initial_size;
     uint32_t max_pool_size = config.maximum_size;
 
-    ++pool_size;
     logInfo(RTPS_UTILS, "Creating CacheChangePool of size: " << pool_size);
 
     current_pool_size_ = 0;
@@ -62,7 +61,7 @@ CacheChangePool::CacheChangePool(
         }
         else
         {
-            max_pool_size_ = max_pool_size + 1;
+            max_pool_size_ = max_pool_size;
         }
     }
     else
@@ -74,12 +73,12 @@ CacheChangePool::CacheChangePool(
     {
         case PREALLOCATED_MEMORY_MODE:
             logInfo(RTPS_UTILS, "Static Mode is active, preallocating memory for pool_size elements");
-            allocateGroup(pool_size);
+            allocateGroup(pool_size ? pool_size : 1);
             break;
         case PREALLOCATED_WITH_REALLOC_MEMORY_MODE:
             logInfo(RTPS_UTILS,
                     "Semi-Static Mode is active, preallocating memory for pool_size. Size of the cachechanges can be increased");
-            allocateGroup(pool_size);
+            allocateGroup(pool_size ? pool_size : 1);
             break;
         case DYNAMIC_RESERVE_MEMORY_MODE:
             logInfo(RTPS_UTILS, "Dynamic Mode is active, CacheChanges are allocated on request");
