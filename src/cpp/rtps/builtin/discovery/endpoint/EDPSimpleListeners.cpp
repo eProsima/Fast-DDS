@@ -106,23 +106,22 @@ void EDPBasePUBListener::add_writer_from_change(
         GUID_t participant_guid;
         WriterProxyData* writer_data =
                 edp->mp_PDP->addWriterProxyData(temp_writer_data_.guid(), participant_guid, copy_data_fun);
+
+        //Removing change from history
+        reader_history->remove_change(reader_history->find_change(change), release_change);
+
+        // At this point we can release reader lock, cause change is not used
+        reader->getMutex().unlock();
         if (writer_data != nullptr)
         {
-            // Removing change from history
-            reader_history->remove_change(reader_history->find_change(change), release_change);
-
-            // At this point we can release reader lock, cause change is not used
-            reader->getMutex().unlock();
-
             edp->pairing_writer_proxy_with_any_local_reader(participant_guid, writer_data);
-
-            // Take again the reader lock.
-            reader->getMutex().lock();
         }
         else //NOT ADDED BECAUSE IT WAS ALREADY THERE
         {
             logWarning(RTPS_EDP, "Received message from UNKNOWN RTPSParticipant, removing");
         }
+        // Take again the reader lock.
+        reader->getMutex().lock();
     }
 }
 
@@ -227,23 +226,25 @@ void EDPBaseSUBListener::add_reader_from_change(
         GUID_t participant_guid;
         ReaderProxyData* reader_data =
                 edp->mp_PDP->addReaderProxyData(temp_reader_data_.guid(), participant_guid, copy_data_fun);
+
+        // Remove change from history.
+        reader_history->remove_change(reader_history->find_change(change), release_change);
+
+        // At this point we can release reader lock, cause change is not used
+        reader->getMutex().unlock();
+
         if (reader_data != nullptr) //ADDED NEW DATA
         {
-            // Remove change from history.
-            reader_history->remove_change(reader_history->find_change(change), release_change);
-
-            // At this point we can release reader lock, cause change is not used
-            reader->getMutex().unlock();
-
             edp->pairing_reader_proxy_with_any_local_writer(participant_guid, reader_data);
 
-            // Take again the reader lock.
-            reader->getMutex().lock();
         }
         else
         {
             logWarning(RTPS_EDP, "From UNKNOWN RTPSParticipant, removing");
         }
+
+        // Take again the reader lock.
+        reader->getMutex().lock();
     }
 }
 
