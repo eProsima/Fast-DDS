@@ -285,7 +285,7 @@ public:
 
         //Create subscribe r
         subscriber_ = eprosima::fastrtps::Domain::createSubscriber(participant_, subscriber_attr, &listener_);
-        
+
         if (subscriber_ != nullptr)
         {
             std::cout << "Created subscriber " << subscriber_->getGuid() << " for topic " <<
