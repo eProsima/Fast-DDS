@@ -60,6 +60,7 @@ WriterProxyData::WriterProxyData(
 {
     m_qos.m_userData.set_max_size(static_cast<uint32_t>(data_limits.max_user_data));
     m_qos.m_partition.set_max_size(static_cast<uint32_t>(data_limits.max_partitions));
+    m_properties.set_max_size(static_cast<uint32_t>(data_limits.max_properties));
 }
 
 WriterProxyData::WriterProxyData(
@@ -83,6 +84,7 @@ WriterProxyData::WriterProxyData(
     , m_type_id(nullptr)
     , m_type(nullptr)
     , m_type_information(nullptr)
+    , m_properties(writerInfo.m_properties)
 {
     if (writerInfo.m_type_id)
     {
@@ -129,6 +131,7 @@ WriterProxyData& WriterProxyData::operator =(
     m_topicKind = writerInfo.m_topicKind;
     persistence_guid_ = writerInfo.persistence_guid_;
     m_qos.setQos(writerInfo.m_qos, true);
+    m_properties = writerInfo.m_properties;
 
     if (writerInfo.m_type_id)
     {
@@ -290,6 +293,12 @@ uint32_t WriterProxyData::get_serialized_size(
     {
         ret_val +=
                 fastdds::dds::QosPoliciesSerializer<xtypes::TypeInformation>::cdr_serialized_size(*m_type_information);
+    }
+
+    if (m_properties.size() > 0)
+    {
+        // PID_PROPERTY_LIST
+        ret_val += fastdds::dds::ParameterSerializer<ParameterPropertyList_t>::cdr_serialized_size(m_properties);
     }
 
 #if HAVE_SECURITY
@@ -533,6 +542,14 @@ bool WriterProxyData::writeToCDRMessage(
     if (m_type && m_type->m_type_object._d() != 0)
     {
         if (!fastdds::dds::QosPoliciesSerializer<TypeObjectV1>::add_to_cdr_message(*m_type, msg))
+        {
+            return false;
+        }
+    }
+
+    if (m_properties.size() > 0)
+    {
+        if (!fastdds::dds::ParameterSerializer<ParameterPropertyList_t>::add_to_cdr_message(m_properties, msg))
         {
             return false;
         }
@@ -922,6 +939,17 @@ bool WriterProxyData::readFromCDRMessage(
                                 "Received TypeConsistencyEnforcementQos from a writer, but they haven't.");
                         break;
                     }
+
+                    case fastdds::dds::PID_PROPERTY_LIST:
+                    {
+                        if (!fastdds::dds::ParameterSerializer<ParameterPropertyList_t>::read_from_cdr_message(
+                                    m_properties, msg, plength))
+                        {
+                            return false;
+                        }
+                        break;
+                    }
+
                     default:
                     {
                         break;
@@ -983,6 +1011,8 @@ void WriterProxyData::clear()
     m_typeMaxSerialized = 0;
     m_topicKind = NO_KEY;
     persistence_guid_ = c_Guid_Unknown;
+    m_properties.clear();
+    m_properties.length = 0;
 
     if (m_type_id)
     {
@@ -1012,6 +1042,7 @@ void WriterProxyData::copy(
     m_typeMaxSerialized = wdata->m_typeMaxSerialized;
     m_topicKind = wdata->m_topicKind;
     persistence_guid_ = wdata->persistence_guid_;
+    m_properties = wdata->m_properties;
 
     if (wdata->m_type_id)
     {

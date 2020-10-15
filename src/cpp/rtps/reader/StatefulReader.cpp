@@ -667,7 +667,13 @@ bool StatefulReader::change_received(
                     if (mp_history->received_change(a_change, 0))
                     {
                         Time_t::now(a_change->receptionTimestamp);
-                        update_last_notified(a_change->writerGUID, a_change->sequenceNumber);
+
+                        // If we use the real a_change->sequenceNumber no DATA(p) with a lower one will ever be received.
+                        // That happens because the WriterProxy created when the listener matches the PDP endpoints is
+                        // initialized using this SequenceNumber_t. Note that on a SERVER the own DATA(p) may be in any
+                        // position within the WriterHistory preventing effective data exchange.
+                        update_last_notified(a_change->writerGUID, SequenceNumber_t(0, 1));
+
                         if (getListener() != nullptr)
                         {
                             getListener()->onNewCacheChangeAdded((RTPSReader*)this, a_change);

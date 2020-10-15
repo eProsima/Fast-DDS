@@ -59,7 +59,7 @@ ParticipantProxyData::ParticipantProxyData(
 #if HAVE_SECURITY
     , security_attributes_(0UL)
     , plugin_security_attributes_(0UL)
-#endif
+#endif // if HAVE_SECURITY
     , isAlive(false)
     , m_properties(static_cast<uint32_t>(allocation.data_limits.max_properties))
     , lease_duration_event(nullptr)
@@ -88,7 +88,7 @@ ParticipantProxyData::ParticipantProxyData(
     , permissions_token_(pdata.permissions_token_)
     , security_attributes_(pdata.security_attributes_)
     , plugin_security_attributes_(pdata.plugin_security_attributes_)
-#endif
+#endif // if HAVE_SECURITY
     , isAlive(pdata.isAlive)
     , m_properties(pdata.m_properties)
     , m_userData(pdata.m_userData)
@@ -209,7 +209,7 @@ uint32_t ParticipantProxyData::get_serialized_size(
         // PID_PARTICIPANT_SECURITY_INFO
         ret_val += 4 + PARAMETER_PARTICIPANT_SECURITY_INFO_LENGTH;
     }
-#endif
+#endif // if HAVE_SECURITY
 
     // PID_SENTINEL
     return ret_val + 4;
@@ -365,7 +365,7 @@ bool ParticipantProxyData::writeToCDRMessage(
             return false;
         }
     }
-#endif
+#endif // if HAVE_SECURITY
 
     return fastdds::dds::ParameterSerializer<Parameter_t>::add_parameter_sentinel(msg);
 }
@@ -611,7 +611,7 @@ bool ParticipantProxyData::readFromCDRMessage(
                         identity_token_ = std::move(p.token);
 #else
                         logWarning(RTPS_PARTICIPANT, "Received PID_IDENTITY_TOKEN but security is disabled");
-#endif
+#endif // if HAVE_SECURITY
                         break;
                     }
                     case fastdds::dds::PID_PERMISSIONS_TOKEN:
@@ -627,7 +627,7 @@ bool ParticipantProxyData::readFromCDRMessage(
                         permissions_token_ = std::move(p.token);
 #else
                         logWarning(RTPS_PARTICIPANT, "Received PID_PERMISSIONS_TOKEN but security is disabled");
-#endif
+#endif // if HAVE_SECURITY
                         break;
                     }
 
@@ -646,7 +646,7 @@ bool ParticipantProxyData::readFromCDRMessage(
 #else
                         logWarning(RTPS_PARTICIPANT,
                                 "Received PID_PARTICIPANT_SECURITY_INFO but security is disabled");
-#endif
+#endif // if HAVE_SECURITY
                         break;
                     }
                     default:
@@ -693,7 +693,7 @@ void ParticipantProxyData::clear()
     permissions_token_ = PermissionsToken();
     security_attributes_ = 0UL;
     plugin_security_attributes_ = 0UL;
-#endif
+#endif // if HAVE_SECURITY
     m_properties.clear();
     m_properties.length = 0;
     m_userData.clear();
@@ -727,7 +727,7 @@ void ParticipantProxyData::copy(
     permissions_token_ = pdata.permissions_token_;
     security_attributes_ = pdata.security_attributes_;
     plugin_security_attributes_ = pdata.plugin_security_attributes_;
-#endif
+#endif // if HAVE_SECURITY
 }
 
 bool ParticipantProxyData::updateData(
@@ -744,7 +744,7 @@ bool ParticipantProxyData::updateData(
     permissions_token_ = pdata.permissions_token_;
     security_attributes_ = pdata.security_attributes_;
     plugin_security_attributes_ = pdata.plugin_security_attributes_;
-#endif
+#endif // if HAVE_SECURITY
     auto new_lease_duration = std::chrono::microseconds(TimeConv::Duration_t2MicroSecondsInt64(m_leaseDuration));
     if (lease_duration_event != nullptr)
     {
@@ -785,9 +785,9 @@ void ParticipantProxyData::set_persistence_guid(
         m_properties.begin(),
         m_properties.end(),
         [&persistent_guid](const fastdds::dds::ParameterProperty_t& p)
-                {
-                    return persistent_guid.first == p.first();
-                });
+        {
+            return persistent_guid.first == p.first();
+        });
 
     if (it != m_properties.end())
     {
@@ -813,9 +813,9 @@ GUID_t ParticipantProxyData::get_persistence_guid() const
         m_properties.begin(),
         m_properties.end(),
         [](const fastdds::dds::ParameterProperty_t p)
-                {
-                    return "PID_PERSISTENCE_GUID" == p.first();
-                });
+        {
+            return "PID_PERSISTENCE_GUID" == p.first();
+        });
 
     if (it != m_properties.end())
     {
@@ -824,6 +824,28 @@ GUID_t ParticipantProxyData::get_persistence_guid() const
     }
 
     return persistent;
+}
+
+void ParticipantProxyData::set_sample_identity(
+        const SampleIdentity& sid)
+{
+    fastdds::dds::set_proxy_property(sid, "PID_CLIENT_SERVER_KEY", m_properties);
+}
+
+SampleIdentity ParticipantProxyData::get_sample_identity() const
+{
+    return fastdds::dds::get_proxy_property<SampleIdentity>("PID_CLIENT_SERVER_KEY", m_properties);
+}
+
+void ParticipantProxyData::set_backup_stamp(
+        const GUID_t& guid)
+{
+    fastdds::dds::set_proxy_property(guid, "PID_BACKUP_STAMP", m_properties);
+}
+
+GUID_t ParticipantProxyData::get_backup_stamp() const
+{
+    return fastdds::dds::get_proxy_property<GUID_t>("PID_BACKUP_STAMP", m_properties);
 }
 
 void ParticipantProxyData::assert_liveliness()

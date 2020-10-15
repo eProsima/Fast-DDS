@@ -59,6 +59,17 @@ struct RTPS_DllAPI SequenceNumber_t
     {
     }
 
+    /*!
+     * @param u
+     */
+    explicit
+    SequenceNumber_t(
+            uint64_t u) noexcept
+        : high(static_cast<int32_t>(u >> 32u))
+        , low(static_cast<uint32_t>(u))
+    {
+    }
+
     /*! Convert the number to 64 bit.
      * @return 64 bit representation of the SequenceNumber
      */
@@ -79,7 +90,8 @@ struct RTPS_DllAPI SequenceNumber_t
         return *this;
     }
 
-    SequenceNumber_t operator ++(int) noexcept
+    SequenceNumber_t operator ++(
+            int) noexcept
     {
         SequenceNumber_t result(*this);
         ++(*this);
@@ -202,7 +214,7 @@ inline bool operator >=(
  */
 inline bool operator <=(
         const SequenceNumber_t& seq1,
-        const  SequenceNumber_t& seq2) noexcept
+        const SequenceNumber_t& seq2) noexcept
 {
     if (seq1.high == seq2.high)
     {
@@ -275,9 +287,9 @@ inline SequenceNumber_t operator -(
     return res;
 }
 
-#endif
+#endif // ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
-const SequenceNumber_t c_SequenceNumber_Unknown(-1,0);
+const SequenceNumber_t c_SequenceNumber_Unknown(-1, 0);
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
@@ -311,7 +323,7 @@ inline std::ostream& operator <<(
         std::ostream& output,
         const std::vector<SequenceNumber_t>& seqNumSet)
 {
-    for(const SequenceNumber_t& sn : seqNumSet)
+    for (const SequenceNumber_t& sn : seqNumSet)
     {
         output << sn << " ";
     }
@@ -329,6 +341,7 @@ struct SequenceNumberHash
     {
         return static_cast<std::size_t>(sequence_number.to64long());
     }
+
 };
 
 struct SequenceNumberDiff
@@ -340,9 +353,10 @@ struct SequenceNumberDiff
         SequenceNumber_t diff = a - b;
         return diff.low;
     }
+
 };
 
-#endif
+#endif // ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
 //!Structure SequenceNumberSet_t, contains a group of sequencenumbers.
 //!@ingroup COMMON_MODULE
@@ -362,15 +376,35 @@ inline std::ostream& operator <<(
 {
     output << sns.base().to64long() << ":";
     sns.for_each([&output](
-            SequenceNumber_t it)
-    {
-        output << it.to64long() << "-";
-    });
+                SequenceNumber_t it)
+            {
+                output << it.to64long() << "-";
+            });
 
     return output;
 }
 
-#endif
+/**
+ *
+ * @param input
+ * @param seqNum
+ * @return
+ */
+inline std::istream& operator >>(
+        std::istream& input,
+        SequenceNumber_t& seqNum)
+{
+    uint64_t aux;
+
+    if (input >> aux)
+    {
+        seqNum = SequenceNumber_t(aux);
+    }
+
+    return input;
+}
+
+#endif // DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
 } // namespace rtps
 } // namespace fastrtps

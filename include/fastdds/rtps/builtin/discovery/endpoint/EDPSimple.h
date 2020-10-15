@@ -52,6 +52,8 @@ class EDPSimple : public EDP
 
 public:
 
+    typedef std::set<InstanceHandle_t> key_list;
+
     /**
      * Constructor.
      * @param p Pointer to the PDP
@@ -81,7 +83,7 @@ public:
     t_p_StatefulWriter subscriptions_secure_writer_;
 
     t_p_StatefulReader subscriptions_secure_reader_;
-#endif
+#endif // if HAVE_SECURITY
 
     //!Pointer to the listener associated with PubReader and PubWriter.
     EDPListener* publications_listener_;
@@ -137,14 +139,14 @@ public:
      * @return True if correct.
      */
     bool removeLocalReader(
-            RTPSReader*R) override;
+            RTPSReader* R) override;
     /**
      * This methods generates the change disposing of the local Writer and calls the unpairing and removal methods of the base class.
      * @param W Pointer to the RTPSWriter object.
      * @return True if correct.
      */
     bool removeLocalWriter(
-            RTPSWriter*W) override;
+            RTPSWriter* W) override;
 
 protected:
 
@@ -215,9 +217,13 @@ protected:
             CacheChange_t** created_change);
 
     //! Process the info recorded in the persistence database
-    static void processPersistentData(t_p_StatefulReader & reader, t_p_StatefulWriter & writer);
+    void processPersistentData(
+            t_p_StatefulReader& reader,
+            t_p_StatefulWriter& writer,
+            key_list& demises);
 
 private:
+
     /**
      * Create a cache change on a builtin writer and serialize a ProxyData on it.
      * @param [in] data The ProxyData object to be serialized.
@@ -243,7 +249,7 @@ private:
     bool pairing_remote_reader_with_local_builtin_writer_after_security(
             const GUID_t& local_writer,
             const ReaderProxyData& remote_reader_data) override;
-#endif
+#endif // if HAVE_SECURITY
 
     std::mutex temp_data_lock_;
     ReaderProxyData temp_reader_proxy_data_;
@@ -254,5 +260,5 @@ private:
 } /* namespace fastrtps */
 } /* namespace eprosima */
 
-#endif
+#endif // ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 #endif /* _FASTDDS_RTPS_EDPSIMPLE_H_ */

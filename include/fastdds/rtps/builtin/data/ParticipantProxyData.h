@@ -31,7 +31,7 @@
 
 #if HAVE_SECURITY
 #include <fastdds/rtps/security/accesscontrol/ParticipantSecurityAttributes.h>
-#endif
+#endif // if HAVE_SECURITY
 
 #include <chrono>
 
@@ -126,7 +126,7 @@ public:
     security::ParticipantSecurityAttributesMask security_attributes_;
     //!
     security::PluginParticipantSecurityAttributesMask plugin_security_attributes_;
-#endif
+#endif // if HAVE_SECURITY
     //!
     bool isAlive;
     //!
@@ -199,6 +199,32 @@ public:
      */
     GUID_t get_persistence_guid() const;
 
+    /**
+     * Set participant client server sample identity
+     * @param sid valid SampleIdentity
+     */
+    void set_sample_identity(
+            const SampleIdentity& sid);
+
+    /**
+     * Retrieve participant SampleIdentity
+     * @return SampleIdentity
+     */
+    SampleIdentity get_sample_identity() const;
+
+    /**
+     * Identifies the participant as client of the given server
+     * @param guid valid backup server GUID
+     */
+    void set_backup_stamp(
+            const GUID_t& guid);
+
+    /**
+     * Retrieves BACKUP server stamp. On deserialization hints if lease duration must be enforced
+     * @return GUID
+     */
+    GUID_t get_backup_stamp() const;
+
     void assert_liveliness();
 
     const std::chrono::steady_clock::time_point& last_received_message_tm() const
@@ -224,6 +250,6 @@ private:
 } /* namespace fastrtps */
 } /* namespace eprosima */
 
-#endif
+#endif // ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
 #endif // _FASTDDS_RTPS_BUILTIN_DATA_PARTICIPANTPROXYDATA_H_
