@@ -48,7 +48,7 @@ bool EDPServer2::createSEDPEndpoints()
     RTPSReader* raux = nullptr;
     set_builtin_reader_history_attributes(reader_history_att);
     set_builtin_reader_attributes(ratt);
-    ratt.endpoint.durabilityKind = VOLATILE;
+    ratt.endpoint.durabilityKind = TRANSIENT_LOCAL;
 
     /* EDP Writers attributes */
     WriterAttributes watt;
@@ -56,7 +56,7 @@ bool EDPServer2::createSEDPEndpoints()
     RTPSWriter* waux = nullptr;
     set_builtin_writer_history_attributes(writer_history_att);
     set_builtin_writer_attributes(watt);
-    watt.endpoint.durabilityKind = VOLATILE;
+    watt.endpoint.durabilityKind = TRANSIENT_LOCAL;
     watt.mode = ASYNCHRONOUS_WRITER;
 
     /* EDP Listeners */
