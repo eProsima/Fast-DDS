@@ -221,16 +221,6 @@ protected:
             t_p_StatefulReader& reader,
             t_p_StatefulWriter& writer);
 
-    std::shared_ptr<ITopicPayloadPool> create_payload_pool(
-            const std::string& topic_name,
-            const HistoryAttributes& history_attr,
-            bool is_reader);
-
-    void release_payload_pool(
-            std::shared_ptr<ITopicPayloadPool>& pool,
-            const HistoryAttributes& history_attr,
-            bool is_reader);
-
     std::shared_ptr<ITopicPayloadPool> pub_writer_payload_pool_;
     std::shared_ptr<ITopicPayloadPool> pub_reader_payload_pool_;
     std::shared_ptr<ITopicPayloadPool> sub_writer_payload_pool_;
