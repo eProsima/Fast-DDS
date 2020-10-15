@@ -183,31 +183,27 @@ EDPSimple::~EDPSimple()
 
     if (this->publications_reader_.first != nullptr)
     {
-        HistoryAttributes hattr = publications_reader_.second->m_att;
         this->mp_RTPSParticipant->deleteUserEndpoint(publications_reader_.first);
+        release_payload_pool(pub_reader_payload_pool_, publications_reader_.second->m_att, true);
         delete(publications_reader_.second);
-        release_payload_pool(pub_reader_payload_pool_, hattr, true);
     }
     if (this->subscriptions_reader_.first != nullptr)
     {
-        HistoryAttributes hattr = subscriptions_reader_.second->m_att;
         this->mp_RTPSParticipant->deleteUserEndpoint(subscriptions_reader_.first);
+        release_payload_pool(sub_reader_payload_pool_, subscriptions_reader_.second->m_att, true);
         delete(subscriptions_reader_.second);
-        release_payload_pool(sub_reader_payload_pool_, hattr, true);
     }
     if (this->publications_writer_.first != nullptr)
     {
-        HistoryAttributes hattr = publications_writer_.second->m_att;
         this->mp_RTPSParticipant->deleteUserEndpoint(publications_writer_.first);
+        release_payload_pool(pub_writer_payload_pool_, publications_writer_.second->m_att, false);
         delete(publications_writer_.second);
-        release_payload_pool(pub_writer_payload_pool_, hattr, false);
     }
     if (this->subscriptions_writer_.first != nullptr)
     {
-        HistoryAttributes hattr = subscriptions_writer_.second->m_att;
         this->mp_RTPSParticipant->deleteUserEndpoint(subscriptions_writer_.first);
+        release_payload_pool(sub_writer_payload_pool_, subscriptions_writer_.second->m_att, false);
         delete(subscriptions_writer_.second);
-        release_payload_pool(sub_writer_payload_pool_, hattr, false);
     }
 
     if (nullptr != publications_listener_)
