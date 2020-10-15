@@ -432,6 +432,8 @@ private:
     void delete_entities();
     bool create_participant_stateless_message_entities();
     void delete_participant_stateless_message_entities();
+    void create_participant_stateless_message_pool();
+    void delete_participant_stateless_message_pool();
     bool create_participant_stateless_message_writer();
     void delete_participant_stateless_message_writer();
     bool create_participant_stateless_message_reader();
@@ -594,6 +596,10 @@ private:
     std::mutex temp_volatile_data_lock_;
     ReaderProxyData temp_volatile_reader_proxy_data_;
     WriterProxyData temp_volatile_writer_proxy_data_;
+
+    HistoryAttributes participant_stateless_message_writer_hattr_;
+    HistoryAttributes participant_stateless_message_reader_hattr_;
+    std::shared_ptr<ITopicPayloadPool> participant_stateless_message_pool_;
 
     HistoryAttributes participant_volatile_message_secure_hattr_;
     std::shared_ptr<ITopicPayloadPool> participant_volatile_message_secure_pool_;
