@@ -222,203 +222,219 @@ private:
     {
         struct AuthenticationInfo
         {
-            public:
+        public:
 
-                AuthenticationInfo(
-                        AuthenticationStatus auth_status)
-                    : identity_handle_(nullptr)
-                    , handshake_handle_(nullptr)
-                    , auth_status_(auth_status)
-                    , expected_sequence_number_(0)
-                    , change_sequence_number_(SequenceNumber_t::unknown())
-                    , event_(nullptr)
-                {}
+            AuthenticationInfo(
+                    AuthenticationStatus auth_status)
+                : identity_handle_(nullptr)
+                , handshake_handle_(nullptr)
+                , auth_status_(auth_status)
+                , expected_sequence_number_(0)
+                , change_sequence_number_(SequenceNumber_t::unknown())
+                , event_(nullptr)
+            {
+            }
 
-                AuthenticationInfo(
-                        AuthenticationInfo&& auth)
-                    : identity_handle_(std::move(auth.identity_handle_))
-                    , handshake_handle_(std::move(auth.handshake_handle_))
-                    , auth_status_(auth.auth_status_)
-                    , expected_sequence_number_(auth.expected_sequence_number_)
-                    , change_sequence_number_(std::move(auth.change_sequence_number_))
-                    , event_(std::move(auth.event_))
-                {}
+            AuthenticationInfo(
+                    AuthenticationInfo&& auth)
+                : identity_handle_(std::move(auth.identity_handle_))
+                , handshake_handle_(std::move(auth.handshake_handle_))
+                , auth_status_(auth.auth_status_)
+                , expected_sequence_number_(auth.expected_sequence_number_)
+                , change_sequence_number_(std::move(auth.change_sequence_number_))
+                , event_(std::move(auth.event_))
+            {
+            }
 
-                IdentityHandle* identity_handle_;
+            IdentityHandle* identity_handle_;
 
-                HandshakeHandle* handshake_handle_;
+            HandshakeHandle* handshake_handle_;
 
-                AuthenticationStatus auth_status_;
+            AuthenticationStatus auth_status_;
 
-                int64_t expected_sequence_number_;
+            int64_t expected_sequence_number_;
 
-                SequenceNumber_t change_sequence_number_;
+            SequenceNumber_t change_sequence_number_;
 
-                TimedEvent* event_;
+            TimedEvent* event_;
 
-            private:
+        private:
 
-                AuthenticationInfo(
-                        const AuthenticationInfo& auth) = delete;
+            AuthenticationInfo(
+                    const AuthenticationInfo& auth) = delete;
         };
 
         struct EmptyDelete
         {
-            void operator()(
+            void operator ()(
                     AuthenticationInfo*)
-            {}
+            {
+            }
+
         };
 
-        public:
+    public:
 
-            typedef std::unique_ptr<AuthenticationInfo, EmptyDelete> AuthUniquePtr;
+        typedef std::unique_ptr<AuthenticationInfo, EmptyDelete> AuthUniquePtr;
 
-            DiscoveredParticipantInfo(
-                    AuthenticationStatus auth_status,
-                    const ParticipantProxyData& participant_data)
-                : auth_(auth_status), auth_ptr_(&auth_)
-                , shared_secret_handle_(nullptr)
-                , permissions_handle_(nullptr)
-                , participant_crypto_(nullptr)
-                , participant_data_(participant_data)
-            {}
+        DiscoveredParticipantInfo(
+                AuthenticationStatus auth_status,
+                const ParticipantProxyData& participant_data)
+            : auth_(auth_status)
+            , auth_ptr_(&auth_)
+            , shared_secret_handle_(nullptr)
+            , permissions_handle_(nullptr)
+            , participant_crypto_(nullptr)
+            , participant_data_(participant_data)
+        {
+        }
 
-            DiscoveredParticipantInfo(
-                    DiscoveredParticipantInfo&& info)
-                : auth_(std::move(info.auth_))
-                , auth_ptr_(&auth_)
-                , shared_secret_handle_(std::move(info.shared_secret_handle_))
-                , permissions_handle_(std::move(info.permissions_handle_))
-                , participant_crypto_(info.participant_crypto_)
-                , participant_data_(std::move(info.participant_data_))
-            {}
+        DiscoveredParticipantInfo(
+                DiscoveredParticipantInfo&& info)
+            : auth_(std::move(info.auth_))
+            , auth_ptr_(&auth_)
+            , shared_secret_handle_(std::move(info.shared_secret_handle_))
+            , permissions_handle_(std::move(info.permissions_handle_))
+            , participant_crypto_(info.participant_crypto_)
+            , participant_data_(std::move(info.participant_data_))
+        {
+        }
 
-            AuthUniquePtr get_auth()
+        AuthUniquePtr get_auth()
+        {
+            return std::move(auth_ptr_);
+        }
+
+        void set_auth(
+                AuthUniquePtr& auth)
+        {
+            assert(auth.get() == &auth_);
+            auth_ptr_ = std::move(auth);
+        }
+
+        void set_shared_secret(
+                SharedSecretHandle* shared_secret)
+        {
+            shared_secret_handle_ = shared_secret;
+        }
+
+        SharedSecretHandle* get_shared_secret()
+        {
+            return shared_secret_handle_;
+        }
+
+        void set_permissions_handle(
+                PermissionsHandle* handle)
+        {
+            permissions_handle_ = handle;
+        }
+
+        PermissionsHandle* get_permissions_handle()
+        {
+            return permissions_handle_;
+        }
+
+        const PermissionsHandle* get_permissions_handle() const
+        {
+            return permissions_handle_;
+        }
+
+        void set_participant_crypto(
+                ParticipantCryptoHandle* participant_crypto)
+        {
+            participant_crypto_ = participant_crypto;
+        }
+
+        ParticipantCryptoHandle* get_participant_crypto()
+        {
+            return participant_crypto_;
+        }
+
+        void stop_event()
+        {
+            if (auth_.event_ != nullptr)
             {
-                return std::move(auth_ptr_);
+                auth_.event_->cancel_timer();
             }
+        }
 
-            void set_auth(
-                    AuthUniquePtr& auth)
-            {
-                assert(auth.get() == &auth_);
-                auth_ptr_ = std::move(auth);
-            }
+        const ParticipantProxyData& participant_data() const
+        {
+            return participant_data_;
+        }
 
-            void set_shared_secret(
-                    SharedSecretHandle* shared_secret)
-            {
-                shared_secret_handle_ = shared_secret;
-            }
+    private:
 
-            SharedSecretHandle* get_shared_secret()
-            {
-                return shared_secret_handle_;
-            }
+        DiscoveredParticipantInfo(
+                const DiscoveredParticipantInfo& info) = delete;
 
-            void set_permissions_handle(
-                    PermissionsHandle* handle)
-            {
-                permissions_handle_ = handle;
-            }
+        AuthenticationInfo auth_;
 
-            PermissionsHandle* get_permissions_handle()
-            {
-                return permissions_handle_;
-            }
+        AuthUniquePtr auth_ptr_;
 
-            const PermissionsHandle* get_permissions_handle() const
-            {
-                return permissions_handle_;
-            }
+        SharedSecretHandle* shared_secret_handle_;
 
-            void set_participant_crypto(
-                    ParticipantCryptoHandle* participant_crypto)
-            {
-                participant_crypto_ = participant_crypto;
-            }
+        PermissionsHandle* permissions_handle_;
 
-            ParticipantCryptoHandle* get_participant_crypto()
-            {
-                return participant_crypto_;
-            }
+        ParticipantCryptoHandle* participant_crypto_;
 
-            void stop_event()
-            {
-                if(auth_.event_ != nullptr)
-                {
-                    auth_.event_->cancel_timer();
-                }
-            }
-
-            const ParticipantProxyData& participant_data() const
-            {
-                return participant_data_;
-            }
-
-        private:
-
-            DiscoveredParticipantInfo(const DiscoveredParticipantInfo& info) = delete;
-
-            AuthenticationInfo auth_;
-
-            AuthUniquePtr auth_ptr_;
-
-            SharedSecretHandle* shared_secret_handle_;
-
-            PermissionsHandle* permissions_handle_;
-
-            ParticipantCryptoHandle* participant_crypto_;
-
-            ParticipantProxyData participant_data_;
+        ParticipantProxyData participant_data_;
 
     };
 
-    class ParticipantStatelessMessageListener: public eprosima::fastrtps::rtps::ReaderListener
+    class ParticipantStatelessMessageListener : public eprosima::fastrtps::rtps::ReaderListener
     {
-        public:
-            ParticipantStatelessMessageListener(
-                    SecurityManager& manager)
-                : manager_(manager)
-            {}
+    public:
 
-            ~ParticipantStatelessMessageListener()
-            {}
+        ParticipantStatelessMessageListener(
+                SecurityManager& manager)
+            : manager_(manager)
+        {
+        }
 
-            void onNewCacheChangeAdded(
-                    RTPSReader* reader,
-                    const CacheChange_t* const change) override;
+        ~ParticipantStatelessMessageListener()
+        {
+        }
 
-        private:
+        void onNewCacheChangeAdded(
+                RTPSReader* reader,
+                const CacheChange_t* const change) override;
 
-            ParticipantStatelessMessageListener& operator=(
-                    const ParticipantStatelessMessageListener&) = delete;
+    private:
 
-            SecurityManager &manager_;
-    } participant_stateless_message_listener_;
+        ParticipantStatelessMessageListener& operator =(
+                const ParticipantStatelessMessageListener&) = delete;
 
-    class ParticipantVolatileMessageListener: public eprosima::fastrtps::rtps::ReaderListener
+        SecurityManager& manager_;
+    }
+    participant_stateless_message_listener_;
+
+    class ParticipantVolatileMessageListener : public eprosima::fastrtps::rtps::ReaderListener
     {
-        public:
-            ParticipantVolatileMessageListener(
-                    SecurityManager &manager)
-                : manager_(manager)
-            {}
+    public:
 
-            ~ParticipantVolatileMessageListener()
-            {}
+        ParticipantVolatileMessageListener(
+                SecurityManager& manager)
+            : manager_(manager)
+        {
+        }
 
-            void onNewCacheChangeAdded(
-                    RTPSReader* reader,
-                    const CacheChange_t* const change) override;
+        ~ParticipantVolatileMessageListener()
+        {
+        }
 
-        private:
+        void onNewCacheChangeAdded(
+                RTPSReader* reader,
+                const CacheChange_t* const change) override;
 
-            ParticipantVolatileMessageListener& operator=(
-                    const ParticipantVolatileMessageListener&) = delete;
+    private:
 
-            SecurityManager &manager_;
-    } participant_volatile_message_secure_listener_;
+        ParticipantVolatileMessageListener& operator =(
+                const ParticipantVolatileMessageListener&) = delete;
+
+        SecurityManager& manager_;
+    }
+    participant_volatile_message_secure_listener_;
 
     void cancel_init();
 
@@ -561,7 +577,8 @@ private:
         DatawriterAssociations(
                 DatawriterCryptoHandle* wh)
             : writer_handle(wh)
-        {}
+        {
+        }
 
         DatawriterCryptoHandle* writer_handle;
 
@@ -573,7 +590,8 @@ private:
         DatareaderAssociations(
                 DatareaderCryptoHandle* rh)
             : reader_handle(rh)
-        {}
+        {
+        }
 
         DatareaderCryptoHandle* reader_handle;
 
