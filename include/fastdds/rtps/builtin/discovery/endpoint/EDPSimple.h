@@ -236,6 +236,13 @@ protected:
     std::shared_ptr<ITopicPayloadPool> sub_writer_payload_pool_;
     std::shared_ptr<ITopicPayloadPool> sub_reader_payload_pool_;
 
+#if HAVE_SECURITY
+    std::shared_ptr<ITopicPayloadPool> sec_pub_writer_payload_pool_;
+    std::shared_ptr<ITopicPayloadPool> sec_pub_reader_payload_pool_;
+    std::shared_ptr<ITopicPayloadPool> sec_sub_writer_payload_pool_;
+    std::shared_ptr<ITopicPayloadPool> sec_sub_reader_payload_pool_;
+#endif // if HAVE_SECURITY
+
 private:
 
     /**

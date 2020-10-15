@@ -449,6 +449,7 @@ bool EDPSimple::create_sedp_secure_endpoints()
 
     if (m_discovery.discovery_config.m_simpleEDP.enable_builtin_secure_publications_writer_and_subscriptions_reader)
     {
+        sec_pub_writer_payload_pool_ = create_payload_pool("DCPSPublicationsSecure", writer_history_att, false);
         publications_secure_writer_.second = new WriterHistory(writer_history_att);
         created &= this->mp_RTPSParticipant->createWriter(&waux, watt, publications_secure_writer_.second,
                         publications_listener_, sedp_builtin_publications_secure_writer, true);
@@ -462,7 +463,10 @@ bool EDPSimple::create_sedp_secure_endpoints()
         {
             delete(publications_secure_writer_.second);
             publications_secure_writer_.second = nullptr;
+            release_payload_pool(sec_pub_writer_payload_pool_, writer_history_att, false);
         }
+
+        sec_sub_reader_payload_pool_ = create_payload_pool("DCPSSubscriptionsSecure", reader_history_att, true);
         subscriptions_secure_reader_.second = new ReaderHistory(reader_history_att);
         created &= this->mp_RTPSParticipant->createReader(&raux, ratt, subscriptions_secure_reader_.second,
                         subscriptions_listener_, sedp_builtin_subscriptions_secure_reader, true);
@@ -476,11 +480,13 @@ bool EDPSimple::create_sedp_secure_endpoints()
         {
             delete(subscriptions_secure_reader_.second);
             subscriptions_secure_reader_.second = nullptr;
+            release_payload_pool(sec_sub_reader_payload_pool_, reader_history_att, true);
         }
     }
 
     if (m_discovery.discovery_config.m_simpleEDP.enable_builtin_secure_subscriptions_writer_and_publications_reader)
     {
+        sec_pub_reader_payload_pool_ = create_payload_pool("DCPSPublicationsSecure", reader_history_att, true);
         publications_secure_reader_.second = new ReaderHistory(reader_history_att);
         created &= this->mp_RTPSParticipant->createReader(&raux, ratt, publications_secure_reader_.second,
                         publications_listener_, sedp_builtin_publications_secure_reader, true);
@@ -495,8 +501,10 @@ bool EDPSimple::create_sedp_secure_endpoints()
         {
             delete(publications_secure_reader_.second);
             publications_secure_reader_.second = nullptr;
+            release_payload_pool(sec_pub_reader_payload_pool_, reader_history_att, true);
         }
 
+        sec_sub_writer_payload_pool_ = create_payload_pool("DCPSSubscriptionsSecure", writer_history_att, false);
         subscriptions_secure_writer_.second = new WriterHistory(writer_history_att);
         created &= this->mp_RTPSParticipant->createWriter(&waux, watt, subscriptions_secure_writer_.second,
                         subscriptions_listener_, sedp_builtin_subscriptions_secure_writer, true);
@@ -511,6 +519,7 @@ bool EDPSimple::create_sedp_secure_endpoints()
         {
             delete(subscriptions_secure_writer_.second);
             subscriptions_secure_writer_.second = nullptr;
+            release_payload_pool(sub_writer_payload_pool_, writer_history_att, false);
         }
     }
     logInfo(RTPS_EDP, "Creation finished");
