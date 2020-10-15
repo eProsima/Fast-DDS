@@ -159,24 +159,28 @@ EDPSimple::~EDPSimple()
     if (this->publications_secure_writer_.first != nullptr)
     {
         this->mp_RTPSParticipant->deleteUserEndpoint(publications_secure_writer_.first);
+        release_payload_pool(sec_pub_writer_payload_pool_, publications_secure_writer_.second->m_att, false);
         delete(publications_secure_writer_.second);
     }
 
     if (this->publications_secure_reader_.first != nullptr)
     {
         this->mp_RTPSParticipant->deleteUserEndpoint(publications_secure_reader_.first);
+        release_payload_pool(sec_pub_reader_payload_pool_, publications_secure_writer_.second->m_att, true);
         delete(publications_secure_reader_.second);
     }
 
     if (this->subscriptions_secure_writer_.first != nullptr)
     {
         this->mp_RTPSParticipant->deleteUserEndpoint(subscriptions_secure_writer_.first);
+        release_payload_pool(sec_sub_writer_payload_pool_, subscriptions_secure_writer_.second->m_att, true);
         delete(subscriptions_secure_writer_.second);
     }
 
     if (this->subscriptions_secure_reader_.first != nullptr)
     {
         this->mp_RTPSParticipant->deleteUserEndpoint(subscriptions_secure_reader_.first);
+        release_payload_pool(sec_sub_reader_payload_pool_, subscriptions_secure_reader_.second->m_att, true);
         delete(subscriptions_secure_reader_.second);
     }
 #endif // if HAVE_SECURITY
