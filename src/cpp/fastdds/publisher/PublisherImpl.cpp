@@ -602,6 +602,29 @@ PublisherListener* PublisherImpl::get_listener_for(
     return participant_->get_listener_for(status);
 }
 
+bool PublisherImpl::is_datasharing_compatible(
+        const DataWriterQos& qos,
+        const TypeSupport& type)
+{
+    switch (qos.data_sharing().kind())
+    {
+        case DataSharingKind::DISABLED:
+            return false;
+            break;
+        case DataSharingKind::FORCED:
+            return true;
+            break;
+        case DataSharingKind::AUTO:
+            return 
+               ((qos.endpoint().history_memory_policy != eprosima::fastrtps::rtps::PREALLOCATED_MEMORY_MODE ||
+                qos.endpoint().history_memory_policy != eprosima::fastrtps::rtps::PREALLOCATED_WITH_REALLOC_MEMORY_MODE) &&
+                type.is_bounded());
+            break;
+        default:
+            return false;
+    }
+}
+
 } // dds
 } // fastdds
 } // eprosima

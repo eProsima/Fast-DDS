@@ -58,6 +58,7 @@ class DomainParticipant;
 class Publisher;
 class DataWriterImpl;
 class Topic;
+class TypeSupport;
 
 /**
  * Class PublisherImpl, contains the actual implementation of the behaviour of the Publisher.
@@ -251,6 +252,9 @@ protected:
             const PublisherQos& to,
             const PublisherQos& from);
 
+    static bool is_datasharing_compatible(
+            const DataWriterQos& qos,
+            const TypeSupport& type);
 };
 
 } /* namespace dds */
