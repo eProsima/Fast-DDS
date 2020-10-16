@@ -94,6 +94,8 @@ void PDPServerListener2::onNewCacheChangeAdded(
         return;
     }
 
+    // Related_sample_identity could be lost in message delivered, so we set as sample_identity
+    // An empty related_sample_identity could lead into an empty sample_identity when resending this msg
     if (change->write_params.related_sample_identity() == SampleIdentity::unknown())
     {
         change->write_params.related_sample_identity(change->write_params.sample_identity());
@@ -142,11 +144,11 @@ void PDPServerListener2::onNewCacheChangeAdded(
                 }
             }
 
-            // Check whether the participant is a client of this server, or it has been discovered through another
-            // server
+            // Check whether the participant is a client/server of this server or if it has been forwarded from
+            //  another entity (server).
+            // is_local means that the server is connected (or will be) with this entity directly
             bool is_local = true;
-            // If the instance handle is different from the writer GUID, then the change has been relayed. That means,
-            // that the participants is somebody else's client
+            // If the instance handle is different from the writer GUID, then the change has been relayed
             if (iHandle2GUID(change->instanceHandle).guidPrefix != change->writerGUID.guidPrefix)
             {
                 is_local = false;

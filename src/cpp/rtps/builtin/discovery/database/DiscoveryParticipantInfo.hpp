@@ -97,16 +97,7 @@ public:
     {
         return participant_change_data_.is_local;
     }
-
-    // bool is_self_server()
-    // {
-    //     // The server itself is the only participant that verifies (all at the same time):
-    //     //  1. Not a client
-    //     //  2. Not my client
-    //     //  3. Not my server
-    //     return (!is_client() && !is_local());
-    // }
-
+    
     bool is_external()
     {
         return (!is_local());

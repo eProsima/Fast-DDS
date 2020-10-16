@@ -562,14 +562,8 @@ void DiscoveryDataBase::create_participant_from_change_(
             // we avoid backprogation of the data.
             ret.first->second.add_or_update_ack_participant(ch->writerGUID.guidPrefix, true);
 
-            // If the DATA(p) it's from this server, put the DATA(p) in the history
-            if (change_guid.guidPrefix == server_guid_prefix_)
-            {
-                // Only add our own DATA(p) to pdp_to_send_ if it's not there already
-                add_pdp_to_send_(ch);
-            }
-            // The participant is not this server
-            else
+            // If the DATA(p) it's from this server, it is already in history and we do nothing here
+            if (change_guid.guidPrefix != server_guid_prefix_)
             {
                 // If the participant is a new participant, mark that not everyone has ACKed this server's DATA(p)
                 // TODO if the new participant is a server it may be that our DATA(p) is already acked because he is
@@ -983,10 +977,14 @@ void DiscoveryDataBase::match_writer_reader_(
 
 bool DiscoveryDataBase::set_dirty_topic_(std::string topic)
 {
+    // If topic is virtual, we need to set as dirty all the other (non-virtual) topics
     if (topic == virtual_topic_)
     {
-        // set all topics to dirty
+        // Set all topics to dirty
         dirty_topics_.clear();
+
+        // It is enough to use writers_by_topic because the topics are simetrical in writers and readers:
+        //  if a topic exists in one, it exists in the other
         for (auto topic_it : writers_by_topic_)
         {
             if (topic_it.first != virtual_topic_)
@@ -1010,7 +1008,6 @@ bool DiscoveryDataBase::set_dirty_topic_(std::string topic)
     }
     return false;
 }
-
 
 void DiscoveryDataBase::process_dispose_participant_(
         eprosima::fastrtps::rtps::CacheChange_t* ch)
@@ -1667,8 +1664,9 @@ void DiscoveryDataBase::remove_writer_from_topic_(
                 break;
             }
         }
-        // the topic wont be deleted to avoid creating and matching again all the virtual endpoints
-        // this only affects a virtual endpoint, that will be added in this topic, but nothing will be matched
+        // The topic wont be deleted to avoid creating and matching again all the virtual endpoints
+        // This only affects a virtual endpoint, that will be added in this topic, but nothing will be matched
+        // This also helps because topics are symetrical, and removing one implies check the other's emptyness first.
     } 
 }
 
@@ -1893,7 +1891,7 @@ std::map<eprosima::fastrtps::rtps::GUID_t, DiscoveryEndpointInfo>::iterator Disc
         changes_to_release_.push_back(it->second.change());
     }
 
-    // remove entity in readers vector
+    // remove entity in readers_ map
     return readers_.erase(it);
 }
 
@@ -1939,13 +1937,13 @@ std::map<eprosima::fastrtps::rtps::GUID_t, DiscoveryEndpointInfo>::iterator Disc
         changes_to_release_.push_back(it->second.change());
     }
 
-    // remove entity in writers vector
+    // remove entity in writers_ map
     return writers_.erase(it);
 }
 
 bool DiscoveryDataBase::add_pdp_to_send_(eprosima::fastrtps::rtps::CacheChange_t* change)
 {
-    // Only add our own DATA(p) to pdp_to_send_ if it's not there already
+    // Add DATA(p) to send in next iteration if it is not already there
     if (std::find(
                 pdp_to_send_.begin(),
                 pdp_to_send_.end(),
@@ -1961,7 +1959,7 @@ bool DiscoveryDataBase::add_pdp_to_send_(eprosima::fastrtps::rtps::CacheChange_t
 
 bool DiscoveryDataBase::add_edp_publications_to_send_(eprosima::fastrtps::rtps::CacheChange_t* change)
 {
-    // Only add our own DATA(p) to pdp_to_send_ if it's not there already
+    // Add DATA(w) to send in next iteration if it is not already there
     if (std::find(
                 edp_publications_to_send_ .begin(),
                 edp_publications_to_send_.end(),
@@ -1977,7 +1975,7 @@ bool DiscoveryDataBase::add_edp_publications_to_send_(eprosima::fastrtps::rtps::
 
 bool DiscoveryDataBase::add_edp_subscriptions_to_send_(eprosima::fastrtps::rtps::CacheChange_t* change)
 {
-    // Only add our own DATA(p) to pdp_to_send_ if it's not there already
+    // Add DATA(r) to send in next iteration if it is not already there
     if (std::find(
                 edp_subscriptions_to_send_.begin(),
                 edp_subscriptions_to_send_.end(),
