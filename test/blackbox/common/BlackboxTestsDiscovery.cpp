@@ -301,6 +301,58 @@ TEST(Discovery, EndpointRediscovery_2)
     reader.wait_discovery();
 }
 
+// Regression for bug #9629
+TEST(Discovery, EndpointRediscoveryWithTransientLocalData)
+{
+    PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
+
+    auto testTransport = std::make_shared<test_UDPv4TransportDescriptor>();
+
+    reader
+        .lease_duration({ 120, 0 }, { 1, 0 })
+        .reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS)
+        .durability_kind(eprosima::fastrtps::TRANSIENT_LOCAL_DURABILITY_QOS)
+        .init();
+
+    ASSERT_TRUE(reader.isInitialized());
+
+    writer.disable_builtin_transport();
+    writer.add_user_transport_to_pparams(testTransport);
+
+    writer
+        .lease_duration({ 2, 0 }, { 1, 0 })
+        .reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS)
+        .durability_kind(eprosima::fastrtps::TRANSIENT_LOCAL_DURABILITY_QOS)
+        .init();
+
+    ASSERT_TRUE(writer.isInitialized());
+
+    auto data = default_helloworld_data_generator(10);
+
+    // Wait for discovery.
+    writer.wait_discovery();
+    reader.wait_discovery();
+
+    reader.startReception(data);
+    writer.send(data);
+
+    reader.block_for_all();
+    EXPECT_TRUE(writer.waitForAllAcked(std::chrono::seconds(1)));
+
+    test_UDPv4Transport::test_UDPv4Transport_ShutdownAllNetwork = true;
+
+    reader.wait_participant_undiscovery();
+
+    test_UDPv4Transport::test_UDPv4Transport_ShutdownAllNetwork = false;
+    
+    reader.wait_discovery();
+
+    // The bug made the last sample to be sent again, producing a test failure inside
+    // PubSubReader::receive_one
+    std::this_thread::sleep_for(std::chrono::seconds(1));
+}
+
 /*!
  * @test Checks that although DATA(p) are not received, but other kind of RTPS submessages, it keeps the participant
  * liveliness from the remote participant.
