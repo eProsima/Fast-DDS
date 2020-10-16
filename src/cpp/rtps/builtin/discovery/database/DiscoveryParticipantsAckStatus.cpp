@@ -82,6 +82,18 @@ std::vector<eprosima::fastrtps::rtps::GuidPrefix_t> DiscoveryParticipantsAckStat
     return res;
 }
 
+bool DiscoveryParticipantsAckStatus::is_acked_by_all() const
+{
+    for (auto it = relevant_participants_map_.begin(); it != relevant_participants_map_.end(); ++it)
+    {
+        if (!it->second)
+        {
+            return false;
+        }
+    }
+    return true;
+}
+
 } /* namespace ddb */
 } /* namespace rtps */
 } /* namespace fastdds */
