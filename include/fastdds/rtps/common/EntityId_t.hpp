@@ -64,6 +64,9 @@ namespace rtps {
 #define ENTITYID_SPDP_RELIABLE_BUILTIN_PARTICIPANT_SECURE_READER 0xff0101c7
 #endif
 
+#define ENTITYID_DS_SERVER_VIRTUAL_WRITER 0x00030073
+#define ENTITYID_DS_SERVER_VIRTUAL_READER 0x00030074
+
 //!@brief Structure EntityId_t, entity id part of GUID_t.
 //!@ingroup COMMON_MODULE
 struct RTPS_DllAPI EntityId_t
@@ -260,7 +263,9 @@ inline std::istream& operator >>(
 
             input >> std::dec;
         }
-        catch (std::ios_base::failure& ){}
+        catch (std::ios_base::failure& )
+        {
+        }
 
         input.exceptions(excp_mask);
     }
@@ -304,6 +309,9 @@ const EntityId_t participant_volatile_message_secure_reader_entity_id =
 const EntityId_t c_EntityId_WriterLivelinessSecure = ENTITYID_P2P_BUILTIN_PARTICIPANT_MESSAGE_SECURE_WRITER;
 const EntityId_t c_EntityId_ReaderLivelinessSecure = ENTITYID_P2P_BUILTIN_PARTICIPANT_MESSAGE_SECURE_READER;
 #endif
+
+const EntityId_t ds_server_virtual_writer = ENTITYID_DS_SERVER_VIRTUAL_WRITER;
+const EntityId_t ds_server_virtual_reader = ENTITYID_DS_SERVER_VIRTUAL_READER;
 
 } // namespace rtps
 } // namespace fastrtps
