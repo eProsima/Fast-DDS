@@ -94,7 +94,7 @@ protected:
 TEST_F(ReaderHistoryTests, add_and_remove_changes)
 {
     EXPECT_CALL(*readerMock, change_removed_by_history(_)).Times(num_changes).
-    WillRepeatedly(Return(true));
+            WillRepeatedly(Return(true));
     EXPECT_CALL(*readerMock, releaseCache(_)).Times(num_changes);
 
     for (uint32_t i = 0; i < num_changes; i++)
@@ -208,7 +208,7 @@ TEST_F(ReaderHistoryTests, remove_changes_with_guid)
     }
 
     EXPECT_CALL(*readerMock, change_removed_by_history(_)).Times(2).
-    WillRepeatedly(Return(true));
+            WillRepeatedly(Return(true));
     EXPECT_CALL(*readerMock, releaseCache(_)).Times(2);
 
     ASSERT_EQ(history->getHistorySize(), num_changes);

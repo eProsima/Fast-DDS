@@ -746,8 +746,8 @@ bool StatelessWriter::matched_reader_add(
 
     update_reader_info(true);
 
-    if ( (mp_history->getHistorySize() > 0) &&
-            (data.m_qos.m_durability.kind >= TRANSIENT_LOCAL_DURABILITY_QOS) )
+    if ((mp_history->getHistorySize() > 0) &&
+            (data.m_qos.m_durability.kind >= TRANSIENT_LOCAL_DURABILITY_QOS))
     {
         // Resend all changes
         unsent_changes_.assign(mp_history->changesBegin(), mp_history->changesEnd());
