@@ -534,7 +534,7 @@ void PDPServer2::announceParticipantState(
                 {
                     // Already there, dispose
                     logError(RTPS_PDP_SERVER, "DiscoveryDatabase already initialized with local DATA(p) on creation");
-                    mp_PDPWriterHistory->release_Cache(change); 
+                    mp_PDPWriterHistory->release_Cache(change);
                 }
             }
             // Doesn't make sense to send the DATA directly if it hasn't been introduced in the history yet (missing
@@ -742,14 +742,14 @@ bool PDPServer2::server_update_routine()
 bool PDPServer2::process_writers_acknowledgements()
 {
     logInfo(RTPS_PDP_SERVER, "process_writers_acknowledgements start");
-    
-    // Execute first ACK for endpoints because PDP acked changes relevance in EDP, 
+
+    // Execute first ACK for endpoints because PDP acked changes relevance in EDP,
     //  which can result in false positives in EDP acknowledgements.
 
     /* EDP Subscriptions Writer's History */
     EDPServer2* edp = static_cast<EDPServer2*>(mp_EDP);
     bool pending = process_history_acknowledgement(edp->subscriptions_writer_.first, edp->subscriptions_writer_.second);
-    
+
     /* EDP Publications Writer's History */
     pending |= process_history_acknowledgement(edp->publications_writer_.first, edp->publications_writer_.second);
 

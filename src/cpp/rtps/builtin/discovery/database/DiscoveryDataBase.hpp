@@ -385,22 +385,28 @@ protected:
 
     //! Add a topic to the list of dirty topics, unless it's already present
     // Return true if added, false if already there
-    bool set_dirty_topic_(std::string topic);
+    bool set_dirty_topic_(
+            std::string topic);
 
     // Add data in pdp_to_send if not already in it
-    bool add_pdp_to_send_(eprosima::fastrtps::rtps::CacheChange_t* change);
+    bool add_pdp_to_send_(
+            eprosima::fastrtps::rtps::CacheChange_t* change);
 
     // Add data in edp_to_send if not already in it
-    bool add_edp_publications_to_send_(eprosima::fastrtps::rtps::CacheChange_t* change);
+    bool add_edp_publications_to_send_(
+            eprosima::fastrtps::rtps::CacheChange_t* change);
 
     // Add data in edp_to_send if not already in it
-    bool add_edp_subscriptions_to_send_(eprosima::fastrtps::rtps::CacheChange_t* change);
+    bool add_edp_subscriptions_to_send_(
+            eprosima::fastrtps::rtps::CacheChange_t* change);
 
     // Get all the writers in given topic and in virtual topic
-    std::vector<eprosima::fastrtps::rtps::GUID_t> get_writers_in_topic(const std::string& topic_name);
+    std::vector<eprosima::fastrtps::rtps::GUID_t> get_writers_in_topic(
+            const std::string& topic_name);
 
     // Get all the readers in given topic and in virtual topic
-    std::vector<eprosima::fastrtps::rtps::GUID_t> get_readers_in_topic(const std::string& topic_name);
+    std::vector<eprosima::fastrtps::rtps::GUID_t> get_readers_in_topic(
+            const std::string& topic_name);
 
     ////////////////
     // Variables
@@ -451,7 +457,7 @@ protected:
 
     //! List of GUID prefixes of the remote servers
     std::vector<fastrtps::rtps::GuidPrefix_t> servers_;
-    
+
     // The number of local servers known by the database
     uint16_t local_servers_count_ = 0;
 

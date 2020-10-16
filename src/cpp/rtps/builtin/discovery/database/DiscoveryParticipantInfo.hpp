@@ -97,7 +97,7 @@ public:
     {
         return participant_change_data_.is_local;
     }
-    
+
     bool is_external()
     {
         return (!is_local());

@@ -60,7 +60,8 @@ public:
         return topic_;
     }
 
-    void is_virtual(bool is_virtual)
+    void is_virtual(
+            bool is_virtual)
     {
         is_virtual_ = is_virtual;
     }
