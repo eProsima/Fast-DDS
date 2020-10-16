@@ -347,7 +347,7 @@ TEST(SubscriberTests, GetDataReaderProfileQos)
 
     // Extract qos from profile
     DataReaderQos qos;
-    ASSERT_EQ(
+    EXPECT_EQ(
         subscriber->get_datareader_qos_from_profile("test_subscriber_profile", qos),
         ReturnCode_t::RETCODE_OK);
 
@@ -358,7 +358,7 @@ TEST(SubscriberTests, GetDataReaderProfileQos)
     check_datareader_with_profile(datareader, "test_subscriber_profile");
 
     // Test return when a non-existent profile is used
-    ASSERT_EQ(
+    EXPECT_EQ(
         subscriber->get_datareader_qos_from_profile("incorrect_profile_name", qos),
         ReturnCode_t::RETCODE_BAD_PARAMETER);
 

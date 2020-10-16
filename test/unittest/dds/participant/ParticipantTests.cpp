@@ -196,7 +196,7 @@ TEST(ParticipantTests, GetParticipantProfileQos)
 {
     DomainParticipantFactory::get_instance()->load_XML_profiles_file("test_xml_profiles.xml");
     DomainParticipantQos qos;
-    ASSERT_EQ(
+    EXPECT_EQ(
         DomainParticipantFactory::get_instance()->get_participant_qos_from_profile("test_participant_profile", qos),
         ReturnCode_t::RETCODE_OK);
 
@@ -207,10 +207,12 @@ TEST(ParticipantTests, GetParticipantProfileQos)
 
     check_participant_with_profile(participant, "test_participant_profile");
 
-    // Clean up
-    ASSERT_EQ(
+    // Test return when a non-existent profile is used
+    EXPECT_EQ(
         DomainParticipantFactory::get_instance()->get_participant_qos_from_profile("incorrect_profile_name", qos),
         ReturnCode_t::RETCODE_BAD_PARAMETER);
+
+    // Clean up
     ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), ReturnCode_t::RETCODE_OK);
 }
 
@@ -571,7 +573,7 @@ TEST(ParticipantTests, GetSubscriberProfileQos)
 
     // Extract qos from profile
     SubscriberQos qos;
-    ASSERT_EQ(
+    EXPECT_EQ(
         participant->get_subscriber_qos_from_profile("test_subscriber_profile", qos),
         ReturnCode_t::RETCODE_OK);
 
@@ -581,7 +583,7 @@ TEST(ParticipantTests, GetSubscriberProfileQos)
     check_subscriber_with_profile(subscriber, "test_subscriber_profile");
 
     // Test return when a non-existent profile is used
-    ASSERT_EQ(
+    EXPECT_EQ(
         participant->get_subscriber_qos_from_profile("incorrect_profile_name", qos),
         ReturnCode_t::RETCODE_BAD_PARAMETER);
     
@@ -620,7 +622,7 @@ TEST(ParticipantTests, GetPublisherProfileQos)
 
     // Extract qos from profile
     PublisherQos qos;
-    ASSERT_EQ(
+    EXPECT_EQ(
         participant->get_publisher_qos_from_profile("test_publisher_profile", qos),
         ReturnCode_t::RETCODE_OK);
 
@@ -630,7 +632,7 @@ TEST(ParticipantTests, GetPublisherProfileQos)
     check_publisher_with_profile(publisher, "test_publisher_profile");
 
     // Test return when a non-existent profile is used
-    ASSERT_EQ(
+    EXPECT_EQ(
         participant->get_publisher_qos_from_profile("incorrect_profile_name", qos),
         ReturnCode_t::RETCODE_BAD_PARAMETER);
         
@@ -776,7 +778,7 @@ TEST(ParticipantTests, GetTopicProfileQos)
 
     // Extract qos from profile
     TopicQos qos;
-    ASSERT_EQ(
+    EXPECT_EQ(
         participant->get_topic_qos_from_profile("test_topic_profile", qos),
         ReturnCode_t::RETCODE_OK);
 
@@ -787,7 +789,7 @@ TEST(ParticipantTests, GetTopicProfileQos)
     check_topic_with_profile(topic, "test_topic_profile");
 
     // Test return when a non-existent profile is used
-    ASSERT_EQ(
+    EXPECT_EQ(
         participant->get_topic_qos_from_profile("incorrect_profile_name", qos),
         ReturnCode_t::RETCODE_BAD_PARAMETER);
 
