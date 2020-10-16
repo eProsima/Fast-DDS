@@ -215,6 +215,21 @@ public:
         return get() == nullptr;
     }
 
+    /**
+     * Checks if the type is bounded.
+     */
+    RTPS_DllAPI virtual inline bool is_bounded() const
+    {
+        return get()->is_bounded();
+    }
+
+    /**
+     * Checks if the type is plain.
+     */
+    RTPS_DllAPI virtual inline bool is_plain() const
+    {
+        return get()->is_plain();
+    }
 };
 
 } /* namespace dds */
