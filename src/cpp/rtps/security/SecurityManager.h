@@ -579,8 +579,8 @@ private:
     std::map<GUID_t, DatareaderAssociations> reader_handles_;
 
     std::map<GUID_t, DataHolderSeq> remote_participant_pending_messages_;
-    std::map<GUID_t, DataHolderSeq> remote_writer_pending_messages_;
-    std::map<GUID_t, DataHolderSeq> remote_reader_pending_messages_;
+    std::map<std::pair<GUID_t, GUID_t>, DataHolderSeq> remote_writer_pending_messages_;
+    std::map<std::pair<GUID_t, GUID_t>, DataHolderSeq> remote_reader_pending_messages_;
     std::list<std::tuple<ReaderProxyData, GUID_t, GUID_t>> remote_reader_pending_discovery_messages_;
     std::list<std::tuple<WriterProxyData, GUID_t, GUID_t>> remote_writer_pending_discovery_messages_;
 
