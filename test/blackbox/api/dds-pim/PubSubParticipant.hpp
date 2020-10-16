@@ -397,6 +397,13 @@ public:
                 });
     }
 
+    PubSubParticipant& property_policy(
+            const eprosima::fastrtps::rtps::PropertyPolicy property_policy)
+    {
+        participant_qos_.properties() = property_policy;
+        return *this;
+    }
+
     PubSubParticipant& pub_topic_name(
             std::string topicName)
     {
