@@ -57,7 +57,7 @@ std::vector<fastrtps::rtps::CacheChange_t*> DiscoveryDataBase::clear()
     }
     logInfo(DISCOVERY_DATABASE, "Clearing DiscoveryDataBase");
 
-    std::unique_lock<share_mutex_t> lock(sh_mtx_);
+    std::unique_lock<std::recursive_mutex> lock(mutex_);
 
     /* Clear receive queues */
     pdp_data_queue_.Clear();
@@ -124,7 +124,7 @@ bool DiscoveryDataBase::pdp_is_relevant(
     }
 
     // Lock(shared mode) mutex locally
-    std::unique_lock<share_mutex_t> lock(sh_mtx_);
+    std::unique_lock<std::recursive_mutex> lock(mutex_);
 
     auto it = participants_.find(change_guid_prefix);
     if (it != participants_.end())
@@ -146,7 +146,7 @@ bool DiscoveryDataBase::edp_publications_is_relevant(
     fastrtps::rtps::GUID_t change_guid = guid_from_change(&change);
 
     // Lock(shared mode) mutex locally
-    std::unique_lock<share_mutex_t> lock(sh_mtx_);
+    std::unique_lock<std::recursive_mutex> lock(mutex_);
 
     auto itp = participants_.find(change_guid.guidPrefix);
     if (itp == participants_.end())
@@ -179,7 +179,7 @@ bool DiscoveryDataBase::edp_subscriptions_is_relevant(
     fastrtps::rtps::GUID_t change_guid = guid_from_change(&change);
 
     // Lock(shared mode) mutex locally
-    std::unique_lock<share_mutex_t> lock(sh_mtx_);
+    std::unique_lock<std::recursive_mutex> lock(mutex_);
 
     auto itp = participants_.find(change_guid.guidPrefix);
     if (itp == participants_.end())
@@ -316,14 +316,14 @@ bool DiscoveryDataBase::update(
 const std::vector<eprosima::fastrtps::rtps::CacheChange_t*> DiscoveryDataBase::changes_to_dispose()
 {
     // lock(sharing mode) mutex locally
-    std::unique_lock<share_mutex_t> lock(sh_mtx_);
+    std::unique_lock<std::recursive_mutex> lock(mutex_);
     return disposals_;
 }
 
 void DiscoveryDataBase::clear_changes_to_dispose()
 {
     // lock(exclusive mode) mutex locally
-    std::unique_lock<share_mutex_t> lock(sh_mtx_);
+    std::unique_lock<std::recursive_mutex> lock(mutex_);
     disposals_.clear();
 }
 
@@ -332,56 +332,56 @@ void DiscoveryDataBase::clear_changes_to_dispose()
 const std::vector<eprosima::fastrtps::rtps::CacheChange_t*> DiscoveryDataBase::pdp_to_send()
 {
     // lock(sharing mode) mutex locally
-    std::unique_lock<share_mutex_t> lock(sh_mtx_);
+    std::unique_lock<std::recursive_mutex> lock(mutex_);
     return pdp_to_send_;
 }
 
 void DiscoveryDataBase::clear_pdp_to_send()
 {
     // lock(exclusive mode) mutex locally
-    std::unique_lock<share_mutex_t> lock(sh_mtx_);
+    std::unique_lock<std::recursive_mutex> lock(mutex_);
     pdp_to_send_.clear();
 }
 
 const std::vector<eprosima::fastrtps::rtps::CacheChange_t*> DiscoveryDataBase::edp_publications_to_send()
 {
     // lock(sharing mode) mutex locally
-    std::unique_lock<share_mutex_t> lock(sh_mtx_);
+    std::unique_lock<std::recursive_mutex> lock(mutex_);
     return edp_publications_to_send_;
 }
 
 void DiscoveryDataBase::clear_edp_publications_to_send()
 {
     // lock(exclusive mode) mutex locally
-    std::unique_lock<share_mutex_t> lock(sh_mtx_);
+    std::unique_lock<std::recursive_mutex> lock(mutex_);
     edp_publications_to_send_.clear();
 }
 
 const std::vector<eprosima::fastrtps::rtps::CacheChange_t*> DiscoveryDataBase::edp_subscriptions_to_send()
 {
     // lock(sharing mode) mutex locally
-    std::unique_lock<share_mutex_t> lock(sh_mtx_);
+    std::unique_lock<std::recursive_mutex> lock(mutex_);
     return edp_subscriptions_to_send_;
 }
 
 void DiscoveryDataBase::clear_edp_subscriptions_to_send()
 {
     // lock(exclusive mode) mutex locally
-    std::unique_lock<share_mutex_t> lock(sh_mtx_);
+    std::unique_lock<std::recursive_mutex> lock(mutex_);
     edp_subscriptions_to_send_.clear();
 }
 
 const std::vector<eprosima::fastrtps::rtps::CacheChange_t*> DiscoveryDataBase::changes_to_release()
 {
     // lock(sharing mode) mutex locally
-    std::unique_lock<share_mutex_t> lock(sh_mtx_);
+    std::unique_lock<std::recursive_mutex> lock(mutex_);
     return changes_to_release_;
 }
 
 void DiscoveryDataBase::clear_changes_to_release()
 {
     // lock(exclusive mode) mutex locally
-    std::unique_lock<share_mutex_t> lock(sh_mtx_);
+    std::unique_lock<std::recursive_mutex> lock(mutex_);
     changes_to_release_.clear();
 }
 
@@ -396,7 +396,7 @@ void DiscoveryDataBase::process_pdp_data_queue()
     }
 
     // Lock(exclusive mode) mutex locally
-    std::unique_lock<share_mutex_t> lock(sh_mtx_);
+    std::unique_lock<std::recursive_mutex> lock(mutex_);
 
     // Swap DATA queues
     pdp_data_queue_.Swap();
@@ -437,7 +437,7 @@ bool DiscoveryDataBase::process_edp_data_queue()
     bool is_dirty_topic = false;
 
     // Lock(exclusive mode) mutex locally
-    std::unique_lock<share_mutex_t> lock(sh_mtx_);
+    std::unique_lock<std::recursive_mutex> lock(mutex_);
 
     // Swap DATA queues
     edp_data_queue_.Swap();
@@ -813,7 +813,7 @@ bool DiscoveryDataBase::process_dirty_topics()
 
     // logInfo(DISCOVERY_DATABASE, "process_dirty_topics start");
     // Get shared lock
-    std::unique_lock<share_mutex_t> lock(sh_mtx_);
+    std::unique_lock<std::recursive_mutex> lock(mutex_);
 
     // Iterator objects are declared here because they are reused in each iteration of the loops
     std::map<eprosima::fastrtps::rtps::GuidPrefix_t, DiscoveryParticipantInfo>::iterator parts_reader_it;
@@ -962,7 +962,7 @@ bool DiscoveryDataBase::delete_entity_of_change(
     }
 
     // Lock(exclusive mode) mutex locally
-    std::unique_lock<share_mutex_t> lock(sh_mtx_);
+    std::unique_lock<std::recursive_mutex> lock(mutex_);
 
     if (change->kind == fastrtps::rtps::ChangeKind_t::ALIVE)
     {
@@ -1127,7 +1127,7 @@ DiscoveryDataBase::AckedFunctor::AckedFunctor(
     , external_pending_(pending_)
 {
     // RAII only for the stateful object
-    db_->exclusive_lock_();
+    db_->lock_();
 }
 
 DiscoveryDataBase::AckedFunctor::AckedFunctor(
@@ -1144,7 +1144,7 @@ DiscoveryDataBase::AckedFunctor::~AckedFunctor()
     if (&external_pending_ == &pending_)
     {
         // only the stateful object manages the lock
-        db_->exclusive_unlock_();
+        db_->unlock_();
     }
 }
 
