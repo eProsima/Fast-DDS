@@ -303,6 +303,11 @@ protected:
             eprosima::fastrtps::rtps::CacheChange_t* ch,
             const std::string& topic_name);
 
+    // change ack relevants and matched between entities participants and endpoints
+    void match_writer_reader_(
+            const eprosima::fastrtps::rtps::GUID_t& writer_guid,
+            const eprosima::fastrtps::rtps::GUID_t& reader_guid);
+
     void process_dispose_participant_(
             eprosima::fastrtps::rtps::CacheChange_t* ch);
 
@@ -366,6 +371,10 @@ protected:
             const eprosima::fastrtps::rtps::GUID_t& reader_guid,
             const std::string& topic_name);
 
+    // create a new topic in writers and readers and fill it with virtuals
+    void create_topic_(
+            const std::string& topic_name);
+
     void add_writer_to_topic_(
             const eprosima::fastrtps::rtps::GUID_t& writer_guid,
             const std::string& topic_name);
@@ -373,6 +382,34 @@ protected:
     void add_reader_to_topic_(
             const eprosima::fastrtps::rtps::GUID_t& reader_guid,
             const std::string& topic_name);
+
+    //! Add a topic to the list of dirty topics, unless it's already present
+    // Return true if added, false if already there
+    bool set_dirty_topic_(
+            std::string topic);
+
+    // Add data in pdp_to_send if not already in it
+    bool add_pdp_to_send_(
+            eprosima::fastrtps::rtps::CacheChange_t* change);
+
+    // Add data in edp_to_send if not already in it
+    bool add_edp_publications_to_send_(
+            eprosima::fastrtps::rtps::CacheChange_t* change);
+
+    // Add data in edp_to_send if not already in it
+    bool add_edp_subscriptions_to_send_(
+            eprosima::fastrtps::rtps::CacheChange_t* change);
+
+    // Get all the writers in given topic and in virtual topic
+    std::vector<eprosima::fastrtps::rtps::GUID_t> get_writers_in_topic(
+            const std::string& topic_name);
+
+    // Get all the readers in given topic and in virtual topic
+    std::vector<eprosima::fastrtps::rtps::GUID_t> get_readers_in_topic(
+            const std::string& topic_name);
+
+    ////////////////
+    // Variables
 
     fastrtps::DBQueue<eprosima::fastdds::rtps::ddb::DiscoveryPDPDataQueueInfo> pdp_data_queue_;
 
@@ -420,6 +457,12 @@ protected:
 
     //! List of GUID prefixes of the remote servers
     std::vector<fastrtps::rtps::GuidPrefix_t> servers_;
+
+    // The number of local servers known by the database
+    uint16_t local_servers_count_ = 0;
+
+    // The virtual topic associated with virtual writers and readers
+    const std::string virtual_topic_ = "eprosima_server_virtual_topic";
 
     // Whether the database is enabled
     std::atomic<bool> enabled_;

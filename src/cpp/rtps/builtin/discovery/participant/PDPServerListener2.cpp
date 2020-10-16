@@ -94,6 +94,14 @@ void PDPServerListener2::onNewCacheChangeAdded(
         return;
     }
 
+    // Related_sample_identity could be lost in message delivered, so we set as sample_identity
+    // An empty related_sample_identity could lead into an empty sample_identity when resending this msg
+    if (change->write_params.related_sample_identity() == SampleIdentity::unknown())
+    {
+        change->write_params.related_sample_identity(change->write_params.sample_identity());
+    }
+
+
     // DATA(p) case
     if (change->kind == ALIVE)
     {
@@ -136,34 +144,14 @@ void PDPServerListener2::onNewCacheChangeAdded(
                 }
             }
 
-            // Check whether the participant is a client of this server, or it has been discovered through another
-            // server
-            bool is_my_client = true;
-            bool is_my_server = false;
-            // If the instance handle is different from the writer GUID, then the change has been relayed. That means,
-            // that the participants is somebody else's client
+            // Check whether the participant is a client/server of this server or if it has been forwarded from
+            //  another entity (server).
+            // is_local means that the server is connected (or will be) with this entity directly
+            bool is_local = true;
+            // If the instance handle is different from the writer GUID, then the change has been relayed
             if (iHandle2GUID(change->instanceHandle).guidPrefix != change->writerGUID.guidPrefix)
             {
-                is_my_client = false;
-            }
-            // If the change has NOT been relayed, then look for it in this server's list of remote servers (servers
-            // for which this sever is a client).
-            //    1. If the participant is there, it means that this server is a CLIENT of the remote one, thus the
-            //       remote is not my client.
-            //    2. If the participant is not there, it means that the remote server is a CLIENT of this server
-            else
-            {
-                // Iterate over the servers for which I'm a CLIENT
-                for (auto server : pdp_server()->servers())
-                {
-                    // If the change's participant is in the list, then it means I'm a CLIENT to it.
-                    if (iHandle2GUID(change->instanceHandle).guidPrefix == server.guidPrefix)
-                    {
-                        is_my_client = false;
-                        is_my_server = true;
-                        break;
-                    }
-                }
+                is_local = false;
             }
 
             // Notify the DiscoveryDataBase
@@ -172,8 +160,7 @@ void PDPServerListener2::onNewCacheChangeAdded(
                         ddb::DiscoveryParticipantChangeData(
                             temp_participant_data_.metatraffic_locators,
                             is_client,
-                            is_my_client,
-                            is_my_server)))
+                            is_local)))
             {
                 // Remove change from PDP reader history, but do not return it to the pool. From here on, the discovery
                 // database takes ownership of the CacheChange_t. Henceforth there are no references to the change.
@@ -184,7 +171,6 @@ void PDPServerListener2::onNewCacheChangeAdded(
                 // The server does not have to postpone the execution of the routine if a change is received, i.e.
                 // the server routine is triggered instantly as the default value of the interval that the server has
                 // to wait is 0.
-                pdp_server()->awake_server_thread();
                 pdp_server()->awake_routine_thread();
 
                 // TODO: when the DiscoveryDataBase allows updating capabilities we can dismissed old PDP processing
