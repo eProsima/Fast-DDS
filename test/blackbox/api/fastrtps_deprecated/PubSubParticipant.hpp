@@ -291,13 +291,15 @@ public:
 
         if (timeout == std::chrono::seconds::zero())
         {
-            pub_cv_.wait(lock, [&](){
+            pub_cv_.wait(lock, [&]()
+                    {
                         return pub_matched_ == expected_match;
                     });
         }
         else
         {
-            pub_cv_.wait_for(lock, timeout, [&](){
+            pub_cv_.wait_for(lock, timeout, [&]()
+                    {
                         return pub_matched_ == expected_match;
                     });
         }
@@ -340,13 +342,15 @@ public:
 
         if (timeout == std::chrono::seconds::zero())
         {
-            sub_cv_.wait(lock, [&](){
+            sub_cv_.wait(lock, [&]()
+                    {
                         return sub_matched_ == expected_match;
                     });
         }
         else
         {
-            sub_cv_.wait_for(lock, timeout, [&](){
+            sub_cv_.wait_for(lock, timeout, [&]()
+                    {
                         return sub_matched_ == expected_match;
                     });
         }

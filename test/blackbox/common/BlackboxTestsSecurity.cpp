@@ -2517,8 +2517,9 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_multiple_endpoint
                 "builtin.AES-GCM-GMAC"));
         pub_property_policy.properties().emplace_back(Property("dds.sec.access.plugin",
                 "builtin.Access-Permissions"));
-        pub_property_policy.properties().emplace_back(Property("dds.sec.access.builtin.Access-Permissions.permissions_ca",
-                "file://" + std::string(certs_path) + "/maincacert.pem"));
+        pub_property_policy.properties().emplace_back(Property(
+                    "dds.sec.access.builtin.Access-Permissions.permissions_ca",
+                    "file://" + std::string(certs_path) + "/maincacert.pem"));
         pub_property_policy.properties().emplace_back(Property("dds.sec.access.builtin.Access-Permissions.governance",
                 "file://" + std::string(certs_path) + "/" + governance_file));
         pub_property_policy.properties().emplace_back(Property("dds.sec.access.builtin.Access-Permissions.permissions",
@@ -2546,8 +2547,9 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_multiple_endpoint
                 "builtin.AES-GCM-GMAC"));
         sub_property_policy.properties().emplace_back(Property("dds.sec.access.plugin",
                 "builtin.Access-Permissions"));
-        sub_property_policy.properties().emplace_back(Property("dds.sec.access.builtin.Access-Permissions.permissions_ca",
-                "file://" + std::string(certs_path) + "/maincacert.pem"));
+        sub_property_policy.properties().emplace_back(Property(
+                    "dds.sec.access.builtin.Access-Permissions.permissions_ca",
+                    "file://" + std::string(certs_path) + "/maincacert.pem"));
         sub_property_policy.properties().emplace_back(Property("dds.sec.access.builtin.Access-Permissions.governance",
                 "file://" + std::string(certs_path) + "/" + governance_file));
         sub_property_policy.properties().emplace_back(Property("dds.sec.access.builtin.Access-Permissions.permissions",

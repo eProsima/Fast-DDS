@@ -352,15 +352,17 @@ public:
 
         if (timeout == std::chrono::seconds::zero())
         {
-            pub_cv_.wait(lock, [&](){
-                return pub_matched_ == expected_match;
-            });
+            pub_cv_.wait(lock, [&]()
+                    {
+                        return pub_matched_ == expected_match;
+                    });
         }
         else
         {
-            pub_cv_.wait_for(lock, timeout, [&](){
-                return pub_matched_ == expected_match;
-            });
+            pub_cv_.wait_for(lock, timeout, [&]()
+                    {
+                        return pub_matched_ == expected_match;
+                    });
         }
 
         std::cout << "Publisher discovery finished " << std::endl;
@@ -401,15 +403,17 @@ public:
 
         if (timeout == std::chrono::seconds::zero())
         {
-            sub_cv_.wait(lock, [&](){
-                return sub_matched_ == expected_match;
-            });
+            sub_cv_.wait(lock, [&]()
+                    {
+                        return sub_matched_ == expected_match;
+                    });
         }
         else
         {
-            sub_cv_.wait_for(lock, timeout, [&](){
-                return sub_matched_ == expected_match;
-            });
+            sub_cv_.wait_for(lock, timeout, [&]()
+                    {
+                        return sub_matched_ == expected_match;
+                    });
         }
 
         std::cout << "Subscriber discovery finished " << std::endl;
@@ -637,12 +641,12 @@ private:
     std::vector<std::tuple<
                 eprosima::fastdds::dds::Topic*,
                 eprosima::fastdds::dds::Publisher*,
-                eprosima::fastdds::dds::DataWriter*> > publishers_;
+                eprosima::fastdds::dds::DataWriter*>> publishers_;
     //! A vector of subscribers
     std::vector<std::tuple<
                 eprosima::fastdds::dds::Topic*,
                 eprosima::fastdds::dds::Subscriber*,
-                eprosima::fastdds::dds::DataReader*> > subscribers_;
+                eprosima::fastdds::dds::DataReader*>> subscribers_;
     //! Publisher attributes
     eprosima::fastdds::dds::DataWriterQos datawriter_qos_;
     //! Subscriber attributes
