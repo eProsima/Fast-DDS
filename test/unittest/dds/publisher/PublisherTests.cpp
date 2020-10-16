@@ -236,8 +236,8 @@ void check_datawriter_with_profile (
 
     //Values taken from profile
     ASSERT_TRUE(
-            qos.writer_resource_limits().matched_subscriber_allocation ==
-            publisher_atts.matched_subscriber_allocation);
+        qos.writer_resource_limits().matched_subscriber_allocation ==
+        publisher_atts.matched_subscriber_allocation);
     ASSERT_TRUE(qos.properties() == publisher_atts.properties);
     ASSERT_TRUE(qos.throughput_controller() == publisher_atts.throughputController);
     ASSERT_TRUE(qos.endpoint().unicast_locator_list == publisher_atts.unicastLocatorList);
@@ -291,6 +291,38 @@ TEST(PublisherTests, CreateDataWriterWithProfile)
     check_datawriter_with_profile(datawriter, "test_publisher_profile");
     ASSERT_TRUE(publisher->delete_datawriter(datawriter) == ReturnCode_t::RETCODE_OK);
 
+    ASSERT_EQ(participant->delete_publisher(publisher), ReturnCode_t::RETCODE_OK);
+    ASSERT_EQ(participant->delete_topic(topic), ReturnCode_t::RETCODE_OK);
+    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), ReturnCode_t::RETCODE_OK);
+}
+
+TEST(PublisherTests, GetDataWriterProfileQos)
+{
+    DomainParticipantFactory::get_instance()->load_XML_profiles_file("test_xml_profiles.xml");
+    DomainParticipant* participant =
+            DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
+    Publisher* publisher = participant->create_publisher(PUBLISHER_QOS_DEFAULT);
+    TypeSupport type(new TopicDataTypeMock());
+    type.register_type(participant);
+    Topic* topic = participant->create_topic("footopic", type.get_type_name(), TOPIC_QOS_DEFAULT);
+
+    // Extract qos from profile
+    DataWriterQos qos;
+    ASSERT_EQ(
+        publisher->get_datawriter_qos_from_profile("test_publisher_profile", qos),
+        ReturnCode_t::RETCODE_OK);
+
+    //Datawriter using the extracted qos
+    DataWriter* datawriter = publisher->create_datawriter(topic, qos);
+    ASSERT_NE(datawriter, nullptr);
+    check_datawriter_with_profile(datawriter, "test_publisher_profile");
+
+    ASSERT_EQ(
+        publisher->get_datawriter_qos_from_profile("incorrect_profile_name", qos),
+        ReturnCode_t::RETCODE_BAD_PARAMETER);
+
+    // Clean up
+    ASSERT_EQ(publisher->delete_datawriter(datawriter), ReturnCode_t::RETCODE_OK);
     ASSERT_EQ(participant->delete_publisher(publisher), ReturnCode_t::RETCODE_OK);
     ASSERT_EQ(participant->delete_topic(topic), ReturnCode_t::RETCODE_OK);
     ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), ReturnCode_t::RETCODE_OK);
@@ -350,7 +382,7 @@ TEST(PublisherTests, SetListener)
     ASSERT_NE(publisher, nullptr);
     ASSERT_EQ(publisher->get_status_mask(), StatusMask::all());
 
-    std::vector<std::tuple<Publisher*, PublisherListener*, StatusMask> > testing_cases{
+    std::vector<std::tuple<Publisher*, PublisherListener*, StatusMask>> testing_cases{
         //statuses, one by one
         { publisher, &listener, StatusMask::liveliness_lost() },
         { publisher, &listener, StatusMask::offered_deadline_missed() },
