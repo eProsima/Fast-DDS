@@ -586,7 +586,7 @@ TEST(ParticipantTests, GetSubscriberProfileQos)
     EXPECT_EQ(
         participant->get_subscriber_qos_from_profile("incorrect_profile_name", qos),
         ReturnCode_t::RETCODE_BAD_PARAMETER);
-    
+
     // Clean up
     ASSERT_EQ(participant->delete_subscriber(subscriber), ReturnCode_t::RETCODE_OK);
     ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), ReturnCode_t::RETCODE_OK);
@@ -635,7 +635,7 @@ TEST(ParticipantTests, GetPublisherProfileQos)
     EXPECT_EQ(
         participant->get_publisher_qos_from_profile("incorrect_profile_name", qos),
         ReturnCode_t::RETCODE_BAD_PARAMETER);
-        
+
     // Clean up
     ASSERT_EQ(participant->delete_publisher(publisher), ReturnCode_t::RETCODE_OK);
     ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), ReturnCode_t::RETCODE_OK);

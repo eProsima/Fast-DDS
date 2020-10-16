@@ -236,8 +236,8 @@ void check_datawriter_with_profile (
 
     //Values taken from profile
     ASSERT_TRUE(
-            qos.writer_resource_limits().matched_subscriber_allocation ==
-            publisher_atts.matched_subscriber_allocation);
+        qos.writer_resource_limits().matched_subscriber_allocation ==
+        publisher_atts.matched_subscriber_allocation);
     ASSERT_TRUE(qos.properties() == publisher_atts.properties);
     ASSERT_TRUE(qos.throughput_controller() == publisher_atts.throughputController);
     ASSERT_TRUE(qos.endpoint().unicast_locator_list == publisher_atts.unicastLocatorList);
@@ -387,7 +387,7 @@ TEST(PublisherTests, SetListener)
     ASSERT_NE(publisher, nullptr);
     ASSERT_EQ(publisher->get_status_mask(), StatusMask::all());
 
-    std::vector<std::tuple<Publisher*, PublisherListener*, StatusMask> > testing_cases{
+    std::vector<std::tuple<Publisher*, PublisherListener*, StatusMask>> testing_cases{
         //statuses, one by one
         { publisher, &listener, StatusMask::liveliness_lost() },
         { publisher, &listener, StatusMask::offered_deadline_missed() },
