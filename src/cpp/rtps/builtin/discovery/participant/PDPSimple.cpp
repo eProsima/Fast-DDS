@@ -279,6 +279,7 @@ bool PDPSimple::createPDPEndpoints()
         delete mp_listener;
         mp_listener = nullptr;
         reader_payload_pool_->release_history(reader_pool_cfg, true);
+        TopicPayloadPoolRegistry::release(reader_payload_pool_);
         return false;
     }
 
@@ -336,6 +337,7 @@ bool PDPSimple::createPDPEndpoints()
         delete mp_PDPWriterHistory;
         mp_PDPWriterHistory = nullptr;
         writer_payload_pool_->release_history(writer_pool_cfg, false);
+        TopicPayloadPoolRegistry::release(writer_payload_pool_);
         return false;
     }
     logInfo(RTPS_PDP, "SPDP Endpoints creation finished");
