@@ -353,7 +353,7 @@ void EDPSimple::processPersistentData(
                 }
 
                 // mark for removal endpoints from unknown participants
-                if ( known_participants.find(handle) == known_participants.end() )
+                if ( known_participants.find(handle) == known_participants.end())
                 {
                     demises.insert(change->instanceHandle);
                     return;

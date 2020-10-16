@@ -92,7 +92,7 @@ bool PDPServer::init(
      */
     mp_sync = new DServerEvent(this,
                     TimeConv::Duration_t2MilliSecondsDouble(m_discovery.discovery_config.
-                    discoveryServer_client_syncperiod));
+                            discoveryServer_client_syncperiod));
     awakeServerThread();
     // the timer is also restart from removeRemoteParticipant, remove(Publisher|Subscriber)FromHistory
     // and queueParticipantForEDPMatch
@@ -955,7 +955,7 @@ void PDPServer::processPersistentData()
 
                     // Only DATA(p)s directly received from a client would have the PID_BACKUP_STAMP property
                     // The CacheChange_t pass to the server simulates a client's DATA(p)
-                    if ( guid != GUID_t::unknown() && guid == mp_PDPWriter->getGuid() )
+                    if ( guid != GUID_t::unknown() && guid == mp_PDPWriter->getGuid())
                     {
                         assert(si != SampleIdentity::unknown());
                         change_to_add->writerGUID = si.writer_guid();

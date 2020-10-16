@@ -191,7 +191,7 @@ private:
     bool ignore_fixed_locators_ = false;
 
     ResourceLimitedVector<ChangeForReader_t, std::true_type> unsent_changes_;
-    std::vector<std::unique_ptr<FlowController> > flow_controllers_;
+    std::vector<std::unique_ptr<FlowController>> flow_controllers_;
     uint64_t last_intraprocess_sequence_number_;
     bool there_are_remote_readers_ = false;
 };
