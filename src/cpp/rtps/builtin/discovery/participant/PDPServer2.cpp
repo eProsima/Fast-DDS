@@ -520,7 +520,7 @@ void PDPServer2::announceParticipantState(
 
                 // Add our change to PDPWriterHistory
                 mp_PDPWriterHistory->add_change(change, wp);
-                change->write_params.sample_identity().sequence_number(change->sequenceNumber);
+                change->write_params = wp;
 
                 // Update the database with our own data
                 if (discovery_db().update(

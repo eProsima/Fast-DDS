@@ -62,6 +62,8 @@ public:
     bool is_relevant_participant(
             const eprosima::fastrtps::rtps::GuidPrefix_t& guid_p) const;
 
+    bool is_acked_by_all() const;
+
     std::vector<eprosima::fastrtps::rtps::GuidPrefix_t> relevant_participants() const;
 
 private:
