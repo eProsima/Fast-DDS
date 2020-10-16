@@ -526,7 +526,12 @@ void DiscoveryDataBase::create_participant_from_change_(
             update_change_and_unmatch_(ch, participant_it->second);
 
             // If it is an update of our own server, is already in history
-            //  else, it would be included when necessary
+            //  else, it needs to be send in case it has unacked participants
+            if (change_guid.guidPrefix != server_guid_prefix_ &&
+                    !participant_it->second.is_acked_by_all())
+            {
+                add_pdp_to_send_(ch);
+            }
         }
         // if the cache is not new we have to release it, because it is repeated or outdated
         else
@@ -644,6 +649,12 @@ void DiscoveryDataBase::create_writers_from_change_(
             // participant is NOT ALIVE. This means that you still have to send your Data(Ux) to him but not the
             // updates
             update_change_and_unmatch_(ch, writer_it->second);
+
+            // It needs to be send in case it has unacked participants
+            if (!writer_it->second.is_acked_by_all())
+            {
+                add_edp_publications_to_send_(ch);
+            }
         }
         // if the cache is not new we have to release it, because it is repeated or outdated
         else
@@ -745,6 +756,12 @@ void DiscoveryDataBase::create_readers_from_change_(
             // participant is NOT ALIVE. This means that you still have to send your Data(Ux) to him but not the
             // updates
             update_change_and_unmatch_(ch, reader_it->second);
+
+            // It needs to be send in case it has unacked participants
+            if (!reader_it->second.is_acked_by_all())
+            {
+                add_edp_subscriptions_to_send_(ch);
+            }
         }
         // if the cache is not new we have to release it, because it is repeated or outdated
         else
