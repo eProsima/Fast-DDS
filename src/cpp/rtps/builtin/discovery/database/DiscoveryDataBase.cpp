@@ -731,9 +731,6 @@ void DiscoveryDataBase::create_writers_from_change_(
                 match_writer_reader_(writer_guid, reader);
             }
         }
-
-        // set topic as dirty (if virtual, all topics)
-        set_dirty_topic_(topic_name);
     }
 }
 
@@ -838,9 +835,6 @@ void DiscoveryDataBase::create_readers_from_change_(
                 match_writer_reader_(writer, reader_guid);
             }
         }
-
-        // set topic as dirty (if virtual, all topics)
-        set_dirty_topic_(topic_name);
     }
 }
 
