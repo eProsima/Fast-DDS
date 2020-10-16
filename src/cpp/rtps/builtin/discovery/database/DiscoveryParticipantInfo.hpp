@@ -93,14 +93,14 @@ public:
         return participant_change_data_.is_client;
     }
 
-    bool is_my_client()
+    bool is_local()
     {
-        return participant_change_data_.is_my_client;
+        return participant_change_data_.is_local;
     }
 
-    bool is_my_server()
+    bool is_external()
     {
-        return participant_change_data_.is_my_server;
+        return (!is_local());
     }
 
     fastrtps::rtps::RemoteLocatorList metatraffic_locators()
