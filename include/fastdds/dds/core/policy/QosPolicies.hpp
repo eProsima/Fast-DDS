@@ -2750,6 +2750,108 @@ public:
     fastrtps::ResourceLimitedContainerConfig matched_subscriber_allocation;
 };
 
+enum DataSharingKind : uint16_t
+{
+    /**
+     * Automatic configuration.
+     * DataSharing will be used if requirements are met.
+     */
+    AUTO,
+    /**
+     * Disable the use of DataSharing
+     */
+    DISABLED,
+    /**
+     * Force the use of DataSharing.
+     * Entity creation will fail if requirements for DataSharing are not met
+     */
+    FORCED
+};
+
+//!Qos Policy to configure the data sharing
+class DataSharingQos
+{
+public:
+
+    /**
+     * @brief Constructor
+     */
+    RTPS_DllAPI DataSharingQos() = default;
+
+    /**
+     * @brief Destructor
+     */
+    virtual RTPS_DllAPI ~DataSharingQos() = default;
+
+    bool operator ==(
+            const DataSharingQos& b) const
+    {
+        return (kind_ == b.kind() &&
+                shm_directory_ == b.shm_directory());
+    }
+
+    /**
+     * @return the current DataSharing configuration mode
+     */
+    RTPS_DllAPI const DataSharingKind& kind() const
+    {
+        return kind_;
+    }
+
+    /**
+     * @return the current DataSharing shared memory directory
+     */
+    RTPS_DllAPI const std::string& shm_directory() const
+    {
+        return shm_directory_;
+    }
+
+    /**
+     * @brief Configures the DataSharing in automatic mode
+     * 
+     * @param directory The shared memory directory to use.
+     *      If none is provided, the default shared memory directory of the OS is used.
+     */
+    RTPS_DllAPI void automatic(const std::string& directory = "")
+    {
+        setup (AUTO, directory);
+    }
+
+    /**
+     * @brief Configures the DataSharing in forced mode
+     * 
+     * @param directory The shared memory directory to use.
+     *      It is mandatory to provide a non-empty name or the creation of endpoints will fail.
+     */
+    RTPS_DllAPI void force(const std::string& directory)
+    {
+        assert(!directory.empty());
+        setup (FORCED, directory);
+    }
+
+    /**
+     * @brief Configures the DataSharing in disabled mode
+     */
+    RTPS_DllAPI void disable()
+    {
+        setup (DISABLED, "");
+    }
+
+private:
+
+    void setup(const DataSharingKind& kind, const std::string& directory)
+    {
+        kind_ = kind;
+        shm_directory_ = directory;
+    }
+
+    //! DataSharing configuration mode
+    DataSharingKind kind_ = AUTO;
+
+    //! Shared memory directory to use on DataSharing
+    std::string shm_directory_;
+};
+
 } // namespace dds
 } // namespace fastdds
 } // namespace eprosima
