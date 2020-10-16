@@ -525,7 +525,7 @@ void PDPServer2::announceParticipantState(
                 // Update the database with our own data
                 if (discovery_db().update(
                             change,
-                            ddb::DiscoveryParticipantChangeData(metatraffic_locators, false, false, false)))
+                            ddb::DiscoveryParticipantChangeData(metatraffic_locators, false, true)))
                 {
                     // Distribute
                     awake_routine_thread();
@@ -729,6 +729,8 @@ bool PDPServer2::server_update_routine()
 
         logInfo(RTPS_PDP_SERVER, "-------------------- Server routine end --------------------");
         logInfo(RTPS_PDP_SERVER, "");
+
+        logInfo(RTPS_PDP_SERVER, "PDP history size " << mp_PDPWriterHistory->getHistorySize());
     }
     // If the data queue is not empty re-start the routine.
     // A non-empty queue means that the server has received a change while it is running the processing routine.
@@ -739,17 +741,21 @@ bool PDPServer2::server_update_routine()
 
 bool PDPServer2::process_writers_acknowledgements()
 {
-    // logInfo(RTPS_PDP_SERVER, "process_writers_acknowledgements start");
-    /* PDP Writer's History */
-    bool pending = process_history_acknowledgement(
-        static_cast<fastrtps::rtps::StatefulWriter*>(mp_PDPWriter), mp_PDPWriterHistory);
+    logInfo(RTPS_PDP_SERVER, "process_writers_acknowledgements start");
 
-    /* EDP Publications Writer's History */
-    EDPServer2* edp = static_cast<EDPServer2*>(mp_EDP);
-    pending |= process_history_acknowledgement(edp->publications_writer_.first, edp->publications_writer_.second);
+    // Execute first ACK for endpoints because PDP acked changes relevance in EDP,
+    //  which can result in false positives in EDP acknowledgements.
 
     /* EDP Subscriptions Writer's History */
-    pending |= process_history_acknowledgement(edp->subscriptions_writer_.first, edp->subscriptions_writer_.second);
+    EDPServer2* edp = static_cast<EDPServer2*>(mp_EDP);
+    bool pending = process_history_acknowledgement(edp->subscriptions_writer_.first, edp->subscriptions_writer_.second);
+
+    /* EDP Publications Writer's History */
+    pending |= process_history_acknowledgement(edp->publications_writer_.first, edp->publications_writer_.second);
+
+    /* PDP Writer's History */
+    pending |= process_history_acknowledgement(
+        static_cast<fastrtps::rtps::StatefulWriter*>(mp_PDPWriter), mp_PDPWriterHistory);
 
     return pending;
 }
@@ -781,6 +787,8 @@ History::iterator PDPServer2::process_change_acknowledgement(
 
     if (c->kind == fastrtps::rtps::ChangeKind_t::ALIVE)
     {
+
+        logInfo(RTPS_PDP_SERVER, "Processing ack data alive " << c->instanceHandle);
 
         // If the change is a DATA(p), and it's the server's DATA(p), and the database knows that
         // it had been acked by all, then skip the change acked check for every reader proxy
@@ -1120,6 +1128,7 @@ bool PDPServer2::process_to_send_list(
         // Add DATA to writer's history.
         change->writerGUID.guidPrefix = mp_PDPWriter->getGuid().guidPrefix;
         eprosima::fastrtps::rtps::WriteParams wp = change->write_params;
+        logInfo(RTPS_PDP_SERVER, "Adding change from " << change->instanceHandle << " to history");
         history->add_change(change, wp);
     }
     return true;
