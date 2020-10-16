@@ -45,6 +45,7 @@ class StatefulPersistentReader : public StatefulReader
 
     protected:
     virtual void set_last_notified(const GUID_t& persistence_guid, const SequenceNumber_t& seq) override;
+    bool may_remove_history_record(bool removed_by_lease) override;
 
     private:
     IPersistenceService* persistence_;

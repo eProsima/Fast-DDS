@@ -117,21 +117,25 @@ void RTPSReader::add_persistence_guid(
     history_state_->persistence_guid_count[persistence_guid_to_store]++;
 }
 
+bool RTPSReader::may_remove_history_record(
+        bool removed_by_lease)
+{
+    return !removed_by_lease;
+}
+
 void RTPSReader::remove_persistence_guid(
         const GUID_t& guid,
-        const GUID_t& persistence_guid)
+        const GUID_t& persistence_guid,
+        bool removed_by_lease)
 {
     std::lock_guard<RecursiveTimedMutex> guard(mp_mutex);
     GUID_t persistence_guid_stored = (c_Guid_Unknown == persistence_guid) ? guid : persistence_guid;
     history_state_->persistence_guid_map.erase(guid);
     auto count = --history_state_->persistence_guid_count[persistence_guid_stored];
-    if (count <= 0)
+    if (count <= 0 && may_remove_history_record(removed_by_lease))
     {
-        if (m_att.durabilityKind < TRANSIENT)
-        {
-            history_state_->history_record.erase(persistence_guid_stored);
-            history_state_->persistence_guid_count.erase(persistence_guid_stored);
-        }
+        history_state_->history_record.erase(persistence_guid_stored);
+        history_state_->persistence_guid_count.erase(persistence_guid_stored);
     }
 }
 

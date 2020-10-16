@@ -60,6 +60,12 @@ void StatefulPersistentReader::set_last_notified(
     persistence_->update_writer_seq_on_storage(persistence_guid_, writer_guid, seq);
 }
 
+bool StatefulPersistentReader::may_remove_history_record(
+        bool /* removed_by_lease */)
+{
+    return false;
+}
+
 } /* namespace rtps */
 } /* namespace fastrtps */
 } /* namespace eprosima */

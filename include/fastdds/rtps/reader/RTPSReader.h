@@ -79,7 +79,8 @@ public:
      * @return True if correctly removed.
      */
     RTPS_DllAPI virtual bool matched_writer_remove(
-            const GUID_t& writer_guid) = 0;
+            const GUID_t& writer_guid,
+            bool removed_by_lease = false) = 0;
 
     /**
      * Tells us if a specific Writer is matched against this reader.
@@ -251,6 +252,9 @@ public:
 
 protected:
 
+    virtual bool may_remove_history_record(
+            bool removed_by_lease);
+
     /*!
      * @brief Add a remote writer to the persistence_guid map
      * @param guid GUID of the remote writer
@@ -267,7 +271,8 @@ protected:
      */
     void remove_persistence_guid(
             const GUID_t& guid,
-            const GUID_t& persistence_guid);
+            const GUID_t& persistence_guid,
+            bool removed_by_lease);
 
     /*!
      * @brief Get the last notified sequence for a RTPS guid

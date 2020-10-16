@@ -69,7 +69,8 @@ public:
      * @return True if correct.
      */
     bool matched_writer_remove(
-            const GUID_t& writer_guid) override;
+            const GUID_t& writer_guid,
+            bool removed_by_lease = false) override;
 
     /**
      * Tells us if a specific Writer is matched against this reader.

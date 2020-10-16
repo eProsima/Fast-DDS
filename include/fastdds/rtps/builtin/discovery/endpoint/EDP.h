@@ -254,7 +254,8 @@ public:
      */
     bool unpairWriterProxy(
             const GUID_t& participant_guid,
-            const GUID_t& writer_guid);
+            const GUID_t& writer_guid,
+            bool removed_by_lease);
 
     /**
      * Unpair a ReaderProxyData object from all local writers.
