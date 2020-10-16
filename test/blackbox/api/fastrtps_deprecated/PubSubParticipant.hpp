@@ -333,7 +333,10 @@ public:
             std::string topicName)
     {
         publisher_attr_.topic.topicDataType = type_.getName();
-        publisher_attr_.topic.topicName = topicName;
+        // Generate topic name
+        std::ostringstream topic;
+        topic << topicName << "_" << asio::ip::host_name() << "_" << GET_PID();
+        publisher_attr_.topic.topicName = topic.str();
         return *this;
     }
 
@@ -341,7 +344,10 @@ public:
             std::string topicName)
     {
         subscriber_attr_.topic.topicDataType = type_.getName();
-        subscriber_attr_.topic.topicName = topicName;
+        // Generate topic name
+        std::ostringstream topic;
+        topic << topicName << "_" << asio::ip::host_name() << "_" << GET_PID();
+        subscriber_attr_.topic.topicName = topic.str();
         return *this;
     }
 
