@@ -576,7 +576,8 @@ void DiscoveryDataBase::create_participant_from_change_(
             }
 
             // if it is local and server we have to create virtual endpoints
-            if (!ret.first->second.is_client() && ret.first->second.is_local())
+            if (change_guid.guidPrefix != server_guid_prefix_ &&
+                    !ret.first->second.is_client() && ret.first->second.is_local())
             {
                 /* Create virtual writer */
                 // Create a GUID for the virtual writer from the local server GUID prefix and the virtual writer entity
@@ -1189,7 +1190,7 @@ bool DiscoveryDataBase::process_dirty_topics()
                     // Check the status of the writer in `readers_[reader]::relevant_participants_builtin_ack_status`.
                     if (readers_it != readers_.end() && !readers_it->second.is_matched(writer.guidPrefix))
                     {
-                        // If the status is 0, add DATA(w) to a `edp_publications_to_send_` (if it's not there).
+                        // If the status is 0, add DATA(r) to a `edp_publications_to_send_` (if it's not there).
                         if (add_edp_subscriptions_to_send_(readers_it->second.change()))
                         {
                             logInfo(DISCOVERY_DATABASE, "Addind DATA(r) to send: "
@@ -1216,7 +1217,7 @@ bool DiscoveryDataBase::process_dirty_topics()
                     // Check the status of the reader in `writers_[writer]::relevant_participants_builtin_ack_status`.
                     if (writers_it != writers_.end() && !writers_it->second.is_matched(reader.guidPrefix))
                     {
-                        // If the status is 0, add DATA(r) to a `edp_subscriptions_to_send_` (if it's not there).
+                        // If the status is 0, add DATA(w) to a `edp_subscriptions_to_send_` (if it's not there).
                         if (add_edp_publications_to_send_(writers_it->second.change()))
                         {
                             logInfo(DISCOVERY_DATABASE, "Addind DATA(w) to send: "
