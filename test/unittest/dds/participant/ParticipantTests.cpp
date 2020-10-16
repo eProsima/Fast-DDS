@@ -200,7 +200,7 @@ TEST(ParticipantTests, GetParticipantProfileQos)
         DomainParticipantFactory::get_instance()->get_participant_qos_from_profile("test_participant_profile", qos),
         ReturnCode_t::RETCODE_OK);
 
-    // Extract ParticipantQos form profile
+    // Extract ParticipantQos from profile
     DomainParticipant* participant =
             DomainParticipantFactory::get_instance()->create_participant(0, qos);
     ASSERT_NE(participant, nullptr);
@@ -567,6 +567,7 @@ TEST(ParticipantTests, GetSubscriberProfileQos)
     DomainParticipantFactory::get_instance()->load_XML_profiles_file("test_xml_profiles.xml");
     DomainParticipant* participant =
             DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
+    ASSERT_NE(participant, nullptr);
 
     // Extract qos from profile
     SubscriberQos qos;
@@ -575,13 +576,16 @@ TEST(ParticipantTests, GetSubscriberProfileQos)
         ReturnCode_t::RETCODE_OK);
 
     Subscriber* subscriber = participant->create_subscriber(qos);
+    ASSERT_NE(subscriber, nullptr);
 
     check_subscriber_with_profile(subscriber, "test_subscriber_profile");
 
-    // Clean up
+    // Test return when a non-existent profile is used
     ASSERT_EQ(
         participant->get_subscriber_qos_from_profile("incorrect_profile_name", qos),
         ReturnCode_t::RETCODE_BAD_PARAMETER);
+    
+    // Clean up
     ASSERT_EQ(participant->delete_subscriber(subscriber), ReturnCode_t::RETCODE_OK);
     ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), ReturnCode_t::RETCODE_OK);
 }
@@ -595,13 +599,13 @@ TEST(ParticipantTests, CreateSubscriberWithProfile)
     //subscriber using the default profile
     Subscriber* default_subscriber = participant->create_subscriber(SUBSCRIBER_QOS_DEFAULT);
     ASSERT_NE(default_subscriber, nullptr);
-    check_subscriber_with_profile(default_subscriber, "test_subscriber_profile");
+    check_subscriber_with_profile(default_subscriber, "test_default_subscriber_profile");
     ASSERT_TRUE(participant->delete_subscriber(default_subscriber) == ReturnCode_t::RETCODE_OK);
 
     //participant using non-default profile
-    Subscriber* subscriber = participant->create_subscriber_with_profile("test_subscriber_profile");
+    Subscriber* subscriber = participant->create_subscriber_with_profile("test_default_subscriber_profile");
     ASSERT_NE(subscriber, nullptr);
-    check_subscriber_with_profile(subscriber, "test_subscriber_profile");
+    check_subscriber_with_profile(subscriber, "test_default_subscriber_profile");
     ASSERT_TRUE(participant->delete_subscriber(subscriber) == ReturnCode_t::RETCODE_OK);
 
     ASSERT_TRUE(DomainParticipantFactory::get_instance()->delete_participant(participant) == ReturnCode_t::RETCODE_OK);
@@ -612,6 +616,7 @@ TEST(ParticipantTests, GetPublisherProfileQos)
     DomainParticipantFactory::get_instance()->load_XML_profiles_file("test_xml_profiles.xml");
     DomainParticipant* participant =
             DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
+    ASSERT_NE(participant, nullptr);
 
     // Extract qos from profile
     PublisherQos qos;
@@ -620,13 +625,16 @@ TEST(ParticipantTests, GetPublisherProfileQos)
         ReturnCode_t::RETCODE_OK);
 
     Publisher* publisher = participant->create_publisher(qos);
+    ASSERT_NE(publisher, nullptr);
 
     check_publisher_with_profile(publisher, "test_publisher_profile");
 
-    // Clean up
+    // Test return when a non-existent profile is used
     ASSERT_EQ(
         participant->get_publisher_qos_from_profile("incorrect_profile_name", qos),
         ReturnCode_t::RETCODE_BAD_PARAMETER);
+        
+    // Clean up
     ASSERT_EQ(participant->delete_publisher(publisher), ReturnCode_t::RETCODE_OK);
     ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), ReturnCode_t::RETCODE_OK);
 }
@@ -762,6 +770,7 @@ TEST(ParticipantTests, GetTopicProfileQos)
     DomainParticipantFactory::get_instance()->load_XML_profiles_file("test_xml_profiles.xml");
     DomainParticipant* participant =
             DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
+    ASSERT_NE(participant, nullptr);
     TypeSupport type(new TopicDataTypeMock());
     type.register_type(participant);
 
@@ -772,13 +781,17 @@ TEST(ParticipantTests, GetTopicProfileQos)
         ReturnCode_t::RETCODE_OK);
 
     Topic* topic = participant->create_topic("footopic", type.get_type_name(), qos);
+    ASSERT_NE(topic, nullptr);
+
 
     check_topic_with_profile(topic, "test_topic_profile");
 
-    // Clean up
+    // Test return when a non-existent profile is used
     ASSERT_EQ(
         participant->get_topic_qos_from_profile("incorrect_profile_name", qos),
         ReturnCode_t::RETCODE_BAD_PARAMETER);
+
+    // Clean up
     ASSERT_EQ(participant->delete_topic(topic), ReturnCode_t::RETCODE_OK);
     ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), ReturnCode_t::RETCODE_OK);
 }

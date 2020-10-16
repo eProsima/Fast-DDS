@@ -337,10 +337,13 @@ TEST(SubscriberTests, GetDataReaderProfileQos)
     DomainParticipantFactory::get_instance()->load_XML_profiles_file("test_xml_profiles.xml");
     DomainParticipant* participant =
             DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
+    ASSERT_NE(participant, nullptr);
     Subscriber* subscriber = participant->create_subscriber(SUBSCRIBER_QOS_DEFAULT);
+    ASSERT_NE(subscriber, nullptr);
     TypeSupport type(new TopicDataTypeMock());
     type.register_type(participant);
     Topic* topic = participant->create_topic("footopic", type.get_type_name(), TOPIC_QOS_DEFAULT);
+    ASSERT_NE(topic, nullptr);
 
     // Extract qos from profile
     DataReaderQos qos;
@@ -350,9 +353,11 @@ TEST(SubscriberTests, GetDataReaderProfileQos)
 
     //DataReader using the extracted qos
     DataReader* datareader = subscriber->create_datareader(topic, qos);
+    ASSERT_NE(datareader, nullptr);
 
     check_datareader_with_profile(datareader, "test_subscriber_profile");
 
+    // Test return when a non-existent profile is used
     ASSERT_EQ(
         subscriber->get_datareader_qos_from_profile("incorrect_profile_name", qos),
         ReturnCode_t::RETCODE_BAD_PARAMETER);
