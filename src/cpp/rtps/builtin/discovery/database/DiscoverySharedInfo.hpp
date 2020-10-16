@@ -91,6 +91,11 @@ public:
         return relevant_participants_builtin_ack_status_.relevant_participants();
     }
 
+    bool is_acked_by_all() const
+    {
+        return relevant_participants_builtin_ack_status_.is_acked_by_all();
+    }
+
 private:
 
     eprosima::fastrtps::rtps::CacheChange_t* change_;
