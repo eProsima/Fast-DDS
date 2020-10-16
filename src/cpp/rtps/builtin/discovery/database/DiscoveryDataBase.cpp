@@ -526,7 +526,7 @@ void DiscoveryDataBase::create_participant_from_change_(
             update_change_and_unmatch_(ch, participant_it->second);
 
             // If it is an update of our own server, is already in history
-            //  else, it needs to be send in case it has unacked participants
+            // Else, it needs to be sent in case it has unacked participants
             if (change_guid.guidPrefix != server_guid_prefix_ &&
                     !participant_it->second.is_acked_by_all())
             {
@@ -575,7 +575,7 @@ void DiscoveryDataBase::create_participant_from_change_(
                 server_acked_by_all(false);
             }
 
-            // if it is local and server we have to create virtual endpoints
+            // If it is local and server we have to create virtual endpoints, except for our own server
             if (change_guid.guidPrefix != server_guid_prefix_ &&
                     !ret.first->second.is_client() && ret.first->second.is_local())
             {
@@ -651,7 +651,7 @@ void DiscoveryDataBase::create_writers_from_change_(
             // updates
             update_change_and_unmatch_(ch, writer_it->second);
 
-            // It needs to be send in case it has unacked participants
+            // It needs to be sent in case it has unacked participants
             if (!writer_it->second.is_acked_by_all())
             {
                 add_edp_publications_to_send_(ch);
@@ -755,7 +755,7 @@ void DiscoveryDataBase::create_readers_from_change_(
             // updates
             update_change_and_unmatch_(ch, reader_it->second);
 
-            // It needs to be send in case it has unacked participants
+            // It needs to be sent in case it has unacked participants
             if (!reader_it->second.is_acked_by_all())
             {
                 add_edp_subscriptions_to_send_(ch);
