@@ -605,9 +605,9 @@ TEST(ParticipantTests, CreateSubscriberWithProfile)
     ASSERT_TRUE(participant->delete_subscriber(default_subscriber) == ReturnCode_t::RETCODE_OK);
 
     //participant using non-default profile
-    Subscriber* subscriber = participant->create_subscriber_with_profile("test_default_subscriber_profile");
+    Subscriber* subscriber = participant->create_subscriber_with_profile("test_subscriber_profile");
     ASSERT_NE(subscriber, nullptr);
-    check_subscriber_with_profile(subscriber, "test_default_subscriber_profile");
+    check_subscriber_with_profile(subscriber, "test_subscriber_profile");
     ASSERT_TRUE(participant->delete_subscriber(subscriber) == ReturnCode_t::RETCODE_OK);
 
     ASSERT_TRUE(DomainParticipantFactory::get_instance()->delete_participant(participant) == ReturnCode_t::RETCODE_OK);
