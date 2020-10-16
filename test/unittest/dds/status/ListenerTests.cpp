@@ -93,7 +93,8 @@ public:
     }
 
     virtual bool matched_writer_remove(
-            const eprosima::fastrtps::rtps::GUID_t&)
+            const eprosima::fastrtps::rtps::GUID_t&,
+            bool)
     {
         return true;
     }
