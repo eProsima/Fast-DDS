@@ -15,7 +15,7 @@ Sony has already done implementation using internal shared memory light framewor
 
 Publisher: after system calls to map and create message on the filesystem, it will directly write the dat into the message. Then at the finish writing or closing file, that will be notified to the subscriber with file path.
 
-Subscriber: file path will be notified via inotify, the subscriber to get the correspoing message to open and read directly.
+Subscriber: file path will be notified via inotify, the subscriber to get the corresponding message to open and read directly.
 
 **There will be no copy insluding user application or framework itself**
 
@@ -60,7 +60,7 @@ Do not serialize data into the shared memory with publish/subscribe. So user app
 - Configurable parameters for each topic
   root file path and ring buffer length to keep for each topic shall be predefined.
 - Ring Buffer / File Mapped Shared Memory
-  Ring Buffer is controlled by framework, e.g) entfies of single topic.
+  Ring Buffer is controlled by framework, e.g) entries of single topic.
 - Retain Memory
   once the file is mapped into physical page, it will never unmapped unless it is necessary.
   this will reduce the huge system time via system calls.
