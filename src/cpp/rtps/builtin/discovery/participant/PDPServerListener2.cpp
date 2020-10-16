@@ -94,6 +94,12 @@ void PDPServerListener2::onNewCacheChangeAdded(
         return;
     }
 
+    if (change->write_params.related_sample_identity() == SampleIdentity::unknown())
+    {
+        change->write_params.related_sample_identity(change->write_params.sample_identity());
+    }
+
+
     // DATA(p) case
     if (change->kind == ALIVE)
     {

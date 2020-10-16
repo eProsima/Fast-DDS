@@ -138,7 +138,6 @@ bool DiscoveryDataBase::pdp_is_relevant(
         return (it->second.is_relevant_participant(reader_guid.guidPrefix) &&
                !it->second.is_matched(reader_guid.guidPrefix));
     }
-    logError(DISCOVERY_DATABASE, "PDP is relevant");
     // Not relevant
     return false;
 }
@@ -1187,7 +1186,7 @@ bool DiscoveryDataBase::process_dirty_topics()
                         }
                     }
                 }
-                else
+                else if (parts_reader_it->second.is_relevant_participant(writer.guidPrefix))
                 {
                     // Add DATA(p) of the client with the writer to `pdp_to_send_` (if it's not there).
                     if (add_pdp_to_send_(parts_reader_it->second.change()))
@@ -1214,7 +1213,7 @@ bool DiscoveryDataBase::process_dirty_topics()
                         }
                     }
                 }
-                else
+                else if (parts_writer_it->second.is_relevant_participant(reader.guidPrefix))
                 {
                     // Add DATA(p) of the client with the reader to `pdp_to_send_` (if it's not there).
                     if (add_pdp_to_send_(parts_writer_it->second.change()))

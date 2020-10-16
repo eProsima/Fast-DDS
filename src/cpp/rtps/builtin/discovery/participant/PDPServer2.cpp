@@ -742,16 +742,18 @@ bool PDPServer2::server_update_routine()
 bool PDPServer2::process_writers_acknowledgements()
 {
     // logInfo(RTPS_PDP_SERVER, "process_writers_acknowledgements start");
-    /* PDP Writer's History */
-    bool pending = process_history_acknowledgement(
-        static_cast<fastrtps::rtps::StatefulWriter*>(mp_PDPWriter), mp_PDPWriterHistory);
-
-    /* EDP Publications Writer's History */
+    
+    // Execute first ack for endpoints because pdp acked change relevance in edp
+    /* EDP Subscriptions Writer's History */
     EDPServer2* edp = static_cast<EDPServer2*>(mp_EDP);
+    bool pending = process_history_acknowledgement(edp->subscriptions_writer_.first, edp->subscriptions_writer_.second);
+    
+    /* EDP Publications Writer's History */
     pending |= process_history_acknowledgement(edp->publications_writer_.first, edp->publications_writer_.second);
 
-    /* EDP Subscriptions Writer's History */
-    pending |= process_history_acknowledgement(edp->subscriptions_writer_.first, edp->subscriptions_writer_.second);
+    /* PDP Writer's History */
+    pending |= process_history_acknowledgement(
+        static_cast<fastrtps::rtps::StatefulWriter*>(mp_PDPWriter), mp_PDPWriterHistory);
 
     return pending;
 }
