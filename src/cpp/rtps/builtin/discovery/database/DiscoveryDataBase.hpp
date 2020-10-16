@@ -23,7 +23,6 @@
 #include <vector>
 #include <map>
 #include <mutex>
-#include <shared_mutex>
 
 #include <fastrtps/utils/fixed_size_string.hpp>
 #include <fastdds/rtps/writer/ReaderProxy.h>
@@ -39,8 +38,6 @@ namespace eprosima {
 namespace fastdds {
 namespace rtps {
 namespace ddb {
-
-typedef std::recursive_mutex share_mutex_t;
 
 /**
  * Class to manage the discovery data base
@@ -157,8 +154,6 @@ public:
      * @return: The changes that can be released
      */
     std::vector<fastrtps::rtps::CacheChange_t*> clear();
-
-
 
     ////////////
     // Functions to is_relevant
@@ -281,29 +276,16 @@ protected:
             const eprosima::fastrtps::rtps::CacheChange_t* change,
             const eprosima::fastrtps::rtps::GuidPrefix_t& acked_entity);
 
-
     ////////////
     // Mutex Functions
-    void exclusive_lock_()
+    void lock_()
     {
-        sh_mtx_.lock();
+        mutex_.lock();
     }
 
-    void shared_lock_()
+    void unlock_()
     {
-        sh_mtx_.lock();
-        //sh_mtx_.lock();
-    }
-
-    void exclusive_unlock_()
-    {
-        sh_mtx_.unlock();
-    }
-
-    void shared_unlock_()
-    {
-        sh_mtx_.unlock();
-        //sh_mtx_.unlock();
+        mutex_.unlock();
     }
 
     ////////////
@@ -428,7 +410,7 @@ protected:
     std::vector<eprosima::fastrtps::rtps::CacheChange_t*> changes_to_release_;
 
     //! Mutex
-    mutable share_mutex_t sh_mtx_;
+    mutable std::recursive_mutex mutex_;
 
     //! GUID prefix from own server
     const fastrtps::rtps::GuidPrefix_t server_guid_prefix_;
