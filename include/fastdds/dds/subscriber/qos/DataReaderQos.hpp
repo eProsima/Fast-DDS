@@ -189,7 +189,8 @@ public:
                (expects_inline_qos_ == b.expects_inline_qos()) &&
                (properties_ == b.properties()) &&
                (endpoint_ == b.endpoint()) &&
-               (reader_resource_limits_ == b.reader_resource_limits());
+               (reader_resource_limits_ == b.reader_resource_limits()) &&
+               (data_sharing_ == b.data_sharing());
     }
 
     RTPS_DllAPI ReaderQos get_readerqos(
@@ -746,6 +747,34 @@ public:
         reader_resource_limits_ = new_value;
     }
 
+    /**
+     * Getter for DataSharingQos
+     * @return DataSharingQos reference
+     */
+    RTPS_DllAPI DataSharingQos& data_sharing()
+    {
+        return data_sharing_;
+    }
+
+    /**
+     * Getter for DataSharingQos
+     * @return DataSharingQos reference
+     */
+    RTPS_DllAPI const DataSharingQos& data_sharing() const
+    {
+        return data_sharing_;
+    }
+
+    /**
+     * Setter for DataSharingQos
+     * @param data_sharing new value for the DataSharingQos
+     */
+    RTPS_DllAPI void data_sharing(
+            const DataSharingQos& data_sharing)
+    {
+        data_sharing_ = data_sharing;
+    }
+
 private:
 
     //!Durability Qos, implemented in the library.
@@ -808,6 +837,9 @@ private:
 
     //!ReaderResourceLimitsQos
     ReaderResourceLimitsQos reader_resource_limits_;
+
+    //!DataSharing configuration (Extension)
+    DataSharingQos data_sharing_;
 };
 
 RTPS_DllAPI extern const DataReaderQos DATAREADER_QOS_DEFAULT;
