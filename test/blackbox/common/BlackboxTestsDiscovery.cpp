@@ -310,10 +310,10 @@ TEST(Discovery, EndpointRediscoveryWithTransientLocalData)
     auto testTransport = std::make_shared<test_UDPv4TransportDescriptor>();
 
     reader
-        .lease_duration({ 120, 0 }, { 1, 0 })
-        .reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS)
-        .durability_kind(eprosima::fastrtps::TRANSIENT_LOCAL_DURABILITY_QOS)
-        .init();
+            .lease_duration({ 120, 0 }, { 1, 0 })
+            .reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS)
+            .durability_kind(eprosima::fastrtps::TRANSIENT_LOCAL_DURABILITY_QOS)
+            .init();
 
     ASSERT_TRUE(reader.isInitialized());
 
@@ -321,10 +321,10 @@ TEST(Discovery, EndpointRediscoveryWithTransientLocalData)
     writer.add_user_transport_to_pparams(testTransport);
 
     writer
-        .lease_duration({ 2, 0 }, { 1, 0 })
-        .reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS)
-        .durability_kind(eprosima::fastrtps::TRANSIENT_LOCAL_DURABILITY_QOS)
-        .init();
+            .lease_duration({ 2, 0 }, { 1, 0 })
+            .reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS)
+            .durability_kind(eprosima::fastrtps::TRANSIENT_LOCAL_DURABILITY_QOS)
+            .init();
 
     ASSERT_TRUE(writer.isInitialized());
 
@@ -345,7 +345,7 @@ TEST(Discovery, EndpointRediscoveryWithTransientLocalData)
     reader.wait_participant_undiscovery();
 
     test_UDPv4Transport::test_UDPv4Transport_ShutdownAllNetwork = false;
-    
+
     reader.wait_discovery();
 
     // The bug made the last sample to be sent again, producing a test failure inside

@@ -183,7 +183,7 @@ public:
     /**
      * Get the RTPS participant
      * @return Associated RTPS participant
-    */
+     */
     inline RTPSParticipantImpl* getRTPSParticipant() const
     {
         return mp_RTPSParticipant;
@@ -231,6 +231,6 @@ private:
 } /* namespace fastrtps */
 } /* namespace eprosima */
 
-#endif
+#endif // ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
 #endif /* _FASTDDS_RTPS_READER_STATELESSREADER_H_ */

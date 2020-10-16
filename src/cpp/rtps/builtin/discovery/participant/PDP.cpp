@@ -546,7 +546,7 @@ bool PDP::lookupWriterProxyData(
         if (pit->m_guid.guidPrefix == writer.guidPrefix)
         {
             auto wit = pit->m_writers->find(writer.entityId);
-            if ( wit != pit->m_writers->end() )
+            if ( wit != pit->m_writers->end())
             {
                 wdata.copy(wit->second);
                 return true;
@@ -903,7 +903,7 @@ bool PDP::remove_remote_participant(
                 if (writer_guid != c_Guid_Unknown)
                 {
                     mp_EDP->unpairWriterProxy(partGUID, writer_guid,
-                        reason == ParticipantDiscoveryInfo::DISCOVERY_STATUS::DROPPED_PARTICIPANT);
+                            reason == ParticipantDiscoveryInfo::DISCOVERY_STATUS::DROPPED_PARTICIPANT);
 
                     if (listener)
                     {

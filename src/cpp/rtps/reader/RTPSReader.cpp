@@ -206,9 +206,9 @@ bool RTPSReader::wait_for_unread_cache(
     if (lock.try_lock_until(time_out))
     {
         if (new_notification_cv_.wait_until(lock, time_out, [&]()
-                    {
-                        return total_unread_ > 0;
-                    }))
+                {
+                    return total_unread_ > 0;
+                }))
         {
             return true;
         }
