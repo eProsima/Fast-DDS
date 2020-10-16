@@ -32,6 +32,8 @@
 #include <fastrtps/utils/collections/ResourceLimitedVector.hpp>
 #include <fastdds/rtps/participant/ParticipantDiscoveryInfo.h>
 
+#include <rtps/history/ITopicPayloadPool.h>
+
 namespace eprosima {
 
 namespace fastdds {
@@ -370,8 +372,12 @@ protected:
     ReaderListener* mp_listener;
     //!WriterHistory
     WriterHistory* mp_PDPWriterHistory;
+    //!Writer payload pool
+    std::shared_ptr<ITopicPayloadPool> writer_payload_pool_;
     //!Reader History
     ReaderHistory* mp_PDPReaderHistory;
+    //!Reader payload pool
+    std::shared_ptr<ITopicPayloadPool> reader_payload_pool_;
     //!ReaderProxyData to allow preallocation of remote locators
     ReaderProxyData temp_reader_data_;
     //!WriterProxyData to allow preallocation of remote locators

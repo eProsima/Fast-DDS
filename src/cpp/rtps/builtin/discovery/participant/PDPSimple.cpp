@@ -43,6 +43,7 @@
 #include <fastrtps/utils/TimeConversion.h>
 #include <fastrtps/utils/IPLocator.h>
 
+#include <rtps/history/TopicPayloadPoolRegistry.hpp>
 #include <rtps/participant/RTPSParticipantImpl.h>
 
 #include <fastdds/dds/log/Log.hpp>
@@ -250,6 +251,10 @@ bool PDPSimple::createPDPEndpoints()
         hatt.maximumReservedCaches = (int32_t)allocation.participants.maximum;
     }
 
+    PoolConfig reader_pool_cfg = PoolConfig::from_history_attributes(hatt);
+    reader_payload_pool_ = TopicPayloadPoolRegistry::get("DCPSParticipant", reader_pool_cfg);
+    reader_payload_pool_->reserve_history(reader_pool_cfg, true);
+
     mp_PDPReaderHistory = new ReaderHistory(hatt);
     ReaderAttributes ratt;
     ratt.endpoint.multicastLocatorList = mp_builtin->m_metatrafficMulticastLocatorList;
@@ -259,8 +264,8 @@ bool PDPSimple::createPDPEndpoints()
     ratt.endpoint.reliabilityKind = BEST_EFFORT;
     ratt.matched_writers_allocation = allocation.participants;
     mp_listener = new PDPListener(this);
-    if (mp_RTPSParticipant->createReader(&mp_PDPReader, ratt, mp_PDPReaderHistory, mp_listener, c_EntityId_SPDPReader,
-            true, false))
+    if (mp_RTPSParticipant->createReader(&mp_PDPReader, ratt, reader_payload_pool_, mp_PDPReaderHistory, mp_listener,
+            c_EntityId_SPDPReader, true, false))
     {
 #if HAVE_SECURITY
         mp_RTPSParticipant->set_endpoint_rtps_protection_supports(mp_PDPReader, false);
@@ -273,6 +278,8 @@ bool PDPSimple::createPDPEndpoints()
         mp_PDPReaderHistory = nullptr;
         delete mp_listener;
         mp_listener = nullptr;
+        reader_payload_pool_->release_history(reader_pool_cfg, true);
+        TopicPayloadPoolRegistry::release(reader_payload_pool_);
         return false;
     }
 
@@ -281,6 +288,11 @@ bool PDPSimple::createPDPEndpoints()
     hatt.initialReservedCaches = 1;
     hatt.maximumReservedCaches = 1;
     hatt.memoryPolicy = mp_builtin->m_att.writerHistoryMemoryPolicy;
+
+    PoolConfig writer_pool_cfg = PoolConfig::from_history_attributes(hatt);
+    writer_payload_pool_ = TopicPayloadPoolRegistry::get("DCPSParticipant", writer_pool_cfg);
+    writer_payload_pool_->reserve_history(writer_pool_cfg, false);
+
     mp_PDPWriterHistory = new WriterHistory(hatt);
     WriterAttributes watt;
     watt.endpoint.endpointKind = WRITER;
@@ -297,7 +309,8 @@ bool PDPSimple::createPDPEndpoints()
     }
 
     RTPSWriter* wout;
-    if (mp_RTPSParticipant->createWriter(&wout, watt, mp_PDPWriterHistory, nullptr, c_EntityId_SPDPWriter, true))
+    if (mp_RTPSParticipant->createWriter(&wout, watt, writer_payload_pool_, mp_PDPWriterHistory, nullptr,
+            c_EntityId_SPDPWriter, true))
     {
 #if HAVE_SECURITY
         mp_RTPSParticipant->set_endpoint_rtps_protection_supports(wout, false);
@@ -323,6 +336,8 @@ bool PDPSimple::createPDPEndpoints()
         logError(RTPS_PDP, "SimplePDP Writer creation failed");
         delete mp_PDPWriterHistory;
         mp_PDPWriterHistory = nullptr;
+        writer_payload_pool_->release_history(writer_pool_cfg, false);
+        TopicPayloadPoolRegistry::release(writer_payload_pool_);
         return false;
     }
     logInfo(RTPS_PDP, "SPDP Endpoints creation finished");

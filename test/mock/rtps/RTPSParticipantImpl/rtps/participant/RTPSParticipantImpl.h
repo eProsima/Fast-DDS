@@ -147,9 +147,45 @@ public:
         return ret;
     }
 
+    bool createWriter(
+            RTPSWriter** writer,
+            WriterAttributes& param,
+            const std::shared_ptr<IPayloadPool>&,
+            WriterHistory* hist,
+            WriterListener* listen,
+            const EntityId_t& entityId = c_EntityId_Unknown,
+            bool isBuiltin = false)
+    {
+        bool ret = createWriter_mock(writer, param, hist, listen, entityId, isBuiltin);
+        if (*writer != nullptr)
+        {
+            (*writer)->history_ = hist;
+        }
+        return ret;
+    }
+
     bool createReader(
             RTPSReader** reader,
             ReaderAttributes& param,
+            ReaderHistory* hist,
+            ReaderListener* listen,
+            const EntityId_t& entityId = c_EntityId_Unknown,
+            bool isBuiltin = false,
+            bool enable = true)
+    {
+        bool ret = createReader_mock(reader, param, hist, listen, entityId, isBuiltin, enable);
+        if (*reader != nullptr)
+        {
+            (*reader)->history_ = hist;
+            (*reader)->listener_ = listen;
+        }
+        return ret;
+    }
+
+    bool createReader(
+            RTPSReader** reader,
+            ReaderAttributes& param,
+            const std::shared_ptr<IPayloadPool>&,
             ReaderHistory* hist,
             ReaderListener* listen,
             const EntityId_t& entityId = c_EntityId_Unknown,

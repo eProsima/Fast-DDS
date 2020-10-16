@@ -58,6 +58,8 @@
 
 #include <fastdds/dds/log/Log.hpp>
 
+#include <rtps/history/TopicPayloadPoolRegistry.hpp>
+
 #include <mutex>
 #include <chrono>
 
@@ -130,8 +132,29 @@ PDP::~PDP()
     delete mp_EDP;
     mp_RTPSParticipant->deleteUserEndpoint(mp_PDPWriter);
     mp_RTPSParticipant->deleteUserEndpoint(mp_PDPReader);
-    delete mp_PDPWriterHistory;
-    delete mp_PDPReaderHistory;
+
+    if (mp_PDPWriterHistory)
+    {
+        PoolConfig cfg = PoolConfig::from_history_attributes(mp_PDPWriterHistory->m_att);
+        delete mp_PDPWriterHistory;
+        if (writer_payload_pool_)
+        {
+            writer_payload_pool_->release_history(cfg, false);
+            TopicPayloadPoolRegistry::release(writer_payload_pool_);
+        }
+    }
+
+    if (mp_PDPReaderHistory)
+    {
+        PoolConfig cfg = PoolConfig::from_history_attributes(mp_PDPReaderHistory->m_att);
+        delete mp_PDPReaderHistory;
+        if (reader_payload_pool_)
+        {
+            reader_payload_pool_->release_history(cfg, true);
+            TopicPayloadPoolRegistry::release(reader_payload_pool_);
+        }
+    }
+
     delete mp_listener;
 
     for (ParticipantProxyData* it : participant_proxies_)
