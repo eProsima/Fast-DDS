@@ -1266,6 +1266,12 @@ ReturnCode_t DataWriterImpl::check_qos(
             return ReturnCode_t::RETCODE_INCONSISTENT_POLICY;
         }
     }
+    if (qos.data_sharing().kind() == DataSharingKind::FORCED &&
+                (qos.endpoint().history_memory_policy != PREALLOCATED_MEMORY_MODE &&
+                qos.endpoint().history_memory_policy != PREALLOCATED_WITH_REALLOC_MEMORY_MODE))
+    {
+        return ReturnCode_t::RETCODE_INCONSISTENT_POLICY;
+    }
     return ReturnCode_t::RETCODE_OK;
 }
 
