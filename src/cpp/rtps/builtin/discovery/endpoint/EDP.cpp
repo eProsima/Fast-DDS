@@ -675,7 +675,7 @@ bool EDP::valid_matching(
             }
         }
     }
-    else if (wdata->m_qos.m_partition.size() > 0 && rdata->m_qos.m_partition.empty() )
+    else if (wdata->m_qos.m_partition.size() > 0 && rdata->m_qos.m_partition.empty())
     {
         for (auto wnameit = wdata->m_qos.m_partition.begin();
                 wnameit !=  wdata->m_qos.m_partition.end(); ++wnameit)
@@ -900,7 +900,7 @@ bool EDP::valid_matching(
             }
         }
     }
-    else if (rdata->m_qos.m_partition.size() > 0 && wdata->m_qos.m_partition.empty() )
+    else if (rdata->m_qos.m_partition.size() > 0 && wdata->m_qos.m_partition.empty())
     {
         for (auto wnameit = rdata->m_qos.m_partition.begin();
                 wnameit !=  rdata->m_qos.m_partition.end(); ++wnameit)
