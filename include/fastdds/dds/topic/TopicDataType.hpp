@@ -25,6 +25,12 @@
 #include <string>
 #include <functional>
 
+// This version of TypeSupport has `is_bounded()`
+#define TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
+
+// This version of TypeSupport has `is_plain()`
+#define TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
 namespace eprosima {
 
 namespace fastrtps {
