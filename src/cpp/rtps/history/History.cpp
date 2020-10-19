@@ -57,13 +57,13 @@ History::History(
     if ((att.memoryPolicy == PREALLOCATED_MEMORY_MODE) || (att.memoryPolicy == PREALLOCATED_WITH_REALLOC_MEMORY_MODE))
     {
         auto init_cache = [this](
-                CacheChange_t* item)
-        {
-            if (payload_pool_->get_payload(m_att.payloadMaxSize, *item))
-            {
-                payload_pool_->release_payload(*item);
-            }
-        };
+            CacheChange_t* item)
+                {
+                    if (payload_pool_->get_payload(m_att.payloadMaxSize, *item))
+                    {
+                        payload_pool_->release_payload(*item);
+                    }
+                };
 
         change_pool_ = std::make_shared<CacheChangePool>(pool_config, init_cache);
     }

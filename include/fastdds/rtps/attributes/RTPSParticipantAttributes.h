@@ -435,7 +435,7 @@ public:
     ThroughputControllerDescriptor throughputController;
 
     //!User defined transports to use alongside or in place of builtins.
-    std::vector<std::shared_ptr<fastdds::rtps::TransportDescriptorInterface> > userTransports;
+    std::vector<std::shared_ptr<fastdds::rtps::TransportDescriptorInterface>> userTransports;
 
     //!Set as false to disable the default UDPv4 implementation.
     bool useBuiltinTransports;

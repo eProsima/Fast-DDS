@@ -149,7 +149,9 @@ inline std::istream& operator >>(
 
             input >> std::dec;
         }
-        catch (std::ios_base::failure& ){}
+        catch (std::ios_base::failure& )
+        {
+        }
 
         input.exceptions(excp_mask);
     }
