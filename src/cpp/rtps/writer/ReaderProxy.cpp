@@ -231,7 +231,7 @@ void ReaderProxy::add_change(
     {
         // This should never happen
         logError(RTPS_READER_PROXY, "Error adding change " << change.getSequenceNumber()
-                << " to reader proxy " << guid());
+                                                           << " to reader proxy " << guid());
         eprosima::fastdds::dds::Log::Flush();
         assert(false);
     }

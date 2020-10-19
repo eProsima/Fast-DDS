@@ -138,7 +138,7 @@ bool load_environment_server_info(
 
                     while (++it != mr.cend())
                     {
-                        if ( !IPLocator::setIPv4(server_locator, it->str()) )
+                        if ( !IPLocator::setIPv4(server_locator, it->str()))
                         {
                             stringstream ss;
                             ss << "Wrong ipv4 address passed into the server's list " << it->str();
@@ -151,7 +151,7 @@ bool load_environment_server_info(
                             IPLocator::setIPv4(server_locator, "127.0.0.1");
                         }
 
-                        if ( ++it != mr.cend() )
+                        if ( ++it != mr.cend())
                         {
                             // reset the locator to default
                             IPLocator::setPhysicalPort(server_locator, DEFAULT_ROS2_SERVER_PORT);
@@ -161,12 +161,12 @@ bool load_environment_server_info(
                                 // note stoi throws also an invalid_argument
                                 int port = stoi(it->str());
 
-                                if ( port > std::numeric_limits<uint16_t>::max() )
+                                if ( port > std::numeric_limits<uint16_t>::max())
                                 {
                                     throw out_of_range("Too larget udp port passed into the server's list");
                                 }
 
-                                if ( !IPLocator::setPhysicalPort(server_locator, static_cast<uint16_t>(port)) )
+                                if ( !IPLocator::setPhysicalPort(server_locator, static_cast<uint16_t>(port)))
                                 {
                                     stringstream ss;
                                     ss << "Wrong udp port passed into the server's list " << it->str();
@@ -245,14 +245,14 @@ void PDPClient2::initializeParticipantProxyData(
     }
 
     if (getRTPSParticipant()->getAttributes().builtin.discovery_config.m_simpleEDP.
-            use_PublicationWriterANDSubscriptionReader)
+                    use_PublicationWriterANDSubscriptionReader)
     {
         participant_data->m_availableBuiltinEndpoints |= DISC_BUILTIN_ENDPOINT_PUBLICATION_ANNOUNCER;
         participant_data->m_availableBuiltinEndpoints |= DISC_BUILTIN_ENDPOINT_SUBSCRIPTION_DETECTOR;
     }
 
     if (getRTPSParticipant()->getAttributes().builtin.discovery_config.m_simpleEDP.
-            use_PublicationReaderANDSubscriptionWriter)
+                    use_PublicationReaderANDSubscriptionWriter)
     {
         participant_data->m_availableBuiltinEndpoints |= DISC_BUILTIN_ENDPOINT_PUBLICATION_DETECTOR;
         participant_data->m_availableBuiltinEndpoints |= DISC_BUILTIN_ENDPOINT_SUBSCRIPTION_ANNOUNCER;

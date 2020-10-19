@@ -78,14 +78,14 @@ void PDPClient::initializeParticipantProxyData(
     }
 
     if (getRTPSParticipant()->getAttributes().builtin.discovery_config.m_simpleEDP.
-            use_PublicationWriterANDSubscriptionReader)
+                    use_PublicationWriterANDSubscriptionReader)
     {
         participant_data->m_availableBuiltinEndpoints |= DISC_BUILTIN_ENDPOINT_PUBLICATION_ANNOUNCER;
         participant_data->m_availableBuiltinEndpoints |= DISC_BUILTIN_ENDPOINT_SUBSCRIPTION_DETECTOR;
     }
 
     if (getRTPSParticipant()->getAttributes().builtin.discovery_config.m_simpleEDP.
-            use_PublicationReaderANDSubscriptionWriter)
+                    use_PublicationReaderANDSubscriptionWriter)
     {
         participant_data->m_availableBuiltinEndpoints |= DISC_BUILTIN_ENDPOINT_PUBLICATION_DETECTOR;
         participant_data->m_availableBuiltinEndpoints |= DISC_BUILTIN_ENDPOINT_SUBSCRIPTION_ANNOUNCER;
