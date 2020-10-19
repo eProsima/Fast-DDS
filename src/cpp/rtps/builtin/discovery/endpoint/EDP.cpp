@@ -116,7 +116,7 @@ bool EDP::newLocalReaderProxyData(
                 rpd->type_id(att.type_id);
                 rpd->type(att.type);
                 rpd->type_information(att.type_information);
-                rpd->m_qos = rqos;
+                rpd->m_qos.setQos(rqos, true);
                 rpd->userDefinedId(reader->getAttributes().getUserDefinedID());
 #if HAVE_SECURITY
                 if (mp_RTPSParticipant->is_secure())
@@ -230,7 +230,7 @@ bool EDP::newLocalWriterProxyData(
                 wpd->type(att.type);
                 wpd->type_information(att.type_information);
                 wpd->typeMaxSerialized(writer->getTypeMaxSerialized());
-                wpd->m_qos = wqos;
+                wpd->m_qos.setQos(wqos, true);
                 wpd->userDefinedId(writer->getAttributes().getUserDefinedID());
                 wpd->persistence_guid(writer->getAttributes().persistence_guid);
 #if HAVE_SECURITY
@@ -675,7 +675,7 @@ bool EDP::valid_matching(
             }
         }
     }
-    else if (wdata->m_qos.m_partition.size() > 0 && rdata->m_qos.m_partition.empty() )
+    else if (wdata->m_qos.m_partition.size() > 0 && rdata->m_qos.m_partition.empty())
     {
         for (auto wnameit = wdata->m_qos.m_partition.begin();
                 wnameit !=  wdata->m_qos.m_partition.end(); ++wnameit)
@@ -900,7 +900,7 @@ bool EDP::valid_matching(
             }
         }
     }
-    else if (rdata->m_qos.m_partition.size() > 0 && wdata->m_qos.m_partition.empty() )
+    else if (rdata->m_qos.m_partition.size() > 0 && wdata->m_qos.m_partition.empty())
     {
         for (auto wnameit = rdata->m_qos.m_partition.begin();
                 wnameit !=  rdata->m_qos.m_partition.end(); ++wnameit)

@@ -51,7 +51,7 @@ class PubSubWriter
 {
     class ParticipantListener : public eprosima::fastrtps::ParticipantListener
     {
-public:
+    public:
 
         ParticipantListener(
                 PubSubWriter& writer)
@@ -98,7 +98,7 @@ public:
             }
         }
 
-#endif
+#endif // if HAVE_SECURITY
 
         void onSubscriberDiscovery(
                 eprosima::fastrtps::Participant*,
@@ -137,18 +137,19 @@ public:
             }
         }
 
-private:
+    private:
 
         ParticipantListener& operator =(
                 const ParticipantListener&) = delete;
 
         PubSubWriter& writer_;
 
-    } participant_listener_;
+    }
+    participant_listener_;
 
     class Listener : public eprosima::fastrtps::PublisherListener
     {
-public:
+    public:
 
         Listener(
                 PubSubWriter& writer)
@@ -205,7 +206,7 @@ public:
             return times_liveliness_lost_;
         }
 
-private:
+    private:
 
         Listener& operator =(
                 const Listener&) = delete;
@@ -217,7 +218,8 @@ private:
         //! The number of times liveliness was lost
         unsigned int times_liveliness_lost_;
 
-    } listener_;
+    }
+    listener_;
 
 public:
 
@@ -239,7 +241,7 @@ public:
 #if HAVE_SECURITY
         , authorized_(0)
         , unauthorized_(0)
-#endif
+#endif // if HAVE_SECURITY
     {
         publisher_attr_.topic.topicDataType = type_.getName();
         // Generate topic name
@@ -298,7 +300,8 @@ public:
 
             if (publisher_ != nullptr)
             {
-                std::cout << "Created publisher " << publisher_->getGuid() << " for topic " <<
+                publisher_guid_ = publisher_->getGuid();
+                std::cout << "Created publisher " << publisher_guid_ << " for topic " <<
                     publisher_attr_.topic.topicName << std::endl;
                 initialized_ = true;
                 return;
@@ -391,15 +394,17 @@ public:
 
         if (timeout == std::chrono::seconds::zero())
         {
-            cv_.wait(lock, [&](){
-                return matched_ != 0;
-            });
+            cv_.wait(lock, [&]()
+                    {
+                        return matched_ != 0;
+                    });
         }
         else
         {
-            cv_.wait_for(lock, timeout, [&](){
-                return matched_ != 0;
-            });
+            cv_.wait_for(lock, timeout, [&]()
+                    {
+                        return matched_ != 0;
+                    });
         }
 
         std::cout << "Writer discovery finished..." << std::endl;
@@ -415,15 +420,17 @@ public:
 
         if (timeout == std::chrono::seconds::zero())
         {
-            cv_.wait(lock, [&](){
-                return matched_ == expected_match;
-            });
+            cv_.wait(lock, [&]()
+                    {
+                        return matched_ == expected_match;
+                    });
         }
         else
         {
-            cv_.wait_for(lock, timeout, [&](){
-                return matched_ == expected_match;
-            });
+            cv_.wait_for(lock, timeout, [&]()
+                    {
+                        return matched_ == expected_match;
+                    });
         }
 
         std::cout << "Writer discovery finished..." << std::endl;
@@ -439,15 +446,17 @@ public:
 
         if (timeout == std::chrono::seconds::zero())
         {
-            cv_.wait(lock, [&](){
-                return participant_matched_ == 0;
-            });
+            cv_.wait(lock, [&]()
+                    {
+                        return participant_matched_ == 0;
+                    });
         }
         else
         {
-            if (!cv_.wait_for(lock, timeout, [&](){
-                return participant_matched_ == 0;
-            }))
+            if (!cv_.wait_for(lock, timeout, [&]()
+                    {
+                        return participant_matched_ == 0;
+                    }))
             {
                 ret_value = false;
             }
@@ -471,9 +480,10 @@ public:
 
         std::cout << "Writer is waiting removal..." << std::endl;
 
-        cv_.wait(lock, [&](){
-            return matched_ == 0;
-        });
+        cv_.wait(lock, [&]()
+                {
+                    return matched_ == 0;
+                });
 
         std::cout << "Writer removal finished..." << std::endl;
     }
@@ -482,9 +492,10 @@ public:
             unsigned int times = 1)
     {
         std::unique_lock<std::mutex> lock(liveliness_mutex_);
-        liveliness_cv_.wait(lock, [&](){
-            return times_liveliness_lost_ >= times;
-        });
+        liveliness_cv_.wait(lock, [&]()
+                {
+                    return times_liveliness_lost_ >= times;
+                });
     }
 
     void liveliness_lost()
@@ -501,9 +512,10 @@ public:
 
         std::cout << "Writer is waiting authorization..." << std::endl;
 
-        cvAuthentication_.wait(lock, [&]() -> bool {
-            return authorized_ > 0;
-        });
+        cvAuthentication_.wait(lock, [&]() -> bool
+                {
+                    return authorized_ > 0;
+                });
 
         std::cout << "Writer authorization finished..." << std::endl;
     }
@@ -514,14 +526,15 @@ public:
 
         std::cout << "Writer is waiting unauthorization..." << std::endl;
 
-        cvAuthentication_.wait(lock, [&]() -> bool {
-            return unauthorized_ > 0;
-        });
+        cvAuthentication_.wait(lock, [&]() -> bool
+                {
+                    return unauthorized_ > 0;
+                });
 
         std::cout << "Writer unauthorization finished..." << std::endl;
     }
 
-#endif
+#endif // if HAVE_SECURITY
 
     template<class _Rep,
             class _Period
@@ -539,10 +552,10 @@ public:
         std::unique_lock<std::mutex> lock(mutexEntitiesInfoList_);
 
         cvEntitiesInfoList_.wait(lock, [&]()
-        {
-            int times = mapTopicCountList_.count(topicName) == 0 ? 0 : mapTopicCountList_[topicName];
-            return times == repeatedTimes;
-        });
+                {
+                    int times = mapTopicCountList_.count(topicName) == 0 ? 0 : mapTopicCountList_[topicName];
+                    return times == repeatedTimes;
+                });
     }
 
     void block_until_discover_partition(
@@ -552,10 +565,10 @@ public:
         std::unique_lock<std::mutex> lock(mutexEntitiesInfoList_);
 
         cvEntitiesInfoList_.wait(lock, [&]()
-        {
-            int times = mapPartitionCountList_.count(partition) == 0 ? 0 : mapPartitionCountList_[partition];
-            return times == repeatedTimes;
-        });
+                {
+                    int times = mapPartitionCountList_.count(partition) == 0 ? 0 : mapPartitionCountList_[partition];
+                    return times == repeatedTimes;
+                });
     }
 
     /*** Function to change QoS ***/
@@ -889,6 +902,13 @@ public:
         return *this;
     }
 
+    PubSubWriter& endpoint_userData(
+            std::vector<eprosima::fastrtps::rtps::octet> user_data)
+    {
+        publisher_attr_.qos.m_userData = user_data;
+        return *this;
+    }
+
     PubSubWriter& lease_duration(
             eprosima::fastrtps::Duration_t lease_duration,
             eprosima::fastrtps::Duration_t announce_period)
@@ -951,6 +971,11 @@ public:
     eprosima::fastrtps::rtps::GUID_t participant_guid()
     {
         return participant_guid_;
+    }
+
+    eprosima::fastrtps::rtps::GUID_t datawriter_guid()
+    {
+        return publisher_guid_;
     }
 
     bool update_partition(
@@ -1029,7 +1054,7 @@ private:
         cvAuthentication_.notify_all();
     }
 
-#endif
+#endif // if HAVE_SECURITY
 
     void add_writer_info(
             const eprosima::fastrtps::rtps::WriterProxyData& writer_data)
@@ -1237,6 +1262,7 @@ private:
     eprosima::fastrtps::PublisherAttributes publisher_attr_;
     std::string topic_name_;
     eprosima::fastrtps::rtps::GUID_t participant_guid_;
+    eprosima::fastrtps::rtps::GUID_t publisher_guid_;
     bool initialized_;
     std::mutex mutexDiscovery_;
     std::condition_variable cv_;
@@ -1265,7 +1291,7 @@ private:
     std::condition_variable cvAuthentication_;
     unsigned int authorized_;
     unsigned int unauthorized_;
-#endif
+#endif // if HAVE_SECURITY
 };
 
 #endif // _TEST_BLACKBOX_PUBSUBWRITER_HPP_
