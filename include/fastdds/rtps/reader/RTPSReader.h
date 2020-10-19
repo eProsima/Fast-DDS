@@ -76,6 +76,7 @@ public:
     /**
      * Remove a writer represented by its attributes from the matched writers.
      * @param writer_guid GUID of the writer to remove.
+     * @param removed_by_lease Whether the writer is being unmatched due to a participant drop.
      * @return True if correctly removed.
      */
     RTPS_DllAPI virtual bool matched_writer_remove(
@@ -268,6 +269,7 @@ protected:
      * @brief Remove a remote writer from the persistence_guid map
      * @param guid GUID of the remote writer
      * @param persistence_guid Persistence GUID of the remote writer
+     * @param removed_by_lease Whether the GUIDs are being removed due to a participant drop.
      */
     void remove_persistence_guid(
             const GUID_t& guid,
