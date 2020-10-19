@@ -133,7 +133,16 @@ void MessageReceiver::process_data_message_with_security(
 
                 std::swap(change.serializedPayload.data, crypto_payload_.data);
                 std::swap(change.serializedPayload.length, crypto_payload_.length);
+
+                SerializedPayload_t original_payload = change.serializedPayload;
                 reader->processDataMsg(&change);
+                IPayloadPool* payload_pool = change.payload_owner();
+                if (payload_pool)
+                {
+                    payload_pool->release_payload(change);
+                    change.serializedPayload = original_payload;
+                }
+                original_payload.data = nullptr;
                 std::swap(change.serializedPayload.data, crypto_payload_.data);
                 std::swap(change.serializedPayload.length, crypto_payload_.length);
             };
