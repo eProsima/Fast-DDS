@@ -23,6 +23,7 @@
 #include <array>
 #include <cstdint>
 #include <string.h>
+#include <limits>
 
 #if _MSC_VER
 #include <intrin.h>
@@ -382,6 +383,10 @@ public:
         uint32_t num_bytes = num_items * sizeof(uint32_t);
         bitmap_.fill(0UL);
         memcpy(bitmap_.data(), bitmap, num_bytes);
+        if (0 < num_bits)
+        {
+            bitmap_[num_items - 1] &= ~(std::numeric_limits<uint32_t>::max() >> (num_bits & 31UL));
+        }
         calc_maximum_bit_set(num_items, 0);
     }
 

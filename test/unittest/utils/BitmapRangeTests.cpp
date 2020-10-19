@@ -446,6 +446,15 @@ TEST_F(BitmapRangeTests, serialization)
     // Bitmap should be equal to the one of the last result
     auto last_result = test0.steps.rbegin()->expected_result;
     last_result.Check(last_result.result, uut);
+
+    num_bits = 20u;
+    num_longs = 1u;
+    bitmap.fill(std::numeric_limits<uint32_t>::max());
+    uut.bitmap_set(num_bits, bitmap.data());
+    uut.bitmap_get(num_bits, bitmap, num_longs);
+    EXPECT_EQ(num_bits, 20u);
+    EXPECT_EQ(num_longs, 1u);
+    EXPECT_EQ(bitmap[0], 0xFFFFF000u);
 }
 
 TEST_F(BitmapRangeTests, traversal)
