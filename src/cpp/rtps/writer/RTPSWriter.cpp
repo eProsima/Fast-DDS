@@ -120,6 +120,11 @@ RTPSWriter::~RTPSWriter()
 
     // Deletion of the events has to be made in child destructor.
 
+    for (auto it = mp_history->changesBegin(); it != mp_history->changesEnd(); ++it)
+    {
+        release_change(*it);
+    }
+
     mp_history->mp_writer = nullptr;
     mp_history->mp_mutex = nullptr;
 }
