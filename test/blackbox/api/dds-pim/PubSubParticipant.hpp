@@ -50,7 +50,7 @@ class PubSubParticipant
     {
         friend class PubSubParticipant;
 
-public:
+    public:
 
         PubListener(
                 PubSubParticipant* participant)
@@ -77,7 +77,7 @@ public:
             participant_->pub_liveliness_lost();
         }
 
-private:
+    private:
 
         PubListener& operator =(
                 const PubListener&) = delete;
@@ -89,7 +89,7 @@ private:
     {
         friend class PubSubParticipant;
 
-public:
+    public:
 
         SubListener(
                 PubSubParticipant* participant)
@@ -117,7 +117,7 @@ public:
 
         }
 
-private:
+    private:
 
         SubListener& operator =(
                 const SubListener&) = delete;
@@ -157,7 +157,7 @@ public:
         datawriter_qos_.historyMemoryPolicy = rtps::DYNAMIC_RESERVE_MEMORY_MODE;
 #else
         datawriter_qos_.endpoint().history_memory_policy = eprosima::fastrtps::rtps::PREALLOCATED_MEMORY_MODE;
-#endif
+#endif // if defined(PREALLOCATED_WITH_REALLOC_MEMORY_MODE_TEST)
 
         // By default, heartbeat period and nack response delay are 100 milliseconds.
         datawriter_qos_.reliable_writer_qos().times.heartbeatPeriod.seconds = 0;
@@ -326,15 +326,43 @@ public:
 
         if (timeout == std::chrono::seconds::zero())
         {
-            pub_cv_.wait(lock, [&](){
-                return pub_matched_ == num_expected_publishers_;
-            });
+            pub_cv_.wait(lock, [&]()
+                    {
+                        return pub_matched_ == num_expected_publishers_;
+                    });
         }
         else
         {
-            pub_cv_.wait_for(lock, timeout, [&](){
-                return pub_matched_ == num_expected_publishers_;
-            });
+            pub_cv_.wait_for(lock, timeout, [&]()
+                    {
+                        return pub_matched_ == num_expected_publishers_;
+                    });
+        }
+
+        std::cout << "Publisher discovery finished " << std::endl;
+    }
+
+    void pub_wait_discovery(
+            unsigned int expected_match,
+            std::chrono::seconds timeout = std::chrono::seconds::zero())
+    {
+        std::unique_lock<std::mutex> lock(pub_mutex_);
+
+        std::cout << "Publisher is waiting discovery..." << std::endl;
+
+        if (timeout == std::chrono::seconds::zero())
+        {
+            pub_cv_.wait(lock, [&]()
+                    {
+                        return pub_matched_ == expected_match;
+                    });
+        }
+        else
+        {
+            pub_cv_.wait_for(lock, timeout, [&]()
+                    {
+                        return pub_matched_ == expected_match;
+                    });
         }
 
         std::cout << "Publisher discovery finished " << std::endl;
@@ -349,15 +377,43 @@ public:
 
         if (timeout == std::chrono::seconds::zero())
         {
-            sub_cv_.wait(lock, [&](){
-                return sub_matched_ == num_expected_subscribers_;
-            });
+            sub_cv_.wait(lock, [&]()
+                    {
+                        return sub_matched_ == num_expected_subscribers_;
+                    });
         }
         else
         {
-            sub_cv_.wait_for(lock, timeout, [&](){
-                return sub_matched_ == num_expected_subscribers_;
-            });
+            sub_cv_.wait_for(lock, timeout, [&]()
+                    {
+                        return sub_matched_ == num_expected_subscribers_;
+                    });
+        }
+
+        std::cout << "Subscriber discovery finished " << std::endl;
+    }
+
+    void sub_wait_discovery(
+            unsigned int expected_match,
+            std::chrono::seconds timeout = std::chrono::seconds::zero())
+    {
+        std::unique_lock<std::mutex> lock(sub_mutex_);
+
+        std::cout << "Subscriber is waiting discovery..." << std::endl;
+
+        if (timeout == std::chrono::seconds::zero())
+        {
+            sub_cv_.wait(lock, [&]()
+                    {
+                        return sub_matched_ == expected_match;
+                    });
+        }
+        else
+        {
+            sub_cv_.wait_for(lock, timeout, [&]()
+                    {
+                        return sub_matched_ == expected_match;
+                    });
         }
 
         std::cout << "Subscriber discovery finished " << std::endl;
@@ -367,40 +423,56 @@ public:
             unsigned int times = 1)
     {
         std::unique_lock<std::mutex> lock(pub_liveliness_mutex_);
-        pub_liveliness_cv_.wait(lock, [&]() {
-            return pub_times_liveliness_lost_ >= times;
-        });
+        pub_liveliness_cv_.wait(lock, [&]()
+                {
+                    return pub_times_liveliness_lost_ >= times;
+                });
     }
 
     void sub_wait_liveliness_recovered(
             unsigned int num_recovered)
     {
         std::unique_lock<std::mutex> lock(sub_liveliness_mutex_);
-        sub_liveliness_cv_.wait(lock, [&]() {
-            return sub_times_liveliness_recovered_ >= num_recovered;
-        });
+        sub_liveliness_cv_.wait(lock, [&]()
+                {
+                    return sub_times_liveliness_recovered_ >= num_recovered;
+                });
     }
 
     void sub_wait_liveliness_lost(
             unsigned int num_lost)
     {
         std::unique_lock<std::mutex> lock(sub_liveliness_mutex_);
-        sub_liveliness_cv_.wait(lock, [&]() {
-            return sub_times_liveliness_lost_ >= num_lost;
-        });
+        sub_liveliness_cv_.wait(lock, [&]()
+                {
+                    return sub_times_liveliness_lost_ >= num_lost;
+                });
+    }
+
+    PubSubParticipant& property_policy(
+            const eprosima::fastrtps::rtps::PropertyPolicy property_policy)
+    {
+        participant_qos_.properties() = property_policy;
+        return *this;
     }
 
     PubSubParticipant& pub_topic_name(
             std::string topicName)
     {
-        publisher_topicname_ = topicName;
+        // Generate topic name
+        std::ostringstream topic;
+        topic << topicName << "_" << asio::ip::host_name() << "_" << GET_PID();
+        publisher_topicname_ = topic.str();
         return *this;
     }
 
     PubSubParticipant& sub_topic_name(
             std::string topicName)
     {
-        subscriber_topicname_ = topicName;
+        // Generate topic name
+        std::ostringstream topic;
+        topic << topicName << "_" << asio::ip::host_name() << "_" << GET_PID();
+        subscriber_topicname_ = topic.str();
         return *this;
     }
 
@@ -569,12 +641,12 @@ private:
     std::vector<std::tuple<
                 eprosima::fastdds::dds::Topic*,
                 eprosima::fastdds::dds::Publisher*,
-                eprosima::fastdds::dds::DataWriter*> > publishers_;
+                eprosima::fastdds::dds::DataWriter*>> publishers_;
     //! A vector of subscribers
     std::vector<std::tuple<
                 eprosima::fastdds::dds::Topic*,
                 eprosima::fastdds::dds::Subscriber*,
-                eprosima::fastdds::dds::DataReader*> > subscribers_;
+                eprosima::fastdds::dds::DataReader*>> subscribers_;
     //! Publisher attributes
     eprosima::fastdds::dds::DataWriterQos datawriter_qos_;
     //! Subscriber attributes

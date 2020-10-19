@@ -50,7 +50,7 @@ class PubSubParticipant
     {
         friend class PubSubParticipant;
 
-public:
+    public:
 
         PubListener(
                 PubSubParticipant* participant)
@@ -79,7 +79,7 @@ public:
             participant_->pub_liveliness_lost();
         }
 
-private:
+    private:
 
         PubListener& operator =(
                 const PubListener&) = delete;
@@ -91,7 +91,7 @@ private:
     {
         friend class PubSubParticipant;
 
-public:
+    public:
 
         SubListener(
                 PubSubParticipant* participant)
@@ -121,7 +121,7 @@ public:
 
         }
 
-private:
+    private:
 
         SubListener& operator =(
                 const SubListener&) = delete;
@@ -163,7 +163,7 @@ public:
         publisher_attr_.historyMemoryPolicy = rtps::DYNAMIC_RESERVE_MEMORY_MODE;
 #else
         publisher_attr_.historyMemoryPolicy = rtps::PREALLOCATED_MEMORY_MODE;
-#endif
+#endif // if defined(PREALLOCATED_WITH_REALLOC_MEMORY_MODE_TEST)
 
         // By default, heartbeat period and nack response delay are 100 milliseconds.
         publisher_attr_.times.heartbeatPeriod.seconds = 0;
@@ -265,14 +265,42 @@ public:
 
         if (timeout == std::chrono::seconds::zero())
         {
-            pub_cv_.wait(lock, [&](){
+            pub_cv_.wait(lock, [&]()
+                    {
                         return pub_matched_ == num_expected_publishers_;
                     });
         }
         else
         {
-            pub_cv_.wait_for(lock, timeout, [&](){
+            pub_cv_.wait_for(lock, timeout, [&]()
+                    {
                         return pub_matched_ == num_expected_publishers_;
+                    });
+        }
+
+        std::cout << "Publisher discovery finished " << std::endl;
+    }
+
+    void pub_wait_discovery(
+            unsigned int expected_match,
+            std::chrono::seconds timeout = std::chrono::seconds::zero())
+    {
+        std::unique_lock<std::mutex> lock(pub_mutex_);
+
+        std::cout << "Publisher is waiting discovery..." << std::endl;
+
+        if (timeout == std::chrono::seconds::zero())
+        {
+            pub_cv_.wait(lock, [&]()
+                    {
+                        return pub_matched_ == expected_match;
+                    });
+        }
+        else
+        {
+            pub_cv_.wait_for(lock, timeout, [&]()
+                    {
+                        return pub_matched_ == expected_match;
                     });
         }
 
@@ -288,14 +316,42 @@ public:
 
         if (timeout == std::chrono::seconds::zero())
         {
-            sub_cv_.wait(lock, [&](){
+            sub_cv_.wait(lock, [&]()
+                    {
                         return sub_matched_ == num_expected_subscribers_;
                     });
         }
         else
         {
-            sub_cv_.wait_for(lock, timeout, [&](){
+            sub_cv_.wait_for(lock, timeout, [&]()
+                    {
                         return sub_matched_ == num_expected_subscribers_;
+                    });
+        }
+
+        std::cout << "Subscriber discovery finished " << std::endl;
+    }
+
+    void sub_wait_discovery(
+            unsigned int expected_match,
+            std::chrono::seconds timeout = std::chrono::seconds::zero())
+    {
+        std::unique_lock<std::mutex> lock(sub_mutex_);
+
+        std::cout << "Subscriber is waiting discovery..." << std::endl;
+
+        if (timeout == std::chrono::seconds::zero())
+        {
+            sub_cv_.wait(lock, [&]()
+                    {
+                        return sub_matched_ == expected_match;
+                    });
+        }
+        else
+        {
+            sub_cv_.wait_for(lock, timeout, [&]()
+                    {
+                        return sub_matched_ == expected_match;
                     });
         }
 
@@ -306,7 +362,8 @@ public:
             unsigned int times = 1)
     {
         std::unique_lock<std::mutex> lock(pub_liveliness_mutex_);
-        pub_liveliness_cv_.wait(lock, [&]() {
+        pub_liveliness_cv_.wait(lock, [&]()
+                {
                     return pub_times_liveliness_lost_ >= times;
                 });
     }
@@ -315,7 +372,8 @@ public:
             unsigned int num_recovered)
     {
         std::unique_lock<std::mutex> lock(sub_liveliness_mutex_);
-        sub_liveliness_cv_.wait(lock, [&]() {
+        sub_liveliness_cv_.wait(lock, [&]()
+                {
                     return sub_times_liveliness_recovered_ >= num_recovered;
                 });
     }
@@ -324,16 +382,27 @@ public:
             unsigned int num_lost)
     {
         std::unique_lock<std::mutex> lock(sub_liveliness_mutex_);
-        sub_liveliness_cv_.wait(lock, [&]() {
+        sub_liveliness_cv_.wait(lock, [&]()
+                {
                     return sub_times_liveliness_lost_ >= num_lost;
                 });
+    }
+
+    PubSubParticipant& property_policy(
+            const eprosima::fastrtps::rtps::PropertyPolicy property_policy)
+    {
+        participant_attr_.rtps.properties = property_policy;
+        return *this;
     }
 
     PubSubParticipant& pub_topic_name(
             std::string topicName)
     {
         publisher_attr_.topic.topicDataType = type_.getName();
-        publisher_attr_.topic.topicName = topicName;
+        // Generate topic name
+        std::ostringstream topic;
+        topic << topicName << "_" << asio::ip::host_name() << "_" << GET_PID();
+        publisher_attr_.topic.topicName = topic.str();
         return *this;
     }
 
@@ -341,7 +410,10 @@ public:
             std::string topicName)
     {
         subscriber_attr_.topic.topicDataType = type_.getName();
-        subscriber_attr_.topic.topicName = topicName;
+        // Generate topic name
+        std::ostringstream topic;
+        topic << topicName << "_" << asio::ip::host_name() << "_" << GET_PID();
+        subscriber_attr_.topic.topicName = topic.str();
         return *this;
     }
 
@@ -544,7 +616,7 @@ private:
     type_support type_;
 };
 
-}
-}
+} // namespace fastrtps
+} // namespace eprosima
 
 #endif // _TEST_BLACKBOX_PUBSUBPARTICIPANT_HPP_
