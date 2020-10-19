@@ -651,7 +651,7 @@ XMLP_ret XMLParser::getXMLPortParameters(
 
 XMLP_ret XMLParser::getXMLTransports(
         tinyxml2::XMLElement* elem,
-        std::vector<std::shared_ptr<TransportDescriptorInterface> >& transports,
+        std::vector<std::shared_ptr<TransportDescriptorInterface>>& transports,
         uint8_t /*ident*/)
 {
     /*

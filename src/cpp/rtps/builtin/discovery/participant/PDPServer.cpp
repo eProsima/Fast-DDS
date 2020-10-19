@@ -90,7 +90,7 @@ bool PDPServer::init(
      */
     mp_sync = new DServerEvent(this,
                     TimeConv::Duration_t2MilliSecondsDouble(m_discovery.discovery_config.
-                    discoveryServer_client_syncperiod));
+                            discoveryServer_client_syncperiod));
     awakeServerThread();
     // the timer is also restart from removeRemoteParticipant, remove(Publisher|Subscriber)FromHistory
     // and queueParticipantForEDPMatch

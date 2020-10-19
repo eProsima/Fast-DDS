@@ -575,7 +575,7 @@ protected:
 
     RTPS_DllAPI static XMLP_ret getXMLTransports(
             tinyxml2::XMLElement* elem,
-            std::vector<std::shared_ptr<fastdds::rtps::TransportDescriptorInterface> >& transports,
+            std::vector<std::shared_ptr<fastdds::rtps::TransportDescriptorInterface>>& transports,
             uint8_t ident);
 
     RTPS_DllAPI static XMLP_ret getXMLDisablePositiveAcksQos(
