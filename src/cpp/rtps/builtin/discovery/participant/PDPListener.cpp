@@ -151,7 +151,6 @@ void PDPListener::onNewCacheChangeAdded(
                 pdata->updateData(temp_participant_data_);
                 pdata->isAlive = true;
                 reader->getMutex().unlock();
-                lock.unlock();
 
                 logInfo(RTPS_PDP_DISCOVERY, "Update participant " << pdata->m_guid << " at " << "MTTLoc: "
                         << pdata->metatraffic_locators << " DefLoc:" << pdata->default_locators);
@@ -160,6 +159,8 @@ void PDPListener::onNewCacheChangeAdded(
                 {
                     parent_pdp_->mp_EDP->assignRemoteEndpoints(*pdata);
                 }
+
+                lock.unlock();
             }
 
             if (pdata != nullptr)
