@@ -262,6 +262,17 @@ bool ReaderProxy::change_is_acked(
     return !chit->isRelevant() || chit->getStatus() == ACKNOWLEDGED;
 }
 
+SequenceNumber_t ReaderProxy::first_change_sequence_number() const
+{
+    if (changes_for_reader_.empty())
+    {
+        return changes_low_mark_ + 1;
+    }
+
+    return changes_for_reader_.front().getSequenceNumber();
+}
+
+
 bool ReaderProxy::change_is_unsent(
         const SequenceNumber_t& seq_num,
         bool& is_irrelevant) const
