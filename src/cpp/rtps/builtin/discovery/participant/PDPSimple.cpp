@@ -401,6 +401,8 @@ void PDPSimple::removeRemoteEndpoints(
 void PDPSimple::notifyAboveRemoteEndpoints(
         const ParticipantProxyData& pdata)
 {
+    std::unique_lock<std::recursive_mutex> lock(*getMutex());
+
     //Inform EDP of new RTPSParticipant data:
     if (mp_EDP != nullptr)
     {
