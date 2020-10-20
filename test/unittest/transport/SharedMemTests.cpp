@@ -149,7 +149,7 @@ protected:
     };
 
     std::unique_ptr<MultiProducerConsumerRingBuffer<MyData>::Cell[]> cells_;
-    std::unique_ptr<MultiProducerConsumerRingBuffer<MyData> > ring_buffer_;
+    std::unique_ptr<MultiProducerConsumerRingBuffer<MyData>> ring_buffer_;
     uint32_t buffer_size_;
 
     SHMRingBuffer()
@@ -163,7 +163,7 @@ protected:
             new MultiProducerConsumerRingBuffer<MyData>::Cell[buffer_size_]);
 
         ring_buffer_ =
-                std::unique_ptr<MultiProducerConsumerRingBuffer<MyData> >(new MultiProducerConsumerRingBuffer<MyData>(
+                std::unique_ptr<MultiProducerConsumerRingBuffer<MyData>>(new MultiProducerConsumerRingBuffer<MyData>(
                             cells_.get(), buffer_size_));
     }
 
@@ -177,7 +177,7 @@ protected:
 
 class SHMRingBufferMultiThread
     :   public SHMRingBuffer,
-    public testing::WithParamInterface<std::tuple<uint32_t, uint32_t, uint32_t> >
+    public testing::WithParamInterface<std::tuple<uint32_t, uint32_t, uint32_t>>
 {
 
 };
@@ -261,14 +261,14 @@ TEST_F(SHMRingBuffer, one_listener_reads_all)
 
 TEST_F(SHMRingBuffer, copy)
 {
-    std::unique_ptr<MultiProducerConsumerRingBuffer<MyData> > ring_buffer;
+    std::unique_ptr<MultiProducerConsumerRingBuffer<MyData>> ring_buffer;
 
     std::unique_ptr<MultiProducerConsumerRingBuffer<MyData>::Cell[]> cells
         = std::unique_ptr<MultiProducerConsumerRingBuffer<MyData>::Cell[]>(
                 new MultiProducerConsumerRingBuffer<MyData>::Cell[2]);
 
     ring_buffer =
-            std::unique_ptr<MultiProducerConsumerRingBuffer<MyData> >(new MultiProducerConsumerRingBuffer<MyData>(
+            std::unique_ptr<MultiProducerConsumerRingBuffer<MyData>>(new MultiProducerConsumerRingBuffer<MyData>(
                         cells_.get(), 2));
 
     auto listener = ring_buffer->register_listener();
@@ -1202,7 +1202,7 @@ TEST_F(SHMTransportTests, memory_bounds)
     std::cout << "    - allocation_size:           " << allocation_size << std::endl;
     std::cout << "    - extra_allocation:          " << extra_allocation << std::endl;
 
-    std::vector<std::shared_ptr<SharedMemManager::Segment> > segments;
+    std::vector<std::shared_ptr<SharedMemManager::Segment>> segments;
 
     auto zero_mem = [](
         const std::shared_ptr<SharedMemManager::Segment>& segment,
@@ -1216,24 +1216,24 @@ TEST_F(SHMTransportTests, memory_bounds)
             };
 
     auto allocation_phase = [&]()
-    {
-        for (uint32_t i = 0; i < allocations; i++)
-        {
-            std::cout << "    - Creating segment of " << allocation_size << " bytes" << std::endl;
-            segments.push_back(shared_mem_manager->create_segment(allocation_size, 1));
-            std::cout << "        - Created. Fill content with 0's" << std::endl;
-            zero_mem(segments.back(), allocation_size);
-            std::cout << "        - Done" << std::endl;
-        }
-        if (extra_allocation)
-        {
-            std::cout << "    - Creating segment of " << extra_allocation << " bytes" << std::endl;
-            segments.push_back(shared_mem_manager->create_segment(extra_allocation, 1));
-            std::cout << "        - Created. Fill content with 0's" << std::endl;
-            zero_mem(segments.back(), extra_allocation);
-            std::cout << "        - Done" << std::endl;
-        }
-    };
+            {
+                for (uint32_t i = 0; i < allocations; i++)
+                {
+                    std::cout << "    - Creating segment of " << allocation_size << " bytes" << std::endl;
+                    segments.push_back(shared_mem_manager->create_segment(allocation_size, 1));
+                    std::cout << "        - Created. Fill content with 0's" << std::endl;
+                    zero_mem(segments.back(), allocation_size);
+                    std::cout << "        - Done" << std::endl;
+                }
+                if (extra_allocation)
+                {
+                    std::cout << "    - Creating segment of " << extra_allocation << " bytes" << std::endl;
+                    segments.push_back(shared_mem_manager->create_segment(extra_allocation, 1));
+                    std::cout << "        - Created. Fill content with 0's" << std::endl;
+                    zero_mem(segments.back(), extra_allocation);
+                    std::cout << "        - Done" << std::endl;
+                }
+            };
 
     // Fist allocation must succeed
     std::cout << "First phase:" << std::endl;
@@ -1624,10 +1624,10 @@ TEST_F(SHMTransportTests, remote_segments_free)
     const std::string domain_name("SHMTests");
     uint32_t num_participants = 100;
 
-    std::vector<std::shared_ptr<SharedMemManager> > managers;
-    std::vector<std::shared_ptr<SharedMemManager::Port> > ports;
-    std::vector<std::shared_ptr<SharedMemManager::Segment> > segments;
-    std::vector<std::shared_ptr<SharedMemManager::Listener> > listeners;
+    std::vector<std::shared_ptr<SharedMemManager>> managers;
+    std::vector<std::shared_ptr<SharedMemManager::Port>> ports;
+    std::vector<std::shared_ptr<SharedMemManager::Segment>> segments;
+    std::vector<std::shared_ptr<SharedMemManager::Listener>> listeners;
 
     std::cout << "Creating " << num_participants << " SharedMemManagers & respective segments..." << std::endl;
 
