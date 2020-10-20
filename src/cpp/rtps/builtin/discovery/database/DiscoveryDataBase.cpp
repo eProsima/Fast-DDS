@@ -24,6 +24,9 @@
 
 #include "./DiscoveryDataBase.hpp"
 
+#include "backup/json.hpp"
+#include "backup/SharedBackupFunctions.hpp"
+
 namespace eprosima {
 namespace fastdds {
 namespace rtps {
@@ -2112,6 +2115,56 @@ bool DiscoveryDataBase::add_edp_subscriptions_to_send_(
         return true;
     }
     return false;
+}
+
+void DiscoveryDataBase::to_json(nlohmann::json& j) const
+{
+    // participants
+    auto pit = participants_.begin();
+    if (pit == participants_.end())
+    {
+        j["participants"] = nlohmann::json({});
+    }
+    while(pit != participants_.end())
+    {
+        nlohmann::json j_part;
+        pit->second.to_json(j_part);
+        j["participants"][ddb::object_to_string(pit->first)] = j_part;
+        ++pit;
+    }
+
+    // writers
+    auto wit = writers_.begin();
+    if (wit == writers_.end())
+    {
+        j["writers"] = nlohmann::json({});
+    }
+    while(wit != writers_.end())
+    {
+        nlohmann::json j_w;
+        wit->second.to_json(j_w);
+        j["writers"][ddb::object_to_string(wit->first)] = j_w;
+        ++wit;
+    }
+
+    // readers
+    auto rit = readers_.begin();
+    if (rit == readers_.end())
+    {
+        j["readers"] = nlohmann::json({});
+    }
+    while(rit != readers_.end())
+    {
+        nlohmann::json j_r;
+        rit->second.to_json(j_r);
+        j["readers"][ddb::object_to_string(rit->first)] = j_r;
+        ++rit;
+    }
+
+    // server guid
+    j["server_prefix"] = ddb::object_to_string(server_guid_prefix_);
+
+    // TODO add version
 }
 
 } // namespace ddb

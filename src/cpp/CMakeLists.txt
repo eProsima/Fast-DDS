@@ -203,6 +203,9 @@ set(${PROJECT_NAME}_source_files
     rtps/builtin/discovery/database/DiscoveryParticipantsAckStatus.cpp
     rtps/builtin/discovery/database/DiscoveryParticipantInfo.cpp
     rtps/builtin/discovery/database/DiscoverySharedInfo.cpp
+#   rtps/builtin/discovery/database/DiscoveryDataQueueInfo.hpp
+#   rtps/builtin/discovery/database/backup/SharedBackupFunctions.hpp
+    rtps/builtin/discovery/database/backup/SharedBackupFunctions.cpp
 
     rtps/builtin/discovery/participant/DSClientEvent2.cpp
     rtps/builtin/discovery/participant/DServerEvent2.cpp
@@ -376,8 +379,8 @@ elseif(NOT EPROSIMA_INSTALLER)
 
     # make visual studio more clang like
     if(MSVC)
-        # C4101 'identifier' : unreferenced local variable 
-        # C4555 expression has no effect; expected expression with side-effect 
+        # C4101 'identifier' : unreferenced local variable
+        # C4555 expression has no effect; expected expression with side-effect
         target_compile_options(${PROJECT_NAME} PRIVATE /w34101 /w34555 )
     endif(MSVC)
 
