@@ -214,6 +214,8 @@ set(${PROJECT_NAME}_source_files
 #   rtps/builtin/discovery/database/DiscoverySharedInfo.hpp
     rtps/builtin/discovery/database/DiscoverySharedInfo.cpp
 #   rtps/builtin/discovery/database/DiscoveryDataQueueInfo.hpp
+#   rtps/builtin/discovery/database/backup/SharedBackupFunctions.hpp
+    rtps/builtin/discovery/database/backup/SharedBackupFunctions.cpp
 
 #   rtps/builtin/discovery/participant/DSClientEvent2.hpp
     rtps/builtin/discovery/participant/DSClientEvent2.cpp
