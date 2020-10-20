@@ -36,10 +36,10 @@
 #define eProsima_user_DllExport __declspec( dllexport )
 #else
 #define eProsima_user_DllExport
-#endif
+#endif // if defined(EPROSIMA_USER_DLL_EXPORT)
 #else
 #define eProsima_user_DllExport
-#endif
+#endif // if defined(_WIN32)
 
 #if defined(_WIN32)
 #if defined(EPROSIMA_USER_DLL_EXPORT)
@@ -50,18 +50,16 @@
 #endif // sample_SOURCE
 #else
 #define sample_DllAPI
-#endif
+#endif // if defined(EPROSIMA_USER_DLL_EXPORT)
 #else
 #define sample_DllAPI
 #endif // _WIN32
 
-namespace eprosima
-{
-    namespace fastcdr
-    {
-        class Cdr;
-    }
-}
+namespace eprosima {
+namespace fastcdr {
+class Cdr;
+} // namespace fastcdr
+} // namespace eprosima
 
 
 /*!
@@ -86,31 +84,36 @@ public:
      * @brief Copy constructor.
      * @param x Reference to the object sample that will be copied.
      */
-    eProsima_user_DllExport sample(const sample &x);
+    eProsima_user_DllExport sample(
+            const sample& x);
 
     /*!
      * @brief Move constructor.
      * @param x Reference to the object sample that will be copied.
      */
-    eProsima_user_DllExport sample(sample &&x);
+    eProsima_user_DllExport sample(
+            sample&& x);
 
     /*!
      * @brief Copy assignment.
      * @param x Reference to the object sample that will be copied.
      */
-    eProsima_user_DllExport sample& operator=(const sample &x);
+    eProsima_user_DllExport sample& operator =(
+            const sample& x);
 
     /*!
      * @brief Move assignment.
      * @param x Reference to the object sample that will be copied.
      */
-    eProsima_user_DllExport sample& operator=(sample &&x);
+    eProsima_user_DllExport sample& operator =(
+            sample&& x);
 
     /*!
      * @brief This function sets a value in member index
      * @param _index New value for member index
      */
-    eProsima_user_DllExport void index(uint8_t _index);
+    eProsima_user_DllExport void index(
+            uint8_t _index);
 
     /*!
      * @brief This function returns the value of member index
@@ -128,7 +131,8 @@ public:
      * @brief This function sets a value in member key_value
      * @param _key_value New value for member key_value
      */
-    eProsima_user_DllExport void key_value(uint8_t _key_value);
+    eProsima_user_DllExport void key_value(
+            uint8_t _key_value);
 
     /*!
      * @brief This function returns the value of member key_value
@@ -149,7 +153,8 @@ public:
      * @param current_alignment Buffer alignment.
      * @return Maximum serialized size.
      */
-    eProsima_user_DllExport static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
+    eProsima_user_DllExport static size_t getMaxCdrSerializedSize(
+            size_t current_alignment = 0);
 
     /*!
      * @brief This function returns the serialized size of a data depending on the buffer alignment.
@@ -157,20 +162,24 @@ public:
      * @param current_alignment Buffer alignment.
      * @return Serialized size.
      */
-    eProsima_user_DllExport static size_t getCdrSerializedSize(const sample& data, size_t current_alignment = 0);
+    eProsima_user_DllExport static size_t getCdrSerializedSize(
+            const sample& data,
+            size_t current_alignment = 0);
 
 
     /*!
      * @brief This function serializes an object using CDR serialization.
      * @param cdr CDR serialization object.
      */
-    eProsima_user_DllExport void serialize(eprosima::fastcdr::Cdr &cdr) const;
+    eProsima_user_DllExport void serialize(
+            eprosima::fastcdr::Cdr& cdr) const;
 
     /*!
      * @brief This function deserializes an object using CDR serialization.
      * @param cdr CDR serialization object.
      */
-    eProsima_user_DllExport void deserialize(eprosima::fastcdr::Cdr &cdr);
+    eProsima_user_DllExport void deserialize(
+            eprosima::fastcdr::Cdr& cdr);
 
 
 
@@ -180,7 +189,8 @@ public:
      * @param current_alignment Buffer alignment.
      * @return Maximum serialized size.
      */
-    eProsima_user_DllExport static size_t getKeyMaxCdrSerializedSize(size_t current_alignment = 0);
+    eProsima_user_DllExport static size_t getKeyMaxCdrSerializedSize(
+            size_t current_alignment = 0);
 
     /*!
      * @brief This function tells you if the Key has been defined for this type
@@ -191,9 +201,11 @@ public:
      * @brief This function serializes the key members of an object using CDR serialization.
      * @param cdr CDR serialization object.
      */
-    eProsima_user_DllExport void serializeKey(eprosima::fastcdr::Cdr &cdr) const;
+    eProsima_user_DllExport void serializeKey(
+            eprosima::fastcdr::Cdr& cdr) const;
 
 private:
+
     uint8_t m_index;
     uint8_t m_key_value;
 };

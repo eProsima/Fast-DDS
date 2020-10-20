@@ -1,4 +1,5 @@
-struct sample{
+struct sample
+{
     octet index;
     @Key octet key_value;
 };
