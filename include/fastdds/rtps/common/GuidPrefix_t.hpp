@@ -80,18 +80,7 @@ struct RTPS_DllAPI GuidPrefix_t
     bool operator <(
             const GuidPrefix_t& prefix) const
     {
-        for (uint8_t i = 0; i < size; ++i)
-        {
-            if (value[i] < prefix.value[i])
-            {
-                return true;
-            }
-            else if (value[i] > prefix.value[i])
-            {
-                return false;
-            }
-        }
-        return false;
+        return std::memcmp(value, prefix.value, size) < 0;
     }
 
 #endif // ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC

@@ -110,27 +110,28 @@ bool WriterHistory::add_change_(CacheChange_t* a_change, WriteParams &wparams,
 }
 
 bool WriterHistory::matches_change(
-        const CacheChange_t* chi,
-        CacheChange_t* cho)
+        const CacheChange_t* inner_change,
+        CacheChange_t* outer_change)
 {
-    if (cho == nullptr)
+    if (nullptr == outer_change
+            || nullptr == inner_change)
     {
         logError(RTPS_WRITER_HISTORY, "Pointer is not valid")
         return false;
     }
 
-    if (cho->writerGUID != mp_writer->getGuid())
+    if (outer_change->writerGUID != mp_writer->getGuid())
     {
         logError(RTPS_WRITER_HISTORY,
-                "Change writerGUID " << cho->writerGUID << " different than Writer GUID " <<
+                "Change writerGUID " << outer_change->writerGUID << " different than Writer GUID " <<
                 mp_writer->getGuid());
         return false;
     }
 
-    return chi->sequenceNumber == cho->sequenceNumber;
+    return inner_change->sequenceNumber == outer_change->sequenceNumber;
 }
 
-History::iterator WriterHistory::remove_change(
+History::iterator WriterHistory::remove_change_nts(
         const_iterator removal,
         bool release)
 {
@@ -145,8 +146,6 @@ History::iterator WriterHistory::remove_change(
         logInfo(RTPS_WRITER_HISTORY, "Trying to remove without a proper CacheChange_t referenced");
         return changesEnd();
     }
-
-    std::lock_guard<RecursiveTimedMutex> guard(*mp_mutex);
 
     CacheChange_t* change = *removal;
     mp_writer->change_removed_by_history(change);

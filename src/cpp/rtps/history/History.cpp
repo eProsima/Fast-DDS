@@ -47,16 +47,14 @@ History::~History()
     logInfo(RTPS_HISTORY, "");
 }
 
-History::const_iterator History::find_change(
+History::const_iterator History::find_change_nts(
         CacheChange_t* ch)
 {
-    if (mp_mutex == nullptr)
+    if ( nullptr == mp_mutex )
     {
         logError(RTPS_HISTORY, "You need to create a RTPS Entity with this History before using it");
         return const_iterator();
     }
-
-    std::lock_guard<RecursiveTimedMutex> guard(*mp_mutex);
 
     return std::find_if(changesBegin(), changesEnd(), [this, ch](const CacheChange_t* chi)
                    {
@@ -72,11 +70,11 @@ bool History::matches_change(
     return ch_inner->sequenceNumber == ch_outer->sequenceNumber;
 }
 
-History::iterator History::remove_change(
+History::iterator History::remove_change_nts(
         const_iterator removal,
         bool release)
 {
-    if (mp_mutex == nullptr)
+    if (nullptr == mp_mutex)
     {
         return changesEnd();
     }
@@ -86,8 +84,6 @@ History::iterator History::remove_change(
         logInfo(RTPS_WRITER_HISTORY, "Trying to remove without a proper CacheChange_t referenced");
         return changesEnd();
     }
-
-    std::lock_guard<RecursiveTimedMutex> guard(*mp_mutex);
 
     CacheChange_t* change = *removal;
     m_isHistoryFull = false;
@@ -103,7 +99,9 @@ History::iterator History::remove_change(
 bool History::remove_change(
         CacheChange_t* ch)
 {
-    const_iterator it = find_change(ch);
+    std::lock_guard<RecursiveTimedMutex> guard(*mp_mutex);
+
+    const_iterator it = find_change_nts(ch);
 
     if (it == changesEnd())
     {
@@ -112,7 +110,7 @@ bool History::remove_change(
     }
 
     // remove using the virtual method
-    remove_change(it);
+    remove_change_nts(it);
 
     return true;
 }

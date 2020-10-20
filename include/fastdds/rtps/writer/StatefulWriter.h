@@ -166,10 +166,19 @@ public:
     bool is_acked_by_all(
             const CacheChange_t* a_change) const override;
 
-    template <class Function>
-    bool for_each_reader_proxy(
-            const CacheChange_t* a_change,
-            Function f);
+    template <typename Function>
+    constexpr Function for_each_reader_proxy(
+            Function f) const
+    {
+        // we cannot directly pass iterators neither const_iterators to matched_readers_ because then the functor would
+        // be able to modify ReaderProxy elements
+        for( const ReaderProxy* rp : matched_readers_ )
+        {
+            f(rp);
+        }
+
+        return f;
+    }
 
     bool wait_for_all_acked(
             const Duration_t& max_wait) override;

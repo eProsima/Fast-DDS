@@ -40,6 +40,9 @@
 
 #include <algorithm>
 
+// TODO: remove once backup is merge for discovery server version 2
+#include <fastdds/rtps/builtin/discovery/participant/PDPServer.h>
+
 using namespace eprosima::fastrtps;
 
 namespace eprosima {
@@ -107,13 +110,13 @@ bool BuiltinProtocols::initBuiltinProtocols(
         case DiscoveryProtocol_t::SERVER:
             mp_PDP = new fastdds::rtps::PDPServer2(this, allocation);
             break;
-        /*
+
          #if HAVE_SQLITE3
                 case DiscoveryProtocol_t::BACKUP:
-                    mp_PDP = new fastdds::rtps::PDPServer2(this, allocation);
+                    mp_PDP = new PDPServer(this, allocation);
                     break;
          #endif // if HAVE_SQLITE3
-         */
+
         default:
             logError(RTPS_PDP, "Unknown DiscoveryProtocol_t specified.");
             return false;

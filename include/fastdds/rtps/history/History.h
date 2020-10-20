@@ -111,6 +111,26 @@ public:
         return m_changes.size();
     }
 
+     /**
+     * Find a specific change in the history using the matches_change method criteria.
+     * No Thread Safe
+     * @param ch Pointer to the CacheChange_t to search for.
+     * @return an iterator if a suitable change is found
+     */
+    RTPS_DllAPI const_iterator find_change_nts(
+            CacheChange_t* ch);
+
+    /**
+     * Remove a specific change from the history.
+     * No Thread Safe
+     * @param removal iterator to the CacheChange_t to remove.
+     * @param release defaults to true and hints if the CacheChange_t should return to the pool
+     * @return iterator to the next CacheChange_t or end iterator.
+     */
+    RTPS_DllAPI virtual iterator remove_change_nts(
+            const_iterator removal,
+            bool release = true);
+
     /**
      * Remove all changes from the History
      * @return True if everything was correctly removed.
@@ -122,7 +142,7 @@ public:
      * @param ch Pointer to the CacheChange_t.
      * @return True if removed.
      */
-    RTPS_DllAPI virtual bool remove_change(
+    RTPS_DllAPI bool remove_change(
             CacheChange_t* ch);
 
     /**
@@ -131,7 +151,11 @@ public:
      * @return an iterator if a suitable change is found
      */
     RTPS_DllAPI const_iterator find_change(
-            CacheChange_t* ch);
+            CacheChange_t* ch)
+    {
+        std::lock_guard<RecursiveTimedMutex> guard(*mp_mutex);
+        return find_change_nts(ch);
+    }
 
     /**
      * Verifies if an element of the changes collection matches a given change
@@ -149,9 +173,13 @@ public:
      * @param release defaults to true and hints if the CacheChange_t should return to the pool
      * @return iterator to the next CacheChange_t or end iterator.
      */
-    RTPS_DllAPI virtual iterator remove_change(
+    RTPS_DllAPI iterator remove_change(
             const_iterator removal,
-            bool release = true);
+            bool release = true)
+    {
+        std::lock_guard<RecursiveTimedMutex> guard(*mp_mutex);
+        return remove_change_nts(removal, release);
+    }
 
     /**
      * Get the beginning of the changes history iterator.

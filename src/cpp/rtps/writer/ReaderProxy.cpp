@@ -78,7 +78,7 @@ ReaderProxy::ReaderProxy(
 }
 
 bool ReaderProxy::rtps_is_relevant(
-        CacheChange_t* change)
+        CacheChange_t* change) const
 {
     if (nullptr != writer_->reader_data_filter())
     {
@@ -261,7 +261,7 @@ bool ReaderProxy::change_is_acked(
     return chit->getStatus() == ACKNOWLEDGED;
 }
 
-SequenceNumber_t ReaderProxy::first_change_sequence_number() const
+SequenceNumber_t ReaderProxy::first_relevant_sequence_number() const
 {
     if (changes_for_reader_.empty())
     {

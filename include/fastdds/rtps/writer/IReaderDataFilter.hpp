@@ -37,8 +37,10 @@ class IReaderDataFilter
 public:
 
     /**
-     * This method checks whether a CacheChange_t is relevant for the Reader
+     * This method checks whether a CacheChange_t is relevant for the remote reader
+     * This callback should return always the same result given the same arguments
      * @param change The CacheChange_t to be evaluated
+     * @param reader_guid remote reader GUID_t
      * @return true if relevant, false otherwise.
      */
     virtual bool is_relevant(
