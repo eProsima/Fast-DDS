@@ -128,10 +128,8 @@ public:
     void notifyAboveRemoteEndpoints(
             const fastrtps::rtps::ParticipantProxyData& pdata) override;
 
-#if HAVE_SQLITE3
     //! Get filename for persistence database file
-    std::string GetPersistenceFileName();
-#endif // if HAVE_SQLITE3
+    std::string get_persistence_file_name() const;
 
     /*
      * Wakes up the DServerRoutineEvent2 for new matching or trimming
@@ -219,6 +217,8 @@ protected:
     bool process_dirty_topics();
 
     bool pending_ack();
+
+    void process_discovery_database_backup_() const;
 
     std::vector<fastrtps::rtps::GuidPrefix_t> servers_prefixes();
 

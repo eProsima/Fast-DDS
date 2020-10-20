@@ -17,6 +17,9 @@
  *
  */
 
+#include <iostream>
+#include <fstream>
+
 #include <fastrtps/utils/TimedMutex.hpp>
 
 #include <fastdds/rtps/builtin/BuiltinProtocols.h>
@@ -415,8 +418,7 @@ void PDPServer2::removeRemoteEndpoints(
     }
 }
 
-#if HAVE_SQLITE3
-std::string PDPServer2::GetPersistenceFileName()
+std::string PDPServer2::get_persistence_file_name() const
 {
     assert(getRTPSParticipant());
 
@@ -428,12 +430,10 @@ std::string PDPServer2::GetPersistenceFileName()
     prefix = filename.str();
     std::replace(prefix.begin(), prefix.end(), '.', '-');
     filename.str(std::move(prefix));
-    filename << ".db";
+    filename << ".json";
 
     return filename.str();
 }
-
-#endif // HAVE_SQLITE3
 
 void PDPServer2::announceParticipantState(
         bool new_change,
@@ -752,6 +752,13 @@ bool PDPServer2::server_update_routine()
     while (!discovery_db_.data_queue_empty() && discovery_db_.is_enabled());
 
     // Must restart the routin after the period time
+
+    // It uses the free time (no messages to process) to save the new state of the ddb
+    // This only will be called when:
+    //  there are not new data in queue
+    //  there has been any modification in the DDB (if not, this routine is not called)
+    process_discovery_database_backup_();
+
     return pending_work;
 }
 
@@ -1276,6 +1283,21 @@ void PDPServer2::send_announcement(
         logError(RTPS_PDP_SERVER, "Error sending announcement from server to clients");
     }
 }
+
+void PDPServer2::process_discovery_database_backup_() const
+{
+    std::ofstream myfile;
+    myfile.open (get_persistence_file_name(), std::ios_base::out);
+
+    // set j with the json from database dump
+    nlohmann::json j;
+    discovery_db_.to_json(j);
+    myfile << std::setw(4) << j << std::endl;
+    // json std files are in one line each object
+    // myfile << std::setw(4) << discovery_db_.json_dump() << std::endl;
+    myfile.close();
+}
+
 
 } // namespace rtps
 } // namespace fastdds
