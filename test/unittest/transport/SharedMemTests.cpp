@@ -149,7 +149,7 @@ protected:
     };
 
     std::unique_ptr<MultiProducerConsumerRingBuffer<MyData>::Cell[]> cells_;
-    std::unique_ptr<MultiProducerConsumerRingBuffer<MyData> > ring_buffer_;
+    std::unique_ptr<MultiProducerConsumerRingBuffer<MyData>> ring_buffer_;
     uint32_t buffer_size_;
 
     SHMRingBuffer()
@@ -163,7 +163,7 @@ protected:
             new MultiProducerConsumerRingBuffer<MyData>::Cell[buffer_size_]);
 
         ring_buffer_ =
-                std::unique_ptr<MultiProducerConsumerRingBuffer<MyData> >(new MultiProducerConsumerRingBuffer<MyData>(
+                std::unique_ptr<MultiProducerConsumerRingBuffer<MyData>>(new MultiProducerConsumerRingBuffer<MyData>(
                             cells_.get(), buffer_size_));
     }
 
@@ -177,7 +177,7 @@ protected:
 
 class SHMRingBufferMultiThread
     :   public SHMRingBuffer,
-    public testing::WithParamInterface<std::tuple<uint32_t, uint32_t, uint32_t> >
+    public testing::WithParamInterface<std::tuple<uint32_t, uint32_t, uint32_t>>
 {
 
 };
@@ -261,14 +261,14 @@ TEST_F(SHMRingBuffer, one_listener_reads_all)
 
 TEST_F(SHMRingBuffer, copy)
 {
-    std::unique_ptr<MultiProducerConsumerRingBuffer<MyData> > ring_buffer;
+    std::unique_ptr<MultiProducerConsumerRingBuffer<MyData>> ring_buffer;
 
     std::unique_ptr<MultiProducerConsumerRingBuffer<MyData>::Cell[]> cells
         = std::unique_ptr<MultiProducerConsumerRingBuffer<MyData>::Cell[]>(
                 new MultiProducerConsumerRingBuffer<MyData>::Cell[2]);
 
     ring_buffer =
-            std::unique_ptr<MultiProducerConsumerRingBuffer<MyData> >(new MultiProducerConsumerRingBuffer<MyData>(
+            std::unique_ptr<MultiProducerConsumerRingBuffer<MyData>>(new MultiProducerConsumerRingBuffer<MyData>(
                         cells_.get(), 2));
 
     auto listener = ring_buffer->register_listener();
@@ -1128,6 +1128,8 @@ TEST_F(SHMTransportTests, memory_bounds)
     auto shared_mem_manager = SharedMemManager::create(domain_name);
     auto shm_path = RobustLock::get_file_path("");
 
+    constexpr uint32_t max_system_size = (std::numeric_limits<uint32_t>::max)() - 1024u;
+
     uint64_t max_file_system_free_size;
     uint64_t physical_mem_size;
 
@@ -1165,86 +1167,92 @@ TEST_F(SHMTransportTests, memory_bounds)
     uint64_t free_size60 = static_cast<uint64_t>(mem_size * 0.6);
     uint32_t extra_allocation = 0u;
 
-    if (free_size60 > (std::numeric_limits<uint32_t>::max)())
+    // The /dev/shm file system is < physical memory => cannot support allocation beyond 100%
+    // Is the default configuration in Linux systems
+    bool over_system_limit = (max_file_system_free_size < physical_mem_size);
+
+#if defined(_WIN32) && !defined(_WIN64)
+    // Win32 processes have a maximum shared mem allowed of 2GB.
+    // The following limit will make a single allocation of 1.3GB on each phase,
+    // making the second one throw an exception as expected
+    if (free_size60 > max_system_size / 3u)
     {
-        allocations = static_cast<uint32_t>(free_size60 / (std::numeric_limits<uint32_t>::max)());
-        allocation_size = static_cast<uint32_t>(free_size60 / allocations);
-        extra_allocation = free_size60 % (std::numeric_limits<uint32_t>::max)();
+        free_size60 = max_system_size / 3u;
+        over_system_limit = true;
+    }
+#else
+    if (free_size60 > max_system_size)
+    {
+        allocations = static_cast<uint32_t>(free_size60 / max_system_size);
+        allocation_size = max_system_size;
+        extra_allocation = free_size60 % max_system_size;
     }
     else
+#endif // Win 32 bits
     {
         allocation_size = static_cast<uint32_t>(free_size60);
         allocations = 1u;
     }
 
-    std::vector<std::shared_ptr<SharedMemManager::Segment> > segments;
+    std::cout << "Gathered system information:" << std::endl;
+    std::cout << "    - max_file_system_free_size: " << max_file_system_free_size << std::endl;
+    std::cout << "    - physical_mem_size:         " << physical_mem_size << std::endl;
+    std::cout << "    - free_size60:               " << free_size60 << std::endl;
+    std::cout << "    - allocations:               " << allocations << std::endl;
+    std::cout << "    - allocation_size:           " << allocation_size << std::endl;
+    std::cout << "    - extra_allocation:          " << extra_allocation << std::endl;
 
-    auto zero_mem = [&]()
+    std::vector<std::shared_ptr<SharedMemManager::Segment>> segments;
+
+    auto zero_mem = [](
+        const std::shared_ptr<SharedMemManager::Segment>& segment,
+        uint32_t size)
             {
-                auto buf = segments.back()->alloc_buffer(allocation_size,
+                auto buf = segment->alloc_buffer(size,
                                 std::chrono::steady_clock::now() + std::chrono::milliseconds(100));
                 ASSERT_TRUE(buf != nullptr);
                 memset(buf->data(), 0, buf->size());
                 buf.reset();
             };
 
-    // Fist allocation must succeed
-    for (uint32_t i = 0; i < allocations; i++)
-    {
-        segments.push_back(shared_mem_manager->create_segment(allocation_size, 1));
-        zero_mem();
-    }
-    if (extra_allocation)
-    {
-        segments.push_back(shared_mem_manager->create_segment(extra_allocation, 1));
-        zero_mem();
-    }
+    auto allocation_phase = [&]()
+            {
+                for (uint32_t i = 0; i < allocations; i++)
+                {
+                    std::cout << "    - Creating segment of " << allocation_size << " bytes" << std::endl;
+                    segments.push_back(shared_mem_manager->create_segment(allocation_size, 1));
+                    std::cout << "        - Created. Fill content with 0's" << std::endl;
+                    zero_mem(segments.back(), allocation_size);
+                    std::cout << "        - Done" << std::endl;
+                }
+                if (extra_allocation)
+                {
+                    std::cout << "    - Creating segment of " << extra_allocation << " bytes" << std::endl;
+                    segments.push_back(shared_mem_manager->create_segment(extra_allocation, 1));
+                    std::cout << "        - Created. Fill content with 0's" << std::endl;
+                    zero_mem(segments.back(), extra_allocation);
+                    std::cout << "        - Done" << std::endl;
+                }
+            };
 
-    // The /dev/shm file system is < physical memory => cannot support allocation beyond 100%
-    // Is the default configuration in Linux systems
-    if ( max_file_system_free_size < physical_mem_size )
+    // Fist allocation must succeed
+    std::cout << "First phase:" << std::endl;
+    allocation_phase();
+
+    std::cout << "Second phase:" << std::endl;
+    if (over_system_limit)
     {
-        // Send allocation must fail
-        ASSERT_THROW(
-            for (uint32_t i = 0; i < allocations; i++)
-        {
-            segments.push_back(shared_mem_manager->create_segment(allocation_size, 1));
-            zero_mem();
-        }
-            if (extra_allocation)
-        {
-            segments.push_back(shared_mem_manager->create_segment(extra_allocation, 1));
-            zero_mem();
-        }
-            , std::exception);
+        // Second allocation expected to fail
+        EXPECT_THROW(allocation_phase(), std::exception);
     }
     else // Allocation beyond 100% physical mem may or may not be supported by virtual-mem and page file
     {
         try
         {
-            for (uint32_t i = 0; i < allocations; i++)
-            {
-                segments.push_back(shared_mem_manager->create_segment(allocation_size, 1));
-                zero_mem();
-            }
-            if (extra_allocation)
-            {
-                segments.push_back(shared_mem_manager->create_segment(extra_allocation, 1));
-                zero_mem();
-            }
+            allocation_phase();
         }
         catch (const std::exception&)
         {
-            for (uint32_t i = 0; i < allocations; i++)
-            {
-                segments.push_back(shared_mem_manager->create_segment(allocation_size, 1));
-                zero_mem();
-            }
-            if (extra_allocation)
-            {
-                segments.push_back(shared_mem_manager->create_segment(extra_allocation, 1));
-                zero_mem();
-            }
         }
     }
 }
@@ -1616,10 +1624,10 @@ TEST_F(SHMTransportTests, remote_segments_free)
     const std::string domain_name("SHMTests");
     uint32_t num_participants = 100;
 
-    std::vector<std::shared_ptr<SharedMemManager> > managers;
-    std::vector<std::shared_ptr<SharedMemManager::Port> > ports;
-    std::vector<std::shared_ptr<SharedMemManager::Segment> > segments;
-    std::vector<std::shared_ptr<SharedMemManager::Listener> > listeners;
+    std::vector<std::shared_ptr<SharedMemManager>> managers;
+    std::vector<std::shared_ptr<SharedMemManager::Port>> ports;
+    std::vector<std::shared_ptr<SharedMemManager::Segment>> segments;
+    std::vector<std::shared_ptr<SharedMemManager::Listener>> listeners;
 
     std::cout << "Creating " << num_participants << " SharedMemManagers & respective segments..." << std::endl;
 
