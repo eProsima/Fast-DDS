@@ -485,7 +485,7 @@ bool StatefulWriter::intraprocess_heartbeat(
             }
         }
 
-        if (first_seq != c_SequenceNumber_Unknown && last_seq != c_SequenceNumber_Unknown)
+        if ((first_seq != c_SequenceNumber_Unknown && last_seq != c_SequenceNumber_Unknown) && (liveliness || reader_proxy->has_changes()))
         {
             incrementHBCount();
             if (true == (returned_value =
@@ -494,7 +494,7 @@ bool StatefulWriter::intraprocess_heartbeat(
                 if (reader_proxy->durability_kind() < TRANSIENT_LOCAL ||
                         this->getAttributes().durabilityKind < TRANSIENT_LOCAL)
                 {
-                    SequenceNumber_t last_irrelevance = reader_proxy->changes_low_mark();
+                    SequenceNumber_t last_irrelevance = reader_proxy->first_change_sequence_number() - 1;
                     if (first_seq <= last_irrelevance)
                     {
                         reader->processGapMsg(m_guid, first_seq, SequenceNumberSet_t(last_irrelevance + 1));
@@ -635,7 +635,7 @@ void StatefulWriter::send_changes_separatedly(
             auto unsent_change_process =
                     [&](const SequenceNumber_t& seqNum, const ChangeForReader_t* unsentChange)
                     {
-                        if (unsentChange != nullptr && unsentChange->isValid())
+                        if (unsentChange != nullptr && unsentChange->isRelevant() && unsentChange->isValid())
                         {
                             if (intraprocess_delivery(unsentChange->getChange(), remoteReader))
                             {
@@ -688,7 +688,7 @@ void StatefulWriter::send_changes_separatedly(
                 auto unsent_change_process =
                         [&](const SequenceNumber_t& seqNum, const ChangeForReader_t* unsentChange)
                         {
-                            if (unsentChange != nullptr && unsentChange->isValid())
+                            if (unsentChange != nullptr && unsentChange->isRelevant() && unsentChange->isValid())
                             {
                                 bool sent_ok = send_data_or_fragments(
                                     group,
@@ -718,8 +718,7 @@ void StatefulWriter::send_changes_separatedly(
                 auto unsent_change_process =
                         [&](const SequenceNumber_t& seqNum, const ChangeForReader_t* unsentChange)
                         {
-                            if (unsentChange != nullptr && remoteReader->rtps_is_relevant(unsentChange->getChange()) &&
-                                    unsentChange->isValid())
+                            if (unsentChange != nullptr &&  unsentChange->isRelevant() && unsentChange->isValid())
                             {
                                 bool sent_ok = send_data_or_fragments(
                                     group,
@@ -1799,7 +1798,7 @@ bool StatefulWriter::send_periodic_heartbeat(
     {
         for (ReaderProxy* it : matched_readers_)
         {
-            if (liveliness || (it->has_changes() && !it->is_local_reader()))
+            if (liveliness || (it->has_unacknowledged() && !it->is_local_reader()))
             {
                 send_heartbeat_to_nts(*it, liveliness);
                 unacked_changes = true;
@@ -1870,7 +1869,7 @@ void StatefulWriter::send_heartbeat_to_nts(
         ReaderProxy& remoteReaderProxy,
         bool liveliness)
 {
-    if (remoteReaderProxy.is_remote_and_reliable() && (liveliness || remoteReaderProxy.has_changes()))
+    if (remoteReaderProxy.is_remote_and_reliable() && (liveliness || remoteReaderProxy.has_unacknowledged()))
     {
         try
         {
@@ -1879,7 +1878,7 @@ void StatefulWriter::send_heartbeat_to_nts(
             SequenceNumber_t first_seq = get_seq_num_min();
             if (first_seq != c_SequenceNumber_Unknown)
             {
-                SequenceNumber_t low_mark = remoteReaderProxy.changes_low_mark();
+                SequenceNumber_t low_mark = remoteReaderProxy.first_change_sequence_number() - 1;
                 if (remoteReaderProxy.durability_kind() == VOLATILE && first_seq <= low_mark)
                 {
                     group.add_gap(first_seq, SequenceNumberSet_t(low_mark + 1));
