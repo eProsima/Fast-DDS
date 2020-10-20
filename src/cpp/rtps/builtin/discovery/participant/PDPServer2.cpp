@@ -803,11 +803,7 @@ History::iterator PDPServer2::process_change_acknowledgement(
             // Call to `StatefulWriter::for_each_reader_proxy()`. This will update
             // `participants_|writers_|readers_[guid_prefix]::relevant_participants_builtin_ack_status`, and will also set
             // `pending` to whether the change is has been acknowledged by all readers.
-            fastdds::rtps::ddb::DiscoveryDataBase::AckedFunctor func = discovery_db_.functor(c);
-            writer->for_each_reader_proxy(c, func);
-
-            // If the change has been acknowledge by everyone
-            if (!func)
+            if (!writer->for_each_reader_proxy(discovery_db_.functor(c)))
             {
                 // in case there is not pending acks for our DATA(p) server, we notify the ddb that it is acked by all
                 if (discovery_db_.is_participant(c) &&

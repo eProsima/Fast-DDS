@@ -1457,7 +1457,7 @@ DiscoveryDataBase::AckedFunctor::~AckedFunctor()
 }
 
 void DiscoveryDataBase::AckedFunctor::operator () (
-        eprosima::fastrtps::rtps::ReaderProxy* reader_proxy)
+        const eprosima::fastrtps::rtps::ReaderProxy* reader_proxy)
 {
     logInfo(DISCOVERY_DATABASE, "functor operator in change: " << change_->instanceHandle);
     logInfo(DISCOVERY_DATABASE, "for reader proxy: " << reader_proxy->guid());

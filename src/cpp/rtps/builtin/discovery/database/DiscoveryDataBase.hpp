@@ -75,6 +75,8 @@ public:
                 DiscoveryDataBase* db,
                 eprosima::fastrtps::rtps::CacheChange_t* change);
 
+        AckedFunctor() = delete;
+
     public:
 
         // Stateless constructors
@@ -88,12 +90,10 @@ public:
         {
         }
 
-        AckedFunctor() = delete;
-
         ~AckedFunctor();
 
         void operator () (
-                eprosima::fastrtps::rtps::ReaderProxy* reader_proxy);
+                const eprosima::fastrtps::rtps::ReaderProxy* reader_proxy);
 
         operator bool() const
         {

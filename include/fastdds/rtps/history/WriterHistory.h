@@ -72,11 +72,12 @@ public:
 
     /**
      * Remove a specific change from the history.
+     * No Thread Safe
      * @param removal iterator to the change for removal
      * @param release specifies if the change should be return to the pool
      * @return iterator to the next change if any
      */
-    RTPS_DllAPI iterator remove_change(
+    RTPS_DllAPI iterator remove_change_nts(
             const_iterator removal,
             bool release = true) override;
 
@@ -84,7 +85,7 @@ public:
      * Criteria to search a specific CacheChange_t on history
      * @param inner change to compare
      * @param outer change for comparisson
-     * @return true if chi matches cho criteria
+     * @return true if inner matches outer criteria
      */
     RTPS_DllAPI bool matches_change(
             const CacheChange_t* inner,
