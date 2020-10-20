@@ -73,11 +73,12 @@ public:
 
     /**
      * Remove a specific change from the history.
+     * No Thread Safe
      * @param removal iterator to the change for removal
      * @param release specifies if the change must be returned to the pool
      * @return iterator to the next change if any
      */
-    RTPS_DllAPI iterator remove_change(
+    RTPS_DllAPI iterator remove_change_nts(
             const_iterator removal,
             bool release = true) override;
 
@@ -85,7 +86,7 @@ public:
      * Criteria to search a specific CacheChange_t on history
      * @param inner change to compare
      * @param outer change for comparisson
-     * @return true if chi matches cho criteria
+     * @return true if inner matches outer criteria
      */
     RTPS_DllAPI bool matches_change(
             const CacheChange_t* inner,
@@ -93,18 +94,6 @@ public:
 
     //! Introduce base class method into scope
     using History::remove_change;
-
-    /**
-     * Remove a specific change from the history.
-     * @param ch Pointer to the CacheChange_t.
-     * @param position Iterator where the CacheChange_t is located in the history.
-     * @return An iterator pointing to the new location of the element that followed the removed CacheChange_t.
-     * @note This is a non-thread-safe method meant to be called from a RTPS reader, with which the ReaderHistory
-     *       shares the same mutex.
-     */
-    const_iterator remove_change_nts(
-            CacheChange_t* ch,
-            const_iterator position);
 
     /**
      * Remove all changes from the History that have a certain guid.

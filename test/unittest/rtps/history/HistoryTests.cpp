@@ -42,27 +42,15 @@ protected:
         {
         }
 
-        bool remove_change(
-                CacheChange_t* ch) override
+        bool matches_change(
+            const CacheChange_t* ch_inner,
+            CacheChange_t* ch_outer) override
         {
-            if (ch == nullptr)
-            {
-                return false;
-            }
-
-            std::lock_guard<eprosima::fastrtps::RecursiveTimedMutex> guard(*mp_mutex);
-            auto it = std::remove(m_changes.begin(), m_changes.end(), ch);
-            if (it == m_changes.end())
-            {
-                return false;
-            }
-
-            m_changes.erase(it, m_changes.end());
-            do_release_cache(ch);
-            return true;
+            // plainly pointer comparisson
+            return ch_inner == ch_outer;
         }
 
-    private:
+   private:
 
         eprosima::fastrtps::RecursiveTimedMutex mutex_;
     };
