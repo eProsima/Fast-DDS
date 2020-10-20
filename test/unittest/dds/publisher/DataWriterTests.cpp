@@ -152,6 +152,66 @@ TEST(DataWriterTests, ChangeDataWriterQos)
     ASSERT_TRUE(DomainParticipantFactory::get_instance()->delete_participant(participant) == ReturnCode_t::RETCODE_OK);
 }
 
+TEST(DataWriterTests, InvalidQos)
+{
+    DomainParticipant* participant =
+            DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
+    ASSERT_NE(participant, nullptr);
+
+    Publisher* publisher = participant->create_publisher(PUBLISHER_QOS_DEFAULT);
+    ASSERT_NE(publisher, nullptr);
+
+    TypeSupport type(new TopicDataTypeMock());
+    type.register_type(participant);
+
+    Topic* topic = participant->create_topic("footopic", type.get_type_name(), TOPIC_QOS_DEFAULT);
+    ASSERT_NE(topic, nullptr);
+
+    DataWriter* datawriter = publisher->create_datawriter(topic, DATAWRITER_QOS_DEFAULT);
+    ASSERT_NE(datawriter, nullptr);
+
+    DataWriterQos qos;
+    qos = DATAWRITER_QOS_DEFAULT;
+    qos.durability().kind = PERSISTENT_DURABILITY_QOS;
+    ASSERT_TRUE(datawriter->set_qos(qos) == ReturnCode_t::RETCODE_UNSUPPORTED);
+
+    qos = DATAWRITER_QOS_DEFAULT;
+    qos.destination_order().kind = BY_SOURCE_TIMESTAMP_DESTINATIONORDER_QOS;
+    ASSERT_TRUE(datawriter->set_qos(qos) == ReturnCode_t::RETCODE_UNSUPPORTED);
+
+    qos = DATAWRITER_QOS_DEFAULT;
+    qos.reliability().kind = BEST_EFFORT_RELIABILITY_QOS;
+    qos.ownership().kind = EXCLUSIVE_OWNERSHIP_QOS;
+    ASSERT_TRUE(datawriter->set_qos(qos) == ReturnCode_t::RETCODE_INCONSISTENT_POLICY);
+
+    qos = DATAWRITER_QOS_DEFAULT;
+    qos.liveliness().kind = AUTOMATIC_LIVELINESS_QOS;
+    qos.liveliness().announcement_period = 20;
+    qos.liveliness().lease_duration = 10;
+    ASSERT_TRUE(datawriter->set_qos(qos) == ReturnCode_t::RETCODE_INCONSISTENT_POLICY);
+
+    qos.liveliness().kind = MANUAL_BY_PARTICIPANT_LIVELINESS_QOS;
+    ASSERT_TRUE(datawriter->set_qos(qos) == ReturnCode_t::RETCODE_INCONSISTENT_POLICY);
+
+    qos = DATAWRITER_QOS_DEFAULT;
+    qos.data_sharing().force("/tmp");
+    qos.endpoint().history_memory_policy = eprosima::fastrtps::rtps::DYNAMIC_RESERVE_MEMORY_MODE;
+    ASSERT_TRUE(datawriter->set_qos(qos) == ReturnCode_t::RETCODE_INCONSISTENT_POLICY);
+
+    qos.endpoint().history_memory_policy = eprosima::fastrtps::rtps::DYNAMIC_REUSABLE_MEMORY_MODE;
+    ASSERT_TRUE(datawriter->set_qos(qos) == ReturnCode_t::RETCODE_INCONSISTENT_POLICY);
+
+    qos.endpoint().history_memory_policy = eprosima::fastrtps::rtps::PREALLOCATED_MEMORY_MODE;
+    ASSERT_TRUE(datawriter->set_qos(qos) == ReturnCode_t::RETCODE_OK);
+
+    qos.endpoint().history_memory_policy = eprosima::fastrtps::rtps::PREALLOCATED_WITH_REALLOC_MEMORY_MODE;
+    ASSERT_TRUE(datawriter->set_qos(qos) == ReturnCode_t::RETCODE_OK);
+
+    ASSERT_TRUE(publisher->delete_datawriter(datawriter) == ReturnCode_t::RETCODE_OK);
+    ASSERT_TRUE(participant->delete_topic(topic) == ReturnCode_t::RETCODE_OK);
+    ASSERT_TRUE(participant->delete_publisher(publisher) == ReturnCode_t::RETCODE_OK);
+    ASSERT_TRUE(DomainParticipantFactory::get_instance()->delete_participant(participant) == ReturnCode_t::RETCODE_OK);
+}
 
 //TODO: Activate the test once PSM API for DataWriter is in place
 //TEST(DataWriterTests, DISABLED_ChangePSMDataWriterQos)
@@ -239,7 +299,7 @@ TEST(DataWriterTests, SetListener)
     ASSERT_NE(datawriter, nullptr);
     ASSERT_EQ(datawriter->get_status_mask(), StatusMask::all());
 
-    std::vector<std::tuple<DataWriter*, DataWriterListener*, StatusMask> > testing_cases{
+    std::vector<std::tuple<DataWriter*, DataWriterListener*, StatusMask>> testing_cases{
         //statuses, one by one
         { datawriter, &listener, StatusMask::liveliness_lost() },
         { datawriter, &listener, StatusMask::offered_deadline_missed() },
