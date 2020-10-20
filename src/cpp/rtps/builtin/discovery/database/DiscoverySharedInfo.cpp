@@ -22,6 +22,9 @@
 
 #include "./DiscoverySharedInfo.hpp"
 
+#include "backup/json.hpp"
+#include "backup/SharedBackupFunctions.hpp"
+
 namespace eprosima {
 namespace fastdds {
 namespace rtps {
@@ -49,6 +52,17 @@ eprosima::fastrtps::rtps::CacheChange_t* DiscoverySharedInfo::update(
     eprosima::fastrtps::rtps::CacheChange_t* old_change = change_;
     change_ = change;
     return old_change;
+}
+
+void DiscoverySharedInfo::to_json(nlohmann::json& j) const
+{
+    nlohmann::json j_change;
+    nlohmann::json j_ack;
+
+    ddb::to_json(j_change, *change_);
+    relevant_participants_builtin_ack_status_.to_json(j_ack);
+    j["change"] = j_change;
+    j["ack_status"] = j_ack;
 }
 
 } /* namespace ddb */

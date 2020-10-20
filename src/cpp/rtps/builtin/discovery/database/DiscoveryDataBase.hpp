@@ -34,6 +34,8 @@
 #include "./DiscoveryEndpointInfo.hpp"
 #include "./DiscoveryDataQueueInfo.hpp"
 
+#include "backup/json.hpp"
+
 namespace eprosima {
 namespace fastdds {
 namespace rtps {
@@ -264,6 +266,8 @@ public:
     // Check if the data queue is empty
     bool data_queue_empty();
 
+    void to_json(nlohmann::json& j) const;
+
 protected:
 
     // change a cacheChange by update or new disposal
@@ -466,7 +470,6 @@ protected:
 
     // Whether the database is enabled
     std::atomic<bool> enabled_;
-
 };
 
 
