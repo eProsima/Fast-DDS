@@ -366,6 +366,12 @@ public:
     }
 
     /**
+     * Get the lowest sequence number of the changes for this reader.
+     * @return the lowest sequence number of the changes for this reader.
+     */
+    SequenceNumber_t first_change_sequence_number() const;
+
+    /**
      * Change the interval of nack-supression event.
      * @param interval Time from data sending to acknack processing.
      */
