@@ -761,7 +761,6 @@ public:
         data_sharing_ = data_sharing;
     }
 
-
 private:
 
     //!Durability Qos, implemented in the library.
