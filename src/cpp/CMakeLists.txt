@@ -14,6 +14,7 @@
 
 include(${PROJECT_SOURCE_DIR}/cmake/dev/set_sources.cmake)
 include(${PROJECT_SOURCE_DIR}/cmake/dev/generate_msvc_libraries.cmake)
+include(CheckLibatomic)
 
 # Set source files
 
@@ -403,6 +404,7 @@ elseif(NOT EPROSIMA_INSTALLER)
         $<$<BOOL:${LINK_SSL}>:OpenSSL::SSL$<SEMICOLON>OpenSSL::Crypto>
         $<$<BOOL:${WIN32}>:iphlpapi$<SEMICOLON>Shlwapi>
         ${THIRDPARTY_BOOST_LINK_LIBS}
+        $<$<BOOL:${LINK_LIBATOMIC}>:atomic>
         )
 
     if(MSVC OR MSVC_IDE)
