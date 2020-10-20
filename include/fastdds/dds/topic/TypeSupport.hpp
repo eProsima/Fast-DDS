@@ -230,6 +230,7 @@ public:
     {
         return get()->is_plain();
     }
+
 };
 
 } /* namespace dds */

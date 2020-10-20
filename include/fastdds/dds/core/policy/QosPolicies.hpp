@@ -2659,7 +2659,7 @@ public:
     }
 
     //!User defined transports to use alongside or in place of builtins.
-    std::vector<std::shared_ptr<fastdds::rtps::TransportDescriptorInterface> > user_transports;
+    std::vector<std::shared_ptr<fastdds::rtps::TransportDescriptorInterface>> user_transports;
 
     //!Set as false to disable the default UDPv4 implementation. <br> By default, true.
     bool use_builtin_transports;
@@ -2784,7 +2784,7 @@ public:
             const DataSharingQos& b) const
     {
         return (kind_ == b.kind() &&
-                shm_directory_ == b.shm_directory());
+               shm_directory_ == b.shm_directory());
     }
 
     /**
@@ -2805,22 +2805,24 @@ public:
 
     /**
      * @brief Configures the DataSharing in automatic mode
-     * 
+     *
      * @param directory The shared memory directory to use.
      *      If none is provided, the default shared memory directory of the OS is used.
      */
-    RTPS_DllAPI void automatic(const std::string& directory = "")
+    RTPS_DllAPI void automatic(
+            const std::string& directory = "")
     {
         setup (AUTO, directory);
     }
 
     /**
      * @brief Configures the DataSharing in forced mode
-     * 
+     *
      * @param directory The shared memory directory to use.
      *      It is mandatory to provide a non-empty name or the creation of endpoints will fail.
      */
-    RTPS_DllAPI void force(const std::string& directory)
+    RTPS_DllAPI void force(
+            const std::string& directory)
     {
         assert(!directory.empty());
         setup (FORCED, directory);
@@ -2836,7 +2838,9 @@ public:
 
 private:
 
-    void setup(const DataSharingKind& kind, const std::string& directory)
+    void setup(
+            const DataSharingKind& kind,
+            const std::string& directory)
     {
         kind_ = kind;
         shm_directory_ = directory;

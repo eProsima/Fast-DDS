@@ -1084,8 +1084,8 @@ ReturnCode_t DataWriterImpl::check_qos(
         }
     }
     if (qos.data_sharing().kind() == DataSharingKind::FORCED &&
-                (qos.endpoint().history_memory_policy != PREALLOCATED_MEMORY_MODE &&
-                qos.endpoint().history_memory_policy != PREALLOCATED_WITH_REALLOC_MEMORY_MODE))
+            (qos.endpoint().history_memory_policy != PREALLOCATED_MEMORY_MODE &&
+            qos.endpoint().history_memory_policy != PREALLOCATED_WITH_REALLOC_MEMORY_MODE))
     {
         return ReturnCode_t::RETCODE_INCONSISTENT_POLICY;
     }
