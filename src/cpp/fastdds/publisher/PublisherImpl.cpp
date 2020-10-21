@@ -453,6 +453,21 @@ const DataWriterQos& PublisherImpl::get_default_datawriter_qos() const
     return default_datawriter_qos_;
 }
 
+const ReturnCode_t PublisherImpl::get_datawriter_qos_from_profile(
+        const std::string& profile_name,
+        DataWriterQos& qos) const
+{
+    PublisherAttributes attr;
+    if (XMLP_ret::XML_OK == XMLProfileManager::fillPublisherAttributes(profile_name, attr))
+    {
+        qos = default_datawriter_qos_;
+        set_qos_from_attributes(qos, attr);
+        return ReturnCode_t::RETCODE_OK;
+    }
+
+    return ReturnCode_t::RETCODE_BAD_PARAMETER;
+}
+
 /* TODO
    bool PublisherImpl::copy_from_topic_qos(
         fastrtps::WriterQos&,

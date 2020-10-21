@@ -625,6 +625,21 @@ const PublisherQos& DomainParticipantImpl::get_default_publisher_qos() const
     return default_pub_qos_;
 }
 
+const ReturnCode_t DomainParticipantImpl::get_publisher_qos_from_profile(
+        const std::string& profile_name,
+        PublisherQos& qos) const
+{
+    PublisherAttributes attr;
+    if (XMLP_ret::XML_OK == XMLProfileManager::fillPublisherAttributes(profile_name, attr))
+    {
+        qos = default_pub_qos_;
+        set_qos_from_attributes(qos, attr);
+        return ReturnCode_t::RETCODE_OK;
+    }
+
+    return ReturnCode_t::RETCODE_BAD_PARAMETER;
+}
+
 ReturnCode_t DomainParticipantImpl::set_default_subscriber_qos(
         const SubscriberQos& qos)
 {
@@ -654,6 +669,21 @@ void DomainParticipantImpl::reset_default_subscriber_qos()
 const SubscriberQos& DomainParticipantImpl::get_default_subscriber_qos() const
 {
     return default_sub_qos_;
+}
+
+const ReturnCode_t DomainParticipantImpl::get_subscriber_qos_from_profile(
+        const std::string& profile_name,
+        SubscriberQos& qos) const
+{
+    SubscriberAttributes attr;
+    if (XMLP_ret::XML_OK == XMLProfileManager::fillSubscriberAttributes(profile_name, attr))
+    {
+        qos = default_sub_qos_;
+        set_qos_from_attributes(qos, attr);
+        return ReturnCode_t::RETCODE_OK;
+    }
+
+    return ReturnCode_t::RETCODE_BAD_PARAMETER;
 }
 
 ReturnCode_t DomainParticipantImpl::set_default_topic_qos(
@@ -687,6 +717,21 @@ void DomainParticipantImpl::reset_default_topic_qos()
 const TopicQos& DomainParticipantImpl::get_default_topic_qos() const
 {
     return default_topic_qos_;
+}
+
+const ReturnCode_t DomainParticipantImpl::get_topic_qos_from_profile(
+        const std::string& profile_name,
+        TopicQos& qos) const
+{
+    TopicAttributes attr;
+    if (XMLP_ret::XML_OK == XMLProfileManager::fillTopicAttributes(profile_name, attr))
+    {
+        qos = default_topic_qos_;
+        set_qos_from_attributes(qos, attr);
+        return ReturnCode_t::RETCODE_OK;
+    }
+
+    return ReturnCode_t::RETCODE_BAD_PARAMETER;
 }
 
 /* TODO

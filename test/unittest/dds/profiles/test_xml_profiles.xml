@@ -676,5 +676,17 @@
                 <increment>0</increment>
             </matchedPublishersAllocation>
         </subscriber>
+        <topic profile_name = "test_topic_profile">
+            <historyQos>
+                <kind>KEEP_LAST</kind>
+                <depth>20</depth>
+            </historyQos>
+            <resourceLimitsQos>
+                <max_samples>200</max_samples>
+                <max_instances>20</max_instances>
+                <max_samples_per_instance>100</max_samples_per_instance>
+                <allocated_samples>50</allocated_samples>
+            </resourceLimitsQos>
+        </topic>
     </profiles>
 </dds>

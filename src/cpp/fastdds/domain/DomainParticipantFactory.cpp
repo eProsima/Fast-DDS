@@ -105,7 +105,7 @@ ReturnCode_t DomainParticipantFactory::delete_participant(
         DomainParticipant* part)
 {
     using PartVectorIt = std::vector<DomainParticipantImpl*>::iterator;
-    using VectorIt = std::map<DomainId_t, std::vector<DomainParticipantImpl*> >::iterator;
+    using VectorIt = std::map<DomainId_t, std::vector<DomainParticipantImpl*>>::iterator;
 
     if (part != nullptr)
     {
@@ -160,7 +160,7 @@ DomainParticipant* DomainParticipantFactory::create_participant(
 
     {
         std::lock_guard<std::mutex> guard(mtx_participants_);
-        using VectorIt = std::map<DomainId_t, std::vector<DomainParticipantImpl*> >::iterator;
+        using VectorIt = std::map<DomainId_t, std::vector<DomainParticipantImpl*>>::iterator;
         VectorIt vector_it = participants_.find(did);
 
         if (vector_it == participants_.end())
@@ -286,6 +286,21 @@ ReturnCode_t DomainParticipantFactory::set_default_participant_qos(
     }
     DomainParticipantImpl::set_qos(default_participant_qos_, qos, true);
     return ReturnCode_t::RETCODE_OK;
+}
+
+ReturnCode_t DomainParticipantFactory::get_participant_qos_from_profile(
+        const std::string& profile_name,
+        DomainParticipantQos& qos) const
+{
+    ParticipantAttributes attr;
+    if (XMLP_ret::XML_OK == XMLProfileManager::fillParticipantAttributes(profile_name, attr))
+    {
+        qos = default_participant_qos_;
+        set_qos_from_attributes(qos, attr.rtps);
+        return ReturnCode_t::RETCODE_OK;
+    }
+
+    return ReturnCode_t::RETCODE_BAD_PARAMETER;
 }
 
 ReturnCode_t DomainParticipantFactory::load_profiles()

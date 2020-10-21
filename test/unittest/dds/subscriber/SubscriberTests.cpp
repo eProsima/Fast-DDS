@@ -272,7 +272,9 @@ void check_datareader_with_profile (
     XMLProfileManager::fillSubscriberAttributes(profile_name, subscriber_atts);
 
     //Values taken from profile
-    ASSERT_TRUE(qos.reader_resource_limits().matched_publisher_allocation == subscriber_atts.matched_publisher_allocation);
+    ASSERT_TRUE(
+        qos.reader_resource_limits().matched_publisher_allocation ==
+        subscriber_atts.matched_publisher_allocation);
     ASSERT_TRUE(qos.properties() == subscriber_atts.properties);
     ASSERT_TRUE(qos.expects_inline_qos() == subscriber_atts.expectsInlineQos);
     ASSERT_TRUE(qos.endpoint().unicast_locator_list == subscriber_atts.unicastLocatorList);
@@ -325,6 +327,43 @@ TEST(SubscriberTests, CreateDataReaderWithProfile)
     check_datareader_with_profile(datareader, "test_subscriber_profile");
     ASSERT_TRUE(subscriber->delete_datareader(datareader) == ReturnCode_t::RETCODE_OK);
 
+    ASSERT_EQ(participant->delete_subscriber(subscriber), ReturnCode_t::RETCODE_OK);
+    ASSERT_EQ(participant->delete_topic(topic), ReturnCode_t::RETCODE_OK);
+    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), ReturnCode_t::RETCODE_OK);
+}
+
+TEST(SubscriberTests, GetDataReaderProfileQos)
+{
+    DomainParticipantFactory::get_instance()->load_XML_profiles_file("test_xml_profiles.xml");
+    DomainParticipant* participant =
+            DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
+    ASSERT_NE(participant, nullptr);
+    Subscriber* subscriber = participant->create_subscriber(SUBSCRIBER_QOS_DEFAULT);
+    ASSERT_NE(subscriber, nullptr);
+    TypeSupport type(new TopicDataTypeMock());
+    type.register_type(participant);
+    Topic* topic = participant->create_topic("footopic", type.get_type_name(), TOPIC_QOS_DEFAULT);
+    ASSERT_NE(topic, nullptr);
+
+    // Extract qos from profile
+    DataReaderQos qos;
+    EXPECT_EQ(
+        subscriber->get_datareader_qos_from_profile("test_subscriber_profile", qos),
+        ReturnCode_t::RETCODE_OK);
+
+    //DataReader using the extracted qos
+    DataReader* datareader = subscriber->create_datareader(topic, qos);
+    ASSERT_NE(datareader, nullptr);
+
+    check_datareader_with_profile(datareader, "test_subscriber_profile");
+
+    // Test return when a non-existent profile is used
+    EXPECT_EQ(
+        subscriber->get_datareader_qos_from_profile("incorrect_profile_name", qos),
+        ReturnCode_t::RETCODE_BAD_PARAMETER);
+
+    // Clean up
+    ASSERT_EQ(subscriber->delete_datareader(datareader), ReturnCode_t::RETCODE_OK);
     ASSERT_EQ(participant->delete_subscriber(subscriber), ReturnCode_t::RETCODE_OK);
     ASSERT_EQ(participant->delete_topic(topic), ReturnCode_t::RETCODE_OK);
     ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), ReturnCode_t::RETCODE_OK);
@@ -409,7 +448,7 @@ TEST(SubscriberTests, SetListener)
     ASSERT_NE(subscriber, nullptr);
     ASSERT_EQ(subscriber->get_status_mask(), StatusMask::all());
 
-    std::vector<std::tuple<Subscriber*, SubscriberListener*, StatusMask> > testing_cases{
+    std::vector<std::tuple<Subscriber*, SubscriberListener*, StatusMask>> testing_cases{
         //statuses, one by one
         { subscriber, &listener, StatusMask::data_on_readers() },
         { subscriber, &listener, StatusMask::data_available() },

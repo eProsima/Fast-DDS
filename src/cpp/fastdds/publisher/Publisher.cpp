@@ -213,6 +213,13 @@ ReturnCode_t Publisher::get_default_datawriter_qos(
     return ReturnCode_t::RETCODE_OK;
 }
 
+ReturnCode_t Publisher::get_datawriter_qos_from_profile(
+        const std::string& profile_name,
+        DataWriterQos& qos) const
+{
+    return impl_->get_datawriter_qos_from_profile(profile_name, qos);
+}
+
 /* TODO
    bool Publisher::copy_from_topic_qos(
         fastrtps::WriterQos& writer_qos,

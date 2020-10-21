@@ -147,6 +147,10 @@ public:
 
     DataReaderQos& get_default_datareader_qos();
 
+    const ReturnCode_t get_datareader_qos_from_profile(
+            const std::string& profile_name,
+            DataReaderQos& qos) const;
+
     /* TODO
        bool copy_from_topic_qos(
             ReaderQos& reader_qos,
@@ -223,7 +227,7 @@ protected:
     SubscriberQos qos_;
 
     //!Map of Pointer to associated DataReaders. Topic name is the key.
-    std::map<std::string, std::vector<DataReaderImpl*> > readers_;
+    std::map<std::string, std::vector<DataReaderImpl*>> readers_;
 
     mutable std::mutex mtx_readers_;
 

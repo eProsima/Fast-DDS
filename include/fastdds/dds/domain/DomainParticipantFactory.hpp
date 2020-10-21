@@ -154,6 +154,16 @@ public:
             const DomainParticipantQos& qos);
 
     /**
+     * Fills the DomainParticipantQos with the values of the XML profile.
+     * @param profile_name DomainParticipant profile name.
+     * @param qos DomainParticipantQos object where the qos is returned.
+     * @return RETCODE_OK if the profile exists. RETCODE_BAD_PARAMETER otherwise.
+     */
+    RTPS_DllAPI ReturnCode_t get_participant_qos_from_profile(
+            const std::string& profile_name,
+            DomainParticipantQos& qos) const;
+
+    /**
      * Remove a Participant and all associated publishers and subscribers.
      * @param part Pointer to the participant.
      * @return RETCODE_PRECONDITION_NOT_MET if the participant has active entities, RETCODE_OK if the participant is correctly
@@ -203,7 +213,7 @@ protected:
 
     friend class DomainParticipant;
 
-    std::map<DomainId_t, std::vector<DomainParticipantImpl*> > participants_;
+    std::map<DomainId_t, std::vector<DomainParticipantImpl*>> participants_;
 
     DomainParticipantFactory();
 

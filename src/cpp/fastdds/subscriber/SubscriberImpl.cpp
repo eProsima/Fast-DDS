@@ -430,6 +430,21 @@ bool SubscriberImpl::contains_entity(
     return false;
 }
 
+const ReturnCode_t SubscriberImpl::get_datareader_qos_from_profile(
+        const std::string& profile_name,
+        DataReaderQos& qos) const
+{
+    SubscriberAttributes attr;
+    if (XMLP_ret::XML_OK == XMLProfileManager::fillSubscriberAttributes(profile_name, attr))
+    {
+        qos = default_datareader_qos_;
+        set_qos_from_attributes(qos, attr);
+        return ReturnCode_t::RETCODE_OK;
+    }
+
+    return ReturnCode_t::RETCODE_BAD_PARAMETER;
+}
+
 /* TODO
    bool SubscriberImpl::copy_from_topic_qos(
         DataReaderQos&,
