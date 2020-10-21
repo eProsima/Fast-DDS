@@ -1778,11 +1778,18 @@ void DiscoveryDataBase::add_writer_to_topic_(
                 it_topics != writers_by_topic_.end();
                 ++it_topics)
         {
-            // always add writer because it is new entity
-            logInfo(DISCOVERY_DATABASE, "New virtual writer " << writer_guid << " in writers_by_topic: " << it_topics->first);
-            it_topics->second.push_back(writer_guid);
+            // This find should be useless because right now we only call this function from
+            //  create_writer_from_change, so the entity must be always new
+            std::vector<eprosima::fastrtps::rtps::GUID_t>::iterator writer_by_topic_it =
+                    std::find(it_topics->second.begin(), it_topics->second.end(), writer_guid);
+            if (writer_by_topic_it == it_topics->second.end())
+            {
+                logInfo(DISCOVERY_DATABASE,
+                        "New virtual writer " << writer_guid << " in writers_by_topic: " << it_topics->first);
+                it_topics->second.push_back(writer_guid);
+            }
         }
-        return; // the writer has been added already, avoid try to add it again
+        return; // the writer has been already added to every topic, avoid try to add it again in virtual topic
     }
 
     // add the writer in the topic
@@ -1815,11 +1822,18 @@ void DiscoveryDataBase::add_reader_to_topic_(
                 it_topics != readers_by_topic_.end();
                 ++it_topics)
         {
-            // always add reader because it is new entity
-            logInfo(DISCOVERY_DATABASE, "New virtual reader " << reader_guid << " in readers_by_topic: " << it_topics->first);
-            it_topics->second.push_back(reader_guid);
+            // This find should be useless because right now we only call this function from
+            //  create_reader_from_change, so the entity must be always new
+            std::vector<eprosima::fastrtps::rtps::GUID_t>::iterator reader_by_topic_it =
+                    std::find(it_topics->second.begin(), it_topics->second.end(), reader_guid);
+            if (reader_by_topic_it == it_topics->second.end())
+            {
+                logInfo(DISCOVERY_DATABASE,
+                        "New virtual reader " << reader_guid << " in readers_by_topic: " << it_topics->first);
+                it_topics->second.push_back(reader_guid);
+            }
         }
-        return; // the reader has been added already, avoid try to add it again
+        return; // the reader has been already added to every topic, avoid try to add it again in virtual topic
     }
 
     // add the reader in the topic

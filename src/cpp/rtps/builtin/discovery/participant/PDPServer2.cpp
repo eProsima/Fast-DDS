@@ -737,7 +737,7 @@ bool PDPServer2::server_update_routine()
     while (!discovery_db_.data_queue_empty());
 
     // must restart the routin after the period time
-    return pending_work || !discovery_db_.server_acked_by_all();
+    return pending_work;
 }
 
 bool PDPServer2::process_writers_acknowledgements()
@@ -1172,7 +1172,8 @@ bool PDPServer2::remove_change_from_history_nts(
 bool PDPServer2::pending_ack()
 {
     EDPServer2* edp = static_cast<EDPServer2*>(mp_EDP);
-    bool ret = (mp_PDPWriterHistory->getHistorySize() > 1 ||
+    bool ret = (!discovery_db_.server_acked_by_all() ||
+            mp_PDPWriterHistory->getHistorySize() > 1 ||
             edp->publications_writer_.second->getHistorySize() > 0 ||
             edp->subscriptions_writer_.second->getHistorySize() > 0);
     logInfo(RTPS_PDP_SERVER, "Are there pending changes? " << ret);
