@@ -736,7 +736,7 @@ bool PDPServer2::server_update_routine()
     // A non-empty queue means that the server has received a change while it is running the processing routine.
     while (!discovery_db_.data_queue_empty());
 
-    // must restart the routin after the period time
+    // Must restart the routin after the period time
     return pending_work;
 }
 

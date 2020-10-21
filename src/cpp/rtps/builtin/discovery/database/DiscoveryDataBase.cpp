@@ -1779,7 +1779,7 @@ void DiscoveryDataBase::add_writer_to_topic_(
                 ++it_topics)
         {
             // This find should be useless because right now we only call this function from
-            //  create_writer_from_change, so the entity must be always new
+            // create_writer_from_change, so the entity must be always new
             std::vector<eprosima::fastrtps::rtps::GUID_t>::iterator writer_by_topic_it =
                     std::find(it_topics->second.begin(), it_topics->second.end(), writer_guid);
             if (writer_by_topic_it == it_topics->second.end())
@@ -1789,7 +1789,8 @@ void DiscoveryDataBase::add_writer_to_topic_(
                 it_topics->second.push_back(writer_guid);
             }
         }
-        return; // the writer has been already added to every topic, avoid try to add it again in virtual topic
+        // The writer has been already added to every topic, avoid try to add it again in virtual topic
+        return;
     }
 
     // add the writer in the topic
@@ -1823,7 +1824,7 @@ void DiscoveryDataBase::add_reader_to_topic_(
                 ++it_topics)
         {
             // This find should be useless because right now we only call this function from
-            //  create_reader_from_change, so the entity must be always new
+            // create_reader_from_change, so the entity must be always new
             std::vector<eprosima::fastrtps::rtps::GUID_t>::iterator reader_by_topic_it =
                     std::find(it_topics->second.begin(), it_topics->second.end(), reader_guid);
             if (reader_by_topic_it == it_topics->second.end())
@@ -1833,7 +1834,8 @@ void DiscoveryDataBase::add_reader_to_topic_(
                 it_topics->second.push_back(reader_guid);
             }
         }
-        return; // the reader has been already added to every topic, avoid try to add it again in virtual topic
+        // The reader has been already added to every topic, avoid try to add it again in virtual topic
+        return;
     }
 
     // add the reader in the topic
