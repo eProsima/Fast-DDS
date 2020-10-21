@@ -234,6 +234,55 @@ inline std::ostream& operator <<(
     return output;
 }
 
+/**
+ *
+ * @param input
+ * @param iHandle
+ */
+inline std::istream& operator>>(
+        std::istream& input,
+        InstanceHandle_t& iHandle)
+{
+    std::istream::sentry s(input);
+
+    if (s)
+    {
+        char point;
+        unsigned short hex;
+        std::ios_base::iostate excp_mask = input.exceptions();
+
+        try
+        {
+            input.exceptions(excp_mask | std::ios_base::failbit | std::ios_base::badbit);
+            input >> std::hex >> hex;
+
+            if (hex > 255)
+            {
+                input.setstate(std::ios_base::failbit);
+            }
+
+            iHandle.value[0] = static_cast<octet>(hex);
+
+            for (int i = 1; i < 15; ++i)
+            {
+                input >> point >> hex;
+                if ( point != '.' || hex > 255 )
+                {
+                    input.setstate(std::ios_base::failbit);
+                }
+                iHandle.value[i] = static_cast<octet>(hex);
+            }
+
+            input >> std::dec;
+        }
+        catch (std::ios_base::failure& ){}
+
+        input.exceptions(excp_mask);
+    }
+
+    return input;
+}
+
 #endif
 
 }
