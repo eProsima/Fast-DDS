@@ -576,6 +576,7 @@ void DiscoveryDataBase::create_participant_from_change_(
             if (change_guid.guidPrefix != server_guid_prefix_ &&
                     !ret.first->second.is_client() && ret.first->second.is_local())
             {
+                logInfo(DISCOVERY_DATABASE, "Creating virtual entities for " << change_guid.guidPrefix);
                 /* Create virtual writer */
                 // Create a GUID for the virtual writer from the local server GUID prefix and the virtual writer entity
                 // ID.
@@ -584,7 +585,8 @@ void DiscoveryDataBase::create_participant_from_change_(
                 // Create a populate the Cache Change with the necessary information.
                 fastrtps::rtps::CacheChange_t* virtual_writer_change = new fastrtps::rtps::CacheChange_t();
                 virtual_writer_change->kind = fastrtps::rtps::ChangeKind_t::ALIVE;
-                virtual_writer_change->writerGUID = ch->writerGUID;
+                virtual_writer_change->writerGUID.guidPrefix = ch->writerGUID.guidPrefix;
+                virtual_writer_change->writerGUID.entityId = fastrtps::rtps::ds_server_virtual_writer;
                 virtual_writer_change->instanceHandle = fastrtps::rtps::InstanceHandle_t(virtual_writer_guid);
                 // Populate sample identity
                 fastrtps::rtps::SampleIdentity virtual_writer_sample_id;
@@ -606,7 +608,8 @@ void DiscoveryDataBase::create_participant_from_change_(
                 // Create a populate the Cache Change with the necessary information.
                 fastrtps::rtps::CacheChange_t* virtual_reader_change = new fastrtps::rtps::CacheChange_t();
                 virtual_reader_change->kind = fastrtps::rtps::ChangeKind_t::ALIVE;
-                virtual_reader_change->writerGUID = ch->writerGUID;
+                virtual_reader_change->writerGUID.guidPrefix = ch->writerGUID.guidPrefix;
+                virtual_reader_change->writerGUID.entityId = fastrtps::rtps::ds_server_virtual_reader;
                 virtual_reader_change->instanceHandle = fastrtps::rtps::InstanceHandle_t(virtual_reader_guid);
                 // Populate sample identity
                 fastrtps::rtps::SampleIdentity virtual_reader_sample_id;

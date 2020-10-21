@@ -96,9 +96,10 @@ bool WriterHistory::add_change_(
     Time_t::now(a_change->sourceTimestamp);
 
     a_change->write_params = wparams;
-    // Updated sample identity
+    // Updated sample and related sample identities on the user's write params
     wparams.sample_identity().writer_guid(a_change->writerGUID);
     wparams.sample_identity().sequence_number(a_change->sequenceNumber);
+    wparams.related_sample_identity(wparams.sample_identity());
 
     m_changes.push_back(a_change);
 
