@@ -285,12 +285,14 @@ public:
 
         //Create subscribe r
         subscriber_ = eprosima::fastrtps::Domain::createSubscriber(participant_, subscriber_attr, &listener_);
-        ASSERT_NE(subscriber_, nullptr);
 
-        std::cout << "Created subscriber " << subscriber_->getGuid() << " for topic " <<
-            subscriber_attr_.topic.topicName << std::endl;
+        if (subscriber_ != nullptr)
+        {
+            std::cout << "Created subscriber " << subscriber_->getGuid() << " for topic " <<
+                subscriber_attr_.topic.topicName << std::endl;
 
-        initialized_ = true;
+            initialized_ = true;
+        }
     }
 
     bool isInitialized() const
