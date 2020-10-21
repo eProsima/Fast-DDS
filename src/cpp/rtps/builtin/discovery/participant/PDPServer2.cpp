@@ -61,17 +61,19 @@ PDPServer2::PDPServer2(
 
 PDPServer2::~PDPServer2()
 {
-    // stop routines
+    // Stop timed events
     routine_->cancel_timer();
     ping_->cancel_timer();
 
-    // disable and clear ddb
+    // Disable database
     discovery_db_.disable();
-    process_changes_release_(discovery_db_.clear());
 
-    // delete routines
+    // Delete timed events
     delete(routine_);
     delete(ping_);
+
+    // Clear ddb and release its changes
+    process_changes_release_(discovery_db_.clear());
 }
 
 bool PDPServer2::init(
@@ -914,7 +916,7 @@ bool PDPServer2::process_disposals()
         }
         else
         {
-            logError(PDPServer2, "Wrong DATA received from disposals");
+            logError(RTPS_PDP_SERVER, "Wrong DATA received from disposals" << change->instanceHandle);
         }
     }
     // Clear database disposals list
@@ -978,7 +980,8 @@ void PDPServer2::process_changes_release_(
             }
             else
             {
-                logError(PDPServer2, "Wrong DATA received to remove");
+                logError(RTPS_PDP_SERVER, "Wrong DATA received to remove from this participant: "
+                        << ch->instanceHandle);
             }
         }
         // The change is not from this participant. In that case, the change comes from a reader pool (PDP, EDP
@@ -1016,12 +1019,12 @@ void PDPServer2::process_changes_release_(
                 }
                 else
                 {
-                    logError(PDPServer2, "Wrong DATA received to remove");
+                    logError(RTPS_PDP_SERVER, "Wrong DATA received to remove from this participant: "
+                            << ch->instanceHandle);
                 }
             }
             else
             {
-
                 // this case is only when is a disposal built for us, so it is a DATA(Up) of a participant
                 // that we have drop for liveliness
                 // this changes goes to Participant Writer
@@ -1029,7 +1032,6 @@ void PDPServer2::process_changes_release_(
                 {
                     mp_PDPWriterHistory->release_Cache(ch);
                 }
-
             }
         }
     }
@@ -1045,7 +1047,7 @@ void PDPServer2::remove_related_alive_from_history_nts(
         // Remove all DATA whose original sender was entity_guid_prefix from writer_history
         if (entity_guid_prefix == discovery_db_.guid_from_change(*chit).guidPrefix)
         {
-            chit = writer_history->remove_change(chit);
+            chit = writer_history->remove_change(chit, false);
             continue;
         }
         chit++;
@@ -1122,10 +1124,11 @@ bool PDPServer2::process_to_send_list(
     {
         // If the DATA is already in the writer's history, then remove it, but do not release the change.
         remove_change_from_history_nts(history, change, false);
+        // Set change's writer GUID so it matches with this writer
+        change->writerGUID = writer->getGuid();
         // Add DATA to writer's history.
-        change->writerGUID.guidPrefix = mp_PDPWriter->getGuid().guidPrefix;
-        eprosima::fastrtps::rtps::WriteParams wp = change->write_params;
         logInfo(RTPS_PDP_SERVER, "Adding change from " << change->instanceHandle << " to history");
+        eprosima::fastrtps::rtps::WriteParams wp = change->write_params;
         history->add_change(change, wp);
     }
     return true;
