@@ -254,12 +254,11 @@ bool ReaderProxy::change_is_acked(
     if (chit == changes_for_reader_.end())
     {
         // There is a hole in changes_for_reader_
-        // This means a change was removed.
-        // The case is equivalent to the !chit->isRelevant() code below
+        // This means a change was removed, or was not relevant.
         return true;
     }
 
-    return !chit->isRelevant() || chit->getStatus() == ACKNOWLEDGED;
+    return chit->getStatus() == ACKNOWLEDGED;
 }
 
 SequenceNumber_t ReaderProxy::first_change_sequence_number() const
@@ -290,10 +289,7 @@ bool ReaderProxy::change_is_unsent(
         return false;
     }
 
-    if (chit->isRelevant())
-    {
-        is_irrelevant = false;
-    }
+    is_irrelevant = false;
 
     return chit->getStatus() == UNSENT;
 }
@@ -561,7 +557,7 @@ bool ReaderProxy::has_unacknowledged() const
 {
     for (const ChangeForReader_t& it : changes_for_reader_)
     {
-        if (it.isRelevant() && it.getStatus() == UNACKNOWLEDGED)
+        if (it.getStatus() == UNACKNOWLEDGED)
         {
             return true;
         }
