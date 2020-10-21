@@ -66,7 +66,7 @@ private:
             const Log::Entry& entry);
 
     std::string output_file_;
-    std::ofstream* file_;
+    std::ofstream file_;
     bool append_;
 };
 

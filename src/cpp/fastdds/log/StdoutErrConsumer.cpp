@@ -19,25 +19,6 @@ namespace eprosima {
 namespace fastdds {
 namespace dds {
 
-void StdoutErrConsumer::Consume(
-        const Log::Entry& entry)
-{
-    // If Log::Kind is stderr_threshold_ or more severe, then use STDERR, else use STDOUT
-    if (entry.kind <= stderr_threshold_)
-    {
-        stream_ = &std::cerr;
-    }
-    else
-    {
-        stream_ = &std::cout;
-    }
-
-    print_header(entry);
-    print_message(stream_, entry, true);
-    print_context(entry);
-    print_new_line(stream_, true);
-}
-
 void StdoutErrConsumer::stderr_threshold(
         const Log::Kind& kind)
 {
@@ -49,17 +30,18 @@ Log::Kind StdoutErrConsumer::stderr_threshold() const
     return stderr_threshold_;
 }
 
-void StdoutErrConsumer::print_header(
-        const Log::Entry& entry) const
+std::ostream& StdoutErrConsumer::get_stream(
+            const Log::Entry& entry)
 {
-    print_timestamp(stream_, entry, true);
-    LogConsumer::print_header(stream_, entry, true);
-}
-
-void StdoutErrConsumer::print_context(
-        const Log::Entry& entry) const
-{
-    LogConsumer::print_context(stream_, entry, true);
+    // If Log::Kind is stderr_threshold_ or more severe, then use STDERR, else use STDOUT
+    if (entry.kind <= stderr_threshold_)
+    {
+        return std::cerr;
+    }
+    else
+    {
+        return std::cout;
+    }
 }
 
 } // Namespace dds

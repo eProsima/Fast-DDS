@@ -14,6 +14,7 @@
 //
 
 #include <fastdds/dds/log/Log.hpp>
+#include <fastdds/dds/log/OStreamConsumer.hpp>
 #include <fastdds/dds/log/StdoutConsumer.hpp>
 #include <fastdds/dds/log/StdoutErrConsumer.hpp>
 #include "mock/MockConsumer.h"

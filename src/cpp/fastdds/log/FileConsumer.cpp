@@ -32,20 +32,17 @@ FileConsumer::FileConsumer(
 {
     if (append_)
     {
-        file_ = new std::ofstream(output_file_, std::ios::out | std::ios::app);
+        file_.open(output_file_, std::ios::out | std::ios::app);
     }
     else
     {
-        file_ = new std::ofstream(output_file_, std::ios::out);
+        file_.open(output_file_, std::ios::out);
     }
 }
 
 FileConsumer::~FileConsumer()
 {
-    if (file_ != nullptr)
-    {
-        file_->close();
-    }
+    file_.close();
 }
 
 void FileConsumer::Consume(
@@ -55,7 +52,7 @@ void FileConsumer::Consume(
     print_message(file_, entry, false);
     print_context(entry);
     print_new_line(file_, false);
-    file_->flush();
+    file_.flush();
 }
 
 void FileConsumer::print_header(

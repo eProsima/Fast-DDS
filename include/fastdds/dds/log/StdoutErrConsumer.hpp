@@ -16,6 +16,7 @@
 #define _FASTDDS_STDOUTERR_CONSUMER_HPP_
 
 #include <fastdds/dds/log/Log.hpp>
+#include <fastdds/dds/log/OStreamConsumer.hpp>
 #include <iostream>
 
 namespace eprosima {
@@ -28,18 +29,11 @@ namespace dds {
  *
  * @file StdoutErrConsumer.hpp
  */
-class StdoutErrConsumer : public LogConsumer
+class StdoutErrConsumer : public OStreamConsumer
 {
 public:
 
-    virtual ~StdoutErrConsumer() {}
-
-    /** \internal
-     * Called by Log to ask us to consume the Entry.
-     * @param Log::Entry to consume.
-     */
-    RTPS_DllAPI virtual void Consume(
-            const Log::Entry& entry);
+    virtual ~StdoutErrConsumer() = default;
 
     /**
      * @brief Set the stderr_threshold to a Log::Kind.
@@ -64,16 +58,19 @@ public:
      */
     RTPS_DllAPI static const Log::Kind STDERR_THRESHOLD_DEFAULT = Log::Kind::Warning;
 
+protected:
+
+    /** \internal
+     * Called by Log consume to get the correct stream
+     * @param Log::Entry to consume.
+     */
+    RTPS_DllAPI virtual std::ostream& get_stream(
+            const Log::Entry& entry) override;
+
 private:
 
-    void print_header(
-            const Log::Entry& entry) const;
-
-    void print_context(
-            const Log::Entry& entry) const;
-
-    std::ostream* stream_;
     Log::Kind stderr_threshold_ = STDERR_THRESHOLD_DEFAULT;
+
 };
 
 } // namespace dds

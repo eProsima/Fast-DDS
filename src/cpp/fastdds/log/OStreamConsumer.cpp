@@ -1,4 +1,4 @@
-// Copyright 2019, 2020 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+// Copyright 2020 Proyectos y Sistemas de Mantenimiento SL (eProsima).
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,34 +12,21 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include <fastdds/dds/log/StdoutConsumer.hpp>
-#include <iostream>
-#include <iomanip>
+#include <fastdds/dds/log/OStreamConsumer.hpp>
 
 namespace eprosima {
 namespace fastdds {
 namespace dds {
 
-void StdoutConsumer::Consume(
+void OStreamConsumer::Consume(
         const Log::Entry& entry)
 {
-    print_header(entry);
-    print_message(std::cout, entry, true);
-    print_context(entry);
-    print_new_line(std::cout, true);
-}
-
-void StdoutConsumer::print_header(
-        const Log::Entry& entry) const
-{
-    print_timestamp(std::cout, entry, true);
-    LogConsumer::print_header(std::cout, entry, true);
-}
-
-void StdoutConsumer::print_context(
-        const Log::Entry& entry) const
-{
-    LogConsumer::print_context(std::cout, entry, true);
+    std::ostream& stream = get_stream(entry);
+    print_timestamp(stream, entry, true);
+    print_header(stream, entry, true);
+    print_message(stream, entry, true);
+    print_context(stream, entry, true);
+    print_new_line(stream, true);
 }
 
 } // Namespace dds

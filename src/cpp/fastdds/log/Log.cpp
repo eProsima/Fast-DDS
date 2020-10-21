@@ -17,6 +17,7 @@
 #include <mutex>
 
 #include <fastdds/dds/log/Log.hpp>
+#include <fastdds/dds/log/OStreamConsumer.hpp>
 #include <fastdds/dds/log/StdoutConsumer.hpp>
 #include <fastdds/dds/log/StdoutErrConsumer.hpp>
 #include <fastdds/dds/log/Colors.hpp>
@@ -302,16 +303,16 @@ void Log::get_timestamp(
 }
 
 void LogConsumer::print_timestamp(
-        std::ostream* stream,
+        std::ostream& stream,
         const Log::Entry& entry,
         bool color) const
 {
     std::string white = (color) ? C_B_WHITE : "";
-    *stream << white << entry.timestamp;
+    stream << white << entry.timestamp;
 }
 
 void LogConsumer::print_header(
-        std::ostream* stream,
+        std::ostream& stream,
         const Log::Entry& entry,
         bool color) const
 {
@@ -326,49 +327,49 @@ void LogConsumer::print_header(
             (entry.kind == Log::Kind::Warning) ? "Warning" :
             (entry.kind == Log::Kind::Info) ? "Info" : "";
 
-    *stream << c_b_color << "[" << white << entry.context.category << c_b_color << " " << kind << "] ";
+    stream << c_b_color << "[" << white << entry.context.category << c_b_color << " " << kind << "] ";
 }
 
 void LogConsumer::print_context(
-        std::ostream* stream,
+        std::ostream& stream,
         const Log::Entry& entry,
         bool color) const
 {
     if (color)
     {
-        *stream << C_B_BLUE;
+        stream << C_B_BLUE;
     }
     if (entry.context.filename)
     {
-        *stream << " (" << entry.context.filename;
-        *stream << ":" << entry.context.line << ")";
+        stream << " (" << entry.context.filename;
+        stream << ":" << entry.context.line << ")";
     }
     if (entry.context.function)
     {
-        *stream << " -> Function ";
+        stream << " -> Function ";
         if (color)
         {
-            *stream << C_CYAN;
+            stream << C_CYAN;
         }
-        *stream << entry.context.function;
+        stream << entry.context.function;
     }
 }
 
 void LogConsumer::print_message(
-        std::ostream* stream,
+        std::ostream& stream,
         const Log::Entry& entry,
         bool color) const
 {
     std::string white = (color) ? C_WHITE : "";
-    *stream << white << entry.message;
+    stream << white << entry.message;
 }
 
 void LogConsumer::print_new_line(
-        std::ostream* stream,
+        std::ostream& stream,
         bool color) const
 {
     std::string def = (color) ? C_DEF : "";
-    *stream << def << std::endl;
+    stream << def << std::endl;
 }
 
 } //namespace dds

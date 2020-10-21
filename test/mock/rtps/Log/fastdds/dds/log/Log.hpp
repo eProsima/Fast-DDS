@@ -48,7 +48,7 @@ class LogConsumer
 {
     public:
 
-        virtual ~LogConsumer() {}
+        virtual ~LogConsumer() = default;
 };
 
 class Log

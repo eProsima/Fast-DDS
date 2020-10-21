@@ -202,9 +202,7 @@ class LogConsumer
 {
 public:
 
-    virtual ~LogConsumer()
-    {
-    }
+    virtual ~LogConsumer() = default;
 
     virtual void Consume(
             const Log::Entry&) = 0;
@@ -212,27 +210,27 @@ public:
 protected:
 
     void print_timestamp(
-            std::ostream* stream,
+            std::ostream& stream,
             const Log::Entry&,
             bool color) const;
 
     void print_header(
-            std::ostream* stream,
+            std::ostream& stream,
             const Log::Entry&,
             bool color) const;
 
     void print_context(
-            std::ostream* stream,
+            std::ostream& stream,
             const Log::Entry&,
             bool color) const;
 
     void print_message(
-            std::ostream* stream,
+            std::ostream& stream,
             const Log::Entry&,
             bool color) const;
 
     void print_new_line(
-            std::ostream* stream,
+            std::ostream& stream,
             bool color) const;
 };
 

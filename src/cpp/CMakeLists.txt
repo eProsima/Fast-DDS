@@ -34,6 +34,7 @@ set(${PROJECT_NAME}_source_files
     ${ALL_HEADERS}
 
     fastdds/log/Log.cpp
+    fastdds/log/OStreamConsumer.cpp
     fastdds/log/StdoutErrConsumer.cpp
     fastdds/log/StdoutConsumer.cpp
     fastdds/log/FileConsumer.cpp

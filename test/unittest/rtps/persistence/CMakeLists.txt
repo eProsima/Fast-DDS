@@ -23,6 +23,7 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             ${PROJECT_SOURCE_DIR}/src/cpp/rtps/persistence/SQLite3PersistenceService.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/rtps/persistence/sqlite3.c
             ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/Log.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/OStreamConsumer.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/StdoutConsumer.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/StdoutErrConsumer.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/rtps/history/CacheChangePool.cpp
