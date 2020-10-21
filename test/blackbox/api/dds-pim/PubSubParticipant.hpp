@@ -342,6 +342,32 @@ public:
         std::cout << "Publisher discovery finished " << std::endl;
     }
 
+    void pub_wait_discovery(
+            unsigned int expected_match,
+            std::chrono::seconds timeout = std::chrono::seconds::zero())
+    {
+        std::unique_lock<std::mutex> lock(pub_mutex_);
+
+        std::cout << "Publisher is waiting discovery..." << std::endl;
+
+        if (timeout == std::chrono::seconds::zero())
+        {
+            pub_cv_.wait(lock, [&]()
+                    {
+                        return pub_matched_ == expected_match;
+                    });
+        }
+        else
+        {
+            pub_cv_.wait_for(lock, timeout, [&]()
+                    {
+                        return pub_matched_ == expected_match;
+                    });
+        }
+
+        std::cout << "Publisher discovery finished " << std::endl;
+    }
+
     void sub_wait_discovery(
             std::chrono::seconds timeout = std::chrono::seconds::zero())
     {
@@ -361,6 +387,32 @@ public:
             sub_cv_.wait_for(lock, timeout, [&]()
                     {
                         return sub_matched_ == num_expected_subscribers_;
+                    });
+        }
+
+        std::cout << "Subscriber discovery finished " << std::endl;
+    }
+
+    void sub_wait_discovery(
+            unsigned int expected_match,
+            std::chrono::seconds timeout = std::chrono::seconds::zero())
+    {
+        std::unique_lock<std::mutex> lock(sub_mutex_);
+
+        std::cout << "Subscriber is waiting discovery..." << std::endl;
+
+        if (timeout == std::chrono::seconds::zero())
+        {
+            sub_cv_.wait(lock, [&]()
+                    {
+                        return sub_matched_ == expected_match;
+                    });
+        }
+        else
+        {
+            sub_cv_.wait_for(lock, timeout, [&]()
+                    {
+                        return sub_matched_ == expected_match;
                     });
         }
 
@@ -395,6 +447,13 @@ public:
                 {
                     return sub_times_liveliness_lost_ >= num_lost;
                 });
+    }
+
+    PubSubParticipant& property_policy(
+            const eprosima::fastrtps::rtps::PropertyPolicy property_policy)
+    {
+        participant_qos_.properties() = property_policy;
+        return *this;
     }
 
     PubSubParticipant& pub_topic_name(
@@ -582,12 +641,12 @@ private:
     std::vector<std::tuple<
                 eprosima::fastdds::dds::Topic*,
                 eprosima::fastdds::dds::Publisher*,
-                eprosima::fastdds::dds::DataWriter*> > publishers_;
+                eprosima::fastdds::dds::DataWriter*>> publishers_;
     //! A vector of subscribers
     std::vector<std::tuple<
                 eprosima::fastdds::dds::Topic*,
                 eprosima::fastdds::dds::Subscriber*,
-                eprosima::fastdds::dds::DataReader*> > subscribers_;
+                eprosima::fastdds::dds::DataReader*>> subscribers_;
     //! Publisher attributes
     eprosima::fastdds::dds::DataWriterQos datawriter_qos_;
     //! Subscriber attributes

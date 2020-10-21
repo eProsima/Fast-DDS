@@ -19,6 +19,7 @@
 #include "PubSubReader.hpp"
 #include "PubSubWriter.hpp"
 #include "PubSubWriterReader.hpp"
+#include "PubSubParticipant.hpp"
 
 #include <gtest/gtest.h>
 
@@ -2494,6 +2495,86 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_governance_rule_o
         writer.property_policy(pub_property_policy).init();
 
         ASSERT_FALSE(writer.isInitialized());
+    }
+}
+
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_multiple_endpoints_matching)
+{
+    {
+        std::string governance_file("governance_helloworld_all_enable.smime");
+        std::string permissions_file("permissions_helloworld.smime");
+
+        PropertyPolicy pub_property_policy;
+        pub_property_policy.properties().emplace_back(Property("dds.sec.auth.plugin",
+                "builtin.PKI-DH"));
+        pub_property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.identity_ca",
+                "file://" + std::string(certs_path) + "/maincacert.pem"));
+        pub_property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.identity_certificate",
+                "file://" + std::string(certs_path) + "/mainpubcert.pem"));
+        pub_property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.private_key",
+                "file://" + std::string(certs_path) + "/mainpubkey.pem"));
+        pub_property_policy.properties().emplace_back(Property("dds.sec.crypto.plugin",
+                "builtin.AES-GCM-GMAC"));
+        pub_property_policy.properties().emplace_back(Property("dds.sec.access.plugin",
+                "builtin.Access-Permissions"));
+        pub_property_policy.properties().emplace_back(Property(
+                    "dds.sec.access.builtin.Access-Permissions.permissions_ca",
+                    "file://" + std::string(certs_path) + "/maincacert.pem"));
+        pub_property_policy.properties().emplace_back(Property("dds.sec.access.builtin.Access-Permissions.governance",
+                "file://" + std::string(certs_path) + "/" + governance_file));
+        pub_property_policy.properties().emplace_back(Property("dds.sec.access.builtin.Access-Permissions.permissions",
+                "file://" + std::string(certs_path) + "/" + permissions_file));
+
+        PubSubParticipant<HelloWorldType> publishers(3u, 0u, 9u, 0u);
+        publishers.property_policy(pub_property_policy)
+                .pub_topic_name("HelloWorldTopic");
+        ASSERT_TRUE(publishers.init_participant());
+
+        // Initializing two publishers in the same participant
+        ASSERT_TRUE(publishers.init_publisher(0u));
+        ASSERT_TRUE(publishers.init_publisher(1u));
+
+        PropertyPolicy sub_property_policy;
+        sub_property_policy.properties().emplace_back(Property("dds.sec.auth.plugin",
+                "builtin.PKI-DH"));
+        sub_property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.identity_ca",
+                "file://" + std::string(certs_path) + "/maincacert.pem"));
+        sub_property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.identity_certificate",
+                "file://" + std::string(certs_path) + "/mainsubcert.pem"));
+        sub_property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.private_key",
+                "file://" + std::string(certs_path) + "/mainsubkey.pem"));
+        sub_property_policy.properties().emplace_back(Property("dds.sec.crypto.plugin",
+                "builtin.AES-GCM-GMAC"));
+        sub_property_policy.properties().emplace_back(Property("dds.sec.access.plugin",
+                "builtin.Access-Permissions"));
+        sub_property_policy.properties().emplace_back(Property(
+                    "dds.sec.access.builtin.Access-Permissions.permissions_ca",
+                    "file://" + std::string(certs_path) + "/maincacert.pem"));
+        sub_property_policy.properties().emplace_back(Property("dds.sec.access.builtin.Access-Permissions.governance",
+                "file://" + std::string(certs_path) + "/" + governance_file));
+        sub_property_policy.properties().emplace_back(Property("dds.sec.access.builtin.Access-Permissions.permissions",
+                "file://" + std::string(certs_path) + "/" + permissions_file));
+
+        PubSubParticipant<HelloWorldType> subscribers(0u, 3u, 0u, 9u);
+        subscribers.property_policy(sub_property_policy)
+                .sub_topic_name("HelloWorldTopic");
+        ASSERT_TRUE(subscribers.init_participant());
+
+        // Initializing two subscribers in the same participant
+        ASSERT_TRUE(subscribers.init_subscriber(0u));
+        ASSERT_TRUE(subscribers.init_subscriber(1u));
+
+        // Wait for discovery: 2 subs x 2 pubs
+        publishers.pub_wait_discovery(4u);
+        subscribers.sub_wait_discovery(4u);
+
+        // Initializing one late joiner in the participants
+        ASSERT_TRUE(subscribers.init_subscriber(2u));
+        ASSERT_TRUE(publishers.init_publisher(2u));
+
+        // Wait for discovery: 3 subs x 3 pubs
+        publishers.pub_wait_discovery();
+        subscribers.sub_wait_discovery();
     }
 }
 
