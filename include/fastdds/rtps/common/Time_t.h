@@ -354,8 +354,43 @@ inline std::ostream& operator<<(
         std::ostream& output,
         const Time_t& t)
 {
-    long double t_aux = t.seconds() + (((long double)t.nanosec()) / 1000000000ULL);
-    return output << t_aux;
+    return output << t.seconds() << "." << t.nanosec();
+}
+
+inline std::istream& operator>>(
+        std::istream& input,
+        Time_t& t)
+{
+    std::istream::sentry s(input);
+
+    if (s)
+    {
+        char point;
+        int32_t sec;
+        int32_t nano;
+        std::ios_base::iostate excp_mask = input.exceptions();
+
+        try
+        {
+            input.exceptions(excp_mask | std::ios_base::failbit | std::ios_base::badbit);
+
+            input >> sec;
+            input >> point >> nano;
+            // nano could not be bigger than 1 sec
+            if ( point != '.' || nano > 1000000000 )
+            {
+                input.setstate(std::ios_base::failbit);
+            }   
+        }
+        catch (std::ios_base::failure& ){}
+
+        t.seconds(sec);
+        t.nanosec(nano);
+
+        input.exceptions(excp_mask);
+    }
+
+    return input;
 }
 
 /**

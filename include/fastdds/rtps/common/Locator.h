@@ -187,6 +187,7 @@ inline bool operator!=(const Locator_t&loc1, const Locator_t& loc2)
 
 inline std::ostream& operator<<(std::ostream& output, const Locator_t& loc)
 {
+    output << loc.kind << ":";
     if (loc.kind == LOCATOR_KIND_UDPv4 || loc.kind == LOCATOR_KIND_TCPv4)
     {
         output << (int)loc.address[12] << "." << (int)loc.address[13]
@@ -207,15 +208,88 @@ inline std::ostream& operator<<(std::ostream& output, const Locator_t& loc)
     {
         if (loc.address[0] == 'M')
         {
-            output << "SHM:M" << loc.port;
+            output << "SHM:M:" << loc.port;
         }
         else
         {
-            output << "SHM:" << loc.port;
+            output << "SHM::" << loc.port;
         }
     }
 
     return output;
+}
+
+inline std::istream& operator>>(
+        std::istream& input,
+        Locator_t& loc)
+{
+    std::istream::sentry s(input);
+
+    if (s)
+    {
+        char punctuation;
+        unsigned short kind;
+        unsigned short value;
+        std::ios_base::iostate excp_mask = input.exceptions();
+
+        try
+        {
+            input.exceptions(excp_mask | std::ios_base::failbit | std::ios_base::badbit);
+
+            input >> kind >> punctuation;
+            loc.kind = kind;
+
+            if (kind == LOCATOR_KIND_SHM)
+            {
+                // ignore till second :
+                input.ignore(16, ':');
+                punctuation = input.get();
+                if (punctuation == 'M')
+                {
+                    loc.address[0] = 'M';
+                    punctuation = input.get();
+                }
+            }
+            else if (kind == LOCATOR_KIND_UDPv4 || kind == LOCATOR_KIND_TCPv4)
+            {
+                input >> std::hex;
+                for (int i = 12; i < 16; ++i)
+                {
+                    input >> value >> punctuation;
+                    if ( punctuation != '.' || value > 255 )
+                    {
+                        input.setstate(std::ios_base::failbit);
+                    }
+                    loc.address[i] = static_cast<octet>(value);
+                }
+            }
+            else if (kind == LOCATOR_KIND_UDPv6 || kind == LOCATOR_KIND_TCPv6)
+            {
+                input >> std::hex;
+                for (int i = 0; i < 16; ++i)
+                {
+                    input >> value >> punctuation;
+                    if ( punctuation != '.' || value > 255 )
+                    {
+                        input.setstate(std::ios_base::failbit);
+                    }
+                    loc.address[i] = static_cast<octet>(value);
+                }
+            }
+            else{
+                input.setstate(std::ios_base::failbit);
+            }
+
+            input >> std::dec;
+            input >> value;
+            loc.port = value;
+        }
+        catch (std::ios_base::failure& ){}
+
+        input.exceptions(excp_mask);
+    }
+
+    return input;
 }
 
 typedef std::vector<Locator_t>::iterator LocatorListIterator;
@@ -456,6 +530,41 @@ inline std::ostream& operator<<(std::ostream& output, const LocatorList_t& locLi
         output << *it << ",";
     }
     return output;
+}
+
+inline std::istream& operator>>(std::istream& input, LocatorList_t& locList)
+{
+    std::istream::sentry s(input);
+
+    if (s)
+    {
+        char coma;
+        Locator_t l;
+        std::ios_base::iostate excp_mask = input.exceptions();
+
+        try
+        {
+            input.exceptions(excp_mask | std::ios_base::failbit | std::ios_base::badbit);
+            
+            input >> l;
+            locList.push_back(l);
+
+            for (int i = 1; i < 12; ++i)
+            {
+                input >> coma >> l;
+                if ( coma != ',' )
+                {
+                    input.setstate(std::ios_base::failbit);
+                }
+                locList.push_back(l);
+            }
+        }
+        catch (std::ios_base::failure& ){}
+
+        input.exceptions(excp_mask);
+    }
+
+    return input;
 }
 
 }
