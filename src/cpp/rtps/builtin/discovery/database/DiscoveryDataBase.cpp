@@ -477,9 +477,6 @@ bool DiscoveryDataBase::process_edp_data_queue()
                                                                 << change->instanceHandle);
                 create_readers_from_change_(change, topic_name);
             }
-
-            // Update set of dirty_topics
-            set_dirty_topic_(topic_name);
         }
         // If the change is a DATA(Uw|Ur)
         else
@@ -732,6 +729,8 @@ void DiscoveryDataBase::create_writers_from_change_(
                 match_writer_reader_(writer_guid, reader);
             }
         }
+        // Update set of dirty_topics
+        set_dirty_topic_(topic_name);
     }
 }
 
@@ -836,6 +835,8 @@ void DiscoveryDataBase::create_readers_from_change_(
                 match_writer_reader_(writer, reader_guid);
             }
         }
+        // Update set of dirty_topics
+        set_dirty_topic_(topic_name);
     }
 }
 
@@ -992,6 +993,8 @@ void DiscoveryDataBase::match_writer_reader_(
 bool DiscoveryDataBase::set_dirty_topic_(
         std::string topic)
 {
+    logInfo(DISCOVERY_DATABASE, "Setting topic " << topic << " as dirty");
+
     // If topic is virtual, we need to set as dirty all the other (non-virtual) topics
     if (topic == virtual_topic_)
     {
@@ -1016,7 +1019,6 @@ bool DiscoveryDataBase::set_dirty_topic_(
                     dirty_topics_.end(),
                     topic) == dirty_topics_.end())
         {
-            logInfo(DISCOVERY_DATABASE, "Setting topic " << topic << " as dirty");
             dirty_topics_.push_back(topic);
             return true;
         }
@@ -1776,13 +1778,9 @@ void DiscoveryDataBase::add_writer_to_topic_(
                 it_topics != writers_by_topic_.end();
                 ++it_topics)
         {
-            std::vector<eprosima::fastrtps::rtps::GUID_t>::iterator writer_by_topic_it =
-                    std::find(it_topics->second.begin(), it_topics->second.end(), writer_guid);
-            if (writer_by_topic_it == it_topics->second.end())
-            {
-                logInfo(DISCOVERY_DATABASE, "New writer " << writer_guid << " in writers_by_topic: " << topic_name);
-                it_topics->second.push_back(writer_guid);
-            }
+            // always add writer because it is new entity
+            logInfo(DISCOVERY_DATABASE, "New virtual writer " << writer_guid << " in writers_by_topic: " << it_topics->first);
+            it_topics->second.push_back(writer_guid);
         }
         return; // the writer has been added already, avoid try to add it again
     }
@@ -1817,13 +1815,9 @@ void DiscoveryDataBase::add_reader_to_topic_(
                 it_topics != readers_by_topic_.end();
                 ++it_topics)
         {
-            std::vector<eprosima::fastrtps::rtps::GUID_t>::iterator reader_by_topic_it =
-                    std::find(it_topics->second.begin(), it_topics->second.end(), reader_guid);
-            if (reader_by_topic_it == it_topics->second.end())
-            {
-                logInfo(DISCOVERY_DATABASE, "New reader " << reader_guid << " in readers_by_topic: " << topic_name);
-                it_topics->second.push_back(reader_guid);
-            }
+            // always add reader because it is new entity
+            logInfo(DISCOVERY_DATABASE, "New virtual reader " << reader_guid << " in readers_by_topic: " << it_topics->first);
+            it_topics->second.push_back(reader_guid);
         }
         return; // the reader has been added already, avoid try to add it again
     }
