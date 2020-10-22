@@ -27,28 +27,17 @@ namespace dds {
 class StdoutErrConsumer : public OStreamConsumer
 {
 public:
+
     StdoutErrConsumer() = default;
 
-    virtual ~StdoutErrConsumer() {}
+    virtual ~StdoutErrConsumer()
+    {
+    }
 
     void stderr_threshold(
             const Log::Kind& kind)
     {
         (void)kind;
-    }
-
-    std::ostream& get_stream(
-                const Log::Entry& entry)
-    {
-        // If Log::Kind is stderr_threshold_ or more severe, then use STDERR, else use STDOUT
-        if (entry.kind <= STDERR_THRESHOLD_DEFAULT)
-        {
-            return std::cerr;
-        }
-        else
-        {
-            return std::cout;
-        }
     }
 
     static const Log::Kind STDERR_THRESHOLD_DEFAULT = Log::Kind::Warning;
