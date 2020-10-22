@@ -45,27 +45,11 @@ FileConsumer::~FileConsumer()
     file_.close();
 }
 
-void FileConsumer::Consume(
+std::ostream& FileConsumer::get_stream(
         const Log::Entry& entry)
 {
-    print_header(entry);
-    print_message(file_, entry, false);
-    print_context(entry);
-    print_new_line(file_, false);
-    file_.flush();
-}
-
-void FileConsumer::print_header(
-        const Log::Entry& entry)
-{
-    print_timestamp(file_, entry, false);
-    LogConsumer::print_header(file_, entry, false);
-}
-
-void FileConsumer::print_context(
-        const Log::Entry& entry)
-{
-    LogConsumer::print_context(file_, entry, false);
+    (void) entry;
+    return file_;
 }
 
 } // Namespace dds
