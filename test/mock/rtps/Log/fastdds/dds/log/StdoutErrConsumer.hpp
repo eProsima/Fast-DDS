@@ -30,9 +30,7 @@ public:
 
     StdoutErrConsumer() = default;
 
-    virtual ~StdoutErrConsumer()
-    {
-    }
+    virtual ~StdoutErrConsumer() = default;
 
     void stderr_threshold(
             const Log::Kind& kind)

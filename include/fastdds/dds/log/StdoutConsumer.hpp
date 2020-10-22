@@ -26,9 +26,7 @@ class StdoutConsumer : public OStreamConsumer
 {
 public:
 
-    virtual ~StdoutConsumer()
-    {
-    }
+    virtual ~StdoutConsumer() = default;
 
 private:
 

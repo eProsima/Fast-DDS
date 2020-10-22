@@ -25,10 +25,7 @@ class StdoutConsumer : public LogConsumer
 {
 public:
 
-    virtual ~StdoutConsumer()
-    {
-    }
-
+    virtual ~StdoutConsumer() = default;
 };
 
 } // namespace dds

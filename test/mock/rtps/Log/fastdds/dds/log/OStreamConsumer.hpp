@@ -1,4 +1,4 @@
-// Copyright 2016 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+// Copyright 2020 Proyectos y Sistemas de Mantenimiento SL (eProsima).
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -21,10 +21,12 @@ namespace eprosima {
 namespace fastdds {
 namespace dds {
 
-    class OStreamConsumer : public LogConsumer {};
+class OStreamConsumer : public LogConsumer
+{
+};
 
 } // namespace dds
 } // namespace fastdds
 } // namespace eprosima
 
-#endif
+#endif // ifndef _FASTDDS_OSTREAM_CONSUMER_HPP_

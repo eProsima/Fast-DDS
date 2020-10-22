@@ -41,10 +41,7 @@ public:
     {
     }
 
-    virtual ~FileConsumer()
-    {
-    }
-
+    virtual ~FileConsumer() = default;
 };
 
 MATCHER(IsFileConsumer, "Argument is a FileConsumer object?")
