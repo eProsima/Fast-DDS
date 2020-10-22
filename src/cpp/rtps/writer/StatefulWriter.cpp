@@ -1832,9 +1832,10 @@ bool StatefulWriter::send_periodic_heartbeat(
 
 void StatefulWriter::send_heartbeat_to_nts(
         ReaderProxy& remoteReaderProxy,
-        bool liveliness)
+        bool liveliness,
+        bool force /* = false */)
 {
-    if (remoteReaderProxy.is_remote_and_reliable() && (liveliness || remoteReaderProxy.has_unacknowledged()))
+    if (remoteReaderProxy.is_remote_and_reliable() && (force || liveliness || remoteReaderProxy.has_unacknowledged()))
     {
         try
         {
@@ -2012,7 +2013,7 @@ bool StatefulWriter::process_acknack(
                             else
                             {
                                 // Send heartbeat if requested
-                                send_heartbeat_to_nts(*remote_reader);
+                                send_heartbeat_to_nts(*remote_reader, false, true);
                             }
                         }
 

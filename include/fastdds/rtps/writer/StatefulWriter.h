@@ -274,7 +274,8 @@ public:
      */
     void send_heartbeat_to_nts(
             ReaderProxy& remoteReaderProxy,
-            bool liveliness = false);
+            bool liveliness = false,
+            bool force = false);
 
     void perform_nack_response();
 
