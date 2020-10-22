@@ -90,7 +90,7 @@ XMLP_ret XMLParser::parseXML(
         root.reset(new BaseNode{ NodeType::ROOT });
         tinyxml2::XMLElement* node = p_root->FirstChildElement();
         const char* tag = nullptr;
-        while ( (nullptr != node) && (ret == XMLP_ret::XML_OK))
+        while ((nullptr != node) && (ret == XMLP_ret::XML_OK))
         {
             if (nullptr != (tag = node->Value()))
             {
@@ -2826,7 +2826,7 @@ XMLP_ret XMLParser::parseXMLConsumer(
                             {
                                 // Continue with the next property if `stderr_threshold` had been already specified.
                                 logError(XMLParser, classStr << " only supports one occurrence of 'stderr_threshold'."
-                                        << " Only the first one is applied.")
+                                                             << " Only the first one is applied.")
                                 property = property->NextSiblingElement(PROPERTY);
                                 ret = XMLP_ret::XML_NOK;
                                 continue;
@@ -2852,7 +2852,7 @@ XMLP_ret XMLParser::parseXMLConsumer(
                                 else
                                 {
                                     logError(XMLParser, "Unkown Log::Kind '" << threshold_str
-                                            << "'. Using default threshold.")
+                                                                             << "'. Using default threshold.")
                                     ret = XMLP_ret::XML_NOK;
                                 }
                             }
@@ -2860,7 +2860,7 @@ XMLP_ret XMLParser::parseXMLConsumer(
                         else
                         {
                             logError(XMLParser, "Unkown property value '" << s << "' in " << classStr
-                                    << " log consumer");
+                                                                          << " log consumer");
                             ret = XMLP_ret::XML_NOK;
                         }
                     }

@@ -31,7 +31,7 @@ Log::Kind StdoutErrConsumer::stderr_threshold() const
 }
 
 std::ostream& StdoutErrConsumer::get_stream(
-            const Log::Entry& entry)
+        const Log::Entry& entry)
 {
     // If Log::Kind is stderr_threshold_ or more severe, then use STDERR, else use STDOUT
     if (entry.kind <= stderr_threshold_)

@@ -156,7 +156,7 @@ private:
     struct Resources
     {
         fastrtps::DBQueue<Entry> logs;
-        std::vector<std::unique_ptr<LogConsumer> > consumers;
+        std::vector<std::unique_ptr<LogConsumer>> consumers;
         std::unique_ptr<std::thread> logging_thread;
 
         // Condition variable segment.
@@ -236,7 +236,7 @@ protected:
 
 #if defined(WIN32)
 #define __func__ __FUNCTION__
-#endif
+#endif // if defined(WIN32)
 
 #ifndef LOG_NO_ERROR
 #define logError_(cat, msg)                                                                          \
@@ -258,7 +258,7 @@ protected:
     }
 #else
 #define logError_(cat, msg)
-#endif
+#endif // ifndef LOG_NO_ERROR
 
 #ifndef LOG_NO_WARNING
 #define logWarning_(cat, msg)                                                                              \
@@ -283,7 +283,7 @@ protected:
     }
 #else
 #define logWarning_(cat, msg)
-#endif
+#endif // ifndef LOG_NO_WARNING
 
 #if (defined(__INTERNALDEBUG) || defined(_INTERNALDEBUG)) && (defined(_DEBUG) || defined(__DEBUG)) && \
     (!defined(LOG_NO_INFO))
@@ -309,10 +309,10 @@ protected:
     }
 #else
 #define logInfo_(cat, msg)
-#endif
+#endif // if (defined(__INTERNALDEBUG) || defined(_INTERNALDEBUG)) && (defined(_DEBUG) || defined(__DEBUG)) && (!defined(LOG_NO_INFO))
 
 } // namespace dds
 } // namespace fastdds
 } // namespace eprosima
 
-#endif
+#endif // ifndef _FASTDDS_LOG_LOG_HPP_

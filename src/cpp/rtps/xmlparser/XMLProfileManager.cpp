@@ -506,7 +506,7 @@ XMLP_ret XMLProfileManager::extractParticipantProfile(
     if (it != node_part->getAttributes().end() && it->second == "true") // Set as default profile
     {
         // +V+ TODO: LOG ERROR IN SECOND ATTEMPT
-        default_participant_attributes = *(emplace.first->second.get() );
+        default_participant_attributes = *(emplace.first->second.get());
     }
     return XMLP_ret::XML_OK;
 }
@@ -539,7 +539,7 @@ XMLP_ret XMLProfileManager::extractPublisherProfile(
     if (it != node_part->getAttributes().end() && it->second == "true") // Set as default profile
     {
         // +V+ TODO: LOG ERROR IN SECOND ATTEMPT
-        default_publisher_attributes = *(emplace.first->second.get() );
+        default_publisher_attributes = *(emplace.first->second.get());
     }
     return XMLP_ret::XML_OK;
 }
@@ -572,7 +572,7 @@ XMLP_ret XMLProfileManager::extractSubscriberProfile(
     if (it != node_part->getAttributes().end() && it->second == "true") // Set as default profile
     {
         // +V+ TODO: LOG ERROR IN SECOND ATTEMPT
-        default_subscriber_attributes = *(emplace.first->second.get() );
+        default_subscriber_attributes = *(emplace.first->second.get());
     }
     return XMLP_ret::XML_OK;
 }

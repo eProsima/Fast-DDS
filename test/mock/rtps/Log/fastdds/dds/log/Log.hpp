@@ -24,20 +24,26 @@
  * eProsima log mock.
  */
 
-#define logInfo(cat,msg)                                                                                \
+#define logInfo(cat, msg)                                                                                \
     {                                                                                                   \
         NulStreambuf null_buffer;                                                                       \
         std::ostream null_stream(&null_buffer);                                                         \
         null_stream << msg;                                                                             \
     }
 
-#define logWarning(cat,msg) logInfo(cat,msg)
-#define logError(cat,msg) logInfo(cat,msg)
+#define logWarning(cat, msg) logInfo(cat, msg)
+#define logError(cat, msg) logInfo(cat, msg)
 
 class NulStreambuf : public std::streambuf
 {
 protected:
-    int overflow(int c) { return c; }
+
+    int overflow(
+            int c)
+    {
+        return c;
+    }
+
 };
 
 namespace eprosima {
@@ -46,42 +52,53 @@ namespace dds {
 
 class LogConsumer
 {
-    public:
+public:
 
-        virtual ~LogConsumer() = default;
+    virtual ~LogConsumer() = default;
 };
 
 class Log
 {
-    public:
-        enum Kind
-        {
-            Error,
-            Warning,
-            Info,
-        };
+public:
 
-        static std::function<void(std::unique_ptr<LogConsumer>&&)> RegisterConsumerFunc;
-        static void RegisterConsumer(std::unique_ptr<LogConsumer>&& c) { RegisterConsumerFunc(std::move(c)); }
+    enum Kind
+    {
+        Error,
+        Warning,
+        Info,
+    };
 
-        static std::function<void()> ClearConsumersFunc;
-        static void ClearConsumers() { ClearConsumersFunc(); }
+    static std::function<void(std::unique_ptr<LogConsumer>&&)> RegisterConsumerFunc;
+    static void RegisterConsumer(
+            std::unique_ptr<LogConsumer>&& c)
+    {
+        RegisterConsumerFunc(std::move(c));
+    }
+
+    static std::function<void()> ClearConsumersFunc;
+    static void ClearConsumers()
+    {
+        ClearConsumersFunc();
+    }
+
 };
 
 using ::testing::_;
 using ::testing::Invoke;
 class LogMock
 {
-    public:
-        // r-value support for mocked function.
-        void RegisterConsumer(std::unique_ptr<LogConsumer>&& p)
-        {
-            RegisterConsumer(p);
-        }
+public:
 
-        MOCK_METHOD1(RegisterConsumer, void(std::unique_ptr<LogConsumer>&));
+    // r-value support for mocked function.
+    void RegisterConsumer(
+            std::unique_ptr<LogConsumer>&& p)
+    {
+        RegisterConsumer(p);
+    }
 
-        MOCK_METHOD0(ClearConsumers, void());
+    MOCK_METHOD1(RegisterConsumer, void(std::unique_ptr<LogConsumer>&));
+
+    MOCK_METHOD0(ClearConsumers, void());
 };
 
 } // namespace dds

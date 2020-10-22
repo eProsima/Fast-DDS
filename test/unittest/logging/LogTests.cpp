@@ -321,7 +321,7 @@ TEST_F(LogTests, validate_multithread_flush_calls)
                     logWarning(flush_ckecks,
                     "I'm thread " << this_thread::get_id() << " Flushing successful, consumed: "
                                   << consumed << " commited till flush " <<
-                    commited_before_flush);
+                        commited_before_flush);
 
                 }));
     }

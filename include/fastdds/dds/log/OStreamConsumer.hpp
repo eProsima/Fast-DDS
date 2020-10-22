@@ -55,4 +55,4 @@ protected:
 } // namespace fastdds
 } // namespace eprosima
 
-#endif
+#endif // ifndef _FASTDDS_OSTREAM_CONSUMER_HPP_
