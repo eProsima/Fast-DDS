@@ -64,6 +64,7 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
 
     set(LIVELINESSMANAGERTESTS_SOURCE LivelinessManagerTests.cpp
           ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/Log.cpp
+          ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/OStreamConsumer.cpp
           ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/StdoutConsumer.cpp
           ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/StdoutErrConsumer.cpp
           ${PROJECT_SOURCE_DIR}/src/cpp/rtps/writer/LivelinessManager.cpp
