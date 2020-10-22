@@ -12,8 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef _FASTDDS_OSTREAM_CONSUMER_HPP_
-#define _FASTDDS_OSTREAM_CONSUMER_HPP_
+#ifndef _FASTDDS_DDS_LOG_OSTREAMCONSUMER_HPP_
+#define _FASTDDS_DDS_LOG_OSTREAMCONSUMER_HPP_
 
 #include <fastdds/dds/log/Log.hpp>
 
@@ -29,4 +29,4 @@ class OStreamConsumer : public LogConsumer
 } // namespace fastdds
 } // namespace eprosima
 
-#endif // ifndef _FASTDDS_OSTREAM_CONSUMER_HPP_
+#endif // ifndef _FASTDDS_DDS_LOG_OSTREAMCONSUMER_HPP_

@@ -12,8 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 //
-#ifndef _FASTDDS_LOG_LOG_HPP_
-#define _FASTDDS_LOG_LOG_HPP_
+#ifndef _FASTDDS_DDS_LOG_LOG_HPP_
+#define _FASTDDS_DDS_LOG_LOG_HPP_
 
 #include <fastrtps/utils/DBQueue.h>
 #include <fastrtps/fastrtps_dll.h>
@@ -315,4 +315,4 @@ protected:
 } // namespace fastdds
 } // namespace eprosima
 
-#endif // ifndef _FASTDDS_LOG_LOG_HPP_
+#endif // ifndef _FASTDDS_DDS_LOG_LOG_HPP_
