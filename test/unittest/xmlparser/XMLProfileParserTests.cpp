@@ -13,6 +13,7 @@
 // limitations under the License.
 
 #include <fastdds/dds/log/Log.hpp>
+#include <fastdds/dds/log/OStreamConsumer.hpp>
 #include <fastdds/dds/log/FileConsumer.hpp>
 #include <fastdds/dds/log/StdoutErrConsumer.hpp>
 #include <fastrtps/xmlparser/XMLProfileManager.h>
@@ -692,12 +693,12 @@ TEST_F(XMLProfileParserTests, log_inactive)
 }
 
 /*
-* This test registers a StdoutErrConsumer using XML and setting the `use_default` flag to FALSE. Furthermore, it sets
-* a `stderr_threshold` to`Log::Kind::Error` using a property `stderr_threshold`. The test checks that:
-*    1. `ClearConsumers()` is called (because `use_default` is set to FALSE).
-*    2. `RegisterConsumer()` is called, meaning a `StdoutErrConsumer` was registered.
-*    3. The return code of `loadXMLFile` is `XMLP_ret::XML_OK`, meaning that the property was correctly set.
-*/
+ * This test registers a StdoutErrConsumer using XML and setting the `use_default` flag to FALSE. Furthermore, it sets
+ * a `stderr_threshold` to`Log::Kind::Error` using a property `stderr_threshold`. The test checks that:
+ *    1. `ClearConsumers()` is called (because `use_default` is set to FALSE).
+ *    2. `RegisterConsumer()` is called, meaning a `StdoutErrConsumer` was registered.
+ *    3. The return code of `loadXMLFile` is `XMLP_ret::XML_OK`, meaning that the property was correctly set.
+ */
 TEST_F(XMLProfileParserTests, log_register_stdouterr)
 {
     using namespace eprosima::fastdds::dds;
@@ -709,13 +710,13 @@ TEST_F(XMLProfileParserTests, log_register_stdouterr)
 }
 
 /*
-* This test registers a StdoutErrConsumer using XML and setting the `use_default` flag to FALSE. Furthermore, it
-* attempts to set a `stderr_threshold` to`Log::Kind::Error` using a property `threshold` (which is not the correct
-* property name). The test checks that:
-*    1. `ClearConsumers()` is called (because `use_default` is set to FALSE).
-*    2. `RegisterConsumer()` is called, meaning a `StdoutErrConsumer` was registered.
-*    3. The return code of `loadXMLFile` is `XMLP_ret::XML_ERROR`, meaning that the property was NOT correctly set.
-*/
+ * This test registers a StdoutErrConsumer using XML and setting the `use_default` flag to FALSE. Furthermore, it
+ * attempts to set a `stderr_threshold` to`Log::Kind::Error` using a property `threshold` (which is not the correct
+ * property name). The test checks that:
+ *    1. `ClearConsumers()` is called (because `use_default` is set to FALSE).
+ *    2. `RegisterConsumer()` is called, meaning a `StdoutErrConsumer` was registered.
+ *    3. The return code of `loadXMLFile` is `XMLP_ret::XML_ERROR`, meaning that the property was NOT correctly set.
+ */
 TEST_F(XMLProfileParserTests, log_register_stdouterr_wrong_property_name)
 {
     using namespace eprosima::fastdds::dds;
@@ -723,18 +724,18 @@ TEST_F(XMLProfileParserTests, log_register_stdouterr_wrong_property_name)
     EXPECT_CALL(*log_mock, ClearConsumers()).Times(1);
     EXPECT_CALL(*log_mock, RegisterConsumer(IsStdoutErrConsumer())).Times(1);
     eprosima::fastrtps::xmlparser::XMLP_ret ret = xmlparser::XMLProfileManager::loadXMLFile(
-            "log_stdouterr_wrong_property_name.xml");
+        "log_stdouterr_wrong_property_name.xml");
     ASSERT_EQ(eprosima::fastrtps::xmlparser::XMLP_ret::XML_ERROR, ret);
 }
 
 /*
-* This test registers a StdoutErrConsumer using XML and setting the `use_default` flag to FALSE. Furthermore, it
-* attempts to set a `stderr_threshold` to`Log::Kind::Error` using a property `stderr_threshold` with value `Error`
-* (which is not a correct property value). The test checks that:
-*    1. `ClearConsumers()` is called (because `use_default` is set to FALSE).
-*    2. `RegisterConsumer()` is called, meaning a `StdoutErrConsumer` was registered.
-*    3. The return code of `loadXMLFile` is `XMLP_ret::XML_ERROR`, meaning that the property was NOT correctly set.
-*/
+ * This test registers a StdoutErrConsumer using XML and setting the `use_default` flag to FALSE. Furthermore, it
+ * attempts to set a `stderr_threshold` to`Log::Kind::Error` using a property `stderr_threshold` with value `Error`
+ * (which is not a correct property value). The test checks that:
+ *    1. `ClearConsumers()` is called (because `use_default` is set to FALSE).
+ *    2. `RegisterConsumer()` is called, meaning a `StdoutErrConsumer` was registered.
+ *    3. The return code of `loadXMLFile` is `XMLP_ret::XML_ERROR`, meaning that the property was NOT correctly set.
+ */
 TEST_F(XMLProfileParserTests, log_register_stdouterr_wrong_property_value)
 {
     using namespace eprosima::fastdds::dds;
@@ -742,21 +743,21 @@ TEST_F(XMLProfileParserTests, log_register_stdouterr_wrong_property_value)
     EXPECT_CALL(*log_mock, ClearConsumers()).Times(1);
     EXPECT_CALL(*log_mock, RegisterConsumer(IsStdoutErrConsumer())).Times(1);
     eprosima::fastrtps::xmlparser::XMLP_ret ret = xmlparser::XMLProfileManager::loadXMLFile(
-            "log_stdouterr_wrong_property_value.xml");
+        "log_stdouterr_wrong_property_value.xml");
     ASSERT_EQ(eprosima::fastrtps::xmlparser::XMLP_ret::XML_ERROR, ret);
 }
 
 /*
-* This test registers a StdoutErrConsumer using XML and setting the `use_default` flag to FALSE. Furthermore, it
-* attempts to set a `stderr_threshold` to`Log::Kind::Error` using two properties `stderr_threshold` with different
-* values. However, this operation is not permited, since only one property with name `` can be present.
-* The test checks that:
-*    1. `ClearConsumers()` is called (because `use_default` is set to FALSE).
-*    2. `RegisterConsumer()` is called, meaning a `StdoutErrConsumer` was registered.
-*    3. The return code of `loadXMLFile` is `XMLP_ret::XML_ERROR`, meaning that the property was NOT correctly set. In
-*       this case, the first `stderr_threshold` property will be used, but the function will warn of an incorrect XML
-*       configuration.
-*/
+ * This test registers a StdoutErrConsumer using XML and setting the `use_default` flag to FALSE. Furthermore, it
+ * attempts to set a `stderr_threshold` to`Log::Kind::Error` using two properties `stderr_threshold` with different
+ * values. However, this operation is not permited, since only one property with name `` can be present.
+ * The test checks that:
+ *    1. `ClearConsumers()` is called (because `use_default` is set to FALSE).
+ *    2. `RegisterConsumer()` is called, meaning a `StdoutErrConsumer` was registered.
+ *    3. The return code of `loadXMLFile` is `XMLP_ret::XML_ERROR`, meaning that the property was NOT correctly set. In
+ *       this case, the first `stderr_threshold` property will be used, but the function will warn of an incorrect XML
+ *       configuration.
+ */
 TEST_F(XMLProfileParserTests, log_register_stdouterr_two_thresholds)
 {
     using namespace eprosima::fastdds::dds;
@@ -764,7 +765,7 @@ TEST_F(XMLProfileParserTests, log_register_stdouterr_two_thresholds)
     EXPECT_CALL(*log_mock, ClearConsumers()).Times(1);
     EXPECT_CALL(*log_mock, RegisterConsumer(IsStdoutErrConsumer())).Times(1);
     eprosima::fastrtps::xmlparser::XMLP_ret ret = xmlparser::XMLProfileManager::loadXMLFile(
-            "log_stdouterr_two_thresholds.xml");
+        "log_stdouterr_two_thresholds.xml");
     ASSERT_EQ(eprosima::fastrtps::xmlparser::XMLP_ret::XML_ERROR, ret);
 }
 
