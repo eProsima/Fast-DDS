@@ -91,6 +91,10 @@ void PDPClient::initializeParticipantProxyData(
         participant_data->m_availableBuiltinEndpoints |= DISC_BUILTIN_ENDPOINT_SUBSCRIPTION_ANNOUNCER;
     }
 
+    // Set participant type and discovery server version properties
+    participant_data->m_properties.push_back(std::pair<std::string, std::string>({"PARTICIPANT_TYPE", "CLIENT"}));
+    participant_data->m_properties.push_back(std::pair<std::string, std::string>({"DS_VERSION", "2.0"}));
+
     //#if HAVE_SECURITY
     //    if (getRTPSParticipant()->getAttributes().builtin.discovery_config.m_simpleEDP
     //    .enable_builtin_secure_publications_writer_and_subscriptions_reader)
