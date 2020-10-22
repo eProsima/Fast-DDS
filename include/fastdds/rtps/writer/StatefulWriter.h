@@ -172,7 +172,7 @@ public:
     {
         // we cannot directly pass iterators neither const_iterators to matched_readers_ because then the functor would
         // be able to modify ReaderProxy elements
-        for( const ReaderProxy* rp : matched_readers_ )
+        for ( const ReaderProxy* rp : matched_readers_ )
         {
             f(rp);
         }

@@ -465,7 +465,8 @@ bool StatefulWriter::intraprocess_heartbeat(
             }
         }
 
-        if ((first_seq != c_SequenceNumber_Unknown && last_seq != c_SequenceNumber_Unknown) && (liveliness || reader_proxy->has_changes()))
+        if ((first_seq != c_SequenceNumber_Unknown && last_seq != c_SequenceNumber_Unknown) &&
+                (liveliness || reader_proxy->has_changes()))
         {
             incrementHBCount();
             if (true == (returned_value =
