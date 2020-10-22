@@ -21,10 +21,18 @@ namespace eprosima {
 namespace fastdds {
 namespace dds {
 
-    class StdoutConsumer : public LogConsumer {};
+class StdoutConsumer : public LogConsumer
+{
+public:
+
+    virtual ~StdoutConsumer()
+    {
+    }
+
+};
 
 } // namespace dds
 } // namespace fastdds
 } // namespace eprosima
 
-#endif
+#endif // ifndef _FASTDDS_STDOUT_CONSUMER_HPP_
