@@ -131,7 +131,7 @@ public:
         return m_changes.size();
     }
 
-     /**
+    /**
      * Find a specific change in the history using the matches_change method criteria.
      * No Thread Safe
      * @param ch Pointer to the CacheChange_t to search for.

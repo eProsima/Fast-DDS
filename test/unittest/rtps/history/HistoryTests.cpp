@@ -23,7 +23,7 @@ using namespace eprosima::fastrtps::rtps;
 using namespace ::testing;
 using namespace std;
 
-class HistoryTests : public TestWithParam<tuple<int32_t, int32_t, uint32_t, MemoryManagementPolicy_t> >
+class HistoryTests : public TestWithParam<tuple<int32_t, int32_t, uint32_t, MemoryManagementPolicy_t>>
 {
 protected:
 
@@ -43,14 +43,14 @@ protected:
         }
 
         bool matches_change(
-            const CacheChange_t* ch_inner,
-            CacheChange_t* ch_outer) override
+                const CacheChange_t* ch_inner,
+                CacheChange_t* ch_outer) override
         {
             // plainly pointer comparisson
             return ch_inner == ch_outer;
         }
 
-   private:
+    private:
 
         eprosima::fastrtps::RecursiveTimedMutex mutex_;
     };

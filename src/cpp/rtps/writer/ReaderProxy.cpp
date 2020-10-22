@@ -271,7 +271,6 @@ SequenceNumber_t ReaderProxy::first_relevant_sequence_number() const
     return changes_for_reader_.front().getSequenceNumber();
 }
 
-
 bool ReaderProxy::change_is_unsent(
         const SequenceNumber_t& seq_num,
         bool& is_irrelevant) const
