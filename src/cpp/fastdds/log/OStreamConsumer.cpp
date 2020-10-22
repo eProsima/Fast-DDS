@@ -27,6 +27,7 @@ void OStreamConsumer::Consume(
     print_message(stream, entry, true);
     print_context(stream, entry, true);
     print_new_line(stream, true);
+    stream.flush();
 }
 
 } // Namespace dds
