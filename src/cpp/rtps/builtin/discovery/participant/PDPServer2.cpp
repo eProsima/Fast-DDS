@@ -302,6 +302,10 @@ void PDPServer2::initializeParticipantProxyData(
     {
         logWarning(RTPS_PDP_SERVER, "SERVER or BACKUP PDP requires always all EDP endpoints creation.");
     }
+
+    // Set participant type and discovery server version properties
+    participant_data->m_properties.push_back(std::pair<std::string, std::string>({"PARTICIPANT_TYPE", "SERVER"}));
+    participant_data->m_properties.push_back(std::pair<std::string, std::string>({"DS_VERSION", "2.0"}));
 }
 
 void PDPServer2::assignRemoteEndpoints(
