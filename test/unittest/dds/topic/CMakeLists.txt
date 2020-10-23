@@ -37,7 +37,7 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include
             ${PROJECT_SOURCE_DIR}/src/cpp
             )
-        target_link_libraries(TopicTests fastrtps foonathan_memory
+        target_link_libraries(TopicTests fastrtps fastcdr foonathan_memory
             ${GTEST_LIBRARIES} ${GMOCK_LIBRARIES}
             ${CMAKE_THREAD_LIBS_INIT} ${CMAKE_DL_LIBS})
         add_gtest(TopicTests SOURCES ${TOPICTESTS_SOURCE})

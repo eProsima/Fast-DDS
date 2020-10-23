@@ -41,7 +41,7 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include
             ${PROJECT_SOURCE_DIR}/src/cpp
             )
-        target_link_libraries(PublisherTests fastrtps foonathan_memory
+        target_link_libraries(PublisherTests fastrtps fastcdr foonathan_memory
             ${GTEST_LIBRARIES} ${GMOCK_LIBRARIES}
             ${CMAKE_THREAD_LIBS_INIT} ${CMAKE_DL_LIBS})
         add_gtest(PublisherTests SOURCES ${PUBLISHERTESTS_SOURCE})
@@ -53,7 +53,7 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include
             ${PROJECT_SOURCE_DIR}/src/cpp
             )
-        target_link_libraries(DataWriterTests fastrtps foonathan_memory
+        target_link_libraries(DataWriterTests fastrtps fastcdr foonathan_memory
             ${GTEST_LIBRARIES} ${GMOCK_LIBRARIES}
             ${CMAKE_THREAD_LIBS_INIT} ${CMAKE_DL_LIBS})
         add_gtest(DataWriterTests SOURCES ${DATAWRITERTESTS_SOURCE})
