@@ -39,6 +39,18 @@ namespace rtps {
 
 class PDPServerListener2;
 
+/**
+ * Struct to define participant types to set participant type parameter property
+ *@ingroup DISCOVERY_MODULE
+ */
+struct ParticipantType
+{
+    static const char SIMPLE[];
+    static const char SERVER[];
+    static const char CLIENT[];
+    static const char BACKUP[];
+};
+
 } // namespace rtps
 } // namespace fastdds
 
