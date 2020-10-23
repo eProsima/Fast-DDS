@@ -88,7 +88,6 @@ struct RTPS_DllAPI GuidPrefix_t
 
 const GuidPrefix_t c_GuidPrefix_Unknown;
 
-
 inline std::ostream& operator <<(
         std::ostream& output,
         const GuidPrefix_t& guiP)

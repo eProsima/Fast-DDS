@@ -55,7 +55,9 @@ public:
      */
     PDPServer2(
             fastrtps::rtps::BuiltinProtocols* builtin,
-            const fastrtps::rtps::RTPSParticipantAllocationAttributes& allocation);
+            const fastrtps::rtps::RTPSParticipantAllocationAttributes& allocation,
+            fastrtps::rtps::DurabilityKind_t durability_kind = fastrtps::rtps::TRANSIENT_LOCAL);
+
     ~PDPServer2();
 
     void initializeParticipantProxyData(
@@ -129,7 +131,10 @@ public:
             const fastrtps::rtps::ParticipantProxyData& pdata) override;
 
     //! Get filename for persistence database file
-    std::string get_persistence_file_name() const;
+    std::string get_writer_persistence_file_name() const;
+
+    //! Get filename for discovery database file
+    std::string get_ddb_persistence_file_name() const;
 
     /*
      * Wakes up the DServerRoutineEvent2 for new matching or trimming
@@ -220,7 +225,11 @@ protected:
 
     void process_discovery_database_backup_() const;
 
+    bool process_discovery_database_restore_();
+
     std::vector<fastrtps::rtps::GuidPrefix_t> servers_prefixes();
+
+    std::ostringstream get_persistence_file_name_() const;
 
 private:
 
@@ -237,9 +246,11 @@ private:
      */
     DServerPingEvent2* ping_;
 
-
     //! Discovery database
     fastdds::rtps::ddb::DiscoveryDataBase discovery_db_;
+
+    //! TRANSIENT or TRANSIENT_LOCAL durability;
+    fastrtps::rtps::DurabilityKind_t _durability;
 
 };
 
