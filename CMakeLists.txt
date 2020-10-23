@@ -260,11 +260,7 @@ option(SQLITE3_SUPPORT "Activate SQLITE3 support" ON)
 ###############################################################################
 # SHM as Default transport
 ###############################################################################
-option(SHM_TRANSPORT_DEFAULT "Adds SHM transport to the default transports" OFF)
-
-if(EPROSIMA_BUILD AND NOT EPROSIMA_INSTALLER)
-    set(SHM_TRANSPORT_DEFAULT ON)
-endif()
+option(SHM_TRANSPORT_DEFAULT "Adds SHM transport to the default transports" ON)
 
 ###############################################################################
 # LogConsumer default setup
