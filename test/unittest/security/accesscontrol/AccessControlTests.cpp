@@ -116,10 +116,10 @@ void AccessControlTest::fill_subscriber_participant_security_attributes(
     fill_common_participant_security_attributes(participant_attr);
 
     participant_attr.properties.properties().
-    emplace_back(Property("dds.sec.auth.builtin.PKI-DH.identity_certificate",
+            emplace_back(Property("dds.sec.auth.builtin.PKI-DH.identity_certificate",
             "file://" + std::string(certs_path) + "/mainsubcert.pem"));
     participant_attr.properties.properties().
-    emplace_back(Property("dds.sec.auth.builtin.PKI-DH.private_key",
+            emplace_back(Property("dds.sec.auth.builtin.PKI-DH.private_key",
             "file://" + std::string(certs_path) + "/mainsubkey.pem"));
 }
 
@@ -129,10 +129,10 @@ void AccessControlTest::fill_publisher_participant_security_attributes(
     fill_common_participant_security_attributes(participant_attr);
 
     participant_attr.properties.properties().
-    emplace_back(Property("dds.sec.auth.builtin.PKI-DH.identity_certificate",
+            emplace_back(Property("dds.sec.auth.builtin.PKI-DH.identity_certificate",
             "file://" + std::string(certs_path) + "/mainpubcert.pem"));
     participant_attr.properties.properties().
-    emplace_back(Property("dds.sec.auth.builtin.PKI-DH.private_key",
+            emplace_back(Property("dds.sec.auth.builtin.PKI-DH.private_key",
             "file://" + std::string(certs_path) + "/mainpubkey.pem"));
 }
 
@@ -140,20 +140,20 @@ void AccessControlTest::fill_common_participant_security_attributes(
         RTPSParticipantAttributes& participant_attr)
 {
     participant_attr.properties.properties().
-    emplace_back(Property("dds.sec.auth.builtin.PKI-DH.identity_ca",
+            emplace_back(Property("dds.sec.auth.builtin.PKI-DH.identity_ca",
             "file://" + std::string(certs_path) + "/maincacert.pem"));
     participant_attr.properties.properties().
-    emplace_back(Property("dds.sec.auth.builtin.PKI-DH.password", "testkey"));
+            emplace_back(Property("dds.sec.auth.builtin.PKI-DH.password", "testkey"));
     participant_attr.properties.properties().
-    emplace_back(Property("dds.sec.access.authentication_plugin", "builtin.Access-Permissions"));
+            emplace_back(Property("dds.sec.access.authentication_plugin", "builtin.Access-Permissions"));
     participant_attr.properties.properties().
-    emplace_back(Property("dds.sec.access.builtin.Access-Permissions.permissions_ca",
+            emplace_back(Property("dds.sec.access.builtin.Access-Permissions.permissions_ca",
             "file://" + std::string(certs_path) + "/maincacert.pem"));
     participant_attr.properties.properties().
-    emplace_back(Property("dds.sec.access.builtin.Access-Permissions.governance",
+            emplace_back(Property("dds.sec.access.builtin.Access-Permissions.governance",
             "file://" + std::string(certs_path) + "/governance_helloworld_all_enable.smime"));
     participant_attr.properties.properties().
-    emplace_back(Property("dds.sec.access.builtin.Access-Permissions.permissions",
+            emplace_back(Property("dds.sec.access.builtin.Access-Permissions.permissions",
             "file://" + std::string(certs_path) + "/" + permissions_file));
 }
 
