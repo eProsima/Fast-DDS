@@ -122,7 +122,7 @@ int main (
 
     // Set up listening locators.
     // If the number of specify ports doesn't match the number of IPs the last port is used.
-    rtps::Locator_t locator(rtps::DEFAULT_ROS2_SERVER_PORT);
+    rtps::Locator_t locator(fastdds::rtps::DEFAULT_ROS2_SERVER_PORT);
     rtps::IPLocator::setIPv4(locator, 0, 0, 0, 0);
 
     option::Option* pO_port = options[PORT];

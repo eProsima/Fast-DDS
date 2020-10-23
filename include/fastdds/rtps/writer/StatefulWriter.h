@@ -58,6 +58,13 @@ protected:
             WriterHistory* hist,
             WriterListener* listen = nullptr);
 
+    virtual void print_inconsistent_acknack(
+            const GUID_t& writer_guid,
+            const GUID_t& reader_guid,
+            const SequenceNumber_t& min_requested_sequence_number,
+            const SequenceNumber_t& max_requested_sequence_number,
+            const SequenceNumber_t& next_sequence_number);
+
 private:
 
     //!Timed Event to manage the periodic HB to the Reader.

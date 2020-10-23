@@ -279,6 +279,8 @@ protected:
     //!Mutex for the History.
     RecursiveTimedMutex* mp_mutex;
 
+    void do_release_cache(
+            CacheChange_t* ch);
 };
 
 } /* namespace rtps     */

@@ -20,6 +20,7 @@
 #ifndef FASTRTPS_UTILS_FIXED_SIZE_BITMAP_HPP_
 #define FASTRTPS_UTILS_FIXED_SIZE_BITMAP_HPP_
 
+#include <cstdint>
 #include <array>
 #include <string.h>
 

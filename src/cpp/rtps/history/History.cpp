@@ -47,6 +47,12 @@ History::~History()
     logInfo(RTPS_HISTORY, "");
 }
 
+void History::do_release_cache(
+        CacheChange_t* ch)
+{
+    m_changePool.release_Cache(ch);
+}
+
 History::const_iterator History::find_change_nts(
         CacheChange_t* ch)
 {
