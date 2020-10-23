@@ -304,8 +304,11 @@ void PDPServer2::initializeParticipantProxyData(
     }
 
     // Set participant type and discovery server version properties
-    participant_data->m_properties.push_back(std::pair<std::string, std::string>({"PARTICIPANT_TYPE", "SERVER"}));
-    participant_data->m_properties.push_back(std::pair<std::string, std::string>({"DS_VERSION", "2.0"}));
+    participant_data->m_properties.push_back(
+        std::pair<std::string, std::string>(
+            {dds::parameter_property_participant_type, ParticipantType::SERVER}));
+    participant_data->m_properties.push_back(
+        std::pair<std::string, std::string>({dds::parameter_property_ds_version, "2.0"}));
 }
 
 void PDPServer2::assignRemoteEndpoints(
