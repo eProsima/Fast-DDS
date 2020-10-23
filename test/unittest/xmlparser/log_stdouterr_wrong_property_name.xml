@@ -5,7 +5,7 @@
         <consumer>
             <class>StdoutErrConsumer</class>
             <property>
-                <name>threshold</name>
+                <name>wrong_property_name</name>
                 <value>Log::Kind::Error</value>
             </property>
         </consumer>

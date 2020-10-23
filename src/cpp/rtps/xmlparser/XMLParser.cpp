@@ -2748,14 +2748,10 @@ XMLP_ret XMLParser::parseLogConfig(
             }
             else if (strcmp(tag, CONSUMER) == 0)
             {
-                XMLP_ret aux_ret = parseXMLConsumer(*p_element);
-                if (aux_ret != XMLP_ret::XML_OK)
+                ret = parseXMLConsumer(*p_element);
+                if (ret == XMLP_ret::XML_ERROR)
                 {
-                    ret = aux_ret;
-                    if (ret == XMLP_ret::XML_ERROR)
-                    {
-                        return ret;
-                    }
+                    return ret;
                 }
             }
             else
