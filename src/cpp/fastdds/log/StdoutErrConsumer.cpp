@@ -38,10 +38,7 @@ std::ostream& StdoutErrConsumer::get_stream(
     {
         return std::cerr;
     }
-    else
-    {
-        return std::cout;
-    }
+    return std::cout;
 }
 
 } // Namespace dds

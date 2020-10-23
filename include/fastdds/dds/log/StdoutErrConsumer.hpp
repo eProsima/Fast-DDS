@@ -56,7 +56,7 @@ public:
     /**
      * @brief Default value of stderr_threshold.
      */
-    RTPS_DllAPI static const Log::Kind STDERR_THRESHOLD_DEFAULT = Log::Kind::Warning;
+    static constexpr Log::Kind STDERR_THRESHOLD_DEFAULT = Log::Kind::Warning;
 
 protected:
 
