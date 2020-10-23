@@ -132,21 +132,23 @@ void PDPServerListener2::onNewCacheChangeAdded(
                 properties.end(),
                 [](const dds::ParameterProperty_t& property)
                 {
-                    return property.first() == "DS_VERSION";
+                    return property.first() == dds::parameter_property_ds_version;
                 });
 
             if (ds_version != properties.end())
             {
-                if (std::stof(ds_version->second()) < 2.0)
+                if (std::stof(ds_version->second()) < 1.0)
                 {
-                    logError(RTPS_PDP_LISTENER, "Minimum DS_VERSION is 2.0, found: " << ds_version->second());
+                    logError(RTPS_PDP_LISTENER, "Minimum " << dds::parameter_property_ds_version
+                            << " is 1.0, found: " << ds_version->second());
                     return;
                 }
+                logInfo(RTPS_PDP_LISTENER, "Participant" << dds::parameter_property_ds_version << ": "
+                        << ds_version->second());
             }
             else
             {
-                logError(RTPS_PDP_LISTENER, "DS_VERSION is not set");
-                return;
+                logWarning(RTPS_PDP_LISTENER, dds::parameter_property_ds_version << " is not set. Assuming 1.0");
             }
 
             /* Check PARTICIPANT_TYPE */
@@ -156,25 +158,43 @@ void PDPServerListener2::onNewCacheChangeAdded(
                 properties.end(),
                 [](const dds::ParameterProperty_t& property)
                 {
-                    return property.first() == "PARTICIPANT_TYPE";
+                    return property.first() == dds::parameter_property_participant_type;
                 });
 
             if (participant_type != properties.end())
             {
-                if (participant_type->second() == "SERVER" || participant_type->second() == "BACKUP")
+                if (participant_type->second() == ParticipantType::SERVER ||
+                    participant_type->second() == ParticipantType::BACKUP)
                 {
                     is_client = false;
                 }
-                else if (participant_type->second() != "CLIENT")
+                else if (participant_type->second() != ParticipantType::CLIENT)
                 {
-                    logError(RTPS_PDP_LISTENER, "Wrong participant type: " << participant_type->second());
+                    logError(RTPS_PDP_LISTENER, "Wrong " << dds::parameter_property_participant_type << ": "
+                            << participant_type->second());
                     return;
                 }
+                logInfo(RTPS_PDP_LISTENER, "Participant type " << participant_type->second());
             }
             else
             {
-                logError(RTPS_PDP_LISTENER, "PARTICIPANT_TYPE is not set");
-                return;
+                logWarning(RTPS_PDP_LISTENER, dds::parameter_property_participant_type << " is not set");
+                // Fallback to checking whether participant is a SERVER looking for the persistence GUID
+                auto persistence_guid = std::find_if(
+                    properties.begin(),
+                    properties.end(),
+                    [](const dds::ParameterProperty_t& property)
+                    {
+                        return property.first() == dds::parameter_property_persistence_guid;
+                    });
+                // The presence of persistence GUID property suggests a SERVER. This assumption is made to keep
+                // backwards compatibility with Discovery Server v1.0. However, any participant that has been configured
+                // as persistent will have this property.
+                if (persistence_guid != properties.end())
+                {
+                    is_client = false;
+                }
+                logInfo(RTPS_PDP_LISTENER, "Participant is client: " << std::boolalpha << is_client);
             }
 
             // Check whether the participant is a client/server of this server or if it has been forwarded from
@@ -187,8 +207,7 @@ void PDPServerListener2::onNewCacheChangeAdded(
                 is_local = false;
             }
 
-            logInfo(RTPS_PDP_LISTENER, "New participant discovered of type " << participant_type->second() <<
-                    ". DS_VERSION: " << ds_version->second() << ". is_local: " << std::boolalpha << is_local);
+            logInfo(RTPS_PDP_LISTENER, "Participant is local: " << std::boolalpha << is_local);
 
             // Notify the DiscoveryDataBase
             if (pdp_server()->discovery_db().update(
