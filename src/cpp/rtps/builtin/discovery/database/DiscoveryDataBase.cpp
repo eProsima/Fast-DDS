@@ -21,6 +21,8 @@
 
 #include <fastdds/dds/log/Log.hpp>
 #include <fastdds/rtps/common/EntityId_t.hpp>
+#include <fastdds/rtps/common/GuidPrefix_t.hpp>
+#include <fastdds/rtps/common/RemoteLocators.hpp>
 
 #include "./DiscoveryDataBase.hpp"
 
@@ -38,7 +40,7 @@ DiscoveryDataBase::DiscoveryDataBase(
     : server_guid_prefix_(server_guid_prefix)
     , server_acked_by_all_(servers.size() == 0)
     , servers_(servers)
-    , enabled_(true)
+    , enabled_(false)
 {
 }
 
@@ -1340,18 +1342,18 @@ bool DiscoveryDataBase::data_queue_empty()
 }
 
 bool DiscoveryDataBase::is_participant(
-        const eprosima::fastrtps::rtps::CacheChange_t* ch)
+        const eprosima::fastrtps::rtps::GUID_t& guid)
 {
-    return eprosima::fastrtps::rtps::c_EntityId_RTPSParticipant == guid_from_change(ch).entityId;
+    return eprosima::fastrtps::rtps::c_EntityId_RTPSParticipant == guid.entityId;
 }
 
 bool DiscoveryDataBase::is_writer(
-        const eprosima::fastrtps::rtps::CacheChange_t* ch)
+        const eprosima::fastrtps::rtps::GUID_t& guid)
 {
     // RTPS Specification v2.3
     // For writers: NO_KEY = 0x03, WITH_KEY = 0x02
     // For built-in writers: NO_KEY = 0xc3, WITH_KEY = 0xc2
-    const eprosima::fastrtps::rtps::octet identifier = guid_from_change(ch).entityId.value[3];
+    const eprosima::fastrtps::rtps::octet identifier = guid.entityId.value[3];
     return ((identifier == 0x02) ||
            (identifier == 0xc2) ||
            (identifier == 0x03) ||
@@ -1359,16 +1361,34 @@ bool DiscoveryDataBase::is_writer(
 }
 
 bool DiscoveryDataBase::is_reader(
-        const eprosima::fastrtps::rtps::CacheChange_t* ch)
+        const eprosima::fastrtps::rtps::GUID_t& guid)
 {
     // RTPS Specification v2.3
     // For readers: NO_KEY = 0x04, WITH_KEY = 0x07
     // For built-in readers: NO_KEY = 0xc4, WITH_KEY = 0xc7
-    const eprosima::fastrtps::rtps::octet identifier = guid_from_change(ch).entityId.value[3];
+    const eprosima::fastrtps::rtps::octet identifier = guid.entityId.value[3];
     return ((identifier == 0x04) ||
            (identifier == 0xc4) ||
            (identifier == 0x07) ||
            (identifier == 0xc7));
+}
+
+bool DiscoveryDataBase::is_participant(
+        const eprosima::fastrtps::rtps::CacheChange_t* ch)
+{
+    return is_participant(guid_from_change(ch));
+}
+
+bool DiscoveryDataBase::is_writer(
+        const eprosima::fastrtps::rtps::CacheChange_t* ch)
+{
+    return is_writer(guid_from_change(ch));
+}
+
+bool DiscoveryDataBase::is_reader(
+        const eprosima::fastrtps::rtps::CacheChange_t* ch)
+{
+    return is_reader(guid_from_change(ch));
 }
 
 eprosima::fastrtps::rtps::GUID_t DiscoveryDataBase::guid_from_change(
@@ -2161,10 +2181,173 @@ void DiscoveryDataBase::to_json(nlohmann::json& j) const
         ++rit;
     }
 
-    // server guid
-    j["server_prefix"] = ddb::object_to_string(server_guid_prefix_);
-
     // TODO add version
+}
+
+
+bool DiscoveryDataBase::from_json(
+        nlohmann::json& j,
+        std::map<eprosima::fastrtps::rtps::InstanceHandle_t, fastrtps::rtps::CacheChange_t*> changes_map)
+{
+    // This function will parse each attribute in json backup, casting it to istringstream
+    // (std::istringstream) j[""] >> obj;
+
+    // Changes are taken from changes_vector, with already created changes
+    // Entities must be read in the same order that the json is written
+
+    // auxiliars to deserialize and set
+    fastrtps::rtps::InstanceHandle_t instance_handle_aux;
+    fastrtps::rtps::GuidPrefix_t prefix_aux;
+    fastrtps::rtps::GUID_t guid_aux;
+
+    try
+    {
+        // Participants
+        for (auto it = j["participants"].begin(); it != j["participants"].end(); ++it)
+        {
+            // Our own participant does not need any special treatment
+            // We know it will be known and acked by those entities alives cause
+            // starting the server an update of the Data will be created and sent to all
+            // Populate GuidPrefix_t
+            (std::istringstream) it.key() >> prefix_aux;
+            (std::istringstream) it.value()["change"]["instance_handle"].get<std::string>() >> instance_handle_aux;
+
+            // Get change
+            fastrtps::rtps::CacheChange_t* change;
+            change = changes_map[instance_handle_aux];
+
+            // Populate RemoteLocatorList
+            fastrtps::rtps::RemoteLocatorList rll;
+            (std::istringstream) it.value()["metatraffic_locators"].get<std::string>() >> rll;
+
+            // Populate DiscoveryParticipantChangeData
+            DiscoveryParticipantChangeData dpcd(
+                    rll,
+                    it.value()["is_client"].get<bool>(),
+                    it.value()["is_local"].get<bool>());
+
+            // Populate DiscoveryParticipantInfo
+            DiscoveryParticipantInfo dpi(change, server_guid_prefix_, dpcd);
+
+            // Add acks
+            for (auto it_ack = it.value()["ack_status"].begin(); it_ack != it.value()["ack_status"].end(); ++it_ack)
+            {
+                // Populate GuidPrefix_t
+                (std::istringstream) it_ack.key() >> prefix_aux;
+
+                dpi.add_or_update_ack_participant(prefix_aux, it_ack.value().get<bool>());
+            }
+
+            // Add Participant
+            participants_.insert(std::make_pair(prefix_aux, dpi));
+        }
+
+        // Writers
+        for (auto it = j["writers"].begin(); it != j["writers"].end(); ++it)
+        {
+            // Populate GUID_t
+            (std::istringstream) it.key() >> guid_aux;
+            (std::istringstream) it.value()["change"]["instance_handle"].get<std::string>() >> instance_handle_aux;
+
+            // Get change
+            fastrtps::rtps::CacheChange_t* change;
+            change = changes_map[instance_handle_aux];
+
+            // Populate topic
+            std::string topic = it.value()["topic"].get<std::string>();
+
+            // Populate DiscoveryEndpointInfo
+            DiscoveryEndpointInfo dei(change, topic, topic == virtual_topic_, server_guid_prefix_);
+
+            // Add acks
+            for (auto it_ack = it.value()["ack_status"].begin(); it_ack != it.value()["ack_status"].end(); ++it_ack)
+            {
+                // Populate GuidPrefix_t
+                (std::istringstream) it_ack.key() >> prefix_aux;
+
+                dei.add_or_update_ack_participant(prefix_aux, it_ack.value().get<bool>());
+            }
+
+            // Add Participant
+            writers_.insert(std::make_pair(guid_aux, dei));
+
+            // Extra configurations for writers
+            // Add writer to writers_by_topic. This will create the topic if necessary
+            add_writer_to_topic_(guid_aux, topic);
+
+            // add writer to its participant
+            std::map<eprosima::fastrtps::rtps::GuidPrefix_t, DiscoveryParticipantInfo>::iterator writer_part_it =
+                    participants_.find(guid_aux.guidPrefix);
+            if (writer_part_it != participants_.end())
+            {
+                writer_part_it->second.add_writer(guid_aux);
+            }
+            else
+            {
+                // Endpoint without participant, corrupted DDB
+                throw;
+            }
+        }
+
+        // Readers
+        for (auto it = j["readers"].begin(); it != j["readers"].end(); ++it)
+        {
+            // Populate GUID_t
+            (std::istringstream) it.key() >> guid_aux;
+            (std::istringstream) it.value()["change"]["instance_handle"].get<std::string>() >> instance_handle_aux;
+
+            // Get change
+            fastrtps::rtps::CacheChange_t* change;
+            change = changes_map[instance_handle_aux];
+
+            // Populate topic
+            std::string topic = it.value()["topic"].get<std::string>();
+
+            // Populate DiscoveryEndpointInfo
+            DiscoveryEndpointInfo dei(change, topic, topic == virtual_topic_, server_guid_prefix_);
+
+            // Add acks
+            for (auto it_ack = it.value()["ack_status"].begin(); it_ack != it.value()["ack_status"].end(); ++it_ack)
+            {
+                // Populate GuidPrefix_t
+                (std::istringstream) it_ack.key() >> prefix_aux;
+
+                dei.add_or_update_ack_participant(prefix_aux, it_ack.value().get<bool>());
+            }
+
+            // Add Participant
+            readers_.insert(std::make_pair(guid_aux, dei));
+
+            // Extra configurations for readers
+            // Add reader to readers_by_topic. This will create the topic if necessary
+            add_reader_to_topic_(guid_aux, topic);
+
+            // add reader to its participant
+            std::map<eprosima::fastrtps::rtps::GuidPrefix_t, DiscoveryParticipantInfo>::iterator reader_part_it =
+                    participants_.find(guid_aux.guidPrefix);
+            if (reader_part_it != participants_.end())
+            {
+                reader_part_it->second.add_reader(guid_aux);
+            }
+            else
+            {
+                // Endpoint without participant, corrupted DDB
+                throw;
+            }
+        }
+    }
+    catch (std::ios_base::failure&)
+    {
+        logError(DISCOVERY_DATABASE, "BACKUP CORRUPTED");
+    }
+
+    // set dirty topics to all, so next iteration every message pending is sent
+    set_dirty_topic_(virtual_topic_);
+
+    // announce own server
+    server_acked_by_all(false);
+
+    return true;
 }
 
 } // namespace ddb

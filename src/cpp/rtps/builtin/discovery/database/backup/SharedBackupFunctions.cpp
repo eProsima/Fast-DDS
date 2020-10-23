@@ -29,9 +29,59 @@ namespace ddb {
 
 using json = nlohmann::json;
 
+void to_json(json& j, const eprosima::fastrtps::rtps::CacheChange_t& change)
+{
+    j["kind"] = change.kind;
+    j["writer_GUID"] = object_to_string(change.writerGUID);
+    j["instance_handle"] = object_to_string(change.instanceHandle);
+    j["sequence_number"] = object_to_string(change.sequenceNumber);
+    // isRead = true
+    j["source_timestamp"] = object_to_string(change.sourceTimestamp);
+    j["reception_timestamp"] = object_to_string(change.receptionTimestamp);
+    j["sample_identity"] = object_to_string(change.write_params.sample_identity());
+    // related_sample_identity = sample_identity
+
+    // serialize payload
+    j["serialized_payload"]["encapsulation"] = change.serializedPayload.encapsulation;
+    j["serialized_payload"]["length"] = change.serializedPayload.length;
+    j["serialized_payload"]["data"] = b64encode(change.serializedPayload.data, change.serializedPayload.length);
+}
+
+void from_json(const json& j, eprosima::fastrtps::rtps::CacheChange_t& change)
+{
+    change.kind = static_cast<fastrtps::rtps::ChangeKind_t>(j["kind"].get<uint8_t>());
+    (std::istringstream) j["writer_GUID"].get<std::string>() >> change.writerGUID;
+    (std::istringstream) j["instance_handle"].get<std::string>() >> change.instanceHandle;
+    (std::istringstream) j["sequence_number"].get<std::string>() >> change.sequenceNumber;
+    change.isRead = true;
+    (std::istringstream) j["source_timestamp"].get<std::string>() >> change.sourceTimestamp;
+    (std::istringstream) j["reception_timestamp"].get<std::string>() >> change.receptionTimestamp;
+
+    // set sample identity
+    fastrtps::rtps::SampleIdentity si;
+    (std::istringstream) j["sample_identity"].get<std::string>() >> si;
+    change.write_params.sample_identity(si);
+    change.write_params.related_sample_identity(si);
+
+    // deserialize SerializedPayload
+    change.serializedPayload.encapsulation = j["serialized_payload"]["encapsulation"];
+    change.serializedPayload.length = j["serialized_payload"]["length"];
+    b64decode(change.serializedPayload.data, j["serialized_payload"]["data"].get<std::string>());
+}
+
+
+// stack overflow
+// @polfosol-ఠ-ఠ
+// https://stackoverflow.com/questions/180947/base64-decode-snippet-in-c/37109258#37109258
+
+// Array to convert binary to b64
+// Each 6 bits has the conversion to a value in this array. Numeric value of byte is index of its representation
 const char* B64chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
 
-const int B64index[256] =
+// Array to the numeric value from a b64 char to binary value
+// In case the input string has a char not included in B64chars it will have Undefined Behaviour
+// 255 spaces are taken to avoid seg fault in this case
+const int B64index[255] = 
 {
     0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0, // 0
     0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0, // 16
@@ -43,17 +93,17 @@ const int B64index[256] =
     41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51 //112
 };
 
+// encode a binary data into a string
 const std::string b64encode(const unsigned char* data, const size_t &len)
 {
     std::string result((len + 2) / 3 * 4, '=');
-    const unsigned char* p = data;
     char* str = &result[0];
     size_t j = 0, pad = len % 3;
     const size_t last = len - pad;
 
     for (size_t i = 0; i < last; i += 3)
     {
-        int n = int(p[i]) << 16 | int(p[i + 1]) << 8 | p[i + 2];
+        int n = int(data[i]) << 16 | int(data[i + 1]) << 8 | data[i + 2];
         str[j++] = B64chars[n >> 18];
         str[j++] = B64chars[n >> 12 & 0x3F];
         str[j++] = B64chars[n >> 6 & 0x3F];
@@ -61,7 +111,7 @@ const std::string b64encode(const unsigned char* data, const size_t &len)
     }
     if (pad)  /// set padding
     {
-        int n = --pad ? int(p[last]) << 8 | p[last + 1] : p[last];
+        int n = --pad ? int(data[last]) << 8 | data[last + 1] : data[last];
         str[j++] = B64chars[pad ? n >> 10 & 0x3F : n >> 2];
         str[j++] = B64chars[pad ? n >> 4 & 0x03F : n << 4 & 0x3F];
         str[j++] = pad ? B64chars[n << 2 & 0x3F] : '=';
@@ -69,57 +119,40 @@ const std::string b64encode(const unsigned char* data, const size_t &len)
     return result;
 }
 
-const std::string b64decode(const unsigned char* data, const size_t &len)
+// decode a string into another string
+void b64decode(unsigned char* data, const std::string input)
 {
-    if (len == 0) return "";
+    uint len = input.size();
+    
+    if (len == 0) return;
 
-    const unsigned char *p = data;
+    const char *p = input.c_str();
     size_t j = 0,
         pad1 = len % 4 || p[len - 1] == '=',
         pad2 = pad1 && (len % 4 > 2 || p[len - 2] != '=');
     const size_t last = (len - pad1) / 4 << 2;
     std::string result(last / 4 * 3 + pad1 + pad2, '\0');
-    unsigned char *str = (unsigned char*) &result[0];
 
     for (size_t i = 0; i < last; i += 4)
     {
-        int n = B64index[p[i]] << 18 | B64index[p[i + 1]] << 12 | B64index[p[i + 2]] << 6 | B64index[p[i + 3]];
-        str[j++] = n >> 16;
-        str[j++] = n >> 8 & 0xFF;
-        str[j++] = n & 0xFF;
+        int n = B64index[(int) p[i]] << 18 |
+                B64index[(int) p[i + 1]] << 12 |
+                B64index[(int) p[i + 2]] << 6 | 
+                B64index[(int) p[i + 3]];
+        data[j++] = n >> 16;
+        data[j++] = n >> 8 & 0xFF;
+        data[j++] = n & 0xFF;
     }
     if (pad1)
     {
-        int n = B64index[p[last]] << 18 | B64index[p[last + 1]] << 12;
-        str[j++] = n >> 16;
+        int n = B64index[(int) p[last]] << 18 | B64index[(int) p[last + 1]] << 12;
+        data[j++] = n >> 16;
         if (pad2)
         {
-            n |= B64index[p[last + 2]] << 6;
-            str[j++] = n >> 8 & 0xFF;
+            n |= B64index[(int) p[last + 2]] << 6;
+            data[j++] = n >> 8 & 0xFF;
         }
     }
-    return result;
-}
-
-void to_json(json& j, const eprosima::fastrtps::rtps::CacheChange_t& change)
-{
-    j["kind"] = change.kind;
-    j["writer_GUID"] = object_to_string(change.writerGUID);
-    j["instance_handle"] = object_to_string(change.instanceHandle);
-    j["sequence_number"] = object_to_string(change.sequenceNumber);
-    j["serialized_payload"] = b64encode(change.serializedPayload.data, change.serializedPayload.length);
-    // isRead = true
-    j["source_timestamp"] = object_to_string(change.sourceTimestamp);
-    j["reception_timestamp"] = object_to_string(change.receptionTimestamp);
-    j["sample_identity"] = object_to_string(change.write_params.sample_identity());
-    // related_sample_identity = sample_identity
-}
-
-void from_json(const json& j, eprosima::fastrtps::rtps::CacheChange_t& change)
-{
-    (void) j;
-    (void) change;
-    // TODO
 }
 
 } /* ddb */

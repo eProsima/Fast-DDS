@@ -117,6 +117,13 @@ public:
             fastrtps::rtps::GuidPrefix_t server_guid_prefix,
             std::vector<fastrtps::rtps::GuidPrefix_t> servers);
 
+    //! Constructor from json backup
+    DiscoveryDataBase(
+            fastrtps::rtps::GuidPrefix_t server_guid_prefix,
+            std::vector<fastrtps::rtps::GuidPrefix_t> servers,
+            nlohmann::json j,
+            std::map<eprosima::fastrtps::rtps::InstanceHandle_t, fastrtps::rtps::CacheChange_t*> changes_map);
+
     ~DiscoveryDataBase();
 
     ////////////
@@ -219,6 +226,15 @@ public:
     ////////////
     // Static Functions to work with GUIDs
     static bool is_participant(
+            const eprosima::fastrtps::rtps::GUID_t& guid);
+
+    static bool is_writer(
+            const eprosima::fastrtps::rtps::GUID_t& guid);
+
+    static bool is_reader(
+            const eprosima::fastrtps::rtps::GUID_t& guid);
+
+    static bool is_participant(
             const eprosima::fastrtps::rtps::CacheChange_t* ch);
 
     static bool is_writer(
@@ -267,6 +283,10 @@ public:
     bool data_queue_empty();
 
     void to_json(nlohmann::json& j) const;
+
+    bool from_json(
+            nlohmann::json& j,
+            std::map<eprosima::fastrtps::rtps::InstanceHandle_t, fastrtps::rtps::CacheChange_t*> changes_map);
 
 protected:
 
@@ -454,16 +474,13 @@ protected:
     mutable std::recursive_mutex mutex_;
 
     //! GUID prefix from own server
-    const fastrtps::rtps::GuidPrefix_t server_guid_prefix_;
+    fastrtps::rtps::GuidPrefix_t server_guid_prefix_;
 
     //! Is own server DATA(p) acked by all other clients
     std::atomic<bool> server_acked_by_all_;
 
     //! List of GUID prefixes of the remote servers
     std::vector<fastrtps::rtps::GuidPrefix_t> servers_;
-
-    // The number of local servers known by the database
-    uint16_t local_servers_count_ = 0;
 
     // The virtual topic associated with virtual writers and readers
     const std::string virtual_topic_ = "eprosima_server_virtual_topic";
