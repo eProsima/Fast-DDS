@@ -39,13 +39,9 @@ std::string object_to_string(const T& t)
     return  stream.str();
 }
 
-// stack overflow
-// @polfosol-ఠ-ఠ
-// https://stackoverflow.com/questions/180947/base64-decode-snippet-in-c/37109258#37109258
-
 const std::string b64encode(const unsigned char* data, const size_t &len);
 
-const std::string b64decode(const unsigned char* data, const size_t &len);
+void b64decode(unsigned char* data, const std::string input);
 
 void to_json(json& j, const eprosima::fastrtps::rtps::CacheChange_t& change);
 

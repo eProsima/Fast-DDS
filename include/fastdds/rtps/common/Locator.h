@@ -185,6 +185,11 @@ inline bool operator!=(const Locator_t&loc1, const Locator_t& loc2)
     return !(loc1 == loc2);
 }
 
+/*
+* kind : address[N] . address[1] . ... . address[16] : port
+* N = 0 if IPv6
+* N = 12 if IPv4
+*/
 inline std::ostream& operator<<(std::ostream& output, const Locator_t& loc)
 {
     output << loc.kind << ":";

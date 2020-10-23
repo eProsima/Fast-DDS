@@ -32,6 +32,13 @@ namespace rtps {
 struct RemoteLocatorList
 {
     /**
+     * Default constructor of RemoteLocatorList for deserialize.
+     */
+    RemoteLocatorList()
+    {
+    }
+
+    /**
      * Construct a RemoteLocatorList.
      *
      * @param max_unicast_locators Maximum number of unicast locators to hold.
@@ -121,12 +128,15 @@ struct RemoteLocatorList
     ResourceLimitedVector<Locator_t> multicast;
 };
 
+/*
+* multicast max_size , multicast size , unicast max_size , unicast size ( locator[0] , locator[1] , ... )
+*/
 inline std::ostream& operator<<(std::ostream& output, const RemoteLocatorList& remote_locators)
 {
     output << remote_locators.multicast.max_size() << ",";
     output << remote_locators.multicast.size() << ",";
     output << remote_locators.unicast.max_size() << ",";
-    output << remote_locators.unicast.size() << ",";
+    output << remote_locators.unicast.size() << "(";
     for (auto it = remote_locators.multicast.begin(); it != remote_locators.multicast.end(); ++it)
     {
         output << *it << ",";
@@ -135,6 +145,7 @@ inline std::ostream& operator<<(std::ostream& output, const RemoteLocatorList& r
     {
         output << *it << ",";
     }
+    output << ")";
     return output;
 }
 
@@ -154,7 +165,7 @@ inline std::istream& operator>>(std::istream& input, RemoteLocatorList& locList)
             input.exceptions(excp_mask | std::ios_base::failbit | std::ios_base::badbit);
             
             input >> size_m_max >> coma >> size_m >> coma;
-            input >> size_u_max >> coma >> size_u >> coma;
+            input >> size_u_max >> coma >> size_u >> coma; // last coma is (
 
             locList = RemoteLocatorList(size_u, size_m);
 
@@ -177,6 +188,7 @@ inline std::istream& operator>>(std::istream& input, RemoteLocatorList& locList)
                 }
                 locList.add_unicast_locator(l);
             }
+            input >> coma; // read )
         }
         catch (std::ios_base::failure& ){}
 
