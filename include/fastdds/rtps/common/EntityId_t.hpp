@@ -62,7 +62,7 @@ namespace rtps {
 #define ENTITYID_P2P_BUILTIN_PARTICIPANT_VOLATILE_MESSAGE_SECURE_READER  0xff0202C4
 #define ENTITYID_SPDP_RELIABLE_BUILTIN_PARTICIPANT_SECURE_WRITER 0xff0101c2
 #define ENTITYID_SPDP_RELIABLE_BUILTIN_PARTICIPANT_SECURE_READER 0xff0101c7
-#endif
+#endif // if HAVE_SECURITY
 
 #define ENTITYID_DS_SERVER_VIRTUAL_WRITER 0x00030073
 #define ENTITYID_DS_SERVER_VIRTUAL_READER 0x00030074
@@ -74,9 +74,11 @@ struct RTPS_DllAPI EntityId_t
     static constexpr unsigned int size = 4;
     octet value[size];
     //! Default constructor. Uknown entity.
-    EntityId_t(){
+    EntityId_t()
+    {
         *this = ENTITYID_UNKNOWN;
     }
+
     /**
      * Main constructor.
      * @param id Entity id
@@ -87,7 +89,7 @@ struct RTPS_DllAPI EntityId_t
         memcpy(value, &id, size);
 #if !__BIG_ENDIAN__
         reverse();
-#endif
+#endif // if !__BIG_ENDIAN__
     }
 
     /*!
@@ -132,13 +134,15 @@ struct RTPS_DllAPI EntityId_t
         memcpy(value, &id, size);
 #if !__BIG_ENDIAN__
         reverse();
-#endif
+#endif // if !__BIG_ENDIAN__
         return *this;
         //return id;
     }
+
 #if !__BIG_ENDIAN__
     //!
-    void reverse(){
+    void reverse()
+    {
         octet oaux;
         oaux = value[3];
         value[3] = value[0];
@@ -147,12 +151,14 @@ struct RTPS_DllAPI EntityId_t
         value[2] = value[1];
         value[1] = oaux;
     }
-#endif
+
+#endif // if !__BIG_ENDIAN__
 
     static EntityId_t unknown()
     {
         return EntityId_t();
     }
+
 };
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
@@ -169,13 +175,14 @@ inline bool operator ==(
 {
 #if !__BIG_ENDIAN__
     id1.reverse();
-#endif
+#endif // if !__BIG_ENDIAN__
     const bool result = 0 == memcmp(id1.value, &id2, sizeof(id2));
 #if !__BIG_ENDIAN__
     id1.reverse();
-#endif
+#endif // if !__BIG_ENDIAN__
     return result;
 }
+
 /**
  * Guid prefix comparison operator
  * @param id1 First EntityId to compare
@@ -216,7 +223,7 @@ inline bool operator !=(
     return false;
 }
 
-#endif
+#endif // ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
 inline std::ostream& operator <<(
         std::ostream& output,
@@ -308,7 +315,7 @@ const EntityId_t participant_volatile_message_secure_reader_entity_id =
 
 const EntityId_t c_EntityId_WriterLivelinessSecure = ENTITYID_P2P_BUILTIN_PARTICIPANT_MESSAGE_SECURE_WRITER;
 const EntityId_t c_EntityId_ReaderLivelinessSecure = ENTITYID_P2P_BUILTIN_PARTICIPANT_MESSAGE_SECURE_READER;
-#endif
+#endif // if HAVE_SECURITY
 
 const EntityId_t ds_server_virtual_writer = ENTITYID_DS_SERVER_VIRTUAL_WRITER;
 const EntityId_t ds_server_virtual_reader = ENTITYID_DS_SERVER_VIRTUAL_READER;
@@ -321,7 +328,7 @@ namespace std {
 template <>
 struct hash<eprosima::fastrtps::rtps::EntityId_t>
 {
-    std::size_t operator()(
+    std::size_t operator ()(
             const eprosima::fastrtps::rtps::EntityId_t& k) const
     {
         // recover the participant entity counter
@@ -337,9 +344,10 @@ struct hash<eprosima::fastrtps::rtps::EntityId_t>
         value[2] = k.value[0];
         value[1] = k.value[1];
         value[0] = k.value[2];
-#endif
+#endif // if __BIG_ENDIAN__
         return static_cast<std::size_t>(*reinterpret_cast<const uint32_t*>(&value));
     }
+
 };
 
 } // namespace std

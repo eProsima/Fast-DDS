@@ -232,9 +232,9 @@ bool History::get_earliest_change(
     return true;
 }
 
-}
-}
-}
+} // namespace rtps
+} // namespace fastrtps
+} // namespace eprosima
 
 
 //TODO Remove if you want.
@@ -256,6 +256,6 @@ void History::print_changes_seqNum2()
     std::cout << ss.str();
 }
 
-}
+} // namespace rtps
 } /* namespace rtps */
 } /* namespace eprosima */

@@ -430,7 +430,7 @@ bool StatefulReader::processDataFragMsg(
                 {
                     change_to_add->copy_not_memcpy(incomingChange);
                     if (!getRTPSParticipant()->security_manager().decode_serialized_payload(incomingChange->
-                            serializedPayload,
+                                    serializedPayload,
                             change_to_add->serializedPayload, m_guid, incomingChange->writerGUID))
                     {
                         releaseCache(change_to_add);
