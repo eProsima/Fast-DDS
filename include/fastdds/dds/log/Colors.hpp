@@ -54,7 +54,7 @@
     #define C_WHITE "\033[37m"
     #define C_B_WHITE "\033[37;1m"
     #define C_BRIGHT "\033[1m"
-#endif
+#endif // if defined(_WIN32)
 
 
 #endif /* _FASTDDS_DDS_LOG_COLORS_H_ */
