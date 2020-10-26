@@ -53,14 +53,14 @@ bool ReaderHistory::add_change(
 {
     if (mp_reader == nullptr || mp_mutex == nullptr)
     {
-        logError(RTPS_HISTORY, "You need to create a Reader with this History before adding any changes");
+        logError(RTPS_READER_HISTORY, "You need to create a Reader with this History before adding any changes");
         return false;
     }
 
     std::lock_guard<RecursiveTimedMutex> guard(*mp_mutex);
     if (m_att.memoryPolicy == PREALLOCATED_MEMORY_MODE && a_change->serializedPayload.length > m_att.payloadMaxSize)
     {
-        logError(RTPS_HISTORY,
+        logError(RTPS_READER_HISTORY,
                 "Change payload size of '" << a_change->serializedPayload.length <<
                 "' bytes is larger than the history payload size of '" << m_att.payloadMaxSize <<
                 "' bytes and cannot be resized.");
@@ -68,7 +68,7 @@ bool ReaderHistory::add_change(
     }
     if (a_change->writerGUID == c_Guid_Unknown)
     {
-        logError(RTPS_HISTORY, "The Writer GUID_t must be defined");
+        logError(RTPS_READER_HISTORY, "The Writer GUID_t must be defined");
     }
 
     if (!m_changes.empty() && a_change->sourceTimestamp < (*m_changes.rbegin())->sourceTimestamp)
@@ -85,53 +85,51 @@ bool ReaderHistory::add_change(
         m_changes.push_back(a_change);
     }
 
-    logInfo(RTPS_HISTORY,
+    logInfo(RTPS_READER_HISTORY,
             "Change " << a_change->sequenceNumber << " added with " << a_change->serializedPayload.length << " bytes");
 
     return true;
 }
 
-bool ReaderHistory::remove_change(
-        CacheChange_t* a_change)
+bool ReaderHistory::matches_change(
+        const CacheChange_t* inner_change,
+        CacheChange_t* outer_change)
 {
-    if (mp_reader == nullptr || mp_mutex == nullptr)
+    if (nullptr == outer_change
+            || nullptr == inner_change)
     {
-        logError(RTPS_HISTORY, "You need to create a Reader with this History before removing any changes");
+        logError(RTPS_READER_HISTORY, "Pointer is not valid")
         return false;
     }
 
-    std::lock_guard<RecursiveTimedMutex> guard(*mp_mutex);
-    if (a_change == nullptr)
-    {
-        logError(RTPS_HISTORY, "Pointer is not valid")
-        return false;
-    }
-    for (std::vector<CacheChange_t*>::iterator chit = m_changes.begin();
-            chit != m_changes.end(); ++chit)
-    {
-        if ((*chit)->sequenceNumber == a_change->sequenceNumber &&
-                (*chit)->writerGUID == a_change->writerGUID)
-        {
-            logInfo(RTPS_HISTORY, "Removing change " << a_change->sequenceNumber);
-            mp_reader->change_removed_by_history(a_change);
-            do_release_cache(a_change);
-            m_changes.erase(chit);
-            return true;
-        }
-    }
-    logWarning(RTPS_HISTORY, "SequenceNumber " << a_change->sequenceNumber << " not found");
-    return false;
+    return inner_change->sequenceNumber == outer_change->sequenceNumber &&
+           inner_change->writerGUID == outer_change->writerGUID;
 }
 
-History::const_iterator ReaderHistory::remove_change_nts(
-        CacheChange_t* a_change,
-        History::const_iterator position)
+History::iterator ReaderHistory::remove_change_nts(
+        const_iterator removal,
+        bool release)
 {
-    (void)a_change;
-    assert(nullptr != a_change);
-    assert((*position) == a_change);
-    do_release_cache(a_change);
-    return m_changes.erase(position);
+    if ( mp_reader == nullptr || mp_mutex == nullptr)
+    {
+        logError(RTPS_WRITER_HISTORY, "You need to create a Writer with this History before removing any changes");
+        return changesEnd();
+    }
+
+    if ( removal == changesEnd())
+    {
+        logInfo(RTPS_WRITER_HISTORY, "Trying to remove without a proper CacheChange_t referenced");
+        return changesEnd();
+    }
+
+    CacheChange_t* change = *removal;
+    mp_reader->change_removed_by_history(change);
+    if ( release )
+    {
+        do_release_cache(change);
+    }
+
+    return m_changes.erase(removal);
 }
 
 bool ReaderHistory::remove_changes_with_guid(
@@ -141,7 +139,7 @@ bool ReaderHistory::remove_changes_with_guid(
 
     if (mp_reader == nullptr || mp_mutex == nullptr)
     {
-        logError(RTPS_HISTORY, "You need to create a Reader with History before removing any changes");
+        logError(RTPS_READER_HISTORY, "You need to create a Reader with History before removing any changes");
         return false;
     }
 
@@ -152,7 +150,7 @@ bool ReaderHistory::remove_changes_with_guid(
         {
             if ((*chit)->writerGUID == a_guid)
             {
-                changes_to_remove.push_back( (*chit) );
+                changes_to_remove.push_back((*chit));
             }
         }
     }//End lock scope
@@ -162,7 +160,7 @@ bool ReaderHistory::remove_changes_with_guid(
     {
         if (!remove_change(*chit))
         {
-            logError(RTPS_HISTORY, "One of the cachechanged in the GUID removal bulk could not be removed");
+            logError(RTPS_READER_HISTORY, "One of the cachechanged in the GUID removal bulk could not be removed");
             return false;
         }
     }
@@ -175,7 +173,7 @@ bool ReaderHistory::remove_fragmented_changes_until(
 {
     if (mp_reader == nullptr || mp_mutex == nullptr)
     {
-        logError(RTPS_HISTORY, "You need to create a Reader with History before removing any changes");
+        logError(RTPS_READER_HISTORY, "You need to create a Reader with History before removing any changes");
         return false;
     }
 
@@ -190,7 +188,7 @@ bool ReaderHistory::remove_fragmented_changes_until(
             {
                 if (item->is_fully_assembled() == false)
                 {
-                    logInfo(RTPS_HISTORY, "Removing change " << item->sequenceNumber);
+                    logInfo(RTPS_READER_HISTORY, "Removing change " << item->sequenceNumber);
                     mp_reader->change_removed_by_history(item);
                     do_release_cache(item);
                     chit = m_changes.erase(chit);

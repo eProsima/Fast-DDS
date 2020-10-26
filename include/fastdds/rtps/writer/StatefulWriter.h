@@ -22,6 +22,7 @@
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
 #include <fastdds/rtps/writer/RTPSWriter.h>
+#include <fastdds/rtps/writer/IReaderDataFilter.hpp>
 #include <fastrtps/utils/collections/ResourceLimitedVector.hpp>
 #include <condition_variable>
 #include <mutex>
@@ -174,6 +175,20 @@ public:
     bool is_acked_by_all(
             const CacheChange_t* a_change) const override;
 
+    template <typename Function>
+    constexpr Function for_each_reader_proxy(
+            Function f) const
+    {
+        // we cannot directly pass iterators neither const_iterators to matched_readers_ because then the functor would
+        // be able to modify ReaderProxy elements
+        for ( const ReaderProxy* rp : matched_readers_ )
+        {
+            f(rp);
+        }
+
+        return f;
+    }
+
     bool wait_for_all_acked(
             const Duration_t& max_wait) override;
 
@@ -268,7 +283,8 @@ public:
      */
     void send_heartbeat_to_nts(
             ReaderProxy& remoteReaderProxy,
-            bool liveliness = false);
+            bool liveliness = false,
+            bool force = false);
 
     void perform_nack_response();
 
@@ -312,6 +328,18 @@ public:
             const SequenceNumber_t& seq_num,
             const FragmentNumberSet_t fragments_state,
             bool& result) override;
+
+    /**
+     * @brief Set a reader data filter to filter data in ReaderProxies
+     * @param reader_data_filter The reader data filter
+     */
+    void reader_data_filter(
+            fastdds::rtps::IReaderDataFilter* reader_data_filter);
+
+    /**
+     * @brief Get the reader data filter used to filter data in ReaderProxies
+     */
+    const fastdds::rtps::IReaderDataFilter* reader_data_filter() const;
 
 private:
 
@@ -383,6 +411,9 @@ private:
 
     StatefulWriter& operator =(
             const StatefulWriter&) = delete;
+
+    //! The filter for the reader
+    fastdds::rtps::IReaderDataFilter* reader_data_filter_ = nullptr;
 };
 
 } /* namespace rtps */

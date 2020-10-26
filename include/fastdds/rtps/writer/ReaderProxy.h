@@ -349,15 +349,12 @@ public:
             const FragmentNumberSet_t& fragments_state);
 
     /**
-     * Filter a CacheChange_t, in this version always returns true.
+     * Filter a CacheChange_t using the StatefulWriter's IReaderDataFilter.
      * @param change
      * @return true if the change is relevant, false otherwise.
      */
-    inline bool rtps_is_relevant(
-            CacheChange_t* change)
-    {
-        (void)change; return true;
-    }
+    bool rtps_is_relevant(
+            CacheChange_t* change) const;
 
     /**
      * Get the highest fully acknowledged sequence number.
@@ -367,6 +364,12 @@ public:
     {
         return changes_low_mark_;
     }
+
+    /**
+     * Get the first relevant sequence number of the changes for this reader.
+     * @return the first relevant sequence number of the changes for this reader.
+     */
+    SequenceNumber_t first_relevant_sequence_number() const;
 
     /**
      * Change the interval of nack-supression event.

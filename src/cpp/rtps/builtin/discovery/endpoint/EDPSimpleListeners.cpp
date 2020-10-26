@@ -67,7 +67,8 @@ void EDPBasePUBListener::add_writer_from_change(
         RTPSReader* reader,
         ReaderHistory* reader_history,
         CacheChange_t* change,
-        EDP* edp)
+        EDP* edp,
+        bool release_change /*=true*/)
 {
     //LOAD INFORMATION IN DESTINATION WRITER PROXY DATA
     const NetworkFactory& network = edp->mp_RTPSParticipant->network_factory();
@@ -107,7 +108,7 @@ void EDPBasePUBListener::add_writer_from_change(
                 edp->mp_PDP->addWriterProxyData(temp_writer_data_.guid(), participant_guid, copy_data_fun);
 
         //Removing change from history
-        reader_history->remove_change(change);
+        reader_history->remove_change(reader_history->find_change(change), release_change);
 
         // At this point we can release reader lock, cause change is not used
         reader->getMutex().unlock();
@@ -186,7 +187,8 @@ void EDPBaseSUBListener::add_reader_from_change(
         RTPSReader* reader,
         ReaderHistory* reader_history,
         CacheChange_t* change,
-        EDP* edp)
+        EDP* edp,
+        bool release_change /*=true*/)
 {
     //LOAD INFORMATION IN TEMPORAL WRITER PROXY DATA
     const NetworkFactory& network = edp->mp_RTPSParticipant->network_factory();
@@ -226,7 +228,7 @@ void EDPBaseSUBListener::add_reader_from_change(
                 edp->mp_PDP->addReaderProxyData(temp_reader_data_.guid(), participant_guid, copy_data_fun);
 
         // Remove change from history.
-        reader_history->remove_change(change);
+        reader_history->remove_change(reader_history->find_change(change), release_change);
 
         // At this point we can release reader lock, cause change is not used
         reader->getMutex().unlock();
@@ -325,6 +327,6 @@ void EDPSimpleSUBListener::onWriterChangeReceivedByAll(
 
 }
 
-} // namespace rtps
-} // namespace fastrtps
-} // namespace eprosima
+} /* namespace rtps */
+} /* namespace fastrtps */
+} /* namespace eprosima */

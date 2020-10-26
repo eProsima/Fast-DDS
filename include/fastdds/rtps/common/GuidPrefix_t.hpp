@@ -55,7 +55,7 @@ struct RTPS_DllAPI GuidPrefix_t
      * @param prefix guid prefix to compare
      * @return True if the guid prefixes are equal
      */
-    bool operator==(
+    bool operator ==(
             const GuidPrefix_t& prefix) const
     {
         return (memcmp(value, prefix.value, size) == 0);
@@ -66,13 +66,24 @@ struct RTPS_DllAPI GuidPrefix_t
      * @param prefix Second guid prefix to compare
      * @return True if the guid prefixes are not equal
      */
-    bool operator!=(
+    bool operator !=(
             const GuidPrefix_t& prefix) const
     {
         return (memcmp(value, prefix.value, size) != 0);
     }
 
-#endif
+    /**
+     * Guid prefix minor operator
+     * @param prefix Second guid prefix to compare
+     * @return True if prefix is higher
+     */
+    bool operator <(
+            const GuidPrefix_t& prefix) const
+    {
+        return std::memcmp(value, prefix.value, size) < 0;
+    }
+
+#endif // ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 };
 
 const GuidPrefix_t c_GuidPrefix_Unknown;
@@ -127,7 +138,9 @@ inline std::istream& operator >>(
 
             input >> std::dec;
         }
-        catch (std::ios_base::failure& ){}
+        catch (std::ios_base::failure& )
+        {
+        }
 
         input.exceptions(excp_mask);
     }

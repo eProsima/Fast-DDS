@@ -160,17 +160,9 @@ set(${PROJECT_NAME}_source_files
     rtps/builtin/discovery/participant/PDP.cpp
     rtps/builtin/discovery/participant/PDPSimple.cpp
     rtps/builtin/discovery/participant/PDPListener.cpp
-    rtps/builtin/discovery/participant/PDPServerListener.cpp
-    rtps/builtin/discovery/participant/PDPClient.cpp
-    rtps/builtin/discovery/participant/PDPServer.cpp
-    rtps/builtin/discovery/participant/timedevent/DSClientEvent.cpp
-    rtps/builtin/discovery/participant/timedevent/DServerEvent.cpp
     rtps/builtin/discovery/endpoint/EDP.cpp
     rtps/builtin/discovery/endpoint/EDPSimple.cpp
-    rtps/builtin/discovery/endpoint/EDPClient.cpp
-    rtps/builtin/discovery/endpoint/EDPServer.cpp
     rtps/builtin/discovery/endpoint/EDPSimpleListeners.cpp
-    rtps/builtin/discovery/endpoint/EDPServerListeners.cpp
     rtps/builtin/discovery/endpoint/EDPStatic.cpp
     rtps/builtin/liveliness/WLP.cpp
     rtps/builtin/liveliness/WLPListener.cpp
@@ -194,6 +186,47 @@ set(${PROJECT_NAME}_source_files
     rtps/reader/StatelessPersistentReader.cpp
     rtps/reader/StatefulPersistentReader.cpp
     rtps/persistence/PersistenceFactory.cpp
+
+    # old discovery-server sources
+
+    rtps/builtin/discovery/participant/timedevent/DSClientEvent.cpp
+    rtps/builtin/discovery/participant/timedevent/DServerEvent.cpp
+    rtps/builtin/discovery/participant/PDPClient.cpp
+    rtps/builtin/discovery/participant/PDPServer.cpp
+    rtps/builtin/discovery/participant/PDPServerListener.cpp
+    rtps/builtin/discovery/endpoint/EDPClient.cpp
+    rtps/builtin/discovery/endpoint/EDPServer.cpp
+    rtps/builtin/discovery/endpoint/EDPServerListeners.cpp
+
+    # new discovery-server sources
+
+#   rtps/builtin/discovery/database/DiscoveryDataFilter.hpp
+#   rtps/builtin/discovery/database/DiscoveryDataBase.hpp
+    rtps/builtin/discovery/database/DiscoveryDataBase.cpp
+#   rtps/builtin/discovery/database/DiscoveryParticipantsAckStatus.hpp
+    rtps/builtin/discovery/database/DiscoveryParticipantsAckStatus.cpp
+#   rtps/builtin/discovery/database/DiscoveryParticipantInfo.hpp
+    rtps/builtin/discovery/database/DiscoveryParticipantInfo.cpp
+#   rtps/builtin/discovery/database/DiscoverySharedInfo.hpp
+    rtps/builtin/discovery/database/DiscoverySharedInfo.cpp
+#   rtps/builtin/discovery/database/DiscoveryDataQueueInfo.hpp
+
+#   rtps/builtin/discovery/participant/DSClientEvent2.hpp
+    rtps/builtin/discovery/participant/DSClientEvent2.cpp
+#   rtps/builtin/discovery/participant/DServerEvent2.hpp
+    rtps/builtin/discovery/participant/DServerEvent2.cpp
+#   rtps/builtin/discovery/participant/PDPClient2.hpp
+    rtps/builtin/discovery/participant/PDPClient2.cpp
+#   rtps/builtin/discovery/participant/PDPServer2.hpp
+    rtps/builtin/discovery/participant/PDPServer2.cpp
+#   rtps/builtin/discovery/participant/PDPServerListener2.hpp
+    rtps/builtin/discovery/participant/PDPServerListener2.cpp
+#   rtps/builtin/discovery/endpoint/EDPClient2.hpp
+    rtps/builtin/discovery/endpoint/EDPClient2.cpp
+#   rtps/builtin/discovery/endpoint/EDPServer2.hpp
+    rtps/builtin/discovery/endpoint/EDPServer2.cpp
+#   rtps/builtin/discovery/endpoint/EDPServerListeners2.hpp
+    rtps/builtin/discovery/endpoint/EDPServerListeners2.cpp
 
     utils/IPFinder.cpp
     utils/md5.cpp
@@ -356,6 +389,13 @@ elseif(NOT EPROSIMA_INSTALLER)
     set_target_properties(${PROJECT_NAME} PROPERTIES SOVERSION ${PROJECT_VERSION_MAJOR})
 
     option(INTERNAL_DEBUG "Activate developer debug messages" OFF)
+
+    # make visual studio more clang like
+    if(MSVC)
+        # C4101 'identifier' : unreferenced local variable
+        # C4555 expression has no effect; expected expression with side-effect
+        target_compile_options(${PROJECT_NAME} PRIVATE /w34101 /w34555 )
+    endif(MSVC)
 
     target_compile_definitions(${PROJECT_NAME} PRIVATE
         ${PROJECT_NAME_UPPER}_SOURCE

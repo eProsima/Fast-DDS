@@ -73,17 +73,17 @@ void PDPSimple::initializeParticipantProxyData(
     PDP::initializeParticipantProxyData(participant_data);
 
     if (getRTPSParticipant()->getAttributes().builtin.discovery_config.
-            use_SIMPLE_EndpointDiscoveryProtocol)
+                    use_SIMPLE_EndpointDiscoveryProtocol)
     {
         if (getRTPSParticipant()->getAttributes().builtin.discovery_config.m_simpleEDP.
-                use_PublicationWriterANDSubscriptionReader)
+                        use_PublicationWriterANDSubscriptionReader)
         {
             participant_data->m_availableBuiltinEndpoints |= DISC_BUILTIN_ENDPOINT_PUBLICATION_ANNOUNCER;
             participant_data->m_availableBuiltinEndpoints |= DISC_BUILTIN_ENDPOINT_SUBSCRIPTION_DETECTOR;
         }
 
         if (getRTPSParticipant()->getAttributes().builtin.discovery_config.m_simpleEDP.
-                use_PublicationReaderANDSubscriptionWriter)
+                        use_PublicationReaderANDSubscriptionWriter)
         {
             participant_data->m_availableBuiltinEndpoints |= DISC_BUILTIN_ENDPOINT_PUBLICATION_DETECTOR;
             participant_data->m_availableBuiltinEndpoints |= DISC_BUILTIN_ENDPOINT_SUBSCRIPTION_ANNOUNCER;
@@ -91,22 +91,22 @@ void PDPSimple::initializeParticipantProxyData(
 
 #if HAVE_SECURITY
         if (getRTPSParticipant()->getAttributes().builtin.discovery_config.m_simpleEDP.
-                enable_builtin_secure_publications_writer_and_subscriptions_reader)
+                        enable_builtin_secure_publications_writer_and_subscriptions_reader)
         {
             participant_data->m_availableBuiltinEndpoints |= DISC_BUILTIN_ENDPOINT_PUBLICATION_SECURE_ANNOUNCER;
             participant_data->m_availableBuiltinEndpoints |= DISC_BUILTIN_ENDPOINT_SUBSCRIPTION_SECURE_DETECTOR;
         }
 
         if (getRTPSParticipant()->getAttributes().builtin.discovery_config.m_simpleEDP.
-                enable_builtin_secure_subscriptions_writer_and_publications_reader)
+                        enable_builtin_secure_subscriptions_writer_and_publications_reader)
         {
             participant_data->m_availableBuiltinEndpoints |= DISC_BUILTIN_ENDPOINT_SUBSCRIPTION_SECURE_ANNOUNCER;
             participant_data->m_availableBuiltinEndpoints |= DISC_BUILTIN_ENDPOINT_PUBLICATION_SECURE_DETECTOR;
         }
-#endif
+#endif // if HAVE_SECURITY
     }
-    else if(!getRTPSParticipant()->getAttributes().builtin.discovery_config.
-            use_STATIC_EndpointDiscoveryProtocol)
+    else if (!getRTPSParticipant()->getAttributes().builtin.discovery_config.
+                    use_STATIC_EndpointDiscoveryProtocol)
     {
         logError(RTPS_PDP, "Neither EDP simple nor EDP static enabled. Endpoints will not be discovered.");
     }
@@ -264,7 +264,7 @@ bool PDPSimple::createPDPEndpoints()
     {
 #if HAVE_SECURITY
         mp_RTPSParticipant->set_endpoint_rtps_protection_supports(mp_PDPReader, false);
-#endif
+#endif // if HAVE_SECURITY
     }
     else
     {
@@ -301,7 +301,7 @@ bool PDPSimple::createPDPEndpoints()
     {
 #if HAVE_SECURITY
         mp_RTPSParticipant->set_endpoint_rtps_protection_supports(wout, false);
-#endif
+#endif // if HAVE_SECURITY
         mp_PDPWriter = wout;
         if (mp_PDPWriter != nullptr)
         {
@@ -349,7 +349,7 @@ void PDPSimple::assignRemoteEndpoints(
         temp_writer_data_.persistence_guid(pdata->get_persistence_guid());
         temp_writer_data_.set_persistence_entity_id(c_EntityId_SPDPWriter);
         temp_writer_data_.set_remote_locators(pdata->metatraffic_locators, network, use_multicast_locators);
-        temp_writer_data_.m_qos.m_reliability.kind = BEST_EFFORT_RELIABILITY_QOS;
+        temp_writer_data_.m_qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
         temp_writer_data_.m_qos.m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
         mp_PDPReader->matched_writer_add(temp_writer_data_);
     }
@@ -374,7 +374,7 @@ void PDPSimple::assignRemoteEndpoints(
 #else
     //Inform EDP of new RTPSParticipant data:
     notifyAboveRemoteEndpoints(*pdata);
-#endif
+#endif // if HAVE_SECURITY
 }
 
 void PDPSimple::removeRemoteEndpoints(
