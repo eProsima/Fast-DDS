@@ -154,8 +154,7 @@ TEST(Discovery, StaticDiscovery)
             durability_kind(eprosima::fastrtps::TRANSIENT_LOCAL_DURABILITY_QOS);
     writer.static_discovery("PubSubWriter.xml").reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).
             unicastLocatorList(WriterUnicastLocators).multicastLocatorList(WriterMulticastLocators).
-            setPublisherIDs(1,
-            2).setManualTopicName(std::string("BlackBox_StaticDiscovery_") + TOPIC_RANDOM_NUMBER).init();
+            setPublisherIDs(1, 2).setManualTopicName(std::string("BlackBox_StaticDiscovery_") + TOPIC_RANDOM_NUMBER).init();
 
 
     ASSERT_TRUE(writer.isInitialized());
@@ -178,8 +177,7 @@ TEST(Discovery, StaticDiscovery)
             durability_kind(eprosima::fastrtps::TRANSIENT_LOCAL_DURABILITY_QOS);
     reader.static_discovery("PubSubReader.xml").
             unicastLocatorList(ReaderUnicastLocators).multicastLocatorList(ReaderMulticastLocators).
-            setSubscriberIDs(3,
-            4).setManualTopicName(std::string("BlackBox_StaticDiscovery_") + TOPIC_RANDOM_NUMBER).init();
+            setSubscriberIDs(3, 4).setManualTopicName(std::string("BlackBox_StaticDiscovery_") + TOPIC_RANDOM_NUMBER).init();
 
     ASSERT_TRUE(reader.isInitialized());
 
@@ -321,8 +319,8 @@ TEST(Discovery, ParticipantLivelinessAssertion)
     auto test_transport = std::make_shared<test_UDPv4TransportDescriptor>();
 
     reader.disable_builtin_transport().add_user_transport_to_pparams(test_transport).
-            lease_duration({ 0, 800000000 },
-            { 0, 500000000 }).reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).init();
+            lease_duration({ 0, 800000000 }, { 0, 500000000 }).
+            reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).init();
 
     ASSERT_TRUE(reader.isInitialized());
 

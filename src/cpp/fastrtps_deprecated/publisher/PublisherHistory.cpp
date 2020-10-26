@@ -417,8 +417,6 @@ bool PublisherHistory::is_key_registered(
     return (vit != keyed_changes_.end() &&
            (vit->second.cache_changes.empty() ||
            (NOT_ALIVE_UNREGISTERED != vit->second.cache_changes.back()->kind &&
-           NOT_ALIVE_DISPOSED_UNREGISTERED != vit->second.cache_changes.back()->kind
-           )
-           )
+           NOT_ALIVE_DISPOSED_UNREGISTERED != vit->second.cache_changes.back()->kind))
            );
 }

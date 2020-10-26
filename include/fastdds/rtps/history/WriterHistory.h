@@ -33,7 +33,7 @@ class WriteParams;
  * Class WriterHistory, container of the different CacheChanges of a writer
  * @ingroup WRITER_MODULE
  */
-class WriterHistory : public rtps::History
+class WriterHistory : public History
 {
     friend class RTPSWriter;
     friend class PersistentWriter;
