@@ -337,10 +337,11 @@ TEST_F(LogTests, validate_multithread_flush_calls)
 /*
  * This test checks that the log messages go to the appropriate buffer (STDOUT) when using a StdoutConsumer.
  * 1. Set a StdoutConsumer as the only log consumer.
- * 2. Redirect std::cout to a stream buffer.
+ * 2. Redirect std::cout and std::cerr to a stream buffer.
  * 3. Log a messages in every log level and wait until all logs are consumed.
- * 4. Reset std::cout to STDOUT.
- * 5. Check the number of messages in the stream buffer.
+ * 4. Reset std::cout to STDOUT and std::cerr to STDCERR.
+ * 5. Check the number of messages in both stream buffers.
+ * 6. Ensure that all the messages have been written to STDOUT and there is no message in STDERR.
  */
 TEST_F(LogTests, stdout_consumer_stream)
 {
