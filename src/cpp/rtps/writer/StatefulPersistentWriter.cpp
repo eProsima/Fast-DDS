@@ -72,9 +72,13 @@ void StatefulPersistentWriter::print_inconsistent_acknack(
     if (!log_error_printed_)
     {
         log_error_printed_ = true;
-        logError(RTPS_WRITER, "Inconsistent acknack received in Local Writer "
-                << writer_guid << ". Beware that delete persistent database without reseting the matched readers prevents communication with them.");
+
+        logError(RTPS_WRITER, "Inconsistent acknack received in Local Writer " << writer_guid <<
+                ". Beware that deleting persistent database without resetting the matched readers "
+                "prevents communication with them.");
+
     }
+
     StatefulWriter::print_inconsistent_acknack(writer_guid, reader_guid, min_requested_sequence_number,
             max_requested_sequence_number, next_sequence_number);
 }
