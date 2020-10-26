@@ -154,8 +154,8 @@ TEST(Discovery, StaticDiscovery)
             durability_kind(eprosima::fastrtps::TRANSIENT_LOCAL_DURABILITY_QOS);
     writer.static_discovery("PubSubWriter.xml").reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).
             unicastLocatorList(WriterUnicastLocators).multicastLocatorList(WriterMulticastLocators).
-            setPublisherIDs(1, 2).setManualTopicName(std::string("BlackBox_StaticDiscovery_") + TOPIC_RANDOM_NUMBER).init();
-
+            setPublisherIDs(1, 2).setManualTopicName(std::string("BlackBox_StaticDiscovery_")
+            + TOPIC_RANDOM_NUMBER).init();
 
     ASSERT_TRUE(writer.isInitialized());
 
@@ -177,7 +177,8 @@ TEST(Discovery, StaticDiscovery)
             durability_kind(eprosima::fastrtps::TRANSIENT_LOCAL_DURABILITY_QOS);
     reader.static_discovery("PubSubReader.xml").
             unicastLocatorList(ReaderUnicastLocators).multicastLocatorList(ReaderMulticastLocators).
-            setSubscriberIDs(3, 4).setManualTopicName(std::string("BlackBox_StaticDiscovery_") + TOPIC_RANDOM_NUMBER).init();
+            setSubscriberIDs(3, 4).setManualTopicName(std::string("BlackBox_StaticDiscovery_")
+            + TOPIC_RANDOM_NUMBER).init();
 
     ASSERT_TRUE(reader.isInitialized());
 
