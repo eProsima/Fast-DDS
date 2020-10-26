@@ -38,7 +38,11 @@ Log::Resources::Resources()
     , functions(true)
     , verbosity(Log::Error)
 {
+#if STDOUTERR_LOG_CONSUMER
     resources_.consumers.emplace_back(new StdoutErrConsumer);
+#else
+    resources_.consumers.emplace_back(new StdoutConsumer);
+#endif // STDOUTERR_LOG_CONSUMER
 }
 
 Log::Resources::~Resources()
@@ -75,7 +79,11 @@ void Log::Reset()
     resources_.functions = true;
     resources_.verbosity = Log::Error;
     resources_.consumers.clear();
+#if STDOUTERR_LOG_CONSUMER
     resources_.consumers.emplace_back(new StdoutErrConsumer);
+#else
+    resources_.consumers.emplace_back(new StdoutConsumer);
+#endif
 }
 
 void Log::Flush()
