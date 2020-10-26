@@ -2498,6 +2498,10 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_governance_rule_o
 
         ASSERT_FALSE(writer.isInitialized());
 
+        // Wait for authorization
+        reader.waitAuthorized();
+        writer.waitAuthorized();
+
         std::cout << "Second phase finished" << std::endl;
     }
 }
