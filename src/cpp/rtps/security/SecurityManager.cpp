@@ -1969,7 +1969,7 @@ void SecurityManager::unmatch_builtin_endpoints(
             builtin_endpoints & BUILTIN_ENDPOINT_PARTICIPANT_STATELESS_MESSAGE_WRITER)
     {
         tmp_guid.entityId = participant_stateless_message_writer_entity_id;
-        participant_stateless_message_reader_->matched_writer_remove(tmp_guid);
+        participant_stateless_message_reader_->matched_writer_remove(tmp_guid, false);
     }
 
     if (participant_stateless_message_writer_ != nullptr &&
@@ -1983,7 +1983,7 @@ void SecurityManager::unmatch_builtin_endpoints(
             builtin_endpoints & BUILTIN_ENDPOINT_PARTICIPANT_VOLATILE_MESSAGE_SECURE_WRITER)
     {
         tmp_guid.entityId = participant_volatile_message_secure_writer_entity_id;
-        participant_volatile_message_secure_reader_->matched_writer_remove(tmp_guid);
+        participant_volatile_message_secure_reader_->matched_writer_remove(tmp_guid, false);
     }
 
     if (participant_volatile_message_secure_writer_ != nullptr &&

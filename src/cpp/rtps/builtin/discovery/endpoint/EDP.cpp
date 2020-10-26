@@ -474,7 +474,8 @@ bool EDP::updatedLocalWriter(
 
 bool EDP::unpairWriterProxy(
         const GUID_t& participant_guid,
-        const GUID_t& writer_guid)
+        const GUID_t& writer_guid,
+        bool removed_by_lease)
 {
     (void)participant_guid;
 
@@ -484,7 +485,7 @@ bool EDP::unpairWriterProxy(
     for (std::vector<RTPSReader*>::iterator rit = mp_RTPSParticipant->userReadersListBegin();
             rit != mp_RTPSParticipant->userReadersListEnd(); ++rit)
     {
-        if ((*rit)->matched_writer_remove(writer_guid))
+        if ((*rit)->matched_writer_remove(writer_guid, removed_by_lease))
         {
             const GUID_t& reader_guid = (*rit)->getGuid();
 #if HAVE_SECURITY

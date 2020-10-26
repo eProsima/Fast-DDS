@@ -69,7 +69,8 @@ public:
      * @return True if correct.
      */
     bool matched_writer_remove(
-            const GUID_t& writer_guid) override;
+            const GUID_t& writer_guid,
+            bool removed_by_lease = false) override;
 
     /**
      * Tells us if a specific Writer is matched against this reader.
@@ -182,7 +183,7 @@ public:
     /**
      * Get the RTPS participant
      * @return Associated RTPS participant
-    */
+     */
     inline RTPSParticipantImpl* getRTPSParticipant() const
     {
         return mp_RTPSParticipant;
@@ -230,6 +231,6 @@ private:
 } /* namespace fastrtps */
 } /* namespace eprosima */
 
-#endif
+#endif // ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
 #endif /* _FASTDDS_RTPS_READER_STATELESSREADER_H_ */

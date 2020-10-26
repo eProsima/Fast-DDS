@@ -101,7 +101,8 @@ bool StatelessReader::matched_writer_add(
 }
 
 bool StatelessReader::matched_writer_remove(
-        const GUID_t& writer_guid)
+        const GUID_t& writer_guid,
+        bool removed_by_lease)
 {
     std::lock_guard<RecursiveTimedMutex> guard(mp_mutex);
 
@@ -129,7 +130,7 @@ bool StatelessReader::matched_writer_remove(
                 }
             }
 
-            remove_persistence_guid(it->guid, it->persistence_guid);
+            remove_persistence_guid(it->guid, it->persistence_guid, removed_by_lease);
             matched_writers_.erase(it);
 
             return true;

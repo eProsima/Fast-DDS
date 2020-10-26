@@ -250,11 +250,13 @@ public:
      * Unpair a WriterProxyData object from all local readers.
      * @param participant_guid GUID of the participant.
      * @param writer_guid GUID of the writer.
+     * @param removed_by_lease Whether the writer is being unpaired due to a participant drop.
      * @return True if correct.
      */
     bool unpairWriterProxy(
             const GUID_t& participant_guid,
-            const GUID_t& writer_guid);
+            const GUID_t& writer_guid,
+            bool removed_by_lease);
 
     /**
      * Unpair a ReaderProxyData object from all local writers.

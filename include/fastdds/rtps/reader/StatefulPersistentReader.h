@@ -24,7 +24,7 @@
 #include <fastdds/rtps/reader/StatefulReader.h>
 
 namespace eprosima {
-namespace fastrtps{
+namespace fastrtps {
 namespace rtps {
 
 class IPersistenceService;
@@ -37,22 +37,35 @@ class StatefulPersistentReader : public StatefulReader
 {
     friend class RTPSParticipantImpl;
 
-    StatefulPersistentReader(RTPSParticipantImpl*, GUID_t& guid,
-        ReaderAttributes& att, ReaderHistory* hist, ReaderListener* listen,
-        IPersistenceService* persistence);
-    public:
+    StatefulPersistentReader(
+            RTPSParticipantImpl*,
+            GUID_t& guid,
+            ReaderAttributes& att,
+            ReaderHistory* hist,
+            ReaderListener* listen,
+            IPersistenceService* persistence);
+
+public:
+
     virtual ~StatefulPersistentReader();
 
-    protected:
-    virtual void set_last_notified(const GUID_t& persistence_guid, const SequenceNumber_t& seq) override;
+protected:
 
-    private:
+    virtual void set_last_notified(
+            const GUID_t& persistence_guid,
+            const SequenceNumber_t& seq) override;
+    bool may_remove_history_record(
+            bool removed_by_lease) override;
+
+private:
+
     IPersistenceService* persistence_;
     std::string persistence_guid_;
 };
-}
-} /* namespace rtps */
-} /* namespace eprosima */
 
-#endif
+} // namespace rtps
+} // namespace fastrtps
+} // namespace eprosima
+
+#endif // ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 #endif /* _FASTDDS_RTPS_STATEFULPERSISTENTREADER_H_ */

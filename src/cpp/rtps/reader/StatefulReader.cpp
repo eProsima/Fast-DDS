@@ -178,7 +178,8 @@ bool StatefulReader::matched_writer_add(
 }
 
 bool StatefulReader::matched_writer_remove(
-        const GUID_t& writer_guid)
+        const GUID_t& writer_guid,
+        bool removed_by_lease)
 {
     std::unique_lock<RecursiveTimedMutex> lock(mp_mutex);
     if (is_alive_)
@@ -214,7 +215,7 @@ bool StatefulReader::matched_writer_remove(
 
                 wproxy = *it;
                 matched_writers_.erase(it);
-                remove_persistence_guid(wproxy->guid(), wproxy->persistence_guid());
+                remove_persistence_guid(wproxy->guid(), wproxy->persistence_guid(), removed_by_lease);
                 break;
             }
         }

@@ -608,7 +608,7 @@ bool PDP::removeWriterProxyData(
             if (wit != pit->m_writers->end())
             {
                 WriterProxyData* pW = wit->second;
-                mp_EDP->unpairWriterProxy(pit->m_guid, writer_guid);
+                mp_EDP->unpairWriterProxy(pit->m_guid, writer_guid, false);
 
                 RTPSParticipantListener* listener = mp_RTPSParticipant->getListener();
                 if (listener)
@@ -902,7 +902,8 @@ bool PDP::remove_remote_participant(
                 GUID_t writer_guid(wit->guid());
                 if (writer_guid != c_Guid_Unknown)
                 {
-                    mp_EDP->unpairWriterProxy(partGUID, writer_guid);
+                    mp_EDP->unpairWriterProxy(partGUID, writer_guid,
+                            reason == ParticipantDiscoveryInfo::DISCOVERY_STATUS::DROPPED_PARTICIPANT);
 
                     if (listener)
                     {

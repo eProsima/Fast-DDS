@@ -57,7 +57,8 @@ public:
             const WriterProxyData& wdata) = 0;
 
     virtual bool matched_writer_remove(
-            const GUID_t& wdata) = 0;
+            const GUID_t& wdata,
+            bool removed_by_lease = false) = 0;
 
     virtual bool matched_writer_is_matched(
             const GUID_t& wguid) = 0;
