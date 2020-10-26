@@ -2871,9 +2871,9 @@ XMLP_ret XMLParser::parseXMLConsumer(
                 }
 
                 // Create consumer with the specified `stderr_threshold` and register it.
-                StdoutErrConsumer* consumer = new StdoutErrConsumer;
-                consumer->stderr_threshold(threshold);
-                Log::RegisterConsumer(std::unique_ptr<LogConsumer>(consumer));
+                StdoutErrConsumer* log_consumer = new StdoutErrConsumer;
+                log_consumer->stderr_threshold(threshold);
+                Log::RegisterConsumer(std::unique_ptr<LogConsumer>(log_consumer));
             }
         }
         else if (std::strcmp(classStr.c_str(), "FileConsumer") == 0)

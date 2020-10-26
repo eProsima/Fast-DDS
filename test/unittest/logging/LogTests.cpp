@@ -369,7 +369,7 @@ TEST_F(LogTests, stdout_consumer_stream)
 
     // Count number of lines in the buffer. There is one line per each log message output to that buffer
     std::string out_string_out = out_stream_out.str();
-    uint32_t lines_out = std::count(out_string_out.begin(), out_string_out.end(), '\n');
+    std::string::difference_type lines_out = std::count(out_string_out.begin(), out_string_out.end(), '\n');
 
     // If CMAKE_BUILD_TYPE is Debug, the INTERNAL_DEBUG flag was set, and the logInfo messages were not deactivated,
     // then there should be 3 messages in the out buffer, one for the logError, one for the logWarning, and another one
@@ -429,8 +429,8 @@ TEST_F(LogTests, stdouterr_consumer_stream)
     // Count number of lines in each of the buffers. There is one line per each log message output to that buffer
     std::string out_string_err = out_stream_err.str();
     std::string out_string_out = out_stream_out.str();
-    uint32_t lines_err = std::count(out_string_err.begin(), out_string_err.end(), '\n');
-    uint32_t lines_out = std::count(out_string_out.begin(), out_string_out.end(), '\n');
+    std::string::difference_type lines_err = std::count(out_string_err.begin(), out_string_err.end(), '\n');
+    std::string::difference_type lines_out = std::count(out_string_out.begin(), out_string_out.end(), '\n');
 
     // Only the logError message should be in the error buffer, since stderr_threshold was set to Log::Kind::Error.
     ASSERT_EQ(1u, lines_err);
