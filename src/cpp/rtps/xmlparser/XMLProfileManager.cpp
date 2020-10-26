@@ -324,6 +324,8 @@ XMLP_ret XMLProfileManager::loadXMLFile(
             {
                 return XMLProfileManager::extractProfiles(std::move(child), filename);
             }
+            // TODO Workaround when there is a ROOT tag without PROFILES. Return the corresponding error instead of
+            // XMLP_ret::XML_ERROR. Only the type is checked so the objects do not need to be populated.
             else if (NodeType::TYPES == child.get()->getType())
             {
                 return loaded_ret;

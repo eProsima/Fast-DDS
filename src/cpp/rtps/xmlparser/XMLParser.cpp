@@ -132,6 +132,9 @@ XMLP_ret XMLParser::parseXML(
                 }
                 else if (strcmp(tag, TYPES) == 0)
                 {
+                    // TODO Workaround to propagate the return code upstream. A refactor is needed to propagate the
+                    // return code in some other more sensible way or populate the object and change code upstream to
+                    // read this new object.
                     up_base_node_t types_node = up_base_node_t{ new BaseNode{NodeType::TYPES} };
                     if (XMLP_ret::XML_OK == (ret = parseXMLTypes(node)))
                     {
@@ -140,6 +143,9 @@ XMLP_ret XMLParser::parseXML(
                 }
                 else if (strcmp(tag, LOG) == 0)
                 {
+                    // TODO Workaround to propagate the return code upstream. A refactor is needed to propagate the
+                    // return code in some other more sensible way or populate the object and change code upstream to
+                    // read this new object.
                     up_base_node_t log_node = up_base_node_t{ new BaseNode{NodeType::LOG} };
                     if (XMLP_ret::XML_OK == (ret = parseLogConfig(node)))
                     {
