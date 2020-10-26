@@ -176,7 +176,7 @@ public:
             const CacheChange_t* a_change) const override;
 
     template <typename Function>
-    const Function for_each_reader_proxy(
+    Function for_each_reader_proxy(
             Function f) const
     {
         // we cannot directly pass iterators neither const_iterators to matched_readers_ because then the functor would
