@@ -83,7 +83,7 @@ void Log::Reset()
     resources_.consumers.emplace_back(new StdoutErrConsumer);
 #else
     resources_.consumers.emplace_back(new StdoutConsumer);
-#endif
+#endif // if STDOUTERR_LOG_CONSUMER
 }
 
 void Log::Flush()
