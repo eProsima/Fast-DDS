@@ -370,19 +370,23 @@ public:
         {
             if (datawriter_)
             {
+                std::cout << "PubSubWriter::destroy() -> removing datawriter_" << std::endl;
                 publisher_->delete_datawriter(datawriter_);
                 datawriter_ = nullptr;
             }
             if (publisher_)
             {
+                std::cout << "PubSubWriter::destroy() -> removing publisher_" << std::endl;
                 participant_->delete_publisher(publisher_);
                 publisher_ = nullptr;
             }
             if (topic_)
             {
+                std::cout << "PubSubWriter::destroy() -> removing topic_" << std::endl;
                 participant_->delete_topic(topic_);
                 topic_ = nullptr;
             }
+            std::cout << "PubSubWriter::destroy() -> removing participant_" << std::endl;
             DomainParticipantFactory::get_instance()->delete_participant(participant_);
             participant_ = nullptr;
         }

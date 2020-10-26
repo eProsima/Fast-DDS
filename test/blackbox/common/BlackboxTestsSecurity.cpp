@@ -2435,6 +2435,8 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_governance_rule_o
         ASSERT_TRUE(data.empty());
         // Block reader until reception finished or timeout.
         reader.block_for_all();
+
+        std::cout << "First phase finished" << std::endl;
     }
 
     {
@@ -2495,6 +2497,8 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_governance_rule_o
         writer.property_policy(pub_property_policy).init();
 
         ASSERT_FALSE(writer.isInitialized());
+
+        std::cout << "Second phase finished" << std::endl;
     }
 }
 

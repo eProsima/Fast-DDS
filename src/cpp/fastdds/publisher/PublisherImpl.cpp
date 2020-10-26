@@ -276,7 +276,9 @@ DataWriter* PublisherImpl::create_datawriter(
     {
         if (ReturnCode_t::RETCODE_OK != writer->enable())
         {
+            logError(PUBLISHER, "Could not enable writer, deleting");
             delete_datawriter(writer);
+            logError(PUBLISHER, "-> Could not enable writer, has been deleted");
             return nullptr;
         }
     }

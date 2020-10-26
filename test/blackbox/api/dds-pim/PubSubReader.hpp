@@ -366,19 +366,23 @@ public:
         {
             if (datareader_)
             {
+                std::cout << "PubSubReader::destroy() -> removing datareader_" << std::endl;
                 subscriber_->delete_datareader(datareader_);
                 datareader_ = nullptr;
             }
             if (subscriber_)
             {
+                std::cout << "PubSubReader::destroy() -> removing subscriber_" << std::endl;
                 participant_->delete_subscriber(subscriber_);
                 subscriber_ = nullptr;
             }
             if (topic_)
             {
+                std::cout << "PubSubReader::destroy() -> removing topic_" << std::endl;
                 participant_->delete_topic(topic_);
                 topic_ = nullptr;
             }
+            std::cout << "PubSubReader::destroy() -> removing participant_" << std::endl;
             eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->delete_participant(participant_);
             participant_ = nullptr;
         }
