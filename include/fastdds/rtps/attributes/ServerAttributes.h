@@ -124,6 +124,21 @@ RTPS_DllAPI bool get_server_client_default_guidPrefix(
 
 } // namespace rtps
 } // namespace fastdds
+
+// keep former namespace references available
+namespace fastrtps {
+namespace rtps {
+
+    using fastdds::rtps::RemoteServerAttributes;
+    using fastdds::rtps::RemoteServerList_t;
+    using fastdds::rtps::DEFAULT_ROS2_SERVER_PORT;
+    using fastdds::rtps::DEFAULT_ROS2_SERVER_GUIDPREFIX;
+    using fastdds::rtps::load_environment_server_info;
+    using fastdds::rtps::get_server_client_default_guidPrefix;
+
+} // fastrtps
+} // rtps
+
 } // namespace eprosima
 
 #endif // DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
