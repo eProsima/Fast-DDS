@@ -58,10 +58,9 @@ struct RemoteLocatorList
      * @param other RemoteLocatorList to copy data from.
      */
     RemoteLocatorList(const RemoteLocatorList& other)
-        : unicast(ResourceLimitedContainerConfig::fixed_size_configuration(other.unicast.max_size()))
-        , multicast(ResourceLimitedContainerConfig::fixed_size_configuration(other.multicast.max_size()))
+        : unicast(other.unicast)
+        , multicast(other.multicast)
     {
-        *this = other;
     }
 
     /**
@@ -167,7 +166,7 @@ inline std::istream& operator>>(std::istream& input, RemoteLocatorList& locList)
             input >> size_m_max >> coma >> size_m >> coma;
             input >> size_u_max >> coma >> size_u >> coma; // last coma is (
 
-            locList = RemoteLocatorList(size_u, size_m);
+            locList = RemoteLocatorList(size_u_max, size_m_max);
 
             for (unsigned int i = 0; i < size_m; ++i)
             {
@@ -179,7 +178,7 @@ inline std::istream& operator>>(std::istream& input, RemoteLocatorList& locList)
                 locList.add_multicast_locator(l);
             }
 
-            for (unsigned int i = 0; i < size_m; ++i)
+            for (unsigned int i = 0; i < size_u; ++i)
             {
                 input >> l >> coma;
                 if ( coma != ',')
