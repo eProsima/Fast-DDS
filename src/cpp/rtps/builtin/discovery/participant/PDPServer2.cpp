@@ -744,7 +744,7 @@ bool PDPServer2::server_update_routine()
     }
     // If the data queue is not empty re-start the routine.
     // A non-empty queue means that the server has received a change while it is running the processing routine.
-    while (!discovery_db_.data_queue_empty());
+    while (!discovery_db_.data_queue_empty() && discovery_db_.is_enabled());
 
     // Must restart the routin after the period time
     return pending_work;

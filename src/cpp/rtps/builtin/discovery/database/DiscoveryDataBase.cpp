@@ -1047,6 +1047,7 @@ void DiscoveryDataBase::process_dispose_participant_(
     {
         logError(DISCOVERY_DATABASE, "Processing disposal from an unexisting Participant"
                 << participant_guid.guidPrefix);
+        return;
     }
 
     // Delete entries from writers_ belonging to the participant
@@ -1190,56 +1191,62 @@ bool DiscoveryDataBase::process_dirty_topics()
 
                 // Check in `participants_` whether the client with the reader has acknowledge the PDP of the client
                 // with the writer.
-                if (parts_reader_it != participants_.end() && parts_reader_it->second.is_matched(writer.guidPrefix))
+                if (parts_reader_it != participants_.end())
                 {
-                    // Check the status of the writer in `readers_[reader]::relevant_participants_builtin_ack_status`.
-                    if (readers_it != readers_.end() && !readers_it->second.is_matched(writer.guidPrefix))
+                    if (parts_reader_it->second.is_matched(writer.guidPrefix))
                     {
-                        // If the status is 0, add DATA(r) to a `edp_publications_to_send_` (if it's not there).
-                        if (add_edp_subscriptions_to_send_(readers_it->second.change()))
+                        // Check the status of the writer in `readers_[reader]::relevant_participants_builtin_ack_status`.
+                        if (readers_it != readers_.end() && !readers_it->second.is_matched(writer.guidPrefix))
                         {
-                            logInfo(DISCOVERY_DATABASE, "Addind DATA(r) to send: "
-                                    << readers_it->second.change()->instanceHandle);
+                            // If the status is 0, add DATA(r) to a `edp_publications_to_send_` (if it's not there).
+                            if (add_edp_subscriptions_to_send_(readers_it->second.change()))
+                            {
+                                logInfo(DISCOVERY_DATABASE, "Addind DATA(r) to send: "
+                                        << readers_it->second.change()->instanceHandle);
+                            }
                         }
                     }
-                }
-                else if (parts_reader_it->second.is_relevant_participant(writer.guidPrefix))
-                {
-                    // Add DATA(p) of the client with the writer to `pdp_to_send_` (if it's not there).
-                    if (add_pdp_to_send_(parts_reader_it->second.change()))
+                    else if (parts_reader_it->second.is_relevant_participant(writer.guidPrefix))
                     {
-                        logInfo(DISCOVERY_DATABASE, "Addind readers' DATA(p) to send: "
-                                << parts_reader_it->second.change()->instanceHandle);
+                        // Add DATA(p) of the client with the writer to `pdp_to_send_` (if it's not there).
+                        if (add_pdp_to_send_(parts_reader_it->second.change()))
+                        {
+                            logInfo(DISCOVERY_DATABASE, "Addind readers' DATA(p) to send: "
+                                    << parts_reader_it->second.change()->instanceHandle);
+                        }
+                        // Set topic as not-clearable.
+                        is_clearable = false;
                     }
-                    // Set topic as not-clearable.
-                    is_clearable = false;
                 }
 
                 // Check in `participants_` whether the client with the writer has acknowledge the PDP of the client
                 // with the reader.
-                if (parts_writer_it != participants_.end() && parts_writer_it->second.is_matched(reader.guidPrefix))
+                if (parts_writer_it != participants_.end())
                 {
-                    // Check the status of the reader in `writers_[writer]::relevant_participants_builtin_ack_status`.
-                    if (writers_it != writers_.end() && !writers_it->second.is_matched(reader.guidPrefix))
+                    if (parts_writer_it->second.is_matched(reader.guidPrefix))
                     {
-                        // If the status is 0, add DATA(w) to a `edp_subscriptions_to_send_` (if it's not there).
-                        if (add_edp_publications_to_send_(writers_it->second.change()))
+                        // Check the status of the reader in `writers_[writer]::relevant_participants_builtin_ack_status`.
+                        if (writers_it != writers_.end() && !writers_it->second.is_matched(reader.guidPrefix))
                         {
-                            logInfo(DISCOVERY_DATABASE, "Addind DATA(w) to send: "
-                                    << writers_it->second.change()->instanceHandle);
+                            // If the status is 0, add DATA(w) to a `edp_subscriptions_to_send_` (if it's not there).
+                            if (add_edp_publications_to_send_(writers_it->second.change()))
+                            {
+                                logInfo(DISCOVERY_DATABASE, "Addind DATA(w) to send: "
+                                        << writers_it->second.change()->instanceHandle);
+                            }
                         }
                     }
-                }
-                else if (parts_writer_it->second.is_relevant_participant(reader.guidPrefix))
-                {
-                    // Add DATA(p) of the client with the reader to `pdp_to_send_` (if it's not there).
-                    if (add_pdp_to_send_(parts_writer_it->second.change()))
+                    else if (parts_writer_it->second.is_relevant_participant(reader.guidPrefix))
                     {
-                        logInfo(DISCOVERY_DATABASE, "Addind writers' DATA(p) to send: "
-                                << parts_writer_it->second.change()->instanceHandle);
+                        // Add DATA(p) of the client with the reader to `pdp_to_send_` (if it's not there).
+                        if (add_pdp_to_send_(parts_writer_it->second.change()))
+                        {
+                            logInfo(DISCOVERY_DATABASE, "Addind writers' DATA(p) to send: "
+                                    << parts_writer_it->second.change()->instanceHandle);
+                        }
+                        // Set topic as not-clearable.
+                        is_clearable = false;
                     }
-                    // Set topic as not-clearable.
-                    is_clearable = false;
                 }
             }
         }
@@ -1670,24 +1677,46 @@ void DiscoveryDataBase::remove_writer_from_topic_(
         const eprosima::fastrtps::rtps::GUID_t& writer_guid,
         const std::string& topic_name)
 {
-    std::map<std::string, std::vector<eprosima::fastrtps::rtps::GUID_t>>::iterator tit =
-            writers_by_topic_.find(topic_name);
-    if (tit != writers_by_topic_.end())
+    if (topic_name.compare(virtual_topic_) == 0)
     {
-        for (std::vector<eprosima::fastrtps::rtps::GUID_t>::iterator writer_it = tit->second.begin();
-                writer_it != tit->second.end();
-                ++writer_it)
+        std::map<std::string, std::vector<eprosima::fastrtps::rtps::GUID_t>>::iterator topic_it;
+        for (topic_it = writers_by_topic_.begin(); topic_it != writers_by_topic_.end(); topic_it++)
         {
-            if (*writer_it == writer_guid)
+            for (std::vector<eprosima::fastrtps::rtps::GUID_t>::iterator writer_it = topic_it->second.begin();
+                    writer_it != topic_it->second.end();
+                    ++writer_it)
             {
-                tit->second.erase(writer_it);
-                break;
+                if (*writer_it == writer_guid)
+                {
+                    topic_it->second.erase(writer_it);
+                    break;
+                }
             }
         }
-        // The topic wont be deleted to avoid creating and matching again all the virtual endpoints
-        // This only affects a virtual endpoint, that will be added in this topic, but nothing will be matched
-        // This also helps because topics are symetrical, and removing one implies check the other's emptyness first.
     }
+    else
+    {
+        std::map<std::string, std::vector<eprosima::fastrtps::rtps::GUID_t>>::iterator topic_it =
+                writers_by_topic_.find(topic_name);
+        if (topic_it != writers_by_topic_.end())
+        {
+            for (std::vector<eprosima::fastrtps::rtps::GUID_t>::iterator writer_it = topic_it->second.begin();
+                    writer_it != topic_it->second.end();
+                    ++writer_it)
+            {
+                if (*writer_it == writer_guid)
+                {
+                    topic_it->second.erase(writer_it);
+                    break;
+                }
+            }
+            // The topic wont be deleted to avoid creating and matching again all the virtual endpoints
+            // This only affects a virtual endpoint, that will be added in this topic, but nothing will be matched
+            // This also helps because topics are symetrical, and removing one implies check the other's emptyness first.
+        }
+    }
+
+
 }
 
 void DiscoveryDataBase::remove_reader_from_topic_(
@@ -1696,22 +1725,42 @@ void DiscoveryDataBase::remove_reader_from_topic_(
 {
     logInfo(DISCOVERY_DATABASE, "removing: " << reader_guid << " from topic " << topic_name);
 
-    std::map<std::string, std::vector<eprosima::fastrtps::rtps::GUID_t>>::iterator tit =
-            readers_by_topic_.find(topic_name);
-    if (tit != readers_by_topic_.end())
+    if (topic_name.compare(virtual_topic_) == 0)
     {
-        for (std::vector<eprosima::fastrtps::rtps::GUID_t>::iterator reader_it = tit->second.begin();
-                reader_it != tit->second.end();
-                ++reader_it)
+        std::map<std::string, std::vector<eprosima::fastrtps::rtps::GUID_t>>::iterator topic_it;
+        for (topic_it = readers_by_topic_.begin(); topic_it != readers_by_topic_.end(); topic_it++)
         {
-            if (*reader_it == reader_guid)
+            for (std::vector<eprosima::fastrtps::rtps::GUID_t>::iterator reader_it = topic_it->second.begin();
+                    reader_it != topic_it->second.end();
+                    ++reader_it)
             {
-                tit->second.erase(reader_it);
-                break;
+                if (*reader_it == reader_guid)
+                {
+                    topic_it->second.erase(reader_it);
+                    break;
+                }
             }
         }
-        // the topic wont be deleted to avoid creating and matching again all the virtual endpoints
-        // this only affects a virtual endpoint, that will be added in this topic, but nothing will be matched
+    }
+    else
+    {
+        std::map<std::string, std::vector<eprosima::fastrtps::rtps::GUID_t>>::iterator topic_it =
+                readers_by_topic_.find(topic_name);
+        if (topic_it != readers_by_topic_.end())
+        {
+            for (std::vector<eprosima::fastrtps::rtps::GUID_t>::iterator reader_it = topic_it->second.begin();
+                    reader_it != topic_it->second.end();
+                    ++reader_it)
+            {
+                if (*reader_it == reader_guid)
+                {
+                    topic_it->second.erase(reader_it);
+                    break;
+                }
+            }
+            // the topic wont be deleted to avoid creating and matching again all the virtual endpoints
+            // this only affects a virtual endpoint, that will be added in this topic, but nothing will be matched
+        }
     }
 }
 
