@@ -132,8 +132,8 @@ macro(add_gtest)
                 if(GTEST_ENVIRONMENT)
                     set_tests_properties(${GTEST_GROUP_NAME}.${GTEST_TEST_NAME}
                         PROPERTIES ENVIRONMENT "${GTEST_ENVIRONMENT}")
-                    unset(GTEST_ENVIRONMENT)
                 endif()
+                unset(GTEST_ENVIRONMENT)
 
                 # Add labels
                 set_property(TEST ${GTEST_GROUP_NAME}.${GTEST_TEST_NAME} PROPERTY LABELS "${GTEST_LABELS}")
@@ -171,8 +171,8 @@ macro(add_gtest)
         if(GTEST_ENVIRONMENT)
             set_tests_properties(${test}
                 PROPERTIES ENVIRONMENT "${GTEST_ENVIRONMENT}")
-            unset(GTEST_ENVIRONMENT)
         endif()
+        unset(GTEST_ENVIRONMENT)
 
         # Add labels
         set_property(TEST ${test} PROPERTY LABELS "${GTEST_LABELS}")
