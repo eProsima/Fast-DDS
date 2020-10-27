@@ -736,7 +736,9 @@ static void discoverParticipantsTest(
         uint32_t wait_ms,
         const std::string& topic_name)
 {
-    auto no_op = [](const std::shared_ptr<PubSubWriterReader<HelloWorldType> >&) {};
+    auto no_op = [](const std::shared_ptr<PubSubWriterReader<HelloWorldType>>&)
+            {
+            };
     discoverParticipantsTest(avoid_multicast, n_participants, wait_ms, topic_name, no_op);
 }
 
@@ -750,10 +752,10 @@ TEST(Discovery, TwentyParticipantsMulticast)
 TEST(Discovery, TwentyParticipantsMulticastLocalhostOnly)
 {
     auto test_transport = std::make_shared<test_UDPv4TransportDescriptor>();
-    auto participant_config = [&test_transport](const std::shared_ptr<PubSubWriterReader<HelloWorldType> >& part)
-    {
-        part->disable_builtin_transport().add_user_transport_to_pparams(test_transport);
-    };
+    auto participant_config = [&test_transport](const std::shared_ptr<PubSubWriterReader<HelloWorldType>>& part)
+            {
+                part->disable_builtin_transport().add_user_transport_to_pparams(test_transport);
+            };
 
     test_UDPv4Transport::simulate_no_interfaces = true;
     discoverParticipantsTest(false, 20, 20, TEST_TOPIC_NAME, participant_config);

@@ -844,7 +844,7 @@ private:
                 eprosima::fastdds::dds::Topic*,
                 eprosima::fastdds::dds::DataWriter*,
                 eprosima::fastdds::dds::DataReader*
-                > > entities_extra_;
+                >> entities_extra_;
 
     std::string topic_name_;
     bool initialized_;
