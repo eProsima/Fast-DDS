@@ -20,8 +20,9 @@
 #include <unordered_map>
 
 #include <rtps/transport/shared_mem/SharedMemGlobal.hpp>
-#include <rtps/transport/shared_mem/RobustSharedLock.hpp>
-#include <rtps/transport/shared_mem/SharedMemWatchdog.hpp>
+
+#include <utils/shared_memory/RobustSharedLock.hpp>
+#include <utils/shared_memory/SharedMemWatchdog.hpp>
 
 namespace eprosima {
 namespace fastdds {
