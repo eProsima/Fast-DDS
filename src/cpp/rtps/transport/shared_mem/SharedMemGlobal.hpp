@@ -19,11 +19,12 @@
 #include <mutex>
 #include <memory>
 
-#include <rtps/transport/shared_mem/SharedMemSegment.hpp>
+#include <utils/shared_memory/SharedMemSegment.hpp>
+#include <utils/shared_memory/RobustExclusiveLock.hpp>
+#include <utils/shared_memory/RobustSharedLock.hpp>
+#include <utils/shared_memory/SharedMemWatchdog.hpp>
+
 #include <rtps/transport/shared_mem/MultiProducerConsumerRingBuffer.hpp>
-#include <rtps/transport/shared_mem/RobustExclusiveLock.hpp>
-#include <rtps/transport/shared_mem/RobustSharedLock.hpp>
-#include <rtps/transport/shared_mem/SharedMemWatchdog.hpp>
 
 #define THREADID "(ID:" << std::this_thread::get_id() << ") "
 
