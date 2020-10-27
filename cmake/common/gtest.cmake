@@ -120,6 +120,7 @@ macro(add_gtest)
                     COMMAND ${command} --gtest_filter=${GTEST_GROUP_NAME}.${GTEST_TEST_NAME}:*/${GTEST_GROUP_NAME}.${GTEST_TEST_NAME}/*)
 
                 # Add environment
+                set(GTEST_ENVIRONMENT "")
                 if(WIN32)
                     set(GTEST_ENVIRONMENT "PATH=${WIN_PATH}")
                 endif()
@@ -131,8 +132,8 @@ macro(add_gtest)
                 if(GTEST_ENVIRONMENT)
                     set_tests_properties(${GTEST_GROUP_NAME}.${GTEST_TEST_NAME}
                         PROPERTIES ENVIRONMENT "${GTEST_ENVIRONMENT}")
-                    unset(GTEST_ENVIRONMENT)
                 endif()
+                unset(GTEST_ENVIRONMENT)
 
                 # Add labels
                 set_property(TEST ${GTEST_GROUP_NAME}.${GTEST_TEST_NAME} PROPERTY LABELS "${GTEST_LABELS}")
@@ -143,6 +144,7 @@ macro(add_gtest)
         add_test(NAME ${test} COMMAND ${command})
 
         # Add environment
+        set(GTEST_ENVIRONMENT "")
         if(WIN32)
             set(WIN_PATH "$ENV{PATH}")
             get_target_property(LINK_LIBRARIES_ ${command} LINK_LIBRARIES)
@@ -169,8 +171,8 @@ macro(add_gtest)
         if(GTEST_ENVIRONMENT)
             set_tests_properties(${test}
                 PROPERTIES ENVIRONMENT "${GTEST_ENVIRONMENT}")
-            unset(GTEST_ENVIRONMENT)
         endif()
+        unset(GTEST_ENVIRONMENT)
 
         # Add labels
         set_property(TEST ${test} PROPERTY LABELS "${GTEST_LABELS}")
