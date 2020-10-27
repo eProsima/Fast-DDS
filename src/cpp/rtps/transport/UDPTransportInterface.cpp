@@ -291,6 +291,10 @@ bool UDPTransportInterface::OpenOutputChannel(
             {
                 SetSocketOutboundInterface(unicastSocket, (*locNames.begin()).name);
             }
+            else
+            {
+                SetSocketOutboundInterface(unicastSocket, localhost_name());
+            }
 
             // If more than one interface, then create sockets for outbounding multicast.
             if (locNames.size() > 1)
