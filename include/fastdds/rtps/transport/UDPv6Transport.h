@@ -90,6 +90,7 @@ protected:
     virtual asio::ip::udp::endpoint generate_local_endpoint(const fastrtps::rtps::Locator_t& loc, uint16_t port) override;
     virtual asio::ip::udp generate_protocol() const override;
     virtual void get_ips(std::vector<fastrtps::rtps::IPFinder::info_IP>& locNames, bool return_loopback = false) override;
+    virtual const std::string& localhost_name() override;
     eProsimaUDPSocket OpenAndBindInputSocket(const std::string& sIp, uint16_t port, bool is_multicast) override;
 
     //! Checks for whether locator is allowed.

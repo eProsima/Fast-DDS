@@ -168,6 +168,7 @@ protected:
     virtual asio::ip::udp::endpoint generate_local_endpoint(const fastrtps::rtps::Locator_t& loc, uint16_t port) = 0;
     virtual asio::ip::udp generate_protocol() const = 0;
     virtual void get_ips(std::vector<fastrtps::rtps::IPFinder::info_IP>& locNames, bool return_loopback = false) = 0;
+    virtual const std::string& localhost_name() = 0;
 
     //! Checks if the interfaces white list is empty.
     virtual bool is_interface_whitelist_empty() const = 0;
