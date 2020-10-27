@@ -263,7 +263,7 @@ inline std::istream& operator>>(
 
             iHandle.value[0] = static_cast<octet>(hex);
 
-            for (int i = 1; i < 15; ++i)
+            for (int i = 1; i < 16; ++i)
             {
                 input >> point >> hex;
                 if ( point != '.' || hex > 255 )
