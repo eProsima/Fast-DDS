@@ -56,6 +56,13 @@ bool EDPServer2::createSEDPEndpoints()
     RTPSWriter* waux = nullptr;
     set_builtin_writer_history_attributes(writer_history_att);
     set_builtin_writer_attributes(watt);
+
+#if HAVE_SQLITE3
+    watt.endpoint.properties.properties().push_back(Property("dds.persistence.plugin", "builtin.SQLITE3"));
+    watt.endpoint.properties.properties().push_back(Property("dds.persistence.sqlite3.filename",
+            get_pdp()->get_writer_persistence_file_name()));
+#endif // if HAVE_SQLITE3
+
     watt.endpoint.durabilityKind = _durability;
     watt.mode = ASYNCHRONOUS_WRITER;
 

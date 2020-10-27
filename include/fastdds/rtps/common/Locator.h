@@ -257,8 +257,7 @@ inline std::istream& operator>>(
             }
             else if (kind == LOCATOR_KIND_UDPv4 || kind == LOCATOR_KIND_TCPv4)
             {
-                input >> std::hex;
-                for (int i = 12; i < 16; ++i)
+                for (int i = 12; i < 15; ++i)
                 {
                     input >> value >> punctuation;
                     if ( punctuation != '.' || value > 255 )
@@ -267,11 +266,20 @@ inline std::istream& operator>>(
                     }
                     loc.address[i] = static_cast<octet>(value);
                 }
+
+                // last value
+                input >> value >> punctuation;
+                if ( punctuation != ':' || value > 255 )
+                {
+                    input.setstate(std::ios_base::failbit);
+                }
+                loc.address[15] = static_cast<octet>(value);
+
             }
             else if (kind == LOCATOR_KIND_UDPv6 || kind == LOCATOR_KIND_TCPv6)
             {
                 input >> std::hex;
-                for (int i = 0; i < 16; ++i)
+                for (int i = 0; i < 15; ++i)
                 {
                     input >> value >> punctuation;
                     if ( punctuation != '.' || value > 255 )
@@ -280,12 +288,19 @@ inline std::istream& operator>>(
                     }
                     loc.address[i] = static_cast<octet>(value);
                 }
+
+                input >> value >> punctuation;
+                if ( punctuation != ':' || value > 255 )
+                {
+                    input.setstate(std::ios_base::failbit);
+                }
+                loc.address[15] = static_cast<octet>(value);
+
+                input >> std::dec;
             }
             else{
                 input.setstate(std::ios_base::failbit);
             }
-
-            input >> std::dec;
             input >> value;
             loc.port = value;
         }
