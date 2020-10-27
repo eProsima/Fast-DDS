@@ -262,6 +262,12 @@ void UDPv4Transport::get_ips(
     get_ipv4s(locNames, return_loopback);
 }
 
+const std::string& UDPv4Transport::localhost_name()
+{
+    static const std::string ip4_localhost = "127.0.0.1";
+    return ip4_localhost;
+}
+
 eProsimaUDPSocket UDPv4Transport::OpenAndBindInputSocket(
         const std::string& sIp,
         uint16_t port,
