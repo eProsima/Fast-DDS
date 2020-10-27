@@ -51,6 +51,13 @@ public:
     RTPS_DllAPI static std::vector<std::vector<fastrtps::rtps::octet> > test_UDPv4Transport_DropLog;
     RTPS_DllAPI static uint32_t test_UDPv4Transport_DropLogLength;
     RTPS_DllAPI static bool always_drop_participant_builtin_topic_data;
+    RTPS_DllAPI static bool simulate_no_interfaces;
+
+protected:
+
+    virtual void get_ips(
+        std::vector<fastrtps::rtps::IPFinder::info_IP>& locNames,
+        bool return_loopback = false) override;
 
 private:
 
