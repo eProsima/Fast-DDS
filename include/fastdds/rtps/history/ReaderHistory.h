@@ -85,7 +85,7 @@ public:
     /**
      * Criteria to search a specific CacheChange_t on history
      * @param inner change to compare
-     * @param outer change for comparisson
+     * @param outer change for comparison
      * @return true if inner matches outer criteria
      */
     RTPS_DllAPI bool matches_change(
