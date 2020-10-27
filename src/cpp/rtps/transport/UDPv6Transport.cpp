@@ -26,9 +26,9 @@
 using namespace std;
 using namespace asio;
 
-namespace eprosima{
-namespace fastdds{
-namespace rtps{
+namespace eprosima {
+namespace fastdds {
+namespace rtps {
 
 using Locator_t = fastrtps::rtps::Locator_t;
 using IPFinder = fastrtps::rtps::IPFinder;
@@ -44,13 +44,16 @@ static void get_ipv6s(
     IPFinder::getIPs(&locNames, return_loopback);
     // Controller out IP4
     auto new_end = remove_if(locNames.begin(),
-            locNames.end(),
-            [](IPFinder::info_IP ip){return ip.type != IPFinder::IP6 && ip.type != IPFinder::IP6_LOCAL;});
+                    locNames.end(),
+                    [](IPFinder::info_IP ip)
+                    {
+                        return ip.type != IPFinder::IP6 && ip.type != IPFinder::IP6_LOCAL;
+                    });
     locNames.erase(new_end, locNames.end());
     std::for_each(locNames.begin(), locNames.end(), [](IPFinder::info_IP& loc)
-    {
-        loc.locator.kind = LOCATOR_KIND_UDPv6;
-    });
+            {
+                loc.locator.kind = LOCATOR_KIND_UDPv6;
+            });
 }
 
 static void get_ipv6s_unique_interfaces(
@@ -59,13 +62,20 @@ static void get_ipv6s_unique_interfaces(
 {
     get_ipv6s(locNames, return_loopback);
     std::sort(locNames.begin(), locNames.end(),
-            [](const IPFinder::info_IP&  a, const IPFinder::info_IP& b) -> bool {return a.dev < b.dev;});
+            [](const IPFinder::info_IP&  a, const IPFinder::info_IP& b) -> bool
+            {
+                return a.dev < b.dev;
+            });
     auto new_end = std::unique(locNames.begin(), locNames.end(),
-            [](const IPFinder::info_IP&  a, const IPFinder::info_IP& b) -> bool {return a.dev == b.dev;});
+                    [](const IPFinder::info_IP&  a, const IPFinder::info_IP& b) -> bool
+                    {
+                        return a.dev == b.dev;
+                    });
     locNames.erase(new_end, locNames.end());
 }
 
-static asio::ip::address_v6::bytes_type locator_to_native(const Locator_t& locator)
+static asio::ip::address_v6::bytes_type locator_to_native(
+        const Locator_t& locator)
 {
     return { { IPLocator::getIPv6(locator)[0],
         IPLocator::getIPv6(locator)[1],
@@ -85,14 +95,17 @@ static asio::ip::address_v6::bytes_type locator_to_native(const Locator_t& locat
         IPLocator::getIPv6(locator)[15] } };
 }
 
-UDPv6Transport::UDPv6Transport(const UDPv6TransportDescriptor& descriptor)
+UDPv6Transport::UDPv6Transport(
+        const UDPv6TransportDescriptor& descriptor)
     : UDPTransportInterface(LOCATOR_KIND_UDPv6)
     , configuration_(descriptor)
 {
     mSendBufferSize = descriptor.sendBufferSize;
     mReceiveBufferSize = descriptor.receiveBufferSize;
     for (const auto& interface : descriptor.interfaceWhiteList)
+    {
         interface_whitelist_.emplace_back(ip::address_v6::from_string(interface));
+    }
 }
 
 UDPv6Transport::UDPv6Transport()
@@ -105,13 +118,13 @@ UDPv6Transport::~UDPv6Transport()
     clean();
 }
 
-
 UDPv6TransportDescriptor::UDPv6TransportDescriptor()
     : UDPTransportDescriptor()
 {
 }
 
-UDPv6TransportDescriptor::UDPv6TransportDescriptor(const UDPv6TransportDescriptor& t)
+UDPv6TransportDescriptor::UDPv6TransportDescriptor(
+        const UDPv6TransportDescriptor& t)
     : UDPTransportDescriptor(t)
 {
 }
@@ -122,7 +135,7 @@ TransportInterface* UDPv6TransportDescriptor::create_transport() const
 }
 
 bool UDPv6Transport::getDefaultMetatrafficMulticastLocators(
-        LocatorList_t &locators,
+        LocatorList_t& locators,
         uint32_t metatraffic_multicast_port) const
 {
     Locator_t locator;
@@ -134,7 +147,7 @@ bool UDPv6Transport::getDefaultMetatrafficMulticastLocators(
 }
 
 bool UDPv6Transport::getDefaultMetatrafficUnicastLocators(
-        LocatorList_t &locators,
+        LocatorList_t& locators,
         uint32_t metatraffic_unicast_port) const
 {
     if (interface_whitelist_.empty())
@@ -160,7 +173,7 @@ bool UDPv6Transport::getDefaultMetatrafficUnicastLocators(
 }
 
 bool UDPv6Transport::getDefaultUnicastLocators(
-        LocatorList_t &locators,
+        LocatorList_t& locators,
         uint32_t unicast_port) const
 {
     if (interface_whitelist_.empty())
@@ -185,7 +198,8 @@ bool UDPv6Transport::getDefaultUnicastLocators(
     return true;
 }
 
-void UDPv6Transport::AddDefaultOutputLocator(LocatorList_t &defaultList)
+void UDPv6Transport::AddDefaultOutputLocator(
+        LocatorList_t& defaultList)
 {
     // TODO What is the default IPv6 address?
     Locator_t temp;
@@ -216,7 +230,8 @@ void UDPv6Transport::endpoint_to_locator(
     IPLocator::setIPv6(locator, ipBytes.data());
 }
 
-void UDPv6Transport::fill_local_ip(Locator_t& loc) const
+void UDPv6Transport::fill_local_ip(
+        Locator_t& loc) const
 {
     IPLocator::setIPv6(loc, "::1");
     loc.kind = LOCATOR_KIND_UDPv6;
@@ -236,7 +251,8 @@ ip::udp::endpoint UDPv6Transport::generate_endpoint(
     return ip::udp::endpoint(asio::ip::address_v6(remoteAddress), port);
 }
 
-asio::ip::udp::endpoint UDPv6Transport::GenerateAnyAddressEndpoint(uint16_t port)
+asio::ip::udp::endpoint UDPv6Transport::GenerateAnyAddressEndpoint(
+        uint16_t port)
 {
     return ip::udp::endpoint(ip::address_v6::any(), port);
 }
@@ -248,7 +264,8 @@ ip::udp::endpoint UDPv6Transport::generate_endpoint(
     return asio::ip::udp::endpoint(ip::address_v6::from_string(sIp), port);
 }
 
-ip::udp::endpoint UDPv6Transport::generate_endpoint(uint16_t port)
+ip::udp::endpoint UDPv6Transport::generate_endpoint(
+        uint16_t port)
 {
     return asio::ip::udp::endpoint(asio::ip::udp::v6(), port);
 }
@@ -295,8 +312,8 @@ eProsimaUDPSocket UDPv6Transport::OpenAndBindInputSocket(
         getSocketPtr(socket)->set_option(ip::udp::socket::reuse_address(true));
 #if defined(__QNX__)
         getSocketPtr(socket)->set_option(asio::detail::socket_option::boolean<
-            ASIO_OS_DEF(SOL_SOCKET), SO_REUSEPORT>(true));
-#endif
+                    ASIO_OS_DEF(SOL_SOCKET), SO_REUSEPORT>(true));
+#endif // if defined(__QNX__)
     }
 
     getSocketPtr(socket)->bind(generate_endpoint(sIp, port));
@@ -311,12 +328,16 @@ bool UDPv6Transport::OpenInputChannel(
 {
     std::unique_lock<std::recursive_mutex> scopedLock(mInputMapMutex);
     if (!is_locator_allowed(locator))
+    {
         return false;
+    }
 
     bool success = false;
 
     if (!IsInputChannelOpen(locator))
+    {
         success = OpenAndBindInputSockets(locator, receiver, IPLocator::isMulticast(locator), maxMsgSize);
+    }
 
     if (IPLocator::isMulticast(locator) && IsInputChannelOpen(locator))
     {
@@ -335,7 +356,7 @@ bool UDPv6Transport::OpenInputChannel(
                     try
                     {
                         channelResource->socket()->set_option(ip::multicast::join_group(
-                            ip::address_v6::from_string(IPLocator::toIPv6string(locator)), ip.scope_id()));
+                                    ip::address_v6::from_string(IPLocator::toIPv6string(locator)), ip.scope_id()));
                     }
                     catch (std::system_error& ex)
                     {
@@ -350,7 +371,7 @@ bool UDPv6Transport::OpenInputChannel(
                 try
                 {
                     channelResource->socket()->set_option(ip::multicast::join_group(
-                        ip::address_v6::from_string(IPLocator::toIPv6string(locator)), ip.scope_id()));
+                                ip::address_v6::from_string(IPLocator::toIPv6string(locator)), ip.scope_id()));
                 }
                 catch (std::system_error& ex)
                 {
@@ -382,20 +403,26 @@ std::vector<std::string> UDPv6Transport::get_binding_interfaces_list()
     return vOutputInterfaces;
 }
 
-bool UDPv6Transport::is_interface_allowed(const std::string& interface) const
+bool UDPv6Transport::is_interface_allowed(
+        const std::string& interface) const
 {
     return is_interface_allowed(asio::ip::address_v6::from_string(interface));
 }
 
-bool UDPv6Transport::is_interface_allowed(const ip::address_v6& ip) const
+bool UDPv6Transport::is_interface_allowed(
+        const ip::address_v6& ip) const
 {
     if (interface_whitelist_.empty())
+    {
         return true;
+    }
 
     if (ip == ip::address_v6::any())
+    {
         return true;
+    }
 
-    return  find(interface_whitelist_.begin(), interface_whitelist_.end(), ip) != interface_whitelist_.end();
+    return find(interface_whitelist_.begin(), interface_whitelist_.end(), ip) != interface_whitelist_.end();
 }
 
 bool UDPv6Transport::is_interface_whitelist_empty() const
@@ -403,20 +430,22 @@ bool UDPv6Transport::is_interface_whitelist_empty() const
     return interface_whitelist_.empty();
 }
 
-bool UDPv6Transport::is_locator_allowed(const Locator_t& locator) const
+bool UDPv6Transport::is_locator_allowed(
+        const Locator_t& locator) const
 {
     if (!IsLocatorSupported(locator))
     {
         return false;
     }
-    if (interface_whitelist_.empty() ||IPLocator::isMulticast(locator))
+    if (interface_whitelist_.empty() || IPLocator::isMulticast(locator))
     {
         return true;
     }
     return is_interface_allowed(IPLocator::toIPv6string(locator));
 }
 
-LocatorList_t UDPv6Transport::NormalizeLocator(const Locator_t& locator)
+LocatorList_t UDPv6Transport::NormalizeLocator(
+        const Locator_t& locator)
 {
     LocatorList_t list;
     if (IPLocator::isAny(locator))
@@ -449,7 +478,8 @@ LocatorList_t UDPv6Transport::NormalizeLocator(const Locator_t& locator)
     return list;
 }
 
-bool UDPv6Transport::is_local_locator(const Locator_t& locator) const
+bool UDPv6Transport::is_local_locator(
+        const Locator_t& locator) const
 {
     assert(locator.kind == LOCATOR_KIND_UDPv4);
 
@@ -460,7 +490,7 @@ bool UDPv6Transport::is_local_locator(const Locator_t& locator) const
 
     for (const IPFinder::info_IP& localInterface : currentInterfaces)
     {
-        if(IPLocator::compareAddress(localInterface.locator, locator))
+        if (IPLocator::compareAddress(localInterface.locator, locator))
         {
             return true;
         }
@@ -469,12 +499,14 @@ bool UDPv6Transport::is_local_locator(const Locator_t& locator) const
     return false;
 }
 
-void UDPv6Transport::set_receive_buffer_size(uint32_t size)
+void UDPv6Transport::set_receive_buffer_size(
+        uint32_t size)
 {
     configuration_.receiveBufferSize = size;
 }
 
-void UDPv6Transport::set_send_buffer_size(uint32_t size)
+void UDPv6Transport::set_send_buffer_size(
+        uint32_t size)
 {
     configuration_.sendBufferSize = size;
 }
@@ -484,7 +516,7 @@ void UDPv6Transport::SetSocketOutboundInterface(
         const std::string& sIp)
 {
     getSocketPtr(socket)->set_option(ip::multicast::outbound_interface(
-        asio::ip::address_v6::from_string(sIp).scope_id()));
+                asio::ip::address_v6::from_string(sIp).scope_id()));
 }
 
 } // namespace rtps
