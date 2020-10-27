@@ -335,12 +335,13 @@ bool UDPTransportInterface::OpenOutputChannel(
             {
                 // We add localhost output for multicast, so in case the network cable is unplugged, local
                 // participants keep receiving DATA(p) announcements
+                const std::string& localhost = localhost_name();
                 uint16_t new_port = 0;
                 try
                 {
                     eProsimaUDPSocket multicastSocket =
-                        OpenAndBindUnicastOutputSocket(generate_endpoint("127.0.0.1", new_port), new_port);
-                    SetSocketOutboundInterface(multicastSocket, "127.0.0.1");
+                        OpenAndBindUnicastOutputSocket(generate_endpoint(localhost, new_port), new_port);
+                    SetSocketOutboundInterface(multicastSocket, localhost);
 
                     sender_resource_list.emplace_back(
                         static_cast<SenderResource*>(new UDPSenderResource(*this, multicastSocket, true)));
@@ -348,7 +349,7 @@ bool UDPTransportInterface::OpenOutputChannel(
                 catch (asio::system_error const& e)
                 {
                     (void)e;
-                    logWarning(RTPS_MSG_OUT, "UDPTransport Error binding interface 127.0.0.1"
+                    logWarning(RTPS_MSG_OUT, "UDPTransport Error binding interface " << localhost
                         << " (skipping) with msg: " << e.what());
                 }
             }
