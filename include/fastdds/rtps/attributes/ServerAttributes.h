@@ -129,12 +129,12 @@ RTPS_DllAPI bool get_server_client_default_guidPrefix(
 namespace fastrtps {
 namespace rtps {
 
-    using fastdds::rtps::RemoteServerAttributes;
-    using fastdds::rtps::RemoteServerList_t;
-    using fastdds::rtps::DEFAULT_ROS2_SERVER_PORT;
-    using fastdds::rtps::DEFAULT_ROS2_SERVER_GUIDPREFIX;
-    using fastdds::rtps::load_environment_server_info;
-    using fastdds::rtps::get_server_client_default_guidPrefix;
+using fastdds::rtps::RemoteServerAttributes;
+using fastdds::rtps::RemoteServerList_t;
+using fastdds::rtps::DEFAULT_ROS2_SERVER_PORT;
+using fastdds::rtps::DEFAULT_ROS2_SERVER_GUIDPREFIX;
+using fastdds::rtps::load_environment_server_info;
+using fastdds::rtps::get_server_client_default_guidPrefix;
 
 } // fastrtps
 } // rtps
