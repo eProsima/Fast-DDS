@@ -32,6 +32,7 @@
 #include <fastrtps/subscriber/SubscriberListener.h>
 #include <fastrtps/attributes/SubscriberAttributes.h>
 #include <fastrtps/subscriber/SampleInfo.h>
+#include <fastrtps/transport/TransportDescriptorInterface.h>
 
 #include <string>
 #include <list>
@@ -557,6 +558,19 @@ public:
     }
 
 #endif
+
+    PubSubWriterReader& disable_builtin_transport()
+    {
+        participant_attr_.rtps.useBuiltinTransports = false;
+        return *this;
+    }
+
+    PubSubWriterReader& add_user_transport_to_pparams(
+            std::shared_ptr<eprosima::fastrtps::rtps::TransportDescriptorInterface> userTransportDescriptor)
+    {
+        participant_attr_.rtps.userTransports.push_back(userTransportDescriptor);
+        return *this;
+    }
 
     PubSubWriterReader& property_policy(
             const eprosima::fastrtps::rtps::PropertyPolicy property_policy)
