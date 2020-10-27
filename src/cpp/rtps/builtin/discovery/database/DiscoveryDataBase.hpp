@@ -287,7 +287,7 @@ public:
 
     bool from_json(
             nlohmann::json& j,
-            std::map<eprosima::fastrtps::rtps::InstanceHandle_t, fastrtps::rtps::CacheChange_t*> changes_map);
+            std::map<eprosima::fastrtps::rtps::InstanceHandle_t, fastrtps::rtps::CacheChange_t*>& changes_map);
 
 protected:
 
@@ -475,7 +475,7 @@ protected:
     mutable std::recursive_mutex mutex_;
 
     //! GUID prefix from own server
-    fastrtps::rtps::GuidPrefix_t server_guid_prefix_;
+    const fastrtps::rtps::GuidPrefix_t server_guid_prefix_;
 
     //! Is own server DATA(p) acked by all other clients
     std::atomic<bool> server_acked_by_all_;
