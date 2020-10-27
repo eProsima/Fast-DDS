@@ -746,6 +746,19 @@ TEST(Discovery, TwentyParticipantsMulticast)
     discoverParticipantsTest(false, 20, 20, TEST_TOPIC_NAME);
 }
 
+//! Regresion test for ros2/ros2#1052
+TEST(Discovery, TwentyParticipantsMulticastLocalhostOnly)
+{
+    auto test_transport = std::make_shared<test_UDPv4TransportDescriptor>();
+    auto participant_config = [&test_transport](const std::shared_ptr<PubSubWriterReader<HelloWorldType> >& part)
+    {
+        part->disable_builtin_transport().add_user_transport_to_pparams(test_transport);
+    };
+
+    test_UDPv4Transport::simulate_no_interfaces = true;
+    discoverParticipantsTest(false, 20, 20, TEST_TOPIC_NAME, participant_config);
+}
+
 //! Tests discovery of 20 participants, having one publisher and one subscriber each, using unicast
 TEST_P(Discovery, TwentyParticipantsUnicast)
 {
