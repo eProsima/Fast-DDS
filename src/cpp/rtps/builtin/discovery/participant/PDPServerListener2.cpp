@@ -140,11 +140,11 @@ void PDPServerListener2::onNewCacheChangeAdded(
                 if (std::stof(ds_version->second()) < 1.0)
                 {
                     logError(RTPS_PDP_LISTENER, "Minimum " << dds::parameter_property_ds_version
-                            << " is 1.0, found: " << ds_version->second());
+                                                           << " is 1.0, found: " << ds_version->second());
                     return;
                 }
                 logInfo(RTPS_PDP_LISTENER, "Participant" << dds::parameter_property_ds_version << ": "
-                        << ds_version->second());
+                                                         << ds_version->second());
             }
             else
             {
@@ -164,14 +164,14 @@ void PDPServerListener2::onNewCacheChangeAdded(
             if (participant_type != properties.end())
             {
                 if (participant_type->second() == ParticipantType::SERVER ||
-                    participant_type->second() == ParticipantType::BACKUP)
+                        participant_type->second() == ParticipantType::BACKUP)
                 {
                     is_client = false;
                 }
                 else if (participant_type->second() != ParticipantType::CLIENT)
                 {
                     logError(RTPS_PDP_LISTENER, "Wrong " << dds::parameter_property_participant_type << ": "
-                            << participant_type->second());
+                                                         << participant_type->second());
                     return;
                 }
                 logInfo(RTPS_PDP_LISTENER, "Participant type " << participant_type->second());
