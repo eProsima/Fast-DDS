@@ -22,10 +22,9 @@
 #include <regex>
 #include <vector>
 
-#include <thread>
 #include <mutex>
 #include <condition_variable>
-#include <signal.h>
+#include <csignal>
 
 #include <fastrtps/Domain.h>
 #include <fastdds/dds/log/Log.hpp>
@@ -34,57 +33,15 @@ using namespace eprosima;
 using namespace fastrtps;
 using namespace std;
 
-static mutex* signal_mutex {nullptr};
-
-static condition_variable* signal_cv {nullptr};
-
-static atomic_bool sigint_arrive {false};
-static atomic_bool all_removed {false};
+volatile sig_atomic_t g_signal_status = 0;
+mutex g_signal_mutex;
+condition_variable g_signal_cv;
 
 void sigint_handler(
-        int /*signum*/)
+        int signum)
 {
-
-    sigint_arrive.store(true);
-    signal_cv->notify_all();
-
-    // it stops the handler because windows can close process when handler finishes
-    unique_lock<mutex> lk(*signal_mutex);
-    signal_cv->wait(lk, []
-            {
-                return all_removed.load();
-            });
-}
-
-void signal_handler_function(
-        Participant* pServer )
-{
-
-    // make thread ignore SIGINT
-#ifndef _WIN32
-    sigset_t set;
-    sigemptyset(&set);
-    sigaddset(&set, SIGINT);
-    pthread_sigmask(SIG_BLOCK, &set, NULL);
-#endif // _WIN32
-
-    // waits for the handler to free mutex
-    unique_lock<mutex> lk(*signal_mutex);
-    signal_cv->wait(lk, []
-            {
-                return sigint_arrive.load();
-            });
-
-    // Properly close the library
-    Domain::removeParticipant(pServer);
-    fastdds::dds::Log::Flush();
-    Domain::stopAll();
-
-    // cout << endl << "Everything removed correctly" << endl;
-
-    // allows handler to finish
-    all_removed.store(true);
-    signal_cv->notify_all();
+    g_signal_status = signum;
+    g_signal_cv.notify_one();
 }
 
 int main (
@@ -98,14 +55,6 @@ int main (
     vector<option::Option> options(stats.options_max);
     vector<option::Option> buffer(stats.buffer_max);
     option::Parser parse(usage, argc, argv, &options[0], &buffer[0]);
-
-    // initialize mutex and condition variable
-    mutex m;
-    condition_variable cv;
-
-    signal_cv = &cv;
-    signal_mutex = &m;
-
 
     // check the command line options
     if (parse.error())
@@ -250,29 +199,24 @@ int main (
     if ( nullptr == pServer )
     {
         cout << "Server creation failed with the given settings. Please review locators setup." << endl;
-
-        fastdds::dds::Log::Flush();
-        Domain::stopAll();
-
-        return 1;
-
+        return_value = 1;
     }
     else
     {
-
-        // throw a thread to erase info
-        thread signal_handler_thread_(signal_handler_function, pServer);
+        unique_lock<mutex> lock(g_signal_mutex);
 
         // handle signal SIGINT for every thread
         signal(SIGINT, sigint_handler);
 
         cout << "\n### Server is running ###" << std::endl;
 
-        // waits for the program to close correctly
-        signal_handler_thread_.join();
+        g_signal_cv.wait(lock,[]{ return 0 != g_signal_status;});
 
         cout << "\n### Server shutted down ###" << std::endl;
     }
+
+    fastdds::dds::Log::Flush();
+    Domain::stopAll();
 
     return return_value;
 }
