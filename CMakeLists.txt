@@ -259,11 +259,8 @@ option(SQLITE3_SUPPORT "Activate SQLITE3 support" ON)
 ###############################################################################
 # SHM as Default transport
 ###############################################################################
-option(SHM_TRANSPORT_DEFAULT "Adds SHM transport to the default transports" OFF)
+option(SHM_TRANSPORT_DEFAULT "Adds SHM transport to the default transports" ON)
 
-if(EPROSIMA_BUILD)
-    set(SHM_TRANSPORT_DEFAULT ON)
-endif()
 
 ###############################################################################
 # Tools default setup 
