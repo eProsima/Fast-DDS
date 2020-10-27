@@ -34,6 +34,7 @@ std::vector<std::vector<octet> > test_UDPv4Transport::test_UDPv4Transport_DropLo
 uint32_t test_UDPv4Transport::test_UDPv4Transport_DropLogLength = 0;
 bool test_UDPv4Transport::test_UDPv4Transport_ShutdownAllNetwork = false;
 bool test_UDPv4Transport::always_drop_participant_builtin_topic_data = false;
+bool test_UDPv4Transport::simulate_no_interfaces = false;
 
 test_UDPv4Transport::test_UDPv4Transport(const test_UDPv4TransportDescriptor& descriptor):
     drop_data_messages_percentage_(descriptor.dropDataMessagesPercentage),
@@ -90,6 +91,29 @@ test_UDPv4TransportDescriptor::test_UDPv4TransportDescriptor():
 TransportInterface* test_UDPv4TransportDescriptor::create_transport() const
 {
     return new test_UDPv4Transport(*this);
+}
+
+void test_UDPv4Transport::get_ips(
+        std::vector<fastrtps::rtps::IPFinder::info_IP>& locNames,
+        bool return_loopback)
+{
+
+    if (!simulate_no_interfaces)
+    {
+        UDPv4Transport::get_ips(locNames, return_loopback);
+        return;
+    }
+
+    if (return_loopback)
+    {
+        fastrtps::rtps::IPFinder::info_IP local;
+        local.type = fastrtps::rtps::IPFinder::IPTYPE::IP4_LOCAL;
+        local.dev = "lo";
+        local.name = "127.0.0.1";
+        local.locator.kind = LOCATOR_KIND_UDPv4;
+        fill_local_ip(local.locator);
+        locNames.emplace_back(local);
+    }
 }
 
 bool test_UDPv4Transport::send(
