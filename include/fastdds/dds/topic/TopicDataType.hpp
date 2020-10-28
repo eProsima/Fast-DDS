@@ -25,6 +25,12 @@
 #include <string>
 #include <functional>
 
+// This version of TypeSupport has `is_bounded()`
+#define TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
+
+// This version of TypeSupport has `is_plain()`
+#define TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
 namespace eprosima {
 
 namespace fastrtps {
@@ -262,6 +268,22 @@ public:
             std::shared_ptr<xtypes::TypeInformation> info)
     {
         type_information_ = std::move(info);
+    }
+
+    /**
+     * Checks if the type is bounded.
+     */
+    RTPS_DllAPI virtual inline bool is_bounded() const
+    {
+        return false;
+    }
+
+    /**
+     * Checks if the type is plain.
+     */
+    RTPS_DllAPI virtual inline bool is_plain() const
+    {
+        return false;
     }
 
     //! Maximum serialized size of the type in bytes.
