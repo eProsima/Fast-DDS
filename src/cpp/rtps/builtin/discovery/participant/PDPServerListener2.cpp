@@ -278,9 +278,9 @@ void PDPServerListener2::onNewCacheChangeAdded(
                 // Realease PDP mutex
                 lock.unlock();
 
-                // All builtins are connected, the database will avoid any EDP DATA to be send before having PDP DATA
-                // acknowledgement
-                if (pdata)
+                // All local builtins are connected, the database will avoid any EDP DATA to be send before having PDP
+                // DATA acknowledgement
+                if (pdata && is_local)
                 {
                     pdp_server()->assignRemoteEndpoints(pdata);
                 }
@@ -296,7 +296,7 @@ void PDPServerListener2::onNewCacheChangeAdded(
 
                 // TODO: pending client liveliness management here
                 // Included form symmetry with PDPListener to profit from a future updateInfoMatchesEDP override
-                if (pdp_server()->updateInfoMatchesEDP())
+                if (pdp_server()->updateInfoMatchesEDP() && is_local)
                 {
                     pdp_server()->mp_EDP->assignRemoteEndpoints(*pdata);
                 }
