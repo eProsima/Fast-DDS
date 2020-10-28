@@ -308,7 +308,8 @@ void PDPServer2::initializeParticipantProxyData(
         std::pair<std::string, std::string>(
             {dds::parameter_property_participant_type, ParticipantType::SERVER}));
     participant_data->m_properties.push_back(
-        std::pair<std::string, std::string>({dds::parameter_property_ds_version, "2.0"}));
+        std::pair<std::string,
+        std::string>({dds::parameter_property_ds_version, dds::parameter_property_current_ds_version}));
 }
 
 void PDPServer2::assignRemoteEndpoints(

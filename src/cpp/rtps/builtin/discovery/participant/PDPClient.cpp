@@ -92,8 +92,11 @@ void PDPClient::initializeParticipantProxyData(
     }
 
     // Set participant type and discovery server version properties
-    participant_data->m_properties.push_back(std::pair<std::string, std::string>({"PARTICIPANT_TYPE", "CLIENT"}));
-    participant_data->m_properties.push_back(std::pair<std::string, std::string>({"DS_VERSION", "2.0"}));
+    participant_data->m_properties.push_back(std::pair<std::string,
+            std::string>({fastdds::dds::parameter_property_participant_type, fastdds::rtps::ParticipantType::CLIENT}));
+    participant_data->m_properties.push_back(std::pair<std::string,
+            std::string>({fastdds::dds::parameter_property_ds_version,
+                          fastdds::dds::parameter_property_current_ds_version}));
 
     //#if HAVE_SECURITY
     //    if (getRTPSParticipant()->getAttributes().builtin.discovery_config.m_simpleEDP
