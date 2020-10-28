@@ -65,7 +65,7 @@ TEST_P(RTPS, RTPSAsNonReliableSocket)
     ASSERT_TRUE(reader.isInitialized());
 
     writer.reliability(eprosima::fastrtps::rtps::ReliabilityKind_t::BEST_EFFORT).
-    add_to_multicast_locator_list(ip, global_port).init();
+            add_to_multicast_locator_list(ip, global_port).init();
 
     ASSERT_TRUE(writer.isInitialized());
 
@@ -92,8 +92,8 @@ TEST_P(RTPS, AsyncRTPSAsNonReliableSocket)
     ASSERT_TRUE(reader.isInitialized());
 
     writer.reliability(eprosima::fastrtps::rtps::ReliabilityKind_t::BEST_EFFORT).
-    add_to_multicast_locator_list(ip, global_port).
-    asynchronously(eprosima::fastrtps::rtps::RTPSWriterPublishMode::ASYNCHRONOUS_WRITER).init();
+            add_to_multicast_locator_list(ip, global_port).
+            asynchronously(eprosima::fastrtps::rtps::RTPSWriterPublishMode::ASYNCHRONOUS_WRITER).init();
 
     ASSERT_TRUE(writer.isInitialized());
 
@@ -122,9 +122,9 @@ TEST_P(RTPS, AsyncRTPSAsNonReliableSocketWithWriterSpecificFlowControl)
     uint32_t bytesPerPeriod = 440; // Roughly ten times the size of the payload being sent
     uint32_t periodMillisecs = 300;
     writer.reliability(eprosima::fastrtps::rtps::ReliabilityKind_t::BEST_EFFORT).
-    add_to_multicast_locator_list(ip, global_port).
-    asynchronously(eprosima::fastrtps::rtps::RTPSWriterPublishMode::ASYNCHRONOUS_WRITER).
-    add_throughput_controller_descriptor_to_pparams(bytesPerPeriod, periodMillisecs).init();
+            add_to_multicast_locator_list(ip, global_port).
+            asynchronously(eprosima::fastrtps::rtps::RTPSWriterPublishMode::ASYNCHRONOUS_WRITER).
+            add_throughput_controller_descriptor_to_pparams(bytesPerPeriod, periodMillisecs).init();
 
     ASSERT_TRUE(writer.isInitialized());
 
@@ -147,12 +147,12 @@ TEST_P(RTPS, RTPSAsReliableSocket)
     std::string ip("239.255.1.4");
 
     reader.reliability(eprosima::fastrtps::rtps::ReliabilityKind_t::RELIABLE).
-    add_to_multicast_locator_list(ip, global_port).init();
+            add_to_multicast_locator_list(ip, global_port).init();
 
     ASSERT_TRUE(reader.isInitialized());
 
     writer.reliability(eprosima::fastrtps::rtps::ReliabilityKind_t::RELIABLE).
-    add_to_multicast_locator_list(ip, global_port).init();
+            add_to_multicast_locator_list(ip, global_port).init();
 
     ASSERT_TRUE(writer.isInitialized());
 
@@ -176,13 +176,13 @@ TEST_P(RTPS, AsyncRTPSAsReliableSocket)
     std::string ip("239.255.1.4");
 
     reader.reliability(eprosima::fastrtps::rtps::ReliabilityKind_t::RELIABLE).
-    add_to_multicast_locator_list(ip, global_port).init();
+            add_to_multicast_locator_list(ip, global_port).init();
 
     ASSERT_TRUE(reader.isInitialized());
 
     writer.reliability(eprosima::fastrtps::rtps::ReliabilityKind_t::RELIABLE).
-    add_to_multicast_locator_list(ip, global_port).
-    asynchronously(eprosima::fastrtps::rtps::RTPSWriterPublishMode::ASYNCHRONOUS_WRITER).init();
+            add_to_multicast_locator_list(ip, global_port).
+            asynchronously(eprosima::fastrtps::rtps::RTPSWriterPublishMode::ASYNCHRONOUS_WRITER).init();
 
     ASSERT_TRUE(writer.isInitialized());
 
@@ -240,7 +240,7 @@ TEST_P(RTPS, AsyncRTPSAsNonReliableWithRegistration)
     ASSERT_TRUE(reader.isInitialized());
 
     writer.reliability(eprosima::fastrtps::rtps::ReliabilityKind_t::BEST_EFFORT).
-    asynchronously(eprosima::fastrtps::rtps::RTPSWriterPublishMode::ASYNCHRONOUS_WRITER).init();
+            asynchronously(eprosima::fastrtps::rtps::RTPSWriterPublishMode::ASYNCHRONOUS_WRITER).init();
 
     ASSERT_TRUE(writer.isInitialized());
 
@@ -267,7 +267,7 @@ TEST_P(RTPS, RTPSAsReliableWithRegistration)
     std::string ip("239.255.1.4");
 
     reader.add_to_multicast_locator_list(ip, global_port).
-    reliability(eprosima::fastrtps::rtps::ReliabilityKind_t::RELIABLE).init();
+            reliability(eprosima::fastrtps::rtps::ReliabilityKind_t::RELIABLE).init();
 
     ASSERT_TRUE(reader.isInitialized());
 
@@ -299,7 +299,7 @@ TEST_P(RTPS, AsyncRTPSAsReliableWithRegistration)
     std::string ip("239.255.1.4");
 
     reader.add_to_multicast_locator_list(ip, global_port).
-    reliability(eprosima::fastrtps::rtps::ReliabilityKind_t::RELIABLE).init();
+            reliability(eprosima::fastrtps::rtps::ReliabilityKind_t::RELIABLE).init();
 
     ASSERT_TRUE(reader.isInitialized());
 
@@ -332,14 +332,14 @@ TEST_P(RTPS, RTPSAsReliableVolatileSocket)
     std::string ip("239.255.1.4");
 
     reader.reliability(eprosima::fastrtps::rtps::ReliabilityKind_t::RELIABLE).
-    add_to_multicast_locator_list(ip, global_port).init();
+            add_to_multicast_locator_list(ip, global_port).init();
 
     ASSERT_TRUE(reader.isInitialized());
 
     writer.reliability(eprosima::fastrtps::rtps::ReliabilityKind_t::RELIABLE).
-    durability(eprosima::fastrtps::rtps::DurabilityKind_t::VOLATILE).
-    add_to_multicast_locator_list(ip, global_port).
-    auto_remove_on_volatile().init();
+            durability(eprosima::fastrtps::rtps::DurabilityKind_t::VOLATILE).
+            add_to_multicast_locator_list(ip, global_port).
+            auto_remove_on_volatile().init();
 
     ASSERT_TRUE(writer.isInitialized());
 
@@ -381,14 +381,14 @@ TEST_P(RTPS, RTPSAsReliableWithRegistrationAndHolesInHistory)
     testTransport->dropLogLength = 1;
 
     reader.
-    durability(eprosima::fastrtps::rtps::DurabilityKind_t::TRANSIENT_LOCAL).
-    reliability(eprosima::fastrtps::rtps::ReliabilityKind_t::RELIABLE).init();
+            durability(eprosima::fastrtps::rtps::DurabilityKind_t::TRANSIENT_LOCAL).
+            reliability(eprosima::fastrtps::rtps::ReliabilityKind_t::RELIABLE).init();
 
     ASSERT_TRUE(reader.isInitialized());
 
     writer.durability(eprosima::fastrtps::rtps::DurabilityKind_t::TRANSIENT_LOCAL).
-    disable_builtin_transport().
-    add_user_transport_to_pparams(testTransport).init();
+            disable_builtin_transport().
+            add_user_transport_to_pparams(testTransport).init();
 
     ASSERT_TRUE(writer.isInitialized());
 
@@ -430,8 +430,8 @@ TEST_P(RTPS, RTPSAsReliableWithRegistrationAndHolesInHistory)
     RTPSWithRegistrationReader<HelloWorldType> late_joiner(TEST_TOPIC_NAME);
 
     late_joiner.
-    durability(eprosima::fastrtps::rtps::DurabilityKind_t::TRANSIENT_LOCAL).
-    reliability(eprosima::fastrtps::rtps::ReliabilityKind_t::RELIABLE).init();
+            durability(eprosima::fastrtps::rtps::DurabilityKind_t::TRANSIENT_LOCAL).
+            reliability(eprosima::fastrtps::rtps::ReliabilityKind_t::RELIABLE).init();
 
     ASSERT_TRUE(late_joiner.isInitialized());
 

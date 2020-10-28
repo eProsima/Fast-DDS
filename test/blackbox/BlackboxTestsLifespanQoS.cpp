@@ -72,11 +72,11 @@ TEST_P(LifespanQos, LongLifespan)
     uint32_t lifespan_ms = 10000;
 
     writer.history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS)
-    .lifespan_period(lifespan_ms * 1e-3)
-    .init();
+            .lifespan_period(lifespan_ms * 1e-3)
+            .init();
     reader.history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS)
-    .reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS)
-    .init();
+            .reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS)
+            .init();
 
     ASSERT_TRUE(reader.isInitialized());
     ASSERT_TRUE(writer.isInitialized());
@@ -124,11 +124,11 @@ TEST_P(LifespanQos, ShortLifespan)
     uint32_t lifespan_ms = 1;
 
     writer.history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS)
-    .lifespan_period(lifespan_ms * 1e-3)
-    .init();
+            .lifespan_period(lifespan_ms * 1e-3)
+            .init();
     reader.history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS)
-    .lifespan_period(lifespan_ms * 1e-3)
-    .init();
+            .lifespan_period(lifespan_ms * 1e-3)
+            .init();
 
     ASSERT_TRUE(reader.isInitialized());
     ASSERT_TRUE(writer.isInitialized());
