@@ -2768,7 +2768,11 @@ enum DataSharingKind : uint16_t
     FORCED
 };
 
-//!Qos Policy to configure the data sharing
+
+/**
+ * Qos Policy to configure the data sharing
+ * @note Immutable Qos Policy
+ */
 class DataSharingQos
 {
 public:
@@ -2807,15 +2811,49 @@ public:
     }
 
     /**
+     * @return the user configured DataSharing domain ID
+     */
+    RTPS_DllAPI const uint64_t& domain_id() const
+    {
+        return domain_id_;
+    }
+
+    /**
+     * @brief Configures the DataSharing in automatic mode
+     * 
+     * The default shared memory directory of the OS is used
+     * The domain ID is automatically computed
+     */
+    RTPS_DllAPI void automatic()
+    {
+        setup (AUTO, "", 0);
+    }
+
+    /**
+     * @brief Configures the DataSharing in automatic mode
+     *
+     * The default shared memory directory of the OS is used
+     * 
+     * @param domain_id The shared memory domain ID to use.
+     */
+    RTPS_DllAPI void automatic(
+            uint64_t domain_id)
+    {
+        setup (AUTO, "", domain_id);
+    }
+
+    /**
      * @brief Configures the DataSharing in automatic mode
      *
      * @param directory The shared memory directory to use.
-     *      If none is provided, the default shared memory directory of the OS is used.
+     * @param domain_id The shared memory domain ID to use.
+     *      If none is provided, the domain ID is automatically computed.
      */
     RTPS_DllAPI void automatic(
-            const std::string& directory = "")
+            const std::string& directory,
+            uint64_t domain_id = 0)
     {
-        setup (AUTO, directory);
+        setup (AUTO, directory, domain_id);
     }
 
     /**
@@ -2823,12 +2861,15 @@ public:
      *
      * @param directory The shared memory directory to use.
      *      It is mandatory to provide a non-empty name or the creation of endpoints will fail.
+     * @param domain_id The shared memory domain ID to use.
+     *      If none is provided, the domain ID is automatically computed.
      */
     RTPS_DllAPI void force(
-            const std::string& directory)
+            const std::string& directory,
+            uint64_t domain_id = 0)
     {
         assert(!directory.empty());
-        setup (FORCED, directory);
+        setup (FORCED, directory, domain_id);
     }
 
     /**
@@ -2836,17 +2877,19 @@ public:
      */
     RTPS_DllAPI void disable()
     {
-        setup (DISABLED, "");
+        setup (DISABLED, "", 0);
     }
 
 private:
 
     void setup(
             const DataSharingKind& kind,
-            const std::string& directory)
+            const std::string& directory,
+            uint64_t domain_id)
     {
         kind_ = kind;
         shm_directory_ = directory;
+        domain_id_ = domain_id;
     }
 
     //! DataSharing configuration mode
@@ -2854,6 +2897,9 @@ private:
 
     //! Shared memory directory to use on DataSharing
     std::string shm_directory_;
+
+    //! Only endpoints with matching domain IDs are DataSharing compatible
+    uint64_t domain_id_;
 };
 
 } // namespace dds
