@@ -34,7 +34,7 @@ DiscoveryDataBase::DiscoveryDataBase(
         fastrtps::rtps::GuidPrefix_t server_guid_prefix,
         std::vector<fastrtps::rtps::GuidPrefix_t> servers)
     : server_guid_prefix_(server_guid_prefix)
-    , server_acked_by_all_((servers.size() > 0) ? false : true)
+    , server_acked_by_all_(servers.size() == 0)
     , servers_(servers)
     , enabled_(true)
 {
@@ -98,7 +98,7 @@ std::vector<fastrtps::rtps::CacheChange_t*> DiscoveryDataBase::clear()
     }
 
     /* Reset state parameters */
-    server_acked_by_all_ = false;
+    server_acked_by_all_ = true;
 
     /* Clear changes to release */
     std::vector<fastrtps::rtps::CacheChange_t*> leftover_changes = changes_to_release_;
@@ -1484,7 +1484,16 @@ void DiscoveryDataBase::AckedFunctor::operator () (
         }
         else
         {
-            // This change is relevant and has not been acked, so there are pending acknowledgements
+            // if the reader proxy is from a server that we are pinging, the data is set as acked
+            for (auto it = db_->servers_.begin(); it < db_->servers_.end(); ++it)
+            {
+                if (reader_proxy->guid().guidPrefix == *(it.base()))
+                {
+                    return;
+                }
+            }
+            // This change is relevant and has not been acked, and does not belongs to the reader proxy
+            // of a server that has not been paired yet, so there are pending acknowledgements
             external_pending_ = true;
         }
     }
@@ -1505,14 +1514,19 @@ void DiscoveryDataBase::unmatch_participant_(
     // for each relevant participant make not relevant
     for (eprosima::fastrtps::rtps::GuidPrefix_t relevant_participant : pit->second.relevant_participants())
     {
-        auto rpit = participants_.find(relevant_participant);
-        if (rpit == participants_.end())
+        if (relevant_participant != guid_prefix)
         {
-            logWarning(DISCOVERY_DATABASE,
-                    "Matched with an unexisting participant: " << guid_prefix);
+            auto rpit = participants_.find(relevant_participant);
+            if (rpit == participants_.end())
+            {
+                logWarning(DISCOVERY_DATABASE,
+                        "Matched with an unexisting participant: " << guid_prefix);
+            }
+            else
+            {
+                rpit->second.remove_participant(guid_prefix);
+            }
         }
-
-        rpit->second.remove_participant(guid_prefix);
     }
 }
 
@@ -1550,8 +1564,12 @@ void DiscoveryDataBase::unmatch_writer_(
                     logWarning(DISCOVERY_DATABASE,
                             "Unexisting reader " << reader << " in topic: " << topic);
                 }
-
-                rit->second.remove_participant(guid.guidPrefix);
+                else
+                {
+                    rit->second.remove_participant(guid.guidPrefix);
+                }
+                
+                
             }
         }
     }
@@ -1591,8 +1609,10 @@ void DiscoveryDataBase::unmatch_reader_(
                     logWarning(DISCOVERY_DATABASE,
                             "Unexisting writer " << writer << " in topic: " << topic);
                 }
-
-                wit->second.remove_participant(guid.guidPrefix);
+                else
+                {
+                    wit->second.remove_participant(guid.guidPrefix);
+                }
             }
         }
     }
@@ -1620,7 +1640,7 @@ bool DiscoveryDataBase::repeated_writer_topic_(
             logWarning(DISCOVERY_DATABASE,
                     "writer missing: " << writer_guid);
         }
-
+        
         if (wit->second.topic() == topic_name)
         {
             ++count;
@@ -1657,6 +1677,7 @@ bool DiscoveryDataBase::repeated_reader_topic_(
         {
             logWarning(DISCOVERY_DATABASE,
                     "reader missing: " << reader_guid);
+            return false;
         }
 
         if (rit->second.topic() == topic_name)
