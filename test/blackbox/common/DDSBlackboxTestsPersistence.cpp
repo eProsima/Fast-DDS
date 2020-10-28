@@ -143,7 +143,13 @@ TEST_P(PersistenceLargeData, PubSubAsReliablePubPersistentNoFrag)
     fragment_data(false);
 }
 
-INSTANTIATE_TEST_CASE_P(PersistenceLargeData,
+#ifdef INSTANTIATE_TEST_SUITE_P
+#define GTEST_INSTANTIATE_TEST_MACRO(x, y, z, w) INSTANTIATE_TEST_SUITE_P(x, y, z, w)
+#else
+#define GTEST_INSTANTIATE_TEST_MACRO(x, y, z, w) INSTANTIATE_TEST_CASE_P(x, y, z, w, )
+#endif // ifdef INSTANTIATE_TEST_SUITE_P
+
+GTEST_INSTANTIATE_TEST_MACRO(PersistenceLargeData,
         PersistenceLargeData,
         testing::Values(false, true),
         [](const testing::TestParamInfo<PersistenceLargeData::ParamType>& info)

@@ -354,7 +354,13 @@ TEST_P(DDSStatus, IncompatibleQosGetters)
     EXPECT_EQ(compatible_reader.last_incompatible_qos(), eprosima::fastdds::dds::INVALID_QOS_POLICY_ID);
 }
 
-INSTANTIATE_TEST_CASE_P(DDSStatus,
+#ifdef INSTANTIATE_TEST_SUITE_P
+#define GTEST_INSTANTIATE_TEST_MACRO(x, y, z, w) INSTANTIATE_TEST_SUITE_P(x, y, z, w)
+#else
+#define GTEST_INSTANTIATE_TEST_MACRO(x, y, z, w) INSTANTIATE_TEST_CASE_P(x, y, z, w, )
+#endif // ifdef INSTANTIATE_TEST_SUITE_P
+
+GTEST_INSTANTIATE_TEST_MACRO(DDSStatus,
         DDSStatus,
         testing::Values(false, true),
         [](const testing::TestParamInfo<DDSStatus::ParamType>& info)
