@@ -25,7 +25,7 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 
-#include "RobustLock.hpp"
+#include "SharedDir.hpp"
 
 namespace eprosima {
 namespace fastdds {
@@ -51,7 +51,7 @@ public:
             bool* was_lock_created,
             bool* was_lock_released)
     {
-        auto file_path = RobustLock::get_file_path(name);
+        auto file_path = SharedDir::get_file_path(name);
 
         fd_ = open_and_lock_file(file_path, was_lock_created, was_lock_released);
 
@@ -68,7 +68,7 @@ public:
     {
         bool was_lock_created;
 
-        auto file_path = RobustLock::get_file_path(name);
+        auto file_path = SharedDir::get_file_path(name);
 
         fd_ = open_and_lock_file(file_path, &was_lock_created, nullptr);
 
@@ -91,7 +91,7 @@ public:
     static bool is_locked(
             const std::string& name)
     {
-        return test_lock(RobustLock::get_file_path(name)) == LockStatus::LOCKED;
+        return test_lock(SharedDir::get_file_path(name)) == LockStatus::LOCKED;
     }
 
     /**
@@ -102,7 +102,7 @@ public:
     static bool remove(
             const std::string& name)
     {
-        return 0 == std::remove(RobustLock::get_file_path(name).c_str());
+        return 0 == std::remove(SharedDir::get_file_path(name).c_str());
     }
 
 private:
@@ -185,7 +185,7 @@ private:
     {
         _close(fd_);
 
-        test_lock(RobustLock::get_file_path(name_), true);
+        test_lock(SharedDir::get_file_path(name_), true);
     }
 
     static LockStatus test_lock(
@@ -280,7 +280,7 @@ private:
         flock(fd_, LOCK_UN | LOCK_NB);
         close(fd_);
 
-        test_lock(RobustLock::get_file_path(name_), true);
+        test_lock(SharedDir::get_file_path(name_), true);
     }
 
     static LockStatus test_lock(

@@ -1040,7 +1040,7 @@ TEST_F(SHMTransportTests, robust_exclusive_lock)
     ASSERT_FALSE(RobustExclusiveLock::remove(lock_name.c_str()));
 
     // Create a fake file
-    FILE* f = fopen(RobustLock::get_file_path(lock_name).c_str(), "w+");
+    FILE* f = fopen(SharedDir::get_file_path(lock_name).c_str(), "w+");
     ASSERT_TRUE(f != nullptr);
     fclose(f);
 
@@ -1104,7 +1104,7 @@ TEST_F(SHMTransportTests, robust_shared_lock)
     ASSERT_FALSE(RobustSharedLock::remove(lock_name.c_str()));
 
     // Create a fake file
-    FILE* f = fopen(RobustLock::get_file_path(lock_name).c_str(), "w+");
+    FILE* f = fopen(SharedDir::get_file_path(lock_name).c_str(), "w+");
     ASSERT_TRUE(f != nullptr);
     fclose(f);
 
@@ -1126,7 +1126,7 @@ TEST_F(SHMTransportTests, memory_bounds)
 {
     const std::string domain_name("SHMTests");
     auto shared_mem_manager = SharedMemManager::create(domain_name);
-    auto shm_path = RobustLock::get_file_path("");
+    auto shm_path = SharedDir::get_file_path("");
 
     constexpr uint32_t max_system_size = (std::numeric_limits<uint32_t>::max)() - 1024u;
 

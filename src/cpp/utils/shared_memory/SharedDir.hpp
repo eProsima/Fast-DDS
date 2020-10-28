@@ -12,8 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef _FASTDDS_ROBUST_LOCK_H_
-#define _FASTDDS_ROBUST_LOCK_H_
+#ifndef _FASTDDS_SHARED_DIR_H_
+#define _FASTDDS_SHARED_DIR_H_
 
 #include <boostconfig.hpp>
 #include <boost/interprocess/detail/shared_dir_helpers.hpp>
@@ -23,29 +23,21 @@ namespace fastdds {
 namespace rtps {
 
 /**
- * This class implement helpers used in RobustSharedLock & RobustExclusiveLock
+ * This class implement helpers used for Shared Memory file support
  */
-class RobustLock
+class SharedDir
 {
 public:
 
-#if !defined(BOOST_INTERPROCESS_POSIX_SHARED_MEMORY_OBJECTS)
-
-    static std::string get_file_path(
-            const std::string& file_name)
+    static void get_default_shared_dir (std::string& shared_dir)
     {
-        std::string shmfile;
-        boost::interprocess::ipcdetail::shared_filepath(file_name.c_str(), shmfile);
-        return shmfile;
-    }
+
+#if !defined(BOOST_INTERPROCESS_POSIX_SHARED_MEMORY_OBJECTS)
+        boost::interprocess::ipcdetail::get_shared_dir(shared_dir);
 
 #else
-
-    static std::string get_file_path(
-            const std::string& filename)
-    {
         // Default value from: glibc-2.29/sysdeps/unix/sysv/linux/shm-directory.c
-        static const char defaultdir[] = "/dev/shm/";
+        static const char defaultdir[] = "/dev/shm";
 
         std::string filepath;
         #if defined(BOOST_INTERPROCESS_FILESYSTEM_BASED_POSIX_SHARED_MEMORY)
@@ -57,21 +49,26 @@ public:
         #endif
         if (add_leading_slash)
         {
-            boost::interprocess::ipcdetail::add_leading_slash(filename.c_str(), filepath);
+            shared_dir = defaultdir;
         }
         else
         {
-            boost::interprocess::ipcdetail::shared_filepath(filename.c_str(), filepath);
+            boost::interprocess::ipcdetail::get_shared_dir(shared_dir);
         }
-
-        return defaultdir + filepath;
+#endif
     }
 
-#endif
+    static std::string get_file_path(
+            const std::string& filename)
+    {
+        std::string path;
+        get_default_shared_dir(path);
+        return path + "/" + filename;
+    }
 };
 
 } // namespace rtps
 } // namespace fastdds
 } // namespace eprosima
 
-#endif // _FASTDDS_ROBUST_LOCK_H_
+#endif // _FASTDDS_SHARED_DIR_H_
