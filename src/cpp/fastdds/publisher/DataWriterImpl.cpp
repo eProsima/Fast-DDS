@@ -1329,6 +1329,21 @@ bool DataWriterImpl::can_qos_be_updated(
         updatable = false;
         logWarning(RTPS_QOS_CHECK, "Destination order Kind cannot be changed after the creation of a DataWriter.");
     }
+    if (to.data_sharing().kind() != from.data_sharing().kind())
+    {
+        updatable = false;
+        logWarning(RTPS_QOS_CHECK, "Data sharing configuration cannot be changed after the creation of a DataWriter.");
+    }
+    if (to.data_sharing().shm_directory() != from.data_sharing().shm_directory())
+    {
+        updatable = false;
+        logWarning(RTPS_QOS_CHECK, "Data sharing configuration cannot be changed after the creation of a DataWriter.");
+    }
+    if (to.data_sharing().domain_id() != from.data_sharing().domain_id())
+    {
+        updatable = false;
+        logWarning(RTPS_QOS_CHECK, "Data sharing configuration cannot be changed after the creation of a DataWriter.");
+    }
     return updatable;
 }
 
