@@ -1,9 +1,25 @@
+// Copyright 2019 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
 #include <chrono>
 #include <iomanip>
 #include <mutex>
 
 #include <fastdds/dds/log/Log.hpp>
+#include <fastdds/dds/log/OStreamConsumer.hpp>
 #include <fastdds/dds/log/StdoutConsumer.hpp>
+#include <fastdds/dds/log/StdoutErrConsumer.hpp>
 #include <fastdds/dds/log/Colors.hpp>
 #include <iostream>
 
@@ -16,13 +32,17 @@ struct Log::Resources Log::resources_;
 
 Log::Resources::Resources()
     : logging(false)
-    ,work(false)
-    ,current_loop(0)
-    ,filenames(false)
-    ,functions(true)
-    ,verbosity(Log::Error)
+    , work(false)
+    , current_loop(0)
+    , filenames(false)
+    , functions(true)
+    , verbosity(Log::Error)
 {
+#if STDOUTERR_LOG_CONSUMER
+    resources_.consumers.emplace_back(new StdoutErrConsumer);
+#else
     resources_.consumers.emplace_back(new StdoutConsumer);
+#endif // STDOUTERR_LOG_CONSUMER
 }
 
 Log::Resources::~Resources()
@@ -41,10 +61,10 @@ void Log::ClearConsumers()
 {
     std::unique_lock<std::mutex> working(resources_.cv_mutex);
     resources_.cv.wait(working,
-        [&]()
-        {
-            return resources_.logs.BothEmpty();
-        });
+            [&]()
+            {
+                return resources_.logs.BothEmpty();
+            });
     std::unique_lock<std::mutex> guard(resources_.config_mutex);
     resources_.consumers.clear();
 }
@@ -59,7 +79,11 @@ void Log::Reset()
     resources_.functions = true;
     resources_.verbosity = Log::Error;
     resources_.consumers.clear();
+#if STDOUTERR_LOG_CONSUMER
+    resources_.consumers.emplace_back(new StdoutErrConsumer);
+#else
     resources_.consumers.emplace_back(new StdoutConsumer);
+#endif // if STDOUTERR_LOG_CONSUMER
 }
 
 void Log::Flush()
@@ -85,16 +109,16 @@ void Log::Flush()
     for (int i = 0; i < 2; ++i)
     {
         resources_.cv.wait(guard,
-            [&]()
-            {
-                /* I must avoid:
-                 + the two calls be processed without an intermediate Run() loop (by using last_loop sequence number)
-                 + deadlock by absence of Run() loop activity (by using BothEmpty() call)
-                 */
-                return !resources_.logging ||
-                ( resources_.logs.Empty() &&
-                ( last_loop != resources_.current_loop || resources_.logs.BothEmpty()) );
-            });
+                [&]()
+                {
+                    /* I must avoid:
+                     + the two calls be processed without an intermediate Run() loop (by using last_loop sequence number)
+                     + deadlock by absence of Run() loop activity (by using BothEmpty() call)
+                     */
+                    return !resources_.logging ||
+                    ( resources_.logs.Empty() &&
+                    ( last_loop != resources_.current_loop || resources_.logs.BothEmpty()));
+                });
 
         last_loop = resources_.current_loop;
 
@@ -108,10 +132,10 @@ void Log::run()
     while (resources_.logging)
     {
         resources_.cv.wait(guard,
-            [&]()
-            {
-                return !resources_.logging || resources_.work;
-            });
+                [&]()
+                {
+                    return !resources_.logging || resources_.work;
+                });
 
         resources_.work = false;
 
@@ -201,7 +225,7 @@ void Log::KillThread()
         // Each VS version deals with post-main deallocation of threads in a very different way.
 #if !defined(_WIN32) || defined(FASTRTPS_STATIC_LINK) || _MSC_VER >= 1800
         resources_.logging_thread->join();
-#endif
+#endif // if !defined(_WIN32) || defined(FASTRTPS_STATIC_LINK) || _MSC_VER >= 1800
         resources_.logging_thread.reset();
     }
 }
@@ -282,7 +306,7 @@ void Log::get_timestamp(
     //    (void)ms;
 #else
     stream << std::put_time(localtime(&now_c), "%F %T") << "." << std::setw(3) << std::setfill('0') << ms << " ";
-#endif
+#endif // if defined(_WIN32)
     timestamp = stream.str();
 }
 

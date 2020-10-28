@@ -1,4 +1,4 @@
-// Copyright 2019 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+// Copyright 2020 Proyectos y Sistemas de Mantenimiento SL (eProsima).
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,34 +12,47 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef _FASTDDS_DDS_LOG_STDOUTCONSUMER_HPP_
-#define _FASTDDS_DDS_LOG_STDOUTCONSUMER_HPP_
+#ifndef _FASTDDS_DDS_LOG_OSTREAMCONSUMER_HPP_
+#define _FASTDDS_DDS_LOG_OSTREAMCONSUMER_HPP_
+
+#include <iostream>
 
 #include <fastdds/dds/log/Log.hpp>
-#include <fastdds/dds/log/OStreamConsumer.hpp>
 
 namespace eprosima {
 namespace fastdds {
 namespace dds {
 
-class StdoutConsumer : public OStreamConsumer
+/**
+ * Log consumer interface for std::ostream objects
+ *
+ * @file OStreamConsumer.hpp
+ */
+class OStreamConsumer : public LogConsumer
 {
 public:
 
-    virtual ~StdoutConsumer() = default;
+    virtual ~OStreamConsumer() = default;
 
-private:
+    /** \internal
+     * Called by Log to ask us to consume the Entry.
+     * @param Log::Entry to consume.
+     */
+    RTPS_DllAPI void Consume(
+            const Log::Entry& entry) override;
+
+protected:
 
     /** \internal
      * Called by Log consume to get the correct stream
      * @param Log::Entry to consume.
      */
     RTPS_DllAPI virtual std::ostream& get_stream(
-            const Log::Entry& entry) override;
+            const Log::Entry& entry) = 0;
 };
 
 } // namespace dds
 } // namespace fastdds
 } // namespace eprosima
 
-#endif // ifndef _FASTDDS_DDS_LOG_STDOUTCONSUMER_HPP_
+#endif // ifndef _FASTDDS_DDS_LOG_OSTREAMCONSUMER_HPP_

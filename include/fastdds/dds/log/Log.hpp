@@ -1,4 +1,3 @@
-
 // Copyright 2019 Proyectos y Sistemas de Mantenimiento SL (eProsima).
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,8 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 //
-#ifndef _FASTDDS_LOG_LOG_HPP_
-#define _FASTDDS_LOG_LOG_HPP_
+#ifndef _FASTDDS_DDS_LOG_LOG_HPP_
+#define _FASTDDS_DDS_LOG_LOG_HPP_
 
 #include <fastrtps/utils/DBQueue.h>
 #include <fastrtps/fastrtps_dll.h>
@@ -157,7 +156,7 @@ private:
     struct Resources
     {
         fastrtps::DBQueue<Entry> logs;
-        std::vector<std::unique_ptr<LogConsumer> > consumers;
+        std::vector<std::unique_ptr<LogConsumer>> consumers;
         std::unique_ptr<std::thread> logging_thread;
 
         // Condition variable segment.
@@ -203,9 +202,7 @@ class LogConsumer
 {
 public:
 
-    virtual ~LogConsumer()
-    {
-    }
+    virtual ~LogConsumer() = default;
 
     virtual void Consume(
             const Log::Entry&) = 0;
@@ -239,7 +236,7 @@ protected:
 
 #if defined(WIN32)
 #define __func__ __FUNCTION__
-#endif
+#endif // if defined(WIN32)
 
 #ifndef LOG_NO_ERROR
 #define logError_(cat, msg)                                                                          \
@@ -261,7 +258,7 @@ protected:
     }
 #else
 #define logError_(cat, msg)
-#endif
+#endif // ifndef LOG_NO_ERROR
 
 #ifndef LOG_NO_WARNING
 #define logWarning_(cat, msg)                                                                              \
@@ -286,7 +283,7 @@ protected:
     }
 #else
 #define logWarning_(cat, msg)
-#endif
+#endif // ifndef LOG_NO_WARNING
 
 #if (defined(__INTERNALDEBUG) || defined(_INTERNALDEBUG)) && (defined(_DEBUG) || defined(__DEBUG)) && \
     (!defined(LOG_NO_INFO))
@@ -312,10 +309,10 @@ protected:
     }
 #else
 #define logInfo_(cat, msg)
-#endif
+#endif // if (defined(__INTERNALDEBUG) || defined(_INTERNALDEBUG)) && (defined(_DEBUG) || defined(__DEBUG)) && (!defined(LOG_NO_INFO))
 
 } // namespace dds
 } // namespace fastdds
 } // namespace eprosima
 
-#endif
+#endif // ifndef _FASTDDS_DDS_LOG_LOG_HPP_

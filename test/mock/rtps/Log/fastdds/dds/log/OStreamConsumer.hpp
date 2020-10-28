@@ -1,4 +1,4 @@
-// Copyright 2016 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+// Copyright 2020 Proyectos y Sistemas de Mantenimiento SL (eProsima).
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,46 +12,21 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-/**
- * @file FileConsumer.h
- *
- */
-
-#ifndef _FASTDDS_DDS_LOG_FILECONSUMER_HPP_
-#define _FASTDDS_DDS_LOG_FILECONSUMER_HPP_
-
-#include <gmock/gmock.h>
+#ifndef _FASTDDS_DDS_LOG_OSTREAMCONSUMER_HPP_
+#define _FASTDDS_DDS_LOG_OSTREAMCONSUMER_HPP_
 
 #include <fastdds/dds/log/Log.hpp>
-#include <fastdds/dds/log/OStreamConsumer.hpp>
 
 namespace eprosima {
 namespace fastdds {
 namespace dds {
 
-class FileConsumer : public OStreamConsumer
+class OStreamConsumer : public LogConsumer
 {
-public:
-
-    FileConsumer() = default;
-
-    FileConsumer(
-            const std::string&,
-            bool = false)
-    {
-    }
-
-    virtual ~FileConsumer() = default;
 };
-
-MATCHER(IsFileConsumer, "Argument is a FileConsumer object?")
-{
-    *result_listener << (typeid(*arg.get()) == typeid(FileConsumer));
-    return typeid(*arg.get()) == typeid(FileConsumer);
-}
 
 } // namespace dds
 } // namespace fastdds
 } // namespace eprosima
 
-#endif // _FASTDDS_DDS_LOG_FILECONSUMER_HPP_
+#endif // ifndef _FASTDDS_DDS_LOG_OSTREAMCONSUMER_HPP_

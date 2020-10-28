@@ -311,6 +311,11 @@ XMLP_ret XMLProfileManager::loadXMLFile(
         return loaded_ret;
     }
 
+    if (NodeType::LOG == root_node->getType())
+    {
+        return loaded_ret;
+    }
+
     if (NodeType::ROOT == root_node->getType())
     {
         for (auto&& child: root_node->getChildren())
@@ -318,6 +323,16 @@ XMLP_ret XMLProfileManager::loadXMLFile(
             if (NodeType::PROFILES == child.get()->getType())
             {
                 return XMLProfileManager::extractProfiles(std::move(child), filename);
+            }
+            // TODO Workaround when there is a ROOT tag without PROFILES. Return the corresponding error instead of
+            // XMLP_ret::XML_ERROR. Only the type is checked so the objects do not need to be populated.
+            else if (NodeType::TYPES == child.get()->getType())
+            {
+                return loaded_ret;
+            }
+            else if (NodeType::LOG == child.get()->getType())
+            {
+                return loaded_ret;
             }
         }
     }
@@ -493,7 +508,7 @@ XMLP_ret XMLProfileManager::extractParticipantProfile(
     if (it != node_part->getAttributes().end() && it->second == "true") // Set as default profile
     {
         // +V+ TODO: LOG ERROR IN SECOND ATTEMPT
-        default_participant_attributes = *(emplace.first->second.get() );
+        default_participant_attributes = *(emplace.first->second.get());
     }
     return XMLP_ret::XML_OK;
 }
@@ -526,7 +541,7 @@ XMLP_ret XMLProfileManager::extractPublisherProfile(
     if (it != node_part->getAttributes().end() && it->second == "true") // Set as default profile
     {
         // +V+ TODO: LOG ERROR IN SECOND ATTEMPT
-        default_publisher_attributes = *(emplace.first->second.get() );
+        default_publisher_attributes = *(emplace.first->second.get());
     }
     return XMLP_ret::XML_OK;
 }
@@ -559,7 +574,7 @@ XMLP_ret XMLProfileManager::extractSubscriberProfile(
     if (it != node_part->getAttributes().end() && it->second == "true") // Set as default profile
     {
         // +V+ TODO: LOG ERROR IN SECOND ATTEMPT
-        default_subscriber_attributes = *(emplace.first->second.get() );
+        default_subscriber_attributes = *(emplace.first->second.get());
     }
     return XMLP_ret::XML_OK;
 }

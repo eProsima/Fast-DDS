@@ -40,6 +40,18 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
         configure_file(${CMAKE_CURRENT_SOURCE_DIR}/test_xml_profiles_rooted.xml
             ${CMAKE_CURRENT_BINARY_DIR}/test_xml_profiles_rooted.xml
             COPYONLY)
+            configure_file(${CMAKE_CURRENT_SOURCE_DIR}/log_stdouterr.xml
+            ${CMAKE_CURRENT_BINARY_DIR}/log_stdouterr.xml
+            COPYONLY)
+        configure_file(${CMAKE_CURRENT_SOURCE_DIR}/log_stdouterr_wrong_property_name.xml
+            ${CMAKE_CURRENT_BINARY_DIR}/log_stdouterr_wrong_property_name.xml
+            COPYONLY)
+        configure_file(${CMAKE_CURRENT_SOURCE_DIR}/log_stdouterr_wrong_property_value.xml
+            ${CMAKE_CURRENT_BINARY_DIR}/log_stdouterr_wrong_property_value.xml
+            COPYONLY)
+        configure_file(${CMAKE_CURRENT_SOURCE_DIR}/log_stdouterr_two_thresholds.xml
+            ${CMAKE_CURRENT_BINARY_DIR}/log_stdouterr_two_thresholds.xml
+            COPYONLY)
         configure_file(${CMAKE_CURRENT_SOURCE_DIR}/log_def_file.xml
             ${CMAKE_CURRENT_BINARY_DIR}/log_def_file.xml
             COPYONLY)
@@ -139,7 +151,9 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/subscriber/qos/ReaderQos.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/rtps/flowcontrol/ThroughputControllerDescriptor.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/Log.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/OStreamConsumer.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/StdoutConsumer.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/StdoutErrConsumer.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/FileConsumer.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/utils/IPFinder.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/utils/IPLocator.cpp

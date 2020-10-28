@@ -1,4 +1,4 @@
-// Copyright 2019 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+// Copyright 2020 Proyectos y Sistemas de Mantenimiento SL (eProsima).
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,44 +12,33 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include <fastdds/dds/log/FileConsumer.hpp>
+#include <fastdds/dds/log/StdoutErrConsumer.hpp>
 #include <iomanip>
 
 namespace eprosima {
 namespace fastdds {
 namespace dds {
 
-FileConsumer::FileConsumer()
-    : FileConsumer("output.log")
+void StdoutErrConsumer::stderr_threshold(
+        const Log::Kind& kind)
 {
+    stderr_threshold_ = kind;
 }
 
-FileConsumer::FileConsumer(
-        const std::string& filename,
-        bool append)
-    : output_file_(filename)
-    , append_(append)
+Log::Kind StdoutErrConsumer::stderr_threshold() const
 {
-    if (append_)
-    {
-        file_.open(output_file_, std::ios::out | std::ios::app);
-    }
-    else
-    {
-        file_.open(output_file_, std::ios::out);
-    }
+    return stderr_threshold_;
 }
 
-FileConsumer::~FileConsumer()
-{
-    file_.close();
-}
-
-std::ostream& FileConsumer::get_stream(
+std::ostream& StdoutErrConsumer::get_stream(
         const Log::Entry& entry)
 {
-    (void) entry;
-    return file_;
+    // If Log::Kind is stderr_threshold_ or more severe, then use STDERR, else use STDOUT
+    if (entry.kind <= stderr_threshold_)
+    {
+        return std::cerr;
+    }
+    return std::cout;
 }
 
 } // Namespace dds

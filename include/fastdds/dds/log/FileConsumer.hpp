@@ -17,10 +17,11 @@
  *
  */
 
-#ifndef _FASTDDS_FILE_CONSUMER_HPP_
-#define _FASTDDS_FILE_CONSUMER_HPP_
+#ifndef _FASTDDS_DDS_LOG_FILECONSUMER_HPP_
+#define _FASTDDS_DDS_LOG_FILECONSUMER_HPP_
 
 #include <fastdds/dds/log/Log.hpp>
+#include <fastdds/dds/log/OStreamConsumer.hpp>
 
 #include <fstream>
 
@@ -33,7 +34,7 @@ namespace dds {
  *
  * @file FileConsumer.hpp
  */
-class FileConsumer : public LogConsumer
+class FileConsumer : public OStreamConsumer
 {
 public:
 
@@ -48,22 +49,16 @@ public:
             const std::string& filename,
             bool append = false);
 
-    /** \internal
-     * Called by Log to ask us to consume the Entry.
-     * @param Log::Entry to consume.
-     */
-    RTPS_DllAPI virtual void Consume(
-            const Log::Entry&);
-
     virtual ~FileConsumer();
 
 private:
 
-    void print_header(
-            const Log::Entry&);
-
-    void print_context(
-            const Log::Entry&);
+    /** \internal
+     * Called by Log consume to get the correct stream
+     * @param entry Log::Entry to consume.
+     */
+    RTPS_DllAPI virtual std::ostream& get_stream(
+            const Log::Entry& entry) override;
 
     std::string output_file_;
     std::ofstream file_;
@@ -74,4 +69,4 @@ private:
 } // namespace fastdds
 } // namespace eprosima
 
-#endif // _FASTDDS_FILE_CONSUMER_HPP_
+#endif // _FASTDDS_DDS_LOG_FILECONSUMER_HPP_

@@ -1,4 +1,4 @@
-// Copyright 2016 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+// Copyright 2020 Proyectos y Sistemas de Mantenimiento SL (eProsima).
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,13 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-/**
- * @file FileConsumer.h
- *
- */
-
-#ifndef _FASTDDS_DDS_LOG_FILECONSUMER_HPP_
-#define _FASTDDS_DDS_LOG_FILECONSUMER_HPP_
+#ifndef _FASTDDS_DDS_LOG_STDOUTERRCONSUMER_HPP_
+#define _FASTDDS_DDS_LOG_STDOUTERRCONSUMER_HPP_
 
 #include <gmock/gmock.h>
 
@@ -29,29 +24,31 @@ namespace eprosima {
 namespace fastdds {
 namespace dds {
 
-class FileConsumer : public OStreamConsumer
+class StdoutErrConsumer : public OStreamConsumer
 {
 public:
 
-    FileConsumer() = default;
+    StdoutErrConsumer() = default;
 
-    FileConsumer(
-            const std::string&,
-            bool = false)
+    virtual ~StdoutErrConsumer() = default;
+
+    void stderr_threshold(
+            const Log::Kind& kind)
     {
+        (void)kind;
     }
 
-    virtual ~FileConsumer() = default;
+    static const Log::Kind STDERR_THRESHOLD_DEFAULT = Log::Kind::Warning;
 };
 
-MATCHER(IsFileConsumer, "Argument is a FileConsumer object?")
+MATCHER(IsStdoutErrConsumer, "Argument is a StdoutErrConsumer object?")
 {
-    *result_listener << (typeid(*arg.get()) == typeid(FileConsumer));
-    return typeid(*arg.get()) == typeid(FileConsumer);
+    *result_listener << (typeid(*arg.get()) == typeid(StdoutErrConsumer));
+    return typeid(*arg.get()) == typeid(StdoutErrConsumer);
 }
 
 } // namespace dds
 } // namespace fastdds
 } // namespace eprosima
 
-#endif // _FASTDDS_DDS_LOG_FILECONSUMER_HPP_
+#endif // _FASTDDS_DDS_LOG_STDOUTERRCONSUMER_HPP_

@@ -267,6 +267,16 @@ if(EPROSIMA_BUILD AND NOT EPROSIMA_INSTALLER)
 endif()
 
 ###############################################################################
+# LogConsumer default setup
+###############################################################################
+set(LOG_CONSUMER_DEFAULT AUTO CACHE STRING "Selects default LogConsumer")
+set_property(CACHE LOG_CONSUMER_DEFAULT PROPERTY STRINGS AUTO STDOUT STDOUTERR)
+
+if(LOG_CONSUMER_DEFAULT STREQUAL "STDOUTERR")
+    set(STDOUTERR_LOG_CONSUMER ON)
+endif()
+
+###############################################################################
 # Tools default setup
 ###############################################################################
 option(COMPILE_TOOLS "Build tools" ON)

@@ -12,8 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef _FASTDDS_STDOUT_CONSUMER_HPP_
-#define _FASTDDS_STDOUT_CONSUMER_HPP_
+#ifndef _FASTDDS_DDS_LOG_STDOUTCONSUMER_HPP_
+#define _FASTDDS_DDS_LOG_STDOUTCONSUMER_HPP_
 
 #include <fastdds/dds/log/Log.hpp>
 
@@ -21,10 +21,15 @@ namespace eprosima {
 namespace fastdds {
 namespace dds {
 
-    class StdoutConsumer : public LogConsumer {};
+class StdoutConsumer : public LogConsumer
+{
+public:
+
+    virtual ~StdoutConsumer() = default;
+};
 
 } // namespace dds
 } // namespace fastdds
 } // namespace eprosima
 
-#endif
+#endif // ifndef _FASTDDS_DDS_LOG_STDOUTCONSUMER_HPP_

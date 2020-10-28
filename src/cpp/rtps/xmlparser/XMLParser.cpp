@@ -31,6 +31,7 @@
 
 #include <fastdds/dds/log/FileConsumer.hpp>
 #include <fastdds/dds/log/StdoutConsumer.hpp>
+#include <fastdds/dds/log/StdoutErrConsumer.hpp>
 
 #include <tinyxml2.h>
 #include <iostream>
@@ -89,7 +90,7 @@ XMLP_ret XMLParser::parseXML(
         root.reset(new BaseNode{ NodeType::ROOT });
         tinyxml2::XMLElement* node = p_root->FirstChildElement();
         const char* tag = nullptr;
-        while ( (nullptr != node) && (ret == XMLP_ret::XML_OK))
+        while ((nullptr != node) && (ret == XMLP_ret::XML_OK))
         {
             if (nullptr != (tag = node->Value()))
             {
@@ -131,11 +132,25 @@ XMLP_ret XMLParser::parseXML(
                 }
                 else if (strcmp(tag, TYPES) == 0)
                 {
-                    ret = parseXMLTypes(node);
+                    // TODO Workaround to propagate the return code upstream. A refactor is needed to propagate the
+                    // return code in some other more sensible way or populate the object and change code upstream to
+                    // read this new object.
+                    up_base_node_t types_node = up_base_node_t{ new BaseNode{NodeType::TYPES} };
+                    if (XMLP_ret::XML_OK == (ret = parseXMLTypes(node)))
+                    {
+                        root->addChild(std::move(types_node));
+                    }
                 }
                 else if (strcmp(tag, LOG) == 0)
                 {
-                    ret = parseLogConfig(node);
+                    // TODO Workaround to propagate the return code upstream. A refactor is needed to propagate the
+                    // return code in some other more sensible way or populate the object and change code upstream to
+                    // read this new object.
+                    up_base_node_t log_node = up_base_node_t{ new BaseNode{NodeType::LOG} };
+                    if (XMLP_ret::XML_OK == (ret = parseLogConfig(node)))
+                    {
+                        root->addChild(std::move(log_node));
+                    }
                 }
                 else
                 {
@@ -2740,7 +2755,7 @@ XMLP_ret XMLParser::parseLogConfig(
             else if (strcmp(tag, CONSUMER) == 0)
             {
                 ret = parseXMLConsumer(*p_element);
-                if (ret != XMLP_ret::XML_OK)
+                if (ret == XMLP_ret::XML_ERROR)
                 {
                     return ret;
                 }
@@ -2771,6 +2786,95 @@ XMLP_ret XMLParser::parseXMLConsumer(
         if (std::strcmp(classStr.c_str(), "StdoutConsumer") == 0)
         {
             Log::RegisterConsumer(std::unique_ptr<LogConsumer>(new StdoutConsumer));
+        }
+        else if (std::strcmp(classStr.c_str(), "StdoutErrConsumer") == 0)
+        {
+            /* Register a StdoutErrConsumer */
+
+            // Get first property
+            tinyxml2::XMLElement* property = consumer.FirstChildElement(PROPERTY);
+            if (nullptr == property)
+            {
+                // If no properties are specified, create the consumer with default values
+                Log::RegisterConsumer(std::unique_ptr<LogConsumer>(new StdoutErrConsumer));
+            }
+            else
+            {
+                // Only one property is supported. Its name is `stderr_threshold`, and its value is a log kind specified
+                // as a string in the form `Log::Kind::<Kind>`.
+                tinyxml2::XMLElement* p_auxName = nullptr;    // Property name
+                tinyxml2::XMLElement* p_auxValue = nullptr;   // Property value
+                uint8_t stderr_threshold_property_count = 0;  // Occurrences count. Only one is allowed
+
+                // Get default threshold
+                Log::Kind threshold = StdoutErrConsumer::STDERR_THRESHOLD_DEFAULT;
+
+                // Iterate over the properties
+                while (nullptr != property)
+                {
+                    if (nullptr != (p_auxName = property->FirstChildElement(NAME)))
+                    {
+                        // Get property name
+                        std::string s = p_auxName->GetText();
+
+                        if (std::strcmp(s.c_str(), "stderr_threshold") == 0)
+                        {
+                            /* Property is a `stderr_threshold` */
+
+                            // Update occurrence count and check how many encountered. Only the first one applies, the
+                            // rest are ignored.
+                            stderr_threshold_property_count++;
+                            if (stderr_threshold_property_count > 1)
+                            {
+                                // Continue with the next property if `stderr_threshold` had been already specified.
+                                logError(XMLParser, classStr << " only supports one occurrence of 'stderr_threshold'."
+                                                             << " Only the first one is applied.")
+                                property = property->NextSiblingElement(PROPERTY);
+                                ret = XMLP_ret::XML_NOK;
+                                continue;
+                            }
+
+                            // Get the property value. It should be a Log::Kind.
+                            if (nullptr != (p_auxValue = property->FirstChildElement(VALUE)))
+                            {
+                                // Get property value and use it to set the threshold.
+                                std::string threshold_str = p_auxValue->GetText();
+                                if (std::strcmp(threshold_str.c_str(), "Log::Kind::Error") == 0)
+                                {
+                                    threshold = Log::Kind::Error;
+                                }
+                                else if (std::strcmp(threshold_str.c_str(), "Log::Kind::Warning") == 0)
+                                {
+                                    threshold = Log::Kind::Warning;
+                                }
+                                else if (std::strcmp(threshold_str.c_str(), "Log::Kind::Info") == 0)
+                                {
+                                    threshold = Log::Kind::Info;
+                                }
+                                else
+                                {
+                                    logError(XMLParser, "Unkown Log::Kind '" << threshold_str
+                                                                             << "'. Using default threshold.")
+                                    ret = XMLP_ret::XML_NOK;
+                                }
+                            }
+                        }
+                        else
+                        {
+                            logError(XMLParser, "Unkown property value '" << s << "' in " << classStr
+                                                                          << " log consumer");
+                            ret = XMLP_ret::XML_NOK;
+                        }
+                    }
+                    // Continue with the next property
+                    property = property->NextSiblingElement(PROPERTY);
+                }
+
+                // Create consumer with the specified `stderr_threshold` and register it.
+                StdoutErrConsumer* log_consumer = new StdoutErrConsumer;
+                log_consumer->stderr_threshold(threshold);
+                Log::RegisterConsumer(std::unique_ptr<LogConsumer>(log_consumer));
+            }
         }
         else if (std::strcmp(classStr.c_str(), "FileConsumer") == 0)
         {
@@ -2803,6 +2907,7 @@ XMLP_ret XMLParser::parseXMLConsumer(
                             {
                                 logError(XMLParser, "Filename value cannot be found for " << classStr
                                                                                           << " log consumer.");
+                                ret = XMLP_ret::XML_NOK;
                             }
                         }
                         else if (std::strcmp(s.c_str(), "append") == 0)
@@ -2819,12 +2924,14 @@ XMLP_ret XMLParser::parseXMLConsumer(
                             {
                                 logError(XMLParser, "Append value cannot be found for " << classStr
                                                                                         << " log consumer.");
+                                ret = XMLP_ret::XML_NOK;
                             }
                         }
                         else
                         {
                             logError(XMLParser, "Unknown property " << s << " in " << classStr
                                                                     << " log consumer.");
+                            ret = XMLP_ret::XML_NOK;
                         }
                     }
                     property = property->NextSiblingElement(PROPERTY);
