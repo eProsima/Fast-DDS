@@ -56,9 +56,9 @@ TEST_P(PubSubHistory, PubSubAsNonReliableKeepLastReaderSmallDepth)
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
 
     reader.history_kind(eprosima::fastrtps::KEEP_LAST_HISTORY_QOS).
-    history_depth(2).
-    resource_limits_allocated_samples(2).
-    resource_limits_max_samples(2).init();
+            history_depth(2).
+            resource_limits_allocated_samples(2).
+            resource_limits_max_samples(2).init();
 
     ASSERT_TRUE(reader.isInitialized());
 
@@ -139,10 +139,10 @@ TEST_P(PubSubHistory, PubSubAsReliableKeepLastReaderSmallDepth)
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
 
     reader.reliability(RELIABLE_RELIABILITY_QOS).
-    history_kind(eprosima::fastrtps::KEEP_LAST_HISTORY_QOS).
-    history_depth(2).
-    resource_limits_allocated_samples(2).
-    resource_limits_max_samples(2).init();
+            history_kind(eprosima::fastrtps::KEEP_LAST_HISTORY_QOS).
+            history_depth(2).
+            resource_limits_allocated_samples(2).
+            resource_limits_max_samples(2).init();
 
     ASSERT_TRUE(reader.isInitialized());
 
@@ -189,8 +189,8 @@ TEST_P(PubSubHistory, PubSubAsReliableKeepLastWriterSmallDepth)
     ASSERT_TRUE(reader.isInitialized());
 
     writer.
-    history_kind(eprosima::fastrtps::KEEP_LAST_HISTORY_QOS).
-    history_depth(2).init();
+            history_kind(eprosima::fastrtps::KEEP_LAST_HISTORY_QOS).
+            history_depth(2).init();
 
     ASSERT_TRUE(writer.isInitialized());
 
@@ -218,16 +218,16 @@ TEST(PubSubHistory, PubSubKeepAll)
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
 
     reader.reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).
-    history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS).
-    resource_limits_allocated_samples(2).
-    resource_limits_max_samples(2).init();
+            history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS).
+            resource_limits_allocated_samples(2).
+            resource_limits_max_samples(2).init();
 
     ASSERT_TRUE(reader.isInitialized());
 
     writer.history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS).
-    max_blocking_time({0, 0}).
-    resource_limits_allocated_samples(2).
-    resource_limits_max_samples(2).init();
+            max_blocking_time({0, 0}).
+            resource_limits_allocated_samples(2).
+            resource_limits_max_samples(2).init();
 
     ASSERT_TRUE(writer.isInitialized());
 
@@ -267,17 +267,17 @@ TEST(PubSubHistory, PubSubKeepAllTransient)
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
 
     reader.reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).
-    history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS).
-    resource_limits_allocated_samples(2).
-    resource_limits_max_samples(2).init();
+            history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS).
+            resource_limits_allocated_samples(2).
+            resource_limits_max_samples(2).init();
 
     ASSERT_TRUE(reader.isInitialized());
 
     writer.history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS).
-    durability_kind(eprosima::fastrtps::TRANSIENT_LOCAL_DURABILITY_QOS).
-    max_blocking_time({0, 0}).
-    resource_limits_allocated_samples(2).
-    resource_limits_max_samples(2).init();
+            durability_kind(eprosima::fastrtps::TRANSIENT_LOCAL_DURABILITY_QOS).
+            max_blocking_time({0, 0}).
+            resource_limits_allocated_samples(2).
+            resource_limits_max_samples(2).init();
 
     ASSERT_TRUE(writer.isInitialized());
 
@@ -320,9 +320,9 @@ TEST_P(PubSubHistory, PubReliableKeepAllSubNonReliable)
     ASSERT_TRUE(reader.isInitialized());
 
     writer.reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).
-    history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS).
-    resource_limits_allocated_samples(1).
-    resource_limits_max_samples(1).init();
+            history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS).
+            resource_limits_allocated_samples(1).
+            resource_limits_max_samples(1).init();
 
     ASSERT_TRUE(writer.isInitialized());
 
@@ -348,10 +348,10 @@ TEST_P(PubSubHistory, StatefulReaderCacheChangeRelease)
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
 
     reader.history_depth(2).
-    reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).init();
+            reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).init();
     ASSERT_TRUE(reader.isInitialized());
     writer.history_depth(2).
-    reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).init();
+            reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).init();
     ASSERT_TRUE(writer.isInitialized());
 
     writer.wait_discovery();
@@ -387,7 +387,7 @@ TEST_P(PubSubHistory, PubSubAsReliableMultithreadKeepLast1)
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
 
     reader.history_depth(1).
-    reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).init();
+            reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).init();
 
     ASSERT_TRUE(reader.isInitialized());
 
@@ -427,11 +427,11 @@ TEST_P(PubSubHistory, PubSubAsReliableKeepLastReaderSmallDepthTwoPublishers)
     PubSubWriter<HelloWorldType> writer2(TEST_TOPIC_NAME);
 
     reader
-    .reliability(RELIABLE_RELIABILITY_QOS)
-    .history_kind(eprosima::fastrtps::KEEP_LAST_HISTORY_QOS)
-    .history_depth(1)
-    .resource_limits_allocated_samples(1)
-    .resource_limits_max_samples(1);
+            .reliability(RELIABLE_RELIABILITY_QOS)
+            .history_kind(eprosima::fastrtps::KEEP_LAST_HISTORY_QOS)
+            .history_depth(1)
+            .resource_limits_allocated_samples(1)
+            .resource_limits_max_samples(1);
 
     writer.max_blocking_time({ 120, 0 });
     writer2.max_blocking_time({ 120, 0 });
@@ -487,13 +487,13 @@ TEST(BlackBox, PubSubAsReliableKeepLastWithKey)
     uint32_t keys = 2;
 
     reader.resource_limits_max_instances(keys).
-    reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).
-    history_kind(eprosima::fastrtps::KEEP_LAST_HISTORY_QOS).init();
+            reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).
+            history_kind(eprosima::fastrtps::KEEP_LAST_HISTORY_QOS).init();
 
     ASSERT_TRUE(reader.isInitialized());
 
     writer.resource_limits_max_instances(keys).
-    reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).init();
+            reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).init();
 
     ASSERT_TRUE(writer.isInitialized());
 
@@ -521,21 +521,21 @@ TEST(BlackBox, PubSubAsReliableKeepLastReaderSmallDepthWithKey)
     uint32_t depth = 2;
 
     reader.history_depth(depth).
-    resource_limits_max_samples(keys * depth).
-    resource_limits_allocated_samples(keys * depth).
-    resource_limits_max_instances(keys).
-    resource_limits_max_samples_per_instance(depth).
-    reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).
-    history_kind(eprosima::fastrtps::KEEP_LAST_HISTORY_QOS).init();
+            resource_limits_max_samples(keys * depth).
+            resource_limits_allocated_samples(keys * depth).
+            resource_limits_max_instances(keys).
+            resource_limits_max_samples_per_instance(depth).
+            reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).
+            history_kind(eprosima::fastrtps::KEEP_LAST_HISTORY_QOS).init();
 
     ASSERT_TRUE(reader.isInitialized());
 
     writer.history_depth(depth).
-    resource_limits_max_samples(keys * depth).
-    resource_limits_allocated_samples(keys * depth).
-    resource_limits_max_instances(keys).
-    resource_limits_max_samples_per_instance(depth).
-    reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).init();
+            resource_limits_max_samples(keys * depth).
+            resource_limits_allocated_samples(keys * depth).
+            resource_limits_max_instances(keys).
+            resource_limits_max_samples_per_instance(depth).
+            reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).init();
 
     ASSERT_TRUE(writer.isInitialized());
 
@@ -588,11 +588,11 @@ TEST_P(PubSubHistory, ReliableTransientLocalKeepLast1)
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
 
     writer.reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS)
-    .durability_kind(eprosima::fastrtps::TRANSIENT_LOCAL_DURABILITY_QOS)
-    .history_kind(eprosima::fastrtps::KEEP_LAST_HISTORY_QOS)
-    .history_depth(10)
-    .resource_limits_allocated_samples(10)
-    .resource_limits_max_samples(10).init();
+            .durability_kind(eprosima::fastrtps::TRANSIENT_LOCAL_DURABILITY_QOS)
+            .history_kind(eprosima::fastrtps::KEEP_LAST_HISTORY_QOS)
+            .history_depth(10)
+            .resource_limits_allocated_samples(10)
+            .resource_limits_max_samples(10).init();
 
     ASSERT_TRUE(writer.isInitialized());
 
@@ -601,9 +601,9 @@ TEST_P(PubSubHistory, ReliableTransientLocalKeepLast1)
     writer.send(data);
 
     reader.reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS)
-    .durability_kind(eprosima::fastrtps::TRANSIENT_LOCAL_DURABILITY_QOS)
-    .history_kind(eprosima::fastrtps::KEEP_LAST_HISTORY_QOS)
-    .history_depth(1).init();
+            .durability_kind(eprosima::fastrtps::TRANSIENT_LOCAL_DURABILITY_QOS)
+            .history_kind(eprosima::fastrtps::KEEP_LAST_HISTORY_QOS)
+            .history_depth(1).init();
 
     ASSERT_TRUE(reader.isInitialized());
 
@@ -630,10 +630,10 @@ TEST_P(PubSubHistory, ReliableTransientLocalKeepLast1Data300Kb)
     auto reader_data = data;
 
     writer
-    .history_depth(static_cast<int32_t>(data.size()))
-    .reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS)
-    .durability_kind(eprosima::fastrtps::TRANSIENT_LOCAL_DURABILITY_QOS)
-    .init();
+            .history_depth(static_cast<int32_t>(data.size()))
+            .reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS)
+            .durability_kind(eprosima::fastrtps::TRANSIENT_LOCAL_DURABILITY_QOS)
+            .init();
 
     ASSERT_TRUE(writer.isInitialized());
 
@@ -643,11 +643,11 @@ TEST_P(PubSubHistory, ReliableTransientLocalKeepLast1Data300Kb)
     ASSERT_FALSE(reader_data.empty());
 
     reader
-    .history_kind(eprosima::fastrtps::KEEP_LAST_HISTORY_QOS)
-    .history_depth(1)
-    .reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS)
-    .durability_kind(eprosima::fastrtps::TRANSIENT_LOCAL_DURABILITY_QOS)
-    .init();
+            .history_kind(eprosima::fastrtps::KEEP_LAST_HISTORY_QOS)
+            .history_depth(1)
+            .reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS)
+            .durability_kind(eprosima::fastrtps::TRANSIENT_LOCAL_DURABILITY_QOS)
+            .init();
 
     ASSERT_TRUE(reader.isInitialized());
 
@@ -683,21 +683,21 @@ TEST_P(PubSubHistory, WriterWithoutReadersTransientLocal)
     PubSubWriter<Data1mbType> writer(TEST_TOPIC_NAME);
 
     writer
-    .history_kind(KEEP_ALL_HISTORY_QOS)
-    .durability_kind(TRANSIENT_LOCAL_DURABILITY_QOS)
-    .reliability(RELIABLE_RELIABILITY_QOS)
-    .resource_limits_allocated_samples(13)
-    .resource_limits_max_samples(13)
-    .init();
+            .history_kind(KEEP_ALL_HISTORY_QOS)
+            .durability_kind(TRANSIENT_LOCAL_DURABILITY_QOS)
+            .reliability(RELIABLE_RELIABILITY_QOS)
+            .resource_limits_allocated_samples(13)
+            .resource_limits_max_samples(13)
+            .init();
 
     ASSERT_TRUE(writer.isInitialized());
 
     // Remove the reader
     PubSubReader<Data1mbType> reader(TEST_TOPIC_NAME);
     reader
-    .reliability(RELIABLE_RELIABILITY_QOS)
-    .durability_kind(TRANSIENT_LOCAL_DURABILITY_QOS)
-    .init();
+            .reliability(RELIABLE_RELIABILITY_QOS)
+            .durability_kind(TRANSIENT_LOCAL_DURABILITY_QOS)
+            .init();
 
     ASSERT_TRUE(reader.isInitialized());
 

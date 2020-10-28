@@ -84,12 +84,12 @@ protected:
         testTransport->receiveBufferSize = 32768;
 
         writer
-        .history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS)
-        .reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS)
-        .make_persistent(db_file_name(), "77.72.69.74.65.72.5f.70.65.72.73.5f|67.75.69.64")
-        .disable_builtin_transport()
-        .add_user_transport_to_pparams(testTransport)
-        .init();
+                .history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS)
+                .reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS)
+                .make_persistent(db_file_name(), "77.72.69.74.65.72.5f.70.65.72.73.5f|67.75.69.64")
+                .disable_builtin_transport()
+                .add_user_transport_to_pparams(testTransport)
+                .init();
 
         ASSERT_TRUE(writer.isInitialized());
 
@@ -112,12 +112,12 @@ protected:
         ASSERT_TRUE(writer.isInitialized());
 
         reader
-        .history_kind(eprosima::fastrtps::KEEP_LAST_HISTORY_QOS)
-        .history_depth(10)
-        .reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS)
-        .durability_kind(eprosima::fastrtps::TRANSIENT_LOCAL_DURABILITY_QOS)
-        .socket_buffer_size(1048576)
-        .init();
+                .history_kind(eprosima::fastrtps::KEEP_LAST_HISTORY_QOS)
+                .history_depth(10)
+                .reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS)
+                .durability_kind(eprosima::fastrtps::TRANSIENT_LOCAL_DURABILITY_QOS)
+                .socket_buffer_size(1048576)
+                .init();
 
         ASSERT_TRUE(reader.isInitialized());
 
