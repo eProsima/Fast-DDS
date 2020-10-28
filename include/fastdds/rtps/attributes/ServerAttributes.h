@@ -37,9 +37,6 @@ class ParticipantProxyData;
 namespace fastdds {
 namespace rtps {
 
-// To be eventually removed together with eprosima::fastrtps
-namespace aux = ::eprosima::fastrtps::rtps;
-
 /**
  * Class RemoteServerAttributes, to define the attributes of the Discovery Server Protocol.
  * @ingroup RTPS_ATTRIBUTES_MODULE

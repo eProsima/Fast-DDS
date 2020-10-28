@@ -46,7 +46,7 @@ namespace rtps {
  * Class PDPClient manages client side of the discovery server mechanism
  *@ingroup DISCOVERY_MODULE
  */
-class PDPClient2 : public aux::PDP
+class PDPClient2 : public fastrtps::rtps::PDP
 {
     friend class DSClientEvent2;
 
@@ -58,12 +58,12 @@ public:
      * @param allocation Participant allocation parameters.
      */
     PDPClient2(
-            aux::BuiltinProtocols* builtin,
-            const aux::RTPSParticipantAllocationAttributes& allocation);
+            fastrtps::rtps::BuiltinProtocols* builtin,
+            const fastrtps::rtps::RTPSParticipantAllocationAttributes& allocation);
     ~PDPClient2();
 
     void initializeParticipantProxyData(
-            aux::ParticipantProxyData* participant_data) override;
+            fastrtps::rtps::ParticipantProxyData* participant_data) override;
 
     /**
      * Initialize the PDP.
@@ -71,7 +71,7 @@ public:
      * @return True on success
      */
     bool init(
-            aux::RTPSParticipantImpl* part) override;
+            fastrtps::rtps::RTPSParticipantImpl* part) override;
 
     /**
      * Creates an initializes a new participant proxy from a DATA(p) raw info
@@ -79,9 +79,9 @@ public:
      * @param writer_guid GUID of originating writer
      * @return new ParticipantProxyData * or nullptr on failure
      */
-    aux::ParticipantProxyData* createParticipantProxyData(
-            const aux::ParticipantProxyData& p,
-            const aux::GUID_t& writer_guid) override;
+    fastrtps::rtps::ParticipantProxyData* createParticipantProxyData(
+            const fastrtps::rtps::ParticipantProxyData& p,
+            const fastrtps::rtps::GUID_t& writer_guid) override;
 
     /**
      * Create the SPDP Writer and Reader
@@ -99,14 +99,14 @@ public:
     void announceParticipantState(
             bool new_change,
             bool dispose = false,
-            aux::WriteParams& wparams = aux::WriteParams::WRITE_PARAM_DEFAULT) override;
+            fastrtps::rtps::WriteParams& wparams = fastrtps::rtps::WriteParams::WRITE_PARAM_DEFAULT) override;
 
     void assignRemoteEndpoints(
-            aux::ParticipantProxyData* pdata) override;
+            fastrtps::rtps::ParticipantProxyData* pdata) override;
     void removeRemoteEndpoints(
-            aux::ParticipantProxyData* pdata) override;
+            fastrtps::rtps::ParticipantProxyData* pdata) override;
     void notifyAboveRemoteEndpoints(
-            const aux::ParticipantProxyData& pdata) override;
+            const fastrtps::rtps::ParticipantProxyData& pdata) override;
 
 private:
 

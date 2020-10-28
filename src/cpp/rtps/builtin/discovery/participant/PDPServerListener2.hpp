@@ -23,9 +23,6 @@
 
 #include <fastdds/rtps/builtin/discovery/participant/PDPListener.h>
 
-// To be eventually removed together with eprosima::fastrtps
-namespace aux = ::eprosima::fastrtps::rtps;
-
 namespace eprosima {
 namespace fastdds {
 namespace rtps {
@@ -37,7 +34,7 @@ class PDPServer2;
  * This class is implemented in order to use the same structure than with any other RTPSReader.
  *@ingroup DISCOVERY_MODULE
  */
-class PDPServerListener2 : public aux::PDPListener
+class PDPServerListener2 : public fastrtps::rtps::PDPListener
 {
 public:
 
@@ -58,8 +55,8 @@ public:
      * @param change
      */
     void onNewCacheChangeAdded(
-            aux::RTPSReader* reader,
-            const aux::CacheChange_t* const change) override;
+            fastrtps::rtps::RTPSReader* reader,
+            const fastrtps::rtps::CacheChange_t* const change) override;
 };
 
 
