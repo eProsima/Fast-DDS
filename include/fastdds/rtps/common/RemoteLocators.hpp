@@ -154,7 +154,7 @@ inline std::istream& operator>>(std::istream& input, RemoteLocatorList& locList)
 
     if (s)
     {
-        unsigned int size_m, size_m_max, size_u, size_u_max;
+        unsigned long size_m, size_m_max, size_u, size_u_max;
         char coma;
         Locator_t l;
         std::ios_base::iostate excp_mask = input.exceptions();
@@ -166,7 +166,7 @@ inline std::istream& operator>>(std::istream& input, RemoteLocatorList& locList)
             input >> size_m_max >> coma >> size_m >> coma;
             input >> size_u_max >> coma >> size_u >> coma; // last coma is (
 
-            locList = RemoteLocatorList(size_u_max, size_m_max);
+            // locList = RemoteLocatorList(size_u_max, size_m_max);
 
             for (unsigned int i = 0; i < size_m; ++i)
             {
