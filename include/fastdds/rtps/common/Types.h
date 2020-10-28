@@ -206,6 +206,12 @@ public:
         return m_vendor[0] == v[0] && m_vendor[1] == v[1];
     }
 
+    bool operator !=(
+            const VendorId_t& v) const
+    {
+        return !(*this == v);
+    }
+
 private:
 
     octet m_vendor[2];
