@@ -160,6 +160,18 @@ public:
         return enabled_;
     }
 
+    bool backup_in_progress()
+    {
+        return processing_backup_;
+    }
+
+    //! Disable the possibility to add new entries to the database
+    void backup_in_progress(bool v)
+    {
+        processing_backup_ = v;
+    }
+
+
     /* Clear all the collections in the database
      * @return: The changes that can be released
      */
@@ -488,6 +500,9 @@ protected:
 
     // Whether the database is enabled
     std::atomic<bool> enabled_;
+
+    // Wheter the database is restoring a backup
+    std::atomic<bool> processing_backup_;
 };
 
 

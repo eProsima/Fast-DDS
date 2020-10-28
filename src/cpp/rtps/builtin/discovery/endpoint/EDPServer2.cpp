@@ -83,6 +83,8 @@ bool EDPServer2::createSEDPEndpoints()
 
         // 1. Set publications writer history and create the writer. Set `created` to the result.
         publications_writer_.second = new WriterHistory(writer_history_att);
+        // TODO check if this should be done here or below
+        publications_writer_.second->remove_all_changes();
         created &= this->mp_RTPSParticipant->createWriter(&waux, watt, publications_writer_.second,
                         publications_listener_, c_EntityId_SEDPPubWriter, true);
 
@@ -110,6 +112,8 @@ bool EDPServer2::createSEDPEndpoints()
 
         // 2. Set subscriptions reader history and create the reader. Set `created` to the result.
         subscriptions_reader_.second = new ReaderHistory(reader_history_att);
+        // TODO check if this should be done here or below
+        subscriptions_reader_.second->remove_all_changes();
         created &= this->mp_RTPSParticipant->createReader(&raux, ratt, subscriptions_reader_.second,
                         subscriptions_listener_, c_EntityId_SEDPSubReader, true);
 

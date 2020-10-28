@@ -64,7 +64,7 @@ void EDPServerPUBListener2::onNewCacheChangeAdded(
     // DATA(w)s should have key
     if (!computeKey(change))
     {
-        logWarning(RTPS_EDP, "Received change with no Key");
+        logWarning(RTPS_EDP_LISTENER, "Received change with no Key");
     }
 
     // Get writer's GUID and EDP publications' reader history
@@ -91,13 +91,18 @@ void EDPServerPUBListener2::onNewCacheChangeAdded(
     // DATA(Uw) case
     else
     {
-        logInfo(RTPS_EDP, "Disposed Remote Writer, removing...");
+        logInfo(RTPS_EDP_LISTENER, "Disposed Remote Writer, removing...");
 
         // Retrieve the topic before removing the WriterProxyData. We need it to add the DATA(Uw) to the database
         if (get_pdp()->lookupWriterProxyData(auxGUID, temp_writer_data_))
         {
             topic_name = temp_writer_data_.topicName().to_string();
         }
+        else
+        {
+            logWarning(RTPS_EDP_LISTENER, "Writer Proxy Data missing for change " << auxGUID);
+        }
+
 
         // Remove WriterProxy data information
         get_pdp()->removeWriterProxyData(auxGUID);
@@ -107,19 +112,29 @@ void EDPServerPUBListener2::onNewCacheChangeAdded(
         reader_history->remove_change(reader_history->find_change(change), false);
     }
 
-    // Notify the DiscoveryDataBase
-    if (topic_name.size() > 0 &&
-            get_pdp()->discovery_db().update(change, topic_name))
+    // Notify the DiscoveryDataBase if it is enabled already
+    // In case it is not enable, the change should not be updated or released because it is been
+    // updated from a backup
+    if (!get_pdp()->discovery_db().backup_in_progress())
     {
-        // From here on, the discovery database takes ownership of the CacheChange_t. Henceforth there are no
-        // references to the CacheChange_t.
-        // Ensure processing time for the cache by triggering the Server thread (which process the updates
-        get_pdp()->awake_routine_thread();
-    }
-    else
-    {
+<<<<<<< HEAD
         // If the database doesn't take the ownership, then return the CacheChante_t to the pool.
         reader_history->release_Cache(change);
+=======
+        if (topic_name.size() > 0 &&
+                get_pdp()->discovery_db().update(change, topic_name))
+        {
+            // From here on, the discovery database takes ownership of the CacheChange_t. Henceforth there are no
+            // references to the CacheChange_t.
+            // Ensure processing time for the cache by triggering the Server thread (which process the updates
+            get_pdp()->awake_routine_thread();
+        }
+        else
+        {
+            // If the database doesn't take the ownership, then return the CacheChante_t to the pool.
+            reader_history->release_Cache(change);
+        }
+>>>>>>> 776bc4952... Refs #9707: backup working in recovering
     }
     logInfo(RTPS_EDP_LISTENER,
             "-------------------- " << sedp_->mp_RTPSParticipant->getGuid() << " --------------------");
@@ -156,7 +171,7 @@ void EDPServerSUBListener2::onNewCacheChangeAdded(
     // DATA(r)s should have key
     if (!computeKey(change))
     {
-        logWarning(RTPS_EDP, "Received change with no Key");
+        logWarning(RTPS_EDP_LISTENER, "Received change with no Key");
     }
 
     // Get readers's GUID and EDP subscriptions' reader history
@@ -179,12 +194,16 @@ void EDPServerSUBListener2::onNewCacheChangeAdded(
         {
             topic_name = temp_reader_data_.topicName().to_string();
         }
+        else
+        {
+            logWarning(RTPS_EDP_LISTENER, "Reader Proxy Data missing for change " << auxGUID);
+        }
     }
     // DATA(Ur) case
     else
     {
         //REMOVE WRITER FROM OUR READERS:
-        logInfo(RTPS_EDP, "Disposed Remote Reader, removing...");
+        logInfo(RTPS_EDP_LISTENER, "Disposed Remote Reader, removing...");
 
         // Retrieve the topic before removing the ReaderProxyData. We need it to add the DATA(Ur) to the database
         if (get_pdp()->lookupReaderProxyData(auxGUID, temp_reader_data_))
@@ -200,19 +219,24 @@ void EDPServerSUBListener2::onNewCacheChangeAdded(
         reader_history->remove_change(reader_history->find_change(change), false);
     }
 
-    // Notify the DiscoveryDataBase
-    if (topic_name.size() > 0 &&
-            get_pdp()->discovery_db().update(change, topic_name))
+    // Notify the DiscoveryDataBase if it is enabled already
+    // In case it is not enable, the change should not be updated or released because it is been
+    // updated from a backup
+    if (!get_pdp()->discovery_db().backup_in_progress())
     {
-        // From here on, the discovery database takes ownership of the CacheChange_t. Henceforth there are no
-        // references to the CacheChange_t.
-        // Ensure processing time for the cache by triggering the Server thread (which process the updates
-        get_pdp()->awake_routine_thread();
-    }
-    else
-    {
-        // If the database doesn't take the ownership, then return the CacheChante_t to the pool.
-        reader_history->release_Cache(change);
+        if (topic_name.size() > 0 &&
+                get_pdp()->discovery_db().update(change, topic_name))
+        {
+            // From here on, the discovery database takes ownership of the CacheChange_t. Henceforth there are no
+            // references to the CacheChange_t.
+            // Ensure processing time for the cache by triggering the Server thread (which process the updates
+            get_pdp()->awake_routine_thread();
+        }
+        else
+        {
+            // If the database doesn't take the ownership, then return the CacheChante_t to the pool.
+            reader_history->release_Cache(change);
+        }
     }
 
     logInfo(RTPS_EDP_LISTENER,

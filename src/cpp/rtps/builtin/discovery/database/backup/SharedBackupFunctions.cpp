@@ -34,7 +34,7 @@ void to_json(json& j, const eprosima::fastrtps::rtps::CacheChange_t& change)
     j["kind"] = change.kind;
     j["writer_GUID"] = object_to_string(change.writerGUID);
     j["instance_handle"] = object_to_string(change.instanceHandle);
-    j["sequence_number"] = object_to_string(change.sequenceNumber);
+    // j["sequence_number"] = object_to_string(change.sequenceNumber);
     // isRead = true
     j["source_timestamp"] = object_to_string(change.sourceTimestamp);
     j["reception_timestamp"] = object_to_string(change.receptionTimestamp);
@@ -52,7 +52,8 @@ void from_json(const json& j, eprosima::fastrtps::rtps::CacheChange_t& change)
     change.kind = static_cast<fastrtps::rtps::ChangeKind_t>(j["kind"].get<uint8_t>());
     (std::istringstream) j["writer_GUID"].get<std::string>() >> change.writerGUID;
     (std::istringstream) j["instance_handle"].get<std::string>() >> change.instanceHandle;
-    (std::istringstream) j["sequence_number"].get<std::string>() >> change.sequenceNumber;
+    //(std::istringstream) j["sequence_number"].get<std::string>() >> change.sequenceNumber;
+    change.sequenceNumber = eprosima::fastrtps::rtps::SequenceNumber_t(1);
     change.isRead = true;
     (std::istringstream) j["source_timestamp"].get<std::string>() >> change.sourceTimestamp;
     (std::istringstream) j["reception_timestamp"].get<std::string>() >> change.receptionTimestamp;
