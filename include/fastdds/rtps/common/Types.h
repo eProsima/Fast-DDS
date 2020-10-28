@@ -26,15 +26,16 @@
 
 #include <fastrtps/fastrtps_dll.h>
 
-namespace eprosima{
-namespace fastrtps{
-namespace rtps{
+namespace eprosima {
+namespace fastrtps {
+namespace rtps {
 
 /*!
  * @brief This enumeration represents endianness types.
  * @ingroup COMMON_MODULE
  */
-enum Endianness_t{
+enum Endianness_t
+{
     //! @brief Big endianness.
     BIGEND = 0x1,
     //! @brief Little endianness.
@@ -78,7 +79,7 @@ typedef enum TopicKind_t
 const Endianness_t DEFAULT_ENDIAN = BIGEND;
 #else
 const Endianness_t DEFAULT_ENDIAN = LITTLEEND;
-#endif
+#endif // if __BIG_ENDIAN__
 
 using octet = unsigned char;
 //typedef unsigned int uint;
@@ -105,31 +106,36 @@ struct RTPS_DllAPI ProtocolVersion_t
     octet m_minor;
     ProtocolVersion_t():
 #if HAVE_SECURITY
-        // As imposed by DDSSEC11-93
-        ProtocolVersion_t(2,3)
+    // As imposed by DDSSEC11-93
+    ProtocolVersion_t(2, 3)
 #else
-        ProtocolVersion_t(2,2)
-#endif
+        ProtocolVersion_t(2, 2)
+#endif // if HAVE_SECURITY
     {
 
-    };
+    }
 
-    ProtocolVersion_t(octet maj,octet min)
+    ProtocolVersion_t(
+            octet maj,
+            octet min)
         : m_major(maj)
         , m_minor(min)
     {
 
     }
 
-    bool operator==(const ProtocolVersion_t &v) const
+    bool operator ==(
+            const ProtocolVersion_t& v) const
     {
         return m_major == v.m_major && m_minor == v.m_minor;
     }
 
-    bool operator!=(const ProtocolVersion_t &v) const
+    bool operator !=(
+            const ProtocolVersion_t& v) const
     {
         return m_major != v.m_major || m_minor != v.m_minor;
     }
+
 };
 
 /**
@@ -138,14 +144,17 @@ struct RTPS_DllAPI ProtocolVersion_t
  * @param pv ProtocolVersion
  * @return OStream.
  */
-inline std::ostream& operator<<(std::ostream& output, const ProtocolVersion_t& pv){
+inline std::ostream& operator <<(
+        std::ostream& output,
+        const ProtocolVersion_t& pv)
+{
     return output << static_cast<int>(pv.m_major) << "." << static_cast<int>(pv.m_minor);
 }
 
-const ProtocolVersion_t c_ProtocolVersion_2_0(2,0);
-const ProtocolVersion_t c_ProtocolVersion_2_1(2,1);
-const ProtocolVersion_t c_ProtocolVersion_2_2(2,2);
-const ProtocolVersion_t c_ProtocolVersion_2_3(2,3);
+const ProtocolVersion_t c_ProtocolVersion_2_0(2, 0);
+const ProtocolVersion_t c_ProtocolVersion_2_1(2, 1);
+const ProtocolVersion_t c_ProtocolVersion_2_2(2, 2);
+const ProtocolVersion_t c_ProtocolVersion_2_3(2, 3);
 
 const ProtocolVersion_t c_ProtocolVersion;
 
@@ -153,51 +162,67 @@ const ProtocolVersion_t c_ProtocolVersion;
 class VendorId_t
 {
 public:
-    VendorId_t(const VendorId_t &v)// : m_vendor{v[0], v[1]}
+
+    VendorId_t(
+            const VendorId_t& v)   // : m_vendor{v[0], v[1]}
     {
         // There isn't a explicit constructor because VS2013 doesn't support it.
         m_vendor[0] = v[0];
         m_vendor[1] = v[1];
     }
 
-    VendorId_t(const octet id0, const octet id1)// : m_vendor{id0, id1}
+    VendorId_t(
+            const octet id0,
+            const octet id1)                    // : m_vendor{id0, id1}
     {
         // There isn't a explicit constructor because VS2013 doesn't support it.
         m_vendor[0] = id0;
         m_vendor[1] = id1;
     }
 
-    VendorId_t& operator=(const VendorId_t &v)
+    VendorId_t& operator =(
+            const VendorId_t& v)
     {
         m_vendor[0] = v[0];
         m_vendor[1] = v[1];
         return *this;
     }
 
-    octet& operator[](const int index)
+    octet& operator [](
+            const int index)
     {
         return m_vendor[index];
     }
 
-    octet operator[](const int index) const
+    octet operator [](
+            const int index) const
     {
         return m_vendor[index];
     }
 
-    bool operator==(const VendorId_t &v) const
+    bool operator ==(
+            const VendorId_t& v) const
     {
         return m_vendor[0] == v[0] && m_vendor[1] == v[1];
     }
+
+    bool operator !=(
+            const VendorId_t& v) const
+    {
+        return !(*this == v);
+    }
+
 private:
+
     octet m_vendor[2];
 };
 //typedef octet VendorId_t[2];
 
-const VendorId_t c_VendorId_Unknown = {0x00,0x00};
-const VendorId_t c_VendorId_eProsima = {0x01,0x0F};
+const VendorId_t c_VendorId_Unknown = {0x00, 0x00};
+const VendorId_t c_VendorId_eProsima = {0x01, 0x0F};
 
-}
-}
-}
+} // namespace rtps
+} // namespace fastrtps
+} // namespace eprosima
 
 #endif /* _FASTDDS_RTPS_COMMON_TYPES_H_ */
