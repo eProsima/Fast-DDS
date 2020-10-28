@@ -37,9 +37,6 @@ class ParticipantProxyData;
 namespace fastdds {
 namespace rtps {
 
-// To be eventually removed together with eprosima::fastrtps
-namespace aux = ::eprosima::fastrtps::rtps;
-
 /**
  * Class RemoteServerAttributes, to define the attributes of the Discovery Server Protocol.
  * @ingroup RTPS_ATTRIBUTES_MODULE
@@ -60,22 +57,22 @@ public:
 
     RTPS_DllAPI void clear()
     {
-        guidPrefix = aux::GuidPrefix_t::unknown();
+        guidPrefix = fastrtps::rtps::GuidPrefix_t::unknown();
         metatrafficUnicastLocatorList.clear();
         metatrafficMulticastLocatorList.clear();
         proxy = nullptr;
     }
 
-    RTPS_DllAPI aux::GUID_t GetParticipant() const;
+    RTPS_DllAPI fastrtps::rtps::GUID_t GetParticipant() const;
 
-    RTPS_DllAPI aux::GUID_t GetPDPReader() const;
-    RTPS_DllAPI aux::GUID_t GetPDPWriter() const;
+    RTPS_DllAPI fastrtps::rtps::GUID_t GetPDPReader() const;
+    RTPS_DllAPI fastrtps::rtps::GUID_t GetPDPWriter() const;
 
-    RTPS_DllAPI aux::GUID_t GetEDPPublicationsReader() const;
-    RTPS_DllAPI aux::GUID_t GetEDPSubscriptionsWriter() const;
+    RTPS_DllAPI fastrtps::rtps::GUID_t GetEDPPublicationsReader() const;
+    RTPS_DllAPI fastrtps::rtps::GUID_t GetEDPSubscriptionsWriter() const;
 
-    RTPS_DllAPI aux::GUID_t GetEDPPublicationsWriter() const;
-    RTPS_DllAPI aux::GUID_t GetEDPSubscriptionsReader() const;
+    RTPS_DllAPI fastrtps::rtps::GUID_t GetEDPPublicationsWriter() const;
+    RTPS_DllAPI fastrtps::rtps::GUID_t GetEDPSubscriptionsReader() const;
 
     RTPS_DllAPI inline bool ReadguidPrefix(
             const char* pfx)
@@ -84,15 +81,15 @@ public:
     }
 
     //!Metatraffic Unicast Locator List
-    aux::LocatorList_t metatrafficUnicastLocatorList;
+    fastrtps::rtps::LocatorList_t metatrafficUnicastLocatorList;
     //!Metatraffic Multicast Locator List.
-    aux::LocatorList_t metatrafficMulticastLocatorList;
+    fastrtps::rtps::LocatorList_t metatrafficMulticastLocatorList;
 
     //!Guid prefix
-    aux::GuidPrefix_t guidPrefix;
+    fastrtps::rtps::GuidPrefix_t guidPrefix;
 
     // Live participant proxy reference
-    const aux::ParticipantProxyData* proxy{};
+    const fastrtps::rtps::ParticipantProxyData* proxy{};
 };
 
 typedef std::list<RemoteServerAttributes> RemoteServerList_t;
@@ -120,7 +117,7 @@ RTPS_DllAPI bool load_environment_server_info(
  */
 RTPS_DllAPI bool get_server_client_default_guidPrefix(
         int id,
-        aux::GuidPrefix_t& guid);
+        fastrtps::rtps::GuidPrefix_t& guid);
 
 } // namespace rtps
 } // namespace fastdds
