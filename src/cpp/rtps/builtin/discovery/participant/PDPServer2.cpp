@@ -1183,6 +1183,9 @@ bool PDPServer2::pending_ack()
             mp_PDPWriterHistory->getHistorySize() > 1 ||
             edp->publications_writer_.second->getHistorySize() > 0 ||
             edp->subscriptions_writer_.second->getHistorySize() > 0);
+    
+    logInfo(RTPS_PDP_SERVER, "PDP writer history length " << mp_PDPWriterHistory->getHistorySize());     
+    logInfo(RTPS_PDP_SERVER, "is server " << mp_PDPWriter->getGuid() << " acked by all? " << discovery_db_.server_acked_by_all());
     logInfo(RTPS_PDP_SERVER, "Are there pending changes? " << ret);
     return ret;
 }
