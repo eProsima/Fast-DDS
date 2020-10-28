@@ -145,9 +145,11 @@ ReturnCode_t DataReaderImpl::enable()
     {
         property.name("partitions");
         std::string partitions;
+        bool is_first_partition = true;
         for (auto partition : subscriber_->get_qos().partition().names())
         {
-            partitions += partition + ";";
+            partitions += (is_first_partition ? "" : ";") + partition;
+            is_first_partition = false;
         }
         property.value(std::move(partitions));
         att.endpoint.properties.properties().push_back(std::move(property));
@@ -353,7 +355,7 @@ ReturnCode_t DataReaderImpl::set_qos(
         // Deadline
         if (qos_.deadline().period != c_TimeInfinite)
         {
-            deadline_duration_us_ = duration<double, std::ratio<1, 1000000> >(qos_.deadline().period.to_ns() * 1e-3);
+            deadline_duration_us_ = duration<double, std::ratio<1, 1000000>>(qos_.deadline().period.to_ns() * 1e-3);
             deadline_timer_->update_interval_millisec(qos_.deadline().period.to_ns() * 1e-6);
         }
         else
@@ -365,7 +367,7 @@ ReturnCode_t DataReaderImpl::set_qos(
         if (qos_.lifespan().duration != c_TimeInfinite)
         {
             lifespan_duration_us_ =
-                    std::chrono::duration<double, std::ratio<1, 1000000> >(qos_.lifespan().duration.to_ns() * 1e-3);
+                    std::chrono::duration<double, std::ratio<1, 1000000>>(qos_.lifespan().duration.to_ns() * 1e-3);
             lifespan_timer_->update_interval_millisec(qos_.lifespan().duration.to_ns() * 1e-6);
         }
         else

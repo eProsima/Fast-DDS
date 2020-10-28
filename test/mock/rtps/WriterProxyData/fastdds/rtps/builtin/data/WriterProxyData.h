@@ -139,7 +139,7 @@ public:
         type_name_ = typeName;
     }
 
-    string_255 typeName() const
+    const string_255& typeName() const
     {
         return type_name_;
     }
@@ -150,7 +150,7 @@ public:
         topic_name_ = topicName;
     }
 
-    string_255 topicName() const
+    const string_255& topicName() const
     {
         return topic_name_;
     }
@@ -333,8 +333,8 @@ private:
 
     GUID_t m_guid;
     RemoteLocatorList remote_locators_;
-    std::string topic_name_;
-    std::string type_name_;
+    string_255 topic_name_;
+    string_255 type_name_;
     TopicKind_t topic_kind_;
     bool is_alive_;
     TypeIdV1 type_id_;
