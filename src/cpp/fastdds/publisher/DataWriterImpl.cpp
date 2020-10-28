@@ -41,6 +41,7 @@
 #include <fastdds/core/policy/ParameterSerializer.hpp>
 
 #include <rtps/history/TopicPayloadPoolRegistry.hpp>
+#include <rtps/history/DataSharingPayloadPool.hpp>
 
 #include <functional>
 #include <iostream>
@@ -128,6 +129,7 @@ DataWriterImpl::DataWriterImpl(
     , high_mark_for_frag_(0)
     , deadline_duration_us_(qos_.deadline().period.to_ns() * 1e-3)
     , lifespan_duration_us_(qos_.lifespan().duration.to_ns() * 1e-3)
+    , is_data_sharing_compatible_(publisher_->is_datasharing_compatible(qos_, type_))
 {
 }
 
@@ -200,12 +202,20 @@ ReturnCode_t DataWriterImpl::enable()
 
     if (writer == nullptr)
     {
-        release_payload_pool();
+        release_payload_pool(false);
         logError(DATA_WRITER, "Problem creating associated Writer");
         return ReturnCode_t::RETCODE_ERROR;
     }
 
     writer_ = writer;
+
+    if (!init_payload_pool())
+    {
+        release_payload_pool(false);
+        RTPSDomain::removeRTPSWriter(writer);
+        logError(DATA_WRITER, "Problem creating payload pool for associated Writer");
+        return ReturnCode_t::RETCODE_ERROR;
+    }
 
     // In case it has been loaded from the persistence DB, rebuild instances on history
     history_.rebuild_instances();
@@ -285,7 +295,7 @@ DataWriterImpl::~DataWriterImpl()
     {
         logInfo(PUBLISHER, guid().entityId << " in topic: " << type_->getName());
         RTPSDomain::removeRTPSWriter(writer_);
-        release_payload_pool();
+        release_payload_pool(true);
     }
 
     delete user_datawriter_;
@@ -1376,8 +1386,14 @@ std::shared_ptr<IPayloadPool> DataWriterImpl::get_payload_pool()
         fixed_payload_size_ = config.memory_policy == PREALLOCATED_MEMORY_MODE ? config.payload_initial_size : 0u;
 
         // Get payload pool reference and allocate space for our history
-        payload_pool_ = TopicPayloadPoolRegistry::get(topic_->get_name(), config);
-        payload_pool_->reserve_history(config, false);
+        if (is_data_sharing_compatible_)
+        {
+            payload_pool_ = DataSharingPayloadPool::get_writer_pool(config);
+        }
+        else
+        {
+            payload_pool_ = TopicPayloadPoolRegistry::get(topic_->get_name(), config);
+        }
 
         // Prepare loans collection for plain types only
         if (type_->is_plain())
@@ -1389,16 +1405,48 @@ std::shared_ptr<IPayloadPool> DataWriterImpl::get_payload_pool()
     return payload_pool_;
 }
 
-void DataWriterImpl::release_payload_pool()
+bool DataWriterImpl::init_payload_pool()
+{
+    assert(payload_pool_);
+    assert(writer_ != nullptr);
+
+    PoolConfig config = PoolConfig::from_history_attributes(history_.m_att);
+    if (is_data_sharing_compatible_)
+    {
+        return std::static_pointer_cast<DataSharingPayloadPool>(payload_pool_)->init_shared_memory(
+            writer_->getGuid(),
+            qos_.data_sharing().shm_directory());
+    }
+    else
+    {
+        return std::static_pointer_cast<ITopicPayloadPool>(payload_pool_)->reserve_history(config, false);
+    }
+}
+
+bool DataWriterImpl::release_payload_pool(bool is_initialized)
 {
     assert(payload_pool_);
 
     loans_.reset();
 
-    PoolConfig config = PoolConfig::from_history_attributes(history_.m_att);
-    payload_pool_->release_history(config, false);
+    bool result = true;
 
-    TopicPayloadPoolRegistry::release(payload_pool_);
+    PoolConfig config = PoolConfig::from_history_attributes(history_.m_att);
+    if (is_data_sharing_compatible_)
+    {
+        // No-op
+    }
+    else
+    {
+        auto topic_pool= std::static_pointer_cast<ITopicPayloadPool>(payload_pool_);
+        if (is_initialized)
+        {
+            result = topic_pool->release_history(config, false);
+        }
+        TopicPayloadPoolRegistry::release(topic_pool);
+    }
+
+    return result;
 }
 
 bool DataWriterImpl::add_loan(
