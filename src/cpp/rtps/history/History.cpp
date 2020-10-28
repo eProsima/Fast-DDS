@@ -64,7 +64,7 @@ History::const_iterator History::find_change_nts(
 
     return std::find_if(changesBegin(), changesEnd(), [this, ch](const CacheChange_t* chi)
                    {
-                       // use the derived classes comparisson criteria for searching
+                       // use the derived classes comparison criteria for searching
                        return this->matches_change(chi, ch);
                    });
 }
