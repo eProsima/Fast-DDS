@@ -557,6 +557,51 @@ TEST(BlackBox, PubSubAsReliableKeepAllWithKeyAndMaxSamplesPerInstance)
     reader.block_for_all();
 }
 
+TEST(BlackBox, PubSubAsReliableKeepAllWithKeyAndInfiniteMaxSamplesPerInstance)
+{
+    PubSubReader<KeyedHelloWorldType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<KeyedHelloWorldType> writer(TEST_TOPIC_NAME);
+
+    uint32_t keys = 2;
+
+    reader.resource_limits_max_instances(keys).
+    reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).
+    history_kind(eprosima::fastrtps::KEEP_LAST_HISTORY_QOS).init();
+
+    ASSERT_TRUE(reader.isInitialized());
+
+    writer.resource_limits_max_instances(keys)
+    .resource_limits_max_samples_per_instance(0)
+    .history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS)
+    .reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS)
+    .init();
+
+    ASSERT_TRUE(writer.isInitialized());
+
+    // Wait for discovery.
+    writer.wait_discovery();
+    reader.wait_discovery();
+
+    auto data = default_keyedhelloworld_data_generator(2);
+    reader.startReception(data);
+
+    // Send data
+    writer.send(data);
+    ASSERT_TRUE(data.empty());
+
+    reader.block_for_all();
+    ASSERT_TRUE(writer.waitForAllAcked(std::chrono::seconds(1)));
+
+    data = default_keyedhelloworld_data_generator(2);
+    reader.startReception(data);
+
+    // Send data
+    writer.send(data);
+    ASSERT_TRUE(data.empty());
+
+    reader.block_for_all();
+}
+
 TEST(BlackBox, PubSubAsReliableKeepAllWithKeyAndMaxSamples)
 {
     PubSubReader<KeyedHelloWorldType> reader(TEST_TOPIC_NAME);
