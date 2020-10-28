@@ -23,9 +23,9 @@
 
 #include <fastdds/rtps/transport/test_UDPv4TransportDescriptor.h>
 
-namespace eprosima{
-namespace fastdds{
-namespace rtps{
+namespace eprosima {
+namespace fastdds {
+namespace rtps {
 
 /*
  * This transport acts as a shim over UDPv4, allowing
@@ -35,28 +35,38 @@ namespace rtps{
 class test_UDPv4Transport : public UDPv4Transport
 {
 public:
-    test_UDPv4Transport(const test_UDPv4TransportDescriptor& descriptor);
+
+    test_UDPv4Transport(
+            const test_UDPv4TransportDescriptor& descriptor);
 
     virtual bool send(
-           const fastrtps::rtps::octet* send_buffer,
-           uint32_t send_buffer_size,
-           eProsimaUDPSocket& socket,
-           fastrtps::rtps::LocatorsIterator* destination_locators_begin,
-           fastrtps::rtps::LocatorsIterator* destination_locators_end,
-           bool only_multicast_purpose,
-           const std::chrono::steady_clock::time_point& max_blocking_time_point) override;
+            const fastrtps::rtps::octet* send_buffer,
+            uint32_t send_buffer_size,
+            eProsimaUDPSocket& socket,
+            fastrtps::rtps::LocatorsIterator* destination_locators_begin,
+            fastrtps::rtps::LocatorsIterator* destination_locators_end,
+            bool only_multicast_purpose,
+            const std::chrono::steady_clock::time_point& max_blocking_time_point) override;
 
     RTPS_DllAPI static bool test_UDPv4Transport_ShutdownAllNetwork;
     // Handle to a persistent log of dropped packets. Defaults to length 0 (no logging) to prevent wasted resources.
-    RTPS_DllAPI static std::vector<std::vector<fastrtps::rtps::octet> > test_UDPv4Transport_DropLog;
+    RTPS_DllAPI static std::vector<std::vector<fastrtps::rtps::octet>> test_UDPv4Transport_DropLog;
     RTPS_DllAPI static uint32_t test_UDPv4Transport_DropLogLength;
     RTPS_DllAPI static bool always_drop_participant_builtin_topic_data;
+    RTPS_DllAPI static bool simulate_no_interfaces;
+
+protected:
+
+    virtual void get_ips(
+            std::vector<fastrtps::rtps::IPFinder::info_IP>& locNames,
+            bool return_loopback = false) override;
 
 private:
 
     struct PercentageData
     {
-        PercentageData(uint8_t percent)
+        PercentageData(
+                uint8_t percent)
             : percentage(percent)
             , accumulator(0)
         {
@@ -66,7 +76,7 @@ private:
         uint8_t accumulator;
     };
 
-    typedef std::function<bool(fastrtps::rtps::CDRMessage_t& msg)> filter;
+    typedef std::function<bool (fastrtps::rtps::CDRMessage_t& msg)> filter;
 
     PercentageData drop_data_messages_percentage_;
     test_UDPv4TransportDescriptor::filter drop_data_messages_filter_;
@@ -86,18 +96,23 @@ private:
     std::vector<fastrtps::rtps::SequenceNumber_t> sequence_number_data_messages_to_drop_;
 
 
-    bool log_drop(const fastrtps::rtps::octet* buffer, uint32_t size);
-    bool packet_should_drop(const fastrtps::rtps::octet* send_buffer, uint32_t send_buffer_size);
+    bool log_drop(
+            const fastrtps::rtps::octet* buffer,
+            uint32_t size);
+    bool packet_should_drop(
+            const fastrtps::rtps::octet* send_buffer,
+            uint32_t send_buffer_size);
     bool random_chance_drop();
-    bool should_be_dropped(PercentageData* percentage);
+    bool should_be_dropped(
+            PercentageData* percentage);
 
     bool send(
-           const fastrtps::rtps::octet* send_buffer,
-           uint32_t send_buffer_size,
-           eProsimaUDPSocket& socket,
-           const fastrtps::rtps::Locator_t& remote_locator,
-           bool only_multicast_purpose,
-           const std::chrono::microseconds& timeout);
+            const fastrtps::rtps::octet* send_buffer,
+            uint32_t send_buffer_size,
+            eProsimaUDPSocket& socket,
+            const fastrtps::rtps::Locator_t& remote_locator,
+            bool only_multicast_purpose,
+            const std::chrono::microseconds& timeout);
 };
 
 } // namespace rtps
