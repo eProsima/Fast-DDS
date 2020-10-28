@@ -234,8 +234,13 @@ TEST_P(DeadlineQos, KeyedTopicShortDeadline)
     EXPECT_GE(reader.missed_deadlines(), writer_samples);
 }
 
+#ifdef INSTANTIATE_TEST_SUITE_P
+#define GTEST_INSTANTIATE_TEST_MACRO(x, y, z, w) INSTANTIATE_TEST_SUITE_P(x, y, z, w)
+#else
+#define GTEST_INSTANTIATE_TEST_MACRO(x, y, z, w) INSTANTIATE_TEST_CASE_P(x, y, z, w, )
+#endif // ifdef INSTANTIATE_TEST_SUITE_P
 
-INSTANTIATE_TEST_CASE_P(DeadlineQos,
+GTEST_INSTANTIATE_TEST_MACRO(DeadlineQos,
         DeadlineQos,
         testing::Values(false, true),
         [](const testing::TestParamInfo<DeadlineQos::ParamType>& info) {

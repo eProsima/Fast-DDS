@@ -1667,7 +1667,13 @@ TEST_P(LivelinessQos, AssertLivelinessParticipant)
     EXPECT_EQ(publishers.pub_times_liveliness_lost(), 2u);
 }
 
-INSTANTIATE_TEST_CASE_P(LivelinessQos,
+#ifdef INSTANTIATE_TEST_SUITE_P
+#define GTEST_INSTANTIATE_TEST_MACRO(x, y, z, w) INSTANTIATE_TEST_SUITE_P(x, y, z, w)
+#else
+#define GTEST_INSTANTIATE_TEST_MACRO(x, y, z, w) INSTANTIATE_TEST_CASE_P(x, y, z, w, )
+#endif // ifdef INSTANTIATE_TEST_SUITE_P
+
+GTEST_INSTANTIATE_TEST_MACRO(LivelinessQos,
         LivelinessQos,
         testing::Values(false, true),
         [](const testing::TestParamInfo<LivelinessQos::ParamType>& info) {

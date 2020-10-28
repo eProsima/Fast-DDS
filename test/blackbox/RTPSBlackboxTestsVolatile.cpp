@@ -85,7 +85,13 @@ TEST_P(Volatile, AsyncPubSubAsNonReliableVolatileKeepAllHelloworld)
     ASSERT_TRUE(writer.is_history_empty());
 }
 
-INSTANTIATE_TEST_CASE_P(Volatile,
+#ifdef INSTANTIATE_TEST_SUITE_P
+#define GTEST_INSTANTIATE_TEST_MACRO(x, y, z, w) INSTANTIATE_TEST_SUITE_P(x, y, z, w)
+#else
+#define GTEST_INSTANTIATE_TEST_MACRO(x, y, z, w) INSTANTIATE_TEST_CASE_P(x, y, z, w, )
+#endif // ifdef INSTANTIATE_TEST_SUITE_P
+
+GTEST_INSTANTIATE_TEST_MACRO(Volatile,
         Volatile,
         testing::Values(false, true),
         [](const testing::TestParamInfo<Volatile::ParamType>& info) {

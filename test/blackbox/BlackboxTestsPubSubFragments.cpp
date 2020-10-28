@@ -664,7 +664,13 @@ TEST(PubSubFragments, AsyncFragmentSizeTest)
 }
 
 
-INSTANTIATE_TEST_CASE_P(PubSubFragments,
+#ifdef INSTANTIATE_TEST_SUITE_P
+#define GTEST_INSTANTIATE_TEST_MACRO(x, y, z, w) INSTANTIATE_TEST_SUITE_P(x, y, z, w)
+#else
+#define GTEST_INSTANTIATE_TEST_MACRO(x, y, z, w) INSTANTIATE_TEST_CASE_P(x, y, z, w, )
+#endif // ifdef INSTANTIATE_TEST_SUITE_P
+
+GTEST_INSTANTIATE_TEST_MACRO(PubSubFragments,
         PubSubFragments,
         testing::Values(false, true),
         [](const testing::TestParamInfo<PubSubFragments::ParamType>& info)
