@@ -19,6 +19,7 @@
 
 #include <iostream>
 #include <fstream>
+#include <mutex>
 
 #include <fastrtps/utils/TimedMutex.hpp>
 
@@ -103,10 +104,12 @@ bool PDPServer2::init(
     if (_durability == TRANSIENT)
     {
         // if the DS is BACKUP, try to restore DDB from file
+        discovery_db().backup_in_progress(true);
         if (process_discovery_database_restore_())
         {
             logInfo(DISCOVERY_DATABASE, "DiscoveryDataBase restored correctly");
         }
+        discovery_db().backup_in_progress(false);
     }
 
     // allows the ddb to analyze new messages from this point
@@ -245,6 +248,8 @@ bool PDPServer2::createPDPEndpoints()
     hatt.initialReservedCaches = pdp_initial_reserved_caches;
     hatt.memoryPolicy = mp_builtin->m_att.writerHistoryMemoryPolicy;
     mp_PDPWriterHistory = new WriterHistory(hatt);
+    // TODO check if this should be done here or below
+    mp_PDPWriterHistory->remove_all_changes();
 
     // PDP Writer Attributes
     WriterAttributes watt;
@@ -1343,15 +1348,18 @@ bool PDPServer2::process_discovery_database_restore_()
 
     // load every change and create it from its respective history
     EDPServer2* edp = static_cast<EDPServer2*>(mp_EDP);
-    EDPServerPUBListener2* edp_pub_listener = reinterpret_cast<EDPServerPUBListener2*>(edp->publications_listener_);
-    EDPServerSUBListener2* edp_sub_listener = reinterpret_cast<EDPServerSUBListener2*>(edp->subscriptions_listener_);
-    std::map<eprosima::fastrtps::rtps::InstanceHandle_t, fastrtps::rtps::CacheChange_t*> changes_map;
+    StatefulReader* p_PDPReader = static_cast<StatefulReader*>(mp_PDPReader);
+    std::unique_lock<fastrtps::RecursiveTimedMutex> lock(mp_PDPReader->getMutex());
+    std::unique_lock<fastrtps::RecursiveTimedMutex> lock_edpp(edp->publications_reader_.first->getMutex());
+    std::unique_lock<fastrtps::RecursiveTimedMutex> lock_edps(edp->subscriptions_reader_.first->getMutex());
 
+    std::map<eprosima::fastrtps::rtps::InstanceHandle_t, fastrtps::rtps::CacheChange_t*> changes_map;
     fastrtps::rtps::SampleIdentity sample_identity_aux;
-    fastrtps::rtps::CacheChange_t* change_aux;
     uint32_t length;
+
     try
     {
+        fastrtps::rtps::CacheChange_t* change_aux;
         // Create every participant change. If it is external creates it from Reader,
         // if it is created from the server, it is created from writer
         for (auto it = j["participants"].begin(); it != j["participants"].end(); ++it)
@@ -1381,15 +1389,24 @@ bool PDPServer2::process_discovery_database_restore_()
             // deserialize from json to change already created
             ddb::from_json(it.value()["change"], *change_aux);
 
+            // if the change was read as is_local we must pass it to listener with his own writer_guid
+            if (it.value()["is_local"].get<bool>())
+            {
+                change_aux->writerGUID = change_aux->write_params.sample_identity().writer_guid();
+            }
+
             changes_map.insert(
                     std::make_pair(change_aux->instanceHandle, change_aux));
+
+            logError(RTPS_PDP_SERVER, "Created CacheChange for " << change_aux->instanceHandle);
 
             // call listener to create proxy info for other entities different than server
             if (change_aux->write_params.sample_identity().writer_guid().guidPrefix !=
                     mp_PDPWriter->getGuid().guidPrefix
                     && change_aux->kind == fastrtps::rtps::ALIVE)
             {
-                mp_listener->onNewCacheChangeAdded(mp_PDPReader, change_aux);
+                p_PDPReader->change_received(change_aux, nullptr);
+                // mp_listener->onNewCacheChangeAdded(mp_PDPReader, change_aux);
             }
         }
 
@@ -1397,6 +1414,7 @@ bool PDPServer2::process_discovery_database_restore_()
         // if it is created from the server, it is created from writer
         for (auto it = j["writers"].begin(); it != j["writers"].end(); ++it)
         {
+            fastrtps::rtps::CacheChange_t* change_aux;
             length = it.value()["change"]["serialized_payload"]["length"].get<std::uint32_t>();
             (std::istringstream) it.value()["change"]["sample_identity"].get<std::string>() >> sample_identity_aux;
 
@@ -1425,19 +1443,29 @@ bool PDPServer2::process_discovery_database_restore_()
             changes_map.insert(
                     std::make_pair(change_aux->instanceHandle, change_aux));
 
+            logWarning(DISCOVERY_DATABASE, "Insert change " << change_aux->instanceHandle);
+
             // call listener to create proxy info for other entities different than server
             if (change_aux->write_params.sample_identity().writer_guid().guidPrefix !=
                     mp_PDPWriter->getGuid().guidPrefix
                     && change_aux->kind == fastrtps::rtps::ALIVE)
             {
-                edp_pub_listener->onNewCacheChangeAdded(edp->publications_reader_.first, change_aux);
+                // edp_pub_listener->onNewCacheChangeAdded(edp->publications_reader_.first, change_aux);
+                edp->publications_reader_.first->change_received(change_aux, nullptr);
             }
+            logWarning(DISCOVERY_DATABASE, "Inserted in reader");
+        }
+
+        for (auto it = changes_map.begin(); it != changes_map.end(); ++it)
+        {
+            logWarning(DISCOVERY_DATABASE, "Change " << it->first << " with instance handle " << it->second->instanceHandle);
         }
 
         // Create every reader change. If it is external creates it from Reader,
         // if it is created from the server, it is created from writer
         for (auto it = j["readers"].begin(); it != j["readers"].end(); ++it)
         {
+            fastrtps::rtps::CacheChange_t* change_aux;
             length = it.value()["change"]["serialized_payload"]["length"].get<std::uint32_t>();
             (std::istringstream) it.value()["change"]["sample_identity"].get<std::string>() >> sample_identity_aux;
 
@@ -1471,8 +1499,14 @@ bool PDPServer2::process_discovery_database_restore_()
                     mp_PDPWriter->getGuid().guidPrefix
                     && change_aux->kind == fastrtps::rtps::ALIVE)
             {
-                edp_sub_listener->onNewCacheChangeAdded(edp->subscriptions_reader_.first, change_aux);
+                edp->subscriptions_reader_.first->change_received(change_aux, nullptr);
+                // edp_sub_listener->onNewCacheChangeAdded(edp->subscriptions_reader_.first, change_aux);
             }
+        }
+
+        for (auto it = changes_map.begin(); it != changes_map.end(); ++it)
+        {
+            logWarning(DISCOVERY_DATABASE, "Change " << it->first << " with instance handle " << it->second->instanceHandle);
         }
 
         // load database
@@ -1489,8 +1523,6 @@ bool PDPServer2::process_discovery_database_restore_()
 
     return true;
 }
-
-
 
 } // namespace rtps
 } // namespace fastdds

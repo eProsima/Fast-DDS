@@ -40,7 +40,8 @@ DiscoveryDataBase::DiscoveryDataBase(
     : server_guid_prefix_(server_guid_prefix)
     , server_acked_by_all_(servers.size() == 0)
     , servers_(servers)
-    , enabled_(false)
+    , enabled_(true)
+    , processing_backup_(false)
 {
 }
 
@@ -2035,9 +2036,11 @@ std::map<eprosima::fastrtps::rtps::GUID_t, DiscoveryEndpointInfo>::iterator Disc
     if (pit == participants_.end())
     {
         logError(DISCOVERY_DATABASE, "Attempting to delete and orphan reader");
-        return it;
     }
-    pit->second.remove_reader(it->first);
+    else
+    {
+        pit->second.remove_reader(it->first);
+    }
 
     if (it->second.is_virtual())
     {
@@ -2083,7 +2086,10 @@ std::map<eprosima::fastrtps::rtps::GUID_t, DiscoveryEndpointInfo>::iterator Disc
         logError(DISCOVERY_DATABASE, "Attempting to delete and orphan writer");
         return it;
     }
-    pit->second.remove_writer(it->first);
+    else
+    {
+        pit->second.remove_writer(it->first);
+    }
 
     if (it->second.is_virtual())
     {
@@ -2155,10 +2161,7 @@ void DiscoveryDataBase::to_json(nlohmann::json& j) const
 {
     // participants
     auto pit = participants_.begin();
-    if (pit == participants_.end())
-    {
-        j["participants"] = nlohmann::json({});
-    }
+    j["participants"] = nlohmann::json({});
     while(pit != participants_.end())
     {
         if (pit->first != server_guid_prefix_)
@@ -2219,6 +2222,11 @@ bool DiscoveryDataBase::from_json(
     fastrtps::rtps::GUID_t guid_aux;
 
     logInfo(DISCOVERY_DATABASE, "Raising DDB from json Backup");
+
+    for (auto it = changes_map.begin(); it != changes_map.end(); ++it)
+    {
+        logWarning(DISCOVERY_DATABASE, "Change " << it->first << " with instance handle " << it->second->instanceHandle);
+    }
 
     try
     {
@@ -2296,7 +2304,7 @@ bool DiscoveryDataBase::from_json(
             }
 
             // Add Participant
-            writers_.insert(std::make_pair(guid_aux, dei));
+            auto wit = writers_.insert(std::make_pair(guid_aux, dei));
 
             // Extra configurations for writers
             // Add writer to writers_by_topic. This will create the topic if necessary
@@ -2316,7 +2324,8 @@ bool DiscoveryDataBase::from_json(
                 throw;
             }
 
-            logInfo(DISCOVERY_DATABASE, "Writer " << guid_aux << " created");
+            logInfo(DISCOVERY_DATABASE, "Writer " << guid_aux << " created with instance handle " << wit.first->second.change()->instanceHandle);
+            
 
             if(change->kind != fastrtps::rtps::ALIVE)
             {

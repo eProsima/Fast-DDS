@@ -51,6 +51,7 @@ public:
 
     /**
      * New added cache
+     * This functions must be called with the reader's mutex taken
      * @param reader
      * @param change
      */
