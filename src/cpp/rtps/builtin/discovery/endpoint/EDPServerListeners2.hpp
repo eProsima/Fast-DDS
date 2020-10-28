@@ -34,9 +34,6 @@ struct CacheChange_t;
 } // namespace fastdds
 } // namespace eprosima
 
-// To be eventually removed together with eprosima::fastrtps
-namespace aux = ::eprosima::fastrtps::rtps;
-
 namespace eprosima {
 namespace fastdds {
 namespace rtps {
@@ -48,7 +45,7 @@ class EDPServer2;
  * Class EDPServerPUBListener2, used to define the behavior when a new WriterProxyData is received.
  * @ingroup DISCOVERY_MODULE
  */
-class EDPServerPUBListener2 : public aux::EDPBasePUBListener
+class EDPServerPUBListener2 : public fastrtps::rtps::EDPBasePUBListener
 {
 public:
 
@@ -72,8 +69,8 @@ public:
      * @param change
      */
     void onNewCacheChangeAdded(
-            aux::RTPSReader* reader,
-            const aux::CacheChange_t* const change) override;
+            fastrtps::rtps::RTPSReader* reader,
+            const fastrtps::rtps::CacheChange_t* const change) override;
 
 private:
 
@@ -85,7 +82,7 @@ private:
  * Class EDPServerSUBListener2, used to define the behavior when a new ReaderProxyData is received.
  * @ingroup DISCOVERY_MODULE
  */
-class EDPServerSUBListener2 : public aux::EDPBaseSUBListener
+class EDPServerSUBListener2 : public fastrtps::rtps::EDPBaseSUBListener
 {
 public:
 
@@ -106,8 +103,8 @@ public:
      * @param change
      */
     void onNewCacheChangeAdded(
-            aux::RTPSReader* reader,
-            const aux::CacheChange_t* const change) override;
+            fastrtps::rtps::RTPSReader* reader,
+            const fastrtps::rtps::CacheChange_t* const change) override;
 
 private:
 

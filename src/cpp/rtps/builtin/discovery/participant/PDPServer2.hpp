@@ -29,9 +29,6 @@
 #include "../database/DiscoveryDataBase.hpp"
 #include "./DServerEvent2.hpp"
 
-// To be eventually removed together with eprosima::fastrtps
-namespace aux = ::eprosima::fastrtps::rtps;
-
 namespace eprosima {
 namespace fastdds {
 namespace rtps {
@@ -40,7 +37,7 @@ namespace rtps {
  * Class PDPServer2 manages server side of the discovery server mechanism
  *@ingroup DISCOVERY_MODULE
  */
-class PDPServer2 : public aux::PDP
+class PDPServer2 : public fastrtps::rtps::PDP
 {
     friend class DServerRoutineEvent2;
     friend class DServerPingEvent2;
@@ -56,12 +53,12 @@ public:
      * @param durability_kind the kind of persistence we want for the discovery data
      */
     PDPServer2(
-            aux::BuiltinProtocols* builtin,
-            const aux::RTPSParticipantAllocationAttributes& allocation);
+            fastrtps::rtps::BuiltinProtocols* builtin,
+            const fastrtps::rtps::RTPSParticipantAllocationAttributes& allocation);
     ~PDPServer2();
 
     void initializeParticipantProxyData(
-            aux::ParticipantProxyData* participant_data) override;
+            fastrtps::rtps::ParticipantProxyData* participant_data) override;
 
     /**
      * Initialize the PDP.
@@ -69,7 +66,7 @@ public:
      * @return True on success
      */
     bool init(
-            aux::RTPSParticipantImpl* part) override;
+            fastrtps::rtps::RTPSParticipantImpl* part) override;
 
     /**
      * Creates an initializes a new participant proxy from a DATA(p) raw info
@@ -77,9 +74,9 @@ public:
      * @param writer_guid GUID of originating writer
      * @return new ParticipantProxyData * or nullptr on failure
      */
-    aux::ParticipantProxyData* createParticipantProxyData(
-            const aux::ParticipantProxyData& p,
-            const aux::GUID_t& writer_guid) override;
+    fastrtps::rtps::ParticipantProxyData* createParticipantProxyData(
+            const fastrtps::rtps::ParticipantProxyData& p,
+            const fastrtps::rtps::GUID_t& writer_guid) override;
 
     /**
      * Create the SPDP Writer and Reader
@@ -94,8 +91,8 @@ public:
      * @return true if correct.
      */
     bool remove_remote_participant(
-            const aux::GUID_t& participant_guid,
-            aux::ParticipantDiscoveryInfo::DISCOVERY_STATUS reason) override;
+            const fastrtps::rtps::GUID_t& participant_guid,
+            fastrtps::rtps::ParticipantDiscoveryInfo::DISCOVERY_STATUS reason) override;
 
     /**
      * Force the sending of our local PDP to all servers
@@ -106,7 +103,7 @@ public:
     void announceParticipantState(
             bool new_change,
             bool dispose = false,
-            aux::WriteParams& wparams = aux::WriteParams::WRITE_PARAM_DEFAULT) override;
+            fastrtps::rtps::WriteParams& wparams = fastrtps::rtps::WriteParams::WRITE_PARAM_DEFAULT) override;
 
     // Force the sending of our DATA(p) to those servers that has not acked yet
     void ping_remote_servers();
@@ -114,7 +111,7 @@ public:
     // send a specific Data to specific locators
     void send_announcement(
             fastrtps::rtps::CacheChange_t* change,
-            std::vector<aux::GUID_t> remote_readers,
+            std::vector<fastrtps::rtps::GUID_t> remote_readers,
             fastrtps::rtps::LocatorList_t locators);
 
     /**
@@ -123,11 +120,11 @@ public:
      * @param pdata Pointer to the RTPSParticipantProxyData object.
      */
     void assignRemoteEndpoints(
-            aux::ParticipantProxyData* pdata) override;
+            fastrtps::rtps::ParticipantProxyData* pdata) override;
     void removeRemoteEndpoints(
-            aux::ParticipantProxyData* pdata) override;
+            fastrtps::rtps::ParticipantProxyData* pdata) override;
     void notifyAboveRemoteEndpoints(
-            const aux::ParticipantProxyData& pdata) override;
+            const fastrtps::rtps::ParticipantProxyData& pdata) override;
 
 #if HAVE_SQLITE3
     //! Get filename for persistence database file

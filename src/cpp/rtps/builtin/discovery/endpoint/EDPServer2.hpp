@@ -28,9 +28,6 @@
 #include <fastdds/rtps/builtin/discovery/endpoint/EDPSimple.h>
 #include "../participant/PDPServer2.hpp"
 
-// To be eventually removed together with eprosima::fastrtps
-namespace aux = ::eprosima::fastrtps::rtps;
-
 namespace eprosima {
 namespace fastdds {
 namespace rtps {
@@ -43,7 +40,7 @@ class EDPServerSUBListener2;
  * Inherits from EDPSimple class.
  *@ingroup DISCOVERY_MODULE
  */
-class EDPServer2 : public aux::EDPSimple
+class EDPServer2 : public fastrtps::rtps::EDPSimple
 {
     friend class EDPServerPUBListener2;
     friend class EDPServerSUBListener2;
@@ -56,8 +53,8 @@ public:
      * @param part Pointer to the RTPSParticipantImpl
      */
     EDPServer2(
-            aux::PDP* p,
-            aux::RTPSParticipantImpl* part)
+            fastrtps::rtps::PDP* p,
+            fastrtps::rtps::RTPSParticipantImpl* part)
         : EDPSimple(p, part)
     {
     }
@@ -79,8 +76,8 @@ public:
      * @return true if correct.
      */
     bool processLocalReaderProxyData(
-            aux::RTPSReader* reader,
-            aux::ReaderProxyData* rdata) override;
+            fastrtps::rtps::RTPSReader* reader,
+            fastrtps::rtps::ReaderProxyData* rdata) override;
     /**
      * This method generates the corresponding change in the publciations writer and send it to all known remote endpoints.
      * @param writer Pointer to the Writer object.
@@ -88,22 +85,22 @@ public:
      * @return true if correct.
      */
     bool processLocalWriterProxyData(
-            aux::RTPSWriter* writer,
-            aux::WriterProxyData* wdata) override;
+            fastrtps::rtps::RTPSWriter* writer,
+            fastrtps::rtps::WriterProxyData* wdata) override;
     /**
      * This methods generates the change disposing of the local Reader and calls the unpairing and removal methods of the base class.
      * @param R Pointer to the RTPSReader object.
      * @return True if correct.
      */
     bool removeLocalReader(
-            aux::RTPSReader* R) override;
+            fastrtps::rtps::RTPSReader* R) override;
     /**
      * This methods generates the change disposing of the local Writer and calls the unpairing and removal methods of the base class.
      * @param W Pointer to the RTPSWriter object.
      * @return True if correct.
      */
     bool removeLocalWriter(
-            aux::RTPSWriter* W) override;
+            fastrtps::rtps::RTPSWriter* W) override;
 
 private:
 
