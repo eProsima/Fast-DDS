@@ -83,6 +83,10 @@ inline bool readInt64(
         CDRMessage_t* msg,
         int64_t* lolo);
 
+inline bool readUInt64(
+        CDRMessage_t* msg,
+        uint64_t* lolo);
+
 inline bool readSequenceNumber(
         CDRMessage_t* msg,
         SequenceNumber_t* sn);
@@ -224,6 +228,10 @@ inline bool addUInt32(
 inline bool addInt64(
         CDRMessage_t* msg,
         int64_t lo);
+
+inline bool addUInt64(
+        CDRMessage_t* msg,
+        uint64_t lo);
 
 inline bool addEntityId(
         CDRMessage_t* msg,

@@ -204,6 +204,33 @@ inline bool CDRMessage::readInt64(
     return true;
 }
 
+inline bool CDRMessage::readUInt64(
+        CDRMessage_t* msg,
+        uint64_t* ulolo)
+{
+    if (msg->pos + 8 > msg->length)
+    {
+        return false;
+    }
+
+    octet* dest = (octet*)ulolo;
+    if (msg->msg_endian == DEFAULT_ENDIAN)
+    {
+        for (uint8_t i = 0; i < 8; ++i)
+        {
+            dest[i] = msg->buffer[msg->pos + i];
+        }
+
+        msg->pos += 8;
+    }
+    else
+    {
+        readDataReversed(msg, dest, 8);
+    }
+
+    return true;
+}
+
 inline bool CDRMessage::readSequenceNumber(
         CDRMessage_t* msg,
         SequenceNumber_t* sn)
@@ -560,6 +587,34 @@ inline bool CDRMessage::addInt64(
         int64_t lolo)
 {
     octet* o = (octet*)&lolo;
+    if (msg->pos + 8 > msg->max_size)
+    {
+        return false;
+    }
+    if (msg->msg_endian == DEFAULT_ENDIAN)
+    {
+        for (uint8_t i = 0; i < 8; i++)
+        {
+            msg->buffer[msg->pos + i] = *(o + i);
+        }
+    }
+    else
+    {
+        for (uint8_t i = 0; i < 8; i++)
+        {
+            msg->buffer[msg->pos + i] = *(o + 7 - i);
+        }
+    }
+    msg->pos += 8;
+    msg->length += 8;
+    return true;
+}
+
+inline bool CDRMessage::addUInt64(
+        CDRMessage_t* msg,
+        uint64_t ulolo)
+{
+    octet* o = (octet*)&ulolo;
     if (msg->pos + 8 > msg->max_size)
     {
         return false;
