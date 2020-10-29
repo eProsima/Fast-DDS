@@ -2902,6 +2902,57 @@ private:
     uint64_t domain_id_;
 };
 
+/**
+ * Information to check data sharing compatibility.
+ * Will only be sent through the wire if this endpoint is data sharing compatible.
+ * @note Immutable Qos Policy
+ */
+class DataSharingInfo : public Parameter_t, public QosPolicy
+{
+public:
+
+    /**
+     * @brief Constructor
+     */
+    RTPS_DllAPI DataSharingInfo()
+        : Parameter_t(PID_DATASHARING_INFO, 8)
+        , QosPolicy(true)
+        , domain_id(0U)
+        , is_compatible(false)
+    {
+    }
+
+    /**
+     * @brief Destructor
+     */
+    virtual RTPS_DllAPI ~DataSharingInfo() = default;
+
+    bool operator ==(
+            const DataSharingInfo& b) const
+    {
+        return is_compatible == b.is_compatible &&
+               domain_id == b.domain_id &&
+               Parameter_t::operator ==(b) &&
+               QosPolicy::operator ==(b);
+    }
+
+    inline void clear() override
+    {
+        DataSharingInfo reset = DataSharingInfo();
+        std::swap(*this, reset);
+    }
+
+public:
+
+    //! Only endpoints with matching domain IDs are DataSharing compatible
+    uint64_t domain_id;
+
+    //! If not compatible, this parameter will not be sent at all.
+    //! This value itself will not be serialized.
+    bool is_compatible;
+};
+
+
 } // namespace dds
 } // namespace fastdds
 } // namespace eprosima
