@@ -255,6 +255,11 @@ void PDPServerListener2::onNewCacheChangeAdded(
                 }
 
             }
+            else
+            {
+                change.release();
+            }
+            
 
             // At this point we can release reader lock.
             reader->getMutex().unlock();
