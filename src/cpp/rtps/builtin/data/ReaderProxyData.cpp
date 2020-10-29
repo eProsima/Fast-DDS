@@ -292,6 +292,12 @@ uint32_t ReaderProxyData::get_serialized_size(
         ret_val += fastdds::dds::QosPoliciesSerializer<TypeConsistencyEnforcementQosPolicy>::cdr_serialized_size(
             m_qos.type_consistency);
     }
+    if ((m_qos.data_sharing_info.send_always() || m_qos.data_sharing_info.hasChanged) &&
+            m_qos.data_sharing_info.is_compatible)
+    {
+        ret_val += fastdds::dds::QosPoliciesSerializer<DataSharingInfo>::cdr_serialized_size(
+            m_qos.data_sharing_info);
+    }
 
     if (m_properties.size() > 0)
     {
@@ -569,6 +575,15 @@ bool ReaderProxyData::writeToCDRMessage(
     if (m_type_information && m_type_information->assigned())
     {
         if (!fastdds::dds::QosPoliciesSerializer<xtypes::TypeInformation>::add_to_cdr_message(*m_type_information, msg))
+        {
+            return false;
+        }
+    }
+
+    if ((m_qos.data_sharing_info.send_always() || m_qos.data_sharing_info.hasChanged) &&
+            m_qos.data_sharing_info.is_compatible)
+    {
+        if (!fastdds::dds::QosPoliciesSerializer<DataSharingInfo>::add_to_cdr_message(m_qos.data_sharing_info, msg))
         {
             return false;
         }

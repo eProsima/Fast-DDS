@@ -65,7 +65,8 @@ public:
                (m_lifespan == b.m_lifespan) &&
                (m_disablePositiveACKs == b.m_disablePositiveACKs) &&
                (type_consistency == b.type_consistency) &&
-               (representation == b.representation);
+               (representation == b.representation) &&
+               (data_sharing_info == b.data_sharing_info);
     }
 
     //!Durability Qos, implemented in the library.
@@ -122,6 +123,9 @@ public:
     //!Disable positive ACKs QoS
     DisablePositiveACKsQosPolicy m_disablePositiveACKs;
 
+    //!Information for data sharing compatibility check.
+    DataSharingInfo data_sharing_info;
+    
     /**
      * Set Qos from another class
      * @param readerqos Reference from a ReaderQos object.
