@@ -49,9 +49,9 @@ public:
     using ReaderHistoryPair = std::pair<StatefulReader*, ReaderHistory*>;
 
     static std::shared_ptr<ITopicPayloadPool> create_payload_pool(
-        const std::string& topic_name,
-        const HistoryAttributes& history_attr,
-        bool is_reader)
+            const std::string& topic_name,
+            const HistoryAttributes& history_attr,
+            bool is_reader)
     {
         PoolConfig pool_cfg = PoolConfig::from_history_attributes(history_attr);
         auto pool = TopicPayloadPoolRegistry::get(topic_name, pool_cfg);
@@ -60,9 +60,9 @@ public:
     }
 
     static void release_payload_pool(
-        std::shared_ptr<ITopicPayloadPool>& pool,
-        const HistoryAttributes& history_attr,
-        bool is_reader)
+            std::shared_ptr<ITopicPayloadPool>& pool,
+            const HistoryAttributes& history_attr,
+            bool is_reader)
     {
         PoolConfig pool_cfg = PoolConfig::from_history_attributes(history_attr);
         pool->release_history(pool_cfg, is_reader);
@@ -70,21 +70,20 @@ public:
     }
 
     static bool create_edp_reader(
-        RTPSParticipantImpl* participant,
-        const std::string& topic_name,
-        const EntityId_t& entity_id,
-        const HistoryAttributes& history_att,
-        ReaderAttributes& ratt,
-        ReaderListener* listener,
-        std::shared_ptr<ITopicPayloadPool>& payload_pool,
-        ReaderHistoryPair& edp_reader)
+            RTPSParticipantImpl* participant,
+            const std::string& topic_name,
+            const EntityId_t& entity_id,
+            const HistoryAttributes& history_att,
+            ReaderAttributes& ratt,
+            ReaderListener* listener,
+            std::shared_ptr<ITopicPayloadPool>& payload_pool,
+            ReaderHistoryPair& edp_reader)
     {
         RTPSReader* raux = nullptr;
 
         payload_pool = create_payload_pool(topic_name, history_att, true);
         edp_reader.second = new ReaderHistory(history_att);
-        bool created =
-            participant->createReader(&raux, ratt, payload_pool, edp_reader.second, listener, entity_id,
+        bool created = participant->createReader(&raux, ratt, payload_pool, edp_reader.second, listener, entity_id,
                 true);
 
         if (created)
@@ -102,21 +101,20 @@ public:
     }
 
     static bool create_edp_writer(
-        RTPSParticipantImpl* participant,
-        const std::string& topic_name,
-        const EntityId_t& entity_id,
-        const HistoryAttributes& history_att,
-        WriterAttributes& watt,
-        WriterListener* listener,
-        std::shared_ptr<ITopicPayloadPool>& payload_pool,
-        WriterHistoryPair& edp_writer)
+            RTPSParticipantImpl* participant,
+            const std::string& topic_name,
+            const EntityId_t& entity_id,
+            const HistoryAttributes& history_att,
+            WriterAttributes& watt,
+            WriterListener* listener,
+            std::shared_ptr<ITopicPayloadPool>& payload_pool,
+            WriterHistoryPair& edp_writer)
     {
         RTPSWriter* waux = nullptr;
 
         payload_pool = create_payload_pool(topic_name, history_att, false);
         edp_writer.second = new WriterHistory(history_att);
-        bool created =
-            participant->createWriter(&waux, watt, payload_pool, edp_writer.second, listener, entity_id,
+        bool created = participant->createWriter(&waux, watt, payload_pool, edp_writer.second, listener, entity_id,
                 true);
 
         if (created)
@@ -132,6 +130,7 @@ public:
 
         return created;
     }
+
 };
 
 } /* namespace rtps */
