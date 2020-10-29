@@ -2,7 +2,6 @@
 rem This batch file simplifies fast-discovery-server tool scripting use by
 rem offering a version independent name. It will be generated only if an unprivileged
 rem installation prevents symlink creation. 
-"%~dp0\@FAST_SERVER_BINARY_NAME@" %*
 
 rem Bypass "Terminate Batch Job" prompt.
 if "%~1"=="-FIXED_CTRL_C" (

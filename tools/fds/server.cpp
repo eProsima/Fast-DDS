@@ -40,6 +40,8 @@ condition_variable g_signal_cv;
 void sigint_handler(
         int signum)
 {
+//  locking here is counterproductive
+//  unique_lock<mutex> lock(g_signal_mutex);
     g_signal_status = signum;
     g_signal_cv.notify_one();
 }
@@ -89,8 +91,10 @@ int main (
         return 0;
     }
 
-    ParticipantAttributes att;
-    rtps::RTPSParticipantAttributes& rtps = att.rtps;
+    // auto att = make_unique<ParticipantAttributes>();
+    // C++11 constrains
+    unique_ptr<ParticipantAttributes> att(new ParticipantAttributes());
+    rtps::RTPSParticipantAttributes& rtps = att->rtps;
 
     // Retrieve server Id: is mandatory and only specified once
     // Note there is a specific cast to pointer if the Option is valid
@@ -126,11 +130,10 @@ int main (
         rtps.setName(is.str().c_str());
     }
 
-    fastdds::dds::Log::SetCategoryFilter(
-        std::regex("(RTPS_PDPSERVER_TRIM)|(RTPS_PARTICIPANT)|(DISCOVERY_SERVER)"
-        "|(SERVER_PDP_THREAD)|(CLIENT_PDP_THREAD)|(RTPS_WRITER_HISTORY)|(RTPS_READER_HISTORY)|(RTPS_PDP)"
-        "|(DISCOVERY_DATABASE)|(RTPS_PDP_LISTENER)|(SERVER_PING_THREAD)"));
-    fastdds::dds::Log::SetVerbosity(fastdds::dds::Log::Kind::Info);
+//  fastdds::dds::Log::SetCategoryFilter(
+//      std::regex("(RTPS_HISTORY)|(RTPS_WRITER_HISTORY)|(RTPS_READER_HISTORY)|(RTPS_PDP_SERVER)|(READER_PROXY)"
+//      "|(RTPS_PDP)|(SERVER_PDP_THREAD)|(CLIENT_PDP_THREAD)|(DISCOVERY_DATABASE)|(RTPS_PDP_LISTENER)"));
+//  fastdds::dds::Log::SetVerbosity(fastdds::dds::Log::Kind::Info);
 
     // Choose the kind of server to create
     rtps.builtin.discovery_config.discoveryProtocol =
@@ -194,7 +197,8 @@ int main (
 
     // Create the server
     int return_value = 0;
-    Participant* pServer = Domain::createParticipant(att, nullptr);
+    Participant* pServer = Domain::createParticipant(*att, nullptr);
+    att.reset();
 
     if ( nullptr == pServer )
     {
@@ -207,10 +211,13 @@ int main (
 
         // handle signal SIGINT for every thread
         signal(SIGINT, sigint_handler);
-
         cout << "\n### Server is running ###" << std::endl;
 
         g_signal_cv.wait(lock,[]{ return 0 != g_signal_status;});
+
+        cout << "\n### Server shutting down ###" << std::endl;
+
+        Domain::removeParticipant(pServer);
 
         cout << "\n### Server shutted down ###" << std::endl;
     }
