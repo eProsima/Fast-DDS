@@ -1102,9 +1102,12 @@ void DiscoveryDataBase::process_dispose_writer_(
         remove_writer_from_topic_(writer_guid, wit->second.topic());
 
         // Add entry to disposals_
-        if (std::find(disposals_.begin(), disposals_.end(), ch) == disposals_.end())
+        if (wit->second.topic() != virtual_topic_)
         {
-            disposals_.push_back(ch);
+            if (std::find(disposals_.begin(), disposals_.end(), ch) == disposals_.end())
+            {
+                disposals_.push_back(ch);
+            }
         }
     }
 }
@@ -1126,9 +1129,12 @@ void DiscoveryDataBase::process_dispose_reader_(
         remove_reader_from_topic_(reader_guid, rit->second.topic());
 
         // Add entry to disposals_
-        if (std::find(disposals_.begin(), disposals_.end(), ch) == disposals_.end())
+        if (rit->second.topic() != virtual_topic_)
         {
-            disposals_.push_back(ch);
+            if (std::find(disposals_.begin(), disposals_.end(), ch) == disposals_.end())
+            {
+                disposals_.push_back(ch);
+            }
         }
     }
 }
@@ -1196,7 +1202,7 @@ bool DiscoveryDataBase::process_dirty_topics()
                     if (parts_reader_it->second.is_matched(writer.guidPrefix))
                     {
                         // Check the status of the writer in `readers_[reader]::relevant_participants_builtin_ack_status`.
-                        if (readers_it != readers_.end() && !readers_it->second.is_matched(writer.guidPrefix))
+                        if (readers_it != readers_.end() && readers_it->second.is_relevant_participant(writer.guidPrefix) && !readers_it->second.is_matched(writer.guidPrefix))
                         {
                             // If the status is 0, add DATA(r) to a `edp_publications_to_send_` (if it's not there).
                             if (add_edp_subscriptions_to_send_(readers_it->second.change()))
@@ -1226,7 +1232,7 @@ bool DiscoveryDataBase::process_dirty_topics()
                     if (parts_writer_it->second.is_matched(reader.guidPrefix))
                     {
                         // Check the status of the reader in `writers_[writer]::relevant_participants_builtin_ack_status`.
-                        if (writers_it != writers_.end() && !writers_it->second.is_matched(reader.guidPrefix))
+                        if (writers_it != writers_.end() && writers_it->second.is_relevant_participant(reader.guidPrefix) && !writers_it->second.is_matched(reader.guidPrefix))
                         {
                             // If the status is 0, add DATA(w) to a `edp_subscriptions_to_send_` (if it's not there).
                             if (add_edp_publications_to_send_(writers_it->second.change()))
@@ -1568,8 +1574,8 @@ void DiscoveryDataBase::unmatch_writer_(
                 {
                     rit->second.remove_participant(guid.guidPrefix);
                 }
-                
-                
+
+
             }
         }
     }
@@ -1640,7 +1646,7 @@ bool DiscoveryDataBase::repeated_writer_topic_(
             logWarning(DISCOVERY_DATABASE,
                     "writer missing: " << writer_guid);
         }
-        
+
         if (wit->second.topic() == topic_name)
         {
             ++count;
