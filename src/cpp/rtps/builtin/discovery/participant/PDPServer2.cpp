@@ -248,8 +248,6 @@ bool PDPServer2::createPDPEndpoints()
     hatt.initialReservedCaches = pdp_initial_reserved_caches;
     hatt.memoryPolicy = mp_builtin->m_att.writerHistoryMemoryPolicy;
     mp_PDPWriterHistory = new WriterHistory(hatt);
-    // TODO check if this should be done here or below
-    mp_PDPWriterHistory->remove_all_changes();
 
     // PDP Writer Attributes
     WriterAttributes watt;
@@ -305,6 +303,9 @@ bool PDPServer2::createPDPEndpoints()
         mp_PDPWriterHistory = nullptr;
         return false;
     }
+    // TODO check if this should be done here or below
+    mp_PDPWriterHistory->remove_all_changes();
+
     logInfo(RTPS_PDP_SERVER, "PDPServer Endpoints creation finished");
     return true;
 }
@@ -620,7 +621,6 @@ void PDPServer2::announceParticipantState(
 
         // Prepare identity
         WriteParams wp;
-        // TODO: Make sure in the database that this CacheChange_t is given this sequence number
         SequenceNumber_t sn = mp_PDPWriterHistory->next_sequence_number();
         {
             SampleIdentity local;
@@ -1399,8 +1399,6 @@ bool PDPServer2::process_discovery_database_restore_()
             changes_map.insert(
                     std::make_pair(change_aux->instanceHandle, change_aux));
 
-            logError(RTPS_PDP_SERVER, "Created CacheChange for " << change_aux->instanceHandle);
-
             // call listener to create proxy info for other entities different than server
             if (change_aux->write_params.sample_identity().writer_guid().guidPrefix !=
                     mp_PDPWriter->getGuid().guidPrefix
@@ -1444,8 +1442,6 @@ bool PDPServer2::process_discovery_database_restore_()
             changes_map.insert(
                     std::make_pair(change_aux->instanceHandle, change_aux));
 
-            logWarning(DISCOVERY_DATABASE, "Insert change " << change_aux->instanceHandle);
-
             // call listener to create proxy info for other entities different than server
             if (change_aux->write_params.sample_identity().writer_guid().guidPrefix !=
                     mp_PDPWriter->getGuid().guidPrefix
@@ -1454,13 +1450,12 @@ bool PDPServer2::process_discovery_database_restore_()
                 // edp_pub_listener->onNewCacheChangeAdded(edp->publications_reader_.first, change_aux);
                 edp->publications_reader_.first->change_received(change_aux, nullptr);
             }
-            logWarning(DISCOVERY_DATABASE, "Inserted in reader");
         }
 
-        for (auto it = changes_map.begin(); it != changes_map.end(); ++it)
-        {
-            logWarning(DISCOVERY_DATABASE, "Change " << it->first << " with instance handle " << it->second->instanceHandle);
-        }
+        // for (auto it = changes_map.begin(); it != changes_map.end(); ++it)
+        // {
+        //     logWarning(DISCOVERY_DATABASE, "Change " << it->first << " with instance handle " << it->second->instanceHandle);
+        // }
 
         // Create every reader change. If it is external creates it from Reader,
         // if it is created from the server, it is created from writer
@@ -1505,10 +1500,10 @@ bool PDPServer2::process_discovery_database_restore_()
             }
         }
 
-        for (auto it = changes_map.begin(); it != changes_map.end(); ++it)
-        {
-            logWarning(DISCOVERY_DATABASE, "Change " << it->first << " with instance handle " << it->second->instanceHandle);
-        }
+        // for (auto it = changes_map.begin(); it != changes_map.end(); ++it)
+        // {
+        //     logWarning(DISCOVERY_DATABASE, "Change " << it->first << " with instance handle " << it->second->instanceHandle);
+        // }
 
         // load database
         discovery_db_.from_json(j, changes_map);
