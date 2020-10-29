@@ -83,8 +83,9 @@ public:
 
         payload_pool = create_payload_pool(topic_name, history_att, true);
         edp_reader.second = new ReaderHistory(history_att);
-        bool created = participant->createReader(&raux, ratt, payload_pool, edp_reader.second, listener, entity_id,
-                true);
+        bool created =
+                participant->createReader(&raux, ratt, payload_pool, edp_reader.second, listener, entity_id,
+                        true);
 
         if (created)
         {
@@ -114,8 +115,9 @@ public:
 
         payload_pool = create_payload_pool(topic_name, history_att, false);
         edp_writer.second = new WriterHistory(history_att);
-        bool created = participant->createWriter(&waux, watt, payload_pool, edp_writer.second, listener, entity_id,
-                true);
+        bool created =
+                participant->createWriter(&waux, watt, payload_pool, edp_writer.second, listener, entity_id,
+                        true);
 
         if (created)
         {
