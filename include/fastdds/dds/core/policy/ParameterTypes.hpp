@@ -125,6 +125,7 @@ enum ParameterId_t : uint16_t
     PID_TYPE_CONSISTENCY_ENFORCEMENT = 0x0074,
     PID_TYPE_INFORMATION = 0x0075,
     PID_DISABLE_POSITIVE_ACKS = 0x8005,
+    PID_DATASHARING_INFO = 0x8006,
 };
 
 //!Base Parameter class with parameter PID and parameter length in bytes.

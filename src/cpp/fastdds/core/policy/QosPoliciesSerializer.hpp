@@ -812,6 +812,33 @@ inline bool QosPoliciesSerializer<DisablePositiveACKsQosPolicy>::read_content_fr
     return valid;
 }
 
+
+template<>
+inline bool QosPoliciesSerializer<DataSharingInfo>::add_content_to_cdr_message(
+        const DataSharingInfo& qos_policy,
+        fastrtps::rtps::CDRMessage_t* cdr_message)
+{
+    bool valid = fastrtps::rtps::CDRMessage::addUInt64(cdr_message, qos_policy.domain_id);
+    return valid;
+}
+
+template<>
+inline bool QosPoliciesSerializer<DataSharingInfo>::read_content_from_cdr_message(
+        DataSharingInfo& qos_policy,
+        fastrtps::rtps::CDRMessage_t* cdr_message,
+        const uint16_t parameter_length)
+{
+    if (parameter_length != 8)
+    {
+        return false;
+    }
+    qos_policy.length = parameter_length;
+    bool valid = fastrtps::rtps::CDRMessage::readUInt64(cdr_message, &qos_policy.domain_id);
+    valid &= (qos_policy.domain_id != 0U);
+    qos_policy.is_compatible = true;
+    return valid;
+}
+
 template<>
 inline uint32_t QosPoliciesSerializer<TypeIdV1>::cdr_serialized_size(
         const TypeIdV1& qos_policy)
