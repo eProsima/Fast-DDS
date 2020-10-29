@@ -146,6 +146,11 @@ void WriterQos::setQos(
         representation = qos.representation;
         representation.hasChanged = true;
     }
+    if (first_time && !(data_sharing_info == qos.data_sharing_info))
+    {
+        data_sharing_info = qos.data_sharing_info;
+        data_sharing_info.hasChanged = true;
+    }
 }
 
 bool WriterQos::checkQos() const
@@ -173,6 +178,11 @@ bool WriterQos::checkQos() const
             logError(RTPS_QOS_CHECK, "WRITERQOS: LeaseDuration <= announcement period.");
             return false;
         }
+    }
+    if (data_sharing_info.is_compatible && data_sharing_info.domain_id == 0U)
+    {
+        logError(RTPS_QOS_CHECK, "WRITERQOS: Data sharing compatible but no domain ID defined");
+        return false;
     }
     return true;
 }

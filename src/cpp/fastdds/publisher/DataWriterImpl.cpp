@@ -262,6 +262,7 @@ ReturnCode_t DataWriterImpl::enable()
 
     // REGISTER THE WRITER
     WriterQos wqos = qos_.get_writerqos(get_publisher()->get_qos(), topic_->get_qos());
+    wqos.data_sharing_info.is_compatible = is_data_sharing_compatible_;
     publisher_->rtps_participant()->registerWriter(writer_, get_topic_attributes(qos_, *topic_, type_), wqos);
 
     return ReturnCode_t::RETCODE_OK;
