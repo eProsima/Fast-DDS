@@ -868,6 +868,8 @@ void DiscoveryDataBase::match_writer_reader_(
         const eprosima::fastrtps::rtps::GUID_t& writer_guid,
         const eprosima::fastrtps::rtps::GUID_t& reader_guid)
 {
+    logInfo(DISCOVERY_DATABASE, "Matching writer " << writer_guid << " with reader " << reader_guid);
+
     // writer entity
     auto wit = writers_.find(writer_guid);
     if (wit == writers_.end())
@@ -1535,7 +1537,7 @@ void DiscoveryDataBase::AckedFunctor::operator () (
     // Check whether the change has been acknowledged by a given reader
     if (reader_proxy->rtps_is_relevant(change_))
     {
-        logInfo(DISCOVERY_DATABASE, "is relevant");
+        logInfo(DISCOVERY_DATABASE, "is relevant, sequence number " << change_->sequenceNumber);
         if (reader_proxy->change_is_acked(change_->sequenceNumber))
         {
             // In the discovery database, mark the change as acknowledged by the reader
@@ -2223,10 +2225,10 @@ bool DiscoveryDataBase::from_json(
 
     logInfo(DISCOVERY_DATABASE, "Raising DDB from json Backup");
 
-    for (auto it = changes_map.begin(); it != changes_map.end(); ++it)
-    {
-        logWarning(DISCOVERY_DATABASE, "Change " << it->first << " with instance handle " << it->second->instanceHandle);
-    }
+    // for (auto it = changes_map.begin(); it != changes_map.end(); ++it)
+    // {
+    //     logWarning(DISCOVERY_DATABASE, "Change " << it->first << " with instance handle " << it->second->instanceHandle);
+    // }
 
     try
     {
