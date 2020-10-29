@@ -115,7 +115,7 @@ private:
 
     std::string topic_name_;
     MemoryManagementPolicy_t policy_;
-    std::shared_ptr<ITopicPayloadPool> inner_pool_;
+    std::unique_ptr<ITopicPayloadPool> inner_pool_;
     std::size_t num_refs_;
 
 };

@@ -313,7 +313,7 @@ protected:
         EXPECT_EQ(pool->payload_pool_allocated_size(), 0u);
     }
 
-    std::shared_ptr<ITopicPayloadPool> pool;    //< The pool under test
+    std::unique_ptr<ITopicPayloadPool> pool;    //< The pool under test
 
     uint32_t test_input_pool_size;              //< Pool size given to the parametric test
     uint32_t test_input_max_pool_size;          //< Max pool size given to the parametric test

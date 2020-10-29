@@ -277,22 +277,28 @@ bool TopicPayloadPool::shrink (
     return true;
 }
 
-std::shared_ptr<ITopicPayloadPool> TopicPayloadPool::get(
+std::unique_ptr<ITopicPayloadPool> TopicPayloadPool::get(
         const BasicPoolConfig& config)
 {
+    ITopicPayloadPool* ret_val = nullptr;
+
     switch (config.memory_policy)
     {
         case PREALLOCATED_MEMORY_MODE:
-            return std::make_shared<PreallocatedTopicPayloadPool>(config.payload_initial_size);
+            ret_val = new PreallocatedTopicPayloadPool(config.payload_initial_size);
+            break;
         case PREALLOCATED_WITH_REALLOC_MEMORY_MODE:
-            return std::make_shared<PreallocatedReallocTopicPayloadPool>(config.payload_initial_size);
+            ret_val = new PreallocatedReallocTopicPayloadPool(config.payload_initial_size);
+            break;
         case DYNAMIC_RESERVE_MEMORY_MODE:
-            return std::make_shared<DynamicTopicPayloadPool>();
+            ret_val = new DynamicTopicPayloadPool();
+            break;
         case DYNAMIC_REUSABLE_MEMORY_MODE:
-            return std::make_shared<DynamicReusableTopicPayloadPool>();
+            ret_val = new DynamicReusableTopicPayloadPool();
+            break;
     }
 
-    return nullptr;
+    return std::unique_ptr<ITopicPayloadPool>(ret_val);
 }
 
 }  // namespace rtps

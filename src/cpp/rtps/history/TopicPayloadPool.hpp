@@ -126,7 +126,7 @@ public:
         return free_payloads_.size();
     }
 
-    static std::shared_ptr<ITopicPayloadPool> get(
+    static std::unique_ptr<ITopicPayloadPool> get(
             const BasicPoolConfig& config);
 
 protected:
