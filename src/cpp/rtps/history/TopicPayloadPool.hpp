@@ -26,10 +26,11 @@
 #include <rtps/history/PoolConfig.h>
 #include <rtps/history/ITopicPayloadPool.h>
 
-#include <memory>
-#include <vector>
-#include <mutex>
 #include <atomic>
+#include <cstddef>
+#include <memory>
+#include <mutex>
+#include <vector>
 
 namespace eprosima {
 namespace fastrtps {
@@ -135,34 +136,23 @@ protected:
     {
     public:
 
-        octet* buffer = nullptr;
-
-        // First metadata: reference counter for this payload (atomic<uint32_t>)
-        static constexpr size_t reference_offset = 0;
-        // Second metadata: size of memory allocated for the payload data (uint32_t)
-        static constexpr size_t size_offset = sizeof(std::atomic<uint32_t>);
-        // Third metadata: index of this node in the all_payloads_ buffer (uint32_t)
-        static constexpr size_t index_offset = size_offset + sizeof(uint32_t);
-        // Payload data comes after the metadata
-        static constexpr size_t data_offset = index_offset + sizeof(uint32_t);
-
         explicit PayloadNode(
                 uint32_t size)
         {
-            buffer = (octet*)calloc(size + data_offset, sizeof(octet));
+            buffer = (octet*)calloc(size + offsetof(NodeInfo, data), sizeof(octet));
             if (buffer == nullptr)
             {
                 throw std::bad_alloc();
             }
-            data_size(size);
 
             // The atomic may need some initialization depending on the platform
-            new (buffer + reference_offset) std::atomic<uint32_t>(0);
+            new (buffer) NodeInfo();
+            data_size(size);
         }
 
         ~PayloadNode()
         {
-            reinterpret_cast<std::atomic<uint32_t>*>(buffer + reference_offset)->~atomic<uint32_t>();
+            info().~NodeInfo();
             free(buffer);
         }
 
@@ -185,67 +175,89 @@ protected:
 
         uint32_t data_size() const
         {
-            return *reinterpret_cast<uint32_t*>(buffer + size_offset);
+            return info().data_size;
         }
 
         static uint32_t data_size(
                 octet* data)
         {
-            return *reinterpret_cast<uint32_t*>(data - data_offset + size_offset);
+            return info(data).data_size;
         }
 
         void data_size(
                 uint32_t size)
         {
-            *reinterpret_cast<uint32_t*>(buffer + size_offset) = size;
+            info().data_size = size;
         }
 
         uint32_t data_index() const
         {
-            return *reinterpret_cast<uint32_t*>(buffer + index_offset);
-        }
-
-        void data_index(
-                uint32_t index)
-        {
-            *reinterpret_cast<uint32_t*>(buffer + index_offset) = index;
-        }
-
-        octet* data() const
-        {
-            return buffer + data_offset;
+            return info().data_index;
         }
 
         static uint32_t data_index(
                 octet* data)
         {
-            return *reinterpret_cast<uint32_t*>(data - data_offset + index_offset);
+            return info(data).data_index;
+        }
+
+        void data_index(
+                uint32_t index)
+        {
+            info().data_index = index;
+        }
+
+        octet* data() const
+        {
+            return info().data;
         }
 
         void reference()
         {
-            reinterpret_cast<std::atomic<uint32_t>*>(buffer + reference_offset)->fetch_add(1,
-                    std::memory_order_relaxed);
+            info().ref_counter.fetch_add(1, std::memory_order_relaxed);
         }
 
         bool dereference()
         {
-            return (reinterpret_cast<std::atomic<uint32_t>*>(buffer + reference_offset)->fetch_sub(1,
-                   std::memory_order_acq_rel) == 1);
+            return (info().ref_counter.fetch_sub(1, std::memory_order_acq_rel) == 1);
         }
 
         static void reference(
                 octet* data)
         {
-            reinterpret_cast<std::atomic<uint32_t>*>(data - data_offset + reference_offset)->fetch_add(1,
-                    std::memory_order_relaxed);
+            info(data).ref_counter.fetch_add(1, std::memory_order_relaxed);
         }
 
         static bool dereference(
                 octet* data)
         {
-            return (reinterpret_cast<std::atomic<uint32_t>*>(data - data_offset + reference_offset)->fetch_sub(1,
-                   std::memory_order_acq_rel) == 1);
+            return (info(data).ref_counter.fetch_sub(1, std::memory_order_acq_rel) == 1);
+        }
+
+    private:
+
+        struct NodeInfo
+        {
+            std::atomic<uint32_t> ref_counter{ 0 };
+            uint32_t data_size = 0;
+            uint32_t data_index = 0;
+            octet data[1];
+        };
+
+        octet* buffer = nullptr;
+
+        // Payload data comes after the metadata
+        static constexpr size_t data_offset = offsetof(NodeInfo, data);
+
+        NodeInfo& info() const
+        {
+            return *reinterpret_cast<NodeInfo*>(buffer);
+        }
+
+        static NodeInfo& info(
+                octet* data)
+        {
+            return *reinterpret_cast<NodeInfo*>(data - data_offset);
         }
 
     };
