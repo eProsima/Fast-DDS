@@ -223,6 +223,12 @@ DataReader* SubscriberImpl::create_datareader(
         return nullptr;
     }
 
+    if (qos.data_sharing().kind() == DataSharingKind::FORCED && !is_datasharing_compatible(qos, type_support))
+    {
+        logError(PUBLISHER, "Reader configuration or DataType is not DataSharing compatible");
+        return nullptr;
+    }
+
     topic->get_impl()->reference();
 
     DataReaderImpl* impl = new DataReaderImpl(
@@ -630,6 +636,24 @@ SubscriberListener* SubscriberImpl::get_listener_for(
         return listener_;
     }
     return participant_->get_listener_for(status);
+}
+
+bool SubscriberImpl::is_datasharing_compatible(
+        const DataReaderQos& qos,
+        const TypeSupport& type)
+{
+    switch (qos.data_sharing().kind())
+    {
+        case DataSharingKind::DISABLED:
+            return false;
+            break;
+        case DataSharingKind::FORCED:
+        case DataSharingKind::AUTO:
+            return type.is_bounded();
+            break;
+        default:
+            return false;
+    }
 }
 
 } /* namespace dds */

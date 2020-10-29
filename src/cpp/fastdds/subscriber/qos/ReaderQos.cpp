@@ -135,6 +135,12 @@ void ReaderQos::setQos(
         type_consistency = qos.type_consistency;
         type_consistency.hasChanged = true;
     }
+
+    if (first_time && !(data_sharing_info == qos.data_sharing_info))
+    {
+        data_sharing_info = qos.data_sharing_info;
+        data_sharing_info.hasChanged = true;
+    }
 }
 
 bool ReaderQos::checkQos() const
@@ -154,6 +160,12 @@ bool ReaderQos::checkQos() const
         logError(RTPS_QOS_CHECK, "BEST_EFFORT incompatible with EXCLUSIVE ownership");
         return false;
     }
+    if (data_sharing_info.is_compatible && data_sharing_info.domain_id == 0U)
+    {
+        logError(RTPS_QOS_CHECK, "WRITERQOS: Data sharing compatible but no domain ID defined");
+        return false;
+    }
+    
     return true;
 }
 

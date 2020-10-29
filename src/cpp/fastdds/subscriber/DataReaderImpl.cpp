@@ -117,6 +117,7 @@ DataReaderImpl::DataReaderImpl(
     , lifespan_duration_us_(qos_.lifespan().duration.to_ns() * 1e-3)
     , sample_info_pool_(qos)
     , loan_manager_(qos)
+    , is_data_sharing_compatible_(subscriber_->is_datasharing_compatible(qos_, type_))
 {
 }
 
@@ -205,6 +206,7 @@ ReturnCode_t DataReaderImpl::enable()
 
     // Register the reader
     ReaderQos rqos = qos_.get_readerqos(subscriber_->get_qos());
+    rqos.data_sharing_info.is_compatible = is_data_sharing_compatible_;
     subscriber_->rtps_participant()->registerReader(reader_, topic_attributes(), rqos);
 
     return ReturnCode_t::RETCODE_OK;

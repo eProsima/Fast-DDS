@@ -48,6 +48,7 @@ ReaderQos DataReaderQos::get_readerqos(
     qos.m_disablePositiveACKs = reliable_reader_qos().disable_positive_ACKs;
     qos.type_consistency = type_consistency().type_consistency;
     qos.representation = type_consistency().representation;
+    qos.data_sharing_info.domain_id = data_sharing().domain_id();
     return qos;
 }
 

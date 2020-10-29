@@ -55,6 +55,7 @@ class DomainParticipantImpl;
 class Subscriber;
 class DataReaderImpl;
 class TopicDescription;
+class TypeSupport;
 
 /**
  * Class SubscriberImpl, contains the actual implementation of the behaviour of the Subscriber.
@@ -287,6 +288,11 @@ protected:
     DataReaderQos default_datareader_qos_;
 
     fastrtps::rtps::InstanceHandle_t handle_;
+
+
+    static bool is_datasharing_compatible(
+            const DataReaderQos& qos,
+            const TypeSupport& type);
 
 };
 

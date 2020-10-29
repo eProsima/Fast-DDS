@@ -392,6 +392,8 @@ protected:
             bool single_instance,
             bool should_take);
 
+    bool is_data_sharing_compatible_;
+
     /**
      * @brief A method called when a new cache change is added
      * @param change The cache change that has been added
