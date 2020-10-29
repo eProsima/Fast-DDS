@@ -65,18 +65,18 @@ TEST_P(DDSDataReader, LivelinessChangedStatusGet)
     // Create and start reader that will not invoke listener for liveliness_changed
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     reader.liveliness_kind(AUTOMATIC_LIVELINESS_QOS)
-    .liveliness_lease_duration(lease_duration)
-    .deactivate_status_listener(eprosima::fastdds::dds::StatusMask::liveliness_changed());
+            .liveliness_lease_duration(lease_duration)
+            .deactivate_status_listener(eprosima::fastdds::dds::StatusMask::liveliness_changed());
     reader.init();
     ASSERT_TRUE(reader.isInitialized());
 
     // Create a participant for the writers
-    std::unique_ptr<PubSubParticipant<HelloWorldType> > writers;
+    std::unique_ptr<PubSubParticipant<HelloWorldType>> writers;
     writers.reset(new PubSubParticipant<HelloWorldType>(num_times, 0, num_times, 0));
     writers->pub_topic_name(TEST_TOPIC_NAME)
-    .pub_liveliness_kind(AUTOMATIC_LIVELINESS_QOS)
-    .pub_liveliness_announcement_period(announcement_period)
-    .pub_liveliness_lease_duration(lease_duration);
+            .pub_liveliness_kind(AUTOMATIC_LIVELINESS_QOS)
+            .pub_liveliness_announcement_period(announcement_period)
+            .pub_liveliness_lease_duration(lease_duration);
     ASSERT_TRUE(writers->init_participant());
 
     // Ensure initial status is 'there are no writers'
@@ -137,7 +137,13 @@ TEST_P(DDSDataReader, LivelinessChangedStatusGet)
 
 }
 
-INSTANTIATE_TEST_CASE_P(DDSDataReader,
+#ifdef INSTANTIATE_TEST_SUITE_P
+#define GTEST_INSTANTIATE_TEST_MACRO(x, y, z, w) INSTANTIATE_TEST_SUITE_P(x, y, z, w)
+#else
+#define GTEST_INSTANTIATE_TEST_MACRO(x, y, z, w) INSTANTIATE_TEST_CASE_P(x, y, z, w)
+#endif // ifdef INSTANTIATE_TEST_SUITE_P
+
+GTEST_INSTANTIATE_TEST_MACRO(DDSDataReader,
         DDSDataReader,
         testing::Values(false, true),
         [](const testing::TestParamInfo<DDSDataReader::ParamType>& info)

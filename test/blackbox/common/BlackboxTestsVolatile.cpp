@@ -58,7 +58,7 @@ TEST_P(Volatile, PubSubAsReliableVolatilePubRemoveWithoutSubs)
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
 
     writer.history_depth(10).
-    durability_kind(eprosima::fastrtps::VOLATILE_DURABILITY_QOS).init();
+            durability_kind(eprosima::fastrtps::VOLATILE_DURABILITY_QOS).init();
 
     ASSERT_TRUE(writer.isInitialized());
 
@@ -84,9 +84,9 @@ TEST_P(Volatile, AsyncPubSubAsNonReliableVolatileHelloworld)
     ASSERT_TRUE(reader.isInitialized());
 
     writer.history_depth(100).
-    reliability(eprosima::fastrtps::BEST_EFFORT_RELIABILITY_QOS).
-    durability_kind(eprosima::fastrtps::VOLATILE_DURABILITY_QOS).
-    asynchronously(eprosima::fastrtps::ASYNCHRONOUS_PUBLISH_MODE).init();
+            reliability(eprosima::fastrtps::BEST_EFFORT_RELIABILITY_QOS).
+            durability_kind(eprosima::fastrtps::VOLATILE_DURABILITY_QOS).
+            asynchronously(eprosima::fastrtps::ASYNCHRONOUS_PUBLISH_MODE).init();
 
     ASSERT_TRUE(writer.isInitialized());
 
@@ -112,8 +112,8 @@ TEST_P(Volatile, AsyncVolatileKeepAllPubReliableSubNonReliable300Kb)
     PubSubWriter<Data1mbType> writer(TEST_TOPIC_NAME);
 
     reader.history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS).
-    reliability(eprosima::fastrtps::BEST_EFFORT_RELIABILITY_QOS).
-    init();
+            reliability(eprosima::fastrtps::BEST_EFFORT_RELIABILITY_QOS).
+            init();
 
     ASSERT_TRUE(reader.isInitialized());
 
@@ -123,13 +123,13 @@ TEST_P(Volatile, AsyncVolatileKeepAllPubReliableSubNonReliable300Kb)
     uint32_t periodInMs = 50;
 
     writer.history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS).
-    reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).
-    durability_kind(eprosima::fastrtps::VOLATILE_DURABILITY_QOS).
-    resource_limits_allocated_samples(9).
-    resource_limits_max_samples(9).
-    asynchronously(eprosima::fastrtps::ASYNCHRONOUS_PUBLISH_MODE).
-    add_throughput_controller_descriptor_to_pparams(bytesPerPeriod, periodInMs).
-    init();
+            reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).
+            durability_kind(eprosima::fastrtps::VOLATILE_DURABILITY_QOS).
+            resource_limits_allocated_samples(9).
+            resource_limits_max_samples(9).
+            asynchronously(eprosima::fastrtps::ASYNCHRONOUS_PUBLISH_MODE).
+            add_throughput_controller_descriptor_to_pparams(bytesPerPeriod, periodInMs).
+            init();
 
     ASSERT_TRUE(writer.isInitialized());
 
@@ -155,17 +155,17 @@ TEST_P(Volatile, VolatileKeepAllPubReliableSubNonReliableHelloWorld)
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
 
     reader.history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS).
-    reliability(eprosima::fastrtps::BEST_EFFORT_RELIABILITY_QOS).
-    init();
+            reliability(eprosima::fastrtps::BEST_EFFORT_RELIABILITY_QOS).
+            init();
 
     ASSERT_TRUE(reader.isInitialized());
 
     writer.history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS).
-    reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).
-    durability_kind(eprosima::fastrtps::VOLATILE_DURABILITY_QOS).
-    resource_limits_allocated_samples(9).
-    resource_limits_max_samples(9).
-    init();
+            reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).
+            durability_kind(eprosima::fastrtps::VOLATILE_DURABILITY_QOS).
+            resource_limits_allocated_samples(9).
+            resource_limits_max_samples(9).
+            init();
 
     ASSERT_TRUE(writer.isInitialized());
 
@@ -191,18 +191,18 @@ TEST_P(Volatile, AsyncVolatileKeepAllPubReliableSubNonReliableHelloWorld)
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
 
     reader.history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS).
-    reliability(eprosima::fastrtps::BEST_EFFORT_RELIABILITY_QOS).
-    init();
+            reliability(eprosima::fastrtps::BEST_EFFORT_RELIABILITY_QOS).
+            init();
 
     ASSERT_TRUE(reader.isInitialized());
 
     writer.history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS).
-    reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).
-    durability_kind(eprosima::fastrtps::VOLATILE_DURABILITY_QOS).
-    resource_limits_allocated_samples(9).
-    resource_limits_max_samples(9).
-    asynchronously(eprosima::fastrtps::ASYNCHRONOUS_PUBLISH_MODE).
-    init();
+            reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).
+            durability_kind(eprosima::fastrtps::VOLATILE_DURABILITY_QOS).
+            resource_limits_allocated_samples(9).
+            resource_limits_max_samples(9).
+            asynchronously(eprosima::fastrtps::ASYNCHRONOUS_PUBLISH_MODE).
+            init();
 
     ASSERT_TRUE(writer.isInitialized());
 
@@ -240,13 +240,13 @@ TEST_P(Volatile, AsyncVolatileSubBetweenPubs)
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
 
     writer.history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS).
-    reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).
-    durability_kind(eprosima::fastrtps::VOLATILE_DURABILITY_QOS).
-    resource_limits_allocated_samples(9).
-    resource_limits_max_samples(9).
-    asynchronously(eprosima::fastrtps::ASYNCHRONOUS_PUBLISH_MODE).
-    heartbeat_period_seconds(3600).
-    init();
+            reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).
+            durability_kind(eprosima::fastrtps::VOLATILE_DURABILITY_QOS).
+            resource_limits_allocated_samples(9).
+            resource_limits_max_samples(9).
+            asynchronously(eprosima::fastrtps::ASYNCHRONOUS_PUBLISH_MODE).
+            heartbeat_period_seconds(3600).
+            init();
 
     ASSERT_TRUE(writer.isInitialized());
 
@@ -257,9 +257,9 @@ TEST_P(Volatile, AsyncVolatileSubBetweenPubs)
     writer.send_sample(hello);
 
     reader.history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS).
-    reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).
-    durability_kind(eprosima::fastrtps::VOLATILE_DURABILITY_QOS).
-    init();
+            reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).
+            durability_kind(eprosima::fastrtps::VOLATILE_DURABILITY_QOS).
+            init();
 
     ASSERT_TRUE(reader.isInitialized());
 
@@ -282,13 +282,13 @@ TEST_P(Volatile, VolatileSubBetweenPubs)
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
 
     writer.history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS).
-    reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).
-    durability_kind(eprosima::fastrtps::VOLATILE_DURABILITY_QOS).
-    resource_limits_allocated_samples(9).
-    resource_limits_max_samples(9).
-    asynchronously(eprosima::fastrtps::SYNCHRONOUS_PUBLISH_MODE).
-    heartbeat_period_seconds(3600).
-    init();
+            reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).
+            durability_kind(eprosima::fastrtps::VOLATILE_DURABILITY_QOS).
+            resource_limits_allocated_samples(9).
+            resource_limits_max_samples(9).
+            asynchronously(eprosima::fastrtps::SYNCHRONOUS_PUBLISH_MODE).
+            heartbeat_period_seconds(3600).
+            init();
 
     ASSERT_TRUE(writer.isInitialized());
 
@@ -299,9 +299,9 @@ TEST_P(Volatile, VolatileSubBetweenPubs)
     writer.send_sample(hello);
 
     reader.history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS).
-    reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).
-    durability_kind(eprosima::fastrtps::VOLATILE_DURABILITY_QOS).
-    init();
+            reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).
+            durability_kind(eprosima::fastrtps::VOLATILE_DURABILITY_QOS).
+            init();
 
     ASSERT_TRUE(reader.isInitialized());
 
@@ -324,14 +324,14 @@ TEST_P(Volatile, AsyncVolatileSubBetweenTransientPubs)
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
 
     writer
-    .history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS)
-    .reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS)
-    .durability_kind(eprosima::fastrtps::TRANSIENT_LOCAL_DURABILITY_QOS)
-    .resource_limits_allocated_samples(9)
-    .resource_limits_max_samples(9)
-    .asynchronously(eprosima::fastrtps::ASYNCHRONOUS_PUBLISH_MODE)
-    .heartbeat_period_seconds(3600)
-    .init();
+            .history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS)
+            .reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS)
+            .durability_kind(eprosima::fastrtps::TRANSIENT_LOCAL_DURABILITY_QOS)
+            .resource_limits_allocated_samples(9)
+            .resource_limits_max_samples(9)
+            .asynchronously(eprosima::fastrtps::ASYNCHRONOUS_PUBLISH_MODE)
+            .heartbeat_period_seconds(3600)
+            .init();
 
     ASSERT_TRUE(writer.isInitialized());
 
@@ -342,9 +342,9 @@ TEST_P(Volatile, AsyncVolatileSubBetweenTransientPubs)
     writer.send_sample(hello);
 
     reader.history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS).
-    reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).
-    durability_kind(eprosima::fastrtps::VOLATILE_DURABILITY_QOS).
-    init();
+            reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).
+            durability_kind(eprosima::fastrtps::VOLATILE_DURABILITY_QOS).
+            init();
 
     ASSERT_TRUE(reader.isInitialized());
 
@@ -367,14 +367,14 @@ TEST_P(Volatile, VolatileSubBetweenTransientPubs)
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
 
     writer
-    .history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS)
-    .reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS)
-    .durability_kind(eprosima::fastrtps::TRANSIENT_LOCAL_DURABILITY_QOS)
-    .resource_limits_allocated_samples(9)
-    .resource_limits_max_samples(9)
-    .asynchronously(eprosima::fastrtps::SYNCHRONOUS_PUBLISH_MODE)
-    .heartbeat_period_seconds(3600)
-    .init();
+            .history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS)
+            .reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS)
+            .durability_kind(eprosima::fastrtps::TRANSIENT_LOCAL_DURABILITY_QOS)
+            .resource_limits_allocated_samples(9)
+            .resource_limits_max_samples(9)
+            .asynchronously(eprosima::fastrtps::SYNCHRONOUS_PUBLISH_MODE)
+            .heartbeat_period_seconds(3600)
+            .init();
 
     ASSERT_TRUE(writer.isInitialized());
 
@@ -385,9 +385,9 @@ TEST_P(Volatile, VolatileSubBetweenTransientPubs)
     writer.send_sample(hello);
 
     reader.history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS).
-    reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).
-    durability_kind(eprosima::fastrtps::VOLATILE_DURABILITY_QOS).
-    init();
+            reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).
+            durability_kind(eprosima::fastrtps::VOLATILE_DURABILITY_QOS).
+            init();
 
     ASSERT_TRUE(reader.isInitialized());
 
@@ -412,10 +412,10 @@ TEST_P(Volatile, VolatileLateJoinerSubGapLost)
 
 
     reader1.history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS).
-    reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).
-    durability_kind(eprosima::fastrtps::VOLATILE_DURABILITY_QOS).
-    //heartbeatResponseDelay(5,0).
-    init();
+            reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).
+            durability_kind(eprosima::fastrtps::VOLATILE_DURABILITY_QOS).
+            //heartbeatResponseDelay(5,0).
+            init();
 
     ASSERT_TRUE(reader1.isInitialized());
 
@@ -434,14 +434,14 @@ TEST_P(Volatile, VolatileLateJoinerSubGapLost)
     testTransport->dropLogLength = 1;
 
     writer.history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS).
-    reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).
-    durability_kind(eprosima::fastrtps::VOLATILE_DURABILITY_QOS).
-    resource_limits_allocated_samples(9).
-    resource_limits_max_samples(9).
-    disable_builtin_transport().
-    add_user_transport_to_pparams(testTransport).
-    asynchronously(eprosima::fastrtps::SYNCHRONOUS_PUBLISH_MODE).
-    init();
+            reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).
+            durability_kind(eprosima::fastrtps::VOLATILE_DURABILITY_QOS).
+            resource_limits_allocated_samples(9).
+            resource_limits_max_samples(9).
+            disable_builtin_transport().
+            add_user_transport_to_pparams(testTransport).
+            asynchronously(eprosima::fastrtps::SYNCHRONOUS_PUBLISH_MODE).
+            init();
 
     ASSERT_TRUE(writer.isInitialized());
 
@@ -457,9 +457,9 @@ TEST_P(Volatile, VolatileLateJoinerSubGapLost)
     data.pop_front();
 
     reader2.history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS).
-    reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).
-    durability_kind(eprosima::fastrtps::VOLATILE_DURABILITY_QOS).
-    init();
+            reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).
+            durability_kind(eprosima::fastrtps::VOLATILE_DURABILITY_QOS).
+            init();
 
     ASSERT_TRUE(reader2.isInitialized());
 
@@ -477,7 +477,13 @@ TEST_P(Volatile, VolatileLateJoinerSubGapLost)
     reader2.block_for_all();
 }
 
-INSTANTIATE_TEST_CASE_P(Volatile,
+#ifdef INSTANTIATE_TEST_SUITE_P
+#define GTEST_INSTANTIATE_TEST_MACRO(x, y, z, w) INSTANTIATE_TEST_SUITE_P(x, y, z, w)
+#else
+#define GTEST_INSTANTIATE_TEST_MACRO(x, y, z, w) INSTANTIATE_TEST_CASE_P(x, y, z, w)
+#endif // ifdef INSTANTIATE_TEST_SUITE_P
+
+GTEST_INSTANTIATE_TEST_MACRO(Volatile,
         Volatile,
         testing::Values(false, true),
         [](const testing::TestParamInfo<Volatile::ParamType>& info)

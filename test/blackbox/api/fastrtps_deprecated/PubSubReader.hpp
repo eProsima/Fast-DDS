@@ -93,7 +93,7 @@ private:
 
         void onPublisherDiscovery(
                 eprosima::fastrtps::Participant*,
-                eprosima::fastrtps::rtps::WriterDiscoveryInfo&& info)
+                eprosima::fastrtps::rtps::WriterDiscoveryInfo&& info) override
         {
             if (reader_.onEndpointDiscovery_ != nullptr)
             {

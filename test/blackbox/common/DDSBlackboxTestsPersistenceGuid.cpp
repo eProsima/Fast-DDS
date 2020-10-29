@@ -349,7 +349,13 @@ TEST_P(PersistenceGuid, NoSetPersistenceForTransientLocal)
 
 }
 
-INSTANTIATE_TEST_CASE_P(PersistenceGuid,
+#ifdef INSTANTIATE_TEST_SUITE_P
+#define GTEST_INSTANTIATE_TEST_MACRO(x, y, z, w) INSTANTIATE_TEST_SUITE_P(x, y, z, w)
+#else
+#define GTEST_INSTANTIATE_TEST_MACRO(x, y, z, w) INSTANTIATE_TEST_CASE_P(x, y, z, w)
+#endif // ifdef INSTANTIATE_TEST_SUITE_P
+
+GTEST_INSTANTIATE_TEST_MACRO(PersistenceGuid,
         PersistenceGuid,
         testing::Values(false, true),
         [](const testing::TestParamInfo<PersistenceGuid::ParamType>& info)
