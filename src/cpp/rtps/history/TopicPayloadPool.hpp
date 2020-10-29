@@ -52,16 +52,16 @@ public:
         }
     }
 
-    virtual bool get_payload(
+    bool get_payload(
             uint32_t size,
             CacheChange_t& cache_change) override;
 
-    virtual bool get_payload(
+    bool get_payload(
             SerializedPayload_t& data,
             IPayloadPool*& data_owner,
             CacheChange_t& cache_change) override;
 
-    virtual bool release_payload(
+    bool release_payload(
             CacheChange_t& cache_change) override;
 
     /**
