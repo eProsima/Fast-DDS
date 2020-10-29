@@ -243,10 +243,11 @@ TEST_P(DeadlineQos, KeyedTopicShortDeadline)
 GTEST_INSTANTIATE_TEST_MACRO(DeadlineQos,
         DeadlineQos,
         testing::Values(false, true),
-        [](const testing::TestParamInfo<DeadlineQos::ParamType>& info) {
-    if (info.param)
-    {
-        return "Intraprocess";
-    }
-    return "NonIntraprocess";
-});
+        [](const testing::TestParamInfo<DeadlineQos::ParamType>& info)
+        {
+            if (info.param)
+            {
+                return "Intraprocess";
+            }
+            return "NonIntraprocess";
+        });

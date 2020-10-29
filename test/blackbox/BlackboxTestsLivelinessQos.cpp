@@ -1676,11 +1676,12 @@ TEST_P(LivelinessQos, AssertLivelinessParticipant)
 GTEST_INSTANTIATE_TEST_MACRO(LivelinessQos,
         LivelinessQos,
         testing::Values(false, true),
-        [](const testing::TestParamInfo<LivelinessQos::ParamType>& info) {
-    if (info.param)
-    {
-        return "Intraprocess";
-    }
-    return "NonIntraprocess";
-});
+        [](const testing::TestParamInfo<LivelinessQos::ParamType>& info)
+        {
+            if (info.param)
+            {
+                return "Intraprocess";
+            }
+            return "NonIntraprocess";
+        });
 

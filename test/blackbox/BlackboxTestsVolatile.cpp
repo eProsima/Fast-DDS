@@ -486,10 +486,11 @@ TEST_P(Volatile, VolatileLateJoinerSubGapLost)
 GTEST_INSTANTIATE_TEST_MACRO(Volatile,
         Volatile,
         testing::Values(false, true),
-        [](const testing::TestParamInfo<Volatile::ParamType>& info) {
-    if (info.param)
-    {
-        return "Intraprocess";
-    }
-    return "NonIntraprocess";
-});
+        [](const testing::TestParamInfo<Volatile::ParamType>& info)
+        {
+            if (info.param)
+            {
+                return "Intraprocess";
+            }
+            return "NonIntraprocess";
+        });

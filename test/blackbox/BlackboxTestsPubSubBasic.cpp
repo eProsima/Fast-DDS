@@ -608,7 +608,8 @@ TEST_P(PubSubBasic, ReceivedPropertiesDataExceedsSizeLimit)
 GTEST_INSTANTIATE_TEST_MACRO(PubSubBasic,
         PubSubBasic,
         testing::Values(false, true),
-        [](const testing::TestParamInfo<PubSubBasic::ParamType>& info) {
+        [](const testing::TestParamInfo<PubSubBasic::ParamType>& info)
+        {
             if (info.param)
             {
                 return "Intraprocess";

@@ -174,7 +174,8 @@ TEST_P(PubSubFlowControllers, FlowControllerIfNotAsync)
 GTEST_INSTANTIATE_TEST_MACRO(PubSubFlowControllers,
         PubSubFlowControllers,
         testing::Values(false, true),
-        [](const testing::TestParamInfo<PubSubFlowControllers::ParamType>& info) {
+        [](const testing::TestParamInfo<PubSubFlowControllers::ParamType>& info)
+        {
             if (info.param)
             {
                 return "Intraprocess";

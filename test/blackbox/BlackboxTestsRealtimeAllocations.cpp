@@ -46,6 +46,7 @@ public:
             xmlparser::XMLProfileManager::library_settings(library_settings);
         }
     }
+
 };
 
 TEST_P(RealtimeAllocations, PubSubReliableWithLimitedSubscribers)
@@ -499,7 +500,8 @@ TEST_P(RealtimeAllocations, AsyncPubSubBestEffortWithLimitedPublishers)
 GTEST_INSTANTIATE_TEST_MACRO(RealtimeAllocations,
         RealtimeAllocations,
         testing::Values(false, true),
-        [](const testing::TestParamInfo<RealtimeAllocations::ParamType>& info) {
+        [](const testing::TestParamInfo<RealtimeAllocations::ParamType>& info)
+        {
             if (info.param)
             {
                 return "Intraprocess";
