@@ -48,7 +48,6 @@
 
 using namespace eprosima::fastrtps;
 
-
 namespace eprosima {
 namespace fastrtps {
 namespace rtps {
@@ -91,7 +90,7 @@ bool PDPServer::init(
      */
     mp_sync = new DServerEvent(this,
                     TimeConv::Duration_t2MilliSecondsDouble(m_discovery.discovery_config.
-                    discoveryServer_client_syncperiod));
+                            discoveryServer_client_syncperiod));
     awakeServerThread();
     // the timer is also restart from removeRemoteParticipant, remove(Publisher|Subscriber)FromHistory
     // and queueParticipantForEDPMatch
@@ -169,7 +168,7 @@ bool PDPServer::createPDPEndpoints()
         mp_PDPReader->enableMessagesFromUnkownWriters(true);
 
         std::lock_guard<std::mutex> data_guard(temp_data_lock_);
-        for (const RemoteServerAttributes& it : mp_builtin->m_DiscoveryServers)
+        for (const eprosima::fastdds::rtps::RemoteServerAttributes& it : mp_builtin->m_DiscoveryServers)
         {
             temp_writer_data_.clear();
             temp_writer_data_.guid(it.GetPDPWriter());
@@ -224,7 +223,7 @@ bool PDPServer::createPDPEndpoints()
             nullptr, c_EntityId_SPDPWriter, true))
     {
         std::lock_guard<std::mutex> data_guard(temp_data_lock_);
-        for (const RemoteServerAttributes& it : mp_builtin->m_DiscoveryServers)
+        for (const eprosima::fastdds::rtps::RemoteServerAttributes& it : mp_builtin->m_DiscoveryServers)
         {
             temp_reader_data_.clear();
             temp_reader_data_.guid(it.GetPDPReader());
@@ -372,7 +371,7 @@ void PDPServer::removeRemoteEndpoints(
     {
         std::lock_guard<std::recursive_mutex> lock(*getMutex());
 
-        for (RemoteServerAttributes& svr : mp_builtin->m_DiscoveryServers)
+        for (eprosima::fastdds::rtps::RemoteServerAttributes& svr : mp_builtin->m_DiscoveryServers)
         {
             if (svr.guidPrefix == pdata->m_guid.guidPrefix)
             {
@@ -509,7 +508,7 @@ bool PDPServer::trimWriterHistory()
 bool PDPServer::trimPDPWriterHistory()
 {
     logInfo(RTPS_PDPSERVER_TRIM, "In trimPDPWriteHistory PDP history count: " << mp_PDPWriterHistory->getHistorySize()
-                                                                              << " demises:" << _demises.size() );
+                                                                              << " demises:" << _demises.size());
 
     // trim demises container
     key_list disposal, aux;
@@ -546,7 +545,7 @@ bool PDPServer::trimPDPWriterHistory()
             });
 
     logInfo(RTPS_PDPSERVER_TRIM, "I've classified the following PDP history data for removal "
-            << std::distance(removal.begin(), removal.end()) );
+            << std::distance(removal.begin(), removal.end()));
 
     if (removal.empty())
     {
@@ -580,7 +579,7 @@ bool PDPServer::trimPDPWriterHistory()
     // update demises
     _demises.swap(pending);
 
-    logInfo(RTPS_PDPSERVER_TRIM, "After trying to trim PDP we still must remove " << _demises.size() );
+    logInfo(RTPS_PDPSERVER_TRIM, "After trying to trim PDP we still must remove " << _demises.size());
 
     return _demises.empty(); // finish?
 }
@@ -950,7 +949,7 @@ void PDPServer::processPersistentData()
 
                     // Only DATA(p)s directly received from a client would have the PID_BACKUP_STAMP property
                     // The CacheChange_t pass to the server simulates a client's DATA(p)
-                    if ( guid != GUID_t::unknown() && guid == mp_PDPWriter->getGuid() )
+                    if ( guid != GUID_t::unknown() && guid == mp_PDPWriter->getGuid())
                     {
                         assert(si != SampleIdentity::unknown());
                         change_to_add->writerGUID = si.writer_guid();
@@ -1072,7 +1071,7 @@ void PDPServer::announceParticipantState(
         bool dispose /* = false */,
         WriteParams& )
 {
-    logInfo(RTPS_PDP, "Announcing RTPSParticipant State (new change: " << new_change << ")");
+    // logInfo(RTPS_PDP, "Announcing RTPSParticipant State (new change: " << new_change << ")");
 
     StatefulWriter* pW = dynamic_cast<StatefulWriter*>(mp_PDPWriter);
     assert(pW);

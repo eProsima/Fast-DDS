@@ -77,6 +77,19 @@ ReaderProxy::ReaderProxy(
     stop();
 }
 
+bool ReaderProxy::rtps_is_relevant(
+        CacheChange_t* change) const
+{
+    if (nullptr != writer_->reader_data_filter())
+    {
+        bool ret = writer_->reader_data_filter()->is_relevant(*change, guid());
+        logInfo(RTPS_READER_PROXY,
+                "Change " << change->instanceHandle << " is relevant for reader " << guid() << "? " << ret);
+        return ret;
+    }
+    return true;
+}
+
 ReaderProxy::~ReaderProxy()
 {
     if (nack_supression_event_)
@@ -123,7 +136,7 @@ void ReaderProxy::start(
         initial_heartbeat_event_->restart_timer();
     }
 
-    logInfo(RTPS_WRITER, "Reader Proxy started");
+    logInfo(RTPS_READER_PROXY, "Reader Proxy started");
 }
 
 bool ReaderProxy::update(
@@ -211,20 +224,16 @@ void ReaderProxy::add_change(
     // Irrelevant changes are not added to the collection
     if (!change.isRelevant())
     {
-        if (changes_for_reader_.empty())
-        {
-            changes_low_mark_ = change.getSequenceNumber();
-        }
-
         return;
     }
 
     if (changes_for_reader_.push_back(change) == nullptr)
     {
         // This should never happen
+        logError(RTPS_READER_PROXY, "Error adding change " << change.getSequenceNumber()
+                                                           << " to reader proxy " << guid());
+        eprosima::fastdds::dds::Log::Flush();
         assert(false);
-        logError(RTPS_WRITER, "Error adding change " << change.getSequenceNumber() << " to reader proxy " << \
-                guid());
     }
 }
 
@@ -245,12 +254,21 @@ bool ReaderProxy::change_is_acked(
     if (chit == changes_for_reader_.end())
     {
         // There is a hole in changes_for_reader_
-        // This means a change was removed.
-        // The case is equivalent to the !chit->isRelevant() code below
+        // This means a change was removed, or was not relevant.
         return true;
     }
 
-    return !chit->isRelevant() || chit->getStatus() == ACKNOWLEDGED;
+    return chit->getStatus() == ACKNOWLEDGED;
+}
+
+SequenceNumber_t ReaderProxy::first_relevant_sequence_number() const
+{
+    if (changes_for_reader_.empty())
+    {
+        return changes_low_mark_ + 1;
+    }
+
+    return changes_for_reader_.front().getSequenceNumber();
 }
 
 bool ReaderProxy::change_is_unsent(
@@ -270,10 +288,7 @@ bool ReaderProxy::change_is_unsent(
         return false;
     }
 
-    if (chit->isRelevant())
-    {
-        is_irrelevant = false;
-    }
+    is_irrelevant = false;
 
     return chit->getStatus() == UNSENT;
 }
@@ -373,7 +388,7 @@ bool ReaderProxy::requested_changes_set(
 
     if (isSomeoneWasSetRequested)
     {
-        logInfo(RTPS_WRITER, "Requested Changes: " << seq_num_set);
+        logInfo(RTPS_READER_PROXY, "Requested Changes: " << seq_num_set);
     }
 
     return isSomeoneWasSetRequested;
@@ -521,6 +536,12 @@ void ReaderProxy::change_has_been_removed(
 
     auto chit = find_change(seq_num);
 
+    if (chit == this->changes_for_reader_.end())
+    {
+        // No change for this sequence number
+        return;
+    }
+
     // In intraprocess, if there is an UNACKNOWLEDGED, a GAP has to be send because there is no reliable mechanism.
     if (is_local_reader() && ACKNOWLEDGED > chit->getStatus())
     {
@@ -535,7 +556,7 @@ bool ReaderProxy::has_unacknowledged() const
 {
     for (const ChangeForReader_t& it : changes_for_reader_)
     {
-        if (it.isRelevant() && it.getStatus() == UNACKNOWLEDGED)
+        if (it.getStatus() == UNACKNOWLEDGED)
         {
             return true;
         }
@@ -663,7 +684,7 @@ void ReaderProxy::send_gaps(
         }
         catch (const RTPSMessageGroup::timeout&)
         {
-            logError(RTPS_WRITER, "Max blocking time reached");
+            logError(RTPS_READER_PROXY, "Max blocking time reached");
         }
     }
 }

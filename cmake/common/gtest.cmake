@@ -107,6 +107,7 @@ macro(add_gtest)
                 set(WIN_PATH "$<TARGET_FILE_DIR:${DEP}>;${WIN_PATH}")
             endforeach()
             string(REPLACE ";" "\\;" WIN_PATH "${WIN_PATH}")
+
         endif()
 
         foreach(GTEST_SOURCE_FILE ${GTEST_SOURCES})
@@ -119,13 +120,20 @@ macro(add_gtest)
                     COMMAND ${command} --gtest_filter=${GTEST_GROUP_NAME}.${GTEST_TEST_NAME}:*/${GTEST_GROUP_NAME}.${GTEST_TEST_NAME}/*)
 
                 # Add environment
+                set(GTEST_ENVIRONMENT "")
                 if(WIN32)
-                    set_property(TEST ${GTEST_GROUP_NAME}.${GTEST_TEST_NAME} APPEND PROPERTY ENVIRONMENT "PATH=${WIN_PATH}")
+                    set(GTEST_ENVIRONMENT "PATH=${WIN_PATH}")
                 endif()
 
                 foreach(property ${GTEST_ENVIRONMENTS})
-                    set_property(TEST ${GTEST_GROUP_NAME}.${GTEST_TEST_NAME} APPEND PROPERTY ENVIRONMENT "${property}")
+                    list(APPEND GTEST_ENVIRONMENT "${property}")
                 endforeach()
+
+                if(GTEST_ENVIRONMENT)
+                    set_tests_properties(${GTEST_GROUP_NAME}.${GTEST_TEST_NAME}
+                        PROPERTIES ENVIRONMENT "${GTEST_ENVIRONMENT}")
+                endif()
+                unset(GTEST_ENVIRONMENT)
 
                 # Add labels
                 set_property(TEST ${GTEST_GROUP_NAME}.${GTEST_TEST_NAME} PROPERTY LABELS "${GTEST_LABELS}")
@@ -136,6 +144,7 @@ macro(add_gtest)
         add_test(NAME ${test} COMMAND ${command})
 
         # Add environment
+        set(GTEST_ENVIRONMENT "")
         if(WIN32)
             set(WIN_PATH "$ENV{PATH}")
             get_target_property(LINK_LIBRARIES_ ${command} LINK_LIBRARIES)
@@ -150,12 +159,20 @@ macro(add_gtest)
                 set(WIN_PATH "$<TARGET_FILE_DIR:${DEP}>;${WIN_PATH}")
             endforeach()
             string(REPLACE ";" "\\;" WIN_PATH "${WIN_PATH}")
-            set_property(TEST ${test} APPEND PROPERTY ENVIRONMENT "PATH=${WIN_PATH}")
+
+            set(GTEST_ENVIRONMENT "PATH=${WIN_PATH}")
+
         endif()
 
         foreach(property ${GTEST_ENVIRONMENTS})
-            set_property(TEST ${test} APPEND PROPERTY ENVIRONMENT "${property}")
+            list(APPEND GTEST_ENVIRONMENT "${property}")
         endforeach()
+
+        if(GTEST_ENVIRONMENT)
+            set_tests_properties(${test}
+                PROPERTIES ENVIRONMENT "${GTEST_ENVIRONMENT}")
+        endif()
+        unset(GTEST_ENVIRONMENT)
 
         # Add labels
         set_property(TEST ${test} PROPERTY LABELS "${GTEST_LABELS}")

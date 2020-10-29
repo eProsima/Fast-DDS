@@ -47,6 +47,80 @@ History::~History()
     logInfo(RTPS_HISTORY, "");
 }
 
+void History::do_release_cache(
+        CacheChange_t* ch)
+{
+    m_changePool.release_Cache(ch);
+}
+
+History::const_iterator History::find_change_nts(
+        CacheChange_t* ch)
+{
+    if ( nullptr == mp_mutex )
+    {
+        logError(RTPS_HISTORY, "You need to create a RTPS Entity with this History before using it");
+        return const_iterator();
+    }
+
+    return std::find_if(changesBegin(), changesEnd(), [this, ch](const CacheChange_t* chi)
+                   {
+                       // use the derived classes comparison criteria for searching
+                       return this->matches_change(chi, ch);
+                   });
+}
+
+bool History::matches_change(
+        const CacheChange_t* ch_inner,
+        CacheChange_t* ch_outer)
+{
+    return ch_inner->sequenceNumber == ch_outer->sequenceNumber;
+}
+
+History::iterator History::remove_change_nts(
+        const_iterator removal,
+        bool release)
+{
+    if (nullptr == mp_mutex)
+    {
+        return changesEnd();
+    }
+
+    if (removal == changesEnd())
+    {
+        logInfo(RTPS_WRITER_HISTORY, "Trying to remove without a proper CacheChange_t referenced");
+        return changesEnd();
+    }
+
+    CacheChange_t* change = *removal;
+    m_isHistoryFull = false;
+
+    if (release)
+    {
+        do_release_cache(change);
+    }
+
+    return m_changes.erase(removal);
+}
+
+bool History::remove_change(
+        CacheChange_t* ch)
+{
+    std::lock_guard<RecursiveTimedMutex> guard(*mp_mutex);
+
+    const_iterator it = find_change_nts(ch);
+
+    if (it == changesEnd())
+    {
+        logInfo(RTPS_WRITER_HISTORY, "Trying to remove a change not in history")
+        return false;
+    }
+
+    // remove using the virtual method
+    remove_change_nts(it);
+
+    return true;
+}
+
 bool History::remove_all_changes()
 {
 
@@ -158,9 +232,9 @@ bool History::get_earliest_change(
     return true;
 }
 
-}
-}
-}
+} // namespace rtps
+} // namespace fastrtps
+} // namespace eprosima
 
 
 //TODO Remove if you want.
@@ -182,6 +256,6 @@ void History::print_changes_seqNum2()
     std::cout << ss.str();
 }
 
-}
+} // namespace rtps
 } /* namespace rtps */
 } /* namespace eprosima */

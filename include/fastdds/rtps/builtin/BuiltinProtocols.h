@@ -93,7 +93,7 @@ public:
      * @param nf NetworkFactory used to make the translation
      */
     void transform_server_remote_locators(
-            NetworkFactory & nf);
+            NetworkFactory& nf);
 
     //!BuiltinAttributes of the builtin protocols.
     BuiltinAttributes m_att;
@@ -112,7 +112,7 @@ public:
     //! Initial peers
     LocatorList_t m_initialPeersList;
     //! Known discovery and backup server container
-    std::list<RemoteServerAttributes> m_DiscoveryServers;
+    std::list<eprosima::fastdds::rtps::RemoteServerAttributes> m_DiscoveryServers;
 
     /**
      * Add a local Writer to the BuiltinProtocols.
@@ -182,8 +182,8 @@ public:
 
 };
 
-}
+} // namespace rtps
 } /* namespace rtps */
 } /* namespace eprosima */
-#endif
+#endif // ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 #endif /* _FASTDDS_RTPS_BUILTINPROTOCOLS_H_ */

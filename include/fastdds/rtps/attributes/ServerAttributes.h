@@ -26,12 +26,16 @@
 
 #include <list>
 
-
 namespace eprosima {
+
 namespace fastrtps {
 namespace rtps {
-
 class ParticipantProxyData;
+} // fastrtps
+} // rtps
+
+namespace fastdds {
+namespace rtps {
 
 /**
  * Class RemoteServerAttributes, to define the attributes of the Discovery Server Protocol.
@@ -53,22 +57,22 @@ public:
 
     RTPS_DllAPI void clear()
     {
-        guidPrefix = GuidPrefix_t::unknown();
+        guidPrefix = fastrtps::rtps::GuidPrefix_t::unknown();
         metatrafficUnicastLocatorList.clear();
         metatrafficMulticastLocatorList.clear();
         proxy = nullptr;
     }
 
-    RTPS_DllAPI GUID_t GetParticipant() const;
+    RTPS_DllAPI fastrtps::rtps::GUID_t GetParticipant() const;
 
-    RTPS_DllAPI GUID_t GetPDPReader() const;
-    RTPS_DllAPI GUID_t GetPDPWriter() const;
+    RTPS_DllAPI fastrtps::rtps::GUID_t GetPDPReader() const;
+    RTPS_DllAPI fastrtps::rtps::GUID_t GetPDPWriter() const;
 
-    RTPS_DllAPI GUID_t GetEDPPublicationsReader() const;
-    RTPS_DllAPI GUID_t GetEDPSubscriptionsWriter() const;
+    RTPS_DllAPI fastrtps::rtps::GUID_t GetEDPPublicationsReader() const;
+    RTPS_DllAPI fastrtps::rtps::GUID_t GetEDPSubscriptionsWriter() const;
 
-    RTPS_DllAPI GUID_t GetEDPPublicationsWriter() const;
-    RTPS_DllAPI GUID_t GetEDPSubscriptionsReader() const;
+    RTPS_DllAPI fastrtps::rtps::GUID_t GetEDPPublicationsWriter() const;
+    RTPS_DllAPI fastrtps::rtps::GUID_t GetEDPSubscriptionsReader() const;
 
     RTPS_DllAPI inline bool ReadguidPrefix(
             const char* pfx)
@@ -77,15 +81,15 @@ public:
     }
 
     //!Metatraffic Unicast Locator List
-    LocatorList_t metatrafficUnicastLocatorList;
+    fastrtps::rtps::LocatorList_t metatrafficUnicastLocatorList;
     //!Metatraffic Multicast Locator List.
-    LocatorList_t metatrafficMulticastLocatorList;
+    fastrtps::rtps::LocatorList_t metatrafficMulticastLocatorList;
 
     //!Guid prefix
-    GuidPrefix_t guidPrefix;
+    fastrtps::rtps::GuidPrefix_t guidPrefix;
 
     // Live participant proxy reference
-    const ParticipantProxyData* proxy{};
+    const fastrtps::rtps::ParticipantProxyData* proxy{};
 };
 
 typedef std::list<RemoteServerAttributes> RemoteServerList_t;
@@ -113,10 +117,25 @@ RTPS_DllAPI bool load_environment_server_info(
  */
 RTPS_DllAPI bool get_server_client_default_guidPrefix(
         int id,
-        GuidPrefix_t& guid);
+        fastrtps::rtps::GuidPrefix_t& guid);
 
 } // namespace rtps
-} // namespace fastrtps
+} // namespace fastdds
+
+// keep former namespace references available
+namespace fastrtps {
+namespace rtps {
+
+using fastdds::rtps::RemoteServerAttributes;
+using fastdds::rtps::RemoteServerList_t;
+using fastdds::rtps::DEFAULT_ROS2_SERVER_PORT;
+using fastdds::rtps::DEFAULT_ROS2_SERVER_GUIDPREFIX;
+using fastdds::rtps::load_environment_server_info;
+using fastdds::rtps::get_server_client_default_guidPrefix;
+
+} // fastrtps
+} // rtps
+
 } // namespace eprosima
 
 #endif // DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
