@@ -77,7 +77,10 @@ public:
             std::shared_ptr<TopicPayloadPoolProxy>& pool)
     {
         std::lock_guard<std::mutex> lock(mutex_);
-        if (pool->dec_references())
+
+        // A reference count of 2 means the only ones referencing the pointer are the caller and the registry.
+        // This means we can release the pointer on the registry also.
+        if (pool.use_count() == 2)
         {
             auto it = pool_map_.find(pool->topic_name());
             assert(it != pool_map_.end());
@@ -111,7 +114,6 @@ private:
             ptr = std::make_shared<TopicPayloadPoolProxy>(topic_name, config);
         }
 
-        ptr->inc_references();
         return ptr;
     }
 
