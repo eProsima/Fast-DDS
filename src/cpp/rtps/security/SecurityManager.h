@@ -224,6 +224,8 @@ private:
         {
         public:
 
+            typedef std::unique_ptr<TimedEvent> EventUniquePtr;
+
             AuthenticationInfo(
                     AuthenticationStatus auth_status)
                 : identity_handle_(nullptr)
@@ -231,7 +233,6 @@ private:
                 , auth_status_(auth_status)
                 , expected_sequence_number_(0)
                 , change_sequence_number_(SequenceNumber_t::unknown())
-                , event_(nullptr)
             {
             }
 
@@ -256,7 +257,7 @@ private:
 
             SequenceNumber_t change_sequence_number_;
 
-            TimedEvent* event_;
+            EventUniquePtr event_;
 
         private:
 
