@@ -63,7 +63,8 @@ PDPServer2::PDPServer2(
     : PDP(builtin, allocation)
     , routine_(nullptr)
     , ping_(nullptr)
-    , discovery_db_(builtin->mp_participantImpl->getGuid().guidPrefix, servers_prefixes())
+    , discovery_db_(builtin->mp_participantImpl->getGuid().guidPrefix,
+            servers_prefixes())
     , _durability (durability_kind)
 {
 }
@@ -101,19 +102,41 @@ bool PDPServer2::init(
         return false;
     }
 
+    std::vector<nlohmann::json> backup_queue;
     if (_durability == TRANSIENT)
     {
+        nlohmann::json backup_json;
         // if the DS is BACKUP, try to restore DDB from file
         discovery_db().backup_in_progress(true);
-        if (process_discovery_database_restore_())
+        if (read_backup(backup_json, backup_queue))
         {
-            logInfo(DISCOVERY_DATABASE, "DiscoveryDataBase restored correctly");
+            if (process_discovery_database_restore_(backup_json))
+            {
+                logInfo(RTPS_PDP_SERVER, "DiscoveryDataBase restored correctly");
+            }
         }
+        else
+        {
+            logInfo(RTPS_PDP_SERVER, "Error reading backup file. Corrupted or unmissing file, restarting from scratch");
+        }
+
         discovery_db().backup_in_progress(false);
+
+        discovery_db_.persistence_enable(get_ddb_queue_persistence_file_name());
+
+        restore_queue(backup_queue);
+    }
+    else
+    {
+        // Allows the ddb to process new messages from this point
+        discovery_db_.enable();
     }
 
-    // allows the ddb to analyze new messages from this point
-    discovery_db_.enable();
+    // Activate listeners
+    EDPServer2* edp = static_cast<EDPServer2*>(mp_EDP);
+    getRTPSParticipant()->enableReader(mp_PDPReader);
+    getRTPSParticipant()->enableReader(edp->subscriptions_reader_.first);
+    getRTPSParticipant()->enableReader(edp->publications_reader_.first);
 
     // Initialize server dedicated thread.
     resource_event_thread_.init_thread();
@@ -200,9 +223,16 @@ bool PDPServer2::createPDPEndpoints()
     ratt.endpoint.multicastLocatorList = mp_builtin->m_metatrafficMulticastLocatorList;
     ratt.endpoint.unicastLocatorList = mp_builtin->m_metatrafficUnicastLocatorList;
     ratt.endpoint.topicKind = WITH_KEY;
-    ratt.endpoint.durabilityKind = TRANSIENT_LOCAL;
+    // change depending of backup mode
+    ratt.endpoint.durabilityKind = _durability;
     ratt.endpoint.reliabilityKind = RELIABLE;
     ratt.times.heartbeatResponseDelay = pdp_heartbeat_response_delay;
+
+#if HAVE_SQLITE3
+    ratt.endpoint.properties.properties().push_back(Property("dds.persistence.plugin", "builtin.SQLITE3"));
+    ratt.endpoint.properties.properties().push_back(Property("dds.persistence.sqlite3.filename",
+            get_reader_persistence_file_name()));
+#endif // HAVE_SQLITE3
 
     // PDP Listener
     mp_listener = new PDPServerListener2(this);
@@ -222,6 +252,8 @@ bool PDPServer2::createPDPEndpoints()
             temp_writer_data_.guid(it.GetPDPWriter());
             temp_writer_data_.set_multicast_locators(it.metatrafficMulticastLocatorList, network);
             temp_writer_data_.set_remote_unicast_locators(it.metatrafficUnicastLocatorList, network);
+            // TODO check if this is correct, it is equal as PDPServer, but we do not know like this the durKind of the
+            // other server
             temp_writer_data_.m_qos.m_durability.durabilityKind(_durability);
             temp_writer_data_.m_qos.m_reliability.kind = fastrtps::RELIABLE_RELIABILITY_QOS;
 
@@ -303,7 +335,7 @@ bool PDPServer2::createPDPEndpoints()
         mp_PDPWriterHistory = nullptr;
         return false;
     }
-    // TODO check if this should be done here or below
+    // TODO check if this should be done here or before this point in creation
     mp_PDPWriterHistory->remove_all_changes();
 
     logInfo(RTPS_PDP_SERVER, "PDPServer Endpoints creation finished");
@@ -468,7 +500,14 @@ std::ostringstream PDPServer2::get_persistence_file_name_() const
 std::string PDPServer2::get_writer_persistence_file_name() const
 {
     std::ostringstream filename = get_persistence_file_name_();
-    filename << ".db";
+    filename << "_writer.db";
+    return filename.str();
+}
+
+std::string PDPServer2::get_reader_persistence_file_name() const
+{
+    std::ostringstream filename = get_persistence_file_name_();
+    filename << "_reader.db";
     return filename.str();
 }
 
@@ -476,6 +515,13 @@ std::string PDPServer2::get_ddb_persistence_file_name() const
 {
     std::ostringstream filename = get_persistence_file_name_();
     filename << ".json";
+    return filename.str();
+}
+
+std::string PDPServer2::get_ddb_queue_persistence_file_name() const
+{
+    std::ostringstream filename = get_persistence_file_name_();
+    filename << "_queue.json";
     return filename.str();
 }
 
@@ -769,9 +815,14 @@ bool PDPServer2::server_update_routine()
     // There is pending work to be done by the server if there are changes that have not been acknowledged.
     bool pending_work = true;
 
+    // Must lock the mutes to unlock it in the loop
+    discovery_db().lock_incoming_data();
+
     // Execute the server routine
     do
     {
+        discovery_db().unlock_incoming_data();
+
         logInfo(RTPS_PDP_SERVER, "");
         logInfo(RTPS_PDP_SERVER, "-------------------- Server routine start --------------------");
         logInfo(RTPS_PDP_SERVER, "-------------------- " << mp_RTPSParticipant->getGuid() << " --------------------");
@@ -787,22 +838,27 @@ bool PDPServer2::server_update_routine()
         logInfo(RTPS_PDP_SERVER, "-------------------- " << mp_RTPSParticipant->getGuid() << " --------------------");
         logInfo(RTPS_PDP_SERVER, "-------------------- Server routine end --------------------");
         logInfo(RTPS_PDP_SERVER, "");
+
+        // Lock new data to check emptyness and to do the dump of the backup in case it is empty
+        discovery_db().lock_incoming_data();
     }
     // If the data queue is not empty re-start the routine.
     // A non-empty queue means that the server has received a change while it is running the processing routine.
     // If not considering disabled and there are changes in queue when disable, it will get in an infinite loop
     while (!discovery_db_.data_queue_empty() && discovery_db_.is_enabled());
 
-    // Must restart the routin after the period time
+    // Must restart the routine after the period time
 
     // It uses the free time (no messages to process) to save the new state of the ddb
     // This only will be called when:
-    //  there are not new data in queue
-    //  there has been any modification in the DDB (if not, this routine is not called)
+    // -there are not new data in queue
+    // -there has been any modification in the DDB (if not, this routine is not called)
     if (_durability == TRANSIENT && discovery_db_.is_enabled())
     {
-        process_discovery_database_backup_();
+        process_ddb_backup();
     }
+    // Unlock the incoming data after finishing the backuo storage
+    discovery_db().unlock_incoming_data();
 
     return pending_work && discovery_db_.is_enabled();
 }
@@ -1227,11 +1283,10 @@ bool PDPServer2::pending_ack()
             mp_PDPWriterHistory->getHistorySize() > 1 ||
             edp->publications_writer_.second->getHistorySize() > 0 ||
             edp->subscriptions_writer_.second->getHistorySize() > 0);
-
-    logInfo(RTPS_PDP_SERVER, "PDP writer history length " << mp_PDPWriterHistory->getHistorySize());
-    logInfo(RTPS_PDP_SERVER,
-            "is server " << mp_PDPWriter->getGuid() << " acked by all? " <<
-                        discovery_db_.server_acked_by_all());
+    logInfo(RTPS_PDP_SERVER, "Is server acked by all? " << discovery_db_.server_acked_by_all());
+    logInfo(RTPS_PDP_SERVER, "EDP pub history size " << edp->publications_writer_.second->getHistorySize());
+    logInfo(RTPS_PDP_SERVER, "EDP sub history size " << edp->subscriptions_writer_.second->getHistorySize());
+    logInfo(RTPS_PDP_SERVER, "PDP history size " << mp_PDPWriterHistory->getHistorySize());
     logInfo(RTPS_PDP_SERVER, "Are there pending changes? " << ret);
     return ret;
 }
@@ -1315,36 +1370,38 @@ void PDPServer2::send_announcement(
     }
 }
 
-void PDPServer2::process_discovery_database_backup_() const
-{
-    logInfo(RTPS_PDP_SERVER, "Dump DDB in json backup");
-
-    std::ofstream myfile;
-    myfile.open (get_ddb_persistence_file_name(), std::ios_base::out);
-    // set j with the json from database dump
-    nlohmann::json j;
-    discovery_db_.to_json(j);
-    // setw makes pretty print for json
-    myfile << std::setw(4) << j << std::endl;
-    myfile.close();
-}
-
-bool PDPServer2::process_discovery_database_restore_()
+bool PDPServer2::read_backup(nlohmann::json& ddb_json, std::vector<nlohmann::json>& new_changes)
 {
     std::ifstream myfile;
-    nlohmann::json j;
     try
     {
         myfile.open(get_ddb_persistence_file_name(), std::ios_base::in);
         // read json object
-        myfile >> j;
+        myfile >> ddb_json;
+        myfile.close();
+
+        myfile.open(get_ddb_queue_persistence_file_name(), std::ios_base::in);
+
+        std::string line;
+        while (std::getline(myfile, line))
+        {
+            nlohmann::json change_json(line);
+            // Read every change, and store it in json format in a vector
+            new_changes.push_back(change_json);
+        }
+
         myfile.close();
     }
     catch(const std::exception& e)
     {
         return false;
     }
+    return true;
+}
 
+
+bool PDPServer2::process_discovery_database_restore_(nlohmann::json& j)
+{
     logInfo(RTPS_PDP_SERVER, "Restoring DiscoveryDataBase from backup");
 
     // load every change and create it from its respective history
@@ -1395,6 +1452,11 @@ bool PDPServer2::process_discovery_database_restore_()
             {
                 change_aux->writerGUID = change_aux->write_params.sample_identity().writer_guid();
             }
+            else
+            {
+                change_aux->writerGUID = fastrtps::rtps::c_Guid_Unknown;
+            }
+
 
             changes_map.insert(
                     std::make_pair(change_aux->instanceHandle, change_aux));
@@ -1514,11 +1576,34 @@ bool PDPServer2::process_discovery_database_restore_()
         logError(DISCOVERY_DATABASE, "BACKUP CORRUPTED");
         return false;
     }
-
-    // getRTPSParticipant()->enableReader(mp_PDPReader);
-
     return true;
 }
+
+bool PDPServer2::restore_queue(std::vector<nlohmann::json>& new_changes)
+{
+    // TODO
+    return true;
+}
+
+void PDPServer2::process_ddb_backup()
+{
+    logInfo(DISCOVERY_DATABASE, "Dump DDB in json backup");
+
+    // This will erase the last backup stored
+    std::ofstream backup_json_file;
+    backup_json_file.open(get_ddb_persistence_file_name(), std::ios_base::out);
+
+    // Set j with the json from database dump
+    nlohmann::json j;
+    discovery_db().to_json(j);
+    // setw makes pretty print for json
+    backup_json_file << std::setw(4) << j << std::endl;
+    backup_json_file.close();
+
+    discovery_db_.clean_backup();
+}
+
+
 
 } // namespace rtps
 } // namespace fastdds

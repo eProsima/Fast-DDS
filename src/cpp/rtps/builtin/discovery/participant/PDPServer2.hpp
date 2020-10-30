@@ -130,11 +130,17 @@ public:
     void notifyAboveRemoteEndpoints(
             const fastrtps::rtps::ParticipantProxyData& pdata) override;
 
-    //! Get filename for persistence database file
+    //! Get filename for writer persistence database file
     std::string get_writer_persistence_file_name() const;
+
+    //! Get filename for reader persistence database file
+    std::string get_reader_persistence_file_name() const;
 
     //! Get filename for discovery database file
     std::string get_ddb_persistence_file_name() const;
+
+    //! Get filename for discovery database file
+    std::string get_ddb_queue_persistence_file_name() const;
 
     /*
      * Wakes up the DServerRoutineEvent2 for new matching or trimming
@@ -221,15 +227,19 @@ protected:
 
     bool process_dirty_topics();
 
-    bool pending_ack();
+    bool pending_ack();    
 
-    void process_discovery_database_backup_() const;
+    bool process_discovery_database_restore_(nlohmann::json& ddb_json);
 
-    bool process_discovery_database_restore_();
+    bool restore_queue(std::vector<nlohmann::json>& new_changes);
+
+    bool read_backup(nlohmann::json& ddb_json, std::vector<nlohmann::json>& new_changes);
 
     std::vector<fastrtps::rtps::GuidPrefix_t> servers_prefixes();
 
     std::ostringstream get_persistence_file_name_() const;
+
+    void process_ddb_backup();
 
 private:
 
