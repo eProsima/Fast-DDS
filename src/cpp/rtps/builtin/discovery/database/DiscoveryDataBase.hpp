@@ -23,6 +23,8 @@
 #include <vector>
 #include <map>
 #include <mutex>
+#include <iostream> 
+#include <fstream> 
 
 #include <fastrtps/utils/fixed_size_string.hpp>
 #include <fastdds/rtps/writer/ReaderProxy.h>
@@ -117,13 +119,6 @@ public:
             fastrtps::rtps::GuidPrefix_t server_guid_prefix,
             std::vector<fastrtps::rtps::GuidPrefix_t> servers);
 
-    //! Constructor from json backup
-    DiscoveryDataBase(
-            fastrtps::rtps::GuidPrefix_t server_guid_prefix,
-            std::vector<fastrtps::rtps::GuidPrefix_t> servers,
-            nlohmann::json j,
-            std::map<eprosima::fastrtps::rtps::InstanceHandle_t, fastrtps::rtps::CacheChange_t*> changes_map);
-
     ~DiscoveryDataBase();
 
     ////////////
@@ -146,6 +141,9 @@ public:
     {
         enabled_ = true;
     }
+
+    // enable ddb in persistence mode and open the file to backup up in append mode
+    void persistence_enable(std::string backup_file_name);
 
     //! Disable the possibility to add new entries to the database
     void disable()
@@ -300,6 +298,25 @@ public:
     bool from_json(
             nlohmann::json& j,
             std::map<eprosima::fastrtps::rtps::InstanceHandle_t, fastrtps::rtps::CacheChange_t*>& changes_map);
+
+    // This function erase the last backup and all the changes that has arrived since then and create
+    // a new backup that shows the actual state of the database
+    // This way we can simulate the state of the database from a clean state of json backup, or from
+    // an state in the middle of an routine execution, and every message that has arrived and has not
+    // been process.
+    // By this, we do not lose any change or information in any case
+    // This function must be called with the incoming datas blocked    
+    void clean_backup();
+
+    void lock_incoming_data()
+    {
+        data_queues_mutex_.lock();
+    }
+
+    void unlock_incoming_data()
+    {
+        data_queues_mutex_.unlock();
+    }
 
 protected:
 
@@ -483,8 +500,11 @@ protected:
     //! changes that are no longer associated to living endpoints and should be returned to it's pool
     std::vector<eprosima::fastrtps::rtps::CacheChange_t*> changes_to_release_;
 
-    //! Mutex
+    //! General mutex
     mutable std::recursive_mutex mutex_;
+
+    //! Mutex to lock updating to queues
+    mutable std::recursive_mutex data_queues_mutex_;
 
     //! GUID prefix from own server
     const fastrtps::rtps::GuidPrefix_t server_guid_prefix_;
@@ -503,6 +523,13 @@ protected:
 
     // Wheter the database is restoring a backup
     std::atomic<bool> processing_backup_;
+
+    // Wheter the database is persistent, so it must store every cache it arrives
+    bool is_persistent_;
+
+    // File to save every cacheChange that is updated to the ddb queues
+    std::string backup_file_name_;
+    std::ofstream backup_file_; 
 };
 
 
