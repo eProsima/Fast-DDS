@@ -173,7 +173,7 @@ TEST_P(Persistence, RTPSAsNonReliableWithPersistence)
     ASSERT_TRUE(reader.isInitialized());
 
     writer.make_persistent(db_file_name(), guid_prefix()).
-    reliability(eprosima::fastrtps::rtps::ReliabilityKind_t::BEST_EFFORT).init();
+            reliability(eprosima::fastrtps::rtps::ReliabilityKind_t::BEST_EFFORT).init();
 
     ASSERT_TRUE(writer.isInitialized());
 
@@ -207,8 +207,8 @@ TEST_P(Persistence, AsyncRTPSAsNonReliableWithPersistence)
     ASSERT_TRUE(reader.isInitialized());
 
     writer.make_persistent(db_file_name(), guid_prefix()).
-    reliability(eprosima::fastrtps::rtps::ReliabilityKind_t::BEST_EFFORT).
-    asynchronously(eprosima::fastrtps::rtps::RTPSWriterPublishMode::ASYNCHRONOUS_WRITER).init();
+            reliability(eprosima::fastrtps::rtps::ReliabilityKind_t::BEST_EFFORT).
+            asynchronously(eprosima::fastrtps::rtps::RTPSWriterPublishMode::ASYNCHRONOUS_WRITER).init();
 
     ASSERT_TRUE(writer.isInitialized());
 
@@ -236,7 +236,7 @@ TEST_P(Persistence, RTPSAsReliableWithPersistence)
     std::string ip("239.255.1.4");
 
     reader.make_persistent(db_file_name(), guid_prefix()).add_to_multicast_locator_list(ip, global_port).
-    reliability(eprosima::fastrtps::rtps::ReliabilityKind_t::RELIABLE).init();
+            reliability(eprosima::fastrtps::rtps::ReliabilityKind_t::RELIABLE).init();
 
     ASSERT_TRUE(reader.isInitialized());
 
@@ -268,12 +268,12 @@ TEST_P(Persistence, AsyncRTPSAsReliableWithPersistence)
     std::string ip("239.255.1.4");
 
     reader.make_persistent(db_file_name(), guid_prefix()).add_to_multicast_locator_list(ip, global_port).
-    reliability(eprosima::fastrtps::rtps::ReliabilityKind_t::RELIABLE).init();
+            reliability(eprosima::fastrtps::rtps::ReliabilityKind_t::RELIABLE).init();
 
     ASSERT_TRUE(reader.isInitialized());
 
     writer.make_persistent(db_file_name(), guid_prefix()).history_depth(10).
-    asynchronously(eprosima::fastrtps::rtps::RTPSWriterPublishMode::ASYNCHRONOUS_WRITER).init();
+            asynchronously(eprosima::fastrtps::rtps::RTPSWriterPublishMode::ASYNCHRONOUS_WRITER).init();
 
     ASSERT_TRUE(writer.isInitialized());
 
@@ -296,14 +296,21 @@ TEST_P(Persistence, AsyncRTPSAsReliableWithPersistence)
     std::cout << "Second round finished." << std::endl;
 }
 
-INSTANTIATE_TEST_CASE_P(Persistence,
+#ifdef INSTANTIATE_TEST_SUITE_P
+#define GTEST_INSTANTIATE_TEST_MACRO(x, y, z, w) INSTANTIATE_TEST_SUITE_P(x, y, z, w)
+#else
+#define GTEST_INSTANTIATE_TEST_MACRO(x, y, z, w) INSTANTIATE_TEST_CASE_P(x, y, z, w)
+#endif // ifdef INSTANTIATE_TEST_SUITE_P
+
+GTEST_INSTANTIATE_TEST_MACRO(Persistence,
         Persistence,
         testing::Values(false, true),
-        [](const testing::TestParamInfo<Persistence::ParamType>& info) {
+        [](const testing::TestParamInfo<Persistence::ParamType>& info)
+        {
             if (info.param)
             {
                 return "Intraprocess";
             }
             return "NonIntraprocess";
         });
-#endif
+#endif // if HAVE_SQLITE3

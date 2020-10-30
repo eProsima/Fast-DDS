@@ -56,7 +56,7 @@ TEST_P(PubSubFlowControllers, AsyncPubSubAsReliableData64kbWithParticipantFlowCo
     PubSubWriter<Data64kbType> writer(TEST_TOPIC_NAME);
 
     reader.history_depth(3).
-    reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).init();
+            reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).init();
 
     ASSERT_TRUE(reader.isInitialized());
 
@@ -65,7 +65,7 @@ TEST_P(PubSubFlowControllers, AsyncPubSubAsReliableData64kbWithParticipantFlowCo
     writer.add_throughput_controller_descriptor_to_pparams(bytesPerPeriod, periodInMs);
 
     writer.history_depth(3).
-    asynchronously(eprosima::fastrtps::ASYNCHRONOUS_PUBLISH_MODE).init();
+            asynchronously(eprosima::fastrtps::ASYNCHRONOUS_PUBLISH_MODE).init();
 
     ASSERT_TRUE(writer.isInitialized());
 
@@ -92,7 +92,7 @@ TEST_P(PubSubFlowControllers, AsyncPubSubAsReliableData64kbWithParticipantFlowCo
     PubSubWriter<Data64kbType> writer(TEST_TOPIC_NAME);
 
     reader.history_depth(3).
-    reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).init();
+            reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).init();
 
     ASSERT_TRUE(reader.isInitialized());
 
@@ -105,7 +105,7 @@ TEST_P(PubSubFlowControllers, AsyncPubSubAsReliableData64kbWithParticipantFlowCo
     writer.add_user_transport_to_pparams(testTransport);
 
     writer.history_depth(3).
-    asynchronously(eprosima::fastrtps::ASYNCHRONOUS_PUBLISH_MODE).init();
+            asynchronously(eprosima::fastrtps::ASYNCHRONOUS_PUBLISH_MODE).init();
 
     ASSERT_TRUE(writer.isInitialized());
 
@@ -132,15 +132,15 @@ TEST(PubSubFlowControllers, AsyncPubSubWithFlowController64kb)
     PubSubWriter<Data64kbType> slowWriter(TEST_TOPIC_NAME);
 
     reader.history_depth(2).
-    reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).init();
+            reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).init();
     ASSERT_TRUE(reader.isInitialized());
 
     uint32_t sizeToClear = 68000; //68kb
     uint32_t periodInMs = 1000; //1sec
 
     slowWriter.history_depth(2).
-    asynchronously(eprosima::fastrtps::ASYNCHRONOUS_PUBLISH_MODE).
-    add_throughput_controller_descriptor_to_pparams(sizeToClear, periodInMs).init();
+            asynchronously(eprosima::fastrtps::ASYNCHRONOUS_PUBLISH_MODE).
+            add_throughput_controller_descriptor_to_pparams(sizeToClear, periodInMs).init();
     ASSERT_TRUE(slowWriter.isInitialized());
 
     slowWriter.wait_discovery();
@@ -165,10 +165,17 @@ TEST_P(PubSubFlowControllers, FlowControllerIfNotAsync)
     ASSERT_FALSE(writer.isInitialized());
 }
 
-INSTANTIATE_TEST_CASE_P(PubSubFlowControllers,
+#ifdef INSTANTIATE_TEST_SUITE_P
+#define GTEST_INSTANTIATE_TEST_MACRO(x, y, z, w) INSTANTIATE_TEST_SUITE_P(x, y, z, w)
+#else
+#define GTEST_INSTANTIATE_TEST_MACRO(x, y, z, w) INSTANTIATE_TEST_CASE_P(x, y, z, w)
+#endif // ifdef INSTANTIATE_TEST_SUITE_P
+
+GTEST_INSTANTIATE_TEST_MACRO(PubSubFlowControllers,
         PubSubFlowControllers,
         testing::Values(false, true),
-        [](const testing::TestParamInfo<PubSubFlowControllers::ParamType>& info) {
+        [](const testing::TestParamInfo<PubSubFlowControllers::ParamType>& info)
+        {
             if (info.param)
             {
                 return "Intraprocess";

@@ -90,8 +90,8 @@ TEST_P(PubSubBasic, AsyncPubSubAsNonReliableHelloworld)
     ASSERT_TRUE(reader.isInitialized());
 
     writer.history_depth(100).
-    reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).
-    asynchronously(eprosima::fastrtps::ASYNCHRONOUS_PUBLISH_MODE).init();
+            reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).
+            asynchronously(eprosima::fastrtps::ASYNCHRONOUS_PUBLISH_MODE).init();
 
     ASSERT_TRUE(writer.isInitialized());
 
@@ -116,7 +116,7 @@ TEST_P(PubSubBasic, PubSubAsReliableHelloworld)
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
 
     reader.history_depth(100).
-    reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).init();
+            reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).init();
 
     ASSERT_TRUE(reader.isInitialized());
 
@@ -147,12 +147,12 @@ TEST_P(PubSubBasic, AsyncPubSubAsReliableHelloworld)
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
 
     reader.history_depth(100).
-    reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).init();
+            reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).init();
 
     ASSERT_TRUE(reader.isInitialized());
 
     writer.history_depth(100).
-    asynchronously(eprosima::fastrtps::ASYNCHRONOUS_PUBLISH_MODE).init();
+            asynchronously(eprosima::fastrtps::ASYNCHRONOUS_PUBLISH_MODE).init();
 
     ASSERT_TRUE(writer.isInitialized());
 
@@ -203,7 +203,7 @@ TEST_P(PubSubBasic, PubSubAsReliableData64kb)
     PubSubWriter<Data64kbType> writer(TEST_TOPIC_NAME);
 
     reader.history_depth(10).
-    reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).init();
+            reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).init();
 
     ASSERT_TRUE(reader.isInitialized());
 
@@ -233,7 +233,7 @@ TEST_P(PubSubBasic, PubSubMoreThan256Unacknowledged)
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
 
     writer.history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS).
-    durability_kind(eprosima::fastrtps::TRANSIENT_LOCAL_DURABILITY_QOS).init();
+            durability_kind(eprosima::fastrtps::TRANSIENT_LOCAL_DURABILITY_QOS).init();
 
     ASSERT_TRUE(writer.isInitialized());
 
@@ -246,8 +246,8 @@ TEST_P(PubSubBasic, PubSubMoreThan256Unacknowledged)
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
 
     reader.reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).
-    history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS).
-    durability_kind(eprosima::fastrtps::TRANSIENT_LOCAL_DURABILITY_QOS).init();
+            history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS).
+            durability_kind(eprosima::fastrtps::TRANSIENT_LOCAL_DURABILITY_QOS).init();
 
     ASSERT_TRUE(reader.isInitialized());
 
@@ -261,13 +261,13 @@ TEST_P(PubSubBasic, PubSubAsReliableHelloworldMulticastDisabled)
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
 
     reader.history_depth(100).
-    reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).
-    disable_multicast(0).init();
+            reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).
+            disable_multicast(0).init();
 
     ASSERT_TRUE(reader.isInitialized());
 
     writer.history_depth(100).
-    disable_multicast(1).init();
+            disable_multicast(1).init();
 
     ASSERT_TRUE(writer.isInitialized());
 
@@ -294,15 +294,15 @@ TEST_P(PubSubBasic, ReceivedDynamicDataWithNoSizeLimit)
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
 
     writer.history_depth(100)
-          .partition("A").partition("B").partition("C")
-          .userData({'a', 'b', 'c', 'd'}).init();
+            .partition("A").partition("B").partition("C")
+            .userData({'a', 'b', 'c', 'd'}).init();
 
 
     ASSERT_TRUE(writer.isInitialized());
 
     reader.history_depth(100)
-          .partition("A")
-          .reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).init();
+            .partition("A")
+            .reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).init();
 
     ASSERT_TRUE(reader.isInitialized());
 
@@ -327,17 +327,17 @@ TEST_P(PubSubBasic, ReceivedDynamicDataWithinSizeLimit)
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
 
     writer.history_depth(100)
-          .partition("A").partition("B").partition("C")
-          .userData({'a', 'b', 'c', 'd'}).init();
+            .partition("A").partition("B").partition("C")
+            .userData({'a', 'b', 'c', 'd'}).init();
 
 
     ASSERT_TRUE(writer.isInitialized());
 
     reader.user_data_max_size(4)
-          .partitions_max_size(28)
-          .history_depth(100)
-          .partition("A")
-          .reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).init();
+            .partitions_max_size(28)
+            .history_depth(100)
+            .partition("A")
+            .reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).init();
 
     ASSERT_TRUE(reader.isInitialized());
 
@@ -362,13 +362,13 @@ TEST_P(PubSubBasic, ReceivedUserDataExceedsSizeLimit)
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
 
     writer.history_depth(100)
-          .userData({'a', 'b', 'c', 'd', 'e', 'f'}).init();
+            .userData({'a', 'b', 'c', 'd', 'e', 'f'}).init();
 
     ASSERT_TRUE(writer.isInitialized());
 
     reader.user_data_max_size(4)
-          .history_depth(100)
-          .reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).init();
+            .history_depth(100)
+            .reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).init();
 
     ASSERT_TRUE(reader.isInitialized());
 
@@ -385,15 +385,15 @@ TEST_P(PubSubBasic, ReceivedPartitionDataExceedsSizeLimit)
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
 
     writer.history_depth(100)
-          .partition("A").partition("B").partition("C")
-          .init();
+            .partition("A").partition("B").partition("C")
+            .init();
 
     ASSERT_TRUE(writer.isInitialized());
 
     reader.partitions_max_size(20)
-          .history_depth(100)
-          .partition("A")
-          .reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).init();
+            .history_depth(100)
+            .partition("A")
+            .reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).init();
 
     ASSERT_TRUE(reader.isInitialized());
 
@@ -468,8 +468,9 @@ TEST_P(PubSubBasic, ReceivedPropertiesDataWithinSizeLimit)
     WriterMulticastLocators.push_back(LocatorBuffer);
 
     writer.static_discovery("PubSubWriter.xml").
-    unicastLocatorList(WriterUnicastLocators).multicastLocatorList(WriterMulticastLocators).
-    setPublisherIDs(1, 2).setManualTopicName(std::string("BlackBox_StaticDiscovery_") + TOPIC_RANDOM_NUMBER).init();
+            unicastLocatorList(WriterUnicastLocators).multicastLocatorList(WriterMulticastLocators).
+            setPublisherIDs(1,
+            2).setManualTopicName(std::string("BlackBox_StaticDiscovery_") + TOPIC_RANDOM_NUMBER).init();
 
     ASSERT_TRUE(writer.isInitialized());
 
@@ -485,9 +486,10 @@ TEST_P(PubSubBasic, ReceivedPropertiesDataWithinSizeLimit)
 
     //Expected properties have exactly size 52
     reader.properties_max_size(52).
-    static_discovery("PubSubReader.xml").
-    unicastLocatorList(ReaderUnicastLocators).multicastLocatorList(ReaderMulticastLocators).
-    setSubscriberIDs(3, 4).setManualTopicName(std::string("BlackBox_StaticDiscovery_") + TOPIC_RANDOM_NUMBER).init();
+            static_discovery("PubSubReader.xml").
+            unicastLocatorList(ReaderUnicastLocators).multicastLocatorList(ReaderMulticastLocators).
+            setSubscriberIDs(3,
+            4).setManualTopicName(std::string("BlackBox_StaticDiscovery_") + TOPIC_RANDOM_NUMBER).init();
 
     ASSERT_TRUE(reader.isInitialized());
 
@@ -563,8 +565,9 @@ TEST_P(PubSubBasic, ReceivedPropertiesDataExceedsSizeLimit)
     WriterMulticastLocators.push_back(LocatorBuffer);
 
     writer.static_discovery("PubSubWriter.xml").
-    unicastLocatorList(WriterUnicastLocators).multicastLocatorList(WriterMulticastLocators).
-    setPublisherIDs(1, 2).setManualTopicName(std::string("BlackBox_StaticDiscovery_") + TOPIC_RANDOM_NUMBER).init();
+            unicastLocatorList(WriterUnicastLocators).multicastLocatorList(WriterMulticastLocators).
+            setPublisherIDs(1,
+            2).setManualTopicName(std::string("BlackBox_StaticDiscovery_") + TOPIC_RANDOM_NUMBER).init();
 
     ASSERT_TRUE(writer.isInitialized());
 
@@ -582,7 +585,8 @@ TEST_P(PubSubBasic, ReceivedPropertiesDataExceedsSizeLimit)
     reader.properties_max_size(50)
             .static_discovery("PubSubReader.xml")
             .unicastLocatorList(ReaderUnicastLocators).multicastLocatorList(ReaderMulticastLocators)
-            .setSubscriberIDs(3, 4).setManualTopicName(std::string("BlackBox_StaticDiscovery_") + TOPIC_RANDOM_NUMBER).init();
+            .setSubscriberIDs(3,
+            4).setManualTopicName(std::string("BlackBox_StaticDiscovery_") + TOPIC_RANDOM_NUMBER).init();
 
     ASSERT_TRUE(reader.isInitialized());
 
@@ -594,10 +598,18 @@ TEST_P(PubSubBasic, ReceivedPropertiesDataExceedsSizeLimit)
     ASSERT_FALSE(reader.is_matched());
 }
 
-INSTANTIATE_TEST_CASE_P(PubSubBasic,
+
+#ifdef INSTANTIATE_TEST_SUITE_P
+#define GTEST_INSTANTIATE_TEST_MACRO(x, y, z, w) INSTANTIATE_TEST_SUITE_P(x, y, z, w)
+#else
+#define GTEST_INSTANTIATE_TEST_MACRO(x, y, z, w) INSTANTIATE_TEST_CASE_P(x, y, z, w)
+#endif // ifdef INSTANTIATE_TEST_SUITE_P
+
+GTEST_INSTANTIATE_TEST_MACRO(PubSubBasic,
         PubSubBasic,
         testing::Values(false, true),
-        [](const testing::TestParamInfo<PubSubBasic::ParamType>& info) {
+        [](const testing::TestParamInfo<PubSubBasic::ParamType>& info)
+        {
             if (info.param)
             {
                 return "Intraprocess";

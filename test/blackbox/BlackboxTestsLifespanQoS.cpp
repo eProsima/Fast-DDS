@@ -72,11 +72,11 @@ TEST_P(LifespanQos, LongLifespan)
     uint32_t lifespan_ms = 10000;
 
     writer.history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS)
-    .lifespan_period(lifespan_ms * 1e-3)
-    .init();
+            .lifespan_period(lifespan_ms * 1e-3)
+            .init();
     reader.history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS)
-    .reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS)
-    .init();
+            .reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS)
+            .init();
 
     ASSERT_TRUE(reader.isInitialized());
     ASSERT_TRUE(writer.isInitialized());
@@ -124,11 +124,11 @@ TEST_P(LifespanQos, ShortLifespan)
     uint32_t lifespan_ms = 1;
 
     writer.history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS)
-    .lifespan_period(lifespan_ms * 1e-3)
-    .init();
+            .lifespan_period(lifespan_ms * 1e-3)
+            .init();
     reader.history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS)
-    .lifespan_period(lifespan_ms * 1e-3)
-    .init();
+            .lifespan_period(lifespan_ms * 1e-3)
+            .init();
 
     ASSERT_TRUE(reader.isInitialized());
     ASSERT_TRUE(writer.isInitialized());
@@ -154,14 +154,21 @@ TEST_P(LifespanQos, ShortLifespan)
     EXPECT_EQ(reader.takeNextData(&msg), false);
 }
 
-INSTANTIATE_TEST_CASE_P(LifespanQos,
+#ifdef INSTANTIATE_TEST_SUITE_P
+#define GTEST_INSTANTIATE_TEST_MACRO(x, y, z, w) INSTANTIATE_TEST_SUITE_P(x, y, z, w)
+#else
+#define GTEST_INSTANTIATE_TEST_MACRO(x, y, z, w) INSTANTIATE_TEST_CASE_P(x, y, z, w)
+#endif // ifdef INSTANTIATE_TEST_SUITE_P
+
+GTEST_INSTANTIATE_TEST_MACRO(LifespanQos,
         LifespanQos,
         testing::Values(false, true),
-        [](const testing::TestParamInfo<LifespanQos::ParamType>& info) {
-    if (info.param)
-    {
-        return "Intraprocess";
-    }
-    return "NonIntraprocess";
-});
+        [](const testing::TestParamInfo<LifespanQos::ParamType>& info)
+        {
+            if (info.param)
+            {
+                return "Intraprocess";
+            }
+            return "NonIntraprocess";
+        });
 
