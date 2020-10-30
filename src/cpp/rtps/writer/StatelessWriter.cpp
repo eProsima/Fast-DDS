@@ -363,12 +363,15 @@ bool StatelessWriter::change_removed_by_history(
 {
     std::lock_guard<RecursiveTimedMutex> guard(mp_mutex);
 
-    unsent_changes_.remove_if(
-        [change](ChangeForReader_t& cptr)
-        {
-            return cptr.getChange() == change ||
-            cptr.getChange()->sequenceNumber == change->sequenceNumber;
-        });
+    if (unsent_changes_.remove_if(
+                [change](ChangeForReader_t& cptr)
+                {
+                    return cptr.getChange() == change ||
+                    cptr.getChange()->sequenceNumber == change->sequenceNumber;
+                }))
+    {
+        unsent_changes_cond_.notify_all();
+    }
 
     return true;
 }
@@ -400,6 +403,29 @@ bool StatelessWriter::try_remove_change(
         std::unique_lock<RecursiveTimedMutex>&)
 {
     return mp_history->remove_min_change();
+}
+
+bool StatelessWriter::wait_for_acknowledgement(
+        CacheChange_t* change,
+        const std::chrono::steady_clock::time_point& max_blocking_time_point,
+        std::unique_lock<RecursiveTimedMutex>& lock)
+{
+    if (!isAsync())
+    {
+        return true;
+    }
+
+    SequenceNumber_t seq = change->sequenceNumber;
+    auto change_is_unsent = [seq](const ChangeForReader_t& unsent_change)
+            {
+                return seq == unsent_change.getSequenceNumber();
+            };
+    auto change_is_acknowledged = [this, change_is_unsent]()
+            {
+                return unsent_changes_.end() ==
+                       std::find_if(unsent_changes_.begin(), unsent_changes_.end(), change_is_unsent);
+            };
+    return unsent_changes_cond_.wait_until(lock, max_blocking_time_point, change_is_acknowledged);
 }
 
 void StatelessWriter::update_unsent_changes(
@@ -445,6 +471,9 @@ void StatelessWriter::send_any_unsent_changes()
     }
 
     logInfo(RTPS_WRITER, "Finish sending unsent changes");
+
+    // In case someone is waiting for changes to be sent
+    unsent_changes_cond_.notify_all();
 }
 
 void StatelessWriter::send_all_unsent_changes()

@@ -225,6 +225,11 @@ public:
             const std::chrono::steady_clock::time_point& max_blocking_time_point,
             std::unique_lock<RecursiveTimedMutex>& lock) override;
 
+    bool wait_for_acknowledgement(
+            CacheChange_t* change,
+            const std::chrono::steady_clock::time_point& max_blocking_time_point,
+            std::unique_lock<RecursiveTimedMutex>& lock) override;
+
     /**
      * Update the Attributes of the Writer.
      * @param att New attributes

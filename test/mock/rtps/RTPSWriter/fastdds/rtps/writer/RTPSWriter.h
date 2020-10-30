@@ -107,6 +107,14 @@ public:
         return true;
     }
 
+    virtual bool wait_for_acknowledgement(
+            CacheChange_t*,
+            const std::chrono::steady_clock::time_point&,
+            std::unique_lock<RecursiveTimedMutex>&)
+    {
+        return true;
+    }
+
     virtual void unsent_change_added_to_history(
             CacheChange_t*,
             const std::chrono::time_point<std::chrono::steady_clock>&)
