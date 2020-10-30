@@ -72,7 +72,9 @@ protected:
         std::remove(dbfile);
     }
 
-    void create_database(sqlite3** db, int version)
+    void create_database(
+            sqlite3** db,
+            int version)
     {
         const char* create_statement;
         switch (version)
@@ -95,20 +97,23 @@ protected:
         rc = sqlite3_open_v2(dbfile, db, flags, 0);
         if (rc != SQLITE_OK)
         {
-             FAIL() << sqlite3_errmsg(*db);
+            FAIL() << sqlite3_errmsg(*db);
         }
 
-        rc = sqlite3_exec(*db,create_statement,0,0,0);
+        rc = sqlite3_exec(*db, create_statement, 0, 0, 0);
         if (rc != SQLITE_OK)
         {
-             FAIL() << sqlite3_errmsg(*db);
+            FAIL() << sqlite3_errmsg(*db);
         }
     }
 
-    void add_writer_data_v1(sqlite3* db, const char* persist_guid, int seq_num)
+    void add_writer_data_v1(
+            sqlite3* db,
+            const char* persist_guid,
+            int seq_num)
     {
         sqlite3_stmt* add_data_statement;
-        sqlite3_prepare_v2(db,"INSERT INTO writers VALUES(?,?,?,?);",-1,&add_data_statement,NULL);
+        sqlite3_prepare_v2(db, "INSERT INTO writers VALUES(?,?,?,?);", -1, &add_data_statement, NULL);
 
         sqlite3_bind_text(add_data_statement, 1, persist_guid, -1, SQLITE_STATIC);
         sqlite3_bind_int64(add_data_statement, 2, seq_num);
@@ -122,10 +127,13 @@ protected:
         sqlite3_finalize(add_data_statement);
     }
 
-    void add_writer_data_v2(sqlite3* db, const char* persist_guid, int seq_num)
+    void add_writer_data_v2(
+            sqlite3* db,
+            const char* persist_guid,
+            int seq_num)
     {
         sqlite3_stmt* add_last_seq_statement;
-        sqlite3_prepare_v2(db,"INSERT INTO writers_states VALUES(?,?);",-1,&add_last_seq_statement,NULL);
+        sqlite3_prepare_v2(db, "INSERT INTO writers_states VALUES(?,?);", -1, &add_last_seq_statement, NULL);
 
         sqlite3_bind_text(add_last_seq_statement, 1, persist_guid, -1, SQLITE_STATIC);
         sqlite3_bind_int64(add_last_seq_statement, 2, seq_num);
@@ -137,7 +145,7 @@ protected:
         sqlite3_finalize(add_last_seq_statement);
 
         sqlite3_stmt* add_data_statement;
-        sqlite3_prepare_v2(db,"INSERT INTO writers_histories VALUES(?,?,?,?);",-1,&add_data_statement,NULL);
+        sqlite3_prepare_v2(db, "INSERT INTO writers_histories VALUES(?,?,?,?);", -1, &add_data_statement, NULL);
 
         sqlite3_bind_text(add_data_statement, 1, persist_guid, -1, SQLITE_STATIC);
         sqlite3_bind_int64(add_data_statement, 2, seq_num);
@@ -151,7 +159,11 @@ protected:
         sqlite3_finalize(add_data_statement);
     }
 
-    void add_writer_data(sqlite3* db, int version, const char* persist_guid, int seq_num)
+    void add_writer_data(
+            sqlite3* db,
+            int version,
+            const char* persist_guid,
+            int seq_num)
     {
         switch (version)
         {
@@ -252,9 +264,9 @@ TEST_F(PersistenceTest, Writer)
 
 
 /*!
-* @fn TEST_F(PersistenceTest, SchemaVersionMismatch)
-* @brief This test checks that an error is issued if the database has an old schema.
-*/
+ * @fn TEST_F(PersistenceTest, SchemaVersionMismatch)
+ * @brief This test checks that an error is issued if the database has an old schema.
+ */
 TEST_F(PersistenceTest, SchemaVersionMismatch)
 {
     const char* persist_guid = "TEST_WRITER";
@@ -274,9 +286,9 @@ TEST_F(PersistenceTest, SchemaVersionMismatch)
 }
 
 /*!
-* @fn TEST_F(PersistenceTest, SchemaVersionUpdateFrom1To2)
-* @brief This test checks that the database is updated correctly.
-*/
+ * @fn TEST_F(PersistenceTest, SchemaVersionUpdateFrom1To2)
+ * @brief This test checks that the database is updated correctly.
+ */
 TEST_F(PersistenceTest, SchemaVersionUpdateFrom1To2)
 {
     const char* persist_guid = "TEST_WRITER";

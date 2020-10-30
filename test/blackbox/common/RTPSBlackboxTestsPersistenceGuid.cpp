@@ -181,7 +181,8 @@ TEST_P(PersistenceGuid, CheckPrevalenceBetweenManualAndPropertyConfiguration)
     ASSERT_EQ(result1, 0);
 
     // Check if there is one entry in the writers database table with the stated persistence guid
-    result1 = system("python check_guid.py \"persistence.db\" \"writers_histories\" \"0.0.0.0.0.0.0.0.0.0.0.1|0.0.0.1\"");
+    result1 =
+            system("python check_guid.py \"persistence.db\" \"writers_histories\" \"0.0.0.0.0.0.0.0.0.0.0.1|0.0.0.1\"");
     ASSERT_EQ(result1, 1);
 
     // Check if that there is no entry in the readers database table with the stated persistence guid

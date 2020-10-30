@@ -58,7 +58,10 @@ static unsigned int database_version(
     return version;
 }
 
-static int upgrade(sqlite3* db, int from, int to)
+static int upgrade(
+        sqlite3* db,
+        int from,
+        int to)
 {
     if (from == to)
     {
@@ -75,7 +78,9 @@ static int upgrade(sqlite3* db, int from, int to)
     return SQLITE_ERROR;
 }
 
-static sqlite3* open_or_create_database(const char* filename, bool update_schema)
+static sqlite3* open_or_create_database(
+        const char* filename,
+        bool update_schema)
 {
     sqlite3* db = NULL;
     int rc;
@@ -83,7 +88,7 @@ static sqlite3* open_or_create_database(const char* filename, bool update_schema
 
     // Open database
     int flags = SQLITE_OPEN_READWRITE |
-                SQLITE_OPEN_FULLMUTEX | SQLITE_OPEN_SHAREDCACHE;
+            SQLITE_OPEN_FULLMUTEX | SQLITE_OPEN_SHAREDCACHE;
     rc = sqlite3_open_v2(filename, &db, flags, 0);
     if (rc != SQLITE_OK)
     {
@@ -122,13 +127,13 @@ static sqlite3* open_or_create_database(const char* filename, bool update_schema
             else
             {
                 logError(RTPS_PERSISTENCE, "Old schema version " << db_version << " on database " << filename
-                    << ". Set property dds.persistence.update_schema to force automatic schema upgrade");
+                                                                 << ". Set property dds.persistence.update_schema to force automatic schema upgrade");
                 return NULL;
             }
-            
+
         }
     }
-    
+
     // Create tables if they don't exist
     rc = sqlite3_exec(db, SQLite3PersistenceServiceSchemaV2::database_create_statement().c_str(), 0, 0, 0);
     if (rc != SQLITE_OK)
@@ -151,7 +156,8 @@ static void finalize_statement(
 }
 
 IPersistenceService* create_SQLite3_persistence_service(
-        const char* filename, bool update_schema)
+        const char* filename,
+        bool update_schema)
 {
     sqlite3* db = open_or_create_database(filename, update_schema);
     return (db == NULL) ? nullptr : new SQLite3PersistenceService(db);
@@ -169,16 +175,17 @@ SQLite3PersistenceService::SQLite3PersistenceService(
     , update_reader_stmt_(NULL)
 {
     // Prepare writer statements
-    sqlite3_prepare_v3(db_, "SELECT seq_num,instance,payload FROM writers_histories WHERE guid=?;",-1,SQLITE_PREPARE_PERSISTENT,
+    sqlite3_prepare_v3(db_, "SELECT seq_num,instance,payload FROM writers_histories WHERE guid=?;", -1,
+            SQLITE_PREPARE_PERSISTENT,
             &load_writer_stmt_, NULL);
-    sqlite3_prepare_v3(db_, "INSERT INTO writers_histories VALUES(?,?,?,?);",-1,SQLITE_PREPARE_PERSISTENT,
+    sqlite3_prepare_v3(db_, "INSERT INTO writers_histories VALUES(?,?,?,?);", -1, SQLITE_PREPARE_PERSISTENT,
             &add_writer_change_stmt_, NULL);
-    sqlite3_prepare_v3(db_, "DELETE FROM writers_histories WHERE guid=? AND seq_num=?;",-1,SQLITE_PREPARE_PERSISTENT,
+    sqlite3_prepare_v3(db_, "DELETE FROM writers_histories WHERE guid=? AND seq_num=?;", -1, SQLITE_PREPARE_PERSISTENT,
             &remove_writer_change_stmt_, NULL);
 
-    sqlite3_prepare_v3(db_, "SELECT last_seq_num FROM writers_states WHERE guid=?;",-1,SQLITE_PREPARE_PERSISTENT,
+    sqlite3_prepare_v3(db_, "SELECT last_seq_num FROM writers_states WHERE guid=?;", -1, SQLITE_PREPARE_PERSISTENT,
             &load_writer_last_seq_num_stmt_, NULL);
-    sqlite3_prepare_v3(db_, "INSERT OR REPLACE INTO writers_states VALUES(?,?);",-1,SQLITE_PREPARE_PERSISTENT,
+    sqlite3_prepare_v3(db_, "INSERT OR REPLACE INTO writers_states VALUES(?,?);", -1, SQLITE_PREPARE_PERSISTENT,
             &update_writer_last_seq_num_stmt_, NULL);
 
     // Prepare reader statements
@@ -263,7 +270,7 @@ bool SQLite3PersistenceService::load_writer_from_storage(
         }
 
         sqlite3_reset(load_writer_last_seq_num_stmt_);
-        sqlite3_bind_text(load_writer_last_seq_num_stmt_,1,persistence_guid.c_str(),-1,SQLITE_STATIC);
+        sqlite3_bind_text(load_writer_last_seq_num_stmt_, 1, persistence_guid.c_str(), -1, SQLITE_STATIC);
 
         while (SQLITE_ROW == sqlite3_step(load_writer_last_seq_num_stmt_))
         {
