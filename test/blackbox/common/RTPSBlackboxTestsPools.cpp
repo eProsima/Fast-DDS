@@ -344,7 +344,13 @@ TEST_P(RTPSCustomPools, RTPSAsReliableWithRegistrationBothPools300Kb)
     do_test<Data1mb, Data1mbType>(TEST_TOPIC_NAME, data, true, true, false);
 }
 
-INSTANTIATE_TEST_CASE_P(RTPSCustomPools,
+#ifdef INSTANTIATE_TEST_SUITE_P
+#define GTEST_INSTANTIATE_TEST_MACRO(x, y, z, w) INSTANTIATE_TEST_SUITE_P(x, y, z, w)
+#else
+#define GTEST_INSTANTIATE_TEST_MACRO(x, y, z, w) INSTANTIATE_TEST_CASE_P(x, y, z, w)
+#endif // ifdef INSTANTIATE_TEST_SUITE_P
+
+GTEST_INSTANTIATE_TEST_MACRO(RTPSCustomPools,
         RTPSCustomPools,
         testing::Values(false, true),
         [](const testing::TestParamInfo<RTPSCustomPools::ParamType>& info)
