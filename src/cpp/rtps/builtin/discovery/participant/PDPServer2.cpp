@@ -1406,7 +1406,9 @@ bool PDPServer2::process_discovery_database_restore_(nlohmann::json& j)
 
     // load every change and create it from its respective history
     EDPServer2* edp = static_cast<EDPServer2*>(mp_EDP);
-    StatefulReader* p_PDPReader = static_cast<StatefulReader*>(mp_PDPReader);
+    EDPServerPUBListener2* edp_pub_listener = static_cast<EDPServerPUBListener2*>(edp->publications_listener_);
+    EDPServerSUBListener2* edp_sub_listener = static_cast<EDPServerSUBListener2*>(edp->subscriptions_listener_);
+
     std::unique_lock<fastrtps::RecursiveTimedMutex> lock(mp_PDPReader->getMutex());
     std::unique_lock<fastrtps::RecursiveTimedMutex> lock_edpp(edp->publications_reader_.first->getMutex());
     std::unique_lock<fastrtps::RecursiveTimedMutex> lock_edps(edp->subscriptions_reader_.first->getMutex());
@@ -1466,8 +1468,8 @@ bool PDPServer2::process_discovery_database_restore_(nlohmann::json& j)
                     mp_PDPWriter->getGuid().guidPrefix
                     && change_aux->kind == fastrtps::rtps::ALIVE)
             {
-                p_PDPReader->change_received(change_aux, nullptr);
-                // mp_listener->onNewCacheChangeAdded(mp_PDPReader, change_aux);
+                // p_PDPReader->change_received(change_aux, nullptr);
+                mp_listener->onNewCacheChangeAdded(mp_PDPReader, change_aux);
             }
         }
 
@@ -1509,15 +1511,9 @@ bool PDPServer2::process_discovery_database_restore_(nlohmann::json& j)
                     mp_PDPWriter->getGuid().guidPrefix
                     && change_aux->kind == fastrtps::rtps::ALIVE)
             {
-                // edp_pub_listener->onNewCacheChangeAdded(edp->publications_reader_.first, change_aux);
-                edp->publications_reader_.first->change_received(change_aux, nullptr);
+                edp_pub_listener->onNewCacheChangeAdded(edp->publications_reader_.first, change_aux);
             }
         }
-
-        // for (auto it = changes_map.begin(); it != changes_map.end(); ++it)
-        // {
-        //     logWarning(DISCOVERY_DATABASE, "Change " << it->first << " with instance handle " << it->second->instanceHandle);
-        // }
 
         // Create every reader change. If it is external creates it from Reader,
         // if it is created from the server, it is created from writer
@@ -1557,15 +1553,9 @@ bool PDPServer2::process_discovery_database_restore_(nlohmann::json& j)
                     mp_PDPWriter->getGuid().guidPrefix
                     && change_aux->kind == fastrtps::rtps::ALIVE)
             {
-                edp->subscriptions_reader_.first->change_received(change_aux, nullptr);
-                // edp_sub_listener->onNewCacheChangeAdded(edp->subscriptions_reader_.first, change_aux);
+                edp_sub_listener->onNewCacheChangeAdded(edp->subscriptions_reader_.first, change_aux);
             }
         }
-
-        // for (auto it = changes_map.begin(); it != changes_map.end(); ++it)
-        // {
-        //     logWarning(DISCOVERY_DATABASE, "Change " << it->first << " with instance handle " << it->second->instanceHandle);
-        // }
 
         // load database
         discovery_db_.from_json(j, changes_map);
@@ -1581,7 +1571,125 @@ bool PDPServer2::process_discovery_database_restore_(nlohmann::json& j)
 
 bool PDPServer2::restore_queue(std::vector<nlohmann::json>& new_changes)
 {
-    // TODO
+    fastrtps::rtps::SampleIdentity sample_identity_aux;
+    uint32_t length;
+
+    EDPServer2* edp = static_cast<EDPServer2*>(mp_EDP);
+    EDPServerPUBListener2* edp_pub_listener = static_cast<EDPServerPUBListener2*>(edp->publications_listener_);
+    EDPServerSUBListener2* edp_sub_listener = static_cast<EDPServerSUBListener2*>(edp->subscriptions_listener_);
+
+    std::unique_lock<fastrtps::RecursiveTimedMutex> lock(mp_PDPReader->getMutex());
+    std::unique_lock<fastrtps::RecursiveTimedMutex> lock_edpp(edp->publications_reader_.first->getMutex());
+    std::unique_lock<fastrtps::RecursiveTimedMutex> lock_edps(edp->subscriptions_reader_.first->getMutex());
+
+    try
+    {
+        // Read every change and push it to the listener that it belongs
+        for (auto json_change : new_changes)
+        {
+
+            fastrtps::rtps::CacheChange_t* change_aux;
+            length = json_change["serialized_payload"]["length"].get<std::uint32_t>();
+            (std::istringstream) json_change["sample_identity"].get<std::string>() >> sample_identity_aux;
+
+
+
+            // Belongs to own server
+            if (sample_identity_aux.writer_guid() == mp_PDPWriter->getGuid())
+            {
+                if (discovery_db_.is_participant(sample_identity_aux.writer_guid()))
+                {
+                    if (!mp_PDPWriterHistory->reserve_Cache(&change_aux, length))
+                    {
+                        logError(RTPS_PDP_SERVER, "Error creating CacheChange");
+                        // TODO release changes and exit
+                    }
+                    else
+                    {
+                        ddb::from_json(new_changes, *change_aux);
+                        mp_listener->onNewCacheChangeAdded(mp_PDPReader, change_aux);
+                    }
+
+                }
+                else if (discovery_db_.is_writer(sample_identity_aux.writer_guid()))
+                {
+                    if (!edp->publications_writer_.second->reserve_Cache(&change_aux, length))
+                    {
+                        logError(RTPS_PDP_SERVER, "Error creating CacheChange");
+                        // TODO release changes and exit
+                    }
+                    else
+                    {
+                        ddb::from_json(new_changes, *change_aux);
+                        edp_pub_listener->onNewCacheChangeAdded(edp->publications_reader_.first, change_aux);
+                    }
+                }
+                else if (discovery_db_.is_reader(sample_identity_aux.writer_guid()))
+                {
+                    if (!edp->subscriptions_writer_.second->reserve_Cache(&change_aux, length))
+                    {
+                        logError(RTPS_PDP_SERVER, "Error creating CacheChange");
+                        // TODO release changes and exit
+                    }
+                    else
+                    {
+                        ddb::from_json(new_changes, *change_aux);
+                        edp_sub_listener->onNewCacheChangeAdded(edp->subscriptions_reader_.first, change_aux);
+                    }
+                }
+            }
+            // It came from outside
+            else
+            {
+                if (discovery_db_.is_participant(sample_identity_aux.writer_guid()))
+                {
+                    if (!mp_PDPReaderHistory->reserve_Cache(&change_aux, length))
+                    {
+                        logError(RTPS_PDP_SERVER, "Error creating CacheChange");
+                        // TODO release changes and exit
+                    }
+                    else
+                    {
+                        ddb::from_json(new_changes, *change_aux);
+                        mp_listener->onNewCacheChangeAdded(mp_PDPReader, change_aux);
+                    }
+
+                }
+                else if (discovery_db_.is_writer(sample_identity_aux.writer_guid()))
+                {
+                    if (!edp->publications_reader_.second->reserve_Cache(&change_aux, length))
+                    {
+                        logError(RTPS_PDP_SERVER, "Error creating CacheChange");
+                        // TODO release changes and exit
+                    }
+                    else
+                    {
+                        ddb::from_json(new_changes, *change_aux);
+                        edp_pub_listener->onNewCacheChangeAdded(edp->publications_reader_.first, change_aux);
+                    }
+                }
+                else if (discovery_db_.is_reader(sample_identity_aux.writer_guid()))
+                {
+                    if (!edp->subscriptions_reader_.second->reserve_Cache(&change_aux, length))
+                    {
+                        logError(RTPS_PDP_SERVER, "Error creating CacheChange");
+                        // TODO release changes and exit
+                    }
+                    else
+                    {
+                        ddb::from_json(new_changes, *change_aux);
+                        edp_sub_listener->onNewCacheChangeAdded(edp->subscriptions_reader_.first, change_aux);
+                    }
+                }
+            }
+        }
+    }
+    catch (std::ios_base::failure&)
+    {
+        // TODO clean changes in case it has been an error
+        logError(DISCOVERY_DATABASE, "QUEUE BACKUP CORRUPTED");
+        return false;
+    }
     return true;
 }
 
