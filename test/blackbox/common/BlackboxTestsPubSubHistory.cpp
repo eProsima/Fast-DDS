@@ -520,16 +520,16 @@ TEST_P(PubSubHistory, PubSubAsReliableKeepAllWithKeyAndMaxSamplesPerInstance)
     uint32_t keys = 2;
 
     reader.resource_limits_max_instances(keys).
-    reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).
-    history_kind(eprosima::fastrtps::KEEP_LAST_HISTORY_QOS).init();
+            reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).
+            history_kind(eprosima::fastrtps::KEEP_LAST_HISTORY_QOS).init();
 
     ASSERT_TRUE(reader.isInitialized());
 
     writer.resource_limits_max_instances(keys)
-    .resource_limits_max_samples_per_instance(1)
-    .history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS)
-    .reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS)
-    .init();
+            .resource_limits_max_samples_per_instance(1)
+            .history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS)
+            .reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS)
+            .init();
 
     ASSERT_TRUE(writer.isInitialized());
 
@@ -565,16 +565,16 @@ TEST_P(PubSubHistory, PubSubAsReliableKeepAllWithKeyAndInfiniteMaxSamplesPerInst
     uint32_t keys = 2;
 
     reader.resource_limits_max_instances(keys).
-    reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).
-    history_kind(eprosima::fastrtps::KEEP_LAST_HISTORY_QOS).init();
+            reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).
+            history_kind(eprosima::fastrtps::KEEP_LAST_HISTORY_QOS).init();
 
     ASSERT_TRUE(reader.isInitialized());
 
     writer.resource_limits_max_instances(keys)
-    .resource_limits_max_samples_per_instance(0)
-    .history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS)
-    .reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS)
-    .init();
+            .resource_limits_max_samples_per_instance(0)
+            .history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS)
+            .reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS)
+            .init();
 
     ASSERT_TRUE(writer.isInitialized());
 
@@ -610,15 +610,15 @@ TEST_P(PubSubHistory, PubSubAsReliableKeepAllWithKeyAndInfiniteMaxInstances)
     uint32_t keys = 2;
 
     reader.resource_limits_max_instances(keys).
-    reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).
-    history_kind(eprosima::fastrtps::KEEP_LAST_HISTORY_QOS).init();
+            reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).
+            history_kind(eprosima::fastrtps::KEEP_LAST_HISTORY_QOS).init();
 
     ASSERT_TRUE(reader.isInitialized());
 
     writer.resource_limits_max_instances(0)
-    .history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS)
-    .reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS)
-    .init();
+            .history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS)
+            .reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS)
+            .init();
 
     ASSERT_TRUE(writer.isInitialized());
 
@@ -654,18 +654,18 @@ TEST_P(PubSubHistory, PubSubAsReliableKeepAllWithKeyAndMaxSamples)
     uint32_t keys = 2;
 
     reader.resource_limits_max_instances(keys).
-    reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).
-    history_kind(eprosima::fastrtps::KEEP_LAST_HISTORY_QOS).init();
+            reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).
+            history_kind(eprosima::fastrtps::KEEP_LAST_HISTORY_QOS).init();
 
     ASSERT_TRUE(reader.isInitialized());
 
     writer.resource_limits_max_instances(keys)
-    .resource_limits_max_samples(2)
-    .resource_limits_allocated_samples(2)
-    .resource_limits_max_samples_per_instance(2)
-    .history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS)
-    .reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS)
-    .init();
+            .resource_limits_max_samples(2)
+            .resource_limits_allocated_samples(2)
+            .resource_limits_max_samples_per_instance(2)
+            .history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS)
+            .reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS)
+            .init();
 
     ASSERT_TRUE(writer.isInitialized());
 
@@ -699,15 +699,15 @@ TEST_P(PubSubHistory, PubSubAsReliableKeepAllWithoutKeyAndMaxSamples)
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
 
     reader.reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).
-    history_kind(eprosima::fastrtps::KEEP_LAST_HISTORY_QOS).init();
+            history_kind(eprosima::fastrtps::KEEP_LAST_HISTORY_QOS).init();
 
     ASSERT_TRUE(reader.isInitialized());
 
     writer.resource_limits_max_samples(2)
-    .resource_limits_allocated_samples(2)
-    .history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS)
-    .reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS)
-    .init();
+            .resource_limits_allocated_samples(2)
+            .history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS)
+            .reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS)
+            .init();
 
     ASSERT_TRUE(writer.isInitialized());
 
