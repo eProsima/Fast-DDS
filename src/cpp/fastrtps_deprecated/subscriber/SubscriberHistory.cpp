@@ -26,6 +26,7 @@
 #include <fastdds/dds/topic/TopicDataType.hpp>
 #include <fastdds/dds/log/Log.hpp>
 
+#include <limits>
 #include <mutex>
 
 namespace eprosima {
@@ -89,6 +90,21 @@ SubscriberHistory::SubscriberHistory(
     if (type_->m_isGetKeyDefined)
     {
         get_key_object_ = type_->createData();
+    }
+
+    if (resource_limited_qos_.max_samples == 0)
+    {
+        resource_limited_qos_.max_samples = std::numeric_limits<int32_t>::max();
+    }
+
+    if (resource_limited_qos_.max_instances == 0)
+    {
+        resource_limited_qos_.max_instances = std::numeric_limits<int32_t>::max();
+    }
+
+    if (resource_limited_qos_.max_samples_per_instance == 0)
+    {
+        resource_limited_qos_.max_samples_per_instance = std::numeric_limits<int32_t>::max();
     }
 
     using std::placeholders::_1;
