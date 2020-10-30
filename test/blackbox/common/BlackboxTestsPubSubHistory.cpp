@@ -479,7 +479,7 @@ TEST_P(PubSubHistory, PubSubAsReliableKeepLastReaderSmallDepthTwoPublishers)
     ASSERT_EQ(received.index(), 3u);
 }
 
-TEST(BlackBox, PubSubAsReliableKeepLastWithKey)
+TEST_P(PubSubHistory, PubSubAsReliableKeepLastWithKey)
 {
     PubSubReader<KeyedHelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<KeyedHelloWorldType> writer(TEST_TOPIC_NAME);
@@ -512,7 +512,7 @@ TEST(BlackBox, PubSubAsReliableKeepLastWithKey)
     reader.stopReception();
 }
 
-TEST(BlackBox, PubSubAsReliableKeepAllWithKeyAndMaxSamplesPerInstance)
+TEST_P(PubSubHistory, PubSubAsReliableKeepAllWithKeyAndMaxSamplesPerInstance)
 {
     PubSubReader<KeyedHelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<KeyedHelloWorldType> writer(TEST_TOPIC_NAME);
@@ -557,7 +557,7 @@ TEST(BlackBox, PubSubAsReliableKeepAllWithKeyAndMaxSamplesPerInstance)
     reader.block_for_all();
 }
 
-TEST(BlackBox, PubSubAsReliableKeepAllWithKeyAndInfiniteMaxSamplesPerInstance)
+TEST_P(PubSubHistory, PubSubAsReliableKeepAllWithKeyAndInfiniteMaxSamplesPerInstance)
 {
     PubSubReader<KeyedHelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<KeyedHelloWorldType> writer(TEST_TOPIC_NAME);
@@ -602,7 +602,7 @@ TEST(BlackBox, PubSubAsReliableKeepAllWithKeyAndInfiniteMaxSamplesPerInstance)
     reader.block_for_all();
 }
 
-TEST(BlackBox, PubSubAsReliableKeepAllWithKeyAndInfiniteMaxInstances)
+TEST_P(PubSubHistory, PubSubAsReliableKeepAllWithKeyAndInfiniteMaxInstances)
 {
     PubSubReader<KeyedHelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<KeyedHelloWorldType> writer(TEST_TOPIC_NAME);
@@ -646,7 +646,7 @@ TEST(BlackBox, PubSubAsReliableKeepAllWithKeyAndInfiniteMaxInstances)
     reader.block_for_all();
 }
 
-TEST(BlackBox, PubSubAsReliableKeepAllWithKeyAndMaxSamples)
+TEST_P(PubSubHistory, PubSubAsReliableKeepAllWithKeyAndMaxSamples)
 {
     PubSubReader<KeyedHelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<KeyedHelloWorldType> writer(TEST_TOPIC_NAME);
@@ -693,7 +693,7 @@ TEST(BlackBox, PubSubAsReliableKeepAllWithKeyAndMaxSamples)
     reader.block_for_all();
 }
 
-TEST(BlackBox, PubSubAsReliableKeepAllWithoutKeyAndMaxSamples)
+TEST_P(PubSubHistory, PubSubAsReliableKeepAllWithoutKeyAndMaxSamples)
 {
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
@@ -735,7 +735,7 @@ TEST(BlackBox, PubSubAsReliableKeepAllWithoutKeyAndMaxSamples)
     reader.block_for_all();
 }
 
-TEST(BlackBox, PubSubAsReliableKeepLastReaderSmallDepthWithKey)
+TEST_P(PubSubHistory, PubSubAsReliableKeepLastReaderSmallDepthWithKey)
 {
     PubSubReader<KeyedHelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<KeyedHelloWorldType> writer(TEST_TOPIC_NAME);
