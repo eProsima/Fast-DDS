@@ -171,7 +171,11 @@ bool PublisherHistory::add_pub_change(
                 }
                 else
                 {
-                    logWarning(RTPS_HISTORY, "Change not added due to maximum number of samples per instance");
+                    CacheChange_t* change_to_remove = vit->second.cache_changes.front();
+                    if (mp_writer->wait_for_acknowledgement(change_to_remove, max_blocking_time, lock))
+                    {
+                        add = remove_change_pub(vit->second.cache_changes.front());
+                    }
                 }
             }
             else if (history_qos_.kind == KEEP_LAST_HISTORY_QOS)
@@ -182,10 +186,7 @@ bool PublisherHistory::add_pub_change(
                 }
                 else
                 {
-                    if (remove_change_pub(vit->second.cache_changes.front()))
-                    {
-                        add = true;
-                    }
+                    add = remove_change_pub(vit->second.cache_changes.front());
                 }
             }
 
