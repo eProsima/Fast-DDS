@@ -42,6 +42,7 @@ DiscoveryDataBase::DiscoveryDataBase(
     , servers_(servers)
     , enabled_(true)
     , processing_backup_(false)
+    , is_persistent_ (false)
 {
 }
 
@@ -299,6 +300,17 @@ bool DiscoveryDataBase::update(
         eprosima::fastrtps::rtps::CacheChange_t* change,
         DiscoveryParticipantChangeData participant_change_data)
 {
+    // in case the ddb is persistent, we store every cache in queue in a file
+    if (is_persistent_)
+    {
+        // Does not allow to the server to erase the ddb before this message has been processed
+        std::unique_lock<std::recursive_mutex> lock(data_queues_mutex_);
+        nlohmann::json j;
+        ddb::to_json(j, *change);
+        backup_file_ << j;
+        backup_file_.flush();
+    }
+
     if (!enabled_)
     {
         logInfo(DISCOVERY_DATABASE, "Discovery Database is disabled");
@@ -320,6 +332,17 @@ bool DiscoveryDataBase::update(
         eprosima::fastrtps::rtps::CacheChange_t* change,
         std::string topic_name)
 {
+    // in case the ddb is persistent, we store every cache in queue in a file
+    if (is_persistent_)
+    {
+        // Does not allow to the server to erase the ddb before this message has been process
+        std::unique_lock<std::recursive_mutex> lock(data_queues_mutex_);
+        nlohmann::json j;
+        ddb::to_json(j, *change);
+        backup_file_ << j;
+        backup_file_.flush();
+    }
+
     if (!enabled_)
     {
         logInfo(DISCOVERY_DATABASE, "Discovery Database is disabled");
@@ -2401,6 +2424,23 @@ bool DiscoveryDataBase::from_json(
 
     return true;
 }
+
+void DiscoveryDataBase::clean_backup()
+{
+    logInfo(DISCOVERY_DATABASE, "Restoring queue DDB in json backup");
+
+    // This will erase the last backup stored
+    backup_file_.close();
+    backup_file_.open(backup_file_name_, std::ios_base::out);
+}
+
+void DiscoveryDataBase::persistence_enable(std::string backup_file_name)
+{
+    is_persistent_ = true;
+    backup_file_name_ = backup_file_name;
+    backup_file_.open(backup_file_name_, std::ios::app);
+}
+
 
 } // namespace ddb
 } // namespace rtps
