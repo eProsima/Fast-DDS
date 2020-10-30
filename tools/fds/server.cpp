@@ -112,8 +112,9 @@ int main (
     }
 
     fastdds::dds::Log::SetCategoryFilter(
-        std::regex("(RTPS_HISTORY)|(RTPS_WRITER_HISTORY)|(RTPS_READER_HISTORY)|(RTPS_PDP_SERVER)|(READER_PROXY)"
-        "|(RTPS_PDP)|(SERVER_PDP_THREAD)|(CLIENT_PDP_THREAD)|(DISCOVERY_DATABASE)|(RTPS_PDP_LISTENER)"));
+        std::regex("(RTPS_PDPSERVER_TRIM)|(RTPS_PARTICIPANT)|(DISCOVERY_SERVER)"
+        "|(SERVER_PDP_THREAD)|(CLIENT_PDP_THREAD)|(RTPS_WRITER_HISTORY)|(RTPS_READER_HISTORY)|(RTPS_PDP)"
+        "|(DISCOVERY_DATABASE)|(RTPS_PDP_LISTENER)|(SERVER_PING_THREAD)"));
     fastdds::dds::Log::SetVerbosity(fastdds::dds::Log::Kind::Info);
 
     // Choose the kind of server to create

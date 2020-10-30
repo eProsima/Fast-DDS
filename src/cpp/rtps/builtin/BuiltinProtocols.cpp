@@ -113,7 +113,7 @@ bool BuiltinProtocols::initBuiltinProtocols(
 
          #if HAVE_SQLITE3
         case DiscoveryProtocol_t::BACKUP:
-            mp_PDP = new PDPServer(this, allocation);
+            mp_PDP = new PDPServer(this, allocation, DurabilityKind_t::TRANSIENT);
             break;
          #endif // if HAVE_SQLITE3
 

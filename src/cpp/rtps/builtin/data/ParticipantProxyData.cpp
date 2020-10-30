@@ -774,7 +774,7 @@ void ParticipantProxyData::set_persistence_guid(
 
     // generate pair
     std::pair<std::string, std::string> persistent_guid;
-    persistent_guid.first = "PID_PERSISTENCE_GUID";
+    persistent_guid.first = fastdds::dds::parameter_property_persistence_guid;
 
     std::ostringstream data;
     data << guid;
@@ -814,7 +814,7 @@ GUID_t ParticipantProxyData::get_persistence_guid() const
         m_properties.end(),
         [](const fastdds::dds::ParameterProperty_t p)
         {
-            return "PID_PERSISTENCE_GUID" == p.first();
+            return fastdds::dds::parameter_property_persistence_guid == p.first();
         });
 
     if (it != m_properties.end())

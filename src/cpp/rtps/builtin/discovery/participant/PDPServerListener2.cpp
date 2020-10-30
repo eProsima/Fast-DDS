@@ -124,24 +124,91 @@ void PDPServerListener2::onNewCacheChangeAdded(
                     pdp_server()->getRTPSParticipant()->network_factory(),
                     pdp_server()->getRTPSParticipant()->has_shm_transport()))
         {
-            // // Key should not match instance handle
-            // if (change->instanceHandle == temp_participant_data_.m_key)
-            // {
-            //     logInfo(RTPS_PDP_LISTENER, "Malformed PDP payload received, ignoring: " << change->instanceHandle);
-            //     return;
-            // }
-
-            // Check whether the participant is a CLIENT or a SERVER
-            bool is_client = true;
-            fastrtps::ParameterPropertyList_t properties = temp_participant_data_.m_properties;
-            for (auto property : properties)
+            /* Check PID_VENDOR_ID */
+            if (temp_participant_data_.m_VendorId != fastrtps::rtps::c_VendorId_eProsima)
             {
-                // If property PID_PERSISTENCE_GUID is set, then the participant is not a CLIENT
-                if (property.first() == "PID_PERSISTENCE_GUID")
+                logInfo(RTPS_PDP_LISTENER,
+                        "DATA(p|Up) from different vendor is not supported for Discover-Server operation");
+                return;
+            }
+
+            fastrtps::ParameterPropertyList_t properties = temp_participant_data_.m_properties;
+
+            /* Check DS_VERSION */
+            auto ds_version = std::find_if(
+                properties.begin(),
+                properties.end(),
+                [](const dds::ParameterProperty_t& property)
+                {
+                    return property.first() == dds::parameter_property_ds_version;
+                });
+
+            if (ds_version != properties.end())
+            {
+                if (std::stof(ds_version->second()) < 1.0)
+                {
+                    logError(RTPS_PDP_LISTENER, "Minimum " << dds::parameter_property_ds_version
+                                                           << " is 1.0, found: " << ds_version->second());
+                    return;
+                }
+                logInfo(RTPS_PDP_LISTENER, "Participant " << dds::parameter_property_ds_version << ": "
+                                                          << ds_version->second());
+            }
+            else
+            {
+                logInfo(RTPS_PDP_LISTENER, dds::parameter_property_ds_version << " is not set. Assuming 1.0");
+            }
+
+            /* Check PARTICIPANT_TYPE */
+            bool is_client = true;
+            auto participant_type = std::find_if(
+                properties.begin(),
+                properties.end(),
+                [](const dds::ParameterProperty_t& property)
+                {
+                    return property.first() == dds::parameter_property_participant_type;
+                });
+
+            if (participant_type != properties.end())
+            {
+                if (participant_type->second() == ParticipantType::SERVER ||
+                        participant_type->second() == ParticipantType::BACKUP)
                 {
                     is_client = false;
-                    break;
                 }
+                else if (participant_type->second() == ParticipantType::SIMPLE)
+                {
+                    logInfo(RTPS_PDP_LISTENER, "Ignoring " << dds::parameter_property_participant_type << ": "
+                                                           << participant_type->second());
+                    return;
+                }
+                else if (participant_type->second() != ParticipantType::CLIENT)
+                {
+                    logError(RTPS_PDP_LISTENER, "Wrong " << dds::parameter_property_participant_type << ": "
+                                                         << participant_type->second());
+                    return;
+                }
+                logInfo(RTPS_PDP_LISTENER, "Participant type " << participant_type->second());
+            }
+            else
+            {
+                logInfo(RTPS_PDP_LISTENER, dds::parameter_property_participant_type << " is not set");
+                // Fallback to checking whether participant is a SERVER looking for the persistence GUID
+                auto persistence_guid = std::find_if(
+                    properties.begin(),
+                    properties.end(),
+                    [](const dds::ParameterProperty_t& property)
+                    {
+                        return property.first() == dds::parameter_property_persistence_guid;
+                    });
+                // The presence of persistence GUID property suggests a SERVER. This assumption is made to keep
+                // backwards compatibility with Discovery Server v1.0. However, any participant that has been configured
+                // as persistent will have this property.
+                if (persistence_guid != properties.end())
+                {
+                    is_client = false;
+                }
+                logInfo(RTPS_PDP_LISTENER, "Participant is client: " << std::boolalpha << is_client);
             }
 
             // Check whether the participant is a client/server of this server or if it has been forwarded from
@@ -153,6 +220,8 @@ void PDPServerListener2::onNewCacheChangeAdded(
             {
                 is_local = false;
             }
+
+            logInfo(RTPS_PDP_LISTENER, "Participant is local: " << std::boolalpha << is_local);
 
             // Notify the DiscoveryDataBase
             if (pdp_server()->discovery_db().update(
