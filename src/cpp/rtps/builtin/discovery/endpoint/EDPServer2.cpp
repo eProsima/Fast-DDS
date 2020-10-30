@@ -53,7 +53,7 @@ bool EDPServer2::createSEDPEndpoints()
 #if HAVE_SQLITE3
     ratt.endpoint.properties.properties().push_back(Property("dds.persistence.plugin", "builtin.SQLITE3"));
     ratt.endpoint.properties.properties().push_back(Property("dds.persistence.sqlite3.filename",
-            get_pdp()->get_writer_persistence_file_name()));
+            get_pdp()->get_reader_persistence_file_name()));
 #endif // if HAVE_SQLITE3
 
     /* EDP Writers attributes */
