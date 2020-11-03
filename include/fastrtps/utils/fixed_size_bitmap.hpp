@@ -118,7 +118,7 @@ public:
         base_ = base;
         range_max_ = base_ + (NBITS - 1);
         num_bits_ = 0;
-        bitmap_.fill(0UL);
+        bitmap_.fill(0u);
     }
 
     /**
@@ -232,8 +232,8 @@ public:
             if (diff < num_bits_)
             {
                 uint32_t pos = diff >> 5;
-                diff &= 31UL;
-                return (bitmap_[pos] & (1UL << (31UL - diff))) != 0;
+                diff &= 31u;
+                return (bitmap_[pos] & (1u << (31u - diff))) != 0;
             }
         }
 
@@ -280,7 +280,7 @@ public:
             const T& from,
             const T& to)
     {
-        constexpr uint32_t full_mask = 0xFFFFFFFF;
+        constexpr uint32_t full_mask = std::numeric_limits<uint32_t>::max();
 
         // Adapt incoming range to range limits
         T min = (base_ >= from) ? base_ : from;
@@ -312,7 +312,7 @@ public:
             pos++;                              // Go to next position in the array
             n_bits -= bits_in_mask;             // Decrease number of pending bits
             mask = full_mask;                   // Mask with all bits set
-            bits_in_mask = 32UL;                // All bits set in mask (32)
+            bits_in_mask = 32u;                 // All bits set in mask (32)
         }
 
         // This condition will be true if the last bits of the mask should not be used
@@ -385,7 +385,7 @@ public:
         memcpy(bitmap_.data(), bitmap, num_bytes);
         if (0 < num_bits)
         {
-            bitmap_[num_items - 1] &= ~(std::numeric_limits<uint32_t>::max() >> (num_bits & 31UL));
+            bitmap_[num_items - 1] &= ~(std::numeric_limits<uint32_t>::max() >> (num_bits & 31u));
         }
         calc_maximum_bit_set(num_items, 0);
     }
@@ -450,7 +450,7 @@ private:
         {
             // Shifting more than most significant. Clear whole bitmap.
             num_bits_ = 0;
-            bitmap_.fill(0UL);
+            bitmap_.fill(0u);
         }
         else
         {
@@ -459,7 +459,7 @@ private:
 
             // Div and mod by 32
             uint32_t n_items = n_bits >> 5;
-            n_bits &= 31UL;
+            n_bits &= 31u;
             if (n_bits == 0)
             {
                 // Shifting a multiple of 32 bits, just move the bitmap integers
@@ -495,7 +495,7 @@ private:
         {
             // Shifting more than total bitmap size. Clear whole bitmap.
             num_bits_ = 0;
-            bitmap_.fill(0UL);
+            bitmap_.fill(0u);
         }
         else
         {
@@ -506,7 +506,7 @@ private:
 
             // Div and mod by 32
             uint32_t n_items = n_bits >> 5;
-            n_bits &= 31UL;
+            n_bits &= 31u;
             if (n_bits == 0)
             {
                 // Shifting a multiple of 32 bits, just move the bitmap integers

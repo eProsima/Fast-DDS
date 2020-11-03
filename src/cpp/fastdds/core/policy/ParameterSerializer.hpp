@@ -92,10 +92,10 @@ class ParameterSerializer<Parameter_t>
 {
 public:
 
-    static constexpr uint32_t PARAMETER_STATUS_SIZE = 8;
-    static constexpr uint32_t PARAMETER_KEY_SIZE = 20;
-    static constexpr uint32_t PARAMETER_SENTINEL_SIZE = 4;
-    static constexpr uint32_t PARAMETER_SAMPLE_IDENTITY_SIZE = 28;
+    static constexpr uint32_t PARAMETER_STATUS_SIZE = 8u;
+    static constexpr uint32_t PARAMETER_KEY_SIZE = 20u;
+    static constexpr uint32_t PARAMETER_SENTINEL_SIZE = 4u;
+    static constexpr uint32_t PARAMETER_SAMPLE_IDENTITY_SIZE = 28u;
 
     static bool add_parameter_status(
             fastrtps::rtps::CDRMessage_t* cdr_message,
