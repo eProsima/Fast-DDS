@@ -28,8 +28,10 @@
 #include <fastdds/rtps/writer/RTPSWriter.h>
 #include <fastrtps/utils/collections/ResourceLimitedVector.hpp>
 
+#include <condition_variable>
 #include <list>
 #include <memory>
+#include <mutex>
 
 namespace eprosima {
 namespace fastrtps {
