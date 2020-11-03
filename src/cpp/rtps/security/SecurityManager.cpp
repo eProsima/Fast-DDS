@@ -600,6 +600,16 @@ bool SecurityManager::discovered_participant(
     {
         assert(remote_participant_info);
 
+        // Configure the timed event but do not start it
+        const GUID_t guid = participant_data.m_guid;
+        remote_participant_info->event_.reset(new TimedEvent(participant_->getEventResource(),
+                [&, guid]() -> bool
+                {
+                    resend_handshake_message_token(guid);
+                    return true;
+                },
+                500)); // TODO (Ricardo) Configurable
+
         IdentityHandle* remote_identity_handle = nullptr;
 
         // Validate remote participant.
@@ -804,7 +814,7 @@ bool SecurityManager::on_process_handshake(
     assert(remote_participant_info->handshake_handle_ != nullptr);
 
     // Remove previous change
-    remote_participant_info->event_.reset();
+    remote_participant_info->event_->cancel_timer();
     if (remote_participant_info->change_sequence_number_ != SequenceNumber_t::unknown())
     {
         participant_stateless_message_writer_history_->remove_change(remote_participant_info->change_sequence_number_);
@@ -920,14 +930,6 @@ bool SecurityManager::on_process_handshake(
                 if (ret == VALIDATION_PENDING_HANDSHAKE_MESSAGE)
                 {
                     remote_participant_info->expected_sequence_number_ = expected_sequence_number;
-                    const GUID_t guid = participant_data.m_guid;
-                    remote_participant_info->event_.reset(new TimedEvent(participant_->getEventResource(),
-                                    [&, guid]() -> bool
-                                    {
-                                        resend_handshake_message_token(guid);
-                                        return true;
-                                    },
-                                    500)); // TODO (Ricardo) Configurable
                     remote_participant_info->event_->restart_timer();
                 }
 
