@@ -225,7 +225,7 @@ void DiscoveryDataBase::add_ack_(
 {
     if (!enabled_)
     {
-        logWarning(DISCOVERY_DATABASE, "Discovery Database is disabled");
+        logInfo(DISCOVERY_DATABASE, "Discovery Database is disabled");
         return;
     }
 
@@ -282,7 +282,7 @@ bool DiscoveryDataBase::update(
 {
     if (!enabled_)
     {
-        logWarning(DISCOVERY_DATABASE, "Discovery Database is disabled");
+        logInfo(DISCOVERY_DATABASE, "Discovery Database is disabled");
         return false;
     }
 
@@ -303,7 +303,7 @@ bool DiscoveryDataBase::update(
 {
     if (!enabled_)
     {
-        logWarning(DISCOVERY_DATABASE, "Discovery Database is disabled");
+        logInfo(DISCOVERY_DATABASE, "Discovery Database is disabled");
         return false;
     }
 
@@ -397,7 +397,7 @@ void DiscoveryDataBase::process_pdp_data_queue()
 {
     if (!enabled_)
     {
-        logWarning(DISCOVERY_DATABASE, "Discovery Database is disabled");
+        logInfo(DISCOVERY_DATABASE, "Discovery Database is disabled");
         return;
     }
 
@@ -417,13 +417,15 @@ void DiscoveryDataBase::process_pdp_data_queue()
         if (data_queue_info.change()->kind == eprosima::fastrtps::rtps::ALIVE)
         {
             // Update participants map
-            logInfo(DISCOVERY_DATABASE, "DATA(p) received from: " << data_queue_info.change()->instanceHandle);
+            logInfo(DISCOVERY_DATABASE, "DATA(p) " << data_queue_info.change()->instanceHandle << " received from: "
+                    << data_queue_info.change()->writerGUID);
             create_participant_from_change_(data_queue_info.change(), data_queue_info.participant_change_data());
         }
         // If the change is a DATA(Up)
         else
         {
-            logInfo(DISCOVERY_DATABASE, "DATA(Up) received from: " << data_queue_info.change()->instanceHandle);
+            logInfo(DISCOVERY_DATABASE, "DATA(Up) " << data_queue_info.change()->instanceHandle << " received from: "
+                    << data_queue_info.change()->writerGUID);
             process_dispose_participant_(data_queue_info.change());
         }
 
@@ -436,7 +438,7 @@ bool DiscoveryDataBase::process_edp_data_queue()
 {
     if (!enabled_)
     {
-        logWarning(DISCOVERY_DATABASE, "Discovery Database is disabled");
+        logInfo(DISCOVERY_DATABASE, "Discovery Database is disabled");
         return false;
     }
 
@@ -1039,13 +1041,23 @@ void DiscoveryDataBase::process_dispose_participant_(
             participants_.find(participant_guid.guidPrefix);
     if (pit != participants_.end())
     {
+        // Check if this participant is already NOT ALIVE
+        // Due to the way of announce a server, it is common to receive two DATA(Up) from the same server
+        if (pit->second.change()->kind != fastrtps::rtps::ChangeKind_t::ALIVE)
+        {
+            logInfo(DISCOVERY_DATABASE, "Ignoring second DATA(Up)"
+                << participant_guid.guidPrefix);
+            return;
+        }
         // Only update DATA(p), leaving the change info untouched. This is because DATA(Up) does not have the
         // participant's meta-information, but we don't want to loose it here.
         update_change_and_unmatch_(ch, pit->second);
     }
     else
     {
-        logError(DISCOVERY_DATABASE, "Processing disposal from an unexisting Participant"
+        // This is not an error. It could be because we have already receive and process the DATA(Up)
+        // from this participant and it is no longer in the database
+        logInfo(DISCOVERY_DATABASE, "Processing disposal from an unexisting Participant"
                 << participant_guid.guidPrefix);
         return;
     }
@@ -1143,7 +1155,7 @@ bool DiscoveryDataBase::process_dirty_topics()
 {
     if (!enabled_)
     {
-        logWarning(DISCOVERY_DATABASE, "Discovery Database is disabled");
+        logInfo(DISCOVERY_DATABASE, "Discovery Database is disabled");
         return false;
     }
 
@@ -1283,7 +1295,7 @@ bool DiscoveryDataBase::delete_entity_of_change(
 {
     if (!enabled_)
     {
-        logWarning(DISCOVERY_DATABASE, "Discovery Database is disabled");
+        logInfo(DISCOVERY_DATABASE, "Discovery Database is disabled");
         return false;
     }
 
@@ -1378,8 +1390,8 @@ const std::vector<fastrtps::rtps::GuidPrefix_t> DiscoveryDataBase::direct_client
         // Only add participants other than the server
         if (server_guid_prefix_ != participant.first)
         {
-            // Only add direct clients or server, not relayed ones.
-            if (participant.second.is_local())
+            // Only add direct clients or server that are alive, not relayed ones.
+            if (participant.second.is_local() && participant.second.change()->kind == eprosima::fastrtps::rtps::ALIVE)
             {
                 direct_clients_and_servers.push_back(participant.first);
             }
@@ -1525,8 +1537,10 @@ void DiscoveryDataBase::unmatch_participant_(
             auto rpit = participants_.find(relevant_participant);
             if (rpit == participants_.end())
             {
-                logWarning(DISCOVERY_DATABASE,
-                        "Matched with an unexisting participant: " << guid_prefix);
+                // This is not an error. Remote participants will try to unmatch with participants even
+                // when the match is not reciprocal
+                logInfo(DISCOVERY_DATABASE,
+                        "Participant " << relevant_participant << " matched with an unexisting participant: " << guid_prefix);
             }
             else
             {
