@@ -530,7 +530,7 @@ void PDPServer2::announceParticipantState(
         bool dispose /* = false */,
         WriteParams& )
 {
-    logInfo(RTPS_PDP_SERVER, "Announcing Server (new change: " << new_change << ")");
+    logInfo(RTPS_PDP_SERVER, "Announcing Server " << mp_RTPSParticipant->getGuid() << " (new change: " << new_change << ")");
     CacheChange_t* change = nullptr;
 
     StatefulWriter* pW = dynamic_cast<StatefulWriter*>(mp_PDPWriter);
