@@ -366,15 +366,37 @@ TEST_F(LogTests, stdout_consumer_stream)
     logWarning(stdout_consumer_stream, "Warning message");
     logInfo(stdout_consumer_stream, "Info message");
     Log::Flush();
+    std::cout.flush();
+    std::cerr.flush();
+
+    // Wait for all lines to be consumed before reseting the buffers
+    std::string out_string_out = out_stream_out.str();
+    std::string::difference_type lines_out = std::count(out_string_out.begin(), out_string_out.end(), '\n');
+
+#if (defined(__INTERNALDEBUG) || defined(_INTERNALDEBUG)) && (defined(_DEBUG) || defined(__DEBUG)) && \
+    (!defined(LOG_NO_INFO))
+    while (lines_out < 3)
+#else
+    while (lines_out < 2)
+#endif // if (defined(__INTERNALDEBUG) || defined(_INTERNALDEBUG)) && (defined(_DEBUG) || defined(__DEBUG)) && (!defined(LOG_NO_INFO))
+    {
+        Log::Flush();
+        std::cout.flush();
+
+        std::this_thread::sleep_for(std::chrono::nanoseconds(1));
+
+        out_string_out = out_stream_out.str();
+        lines_out = std::count(out_string_out.begin(), out_string_out.end(), '\n');
+    }
 
     // Reset std::cout to STDOUT
     std::cout.rdbuf(stream_buffer_out);
     std::cerr.rdbuf(stream_buffer_err);
 
     // Count number of lines in the buffer. There is one line per each log message output to that buffer
-    std::string out_string_out = out_stream_out.str();
+    out_string_out = out_stream_out.str();
     std::string out_string_err = out_stream_err.str();
-    std::string::difference_type lines_out = std::count(out_string_out.begin(), out_string_out.end(), '\n');
+    lines_out = std::count(out_string_out.begin(), out_string_out.end(), '\n');
     std::string::difference_type lines_err = std::count(out_string_err.begin(), out_string_err.end(), '\n');
 
     // If CMAKE_BUILD_TYPE is Debug, the INTERNAL_DEBUG flag was set, and the logInfo messages were not deactivated,
@@ -388,7 +410,7 @@ TEST_F(LogTests, stdout_consumer_stream)
     ASSERT_EQ(2u, lines_out);
 #endif // if (defined(__INTERNALDEBUG) || defined(_INTERNALDEBUG)) && (defined(_DEBUG) || defined(__DEBUG)) && (!defined(LOG_NO_INFO))
     ASSERT_EQ(0u, lines_err);
-    std::cout << "Number of messesages in the out buffer is correct: " << lines_out << std::endl;
+    std::cout << "Number of messages in the out buffer is correct: " << lines_out << std::endl;
     std::cout << "No messages in the err buffer: " << lines_err << std::endl;
 
     // Reset the log module to the test default
@@ -429,20 +451,47 @@ TEST_F(LogTests, stdouterr_consumer_stream)
     logWarning(stdouterr_consumer_stream, "Warning message");
     logInfo(stdouterr_consumer_stream, "Info message");
     Log::Flush();
+    std::cout.flush();
+    std::cerr.flush();
 
-    // Reset std::cout and std::cerr to STDOUT and STDERR respectively
-    std::cerr.rdbuf(stream_buffer_err);
-    std::cout.rdbuf(stream_buffer_out);
-
-    // Count number of lines in each of the buffers. There is one line per each log message output to that buffer
+    // Wait for all lines to be consumed before reseting the buffers
     std::string out_string_err = out_stream_err.str();
     std::string out_string_out = out_stream_out.str();
     std::string::difference_type lines_err = std::count(out_string_err.begin(), out_string_err.end(), '\n');
     std::string::difference_type lines_out = std::count(out_string_out.begin(), out_string_out.end(), '\n');
 
+#if (defined(__INTERNALDEBUG) || defined(_INTERNALDEBUG)) && (defined(_DEBUG) || defined(__DEBUG)) && \
+    (!defined(LOG_NO_INFO))
+    while (lines_err < 1 || lines_out < 2)
+#else
+    while (lines_err < 1 || lines_out < 1)
+#endif // if (defined(__INTERNALDEBUG) || defined(_INTERNALDEBUG)) && (defined(_DEBUG) || defined(__DEBUG)) && (!defined(LOG_NO_INFO))
+    {
+        Log::Flush();
+        std::cout.flush();
+        std::cerr.flush();
+
+        std::this_thread::sleep_for(std::chrono::nanoseconds(1));
+
+        out_string_out = out_stream_out.str();
+        out_string_err = out_stream_err.str();
+        lines_out = std::count(out_string_out.begin(), out_string_out.end(), '\n');
+        lines_err = std::count(out_string_err.begin(), out_string_err.end(), '\n');
+    }
+
+    // Reset std::cout and std::cerr to STDOUT and STDERR respectively
+    std::cout.rdbuf(stream_buffer_out);
+    std::cerr.rdbuf(stream_buffer_err);
+
+    // Count number of lines in each of the buffers. There is one line per each log message output to that buffer
+    out_string_err = out_stream_err.str();
+    out_string_out = out_stream_out.str();
+    lines_err = std::count(out_string_err.begin(), out_string_err.end(), '\n');
+    lines_out = std::count(out_string_out.begin(), out_string_out.end(), '\n');
+
     // Only the logError message should be in the error buffer, since stderr_threshold was set to Log::Kind::Error.
     ASSERT_EQ(1u, lines_err);
-    std::cout << "Number of messesages in the error buffer is correct: " << lines_err << std::endl;
+    std::cout << "Number of messages in the error buffer is correct: " << lines_err << std::endl;
 
     // If CMAKE_BUILD_TYPE is Debug, the INTERNAL_DEBUG flag was set, and the logInfo messages were not deactivated,
     // then there should be 2 messages in the out buffer, one for the logWarning, and another one for the logInfo.
@@ -453,8 +502,7 @@ TEST_F(LogTests, stdouterr_consumer_stream)
 #else
     ASSERT_EQ(1u, lines_out);
 #endif // if (defined(__INTERNALDEBUG) || defined(_INTERNALDEBUG)) && (defined(_DEBUG) || defined(__DEBUG)) && (!defined(LOG_NO_INFO))
-    std::cout << "Number of messesages in the out buffer is correct: " << lines_out << std::endl;
-
+    std::cout << "Number of messages in the out buffer is correct: " << lines_out << std::endl;
     // Reset the log module to the test default
     Reset();
 }
