@@ -43,6 +43,7 @@ class PDPServer2 : public fastrtps::rtps::PDP
     friend class DServerPingEvent2;
     friend class EDPServer2;
     friend class PDPServerListener2;
+    friend class EDPServerListener2;
 
 public:
 
