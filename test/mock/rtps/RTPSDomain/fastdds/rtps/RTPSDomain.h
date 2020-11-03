@@ -77,6 +77,17 @@ public:
         return writer_;
     }
 
+    static RTPSWriter* createRTPSWriter(
+            RTPSParticipant*,
+            WriterAttributes&,
+            const std::shared_ptr<IPayloadPool>&,
+            WriterHistory*,
+            WriterListener* listen = nullptr)
+    {
+        writer_->set_listener(listen);
+        return writer_;
+    }
+
     static bool removeRTPSWriter(
             RTPSWriter*)
     {
@@ -86,6 +97,17 @@ public:
     static RTPSReader* createRTPSReader(
             RTPSParticipant*,
             ReaderAttributes&,
+            ReaderHistory*,
+            ReaderListener* listen = nullptr)
+    {
+        reader_->setListener(listen);
+        return reader_;
+    }
+
+    static RTPSReader* createRTPSReader(
+            RTPSParticipant*,
+            ReaderAttributes&,
+            const std::shared_ptr<IPayloadPool>&,
             ReaderHistory*,
             ReaderListener* listen = nullptr)
     {

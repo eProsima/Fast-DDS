@@ -28,6 +28,7 @@
 #include <fastdds/rtps/builtin/data/ReaderProxyData.h>
 #include <fastdds/rtps/builtin/data/WriterProxyData.h>
 #include <fastdds/rtps/builtin/data/ParticipantProxyData.h>
+#include <fastdds/rtps/attributes/HistoryAttributes.h>
 #include <fastdds/rtps/resources/TimedEvent.h>
 
 #include <map>
@@ -47,6 +48,7 @@ class StatefulWriter;
 class StatefulReader;
 class WriterHistory;
 class ReaderHistory;
+class ITopicPayloadPool;
 
 namespace security {
 
@@ -446,12 +448,16 @@ private:
     void delete_entities();
     bool create_participant_stateless_message_entities();
     void delete_participant_stateless_message_entities();
+    void create_participant_stateless_message_pool();
+    void delete_participant_stateless_message_pool();
     bool create_participant_stateless_message_writer();
     void delete_participant_stateless_message_writer();
     bool create_participant_stateless_message_reader();
     void delete_participant_stateless_message_reader();
     bool create_participant_volatile_message_secure_entities();
     void delete_participant_volatile_message_secure_entities();
+    void create_participant_volatile_message_secure_pool();
+    void delete_participant_volatile_message_secure_pool();
     bool create_participant_volatile_message_secure_writer();
     void delete_participant_volatile_message_secure_writer();
     bool create_participant_volatile_message_secure_reader();
@@ -608,6 +614,13 @@ private:
     std::mutex temp_volatile_data_lock_;
     ReaderProxyData temp_volatile_reader_proxy_data_;
     WriterProxyData temp_volatile_writer_proxy_data_;
+
+    HistoryAttributes participant_stateless_message_writer_hattr_;
+    HistoryAttributes participant_stateless_message_reader_hattr_;
+    std::shared_ptr<ITopicPayloadPool> participant_stateless_message_pool_;
+
+    HistoryAttributes participant_volatile_message_secure_hattr_;
+    std::shared_ptr<ITopicPayloadPool> participant_volatile_message_secure_pool_;
 };
 
 } //namespace security

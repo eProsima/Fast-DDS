@@ -141,9 +141,21 @@ public:
         history_ = new eprosima::fastrtps::rtps::WriterHistory(hattr_);
 
         //Create writer
-        writer_ = eprosima::fastrtps::rtps::RTPSDomain::createRTPSWriter(
-            participant_, writer_attr_, history_, &listener_);
-        ASSERT_NE(writer_, nullptr);
+        if (has_payload_pool_)
+        {
+            writer_ = eprosima::fastrtps::rtps::RTPSDomain::createRTPSWriter(
+                participant_, writer_attr_, payload_pool_, history_, &listener_);
+        }
+        else
+        {
+            writer_ = eprosima::fastrtps::rtps::RTPSDomain::createRTPSWriter(
+                participant_, writer_attr_, history_, &listener_);
+        }
+
+        if (writer_ == nullptr)
+        {
+            return;
+        }
 
         ASSERT_EQ(participant_->registerWriter(writer_, topic_attr_, writer_qos_), true);
 
@@ -188,6 +200,10 @@ public:
             cdr << *it;
 
             ch->serializedPayload.length = static_cast<uint32_t>(cdr.getSerializedDataLength());
+            if (ch->serializedPayload.length > 65000u)
+            {
+                ch->setFragmentSize(65000u);
+            }
 
             history_->add_change(ch);
             it = msgs.erase(it);
@@ -254,6 +270,14 @@ public:
     }
 
     /*** Function to change QoS ***/
+    RTPSWithRegistrationWriter& payload_pool(
+            const std::shared_ptr<eprosima::fastrtps::rtps::IPayloadPool>& pool)
+    {
+        payload_pool_ = pool;
+        has_payload_pool_ = true;
+        return *this;
+    }
+
     RTPSWithRegistrationWriter& memoryMode(
             const eprosima::fastrtps::rtps::MemoryManagementPolicy_t memoryPolicy)
     {
@@ -347,9 +371,9 @@ public:
         std::cout << "Initializing persistent WRITER " << writer_attr_.endpoint.persistence_guid
                   << " with file " << filename << std::endl;
 
-        return durability(eprosima::fastrtps::rtps::DurabilityKind_t::TRANSIENT).
-                       add_property("dds.persistence.plugin", "builtin.SQLITE3").
-                       add_property("dds.persistence.sqlite3.filename", filename);
+        return durability(eprosima::fastrtps::rtps::DurabilityKind_t::PERSISTENT)
+                       .add_property("dds.persistence.plugin", "builtin.SQLITE3")
+                       .add_property("dds.persistence.sqlite3.filename", filename);
     }
 
 #endif // if HAVE_SQLITE3
@@ -392,6 +416,8 @@ private:
     std::condition_variable cv_;
     unsigned int matched_;
     type_support type_;
+    std::shared_ptr<eprosima::fastrtps::rtps::IPayloadPool> payload_pool_;
+    bool has_payload_pool_ = false;
 };
 
 #endif // _TEST_BLACKBOX_RTPSWITHREGISTRATIONWRITER_HPP_

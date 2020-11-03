@@ -19,25 +19,69 @@
 #ifndef RTPS_HISTORY_POOLCONFIG_H_
 #define RTPS_HISTORY_POOLCONFIG_H_
 
+#include <fastdds/rtps/attributes/HistoryAttributes.h>
 #include <fastdds/rtps/resources/ResourceManagement.h>
 
 namespace eprosima {
 namespace fastrtps {
 namespace rtps {
 
-struct PoolConfig
+struct BasicPoolConfig
 {
     //! Memory management policy.
     MemoryManagementPolicy_t memory_policy;
 
     //! Payload size when preallocating data.
     uint32_t payload_initial_size;
+};
+
+struct PoolConfig : public BasicPoolConfig
+{
+    PoolConfig() = default;
+
+    constexpr PoolConfig(
+            MemoryManagementPolicy_t policy,
+            uint32_t payload_size,
+            uint32_t ini_size,
+            uint32_t max_size) noexcept
+        : BasicPoolConfig {policy, payload_size}
+        , initial_size(ini_size)
+        , maximum_size(max_size)
+    {
+    }
 
     //! Initial number of elements when preallocating data.
     uint32_t initial_size;
 
     //! Maximum number of elements in the pool. Default value is 0, indicating to make allocations until they fail.
     uint32_t maximum_size;
+
+    /**
+     * Transform a HistoryAttributes object into a PoolConfig
+     *
+     * @param [in] history_attr HistoryAttributes to be transformed
+     *
+     * @return equivalent PoolConfig object
+     */
+    static constexpr PoolConfig from_history_attributes(
+            const HistoryAttributes& history_attr) noexcept
+    {
+        return
+            {
+                history_attr.memoryPolicy,
+                history_attr.payloadMaxSize,
+                // Negative or 0 means no preallocation. Otherwise keep value.
+                static_cast<uint32_t>(
+                    history_attr.initialReservedCaches <= 0 ? 0 : history_attr.initialReservedCaches),
+                // Negative or 0 means infinite maximum.
+                // Otherwise, we need to allow one extra slot, as a call to `reserve` needs to succeed
+                // even if the history is full, as old changes will only be removed when a change is added
+                // to the history.
+                static_cast<uint32_t>(
+                    history_attr.maximumReservedCaches <= 0 ? 0 : history_attr.maximumReservedCaches + 1)
+            };
+    }
+
 };
 
 } /* namespace rtps */

@@ -45,6 +45,8 @@
 #include <fastdds/rtps/security/accesscontrol/ParticipantSecurityAttributes.h>
 #include <fastdds/rtps/security/accesscontrol/EndpointSecurityAttributes.h>
 
+#include <rtps/history/TopicPayloadPoolRegistry.hpp>
+
 #include <cassert>
 #include <chrono>
 #include <thread>
@@ -982,6 +984,7 @@ void SecurityManager::delete_entities()
 
 bool SecurityManager::create_participant_stateless_message_entities()
 {
+    create_participant_stateless_message_pool();
     if (create_participant_stateless_message_writer())
     {
         if (create_participant_stateless_message_reader())
@@ -991,6 +994,7 @@ bool SecurityManager::create_participant_stateless_message_entities()
         delete_participant_stateless_message_writer();
     }
 
+    delete_participant_stateless_message_pool();
     return false;
 }
 
@@ -998,15 +1002,44 @@ void SecurityManager::delete_participant_stateless_message_entities()
 {
     delete_participant_stateless_message_reader();
     delete_participant_stateless_message_writer();
+    delete_participant_stateless_message_pool();
+}
+
+void SecurityManager::create_participant_stateless_message_pool()
+{
+    participant_stateless_message_writer_hattr_ =
+    { PREALLOCATED_MEMORY_MODE, participant_->getMaxMessageSize(), 20, 100 };
+    participant_stateless_message_reader_hattr_ =
+    { PREALLOCATED_MEMORY_MODE, participant_->getMaxMessageSize(), 10, 5000 };
+
+    BasicPoolConfig cfg{ PREALLOCATED_MEMORY_MODE, participant_->getMaxMessageSize() };
+    participant_stateless_message_pool_ = TopicPayloadPoolRegistry::get("DCPSParticipantStatelessMessage", cfg);
+
+    PoolConfig writer_cfg = PoolConfig::from_history_attributes(participant_stateless_message_writer_hattr_);
+    participant_stateless_message_pool_->reserve_history(writer_cfg, false);
+
+    PoolConfig reader_cfg = PoolConfig::from_history_attributes(participant_stateless_message_reader_hattr_);
+    participant_stateless_message_pool_->reserve_history(reader_cfg, true);
+}
+
+void SecurityManager::delete_participant_stateless_message_pool()
+{
+    if (participant_stateless_message_pool_)
+    {
+        PoolConfig writer_cfg = PoolConfig::from_history_attributes(participant_stateless_message_writer_hattr_);
+        participant_stateless_message_pool_->release_history(writer_cfg, false);
+
+        PoolConfig reader_cfg = PoolConfig::from_history_attributes(participant_stateless_message_reader_hattr_);
+        participant_stateless_message_pool_->release_history(reader_cfg, true);
+
+        TopicPayloadPoolRegistry::release(participant_stateless_message_pool_);
+    }
 }
 
 bool SecurityManager::create_participant_stateless_message_writer()
 {
-    HistoryAttributes hatt;
-    hatt.payloadMaxSize = participant_->getMaxMessageSize();
-    hatt.initialReservedCaches = 20;
-    hatt.maximumReservedCaches = 100;
-    participant_stateless_message_writer_history_ = new WriterHistory(hatt);
+    participant_stateless_message_writer_history_ = new WriterHistory(participant_stateless_message_writer_hattr_);
+
     WriterAttributes watt;
     watt.endpoint.endpointKind = WRITER;
     watt.endpoint.reliabilityKind = BEST_EFFORT;
@@ -1020,8 +1053,9 @@ bool SecurityManager::create_participant_stateless_message_writer()
     }
 
     RTPSWriter* wout = nullptr;
-    if (participant_->createWriter(&wout, watt, participant_stateless_message_writer_history_,
-            nullptr, participant_stateless_message_writer_entity_id, true))
+    if (participant_->createWriter(&wout, watt, participant_stateless_message_pool_,
+            participant_stateless_message_writer_history_, nullptr,
+            participant_stateless_message_writer_entity_id, true))
     {
         participant_->set_endpoint_rtps_protection_supports(wout, false);
         participant_stateless_message_writer_ = dynamic_cast<StatelessWriter*>(wout);
@@ -1055,11 +1089,8 @@ void SecurityManager::delete_participant_stateless_message_writer()
 
 bool SecurityManager::create_participant_stateless_message_reader()
 {
-    HistoryAttributes hatt;
-    hatt.payloadMaxSize = participant_->getMaxMessageSize();
-    hatt.initialReservedCaches = 10;
-    hatt.maximumReservedCaches = 5000;
-    participant_stateless_message_reader_history_ = new ReaderHistory(hatt);
+    participant_stateless_message_reader_history_ = new ReaderHistory(participant_stateless_message_reader_hattr_);
+
     ReaderAttributes ratt;
     ratt.endpoint.topicKind = NO_KEY;
     ratt.endpoint.reliabilityKind = BEST_EFFORT;
@@ -1074,8 +1105,8 @@ bool SecurityManager::create_participant_stateless_message_reader()
     ratt.matched_writers_allocation = participant_->getRTPSParticipantAttributes().allocation.participants;
 
     RTPSReader* rout = nullptr;
-    if (participant_->createReader(&rout, ratt, participant_stateless_message_reader_history_,
-            &participant_stateless_message_listener_,
+    if (participant_->createReader(&rout, ratt, participant_stateless_message_pool_,
+            participant_stateless_message_reader_history_, &participant_stateless_message_listener_,
             participant_stateless_message_reader_entity_id, true, true))
     {
         participant_->set_endpoint_rtps_protection_supports(rout, false);
@@ -1107,6 +1138,8 @@ void SecurityManager::delete_participant_stateless_message_reader()
 
 bool SecurityManager::create_participant_volatile_message_secure_entities()
 {
+    create_participant_volatile_message_secure_pool();
+
     if (create_participant_volatile_message_secure_writer())
     {
         if (create_participant_volatile_message_secure_reader())
@@ -1117,6 +1150,7 @@ bool SecurityManager::create_participant_volatile_message_secure_entities()
         delete_participant_volatile_message_secure_writer();
     }
 
+    delete_participant_volatile_message_secure_pool();
     return false;
 }
 
@@ -1124,15 +1158,37 @@ void SecurityManager::delete_participant_volatile_message_secure_entities()
 {
     delete_participant_volatile_message_secure_reader();
     delete_participant_volatile_message_secure_writer();
+    delete_participant_volatile_message_secure_pool();
+}
+
+void SecurityManager::create_participant_volatile_message_secure_pool()
+{
+    participant_volatile_message_secure_hattr_ =
+    { PREALLOCATED_MEMORY_MODE, participant_->getMaxMessageSize(), 10, 0 };
+
+    PoolConfig pool_cfg = PoolConfig::from_history_attributes(participant_volatile_message_secure_hattr_);
+    participant_volatile_message_secure_pool_ =
+            TopicPayloadPoolRegistry::get("DCPSParticipantVolatileMessageSecure", pool_cfg);
+    participant_volatile_message_secure_pool_->reserve_history(pool_cfg, false);
+    participant_volatile_message_secure_pool_->reserve_history(pool_cfg, true);
+}
+
+void SecurityManager::delete_participant_volatile_message_secure_pool()
+{
+    if (participant_volatile_message_secure_pool_)
+    {
+        PoolConfig pool_cfg = PoolConfig::from_history_attributes(participant_volatile_message_secure_hattr_);
+        participant_volatile_message_secure_pool_->release_history(pool_cfg, true);
+        participant_volatile_message_secure_pool_->release_history(pool_cfg, false);
+        TopicPayloadPoolRegistry::release(participant_volatile_message_secure_pool_);
+    }
 }
 
 bool SecurityManager::create_participant_volatile_message_secure_writer()
 {
-    HistoryAttributes hatt;
-    hatt.payloadMaxSize = participant_->getMaxMessageSize();
-    hatt.initialReservedCaches = 10;
-    hatt.maximumReservedCaches = 5000;
-    participant_volatile_message_secure_writer_history_ = new WriterHistory(hatt);
+    participant_volatile_message_secure_writer_history_ =
+            new WriterHistory(participant_volatile_message_secure_hattr_);
+
     WriterAttributes watt;
     watt.endpoint.endpointKind = WRITER;
     watt.endpoint.reliabilityKind = RELIABLE;
@@ -1154,7 +1210,8 @@ bool SecurityManager::create_participant_volatile_message_secure_writer()
     }
 
     RTPSWriter* wout = nullptr;
-    if (participant_->createWriter(&wout, watt, participant_volatile_message_secure_writer_history_,
+    if (participant_->createWriter(&wout, watt, participant_volatile_message_secure_pool_,
+            participant_volatile_message_secure_writer_history_,
             nullptr, participant_volatile_message_secure_writer_entity_id, true))
     {
         participant_->set_endpoint_rtps_protection_supports(wout, false);
@@ -1187,11 +1244,9 @@ void SecurityManager::delete_participant_volatile_message_secure_writer()
 
 bool SecurityManager::create_participant_volatile_message_secure_reader()
 {
-    HistoryAttributes hatt;
-    hatt.payloadMaxSize = participant_->getMaxMessageSize();
-    hatt.initialReservedCaches = 10;
-    hatt.maximumReservedCaches = 1000000;
-    participant_volatile_message_secure_reader_history_ = new ReaderHistory(hatt);
+    participant_volatile_message_secure_reader_history_ =
+            new ReaderHistory(participant_volatile_message_secure_hattr_);
+
     ReaderAttributes ratt;
     ratt.endpoint.topicKind = NO_KEY;
     ratt.endpoint.reliabilityKind = RELIABLE;
@@ -1205,8 +1260,8 @@ bool SecurityManager::create_participant_volatile_message_secure_reader()
     ratt.matched_writers_allocation = participant_->getRTPSParticipantAttributes().allocation.participants;
 
     RTPSReader* rout = nullptr;
-    if (participant_->createReader(&rout, ratt, participant_volatile_message_secure_reader_history_,
-            &participant_volatile_message_secure_listener_,
+    if (participant_->createReader(&rout, ratt, participant_volatile_message_secure_pool_,
+            participant_volatile_message_secure_reader_history_, &participant_volatile_message_secure_listener_,
             participant_volatile_message_secure_reader_entity_id, true, true))
     {
         participant_->set_endpoint_rtps_protection_supports(rout, false);
@@ -2040,13 +2095,13 @@ void SecurityManager::exchange_participant_crypto(
                 // Send
                 if (!participant_volatile_message_secure_writer_history_->add_change(change))
                 {
-                    participant_volatile_message_secure_writer_history_->release_Cache(change);
+                    participant_volatile_message_secure_writer_->release_change(change);
                     logError(SECURITY, "WriterHistory cannot add the CacheChange_t");
                 }
             }
             else
             {
-                participant_volatile_message_secure_writer_history_->release_Cache(change);
+                participant_volatile_message_secure_writer_->release_change(change);
                 logError(SECURITY, "Cannot serialize ParticipantGenericMessage");
             }
         }
@@ -2809,13 +2864,13 @@ bool SecurityManager::discovered_reader(
                                         }
                                         else
                                         {
-                                            participant_volatile_message_secure_writer_history_->release_Cache(change);
+                                            participant_volatile_message_secure_writer_->release_change(change);
                                             logError(SECURITY, "WriterHistory cannot add the CacheChange_t");
                                         }
                                     }
                                     else
                                     {
-                                        participant_volatile_message_secure_writer_history_->release_Cache(change);
+                                        participant_volatile_message_secure_writer_->release_change(change);
                                         logError(SECURITY, "Cannot serialize ParticipantGenericMessage");
                                     }
                                 }
@@ -3142,13 +3197,13 @@ bool SecurityManager::discovered_writer(
                                         }
                                         else
                                         {
-                                            participant_volatile_message_secure_writer_history_->release_Cache(change);
+                                            participant_volatile_message_secure_writer_->release_change(change);
                                             logError(SECURITY, "WriterHistory cannot add the CacheChange_t");
                                         }
                                     }
                                     else
                                     {
-                                        participant_volatile_message_secure_writer_history_->release_Cache(change);
+                                        participant_volatile_message_secure_writer_->release_change(change);
                                         logError(SECURITY, "Cannot serialize ParticipantGenericMessage");
                                     }
                                 }

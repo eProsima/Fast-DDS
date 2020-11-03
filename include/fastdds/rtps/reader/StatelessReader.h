@@ -53,6 +53,23 @@ protected:
             ReaderHistory* hist,
             ReaderListener* listen = nullptr);
 
+    StatelessReader(
+            RTPSParticipantImpl* pimpl,
+            const GUID_t& guid,
+            const ReaderAttributes& att,
+            const std::shared_ptr<IPayloadPool>& payload_pool,
+            ReaderHistory* hist,
+            ReaderListener* listen = nullptr);
+
+    StatelessReader(
+            RTPSParticipantImpl* pimpl,
+            const GUID_t& guid,
+            const ReaderAttributes& att,
+            const std::shared_ptr<IPayloadPool>& payload_pool,
+            const std::shared_ptr<IChangePool>& change_pool,
+            ReaderHistory* hist,
+            ReaderListener* listen = nullptr);
+
 public:
 
     /**

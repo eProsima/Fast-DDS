@@ -26,7 +26,7 @@ using namespace eprosima::fastrtps::rtps;
 using namespace ::testing;
 using namespace std;
 
-class BasicPoolsTest : public TestWithParam<tuple<uint32_t, uint32_t, uint32_t, MemoryManagementPolicy> >
+class BasicPoolsTest : public TestWithParam<tuple<uint32_t, uint32_t, uint32_t, MemoryManagementPolicy>>
 {
 protected:
 
@@ -50,25 +50,7 @@ protected:
         memory_policy_ = get<3>(GetParam());
 
         PoolConfig cfg { memory_policy_, payload_size_, pool_size_, max_pool_size_ };
-        payload_pool_ = BasicPayloadPool::get(cfg);
-        if ( (MemoryManagementPolicy::PREALLOCATED_MEMORY_MODE == memory_policy_) ||
-                (MemoryManagementPolicy::PREALLOCATED_WITH_REALLOC_MEMORY_MODE == memory_policy_) )
-        {
-            change_pool_ = std::make_shared<CacheChangePool>(
-                cfg,
-                [this](
-                    CacheChange_t* item)
-                {
-                    if (payload_pool_->get_payload(payload_size_, *item))
-                    {
-                        payload_pool_->release_payload(*item);
-                    }
-                });
-        }
-        else
-        {
-            change_pool_ = std::make_shared<CacheChangePool>(cfg);
-        }
+        payload_pool_ = BasicPayloadPool::get(cfg, change_pool_);
     }
 
     virtual void TearDown()
@@ -127,11 +109,11 @@ TEST_P(BasicPoolsTest, reserve_cache)
     else if (max_size <= size)
     {
         max_size = size;
-        num_inserts = size + 1;
+        num_inserts = size;
     }
     else // max_size > size
     {
-        num_inserts = max_size + 1;
+        num_inserts = max_size;
     }
 
     for (uint32_t i = 0; i < num_inserts; i++)

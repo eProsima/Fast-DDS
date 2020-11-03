@@ -39,8 +39,27 @@ class StatefulPersistentWriter : public StatefulWriter, private PersistentWriter
 
     StatefulPersistentWriter(
             RTPSParticipantImpl*,
-            GUID_t& guid,
-            WriterAttributes& att,
+            const GUID_t& guid,
+            const WriterAttributes& att,
+            WriterHistory* hist,
+            WriterListener* listen = nullptr,
+            IPersistenceService* persistence = nullptr);
+
+    StatefulPersistentWriter(
+            RTPSParticipantImpl*,
+            const GUID_t& guid,
+            const WriterAttributes& att,
+            const std::shared_ptr<IPayloadPool>& payload_pool,
+            WriterHistory* hist,
+            WriterListener* listen = nullptr,
+            IPersistenceService* persistence = nullptr);
+
+    StatefulPersistentWriter(
+            RTPSParticipantImpl*,
+            const GUID_t& guid,
+            const WriterAttributes& att,
+            const std::shared_ptr<IPayloadPool>& payload_pool,
+            const std::shared_ptr<IChangePool>& change_pool,
             WriterHistory* hist,
             WriterListener* listen = nullptr,
             IPersistenceService* persistence = nullptr);
@@ -75,9 +94,10 @@ public:
     bool change_removed_by_history(
             CacheChange_t* a_change) override;
 };
+
 } // namespace rtps
-} /* namespace fastrtps */
-} /* namespace eprosima */
+} // namespace fastrtps
+} // namespace eprosima
 
 #endif // ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 #endif /* _FASTDDS_RTPS_STATEFULPERSISTENTWRITER_H_ */

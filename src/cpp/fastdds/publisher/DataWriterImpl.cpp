@@ -40,6 +40,8 @@
 #include <fastdds/rtps/builtin/liveliness/WLP.h>
 #include <fastdds/core/policy/ParameterSerializer.hpp>
 
+#include <rtps/history/TopicPayloadPoolRegistry.hpp>
+
 #include <functional>
 #include <iostream>
 
@@ -137,14 +139,16 @@ ReturnCode_t DataWriterImpl::enable()
         w_att.keep_duration = qos_.reliable_writer_qos().disable_positive_acks.duration;
     }
 
+    auto pool = get_payload_pool();
     RTPSWriter* writer = RTPSDomain::createRTPSWriter(
         publisher_->rtps_participant(),
-        w_att,
+        w_att, pool,
         static_cast<WriterHistory*>(&history_),
         static_cast<WriterListener*>(&writer_listener_));
 
     if (writer == nullptr)
     {
+        release_payload_pool();
         logError(DATA_WRITER, "Problem creating associated Writer");
         return ReturnCode_t::RETCODE_ERROR;
     }
@@ -219,6 +223,7 @@ DataWriterImpl::~DataWriterImpl()
     {
         logInfo(PUBLISHER, guid().entityId << " in topic: " << type_->getName());
         RTPSDomain::removeRTPSWriter(writer_);
+        release_payload_pool();
     }
 
     delete user_datawriter_;
@@ -459,7 +464,7 @@ bool DataWriterImpl::perform_create_new_change(
                 if (!type_->serialize(data, &ch->serializedPayload))
                 {
                     logWarning(RTPS_WRITER, "RTPSWriter:Serialization returns false"; );
-                    history_.release_Cache(ch);
+                    writer_->release_change(ch);
                     return false;
                 }
             }
@@ -468,7 +473,7 @@ bool DataWriterImpl::perform_create_new_change(
 
             if (!this->history_.add_pub_change(ch, wparams, lock, max_blocking_time))
             {
-                history_.release_Cache(ch);
+                writer_->release_change(ch);
                 return false;
             }
 
@@ -1169,6 +1174,29 @@ void DataWriterImpl::set_fragment_size_on_change(
         ch->setFragmentSize(static_cast<uint16_t>(
                     (std::min)(final_high_mark_for_frag, RTPSMessageGroup::get_max_fragment_payload_size())));
     }
+}
+
+std::shared_ptr<IPayloadPool> DataWriterImpl::get_payload_pool()
+{
+    PoolConfig config = PoolConfig::from_history_attributes(history_.m_att);
+
+    if (!payload_pool_)
+    {
+        payload_pool_ = TopicPayloadPoolRegistry::get(topic_->get_name(), config);
+    }
+
+    payload_pool_->reserve_history(config, false);
+    return payload_pool_;
+}
+
+void DataWriterImpl::release_payload_pool()
+{
+    assert(payload_pool_);
+
+    PoolConfig config = PoolConfig::from_history_attributes(history_.m_att);
+    payload_pool_->release_history(config, false);
+
+    TopicPayloadPoolRegistry::release(payload_pool_);
 }
 
 } // namespace dds

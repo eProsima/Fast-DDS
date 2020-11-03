@@ -19,24 +19,27 @@
 #ifndef _FASTRTPS_DATAWRITERIMPL_HPP_
 #define _FASTRTPS_DATAWRITERIMPL_HPP_
 
+#include <fastdds/dds/core/status/BaseStatus.hpp>
+#include <fastdds/dds/core/status/IncompatibleQosStatus.hpp>
+#include <fastdds/dds/publisher/DataWriterListener.hpp>
+#include <fastdds/dds/publisher/qos/DataWriterQos.hpp>
+#include <fastdds/dds/topic/Topic.hpp>
+#include <fastdds/dds/topic/TypeSupport.hpp>
+
+#include <fastdds/rtps/attributes/WriterAttributes.h>
 #include <fastdds/rtps/common/Locator.h>
 #include <fastdds/rtps/common/Guid.h>
 #include <fastdds/rtps/common/WriteParams.h>
-
-#include <fastdds/dds/publisher/qos/DataWriterQos.hpp>
-
-#include <fastdds/rtps/attributes/WriterAttributes.h>
-#include <fastdds/dds/publisher/DataWriterListener.hpp>
-#include <fastdds/dds/topic/TypeSupport.hpp>
-#include <fastrtps/publisher/PublisherHistory.h>
-#include <fastdds/dds/topic/Topic.hpp>
-
+#include <fastdds/rtps/history/IPayloadPool.h>
 #include <fastdds/rtps/writer/WriterListener.h>
+
+#include <fastrtps/publisher/PublisherHistory.h>
 #include <fastrtps/qos/DeadlineMissedStatus.h>
-#include <fastdds/dds/core/status/IncompatibleQosStatus.hpp>
 #include <fastrtps/qos/LivelinessLostStatus.h>
-#include <fastdds/dds/core/status/BaseStatus.hpp>
+
 #include <fastrtps/types/TypesBase.h>
+
+#include <rtps/history/ITopicPayloadPool.h>
 
 using eprosima::fastrtps::types::ReturnCode_t;
 
@@ -223,6 +226,9 @@ public:
 
 protected:
 
+    using IPayloadPool = eprosima::fastrtps::rtps::IPayloadPool;
+    using ITopicPayloadPool = eprosima::fastrtps::rtps::ITopicPayloadPool;
+
     PublisherImpl* publisher_ = nullptr;
 
     //! Pointer to the associated Data Writer.
@@ -282,7 +288,7 @@ protected:
     fastrtps::rtps::TimedEvent* deadline_timer_ = nullptr;
 
     //! Deadline duration in microseconds
-    std::chrono::duration<double, std::ratio<1, 1000000> > deadline_duration_us_;
+    std::chrono::duration<double, std::ratio<1, 1000000>> deadline_duration_us_;
 
     //! The current timer owner, i.e. the instance which started the deadline timer
     fastrtps::rtps::InstanceHandle_t timer_owner_;
@@ -297,9 +303,11 @@ protected:
     fastrtps::rtps::TimedEvent* lifespan_timer_ = nullptr;
 
     //! The lifespan duration, in microseconds
-    std::chrono::duration<double, std::ratio<1, 1000000> > lifespan_duration_us_;
+    std::chrono::duration<double, std::ratio<1, 1000000>> lifespan_duration_us_;
 
     DataWriter* user_datawriter_ = nullptr;
+
+    std::shared_ptr<ITopicPayloadPool> payload_pool_;
 
     /**
      *
@@ -401,6 +409,10 @@ protected:
             fastrtps::rtps::WriteParams& wparams,
             fastrtps::rtps::CacheChange_t* ch,
             const uint32_t& high_mark_for_frag);
+
+    std::shared_ptr<IPayloadPool> get_payload_pool();
+
+    void release_payload_pool();
 };
 
 } /* namespace dds */

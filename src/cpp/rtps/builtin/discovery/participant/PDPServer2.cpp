@@ -544,7 +544,7 @@ void PDPServer2::announceParticipantState(
                 {
                     // Already there, dispose
                     logError(RTPS_PDP_SERVER, "DiscoveryDatabase already initialized with local DATA(p) on creation");
-                    mp_PDPWriterHistory->release_Cache(change);
+                    mp_PDPWriter->release_change(change);
                 }
             }
             // Doesn't make sense to send the DATA directly if it hasn't been introduced in the history yet (missing
@@ -609,7 +609,7 @@ void PDPServer2::announceParticipantState(
             else
             {
                 // already there, dispose. If participant is not removed fast enought may happen
-                mp_PDPWriterHistory->release_Cache(change);
+                mp_PDPWriter->release_change(change);
                 return;
             }
         }
@@ -686,7 +686,7 @@ bool PDPServer2::remove_remote_participant(
             else
             {
                 // if the database doesn't take the ownership remove
-                mp_PDPWriterHistory->release_Cache(pC);
+                mp_PDPWriter->release_change(pC);
             }
         }
     }
@@ -959,7 +959,7 @@ void PDPServer2::process_changes_release_(
                 // Normally Data(Up) will not be in history except in Own Server destruction
                 if (!remove_change_from_writer_history(mp_PDPWriter, mp_PDPWriterHistory, ch))
                 {
-                    mp_PDPWriterHistory->release_Cache(ch);
+                    mp_PDPWriter->release_change(ch);
                 }
             }
             else if (discovery_db_.is_writer(ch))
@@ -971,7 +971,7 @@ void PDPServer2::process_changes_release_(
                             edp->publications_writer_.second,
                             ch))
                 {
-                    edp->publications_writer_.second->release_Cache(ch);
+                    edp->publications_writer_.first->release_change(ch);
                 }
             }
             else if (discovery_db_.is_reader(ch))
@@ -983,7 +983,7 @@ void PDPServer2::process_changes_release_(
                             edp->subscriptions_writer_.second,
                             ch))
                 {
-                    edp->subscriptions_writer_.second->release_Cache(ch);
+                    edp->subscriptions_writer_.first->release_change(ch);
                 }
             }
             else
@@ -1005,7 +1005,7 @@ void PDPServer2::process_changes_release_(
                 if (discovery_db_.is_participant(ch))
                 {
                     remove_change_from_writer_history(mp_PDPWriter, mp_PDPWriterHistory, ch, false);
-                    mp_PDPReaderHistory->release_Cache(ch);
+                    mp_PDPReader->releaseCache(ch);
                 }
                 else if (discovery_db_.is_writer(ch))
                 {
@@ -1014,7 +1014,7 @@ void PDPServer2::process_changes_release_(
                         edp->publications_writer_.second,
                         ch,
                         false);
-                    edp->publications_reader_.second->release_Cache(ch);
+                    edp->publications_reader_.first->releaseCache(ch);
                 }
                 else if (discovery_db_.is_reader(ch))
                 {
@@ -1023,7 +1023,7 @@ void PDPServer2::process_changes_release_(
                         edp->subscriptions_writer_.second,
                         ch,
                         false);
-                    edp->subscriptions_reader_.second->release_Cache(ch);
+                    edp->subscriptions_reader_.first->releaseCache(ch);
                 }
                 else
                 {
@@ -1038,7 +1038,7 @@ void PDPServer2::process_changes_release_(
                 // this changes goes to Participant Writer
                 if (!remove_change_from_writer_history(mp_PDPWriter, mp_PDPWriterHistory, ch))
                 {
-                    mp_PDPWriterHistory->release_Cache(ch);
+                    mp_PDPWriter->release_change(ch);
                 }
             }
         }

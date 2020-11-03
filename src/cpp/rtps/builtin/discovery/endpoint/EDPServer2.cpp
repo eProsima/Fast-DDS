@@ -247,7 +247,7 @@ bool EDPServer2::removeLocalReader(
             else
             {
                 // If the database doesn't take the ownership, then return the CacheChante_t to the pool.
-                get_pdp()->mp_PDPWriterHistory->release_Cache(change);
+                get_pdp()->mp_PDPWriter->release_change(change);
             }
             return true;
         }
@@ -307,7 +307,7 @@ bool EDPServer2::removeLocalWriter(
             else
             {
                 // If the database doesn't take the ownership, then return the CacheChante_t to the pool.
-                get_pdp()->mp_PDPWriterHistory->release_Cache(change);
+                get_pdp()->mp_PDPWriter->release_change(change);
             }
             return true;
         }
@@ -354,14 +354,14 @@ bool EDPServer2::processLocalWriterProxyData(
         else
         {
             // If the database doesn't take the ownership, then return the CacheChante_t to the pool.
-            get_pdp()->mp_PDPWriterHistory->release_Cache(change);
+            get_pdp()->mp_PDPWriter->release_change(change);
         }
         // Return whether the DATA(w) was generated correctly
         return ret_val;
     }
 
     // Return the change to the pool and return false
-    get_pdp()->mp_PDPWriterHistory->release_Cache(change);
+    get_pdp()->mp_PDPWriter->release_change(change);
     return false;
 }
 
@@ -404,14 +404,14 @@ bool EDPServer2::processLocalReaderProxyData(
         else
         {
             // If the database doesn't take the ownership, then return the CacheChante_t to the pool.
-            get_pdp()->mp_PDPWriterHistory->release_Cache(change);
+            get_pdp()->mp_PDPWriter->release_change(change);
         }
         // Return whether the DATA(w) was generated correctly
         return ret_val;
     }
 
     // Return the change to the pool and return false
-    get_pdp()->mp_PDPWriterHistory->release_Cache(change);
+    get_pdp()->mp_PDPWriter->release_change(change);
     return false;
 }
 

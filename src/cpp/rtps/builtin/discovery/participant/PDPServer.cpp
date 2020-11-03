@@ -642,7 +642,12 @@ bool PDPServer::addRelayedChangeToHistory(
     }
     else
     {
-        if (mp_PDPWriterHistory->reserve_Cache(&pCh, c.serializedPayload.max_size) && pCh )
+        pCh = mp_PDPWriter->new_change(
+            [&c]()
+            {
+                return c.serializedPayload.max_size;
+            }, ALIVE);
+        if (pCh)
         {
             if ( mp_PDPWriter->getAttributes().durabilityKind == DurabilityKind_t::TRANSIENT_LOCAL )
             {
@@ -1170,7 +1175,7 @@ void PDPServer::announceParticipantState(
             }
 
             // free change
-            mp_PDPWriterHistory->release_Cache(change);
+            mp_PDPWriter->release_change(change);
         }
 
     }

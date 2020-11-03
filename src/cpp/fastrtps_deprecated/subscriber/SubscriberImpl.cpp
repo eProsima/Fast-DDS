@@ -32,6 +32,8 @@
 #include <fastrtps/utils/TimeConversion.h>
 #include <fastdds/dds/log/Log.hpp>
 
+#include <rtps/history/TopicPayloadPoolRegistry.hpp>
+
 using namespace eprosima::fastrtps::rtps;
 using namespace std::chrono;
 
@@ -64,6 +66,11 @@ SubscriberImpl::SubscriberImpl(
     , deadline_missed_status_()
     , lifespan_duration_us_(m_att.qos.m_lifespan.duration.to_ns() * 1e-3)
 {
+    std::string topic_name = m_att.topic.getTopicName().to_string();
+    PoolConfig pool_cfg = PoolConfig::from_history_attributes(m_history.m_att);
+    payload_pool_ = TopicPayloadPoolRegistry::get(topic_name, pool_cfg);
+    payload_pool_->reserve_history(pool_cfg, true);
+
     deadline_timer_ = new TimedEvent(mp_participant->get_resource_event(),
                     [&]() -> bool
                     {
@@ -91,6 +98,11 @@ SubscriberImpl::~SubscriberImpl()
 
     RTPSDomain::removeRTPSReader(mp_reader);
     delete(this->mp_userSubscriber);
+
+    std::string topic_name = m_att.topic.getTopicName().to_string();
+    PoolConfig pool_cfg = PoolConfig::from_history_attributes(m_history.m_att);
+    payload_pool_->release_history(pool_cfg, true);
+    TopicPayloadPoolRegistry::release(payload_pool_);
 }
 
 bool SubscriberImpl::wait_for_unread_samples(
@@ -219,7 +231,7 @@ bool SubscriberImpl::updateAttributes(
         if (m_att.qos.m_deadline.period != c_TimeInfinite)
         {
             deadline_duration_us_ =
-                    duration<double, std::ratio<1, 1000000> >(m_att.qos.m_deadline.period.to_ns() * 1e-3);
+                    duration<double, std::ratio<1, 1000000>>(m_att.qos.m_deadline.period.to_ns() * 1e-3);
             deadline_timer_->update_interval_millisec(m_att.qos.m_deadline.period.to_ns() * 1e-6);
         }
         else
@@ -233,7 +245,7 @@ bool SubscriberImpl::updateAttributes(
         {
             lifespan_duration_us_ =
                     std::chrono::duration<double,
-                            std::ratio<1, 1000000> >(m_att.qos.m_lifespan.duration.to_ns() * 1e-3);
+                            std::ratio<1, 1000000>>(m_att.qos.m_lifespan.duration.to_ns() * 1e-3);
             lifespan_timer_->update_interval_millisec(m_att.qos.m_lifespan.duration.to_ns() * 1e-6);
         }
         else
@@ -464,6 +476,11 @@ void SubscriberImpl::get_liveliness_changed_status(
 
     mp_reader->liveliness_changed_status_.alive_count_change = 0u;
     mp_reader->liveliness_changed_status_.not_alive_count_change = 0u;
+}
+
+std::shared_ptr<rtps::IPayloadPool> SubscriberImpl::payload_pool()
+{
+    return payload_pool_;
 }
 
 } /* namespace fastrtps */

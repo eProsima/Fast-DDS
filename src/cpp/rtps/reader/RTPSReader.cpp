@@ -18,13 +18,17 @@
  */
 
 #include <fastdds/rtps/reader/RTPSReader.h>
-#include <fastdds/rtps/history/ReaderHistory.h>
-#include <fastdds/dds/log/Log.hpp>
-#include <rtps/reader/ReaderHistoryState.hpp>
 
+#include <fastdds/dds/log/Log.hpp>
+
+#include <fastdds/rtps/history/ReaderHistory.h>
 #include <fastdds/rtps/reader/ReaderListener.h>
 #include <fastdds/rtps/resources/ResourceEvent.h>
-#include <fastrtps_deprecated/participant/ParticipantImpl.h>
+
+#include <rtps/history/BasicPayloadPool.hpp>
+#include <rtps/history/CacheChangePool.h>
+#include <rtps/participant/RTPSParticipantImpl.h>
+#include <rtps/reader/ReaderHistoryState.hpp>
 
 #include <foonathan/memory/namespace_alias.hpp>
 
@@ -52,6 +56,61 @@ RTPSReader::RTPSReader(
     , liveliness_kind_(att.liveliness_kind_)
     , liveliness_lease_duration_(att.liveliness_lease_duration)
 {
+    PoolConfig cfg = PoolConfig::from_history_attributes(hist->m_att);
+    std::shared_ptr<IChangePool> change_pool;
+    std::shared_ptr<IPayloadPool> payload_pool;
+    payload_pool = BasicPayloadPool::get(cfg, change_pool);
+
+    init(payload_pool, change_pool);
+}
+
+RTPSReader::RTPSReader(
+        RTPSParticipantImpl* pimpl,
+        const GUID_t& guid,
+        const ReaderAttributes& att,
+        const std::shared_ptr<IPayloadPool>& payload_pool,
+        ReaderHistory* hist,
+        ReaderListener* rlisten)
+    : RTPSReader(
+        pimpl, guid, att, payload_pool,
+        std::make_shared<CacheChangePool>(PoolConfig::from_history_attributes(hist->m_att)),
+        hist, rlisten)
+{
+}
+
+RTPSReader::RTPSReader(
+        RTPSParticipantImpl* pimpl,
+        const GUID_t& guid,
+        const ReaderAttributes& att,
+        const std::shared_ptr<IPayloadPool>& payload_pool,
+        const std::shared_ptr<IChangePool>& change_pool,
+        ReaderHistory* hist,
+        ReaderListener* rlisten)
+    : Endpoint(pimpl, guid, att.endpoint)
+    , mp_history(hist)
+    , mp_listener(rlisten)
+    , m_acceptMessagesToUnknownReaders(true)
+    , m_acceptMessagesFromUnkownWriters(false)
+    , m_expectsInlineQos(att.expectsInlineQos)
+    , history_state_(new ReaderHistoryState(att.matched_writers_allocation.initial))
+    , liveliness_kind_(att.liveliness_kind_)
+    , liveliness_lease_duration_(att.liveliness_lease_duration)
+{
+    init(payload_pool, change_pool);
+}
+
+void RTPSReader::init(
+        const std::shared_ptr<IPayloadPool>& payload_pool,
+        const std::shared_ptr<IChangePool>& change_pool)
+{
+    payload_pool_ = payload_pool;
+    change_pool_ = change_pool;
+    fixed_payload_size_ = 0;
+    if (mp_history->m_att.memoryPolicy == PREALLOCATED_MEMORY_MODE)
+    {
+        fixed_payload_size_ = mp_history->m_att.payloadMaxSize;
+    }
+
     mp_history->mp_reader = this;
     mp_history->mp_mutex = &mp_mutex;
 
@@ -61,6 +120,12 @@ RTPSReader::RTPSReader(
 RTPSReader::~RTPSReader()
 {
     logInfo(RTPS_READER, "Removing reader " << this->getGuid().entityId; );
+
+    for (auto it = mp_history->changesBegin(); it != mp_history->changesEnd(); ++it)
+    {
+        releaseCache(*it);
+    }
+
     delete history_state_;
     mp_history->mp_reader = nullptr;
     mp_history->mp_mutex = nullptr;
@@ -70,13 +135,40 @@ bool RTPSReader::reserveCache(
         CacheChange_t** change,
         uint32_t dataCdrSerializedSize)
 {
-    return mp_history->reserve_Cache(change, dataCdrSerializedSize);
+    std::lock_guard<RecursiveTimedMutex> guard(mp_mutex);
+
+    *change = nullptr;
+
+    CacheChange_t* reserved_change = nullptr;
+    if (!change_pool_->reserve_cache(reserved_change))
+    {
+        logWarning(RTPS_READER, "Problem reserving cache from pool");
+        return false;
+    }
+
+    uint32_t payload_size = fixed_payload_size_ ? fixed_payload_size_ : dataCdrSerializedSize;
+    if (!payload_pool_->get_payload(payload_size, *reserved_change))
+    {
+        change_pool_->release_cache(reserved_change);
+        logWarning(RTPS_READER, "Problem reserving payload from pool");
+        return false;
+    }
+
+    *change = reserved_change;
+    return true;
 }
 
 void RTPSReader::releaseCache(
         CacheChange_t* change)
 {
-    return mp_history->release_Cache(change);
+    std::lock_guard<RecursiveTimedMutex> guard(mp_mutex);
+
+    IPayloadPool* pool = change->payload_owner();
+    if (pool)
+    {
+        pool->release_payload(*change);
+    }
+    change_pool_->release_cache(change);
 }
 
 ReaderListener* RTPSReader::getListener() const
@@ -205,10 +297,12 @@ bool RTPSReader::wait_for_unread_cache(
 
     if (lock.try_lock_until(time_out))
     {
-        if (new_notification_cv_.wait_until(lock, time_out, [&]()
-                {
-                    return total_unread_ > 0;
-                }))
+        if (new_notification_cv_.wait_until(
+                    lock, time_out,
+                    [&]()
+                    {
+                        return total_unread_ > 0;
+                    }))
         {
             return true;
         }

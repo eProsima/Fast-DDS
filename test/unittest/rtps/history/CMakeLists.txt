@@ -30,15 +30,6 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/StdoutErrConsumer.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/Time_t.cpp)
 
-        set(HISTORYTESTS_SOURCE HistoryTests.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/rtps/history/History.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/rtps/history/CacheChangePool.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/Log.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/OStreamConsumer.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/StdoutConsumer.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/StdoutErrConsumer.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/Time_t.cpp)
-
         set(BASICPOOLSTESTS_SOURCE BasicPoolsTests.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/rtps/history/CacheChangePool.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/Log.cpp
@@ -49,6 +40,16 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
 
         set(CACHECHANGEPOOLTESTS_SOURCE CacheChangePoolTests.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/rtps/history/CacheChangePool.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/Log.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/OStreamConsumer.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/StdoutConsumer.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/StdoutErrConsumer.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/Time_t.cpp)
+
+        set(TOPICPAYLOADPOOLTESTS_SOURCE
+            TopicPayloadPoolTests.cpp TopicPayloadPoolRegistryTests.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/rtps/history/TopicPayloadPool.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/rtps/history/TopicPayloadPoolRegistry.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/Log.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/OStreamConsumer.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/StdoutConsumer.cpp
@@ -73,17 +74,6 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             ${CMAKE_THREAD_LIBS_INIT} ${CMAKE_DL_LIBS})
         add_gtest(ReaderHistoryTests SOURCES ${READERHISTORYTESTS_SOURCE})
 
-        add_executable(HistoryTests ${HISTORYTESTS_SOURCE})
-        target_compile_definitions(HistoryTests PRIVATE FASTRTPS_NO_LIB)
-        target_include_directories(HistoryTests PRIVATE
-            ${GTEST_INCLUDE_DIRS}
-            ${PROJECT_SOURCE_DIR}/src/cpp
-            ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include)
-        target_link_libraries(HistoryTests
-            ${GTEST_LIBRARIES}
-            ${CMAKE_THREAD_LIBS_INIT} ${CMAKE_DL_LIBS})
-        add_gtest(HistoryTests SOURCES ${HISTORYTESTS_SOURCE})
-
         add_executable(BasicPoolsTests ${BASICPOOLSTESTS_SOURCE})
         target_compile_definitions(BasicPoolsTests PRIVATE FASTRTPS_NO_LIB)
         target_include_directories(BasicPoolsTests PRIVATE
@@ -105,6 +95,17 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             ${GTEST_LIBRARIES}
             ${CMAKE_THREAD_LIBS_INIT} ${CMAKE_DL_LIBS})
         add_gtest(CacheChangePoolTests SOURCES ${CACHECHANGEPOOLTESTS_SOURCE})
+
+        add_executable(TopicPayloadPoolTests ${TOPICPAYLOADPOOLTESTS_SOURCE})
+        target_compile_definitions(TopicPayloadPoolTests PRIVATE FASTRTPS_NO_LIB)
+        target_include_directories(TopicPayloadPoolTests PRIVATE
+            ${GTEST_INCLUDE_DIRS}
+            ${PROJECT_SOURCE_DIR}/src/cpp
+            ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include)
+        target_link_libraries(TopicPayloadPoolTests
+            ${GTEST_LIBRARIES}
+            ${CMAKE_THREAD_LIBS_INIT} ${CMAKE_DL_LIBS})
+        add_gtest(TopicPayloadPoolTests SOURCES ${TOPICPAYLOADPOOLTESTS_SOURCE})
 
     endif()
 endif()

@@ -34,13 +34,15 @@
 
 #include <fastdds/dds/topic/TopicDataType.hpp>
 
+#include <rtps/history/ITopicPayloadPool.h>
+
 namespace eprosima {
 namespace fastrtps {
 namespace rtps {
 class RTPSWriter;
 class RTPSParticipant;
 class TimedEvent;
-}
+} // namespace rtps
 
 class PublisherListener;
 class ParticipantImpl;
@@ -192,6 +194,8 @@ public:
      */
     void assert_liveliness();
 
+    std::shared_ptr<rtps::IPayloadPool> payload_pool();
+
 private:
 
     ParticipantImpl* mp_participant;
@@ -208,7 +212,7 @@ private:
     //!Listener to capture the events of the Writer
     class PublisherWriterListener : public rtps::WriterListener
     {
-public:
+    public:
 
         PublisherWriterListener(
                 PublisherImpl* p)
@@ -231,7 +235,8 @@ public:
                 const LivelinessLostStatus& status) override;
 
         PublisherImpl* mp_publisherImpl;
-    } m_writerListener;
+    }
+    m_writerListener;
 
     Publisher* mp_userPublisher;
 
@@ -242,7 +247,7 @@ public:
     //! A timer used to check for deadlines
     rtps::TimedEvent* deadline_timer_;
     //! Deadline duration in microseconds
-    std::chrono::duration<double, std::ratio<1, 1000000> > deadline_duration_us_;
+    std::chrono::duration<double, std::ratio<1, 1000000>> deadline_duration_us_;
     //! The current timer owner, i.e. the instance which started the deadline timer
     rtps::InstanceHandle_t timer_owner_;
     //! The offered deadline missed status
@@ -251,7 +256,9 @@ public:
     //! A timed callback to remove expired samples for lifespan QoS
     rtps::TimedEvent* lifespan_timer_;
     //! The lifespan duration, in microseconds
-    std::chrono::duration<double, std::ratio<1, 1000000> > lifespan_duration_us_;
+    std::chrono::duration<double, std::ratio<1, 1000000>> lifespan_duration_us_;
+
+    std::shared_ptr<rtps::ITopicPayloadPool> payload_pool_;
 
     /**
      * @brief A method called when an instance misses the deadline
@@ -272,7 +279,8 @@ public:
 };
 
 
-} /* namespace  */
-} /* namespace eprosima */
-#endif
-#endif /* PUBLISHER_H_ */
+} // namespace fastrtps
+} // namespace eprosima
+
+#endif // ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
+#endif /* PUBLISHERIMPL_H_ */
