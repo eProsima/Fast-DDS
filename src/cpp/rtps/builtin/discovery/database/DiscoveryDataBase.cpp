@@ -459,15 +459,15 @@ void DiscoveryDataBase::process_pdp_data_queue()
         if (data_queue_info.change()->kind == eprosima::fastrtps::rtps::ALIVE)
         {
             // Update participants map
-            logInfo(DISCOVERY_DATABASE, "DATA(p) " << data_queue_info.change()->instanceHandle << " received from: "
-                                                   << data_queue_info.change()->writerGUID);
+            logInfo(DISCOVERY_DATABASE, "DATA(p) of entity " << data_queue_info.change()->instanceHandle <<
+                    " received from: " << data_queue_info.change()->writerGUID);
             create_participant_from_change_(data_queue_info.change(), data_queue_info.participant_change_data());
         }
         // If the change is a DATA(Up)
         else
         {
-            logInfo(DISCOVERY_DATABASE, "DATA(Up) " << data_queue_info.change()->instanceHandle << " received from: "
-                                                    << data_queue_info.change()->writerGUID);
+            logInfo(DISCOVERY_DATABASE, "DATA(Up) of entity " << data_queue_info.change()->instanceHandle <<
+                    " received from: " << data_queue_info.change()->writerGUID);
             process_dispose_participant_(data_queue_info.change());
         }
 
@@ -2350,7 +2350,7 @@ bool DiscoveryDataBase::from_json(
             }
 
             logInfo(DISCOVERY_DATABASE, "Writer " << guid_aux << " created with instance handle " << wit.first->second.change()->instanceHandle);
-            
+
 
             if(change->kind != fastrtps::rtps::ALIVE)
             {
