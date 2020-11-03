@@ -27,7 +27,7 @@ Param(
 $test = Start-Process -Passthru -Wait `
     -FilePath $python_path `
     -ArgumentList ($test_script, $tool_path, $test_name) `
-    -WindowStyle Minimized # Hidden 
+    -WindowStyle Hidden
 
 if( $test.ExitCode -ne 0 )
 {

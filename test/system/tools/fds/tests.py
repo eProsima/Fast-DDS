@@ -40,7 +40,7 @@ def test_fast_discovery_closure(fast_discovery_tool):
     """Test that discovery command closes correctly."""
     command = [fast_discovery_tool, '-i', '0']
 
-#   print("Executing command: " + str(command))
+    print("Executing command: " + str(command))
 
     # this subprocess cannot be executed in shell=True or using bash
     #  because a background script will not broadcast the signals
@@ -56,7 +56,7 @@ def test_fast_discovery_closure(fast_discovery_tool):
     try:
 
         while proc.poll() is None:
-#           print('iterating...')
+            print('iterating...')
             if os.name == 'posix':
                 proc.send_signal(signal.SIGINT)
             elif os.name == 'nt':
@@ -65,8 +65,8 @@ def test_fast_discovery_closure(fast_discovery_tool):
             time.sleep(1)
 
     except KeyboardInterrupt:
+       print('Catched a KeyboardInterrupt')
        pass
-#      print('Catched a KeyboardInterrupt')
 
     # CTest behaves differently than calling python directly
 

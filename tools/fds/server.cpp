@@ -40,8 +40,8 @@ condition_variable g_signal_cv;
 void sigint_handler(
         int signum)
 {
-//  locking here is counterproductive
-//  unique_lock<mutex> lock(g_signal_mutex);
+    //  locking here is counterproductive
+    //  unique_lock<mutex> lock(g_signal_mutex);
     g_signal_status = signum;
     g_signal_cv.notify_one();
 }
@@ -130,10 +130,10 @@ int main (
         rtps.setName(is.str().c_str());
     }
 
-//  fastdds::dds::Log::SetCategoryFilter(
-//      std::regex("(RTPS_HISTORY)|(RTPS_WRITER_HISTORY)|(RTPS_READER_HISTORY)|(RTPS_PDP_SERVER)|(READER_PROXY)"
-//      "|(RTPS_PDP)|(SERVER_PDP_THREAD)|(CLIENT_PDP_THREAD)|(DISCOVERY_DATABASE)|(RTPS_PDP_LISTENER)"));
-//  fastdds::dds::Log::SetVerbosity(fastdds::dds::Log::Kind::Info);
+    //  fastdds::dds::Log::SetCategoryFilter(
+    //      std::regex("(RTPS_HISTORY)|(RTPS_WRITER_HISTORY)|(RTPS_READER_HISTORY)|(RTPS_PDP_SERVER)|(READER_PROXY)"
+    //      "|(RTPS_PDP)|(SERVER_PDP_THREAD)|(CLIENT_PDP_THREAD)|(DISCOVERY_DATABASE)|(RTPS_PDP_LISTENER)"));
+    //  fastdds::dds::Log::SetVerbosity(fastdds::dds::Log::Kind::Info);
 
     // Choose the kind of server to create
     rtps.builtin.discovery_config.discoveryProtocol =
@@ -213,11 +213,10 @@ int main (
         signal(SIGINT, sigint_handler);
         cout << "\n### Server is running ###" << std::endl;
 
-        g_signal_cv.wait(lock,[]{ return 0 != g_signal_status;});
-
-        cout << "\n### Server shutting down ###" << std::endl;
-
-        Domain::removeParticipant(pServer);
+        g_signal_cv.wait(lock, []
+                {
+                    return 0 != g_signal_status;
+                });
 
         cout << "\n### Server shutted down ###" << std::endl;
     }
