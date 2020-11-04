@@ -150,7 +150,11 @@ static void finalize_statement(
 {
     if (stmt != NULL)
     {
-        sqlite3_finalize(stmt);
+        int res = sqlite3_finalize(stmt);
+        if (res != SQLITE_OK)
+        {
+            logWarning(RTPS_PERSISTENCE, "Statement could not be finalized. sqlite3_finalize code: " << res);
+        }
         stmt = NULL;
     }
 }
@@ -205,7 +209,15 @@ SQLite3PersistenceService::~SQLite3PersistenceService()
     finalize_statement(load_reader_stmt_);
     finalize_statement(update_reader_stmt_);
 
-    sqlite3_close(db_);
+    // Finalize writer seq_num statements
+    finalize_statement(load_writer_last_seq_num_stmt_);
+    finalize_statement(update_writer_last_seq_num_stmt_);
+
+    int res = sqlite3_close(db_);
+    if(res != SQLITE_OK) // (0) SQLITE_OK
+    {
+        logWarning(RTPS_PERSISTENCE, "Database could not be closed. sqlite3_close code: " << res);
+    }
     db_ = NULL;
 }
 
