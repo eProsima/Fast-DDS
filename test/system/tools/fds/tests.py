@@ -36,6 +36,10 @@ import time
 import signal
 import os
 
+def signal_handler(signum, frame):
+    # ignore signals if the test generates them
+    pass
+
 def test_fast_discovery_closure(fast_discovery_tool):
     """Test that discovery command closes correctly."""
     command = [fast_discovery_tool, '-i', '0']
@@ -46,45 +50,56 @@ def test_fast_discovery_closure(fast_discovery_tool):
     #  because a background script will not broadcast the signals
     #  it receives
     proc = subprocess.Popen(command,
-                            stdout=subprocess.PIPE
+                            stdout=subprocess.PIPE,
+                            universal_newlines=True
                            )
 
     # sleep to let the server run
     time.sleep(1)
 
-    # send SIGINT to process
-    try:
+    # On launching error report
+    exit_code = 0
+    # exit_code is set to 1 on python script failure
+    if not proc.poll() is None:
+        exit_code = 2
+        sys.exit(exit_code)
 
-        while proc.poll() is None:
+    # direct this script to ignore SIGINT
+    signal.signal(signal.SIGINT, signal_handler)
+
+    # send SIGINT to process and wait for processing
+    lease = 0
+    while True:
+
+        if os.name == 'posix':
+            proc.send_signal(signal.SIGINT)
+        elif os.name == 'nt':
+            proc.send_signal(signal.CTRL_C_EVENT)
+
+        time.sleep(1)
+        lease += 1
+
+        # Break when signal kills the process or it hangs
+        if proc.poll() is None and lease < 10:
             print('iterating...')
-            if os.name == 'posix':
-                proc.send_signal(signal.SIGINT)
-            elif os.name == 'nt':
-                proc.send_signal(signal.CTRL_C_EVENT)
-            # sleep to let the server shut down
-            time.sleep(1)
+        else:
+            break
 
-    except KeyboardInterrupt:
-       print('Catched a KeyboardInterrupt')
-       pass
-
-    # CTest behaves differently than calling python directly
+    # check output
+    proc.kill()
+    output, err = proc.communicate()
 
     EXPECTED_CLOSURE = "### Server shut down ###"
 
-    # joins all the output and converts to string
-    output = proc.stdout.readlines()
-    output = b'\n'.join(output).decode()
-
-    # check if correct shut down message has been sent
     if EXPECTED_CLOSURE in output:
         # success
         print('test_fast_discovery_closure SUCCEED')
-        proc = None
-        return
+    else:
+        # failure
+        print('test_fast_discovery_closure FAILED')
+        exit_code = 3
 
-    print('test_fast_discovery_closure FAILED')
-    sys.exit(1)
+    sys.exit(exit_code)
 
 if __name__ == '__main__':
 

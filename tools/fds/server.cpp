@@ -235,6 +235,7 @@ int main (
     }
 
     fastdds::dds::Log::Flush();
+    cout.flush();
     Domain::stopAll();
 
     return return_value;
