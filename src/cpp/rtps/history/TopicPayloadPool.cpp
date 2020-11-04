@@ -280,6 +280,11 @@ bool TopicPayloadPool::shrink (
 std::unique_ptr<ITopicPayloadPool> TopicPayloadPool::get(
         const BasicPoolConfig& config)
 {
+    if (config.payload_initial_size == 0u)
+    {
+        return nullptr;
+    }
+
     ITopicPayloadPool* ret_val = nullptr;
 
     switch (config.memory_policy)
