@@ -25,6 +25,7 @@ public:
             uint32_t payload_size)
         : payload_size_(payload_size)
     {
+        assert(payload_size_ > 0);
     }
 
     bool get_payload(
