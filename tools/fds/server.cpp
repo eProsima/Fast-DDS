@@ -141,12 +141,30 @@ int main (
 
     // Set up listening locators.
     // If the number of specify ports doesn't match the number of IPs the last port is used.
+    // If at least one port specified replace the default one
     rtps::Locator_t locator(eprosima::fastdds::rtps::DEFAULT_ROS2_SERVER_PORT);
+
+    // retrieve first UDP port
+    option::Option* pO_port = options[PORT];
+    if ( nullptr != pO_port )
+    {
+        stringstream is;
+        is << pO_port->arg;
+        uint16_t id;
+
+        if ( !(is >> id
+                && is.eof()
+                && rtps::IPLocator::setPhysicalPort(locator, id)))
+        {
+            cout << "Invalid listening locator port specified:" << id << endl;
+            return 1;
+        }
+    }
+
     rtps::IPLocator::setIPv4(locator, 0, 0, 0, 0);
 
-    option::Option* pO_port = options[PORT];
+    // retrieve first IP address
     pOp = options[IPADDRESS];
-
     if ( nullptr == pOp )
     {
         // add default locator
