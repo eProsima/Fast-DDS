@@ -19,7 +19,7 @@
 
     usage: test.py <binary_path> <test_name>
 
-    binary: Fast-DDS binary path
+    binary_path: Fast-DDS binary path
 
     test_name: Test to run.
 
@@ -70,7 +70,7 @@ def test_fast_discovery_closure(fast_discovery_tool):
 
     # CTest behaves differently than calling python directly
 
-    EXPECTED_CLOSURE = "### Server shutted down ###"
+    EXPECTED_CLOSURE = "### Server shut down ###"
 
     # joins all the output and converts to string
     output = proc.stdout.readlines()
