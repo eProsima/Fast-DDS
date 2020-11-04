@@ -48,7 +48,8 @@ public:
      *
      * In both cases, the received @c size will be for the whole serialized payload.
      *
-     * @param [in]     size          Number of bytes required for the serialized payload
+     * @param [in]     size          Number of bytes required for the serialized payload.
+     *                               Should be greater than 0.
      * @param [in,out] cache_change  Cache change to assign the payload to
      *
      * @returns whether the operation succeeded or not
