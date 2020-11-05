@@ -74,7 +74,7 @@ public:
     {
         DestructorHelper::instance().increment();
     }
-        
+
     const std::string& topic_name() const
     {
         return topic_name_;
