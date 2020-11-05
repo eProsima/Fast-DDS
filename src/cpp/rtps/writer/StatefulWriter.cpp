@@ -1796,11 +1796,10 @@ bool StatefulWriter::try_remove_change(
 }
 
 bool StatefulWriter::wait_for_acknowledgement(
-        CacheChange_t* change,
+        const SequenceNumber_t& seq,
         const std::chrono::steady_clock::time_point& max_blocking_time_point,
         std::unique_lock<RecursiveTimedMutex>& lock)
 {
-    SequenceNumber_t seq = change->sequenceNumber;
     return may_remove_change_cond_.wait_until(lock, max_blocking_time_point,
                    [this, &seq]()
                    {

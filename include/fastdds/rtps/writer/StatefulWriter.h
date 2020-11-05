@@ -226,7 +226,7 @@ public:
             std::unique_lock<RecursiveTimedMutex>& lock) override;
 
     bool wait_for_acknowledgement(
-            CacheChange_t* change,
+            const SequenceNumber_t& seq,
             const std::chrono::steady_clock::time_point& max_blocking_time_point,
             std::unique_lock<RecursiveTimedMutex>& lock) override;
 

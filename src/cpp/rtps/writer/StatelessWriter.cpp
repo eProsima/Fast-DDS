@@ -406,7 +406,7 @@ bool StatelessWriter::try_remove_change(
 }
 
 bool StatelessWriter::wait_for_acknowledgement(
-        CacheChange_t* change,
+        const SequenceNumber_t& seq,
         const std::chrono::steady_clock::time_point& max_blocking_time_point,
         std::unique_lock<RecursiveTimedMutex>& lock)
 {
@@ -415,7 +415,6 @@ bool StatelessWriter::wait_for_acknowledgement(
         return true;
     }
 
-    SequenceNumber_t seq = change->sequenceNumber;
     auto change_is_unsent = [seq](const ChangeForReader_t& unsent_change)
             {
                 return seq == unsent_change.getSequenceNumber();

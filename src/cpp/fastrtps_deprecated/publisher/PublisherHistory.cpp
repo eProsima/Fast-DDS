@@ -171,8 +171,8 @@ bool PublisherHistory::add_pub_change(
                 }
                 else
                 {
-                    CacheChange_t* change_to_remove = vit->second.cache_changes.front();
-                    if (mp_writer->wait_for_acknowledgement(change_to_remove, max_blocking_time, lock))
+                    SequenceNumber_t seq_to_remove = vit->second.cache_changes.front()->sequenceNumber;
+                    if (mp_writer->wait_for_acknowledgement(seq_to_remove, max_blocking_time, lock))
                     {
                         add = remove_change_pub(vit->second.cache_changes.front());
                     }

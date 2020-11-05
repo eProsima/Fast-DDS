@@ -108,7 +108,7 @@ public:
     }
 
     virtual bool wait_for_acknowledgement(
-            CacheChange_t*,
+            const SequenceNumber_t&,
             const std::chrono::steady_clock::time_point&,
             std::unique_lock<RecursiveTimedMutex>&)
     {

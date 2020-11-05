@@ -252,13 +252,13 @@ public:
 
     /**
      * Waits till a change has been acknowledged.
-     * @param change Change to wait for acknowledgement.
+     * @param seq Sequence number to wait for acknowledgement.
      * @param max_blocking_time_point Maximum time to wait for.
      * @param lock Lock of the Change list.
      * @return true when change was acknowledged, false when timeout is reached.
      */
     virtual bool wait_for_acknowledgement(
-            CacheChange_t* change,
+            const SequenceNumber_t& seq,
             const std::chrono::steady_clock::time_point& max_blocking_time_point,
             std::unique_lock<RecursiveTimedMutex>& lock) = 0;
 
