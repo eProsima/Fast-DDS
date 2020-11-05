@@ -79,6 +79,11 @@ private:
     static std::shared_ptr<IPayloadPool> get(
             const BasicPoolConfig& config)
     {
+        if (config.payload_initial_size == 0)
+        {
+            return nullptr;
+        }
+
         switch (config.memory_policy)
         {
             case PREALLOCATED_MEMORY_MODE:

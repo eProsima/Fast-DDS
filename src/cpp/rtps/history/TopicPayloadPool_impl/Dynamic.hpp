@@ -29,7 +29,14 @@ class DynamicTopicPayloadPool : public TopicPayloadPool
 {
 public:
 
-    virtual bool release_payload(
+    bool get_payload(
+            uint32_t size,
+            CacheChange_t& cache_change) override
+    {
+        return (size > 0u) && do_get_payload(size, cache_change, true);
+    }
+
+    bool release_payload(
             CacheChange_t& cache_change) override
     {
         assert(cache_change.payload_owner() == this);

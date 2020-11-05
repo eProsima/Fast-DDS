@@ -150,7 +150,7 @@ protected:
         //Reserve to the expected maximum
         for (uint32_t i = 0; i < num_reserves; i++)
         {
-            uint32_t data_size = i * 16;
+            uint32_t data_size = i * 16 + 1u;
             CacheChange_t* ch = new CacheChange_t();
             cache_changes.push_back(ch);
 

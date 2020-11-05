@@ -34,6 +34,7 @@ public:
         : payload_size_(payload_size)
         , minimum_pool_size_(0)
     {
+        assert(payload_size_ > 0);
     }
 
     bool get_payload(

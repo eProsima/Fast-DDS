@@ -139,6 +139,8 @@ protected:
         explicit PayloadNode(
                 uint32_t size)
         {
+            assert(size > 0);
+
             buffer = (octet*)calloc(size + offsetof(NodeInfo, data), sizeof(octet));
             if (buffer == nullptr)
             {
