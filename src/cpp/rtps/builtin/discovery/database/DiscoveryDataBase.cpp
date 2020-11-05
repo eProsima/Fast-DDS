@@ -52,6 +52,7 @@ DiscoveryDataBase::~DiscoveryDataBase()
     {
         logError(DISCOVERY_DATABASE, "Destroying a NOT cleared database");
     }
+    // TODO close file
 }
 
 std::vector<fastrtps::rtps::CacheChange_t*> DiscoveryDataBase::clear()
