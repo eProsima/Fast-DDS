@@ -622,7 +622,11 @@ bool RTPSParticipantImpl::create_writer(
 
     std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
     m_allWriterList.push_back(SWriter);
-    if (!is_builtin)
+    if (is_builtin)
+    {
+        async_thread().wake_up(SWriter);
+    }
+    else
     {
         m_userWriterList.push_back(SWriter);
     }
