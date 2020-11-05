@@ -102,9 +102,9 @@ bool PDPServer2::init(
         return false;
     }
 
-    std::vector<nlohmann::json> backup_queue;
     if (_durability == TRANSIENT)
     {
+        std::vector<nlohmann::json> backup_queue;
         nlohmann::json backup_json;
         // if the DS is BACKUP, try to restore DDB from file
         discovery_db().backup_in_progress(true);
@@ -1370,7 +1370,7 @@ void PDPServer2::send_announcement(
     }
 }
 
-bool PDPServer2::read_backup(nlohmann::json& ddb_json, std::vector<nlohmann::json>& new_changes)
+bool PDPServer2::read_backup(nlohmann::json& ddb_json, std::vector<nlohmann::json>& /* new_changes */)
 {
     std::ifstream myfile;
     try
@@ -1382,13 +1382,14 @@ bool PDPServer2::read_backup(nlohmann::json& ddb_json, std::vector<nlohmann::jso
 
         myfile.open(get_ddb_queue_persistence_file_name(), std::ios_base::in);
 
-        std::string line;
-        while (std::getline(myfile, line))
-        {
-            nlohmann::json change_json(line);
-            // Read every change, and store it in json format in a vector
-            new_changes.push_back(change_json);
-        }
+        // std::string line;
+        // while (std::getline(myfile, line))
+        // {
+        //     nlohmann::json change_json = nlohmann::json::parse(line);
+
+        //     // Read every change, and store it in json format in a vector
+        //     new_changes.push_back(change_json);
+        // }
 
         myfile.close();
     }
@@ -1583,8 +1584,9 @@ bool PDPServer2::process_backup_restore_queue(std::vector<nlohmann::json>& new_c
     try
     {
         // Read every change and push it to the listener that it belongs
-        for (auto json_change : new_changes)
+        for (nlohmann::json& json_change : new_changes)
         {
+            // std::cout << json_change << std::endl;
             fastrtps::rtps::CacheChange_t* change_aux;
             length = json_change["serialized_payload"]["length"].get<std::uint32_t>();
             (std::istringstream) json_change["sample_identity"].get<std::string>() >> sample_identity_aux;
@@ -1606,7 +1608,7 @@ bool PDPServer2::process_backup_restore_queue(std::vector<nlohmann::json>& new_c
                     }
                     else
                     {
-                        ddb::from_json(new_changes, *change_aux);
+                        ddb::from_json(json_change, *change_aux);
                         mp_listener->onNewCacheChangeAdded(mp_PDPReader, change_aux);
                     }
 
@@ -1620,7 +1622,7 @@ bool PDPServer2::process_backup_restore_queue(std::vector<nlohmann::json>& new_c
                     }
                     else
                     {
-                        ddb::from_json(new_changes, *change_aux);
+                        ddb::from_json(json_change, *change_aux);
                         edp_pub_listener->onNewCacheChangeAdded(edp->publications_reader_.first, change_aux);
                     }
                 }
@@ -1633,7 +1635,7 @@ bool PDPServer2::process_backup_restore_queue(std::vector<nlohmann::json>& new_c
                     }
                     else
                     {
-                        ddb::from_json(new_changes, *change_aux);
+                        ddb::from_json(json_change, *change_aux);
                         edp_sub_listener->onNewCacheChangeAdded(edp->subscriptions_reader_.first, change_aux);
                     }
                 }
@@ -1650,7 +1652,7 @@ bool PDPServer2::process_backup_restore_queue(std::vector<nlohmann::json>& new_c
                     }
                     else
                     {
-                        ddb::from_json(new_changes, *change_aux);
+                        ddb::from_json(json_change, *change_aux);
                         mp_listener->onNewCacheChangeAdded(mp_PDPReader, change_aux);
                     }
 
@@ -1664,7 +1666,7 @@ bool PDPServer2::process_backup_restore_queue(std::vector<nlohmann::json>& new_c
                     }
                     else
                     {
-                        ddb::from_json(new_changes, *change_aux);
+                        ddb::from_json(json_change, *change_aux);
                         edp_pub_listener->onNewCacheChangeAdded(edp->publications_reader_.first, change_aux);
                     }
                 }
@@ -1677,7 +1679,7 @@ bool PDPServer2::process_backup_restore_queue(std::vector<nlohmann::json>& new_c
                     }
                     else
                     {
-                        ddb::from_json(new_changes, *change_aux);
+                        ddb::from_json(json_change, *change_aux);
                         edp_sub_listener->onNewCacheChangeAdded(edp->subscriptions_reader_.first, change_aux);
                     }
                 }
