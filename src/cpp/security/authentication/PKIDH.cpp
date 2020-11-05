@@ -33,13 +33,13 @@
 #else
 #define IS_OPENSSL_1_1 0
 #define OPENSSL_CONST
-#endif
+#endif // if OPENSSL_VERSION_NUMBER >= 0x10100000L
 
 #if OPENSSL_VERSION_NUMBER >= 0x10101040L
 #define IS_OPENSSL_1_1_1d 1
 #else
 #define IS_OPENSSL_1_1_1d 0
-#endif
+#endif // if OPENSSL_VERSION_NUMBER >= 0x10101040L
 
 #include <openssl/pem.h>
 #include <openssl/err.h>
@@ -473,7 +473,7 @@ static bool sign_sha256(
     EVP_MD_CTX* ctx = EVP_MD_CTX_new();
 #else
     EVP_MD_CTX* ctx = (EVP_MD_CTX*)malloc(sizeof(EVP_MD_CTX));
-#endif
+#endif // if IS_OPENSSL_1_1
     EVP_MD_CTX_init(ctx);
     EVP_PKEY_CTX* pkey;
 
@@ -528,7 +528,7 @@ static bool sign_sha256(
 #else
     EVP_MD_CTX_cleanup(ctx);
     free(ctx);
-#endif
+#endif // if IS_OPENSSL_1_1
 
     return returnedValue;
 }
@@ -550,7 +550,7 @@ static bool check_sign_sha256(
             EVP_MD_CTX_new();
 #else
             (EVP_MD_CTX*)malloc(sizeof(EVP_MD_CTX));
-#endif
+#endif // if IS_OPENSSL_1_1
     EVP_MD_CTX_init(ctx);
 
     EVP_PKEY* pubkey = X509_get_pubkey(certificate);
@@ -604,7 +604,7 @@ static bool check_sign_sha256(
 #else
     EVP_MD_CTX_cleanup(ctx);
     free(ctx);
-#endif
+#endif // if IS_OPENSSL_1_1
 
     return returnedValue;
 }
@@ -824,7 +824,7 @@ static bool store_dh_public_key(
                 EVP_PKEY_get0_DH(dhkey);
 #else
                 dhkey->pkey.dh;
-#endif
+#endif // if IS_OPENSSL_1_1
 
         if (dh != nullptr)
         {
@@ -835,7 +835,7 @@ static bool store_dh_public_key(
 
 #else
             const BIGNUM* pub_key = dh->pub_key;
-#endif
+#endif // if IS_OPENSSL_1_1
 
             int len = BN_num_bytes(pub_key);
             buffer.resize(len);
@@ -861,7 +861,7 @@ static bool store_dh_public_key(
                 EVP_PKEY_get0_EC_KEY(dhkey);
 #else
                 dhkey->pkey.ec;
-#endif
+#endif // if IS_OPENSSL_1_1
         if (ec != nullptr)
         {
             auto grp = EC_KEY_get0_group(ec);
@@ -908,13 +908,13 @@ static EVP_PKEY* generate_dh_peer_key(
             BIGNUM** pub_key = &pub_key_ptr;
 #else
             BIGNUM** pub_key = &dh->pub_key;
-#endif
+#endif // if IS_OPENSSL_1_1
 
             if ((pointer = BN_deserialize_raw(pub_key, buffer.data(), buffer.size(), exception)) != nullptr)
             {
 #if IS_OPENSSL_1_1
                 DH_set0_key(dh, *pub_key, NULL);
-#endif
+#endif // if IS_OPENSSL_1_1
                 EVP_PKEY* key = EVP_PKEY_new();
 
                 if (key != nullptr)
@@ -924,7 +924,7 @@ static EVP_PKEY* generate_dh_peer_key(
                     if (EVP_PKEY_assign(key, type, dh) > 0)
 #else
                     if (EVP_PKEY_assign_DH(key, dh) > 0)
-#endif
+#endif // if IS_OPENSSL_1_1_1d
                     {
                         return key;
                     }
@@ -962,7 +962,7 @@ static EVP_PKEY* generate_dh_peer_key(
             if (EC_KEY_oct2key(ec, pointer, buffer.size(), NULL) > 0)
 #else
             if (o2i_ECPublicKey(&ec, &pointer, (long) buffer.size()) != nullptr)
-#endif
+#endif // if IS_OPENSSL_1_1
             {
                 EVP_PKEY* key = EVP_PKEY_new();
 
@@ -1058,10 +1058,16 @@ static SharedSecretHandle* generate_sharedsecret(
                     if (EVP_PKEY_derive(ctx, data.value().data(), &length) > 0)
                     {
                         uint8_t md[32];
-                        EVP_Digest(data.value().data(), length, md, NULL, EVP_sha256(), NULL);
-                        data.value().assign(md, md + 32);
-                        handle = new SharedSecretHandle();
-                        (*handle)->data_.push_back(std::move(data));
+                        if (EVP_Digest(data.value().data(), length, md, NULL, EVP_sha256(), NULL))
+                        {
+                            data.value().assign(md, md + 32);
+                            handle = new SharedSecretHandle();
+                            (*handle)->data_.push_back(std::move(data));
+                        }
+                        else
+                        {
+                            exception = _SecurityException_("OpenSSL library failed while getting derived key");
+                        }
                     }
                     else
                     {
@@ -1376,6 +1382,7 @@ ValidationResult_t PKIDH::begin_handshake_request(
         {
             exception = _SecurityException_("Cannot find permissions file in permissions credential token");
             EMERGENCY_SECURITY_LOGGING("PKIDH", exception.what());
+            delete handshake_handle_aux;
             return ValidationResult_t::VALIDATION_FAILED;
         }
     }
@@ -1672,8 +1679,8 @@ ValidationResult_t PKIDH::begin_handshake_reply(
 
         if (hash_c1_vec != nullptr)
         {
-            if ( (hash_c1_vec->size() == SHA256_DIGEST_LENGTH) &&
-                    (memcmp(hash_c1, hash_c1_vec->data(), SHA256_DIGEST_LENGTH) != 0) )
+            if ((hash_c1_vec->size() == SHA256_DIGEST_LENGTH) &&
+                    (memcmp(hash_c1, hash_c1_vec->data(), SHA256_DIGEST_LENGTH) != 0))
             {
                 WARNING_SECURITY_LOGGING("PKIDH", "Wrong hash_c1");
             }
@@ -1709,6 +1716,7 @@ ValidationResult_t PKIDH::begin_handshake_reply(
     if (((*handshake_handle_aux)->peerkeys_ = generate_dh_peer_key(*dh1, exception, kagree_kind)) == nullptr)
     {
         WARNING_SECURITY_LOGGING("PKIDH", "Cannot store peer key from dh1");
+        delete handshake_handle_aux;
         return ValidationResult_t::VALIDATION_FAILED;
     }
 
@@ -1846,7 +1854,7 @@ ValidationResult_t PKIDH::begin_handshake_reply(
                         "hash_c1"), false);
 
                 bproperty.name("signature");
-                bproperty.propagate("true");
+                bproperty.propagate(true);
                 if (sign_sha256(lih->pkey_, cdrmessage2.buffer, cdrmessage2.length, bproperty.value(), exception))
                 {
                     (*handshake_handle_aux)->handshake_message_.binary_properties().push_back(std::move(bproperty));
@@ -2306,7 +2314,7 @@ ValidationResult_t PKIDH::process_handshake_request(
             false);
 
     bproperty.name("signature");
-    bproperty.propagate("true");
+    bproperty.propagate(true);
     if (sign_sha256(lih->pkey_, cdrmessage2.buffer, cdrmessage2.length, bproperty.value(), exception))
     {
         final_message.binary_properties().push_back(std::move(bproperty));
