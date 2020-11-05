@@ -642,7 +642,7 @@ void PDPServer2::announceParticipantState(
 
         locators.push_back(discovery_db_.participant_metatraffic_locators(participant_prefix));
     }
-    send_announcement(change, remote_readers, locators);
+    send_announcement(change, remote_readers, locators, dispose);
 }
 
 /**
@@ -1189,8 +1189,8 @@ bool PDPServer2::pending_ack()
             mp_PDPWriterHistory->getHistorySize() > 1 ||
             edp->publications_writer_.second->getHistorySize() > 0 ||
             edp->subscriptions_writer_.second->getHistorySize() > 0);
-    
-    logInfo(RTPS_PDP_SERVER, "PDP writer history length " << mp_PDPWriterHistory->getHistorySize());     
+
+    logInfo(RTPS_PDP_SERVER, "PDP writer history length " << mp_PDPWriterHistory->getHistorySize());
     logInfo(RTPS_PDP_SERVER, "is server " << mp_PDPWriter->getGuid() << " acked by all? " << discovery_db_.server_acked_by_all());
     logInfo(RTPS_PDP_SERVER, "Are there pending changes? " << ret);
     return ret;
@@ -1245,7 +1245,8 @@ void PDPServer2::ping_remote_servers()
 void PDPServer2::send_announcement(
         CacheChange_t* change,
         std::vector<GUID_t> remote_readers,
-        LocatorList_t locators)
+        LocatorList_t locators,
+        bool dispose /* = false */)
 {
 
     if (nullptr == change)
@@ -1255,6 +1256,18 @@ void PDPServer2::send_announcement(
 
     DirectMessageSender sender(getRTPSParticipant(), &remote_readers, &locators);
     RTPSMessageGroup group(getRTPSParticipant(), mp_PDPWriter, sender);
+
+    if (dispose)
+    {
+        fastrtps::rtps::StatefulWriter* writer = static_cast<fastrtps::rtps::StatefulWriter*>(mp_PDPWriter);
+        writer->fastrtps::rtps::StatefulWriter::incrementHBCount();
+        group.add_heartbeat(
+            change->sequenceNumber,
+            change->sequenceNumber,
+            writer->getHeartbeatCount(),
+            true,
+            false);
+    }
 
     if (!group.add_data(*change, false))
     {
