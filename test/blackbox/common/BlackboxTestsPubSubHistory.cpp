@@ -18,6 +18,7 @@
 #include "PubSubWriter.hpp"
 
 #include <fastrtps/xmlparser/XMLProfileManager.h>
+#include <fastrtps/transport/test_UDPv4Transport.h>
 #include <gtest/gtest.h>
 
 using namespace eprosima::fastrtps;
@@ -555,6 +556,67 @@ TEST_P(PubSubHistory, PubSubAsReliableKeepAllWithKeyAndMaxSamplesPerInstance)
     ASSERT_TRUE(data.empty());
 
     reader.block_for_all();
+}
+
+TEST(PubSubHistory, PubSubAsReliableKeepAllWithKeyAndMaxSamplesPerInstanceAndLifespan)
+{
+    PubSubReader<KeyedHelloWorldType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<KeyedHelloWorldType> writer(TEST_TOPIC_NAME);
+
+    constexpr uint32_t keys = 2;
+    constexpr uint32_t samples_per_instance = 2;
+
+    reader.resource_limits_max_instances(keys).
+            reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).
+            history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS).init();
+
+    ASSERT_TRUE(reader.isInitialized());
+
+    // Lifespan period in milliseconds
+    constexpr uint32_t lifespan_ms = 1000;
+    constexpr uint32_t max_block_time_ms = 500;
+    auto testTransport = std::make_shared<test_UDPv4TransportDescriptor>();
+
+    writer.resource_limits_max_instances(keys)
+            .resource_limits_max_samples_per_instance(samples_per_instance)
+            .history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS)
+            .reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS)
+            .max_blocking_time(max_block_time_ms * 1e-3)
+            .lifespan_period(lifespan_ms * 1e-3)
+            .disable_builtin_transport()
+            .add_user_transport_to_pparams(testTransport)
+            .init();
+
+    ASSERT_TRUE(writer.isInitialized());
+
+    // Wait for discovery.
+    writer.wait_discovery();
+    reader.wait_discovery();
+
+    eprosima::fastrtps::rtps::test_UDPv4Transport::test_UDPv4Transport_ShutdownAllNetwork = true;
+
+    auto data = default_keyedhelloworld_data_generator(2);
+
+    // Send data
+    writer.send(data);
+
+    std::this_thread::sleep_for(std::chrono::milliseconds(lifespan_ms - 10));
+
+    data = default_keyedhelloworld_data_generator(4);
+    reader.startReception(data);
+
+    std::thread thread([]()
+            {
+                std::this_thread::sleep_for(std::chrono::milliseconds(20));
+                eprosima::fastrtps::rtps::test_UDPv4Transport::test_UDPv4Transport_ShutdownAllNetwork = false;
+            });
+
+    // Send data
+    writer.send(data);
+    ASSERT_TRUE(data.empty());
+
+    reader.block_for_all();
+    thread.join();
 }
 
 TEST_P(PubSubHistory, PubSubAsReliableKeepAllWithKeyAndInfiniteMaxSamplesPerInstance)
