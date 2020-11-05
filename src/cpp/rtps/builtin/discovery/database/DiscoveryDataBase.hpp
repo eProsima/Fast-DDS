@@ -324,6 +324,11 @@ public:
         data_queues_mutex_.unlock();
     }
 
+    std::string virtual_topic() const
+    {
+        return virtual_topic_;
+    }
+
 protected:
 
     // change a cacheChange by update or new disposal
