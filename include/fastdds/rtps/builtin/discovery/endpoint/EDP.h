@@ -395,7 +395,7 @@ private:
     WriterProxyData temp_writer_proxy_data_;
 
     using pool_allocator_t =
-        foonathan::memory::memory_pool<foonathan::memory::node_pool, foonathan::memory::heap_allocator>;
+            foonathan::memory::memory_pool<foonathan::memory::node_pool, foonathan::memory::heap_allocator>;
 
     pool_allocator_t reader_status_allocator_;
     pool_allocator_t writer_status_allocator_;

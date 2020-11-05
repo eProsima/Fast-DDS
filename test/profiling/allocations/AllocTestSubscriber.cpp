@@ -29,12 +29,16 @@
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
 
-AllocTestSubscriber::AllocTestSubscriber():mp_participant(nullptr),
-mp_subscriber(nullptr)
+AllocTestSubscriber::AllocTestSubscriber()
+    : mp_participant(nullptr)
+    , mp_subscriber(nullptr)
 {
 }
 
-bool AllocTestSubscriber::init(const char* profile, int domainId, const std::string& outputFile)
+bool AllocTestSubscriber::init(
+        const char* profile,
+        int domainId,
+        const std::string& outputFile)
 {
     m_profile = profile;
     m_outputFile = outputFile;
@@ -42,57 +46,65 @@ bool AllocTestSubscriber::init(const char* profile, int domainId, const std::str
 
     ParticipantAttributes participant_att;
     if (eprosima::fastrtps::xmlparser::XMLP_ret::XML_OK ==
-        eprosima::fastrtps::xmlparser::XMLProfileManager::fillParticipantAttributes("test_participant_profile",
+            eprosima::fastrtps::xmlparser::XMLProfileManager::fillParticipantAttributes("test_participant_profile",
             participant_att))
     {
         participant_att.domainId = domainId;
         mp_participant = Domain::createParticipant(participant_att);
     }
 
-    if(mp_participant==nullptr)
+    if (mp_participant == nullptr)
+    {
         return false;
+    }
 
     //REGISTER THE TYPE
-    Domain::registerType(mp_participant,&m_type);
+    Domain::registerType(mp_participant, &m_type);
 
     //CREATE THE SUBSCRIBER
     std::string prof("test_subscriber_profile_");
     prof.append(profile);
     mp_subscriber = Domain::createSubscriber(mp_participant, prof, &m_listener);
 
-    if(mp_subscriber == nullptr)
+    if (mp_subscriber == nullptr)
+    {
         return false;
+    }
 
     bool show_allocation_traces = std::getenv("FASTDDS_PROFILING_PRINT_TRACES") != nullptr;
     eprosima_profiling::entities_created(show_allocation_traces);
     return true;
 }
 
-AllocTestSubscriber::~AllocTestSubscriber() {
+AllocTestSubscriber::~AllocTestSubscriber()
+{
     Domain::removeParticipant(mp_participant);
 }
 
-void AllocTestSubscriber::SubListener::onSubscriptionMatched(Subscriber* /*sub*/,MatchingInfo& info)
+void AllocTestSubscriber::SubListener::onSubscriptionMatched(
+        Subscriber* /*sub*/,
+        MatchingInfo& info)
 {
     std::unique_lock<std::mutex> lock(mtx);
-    if(info.status == MATCHED_MATCHING)
+    if (info.status == MATCHED_MATCHING)
     {
         n_matched++;
-        std::cout << "Subscriber matched"<<std::endl;
+        std::cout << "Subscriber matched" << std::endl;
     }
     else
     {
         n_matched--;
-        std::cout << "Subscriber unmatched"<<std::endl;
+        std::cout << "Subscriber unmatched" << std::endl;
     }
     cv.notify_all();
 }
 
-void AllocTestSubscriber::SubListener::onNewDataMessage(Subscriber* sub)
+void AllocTestSubscriber::SubListener::onNewDataMessage(
+        Subscriber* sub)
 {
-    if(sub->takeNextData((void*)&m_Hello, &m_info))
+    if (sub->takeNextData((void*)&m_Hello, &m_info))
     {
-        if(m_info.sampleKind == ALIVE)
+        if (m_info.sampleKind == ALIVE)
         {
             std::unique_lock<std::mutex> lock(mtx);
             this->n_samples++;
@@ -107,27 +119,40 @@ void AllocTestSubscriber::SubListener::onNewDataMessage(Subscriber* sub)
 void AllocTestSubscriber::SubListener::wait_match()
 {
     std::unique_lock<std::mutex> lock(mtx);
-    cv.wait(lock, [this]() { return n_matched > 0; });
+    cv.wait(lock, [this]()
+            {
+                return n_matched > 0;
+            });
 }
 
 void AllocTestSubscriber::SubListener::wait_unmatch()
 {
     std::unique_lock<std::mutex> lock(mtx);
-    cv.wait(lock, [this]() { return n_matched <= 0; });
+    cv.wait(lock, [this]()
+            {
+                return n_matched <= 0;
+            });
 }
 
-void AllocTestSubscriber::SubListener::wait_until_total_received_at_least(uint32_t n)
+void AllocTestSubscriber::SubListener::wait_until_total_received_at_least(
+        uint32_t n)
 {
     std::unique_lock<std::mutex> lock(mtx);
-    cv.wait(lock, [this, n]() { return n_samples >= n; });
+    cv.wait(lock, [this, n]()
+            {
+                return n_samples >= n;
+            });
 }
 
-void AllocTestSubscriber::run(bool wait_unmatch)
+void AllocTestSubscriber::run(
+        bool wait_unmatch)
 {
-  run(60, wait_unmatch);
+    run(60, wait_unmatch);
 }
 
-void AllocTestSubscriber::run(uint32_t number, bool wait_unmatch)
+void AllocTestSubscriber::run(
+        uint32_t number,
+        bool wait_unmatch)
 {
     // Restart callgrind graph
     eprosima_profiling::callgrind_zero_count();

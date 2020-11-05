@@ -191,7 +191,8 @@ bool EDP::newLocalReaderProxyData(
 
                     if (att.type.m_type_object._d() == static_cast<uint8_t>(0x00))
                     {
-                        bool type_is_complete = has_type_id && rpd->type_id().m_type_identifier._d() == types::EK_COMPLETE;
+                        bool type_is_complete = has_type_id &&
+                                rpd->type_id().m_type_identifier._d() == types::EK_COMPLETE;
                         const types::TypeObject* type_obj =
                                 types::TypeObjectFactory::get_instance()->get_type_object(
                             rpd->typeName().c_str(), type_is_complete);
@@ -319,7 +320,8 @@ bool EDP::newLocalWriterProxyData(
 
                     if (att.type.m_type_object._d() == static_cast<uint8_t>(0x00))
                     {
-                        bool type_is_complete = has_type_id && wpd->type_id().m_type_identifier._d() == types::EK_COMPLETE;
+                        bool type_is_complete = has_type_id &&
+                                wpd->type_id().m_type_identifier._d() == types::EK_COMPLETE;
                         const types::TypeObject* type_obj =
                                 types::TypeObjectFactory::get_instance()->get_type_object(
                             wpd->typeName().c_str(), type_is_complete);
