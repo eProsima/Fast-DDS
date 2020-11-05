@@ -113,7 +113,8 @@ public:
     void send_announcement(
             fastrtps::rtps::CacheChange_t* change,
             std::vector<fastrtps::rtps::GUID_t> remote_readers,
-            fastrtps::rtps::LocatorList_t locators);
+            fastrtps::rtps::LocatorList_t locators,
+            bool dispose = false);
 
     /**
      * These methods wouldn't be needed under perfect server operation (no need of dynamic endpoint allocation)
