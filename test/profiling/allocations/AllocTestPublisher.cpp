@@ -67,7 +67,8 @@ bool AllocTestPublisher::init(const char* profile, int domainId, const std::stri
     if(mp_publisher == nullptr)
         return false;
 
-    eprosima_profiling::entities_created();
+    bool show_allocation_traces = std::getenv("FASTDDS_PROFILING_PRINT_TRACES") != nullptr;
+    eprosima_profiling::entities_created(show_allocation_traces);
     return true;
 
 }
