@@ -522,7 +522,7 @@ public:
         , ResourceLimitedOctetVector()
     {
         assign(data.begin(), data.end());
-        length = (size() + 7) & ~3;
+        length = static_cast<uint16_t>((size() + 7u) & ~3u);
     }
 
     virtual RTPS_DllAPI ~GenericDataQosPolicy()

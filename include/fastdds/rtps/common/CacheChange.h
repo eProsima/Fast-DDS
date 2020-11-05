@@ -331,7 +331,7 @@ private:
     {
         size_t offset = fragment_size_;
         offset *= fragment_index;
-        offset = (offset + 3) & ~3;
+        offset = (offset + 3u) & ~3u;
         return reinterpret_cast<uint32_t*>(&serializedPayload.data[offset]);
     }
 
@@ -350,7 +350,7 @@ private:
     {
         bool at_least_one_changed = false;
 
-        if ( (fragment_size_ > 0) && (initial_fragment < fragment_count_) )
+        if ((fragment_size_ > 0) && (initial_fragment < fragment_count_))
         {
             uint32_t last_fragment = initial_fragment + num_of_fragments;
             if (last_fragment > fragment_count_)

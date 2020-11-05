@@ -61,7 +61,7 @@ struct DiffFunction
 template<class T, class Diff = DiffFunction<T>, uint32_t NBITS = 256>
 class BitmapRange
 {
-    #define NITEMS ((NBITS + 31ul) / 32ul)
+    #define NITEMS ((NBITS + 31u) / 32u)
 
 public:
 
@@ -118,7 +118,7 @@ public:
         base_ = base;
         range_max_ = base_ + (NBITS - 1);
         num_bits_ = 0;
-        bitmap_.fill(0UL);
+        bitmap_.fill(0u);
     }
 
     /**
@@ -184,7 +184,7 @@ public:
     {
         // Traverse through the significant items on the bitmap
         T item = base_;
-        uint32_t n_longs = (num_bits_ + 31UL) / 32UL;
+        uint32_t n_longs = (num_bits_ + 31u) / 32u;
         for (uint32_t i = 0; i < n_longs; i++)
         {
             // Check if item has at least one bit set
@@ -197,9 +197,9 @@ public:
 #if _MSC_VER
                 unsigned long bit;
                 _BitScanReverse(&bit, bits);
-                uint32_t offset = 31UL ^ bit;
+                uint32_t offset = 31u ^ bit;
 #else
-                uint32_t offset = __builtin_clz(bits);
+                uint32_t offset = static_cast<uint32_t>(__builtin_clz(bits));
 #endif // if _MSC_VER
 
                 // Found first bit set in bitmap
@@ -207,7 +207,7 @@ public:
             }
 
             // There are 32 items on each bitmap item.
-            item = item + 32UL;
+            item = item + 32u;
         }
 
         return base_;
@@ -232,8 +232,8 @@ public:
             if (diff < num_bits_)
             {
                 uint32_t pos = diff >> 5;
-                diff &= 31UL;
-                return (bitmap_[pos] & (1UL << (31UL - diff))) != 0;
+                diff &= 31u;
+                return (bitmap_[pos] & (1u << (31u - diff))) != 0;
             }
         }
 
@@ -259,8 +259,8 @@ public:
             uint32_t diff = d_func(item, base_);
             num_bits_ = std::max(diff + 1, num_bits_);
             uint32_t pos = diff >> 5;
-            diff &= 31UL;
-            bitmap_[pos] |= (1UL << (31UL - diff));
+            diff &= 31u;
+            bitmap_[pos] |= (1u << (31u - diff));
             return true;
         }
 
@@ -280,7 +280,7 @@ public:
             const T& from,
             const T& to)
     {
-        constexpr uint32_t full_mask = 0xFFFFFFFF;
+        constexpr uint32_t full_mask = std::numeric_limits<uint32_t>::max();
 
         // Adapt incoming range to range limits
         T min = (base_ >= from) ? base_ : from;
@@ -300,10 +300,10 @@ public:
         num_bits_ = std::max(num_bits_, offset + n_bits);
 
         uint32_t pos = offset >> 5;             // Item position
-        offset &= 31UL;                         // Bit position inside item
+        offset &= 31u;                          // Bit position inside item
         uint32_t mask = full_mask;              // Mask with all bits set
         mask >>= offset;                        // Remove first 'offset' bits from mask
-        uint32_t bits_in_mask = 32UL - offset;  // Take note of number of set bits in mask
+        uint32_t bits_in_mask = 32u - offset;   // Take note of number of set bits in mask
 
         // This loop enters whenever the whole mask should be added
         while (n_bits >= bits_in_mask)
@@ -312,7 +312,7 @@ public:
             pos++;                              // Go to next position in the array
             n_bits -= bits_in_mask;             // Decrease number of pending bits
             mask = full_mask;                   // Mask with all bits set
-            bits_in_mask = 32UL;                // All bits set in mask (32)
+            bits_in_mask = 32u;                 // All bits set in mask (32)
         }
 
         // This condition will be true if the last bits of the mask should not be used
@@ -339,8 +339,8 @@ public:
             Diff d_func;
             uint32_t diff = d_func(item, base_);
             uint32_t pos = diff >> 5;
-            diff &= 31UL;
-            bitmap_[pos] &= ~(1UL << (31UL - diff));
+            diff &= 31u;
+            bitmap_[pos] &= ~(1u << (31u - diff));
 
             if (item == max_value)
             {
@@ -363,7 +363,7 @@ public:
             uint32_t& num_longs_used) const noexcept
     {
         num_bits = num_bits_;
-        num_longs_used = (num_bits_ + 31UL) / 32UL;
+        num_longs_used = (num_bits_ + 31u) / 32u;
         bitmap = bitmap_;
     }
 
@@ -379,13 +379,13 @@ public:
             const uint32_t* bitmap) noexcept
     {
         num_bits_ = std::min(num_bits, NBITS);
-        uint32_t num_items = ((num_bits_ + 31UL) / 32UL);
-        uint32_t num_bytes = num_items * sizeof(uint32_t);
-        bitmap_.fill(0UL);
+        uint32_t num_items = ((num_bits_ + 31u) / 32u);
+        uint32_t num_bytes = num_items * static_cast<uint32_t>(sizeof(uint32_t));
+        bitmap_.fill(0u);
         memcpy(bitmap_.data(), bitmap, num_bytes);
         if (0 < num_bits)
         {
-            bitmap_[num_items - 1] &= ~(std::numeric_limits<uint32_t>::max() >> (num_bits & 31UL));
+            bitmap_[num_items - 1] &= ~(std::numeric_limits<uint32_t>::max() >> (num_bits & 31u));
         }
         calc_maximum_bit_set(num_items, 0);
     }
@@ -402,7 +402,7 @@ public:
         T item = base_;
 
         // Traverse through the significant items on the bitmap
-        uint32_t n_longs = (num_bits_ + 31UL) / 32UL;
+        uint32_t n_longs = (num_bits_ + 31u) / 32u;
         for (uint32_t i = 0; i < n_longs; i++)
         {
             // Traverse through the bits set on the item, msb first.
@@ -416,21 +416,21 @@ public:
 #if _MSC_VER
                 unsigned long bit;
                 _BitScanReverse(&bit, bits);
-                uint32_t offset = 31UL ^ bit;
+                uint32_t offset = 31u ^ bit;
 #else
-                uint32_t offset = __builtin_clz(bits);
-                uint32_t bit = 31UL ^ offset;
+                uint32_t offset = static_cast<uint32_t>(__builtin_clz(bits));
+                uint32_t bit = 31u ^ offset;
 #endif // if _MSC_VER
 
                 // Call the function for the corresponding item
                 f(item + offset);
 
                 // Clear the most significant bit
-                bits &= ~(1UL << bit);
+                bits &= ~(1u << bit);
             }
 
             // There are 32 items on each bitmap item.
-            item = item + 32UL;
+            item = item + 32u;
         }
     }
 
@@ -450,7 +450,7 @@ private:
         {
             // Shifting more than most significant. Clear whole bitmap.
             num_bits_ = 0;
-            bitmap_.fill(0UL);
+            bitmap_.fill(0u);
         }
         else
         {
@@ -459,7 +459,7 @@ private:
 
             // Div and mod by 32
             uint32_t n_items = n_bits >> 5;
-            n_bits &= 31UL;
+            n_bits &= 31u;
             if (n_bits == 0)
             {
                 // Shifting a multiple of 32 bits, just move the bitmap integers
@@ -474,7 +474,7 @@ private:
                 // bbbbbccc bbbbbbbb cccccccc dddddddd
                 // bbbbbccc cccccddd ddddd000 dddddddd
                 // bbbbbccc cccccddd ddddd000 00000000
-                uint32_t overflow_bits = 32UL - n_bits;
+                uint32_t overflow_bits = 32u - n_bits;
                 size_t last_index = NITEMS - 1u;
                 for (size_t i = 0, n = n_items; n < last_index; i++, n++)
                 {
@@ -495,7 +495,7 @@ private:
         {
             // Shifting more than total bitmap size. Clear whole bitmap.
             num_bits_ = 0;
-            bitmap_.fill(0UL);
+            bitmap_.fill(0u);
         }
         else
         {
@@ -506,7 +506,7 @@ private:
 
             // Div and mod by 32
             uint32_t n_items = n_bits >> 5;
-            n_bits &= 31UL;
+            n_bits &= 31u;
             if (n_bits == 0)
             {
                 // Shifting a multiple of 32 bits, just move the bitmap integers
@@ -522,7 +522,7 @@ private:
                 // aaaaaaaa bbbbbbbb aaabbbbb bbbccccc
                 // aaaaaaaa 000aaaaa aaabbbbb bbbccccc
                 // 00000000 000aaaaa aaabbbbb bbbccccc
-                uint32_t overflow_bits = 32UL - n_bits;
+                uint32_t overflow_bits = 32u - n_bits;
                 size_t last_index = NITEMS - 1u;
                 for (size_t i = last_index, n = last_index - n_items; n > 0; i--, n--)
                 {
@@ -557,11 +557,11 @@ private:
 #if _MSC_VER
                 unsigned long bit;
                 _BitScanReverse(&bit, bits);
-                uint32_t offset = (31UL ^ bit) + 1;
+                uint32_t offset = (31u ^ bit) + 1;
 #else
-                uint32_t offset = __builtin_clz(bits) + 1;
+                uint32_t offset = static_cast<uint32_t>(__builtin_clz(bits)) + 1u;
 #endif // if _MSC_VER
-                num_bits_ = (i << 5UL) + offset;
+                num_bits_ = (i << 5u) + offset;
                 break;
             }
         }

@@ -54,7 +54,7 @@ template <
     typename _KeepOrderEnabler = std::false_type,
     typename _LimitsConfig = ResourceLimitedContainerConfig,
     typename _Alloc = std::allocator<_Ty>,
-    typename _Collection = std::vector<_Ty, _Alloc> >
+    typename _Collection = std::vector<_Ty, _Alloc>>
 class ResourceLimitedVector
 {
 public:
@@ -247,9 +247,11 @@ public:
             InputIterator first,
             InputIterator last)
     {
-        size_type n = std::distance(first, last);
+        size_type n = static_cast<size_type>(std::distance(first, last));
         n = std::min(n, configuration_.maximum);
-        collection_.assign(first, first + n);
+        InputIterator value = first;
+        std::advance(value, n);
+        collection_.assign(first, value);
     }
 
     /**
@@ -459,7 +461,10 @@ public:
      *
      * @return const reference to the underlying collection.
      */
-    operator const collection_type& () const noexcept { return collection_; }
+    operator const collection_type& () const noexcept
+    {
+        return collection_;
+    }
 
 protected:
 

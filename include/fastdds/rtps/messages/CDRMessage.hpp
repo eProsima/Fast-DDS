@@ -112,7 +112,7 @@ inline bool CDRMessage::read_array_with_max_size(
         return false;
     }
     valid &= CDRMessage::readData(msg, arr, datasize);
-    msg->pos = (msg->pos + 3) & ~3;
+    msg->pos = (msg->pos + 3u) & ~3u;
     return valid;
 }
 
@@ -229,7 +229,7 @@ inline SequenceNumberSet_t CDRMessage::readSequenceNumberSet(
     valid &= CDRMessage::readUInt32(msg, &numBits);
     valid &= (numBits <= 256u);
 
-    uint32_t n_longs = (numBits + 31ul) / 32ul;
+    uint32_t n_longs = (numBits + 31u) / 32u;
     uint32_t bitmap[8];
     for (uint32_t i = 0; valid && (i < n_longs); ++i)
     {
@@ -257,7 +257,7 @@ inline bool CDRMessage::readFragmentNumberSet(
     valid &= CDRMessage::readUInt32(msg, &numBits);
     valid &= (numBits <= 256u);
 
-    uint32_t n_longs = (numBits + 31ul) / 32ul;
+    uint32_t n_longs = (numBits + 31u) / 32u;
     uint32_t bitmap[8];
     for (uint32_t i = 0; valid && (i < n_longs); ++i)
     {
@@ -372,7 +372,7 @@ inline bool CDRMessage::readOctetVector(
     bool valid = CDRMessage::readUInt32(msg, &vecsize);
     ocvec->resize(vecsize);
     valid &= CDRMessage::readData(msg, ocvec->data(), vecsize);
-    msg->pos = (msg->pos + 3) & ~3;
+    msg->pos = (msg->pos + 3u) & ~3u;
     return valid;
 }
 
@@ -394,11 +394,11 @@ inline bool CDRMessage::readString(
         stri->resize(str_size - 1);
         for (uint32_t i = 0; i < str_size - 1; i++)
         {
-            stri->at(i) = msg->buffer[msg->pos + i];
+            stri->at(i) = static_cast<char>(msg->buffer[msg->pos + i]);
         }
     }
     msg->pos += str_size;
-    msg->pos = (msg->pos + 3) & ~3;
+    msg->pos = (msg->pos + 3u) & ~3u;
 
     return valid;
 }
@@ -421,9 +421,7 @@ inline bool CDRMessage::readString(
         *stri = (const char*) &(msg->buffer[msg->pos]);
     }
     msg->pos += str_size;
-    int rest = (str_size) % 4;
-    rest = rest == 0 ? 0 : 4 - rest;
-    msg->pos += rest;
+    msg->pos = (msg->pos + 3u) & ~3u;
 
     return valid;
 }
@@ -915,7 +913,7 @@ inline bool CDRMessage::addBinaryPropertySeq(
                     --number_to_serialize;
                     returnedValue =
                             CDRMessage::addBinaryProperty(msg, *it,
-                                    add_final_padding || (number_to_serialize != 0) );
+                                    add_final_padding || (number_to_serialize != 0));
                 }
             }
         }
@@ -955,7 +953,7 @@ inline bool CDRMessage::addBinaryPropertySeq(
                     --number_to_serialize;
                     returnedValue =
                             CDRMessage::addBinaryProperty(msg, *it,
-                                    add_final_padding || (number_to_serialize != 0) );
+                                    add_final_padding || (number_to_serialize != 0));
                 }
             }
         }
