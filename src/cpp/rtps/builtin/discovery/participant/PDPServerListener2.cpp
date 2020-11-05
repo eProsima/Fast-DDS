@@ -257,6 +257,7 @@ void PDPServerListener2::onNewCacheChangeAdded(
             }
             else
             {
+                // Release the unique pointer, not the change in the pool
                 change.release();
             }
 

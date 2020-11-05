@@ -158,12 +158,16 @@ public:
         return enabled_;
     }
 
+    //! Check if the DDB is restoring a backup at the moment
     bool backup_in_progress()
     {
         return processing_backup_;
     }
 
     //! Disable the possibility to add new entries to the database
+    // This is different than lock_incoming_data() because it does not store the changes or lock the listener
+    // This method is only used when the Server is restoring the backup file, and so sending messages to the
+    // listener that should not be process
     void backup_in_progress(bool v)
     {
         processing_backup_ = v;
@@ -308,11 +312,13 @@ public:
     // This function must be called with the incoming datas blocked    
     void clean_backup();
 
+    // Lock the incoming of new data to the DDB queue. This locks the Listener as well
     void lock_incoming_data()
     {
         data_queues_mutex_.lock();
     }
 
+    // Unock the incoming of new data to the DDB queue
     void unlock_incoming_data()
     {
         data_queues_mutex_.unlock();
@@ -529,6 +535,8 @@ protected:
 
     // File to save every cacheChange that is updated to the ddb queues
     std::string backup_file_name_;
+    // This file will keep open to write it fast every time a new cache arrives
+    // It needs a flush every time a new change is added
     std::ofstream backup_file_; 
 };
 
