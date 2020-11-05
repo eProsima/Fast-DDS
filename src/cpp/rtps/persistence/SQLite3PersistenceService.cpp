@@ -89,9 +89,15 @@ static sqlite3* open_or_create_database(
     // Open database
     int flags = SQLITE_OPEN_READWRITE |
             SQLITE_OPEN_FULLMUTEX | SQLITE_OPEN_SHAREDCACHE;
-    rc = sqlite3_open_v2(filename, &db, flags, 0);
+    rc = sqlite3_open_v2(filename, &db, flags, 0); // malloc that is not erased
     if (rc != SQLITE_OK)
     {
+        // In case file cantopen, memory is reserved in db, so it must be free (for valgrind sake)
+        if (rc == SQLITE_CANTOPEN)
+        {
+            sqlite3_close(db);
+        }
+
         //probably the database does not exists. Create new and no need to upgrade schema
         flags = SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE |
                 SQLITE_OPEN_FULLMUTEX | SQLITE_OPEN_SHAREDCACHE;
@@ -128,6 +134,7 @@ static sqlite3* open_or_create_database(
             {
                 logError(RTPS_PERSISTENCE, "Old schema version " << db_version << " on database " << filename
                                                                  << ". Set property dds.persistence.update_schema to force automatic schema upgrade");
+                sqlite3_close(db);
                 return NULL;
             }
 
@@ -214,9 +221,9 @@ SQLite3PersistenceService::~SQLite3PersistenceService()
     finalize_statement(update_writer_last_seq_num_stmt_);
 
     int res = sqlite3_close(db_);
-    if(res != SQLITE_OK) // (0) SQLITE_OK
+    if (res != SQLITE_OK) // (0) SQLITE_OK
     {
-        logWarning(RTPS_PERSISTENCE, "Database could not be closed. sqlite3_close code: " << res);
+        logError(RTPS_PERSISTENCE, "Database could not be closed. sqlite3_close code: " << res);
     }
     db_ = NULL;
 }
