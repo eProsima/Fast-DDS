@@ -16,6 +16,8 @@
 
 #include <rtps/history/TopicPayloadPoolRegistry.hpp>
 
+#include <rtps/history/TopicPayloadPoolRegistry_impl/TopicPayloadPoolProxy.hpp>
+
 using namespace eprosima::fastrtps::rtps;
 using namespace ::testing;
 using namespace std;
@@ -45,11 +47,6 @@ TEST(TopicPayloadPoolRegistryTests, basic_checks)
     // And be different from the other topic.
     EXPECT_NE(pool_b1, pool_a3);
 
-    // Backups to check reference counts
-    auto pool_backup_a1 = pool_a1.get();
-    auto pool_backup_a3 = pool_a3.get();
-    auto pool_backup_b1 = pool_b1.get();
-
     // Releasing pointers should reset them
     TopicPayloadPoolRegistry::release(pool_a1);
     EXPECT_FALSE(pool_a1);
@@ -74,13 +71,6 @@ TEST(TopicPayloadPoolRegistryTests, basic_checks)
     EXPECT_NO_THROW(TopicPayloadPoolRegistry::release(pool_b2));
     EXPECT_FALSE(pool_b2);
 
-    // Repeat allocations and check a different pointer is returned
-    cfg.memory_policy = PREALLOCATED_MEMORY_MODE;
-    pool_a1 = TopicPayloadPoolRegistry::get("topic_a", cfg);
-    EXPECT_NE(pool_a1.get(), pool_backup_a1);
-    pool_b1 = TopicPayloadPoolRegistry::get("topic_b", cfg);
-    EXPECT_NE(pool_b1.get(), pool_backup_b1);
-    cfg.memory_policy = DYNAMIC_RESERVE_MEMORY_MODE;
-    pool_a3 = TopicPayloadPoolRegistry::get("topic_a", cfg);
-    EXPECT_NE(pool_a3.get(), pool_backup_a3);
+    // Destructor should have been called a certain number of times
+    EXPECT_EQ(detail::TopicPayloadPoolProxy::DestructorHelper::instance().get(), 3u);
 }
