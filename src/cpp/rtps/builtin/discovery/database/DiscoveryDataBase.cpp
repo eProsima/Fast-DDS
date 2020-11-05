@@ -418,14 +418,14 @@ void DiscoveryDataBase::process_pdp_data_queue()
         {
             // Update participants map
             logInfo(DISCOVERY_DATABASE, "DATA(p) " << data_queue_info.change()->instanceHandle << " received from: "
-                    << data_queue_info.change()->writerGUID);
+                                                   << data_queue_info.change()->writerGUID);
             create_participant_from_change_(data_queue_info.change(), data_queue_info.participant_change_data());
         }
         // If the change is a DATA(Up)
         else
         {
             logInfo(DISCOVERY_DATABASE, "DATA(Up) " << data_queue_info.change()->instanceHandle << " received from: "
-                    << data_queue_info.change()->writerGUID);
+                                                    << data_queue_info.change()->writerGUID);
             process_dispose_participant_(data_queue_info.change());
         }
 
@@ -1046,7 +1046,7 @@ void DiscoveryDataBase::process_dispose_participant_(
         if (pit->second.change()->kind != fastrtps::rtps::ChangeKind_t::ALIVE)
         {
             logInfo(DISCOVERY_DATABASE, "Ignoring second DATA(Up)"
-                << participant_guid.guidPrefix);
+                    << participant_guid.guidPrefix);
             return;
         }
         // Only update DATA(p), leaving the change info untouched. This is because DATA(Up) does not have the
@@ -1214,7 +1214,9 @@ bool DiscoveryDataBase::process_dirty_topics()
                     if (parts_reader_it->second.is_matched(writer.guidPrefix))
                     {
                         // Check the status of the writer in `readers_[reader]::relevant_participants_builtin_ack_status`.
-                        if (readers_it != readers_.end() && readers_it->second.is_relevant_participant(writer.guidPrefix) && !readers_it->second.is_matched(writer.guidPrefix))
+                        if (readers_it != readers_.end() &&
+                                readers_it->second.is_relevant_participant(writer.guidPrefix) &&
+                                !readers_it->second.is_matched(writer.guidPrefix))
                         {
                             // If the status is 0, add DATA(r) to a `edp_publications_to_send_` (if it's not there).
                             if (add_edp_subscriptions_to_send_(readers_it->second.change()))
@@ -1244,7 +1246,9 @@ bool DiscoveryDataBase::process_dirty_topics()
                     if (parts_writer_it->second.is_matched(reader.guidPrefix))
                     {
                         // Check the status of the reader in `writers_[writer]::relevant_participants_builtin_ack_status`.
-                        if (writers_it != writers_.end() && writers_it->second.is_relevant_participant(reader.guidPrefix) && !writers_it->second.is_matched(reader.guidPrefix))
+                        if (writers_it != writers_.end() &&
+                                writers_it->second.is_relevant_participant(reader.guidPrefix) &&
+                                !writers_it->second.is_matched(reader.guidPrefix))
                         {
                             // If the status is 0, add DATA(w) to a `edp_subscriptions_to_send_` (if it's not there).
                             if (add_edp_publications_to_send_(writers_it->second.change()))
@@ -1540,7 +1544,8 @@ void DiscoveryDataBase::unmatch_participant_(
                 // This is not an error. Remote participants will try to unmatch with participants even
                 // when the match is not reciprocal
                 logInfo(DISCOVERY_DATABASE,
-                        "Participant " << relevant_participant << " matched with an unexisting participant: " << guid_prefix);
+                        "Participant " << relevant_participant << " matched with an unexisting participant: " <<
+                                        guid_prefix);
             }
             else
             {

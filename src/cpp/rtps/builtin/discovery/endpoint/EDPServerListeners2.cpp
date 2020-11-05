@@ -55,7 +55,8 @@ void EDPServerPUBListener2::onNewCacheChangeAdded(
 {
     logInfo(RTPS_EDP_LISTENER, "");
     logInfo(RTPS_EDP_LISTENER, "------------------ EDP PUB SERVER LISTENER START ------------------");
-    logInfo(RTPS_EDP_LISTENER, "-------------------- " << sedp_->mp_RTPSParticipant->getGuid() << " --------------------");
+    logInfo(RTPS_EDP_LISTENER,
+            "-------------------- " << sedp_->mp_RTPSParticipant->getGuid() << " --------------------");
 
     // Create a new change from the one received
     CacheChange_t* change = (CacheChange_t*)change_in;
@@ -121,7 +122,8 @@ void EDPServerPUBListener2::onNewCacheChangeAdded(
         // If the database doesn't take the ownership, then return the CacheChante_t to the pool.
         reader->releaseCache(change);
     }
-    logInfo(RTPS_EDP_LISTENER, "-------------------- " << sedp_->mp_RTPSParticipant->getGuid() << " --------------------");
+    logInfo(RTPS_EDP_LISTENER,
+            "-------------------- " << sedp_->mp_RTPSParticipant->getGuid() << " --------------------");
     logInfo(RTPS_EDP_LISTENER, "------------------ EDP PUB SERVER LISTENER END ------------------");
     logInfo(RTPS_EDP_LISTENER, "");
 }
@@ -145,7 +147,8 @@ void EDPServerSUBListener2::onNewCacheChangeAdded(
 {
     logInfo(RTPS_EDP_LISTENER, "");
     logInfo(RTPS_EDP_LISTENER, "------------------ EDP SUB SERVER LISTENER START ------------------");
-    logInfo(RTPS_EDP_LISTENER, "-------------------- " << sedp_->mp_RTPSParticipant->getGuid() << " --------------------");
+    logInfo(RTPS_EDP_LISTENER,
+            "-------------------- " << sedp_->mp_RTPSParticipant->getGuid() << " --------------------");
 
     // Create a new change from the one received
     CacheChange_t* change = (CacheChange_t*)change_in;
@@ -213,7 +216,8 @@ void EDPServerSUBListener2::onNewCacheChangeAdded(
         reader->releaseCache(change);
     }
 
-    logInfo(RTPS_EDP_LISTENER, "-------------------- " << sedp_->mp_RTPSParticipant->getGuid() << " --------------------");
+    logInfo(RTPS_EDP_LISTENER,
+            "-------------------- " << sedp_->mp_RTPSParticipant->getGuid() << " --------------------");
     logInfo(RTPS_EDP_LISTENER, "------------------ EDP SUB SERVER LISTENER END ------------------");
     logInfo(RTPS_EDP_LISTENER, "");
 }
