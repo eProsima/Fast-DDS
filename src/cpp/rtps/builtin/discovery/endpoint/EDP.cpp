@@ -39,8 +39,14 @@
 #include <fastrtps/types/TypeObjectFactory.h>
 
 #include <fastdds/core/policy/ParameterList.hpp>
+
+#include <foonathan/memory/container.hpp>
+#include <foonathan/memory/memory_pool.hpp>
+
 #include <rtps/builtin/data/ProxyHashTables.hpp>
 #include <rtps/participant/RTPSParticipantImpl.h>
+
+#include <utils/collections/node_size_helpers.hpp>
 
 #include <mutex>
 
@@ -53,6 +59,9 @@ using ParameterList = eprosima::fastdds::dds::ParameterList;
 namespace eprosima {
 namespace fastrtps {
 namespace rtps {
+
+using reader_map_helper = utilities::collections::map_size_helper<GUID_t, SubscriptionMatchedStatus>;
+using writer_map_helper = utilities::collections::map_size_helper<GUID_t, PublicationMatchedStatus>;
 
 EDP::EDP(
         PDP* p,
@@ -67,6 +76,16 @@ EDP::EDP(
         part->getRTPSParticipantAttributes().allocation.locators.max_unicast_locators,
         part->getRTPSParticipantAttributes().allocation.locators.max_multicast_locators,
         part->getRTPSParticipantAttributes().allocation.data_limits)
+    , reader_status_allocator_(
+        reader_map_helper::node_size,
+        reader_map_helper::min_pool_size<pool_allocator_t>(
+            part->getRTPSParticipantAttributes().allocation.total_readers().initial))
+    , writer_status_allocator_(
+        writer_map_helper::node_size,
+        writer_map_helper::min_pool_size<pool_allocator_t>(
+            part->getRTPSParticipantAttributes().allocation.total_writers().initial))
+    , reader_status_(reader_status_allocator_)
+    , writer_status_(writer_status_allocator_)
 {
 }
 

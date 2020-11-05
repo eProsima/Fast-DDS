@@ -29,6 +29,9 @@
 #include <fastdds/dds/core/status/SubscriptionMatchedStatus.hpp>
 #include <fastdds/dds/core/status/IncompatibleQosStatus.hpp>
 
+#include <foonathan/memory/container.hpp>
+#include <foonathan/memory/memory_pool.hpp>
+
 #define MATCH_FAILURE_REASON_COUNT size_t(16)
 
 namespace eprosima {
@@ -390,8 +393,15 @@ private:
 
     ReaderProxyData temp_reader_proxy_data_;
     WriterProxyData temp_writer_proxy_data_;
-    std::map<GUID_t, fastdds::dds::SubscriptionMatchedStatus> reader_status_;
-    std::map<GUID_t, fastdds::dds::PublicationMatchedStatus> writer_status_;
+
+    using pool_allocator_t =
+        foonathan::memory::memory_pool<foonathan::memory::node_pool, foonathan::memory::heap_allocator>;
+
+    pool_allocator_t reader_status_allocator_;
+    pool_allocator_t writer_status_allocator_;
+
+    foonathan::memory::map<GUID_t, fastdds::dds::SubscriptionMatchedStatus, pool_allocator_t> reader_status_;
+    foonathan::memory::map<GUID_t, fastdds::dds::PublicationMatchedStatus, pool_allocator_t> writer_status_;
 };
 
 } /* namespace rtps */
