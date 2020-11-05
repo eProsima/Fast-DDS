@@ -229,17 +229,33 @@ protected:
 
     bool pending_ack();    
 
-    bool process_discovery_database_restore_(nlohmann::json& ddb_json);
+    // Method to restore de DiscoveryDataBase from a json object
+    // This method reserve space for every cacheChange from the correspondent pool, and
+    // sends these changes stored to the DDB for it to process them
+    // This method must be called with the DDB variable backup_in_progress as true
+    bool process_backup_discovery_database_restore(nlohmann::json& ddb_json);
 
-    bool restore_queue(std::vector<nlohmann::json>& new_changes);
+    // Restore the backup file with the changes that were added to the DDB queues (and so acked)
+    // It reserves memory for the changes depending the pool, and send them by the listener to the DDB
+    // This method must be called with the DDB variable backup_in_progress as false
+    bool process_backup_restore_queue(std::vector<nlohmann::json>& new_changes);
 
+    // Reads the two backup files and stores each json objects in both arguments
+    // The first argument has the json object to restore the DDB
+    // The second argument has the json vector object to restore the changes that must be sent again to the queue
     bool read_backup(nlohmann::json& ddb_json, std::vector<nlohmann::json>& new_changes);
 
     std::vector<fastrtps::rtps::GuidPrefix_t> servers_prefixes();
 
+    // General file name for the prefix of every backup file
     std::ostringstream get_persistence_file_name_() const;
 
-    void process_ddb_backup();
+    // Erase the last file and store the backup info of the actual state of the DDB
+    // Erase the content of the file with the changes in the queues
+    // This method must be called after the whole DDB routine process has been finished and with the DDB
+    // queues empty. If not, there will be some information that could be lost. For this, the lock_incoming_data()
+    // from DDB must be called during this process
+    void process_backup_store();
 
 private:
 

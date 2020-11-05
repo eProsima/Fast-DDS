@@ -39,12 +39,17 @@ std::string object_to_string(const T& t)
     return  stream.str();
 }
 
+// Encode bytes into b64 string
 const std::string b64encode(const unsigned char* data, const size_t &len);
 
+// Decode a string in b64 into an array of bytes
 void b64decode(unsigned char* data, const std::string input);
 
+// Writes the info from a change into a json object
 void to_json(json& j, const eprosima::fastrtps::rtps::CacheChange_t& change);
 
+// Deserialize a cacheChange from a json object. The change must have been
+// already created from a pool and reserved the payload length
 void from_json(const json& j, eprosima::fastrtps::rtps::CacheChange_t& change);
 
 // INFO TO STORE IN DDB
@@ -59,7 +64,12 @@ void from_json(const json& j, eprosima::fastrtps::rtps::CacheChange_t& change);
                 "sequence_number":<sequenceNumber>,
                 "source_timestamp":<sourceTimestamp>,
                 "reception_timestamp":<receptionTimestamp>,
-                "sample_identity":<sample_identity>
+                "sample_identity":<sample_identity>,
+                "serialized_payload":{
+                    "encapsulation":<encapsulation>
+                    "length":<length>
+                    "data":b64x<data>
+                },
             },
             "ack_status":{
                 <guid_prefix>:<is_acked>
@@ -102,9 +112,7 @@ void from_json(const json& j, eprosima::fastrtps::rtps::CacheChange_t& change);
             }
             "topic":<topic>
         }
-    },
-    "server_prefix":<server_prefix>,
-    "version":<version>
+    }
 }
 */
 

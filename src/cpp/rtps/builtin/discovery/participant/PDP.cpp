@@ -19,9 +19,6 @@
 
 #include <fastdds/rtps/builtin/discovery/participant/PDP.h>
 #include <fastdds/rtps/builtin/discovery/participant/PDPListener.h>
-#include <fastdds/rtps/builtin/discovery/participant/PDPClient.h>
-#include <fastdds/rtps/builtin/discovery/participant/PDPClient.h>
-#include <fastdds/rtps/builtin/discovery/participant/PDPSimple.h>
 
 #include <fastdds/rtps/builtin/BuiltinProtocols.h>
 #include <fastdds/rtps/builtin/liveliness/WLP.h>
