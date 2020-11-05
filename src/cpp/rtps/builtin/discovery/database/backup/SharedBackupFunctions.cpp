@@ -34,12 +34,12 @@ void to_json(json& j, const eprosima::fastrtps::rtps::CacheChange_t& change)
     j["kind"] = change.kind;
     j["writer_GUID"] = object_to_string(change.writerGUID);
     j["instance_handle"] = object_to_string(change.instanceHandle);
-    // j["sequence_number"] = object_to_string(change.sequenceNumber);
-    // isRead = true
+    j["sequence_number"] = object_to_string(change.sequenceNumber);
+    j["isRead"] = change.isRead;
     j["source_timestamp"] = object_to_string(change.sourceTimestamp);
     j["reception_timestamp"] = object_to_string(change.receptionTimestamp);
     j["sample_identity"] = object_to_string(change.write_params.sample_identity());
-    // related_sample_identity = sample_identity
+    j["related_sample_identity"] = object_to_string(change.write_params.related_sample_identity());
 
     // serialize payload
     j["serialized_payload"]["encapsulation"] = change.serializedPayload.encapsulation;
@@ -52,9 +52,8 @@ void from_json(const json& j, eprosima::fastrtps::rtps::CacheChange_t& change)
     change.kind = static_cast<fastrtps::rtps::ChangeKind_t>(j["kind"].get<uint8_t>());
     (std::istringstream) j["writer_GUID"].get<std::string>() >> change.writerGUID;
     (std::istringstream) j["instance_handle"].get<std::string>() >> change.instanceHandle;
-    //(std::istringstream) j["sequence_number"].get<std::string>() >> change.sequenceNumber;
-    change.sequenceNumber = eprosima::fastrtps::rtps::SequenceNumber_t(1);
-    change.isRead = true;
+    (std::istringstream) j["sequence_number"].get<std::string>() >> change.sequenceNumber;
+    change.isRead = static_cast<fastrtps::rtps::ChangeKind_t>(j["isRead"].get<bool>());;
     (std::istringstream) j["source_timestamp"].get<std::string>() >> change.sourceTimestamp;
     (std::istringstream) j["reception_timestamp"].get<std::string>() >> change.receptionTimestamp;
 
@@ -63,6 +62,12 @@ void from_json(const json& j, eprosima::fastrtps::rtps::CacheChange_t& change)
     (std::istringstream) j["sample_identity"].get<std::string>() >> si;
     change.write_params.sample_identity(si);
     change.write_params.related_sample_identity(si);
+
+    // set related sample identity
+    fastrtps::rtps::SampleIdentity rsi;
+    (std::istringstream) j["related_sample_identity"].get<std::string>() >> rsi;
+    change.write_params.sample_identity(rsi);
+    change.write_params.related_sample_identity(rsi);
 
     // deserialize SerializedPayload
     change.serializedPayload.encapsulation = j["serialized_payload"]["encapsulation"];

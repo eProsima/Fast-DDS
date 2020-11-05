@@ -2237,10 +2237,9 @@ bool DiscoveryDataBase::from_json(
     // This function will parse each attribute in json backup, casting it to istringstream
     // (std::istringstream) j[""] >> obj;
 
-    // Changes are taken from changes_vector, with already created changes
-    // Entities must be read in the same order that the json is written
+    // Changes are taken from changes_map, with already created changes
 
-    // auxiliars to deserialize and set
+    // Auxiliar variables to deserialize and create new objects of the ddb
     fastrtps::rtps::InstanceHandle_t instance_handle_aux;
     fastrtps::rtps::GuidPrefix_t prefix_aux;
     fastrtps::rtps::GuidPrefix_t prefix_aux_ack;
@@ -2248,20 +2247,12 @@ bool DiscoveryDataBase::from_json(
 
     logInfo(DISCOVERY_DATABASE, "Raising DDB from json Backup");
 
-    // for (auto it = changes_map.begin(); it != changes_map.end(); ++it)
-    // {
-    //     logWarning(DISCOVERY_DATABASE, "Change " << it->first << " with instance handle " << it->second->instanceHandle);
-    // }
-
     try
     {
         // Participants
         for (auto it = j["participants"].begin(); it != j["participants"].end(); ++it)
         {
-            // Our own participant does not need any special treatment
-            // We know it will be known and acked by those entities alives cause
-            // starting the server an update of the Data will be created and sent to all
-            // Populate GuidPrefix_t
+            // Populate info from participant to charge its change
             (std::istringstream) it.key() >> prefix_aux;
             (std::istringstream) it.value()["change"]["instance_handle"].get<std::string>() >> instance_handle_aux;
 
@@ -2296,6 +2287,7 @@ bool DiscoveryDataBase::from_json(
 
             logInfo(DISCOVERY_DATABASE, "Participant " << prefix_aux << " created");
 
+            // In case the change is NOT ALIVE it must be set as dispose so it can be communicate to others and erased
             if(change->kind != fastrtps::rtps::ALIVE)
             {
                 disposals_.push_back(change);
@@ -2346,11 +2338,15 @@ bool DiscoveryDataBase::from_json(
             {
                 // Endpoint without participant, corrupted DDB
                 logError(DISCOVERY_DATABASE, "Writer " << guid_aux << " without participant");
-                throw;
+                // TODO handle error
+                return false;
             }
 
             logInfo(DISCOVERY_DATABASE, "Writer " << guid_aux << " created with instance handle " << wit.first->second.change()->instanceHandle);
+<<<<<<< HEAD
 
+=======
+>>>>>>> 79872acb6... Refs #9649: Add comments and refactor backup functionality
 
             if(change->kind != fastrtps::rtps::ALIVE)
             {
@@ -2401,7 +2397,8 @@ bool DiscoveryDataBase::from_json(
             else
             {
                 // Endpoint without participant, corrupted DDB
-                throw;
+                // TODO handle error
+                return false;
             }
             logInfo(DISCOVERY_DATABASE, "Reader " << guid_aux << " created");
 
@@ -2438,6 +2435,7 @@ void DiscoveryDataBase::persistence_enable(std::string backup_file_name)
 {
     is_persistent_ = true;
     backup_file_name_ = backup_file_name;
+    // It opens the file in append mode because the info in it has not been yet
     backup_file_.open(backup_file_name_, std::ios::app);
 }
 

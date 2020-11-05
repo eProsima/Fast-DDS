@@ -110,7 +110,7 @@ bool PDPServer2::init(
         discovery_db().backup_in_progress(true);
         if (read_backup(backup_json, backup_queue))
         {
-            if (process_discovery_database_restore_(backup_json))
+            if (process_backup_discovery_database_restore(backup_json))
             {
                 logInfo(RTPS_PDP_SERVER, "DiscoveryDataBase restored correctly");
             }
@@ -124,7 +124,7 @@ bool PDPServer2::init(
 
         discovery_db_.persistence_enable(get_ddb_queue_persistence_file_name());
 
-        restore_queue(backup_queue);
+        process_backup_restore_queue(backup_queue);
     }
     else
     {
@@ -855,7 +855,7 @@ bool PDPServer2::server_update_routine()
     // -there has been any modification in the DDB (if not, this routine is not called)
     if (_durability == TRANSIENT && discovery_db_.is_enabled())
     {
-        process_ddb_backup();
+        process_backup_store();
     }
     // Unlock the incoming data after finishing the backuo storage
     discovery_db().unlock_incoming_data();
@@ -1400,28 +1400,31 @@ bool PDPServer2::read_backup(nlohmann::json& ddb_json, std::vector<nlohmann::jso
 }
 
 
-bool PDPServer2::process_discovery_database_restore_(nlohmann::json& j)
+bool PDPServer2::process_backup_discovery_database_restore(nlohmann::json& j)
 {
     logInfo(RTPS_PDP_SERVER, "Restoring DiscoveryDataBase from backup");
 
-    // load every change and create it from its respective history
+    // We need every listener to resend the changes of every entity (ALIVE) in the DDB, so the PaticipantProxy
+    // is restored
     EDPServer2* edp = static_cast<EDPServer2*>(mp_EDP);
     EDPServerPUBListener2* edp_pub_listener = static_cast<EDPServerPUBListener2*>(edp->publications_listener_);
     EDPServerSUBListener2* edp_sub_listener = static_cast<EDPServerSUBListener2*>(edp->subscriptions_listener_);
 
+    // These mutexes are necessary to send messages to the listeners
     std::unique_lock<fastrtps::RecursiveTimedMutex> lock(mp_PDPReader->getMutex());
     std::unique_lock<fastrtps::RecursiveTimedMutex> lock_edpp(edp->publications_reader_.first->getMutex());
     std::unique_lock<fastrtps::RecursiveTimedMutex> lock_edps(edp->subscriptions_reader_.first->getMutex());
 
+    // Auxiliar variables to load info from json
     std::map<eprosima::fastrtps::rtps::InstanceHandle_t, fastrtps::rtps::CacheChange_t*> changes_map;
     fastrtps::rtps::SampleIdentity sample_identity_aux;
     uint32_t length;
+    fastrtps::rtps::CacheChange_t* change_aux;
 
     try
     {
-        fastrtps::rtps::CacheChange_t* change_aux;
         // Create every participant change. If it is external creates it from Reader,
-        // if it is created from the server, it is created from writer
+        // if it is from the server, it is created from the writer
         for (auto it = j["participants"].begin(); it != j["participants"].end(); ++it)
         {
             length = it.value()["change"]["serialized_payload"]["length"].get<std::uint32_t>();
@@ -1446,35 +1449,27 @@ bool PDPServer2::process_discovery_database_restore_(nlohmann::json& j)
                 }
             }
 
-            // deserialize from json to change already created
+            // Deserialize from json to change already created
             ddb::from_json(it.value()["change"], *change_aux);
 
-            // if the change was read as is_local we must pass it to listener with his own writer_guid
-            if (it.value()["is_local"].get<bool>())
-            {
-                change_aux->writerGUID = change_aux->write_params.sample_identity().writer_guid();
-            }
-            else
-            {
-                change_aux->writerGUID = fastrtps::rtps::c_Guid_Unknown;
-            }
-
-
+            // Insert into the map so the DDB can store it
             changes_map.insert(
                     std::make_pair(change_aux->instanceHandle, change_aux));
 
-            // call listener to create proxy info for other entities different than server
-            if (change_aux->write_params.sample_identity().writer_guid().guidPrefix !=
-                    mp_PDPWriter->getGuid().guidPrefix
-                    && change_aux->kind == fastrtps::rtps::ALIVE)
+            // If the change was read as is_local we must pass it to listener with his own writer_guid
+            if (it.value()["is_local"].get<bool>() &&
+                    change_aux->write_params.sample_identity().writer_guid().guidPrefix !=
+                        mp_PDPWriter->getGuid().guidPrefix &&
+                    change_aux->kind == fastrtps::rtps::ALIVE)
             {
-                // p_PDPReader->change_received(change_aux, nullptr);
+                change_aux->writerGUID = change_aux->write_params.sample_identity().writer_guid();
+                change_aux->sequenceNumber = change_aux->write_params.sample_identity().sequence_number();
                 mp_listener->onNewCacheChangeAdded(mp_PDPReader, change_aux);
             }
         }
 
         // Create every writer change. If it is external creates it from Reader,
-        // if it is created from the server, it is created from writer
+        // if it is from the server, it is created from writer
         for (auto it = j["writers"].begin(); it != j["writers"].end(); ++it)
         {
             fastrtps::rtps::CacheChange_t* change_aux;
@@ -1506,6 +1501,9 @@ bool PDPServer2::process_discovery_database_restore_(nlohmann::json& j)
             changes_map.insert(
                     std::make_pair(change_aux->instanceHandle, change_aux));
 
+            // TODO refactor for multiple servers
+            // should not send the virtual changes by the listener
+            // should store in DDB if it is local even for endpoints
             // call listener to create proxy info for other entities different than server
             if (change_aux->write_params.sample_identity().writer_guid().guidPrefix !=
                     mp_PDPWriter->getGuid().guidPrefix
@@ -1515,12 +1513,12 @@ bool PDPServer2::process_discovery_database_restore_(nlohmann::json& j)
             }
         }
 
+<<<<<<< HEAD
         // Create every reader change. If it is external creates it from Reader,
         // if it is created from the server, it is created from writer
-        for (auto it = j["readers"].begin(); it != j["readers"].end(); ++it)
+=======
         {
             fastrtps::rtps::CacheChange_t* change_aux;
-            length = it.value()["change"]["serialized_payload"]["length"].get<std::uint32_t>();
             (std::istringstream) it.value()["change"]["sample_identity"].get<std::string>() >> sample_identity_aux;
 
             // Belongs to own server
@@ -1569,7 +1567,7 @@ bool PDPServer2::process_discovery_database_restore_(nlohmann::json& j)
     return true;
 }
 
-bool PDPServer2::restore_queue(std::vector<nlohmann::json>& new_changes)
+bool PDPServer2::process_backup_restore_queue(std::vector<nlohmann::json>& new_changes)
 {
     fastrtps::rtps::SampleIdentity sample_identity_aux;
     uint32_t length;
@@ -1587,13 +1585,15 @@ bool PDPServer2::restore_queue(std::vector<nlohmann::json>& new_changes)
         // Read every change and push it to the listener that it belongs
         for (auto json_change : new_changes)
         {
-
             fastrtps::rtps::CacheChange_t* change_aux;
             length = json_change["serialized_payload"]["length"].get<std::uint32_t>();
             (std::istringstream) json_change["sample_identity"].get<std::string>() >> sample_identity_aux;
 
+<<<<<<< HEAD
 
 
+=======
+>>>>>>> 79872acb6... Refs #9649: Add comments and refactor backup functionality
             // Belongs to own server
             if (sample_identity_aux.writer_guid() == mp_PDPWriter->getGuid())
             {
@@ -1693,7 +1693,7 @@ bool PDPServer2::restore_queue(std::vector<nlohmann::json>& new_changes)
     return true;
 }
 
-void PDPServer2::process_ddb_backup()
+void PDPServer2::process_backup_store()
 {
     logInfo(DISCOVERY_DATABASE, "Dump DDB in json backup");
 
@@ -1708,6 +1708,7 @@ void PDPServer2::process_ddb_backup()
     backup_json_file << std::setw(4) << j << std::endl;
     backup_json_file.close();
 
+    // Clear queue ddb backup
     discovery_db_.clean_backup();
 }
 
