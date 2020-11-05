@@ -307,7 +307,7 @@ TEST_F(PersistenceTest, SchemaVersionUpdateFrom1To2)
     service = PersistenceFactory::create_persistence_service(policy);
     ASSERT_NE(service, nullptr);
 
-    auto init_cache = [](CacheChange_t* item)                                                                                                                                   
+    auto init_cache = [](CacheChange_t* item)
             {
                 item->serializedPayload.reserve(128);
             };
