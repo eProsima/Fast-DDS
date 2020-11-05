@@ -132,9 +132,18 @@ bool EDP::newLocalReaderProxyData(
                 rpd->topicName(att.getTopicName());
                 rpd->typeName(att.getTopicDataType());
                 rpd->topicKind(att.getTopicKind());
-                rpd->type_id(att.type_id);
-                rpd->type(att.type);
-                rpd->type_information(att.type_information);
+                if (att.type_id.m_type_identifier._d() != static_cast<uint8_t>(0x00))
+                {
+                    rpd->type_id(att.type_id);
+                }
+                if (att.type.m_type_object._d() != static_cast<uint8_t>(0x00))
+                {
+                    rpd->type(att.type);
+                }
+                if (att.type_information.assigned())
+                {
+                    rpd->type_information(att.type_information);
+                }
                 rpd->m_qos.setQos(rqos, true);
                 rpd->userDefinedId(reader->getAttributes().getUserDefinedID());
 #if HAVE_SECURITY
@@ -153,7 +162,7 @@ bool EDP::newLocalReaderProxyData(
                 if (att.auto_fill_type_information)
                 {
                     // TypeInformation, TypeObject and TypeIdentifier
-                    if (!rpd->type_information().assigned())
+                    if (!att.type_information.assigned())
                     {
                         const types::TypeInformation* type_info =
                                 types::TypeObjectFactory::get_instance()->get_type_information(rpd->typeName().c_str());
@@ -166,23 +175,26 @@ bool EDP::newLocalReaderProxyData(
 
                 if (att.auto_fill_type_object)
                 {
-
-                    if (rpd->type_id().m_type_identifier._d() == static_cast<uint8_t>(0x00))
+                    bool has_type_id = true;
+                    if (att.type_id.m_type_identifier._d() == static_cast<uint8_t>(0x00))
                     {
+                        has_type_id = false;
                         const types::TypeIdentifier* type_id =
                                 types::TypeObjectFactory::get_instance()->get_type_identifier_trying_complete(
                             rpd->typeName().c_str());
                         if (type_id != nullptr)
                         {
+                            has_type_id = true;
                             rpd->type_id().m_type_identifier = *type_id;
                         }
                     }
 
-                    if (rpd->type().m_type_object._d() == static_cast<uint8_t>(0x00))
+                    if (att.type.m_type_object._d() == static_cast<uint8_t>(0x00))
                     {
+                        bool type_is_complete = has_type_id && rpd->type_id().m_type_identifier._d() == types::EK_COMPLETE;
                         const types::TypeObject* type_obj =
                                 types::TypeObjectFactory::get_instance()->get_type_object(
-                            rpd->typeName().c_str(), rpd->type_id().m_type_identifier._d() == types::EK_COMPLETE);
+                            rpd->typeName().c_str(), type_is_complete);
                         if (type_obj != nullptr)
                         {
                             rpd->type().m_type_object = *type_obj;
@@ -245,9 +257,18 @@ bool EDP::newLocalWriterProxyData(
                 wpd->topicName(att.getTopicName());
                 wpd->typeName(att.getTopicDataType());
                 wpd->topicKind(att.getTopicKind());
-                wpd->type_id(att.type_id);
-                wpd->type(att.type);
-                wpd->type_information(att.type_information);
+                if (att.type_id.m_type_identifier._d() != static_cast<uint8_t>(0x00))
+                {
+                    wpd->type_id(att.type_id);
+                }
+                if (att.type.m_type_object._d() != static_cast<uint8_t>(0x00))
+                {
+                    wpd->type(att.type);
+                }
+                if (att.type_information.assigned())
+                {
+                    wpd->type_information(att.type_information);
+                }
                 wpd->typeMaxSerialized(writer->getTypeMaxSerialized());
                 wpd->m_qos.setQos(wqos, true);
                 wpd->userDefinedId(writer->getAttributes().getUserDefinedID());
@@ -269,7 +290,7 @@ bool EDP::newLocalWriterProxyData(
                 if (att.auto_fill_type_information)
                 {
                     // TypeInformation, TypeObject and TypeIdentifier
-                    if (!wpd->type_information().assigned())
+                    if (!att.type_information.assigned())
                     {
                         const types::TypeInformation* type_info =
                                 types::TypeObjectFactory::get_instance()->get_type_information(wpd->typeName().c_str());
@@ -282,23 +303,26 @@ bool EDP::newLocalWriterProxyData(
 
                 if (att.auto_fill_type_object)
                 {
-
-                    if (wpd->type_id().m_type_identifier._d() == static_cast<uint8_t>(0x00))
+                    bool has_type_id = true;
+                    if (att.type_id.m_type_identifier._d() == static_cast<uint8_t>(0x00))
                     {
+                        has_type_id = false;
                         const types::TypeIdentifier* type_id =
                                 types::TypeObjectFactory::get_instance()->get_type_identifier_trying_complete(
                             wpd->typeName().c_str());
                         if (type_id != nullptr)
                         {
+                            has_type_id = true;
                             wpd->type_id().m_type_identifier = *type_id;
                         }
                     }
 
-                    if (wpd->type().m_type_object._d() == static_cast<uint8_t>(0x00))
+                    if (att.type.m_type_object._d() == static_cast<uint8_t>(0x00))
                     {
+                        bool type_is_complete = has_type_id && wpd->type_id().m_type_identifier._d() == types::EK_COMPLETE;
                         const types::TypeObject* type_obj =
                                 types::TypeObjectFactory::get_instance()->get_type_object(
-                            wpd->typeName().c_str(), wpd->type_id().m_type_identifier._d() == types::EK_COMPLETE);
+                            wpd->typeName().c_str(), type_is_complete);
                         if (type_obj != nullptr)
                         {
                             wpd->type().m_type_object = *type_obj;
