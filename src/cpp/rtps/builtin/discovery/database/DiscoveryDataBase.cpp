@@ -2322,7 +2322,7 @@ bool DiscoveryDataBase::from_json(
             }
 
             // Add Participant
-            auto wit = writers_.insert(std::make_pair(guid_aux, dei));
+            writers_.insert(std::make_pair(guid_aux, dei));
 
             // Extra configurations for writers
             // Add writer to writers_by_topic. This will create the topic if necessary
