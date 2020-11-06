@@ -25,7 +25,7 @@
 namespace eprosima {
 namespace fastdds {
 namespace rtps {
-namespace ddb { 
+namespace ddb {
 
 using json = nlohmann::json;
 
@@ -87,7 +87,7 @@ const char* B64chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123
 // Array to the numeric value from a b64 char to binary value
 // In case the input string has a char not included in B64chars it will have Undefined Behaviour
 // 255 spaces are taken to avoid seg fault in this case
-const int B64index[255] = 
+const int B64index[255] =
 {
     0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0, // 0
     0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0, // 16
@@ -128,8 +128,8 @@ const std::string b64encode(const unsigned char* data, const size_t &len)
 // decode a string into another string
 void b64decode(unsigned char* data, const std::string input)
 {
-    uint len = input.size();
-    
+    size_t len = input.size();
+
     if (len == 0) return;
 
     const char *p = input.c_str();
@@ -143,7 +143,7 @@ void b64decode(unsigned char* data, const std::string input)
     {
         int n = B64index[(int) p[i]] << 18 |
                 B64index[(int) p[i + 1]] << 12 |
-                B64index[(int) p[i + 2]] << 6 | 
+                B64index[(int) p[i + 2]] << 6 |
                 B64index[(int) p[i + 3]];
         data[j++] = n >> 16;
         data[j++] = n >> 8 & 0xFF;

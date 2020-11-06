@@ -1385,7 +1385,7 @@ bool PDPServer2::read_backup(nlohmann::json& ddb_json, std::vector<nlohmann::jso
         myfile >> ddb_json;
         myfile.close();
     }
-    catch(const std::exception& e)
+    catch(const std::exception& )
     {
         ret = false;
     }
@@ -1431,7 +1431,7 @@ bool PDPServer2::process_backup_discovery_database_restore(nlohmann::json& j)
     // Auxiliar variables to load info from json
     std::map<eprosima::fastrtps::rtps::InstanceHandle_t, fastrtps::rtps::CacheChange_t*> changes_map;
     fastrtps::rtps::SampleIdentity sample_identity_aux;
-    uint32_t length;
+    uint32_t length = 0;
     fastrtps::rtps::CacheChange_t* change_aux;
 
     try

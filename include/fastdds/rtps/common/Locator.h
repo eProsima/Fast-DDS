@@ -248,11 +248,12 @@ inline std::istream& operator>>(
             {
                 // ignore till second :
                 input.ignore(16, ':');
-                punctuation = input.get();
+                // TODO
+                punctuation = static_cast<char>(input.get());
                 if (punctuation == 'M')
                 {
                     loc.address[0] = 'M';
-                    punctuation = input.get();
+                    punctuation = static_cast<char>(input.get());
                 }
             }
             else if (kind == LOCATOR_KIND_UDPv4 || kind == LOCATOR_KIND_TCPv4)
@@ -565,7 +566,7 @@ inline std::istream& operator>>(std::istream& input, LocatorList_t& locList)
         try
         {
             input.exceptions(excp_mask | std::ios_base::failbit | std::ios_base::badbit);
-            
+
             input >> l;
             locList.push_back(l);
 
