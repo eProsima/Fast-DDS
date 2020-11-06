@@ -174,6 +174,19 @@ ReturnCode_t DataReaderImpl::enable()
         att.endpoint.properties.properties().push_back(std::move(property));
     }
 
+    // Add datasharing information
+    if (is_data_sharing_compatible_)
+    {
+        std::stringstream ss;
+        ss << qos_.data_sharing().domain_id();
+        property.name("fastdds.datasharing_domain");
+        property.value(ss.str());
+        att.endpoint.properties.properties().push_back(std::move(property));
+        property.name("fastdds.datasharing_directory");
+        property.value(qos_.data_sharing().shm_directory());
+        att.endpoint.properties.properties().push_back(std::move(property));
+    }
+
     std::shared_ptr<IPayloadPool> pool = get_payload_pool();
     RTPSReader* reader = RTPSDomain::createRTPSReader(
         subscriber_->rtps_participant(),

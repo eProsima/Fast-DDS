@@ -55,13 +55,14 @@ RTPSReader::RTPSReader(
     , history_state_(new ReaderHistoryState(att.matched_writers_allocation.initial))
     , liveliness_kind_(att.liveliness_kind_)
     , liveliness_lease_duration_(att.liveliness_lease_duration)
+    , data_sharing_domain_(0u)
 {
     PoolConfig cfg = PoolConfig::from_history_attributes(hist->m_att);
     std::shared_ptr<IChangePool> change_pool;
     std::shared_ptr<IPayloadPool> payload_pool;
     payload_pool = BasicPayloadPool::get(cfg, change_pool);
 
-    init(payload_pool, change_pool);
+    init(payload_pool, change_pool, att);
 }
 
 RTPSReader::RTPSReader(
@@ -95,13 +96,15 @@ RTPSReader::RTPSReader(
     , history_state_(new ReaderHistoryState(att.matched_writers_allocation.initial))
     , liveliness_kind_(att.liveliness_kind_)
     , liveliness_lease_duration_(att.liveliness_lease_duration)
+    , data_sharing_domain_(0u)
 {
-    init(payload_pool, change_pool);
+    init(payload_pool, change_pool, att);
 }
 
 void RTPSReader::init(
         const std::shared_ptr<IPayloadPool>& payload_pool,
-        const std::shared_ptr<IChangePool>& change_pool)
+        const std::shared_ptr<IChangePool>& change_pool,
+        const ReaderAttributes& att)
 {
     payload_pool_ = payload_pool;
     change_pool_ = change_pool;
@@ -109,6 +112,30 @@ void RTPSReader::init(
     if (mp_history->m_att.memoryPolicy == PREALLOCATED_MEMORY_MODE)
     {
         fixed_payload_size_ = mp_history->m_att.payloadMaxSize;
+    }
+
+    // Get the datasharing compatibility from property
+    const std::string* data_sharing_domain = PropertyPolicyHelper::find_property(
+            att.endpoint.properties, "fastdds.datasharing_domain");
+    if (data_sharing_domain != nullptr)
+    {
+        is_datasharing_compatible_ = true;
+        std::stringstream ss(*data_sharing_domain);
+        ss >> data_sharing_domain_;
+
+        const std::string* data_sharing_directory = PropertyPolicyHelper::find_property(
+            att.endpoint.properties, "fastdds.datasharing_directory");
+        if (data_sharing_directory == NULL)
+        {
+            logInfo(RTPS_READER, "Data sharing compatible RTPSReader with default shared directory");
+            data_sharing_directory_ = std::string();
+        }
+        else
+        {
+            data_sharing_directory_ = *data_sharing_directory;
+        }
+        
+        create_datasharing_listener();
     }
 
     mp_history->mp_reader = this;
@@ -315,6 +342,18 @@ uint64_t RTPSReader::get_unread_count() const
 {
     std::unique_lock<RecursiveTimedMutex> lock(mp_mutex);
     return total_unread_;
+}
+
+void RTPSReader::create_datasharing_listener()
+{
+    using std::placeholders::_1;
+    std::shared_ptr<DataSharingNotification> notification =
+            DataSharingNotification::create_notification(getGuid(), data_sharing_directory_);
+    datasharing_listener_.reset(new DataSharingListener(
+            notification,
+            data_sharing_directory_,
+            std::bind(&RTPSReader::processDataMsg, this, _1 )));
+    datasharing_listener_->start();
 }
 
 } /* namespace rtps */
