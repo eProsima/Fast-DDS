@@ -63,6 +63,10 @@ class Parser:
                 if result.returncode != 0:
                     sys.exit(result.returncode)
 
+        except KeyboardInterrupt as e:
+            # it lets the subprocess to handle the exception
+            pass
+
         except BaseException as e:
             self.__help_message += str(e)
             self.__help_message += '\n fast-discovery-server tool not found!'

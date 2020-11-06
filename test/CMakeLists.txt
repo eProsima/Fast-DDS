@@ -66,4 +66,5 @@ endif()
 ###############################################################################
 if(SYSTEM_TESTS)
     add_subdirectory(system/tools/fastdds)
+    add_subdirectory(system/tools/fds)
 endif()
