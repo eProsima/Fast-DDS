@@ -578,6 +578,8 @@ bool StatefulWriter::change_removed_by_history(
     may_remove_change_ = 2;
     may_remove_change_cond_.notify_one();
 
+    check_acked_status();
+
     return true;
 }
 
