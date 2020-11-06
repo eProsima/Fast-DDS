@@ -1544,7 +1544,7 @@ void DiscoveryDataBase::unmatch_participant_(
                 // when the match is not reciprocal
                 logInfo(DISCOVERY_DATABASE,
                         "Participant " << relevant_participant << " matched with an unexisting participant: " <<
-                                        guid_prefix);
+                        guid_prefix);
             }
             else
             {

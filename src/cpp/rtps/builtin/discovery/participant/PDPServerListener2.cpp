@@ -55,7 +55,7 @@ void PDPServerListener2::onNewCacheChangeAdded(
     logInfo(RTPS_PDP_LISTENER, "------------------ PDP SERVER LISTENER START ------------------");
     logInfo(RTPS_PDP_LISTENER,
             "-------------------- " << pdp_server()->mp_RTPSParticipant->getGuid() <<
-                        " --------------------");
+            " --------------------");
     logInfo(RTPS_PDP_LISTENER, "PDP Server Message received: " << change_in->instanceHandle);
 
     // Get PDP reader history
@@ -100,9 +100,7 @@ void PDPServerListener2::onNewCacheChangeAdded(
     // Related_sample_identity could be lost in message delivered, so we set as sample_identity
     // An empty related_sample_identity could lead into an empty sample_identity when resending this msg
     if (change->write_params.related_sample_identity() == SampleIdentity::unknown())
-    {
-        change->write_params.related_sample_identity(change->write_params.sample_identity());
-    }
+    {:
 
 
     // DATA(p) case
@@ -365,7 +363,7 @@ void PDPServerListener2::onNewCacheChangeAdded(
 
     logInfo(RTPS_PDP_LISTENER,
             "-------------------- " << pdp_server()->mp_RTPSParticipant->getGuid() <<
-                        " --------------------");
+            " --------------------");
     logInfo(RTPS_PDP_LISTENER, "------------------ PDP SERVER LISTENER END ------------------");
     logInfo(RTPS_PDP_LISTENER, "");
 }
