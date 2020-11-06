@@ -117,10 +117,6 @@ void EDPServerPUBListener2::onNewCacheChangeAdded(
     // updated from a backup
     if (!get_pdp()->discovery_db().backup_in_progress())
     {
-<<<<<<< HEAD
-        // If the database doesn't take the ownership, then return the CacheChante_t to the pool.
-        reader_history->release_Cache(change);
-=======
         if (topic_name.size() > 0 &&
                 get_pdp()->discovery_db().update(change, topic_name))
         {
@@ -134,7 +130,6 @@ void EDPServerPUBListener2::onNewCacheChangeAdded(
             // If the database doesn't take the ownership, then return the CacheChante_t to the pool.
             reader_history->release_Cache(change);
         }
->>>>>>> 776bc4952... Refs #9707: backup working in recovering
     }
     logInfo(RTPS_EDP_LISTENER,
             "-------------------- " << sedp_->mp_RTPSParticipant->getGuid() << " --------------------");
