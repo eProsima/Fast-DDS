@@ -18,7 +18,6 @@
  */
 
 #include <mutex>
-#include <shared_mutex>
 
 #include <fastdds/dds/log/Log.hpp>
 #include <fastdds/rtps/common/EntityId_t.hpp>
