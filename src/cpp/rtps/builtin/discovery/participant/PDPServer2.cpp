@@ -1485,13 +1485,12 @@ bool PDPServer2::process_backup_discovery_database_restore(nlohmann::json& j)
         // if it is from the server, it is created from writer
         for (auto it = j["writers"].begin(); it != j["writers"].end(); ++it)
         {
-            fastrtps::rtps::CacheChange_t* change_aux;
             length = it.value()["change"]["serialized_payload"]["length"].get<std::uint32_t>();
             (std::istringstream) it.value()["change"]["sample_identity"].get<std::string>() >> sample_identity_aux;
 
             if (it.value()["topic"] == discovery_db().virtual_topic())
             {
-                fastrtps::rtps::CacheChange_t* change_aux = new fastrtps::rtps::CacheChange_t();
+                change_aux = new fastrtps::rtps::CacheChange_t();
             }
             else
             {
@@ -1538,12 +1537,11 @@ bool PDPServer2::process_backup_discovery_database_restore(nlohmann::json& j)
         // if it is created from the server, it is created from writer
         for (auto it = j["readers"].begin(); it != j["readers"].end(); ++it)
         {
-            fastrtps::rtps::CacheChange_t* change_aux;
             (std::istringstream) it.value()["change"]["sample_identity"].get<std::string>() >> sample_identity_aux;
 
             if (it.value()["topic"] == discovery_db().virtual_topic())
             {
-                fastrtps::rtps::CacheChange_t* change_aux = new fastrtps::rtps::CacheChange_t();
+                change_aux = new fastrtps::rtps::CacheChange_t();
             }
             else
             {
