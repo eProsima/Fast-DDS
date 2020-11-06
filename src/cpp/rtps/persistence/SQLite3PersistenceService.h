@@ -31,7 +31,8 @@ namespace rtps {
  * @ingroup RTPS_PERSISTENCE_MODULE
  */
 IPersistenceService* create_SQLite3_persistence_service(
-        const char* filename);
+        const char* filename,
+        bool update_schema);
 
 
 /**
@@ -105,6 +106,9 @@ private:
     sqlite3_stmt* load_writer_stmt_;
     sqlite3_stmt* add_writer_change_stmt_;
     sqlite3_stmt* remove_writer_change_stmt_;
+
+    sqlite3_stmt* load_writer_last_seq_num_stmt_;
+    sqlite3_stmt* update_writer_last_seq_num_stmt_;
 
     sqlite3_stmt* load_reader_stmt_;
     sqlite3_stmt* update_reader_stmt_;

@@ -18,6 +18,7 @@
  */
 
 #include <rtps/persistence/SQLite3PersistenceService.h>
+#include <rtps/persistence/SQLite3PersistenceServiceStatements.h>
 #include <fastdds/dds/log/Log.hpp>
 #include <fastdds/rtps/history/WriterHistory.h>
 
@@ -29,43 +30,119 @@ namespace eprosima {
 namespace fastrtps {
 namespace rtps {
 
+/**
+ * @brief Retrieve the schema version of the database
+ * @param db [IN] Database of which we want to get the schema version
+ * @return Integer representing the schema version. Zero if an error occurs during the processing.
+ */
+static unsigned int database_version(
+        sqlite3* db)
+{
+    sqlite3_stmt* version_stmt;
+    unsigned int version = 1;
+    if (sqlite3_prepare_v2(db, "PRAGMA user_version;", -1, &version_stmt, NULL) != SQLITE_OK)
+    {
+        return 0;
+    }
+
+    if (SQLITE_ROW == sqlite3_step(version_stmt))
+    {
+        version = sqlite3_column_int(version_stmt, 0);
+        if (version == 0)
+        {
+            //No version information. It really means version 1
+            version = 1;
+        }
+    }
+    sqlite3_finalize(version_stmt);
+    return version;
+}
+
+static int upgrade(
+        sqlite3* db,
+        int from,
+        int to)
+{
+    if (from == to)
+    {
+        return SQLITE_OK;
+    }
+
+    if (from == 1 && to == 2)
+    {
+        return sqlite3_exec(db, SQLite3PersistenceServiceSchemaV2::update_from_v1_statement().c_str(), 0, 0, 0);
+    }
+
+    // unsupported upgrade path
+    logError(RTPS_PERSISTENCE, "Unsupported database upgrade from version " << from << " to version " << to);
+    return SQLITE_ERROR;
+}
+
 static sqlite3* open_or_create_database(
-        const char* filename)
+        const char* filename,
+        bool update_schema)
 {
     sqlite3* db = NULL;
     int rc;
+    int version = 2;
 
     // Open database
-    int flags = SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE |
+    int flags = SQLITE_OPEN_READWRITE |
             SQLITE_OPEN_FULLMUTEX | SQLITE_OPEN_SHAREDCACHE;
-    rc = sqlite3_open_v2(filename, &db, flags, 0);
+    rc = sqlite3_open_v2(filename, &db, flags, 0); // malloc that is not erased
     if (rc != SQLITE_OK)
     {
-        sqlite3_close(db);
-        return NULL;
+        // In case file cantopen, memory is reserved in db, so it must be free (for valgrind sake)
+        if (rc == SQLITE_CANTOPEN)
+        {
+            sqlite3_close(db);
+        }
+
+        //probably the database does not exists. Create new and no need to upgrade schema
+        flags = SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE |
+                SQLITE_OPEN_FULLMUTEX | SQLITE_OPEN_SHAREDCACHE;
+        rc = sqlite3_open_v2(filename, &db, flags, 0);
+        if (rc != SQLITE_OK)
+        {
+            logError(RTPS_PERSISTENCE, "Unable to create persistence database " << filename);
+            sqlite3_close(db);
+            return NULL;
+        }
+    }
+    else
+    {
+        // Find the database version and handle upgrades
+        int db_version = database_version(db);
+        if (db_version == 0)
+        {
+            logError(RTPS_PERSISTENCE, "Error retrieving version on database " << filename);
+            sqlite3_close(db);
+            return NULL;
+        }
+        if (db_version != version)
+        {
+            if (update_schema)
+            {
+                rc = upgrade(db, db_version, version);
+                if (rc != SQLITE_OK)
+                {
+                    sqlite3_close(db);
+                    return NULL;
+                }
+            }
+            else
+            {
+                logError(RTPS_PERSISTENCE, "Old schema version " << db_version << " on database " << filename
+                                                                 << ". Set property dds.persistence.update_schema to force automatic schema upgrade");
+                sqlite3_close(db);
+                return NULL;
+            }
+
+        }
     }
 
     // Create tables if they don't exist
-    const char* create_statement =
-            R"(
-CREATE TABLE IF NOT EXISTS writers(
-    guid text,
-    seq_num integer,
-    instance binary(16),
-    payload blob,
-    PRIMARY KEY(guid, seq_num DESC)
-) WITHOUT ROWID;
-
-CREATE TABLE IF NOT EXISTS readers(
-    guid text,
-    writer_guid_prefix binary(12),
-    writer_guid_entity binary(4),
-    seq_num integer,
-    PRIMARY KEY(guid, writer_guid_prefix, writer_guid_entity)
-) WITHOUT ROWID;
-
-)";
-    rc = sqlite3_exec(db, create_statement, 0, 0, 0);
+    rc = sqlite3_exec(db, SQLite3PersistenceServiceSchemaV2::database_create_statement().c_str(), 0, 0, 0);
     if (rc != SQLITE_OK)
     {
         sqlite3_close(db);
@@ -80,15 +157,20 @@ static void finalize_statement(
 {
     if (stmt != NULL)
     {
-        sqlite3_finalize(stmt);
+        int res = sqlite3_finalize(stmt);
+        if (res != SQLITE_OK)
+        {
+            logWarning(RTPS_PERSISTENCE, "Statement could not be finalized. sqlite3_finalize code: " << res);
+        }
         stmt = NULL;
     }
 }
 
 IPersistenceService* create_SQLite3_persistence_service(
-        const char* filename)
+        const char* filename,
+        bool update_schema)
 {
-    sqlite3* db = open_or_create_database(filename);
+    sqlite3* db = open_or_create_database(filename, update_schema);
     return (db == NULL) ? nullptr : new SQLite3PersistenceService(db);
 }
 
@@ -98,16 +180,24 @@ SQLite3PersistenceService::SQLite3PersistenceService(
     , load_writer_stmt_(NULL)
     , add_writer_change_stmt_(NULL)
     , remove_writer_change_stmt_(NULL)
+    , load_writer_last_seq_num_stmt_(NULL)
+    , update_writer_last_seq_num_stmt_(NULL)
     , load_reader_stmt_(NULL)
     , update_reader_stmt_(NULL)
 {
     // Prepare writer statements
-    sqlite3_prepare_v3(db_, "SELECT seq_num,instance,payload FROM writers WHERE guid=?;", -1, SQLITE_PREPARE_PERSISTENT,
+    sqlite3_prepare_v3(db_, "SELECT seq_num,instance,payload FROM writers_histories WHERE guid=?;", -1,
+            SQLITE_PREPARE_PERSISTENT,
             &load_writer_stmt_, NULL);
-    sqlite3_prepare_v3(db_, "INSERT INTO writers VALUES(?,?,?,?);", -1, SQLITE_PREPARE_PERSISTENT,
+    sqlite3_prepare_v3(db_, "INSERT INTO writers_histories VALUES(?,?,?,?);", -1, SQLITE_PREPARE_PERSISTENT,
             &add_writer_change_stmt_, NULL);
-    sqlite3_prepare_v3(db_, "DELETE FROM writers WHERE guid=? AND seq_num=?;", -1, SQLITE_PREPARE_PERSISTENT,
+    sqlite3_prepare_v3(db_, "DELETE FROM writers_histories WHERE guid=? AND seq_num=?;", -1, SQLITE_PREPARE_PERSISTENT,
             &remove_writer_change_stmt_, NULL);
+
+    sqlite3_prepare_v3(db_, "SELECT last_seq_num FROM writers_states WHERE guid=?;", -1, SQLITE_PREPARE_PERSISTENT,
+            &load_writer_last_seq_num_stmt_, NULL);
+    sqlite3_prepare_v3(db_, "INSERT OR REPLACE INTO writers_states VALUES(?,?);", -1, SQLITE_PREPARE_PERSISTENT,
+            &update_writer_last_seq_num_stmt_, NULL);
 
     // Prepare reader statements
     sqlite3_prepare_v3(db_, "SELECT writer_guid_prefix,writer_guid_entity,seq_num FROM readers WHERE guid=?;", -1,
@@ -127,13 +217,25 @@ SQLite3PersistenceService::~SQLite3PersistenceService()
     finalize_statement(load_reader_stmt_);
     finalize_statement(update_reader_stmt_);
 
-    sqlite3_close(db_);
+    // Finalize writer seq_num statements
+    finalize_statement(load_writer_last_seq_num_stmt_);
+    finalize_statement(update_writer_last_seq_num_stmt_);
+
+    int res = sqlite3_close(db_);
+    if (res != SQLITE_OK) // (0) SQLITE_OK
+    {
+        logError(RTPS_PERSISTENCE, "Database could not be closed. sqlite3_close code: " << res);
+    }
     db_ = NULL;
 }
 
 /**
  * Get all data stored for a writer.
+ * @param persistence_guid GUID of persistence service that holds the data.
  * @param writer_guid GUID of the writer to load.
+ * @param changes History of CacheChanges of the writer. It will be filled.
+ * @param pool Pool of CacheChanges from which new ones are reserved to add to the history.
+ * @param next_sequence Buffer to fill with the last sequence number on the history.
  * @return True if operation was successful.
  */
 bool SQLite3PersistenceService::load_writer_from_storage(
@@ -151,16 +253,10 @@ bool SQLite3PersistenceService::load_writer_from_storage(
         sqlite3_reset(load_writer_stmt_);
         sqlite3_bind_text(load_writer_stmt_, 1, persistence_guid.c_str(), -1, SQLITE_STATIC);
 
-        sqlite3_int64 max_sn = 0;
 
         while (SQLITE_ROW == sqlite3_step(load_writer_stmt_))
         {
             sqlite3_int64 sn = sqlite3_column_int64(load_writer_stmt_, 0);
-            if (sn > max_sn)
-            {
-                max_sn = sn;
-            }
-
             CacheChange_t* change = nullptr;
             int size = sqlite3_column_bytes(load_writer_stmt_, 2);
 
@@ -191,8 +287,15 @@ bool SQLite3PersistenceService::load_writer_from_storage(
             changes.insert(changes.begin(), change);
         }
 
-        next_sequence.high = (int32_t)((max_sn >> 32) & 0xFFFFFFFF);
-        next_sequence.low = (int32_t)(max_sn & 0xFFFFFFFF);
+        sqlite3_reset(load_writer_last_seq_num_stmt_);
+        sqlite3_bind_text(load_writer_last_seq_num_stmt_, 1, persistence_guid.c_str(), -1, SQLITE_STATIC);
+
+        while (SQLITE_ROW == sqlite3_step(load_writer_last_seq_num_stmt_))
+        {
+            sqlite3_int64 sn = sqlite3_column_int64(load_writer_last_seq_num_stmt_, 0);
+            next_sequence.high = (int32_t)((sn >> 32) & 0xFFFFFFFF);
+            next_sequence.low = (int32_t)(sn & 0xFFFFFFFF);
+        }
     }
 
     return true;
@@ -211,20 +314,29 @@ bool SQLite3PersistenceService::add_writer_change_to_storage(
 
     if (add_writer_change_stmt_ != NULL)
     {
-        sqlite3_reset(add_writer_change_stmt_);
-        sqlite3_bind_text(add_writer_change_stmt_, 1, persistence_guid.c_str(), -1, SQLITE_STATIC);
-        sqlite3_bind_int64(add_writer_change_stmt_, 2, change.sequenceNumber.to64long());
-        if (change.instanceHandle.isDefined())
+        //First add the last seq number, it is needed for the foreign key on writers_histories
+        sqlite3_reset(update_writer_last_seq_num_stmt_);
+        sqlite3_bind_text(update_writer_last_seq_num_stmt_, 1, persistence_guid.c_str(), -1, SQLITE_STATIC);
+        sqlite3_bind_int64(update_writer_last_seq_num_stmt_, 2, change.sequenceNumber.to64long());
+
+        if (sqlite3_step(update_writer_last_seq_num_stmt_) == SQLITE_DONE)
         {
-            sqlite3_bind_blob(add_writer_change_stmt_, 3, change.instanceHandle.value, 16, SQLITE_STATIC);
+            sqlite3_reset(add_writer_change_stmt_);
+            sqlite3_bind_text(add_writer_change_stmt_, 1, persistence_guid.c_str(), -1, SQLITE_STATIC);
+            sqlite3_bind_int64(add_writer_change_stmt_, 2, change.sequenceNumber.to64long());
+            if (change.instanceHandle.isDefined())
+            {
+                sqlite3_bind_blob(add_writer_change_stmt_, 3, change.instanceHandle.value, 16, SQLITE_STATIC);
+            }
+            else
+            {
+                sqlite3_bind_zeroblob(add_writer_change_stmt_, 3, 16);
+            }
+            sqlite3_bind_blob(add_writer_change_stmt_, 4, change.serializedPayload.data,
+                    change.serializedPayload.length, SQLITE_STATIC);
+
+            return sqlite3_step(add_writer_change_stmt_) == SQLITE_DONE;
         }
-        else
-        {
-            sqlite3_bind_zeroblob(add_writer_change_stmt_, 3, 16);
-        }
-        sqlite3_bind_blob(add_writer_change_stmt_, 4, change.serializedPayload.data, change.serializedPayload.length,
-                SQLITE_STATIC);
-        return sqlite3_step(add_writer_change_stmt_) == SQLITE_DONE;
     }
 
     return false;

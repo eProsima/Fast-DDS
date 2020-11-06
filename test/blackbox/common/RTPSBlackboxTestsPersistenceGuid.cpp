@@ -93,7 +93,7 @@ TEST_P(PersistenceGuid, SetPersistenceGuidThroughRTPSLayer)
 #ifdef WIN32
     // Check if there is one entry in the writers database table with the stated persistence guid
     int result1 = system(
-        "python check_guid.py \"persistence.db\" \"writers\" \"77.72.69.74.65.72.5f.70.65.72.73.5f|67.75.69.64\"");
+        "python check_guid.py \"persistence.db\" \"writers_histories\" \"77.72.69.74.65.72.5f.70.65.72.73.5f|67.75.69.64\"");
     ASSERT_EQ(result1, 1);
 
     // Check if there is one entry in the readers database table with the stated persistence guid
@@ -103,7 +103,7 @@ TEST_P(PersistenceGuid, SetPersistenceGuidThroughRTPSLayer)
 #else
     // Check if there is one entry in the writers database table with the stated persistence guid
     int result1 = system(
-        "python3 check_guid.py 'persistence.db' 'writers' '77.72.69.74.65.72.5f.70.65.72.73.5f|67.75.69.64'");
+        "python3 check_guid.py 'persistence.db' 'writers_histories' '77.72.69.74.65.72.5f.70.65.72.73.5f|67.75.69.64'");
     ASSERT_EQ((result1 >> 8), 1);
 
     // Check if there is one entry in the readers database table with the stated persistence guid
@@ -177,11 +177,12 @@ TEST_P(PersistenceGuid, CheckPrevalenceBetweenManualAndPropertyConfiguration)
 #ifdef WIN32
     // Check if that there is no entry in the writers database table with the stated persistence guid
     int result1 = system(
-        "python check_guid.py \"persistence.db\" \"writers\" \"77.72.69.74.65.72.5f.70.65.72.73.5f|67.75.69.64\"");
+        "python check_guid.py \"persistence.db\" \"writers_histories\" \"77.72.69.74.65.72.5f.70.65.72.73.5f|67.75.69.64\"");
     ASSERT_EQ(result1, 0);
 
     // Check if there is one entry in the writers database table with the stated persistence guid
-    result1 = system("python check_guid.py \"persistence.db\" \"writers\" \"0.0.0.0.0.0.0.0.0.0.0.1|0.0.0.1\"");
+    result1 =
+            system("python check_guid.py \"persistence.db\" \"writers_histories\" \"0.0.0.0.0.0.0.0.0.0.0.1|0.0.0.1\"");
     ASSERT_EQ(result1, 1);
 
     // Check if that there is no entry in the readers database table with the stated persistence guid
@@ -196,11 +197,11 @@ TEST_P(PersistenceGuid, CheckPrevalenceBetweenManualAndPropertyConfiguration)
 
     // Check if that there is no entry in the writers database table with the stated persistence guid
     int result1 = system(
-        "python3 check_guid.py 'persistence.db' 'writers' '77.72.69.74.65.72.5f.70.65.72.73.5f|67.75.69.64'");
+        "python3 check_guid.py 'persistence.db' 'writers_histories' '77.72.69.74.65.72.5f.70.65.72.73.5f|67.75.69.64'");
     ASSERT_EQ((result1 >> 8), 0);
 
     // Check if there is one entry in the writers database table with the stated persistence guid
-    result1 = system("python3 check_guid.py 'persistence.db' 'writers' '0.0.0.0.0.0.0.0.0.0.0.1|0.0.0.1'");
+    result1 = system("python3 check_guid.py 'persistence.db' 'writers_histories' '0.0.0.0.0.0.0.0.0.0.0.1|0.0.0.1'");
     ASSERT_EQ((result1 >> 8), 1);
 
     // Check if that there is no entry in the readers database table with the stated persistence guid

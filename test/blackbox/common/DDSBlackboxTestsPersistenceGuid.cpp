@@ -99,7 +99,7 @@ TEST_P(PersistenceGuid, SetPersistenceGuidThroughDDSLayer)
 #ifdef WIN32
     // Check if there is one entry in the writers database table with the stated persistence guid
     int result1 = system(
-        "python check_guid.py \"persistence.db\" \"writers\" \"77.72.69.74.65.72.5f.70.65.72.73.5f|67.75.69.64\"");
+        "python check_guid.py \"persistence.db\" \"writers_histories\" \"77.72.69.74.65.72.5f.70.65.72.73.5f|67.75.69.64\"");
     ASSERT_EQ(result1, 1);
 
     // Check if there is one entry in the readers database table with the stated persistence guid
@@ -109,7 +109,7 @@ TEST_P(PersistenceGuid, SetPersistenceGuidThroughDDSLayer)
 #else
     // Check if there is one entry in the writers database table with the stated persistence guid
     int result1 = system(
-        "python3 check_guid.py 'persistence.db' 'writers' '77.72.69.74.65.72.5f.70.65.72.73.5f|67.75.69.64'");
+        "python3 check_guid.py 'persistence.db' 'writers_histories' '77.72.69.74.65.72.5f.70.65.72.73.5f|67.75.69.64'");
     ASSERT_EQ((result1 >> 8), 1);
 
     // Check if there is one entry in the readers database table with the stated persistence guid
@@ -166,7 +166,7 @@ TEST_P(PersistenceGuid, SetPersistenceGuidByXML)
 #ifdef WIN32
     // Check if there is one entry in the writers database table with the stated persistence guid
     int result1 = system(
-        "python check_guid.py \"persistence.db\" \"writers\" \"77.72.69.74.65.72.5f.70.65.72.73.5f|67.75.69.64\"");
+        "python check_guid.py \"persistence.db\" \"writers_histories\" \"77.72.69.74.65.72.5f.70.65.72.73.5f|67.75.69.64\"");
     ASSERT_EQ(result1, 1);
 
     // Check if there is one entry in the readers database table with the stated persistence guid
@@ -176,7 +176,7 @@ TEST_P(PersistenceGuid, SetPersistenceGuidByXML)
 #else
     // Check if there is one entry in the writers database table with the stated persistence guid
     int result1 = system(
-        "python3 check_guid.py 'persistence.db' 'writers' '77.72.69.74.65.72.5f.70.65.72.73.5f|67.75.69.64'");
+        "python3 check_guid.py 'persistence.db' 'writers_histories' '77.72.69.74.65.72.5f.70.65.72.73.5f|67.75.69.64'");
     ASSERT_EQ((result1 >> 8), 1);
 
     // Check if there is one entry in the readers database table with the stated persistence guid
@@ -247,7 +247,7 @@ TEST_P(PersistenceGuid, SetPersistenceForTransientLocal)
 #ifdef WIN32
     // Check if there is one entry in the writers database table with the stated persistence guid
     int result1 = system(
-        "python check_guid.py \"persistence.db\" \"writers\" \"77.72.69.74.65.72.5f.70.65.72.73.5f|67.75.69.64\"");
+        "python check_guid.py \"persistence.db\" \"writers_histories\" \"77.72.69.74.65.72.5f.70.65.72.73.5f|67.75.69.64\"");
     ASSERT_EQ(result1, 1);
 
     // Check if there is one entry in the readers database table with the stated persistence guid
@@ -257,7 +257,7 @@ TEST_P(PersistenceGuid, SetPersistenceForTransientLocal)
 #else
     // Check if there is one entry in the writers database table with the stated persistence guid
     int result1 = system(
-        "python3 check_guid.py 'persistence.db' 'writers' '77.72.69.74.65.72.5f.70.65.72.73.5f|67.75.69.64'");
+        "python3 check_guid.py 'persistence.db' 'writers_histories' '77.72.69.74.65.72.5f.70.65.72.73.5f|67.75.69.64'");
     ASSERT_EQ((result1 >> 8), 1);
 
     // Check if there is one entry in the readers database table with the stated persistence guid
@@ -328,7 +328,7 @@ TEST_P(PersistenceGuid, NoSetPersistenceForTransientLocal)
 #ifdef WIN32
     // Check if there is no entry in the writers database table with the stated persistence guid
     int result1 = system(
-        "python check_guid.py \"persistence.db\" \"writers\" \"77.72.69.74.65.72.5f.70.65.72.73.5f|67.75.69.64\"");
+        "python check_guid.py \"persistence.db\" \"writers_histories\" \"77.72.69.74.65.72.5f.70.65.72.73.5f|67.75.69.64\"");
     ASSERT_EQ(result1, 255);
 
     // Check if there is no entry in the readers database table with the stated persistence guid
@@ -338,7 +338,7 @@ TEST_P(PersistenceGuid, NoSetPersistenceForTransientLocal)
 #else
     // Check if there is no entry in the writers database table with the stated persistence guid
     int result1 = system(
-        "python3 check_guid.py 'persistence.db' 'writers' '77.72.69.74.65.72.5f.70.65.72.73.5f|67.75.69.64'");
+        "python3 check_guid.py 'persistence.db' 'writers_histories' '77.72.69.74.65.72.5f.70.65.72.73.5f|67.75.69.64'");
     ASSERT_EQ((result1 >> 8), 255);
 
     // Check if there is no entry in the readers database table with the stated persistence guid
