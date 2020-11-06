@@ -1786,7 +1786,7 @@ void DiscoveryDataBase::remove_writer_from_topic_(
         const eprosima::fastrtps::rtps::GUID_t& writer_guid,
         const std::string& topic_name)
 {
-    if (topic_name.compare(virtual_topic_) == 0)
+    if (topic_name == virtual_topic_)
     {
         std::map<std::string, std::vector<eprosima::fastrtps::rtps::GUID_t>>::iterator topic_it;
         for (topic_it = writers_by_topic_.begin(); topic_it != writers_by_topic_.end(); topic_it++)
@@ -1834,7 +1834,7 @@ void DiscoveryDataBase::remove_reader_from_topic_(
 {
     logInfo(DISCOVERY_DATABASE, "removing: " << reader_guid << " from topic " << topic_name);
 
-    if (topic_name.compare(virtual_topic_) == 0)
+    if (topic_name == virtual_topic_)
     {
         std::map<std::string, std::vector<eprosima::fastrtps::rtps::GUID_t>>::iterator topic_it;
         for (topic_it = readers_by_topic_.begin(); topic_it != readers_by_topic_.end(); topic_it++)
