@@ -22,11 +22,14 @@
 #include <fastdds/rtps/Endpoint.h>
 #include <fastdds/rtps/attributes/ReaderAttributes.h>
 #include <fastdds/rtps/common/SequenceNumber.h>
+#include <rtps/history/DataSharingListener.hpp>
 #include <fastrtps/qos/LivelinessChangedStatus.h>
 #include <fastdds/rtps/common/Time_t.h>
 #include <fastdds/rtps/builtin/data/WriterProxyData.h>
 #include <fastrtps/utils/TimedConditionVariable.hpp>
 #include "../history/ReaderHistory.h"
+
+#include <functional>
 
 namespace eprosima {
 namespace fastrtps {
@@ -341,6 +344,11 @@ protected:
             CacheChange_t** change,
             History::const_iterator hint) const;
 
+    /**
+     * Creates the listener for the datasharing notifications
+     */
+    void create_datasharing_listener();
+
     //!ReaderHistory
     ReaderHistory* mp_history;
     //!Listener
@@ -366,6 +374,15 @@ protected:
     //! The liveliness lease duration of this reader
     Duration_t liveliness_lease_duration_;
 
+    //! Whether the writer is datasharing compatible or not
+    bool is_datasharing_compatible_ = false;
+    //! The listener for the datasharing notifications
+    std::unique_ptr<DataSharingListener> datasharing_listener_;
+    //! Data sharing domain
+    uint64_t data_sharing_domain_;
+    //! Data sharing directory
+    std::string data_sharing_directory_;
+
 private:
 
     RTPSReader& operator =(
@@ -373,7 +390,8 @@ private:
 
     void init(
             const std::shared_ptr<IPayloadPool>& payload_pool,
-            const std::shared_ptr<IChangePool>& change_pool);
+            const std::shared_ptr<IChangePool>& change_pool,
+            const ReaderAttributes& att);
 
 };
 
