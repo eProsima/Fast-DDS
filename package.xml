@@ -25,10 +25,6 @@
 
   <doc_depend>doxygen</doc_depend>
 
-  <test_depend>libgtest-dev</test_depend>
-  <test_depend>libgmock-dev</test_depend>
-  <test_depend>python3</test_depend>
-
   <export>
     <build_type>cmake</build_type>
   </export>
