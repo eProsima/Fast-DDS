@@ -1572,7 +1572,7 @@ void DiscoveryDataBase::AckedFunctor::operator () (
             // if the reader proxy is from a server that we are pinging, the data is set as acked
             for (auto it = db_->servers_.begin(); it < db_->servers_.end(); ++it)
             {
-                if (reader_proxy->guid().guidPrefix == *(it.base()))
+                if (reader_proxy->guid().guidPrefix == *it)
                 {
                     return;
                 }
