@@ -18,11 +18,9 @@
 
   <depend>fastcdr</depend>
   <depend>libssl-dev</depend>
-  <depend>libtinyxml2-dev</depend>
-
+  
   <build_depend>foonathan_memory_vendor</build_depend>
-  <build_depend>libasio-dev</build_depend>
-
+  
   <doc_depend>doxygen</doc_depend>
 
   <export>
