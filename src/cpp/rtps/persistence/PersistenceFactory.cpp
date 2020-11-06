@@ -21,15 +21,16 @@
 
 #if HAVE_SQLITE3
 #include <rtps/persistence/SQLite3PersistenceService.h>
-#endif
+#endif // if HAVE_SQLITE3
 
 #include <fastdds/rtps/attributes/PropertyPolicy.h>
 
 namespace eprosima {
-namespace fastrtps{
+namespace fastrtps {
 namespace rtps {
 
-IPersistenceService* PersistenceFactory::create_persistence_service(const PropertyPolicy& property_policy)
+IPersistenceService* PersistenceFactory::create_persistence_service(
+        const PropertyPolicy& property_policy)
 {
     IPersistenceService* ret_val = nullptr;
     const std::string* plugin_property = PropertyPolicyHelper::find_property(property_policy, "dds.persistence.plugin");
@@ -39,12 +40,22 @@ IPersistenceService* PersistenceFactory::create_persistence_service(const Proper
 #if HAVE_SQLITE3
         if (plugin_property->compare("builtin.SQLITE3") == 0)
         {
-            const std::string* filename_property = PropertyPolicyHelper::find_property(property_policy, "dds.persistence.sqlite3.filename");
+            const std::string* filename_property = PropertyPolicyHelper::find_property(property_policy,
+                            "dds.persistence.sqlite3.filename");
             const char* filename = (filename_property == nullptr) ?
-                "persistence.db" : filename_property->c_str();
-            ret_val = create_SQLite3_persistence_service(filename);
+                    "persistence.db" : filename_property->c_str();
+            bool update_schema = false;
+            const std::string* update_schema_value = PropertyPolicyHelper::find_property(property_policy,
+                            "dds.persistence.update_schema");
+            if (update_schema_value != nullptr &&
+                    ((update_schema_value->compare("TRUE") == 0) ||
+                    (update_schema_value->compare("true") == 0)))
+            {
+                update_schema = true;
+            }
+            ret_val = create_SQLite3_persistence_service(filename, update_schema);
         }
-#endif
+#endif // if HAVE_SQLITE3
     }
 
     return ret_val;

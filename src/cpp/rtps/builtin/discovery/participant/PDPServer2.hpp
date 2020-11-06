@@ -43,6 +43,7 @@ class PDPServer2 : public fastrtps::rtps::PDP
     friend class DServerPingEvent2;
     friend class EDPServer2;
     friend class PDPServerListener2;
+    friend class EDPServerListener2;
 
 public:
 
@@ -54,7 +55,9 @@ public:
      */
     PDPServer2(
             fastrtps::rtps::BuiltinProtocols* builtin,
-            const fastrtps::rtps::RTPSParticipantAllocationAttributes& allocation);
+            const fastrtps::rtps::RTPSParticipantAllocationAttributes& allocation,
+            fastrtps::rtps::DurabilityKind_t durability_kind = fastrtps::rtps::TRANSIENT_LOCAL);
+
     ~PDPServer2();
 
     void initializeParticipantProxyData(
@@ -112,7 +115,8 @@ public:
     void send_announcement(
             fastrtps::rtps::CacheChange_t* change,
             std::vector<fastrtps::rtps::GUID_t> remote_readers,
-            fastrtps::rtps::LocatorList_t locators);
+            fastrtps::rtps::LocatorList_t locators,
+            bool dispose = false);
 
     /**
      * These methods wouldn't be needed under perfect server operation (no need of dynamic endpoint allocation)
@@ -126,10 +130,17 @@ public:
     void notifyAboveRemoteEndpoints(
             const fastrtps::rtps::ParticipantProxyData& pdata) override;
 
-#if HAVE_SQLITE3
-    //! Get filename for persistence database file
-    std::string GetPersistenceFileName();
-#endif // if HAVE_SQLITE3
+    //! Get filename for writer persistence database file
+    std::string get_writer_persistence_file_name() const;
+
+    //! Get filename for reader persistence database file
+    std::string get_reader_persistence_file_name() const;
+
+    //! Get filename for discovery database file
+    std::string get_ddb_persistence_file_name() const;
+
+    //! Get filename for discovery database file
+    std::string get_ddb_queue_persistence_file_name() const;
 
     /*
      * Wakes up the DServerRoutineEvent2 for new matching or trimming
@@ -216,9 +227,35 @@ protected:
 
     bool process_dirty_topics();
 
-    bool pending_ack();
+    bool pending_ack();    
+
+    // Method to restore de DiscoveryDataBase from a json object
+    // This method reserve space for every cacheChange from the correspondent pool, and
+    // sends these changes stored to the DDB for it to process them
+    // This method must be called with the DDB variable backup_in_progress as true
+    bool process_backup_discovery_database_restore(nlohmann::json& ddb_json);
+
+    // Restore the backup file with the changes that were added to the DDB queues (and so acked)
+    // It reserves memory for the changes depending the pool, and send them by the listener to the DDB
+    // This method must be called with the DDB variable backup_in_progress as false
+    bool process_backup_restore_queue(std::vector<nlohmann::json>& new_changes);
+
+    // Reads the two backup files and stores each json objects in both arguments
+    // The first argument has the json object to restore the DDB
+    // The second argument has the json vector object to restore the changes that must be sent again to the queue
+    bool read_backup(nlohmann::json& ddb_json, std::vector<nlohmann::json>& new_changes);
 
     std::vector<fastrtps::rtps::GuidPrefix_t> servers_prefixes();
+
+    // General file name for the prefix of every backup file
+    std::ostringstream get_persistence_file_name_() const;
+
+    // Erase the last file and store the backup info of the actual state of the DDB
+    // Erase the content of the file with the changes in the queues
+    // This method must be called after the whole DDB routine process has been finished and with the DDB
+    // queues empty. If not, there will be some information that could be lost. For this, the lock_incoming_data()
+    // from DDB must be called during this process
+    void process_backup_store();
 
 private:
 
@@ -235,9 +272,11 @@ private:
      */
     DServerPingEvent2* ping_;
 
-
     //! Discovery database
     fastdds::rtps::ddb::DiscoveryDataBase discovery_db_;
+
+    //! TRANSIENT or TRANSIENT_LOCAL durability;
+    fastrtps::rtps::DurabilityKind_t _durability;
 
 };
 

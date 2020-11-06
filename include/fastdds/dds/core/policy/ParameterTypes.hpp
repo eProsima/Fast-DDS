@@ -977,6 +977,30 @@ private:
 };
 
 /**
+ * Parameter property ID for persistence GUID
+ * @ingroup PARAMETER_MODULE
+ */
+const std::string parameter_property_persistence_guid = "PID_PERSISTENCE_GUID";
+
+/**
+ * Parameter property ID for participant type
+ * @ingroup PARAMETER_MODULE
+ */
+const std::string parameter_property_participant_type = "PARTICIPANT_TYPE";
+
+/**
+ * Parameter property ID for Discovery Server version
+ * @ingroup PARAMETER_MODULE
+ */
+const std::string parameter_property_ds_version = "DS_VERSION";
+
+/**
+ * Parameter property value for Discovery Server version
+ * @ingroup PARAMETER_MODULE
+ */
+const std::string parameter_property_current_ds_version = "2.0";
+
+/**
  * @ingroup PARAMETER_MODULE
  */
 class ParameterPropertyList_t : public Parameter_t
