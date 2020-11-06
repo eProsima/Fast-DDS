@@ -1534,10 +1534,9 @@ bool PDPServer2::process_backup_discovery_database_restore(nlohmann::json& j)
             }
         }
 
-<<<<<<< HEAD
         // Create every reader change. If it is external creates it from Reader,
         // if it is created from the server, it is created from writer
-=======
+        for (auto it = j["readers"].begin(); it != j["readers"].end(); ++it)
         {
             fastrtps::rtps::CacheChange_t* change_aux;
             (std::istringstream) it.value()["change"]["sample_identity"].get<std::string>() >> sample_identity_aux;
@@ -1621,11 +1620,6 @@ bool PDPServer2::process_backup_restore_queue(std::vector<nlohmann::json>& new_c
             (std::istringstream) json_change["sample_identity"].get<std::string>() >> sample_identity_aux;
             (std::istringstream) json_change["instance_handle"].get<std::string>() >> instance_handle_aux;
 
-<<<<<<< HEAD
-
-
-=======
->>>>>>> 79872acb6... Refs #9649: Add comments and refactor backup functionality
             // Belongs to own server
             if (sample_identity_aux.writer_guid() == mp_PDPWriter->getGuid())
             {
