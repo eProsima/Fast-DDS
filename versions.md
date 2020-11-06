@@ -1,3 +1,40 @@
+Version 2.0.2
+-------------
+
+This release includes improvements:
+
+* Support persistence for large data
+* Improve QNX support
+* Security improvements
+* Fast DDS Quality Declaration (QL 2)
+* Large traffic reduction when using Discovery Server (up to 85-90% for large deployments)
+* Configuration of Clients of Discovery Server using an environment variable
+* A CLI for Fast DDS:
+  * This can be used to launch a discovery server
+  * Clean SHM directories with one command
+* Shared memory transport enabled by default
+* Solve edge-case interoperability issue with CycloneDDS
+
+PRs in merge order:
+
+#1320 #1317 #1329 #1325 #1330 #1326 #1367 #1331 #1267 #1382 #1386 #1384 #1398 #1456 #1444 #1466 #1463 #1469 #1490 #1475 #1514 #1513 #1515 #1520 #1516 #1526 #1549
+
+Version 2.0.1
+-------------
+
+This release includes the following bug fixes:
+
+* Fixed sending GAPs to late joiners
+* Fixed asserting liveliness on data reception
+* Avoid calling OpenSSL_add_all_algorithms when not required
+
+Other improvements:
+
+* Fixing warnings
+
+PRs in merge order:
+#1295, #1300, #1304, #1290, #1307
+
 Version 2.0.0
 -------------
 
