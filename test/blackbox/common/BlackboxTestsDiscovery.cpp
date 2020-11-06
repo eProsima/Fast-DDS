@@ -669,11 +669,13 @@ TEST_P(Discovery, PubSubAsReliableHelloworldEndpointUserData)
 }
 
 //! Auxiliar method for discovering participants tests
+template <typename ParticipantConfigurator>
 static void discoverParticipantsTest(
         bool avoid_multicast,
         size_t n_participants,
         uint32_t wait_ms,
-        const std::string& topic_name)
+        const std::string& topic_name,
+        ParticipantConfigurator participant_configurator)
 {
     std::vector<std::shared_ptr<PubSubWriterReader<HelloWorldType>>> pubsub;
     pubsub.reserve(n_participants);
@@ -689,6 +691,7 @@ static void discoverParticipantsTest(
     for (auto& ps : pubsub)
     {
         std::cout << "\rParticipant " << idx++ << " of " << n_participants << std::flush;
+        participant_configurator(ps);
         ps->init(avoid_multicast);
         ASSERT_EQ(ps->isInitialized(), true);
     }
@@ -727,10 +730,35 @@ static void discoverParticipantsTest(
     }
 }
 
+static void discoverParticipantsTest(
+        bool avoid_multicast,
+        size_t n_participants,
+        uint32_t wait_ms,
+        const std::string& topic_name)
+{
+    auto no_op = [](const std::shared_ptr<PubSubWriterReader<HelloWorldType>>&)
+            {
+            };
+    discoverParticipantsTest(avoid_multicast, n_participants, wait_ms, topic_name, no_op);
+}
+
 //! Tests discovery of 20 participants, having one publisher and one subscriber each, using multicast
 TEST(Discovery, TwentyParticipantsMulticast)
 {
     discoverParticipantsTest(false, 20, 20, TEST_TOPIC_NAME);
+}
+
+//! Regresion test for ros2/ros2#1052
+TEST(Discovery, TwentyParticipantsMulticastLocalhostOnly)
+{
+    auto test_transport = std::make_shared<test_UDPv4TransportDescriptor>();
+    auto participant_config = [&test_transport](const std::shared_ptr<PubSubWriterReader<HelloWorldType>>& part)
+            {
+                part->disable_builtin_transport().add_user_transport_to_pparams(test_transport);
+            };
+
+    test_UDPv4Transport::simulate_no_interfaces = true;
+    discoverParticipantsTest(false, 20, 20, TEST_TOPIC_NAME, participant_config);
 }
 
 //! Tests discovery of 20 participants, having one publisher and one subscriber each, using unicast

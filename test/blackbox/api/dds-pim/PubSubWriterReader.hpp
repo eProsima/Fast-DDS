@@ -34,6 +34,7 @@
 #include <fastdds/dds/subscriber/DataReaderListener.hpp>
 #include <fastdds/dds/subscriber/qos/DataReaderQos.hpp>
 #include <fastdds/dds/subscriber/SampleInfo.hpp>
+#include <fastrtps/transport/TransportDescriptorInterface.h>
 
 #include <string>
 #include <list>
@@ -682,6 +683,19 @@ public:
         return *this;
     }
 
+    PubSubWriterReader& disable_builtin_transport()
+    {
+        participant_qos_.transport().use_builtin_transports = false;
+        return *this;
+    }
+
+    PubSubWriterReader& add_user_transport_to_pparams(
+            std::shared_ptr<eprosima::fastrtps::rtps::TransportDescriptorInterface> userTransportDescriptor)
+    {
+        participant_qos_.transport().user_transports.push_back(userTransportDescriptor);
+        return *this;
+    }
+
     PubSubWriterReader& property_policy(
             const eprosima::fastrtps::rtps::PropertyPolicy property_policy)
     {
@@ -830,7 +844,7 @@ private:
                 eprosima::fastdds::dds::Topic*,
                 eprosima::fastdds::dds::DataWriter*,
                 eprosima::fastdds::dds::DataReader*
-                > > entities_extra_;
+                >> entities_extra_;
 
     std::string topic_name_;
     bool initialized_;

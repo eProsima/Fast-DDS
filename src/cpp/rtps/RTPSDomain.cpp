@@ -169,13 +169,6 @@ RTPSParticipant* RTPSDomain::createParticipant(
     LocatorList_t loc;
     IPFinder::getIP4Address(&loc);
 
-    if (loc.empty() && PParam.builtin.initialPeersList.empty())
-    {
-        Locator_t local;
-        IPLocator::setIPv4(local, 127, 0, 0, 1);
-        PParam.builtin.initialPeersList.push_back(local);
-    }
-
     // Generate a new GuidPrefix_t
     GuidPrefix_t guidP;
     guid_prefix_create(ID, guidP);
