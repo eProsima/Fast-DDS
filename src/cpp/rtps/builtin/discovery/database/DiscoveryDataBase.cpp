@@ -2344,10 +2344,6 @@ bool DiscoveryDataBase::from_json(
             }
 
             logInfo(DISCOVERY_DATABASE, "Writer " << guid_aux << " created with instance handle " << wit.first->second.change()->instanceHandle);
-<<<<<<< HEAD
-
-=======
->>>>>>> 79872acb6... Refs #9649: Add comments and refactor backup functionality
 
             if(change->kind != fastrtps::rtps::ALIVE)
             {
