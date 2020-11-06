@@ -145,18 +145,18 @@ void b64decode(unsigned char* data, const std::string input)
                 B64index[(int) p[i + 1]] << 12 |
                 B64index[(int) p[i + 2]] << 6 |
                 B64index[(int) p[i + 3]];
-        data[j++] = n >> 16;
-        data[j++] = n >> 8 & 0xFF;
+        data[j++] = (n >> 16) & 0xFF;
+        data[j++] = (n >> 8) & 0xFF;
         data[j++] = n & 0xFF;
     }
     if (pad1)
     {
         int n = B64index[(int) p[last]] << 18 | B64index[(int) p[last + 1]] << 12;
-        data[j++] = n >> 16;
+        data[j++] = (n >> 16) & 0xFF;
         if (pad2)
         {
             n |= B64index[(int) p[last + 2]] << 6;
-            data[j++] = n >> 8 & 0xFF;
+            data[j++] = (n >> 8) & 0xFF;
         }
     }
 }
