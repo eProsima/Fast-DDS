@@ -2323,6 +2323,8 @@ bool DiscoveryDataBase::from_json(
 
             // Add Participant
             auto wit = writers_.insert(std::make_pair(guid_aux, dei));
+            // wit is only used in log message below, so it's potentially unused. 
+            static_cast<void>(wit);
 
             // Extra configurations for writers
             // Add writer to writers_by_topic. This will create the topic if necessary
