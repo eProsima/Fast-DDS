@@ -194,7 +194,7 @@ TEST(DataReaderTests, SetListener)
     ASSERT_NE(datareader, nullptr);
     ASSERT_EQ(datareader->get_status_mask(), StatusMask::all());
 
-    std::vector<std::tuple<DataReader*, DataReaderListener*, StatusMask> > testing_cases{
+    std::vector<std::tuple<DataReader*, DataReaderListener*, StatusMask>> testing_cases{
         //statuses, one by one
         { datareader, &listener, StatusMask::data_available() },
         { datareader, &listener, StatusMask::sample_rejected() },

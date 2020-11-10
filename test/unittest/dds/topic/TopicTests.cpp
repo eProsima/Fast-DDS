@@ -201,7 +201,7 @@ TEST(TopicTests, SetListener)
     ASSERT_NE(topic, nullptr);
     ASSERT_EQ(topic->get_status_mask(), StatusMask::all());
 
-    std::vector<std::tuple<Topic*, TopicListener*, StatusMask> > testing_cases{
+    std::vector<std::tuple<Topic*, TopicListener*, StatusMask>> testing_cases{
         //statuses, one by one
         { topic, &listener, StatusMask::data_available() },
         //all except one
