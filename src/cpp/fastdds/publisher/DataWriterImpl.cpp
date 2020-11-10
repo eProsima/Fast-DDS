@@ -193,6 +193,19 @@ ReturnCode_t DataWriterImpl::enable()
         w_att.keep_duration = qos_.reliable_writer_qos().disable_positive_acks.duration;
     }
 
+    // Add datasharing information
+    if (is_data_sharing_compatible_)
+    {
+        std::stringstream ss;
+        ss << qos_.data_sharing().domain_id();
+        property.name("fastdds.datasharing_domain");
+        property.value(ss.str());
+        w_att.endpoint.properties.properties().push_back(std::move(property));
+        property.name("fastdds.datasharing_directory");
+        property.value(qos_.data_sharing().shm_directory());
+        w_att.endpoint.properties.properties().push_back(std::move(property));
+    }
+
     auto pool = get_payload_pool();
     RTPSWriter* writer = RTPSDomain::createRTPSWriter(
         publisher_->rtps_participant(),

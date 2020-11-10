@@ -57,7 +57,7 @@ RTPSWriter::RTPSWriter(
     std::shared_ptr<IPayloadPool> payload_pool;
     payload_pool = BasicPayloadPool::get(cfg, change_pool);
 
-    init(payload_pool, change_pool);
+    init(payload_pool, change_pool, att);
 }
 
 RTPSWriter::RTPSWriter(
@@ -93,12 +93,13 @@ RTPSWriter::RTPSWriter(
     , liveliness_lease_duration_(att.liveliness_lease_duration)
     , liveliness_announcement_period_(att.liveliness_announcement_period)
 {
-    init(payload_pool, change_pool);
+    init(payload_pool, change_pool, att);
 }
 
 void RTPSWriter::init(
         const std::shared_ptr<IPayloadPool>& payload_pool,
-        const std::shared_ptr<IChangePool>& change_pool)
+        const std::shared_ptr<IChangePool>& change_pool,
+        const WriterAttributes& att)
 {
     payload_pool_ = payload_pool;
     change_pool_ = change_pool;
@@ -106,6 +107,17 @@ void RTPSWriter::init(
     if (mp_history->m_att.memoryPolicy == PREALLOCATED_MEMORY_MODE)
     {
         fixed_payload_size_ = mp_history->m_att.payloadMaxSize;
+    }
+
+    // Get the datasharing compatibility from property
+    const std::string* data_sharing_domain = PropertyPolicyHelper::find_property(
+            att.endpoint.properties, "fastdds.datasharing_domain");
+    if (data_sharing_domain != nullptr)
+    {
+        is_datasharing_compatible_ = true;
+        std::stringstream ss(*data_sharing_domain);
+        ss >> data_sharing_domain_;
+        datasharing_notifier_.reset(new DataSharingNotifier());
     }
 
     mp_history->mp_writer = this;

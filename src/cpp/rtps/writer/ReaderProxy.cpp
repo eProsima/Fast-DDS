@@ -58,6 +58,7 @@ ReaderProxy::ReaderProxy(
     , timers_enabled_(false)
     , last_acknack_count_(0)
     , last_nackfrag_count_(0)
+    , is_datasharing_reader_(false)
 {
     nack_supression_event_ = new TimedEvent(writer_->getRTPSParticipant()->getEventResource(),
                     [&]() -> bool
@@ -106,7 +107,8 @@ ReaderProxy::~ReaderProxy()
 }
 
 void ReaderProxy::start(
-        const ReaderProxyData& reader_attributes)
+        const ReaderProxyData& reader_attributes,
+        bool is_datasharing)
 {
     locator_info_.start(
         reader_attributes.guid(),
@@ -136,6 +138,8 @@ void ReaderProxy::start(
         initial_heartbeat_event_->restart_timer();
     }
 
+    is_datasharing_reader_ = is_datasharing;
+
     logInfo(RTPS_READER_PROXY, "Reader Proxy started");
 }
 
@@ -157,6 +161,7 @@ bool ReaderProxy::update(
 
 void ReaderProxy::stop()
 {
+    is_datasharing_reader_ = false;
     locator_info_.stop(guid());
     is_active_ = false;
     disable_timers();

@@ -285,6 +285,20 @@ StatefulWriter::~StatefulWriter()
         delete(remote_reader);
     }
 
+    // TOODO [ILG] Shold we force this on all cases?
+    if(is_datasharing_compatible_)
+    {
+        //Release payloads orderly
+        for (std::vector<CacheChange_t*>::iterator chit = mp_history->changesBegin();
+                chit != mp_history->changesEnd(); ++chit)
+        {
+            IPayloadPool* pool = (*chit)->payload_owner();
+            if (pool)
+            {
+                pool->release_payload(**chit);
+            }
+        }
+    }
 }
 
 /*

@@ -27,6 +27,7 @@
 #include <fastrtps/utils/collections/ResourceLimitedVector.hpp>
 #include <fastdds/rtps/common/LocatorSelector.hpp>
 #include <fastdds/rtps/messages/RTPSMessageSenderInterface.hpp>
+#include <rtps/history/DataSharingNotifier.hpp>
 
 #include <vector>
 #include <memory>
@@ -438,6 +439,13 @@ protected:
     //! The liveliness announcement period
     Duration_t liveliness_announcement_period_;
 
+    //! Whether the writer is datasharing compatible or not
+    bool is_datasharing_compatible_ = false;
+    //! The notifier for Datasharing readers
+    std::unique_ptr<DataSharingNotifier> datasharing_notifier_;
+    //! Data sharing domain
+    uint64_t data_sharing_domain_;
+
     void add_guid(
             const GUID_t& remote_guid);
 
@@ -469,7 +477,8 @@ private:
 
     void init(
             const std::shared_ptr<IPayloadPool>& payload_pool,
-            const std::shared_ptr<IChangePool>& change_pool);
+            const std::shared_ptr<IChangePool>& change_pool,
+            const WriterAttributes& att);
 
 
     RTPSWriter* next_[2] = { nullptr, nullptr };
