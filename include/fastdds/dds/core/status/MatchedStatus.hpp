@@ -25,7 +25,7 @@ namespace eprosima {
 namespace fastdds {
 namespace dds {
 
-//! @brief A structure storing the subscription status
+//! @brief A structure storing a matching status
 struct MatchedStatus
 {
     //! @brief Constructor
