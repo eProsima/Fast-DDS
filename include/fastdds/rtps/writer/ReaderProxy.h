@@ -73,9 +73,11 @@ public:
     /**
      * Activate this proxy associating it to a remote reader.
      * @param reader_attributes ReaderProxyData of the reader for which to keep state.
+     * @param is_datasharing whether the reader is datasharing compatible with the writer or not.
      */
     void start(
-            const ReaderProxyData& reader_attributes);
+            const ReaderProxyData& reader_attributes,
+            bool is_datasharing = false);
 
     /**
      * Update information about the remote reader.
@@ -404,6 +406,16 @@ public:
         return locator_info_;
     }
 
+    /**
+     * Check if the reader is datasharing compatible with this writer
+     * @return true if the reader datasharing compatible with this writer
+     */
+    inline bool is_datasharing_reader() const
+    {
+        return is_datasharing_reader_;
+    }
+
+
 private:
 
     //!Is this proxy active? I.e. does it have a remote reader associated?
@@ -433,6 +445,8 @@ private:
     uint32_t last_nackfrag_count_;
 
     SequenceNumber_t changes_low_mark_;
+    //! True if the reader is datasharing compatible with this writer
+    bool is_datasharing_reader_;
 
     using ChangeIterator = ResourceLimitedVector<ChangeForReader_t, std::true_type>::iterator;
     using ChangeConstIterator = ResourceLimitedVector<ChangeForReader_t, std::true_type>::const_iterator;

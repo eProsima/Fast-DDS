@@ -420,6 +420,10 @@ private:
             SequenceNumber_t seq,
             RTPSMessageGroup& group);
 
+    bool datasharing_delivery(
+            CacheChange_t* change);
+
+
     //! True to disable piggyback heartbeats
     bool disable_heartbeat_piggyback_;
     //! True to disable positive ACKs

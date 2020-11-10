@@ -42,6 +42,7 @@ ReaderLocator::ReaderLocator(
     , local_reader_(nullptr)
     , guid_prefix_as_vector_(1u)
     , guid_as_vector_(1u)
+    , is_datasharing_reader_(false)
 {
 }
 
@@ -49,7 +50,8 @@ bool ReaderLocator::start(
         const GUID_t& remote_guid,
         const ResourceLimitedVector<Locator_t>& unicast_locators,
         const ResourceLimitedVector<Locator_t>& multicast_locators,
-        bool expects_inline_qos)
+        bool expects_inline_qos,
+        bool is_datasharing)
 {
     if (locator_info_.remote_guid == c_Guid_Unknown)
     {
@@ -60,6 +62,8 @@ bool ReaderLocator::start(
 
         is_local_reader_ = RTPSDomainImpl::should_intraprocess_between(owner_->getGuid(), remote_guid);
         local_reader_ = nullptr;
+
+        is_datasharing_reader_ = is_datasharing;
 
         if (!is_local_reader_)
         {
@@ -119,6 +123,7 @@ bool ReaderLocator::stop(
         expects_inline_qos_ = false;
         is_local_reader_ = false;
         local_reader_ = nullptr;
+        is_datasharing_reader_ = false;
         return true;
     }
 
