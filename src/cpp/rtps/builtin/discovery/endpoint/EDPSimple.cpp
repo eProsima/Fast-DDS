@@ -295,8 +295,8 @@ void EDPSimple::processPersistentData(
                 if (!change_to_add->copy(change))
                 {
                     logWarning(RTPS_EDP, "Problem copying CacheChange, received data is: "
-                    << change->serializedPayload.length << " bytes and max size in EDPServer reader"
-                    << " is " << change_to_add->serializedPayload.max_size);
+                        << change->serializedPayload.length << " bytes and max size in EDPServer reader"
+                        << " is " << change_to_add->serializedPayload.max_size);
 
                     reader.first->releaseCache(change_to_add);
                     return;
@@ -305,7 +305,7 @@ void EDPSimple::processPersistentData(
                 if (!reader.first->change_received(change_to_add, nullptr))
                 {
                     logInfo(RTPS_EDP, "EDPServer couldn't process database data not add change "
-                    << change_to_add->sequenceNumber);
+                        << change_to_add->sequenceNumber);
                     reader.first->releaseCache(change_to_add);
                 }
 
