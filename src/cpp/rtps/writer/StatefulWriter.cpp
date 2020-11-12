@@ -26,6 +26,7 @@
 #include <rtps/participant/RTPSParticipantImpl.h>
 #include <rtps/flowcontrol/FlowController.h>
 #include <rtps/history/BasicPayloadPool.hpp>
+#include <rtps/history/DataSharingPayloadPool.hpp>
 
 #include <fastdds/rtps/messages/RTPSMessageCreator.h>
 #include <fastdds/rtps/messages/RTPSMessageGroup.h>
@@ -304,6 +305,26 @@ StatefulWriter::~StatefulWriter()
 /*
  * CHANGE-RELATED METHODS
  */
+bool StatefulWriter::datasharing_delivery(
+        CacheChange_t* change)
+{
+    if (is_datasharing_compatible_ && !datasharing_notifier_->empty())
+    {
+        auto pool = std::dynamic_pointer_cast<DataSharingPayloadPool>(payload_pool_);
+        if (pool)
+        {
+            pool->fill_metadata(change);
+            logInfo(RTPS_WRITER, "Notifying readers of cache change with SN " << change->sequenceNumber);
+            datasharing_notifier_->notify();
+            return true;
+        }
+        else
+        {
+            logError(RTPS_WRITER, "Data sharing compatible writer but no data sharing payload pool.");
+        }
+    }
+    return false;
+}
 
 void StatefulWriter::unsent_change_added_to_history(
         CacheChange_t* change,
@@ -319,6 +340,10 @@ void StatefulWriter::unsent_change_added_to_history(
             liveliness_lease_duration_);
     }
 
+    // Notify the datasharing readers
+    datasharing_delivery(change);
+
+    // Now for the rest of readers
     if (!matched_readers_.empty())
     {
         if (!isAsync())
@@ -1325,6 +1350,24 @@ bool StatefulWriter::matched_reader_add(
         }
     }
 
+    bool is_datasharing = (is_datasharing_compatible_ && 
+            rdata.m_qos.data_sharing_info.is_compatible &&
+            rdata.m_qos.data_sharing_info.domain_id == data_sharing_domain_);
+
+    if (is_datasharing)
+    {
+        if (datasharing_notifier_->add_reader(rdata.guid()))
+        {
+            logInfo(RTPS_WRITER, "Reader " << rdata.guid() << " added to " << this->m_guid.entityId 
+                                           << " with data sharing");
+            return true;
+        }
+
+        logError(RTPS_WRITER, "Failed to add Reader Proxy " << rdata.guid()
+                << " to " << this->m_guid.entityId 
+                << " with data sharing. Falling back to configured transports");
+    }
+
     // Get a reader proxy from the inactive pool (or create a new one if necessary and allowed)
     ReaderProxy* rp = nullptr;
     if (matched_readers_pool_.empty())
@@ -1337,7 +1380,7 @@ bool StatefulWriter::matched_reader_add(
         }
         else
         {
-            logWarning(RTPS_WRITER, "Maximum number of reader proxies (" << max_readers << \
+            logWarning(RTPS_WRITER, "Maximum number of reader proxies (" << max_readers <<
                     ") reached for writer " << m_guid);
             return false;
         }
@@ -1352,6 +1395,7 @@ bool StatefulWriter::matched_reader_add(
     rp->start(rdata);
     locator_selector_.add_entry(rp->locator_selector_entry());
     matched_readers_.push_back(rp);
+
     update_reader_info(true);
 
     RTPSMessageGroup group(mp_RTPSParticipant, this, rp->message_sender());
@@ -1514,6 +1558,15 @@ bool StatefulWriter::matched_reader_remove(
 {
     ReaderProxy* rproxy = nullptr;
     std::unique_lock<RecursiveTimedMutex> lock(mp_mutex);
+
+    if (is_datasharing_compatible_)
+    {
+        if (datasharing_notifier_->remove_reader(reader_guid))
+        {
+            logInfo(RTPS_WRITER, "Reader Proxy removed: " << reader_guid);
+            return true;
+        }
+    }
 
     ReaderProxyIterator it = matched_readers_.begin();
     while (it != matched_readers_.end())

@@ -235,6 +235,26 @@ void StatelessWriter::update_reader_info(
 /*
  *	CHANGE-RELATED METHODS
  */
+bool StatelessWriter::datasharing_delivery(
+        CacheChange_t* change)
+{
+    if (is_datasharing_compatible_ && !datasharing_notifier_->empty())
+    {
+        auto pool = std::dynamic_pointer_cast<DataSharingPayloadPool>(payload_pool_);
+        if (pool)
+        {
+            pool->fill_metadata(change);
+            logInfo(RTPS_WRITER, "Notifying readers of cache change with SN " << change->sequenceNumber);
+            datasharing_notifier_->notify();
+            return true;
+        }
+        else
+        {
+            logError(RTPS_WRITER, "Data sharing compatible writer but no data sharing payload pool.");
+        }
+    }
+    return false;
+}
 
 // TODO(Ricardo) This function only can be used by history. Private it and frined History.
 // TODO(Ricardo) Look for other functions
@@ -252,6 +272,10 @@ void StatelessWriter::unsent_change_added_to_history(
             liveliness_lease_duration_);
     }
 
+    // Notify the datasharing readers
+    datasharing_delivery(change);
+
+    // Now for the rest of readers
     if (!fixed_locators_.empty() || matched_readers_.size() > 0)
     {
         if (!isAsync())
@@ -745,6 +769,25 @@ bool StatelessWriter::matched_reader_add(
         }
     }
 
+    bool is_datasharing = (is_datasharing_compatible_ && 
+            data.m_qos.data_sharing_info.is_compatible &&
+            data.m_qos.data_sharing_info.domain_id == data_sharing_domain_);
+
+    if (is_datasharing)
+    {
+
+        if (datasharing_notifier_->add_reader(data.guid()))
+        {
+            logInfo(RTPS_WRITER, "Reader " << data.guid() << " added to " << this->m_guid.entityId 
+                                           << " with data sharing");
+            return true;
+        }
+
+        logError(RTPS_WRITER, "Failed to add Reader Proxy " << data.guid()
+                << " to " << this->m_guid.entityId 
+                << " with data sharing. Falling back to configured transports");
+    }
+
     // Try to add entry on matched_readers_
     ReaderLocator* new_reader = nullptr;
     for (ReaderLocator& reader : matched_readers_)
@@ -786,7 +829,6 @@ bool StatelessWriter::matched_reader_add(
     {
         locator_selector_.add_entry(reader.locator_selector_entry());
     }
-
     update_reader_info(true);
 
     if ((mp_history->getHistorySize() > 0) &&
@@ -802,7 +844,7 @@ bool StatelessWriter::matched_reader_add(
         mp_RTPSParticipant->async_thread().wake_up(this);
     }
 
-    logInfo(RTPS_READER, "Reader " << data.guid() << " added to " << m_guid.entityId);
+    logInfo(RTPS_WRITER, "Reader " << data.guid() << " added to " << m_guid.entityId);
     return true;
 }
 
@@ -831,23 +873,32 @@ bool StatelessWriter::matched_reader_remove(
 {
     std::lock_guard<RecursiveTimedMutex> guard(mp_mutex);
 
-    bool found = locator_selector_.remove_entry(reader_guid);
-    if (found)
+    bool found = false;
+    if (is_datasharing_compatible_)
     {
-        found = false;
-        for (ReaderLocator& reader : matched_readers_)
-        {
-            if (reader.stop(reader_guid))
-            {
-                found = true;
-                break;
-            }
-        }
-        // guid should be both on locator_selector_ and matched_readers_
-        assert(found);
+        found = datasharing_notifier_->remove_reader(reader_guid);
+    }
 
-        late_joiner_guids_.remove(reader_guid);
-        update_reader_info(false);
+    if (!found)
+    {
+        found = locator_selector_.remove_entry(reader_guid);
+        if (found)
+        {
+            found = false;
+            for (ReaderLocator& reader : matched_readers_)
+            {
+                if (reader.stop(reader_guid))
+                {
+                    found = true;
+                    break;
+                }
+            }
+            // guid should be both on locator_selector_ and matched_readers_
+            assert(found);
+
+            late_joiner_guids_.remove(reader_guid);
+            update_reader_info(false);
+        }
     }
 
     return found;
