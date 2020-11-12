@@ -457,10 +457,6 @@ void SecurityManager::destroy()
 
         for (auto& dp_it : discovered_participants_)
         {
-            dp_it.second.stop_event();
-
-            auto auth_ptr = dp_it.second.get_auth();
-
             ParticipantCryptoHandle* participant_crypto_handle = dp_it.second.get_participant_crypto();
             if (participant_crypto_handle != nullptr)
             {
@@ -479,7 +475,7 @@ void SecurityManager::destroy()
                 authentication_plugin_->return_sharedsecret_handle(shared_secret_handle, exception);
             }
 
-            remove_discovered_participant_info(auth_ptr);
+            remove_discovered_participant_info(dp_it.second.get_auth());
         }
 
         discovered_participants_.clear();
@@ -532,18 +528,12 @@ void SecurityManager::destroy()
 }
 
 void SecurityManager::remove_discovered_participant_info(
-        DiscoveredParticipantInfo::AuthUniquePtr& auth_ptr)
+        DiscoveredParticipantInfo::AuthUniquePtr&& auth_ptr)
 {
     SecurityException exception;
 
     if (auth_ptr)
     {
-        if (auth_ptr->event_ != nullptr)
-        {
-            delete auth_ptr->event_;
-            auth_ptr->event_ = nullptr;
-        }
-
         if (auth_ptr->handshake_handle_ != nullptr)
         {
             authentication_plugin_->return_handshake_handle(auth_ptr->handshake_handle_, exception);
@@ -572,7 +562,7 @@ bool SecurityManager::restore_discovered_participant_info(
     }
     else
     {
-        remove_discovered_participant_info(auth_ptr);
+        remove_discovered_participant_info(std::move(auth_ptr));
     }
 
     return returned_value;
@@ -609,6 +599,16 @@ bool SecurityManager::discovered_participant(
     if (map_ret.second)
     {
         assert(remote_participant_info);
+
+        // Configure the timed event but do not start it
+        const GUID_t guid = participant_data.m_guid;
+        remote_participant_info->event_.reset(new TimedEvent(participant_->getEventResource(),
+                [&, guid]() -> bool
+                {
+                    resend_handshake_message_token(guid);
+                    return true;
+                },
+                500)); // TODO (Ricardo) Configurable
 
         IdentityHandle* remote_identity_handle = nullptr;
 
@@ -715,7 +715,6 @@ void SecurityManager::remove_participant(
     if (dp_it != discovered_participants_.end())
     {
         SecurityException exception;
-        auto auth_ptr = dp_it->second.get_auth();
 
         ParticipantCryptoHandle* participant_crypto_handle =
                 dp_it->second.get_participant_crypto();
@@ -737,7 +736,7 @@ void SecurityManager::remove_participant(
             authentication_plugin_->return_sharedsecret_handle(shared_secret_handle, exception);
         }
 
-        remove_discovered_participant_info(auth_ptr);
+        remove_discovered_participant_info(dp_it->second.get_auth());
 
         discovered_participants_.erase(dp_it);
     }
@@ -815,11 +814,7 @@ bool SecurityManager::on_process_handshake(
     assert(remote_participant_info->handshake_handle_ != nullptr);
 
     // Remove previous change
-    if (remote_participant_info->event_ != nullptr)
-    {
-        delete remote_participant_info->event_;
-        remote_participant_info->event_ = nullptr;
-    }
+    remote_participant_info->event_->cancel_timer();
     if (remote_participant_info->change_sequence_number_ != SequenceNumber_t::unknown())
     {
         participant_stateless_message_writer_history_->remove_change(remote_participant_info->change_sequence_number_);
@@ -935,14 +930,6 @@ bool SecurityManager::on_process_handshake(
                 if (ret == VALIDATION_PENDING_HANDSHAKE_MESSAGE)
                 {
                     remote_participant_info->expected_sequence_number_ = expected_sequence_number;
-                    const GUID_t guid = participant_data.m_guid;
-                    remote_participant_info->event_ = new TimedEvent(participant_->getEventResource(),
-                                    [&, guid]() -> bool
-                                    {
-                                        resend_handshake_message_token(guid);
-                                        return true;
-                                    },
-                                    500); // TODO (Ricardo) Configurable
                     remote_participant_info->event_->restart_timer();
                 }
 
@@ -1425,19 +1412,14 @@ void SecurityManager::process_participant_stateless_message(
 
         mutex_.lock();
         auto dp_it = discovered_participants_.find(remote_participant_key);
-
         if (dp_it != discovered_participants_.end())
         {
             remote_participant_info = dp_it->second.get_auth();
             participant_data = &(dp_it->second.participant_data());
         }
-        else
-        {
-            logInfo(SECURITY, "Received Authentication message but not found related remote_participant_key");
-        }
         mutex_.unlock();
 
-        if (remote_participant_info)
+        if (remote_participant_info && participant_data)
         {
             if (remote_participant_info->auth_status_ == AUTHENTICATION_WAITING_REQUEST)
             {
@@ -1570,6 +1552,10 @@ void SecurityManager::process_participant_stateless_message(
                     std::move(message.message_identity()), std::move(message.message_data().at(0)));
 
             restore_discovered_participant_info(remote_participant_key, remote_participant_info);
+        }
+        else
+        {
+            logInfo(SECURITY, "Received Authentication message but not found related remote_participant_key");
         }
     }
     else
