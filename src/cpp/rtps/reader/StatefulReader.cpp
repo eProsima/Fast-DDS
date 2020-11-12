@@ -166,44 +166,65 @@ bool StatefulReader::matched_writer_add(
         }
     }
 
-    // Get a writer proxy from the inactive pool (or create a new one if necessary and allowed)
-    WriterProxy* wp = nullptr;
-    if (matched_writers_pool_.empty())
+    bool is_datasharing = (is_datasharing_compatible_ && 
+            wdata.m_qos.data_sharing_info.is_compatible &&
+            wdata.m_qos.data_sharing_info.domain_id == data_sharing_domain_);
+
+    if (is_datasharing)
     {
-        size_t max_readers = matched_writers_pool_.max_size();
-        if (matched_writers_.size() + matched_writers_pool_.size() < max_readers)
+        if (datasharing_listener_->add_datasharing_writer(wdata.guid(),
+            PoolConfig::from_history_attributes(mp_history->m_att)))
         {
-            const RTPSParticipantAttributes& part_att = mp_RTPSParticipant->getRTPSParticipantAttributes();
-            wp = new WriterProxy(this, part_att.allocation.locators, proxy_changes_config_);
+            logInfo(RTPS_READER, "Writer Proxy " << wdata.guid() << " added to " << this->m_guid.entityId 
+                                                 << " with data sharing");
         }
         else
         {
-            logWarning(RTPS_WRITER, "Maximum number of reader proxies (" << max_readers << \
-                    ") reached for writer " << m_guid);
             return false;
         }
     }
     else
     {
-        wp = matched_writers_pool_.back();
-        matched_writers_pool_.pop_back();
-    }
-
-    if (!is_same_process)
-    {
-        for (const Locator_t& locator : wp->remote_locators_shrinked())
+        // Get a writer proxy from the inactive pool (or create a new one if necessary and allowed)
+        WriterProxy* wp = nullptr;
+        if (matched_writers_pool_.empty())
         {
-            getRTPSParticipant()->createSenderResources(locator);
+            size_t max_readers = matched_writers_pool_.max_size();
+            if (matched_writers_.size() + matched_writers_pool_.size() < max_readers)
+            {
+                const RTPSParticipantAttributes& part_att = mp_RTPSParticipant->getRTPSParticipantAttributes();
+                wp = new WriterProxy(this, part_att.allocation.locators, proxy_changes_config_);
+            }
+            else
+            {
+                logWarning(RTPS_READER, "Maximum number of reader proxies (" << max_readers << \
+                        ") reached for writer " << m_guid);
+                return false;
+            }
         }
+        else
+        {
+            wp = matched_writers_pool_.back();
+            matched_writers_pool_.pop_back();
+        }
+
+        if (!is_same_process)
+        {
+            for (const Locator_t& locator : wp->remote_locators_shrinked())
+            {
+                getRTPSParticipant()->createSenderResources(locator);
+            }
+        }
+
+        SequenceNumber_t initial_sequence;
+        add_persistence_guid(wdata.guid(), wdata.persistence_guid());
+        initial_sequence = get_last_notified(wdata.guid());
+
+        wp->start(wdata, initial_sequence);
+
+        matched_writers_.push_back(wp);
+        logInfo(RTPS_READER, "Writer Proxy " << wp->guid() << " added to " << m_guid.entityId);
     }
-
-    SequenceNumber_t initial_sequence;
-    add_persistence_guid(wdata.guid(), wdata.persistence_guid());
-    initial_sequence = get_last_notified(wdata.guid());
-
-    wp->start(wdata, initial_sequence);
-
-    matched_writers_.push_back(wp);
 
     if (liveliness_lease_duration_ < c_TimeInfinite)
     {
@@ -221,7 +242,6 @@ bool StatefulReader::matched_writer_add(
         }
     }
 
-    logInfo(RTPS_READER, "Writer Proxy " << wp->guid() << " added to " << m_guid.entityId);
     return true;
 }
 
@@ -232,46 +252,61 @@ bool StatefulReader::matched_writer_remove(
     std::unique_lock<RecursiveTimedMutex> lock(mp_mutex);
     if (is_alive_)
     {
-        WriterProxy* wproxy = nullptr;
-
         //Remove cachechanges belonging to the unmatched writer
         mp_history->remove_changes_with_guid(writer_guid);
 
-        for (ResourceLimitedVector<WriterProxy*>::iterator it = matched_writers_.begin(); it != matched_writers_.end();
-                ++it)
+        bool found = false;
+        if (is_datasharing_compatible_)
         {
-            if ((*it)->guid() == writer_guid)
+            if (datasharing_listener_->remove_datasharing_writer(writer_guid))
             {
-                logInfo(RTPS_READER, "Writer proxy " << writer_guid << " removed from " << m_guid.entityId);
-
-                if (liveliness_lease_duration_ < c_TimeInfinite)
+                found = true;
+                logInfo(RTPS_READER, "Dsta sharing writer " << writer_guid << " removed from " << m_guid.entityId);
+            }
+        }
+        
+        if (!found)
+        {
+            for (ResourceLimitedVector<WriterProxy*>::iterator it = matched_writers_.begin(); it != matched_writers_.end();
+                    ++it)
+            {
+                if ((*it)->guid() == writer_guid)
                 {
-                    auto wlp = this->mp_RTPSParticipant->wlp();
-                    if ( wlp != nullptr)
-                    {
-                        wlp->sub_liveliness_manager_->remove_writer(
-                            writer_guid,
-                            liveliness_kind_,
-                            liveliness_lease_duration_);
-                    }
-                    else
-                    {
-                        logError(RTPS_LIVELINESS,
-                                "Finite liveliness lease duration but WLP not enabled, cannot remove writer");
-                    }
-                }
+                    logInfo(RTPS_READER, "Writer proxy " << writer_guid << " removed from " << m_guid.entityId);
+                    found = true;
 
-                wproxy = *it;
-                matched_writers_.erase(it);
-                remove_persistence_guid(wproxy->guid(), wproxy->persistence_guid(), removed_by_lease);
-                break;
+		    
+                    WriterProxy* wproxy = *it;
+                    matched_writers_.erase(it);
+                    remove_persistence_guid(wproxy->guid(), wproxy->persistence_guid(), removed_by_lease);
+
+                    wproxy->stop();
+                    matched_writers_pool_.push_back(wproxy);
+
+                    break;
+                }
             }
         }
 
-        if (wproxy != nullptr)
+        if (found)
         {
-            wproxy->stop();
-            matched_writers_pool_.push_back(wproxy);
+            if (liveliness_lease_duration_ < c_TimeInfinite)
+            {
+                auto wlp = this->mp_RTPSParticipant->wlp();
+                if ( wlp != nullptr)
+                {
+                    wlp->sub_liveliness_manager_->remove_writer(
+                        writer_guid,
+                        liveliness_kind_,
+                        liveliness_lease_duration_);
+                }
+                else
+                {
+                    logError(RTPS_LIVELINESS,
+                            "Finite liveliness lease duration but WLP not enabled, cannot remove writer");
+                }
+            }
+
             return true;
         }
 
@@ -656,6 +691,12 @@ bool StatefulReader::acceptMsgFrom(
         }
     }
 
+    if (is_datasharing_compatible_ && datasharing_listener_->writer_is_matched(writerId))
+    {
+        *wp = nullptr;
+        return true;
+    }
+
     // Check if it's a framework's one. In this case, m_acceptMessagesFromUnkownWriters
     // is an enabler for the trusted entity comparison
     if (m_acceptMessagesFromUnkownWriters
@@ -693,10 +734,14 @@ bool StatefulReader::change_removed_by_history(
             }
             return true;
         }
-        else if (a_change->writerGUID.entityId != this->m_trustedWriterEntityId)
+        else
         {
-            // trusted entities messages mean no havoc
-            logError(RTPS_READER, " You should always find the WP associated with a change, something is very wrong");
+            if ((!is_datasharing_compatible_ || !datasharing_listener_->writer_is_matched(a_change->writerGUID)) &&
+                    a_change->writerGUID.entityId != m_trustedWriterEntityId)
+            {
+                // trusted entities messages mean no havoc
+                logError(RTPS_READER, " You should always find the WP associated with a change, something is very wrong");
+            }
         }
     }
 
@@ -713,7 +758,8 @@ bool StatefulReader::change_received(
         if (!findWriterProxy(a_change->writerGUID, &prox))
         {
             // discard non framework messages from unknown writer
-            if (a_change->writerGUID.entityId != m_trustedWriterEntityId)
+            if ((!is_datasharing_compatible_ || !datasharing_listener_->writer_is_matched(a_change->writerGUID)) &&
+                a_change->writerGUID.entityId != m_trustedWriterEntityId)
             {
                 logInfo(RTPS_READER,
                         "Writer Proxy " << a_change->writerGUID << " not matched to this Reader " << m_guid.entityId);
@@ -835,29 +881,42 @@ bool StatefulReader::nextUntakenCache(
         if (this->matched_writer_lookup((*it)->writerGUID, &wp))
         {
             // TODO Revisar la comprobacion
-            SequenceNumber_t seq = wp->available_changes_max();
-            if (seq >= (*it)->sequenceNumber)
+            SequenceNumber_t seq;
+            seq = wp->available_changes_max();
+            if (seq < (*it)->sequenceNumber)
             {
-                *change = *it;
-
-                if (!(*change)->isRead)
-                {
-                    if (0 < total_unread_)
-                    {
-                        --total_unread_;
-                    }
-                }
-
-                (*change)->isRead = true;
-
-                if (wpout != nullptr)
-                {
-                    *wpout = wp;
-                }
-
-                takeok = true;
-                break;
+                continue;
             }
+            takeok = true;
+        }
+        else
+        {
+            if (datasharing_listener_->writer_is_matched((*it)->writerGUID))
+            {
+                takeok = true;
+            }
+        }
+        
+        if (takeok)
+        {
+            *change = *it;
+
+            if (!(*change)->isRead)
+            {
+                if (0 < total_unread_)
+                {
+                    --total_unread_;
+                }
+            }
+
+            (*change)->isRead = true;
+
+            if (wpout != nullptr)
+            {
+                *wpout = wp;
+            }
+
+            break;
         }
         else
         {
@@ -897,30 +956,43 @@ bool StatefulReader::nextUnreadCache(
             continue;
         }
 
-        WriterProxy* wp;
+        WriterProxy* wp = nullptr;
         if (this->matched_writer_lookup((*it)->writerGUID, &wp))
         {
             SequenceNumber_t seq;
             seq = wp->available_changes_max();
-            if (seq >= (*it)->sequenceNumber)
+            if (seq < (*it)->sequenceNumber)
             {
-                *change = *it;
-
-                if (0 < total_unread_)
-                {
-                    --total_unread_;
-                }
-
-                (*change)->isRead = true;
-
-                if (wpout != nullptr)
-                {
-                    *wpout = wp;
-                }
-
-                readok = true;
-                break;
+                continue;
             }
+            readok = true;
+        }
+        else
+        {
+            if (datasharing_listener_->writer_is_matched((*it)->writerGUID))
+            {
+                readok = true;
+            }
+        }
+
+        if (readok)
+        {
+
+            *change = *it;
+
+            if (0 < total_unread_)
+            {
+                --total_unread_;
+            }
+
+            (*change)->isRead = true;
+
+            if (wpout != nullptr)
+            {
+                *wpout = wp;
+            }
+
+            break;
         }
         else
         {
