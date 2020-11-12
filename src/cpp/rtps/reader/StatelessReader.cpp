@@ -90,39 +90,58 @@ bool StatelessReader::matched_writer_add(
         }
     }
 
-    RemoteWriterInfo_t info;
-    info.guid = wdata.guid();
-    info.persistence_guid = wdata.persistence_guid();
-    info.has_manual_topic_liveliness = (MANUAL_BY_TOPIC_LIVELINESS_QOS == wdata.m_qos.m_liveliness.kind);
-    RemoteWriterInfo_t* att = matched_writers_.emplace_back(info);
-    if (att != nullptr)
+    bool is_datasharing = (is_datasharing_compatible_ && 
+            wdata.m_qos.data_sharing_info.is_compatible &&
+            wdata.m_qos.data_sharing_info.domain_id == data_sharing_domain_);
+
+    if (is_datasharing)
     {
-        add_persistence_guid(info.guid, info.persistence_guid);
-
-        m_acceptMessagesFromUnkownWriters = false;
-        logInfo(RTPS_READER, "Writer " << info.guid << " added to reader " << m_guid);
-
-        if (liveliness_lease_duration_ < c_TimeInfinite)
+        if (datasharing_listener_->add_datasharing_writer(wdata.guid(),
+            PoolConfig::from_history_attributes(mp_history->m_att)))
         {
-            auto wlp = mp_RTPSParticipant->wlp();
-            if ( wlp != nullptr)
-            {
-                wlp->sub_liveliness_manager_->add_writer(
-                    wdata.guid(),
-                    liveliness_kind_,
-                    liveliness_lease_duration_);
-            }
-            else
-            {
-                logError(RTPS_LIVELINESS, "Finite liveliness lease duration but WLP not enabled");
-            }
+            logInfo(RTPS_READER, "Writer Proxy " << wdata.guid() << " added to " << this->m_guid.entityId 
+                                                 << " with data sharing");
+        }
+        else
+        {
+            return false;
+        }
+    }
+    else
+    {
+        RemoteWriterInfo_t info;
+        info.guid = wdata.guid();
+        info.persistence_guid = wdata.persistence_guid();
+        info.has_manual_topic_liveliness = (MANUAL_BY_TOPIC_LIVELINESS_QOS == wdata.m_qos.m_liveliness.kind);
+        if (matched_writers_.emplace_back(info) == nullptr)
+        {
+            logWarning(RTPS_READER, "No space to add writer " << wdata.guid() << " to reader " << m_guid);
+            return false;
         }
 
-        return true;
+        add_persistence_guid(info.guid, info.persistence_guid);
+        logInfo(RTPS_READER, "Writer " << wdata.guid() << " added to reader " << m_guid);
     }
 
-    logWarning(RTPS_READER, "No space to add writer " << wdata.guid() << " to reader " << m_guid);
-    return false;
+    m_acceptMessagesFromUnkownWriters = false;
+
+    if (liveliness_lease_duration_ < c_TimeInfinite)
+    {
+        auto wlp = mp_RTPSParticipant->wlp();
+        if ( wlp != nullptr)
+        {
+            wlp->sub_liveliness_manager_->add_writer(
+                wdata.guid(),
+                liveliness_kind_,
+                liveliness_lease_duration_);
+        }
+        else
+        {
+            logError(RTPS_LIVELINESS, "Finite liveliness lease duration but WLP not enabled");
+        }
+    }
+
+    return true;
 }
 
 bool StatelessReader::matched_writer_remove(
@@ -131,38 +150,52 @@ bool StatelessReader::matched_writer_remove(
 {
     std::lock_guard<RecursiveTimedMutex> guard(mp_mutex);
 
-    ResourceLimitedVector<RemoteWriterInfo_t>::iterator it;
-    for (it = matched_writers_.begin(); it != matched_writers_.end(); ++it)
+    bool found = false;
+    if (is_datasharing_compatible_)
     {
-        if (it->guid == writer_guid)
+        if (datasharing_listener_->remove_datasharing_writer(writer_guid))
         {
-            logInfo(RTPS_READER, "Writer " << writer_guid << " removed from " << m_guid);
-
-            if (liveliness_lease_duration_ < c_TimeInfinite)
+            found = true;
+            logInfo(RTPS_READER, "Data sharing writer " << writer_guid << " removed from " << m_guid.entityId);
+        }
+    }
+    if (!found)
+    {
+        ResourceLimitedVector<RemoteWriterInfo_t>::iterator it;
+        for (it = matched_writers_.begin(); it != matched_writers_.end(); ++it)
+        {
+            if (it->guid == writer_guid)
             {
-                auto wlp = mp_RTPSParticipant->wlp();
-                if ( wlp != nullptr)
-                {
-                    wlp->sub_liveliness_manager_->remove_writer(
-                        writer_guid,
-                        liveliness_kind_,
-                        liveliness_lease_duration_);
-                }
-                else
-                {
-                    logError(RTPS_LIVELINESS,
-                            "Finite liveliness lease duration but WLP not enabled, cannot remove writer");
-                }
+                logInfo(RTPS_READER, "Writer " << writer_guid << " removed from " << m_guid);
+                found = true;
+
+                remove_persistence_guid(it->guid, it->persistence_guid, removed_by_lease);
+                matched_writers_.erase(it);
+                break;
             }
-
-            remove_persistence_guid(it->guid, it->persistence_guid, removed_by_lease);
-            matched_writers_.erase(it);
-
-            return true;
         }
     }
 
-    return false;
+    if (found)
+    {
+        if (liveliness_lease_duration_ < c_TimeInfinite)
+        {
+            auto wlp = mp_RTPSParticipant->wlp();
+            if ( wlp != nullptr)
+            {
+                wlp->sub_liveliness_manager_->remove_writer(
+                    writer_guid,
+                    liveliness_kind_,
+                    liveliness_lease_duration_);
+            }
+            else
+            {
+                logError(RTPS_LIVELINESS,
+                        "Finite liveliness lease duration but WLP not enabled, cannot remove writer");
+            }
+        }
+    }
+    return found;
 }
 
 bool StatelessReader::matched_writer_is_matched(
@@ -468,6 +501,11 @@ bool StatelessReader::acceptMsgFrom(
         {
             return true;
         }
+    }
+
+    if (is_datasharing_compatible_ &&  datasharing_listener_->writer_is_matched(writerId))
+    {
+        return true;
     }
 
     return std::any_of(matched_writers_.begin(), matched_writers_.end(),
