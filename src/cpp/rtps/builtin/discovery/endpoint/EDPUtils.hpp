@@ -64,9 +64,12 @@ public:
             const HistoryAttributes& history_attr,
             bool is_reader)
     {
-        PoolConfig pool_cfg = PoolConfig::from_history_attributes(history_attr);
-        pool->release_history(pool_cfg, is_reader);
-        TopicPayloadPoolRegistry::release(pool);
+        if (pool)
+        {
+            PoolConfig pool_cfg = PoolConfig::from_history_attributes(history_attr);
+            pool->release_history(pool_cfg, is_reader);
+            TopicPayloadPoolRegistry::release(pool);
+        }
     }
 
     static bool create_edp_reader(
