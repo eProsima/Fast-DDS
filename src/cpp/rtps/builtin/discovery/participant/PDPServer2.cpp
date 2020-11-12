@@ -1391,7 +1391,7 @@ bool PDPServer2::read_backup(nlohmann::json& ddb_json, std::vector<nlohmann::jso
         myfile >> ddb_json;
         myfile.close();
     }
-    catch(const std::exception& e)
+    catch(const std::exception& /* e */)
     {
         ret = false;
     }
