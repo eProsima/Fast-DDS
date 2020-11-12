@@ -27,34 +27,43 @@
 namespace eprosima {
 namespace fastdds {
 namespace rtps {
-namespace ddb { 
+namespace ddb {
 
 using json = nlohmann::json;
 
 template <typename T>
-std::string object_to_string(const T& t)
+std::string object_to_string(
+        const T& t)
 {
     std::ostringstream stream;
     stream << t;
-    return  stream.str();
+    return stream.str();
 }
 
 // Encode bytes into b64 string
-const std::string b64encode(const unsigned char* data, const size_t &len);
+const std::string b64encode(
+        const unsigned char* data,
+        const size_t& len);
 
 // Decode a string in b64 into an array of bytes
-void b64decode(unsigned char* data, const std::string input);
+void b64decode(
+        unsigned char* data,
+        const std::string input);
 
 // Writes the info from a change into a json object
-void to_json(json& j, const eprosima::fastrtps::rtps::CacheChange_t& change);
+void to_json(
+        json& j,
+        const eprosima::fastrtps::rtps::CacheChange_t& change);
 
 // Deserialize a cacheChange from a json object. The change must have been
 // already created from a pool and reserved the payload length
-void from_json(const json& j, eprosima::fastrtps::rtps::CacheChange_t& change);
+void from_json(
+        const json& j,
+        eprosima::fastrtps::rtps::CacheChange_t& change);
 
 // INFO TO STORE IN DDB
 /*
-{
+   {
     "participants":{
         <guid_prefix>:{
             "change":{
@@ -113,8 +122,8 @@ void from_json(const json& j, eprosima::fastrtps::rtps::CacheChange_t& change);
             "topic":<topic>
         }
     }
-}
-*/
+   }
+ */
 
 } /* ddb */
 } /* namespace rtps */

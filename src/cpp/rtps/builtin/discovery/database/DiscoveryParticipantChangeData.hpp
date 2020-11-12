@@ -70,7 +70,8 @@ public:
         return metatraffic_locators_;
     }
 
-    void to_json(nlohmann::json& j) const
+    void to_json(
+            nlohmann::json& j) const
     {
         j["is_client"] = is_client_;
         j["is_local"] = is_local_;

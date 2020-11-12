@@ -73,7 +73,8 @@ public:
         return is_virtual_;
     }
 
-    void to_json(nlohmann::json& j) const
+    void to_json(
+            nlohmann::json& j) const
     {
         DiscoverySharedInfo::to_json(j);
         j["topic"] = topic_;

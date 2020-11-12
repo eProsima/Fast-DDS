@@ -159,7 +159,7 @@ inline bool operator !=(
     return !(ihandle1 == ihandle2);
 }
 
-#endif
+#endif // ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
 /**
  * Convert InstanceHandle_t to GUID
@@ -239,7 +239,7 @@ inline std::ostream& operator <<(
  * @param input
  * @param iHandle
  */
-inline std::istream& operator>>(
+inline std::istream& operator >>(
         std::istream& input,
         InstanceHandle_t& iHandle)
 {
@@ -275,7 +275,9 @@ inline std::istream& operator>>(
 
             input >> std::dec;
         }
-        catch (std::ios_base::failure& ){}
+        catch (std::ios_base::failure& )
+        {
+        }
 
         input.exceptions(excp_mask);
     }
@@ -283,10 +285,10 @@ inline std::istream& operator>>(
     return input;
 }
 
-#endif
+#endif // ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
-}
-}
-}
+} // namespace rtps
+} // namespace fastrtps
+} // namespace eprosima
 
 #endif /* _FASTDDS_RTPS_INSTANCEHANDLE_H_ */

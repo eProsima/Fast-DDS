@@ -76,7 +76,7 @@ std::vector<fastrtps::rtps::CacheChange_t*> DiscoveryDataBase::clear()
     }
     pdp_data_queue_.Clear(
 
-    );
+        );
     while (!edp_data_queue_.Empty())
     {
         DiscoveryEDPDataQueueInfo data_queue_info = edp_data_queue_.Front();
@@ -2183,13 +2183,14 @@ bool DiscoveryDataBase::add_edp_subscriptions_to_send_(
     return false;
 }
 
-void DiscoveryDataBase::to_json(nlohmann::json& j) const
+void DiscoveryDataBase::to_json(
+        nlohmann::json& j) const
 {
     // The own server entities are not stored in the db, because in relaunch the must be created again
     // Participants
     auto pit = participants_.begin();
     j["participants"] = nlohmann::json({});
-    while(pit != participants_.end())
+    while (pit != participants_.end())
     {
         if (pit->first != server_guid_prefix_)
         {
@@ -2203,7 +2204,7 @@ void DiscoveryDataBase::to_json(nlohmann::json& j) const
     // Writers
     auto wit = writers_.begin();
     j["writers"] = nlohmann::json({});
-    while(wit != writers_.end())
+    while (wit != writers_.end())
     {
         if (wit->first.guidPrefix != server_guid_prefix_)
         {
@@ -2217,7 +2218,7 @@ void DiscoveryDataBase::to_json(nlohmann::json& j) const
     // Readers
     auto rit = readers_.begin();
     j["readers"] = nlohmann::json({});
-    while(rit != readers_.end())
+    while (rit != readers_.end())
     {
         if (rit->first.guidPrefix != server_guid_prefix_)
         {
@@ -2230,7 +2231,6 @@ void DiscoveryDataBase::to_json(nlohmann::json& j) const
 
     // TODO add version
 }
-
 
 bool DiscoveryDataBase::from_json(
         nlohmann::json& j,
@@ -2268,9 +2268,9 @@ bool DiscoveryDataBase::from_json(
 
             // Populate DiscoveryParticipantChangeData
             DiscoveryParticipantChangeData dpcd(
-                    rll,
-                    it.value()["is_client"].get<bool>(),
-                    it.value()["is_local"].get<bool>());
+                rll,
+                it.value()["is_client"].get<bool>(),
+                it.value()["is_local"].get<bool>());
 
             // Populate DiscoveryParticipantInfo
             DiscoveryParticipantInfo dpi(change, server_guid_prefix_, dpcd);
@@ -2290,7 +2290,7 @@ bool DiscoveryDataBase::from_json(
             logInfo(DISCOVERY_DATABASE, "Participant " << prefix_aux << " created");
 
             // In case the change is NOT ALIVE it must be set as dispose so it can be communicate to others and erased
-            if(change->kind != fastrtps::rtps::ALIVE)
+            if (change->kind != fastrtps::rtps::ALIVE)
             {
                 disposals_.push_back(change);
             }
@@ -2346,9 +2346,11 @@ bool DiscoveryDataBase::from_json(
                 return false;
             }
 
-            logInfo(DISCOVERY_DATABASE, "Writer " << guid_aux << " created with instance handle " << wit.first->second.change()->instanceHandle);
+            logInfo(DISCOVERY_DATABASE,
+                    "Writer " << guid_aux << " created with instance handle " <<
+                                    wit.first->second.change()->instanceHandle);
 
-            if(change->kind != fastrtps::rtps::ALIVE)
+            if (change->kind != fastrtps::rtps::ALIVE)
             {
                 disposals_.push_back(change);
             }
@@ -2402,7 +2404,7 @@ bool DiscoveryDataBase::from_json(
             }
             logInfo(DISCOVERY_DATABASE, "Reader " << guid_aux << " created");
 
-            if(change->kind != fastrtps::rtps::ALIVE)
+            if (change->kind != fastrtps::rtps::ALIVE)
             {
                 disposals_.push_back(change);
             }
@@ -2431,14 +2433,14 @@ void DiscoveryDataBase::clean_backup()
     backup_file_.open(backup_file_name_, std::ios_base::out);
 }
 
-void DiscoveryDataBase::persistence_enable(std::string backup_file_name)
+void DiscoveryDataBase::persistence_enable(
+        std::string backup_file_name)
 {
     is_persistent_ = true;
     backup_file_name_ = backup_file_name;
     // It opens the file in append mode because the info in it has not been yet
     backup_file_.open(backup_file_name_, std::ios::app);
 }
-
 
 } // namespace ddb
 } // namespace rtps

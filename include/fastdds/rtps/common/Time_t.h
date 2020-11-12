@@ -43,9 +43,9 @@ struct RTPS_DllAPI Time_t
     Time_t();
 
     /**
-    * @param sec Seconds
-    * @param nsec Nanoseconds
-    */
+     * @param sec Seconds
+     * @param nsec Nanoseconds
+     */
     Time_t(
             int32_t sec,
             uint32_t nsec);
@@ -91,9 +91,9 @@ public:
     Time_t();
 
     /**
-    * @param sec Seconds
-    * @param frac Fraction of second
-    */
+     * @param sec Seconds
+     * @param frac Fraction of second
+     */
     Time_t(
             int32_t sec,
             uint32_t frac);
@@ -155,7 +155,8 @@ public:
 
     Duration_t to_duration_t() const;
 
-    void from_duration_t(const Duration_t& duration);
+    void from_duration_t(
+            const Duration_t& duration);
 
     /**
      * Fills a Time_t struct with a representation of the current time.
@@ -166,6 +167,7 @@ public:
             Time_t& ret);
 
 private:
+
     //!Seconds
     int32_t seconds_;
 
@@ -190,15 +192,15 @@ private:
  * @param t2 Second Time_t to compare
  * @return True if equal
  */
-static inline bool operator==(
+static inline bool operator ==(
         const Time_t& t1,
         const Time_t& t2)
 {
-    if(t1.seconds() != t2.seconds())
+    if (t1.seconds() != t2.seconds())
     {
         return false;
     }
-    if(t1.fraction() != t2.fraction())
+    if (t1.fraction() != t2.fraction())
     {
         return false;
     }
@@ -211,7 +213,7 @@ static inline bool operator==(
  * @param t2 Second Time_t to compare
  * @return True if not equal
  */
-static inline bool operator!=(
+static inline bool operator !=(
         const Time_t& t1,
         const Time_t& t2)
 {
@@ -232,7 +234,7 @@ static inline bool operator!=(
  * @param t2 Second Time_t to compare
  * @return True if the first Time_t is less than the second
  */
-static inline bool operator<(
+static inline bool operator <(
         const Time_t& t1,
         const Time_t& t2)
 {
@@ -263,7 +265,7 @@ static inline bool operator<(
  * @param t2 Second Time_t to compare
  * @return True if the first Time_t is greather than the second
  */
-static inline bool operator>(
+static inline bool operator >(
         const Time_t& t1,
         const Time_t& t2)
 {
@@ -294,7 +296,7 @@ static inline bool operator>(
  * @param t2 Second Time_t to compare
  * @return True if the first Time_t is less or equal than the second
  */
-static inline bool operator<=(
+static inline bool operator <=(
         const Time_t& t1,
         const Time_t& t2)
 {
@@ -325,7 +327,7 @@ static inline bool operator<=(
  * @param t2 Second Time_t to compare
  * @return True if the first Time_t is greather or equal than the second
  */
-static inline bool operator>=(
+static inline bool operator >=(
         const Time_t& t1,
         const Time_t& t2)
 {
@@ -350,14 +352,14 @@ static inline bool operator>=(
     }
 }
 
-inline std::ostream& operator<<(
+inline std::ostream& operator <<(
         std::ostream& output,
         const Time_t& t)
 {
     return output << t.seconds() << "." << t.nanosec();
 }
 
-inline std::istream& operator>>(
+inline std::istream& operator >>(
         std::istream& input,
         Time_t& t)
 {
@@ -382,7 +384,9 @@ inline std::istream& operator>>(
                 input.setstate(std::ios_base::failbit);
             }
         }
-        catch (std::ios_base::failure& ){}
+        catch (std::ios_base::failure& )
+        {
+        }
 
         t.seconds(sec);
         t.nanosec(nano);
@@ -399,9 +403,9 @@ inline std::istream& operator>>(
  * @param tb Second Time_t to add
  * @return A new Time_t with the result.
  */
-static inline Time_t operator+(
-        const Time_t &ta,
-        const Time_t &tb)
+static inline Time_t operator +(
+        const Time_t& ta,
+        const Time_t& tb)
 {
     Time_t result(ta.seconds() + tb.seconds(), ta.fraction() + tb.fraction());
     if (result.fraction() < ta.fraction()) // Overflow is detected by any of them
@@ -417,9 +421,9 @@ static inline Time_t operator+(
  * @param tb Second Time_t to substract
  * @return A new Time_t with the result.
  */
-static inline Time_t operator-(
-        const Time_t &ta,
-        const Time_t &tb)
+static inline Time_t operator -(
+        const Time_t& ta,
+        const Time_t& tb)
 {
     Time_t result(ta.seconds() - tb.seconds(), ta.fraction() - tb.fraction());
     if (result.fraction() > ta.fraction()) // Overflow is detected by ta
@@ -429,11 +433,11 @@ static inline Time_t operator-(
     return result;
 }
 
-#endif
+#endif // ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
-const Time_t c_RTPSTimeInfinite(0x7fffffff,0xffffffff);
-const Time_t c_RTPSTimeZero(0,0);
-const Time_t c_RTPSTimeInvalid(-1,0xffffffff);
+const Time_t c_RTPSTimeInfinite(0x7fffffff, 0xffffffff);
+const Time_t c_RTPSTimeZero(0, 0);
+const Time_t c_RTPSTimeInvalid(-1, 0xffffffff);
 
 } // namespace rtps
 
@@ -445,15 +449,15 @@ const Time_t c_RTPSTimeInvalid(-1,0xffffffff);
  * @param t2 Second Time_t to compare
  * @return True if equal
  */
-static inline bool operator==(
+static inline bool operator ==(
         const Time_t& t1,
         const Time_t& t2)
 {
-    if(t1.seconds != t2.seconds)
+    if (t1.seconds != t2.seconds)
     {
         return false;
     }
-    if(t1.nanosec != t2.nanosec)
+    if (t1.nanosec != t2.nanosec)
     {
         return false;
     }
@@ -466,7 +470,7 @@ static inline bool operator==(
  * @param t2 Second Time_t to compare
  * @return True if not equal
  */
-static inline bool operator!=(
+static inline bool operator !=(
         const Time_t& t1,
         const Time_t& t2)
 {
@@ -487,7 +491,7 @@ static inline bool operator!=(
  * @param t2 Second Time_t to compare
  * @return True if the first Time_t is less than the second
  */
-static inline bool operator<(
+static inline bool operator <(
         const Time_t& t1,
         const Time_t& t2)
 {
@@ -518,7 +522,7 @@ static inline bool operator<(
  * @param t2 Second Time_t to compare
  * @return True if the first Time_t is greather than the second
  */
-static inline bool operator>(
+static inline bool operator >(
         const Time_t& t1,
         const Time_t& t2)
 {
@@ -549,7 +553,7 @@ static inline bool operator>(
  * @param t2 Second Time_t to compare
  * @return True if the first Time_t is less or equal than the second
  */
-static inline bool operator<=(
+static inline bool operator <=(
         const Time_t& t1,
         const Time_t& t2)
 {
@@ -580,7 +584,7 @@ static inline bool operator<=(
  * @param t2 Second Time_t to compare
  * @return True if the first Time_t is greather or equal than the second
  */
-static inline bool operator>=(
+static inline bool operator >=(
         const Time_t& t1,
         const Time_t& t2)
 {
@@ -605,7 +609,7 @@ static inline bool operator>=(
     }
 }
 
-inline std::ostream& operator<<(
+inline std::ostream& operator <<(
         std::ostream& output,
         const Time_t& t)
 {
@@ -619,9 +623,9 @@ inline std::ostream& operator<<(
  * @param tb Second Time_t to add
  * @return A new Time_t with the result.
  */
-static inline Time_t operator+(
-        const Time_t &ta,
-        const Time_t &tb)
+static inline Time_t operator +(
+        const Time_t& ta,
+        const Time_t& tb)
 {
     Time_t result(ta.seconds + tb.seconds, ta.nanosec + tb.nanosec);
     if (result.nanosec < ta.nanosec) // Overflow is detected by any of them
@@ -637,9 +641,9 @@ static inline Time_t operator+(
  * @param tb Second Time_t to substract
  * @return A new Time_t with the result.
  */
-static inline Time_t operator-(
-        const Time_t &ta,
-        const Time_t &tb)
+static inline Time_t operator -(
+        const Time_t& ta,
+        const Time_t& tb)
 {
     Time_t result(ta.seconds - tb.seconds, ta.nanosec - tb.nanosec);
     if (result.nanosec > ta.nanosec) // Overflow is detected by ta
@@ -649,12 +653,12 @@ static inline Time_t operator-(
     return result;
 }
 
-#endif
+#endif // ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
 //! Time_t (Duration_t) representing an infinite time. DONT USE IT IN CONSTRUCTORS
 const Time_t c_TimeInfinite(TIME_T_INFINITE_SECONDS, TIME_T_INFINITE_NANOSECONDS);
 //! Time_t (Duration_t) representing a zero time. DONT USE IT IN CONSTRUCTORS
-const Time_t c_TimeZero(0,0);
+const Time_t c_TimeZero(0, 0);
 //! Time_t (Duration_t) representing an invalid time. DONT USE IT IN CONSTRUCTORS
 const Time_t c_TimeInvalid(-1, TIME_T_INFINITE_NANOSECONDS);
 

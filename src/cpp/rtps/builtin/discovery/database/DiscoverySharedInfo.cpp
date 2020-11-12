@@ -54,7 +54,8 @@ eprosima::fastrtps::rtps::CacheChange_t* DiscoverySharedInfo::update(
     return old_change;
 }
 
-void DiscoverySharedInfo::to_json(nlohmann::json& j) const
+void DiscoverySharedInfo::to_json(
+        nlohmann::json& j) const
 {
     nlohmann::json j_change;
     nlohmann::json j_ack;

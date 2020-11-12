@@ -233,17 +233,21 @@ protected:
     // This method reserve space for every cacheChange from the correspondent pool, and
     // sends these changes stored to the DDB for it to process them
     // This method must be called with the DDB variable backup_in_progress as true
-    bool process_backup_discovery_database_restore(nlohmann::json& ddb_json);
+    bool process_backup_discovery_database_restore(
+            nlohmann::json& ddb_json);
 
     // Restore the backup file with the changes that were added to the DDB queues (and so acked)
     // It reserves memory for the changes depending the pool, and send them by the listener to the DDB
     // This method must be called with the DDB variable backup_in_progress as false
-    bool process_backup_restore_queue(std::vector<nlohmann::json>& new_changes);
+    bool process_backup_restore_queue(
+            std::vector<nlohmann::json>& new_changes);
 
     // Reads the two backup files and stores each json objects in both arguments
     // The first argument has the json object to restore the DDB
     // The second argument has the json vector object to restore the changes that must be sent again to the queue
-    bool read_backup(nlohmann::json& ddb_json, std::vector<nlohmann::json>& new_changes);
+    bool read_backup(
+            nlohmann::json& ddb_json,
+            std::vector<nlohmann::json>& new_changes);
 
     std::vector<fastrtps::rtps::GuidPrefix_t> servers_prefixes();
 

@@ -120,7 +120,8 @@ public:
         return writers_;
     }
 
-    void to_json(nlohmann::json& j) const;
+    void to_json(
+            nlohmann::json& j) const;
 
 private:
 

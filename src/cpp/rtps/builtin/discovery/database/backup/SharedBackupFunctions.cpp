@@ -29,7 +29,9 @@ namespace ddb {
 
 using json = nlohmann::json;
 
-void to_json(json& j, const eprosima::fastrtps::rtps::CacheChange_t& change)
+void to_json(
+        json& j,
+        const eprosima::fastrtps::rtps::CacheChange_t& change)
 {
     j["kind"] = change.kind;
     j["writer_GUID"] = object_to_string(change.writerGUID);
@@ -47,13 +49,15 @@ void to_json(json& j, const eprosima::fastrtps::rtps::CacheChange_t& change)
     j["serialized_payload"]["data"] = b64encode(change.serializedPayload.data, change.serializedPayload.length);
 }
 
-void from_json(const json& j, eprosima::fastrtps::rtps::CacheChange_t& change)
+void from_json(
+        const json& j,
+        eprosima::fastrtps::rtps::CacheChange_t& change)
 {
     change.kind = static_cast<fastrtps::rtps::ChangeKind_t>(j["kind"].get<uint8_t>());
     std::istringstream(j["writer_GUID"].get<std::string>()) >> change.writerGUID;
     std::istringstream(j["instance_handle"].get<std::string>()) >> change.instanceHandle;
     std::istringstream(j["sequence_number"].get<std::string>()) >> change.sequenceNumber;
-    change.isRead = static_cast<fastrtps::rtps::ChangeKind_t>(j["isRead"].get<bool>());;
+    change.isRead = static_cast<fastrtps::rtps::ChangeKind_t>(j["isRead"].get<bool>());
     std::istringstream(j["source_timestamp"].get<std::string>()) >> change.sourceTimestamp;
     std::istringstream(j["reception_timestamp"].get<std::string>()) >> change.receptionTimestamp;
 
@@ -74,7 +78,6 @@ void from_json(const json& j, eprosima::fastrtps::rtps::CacheChange_t& change)
     change.serializedPayload.length = j["serialized_payload"]["length"];
     b64decode(change.serializedPayload.data, j["serialized_payload"]["data"].get<std::string>());
 }
-
 
 // stack overflow
 // @polfosol-ఠ-ఠ
@@ -100,7 +103,9 @@ const int B64index[255] =
 };
 
 // encode a binary data into a string
-const std::string b64encode(const unsigned char* data, const size_t &len)
+const std::string b64encode(
+        const unsigned char* data,
+        const size_t& len)
 {
     std::string result((len + 2) / 3 * 4, '=');
     char* str = &result[0];
@@ -126,16 +131,21 @@ const std::string b64encode(const unsigned char* data, const size_t &len)
 }
 
 // decode a string into another string
-void b64decode(unsigned char* data, const std::string input)
+void b64decode(
+        unsigned char* data,
+        const std::string input)
 {
     size_t len = input.size();
 
-    if (len == 0) return;
+    if (len == 0)
+    {
+        return;
+    }
 
-    const char *p = input.c_str();
+    const char* p = input.c_str();
     size_t j = 0,
-        pad1 = len % 4 || p[len - 1] == '=',
-        pad2 = pad1 && (len % 4 > 2 || p[len - 2] != '=');
+            pad1 = len % 4 || p[len - 1] == '=',
+            pad2 = pad1 && (len % 4 > 2 || p[len - 2] != '=');
     const size_t last = (len - pad1) / 4 << 2;
     std::string result(last / 4 * 3 + pad1 + pad2, '\0');
 

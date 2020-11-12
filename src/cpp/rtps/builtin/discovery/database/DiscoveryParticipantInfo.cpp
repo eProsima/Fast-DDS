@@ -89,7 +89,8 @@ void DiscoveryParticipantInfo::remove_writer(
     }
 }
 
-void DiscoveryParticipantInfo::to_json(nlohmann::json& j) const
+void DiscoveryParticipantInfo::to_json(
+        nlohmann::json& j) const
 {
     DiscoverySharedInfo::to_json(j);
     participant_change_data_.to_json(j);

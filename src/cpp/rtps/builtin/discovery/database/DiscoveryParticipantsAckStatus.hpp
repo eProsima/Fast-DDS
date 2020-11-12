@@ -68,7 +68,8 @@ public:
 
     std::vector<eprosima::fastrtps::rtps::GuidPrefix_t> relevant_participants() const;
 
-    void to_json(nlohmann::json& j) const;
+    void to_json(
+            nlohmann::json& j) const;
 
 private:
 

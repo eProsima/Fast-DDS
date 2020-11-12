@@ -174,7 +174,7 @@ bool EDPServer2::createSEDPEndpoints()
             subscriptions_writer_.first->set_separate_sending(true);
             logInfo(RTPS_EDP, "SEDP Subscriptions Writer created");
 
-             // TODO check if this should be done here or below
+            // TODO check if this should be done here or below
             subscriptions_writer_.second->remove_all_changes();
         }
         else

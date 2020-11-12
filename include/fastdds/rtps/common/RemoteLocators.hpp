@@ -57,7 +57,8 @@ struct RemoteLocatorList
      *
      * @param other RemoteLocatorList to copy data from.
      */
-    RemoteLocatorList(const RemoteLocatorList& other)
+    RemoteLocatorList(
+            const RemoteLocatorList& other)
         : unicast(other.unicast)
         , multicast(other.multicast)
     {
@@ -72,7 +73,8 @@ struct RemoteLocatorList
      * configuration with the maximum number of locators is not copied. This means that, for two lists with
      * different maximum number of locators, the expression `(a = b) == b` may not be true.
      */
-    RemoteLocatorList& operator = (const RemoteLocatorList& other)
+    RemoteLocatorList& operator = (
+            const RemoteLocatorList& other)
     {
         unicast = other.unicast;
         multicast = other.multicast;
@@ -87,7 +89,8 @@ struct RemoteLocatorList
      *
      * @param locator Unicast locator to be added.
      */
-    void add_unicast_locator(const Locator_t& locator)
+    void add_unicast_locator(
+            const Locator_t& locator)
     {
         for (const Locator_t& loc : unicast)
         {
@@ -108,7 +111,8 @@ struct RemoteLocatorList
      *
      * @param locator Multicast locator to be added.
      */
-    void add_multicast_locator(const Locator_t& locator)
+    void add_multicast_locator(
+            const Locator_t& locator)
     {
         for (const Locator_t& loc : multicast)
         {
@@ -128,9 +132,11 @@ struct RemoteLocatorList
 };
 
 /*
-* multicast max_size , multicast size , unicast max_size , unicast size ( locator[0] , locator[1] , ... )
-*/
-inline std::ostream& operator<<(std::ostream& output, const RemoteLocatorList& remote_locators)
+ * multicast max_size , multicast size , unicast max_size , unicast size ( locator[0] , locator[1] , ... )
+ */
+inline std::ostream& operator <<(
+        std::ostream& output,
+        const RemoteLocatorList& remote_locators)
 {
     output << remote_locators.multicast.max_size() << ",";
     output << remote_locators.multicast.size() << ",";
@@ -148,7 +154,9 @@ inline std::ostream& operator<<(std::ostream& output, const RemoteLocatorList& r
     return output;
 }
 
-inline std::istream& operator>>(std::istream& input, RemoteLocatorList& locList)
+inline std::istream& operator >>(
+        std::istream& input,
+        RemoteLocatorList& locList)
 {
     std::istream::sentry s(input);
 
@@ -162,7 +170,7 @@ inline std::istream& operator>>(std::istream& input, RemoteLocatorList& locList)
         try
         {
             input.exceptions(excp_mask | std::ios_base::failbit | std::ios_base::badbit);
-            
+
             input >> size_m_max >> coma >> size_m >> coma;
             input >> size_u_max >> coma >> size_u >> coma; // last coma is (
 
@@ -189,7 +197,9 @@ inline std::istream& operator>>(std::istream& input, RemoteLocatorList& locList)
             }
             input >> coma; // read )
         }
-        catch (std::ios_base::failure& ){}
+        catch (std::ios_base::failure& )
+        {
+        }
 
         input.exceptions(excp_mask);
     }
