@@ -301,8 +301,9 @@ bool DiscoveryDataBase::update(
         eprosima::fastrtps::rtps::CacheChange_t* change,
         DiscoveryParticipantChangeData participant_change_data)
 {
-    // in case the ddb is persistent, we store every cache in queue in a file
-    if (is_persistent_)
+    // In case the ddb is persistent, we store every cache in queue in a file
+    // The own server changes are not stored
+    if (is_persistent_ && guid_from_change(change).guidPrefix != server_guid_prefix_)
     {
         // Does not allow to the server to erase the ddb before this message has been processed
         std::unique_lock<std::recursive_mutex> lock(data_queues_mutex_);
@@ -334,7 +335,7 @@ bool DiscoveryDataBase::update(
         std::string topic_name)
 {
     // in case the ddb is persistent, we store every cache in queue in a file
-    if (is_persistent_)
+    if (is_persistent_ && guid_from_change(change).guidPrefix != server_guid_prefix_)
     {
         // Does not allow to the server to erase the ddb before this message has been process
         std::unique_lock<std::recursive_mutex> lock(data_queues_mutex_);
@@ -941,11 +942,11 @@ void DiscoveryDataBase::match_writer_reader_(
     {
         // writer virtual
 
-        // if reader is virtual do not exchange info
-        // if not, writer needs all the info from this endpoint
+        // If reader is virtual do not exchange info
+        // If not, writer needs all the info from this endpoint
         if (!reader_info.is_virtual())
         {
-            // only if they do not have the info yet
+            // Only if they do not have the info yet
             if (!reader_participant_info.is_relevant_participant(writer_guid.guidPrefix))
             {
                 reader_participant_info.add_or_update_ack_participant(writer_guid.guidPrefix);
@@ -959,13 +960,13 @@ void DiscoveryDataBase::match_writer_reader_(
     }
     else if (writer_participant_info.is_local())
     {
-        // writer local
+        // Writer local
 
         if (reader_info.is_virtual())
         {
-            // reader virtual
-            // writer gives info to reader
-            // only if they do not have the info yet
+            // Reader virtual
+            // Writer gives info to reader
+            // Only if they do not have the info yet
             if (!writer_participant_info.is_relevant_participant(reader_guid.guidPrefix))
             {
                 writer_participant_info.add_or_update_ack_participant(reader_guid.guidPrefix);
@@ -978,10 +979,9 @@ void DiscoveryDataBase::match_writer_reader_(
         }
         else if (reader_participant_info.is_local())
         {
-            // reader local
-            // both exchange info
-
-            // only if they do not have the info yet
+            // Reader local
+            // Both exchange info
+            // Only if they do not have the info yet
             if (!writer_participant_info.is_relevant_participant(reader_guid.guidPrefix))
             {
                 writer_participant_info.add_or_update_ack_participant(reader_guid.guidPrefix);
@@ -1004,9 +1004,9 @@ void DiscoveryDataBase::match_writer_reader_(
         }
         else
         {
-            // reader external
-            // reader gives info to writer
-            // only if they do not have the info yet
+            // Reader external
+            // Reader gives info to writer
+            // Only if they do not have the info yet
             if (!reader_participant_info.is_relevant_participant(writer_guid.guidPrefix))
             {
                 reader_participant_info.add_or_update_ack_participant(writer_guid.guidPrefix);
@@ -1020,13 +1020,13 @@ void DiscoveryDataBase::match_writer_reader_(
     }
     else
     {
-        // writer external
+        // Writer external
 
         // if reader is external do not exchange info
         // if not, reader needs all the info from this endpoint
         if (reader_participant_info.is_local())
         {
-            // only if they do not have the info yet
+            // Only if they do not have the info yet
             if (!writer_participant_info.is_relevant_participant(reader_guid.guidPrefix))
             {
                 writer_participant_info.add_or_update_ack_participant(reader_guid.guidPrefix);
@@ -1112,10 +1112,10 @@ void DiscoveryDataBase::process_dispose_participant_(
     {
         auto writer_guid = pit->second.writers().back();
 
-        // erase writer from topic
+        // Erase writer from topic
         unmatch_writer_(writer_guid);
 
-        // release the change and remove entity without setting Data(Uw)
+        // Release the change and remove entity without setting Data(Uw)
         delete_writer_entity_(writer_guid);
     }
 
@@ -1124,16 +1124,16 @@ void DiscoveryDataBase::process_dispose_participant_(
     {
         auto reader_guid = pit->second.readers().back();
 
-        // this unmatch must erase the entity from writers
+        // This unmatch must erase the entity from writers
         unmatch_reader_(reader_guid);
 
-        // release the change and remove entity without setting Data(Ur)
+        // Release the change and remove entity without setting Data(Ur)
         delete_reader_entity_(reader_guid);
     }
 
-    // all participant endoints must be already unmatched in others endopoints relevant_ack maps
+    // All participant endoints must be already unmatched in others endopoints relevant_ack maps
 
-    // unmatch own participant
+    // Unmatch own participant
     unmatch_participant_(participant_guid.guidPrefix);
 
     // Add entry to disposals_
@@ -1148,14 +1148,14 @@ void DiscoveryDataBase::process_dispose_writer_(
 {
     const eprosima::fastrtps::rtps::GUID_t& writer_guid = guid_from_change(ch);
 
-    // check if the writer is still alive (if DATA(Up) is processed before it will be erased)
+    // Check if the writer is still alive (if DATA(Up) is processed before it will be erased)
     std::map<eprosima::fastrtps::rtps::GUID_t, DiscoveryEndpointInfo>::iterator wit = writers_.find(writer_guid);
     if (wit != writers_.end())
     {
         // Change DATA(w) with DATA(Uw)
         update_change_and_unmatch_(ch, wit->second);
 
-        // remove writer from topic
+        // Remove writer from topic
         remove_writer_from_topic_(writer_guid, wit->second.topic());
 
         // Add entry to disposals_
@@ -1174,7 +1174,7 @@ void DiscoveryDataBase::process_dispose_reader_(
 {
     const eprosima::fastrtps::rtps::GUID_t& reader_guid = guid_from_change(ch);
 
-    // check if the writer is still alive (if DATA(Up) is processed before it will be erased)
+    // Check if the writer is still alive (if DATA(Up) is processed before it will be erased)
 
     std::map<eprosima::fastrtps::rtps::GUID_t, DiscoveryEndpointInfo>::iterator rit = readers_.find(reader_guid);
     if (rit != readers_.end())
@@ -1182,7 +1182,7 @@ void DiscoveryDataBase::process_dispose_reader_(
         // Change DATA(r) with DATA(Ur)
         update_change_and_unmatch_(ch, rit->second);
 
-        // remove reader from topic
+        // Remove reader from topic
         remove_reader_from_topic_(reader_guid, rit->second.topic());
 
         // Add entry to disposals_
@@ -1528,7 +1528,7 @@ DiscoveryDataBase::AckedFunctor::AckedFunctor(
     : db_(db)
     , change_(change)
     , pending_(false)
-    // references its own state
+    // References its own state
     , external_pending_(pending_)
 {
     // RAII only for the stateful object
@@ -1537,7 +1537,7 @@ DiscoveryDataBase::AckedFunctor::AckedFunctor(
 
 DiscoveryDataBase::AckedFunctor::AckedFunctor(
         const DiscoveryDataBase::AckedFunctor& r)
-// references original state
+// References original state
     : external_pending_(r.external_pending_)
 {
     db_ = r.db_;
@@ -1548,7 +1548,7 @@ DiscoveryDataBase::AckedFunctor::~AckedFunctor()
 {
     if (&external_pending_ == &pending_)
     {
-        // only the stateful object manages the lock
+        // Only the stateful object manages the lock
         db_->unlock_();
     }
 }
@@ -1569,7 +1569,7 @@ void DiscoveryDataBase::AckedFunctor::operator () (
         }
         else
         {
-            // if the reader proxy is from a server that we are pinging, the data is set as acked
+            // If the reader proxy is from a server that we are pinging, the data is set as acked
             for (auto it = db_->servers_.begin(); it < db_->servers_.end(); ++it)
             {
                 if (reader_proxy->guid().guidPrefix == *it)
@@ -1596,7 +1596,7 @@ void DiscoveryDataBase::unmatch_participant_(
                 "Attempting to unmatch an unexisting participant: " << guid_prefix);
     }
 
-    // for each relevant participant make not relevant
+    // For each relevant participant make not relevant
     for (eprosima::fastrtps::rtps::GuidPrefix_t relevant_participant : pit->second.relevant_participants())
     {
         if (relevant_participant != guid_prefix)
@@ -1631,16 +1631,16 @@ void DiscoveryDataBase::unmatch_writer_(
         return;
     }
 
-    // get writer topic
+    // Get writer topic
     std::string topic = wit->second.topic();
 
-    // remove it from writer by topic
+    // Remove it from writer by topic
     remove_writer_from_topic_(guid, topic);
 
-    // it there are more than one writer in this topic in the same participant we do not unmatch the endpoints
+    // It there are more than one writer in this topic in the same participant we do not unmatch the endpoints
     if (!repeated_writer_topic_(guid.guidPrefix, topic))
     {
-        // for each reader in same topic make not relevant. It could be none in readers
+        // For each reader in same topic make not relevant. It could be none in readers
         auto tit = readers_by_topic_.find(topic);
         if (tit != readers_by_topic_.end())
         {
@@ -1676,16 +1676,16 @@ void DiscoveryDataBase::unmatch_reader_(
         return;
     }
 
-    // get reader topic
+    // Get reader topic
     std::string topic = rit->second.topic();
 
-    // remove it from reader by topic
+    // Remove it from reader by topic
     remove_reader_from_topic_(guid, topic);
 
-    // it there are more than one reader in this topic in the same participant we do not unmatch the endpoints
+    // If there are more than one reader in this topic in the same participant we do not unmatch the endpoints
     if (!repeated_reader_topic_(guid.guidPrefix, topic))
     {
-        // for each writer in same topic make not relevant. It could be none in writers
+        // For each writer in same topic make not relevant. It could be none in writers
         auto tit = writers_by_topic_.find(topic);
         if (tit != writers_by_topic_.end())
         {
@@ -1739,11 +1739,10 @@ bool DiscoveryDataBase::repeated_writer_topic_(
         }
     }
 
-    // we already know is false. Safety check
+    // We already know is false. Safety check
     return count > 1;
 }
 
-// return if there are more than one reader in the participant in the same topic
 bool DiscoveryDataBase::repeated_reader_topic_(
         const eprosima::fastrtps::rtps::GuidPrefix_t& participant,
         const std::string& topic_name)
@@ -1778,7 +1777,7 @@ bool DiscoveryDataBase::repeated_reader_topic_(
         }
     }
 
-    // we already know is false. Safety check
+    // We already know is false. Safety check
     return count > 1;
 }
 
@@ -1867,7 +1866,7 @@ void DiscoveryDataBase::remove_reader_from_topic_(
                     break;
                 }
             }
-            // the topic wont be deleted to avoid creating and matching again all the virtual endpoints
+            // The topic wont be deleted to avoid creating and matching again all the virtual endpoints
             // this only affects a virtual endpoint, that will be added in this topic, but nothing will be matched
         }
     }
@@ -1876,14 +1875,14 @@ void DiscoveryDataBase::remove_reader_from_topic_(
 void DiscoveryDataBase::create_topic_(
         const std::string& topic_name)
 {
-    // create writers topic
+    // Create writers topic
     auto wit = writers_by_topic_.insert(
         std::pair<std::string, std::vector<fastrtps::rtps::GUID_t>>(
             topic_name,
             std::vector<fastrtps::rtps::GUID_t>()));
     if (wit.second)
     {
-        // find virtual topic
+        // Find virtual topic
         auto v_wit = writers_by_topic_.find(virtual_topic_);
         if (v_wit != writers_by_topic_.end())
         {
@@ -1894,16 +1893,16 @@ void DiscoveryDataBase::create_topic_(
                 wit.first->second.push_back(virtual_writer);
             }
         }
-    } // else topic already existed
+    } // Else topic already existed
 
-    // create readers topic
+    // Create readers topic
     auto rit = readers_by_topic_.insert(
         std::pair<std::string, std::vector<fastrtps::rtps::GUID_t>>(
             topic_name,
             std::vector<fastrtps::rtps::GUID_t>()));
     if (rit.second)
     {
-        // find virtual topic
+        // Find virtual topic
         auto v_rit = readers_by_topic_.find(virtual_topic_);
         if (v_rit != readers_by_topic_.end())
         {
@@ -1914,7 +1913,7 @@ void DiscoveryDataBase::create_topic_(
                 rit.first->second.push_back(virtual_reader);
             }
         }
-    } // else topic already existed
+    } // Else topic already existed
 
     logInfo(DISCOVERY_DATABASE, "New topic " << topic_name << " created");
 }
@@ -1923,7 +1922,7 @@ void DiscoveryDataBase::add_writer_to_topic_(
         const eprosima::fastrtps::rtps::GUID_t& writer_guid,
         const std::string& topic_name)
 {
-    // check if the topic exists already, if not create it
+    // Check if the topic exists already, if not create it
     auto it = writers_by_topic_.find(topic_name);
     if (it == writers_by_topic_.end())
     {
@@ -1931,7 +1930,7 @@ void DiscoveryDataBase::add_writer_to_topic_(
         it = writers_by_topic_.find(topic_name);
     }
 
-    // if the topic is virtual, add it in every topic, included virtual
+    // If the topic is virtual, add it in every topic, included virtual
     // could be recursive but it will call too many find functions
     if (topic_name == virtual_topic_)
     {
@@ -1954,7 +1953,7 @@ void DiscoveryDataBase::add_writer_to_topic_(
         return;
     }
 
-    // add the writer in the topic
+    // Add the writer in the topic
     std::vector<eprosima::fastrtps::rtps::GUID_t>::iterator writer_by_topic_it =
             std::find(it->second.begin(), it->second.end(), writer_guid);
     if (writer_by_topic_it == it->second.end())
@@ -1968,7 +1967,7 @@ void DiscoveryDataBase::add_reader_to_topic_(
         const eprosima::fastrtps::rtps::GUID_t& reader_guid,
         const std::string& topic_name)
 {
-    // check if the topic exists already, if not create it
+    // Check if the topic exists already, if not create it
     auto it = readers_by_topic_.find(topic_name);
     if (it == readers_by_topic_.end())
     {
@@ -1976,7 +1975,7 @@ void DiscoveryDataBase::add_reader_to_topic_(
         it = readers_by_topic_.find(topic_name);
     }
 
-    // if the topic is virtual, add it in every topic, included virtual
+    // If the topic is virtual, add it in every topic, included virtual
     // could be recursive but it will call too many find functions
     if (topic_name == virtual_topic_)
     {
@@ -1999,7 +1998,7 @@ void DiscoveryDataBase::add_reader_to_topic_(
         return;
     }
 
-    // add the reader in the topic
+    // Add the reader in the topic
     std::vector<eprosima::fastrtps::rtps::GUID_t>::iterator reader_by_topic_it =
             std::find(it->second.begin(), it->second.end(), reader_guid);
     if (reader_by_topic_it == it->second.end())
@@ -2038,7 +2037,7 @@ DiscoveryDataBase::delete_participant_entity_(
 bool DiscoveryDataBase::delete_reader_entity_(
         const fastrtps::rtps::GUID_t& guid)
 {
-    // find own reader
+    // Find own reader
     auto it = readers_.find(guid);
     if (it == readers_.end())
     {
@@ -2062,6 +2061,7 @@ std::map<eprosima::fastrtps::rtps::GUID_t, DiscoveryEndpointInfo>::iterator Disc
     if (pit == participants_.end())
     {
         logError(DISCOVERY_DATABASE, "Attempting to delete and orphan reader");
+        // Returning error here could lead to an infinite loop
     }
     else
     {
@@ -2079,14 +2079,14 @@ std::map<eprosima::fastrtps::rtps::GUID_t, DiscoveryEndpointInfo>::iterator Disc
         changes_to_release_.push_back(it->second.change());
     }
 
-    // remove entity in readers_ map
+    // Remove entity in readers_ map
     return readers_.erase(it);
 }
 
 bool DiscoveryDataBase::delete_writer_entity_(
         const fastrtps::rtps::GUID_t& guid)
 {
-    // find own writer
+    // Find own writer
     auto it = writers_.find(guid);
     if (it == writers_.end())
     {
@@ -2110,7 +2110,7 @@ std::map<eprosima::fastrtps::rtps::GUID_t, DiscoveryEndpointInfo>::iterator Disc
     if (pit == participants_.end())
     {
         logError(DISCOVERY_DATABASE, "Attempting to delete and orphan writer");
-        return it;
+        // Returning error here could lead to an infinite loop
     }
     else
     {
@@ -2128,7 +2128,7 @@ std::map<eprosima::fastrtps::rtps::GUID_t, DiscoveryEndpointInfo>::iterator Disc
         changes_to_release_.push_back(it->second.change());
     }
 
-    // remove entity in writers_ map
+    // Remove entity in writers_ map
     return writers_.erase(it);
 }
 
@@ -2185,7 +2185,8 @@ bool DiscoveryDataBase::add_edp_subscriptions_to_send_(
 
 void DiscoveryDataBase::to_json(nlohmann::json& j) const
 {
-    // participants
+    // The own server entities are not stored in the db, because in relaunch the must be created again
+    // Participants
     auto pit = participants_.begin();
     j["participants"] = nlohmann::json({});
     while(pit != participants_.end())
@@ -2199,31 +2200,31 @@ void DiscoveryDataBase::to_json(nlohmann::json& j) const
         ++pit;
     }
 
-    // writers
+    // Writers
     auto wit = writers_.begin();
-    if (wit == writers_.end())
-    {
-        j["writers"] = nlohmann::json({});
-    }
+    j["writers"] = nlohmann::json({});
     while(wit != writers_.end())
     {
-        nlohmann::json j_w;
-        wit->second.to_json(j_w);
-        j["writers"][ddb::object_to_string(wit->first)] = j_w;
+        if (wit->first.guidPrefix != server_guid_prefix_)
+        {
+            nlohmann::json j_w;
+            wit->second.to_json(j_w);
+            j["writers"][ddb::object_to_string(wit->first)] = j_w;
+        }
         ++wit;
     }
 
-    // readers
+    // Readers
     auto rit = readers_.begin();
-    if (rit == readers_.end())
-    {
-        j["readers"] = nlohmann::json({});
-    }
+    j["readers"] = nlohmann::json({});
     while(rit != readers_.end())
     {
-        nlohmann::json j_r;
-        rit->second.to_json(j_r);
-        j["readers"][ddb::object_to_string(rit->first)] = j_r;
+        if (rit->first.guidPrefix != server_guid_prefix_)
+        {
+            nlohmann::json j_r;
+            rit->second.to_json(j_r);
+            j["readers"][ddb::object_to_string(rit->first)] = j_r;
+        }
         ++rit;
     }
 
@@ -2236,7 +2237,7 @@ bool DiscoveryDataBase::from_json(
         std::map<eprosima::fastrtps::rtps::InstanceHandle_t, fastrtps::rtps::CacheChange_t*>& changes_map)
 {
     // This function will parse each attribute in json backup, casting it to istringstream
-    // (std::istringstream) j[""] >> obj;
+    // std::istringstream(j[""]) >> obj;
 
     // Changes are taken from changes_map, with already created changes
 
@@ -2254,8 +2255,8 @@ bool DiscoveryDataBase::from_json(
         for (auto it = j["participants"].begin(); it != j["participants"].end(); ++it)
         {
             // Populate info from participant to charge its change
-            (std::istringstream) it.key() >> prefix_aux;
-            (std::istringstream) it.value()["change"]["instance_handle"].get<std::string>() >> instance_handle_aux;
+            std::istringstream(it.key()) >> prefix_aux;
+            std::istringstream(it.value()["change"]["instance_handle"].get<std::string>()) >> instance_handle_aux;
 
             // Get change
             fastrtps::rtps::CacheChange_t* change;
@@ -2263,7 +2264,7 @@ bool DiscoveryDataBase::from_json(
 
             // Populate RemoteLocatorList
             fastrtps::rtps::RemoteLocatorList rll;
-            (std::istringstream) it.value()["metatraffic_locators"].get<std::string>() >> rll;
+            std::istringstream(it.value()["metatraffic_locators"].get<std::string>()) >> rll;
 
             // Populate DiscoveryParticipantChangeData
             DiscoveryParticipantChangeData dpcd(
@@ -2278,7 +2279,7 @@ bool DiscoveryDataBase::from_json(
             for (auto it_ack = it.value()["ack_status"].begin(); it_ack != it.value()["ack_status"].end(); ++it_ack)
             {
                 // Populate GuidPrefix_t
-                (std::istringstream) it_ack.key() >> prefix_aux_ack;
+                std::istringstream(it_ack.key()) >> prefix_aux_ack;
 
                 dpi.add_or_update_ack_participant(prefix_aux_ack, it_ack.value().get<bool>());
             }
@@ -2299,8 +2300,8 @@ bool DiscoveryDataBase::from_json(
         for (auto it = j["writers"].begin(); it != j["writers"].end(); ++it)
         {
             // Populate GUID_t
-            (std::istringstream) it.key() >> guid_aux;
-            (std::istringstream) it.value()["change"]["instance_handle"].get<std::string>() >> instance_handle_aux;
+            std::istringstream(it.key()) >> guid_aux;
+            std::istringstream(it.value()["change"]["instance_handle"].get<std::string>()) >> instance_handle_aux;
 
             // Get change
             fastrtps::rtps::CacheChange_t* change;
@@ -2316,7 +2317,7 @@ bool DiscoveryDataBase::from_json(
             for (auto it_ack = it.value()["ack_status"].begin(); it_ack != it.value()["ack_status"].end(); ++it_ack)
             {
                 // Populate GuidPrefix_t
-                (std::istringstream) it_ack.key() >> prefix_aux_ack;
+                std::istringstream(it_ack.key()) >> prefix_aux_ack;
 
                 dei.add_or_update_ack_participant(prefix_aux_ack, it_ack.value().get<bool>());
             }
@@ -2330,7 +2331,7 @@ bool DiscoveryDataBase::from_json(
             // Add writer to writers_by_topic. This will create the topic if necessary
             add_writer_to_topic_(guid_aux, topic);
 
-            // add writer to its participant
+            // Add writer to its participant
             std::map<eprosima::fastrtps::rtps::GuidPrefix_t, DiscoveryParticipantInfo>::iterator writer_part_it =
                     participants_.find(guid_aux.guidPrefix);
             if (writer_part_it != participants_.end())
@@ -2357,8 +2358,8 @@ bool DiscoveryDataBase::from_json(
         for (auto it = j["readers"].begin(); it != j["readers"].end(); ++it)
         {
             // Populate GUID_t
-            (std::istringstream) it.key() >> guid_aux;
-            (std::istringstream) it.value()["change"]["instance_handle"].get<std::string>() >> instance_handle_aux;
+            std::istringstream(it.key()) >> guid_aux;
+            std::istringstream(it.value()["change"]["instance_handle"].get<std::string>()) >> instance_handle_aux;
 
             // Get change
             fastrtps::rtps::CacheChange_t* change;
@@ -2374,7 +2375,7 @@ bool DiscoveryDataBase::from_json(
             for (auto it_ack = it.value()["ack_status"].begin(); it_ack != it.value()["ack_status"].end(); ++it_ack)
             {
                 // Populate GuidPrefix_t
-                (std::istringstream) it_ack.key() >> prefix_aux_ack;
+                std::istringstream(it_ack.key()) >> prefix_aux_ack;
 
                 dei.add_or_update_ack_participant(prefix_aux_ack, it_ack.value().get<bool>());
             }
@@ -2386,7 +2387,7 @@ bool DiscoveryDataBase::from_json(
             // Add reader to readers_by_topic. This will create the topic if necessary
             add_reader_to_topic_(guid_aux, topic);
 
-            // add reader to its participant
+            // Add reader to its participant
             std::map<eprosima::fastrtps::rtps::GuidPrefix_t, DiscoveryParticipantInfo>::iterator reader_part_it =
                     participants_.find(guid_aux.guidPrefix);
             if (reader_part_it != participants_.end())
@@ -2412,10 +2413,10 @@ bool DiscoveryDataBase::from_json(
         logError(DISCOVERY_DATABASE, "BACKUP CORRUPTED");
     }
 
-    // set dirty topics to all, so next iteration every message pending is sent
+    // Set dirty topics to all, so next iteration every message pending is sent
     set_dirty_topic_(virtual_topic_);
 
-    // announce own server
+    // Announce own server
     server_acked_by_all(false);
 
     return true;

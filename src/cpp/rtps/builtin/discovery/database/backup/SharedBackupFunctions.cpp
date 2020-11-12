@@ -25,7 +25,7 @@
 namespace eprosima {
 namespace fastdds {
 namespace rtps {
-namespace ddb { 
+namespace ddb {
 
 using json = nlohmann::json;
 
@@ -50,22 +50,22 @@ void to_json(json& j, const eprosima::fastrtps::rtps::CacheChange_t& change)
 void from_json(const json& j, eprosima::fastrtps::rtps::CacheChange_t& change)
 {
     change.kind = static_cast<fastrtps::rtps::ChangeKind_t>(j["kind"].get<uint8_t>());
-    (std::istringstream) j["writer_GUID"].get<std::string>() >> change.writerGUID;
-    (std::istringstream) j["instance_handle"].get<std::string>() >> change.instanceHandle;
-    (std::istringstream) j["sequence_number"].get<std::string>() >> change.sequenceNumber;
+    std::istringstream(j["writer_GUID"].get<std::string>()) >> change.writerGUID;
+    std::istringstream(j["instance_handle"].get<std::string>()) >> change.instanceHandle;
+    std::istringstream(j["sequence_number"].get<std::string>()) >> change.sequenceNumber;
     change.isRead = static_cast<fastrtps::rtps::ChangeKind_t>(j["isRead"].get<bool>());;
-    (std::istringstream) j["source_timestamp"].get<std::string>() >> change.sourceTimestamp;
-    (std::istringstream) j["reception_timestamp"].get<std::string>() >> change.receptionTimestamp;
+    std::istringstream(j["source_timestamp"].get<std::string>()) >> change.sourceTimestamp;
+    std::istringstream(j["reception_timestamp"].get<std::string>()) >> change.receptionTimestamp;
 
     // set sample identity
     fastrtps::rtps::SampleIdentity si;
-    (std::istringstream) j["sample_identity"].get<std::string>() >> si;
+    std::istringstream(j["sample_identity"].get<std::string>()) >> si;
     change.write_params.sample_identity(si);
     change.write_params.related_sample_identity(si);
 
     // set related sample identity
     fastrtps::rtps::SampleIdentity rsi;
-    (std::istringstream) j["related_sample_identity"].get<std::string>() >> rsi;
+    std::istringstream(j["related_sample_identity"].get<std::string>()) >> rsi;
     change.write_params.sample_identity(rsi);
     change.write_params.related_sample_identity(rsi);
 
@@ -87,7 +87,7 @@ const char* B64chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123
 // Array to the numeric value from a b64 char to binary value
 // In case the input string has a char not included in B64chars it will have Undefined Behaviour
 // 255 spaces are taken to avoid seg fault in this case
-const int B64index[255] = 
+const int B64index[255] =
 {
     0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0, // 0
     0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0, // 16
@@ -128,8 +128,8 @@ const std::string b64encode(const unsigned char* data, const size_t &len)
 // decode a string into another string
 void b64decode(unsigned char* data, const std::string input)
 {
-    uint len = input.size();
-    
+    size_t len = input.size();
+
     if (len == 0) return;
 
     const char *p = input.c_str();
@@ -143,20 +143,20 @@ void b64decode(unsigned char* data, const std::string input)
     {
         int n = B64index[(int) p[i]] << 18 |
                 B64index[(int) p[i + 1]] << 12 |
-                B64index[(int) p[i + 2]] << 6 | 
+                B64index[(int) p[i + 2]] << 6 |
                 B64index[(int) p[i + 3]];
-        data[j++] = n >> 16;
-        data[j++] = n >> 8 & 0xFF;
+        data[j++] = (n >> 16) & 0xFF;
+        data[j++] = (n >> 8) & 0xFF;
         data[j++] = n & 0xFF;
     }
     if (pad1)
     {
         int n = B64index[(int) p[last]] << 18 | B64index[(int) p[last + 1]] << 12;
-        data[j++] = n >> 16;
+        data[j++] = (n >> 16) & 0xFF;
         if (pad2)
         {
             n |= B64index[(int) p[last + 2]] << 6;
-            data[j++] = n >> 8 & 0xFF;
+            data[j++] = (n >> 8) & 0xFF;
         }
     }
 }

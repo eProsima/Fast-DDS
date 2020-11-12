@@ -60,6 +60,8 @@ void PDPServerListener2::onNewCacheChangeAdded(
 
     // Get PDP reader history
     auto pdp_history = pdp_server()->mp_PDPReaderHistory;
+    // Get PDP reader to release change
+    auto pdp_reader = pdp_server()->mp_PDPReader;
 
     // Create a delete function to clear the data associated with the unique pointer in case the change is not passed
     // to the database.
@@ -251,7 +253,7 @@ void PDPServerListener2::onNewCacheChangeAdded(
                 else
                 {
                     // If the database doesn't take the ownership, then return the CacheChante_t to the pool.
-                    pdp_history->release_Cache(change.release());
+                    pdp_reader->releaseCache(change.release());
                 }
 
             }

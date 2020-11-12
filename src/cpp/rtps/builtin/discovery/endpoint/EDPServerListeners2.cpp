@@ -129,7 +129,7 @@ void EDPServerPUBListener2::onNewCacheChangeAdded(
         else
         {
             // If the database doesn't take the ownership, then return the CacheChante_t to the pool.
-            reader_history->release_Cache(change);
+            reader->releaseCache(change);
         }
     }
     logInfo(RTPS_EDP_LISTENER,
@@ -231,7 +231,7 @@ void EDPServerSUBListener2::onNewCacheChangeAdded(
         else
         {
             // If the database doesn't take the ownership, then return the CacheChante_t to the pool.
-            reader_history->release_Cache(change);
+            reader->releaseCache(change);
         }
     }
 

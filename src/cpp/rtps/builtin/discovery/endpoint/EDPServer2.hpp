@@ -57,7 +57,7 @@ public:
             fastrtps::rtps::RTPSParticipantImpl* part,
             fastrtps::rtps::DurabilityKind_t durability_kind)
         : EDPSimple(p, part)
-        , _durability(durability_kind)
+        , durability_(durability_kind)
     {
     }
 
@@ -113,7 +113,7 @@ private:
     virtual bool createSEDPEndpoints() override;
 
     //! TRANSIENT or TRANSIENT_LOCAL durability;
-    fastrtps::rtps::DurabilityKind_t _durability;
+    fastrtps::rtps::DurabilityKind_t durability_;
 
 };
 

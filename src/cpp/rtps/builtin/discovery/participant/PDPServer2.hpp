@@ -227,7 +227,7 @@ protected:
 
     bool process_dirty_topics();
 
-    bool pending_ack();    
+    bool pending_ack();
 
     // Method to restore de DiscoveryDataBase from a json object
     // This method reserve space for every cacheChange from the correspondent pool, and
@@ -276,7 +276,7 @@ private:
     fastdds::rtps::ddb::DiscoveryDataBase discovery_db_;
 
     //! TRANSIENT or TRANSIENT_LOCAL durability;
-    fastrtps::rtps::DurabilityKind_t _durability;
+    fastrtps::rtps::DurabilityKind_t durability_;
 
 };
 

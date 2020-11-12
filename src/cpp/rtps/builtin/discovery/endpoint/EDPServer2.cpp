@@ -48,7 +48,7 @@ bool EDPServer2::createSEDPEndpoints()
     RTPSReader* raux = nullptr;
     set_builtin_reader_history_attributes(reader_history_att);
     set_builtin_reader_attributes(ratt);
-    ratt.endpoint.durabilityKind = _durability;
+    ratt.endpoint.durabilityKind = durability_;
 
 #if HAVE_SQLITE3
     ratt.endpoint.properties.properties().push_back(Property("dds.persistence.plugin", "builtin.SQLITE3"));
@@ -69,7 +69,7 @@ bool EDPServer2::createSEDPEndpoints()
             get_pdp()->get_writer_persistence_file_name()));
 #endif // if HAVE_SQLITE3
 
-    watt.endpoint.durabilityKind = _durability;
+    watt.endpoint.durabilityKind = durability_;
     watt.mode = ASYNCHRONOUS_WRITER;
 
     /* EDP Listeners */
@@ -89,7 +89,7 @@ bool EDPServer2::createSEDPEndpoints()
 
         // 1. Set publications writer history and create the writer. Set `created` to the result.
         publications_writer_.second = new WriterHistory(writer_history_att);
-        
+
         created &= this->mp_RTPSParticipant->createWriter(&waux, watt, publications_writer_.second,
                         publications_listener_, c_EntityId_SEDPPubWriter, true);
 
@@ -120,7 +120,7 @@ bool EDPServer2::createSEDPEndpoints()
 
         // 2. Set subscriptions reader history and create the reader. Set `created` to the result.
         subscriptions_reader_.second = new ReaderHistory(reader_history_att);
-        
+
         created &= this->mp_RTPSParticipant->createReader(&raux, ratt, subscriptions_reader_.second,
                         subscriptions_listener_, c_EntityId_SEDPSubReader, true, false);
 
