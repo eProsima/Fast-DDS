@@ -14,12 +14,17 @@
   <url type="bugtracker">https://github.com/eProsima/Fast-DDS/issues</url>
   <url type="repository">https://github.com/eProsima/Fast-DDS</url>
 
-  <buildtool_depend>cmake</buildtool_depend>
+  <build_depend>asio</build_depend>
+
+  <build_export_depend>libssl-dev</build_export_depend>
+
+  <exec_depend>libssl-dev</exec_depend>
 
   <depend>fastcdr</depend>
-  <depend>libssl-dev</depend>
+  <depend>foonathan_memory_vendor</depend>
+  <depend>tinyxml2</depend>
 
-  <build_depend>foonathan_memory_vendor</build_depend>
+  <buildtool_depend>cmake</buildtool_depend>
 
   <doc_depend>doxygen</doc_depend>
 
