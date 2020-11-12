@@ -64,7 +64,7 @@ public:
             const HistoryAttributes& history_attr,
             bool is_reader)
     {
-        if (nullptr != pool)
+        if (pool)
         {
             PoolConfig pool_cfg = PoolConfig::from_history_attributes(history_attr);
             pool->release_history(pool_cfg, is_reader);
