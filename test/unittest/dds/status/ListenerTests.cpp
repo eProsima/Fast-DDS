@@ -489,6 +489,7 @@ public:
     TopicDataTypeMock()
         : TopicDataType()
     {
+        m_typeSize = 4u;
         setName("footype");
     }
 

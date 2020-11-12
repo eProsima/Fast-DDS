@@ -72,6 +72,7 @@ public:
     TopicDataTypeMock()
         : TopicDataType()
     {
+        m_typeSize = 4u;
         setName("footype");
     }
 
@@ -239,7 +240,7 @@ TEST(DataWriterTests, SetListener)
     ASSERT_NE(datawriter, nullptr);
     ASSERT_EQ(datawriter->get_status_mask(), StatusMask::all());
 
-    std::vector<std::tuple<DataWriter*, DataWriterListener*, StatusMask> > testing_cases{
+    std::vector<std::tuple<DataWriter*, DataWriterListener*, StatusMask>> testing_cases{
         //statuses, one by one
         { datawriter, &listener, StatusMask::liveliness_lost() },
         { datawriter, &listener, StatusMask::offered_deadline_missed() },
