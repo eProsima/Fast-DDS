@@ -528,6 +528,9 @@ void PDPServer2::announceParticipantState(
                     metatraffic_locators.add_multicast_locator(locator);
                 }
 
+                // If the DATA is already in the writer's history, then remove it, but do not release the change.
+                remove_change_from_history_nts(mp_PDPWriterHistory, change, false);
+
                 // Add our change to PDPWriterHistory
                 mp_PDPWriterHistory->add_change(change, wp);
                 change->write_params = wp;
@@ -639,7 +642,7 @@ void PDPServer2::announceParticipantState(
 
         locators.push_back(discovery_db_.participant_metatraffic_locators(participant_prefix));
     }
-    send_announcement(change, remote_readers, locators);
+    send_announcement(change, remote_readers, locators, dispose);
 }
 
 /**
@@ -728,6 +731,7 @@ bool PDPServer2::server_update_routine()
     {
         logInfo(RTPS_PDP_SERVER, "");
         logInfo(RTPS_PDP_SERVER, "-------------------- Server routine start --------------------");
+        logInfo(RTPS_PDP_SERVER, "-------------------- " << mp_RTPSParticipant->getGuid() << " --------------------");
 
         process_writers_acknowledgements();     // server + ddb(functor_with_ddb)
         process_data_queues();                  // all ddb
@@ -737,6 +741,7 @@ bool PDPServer2::server_update_routine()
         process_to_send_lists();                // server + ddb(get_to_send, remove_to_send_this)
         pending_work = pending_ack();           // all server
 
+        logInfo(RTPS_PDP_SERVER, "-------------------- " << mp_RTPSParticipant->getGuid() << " --------------------");
         logInfo(RTPS_PDP_SERVER, "-------------------- Server routine end --------------------");
         logInfo(RTPS_PDP_SERVER, "");
 
@@ -744,7 +749,7 @@ bool PDPServer2::server_update_routine()
     }
     // If the data queue is not empty re-start the routine.
     // A non-empty queue means that the server has received a change while it is running the processing routine.
-    while (!discovery_db_.data_queue_empty());
+    while (!discovery_db_.data_queue_empty() && discovery_db_.is_enabled());
 
     // Must restart the routin after the period time
     return pending_work;
@@ -865,6 +870,7 @@ bool PDPServer2::process_disposals()
     // Iterate over disposals
     for (auto change: disposals)
     {
+        logInfo(RTPS_PDP_SERVER, "Process disposal change from: " << change->instanceHandle);
         // No check is performed on whether the change is an actual disposal, leaving the responsability of correctly
         // populating the disposals list to discovery_db_.process_data_queue().
 
@@ -924,7 +930,7 @@ bool PDPServer2::process_disposals()
         }
         else
         {
-            logError(RTPS_PDP_SERVER, "Wrong DATA received from disposals" << change->instanceHandle);
+            logError(RTPS_PDP_SERVER, "Wrong DATA received from disposals " << change->instanceHandle);
         }
     }
     // Clear database disposals list
@@ -1183,6 +1189,11 @@ bool PDPServer2::pending_ack()
             mp_PDPWriterHistory->getHistorySize() > 1 ||
             edp->publications_writer_.second->getHistorySize() > 0 ||
             edp->subscriptions_writer_.second->getHistorySize() > 0);
+
+    logInfo(RTPS_PDP_SERVER, "PDP writer history length " << mp_PDPWriterHistory->getHistorySize());
+    logInfo(RTPS_PDP_SERVER,
+            "is server " << mp_PDPWriter->getGuid() << " acked by all? " <<
+            discovery_db_.server_acked_by_all());
     logInfo(RTPS_PDP_SERVER, "Are there pending changes? " << ret);
     return ret;
 }
@@ -1236,7 +1247,8 @@ void PDPServer2::ping_remote_servers()
 void PDPServer2::send_announcement(
         CacheChange_t* change,
         std::vector<GUID_t> remote_readers,
-        LocatorList_t locators)
+        LocatorList_t locators,
+        bool dispose /* = false */)
 {
 
     if (nullptr == change)
@@ -1246,6 +1258,18 @@ void PDPServer2::send_announcement(
 
     DirectMessageSender sender(getRTPSParticipant(), &remote_readers, &locators);
     RTPSMessageGroup group(getRTPSParticipant(), mp_PDPWriter, sender);
+
+    if (dispose)
+    {
+        fastrtps::rtps::StatefulWriter* writer = static_cast<fastrtps::rtps::StatefulWriter*>(mp_PDPWriter);
+        writer->fastrtps::rtps::StatefulWriter::incrementHBCount();
+        group.add_heartbeat(
+            change->sequenceNumber,
+            change->sequenceNumber,
+            writer->getHeartbeatCount(),
+            true,
+            false);
+    }
 
     if (!group.add_data(*change, false))
     {

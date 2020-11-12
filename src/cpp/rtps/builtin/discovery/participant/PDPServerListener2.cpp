@@ -53,6 +53,9 @@ void PDPServerListener2::onNewCacheChangeAdded(
 {
     logInfo(RTPS_PDP_LISTENER, "");
     logInfo(RTPS_PDP_LISTENER, "------------------ PDP SERVER LISTENER START ------------------");
+    logInfo(RTPS_PDP_LISTENER,
+            "-------------------- " << pdp_server()->mp_RTPSParticipant->getGuid() <<
+            " --------------------");
     logInfo(RTPS_PDP_LISTENER, "PDP Server Message received: " << change_in->instanceHandle);
 
     // Get PDP reader history
@@ -108,7 +111,8 @@ void PDPServerListener2::onNewCacheChangeAdded(
         // Ignore announcement from own RTPSParticipant
         if (guid == pdp_server()->getRTPSParticipant()->getGuid())
         {
-            logInfo(RTPS_PDP_LISTENER, "Message from own RTPSParticipant, ignoring");
+            // Observation: It never reaches this point
+            logWarning(RTPS_PDP_LISTENER, "Message from own RTPSParticipant, ignoring");
             logInfo(RTPS_PDP_LISTENER, "------------------ PDP SERVER LISTENER END ------------------");
             logInfo(RTPS_PDP_LISTENER, "");
             return;
@@ -278,9 +282,9 @@ void PDPServerListener2::onNewCacheChangeAdded(
                 // Realease PDP mutex
                 lock.unlock();
 
-                // All builtins are connected, the database will avoid any EDP DATA to be send before having PDP DATA
-                // acknowledgement
-                if (pdata)
+                // All local builtins are connected, the database will avoid any EDP DATA to be send before having PDP
+                // DATA acknowledgement
+                if (pdata && is_local)
                 {
                     pdp_server()->assignRemoteEndpoints(pdata);
                 }
@@ -296,7 +300,7 @@ void PDPServerListener2::onNewCacheChangeAdded(
 
                 // TODO: pending client liveliness management here
                 // Included form symmetry with PDPListener to profit from a future updateInfoMatchesEDP override
-                if (pdp_server()->updateInfoMatchesEDP())
+                if (pdp_server()->updateInfoMatchesEDP() && is_local)
                 {
                     pdp_server()->mp_EDP->assignRemoteEndpoints(*pdata);
                 }
@@ -359,6 +363,9 @@ void PDPServerListener2::onNewCacheChangeAdded(
     // unique pointer destruction grants it. If the ownership has been taken away from the unique pointer, then nothing
     // happens at this point
 
+    logInfo(RTPS_PDP_LISTENER,
+            "-------------------- " << pdp_server()->mp_RTPSParticipant->getGuid() <<
+            " --------------------");
     logInfo(RTPS_PDP_LISTENER, "------------------ PDP SERVER LISTENER END ------------------");
     logInfo(RTPS_PDP_LISTENER, "");
 }
