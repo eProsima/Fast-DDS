@@ -82,48 +82,28 @@ EDPSimple::~EDPSimple()
     if (this->publications_secure_reader_.first != nullptr)
     {
         this->mp_RTPSParticipant->deleteUserEndpoint(publications_secure_reader_.first);
-        // This payload is created outside the constructor, so it could not be initialized
-        if (nullptr != sec_pub_reader_payload_pool_)
-        {
-            EDPUtils::release_payload_pool(sec_pub_reader_payload_pool_, publications_secure_writer_.second->m_att,
-                    true);
-        }
+        EDPUtils::release_payload_pool(sec_pub_reader_payload_pool_, publications_secure_writer_.second->m_att, true);
         delete(publications_secure_reader_.second);
     }
 
     if (this->subscriptions_secure_reader_.first != nullptr)
     {
         this->mp_RTPSParticipant->deleteUserEndpoint(subscriptions_secure_reader_.first);
-        // This payload is created outside the constructor, so it could not be initialized
-        if (nullptr != sec_sub_reader_payload_pool_)
-        {
-            EDPUtils::release_payload_pool(sec_sub_reader_payload_pool_, subscriptions_secure_reader_.second->m_att,
-                    true);
-        }
+        EDPUtils::release_payload_pool(sec_sub_reader_payload_pool_, subscriptions_secure_reader_.second->m_att, true);
         delete(subscriptions_secure_reader_.second);
     }
 
     if (this->publications_secure_writer_.first != nullptr)
     {
         this->mp_RTPSParticipant->deleteUserEndpoint(publications_secure_writer_.first);
-        // This payload is created outside the constructor, so it could not be initialized
-        if (nullptr != sec_pub_writer_payload_pool_)
-        {
-            EDPUtils::release_payload_pool(sec_pub_writer_payload_pool_, publications_secure_writer_.second->m_att,
-                    false);
-        }
+        EDPUtils::release_payload_pool(sec_pub_writer_payload_pool_, publications_secure_writer_.second->m_att, false);
         delete(publications_secure_writer_.second);
     }
 
     if (this->subscriptions_secure_writer_.first != nullptr)
     {
         this->mp_RTPSParticipant->deleteUserEndpoint(subscriptions_secure_writer_.first);
-        // This payload is created outside the constructor, so it could not be initialized
-        if (nullptr != sec_sub_writer_payload_pool_)
-        {
-            EDPUtils::release_payload_pool(sec_sub_writer_payload_pool_, subscriptions_secure_writer_.second->m_att,
-                    true);
-        }
+        EDPUtils::release_payload_pool(sec_sub_writer_payload_pool_, subscriptions_secure_writer_.second->m_att, true);
         delete(subscriptions_secure_writer_.second);
     }
 #endif // if HAVE_SECURITY
@@ -131,41 +111,25 @@ EDPSimple::~EDPSimple()
     if (this->publications_reader_.first != nullptr)
     {
         this->mp_RTPSParticipant->deleteUserEndpoint(publications_reader_.first);
-        // This payload is created outside the constructor, so it could not be initialized
-        if (nullptr != pub_reader_payload_pool_)
-        {
-            EDPUtils::release_payload_pool(pub_reader_payload_pool_, publications_reader_.second->m_att, true);
-        }
+        EDPUtils::release_payload_pool(pub_reader_payload_pool_, publications_reader_.second->m_att, true);
         delete(publications_reader_.second);
     }
     if (this->subscriptions_reader_.first != nullptr)
     {
         this->mp_RTPSParticipant->deleteUserEndpoint(subscriptions_reader_.first);
-        // This payload is created outside the constructor, so it could not be initialized
-        if (nullptr != sub_reader_payload_pool_)
-        {
-            EDPUtils::release_payload_pool(sub_reader_payload_pool_, subscriptions_reader_.second->m_att, true);
-        }
+        EDPUtils::release_payload_pool(sub_reader_payload_pool_, subscriptions_reader_.second->m_att, true);
         delete(subscriptions_reader_.second);
     }
     if (this->publications_writer_.first != nullptr)
     {
         this->mp_RTPSParticipant->deleteUserEndpoint(publications_writer_.first);
-        // This payload is created outside the constructor, so it could not be initialized
-        if (nullptr != pub_writer_payload_pool_)
-        {
-            EDPUtils::release_payload_pool(pub_writer_payload_pool_, publications_writer_.second->m_att, false);
-        }
+        EDPUtils::release_payload_pool(pub_writer_payload_pool_, publications_writer_.second->m_att, false);
         delete(publications_writer_.second);
     }
     if (this->subscriptions_writer_.first != nullptr)
     {
         this->mp_RTPSParticipant->deleteUserEndpoint(subscriptions_writer_.first);
-        // This payload is created outside the constructor, so it could not be initialized
-        if (nullptr != sub_writer_payload_pool_)
-        {
-            EDPUtils::release_payload_pool(sub_writer_payload_pool_, subscriptions_writer_.second->m_att, false);
-        }
+        EDPUtils::release_payload_pool(sub_writer_payload_pool_, subscriptions_writer_.second->m_att, false);
         delete(subscriptions_writer_.second);
     }
 
