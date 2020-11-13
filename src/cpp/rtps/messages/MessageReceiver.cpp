@@ -615,11 +615,6 @@ bool MessageReceiver::willAReaderAcceptMsgDirectedTo(
     {
         for (const auto& readers : associated_readers_)
         {
-            if (readers.second.empty())
-            {
-                continue;
-            }
-
             for (const auto& it : readers.second)
             {
                 if (it->m_acceptMessagesToUnknownReaders)
