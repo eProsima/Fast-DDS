@@ -20,8 +20,7 @@
 #ifndef _SHARED_DUMP_FUNCTIONS_H_
 #define _SHARED_DUMP_FUNCTIONS_H_
 
-#include "json.hpp"
-
+#include <json.hpp>
 #include <fastdds/rtps/common/CacheChange.h>
 
 namespace eprosima {

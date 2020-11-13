@@ -36,7 +36,7 @@
 #include "./DiscoveryEndpointInfo.hpp"
 #include "./DiscoveryDataQueueInfo.hpp"
 
-#include "backup/json.hpp"
+#include <json.hpp>
 
 namespace eprosima {
 namespace fastdds {

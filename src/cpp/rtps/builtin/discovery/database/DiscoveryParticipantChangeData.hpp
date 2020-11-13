@@ -23,7 +23,7 @@
 #include <fastdds/rtps/common/RemoteLocators.hpp>
 #include <fastdds/dds/core/policy/ParameterTypes.hpp>
 
-#include "backup/json.hpp"
+#include <json.hpp>
 #include "backup/SharedBackupFunctions.hpp"
 
 namespace eprosima {

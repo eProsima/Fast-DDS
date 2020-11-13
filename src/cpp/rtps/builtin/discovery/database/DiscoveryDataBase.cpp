@@ -26,7 +26,7 @@
 
 #include "./DiscoveryDataBase.hpp"
 
-#include "backup/json.hpp"
+#include <json.hpp>
 #include "backup/SharedBackupFunctions.hpp"
 
 namespace eprosima {
