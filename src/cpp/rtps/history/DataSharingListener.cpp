@@ -141,7 +141,8 @@ void DataSharingListener::process_new_data ()
 
 bool DataSharingListener::add_datasharing_writer(
     const GUID_t& writer_guid,
-    const PoolConfig& pool_config)
+    const PoolConfig& pool_config,
+    bool is_volatile)
 {
     // TODO [ULG] adding and removing must be protected
     if (writer_is_matched(writer_guid))
@@ -150,7 +151,7 @@ bool DataSharingListener::add_datasharing_writer(
         return false;
     }
 
-    std::shared_ptr<DataSharingPayloadPool> pool = DataSharingPayloadPool::get_reader_pool(pool_config);
+    std::shared_ptr<DataSharingPayloadPool> pool = DataSharingPayloadPool::get_reader_pool(pool_config, is_volatile);
     pool->init_shared_memory(writer_guid, datasharing_pools_directory_);
     writer_pools_.push_back(pool);
 
@@ -178,6 +179,11 @@ bool DataSharingListener::writer_is_matched(
         }
     );
     return (it != writer_pools_.end());
+}
+
+void DataSharingListener::notify()
+{
+    notification_->notify();
 }
 
 }  // namespace rtps

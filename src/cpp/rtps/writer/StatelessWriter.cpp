@@ -238,7 +238,7 @@ void StatelessWriter::update_reader_info(
 bool StatelessWriter::datasharing_delivery(
         CacheChange_t* change)
 {
-    if (is_datasharing_compatible_ && !datasharing_notifier_->empty())
+    if (is_datasharing_compatible_)
     {
         auto pool = std::dynamic_pointer_cast<DataSharingPayloadPool>(payload_pool_);
         if (pool)

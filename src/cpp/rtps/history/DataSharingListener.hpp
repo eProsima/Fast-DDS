@@ -62,13 +62,16 @@ public:
 
     bool add_datasharing_writer(
             const GUID_t& writer_guid,
-            const PoolConfig& pool_config);
+            const PoolConfig& pool_config,
+            bool is_volatile);
 
     bool remove_datasharing_writer(
             const GUID_t& writer_guid);
 
     bool writer_is_matched(
             const GUID_t& writer_guid) const;
+
+    void notify();
 
 protected:
 

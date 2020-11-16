@@ -93,11 +93,12 @@ const GUID_t& DataSharingPayloadPool::writer() const
 }
 
 std::shared_ptr<DataSharingPayloadPool> DataSharingPayloadPool::get_reader_pool(
-        const PoolConfig& config)
+        const PoolConfig& config,
+        bool is_volatile)
 {
     assert (config.memory_policy == PREALLOCATED_MEMORY_MODE);
     
-    return std::make_shared<ReaderPool>();
+    return std::make_shared<ReaderPool>(is_volatile);
 }
 
 std::shared_ptr<DataSharingPayloadPool> DataSharingPayloadPool::get_writer_pool(
