@@ -56,7 +56,8 @@ public:
             CacheChange_t& cache_change) override;
 
     static std::shared_ptr<DataSharingPayloadPool> get_reader_pool(
-            const PoolConfig& config);
+            const PoolConfig& config,
+            bool is_volatile);
 
     static std::shared_ptr<DataSharingPayloadPool> get_writer_pool(
             const PoolConfig& config);

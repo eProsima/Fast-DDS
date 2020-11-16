@@ -38,6 +38,12 @@ class ReaderPool : public DataSharingPayloadPool
 
 public:
 
+    ReaderPool (
+            bool is_volatile)
+        : is_volatile_(is_volatile)
+    {
+    }
+
     bool get_payload(
             uint32_t /*size*/,
             CacheChange_t& /*cache_change*/) override
@@ -125,7 +131,15 @@ public:
         // Get the pool buffer
         payloads_ = static_cast<PayloadNode*>(segment_->get_address_from_offset(descriptor_->payloads_base));
 
-        next_payload_ = end();
+        // Set the reading pointer
+        if (is_volatile_)
+        {
+            next_payload_ = end();
+        }
+        else
+        {
+            next_payload_ = begin();
+        }
 
         return true;
     }
@@ -161,7 +175,8 @@ bool get_next_unread_payload(
 
 private:
 
-    Segment::Offset next_payload_;     //< Next payload to read
+    bool is_volatile_;              //< Whether the reader is volatile or not
+    Segment::Offset next_payload_;  //< Next payload to read
 };
 
 }  // namespace rtps

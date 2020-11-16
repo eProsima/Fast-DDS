@@ -173,7 +173,8 @@ bool StatefulReader::matched_writer_add(
     if (is_datasharing)
     {
         if (datasharing_listener_->add_datasharing_writer(wdata.guid(),
-            PoolConfig::from_history_attributes(mp_history->m_att)))
+            PoolConfig::from_history_attributes(mp_history->m_att),
+            m_att.durabilityKind == VOLATILE))
         {
             logInfo(RTPS_READER, "Writer Proxy " << wdata.guid() << " added to " << this->m_guid.entityId 
                                                  << " with data sharing");
@@ -181,6 +182,12 @@ bool StatefulReader::matched_writer_add(
         else
         {
             return false;
+        }
+
+        if (m_att.durabilityKind != VOLATILE)
+        {
+            // simulate a notification to force reading of transient changes
+            this->datasharing_listener_->notify();
         }
     }
     else
@@ -427,7 +434,12 @@ bool StatefulReader::processDataMsg(
 
             // Ask payload pool to copy the payload
             IPayloadPool* payload_owner = change->payload_owner();
-            if (payload_pool_->get_payload(change->serializedPayload, payload_owner, *change_to_add))
+            DataSharingPayloadPool* datasharing_pool = dynamic_cast<DataSharingPayloadPool*>(payload_owner);
+            if (datasharing_pool)
+            {
+                datasharing_pool->get_payload(change->serializedPayload, payload_owner, *change_to_add);
+            }
+            else if (payload_pool_->get_payload(change->serializedPayload, payload_owner, *change_to_add))
             {
                 change->payload_owner(payload_owner);
             }
