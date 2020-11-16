@@ -101,6 +101,8 @@ public:
 
     bool full() const;
 
+    const GUID_t& writer() const;
+
 protected:
 
     class alignas(8) PayloadNode

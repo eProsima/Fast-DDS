@@ -22,6 +22,7 @@
 #include <fastdds/dds/log/Log.hpp>
 #include <rtps/history/DataSharingNotification.hpp>
 #include <rtps/history/DataSharingPayloadPool.hpp>
+#include <fastrtps/utils/collections/ResourceLimitedVector.hpp>
 
 #include <memory>
 #include <atomic>
@@ -42,6 +43,7 @@ public:
     DataSharingListener(
         std::shared_ptr<DataSharingNotification> notification,
         const std::string& datasharing_pools_directory,
+        ResourceLimitedContainerConfig limits,
         std::function<void(CacheChange_t*)> callback);
 
     virtual ~DataSharingListener();
@@ -65,11 +67,8 @@ public:
     bool remove_datasharing_writer(
             const GUID_t& writer_guid);
 
-    inline bool writer_is_matched(
-            const GUID_t& writer_guid)
-    {
-        return writer_pools_.find(writer_guid) != writer_pools_.end();
-    }
+    bool writer_is_matched(
+            const GUID_t& writer_guid) const;
 
 protected:
 
@@ -88,7 +87,7 @@ protected:
     std::atomic<bool> is_running_;
     std::function<void(CacheChange_t*)> callback_;
     std::thread* listening_thread_;
-    std::map<GUID_t, std::shared_ptr<DataSharingPayloadPool>> writer_pools_;
+    ResourceLimitedVector<std::shared_ptr<DataSharingPayloadPool>> writer_pools_;
     std::string datasharing_pools_directory_;
 
 };
