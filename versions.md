@@ -1,6 +1,20 @@
 Version 2.1.0
 -------------
 
+This minor release is API compatible with the previous minor release, but introduces **ABI breaks** on
+two of the three public APIs:
+* Methods and attributes have been added on several classes of the DDS-PIM high-level API, so indexes of
+  symbols on dynamic libraries may have changed
+* Methods and attributes have been added on several classes of the RTPS low-level API, so indexes of
+  symbols on dynamic libraries may have changed
+* Old Fast-RTPS high-level API remains ABI compatible.
+
+Users of the RTPS low-level API should also be aware of the following **API deprecations**:
+* History::reserve_Cache has been deprecated
+  * Methods RTPSWriter::new_change or RTPSReader::reserveCache should be used instead
+* History::release_Cache has been deprecated
+  * Methods RTPSWriter::release_change or RTPSReader::releaseCache should be used instead
+
 This release adds the follwing **features**:
 * Support persistence for large data
 * Added support for `on_requested_incompatible_qos` and `on_offered_incompatible_qos`
