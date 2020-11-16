@@ -568,6 +568,7 @@ bool RTPSParticipantImpl::create_writer(
                 entity_id);
         }
     }
+
     // Get persistence service
     IPersistenceService* persistence = nullptr;
     if (!get_persistence_service("writer", is_builtin, param.endpoint, persistence))
@@ -659,6 +660,19 @@ bool RTPSParticipantImpl::create_reader(
         return false;
     }
 
+    // Special case for DiscoveryProtocol::BACKUP, which abuses persistence guid
+    GUID_t former_persistence_guid = param.endpoint.persistence_guid;
+    if (param.endpoint.persistence_guid == c_Guid_Unknown)
+    {
+        if (m_persistence_guid != c_Guid_Unknown)
+        {
+            // Generate persistence guid from participant persistence guid
+            param.endpoint.persistence_guid = GUID_t(
+                m_persistence_guid.guidPrefix,
+                entity_id);
+        }
+    }
+
     // Get persistence service
     IPersistenceService* persistence = nullptr;
     if (!get_persistence_service("reader", is_builtin, param.endpoint, persistence))
@@ -671,6 +685,9 @@ bool RTPSParticipantImpl::create_reader(
     RTPSReader* SReader = nullptr;
     GUID_t guid(m_guid.guidPrefix, entId);
     SReader = callback(guid, param, persistence, param.endpoint.reliabilityKind == RELIABLE);
+
+    // restore attributes
+    param.endpoint.persistence_guid = former_persistence_guid;
 
     if (SReader == nullptr)
     {

@@ -24,6 +24,8 @@
 
 #include "./DiscoveryParticipantInfo.hpp"
 
+#include <json.hpp>
+
 namespace eprosima {
 namespace fastdds {
 namespace rtps {
@@ -85,6 +87,13 @@ void DiscoveryParticipantInfo::remove_writer(
         // prev because the inverse iterator
         writers_.erase(std::prev(rit.base()));
     }
+}
+
+void DiscoveryParticipantInfo::to_json(
+        nlohmann::json& j) const
+{
+    DiscoverySharedInfo::to_json(j);
+    participant_change_data_.to_json(j);
 }
 
 } /* namespace ddb */

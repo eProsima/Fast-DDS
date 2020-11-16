@@ -60,6 +60,8 @@ void PDPServerListener2::onNewCacheChangeAdded(
 
     // Get PDP reader history
     auto pdp_history = pdp_server()->mp_PDPReaderHistory;
+    // Get PDP reader to release change
+    auto pdp_reader = pdp_server()->mp_PDPReader;
 
     // Create a delete function to clear the data associated with the unique pointer in case the change is not passed
     // to the database.
@@ -225,29 +227,42 @@ void PDPServerListener2::onNewCacheChangeAdded(
                 is_local = false;
             }
 
-            logInfo(RTPS_PDP_LISTENER, "Participant is local: " << std::boolalpha << is_local);
-
-            // Notify the DiscoveryDataBase
-            if (pdp_server()->discovery_db().update(
-                        change.get(),
-                        ddb::DiscoveryParticipantChangeData(
-                            temp_participant_data_.metatraffic_locators,
-                            is_client,
-                            is_local)))
+            if (!pdp_server()->discovery_db().backup_in_progress())
             {
-                // Remove change from PDP reader history, but do not return it to the pool. From here on, the discovery
-                // database takes ownership of the CacheChange_t. Henceforth there are no references to the change.
-                // Take change ownership away from the unique pointer, so that its destruction does not destroy the data
-                pdp_history->remove_change(pdp_history->find_change(change.release()), false);
+                // Notify the DiscoveryDataBase
+                if (pdp_server()->discovery_db().update(
+                            change.get(),
+                            ddb::DiscoveryParticipantChangeData(
+                                temp_participant_data_.metatraffic_locators,
+                                is_client,
+                                is_local)))
+                {
+                    // Remove change from PDP reader history, but do not return it to the pool. From here on, the discovery
+                    // database takes ownership of the CacheChange_t. Henceforth there are no references to the change.
+                    // Take change ownership away from the unique pointer, so that its destruction does not destroy the data
+                    pdp_history->remove_change(pdp_history->find_change(change.release()), false);
 
-                // Ensure processing time for the cache by triggering the Server thread (which process the updates)
-                // The server does not have to postpone the execution of the routine if a change is received, i.e.
-                // the server routine is triggered instantly as the default value of the interval that the server has
-                // to wait is 0.
-                pdp_server()->awake_routine_thread();
+                    // Ensure processing time for the cache by triggering the Server thread (which process the updates)
+                    // The server does not have to postpone the execution of the routine if a change is received, i.e.
+                    // the server routine is triggered instantly as the default value of the interval that the server has
+                    // to wait is 0.
+                    pdp_server()->awake_routine_thread();
 
-                // TODO: when the DiscoveryDataBase allows updating capabilities we can dismissed old PDP processing
+                    // TODO: when the DiscoveryDataBase allows updating capabilities we can dismissed old PDP processing
+                }
+                else
+                {
+                    // If the database doesn't take the ownership, then return the CacheChante_t to the pool.
+                    pdp_reader->releaseCache(change.release());
+                }
+
             }
+            else
+            {
+                // Release the unique pointer, not the change in the pool
+                change.release();
+            }
+
 
             // At this point we can release reader lock.
             reader->getMutex().unlock();

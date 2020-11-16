@@ -26,6 +26,8 @@
 
 #include "./DiscoverySharedInfo.hpp"
 
+#include <json.hpp>
+
 namespace eprosima {
 namespace fastdds {
 namespace rtps {
@@ -69,6 +71,13 @@ public:
     bool is_virtual()
     {
         return is_virtual_;
+    }
+
+    void to_json(
+            nlohmann::json& j) const
+    {
+        DiscoverySharedInfo::to_json(j);
+        j["topic"] = topic_;
     }
 
 private:

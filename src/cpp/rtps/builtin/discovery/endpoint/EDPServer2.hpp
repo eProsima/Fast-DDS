@@ -54,8 +54,10 @@ public:
      */
     EDPServer2(
             fastrtps::rtps::PDP* p,
-            fastrtps::rtps::RTPSParticipantImpl* part)
+            fastrtps::rtps::RTPSParticipantImpl* part,
+            fastrtps::rtps::DurabilityKind_t durability_kind)
         : EDPSimple(p, part)
+        , durability_(durability_kind)
     {
     }
 
@@ -109,6 +111,9 @@ private:
      * @return True if correct.
      */
     virtual bool createSEDPEndpoints() override;
+
+    //! TRANSIENT or TRANSIENT_LOCAL durability;
+    fastrtps::rtps::DurabilityKind_t durability_;
 
 };
 

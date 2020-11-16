@@ -17,6 +17,10 @@
  *
  */
 
+#include <iostream>
+#include <fstream>
+#include <mutex>
+
 #include <fastrtps/utils/TimedMutex.hpp>
 
 #include <fastdds/rtps/builtin/BuiltinProtocols.h>
@@ -42,6 +46,9 @@
 #include "./PDPServerListener2.hpp"
 #include "./DServerEvent2.hpp"
 #include "../endpoint/EDPServer2.hpp"
+#include "../endpoint/EDPServerListeners2.hpp"
+
+#include "../database/backup/SharedBackupFunctions.hpp"
 
 namespace eprosima {
 namespace fastdds {
@@ -51,11 +58,14 @@ using namespace eprosima::fastrtps::rtps;
 
 PDPServer2::PDPServer2(
         BuiltinProtocols* builtin,
-        const RTPSParticipantAllocationAttributes& allocation)
+        const RTPSParticipantAllocationAttributes& allocation,
+        DurabilityKind_t durability_kind /* TRANSIENT_LOCAL */)
     : PDP(builtin, allocation)
     , routine_(nullptr)
     , ping_(nullptr)
-    , discovery_db_(builtin->mp_participantImpl->getGuid().guidPrefix, servers_prefixes())
+    , discovery_db_(builtin->mp_participantImpl->getGuid().guidPrefix,
+            servers_prefixes())
+    , durability_ (durability_kind)
 {
 }
 
@@ -85,12 +95,46 @@ bool PDPServer2::init(
     }
 
     //INIT EDP
-    mp_EDP = new EDPServer2(this, mp_RTPSParticipant);
+    mp_EDP = new EDPServer2(this, mp_RTPSParticipant, durability_);
     if (!mp_EDP->initEDP(m_discovery))
     {
         logError(RTPS_PDP_SERVER, "Endpoint discovery configuration failed");
         return false;
     }
+
+    std::vector<nlohmann::json> backup_queue;
+    if (durability_ == TRANSIENT)
+    {
+        nlohmann::json backup_json;
+        // If the DS is BACKUP, try to restore DDB from file
+        discovery_db().backup_in_progress(true);
+        if (read_backup(backup_json, backup_queue))
+        {
+            if (process_backup_discovery_database_restore(backup_json))
+            {
+                logInfo(RTPS_PDP_SERVER, "DiscoveryDataBase restored correctly");
+            }
+        }
+        else
+        {
+            logInfo(RTPS_PDP_SERVER, "Error reading backup file. Corrupted or unmissing file, restarting from scratch");
+        }
+
+        discovery_db().backup_in_progress(false);
+
+        discovery_db_.persistence_enable(get_ddb_queue_persistence_file_name());
+    }
+    else
+    {
+        // Allows the ddb to process new messages from this point
+        discovery_db_.enable();
+    }
+
+    // Activate listeners
+    EDPServer2* edp = static_cast<EDPServer2*>(mp_EDP);
+    getRTPSParticipant()->enableReader(mp_PDPReader);
+    getRTPSParticipant()->enableReader(edp->subscriptions_reader_.first);
+    getRTPSParticipant()->enableReader(edp->publications_reader_.first);
 
     // Initialize server dedicated thread.
     resource_event_thread_.init_thread();
@@ -111,6 +155,13 @@ bool PDPServer2::init(
                     TimeConv::Duration_t2MilliSecondsDouble(
                         m_discovery.discovery_config.discoveryServer_client_syncperiod));
     ping_->restart_timer();
+
+    // Restoring the queue must be done after starting the routine
+    if (durability_ == TRANSIENT)
+    {
+        // This vector is empty till backup queue is implemented
+        process_backup_restore_queue(backup_queue);
+    }
 
     return true;
 }
@@ -177,9 +228,16 @@ bool PDPServer2::createPDPEndpoints()
     ratt.endpoint.multicastLocatorList = mp_builtin->m_metatrafficMulticastLocatorList;
     ratt.endpoint.unicastLocatorList = mp_builtin->m_metatrafficUnicastLocatorList;
     ratt.endpoint.topicKind = WITH_KEY;
-    ratt.endpoint.durabilityKind = TRANSIENT_LOCAL;
+    // change depending of backup mode
+    ratt.endpoint.durabilityKind = durability_;
     ratt.endpoint.reliabilityKind = RELIABLE;
     ratt.times.heartbeatResponseDelay = pdp_heartbeat_response_delay;
+
+#if HAVE_SQLITE3
+    ratt.endpoint.properties.properties().push_back(Property("dds.persistence.plugin", "builtin.SQLITE3"));
+    ratt.endpoint.properties.properties().push_back(Property("dds.persistence.sqlite3.filename",
+            get_reader_persistence_file_name()));
+#endif // HAVE_SQLITE3
 
     // PDP Listener
     mp_listener = new PDPServerListener2(this);
@@ -199,7 +257,9 @@ bool PDPServer2::createPDPEndpoints()
             temp_writer_data_.guid(it.GetPDPWriter());
             temp_writer_data_.set_multicast_locators(it.metatrafficMulticastLocatorList, network);
             temp_writer_data_.set_remote_unicast_locators(it.metatrafficUnicastLocatorList, network);
-            temp_writer_data_.m_qos.m_durability.kind = fastrtps::TRANSIENT_DURABILITY_QOS;  // Server Information must be persistent
+            // TODO check if this is correct, it is equal as PDPServer, but we do not know like this the durKind of the
+            // other server
+            temp_writer_data_.m_qos.m_durability.durabilityKind(durability_);
             temp_writer_data_.m_qos.m_reliability.kind = fastrtps::RELIABLE_RELIABILITY_QOS;
 
             mp_PDPReader->matched_writer_add(temp_writer_data_);
@@ -232,7 +292,14 @@ bool PDPServer2::createPDPEndpoints()
     // VOLATILE durability to highlight that on steady state the history is empty (except for announcement DATAs)
     // this setting is incompatible with CLIENTs TRANSIENT_LOCAL PDP readers but not validation is done on builitin
     // endpoints
-    watt.endpoint.durabilityKind = TRANSIENT_LOCAL;
+    watt.endpoint.durabilityKind = durability_;
+
+#if HAVE_SQLITE3
+    watt.endpoint.properties.properties().push_back(Property("dds.persistence.plugin", "builtin.SQLITE3"));
+    watt.endpoint.properties.properties().push_back(Property("dds.persistence.sqlite3.filename",
+            get_writer_persistence_file_name()));
+#endif // HAVE_SQLITE3
+
     watt.endpoint.reliabilityKind = RELIABLE;
     watt.endpoint.topicKind = WITH_KEY;
     watt.endpoint.multicastLocatorList = mp_builtin->m_metatrafficMulticastLocatorList;
@@ -273,6 +340,9 @@ bool PDPServer2::createPDPEndpoints()
         mp_PDPWriterHistory = nullptr;
         return false;
     }
+    // TODO check if this should be done here or before this point in creation
+    mp_PDPWriterHistory->remove_all_changes();
+
     logInfo(RTPS_PDP_SERVER, "PDPServer Endpoints creation finished");
     return true;
 }
@@ -353,6 +423,7 @@ void PDPServer2::assignRemoteEndpoints(
         temp_reader_data_.m_expectsInlineQos = false;
         temp_reader_data_.guid().guidPrefix = pdata->m_guid.guidPrefix;
         temp_reader_data_.guid().entityId = c_EntityId_SPDPReader;
+        temp_writer_data_.persistence_guid(pdata->get_persistence_guid());
         temp_reader_data_.set_remote_locators(pdata->metatraffic_locators, network, use_multicast_locators);
         temp_reader_data_.m_qos.m_reliability.kind = dds::RELIABLE_RELIABILITY_QOS;
         temp_reader_data_.m_qos.m_durability.kind = dds::TRANSIENT_LOCAL_DURABILITY_QOS;
@@ -415,8 +486,7 @@ void PDPServer2::removeRemoteEndpoints(
     }
 }
 
-#if HAVE_SQLITE3
-std::string PDPServer2::GetPersistenceFileName()
+std::ostringstream PDPServer2::get_persistence_file_name_() const
 {
     assert(getRTPSParticipant());
 
@@ -428,19 +498,46 @@ std::string PDPServer2::GetPersistenceFileName()
     prefix = filename.str();
     std::replace(prefix.begin(), prefix.end(), '.', '-');
     filename.str(std::move(prefix));
-    filename << ".db";
+    //filename << ".json";
 
+    return filename;
+}
+
+std::string PDPServer2::get_writer_persistence_file_name() const
+{
+    std::ostringstream filename = get_persistence_file_name_();
+    filename << "_writer.db";
     return filename.str();
 }
 
-#endif // HAVE_SQLITE3
+std::string PDPServer2::get_reader_persistence_file_name() const
+{
+    std::ostringstream filename = get_persistence_file_name_();
+    filename << "_reader.db";
+    return filename.str();
+}
+
+std::string PDPServer2::get_ddb_persistence_file_name() const
+{
+    std::ostringstream filename = get_persistence_file_name_();
+    filename << ".json";
+    return filename.str();
+}
+
+std::string PDPServer2::get_ddb_queue_persistence_file_name() const
+{
+    std::ostringstream filename = get_persistence_file_name_();
+    filename << "_queue.json";
+    return filename.str();
+}
 
 void PDPServer2::announceParticipantState(
         bool new_change,
         bool dispose /* = false */,
         WriteParams& )
 {
-    logInfo(RTPS_PDP_SERVER, "Announcing Server (new change: " << new_change << ")");
+    logInfo(RTPS_PDP_SERVER,
+            "Announcing Server " << mp_RTPSParticipant->getGuid() << " (new change: " << new_change << ")");
     CacheChange_t* change = nullptr;
 
     StatefulWriter* pW = dynamic_cast<StatefulWriter*>(mp_PDPWriter);
@@ -577,7 +674,6 @@ void PDPServer2::announceParticipantState(
 
         // Prepare identity
         WriteParams wp;
-        // TODO: Make sure in the database that this CacheChange_t is given this sequence number
         SequenceNumber_t sn = mp_PDPWriterHistory->next_sequence_number();
         {
             SampleIdentity local;
@@ -661,14 +757,17 @@ bool PDPServer2::remove_remote_participant(
     {
         CacheChange_t* pC = nullptr;
 
+        // TODO check in standard if DROP payload is always 0
+        // We create the drop from Reader to make release simplier
+        mp_PDPReader->reserveCache(&pC, mp_builtin->m_att.writerPayloadSize);
+
         // We must create the corresponding DATA(p[UD])
-        if ((pC = mp_PDPWriter->new_change(
-                    [this]() -> uint32_t
-                    {
-                        return mp_builtin->m_att.writerPayloadSize;
-                    },
-                    NOT_ALIVE_DISPOSED_UNREGISTERED, partGUID)))
+        if (nullptr != pC)
         {
+            pC->instanceHandle = partGUID;
+            pC->kind = NOT_ALIVE_DISPOSED_UNREGISTERED;
+            pC->writerGUID = mp_PDPWriter->getGuid();
+
             // Use this server identity in order to hint clients it's a lease duration demise
             WriteParams& wp = pC->write_params;
             SampleIdentity local;
@@ -726,9 +825,14 @@ bool PDPServer2::server_update_routine()
     // There is pending work to be done by the server if there are changes that have not been acknowledged.
     bool pending_work = true;
 
+    // Must lock the mutes to unlock it in the loop
+    discovery_db().lock_incoming_data();
+
     // Execute the server routine
     do
     {
+        discovery_db().unlock_incoming_data();
+
         logInfo(RTPS_PDP_SERVER, "");
         logInfo(RTPS_PDP_SERVER, "-------------------- Server routine start --------------------");
         logInfo(RTPS_PDP_SERVER, "-------------------- " << mp_RTPSParticipant->getGuid() << " --------------------");
@@ -745,14 +849,28 @@ bool PDPServer2::server_update_routine()
         logInfo(RTPS_PDP_SERVER, "-------------------- Server routine end --------------------");
         logInfo(RTPS_PDP_SERVER, "");
 
-        logInfo(RTPS_PDP_SERVER, "PDP history size " << mp_PDPWriterHistory->getHistorySize());
+        // Lock new data to check emptyness and to do the dump of the backup in case it is empty
+        discovery_db().lock_incoming_data();
     }
     // If the data queue is not empty re-start the routine.
     // A non-empty queue means that the server has received a change while it is running the processing routine.
+    // If not considering disabled and there are changes in queue when disable, it will get in an infinite loop
     while (!discovery_db_.data_queue_empty() && discovery_db_.is_enabled());
 
-    // Must restart the routin after the period time
-    return pending_work;
+    // Must restart the routine after the period time
+
+    // It uses the free time (no messages to process) to save the new state of the ddb
+    // This only will be called when:
+    // -there are not new data in queue
+    // -there has been any modification in the DDB (if not, this routine is not called)
+    if (durability_ == TRANSIENT && discovery_db_.is_enabled())
+    {
+        process_backup_store();
+    }
+    // Unlock the incoming data after finishing the backuo storage
+    discovery_db().unlock_incoming_data();
+
+    return pending_work && discovery_db_.is_enabled();
 }
 
 bool PDPServer2::process_writers_acknowledgements()
@@ -957,7 +1075,8 @@ void PDPServer2::process_changes_release_(
     {
         // Check if change owner is this participant. In that case, the change comes from a writer pool (PDP, EDP
         // publications or EDP subscriptions)
-        if (discovery_db_.guid_from_change(ch).guidPrefix == mp_builtin->mp_participantImpl->getGuid().guidPrefix)
+        // We compare the instance handle, as the only changes from our own server are its owns
+        if (discovery_db().guid_from_change(ch) == mp_PDPWriter->getGuid())
         {
             if (discovery_db_.is_participant(ch))
             {
@@ -1002,50 +1121,35 @@ void PDPServer2::process_changes_release_(
         // publications or EDP subscriptions)
         else
         {
-            if (ch->kind == ChangeKind_t::ALIVE ||
-                    ch->write_params.sample_identity().writer_guid() != mp_PDPWriter->getGuid())
+            // If the change is from a remote participant,
+            // then it is never on any of the readers' histories, since we
+            // take it out upon reading it in the listeners
+            if (discovery_db_.is_participant(ch))
             {
-                // If the change is from a remote participant,
-                // then it is never on any of the readers' histories, since we
-                // take it out upon reading it in the listeners
-                if (discovery_db_.is_participant(ch))
-                {
-                    remove_change_from_writer_history(mp_PDPWriter, mp_PDPWriterHistory, ch, false);
-                    mp_PDPReader->releaseCache(ch);
-                }
-                else if (discovery_db_.is_writer(ch))
-                {
-                    remove_change_from_writer_history(
-                        edp->publications_writer_.first,
-                        edp->publications_writer_.second,
-                        ch,
-                        false);
-                    edp->publications_reader_.first->releaseCache(ch);
-                }
-                else if (discovery_db_.is_reader(ch))
-                {
-                    remove_change_from_writer_history(
-                        edp->subscriptions_writer_.first,
-                        edp->subscriptions_writer_.second,
-                        ch,
-                        false);
-                    edp->subscriptions_reader_.first->releaseCache(ch);
-                }
-                else
-                {
-                    logError(RTPS_PDP_SERVER, "Wrong DATA received to remove from this participant: "
-                            << ch->instanceHandle);
-                }
+                remove_change_from_writer_history(mp_PDPWriter, mp_PDPWriterHistory, ch, false);
+                mp_PDPReader->releaseCache(ch);
+            }
+            else if (discovery_db_.is_writer(ch))
+            {
+                remove_change_from_writer_history(
+                    edp->publications_writer_.first,
+                    edp->publications_writer_.second,
+                    ch,
+                    false);
+                edp->publications_reader_.first->releaseCache(ch);
+            }
+            else if (discovery_db_.is_reader(ch))
+            {
+                remove_change_from_writer_history(
+                    edp->subscriptions_writer_.first,
+                    edp->subscriptions_writer_.second,
+                    ch,
+                    false);
+                edp->subscriptions_reader_.first->releaseCache(ch);
             }
             else
             {
-                // this case is only when is a disposal built for us, so it is a DATA(Up) of a participant
-                // that we have drop for liveliness
-                // this changes goes to Participant Writer
-                if (!remove_change_from_writer_history(mp_PDPWriter, mp_PDPWriterHistory, ch))
-                {
-                    mp_PDPWriter->release_change(ch);
-                }
+                logError(PDPServer2, "Wrong DATA received to remove");
             }
         }
     }
@@ -1275,6 +1379,341 @@ void PDPServer2::send_announcement(
     {
         logError(RTPS_PDP_SERVER, "Error sending announcement from server to clients");
     }
+}
+
+bool PDPServer2::read_backup(
+        nlohmann::json& ddb_json,
+        std::vector<nlohmann::json>& /* new_changes */)
+{
+    std::ifstream myfile;
+    bool ret = true;
+    try
+    {
+        myfile.open(get_ddb_persistence_file_name(), std::ios_base::in);
+        // read json object
+        myfile >> ddb_json;
+        myfile.close();
+    }
+    catch (const std::exception& /* e */)
+    {
+        ret = false;
+    }
+
+    // TODO uncomment this part when recover queues is finish
+    // try{
+    //     myfile.open(get_ddb_queue_persistence_file_name(), std::ios_base::in);
+
+    //     std::string line;
+    //     while (std::getline(myfile, line))
+    //     {
+    //         nlohmann::json change_json = nlohmann::json::parse(line);
+
+    //         // Read every change, and store it in json format in a vector
+    //         new_changes.push_back(change_json);
+    //     }
+
+    //     myfile.close();
+    // }
+    // catch(const std::exception& e)
+    // {
+    //     return ret;
+    // }
+    return ret;
+}
+
+bool PDPServer2::process_backup_discovery_database_restore(
+        nlohmann::json& j)
+{
+    logInfo(RTPS_PDP_SERVER, "Restoring DiscoveryDataBase from backup");
+
+    // We need every listener to resend the changes of every entity (ALIVE) in the DDB, so the PaticipantProxy
+    // is restored
+    EDPServer2* edp = static_cast<EDPServer2*>(mp_EDP);
+    EDPServerPUBListener2* edp_pub_listener = static_cast<EDPServerPUBListener2*>(edp->publications_listener_);
+    EDPServerSUBListener2* edp_sub_listener = static_cast<EDPServerSUBListener2*>(edp->subscriptions_listener_);
+
+    // These mutexes are necessary to send messages to the listeners
+    std::unique_lock<fastrtps::RecursiveTimedMutex> lock(mp_PDPReader->getMutex());
+    std::unique_lock<fastrtps::RecursiveTimedMutex> lock_edpp(edp->publications_reader_.first->getMutex());
+    std::unique_lock<fastrtps::RecursiveTimedMutex> lock_edps(edp->subscriptions_reader_.first->getMutex());
+
+    // Auxiliar variables to load info from json
+    std::map<eprosima::fastrtps::rtps::InstanceHandle_t, fastrtps::rtps::CacheChange_t*> changes_map;
+    fastrtps::rtps::SampleIdentity sample_identity_aux;
+    uint32_t length = 0;
+    fastrtps::rtps::CacheChange_t* change_aux;
+
+    try
+    {
+        // Create every participant change. If it is external creates it from Reader,
+        // if it is from the server, it is created from the writer
+        for (auto it = j["participants"].begin(); it != j["participants"].end(); ++it)
+        {
+            length = it.value()["change"]["serialized_payload"]["length"].get<std::uint32_t>();
+            std::istringstream(it.value()["change"]["sample_identity"].get<std::string>()) >> sample_identity_aux;
+
+            // Reserve memory for new change. There will not be changes from own server
+            if (!mp_PDPReader->reserveCache(&change_aux, length))
+            {
+                logError(RTPS_PDP_SERVER, "Error creating CacheChange");
+                // TODO release changes and exit
+            }
+
+            // Deserialize from json to change already created
+            ddb::from_json(it.value()["change"], *change_aux);
+
+            // Insert into the map so the DDB can store it
+            changes_map.insert(
+                std::make_pair(change_aux->instanceHandle, change_aux));
+
+            // If the change was read as is_local we must pass it to listener with his own writer_guid
+            if (it.value()["is_local"].get<bool>() &&
+                    change_aux->write_params.sample_identity().writer_guid().guidPrefix !=
+                    mp_PDPWriter->getGuid().guidPrefix &&
+                    change_aux->kind == fastrtps::rtps::ALIVE)
+            {
+                change_aux->writerGUID = change_aux->write_params.sample_identity().writer_guid();
+                change_aux->sequenceNumber = change_aux->write_params.sample_identity().sequence_number();
+                mp_listener->onNewCacheChangeAdded(mp_PDPReader, change_aux);
+            }
+        }
+
+        // Create every writer change. If it is external creates it from Reader,
+        // if it is from the server, it is created from writer
+        for (auto it = j["writers"].begin(); it != j["writers"].end(); ++it)
+        {
+            length = it.value()["change"]["serialized_payload"]["length"].get<std::uint32_t>();
+            std::istringstream(it.value()["change"]["sample_identity"].get<std::string>()) >> sample_identity_aux;
+
+            if (it.value()["topic"] == discovery_db().virtual_topic())
+            {
+                change_aux = new fastrtps::rtps::CacheChange_t();
+            }
+            else
+            {
+                // Reserve memory for new change. There will not be changes from own server
+                if (!edp->publications_reader_.first->reserveCache(&change_aux, length))
+                {
+                    logError(RTPS_PDP_SERVER, "Error creating CacheChange");
+                    // TODO release changes and exit
+                }
+            }
+
+            // deserialize from json to change already created
+            ddb::from_json(it.value()["change"], *change_aux);
+
+            changes_map.insert(
+                std::make_pair(change_aux->instanceHandle, change_aux));
+
+            // TODO refactor for multiple servers
+            // should not send the virtual changes by the listener
+            // should store in DDB if it is local even for endpoints
+            // call listener to create proxy info for other entities different than server
+            if (change_aux->write_params.sample_identity().writer_guid().guidPrefix !=
+                    mp_PDPWriter->getGuid().guidPrefix
+                    && change_aux->kind == fastrtps::rtps::ALIVE
+                    && it.value()["topic"] != discovery_db().virtual_topic())
+            {
+                edp_pub_listener->onNewCacheChangeAdded(edp->publications_reader_.first, change_aux);
+            }
+        }
+
+        // Create every reader change. If it is external creates it from Reader,
+        // if it is created from the server, it is created from writer
+        for (auto it = j["readers"].begin(); it != j["readers"].end(); ++it)
+        {
+            std::istringstream(it.value()["change"]["sample_identity"].get<std::string>()) >> sample_identity_aux;
+
+            if (it.value()["topic"] == discovery_db().virtual_topic())
+            {
+                change_aux = new fastrtps::rtps::CacheChange_t();
+            }
+            else
+            {
+                // Reserve memory for new change. There will not be changes from own server
+                if (!edp->subscriptions_reader_.first->reserveCache(&change_aux, length))
+                {
+                    logError(RTPS_PDP_SERVER, "Error creating CacheChange");
+                    // TODO release changes and exit
+                }
+            }
+
+            // deserialize from json to change already created
+            ddb::from_json(it.value()["change"], *change_aux);
+
+            changes_map.insert(
+                std::make_pair(change_aux->instanceHandle, change_aux));
+
+            // call listener to create proxy info for other entities different than server
+            if (change_aux->write_params.sample_identity().writer_guid().guidPrefix !=
+                    mp_PDPWriter->getGuid().guidPrefix
+                    && change_aux->kind == fastrtps::rtps::ALIVE
+                    && it.value()["topic"] != discovery_db().virtual_topic())
+            {
+                edp_sub_listener->onNewCacheChangeAdded(edp->subscriptions_reader_.first, change_aux);
+            }
+        }
+
+        // load database
+        discovery_db_.from_json(j, changes_map);
+    }
+    catch (std::ios_base::failure&)
+    {
+        // TODO clean changes in case it has been an error
+        logError(DISCOVERY_DATABASE, "BACKUP CORRUPTED");
+        return false;
+    }
+    return true;
+}
+
+bool PDPServer2::process_backup_restore_queue(
+        std::vector<nlohmann::json>& /* new_changes */)
+{
+    // fastrtps::rtps::SampleIdentity sample_identity_aux;
+    // fastrtps::rtps::InstanceHandle_t instance_handle_aux;
+    // uint32_t length;
+
+    // EDPServer2* edp = static_cast<EDPServer2*>(mp_EDP);
+    // EDPServerPUBListener2* edp_pub_listener = static_cast<EDPServerPUBListener2*>(edp->publications_listener_);
+    // EDPServerSUBListener2* edp_sub_listener = static_cast<EDPServerSUBListener2*>(edp->subscriptions_listener_);
+
+    // std::unique_lock<fastrtps::RecursiveTimedMutex> lock(mp_PDPReader->getMutex());
+    // std::unique_lock<fastrtps::RecursiveTimedMutex> lock_edpp(edp->publications_reader_.first->getMutex());
+    // std::unique_lock<fastrtps::RecursiveTimedMutex> lock_edps(edp->subscriptions_reader_.first->getMutex());
+
+    // TODO uncomment this funcionality and update with pools when queue functionality is implemented
+    // try
+    // {
+    //     // Read every change and push it to the listener that it belongs
+    //     for (nlohmann::json& json_change : new_changes)
+    //     {
+    //         // std::cout << json_change << std::endl;
+    //         fastrtps::rtps::CacheChange_t* change_aux;
+    //         length = json_change["serialized_payload"]["length"].get<std::uint32_t>();
+    //         (std::istringstream) json_change["sample_identity"].get<std::string>() >> sample_identity_aux;
+    //         (std::istringstream) json_change["instance_handle"].get<std::string>() >> instance_handle_aux;
+
+    //         // Belongs to own server
+    //         if (sample_identity_aux.writer_guid() == mp_PDPWriter->getGuid())
+    //         {
+    //             if (discovery_db_.is_participant(iHandle2GUID(instance_handle_aux)))
+    //             {
+    //                 if (!mp_PDPWriterHistory->reserve_Cache(&change_aux, length))
+    //                             [this]() -> uint32_t
+    //                             {
+    //                                 return mp_PDP->builtin_attributes().readerPayloadSize;
+    //                             },
+    //                             &change_aux, length))
+    //                 {
+    //                     logError(RTPS_PDP_SERVER, "Error creating CacheChange");
+    //                     // TODO release changes and exit
+    //                 }
+    //                 else
+    //                 {
+    //                     ddb::from_json(json_change, *change_aux);
+    //                     mp_listener->onNewCacheChangeAdded(mp_PDPReader, change_aux);
+    //                 }
+
+    //             }
+    //             else if (discovery_db_.is_writer(iHandle2GUID(instance_handle_aux)))
+    //             {
+    //                 if (!edp->publications_writer_.second->reserve_Cache(&change_aux, length))
+    //                 {
+    //                     logError(RTPS_PDP_SERVER, "Error creating CacheChange");
+    //                     // TODO release changes and exit
+    //                 }
+    //                 else
+    //                 {
+    //                     ddb::from_json(json_change, *change_aux);
+    //                     edp_pub_listener->onNewCacheChangeAdded(edp->publications_reader_.first, change_aux);
+    //                 }
+    //             }
+    //             else if (discovery_db_.is_reader(iHandle2GUID(instance_handle_aux)))
+    //             {
+    //                 if (!edp->subscriptions_writer_.second->reserve_Cache(&change_aux, length))
+    //                 {
+    //                     logError(RTPS_PDP_SERVER, "Error creating CacheChange");
+    //                     // TODO release changes and exit
+    //                 }
+    //                 else
+    //                 {
+    //                     ddb::from_json(json_change, *change_aux);
+    //                     edp_sub_listener->onNewCacheChangeAdded(edp->subscriptions_reader_.first, change_aux);
+    //                 }
+    //             }
+    //         }
+    //         // It came from outside
+    //         else
+    //         {
+    //             if (discovery_db_.is_participant(iHandle2GUID(instance_handle_aux)))
+    //             {
+    //                 if (!mp_PDPReaderHistory->reserve_Cache(&change_aux, length))
+    //                 {
+    //                     logError(RTPS_PDP_SERVER, "Error creating CacheChange");
+    //                     // TODO release changes and exit
+    //                 }
+    //                 else
+    //                 {
+    //                     ddb::from_json(json_change, *change_aux);
+    //                     mp_listener->onNewCacheChangeAdded(mp_PDPReader, change_aux);
+    //                 }
+
+    //             }
+    //             else if (discovery_db_.is_writer(iHandle2GUID(instance_handle_aux)))
+    //             {
+    //                 if (!edp->publications_reader_.second->reserve_Cache(&change_aux, length))
+    //                 {
+    //                     logError(RTPS_PDP_SERVER, "Error creating CacheChange");
+    //                     // TODO release changes and exit
+    //                 }
+    //                 else
+    //                 {
+    //                     ddb::from_json(json_change, *change_aux);
+    //                     edp_pub_listener->onNewCacheChangeAdded(edp->publications_reader_.first, change_aux);
+    //                 }
+    //             }
+    //             else if (discovery_db_.is_reader(iHandle2GUID(instance_handle_aux)))
+    //             {
+    //                 if (!edp->subscriptions_reader_.second->reserve_Cache(&change_aux, length))
+    //                 {
+    //                     logError(RTPS_PDP_SERVER, "Error creating CacheChange");
+    //                     // TODO release changes and exit
+    //                 }
+    //                 else
+    //                 {
+    //                     ddb::from_json(json_change, *change_aux);
+    //                     edp_sub_listener->onNewCacheChangeAdded(edp->subscriptions_reader_.first, change_aux);
+    //                 }
+    //             }
+    //         }
+    //     }
+    // }
+    // catch (std::ios_base::failure&)
+    // {
+    //     // TODO clean changes in case it has been an error
+    //     logError(DISCOVERY_DATABASE, "QUEUE BACKUP CORRUPTED");
+    //     return false;
+    // }
+    return true;
+}
+
+void PDPServer2::process_backup_store()
+{
+    logInfo(DISCOVERY_DATABASE, "Dump DDB in json backup");
+
+    // This will erase the last backup stored
+    std::ofstream backup_json_file;
+    backup_json_file.open(get_ddb_persistence_file_name(), std::ios_base::out);
+
+    // Set j with the json from database dump
+    nlohmann::json j;
+    discovery_db().to_json(j);
+    // setw makes pretty print for json
+    backup_json_file << std::setw(4) << j << std::endl;
+    backup_json_file.close();
+
+    // Clear queue ddb backup
+    discovery_db_.clean_backup();
 }
 
 } // namespace rtps

@@ -48,7 +48,13 @@ bool EDPServer2::createSEDPEndpoints()
     RTPSReader* raux = nullptr;
     set_builtin_reader_history_attributes(reader_history_att);
     set_builtin_reader_attributes(ratt);
-    ratt.endpoint.durabilityKind = TRANSIENT_LOCAL;
+    ratt.endpoint.durabilityKind = durability_;
+
+#if HAVE_SQLITE3
+    ratt.endpoint.properties.properties().push_back(Property("dds.persistence.plugin", "builtin.SQLITE3"));
+    ratt.endpoint.properties.properties().push_back(Property("dds.persistence.sqlite3.filename",
+            get_pdp()->get_reader_persistence_file_name()));
+#endif // if HAVE_SQLITE3
 
     /* EDP Writers attributes */
     WriterAttributes watt;
@@ -56,7 +62,14 @@ bool EDPServer2::createSEDPEndpoints()
     RTPSWriter* waux = nullptr;
     set_builtin_writer_history_attributes(writer_history_att);
     set_builtin_writer_attributes(watt);
-    watt.endpoint.durabilityKind = TRANSIENT_LOCAL;
+
+#if HAVE_SQLITE3
+    watt.endpoint.properties.properties().push_back(Property("dds.persistence.plugin", "builtin.SQLITE3"));
+    watt.endpoint.properties.properties().push_back(Property("dds.persistence.sqlite3.filename",
+            get_pdp()->get_writer_persistence_file_name()));
+#endif // if HAVE_SQLITE3
+
+    watt.endpoint.durabilityKind = durability_;
     watt.mode = ASYNCHRONOUS_WRITER;
 
     /* EDP Listeners */
@@ -76,6 +89,7 @@ bool EDPServer2::createSEDPEndpoints()
 
         // 1. Set publications writer history and create the writer. Set `created` to the result.
         publications_writer_.second = new WriterHistory(writer_history_att);
+
         created &= this->mp_RTPSParticipant->createWriter(&waux, watt, publications_writer_.second,
                         publications_listener_, c_EntityId_SEDPPubWriter, true);
 
@@ -91,6 +105,9 @@ bool EDPServer2::createSEDPEndpoints()
             // 1.2. Enable separate sending so the filter can be called for each change and reader proxy
             publications_writer_.first->set_separate_sending(true);
             logInfo(RTPS_EDP, "SEDP Publications Writer created");
+
+            // TODO check if this should be done here or below
+            publications_writer_.second->remove_all_changes();
         }
         else
         {
@@ -103,8 +120,9 @@ bool EDPServer2::createSEDPEndpoints()
 
         // 2. Set subscriptions reader history and create the reader. Set `created` to the result.
         subscriptions_reader_.second = new ReaderHistory(reader_history_att);
+
         created &= this->mp_RTPSParticipant->createReader(&raux, ratt, subscriptions_reader_.second,
-                        subscriptions_listener_, c_EntityId_SEDPSubReader, true);
+                        subscriptions_listener_, c_EntityId_SEDPSubReader, true, false);
 
         if (created)
         {
@@ -156,6 +174,8 @@ bool EDPServer2::createSEDPEndpoints()
             subscriptions_writer_.first->set_separate_sending(true);
             logInfo(RTPS_EDP, "SEDP Subscriptions Writer created");
 
+            // TODO check if this should be done here or below
+            subscriptions_writer_.second->remove_all_changes();
         }
         else
         {
@@ -169,7 +189,7 @@ bool EDPServer2::createSEDPEndpoints()
         // 2. Set publications reader history and create the reader. Set `created` to the result.
         publications_reader_.second = new ReaderHistory(writer_history_att);
         created &= this->mp_RTPSParticipant->createReader(&raux, ratt, publications_reader_.second,
-                        publications_listener_, c_EntityId_SEDPPubReader, true);
+                        publications_listener_, c_EntityId_SEDPPubReader, true, false);
 
         if (created)
         {

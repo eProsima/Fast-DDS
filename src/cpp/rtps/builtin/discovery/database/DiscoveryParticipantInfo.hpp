@@ -28,6 +28,8 @@
 #include "./DiscoverySharedInfo.hpp"
 #include "./DiscoveryParticipantChangeData.hpp"
 
+#include <json.hpp>
+
 namespace eprosima {
 namespace fastdds {
 namespace rtps {
@@ -90,12 +92,12 @@ public:
 
     bool is_client()
     {
-        return participant_change_data_.is_client;
+        return participant_change_data_.is_client();
     }
 
     bool is_local()
     {
-        return participant_change_data_.is_local;
+        return participant_change_data_.is_local();
     }
 
     bool is_external()
@@ -105,7 +107,7 @@ public:
 
     fastrtps::rtps::RemoteLocatorList metatraffic_locators()
     {
-        return participant_change_data_.metatraffic_locators;
+        return participant_change_data_.metatraffic_locators();
     }
 
     std::vector<eprosima::fastrtps::rtps::GUID_t> readers()
@@ -117,6 +119,9 @@ public:
     {
         return writers_;
     }
+
+    void to_json(
+            nlohmann::json& j) const;
 
 private:
 

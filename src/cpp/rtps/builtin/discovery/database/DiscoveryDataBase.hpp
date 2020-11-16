@@ -23,6 +23,8 @@
 #include <vector>
 #include <map>
 #include <mutex>
+#include <iostream>
+#include <fstream>
 
 #include <fastrtps/utils/fixed_size_string.hpp>
 #include <fastdds/rtps/writer/ReaderProxy.h>
@@ -33,6 +35,8 @@
 #include "./DiscoveryParticipantInfo.hpp"
 #include "./DiscoveryEndpointInfo.hpp"
 #include "./DiscoveryDataQueueInfo.hpp"
+
+#include <json.hpp>
 
 namespace eprosima {
 namespace fastdds {
@@ -138,9 +142,14 @@ public:
         enabled_ = true;
     }
 
+    // enable ddb in persistence mode and open the file to backup up in append mode
+    void persistence_enable(
+            std::string backup_file_name);
+
     //! Disable the possibility to add new entries to the database
     void disable()
     {
+        logInfo(DISCOVERY_DATABASE, "DISCOVERY DATA BASE DISABLED");
         enabled_ = false;
     }
 
@@ -148,6 +157,22 @@ public:
     bool is_enabled()
     {
         return enabled_;
+    }
+
+    //! Check if the DDB is restoring a backup at the moment
+    bool backup_in_progress()
+    {
+        return processing_backup_;
+    }
+
+    //! Disable the possibility to add new entries to the database
+    // This is different than lock_incoming_data() because it does not store the changes or lock the listener
+    // This method is only used when the Server is restoring the backup file, and so sending messages to the
+    // listener that should not be process
+    void backup_in_progress(
+            bool v)
+    {
+        processing_backup_ = v;
     }
 
     /* Clear all the collections in the database
@@ -217,6 +242,15 @@ public:
     ////////////
     // Static Functions to work with GUIDs
     static bool is_participant(
+            const eprosima::fastrtps::rtps::GUID_t& guid);
+
+    static bool is_writer(
+            const eprosima::fastrtps::rtps::GUID_t& guid);
+
+    static bool is_reader(
+            const eprosima::fastrtps::rtps::GUID_t& guid);
+
+    static bool is_participant(
             const eprosima::fastrtps::rtps::CacheChange_t* ch);
 
     static bool is_writer(
@@ -263,6 +297,39 @@ public:
 
     // Check if the data queue is empty
     bool data_queue_empty();
+
+    void to_json(
+            nlohmann::json& j) const;
+
+    bool from_json(
+            nlohmann::json& j,
+            std::map<eprosima::fastrtps::rtps::InstanceHandle_t, fastrtps::rtps::CacheChange_t*>& changes_map);
+
+    // This function erase the last backup and all the changes that has arrived since then and create
+    // a new backup that shows the actual state of the database
+    // This way we can simulate the state of the database from a clean state of json backup, or from
+    // an state in the middle of an routine execution, and every message that has arrived and has not
+    // been process.
+    // By this, we do not lose any change or information in any case
+    // This function must be called with the incoming datas blocked
+    void clean_backup();
+
+    // Lock the incoming of new data to the DDB queue. This locks the Listener as well
+    void lock_incoming_data()
+    {
+        data_queues_mutex_.lock();
+    }
+
+    // Unock the incoming of new data to the DDB queue
+    void unlock_incoming_data()
+    {
+        data_queues_mutex_.unlock();
+    }
+
+    std::string virtual_topic() const
+    {
+        return virtual_topic_;
+    }
 
 protected:
 
@@ -446,8 +513,11 @@ protected:
     //! changes that are no longer associated to living endpoints and should be returned to it's pool
     std::vector<eprosima::fastrtps::rtps::CacheChange_t*> changes_to_release_;
 
-    //! Mutex
+    //! General mutex
     mutable std::recursive_mutex mutex_;
+
+    //! Mutex to lock updating to queues
+    mutable std::recursive_mutex data_queues_mutex_;
 
     //! GUID prefix from own server
     const fastrtps::rtps::GuidPrefix_t server_guid_prefix_;
@@ -458,15 +528,23 @@ protected:
     //! List of GUID prefixes of the remote servers
     std::vector<fastrtps::rtps::GuidPrefix_t> servers_;
 
-    // The number of local servers known by the database
-    uint16_t local_servers_count_ = 0;
-
     // The virtual topic associated with virtual writers and readers
     const std::string virtual_topic_ = "eprosima_server_virtual_topic";
 
     // Whether the database is enabled
     std::atomic<bool> enabled_;
 
+    // Wheter the database is restoring a backup
+    std::atomic<bool> processing_backup_;
+
+    // Wheter the database is persistent, so it must store every cache it arrives
+    bool is_persistent_;
+
+    // File to save every cacheChange that is updated to the ddb queues
+    std::string backup_file_name_;
+    // This file will keep open to write it fast every time a new cache arrives
+    // It needs a flush every time a new change is added
+    std::ofstream backup_file_;
 };
 
 

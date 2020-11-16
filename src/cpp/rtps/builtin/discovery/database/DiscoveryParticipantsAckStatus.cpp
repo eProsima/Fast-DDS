@@ -24,6 +24,9 @@
 
 #include "./DiscoveryParticipantsAckStatus.hpp"
 
+#include <json.hpp>
+#include "backup/SharedBackupFunctions.hpp"
+
 namespace eprosima {
 namespace fastdds {
 namespace rtps {
@@ -92,6 +95,15 @@ bool DiscoveryParticipantsAckStatus::is_acked_by_all() const
         }
     }
     return true;
+}
+
+void DiscoveryParticipantsAckStatus::to_json(
+        nlohmann::json& j) const
+{
+    for (auto it = relevant_participants_map_.begin(); it != relevant_participants_map_.end(); ++it)
+    {
+        j[object_to_string(it->first)] = it->second;
+    }
 }
 
 } /* namespace ddb */

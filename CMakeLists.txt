@@ -219,6 +219,7 @@ include(${PROJECT_SOURCE_DIR}/cmake/common/eprosima_libraries.cmake)
 eprosima_find_package(fastcdr REQUIRED)
 eprosima_find_thirdparty(Asio asio)
 eprosima_find_thirdparty(TinyXML2 tinyxml2)
+
 find_package(foonathan_memory REQUIRED)
 message(STATUS "Found foonathan_memory: ${foonathan_memory_DIR}")
 find_package(ThirdpartyBoost REQUIRED)
@@ -226,6 +227,8 @@ find_package(ThirdpartyBoost REQUIRED)
 if(ANDROID)
     eprosima_find_thirdparty(android-ifaddrs android-ifaddrs)
 endif()
+
+include_directories(thirdparty/nlohmann-json)
 
 ###############################################################################
 # Options
