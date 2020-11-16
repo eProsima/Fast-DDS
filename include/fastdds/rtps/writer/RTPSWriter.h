@@ -445,6 +445,8 @@ protected:
     std::unique_ptr<DataSharingNotifier> datasharing_notifier_;
     //! Data sharing domain
     uint64_t data_sharing_domain_;
+    //! Data sharing directory
+    std::string data_sharing_directory_;
 
     void add_guid(
             const GUID_t& remote_guid);

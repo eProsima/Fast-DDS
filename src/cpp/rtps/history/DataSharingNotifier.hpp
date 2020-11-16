@@ -20,6 +20,7 @@
 #define RTPS_HISTORY_DATASHARINGNOTIFIER_HPP
 
 #include "rtps/history/DataSharingNotification.hpp"
+#include <fastrtps/utils/collections/ResourceLimitedVector.hpp>
 
 #include <map>
 #include <memory>
@@ -33,7 +34,13 @@ class DataSharingNotifier
 
 public:
 
-    DataSharingNotifier() = default;
+    DataSharingNotifier(
+            ResourceLimitedContainerConfig limits,
+            std::string directory)
+        : shared_notifications_(limits)
+        , data_sharing_directory_(directory)
+    {
+    }
 
     ~DataSharingNotifier() = default;
 
@@ -61,11 +68,8 @@ public:
      * @param reader_guid GUID of the reader to check
      * @return Whether the reader is subscribed or not
      */
-    inline bool reader_is_subscribed(
-            const GUID_t& reader_guid) const
-    {
-        return shared_notifications_.find(reader_guid) != shared_notifications_.end();
-    }
+    bool reader_is_subscribed(
+            const GUID_t& reader_guid) const;
 
     /**
      * Notifies to all subscribed readers
@@ -84,7 +88,8 @@ public:
 
 protected:
 
-    std::map<GUID_t, std::shared_ptr<DataSharingNotification>> shared_notifications_;
+    ResourceLimitedVector<std::shared_ptr<DataSharingNotification>> shared_notifications_;
+    std::string data_sharing_directory_;
 };
 
 

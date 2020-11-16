@@ -117,7 +117,20 @@ void RTPSWriter::init(
         is_datasharing_compatible_ = true;
         std::stringstream ss(*data_sharing_domain);
         ss >> data_sharing_domain_;
-        datasharing_notifier_.reset(new DataSharingNotifier());
+
+        const std::string* data_sharing_directory = PropertyPolicyHelper::find_property(
+            att.endpoint.properties, "fastdds.datasharing_directory");
+        if (data_sharing_directory == NULL)
+        {
+            logInfo(RTPS_WRITER, "Data sharing compatible RTPSWriter with default shared directory");
+            data_sharing_directory_ = std::string();
+        }
+        else
+        {
+            data_sharing_directory_ = *data_sharing_directory;
+        }
+
+        datasharing_notifier_.reset(new DataSharingNotifier(att.matched_readers_allocation, data_sharing_directory_));
     }
 
     mp_history->mp_writer = this;
