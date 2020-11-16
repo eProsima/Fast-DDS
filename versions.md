@@ -1,3 +1,33 @@
+Version 2.1.0
+-------------
+
+This release adds the follwing **features**:
+* Support persistence for large data
+* Added support for `on_requested_incompatible_qos` and `on_offered_incompatible_qos`
+* SKIP_DEFAULT_XML environment variable
+* Added FORCE value to THIRDPARTY cmake options
+* New log consumer (StdOutErrConsumer)
+* Added methods to get qos defined in XML Profile
+* Support for persistence on TRANSIENT_LOCAL
+
+It also includes the following **improvements**:
+* Internal refactor for intra-process performance boost
+* Allow usage of foonathan/memory library built without debug tool
+* Large data support on performance tests
+* Reduced flakiness of several tests
+
+Some important **bugfixes** are also included:
+* Fixed behavior of several DDS API methods
+* Fixed interoperability issues with RTI connext
+* Fixed DLL export of some methods
+* Avoid redefinition of compiler defined macros
+* Fixed some intra-process related segmentation faults and deadlocks
+* Fixed large data payload protection issues on intra-process
+* Fixed C++17 and VS 2019 warnings
+* Fixed linker problems on some platforms
+* Fixed transient local retransmission after participant drop
+* Fixed assertion failure on persistent writers
+
 Version 2.0.2
 -------------
 
