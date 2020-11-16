@@ -29,10 +29,12 @@ namespace rtps {
 DataSharingListener::DataSharingListener(
         std::shared_ptr<DataSharingNotification> notification,
         const std::string& datasharing_pools_directory,
+        ResourceLimitedContainerConfig limits,
         std::function<void(CacheChange_t*)> callback)
     : notification_(notification)
     , is_running_(false)
     , callback_(callback)
+    , writer_pools_(limits)
     , datasharing_pools_directory_(datasharing_pools_directory)
 {
 }
@@ -109,11 +111,11 @@ void DataSharingListener::process_new_data ()
         while(has_new_payload)
         {
             CacheChange_t ch;
-            has_new_payload = it->second->get_next_unread_payload(ch);
+            has_new_payload = (*it)->get_next_unread_payload(ch);
 
             if (has_new_payload)
             {
-                logInfo(RTPS_READER, "New data found on writer " << it->first
+                logInfo(RTPS_READER, "New data found on writer " <<(*it)->writer()
                         << " with SN " << ch.sequenceNumber);
 
                 // TODO [ILG] process security attributes
@@ -131,7 +133,7 @@ void DataSharingListener::process_new_data ()
 #endif  // HAVE_SECURITY
 */
                 callback_(&ch);
-                it->second->release_payload(ch);
+                (*it)->release_payload(ch);
             }
         }
     }
@@ -142,7 +144,7 @@ bool DataSharingListener::add_datasharing_writer(
     const PoolConfig& pool_config)
 {
     // TODO [ULG] adding and removing must be protected
-    if (writer_pools_.find(writer_guid) != writer_pools_.end())
+    if (writer_is_matched(writer_guid))
     {
         logInfo(RTPS_READER, "Attempting to add existing datasharing writer " << writer_guid);
         return false;
@@ -150,7 +152,7 @@ bool DataSharingListener::add_datasharing_writer(
 
     std::shared_ptr<DataSharingPayloadPool> pool = DataSharingPayloadPool::get_reader_pool(pool_config);
     pool->init_shared_memory(writer_guid, datasharing_pools_directory_);
-    writer_pools_[writer_guid] = pool;
+    writer_pools_.push_back(pool);
 
     return true;
 }
@@ -158,15 +160,25 @@ bool DataSharingListener::add_datasharing_writer(
 bool DataSharingListener::remove_datasharing_writer(
     const GUID_t& writer_guid)
 {
-    auto it = writer_pools_.find(writer_guid);
-    if (it != writer_pools_.end())
-    {
-        writer_pools_.erase(it);
-        return true;
-    }
-    return false;
+    return writer_pools_.remove_if (
+            [writer_guid](const std::shared_ptr<DataSharingPayloadPool> pool)
+            {
+                return pool->writer() == writer_guid;
+            }
+    );
 }
 
+bool DataSharingListener::writer_is_matched(
+        const GUID_t& writer_guid) const
+{
+    auto it = std::find_if(writer_pools_.begin(), writer_pools_.end(),
+        [writer_guid](const std::shared_ptr<DataSharingPayloadPool> pool)
+        {
+            return pool->writer() == writer_guid;
+        }
+    );
+    return (it != writer_pools_.end());
+}
 
 }  // namespace rtps
 }  // namespace fastrtps

@@ -346,8 +346,11 @@ protected:
 
     /**
      * Creates the listener for the datasharing notifications
+     * 
+     * @param limits Resource limits for the number of matched datasharing writers
      */
-    void create_datasharing_listener();
+    void create_datasharing_listener(
+            ResourceLimitedContainerConfig limits);
 
     //!ReaderHistory
     ReaderHistory* mp_history;

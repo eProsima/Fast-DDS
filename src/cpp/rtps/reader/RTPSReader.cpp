@@ -135,7 +135,7 @@ void RTPSReader::init(
             data_sharing_directory_ = *data_sharing_directory;
         }
         
-        create_datasharing_listener();
+        create_datasharing_listener(att.matched_writers_allocation);
     }
 
     mp_history->mp_reader = this;
@@ -344,7 +344,7 @@ uint64_t RTPSReader::get_unread_count() const
     return total_unread_;
 }
 
-void RTPSReader::create_datasharing_listener()
+void RTPSReader::create_datasharing_listener(ResourceLimitedContainerConfig limits)
 {
     using std::placeholders::_1;
     std::shared_ptr<DataSharingNotification> notification =
@@ -352,6 +352,7 @@ void RTPSReader::create_datasharing_listener()
     datasharing_listener_.reset(new DataSharingListener(
             notification,
             data_sharing_directory_,
+            limits,
             std::bind(&RTPSReader::processDataMsg, this, _1 )));
     datasharing_listener_->start();
 }

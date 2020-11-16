@@ -87,6 +87,11 @@ bool DataSharingPayloadPool::full() const
     return descriptor_->free_payloads == 0;
 }
 
+const GUID_t& DataSharingPayloadPool::writer() const
+{
+    return segment_id_;
+}
+
 std::shared_ptr<DataSharingPayloadPool> DataSharingPayloadPool::get_reader_pool(
         const PoolConfig& config)
 {
