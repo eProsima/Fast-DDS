@@ -748,7 +748,7 @@ bool WLP::remove_local_writer(
                 min_automatic_ms_ = announcement_period;
             }
         }
-        automatic_liveliness_assertion_->update_interval(min_automatic_ms_);
+        automatic_liveliness_assertion_->update_interval_millisec(min_automatic_ms_);
     }
     else if (W->get_liveliness_kind() == MANUAL_BY_PARTICIPANT_LIVELINESS_QOS)
     {
@@ -790,7 +790,7 @@ bool WLP::remove_local_writer(
                 min_manual_by_participant_ms_ = announcement_period;
             }
         }
-        manual_liveliness_assertion_->update_interval(min_manual_by_participant_ms_);
+        manual_liveliness_assertion_->update_interval_millisec(min_manual_by_participant_ms_);
         return true;
     }
     else if (W->get_liveliness_kind() == MANUAL_BY_TOPIC_LIVELINESS_QOS)
