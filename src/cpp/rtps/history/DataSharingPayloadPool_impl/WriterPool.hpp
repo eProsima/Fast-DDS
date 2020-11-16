@@ -52,15 +52,15 @@ public:
 
         // Destroy each node in the buffer
         size_t aligned_size = DataSharingPayloadPool::aligned_node_size(max_data_size_);
-        for (PayloadNode* payload = payloads_;
-                payload < payloads_ + (pool_size_ * aligned_size);
+        for (octet* payload = payloads_buffer_;
+                payload < payloads_buffer_ + (pool_size_ * aligned_size);
                 payload += aligned_size)
         {
-            payload->~PayloadNode();
+            reinterpret_cast<PayloadNode*>(payload)->~PayloadNode();
         }
 
         // Free the buffer
-        segment_->get().deallocate(payloads_);
+        segment_->get().deallocate(payloads_buffer_);
 
         // Free the descriptor
         segment_->get().destroy<PoolDescriptor>("descriptor");
@@ -203,22 +203,23 @@ public:
             // Alloc the memory for the pool
             // Cannot use 'construct' because we need to reserve extra space for the data,
             // which is not in considered in sizeof(PayloadNode).
-            payloads_ = static_cast<PayloadNode*>(segment_->get().allocate(size_for_payloads_buffer));
+            payloads_buffer_ = static_cast<octet*>(segment_->get().allocate(size_for_payloads_buffer));
 
             // Initialize each node in the buffer
-            octet* payload = reinterpret_cast<octet*>(payloads_);
+            octet* payload = static_cast<octet*>(payloads_buffer_);
+
             for (uint32_t i = 0; i <= pool_size_; ++i)
             {
                 new (payload) PayloadNode();
-                payload += aligned_payload_size;
+                payload += (ptrdiff_t)aligned_payload_size;
             }
 
             //Alloc the memory for the descriptor
             descriptor_ = segment_->get().construct<PoolDescriptor>("descriptor")();
 
             // Initialize the data in the descriptor
-            descriptor_->payloads_base = segment_->get_offset_from_address(payloads_);
-            descriptor_->payloads_limit = segment_->get_offset_from_address(payloads_ + size_for_payloads_buffer);
+            descriptor_->payloads_base = segment_->get_offset_from_address(payloads_buffer_);
+            descriptor_->payloads_limit = segment_->get_offset_from_address(payloads_buffer_ + size_for_payloads_buffer);
             descriptor_->first_free_payload = descriptor_->payloads_base;
             descriptor_->first_used_payload = descriptor_->payloads_base;
             descriptor_->free_payloads = pool_size_;

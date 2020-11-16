@@ -341,7 +341,7 @@ protected:
     std::unique_ptr<Segment> segment_;    //< Shared memory segment
     //eprosima::fastdds::rtps::RobustExclusiveLock segment_name_lock_;        //< Segment access lock
 
-    PayloadNode* payloads_;         //< Shared buffer of payloads
+    octet* payloads_buffer_;        //< Shared buffer of payloads
     PoolDescriptor* descriptor_;    //< Shared descriptor of the pool
 
 };
