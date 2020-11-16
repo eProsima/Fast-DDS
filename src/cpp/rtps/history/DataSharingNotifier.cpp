@@ -25,38 +25,52 @@ namespace rtps {
 bool DataSharingNotifier::add_reader(
             const GUID_t& reader_guid)
 {
-    if (shared_notifications_.find(reader_guid) != shared_notifications_.end())
+    if (reader_is_subscribed(reader_guid))
     {
         logInfo(RTPS_WRITER, "Attempting to add existing datasharing reader " << reader_guid);
         return false;
     }
 
-    auto notification = DataSharingNotification::open_notification(reader_guid);
-    shared_notifications_[reader_guid] = notification;
+    auto notification = DataSharingNotification::open_notification(reader_guid, data_sharing_directory_);
+    if (!shared_notifications_.push_back(notification))
+    {
+        logInfo(RTPS_WRITER, "Maximum number of matched data sharing readers reached. Fail to add reader " << reader_guid);
+        return false;
+    }
     return true;
 }
 
 bool DataSharingNotifier::remove_reader(
             const GUID_t& reader_guid)
 {
-    auto it = shared_notifications_.find(reader_guid);
-    if (it != shared_notifications_.end())
-    {
-        shared_notifications_[reader_guid].reset();
-        return true;
-    }
-    return false;
+    return shared_notifications_.remove_if (
+            [reader_guid](const std::shared_ptr<DataSharingNotification> notification)
+            {
+                return notification->reader() == reader_guid;
+            }
+    );
 }
 
 void DataSharingNotifier::notify()
 {
-    for (auto it : shared_notifications_)
+    for (auto it = shared_notifications_.begin(); it != shared_notifications_.end(); ++it)
     {
-        logInfo(RTPS_WRITER, "Notifying reader " << it.first);
-        it.second->notify();
+        logInfo(RTPS_WRITER, "Notifying reader " << (*it)->reader());
+        (*it)->notify();
     }
 }
 
+bool DataSharingNotifier::reader_is_subscribed(
+        const GUID_t& reader_guid) const
+{
+    auto it = std::find_if(shared_notifications_.begin(), shared_notifications_.end(),
+        [reader_guid](const std::shared_ptr<DataSharingNotification> notification)
+        {
+            return notification->reader() == reader_guid;
+        }
+    );
+    return (it != shared_notifications_.end());
+}
 
 }  // namespace rtps
 }  // namespace fastrtps

@@ -56,6 +56,14 @@ public:
         notification_->notification_cv.notify_all();
     }
 
+    /**
+     * Returns the GUID of the reader listening to the notifications
+     */
+    inline const GUID_t&  reader() const
+    {
+        return segment_id_;
+    }
+
     static std::shared_ptr<DataSharingNotification> create_notification(
             const GUID_t& reader_guid,
             const std::string& shared_dir = std::string());
@@ -113,7 +121,7 @@ protected:
             const std::string& shared_dir = std::string());
 
 
-    GUID_t segment_id_;         //< The ID of the segment
+    GUID_t segment_id_;         //< The ID of the segment is the GUID of the reader
     std::string segment_name_;  //< Segment name
 
     std::unique_ptr<Segment> segment_;  //< Shared memory segment
