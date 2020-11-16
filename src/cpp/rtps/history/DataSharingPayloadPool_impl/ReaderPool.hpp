@@ -129,7 +129,7 @@ public:
         }
 
         // Get the pool buffer
-        payloads_ = static_cast<PayloadNode*>(segment_->get_address_from_offset(descriptor_->payloads_base));
+        payloads_buffer_ = static_cast<octet*>(segment_->get_address_from_offset(descriptor_->payloads_base));
 
         // Set the reading pointer
         if (is_volatile_)
