@@ -25,8 +25,6 @@
 #include <fastdds/rtps/builtin/data/WriterProxyData.h>
 #include <fastdds/rtps/builtin/data/ReaderProxyData.h>
 
-#include <rtps/history/ITopicPayloadPool.h>
-
 namespace eprosima {
 namespace fastrtps {
 namespace rtps {
@@ -41,6 +39,7 @@ class HistoryAttributes;
 class ReaderAttributes;
 class WriterAttributes;
 class EDPListener;
+class ITopicPayloadPool;
 
 /**
  * Class EDPSimple, implements the Simple Endpoint Discovery Protocol defined in the RTPS specification.

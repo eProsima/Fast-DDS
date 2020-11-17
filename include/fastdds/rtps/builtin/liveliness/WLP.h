@@ -32,8 +32,6 @@
 #include <fastdds/rtps/builtin/data/WriterProxyData.h>
 #include <fastdds/rtps/builtin/data/ReaderProxyData.h>
 
-#include <rtps/history/ITopicPayloadPool.h>
-
 namespace eprosima {
 namespace fastrtps {
 namespace rtps {
@@ -52,6 +50,7 @@ class TimedEvent;
 class WLPListener;
 class WriterHistory;
 class WriterProxyData;
+class ITopicPayloadPool;
 
 /**
  * Class WLP that implements the Writer Liveliness Protocol described in the RTPS specification.

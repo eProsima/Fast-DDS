@@ -32,8 +32,6 @@
 #include <fastrtps/utils/collections/ResourceLimitedVector.hpp>
 #include <fastdds/rtps/participant/ParticipantDiscoveryInfo.h>
 
-#include <rtps/history/ITopicPayloadPool.h>
-
 namespace eprosima {
 
 namespace fastdds {
@@ -74,6 +72,7 @@ class ParticipantProxyData;
 class ReaderListener;
 class PDPListener;
 class PDPServerListener;
+class ITopicPayloadPool;
 
 /**
  * Abstract class PDP that implements the basic interfaces for all Participant Discovery implementations
