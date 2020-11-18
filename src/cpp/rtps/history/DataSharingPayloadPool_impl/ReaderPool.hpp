@@ -64,8 +64,6 @@ public:
 
         if (data_owner == this)
         {
-            PayloadNode::reference(data.data);
-
             cache_change.serializedPayload.data = data.data;
             cache_change.serializedPayload.length = data.length;
             cache_change.serializedPayload.max_size = data.length;
@@ -80,7 +78,6 @@ public:
         }
 
         // `data.data` must be received from shared memory
-        PayloadNode::reference(data.data);
         cache_change.serializedPayload = data;
         cache_change.payload_owner(this);
         data_owner = this;
@@ -91,8 +88,6 @@ public:
             CacheChange_t& cache_change)
     {
         assert(cache_change.payload_owner() == this);
-
-        PayloadNode::dereference(cache_change.serializedPayload.data);
 
         return DataSharingPayloadPool::release_payload(cache_change);
     }
@@ -151,9 +146,7 @@ bool get_next_unread_payload(
     if (next_payload_ != end())
     {
         PayloadNode* payload = static_cast<PayloadNode*>(segment_->get_address_from_offset(next_payload_));
-        payload->reference();
 
-        // TODO [ILG]:We must handle the endian here
         cache_change.serializedPayload.data = payload->data();
         cache_change.serializedPayload.max_size = payload->data_length();
         cache_change.serializedPayload.length = payload->data_length();

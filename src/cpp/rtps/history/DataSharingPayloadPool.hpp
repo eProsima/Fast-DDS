@@ -114,8 +114,7 @@ protected:
         public:
 
             PayloadNodeMetaData()
-                : reference_counter(0)
-                , status(fastrtps::rtps::ChangeKind_t::ALIVE)
+                : status(fastrtps::rtps::ChangeKind_t::ALIVE)
                 , data_length(0)
                 , sequence_number(c_SequenceNumber_Unknown)
                 , writer_GUID(c_Guid_Unknown)
@@ -124,10 +123,6 @@ protected:
             }
 
             ~PayloadNodeMetaData() = default;
-
-
-            // Reference counter for this payload
-            std::atomic<uint32_t> reference_counter;
 
             // writer/instance status
             alignas(2) uint8_t status;
@@ -167,7 +162,6 @@ protected:
 
         void reset()
         {
-            metadata_.reference_counter.store(0);
             metadata_.status = fastrtps::rtps::ChangeKind_t::ALIVE;
             metadata_.data_length = 0;
             metadata_.sequence_number = c_SequenceNumber_Unknown;
@@ -273,28 +267,6 @@ protected:
                 fastrtps::rtps::SampleIdentity identity)
         {
             metadata_.related_sample_identity = identity;
-        }
-
-        void reference()
-        {
-            metadata_.reference_counter.fetch_add(1, std::memory_order_relaxed);
-        }
-
-        bool dereference()
-        {
-            return (metadata_.reference_counter.fetch_sub(1, std::memory_order_acq_rel) == 1);
-        }
-
-        static void reference(
-                octet* data)
-        {
-            PayloadNode::get_from_data(data)->reference();
-        }
-
-        static bool dereference(
-                octet* data)
-        {
-            return PayloadNode::get_from_data(data)->dereference();
         }
 
 

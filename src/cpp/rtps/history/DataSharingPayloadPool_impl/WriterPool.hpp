@@ -78,7 +78,6 @@ public:
         PayloadNode* payload = static_cast<PayloadNode*>(
                 segment_->get_address_from_offset(descriptor_->first_free_payload));
         descriptor_->first_free_payload = advance(descriptor_->first_free_payload);
-        payload->reference();
         --descriptor_->free_payloads;
 
         cache_change.serializedPayload.data = payload->data();
@@ -98,8 +97,6 @@ public:
 
         if (data_owner == this)
         {
-            PayloadNode::reference(data.data);
-
             cache_change.serializedPayload.data = data.data;
             cache_change.serializedPayload.length = data.length;
             cache_change.serializedPayload.max_size = data.length;
@@ -120,7 +117,6 @@ public:
                 {
                     data_owner = this;
                     data.data = cache_change.serializedPayload.data;
-                    PayloadNode::reference(data.data);
                 }
 
                 return true;
@@ -145,13 +141,6 @@ public:
         PayloadNode* payload = PayloadNode::get_from_data(cache_change.serializedPayload.data);
         assert(segment_->get_offset_from_address(payload) == descriptor_->first_used_payload);
 
-        // The writer should always be the last to release the payload
-        bool is_released_by_all = payload->dereference();
-        if (!is_released_by_all)
-        {
-            logError(HISTORY_DATASHARING_PAYLOADPOOL,
-                "Writer releasing a payload with active references in segment " << segment_name_);
-        }
         payload->reset();
         descriptor_->first_used_payload = advance(descriptor_->first_used_payload);
         ++descriptor_->free_payloads;
