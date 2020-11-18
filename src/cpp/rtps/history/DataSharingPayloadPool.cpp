@@ -92,6 +92,13 @@ const GUID_t& DataSharingPayloadPool::writer() const
     return segment_id_;
 }
 
+bool DataSharingPayloadPool::check_sequence_number(
+        octet* data, SequenceNumber_t sn)
+{
+    return (PayloadNode::get_from_data(data)->sequence_number() == sn);
+}
+
+
 std::shared_ptr<DataSharingPayloadPool> DataSharingPayloadPool::get_reader_pool(
         const PoolConfig& config,
         bool is_volatile)

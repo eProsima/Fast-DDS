@@ -104,6 +104,8 @@ public:
 
     const GUID_t& writer() const;
 
+    static bool check_sequence_number(octet* data, SequenceNumber_t sn);
+
 protected:
 
     class alignas(8) PayloadNode
@@ -162,9 +164,9 @@ protected:
 
         void reset()
         {
+            metadata_.sequence_number = c_SequenceNumber_Unknown;
             metadata_.status = fastrtps::rtps::ChangeKind_t::ALIVE;
             metadata_.data_length = 0;
-            metadata_.sequence_number = c_SequenceNumber_Unknown;
             metadata_.writer_GUID = c_Guid_Unknown;
             metadata_.instance_handle = c_InstanceHandle_Unknown;
             metadata_.related_sample_identity = fastrtps::rtps::SampleIdentity();

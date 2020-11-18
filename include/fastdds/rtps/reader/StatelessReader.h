@@ -239,6 +239,11 @@ private:
     bool writer_has_manual_liveliness(
             const GUID_t& guid);
 
+    void remove_changes_from(
+            const GUID_t& writerGUID,
+            bool is_payload_pool_lost = false);
+
+
     //!List of GUID_t os matched writers.
     //!Is only used in the Discovery, to correctly notify the user using SubscriptionListener::onSubscriptionMatched();
     ResourceLimitedVector<RemoteWriterInfo_t> matched_writers_;

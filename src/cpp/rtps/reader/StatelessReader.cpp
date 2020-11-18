@@ -164,6 +164,7 @@ bool StatelessReader::matched_writer_remove(
         {
             found = true;
             logInfo(RTPS_READER, "Data sharing writer " << writer_guid << " removed from " << m_guid.entityId);
+            remove_changes_from(writer_guid, true);
         }
     }
     if (!found)
@@ -242,14 +243,62 @@ bool StatelessReader::change_received(
     return false;
 }
 
+void StatelessReader::remove_changes_from(
+        const GUID_t& writerGUID,
+        bool is_payload_pool_lost)
+{
+    std::lock_guard<RecursiveTimedMutex> guard(mp_mutex);
+    std::vector<CacheChange_t*> toremove;
+    for (std::vector<CacheChange_t*>::iterator it = mp_history->changesBegin();
+            it != mp_history->changesEnd(); ++it)
+    {
+        if ((*it)->writerGUID == writerGUID)
+        {
+            toremove.push_back((*it));
+        }
+    }
+
+    for (std::vector<CacheChange_t*>::iterator it = toremove.begin();
+            it != toremove.end(); ++it)
+    {
+        logInfo(RTPS_READER,
+                "Removing change " << (*it)->sequenceNumber << " from " << (*it)->writerGUID);
+        if(is_payload_pool_lost)
+        {
+            (*it)->serializedPayload.data = nullptr;
+            (*it)->payload_owner(nullptr);
+        }
+        mp_history->remove_change(*it);
+    }
+}
+
 bool StatelessReader::nextUntakenCache(
         CacheChange_t** change,
         WriterProxy** /*wpout*/)
 {
     std::lock_guard<RecursiveTimedMutex> guard(mp_mutex);
-    bool ret = mp_history->get_min_change(change);
+    bool found = false;
 
-    if (ret)
+    while (mp_history->get_min_change(change))
+    {
+        if (datasharing_listener_->writer_is_matched((*change)->writerGUID))
+        {
+            //Check if the payload is dirty
+            if (DataSharingPayloadPool::check_sequence_number(
+                    (*change)->serializedPayload.data, (*change)->sequenceNumber))
+            {
+                found = true;
+                break;
+            }
+
+            logWarning(RTPS_READER,
+                    "Removing change " << (*change)->sequenceNumber << " from " << (*change)->writerGUID <<
+                    " because it was overriden byt the writer");
+            mp_history->remove_change(*change);
+        }
+    }
+
+    if (found)
     {
         if (!(*change)->isRead)
         {
@@ -262,7 +311,7 @@ bool StatelessReader::nextUntakenCache(
         (*change)->isRead = true;
     }
 
-    return ret;
+    return found;
 }
 
 bool StatelessReader::nextUnreadCache(
@@ -271,6 +320,7 @@ bool StatelessReader::nextUnreadCache(
 {
     std::lock_guard<RecursiveTimedMutex> guard(mp_mutex);
     bool found = false;
+    std::vector<CacheChange_t*> toremove;
     std::vector<CacheChange_t*>::iterator it;
 
     for (it = mp_history->changesBegin();
@@ -278,8 +328,18 @@ bool StatelessReader::nextUnreadCache(
     {
         if (!(*it)->isRead)
         {
-            found = true;
-            break;
+            if (datasharing_listener_->writer_is_matched((*it)->writerGUID))
+            {
+                //Check if the payload is dirty
+                if (DataSharingPayloadPool::check_sequence_number(
+                        (*it)->serializedPayload.data, (*it)->sequenceNumber))
+                {
+                    found = true;
+                    break;
+                }
+            }
+
+            toremove.push_back((*it));
         }
     }
 
@@ -291,12 +351,22 @@ bool StatelessReader::nextUnreadCache(
             --total_unread_;
         }
         (*change)->isRead = true;
-
-        return true;
+    }
+    else
+    {
+        logInfo(RTPS_READER, "No Unread elements left");
     }
 
-    logInfo(RTPS_READER, "No Unread elements left");
-    return false;
+    for (std::vector<CacheChange_t*>::iterator it = toremove.begin();
+            it != toremove.end(); ++it)
+    {
+        logWarning(RTPS_READER,
+                "Removing change " << (*it)->sequenceNumber << " from " << (*it)->writerGUID <<
+                " because it was overriden byt the writer");
+        mp_history->remove_change(*it);
+    }
+
+    return found;
 }
 
 bool StatelessReader::change_removed_by_history(
@@ -363,7 +433,7 @@ bool StatelessReader::processDataMsg(
         if (!change_received(change_to_add))
         {
             logInfo(RTPS_MSG_IN, IDSTRING "MessageReceiver not add change " << change_to_add->sequenceNumber);
-            payload_pool_->release_payload(*change_to_add);
+            change_to_add->payload_owner()->release_payload(*change_to_add);
             change_pool_->release_cache(change_to_add);
         }
     }

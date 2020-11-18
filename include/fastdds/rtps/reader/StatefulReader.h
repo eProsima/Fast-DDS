@@ -292,6 +292,10 @@ private:
     void NotifyChanges(
             WriterProxy* wp);
 
+    void remove_changes_from(
+            const GUID_t& writerGUID,
+            bool is_payload_pool_lost = false);
+
     //! Acknack Count
     uint32_t acknack_count_;
     //! NACKFRAG Count
