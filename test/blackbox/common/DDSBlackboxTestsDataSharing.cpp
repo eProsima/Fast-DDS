@@ -58,3 +58,43 @@ TEST(DDSDataSharing, BasicCommunication)
     reader.block_for_all();
 }
 
+
+TEST(DDSDataSharing, TransientReader)
+{
+    PubSubReader<FixedSizedType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<FixedSizedType> writer(TEST_TOPIC_NAME);
+
+    constexpr int writer_history_depth = 2;
+    constexpr int writer_sent_data = 4;
+
+    writer.history_depth(writer_history_depth)
+            .datasharing_force("Unused. change when ready")
+            .reliability(BEST_EFFORT_RELIABILITY_QOS).init();
+
+    ASSERT_TRUE(writer.isInitialized());
+
+    // Send the data to fill the history and overwrite old changes
+    // The reader only receives the last changes
+    std::list<FixedSized> data = default_fixed_sized_data_generator(writer_sent_data);
+    std::list<FixedSized> received_data;
+    auto data_it = data.begin();
+    std::advance(data_it, writer_sent_data - writer_history_depth);
+    std::copy(data_it, data.end(), std::back_inserter(received_data));
+
+    writer.send(data);
+    ASSERT_TRUE(data.empty());
+
+    reader.history_depth(writer_sent_data)
+            .datasharing_force("Unused. change when ready")
+            .reliability(BEST_EFFORT_RELIABILITY_QOS)
+            .durability_kind(TRANSIENT_LOCAL_DURABILITY_QOS).init();
+
+    ASSERT_TRUE(reader.isInitialized());
+
+    writer.wait_discovery();
+    reader.wait_discovery();
+
+    reader.startReception(received_data);
+    reader.block_for_all();
+}
+
