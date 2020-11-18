@@ -14,8 +14,10 @@
 
 #include <fastrtps/xmlparser/XMLParser.h>
 #include <fastrtps/xmlparser/XMLTree.h>
+#include <fastrtps/xmlparser/XMLProfileManager.h>
 #include <fastdds/dds/log/Log.hpp>
 #include <fastrtps/utils/IPLocator.h>
+#include "mock/XMLMockConsumer.h"
 
 #include <tinyxml2.h>
 #include <gtest/gtest.h>
@@ -31,6 +33,12 @@ using eprosima::fastrtps::xmlparser::DataNode;
 using eprosima::fastrtps::xmlparser::NodeType;
 using eprosima::fastrtps::xmlparser::XMLP_ret;
 using eprosima::fastrtps::xmlparser::XMLParser;
+using eprosima::fastrtps::xmlparser::up_participant_t;
+using eprosima::fastrtps::xmlparser::up_node_participant_t;
+using eprosima::fastrtps::xmlparser::node_participant_t;
+using eprosima::fastrtps::xmlparser::sp_transport_t;
+
+using eprosima::fastrtps::xmlparser::XMLProfileManager;
 
 class XMLParserTests : public ::testing::Test
 {
@@ -44,29 +52,6 @@ public:
     {
         eprosima::fastdds::dds::Log::Reset();
         eprosima::fastdds::dds::Log::KillThread();
-    }
-
-    bool get_participant_attributes(
-            std::unique_ptr<BaseNode>& root,
-            ParticipantAttributes& participant_atts)
-    {
-        const std::string name_attribute{"profile_name"};
-        const std::string profile_name{"missing_profile"};
-        bool participant_profile = false;
-        for (const auto& profile : root->getChildren())
-        {
-            if (profile->getType() == NodeType::PARTICIPANT)
-            {
-                auto data_node = dynamic_cast<DataNode<ParticipantAttributes>*>(profile.get());
-                auto search    = data_node->getAttributes().find(name_attribute);
-                if ((search != data_node->getAttributes().end()) && (search->second == profile_name))
-                {
-                    participant_atts    = *data_node->get();
-                    participant_profile = true;
-                }
-            }
-        }
-        return participant_profile;
     }
 
 };
@@ -95,6 +80,14 @@ class XMLParserTest : public XMLParser{
     {
         return getXMLLocatorList(elem, locatorList, ident);
     }
+
+    static XMLP_ret fillDataNode_wrapper(
+        tinyxml2::XMLElement* p_profile,
+        DataNode<ParticipantAttributes>& participant_node)
+    {
+        return fillDataNode(p_profile, participant_node);
+    }
+    
 
 };
 
@@ -148,7 +141,6 @@ TEST_F(XMLParserTests, getXMLLifespanQos)
 
 TEST_F(XMLParserTests, getXMLDisablePositiveAcksQos)
 {
-
     uint8_t ident = 1;
     WriterQos wqos;
     ReaderQos rqos;
@@ -197,7 +189,43 @@ TEST_F(XMLParserTests, getXMLDisablePositiveAcksQos)
     EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::getXMLWriterQosPolicies_wrapper(titleElement,wqos,ident));
 
 }
+/*
+TEST_F(XMLParserTests, unsuportedQos)
+{
+    uint8_t ident = 1;
+    WriterQos wqos;
+    ReaderQos rqos;
+    tinyxml2::XMLDocument xml_doc;
+    tinyxml2::XMLElement* titleElement;
 
+    // Parametrized XML
+    const char* xml_p =
+    "\
+    <qos>\
+        <durabilityService></durabilityService>\
+        <userData></userData>\
+        <timeBasedFilter></timeBasedFilter>\
+        <ownership></ownership>\
+        <ownershipStrength></ownershipStrength>\
+        <></>\
+        <></>\
+        <></>\
+        <></>\
+        <></>\
+        <></>\
+        <></>\
+    </qos>\
+    ";
+    char xml[500];
+
+    // Valid XML
+    sprintf(xml, xml_p, "true", "5", "0", "");
+    ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+    titleElement = xml_doc.RootElement();
+    EXPECT_EQ(XMLP_ret::XML_OK, XMLParserTest::getXMLWriterQosPolicies_wrapper(titleElement,wqos,ident));
+    EXPECT_EQ(XMLP_ret::XML_OK, XMLParserTest::getXMLReaderQosPolicies_wrapper(titleElement,rqos,ident));
+}
+*/
 TEST_F(XMLParserTests, getXMLLocatorUDPv6)
 {
 
@@ -344,5 +372,69 @@ TEST_F(XMLParserTests, getXMLLocatorTCPv6)
     ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
     titleElement = xml_doc.RootElement();
     EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::getXMLLocatorList_wrapper(titleElement,list,ident));
+
+}
+
+TEST_F(XMLParserTests, getXMLPropertiesPolicy)
+{  
+
+    up_participant_t participant_atts{new ParticipantAttributes};
+    up_node_participant_t participant_node{new node_participant_t{NodeType::PARTICIPANT, std::move(participant_atts)}};
+
+    uint8_t ident = 1;
+    LocatorList_t list;
+    tinyxml2::XMLDocument xml_doc;
+    tinyxml2::XMLElement* titleElement;
+
+    const char* xml_profile =
+            "\
+        <profiles>\
+            <transport_descriptors>\
+                <transport_descriptor>\
+                    <transport_id>ExampleTransportId1</transport_id>\
+                    <type>UDPv6</type>\
+                </transport_descriptor>\
+            </transport_descriptors>\
+        </profiles>\
+    ";
+    tinyxml2::XMLDocument xml_profile_doc;
+    ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_profile_doc.Parse(xml_profile));
+    ASSERT_EQ(xmlparser::XMLP_ret::XML_ERROR, xmlparser::XMLProfileManager::loadXMLNode(xml_profile_doc));
+
+
+    // Parametrized XML
+    const char* xml_p =
+    "\
+    <participant>\
+        <rtps>\
+            <userTransports>\
+                <transport_id>%s</transport_id>\
+                %s\
+            </userTransports>\
+        </rtps>\
+    </participant>\
+    ";
+    char xml[500];
+
+    // Valid XML
+    sprintf(xml, xml_p, "ExampleTransportId1", "");
+
+    ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+    titleElement = xml_doc.RootElement();
+    EXPECT_EQ(XMLP_ret::XML_OK, XMLParserTest::fillDataNode_wrapper(titleElement,*participant_node));
+    auto ret = participant_node.get()->getAttributes();
+
+
+    // Missing data
+    sprintf(xml, xml_p, "", "","", "");
+    ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+    titleElement = xml_doc.RootElement();
+    EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::fillDataNode_wrapper(titleElement,*participant_node));
+
+    // Invalid element
+    sprintf(xml, xml_p, "ExampleTransportId1", "<bad_element></bad_element>");
+    ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+    titleElement = xml_doc.RootElement();
+    EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::fillDataNode_wrapper(titleElement,*participant_node));
 
 }
