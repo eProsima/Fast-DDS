@@ -38,6 +38,8 @@ public:
 	bool getKey(void*data, eprosima::fastrtps::rtps::InstanceHandle_t* ihandle, bool force_md5);
 	void* createData();
 	void deleteData(void* data);
+    bool is_bounded() const;
+    bool is_plain() const;
 };
 
 

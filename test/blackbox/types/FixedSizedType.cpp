@@ -88,3 +88,14 @@ bool FixedSizedType::getKey(void* /*data*/, InstanceHandle_t* /*ihandle*/, bool 
 {
     return false;
 }
+
+bool FixedSizedType::is_bounded() const
+{
+    return true;
+}
+
+bool FixedSizedType::is_plain() const
+{
+    return true;
+}
+

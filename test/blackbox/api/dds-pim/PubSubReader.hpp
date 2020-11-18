@@ -1059,6 +1059,27 @@ public:
         return *this;
     }
 
+    PubSubReader& datasharing_disable()
+    {
+        datareader_qos_.data_sharing().disable();
+        return *this;
+    }
+
+    PubSubReader& datasharing_auto(
+            uint64_t domain_id = 0)
+    {
+        datareader_qos_.data_sharing().automatic(domain_id);
+        return *this;
+    }
+
+    PubSubReader& datasharing_force(
+            const std::string directory,
+            uint64_t domain_id = 0)
+    {
+        datareader_qos_.data_sharing().force(directory, domain_id);
+        return *this;
+    }
+
     bool update_partition(
             const std::string& partition)
     {
