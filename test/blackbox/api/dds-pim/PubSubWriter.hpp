@@ -1111,6 +1111,27 @@ public:
         return *this;
     }
 
+    PubSubWriter& datasharing_disable()
+    {
+        datawriter_qos_.data_sharing().disable();
+        return *this;
+    }
+
+    PubSubWriter& datasharing_auto(
+            uint64_t domain_id = 0)
+    {
+        datawriter_qos_.data_sharing().automatic(domain_id);
+        return *this;
+    }
+
+    PubSubWriter& datasharing_force(
+            const std::string directory,
+            uint64_t domain_id = 0)
+    {
+        datawriter_qos_.data_sharing().force(directory, domain_id);
+        return *this;
+    }
+
     const std::string& topic_name() const
     {
         return topic_name_;
