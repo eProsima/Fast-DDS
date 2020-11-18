@@ -88,6 +88,14 @@ class XMLParserTest : public XMLParser{
     {
         return getXMLReaderQosPolicies(elem, qos, ident);
     }
+    static XMLP_ret getXMLLocatorList_wrapper(
+        tinyxml2::XMLElement* elem,
+        LocatorList_t& locatorList,
+        uint8_t ident)
+    {
+        return getXMLLocatorList(elem, locatorList, ident);
+    }
+
 };
 
 TEST_F(XMLParserTests, getXMLLifespanQos)
@@ -194,50 +202,44 @@ TEST_F(XMLParserTests, getXMLLocatorUDPv6)
 {
 
     uint8_t ident = 1;
-    WriterQos wqos;
-    ReaderQos rqos;
+    LocatorList_t list;
     tinyxml2::XMLDocument xml_doc;
     tinyxml2::XMLElement* titleElement;
 
     // Parametrized XML
     const char* xml_p =
     "\
-    <qos>\
-        <disablePositiveAcks>\
-            <enabled>%s</enabled>\
-            <duration>\
-                <sec>%s</sec>\
-                <nanosec>%s</nanosec>\
-            </duration>\
-            %s\
-        </disablePositiveAcks>\
-    </qos>\
+    <unicastLocatorList>\
+        <locator>\
+            <udpv6>\
+                <port>%s</port>\
+                <address>%s</address>\
+                %s\
+            </udpv6>\
+        </locator>\
+    </unicastLocatorList>\
     ";
     char xml[500];
 
     // Valid XML         
-    sprintf(xml, xml_p, "true", "5", "0", "");
+    sprintf(xml, xml_p, "8844", "::1", "");
     ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
     titleElement = xml_doc.RootElement();
-    EXPECT_EQ(XMLP_ret::XML_OK, XMLParserTest::getXMLWriterQosPolicies_wrapper(titleElement,wqos,ident));
-    EXPECT_EQ(XMLP_ret::XML_OK, XMLParserTest::getXMLReaderQosPolicies_wrapper(titleElement,rqos,ident));
-    EXPECT_EQ(wqos.m_disablePositiveACKs.enabled,true);
-    EXPECT_EQ(rqos.m_disablePositiveACKs.enabled,true);
-    EXPECT_EQ(wqos.m_disablePositiveACKs.duration.seconds,5);
-    EXPECT_EQ(wqos.m_disablePositiveACKs.duration.nanosec,0);
-    EXPECT_EQ(rqos.m_disablePositiveACKs.duration.seconds,5);
-    EXPECT_EQ(rqos.m_disablePositiveACKs.duration.nanosec,0);
+    EXPECT_EQ(XMLP_ret::XML_OK, XMLParserTest::getXMLLocatorList_wrapper(titleElement,list,ident));
+    EXPECT_EQ(list.begin()->port, 8844);
+    EXPECT_EQ(list.begin()->address[15], 1);
+    EXPECT_EQ(list.begin()->kind, 2);
 
     // Missing data
-    sprintf(xml, xml_p, "", "", "", "");
+    sprintf(xml, xml_p, "", "", "");
     ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
     titleElement = xml_doc.RootElement();
-    EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::getXMLWriterQosPolicies_wrapper(titleElement,wqos,ident));
+    EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::getXMLLocatorList_wrapper(titleElement,list,ident));
 
     // Invalid element
-    sprintf(xml, xml_p, "true", "5", "0", "<bad_element></bad_element>");
+    sprintf(xml, xml_p, "8844", "::1", "<bad_element></bad_element>");
     ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
     titleElement = xml_doc.RootElement();
-    EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::getXMLWriterQosPolicies_wrapper(titleElement,wqos,ident));
+    EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::getXMLLocatorList_wrapper(titleElement,list,ident));
 
 }
