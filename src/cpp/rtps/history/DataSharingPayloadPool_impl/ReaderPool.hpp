@@ -57,11 +57,9 @@ public:
             IPayloadPool*& data_owner,
             CacheChange_t& cache_change) override
     {
-        assert(cache_change.writerGUID != GUID_t::unknown());
-        assert(cache_change.sequenceNumber != SequenceNumber_t::unknown());
         assert(data_owner == this || data_owner == nullptr);
-        assert(cache_change.writerGUID == segment_id_);
 
+        assert(data_owner == this);
         if (data_owner == this)
         {
             cache_change.serializedPayload.data = data.data;
@@ -71,17 +69,7 @@ public:
             return true;
         }
 
-        if (cache_change.writerGUID != segment_id_)
-        {
-            // Can only point to payloads allocated by someone else
-            return false;
-        }
-
-        // `data.data` must be received from shared memory
-        cache_change.serializedPayload = data;
-        cache_change.payload_owner(this);
-        data_owner = this;
-        return true;
+        return false;
     }
 
     bool release_payload(
@@ -143,21 +131,37 @@ bool get_next_unread_payload(
         CacheChange_t& cache_change) override
 {
     // TODO [ILG] access to next_payload is protected?
-    if (next_payload_ != end())
+    while (next_payload_ != end())
     {
         PayloadNode* payload = static_cast<PayloadNode*>(segment_->get_address_from_offset(next_payload_));
+
+        // The SN is the first thing to be invalidated on the writer
+        cache_change.sequenceNumber = payload->sequence_number();
+        if (cache_change.sequenceNumber == c_SequenceNumber_Unknown)
+        {
+            // Reset by the writer. Discard and continue
+            next_payload_ = advance(next_payload_);
+            continue;
+        }
 
         cache_change.serializedPayload.data = payload->data();
         cache_change.serializedPayload.max_size = payload->data_length();
         cache_change.serializedPayload.length = payload->data_length();
-        cache_change.payload_owner(this);
 
         cache_change.kind = static_cast<ChangeKind_t>(payload->status());
         cache_change.writerGUID = payload->writer_GUID();
         cache_change.instanceHandle = payload->instance_handle();
-        cache_change.sequenceNumber = payload->sequence_number();
         cache_change.sourceTimestamp = payload->source_timestamp();
         cache_change.write_params.sample_identity(payload->related_sample_identity());
+
+        cache_change.payload_owner(this);
+
+        if (payload->sequence_number() != cache_change.sequenceNumber)
+        {
+            // Overriden while retrieving. Discard and continue
+            next_payload_ = advance(next_payload_);
+            continue;
+        }
 
         next_payload_ = advance(next_payload_);
         return true;

@@ -268,7 +268,8 @@ bool StatefulReader::matched_writer_remove(
             if (datasharing_listener_->remove_datasharing_writer(writer_guid))
             {
                 found = true;
-                logInfo(RTPS_READER, "Dsta sharing writer " << writer_guid << " removed from " << m_guid.entityId);
+                logInfo(RTPS_READER, "Data sharing writer " << writer_guid << " removed from " << m_guid.entityId);
+                remove_changes_from(writer_guid, true);
             }
         }
         
@@ -457,7 +458,7 @@ bool StatefulReader::processDataMsg(
             if (!change_received(change_to_add, pWP))
             {
                 logInfo(RTPS_MSG_IN, IDSTRING "MessageReceiver not add change " << change_to_add->sequenceNumber);
-                payload_pool_->release_payload(*change_to_add);
+                change_to_add->payload_owner()->release_payload(*change_to_add);
                 change_pool_->release_cache(change_to_add);
             }
         }
@@ -874,6 +875,35 @@ void StatefulReader::NotifyChanges(
     }
 }
 
+void StatefulReader::remove_changes_from(
+        const GUID_t& writerGUID,
+        bool is_payload_pool_lost)
+{
+    std::lock_guard<RecursiveTimedMutex> guard(mp_mutex);
+    std::vector<CacheChange_t*> toremove;
+    for (std::vector<CacheChange_t*>::iterator it = mp_history->changesBegin();
+            it != mp_history->changesEnd(); ++it)
+    {
+        if ((*it)->writerGUID == writerGUID)
+        {
+            toremove.push_back((*it));
+        }
+    }
+
+    for (std::vector<CacheChange_t*>::iterator it = toremove.begin();
+            it != toremove.end(); ++it)
+    {
+        logInfo(RTPS_READER,
+                "Removing change " << (*it)->sequenceNumber << " from " << (*it)->writerGUID);
+        if(is_payload_pool_lost)
+        {
+            (*it)->serializedPayload.data = nullptr;
+            (*it)->payload_owner(nullptr);
+        }
+        mp_history->remove_change(*it);
+    }
+}
+
 bool StatefulReader::nextUntakenCache(
         CacheChange_t** change,
         WriterProxy** wpout)
@@ -905,7 +935,12 @@ bool StatefulReader::nextUntakenCache(
         {
             if (datasharing_listener_->writer_is_matched((*it)->writerGUID))
             {
-                takeok = true;
+                //Check if the payload is dirty
+                if (DataSharingPayloadPool::check_sequence_number(
+                        (*it)->serializedPayload.data, (*it)->sequenceNumber))
+                {
+                    takeok = true;
+                }
             }
         }
         
@@ -983,7 +1018,12 @@ bool StatefulReader::nextUnreadCache(
         {
             if (datasharing_listener_->writer_is_matched((*it)->writerGUID))
             {
-                readok = true;
+                //Check if the payload is dirty
+                if (DataSharingPayloadPool::check_sequence_number(
+                        (*it)->serializedPayload.data, (*it)->sequenceNumber))
+                {
+                    readok = true;
+                }
             }
         }
 
