@@ -90,8 +90,8 @@ class XMLParserTest : public XMLParser{
     }
 };
 
-TEST_F(XMLParserTests, getXMLLifespanQos){
-
+TEST_F(XMLParserTests, getXMLLifespanQos)
+{
     uint8_t ident = 1;
     WriterQos wqos;
     ReaderQos rqos;
@@ -113,7 +113,7 @@ TEST_F(XMLParserTests, getXMLLifespanQos){
     ";
     char xml[500];
 
-    // Valid XML         
+    // Valid XML
     sprintf(xml, xml_p, "5", "0", "");
     ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
     titleElement = xml_doc.RootElement();
@@ -132,6 +132,110 @@ TEST_F(XMLParserTests, getXMLLifespanQos){
 
     // Invalid element
     sprintf(xml, xml_p, "5", "0", "<bad_element></bad_element>");
+    ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+    titleElement = xml_doc.RootElement();
+    EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::getXMLWriterQosPolicies_wrapper(titleElement,wqos,ident));
+
+}
+
+TEST_F(XMLParserTests, getXMLDisablePositiveAcksQos)
+{
+
+    uint8_t ident = 1;
+    WriterQos wqos;
+    ReaderQos rqos;
+    tinyxml2::XMLDocument xml_doc;
+    tinyxml2::XMLElement* titleElement;
+
+    // Parametrized XML
+    const char* xml_p =
+    "\
+    <qos>\
+        <disablePositiveAcks>\
+            <enabled>%s</enabled>\
+            <duration>\
+                <sec>%s</sec>\
+                <nanosec>%s</nanosec>\
+            </duration>\
+            %s\
+        </disablePositiveAcks>\
+    </qos>\
+    ";
+    char xml[500];
+
+    // Valid XML         
+    sprintf(xml, xml_p, "true", "5", "0", "");
+    ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+    titleElement = xml_doc.RootElement();
+    EXPECT_EQ(XMLP_ret::XML_OK, XMLParserTest::getXMLWriterQosPolicies_wrapper(titleElement,wqos,ident));
+    EXPECT_EQ(XMLP_ret::XML_OK, XMLParserTest::getXMLReaderQosPolicies_wrapper(titleElement,rqos,ident));
+    EXPECT_EQ(wqos.m_disablePositiveACKs.enabled,true);
+    EXPECT_EQ(rqos.m_disablePositiveACKs.enabled,true);
+    EXPECT_EQ(wqos.m_disablePositiveACKs.duration.seconds,5);
+    EXPECT_EQ(wqos.m_disablePositiveACKs.duration.nanosec,0);
+    EXPECT_EQ(rqos.m_disablePositiveACKs.duration.seconds,5);
+    EXPECT_EQ(rqos.m_disablePositiveACKs.duration.nanosec,0);
+
+    // Missing data
+    sprintf(xml, xml_p, "", "", "", "");
+    ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+    titleElement = xml_doc.RootElement();
+    EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::getXMLWriterQosPolicies_wrapper(titleElement,wqos,ident));
+
+    // Invalid element
+    sprintf(xml, xml_p, "true", "5", "0", "<bad_element></bad_element>");
+    ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+    titleElement = xml_doc.RootElement();
+    EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::getXMLWriterQosPolicies_wrapper(titleElement,wqos,ident));
+
+}
+
+TEST_F(XMLParserTests, getXMLLocatorUDPv6)
+{
+
+    uint8_t ident = 1;
+    WriterQos wqos;
+    ReaderQos rqos;
+    tinyxml2::XMLDocument xml_doc;
+    tinyxml2::XMLElement* titleElement;
+
+    // Parametrized XML
+    const char* xml_p =
+    "\
+    <qos>\
+        <disablePositiveAcks>\
+            <enabled>%s</enabled>\
+            <duration>\
+                <sec>%s</sec>\
+                <nanosec>%s</nanosec>\
+            </duration>\
+            %s\
+        </disablePositiveAcks>\
+    </qos>\
+    ";
+    char xml[500];
+
+    // Valid XML         
+    sprintf(xml, xml_p, "true", "5", "0", "");
+    ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+    titleElement = xml_doc.RootElement();
+    EXPECT_EQ(XMLP_ret::XML_OK, XMLParserTest::getXMLWriterQosPolicies_wrapper(titleElement,wqos,ident));
+    EXPECT_EQ(XMLP_ret::XML_OK, XMLParserTest::getXMLReaderQosPolicies_wrapper(titleElement,rqos,ident));
+    EXPECT_EQ(wqos.m_disablePositiveACKs.enabled,true);
+    EXPECT_EQ(rqos.m_disablePositiveACKs.enabled,true);
+    EXPECT_EQ(wqos.m_disablePositiveACKs.duration.seconds,5);
+    EXPECT_EQ(wqos.m_disablePositiveACKs.duration.nanosec,0);
+    EXPECT_EQ(rqos.m_disablePositiveACKs.duration.seconds,5);
+    EXPECT_EQ(rqos.m_disablePositiveACKs.duration.nanosec,0);
+
+    // Missing data
+    sprintf(xml, xml_p, "", "", "", "");
+    ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+    titleElement = xml_doc.RootElement();
+    EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::getXMLWriterQosPolicies_wrapper(titleElement,wqos,ident));
+
+    // Invalid element
+    sprintf(xml, xml_p, "true", "5", "0", "<bad_element></bad_element>");
     ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
     titleElement = xml_doc.RootElement();
     EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::getXMLWriterQosPolicies_wrapper(titleElement,wqos,ident));
