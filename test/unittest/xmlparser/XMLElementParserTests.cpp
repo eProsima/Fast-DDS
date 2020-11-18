@@ -171,7 +171,7 @@ TEST_F(XMLParserTests, getXMLDisablePositiveAcksQos)
     ";
     char xml[500];
 
-    // Valid XML         
+    // Valid XML
     sprintf(xml, xml_p, "true", "5", "0", "");
     ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
     titleElement = xml_doc.RootElement();
@@ -221,14 +221,14 @@ TEST_F(XMLParserTests, getXMLLocatorUDPv6)
     ";
     char xml[500];
 
-    // Valid XML         
+    // Valid XML
     sprintf(xml, xml_p, "8844", "::1", "");
     ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
     titleElement = xml_doc.RootElement();
     EXPECT_EQ(XMLP_ret::XML_OK, XMLParserTest::getXMLLocatorList_wrapper(titleElement,list,ident));
     EXPECT_EQ(list.begin()->port, 8844);
     EXPECT_EQ(list.begin()->address[15], 1);
-    EXPECT_EQ(list.begin()->kind, 2);
+    EXPECT_EQ(list.begin()->kind, LOCATOR_KIND_UDPv6);
 
     // Missing data
     sprintf(xml, xml_p, "", "", "");
@@ -238,6 +238,55 @@ TEST_F(XMLParserTests, getXMLLocatorUDPv6)
 
     // Invalid element
     sprintf(xml, xml_p, "8844", "::1", "<bad_element></bad_element>");
+    ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+    titleElement = xml_doc.RootElement();
+    EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::getXMLLocatorList_wrapper(titleElement,list,ident));
+
+}
+
+TEST_F(XMLParserTests, getXMLLocatorTCPv6)
+{
+
+    uint8_t ident = 1;
+    LocatorList_t list;
+    tinyxml2::XMLDocument xml_doc;
+    tinyxml2::XMLElement* titleElement;
+
+    // Parametrized XML
+    const char* xml_p =
+    "\
+    <unicastLocatorList>\
+        <locator>\
+            <tcpv6>\
+                <physical_port>%s</physical_port>\
+                <port>%s</port>\
+                <address>%s</address>\
+                %s\
+            </tcpv6>\
+        </locator>\
+    </unicastLocatorList>\
+    ";
+    char xml[500];
+
+    // Valid XML
+    sprintf(xml, xml_p, "5100", "8844", "::1", "");
+
+    ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+    titleElement = xml_doc.RootElement();
+    EXPECT_EQ(XMLP_ret::XML_OK, XMLParserTest::getXMLLocatorList_wrapper(titleElement,list,ident));
+    EXPECT_EQ(IPLocator::getPhysicalPort(list.begin()->port), 5100);
+    EXPECT_EQ(IPLocator::getLogicalPort(list.begin()->port), 8844);
+    EXPECT_EQ(list.begin()->address[15], 1);
+    EXPECT_EQ(list.begin()->kind, LOCATOR_KIND_TCPv6);
+
+    // Missing data
+    sprintf(xml, xml_p, "", "","", "");
+    ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+    titleElement = xml_doc.RootElement();
+    EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::getXMLLocatorList_wrapper(titleElement,list,ident));
+
+    // Invalid element
+    sprintf(xml, xml_p, "5100", "8844", "::1", "<bad_element></bad_element>");
     ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
     titleElement = xml_doc.RootElement();
     EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::getXMLLocatorList_wrapper(titleElement,list,ident));
