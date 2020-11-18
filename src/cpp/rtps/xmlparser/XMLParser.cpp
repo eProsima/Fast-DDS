@@ -170,23 +170,6 @@ XMLP_ret XMLParser::parseXMLProfiles(
     return ret;
 }
 
-XMLP_ret XMLParser::parseRoot(
-        tinyxml2::XMLElement* p_root,
-        BaseNode& rootNode)
-{
-    XMLP_ret ret           = XMLP_ret::XML_OK;
-    tinyxml2::XMLElement* root_child = nullptr;
-    if (nullptr != (root_child = p_root->FirstChildElement(PROFILES)))
-    {
-        up_base_node_t profiles_node = up_base_node_t(new BaseNode{NodeType::PROFILES});
-        if (XMLP_ret::XML_OK == (ret = parseProfiles(root_child, *profiles_node)))
-        {
-            rootNode.addChild(std::move(profiles_node));
-        }
-    }
-    return ret;
-}
-
 XMLP_ret XMLParser::parseXMLTransportsProf(
         tinyxml2::XMLElement* p_root)
 {
