@@ -87,7 +87,9 @@ public:
 
 protected:
 
-    class alignas(8) Notification
+#pragma warning(push)
+#pragma warning(disable:4324)
+    class alignas(void*) Notification
     {
     public:
 
@@ -101,6 +103,7 @@ protected:
                 & ~(alignof(Notification) - 1);
         }
     };
+#pragma warning(pop)
     
     static std::string generate_segment_name(
             const std::string& /*shared_dir*/,
