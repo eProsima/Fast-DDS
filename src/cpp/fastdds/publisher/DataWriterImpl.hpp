@@ -39,6 +39,7 @@
 
 #include <fastrtps/types/TypesBase.h>
 
+#include <rtps/common/PayloadInfo_t.hpp>
 #include <rtps/history/ITopicPayloadPool.h>
 
 using eprosima::fastrtps::types::ReturnCode_t;
@@ -68,6 +69,10 @@ class Publisher;
  */
 class DataWriterImpl
 {
+
+    using PayloadInfo_t = eprosima::fastrtps::rtps::detail::PayloadInfo_t;
+    using CacheChange_t = eprosima::fastrtps::rtps::CacheChange_t;
+
 protected:
 
     friend class PublisherImpl;
@@ -413,6 +418,29 @@ protected:
     std::shared_ptr<IPayloadPool> get_payload_pool();
 
     void release_payload_pool();
+
+    template<typename SizeFunctor>
+    bool get_free_payload_from_pool(
+            const SizeFunctor& size_getter,
+            PayloadInfo_t& payload)
+    {
+        CacheChange_t change;
+        if (!payload_pool_ || !payload_pool_->get_payload(size_getter(), change))
+        {
+            return false;
+        }
+
+        payload.move_from_change(change);
+        return true;
+    }
+
+    void return_payload_to_pool(
+            PayloadInfo_t& payload)
+    {
+        CacheChange_t change;
+        payload.move_into_change(change);
+        payload_pool_->release_payload(change);
+    }
 };
 
 } /* namespace dds */
