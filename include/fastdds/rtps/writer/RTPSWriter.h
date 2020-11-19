@@ -108,6 +108,10 @@ public:
             ChangeKind_t changeKind,
             InstanceHandle_t handle = c_InstanceHandle_Unknown);
 
+    RTPS_DllAPI CacheChange_t* new_change(
+            ChangeKind_t changeKind,
+            InstanceHandle_t handle = c_InstanceHandle_Unknown);
+
     /**
      * Release a change when it is not being used anymore.
      *

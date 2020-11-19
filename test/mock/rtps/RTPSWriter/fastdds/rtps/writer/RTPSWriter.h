@@ -71,6 +71,10 @@ public:
             InstanceHandle_t));
 
     MOCK_METHOD2(new_change, CacheChange_t* (
+            ChangeKind_t,
+            InstanceHandle_t));
+
+    MOCK_METHOD2(new_change, CacheChange_t* (
             const std::function<uint32_t()>&,
             ChangeKind_t));
 
