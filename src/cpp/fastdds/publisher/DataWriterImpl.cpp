@@ -450,24 +450,37 @@ ReturnCode_t DataWriterImpl::perform_create_new_change(
 #else
     std::unique_lock<RecursiveTimedMutex> lock(writer_->getMutex());
 #endif // if HAVE_STRICT_REALTIME
-    CacheChange_t* ch = writer_->new_change(type_->getSerializedSizeProvider(data), change_kind, handle);
-    if (ch != nullptr)
+
+    PayloadInfo_t payload;
+    bool was_loaned = check_and_remove_loan(data, payload);
+    if (!was_loaned)
     {
-        if (change_kind == ALIVE)
+        if (!get_free_payload_from_pool(type_->getSerializedSizeProvider(data), payload))
         {
-            //If these two checks are correct, we asume the cachechange is valid and thwn we can write to it.
-            if (!type_->serialize(data, &ch->serializedPayload))
-            {
-                logWarning(RTPS_WRITER, "RTPSWriter:Serialization returns false"; );
-                writer_->release_change(ch);
-                return ReturnCode_t::RETCODE_ERROR;
-            }
+            return ReturnCode_t::RETCODE_OUT_OF_RESOURCES;
         }
 
+        if ((ALIVE == change_kind) && !type_->serialize(data, &payload.payload))
+        {
+            logWarning(RTPS_WRITER, "RTPSWriter:Serialization returns false");
+            return_payload_to_pool(payload);
+            return ReturnCode_t::RETCODE_ERROR;
+        }
+    }
+
+    CacheChange_t* ch = writer_->new_change(change_kind, handle);
+    if (ch != nullptr)
+    {
+        payload.move_into_change(*ch);
         set_fragment_size_on_change(wparams, ch, high_mark_for_frag_);
 
         if (!this->history_.add_pub_change(ch, wparams, lock, max_blocking_time))
         {
+            if (was_loaned)
+            {
+                payload.move_from_change(*ch);
+                add_loan(data, payload);
+            }
             writer_->release_change(ch);
             return ReturnCode_t::RETCODE_TIMEOUT;
         }
