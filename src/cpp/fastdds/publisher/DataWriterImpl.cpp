@@ -1218,6 +1218,11 @@ std::shared_ptr<IPayloadPool> DataWriterImpl::get_payload_pool()
     if (!payload_pool_)
     {
         payload_pool_ = TopicPayloadPoolRegistry::get(topic_->get_name(), config);
+
+        if (type_->is_plain())
+        {
+            loans_.reset(new LoanCollection(config));
+        }
     }
 
     payload_pool_->reserve_history(config, false);
@@ -1227,6 +1232,9 @@ std::shared_ptr<IPayloadPool> DataWriterImpl::get_payload_pool()
 void DataWriterImpl::release_payload_pool()
 {
     assert(payload_pool_);
+
+    // TODO (Miguel C): What to do if there are outstanding loans?
+    loans_.reset();
 
     PoolConfig config = PoolConfig::from_history_attributes(history_.m_att);
     payload_pool_->release_history(config, false);
