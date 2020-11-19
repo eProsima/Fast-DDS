@@ -238,7 +238,7 @@ bool DataWriterImpl::write(
     }
 
     logInfo(DATA_WRITER, "Writing new data");
-    return create_new_change(ALIVE, data);
+    return ReturnCode_t::RETCODE_OK == create_new_change(ALIVE, data);
 }
 
 bool DataWriterImpl::write(
@@ -251,7 +251,7 @@ bool DataWriterImpl::write(
     }
 
     logInfo(DATA_WRITER, "Writing new data with WriteParams");
-    return create_new_change_with_params(ALIVE, data, params);
+    return ReturnCode_t::RETCODE_OK == create_new_change_with_params(ALIVE, data, params);
 }
 
 ReturnCode_t DataWriterImpl::write(
@@ -281,11 +281,7 @@ ReturnCode_t DataWriterImpl::write(
     }
     logInfo(DATA_WRITER, "Writing new data with Handle");
     WriteParams wparams;
-    if (create_new_change_with_params(ALIVE, data, wparams, instance_handle))
-    {
-        return ReturnCode_t::RETCODE_OK;
-    }
-    return ReturnCode_t::RETCODE_ERROR;
+    return create_new_change_with_params(ALIVE, data, wparams, instance_handle);
 }
 
 fastrtps::rtps::InstanceHandle_t DataWriterImpl::register_instance(
@@ -392,10 +388,7 @@ ReturnCode_t DataWriterImpl::unregister_instance(
                     NOT_ALIVE_UNREGISTERED;
         }
 
-        if (create_new_change_with_params(change_kind, instance, wparams, ih))
-        {
-            returned_value = ReturnCode_t::RETCODE_OK;
-        }
+        returned_value = create_new_change_with_params(change_kind, instance, wparams, ih);
     }
     else
     {
@@ -410,10 +403,10 @@ bool DataWriterImpl::create_new_change(
         void* data)
 {
     WriteParams wparams;
-    return create_new_change_with_params(changeKind, data, wparams);
+    return ReturnCode_t::RETCODE_OK == create_new_change_with_params(changeKind, data, wparams);
 }
 
-bool DataWriterImpl::check_new_change_preconditions(
+ReturnCode_t DataWriterImpl::check_new_change_preconditions(
         ChangeKind_t change_kind,
         void* data)
 {
@@ -421,7 +414,7 @@ bool DataWriterImpl::check_new_change_preconditions(
     if (data == nullptr)
     {
         logError(PUBLISHER, "Data pointer not valid");
-        return false;
+        return ReturnCode_t::RETCODE_BAD_PARAMETER;
     }
 
     if (change_kind == NOT_ALIVE_UNREGISTERED
@@ -431,14 +424,14 @@ bool DataWriterImpl::check_new_change_preconditions(
         if (!type_->m_isGetKeyDefined)
         {
             logError(PUBLISHER, "Topic is NO_KEY, operation not permitted");
-            return false;
+            return ReturnCode_t::RETCODE_ILLEGAL_OPERATION;
         }
     }
 
-    return true;
+    return ReturnCode_t::RETCODE_OK;
 }
 
-bool DataWriterImpl::perform_create_new_change(
+ReturnCode_t DataWriterImpl::perform_create_new_change(
         ChangeKind_t change_kind,
         void* data,
         WriteParams& wparams,
@@ -450,77 +443,79 @@ bool DataWriterImpl::perform_create_new_change(
 
 #if HAVE_STRICT_REALTIME
     std::unique_lock<RecursiveTimedMutex> lock(writer_->getMutex(), std::defer_lock);
-    if (lock.try_lock_until(max_blocking_time))
+    if (!lock.try_lock_until(max_blocking_time))
+    {
+        return ReturnCode_t::RETCODE_TIMEOUT;
+    }
 #else
     std::unique_lock<RecursiveTimedMutex> lock(writer_->getMutex());
 #endif // if HAVE_STRICT_REALTIME
+    CacheChange_t* ch = writer_->new_change(type_->getSerializedSizeProvider(data), change_kind, handle);
+    if (ch != nullptr)
     {
-        CacheChange_t* ch = writer_->new_change(type_->getSerializedSizeProvider(data), change_kind, handle);
-        if (ch != nullptr)
+        if (change_kind == ALIVE)
         {
-            if (change_kind == ALIVE)
+            //If these two checks are correct, we asume the cachechange is valid and thwn we can write to it.
+            if (!type_->serialize(data, &ch->serializedPayload))
             {
-                //If these two checks are correct, we asume the cachechange is valid and thwn we can write to it.
-                if (!type_->serialize(data, &ch->serializedPayload))
-                {
-                    logWarning(RTPS_WRITER, "RTPSWriter:Serialization returns false"; );
-                    writer_->release_change(ch);
-                    return false;
-                }
-            }
-
-            set_fragment_size_on_change(wparams, ch, high_mark_for_frag_);
-
-            if (!this->history_.add_pub_change(ch, wparams, lock, max_blocking_time))
-            {
+                logWarning(RTPS_WRITER, "RTPSWriter:Serialization returns false"; );
                 writer_->release_change(ch);
-                return false;
+                return ReturnCode_t::RETCODE_ERROR;
             }
+        }
 
-            if (qos_.deadline().period != c_TimeInfinite)
+        set_fragment_size_on_change(wparams, ch, high_mark_for_frag_);
+
+        if (!this->history_.add_pub_change(ch, wparams, lock, max_blocking_time))
+        {
+            writer_->release_change(ch);
+            return ReturnCode_t::RETCODE_TIMEOUT;
+        }
+
+        if (qos_.deadline().period != c_TimeInfinite)
+        {
+            if (!history_.set_next_deadline(
+                        ch->instanceHandle,
+                        steady_clock::now() + duration_cast<system_clock::duration>(deadline_duration_us_)))
             {
-                if (!history_.set_next_deadline(
-                            ch->instanceHandle,
-                            steady_clock::now() + duration_cast<system_clock::duration>(deadline_duration_us_)))
+                logError(PUBLISHER, "Could not set the next deadline in the history");
+            }
+            else
+            {
+                if (timer_owner_ == handle || timer_owner_ == InstanceHandle_t())
                 {
-                    logError(PUBLISHER, "Could not set the next deadline in the history");
-                }
-                else
-                {
-                    if (timer_owner_ == handle || timer_owner_ == InstanceHandle_t())
+                    if (deadline_timer_reschedule())
                     {
-                        if (deadline_timer_reschedule())
-                        {
-                            deadline_timer_->cancel_timer();
-                            deadline_timer_->restart_timer();
-                        }
+                        deadline_timer_->cancel_timer();
+                        deadline_timer_->restart_timer();
                     }
                 }
             }
-
-            if (qos_.lifespan().duration != c_TimeInfinite)
-            {
-                lifespan_duration_us_ = duration<double, std::ratio<1, 1000000>>(
-                    qos_.lifespan().duration.to_ns() * 1e-3);
-                lifespan_timer_->update_interval_millisec(qos_.lifespan().duration.to_ns() * 1e-6);
-                lifespan_timer_->restart_timer();
-            }
-
-            return true;
         }
+
+        if (qos_.lifespan().duration != c_TimeInfinite)
+        {
+            lifespan_duration_us_ = duration<double, std::ratio<1, 1000000>>(
+                qos_.lifespan().duration.to_ns() * 1e-3);
+            lifespan_timer_->update_interval_millisec(qos_.lifespan().duration.to_ns() * 1e-6);
+            lifespan_timer_->restart_timer();
+        }
+
+        return ReturnCode_t::RETCODE_OK;
     }
 
-    return false;
+    return ReturnCode_t::RETCODE_OUT_OF_RESOURCES;
 }
 
-bool DataWriterImpl::create_new_change_with_params(
+ReturnCode_t DataWriterImpl::create_new_change_with_params(
         ChangeKind_t changeKind,
         void* data,
         WriteParams& wparams)
 {
-    if (!check_new_change_preconditions(changeKind, data))
+    ReturnCode_t ret_code = check_new_change_preconditions(changeKind, data);
+    if (!ret_code)
     {
-        return false;
+        return ret_code;
     }
 
     InstanceHandle_t handle;
@@ -536,15 +531,16 @@ bool DataWriterImpl::create_new_change_with_params(
     return perform_create_new_change(changeKind, data, wparams, handle);
 }
 
-bool DataWriterImpl::create_new_change_with_params(
+ReturnCode_t DataWriterImpl::create_new_change_with_params(
         ChangeKind_t changeKind,
         void* data,
         WriteParams& wparams,
         const fastrtps::rtps::InstanceHandle_t& handle)
 {
-    if (!check_new_change_preconditions(changeKind, data))
+    ReturnCode_t ret_code = check_new_change_preconditions(changeKind, data);
+    if (!ret_code)
     {
-        return false;
+        return ret_code;
     }
 
     return perform_create_new_change(changeKind, data, wparams, handle);

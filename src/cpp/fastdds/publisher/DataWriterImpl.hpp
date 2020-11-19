@@ -326,7 +326,7 @@ protected:
      * @param wparams
      * @return
      */
-    bool create_new_change_with_params(
+    ReturnCode_t create_new_change_with_params(
             fastrtps::rtps::ChangeKind_t kind,
             void* data,
             fastrtps::rtps::WriteParams& wparams);
@@ -339,7 +339,7 @@ protected:
      * @param handle
      * @return
      */
-    bool create_new_change_with_params(
+    ReturnCode_t create_new_change_with_params(
             fastrtps::rtps::ChangeKind_t kind,
             void* data,
             fastrtps::rtps::WriteParams& wparams,
@@ -366,11 +366,11 @@ protected:
      */
     bool lifespan_expired();
 
-    bool check_new_change_preconditions(
+    ReturnCode_t check_new_change_preconditions(
             fastrtps::rtps::ChangeKind_t change_kind,
             void* data);
 
-    bool perform_create_new_change(
+    ReturnCode_t perform_create_new_change(
             fastrtps::rtps::ChangeKind_t change_kind,
             void* data,
             fastrtps::rtps::WriteParams& wparams,
