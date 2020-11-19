@@ -441,6 +441,23 @@ protected:
         payload.move_into_change(change);
         payload_pool_->release_payload(change);
     }
+
+    bool add_loan(
+            void* data,
+            PayloadInfo_t& payload)
+    {
+        // TODO (Miguel C): Loans collection implementation
+        return false;
+    }
+
+    bool check_and_remove_loan(
+            void* data,
+            PayloadInfo_t& payload)
+    {
+        // TODO (Miguel C): Loans collection implementation
+        return false;
+    }
+
 };
 
 } /* namespace dds */
