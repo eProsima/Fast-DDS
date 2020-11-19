@@ -72,6 +72,7 @@ class DataWriterImpl
 
     using PayloadInfo_t = eprosima::fastrtps::rtps::detail::PayloadInfo_t;
     using CacheChange_t = eprosima::fastrtps::rtps::CacheChange_t;
+    class LoanCollection;
 
 protected:
 
@@ -204,16 +205,6 @@ public:
     ReturnCode_t get_liveliness_lost_status(
             LivelinessLostStatus& status);
 
-    /* TODO
-       ReturnCode_t get_offered_incompatible_qos_status(
-            OfferedIncompatibleQosStatus& status)
-       {
-        // Not implemented
-        (void)status;
-        return false;
-       }
-     */
-
     const Publisher* get_publisher() const;
 
     ReturnCode_t assert_liveliness();
@@ -313,6 +304,8 @@ protected:
     DataWriter* user_datawriter_ = nullptr;
 
     std::shared_ptr<ITopicPayloadPool> payload_pool_;
+
+    std::unique_ptr<LoanCollection> loans_;
 
     /**
      *
@@ -444,19 +437,11 @@ protected:
 
     bool add_loan(
             void* data,
-            PayloadInfo_t& payload)
-    {
-        // TODO (Miguel C): Loans collection implementation
-        return false;
-    }
+            PayloadInfo_t& payload);
 
     bool check_and_remove_loan(
             void* data,
-            PayloadInfo_t& payload)
-    {
-        // TODO (Miguel C): Loans collection implementation
-        return false;
-    }
+            PayloadInfo_t& payload);
 
 };
 

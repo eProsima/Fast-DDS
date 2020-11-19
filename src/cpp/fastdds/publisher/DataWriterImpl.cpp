@@ -53,6 +53,32 @@ namespace eprosima {
 namespace fastdds {
 namespace dds {
 
+class DataWriterImpl::LoanCollection
+{
+public:
+    explicit LoanCollection(
+            const PoolConfig& /*config*/)
+    {
+    }
+
+    bool add_loan(
+            void* /*data*/,
+            PayloadInfo_t& /*payload*/)
+    {
+        // TODO (Miguel C): Loans collection implementation
+        return false;
+    }
+
+    bool check_and_remove_loan(
+            void* /*data*/,
+            PayloadInfo_t& /*payload*/)
+    {
+        // TODO (Miguel C): Loans collection implementation
+        return false;
+    }
+
+};
+
 DataWriterImpl::DataWriterImpl(
         PublisherImpl* p,
         TypeSupport type,
@@ -1206,6 +1232,20 @@ void DataWriterImpl::release_payload_pool()
     payload_pool_->release_history(config, false);
 
     TopicPayloadPoolRegistry::release(payload_pool_);
+}
+
+bool DataWriterImpl::add_loan(
+        void* data,
+        PayloadInfo_t& payload)
+{
+    return loans_ && loans_->add_loan(data, payload);
+}
+
+bool DataWriterImpl::check_and_remove_loan(
+        void* data,
+        PayloadInfo_t& payload)
+{
+    return loans_ && loans_->check_and_remove_loan(data, payload);
 }
 
 } // namespace dds
