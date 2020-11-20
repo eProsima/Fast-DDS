@@ -281,7 +281,7 @@ bool StatelessReader::nextUntakenCache(
 
     while (mp_history->get_min_change(change))
     {
-        if (datasharing_listener_->writer_is_matched((*change)->writerGUID))
+        if (is_datasharing_compatible_ && datasharing_listener_->writer_is_matched((*change)->writerGUID))
         {
             //Check if the payload is dirty
             if (DataSharingPayloadPool::check_sequence_number(
@@ -293,8 +293,13 @@ bool StatelessReader::nextUntakenCache(
 
             logWarning(RTPS_READER,
                     "Removing change " << (*change)->sequenceNumber << " from " << (*change)->writerGUID <<
-                    " because it was overriden byt the writer");
+                    " because it was overriden by the writer");
             mp_history->remove_change(*change);
+        }
+        else
+        {
+            found = true;
+            break;
         }
     }
 
@@ -328,7 +333,7 @@ bool StatelessReader::nextUnreadCache(
     {
         if (!(*it)->isRead)
         {
-            if (datasharing_listener_->writer_is_matched((*it)->writerGUID))
+            if (is_datasharing_compatible_ && datasharing_listener_->writer_is_matched((*it)->writerGUID))
             {
                 //Check if the payload is dirty
                 if (DataSharingPayloadPool::check_sequence_number(
@@ -337,9 +342,18 @@ bool StatelessReader::nextUnreadCache(
                     found = true;
                     break;
                 }
-            }
 
-            toremove.push_back((*it));
+                logWarning(RTPS_READER,
+                        "Removing change " << (*it)->sequenceNumber << " from " << (*it)->writerGUID <<
+                        " because it was overriden by the writer");
+
+                toremove.push_back((*it));
+            }
+            else
+            {
+                found = true;
+                break;
+            }
         }
     }
 
@@ -360,9 +374,6 @@ bool StatelessReader::nextUnreadCache(
     for (std::vector<CacheChange_t*>::iterator it = toremove.begin();
             it != toremove.end(); ++it)
     {
-        logWarning(RTPS_READER,
-                "Removing change " << (*it)->sequenceNumber << " from " << (*it)->writerGUID <<
-                " because it was overriden byt the writer");
         mp_history->remove_change(*it);
     }
 

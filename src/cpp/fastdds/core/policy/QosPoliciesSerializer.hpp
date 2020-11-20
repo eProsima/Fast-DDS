@@ -834,7 +834,7 @@ inline bool QosPoliciesSerializer<DataSharingInfo>::read_content_from_cdr_messag
     }
     qos_policy.length = parameter_length;
     bool valid = fastrtps::rtps::CDRMessage::readUInt64(cdr_message, &qos_policy.domain_id);
-    // This has to be addressed
+    // TODO [ILG] This has to be addressed
     // valid &= (qos_policy.domain_id != 0U);
     qos_policy.is_compatible = true;
     return valid;

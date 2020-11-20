@@ -136,7 +136,7 @@ void ReaderQos::setQos(
         type_consistency.hasChanged = true;
     }
 
-    if (first_time && !(data_sharing_info == qos.data_sharing_info))
+    if (!(data_sharing_info == qos.data_sharing_info))
     {
         data_sharing_info = qos.data_sharing_info;
         data_sharing_info.hasChanged = true;
@@ -235,6 +235,7 @@ void ReaderQos::clear()
     m_disablePositiveACKs.clear();
     representation.clear();
     type_consistency.clear();
+    data_sharing_info.clear();
 }
 
 } //namespace dds
