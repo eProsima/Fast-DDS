@@ -108,6 +108,18 @@ public:
             void*& sample);
 
     /**
+     * Discards a loaned sample pointer.
+     *
+     * @param [in][out] sample  Pointer to the previously loaned sample.
+     *
+     * @return ReturnCode_t::RETCODE_ILLEGAL_OPERATION when the type does not support loans.
+     * @return ReturnCode_t::RETCODE_BAD_PARAMETER if the pointer does not correspond to a loaned sample.
+     * @return ReturnCode_t::RETCODE_OK if the loan is successfully discarded.
+     */
+    ReturnCode_t discard_loan(
+            void*& sample);
+
+    /**
      * Write data to the topic.
      * @param data Pointer to the data
      * @return True if correct

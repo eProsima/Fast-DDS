@@ -328,6 +328,35 @@ ReturnCode_t DataWriterImpl::loan_sample(
     return ReturnCode_t::RETCODE_OK;
 }
 
+ReturnCode_t DataWriterImpl::discard_loan(
+        void*& sample)
+{
+    // Type should be plain and have space for the representation header
+    if (!type_->is_plain() || SerializedPayload_t::representation_header_size > type_->m_typeSize)
+    {
+        return ReturnCode_t::RETCODE_ILLEGAL_OPERATION;
+    }
+
+    // Writer should be enabled
+    if (nullptr == writer_)
+    {
+        return ReturnCode_t::RETCODE_NOT_ENABLED;
+    }
+
+    // Remove sample from loans collection
+    PayloadInfo_t payload;
+    if ((nullptr == sample) || !check_and_remove_loan(sample, payload))
+    {
+        return ReturnCode_t::RETCODE_BAD_PARAMETER;
+    }
+
+    // Return payload to pool
+    return_payload_to_pool(payload);
+    sample = nullptr;
+
+    return ReturnCode_t::RETCODE_OK;
+}
+
 bool DataWriterImpl::write(
         void* data)
 {
