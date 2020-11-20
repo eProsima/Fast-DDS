@@ -933,7 +933,7 @@ bool StatefulReader::nextUntakenCache(
         }
         else
         {
-            if (datasharing_listener_->writer_is_matched((*it)->writerGUID))
+            if (is_datasharing_compatible_ && datasharing_listener_->writer_is_matched((*it)->writerGUID))
             {
                 //Check if the payload is dirty
                 if (DataSharingPayloadPool::check_sequence_number(
@@ -1016,7 +1016,7 @@ bool StatefulReader::nextUnreadCache(
         }
         else
         {
-            if (datasharing_listener_->writer_is_matched((*it)->writerGUID))
+            if (is_datasharing_compatible_ && datasharing_listener_->writer_is_matched((*it)->writerGUID))
             {
                 //Check if the payload is dirty
                 if (DataSharingPayloadPool::check_sequence_number(
