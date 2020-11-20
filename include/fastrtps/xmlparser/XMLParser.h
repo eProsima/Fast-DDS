@@ -162,10 +162,6 @@ protected:
             tinyxml2::XMLElement* p_root,
             BaseNode& profilesNode);
 
-    RTPS_DllAPI static XMLP_ret parseRoot(
-            tinyxml2::XMLElement* p_root,
-            BaseNode& rootNode);
-
 
     /**
      * Load a XML log node and parses it. It applies the configuration of the node directly.
