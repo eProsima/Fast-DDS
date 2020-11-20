@@ -493,9 +493,15 @@ bool RTPSParticipantImpl::preprocess_endpoint_attributes(
         }
 
         octet* c = reinterpret_cast<octet*>(&idnum);
+#if __BIG_ENDIAN__
+        entId.value[2] = c[1];
+        entId.value[1] = c[2];
+        entId.value[0] = c[3];
+#else
         entId.value[2] = c[0];
         entId.value[1] = c[1];
         entId.value[0] = c[2];
+#endif // if __BIG_ENDIAN__
         if (this->existsEntityId(entId, kind))
         {
             logError(RTPS_PARTICIPANT,
