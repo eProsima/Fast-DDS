@@ -282,6 +282,52 @@ DataWriterImpl::~DataWriterImpl()
     delete user_datawriter_;
 }
 
+ReturnCode_t DataWriterImpl::loan_sample(
+        void*& sample)
+{
+    // Type should be plain and have space for the representation header
+    if (!type_->is_plain() || SerializedPayload_t::representation_header_size > type_->m_typeSize)
+    {
+        return ReturnCode_t::RETCODE_ILLEGAL_OPERATION;
+    }
+
+    // Writer should be enabled
+    if (nullptr == writer_)
+    {
+        return ReturnCode_t::RETCODE_NOT_ENABLED;
+    }
+
+    // Get one payload from the pool
+    PayloadInfo_t payload;
+    uint32_t size = type_->m_typeSize;
+    if (!get_free_payload_from_pool([size]()
+            {
+                return size;
+            }, payload))
+    {
+        return ReturnCode_t::RETCODE_OUT_OF_RESOURCES;
+    }
+
+    // Leave payload state as if serialization has already been performed
+    payload.payload.length = size;
+    payload.payload.pos = size;
+    payload.payload.data[1] = DEFAULT_ENCAPSULATION;
+    payload.payload.encapsulation = DEFAULT_ENCAPSULATION;
+
+    // Sample starts after representation header
+    sample = payload.payload.data + SerializedPayload_t::representation_header_size;
+
+    // Add to loans collection
+    if (!add_loan(sample, payload))
+    {
+        sample = nullptr;
+        return_payload_to_pool(payload);
+        return ReturnCode_t::RETCODE_OUT_OF_RESOURCES;
+    }
+
+    return ReturnCode_t::RETCODE_OK;
+}
+
 bool DataWriterImpl::write(
         void* data)
 {

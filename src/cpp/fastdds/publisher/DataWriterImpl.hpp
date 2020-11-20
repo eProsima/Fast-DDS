@@ -96,6 +96,18 @@ public:
     ReturnCode_t enable();
 
     /**
+     * Get a pointer to the internal pool where the user could directly write.
+     *
+     * @param [out] sample  Pointer to the sample on the internal pool.
+     *
+     * @return ReturnCode_t::RETCODE_ILLEGAL_OPERATION when the type does not support loans.
+     * @return ReturnCode_t::RETCODE_OUT_OF_RESOURCES if the pool has been exhausted.
+     * @return ReturnCode_t::RETCODE_OK if a pointer to a sample is successfully obtained.
+     */
+    ReturnCode_t loan_sample(
+            void*& sample);
+
+    /**
      * Write data to the topic.
      * @param data Pointer to the data
      * @return True if correct
