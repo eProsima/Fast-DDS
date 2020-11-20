@@ -517,13 +517,14 @@ TEST_F(XMLParserTests, getXMLRemoteServer)
         </discoveryServersList>\
     </discovery_config>\
     ";
-    char xml[500];
+    char xml[600];
 
     // Valid XML
     sprintf(xml, xml_p, "true", "5", "0", "");
     ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
     titleElement = xml_doc.RootElement();
     EXPECT_EQ(XMLP_ret::XML_OK, XMLParserTest::getXMLDiscoverySettings_wrapper(titleElement,settings,ident));
+    auto a = settings.m_DiscoveryServers.begin()->metatrafficUnicastLocatorList.begin()->port;
     EXPECT_EQ(settings.m_DiscoveryServers.begin()->metatrafficUnicastLocatorList.begin()->port, 8844);
 
 }
