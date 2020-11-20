@@ -96,6 +96,23 @@ class XMLParserTest : public XMLParser{
         return getXMLDiscoverySettings(elem,settings,ident);
     }
 
+    // INIT FUNCTIONS NACHO SECTION
+
+
+    // FINISH FUNCTIONS NACHO SECTION
+
+
+    // INIT FUNCTIONS RAUL SECTION
+
+
+    // FINISH FUNCTIONS RAUL SECTION
+
+
+    // INIT FUNCTIONS PARIS SECTION
+
+
+    // FINISH FUNCTIONS PARIS SECTION
+
 };
 
 TEST_F(XMLParserTests, getXMLLifespanQos)
