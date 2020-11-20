@@ -159,7 +159,7 @@ public:
      * Returns the DataWriter's GUID
      * @return Reference to the DataWriter GUID
      */
-    RTPS_DllAPI const fastrtps::rtps::GUID_t& guid();
+    RTPS_DllAPI const fastrtps::rtps::GUID_t& guid() const;
 
     /**
      * Returns the DataWriter's InstanceHandle
@@ -281,16 +281,6 @@ public:
      */
     RTPS_DllAPI ReturnCode_t get_liveliness_lost_status(
             LivelinessLostStatus& status);
-
-    /* TODO
-       bool get_offered_incompatible_qos_status(
-            OfferedIncompatibleQosStatus& status)
-       {
-        // Not implemented
-        (void)status;
-        return false;
-       }
-     */
 
     /**
      * @brief Getter for the Publisher that creates this DataWriter

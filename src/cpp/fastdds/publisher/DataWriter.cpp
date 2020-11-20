@@ -105,7 +105,7 @@ ReturnCode_t DataWriter::dispose(
     return impl_->unregister_instance(data, handle, true);
 }
 
-const fastrtps::rtps::GUID_t& DataWriter::guid()
+const fastrtps::rtps::GUID_t& DataWriter::guid() const
 {
     return impl_->guid();
 }
