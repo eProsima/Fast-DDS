@@ -308,6 +308,46 @@ public:
     RTPS_DllAPI ReturnCode_t clear_history(
             size_t* removed);
 
+    /**
+     * @brief Get a pointer to the internal pool where the user could directly write.
+     *
+     * This method can only be used on a DataWriter for a plain data type. It will provide the
+     * user with a pointer to an internal buffer where the data type can be prepared for sending.
+     * No assumptions should be made on the contents where the pointer points to, as it may be
+     * an old pointer being reused.
+     *
+     * Once the sample has been prepared, it can then be published by calling @ref write.
+     * After a successful call to @ref write, the middleware takes ownership of the loaned pointer again,
+     * and the user should not access that memory again.
+     *
+     * If, for whatever reason, the sample is not published, the loan can be returned by calling
+     * @ref discard_loan.
+     *
+     * @param [out] sample  Pointer to the sample on the internal pool.
+     *
+     * @return ReturnCode_t::RETCODE_ILLEGAL_OPERATION when the data type does not support loans.
+     * @return ReturnCode_t::RETCODE_NOT_ENABLED if the writer has not been enabled.
+     * @return ReturnCode_t::RETCODE_OUT_OF_RESOURCES if the pool has been exhausted.
+     * @return ReturnCode_t::RETCODE_OK if a pointer to a sample is successfully obtained.
+     */
+    RTPS_DllAPI ReturnCode_t loan_sample(
+            void*& sample);
+
+    /**
+     * @brief Discards a loaned sample pointer.
+     *
+     * See the description on @ref loan_sample for how and when to call this method.
+     *
+     * @param [in][out] sample  Pointer to the previously loaned sample.
+     *
+     * @return ReturnCode_t::RETCODE_ILLEGAL_OPERATION when the data type does not support loans.
+     * @return ReturnCode_t::RETCODE_NOT_ENABLED if the writer has not been enabled.
+     * @return ReturnCode_t::RETCODE_BAD_PARAMETER if the pointer does not correspond to a loaned sample.
+     * @return ReturnCode_t::RETCODE_OK if the loan is successfully discarded.
+     */
+    RTPS_DllAPI ReturnCode_t discard_loan(
+            void*& sample);
+
 protected:
 
     DataWriterImpl* impl_;

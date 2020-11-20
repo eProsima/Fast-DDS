@@ -65,6 +65,18 @@ ReturnCode_t DataWriter::enable()
     return ret_code;
 }
 
+ReturnCode_t DataWriter::loan_sample(
+        void*& sample)
+{
+    return impl_->loan_sample(sample);
+}
+
+ReturnCode_t DataWriter::discard_loan(
+        void*& sample)
+{
+    return impl_->discard_loan(sample);
+}
+
 bool DataWriter::write(
         void* data)
 {
