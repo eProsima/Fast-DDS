@@ -87,7 +87,7 @@ class XMLParserTest : public XMLParser{
     {
         return fillDataNode(p_profile, participant_node);
     }
-    
+
     static XMLP_ret getXMLDiscoverySettings_wrapper(
         tinyxml2::XMLElement* elem,
         rtps::DiscoverySettings& settings,
@@ -383,7 +383,7 @@ TEST_F(XMLParserTests, getXMLLocatorTCPv6)
 }
 
 TEST_F(XMLParserTests, getXMLTransports)
-{  
+{
 
     up_participant_t participant_atts{new ParticipantAttributes};
     up_node_participant_t participant_node{new node_participant_t{NodeType::PARTICIPANT, std::move(participant_atts)}};
@@ -440,7 +440,7 @@ TEST_F(XMLParserTests, getXMLTransports)
 }
 
 TEST_F(XMLParserTests, getXMLPropertiesPolicy)
-{  
+{
 
     up_participant_t participant_atts{new ParticipantAttributes};
     up_node_participant_t participant_node{new node_participant_t{NodeType::PARTICIPANT, std::move(participant_atts)}};
@@ -492,7 +492,7 @@ TEST_F(XMLParserTests, getXMLPropertiesPolicy)
 }
 
 TEST_F(XMLParserTests, getXMLRemoteServer)
-{  
+{
     uint8_t ident = 1;
     DiscoverySettings settings;
     tinyxml2::XMLDocument xml_doc;
@@ -528,3 +528,20 @@ TEST_F(XMLParserTests, getXMLRemoteServer)
     EXPECT_EQ(settings.m_DiscoveryServers.begin()->metatrafficUnicastLocatorList.begin()->port, 8844);
 
 }
+
+// INIT NACHO SECTION
+
+
+// FINISH NACHO SECTION
+
+
+// INIT RAUL SECTION
+
+
+// FINISH RAUL SECTION
+
+
+// INIT PARIS SECTION
+
+
+// FINISH PARIS SECTION
