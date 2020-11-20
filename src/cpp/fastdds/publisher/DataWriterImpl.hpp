@@ -95,6 +95,8 @@ public:
 
     ReturnCode_t enable();
 
+    ReturnCode_t check_delete_preconditions();
+
     /**
      * Get a pointer to the internal pool where the user could directly write.
      *

@@ -89,6 +89,11 @@ public:
         return false;
     }
 
+    bool is_empty() const
+    {
+        return loans_.empty();
+    }
+
 private:
 
     static ResourceLimitedContainerConfig get_collection_limits(
@@ -265,6 +270,16 @@ void DataWriterImpl::disable()
     {
         writer_->set_listener(nullptr);
     }
+}
+
+ReturnCode_t DataWriterImpl::check_delete_preconditions()
+{
+    if (loans_ && !loans_->is_empty())
+    {
+        return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
+    }
+
+    return ReturnCode_t::RETCODE_OK;
 }
 
 DataWriterImpl::~DataWriterImpl()
