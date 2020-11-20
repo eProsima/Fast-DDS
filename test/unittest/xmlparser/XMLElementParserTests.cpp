@@ -88,6 +88,13 @@ class XMLParserTest : public XMLParser{
         return fillDataNode(p_profile, participant_node);
     }
     
+    static XMLP_ret getXMLDiscoverySettings_wrapper(
+        tinyxml2::XMLElement* elem,
+        rtps::DiscoverySettings& settings,
+        uint8_t ident)
+    {
+        return getXMLDiscoverySettings(elem,settings,ident);
+    }
 
 };
 
@@ -375,14 +382,12 @@ TEST_F(XMLParserTests, getXMLLocatorTCPv6)
 
 }
 
-TEST_F(XMLParserTests, getXMLPropertiesPolicy)
+TEST_F(XMLParserTests, getXMLTransports)
 {  
 
     up_participant_t participant_atts{new ParticipantAttributes};
     up_node_participant_t participant_node{new node_participant_t{NodeType::PARTICIPANT, std::move(participant_atts)}};
 
-    uint8_t ident = 1;
-    LocatorList_t list;
     tinyxml2::XMLDocument xml_doc;
     tinyxml2::XMLElement* titleElement;
 
@@ -399,8 +404,7 @@ TEST_F(XMLParserTests, getXMLPropertiesPolicy)
     ";
     tinyxml2::XMLDocument xml_profile_doc;
     ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_profile_doc.Parse(xml_profile));
-    ASSERT_EQ(xmlparser::XMLP_ret::XML_ERROR, xmlparser::XMLProfileManager::loadXMLNode(xml_profile_doc));
-
+    ASSERT_EQ(xmlparser::XMLP_ret::XML_OK, xmlparser::XMLProfileManager::loadXMLNode(xml_profile_doc));
 
     // Parametrized XML
     const char* xml_p =
@@ -426,15 +430,100 @@ TEST_F(XMLParserTests, getXMLPropertiesPolicy)
 
 
     // Missing data
-    sprintf(xml, xml_p, "", "","", "");
+    sprintf(xml, xml_p, "", "");
     ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
     titleElement = xml_doc.RootElement();
     EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::fillDataNode_wrapper(titleElement,*participant_node));
 
-    // Invalid element
-    sprintf(xml, xml_p, "ExampleTransportId1", "<bad_element></bad_element>");
-    ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+    // Clean up
+    xmlparser::XMLProfileManager::DeleteInstance();
+}
+
+TEST_F(XMLParserTests, getXMLPropertiesPolicy)
+{  
+
+    up_participant_t participant_atts{new ParticipantAttributes};
+    up_node_participant_t participant_node{new node_participant_t{NodeType::PARTICIPANT, std::move(participant_atts)}};
+
+    tinyxml2::XMLDocument xml_doc;
+    tinyxml2::XMLElement* titleElement;
+
+    // Valid XML
+    const char* xml_p =
+    "\
+    <participant>\
+        <rtps>\
+            <propertiesPolicy>\
+                <properties>\
+                    <property>\
+                        <name>Property1Name</name>\
+                        <value>Property1Value</value>\
+                        <propagate>false</propagate>\
+                    </property>\
+                </properties>\
+            </propertiesPolicy>\
+        </rtps>\
+    </participant>\
+    ";
+
+    ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml_p));
+    titleElement = xml_doc.RootElement();
+    EXPECT_EQ(XMLP_ret::XML_OK, XMLParserTest::fillDataNode_wrapper(titleElement,*participant_node));
+    auto ret = participant_node.get()->getAttributes();
+
+
+    // Empyty property XML
+    const char* xml_empty =
+    "\
+    <participant>\
+        <rtps>\
+            <propertiesPolicy>\
+                <properties></properties>\
+            </propertiesPolicy>\
+        </rtps>\
+    </participant>\
+    ";
+
+    // Missing data
+    ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml_empty));
     titleElement = xml_doc.RootElement();
     EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::fillDataNode_wrapper(titleElement,*participant_node));
+
+}
+
+TEST_F(XMLParserTests, getXMLRemoteServer)
+{  
+    uint8_t ident = 1;
+    DiscoverySettings settings;
+    tinyxml2::XMLDocument xml_doc;
+    tinyxml2::XMLElement* titleElement;
+
+
+    // Parametrized XML
+    const char* xml_p =
+    "\
+    <discovery_config>\
+        <discoveryServersList>\
+        <RemoteServer prefix=\"4D.49.47.55.45.4c.5f.42.41.52.52.4f\">\
+                <metatrafficUnicastLocatorList>\
+                    <locator>\
+                        <udpv6>\
+                            <port>8844</port>\
+                            <address>::1</address>\
+                        </udpv6>\
+                    </locator>\
+                </metatrafficUnicastLocatorList>\
+        </RemoteServer>\
+        </discoveryServersList>\
+    </discovery_config>\
+    ";
+    char xml[500];
+
+    // Valid XML
+    sprintf(xml, xml_p, "true", "5", "0", "");
+    ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+    titleElement = xml_doc.RootElement();
+    EXPECT_EQ(XMLP_ret::XML_OK, XMLParserTest::getXMLDiscoverySettings_wrapper(titleElement,settings,ident));
+    EXPECT_EQ(settings.m_DiscoveryServers.begin()->metatrafficUnicastLocatorList.begin()->port, 8844);
 
 }
