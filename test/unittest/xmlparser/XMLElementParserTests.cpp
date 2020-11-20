@@ -779,7 +779,58 @@ TEST_F(XMLParserTests, getXMLPublisherAttributes_negative)
 
 
 // INIT RAUL SECTION
+TEST_F(XMLParserTests, getXMLInitialAnnouncementsConfig)
+{
+    uint8_t ident = 1;
+    DiscoverySettings settings;
+    tinyxml2::XMLDocument xml_doc;
+    tinyxml2::XMLElement* titleElement;
 
+    // Parametrized XML
+    const char* xml_p =
+    "\
+    <discovery_config>\
+        <initialAnnouncements>\
+            %s\
+            <count>%s</count>\
+            <period>\
+                <sec>%s</sec>\
+                <nanosec>%s</nanosec>\
+            </period>\
+        </initialAnnouncements>\
+    </discovery_config>\
+    ";
+
+    char xml[600];
+
+    sprintf(xml, xml_p, "", "", "5", "123");
+    ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+    titleElement = xml_doc.RootElement();
+    EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::getXMLDiscoverySettings_wrapper(titleElement,settings,ident));
+
+    sprintf(xml, xml_p, "", "5", "", "123");
+    ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+    titleElement = xml_doc.RootElement();
+    EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::getXMLDiscoverySettings_wrapper(titleElement,settings,ident));
+
+    sprintf(xml, xml_p, "", "5", "5", "");
+    ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+    titleElement = xml_doc.RootElement();
+    EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::getXMLDiscoverySettings_wrapper(titleElement,settings,ident));
+
+    const char* xml_e =
+    "\
+    <discovery_config>\
+        <initialAnnouncements>\
+            <bad_element>1</bad_element>\
+        </initialAnnouncements>\
+    </discovery_config>\
+    ";
+
+    ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml_e));
+    titleElement = xml_doc.RootElement();
+    EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::getXMLDiscoverySettings_wrapper(titleElement,settings,ident));
+}
 
 // FINISH RAUL SECTION
 
