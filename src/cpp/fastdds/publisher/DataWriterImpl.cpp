@@ -56,26 +56,53 @@ namespace dds {
 class DataWriterImpl::LoanCollection
 {
 public:
+
     explicit LoanCollection(
-            const PoolConfig& /*config*/)
+            const PoolConfig& config)
+        : loans_(get_collection_limits(config))
     {
     }
 
     bool add_loan(
-            void* /*data*/,
-            PayloadInfo_t& /*payload*/)
+            void* data,
+            PayloadInfo_t& payload)
     {
-        // TODO (Miguel C): Loans collection implementation
-        return false;
+        static_cast<void>(data);
+        assert(data == payload.payload.data + SerializedPayload_t::representation_header_size);
+        return loans_.push_back(payload);
     }
 
     bool check_and_remove_loan(
-            void* /*data*/,
-            PayloadInfo_t& /*payload*/)
+            void* data,
+            PayloadInfo_t& payload)
     {
-        // TODO (Miguel C): Loans collection implementation
+        octet* payload_data = static_cast<octet*>(data) - SerializedPayload_t::representation_header_size;
+        for (auto it = loans_.begin(); it != loans_.end(); ++it)
+        {
+            if (it->payload.data == payload_data)
+            {
+                payload = *it;
+                loans_.erase(it);
+                return true;
+            }
+        }
         return false;
     }
+
+private:
+
+    static ResourceLimitedContainerConfig get_collection_limits(
+            const PoolConfig& config)
+    {
+        return
+            {
+                config.initial_size,
+                config.maximum_size,
+                config.initial_size == config.maximum_size ? 0u : 1u
+            };
+    }
+
+    ResourceLimitedVector<PayloadInfo_t> loans_;
 
 };
 
