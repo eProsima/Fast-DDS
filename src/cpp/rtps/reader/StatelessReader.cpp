@@ -26,6 +26,7 @@
 #include <fastdds/rtps/builtin/liveliness/WLP.h>
 #include <fastdds/rtps/writer/LivelinessManager.h>
 #include <rtps/participant/RTPSParticipantImpl.h>
+#include <rtps/history/DataSharingListener.hpp>
 
 #include <mutex>
 #include <thread>

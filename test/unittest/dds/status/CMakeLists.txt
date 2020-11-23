@@ -109,6 +109,7 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             )
         target_include_directories(ListenerTests PRIVATE
             ${GTEST_INCLUDE_DIRS} ${GMOCK_INCLUDE_DIRS}
+            ${PROJECT_SOURCE_DIR}/test/mock/rtps/DataSharingPayloadPool
             ${PROJECT_SOURCE_DIR}/test/mock/rtps/RTPSReader
             ${PROJECT_SOURCE_DIR}/test/mock/rtps/RTPSWriter
             ${PROJECT_SOURCE_DIR}/test/mock/rtps/RTPSDomain

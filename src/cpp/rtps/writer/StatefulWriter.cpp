@@ -27,6 +27,7 @@
 #include <rtps/flowcontrol/FlowController.h>
 #include <rtps/history/BasicPayloadPool.hpp>
 #include <rtps/history/DataSharingPayloadPool.hpp>
+#include <rtps/history/DataSharingNotifier.hpp>
 
 #include <fastdds/rtps/messages/RTPSMessageCreator.h>
 #include <fastdds/rtps/messages/RTPSMessageGroup.h>

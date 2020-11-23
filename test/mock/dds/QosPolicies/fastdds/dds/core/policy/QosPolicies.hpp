@@ -1285,6 +1285,52 @@ public:
     bool enabled = false;
 };
 
+
+/**
+ * Information to check data sharing compatibility.
+ * Will only be sent through the wire if this endpoint is data sharing compatible.
+ * @note Immutable Qos Policy
+ */
+class DataSharingInfo : public Parameter_t, public QosPolicy
+{
+public:
+
+    /**
+     * @brief Constructor
+     */
+    RTPS_DllAPI DataSharingInfo()
+        : Parameter_t(PID_DATASHARING_INFO, 8)
+        , QosPolicy(true)
+        , domain_id(0U)
+        , is_compatible(false)
+    {
+    }
+
+    /**
+     * @brief Destructor
+     */
+    virtual RTPS_DllAPI ~DataSharingInfo() = default;
+
+    bool operator ==(
+            const DataSharingInfo& b) const
+    {
+        return is_compatible == b.is_compatible &&
+               domain_id == b.domain_id;
+    }
+
+    inline void clear() override
+    {
+        domain_id = 0;
+        is_compatible = false;
+    }
+
+public:
+
+    uint64_t domain_id;
+    bool is_compatible;
+};
+
+
 /**
  * Class TypeIdV1,
  */

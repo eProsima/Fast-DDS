@@ -22,7 +22,6 @@
 #include <fastdds/rtps/Endpoint.h>
 #include <fastdds/rtps/attributes/ReaderAttributes.h>
 #include <fastdds/rtps/common/SequenceNumber.h>
-#include <rtps/history/DataSharingListener.hpp>
 #include <fastrtps/qos/LivelinessChangedStatus.h>
 #include <fastdds/rtps/common/Time_t.h>
 #include <fastdds/rtps/builtin/data/WriterProxyData.h>
@@ -42,6 +41,7 @@ class WriterProxy;
 struct CacheChange_t;
 struct ReaderHistoryState;
 class WriterProxyData;
+class DataSharingListener;
 
 /**
  * Class RTPSReader, manages the reception of data from its matched writers.

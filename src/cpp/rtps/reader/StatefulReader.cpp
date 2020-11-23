@@ -26,7 +26,7 @@
 #include <rtps/reader/WriterProxy.h>
 #include <fastrtps/utils/TimeConversion.h>
 #include <rtps/history/HistoryAttributesExtension.hpp>
-
+#include <rtps/history/DataSharingListener.hpp>
 #include <fastdds/rtps/builtin/BuiltinProtocols.h>
 #include <fastdds/rtps/builtin/liveliness/WLP.h>
 #include <fastdds/rtps/writer/LivelinessManager.h>
