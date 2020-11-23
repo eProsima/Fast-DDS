@@ -1209,6 +1209,7 @@ TEST_F(XMLParserTests, getXMLWriterReaderQosPolicies)
     sprintf(xml, xml_p, "<lifespan></lifespan>");
     ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
     titleElement = xml_doc.RootElement();
+    EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::getXMLWriterQosPolicies_wrapper(titleElement,wqos,ident));
     EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::getXMLReaderQosPolicies_wrapper(titleElement,rqos,ident));
 
     // Check an empty definition of <latencyBudget> xml element.
@@ -1410,7 +1411,7 @@ TEST_F(XMLParserTests, getXMLDiscoverySettingsStaticEDP)
     </discovery_config>\
     ";
 
-    // Check that the XML return code is correct for the static edp settings.
+    // Load the xml
     ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
     titleElement = xml_doc.RootElement();
     // Check that the XML return code is correct for the STATIC EDP settings.
@@ -1421,6 +1422,35 @@ TEST_F(XMLParserTests, getXMLDiscoverySettingsStaticEDP)
     EXPECT_TRUE(settings.use_STATIC_EndpointDiscoveryProtocol);
     // Check that the static endpoint XML filename is set correctly.
     EXPECT_STREQ(settings.getStaticEndpointXMLFilename(), "my_static_edp.xml");
+}
+
+/*
+ * This test checks the positive case of configuration via XML of the livelines atomatic kind.
+ * 1. Check that the XML return code is correct for the liveliness kind setting.
+ * 2. Check that the liveliness kind is set to AUTOMATIC.
+ */
+TEST_F(XMLParserTests, getXMLLivelinessQosAutomaticKind)
+{
+    uint8_t ident = 1;
+    LivelinessQosPolicy liveliness;
+    tinyxml2::XMLDocument xml_doc;
+    tinyxml2::XMLElement* titleElement;
+
+    // XML snippet
+    const char* xml =
+    "\
+    <liveliness>\
+        <kind>AUTOMATIC</kind>\
+    </liveliness>\
+    ";
+
+    // Load the xml
+    ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+    titleElement = xml_doc.RootElement();
+    // Check that the XML return code is correct for the liveliness kind setting.
+    EXPECT_EQ(XMLP_ret::XML_OK, XMLParserTest::getXMLLivelinessQos_wrapper(titleElement,liveliness,ident));
+    // Check that the liveliness kind is set to AUTOMATIC.
+    EXPECT_EQ(liveliness.kind, LivelinessQosPolicyKind::AUTOMATIC_LIVELINESS_QOS);
 }
 
 // FINISH RAUL SECTION
