@@ -31,8 +31,10 @@
 // This version of TypeSupport has `is_plain()`
 #define TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-namespace eprosima {
+// This version of TypeSupport has `construct_sample()`
+#define TOPIC_DATA_TYPE_API_HAS_CONSTRUCT_SAMPLE
 
+namespace eprosima {
 namespace fastrtps {
 
 namespace rtps {
@@ -283,6 +285,20 @@ public:
      */
     RTPS_DllAPI virtual inline bool is_plain() const
     {
+        return false;
+    }
+
+    /**
+     * Construct a sample on a memory location.
+     *
+     * @param memory Pointer to the memory location where the sample should be constructed.
+     *
+     * @return whether this type supports in-place construction or not.
+     */
+    RTPS_DllAPI virtual inline bool construct_sample(
+            void* memory) const
+    {
+        static_cast<void>(memory);
         return false;
     }
 
