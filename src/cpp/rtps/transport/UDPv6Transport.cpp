@@ -12,16 +12,17 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include <fastdds/rtps/transport/TransportInterface.h>
-#include <fastdds/rtps/transport/UDPv6Transport.h>
 #include <utility>
 #include <cstring>
 #include <algorithm>
+
+#include <fastdds/rtps/transport/TransportInterface.h>
 #include <fastdds/dds/log/Log.hpp>
 #include <fastrtps/utils/Semaphore.h>
 #include <fastrtps/utils/IPLocator.h>
 #include <fastdds/rtps/network/SenderResource.h>
 #include <fastdds/rtps/messages/MessageReceiver.h>
+#include <rtps/transport/UDPv6Transport.h>
 
 using namespace std;
 using namespace asio;

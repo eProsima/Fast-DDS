@@ -15,10 +15,10 @@
 #ifndef MOCK_RECEIVER_STUFF_H
 #define MOCK_RECEIVER_STUFF_H
 
+#include <functional>
+
 #include <fastrtps/rtps/network/ReceiverResource.h>
 #include <fastrtps/rtps/messages/MessageReceiver.h>
-#include <fastrtps/transport/ChannelResource.h>
-#include <functional>
 
 namespace eprosima{
 namespace fastrtps{

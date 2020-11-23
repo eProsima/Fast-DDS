@@ -15,16 +15,16 @@
 #ifndef _FASTDDS_TCPV6_TRANSPORT_H_
 #define _FASTDDS_TCPV6_TRANSPORT_H_
 
-#include <fastdds/rtps/transport/TCPTransportInterface.h>
-#include <fastdds/rtps/transport/TCPv6TransportDescriptor.h>
-#include <fastrtps/utils/IPFinder.h>
-#include <fastdds/rtps/transport/tcp/RTCPHeader.h>
-
-#include <asio.hpp>
 #include <thread>
 #include <vector>
 #include <map>
 #include <mutex>
+
+#include <asio.hpp>
+#include <fastdds/rtps/transport/TCPv6TransportDescriptor.h>
+#include <fastrtps/utils/IPFinder.h>
+#include <rtps/transport/TCPTransportInterface.h>
+#include <rtps/transport/tcp/RTCPHeader.h>
 
 namespace eprosima{
 namespace fastdds{

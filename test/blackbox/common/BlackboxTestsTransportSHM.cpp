@@ -21,13 +21,14 @@
 
 #include <gtest/gtest.h>
 
-#include <fastrtps/transport/UDPv4Transport.h>
-#include "../cpp/rtps/transport/shared_mem/test_SharedMemTransportDescriptor.h"
+#include <rtps/transport/shared_mem/test_SharedMemTransportDescriptor.h>
+#include <rtps/transport/UDPv4Transport.h>
 
 using namespace eprosima::fastrtps;
 
 using SharedMemTransportDescriptor = eprosima::fastdds::rtps::SharedMemTransportDescriptor;
 using test_SharedMemTransportDescriptor = eprosima::fastdds::rtps::test_SharedMemTransportDescriptor;
+using UDPv4Transport = eprosima::fastdds::rtps::UDPv4Transport;
 
 TEST(SHM, TransportPubSub)
 {

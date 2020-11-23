@@ -12,21 +12,22 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include <fastrtps/utils/Semaphore.h>
-#include <fastrtps/transport/UDPv4Transport.h>
-#include <fastrtps/rtps/network/NetworkFactory.h>
-#include <gtest/gtest.h>
 #include <thread>
+#include <memory>
+
+#include <asio.hpp>
+#include <gtest/gtest.h>
+#include <MockReceiverResource.h>
+#include <fastrtps/transport/UDPv4TransportDescriptor.h>
+#include <fastrtps/rtps/network/NetworkFactory.h>
+#include <fastrtps/utils/Semaphore.h>
 #include <fastrtps/utils/IPFinder.h>
 #include <fastrtps/utils/IPLocator.h>
-//#include <fastdds/dds/log/Log.hpp>
-#include <memory>
-#include <asio.hpp>
-#include <MockReceiverResource.h>
-
+#include <rtps/transport/UDPv4Transport.h>
 
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
+using UDPv4Transport = eprosima::fastdds::rtps::UDPv4Transport;
 
 #ifndef __APPLE__
 const uint32_t ReceiveBufferCapacity = 65536;

@@ -20,14 +20,14 @@
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
+#include<memory>
+#include <atomic>
+
 #include <fastdds/rtps/common/all_common.h>
 #include <fastdds/rtps/writer/StatelessWriter.h>
 #include <fastdds/rtps/writer/StatefulWriter.h>
-#include <fastdds/rtps/transport/tcp/TCPControlMessage.h>
-#include <fastdds/rtps/transport/tcp/RTCPHeader.h>
-
-#include<memory>
-#include <atomic>
+#include <rtps/transport/tcp/TCPControlMessage.h>
+#include <rtps/transport/tcp/RTCPHeader.h>
 
 namespace eprosima {
 namespace fastdds{

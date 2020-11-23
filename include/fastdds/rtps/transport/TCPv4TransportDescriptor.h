@@ -15,6 +15,8 @@
 #ifndef _FASTDDS_TCPV4_TRANSPORT_DESCRIPTOR_
 #define _FASTDDS_TCPV4_TRANSPORT_DESCRIPTOR_
 
+#include <sstream>
+
 #include <fastdds/rtps/transport/TCPTransportDescriptor.h>
 #include <fastdds/rtps/common/Types.h>
 

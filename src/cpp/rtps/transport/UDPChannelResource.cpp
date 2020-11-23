@@ -13,9 +13,9 @@
 // limitations under the License.
 
 #include <asio.hpp>
-#include <fastdds/rtps/transport/UDPTransportInterface.h>
-#include <fastdds/rtps/transport/UDPChannelResource.h>
 #include <fastdds/rtps/messages/MessageReceiver.h>
+#include <rtps/transport/UDPTransportInterface.h>
+#include <rtps/transport/UDPChannelResource.h>
 
 namespace eprosima {
 namespace fastdds {

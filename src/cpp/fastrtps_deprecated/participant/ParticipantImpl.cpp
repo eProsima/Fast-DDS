@@ -38,10 +38,10 @@
 
 #include <fastdds/rtps/RTPSDomain.h>
 
-#include <fastdds/rtps/transport/UDPv4Transport.h>
-#include <fastdds/rtps/transport/UDPv6Transport.h>
-#include <fastdds/rtps/transport/test_UDPv4Transport.h>
 #include <fastdds/rtps/builtin/liveliness/WLP.h>
+#include <rtps/transport/UDPv4Transport.h>
+#include <rtps/transport/UDPv6Transport.h>
+#include <rtps/transport/test_UDPv4Transport.h>
 
 #include <fastdds/dds/log/Log.hpp>
 

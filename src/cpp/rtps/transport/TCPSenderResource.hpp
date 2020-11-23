@@ -16,8 +16,8 @@
 #define __TRANSPORT_TCPSENDERRESOURCE_HPP__
 
 #include <fastdds/rtps/network/SenderResource.h>
-#include <fastdds/rtps/transport/TCPTransportInterface.h>
-#include <fastdds/rtps/transport/TCPChannelResource.h>
+#include <rtps/transport/TCPTransportInterface.h>
+#include <rtps/transport/TCPChannelResource.h>
 
 namespace eprosima {
 namespace fastdds {

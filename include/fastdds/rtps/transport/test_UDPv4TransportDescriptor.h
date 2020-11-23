@@ -15,9 +15,11 @@
 #ifndef _FASTDDS_TEST_UDPV4_TRANSPORT_DESCRIPTOR_
 #define _FASTDDS_TEST_UDPV4_TRANSPORT_DESCRIPTOR_
 
+#include <functional>
+
 #include <fastdds/rtps/transport/SocketTransportDescriptor.h>
 #include <fastdds/rtps/common/SequenceNumber.h>
-#include <functional>
+#include <fastdds/rtps/messages/CDRMessage.h>
 
 namespace eprosima{
 namespace fastdds{

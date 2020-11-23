@@ -16,11 +16,11 @@
 #define _FASTDDS_SHAREDMEM_CHANNEL_RESOURCE_
 
 #include <fastdds/rtps/messages/MessageReceiver.h>
-#include <fastrtps/transport/ChannelResource.h>
 #include <fastrtps/rtps/common/Locator.h>
 
 #include <rtps/transport/shared_mem/SharedMemManager.hpp>
 #include <rtps/transport/shared_mem/SharedMemTransport.h>
+#include <rtps/transport/ChannelResource.h>
 
 namespace eprosima {
 namespace fastdds {
