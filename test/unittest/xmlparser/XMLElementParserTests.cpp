@@ -61,6 +61,7 @@ public:
     void helper_block_for_at_least_entries(uint32_t amount)
     {
         std::unique_lock<std::mutex> lck(*xml_mutex_);
+        std::cout << amount << std::endl;
         mock_consumer->cv().wait(lck, [this, amount]
                 {
                     return mock_consumer->ConsumedEntries().size() >= amount;
@@ -1329,6 +1330,8 @@ TEST_F(XMLParserTests, getXMLWriterReaderUnsupportedQosPolicies)
     EXPECT_EQ(XMLP_ret::XML_OK, XMLParserTest::getXMLWriterQosPolicies_wrapper(titleElement,wqos,ident));
     EXPECT_EQ(XMLP_ret::XML_OK, XMLParserTest::getXMLReaderQosPolicies_wrapper(titleElement,rqos,ident));
 
+    std::cout << "PRINT--------------------------------------------------" << std::endl;
+
     helper_block_for_at_least_entries(18);
     auto consumed_entries = mock_consumer->ConsumedEntries();
     // Expect 1 log error.
@@ -2175,7 +2178,7 @@ TEST_F(XMLParserTests, getXMLReaderTimes_invalidXML)
 TEST_F(XMLParserTests, getXMLLocatorUDPv4_invalidXML)
 {
     uint8_t ident = 1;
-    rtps::Locator_t locator;
+    Locator_t locator;
     tinyxml2::XMLDocument xml_doc;
     tinyxml2::XMLElement* titleElement;
 
@@ -2393,7 +2396,7 @@ TEST_F(XMLParserTests, getXMLPublishModeQos_invalidXML)
 TEST_F(XMLParserTests, getXMLParticipantAllocationAttributes_invalidXML)
 {
     uint8_t ident = 1;
-    rtps::RTPSParticipantAllocationAttributes allocation;
+    RTPSParticipantAllocationAttributes allocation;
     tinyxml2::XMLDocument xml_doc;
     tinyxml2::XMLElement* titleElement;
 
@@ -2463,7 +2466,7 @@ TEST_F(XMLParserTests, getXMLParticipantAllocationAttributes_invalidXML)
 TEST_F(XMLParserTests, getXMLDiscoverySettings_invalidXML)
 {
     uint8_t ident = 1;
-    rtps::DiscoverySettings settings;
+    DiscoverySettings settings;
     tinyxml2::XMLDocument xml_doc;
     tinyxml2::XMLElement* titleElement;
 
@@ -2551,7 +2554,7 @@ TEST_F(XMLParserTests, getXMLDiscoverySettings_invalidXML)
 TEST_F(XMLParserTests, getXMLSendBuffersAllocationAttributes_invalidXML)
 {
     uint8_t ident = 1;
-    rtps::SendBuffersAllocationAttributes allocation;
+    SendBuffersAllocationAttributes allocation;
     tinyxml2::XMLDocument xml_doc;
     tinyxml2::XMLElement* titleElement;
 
@@ -2604,7 +2607,7 @@ TEST_F(XMLParserTests, getXMLSendBuffersAllocationAttributes_invalidXML)
 TEST_F(XMLParserTests, getXMLRemoteLocatorsAllocationAttributes_invalidXML)
 {
     uint8_t ident = 1;
-    rtps::RemoteLocatorsAllocationAttributes allocation;
+    RemoteLocatorsAllocationAttributes allocation;
     tinyxml2::XMLDocument xml_doc;
     tinyxml2::XMLElement* titleElement;
 

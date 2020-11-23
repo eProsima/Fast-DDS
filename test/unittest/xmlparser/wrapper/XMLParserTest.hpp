@@ -55,7 +55,7 @@ class XMLParserTest : public XMLParser{
 
     static XMLP_ret getXMLDiscoverySettings_wrapper(
         tinyxml2::XMLElement* elem,
-        rtps::DiscoverySettings& settings,
+        DiscoverySettings& settings,
         uint8_t ident)
     {
         return getXMLDiscoverySettings(elem,settings,ident);
@@ -300,7 +300,7 @@ class XMLParserTest : public XMLParser{
 
     static XMLP_ret getXMLLocatorUDPv4_wrapper(
         tinyxml2::XMLElement* elem,
-        rtps::Locator_t& locator,
+        Locator_t& locator,
         uint8_t ident)
     {
         return getXMLLocatorUDPv4(elem, locator, ident);
@@ -340,7 +340,7 @@ class XMLParserTest : public XMLParser{
 
     static XMLP_ret getXMLParticipantAllocationAttributes_wrapper(
         tinyxml2::XMLElement* elem,
-        rtps::RTPSParticipantAllocationAttributes& allocation,
+        RTPSParticipantAllocationAttributes& allocation,
         uint8_t ident)
     {
         return getXMLParticipantAllocationAttributes(elem, allocation, ident);
@@ -348,7 +348,7 @@ class XMLParserTest : public XMLParser{
 
     static XMLP_ret getXMLSendBuffersAllocationAttributes_wrapper(
         tinyxml2::XMLElement* elem,
-        rtps::SendBuffersAllocationAttributes& allocation,
+        SendBuffersAllocationAttributes& allocation,
         uint8_t ident)
     {
         return getXMLSendBuffersAllocationAttributes(elem, allocation, ident);
@@ -356,7 +356,7 @@ class XMLParserTest : public XMLParser{
 
     static XMLP_ret getXMLRemoteLocatorsAllocationAttributes_wrapper(
         tinyxml2::XMLElement* elem,
-        rtps::RemoteLocatorsAllocationAttributes& allocation,
+        RemoteLocatorsAllocationAttributes& allocation,
         uint8_t ident)
     {
         return getXMLRemoteLocatorsAllocationAttributes(elem, allocation, ident);
