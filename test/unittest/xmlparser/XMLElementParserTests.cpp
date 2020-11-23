@@ -1387,6 +1387,42 @@ TEST_F(XMLParserTests, ParticipantAllocationAttributesDataLimits)
     EXPECT_EQ(allocation.data_limits.max_partitions, 3);
 }
 
+/*
+ * This test checks the positive cases of configuration through XML of the STATIC EDP.
+ * 1. Check that the XML return code is correct for the STATIC EDP settings.
+ * 2. Check that the SIMPLE discovery protocol is set to false.
+ * 3. Check that the STATIC discovery protocol is set to true.
+ * 4. Check that the static endpoint XML filename is set correctly.
+ */
+TEST_F(XMLParserTests, getXMLDiscoverySettingsStaticEDP)
+{
+    uint8_t ident = 1;
+    rtps::DiscoverySettings settings;
+    tinyxml2::XMLDocument xml_doc;
+    tinyxml2::XMLElement* titleElement;
+
+    // XML snippet
+    const char* xml =
+    "\
+    <discovery_config>\
+        <EDP>STATIC</EDP>\
+        <staticEndpointXMLFilename>my_static_edp.xml</staticEndpointXMLFilename>\
+    </discovery_config>\
+    ";
+
+    // Check that the XML return code is correct for the static edp settings.
+    ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+    titleElement = xml_doc.RootElement();
+    // Check that the XML return code is correct for the STATIC EDP settings.
+    EXPECT_EQ(XMLP_ret::XML_OK, XMLParserTest::getXMLDiscoverySettings_wrapper(titleElement,settings,ident));
+    // Check that the SIMPLE discovery protocol is set to false.
+    EXPECT_FALSE(settings.use_SIMPLE_EndpointDiscoveryProtocol);
+    // Check that the STATIC discovery protocol is set to true.
+    EXPECT_TRUE(settings.use_STATIC_EndpointDiscoveryProtocol);
+    // Check that the static endpoint XML filename is set correctly.
+    EXPECT_STREQ(settings.getStaticEndpointXMLFilename(), "my_static_edp.xml");
+}
+
 // FINISH RAUL SECTION
 
 
