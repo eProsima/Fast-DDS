@@ -1349,7 +1349,22 @@ TEST_F(XMLParserTests, getXMLWriterReaderUnsupportedQosPolicies)
 
 // INIT PARIS SECTION
 
-
+/*
+ * This test checks the negative cases in the xml child element of <BuiltinAttributesr>
+ * 1. Check an invalid tag of:
+ *      <discovery_config>
+ *      <use_WriterLivelinessProtocol>
+ *      <metatrafficUnicastLocatorList>
+ *      <metatrafficMulticastLocatorList>
+ *      <initialPeersList>
+ *      <readerHistoryMemoryPolicy>
+ *      <writerHistoryMemoryPolicy>
+ *      <readerPayloadSize>
+ *      <writerPayloadSize>
+ *      <mutation_tries>
+ *      <avoid_builtin_multicast>
+ * 2. Check invalid element
+ */
 TEST_F(XMLParserTests, getXMLBuiltinAttributes_invalidXML)
 {
     uint8_t ident = 1;
@@ -1360,9 +1375,9 @@ TEST_F(XMLParserTests, getXMLBuiltinAttributes_invalidXML)
     // Parametrized XML
     const char* xml_p =
     "\
-    <builtinAttributesType>\
+    <builtinAttributes>\
         %s\
-    </builtinAttributesType>\
+    </builtinAttributes>\
     ";
     char xml[1000];
 
@@ -1405,6 +1420,13 @@ TEST_F(XMLParserTests, getXMLBuiltinAttributes_invalidXML)
     EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::getXMLBuiltinAttributes_wrapper(titleElement,builtin,ident));
 }
 
+/*
+ * This test checks the negative cases in the xml child element of <ThroughputController>
+ * 1. Check an invalid tag of:
+ *      <dbytesPerPeriod>
+ *      <periodMillisecs>
+ * 2. Check invalid element
+ */
 TEST_F(XMLParserTests, getXMLThroughputController_invalidXML)
 {
     uint8_t ident = 1;
@@ -1415,9 +1437,9 @@ TEST_F(XMLParserTests, getXMLThroughputController_invalidXML)
     // Parametrized XML
     const char* xml_p =
     "\
-    <throughputControllerType>\
+    <throughputController>\
         %s\
-    </throughputControllerType>\
+    </throughputController>\
     ";
     char xml[1000];
 
@@ -1451,6 +1473,18 @@ TEST_F(XMLParserTests, getXMLThroughputController_invalidXML)
     EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::getXMLThroughputController_wrapper(titleElement,throughputController,ident));
 }
 
+/*
+ * This test checks the negative cases in the xml child element of <TopicAttributes>
+ * 1. Check an invalid tag of:
+ *      <kind>
+ *      <name>
+ *      <data>
+ *      <kind>
+ *      <historyQos>
+ *      <resourceLimitsQos>
+ * 2. Check invalid <kind> type
+ * 3. Check invalid element
+ */
 TEST_F(XMLParserTests, getXMLTopicAttributes_invalidXML)
 {
     uint8_t ident = 1;
@@ -1461,9 +1495,9 @@ TEST_F(XMLParserTests, getXMLTopicAttributes_invalidXML)
     // Parametrized XML
     const char* xml_p =
     "\
-    <topicAttributesType>\
+    <topicAttributes>\
         %s\
-    </topicAttributesType>\
+    </topicAttributes>\
     ";
     char xml[1000];
 
@@ -1515,6 +1549,16 @@ TEST_F(XMLParserTests, getXMLTopicAttributes_invalidXML)
     EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::getXMLTopicAttributes_wrapper(titleElement,topic,ident));
 }
 
+/*
+ * This test checks the negative cases in the xml child element of <ResourceLimitsQos>
+ * 1. Check an invalid tag of:
+ *      <max_samples>
+ *      <max_instances>
+ *      <max_samples_per_instance>
+ *      <allocated_samples>
+ * 2. Check invalid <kind> type
+ * 3. Check invalid element
+ */
 TEST_F(XMLParserTests, getXMLResourceLimitsQos_invalidXML)
 {
     uint8_t ident = 1;
@@ -1525,9 +1569,9 @@ TEST_F(XMLParserTests, getXMLResourceLimitsQos_invalidXML)
     // Parametrized XML
     const char* xml_p =
     "\
-    <topicAttributesType>\
+    <topicAttributes>\
         %s\
-    </topicAttributesType>\
+    </topicAttributes>\
     ";
     char xml[1000];
 
@@ -1563,6 +1607,16 @@ TEST_F(XMLParserTests, getXMLResourceLimitsQos_invalidXML)
     EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::getXMLResourceLimitsQos_wrapper(titleElement,resourceLimitsQos,ident));
 }
 
+/*
+ * This test checks the negative cases in the xml child element of <ContainerAllocationConfig>
+ * 1. Check an invalid tag of:
+ *      <initial>
+ *      <maximum>
+ *      <increment>
+ * 2. Check invalid config <initial> > <maximum>
+ * 3. Check incalid config <increment> = 0
+ * 4. Check invalid element
+ */
 TEST_F(XMLParserTests, getXMLContainerAllocationConfig_invalidXML)
 {
     uint8_t ident = 1;
@@ -1573,9 +1627,9 @@ TEST_F(XMLParserTests, getXMLContainerAllocationConfig_invalidXML)
     // Parametrized XML
     const char* xml_p =
     "\
-    <containerAllocationConfigType>\
+    <containerAllocationConfig>\
         %s\
-    </containerAllocationConfigType>\
+    </containerAllocationConfig>\
     ";
     char xml[1000];
 
@@ -1638,6 +1692,14 @@ TEST_F(XMLParserTests, getXMLContainerAllocationConfig_invalidXML)
     EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::getXMLContainerAllocationConfig_wrapper(titleElement,allocation_config,ident));
 }
 
+/*
+ * This test checks the negative cases in the xml child element of <HistoryQosPolicy>
+ * 1. Check an invalid tag of:
+ *      <kind>
+ *      <depth>
+ * 2. Check invalid <kind> element
+ * 3. Check invalid element
+ */
 TEST_F(XMLParserTests, getXMLHistoryQosPolicy_invalidXML)
 {
     uint8_t ident = 1;
@@ -1648,9 +1710,9 @@ TEST_F(XMLParserTests, getXMLHistoryQosPolicy_invalidXML)
     // Parametrized XML
     const char* xml_p =
     "\
-    <historyQosPolicyType>\
+    <historyQosPolicy>\
         %s\
-    </historyQosPolicyType>\
+    </historyQosPolicy>\
     ";
     char xml[1000];
 
@@ -1696,6 +1758,13 @@ TEST_F(XMLParserTests, getXMLHistoryQosPolicy_invalidXML)
     EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::getXMLHistoryQosPolicy_wrapper(titleElement,historyQos,ident));
 }
 
+/*
+ * This test checks the negative cases in the xml child element of <DurabilityQos>
+ * 1. Check invalid <kind> element
+ * 2. Check empty <kind> element
+ * 3. Check no <kind> element
+ * 4. Check invalid element
+ */
 TEST_F(XMLParserTests, getXMLDurabilityQos_invalidXML)
 {
     uint8_t ident = 1;
@@ -1706,9 +1775,9 @@ TEST_F(XMLParserTests, getXMLDurabilityQos_invalidXML)
     // Parametrized XML
     const char* xml_p =
     "\
-    <durabilityQosPolicyType>\
+    <durabilityQosPolicy>\
         %s\
-    </durabilityQosPolicyType>\
+    </durabilityQosPolicy>\
     ";
     char xml[1000];
 
@@ -1752,6 +1821,12 @@ TEST_F(XMLParserTests, getXMLDurabilityQos_invalidXML)
     EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::getXMLDurabilityQos_wrapper(titleElement,durability,ident));
 }
 
+/*
+ * This test checks the negative cases in the xml child element of <DeadlineQos>
+ * 1. Check invalid <period> element
+ * 2. Check no <period> element
+ * 3. Check invalid element
+ */
 TEST_F(XMLParserTests, getXMLDeadlineQos_invalidXML)
 {
     uint8_t ident = 1;
@@ -1762,9 +1837,9 @@ TEST_F(XMLParserTests, getXMLDeadlineQos_invalidXML)
     // Parametrized XML
     const char* xml_p =
     "\
-    <deadlineQosPolicyType>\
+    <deadlineQosPolicy>\
         %s\
-    </deadlineQosPolicyType>\
+    </deadlineQosPolicy>\
     ";
     char xml[1000];
 
@@ -1796,6 +1871,12 @@ TEST_F(XMLParserTests, getXMLDeadlineQos_invalidXML)
     EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::getXMLDeadlineQos_wrapper(titleElement,deadline,ident));
 }
 
+/*
+ * This test checks the negative cases in the xml child element of <LatencyBudgetQos>
+ * 1. Check invalid <duration> element
+ * 2. Check no <duration> element
+ * 3. Check invalid element
+ */
 TEST_F(XMLParserTests, getXMLLatencyBudgetQos_invalidXML)
 {
     uint8_t ident = 1;
@@ -1806,9 +1887,9 @@ TEST_F(XMLParserTests, getXMLLatencyBudgetQos_invalidXML)
     // Parametrized XML
     const char* xml_p =
     "\
-    <latencyBudgetQosPolicyType>\
+    <latencyBudgetQosPolicy>\
         %s\
-    </latencyBudgetQosPolicyType>\
+    </latencyBudgetQosPolicy>\
     ";
     char xml[1000];
 
@@ -1840,6 +1921,13 @@ TEST_F(XMLParserTests, getXMLLatencyBudgetQos_invalidXML)
     EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::getXMLLatencyBudgetQos_wrapper(titleElement,latencyBudget,ident));
 }
 
+/*
+ * This test checks the negative cases in the xml child element of <ReliabilityQos>
+ * 1. Check invalid <kind> element
+ * 2. Check empty <kind> element
+ * 3. Check no <max_blocking_time> element
+ * 4. Check invalid element
+ */
 TEST_F(XMLParserTests, getXMLReliabilityQos_invalidXML)
 {
     uint8_t ident = 1;
@@ -1850,9 +1938,9 @@ TEST_F(XMLParserTests, getXMLReliabilityQos_invalidXML)
     // Parametrized XML
     const char* xml_p =
     "\
-    <reliabilityQosPolicyType>\
+    <reliabilityQosPolicy>\
         %s\
-    </reliabilityQosPolicyType>\
+    </reliabilityQosPolicy>\
     ";
     char xml[1000];
 
@@ -1899,6 +1987,13 @@ TEST_F(XMLParserTests, getXMLReliabilityQos_invalidXML)
     EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::getXMLReliabilityQos_wrapper(titleElement,reliability,ident));
 }
 
+/*
+ * This test checks the negative cases in the xml child element of <PartitionQos>
+ * 1. Check invalid <names> element
+ * 2. Check empty <names> element
+ * 3. Check no <names> element
+ * 4. Check invalid element
+ */
 TEST_F(XMLParserTests, getXMLPartitionQos_invalidXML)
 {
     uint8_t ident = 1;
@@ -1909,9 +2004,9 @@ TEST_F(XMLParserTests, getXMLPartitionQos_invalidXML)
     // Parametrized XML
     const char* xml_p =
     "\
-    <partitionQosPolicyType>\
+    <partitionQosPolicy>\
         %s\
-    </partitionQosPolicyType>\
+    </partitionQosPolicy>\
     ";
     char xml[1000];
 
@@ -1960,6 +2055,15 @@ TEST_F(XMLParserTests, getXMLPartitionQos_invalidXML)
     EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::getXMLPartitionQos_wrapper(titleElement,partition,ident));
 }
 
+/*
+ * This test checks the negative cases in the xml child element of <WriterTimes>
+ * 1. Check an invalid tag of:
+ *      <initialHeartbeatDelay>
+ *      <heartbeatPeriod>
+ *      <nackResponseDelay>
+ *      <nackSupressionDuration>
+ * 2. Check invalid element
+ */
 TEST_F(XMLParserTests, getXMLWriterTimes_invalidXML)
 {
     uint8_t ident = 1;
@@ -1970,9 +2074,9 @@ TEST_F(XMLParserTests, getXMLWriterTimes_invalidXML)
     // Parametrized XML
     const char* xml_p =
     "\
-    <writerTimesType>\
+    <writerTimes>\
         %s\
-    </writerTimesType>\
+    </writerTimes>\
     ";
     char xml[1000];
 
@@ -2008,6 +2112,13 @@ TEST_F(XMLParserTests, getXMLWriterTimes_invalidXML)
     EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::getXMLWriterTimes_wrapper(titleElement,times,ident));
 }
 
+/*
+ * This test checks the negative cases in the xml child element of <ReaderTimes>
+ * 1. Check an invalid tag of:
+ *      <initialAcknackDelay>
+ *      <heartbeatResponseDelay>
+ * 2. Check invalid element
+ */
 TEST_F(XMLParserTests, getXMLReaderTimes_invalidXML)
 {
     uint8_t ident = 1;
@@ -2018,9 +2129,9 @@ TEST_F(XMLParserTests, getXMLReaderTimes_invalidXML)
     // Parametrized XML
     const char* xml_p =
     "\
-    <readerTimesType>\
+    <readerTimes>\
         %s\
-    </readerTimesType>\
+    </readerTimes>\
     ";
     char xml[1000];
 
@@ -2054,6 +2165,13 @@ TEST_F(XMLParserTests, getXMLReaderTimes_invalidXML)
     EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::getXMLReaderTimes_wrapper(titleElement,times,ident));
 }
 
+/*
+ * This test checks the negative cases in the xml child element of <LocatorUDPv4>
+ * 1. Check an invalid tag of:
+ *      <port>
+ *      <address>
+ * 2. Check invalid element
+ */
 TEST_F(XMLParserTests, getXMLLocatorUDPv4_invalidXML)
 {
     uint8_t ident = 1;
@@ -2064,9 +2182,9 @@ TEST_F(XMLParserTests, getXMLLocatorUDPv4_invalidXML)
     // Parametrized XML
     const char* xml_p =
     "\
-    <udpv4LocatorType>\
+    <udpv4Locator>\
         %s\
-    </udpv4LocatorType>\
+    </udpv4Locator>\
     ";
     char xml[1000];
 
@@ -2100,6 +2218,11 @@ TEST_F(XMLParserTests, getXMLLocatorUDPv4_invalidXML)
     EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::getXMLLocatorUDPv4_wrapper(titleElement,locator,ident));
 }
 
+/*
+ * This test checks the negative cases in the xml child element of <HistoryMemoryPolicy>
+ * 1. Check no elements
+ * 2. Check invalid element
+ */
 TEST_F(XMLParserTests, getXMLHistoryMemoryPolicy_invalidXML)
 {
     uint8_t ident = 1;
@@ -2110,9 +2233,9 @@ TEST_F(XMLParserTests, getXMLHistoryMemoryPolicy_invalidXML)
     // Parametrized XML
     const char* xml_p =
     "\
-    <historyMemoryPolicyType>\
+    <historyMemoryPolicy>\
         %s\
-    </historyMemoryPolicyType>\
+    </historyMemoryPolicy>\
     ";
     char xml[1000];
 
@@ -2132,6 +2255,15 @@ TEST_F(XMLParserTests, getXMLHistoryMemoryPolicy_invalidXML)
     EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::getXMLHistoryMemoryPolicy_wrapper(titleElement,historyMemoryPolicy,ident));
 }
 
+/*
+ * This test checks the negative cases in the xml child element of <LivelinessQos>
+ * 1. Check an invalid tag of:
+ *      <kind>
+ *      <lease_duration>
+ *      <announcement_period>
+ * 2. Check invalid <kind> element
+ * 3. Check invalid element
+ */
 TEST_F(XMLParserTests, getXMLLivelinessQos_invalidXML)
 {
     uint8_t ident = 1;
@@ -2142,9 +2274,9 @@ TEST_F(XMLParserTests, getXMLLivelinessQos_invalidXML)
     // Parametrized XML
     const char* xml_p =
     "\
-    <livelinessQosPolicyType>\
+    <livelinessQosPolicy>\
         %s\
-    </livelinessQosPolicyType>\
+    </livelinessQosPolicy>\
     ";
     char xml[1000];
 
@@ -2188,6 +2320,13 @@ TEST_F(XMLParserTests, getXMLLivelinessQos_invalidXML)
     EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::getXMLLivelinessQos_wrapper(titleElement,liveliness,ident));
 }
 
+/*
+ * This test checks the negative cases in the xml child element of <PublishModeQos>
+ * 1. Check invalid <kind> element
+ * 2. Check empty <kind> element
+ * 3. Check no <kind> element
+ * 4. Check invalid element
+ */
 TEST_F(XMLParserTests, getXMLPublishModeQos_invalidXML)
 {
     uint8_t ident = 1;
@@ -2198,9 +2337,9 @@ TEST_F(XMLParserTests, getXMLPublishModeQos_invalidXML)
     // Parametrized XML
     const char* xml_p =
     "\
-    <publishModeQosPolicyType>\
+    <publishModeQosPolicy>\
         %s\
-    </publishModeQosPolicyType>\
+    </publishModeQosPolicy>\
     ";
     char xml[1000];
 
@@ -2238,6 +2377,19 @@ TEST_F(XMLParserTests, getXMLPublishModeQos_invalidXML)
     EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::getXMLPublishModeQos_wrapper(titleElement,publishMode,ident));
 }
 
+/*
+ * This test checks the negative cases in the xml child element of <ParticipantAllocationAttributes>
+ * 1. Check an invalid tag of:
+ *      <remote_locators>
+ *      <total_participants>
+ *      <total_readers>
+ *      <total_writers>
+ *      <send_buffers>
+ *      <max_properties>
+ *      <max_user_data>
+ *      <max_partitions>
+ * 2. Check invalid element
+ */
 TEST_F(XMLParserTests, getXMLParticipantAllocationAttributes_invalidXML)
 {
     uint8_t ident = 1;
@@ -2248,9 +2400,9 @@ TEST_F(XMLParserTests, getXMLParticipantAllocationAttributes_invalidXML)
     // Parametrized XML
     const char* xml_p =
     "\
-    <rtpsParticipantAllocationAttributesType>\
+    <rtpsParticipantAllocationAttributes>\
         %s\
-    </rtpsParticipantAllocationAttributesType>\
+    </rtpsParticipantAllocationAttributes>\
     ";
     char xml[1000];
 
@@ -2290,6 +2442,24 @@ TEST_F(XMLParserTests, getXMLParticipantAllocationAttributes_invalidXML)
     EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::getXMLParticipantAllocationAttributes_wrapper(titleElement,allocation,ident));
 }
 
+/*
+ * This test checks the negative cases in the xml child element of <DiscoverySettings>
+ * 1. Check an invalid tag of:
+ *      <discoveryProtocol>
+ *      <ignoreParticipantFlags>
+ *      <EDP>
+ *      <leaseDuration>
+ *      <leaseAnnouncement>
+ *      <initialAnnouncements>
+ *      <simpleEDP>
+ *      <clientAnnouncementPeriod>
+ *      <discoveryServersList>
+ *      <staticEndpointXMLFilename>
+ * 2. Check invalid <EDP> element
+ * 3. Check invalid <SimpleEDP <PUBWRITER_SUBREADER>> element
+ * 4. Check invalid <SimpleEDP <PUBREADER_SUBWRITER>> element
+ * 5. Check invalid element
+ */
 TEST_F(XMLParserTests, getXMLDiscoverySettings_invalidXML)
 {
     uint8_t ident = 1;
@@ -2300,9 +2470,9 @@ TEST_F(XMLParserTests, getXMLDiscoverySettings_invalidXML)
     // Parametrized XML
     const char* xml_p =
     "\
-    <discoverySettingsType>\
+    <discoverySettings>\
         %s\
-    </discoverySettingsType>\
+    </discoverySettings>\
     ";
     char xml[1000];
 
@@ -2371,6 +2541,13 @@ TEST_F(XMLParserTests, getXMLDiscoverySettings_invalidXML)
     EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::getXMLDiscoverySettings_wrapper(titleElement,settings,ident));
 }
 
+/*
+ * This test checks the negative cases in the xml child element of <SendBuffersAllocationAttributes>
+ * 1. Check an invalid tag of:
+ *      <preallocated_number>
+ *      <dynamic>
+ * 2. Check invalid element
+ */
 TEST_F(XMLParserTests, getXMLSendBuffersAllocationAttributes_invalidXML)
 {
     uint8_t ident = 1;
@@ -2381,9 +2558,9 @@ TEST_F(XMLParserTests, getXMLSendBuffersAllocationAttributes_invalidXML)
     // Parametrized XML
     const char* xml_p =
     "\
-    <sendBuffersAllocationConfigType>\
+    <sendBuffersAllocationConfig>\
         %s\
-    </sendBuffersAllocationConfigType>\
+    </sendBuffersAllocationConfig>\
     ";
     char xml[1000];
 
@@ -2417,6 +2594,13 @@ TEST_F(XMLParserTests, getXMLSendBuffersAllocationAttributes_invalidXML)
     EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::getXMLSendBuffersAllocationAttributes_wrapper(titleElement,allocation,ident));
 }
 
+/*
+ * This test checks the negative cases in the xml child element of <RemoteLocatorsAllocationAttributes>
+ * 1. Check an invalid tag of:
+ *      <max_unicast_locators>
+ *      <max_multicast_locators>
+ * 2. Check invalid element
+ */
 TEST_F(XMLParserTests, getXMLRemoteLocatorsAllocationAttributes_invalidXML)
 {
     uint8_t ident = 1;
@@ -2427,9 +2611,9 @@ TEST_F(XMLParserTests, getXMLRemoteLocatorsAllocationAttributes_invalidXML)
     // Parametrized XML
     const char* xml_p =
     "\
-    <remoteLocatorsAllocationConfigType>\
+    <remoteLocatorsAllocationConfig>\
         %s\
-    </remoteLocatorsAllocationConfigType>\
+    </remoteLocatorsAllocationConfig>\
     ";
     char xml[1000];
 
@@ -2461,6 +2645,144 @@ TEST_F(XMLParserTests, getXMLRemoteLocatorsAllocationAttributes_invalidXML)
     ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
     titleElement = xml_doc.RootElement();
     EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::getXMLRemoteLocatorsAllocationAttributes_wrapper(titleElement,allocation,ident));
+}
+
+/*
+ * This test checks the negative cases in the xml child element of <RemoteLocatorsAllocationAttributes>
+ * 1. Check XMLEnum with arg IntraprocessDeliveryType
+ *      1. null input
+ *      2. empty input
+ *      3. invalid input
+ * 2. Check XMLEnum with arg DiscoveryProtocol_t
+ *      1. null input
+ *      2. empty input
+ *      3. invalid input
+ * 3. Check XMLEnum with arg ParticipantFilteringFlags_t
+ *      1. null input
+ *      2. empty input
+ *      3. invalid input
+ */
+TEST_F(XMLParserTests, getXMLEnum_invalidXML)
+{
+    uint8_t ident = 1;
+    tinyxml2::XMLDocument xml_doc;
+    tinyxml2::XMLElement* titleElement;
+    char xml[1000];
+
+    // IntraprocessDeliveryType Enum
+    {
+        IntraprocessDeliveryType e;
+        const char* enum_p =
+        "\
+        <IntraprocessDelivery>\
+            %s\
+        </IntraprocessDelivery>\
+        ";
+
+        // null input
+        EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::getXMLEnum_wrapper(static_cast<tinyxml2::XMLElement*>(nullptr),&e,ident));
+
+        // void tag
+        sprintf(xml, enum_p, "");
+        ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+        titleElement = xml_doc.RootElement();
+        EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::getXMLEnum_wrapper(titleElement,&e,ident));
+
+        // Invalid argument
+        sprintf(xml, enum_p, "BAD FIELD");
+        ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+        titleElement = xml_doc.RootElement();
+        EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::getXMLEnum_wrapper(titleElement,&e,ident));
+    }
+
+    // DiscoveryProtocol Enum
+    {
+        DiscoveryProtocol_t e;
+        const char* enum_p =
+        "\
+        <DiscoveryProtocol>\
+            %s\
+        </DiscoveryProtocol>\
+        ";
+
+        // null input
+        EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::getXMLEnum_wrapper(static_cast<tinyxml2::XMLElement*>(nullptr),&e,ident));
+
+        // void tag
+        sprintf(xml, enum_p, "");
+        ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+        titleElement = xml_doc.RootElement();
+        EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::getXMLEnum_wrapper(titleElement,&e,ident));
+
+        // Invalid argument
+        sprintf(xml, enum_p, "BAD FIELD");
+        ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+        titleElement = xml_doc.RootElement();
+        EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::getXMLEnum_wrapper(titleElement,&e,ident));
+    }
+
+    // ParticipantFilteringFlags_t Enum
+    {
+        ParticipantFilteringFlags_t e;
+        const char* enum_p =
+        "\
+        <ParticipantFilteringFlags_t>\
+            %s\
+        </ParticipantFilteringFlags_t>\
+        ";
+
+        // null input
+        EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::getXMLEnum_wrapper(static_cast<tinyxml2::XMLElement*>(nullptr),&e,ident));
+
+        // void tag
+        sprintf(xml, enum_p, "");
+        ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+        titleElement = xml_doc.RootElement();
+        EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::getXMLEnum_wrapper(titleElement,&e,ident));
+
+        // Invalid argument
+        sprintf(xml, enum_p, "BAD FIELD");
+        ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+        titleElement = xml_doc.RootElement();
+        EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::getXMLEnum_wrapper(titleElement,&e,ident));
+    }
+
+}
+
+/*
+ * This function is not implemented, so this test checks fulfill the XMLElementParser coverage
+ * 1. Check an error message is received
+ */
+TEST_F(XMLParserTests, getXMLOctetVector_invalidXML)
+{
+    uint8_t indent = 1;
+    std::vector<octet> v;
+    tinyxml2::XMLDocument xml_doc;
+    tinyxml2::XMLElement* titleElement;
+    const char* xml = "</void>";
+
+    mock_consumer = new XMLMockConsumer();
+
+    Log::RegisterConsumer(std::unique_ptr<LogConsumer>(mock_consumer));
+    Log::SetVerbosity(Log::Warning);
+    Log::SetCategoryFilter(std::regex("(XMLPARSER)"));
+
+    ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+    titleElement = xml_doc.RootElement();
+    EXPECT_EQ(XMLP_ret::XML_OK, XMLParserTest::getXMLOctetVector_wrapper(titleElement,v,indent));
+
+    helper_block_for_at_least_entries(1);
+    auto consumed_entries = mock_consumer->ConsumedEntries();
+    // Expect 1 log error.
+    uint32_t num_errors = 0;
+    for (const auto& entry : consumed_entries)
+    {
+        if (entry.kind == Log::Kind::Error)
+        {
+            num_errors++;
+        }
+    }
+    EXPECT_EQ(num_errors, 1);
 }
 
 // FINISH PARIS SECTION

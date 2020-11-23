@@ -362,6 +362,38 @@ class XMLParserTest : public XMLParser{
         return getXMLRemoteLocatorsAllocationAttributes(elem, allocation, ident);
     }
 
+    static XMLP_ret getXMLEnum_wrapper(
+        tinyxml2::XMLElement* elem,
+        IntraprocessDeliveryType* e,
+        uint8_t ident)
+    {
+        return getXMLEnum(elem, e, ident);
+    }
+
+    static XMLP_ret getXMLEnum_wrapper(
+        tinyxml2::XMLElement* elem,
+        DiscoveryProtocol_t* e,
+        uint8_t ident)
+    {
+        return getXMLEnum(elem, e, ident);
+    }
+
+    static XMLP_ret getXMLEnum_wrapper(
+        tinyxml2::XMLElement* elem,
+        ParticipantFilteringFlags_t* e,
+        uint8_t ident)
+    {
+        return getXMLEnum(elem, e, ident);
+    }
+
+    static XMLP_ret getXMLOctetVector_wrapper(
+        tinyxml2::XMLElement* elem,
+        std::vector<octet>& e,
+        uint8_t ident)
+    {
+        return getXMLOctetVector(elem, e, ident);
+    }
+
     // FINISH FUNCTIONS PARIS SECTION
 
 };
