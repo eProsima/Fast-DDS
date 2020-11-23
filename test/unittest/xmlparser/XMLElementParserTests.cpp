@@ -1252,4 +1252,275 @@ TEST_F(XMLParserTests, getXMLLocatorUDPv4_invalidXML)
     EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::getXMLLocatorUDPv4_wrapper(titleElement,locator,ident));
 }
 
+TEST_F(XMLParserTests, getXMLHistoryMemoryPolicy_invalidXML)
+{
+    uint8_t ident = 1;
+    MemoryManagementPolicy_t historyMemoryPolicy;
+    tinyxml2::XMLDocument xml_doc;
+    tinyxml2::XMLElement* titleElement;
+
+    // Parametrized XML
+    const char* xml_p =
+    "\
+    <historyMemoryPolicyType>\
+        %s\
+    </historyMemoryPolicyType>\
+    ";
+    char xml[1000];
+
+    // Void historyMemoryPolicyType
+    {
+        const char* tag = "BAD POLICY";
+        sprintf(xml, xml_p, tag);
+        ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+        titleElement = xml_doc.RootElement();
+        EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::getXMLHistoryMemoryPolicy_wrapper(titleElement,historyMemoryPolicy,ident));
+    }
+
+    // Invalid element
+    sprintf(xml, xml_p, "<bad_element> </bad_element>");
+    ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+    titleElement = xml_doc.RootElement();
+    EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::getXMLHistoryMemoryPolicy_wrapper(titleElement,historyMemoryPolicy,ident));
+}
+
+TEST_F(XMLParserTests, getXMLLivelinessQos_invalidXML)
+{
+    uint8_t ident = 1;
+    LivelinessQosPolicy liveliness;
+    tinyxml2::XMLDocument xml_doc;
+    tinyxml2::XMLElement* titleElement;
+
+    // Parametrized XML
+    const char* xml_p =
+    "\
+    <livelinessQosPolicyType>\
+        %s\
+    </livelinessQosPolicyType>\
+    ";
+    char xml[1000];
+
+    const char* field_p =
+        "\
+        <%s>\
+            <bad_element> </bad_element>\
+        </%s>\
+        ";
+    char field[500];
+
+    std::vector<std::string> field_vec =
+    {
+        "kind",
+        "lease_duration",
+        "announcement_period"
+    };
+
+    for (std::string tag : field_vec)
+    {
+        sprintf(field, field_p, tag.c_str(), tag.c_str());
+        sprintf(xml, xml_p, field);
+        ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+        titleElement = xml_doc.RootElement();
+        EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::getXMLLivelinessQos_wrapper(titleElement,liveliness,ident));
+    }
+
+    // Invalid kind
+    {
+        const char* tag = "<kind> BAD_KIND </kind>";
+        sprintf(xml, xml_p, tag);
+        ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+        titleElement = xml_doc.RootElement();
+        EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::getXMLLivelinessQos_wrapper(titleElement,liveliness,ident));
+    }
+
+    // Invalid element
+    sprintf(xml, xml_p, "<bad_element> </bad_element>");
+    ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+    titleElement = xml_doc.RootElement();
+    EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::getXMLLivelinessQos_wrapper(titleElement,liveliness,ident));
+}
+
+TEST_F(XMLParserTests, getXMLPublishModeQos_invalidXML)
+{
+    uint8_t ident = 1;
+    PublishModeQosPolicy publishMode;
+    tinyxml2::XMLDocument xml_doc;
+    tinyxml2::XMLElement* titleElement;
+
+    // Parametrized XML
+    const char* xml_p =
+    "\
+    <publishModeQosPolicyType>\
+        %s\
+    </publishModeQosPolicyType>\
+    ";
+    char xml[1000];
+
+    // Invalid kind
+    {
+        const char* tag = "<kind> BAD_KIND </kind>";
+        sprintf(xml, xml_p, tag);
+        ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+        titleElement = xml_doc.RootElement();
+        EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::getXMLPublishModeQos_wrapper(titleElement,publishMode,ident));
+    }
+
+    // Empty kind
+    {
+        const char* tag = "<kind> </kind>";
+        sprintf(xml, xml_p, tag);
+        ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+        titleElement = xml_doc.RootElement();
+        EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::getXMLPublishModeQos_wrapper(titleElement,publishMode,ident));
+    }
+
+    // Empty kind
+    {
+        const char* tag = "";
+        sprintf(xml, xml_p, tag);
+        ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+        titleElement = xml_doc.RootElement();
+        EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::getXMLPublishModeQos_wrapper(titleElement,publishMode,ident));
+    }
+
+    // Invalid element
+    sprintf(xml, xml_p, "<bad_element> </bad_element>");
+    ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+    titleElement = xml_doc.RootElement();
+    EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::getXMLPublishModeQos_wrapper(titleElement,publishMode,ident));
+}
+
+TEST_F(XMLParserTests, getXMLParticipantAllocationAttributes_invalidXML)
+{
+    uint8_t ident = 1;
+    rtps::RTPSParticipantAllocationAttributes allocation;
+    tinyxml2::XMLDocument xml_doc;
+    tinyxml2::XMLElement* titleElement;
+
+    // Parametrized XML
+    const char* xml_p =
+    "\
+    <rtpsParticipantAllocationAttributesType>\
+        %s\
+    </rtpsParticipantAllocationAttributesType>\
+    ";
+    char xml[1000];
+
+    const char* field_p =
+        "\
+        <%s>\
+            <bad_element> </bad_element>\
+        </%s>\
+        ";
+    char field[500];
+
+    std::vector<std::string> field_vec =
+    {
+        "remote_locators",
+        "total_participants",
+        "total_readers",
+        "total_writers",
+        "send_buffers",
+        "max_properties",
+        "max_user_data",
+        "max_partitions"
+    };
+
+    for (std::string tag : field_vec)
+    {
+        sprintf(field, field_p, tag.c_str(), tag.c_str());
+        sprintf(xml, xml_p, field);
+        ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+        titleElement = xml_doc.RootElement();
+        EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::getXMLParticipantAllocationAttributes_wrapper(titleElement,allocation,ident));
+    }
+
+    // Invalid element
+    sprintf(xml, xml_p, "<bad_element> </bad_element>");
+    ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+    titleElement = xml_doc.RootElement();
+    EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::getXMLParticipantAllocationAttributes_wrapper(titleElement,allocation,ident));
+}
+
+TEST_F(XMLParserTests, getXMLDiscoverySettings_invalidXML)
+{
+    uint8_t ident = 1;
+    rtps::DiscoverySettings settings;
+    tinyxml2::XMLDocument xml_doc;
+    tinyxml2::XMLElement* titleElement;
+
+    // Parametrized XML
+    const char* xml_p =
+    "\
+    <discoverySettingsType>\
+        %s\
+    </discoverySettingsType>\
+    ";
+    char xml[1000];
+
+    const char* field_p =
+        "\
+        <%s>\
+            <bad_element> </bad_element>\
+        </%s>\
+        ";
+    char field[500];
+
+    std::vector<std::string> field_vec =
+    {
+        "discoveryProtocol",
+        "ignoreParticipantFlags",
+        "EDP",
+        "leaseDuration",
+        "leaseAnnouncement",
+        "initialAnnouncements",
+        "simpleEDP",
+        "clientAnnouncementPeriod",
+        "discoveryServersList",
+        "staticEndpointXMLFilename"
+    };
+
+    for (std::string tag : field_vec)
+    {
+        sprintf(field, field_p, tag.c_str(), tag.c_str());
+        sprintf(xml, xml_p, field);
+        ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+        titleElement = xml_doc.RootElement();
+        EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::getXMLDiscoverySettings_wrapper(titleElement,settings,ident));
+    }
+
+    // Bad EDP
+    {
+        const char* tag = "<EDP> BAD_EDP </EDP>";
+        sprintf(xml, xml_p, tag);
+        ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+        titleElement = xml_doc.RootElement();
+        EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::getXMLDiscoverySettings_wrapper(titleElement,settings,ident));
+    }
+
+    // Bad simpleEDP PUBWRITER_SUBREADER
+    {
+        const char* tag = "<simpleEDP> <PUBWRITER_SUBREADER> </PUBWRITER_SUBREADER> </simpleEDP>";
+        sprintf(xml, xml_p, tag);
+        ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+        titleElement = xml_doc.RootElement();
+        EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::getXMLDiscoverySettings_wrapper(titleElement,settings,ident));
+    }
+
+    // Bad simpleEDP PUBREADER_SUBWRITER
+    {
+        const char* tag = "<simpleEDP> <PUBREADER_SUBWRITER> </PUBREADER_SUBWRITER> </simpleEDP>";
+        sprintf(xml, xml_p, tag);
+        ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+        titleElement = xml_doc.RootElement();
+        EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::getXMLDiscoverySettings_wrapper(titleElement,settings,ident));
+    }
+
+    // Invalid element
+    sprintf(xml, xml_p, "<bad_element> </bad_element>");
+    ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+    titleElement = xml_doc.RootElement();
+    EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::getXMLDiscoverySettings_wrapper(titleElement,settings,ident));
+}
+
 // FINISH PARIS SECTION

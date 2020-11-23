@@ -187,6 +187,46 @@ class XMLParserTest : public XMLParser{
         return getXMLLocatorUDPv4(elem, locator, ident);
     }
 
+    static XMLP_ret getXMLPublisherAttributes_wrapper(
+        tinyxml2::XMLElement* elem,
+        PublisherAttributes& publisher,
+        uint8_t ident)
+    {
+        return getXMLPublisherAttributes(elem, publisher, ident);
+    }
+
+    static XMLP_ret getXMLHistoryMemoryPolicy_wrapper(
+        tinyxml2::XMLElement* elem,
+        MemoryManagementPolicy_t& historyMemoryPolicy,
+        uint8_t ident)
+    {
+        return getXMLHistoryMemoryPolicy(elem, historyMemoryPolicy, ident);
+    }
+
+    static XMLP_ret getXMLLivelinessQos_wrapper(
+        tinyxml2::XMLElement* elem,
+        LivelinessQosPolicy& liveliness,
+        uint8_t ident)
+    {
+        return getXMLLivelinessQos(elem, liveliness, ident);
+    }
+
+    static XMLP_ret getXMLPublishModeQos_wrapper(
+        tinyxml2::XMLElement* elem,
+        PublishModeQosPolicy& publishMode,
+        uint8_t ident)
+    {
+        return getXMLPublishModeQos(elem, publishMode, ident);
+    }
+
+    static XMLP_ret getXMLParticipantAllocationAttributes_wrapper(
+        tinyxml2::XMLElement* elem,
+        rtps::RTPSParticipantAllocationAttributes& allocation,
+        uint8_t ident)
+    {
+        return getXMLParticipantAllocationAttributes(elem, allocation, ident);
+    }
+
     // FINISH FUNCTIONS PARIS SECTION
 
 };
