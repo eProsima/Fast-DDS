@@ -34,7 +34,7 @@ TEST(BlackBox, UDPv4TransportWrongConfig)
         testTransport->maxMessageSize = 100000;
 
         writer.disable_builtin_transport().
-        add_user_transport_to_pparams(testTransport).init();
+                add_user_transport_to_pparams(testTransport).init();
 
         ASSERT_FALSE(writer.isInitialized());
     }
@@ -46,7 +46,7 @@ TEST(BlackBox, UDPv4TransportWrongConfig)
         testTransport->sendBufferSize = 64000;
 
         writer.disable_builtin_transport().
-        add_user_transport_to_pparams(testTransport).init();
+                add_user_transport_to_pparams(testTransport).init();
 
         ASSERT_FALSE(writer.isInitialized());
     }
@@ -58,7 +58,7 @@ TEST(BlackBox, UDPv4TransportWrongConfig)
         testTransport->receiveBufferSize = 64000;
 
         writer.disable_builtin_transport().
-        add_user_transport_to_pparams(testTransport).init();
+                add_user_transport_to_pparams(testTransport).init();
 
         ASSERT_FALSE(writer.isInitialized());
     }

@@ -19,9 +19,9 @@
 #include <rtps/transport/TCPAcceptor.h>
 #include <rtps/transport/TCPChannelResourceSecure.h>
 
-namespace eprosima{
-namespace fastdds{
-namespace rtps{
+namespace eprosima {
+namespace fastdds {
+namespace rtps {
 
 /**
  * TLS TCP Socket acceptor wrapper class.
@@ -29,31 +29,32 @@ namespace rtps{
 class TCPAcceptorSecure : public TCPAcceptor
 {
 public:
-    /**
-    * Constructor
-    * @param io_service Reference to the ASIO service.
-    * @param parent Pointer to the transport that is going to manage the acceptor.
-    * @param locator Locator with the information about where to accept connections.
-    */
-    TCPAcceptorSecure(
-        asio::io_service& io_service,
-        TCPTransportInterface* parent,
-        const fastrtps::rtps::Locator_t& locator);
 
     /**
-    * Constructor
-    * @param io_service Reference to the ASIO service.
-    * @param interface Network interface to bind the socket
-    * @param locator Locator with the information about where to accept connections.
-    */
+     * Constructor
+     * @param io_service Reference to the ASIO service.
+     * @param parent Pointer to the transport that is going to manage the acceptor.
+     * @param locator Locator with the information about where to accept connections.
+     */
     TCPAcceptorSecure(
-        asio::io_service& io_service,
-        const std::string& interface,
-        const fastrtps::rtps::Locator_t& locator);
+            asio::io_service& io_service,
+            TCPTransportInterface* parent,
+            const fastrtps::rtps::Locator_t& locator);
 
     /**
-    * Destructor
-    */
+     * Constructor
+     * @param io_service Reference to the ASIO service.
+     * @param interface Network interface to bind the socket
+     * @param locator Locator with the information about where to accept connections.
+     */
+    TCPAcceptorSecure(
+            asio::io_service& io_service,
+            const std::string& interface,
+            const fastrtps::rtps::Locator_t& locator);
+
+    /**
+     * Destructor
+     */
     virtual ~TCPAcceptorSecure()
     {
         acceptor_.cancel();
@@ -62,8 +63,8 @@ public:
 
     //! Method to start the accepting process.
     void accept(
-        TCPTransportInterface* parent,
-        asio::ssl::context&);
+            TCPTransportInterface* parent,
+            asio::ssl::context&);
 
 };
 

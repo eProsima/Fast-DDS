@@ -21,41 +21,44 @@
 #include <fastdds/rtps/common/SequenceNumber.h>
 #include <fastdds/rtps/messages/CDRMessage.h>
 
-namespace eprosima{
-namespace fastdds{
-namespace rtps{
+namespace eprosima {
+namespace fastdds {
+namespace rtps {
 
-typedef struct test_UDPv4TransportDescriptor : public SocketTransportDescriptor{
+typedef struct test_UDPv4TransportDescriptor : public SocketTransportDescriptor
+{
 
-    typedef std::function<bool(fastrtps::rtps::CDRMessage_t& msg)> filter;
+    typedef std::function<bool (fastrtps::rtps::CDRMessage_t& msg)> filter;
 
-   // Test shim parameters
-   uint8_t dropDataMessagesPercentage;
-   filter drop_data_messages_filter_;
-   bool dropParticipantBuiltinTopicData;
-   bool dropPublicationBuiltinTopicData;
-   bool dropSubscriptionBuiltinTopicData;
-   uint8_t dropDataFragMessagesPercentage;
-   filter drop_data_frag_messages_filter_;
-   uint8_t dropHeartbeatMessagesPercentage;
-   filter drop_heartbeat_messages_filter_;
-   uint8_t dropAckNackMessagesPercentage;
-   filter drop_ack_nack_messages_filter_;
-   uint8_t dropGapMessagesPercentage;
-   filter drop_gap_messages_filter_;
+    // Test shim parameters
+    uint8_t dropDataMessagesPercentage;
+    filter drop_data_messages_filter_;
+    bool dropParticipantBuiltinTopicData;
+    bool dropPublicationBuiltinTopicData;
+    bool dropSubscriptionBuiltinTopicData;
+    uint8_t dropDataFragMessagesPercentage;
+    filter drop_data_frag_messages_filter_;
+    uint8_t dropHeartbeatMessagesPercentage;
+    filter drop_heartbeat_messages_filter_;
+    uint8_t dropAckNackMessagesPercentage;
+    filter drop_ack_nack_messages_filter_;
+    uint8_t dropGapMessagesPercentage;
+    filter drop_gap_messages_filter_;
 
-   // General drop percentage (indescriminate)
-   uint8_t percentageOfMessagesToDrop;
-   filter messages_filter_;
+    // General drop percentage (indescriminate)
+    uint8_t percentageOfMessagesToDrop;
+    filter messages_filter_;
 
-   std::vector<fastrtps::rtps::SequenceNumber_t> sequenceNumberDataMessagesToDrop;
+    std::vector<fastrtps::rtps::SequenceNumber_t> sequenceNumberDataMessagesToDrop;
 
-   uint32_t dropLogLength; // logs dropped packets.
+    uint32_t dropLogLength; // logs dropped packets.
 
-   RTPS_DllAPI test_UDPv4TransportDescriptor();
-   virtual ~test_UDPv4TransportDescriptor(){}
+    RTPS_DllAPI test_UDPv4TransportDescriptor();
+    virtual ~test_UDPv4TransportDescriptor()
+    {
+    }
 
-   virtual TransportInterface* create_transport() const override;
+    virtual TransportInterface* create_transport() const override;
 } test_UDPv4TransportDescriptor;
 
 } // namespace rtps

@@ -21,23 +21,27 @@
 #include <fastdds/dds/log/Log.hpp>
 #include <fastdds/rtps/common/CDRMessage_t.h>
 
-namespace eprosima{
-namespace fastdds{
-namespace rtps{
+namespace eprosima {
+namespace fastdds {
+namespace rtps {
 
 class ChannelResource
 {
 public:
+
     ChannelResource();
-    ChannelResource(ChannelResource&& channelResource);
-    ChannelResource(uint32_t rec_buffer_size);
+    ChannelResource(
+            ChannelResource&& channelResource);
+    ChannelResource(
+            uint32_t rec_buffer_size);
     virtual ~ChannelResource();
 
     virtual void clear();
 
-    inline void thread(std::thread&& pThread)
+    inline void thread(
+            std::thread&& pThread)
     {
-        if(thread_.joinable())
+        if (thread_.joinable())
         {
             thread_.join();
         }
@@ -61,6 +65,7 @@ public:
     }
 
 protected:
+
     //!Received message
     fastrtps::rtps::CDRMessage_t message_buffer_;
 

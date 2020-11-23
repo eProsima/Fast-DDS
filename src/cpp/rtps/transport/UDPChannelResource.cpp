@@ -47,7 +47,8 @@ UDPChannelResource::~UDPChannelResource()
     message_receiver_ = nullptr;
 }
 
-void UDPChannelResource::perform_listen_operation(Locator_t input_locator)
+void UDPChannelResource::perform_listen_operation(
+        Locator_t input_locator)
 {
     Locator_t remote_locator;
 
@@ -101,7 +102,7 @@ bool UDPChannelResource::Receive(
     {
         (void)error;
         logWarning(RTPS_MSG_OUT, "Error receiving data: " << error.what() << " - " << message_receiver()
-            << " (" << this << ")");
+                                                          << " (" << this << ")");
         return false;
     }
 }

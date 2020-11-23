@@ -16,9 +16,9 @@
 #include <rtps/transport/TCPAcceptorSecure.h>
 #include <rtps/transport/TCPTransportInterface.h>
 
-namespace eprosima{
-namespace fastdds{
-namespace rtps{
+namespace eprosima {
+namespace fastdds {
+namespace rtps {
 
 using Locator_t = fastrtps::rtps::Locator_t;
 using Log = fastdds::dds::Log;
@@ -46,7 +46,7 @@ void TCPAcceptorSecure::accept(
         ssl::context& ssl_context)
 {
     logInfo(ACEPTOR, "Listening at: " << acceptor_.local_endpoint().address()
-        << ":" << acceptor_.local_endpoint().port());
+                                      << ":" << acceptor_.local_endpoint().port());
 
     using asio::ip::tcp;
     using TLSHSRole = TCPTransportDescriptor::TLSConfig::TLSHandShakeRole;
@@ -70,11 +70,11 @@ void TCPAcceptorSecure::accept(
                     std::make_shared<asio::ssl::stream<asio::ip::tcp::socket>>(std::move(socket), ssl_context);
 
                     secure_socket->async_handshake(role,
-                        [secure_socket, locator, parent](const std::error_code& error)
-                        {
-                            //logError(RTCP_TLS, "Handshake: " << error.message());
-                            parent->SecureSocketAccepted(secure_socket, locator, error);
-                        });
+                    [secure_socket, locator, parent](const std::error_code& error)
+                    {
+                        //logError(RTCP_TLS, "Handshake: " << error.message());
+                        parent->SecureSocketAccepted(secure_socket, locator, error);
+                    });
                 }
                 else
                 {
@@ -85,31 +85,31 @@ void TCPAcceptorSecure::accept(
         auto secure_socket = std::make_shared<asio::ssl::stream<asio::ip::tcp::socket>>(*io_service_, ssl_context);
 
         acceptor_.async_accept(secure_socket->lowest_layer(),
-            [locator, parent, secure_socket](const std::error_code& error)
-            {
-                if (!error)
+                [locator, parent, secure_socket](const std::error_code& error)
                 {
-                    ssl::stream_base::handshake_type role = ssl::stream_base::server;
-                    if (parent->configuration()->tls_config.handshake_role == TLSHSRole::CLIENT)
+                    if (!error)
                     {
-                        role = ssl::stream_base::client;
-                    }
+                        ssl::stream_base::handshake_type role = ssl::stream_base::server;
+                        if (parent->configuration()->tls_config.handshake_role == TLSHSRole::CLIENT)
+                        {
+                            role = ssl::stream_base::client;
+                        }
 
-                    secure_socket->async_handshake(role,
+                        secure_socket->async_handshake(role,
                         [secure_socket, locator, parent](const std::error_code& error)
                         {
                             //logError(RTCP_TLS, "Handshake: " << error.message());
                             parent->SecureSocketAccepted(secure_socket, locator, error);
                         });
-                }
-                else
-                {
-                    parent->SecureSocketAccepted(nullptr, locator, error); // This method manages errors too.
-                }
-            });
-#endif
+                    }
+                    else
+                    {
+                        parent->SecureSocketAccepted(nullptr, locator, error); // This method manages errors too.
+                    }
+                });
+#endif // if ASIO_VERSION >= 101200
     }
-    catch(std::error_code& error)
+    catch (std::error_code& error)
     {
         logError(RTCP_TLS, "Exception accepting: " << error.message());
     }

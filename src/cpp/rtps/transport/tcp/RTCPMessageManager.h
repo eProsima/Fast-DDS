@@ -20,7 +20,7 @@
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
-#include<memory>
+#include <memory>
 #include <atomic>
 
 #include <fastdds/rtps/common/all_common.h>
@@ -30,7 +30,7 @@
 #include <rtps/transport/tcp/RTCPHeader.h>
 
 namespace eprosima {
-namespace fastdds{
+namespace fastdds {
 namespace rtps {
 
 class TCPChannelResource;
@@ -45,19 +45,27 @@ const fastrtps::rtps::ProtocolVersion_t c_rtcpProtocolVersion = {1, 0};
 class RTCPMessageManager
 {
     std::atomic<bool> alive_;
+
 public:
 
-    RTCPMessageManager(TCPTransportInterface* pTransport) : alive_(true), mTransport(pTransport) {}
+    RTCPMessageManager(
+            TCPTransportInterface* pTransport)
+        : alive_(true)
+        , mTransport(pTransport)
+    {
+    }
+
     virtual ~RTCPMessageManager();
 
     /** @name Send RTCP Message Methods.
-    * These methods create RTPS messages for different types
-    */
-    TCPTransactionId sendConnectionRequest(std::shared_ptr<TCPChannelResource>& channel);
+     * These methods create RTPS messages for different types
+     */
+    TCPTransactionId sendConnectionRequest(
+            std::shared_ptr<TCPChannelResource>& channel);
 
     TCPTransactionId sendOpenLogicalPortRequest(
             TCPChannelResource* channel,
-            OpenLogicalPortRequest_t &request);
+            OpenLogicalPortRequest_t& request);
 
     TCPTransactionId sendOpenLogicalPortRequest(
             TCPChannelResource* channel,
@@ -65,17 +73,18 @@ public:
 
     TCPTransactionId sendCheckLogicalPortsRequest(
             TCPChannelResource* channel,
-            CheckLogicalPortsRequest_t &request);
+            CheckLogicalPortsRequest_t& request);
 
     TCPTransactionId sendCheckLogicalPortsRequest(
             TCPChannelResource* channel,
-            std::vector<uint16_t> &ports);
+            std::vector<uint16_t>& ports);
 
     TCPTransactionId sendKeepAliveRequest(
             std::shared_ptr<TCPChannelResource>& channel,
-            KeepAliveRequest_t &request);
+            KeepAliveRequest_t& request);
 
-    TCPTransactionId sendKeepAliveRequest(std::shared_ptr<TCPChannelResource>& channel);
+    TCPTransactionId sendKeepAliveRequest(
+            std::shared_ptr<TCPChannelResource>& channel);
 
     TCPTransactionId sendLogicalPortIsClosedRequest(
             std::shared_ptr<TCPChannelResource>& channel,
@@ -85,63 +94,66 @@ public:
             std::shared_ptr<TCPChannelResource>& channel,
             uint16_t port);
 
-    TCPTransactionId sendUnbindConnectionRequest(std::shared_ptr<TCPChannelResource>& channel);
+    TCPTransactionId sendUnbindConnectionRequest(
+            std::shared_ptr<TCPChannelResource>& channel);
 
     /** @name Process RTCP Message Methods.
-    * These methods create RTPS messages for different types
-    */
+     * These methods create RTPS messages for different types
+     */
     ResponseCode processBindConnectionRequest(
             std::shared_ptr<TCPChannelResource>& channel,
-            const ConnectionRequest_t &request,
-            const TCPTransactionId &transactionId,
-            fastrtps::rtps::Locator_t &localLocator);
+            const ConnectionRequest_t& request,
+            const TCPTransactionId& transactionId,
+            fastrtps::rtps::Locator_t& localLocator);
 
     virtual ResponseCode processOpenLogicalPortRequest(
             std::shared_ptr<TCPChannelResource>& channel,
-            const OpenLogicalPortRequest_t &request,
-            const TCPTransactionId &transactionId);
+            const OpenLogicalPortRequest_t& request,
+            const TCPTransactionId& transactionId);
 
     void processCheckLogicalPortsRequest(
             std::shared_ptr<TCPChannelResource>& channel,
-            const CheckLogicalPortsRequest_t &request,
-            const TCPTransactionId &transactionId);
+            const CheckLogicalPortsRequest_t& request,
+            const TCPTransactionId& transactionId);
 
     ResponseCode processKeepAliveRequest(
             std::shared_ptr<TCPChannelResource>& channel,
-            const KeepAliveRequest_t &request,
-            const TCPTransactionId &transactionId);
+            const KeepAliveRequest_t& request,
+            const TCPTransactionId& transactionId);
 
     void processLogicalPortIsClosedRequest(
             std::shared_ptr<TCPChannelResource>& channel,
-            const LogicalPortIsClosedRequest_t &request,
-            const TCPTransactionId &transactionId);
+            const LogicalPortIsClosedRequest_t& request,
+            const TCPTransactionId& transactionId);
 
     ResponseCode processBindConnectionResponse(
             std::shared_ptr<TCPChannelResource>& channel,
-            const BindConnectionResponse_t &response,
-            const TCPTransactionId &transactionId);
+            const BindConnectionResponse_t& response,
+            const TCPTransactionId& transactionId);
 
     ResponseCode processCheckLogicalPortsResponse(
             std::shared_ptr<TCPChannelResource>& channel,
-            const CheckLogicalPortsResponse_t &response,
-            const TCPTransactionId &transactionId);
+            const CheckLogicalPortsResponse_t& response,
+            const TCPTransactionId& transactionId);
 
     ResponseCode processOpenLogicalPortResponse(
             std::shared_ptr<TCPChannelResource>& channel,
             ResponseCode respCode,
-            const TCPTransactionId &transactionId);
+            const TCPTransactionId& transactionId);
 
     ResponseCode processKeepAliveResponse(
             std::shared_ptr<TCPChannelResource>& channel,
             ResponseCode respCode,
-            const TCPTransactionId &transactionId);
+            const TCPTransactionId& transactionId);
 
     ResponseCode processRTCPMessage(
             std::shared_ptr<TCPChannelResource>& channel,
             fastrtps::rtps::octet* receive_buffer,
             size_t receivedSize);
 
-    static uint32_t& addToCRC(uint32_t &crc, fastrtps::rtps::octet data);
+    static uint32_t& addToCRC(
+            uint32_t& crc,
+            fastrtps::rtps::octet data);
 
     void dispose()
     {
@@ -149,6 +161,7 @@ public:
     }
 
 protected:
+
     TCPTransportInterface* mTransport;
     std::set<TCPTransactionId> mUnconfirmedTransactions;
     TCPTransactionId myTransId;
@@ -160,20 +173,23 @@ protected:
         return myTransId++;
     }
 
-    bool findTransactionId(const TCPTransactionId& transactionId)
+    bool findTransactionId(
+            const TCPTransactionId& transactionId)
     {
         std::unique_lock<std::recursive_mutex> scopedLock(mutex);
         auto it = mUnconfirmedTransactions.find(transactionId);
         return it != mUnconfirmedTransactions.end();
     }
 
-    void addTransactionId(const TCPTransactionId& transactionId)
+    void addTransactionId(
+            const TCPTransactionId& transactionId)
     {
         std::unique_lock<std::recursive_mutex> scopedLock(mutex);
         mUnconfirmedTransactions.emplace(transactionId);
     }
 
-    bool removeTransactionId(const TCPTransactionId& transactionId)
+    bool removeTransactionId(
+            const TCPTransactionId& transactionId)
     {
         std::unique_lock<std::recursive_mutex> scopedLock(mutex);
         auto it = mUnconfirmedTransactions.find(transactionId);
@@ -192,34 +208,41 @@ protected:
 
     size_t sendMessage(
             TCPChannelResource* channel,
-            const fastrtps::rtps::CDRMessage_t &msg) const;
+            const fastrtps::rtps::CDRMessage_t& msg) const;
 
     bool sendData(
             std::shared_ptr<TCPChannelResource>& channel,
             TCPCPMKind kind,
-            const TCPTransactionId &transactionId,
-            const fastrtps::rtps::SerializedPayload_t *payload = nullptr,
+            const TCPTransactionId& transactionId,
+            const fastrtps::rtps::SerializedPayload_t* payload = nullptr,
             const ResponseCode respCode = RETCODE_VOID);
 
     bool sendData(
             TCPChannelResource* channel,
             TCPCPMKind kind,
-            const TCPTransactionId &transactionId,
-            const fastrtps::rtps::SerializedPayload_t *payload = nullptr,
+            const TCPTransactionId& transactionId,
+            const fastrtps::rtps::SerializedPayload_t* payload = nullptr,
             const ResponseCode respCode = RETCODE_VOID);
 
-    void fillHeaders(TCPCPMKind kind, const TCPTransactionId &transactionId, TCPControlMsgHeader &retCtrlHeader,
-        TCPHeader &header, const fastrtps::rtps::SerializedPayload_t *payload = nullptr, const ResponseCode *respCode = nullptr);
+    void fillHeaders(
+            TCPCPMKind kind,
+            const TCPTransactionId& transactionId,
+            TCPControlMsgHeader& retCtrlHeader,
+            TCPHeader& header,
+            const fastrtps::rtps::SerializedPayload_t* payload = nullptr,
+            const ResponseCode* respCode = nullptr);
 
-    bool isCompatibleProtocol(const fastrtps::rtps::ProtocolVersion_t &protocol) const;
+    bool isCompatibleProtocol(
+            const fastrtps::rtps::ProtocolVersion_t& protocol) const;
 
     inline bool alive() const
     {
         return alive_.load();
     }
+
 };
 } /* namespace rtps */
 } /* namespace fastdds */
 } /* namespace eprosima */
-#endif
+#endif // ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 #endif /* _FASTDDS_RTCP_MESSAGEMANAGER_H_ */

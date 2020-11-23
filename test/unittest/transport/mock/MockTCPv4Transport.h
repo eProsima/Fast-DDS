@@ -19,9 +19,9 @@
 #include <fastrtps/utils/IPLocator.h>
 #include <rtps/transport/TCPv4Transport.h>
 
-namespace eprosima{
-namespace fastrtps{
-namespace rtps{
+namespace eprosima {
+namespace fastrtps {
+namespace rtps {
 
 using TCPv4Transport = eprosima::fastdds::rtps::TCPv4Transport;
 using TCPChannelResource = eprosima::fastdds::rtps::TCPChannelResource;
@@ -32,7 +32,8 @@ class MockTCPv4Transport : public TCPv4Transport
 {
 public:
 
-    MockTCPv4Transport(const TCPv4TransportDescriptor& descriptor)
+    MockTCPv4Transport(
+            const TCPv4TransportDescriptor& descriptor)
     {
         configuration_ = descriptor;
     }
@@ -45,30 +46,30 @@ public:
         std::shared_ptr<TCPChannelResource> channel(
 #if TLS_FOUND
             (configuration_.apply_security) ?
-                static_cast<TCPChannelResource*>(
-                    new TCPChannelResourceSecure(this, io_service_, ssl_context_, physicalLocator, 0)) :
-#endif
-                static_cast<TCPChannelResource*>(
-                    new TCPChannelResourceBasic(this, io_service_, physicalLocator, 0))
+            static_cast<TCPChannelResource*>(
+                new TCPChannelResourceSecure(this, io_service_, ssl_context_, physicalLocator, 0)) :
+#endif // if TLS_FOUND
+            static_cast<TCPChannelResource*>(
+                new TCPChannelResourceBasic(this, io_service_, physicalLocator, 0))
             );
 
         channel_resources_[physicalLocator] = channel;
         return true;
     }
 
-        /*
-    virtual bool CloseOutputChannel(const Locator_t& locator) override
-    {
-        const Locator_t& physicalLocator = IPLocator::toPhysicalLocator(locator);
-        auto it = channel_resources_.find(physicalLocator);
-        if (it != channel_resources_.end())
-        {
-            delete it->second;
-            channel_resources_.erase(it);
-        }
-        return true;
-    }
-        */
+    /*
+       virtual bool CloseOutputChannel(const Locator_t& locator) override
+       {
+       const Locator_t& physicalLocator = IPLocator::toPhysicalLocator(locator);
+       auto it = channel_resources_.find(physicalLocator);
+       if (it != channel_resources_.end())
+       {
+        delete it->second;
+        channel_resources_.erase(it);
+       }
+       return true;
+       }
+     */
 };
 
 } // namespace rtps
