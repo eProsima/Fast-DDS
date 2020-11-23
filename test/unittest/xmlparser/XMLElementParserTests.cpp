@@ -557,4 +557,50 @@ TEST_F(XMLParserTests, getXMLBuiltinAttributes_invalidXML)
     EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::getXMLBuiltinAttributes_wrapper(titleElement,builtin,ident));
 }
 
+TEST_F(XMLParserTests, getXMLThroughputController_invalidXML)
+{
+    uint8_t ident = 1;
+    ThroughputControllerDescriptor throughputController;
+    tinyxml2::XMLDocument xml_doc;
+    tinyxml2::XMLElement* titleElement;
+
+    // Parametrized XML
+    const char* xml_p =
+    "\
+    <throughputControllerType>\
+        %s\
+    </throughputControllerType>\
+    ";
+    char xml[1000];
+
+    const char* field_p =
+        "\
+        <%s>\
+            <bad_element> </bad_element>\
+        </%s>\
+        ";
+    char field[500];
+
+    std::vector<std::string> field_vec =
+    {
+        "bytesPerPeriod",
+        "periodMillisecs",
+    };
+
+    for (std::string tag : field_vec)
+    {
+        sprintf(field, field_p, tag.c_str(), tag.c_str());
+        sprintf(xml, xml_p, field);
+        ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+        titleElement = xml_doc.RootElement();
+        EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::getXMLThroughputController_wrapper(titleElement,throughputController,ident));
+    }
+
+    // Invalid element
+    sprintf(xml, xml_p, "<bad_element> </bad_element>");
+    ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+    titleElement = xml_doc.RootElement();
+    EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::getXMLThroughputController_wrapper(titleElement,throughputController,ident));
+}
+
 // FINISH PARIS SECTION

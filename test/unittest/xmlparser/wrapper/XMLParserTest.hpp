@@ -83,6 +83,14 @@ class XMLParserTest : public XMLParser{
         return getXMLBuiltinAttributes(elem, builtin, ident);
     }
 
+    static XMLP_ret getXMLThroughputController_wrapper(
+        tinyxml2::XMLElement* elem,
+        ThroughputControllerDescriptor& throughputController,
+        uint8_t ident)
+    {
+        return getXMLThroughputController(elem, throughputController, ident);
+    }
+
     // FINISH FUNCTIONS PARIS SECTION
 
 };
