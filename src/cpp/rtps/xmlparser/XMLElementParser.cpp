@@ -2790,6 +2790,7 @@ XMLP_ret XMLParser::getXMLHistoryMemoryPolicy(
                 <xs:enumeration value="PREALLOCATED_WITH_REALLOC"/>
                 <xs:enumeration value="DYNAMIC"/>
                 <xs:enumeration value="DYNAMIC_REUSABLE"/>
+                <xs:enumeration value="DYNAMIC_RESERVE"/>
             </xs:restriction>
         </xs:simpleType>
      */
@@ -2814,6 +2815,10 @@ XMLP_ret XMLParser::getXMLHistoryMemoryPolicy(
     else if (strcmp(text, DYNAMIC_REUSABLE) == 0)
     {
         historyMemoryPolicy = MemoryManagementPolicy::DYNAMIC_REUSABLE_MEMORY_MODE;
+    }
+    else if (strcmp(text, DYNAMIC_RESERVE) == 0)
+    {
+        historyMemoryPolicy = MemoryManagementPolicy::DYNAMIC_RESERVE_MEMORY_MODE;
     }
     else
     {

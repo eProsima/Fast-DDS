@@ -157,6 +157,7 @@ extern const char* PREALLOCATED;
 extern const char* PREALLOCATED_WITH_REALLOC;
 extern const char* DYNAMIC;
 extern const char* DYNAMIC_REUSABLE;
+extern const char* DYNAMIC_RESERVE;
 extern const char* LOCATOR;
 extern const char* UDPv4_LOCATOR;
 extern const char* UDPv6_LOCATOR;
