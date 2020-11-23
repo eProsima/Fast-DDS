@@ -15,8 +15,8 @@
 #ifndef _FASTDDS_TCP_ACCEPTOR_BASIC_
 #define _FASTDDS_TCP_ACCEPTOR_BASIC_
 
-#include <fastdds/rtps/transport/TCPAcceptor.h>
-#include <fastdds/rtps/transport/TCPChannelResourceBasic.h>
+#include <rtps/transport/TCPAcceptor.h>
+#include <rtps/transport/TCPChannelResourceBasic.h>
 
 namespace eprosima{
 namespace fastdds{

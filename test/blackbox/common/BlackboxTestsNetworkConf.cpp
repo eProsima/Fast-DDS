@@ -17,8 +17,8 @@
 #include "PubSubWriter.hpp"
 
 #include <fastrtps/rtps/common/Locator.h>
-#include <fastrtps/transport/UDPv4Transport.h>
 #include <fastrtps/utils/IPFinder.h>
+#include <rtps/transport/UDPv4Transport.h>
 
 #include <gtest/gtest.h>
 
@@ -26,6 +26,7 @@
 
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
+using UDPv4Transport = eprosima::fastdds::rtps::UDPv4Transport;
 
 static void GetIP4s(
         std::vector<IPFinder::info_IP>& interfaces)

@@ -12,22 +12,24 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include <fastrtps/utils/Semaphore.h>
-#include <fastrtps/transport/TCPv4Transport.h>
-#include "mock/MockTCPv4Transport.h"
-#include <fastrtps/utils/IPFinder.h>
-#include <fastrtps/utils/IPLocator.h>
-#include <fastdds/dds/log/Log.hpp>
-#include <MockReceiverResource.h>
-#include "../../../src/cpp/rtps/transport/TCPSenderResource.hpp"
-
 #include <memory>
+#include <thread>
+
 #include <asio.hpp>
 #include <gtest/gtest.h>
-#include <thread>
+#include <MockReceiverResource.h>
+#include "mock/MockTCPv4Transport.h"
+#include <fastdds/dds/log/Log.hpp>
+#include <fastrtps/transport/TCPv4TransportDescriptor.h>
+#include <fastrtps/utils/Semaphore.h>
+#include <fastrtps/utils/IPFinder.h>
+#include <fastrtps/utils/IPLocator.h>
+#include <rtps/transport/TCPv4Transport.h>
+//#include "../../../src/cpp/rtps/transport/TCPSenderResource.hpp"
 
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
+using TCPv4Transport = eprosima::fastdds::rtps::TCPv4Transport;
 
 #if defined(_WIN32)
 #define GET_PID _getpid

@@ -16,7 +16,7 @@
 #define _FASTDDS_TCP_CHANNEL_RESOURCE_BASIC_
 
 #include <asio.hpp>
-#include <fastdds/rtps/transport/TCPChannelResource.h>
+#include <rtps/transport/TCPChannelResource.h>
 
 namespace eprosima{
 namespace fastdds{

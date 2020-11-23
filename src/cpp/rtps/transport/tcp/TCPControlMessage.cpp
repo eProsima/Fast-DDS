@@ -26,8 +26,8 @@ char dummy;
 } // namespace
 #endif // ifdef _WIN32
 
-#include <fastdds/rtps/transport/tcp/TCPControlMessage.h>
 #include <fastdds/rtps/common/Types.h>
+#include <rtps/transport/tcp/TCPControlMessage.h>
 
 #include <fastcdr/FastCdr.h>
 #include <fastcdr/Cdr.h>

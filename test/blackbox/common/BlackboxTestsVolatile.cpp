@@ -21,10 +21,12 @@
 
 #include <gtest/gtest.h>
 #include <fastrtps/xmlparser/XMLProfileManager.h>
-#include <fastrtps/transport/test_UDPv4Transport.h>
 #include <fastdds/rtps/common/CDRMessage_t.h>
+#include <rtps/transport/test_UDPv4Transport.h>
 
 using namespace eprosima::fastrtps;
+using test_UDPv4Transport = eprosima::fastdds::rtps::test_UDPv4Transport;
+using test_UDPv4TransportDescriptor = eprosima::fastdds::rtps::test_UDPv4TransportDescriptor;
 
 enum communication_type
 {
@@ -444,7 +446,7 @@ TEST_P(Volatile, VolatileLateJoinerSubGapLost)
 
     // To simulate lossy conditions
     int gaps_to_drop = 2;
-    auto testTransport = std::make_shared<rtps::test_UDPv4TransportDescriptor>();
+    auto testTransport = std::make_shared<test_UDPv4TransportDescriptor>();
     testTransport->drop_gap_messages_filter_ = [&gaps_to_drop](rtps::CDRMessage_t& )
             {
                 if (gaps_to_drop > 0)

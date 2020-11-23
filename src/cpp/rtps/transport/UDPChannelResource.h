@@ -15,9 +15,9 @@
 #ifndef _FASTDDS_UDP_CHANNEL_RESOURCE_INFO_
 #define _FASTDDS_UDP_CHANNEL_RESOURCE_INFO_
 
-#include <fastdds/rtps/transport/ChannelResource.h>
-#include <fastdds/rtps/common/Locator.h>
 #include <asio.hpp>
+#include <fastdds/rtps/common/Locator.h>
+#include <rtps/transport/ChannelResource.h>
 
 namespace eprosima{
 namespace fastdds{

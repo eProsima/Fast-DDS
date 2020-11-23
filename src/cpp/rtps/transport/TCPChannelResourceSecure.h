@@ -18,7 +18,7 @@
 #include <asio.hpp>
 #include <asio/ssl.hpp>
 #include <asio/strand.hpp>
-#include <fastdds/rtps/transport/TCPChannelResource.h>
+#include <rtps/transport/TCPChannelResource.h>
 
 namespace eprosima{
 namespace fastdds{

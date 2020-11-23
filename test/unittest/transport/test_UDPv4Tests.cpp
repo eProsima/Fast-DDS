@@ -12,17 +12,18 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include <fastrtps/transport/test_UDPv4Transport.h>
-#include <gtest/gtest.h>
 #include <thread>
+#include <memory>
+#include <string>
+
+#include <gtest/gtest.h>
+#include <fastdds/dds/log/Log.hpp>
+#include <fastrtps/transport/test_UDPv4TransportDescriptor.h>
 #include <fastrtps/rtps/common/CDRMessage_t.h>
 #include <fastrtps/rtps/messages/RTPSMessageCreator.h>
 #include <fastrtps/qos/ParameterTypes.h>
-#include <fastdds/dds/log/Log.hpp>
 #include <fastrtps/utils/IPLocator.h>
-
-#include <memory>
-#include <string>
+#include <rtps/transport/test_UDPv4Transport.h>
 
 #if defined(_WIN32)
 #define GET_PID _getpid
@@ -30,7 +31,8 @@
 #define GET_PID getpid
 #endif
 
-using eprosima::fastrtps::rtps::IPLocator;
+using IPLocator = eprosima::fastrtps::rtps::IPLocator;
+using test_UDPv4Transport = eprosima::fastdds::rtps::test_UDPv4Transport;
 
 static uint16_t g_default_port = 0;
 

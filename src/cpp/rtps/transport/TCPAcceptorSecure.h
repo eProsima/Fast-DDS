@@ -15,9 +15,9 @@
 #ifndef _FASTDDS_TCP_ACCEPTOR_SECURE_
 #define _FASTDDS_TCP_ACCEPTOR_SECURE_
 
-#include <fastdds/rtps/transport/TCPAcceptor.h>
-#include <fastdds/rtps/transport/TCPChannelResourceSecure.h>
 #include <asio/ssl.hpp>
+#include <rtps/transport/TCPAcceptor.h>
+#include <rtps/transport/TCPChannelResourceSecure.h>
 
 namespace eprosima{
 namespace fastdds{

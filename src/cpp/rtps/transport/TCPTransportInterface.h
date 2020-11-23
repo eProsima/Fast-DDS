@@ -18,11 +18,11 @@
 #include <fastdds/rtps/transport/TransportInterface.h>
 #include <fastdds/rtps/transport/TCPTransportDescriptor.h>
 #include <fastrtps/utils/IPFinder.h>
-#include <fastdds/rtps/transport/tcp/RTCPHeader.h>
-#include <fastdds/rtps/transport/TCPChannelResourceBasic.h>
-#include <fastdds/rtps/transport/TCPAcceptorBasic.h>
+#include <rtps/transport/tcp/RTCPHeader.h>
+#include <rtps/transport/TCPChannelResourceBasic.h>
+#include <rtps/transport/TCPAcceptorBasic.h>
 #if TLS_FOUND
-#include <fastdds/rtps/transport/TCPAcceptorSecure.h>
+#include <rtps/transport/TCPAcceptorSecure.h>
 #include <asio/ssl.hpp>
 #endif
 

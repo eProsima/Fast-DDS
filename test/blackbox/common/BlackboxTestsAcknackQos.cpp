@@ -22,10 +22,12 @@
 #include <gtest/gtest.h>
 
 #include <fastrtps/utils/TimeConversion.h>
-#include <fastrtps/transport/test_UDPv4Transport.h>
+#include <rtps/transport/test_UDPv4Transport.h>
 
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
+using test_UDPv4Transport = eprosima::fastdds::rtps::test_UDPv4Transport;
+using test_UDPv4TransportDescriptor = eprosima::fastdds::rtps::test_UDPv4TransportDescriptor;
 
 TEST(AcknackQos, RecoverAfterLosingCommunicationWithDisablePositiveAck)
 {

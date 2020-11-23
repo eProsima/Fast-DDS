@@ -18,11 +18,13 @@
 #include "PubSubWriter.hpp"
 
 #include <fastdds/dds/log/Log.hpp>
-#include <fastrtps/transport/test_UDPv4Transport.h>
 #include <fastrtps/xmlparser/XMLProfileManager.h>
+#include <rtps/transport/test_UDPv4Transport.h>
 
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
+using test_UDPv4Transport = eprosima::fastdds::rtps::test_UDPv4Transport;
+using test_UDPv4TransportDescriptor = eprosima::fastdds::rtps::test_UDPv4TransportDescriptor;
 
 enum communication_type
 {
@@ -417,7 +419,7 @@ TEST(PubSubFragments, AsyncPubSubAsReliableData300kbInLossyConditions)
 
     // Sanity check. Make sure we have dropped a few packets
     ASSERT_EQ(
-        eprosima::fastrtps::rtps::test_UDPv4Transport::test_UDPv4Transport_DropLog.size(),
+        test_UDPv4Transport::test_UDPv4Transport_DropLog.size(),
         testTransport->dropLogLength);
 }
 
@@ -472,7 +474,7 @@ TEST(PubSubFragments, AsyncPubSubAsReliableVolatileData300kbInLossyConditions)
 
     // Sanity check. Make sure we have dropped a few packets
     ASSERT_EQ(
-        eprosima::fastrtps::rtps::test_UDPv4Transport::test_UDPv4Transport_DropLog.size(),
+        test_UDPv4Transport::test_UDPv4Transport_DropLog.size(),
         testTransport->dropLogLength);
 }
 
@@ -528,7 +530,7 @@ TEST(PubSubFragments, AsyncPubSubAsReliableData300kbInLossyConditionsSmallFragme
 
     // Sanity check. Make sure we have dropped a few packets
     ASSERT_EQ(
-        eprosima::fastrtps::rtps::test_UDPv4Transport::test_UDPv4Transport_DropLog.size(),
+        test_UDPv4Transport::test_UDPv4Transport_DropLog.size(),
         testTransport->dropLogLength);
 }
 
@@ -585,7 +587,7 @@ TEST(PubSubFragments, AsyncPubSubAsReliableVolatileData300kbInLossyConditionsSma
 
     // Sanity check. Make sure we have dropped a few packets
     ASSERT_EQ(
-        eprosima::fastrtps::rtps::test_UDPv4Transport::test_UDPv4Transport_DropLog.size(),
+        test_UDPv4Transport::test_UDPv4Transport_DropLog.size(),
         testTransport->dropLogLength);
 }
 

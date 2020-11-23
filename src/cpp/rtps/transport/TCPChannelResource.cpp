@@ -12,12 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include <fastdds/rtps/transport/TCPChannelResource.h>
-#include <fastdds/rtps/transport/TCPTransportInterface.h>
-#include <fastrtps/utils/IPLocator.h>
-
 #include <chrono>
 #include <thread>
+
+#include <fastrtps/utils/IPLocator.h>
+#include <rtps/transport/TCPChannelResource.h>
+#include <rtps/transport/TCPTransportInterface.h>
 
 namespace eprosima {
 namespace fastdds {

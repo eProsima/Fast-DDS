@@ -15,13 +15,13 @@
 #ifndef _FASTDDS_TCP_CHANNEL_RESOURCE_BASE_
 #define _FASTDDS_TCP_CHANNEL_RESOURCE_BASE_
 
+#include <asio.hpp>
 #include <fastdds/rtps/transport/TCPTransportDescriptor.h>
 #include <fastdds/rtps/transport/TransportReceiverInterface.h>
-#include <fastdds/rtps/transport/ChannelResource.h>
-#include <fastdds/rtps/transport/tcp/RTCPMessageManager.h>
 #include <fastdds/rtps/common/Locator.h>
+#include <rtps/transport/ChannelResource.h>
+#include <rtps/transport/tcp/RTCPMessageManager.h>
 
-#include <asio.hpp>
 
 namespace eprosima {
 namespace fastdds {
