@@ -3411,6 +3411,7 @@ XMLP_ret XMLParser::getXMLPublisherAttributes(
                 <xs:element name="propertiesPolicy" type="propertyPolicyType" minOccurs="0"/>
                 <xs:element name="userDefinedID" type="int16Type" minOccurs="0"/>
                 <xs:element name="entityID" type="int16Type" minOccurs="0"/>
+                <xs:element name="matchedSubscribersAllocation" type="containerAllocationConfigType" minOccurs="0"/>
             </xs:all>
             <xs:attribute name="profile_name" type="stringType" use="required"/>
         </xs:complexType>
@@ -3550,6 +3551,7 @@ XMLP_ret XMLParser::getXMLSubscriberAttributes(
                 <xs:element name="propertiesPolicy" type="propertyPolicyType" minOccurs="0"/>
                 <xs:element name="userDefinedID" type="int16Type" minOccurs="0"/>
                 <xs:element name="entityID" type="int16Type" minOccurs="0"/>
+                <xs:element name="matchedPublishersAllocation" type="containerAllocationConfigType" minOccurs="0"/>
             </xs:all>
             <xs:attribute name="profile_name" type="stringType" use="required"/>
         </xs:complexType>
