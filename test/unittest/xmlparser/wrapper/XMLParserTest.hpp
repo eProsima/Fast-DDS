@@ -75,6 +75,13 @@ class XMLParserTest : public XMLParser{
 
     // INIT FUNCTIONS PARIS SECTION
 
+    static XMLP_ret getXMLBuiltinAttributes_wrapper(
+        tinyxml2::XMLElement* elem,
+        BuiltinAttributes& builtin,
+        uint8_t ident)
+    {
+        return getXMLBuiltinAttributes(elem, builtin, ident);
+    }
 
     // FINISH FUNCTIONS PARIS SECTION
 
