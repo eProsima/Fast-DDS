@@ -26,7 +26,9 @@ namespace rtps {
 using TCPv4Transport = eprosima::fastdds::rtps::TCPv4Transport;
 using TCPChannelResource = eprosima::fastdds::rtps::TCPChannelResource;
 using TCPChannelResourceBasic = eprosima::fastdds::rtps::TCPChannelResourceBasic;
+#if TLS_FOUND
 using TCPChannelResourceSecure = eprosima::fastdds::rtps::TCPChannelResourceSecure;
+#endif // if TLS_FOUND
 
 class MockTCPv4Transport : public TCPv4Transport
 {
