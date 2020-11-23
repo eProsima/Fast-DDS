@@ -18,6 +18,7 @@
 #include <fastdds/dds/log/Log.hpp>
 #include <fastrtps/utils/IPLocator.h>
 #include "mock/XMLMockConsumer.h"
+#include "wrapper/XMLParserTest.hpp"
 
 #include <tinyxml2.h>
 #include <gtest/gtest.h>
@@ -53,65 +54,6 @@ public:
         eprosima::fastdds::dds::Log::Reset();
         eprosima::fastdds::dds::Log::KillThread();
     }
-
-};
-
-// Class to test protected methods
-class XMLParserTest : public XMLParser{
-    public:
-    static XMLP_ret getXMLWriterQosPolicies_wrapper(
-        tinyxml2::XMLElement* elem,
-        WriterQos& qos,
-        uint8_t ident)
-    {
-        return getXMLWriterQosPolicies(elem, qos, ident);
-    }
-    static XMLP_ret getXMLReaderQosPolicies_wrapper(
-        tinyxml2::XMLElement* elem,
-        ReaderQos& qos,
-        uint8_t ident)
-    {
-        return getXMLReaderQosPolicies(elem, qos, ident);
-    }
-    static XMLP_ret getXMLLocatorList_wrapper(
-        tinyxml2::XMLElement* elem,
-        LocatorList_t& locatorList,
-        uint8_t ident)
-    {
-        return getXMLLocatorList(elem, locatorList, ident);
-    }
-
-    static XMLP_ret fillDataNode_wrapper(
-        tinyxml2::XMLElement* p_profile,
-        DataNode<ParticipantAttributes>& participant_node)
-    {
-        return fillDataNode(p_profile, participant_node);
-    }
-
-    static XMLP_ret getXMLDiscoverySettings_wrapper(
-        tinyxml2::XMLElement* elem,
-        rtps::DiscoverySettings& settings,
-        uint8_t ident)
-    {
-        return getXMLDiscoverySettings(elem,settings,ident);
-    }
-
-    // INIT FUNCTIONS NACHO SECTION
-
-
-    // FINISH FUNCTIONS NACHO SECTION
-
-
-    // INIT FUNCTIONS RAUL SECTION
-
-
-    // FINISH FUNCTIONS RAUL SECTION
-
-
-    // INIT FUNCTIONS PARIS SECTION
-
-
-    // FINISH FUNCTIONS PARIS SECTION
 
 };
 
@@ -541,7 +483,6 @@ TEST_F(XMLParserTests, getXMLRemoteServer)
     ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
     titleElement = xml_doc.RootElement();
     EXPECT_EQ(XMLP_ret::XML_OK, XMLParserTest::getXMLDiscoverySettings_wrapper(titleElement,settings,ident));
-    auto a = settings.m_DiscoveryServers.begin()->metatrafficUnicastLocatorList.begin()->port;
     EXPECT_EQ(settings.m_DiscoveryServers.begin()->metatrafficUnicastLocatorList.begin()->port, 8844);
 
 }
