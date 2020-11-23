@@ -57,6 +57,72 @@ public:
 
 };
 
+class XMLParserTest : public XMLParser{
+    public:
+    static XMLP_ret getXMLWriterQosPolicies_wrapper(
+        tinyxml2::XMLElement* elem,
+        WriterQos& qos,
+        uint8_t ident)
+    {
+        return getXMLWriterQosPolicies(elem, qos, ident);
+    }
+    static XMLP_ret getXMLReaderQosPolicies_wrapper(
+        tinyxml2::XMLElement* elem,
+        ReaderQos& qos,
+        uint8_t ident)
+    {
+        return getXMLReaderQosPolicies(elem, qos, ident);
+    }
+    static XMLP_ret getXMLLocatorList_wrapper(
+        tinyxml2::XMLElement* elem,
+        LocatorList_t& locatorList,
+        uint8_t ident)
+    {
+        return getXMLLocatorList(elem, locatorList, ident);
+    }
+
+    static XMLP_ret fillDataNode_wrapper(
+        tinyxml2::XMLElement* p_profile,
+        DataNode<ParticipantAttributes>& participant_node)
+    {
+        return fillDataNode(p_profile, participant_node);
+    }
+
+    static XMLP_ret getXMLDiscoverySettings_wrapper(
+        tinyxml2::XMLElement* elem,
+        rtps::DiscoverySettings& settings,
+        uint8_t ident)
+    {
+        return getXMLDiscoverySettings(elem,settings,ident);
+    }
+
+    // INIT FUNCTIONS NACHO SECTION
+
+
+    // FINISH FUNCTIONS NACHO SECTION
+
+
+    // INIT FUNCTIONS RAUL SECTION
+
+
+    // FINISH FUNCTIONS RAUL SECTION
+
+
+    // INIT FUNCTIONS PARIS SECTION
+
+    static XMLP_ret getXMLBuiltinAttributes_wrapper(
+        tinyxml2::XMLElement* elem,
+        BuiltinAttributes& builtin,
+        uint8_t ident)
+    {
+        return getXMLBuiltinAttributes(elem, builtin, ident);
+    }
+
+
+    // FINISH FUNCTIONS PARIS SECTION
+
+};
+
 TEST_F(XMLParserTests, getXMLLifespanQos)
 {
     uint8_t ident = 1;
@@ -501,5 +567,41 @@ TEST_F(XMLParserTests, getXMLRemoteServer)
 
 // INIT PARIS SECTION
 
+
+TEST_F(XMLParserTests, getXMLBuiltinAttributes_invalidXML)
+{
+    uint8_t ident = 1;
+    BuiltinAttributes builtin;
+    tinyxml2::XMLDocument xml_doc;
+    tinyxml2::XMLElement* titleElement;
+
+
+    // Parametrized XML
+    const char* xml_p =
+    "\
+    <builtinAttributesType>\
+        %s\
+    </builtinAttributesType>\
+    ";
+    char xml[1000];
+
+    // Invalid discovery_config
+    const char* tag =
+    "\
+    <discovery_config>\
+        <bad_element> </bad_element>\
+    </discovery_config>\
+    ";
+    sprintf(xml, xml_p, tag);
+    ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+    titleElement = xml_doc.RootElement();
+    EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::getXMLBuiltinAttributes_wrapper(titleElement,builtin,ident));
+
+    // Invalid element
+    sprintf(xml, xml_p, "<bad_element> </bad_element>");
+    ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+    titleElement = xml_doc.RootElement();
+    EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::getXMLBuiltinAttributes_wrapper(titleElement,builtin,ident));
+}
 
 // FINISH PARIS SECTION
