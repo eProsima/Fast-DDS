@@ -433,6 +433,86 @@ TEST(DataWriterTests, LoanPositiveTests)
     ASSERT_TRUE(DomainParticipantFactory::get_instance()->delete_participant(participant) == ReturnCode_t::RETCODE_OK);
 }
 
+class LoanableTypeSupportTesting : public LoanableTypeSupport
+{
+public:
+
+    bool is_plain_result = true;
+    bool construct_sample_result = true;
+
+    bool is_plain() const override
+    {
+        return is_plain_result;
+    }
+
+    bool construct_sample(
+            void* sample) const override
+    {
+        new (sample) LoanableType();
+        return construct_sample_result;
+    }
+
+};
+
+TEST(DataWriterTests, LoanNegativeTests)
+{
+    using InitKind = DataWriter::LoanInitializationKind;
+
+    DomainParticipant* participant =
+            DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
+    ASSERT_NE(participant, nullptr);
+
+    PublisherQos pqos = PUBLISHER_QOS_DEFAULT;
+    pqos.entity_factory().autoenable_created_entities = false;
+    Publisher* publisher = participant->create_publisher(pqos);
+    ASSERT_NE(publisher, nullptr);
+
+    TypeSupport type(new LoanableTypeSupportTesting());
+    type.register_type(participant);
+    LoanableTypeSupportTesting* type_support = static_cast<LoanableTypeSupportTesting*>(type.get());
+
+    Topic* topic = participant->create_topic("loanable_topic", type.get_type_name(), TOPIC_QOS_DEFAULT);
+    ASSERT_NE(topic, nullptr);
+
+    DataWriterQos wqos;
+    wqos.history().depth = 1;
+
+    DataWriter* datawriter = publisher->create_datawriter(topic, wqos);
+    ASSERT_NE(datawriter, nullptr);
+    ASSERT_EQ(datawriter->get_status_mask(), StatusMask::all());
+
+    void* sample = nullptr;
+    auto original_type_size = type_support->m_typeSize;
+
+    // Check for illegal operation
+    type_support->is_plain_result = false;
+    EXPECT_EQ(ReturnCode_t::RETCODE_ILLEGAL_OPERATION, datawriter->loan_sample(sample));
+    type_support->is_plain_result = true;
+    type_support->m_typeSize = 0;
+    EXPECT_EQ(ReturnCode_t::RETCODE_ILLEGAL_OPERATION, datawriter->loan_sample(sample));
+    type_support->m_typeSize = original_type_size;
+
+    // Check for not enabled
+    EXPECT_EQ(ReturnCode_t::RETCODE_NOT_ENABLED, datawriter->loan_sample(sample));
+    EXPECT_EQ(ReturnCode_t::RETCODE_OK, datawriter->enable());
+
+    // Check for constructor support
+    type_support->construct_sample_result = false;
+    EXPECT_EQ(ReturnCode_t::RETCODE_UNSUPPORTED,
+            datawriter->loan_sample(sample, InitKind::CONSTRUCTED_LOAN_INITIALIZATION));
+    type_support->construct_sample_result = true;
+
+    // Check preconditions on delete_datawriter
+    EXPECT_EQ(ReturnCode_t::RETCODE_OK, datawriter->loan_sample(sample));
+    EXPECT_EQ(ReturnCode_t::RETCODE_PRECONDITION_NOT_MET, publisher->delete_datawriter(datawriter));
+    EXPECT_EQ(ReturnCode_t::RETCODE_OK, datawriter->discard_loan(sample));
+
+    ASSERT_TRUE(publisher->delete_datawriter(datawriter) == ReturnCode_t::RETCODE_OK);
+    ASSERT_TRUE(participant->delete_topic(topic) == ReturnCode_t::RETCODE_OK);
+    ASSERT_TRUE(participant->delete_publisher(publisher) == ReturnCode_t::RETCODE_OK);
+    ASSERT_TRUE(DomainParticipantFactory::get_instance()->delete_participant(participant) == ReturnCode_t::RETCODE_OK);
+}
+
 } // namespace dds
 } // namespace fastdds
 } // namespace eprosima
