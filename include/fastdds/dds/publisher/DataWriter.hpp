@@ -88,6 +88,37 @@ protected:
 
 public:
 
+    /**
+     * How to initialize samples loaned with @ref loan_sample
+     */
+    enum class LoanInitializationKind
+    {
+        /**
+         * @brief Do not perform initialization of sample.
+         *
+         * This is the default initialization scheme of loaned samples.
+         * It is the fastest scheme, but implies the user should take care of writing
+         * every field on the data type before calling @ref write on the loaned sample.
+         */
+        NO_LOAN_INITIALIZATION,
+
+        /**
+         * @brief Initialize all memory with zero-valued bytes.
+         *
+         * The contents of the loaned sample will be zero-initialized upon return of
+         * @ref loan_sample.
+         */
+        ZERO_LOAN_INITIALIZATION,
+
+        /**
+         * @brief Use in-place constructor initialization.
+         *
+         * This will call the constructor of the data type over the memory space being
+         * returned by @ref loan_sample.
+         */
+        CONSTRUCTED_LOAN_INITIALIZATION
+    };
+
     RTPS_DllAPI virtual ~DataWriter();
 
     /**
@@ -313,8 +344,10 @@ public:
      *
      * This method can only be used on a DataWriter for a plain data type. It will provide the
      * user with a pointer to an internal buffer where the data type can be prepared for sending.
-     * No assumptions should be made on the contents where the pointer points to, as it may be
-     * an old pointer being reused.
+     *
+     * When using NO_LOAN_INITIALIZATION on the initialization parameter, which is the default,
+     * no assumptions should be made on the contents where the pointer points to, as it may be an
+     * old pointer being reused. See @ref LoanInitializationKind for more details.
      *
      * Once the sample has been prepared, it can then be published by calling @ref write.
      * After a successful call to @ref write, the middleware takes ownership of the loaned pointer again,
@@ -323,7 +356,8 @@ public:
      * If, for whatever reason, the sample is not published, the loan can be returned by calling
      * @ref discard_loan.
      *
-     * @param [out] sample  Pointer to the sample on the internal pool.
+     * @param [out] sample          Pointer to the sample on the internal pool.
+     * @param [in]  initialization  How to initialize the loaned sample.
      *
      * @return ReturnCode_t::RETCODE_ILLEGAL_OPERATION when the data type does not support loans.
      * @return ReturnCode_t::RETCODE_NOT_ENABLED if the writer has not been enabled.
@@ -331,7 +365,8 @@ public:
      * @return ReturnCode_t::RETCODE_OK if a pointer to a sample is successfully obtained.
      */
     RTPS_DllAPI ReturnCode_t loan_sample(
-            void*& sample);
+            void*& sample,
+            LoanInitializationKind initialization = LoanInitializationKind::NO_LOAN_INITIALIZATION);
 
     /**
      * @brief Discards a loaned sample pointer.

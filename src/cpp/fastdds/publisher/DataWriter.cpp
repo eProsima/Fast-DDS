@@ -66,9 +66,10 @@ ReturnCode_t DataWriter::enable()
 }
 
 ReturnCode_t DataWriter::loan_sample(
-        void*& sample)
+        void*& sample,
+        LoanInitializationKind initialization)
 {
-    return impl_->loan_sample(sample);
+    return impl_->loan_sample(sample, initialization);
 }
 
 ReturnCode_t DataWriter::discard_loan(

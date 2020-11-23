@@ -21,6 +21,7 @@
 
 #include <fastdds/dds/core/status/BaseStatus.hpp>
 #include <fastdds/dds/core/status/IncompatibleQosStatus.hpp>
+#include <fastdds/dds/publisher/DataWriter.hpp>
 #include <fastdds/dds/publisher/DataWriterListener.hpp>
 #include <fastdds/dds/publisher/qos/DataWriterQos.hpp>
 #include <fastdds/dds/topic/Topic.hpp>
@@ -69,7 +70,7 @@ class Publisher;
  */
 class DataWriterImpl
 {
-
+    using LoanInitializationKind = DataWriter::LoanInitializationKind;
     using PayloadInfo_t = eprosima::fastrtps::rtps::detail::PayloadInfo_t;
     using CacheChange_t = eprosima::fastrtps::rtps::CacheChange_t;
     class LoanCollection;
@@ -100,14 +101,16 @@ public:
     /**
      * Get a pointer to the internal pool where the user could directly write.
      *
-     * @param [out] sample  Pointer to the sample on the internal pool.
+     * @param [out] sample          Pointer to the sample on the internal pool.
+     * @param [in]  initialization  How to initialize the loaned sample.
      *
      * @return ReturnCode_t::RETCODE_ILLEGAL_OPERATION when the type does not support loans.
      * @return ReturnCode_t::RETCODE_OUT_OF_RESOURCES if the pool has been exhausted.
      * @return ReturnCode_t::RETCODE_OK if a pointer to a sample is successfully obtained.
      */
     ReturnCode_t loan_sample(
-            void*& sample);
+            void*& sample,
+            LoanInitializationKind initialization);
 
     /**
      * Discards a loaned sample pointer.

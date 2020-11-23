@@ -298,7 +298,8 @@ DataWriterImpl::~DataWriterImpl()
 }
 
 ReturnCode_t DataWriterImpl::loan_sample(
-        void*& sample)
+        void*& sample,
+        LoanInitializationKind initialization)
 {
     // Type should be plain and have space for the representation header
     if (!type_->is_plain() || SerializedPayload_t::representation_header_size > type_->m_typeSize)
@@ -338,6 +339,35 @@ ReturnCode_t DataWriterImpl::loan_sample(
         sample = nullptr;
         return_payload_to_pool(payload);
         return ReturnCode_t::RETCODE_OUT_OF_RESOURCES;
+    }
+
+    switch (initialization)
+    {
+        default:
+            logWarning(DATA_WRITER, "Using wrong LoanInitializationKind value ("
+                    << static_cast<int>(initialization) << "). Using default NO_LOAN_INITIALIZATION");
+            break;
+
+        case LoanInitializationKind::NO_LOAN_INITIALIZATION:
+            break;
+
+        case LoanInitializationKind::ZERO_LOAN_INITIALIZATION:
+            if (SerializedPayload_t::representation_header_size < size)
+            {
+                size -= SerializedPayload_t::representation_header_size;
+                memset(sample, 0, size);
+            }
+            break;
+
+        case LoanInitializationKind::CONSTRUCTED_LOAN_INITIALIZATION:
+            if (!type_->construct_sample(sample))
+            {
+                check_and_remove_loan(sample, payload);
+                return_payload_to_pool(payload);
+                sample = nullptr;
+                return ReturnCode_t::RETCODE_UNSUPPORTED;
+            }
+            break;
     }
 
     return ReturnCode_t::RETCODE_OK;
