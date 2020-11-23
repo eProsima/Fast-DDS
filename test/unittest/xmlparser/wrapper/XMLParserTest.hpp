@@ -346,6 +346,22 @@ class XMLParserTest : public XMLParser{
         return getXMLParticipantAllocationAttributes(elem, allocation, ident);
     }
 
+    static XMLP_ret getXMLSendBuffersAllocationAttributes_wrapper(
+        tinyxml2::XMLElement* elem,
+        rtps::SendBuffersAllocationAttributes& allocation,
+        uint8_t ident)
+    {
+        return getXMLSendBuffersAllocationAttributes(elem, allocation, ident);
+    }
+
+    static XMLP_ret getXMLRemoteLocatorsAllocationAttributes_wrapper(
+        tinyxml2::XMLElement* elem,
+        rtps::RemoteLocatorsAllocationAttributes& allocation,
+        uint8_t ident)
+    {
+        return getXMLRemoteLocatorsAllocationAttributes(elem, allocation, ident);
+    }
+
     // FINISH FUNCTIONS PARIS SECTION
 
 };

@@ -2371,4 +2371,96 @@ TEST_F(XMLParserTests, getXMLDiscoverySettings_invalidXML)
     EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::getXMLDiscoverySettings_wrapper(titleElement,settings,ident));
 }
 
+TEST_F(XMLParserTests, getXMLSendBuffersAllocationAttributes_invalidXML)
+{
+    uint8_t ident = 1;
+    rtps::SendBuffersAllocationAttributes allocation;
+    tinyxml2::XMLDocument xml_doc;
+    tinyxml2::XMLElement* titleElement;
+
+    // Parametrized XML
+    const char* xml_p =
+    "\
+    <sendBuffersAllocationConfigType>\
+        %s\
+    </sendBuffersAllocationConfigType>\
+    ";
+    char xml[1000];
+
+    const char* field_p =
+        "\
+        <%s>\
+            <bad_element> </bad_element>\
+        </%s>\
+        ";
+    char field[500];
+
+    std::vector<std::string> field_vec =
+    {
+        "preallocated_number",
+        "dynamic",
+    };
+
+    for (std::string tag : field_vec)
+    {
+        sprintf(field, field_p, tag.c_str(), tag.c_str());
+        sprintf(xml, xml_p, field);
+        ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+        titleElement = xml_doc.RootElement();
+        EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::getXMLSendBuffersAllocationAttributes_wrapper(titleElement,allocation,ident));
+    }
+
+    // Invalid element
+    sprintf(xml, xml_p, "<bad_element> </bad_element>");
+    ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+    titleElement = xml_doc.RootElement();
+    EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::getXMLSendBuffersAllocationAttributes_wrapper(titleElement,allocation,ident));
+}
+
+TEST_F(XMLParserTests, getXMLRemoteLocatorsAllocationAttributes_invalidXML)
+{
+    uint8_t ident = 1;
+    rtps::RemoteLocatorsAllocationAttributes allocation;
+    tinyxml2::XMLDocument xml_doc;
+    tinyxml2::XMLElement* titleElement;
+
+    // Parametrized XML
+    const char* xml_p =
+    "\
+    <remoteLocatorsAllocationConfigType>\
+        %s\
+    </remoteLocatorsAllocationConfigType>\
+    ";
+    char xml[1000];
+
+    const char* field_p =
+        "\
+        <%s>\
+            <bad_element> </bad_element>\
+        </%s>\
+        ";
+    char field[500];
+
+    std::vector<std::string> field_vec =
+    {
+        "max_unicast_locators",
+        "max_multicast_locators",
+    };
+
+    for (std::string tag : field_vec)
+    {
+        sprintf(field, field_p, tag.c_str(), tag.c_str());
+        sprintf(xml, xml_p, field);
+        ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+        titleElement = xml_doc.RootElement();
+        EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::getXMLRemoteLocatorsAllocationAttributes_wrapper(titleElement,allocation,ident));
+    }
+
+    // Invalid element
+    sprintf(xml, xml_p, "<bad_element> </bad_element>");
+    ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+    titleElement = xml_doc.RootElement();
+    EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::getXMLRemoteLocatorsAllocationAttributes_wrapper(titleElement,allocation,ident));
+}
+
 // FINISH PARIS SECTION
