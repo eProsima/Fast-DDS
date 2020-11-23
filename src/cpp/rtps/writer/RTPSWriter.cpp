@@ -26,6 +26,7 @@
 
 #include <rtps/history/BasicPayloadPool.hpp>
 #include <rtps/history/CacheChangePool.h>
+#include <rtps/history/DataSharingNotifier.hpp>
 #include <rtps/flowcontrol/FlowController.h>
 #include <rtps/participant/RTPSParticipantImpl.h>
 

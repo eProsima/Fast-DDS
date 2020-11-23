@@ -27,7 +27,6 @@
 #include <fastrtps/utils/collections/ResourceLimitedVector.hpp>
 #include <fastdds/rtps/common/LocatorSelector.hpp>
 #include <fastdds/rtps/messages/RTPSMessageSenderInterface.hpp>
-#include <rtps/history/DataSharingNotifier.hpp>
 
 #include <vector>
 #include <memory>
@@ -42,6 +41,7 @@ namespace rtps {
 class WriterListener;
 class WriterHistory;
 class FlowController;
+class DataSharingNotifier;
 struct CacheChange_t;
 
 /**

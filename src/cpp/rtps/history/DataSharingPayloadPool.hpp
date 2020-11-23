@@ -84,7 +84,7 @@ public:
     }
 
     /**
-     * Fills the metadata of the chared payload from the cache change information
+     * Fills the metadata of the shared payload from the cache change information
      */
     void fill_metadata(const CacheChange_t* cache_change);
 
