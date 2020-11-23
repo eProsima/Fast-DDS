@@ -696,6 +696,7 @@ TEST_F(XMLParserTests, getXMLSubscriberAttributes_negative)
         "<remoteLocatorList><bad_element></bad_element></remoteLocatorList>",
         "<expectsInlineQos><bad_element></bad_element></expectsInlineQos>",
         "<historyMemoryPolicy><bad_element></bad_element></historyMemoryPolicy>",
+        "<propertiesPolicy><bad_element></bad_element></propertiesPolicy>",
         "<userDefinedID><bad_element></bad_element></userDefinedID>",
         "<entityID><bad_element></bad_element></entityID>",
         "<matchedPublishersAllocation><bad_element></bad_element></matchedPublishersAllocation>"
@@ -741,6 +742,7 @@ TEST_F(XMLParserTests, getXMLPublisherAttributes_negative)
         "<unicastLocatorList><bad_element></bad_element></unicastLocatorList>",
         "<multicastLocatorList><bad_element></bad_element></multicastLocatorList>",
         "<remoteLocatorList><bad_element></bad_element></remoteLocatorList>",
+        "<throughputController><bad_element></bad_element></throughputController>",
         "<historyMemoryPolicy><bad_element></bad_element></historyMemoryPolicy>",
         "<propertiesPolicy><bad_element></bad_element></propertiesPolicy>",
         "<userDefinedID><bad_element></bad_element></userDefinedID>",
