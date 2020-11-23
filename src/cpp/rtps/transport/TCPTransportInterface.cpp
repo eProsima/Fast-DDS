@@ -1231,7 +1231,7 @@ void TCPTransportInterface::SecureSocketAccepted(
             logInfo(RTCP, " Accepted connection (local: " << IPLocator::to_string(locator)
                                                           << ", remote: " << socket->lowest_layer().remote_endpoint().address()
                                                           << ":" << socket->lowest_layer().remote_endpoint().port() <<
-                                ")");
+                    ")");
         }
         else
         {
