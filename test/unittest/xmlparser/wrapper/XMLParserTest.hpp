@@ -115,6 +115,78 @@ class XMLParserTest : public XMLParser{
         return getXMLContainerAllocationConfig(elem, allocation_config, ident);
     }
 
+    static XMLP_ret getXMLHistoryQosPolicy_wrapper(
+        tinyxml2::XMLElement* elem,
+        HistoryQosPolicy& historyQos,
+        uint8_t ident)
+    {
+        return getXMLHistoryQosPolicy(elem, historyQos, ident);
+    }
+
+    static XMLP_ret getXMLDurabilityQos_wrapper(
+        tinyxml2::XMLElement* elem,
+        DurabilityQosPolicy& durability,
+        uint8_t ident)
+    {
+        return getXMLDurabilityQos(elem, durability, ident);
+    }
+
+    static XMLP_ret getXMLDeadlineQos_wrapper(
+        tinyxml2::XMLElement* elem,
+        DeadlineQosPolicy& deadline,
+        uint8_t ident)
+    {
+        return getXMLDeadlineQos(elem, deadline, ident);
+    }
+
+    static XMLP_ret getXMLLatencyBudgetQos_wrapper(
+        tinyxml2::XMLElement* elem,
+        LatencyBudgetQosPolicy& latencyBudget,
+        uint8_t ident)
+    {
+        return getXMLLatencyBudgetQos(elem, latencyBudget, ident);
+    }
+
+    static XMLP_ret getXMLReliabilityQos_wrapper(
+        tinyxml2::XMLElement* elem,
+        ReliabilityQosPolicy& reliability,
+        uint8_t ident)
+    {
+        return getXMLReliabilityQos(elem, reliability, ident);
+    }
+
+    static XMLP_ret getXMLPartitionQos_wrapper(
+        tinyxml2::XMLElement* elem,
+        PartitionQosPolicy& partition,
+        uint8_t ident)
+    {
+        return getXMLPartitionQos(elem, partition, ident);
+    }
+
+    static XMLP_ret getXMLWriterTimes_wrapper(
+        tinyxml2::XMLElement* elem,
+        WriterTimes& times,
+        uint8_t ident)
+    {
+        return getXMLWriterTimes(elem, times, ident);
+    }
+
+    static XMLP_ret getXMLReaderTimes_wrapper(
+        tinyxml2::XMLElement* elem,
+        ReaderTimes& times,
+        uint8_t ident)
+    {
+        return getXMLReaderTimes(elem, times, ident);
+    }
+
+    static XMLP_ret getXMLLocatorUDPv4_wrapper(
+        tinyxml2::XMLElement* elem,
+        rtps::Locator_t& locator,
+        uint8_t ident)
+    {
+        return getXMLLocatorUDPv4(elem, locator, ident);
+    }
+
     // FINISH FUNCTIONS PARIS SECTION
 
 };

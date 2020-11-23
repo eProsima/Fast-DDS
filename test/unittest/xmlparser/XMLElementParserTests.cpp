@@ -790,4 +790,466 @@ TEST_F(XMLParserTests, getXMLContainerAllocationConfig_invalidXML)
     EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::getXMLContainerAllocationConfig_wrapper(titleElement,allocation_config,ident));
 }
 
+TEST_F(XMLParserTests, getXMLHistoryQosPolicy_invalidXML)
+{
+    uint8_t ident = 1;
+    HistoryQosPolicy historyQos;
+    tinyxml2::XMLDocument xml_doc;
+    tinyxml2::XMLElement* titleElement;
+
+    // Parametrized XML
+    const char* xml_p =
+    "\
+    <historyQosPolicyType>\
+        %s\
+    </historyQosPolicyType>\
+    ";
+    char xml[1000];
+
+    const char* field_p =
+        "\
+        <%s>\
+            <bad_element> </bad_element>\
+        </%s>\
+        ";
+    char field[500];
+
+    std::vector<std::string> field_vec =
+    {
+        "kind",
+        "depth",
+    };
+
+    for (std::string tag : field_vec)
+    {
+        sprintf(field, field_p, tag.c_str(), tag.c_str());
+        sprintf(xml, xml_p, field);
+        ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+        titleElement = xml_doc.RootElement();
+        EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::getXMLHistoryQosPolicy_wrapper(titleElement,historyQos,ident));
+    }
+
+    // Invalid tuple initial-maximum parameters
+    {
+        const char* tag =
+        "\
+            <kind> KEEP_BAD </kind>\
+        ";
+        sprintf(xml, xml_p, tag);
+        ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+        titleElement = xml_doc.RootElement();
+        EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::getXMLHistoryQosPolicy_wrapper(titleElement,historyQos,ident));
+    }
+
+    // Invalid element
+    sprintf(xml, xml_p, "<bad_element> </bad_element>");
+    ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+    titleElement = xml_doc.RootElement();
+    EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::getXMLHistoryQosPolicy_wrapper(titleElement,historyQos,ident));
+}
+
+TEST_F(XMLParserTests, getXMLDurabilityQos_invalidXML)
+{
+    uint8_t ident = 1;
+    DurabilityQosPolicy durability;
+    tinyxml2::XMLDocument xml_doc;
+    tinyxml2::XMLElement* titleElement;
+
+    // Parametrized XML
+    const char* xml_p =
+    "\
+    <durabilityQosPolicyType>\
+        %s\
+    </durabilityQosPolicyType>\
+    ";
+    char xml[1000];
+
+    // Invalid kind
+    {
+        const char* tag =
+        "\
+            <kind> BAD_KIND </kind>\
+        ";
+        sprintf(xml, xml_p, tag);
+        ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+        titleElement = xml_doc.RootElement();
+        EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::getXMLDurabilityQos_wrapper(titleElement,durability,ident));
+    }
+
+    // Void kind
+    {
+        const char* tag =
+        "\
+            <kind> </kind>\
+        ";
+        sprintf(xml, xml_p, tag);
+        ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+        titleElement = xml_doc.RootElement();
+        EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::getXMLDurabilityQos_wrapper(titleElement,durability,ident));
+    }
+
+    // No kind
+    {
+        const char* tag = "";
+        sprintf(xml, xml_p, tag);
+        ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+        titleElement = xml_doc.RootElement();
+        EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::getXMLDurabilityQos_wrapper(titleElement,durability,ident));
+    }
+
+    // Invalid element
+    sprintf(xml, xml_p, "<bad_element> </bad_element>");
+    ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+    titleElement = xml_doc.RootElement();
+    EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::getXMLDurabilityQos_wrapper(titleElement,durability,ident));
+}
+
+TEST_F(XMLParserTests, getXMLDeadlineQos_invalidXML)
+{
+    uint8_t ident = 1;
+    DeadlineQosPolicy deadline;
+    tinyxml2::XMLDocument xml_doc;
+    tinyxml2::XMLElement* titleElement;
+
+    // Parametrized XML
+    const char* xml_p =
+    "\
+    <deadlineQosPolicyType>\
+        %s\
+    </deadlineQosPolicyType>\
+    ";
+    char xml[1000];
+
+    // Invalid kind
+    {
+        const char* tag =
+        "\
+            <period> BAD_PERIOD </period>\
+        ";
+        sprintf(xml, xml_p, tag);
+        ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+        titleElement = xml_doc.RootElement();
+        EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::getXMLDeadlineQos_wrapper(titleElement,deadline,ident));
+    }
+
+    // No period
+    {
+        const char* tag = "";
+        sprintf(xml, xml_p, tag);
+        ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+        titleElement = xml_doc.RootElement();
+        EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::getXMLDeadlineQos_wrapper(titleElement,deadline,ident));
+    }
+
+    // Invalid element
+    sprintf(xml, xml_p, "<bad_element> </bad_element>");
+    ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+    titleElement = xml_doc.RootElement();
+    EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::getXMLDeadlineQos_wrapper(titleElement,deadline,ident));
+}
+
+TEST_F(XMLParserTests, getXMLLatencyBudgetQos_invalidXML)
+{
+    uint8_t ident = 1;
+    LatencyBudgetQosPolicy latencyBudget;
+    tinyxml2::XMLDocument xml_doc;
+    tinyxml2::XMLElement* titleElement;
+
+    // Parametrized XML
+    const char* xml_p =
+    "\
+    <latencyBudgetQosPolicyType>\
+        %s\
+    </latencyBudgetQosPolicyType>\
+    ";
+    char xml[1000];
+
+    // Invalid duration
+    {
+        const char* tag =
+        "\
+            <duration> BAD_DURATION </duration>\
+        ";
+        sprintf(xml, xml_p, tag);
+        ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+        titleElement = xml_doc.RootElement();
+        EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::getXMLLatencyBudgetQos_wrapper(titleElement,latencyBudget,ident));
+    }
+
+    // No duration
+    {
+        const char* tag = "";
+        sprintf(xml, xml_p, tag);
+        ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+        titleElement = xml_doc.RootElement();
+        EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::getXMLLatencyBudgetQos_wrapper(titleElement,latencyBudget,ident));
+    }
+
+    // Invalid element
+    sprintf(xml, xml_p, "<bad_element> </bad_element>");
+    ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+    titleElement = xml_doc.RootElement();
+    EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::getXMLLatencyBudgetQos_wrapper(titleElement,latencyBudget,ident));
+}
+
+TEST_F(XMLParserTests, getXMLReliabilityQos_invalidXML)
+{
+    uint8_t ident = 1;
+    ReliabilityQosPolicy reliability;
+    tinyxml2::XMLDocument xml_doc;
+    tinyxml2::XMLElement* titleElement;
+
+    // Parametrized XML
+    const char* xml_p =
+    "\
+    <reliabilityQosPolicyType>\
+        %s\
+    </reliabilityQosPolicyType>\
+    ";
+    char xml[1000];
+
+    // Invalid kind
+    {
+        const char* tag =
+        "\
+            <kind> BAD_KIND </kind>\
+        ";
+        sprintf(xml, xml_p, tag);
+        ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+        titleElement = xml_doc.RootElement();
+        EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::getXMLReliabilityQos_wrapper(titleElement,reliability,ident));
+    }
+
+    // Void kind
+    {
+        const char* tag =
+        "\
+            <kind> </kind>\
+        ";
+        sprintf(xml, xml_p, tag);
+        ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+        titleElement = xml_doc.RootElement();
+        EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::getXMLReliabilityQos_wrapper(titleElement,reliability,ident));
+    }
+
+    // No max_blocking_time
+    {
+        const char* tag =
+        "\
+            <max_blocking_time> BAD_MBT </max_blocking_time>\
+        ";
+        sprintf(xml, xml_p, tag);
+        ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+        titleElement = xml_doc.RootElement();
+        EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::getXMLReliabilityQos_wrapper(titleElement,reliability,ident));
+    }
+
+    // Invalid element
+    sprintf(xml, xml_p, "<bad_element> </bad_element>");
+    ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+    titleElement = xml_doc.RootElement();
+    EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::getXMLReliabilityQos_wrapper(titleElement,reliability,ident));
+}
+
+TEST_F(XMLParserTests, getXMLPartitionQos_invalidXML)
+{
+    uint8_t ident = 1;
+    PartitionQosPolicy partition;
+    tinyxml2::XMLDocument xml_doc;
+    tinyxml2::XMLElement* titleElement;
+
+    // Parametrized XML
+    const char* xml_p =
+    "\
+    <partitionQosPolicyType>\
+        %s\
+    </partitionQosPolicyType>\
+    ";
+    char xml[1000];
+
+    // Invalid names
+    {
+        const char* tag =
+        "\
+            <names>\
+                <name>  </name>\
+            </names>\
+        ";
+        sprintf(xml, xml_p, tag);
+        ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+        titleElement = xml_doc.RootElement();
+        EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::getXMLPartitionQos_wrapper(titleElement,partition,ident));
+    }
+
+    // Void names
+    {
+        const char* tag =
+        "\
+            <names>\
+            </names>\
+        ";
+        sprintf(xml, xml_p, tag);
+        ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+        titleElement = xml_doc.RootElement();
+        EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::getXMLPartitionQos_wrapper(titleElement,partition,ident));
+    }
+
+    // Void args
+    {
+        const char* tag =
+        "\
+        ";
+        sprintf(xml, xml_p, tag);
+        ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+        titleElement = xml_doc.RootElement();
+        EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::getXMLPartitionQos_wrapper(titleElement,partition,ident));
+    }
+
+    // Invalid element
+    sprintf(xml, xml_p, "<bad_element> </bad_element>");
+    ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+    titleElement = xml_doc.RootElement();
+    EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::getXMLPartitionQos_wrapper(titleElement,partition,ident));
+}
+
+TEST_F(XMLParserTests, getXMLWriterTimes_invalidXML)
+{
+    uint8_t ident = 1;
+    WriterTimes times;
+    tinyxml2::XMLDocument xml_doc;
+    tinyxml2::XMLElement* titleElement;
+
+    // Parametrized XML
+    const char* xml_p =
+    "\
+    <writerTimesType>\
+        %s\
+    </writerTimesType>\
+    ";
+    char xml[1000];
+
+    const char* field_p =
+        "\
+        <%s>\
+            <bad_element> </bad_element>\
+        </%s>\
+        ";
+    char field[500];
+
+    std::vector<std::string> field_vec =
+    {
+        "initialHeartbeatDelay",
+        "heartbeatPeriod",
+        "nackResponseDelay",
+        "nackSupressionDuration",
+    };
+
+    for (std::string tag : field_vec)
+    {
+        sprintf(field, field_p, tag.c_str(), tag.c_str());
+        sprintf(xml, xml_p, field);
+        ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+        titleElement = xml_doc.RootElement();
+        EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::getXMLWriterTimes_wrapper(titleElement,times,ident));
+    }
+
+    // Invalid element
+    sprintf(xml, xml_p, "<bad_element> </bad_element>");
+    ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+    titleElement = xml_doc.RootElement();
+    EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::getXMLWriterTimes_wrapper(titleElement,times,ident));
+}
+
+TEST_F(XMLParserTests, getXMLReaderTimes_invalidXML)
+{
+    uint8_t ident = 1;
+    ReaderTimes times;
+    tinyxml2::XMLDocument xml_doc;
+    tinyxml2::XMLElement* titleElement;
+
+    // Parametrized XML
+    const char* xml_p =
+    "\
+    <readerTimesType>\
+        %s\
+    </readerTimesType>\
+    ";
+    char xml[1000];
+
+    const char* field_p =
+        "\
+        <%s>\
+            <bad_element> </bad_element>\
+        </%s>\
+        ";
+    char field[500];
+
+    std::vector<std::string> field_vec =
+    {
+        "initialAcknackDelay",
+        "heartbeatResponseDelay",
+    };
+
+    for (std::string tag : field_vec)
+    {
+        sprintf(field, field_p, tag.c_str(), tag.c_str());
+        sprintf(xml, xml_p, field);
+        ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+        titleElement = xml_doc.RootElement();
+        EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::getXMLReaderTimes_wrapper(titleElement,times,ident));
+    }
+
+    // Invalid element
+    sprintf(xml, xml_p, "<bad_element> </bad_element>");
+    ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+    titleElement = xml_doc.RootElement();
+    EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::getXMLReaderTimes_wrapper(titleElement,times,ident));
+}
+
+TEST_F(XMLParserTests, getXMLLocatorUDPv4_invalidXML)
+{
+    uint8_t ident = 1;
+    rtps::Locator_t locator;
+    tinyxml2::XMLDocument xml_doc;
+    tinyxml2::XMLElement* titleElement;
+
+    // Parametrized XML
+    const char* xml_p =
+    "\
+    <udpv4LocatorType>\
+        %s\
+    </udpv4LocatorType>\
+    ";
+    char xml[1000];
+
+    const char* field_p =
+        "\
+        <%s>\
+            <bad_element> </bad_element>\
+        </%s>\
+        ";
+    char field[500];
+
+    std::vector<std::string> field_vec =
+    {
+        "port",
+        "address",
+    };
+
+    for (std::string tag : field_vec)
+    {
+        sprintf(field, field_p, tag.c_str(), tag.c_str());
+        sprintf(xml, xml_p, field);
+        ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+        titleElement = xml_doc.RootElement();
+        EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::getXMLLocatorUDPv4_wrapper(titleElement,locator,ident));
+    }
+
+    // Invalid element
+    sprintf(xml, xml_p, "<bad_element> </bad_element>");
+    ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+    titleElement = xml_doc.RootElement();
+    EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::getXMLLocatorUDPv4_wrapper(titleElement,locator,ident));
+}
+
 // FINISH PARIS SECTION
