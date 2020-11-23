@@ -643,7 +643,7 @@ TEST_F(XMLParserTests, getXMLRemoteServer)
             </udpv6>\
         </locator>",};
     std::vector<std::string> parameters(valid_parameters);
-    
+
     // Parametrized XML
     const char* xml_p =
     "\
@@ -665,7 +665,7 @@ TEST_F(XMLParserTests, getXMLRemoteServer)
     EXPECT_EQ(attr.metatrafficMulticastLocatorList.begin()->port, 8844);
     EXPECT_EQ(attr.metatrafficMulticastLocatorList.begin()->address[15], 1);
 
-    // nullptr element 
+    // nullptr element
     EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::getXMLRemoteServer_wrapper(nullptr,attr,ident));
 
     // No prefix
@@ -739,7 +739,7 @@ TEST_F(XMLParserTests, getXMLPortParameters_negative)
             </port>\
             ";
         }
-                
+
         ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml.c_str()));
         titleElement = xml_doc.RootElement();
         EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::getXMLPortParameters_wrapper(titleElement,port,ident));
@@ -787,7 +787,7 @@ TEST_F(XMLParserTests, getXMLSubscriberAttributes_negative)
         titleElement = xml_doc.RootElement();
         EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::getXMLSubscriberAttributes_wrapper(titleElement,attr,ident));
     }
-
+    
 }
 
 /*
@@ -979,7 +979,7 @@ TEST_F(XMLParserTests, getXMLList_negative)
     ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse("<list></list>"));
     titleElement = xml_doc.RootElement();
     EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::getXMLList_wrapper(titleElement,list,ident));
-    
+
     // bad remote server element
     const char * xml = "<list><RemoteServer>bad_remote_server</RemoteServer></list>";
     ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
