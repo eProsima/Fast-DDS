@@ -119,6 +119,70 @@ class XMLParserTest : public XMLParser{
         return getXMLTransports(elem,transports,ident);
     }
 
+    static XMLP_ret getXMLguidPrefix_wrapper(
+        tinyxml2::XMLElement* elem,
+        GuidPrefix_t& prefix,
+        uint8_t ident)
+    {
+        return getXMLguidPrefix(elem,prefix,ident);
+    }
+
+    static XMLP_ret getXMLDuration_wrapper(
+        tinyxml2::XMLElement* elem,
+        Duration_t& duration,
+        uint8_t ident)
+    {
+        return getXMLDuration(elem, duration, ident);
+    }
+
+    static XMLP_ret getXMLString_wrapper(
+        tinyxml2::XMLElement* elem,
+        std::string* s,
+        uint8_t ident)
+    {
+        return getXMLString(elem, s, ident);
+    }
+
+    static XMLP_ret getXMLList_wrapper(
+        tinyxml2::XMLElement* elem,
+        eprosima::fastdds::rtps::RemoteServerList_t& list,
+        uint8_t ident)
+    {
+        return getXMLList(elem, list, ident);
+    }
+
+    static XMLP_ret getXMLBool_wrapper(
+        tinyxml2::XMLElement* elem,
+        bool* b,
+        uint8_t ident)
+    {
+        return getXMLBool(elem,b,ident);
+    }
+
+    static XMLP_ret getXMLInt_wrapper(
+        tinyxml2::XMLElement* elem,
+        int* i,
+        uint8_t ident)
+    {
+        return getXMLInt(elem,i,ident);
+    }
+
+    static XMLP_ret getXMLUint_wrapper(
+        tinyxml2::XMLElement* elem,
+        unsigned int* ui,
+        uint8_t ident)
+    {
+        return getXMLUint(elem,ui,ident);
+    }
+
+    static XMLP_ret getXMLUint_wrapper(
+        tinyxml2::XMLElement* elem,
+        uint16_t* ui16,
+        uint8_t ident)
+    {
+        return getXMLUint(elem,ui16,ident);
+    }
+
     // FINISH FUNCTIONS NACHO SECTION
 
 

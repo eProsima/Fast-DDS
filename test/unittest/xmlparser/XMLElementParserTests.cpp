@@ -87,6 +87,8 @@ protected:
     }
 };
 
+// INIT NACHO SECTION
+
 TEST_F(XMLParserTests, getXMLLifespanQos)
 {
     uint8_t ident = 1;
@@ -665,8 +667,6 @@ TEST_F(XMLParserTests, getXMLRemoteServer)
     EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::getXMLRemoteServer_wrapper(titleElement,attr,ident));
 }
 
-// INIT NACHO SECTION
-
 TEST_F(XMLParserTests, getXMLPortParameters_negative)
 {
     uint8_t ident = 1;
@@ -744,17 +744,218 @@ TEST_F(XMLParserTests, getXMLSubscriberAttributes_negative)
         titleElement = xml_doc.RootElement();
         EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::getXMLSubscriberAttributes_wrapper(titleElement,attr,ident));
     }
-    
 
-    xml = "\
-    <subscriber profile_name=\"test_subscriber_profile\" is_default_profile=\"true\">\
-        <bad_element></bad_element>\
-    </subscriber>\
-    ";
-    ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml.c_str()));
+}
+TEST_F(XMLParserTests, getXMLPublisherAttributes_negative)
+{
+    uint8_t ident = 1;
+    PublisherAttributes attr;
+    tinyxml2::XMLDocument xml_doc;
+    tinyxml2::XMLElement* titleElement;
+
+    std::string xml;
+    std::vector<std::string> parameters {
+        "<topic><bad_element></bad_element></topic>",
+        "<qos><bad_element></bad_element></qos>",
+        "<times><bad_element></bad_element></times>",
+        "<unicastLocatorList><bad_element></bad_element></unicastLocatorList>",
+        "<multicastLocatorList><bad_element></bad_element></multicastLocatorList>",
+        "<remoteLocatorList><bad_element></bad_element></remoteLocatorList>",
+        "<throughputController><bad_element></bad_element></throughputController>",
+        "<historyMemoryPolicy><bad_element></bad_element></historyMemoryPolicy>",
+        "<propertiesPolicy><bad_element></bad_element></propertiesPolicy>",
+        "<userDefinedID><bad_element></bad_element></userDefinedID>",
+        "<entityID><bad_element></bad_element></entityID>",
+        "<matchedSubscribersAllocation><bad_element></bad_element></matchedSubscribersAllocation>",
+        "<bad_element></bad_element>"
+    };
+
+    for(std::vector<std::string>::iterator it = parameters.begin() ; it != parameters.end(); ++it)
+    {
+        xml =
+        "\
+        <publisher profile_name=\"test_publisher_profile\" is_default_profile=\"true\">\
+            "+*it+"\
+        </publisher>\
+        ";
+        ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml.c_str()));
+        titleElement = xml_doc.RootElement();
+        EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::getXMLPublisherAttributes_wrapper(titleElement,attr,ident));
+    }
+
+}
+
+TEST_F(XMLParserTests, getXMLLocatorList)
+{
+
+    uint8_t ident = 1;
+    LocatorList_t list;
+    tinyxml2::XMLDocument xml_doc;
+    tinyxml2::XMLElement* titleElement;
+
+    std::string xml;
+    std::vector<std::string> parameters {
+        "<locator><udpv4><bad_element></bad_element></udpv4></locator>",
+        "<locator><udpv6><bad_element></bad_element></udpv6></locator>",
+        "<locator><tcpv4><bad_element></bad_element></tcpv4></locator>",
+        "<locator><tcpv6><bad_element></bad_element></tcpv6></locator>",
+        "<locator><bad_element></bad_element></locator>",
+        "<bad_element></bad_element>"
+    };
+
+    for(std::vector<std::string>::iterator it = parameters.begin() ; it != parameters.end(); ++it)
+    {
+        xml =
+        "\
+        <locatorList>\
+            "+*it+"\
+        </locatorList>\
+        ";
+        ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml.c_str()));
+        titleElement = xml_doc.RootElement();
+        EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::getXMLLocatorList_wrapper(titleElement,list,ident));
+    }
+
+}
+
+TEST_F(XMLParserTests, getXMLguidPrefix)
+{
+
+    uint8_t ident = 1;
+    GuidPrefix_t prefix;
+    tinyxml2::XMLDocument xml_doc;
+    tinyxml2::XMLElement* titleElement;
+
+    ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse("<guid></guid>"));
     titleElement = xml_doc.RootElement();
-    EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::getXMLSubscriberAttributes_wrapper(titleElement,attr,ident));
+    EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::getXMLguidPrefix_wrapper(titleElement,prefix,ident));
 
+    EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::getXMLguidPrefix_wrapper(nullptr,prefix,ident));
+}
+
+TEST_F(XMLParserTests, getXMLDuration)
+{
+
+    uint8_t ident = 1;
+    Duration_t duration;
+    tinyxml2::XMLDocument xml_doc;
+    tinyxml2::XMLElement* titleElement;
+
+    std::string xml;
+    std::vector<std::string> parameters {
+        "DURATION_INFINITY<sec>1</sec>",
+        "<sec></sec>",
+        "<sec>not_an_int</sec>",
+        "<nanosec></nanosec>",
+        "<nanosec>not_an_int</nanosec>",
+        "<bad_element></bad_element>",
+        ""
+    };
+
+    for(std::vector<std::string>::iterator it = parameters.begin() ; it != parameters.end(); ++it)
+    {
+        xml =
+        "\
+        <duration>\
+            "+*it+"\
+        </duration>\
+        ";
+        ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml.c_str()));
+        titleElement = xml_doc.RootElement();
+        EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::getXMLDuration_wrapper(titleElement,duration,ident));
+    }
+
+}
+
+TEST_F(XMLParserTests, getXMLString)
+{
+    uint8_t ident = 1;
+    std::string s;
+    tinyxml2::XMLDocument xml_doc;
+    tinyxml2::XMLElement* titleElement;
+
+    ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse("<field>field_text</field>"));
+    titleElement = xml_doc.RootElement();
+    EXPECT_EQ(XMLP_ret::XML_OK, XMLParserTest::getXMLString_wrapper(titleElement,&s,ident));
+    EXPECT_EQ(s, "field_text");
+
+    EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::getXMLString_wrapper(nullptr,&s,ident));
+
+    ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse("<field></field>"));
+    titleElement = xml_doc.RootElement();
+    EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::getXMLString_wrapper(nullptr,&s,ident));
+
+}
+
+TEST_F(XMLParserTests, getXMLList)
+{
+    uint8_t ident = 1;
+    RemoteServerList_t list;
+    tinyxml2::XMLDocument xml_doc;
+    tinyxml2::XMLElement* titleElement;
+
+    // empty element
+    EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::getXMLList_wrapper(nullptr,list,ident));
+
+    // empty list
+    ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse("<list></list>"));
+    titleElement = xml_doc.RootElement();
+    EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::getXMLList_wrapper(titleElement,list,ident));
+    
+    const char * xml = "<list><RemoteServer>bad_remote_server</RemoteServer></list>";
+    ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+    titleElement = xml_doc.RootElement();
+    EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::getXMLList_wrapper(titleElement,list,ident));
+
+}
+
+TEST_F(XMLParserTests, getXMLBool)
+{
+    uint8_t ident = 1;
+    bool b;
+    tinyxml2::XMLDocument xml_doc;
+    tinyxml2::XMLElement* titleElement;
+
+    EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::getXMLBool_wrapper(nullptr,&b,ident));
+
+    ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse("<field>not_a_bool</field>"));
+    titleElement = xml_doc.RootElement();
+    EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::getXMLBool_wrapper(titleElement,&b,ident));
+}
+
+TEST_F(XMLParserTests, getXMLInt)
+{
+    uint8_t ident = 1;
+    int i;
+    tinyxml2::XMLDocument xml_doc;
+    tinyxml2::XMLElement* titleElement;
+
+    EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::getXMLInt_wrapper(nullptr,&i, ident));
+
+    ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse("<field>not_an_int</field>"));
+    titleElement = xml_doc.RootElement();
+    EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::getXMLInt_wrapper(titleElement, &i, ident));
+}
+
+TEST_F(XMLParserTests, getXMLUint)
+{
+    uint8_t ident = 1;
+    unsigned int ui;
+    uint16_t ui16;
+    tinyxml2::XMLDocument xml_doc;
+    tinyxml2::XMLElement* titleElement;
+
+    EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::getXMLUint_wrapper(nullptr, &ui, ident));
+
+    ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse("<field>not_an_uint</field>"));
+    titleElement = xml_doc.RootElement();
+    EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::getXMLUint_wrapper(titleElement, &ui, ident));
+
+    EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::getXMLUint_wrapper(nullptr, &ui16, ident));
+
+    ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse("<field>not_an_uint</field>"));
+    titleElement = xml_doc.RootElement();
+    EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::getXMLUint_wrapper(titleElement, &ui16, ident));
 }
 
 TEST_F(XMLParserTests, getXMLPublisherAttributes_negative)
