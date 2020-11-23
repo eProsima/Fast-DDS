@@ -102,9 +102,7 @@ TEST_F(XMLParserTests, getXMLLifespanQos)
     // Missing element
     const char* miss_xml =
     "\
-    <lifespan>\
-        <duration></duration>\
-    </lifespan>\
+    <lifespan></lifespan>\
     ";
     ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(miss_xml));
     titleElement = xml_doc.RootElement();
@@ -695,6 +693,7 @@ TEST_F(XMLParserTests, getXMLSubscriberAttributes_negative)
         "<times><bad_element></bad_element></times>",
         "<unicastLocatorList><bad_element></bad_element></unicastLocatorList>",
         "<multicastLocatorList><bad_element></bad_element></multicastLocatorList>",
+        "<remoteLocatorList><bad_element></bad_element></remoteLocatorList>",
         "<expectsInlineQos><bad_element></bad_element></expectsInlineQos>",
         "<historyMemoryPolicy><bad_element></bad_element></historyMemoryPolicy>",
         "<userDefinedID><bad_element></bad_element></userDefinedID>",
