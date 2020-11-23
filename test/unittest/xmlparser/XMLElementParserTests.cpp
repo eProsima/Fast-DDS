@@ -1453,6 +1453,35 @@ TEST_F(XMLParserTests, getXMLLivelinessQosAutomaticKind)
     EXPECT_EQ(liveliness.kind, LivelinessQosPolicyKind::AUTOMATIC_LIVELINESS_QOS);
 }
 
+/*
+ * This test checks the positive case of configuration via XML of the publish mode synchronous kind.
+ * 1. Check that the XML return code is correct for the publish mode kind setting.
+ * 2. Check that the publish mode kind is set to SYNCHRONOUS_PUBLISH_MODE.
+ */
+TEST_F(XMLParserTests, getXMLPublishModeQosSynchronousKind)
+{
+    uint8_t ident = 1;
+    PublishModeQosPolicy publishMode;
+    tinyxml2::XMLDocument xml_doc;
+    tinyxml2::XMLElement* titleElement;
+
+    // XML snippet
+    const char* xml =
+    "\
+    <publishMode>\
+        <kind>SYNCHRONOUS</kind>\
+    </publishMode>\
+    ";
+
+    // Load the xml
+    ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+    titleElement = xml_doc.RootElement();
+    // Check that the XML return code is correct for the publish mode kind setting.
+    EXPECT_EQ(XMLP_ret::XML_OK, XMLParserTest::getXMLPublishModeQos_wrapper(titleElement,publishMode,ident));
+    // Check that the publish mode kind is set to SYNCHRONOUS_PUBLISH_MODE.
+    EXPECT_EQ(publishMode.kind, PublishModeQosPolicyKind::SYNCHRONOUS_PUBLISH_MODE);
+}
+
 // FINISH RAUL SECTION
 
 
