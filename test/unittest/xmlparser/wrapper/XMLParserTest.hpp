@@ -63,6 +63,61 @@ class XMLParserTest : public XMLParser{
 
     // INIT FUNCTIONS NACHO SECTION
 
+    static XMLP_ret getXMLPortParameters_wrapper(
+        tinyxml2::XMLElement* elem,
+        PortParameters& port,
+        uint8_t ident)
+    {
+        return getXMLPortParameters(elem,port,ident);
+    }
+
+    static XMLP_ret getXMLSubscriberAttributes_wrapper(
+        tinyxml2::XMLElement* elem,
+        SubscriberAttributes& subscriber,
+        uint8_t ident)
+    {
+        return getXMLSubscriberAttributes(elem,subscriber,ident);
+    }
+
+    static XMLP_ret getXMLLifespanQos_wrapper(
+        tinyxml2::XMLElement* elem,
+        LifespanQosPolicy& lifespan,
+        uint8_t ident)
+    {
+        return getXMLLifespanQos(elem, lifespan, ident);
+    }
+
+    static XMLP_ret getXMLDisablePositiveAcksQos_wrapper(
+        tinyxml2::XMLElement* elem,
+        DisablePositiveACKsQosPolicy& disablePositiveAcks,
+        uint8_t ident)
+    {
+        return getXMLDisablePositiveAcksQos(elem, disablePositiveAcks, ident);
+    }
+
+    static XMLP_ret propertiesPolicy_wrapper(
+        tinyxml2::XMLElement* elem,
+        PropertyPolicy& propertiesPolicy,
+        uint8_t ident)
+    {
+        return getXMLPropertiesPolicy(elem,propertiesPolicy,ident);
+    }
+
+    static XMLP_ret getXMLRemoteServer_wrapper(
+        tinyxml2::XMLElement* elem,
+        RemoteServerAttributes& attr,
+        uint8_t ident)
+    {
+        return getXMLRemoteServer(elem,attr,ident);
+    }
+
+    static XMLP_ret getXMLTransports_wrapper(
+         tinyxml2::XMLElement* elem,
+        std::vector<std::shared_ptr<TransportDescriptorInterface>>& transports,
+        uint8_t ident)
+    {
+        return getXMLTransports(elem,transports,ident);
+    }
 
     // FINISH FUNCTIONS NACHO SECTION
 
