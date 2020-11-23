@@ -726,6 +726,53 @@ TEST_F(XMLParserTests, getXMLSubscriberAttributes_negative)
 
 }
 
+TEST_F(XMLParserTests, getXMLPublisherAttributes_negative)
+{
+    uint8_t ident = 1;
+    PublisherAttributes attr;
+    tinyxml2::XMLDocument xml_doc;
+    tinyxml2::XMLElement* titleElement;
+
+    std::string xml;
+    std::vector<std::string> parameters {
+        "<topic><bad_element></bad_element></topic>",
+        "<qos><bad_element></bad_element></qos>",
+        "<times><bad_element></bad_element></times>",
+        "<unicastLocatorList><bad_element></bad_element></unicastLocatorList>",
+        "<multicastLocatorList><bad_element></bad_element></multicastLocatorList>",
+        "<remoteLocatorList><bad_element></bad_element></remoteLocatorList>",
+        "<historyMemoryPolicy><bad_element></bad_element></historyMemoryPolicy>",
+        "<propertiesPolicy><bad_element></bad_element></propertiesPolicy>",
+        "<userDefinedID><bad_element></bad_element></userDefinedID>",
+        "<entityID><bad_element></bad_element></entityID>",
+        "<matchedSubscribersAllocation><bad_element></bad_element></matchedSubscribersAllocation>"
+    };
+
+    for(std::vector<std::string>::iterator it = parameters.begin() ; it != parameters.end(); ++it)
+    {
+        xml =
+        "\
+        <publisher profile_name=\"test_publisher_profile\" is_default_profile=\"true\">\
+            "+*it+"\
+        </publisher>\
+        ";
+        ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml.c_str()));
+        titleElement = xml_doc.RootElement();
+        EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::getXMLPublisherAttributes_wrapper(titleElement,attr,ident));
+    }
+    
+
+    xml = "\
+    <publisher profile_name=\"test_publisher_profile\" is_default_profile=\"true\">\
+        <bad_element></bad_element>\
+    </publisher>\
+    ";
+    ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml.c_str()));
+    titleElement = xml_doc.RootElement();
+    EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::getXMLPublisherAttributes_wrapper(titleElement,attr,ident));
+
+}
+
 // FINISH NACHO SECTION
 
 
