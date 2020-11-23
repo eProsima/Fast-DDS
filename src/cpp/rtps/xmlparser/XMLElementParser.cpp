@@ -1384,7 +1384,7 @@ XMLP_ret XMLParser::getXMLDurabilityServiceQos(
         DurabilityServiceQosPolicy& durabilityService,
         uint8_t ident)
 {
-    
+
     //    <xs:complexType name="durabilityServiceQosPolicyType">
     //        <xs:all minOccurs="0">
     //            <xs:element name="service_cleanup_delay" type="durationType" minOccurs="0"/>
@@ -1395,7 +1395,7 @@ XMLP_ret XMLParser::getXMLDurabilityServiceQos(
     //            <xs:element name="max_samples_per_instance" type="uint32Type" minOccurs="0"/>
     //        </xs:all>
     //    </xs:complexType>
-     
+
 
     tinyxml2::XMLElement* p_aux0 = nullptr;
     const char* name = nullptr;
@@ -1809,13 +1809,13 @@ XMLP_ret XMLParser::getXMLTimeBasedFilterQos(
         TimeBasedFilterQosPolicy& timeBasedFilter,
         uint8_t ident)
 {
-    
+
     //    <xs:complexType name="timeBasedFilterQosPolicyType">
     //        <xs:all>
     //          <xs:element name="minimum_separation" type="durationType"/>
     //        </xs:all>
     //    </xs:complexType>
-    
+
 
     tinyxml2::XMLElement* p_aux0 = nullptr;
     bool bSeparationDefined = false;
@@ -1854,13 +1854,13 @@ XMLP_ret XMLParser::getXMLOwnershipQos(
         OwnershipQosPolicy& ownership,
         uint8_t ident)
 {
-    
+
     //    <xs:complexType name="ownershipQosPolicyType">
     //        <xs:all>
     //            <xs:element name="kind" type="ownershipQosKindType"/>
     //        </xs:all>
     //    </xs:complexType>
-    
+
     tinyxml2::XMLElement* p_aux0 = nullptr;
     bool bKindDefined = false;
     const char* name = nullptr;
@@ -1869,14 +1869,14 @@ XMLP_ret XMLParser::getXMLOwnershipQos(
         name = p_aux0->Name();
         if (strcmp(name, KIND) == 0)
         {
-            
+
             //    <xs:simpleType name="ownershipQosKindType">
             //        <xs:restriction base="xs:string">
             //            <xs:enumeration value="SHARED"/>
             //            <xs:enumeration value="EXCLUSIVE"/>
             //        </xs:restriction>
             //    </xs:simpleType>
-            
+
             bKindDefined = true;
             const char* text = p_aux0->GetText();
             if (nullptr == text)
@@ -1923,13 +1923,13 @@ XMLP_ret XMLParser::getXMLOwnershipStrengthQos(
         OwnershipStrengthQosPolicy& ownershipStrength,
         uint8_t ident)
 {
-    
+
     //    <xs:complexType name="ownershipStrengthQosPolicyType">
     //        <xs:all>
     //            <xs:element name="value" type="uint32Type"/>
     //        </xs:all>
     //    </xs:complexType>
-    
+
     tinyxml2::XMLElement* p_aux0 = nullptr;
     bool bValueDefined = false;
     const char* name = nullptr;
@@ -1969,13 +1969,13 @@ XMLP_ret XMLParser::getXMLDestinationOrderQos(
         DestinationOrderQosPolicy& destinationOrder,
         uint8_t ident)
 {
-    
+
     //    <xs:complexType name="destinationOrderQosPolicyType">
     //        <xs:all>
     //            <xs:element name="kind" type="destinationOrderQosKindType"/>
     //        </xs:all>
     //    </xs:complexType>
-     
+
 
     tinyxml2::XMLElement* p_aux0 = nullptr;
     bool bKindDefined = false;
@@ -1985,14 +1985,14 @@ XMLP_ret XMLParser::getXMLDestinationOrderQos(
         name = p_aux0->Name();
         if (strcmp(name, KIND) == 0)
         {
-            
+
             //    <xs:simpleType name="destinationOrderQosKindType">
             //        <xs:restriction base="xs:string">
             //            <xs:enumeration value="BY_RECEPTION_TIMESTAMP"/>
             //            <xs:enumeration value="BY_SOURCE_TIMESTAMP"/>
             //        </xs:restriction>
             //    </xs:simpleType>
-            
+
             bKindDefined = true;
             const char* text = p_aux0->GetText();
             if (nullptr == text)
@@ -2038,7 +2038,7 @@ XMLP_ret XMLParser::getXMLPresentationQos(
         PresentationQosPolicy& presentation,
         uint8_t ident)
 {
-    
+
     //    <xs:complexType name="presentationQosPolicyType">
     //        <xs:all minOccurs="0">
     //            <xs:element name="access_scope" type="presentationQosKindType" minOccurs="0"/>
@@ -2046,7 +2046,7 @@ XMLP_ret XMLParser::getXMLPresentationQos(
     //            <xs:element name="ordered_access" type="boolType" minOccurs="0"/>
     //        </xs:all>
     //    </xs:complexType>
-     
+
 
     tinyxml2::XMLElement* p_aux0 = nullptr;
     const char* name = nullptr;
@@ -2056,7 +2056,7 @@ XMLP_ret XMLParser::getXMLPresentationQos(
         if (strcmp(name, ACCESS_SCOPE) == 0)
         {
             // access_scope
-            
+
             //    <xs:simpleType name="presentationQosKindType">
             //        <xs:restriction base="xs:string">
             //            <xs:enumeration value="INSTANCE"/>
@@ -2064,7 +2064,7 @@ XMLP_ret XMLParser::getXMLPresentationQos(
             //            <xs:enumeration value="GROUP"/>
             //        </xs:restriction>
             //    </xs:simpleType>
-             
+
             const char* text = p_aux0->GetText();
             if (nullptr == text)
             {
@@ -2983,6 +2983,11 @@ XMLP_ret XMLParser::getXMLPropertiesPolicy(
                 propertiesPolicy.binary_properties().push_back(bin_prop);
                 p_aux1 = p_aux1->NextSiblingElement(PROPERTY);
             }
+        }
+        else
+        {
+            logError(XMLPARSER, "Invalid element found into 'propertyPolicyType'. Name: " << name);
+            return XMLP_ret::XML_ERROR;
         }
     }
     return XMLP_ret::XML_OK;
