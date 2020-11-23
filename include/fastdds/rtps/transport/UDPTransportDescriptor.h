@@ -17,9 +17,9 @@
 
 #include <fastdds/rtps/transport/SocketTransportDescriptor.h>
 
-namespace eprosima{
-namespace fastdds{
-namespace rtps{
+namespace eprosima {
+namespace fastdds {
+namespace rtps {
 
 /**
  * UDP Transport configuration
@@ -31,28 +31,31 @@ namespace rtps{
  * - interfaceWhiteList: Lists the allowed interfaces.
  * @ingroup TRANSPORT_MODULE
  */
-typedef struct UDPTransportDescriptor: public SocketTransportDescriptor
+typedef struct UDPTransportDescriptor : public SocketTransportDescriptor
 {
-   virtual ~UDPTransportDescriptor(){}
+    virtual ~UDPTransportDescriptor()
+    {
+    }
 
-   RTPS_DllAPI UDPTransportDescriptor();
+    RTPS_DllAPI UDPTransportDescriptor();
 
-   RTPS_DllAPI UDPTransportDescriptor(const UDPTransportDescriptor& t);
+    RTPS_DllAPI UDPTransportDescriptor(
+            const UDPTransportDescriptor& t);
 
-   uint16_t m_output_udp_socket;
+    uint16_t m_output_udp_socket;
 
-   /**
-    * Whether to use non-blocking calls to send_to().
-    *
-    * When set to true, calls to send_to() will return inmediately if the buffer is full, but
-    * no error will be returned to the upper layer. This means that the application will behave
-    * as if the datagram is sent but lost (i.e. throughput may be reduced). This value is
-    * specially useful on high-frequency best-effort writers.
-    *
-    * When set to false, calls to send_to() will block until the network buffer has space for the
-    * datagram. This may hinder performance on high-frequency writers.
-    */
-   bool non_blocking_send = false;
+    /**
+     * Whether to use non-blocking calls to send_to().
+     *
+     * When set to true, calls to send_to() will return inmediately if the buffer is full, but
+     * no error will be returned to the upper layer. This means that the application will behave
+     * as if the datagram is sent but lost (i.e. throughput may be reduced). This value is
+     * specially useful on high-frequency best-effort writers.
+     *
+     * When set to false, calls to send_to() will block until the network buffer has space for the
+     * datagram. This may hinder performance on high-frequency writers.
+     */
+    bool non_blocking_send = false;
 } UDPTransportDescriptor;
 
 } // namespace rtps

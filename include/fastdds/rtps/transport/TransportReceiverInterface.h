@@ -38,8 +38,11 @@ public:
      * @param localLocator Locator identifying the local endpoint.
      * @param remote_locator Locator identifying the remote endpoint.
      */
-    virtual void OnDataReceived(const fastrtps::rtps::octet* data, const uint32_t size,
-        const fastrtps::rtps::Locator_t& localLocator, const fastrtps::rtps::Locator_t& remote_locator) = 0;
+    virtual void OnDataReceived(
+            const fastrtps::rtps::octet* data,
+            const uint32_t size,
+            const fastrtps::rtps::Locator_t& localLocator,
+            const fastrtps::rtps::Locator_t& remote_locator) = 0;
 };
 
 } // namespace rtps

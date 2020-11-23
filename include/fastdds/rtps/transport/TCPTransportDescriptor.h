@@ -19,14 +19,14 @@
 #include <fastrtps/fastrtps_dll.h>
 #include <iostream>
 
-namespace eprosima{
-namespace fastdds{
-namespace rtps{
+namespace eprosima {
+namespace fastdds {
+namespace rtps {
 
 /**
-* Transport configuration
-* @ingroup TRANSPORT_MODULE
-*/
+ * Transport configuration
+ * @ingroup TRANSPORT_MODULE
+ */
 typedef struct TCPTransportDescriptor : public SocketTransportDescriptor
 {
     struct TLSConfig
@@ -74,22 +74,26 @@ typedef struct TCPTransportDescriptor : public SocketTransportDescriptor
         std::string rsa_private_key_file;
         TLSHandShakeRole handshake_role;
 
-        void add_verify_mode(const TLSVerifyMode verify)
+        void add_verify_mode(
+                const TLSVerifyMode verify)
         {
             verify_mode |= verify;
         }
 
-        bool get_verify_mode(const TLSVerifyMode verify) const
+        bool get_verify_mode(
+                const TLSVerifyMode verify) const
         {
             return (verify_mode & verify) == verify;
         }
 
-        void add_option(const TLSOptions option)
+        void add_option(
+                const TLSOptions option)
         {
             options |= option;
         }
 
-        bool get_option(const TLSOptions option) const
+        bool get_option(
+                const TLSOptions option) const
         {
             return (options & option) == option;
         }
@@ -101,7 +105,8 @@ typedef struct TCPTransportDescriptor : public SocketTransportDescriptor
         {
         }
 
-        TLSConfig(const TLSConfig& t)
+        TLSConfig(
+                const TLSConfig& t)
             : password(t.password)
             , options(t.options)
             , cert_chain_file(t.cert_chain_file)
@@ -117,7 +122,8 @@ typedef struct TCPTransportDescriptor : public SocketTransportDescriptor
         {
         }
 
-        TLSConfig(TLSConfig&& t)
+        TLSConfig(
+                TLSConfig&& t)
             : password(std::move(t.password))
             , options(std::move(t.options))
             , cert_chain_file(std::move(t.cert_chain_file))
@@ -133,7 +139,8 @@ typedef struct TCPTransportDescriptor : public SocketTransportDescriptor
         {
         }
 
-        TLSConfig& operator=(const TLSConfig& t)
+        TLSConfig& operator =(
+                const TLSConfig& t)
         {
             password = t.password;
             options = t.options;
@@ -150,6 +157,7 @@ typedef struct TCPTransportDescriptor : public SocketTransportDescriptor
 
             return *this;
         }
+
     };
 
     std::vector<uint16_t> listening_ports;
@@ -167,18 +175,24 @@ typedef struct TCPTransportDescriptor : public SocketTransportDescriptor
 
     TLSConfig tls_config;
 
-    void add_listener_port(uint16_t port)
+    void add_listener_port(
+            uint16_t port)
     {
         listening_ports.push_back(port);
     }
 
     RTPS_DllAPI TCPTransportDescriptor();
 
-    RTPS_DllAPI TCPTransportDescriptor(const TCPTransportDescriptor& t);
+    RTPS_DllAPI TCPTransportDescriptor(
+            const TCPTransportDescriptor& t);
 
-    RTPS_DllAPI TCPTransportDescriptor& operator=(const TCPTransportDescriptor& t);
+    RTPS_DllAPI TCPTransportDescriptor& operator =(
+            const TCPTransportDescriptor& t);
 
-    virtual ~TCPTransportDescriptor() {}
+    virtual ~TCPTransportDescriptor()
+    {
+    }
+
 } TCPTransportDescriptor;
 
 } // namespace rtps

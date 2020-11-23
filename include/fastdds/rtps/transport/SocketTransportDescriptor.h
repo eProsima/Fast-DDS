@@ -19,13 +19,13 @@
 
 #ifdef _WIN32
 #include <cstdint>
-#endif
+#endif // ifdef _WIN32
 #include <vector>
 #include <string>
 
-namespace eprosima{
-namespace fastdds{
-namespace rtps{
+namespace eprosima {
+namespace fastdds {
+namespace rtps {
 
 class TransportInterface;
 
@@ -44,18 +44,26 @@ struct SocketTransportDescriptor : public TransportDescriptorInterface
         , sendBufferSize(0)
         , receiveBufferSize(0)
         , TTL(s_defaultTTL)
-    {}
+    {
+    }
 
-    SocketTransportDescriptor(const SocketTransportDescriptor& t)
+    SocketTransportDescriptor(
+            const SocketTransportDescriptor& t)
         : TransportDescriptorInterface(t)
         , sendBufferSize(t.sendBufferSize)
         , receiveBufferSize(t.receiveBufferSize)
         , TTL(t.TTL)
-    {}
+    {
+    }
 
-    virtual ~SocketTransportDescriptor(){}
+    virtual ~SocketTransportDescriptor()
+    {
+    }
 
-    virtual uint32_t min_send_buffer_size() const override { return sendBufferSize; }
+    virtual uint32_t min_send_buffer_size() const override
+    {
+        return sendBufferSize;
+    }
 
     //! Length of the send buffer.
     uint32_t sendBufferSize;
