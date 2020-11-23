@@ -91,6 +91,30 @@ class XMLParserTest : public XMLParser{
         return getXMLThroughputController(elem, throughputController, ident);
     }
 
+    static XMLP_ret getXMLTopicAttributes_wrapper(
+        tinyxml2::XMLElement* elem,
+        TopicAttributes& topic,
+        uint8_t ident)
+    {
+        return getXMLTopicAttributes(elem, topic, ident);
+    }
+
+    static XMLP_ret getXMLResourceLimitsQos_wrapper(
+        tinyxml2::XMLElement* elem,
+        ResourceLimitsQosPolicy& resourceLimitsQos,
+        uint8_t ident)
+    {
+        return getXMLResourceLimitsQos(elem, resourceLimitsQos, ident);
+    }
+
+    static XMLP_ret getXMLContainerAllocationConfig_wrapper(
+        tinyxml2::XMLElement* elem,
+        ResourceLimitedContainerConfig& allocation_config,
+        uint8_t ident)
+    {
+        return getXMLContainerAllocationConfig(elem, allocation_config, ident);
+    }
+
     // FINISH FUNCTIONS PARIS SECTION
 
 };

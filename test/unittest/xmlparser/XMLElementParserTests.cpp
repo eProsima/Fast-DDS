@@ -603,4 +603,191 @@ TEST_F(XMLParserTests, getXMLThroughputController_invalidXML)
     EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::getXMLThroughputController_wrapper(titleElement,throughputController,ident));
 }
 
+TEST_F(XMLParserTests, getXMLTopicAttributes_invalidXML)
+{
+    uint8_t ident = 1;
+    TopicAttributes topic;
+    tinyxml2::XMLDocument xml_doc;
+    tinyxml2::XMLElement* titleElement;
+
+    // Parametrized XML
+    const char* xml_p =
+    "\
+    <topicAttributesType>\
+        %s\
+    </topicAttributesType>\
+    ";
+    char xml[1000];
+
+    const char* field_p =
+        "\
+        <%s>\
+            <bad_element> </bad_element>\
+        </%s>\
+        ";
+    char field[500];
+
+    std::vector<std::string> field_vec =
+    {
+        "kind",
+        "name",
+        "dataType",
+        "kind",
+        "historyQos",
+        "resourceLimitsQos",
+    };
+
+    for (std::string tag : field_vec)
+    {
+        sprintf(field, field_p, tag.c_str(), tag.c_str());
+        sprintf(xml, xml_p, field);
+        ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+        titleElement = xml_doc.RootElement();
+        EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::getXMLTopicAttributes_wrapper(titleElement,topic,ident));
+    }
+
+    // Invalid key in kind field
+    {
+        const char* tag =
+        "\
+        <kind>\
+            BAD_KEY\
+        </kind>\
+        ";
+        sprintf(xml, xml_p, tag);
+        ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+        titleElement = xml_doc.RootElement();
+        EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::getXMLTopicAttributes_wrapper(titleElement,topic,ident));
+    }
+
+    // Invalid element
+    sprintf(xml, xml_p, "<bad_element> </bad_element>");
+    ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+    titleElement = xml_doc.RootElement();
+    EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::getXMLTopicAttributes_wrapper(titleElement,topic,ident));
+}
+
+TEST_F(XMLParserTests, getXMLResourceLimitsQos_invalidXML)
+{
+    uint8_t ident = 1;
+    ResourceLimitsQosPolicy resourceLimitsQos;
+    tinyxml2::XMLDocument xml_doc;
+    tinyxml2::XMLElement* titleElement;
+
+    // Parametrized XML
+    const char* xml_p =
+    "\
+    <topicAttributesType>\
+        %s\
+    </topicAttributesType>\
+    ";
+    char xml[1000];
+
+    const char* field_p =
+        "\
+        <%s>\
+            <bad_element> </bad_element>\
+        </%s>\
+        ";
+    char field[500];
+
+    std::vector<std::string> field_vec =
+    {
+        "max_samples",
+        "max_instances",
+        "max_samples_per_instance",
+        "allocated_samples",
+    };
+
+    for (std::string tag : field_vec)
+    {
+        sprintf(field, field_p, tag.c_str(), tag.c_str());
+        sprintf(xml, xml_p, field);
+        ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+        titleElement = xml_doc.RootElement();
+        EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::getXMLResourceLimitsQos_wrapper(titleElement,resourceLimitsQos,ident));
+    }
+
+    // Invalid element
+    sprintf(xml, xml_p, "<bad_element> </bad_element>");
+    ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+    titleElement = xml_doc.RootElement();
+    EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::getXMLResourceLimitsQos_wrapper(titleElement,resourceLimitsQos,ident));
+}
+
+TEST_F(XMLParserTests, getXMLContainerAllocationConfig_invalidXML)
+{
+    uint8_t ident = 1;
+    ResourceLimitedContainerConfig allocation_config;
+    tinyxml2::XMLDocument xml_doc;
+    tinyxml2::XMLElement* titleElement;
+
+    // Parametrized XML
+    const char* xml_p =
+    "\
+    <containerAllocationConfigType>\
+        %s\
+    </containerAllocationConfigType>\
+    ";
+    char xml[1000];
+
+    const char* field_p =
+        "\
+        <%s>\
+            <bad_element> </bad_element>\
+        </%s>\
+        ";
+    char field[500];
+
+    std::vector<std::string> field_vec =
+    {
+        "initial",
+        "maximum",
+        "increment",
+    };
+
+    for (std::string tag : field_vec)
+    {
+        sprintf(field, field_p, tag.c_str(), tag.c_str());
+        sprintf(xml, xml_p, field);
+        ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+        titleElement = xml_doc.RootElement();
+        EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::getXMLContainerAllocationConfig_wrapper(titleElement,allocation_config,ident));
+    }
+
+    // Invalid tuple initial-maximum parameters
+    {
+        const char* tag =
+        "\
+            <initial> 2 </initial>\
+            <maximum> 1 </maximum>\
+            <increment> 1 </increment>\
+        ";
+        sprintf(xml, xml_p, tag);
+        ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+        titleElement = xml_doc.RootElement();
+        EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::getXMLContainerAllocationConfig_wrapper(titleElement,allocation_config,ident));
+    }
+
+    // Invalid increment parameters
+    {
+        const char* tag =
+        "\
+            <initial> 1 </initial>\
+            <maximum> 2 </maximum>\
+            <increment> 0 </increment>\
+        ";
+        sprintf(xml, xml_p, tag);
+        ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+        titleElement = xml_doc.RootElement();
+        EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::getXMLContainerAllocationConfig_wrapper(titleElement,allocation_config,ident));
+    }
+
+    // Invalid element
+    sprintf(xml, xml_p, "<bad_element> </bad_element>");
+    ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+    titleElement = xml_doc.RootElement();
+    EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::getXMLContainerAllocationConfig_wrapper(titleElement,allocation_config,ident));
+}
+
 // FINISH PARIS SECTION
