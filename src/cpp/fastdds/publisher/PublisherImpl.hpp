@@ -252,9 +252,6 @@ protected:
             const PublisherQos& to,
             const PublisherQos& from);
 
-    static bool is_datasharing_compatible(
-            const DataWriterQos& qos,
-            const TypeSupport& type);
 };
 
 } /* namespace dds */

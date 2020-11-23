@@ -17,6 +17,7 @@
 
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
 #include <fastdds/dds/domain/DomainParticipant.hpp>
+#include <fastdds/dds/domain/qos/DomainParticipantQos.hpp>
 #include <fastdds/dds/publisher/Publisher.hpp>
 #include <fastdds/dds/publisher/DataWriter.hpp>
 #include <fastdds/dds/publisher/DataWriterListener.hpp>
@@ -155,8 +156,10 @@ TEST(DataWriterTests, ChangeDataWriterQos)
 
 TEST(DataWriterTests, InvalidQos)
 {
+    DomainParticipantQos pqos = PARTICIPANT_QOS_DEFAULT;
+    pqos.entity_factory().autoenable_created_entities = false;
     DomainParticipant* participant =
-            DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
+            DomainParticipantFactory::get_instance()->create_participant(0, pqos);
     ASSERT_NE(participant, nullptr);
 
     Publisher* publisher = participant->create_publisher(PUBLISHER_QOS_DEFAULT);

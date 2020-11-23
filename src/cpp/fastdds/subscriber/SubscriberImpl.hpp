@@ -289,11 +289,6 @@ protected:
 
     fastrtps::rtps::InstanceHandle_t handle_;
 
-
-    static bool is_datasharing_compatible(
-            const DataReaderQos& qos,
-            const TypeSupport& type);
-
 };
 
 } /* namespace dds */

@@ -122,6 +122,7 @@ public:
     uint32_t advance(
             uint32_t /*pointer*/) const
     {
+        return 0;
     }
 
     uint32_t begin() const

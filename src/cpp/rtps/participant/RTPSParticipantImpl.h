@@ -367,6 +367,20 @@ public:
             const GUID_t& local_reader,
             const WriterProxyData& remote_writer_data);
 
+    /**
+     * @brief Checks whether the writer has security attributes enabled
+     * @param writer_attributes Attibutes of the writer as given to the create_writer
+     */
+    bool is_security_enabled_for_writer(
+            const WriterAttributes& writer_attributes);
+
+    /**
+     * @brief Checks whether the reader has security attributes enabled
+     * @param reader_attributes Attibutes of the reader as given to the create_reader
+     */
+    bool is_security_enabled_for_reader(
+            const ReaderAttributes& reader_attributes);
+
 #endif // if HAVE_SECURITY
 
     PDPSimple* pdpsimple();

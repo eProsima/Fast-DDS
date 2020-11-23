@@ -2249,6 +2249,34 @@ bool SecurityManager::register_local_writer(
         const PropertyPolicy& writer_properties,
         EndpointSecurityAttributes& security_attributes)
 {
+    SecurityException exception;
+    bool returned_value = get_datawriter_sec_attributes(writer_properties, security_attributes);
+
+    if (returned_value && crypto_plugin_ != nullptr && (security_attributes.is_submessage_protected ||
+            security_attributes.is_payload_protected))
+    {
+        DatawriterCryptoHandle* writer_handle = crypto_plugin_->cryptokeyfactory()->register_local_datawriter(
+            *local_participant_crypto_handle_, writer_properties.properties(), security_attributes, exception);
+
+        if (writer_handle != nullptr && !writer_handle->nil())
+        {
+            std::unique_lock<std::mutex> lock(mutex_);
+            writer_handles_.emplace(writer_guid, writer_handle);
+        }
+        else
+        {
+            logError(SECURITY, "Cannot register local writer in crypto plugin. (" << exception.what() << ")");
+            returned_value = false;
+        }
+    }
+
+    return returned_value;
+}
+
+bool SecurityManager::get_datawriter_sec_attributes(
+        const PropertyPolicy& writer_properties,
+        EndpointSecurityAttributes& security_attributes)
+{
     bool returned_value = true;
     SecurityException exception;
 
@@ -2292,13 +2320,13 @@ bool SecurityManager::register_local_writer(
                 if ((returned_value = access_plugin_->get_datawriter_sec_attributes(*local_permissions_handle_,
                         topic_name, partitions, security_attributes, exception)) == false)
                 {
-                    logError(SECURITY, "Error getting security attributes of local writer " << writer_guid <<
+                    logError(SECURITY, "Error getting security attributes of local writer " <<
                             " (" << exception.what() << ")" << std::endl);
                 }
             }
             else
             {
-                logError(SECURITY, "Error checking creation of local writer " << writer_guid <<
+                logError(SECURITY, "Error checking creation of local writer " <<
                         " (" << exception.what() << ")" << std::endl);
                 returned_value = false;
             }
@@ -2333,24 +2361,6 @@ bool SecurityManager::register_local_writer(
             security_attributes.plugin_endpoint_attributes |=
                     PLUGIN_ENDPOINT_SECURITY_ATTRIBUTES_FLAG_IS_VALID |
                     PLUGIN_ENDPOINT_SECURITY_ATTRIBUTES_FLAG_IS_PAYLOAD_ENCRYPTED;
-        }
-    }
-
-    if (returned_value && crypto_plugin_ != nullptr && (security_attributes.is_submessage_protected ||
-            security_attributes.is_payload_protected))
-    {
-        DatawriterCryptoHandle* writer_handle = crypto_plugin_->cryptokeyfactory()->register_local_datawriter(
-            *local_participant_crypto_handle_, writer_properties.properties(), security_attributes, exception);
-
-        if (writer_handle != nullptr && !writer_handle->nil())
-        {
-            std::unique_lock<std::mutex> lock(mutex_);
-            writer_handles_.emplace(writer_guid, writer_handle);
-        }
-        else
-        {
-            logError(SECURITY, "Cannot register local writer in crypto plugin. (" << exception.what() << ")");
-            returned_value = false;
         }
     }
 
@@ -2422,6 +2432,35 @@ bool SecurityManager::register_local_reader(
         const PropertyPolicy& reader_properties,
         EndpointSecurityAttributes& security_attributes)
 {
+    SecurityException exception;
+    bool returned_value = get_datareader_sec_attributes(reader_properties, security_attributes);
+
+    if (returned_value && crypto_plugin_ != nullptr && (security_attributes.is_submessage_protected ||
+            security_attributes.is_payload_protected))
+    {
+
+        DatareaderCryptoHandle* reader_handle = crypto_plugin_->cryptokeyfactory()->register_local_datareader(
+            *local_participant_crypto_handle_, reader_properties.properties(), security_attributes, exception);
+
+        if (reader_handle != nullptr && !reader_handle->nil())
+        {
+            std::unique_lock<std::mutex> lock(mutex_);
+            reader_handles_.emplace(reader_guid, reader_handle);
+        }
+        else
+        {
+            logError(SECURITY, "Cannot register local reader in crypto plugin. (" << exception.what() << ")");
+            returned_value = false;
+        }
+    }
+
+    return returned_value;
+}
+
+bool SecurityManager::get_datareader_sec_attributes(
+        const PropertyPolicy& reader_properties,
+        EndpointSecurityAttributes& security_attributes)
+{
     bool returned_value = true;
     SecurityException exception;
 
@@ -2465,13 +2504,13 @@ bool SecurityManager::register_local_reader(
                 if ((returned_value = access_plugin_->get_datareader_sec_attributes(*local_permissions_handle_,
                         topic_name, partitions, security_attributes, exception)) == false)
                 {
-                    logError(SECURITY, "Error getting security attributes of local reader " << reader_guid <<
+                    logError(SECURITY, "Error getting security attributes of local reader " <<
                             " (" << exception.what() << ")" << std::endl);
                 }
             }
             else
             {
-                logError(SECURITY, "Error checking creation of local reader " << reader_guid <<
+                logError(SECURITY, "Error checking creation of local reader " <<
                         " (" << exception.what() << ")" << std::endl);
                 returned_value = false;
             }
@@ -2506,25 +2545,6 @@ bool SecurityManager::register_local_reader(
             security_attributes.plugin_endpoint_attributes |=
                     PLUGIN_ENDPOINT_SECURITY_ATTRIBUTES_FLAG_IS_VALID |
                     PLUGIN_ENDPOINT_SECURITY_ATTRIBUTES_FLAG_IS_PAYLOAD_ENCRYPTED;
-        }
-    }
-
-    if (returned_value && crypto_plugin_ != nullptr && (security_attributes.is_submessage_protected ||
-            security_attributes.is_payload_protected))
-    {
-
-        DatareaderCryptoHandle* reader_handle = crypto_plugin_->cryptokeyfactory()->register_local_datareader(
-            *local_participant_crypto_handle_, reader_properties.properties(), security_attributes, exception);
-
-        if (reader_handle != nullptr && !reader_handle->nil())
-        {
-            std::unique_lock<std::mutex> lock(mutex_);
-            reader_handles_.emplace(reader_guid, reader_handle);
-        }
-        else
-        {
-            logError(SECURITY, "Cannot register local reader in crypto plugin. (" << exception.what() << ")");
-            returned_value = false;
         }
     }
 

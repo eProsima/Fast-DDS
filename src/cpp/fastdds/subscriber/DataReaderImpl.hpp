@@ -392,7 +392,7 @@ protected:
             bool single_instance,
             bool should_take);
 
-    bool is_data_sharing_compatible_;
+    bool is_data_sharing_compatible_ = false;
 
     /**
      * @brief A method called when a new cache change is added
@@ -437,6 +437,9 @@ protected:
     std::shared_ptr<IPayloadPool> get_payload_pool();
 
     void release_payload_pool();
+
+    ReturnCode_t check_datasharing_compatible(
+            const fastrtps::rtps::ReaderAttributes& reader_attributes);
 
 };
 

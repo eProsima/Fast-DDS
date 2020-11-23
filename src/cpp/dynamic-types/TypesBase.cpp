@@ -39,6 +39,10 @@ const ReturnCode_t ReturnCode_t::RETCODE_ALREADY_DELETED = {9};
 const ReturnCode_t ReturnCode_t::RETCODE_TIMEOUT = {10};
 const ReturnCode_t ReturnCode_t::RETCODE_NO_DATA = {11};
 const ReturnCode_t ReturnCode_t::RETCODE_ILLEGAL_OPERATION = {12};
+#if HAVE_SECURITY
+const ReturnCode_t ReturnCode_t::RETCODE_NOT_ALLOWED_BY_SECURITY = {13};
+#endif // HAVE_SECURITY
+
 
 void MemberFlag::serialize(eprosima::fastcdr::Cdr &cdr) const
 {
