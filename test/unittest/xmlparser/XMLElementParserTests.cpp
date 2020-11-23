@@ -88,7 +88,13 @@ protected:
 };
 
 // INIT NACHO SECTION
-
+/*
+ * This test checks the proper parsing of the <lifespan> xml element to LifespanQosPolicy, and negative cases.
+ * 1. Correct parsing of a valid element.
+ * 2. Check an empty definition of <sec> and <nanosec> in <duration> child xml element.
+ * 3. Check an bad element as a child xml element.
+ * 4. Check an  empty xml definition.
+ */
 TEST_F(XMLParserTests, getXMLLifespanQos)
 {
     uint8_t ident = 1;
@@ -142,6 +148,15 @@ TEST_F(XMLParserTests, getXMLLifespanQos)
 
 }
 
+/*
+ * This test checks the proper parsing of the <disablePositiveACKs> xml element to DisablePositiveACKsQosPolicy,
+ * and negative cases.
+ * 1. Correct parsing of a valid element.
+ * 2. Check an empty definition of <sec> and <nanosec> in <duration> child xml element and empty <enabled>.
+ * 3. Check an empty definition of <enabled>.
+ * 4. Check an bad element as a child xml element.
+ * 5. Check an  empty xml definition.
+ */
 TEST_F(XMLParserTests, getXMLDisablePositiveAcksQos)
 {
     uint8_t ident = 1;
@@ -194,43 +209,14 @@ TEST_F(XMLParserTests, getXMLDisablePositiveAcksQos)
     EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::getXMLDisablePositiveAcksQos_wrapper(titleElement,disablePositiveACKs,ident));
 
 }
+
 /*
-TEST_F(XMLParserTests, unsuportedWriterQos)
-{
-    uint8_t ident = 1;
-    WriterQos wqos;
-    ReaderQos rqos;
-    tinyxml2::XMLDocument xml_doc;
-    tinyxml2::XMLElement* titleElement;
-
-    // Parametrized XML
-    const char* xml_p =
-    "\
-    <qos>\
-        <durabilityService></durabilityService>\
-        <userData></userData>\
-        <timeBasedFilter></timeBasedFilter>\
-        <ownership></ownership>\
-        <ownershipStrength></ownershipStrength>\
-        <></>\
-        <></>\
-        <></>\
-        <></>\
-        <></>\
-        <></>\
-        <></>\
-    </qos>\
-    ";
-    char xml[500];
-
-    // Valid XML
-    sprintf(xml, xml_p, "true", "5", "0", "");
-    ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
-    titleElement = xml_doc.RootElement();
-    EXPECT_EQ(XMLP_ret::XML_OK, XMLParserTest::getXMLWriterQosPolicies_wrapper(titleElement,wqos,ident));
-    EXPECT_EQ(XMLP_ret::XML_OK, XMLParserTest::getXMLReaderQosPolicies_wrapper(titleElement,rqos,ident));
-}
-*/
+ * This test checks the proper parsing of the <udpv6> xml element to in a LocatorList_t, and negative cases.
+ * 1. Correct parsing of a valid element.
+ * 2. Check an empty definition of <port> .
+ * 3. Check an empty definition of <address>.
+ * 4. Check an bad element as a child xml element.
+ */
 TEST_F(XMLParserTests, getXMLLocatorUDPv6)
 {
 
@@ -284,6 +270,16 @@ TEST_F(XMLParserTests, getXMLLocatorUDPv6)
 
 }
 
+/*
+ * This test checks the proper parsing of the <tcpv4> xml element to in a LocatorList_t, and negative cases.
+ * 1. Correct parsing of a valid element.
+ * 2. Check an empty definition of <physical_port> .
+ * 3. Check an empty definition of <port>.
+ * 4. Check an empty definition of <unique_lan_id>.
+ * 5. Check an empty definition of <wan_address>.
+ * 6. Check an empty definition of <address>.
+ * 7. Check an bad element as a child xml element.
+ */
 TEST_F(XMLParserTests, getXMLLocatorTCPv4)
 {
 
@@ -364,6 +360,14 @@ TEST_F(XMLParserTests, getXMLLocatorTCPv4)
 
 }
 
+/*
+ * This test checks the proper parsing of the <tcpv6> xml element to in a LocatorList_t, and negative cases.
+ * 1. Correct parsing of a valid element.
+ * 2. Check an empty definition of <physical_port> .
+ * 3. Check an empty definition of <port>.
+ * 5. Check an empty definition of <address>.
+ * 6. Check an bad element as a child xml element.
+ */
 TEST_F(XMLParserTests, getXMLLocatorTCPv6)
 {
 
@@ -425,6 +429,15 @@ TEST_F(XMLParserTests, getXMLLocatorTCPv6)
 
 }
 
+/*
+ * This test checks the proper parsing of the <transport_descriptors> xml elements to in a vector of pointers to
+ * TransportDescriptorInterface, and negative cases.
+ * 1. Correct parsing of a valid descriptor present in the XmlProfileManager.
+ * 2. Check a reference to a non existentTransportDescriptorInterface.
+ * 3. Check an empty definition of <transport_id>.
+ * 5. Check an empty definition of <transport_descriptor>.
+ * 6. Check an empty list of transports.
+ */
 TEST_F(XMLParserTests, getXMLTransports)
 {
     uint8_t ident = 1;
@@ -484,6 +497,15 @@ TEST_F(XMLParserTests, getXMLTransports)
     xmlparser::XMLProfileManager::DeleteInstance();
 }
 
+/*
+ * This test checks the proper parsing of the <property_policy> xml elements to a PropertyPolicy object, and negative
+ * cases.
+ * 1. Correct parsing of a valid <property_policy>.
+ * 2. Check missing values for the possible elemnts of the properties.
+ * 3. Check an empty list of <properties>.
+ * 5. Check an empty list of <binary_properties>.
+ * 6. Check an wrong descriptor for properties.
+ */
 TEST_F(XMLParserTests, getXMLPropertiesPolicy)
 {
     uint8_t ident = 1;
@@ -589,6 +611,16 @@ TEST_F(XMLParserTests, getXMLPropertiesPolicy)
 
 }
 
+/*
+ * This test checks the proper parsing of a <RemoteServer> xml element to a RemoteServerAttributes object, and negative
+ * cases.
+ * 1. Check nullptr as tinyxml2::XMLElement argument.
+ * 2. Check missing prefix in the <RemoteServer> tag.
+ * 3. Check wrongly formated in the <RemoteServer> tag.
+ * 5. Check an empty <metatrafficUnicastLocatorList> tag.
+ * 6. Check an empty <metatrafficMulticastLocatorList> tag.
+ * 6. Check a <RemoteServer> tag with no locators.
+ */
 TEST_F(XMLParserTests, getXMLRemoteServer)
 {
     uint8_t ident = 1;
@@ -667,6 +699,11 @@ TEST_F(XMLParserTests, getXMLRemoteServer)
     EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::getXMLRemoteServer_wrapper(titleElement,attr,ident));
 }
 
+/*
+ * This test checks the negative cases of a <port> xml element.
+ * 1. Check a missing case of each of the <port> child tags.
+ * 2. Check a wrong child tag.
+ */
 TEST_F(XMLParserTests, getXMLPortParameters_negative)
 {
     uint8_t ident = 1;
@@ -709,6 +746,11 @@ TEST_F(XMLParserTests, getXMLPortParameters_negative)
     }
 }
 
+/*
+ * This test checks the negative cases of a <subscriber> xml profile.
+ * 1. Check an incorrect for each of the possible SubscriberAttributes.
+ * 2. Check an non existant attribute.
+ */
 TEST_F(XMLParserTests, getXMLSubscriberAttributes_negative)
 {
     uint8_t ident = 1;
@@ -729,7 +771,8 @@ TEST_F(XMLParserTests, getXMLSubscriberAttributes_negative)
         "<propertiesPolicy><bad_element></bad_element></propertiesPolicy>",
         "<userDefinedID><bad_element></bad_element></userDefinedID>",
         "<entityID><bad_element></bad_element></entityID>",
-        "<matchedPublishersAllocation><bad_element></bad_element></matchedPublishersAllocation>"
+        "<matchedPublishersAllocation><bad_element></bad_element></matchedPublishersAllocation>",
+        "<bad_element></bad_element>"
     };
 
     for(std::vector<std::string>::iterator it = parameters.begin() ; it != parameters.end(); ++it)
@@ -746,6 +789,12 @@ TEST_F(XMLParserTests, getXMLSubscriberAttributes_negative)
     }
 
 }
+
+/*
+ * This test checks the negative cases of a <publisher> xml profile.
+ * 1. Check an incorrect for each of the possible PublisherAttributes.
+ * 2. Check an non existant attribute.
+ */
 TEST_F(XMLParserTests, getXMLPublisherAttributes_negative)
 {
     uint8_t ident = 1;
@@ -785,7 +834,12 @@ TEST_F(XMLParserTests, getXMLPublisherAttributes_negative)
 
 }
 
-TEST_F(XMLParserTests, getXMLLocatorList)
+/*
+ * This test checks the negative cases of a locator list xml element.
+ * 1. Check an incorrect for each of the possible types of <locator>.
+ * 2. Check an non existant type of locator.
+ */
+TEST_F(XMLParserTests, getXMLLocatorList_negative)
 {
 
     uint8_t ident = 1;
@@ -818,7 +872,12 @@ TEST_F(XMLParserTests, getXMLLocatorList)
 
 }
 
-TEST_F(XMLParserTests, getXMLguidPrefix)
+/*
+ * This test checks the negative cases of the XMLParser::getXMLguidPrefix method.
+ * 1. Check a missing value for a <guid>.
+ * 2. Check passing a nullptr as a tinyxml2::XMLElement argument.
+ */
+TEST_F(XMLParserTests, getXMLguidPrefix_negative)
 {
 
     uint8_t ident = 1;
@@ -833,7 +892,14 @@ TEST_F(XMLParserTests, getXMLguidPrefix)
     EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::getXMLguidPrefix_wrapper(nullptr,prefix,ident));
 }
 
-TEST_F(XMLParserTests, getXMLDuration)
+/*
+ * This test checks the negative cases of the XMLParser::getXMLDuration method.
+ * 1. Check passing an infinite duration and a finite duration at the same time.
+ * 2. Check passing a missing value of <sec> and <nsec>.
+ * 3. Check passing a non valid value of <sec> and <nsec>.
+ * 4. Check passing an empty <duration> field.
+ */
+TEST_F(XMLParserTests, getXMLDuration_negative)
 {
 
     uint8_t ident = 1;
@@ -867,6 +933,12 @@ TEST_F(XMLParserTests, getXMLDuration)
 
 }
 
+/*
+ * This test checks the correct parsing of a string field in an with the XMLParser::getXMLDuration method.
+ * 1. Check passing a valied string field.
+ * 2. Check passing a nullptr as a tinyxml2::XMLElement argument.
+ * 4. Check passing an empty field.
+ */
 TEST_F(XMLParserTests, getXMLString)
 {
     uint8_t ident = 1;
@@ -883,11 +955,17 @@ TEST_F(XMLParserTests, getXMLString)
 
     ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse("<field></field>"));
     titleElement = xml_doc.RootElement();
-    EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::getXMLString_wrapper(nullptr,&s,ident));
+    EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::getXMLString_wrapper(titleElement,&s,ident));
 
 }
 
-TEST_F(XMLParserTests, getXMLList)
+/*
+ * This test checks the negative cases of the XMLParser::getXMLList method.
+ * 1. Check passing a nullptr as a tinyxml2::XMLElement argument.
+ * 2. Check passing an empty <list> field.
+ * 3. Check passing a non valid value of <RemoteServer> descriptor as an element of <list>.
+ */
+TEST_F(XMLParserTests, getXMLList_negative)
 {
     uint8_t ident = 1;
     RemoteServerList_t list;
@@ -902,6 +980,7 @@ TEST_F(XMLParserTests, getXMLList)
     titleElement = xml_doc.RootElement();
     EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::getXMLList_wrapper(titleElement,list,ident));
     
+    // bad remote server element
     const char * xml = "<list><RemoteServer>bad_remote_server</RemoteServer></list>";
     ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
     titleElement = xml_doc.RootElement();
@@ -909,7 +988,12 @@ TEST_F(XMLParserTests, getXMLList)
 
 }
 
-TEST_F(XMLParserTests, getXMLBool)
+/*
+ * This test checks the negative cases of the XMLParser::getXMLBool method.
+ * 1. Check passing a nullptr as a tinyxml2::XMLElement argument.
+ * 2. Check passing a non boolean valie inside the field.
+ */
+TEST_F(XMLParserTests, getXMLBool_negative)
 {
     uint8_t ident = 1;
     bool b;
@@ -923,7 +1007,12 @@ TEST_F(XMLParserTests, getXMLBool)
     EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::getXMLBool_wrapper(titleElement,&b,ident));
 }
 
-TEST_F(XMLParserTests, getXMLInt)
+/*
+ * This test checks the negative cases of the XMLParser::getXMLInt method.
+ * 1. Check passing a nullptr as a tinyxml2::XMLElement argument.
+ * 2. Check passing a non integer valie inside the field.
+ */
+TEST_F(XMLParserTests, getXMLInt_negative)
 {
     uint8_t ident = 1;
     int i;
@@ -937,6 +1026,12 @@ TEST_F(XMLParserTests, getXMLInt)
     EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::getXMLInt_wrapper(titleElement, &i, ident));
 }
 
+/*
+ * This test checks the negative cases of the two definitions of XMLParser::getXMLInt method.
+ * 1. Check passing a nullptr as a tinyxml2::XMLElement argument.
+ * 2. Check passing a non integer valie inside the field.
+ * Both for each defeinition.
+ */
 TEST_F(XMLParserTests, getXMLUint)
 {
     uint8_t ident = 1;
@@ -956,54 +1051,6 @@ TEST_F(XMLParserTests, getXMLUint)
     ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse("<field>not_an_uint</field>"));
     titleElement = xml_doc.RootElement();
     EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::getXMLUint_wrapper(titleElement, &ui16, ident));
-}
-
-TEST_F(XMLParserTests, getXMLPublisherAttributes_negative)
-{
-    uint8_t ident = 1;
-    PublisherAttributes attr;
-    tinyxml2::XMLDocument xml_doc;
-    tinyxml2::XMLElement* titleElement;
-
-    std::string xml;
-    std::vector<std::string> parameters {
-        "<topic><bad_element></bad_element></topic>",
-        "<qos><bad_element></bad_element></qos>",
-        "<times><bad_element></bad_element></times>",
-        "<unicastLocatorList><bad_element></bad_element></unicastLocatorList>",
-        "<multicastLocatorList><bad_element></bad_element></multicastLocatorList>",
-        "<remoteLocatorList><bad_element></bad_element></remoteLocatorList>",
-        "<throughputController><bad_element></bad_element></throughputController>",
-        "<historyMemoryPolicy><bad_element></bad_element></historyMemoryPolicy>",
-        "<propertiesPolicy><bad_element></bad_element></propertiesPolicy>",
-        "<userDefinedID><bad_element></bad_element></userDefinedID>",
-        "<entityID><bad_element></bad_element></entityID>",
-        "<matchedSubscribersAllocation><bad_element></bad_element></matchedSubscribersAllocation>"
-    };
-
-    for(std::vector<std::string>::iterator it = parameters.begin() ; it != parameters.end(); ++it)
-    {
-        xml =
-        "\
-        <publisher profile_name=\"test_publisher_profile\" is_default_profile=\"true\">\
-            "+*it+"\
-        </publisher>\
-        ";
-        ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml.c_str()));
-        titleElement = xml_doc.RootElement();
-        EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::getXMLPublisherAttributes_wrapper(titleElement,attr,ident));
-    }
-    
-
-    xml = "\
-    <publisher profile_name=\"test_publisher_profile\" is_default_profile=\"true\">\
-        <bad_element></bad_element>\
-    </publisher>\
-    ";
-    ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml.c_str()));
-    titleElement = xml_doc.RootElement();
-    EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::getXMLPublisherAttributes_wrapper(titleElement,attr,ident));
-
 }
 
 // FINISH NACHO SECTION
