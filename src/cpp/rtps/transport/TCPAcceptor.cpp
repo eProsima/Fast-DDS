@@ -16,9 +16,9 @@
 #include <rtps/transport/TCPAcceptor.h>
 #include <rtps/transport/TCPTransportInterface.h>
 
-namespace eprosima{
-namespace fastdds{
-namespace rtps{
+namespace eprosima {
+namespace fastdds {
+namespace rtps {
 
 using Locator_t = fastrtps::rtps::Locator_t;
 using IPLocator = fastrtps::rtps::IPLocator;
@@ -39,12 +39,12 @@ TCPAcceptor::TCPAcceptor(
         const std::string& interface,
         const Locator_t& locator)
     : acceptor_(io_service, asio::ip::tcp::endpoint(asio::ip::address_v4::from_string(interface),
-        IPLocator::getPhysicalPort(locator)))
+            IPLocator::getPhysicalPort(locator)))
     , locator_(locator)
     , io_service_(&io_service)
 {
     endpoint_ = asio::ip::tcp::endpoint(asio::ip::address_v4::from_string(interface),
-        IPLocator::getPhysicalPort(locator_));
+                    IPLocator::getPhysicalPort(locator_));
 }
 
 } // namespace rtps

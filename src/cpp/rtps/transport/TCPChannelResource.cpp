@@ -30,7 +30,8 @@ using Log = fastdds::dds::Log;
 /**
  * Search for the base port in the current domain without taking account the participant
  */
-static uint16_t GetBaseAutoPort(uint16_t currentPort)
+static uint16_t GetBaseAutoPort(
+        uint16_t currentPort)
 {
     if (currentPort < 7411)
     {
@@ -69,7 +70,6 @@ TCPChannelResource::TCPChannelResource(
 {
 }
 
-
 void TCPChannelResource::disable()
 {
     ChannelResource::disable(); // prevent asio callback workings on this channel.
@@ -77,10 +77,11 @@ void TCPChannelResource::disable()
     disconnect();
 }
 
-ResponseCode TCPChannelResource::process_bind_request(const Locator_t& locator)
+ResponseCode TCPChannelResource::process_bind_request(
+        const Locator_t& locator)
 {
     eConnectionStatus expected = TCPChannelResource::eConnectionStatus::eWaitingForBind;
-    if(connection_status_.compare_exchange_strong(expected, eConnectionStatus::eEstablished))
+    if (connection_status_.compare_exchange_strong(expected, eConnectionStatus::eEstablished))
     {
         locator_ = IPLocator::toPhysicalLocator(locator);
         logInfo(RTCP_MSG, "Connection Stablished");
@@ -98,26 +99,30 @@ void TCPChannelResource::set_all_ports_pending()
 {
     std::unique_lock<std::recursive_mutex> scopedLock(pending_logical_mutex_);
     pending_logical_output_ports_.insert(pending_logical_output_ports_.end(),
-        logical_output_ports_.begin(),
-        logical_output_ports_.end());
+            logical_output_ports_.begin(),
+            logical_output_ports_.end());
     logical_output_ports_.clear();
 }
 
-bool TCPChannelResource::is_logical_port_opened(uint16_t port)
+bool TCPChannelResource::is_logical_port_opened(
+        uint16_t port)
 {
     std::unique_lock<std::recursive_mutex> scopedLock(pending_logical_mutex_);
     return std::find(logical_output_ports_.begin(), logical_output_ports_.end(), port) != logical_output_ports_.end();
 }
 
-bool TCPChannelResource::is_logical_port_added(uint16_t port)
+bool TCPChannelResource::is_logical_port_added(
+        uint16_t port)
 {
     std::unique_lock<std::recursive_mutex> scopedLock(pending_logical_mutex_);
     return std::find(logical_output_ports_.begin(), logical_output_ports_.end(), port) != logical_output_ports_.end()
-        || std::find(pending_logical_output_ports_.begin(), pending_logical_output_ports_.end(), port)
-        != pending_logical_output_ports_.end();
+           || std::find(pending_logical_output_ports_.begin(), pending_logical_output_ports_.end(), port)
+           != pending_logical_output_ports_.end();
 }
 
-void TCPChannelResource::add_logical_port(uint16_t port, RTCPMessageManager* rtcp_manager)
+void TCPChannelResource::add_logical_port(
+        uint16_t port,
+        RTCPMessageManager* rtcp_manager)
 {
     std::unique_lock<std::recursive_mutex> scopedLock(pending_logical_mutex_);
     // Already opened?
@@ -144,7 +149,8 @@ void TCPChannelResource::add_logical_port(uint16_t port, RTCPMessageManager* rtc
 
 }
 
-void TCPChannelResource::send_pending_open_logical_ports(RTCPMessageManager* rtcp_manager)
+void TCPChannelResource::send_pending_open_logical_ports(
+        RTCPMessageManager* rtcp_manager)
 {
     std::unique_lock<std::recursive_mutex> scopedLock(pending_logical_mutex_);
     if (!pending_logical_output_ports_.empty())
@@ -159,7 +165,7 @@ void TCPChannelResource::send_pending_open_logical_ports(RTCPMessageManager* rtc
 }
 
 void TCPChannelResource::add_logical_port_response(
-        const TCPTransactionId &id,
+        const TCPTransactionId& id,
         bool success,
         RTCPMessageManager* rtcp_manager)
 {
@@ -186,14 +192,14 @@ void TCPChannelResource::add_logical_port_response(
         }
         else
         {
-            logWarning(RTCP, "Received add_logical_port_response for port " << port
-                << ", but it wasn't found in pending list.");
+            logWarning(RTCP, "Received add_logical_port_response for port "
+                    << port << ", but it wasn't found in pending list.");
         }
     }
     else
     {
         logWarning(RTCP, "Received add_logical_port_response, but the transaction id wasn't registered " <<
-            "(maybe removed" << " while negotiating?).");
+                "(maybe removed" << " while negotiating?).");
     }
 }
 
@@ -206,9 +212,9 @@ void TCPChannelResource::prepare_send_check_logical_ports_req(
     uint16_t max_port = closedPort + parent_->GetMaxLogicalPort();
 
     for (uint16_t p = base_port;
-        p <= closedPort + (parent_->GetLogicalPortRange()
+            p <= closedPort + (parent_->GetLogicalPortRange()
             * parent_->GetLogicalPortIncrement());
-        p += parent_->GetLogicalPortIncrement())
+            p += parent_->GetLogicalPortIncrement())
     {
         // Don't add ports just tested and already pendings
         if (p <= max_port && p != closedPort)
@@ -235,8 +241,8 @@ void TCPChannelResource::prepare_send_check_logical_ports_req(
 }
 
 void TCPChannelResource::process_check_logical_ports_response(
-        const TCPTransactionId &transactionId,
-        const std::vector<uint16_t> &availablePorts,
+        const TCPTransactionId& transactionId,
+        const std::vector<uint16_t>& availablePorts,
         RTCPMessageManager* rtcp_manager)
 {
     std::unique_lock<std::recursive_mutex> scopedLock(pending_logical_mutex_);
@@ -261,7 +267,8 @@ void TCPChannelResource::process_check_logical_ports_response(
     }
 }
 
-void TCPChannelResource::set_logical_port_pending(uint16_t port)
+void TCPChannelResource::set_logical_port_pending(
+        uint16_t port)
 {
     std::unique_lock<std::recursive_mutex> scopedLock(pending_logical_mutex_);
     auto it = std::find(logical_output_ports_.begin(), logical_output_ports_.end(), port);
@@ -272,11 +279,14 @@ void TCPChannelResource::set_logical_port_pending(uint16_t port)
     }
 }
 
-bool TCPChannelResource::remove_logical_port(uint16_t port)
+bool TCPChannelResource::remove_logical_port(
+        uint16_t port)
 {
     std::unique_lock<std::recursive_mutex> scopedLock(pending_logical_mutex_);
     if (!is_logical_port_added(port))
+    {
         return false;
+    }
 
     auto it = std::remove(logical_output_ports_.begin(), logical_output_ports_.end(), port);
     logical_output_ports_.erase(it, logical_output_ports_.end());

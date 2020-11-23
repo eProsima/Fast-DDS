@@ -19,80 +19,98 @@
 #include <fastdds/rtps/common/Locator.h>
 #include <rtps/transport/ChannelResource.h>
 
-namespace eprosima{
-namespace fastdds{
-namespace rtps{
+namespace eprosima {
+namespace fastdds {
+namespace rtps {
 
 class TransportReceiverInterface;
 class UDPTransportInterface;
 
 #if defined(ASIO_HAS_MOVE)
-    // Typedefs
-    typedef asio::ip::udp::socket eProsimaUDPSocket;
-    typedef eProsimaUDPSocket& eProsimaUDPSocketRef;
+// Typedefs
+typedef asio::ip::udp::socket eProsimaUDPSocket;
+typedef eProsimaUDPSocket& eProsimaUDPSocketRef;
 
-    // UDP
-    inline eProsimaUDPSocket* getSocketPtr(eProsimaUDPSocket &socket)
-    {
-        return &socket;
-    }
-    inline eProsimaUDPSocket moveSocket(eProsimaUDPSocket &socket)
-    {
-        return std::move(socket);
-    }
-    inline eProsimaUDPSocket createUDPSocket(asio::io_service& io_service)
-    {
-        return asio::ip::udp::socket(io_service);
-    }
-    inline eProsimaUDPSocket& getRefFromPtr(eProsimaUDPSocket* socket)
-    {
-        return *socket;
-    }
+// UDP
+inline eProsimaUDPSocket* getSocketPtr(
+        eProsimaUDPSocket& socket)
+{
+    return &socket;
+}
+
+inline eProsimaUDPSocket moveSocket(
+        eProsimaUDPSocket& socket)
+{
+    return std::move(socket);
+}
+
+inline eProsimaUDPSocket createUDPSocket(
+        asio::io_service& io_service)
+{
+    return asio::ip::udp::socket(io_service);
+}
+
+inline eProsimaUDPSocket& getRefFromPtr(
+        eProsimaUDPSocket* socket)
+{
+    return *socket;
+}
+
 #else
-    // Typedefs
-    typedef std::shared_ptr<asio::ip::udp::socket> eProsimaUDPSocket;
-    typedef eProsimaUDPSocket eProsimaUDPSocketRef;
+// Typedefs
+typedef std::shared_ptr<asio::ip::udp::socket> eProsimaUDPSocket;
+typedef eProsimaUDPSocket eProsimaUDPSocketRef;
 
-    // UDP
-    inline eProsimaUDPSocket getSocketPtr(eProsimaUDPSocket socket)
-    {
-        return socket;
-    }
-    inline eProsimaUDPSocket moveSocket(eProsimaUDPSocket socket)
-    {
-        return socket;
-    }
-    inline eProsimaUDPSocket createUDPSocket(asio::io_service& io_service)
-    {
-        return std::make_shared<asio::ip::udp::socket>(io_service);
-    }
-    inline eProsimaUDPSocket getRefFromPtr(eProsimaUDPSocket socket)
-    {
-        return socket;
-    }
-#endif
+// UDP
+inline eProsimaUDPSocket getSocketPtr(
+        eProsimaUDPSocket socket)
+{
+    return socket;
+}
+
+inline eProsimaUDPSocket moveSocket(
+        eProsimaUDPSocket socket)
+{
+    return socket;
+}
+
+inline eProsimaUDPSocket createUDPSocket(
+        asio::io_service& io_service)
+{
+    return std::make_shared<asio::ip::udp::socket>(io_service);
+}
+
+inline eProsimaUDPSocket getRefFromPtr(
+        eProsimaUDPSocket socket)
+{
+    return socket;
+}
+
+#endif // if defined(ASIO_HAS_MOVE)
 
 class UDPChannelResource : public ChannelResource
 {
 public:
 
     UDPChannelResource(
-        UDPTransportInterface* transport,
-        eProsimaUDPSocket& socket,
-        uint32_t maxMsgSize,
-        const fastrtps::rtps::Locator_t& locator,
-        const std::string& sInterface,
-        TransportReceiverInterface* receiver);
+            UDPTransportInterface* transport,
+            eProsimaUDPSocket& socket,
+            uint32_t maxMsgSize,
+            const fastrtps::rtps::Locator_t& locator,
+            const std::string& sInterface,
+            TransportReceiverInterface* receiver);
 
     virtual ~UDPChannelResource() override;
 
-    UDPChannelResource& operator=(UDPChannelResource&& channelResource)
+    UDPChannelResource& operator =(
+            UDPChannelResource&& channelResource)
     {
         socket_ = moveSocket(channelResource.socket_);
         return *this;
     }
 
-    void only_multicast_purpose(const bool value)
+    void only_multicast_purpose(
+            const bool value)
     {
         only_multicast_purpose_ = value;
     }
@@ -111,12 +129,13 @@ public:
     inline eProsimaUDPSocket* socket()
 #else
     inline eProsimaUDPSocket socket()
-#endif
+#endif // if defined(ASIO_HAS_MOVE)
     {
         return getSocketPtr(socket_);
     }
 
-    inline void interface(const std::string& interface)
+    inline void interface(
+            const std::string& interface)
     {
         interface_ = interface;
     }
@@ -126,7 +145,8 @@ public:
         return interface_;
     }
 
-    inline void message_receiver(TransportReceiverInterface* receiver)
+    inline void message_receiver(
+            TransportReceiverInterface* receiver)
     {
         message_receiver_ = receiver;
     }
@@ -144,22 +164,23 @@ public:
     void release();
 
 protected:
+
     /**
      * Function to be called from a new thread, which takes cares of performing a blocking receive
      * operation on the ReceiveResource
      * @param input_locator - Locator that triggered the creation of the resource
-    */
+     */
     void perform_listen_operation(
             fastrtps::rtps::Locator_t input_locator);
 
     /**
-    * Blocking Receive from the specified channel.
-    * @param receive_buffer vector with enough capacity (not size) to accomodate a full receive buffer. That
-    * capacity must not be less than the receive_buffer_size supplied to this class during construction.
-    * @param receive_buffer_capacity Maximum size of the receive_buffer.
-    * @param[out] receive_buffer_size Size of the received buffer.
-    * @param[out] remote_locator Locator describing the remote restination we received a packet from.
-    */
+     * Blocking Receive from the specified channel.
+     * @param receive_buffer vector with enough capacity (not size) to accomodate a full receive buffer. That
+     * capacity must not be less than the receive_buffer_size supplied to this class during construction.
+     * @param receive_buffer_capacity Maximum size of the receive_buffer.
+     * @param[out] receive_buffer_size Size of the received buffer.
+     * @param[out] remote_locator Locator describing the remote restination we received a packet from.
+     */
     bool Receive(
             fastrtps::rtps::octet* receive_buffer,
             uint32_t receive_buffer_capacity,
@@ -174,8 +195,10 @@ private:
     std::string interface_;
     UDPTransportInterface* transport_;
 
-    UDPChannelResource(const UDPChannelResource&) = delete;
-    UDPChannelResource& operator=(const UDPChannelResource&) = delete;
+    UDPChannelResource(
+            const UDPChannelResource&) = delete;
+    UDPChannelResource& operator =(
+            const UDPChannelResource&) = delete;
 };
 
 } // namespace rtps

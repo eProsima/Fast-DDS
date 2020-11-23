@@ -25,11 +25,11 @@ namespace rtps {
 
 class TCPSenderResource : public fastrtps::rtps::SenderResource
 {
-    public:
+public:
 
-        TCPSenderResource(
-        TCPTransportInterface& transport,
-        std::shared_ptr<TCPChannelResource>& channel)
+    TCPSenderResource(
+            TCPTransportInterface& transport,
+            std::shared_ptr<TCPChannelResource>& channel)
         : fastrtps::rtps::SenderResource(transport.kind())
         , channel_(channel)
     {
@@ -39,48 +39,56 @@ class TCPSenderResource : public fastrtps::rtps::SenderResource
                     transport.CloseOutputChannel(channel_);
                 };
 
-        send_lambda_ = [this, &transport] (
+        send_lambda_ = [this, &transport](
             const fastrtps::rtps::octet* data,
             uint32_t dataSize,
             fastrtps::rtps::LocatorsIterator* destination_locators_begin,
             fastrtps::rtps::LocatorsIterator* destination_locators_end,
             const std::chrono::steady_clock::time_point&) -> bool
                 {
-                    return transport.send(data, dataSize, channel_, destination_locators_begin, destination_locators_end);
+                    return transport.send(data, dataSize, channel_, destination_locators_begin,
+                                   destination_locators_end);
                 };
     }
 
-        virtual ~TCPSenderResource()
+    virtual ~TCPSenderResource()
+    {
+        if (clean_up)
         {
-            if (clean_up)
-            {
-                clean_up();
-            }
+            clean_up();
+        }
+    }
+
+    std::shared_ptr<TCPChannelResource>& channel()
+    {
+        return channel_;
+    }
+
+    static TCPSenderResource* cast(
+            TransportInterface& transport,
+            SenderResource* sender_resource)
+    {
+        TCPSenderResource* returned_resource = nullptr;
+
+        if (sender_resource->kind() == transport.kind())
+        {
+            returned_resource = dynamic_cast<TCPSenderResource*>(sender_resource);
         }
 
-        std::shared_ptr<TCPChannelResource>& channel() { return channel_; }
+        return returned_resource;
+    }
 
-        static TCPSenderResource* cast(TransportInterface& transport, SenderResource* sender_resource)
-        {
-            TCPSenderResource* returned_resource = nullptr;
+private:
 
-            if (sender_resource->kind() == transport.kind())
-            {
-                returned_resource = dynamic_cast<TCPSenderResource*>(sender_resource);
-            }
+    TCPSenderResource() = delete;
 
-            return returned_resource;
-        }
+    TCPSenderResource(
+            const SenderResource&) = delete;
 
-    private:
+    TCPSenderResource& operator =(
+            const SenderResource&) = delete;
 
-        TCPSenderResource() = delete;
-
-        TCPSenderResource(const SenderResource&) = delete;
-
-        TCPSenderResource& operator=(const SenderResource&) = delete;
-
-        std::shared_ptr<TCPChannelResource> channel_;
+    std::shared_ptr<TCPChannelResource> channel_;
 };
 
 } // namespace rtps

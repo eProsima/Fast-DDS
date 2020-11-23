@@ -24,65 +24,69 @@ namespace rtps {
 
 class UDPSenderResource : public fastrtps::rtps::SenderResource
 {
-    public:
+public:
 
-        UDPSenderResource(
-                UDPTransportInterface& transport,
-                eProsimaUDPSocket& socket,
-                bool only_multicast_purpose = false)
-            : SenderResource(transport.kind())
-            , socket_(moveSocket(socket))
-            , only_multicast_purpose_(only_multicast_purpose)
-        {
-            // Implementation functions are bound to the right transport parameters
-            clean_up = [this, &transport]()
+    UDPSenderResource(
+            UDPTransportInterface& transport,
+            eProsimaUDPSocket& socket,
+            bool only_multicast_purpose = false)
+        : SenderResource(transport.kind())
+        , socket_(moveSocket(socket))
+        , only_multicast_purpose_(only_multicast_purpose)
+    {
+        // Implementation functions are bound to the right transport parameters
+        clean_up = [this, &transport]()
                 {
                     transport.CloseOutputChannel(socket_);
                 };
 
-            send_lambda_ = [this, &transport] (
-                const fastrtps::rtps::octet* data,
-                uint32_t dataSize,
-                fastrtps::rtps::LocatorsIterator* destination_locators_begin,
-                fastrtps::rtps::LocatorsIterator* destination_locators_end,
-                const std::chrono::steady_clock::time_point& max_blocking_time_point) -> bool
-                    {
-                        return transport.send(data, dataSize, socket_, destination_locators_begin,
-                                    destination_locators_end, only_multicast_purpose_, max_blocking_time_point);
-                    };
-        }
+        send_lambda_ = [this, &transport](
+            const fastrtps::rtps::octet* data,
+            uint32_t dataSize,
+            fastrtps::rtps::LocatorsIterator* destination_locators_begin,
+            fastrtps::rtps::LocatorsIterator* destination_locators_end,
+            const std::chrono::steady_clock::time_point& max_blocking_time_point) -> bool
+                {
+                    return transport.send(data, dataSize, socket_, destination_locators_begin,
+                                   destination_locators_end, only_multicast_purpose_, max_blocking_time_point);
+                };
+    }
 
-        virtual ~UDPSenderResource()
+    virtual ~UDPSenderResource()
+    {
+        if (clean_up)
         {
-            if (clean_up)
-            {
-                clean_up();
-            }
+            clean_up();
         }
+    }
 
-        static UDPSenderResource* cast(TransportInterface& transport, SenderResource* sender_resource)
+    static UDPSenderResource* cast(
+            TransportInterface& transport,
+            SenderResource* sender_resource)
+    {
+        UDPSenderResource* returned_resource = nullptr;
+
+        if (sender_resource->kind() == transport.kind())
         {
-            UDPSenderResource* returned_resource = nullptr;
-
-            if (sender_resource->kind() == transport.kind())
-            {
-                returned_resource = dynamic_cast<UDPSenderResource*>(sender_resource);
-            }
-
-            return returned_resource;
+            returned_resource = dynamic_cast<UDPSenderResource*>(sender_resource);
         }
 
-    private:
+        return returned_resource;
+    }
 
-        UDPSenderResource() = delete;
+private:
 
-        UDPSenderResource(const SenderResource&) = delete;
+    UDPSenderResource() = delete;
 
-        UDPSenderResource& operator=(const SenderResource&) = delete;
+    UDPSenderResource(
+            const SenderResource&) = delete;
 
-        eProsimaUDPSocket socket_;
+    UDPSenderResource& operator =(
+            const SenderResource&) = delete;
 
-        bool only_multicast_purpose_;
+    eProsimaUDPSocket socket_;
+
+    bool only_multicast_purpose_;
 };
 
 } // namespace rtps

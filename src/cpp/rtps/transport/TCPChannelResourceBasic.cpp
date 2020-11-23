@@ -84,14 +84,14 @@ void TCPChannelResourceBasic::connect(
                 , ip::tcp::endpoint
 #else
                 , ip::tcp::resolver::iterator
-#endif
+#endif // if ASIO_VERSION >= 101200
                 )
-                        {
-                            if (!channel_weak_ptr.expired())
-                            {
-                                parent_->SocketConnected(channel_weak_ptr, ec);
-                            }
-                        }
+                {
+                    if (!channel_weak_ptr.expired())
+                    {
+                        parent_->SocketConnected(channel_weak_ptr, ec);
+                    }
+                }
                 );
         }
         catch (const std::system_error& error)
@@ -108,23 +108,23 @@ void TCPChannelResourceBasic::disconnect()
         auto socket = socket_;
 
         service_.post([&, socket]()
+                {
+                    try
                     {
-                        try
-                        {
-                            std::error_code ec;
-                            socket->shutdown(asio::ip::tcp::socket::shutdown_both, ec);
-                            socket->cancel();
+                        std::error_code ec;
+                        socket->shutdown(asio::ip::tcp::socket::shutdown_both, ec);
+                        socket->cancel();
 
-                            // This method was added on the version 1.12.0
+                        // This method was added on the version 1.12.0
 #if ASIO_VERSION >= 101200 && (!defined(_WIN32_WINNT) || _WIN32_WINNT >= 0x0603)
-                            socket->release();
-#endif
-                            socket->close();
-                        }
-                        catch (std::exception&)
-                        {
-                        }
-                    });
+                        socket->release();
+#endif // if ASIO_VERSION >= 101200 && (!defined(_WIN32_WINNT) || _WIN32_WINNT >= 0x0603)
+                        socket->close();
+                    }
+                    catch (std::exception&)
+                    {
+                    }
+                });
 
     }
 }

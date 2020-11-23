@@ -28,7 +28,8 @@ ChannelResource::ChannelResource()
     logInfo(RTPS_MSG_IN, "Created with CDRMessage of size: " << message_buffer_.max_size);
 }
 
-ChannelResource::ChannelResource(ChannelResource&& channelResource)
+ChannelResource::ChannelResource(
+        ChannelResource&& channelResource)
     : message_buffer_(std::move(channelResource.message_buffer_))
     , thread_(std::move(channelResource.thread_))
 {
@@ -38,7 +39,8 @@ ChannelResource::ChannelResource(ChannelResource&& channelResource)
     //message_buffer_ = std::move(channelResource.message_buffer_);
 }
 
-ChannelResource::ChannelResource(uint32_t rec_buffer_size)
+ChannelResource::ChannelResource(
+        uint32_t rec_buffer_size)
     : message_buffer_(rec_buffer_size)
     , alive_(true)
 {
@@ -57,11 +59,13 @@ void ChannelResource::clear()
     if (thread_.joinable())
     {
         if (thread_.get_id() != std::this_thread::get_id())
-        {   // wait for it to finish
+        {
+            // wait for it to finish
             thread_.join();
         }
         else
-        {   // killing my own thread
+        {
+            // killing my own thread
             thread_.detach();
         }
     }

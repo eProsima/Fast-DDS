@@ -25,8 +25,8 @@
 using namespace std;
 using namespace asio;
 
-namespace eprosima{
-namespace fastdds{
+namespace eprosima {
+namespace fastdds {
 namespace rtps {
 
 using IPFinder = fastrtps::rtps::IPFinder;
@@ -42,13 +42,16 @@ static void get_ipv4s(
 {
     IPFinder::getIPs(&locNames, return_loopback);
     auto new_end = remove_if(locNames.begin(),
-        locNames.end(),
-        [](IPFinder::info_IP ip) {return ip.type != IPFinder::IP4 && ip.type != IPFinder::IP4_LOCAL; });
+                    locNames.end(),
+                    [](IPFinder::info_IP ip)
+                    {
+                        return ip.type != IPFinder::IP4 && ip.type != IPFinder::IP4_LOCAL;
+                    });
     locNames.erase(new_end, locNames.end());
     std::for_each(locNames.begin(), locNames.end(), [](IPFinder::info_IP& loc)
-    {
-        loc.locator.kind = LOCATOR_KIND_TCPv4;
-    });
+            {
+                loc.locator.kind = LOCATOR_KIND_TCPv4;
+            });
 }
 
 static asio::ip::address_v4::bytes_type locator_to_native(
@@ -69,7 +72,8 @@ static asio::ip::address_v4::bytes_type locator_to_native(
     }
 }
 
-TCPv4Transport::TCPv4Transport(const TCPv4TransportDescriptor& descriptor)
+TCPv4Transport::TCPv4Transport(
+        const TCPv4TransportDescriptor& descriptor)
     : TCPTransportInterface(LOCATOR_KIND_TCPv4)
     , configuration_(descriptor)
 {
@@ -89,7 +93,7 @@ TCPv4Transport::TCPv4Transport(const TCPv4TransportDescriptor& descriptor)
     {
         logError(RTCP_TLS, "Trying to use TCP Transport with TLS but TLS was not found.");
     }
-#endif
+#endif // if !TLS_FOUND
 }
 
 TCPv4Transport::TCPv4Transport()
@@ -108,13 +112,14 @@ TCPv4TransportDescriptor::TCPv4TransportDescriptor()
     memset(wan_addr, 0, 4);
 }
 
-TCPv4TransportDescriptor::TCPv4TransportDescriptor(const TCPv4TransportDescriptor& t)
+TCPv4TransportDescriptor::TCPv4TransportDescriptor(
+        const TCPv4TransportDescriptor& t)
     : TCPTransportDescriptor(t)
 {
     memcpy(wan_addr, t.wan_addr, 4);
 }
 
-TCPv4TransportDescriptor& TCPv4TransportDescriptor::operator=(
+TCPv4TransportDescriptor& TCPv4TransportDescriptor::operator =(
         const TCPv4TransportDescriptor& t)
 {
     *static_cast<TCPTransportDescriptor*>(this) = t;
@@ -128,7 +133,8 @@ TransportInterface* TCPv4TransportDescriptor::create_transport() const
     return new TCPv4Transport(*this);
 }
 
-void TCPv4Transport::AddDefaultOutputLocator(LocatorList_t&)
+void TCPv4Transport::AddDefaultOutputLocator(
+        LocatorList_t&)
 {
 }
 
@@ -181,28 +187,36 @@ std::vector<std::string> TCPv4Transport::get_binding_interfaces_list()
 
     return vOutputInterfaces;
 }
+
 bool TCPv4Transport::is_interface_whitelist_empty() const
 {
     return interface_whitelist_.empty();
 }
 
-bool TCPv4Transport::is_interface_allowed(const std::string& interface) const
+bool TCPv4Transport::is_interface_allowed(
+        const std::string& interface) const
 {
     return is_interface_allowed(asio::ip::address_v4::from_string(interface));
 }
 
-bool TCPv4Transport::is_interface_allowed(const ip::address_v4& ip) const
+bool TCPv4Transport::is_interface_allowed(
+        const ip::address_v4& ip) const
 {
     if (interface_whitelist_.empty())
+    {
         return true;
+    }
 
     if (ip == ip::address_v4::any())
+    {
         return true;
+    }
 
     return find(interface_whitelist_.begin(), interface_whitelist_.end(), ip) != interface_whitelist_.end();
 }
 
-LocatorList_t TCPv4Transport::NormalizeLocator(const Locator_t& locator)
+LocatorList_t TCPv4Transport::NormalizeLocator(
+        const Locator_t& locator)
 {
     LocatorList_t list;
 
@@ -235,7 +249,8 @@ LocatorList_t TCPv4Transport::NormalizeLocator(const Locator_t& locator)
     return list;
 }
 
-bool TCPv4Transport::is_local_locator(const Locator_t& locator) const
+bool TCPv4Transport::is_local_locator(
+        const Locator_t& locator) const
 {
     assert(locator.kind == LOCATOR_KIND_TCPv4);
 
@@ -273,7 +288,8 @@ bool TCPv4Transport::is_local_locator(const Locator_t& locator) const
     return false;
 }
 
-bool TCPv4Transport::is_locator_allowed(const Locator_t& locator) const
+bool TCPv4Transport::is_locator_allowed(
+        const Locator_t& locator) const
 {
     if (!IsLocatorSupported(locator))
     {
@@ -300,7 +316,8 @@ bool TCPv4Transport::compare_locator_ip_and_port(
     return IPLocator::compareAddressAndPhysicalPort(lh, rh);
 }
 
-void TCPv4Transport::fill_local_ip(Locator_t& loc) const
+void TCPv4Transport::fill_local_ip(
+        Locator_t& loc) const
 {
     IPLocator::setIPv4(loc, "127.0.0.1");
     loc.kind = LOCATOR_KIND_TCPv4;
@@ -322,7 +339,8 @@ ip::tcp::endpoint TCPv4Transport::generate_local_endpoint(
     return ip::tcp::endpoint(asio::ip::address_v4(locator_to_native(loc, configuration_.wan_addr)), port);
 }
 
-ip::tcp::endpoint TCPv4Transport::generate_endpoint(uint16_t port) const
+ip::tcp::endpoint TCPv4Transport::generate_endpoint(
+        uint16_t port) const
 {
     return asio::ip::tcp::endpoint(asio::ip::tcp::v4(), port);
 }
@@ -332,18 +350,21 @@ asio::ip::tcp TCPv4Transport::generate_protocol() const
     return asio::ip::tcp::v4();
 }
 
-bool TCPv4Transport::is_interface_allowed(const Locator_t& loc) const
+bool TCPv4Transport::is_interface_allowed(
+        const Locator_t& loc) const
 {
     asio::ip::address_v4 ip = asio::ip::address_v4::from_string(IPLocator::toIPv4string(loc));
     return is_interface_allowed(ip);
 }
 
-void TCPv4Transport::set_receive_buffer_size(uint32_t size)
+void TCPv4Transport::set_receive_buffer_size(
+        uint32_t size)
 {
     configuration_.receiveBufferSize = size;
 }
 
-void TCPv4Transport::set_send_buffer_size(uint32_t size)
+void TCPv4Transport::set_send_buffer_size(
+        uint32_t size)
 {
     configuration_.sendBufferSize = size;
 }
@@ -359,27 +380,27 @@ void TCPv4Transport::endpoint_to_locator(
 }
 
 bool TCPv4Transport::fillMetatrafficUnicastLocator(
-        Locator_t &locator,
+        Locator_t& locator,
         uint32_t metatraffic_unicast_port) const
 {
     bool result = TCPTransportInterface::fillMetatrafficUnicastLocator(locator, metatraffic_unicast_port);
 
     IPLocator::setWan(locator,
-        configuration_.wan_addr[0], configuration_.wan_addr[1],
-        configuration_.wan_addr[2], configuration_.wan_addr[3]);
+            configuration_.wan_addr[0], configuration_.wan_addr[1],
+            configuration_.wan_addr[2], configuration_.wan_addr[3]);
 
     return result;
 }
 
 bool TCPv4Transport::fillUnicastLocator(
-        Locator_t &locator,
+        Locator_t& locator,
         uint32_t well_known_port) const
 {
     bool result = TCPTransportInterface::fillUnicastLocator(locator, well_known_port);
 
     IPLocator::setWan(locator,
-        configuration_.wan_addr[0], configuration_.wan_addr[1],
-        configuration_.wan_addr[2], configuration_.wan_addr[3]);
+            configuration_.wan_addr[0], configuration_.wan_addr[1],
+            configuration_.wan_addr[2], configuration_.wan_addr[3]);
 
     return result;
 }
