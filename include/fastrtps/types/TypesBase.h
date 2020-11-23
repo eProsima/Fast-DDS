@@ -260,6 +260,9 @@ public:
     static const ReturnCode_t RETCODE_TIMEOUT;
     static const ReturnCode_t RETCODE_NO_DATA;
     static const ReturnCode_t RETCODE_ILLEGAL_OPERATION;
+#if HAVE_SECURITY
+    static const ReturnCode_t RETCODE_NOT_ALLOWED_BY_SECURITY;
+#endif // HAVE_SECURITY
 
 private:
 

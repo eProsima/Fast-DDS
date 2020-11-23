@@ -129,7 +129,6 @@ DataWriterImpl::DataWriterImpl(
     , high_mark_for_frag_(0)
     , deadline_duration_us_(qos_.deadline().period.to_ns() * 1e-3)
     , lifespan_duration_us_(qos_.lifespan().duration.to_ns() * 1e-3)
-    , is_data_sharing_compatible_(publisher_->is_datasharing_compatible(qos_, type_))
 {
 }
 
@@ -191,6 +190,12 @@ ReturnCode_t DataWriterImpl::enable()
     {
         w_att.disable_positive_acks = true;
         w_att.keep_duration = qos_.reliable_writer_qos().disable_positive_acks.duration;
+    }
+
+    ReturnCode_t ret_code = check_datasharing_compatible(w_att);
+    if (ret_code != ReturnCode_t::RETCODE_OK)
+    {
+        return ret_code;
     }
 
     // Add datasharing information
@@ -1490,6 +1495,70 @@ bool DataWriterImpl::check_and_remove_loan(
         PayloadInfo_t& payload)
 {
     return loans_ && loans_->check_and_remove_loan(data, payload);
+}
+
+ReturnCode_t DataWriterImpl::check_datasharing_compatible(
+        const WriterAttributes& writer_attributes)
+{
+    bool has_security_enabled = false;
+
+#if HAVE_SECURITY
+    has_security_enabled = publisher_->rtps_participant()->is_security_enabled_for_writer(writer_attributes);
+#endif // HAVE_SECURITY
+
+    bool has_bound_payload_size =
+            qos_.endpoint().history_memory_policy == eprosima::fastrtps::rtps::PREALLOCATED_MEMORY_MODE &&
+            type_.is_bounded();
+
+    switch (qos_.data_sharing().kind())
+    {
+        case DataSharingKind::DISABLED:
+            is_data_sharing_compatible_ = false;
+            return ReturnCode_t::RETCODE_OK;
+            break;
+        case DataSharingKind::FORCED:
+            if (has_security_enabled)
+            {
+                logError(DATA_WRITER, "Data sharing cannot be used with security protection.");
+                is_data_sharing_compatible_ = false;
+                return ReturnCode_t::RETCODE_NOT_ALLOWED_BY_SECURITY;
+            }
+
+            if (!has_bound_payload_size)
+            {
+                logError(DATA_WRITER, "Data sharing cannot be used with " <<
+                        (type_.is_bounded() ? "memory policies other than PREALLOCATED" : "unbounded data types"));
+                is_data_sharing_compatible_ = false;
+                return ReturnCode_t::RETCODE_BAD_PARAMETER;
+            }
+
+            is_data_sharing_compatible_ = true;
+            return ReturnCode_t::RETCODE_OK;
+            break;
+        case DataSharingKind::AUTO:
+            if (has_security_enabled)
+            {
+                logInfo(DATA_WRITER, "Data sharing disabled due to security configuration.");
+                is_data_sharing_compatible_ = false;
+                return ReturnCode_t::RETCODE_OK;
+            }
+
+            if (!has_bound_payload_size)
+            {
+                logInfo(DATA_WRITER, "Data sharing disabled because " <<
+                        (type_.is_bounded() ? "memory policy is not PREALLOCATED" : "data type is not bounded"));
+                is_data_sharing_compatible_ = false;
+                return ReturnCode_t::RETCODE_OK;
+            }
+
+            is_data_sharing_compatible_ = true;
+            return ReturnCode_t::RETCODE_OK;
+            break;
+        default:
+            logError(DATA_WRITER, "Unknown data sharing kind.");
+            is_data_sharing_compatible_ = false;
+            return ReturnCode_t::RETCODE_BAD_PARAMETER;
+    }
 }
 
 } // namespace dds

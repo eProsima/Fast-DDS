@@ -142,6 +142,16 @@ public:
         return attributes_;
     }
 
+#if HAVE_SECURITY
+
+    MOCK_METHOD1(is_security_enabled_for_writer, bool(
+                const WriterAttributes& writer_attributes));
+
+    MOCK_METHOD1(is_security_enabled_for_reader, bool(
+                const ReaderAttributes& reader_attributes));
+
+#endif // if HAVE_SECURITY
+
     RTPSParticipantListener* listener_;
     const GUID_t m_guid;
     ResourceEvent mp_event_thr;

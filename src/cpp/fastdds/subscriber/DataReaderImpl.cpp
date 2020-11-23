@@ -117,7 +117,6 @@ DataReaderImpl::DataReaderImpl(
     , lifespan_duration_us_(qos_.lifespan().duration.to_ns() * 1e-3)
     , sample_info_pool_(qos)
     , loan_manager_(qos)
-    , is_data_sharing_compatible_(subscriber_->is_datasharing_compatible(qos_, type_))
 {
 }
 
@@ -172,6 +171,12 @@ ReturnCode_t DataReaderImpl::enable()
         }
         property.value(std::move(partitions));
         att.endpoint.properties.properties().push_back(std::move(property));
+    }
+
+    ReturnCode_t ret_code = check_datasharing_compatible(att);
+    if (ret_code != ReturnCode_t::RETCODE_OK)
+    {
+        return ret_code;
     }
 
     // Add datasharing information
@@ -1345,6 +1350,65 @@ void DataReaderImpl::release_payload_pool()
     payload_pool_->release_history(config, true);
 
     TopicPayloadPoolRegistry::release(payload_pool_);
+}
+
+
+ReturnCode_t DataReaderImpl::check_datasharing_compatible(
+        const ReaderAttributes& reader_attributes)
+{
+    bool has_security_enabled = false;
+
+#if HAVE_SECURITY
+    has_security_enabled = subscriber_->rtps_participant()->is_security_enabled_for_reader(reader_attributes);
+#endif // HAVE_SECURITY
+
+    switch (qos_.data_sharing().kind())
+    {
+        case DataSharingKind::DISABLED:
+            is_data_sharing_compatible_ = false;
+            return ReturnCode_t::RETCODE_OK;
+            break;
+        case DataSharingKind::FORCED:
+            if (has_security_enabled)
+            {
+                logError(DATA_READER, "Data sharing cannot be used with security protection.");
+                is_data_sharing_compatible_ = false;
+                return ReturnCode_t::RETCODE_NOT_ALLOWED_BY_SECURITY;
+            }
+
+            if (!type_.is_bounded())
+            {
+                logInfo(DATA_READER, "Data sharing cannot be used with unbounded data types");
+                is_data_sharing_compatible_ = false;
+                return ReturnCode_t::RETCODE_BAD_PARAMETER;
+            }
+
+            is_data_sharing_compatible_ = true;
+            return ReturnCode_t::RETCODE_OK;
+            break;
+        case DataSharingKind::AUTO:
+            if (has_security_enabled)
+            {
+                logInfo(DATA_READER, "Data sharing disabled due to security configuration.");
+                is_data_sharing_compatible_ = false;
+                return ReturnCode_t::RETCODE_OK;
+            }
+
+            if (!type_.is_bounded())
+            {
+                logInfo(DATA_READER, "Data sharing disabled because data type is not bounded");
+                is_data_sharing_compatible_ = false;
+                return ReturnCode_t::RETCODE_OK;
+        }
+
+            is_data_sharing_compatible_ = true;
+            return ReturnCode_t::RETCODE_OK;
+            break;
+        default:
+            logError(DATA_WRITER, "Unknown data sharing kind.");
+            is_data_sharing_compatible_ = false;
+            return ReturnCode_t::RETCODE_BAD_PARAMETER;
+    }
 }
 
 } /* namespace dds */
