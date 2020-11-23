@@ -17,13 +17,13 @@
 
 #ifdef _WIN32
 #include <cstdint>
-#endif
+#endif // ifdef _WIN32
 #include <vector>
 #include <string>
 
-namespace eprosima{
-namespace fastdds{
-namespace rtps{
+namespace eprosima {
+namespace fastdds {
+namespace rtps {
 
 class TransportInterface;
 
@@ -33,17 +33,24 @@ class TransportInterface;
  * */
 struct TransportDescriptorInterface
 {
-    TransportDescriptorInterface(uint32_t maximumMessageSize, uint32_t maximumInitialPeersRange)
+    TransportDescriptorInterface(
+            uint32_t maximumMessageSize,
+            uint32_t maximumInitialPeersRange)
         : maxMessageSize(maximumMessageSize)
         , maxInitialPeersRange(maximumInitialPeersRange)
-    {}
+    {
+    }
 
-    TransportDescriptorInterface(const TransportDescriptorInterface& t)
+    TransportDescriptorInterface(
+            const TransportDescriptorInterface& t)
         : maxMessageSize(t.maxMessageSize)
         , maxInitialPeersRange(t.maxInitialPeersRange)
-    {}
+    {
+    }
 
-    virtual ~TransportDescriptorInterface(){}
+    virtual ~TransportDescriptorInterface()
+    {
+    }
 
     /**
      * Factory method pattern. It will create and return a TransportInterface
@@ -52,13 +59,19 @@ struct TransportDescriptorInterface
      */
     virtual TransportInterface* create_transport() const = 0;
 
-     //! Returns the minimum size required for a send operation.
+    //! Returns the minimum size required for a send operation.
     virtual uint32_t min_send_buffer_size() const = 0;
 
     //! Returns the maximum size expected for received messages.
-    virtual uint32_t max_message_size() const { return maxMessageSize; }
+    virtual uint32_t max_message_size() const
+    {
+        return maxMessageSize;
+    }
 
-    virtual uint32_t max_initial_peers_range() const { return maxInitialPeersRange; }
+    virtual uint32_t max_initial_peers_range() const
+    {
+        return maxInitialPeersRange;
+    }
 
     uint32_t maxMessageSize;
 
