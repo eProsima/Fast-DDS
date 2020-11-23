@@ -788,7 +788,7 @@ TEST_F(XMLParserTests, getXMLSubscriberAttributes_negative)
         titleElement = xml_doc.RootElement();
         EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::getXMLSubscriberAttributes_wrapper(titleElement,attr,ident));
     }
-    
+
 }
 
 /*
@@ -1345,6 +1345,46 @@ TEST_F(XMLParserTests, getXMLWriterReaderUnsupportedQosPolicies)
     }
     EXPECT_EQ(num_errors, 18);
 
+}
+
+/*
+ * This test checks the positive cases of configuration through XML of the data limits of the participant's allocation
+ * attributes.
+ * 1. Check that the XML return code is correct for the data limit settings.
+ * 2. Check that the maximum number of properties attribute (max_properties) is set correctly.
+ * 3. Check that the maximum user data attribute (max_user_data) is set correctly.
+ * 4. Check that the maximum number of partitions attribute (max_partitions) is set correctly.
+ */
+TEST_F(XMLParserTests, ParticipantAllocationAttributesDataLimits)
+{
+    uint8_t ident = 1;
+    rtps::RTPSParticipantAllocationAttributes allocation;
+    tinyxml2::XMLDocument xml_doc;
+    tinyxml2::XMLElement* titleElement;
+
+    // XML snippet
+    const char* xml =
+    "\
+    <rtpsParticipantAllocationAttributes>\
+        <max_properties>10</max_properties>\
+        <max_user_data>20</max_user_data>\
+        <max_partitions>3</max_partitions>\
+    </rtpsParticipantAllocationAttributes>\
+    ";
+
+    // Load the xml
+    ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+    titleElement = xml_doc.RootElement();
+    // Check that the XML return code is correct for the data limit settings.
+    EXPECT_EQ(
+            XMLP_ret::XML_OK,
+            XMLParserTest::getXMLParticipantAllocationAttributes_wrapper(titleElement,allocation,ident));
+    // Check that the maximum number of properties attribute (max_properties) is set correctly.
+    EXPECT_EQ(allocation.data_limits.max_properties, 10);
+    // Check that the maximum user data attribute (max_user_data) is set correctly.
+    EXPECT_EQ(allocation.data_limits.max_user_data, 20);
+    // Check that the maximum number of partitions attribute (max_partitions) is set correctly.
+    EXPECT_EQ(allocation.data_limits.max_partitions, 3);
 }
 
 // FINISH RAUL SECTION
