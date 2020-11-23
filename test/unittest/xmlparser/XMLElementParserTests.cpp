@@ -12,10 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include <thread>
+#include <mutex>
+
 #include <fastrtps/xmlparser/XMLParser.h>
 #include <fastrtps/xmlparser/XMLTree.h>
 #include <fastrtps/xmlparser/XMLProfileManager.h>
-#include <fastdds/dds/log/Log.hpp>
 #include <fastrtps/utils/IPLocator.h>
 #include "mock/XMLMockConsumer.h"
 #include "wrapper/XMLParserTest.hpp"
@@ -26,6 +28,7 @@
 #include <fstream>
 #include <sstream>
 
+using namespace eprosima::fastdds::dds;
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
 
@@ -51,10 +54,37 @@ public:
 
     ~XMLParserTests()
     {
-        eprosima::fastdds::dds::Log::Reset();
-        eprosima::fastdds::dds::Log::KillThread();
+        Log::Reset();
+        Log::KillThread();
     }
 
+    void helper_block_for_at_least_entries(uint32_t amount)
+    {
+        std::unique_lock<std::mutex> lck(*xml_mutex_);
+        mock_consumer->cv().wait(lck, [this, amount]
+                {
+                    return mock_consumer->ConsumedEntries().size() >= amount;
+                });
+    }
+
+    XMLMockConsumer* mock_consumer;
+
+private:
+
+    mutable std::mutex* xml_mutex_;
+
+protected:
+
+    void SetUp() override
+    {
+        xml_mutex_ = new std::mutex();
+    }
+
+    void TearDown() override
+    {
+        delete xml_mutex_;
+        xml_mutex_ = nullptr;
+    }
 };
 
 TEST_F(XMLParserTests, getXMLLifespanQos)
@@ -779,7 +809,292 @@ TEST_F(XMLParserTests, getXMLPublisherAttributes_negative)
 
 
 // INIT RAUL SECTION
+/*
+ * This test checks the negative cases in the <initialAnnouncements> xml element.
+ * 1. Check an empty definition of <count> child xml element.
+ * 2. Check an empty definition of <sec> in <period> child xml element.
+ * 3. Check an empty definition of <nanosec> in <period> child xml element.
+ * 4. Check a wrong xml element definition inside <initialAnnouncements>
+ */
+TEST_F(XMLParserTests, getXMLInitialAnnouncementsConfig)
+{
+    uint8_t ident = 1;
+    DiscoverySettings settings;
+    tinyxml2::XMLDocument xml_doc;
+    tinyxml2::XMLElement* titleElement;
 
+    // Parametrized XML
+    const char* xml_p =
+    "\
+    <discovery_config>\
+        <initialAnnouncements>\
+            %s\
+            <count>%s</count>\
+            <period>\
+                <sec>%s</sec>\
+                <nanosec>%s</nanosec>\
+            </period>\
+        </initialAnnouncements>\
+    </discovery_config>\
+    ";
+
+    char xml[600];
+
+    // Check an empty definition of <count> child xml element.
+    sprintf(xml, xml_p, "", "", "5", "123");
+    ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+    titleElement = xml_doc.RootElement();
+    EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::getXMLDiscoverySettings_wrapper(titleElement,settings,ident));
+
+    // Check an empty definition of <sec> in <period> child xml element.
+    sprintf(xml, xml_p, "", "5", "", "123");
+    ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+    titleElement = xml_doc.RootElement();
+    EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::getXMLDiscoverySettings_wrapper(titleElement,settings,ident));
+
+    // Check an empty definition of <nanosec> in <period> child xml element.
+    sprintf(xml, xml_p, "", "5", "5", "");
+    ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+    titleElement = xml_doc.RootElement();
+    EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::getXMLDiscoverySettings_wrapper(titleElement,settings,ident));
+
+    const char* xml_e =
+    "\
+    <discovery_config>\
+        <initialAnnouncements>\
+            <bad_element>1</bad_element>\
+        </initialAnnouncements>\
+    </discovery_config>\
+    ";
+
+    // Check a wrong xml element definition inside <initialAnnouncements>
+    ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml_e));
+    titleElement = xml_doc.RootElement();
+    EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::getXMLDiscoverySettings_wrapper(titleElement,settings,ident));
+}
+
+/*
+ * This test checks the negative cases in the <qos> xml child element of <data_writer>/<data_reader>
+ * 1. Check an empty definition of <durability> xml element.
+ * 2. Check an empty definition of <liveliness> xml element.
+ * 3. Check an empty definition of <reliability> xml element.
+ * 4. Check an empty definition of <partition> xml element.
+ * 5. Check an empty definition of <publishMode> xml element.
+ * 6. Check an empty definition of <deadline> xml element.
+ * 7. Check an empty definition of <disablePositiveAcks> xml element.
+ * 8. Check an empty definition of <latencyBudget> xml element.
+ * 9. Check a wrong xml element definition inside <qos>
+ */
+TEST_F(XMLParserTests, getXMLWriterReaderQosPolicies)
+{
+    uint8_t ident = 1;
+    WriterQos wqos;
+    ReaderQos rqos;
+    tinyxml2::XMLDocument xml_doc;
+    tinyxml2::XMLElement* titleElement;
+
+    // Parametrized XML
+    const char* xml_p =
+    "\
+    <qos>\
+        %s\
+    </qos>\
+    ";
+
+    char xml[600];
+
+    // Check an empty definition of <durability> xml element.
+    sprintf(xml, xml_p, "<durability></durability>");
+    ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+    titleElement = xml_doc.RootElement();
+    EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::getXMLWriterQosPolicies_wrapper(titleElement,wqos,ident));
+    EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::getXMLReaderQosPolicies_wrapper(titleElement,rqos,ident));
+
+    // Check an empty definition of <liveliness> xml element.
+    sprintf(xml, xml_p, "<liveliness><kind></kind></liveliness>");
+    ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+    titleElement = xml_doc.RootElement();
+    EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::getXMLWriterQosPolicies_wrapper(titleElement,wqos,ident));
+    EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::getXMLReaderQosPolicies_wrapper(titleElement,rqos,ident));
+
+    // Check an empty definition of <reliability> xml element.
+    sprintf(xml, xml_p, "<reliability><kind></kind></reliability>");
+    ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+    titleElement = xml_doc.RootElement();
+    EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::getXMLWriterQosPolicies_wrapper(titleElement,wqos,ident));
+    EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::getXMLReaderQosPolicies_wrapper(titleElement,rqos,ident));
+
+    // Check an empty definition of <partition> xml element.
+    sprintf(xml, xml_p, "<partition></partition>");
+    ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+    titleElement = xml_doc.RootElement();
+    EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::getXMLWriterQosPolicies_wrapper(titleElement,wqos,ident));
+    EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::getXMLReaderQosPolicies_wrapper(titleElement,rqos,ident));
+
+    // Check an empty definition of <publishMode> xml element.
+    sprintf(xml, xml_p, "<publishMode></publishMode>");
+    ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+    titleElement = xml_doc.RootElement();
+    EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::getXMLWriterQosPolicies_wrapper(titleElement,wqos,ident));
+
+    // Check an empty definition of <deadline> xml element.
+    sprintf(xml, xml_p, "<deadline></deadline>");
+    ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+    titleElement = xml_doc.RootElement();
+    EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::getXMLWriterQosPolicies_wrapper(titleElement,wqos,ident));
+    EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::getXMLReaderQosPolicies_wrapper(titleElement,rqos,ident));
+
+    // Check an empty definition of <disablePositiveAcks> xml element.
+    sprintf(xml, xml_p, "<disablePositiveAcks><enabled></enabled></disablePositiveAcks>");
+    ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+    titleElement = xml_doc.RootElement();
+    EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::getXMLWriterQosPolicies_wrapper(titleElement,wqos,ident));
+
+    // Check an empty definition of <latencyBudget> xml element.
+    sprintf(xml, xml_p, "<latencyBudget></latencyBudget>");
+    ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+    titleElement = xml_doc.RootElement();
+    EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::getXMLWriterQosPolicies_wrapper(titleElement,wqos,ident));
+
+    // Check an empty definition of <lifespan> xml element.
+    sprintf(xml, xml_p, "<lifespan></lifespan>");
+    ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+    titleElement = xml_doc.RootElement();
+    EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::getXMLReaderQosPolicies_wrapper(titleElement,rqos,ident));
+
+    // Check an empty definition of <latencyBudget> xml element.
+    sprintf(xml, xml_p, "<latencyBudget></latencyBudget>");
+    ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+    titleElement = xml_doc.RootElement();
+    EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::getXMLReaderQosPolicies_wrapper(titleElement,rqos,ident));
+
+    // Check an empty definition of <disablePositiveAcks> xml element.
+    sprintf(xml, xml_p, "<disablePositiveAcks><enabled></enabled></disablePositiveAcks>");
+    ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+    titleElement = xml_doc.RootElement();
+    EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::getXMLReaderQosPolicies_wrapper(titleElement,rqos,ident));
+
+    // Check a wrong xml element definition inside <qos>
+    sprintf(xml, xml_p, "<bad_element></bad_element>");
+    ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+    titleElement = xml_doc.RootElement();
+    EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::getXMLWriterQosPolicies_wrapper(titleElement,wqos,ident));
+    EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::getXMLReaderQosPolicies_wrapper(titleElement,rqos,ident));
+}
+
+/*
+ * This test checks that there is a logError when setting up a non supported <data_writer>/<data_reader> qos
+ * 1. Check that there is a logError when trying to set up the <durabilityService> Qos.
+ * 2. Check that there is a logError when trying to set up the <userData> Qos.
+ * 3. Check that there is a logError when trying to set up the <timeBasedFilter> Qos.
+ * 4. Check that there is a logError when trying to set up the <ownership> Qos.
+ * 5. Check that there is a logError when trying to set up the <ownershipStrength> Qos.
+ * 6. Check that there is a logError when trying to set up the <destinationOrder> Qos.
+ * 7. Check that there is a logError when trying to set up the <presentation> Qos.
+ * 8. Check that there is a logError when trying to set up the <topicData> Qos.
+ * 9. Check that there is a logError when trying to set up the <groupData> Qos.
+ */
+TEST_F(XMLParserTests, getXMLWriterReaderUnsupportedQosPolicies)
+{
+    uint8_t ident = 1;
+    WriterQos wqos;
+    ReaderQos rqos;
+    tinyxml2::XMLDocument xml_doc;
+    tinyxml2::XMLElement* titleElement;
+
+    mock_consumer = new XMLMockConsumer();
+
+    Log::RegisterConsumer(std::unique_ptr<LogConsumer>(mock_consumer));
+    Log::SetVerbosity(Log::Warning);
+    Log::SetCategoryFilter(std::regex("(XMLPARSER)"));
+
+    // Parametrized XML
+    const char* xml_p =
+    "\
+    <qos>\
+        %s\
+    </qos>\
+    ";
+
+    char xml[600];
+
+    // Check that there is a logError when trying to set up the <durabilityService> Qos.
+    sprintf(xml, xml_p, "<durabilityService></durabilityService>");
+    ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+    titleElement = xml_doc.RootElement();
+    EXPECT_EQ(XMLP_ret::XML_OK, XMLParserTest::getXMLWriterQosPolicies_wrapper(titleElement,wqos,ident));
+    EXPECT_EQ(XMLP_ret::XML_OK, XMLParserTest::getXMLReaderQosPolicies_wrapper(titleElement,rqos,ident));
+
+    // Check that there is a logError when trying to set up the <userData> Qos.
+    sprintf(xml, xml_p, "<userData></userData>");
+    ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+    titleElement = xml_doc.RootElement();
+    EXPECT_EQ(XMLP_ret::XML_OK, XMLParserTest::getXMLWriterQosPolicies_wrapper(titleElement,wqos,ident));
+    EXPECT_EQ(XMLP_ret::XML_OK, XMLParserTest::getXMLReaderQosPolicies_wrapper(titleElement,rqos,ident));
+
+    // Check that there is a logError when trying to set up the <timeBasedFilter> Qos.
+    sprintf(xml, xml_p, "<timeBasedFilter></timeBasedFilter>");
+    ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+    titleElement = xml_doc.RootElement();
+    EXPECT_EQ(XMLP_ret::XML_OK, XMLParserTest::getXMLWriterQosPolicies_wrapper(titleElement,wqos,ident));
+    EXPECT_EQ(XMLP_ret::XML_OK, XMLParserTest::getXMLReaderQosPolicies_wrapper(titleElement,rqos,ident));
+
+    // Check that there is a logError when trying to set up the <ownership> Qos.
+    sprintf(xml, xml_p, "<ownership></ownership>");
+    ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+    titleElement = xml_doc.RootElement();
+    EXPECT_EQ(XMLP_ret::XML_OK, XMLParserTest::getXMLWriterQosPolicies_wrapper(titleElement,wqos,ident));
+    EXPECT_EQ(XMLP_ret::XML_OK, XMLParserTest::getXMLReaderQosPolicies_wrapper(titleElement,rqos,ident));
+
+    // Check that there is a logError when trying to set up the <ownershipStrength> Qos.
+    sprintf(xml, xml_p, "<ownershipStrength></ownershipStrength>");
+    ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+    titleElement = xml_doc.RootElement();
+    EXPECT_EQ(XMLP_ret::XML_OK, XMLParserTest::getXMLWriterQosPolicies_wrapper(titleElement,wqos,ident));
+    EXPECT_EQ(XMLP_ret::XML_OK, XMLParserTest::getXMLReaderQosPolicies_wrapper(titleElement,rqos,ident));
+
+    // Check that there is a logError when trying to set up the <destinationOrder> Qos.
+    sprintf(xml, xml_p, "<destinationOrder></destinationOrder>");
+    ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+    titleElement = xml_doc.RootElement();
+    EXPECT_EQ(XMLP_ret::XML_OK, XMLParserTest::getXMLWriterQosPolicies_wrapper(titleElement,wqos,ident));
+    EXPECT_EQ(XMLP_ret::XML_OK, XMLParserTest::getXMLReaderQosPolicies_wrapper(titleElement,rqos,ident));
+
+    // Check that there is a logError when trying to set up the <presentation> Qos.
+    sprintf(xml, xml_p, "<presentation></presentation>");
+    ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+    titleElement = xml_doc.RootElement();
+    EXPECT_EQ(XMLP_ret::XML_OK, XMLParserTest::getXMLWriterQosPolicies_wrapper(titleElement,wqos,ident));
+    EXPECT_EQ(XMLP_ret::XML_OK, XMLParserTest::getXMLReaderQosPolicies_wrapper(titleElement,rqos,ident));
+
+    // Check that there is a logError when trying to set up the <topicData> Qos.
+    sprintf(xml, xml_p, "<topicData></topicData>");
+    ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+    titleElement = xml_doc.RootElement();
+    EXPECT_EQ(XMLP_ret::XML_OK, XMLParserTest::getXMLWriterQosPolicies_wrapper(titleElement,wqos,ident));
+    EXPECT_EQ(XMLP_ret::XML_OK, XMLParserTest::getXMLReaderQosPolicies_wrapper(titleElement,rqos,ident));
+
+    // Check that there is a logError when trying to set up the <groupData> Qos.
+    sprintf(xml, xml_p, "<groupData></groupData>");
+    ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+    titleElement = xml_doc.RootElement();
+    EXPECT_EQ(XMLP_ret::XML_OK, XMLParserTest::getXMLWriterQosPolicies_wrapper(titleElement,wqos,ident));
+    EXPECT_EQ(XMLP_ret::XML_OK, XMLParserTest::getXMLReaderQosPolicies_wrapper(titleElement,rqos,ident));
+
+    helper_block_for_at_least_entries(18);
+    auto consumed_entries = mock_consumer->ConsumedEntries();
+    // Expect 1 log error.
+    uint32_t num_errors = 0;
+    for (const auto& entry : consumed_entries)
+    {
+        if (entry.kind == Log::Kind::Error)
+        {
+            num_errors++;
+        }
+    }
+    EXPECT_EQ(num_errors, 18);
+
+}
 
 // FINISH RAUL SECTION
 
