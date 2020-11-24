@@ -2891,9 +2891,9 @@ TEST_F(XMLParserTests, getXMLEnum_invalidXML)
         ParticipantFilteringFlags_t e;
         const char* enum_p =
         "\
-        <ParticipantFilteringFlags_t>\
+        <ParticipantFilteringFlags>\
             %s\
-        </ParticipantFilteringFlags_t>\
+        </ParticipantFilteringFlags>\
         ";
 
         // null input
@@ -2980,6 +2980,7 @@ TEST_F(XMLParserTests, getXMLEnum_positive)
         ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(enum_p));
         titleElement = xml_doc.RootElement();
         EXPECT_EQ(XMLP_ret::XML_OK, XMLParserTest::getXMLEnum_wrapper(titleElement,&e,ident));
+        EXPECT_EQ(IntraprocessDeliveryType::INTRAPROCESS_OFF, e);
     }
 
     // DiscoveryProtocol Enum
@@ -2990,25 +2991,38 @@ TEST_F(XMLParserTests, getXMLEnum_positive)
             <DiscoveryProtocol>%s</DiscoveryProtocol>\
         ";
 
-        std::vector<std::string> tag_vec = {
-            "NONE",
-            "CLIENT",
-            "SERVER",
-            "BACKUP"
-        };
+        // NONE case
+        sprintf(xml, enum_p, "NONE");
+        ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+        titleElement = xml_doc.RootElement();
+        EXPECT_EQ(XMLP_ret::XML_OK, XMLParserTest::getXMLEnum_wrapper(titleElement,&e,ident));
+        EXPECT_EQ(DiscoveryProtocol_t::NONE, e);
 
-        for (std::string tag : tag_vec)
-        {
-            sprintf(xml, enum_p, tag.c_str());
-            ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
-            titleElement = xml_doc.RootElement();
-            EXPECT_EQ(XMLP_ret::XML_OK, XMLParserTest::getXMLEnum_wrapper(titleElement,&e,ident));
-        }
+        // CLIENT case
+        sprintf(xml, enum_p, "CLIENT");
+        ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+        titleElement = xml_doc.RootElement();
+        EXPECT_EQ(XMLP_ret::XML_OK, XMLParserTest::getXMLEnum_wrapper(titleElement,&e,ident));
+        EXPECT_EQ(DiscoveryProtocol_t::CLIENT, e);
+
+        // SERVER case
+        sprintf(xml, enum_p, "SERVER");
+        ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+        titleElement = xml_doc.RootElement();
+        EXPECT_EQ(XMLP_ret::XML_OK, XMLParserTest::getXMLEnum_wrapper(titleElement,&e,ident));
+        EXPECT_EQ(DiscoveryProtocol_t::SERVER, e);
+
+        // BACKUP case
+        sprintf(xml, enum_p, "BACKUP");
+        ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+        titleElement = xml_doc.RootElement();
+        EXPECT_EQ(XMLP_ret::XML_OK, XMLParserTest::getXMLEnum_wrapper(titleElement,&e,ident));
+        EXPECT_EQ(DiscoveryProtocol_t::BACKUP, e);
     }
 
     // ParticipantFilteringFlags_t Enum
     {
-        ParticipantFilteringFlags_t e;
+        ParticipantFilteringFlags_t e(ParticipantFilteringFlags_t::NO_FILTER);
         const char* enum_p =
         "\
             <ParticipantFilteringFlags>FILTER_DIFFERENT_PROCESS</ParticipantFilteringFlags>\
@@ -3018,6 +3032,7 @@ TEST_F(XMLParserTests, getXMLEnum_positive)
         ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(enum_p));
         titleElement = xml_doc.RootElement();
         EXPECT_EQ(XMLP_ret::XML_OK, XMLParserTest::getXMLEnum_wrapper(titleElement,&e,ident));
+        EXPECT_EQ(ParticipantFilteringFlags_t::FILTER_DIFFERENT_PROCESS, e);
     }
 }
 
