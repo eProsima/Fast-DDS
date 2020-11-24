@@ -16,7 +16,10 @@
 #include <fastrtps/xmlparser/XMLTree.h>
 #include <fastdds/dds/log/Log.hpp>
 #include <fastrtps/utils/IPLocator.h>
+#include "mock/XMLMockConsumer.h"
+#include "wrapper/XMLParserTest.hpp"
 
+#include <tinyxml2.h>
 #include <gtest/gtest.h>
 
 #include <fstream>
@@ -617,7 +620,7 @@ TEST_F(XMLParserTests, DataBuffer)
     EXPECT_EQ(std::string(rtps_atts.getName()), "test_name");
 }
 
-// INIT NACHO SECTION	
+// INIT NACHO SECTION
 
 // FINISH NACHO SECTION	
 
