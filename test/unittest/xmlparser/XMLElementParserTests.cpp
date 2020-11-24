@@ -891,10 +891,31 @@ TEST_F(XMLParserTests, getXMLguidPrefix_negative)
 }
 
 /*
+ * This test checks the positive cases of the XMLParser::getXMLguidPrefix method.
+ * 1. Check a correct return of the method.
+ * 2. Check the correct values have been pased to the prefix variable.
+ */
+TEST_F(XMLParserTests, getXMLguidPrefix_positive)
+{
+
+    uint8_t ident = 1;
+    GuidPrefix_t prefix;
+    tinyxml2::XMLDocument xml_doc;
+    tinyxml2::XMLElement* titleElement;
+
+    ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse("<guid>4D.49.47.55.45.4c.5f.42.41.52.52.4f</guid>"));
+    titleElement = xml_doc.RootElement();
+    EXPECT_EQ(XMLP_ret::XML_OK, XMLParserTest::getXMLguidPrefix_wrapper(titleElement,prefix,ident));
+    EXPECT_EQ(prefix.value[0], 0x4d);
+    EXPECT_EQ(prefix.value[1], 0x49);
+
+}
+
+/*
  * This test checks the negative cases of the XMLParser::getXMLDuration method.
  * 1. Check passing an infinite duration and a finite duration at the same time.
- * 2. Check passing a missing value of <sec> and <nsec>.
- * 3. Check passing a non valid value of <sec> and <nsec>.
+ * 2. Check passing a missing value of <sec> and <nanosec>.
+ * 3. Check passing a non valid value of <sec> and <nanosec>.
  * 4. Check passing an empty <duration> field.
  */
 TEST_F(XMLParserTests, getXMLDuration_negative)
@@ -927,6 +948,42 @@ TEST_F(XMLParserTests, getXMLDuration_negative)
         ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml.c_str()));
         titleElement = xml_doc.RootElement();
         EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::getXMLDuration_wrapper(titleElement,duration,ident));
+    }
+
+}
+
+/*
+ * This test checks the positive cases of the XMLParser::getXMLDuration method.
+ * 1. Check correct return of the method.
+ * 2. Check correct parsing on DURATION_INFINITY in the <sec> field.
+ * 3. Check correct parsing on DURATION_INFINITY in the <nanosec> field.
+ */
+TEST_F(XMLParserTests, getXMLDuration_infinite)
+{
+
+    uint8_t ident = 1;
+    Duration_t duration;
+    tinyxml2::XMLDocument xml_doc;
+    tinyxml2::XMLElement* titleElement;
+
+    std::string xml;
+    std::vector<std::string> parameters {
+        "<sec>DURATION_INFINITY</sec>",
+        "<nanosec>DURATION_INFINITY</nanosec>"
+    };
+
+    for(std::vector<std::string>::iterator it = parameters.begin() ; it != parameters.end(); ++it)
+    {
+        xml =
+        "\
+        <duration>\
+            "+*it+"\
+        </duration>\
+        ";
+        ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml.c_str()));
+        titleElement = xml_doc.RootElement();
+        EXPECT_EQ(XMLP_ret::XML_OK, XMLParserTest::getXMLDuration_wrapper(titleElement,duration,ident));
+        EXPECT_EQ(duration, c_TimeInfinite);
     }
 
 }
@@ -977,12 +1034,52 @@ TEST_F(XMLParserTests, getXMLList_negative)
     ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse("<list></list>"));
     titleElement = xml_doc.RootElement();
     EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::getXMLList_wrapper(titleElement,list,ident));
-    
+
     // bad remote server element
     const char * xml = "<list><RemoteServer>bad_remote_server</RemoteServer></list>";
     ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
     titleElement = xml_doc.RootElement();
     EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::getXMLList_wrapper(titleElement,list,ident));
+
+}
+
+/*
+ * This test checks the positive case of the XMLParser::getXMLList method.
+ * 1. Check an valid return on the funtion.
+ * 2. Check the correct elemetn has been placed on the list.
+ */
+TEST_F(XMLParserTests, getXMLList_positive)
+{
+    uint8_t ident = 1;
+    RemoteServerList_t list;
+    tinyxml2::XMLDocument xml_doc;
+    tinyxml2::XMLElement* titleElement;
+
+    // bad remote server element
+    const char * xml =
+    "<list>\
+        <RemoteServer prefix=\"4D.49.47.55.45.4c.5f.42.41.52.52.4f\">\
+                    <metatrafficUnicastLocatorList>\
+                        <locator>\
+                            <udpv6>\
+                                <port>8844</port>\
+                                <address>::1</address>\
+                            </udpv6>\
+                        </locator>\
+                    </metatrafficUnicastLocatorList>\
+        </RemoteServer>\
+    </list>";
+
+    ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+    titleElement = xml_doc.RootElement();
+    EXPECT_EQ(XMLP_ret::XML_OK, XMLParserTest::getXMLList_wrapper(titleElement,list,ident));
+    EXPECT_EQ(list.begin()->metatrafficUnicastLocatorList.begin()->port, 8844);
+    EXPECT_EQ(list.begin()->metatrafficUnicastLocatorList.begin()->address[15], 1);
+    EXPECT_EQ(list.begin()->guidPrefix.value[0], 0x4d);
+    EXPECT_EQ(list.begin()->guidPrefix.value[1], 0x49);
+    EXPECT_EQ(list.begin()->guidPrefix.value[2], 0x47);
+    EXPECT_EQ(list.begin()->guidPrefix.value[3], 0x55);
+    EXPECT_EQ(list.begin()->guidPrefix.value[4], 0x45);
 
 }
 
@@ -1050,6 +1147,9 @@ TEST_F(XMLParserTests, getXMLUint)
     titleElement = xml_doc.RootElement();
     EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::getXMLUint_wrapper(titleElement, &ui16, ident));
 }
+
+// FINISH NACHO SECTION
+
 
 // INIT RAUL SECTION
 /*
