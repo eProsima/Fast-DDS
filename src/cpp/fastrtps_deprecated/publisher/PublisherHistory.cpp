@@ -173,7 +173,7 @@ bool PublisherHistory::add_pub_change(
             else if (history_qos_.kind == KEEP_ALL_HISTORY_QOS)
             {
                 if (vit->second.cache_changes.size() <
-                    static_cast<size_t>(resource_limited_qos_.max_samples_per_instance))
+                        static_cast<size_t>(resource_limited_qos_.max_samples_per_instance))
                 {
                     add = true;
                 }
@@ -194,7 +194,7 @@ bool PublisherHistory::add_pub_change(
 
                     // If the change we were trying to remove was already removed, try again
                     if (vit->second.cache_changes.empty() ||
-                        vit->second.cache_changes.front()->sequenceNumber != seq_to_remove)
+                            vit->second.cache_changes.front()->sequenceNumber != seq_to_remove)
                     {
                         continue;
                     }
@@ -204,7 +204,7 @@ bool PublisherHistory::add_pub_change(
                 }
             }
         }
-        
+
         if (add)
         {
             vit->second.cache_changes.push_back(change);
