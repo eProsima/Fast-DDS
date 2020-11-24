@@ -85,7 +85,6 @@ protected:
     }
 };
 
-// INIT NACHO SECTION
 /*
  * This test checks the proper parsing of the <lifespan> xml element to LifespanQosPolicy, and negative cases.
  * 1. Correct parsing of a valid element.
@@ -1148,10 +1147,6 @@ TEST_F(XMLParserTests, getXMLUint)
     EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::getXMLUint_wrapper(titleElement, &ui16, ident));
 }
 
-// FINISH NACHO SECTION
-
-
-// INIT RAUL SECTION
 /*
  * This test checks the negative cases in the <initialAnnouncements> xml element.
  * 1. Check an empty definition of <count> child xml element.
@@ -1659,10 +1654,6 @@ TEST_F(XMLParserTests, getXMLDurabilityQosKind)
     // Check that the durability QoS policy kind is set to PERSISTENT.
     EXPECT_EQ(durability.kind, DurabilityQosPolicyKind::PERSISTENT_DURABILITY_QOS);
 }
-// FINISH RAUL SECTION
-
-
-// INIT PARIS SECTION
 
 /*
  * This test checks the negative cases in the xml child element of <BuiltinAttributesr>
@@ -3200,6 +3191,3 @@ TEST_F(XMLParserTests, getXMLEnum_positive)
         EXPECT_EQ(ParticipantFilteringFlags_t::FILTER_DIFFERENT_PROCESS, e);
     }
 }
-
-
-// FINISH PARIS SECTION

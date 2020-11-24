@@ -61,8 +61,6 @@ class XMLParserTest : public XMLParser{
         return getXMLDiscoverySettings(elem,settings,ident);
     }
 
-    // INIT FUNCTIONS NACHO SECTION
-
     static XMLP_ret getXMLPortParameters_wrapper(
         tinyxml2::XMLElement* elem,
         PortParameters& port,
@@ -182,17 +180,6 @@ class XMLParserTest : public XMLParser{
     {
         return getXMLUint(elem,ui16,ident);
     }
-
-    // FINISH FUNCTIONS NACHO SECTION
-
-
-    // INIT FUNCTIONS RAUL SECTION
-
-
-    // FINISH FUNCTIONS RAUL SECTION
-
-
-    // INIT FUNCTIONS PARIS SECTION
 
     static XMLP_ret getXMLBuiltinAttributes_wrapper(
         tinyxml2::XMLElement* elem,
@@ -393,7 +380,4 @@ class XMLParserTest : public XMLParser{
     {
         return getXMLOctetVector(elem, e, ident);
     }
-
-    // FINISH FUNCTIONS PARIS SECTION
-
 };
