@@ -12,6 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include <rtps/transport/UDPv4Transport.h>
+
 #include <utility>
 #include <cstring>
 #include <algorithm>
@@ -23,7 +25,6 @@
 #include <fastdds/rtps/messages/MessageReceiver.h>
 #include <fastdds/dds/log/Log.hpp>
 #include <fastrtps/utils/IPLocator.h>
-#include <rtps/transport/UDPv4Transport.h>
 
 using namespace std;
 using namespace asio;

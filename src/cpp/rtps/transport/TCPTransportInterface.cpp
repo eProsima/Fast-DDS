@@ -12,11 +12,19 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include <rtps/transport/TCPTransportInterface.h>
+
+#include <utility>
+#include <cstring>
+#include <algorithm>
+#include <chrono>
+#include <thread>
+
+#include <asio/steady_timer.hpp>
 #include <fastdds/dds/log/Log.hpp>
 #include <fastrtps/utils/IPLocator.h>
 #include <fastrtps/utils/System.h>
 #include <rtps/transport/tcp/RTCPMessageManager.h>
-#include <rtps/transport/TCPTransportInterface.h>
 #include <rtps/transport/TCPSenderResource.hpp>
 #include <rtps/transport/TCPChannelResourceBasic.h>
 #include <rtps/transport/TCPAcceptorBasic.h>
@@ -24,15 +32,6 @@
 #include <rtps/transport/TCPChannelResourceSecure.h>
 #include <rtps/transport/TCPAcceptorSecure.h>
 #endif // if TLS_FOUND
-
-#include <asio/steady_timer.hpp>
-#include <utility>
-#include <cstring>
-#include <algorithm>
-
-#include <chrono>
-#include <thread>
-
 #include <utils/SystemInfo.hpp>
 
 using namespace std;

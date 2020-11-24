@@ -12,6 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include <rtps/transport/UDPTransportInterface.h>
+
 #include <utility>
 #include <cstring>
 #include <algorithm>
@@ -21,7 +23,6 @@
 #include <fastdds/rtps/messages/CDRMessage.h>
 #include <fastdds/dds/log/Log.hpp>
 #include <fastrtps/utils/IPLocator.h>
-#include <rtps/transport/UDPTransportInterface.h>
 #include <rtps/transport/UDPSenderResource.hpp>
 
 using namespace std;

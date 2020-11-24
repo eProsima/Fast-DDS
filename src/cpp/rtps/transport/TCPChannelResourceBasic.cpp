@@ -12,12 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include <rtps/transport/TCPChannelResourceBasic.h>
+
 #include <future>
 #include <array>
 
 #include <asio.hpp>
 #include <fastrtps/utils/IPLocator.h>
-#include <rtps/transport/TCPChannelResource.h>
 #include <rtps/transport/TCPTransportInterface.h>
 
 using namespace asio;
