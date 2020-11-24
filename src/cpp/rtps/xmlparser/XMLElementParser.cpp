@@ -3000,7 +3000,7 @@ XMLP_ret XMLParser::getXMLOctetVector(
         uint8_t /*ident*/)
 {
     (void)(elem);
-    logError(XMLPARSER, "Tag '" << elem->Value() << "' octetVector do not supported for now");
+    logError(XMLPARSER, "octetVector do not supported for now");
     return XMLP_ret::XML_OK;
 }
 
