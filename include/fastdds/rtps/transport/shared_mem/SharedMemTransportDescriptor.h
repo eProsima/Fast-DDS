@@ -28,13 +28,13 @@ class TransportInterface;
  * The kind value for SharedMemTransportDescriptor is given by eprosima::fastrtps::rtps::LOCATOR_KIND_SHM.
  *
  * - segment_size_: size of the shared memory segment (in octets).
- * 
+ *
  * - port_queue_capacity_: size of the listening port (in messages).
- * 
+ *
  * - healthy_check_timeout_ms_: timeout for the health check of ports (ms).
- * 
+ *
  * - rtps_dump_file_: full path of the protocol dump file.
- * 
+ *
  * @ingroup TRANSPORT_MODULE
  */
 struct SharedMemTransportDescriptor : public TransportDescriptorInterface

@@ -24,13 +24,13 @@ namespace rtps {
 /**
  * UDPv4 Transport configuration
  * The kind value for UDPv4TransportDescriptor is given by eprosima::fastrtps::rtps::LOCATOR_KIND_UDPv4.
- * 
+ *
  * @ingroup TRANSPORT_MODULE
  */
 struct UDPv4TransportDescriptor : public UDPTransportDescriptor
 {
     //! Destructor
-    virtual ~UDPv4TransportDescriptor() =default;
+    virtual ~UDPv4TransportDescriptor() = default;
 
     virtual TransportInterface* create_transport() const override;
 

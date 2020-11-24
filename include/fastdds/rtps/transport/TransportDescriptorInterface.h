@@ -30,11 +30,11 @@ class TransportInterface;
  * It acts as a builder for a given transport meaning that it allows to configure
  * the transport, and then a new Transport can be built according to this configuration
  * using its create_transport() factory member function.
- * 
+ *
  * - maxMessageSize: maximum size of a single message in the transport.
- * 
+ *
  * - maxInitialPeersRange: number of channels opened with each initial remote peer.
- * 
+ *
  * @ingroup RTPS_MODULE
  * */
 struct TransportDescriptorInterface
