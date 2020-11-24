@@ -16,6 +16,7 @@
 #define _FASTDDS_UDP_TRANSPORT_DESCRIPTOR_
 
 #include <fastdds/rtps/transport/SocketTransportDescriptor.h>
+#include <fastrtps/fastrtps_dll.h>
 
 namespace eprosima {
 namespace fastdds {

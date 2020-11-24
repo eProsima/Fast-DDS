@@ -12,11 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include <rtps/transport/test_UDPv4Transport.h>
+
 #include <cstdlib>
 #include <functional>
 
 #include <asio.hpp>
-#include <rtps/transport/test_UDPv4Transport.h>
 
 using namespace std;
 

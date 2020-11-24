@@ -12,8 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include <fastrtps/utils/IPLocator.h>
 #include <rtps/transport/TCPAcceptorBasic.h>
+
+#include <fastrtps/utils/IPLocator.h>
 #include <rtps/transport/TCPTransportInterface.h>
 
 namespace eprosima {

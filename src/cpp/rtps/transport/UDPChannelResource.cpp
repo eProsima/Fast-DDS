@@ -12,10 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include <rtps/transport/UDPChannelResource.h>
+
 #include <asio.hpp>
 #include <fastdds/rtps/messages/MessageReceiver.h>
 #include <rtps/transport/UDPTransportInterface.h>
-#include <rtps/transport/UDPChannelResource.h>
 
 namespace eprosima {
 namespace fastdds {
