@@ -332,7 +332,7 @@ std::string IPLocator::toIPv6string(
         auto field = (locator.address[i] << 8) + locator.address[i + 1];
         ss << field << ":";
     }
-    auto field = locator.address[14] + (locator.address[15] << 8);
+    auto field = (locator.address[14] << 8) + locator.address[15];
     ss << field;
     return ss.str();
 }
@@ -665,7 +665,7 @@ bool IPLocator::compareAddress(
         return false;
     }
 
-    if (!fullAddress && (loc1.kind == LOCATOR_KIND_UDPv4 || loc1.kind == LOCATOR_KIND_TCPv4) )
+    if (!fullAddress && (loc1.kind == LOCATOR_KIND_UDPv4 || loc1.kind == LOCATOR_KIND_TCPv4))
     {
         return memcmp(&loc1.address[12], &loc2.address[12], 4) == 0;
     }
