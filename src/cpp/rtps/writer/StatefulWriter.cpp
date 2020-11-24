@@ -578,8 +578,6 @@ bool StatefulWriter::change_removed_by_history(
     may_remove_change_ = 2;
     may_remove_change_cond_.notify_one();
 
-    check_acked_status();
-
     return true;
 }
 
@@ -1582,11 +1580,18 @@ bool StatefulWriter::is_acked_by_all(
         return false;
     }
 
-    assert(mp_history->next_sequence_number() > change->sequenceNumber);
-    return std::all_of(matched_readers_.begin(), matched_readers_.end(),
-                   [change](const ReaderProxy* reader)
+    return is_acked_by_all(change->sequenceNumber);
+}
+
+bool StatefulWriter::is_acked_by_all(
+        const SequenceNumber_t seq) const
+{
+    assert(mp_history->next_sequence_number() > seq);
+    return (seq < next_all_acked_notify_sequence_) ||
+           std::all_of(matched_readers_.begin(), matched_readers_.end(),
+                   [seq](const ReaderProxy* reader)
                    {
-                       return reader->change_is_acked(change->sequenceNumber);
+                       return reader->change_is_acked(seq);
                    });
 }
 
@@ -1805,7 +1810,7 @@ bool StatefulWriter::wait_for_acknowledgement(
     return may_remove_change_cond_.wait_until(lock, max_blocking_time_point,
                    [this, &seq]()
                    {
-                       return seq < next_all_acked_notify_sequence_;
+                       return is_acked_by_all(seq);
                    });
 }
 

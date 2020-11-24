@@ -371,6 +371,9 @@ public:
 
 private:
 
+    bool is_acked_by_all(
+            const SequenceNumber_t seq) const;
+
     void update_reader_info(
             bool create_sender_resources);
 
