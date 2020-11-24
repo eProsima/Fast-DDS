@@ -104,14 +104,14 @@ TEST_F(XMLParserTests, getXMLLifespanQos)
     // Parametrized XML
     const char* xml_p =
             "\
-    <lifespan>\
-        <duration>\
-            <sec>%s</sec>\
-            <nanosec>%s</nanosec>\
-        </duration>\
-        %s\
-    </lifespan>\
-    ";
+            <lifespan>\
+                <duration>\
+                    <sec>%s</sec>\
+                    <nanosec>%s</nanosec>\
+                </duration>\
+                %s\
+            </lifespan>\
+            ";
     char xml[500];
 
     // Valid XML
@@ -139,8 +139,8 @@ TEST_F(XMLParserTests, getXMLLifespanQos)
     // Missing element
     const char* miss_xml =
             "\
-    <lifespan></lifespan>\
-    ";
+            <lifespan></lifespan>\
+            ";
     ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(miss_xml));
     titleElement = xml_doc.RootElement();
     EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::getXMLLifespanQos_wrapper(titleElement, lifespan, ident));
@@ -166,15 +166,15 @@ TEST_F(XMLParserTests, getXMLDisablePositiveAcksQos)
     // Parametrized XML
     const char* xml_p =
             "\
-    <disablePositiveAcks>\
-        <enabled>%s</enabled>\
-        <duration>\
-            <sec>%s</sec>\
-            <nanosec>%s</nanosec>\
-        </duration>\
-        %s\
-    </disablePositiveAcks>\
-    ";
+            <disablePositiveAcks>\
+                <enabled>%s</enabled>\
+                <duration>\
+                    <sec>%s</sec>\
+                    <nanosec>%s</nanosec>\
+                </duration>\
+                %s\
+            </disablePositiveAcks>\
+            ";
     char xml[500];
 
     // Valid XML
@@ -231,16 +231,16 @@ TEST_F(XMLParserTests, getXMLLocatorUDPv6)
     // Parametrized XML
     const char* xml_p =
             "\
-    <unicastLocatorList>\
-        <locator>\
-            <udpv6>\
-                <port>%s</port>\
-                <address>%s</address>\
-                %s\
-            </udpv6>\
-        </locator>\
-    </unicastLocatorList>\
-    ";
+            <unicastLocatorList>\
+                <locator>\
+                    <udpv6>\
+                        <port>%s</port>\
+                        <address>%s</address>\
+                        %s\
+                    </udpv6>\
+                </locator>\
+            </unicastLocatorList>\
+            ";
     char xml[500];
 
     // Valid XML
@@ -294,20 +294,20 @@ TEST_F(XMLParserTests, getXMLLocatorTCPv4)
     // Parametrized XML
     const char* xml_p =
             "\
-    <unicastLocatorList>\
-        <locator>\
-            <tcpv4>\
-                <physical_port>%s</physical_port>\
-                <port>%s</port>\
-                <unique_lan_id>%s</unique_lan_id>\
-                <wan_address>%s</wan_address>\
-                <address>%s</address>\
-                %s\
-            </tcpv4>\
-        </locator>\
-    </unicastLocatorList>\
-    ";
-    char xml[500];
+            <unicastLocatorList>\
+                <locator>\
+                    <tcpv4>\
+                        <physical_port>%s</physical_port>\
+                        <port>%s</port>\
+                        <unique_lan_id>%s</unique_lan_id>\
+                        <wan_address>%s</wan_address>\
+                        <address>%s</address>\
+                        %s\
+                    </tcpv4>\
+                </locator>\
+            </unicastLocatorList>\
+            ";
+    char xml[1000];
 
     // Valid XML
     sprintf(xml, xml_p, "5100", "8844", "192.168.1.1.1.1.2.55", "80.80.99.45", "192.168.1.55", "");
@@ -353,15 +353,12 @@ TEST_F(XMLParserTests, getXMLLocatorTCPv4)
     titleElement = xml_doc.RootElement();
     EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::getXMLLocatorList_wrapper(titleElement, list, ident));
 
-
-
     // Invalid element
     sprintf(xml, xml_p, "5100", "8844", "192.168.1.1.1.1.2.55", "80.80.99.45", "192.168.1.55",
             "<bad_element></bad_element>");
     ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
     titleElement = xml_doc.RootElement();
     EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::getXMLLocatorList_wrapper(titleElement, list, ident));
-
 }
 
 /*
@@ -383,17 +380,17 @@ TEST_F(XMLParserTests, getXMLLocatorTCPv6)
     // Parametrized XML
     const char* xml_p =
             "\
-    <unicastLocatorList>\
-        <locator>\
-            <tcpv6>\
-                <physical_port>%s</physical_port>\
-                <port>%s</port>\
-                <address>%s</address>\
-                %s\
-            </tcpv6>\
-        </locator>\
-    </unicastLocatorList>\
-    ";
+            <unicastLocatorList>\
+                <locator>\
+                    <tcpv6>\
+                        <physical_port>%s</physical_port>\
+                        <port>%s</port>\
+                        <address>%s</address>\
+                        %s\
+                    </tcpv6>\
+                </locator>\
+            </unicastLocatorList>\
+            ";
     char xml[500];
 
     // Valid XML
@@ -452,15 +449,15 @@ TEST_F(XMLParserTests, getXMLTransports)
     // Profile describing the transport
     const char* xml_profile =
             "\
-    <profiles>\
-        <transport_descriptors>\
-            <transport_descriptor>\
-                <transport_id>ExampleTransportId1</transport_id>\
-                <type>UDPv6</type>\
-            </transport_descriptor>\
-        </transport_descriptors>\
-    </profiles>\
-    ";
+            <profiles>\
+                <transport_descriptors>\
+                    <transport_descriptor>\
+                        <transport_id>ExampleTransportId1</transport_id>\
+                        <type>UDPv6</type>\
+                    </transport_descriptor>\
+                </transport_descriptors>\
+            </profiles>\
+            ";
     tinyxml2::XMLDocument xml_profile_doc;
     ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_profile_doc.Parse(xml_profile));
     ASSERT_EQ(xmlparser::XMLP_ret::XML_OK, xmlparser::XMLProfileManager::loadXMLNode(xml_profile_doc));
@@ -468,10 +465,10 @@ TEST_F(XMLParserTests, getXMLTransports)
     // Parametrized XML
     const char* xml_p =
             "\
-    <userTransports>\
-        <transport_id>%s</transport_id>\
-    </userTransports>\
-    ";
+            <userTransports>\
+                <transport_id>%s</transport_id>\
+            </userTransports>\
+            ";
     char xml[500];
 
     // Valid XML
@@ -528,23 +525,23 @@ TEST_F(XMLParserTests, getXMLPropertiesPolicy)
     // Template xml
     const char* xml_p =
             "\
-    <propertiesPolicy>\
-        <properties>\
-            <property>\
-                <name>%s</name>\
-                <value>%s</value>\
-                <propagate>%s</propagate>\
-            </property>\
-        </properties>\
-        <binary_properties>\
-            <property>\
-                <name>%s</name>\
-                <value></value>\
-                <propagate>%s</propagate>\
-            </property>\
-        </binary_properties>\
-    </propertiesPolicy>\
-    ";
+            <propertiesPolicy>\
+                <properties>\
+                    <property>\
+                        <name>%s</name>\
+                        <value>%s</value>\
+                        <propagate>%s</propagate>\
+                    </property>\
+                </properties>\
+                <binary_properties>\
+                    <property>\
+                        <name>%s</name>\
+                        <value></value>\
+                        <propagate>%s</propagate>\
+                    </property>\
+                </binary_properties>\
+            </propertiesPolicy>\
+            ";
     char xml[1000];
 
     sprintf(xml, xml_p,
@@ -577,10 +574,10 @@ TEST_F(XMLParserTests, getXMLPropertiesPolicy)
     // Empyty property XML
     const char* xml_empty_prop =
             "\
-    <propertiesPolicy>\
-        <properties></properties>\
-    </propertiesPolicy>\
-    ";
+            <propertiesPolicy>\
+                <properties></properties>\
+            </propertiesPolicy>\
+            ";
 
     // Missing data
     ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml_empty_prop));
@@ -591,10 +588,10 @@ TEST_F(XMLParserTests, getXMLPropertiesPolicy)
     // Empyty binary_property XML
     const char* xml_empty_bin_prop =
             "\
-    <propertiesPolicy>\
-        <binary_properties></binary_properties>\
-    </propertiesPolicy>\
-    ";
+            <propertiesPolicy>\
+                <binary_properties></binary_properties>\
+            </propertiesPolicy>\
+            ";
 
     // Missing data
     ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml_empty_bin_prop));
@@ -604,10 +601,10 @@ TEST_F(XMLParserTests, getXMLPropertiesPolicy)
     // wrong XML
     const char* xml_bad_prop =
             "\
-    <propertiesPolicy>\
-        <bad_properties></bad_properties>\
-    </propertiesPolicy>\
-    ";
+            <propertiesPolicy>\
+                <bad_properties></bad_properties>\
+            </propertiesPolicy>\
+            ";
 
     // Wrong property
     ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml_bad_prop));
@@ -652,11 +649,11 @@ TEST_F(XMLParserTests, getXMLRemoteServer)
     // Parametrized XML
     const char* xml_p =
             "\
-    <RemoteServer %s>\
-            <metatrafficUnicastLocatorList>%s</metatrafficUnicastLocatorList>\
-            <metatrafficMulticastLocatorList>%s</metatrafficMulticastLocatorList>\
-    </RemoteServer>\
-    ";
+            <RemoteServer %s>\
+                    <metatrafficUnicastLocatorList>%s</metatrafficUnicastLocatorList>\
+                    <metatrafficMulticastLocatorList>%s</metatrafficMulticastLocatorList>\
+            </RemoteServer>\
+            ";
     char xml[1200];
 
     // Valid XML
@@ -709,7 +706,7 @@ TEST_F(XMLParserTests, getXMLRemoteServer)
  * 1. Check a missing case of each of the <port> child tags.
  * 2. Check a wrong child tag.
  */
-TEST_F(XMLParserTests, getXMLPortParameters_negative)
+TEST_F(XMLParserTests, getXMLPortParametersNegativeClauses)
 {
     uint8_t ident = 1;
     PortParameters port;
@@ -727,24 +724,26 @@ TEST_F(XMLParserTests, getXMLPortParameters_negative)
             parameters[i] = "";
             xml =
                     "\
-            <port>\
-                <portBase>" + parameters[0] + "</portBase>\
-                <domainIDGain>" + parameters[1] + "</domainIDGain>\
-                <participantIDGain>" + parameters[2] + "</participantIDGain>\
-                <offsetd0>" + parameters[3] + "</offsetd0>\
-                <offsetd1>" + parameters[4] + "</offsetd1>\
-                <offsetd2>" + parameters[5] + "</offsetd2>\
-                <offsetd3>" + parameters[6] + "</offsetd3>\
-            </port>\
-            ";
+                    <port>\
+                        <portBase>" + parameters[0] + "</portBase>\
+                        <domainIDGain>" + parameters[1] + "</domainIDGain>\
+                        <participantIDGain>" + parameters[2] +
+                    "</participantIDGain>\
+                        <offsetd0>" + parameters[3] + "</offsetd0>\
+                        <offsetd1>" + parameters[4] + "</offsetd1>\
+                        <offsetd2>" + parameters[5] + "</offsetd2>\
+                        <offsetd3>" + parameters[6] + "</offsetd3>\
+                    </port>\
+                    ";
         }
         else
         {
-            xml = "\
-            <port>\
-                <bad_element></bad_element>\
-            </port>\
-            ";
+            xml =
+                    "\
+                    <port>\
+                        <bad_element></bad_element>\
+                    </port>\
+                    ";
         }
 
         ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml.c_str()));
@@ -758,7 +757,7 @@ TEST_F(XMLParserTests, getXMLPortParameters_negative)
  * 1. Check an incorrect for each of the possible SubscriberAttributes.
  * 2. Check an non existant attribute.
  */
-TEST_F(XMLParserTests, getXMLSubscriberAttributes_negative)
+TEST_F(XMLParserTests, getXMLSubscriberAttributesNegativeClauses)
 {
     uint8_t ident = 1;
     SubscriberAttributes attr;
@@ -786,10 +785,10 @@ TEST_F(XMLParserTests, getXMLSubscriberAttributes_negative)
     {
         xml =
                 "\
-        <subscriber profile_name=\"test_subscriber_profile\" is_default_profile=\"true\">\
-            " + *it + "\
-        </subscriber>\
-        ";
+                <subscriber profile_name=\"test_subscriber_profile\" is_default_profile=\"true\">\
+                    " + *it + "\
+                </subscriber>\
+                ";
         ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml.c_str()));
         titleElement = xml_doc.RootElement();
         EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::getXMLSubscriberAttributes_wrapper(titleElement, attr, ident));
@@ -802,7 +801,7 @@ TEST_F(XMLParserTests, getXMLSubscriberAttributes_negative)
  * 1. Check an incorrect for each of the possible PublisherAttributes.
  * 2. Check an non existant attribute.
  */
-TEST_F(XMLParserTests, getXMLPublisherAttributes_negative)
+TEST_F(XMLParserTests, getXMLPublisherAttributesNegativeClauses)
 {
     uint8_t ident = 1;
     PublisherAttributes attr;
@@ -830,10 +829,10 @@ TEST_F(XMLParserTests, getXMLPublisherAttributes_negative)
     {
         xml =
                 "\
-        <publisher profile_name=\"test_publisher_profile\" is_default_profile=\"true\">\
-            " + *it + "\
-        </publisher>\
-        ";
+                <publisher profile_name=\"test_publisher_profile\" is_default_profile=\"true\">\
+                    " + *it + "\
+                </publisher>\
+                ";
         ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml.c_str()));
         titleElement = xml_doc.RootElement();
         EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::getXMLPublisherAttributes_wrapper(titleElement, attr, ident));
@@ -846,7 +845,7 @@ TEST_F(XMLParserTests, getXMLPublisherAttributes_negative)
  * 1. Check an incorrect for each of the possible types of <locator>.
  * 2. Check an non existant type of locator.
  */
-TEST_F(XMLParserTests, getXMLLocatorList_negative)
+TEST_F(XMLParserTests, getXMLLocatorListNegativeClauses)
 {
 
     uint8_t ident = 1;
@@ -868,10 +867,10 @@ TEST_F(XMLParserTests, getXMLLocatorList_negative)
     {
         xml =
                 "\
-        <locatorList>\
-            " + *it + "\
-        </locatorList>\
-        ";
+                <locatorList>\
+                    " + *it + "\
+                </locatorList>\
+                ";
         ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml.c_str()));
         titleElement = xml_doc.RootElement();
         EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::getXMLLocatorList_wrapper(titleElement, list, ident));
@@ -884,7 +883,7 @@ TEST_F(XMLParserTests, getXMLLocatorList_negative)
  * 1. Check a missing value for a <guid>.
  * 2. Check passing a nullptr as a tinyxml2::XMLElement argument.
  */
-TEST_F(XMLParserTests, getXMLguidPrefix_negative)
+TEST_F(XMLParserTests, getXMLguidPrefixNegativeClauses)
 {
 
     uint8_t ident = 1;
@@ -927,7 +926,7 @@ TEST_F(XMLParserTests, getXMLguidPrefix_positive)
  * 3. Check passing a non valid value of <sec> and <nanosec>.
  * 4. Check passing an empty <duration> field.
  */
-TEST_F(XMLParserTests, getXMLDuration_negative)
+TEST_F(XMLParserTests, getXMLDurationNegativeClauses)
 {
 
     uint8_t ident = 1;
@@ -950,10 +949,10 @@ TEST_F(XMLParserTests, getXMLDuration_negative)
     {
         xml =
                 "\
-        <duration>\
-            " + *it + "\
-        </duration>\
-        ";
+                <duration>\
+                    " + *it + "\
+                </duration>\
+                ";
         ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml.c_str()));
         titleElement = xml_doc.RootElement();
         EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::getXMLDuration_wrapper(titleElement, duration, ident));
@@ -985,10 +984,10 @@ TEST_F(XMLParserTests, getXMLDuration_infinite)
     {
         xml =
                 "\
-        <duration>\
-            " + *it + "\
-        </duration>\
-        ";
+                <duration>\
+                    " + *it + "\
+                </duration>\
+                ";
         ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml.c_str()));
         titleElement = xml_doc.RootElement();
         EXPECT_EQ(XMLP_ret::XML_OK, XMLParserTest::getXMLDuration_wrapper(titleElement, duration, ident));
@@ -1029,7 +1028,7 @@ TEST_F(XMLParserTests, getXMLString)
  * 2. Check passing an empty <list> field.
  * 3. Check passing a non valid value of <RemoteServer> descriptor as an element of <list>.
  */
-TEST_F(XMLParserTests, getXMLList_negative)
+TEST_F(XMLParserTests, getXMLListNegativeClauses)
 {
     uint8_t ident = 1;
     RemoteServerList_t list;
@@ -1067,17 +1066,17 @@ TEST_F(XMLParserTests, getXMLList_positive)
     // bad remote server element
     const char* xml =
             "<list>\
-        <RemoteServer prefix=\"4D.49.47.55.45.4c.5f.42.41.52.52.4f\">\
-                    <metatrafficUnicastLocatorList>\
-                        <locator>\
-                            <udpv6>\
-                                <port>8844</port>\
-                                <address>::1</address>\
-                            </udpv6>\
-                        </locator>\
-                    </metatrafficUnicastLocatorList>\
-        </RemoteServer>\
-    </list>";
+                <RemoteServer prefix=\"4D.49.47.55.45.4c.5f.42.41.52.52.4f\">\
+                            <metatrafficUnicastLocatorList>\
+                                <locator>\
+                                    <udpv6>\
+                                        <port>8844</port>\
+                                        <address>::1</address>\
+                                    </udpv6>\
+                                </locator>\
+                            </metatrafficUnicastLocatorList>\
+                </RemoteServer>\
+            </list>";
 
     ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
     titleElement = xml_doc.RootElement();
@@ -1097,7 +1096,7 @@ TEST_F(XMLParserTests, getXMLList_positive)
  * 1. Check passing a nullptr as a tinyxml2::XMLElement argument.
  * 2. Check passing a non boolean valie inside the field.
  */
-TEST_F(XMLParserTests, getXMLBool_negative)
+TEST_F(XMLParserTests, getXMLBoolNegativeClauses)
 {
     uint8_t ident = 1;
     bool b;
@@ -1116,7 +1115,7 @@ TEST_F(XMLParserTests, getXMLBool_negative)
  * 1. Check passing a nullptr as a tinyxml2::XMLElement argument.
  * 2. Check passing a non integer valie inside the field.
  */
-TEST_F(XMLParserTests, getXMLInt_negative)
+TEST_F(XMLParserTests, getXMLIntNegativeClauses)
 {
     uint8_t ident = 1;
     int i;
@@ -1174,17 +1173,17 @@ TEST_F(XMLParserTests, getXMLInitialAnnouncementsConfig)
     // Parametrized XML
     const char* xml_p =
             "\
-    <discovery_config>\
-        <initialAnnouncements>\
-            %s\
-            <count>%s</count>\
-            <period>\
-                <sec>%s</sec>\
-                <nanosec>%s</nanosec>\
-            </period>\
-        </initialAnnouncements>\
-    </discovery_config>\
-    ";
+            <discovery_config>\
+                <initialAnnouncements>\
+                    %s\
+                    <count>%s</count>\
+                    <period>\
+                        <sec>%s</sec>\
+                        <nanosec>%s</nanosec>\
+                    </period>\
+                </initialAnnouncements>\
+            </discovery_config>\
+            ";
 
     char xml[600];
 
@@ -1208,12 +1207,12 @@ TEST_F(XMLParserTests, getXMLInitialAnnouncementsConfig)
 
     const char* xml_e =
             "\
-    <discovery_config>\
-        <initialAnnouncements>\
-            <bad_element>1</bad_element>\
-        </initialAnnouncements>\
-    </discovery_config>\
-    ";
+            <discovery_config>\
+                <initialAnnouncements>\
+                    <bad_element>1</bad_element>\
+                </initialAnnouncements>\
+            </discovery_config>\
+            ";
 
     // Check a wrong xml element definition inside <initialAnnouncements>
     ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml_e));
@@ -1244,10 +1243,10 @@ TEST_F(XMLParserTests, getXMLWriterReaderQosPolicies)
     // Parametrized XML
     const char* xml_p =
             "\
-    <qos>\
-        %s\
-    </qos>\
-    ";
+            <qos>\
+                %s\
+            </qos>\
+            ";
 
     char xml[600];
 
@@ -1360,10 +1359,10 @@ TEST_F(XMLParserTests, getXMLWriterReaderUnsupportedQosPolicies)
     // Parametrized XML
     const char* xml_p =
             "\
-    <qos>\
-        %s\
-    </qos>\
-    ";
+            <qos>\
+                %s\
+            </qos>\
+            ";
 
     char xml[600];
 
@@ -1463,12 +1462,12 @@ TEST_F(XMLParserTests, ParticipantAllocationAttributesDataLimits)
     // XML snippet
     const char* xml =
             "\
-    <rtpsParticipantAllocationAttributes>\
-        <max_properties>10</max_properties>\
-        <max_user_data>20</max_user_data>\
-        <max_partitions>3</max_partitions>\
-    </rtpsParticipantAllocationAttributes>\
-    ";
+            <rtpsParticipantAllocationAttributes>\
+                <max_properties>10</max_properties>\
+                <max_user_data>20</max_user_data>\
+                <max_partitions>3</max_partitions>\
+            </rtpsParticipantAllocationAttributes>\
+            ";
 
     // Load the xml
     ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
@@ -1502,11 +1501,11 @@ TEST_F(XMLParserTests, getXMLDiscoverySettingsStaticEDP)
     // XML snippet
     const char* xml =
             "\
-    <discovery_config>\
-        <EDP>STATIC</EDP>\
-        <staticEndpointXMLFilename>my_static_edp.xml</staticEndpointXMLFilename>\
-    </discovery_config>\
-    ";
+            <discovery_config>\
+                <EDP>STATIC</EDP>\
+                <staticEndpointXMLFilename>my_static_edp.xml</staticEndpointXMLFilename>\
+            </discovery_config>\
+            ";
 
     // Load the xml
     ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
@@ -1536,10 +1535,10 @@ TEST_F(XMLParserTests, getXMLLivelinessQosAutomaticKind)
     // XML snippet
     const char* xml =
             "\
-    <liveliness>\
-        <kind>AUTOMATIC</kind>\
-    </liveliness>\
-    ";
+            <liveliness>\
+                <kind>AUTOMATIC</kind>\
+            </liveliness>\
+            ";
 
     // Load the xml
     ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
@@ -1565,10 +1564,10 @@ TEST_F(XMLParserTests, getXMLPublishModeQosSynchronousKind)
     // XML snippet
     const char* xml =
             "\
-    <publishMode>\
-        <kind>SYNCHRONOUS</kind>\
-    </publishMode>\
-    ";
+            <publishMode>\
+                <kind>SYNCHRONOUS</kind>\
+            </publishMode>\
+            ";
 
     // Load the xml
     ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
@@ -1594,8 +1593,8 @@ TEST_F(XMLParserTests, getXMLHistoryMemoryPolicyDynamicReusable)
     // XML snippet
     const char* xml =
             "\
-    <historyMemoryPolicyType>DYNAMIC_REUSABLE</historyMemoryPolicyType>\
-    ";
+            <historyMemoryPolicyType>DYNAMIC_REUSABLE</historyMemoryPolicyType>\
+            ";
 
     // Load the xml
     ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
@@ -1624,10 +1623,10 @@ TEST_F(XMLParserTests, getXMLDurabilityQosKind)
     // Parametrized XML
     const char* xml_p =
             "\
-    <durability>\
-        <kind>%s</kind>\
-    </durability>\
-    ";
+            <durability>\
+                <kind>%s</kind>\
+            </durability>\
+            ";
     char xml[500];
 
     std::vector<std::string> kinds = {"VOLATILE", "TRANSIENT_LOCAL", "TRANSIENT", "PERSISTENT"};
@@ -1681,7 +1680,7 @@ TEST_F(XMLParserTests, getXMLDurabilityQosKind)
  *      <avoid_builtin_multicast>
  * 2. Check invalid element
  */
-TEST_F(XMLParserTests, getXMLBuiltinAttributes_invalidXML)
+TEST_F(XMLParserTests, getXMLBuiltinAttributesNegativeClauses)
 {
     uint8_t ident = 1;
     BuiltinAttributes builtin;
@@ -1691,18 +1690,18 @@ TEST_F(XMLParserTests, getXMLBuiltinAttributes_invalidXML)
     // Parametrized XML
     const char* xml_p =
             "\
-    <builtinAttributes>\
-        %s\
-    </builtinAttributes>\
-    ";
+            <builtinAttributes>\
+                %s\
+            </builtinAttributes>\
+            ";
     char xml[1000];
 
     const char* field_p =
             "\
-        <%s>\
-            <bad_element> </bad_element>\
-        </%s>\
-        ";
+            <%s>\
+                <bad_element> </bad_element>\
+            </%s>\
+            ";
     char field[500];
 
     std::vector<std::string> field_vec =
@@ -1743,7 +1742,7 @@ TEST_F(XMLParserTests, getXMLBuiltinAttributes_invalidXML)
  *      <periodMillisecs>
  * 2. Check invalid element
  */
-TEST_F(XMLParserTests, getXMLThroughputController_invalidXML)
+TEST_F(XMLParserTests, getXMLThroughputControllerNegativeClauses)
 {
     uint8_t ident = 1;
     ThroughputControllerDescriptor throughputController;
@@ -1753,18 +1752,18 @@ TEST_F(XMLParserTests, getXMLThroughputController_invalidXML)
     // Parametrized XML
     const char* xml_p =
             "\
-    <throughputController>\
-        %s\
-    </throughputController>\
-    ";
+            <throughputController>\
+                %s\
+            </throughputController>\
+            ";
     char xml[1000];
 
     const char* field_p =
             "\
-        <%s>\
-            <bad_element> </bad_element>\
-        </%s>\
-        ";
+            <%s>\
+                <bad_element> </bad_element>\
+            </%s>\
+            ";
     char field[500];
 
     std::vector<std::string> field_vec =
@@ -1803,7 +1802,7 @@ TEST_F(XMLParserTests, getXMLThroughputController_invalidXML)
  * 2. Check invalid <kind> type
  * 3. Check invalid element
  */
-TEST_F(XMLParserTests, getXMLTopicAttributes_invalidXML)
+TEST_F(XMLParserTests, getXMLTopicAttributesNegativeClauses)
 {
     uint8_t ident = 1;
     TopicAttributes topic;
@@ -1813,18 +1812,18 @@ TEST_F(XMLParserTests, getXMLTopicAttributes_invalidXML)
     // Parametrized XML
     const char* xml_p =
             "\
-    <topicAttributes>\
-        %s\
-    </topicAttributes>\
-    ";
+            <topicAttributes>\
+                %s\
+            </topicAttributes>\
+            ";
     char xml[1000];
 
     const char* field_p =
             "\
-        <%s>\
-            <bad_element> </bad_element>\
-        </%s>\
-        ";
+            <%s>\
+                <bad_element> </bad_element>\
+            </%s>\
+            ";
     char field[500];
 
     std::vector<std::string> field_vec =
@@ -1850,10 +1849,10 @@ TEST_F(XMLParserTests, getXMLTopicAttributes_invalidXML)
     {
         const char* tag =
                 "\
-        <kind>\
-            BAD_KEY\
-        </kind>\
-        ";
+                <kind>\
+                    BAD_KEY\
+                </kind>\
+                ";
         sprintf(xml, xml_p, tag);
         ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
         titleElement = xml_doc.RootElement();
@@ -1877,7 +1876,7 @@ TEST_F(XMLParserTests, getXMLTopicAttributes_invalidXML)
  * 2. Check invalid <kind> type
  * 3. Check invalid element
  */
-TEST_F(XMLParserTests, getXMLResourceLimitsQos_invalidXML)
+TEST_F(XMLParserTests, getXMLResourceLimitsQosNegativeClauses)
 {
     uint8_t ident = 1;
     ResourceLimitsQosPolicy resourceLimitsQos;
@@ -1887,18 +1886,18 @@ TEST_F(XMLParserTests, getXMLResourceLimitsQos_invalidXML)
     // Parametrized XML
     const char* xml_p =
             "\
-    <topicAttributes>\
-        %s\
-    </topicAttributes>\
-    ";
+            <topicAttributes>\
+                %s\
+            </topicAttributes>\
+            ";
     char xml[1000];
 
     const char* field_p =
             "\
-        <%s>\
-            <bad_element> </bad_element>\
-        </%s>\
-        ";
+            <%s>\
+                <bad_element> </bad_element>\
+            </%s>\
+            ";
     char field[500];
 
     std::vector<std::string> field_vec =
@@ -1937,7 +1936,7 @@ TEST_F(XMLParserTests, getXMLResourceLimitsQos_invalidXML)
  * 3. Check incalid config <increment> = 0
  * 4. Check invalid element
  */
-TEST_F(XMLParserTests, getXMLContainerAllocationConfig_invalidXML)
+TEST_F(XMLParserTests, getXMLContainerAllocationConfigNegativeClauses)
 {
     uint8_t ident = 1;
     ResourceLimitedContainerConfig allocation_config;
@@ -1947,18 +1946,18 @@ TEST_F(XMLParserTests, getXMLContainerAllocationConfig_invalidXML)
     // Parametrized XML
     const char* xml_p =
             "\
-    <containerAllocationConfig>\
-        %s\
-    </containerAllocationConfig>\
-    ";
+            <containerAllocationConfig>\
+                %s\
+            </containerAllocationConfig>\
+            ";
     char xml[1000];
 
     const char* field_p =
             "\
-        <%s>\
-            <bad_element> </bad_element>\
-        </%s>\
-        ";
+            <%s>\
+                <bad_element> </bad_element>\
+            </%s>\
+            ";
     char field[500];
 
     std::vector<std::string> field_vec =
@@ -1982,10 +1981,10 @@ TEST_F(XMLParserTests, getXMLContainerAllocationConfig_invalidXML)
     {
         const char* tag =
                 "\
-            <initial> 2 </initial>\
-            <maximum> 1 </maximum>\
-            <increment> 1 </increment>\
-        ";
+                <initial> 2 </initial>\
+                <maximum> 1 </maximum>\
+                <increment> 1 </increment>\
+                ";
         sprintf(xml, xml_p, tag);
         ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
         titleElement = xml_doc.RootElement();
@@ -1997,10 +1996,10 @@ TEST_F(XMLParserTests, getXMLContainerAllocationConfig_invalidXML)
     {
         const char* tag =
                 "\
-            <initial> 1 </initial>\
-            <maximum> 2 </maximum>\
-            <increment> 0 </increment>\
-        ";
+                <initial> 1 </initial>\
+                <maximum> 2 </maximum>\
+                <increment> 0 </increment>\
+                ";
         sprintf(xml, xml_p, tag);
         ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
         titleElement = xml_doc.RootElement();
@@ -2024,7 +2023,7 @@ TEST_F(XMLParserTests, getXMLContainerAllocationConfig_invalidXML)
  * 2. Check invalid <kind> element
  * 3. Check invalid element
  */
-TEST_F(XMLParserTests, getXMLHistoryQosPolicy_invalidXML)
+TEST_F(XMLParserTests, getXMLHistoryQosPolicyNegativeClauses)
 {
     uint8_t ident = 1;
     HistoryQosPolicy historyQos;
@@ -2034,18 +2033,18 @@ TEST_F(XMLParserTests, getXMLHistoryQosPolicy_invalidXML)
     // Parametrized XML
     const char* xml_p =
             "\
-    <historyQosPolicy>\
-        %s\
-    </historyQosPolicy>\
-    ";
+            <historyQosPolicy>\
+                %s\
+            </historyQosPolicy>\
+            ";
     char xml[1000];
 
     const char* field_p =
             "\
-        <%s>\
-            <bad_element> </bad_element>\
-        </%s>\
-        ";
+            <%s>\
+                <bad_element> </bad_element>\
+            </%s>\
+            ";
     char field[500];
 
     std::vector<std::string> field_vec =
@@ -2067,8 +2066,8 @@ TEST_F(XMLParserTests, getXMLHistoryQosPolicy_invalidXML)
     {
         const char* tag =
                 "\
-            <kind> KEEP_BAD </kind>\
-        ";
+                <kind> KEEP_BAD </kind>\
+                ";
         sprintf(xml, xml_p, tag);
         ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
         titleElement = xml_doc.RootElement();
@@ -2089,7 +2088,7 @@ TEST_F(XMLParserTests, getXMLHistoryQosPolicy_invalidXML)
  * 3. Check no <kind> element
  * 4. Check invalid element
  */
-TEST_F(XMLParserTests, getXMLDurabilityQos_invalidXML)
+TEST_F(XMLParserTests, getXMLDurabilityQosNegativeClauses)
 {
     uint8_t ident = 1;
     DurabilityQosPolicy durability;
@@ -2099,18 +2098,18 @@ TEST_F(XMLParserTests, getXMLDurabilityQos_invalidXML)
     // Parametrized XML
     const char* xml_p =
             "\
-    <durabilityQosPolicy>\
-        %s\
-    </durabilityQosPolicy>\
-    ";
+            <durabilityQosPolicy>\
+                %s\
+            </durabilityQosPolicy>\
+            ";
     char xml[1000];
 
     // Invalid kind
     {
         const char* tag =
                 "\
-            <kind> BAD_KIND </kind>\
-        ";
+                    <kind> BAD_KIND </kind>\
+                ";
         sprintf(xml, xml_p, tag);
         ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
         titleElement = xml_doc.RootElement();
@@ -2121,8 +2120,8 @@ TEST_F(XMLParserTests, getXMLDurabilityQos_invalidXML)
     {
         const char* tag =
                 "\
-            <kind> </kind>\
-        ";
+                    <kind> </kind>\
+                ";
         sprintf(xml, xml_p, tag);
         ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
         titleElement = xml_doc.RootElement();
@@ -2151,7 +2150,7 @@ TEST_F(XMLParserTests, getXMLDurabilityQos_invalidXML)
  * 2. Check no <period> element
  * 3. Check invalid element
  */
-TEST_F(XMLParserTests, getXMLDeadlineQos_invalidXML)
+TEST_F(XMLParserTests, getXMLDeadlineQosNegativeClauses)
 {
     uint8_t ident = 1;
     DeadlineQosPolicy deadline;
@@ -2161,18 +2160,18 @@ TEST_F(XMLParserTests, getXMLDeadlineQos_invalidXML)
     // Parametrized XML
     const char* xml_p =
             "\
-    <deadlineQosPolicy>\
-        %s\
-    </deadlineQosPolicy>\
-    ";
+            <deadlineQosPolicy>\
+                %s\
+            </deadlineQosPolicy>\
+            ";
     char xml[1000];
 
     // Invalid kind
     {
         const char* tag =
                 "\
-            <period> BAD_PERIOD </period>\
-        ";
+                    <period> BAD_PERIOD </period>\
+                ";
         sprintf(xml, xml_p, tag);
         ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
         titleElement = xml_doc.RootElement();
@@ -2201,7 +2200,7 @@ TEST_F(XMLParserTests, getXMLDeadlineQos_invalidXML)
  * 2. Check no <duration> element
  * 3. Check invalid element
  */
-TEST_F(XMLParserTests, getXMLLatencyBudgetQos_invalidXML)
+TEST_F(XMLParserTests, getXMLLatencyBudgetQosNegativeClauses)
 {
     uint8_t ident = 1;
     LatencyBudgetQosPolicy latencyBudget;
@@ -2211,18 +2210,18 @@ TEST_F(XMLParserTests, getXMLLatencyBudgetQos_invalidXML)
     // Parametrized XML
     const char* xml_p =
             "\
-    <latencyBudgetQosPolicy>\
-        %s\
-    </latencyBudgetQosPolicy>\
-    ";
+            <latencyBudgetQosPolicy>\
+                %s\
+            </latencyBudgetQosPolicy>\
+            ";
     char xml[1000];
 
     // Invalid duration
     {
         const char* tag =
                 "\
-            <duration> BAD_DURATION </duration>\
-        ";
+                <duration> BAD_DURATION </duration>\
+                ";
         sprintf(xml, xml_p, tag);
         ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
         titleElement = xml_doc.RootElement();
@@ -2254,7 +2253,7 @@ TEST_F(XMLParserTests, getXMLLatencyBudgetQos_invalidXML)
  * 3. Check no <max_blocking_time> element
  * 4. Check invalid element
  */
-TEST_F(XMLParserTests, getXMLReliabilityQos_invalidXML)
+TEST_F(XMLParserTests, getXMLReliabilityQosNegativeClauses)
 {
     uint8_t ident = 1;
     ReliabilityQosPolicy reliability;
@@ -2264,18 +2263,18 @@ TEST_F(XMLParserTests, getXMLReliabilityQos_invalidXML)
     // Parametrized XML
     const char* xml_p =
             "\
-    <reliabilityQosPolicy>\
-        %s\
-    </reliabilityQosPolicy>\
-    ";
+            <reliabilityQosPolicy>\
+                %s\
+            </reliabilityQosPolicy>\
+            ";
     char xml[1000];
 
     // Invalid kind
     {
         const char* tag =
                 "\
-            <kind> BAD_KIND </kind>\
-        ";
+                <kind> BAD_KIND </kind>\
+                ";
         sprintf(xml, xml_p, tag);
         ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
         titleElement = xml_doc.RootElement();
@@ -2286,8 +2285,8 @@ TEST_F(XMLParserTests, getXMLReliabilityQos_invalidXML)
     {
         const char* tag =
                 "\
-            <kind> </kind>\
-        ";
+                <kind> </kind>\
+                ";
         sprintf(xml, xml_p, tag);
         ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
         titleElement = xml_doc.RootElement();
@@ -2298,8 +2297,8 @@ TEST_F(XMLParserTests, getXMLReliabilityQos_invalidXML)
     {
         const char* tag =
                 "\
-            <max_blocking_time> BAD_MBT </max_blocking_time>\
-        ";
+                <max_blocking_time> BAD_MBT </max_blocking_time>\
+                ";
         sprintf(xml, xml_p, tag);
         ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
         titleElement = xml_doc.RootElement();
@@ -2320,7 +2319,7 @@ TEST_F(XMLParserTests, getXMLReliabilityQos_invalidXML)
  * 3. Check no <names> element
  * 4. Check invalid element
  */
-TEST_F(XMLParserTests, getXMLPartitionQos_invalidXML)
+TEST_F(XMLParserTests, getXMLPartitionQosNegativeClauses)
 {
     uint8_t ident = 1;
     PartitionQosPolicy partition;
@@ -2330,20 +2329,20 @@ TEST_F(XMLParserTests, getXMLPartitionQos_invalidXML)
     // Parametrized XML
     const char* xml_p =
             "\
-    <partitionQosPolicy>\
-        %s\
-    </partitionQosPolicy>\
-    ";
+            <partitionQosPolicy>\
+                %s\
+            </partitionQosPolicy>\
+            ";
     char xml[1000];
 
     // Invalid names
     {
         const char* tag =
                 "\
-            <names>\
-                <name>  </name>\
-            </names>\
-        ";
+                <names>\
+                    <name>  </name>\
+                </names>\
+                ";
         sprintf(xml, xml_p, tag);
         ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
         titleElement = xml_doc.RootElement();
@@ -2354,9 +2353,9 @@ TEST_F(XMLParserTests, getXMLPartitionQos_invalidXML)
     {
         const char* tag =
                 "\
-            <names>\
-            </names>\
-        ";
+                <names>\
+                </names>\
+                ";
         sprintf(xml, xml_p, tag);
         ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
         titleElement = xml_doc.RootElement();
@@ -2390,7 +2389,7 @@ TEST_F(XMLParserTests, getXMLPartitionQos_invalidXML)
  *      <nackSupressionDuration>
  * 2. Check invalid element
  */
-TEST_F(XMLParserTests, getXMLWriterTimes_invalidXML)
+TEST_F(XMLParserTests, getXMLWriterTimesNegativeClauses)
 {
     uint8_t ident = 1;
     WriterTimes times;
@@ -2400,18 +2399,18 @@ TEST_F(XMLParserTests, getXMLWriterTimes_invalidXML)
     // Parametrized XML
     const char* xml_p =
             "\
-    <writerTimes>\
-        %s\
-    </writerTimes>\
-    ";
+            <writerTimes>\
+                %s\
+            </writerTimes>\
+            ";
     char xml[1000];
 
     const char* field_p =
             "\
-        <%s>\
-            <bad_element> </bad_element>\
-        </%s>\
-        ";
+            <%s>\
+                <bad_element> </bad_element>\
+            </%s>\
+            ";
     char field[500];
 
     std::vector<std::string> field_vec =
@@ -2445,7 +2444,7 @@ TEST_F(XMLParserTests, getXMLWriterTimes_invalidXML)
  *      <heartbeatResponseDelay>
  * 2. Check invalid element
  */
-TEST_F(XMLParserTests, getXMLReaderTimes_invalidXML)
+TEST_F(XMLParserTests, getXMLReaderTimesNegativeClauses)
 {
     uint8_t ident = 1;
     ReaderTimes times;
@@ -2455,18 +2454,18 @@ TEST_F(XMLParserTests, getXMLReaderTimes_invalidXML)
     // Parametrized XML
     const char* xml_p =
             "\
-    <readerTimes>\
-        %s\
-    </readerTimes>\
-    ";
+            <readerTimes>\
+                %s\
+            </readerTimes>\
+            ";
     char xml[1000];
 
     const char* field_p =
             "\
-        <%s>\
-            <bad_element> </bad_element>\
-        </%s>\
-        ";
+            <%s>\
+                <bad_element> </bad_element>\
+            </%s>\
+            ";
     char field[500];
 
     std::vector<std::string> field_vec =
@@ -2498,7 +2497,7 @@ TEST_F(XMLParserTests, getXMLReaderTimes_invalidXML)
  *      <address>
  * 2. Check invalid element
  */
-TEST_F(XMLParserTests, getXMLLocatorUDPv4_invalidXML)
+TEST_F(XMLParserTests, getXMLLocatorUDPv4NegativeClauses)
 {
     uint8_t ident = 1;
     Locator_t locator;
@@ -2508,18 +2507,18 @@ TEST_F(XMLParserTests, getXMLLocatorUDPv4_invalidXML)
     // Parametrized XML
     const char* xml_p =
             "\
-    <udpv4Locator>\
-        %s\
-    </udpv4Locator>\
-    ";
+            <udpv4Locator>\
+                %s\
+            </udpv4Locator>\
+            ";
     char xml[1000];
 
     const char* field_p =
             "\
-        <%s>\
-            <bad_element> </bad_element>\
-        </%s>\
-        ";
+            <%s>\
+                <bad_element> </bad_element>\
+            </%s>\
+            ";
     char field[500];
 
     std::vector<std::string> field_vec =
@@ -2549,7 +2548,7 @@ TEST_F(XMLParserTests, getXMLLocatorUDPv4_invalidXML)
  * 1. Check no elements
  * 2. Check invalid element
  */
-TEST_F(XMLParserTests, getXMLHistoryMemoryPolicy_invalidXML)
+TEST_F(XMLParserTests, getXMLHistoryMemoryPolicyNegativeClauses)
 {
     uint8_t ident = 1;
     MemoryManagementPolicy_t historyMemoryPolicy;
@@ -2559,10 +2558,10 @@ TEST_F(XMLParserTests, getXMLHistoryMemoryPolicy_invalidXML)
     // Parametrized XML
     const char* xml_p =
             "\
-    <historyMemoryPolicy>\
-        %s\
-    </historyMemoryPolicy>\
-    ";
+            <historyMemoryPolicy>\
+                %s\
+            </historyMemoryPolicy>\
+            ";
     char xml[1000];
 
     // Void historyMemoryPolicyType
@@ -2592,7 +2591,7 @@ TEST_F(XMLParserTests, getXMLHistoryMemoryPolicy_invalidXML)
  * 2. Check invalid <kind> element
  * 3. Check invalid element
  */
-TEST_F(XMLParserTests, getXMLLivelinessQos_invalidXML)
+TEST_F(XMLParserTests, getXMLLivelinessQosNegativeClauses)
 {
     uint8_t ident = 1;
     LivelinessQosPolicy liveliness;
@@ -2602,18 +2601,18 @@ TEST_F(XMLParserTests, getXMLLivelinessQos_invalidXML)
     // Parametrized XML
     const char* xml_p =
             "\
-    <livelinessQosPolicy>\
-        %s\
-    </livelinessQosPolicy>\
-    ";
+            <livelinessQosPolicy>\
+                %s\
+            </livelinessQosPolicy>\
+            ";
     char xml[1000];
 
     const char* field_p =
             "\
-        <%s>\
-            <bad_element> </bad_element>\
-        </%s>\
-        ";
+            <%s>\
+                <bad_element> </bad_element>\
+            </%s>\
+            ";
     char field[500];
 
     std::vector<std::string> field_vec =
@@ -2655,7 +2654,7 @@ TEST_F(XMLParserTests, getXMLLivelinessQos_invalidXML)
  * 3. Check no <kind> element
  * 4. Check invalid element
  */
-TEST_F(XMLParserTests, getXMLPublishModeQos_invalidXML)
+TEST_F(XMLParserTests, getXMLPublishModeQosNegativeClauses)
 {
     uint8_t ident = 1;
     PublishModeQosPolicy publishMode;
@@ -2665,10 +2664,10 @@ TEST_F(XMLParserTests, getXMLPublishModeQos_invalidXML)
     // Parametrized XML
     const char* xml_p =
             "\
-    <publishModeQosPolicy>\
-        %s\
-    </publishModeQosPolicy>\
-    ";
+            <publishModeQosPolicy>\
+                %s\
+            </publishModeQosPolicy>\
+            ";
     char xml[1000];
 
     // Invalid kind
@@ -2718,7 +2717,7 @@ TEST_F(XMLParserTests, getXMLPublishModeQos_invalidXML)
  *      <max_partitions>
  * 2. Check invalid element
  */
-TEST_F(XMLParserTests, getXMLParticipantAllocationAttributes_invalidXML)
+TEST_F(XMLParserTests, getXMLParticipantAllocationAttributesNegativeClauses)
 {
     uint8_t ident = 1;
     RTPSParticipantAllocationAttributes allocation;
@@ -2728,18 +2727,18 @@ TEST_F(XMLParserTests, getXMLParticipantAllocationAttributes_invalidXML)
     // Parametrized XML
     const char* xml_p =
             "\
-    <rtpsParticipantAllocationAttributes>\
-        %s\
-    </rtpsParticipantAllocationAttributes>\
-    ";
+            <rtpsParticipantAllocationAttributes>\
+                %s\
+            </rtpsParticipantAllocationAttributes>\
+            ";
     char xml[1000];
 
     const char* field_p =
             "\
-        <%s>\
-            <bad_element> </bad_element>\
-        </%s>\
-        ";
+            <%s>\
+                <bad_element> </bad_element>\
+            </%s>\
+            ";
     char field[500];
 
     std::vector<std::string> field_vec =
@@ -2790,7 +2789,7 @@ TEST_F(XMLParserTests, getXMLParticipantAllocationAttributes_invalidXML)
  * 4. Check invalid <SimpleEDP <PUBREADER_SUBWRITER>> element
  * 5. Check invalid element
  */
-TEST_F(XMLParserTests, getXMLDiscoverySettings_invalidXML)
+TEST_F(XMLParserTests, getXMLDiscoverySettingsNegativeClauses)
 {
     uint8_t ident = 1;
     DiscoverySettings settings;
@@ -2800,10 +2799,10 @@ TEST_F(XMLParserTests, getXMLDiscoverySettings_invalidXML)
     // Parametrized XML
     const char* xml_p =
             "\
-    <discoverySettings>\
-        %s\
-    </discoverySettings>\
-    ";
+            <discoverySettings>\
+                %s\
+            </discoverySettings>\
+            ";
     char xml[1000];
 
     const char* field_p =
@@ -2878,7 +2877,7 @@ TEST_F(XMLParserTests, getXMLDiscoverySettings_invalidXML)
  *      <dynamic>
  * 2. Check invalid element
  */
-TEST_F(XMLParserTests, getXMLSendBuffersAllocationAttributes_invalidXML)
+TEST_F(XMLParserTests, getXMLSendBuffersAllocationAttributesNegativeClauses)
 {
     uint8_t ident = 1;
     SendBuffersAllocationAttributes allocation;
@@ -2888,18 +2887,18 @@ TEST_F(XMLParserTests, getXMLSendBuffersAllocationAttributes_invalidXML)
     // Parametrized XML
     const char* xml_p =
             "\
-    <sendBuffersAllocationConfig>\
-        %s\
-    </sendBuffersAllocationConfig>\
-    ";
+            <sendBuffersAllocationConfig>\
+                %s\
+            </sendBuffersAllocationConfig>\
+            ";
     char xml[1000];
 
     const char* field_p =
             "\
-        <%s>\
-            <bad_element> </bad_element>\
-        </%s>\
-        ";
+            <%s>\
+                <bad_element> </bad_element>\
+            </%s>\
+            ";
     char field[500];
 
     std::vector<std::string> field_vec =
@@ -2933,7 +2932,7 @@ TEST_F(XMLParserTests, getXMLSendBuffersAllocationAttributes_invalidXML)
  *      <max_multicast_locators>
  * 2. Check invalid element
  */
-TEST_F(XMLParserTests, getXMLRemoteLocatorsAllocationAttributes_invalidXML)
+TEST_F(XMLParserTests, getXMLRemoteLocatorsAllocationAttributesNegativeClauses)
 {
     uint8_t ident = 1;
     RemoteLocatorsAllocationAttributes allocation;
@@ -2943,18 +2942,18 @@ TEST_F(XMLParserTests, getXMLRemoteLocatorsAllocationAttributes_invalidXML)
     // Parametrized XML
     const char* xml_p =
             "\
-    <remoteLocatorsAllocationConfig>\
-        %s\
-    </remoteLocatorsAllocationConfig>\
-    ";
+            <remoteLocatorsAllocationConfig>\
+                %s\
+            </remoteLocatorsAllocationConfig>\
+            ";
     char xml[1000];
 
     const char* field_p =
             "\
-        <%s>\
-            <bad_element> </bad_element>\
-        </%s>\
-        ";
+            <%s>\
+                <bad_element> </bad_element>\
+            </%s>\
+            ";
     char field[500];
 
     std::vector<std::string> field_vec =
@@ -2996,7 +2995,7 @@ TEST_F(XMLParserTests, getXMLRemoteLocatorsAllocationAttributes_invalidXML)
  *      2. empty input
  *      3. invalid input
  */
-TEST_F(XMLParserTests, getXMLEnum_invalidXML)
+TEST_F(XMLParserTests, getXMLEnumNegativeClauses)
 {
     uint8_t ident = 1;
     tinyxml2::XMLDocument xml_doc;
@@ -3008,10 +3007,10 @@ TEST_F(XMLParserTests, getXMLEnum_invalidXML)
         IntraprocessDeliveryType e;
         const char* enum_p =
                 "\
-        <IntraprocessDelivery>\
-            %s\
-        </IntraprocessDelivery>\
-        ";
+                <IntraprocessDelivery>\
+                    %s\
+                </IntraprocessDelivery>\
+                ";
 
         // null input
         EXPECT_EQ(XMLP_ret::XML_ERROR,
@@ -3035,10 +3034,10 @@ TEST_F(XMLParserTests, getXMLEnum_invalidXML)
         DiscoveryProtocol_t e;
         const char* enum_p =
                 "\
-        <DiscoveryProtocol>\
-            %s\
-        </DiscoveryProtocol>\
-        ";
+                <DiscoveryProtocol>\
+                    %s\
+                </DiscoveryProtocol>\
+                ";
 
         // null input
         EXPECT_EQ(XMLP_ret::XML_ERROR,
@@ -3062,10 +3061,8 @@ TEST_F(XMLParserTests, getXMLEnum_invalidXML)
         ParticipantFilteringFlags_t e;
         const char* enum_p =
                 "\
-        <ParticipantFilteringFlags>\
-            %s\
-        </ParticipantFilteringFlags>\
-        ";
+                <ParticipantFilteringFlags>%s</ParticipantFilteringFlags>\
+                ";
 
         // null input
         EXPECT_EQ(XMLP_ret::XML_ERROR,
@@ -3089,7 +3086,7 @@ TEST_F(XMLParserTests, getXMLEnum_invalidXML)
  * This function is not implemented, so this test checks fulfill the XMLElementParser coverage
  * 1. Check an error message is received
  */
-TEST_F(XMLParserTests, getXMLOctetVector_invalidXML)
+TEST_F(XMLParserTests, getXMLOctetVectorNegativeClauses)
 {
     uint8_t indent = 1;
     std::vector<octet> v;
@@ -3145,8 +3142,8 @@ TEST_F(XMLParserTests, getXMLEnum_positive)
         IntraprocessDeliveryType e;
         const char* enum_p =
                 "\
-        <IntraprocessDelivery>OFF</IntraprocessDelivery>\
-        ";
+                <IntraprocessDelivery>OFF</IntraprocessDelivery>\
+                ";
 
         // INTRAPROCESS_OFF case
         ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(enum_p));
@@ -3160,8 +3157,8 @@ TEST_F(XMLParserTests, getXMLEnum_positive)
         IntraprocessDeliveryType e;
         const char* enum_p =
                 "\
-        <IntraprocessDelivery>USER_DATA_ONLY</IntraprocessDelivery>\
-        ";
+                <IntraprocessDelivery>USER_DATA_ONLY</IntraprocessDelivery>\
+                ";
 
         // INTRAPROCESS_OFF case
         ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(enum_p));
@@ -3175,8 +3172,8 @@ TEST_F(XMLParserTests, getXMLEnum_positive)
         DiscoveryProtocol_t e;
         const char* enum_p =
                 "\
-            <DiscoveryProtocol>%s</DiscoveryProtocol>\
-        ";
+                <DiscoveryProtocol>%s</DiscoveryProtocol>\
+                ";
 
         // NONE case
         sprintf(xml, enum_p, "NONE");
@@ -3212,8 +3209,8 @@ TEST_F(XMLParserTests, getXMLEnum_positive)
         ParticipantFilteringFlags_t e(ParticipantFilteringFlags_t::NO_FILTER);
         const char* enum_p =
                 "\
-            <ParticipantFilteringFlags>FILTER_DIFFERENT_PROCESS</ParticipantFilteringFlags>\
-        ";
+                <ParticipantFilteringFlags>FILTER_DIFFERENT_PROCESS</ParticipantFilteringFlags>\
+                ";
 
         // FILTER_DIFFERENT_PROCESS case
         ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(enum_p));
