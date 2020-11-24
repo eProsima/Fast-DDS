@@ -787,7 +787,8 @@ bool StatelessWriter::matched_reader_add(
 
         logError(RTPS_WRITER, "Failed to add Reader Proxy " << data.guid()
                 << " to " << this->m_guid.entityId 
-                << " with data sharing. Falling back to configured transports");
+                << " with data sharing.");
+        return false;
     }
 
     // Try to add entry on matched_readers_

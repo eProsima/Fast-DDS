@@ -1366,7 +1366,8 @@ bool StatefulWriter::matched_reader_add(
 
         logError(RTPS_WRITER, "Failed to add Reader Proxy " << rdata.guid()
                 << " to " << this->m_guid.entityId 
-                << " with data sharing. Falling back to configured transports");
+                << " with data sharing.");
+        return false;
     }
 
     // Get a reader proxy from the inactive pool (or create a new one if necessary and allowed)
