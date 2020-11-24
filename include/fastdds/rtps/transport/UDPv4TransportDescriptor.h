@@ -22,29 +22,29 @@ namespace fastdds {
 namespace rtps {
 
 /**
- * Transport configuration
- *
- * - bufferSize:    length of the buffers used for transmission. Passing
- *                  a buffer of different size will cause transmission to
- *                  fail.
- *
- * - interfaceWhiteList: Lists the allowed interfaces.
+ * UDPv4 Transport configuration
+ * The kind value for UDPv4TransportDescriptor is given by eprosima::fastrtps::rtps::LOCATOR_KIND_UDPv4.
+ * 
  * @ingroup TRANSPORT_MODULE
  */
-typedef struct UDPv4TransportDescriptor : public UDPTransportDescriptor
+struct UDPv4TransportDescriptor : public UDPTransportDescriptor
 {
-    virtual ~UDPv4TransportDescriptor()
-    {
-    }
+    //! Destructor
+    virtual ~UDPv4TransportDescriptor() =default;
 
     virtual TransportInterface* create_transport() const override;
 
+    //! Constructor
     RTPS_DllAPI UDPv4TransportDescriptor();
 
+    //! Copy constructor
     RTPS_DllAPI UDPv4TransportDescriptor(
             const UDPv4TransportDescriptor& t);
 
-} UDPv4TransportDescriptor;
+    //! Copy assignment
+    UDPv4TransportDescriptor& operator =(
+            const UDPv4TransportDescriptor& t) = default;
+};
 
 } // namespace rtps
 } // namespace fastdds

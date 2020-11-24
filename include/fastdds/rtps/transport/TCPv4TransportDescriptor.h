@@ -24,21 +24,25 @@ namespace eprosima {
 namespace fastdds {
 namespace rtps {
 
-class TCPTransportInterface;
 /**
- * Transport configuration
+ * TCPv4 Transport configuration.
+ * The kind value for TCPv4TransportDescriptor is given by eprosima::fastrtps::rtps::LOCATOR_KIND_TCPv4.
+ * 
+ * - wan_addr: Configuration for TLS (Transport Layer Security). Public IP address.
+ * 
  * @ingroup TRANSPORT_MODULE
  */
-typedef struct TCPv4TransportDescriptor : public TCPTransportDescriptor
+struct TCPv4TransportDescriptor : public TCPTransportDescriptor
 {
-    virtual ~TCPv4TransportDescriptor()
-    {
-    }
+    //! Destructor
+    virtual ~TCPv4TransportDescriptor() = default;
 
     virtual TransportInterface* create_transport() const override;
 
+    //! Public IP address
     fastrtps::rtps::octet wan_addr[4];
 
+    //! Set the public IP address
     void set_WAN_address(
             fastrtps::rtps::octet o1,
             fastrtps::rtps::octet o2,
@@ -51,6 +55,7 @@ typedef struct TCPv4TransportDescriptor : public TCPTransportDescriptor
         wan_addr[3] = o4;
     }
 
+    //! Set the public IP address
     void set_WAN_address(
             const std::string& in_address)
     {
@@ -64,13 +69,17 @@ typedef struct TCPv4TransportDescriptor : public TCPTransportDescriptor
         wan_addr[3] = (fastrtps::rtps::octet)d;
     }
 
+    //! Constructor
     RTPS_DllAPI TCPv4TransportDescriptor();
 
+    //! Copy constructor
     RTPS_DllAPI TCPv4TransportDescriptor(
             const TCPv4TransportDescriptor& t);
+
+    //! Copy assignment
     RTPS_DllAPI TCPv4TransportDescriptor& operator =(
             const TCPv4TransportDescriptor& t);
-} TCPv4TransportDescriptor;
+};
 
 } // namespace rtps
 } // namespace fastdds

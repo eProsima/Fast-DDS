@@ -28,15 +28,18 @@ namespace eprosima {
 namespace fastdds {
 namespace rtps {
 
-static const uint32_t s_maximumMessageSize = 65500;
-static const uint32_t s_maximumInitialPeersRange = 4;
-static const uint32_t s_minimumSocketBuffer = 65536;
+//! Default maximum message size
+constexpr uint32_t s_maximumMessageSize = 65500;
+//! Default maximum initial peers range
+constexpr uint32_t s_maximumInitialPeersRange = 4;
+//! Default minimum socket buffer
+constexpr uint32_t s_minimumSocketBuffer = 65536;
+//! Default IPv4 address
 static const std::string s_IPv4AddressAny = "0.0.0.0";
+//! Default IPv6 address
 static const std::string s_IPv6AddressAny = "::";
 
 using SendResourceList = std::vector<std::unique_ptr<fastrtps::rtps::SenderResource>>;
-
-class ChannelResource;
 
 /**
  * Interface against which to implement a transport layer, decoupled from FastRTPS internals.
@@ -60,6 +63,14 @@ public:
      *    ...
      */
     virtual ~TransportInterface() = default;
+
+    //! Copy constructor
+    TransportInterface(
+            const TransportInterface& t) = default;
+
+    //! Copy assignment
+    TransportInterface& operator =(
+            const TransportInterface& t) = default;
 
     /**
      * Initialize this transport. This method will prepare all the internals of the transport.
@@ -112,6 +123,9 @@ public:
             SendResourceList& sender_resource_list,
             const fastrtps::rtps::Locator_t&) = 0;
 
+    /** Opens an input channel to receive incomming connections.
+     *   If there is an existing channel it registers the receiver resource.
+     */
     virtual bool OpenInputChannel(
             const fastrtps::rtps::Locator_t&,
             TransportReceiverInterface*,
@@ -130,6 +144,7 @@ public:
             const fastrtps::rtps::Locator_t&,
             const fastrtps::rtps::Locator_t&) const = 0;
 
+    //! Performs locator normalization (assign valid IP if not defined by user)
     virtual fastrtps::rtps::LocatorList_t NormalizeLocator(
             const fastrtps::rtps::Locator_t& locator) = 0;
 
@@ -146,40 +161,50 @@ public:
     virtual void select_locators(
             fastrtps::rtps::LocatorSelector& selector) const = 0;
 
+    //! Must report whether the given locator is from the local host
     virtual bool is_local_locator(
             const fastrtps::rtps::Locator_t& locator) const = 0;
 
+    //! Return the transport configuration (Transport Descriptor)
     virtual TransportDescriptorInterface* get_configuration() = 0;
 
+    //! Add default output locator to the locator list
     virtual void AddDefaultOutputLocator(
             fastrtps::rtps::LocatorList_t& defaultList) = 0;
 
+    //! Add metatraffic multicast locator with the given port
     virtual bool getDefaultMetatrafficMulticastLocators(
             fastrtps::rtps::LocatorList_t& locators,
             uint32_t metatraffic_multicast_port) const = 0;
 
+    //! Add metatraffic unicast locator with the given port
     virtual bool getDefaultMetatrafficUnicastLocators(
             fastrtps::rtps::LocatorList_t& locators,
             uint32_t metatraffic_unicast_port) const = 0;
 
+    //! Add unicast locator with the given port
     virtual bool getDefaultUnicastLocators(
             fastrtps::rtps::LocatorList_t& locators,
             uint32_t unicast_port) const = 0;
 
+    //! Assign port to the given metatraffic multicast locator if not already defined
     virtual bool fillMetatrafficMulticastLocator(
             fastrtps::rtps::Locator_t& locator,
             uint32_t metatraffic_multicast_port) const = 0;
 
+    //! Assign port to the given matatraffic unicast locator if not already defined
     virtual bool fillMetatrafficUnicastLocator(
             fastrtps::rtps::Locator_t& locator,
             uint32_t metatraffic_unicast_port) const = 0;
 
+    //! Configure the initial peer locators list
     virtual bool configureInitialPeerLocator(
             fastrtps::rtps::Locator_t& locator,
             const fastrtps::rtps::PortParameters& port_params,
             uint32_t domainId,
             fastrtps::rtps::LocatorList_t& list) const = 0;
 
+    //! Assign port to the given unicast locator if not already defined
     virtual bool fillUnicastLocator(
             fastrtps::rtps::Locator_t& locator,
             uint32_t well_known_port) const = 0;
@@ -196,6 +221,7 @@ public:
     {
     }
 
+    //! Return the transport kind
     int32_t kind() const
     {
         return transport_kind_;

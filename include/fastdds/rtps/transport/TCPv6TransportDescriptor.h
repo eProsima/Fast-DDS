@@ -21,31 +21,30 @@ namespace eprosima {
 namespace fastdds {
 namespace rtps {
 
-class TCPTransportInterface;
-
 /**
- * Transport configuration
- *
- * - bufferSize:    length of the buffers used for transmission. Passing
- *                  a buffer of different size will cause transmission to
- *                  fail.
- *
- * - interfaceWhiteList: Lists the allowed interfaces.
+ * TCPv6 Transport configuration
+ * The kind value for TCPv6TransportDescriptor is given by eprosima::fastrtps::rtps::LOCATOR_KIND_TCPv6.
+ * 
  * @ingroup TRANSPORT_MODULE
  */
-typedef struct TCPv6TransportDescriptor : public TCPTransportDescriptor
+struct TCPv6TransportDescriptor : public TCPTransportDescriptor
 {
-    virtual ~TCPv6TransportDescriptor()
-    {
-    }
+    //! Destructor
+    virtual ~TCPv6TransportDescriptor() = default;
 
     virtual TransportInterface* create_transport() const override;
 
+    //! Constructor
     RTPS_DllAPI TCPv6TransportDescriptor();
 
+    //! Copy constructor
     RTPS_DllAPI TCPv6TransportDescriptor(
             const TCPv6TransportDescriptor& t);
-} TCPv6TransportDescriptor;
+
+    //! Copy assignment
+    TCPv6TransportDescriptor& operator =(
+            const TCPv6TransportDescriptor& t) = default;
+};
 
 } // namespace rtps
 } // namespace fastdds

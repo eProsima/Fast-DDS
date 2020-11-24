@@ -24,33 +24,50 @@ namespace rtps {
 class TransportInterface;
 
 /**
- * Shared memory transport configuration
+ * Shared memory transport configuration.
+ * The kind value for SharedMemTransportDescriptor is given by eprosima::fastrtps::rtps::LOCATOR_KIND_SHM.
  *
+ * - segment_size_: size of the shared memory segment (in octets).
+ * 
+ * - port_queue_capacity_: size of the listening port (in messages).
+ * 
+ * - healthy_check_timeout_ms_: timeout for the health check of ports (ms).
+ * 
+ * - rtps_dump_file_: full path of the protocol dump file.
+ * 
  * @ingroup TRANSPORT_MODULE
  */
-typedef struct SharedMemTransportDescriptor : public TransportDescriptorInterface
+struct SharedMemTransportDescriptor : public TransportDescriptorInterface
 {
-    virtual ~SharedMemTransportDescriptor()
-    {
-
-    }
+    //! Destructor
+    virtual ~SharedMemTransportDescriptor() = default;
 
     virtual TransportInterface* create_transport() const override;
+
+    //! Minimum size of the send buffer
     uint32_t min_send_buffer_size() const override
     {
         return 0;
     }
 
+    //! Constructor
     RTPS_DllAPI SharedMemTransportDescriptor();
 
+    //! Copy constructor
     RTPS_DllAPI SharedMemTransportDescriptor(
             const SharedMemTransportDescriptor& t);
 
+    //! Copy assignment
+    SharedMemTransportDescriptor& operator =(
+            const SharedMemTransportDescriptor& t) = default;
+
+    //! Return the size of the shared memory segment
     RTPS_DllAPI uint32_t segment_size() const
     {
         return segment_size_;
     }
 
+    //! Set the size of the shared memory segment
     RTPS_DllAPI void segment_size(
             uint32_t segment_size)
     {
@@ -62,39 +79,46 @@ typedef struct SharedMemTransportDescriptor : public TransportDescriptorInterfac
         return maxMessageSize;
     }
 
+    //! Set the maximum size of a single message in the transport (in octets)
     RTPS_DllAPI void max_message_size(
             uint32_t max_message_size)
     {
         maxMessageSize = max_message_size;
     }
 
+    //! Return the size of the listening port (in messages)
     RTPS_DllAPI uint32_t port_queue_capacity() const
     {
         return port_queue_capacity_;
     }
 
+    //! Set the size of the listening port (in messages)
     RTPS_DllAPI void port_queue_capacity(
             uint32_t port_queue_capacity)
     {
         port_queue_capacity_ = port_queue_capacity;
     }
 
+    //! Return the timeout for the health check of ports (ms)
     RTPS_DllAPI uint32_t healthy_check_timeout_ms() const
     {
         return healthy_check_timeout_ms_;
     }
 
+    //! Set the timeout for the health check of ports (ms)
     RTPS_DllAPI void healthy_check_timeout_ms(
             uint32_t healthy_check_timeout_ms)
     {
         healthy_check_timeout_ms_ = healthy_check_timeout_ms;
     }
 
+    //! Return the full path of the protocol dump file
     RTPS_DllAPI std::string rtps_dump_file() const
     {
         return rtps_dump_file_;
     }
 
+    //! Set the full path of the protocol dump file
     RTPS_DllAPI void rtps_dump_file(
             const std::string& rtps_dump_file)
     {
@@ -108,7 +132,7 @@ private:
     uint32_t healthy_check_timeout_ms_;
     std::string rtps_dump_file_;
 
-}SharedMemTransportDescriptor;
+};
 
 } // namespace rtps
 } // namespace fastdds

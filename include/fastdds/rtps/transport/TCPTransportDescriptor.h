@@ -24,13 +24,88 @@ namespace fastdds {
 namespace rtps {
 
 /**
- * Transport configuration
+ * TCP Transport configuration
+ * 
+ * - listening_ports: list of ports to listen as server.
+ * 
+ * - keep_alive_frequency_ms: frequency of RTCP keep alive requests (in ms).
+ * 
+ * - keep_alive_timeout_ms: time since sending the last keep alive request to consider a connection as broken (in ms).
+ * 
+ * - max_logical_port: maximum number of logical ports to try during RTCP negotiation.
+ * 
+ * - logical_port_range: maximum number of logical ports per request to try during RTCP negotiation.
+ * 
+ * - logical_port_increment: increment between logical ports to try during RTCP negotiation.
+ * 
+ * - tcp_negotiation_timeout:
+ * 
+ * - enable_tcp_nodelay: enables the TCP_NODELAY socket option.
+ * 
+ * - wait_for_tcp_negotiation:
+ * 
+ * - calculate_crc: true to calculate and send CRC on message headers.
+ * 
+ * - check_crc: true to check the CRC of incoming message headers.
+ * 
+ * - apply_security: true to use TLS (Transport Layer Security).
+ * 
+ * - tls_config: Configuration for TLS.
+ * 
  * @ingroup TRANSPORT_MODULE
  */
-typedef struct TCPTransportDescriptor : public SocketTransportDescriptor
+struct TCPTransportDescriptor : public SocketTransportDescriptor
 {
+    /**
+     * TLS Configuration
+     * 
+     * - password: password of the private_key_file or rsa_private_key_file.
+     * 
+     * - private_key_file: path to the private key certificate file.
+     * 
+     * - rsa_private_key_file: path to the private key RSA certificate file.
+     * 
+     * - cert_chain_file: path to the public certificate chain file.
+     * 
+     * - tmp_dh_file: path to the Diffie-Hellman parameters file.
+     * 
+     * - verify_file: path to the CA (Certification-Authority) file.
+     * 
+     * - verify_mode: establishes the verification mode mask.
+     * 
+     * - options: establishes the SSL Context options mask.
+     * 
+     * - verify_paths: paths where the system will look for verification files.
+     * 
+     * - default_verify_path: look for verification files on the default paths.
+     * 
+     * - handshake_role: role that the transport will take on handshaking.
+     * 
+     */
     struct TLSConfig
     {
+        /**
+         * Supported TLS features.
+         * Several options can be combined in the same TransportDescriptor using the add_option() member function.
+         * 
+         * - DEFAULT_WORKAROUNDS: implement various bug workarounds.
+         * 
+         * - NO_COMPRESSION: disable compression.
+         * 
+         * - NO_SSLV2: disable SSL v2.
+         * 
+         * - NO_SSLV3: disable SSL v3.
+         * 
+         * - NO_TLSV1: disable TLS v1.
+         * 
+         * - NO_TLSV1_1: disable TLS v1.1.
+         * 
+         * - NO_TLSV1_2: disable TLS v1.2.
+         * 
+         * - NO_TLSV1_3: disable TLS v1.3.
+         * 
+         * - SINGLE_DH_USE: always create a new key using Diffie-Hellman parameters.
+         */
         enum TLSOptions : uint32_t
         {
             NONE                    = 0,      // 0000 0000 0000
@@ -45,6 +120,21 @@ typedef struct TCPTransportDescriptor : public SocketTransportDescriptor
             SINGLE_DH_USE           = 1 << 8  // 0001 0000 0000
         };
 
+        /**
+         * Peer node verification options.
+         * Several verification options can be combined in the same TransportDescriptor using the add_verify_mode()
+         * member function.
+         * 
+         * - VERIFY_NONE: perform no verification.
+         * 
+         * - VERIFY_PEER: perform verification of the peer.
+         * 
+         * - VERIFY_FAIL_IF_NO_PEER_CERT: fail verification if the peer has no certificate. Ignored unless VERIFY_PEER
+         * is also set.
+         * 
+         * - VERIFY_CLIENT_ONCE: do not request client certificate on renegotiation. Ignored unless VERIFY_PEER is also
+         * set.
+         */
         enum TLSVerifyMode : uint8_t
         {
             UNUSED                      = 0,      // 0000 0000
@@ -54,6 +144,15 @@ typedef struct TCPTransportDescriptor : public SocketTransportDescriptor
             VERIFY_CLIENT_ONCE          = 1 << 3  // 0000 1000
         };
 
+        /**
+         * Role that the transport will take on handshaking.
+         * 
+         * - DEFAULT: configured as client if connector, and as server if acceptor.
+         * 
+         * - CLIENT: configured as client.
+         * 
+         * - SERVER: configured as server.
+         */
         enum TLSHandShakeRole : uint8_t
         {
             DEFAULT                     = 0,      // 0000 0000
@@ -61,139 +160,110 @@ typedef struct TCPTransportDescriptor : public SocketTransportDescriptor
             SERVER                      = 1 << 1  // 0000 0010
         };
 
+        //! Password of the private_key_file or rsa_private_key_file
         std::string password;
-        uint32_t options;
+        //! SSL context options mask
+        uint32_t options = NONE;
+        //! Path to the public certificate chain file
         std::string cert_chain_file;
+        //! Path to the private key certificate file
         std::string private_key_file;
+        //! Path to the Diffie-Hellman parameters file
         std::string tmp_dh_file;
+        //! Path to the CA (Certification-Authority) file.
         std::string verify_file;
-        uint8_t verify_mode;
+        //! Verification mode mask
+        uint8_t verify_mode = UNUSED;
+        //! Paths where the system will look for verification files
         std::vector<std::string> verify_paths;
-        bool default_verify_path = false; // don't invoque
-        int32_t verify_depth = -1; // don't override
+        //! Look for verification files on the default paths. Do not invoque
+        bool default_verify_path = false;
+        //! Maximum allowed depth for verifying intermediate certificates. Do not override
+        int32_t verify_depth = -1;
+        //! Path to the private key RSA certificate file
         std::string rsa_private_key_file;
-        TLSHandShakeRole handshake_role;
+        //! Role that the transport will take on handshaking
+        TLSHandShakeRole handshake_role = DEFAULT;
 
+        //! Add verification modes to the verification mode mask
         void add_verify_mode(
                 const TLSVerifyMode verify)
         {
             verify_mode |= verify;
         }
 
+        //! Get the verification mode mask
         bool get_verify_mode(
                 const TLSVerifyMode verify) const
         {
             return (verify_mode & verify) == verify;
         }
 
+        //! Add TLS features to the SSL Context options mask
         void add_option(
                 const TLSOptions option)
         {
             options |= option;
         }
 
+        //! Get the SSL Context options mask
         bool get_option(
                 const TLSOptions option) const
         {
             return (options & option) == option;
         }
 
-        TLSConfig()
-            : options(TCPTransportDescriptor::TLSConfig::TLSOptions::NONE)
-            , verify_mode(TCPTransportDescriptor::TLSConfig::TLSVerifyMode::UNUSED)
-            , handshake_role(DEFAULT)
-        {
-        }
-
-        TLSConfig(
-                const TLSConfig& t)
-            : password(t.password)
-            , options(t.options)
-            , cert_chain_file(t.cert_chain_file)
-            , private_key_file(t.private_key_file)
-            , tmp_dh_file(t.tmp_dh_file)
-            , verify_file(t.verify_file)
-            , verify_mode(t.verify_mode)
-            , verify_paths(t.verify_paths)
-            , default_verify_path(t.default_verify_path)
-            , verify_depth(t.verify_depth)
-            , rsa_private_key_file(t.rsa_private_key_file)
-            , handshake_role(t.handshake_role)
-        {
-        }
-
-        TLSConfig(
-                TLSConfig&& t)
-            : password(std::move(t.password))
-            , options(std::move(t.options))
-            , cert_chain_file(std::move(t.cert_chain_file))
-            , private_key_file(std::move(t.private_key_file))
-            , tmp_dh_file(std::move(t.tmp_dh_file))
-            , verify_file(std::move(t.verify_file))
-            , verify_mode(std::move(t.verify_mode))
-            , verify_paths(std::move(t.verify_paths))
-            , default_verify_path(std::move(t.default_verify_path))
-            , verify_depth(std::move(t.verify_depth))
-            , rsa_private_key_file(std::move(t.rsa_private_key_file))
-            , handshake_role(std::move(t.handshake_role))
-        {
-        }
-
-        TLSConfig& operator =(
-                const TLSConfig& t)
-        {
-            password = t.password;
-            options = t.options;
-            cert_chain_file = t.cert_chain_file;
-            private_key_file = t.private_key_file;
-            tmp_dh_file = t.tmp_dh_file;
-            verify_file = t.verify_file;
-            verify_mode = t.verify_mode;
-            verify_paths = t.verify_paths;
-            default_verify_path = t.default_verify_path;
-            verify_depth = t.verify_depth;
-            rsa_private_key_file = t.rsa_private_key_file;
-            handshake_role = t.handshake_role;
-
-            return *this;
-        }
-
     };
 
+    //! List of ports to listen as server
     std::vector<uint16_t> listening_ports;
+    //! Frequency of RTCP keep alive requests (ms)
     uint32_t keep_alive_frequency_ms;
+    //! Time since sending the last keep alive request to consider a connection as broken (ms)
     uint32_t keep_alive_timeout_ms;
+    //! Maximum number of logical ports to try during RTCP negotiation
     uint16_t max_logical_port;
+    //! Maximum number of logical ports per request to try during RTCP negotiation
     uint16_t logical_port_range;
+    //! Increment between logical ports to try during RTCP negotiation
     uint16_t logical_port_increment;
+    // TODO(jlbueno): Remove v3.0
     uint32_t tcp_negotiation_timeout;
+    //! Enables the TCP_NODELAY socket option
     bool enable_tcp_nodelay;
+    // TODO(jlbueno): Remove v3.0
     bool wait_for_tcp_negotiation;
+    //! Enables the calculation and sending of CRC on message headers
     bool calculate_crc;
+    //! Enables checking the CRC of incoming message headers
     bool check_crc;
+    //! Enables the use of TLS (Transport Layer Security)
     bool apply_security;
 
+    //! Configuration of the TLS (Transport Layer Security)
     TLSConfig tls_config;
 
+    //! Add listener port to the listening_ports list
     void add_listener_port(
             uint16_t port)
     {
         listening_ports.push_back(port);
     }
 
+    //! Constructor
     RTPS_DllAPI TCPTransportDescriptor();
 
+    //! Copy constructor
     RTPS_DllAPI TCPTransportDescriptor(
             const TCPTransportDescriptor& t);
 
+    //! Copy assignment
     RTPS_DllAPI TCPTransportDescriptor& operator =(
             const TCPTransportDescriptor& t);
 
-    virtual ~TCPTransportDescriptor()
-    {
-    }
-
-} TCPTransportDescriptor;
+    //! Destructor
+    virtual ~TCPTransportDescriptor() = default;
+};
 
 } // namespace rtps
 } // namespace fastdds

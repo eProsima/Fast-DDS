@@ -23,25 +23,32 @@ namespace rtps {
 
 /**
  * UDP Transport configuration
- *
- * - bufferSize:    length of the buffers used for transmission. Passing
- *                  a buffer of different size will cause transmission to
- *                  fail.
- *
- * - interfaceWhiteList: Lists the allowed interfaces.
+ * 
+ * - m_output_udp_socket: port number for the outgoing messages.
+ * 
+ * - non_blocking_send: do not block on send operations. When it is set to true, send operations will return
+ * immediately if the buffer is full, but no error will be returned to the upper layer. This means that the
+ * application will behave as if the datagram is sent and lost.
+ * 
  * @ingroup TRANSPORT_MODULE
  */
-typedef struct UDPTransportDescriptor : public SocketTransportDescriptor
+struct UDPTransportDescriptor : public SocketTransportDescriptor
 {
-    virtual ~UDPTransportDescriptor()
-    {
-    }
+    //! Destructor
+    virtual ~UDPTransportDescriptor() = default;
 
+    //! Constructor
     RTPS_DllAPI UDPTransportDescriptor();
 
+    //! Copy constructor
     RTPS_DllAPI UDPTransportDescriptor(
             const UDPTransportDescriptor& t);
 
+    //! Copy assignment
+    UDPTransportDescriptor& operator =(
+            const UDPTransportDescriptor& t) = default;
+
+    //! Port number for the outgoing messages
     uint16_t m_output_udp_socket;
 
     /**
@@ -56,7 +63,7 @@ typedef struct UDPTransportDescriptor : public SocketTransportDescriptor
      * datagram. This may hinder performance on high-frequency writers.
      */
     bool non_blocking_send = false;
-} UDPTransportDescriptor;
+};
 
 } // namespace rtps
 } // namespace fastdds

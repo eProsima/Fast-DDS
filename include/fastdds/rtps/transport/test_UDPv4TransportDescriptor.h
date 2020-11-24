@@ -25,7 +25,11 @@ namespace eprosima {
 namespace fastdds {
 namespace rtps {
 
-typedef struct test_UDPv4TransportDescriptor : public SocketTransportDescriptor
+/**
+ * test_UDPv4 Transport configuration
+ * @ingroup TRANSPORT_MODULE
+ */
+struct test_UDPv4TransportDescriptor : public SocketTransportDescriptor
 {
 
     typedef std::function<bool (fastrtps::rtps::CDRMessage_t& msg)> filter;
@@ -51,15 +55,26 @@ typedef struct test_UDPv4TransportDescriptor : public SocketTransportDescriptor
 
     std::vector<fastrtps::rtps::SequenceNumber_t> sequenceNumberDataMessagesToDrop;
 
-    uint32_t dropLogLength; // logs dropped packets.
+    //! Log dropped packets
+    uint32_t dropLogLength;
 
+    //! Constructor
     RTPS_DllAPI test_UDPv4TransportDescriptor();
-    virtual ~test_UDPv4TransportDescriptor()
-    {
-    }
 
+    //! Destructor
+    virtual ~test_UDPv4TransportDescriptor() = default;
+
+    //! Create transport using the parameters defined within the Descriptor
     virtual TransportInterface* create_transport() const override;
-} test_UDPv4TransportDescriptor;
+
+    //! Copy constructor
+    test_UDPv4TransportDescriptor(
+            const test_UDPv4TransportDescriptor& t) = default;
+
+    //! Copy assignment
+    test_UDPv4TransportDescriptor& operator =(
+            const test_UDPv4TransportDescriptor& t) = default;
+};
 
 } // namespace rtps
 } // namespace fastdds
