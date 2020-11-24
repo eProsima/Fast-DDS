@@ -2983,6 +2983,21 @@ TEST_F(XMLParserTests, getXMLEnum_positive)
         EXPECT_EQ(IntraprocessDeliveryType::INTRAPROCESS_OFF, e);
     }
 
+    // IntraprocessDeliveryType Enum
+    {
+        IntraprocessDeliveryType e;
+        const char* enum_p =
+        "\
+        <IntraprocessDelivery>USER_DATA_ONLY</IntraprocessDelivery>\
+        ";
+
+        // INTRAPROCESS_OFF case
+        ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(enum_p));
+        titleElement = xml_doc.RootElement();
+        EXPECT_EQ(XMLP_ret::XML_OK, XMLParserTest::getXMLEnum_wrapper(titleElement,&e,ident));
+        EXPECT_EQ(IntraprocessDeliveryType::INTRAPROCESS_USER_DATA_ONLY, e);
+    }
+
     // DiscoveryProtocol Enum
     {
         DiscoveryProtocol_t e;
