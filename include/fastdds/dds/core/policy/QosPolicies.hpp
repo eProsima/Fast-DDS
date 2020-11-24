@@ -2899,7 +2899,7 @@ private:
     std::string shm_directory_;
 
     //! Only endpoints with matching domain IDs are DataSharing compatible
-    uint64_t domain_id_;
+    uint64_t domain_id_ = 0;
 };
 
 /**
