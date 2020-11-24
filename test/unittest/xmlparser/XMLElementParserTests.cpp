@@ -1482,6 +1482,33 @@ TEST_F(XMLParserTests, getXMLPublishModeQosSynchronousKind)
     EXPECT_EQ(publishMode.kind, PublishModeQosPolicyKind::SYNCHRONOUS_PUBLISH_MODE);
 }
 
+/*
+ * This test checks the positive case of configuration via XML of the history memory policy dynamic reusable mode.
+ * 1. Check that the XML return code is correct for the history memory policy setting.
+ * 2. Check that the history memory policy mode is set to DYNAMIC_REUSABLE_MEMORY_MODE.
+ */
+TEST_F(XMLParserTests, getXMLHistoryMemoryPolicyDynamicReusable)
+{
+    uint8_t ident = 1;
+    MemoryManagementPolicy_t historyMemoryPolicy;
+    tinyxml2::XMLDocument xml_doc;
+    tinyxml2::XMLElement* titleElement;
+
+    // XML snippet
+    const char* xml =
+    "\
+    <historyMemoryPolicyType>DYNAMIC_REUSABLE</historyMemoryPolicyType>\
+    ";
+
+    // Load the xml
+    ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+    titleElement = xml_doc.RootElement();
+    EXPECT_EQ(
+            XMLP_ret::XML_OK,
+            XMLParserTest::getXMLHistoryMemoryPolicy_wrapper(titleElement,historyMemoryPolicy,ident));
+    EXPECT_EQ(historyMemoryPolicy, MemoryManagementPolicy::DYNAMIC_REUSABLE_MEMORY_MODE);
+}
+
 // FINISH RAUL SECTION
 
 
