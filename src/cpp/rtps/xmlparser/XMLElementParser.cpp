@@ -3118,7 +3118,6 @@ XMLP_ret XMLParser::getXMLEnum(
     }
     else
     {
-        std::cout << text << std::endl;
         logError(XMLPARSER, "Node '" << INTRAPROCESS_DELIVERY << "' with bad content");
         return XMLP_ret::XML_ERROR;
     }
