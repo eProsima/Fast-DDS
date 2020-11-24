@@ -2911,7 +2911,6 @@ TEST_F(XMLParserTests, getXMLEnum_invalidXML)
         titleElement = xml_doc.RootElement();
         EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::getXMLEnum_wrapper(titleElement,&e,ident));
     }
-
 }
 
 /*
@@ -2949,5 +2948,78 @@ TEST_F(XMLParserTests, getXMLOctetVector_invalidXML)
     }
     EXPECT_EQ(num_errors, 1);
 }
+
+/*
+ * This test checks the positive cases in the xml child element of <XMLEnum>
+ * 1. Check XMLEnum with arg IntraprocessDeliveryType
+ *      1. INTRAPROCESS_OFF
+ * 2. Check XMLEnum with arg DiscoveryProtocol_t
+ *      1. NONE
+ *      2. CLIENT
+ *      3. SERVER
+ *      4. BACKUP
+ * 3. Check XMLEnum with arg ParticipantFilteringFlags_t
+ *      1. FILTER_DIFFERENT_PROCESS
+ */
+TEST_F(XMLParserTests, getXMLEnum_positive)
+{
+    uint8_t ident = 1;
+    tinyxml2::XMLDocument xml_doc;
+    tinyxml2::XMLElement* titleElement;
+    char xml[1000];
+
+    // IntraprocessDeliveryType Enum
+    {
+        IntraprocessDeliveryType e;
+        const char* enum_p =
+        "\
+        <IntraprocessDelivery>OFF</IntraprocessDelivery>\
+        ";
+
+        // INTRAPROCESS_OFF case
+        ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(enum_p));
+        titleElement = xml_doc.RootElement();
+        EXPECT_EQ(XMLP_ret::XML_OK, XMLParserTest::getXMLEnum_wrapper(titleElement,&e,ident));
+    }
+
+    // DiscoveryProtocol Enum
+    {
+        DiscoveryProtocol_t e;
+        const char* enum_p =
+        "\
+            <DiscoveryProtocol>%s</DiscoveryProtocol>\
+        ";
+
+        std::vector<std::string> tag_vec = {
+            "NONE",
+            "CLIENT",
+            "SERVER",
+            "BACKUP"
+        };
+
+        for (std::string tag : tag_vec)
+        {
+            sprintf(xml, enum_p, tag.c_str());
+            ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+            titleElement = xml_doc.RootElement();
+            EXPECT_EQ(XMLP_ret::XML_OK, XMLParserTest::getXMLEnum_wrapper(titleElement,&e,ident));
+        }
+    }
+
+    // ParticipantFilteringFlags_t Enum
+    {
+        ParticipantFilteringFlags_t e;
+        const char* enum_p =
+        "\
+            <ParticipantFilteringFlags>FILTER_DIFFERENT_PROCESS</ParticipantFilteringFlags>\
+        ";
+
+        // FILTER_DIFFERENT_PROCESS case
+        ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(enum_p));
+        titleElement = xml_doc.RootElement();
+        EXPECT_EQ(XMLP_ret::XML_OK, XMLParserTest::getXMLEnum_wrapper(titleElement,&e,ident));
+    }
+}
+
 
 // FINISH PARIS SECTION
