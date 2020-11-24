@@ -27,6 +27,7 @@
 #include <fastrtps/utils/TimeConversion.h>
 #include <rtps/history/HistoryAttributesExtension.hpp>
 #include <rtps/history/DataSharingListener.hpp>
+#include <rtps/history/DataSharingPayloadPool_impl/ReaderPool.hpp>
 #include <fastdds/rtps/builtin/BuiltinProtocols.h>
 #include <fastdds/rtps/builtin/liveliness/WLP.h>
 #include <fastdds/rtps/writer/LivelinessManager.h>
@@ -435,7 +436,7 @@ bool StatefulReader::processDataMsg(
 
             // Ask payload pool to copy the payload
             IPayloadPool* payload_owner = change->payload_owner();
-            DataSharingPayloadPool* datasharing_pool = dynamic_cast<DataSharingPayloadPool*>(payload_owner);
+            ReaderPool* datasharing_pool = dynamic_cast<ReaderPool*>(payload_owner);
             if (datasharing_pool)
             {
                 datasharing_pool->get_payload(change->serializedPayload, payload_owner, *change_to_add);
