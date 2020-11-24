@@ -30,15 +30,15 @@ constexpr uint8_t s_defaultTTL = 1;
 
 /**
  * Virtual base class for the data type used to define configuration of transports using sockets.
- * 
+ *
  * - sendBufferSize: size of the sending buffer of the socket (in octets).
- * 
+ *
  * - receiveBufferSize: size of the receiving buffer of the socket (in octets).
- * 
+ *
  * - interfaceWhiteList: list of allowed interfaces.
- * 
+ *
  * - TTL: time to live, in number of hops.
- * 
+ *
  * @ingroup RTPS_MODULE
  * */
 struct SocketTransportDescriptor : public TransportDescriptorInterface
@@ -59,11 +59,11 @@ struct SocketTransportDescriptor : public TransportDescriptorInterface
             const SocketTransportDescriptor& t) = default;
 
     // Copy assignment
-    SocketTransportDescriptor& operator=(
+    SocketTransportDescriptor& operator =(
             const SocketTransportDescriptor& t) = default;
 
     //! Destructor
-    virtual ~SocketTransportDescriptor() =default;
+    virtual ~SocketTransportDescriptor() = default;
 
     virtual uint32_t min_send_buffer_size() const override
     {

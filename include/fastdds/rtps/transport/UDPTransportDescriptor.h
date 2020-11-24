@@ -23,13 +23,13 @@ namespace rtps {
 
 /**
  * UDP Transport configuration
- * 
+ *
  * - m_output_udp_socket: port number for the outgoing messages.
- * 
+ *
  * - non_blocking_send: do not block on send operations. When it is set to true, send operations will return
  * immediately if the buffer is full, but no error will be returned to the upper layer. This means that the
  * application will behave as if the datagram is sent and lost.
- * 
+ *
  * @ingroup TRANSPORT_MODULE
  */
 struct UDPTransportDescriptor : public SocketTransportDescriptor

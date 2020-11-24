@@ -27,9 +27,9 @@ namespace rtps {
 /**
  * TCPv4 Transport configuration.
  * The kind value for TCPv4TransportDescriptor is given by eprosima::fastrtps::rtps::LOCATOR_KIND_TCPv4.
- * 
+ *
  * - wan_addr: Configuration for TLS (Transport Layer Security). Public IP address.
- * 
+ *
  * @ingroup TRANSPORT_MODULE
  */
 struct TCPv4TransportDescriptor : public TCPTransportDescriptor
