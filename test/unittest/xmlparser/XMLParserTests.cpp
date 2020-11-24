@@ -622,15 +622,104 @@ TEST_F(XMLParserTests, DataBuffer)
 
 // INIT NACHO SECTION
 
-// FINISH NACHO SECTION	
+// FINISH NACHO SECTION
 
-// INIT RAUL SECTION	
+// INIT RAUL SECTION
+/*
+ * This test checks the correct functioning of the parseXML function when the <dds> root element does not exist.
+ * 1. Check that elements <profiles>, <types> and <log> are read as root elements.
+ * 2. Check that it triggers an error when reading an wrong element.
+ */
+TEST_F(XMLParserTests, parseXMLNoRoot)
+{
+    tinyxml2::XMLDocument xml_doc;
+    std::unique_ptr<BaseNode> root;
 
-// FINISH RAUL SECTION	
+    // Parametrized XML
+    const char* xml_p =
+            "\
+            <%s>\
+            </%s>\
+            ";
 
-// INIT PARIS SECTION	
+    char xml[600];
 
-// FINISH PARIS SECTION	
+    // Check that elements <profiles>, <types> and <log> are read as root elements.
+    std::vector<std::string> elements {
+        "profiles",
+        "types",
+        "log"
+    };
+
+    for (std::string e : elements)
+    {
+        sprintf(xml, xml_p, e.c_str(), e.c_str());
+        ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+        EXPECT_EQ(XMLP_ret::XML_OK, XMLParserTest::parseXML_wrapper(xml_doc, root));
+    }
+
+    // Check that it triggers an error when reading an wrong element.
+    sprintf(xml, xml_p, "bad_root", "bad_root");
+    ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+    EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::parseXML_wrapper(xml_doc, root));
+}
+
+/*
+ * This test checks the correct functioning of the parseXML function for all xml child elements of <profile>
+ * when the <profiles> element is an xml child element of the <dds> root element.
+ * 1. Check that elements library_settings <participant>, <publisher>, <data_writer>, <subscriber>, <data_reader>,
+ * <topic>, <requester>, <replier>, <types>, and <log> are read as xml child elements of the <profiles> root element.
+ * 2. Check that it triggers an error when reading an wrong element.
+ */
+TEST_F(XMLParserTests, parseXMLProfilesRoot)
+{
+    tinyxml2::XMLDocument xml_doc;
+    std::unique_ptr<BaseNode> root;
+
+    // Parametrized XML
+    const char* xml_p =
+            "\
+            <dds>\
+                <%s>\
+                </%s>\
+            </dds>\
+            ";
+
+    char xml[600];
+
+    // Check that elements library_settings <participant>, <publisher>, <data_writer>, <subscriber>, <data_reader>,
+    // <topic>, <requester>, <replier>, <types>, and <log> are read as xml child elements of the <profiles> root element.
+    std::vector<std::string> elements {
+        "library_settings",
+        "participant",
+        "publisher",
+        "data_writer",
+        "subscriber",
+        "data_reader",
+        "topic",
+        "requester",
+        "replier",
+        "types",
+        "log"
+    };
+
+    for (std::string e : elements)
+    {
+        sprintf(xml, xml_p, e.c_str(), e.c_str());
+        ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+        EXPECT_EQ(XMLP_ret::XML_OK, XMLParserTest::parseXML_wrapper(xml_doc, root));
+    }
+
+    // Check that it triggers an error when reading an wrong element.
+    sprintf(xml, xml_p, "bad_element", "bad_element");
+    ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+    EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::parseXML_wrapper(xml_doc, root));
+}
+// FINISH RAUL SECTION
+
+// INIT PARIS SECTION
+
+// FINISH PARIS SECTION
 
 int main(
         int argc,

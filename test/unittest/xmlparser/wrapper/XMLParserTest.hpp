@@ -385,16 +385,22 @@ public:
         return getXMLOctetVector(elem, e, ident);
     }
 
-// INIT NACHO SECTION	
+// INIT NACHO SECTION
 
-// FINISH NACHO SECTION	
+// FINISH NACHO SECTION
 
-// INIT RAUL SECTION	
+// INIT RAUL SECTION
+    static XMLP_ret parseXML_wrapper(
+        tinyxml2::XMLDocument& xmlDoc,
+        eprosima::fastrtps::xmlparser::up_base_node_t& root)
+    {
+        return parseXML(xmlDoc, root);
+    }
 
-// FINISH RAUL SECTION	
+// FINISH RAUL SECTION
 
-// INIT PARIS SECTION	
+// INIT PARIS SECTION
 
-// FINISH PARIS SECTION	
+// FINISH PARIS SECTION
 
 };
