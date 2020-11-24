@@ -61,16 +61,13 @@ public:
     void helper_block_for_at_least_entries(uint32_t amount)
     {
         std::unique_lock<std::mutex> lck(*xml_mutex_);
-        std::cout << amount << std::endl;
         mock_consumer->cv().wait(lck, [this, amount]
                 {
-                    return mock_consumer->ConsumedEntries().size() >= amount;
+                    return mock_consumer->ConsumedEntriesSize_nts() >= amount;
                 });
     }
 
     XMLMockConsumer* mock_consumer;
-
-private:
 
     mutable std::mutex* xml_mutex_;
 
@@ -1252,7 +1249,7 @@ TEST_F(XMLParserTests, getXMLWriterReaderUnsupportedQosPolicies)
     tinyxml2::XMLDocument xml_doc;
     tinyxml2::XMLElement* titleElement;
 
-    mock_consumer = new XMLMockConsumer();
+    mock_consumer = new XMLMockConsumer(xml_mutex_);
 
     Log::RegisterConsumer(std::unique_ptr<LogConsumer>(mock_consumer));
     Log::SetVerbosity(Log::Warning);
@@ -1330,8 +1327,6 @@ TEST_F(XMLParserTests, getXMLWriterReaderUnsupportedQosPolicies)
     titleElement = xml_doc.RootElement();
     EXPECT_EQ(XMLP_ret::XML_OK, XMLParserTest::getXMLWriterQosPolicies_wrapper(titleElement,wqos,ident));
     EXPECT_EQ(XMLP_ret::XML_OK, XMLParserTest::getXMLReaderQosPolicies_wrapper(titleElement,rqos,ident));
-
-    std::cout << "PRINT--------------------------------------------------" << std::endl;
 
     helper_block_for_at_least_entries(18);
     auto consumed_entries = mock_consumer->ConsumedEntries();
@@ -2926,7 +2921,7 @@ TEST_F(XMLParserTests, getXMLOctetVector_invalidXML)
     tinyxml2::XMLElement* titleElement;
     const char* xml = "</void>";
 
-    mock_consumer = new XMLMockConsumer();
+    mock_consumer = new XMLMockConsumer(xml_mutex_);
 
     Log::RegisterConsumer(std::unique_ptr<LogConsumer>(mock_consumer));
     Log::SetVerbosity(Log::Warning);

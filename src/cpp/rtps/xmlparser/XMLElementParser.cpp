@@ -1169,7 +1169,7 @@ XMLP_ret XMLParser::getXMLWriterQosPolicies(
             //if (nullptr != (p_aux = elem->FirstChildElement(      PRESENTATION))) getXMLPresentationQos(p_aux, ident);
             //if (nullptr != (p_aux = elem->FirstChildElement(        TOPIC_DATA))) getXMLTopicDataQos(p_aux, ident);
             //if (nullptr != (p_aux = elem->FirstChildElement(        GROUP_DATA))) getXMLGroupDataQos(p_aux, ident);
-            logError(XMLPARSER, "Quality os Service '" << p_aux0->Value() << "' do not supported for now");
+            logError(XMLPARSER, "Quality of Service '" << p_aux0->Value() << "' do not supported for now");
         }
         else
         {
@@ -1290,7 +1290,7 @@ XMLP_ret XMLParser::getXMLReaderQosPolicies(
             //if (nullptr != (p_aux = elem->FirstChildElement(      PRESENTATION))) getXMLPresentationQos(p_aux, ident);
             //if (nullptr != (p_aux = elem->FirstChildElement(        TOPIC_DATA))) getXMLTopicDataQos(p_aux, ident);
             //if (nullptr != (p_aux = elem->FirstChildElement(        GROUP_DATA))) getXMLGroupDataQos(p_aux, ident);
-            logError(XMLPARSER, "Quality os Service '" << p_aux0->Value() << "' do not supported for now");
+            logError(XMLPARSER, "Quality of Service '" << p_aux0->Value() << "' do not supported for now");
         }
         else
         {
