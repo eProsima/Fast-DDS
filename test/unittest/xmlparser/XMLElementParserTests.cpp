@@ -1509,6 +1509,64 @@ TEST_F(XMLParserTests, getXMLHistoryMemoryPolicyDynamicReusable)
     EXPECT_EQ(historyMemoryPolicy, MemoryManagementPolicy::DYNAMIC_REUSABLE_MEMORY_MODE);
 }
 
+/*
+ * This test checks the positive case of configuration via XML of the durability QoS policy kind.
+ * 1. Check that the XML return code is correct for all the durability QoS policy kind values.
+ * 2. Check that the durability QoS policy kind is set to VOLATILE.
+ * 3. Check that the durability QoS policy kind is set to TRANSIENT_LOCAL.
+ * 4. Check that the durability QoS policy kind is set to TRANSIENT.
+ * 5. Check that the durability QoS policy kind is set to PERSISTENT.
+ */
+TEST_F(XMLParserTests, getXMLDurabilityQosKind)
+{
+    uint8_t ident = 1;
+    DurabilityQosPolicy durability;
+    tinyxml2::XMLDocument xml_doc;
+    tinyxml2::XMLElement* titleElement;
+
+    // Parametrized XML
+    const char* xml_p =
+    "\
+    <durability>\
+        <kind>%s</kind>\
+    </durability>\
+    ";
+    char xml[500];
+
+    std::vector<std::string> kinds = {"VOLATILE", "TRANSIENT_LOCAL", "TRANSIENT", "PERSISTENT"};
+
+    sprintf(xml, xml_p, "VOLATILE");
+    ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+    titleElement = xml_doc.RootElement();
+    // Check that the XML return code is correct for the durability QoS policy VOLATILE kind.
+    EXPECT_EQ(XMLP_ret::XML_OK, XMLParserTest::getXMLDurabilityQos_wrapper(titleElement,durability,ident));
+    // Check that the durability QoS policy kind is set to VOLATILE.
+    EXPECT_EQ(durability.kind, DurabilityQosPolicyKind::VOLATILE_DURABILITY_QOS);
+
+    sprintf(xml, xml_p, "TRANSIENT_LOCAL");
+    ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+    titleElement = xml_doc.RootElement();
+    // Check that the XML return code is correct for the durability QoS policy TRANSIENT_LOCAL kind.
+    EXPECT_EQ(XMLP_ret::XML_OK, XMLParserTest::getXMLDurabilityQos_wrapper(titleElement,durability,ident));
+    // Check that the durability QoS policy kind is set to TRANSIENT_LOCAL.
+    EXPECT_EQ(durability.kind, DurabilityQosPolicyKind::TRANSIENT_LOCAL_DURABILITY_QOS);
+
+    sprintf(xml, xml_p, "TRANSIENT");
+    ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+    titleElement = xml_doc.RootElement();
+    // Check that the XML return code is correct for the durability QoS policy TRANSIENT kind.
+    EXPECT_EQ(XMLP_ret::XML_OK, XMLParserTest::getXMLDurabilityQos_wrapper(titleElement,durability,ident));
+    // Check that the durability QoS policy kind is set to TRANSIENT.
+    EXPECT_EQ(durability.kind, DurabilityQosPolicyKind::TRANSIENT_DURABILITY_QOS);
+
+    sprintf(xml, xml_p, "PERSISTENT");
+    ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+    titleElement = xml_doc.RootElement();
+    // Check that the XML return code is correct for the durability QoS policy PERSISTENT kind.
+    EXPECT_EQ(XMLP_ret::XML_OK, XMLParserTest::getXMLDurabilityQos_wrapper(titleElement,durability,ident));
+    // Check that the durability QoS policy kind is set to PERSISTENT.
+    EXPECT_EQ(durability.kind, DurabilityQosPolicyKind::PERSISTENT_DURABILITY_QOS);
+}
 // FINISH RAUL SECTION
 
 
