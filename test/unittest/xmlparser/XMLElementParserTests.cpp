@@ -2983,9 +2983,9 @@ TEST_F(XMLParserTests, getXMLEnum_invalidXML)
         ParticipantFilteringFlags_t e;
         const char* enum_p =
         "\
-        <ParticipantFilteringFlags_t>\
+        <ParticipantFilteringFlags>\
             %s\
-        </ParticipantFilteringFlags_t>\
+        </ParticipantFilteringFlags>\
         ";
 
         // null input
@@ -3003,7 +3003,6 @@ TEST_F(XMLParserTests, getXMLEnum_invalidXML)
         titleElement = xml_doc.RootElement();
         EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::getXMLEnum_wrapper(titleElement,&e,ident));
     }
-
 }
 
 /*
@@ -3041,5 +3040,108 @@ TEST_F(XMLParserTests, getXMLOctetVector_invalidXML)
     }
     EXPECT_EQ(num_errors, 1);
 }
+
+/*
+ * This test checks the positive cases in the xml child element of <XMLEnum>
+ * 1. Check XMLEnum with arg IntraprocessDeliveryType
+ *      1. INTRAPROCESS_OFF
+ * 2. Check XMLEnum with arg DiscoveryProtocol_t
+ *      1. NONE
+ *      2. CLIENT
+ *      3. SERVER
+ *      4. BACKUP
+ * 3. Check XMLEnum with arg ParticipantFilteringFlags_t
+ *      1. FILTER_DIFFERENT_PROCESS
+ */
+TEST_F(XMLParserTests, getXMLEnum_positive)
+{
+    uint8_t ident = 1;
+    tinyxml2::XMLDocument xml_doc;
+    tinyxml2::XMLElement* titleElement;
+    char xml[1000];
+
+    // IntraprocessDeliveryType Enum
+    {
+        IntraprocessDeliveryType e;
+        const char* enum_p =
+        "\
+        <IntraprocessDelivery>OFF</IntraprocessDelivery>\
+        ";
+
+        // INTRAPROCESS_OFF case
+        ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(enum_p));
+        titleElement = xml_doc.RootElement();
+        EXPECT_EQ(XMLP_ret::XML_OK, XMLParserTest::getXMLEnum_wrapper(titleElement,&e,ident));
+        EXPECT_EQ(IntraprocessDeliveryType::INTRAPROCESS_OFF, e);
+    }
+
+    // IntraprocessDeliveryType Enum
+    {
+        IntraprocessDeliveryType e;
+        const char* enum_p =
+        "\
+        <IntraprocessDelivery>USER_DATA_ONLY</IntraprocessDelivery>\
+        ";
+
+        // INTRAPROCESS_OFF case
+        ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(enum_p));
+        titleElement = xml_doc.RootElement();
+        EXPECT_EQ(XMLP_ret::XML_OK, XMLParserTest::getXMLEnum_wrapper(titleElement,&e,ident));
+        EXPECT_EQ(IntraprocessDeliveryType::INTRAPROCESS_USER_DATA_ONLY, e);
+    }
+
+    // DiscoveryProtocol Enum
+    {
+        DiscoveryProtocol_t e;
+        const char* enum_p =
+        "\
+            <DiscoveryProtocol>%s</DiscoveryProtocol>\
+        ";
+
+        // NONE case
+        sprintf(xml, enum_p, "NONE");
+        ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+        titleElement = xml_doc.RootElement();
+        EXPECT_EQ(XMLP_ret::XML_OK, XMLParserTest::getXMLEnum_wrapper(titleElement,&e,ident));
+        EXPECT_EQ(DiscoveryProtocol_t::NONE, e);
+
+        // CLIENT case
+        sprintf(xml, enum_p, "CLIENT");
+        ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+        titleElement = xml_doc.RootElement();
+        EXPECT_EQ(XMLP_ret::XML_OK, XMLParserTest::getXMLEnum_wrapper(titleElement,&e,ident));
+        EXPECT_EQ(DiscoveryProtocol_t::CLIENT, e);
+
+        // SERVER case
+        sprintf(xml, enum_p, "SERVER");
+        ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+        titleElement = xml_doc.RootElement();
+        EXPECT_EQ(XMLP_ret::XML_OK, XMLParserTest::getXMLEnum_wrapper(titleElement,&e,ident));
+        EXPECT_EQ(DiscoveryProtocol_t::SERVER, e);
+
+        // BACKUP case
+        sprintf(xml, enum_p, "BACKUP");
+        ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+        titleElement = xml_doc.RootElement();
+        EXPECT_EQ(XMLP_ret::XML_OK, XMLParserTest::getXMLEnum_wrapper(titleElement,&e,ident));
+        EXPECT_EQ(DiscoveryProtocol_t::BACKUP, e);
+    }
+
+    // ParticipantFilteringFlags_t Enum
+    {
+        ParticipantFilteringFlags_t e(ParticipantFilteringFlags_t::NO_FILTER);
+        const char* enum_p =
+        "\
+            <ParticipantFilteringFlags>FILTER_DIFFERENT_PROCESS</ParticipantFilteringFlags>\
+        ";
+
+        // FILTER_DIFFERENT_PROCESS case
+        ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(enum_p));
+        titleElement = xml_doc.RootElement();
+        EXPECT_EQ(XMLP_ret::XML_OK, XMLParserTest::getXMLEnum_wrapper(titleElement,&e,ident));
+        EXPECT_EQ(ParticipantFilteringFlags_t::FILTER_DIFFERENT_PROCESS, e);
+    }
+}
+
 
 // FINISH PARIS SECTION
