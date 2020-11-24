@@ -788,7 +788,7 @@ TEST_F(XMLParserTests, getXMLSubscriberAttributes_negative)
         titleElement = xml_doc.RootElement();
         EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::getXMLSubscriberAttributes_wrapper(titleElement,attr,ident));
     }
-    
+
 }
 
 /*
@@ -1209,6 +1209,7 @@ TEST_F(XMLParserTests, getXMLWriterReaderQosPolicies)
     sprintf(xml, xml_p, "<lifespan></lifespan>");
     ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
     titleElement = xml_doc.RootElement();
+    EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::getXMLWriterQosPolicies_wrapper(titleElement,wqos,ident));
     EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::getXMLReaderQosPolicies_wrapper(titleElement,rqos,ident));
 
     // Check an empty definition of <latencyBudget> xml element.
@@ -1345,6 +1346,167 @@ TEST_F(XMLParserTests, getXMLWriterReaderUnsupportedQosPolicies)
     }
     EXPECT_EQ(num_errors, 18);
 
+}
+
+/*
+ * This test checks the positive cases of configuration through XML of the data limits of the participant's allocation
+ * attributes.
+ * 1. Check that the XML return code is correct for the data limit settings.
+ * 2. Check that the maximum number of properties attribute (max_properties) is set correctly.
+ * 3. Check that the maximum user data attribute (max_user_data) is set correctly.
+ * 4. Check that the maximum number of partitions attribute (max_partitions) is set correctly.
+ */
+TEST_F(XMLParserTests, ParticipantAllocationAttributesDataLimits)
+{
+    uint8_t ident = 1;
+    rtps::RTPSParticipantAllocationAttributes allocation;
+    tinyxml2::XMLDocument xml_doc;
+    tinyxml2::XMLElement* titleElement;
+
+    // XML snippet
+    const char* xml =
+    "\
+    <rtpsParticipantAllocationAttributes>\
+        <max_properties>10</max_properties>\
+        <max_user_data>20</max_user_data>\
+        <max_partitions>3</max_partitions>\
+    </rtpsParticipantAllocationAttributes>\
+    ";
+
+    // Load the xml
+    ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+    titleElement = xml_doc.RootElement();
+    // Check that the XML return code is correct for the data limit settings.
+    EXPECT_EQ(
+            XMLP_ret::XML_OK,
+            XMLParserTest::getXMLParticipantAllocationAttributes_wrapper(titleElement,allocation,ident));
+    // Check that the maximum number of properties attribute (max_properties) is set correctly.
+    EXPECT_EQ(allocation.data_limits.max_properties, 10);
+    // Check that the maximum user data attribute (max_user_data) is set correctly.
+    EXPECT_EQ(allocation.data_limits.max_user_data, 20);
+    // Check that the maximum number of partitions attribute (max_partitions) is set correctly.
+    EXPECT_EQ(allocation.data_limits.max_partitions, 3);
+}
+
+/*
+ * This test checks the positive cases of configuration through XML of the STATIC EDP.
+ * 1. Check that the XML return code is correct for the STATIC EDP settings.
+ * 2. Check that the SIMPLE discovery protocol is set to false.
+ * 3. Check that the STATIC discovery protocol is set to true.
+ * 4. Check that the static endpoint XML filename is set correctly.
+ */
+TEST_F(XMLParserTests, getXMLDiscoverySettingsStaticEDP)
+{
+    uint8_t ident = 1;
+    rtps::DiscoverySettings settings;
+    tinyxml2::XMLDocument xml_doc;
+    tinyxml2::XMLElement* titleElement;
+
+    // XML snippet
+    const char* xml =
+    "\
+    <discovery_config>\
+        <EDP>STATIC</EDP>\
+        <staticEndpointXMLFilename>my_static_edp.xml</staticEndpointXMLFilename>\
+    </discovery_config>\
+    ";
+
+    // Load the xml
+    ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+    titleElement = xml_doc.RootElement();
+    // Check that the XML return code is correct for the STATIC EDP settings.
+    EXPECT_EQ(XMLP_ret::XML_OK, XMLParserTest::getXMLDiscoverySettings_wrapper(titleElement,settings,ident));
+    // Check that the SIMPLE discovery protocol is set to false.
+    EXPECT_FALSE(settings.use_SIMPLE_EndpointDiscoveryProtocol);
+    // Check that the STATIC discovery protocol is set to true.
+    EXPECT_TRUE(settings.use_STATIC_EndpointDiscoveryProtocol);
+    // Check that the static endpoint XML filename is set correctly.
+    EXPECT_STREQ(settings.getStaticEndpointXMLFilename(), "my_static_edp.xml");
+}
+
+/*
+ * This test checks the positive case of configuration via XML of the livelines atomatic kind.
+ * 1. Check that the XML return code is correct for the liveliness kind setting.
+ * 2. Check that the liveliness kind is set to AUTOMATIC.
+ */
+TEST_F(XMLParserTests, getXMLLivelinessQosAutomaticKind)
+{
+    uint8_t ident = 1;
+    LivelinessQosPolicy liveliness;
+    tinyxml2::XMLDocument xml_doc;
+    tinyxml2::XMLElement* titleElement;
+
+    // XML snippet
+    const char* xml =
+    "\
+    <liveliness>\
+        <kind>AUTOMATIC</kind>\
+    </liveliness>\
+    ";
+
+    // Load the xml
+    ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+    titleElement = xml_doc.RootElement();
+    // Check that the XML return code is correct for the liveliness kind setting.
+    EXPECT_EQ(XMLP_ret::XML_OK, XMLParserTest::getXMLLivelinessQos_wrapper(titleElement,liveliness,ident));
+    // Check that the liveliness kind is set to AUTOMATIC.
+    EXPECT_EQ(liveliness.kind, LivelinessQosPolicyKind::AUTOMATIC_LIVELINESS_QOS);
+}
+
+/*
+ * This test checks the positive case of configuration via XML of the publish mode synchronous kind.
+ * 1. Check that the XML return code is correct for the publish mode kind setting.
+ * 2. Check that the publish mode kind is set to SYNCHRONOUS_PUBLISH_MODE.
+ */
+TEST_F(XMLParserTests, getXMLPublishModeQosSynchronousKind)
+{
+    uint8_t ident = 1;
+    PublishModeQosPolicy publishMode;
+    tinyxml2::XMLDocument xml_doc;
+    tinyxml2::XMLElement* titleElement;
+
+    // XML snippet
+    const char* xml =
+    "\
+    <publishMode>\
+        <kind>SYNCHRONOUS</kind>\
+    </publishMode>\
+    ";
+
+    // Load the xml
+    ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+    titleElement = xml_doc.RootElement();
+    // Check that the XML return code is correct for the publish mode kind setting.
+    EXPECT_EQ(XMLP_ret::XML_OK, XMLParserTest::getXMLPublishModeQos_wrapper(titleElement,publishMode,ident));
+    // Check that the publish mode kind is set to SYNCHRONOUS_PUBLISH_MODE.
+    EXPECT_EQ(publishMode.kind, PublishModeQosPolicyKind::SYNCHRONOUS_PUBLISH_MODE);
+}
+
+/*
+ * This test checks the positive case of configuration via XML of the history memory policy dynamic reusable mode.
+ * 1. Check that the XML return code is correct for the history memory policy setting.
+ * 2. Check that the history memory policy mode is set to DYNAMIC_REUSABLE_MEMORY_MODE.
+ */
+TEST_F(XMLParserTests, getXMLHistoryMemoryPolicyDynamicReusable)
+{
+    uint8_t ident = 1;
+    MemoryManagementPolicy_t historyMemoryPolicy;
+    tinyxml2::XMLDocument xml_doc;
+    tinyxml2::XMLElement* titleElement;
+
+    // XML snippet
+    const char* xml =
+    "\
+    <historyMemoryPolicyType>DYNAMIC_REUSABLE</historyMemoryPolicyType>\
+    ";
+
+    // Load the xml
+    ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+    titleElement = xml_doc.RootElement();
+    EXPECT_EQ(
+            XMLP_ret::XML_OK,
+            XMLParserTest::getXMLHistoryMemoryPolicy_wrapper(titleElement,historyMemoryPolicy,ident));
+    EXPECT_EQ(historyMemoryPolicy, MemoryManagementPolicy::DYNAMIC_REUSABLE_MEMORY_MODE);
 }
 
 // FINISH RAUL SECTION
