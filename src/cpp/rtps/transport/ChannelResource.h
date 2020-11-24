@@ -17,7 +17,6 @@
 
 #include <memory>
 #include <map>
-#include <fastrtps/utils/Semaphore.h>
 #include <fastdds/dds/log/Log.hpp>
 #include <fastdds/rtps/common/CDRMessage_t.h>
 

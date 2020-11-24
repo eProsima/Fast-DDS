@@ -20,7 +20,6 @@
 #include <fastdds/rtps/transport/TransportInterface.h>
 #include <fastdds/rtps/messages/CDRMessage.h>
 #include <fastdds/dds/log/Log.hpp>
-#include <fastrtps/utils/Semaphore.h>
 #include <fastrtps/utils/IPLocator.h>
 #include <rtps/transport/UDPTransportInterface.h>
 #include <rtps/transport/UDPSenderResource.hpp>
