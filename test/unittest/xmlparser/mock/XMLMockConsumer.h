@@ -28,8 +28,11 @@ class XMLMockConsumer : public LogConsumer
 {
 public:
 
-    XMLMockConsumer(std::mutex* mutex) :
-        mutex_(mutex) {}
+    XMLMockConsumer(
+            std::mutex* mutex)
+        : mutex_(mutex)
+    {
+    }
 
     virtual void Consume(
             const Log::Entry& entry)

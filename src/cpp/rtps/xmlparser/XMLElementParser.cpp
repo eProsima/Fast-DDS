@@ -1379,11 +1379,11 @@ XMLP_ret XMLParser::getXMLDurabilityQos(
 
 // TODO Implement DurabilityServiceQos
 /*
-XMLP_ret XMLParser::getXMLDurabilityServiceQos(
+   XMLP_ret XMLParser::getXMLDurabilityServiceQos(
         tinyxml2::XMLElement* elem,
         DurabilityServiceQosPolicy& durabilityService,
         uint8_t ident)
-{
+   {
 
     //    <xs:complexType name="durabilityServiceQosPolicyType">
     //        <xs:all minOccurs="0">
@@ -1480,8 +1480,8 @@ XMLP_ret XMLParser::getXMLDurabilityServiceQos(
         }
     }
     return XMLP_ret::XML_OK;
-}
-*/
+   }
+ */
 
 XMLP_ret XMLParser::getXMLDeadlineQos(
         tinyxml2::XMLElement* elem,
@@ -1804,11 +1804,11 @@ XMLP_ret XMLParser::getXMLDisablePositiveAcksQos(
 
 // TODO Implement TimeBasedFilterQos
 /*
-XMLP_ret XMLParser::getXMLTimeBasedFilterQos(
+   XMLP_ret XMLParser::getXMLTimeBasedFilterQos(
         tinyxml2::XMLElement* elem,
         TimeBasedFilterQosPolicy& timeBasedFilter,
         uint8_t ident)
-{
+   {
 
     //    <xs:complexType name="timeBasedFilterQosPolicyType">
     //        <xs:all>
@@ -1844,16 +1844,16 @@ XMLP_ret XMLParser::getXMLTimeBasedFilterQos(
         return XMLP_ret::XML_ERROR;
     }
     return XMLP_ret::XML_OK;
-}
-*/
+   }
+ */
 
 // TODO Implement OwnershipQos
 /*
-XMLP_ret XMLParser::getXMLOwnershipQos(
+   XMLP_ret XMLParser::getXMLOwnershipQos(
         tinyxml2::XMLElement* elem,
         OwnershipQosPolicy& ownership,
         uint8_t ident)
-{
+   {
 
     //    <xs:complexType name="ownershipQosPolicyType">
     //        <xs:all>
@@ -1913,16 +1913,16 @@ XMLP_ret XMLParser::getXMLOwnershipQos(
 
     return XMLP_ret::
     XML_OK;
-}
-*/
+   }
+ */
 
 // TODO Implement OwnershipStrengthQos
 /*
-XMLP_ret XMLParser::getXMLOwnershipStrengthQos(
+   XMLP_ret XMLParser::getXMLOwnershipStrengthQos(
         tinyxml2::XMLElement* elem,
         OwnershipStrengthQosPolicy& ownershipStrength,
         uint8_t ident)
-{
+   {
 
     //    <xs:complexType name="ownershipStrengthQosPolicyType">
     //        <xs:all>
@@ -1958,17 +1958,17 @@ XMLP_ret XMLParser::getXMLOwnershipStrengthQos(
     }
 
     return XMLP_ret::XML_OK;
-}
-*/
+   }
+ */
 
 
 // TODO Implement DestinationOrderQos
 /*
-XMLP_ret XMLParser::getXMLDestinationOrderQos(
+   XMLP_ret XMLParser::getXMLDestinationOrderQos(
         tinyxml2::XMLElement* elem,
         DestinationOrderQosPolicy& destinationOrder,
         uint8_t ident)
-{
+   {
 
     //    <xs:complexType name="destinationOrderQosPolicyType">
     //        <xs:all>
@@ -2028,16 +2028,16 @@ XMLP_ret XMLParser::getXMLDestinationOrderQos(
     }
 
     return XMLP_ret::XML_OK;
-}
-*/
+   }
+ */
 
 // TODO Implement PresentationQos
 /*
-XMLP_ret XMLParser::getXMLPresentationQos(
+   XMLP_ret XMLParser::getXMLPresentationQos(
         tinyxml2::XMLElement* elem,
         PresentationQosPolicy& presentation,
         uint8_t ident)
-{
+   {
 
     //    <xs:complexType name="presentationQosPolicyType">
     //        <xs:all minOccurs="0">
@@ -2112,8 +2112,8 @@ XMLP_ret XMLParser::getXMLPresentationQos(
         }
     }
     return XMLP_ret::XML_OK;
-}
-*/
+   }
+ */
 
 XMLP_ret XMLParser::getXMLPartitionQos(
         tinyxml2::XMLElement* elem,
