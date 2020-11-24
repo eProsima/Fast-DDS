@@ -385,4 +385,16 @@ public:
         return getXMLOctetVector(elem, e, ident);
     }
 
+// INIT NACHO SECTION	
+
+// FINISH NACHO SECTION	
+
+// INIT RAUL SECTION	
+
+// FINISH RAUL SECTION	
+
+// INIT PARIS SECTION	
+
+// FINISH PARIS SECTION	
+
 };

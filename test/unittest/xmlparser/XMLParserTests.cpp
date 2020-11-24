@@ -617,6 +617,18 @@ TEST_F(XMLParserTests, DataBuffer)
     EXPECT_EQ(std::string(rtps_atts.getName()), "test_name");
 }
 
+// INIT NACHO SECTION	
+
+// FINISH NACHO SECTION	
+
+// INIT RAUL SECTION	
+
+// FINISH RAUL SECTION	
+
+// INIT PARIS SECTION	
+
+// FINISH PARIS SECTION	
+
 int main(
         int argc,
         char** argv)
