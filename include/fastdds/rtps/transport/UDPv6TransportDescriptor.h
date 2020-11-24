@@ -24,29 +24,30 @@ namespace rtps {
 class TransportInterface;
 
 /**
- * Transport configuration
- *
- * - bufferSize:    length of the buffers used for transmission. Passing
- *                  a buffer of different size will cause transmission to
- *                  fail.
- *
- * - interfaceWhiteList: Lists the allowed interfaces.
+ * UDPv6 Transport configuration
+ * The kind value for UDPv6TransportDescriptor is given by eprosima::fastrtps::rtps::LOCATOR_KIND_UDPv6.
+ * 
  * @ingroup TRANSPORT_MODULE
  */
-typedef struct UDPv6TransportDescriptor : public UDPTransportDescriptor
+struct UDPv6TransportDescriptor : public UDPTransportDescriptor
 {
-    virtual ~UDPv6TransportDescriptor()
-    {
-    }
+    //! Destructor
+    virtual ~UDPv6TransportDescriptor() = default;
 
     virtual TransportInterface* create_transport() const override;
 
+    //! Constructor
     RTPS_DllAPI UDPv6TransportDescriptor();
 
+    //! Copy constructor
     RTPS_DllAPI UDPv6TransportDescriptor(
             const UDPv6TransportDescriptor& t);
 
-} UDPv6TransportDescriptor;
+    //! Copy assignment
+    UDPv6TransportDescriptor& operator =(
+            const UDPv6TransportDescriptor& t) = default;
+
+};
 
 } // namespace rtps
 } // namespace fastdds

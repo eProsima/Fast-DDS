@@ -17,9 +17,7 @@
 
 #include <fastdds/rtps/transport/TransportDescriptorInterface.h>
 
-#ifdef _WIN32
 #include <cstdint>
-#endif // ifdef _WIN32
 #include <vector>
 #include <string>
 
@@ -27,16 +25,25 @@ namespace eprosima {
 namespace fastdds {
 namespace rtps {
 
-class TransportInterface;
-
-static const uint8_t s_defaultTTL = 1;
+//! Default time to live (TTL)
+constexpr uint8_t s_defaultTTL = 1;
 
 /**
  * Virtual base class for the data type used to define configuration of transports using sockets.
+ * 
+ * - sendBufferSize: size of the sending buffer of the socket (in octets).
+ * 
+ * - receiveBufferSize: size of the receiving buffer of the socket (in octets).
+ * 
+ * - interfaceWhiteList: list of allowed interfaces.
+ * 
+ * - TTL: time to live, in number of hops.
+ * 
  * @ingroup RTPS_MODULE
  * */
 struct SocketTransportDescriptor : public TransportDescriptorInterface
 {
+    //! Constructor
     SocketTransportDescriptor(
             uint32_t maximumMessageSize,
             uint32_t maximumInitialPeersRange)
@@ -47,18 +54,16 @@ struct SocketTransportDescriptor : public TransportDescriptorInterface
     {
     }
 
+    //! Copy constructor
     SocketTransportDescriptor(
-            const SocketTransportDescriptor& t)
-        : TransportDescriptorInterface(t)
-        , sendBufferSize(t.sendBufferSize)
-        , receiveBufferSize(t.receiveBufferSize)
-        , TTL(t.TTL)
-    {
-    }
+            const SocketTransportDescriptor& t) = default;
 
-    virtual ~SocketTransportDescriptor()
-    {
-    }
+    // Copy assignment
+    SocketTransportDescriptor& operator=(
+            const SocketTransportDescriptor& t) = default;
+
+    //! Destructor
+    virtual ~SocketTransportDescriptor() =default;
 
     virtual uint32_t min_send_buffer_size() const override
     {
