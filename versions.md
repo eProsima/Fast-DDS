@@ -1,3 +1,8 @@
+Forthcoming
+-----------
+
+* TopicDataType interface extended (ABI break)
+
 Version 2.1.0
 -------------
 
