@@ -16,6 +16,7 @@
 #include <fastrtps/xmlparser/XMLTree.h>
 #include <fastdds/dds/log/Log.hpp>
 #include <fastrtps/utils/IPLocator.h>
+#include <fastrtps/transport/TCPv4TransportDescriptor.h>
 #include "mock/XMLMockConsumer.h"
 #include "wrapper/XMLParserTest.hpp"
 
@@ -667,7 +668,7 @@ TEST_F(XMLParserTests, parseXMLNoRoot)
 /*
  * This test checks the correct functioning of the parseXML function for all xml child elements of <profile>
  * when the <profiles> element is an xml child element of the <dds> root element.
- * 1. Check that elements library_settings <participant>, <publisher>, <data_writer>, <subscriber>, <data_reader>,
+ * 1. Check that elements <library_settings>, <participant>, <publisher>, <data_writer>, <subscriber>, <data_reader>,
  * <topic>, <requester>, <replier>, <types>, and <log> are read as xml child elements of the <profiles> root element.
  * 2. Check that it triggers an error when reading an wrong element.
  */
@@ -687,33 +688,478 @@ TEST_F(XMLParserTests, parseXMLProfilesRoot)
 
     char xml[600];
 
-    // Check that elements library_settings <participant>, <publisher>, <data_writer>, <subscriber>, <data_reader>,
-    // <topic>, <requester>, <replier>, <types>, and <log> are read as xml child elements of the <profiles> root element.
-    std::vector<std::string> elements {
-        "library_settings",
-        "participant",
+    // Check that elements <library_settings>, <participant>, <publisher>, <data_writer>, <subscriber>, <data_reader>,
+    // <topic>, <requester>, <replier>, <types>, and <log> are read as xml child elements of the <profiles>
+    // root element.
+    std::vector<std::string> elements_ok {
         "publisher",
         "data_writer",
         "subscriber",
         "data_reader",
         "topic",
-        "requester",
-        "replier",
         "types",
         "log"
     };
-
-    for (std::string e : elements)
+    for (std::string e : elements_ok)
     {
         sprintf(xml, xml_p, e.c_str(), e.c_str());
         ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+        std::cout << "Checking ............... " << e << std::endl;
         EXPECT_EQ(XMLP_ret::XML_OK, XMLParserTest::parseXML_wrapper(xml_doc, root));
+    }
+
+    std::vector<std::string> elements_error {
+        "library_settings",
+        "participant",
+        "requester",
+        "replier"
+    };
+    for (std::string e : elements_error)
+    {
+        sprintf(xml, xml_p, e.c_str(), e.c_str());
+        ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+        EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::parseXML_wrapper(xml_doc, root));
     }
 
     // Check that it triggers an error when reading an wrong element.
     sprintf(xml, xml_p, "bad_element", "bad_element");
     ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
     EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::parseXML_wrapper(xml_doc, root));
+}
+
+/*
+ * This test checks the negative cases of the TLS configuration via XML.
+ * 1. Check that elements <password>, <private_key_file>, <rsa_private_key_file>, <cert_chain_file>, <tmp_dh_file>,
+ * <verify_file>, <verify_depth>, <default_verify_path>, and <bad_element> return an xml error if their value is empty.
+ * 2. Check all possible wrong configurations of <verify_paths>.
+ * 3. Check all possible wrong configurations of <verify_mode>.
+ * 4. Check all possible wrong configurations of <handshake_role>.
+ * 5. Check all possible wrong configurations of <options>.
+ */
+TEST_F(XMLParserTests, parseTLSConfigNegativeClauses)
+{
+    tinyxml2::XMLDocument xml_doc;
+    std::unique_ptr<BaseNode> root;
+    tinyxml2::XMLElement* titleElement;
+    std::shared_ptr<eprosima::fastdds::rtps::TransportDescriptorInterface> tcp_transport =
+            std::make_shared<rtps::TCPv4TransportDescriptor>();
+    char xml[600];
+
+    // Check that elements <password>, <private_key_file>, <rsa_private_key_file>, <cert_chain_file>, <tmp_dh_file>,
+    // <verify_file>, <verify_depth>, <default_verify_path>, and <bad_element> return an xml error if their value is empty.
+    {
+        // Parametrized XML
+        const char* xml_p =
+                "\
+                <tls>\
+                    <%s></%s>\
+                </tls>\
+                ";
+
+        std::vector<std::string> elements {
+            "password",
+            "private_key_file",
+            "rsa_private_key_file",
+            "cert_chain_file",
+            "tmp_dh_file",
+            "verify_file",
+            "verify_depth",
+            "default_verify_path",
+            "bad_element"
+        };
+
+        for (std::string e : elements)
+        {
+            sprintf(xml, xml_p, e.c_str(), e.c_str());
+            ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+            titleElement = xml_doc.RootElement();
+            EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::parse_tls_config_wrapper(titleElement, tcp_transport));
+        }
+    }
+
+    // Check all possible wrong configurations of <verify_paths>.
+    {
+        // Parametrized XML
+        const char* xml_p_verify_paths =
+                "\
+                <tls>\
+                    <verify_paths>\
+                        <%s></%s>\
+                    </verify_paths>\
+                </tls>\
+                ";
+
+        std::vector<std::string> elements {"verify_path", "bad_element"};
+
+        for (std::string e : elements)
+        {
+            sprintf(xml, xml_p_verify_paths, e.c_str(), e.c_str());
+            ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+            titleElement = xml_doc.RootElement();
+            EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::parse_tls_config_wrapper(titleElement, tcp_transport));
+        }
+    }
+
+    // Check all possible wrong configurations of <verify_mode>.
+    {
+        // Parametrized XML
+        const char* xml_p_verify_mode =
+                "\
+                <tls>\
+                    <verify_mode>\
+                        %s\
+                    </verify_mode>\
+                </tls>\
+                ";
+
+        std::vector<std::string> elements {
+            "<verify></verify>",
+            "<verify>bad_value</verify>",
+            "<bad_element></bad_element>"
+        };
+
+        for (std::string e : elements)
+        {
+            sprintf(xml, xml_p_verify_mode, e.c_str());
+            ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+            titleElement = xml_doc.RootElement();
+            EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::parse_tls_config_wrapper(titleElement, tcp_transport));
+        }
+    }
+
+    // Check all possible wrong configurations of <handshake_role>.
+    {
+        // Parametrized XML
+        const char* xml_p_handshake_role =
+                "\
+                <tls>\
+                    <handshake_role>%s</handshake_role>\
+                </tls>\
+                ";
+        std::vector<std::string> elements {"", "bad_mode"};
+
+        for (std::string e : elements)
+        {
+            sprintf(xml, xml_p_handshake_role, e.c_str());
+            ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+            titleElement = xml_doc.RootElement();
+            EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::parse_tls_config_wrapper(titleElement, tcp_transport));
+        }
+    }
+
+    // Check all possible wrong configurations of <options>.
+    {
+        // Parametrized XML
+        const char* xml_p_options =
+                "\
+                <tls>\
+                    <options>\
+                        %s\
+                    </options>\
+                </tls>\
+                ";
+
+        std::vector<std::string> elements {
+            "<option></option>",
+            "<option>bad_option</option>",
+            "<bad_element></bad_element>"
+        };
+
+        for (std::string e : elements)
+        {
+            sprintf(xml, xml_p_options, e.c_str());
+            ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+            titleElement = xml_doc.RootElement();
+            EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::parse_tls_config_wrapper(titleElement, tcp_transport));
+        }
+    }
+}
+
+/*
+ * This test checks all possible settings of the TLS handshake role (<handshake_role>) that return an XML OK code.
+ * 1. Check that the DEFAULT setting return an xml ok code and is set correctly.
+ * 2. Check that the CLIENT setting return an xml ok code and is set correctly.
+ * 3. Check that the SERVER setting return an xml ok code and is set correctly.
+ */
+TEST_F(XMLParserTests, parseTLSConfigHandshakeRole)
+{
+    tinyxml2::XMLDocument xml_doc;
+    std::unique_ptr<BaseNode> root;
+    tinyxml2::XMLElement* titleElement;
+    std::shared_ptr<eprosima::fastdds::rtps::TransportDescriptorInterface> tcp_transport =
+            std::make_shared<rtps::TCPv4TransportDescriptor>();
+
+    char xml[600];
+
+    // Parametrized XML
+    const char* xml_p =
+            "\
+            <tls>\
+                <handshake_role>%s</handshake_role>\
+            </tls>\
+            ";
+
+    // Check that the DEFAULT setting return an xml ok code and is set correctly.
+    {
+        sprintf(xml, xml_p, "DEFAULT");
+        ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+        titleElement = xml_doc.RootElement();
+        EXPECT_EQ(XMLP_ret::XML_OK, XMLParserTest::parse_tls_config_wrapper(titleElement, tcp_transport));
+        std::shared_ptr<TCPTransportDescriptor> descriptor =
+                std::dynamic_pointer_cast<TCPTransportDescriptor>(tcp_transport);
+        EXPECT_EQ(descriptor->tls_config.handshake_role,
+                TCPTransportDescriptor::TLSConfig::TLSHandShakeRole::DEFAULT);
+    }
+
+    // Check that the CLIENT setting return an xml ok code and is set correctly.
+    {
+        sprintf(xml, xml_p, "CLIENT");
+        ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+        titleElement = xml_doc.RootElement();
+        EXPECT_EQ(XMLP_ret::XML_OK, XMLParserTest::parse_tls_config_wrapper(titleElement, tcp_transport));
+        std::shared_ptr<TCPTransportDescriptor> descriptor =
+                std::dynamic_pointer_cast<TCPTransportDescriptor>(tcp_transport);
+        EXPECT_EQ(descriptor->tls_config.handshake_role,
+                TCPTransportDescriptor::TLSConfig::TLSHandShakeRole::CLIENT);
+    }
+
+    // Check that the SERVER setting return an xml ok code and is set correctly.
+    {
+        sprintf(xml, xml_p, "SERVER");
+        ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+        titleElement = xml_doc.RootElement();
+        EXPECT_EQ(XMLP_ret::XML_OK, XMLParserTest::parse_tls_config_wrapper(titleElement, tcp_transport));
+        std::shared_ptr<TCPTransportDescriptor> descriptor =
+                std::dynamic_pointer_cast<TCPTransportDescriptor>(tcp_transport);
+        EXPECT_EQ(descriptor->tls_config.handshake_role,
+                TCPTransportDescriptor::TLSConfig::TLSHandShakeRole::SERVER);
+    }
+}
+
+/*
+ * This test checks all possible settings of the TLS verify mode (<verify_mode>) that return an XML OK code.
+ * 1. Check that the VERIFY_NONE setting return an xml ok code and is set correctly.
+ * 2. Check that the VERIFY_PEER setting return an xml ok code and is set correctly.
+ * 3. Check that the VERIFY_FAIL_IF_NO_PEER_CERT setting return an xml ok code and is set correctly.
+ * 4. Check that the VERIFY_CLIENT_ONCE setting return an xml ok code and is set correctly.
+ */
+TEST_F(XMLParserTests, parseTLSConfigVerifyMode)
+{
+    tinyxml2::XMLDocument xml_doc;
+    std::unique_ptr<BaseNode> root;
+    tinyxml2::XMLElement* titleElement;
+    char xml[600];
+
+    // Parametrized XML
+    const char* xml_p_verify_mode =
+            "\
+            <tls>\
+                <verify_mode>\
+                    <verify>%s</verify>\
+                </verify_mode>\
+            </tls>\
+            ";
+
+    // Check that the VERIFY_NONE setting return an xml ok code and is set correctly.
+    {
+        sprintf(xml, xml_p_verify_mode, "VERIFY_NONE");
+        ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+        titleElement = xml_doc.RootElement();
+
+        std::shared_ptr<eprosima::fastdds::rtps::TransportDescriptorInterface> tcp_transport =
+            std::make_shared<rtps::TCPv4TransportDescriptor>();
+        EXPECT_EQ(XMLP_ret::XML_OK, XMLParserTest::parse_tls_config_wrapper(titleElement, tcp_transport));
+
+        std::shared_ptr<TCPTransportDescriptor> descriptor =
+                std::dynamic_pointer_cast<TCPTransportDescriptor>(tcp_transport);
+        EXPECT_EQ(descriptor->tls_config.verify_mode, TCPTransportDescriptor::TLSConfig::TLSVerifyMode::VERIFY_NONE);
+    }
+
+    // Check that the VERIFY_PEER setting return an xml ok code and is set correctly.
+    {
+        sprintf(xml, xml_p_verify_mode, "VERIFY_PEER");
+        ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+        titleElement = xml_doc.RootElement();
+
+        std::shared_ptr<eprosima::fastdds::rtps::TransportDescriptorInterface> tcp_transport =
+            std::make_shared<rtps::TCPv4TransportDescriptor>();
+        EXPECT_EQ(XMLP_ret::XML_OK, XMLParserTest::parse_tls_config_wrapper(titleElement, tcp_transport));
+
+        std::shared_ptr<TCPTransportDescriptor> descriptor =
+                std::dynamic_pointer_cast<TCPTransportDescriptor>(tcp_transport);
+        EXPECT_EQ(descriptor->tls_config.verify_mode, TCPTransportDescriptor::TLSConfig::TLSVerifyMode::VERIFY_PEER);
+    }
+
+    // Check that the VERIFY_FAIL_IF_NO_PEER_CERT setting return an xml ok code and is set correctly.
+    {
+        sprintf(xml, xml_p_verify_mode, "VERIFY_FAIL_IF_NO_PEER_CERT");
+        ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+        titleElement = xml_doc.RootElement();
+
+        std::shared_ptr<eprosima::fastdds::rtps::TransportDescriptorInterface> tcp_transport =
+            std::make_shared<rtps::TCPv4TransportDescriptor>();
+        EXPECT_EQ(XMLP_ret::XML_OK, XMLParserTest::parse_tls_config_wrapper(titleElement, tcp_transport));
+
+        std::shared_ptr<TCPTransportDescriptor> descriptor =
+                std::dynamic_pointer_cast<TCPTransportDescriptor>(tcp_transport);
+        EXPECT_EQ(descriptor->tls_config.verify_mode,
+                TCPTransportDescriptor::TLSConfig::TLSVerifyMode::VERIFY_FAIL_IF_NO_PEER_CERT);
+    }
+
+    // Check that the VERIFY_CLIENT_ONCE setting return an xml ok code and is set correctly.
+    {
+        sprintf(xml, xml_p_verify_mode, "VERIFY_CLIENT_ONCE");
+        ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+        titleElement = xml_doc.RootElement();
+
+        std::shared_ptr<eprosima::fastdds::rtps::TransportDescriptorInterface> tcp_transport =
+            std::make_shared<rtps::TCPv4TransportDescriptor>();
+        EXPECT_EQ(XMLP_ret::XML_OK, XMLParserTest::parse_tls_config_wrapper(titleElement, tcp_transport));
+        std::shared_ptr<TCPTransportDescriptor> descriptor =
+                std::dynamic_pointer_cast<TCPTransportDescriptor>(tcp_transport);
+        EXPECT_EQ(descriptor->tls_config.verify_mode,
+                TCPTransportDescriptor::TLSConfig::TLSVerifyMode::VERIFY_CLIENT_ONCE);
+    }
+}
+
+/*
+ * This test checks all possible settings of the TLS options (<options>) that return an XML OK code.
+ * 1. Check that the DEFAULT_WORKAROUNDS setting return an xml ok code and is set correctly.
+ * 2. Check that the NO_COMPRESSION setting return an xml ok code and is set correctly.
+ * 3. Check that the NO_SSLV2 setting return an xml ok code and is set correctly.
+ * 4. Check that the NO_SSLV3 setting return an xml ok code and is set correctly.
+ * 5. Check that the NO_TLSV1 setting return an xml ok code and is set correctly.
+ * 6. Check that the NO_TLSV1_1 setting return an xml ok code and is set correctly.
+ * 7. Check that the NO_TLSV1_2 setting return an xml ok code and is set correctly.
+ * 8. Check that the NO_TLSV1_3 setting return an xml ok code and is set correctly.
+ * 9. Check that the SINGLE_DH_USE setting return an xml ok code and is set correctly.
+ */
+TEST_F(XMLParserTests, parseTLSConfigOptions)
+{
+    tinyxml2::XMLDocument xml_doc;
+    std::unique_ptr<BaseNode> root;
+    tinyxml2::XMLElement* titleElement;
+    std::shared_ptr<eprosima::fastdds::rtps::TransportDescriptorInterface> tcp_transport =
+            std::make_shared<rtps::TCPv4TransportDescriptor>();
+    char xml[600];
+
+    // Parametrized XML
+    const char* xml_p_verify_mode =
+            "\
+            <tls>\
+                <options>\
+                    <option>%s</option>\
+                </options>\
+            </tls>\
+            ";
+
+    // Check that the DEFAULT_WORKAROUNDS setting return an xml ok code and is set correctly.
+    {
+        sprintf(xml, xml_p_verify_mode, "DEFAULT_WORKAROUNDS");
+        ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+        titleElement = xml_doc.RootElement();
+        EXPECT_EQ(XMLP_ret::XML_OK, XMLParserTest::parse_tls_config_wrapper(titleElement, tcp_transport));
+        std::shared_ptr<TCPTransportDescriptor> descriptor =
+                std::dynamic_pointer_cast<TCPTransportDescriptor>(tcp_transport);
+        EXPECT_TRUE(
+                descriptor->tls_config.get_option(TCPTransportDescriptor::TLSConfig::TLSOptions::DEFAULT_WORKAROUNDS));
+    }
+
+    // Check that the NO_COMPRESSION setting return an xml ok code and is set correctly.
+    {
+        sprintf(xml, xml_p_verify_mode, "NO_COMPRESSION");
+        ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+        titleElement = xml_doc.RootElement();
+        EXPECT_EQ(XMLP_ret::XML_OK, XMLParserTest::parse_tls_config_wrapper(titleElement, tcp_transport));
+        std::shared_ptr<TCPTransportDescriptor> descriptor =
+                std::dynamic_pointer_cast<TCPTransportDescriptor>(tcp_transport);
+        EXPECT_TRUE(
+                descriptor->tls_config.get_option(TCPTransportDescriptor::TLSConfig::TLSOptions::NO_COMPRESSION));
+    }
+
+    // Check that the NO_SSLV2 setting return an xml ok code and is set correctly.
+    {
+        sprintf(xml, xml_p_verify_mode, "NO_SSLV2");
+        ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+        titleElement = xml_doc.RootElement();
+        EXPECT_EQ(XMLP_ret::XML_OK, XMLParserTest::parse_tls_config_wrapper(titleElement, tcp_transport));
+        std::shared_ptr<TCPTransportDescriptor> descriptor =
+                std::dynamic_pointer_cast<TCPTransportDescriptor>(tcp_transport);
+        EXPECT_TRUE(
+                descriptor->tls_config.get_option(TCPTransportDescriptor::TLSConfig::TLSOptions::NO_SSLV2));
+    }
+
+    // Check that the NO_SSLV3 setting return an xml ok code and is set correctly.
+    {
+        sprintf(xml, xml_p_verify_mode, "NO_SSLV3");
+        ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+        titleElement = xml_doc.RootElement();
+        EXPECT_EQ(XMLP_ret::XML_OK, XMLParserTest::parse_tls_config_wrapper(titleElement, tcp_transport));
+        std::shared_ptr<TCPTransportDescriptor> descriptor =
+                std::dynamic_pointer_cast<TCPTransportDescriptor>(tcp_transport);
+        EXPECT_TRUE(
+                descriptor->tls_config.get_option(TCPTransportDescriptor::TLSConfig::TLSOptions::NO_SSLV3));
+    }
+
+    // Check that the NO_TLSV1 setting return an xml ok code and is set correctly.
+    {
+        sprintf(xml, xml_p_verify_mode, "NO_TLSV1");
+        ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+        titleElement = xml_doc.RootElement();
+        EXPECT_EQ(XMLP_ret::XML_OK, XMLParserTest::parse_tls_config_wrapper(titleElement, tcp_transport));
+        std::shared_ptr<TCPTransportDescriptor> descriptor =
+                std::dynamic_pointer_cast<TCPTransportDescriptor>(tcp_transport);
+        EXPECT_TRUE(
+                descriptor->tls_config.get_option(TCPTransportDescriptor::TLSConfig::TLSOptions::NO_TLSV1));
+    }
+
+    // Check that the NO_TLSV1_1 setting return an xml ok code and is set correctly.
+    {
+        sprintf(xml, xml_p_verify_mode, "NO_TLSV1_1");
+        ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+        titleElement = xml_doc.RootElement();
+        EXPECT_EQ(XMLP_ret::XML_OK, XMLParserTest::parse_tls_config_wrapper(titleElement, tcp_transport));
+        std::shared_ptr<TCPTransportDescriptor> descriptor =
+                std::dynamic_pointer_cast<TCPTransportDescriptor>(tcp_transport);
+        EXPECT_TRUE(
+                descriptor->tls_config.get_option(TCPTransportDescriptor::TLSConfig::TLSOptions::NO_TLSV1_1));
+    }
+
+    // Check that the NO_TLSV1_2 setting return an xml ok code and is set correctly.
+    {
+        sprintf(xml, xml_p_verify_mode, "NO_TLSV1_2");
+        ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+        titleElement = xml_doc.RootElement();
+        EXPECT_EQ(XMLP_ret::XML_OK, XMLParserTest::parse_tls_config_wrapper(titleElement, tcp_transport));
+        std::shared_ptr<TCPTransportDescriptor> descriptor =
+                std::dynamic_pointer_cast<TCPTransportDescriptor>(tcp_transport);
+        EXPECT_TRUE(
+                descriptor->tls_config.get_option(TCPTransportDescriptor::TLSConfig::TLSOptions::NO_TLSV1_2));
+    }
+
+    // Check that the NO_TLSV1_3 setting return an xml ok code and is set correctly.
+    {
+        sprintf(xml, xml_p_verify_mode, "NO_TLSV1_3");
+        ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+        titleElement = xml_doc.RootElement();
+        EXPECT_EQ(XMLP_ret::XML_OK, XMLParserTest::parse_tls_config_wrapper(titleElement, tcp_transport));
+        std::shared_ptr<TCPTransportDescriptor> descriptor =
+                std::dynamic_pointer_cast<TCPTransportDescriptor>(tcp_transport);
+        EXPECT_TRUE(
+                descriptor->tls_config.get_option(TCPTransportDescriptor::TLSConfig::TLSOptions::NO_TLSV1_3));
+    }
+
+    // Check that the SINGLE_DH_USE setting return an xml ok code and is set correctly.
+    {
+        sprintf(xml, xml_p_verify_mode, "SINGLE_DH_USE");
+        ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+        titleElement = xml_doc.RootElement();
+        EXPECT_EQ(XMLP_ret::XML_OK, XMLParserTest::parse_tls_config_wrapper(titleElement, tcp_transport));
+        std::shared_ptr<TCPTransportDescriptor> descriptor =
+                std::dynamic_pointer_cast<TCPTransportDescriptor>(tcp_transport);
+        EXPECT_TRUE(
+                descriptor->tls_config.get_option(TCPTransportDescriptor::TLSConfig::TLSOptions::SINGLE_DH_USE));
+    }
 }
 // FINISH RAUL SECTION
 

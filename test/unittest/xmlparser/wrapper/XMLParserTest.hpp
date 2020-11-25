@@ -397,6 +397,13 @@ public:
         return parseXML(xmlDoc, root);
     }
 
+    static XMLP_ret parse_tls_config_wrapper(
+        tinyxml2::XMLElement* p_root,
+        eprosima::fastrtps::xmlparser::sp_transport_t tcp_transport)
+    {
+        return parse_tls_config(p_root, tcp_transport);
+    }
+
 // FINISH RAUL SECTION
 
 // INIT PARIS SECTION
