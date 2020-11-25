@@ -1404,6 +1404,38 @@ TEST_F(XMLParserTests, fillDataNodeSubscriberNegativeClauses)
     EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::fillDataNode_wrapper(titleElement, *subscriber_node));
 }
 
+/*
+ * This test checks the negative case in the fillDataNode function when it refers to a topic node.
+ * 1. Check that an XML_ERROR is triggered when the xml element is nullptr.
+ * 2. Check that an XML_ERROR is triggered when the <topic> element does not contains any attributes.
+ */
+TEST_F(XMLParserTests, fillDataNodeTopicNegativeClauses)
+{
+    std::unique_ptr<TopicAttributes> topic_atts{new TopicAttributes};
+    std::unique_ptr<DataNode<TopicAttributes>> topic_node{
+            new DataNode<TopicAttributes>{ NodeType::PUBLISHER, std::move(topic_atts) }};
+
+    // Check that an XML_ERROR is triggered when the xml element is nullptr.
+    EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::fillDataNode_wrapper(nullptr, *topic_node));
+
+    tinyxml2::XMLDocument xml_doc;
+    tinyxml2::XMLElement* titleElement;
+
+    // XML snippet
+    const char* xml =
+            "\
+            <topic>\
+                <bad_element></bad_element>\
+            </topic>\
+            ";
+
+    // Load the xml
+    ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+    titleElement = xml_doc.RootElement();
+    // Check that an XML_ERROR is triggered when the <topic> element does not contains any attributes.
+    EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::fillDataNode_wrapper(titleElement, *topic_node));
+}
+
 // FINISH RAUL SECTION
 
 // INIT PARIS SECTION
