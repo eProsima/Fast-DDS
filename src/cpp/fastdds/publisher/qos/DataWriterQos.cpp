@@ -52,7 +52,7 @@ WriterQos DataWriterQos::get_writerqos(
     qos.m_topicData = tqos.topic_data();
     qos.m_userData = user_data();
     qos.representation = representation();
-    qos.data_sharing_info.domain_id = data_sharing().domain_id();
+    qos.data_sharing = data_sharing();
 
     return qos;
 }

@@ -734,29 +734,29 @@ public:
     }
 
     /**
-     * Getter for DataSharingQos
-     * @return DataSharingQos reference
+     * Getter for DataSharingQosPolicy
+     * @return DataSharingQosPolicy reference
      */
-    RTPS_DllAPI DataSharingQos& data_sharing()
+    RTPS_DllAPI DataSharingQosPolicy& data_sharing()
     {
         return data_sharing_;
     }
 
     /**
-     * Getter for DataSharingQos
-     * @return DataSharingQos reference
+     * Getter for DataSharingQosPolicy
+     * @return DataSharingQosPolicy reference
      */
-    RTPS_DllAPI const DataSharingQos& data_sharing() const
+    RTPS_DllAPI const DataSharingQosPolicy& data_sharing() const
     {
         return data_sharing_;
     }
 
     /**
-     * Setter for DataSharingQos
-     * @param data_sharing new value for the DataSharingQos
+     * Setter for DataSharingQosPolicy
+     * @param data_sharing new value for the DataSharingQosPolicy
      */
     RTPS_DllAPI void data_sharing(
-            const DataSharingQos& data_sharing)
+            const DataSharingQosPolicy& data_sharing)
     {
         data_sharing_ = data_sharing;
     }
@@ -830,7 +830,7 @@ private:
     fastrtps::rtps::ThroughputControllerDescriptor throughput_controller_;
 
     //!DataSharing configuration
-    DataSharingQos data_sharing_;
+    DataSharingQosPolicy data_sharing_;
 };
 
 RTPS_DllAPI extern const DataWriterQos DATAWRITER_QOS_DEFAULT;

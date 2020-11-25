@@ -2773,25 +2773,74 @@ enum DataSharingKind : uint16_t
  * Qos Policy to configure the data sharing
  * @note Immutable Qos Policy
  */
-class DataSharingQos
+class DataSharingQosPolicy : public Parameter_t, public QosPolicy
 {
 public:
 
     /**
      * @brief Constructor
      */
-    RTPS_DllAPI DataSharingQos() = default;
+    RTPS_DllAPI DataSharingQosPolicy()
+        : Parameter_t(PID_DATASHARING, 0)
+        , QosPolicy(true)
+    {
+        //Needed to generate the automatic domain ID
+        automatic();
+    }
 
     /**
      * @brief Destructor
      */
-    virtual RTPS_DllAPI ~DataSharingQos() = default;
+    virtual RTPS_DllAPI ~DataSharingQosPolicy() = default;
+
+    /**
+     * @brief Copy constructor
+     * @param b Another DataSharingQosPolicy instance
+     */
+    RTPS_DllAPI DataSharingQosPolicy(
+            const DataSharingQosPolicy& b)
+        : Parameter_t(b)
+        , QosPolicy(b)
+        , kind_(b.kind())
+        , shm_directory_ (b.shm_directory())
+        , max_domains_ (b.max_domains())
+        , domain_ids_(b.max_domains() != 0 ?
+                b.max_domains() :
+                b.domain_ids().size())
+    {
+        domain_ids_ = b.domain_ids();
+    }
+
+    RTPS_DllAPI DataSharingQosPolicy& operator =(
+            const DataSharingQosPolicy& b)
+    {
+        QosPolicy::operator =(b);
+        Parameter_t::operator =(b);
+        kind_ = b.kind();
+        shm_directory_ = b.shm_directory();
+        max_domains_ = b.max_domains();
+        domain_ids_.reserve(max_domains_ != 0 ?
+                max_domains_ :
+                b.domain_ids().size());
+        domain_ids_ = b.domain_ids();
+
+        return *this;
+    }
 
     bool operator ==(
-            const DataSharingQos& b) const
+            const DataSharingQosPolicy& b) const
     {
-        return (kind_ == b.kind() &&
-               shm_directory_ == b.shm_directory());
+        return kind_ == b.kind_ &&
+               shm_directory_ == b.shm_directory_ &&
+               domain_ids_ == b.domain_ids_ &&
+               Parameter_t::operator ==(b) &&
+               QosPolicy::operator ==(b);
+    }
+
+    inline void clear() override
+    {
+        DataSharingQosPolicy reset = DataSharingQosPolicy();
+        std::swap(*this, reset);
     }
 
     /**
@@ -2811,49 +2860,103 @@ public:
     }
 
     /**
-     * @return the user configured DataSharing domain ID
+     * Gets the set of DataSharing domain IDs.
+     * 
+     * Each domain ID is 64 bit long.
+     * However, user-defined domain IDs are only 16 bit long,
+     * while the rest of the 48 bits are used for the
+     * automatically generated domain ID (if any).
+     * 
+     * - Automatic domain IDs use the 48 MSB and leave the 16 LSB as zero.
+     * - User defined domain IDs use the 16 LSB and leave the 48 MSB as zero.
+     * 
+     * @return the current DataSharing domain IDs
      */
-    RTPS_DllAPI const uint64_t& domain_id() const
+    RTPS_DllAPI const std::vector<uint64_t>& domain_ids() const
     {
-        return domain_id_;
+        return domain_ids_;
+    }
+
+    /**
+     * @param size the new maximum number of domain IDs
+     */
+    RTPS_DllAPI void set_max_domains(uint32_t size)
+    {
+        domain_ids_.reserve(size);
+        max_domains_ = size;
+    }
+
+    /**
+     * @return the current configured maximum number of domain IDs
+     */
+    RTPS_DllAPI const uint32_t& max_domains() const
+    {
+        return max_domains_;
     }
 
     /**
      * @brief Configures the DataSharing in automatic mode
      * 
-     * The default shared memory directory of the OS is used
-     * The domain ID is automatically computed
+     * The default shared memory directory of the OS is used.
+     * A default domain ID is automatically computed. 
      */
     RTPS_DllAPI void automatic()
     {
-        setup (AUTO, "", 0);
+        setup (AUTO, "", std::vector<uint16_t>());
     }
 
     /**
      * @brief Configures the DataSharing in automatic mode
      *
-     * The default shared memory directory of the OS is used
+     * The default shared memory directory of the OS is used.
      * 
-     * @param domain_id The shared memory domain ID to use.
+     * @param domain_ids the user configured DataSharing domain IDs (16 bits).
      */
     RTPS_DllAPI void automatic(
-            uint64_t domain_id)
+            const std::vector<uint16_t>& domain_ids)
     {
-        setup (AUTO, "", domain_id);
+        setup (AUTO, "", domain_ids);
+    }
+
+    /**
+     * @brief Configures the DataSharing in automatic mode
+     *
+     * A default domain ID is automatically computed. 
+     * 
+     * @param directory The shared memory directory to use.
+     */
+    RTPS_DllAPI void automatic(
+            const std::string& directory)
+    {
+        setup (AUTO, directory, std::vector<uint16_t>());
     }
 
     /**
      * @brief Configures the DataSharing in automatic mode
      *
      * @param directory The shared memory directory to use.
-     * @param domain_id The shared memory domain ID to use.
-     *      If none is provided, the domain ID is automatically computed.
+     * @param domain_ids the user configured DataSharing domain IDs (16 bits).
      */
     RTPS_DllAPI void automatic(
             const std::string& directory,
-            uint64_t domain_id = 0)
+            const std::vector<uint16_t>& domain_ids)
     {
-        setup (AUTO, directory, domain_id);
+        setup (AUTO, directory, domain_ids);
+    }
+
+    /**
+     * @brief Configures the DataSharing in forced mode
+     *
+     * A default domain ID is automatically computed.
+     * 
+     * @param directory The shared memory directory to use.
+     *      It is mandatory to provide a non-empty name or the creation of endpoints will fail.
+     */
+    RTPS_DllAPI void force(
+            const std::string& directory)
+    {
+        assert(!directory.empty());
+        setup (FORCED, directory, std::vector<uint16_t>());
     }
 
     /**
@@ -2861,15 +2964,14 @@ public:
      *
      * @param directory The shared memory directory to use.
      *      It is mandatory to provide a non-empty name or the creation of endpoints will fail.
-     * @param domain_id The shared memory domain ID to use.
-     *      If none is provided, the domain ID is automatically computed.
+     * @param domain_ids the user configured DataSharing domain IDs (16 bits).
      */
     RTPS_DllAPI void force(
             const std::string& directory,
-            uint64_t domain_id = 0)
+            const std::vector<uint16_t>& domain_ids)
     {
         assert(!directory.empty());
-        setup (FORCED, directory, domain_id);
+        setup (FORCED, directory, domain_ids);
     }
 
     /**
@@ -2877,7 +2979,15 @@ public:
      */
     RTPS_DllAPI void disable()
     {
-        setup (DISABLED, "", 0);
+        setup (DISABLED, "", std::vector<uint16_t>());
+    }
+
+    void add_domain_id(uint64_t id)
+    {
+        if (max_domains_ == 0 || domain_ids_.size() < max_domains_)
+        {
+            domain_ids_.push_back(id);
+        }
     }
 
 private:
@@ -2885,11 +2995,32 @@ private:
     void setup(
             const DataSharingKind& kind,
             const std::string& directory,
-            uint64_t domain_id)
+            const std::vector<uint16_t>& domain_ids)
     {
         kind_ = kind;
         shm_directory_ = directory;
-        domain_id_ = domain_id;
+        domain_ids_.clear();
+
+        if (domain_ids.empty() && kind != DISABLED)
+        {
+            uint64_t id = (1l << 16);
+            add_domain_id(id);
+        }
+        else
+        {
+            for (uint16_t id : domain_ids)
+            {
+                add_domain_id(id);
+            }
+        }
+    }
+
+    RTPS_DllAPI void add_domain_id(uint16_t id)
+    {
+        if (max_domains_ == 0 || domain_ids_.size() < max_domains_)
+        {
+            domain_ids_.push_back(id);
+        }
     }
 
     //! DataSharing configuration mode
@@ -2898,58 +3029,11 @@ private:
     //! Shared memory directory to use on DataSharing
     std::string shm_directory_;
 
-    //! Only endpoints with matching domain IDs are DataSharing compatible
-    uint64_t domain_id_ = 0;
-};
-
-/**
- * Information to check data sharing compatibility.
- * Will only be sent through the wire if this endpoint is data sharing compatible.
- * @note Immutable Qos Policy
- */
-class DataSharingInfo : public Parameter_t, public QosPolicy
-{
-public:
-
-    /**
-     * @brief Constructor
-     */
-    RTPS_DllAPI DataSharingInfo()
-        : Parameter_t(PID_DATASHARING_INFO, 8)
-        , QosPolicy(true)
-        , domain_id(0U)
-        , is_compatible(false)
-    {
-    }
-
-    /**
-     * @brief Destructor
-     */
-    virtual RTPS_DllAPI ~DataSharingInfo() = default;
-
-    bool operator ==(
-            const DataSharingInfo& b) const
-    {
-        return is_compatible == b.is_compatible &&
-               domain_id == b.domain_id &&
-               Parameter_t::operator ==(b) &&
-               QosPolicy::operator ==(b);
-    }
-
-    inline void clear() override
-    {
-        DataSharingInfo reset = DataSharingInfo();
-        std::swap(*this, reset);
-    }
-
-public:
+    //! Maximum number of domain IDs
+    uint32_t max_domains_ = 0;
 
     //! Only endpoints with matching domain IDs are DataSharing compatible
-    uint64_t domain_id;
-
-    //! If not compatible, this parameter will not be sent at all.
-    //! This value itself will not be serialized.
-    bool is_compatible;
+    std::vector<uint64_t> domain_ids_;
 };
 
 

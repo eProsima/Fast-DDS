@@ -31,13 +31,13 @@ namespace dds {
 
 WriterQos::WriterQos()
 {
-    this->m_reliability.kind = RELIABLE_RELIABILITY_QOS;
-    this->m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
+    m_reliability.kind = RELIABLE_RELIABILITY_QOS;
+    m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
+    data_sharing.disable();
 }
 
 WriterQos::~WriterQos()
 {
-
 }
 
 void WriterQos::setQos(
@@ -146,10 +146,10 @@ void WriterQos::setQos(
         representation = qos.representation;
         representation.hasChanged = true;
     }
-    if (first_time && !(data_sharing_info == qos.data_sharing_info))
+    if (first_time && !(data_sharing == qos.data_sharing))
     {
-        data_sharing_info = qos.data_sharing_info;
-        data_sharing_info.hasChanged = true;
+        data_sharing = qos.data_sharing;
+        data_sharing.hasChanged = true;
     }
 }
 
@@ -179,7 +179,7 @@ bool WriterQos::checkQos() const
             return false;
         }
     }
-    if (data_sharing_info.is_compatible && data_sharing_info.domain_id == 0U)
+    if (data_sharing.kind() != DISABLED && data_sharing.domain_ids().empty())
     {
         logError(RTPS_QOS_CHECK, "WRITERQOS: Data sharing compatible but no domain ID defined");
         return false;
@@ -230,8 +230,13 @@ bool WriterQos::canQosBeUpdated(
         updatable = false;
         logWarning(RTPS_QOS_CHECK, "Destination order Kind cannot be changed after the creation of a publisher.");
     }
+    if (data_sharing.kind() != qos.data_sharing.kind() ||
+            data_sharing.domain_ids() != qos.data_sharing.domain_ids())
+    {
+        updatable = false;
+        logWarning(RTPS_QOS_CHECK, "Data sharing configuration cannot be changed after the creation of a publisher.");
+    }
     return updatable;
-
 }
 
 void WriterQos::clear()
@@ -255,6 +260,7 @@ void WriterQos::clear()
     m_ownershipStrength.clear();
     m_publishMode.clear();
     representation.clear();
+    data_sharing.disable();
 
     m_reliability.kind = RELIABLE_RELIABILITY_QOS;
 }

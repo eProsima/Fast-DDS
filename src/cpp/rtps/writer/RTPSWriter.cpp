@@ -110,14 +110,30 @@ void RTPSWriter::init(
         fixed_payload_size_ = mp_history->m_att.payloadMaxSize;
     }
 
-    // Get the datasharing compatibility from property
-    const std::string* data_sharing_domain = PropertyPolicyHelper::find_property(
-            att.endpoint.properties, "fastdds.datasharing_domain");
-    if (data_sharing_domain != nullptr)
+    const std::string* data_sharing_domains = PropertyPolicyHelper::find_property(
+            att.endpoint.properties, "fastdds.datasharing_domains");
+    if (data_sharing_domains != nullptr)
     {
         is_datasharing_compatible_ = true;
-        std::stringstream ss(*data_sharing_domain);
-        ss >> data_sharing_domain_;
+
+        // Extract domains.
+        std::stringstream ss;
+        uint64_t id;
+        std::size_t initial_pos = 0;
+        std::size_t last_pos = data_sharing_domains->find_first_of(';');
+        while (last_pos != std::string::npos)
+        {
+            ss.str(data_sharing_domains->substr(initial_pos, last_pos - initial_pos));
+            ss >> id;
+            data_sharing_domains_.emplace_back(id);
+            initial_pos = last_pos + 1;
+            last_pos = data_sharing_domains->find_first_of(';', initial_pos);
+        }
+        ss.str(data_sharing_domains->substr(initial_pos, data_sharing_domains->size() - initial_pos));
+        ss >> id;
+        data_sharing_domains_.emplace_back(id);
+
+        assert(data_sharing_domains_.size() != 0);
 
         const std::string* data_sharing_directory = PropertyPolicyHelper::find_property(
             att.endpoint.properties, "fastdds.datasharing_directory");
@@ -390,6 +406,26 @@ const Duration_t& RTPSWriter::get_liveliness_lease_duration() const
 const Duration_t& RTPSWriter::get_liveliness_announcement_period() const
 {
     return liveliness_announcement_period_;
+}
+
+bool RTPSWriter::is_datasharing_compatible(
+        const ReaderProxyData& rdata)
+{
+    if (!is_datasharing_compatible_ ||
+        rdata.m_qos.data_sharing.kind() == fastdds::dds::DISABLED)
+    {
+        return false;
+    }
+
+    for (auto id : rdata.m_qos.data_sharing.domain_ids())
+    {
+        if (std::find(data_sharing_domains_.begin(), data_sharing_domains_.end(), id) != data_sharing_domains_.end())
+        {
+            return true;
+        }
+    }
+
+    return false;
 }
 
 }  // namespace rtps

@@ -61,6 +61,7 @@ WriterProxyData::WriterProxyData(
     m_qos.m_userData.set_max_size(static_cast<uint32_t>(data_limits.max_user_data));
     m_qos.m_partition.set_max_size(static_cast<uint32_t>(data_limits.max_partitions));
     m_properties.set_max_size(static_cast<uint32_t>(data_limits.max_properties));
+    m_qos.data_sharing.set_max_domains(static_cast<uint32_t>(data_limits.max_datasharing_domains));
 }
 
 WriterProxyData::WriterProxyData(
@@ -277,11 +278,11 @@ uint32_t WriterProxyData::get_serialized_size(
         ret_val += fastdds::dds::QosPoliciesSerializer<DisablePositiveACKsQosPolicy>::cdr_serialized_size(
             m_qos.m_disablePositiveACKs);
     }
-    if ((m_qos.data_sharing_info.send_always() || m_qos.data_sharing_info.hasChanged) &&
-            m_qos.data_sharing_info.is_compatible)
+    if ((m_qos.data_sharing.send_always() || m_qos.data_sharing.hasChanged) &&
+            m_qos.data_sharing.kind() != fastdds::dds::DISABLED)
     {
-        ret_val += fastdds::dds::QosPoliciesSerializer<DataSharingInfo>::cdr_serialized_size(
-            m_qos.data_sharing_info);
+        ret_val += fastdds::dds::QosPoliciesSerializer<DataSharingQosPolicy>::cdr_serialized_size(
+            m_qos.data_sharing);
     }
     if (m_qos.m_groupData.send_always() || m_qos.m_groupData.hasChanged)
     {
@@ -520,10 +521,10 @@ bool WriterProxyData::writeToCDRMessage(
             return false;
         }
     }
-    if ((m_qos.data_sharing_info.send_always() || m_qos.data_sharing_info.hasChanged) &&
-            m_qos.data_sharing_info.is_compatible)
+    if ((m_qos.data_sharing.send_always() || m_qos.data_sharing.hasChanged) &&
+            m_qos.data_sharing.kind() != fastdds::dds::DISABLED)
     {
-        if (!fastdds::dds::QosPoliciesSerializer<DataSharingInfo>::add_to_cdr_message(m_qos.data_sharing_info, msg))
+        if (!fastdds::dds::QosPoliciesSerializer<DataSharingQosPolicy>::add_to_cdr_message(m_qos.data_sharing, msg))
         {
             return false;
         }
@@ -964,10 +965,10 @@ bool WriterProxyData::readFromCDRMessage(
                         break;
                     }
 
-                    case fastdds::dds::PID_DATASHARING_INFO:
+                    case fastdds::dds::PID_DATASHARING:
                     {
-                        if (!fastdds::dds::QosPoliciesSerializer<DataSharingInfo>::read_from_cdr_message(
-                                    m_qos.data_sharing_info, msg, plength))
+                        if (!fastdds::dds::QosPoliciesSerializer<DataSharingQosPolicy>::read_from_cdr_message(
+                                    m_qos.data_sharing, msg, plength))
                         {
                         logError(RTPS_WRITER_PROXY_DATA,
                                 "Received with error.");
