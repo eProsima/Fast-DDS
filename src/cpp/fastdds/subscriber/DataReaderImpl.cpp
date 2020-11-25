@@ -1356,10 +1356,10 @@ void DataReaderImpl::release_payload_pool()
 ReturnCode_t DataReaderImpl::check_datasharing_compatible(
         const ReaderAttributes& reader_attributes)
 {
-    bool has_security_enabled = false;
-
 #if HAVE_SECURITY
-    has_security_enabled = subscriber_->rtps_participant()->is_security_enabled_for_reader(reader_attributes);
+    bool has_security_enabled = subscriber_->rtps_participant()->is_security_enabled_for_reader(reader_attributes);
+#else
+    (void) reader_attributes;
 #endif // HAVE_SECURITY
 
     switch (qos_.data_sharing().kind())
@@ -1369,13 +1369,14 @@ ReturnCode_t DataReaderImpl::check_datasharing_compatible(
             return ReturnCode_t::RETCODE_OK;
             break;
         case DataSharingKind::FORCED:
+#if HAVE_SECURITY
             if (has_security_enabled)
             {
                 logError(DATA_READER, "Data sharing cannot be used with security protection.");
                 is_data_sharing_compatible_ = false;
                 return ReturnCode_t::RETCODE_NOT_ALLOWED_BY_SECURITY;
             }
-
+#endif
             if (!type_.is_bounded())
             {
                 logInfo(DATA_READER, "Data sharing cannot be used with unbounded data types");
@@ -1387,12 +1388,14 @@ ReturnCode_t DataReaderImpl::check_datasharing_compatible(
             return ReturnCode_t::RETCODE_OK;
             break;
         case DataSharingKind::AUTO:
+#if HAVE_SECURITY
             if (has_security_enabled)
             {
                 logInfo(DATA_READER, "Data sharing disabled due to security configuration.");
                 is_data_sharing_compatible_ = false;
                 return ReturnCode_t::RETCODE_OK;
             }
+#endif
 
             if (!type_.is_bounded())
             {
