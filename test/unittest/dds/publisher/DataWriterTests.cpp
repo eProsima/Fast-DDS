@@ -271,9 +271,12 @@ TEST(DataWriterTests, SetListener)
 
 struct LoanableType
 {
-    static constexpr uint32_t initialization_value = 27u;
+    static constexpr uint32_t initialization_value()
+    {
+        return 27u;
+    }
 
-    uint32_t index = initialization_value;
+    uint32_t index = initialization_value();
 };
 
 class LoanableTypeSupport : public TopicDataType
@@ -389,7 +392,7 @@ TEST(DataWriterTests, LoanPositiveTests)
 
     EXPECT_EQ(ReturnCode_t::RETCODE_OK, datawriter->loan_sample(sample, InitKind::CONSTRUCTED_LOAN_INITIALIZATION));
     ASSERT_NE(nullptr, sample);
-    EXPECT_EQ(LoanableType::initialization_value, static_cast<LoanableType*>(sample)->index);
+    EXPECT_EQ(LoanableType::initialization_value(), static_cast<LoanableType*>(sample)->index);
     EXPECT_EQ(ReturnCode_t::RETCODE_OK, datawriter->discard_loan(sample));
     EXPECT_EQ(ReturnCode_t::RETCODE_BAD_PARAMETER, datawriter->discard_loan(sample));
 
