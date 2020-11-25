@@ -22,6 +22,9 @@ using eprosima::fastrtps::xmlparser::XMLParser;
 using eprosima::fastrtps::xmlparser::DataNode;
 using eprosima::fastrtps::xmlparser::BaseNode;
 using eprosima::fastrtps::xmlparser::sp_transport_t;
+using eprosima::fastrtps::xmlparser::up_participant_t;
+using eprosima::fastrtps::xmlparser::up_node_participant_t;
+using eprosima::fastrtps::xmlparser::node_participant_t;
 
 // Class to test protected methods
 class XMLParserTest : public XMLParser

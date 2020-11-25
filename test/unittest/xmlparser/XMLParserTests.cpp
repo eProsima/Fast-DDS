@@ -1321,6 +1321,91 @@ TEST_F(XMLParserTests, parseLogConfig_negative)
 
 }
 
+/*
+ * This test checks the return of the negative cases of the fillDataNode given a ParticipantAttributes DataNode
+ * 1. Check passing a nullptr as if the XMLElement was wrongly parsed above
+ * 2. Check missing required rtps tag
+ * 3. Check missing DomaiId value in tag
+ * 4. Check bad values for all attributes
+ * 5. Check a non existant atribute tag
+ */
+TEST_F(XMLParserTests, fillDataNodeParticipant_negative)
+{
+    tinyxml2::XMLDocument xml_doc;
+    tinyxml2::XMLElement* titleElement;
+
+    up_participant_t participant_atts{new ParticipantAttributes};
+    up_node_participant_t participant_node{new node_participant_t{NodeType::PARTICIPANT, std::move(participant_atts)}};
+
+    // missing profile XMLElemnt
+    EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::fillDataNode_wrapper(nullptr, *participant_node));
+
+    {
+        const char * xml_p =
+        "\
+        <participant profile_name=\"domainparticipant_profile_name\">\
+            %s\
+        </participant>\
+        ";
+        char xml[500];
+
+        // Misssing rtps tag
+        sprintf(xml, xml_p, "<domainId>0</domainId>");
+        ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+        titleElement = xml_doc.RootElement();
+        EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::fillDataNode_wrapper(titleElement, *participant_node));
+
+        // Misssing DomainId Value
+        sprintf(xml, xml_p, "<domainId></domainId><rtps></rtps>");
+        ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+        titleElement = xml_doc.RootElement();
+        EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::fillDataNode_wrapper(titleElement, *participant_node));
+    }
+
+    {
+        // Wrong rtps child tags
+        const char * xml_p =
+        "\
+        <participant profile_name=\"domainparticipant_profile_name\">\
+            <domainId>0</domainId>\
+            <rtps>\
+                %s\
+            </rtps>\
+        </participant>\
+        ";
+        char xml[500];
+
+        std::vector<std::string> parameters = {
+            "<name></name>",
+            "<defaultUnicastLocatorList><bad_element></bad_element></defaultUnicastLocatorList>",
+            "<defaultMulticastLocatorList><bad_element></bad_element></defaultMulticastLocatorList>",
+            "<sendSocketBufferSize><bad_element></bad_element></sendSocketBufferSize>",
+            "<listenSocketBufferSize><bad_element></bad_element></listenSocketBufferSize>",
+            "<builtin><bad_element></bad_element></builtin>",
+            "<port><bad_element></bad_element></port>",
+            "<participantID><bad_element></bad_element></participantID>",
+            "<throughputController><bad_element></bad_element></throughputController>",
+            "<userTransports><bad_element></bad_element></userTransports>",
+            "<useBuiltinTransports><bad_element></bad_element></useBuiltinTransports>",
+            "<propertiesPolicy><bad_element></bad_element></propertiesPolicy>",
+            "<allocation><bad_element></bad_element></allocation>",
+            "<bad_element></bad_element>"
+        };
+
+
+        for (std::vector<std::string>::iterator it = parameters.begin(); it != parameters.end(); ++it)
+        {
+            sprintf(xml, xml_p, (*it).c_str());
+            ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+            titleElement = xml_doc.RootElement();
+            EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::fillDataNode_wrapper(titleElement, *participant_node));
+
+        }
+    }
+
+
+}
+
 // FINISH NACHO SECTION
 
 // INIT RAUL SECTION
