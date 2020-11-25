@@ -711,7 +711,7 @@ TEST_F(XMLParserTests, parseXMLTransportData)
         tinyxml2::XMLDocument xml_doc;
         tinyxml2::XMLElement* titleElement;
 
-        const char * xml_p = 
+        const char * xml_p =
         "\
         <transport_descriptor>\
             <transport_id>TransportId1</transport_id>\
@@ -773,7 +773,7 @@ TEST_F(XMLParserTests, parseXMLTransportData)
         tinyxml2::XMLDocument xml_doc;
         tinyxml2::XMLElement* titleElement;
 
-        const char * xml_p = 
+        const char * xml_p =
         "\
         <transport_descriptor>\
             <transport_id>TransportId1</transport_id>\
@@ -813,7 +813,7 @@ TEST_F(XMLParserTests, parseXMLTransportData)
         EXPECT_EQ(xmlparser::XMLProfileManager::getTransportById("TransportId1")->max_initial_peers_range(), 100);
         EXPECT_EQ(xmlparser::XMLProfileManager::getTransportById("TransportId1")->max_message_size(), 16384);
         xmlparser::XMLProfileManager::DeleteInstance();
-        
+
         // TCPv6
         sprintf(xml, xml_p, "6");
         ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
@@ -829,7 +829,7 @@ TEST_F(XMLParserTests, parseXMLTransportData)
         tinyxml2::XMLDocument xml_doc;
         tinyxml2::XMLElement* titleElement;
 
-        const char * xml = 
+        const char * xml =
         "\
         <transport_descriptor>\
             <transport_id>TransportId1</transport_id>\
@@ -850,6 +850,199 @@ TEST_F(XMLParserTests, parseXMLTransportData)
         EXPECT_EQ(xmlparser::XMLProfileManager::getTransportById("TransportId1")->max_message_size(), 16384);
         xmlparser::XMLProfileManager::DeleteInstance();
     }
+}
+
+/*
+ * This test checks the return of the negative cases of th parseXMLTransportData method.
+ * 1. Check an XMLP_ret::XML_ERROR retur on an incorrectly formated parameter of every posible parameter of the
+ * UDPv4, UDPv6, TCPv4, TCPv6, and SHM.
+ * 2. Check the correct parsing of a TCP transport descriptor for birth v4 and v6
+ * 3. Check the correct parsing of a SHM transport descriptor
+ * 4. Check missing TransportID
+ * 5. Check missing type
+ * 6. Check wrong type
+ */
+TEST_F(XMLParserTests, parseXMLTransportData_negative)
+{
+    tinyxml2::XMLDocument xml_doc;
+    tinyxml2::XMLElement* titleElement;
+    std::string xml;
+    std::vector<std::string> transport_types {"UDPv4", "UDPv6", "TCPv4", "TCPv6", "SHM"};
+
+    std::vector<std::string> parameters_UDP =
+    {
+        "maxMessageSize",
+        "maxInitialPeersRange",
+        "sendBufferSize",
+        "receiveBufferSize",
+        "TTL",
+        "non_blocking_send",
+        "interfaceWhiteList",
+        "output_port",
+        "bad_element"
+    };
+
+    std::vector<std::string> parameters_TCP =
+    {
+        "maxMessageSize",
+        "maxInitialPeersRange",
+        "sendBufferSize",
+        "receiveBufferSize",
+        "TTL",
+        "non_blocking_send",
+        "interfaceWhiteList",
+        "output_port",
+        "keep_alive_frequency_ms",
+        "keep_alive_timeout_ms",
+        "max_logical_port",
+        "logical_port_range",
+        "logical_port_increment",
+        "calculate_crc",
+        "check_crc",
+        "enable_tcp_nodelay",
+        "tls",
+        "bad_element"
+    };
+
+    std::vector<std::string> parameters_SHM =
+    {
+        "maxMessageSize",
+        "maxInitialPeersRange",
+        "segment_size",
+        "port_queue_capacity",
+        "healthy_check_timeout_ms",
+        "rtps_dump_file",
+        "bad_element"
+    };
+
+    std::vector<std::string> parameters;
+    for (std::vector<std::string>::iterator transport_type = transport_types.begin(); transport_type != transport_types.end(); ++transport_type)
+    {
+        parameters.clear();
+        if( (*transport_type).substr(0,3) == "UDP" )
+        {
+            parameters = parameters_UDP;
+        }
+        else if ( (*transport_type).substr(0,3) == "TCP" )
+        {
+            parameters = parameters_TCP;
+            if ( (*transport_type) == "TCPv4" )
+            {
+                parameters.insert(parameters.end(), "wan_addr");
+            }
+        }
+        else if ( (*transport_type).substr(0,3) == "SHM" )
+        {
+            parameters = parameters_SHM;
+        }
+
+        for (std::vector<std::string>::iterator it = parameters.begin(); it != parameters.end(); ++it)
+        {
+            xml =
+            "\
+            <transport_descriptor>\
+                <transport_id>TransportId1</transport_id>\
+                <type>"+*transport_type+"</type>\
+                <"+*it+"><bad_element></bad_element></"+*it+">\
+            </transport_descriptor>\
+            ";
+
+            ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml.c_str()));
+            titleElement = xml_doc.RootElement();
+            EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::parseXMLTransportData_wrapper(titleElement));
+            xmlparser::XMLProfileManager::DeleteInstance();
+        }
+
+        if ( (*transport_type).substr(0,3) == "TCP" )
+        {
+            xml =
+            "\
+            <transport_descriptor>\
+                <transport_id>TransportId1</transport_id>\
+                <type>"+*transport_type+"</type>\
+                <listening_ports>\
+                    <port>not_an_int</port>\
+                </listening_ports>\
+            </transport_descriptor>\
+            ";
+
+            ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml.c_str()));
+            titleElement = xml_doc.RootElement();
+            EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::parseXMLTransportData_wrapper(titleElement));
+            xmlparser::XMLProfileManager::DeleteInstance();
+
+            // Check empty pointer
+            EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::parseXMLCommonTCPTransportData_wrapper(titleElement, nullptr));
+        }
+        else if( (*transport_type).substr(0,3) == "SHM" )
+        {
+            // Check empty pointer
+            EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::parseXMLCommonSharedMemTransportData_wrapper(titleElement, nullptr));
+        }
+    }
+
+    // missing type tag
+    xml =
+    "\
+    <transport_descriptor>\
+        <transport_id>TransportId1</transport_id>\
+    </transport_descriptor>\
+    ";
+    ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml.c_str()));
+    titleElement = xml_doc.RootElement();
+    EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::parseXMLTransportData_wrapper(titleElement));
+    xmlparser::XMLProfileManager::DeleteInstance();
+
+    // missing type value
+    xml =
+    "\
+    <transport_descriptor>\
+        <transport_id>TransportId1</transport_id>\
+        <type></type>\
+    </transport_descriptor>\
+    ";
+    ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml.c_str()));
+    titleElement = xml_doc.RootElement();
+    EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::parseXMLTransportData_wrapper(titleElement));
+    xmlparser::XMLProfileManager::DeleteInstance();
+
+    // invalid type
+    xml =
+    "\
+    <transport_descriptor>\
+        <transport_id>TransportId1</transport_id>\
+        <type>bad_type</type>\
+    </transport_descriptor>\
+    ";
+    ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml.c_str()));
+    titleElement = xml_doc.RootElement();
+    EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::parseXMLTransportData_wrapper(titleElement));
+    xmlparser::XMLProfileManager::DeleteInstance();
+
+    // missing id tag
+    xml =
+    "\
+    <transport_descriptor>\
+        <transport_id></transport_id>\
+        <type>UDPv4</type>\
+    </transport_descriptor>\
+    ";
+    ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml.c_str()));
+    titleElement = xml_doc.RootElement();
+    EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::parseXMLTransportData_wrapper(titleElement));
+    xmlparser::XMLProfileManager::DeleteInstance();
+
+    // missing id value
+    xml =
+    "\
+    <transport_descriptor>\
+        <type>UDPv4</type>\
+    </transport_descriptor>\
+    ";
+    ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml.c_str()));
+    titleElement = xml_doc.RootElement();
+    EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::parseXMLTransportData_wrapper(titleElement));
+    xmlparser::XMLProfileManager::DeleteInstance();
 }
 
 // FINISH NACHO SECTION

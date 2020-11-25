@@ -20,11 +20,8 @@ using namespace eprosima::fastrtps::rtps;
 using eprosima::fastrtps::xmlparser::XMLP_ret;
 using eprosima::fastrtps::xmlparser::XMLParser;
 using eprosima::fastrtps::xmlparser::DataNode;
-<<<<<<< HEAD
 using eprosima::fastrtps::xmlparser::BaseNode;
-=======
 using eprosima::fastrtps::xmlparser::sp_transport_t;
->>>>>>> d116cf92b... Refs #9965: Added Wrapped methods
 
 // Class to test protected methods
 class XMLParserTest : public XMLParser
@@ -392,9 +389,6 @@ public:
 
 // INIT NACHO SECTION
 
-<<<<<<< HEAD
-// FINISH NACHO SECTION
-=======
     static XMLP_ret parseXMLTypes_wrapper(
         tinyxml2::XMLElement* p_root)
     {
@@ -426,15 +420,14 @@ public:
         eprosima::fastrtps::xmlparser::sp_transport_t p_transport)
     {
         return parseXMLCommonTCPTransportData(p_root, p_transport);
-    }   
-    
+    }
+
     static XMLP_ret parseXMLConsumer_wrapper(
         tinyxml2::XMLElement& p_root)
     {
         return parseXMLConsumer(p_root);
     }
-// FINISH NACHO SECTION	
->>>>>>> d116cf92b... Refs #9965: Added Wrapped methods
+// FINISH NACHO SECTION
 
 // INIT RAUL SECTION
     static XMLP_ret parseXML_wrapper(
