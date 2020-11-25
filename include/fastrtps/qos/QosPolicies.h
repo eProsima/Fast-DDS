@@ -94,7 +94,7 @@ constexpr TypeConsistencyKind DISALLOW_TYPE_COERCION = TypeConsistencyKind::DISA
 constexpr TypeConsistencyKind ALLOW_TYPE_COERCION = TypeConsistencyKind::ALLOW_TYPE_COERCION;
 using TypeConsistencyEnforcementQosPolicy = fastdds::dds::TypeConsistencyEnforcementQosPolicy;
 using DisablePositiveACKsQosPolicy = fastdds::dds::DisablePositiveACKsQosPolicy;
-using DataSharingInfo = fastdds::dds::DataSharingInfo;
+using DataSharingQosPolicy = fastdds::dds::DataSharingQosPolicy;
 using TypeIdV1 = fastdds::dds::TypeIdV1;
 using TypeObjectV1 = fastdds::dds::TypeObjectV1;
 

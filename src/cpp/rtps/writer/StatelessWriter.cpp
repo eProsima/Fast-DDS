@@ -771,11 +771,7 @@ bool StatelessWriter::matched_reader_add(
         }
     }
 
-    bool is_datasharing = (is_datasharing_compatible_ && 
-            data.m_qos.data_sharing_info.is_compatible &&
-            data.m_qos.data_sharing_info.domain_id == data_sharing_domain_);
-
-    if (is_datasharing)
+    if (is_datasharing_compatible(data))
     {
 
         if (datasharing_notifier_->add_reader(data.guid()))

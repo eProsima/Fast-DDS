@@ -56,7 +56,6 @@ RTPSReader::RTPSReader(
     , history_state_(new ReaderHistoryState(att.matched_writers_allocation.initial))
     , liveliness_kind_(att.liveliness_kind_)
     , liveliness_lease_duration_(att.liveliness_lease_duration)
-    , data_sharing_domain_(0u)
 {
     PoolConfig cfg = PoolConfig::from_history_attributes(hist->m_att);
     std::shared_ptr<IChangePool> change_pool;
@@ -97,7 +96,6 @@ RTPSReader::RTPSReader(
     , history_state_(new ReaderHistoryState(att.matched_writers_allocation.initial))
     , liveliness_kind_(att.liveliness_kind_)
     , liveliness_lease_duration_(att.liveliness_lease_duration)
-    , data_sharing_domain_(0u)
 {
     init(payload_pool, change_pool, att);
 }
@@ -116,13 +114,30 @@ void RTPSReader::init(
     }
 
     // Get the datasharing compatibility from property
-    const std::string* data_sharing_domain = PropertyPolicyHelper::find_property(
-            att.endpoint.properties, "fastdds.datasharing_domain");
-    if (data_sharing_domain != nullptr)
+    const std::string* data_sharing_domains = PropertyPolicyHelper::find_property(
+            att.endpoint.properties, "fastdds.datasharing_domains");
+    if (data_sharing_domains != nullptr)
     {
         is_datasharing_compatible_ = true;
-        std::stringstream ss(*data_sharing_domain);
-        ss >> data_sharing_domain_;
+
+        // Extract domains.
+        std::stringstream ss;
+        uint64_t id;
+        std::size_t initial_pos = 0;
+        std::size_t last_pos = data_sharing_domains->find_first_of(';');
+        while (last_pos != std::string::npos)
+        {
+            ss.str(data_sharing_domains->substr(initial_pos, last_pos - initial_pos));
+            ss >> id;
+            data_sharing_domains_.emplace_back(id);
+            initial_pos = last_pos + 1;
+            last_pos = data_sharing_domains->find_first_of(';', initial_pos);
+        }
+        ss.str(data_sharing_domains->substr(initial_pos, data_sharing_domains->size() - initial_pos));
+        ss >> id;
+        data_sharing_domains_.emplace_back(id);
+
+        assert(data_sharing_domains_.size() != 0);
 
         const std::string* data_sharing_directory = PropertyPolicyHelper::find_property(
             att.endpoint.properties, "fastdds.datasharing_directory");
@@ -357,6 +372,27 @@ void RTPSReader::create_datasharing_listener(ResourceLimitedContainerConfig limi
             std::bind(&RTPSReader::processDataMsg, this, _1 )));
     datasharing_listener_->start();
 }
+
+bool RTPSReader::is_datasharing_compatible(
+        const WriterProxyData& wdata)
+{
+    if (!is_datasharing_compatible_ ||
+        wdata.m_qos.data_sharing.kind() == fastdds::dds::DISABLED)
+    {
+        return false;
+    }
+
+    for (auto id : wdata.m_qos.data_sharing.domain_ids())
+    {
+        if (std::find(data_sharing_domains_.begin(), data_sharing_domains_.end(), id) != data_sharing_domains_.end())
+        {
+            return true;
+        }
+    }
+
+    return false;
+}
+
 
 } /* namespace rtps */
 } /* namespace fastrtps */

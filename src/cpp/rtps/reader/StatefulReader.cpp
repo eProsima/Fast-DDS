@@ -167,11 +167,7 @@ bool StatefulReader::matched_writer_add(
         }
     }
 
-    bool is_datasharing = (is_datasharing_compatible_ && 
-            wdata.m_qos.data_sharing_info.is_compatible &&
-            wdata.m_qos.data_sharing_info.domain_id == data_sharing_domain_);
-
-    if (is_datasharing)
+    if (is_datasharing_compatible(wdata))
     {
         if (datasharing_listener_->add_datasharing_writer(wdata.guid(),
             PoolConfig::from_history_attributes(mp_history->m_att),

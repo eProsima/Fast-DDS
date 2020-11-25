@@ -201,9 +201,14 @@ ReturnCode_t DataWriterImpl::enable()
     // Add datasharing information
     if (is_data_sharing_compatible_)
     {
+        property.name("fastdds.datasharing_domains");
         std::stringstream ss;
-        ss << qos_.data_sharing().domain_id();
-        property.name("fastdds.datasharing_domain");
+        bool is_first_domain = true;
+        for (auto id : qos_.data_sharing().domain_ids())
+        {
+            ss << (is_first_domain ? "" : ";") << id;
+            is_first_domain = false;
+        }
         property.value(ss.str());
         w_att.endpoint.properties.properties().push_back(std::move(property));
         property.name("fastdds.datasharing_directory");
@@ -280,7 +285,11 @@ ReturnCode_t DataWriterImpl::enable()
 
     // REGISTER THE WRITER
     WriterQos wqos = qos_.get_writerqos(get_publisher()->get_qos(), topic_->get_qos());
-    wqos.data_sharing_info.is_compatible = is_data_sharing_compatible_;
+    if (!is_data_sharing_compatible_)
+    {
+        // Do not send datasharing info on discovery
+        wqos.data_sharing.disable();
+    }
     publisher_->rtps_participant()->registerWriter(writer_, get_topic_attributes(qos_, *topic_, type_), wqos);
 
     return ReturnCode_t::RETCODE_OK;
@@ -1358,7 +1367,7 @@ bool DataWriterImpl::can_qos_be_updated(
         updatable = false;
         logWarning(RTPS_QOS_CHECK, "Data sharing configuration cannot be changed after the creation of a DataWriter.");
     }
-    if (to.data_sharing().domain_id() != from.data_sharing().domain_id())
+    if (to.data_sharing().domain_ids() != from.data_sharing().domain_ids())
     {
         updatable = false;
         logWarning(RTPS_QOS_CHECK, "Data sharing configuration cannot be changed after the creation of a DataWriter.");

@@ -352,6 +352,9 @@ protected:
     void create_datasharing_listener(
             ResourceLimitedContainerConfig limits);
 
+    bool is_datasharing_compatible(
+            const WriterProxyData& wdata);
+
     //!ReaderHistory
     ReaderHistory* mp_history;
     //!Listener
@@ -381,8 +384,8 @@ protected:
     bool is_datasharing_compatible_ = false;
     //! The listener for the datasharing notifications
     std::unique_ptr<DataSharingListener> datasharing_listener_;
-    //! Data sharing domain
-    uint64_t data_sharing_domain_;
+    //! Data sharing domains
+    std::vector<uint64_t> data_sharing_domains_;
     //! Data sharing directory
     std::string data_sharing_directory_;
 

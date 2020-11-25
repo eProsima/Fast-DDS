@@ -62,7 +62,7 @@ public:
                (this->m_publishMode == b.m_publishMode) &&
                (this->m_disablePositiveACKs == b.m_disablePositiveACKs) &&
                (this->representation == b.representation) &&
-               (this->data_sharing_info == b.data_sharing_info);
+               (this->data_sharing == b.data_sharing);
     }
 
     //!Durability Qos, implemented in the library.
@@ -123,7 +123,7 @@ public:
     DisablePositiveACKsQosPolicy m_disablePositiveACKs;
 
     //!Information for data sharing compatibility check.
-    DataSharingInfo data_sharing_info;
+    DataSharingQosPolicy data_sharing;
 
     /**
      * Set Qos from another class

@@ -182,9 +182,14 @@ ReturnCode_t DataReaderImpl::enable()
     // Add datasharing information
     if (is_data_sharing_compatible_)
     {
+        property.name("fastdds.datasharing_domains");
         std::stringstream ss;
-        ss << qos_.data_sharing().domain_id();
-        property.name("fastdds.datasharing_domain");
+        bool is_first_domain = true;
+        for (auto id : qos_.data_sharing().domain_ids())
+        {
+            ss << (is_first_domain ? "" : ";") << id;
+            is_first_domain = false;
+        }
         property.value(ss.str());
         att.endpoint.properties.properties().push_back(std::move(property));
         property.name("fastdds.datasharing_directory");
@@ -224,7 +229,11 @@ ReturnCode_t DataReaderImpl::enable()
 
     // Register the reader
     ReaderQos rqos = qos_.get_readerqos(subscriber_->get_qos());
-    rqos.data_sharing_info.is_compatible = is_data_sharing_compatible_;
+    if (!is_data_sharing_compatible_)
+    {
+        // Do not send datasharing info on discovery
+        rqos.data_sharing.disable();
+    }
     subscriber_->rtps_participant()->registerReader(reader_, topic_attributes(), rqos);
 
     return ReturnCode_t::RETCODE_OK;
@@ -1181,6 +1190,21 @@ bool DataReaderImpl::can_qos_be_updated(
     {
         updatable = false;
         logWarning(DDS_QOS_CHECK, "reader_resource_limits cannot be changed after the creation of a DataReader.");
+    }
+    if (to.data_sharing().kind() != from.data_sharing().kind())
+    {
+        updatable = false;
+        logWarning(RTPS_QOS_CHECK, "Data sharing configuration cannot be changed after the creation of a DataReader.");
+    }
+    if (to.data_sharing().shm_directory() != from.data_sharing().shm_directory())
+    {
+        updatable = false;
+        logWarning(RTPS_QOS_CHECK, "Data sharing configuration cannot be changed after the creation of a DataReader.");
+    }
+    if (to.data_sharing().domain_ids() != from.data_sharing().domain_ids())
+    {
+        updatable = false;
+        logWarning(RTPS_QOS_CHECK, "Data sharing configuration cannot be changed after the creation of a DataReader.");
     }
     return updatable;
 }

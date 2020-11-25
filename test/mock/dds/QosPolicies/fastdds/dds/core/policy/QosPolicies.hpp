@@ -1286,48 +1286,131 @@ public:
 };
 
 
+
+enum DataSharingKind : uint16_t
+{
+    AUTO,
+    DISABLED,
+    FORCED
+};
+
 /**
  * Information to check data sharing compatibility.
  * Will only be sent through the wire if this endpoint is data sharing compatible.
  * @note Immutable Qos Policy
  */
-class DataSharingInfo : public Parameter_t, public QosPolicy
+class DataSharingQosPolicy : public Parameter_t, public QosPolicy
 {
 public:
 
-    /**
-     * @brief Constructor
-     */
-    RTPS_DllAPI DataSharingInfo()
-        : Parameter_t(PID_DATASHARING_INFO, 8)
+    RTPS_DllAPI DataSharingQosPolicy()
+        : Parameter_t(PID_DATASHARING, 0)
         , QosPolicy(true)
-        , domain_id(0U)
-        , is_compatible(false)
     {
+        domain_ids_.push_back(1);
     }
 
-    /**
-     * @brief Destructor
-     */
-    virtual RTPS_DllAPI ~DataSharingInfo() = default;
+    virtual RTPS_DllAPI ~DataSharingQosPolicy() = default;
+
+    RTPS_DllAPI DataSharingQosPolicy(
+            const DataSharingQosPolicy& b) = default;
+
+    RTPS_DllAPI DataSharingQosPolicy& operator =(
+            const DataSharingQosPolicy& b) = default;
 
     bool operator ==(
-            const DataSharingInfo& b) const
+            const DataSharingQosPolicy& b) const
     {
-        return is_compatible == b.is_compatible &&
-               domain_id == b.domain_id;
+        return kind_ == b.kind_ &&
+               shm_directory_ == b.shm_directory_ &&
+               domain_ids_ == b.domain_ids_;
     }
 
     inline void clear() override
     {
-        domain_id = 0;
-        is_compatible = false;
+        DataSharingQosPolicy reset = DataSharingQosPolicy();
+        std::swap(*this, reset);
+    }
+
+    const DataSharingKind& kind() const
+    {
+        return kind_;
+    }
+
+    const std::string& shm_directory() const
+    {
+        return shm_directory_;
+    }
+
+    const std::vector<uint64_t>& domain_ids() const
+    {
+        return domain_ids_;
+    }
+
+    void automatic()
+    {
+        automatic(std::string(), std::vector<uint16_t> (1, 1));
+    }
+
+    void automatic(
+            const std::vector<uint16_t>& domain_ids)
+    {
+        automatic(std::string(), domain_ids);
+    }
+
+    void automatic(
+            const std::string& directory)
+    {
+        automatic(directory, std::vector<uint16_t> (1, 1));
+    }
+
+    void automatic(
+            const std::string& directory,
+            const std::vector<uint16_t>& domain_ids)
+    {
+        kind_ = AUTO;
+        shm_directory_ = directory;
+        domain_ids_.clear();
+        for (auto id : domain_ids)
+        {
+            domain_ids_.push_back(id);
+        }
+    }
+
+    void force(
+            const std::string& directory)
+    {
+        force(directory, std::vector<uint16_t> (1, 1));
+    }
+
+    void force(
+            const std::string& directory,
+            const std::vector<uint16_t>& domain_ids)
+    {
+        kind_ = FORCED;
+        shm_directory_ = directory;
+        domain_ids_.clear();
+        for (auto id : domain_ids)
+        {
+            domain_ids_.push_back(id);
+        }
+    }
+
+    /**
+     * @brief Configures the DataSharing in disabled mode
+     */
+    RTPS_DllAPI void disable()
+    {
+        kind_ = DISABLED;
+        shm_directory_ = "directory";
+        domain_ids_.clear();
     }
 
 public:
 
-    uint64_t domain_id;
-    bool is_compatible;
+    DataSharingKind kind_ = AUTO;
+    std::string shm_directory_;
+    std::vector<uint64_t> domain_ids_;
 };
 
 
