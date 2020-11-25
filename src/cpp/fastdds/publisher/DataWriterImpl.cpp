@@ -571,12 +571,12 @@ ReturnCode_t DataWriterImpl::unregister_instance(
     return returned_value;
 }
 
-bool DataWriterImpl::create_new_change(
+ReturnCode_t DataWriterImpl::create_new_change(
         ChangeKind_t changeKind,
         void* data)
 {
     WriteParams wparams;
-    return ReturnCode_t::RETCODE_OK == create_new_change_with_params(changeKind, data, wparams);
+    return create_new_change_with_params(changeKind, data, wparams);
 }
 
 ReturnCode_t DataWriterImpl::check_new_change_preconditions(

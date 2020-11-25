@@ -342,7 +342,7 @@ protected:
      * @param  data
      * @return
      */
-    bool create_new_change(
+    ReturnCode_t create_new_change(
             fastrtps::rtps::ChangeKind_t kind,
             void* data);
 
