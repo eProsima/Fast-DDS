@@ -1287,6 +1287,40 @@ TEST_F(XMLParserTests, parseXMLConsumer_negative)
 
 }
 
+/*
+ * This test checks the return of the negative cases of the parseLogConfig method.
+ * 1. Check a consummer with a missing class
+ * 2. Check the use_default tag without value
+ */
+TEST_F(XMLParserTests, parseLogConfig_negative)
+{
+    xmlparser::up_base_node_t root_node;
+    tinyxml2::XMLDocument xml_doc;
+    tinyxml2::XMLElement* titleElement;
+
+    const char * xml_p =
+    "\
+    <log>\
+        <use_default>%s</use_default>\
+        <consumer>\
+            <class>%s</class>\
+        </consumer>\
+    </log>\
+    ";
+    char xml[500];
+
+    sprintf(xml, xml_p, "FALSE", "");
+    ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+    titleElement = xml_doc.RootElement();
+    EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::loadXMLProfiles(*titleElement, root_node));
+
+    sprintf(xml, xml_p, "", "StdoutConsumer");
+    ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+    titleElement = xml_doc.RootElement();
+    EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::loadXMLProfiles(*titleElement, root_node));
+
+}
+
 // FINISH NACHO SECTION
 
 // INIT RAUL SECTION
