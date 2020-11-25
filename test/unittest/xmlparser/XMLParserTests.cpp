@@ -1308,6 +1308,9 @@ TEST_F(XMLParserTests, parseUnsupportedProfiles)
     EXPECT_EQ(num_errors, 3);
 }
 
+/*
+ * This test checks the negative case in the <library_settings> xml element.
+ */
 TEST_F(XMLParserTests, parseXMLLibrarySettingsNegativeClauses)
 {
     tinyxml2::XMLDocument xml_doc;
@@ -1324,7 +1327,17 @@ TEST_F(XMLParserTests, parseXMLLibrarySettingsNegativeClauses)
     // Load the xml
     ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
     titleElement = xml_doc.RootElement();
+    // Check that it returns an xml error when <intraprocess_delivery> is empty
     EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::parseXMLLibrarySettings_wrapper(titleElement));
+}
+
+/*
+ * This test checks an error is triggered when the xml file name is empty.
+ */
+TEST_F(XMLParserTests, loadXMLEmptyFileName)
+{
+    std::unique_ptr<BaseNode> root;
+    ASSERT_EQ(XMLP_ret::XML_ERROR, XMLParser::loadXML("", root));
 }
 // FINISH RAUL SECTION
 
