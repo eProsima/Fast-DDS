@@ -1500,10 +1500,11 @@ bool DataWriterImpl::check_and_remove_loan(
 ReturnCode_t DataWriterImpl::check_datasharing_compatible(
         const WriterAttributes& writer_attributes)
 {
-    bool has_security_enabled = false;
 
 #if HAVE_SECURITY
-    has_security_enabled = publisher_->rtps_participant()->is_security_enabled_for_writer(writer_attributes);
+    bool has_security_enabled = publisher_->rtps_participant()->is_security_enabled_for_writer(writer_attributes);
+#else
+    (void) writer_attributes;
 #endif // HAVE_SECURITY
 
     bool has_bound_payload_size =
@@ -1517,12 +1518,14 @@ ReturnCode_t DataWriterImpl::check_datasharing_compatible(
             return ReturnCode_t::RETCODE_OK;
             break;
         case DataSharingKind::FORCED:
+#if HAVE_SECURITY
             if (has_security_enabled)
             {
                 logError(DATA_WRITER, "Data sharing cannot be used with security protection.");
                 is_data_sharing_compatible_ = false;
                 return ReturnCode_t::RETCODE_NOT_ALLOWED_BY_SECURITY;
             }
+#endif // HAVE_SECURITY
 
             if (!has_bound_payload_size)
             {
@@ -1536,12 +1539,14 @@ ReturnCode_t DataWriterImpl::check_datasharing_compatible(
             return ReturnCode_t::RETCODE_OK;
             break;
         case DataSharingKind::AUTO:
+#if HAVE_SECURITY
             if (has_security_enabled)
             {
                 logInfo(DATA_WRITER, "Data sharing disabled due to security configuration.");
                 is_data_sharing_compatible_ = false;
                 return ReturnCode_t::RETCODE_OK;
             }
+#endif // HAVE_SECURITY
 
             if (!has_bound_payload_size)
             {
