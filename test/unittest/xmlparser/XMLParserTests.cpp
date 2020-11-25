@@ -16,7 +16,16 @@
 #include <fastrtps/xmlparser/XMLTree.h>
 #include <fastdds/dds/log/Log.hpp>
 #include <fastrtps/utils/IPLocator.h>
+#include <fastrtps/xmlparser/XMLProfileManager.h>
+#include <fastrtps/transport/UDPv4TransportDescriptor.h>
+#include <fastrtps/transport/UDPv6TransportDescriptor.h>
 #include <fastrtps/transport/TCPv4TransportDescriptor.h>
+#include <fastrtps/transport/TCPv6TransportDescriptor.h>
+#include <fastdds/dds/log/Log.hpp>
+#include <fastdds/dds/log/OStreamConsumer.hpp>
+#include <fastdds/dds/log/FileConsumer.hpp>
+#include <fastdds/dds/log/StdoutConsumer.hpp>
+#include <fastdds/dds/log/StdoutErrConsumer.hpp>
 #include "mock/XMLMockConsumer.h"
 #include "wrapper/XMLParserTest.hpp"
 
@@ -28,12 +37,16 @@
 
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
+using namespace ::testing;
 
 using eprosima::fastrtps::xmlparser::BaseNode;
 using eprosima::fastrtps::xmlparser::DataNode;
 using eprosima::fastrtps::xmlparser::NodeType;
 using eprosima::fastrtps::xmlparser::XMLP_ret;
 using eprosima::fastrtps::xmlparser::XMLParser;
+
+using eprosima::fastdds::dds::Log;
+using eprosima::fastdds::dds::LogConsumer;
 
 class XMLTreeTests : public ::testing::Test
 {
@@ -649,6 +662,41 @@ TEST_F(XMLParserTests, DataBuffer)
 }
 
 // INIT NACHO SECTION
+/*
+ * This test checks The return of the loadXMLProfiles method when a correct xml is parsed
+ */
+TEST_F(XMLParserTests, loadXMLProfiles)
+{
+
+    xmlparser::up_base_node_t root_node;
+    tinyxml2::XMLDocument xml_doc;
+    tinyxml2::XMLElement* titleElement;
+
+    const char * xml =
+    "\
+    <profiles>\
+        <publisher profile_name=\"test_publisher_profile\"\
+        is_default_profile=\"true\">\
+            <qos>\
+                <durability>\
+                    <kind>TRANSIENT_LOCAL</kind>\
+                </durability>\
+            </qos>\
+        </publisher>\
+        <subscriber profile_name=\"test_subscriber_profile\" is_default_profile=\"true\">\
+            <historyMemoryPolicy>PREALLOCATED_WITH_REALLOC</historyMemoryPolicy>\
+            <userDefinedID>13</userDefinedID>\
+            <entityID>31</entityID>\
+        </subscriber>\
+    </profiles>\
+    ";
+
+    ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+    titleElement = xml_doc.RootElement();
+    EXPECT_EQ(XMLP_ret::XML_OK, XMLParserTest::loadXMLProfiles(*titleElement, root_node));
+
+}
+
 
 // FINISH NACHO SECTION
 
