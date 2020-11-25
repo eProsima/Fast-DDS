@@ -168,6 +168,33 @@ public:
         return participant_profile;
     }
 
+    void helper_block_for_at_least_entries(
+            uint32_t amount)
+    {
+        std::unique_lock<std::mutex> lck(*xml_mutex_);
+        mock_consumer->cv().wait(lck, [this, amount]
+                {
+                    return mock_consumer->ConsumedEntriesSize_nts() >= amount;
+                });
+    }
+
+    eprosima::fastdds::dds::XMLMockConsumer* mock_consumer;
+
+    mutable std::mutex* xml_mutex_;
+
+protected:
+
+    void SetUp() override
+    {
+        xml_mutex_ = new std::mutex();
+    }
+
+    void TearDown() override
+    {
+        delete xml_mutex_;
+        xml_mutex_ = nullptr;
+    }
+
 };
 
 TEST_F(XMLParserTests, NoFIle)
@@ -704,7 +731,6 @@ TEST_F(XMLParserTests, parseXMLProfilesRoot)
     {
         sprintf(xml, xml_p, e.c_str(), e.c_str());
         ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
-        std::cout << "Checking ............... " << e << std::endl;
         EXPECT_EQ(XMLP_ret::XML_OK, XMLParserTest::parseXML_wrapper(xml_doc, root));
     }
 
@@ -1160,6 +1186,126 @@ TEST_F(XMLParserTests, parseTLSConfigOptions)
         EXPECT_TRUE(
                 descriptor->tls_config.get_option(TCPTransportDescriptor::TLSConfig::TLSOptions::SINGLE_DH_USE));
     }
+}
+
+/*
+ * This test checks the correct functioning of the parseProfile function for all xml child elements of <profile>.
+ * 1. Check that elements <transport_descriptors>, <library_settings>, <participant>, <publisher>, <data_writer>,
+ * <subscriber>, <data_reader>, <topic>, <requester>, <replier>, and <types> are read as xml child elements of the
+ * <profiles> root element.
+ * 2. Check that it triggers an error when reading an wrong element.
+ */
+TEST_F(XMLParserTests, parseProfiles)
+{
+    tinyxml2::XMLDocument xml_doc;
+    tinyxml2::XMLElement* titleElement;
+    std::unique_ptr<BaseNode> profilesNode;
+
+    // Parametrized XML
+    const char* xml_p =
+            "\
+            <profiles>\
+                <%s>\
+                </%s>\
+            </profiles>\
+            ";
+
+    char xml[600];
+
+    std::vector<std::string> elements_ok {
+        "transport_descriptors",
+        "publisher",
+        "data_writer",
+        "subscriber",
+        "data_reader",
+        "topic",
+        "types"
+        // "qos_profile",
+        // "application",
+        // "type"
+    };
+    for (std::string e : elements_ok)
+    {
+        sprintf(xml, xml_p, e.c_str(), e.c_str());
+        ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+        titleElement = xml_doc.RootElement();
+        profilesNode.reset(new BaseNode{ NodeType::PROFILES });
+        EXPECT_EQ(XMLP_ret::XML_OK, XMLParserTest::parseProfiles_wrapper(titleElement, *profilesNode));
+    }
+
+    std::vector<std::string> elements_error {
+        "library_settings",
+        "participant",
+        "requester",
+        "replier",
+        "bad_element"
+    };
+    for (std::string e : elements_error)
+    {
+        sprintf(xml, xml_p, e.c_str(), e.c_str());
+        ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+        titleElement = xml_doc.RootElement();
+        profilesNode.reset(new BaseNode{ NodeType::PROFILES });
+        EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::parseProfiles_wrapper(titleElement, *profilesNode));
+    }
+}
+
+/*
+ * This test checks the correct functioning of the parseProfile function for all unsupported xml child elements of
+ * <profile>.
+ * 1. Check that unsupported elements <qos_profile>, <application>, and <type> are read as xml child elements of the
+ * <profiles> root element.
+ * 2. Check that it outputs a Log Error when reading an unsupported element.
+ */
+TEST_F(XMLParserTests, parseUnsupportedProfiles)
+{
+    tinyxml2::XMLDocument xml_doc;
+    tinyxml2::XMLElement* titleElement;
+    std::unique_ptr<BaseNode> profilesNode;
+
+    mock_consumer = new eprosima::fastdds::dds::XMLMockConsumer(xml_mutex_);
+
+    eprosima::fastdds::dds::Log::RegisterConsumer(std::unique_ptr<eprosima::fastdds::dds::LogConsumer>(mock_consumer));
+    eprosima::fastdds::dds::Log::SetVerbosity(eprosima::fastdds::dds::Log::Warning);
+    eprosima::fastdds::dds::Log::SetCategoryFilter(std::regex("(XMLPARSER)"));
+
+    // Parametrized XML
+    const char* xml_p =
+            "\
+            <profiles>\
+                <%s>\
+                </%s>\
+            </profiles>\
+            ";
+
+    char xml[600];
+
+    std::vector<std::string> elements {
+        "qos_profile",
+        "application",
+        "type"
+    };
+    for (std::string e : elements)
+    {
+        sprintf(xml, xml_p, e.c_str(), e.c_str());
+        ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+        titleElement = xml_doc.RootElement();
+        profilesNode.reset(new BaseNode{ NodeType::PROFILES });
+        EXPECT_EQ(XMLP_ret::XML_OK, XMLParserTest::parseProfiles_wrapper(titleElement, *profilesNode));
+    }
+
+    helper_block_for_at_least_entries(3);
+    auto consumed_entries = mock_consumer->ConsumedEntries();
+    // Expect 1 log error.
+    uint32_t num_errors = 0;
+    for (const auto& entry : consumed_entries)
+    {
+        if (entry.kind == eprosima::fastdds::dds::Log::Kind::Error)
+        {
+            num_errors++;
+        }
+    }
+    EXPECT_EQ(num_errors, 3);
 }
 // FINISH RAUL SECTION
 

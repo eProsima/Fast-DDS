@@ -20,6 +20,7 @@ using namespace eprosima::fastrtps::rtps;
 using eprosima::fastrtps::xmlparser::XMLP_ret;
 using eprosima::fastrtps::xmlparser::XMLParser;
 using eprosima::fastrtps::xmlparser::DataNode;
+using eprosima::fastrtps::xmlparser::BaseNode;
 
 // Class to test protected methods
 class XMLParserTest : public XMLParser
@@ -395,6 +396,13 @@ public:
         eprosima::fastrtps::xmlparser::up_base_node_t& root)
     {
         return parseXML(xmlDoc, root);
+    }
+
+    static XMLP_ret parseProfiles_wrapper(
+        tinyxml2::XMLElement* p_root,
+        BaseNode& profilesNode)
+    {
+        return parseProfiles(p_root, profilesNode);
     }
 
     static XMLP_ret parse_tls_config_wrapper(
