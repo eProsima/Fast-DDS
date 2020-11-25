@@ -1354,14 +1354,26 @@ void DataWriterImpl::set_fragment_size_on_change(
 
 std::shared_ptr<IPayloadPool> DataWriterImpl::get_payload_pool()
 {
-    PoolConfig config = PoolConfig::from_history_attributes(history_.m_att);
-
     if (!payload_pool_)
     {
+        PoolConfig config = PoolConfig::from_history_attributes(history_.m_att);
+
+        // When the user requested PREALLOCATED_WITH_REALLOC, but we know the type cannot
+        // grow, we translate the policy into bare PREALLOCATED
+        if (PREALLOCATED_WITH_REALLOC_MEMORY_MODE == config.memory_policy &&
+                (type_->is_bounded() || type_->is_plain()))
+        {
+            config.memory_policy = PREALLOCATED_MEMORY_MODE;
+        }
+
+        // Avoid calling the serialization size functors on PREALLOCATED mode
         fixed_payload_size_ = config.memory_policy == PREALLOCATED_MEMORY_MODE ? config.payload_initial_size : 0u;
+
+        // Get payload pool reference and allocate space for our history
         payload_pool_ = TopicPayloadPoolRegistry::get(topic_->get_name(), config);
         payload_pool_->reserve_history(config, false);
 
+        // Prepare loans collection for plain types only
         if (type_->is_plain())
         {
             loans_.reset(new LoanCollection(config));
