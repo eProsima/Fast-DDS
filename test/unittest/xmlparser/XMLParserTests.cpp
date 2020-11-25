@@ -1339,6 +1339,71 @@ TEST_F(XMLParserTests, loadXMLEmptyFileName)
     std::unique_ptr<BaseNode> root;
     ASSERT_EQ(XMLP_ret::XML_ERROR, XMLParser::loadXML("", root));
 }
+
+/*
+ * This test checks the negative case in the fillDataNode function when it refers to a publisher node.
+ * 1. Check that an XML_ERROR is triggered when the xml element is nullptr.
+ * 2. Check that an XML_ERROR is triggered when the <publisher> element does not contains any attributes.
+ */
+TEST_F(XMLParserTests, fillDataNodePublisherNegativeClauses)
+{
+    std::unique_ptr<PublisherAttributes> publisher_atts{new PublisherAttributes};
+    std::unique_ptr<DataNode<PublisherAttributes>> publisher_node{
+            new DataNode<PublisherAttributes>{ NodeType::PUBLISHER, std::move(publisher_atts) }};
+
+    // Check that an XML_ERROR is triggered when the xml element is nullptr.
+    EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::fillDataNode_wrapper(nullptr, *publisher_node));
+
+    tinyxml2::XMLDocument xml_doc;
+    tinyxml2::XMLElement* titleElement;
+
+    // XML snippet
+    const char* xml =
+            "\
+            <publisher>\
+                <bad_element></bad_element>\
+            </publisher>\
+            ";
+
+    // Load the xml
+    ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+    titleElement = xml_doc.RootElement();
+    // Check that an XML_ERROR is triggered when the <publisher> element does not contains any attributes.
+    EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::fillDataNode_wrapper(titleElement, *publisher_node));
+}
+
+/*
+ * This test checks the negative case in the fillDataNode function when it refers to a subscriber node.
+ * 1. Check that an XML_ERROR is triggered when the xml element is nullptr.
+ * 2. Check that an XML_ERROR is triggered when the <subscriber> element does not contains any attributes.
+ */
+TEST_F(XMLParserTests, fillDataNodeSubscriberNegativeClauses)
+{
+    std::unique_ptr<SubscriberAttributes> subscriber_atts{new SubscriberAttributes};
+    std::unique_ptr<DataNode<SubscriberAttributes>> subscriber_node{
+            new DataNode<SubscriberAttributes>{ NodeType::PUBLISHER, std::move(subscriber_atts) }};
+
+    // Check that an XML_ERROR is triggered when the xml element is nullptr.
+    EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::fillDataNode_wrapper(nullptr, *subscriber_node));
+
+    tinyxml2::XMLDocument xml_doc;
+    tinyxml2::XMLElement* titleElement;
+
+    // XML snippet
+    const char* xml =
+            "\
+            <subscriber>\
+                <bad_element></bad_element>\
+            </subscriber>\
+            ";
+
+    // Load the xml
+    ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+    titleElement = xml_doc.RootElement();
+    // Check that an XML_ERROR is triggered when the <subscriber> element does not contains any attributes.
+    EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::fillDataNode_wrapper(titleElement, *subscriber_node));
+}
+
 // FINISH RAUL SECTION
 
 // INIT PARIS SECTION

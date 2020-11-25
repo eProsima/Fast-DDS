@@ -418,6 +418,20 @@ public:
         return parseXMLLibrarySettings(p_root);
     }
 
+    static XMLP_ret fillDataNode_wrapper(
+        tinyxml2::XMLElement* p_profile,
+        DataNode<PublisherAttributes>& publisher_node)
+    {
+        return fillDataNode(p_profile, publisher_node);
+    }
+
+    static XMLP_ret fillDataNode_wrapper(
+        tinyxml2::XMLElement* p_profile,
+        DataNode<SubscriberAttributes>& subscriber_node)
+    {
+        return fillDataNode(p_profile, subscriber_node);
+    }
+
 // FINISH RAUL SECTION
 
 // INIT PARIS SECTION
