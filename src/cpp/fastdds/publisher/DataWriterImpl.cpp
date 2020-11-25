@@ -1364,6 +1364,7 @@ std::shared_ptr<IPayloadPool> DataWriterImpl::get_payload_pool()
 
     if (!payload_pool_)
     {
+        fixed_payload_size_ = config.memory_policy == PREALLOCATED_MEMORY_MODE ? config.payload_initial_size : 0u;
         payload_pool_ = TopicPayloadPoolRegistry::get(topic_->get_name(), config);
         payload_pool_->reserve_history(config, false);
 

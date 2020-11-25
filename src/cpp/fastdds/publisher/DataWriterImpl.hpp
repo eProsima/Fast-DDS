@@ -332,6 +332,8 @@ protected:
 
     DataWriter* user_datawriter_ = nullptr;
 
+    uint32_t fixed_payload_size_ = 0u;
+
     std::shared_ptr<ITopicPayloadPool> payload_pool_;
 
     std::unique_ptr<LoanCollection> loans_;
@@ -447,7 +449,13 @@ protected:
             PayloadInfo_t& payload)
     {
         CacheChange_t change;
-        if (!payload_pool_ || !payload_pool_->get_payload(size_getter(), change))
+        if (!payload_pool_)
+        {
+            return false;
+        }
+
+        uint32_t size = fixed_payload_size_ ? fixed_payload_size_ : size_getter();
+        if (!payload_pool_->get_payload(size, change))
         {
             return false;
         }
