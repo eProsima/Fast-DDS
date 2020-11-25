@@ -1307,6 +1307,25 @@ TEST_F(XMLParserTests, parseUnsupportedProfiles)
     }
     EXPECT_EQ(num_errors, 3);
 }
+
+TEST_F(XMLParserTests, parseXMLLibrarySettingsNegativeClauses)
+{
+    tinyxml2::XMLDocument xml_doc;
+    tinyxml2::XMLElement* titleElement;
+
+    // XML snippet
+    const char* xml =
+            "\
+            <library_settings>\
+                <intraprocess_delivery></intraprocess_delivery>\
+            </library_settings>\
+            ";
+
+    // Load the xml
+    ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+    titleElement = xml_doc.RootElement();
+    EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::parseXMLLibrarySettings_wrapper(titleElement));
+}
 // FINISH RAUL SECTION
 
 // INIT PARIS SECTION

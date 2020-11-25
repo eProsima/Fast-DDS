@@ -412,6 +412,12 @@ public:
         return parse_tls_config(p_root, tcp_transport);
     }
 
+    static XMLP_ret parseXMLLibrarySettings_wrapper(
+        tinyxml2::XMLElement* p_root)
+    {
+        return parseXMLLibrarySettings(p_root);
+    }
+
 // FINISH RAUL SECTION
 
 // INIT PARIS SECTION
