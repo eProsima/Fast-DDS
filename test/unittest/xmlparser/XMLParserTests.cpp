@@ -1045,6 +1045,98 @@ TEST_F(XMLParserTests, parseXMLTransportData_negative)
     xmlparser::XMLProfileManager::DeleteInstance();
 }
 
+/*
+ * This test checks the return of the parseXMLConsumer method.
+ * 1. Check an XMLP_ret::XML_ERROR retur on an incorrectly formated parameter of every posible parameter of the
+ * UDPv4, UDPv6, TCPv4, UDPv6, and SHM.
+ * 2. Check the correct return parsing a StdoutConsumer.
+ * 3. Check the correct return parsing a StdoutErrConsumer with default configuration.
+ * 4. Check the correct return parsing a StdoutErrConsumer with a custom configuration.
+ * 5. Check the correct return parsing a FileConsumer with default configuration.
+ */
+TEST_F(XMLParserTests, parseXMLConsumer)
+{
+    tinyxml2::XMLDocument xml_doc;
+    tinyxml2::XMLElement* titleElement;
+
+    {
+        // StdoutConsumer
+        const char * xml =
+        "\
+        <consumer>\
+            <class>StdoutConsumer</class>\
+        </consumer>\
+        ";
+
+        ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+        titleElement = xml_doc.RootElement();
+        EXPECT_EQ(XMLP_ret::XML_OK, XMLParserTest::parseXMLConsumer_wrapper(*titleElement));
+    }
+
+
+    {
+        // StdoutErrConsumer without properties
+        const char * xml =
+        "\
+        <consumer>\
+            <class>StdoutErrConsumer</class>\
+        </consumer>\
+        ";
+        ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+        titleElement = xml_doc.RootElement();
+        EXPECT_EQ(XMLP_ret::XML_OK, XMLParserTest::parseXMLConsumer_wrapper(*titleElement));
+    }
+
+    {
+        // StdoutErrConsumer with properties
+        const char * xml_p =
+        "\
+        <consumer>\
+            <class>StdoutErrConsumer</class>\
+            <property>\
+                <name>stderr_threshold</name>\
+                <value>Log::Kind::%s</value>\
+            </property>\
+        </consumer>\
+        ";
+        char xml[500];
+
+        std::vector<std::string> log_levels = {"Info", "Warning", "Error"};
+        for (std::vector<std::string>::iterator it = log_levels.begin(); it != log_levels.end(); ++it)
+        {
+            sprintf(xml, xml_p, (*it).c_str());
+            ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+            titleElement = xml_doc.RootElement();
+            EXPECT_EQ(XMLP_ret::XML_OK, XMLParserTest::parseXMLConsumer_wrapper(*titleElement));
+        }
+
+
+    }
+
+    {
+        // FileConsumer
+        const char * xml =
+        "\
+        <consumer>\
+            <class>FileConsumer</class>\
+            <property>\
+                <name>filename</name>\
+                <value>execution.log</value>\
+            </property>\
+            <property>\
+                <name>append</name>\
+                <value>TRUE</value>\
+            </property>\
+        </consumer>\
+        ";
+
+        ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+        titleElement = xml_doc.RootElement();
+        EXPECT_EQ(XMLP_ret::XML_OK, XMLParserTest::parseXMLConsumer_wrapper(*titleElement));
+    }
+
+}
+
 // FINISH NACHO SECTION
 
 // INIT RAUL SECTION
