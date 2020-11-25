@@ -481,7 +481,7 @@ LocatorList_t UDPv6Transport::NormalizeLocator(
 bool UDPv6Transport::is_local_locator(
         const Locator_t& locator) const
 {
-    assert(locator.kind == LOCATOR_KIND_UDPv4);
+    assert(locator.kind == LOCATOR_KIND_UDPv6);
 
     if (IPLocator::isLocal(locator))
     {
