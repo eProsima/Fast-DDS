@@ -1137,6 +1137,156 @@ TEST_F(XMLParserTests, parseXMLConsumer)
 
 }
 
+/*
+ * This test checks the return of the negative cases of the parseXMLConsumer method.
+ * 1. Check an XMLP_ret::XML_ERROR retur on an incorrectly formated parameter of every posible parameter of the
+ * UDPv4, UDPv6, TCPv4, UDPv6, and SHM.
+ * 2. Check a non-existant Consumer class.
+ * 3. Check a StdoutErrConsumer with incorrect propertiy values.
+ * 4. Check a StdoutErrConsumer with std_threshold set twice.
+ * 5. Check a StdoutErrConsumer with an incorrect property.
+ * 6. Check a FileConsumer without a filename property.
+ * 7. Check a FileConsumer without a value for the append property.
+ * 8. Check a FileConsumer with an incorrect property.
+ */
+TEST_F(XMLParserTests, parseXMLConsumer_negative)
+{
+    tinyxml2::XMLDocument xml_doc;
+    tinyxml2::XMLElement* titleElement;
+
+    {
+        Log::ClearConsumers();
+        // Unknown consumer class
+        const char * xml =
+        "\
+        <consumer>\
+            <class>UnknownConsumer</class>\
+        </consumer>\
+        ";
+
+        ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+        titleElement = xml_doc.RootElement();
+        EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::parseXMLConsumer_wrapper(*titleElement));
+    }
+
+    {
+        Log::ClearConsumers();
+        // StdoutErrConsumer with properties
+        const char * xml =
+        "\
+        <consumer>\
+            <class>StdoutErrConsumer</class>\
+            <property>\
+                <name>stderr_threshold</name>\
+                <value>bad_value</value>\
+            </property>\
+        </consumer>\
+        ";
+        ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+        titleElement = xml_doc.RootElement();
+        EXPECT_EQ(XMLP_ret::XML_NOK, XMLParserTest::parseXMLConsumer_wrapper(*titleElement));
+
+    }
+
+    {
+        Log::ClearConsumers();
+        // StdoutErrConsumer with two stderr_threshold
+        const char * xml =
+        "\
+        <consumer>\
+            <class>StdoutErrConsumer</class>\
+            <property>\
+                <name>stderr_threshold</name>\
+                <value>Log::Kind::Error</value>\
+            </property>\
+            <property>\
+                <name>stderr_threshold</name>\
+                <value>Log::Kind::Error</value>\
+            </property>\
+        </consumer>\
+        ";
+        ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+        titleElement = xml_doc.RootElement();
+        EXPECT_EQ(XMLP_ret::XML_NOK, XMLParserTest::parseXMLConsumer_wrapper(*titleElement));
+
+    }
+
+    {
+        Log::ClearConsumers();
+        // StdoutErrConsumer with wrong property name
+        const char * xml =
+        "\
+        <consumer>\
+            <class>StdoutErrConsumer</class>\
+            <property>\
+                <name>bad_property</name>\
+            </property>\
+        </consumer>\
+        ";
+        ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+        titleElement = xml_doc.RootElement();
+        EXPECT_EQ(XMLP_ret::XML_NOK, XMLParserTest::parseXMLConsumer_wrapper(*titleElement));
+
+    }
+
+    {
+        Log::ClearConsumers();
+        // FileConsumer no filename
+        const char * xml =
+        "\
+        <consumer>\
+            <class>FileConsumer</class>\
+            <property>\
+                <name>filename</name>\
+                <value></value>\
+            </property>\
+        </consumer>\
+        ";
+
+        ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+        titleElement = xml_doc.RootElement();
+        EXPECT_EQ(XMLP_ret::XML_NOK, XMLParserTest::parseXMLConsumer_wrapper(*titleElement));
+    }
+
+    {
+        Log::ClearConsumers();
+        // FileConsumer no append value
+        const char * xml =
+        "\
+        <consumer>\
+            <class>FileConsumer</class>\
+            <property>\
+                <name>append</name>\
+                <value></value>\
+            </property>\
+        </consumer>\
+        ";
+
+        ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+        titleElement = xml_doc.RootElement();
+        EXPECT_EQ(XMLP_ret::XML_NOK, XMLParserTest::parseXMLConsumer_wrapper(*titleElement));
+    }
+
+    {
+        Log::ClearConsumers();
+        // FileConsumer bad property
+        const char * xml =
+        "\
+        <consumer>\
+            <class>FileConsumer</class>\
+            <property>\
+                <name>bad_property</name>\
+            </property>\
+        </consumer>\
+        ";
+
+        ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+        titleElement = xml_doc.RootElement();
+        EXPECT_EQ(XMLP_ret::XML_NOK, XMLParserTest::parseXMLConsumer_wrapper(*titleElement));
+    }
+
+}
+
 // FINISH NACHO SECTION
 
 // INIT RAUL SECTION
