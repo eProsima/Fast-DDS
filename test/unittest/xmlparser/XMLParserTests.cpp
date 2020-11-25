@@ -697,6 +697,160 @@ TEST_F(XMLParserTests, loadXMLProfiles)
 
 }
 
+/*
+ * This test checks the return of the parseXMLTransportData method  and the storage of the values in the XMLProfileManager
+ * xml is parsed
+ * 1. Check the correct parsing of a UDP transport descriptor for birth v4 and v6
+ * 2. Check the correct parsing of a TCP transport descriptor for birth v4 and v6
+ * 3. Check the correct parsing of a SHM transport descriptor
+ */
+TEST_F(XMLParserTests, parseXMLTransportData)
+{
+    // Test UDPv4 and UDPv6
+    {
+        tinyxml2::XMLDocument xml_doc;
+        tinyxml2::XMLElement* titleElement;
+
+        const char * xml_p = 
+        "\
+        <transport_descriptor>\
+            <transport_id>TransportId1</transport_id>\
+            <type>UDPv%s</type>\
+            <sendBufferSize>8192</sendBufferSize>\
+            <receiveBufferSize>8192</receiveBufferSize>\
+            <TTL>250</TTL>\
+            <non_blocking_send>false</non_blocking_send>\
+            <maxMessageSize>16384</maxMessageSize>\
+            <maxInitialPeersRange>100</maxInitialPeersRange>\
+            <interfaceWhiteList>\
+                <address>192.168.1.41</address>\
+                <address>127.0.0.1</address>\
+            </interfaceWhiteList>\
+            <wan_addr>80.80.55.44</wan_addr>\
+            <output_port>5101</output_port>\
+            <keep_alive_frequency_ms>5000</keep_alive_frequency_ms>\
+            <keep_alive_timeout_ms>25000</keep_alive_timeout_ms>\
+            <max_logical_port>9000</max_logical_port>\
+            <logical_port_range>100</logical_port_range>\
+            <logical_port_increment>2</logical_port_increment>\
+            <listening_ports>\
+                <port>5100</port>\
+                <port>5200</port>\
+            </listening_ports>\
+            <calculate_crc>false</calculate_crc>\
+            <check_crc>false</check_crc>\
+            <enable_tcp_nodelay>false</enable_tcp_nodelay>\
+            <tls><!-- TLS Section --></tls>\
+            <segment_size>262144</segment_size>\
+            <port_queue_capacity>512</port_queue_capacity>\
+            <healthy_check_timeout_ms>1000</healthy_check_timeout_ms>\
+            <rtps_dump_file>rtsp_messages.log</rtps_dump_file>\
+        </transport_descriptor>\
+        ";
+        char xml[1600];
+
+        // UDPv4
+        sprintf(xml, xml_p, "4");
+        ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+        titleElement = xml_doc.RootElement();
+        EXPECT_EQ(XMLP_ret::XML_OK, XMLParserTest::parseXMLTransportData_wrapper(titleElement));
+        EXPECT_EQ(xmlparser::XMLProfileManager::getTransportById("TransportId1")->max_initial_peers_range(), 100);
+        EXPECT_EQ(xmlparser::XMLProfileManager::getTransportById("TransportId1")->max_message_size(), 16384);
+        xmlparser::XMLProfileManager::DeleteInstance();
+
+        // UDPv6
+        sprintf(xml, xml_p, "6");
+        ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+        titleElement = xml_doc.RootElement();
+        EXPECT_EQ(XMLP_ret::XML_OK, XMLParserTest::parseXMLTransportData_wrapper(titleElement));
+        EXPECT_EQ(xmlparser::XMLProfileManager::getTransportById("TransportId1")->max_initial_peers_range(), 100);
+        EXPECT_EQ(xmlparser::XMLProfileManager::getTransportById("TransportId1")->max_message_size(), 16384);
+        xmlparser::XMLProfileManager::DeleteInstance();
+    }
+
+    // Test TCPv4 and TCPv6
+    {
+        tinyxml2::XMLDocument xml_doc;
+        tinyxml2::XMLElement* titleElement;
+
+        const char * xml_p = 
+        "\
+        <transport_descriptor>\
+            <transport_id>TransportId1</transport_id>\
+            <type>TCPv%s</type>\
+            <sendBufferSize>8192</sendBufferSize>\
+            <receiveBufferSize>8192</receiveBufferSize>\
+            <TTL>250</TTL>\
+            <maxMessageSize>16384</maxMessageSize>\
+            <maxInitialPeersRange>100</maxInitialPeersRange>\
+            <interfaceWhiteList>\
+                <address>192.168.1.41</address>\
+                <address>127.0.0.1</address>\
+            </interfaceWhiteList>\
+            <wan_addr>80.80.55.44</wan_addr>\
+            <keep_alive_frequency_ms>5000</keep_alive_frequency_ms>\
+            <keep_alive_timeout_ms>25000</keep_alive_timeout_ms>\
+            <max_logical_port>9000</max_logical_port>\
+            <logical_port_range>100</logical_port_range>\
+            <logical_port_increment>2</logical_port_increment>\
+            <listening_ports>\
+                <port>5100</port>\
+                <port>5200</port>\
+            </listening_ports>\
+            <calculate_crc>false</calculate_crc>\
+            <check_crc>false</check_crc>\
+            <enable_tcp_nodelay>false</enable_tcp_nodelay>\
+            <tls><!-- TLS Section --></tls>\
+        </transport_descriptor>\
+        ";
+        char xml[1600];
+
+        // TCPv4
+        sprintf(xml, xml_p, "4");
+        ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+        titleElement = xml_doc.RootElement();
+        EXPECT_EQ(XMLP_ret::XML_OK, XMLParserTest::parseXMLTransportData_wrapper(titleElement));
+        EXPECT_EQ(xmlparser::XMLProfileManager::getTransportById("TransportId1")->max_initial_peers_range(), 100);
+        EXPECT_EQ(xmlparser::XMLProfileManager::getTransportById("TransportId1")->max_message_size(), 16384);
+        xmlparser::XMLProfileManager::DeleteInstance();
+        
+        // TCPv6
+        sprintf(xml, xml_p, "6");
+        ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+        titleElement = xml_doc.RootElement();
+        EXPECT_EQ(XMLP_ret::XML_OK, XMLParserTest::parseXMLTransportData_wrapper(titleElement));
+        EXPECT_EQ(xmlparser::XMLProfileManager::getTransportById("TransportId1")->max_initial_peers_range(), 100);
+        EXPECT_EQ(xmlparser::XMLProfileManager::getTransportById("TransportId1")->max_message_size(), 16384);
+        xmlparser::XMLProfileManager::DeleteInstance();
+    }
+
+    // SHM
+    {
+        tinyxml2::XMLDocument xml_doc;
+        tinyxml2::XMLElement* titleElement;
+
+        const char * xml = 
+        "\
+        <transport_descriptor>\
+            <transport_id>TransportId1</transport_id>\
+            <type>SHM</type>\
+            <segment_size>262144</segment_size>\
+            <port_queue_capacity>512</port_queue_capacity>\
+            <healthy_check_timeout_ms>1000</healthy_check_timeout_ms>\
+            <rtps_dump_file>rtsp_messages.log</rtps_dump_file>\
+            <maxMessageSize>16384</maxMessageSize>\
+            <maxInitialPeersRange>100</maxInitialPeersRange>\
+        </transport_descriptor>\
+        ";
+
+        ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+        titleElement = xml_doc.RootElement();
+        EXPECT_EQ(XMLP_ret::XML_OK, XMLParserTest::parseXMLTransportData_wrapper(titleElement));
+        EXPECT_EQ(xmlparser::XMLProfileManager::getTransportById("TransportId1")->max_initial_peers_range(), 100);
+        EXPECT_EQ(xmlparser::XMLProfileManager::getTransportById("TransportId1")->max_message_size(), 16384);
+        xmlparser::XMLProfileManager::DeleteInstance();
+    }
+}
 
 // FINISH NACHO SECTION
 
