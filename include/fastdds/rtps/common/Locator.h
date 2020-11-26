@@ -24,8 +24,6 @@
 #include <fastdds/rtps/common/Types.h>
 #include <fastrtps/utils/IPLocator.h>
 
-#include <fastdds/dds/log/Log.hpp>
-
 #include <sstream>
 #include <vector>
 #include <cstdint>
@@ -357,7 +355,6 @@ inline std::istream& operator >>(
         catch (std::ios_base::failure& )
         {
             loc.kind = LOCATOR_KIND_INVALID;
-            logWarning(LOCATOR, "Error deserializing Locator");
         }
 
         input.exceptions(excp_mask);

@@ -21,7 +21,6 @@
 
 #include <fastdds/rtps/common/Locator.h>
 #include <fastrtps/utils/collections/ResourceLimitedVector.hpp>
-#include <fastdds/dds/log/Log.hpp>
 
 namespace eprosima {
 namespace fastrtps {
@@ -224,7 +223,6 @@ inline std::istream& operator >>(
         {
             locList.unicast.clear();
             locList.multicast.clear();
-            logWarning(REMOTE_LOCATOR_LIST, "Error deserializing RemoteLocatorList");
         }
 
         input.exceptions(excp_mask);

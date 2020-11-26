@@ -25,7 +25,6 @@
 #include <fastdds/rtps/attributes/RTPSParticipantAttributes.h>
 
 #include <atomic>
-#include <mutex>
 #include <set>
 
 namespace eprosima {
@@ -265,8 +264,6 @@ private:
 
     static void removeRTPSParticipant_nts(
             t_p_RTPSParticipant&);
-
-    static std::mutex m_mutex;
 
     static std::atomic<uint32_t> m_maxRTPSParticipantID;
 

@@ -349,7 +349,6 @@ inline std::istream& operator >>(
         catch (std::ios_base::failure& )
         {
             locList.clear();
-            logWarning(LOCATOR_LIST, "Error deserializing LocatorList");
         }
 
         input.exceptions(excp_mask);

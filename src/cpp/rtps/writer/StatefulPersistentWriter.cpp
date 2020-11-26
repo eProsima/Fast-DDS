@@ -21,6 +21,7 @@
 #include <fastdds/rtps/history/WriterHistory.h>
 #include <rtps/persistence/PersistenceService.h>
 #include <fastrtps_deprecated/participant/ParticipantImpl.h>
+#include <fastdds/dds/log/Log.hpp>
 
 namespace eprosima {
 namespace fastrtps {

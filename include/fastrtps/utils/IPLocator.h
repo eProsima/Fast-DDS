@@ -21,7 +21,6 @@
 #define IP_LOCATOR_H_
 
 #include <fastdds/rtps/common/Types.h>
-#include <fastdds/dds/log/Log.hpp>
 
 #include <vector>
 #include <string>

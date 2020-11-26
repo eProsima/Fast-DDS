@@ -18,6 +18,7 @@
 #include <fastdds/rtps/common/Guid.h>
 #include <fastrtps/utils/IPFinder.h>
 #include <fastrtps/utils/IPLocator.h>
+#include <fastdds/dds/log/Log.hpp>
 #include <utility>
 #include <limits>
 

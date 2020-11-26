@@ -22,7 +22,6 @@
 
 #include <fastdds/dds/topic/TopicDataType.hpp>
 #include <fastrtps/attributes/ParticipantAttributes.h>
-#include <mutex>
 
 #ifdef USE_DEPRECATION
 #if defined(__GNUC__) || defined(__clang__)
@@ -219,8 +218,6 @@ class Domain
         Domain();
 
         virtual ~Domain();
-
-        static std::mutex m_mutex;
 
         static std::vector<t_p_Participant> m_participants;
 

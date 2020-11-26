@@ -19,6 +19,7 @@
 
 #include <fastrtps/utils/IPLocator.h>
 #include <fastrtps/utils/IPFinder.h>
+#include <fastdds/dds/log/Log.hpp>
 
 namespace eprosima {
 namespace fastrtps {
