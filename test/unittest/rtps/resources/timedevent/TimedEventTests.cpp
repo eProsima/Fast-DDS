@@ -346,49 +346,52 @@ TEST(TimedEventMultithread, PendingRaceCheck)
 
     // Code to check the newcomer event
     auto newcomer_thread_code = [&]()
-    {
-        std::condition_variable cv;
-        std::mutex mtx;
-        bool triggered = false;
-
-        // The event will just inform it has been triggered
-        auto callback = [&]()
-        {
-            std::lock_guard<std::mutex> guard(mtx);
-            triggered = true;
-            cv.notify_one();
-
-            return false;
-        };
-
-        // We create the timed event and then enter in a loop where we will start
-        // it and wait for its completion. We will then check that it is triggered
-        // in less time than half the periodic timed event 
-        TimedEvent newcomer_event(*env->service_, callback, 1.0 * newcomer_ms.count());
-        while (!stop_test)
-        {
-            TimePoint start_time;
-            TimePoint stop_time;
-
-            start_time = TimeClock::now();
-
             {
-                std::unique_lock<std::mutex> lock(mtx);
-                triggered = false;
-                newcomer_event.restart_timer();
-                cv.wait(lock, [&]() { return triggered; });
-                stop_time = TimeClock::now();
-            }
+                std::condition_variable cv;
+                std::mutex mtx;
+                bool triggered = false;
 
-            EXPECT_LT(stop_time - start_time, periodic_ms / 2);
-        }
-    };
+                // The event will just inform it has been triggered
+                auto callback = [&]()
+                        {
+                            std::lock_guard<std::mutex> guard(mtx);
+                            triggered = true;
+                            cv.notify_one();
+
+                            return false;
+                        };
+
+                // We create the timed event and then enter in a loop where we will start
+                // it and wait for its completion. We will then check that it is triggered
+                // in less time than half the periodic timed event
+                TimedEvent newcomer_event(*env->service_, callback, 1.0 * newcomer_ms.count());
+                while (!stop_test)
+                {
+                    TimePoint start_time;
+                    TimePoint stop_time;
+
+                    start_time = TimeClock::now();
+
+                    {
+                        std::unique_lock<std::mutex> lock(mtx);
+                        triggered = false;
+                        newcomer_event.restart_timer();
+                        cv.wait(lock, [&]()
+                                {
+                                    return triggered;
+                                });
+                        stop_time = TimeClock::now();
+                    }
+
+                    EXPECT_LT(stop_time - start_time, periodic_ms / 2);
+                }
+            };
 
     // Periodic event that triggers every second
     auto periodic_callback = []()
-    {
-        return true;
-    };
+            {
+                return true;
+            };
     TimedEvent main_event(*env->service_, periodic_callback, 1.0 * periodic_ms.count());
 
     // Let the periodic event run for several periods
