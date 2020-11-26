@@ -1872,7 +1872,8 @@ XMLP_ret XMLParser::fillDataNode(
             // userData
             if (XMLP_ret::XML_OK != getXMLOctetVector(p_aux0, participant_node.get()->rtps.userData, ident))
             {
-                return XMLP_ret::XML_ERROR;
+                // Not supported for now - never returns Error
+                // return XMLP_ret::XML_ERROR;
             }
         }
         else if (strcmp(name, PART_ID) == 0)
