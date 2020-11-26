@@ -196,58 +196,6 @@ XMLP_ret XMLParser::parseXMLTransportsProf(
     return ret;
 }
 
-XMLP_ret XMLParser::parseXMLTypes(
-        tinyxml2::XMLElement* p_root)
-{
-    /*
-        <xs:element name="types">
-            <xs:complexType>
-                <xs:group ref="moduleElems"/>
-            </xs:complexType>
-        </xs:element>
-     */
-
-    XMLP_ret ret = XMLP_ret::XML_OK;
-    tinyxml2::XMLElement* p_aux0 = nullptr, * p_aux1 = nullptr;
-    p_aux0 = p_root->FirstChildElement(TYPES);
-    if (p_aux0 != nullptr)
-    {
-        const char* name = nullptr;
-        for (p_aux1 = p_aux0->FirstChildElement(); p_aux1 != nullptr; p_aux1 = p_aux1->NextSiblingElement())
-        {
-            name = p_aux1->Name();
-            if (strcmp(name, TYPE) == 0)
-            {
-                if (XMLP_ret::XML_OK != parseXMLDynamicType(p_aux1))
-                {
-                    return XMLP_ret::XML_ERROR;
-                }
-            }
-            else
-            {
-                logError(XMLPARSER, "Invalid element found into 'types'. Name: " << name);
-                return XMLP_ret::XML_ERROR;
-            }
-        }
-    }
-    else // Directly root is TYPES?
-    {
-        const char* name = nullptr;
-        for (p_aux0 = p_root->FirstChildElement(); p_aux0 != nullptr; p_aux0 = p_aux0->NextSiblingElement())
-        {
-            name = p_aux0->Name();
-            if (strcmp(name, TYPE) == 0)
-            {
-                if (XMLP_ret::XML_OK != parseXMLDynamicType(p_aux0))
-                {
-                    return XMLP_ret::XML_ERROR;
-                }
-            }
-        }
-    }
-    return ret;
-}
-
 XMLP_ret XMLParser::parseXMLTransportData(
         tinyxml2::XMLElement* p_root)
 {
@@ -293,7 +241,15 @@ XMLP_ret XMLParser::parseXMLTransportData(
     }
     else
     {
-        sId = p_aux0->GetText();
+        if (p_aux0->GetText() != nullptr)
+        {
+            sId = p_aux0->GetText();
+        }
+        else
+        {
+            logError(XMLPARSER, "'" << TRANSPORT_ID << "' attribute cannot be empty");
+            return XMLP_ret::XML_ERROR;
+        }
     }
 
     p_aux0 = p_root->FirstChildElement(TYPE);
@@ -304,7 +260,17 @@ XMLP_ret XMLParser::parseXMLTransportData(
     }
     else
     {
-        std::string sType = p_aux0->GetText();
+        std::string sType;
+        if (p_aux0->GetText() != nullptr)
+        {
+            sType = p_aux0->GetText();
+        }
+        else
+        {
+            logError(XMLPARSER, "'" << TYPE << "' attribute cannot be empty");
+            return XMLP_ret::XML_ERROR;
+        }
+
         if (sType == UDPv4 || sType == UDPv6)
         {
             if (sType == UDPv4)
@@ -1584,7 +1550,8 @@ XMLP_ret XMLParser::parseXMLConsumer(
 
                         if (std::strcmp(s.c_str(), "filename") == 0)
                         {
-                            if (nullptr != (p_auxValue = property->FirstChildElement(VALUE)))
+                            if (nullptr != (p_auxValue = property->FirstChildElement(VALUE)) &&
+                                    nullptr != p_auxValue->GetText())
                             {
                                 outputFile = p_auxValue->GetText();
                             }
@@ -1597,7 +1564,8 @@ XMLP_ret XMLParser::parseXMLConsumer(
                         }
                         else if (std::strcmp(s.c_str(), "append") == 0)
                         {
-                            if (nullptr != (p_auxValue = property->FirstChildElement(VALUE)))
+                            if (nullptr != (p_auxValue = property->FirstChildElement(VALUE)) &&
+                                    nullptr != p_auxValue->GetText())
                             {
                                 std::string auxBool = p_auxValue->GetText();
                                 if (std::strcmp(auxBool.c_str(), "TRUE") == 0)
@@ -1852,7 +1820,8 @@ XMLP_ret XMLParser::fillDataNode(
             // userData
             if (XMLP_ret::XML_OK != getXMLOctetVector(p_aux0, participant_node.get()->rtps.userData, ident))
             {
-                return XMLP_ret::XML_ERROR;
+                // Not supported for now - never returns Error
+                // return XMLP_ret::XML_ERROR;
             }
         }
         else if (strcmp(name, PART_ID) == 0)

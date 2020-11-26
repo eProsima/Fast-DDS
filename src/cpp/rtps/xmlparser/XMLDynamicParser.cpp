@@ -97,6 +97,58 @@ XMLP_ret XMLParser::parseXMLDynamicType(
     return ret;
 }
 
+XMLP_ret XMLParser::parseXMLTypes(
+        tinyxml2::XMLElement* p_root)
+{
+    /*
+        <xs:element name="types">
+            <xs:complexType>
+                <xs:group ref="moduleElems"/>
+            </xs:complexType>
+        </xs:element>
+     */
+
+    XMLP_ret ret = XMLP_ret::XML_OK;
+    tinyxml2::XMLElement* p_aux0 = nullptr, * p_aux1 = nullptr;
+    p_aux0 = p_root->FirstChildElement(TYPES);
+    if (p_aux0 != nullptr)
+    {
+        const char* name = nullptr;
+        for (p_aux1 = p_aux0->FirstChildElement(); p_aux1 != nullptr; p_aux1 = p_aux1->NextSiblingElement())
+        {
+            name = p_aux1->Name();
+            if (strcmp(name, TYPE) == 0)
+            {
+                if (XMLP_ret::XML_OK != parseXMLDynamicType(p_aux1))
+                {
+                    return XMLP_ret::XML_ERROR;
+                }
+            }
+            else
+            {
+                logError(XMLPARSER, "Invalid element found into 'types'. Name: " << name);
+                return XMLP_ret::XML_ERROR;
+            }
+        }
+    }
+    else // Directly root is TYPES?
+    {
+        const char* name = nullptr;
+        for (p_aux0 = p_root->FirstChildElement(); p_aux0 != nullptr; p_aux0 = p_aux0->NextSiblingElement())
+        {
+            name = p_aux0->Name();
+            if (strcmp(name, TYPE) == 0)
+            {
+                if (XMLP_ret::XML_OK != parseXMLDynamicType(p_aux0))
+                {
+                    return XMLP_ret::XML_ERROR;
+                }
+            }
+        }
+    }
+    return ret;
+}
+
 XMLP_ret XMLParser::parseXMLBitvalueDynamicType(
         tinyxml2::XMLElement* p_root,
         p_dynamictypebuilder_t p_dynamictype,
@@ -143,7 +195,6 @@ XMLP_ret XMLParser::parseXMLBitvalueDynamicType(
 
     return XMLP_ret::XML_OK;
 }
-
 
 static p_dynamictypebuilder_t getDiscriminatorTypeBuilder(
         const std::string& disc,
