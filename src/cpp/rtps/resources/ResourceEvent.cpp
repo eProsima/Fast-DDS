@@ -173,7 +173,6 @@ void ResourceEvent::event_service()
         allow_vector_manipulation_ = true;
         cv_manipulation_.notify_all();
 
-        // If pending timers exist, there is some work to be done, so no need to wait.
         // Wait for the first timer to be triggered
         std::chrono::steady_clock::time_point next_trigger =
                 active_timers_.empty() ?
