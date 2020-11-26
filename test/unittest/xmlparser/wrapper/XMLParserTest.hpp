@@ -430,6 +430,12 @@ public:
     {
         return parseXMLConsumer(p_root);
     }
+
+    static XMLP_ret parseLogConfig_wrapper(
+        tinyxml2::XMLElement* p_root)
+    {
+        return parseLogConfig(p_root);
+    }
 // FINISH NACHO SECTION
 
 // INIT RAUL SECTION
