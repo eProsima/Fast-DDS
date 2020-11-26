@@ -21,6 +21,10 @@ using eprosima::fastrtps::xmlparser::XMLP_ret;
 using eprosima::fastrtps::xmlparser::XMLParser;
 using eprosima::fastrtps::xmlparser::DataNode;
 using eprosima::fastrtps::xmlparser::BaseNode;
+using eprosima::fastrtps::xmlparser::sp_transport_t;
+using eprosima::fastrtps::xmlparser::up_participant_t;
+using eprosima::fastrtps::xmlparser::up_node_participant_t;
+using eprosima::fastrtps::xmlparser::node_participant_t;
 
 // Class to test protected methods
 class XMLParserTest : public XMLParser
@@ -387,6 +391,57 @@ public:
     }
 
 // INIT NACHO SECTION
+
+    static XMLP_ret parseXMLTypes_wrapper(
+        tinyxml2::XMLElement* p_root)
+    {
+        return parseXMLTypes(p_root);
+    }
+
+    static XMLP_ret parseXMLTransportData_wrapper(
+        tinyxml2::XMLElement* p_root)
+    {
+        return parseXMLTransportData(p_root);
+    }
+
+    static XMLP_ret parseXMLCommonTransportData_wrapper(
+        tinyxml2::XMLElement* p_root,
+        sp_transport_t p_transport)
+    {
+        return parseXMLCommonTransportData(p_root, p_transport);
+    }
+
+    static XMLP_ret parseXMLCommonSharedMemTransportData_wrapper(
+        tinyxml2::XMLElement* p_root,
+        sp_transport_t p_transport)
+    {
+        return parseXMLCommonSharedMemTransportData(p_root, p_transport);
+    }
+
+    static XMLP_ret parseXMLCommonTCPTransportData_wrapper(
+        tinyxml2::XMLElement* p_root,
+        eprosima::fastrtps::xmlparser::sp_transport_t p_transport)
+    {
+        return parseXMLCommonTCPTransportData(p_root, p_transport);
+    }
+
+    static XMLP_ret parseXMLConsumer_wrapper(
+        tinyxml2::XMLElement& p_root)
+    {
+        return parseXMLConsumer(p_root);
+    }
+
+    static XMLP_ret parseLogConfig_wrapper(
+        tinyxml2::XMLElement* p_root)
+    {
+        return parseLogConfig(p_root);
+    }
+
+    static XMLP_ret parseXMLTransportsProf_wrapper(
+        tinyxml2::XMLElement* p_root)
+    {
+        return parseXMLTransportsProf(p_root);
+    }
 
 // FINISH NACHO SECTION
 
