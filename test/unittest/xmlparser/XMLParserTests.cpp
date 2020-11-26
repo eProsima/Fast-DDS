@@ -16,7 +16,16 @@
 #include <fastrtps/xmlparser/XMLTree.h>
 #include <fastdds/dds/log/Log.hpp>
 #include <fastrtps/utils/IPLocator.h>
+#include <fastrtps/xmlparser/XMLProfileManager.h>
+#include <fastrtps/transport/UDPv4TransportDescriptor.h>
+#include <fastrtps/transport/UDPv6TransportDescriptor.h>
 #include <fastrtps/transport/TCPv4TransportDescriptor.h>
+#include <fastrtps/transport/TCPv6TransportDescriptor.h>
+#include <fastdds/dds/log/Log.hpp>
+#include <fastdds/dds/log/OStreamConsumer.hpp>
+#include <fastdds/dds/log/FileConsumer.hpp>
+#include <fastdds/dds/log/StdoutConsumer.hpp>
+#include <fastdds/dds/log/StdoutErrConsumer.hpp>
 #include "mock/XMLMockConsumer.h"
 #include "wrapper/XMLParserTest.hpp"
 
@@ -28,12 +37,16 @@
 
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
+using namespace ::testing;
 
 using eprosima::fastrtps::xmlparser::BaseNode;
 using eprosima::fastrtps::xmlparser::DataNode;
 using eprosima::fastrtps::xmlparser::NodeType;
 using eprosima::fastrtps::xmlparser::XMLP_ret;
 using eprosima::fastrtps::xmlparser::XMLParser;
+
+using eprosima::fastdds::dds::Log;
+using eprosima::fastdds::dds::LogConsumer;
 
 class XMLTreeTests : public ::testing::Test
 {
@@ -649,6 +662,853 @@ TEST_F(XMLParserTests, DataBuffer)
 }
 
 // INIT NACHO SECTION
+/*
+ * This test checks The return of the loadXMLProfiles method when a correct xml is parsed
+ */
+TEST_F(XMLParserTests, loadXMLProfiles)
+{
+
+    xmlparser::up_base_node_t root_node;
+    tinyxml2::XMLDocument xml_doc;
+    tinyxml2::XMLElement* titleElement;
+
+    const char * xml =
+            "\
+            <profiles>\
+                <publisher profile_name=\"test_publisher_profile\"\
+                is_default_profile=\"true\">\
+                    <qos>\
+                        <durability>\
+                            <kind>TRANSIENT_LOCAL</kind>\
+                        </durability>\
+                    </qos>\
+                </publisher>\
+                <subscriber profile_name=\"test_subscriber_profile\" is_default_profile=\"true\">\
+                    <historyMemoryPolicy>PREALLOCATED_WITH_REALLOC</historyMemoryPolicy>\
+                    <userDefinedID>13</userDefinedID>\
+                    <entityID>31</entityID>\
+                </subscriber>\
+            </profiles>\
+            ";
+
+    ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+    titleElement = xml_doc.RootElement();
+    EXPECT_EQ(XMLP_ret::XML_OK, XMLParserTest::loadXMLProfiles(*titleElement, root_node));
+
+}
+
+/*
+ * This test checks the return of the parseXMLTransportData method  and the storage of the values in the XMLProfileManager
+ * xml is parsed
+ * 1. Check the correct parsing of a UDP transport descriptor for birth v4 and v6
+ * 2. Check the correct parsing of a TCP transport descriptor for birth v4 and v6
+ * 3. Check the correct parsing of a SHM transport descriptor
+ */
+TEST_F(XMLParserTests, parseXMLTransportData)
+{
+    // Test UDPv4 and UDPv6
+    {
+        tinyxml2::XMLDocument xml_doc;
+        tinyxml2::XMLElement* titleElement;
+
+        const char * xml_p =
+                "\
+                <transport_descriptor>\
+                    <transport_id>TransportId1</transport_id>\
+                    <type>UDPv%s</type>\
+                    <sendBufferSize>8192</sendBufferSize>\
+                    <receiveBufferSize>8192</receiveBufferSize>\
+                    <TTL>250</TTL>\
+                    <non_blocking_send>false</non_blocking_send>\
+                    <maxMessageSize>16384</maxMessageSize>\
+                    <maxInitialPeersRange>100</maxInitialPeersRange>\
+                    <interfaceWhiteList>\
+                        <address>192.168.1.41</address>\
+                        <address>127.0.0.1</address>\
+                    </interfaceWhiteList>\
+                    <wan_addr>80.80.55.44</wan_addr>\
+                    <output_port>5101</output_port>\
+                    <keep_alive_frequency_ms>5000</keep_alive_frequency_ms>\
+                    <keep_alive_timeout_ms>25000</keep_alive_timeout_ms>\
+                    <max_logical_port>9000</max_logical_port>\
+                    <logical_port_range>100</logical_port_range>\
+                    <logical_port_increment>2</logical_port_increment>\
+                    <listening_ports>\
+                        <port>5100</port>\
+                        <port>5200</port>\
+                    </listening_ports>\
+                    <calculate_crc>false</calculate_crc>\
+                    <check_crc>false</check_crc>\
+                    <enable_tcp_nodelay>false</enable_tcp_nodelay>\
+                    <tls><!-- TLS Section --></tls>\
+                    <segment_size>262144</segment_size>\
+                    <port_queue_capacity>512</port_queue_capacity>\
+                    <healthy_check_timeout_ms>1000</healthy_check_timeout_ms>\
+                    <rtps_dump_file>rtsp_messages.log</rtps_dump_file>\
+                </transport_descriptor>\
+                ";
+        char xml[2000];
+
+        // UDPv4
+        sprintf(xml, xml_p, "4");
+        ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+        titleElement = xml_doc.RootElement();
+        EXPECT_EQ(XMLP_ret::XML_OK, XMLParserTest::parseXMLTransportData_wrapper(titleElement));
+        EXPECT_EQ(xmlparser::XMLProfileManager::getTransportById("TransportId1")->max_initial_peers_range(), 100);
+        EXPECT_EQ(xmlparser::XMLProfileManager::getTransportById("TransportId1")->max_message_size(), 16384);
+        xmlparser::XMLProfileManager::DeleteInstance();
+
+        // UDPv6
+        sprintf(xml, xml_p, "6");
+        ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+        titleElement = xml_doc.RootElement();
+        EXPECT_EQ(XMLP_ret::XML_OK, XMLParserTest::parseXMLTransportData_wrapper(titleElement));
+        EXPECT_EQ(xmlparser::XMLProfileManager::getTransportById("TransportId1")->max_initial_peers_range(), 100);
+        EXPECT_EQ(xmlparser::XMLProfileManager::getTransportById("TransportId1")->max_message_size(), 16384);
+        xmlparser::XMLProfileManager::DeleteInstance();
+    }
+
+    // Test TCPv4 and TCPv6
+    {
+        tinyxml2::XMLDocument xml_doc;
+        tinyxml2::XMLElement* titleElement;
+
+        const char * xml_p =
+                "\
+                <transport_descriptor>\
+                    <transport_id>TransportId1</transport_id>\
+                    <type>TCPv%s</type>\
+                    <sendBufferSize>8192</sendBufferSize>\
+                    <receiveBufferSize>8192</receiveBufferSize>\
+                    <TTL>250</TTL>\
+                    <maxMessageSize>16384</maxMessageSize>\
+                    <maxInitialPeersRange>100</maxInitialPeersRange>\
+                    <interfaceWhiteList>\
+                        <address>192.168.1.41</address>\
+                        <address>127.0.0.1</address>\
+                    </interfaceWhiteList>\
+                    <wan_addr>80.80.55.44</wan_addr>\
+                    <keep_alive_frequency_ms>5000</keep_alive_frequency_ms>\
+                    <keep_alive_timeout_ms>25000</keep_alive_timeout_ms>\
+                    <max_logical_port>9000</max_logical_port>\
+                    <logical_port_range>100</logical_port_range>\
+                    <logical_port_increment>2</logical_port_increment>\
+                    <listening_ports>\
+                        <port>5100</port>\
+                        <port>5200</port>\
+                    </listening_ports>\
+                    <calculate_crc>false</calculate_crc>\
+                    <check_crc>false</check_crc>\
+                    <enable_tcp_nodelay>false</enable_tcp_nodelay>\
+                    <tls><!-- TLS Section --></tls>\
+                </transport_descriptor>\
+                ";
+        char xml[2000];
+
+        // TCPv4
+        sprintf(xml, xml_p, "4");
+        ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+        titleElement = xml_doc.RootElement();
+        EXPECT_EQ(XMLP_ret::XML_OK, XMLParserTest::parseXMLTransportData_wrapper(titleElement));
+        EXPECT_EQ(xmlparser::XMLProfileManager::getTransportById("TransportId1")->max_initial_peers_range(), 100);
+        EXPECT_EQ(xmlparser::XMLProfileManager::getTransportById("TransportId1")->max_message_size(), 16384);
+        xmlparser::XMLProfileManager::DeleteInstance();
+
+        // TCPv6
+        sprintf(xml, xml_p, "6");
+        ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+        titleElement = xml_doc.RootElement();
+        EXPECT_EQ(XMLP_ret::XML_OK, XMLParserTest::parseXMLTransportData_wrapper(titleElement));
+        EXPECT_EQ(xmlparser::XMLProfileManager::getTransportById("TransportId1")->max_initial_peers_range(), 100);
+        EXPECT_EQ(xmlparser::XMLProfileManager::getTransportById("TransportId1")->max_message_size(), 16384);
+        xmlparser::XMLProfileManager::DeleteInstance();
+    }
+
+    // SHM
+    {
+        tinyxml2::XMLDocument xml_doc;
+        tinyxml2::XMLElement* titleElement;
+
+        const char * xml =
+                "\
+                <transport_descriptor>\
+                    <transport_id>TransportId1</transport_id>\
+                    <type>SHM</type>\
+                    <segment_size>262144</segment_size>\
+                    <port_queue_capacity>512</port_queue_capacity>\
+                    <healthy_check_timeout_ms>1000</healthy_check_timeout_ms>\
+                    <rtps_dump_file>rtsp_messages.log</rtps_dump_file>\
+                    <maxMessageSize>16384</maxMessageSize>\
+                    <maxInitialPeersRange>100</maxInitialPeersRange>\
+                </transport_descriptor>\
+                ";
+
+        ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+        titleElement = xml_doc.RootElement();
+        EXPECT_EQ(XMLP_ret::XML_OK, XMLParserTest::parseXMLTransportData_wrapper(titleElement));
+        EXPECT_EQ(xmlparser::XMLProfileManager::getTransportById("TransportId1")->max_initial_peers_range(), 100);
+        EXPECT_EQ(xmlparser::XMLProfileManager::getTransportById("TransportId1")->max_message_size(), 16384);
+        xmlparser::XMLProfileManager::DeleteInstance();
+    }
+}
+
+/*
+ * This test checks the return of the negative cases of th parseXMLTransportData method.
+ * 1. Check an XMLP_ret::XML_ERROR retur on an incorrectly formated parameter of every posible parameter of the
+ * UDPv4, UDPv6, TCPv4, TCPv6, and SHM.
+ * 2. Check the correct parsing of a TCP transport descriptor for birth v4 and v6
+ * 3. Check the correct parsing of a SHM transport descriptor
+ * 4. Check missing TransportID
+ * 5. Check missing type
+ * 6. Check wrong type
+ */
+TEST_F(XMLParserTests, parseXMLTransportDataNegativeClauses)
+{
+    tinyxml2::XMLDocument xml_doc;
+    tinyxml2::XMLElement* titleElement;
+    std::string xml;
+    std::vector<std::string> transport_types {"UDPv4", "UDPv6", "TCPv4", "TCPv6", "SHM"};
+
+    std::vector<std::string> parameters_UDP =
+    {
+        "maxMessageSize",
+        "maxInitialPeersRange",
+        "sendBufferSize",
+        "receiveBufferSize",
+        "TTL",
+        "non_blocking_send",
+        "interfaceWhiteList",
+        "output_port",
+        "bad_element"
+    };
+
+    std::vector<std::string> parameters_TCP =
+    {
+        "maxMessageSize",
+        "maxInitialPeersRange",
+        "sendBufferSize",
+        "receiveBufferSize",
+        "TTL",
+        "non_blocking_send",
+        "interfaceWhiteList",
+        "output_port",
+        "keep_alive_frequency_ms",
+        "keep_alive_timeout_ms",
+        "max_logical_port",
+        "logical_port_range",
+        "logical_port_increment",
+        "calculate_crc",
+        "check_crc",
+        "enable_tcp_nodelay",
+        "tls",
+        "bad_element"
+    };
+
+    std::vector<std::string> parameters_SHM =
+    {
+        "maxMessageSize",
+        "maxInitialPeersRange",
+        "segment_size",
+        "port_queue_capacity",
+        "healthy_check_timeout_ms",
+        "rtps_dump_file",
+        "bad_element"
+    };
+
+    std::vector<std::string> parameters;
+    for (std::vector<std::string>::iterator transport_type = transport_types.begin(); transport_type != transport_types.end(); ++transport_type)
+    {
+        parameters.clear();
+        if( (*transport_type).substr(0,3) == "UDP" )
+        {
+            parameters = parameters_UDP;
+        }
+        else if ( (*transport_type).substr(0,3) == "TCP" )
+        {
+            parameters = parameters_TCP;
+            if ( (*transport_type) == "TCPv4" )
+            {
+                parameters.insert(parameters.end(), "wan_addr");
+            }
+        }
+        else if ( (*transport_type).substr(0,3) == "SHM" )
+        {
+            parameters = parameters_SHM;
+        }
+
+        for (std::vector<std::string>::iterator it = parameters.begin(); it != parameters.end(); ++it)
+        {
+            xml =
+                    "\
+                    <transport_descriptor>\
+                        <transport_id>TransportId1</transport_id>\
+                        <type>"+*transport_type+"</type>\
+                        <"+*it+"><bad_element></bad_element></"+*it+">\
+                    </transport_descriptor>\
+                    ";
+
+            ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml.c_str()));
+            titleElement = xml_doc.RootElement();
+            EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::parseXMLTransportData_wrapper(titleElement));
+            xmlparser::XMLProfileManager::DeleteInstance();
+        }
+
+        if ( (*transport_type).substr(0,3) == "TCP" )
+        {
+            xml =
+                    "\
+                    <transport_descriptor>\
+                        <transport_id>TransportId1</transport_id>\
+                        <type>"+*transport_type+"</type>\
+                        <listening_ports>\
+                            <port>not_an_int</port>\
+                        </listening_ports>\
+                    </transport_descriptor>\
+                    ";
+
+            ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml.c_str()));
+            titleElement = xml_doc.RootElement();
+            EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::parseXMLTransportData_wrapper(titleElement));
+            xmlparser::XMLProfileManager::DeleteInstance();
+
+            // Check empty pointer
+            EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::parseXMLCommonTCPTransportData_wrapper(titleElement, nullptr));
+        }
+        else if( (*transport_type).substr(0,3) == "SHM" )
+        {
+            // Check empty pointer
+            EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::parseXMLCommonSharedMemTransportData_wrapper(titleElement, nullptr));
+        }
+    }
+
+    // missing type tag
+    xml =
+            "\
+            <transport_descriptor>\
+                <transport_id>TransportId1</transport_id>\
+            </transport_descriptor>\
+            ";
+    ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml.c_str()));
+    titleElement = xml_doc.RootElement();
+    EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::parseXMLTransportData_wrapper(titleElement));
+    xmlparser::XMLProfileManager::DeleteInstance();
+
+    // missing type value
+    xml =
+            "\
+            <transport_descriptor>\
+                <transport_id>TransportId1</transport_id>\
+                <type></type>\
+            </transport_descriptor>\
+            ";
+    ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml.c_str()));
+    titleElement = xml_doc.RootElement();
+    EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::parseXMLTransportData_wrapper(titleElement));
+    xmlparser::XMLProfileManager::DeleteInstance();
+
+    // invalid type
+    xml =
+            "\
+            <transport_descriptor>\
+                <transport_id>TransportId1</transport_id>\
+                <type>bad_type</type>\
+            </transport_descriptor>\
+            ";
+    ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml.c_str()));
+    titleElement = xml_doc.RootElement();
+    EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::parseXMLTransportData_wrapper(titleElement));
+    xmlparser::XMLProfileManager::DeleteInstance();
+
+    // missing id tag
+    xml =
+            "\
+            <transport_descriptor>\
+                <transport_id></transport_id>\
+                <type>UDPv4</type>\
+            </transport_descriptor>\
+            ";
+    ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml.c_str()));
+    titleElement = xml_doc.RootElement();
+    EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::parseXMLTransportData_wrapper(titleElement));
+    xmlparser::XMLProfileManager::DeleteInstance();
+
+    // missing id value
+    xml =
+            "\
+            <transport_descriptor>\
+                <type>UDPv4</type>\
+            </transport_descriptor>\
+            ";
+    ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml.c_str()));
+    titleElement = xml_doc.RootElement();
+    EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::parseXMLTransportData_wrapper(titleElement));
+    xmlparser::XMLProfileManager::DeleteInstance();
+}
+
+TEST_F(XMLParserTests, parseXMLTransportsProf)
+{
+    tinyxml2::XMLDocument xml_doc;
+    tinyxml2::XMLElement* titleElement;
+    std::string xml =
+            "\
+            <transport_descriptors>\
+                <transport_descriptor>\
+                    <bad_element></bad_element>\
+                </transport_descriptor>\
+            </transport_descriptors>\
+            ";
+
+    ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml.c_str()));
+    titleElement = xml_doc.RootElement();
+    EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::parseXMLTransportsProf_wrapper(titleElement));
+}
+
+/*
+ * This test checks the return of the parseXMLConsumer method.
+ * 1. Check an XMLP_ret::XML_ERROR retur on an incorrectly formated parameter of every posible parameter of the
+ * UDPv4, UDPv6, TCPv4, UDPv6, and SHM.
+ * 2. Check the correct return parsing a StdoutConsumer.
+ * 3. Check the correct return parsing a StdoutErrConsumer with default configuration.
+ * 4. Check the correct return parsing a StdoutErrConsumer with a custom configuration.
+ * 5. Check the correct return parsing a FileConsumer with default configuration.
+ */
+TEST_F(XMLParserTests, parseXMLConsumer)
+{
+    tinyxml2::XMLDocument xml_doc;
+    tinyxml2::XMLElement* titleElement;
+
+    {
+        // StdoutConsumer
+        const char * xml =
+                "\
+                <consumer>\
+                    <class>StdoutConsumer</class>\
+                </consumer>\
+                ";
+
+        ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+        titleElement = xml_doc.RootElement();
+        EXPECT_EQ(XMLP_ret::XML_OK, XMLParserTest::parseXMLConsumer_wrapper(*titleElement));
+    }
+
+    {
+        // StdoutErrConsumer without properties
+        const char * xml =
+                "\
+                <consumer>\
+                    <class>StdoutErrConsumer</class>\
+                </consumer>\
+                ";
+        ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+        titleElement = xml_doc.RootElement();
+        EXPECT_EQ(XMLP_ret::XML_OK, XMLParserTest::parseXMLConsumer_wrapper(*titleElement));
+    }
+
+    {
+        // StdoutErrConsumer with properties
+        const char * xml_p =
+                "\
+                <consumer>\
+                    <class>StdoutErrConsumer</class>\
+                    <property>\
+                        <name>stderr_threshold</name>\
+                        <value>Log::Kind::%s</value>\
+                    </property>\
+                </consumer>\
+                ";
+        char xml[500];
+
+        std::vector<std::string> log_levels = {"Info", "Warning", "Error"};
+        for (std::vector<std::string>::iterator it = log_levels.begin(); it != log_levels.end(); ++it)
+        {
+            sprintf(xml, xml_p, (*it).c_str());
+            ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+            titleElement = xml_doc.RootElement();
+            EXPECT_EQ(XMLP_ret::XML_OK, XMLParserTest::parseXMLConsumer_wrapper(*titleElement));
+        }
+
+
+    }
+
+    {
+        // FileConsumer without properties
+        const char * xml =
+                "\
+                <consumer>\
+                    <class>FileConsumer</class>\
+                </consumer>\
+                ";
+
+        ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+        titleElement = xml_doc.RootElement();
+        EXPECT_EQ(XMLP_ret::XML_OK, XMLParserTest::parseXMLConsumer_wrapper(*titleElement));
+    }
+
+
+    {
+        // FileConsumer
+        const char * xml =
+                "\
+                <consumer>\
+                    <class>FileConsumer</class>\
+                    <property>\
+                        <name>filename</name>\
+                        <value>execution.log</value>\
+                    </property>\
+                    <property>\
+                        <name>append</name>\
+                        <value>TRUE</value>\
+                    </property>\
+                </consumer>\
+                ";
+
+        ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+        titleElement = xml_doc.RootElement();
+        EXPECT_EQ(XMLP_ret::XML_OK, XMLParserTest::parseXMLConsumer_wrapper(*titleElement));
+    }
+
+}
+
+/*
+ * This test checks the return of the negative cases of the parseXMLConsumer method.
+ * 1. Check an XMLP_ret::XML_ERROR retur on an incorrectly formated parameter of every posible parameter of the
+ * UDPv4, UDPv6, TCPv4, UDPv6, and SHM.
+ * 2. Check a non-existant Consumer class.
+ * 3. Check a StdoutErrConsumer with incorrect propertiy values.
+ * 4. Check a StdoutErrConsumer with std_threshold set twice.
+ * 5. Check a StdoutErrConsumer with an incorrect property.
+ * 6. Check a FileConsumer without a filename property.
+ * 7. Check a FileConsumer without a value for the append property.
+ * 8. Check a FileConsumer with an incorrect property.
+ */
+TEST_F(XMLParserTests, parseXMLConsumerNegativeClauses)
+{
+    tinyxml2::XMLDocument xml_doc;
+    tinyxml2::XMLElement* titleElement;
+
+    {
+        Log::ClearConsumers();
+        // Unknown consumer class
+        const char * xml =
+                "\
+                <consumer>\
+                    <class>UnknownConsumer</class>\
+                </consumer>\
+                ";
+
+        ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+        titleElement = xml_doc.RootElement();
+        EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::parseXMLConsumer_wrapper(*titleElement));
+    }
+
+    {
+        Log::ClearConsumers();
+        // StdoutErrConsumer with properties
+        const char * xml =
+                "\
+                <consumer>\
+                    <class>StdoutErrConsumer</class>\
+                    <property>\
+                        <name>stderr_threshold</name>\
+                        <value>bad_value</value>\
+                    </property>\
+                </consumer>\
+                ";
+        ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+        titleElement = xml_doc.RootElement();
+        EXPECT_EQ(XMLP_ret::XML_NOK, XMLParserTest::parseXMLConsumer_wrapper(*titleElement));
+
+    }
+
+    {
+        Log::ClearConsumers();
+        // StdoutErrConsumer with two stderr_threshold
+        const char * xml =
+                "\
+                <consumer>\
+                    <class>StdoutErrConsumer</class>\
+                    <property>\
+                        <name>stderr_threshold</name>\
+                        <value>Log::Kind::Error</value>\
+                    </property>\
+                    <property>\
+                        <name>stderr_threshold</name>\
+                        <value>Log::Kind::Error</value>\
+                    </property>\
+                </consumer>\
+                ";
+        ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+        titleElement = xml_doc.RootElement();
+        EXPECT_EQ(XMLP_ret::XML_NOK, XMLParserTest::parseXMLConsumer_wrapper(*titleElement));
+
+    }
+
+    {
+        Log::ClearConsumers();
+        // StdoutErrConsumer with wrong property name
+        const char * xml =
+                "\
+                <consumer>\
+                    <class>StdoutErrConsumer</class>\
+                    <property>\
+                        <name>bad_property</name>\
+                    </property>\
+                </consumer>\
+                ";
+        ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+        titleElement = xml_doc.RootElement();
+        EXPECT_EQ(XMLP_ret::XML_NOK, XMLParserTest::parseXMLConsumer_wrapper(*titleElement));
+
+    }
+
+    {
+        Log::ClearConsumers();
+        // FileConsumer no filename
+        const char * xml =
+                "\
+                <consumer>\
+                    <class>FileConsumer</class>\
+                    <property>\
+                        <name>filename</name>\
+                        <value></value>\
+                    </property>\
+                </consumer>\
+                ";
+
+        ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+        titleElement = xml_doc.RootElement();
+        EXPECT_EQ(XMLP_ret::XML_NOK, XMLParserTest::parseXMLConsumer_wrapper(*titleElement));
+    }
+
+    {
+        Log::ClearConsumers();
+        // FileConsumer no append value
+        const char * xml =
+                "\
+                <consumer>\
+                    <class>FileConsumer</class>\
+                    <property>\
+                        <name>append</name>\
+                        <value></value>\
+                    </property>\
+                </consumer>\
+                ";
+
+        ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+        titleElement = xml_doc.RootElement();
+        EXPECT_EQ(XMLP_ret::XML_NOK, XMLParserTest::parseXMLConsumer_wrapper(*titleElement));
+    }
+
+    {
+        Log::ClearConsumers();
+        // FileConsumer bad property
+        const char * xml =
+                "\
+                <consumer>\
+                    <class>FileConsumer</class>\
+                    <property>\
+                        <name>bad_property</name>\
+                    </property>\
+                </consumer>\
+                ";
+
+        ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+        titleElement = xml_doc.RootElement();
+        EXPECT_EQ(XMLP_ret::XML_NOK, XMLParserTest::parseXMLConsumer_wrapper(*titleElement));
+    }
+
+}
+
+/*
+ * This test checks the return of the parseLogConfig method.
+ * 1. Check a consummer with a wrong class
+ * 2. Check the use_default tag without TRUE and TRUE
+ * 3. Check a wrong tag
+ */
+TEST_F(XMLParserTests, parseLogConfig)
+{
+    tinyxml2::XMLDocument xml_doc;
+    tinyxml2::XMLElement* titleElement;
+
+    {
+        // Bad parameters
+        const char * xml_p =
+                "\
+                <log>\
+                    <use_default>%s</use_default>\
+                    <consumer>\
+                        <class>%s</class>\
+                    </consumer>\
+                </log>\
+                ";
+        char xml[500];
+
+        // Check wrong class of consumer
+        sprintf(xml, xml_p, "FALSE", "wrong_class");
+        ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+        titleElement = xml_doc.RootElement();
+        EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::parseLogConfig_wrapper(titleElement));
+
+        // Check both values of use_default
+        sprintf(xml, xml_p, "TRUE", "StdoutConsumer");
+        ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+        titleElement = xml_doc.RootElement();
+        EXPECT_EQ(XMLP_ret::XML_OK, XMLParserTest::parseLogConfig_wrapper(titleElement));
+
+        sprintf(xml, xml_p, "FALSE", "StdoutConsumer");
+        ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+        titleElement = xml_doc.RootElement();
+        EXPECT_EQ(XMLP_ret::XML_OK, XMLParserTest::parseLogConfig_wrapper(titleElement));
+    }
+
+    {
+        // Check bad tag
+        const char * xml =
+                "\
+                <log>\
+                    <bad_element></bad_element>\
+                </log>\
+                ";
+
+        ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+        titleElement = xml_doc.RootElement();
+        EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::parseLogConfig_wrapper(titleElement));
+
+    }
+
+}
+
+/*
+ * This test checks the return of the negative cases of the fillDataNode given a ParticipantAttributes DataNode
+ * 1. Check passing a nullptr as if the XMLElement was wrongly parsed above
+ * 2. Check missing required rtps tag
+ * 3. Check missing DomaiId value in tag
+ * 4. Check bad values for all attributes
+ * 5. Check a non existant atribute tag
+ */
+TEST_F(XMLParserTests, fillDataNodeParticipantNegativeClauses)
+{
+    tinyxml2::XMLDocument xml_doc;
+    tinyxml2::XMLElement* titleElement;
+
+    up_participant_t participant_atts{new ParticipantAttributes};
+    up_node_participant_t participant_node{new node_participant_t{NodeType::PARTICIPANT, std::move(participant_atts)}};
+
+    // missing profile XMLElemnt
+    EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::fillDataNode_wrapper(nullptr, *participant_node));
+
+    {
+        const char * xml_p =
+                "\
+                <participant profile_name=\"domainparticipant_profile_name\">\
+                    %s\
+                </participant>\
+                ";
+        char xml[500];
+
+        // Misssing rtps tag
+        sprintf(xml, xml_p, "<domainId>0</domainId>");
+        ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+        titleElement = xml_doc.RootElement();
+        EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::fillDataNode_wrapper(titleElement, *participant_node));
+
+        // Misssing DomainId Value
+        sprintf(xml, xml_p, "<domainId></domainId><rtps></rtps>");
+        ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+        titleElement = xml_doc.RootElement();
+        EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::fillDataNode_wrapper(titleElement, *participant_node));
+    }
+
+    {
+        // Wrong rtps child tags
+        const char * xml_p =
+                "\
+                <participant profile_name=\"domainparticipant_profile_name\">\
+                    <domainId>0</domainId>\
+                    <rtps>\
+                        %s\
+                    </rtps>\
+                </participant>\
+                ";
+        char xml[500];
+
+        std::vector<std::string> parameters = {
+            "<name></name>",
+            "<prefix><bad_element></bad_element></prefix>",
+            "<defaultUnicastLocatorList><bad_element></bad_element></defaultUnicastLocatorList>",
+            "<defaultMulticastLocatorList><bad_element></bad_element></defaultMulticastLocatorList>",
+            "<sendSocketBufferSize><bad_element></bad_element></sendSocketBufferSize>",
+            "<listenSocketBufferSize><bad_element></bad_element></listenSocketBufferSize>",
+            "<builtin><bad_element></bad_element></builtin>",
+            "<port><bad_element></bad_element></port>",
+            "<participantID><bad_element></bad_element></participantID>",
+            "<throughputController><bad_element></bad_element></throughputController>",
+            "<userTransports><bad_element></bad_element></userTransports>",
+            "<useBuiltinTransports><bad_element></bad_element></useBuiltinTransports>",
+            "<propertiesPolicy><bad_element></bad_element></propertiesPolicy>",
+            "<allocation><bad_element></bad_element></allocation>",
+            "<bad_element></bad_element>"
+        };
+
+
+        for (std::vector<std::string>::iterator it = parameters.begin(); it != parameters.end(); ++it)
+        {
+            sprintf(xml, xml_p, (*it).c_str());
+            ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+            titleElement = xml_doc.RootElement();
+            EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::fillDataNode_wrapper(titleElement, *participant_node));
+
+        }
+    }
+
+}
+
+/*
+ * This test checks the return of the unsupported cases of the fillDataNode given a ParticipantAttributes DataNode
+ * 1. Check passing a a UserData parameter
+ */
+TEST_F(XMLParserTests, fillDataNodeParticipantUnsupported)
+{
+    tinyxml2::XMLDocument xml_doc;
+    tinyxml2::XMLElement* titleElement;
+
+    up_participant_t participant_atts{new ParticipantAttributes};
+    up_node_participant_t participant_node{new node_participant_t{NodeType::PARTICIPANT, std::move(participant_atts)}};
+
+    mock_consumer = new eprosima::fastdds::dds::XMLMockConsumer(xml_mutex_);
+    Log::RegisterConsumer(std::unique_ptr<LogConsumer>(mock_consumer));
+    Log::SetVerbosity(Log::Warning);
+    Log::SetCategoryFilter(std::regex("(XMLPARSER)"));
+
+    // Unsuported fields
+    const char * xml =
+            "\
+            <participant profile_name=\"domainparticipant_profile_name\">\
+                <rtps>\
+                    <userData>data</userData>\
+                </rtps>\
+            </participant>\
+            ";
+
+    ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+    titleElement = xml_doc.RootElement();
+    EXPECT_EQ(XMLP_ret::XML_OK, XMLParserTest::fillDataNode_wrapper(titleElement, *participant_node));
+
+    helper_block_for_at_least_entries(1);
+    auto consumed_entries = mock_consumer->ConsumedEntries();
+    // Expect 1 log error.
+    uint32_t num_errors = 0;
+    for (const auto& entry : consumed_entries)
+    {
+        if (entry.kind == Log::Kind::Error)
+        {
+            num_errors++;
+        }
+    }
+
+    EXPECT_EQ(num_errors, 1);
+
+}
 
 // FINISH NACHO SECTION
 

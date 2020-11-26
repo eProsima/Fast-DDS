@@ -293,7 +293,15 @@ XMLP_ret XMLParser::parseXMLTransportData(
     }
     else
     {
-        sId = p_aux0->GetText();
+        if(p_aux0->GetText() != nullptr)
+        {
+            sId = p_aux0->GetText();
+        }
+        else
+        {
+            logError(XMLPARSER, "'" << TRANSPORT_ID << "' attribute cannot be empty");
+            return XMLP_ret::XML_ERROR;
+        }
     }
 
     p_aux0 = p_root->FirstChildElement(TYPE);
@@ -304,7 +312,17 @@ XMLP_ret XMLParser::parseXMLTransportData(
     }
     else
     {
-        std::string sType = p_aux0->GetText();
+        std::string sType;
+        if(p_aux0->GetText() != nullptr)
+        {
+            sType = p_aux0->GetText();
+        }
+        else
+        {
+            logError(XMLPARSER, "'" << TYPE << "' attribute cannot be empty");
+            return XMLP_ret::XML_ERROR;
+        }
+
         if (sType == UDPv4 || sType == UDPv6)
         {
             if (sType == UDPv4)
@@ -1584,7 +1602,8 @@ XMLP_ret XMLParser::parseXMLConsumer(
 
                         if (std::strcmp(s.c_str(), "filename") == 0)
                         {
-                            if (nullptr != (p_auxValue = property->FirstChildElement(VALUE)))
+                            if (nullptr != (p_auxValue = property->FirstChildElement(VALUE)) &&
+                                nullptr != p_auxValue->GetText())
                             {
                                 outputFile = p_auxValue->GetText();
                             }
@@ -1597,7 +1616,8 @@ XMLP_ret XMLParser::parseXMLConsumer(
                         }
                         else if (std::strcmp(s.c_str(), "append") == 0)
                         {
-                            if (nullptr != (p_auxValue = property->FirstChildElement(VALUE)))
+                            if (nullptr != (p_auxValue = property->FirstChildElement(VALUE)) &&
+                                nullptr != p_auxValue->GetText())
                             {
                                 std::string auxBool = p_auxValue->GetText();
                                 if (std::strcmp(auxBool.c_str(), "TRUE") == 0)
@@ -1852,7 +1872,8 @@ XMLP_ret XMLParser::fillDataNode(
             // userData
             if (XMLP_ret::XML_OK != getXMLOctetVector(p_aux0, participant_node.get()->rtps.userData, ident))
             {
-                return XMLP_ret::XML_ERROR;
+                // Not supported for now - never returns Error
+                // return XMLP_ret::XML_ERROR;
             }
         }
         else if (strcmp(name, PART_ID) == 0)
