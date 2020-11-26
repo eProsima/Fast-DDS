@@ -40,6 +40,12 @@
 #include <sys/ioctl.h>
 #include <net/if_arp.h>
 #include <errno.h>
+#if defined(__APPLE__)
+#include <sys/types.h>
+#include <sys/sysctl.h>
+#include <net/if_dl.h>
+#include <netinet/in.h>
+#endif // if defined(__APPLE__)
 #endif // if defined(_WIN32)
 
 #if defined(__FreeBSD__)
@@ -227,7 +233,51 @@ bool IPFinder::getAllMACAddress(std::vector<info_MAC>* macs)
 
 bool IPFinder::getAllMACAddress(std::vector<info_MAC>* macs)
 {
-    return false;
+    int mib[6];
+    mib[0] = CTL_NET;
+    mib[1] = AF_ROUTE;
+    mib[2] = 0;
+    mib[3] = AF_LINK;
+    mib[4] = NET_RT_IFLIST;
+
+    std::vector<IPFinder::info_IP> ips;
+    IPFinder::getIPs(&ips);
+    for (auto& ip : ips)
+    {
+        if ((mib[5] = if_nametoindex(ip.dev.c_str())) == 0)
+        {
+            printf("Error on nametoindex: %s\n", strerror(errno));
+            return false;
+        }
+
+        size_t len;
+        unsigned char *buf;
+        if (sysctl(mib, 6, NULL, &len, NULL, 0) < 0) {
+            printf("Error on sysctl: %s\n", strerror(errno));
+            return false;
+        }
+
+        if ((buf = (unsigned char*)malloc(len)) == NULL) {
+            printf("Falure allocating %ld octets", len);
+            return false;
+        }
+
+        if (sysctl(mib, 6, buf, &len, NULL, 0) < 0) {
+            printf("Error on sysctl: %s\n", strerror(errno));
+            return false;
+        }
+        
+        sockaddr_dl* sdl = (sockaddr_dl*)(buf + sizeof(if_msghdr));
+        info_MAC mac;
+        memcpy(mac.address, LLADDR(sdl), 6);
+
+        if (std::find(macs->begin(), macs->end(), mac) == macs->end())
+        {
+            macs->push_back(mac);
+        }
+
+        free(buf);
+    }
 }
 
 #elif defined(__linux__)
