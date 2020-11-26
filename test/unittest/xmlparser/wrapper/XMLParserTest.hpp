@@ -20,6 +20,7 @@ using namespace eprosima::fastrtps::rtps;
 using eprosima::fastrtps::xmlparser::XMLP_ret;
 using eprosima::fastrtps::xmlparser::XMLParser;
 using eprosima::fastrtps::xmlparser::DataNode;
+using eprosima::fastrtps::xmlparser::BaseNode;
 
 // Class to test protected methods
 class XMLParserTest : public XMLParser
@@ -385,16 +386,77 @@ public:
         return getXMLOctetVector(elem, e, ident);
     }
 
-// INIT NACHO SECTION	
+// INIT NACHO SECTION
 
-// FINISH NACHO SECTION	
+// FINISH NACHO SECTION
 
-// INIT RAUL SECTION	
+// INIT RAUL SECTION
+    static XMLP_ret parseXML_wrapper(
+        tinyxml2::XMLDocument& xmlDoc,
+        eprosima::fastrtps::xmlparser::up_base_node_t& root)
+    {
+        return parseXML(xmlDoc, root);
+    }
 
-// FINISH RAUL SECTION	
+    static XMLP_ret parseProfiles_wrapper(
+        tinyxml2::XMLElement* p_root,
+        BaseNode& profilesNode)
+    {
+        return parseProfiles(p_root, profilesNode);
+    }
 
-// INIT PARIS SECTION	
+    static XMLP_ret parse_tls_config_wrapper(
+        tinyxml2::XMLElement* p_root,
+        eprosima::fastrtps::xmlparser::sp_transport_t tcp_transport)
+    {
+        return parse_tls_config(p_root, tcp_transport);
+    }
 
-// FINISH PARIS SECTION	
+    static XMLP_ret parseXMLLibrarySettings_wrapper(
+        tinyxml2::XMLElement* p_root)
+    {
+        return parseXMLLibrarySettings(p_root);
+    }
+
+    static XMLP_ret fillDataNode_wrapper(
+        tinyxml2::XMLElement* p_profile,
+        DataNode<PublisherAttributes>& publisher_node)
+    {
+        return fillDataNode(p_profile, publisher_node);
+    }
+
+    static XMLP_ret fillDataNode_wrapper(
+        tinyxml2::XMLElement* p_profile,
+        DataNode<SubscriberAttributes>& subscriber_node)
+    {
+        return fillDataNode(p_profile, subscriber_node);
+    }
+
+    static XMLP_ret fillDataNode_wrapper(
+        tinyxml2::XMLElement* p_profile,
+        DataNode<TopicAttributes>& topic_node)
+    {
+        return fillDataNode(p_profile, topic_node);
+    }
+
+    static XMLP_ret fillDataNode_wrapper(
+        tinyxml2::XMLElement* p_profile,
+        DataNode<RequesterAttributes>& requester_node)
+    {
+        return fillDataNode(p_profile, requester_node);
+    }
+
+    static XMLP_ret fillDataNode_wrapper(
+        tinyxml2::XMLElement* p_profile,
+        DataNode<ReplierAttributes>& replier_node)
+    {
+        return fillDataNode(p_profile, replier_node);
+    }
+
+// FINISH RAUL SECTION
+
+// INIT PARIS SECTION
+
+// FINISH PARIS SECTION
 
 };
