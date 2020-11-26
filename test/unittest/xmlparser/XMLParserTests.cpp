@@ -1114,6 +1114,21 @@ TEST_F(XMLParserTests, parseXMLConsumer)
     }
 
     {
+        // FileConsumer without properties
+        const char * xml =
+        "\
+        <consumer>\
+            <class>FileConsumer</class>\
+        </consumer>\
+        ";
+
+        ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+        titleElement = xml_doc.RootElement();
+        EXPECT_EQ(XMLP_ret::XML_OK, XMLParserTest::parseXMLConsumer_wrapper(*titleElement));
+    }
+
+
+    {
         // FileConsumer
         const char * xml =
         "\
@@ -1288,36 +1303,54 @@ TEST_F(XMLParserTests, parseXMLConsumer_negative)
 }
 
 /*
- * This test checks the return of the negative cases of the parseLogConfig method.
- * 1. Check a consummer with a missing class
- * 2. Check the use_default tag without value
+ * This test checks the return of the parseLogConfig method.
+ * 1. Check a consummer with a wrong class
+ * 2. Check the use_default tag without TRUE and TRUE
+ * 3. Check a wrong tag
  */
-TEST_F(XMLParserTests, parseLogConfig_negative)
+TEST_F(XMLParserTests, parseLogConfig)
 {
-    xmlparser::up_base_node_t root_node;
     tinyxml2::XMLDocument xml_doc;
     tinyxml2::XMLElement* titleElement;
 
-    const char * xml_p =
-    "\
-    <log>\
-        <use_default>%s</use_default>\
-        <consumer>\
-            <class>%s</class>\
-        </consumer>\
-    </log>\
-    ";
-    char xml[500];
+    {
+        // Bad parameters
+        const char * xml_p =
+        "\
+        <log>\
+            <use_default>%s</use_default>\
+            <consumer>\
+                <class>%s</class>\
+            </consumer>\
+            %s\
+        </log>\
+        ";
+        char xml[500];
 
-    sprintf(xml, xml_p, "FALSE", "");
-    ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
-    titleElement = xml_doc.RootElement();
-    EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::loadXMLProfiles(*titleElement, root_node));
+        // Check wrong class of consumer
+        sprintf(xml, xml_p, "FALSE", "wrong_class", "");
+        ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+        titleElement = xml_doc.RootElement();
+        EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::parseLogConfig_wrapper(titleElement));
 
-    sprintf(xml, xml_p, "", "StdoutConsumer");
-    ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
-    titleElement = xml_doc.RootElement();
-    EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::loadXMLProfiles(*titleElement, root_node));
+        // Check both values of use_default
+        sprintf(xml, xml_p, "TRUE", "StdoutConsumer", "");
+        ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+        titleElement = xml_doc.RootElement();
+        EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::parseLogConfig_wrapper(titleElement));
+
+        sprintf(xml, xml_p, "FALSE", "StdoutConsumer", "");
+        ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+        titleElement = xml_doc.RootElement();
+        EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::parseLogConfig_wrapper(titleElement));
+
+        // Check bad tag
+        sprintf(xml, xml_p, "FALSE", "StdoutConsumer", "<bad_element></bad_element>");
+        ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+        titleElement = xml_doc.RootElement();
+        EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::parseLogConfig_wrapper(titleElement));
+
+    }
 
 }
 
