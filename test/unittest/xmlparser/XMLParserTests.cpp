@@ -2582,6 +2582,90 @@ TEST_F(XMLParserTests, fillDataNodeReplierNegativeClauses)
         }
     }
 }
+
+/*
+ * This test checks the negative clause in the parseXMLParticipantProf function. This clause is called in case the
+ * the participant node could not be filled, i.e. fillDataNode returns an XML_ERROR code.
+ */
+TEST_F(XMLParserTests, parseXMLParticipantProfNegativeClauses)
+{
+    std::unique_ptr<ParticipantAttributes> participant_atts{new ParticipantAttributes};
+    std::unique_ptr<DataNode<ParticipantAttributes>> participant_node{
+            new DataNode<ParticipantAttributes>{ NodeType::PARTICIPANT, std::move(participant_atts) }};
+
+    // Check that an XML_ERROR is triggered when the xml element is nullptr.
+    EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::parseXMLParticipantProf_wrapper(nullptr, *participant_node));
+}
+
+/*
+ * This test checks the negative clause in the parseXMLPublisherProf function. This clause is called in case the
+ * the publisher node could not be filled, i.e. fillDataNode returns an XML_ERROR code.
+ */
+TEST_F(XMLParserTests, parseXMLPublisherProfNegativeClauses)
+{
+    std::unique_ptr<PublisherAttributes> publisher_atts{new PublisherAttributes};
+    std::unique_ptr<DataNode<PublisherAttributes>> publisher_node{
+            new DataNode<PublisherAttributes>{ NodeType::PUBLISHER, std::move(publisher_atts) }};
+
+    // Check that an XML_ERROR is triggered when the xml element is nullptr.
+    EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::parseXMLPublisherProf_wrapper(nullptr, *publisher_node));
+}
+
+/*
+ * This test checks the negative clause in the parseXMLSubscriberProf function. This clause is called in case the
+ * the subscriber node could not be filled, i.e. fillDataNode returns an XML_ERROR code.
+ */
+TEST_F(XMLParserTests, parseXMLSubscriberProfNegativeClauses)
+{
+    std::unique_ptr<SubscriberAttributes> subscriber_atts{new SubscriberAttributes};
+    std::unique_ptr<DataNode<SubscriberAttributes>> subscriber_node{
+            new DataNode<SubscriberAttributes>{ NodeType::SUBSCRIBER, std::move(subscriber_atts) }};
+
+    // Check that an XML_ERROR is triggered when the xml element is nullptr.
+    EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::parseXMLSubscriberProf_wrapper(nullptr, *subscriber_node));
+}
+
+/*
+ * This test checks the negative clause in the parseXMLRequesterProf function. This clause is called in case the
+ * the requester node could not be filled, i.e. fillDataNode returns an XML_ERROR code.
+ */
+TEST_F(XMLParserTests, parseXMLRequesterProfNegativeClauses)
+{
+    std::unique_ptr<RequesterAttributes> requester_atts{new RequesterAttributes};
+    std::unique_ptr<DataNode<RequesterAttributes>> requester_node{
+            new DataNode<RequesterAttributes>{ NodeType::REQUESTER, std::move(requester_atts) }};
+
+    // Check that an XML_ERROR is triggered when the xml element is nullptr.
+    EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::parseXMLRequesterProf_wrapper(nullptr, *requester_node));
+}
+
+/*
+ * This test checks the negative clause in the parseXMLReplierProf function. This clause is called in case the
+ * the replier node could not be filled, i.e. fillDataNode returns an XML_ERROR code.
+ */
+TEST_F(XMLParserTests, parseXMLReplierProfNegativeClauses)
+{
+    std::unique_ptr<ReplierAttributes> replier_atts{new ReplierAttributes};
+    std::unique_ptr<DataNode<ReplierAttributes>> replier_node{
+            new DataNode<ReplierAttributes>{ NodeType::REPLIER, std::move(replier_atts) }};
+
+    // Check that an XML_ERROR is triggered when the xml element is nullptr.
+    EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::parseXMLReplierProf_wrapper(nullptr, *replier_node));
+}
+
+/*
+ * This test checks the negative clause in the parseXMLTopicData function. This clause is called in case the
+ * the topic node could not be filled, i.e. fillDataNode returns an XML_ERROR code.
+ */
+TEST_F(XMLParserTests, parseXMLTopicDataNegativeClauses)
+{
+    std::unique_ptr<TopicAttributes> topic_atts{new TopicAttributes};
+    std::unique_ptr<DataNode<TopicAttributes>> topic_node{
+            new DataNode<TopicAttributes>{ NodeType::TOPIC, std::move(topic_atts) }};
+
+    // Check that an XML_ERROR is triggered when the xml element is nullptr.
+    EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::parseXMLTopicData_wrapper(nullptr, *topic_node));
+}
 // FINISH RAUL SECTION
 
 // INIT PARIS SECTION

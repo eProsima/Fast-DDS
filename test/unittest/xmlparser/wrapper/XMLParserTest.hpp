@@ -508,6 +508,48 @@ public:
         return fillDataNode(p_profile, replier_node);
     }
 
+    static XMLP_ret parseXMLParticipantProf_wrapper(
+        tinyxml2::XMLElement* p_root,
+        BaseNode& rootNode)
+    {
+        return parseXMLParticipantProf(p_root, rootNode);
+    }
+
+    static XMLP_ret parseXMLPublisherProf_wrapper(
+        tinyxml2::XMLElement* p_root,
+        BaseNode& rootNode)
+    {
+        return parseXMLPublisherProf(p_root, rootNode);
+    }
+
+    static XMLP_ret parseXMLSubscriberProf_wrapper(
+        tinyxml2::XMLElement* p_root,
+        BaseNode& rootNode)
+    {
+        return parseXMLSubscriberProf(p_root, rootNode);
+    }
+
+    static XMLP_ret parseXMLRequesterProf_wrapper(
+        tinyxml2::XMLElement* p_root,
+        BaseNode& rootNode)
+    {
+        return parseXMLRequesterProf(p_root, rootNode);
+    }
+
+    static XMLP_ret parseXMLReplierProf_wrapper(
+        tinyxml2::XMLElement* p_root,
+        BaseNode& rootNode)
+    {
+        return parseXMLReplierProf(p_root, rootNode);
+    }
+
+    static XMLP_ret parseXMLTopicData_wrapper(
+        tinyxml2::XMLElement* p_root,
+        BaseNode& rootNode)
+    {
+        return parseXMLTopicData(p_root, rootNode);
+    }
+
 // FINISH RAUL SECTION
 
 // INIT PARIS SECTION
