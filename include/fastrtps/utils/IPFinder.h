@@ -58,6 +58,20 @@ class IPFinder
             std::string dev;
             Locator_t locator;
         }info_IP;
+
+        /**
+         * Structure info_MAC with information about a specific MAC obtained from a NIC.
+         */
+        typedef struct info_MAC
+        {
+            unsigned char address [6];
+
+            bool operator == (const info_MAC& other)
+            {
+                return memcmp(address, other.address, 6);
+            }
+        }info_MAC;
+
 #endif
         IPFinder();
         virtual ~IPFinder();
@@ -92,6 +106,13 @@ class IPFinder
 
         RTPS_DllAPI static std::string getIPv4Address(const std::string &name);
         RTPS_DllAPI static std::string getIPv6Address(const std::string &name);
+
+        /**
+         * Get all MAC Adresses of all interfaces.
+         * Will return all unique MAC addresses for eadh of the interfaces returned by getAllIPAddress
+         * @param[out] macs List of MAC addresses.
+         */
+        RTPS_DllAPI static bool getAllMACAddress(std::vector<info_MAC>* macs);
 };
 
 }
