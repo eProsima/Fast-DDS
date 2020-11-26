@@ -390,170 +390,159 @@ public:
         return getXMLOctetVector(elem, e, ident);
     }
 
-// INIT NACHO SECTION
-
     static XMLP_ret parseXMLTypes_wrapper(
-        tinyxml2::XMLElement* p_root)
+            tinyxml2::XMLElement* p_root)
     {
         return parseXMLTypes(p_root);
     }
 
     static XMLP_ret parseXMLTransportData_wrapper(
-        tinyxml2::XMLElement* p_root)
+            tinyxml2::XMLElement* p_root)
     {
         return parseXMLTransportData(p_root);
     }
 
     static XMLP_ret parseXMLCommonTransportData_wrapper(
-        tinyxml2::XMLElement* p_root,
-        sp_transport_t p_transport)
+            tinyxml2::XMLElement* p_root,
+            sp_transport_t p_transport)
     {
         return parseXMLCommonTransportData(p_root, p_transport);
     }
 
     static XMLP_ret parseXMLCommonSharedMemTransportData_wrapper(
-        tinyxml2::XMLElement* p_root,
-        sp_transport_t p_transport)
+            tinyxml2::XMLElement* p_root,
+            sp_transport_t p_transport)
     {
         return parseXMLCommonSharedMemTransportData(p_root, p_transport);
     }
 
     static XMLP_ret parseXMLCommonTCPTransportData_wrapper(
-        tinyxml2::XMLElement* p_root,
-        eprosima::fastrtps::xmlparser::sp_transport_t p_transport)
+            tinyxml2::XMLElement* p_root,
+            eprosima::fastrtps::xmlparser::sp_transport_t p_transport)
     {
         return parseXMLCommonTCPTransportData(p_root, p_transport);
     }
 
     static XMLP_ret parseXMLConsumer_wrapper(
-        tinyxml2::XMLElement& p_root)
+            tinyxml2::XMLElement& p_root)
     {
         return parseXMLConsumer(p_root);
     }
 
     static XMLP_ret parseLogConfig_wrapper(
-        tinyxml2::XMLElement* p_root)
+            tinyxml2::XMLElement* p_root)
     {
         return parseLogConfig(p_root);
     }
 
     static XMLP_ret parseXMLTransportsProf_wrapper(
-        tinyxml2::XMLElement* p_root)
+            tinyxml2::XMLElement* p_root)
     {
         return parseXMLTransportsProf(p_root);
     }
 
-// FINISH NACHO SECTION
-
-// INIT RAUL SECTION
     static XMLP_ret parseXML_wrapper(
-        tinyxml2::XMLDocument& xmlDoc,
-        eprosima::fastrtps::xmlparser::up_base_node_t& root)
+            tinyxml2::XMLDocument& xmlDoc,
+            eprosima::fastrtps::xmlparser::up_base_node_t& root)
     {
         return parseXML(xmlDoc, root);
     }
 
     static XMLP_ret parseProfiles_wrapper(
-        tinyxml2::XMLElement* p_root,
-        BaseNode& profilesNode)
+            tinyxml2::XMLElement* p_root,
+            BaseNode& profilesNode)
     {
         return parseProfiles(p_root, profilesNode);
     }
 
     static XMLP_ret parse_tls_config_wrapper(
-        tinyxml2::XMLElement* p_root,
-        eprosima::fastrtps::xmlparser::sp_transport_t tcp_transport)
+            tinyxml2::XMLElement* p_root,
+            eprosima::fastrtps::xmlparser::sp_transport_t tcp_transport)
     {
         return parse_tls_config(p_root, tcp_transport);
     }
 
     static XMLP_ret parseXMLLibrarySettings_wrapper(
-        tinyxml2::XMLElement* p_root)
+            tinyxml2::XMLElement* p_root)
     {
         return parseXMLLibrarySettings(p_root);
     }
 
     static XMLP_ret fillDataNode_wrapper(
-        tinyxml2::XMLElement* p_profile,
-        DataNode<PublisherAttributes>& publisher_node)
+            tinyxml2::XMLElement* p_profile,
+            DataNode<PublisherAttributes>& publisher_node)
     {
         return fillDataNode(p_profile, publisher_node);
     }
 
     static XMLP_ret fillDataNode_wrapper(
-        tinyxml2::XMLElement* p_profile,
-        DataNode<SubscriberAttributes>& subscriber_node)
+            tinyxml2::XMLElement* p_profile,
+            DataNode<SubscriberAttributes>& subscriber_node)
     {
         return fillDataNode(p_profile, subscriber_node);
     }
 
     static XMLP_ret fillDataNode_wrapper(
-        tinyxml2::XMLElement* p_profile,
-        DataNode<TopicAttributes>& topic_node)
+            tinyxml2::XMLElement* p_profile,
+            DataNode<TopicAttributes>& topic_node)
     {
         return fillDataNode(p_profile, topic_node);
     }
 
     static XMLP_ret fillDataNode_wrapper(
-        tinyxml2::XMLElement* p_profile,
-        DataNode<RequesterAttributes>& requester_node)
+            tinyxml2::XMLElement* p_profile,
+            DataNode<RequesterAttributes>& requester_node)
     {
         return fillDataNode(p_profile, requester_node);
     }
 
     static XMLP_ret fillDataNode_wrapper(
-        tinyxml2::XMLElement* p_profile,
-        DataNode<ReplierAttributes>& replier_node)
+            tinyxml2::XMLElement* p_profile,
+            DataNode<ReplierAttributes>& replier_node)
     {
         return fillDataNode(p_profile, replier_node);
     }
 
     static XMLP_ret parseXMLParticipantProf_wrapper(
-        tinyxml2::XMLElement* p_root,
-        BaseNode& rootNode)
+            tinyxml2::XMLElement* p_root,
+            BaseNode& rootNode)
     {
         return parseXMLParticipantProf(p_root, rootNode);
     }
 
     static XMLP_ret parseXMLPublisherProf_wrapper(
-        tinyxml2::XMLElement* p_root,
-        BaseNode& rootNode)
+            tinyxml2::XMLElement* p_root,
+            BaseNode& rootNode)
     {
         return parseXMLPublisherProf(p_root, rootNode);
     }
 
     static XMLP_ret parseXMLSubscriberProf_wrapper(
-        tinyxml2::XMLElement* p_root,
-        BaseNode& rootNode)
+            tinyxml2::XMLElement* p_root,
+            BaseNode& rootNode)
     {
         return parseXMLSubscriberProf(p_root, rootNode);
     }
 
     static XMLP_ret parseXMLRequesterProf_wrapper(
-        tinyxml2::XMLElement* p_root,
-        BaseNode& rootNode)
+            tinyxml2::XMLElement* p_root,
+            BaseNode& rootNode)
     {
         return parseXMLRequesterProf(p_root, rootNode);
     }
 
     static XMLP_ret parseXMLReplierProf_wrapper(
-        tinyxml2::XMLElement* p_root,
-        BaseNode& rootNode)
+            tinyxml2::XMLElement* p_root,
+            BaseNode& rootNode)
     {
         return parseXMLReplierProf(p_root, rootNode);
     }
 
     static XMLP_ret parseXMLTopicData_wrapper(
-        tinyxml2::XMLElement* p_root,
-        BaseNode& rootNode)
+            tinyxml2::XMLElement* p_root,
+            BaseNode& rootNode)
     {
         return parseXMLTopicData(p_root, rootNode);
     }
-
-// FINISH RAUL SECTION
-
-// INIT PARIS SECTION
-
-// FINISH PARIS SECTION
 
 };

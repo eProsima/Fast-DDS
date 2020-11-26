@@ -196,7 +196,6 @@ XMLP_ret XMLParser::parseXMLBitvalueDynamicType(
     return XMLP_ret::XML_OK;
 }
 
-
 static p_dynamictypebuilder_t getDiscriminatorTypeBuilder(
         const std::string& disc,
         uint32_t bound = 0);

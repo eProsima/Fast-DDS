@@ -241,7 +241,7 @@ XMLP_ret XMLParser::parseXMLTransportData(
     }
     else
     {
-        if(p_aux0->GetText() != nullptr)
+        if (p_aux0->GetText() != nullptr)
         {
             sId = p_aux0->GetText();
         }
@@ -261,7 +261,7 @@ XMLP_ret XMLParser::parseXMLTransportData(
     else
     {
         std::string sType;
-        if(p_aux0->GetText() != nullptr)
+        if (p_aux0->GetText() != nullptr)
         {
             sType = p_aux0->GetText();
         }
@@ -1551,7 +1551,7 @@ XMLP_ret XMLParser::parseXMLConsumer(
                         if (std::strcmp(s.c_str(), "filename") == 0)
                         {
                             if (nullptr != (p_auxValue = property->FirstChildElement(VALUE)) &&
-                                nullptr != p_auxValue->GetText())
+                                    nullptr != p_auxValue->GetText())
                             {
                                 outputFile = p_auxValue->GetText();
                             }
@@ -1565,7 +1565,7 @@ XMLP_ret XMLParser::parseXMLConsumer(
                         else if (std::strcmp(s.c_str(), "append") == 0)
                         {
                             if (nullptr != (p_auxValue = property->FirstChildElement(VALUE)) &&
-                                nullptr != p_auxValue->GetText())
+                                    nullptr != p_auxValue->GetText())
                             {
                                 std::string auxBool = p_auxValue->GetText();
                                 if (std::strcmp(auxBool.c_str(), "TRUE") == 0)

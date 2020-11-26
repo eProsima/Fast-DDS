@@ -661,7 +661,6 @@ TEST_F(XMLParserTests, DataBuffer)
     EXPECT_EQ(std::string(rtps_atts.getName()), "test_name");
 }
 
-// INIT NACHO SECTION
 /*
  * This test checks The return of the loadXMLProfiles method when a correct xml is parsed
  */
@@ -672,7 +671,7 @@ TEST_F(XMLParserTests, loadXMLProfiles)
     tinyxml2::XMLDocument xml_doc;
     tinyxml2::XMLElement* titleElement;
 
-    const char * xml =
+    const char* xml =
             "\
             <profiles>\
                 <publisher profile_name=\"test_publisher_profile\"\
@@ -711,7 +710,7 @@ TEST_F(XMLParserTests, parseXMLTransportData)
         tinyxml2::XMLDocument xml_doc;
         tinyxml2::XMLElement* titleElement;
 
-        const char * xml_p =
+        const char* xml_p =
                 "\
                 <transport_descriptor>\
                     <transport_id>TransportId1</transport_id>\
@@ -773,7 +772,7 @@ TEST_F(XMLParserTests, parseXMLTransportData)
         tinyxml2::XMLDocument xml_doc;
         tinyxml2::XMLElement* titleElement;
 
-        const char * xml_p =
+        const char* xml_p =
                 "\
                 <transport_descriptor>\
                     <transport_id>TransportId1</transport_id>\
@@ -829,7 +828,7 @@ TEST_F(XMLParserTests, parseXMLTransportData)
         tinyxml2::XMLDocument xml_doc;
         tinyxml2::XMLElement* titleElement;
 
-        const char * xml =
+        const char* xml =
                 "\
                 <transport_descriptor>\
                     <transport_id>TransportId1</transport_id>\
@@ -916,22 +915,23 @@ TEST_F(XMLParserTests, parseXMLTransportDataNegativeClauses)
     };
 
     std::vector<std::string> parameters;
-    for (std::vector<std::string>::iterator transport_type = transport_types.begin(); transport_type != transport_types.end(); ++transport_type)
+    for (std::vector<std::string>::iterator transport_type = transport_types.begin();
+            transport_type != transport_types.end(); ++transport_type)
     {
         parameters.clear();
-        if( (*transport_type).substr(0,3) == "UDP" )
+        if ((*transport_type).substr(0, 3) == "UDP" )
         {
             parameters = parameters_UDP;
         }
-        else if ( (*transport_type).substr(0,3) == "TCP" )
+        else if ((*transport_type).substr(0, 3) == "TCP" )
         {
             parameters = parameters_TCP;
-            if ( (*transport_type) == "TCPv4" )
+            if ((*transport_type) == "TCPv4" )
             {
                 parameters.insert(parameters.end(), "wan_addr");
             }
         }
-        else if ( (*transport_type).substr(0,3) == "SHM" )
+        else if ((*transport_type).substr(0, 3) == "SHM" )
         {
             parameters = parameters_SHM;
         }
@@ -942,8 +942,9 @@ TEST_F(XMLParserTests, parseXMLTransportDataNegativeClauses)
                     "\
                     <transport_descriptor>\
                         <transport_id>TransportId1</transport_id>\
-                        <type>"+*transport_type+"</type>\
-                        <"+*it+"><bad_element></bad_element></"+*it+">\
+                        <type>" + *transport_type + "</type>\
+                        <" + *it + "><bad_element></bad_element></" + *it +
+                    ">\
                     </transport_descriptor>\
                     ";
 
@@ -953,13 +954,14 @@ TEST_F(XMLParserTests, parseXMLTransportDataNegativeClauses)
             xmlparser::XMLProfileManager::DeleteInstance();
         }
 
-        if ( (*transport_type).substr(0,3) == "TCP" )
+        if ((*transport_type).substr(0, 3) == "TCP" )
         {
             xml =
                     "\
                     <transport_descriptor>\
                         <transport_id>TransportId1</transport_id>\
-                        <type>"+*transport_type+"</type>\
+                        <type>" + *transport_type +
+                    "</type>\
                         <listening_ports>\
                             <port>not_an_int</port>\
                         </listening_ports>\
@@ -972,12 +974,14 @@ TEST_F(XMLParserTests, parseXMLTransportDataNegativeClauses)
             xmlparser::XMLProfileManager::DeleteInstance();
 
             // Check empty pointer
-            EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::parseXMLCommonTCPTransportData_wrapper(titleElement, nullptr));
+            EXPECT_EQ(XMLP_ret::XML_ERROR,
+                    XMLParserTest::parseXMLCommonTCPTransportData_wrapper(titleElement, nullptr));
         }
-        else if( (*transport_type).substr(0,3) == "SHM" )
+        else if ((*transport_type).substr(0, 3) == "SHM" )
         {
             // Check empty pointer
-            EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::parseXMLCommonSharedMemTransportData_wrapper(titleElement, nullptr));
+            EXPECT_EQ(XMLP_ret::XML_ERROR,
+                    XMLParserTest::parseXMLCommonSharedMemTransportData_wrapper(titleElement, nullptr));
         }
     }
 
@@ -1079,7 +1083,7 @@ TEST_F(XMLParserTests, parseXMLConsumer)
 
     {
         // StdoutConsumer
-        const char * xml =
+        const char* xml =
                 "\
                 <consumer>\
                     <class>StdoutConsumer</class>\
@@ -1093,7 +1097,7 @@ TEST_F(XMLParserTests, parseXMLConsumer)
 
     {
         // StdoutErrConsumer without properties
-        const char * xml =
+        const char* xml =
                 "\
                 <consumer>\
                     <class>StdoutErrConsumer</class>\
@@ -1106,7 +1110,7 @@ TEST_F(XMLParserTests, parseXMLConsumer)
 
     {
         // StdoutErrConsumer with properties
-        const char * xml_p =
+        const char* xml_p =
                 "\
                 <consumer>\
                     <class>StdoutErrConsumer</class>\
@@ -1132,7 +1136,7 @@ TEST_F(XMLParserTests, parseXMLConsumer)
 
     {
         // FileConsumer without properties
-        const char * xml =
+        const char* xml =
                 "\
                 <consumer>\
                     <class>FileConsumer</class>\
@@ -1147,7 +1151,7 @@ TEST_F(XMLParserTests, parseXMLConsumer)
 
     {
         // FileConsumer
-        const char * xml =
+        const char* xml =
                 "\
                 <consumer>\
                     <class>FileConsumer</class>\
@@ -1189,7 +1193,7 @@ TEST_F(XMLParserTests, parseXMLConsumerNegativeClauses)
     {
         Log::ClearConsumers();
         // Unknown consumer class
-        const char * xml =
+        const char* xml =
                 "\
                 <consumer>\
                     <class>UnknownConsumer</class>\
@@ -1204,7 +1208,7 @@ TEST_F(XMLParserTests, parseXMLConsumerNegativeClauses)
     {
         Log::ClearConsumers();
         // StdoutErrConsumer with properties
-        const char * xml =
+        const char* xml =
                 "\
                 <consumer>\
                     <class>StdoutErrConsumer</class>\
@@ -1223,7 +1227,7 @@ TEST_F(XMLParserTests, parseXMLConsumerNegativeClauses)
     {
         Log::ClearConsumers();
         // StdoutErrConsumer with two stderr_threshold
-        const char * xml =
+        const char* xml =
                 "\
                 <consumer>\
                     <class>StdoutErrConsumer</class>\
@@ -1246,7 +1250,7 @@ TEST_F(XMLParserTests, parseXMLConsumerNegativeClauses)
     {
         Log::ClearConsumers();
         // StdoutErrConsumer with wrong property name
-        const char * xml =
+        const char* xml =
                 "\
                 <consumer>\
                     <class>StdoutErrConsumer</class>\
@@ -1264,7 +1268,7 @@ TEST_F(XMLParserTests, parseXMLConsumerNegativeClauses)
     {
         Log::ClearConsumers();
         // FileConsumer no filename
-        const char * xml =
+        const char* xml =
                 "\
                 <consumer>\
                     <class>FileConsumer</class>\
@@ -1283,7 +1287,7 @@ TEST_F(XMLParserTests, parseXMLConsumerNegativeClauses)
     {
         Log::ClearConsumers();
         // FileConsumer no append value
-        const char * xml =
+        const char* xml =
                 "\
                 <consumer>\
                     <class>FileConsumer</class>\
@@ -1302,7 +1306,7 @@ TEST_F(XMLParserTests, parseXMLConsumerNegativeClauses)
     {
         Log::ClearConsumers();
         // FileConsumer bad property
-        const char * xml =
+        const char* xml =
                 "\
                 <consumer>\
                     <class>FileConsumer</class>\
@@ -1332,7 +1336,7 @@ TEST_F(XMLParserTests, parseLogConfig)
 
     {
         // Bad parameters
-        const char * xml_p =
+        const char* xml_p =
                 "\
                 <log>\
                     <use_default>%s</use_default>\
@@ -1363,7 +1367,7 @@ TEST_F(XMLParserTests, parseLogConfig)
 
     {
         // Check bad tag
-        const char * xml =
+        const char* xml =
                 "\
                 <log>\
                     <bad_element></bad_element>\
@@ -1398,7 +1402,7 @@ TEST_F(XMLParserTests, fillDataNodeParticipantNegativeClauses)
     EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::fillDataNode_wrapper(nullptr, *participant_node));
 
     {
-        const char * xml_p =
+        const char* xml_p =
                 "\
                 <participant profile_name=\"domainparticipant_profile_name\">\
                     %s\
@@ -1421,7 +1425,7 @@ TEST_F(XMLParserTests, fillDataNodeParticipantNegativeClauses)
 
     {
         // Wrong rtps child tags
-        const char * xml_p =
+        const char* xml_p =
                 "\
                 <participant profile_name=\"domainparticipant_profile_name\">\
                     <domainId>0</domainId>\
@@ -1481,7 +1485,7 @@ TEST_F(XMLParserTests, fillDataNodeParticipantUnsupported)
     Log::SetCategoryFilter(std::regex("(XMLPARSER)"));
 
     // Unsuported fields
-    const char * xml =
+    const char* xml =
             "\
             <participant profile_name=\"domainparticipant_profile_name\">\
                 <rtps>\
@@ -1510,9 +1514,6 @@ TEST_F(XMLParserTests, fillDataNodeParticipantUnsupported)
 
 }
 
-// FINISH NACHO SECTION
-
-// INIT RAUL SECTION
 /*
  * This test checks the correct functioning of the parseXML function when the <dds> root element does not exist.
  * 1. Check that elements <profiles>, <types> and <log> are read as root elements.
@@ -1882,7 +1883,7 @@ TEST_F(XMLParserTests, parseTLSConfigVerifyMode)
         titleElement = xml_doc.RootElement();
 
         std::shared_ptr<eprosima::fastdds::rtps::TransportDescriptorInterface> tcp_transport =
-            std::make_shared<rtps::TCPv4TransportDescriptor>();
+                std::make_shared<rtps::TCPv4TransportDescriptor>();
         EXPECT_EQ(XMLP_ret::XML_OK, XMLParserTest::parse_tls_config_wrapper(titleElement, tcp_transport));
 
         std::shared_ptr<TCPTransportDescriptor> descriptor =
@@ -1897,7 +1898,7 @@ TEST_F(XMLParserTests, parseTLSConfigVerifyMode)
         titleElement = xml_doc.RootElement();
 
         std::shared_ptr<eprosima::fastdds::rtps::TransportDescriptorInterface> tcp_transport =
-            std::make_shared<rtps::TCPv4TransportDescriptor>();
+                std::make_shared<rtps::TCPv4TransportDescriptor>();
         EXPECT_EQ(XMLP_ret::XML_OK, XMLParserTest::parse_tls_config_wrapper(titleElement, tcp_transport));
 
         std::shared_ptr<TCPTransportDescriptor> descriptor =
@@ -1912,7 +1913,7 @@ TEST_F(XMLParserTests, parseTLSConfigVerifyMode)
         titleElement = xml_doc.RootElement();
 
         std::shared_ptr<eprosima::fastdds::rtps::TransportDescriptorInterface> tcp_transport =
-            std::make_shared<rtps::TCPv4TransportDescriptor>();
+                std::make_shared<rtps::TCPv4TransportDescriptor>();
         EXPECT_EQ(XMLP_ret::XML_OK, XMLParserTest::parse_tls_config_wrapper(titleElement, tcp_transport));
 
         std::shared_ptr<TCPTransportDescriptor> descriptor =
@@ -1928,7 +1929,7 @@ TEST_F(XMLParserTests, parseTLSConfigVerifyMode)
         titleElement = xml_doc.RootElement();
 
         std::shared_ptr<eprosima::fastdds::rtps::TransportDescriptorInterface> tcp_transport =
-            std::make_shared<rtps::TCPv4TransportDescriptor>();
+                std::make_shared<rtps::TCPv4TransportDescriptor>();
         EXPECT_EQ(XMLP_ret::XML_OK, XMLParserTest::parse_tls_config_wrapper(titleElement, tcp_transport));
         std::shared_ptr<TCPTransportDescriptor> descriptor =
                 std::dynamic_pointer_cast<TCPTransportDescriptor>(tcp_transport);
@@ -1977,7 +1978,7 @@ TEST_F(XMLParserTests, parseTLSConfigOptions)
         std::shared_ptr<TCPTransportDescriptor> descriptor =
                 std::dynamic_pointer_cast<TCPTransportDescriptor>(tcp_transport);
         EXPECT_TRUE(
-                descriptor->tls_config.get_option(TCPTransportDescriptor::TLSConfig::TLSOptions::DEFAULT_WORKAROUNDS));
+            descriptor->tls_config.get_option(TCPTransportDescriptor::TLSConfig::TLSOptions::DEFAULT_WORKAROUNDS));
     }
 
     // Check that the NO_COMPRESSION setting return an xml ok code and is set correctly.
@@ -1989,7 +1990,7 @@ TEST_F(XMLParserTests, parseTLSConfigOptions)
         std::shared_ptr<TCPTransportDescriptor> descriptor =
                 std::dynamic_pointer_cast<TCPTransportDescriptor>(tcp_transport);
         EXPECT_TRUE(
-                descriptor->tls_config.get_option(TCPTransportDescriptor::TLSConfig::TLSOptions::NO_COMPRESSION));
+            descriptor->tls_config.get_option(TCPTransportDescriptor::TLSConfig::TLSOptions::NO_COMPRESSION));
     }
 
     // Check that the NO_SSLV2 setting return an xml ok code and is set correctly.
@@ -2001,7 +2002,7 @@ TEST_F(XMLParserTests, parseTLSConfigOptions)
         std::shared_ptr<TCPTransportDescriptor> descriptor =
                 std::dynamic_pointer_cast<TCPTransportDescriptor>(tcp_transport);
         EXPECT_TRUE(
-                descriptor->tls_config.get_option(TCPTransportDescriptor::TLSConfig::TLSOptions::NO_SSLV2));
+            descriptor->tls_config.get_option(TCPTransportDescriptor::TLSConfig::TLSOptions::NO_SSLV2));
     }
 
     // Check that the NO_SSLV3 setting return an xml ok code and is set correctly.
@@ -2013,7 +2014,7 @@ TEST_F(XMLParserTests, parseTLSConfigOptions)
         std::shared_ptr<TCPTransportDescriptor> descriptor =
                 std::dynamic_pointer_cast<TCPTransportDescriptor>(tcp_transport);
         EXPECT_TRUE(
-                descriptor->tls_config.get_option(TCPTransportDescriptor::TLSConfig::TLSOptions::NO_SSLV3));
+            descriptor->tls_config.get_option(TCPTransportDescriptor::TLSConfig::TLSOptions::NO_SSLV3));
     }
 
     // Check that the NO_TLSV1 setting return an xml ok code and is set correctly.
@@ -2025,7 +2026,7 @@ TEST_F(XMLParserTests, parseTLSConfigOptions)
         std::shared_ptr<TCPTransportDescriptor> descriptor =
                 std::dynamic_pointer_cast<TCPTransportDescriptor>(tcp_transport);
         EXPECT_TRUE(
-                descriptor->tls_config.get_option(TCPTransportDescriptor::TLSConfig::TLSOptions::NO_TLSV1));
+            descriptor->tls_config.get_option(TCPTransportDescriptor::TLSConfig::TLSOptions::NO_TLSV1));
     }
 
     // Check that the NO_TLSV1_1 setting return an xml ok code and is set correctly.
@@ -2037,7 +2038,7 @@ TEST_F(XMLParserTests, parseTLSConfigOptions)
         std::shared_ptr<TCPTransportDescriptor> descriptor =
                 std::dynamic_pointer_cast<TCPTransportDescriptor>(tcp_transport);
         EXPECT_TRUE(
-                descriptor->tls_config.get_option(TCPTransportDescriptor::TLSConfig::TLSOptions::NO_TLSV1_1));
+            descriptor->tls_config.get_option(TCPTransportDescriptor::TLSConfig::TLSOptions::NO_TLSV1_1));
     }
 
     // Check that the NO_TLSV1_2 setting return an xml ok code and is set correctly.
@@ -2049,7 +2050,7 @@ TEST_F(XMLParserTests, parseTLSConfigOptions)
         std::shared_ptr<TCPTransportDescriptor> descriptor =
                 std::dynamic_pointer_cast<TCPTransportDescriptor>(tcp_transport);
         EXPECT_TRUE(
-                descriptor->tls_config.get_option(TCPTransportDescriptor::TLSConfig::TLSOptions::NO_TLSV1_2));
+            descriptor->tls_config.get_option(TCPTransportDescriptor::TLSConfig::TLSOptions::NO_TLSV1_2));
     }
 
     // Check that the NO_TLSV1_3 setting return an xml ok code and is set correctly.
@@ -2061,7 +2062,7 @@ TEST_F(XMLParserTests, parseTLSConfigOptions)
         std::shared_ptr<TCPTransportDescriptor> descriptor =
                 std::dynamic_pointer_cast<TCPTransportDescriptor>(tcp_transport);
         EXPECT_TRUE(
-                descriptor->tls_config.get_option(TCPTransportDescriptor::TLSConfig::TLSOptions::NO_TLSV1_3));
+            descriptor->tls_config.get_option(TCPTransportDescriptor::TLSConfig::TLSOptions::NO_TLSV1_3));
     }
 
     // Check that the SINGLE_DH_USE setting return an xml ok code and is set correctly.
@@ -2073,7 +2074,7 @@ TEST_F(XMLParserTests, parseTLSConfigOptions)
         std::shared_ptr<TCPTransportDescriptor> descriptor =
                 std::dynamic_pointer_cast<TCPTransportDescriptor>(tcp_transport);
         EXPECT_TRUE(
-                descriptor->tls_config.get_option(TCPTransportDescriptor::TLSConfig::TLSOptions::SINGLE_DH_USE));
+            descriptor->tls_config.get_option(TCPTransportDescriptor::TLSConfig::TLSOptions::SINGLE_DH_USE));
     }
 }
 
@@ -2238,7 +2239,7 @@ TEST_F(XMLParserTests, fillDataNodePublisherNegativeClauses)
 {
     std::unique_ptr<PublisherAttributes> publisher_atts{new PublisherAttributes};
     std::unique_ptr<DataNode<PublisherAttributes>> publisher_node{
-            new DataNode<PublisherAttributes>{ NodeType::PUBLISHER, std::move(publisher_atts) }};
+        new DataNode<PublisherAttributes>{ NodeType::PUBLISHER, std::move(publisher_atts) }};
 
     // Check that an XML_ERROR is triggered when the xml element is nullptr.
     EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::fillDataNode_wrapper(nullptr, *publisher_node));
@@ -2270,7 +2271,7 @@ TEST_F(XMLParserTests, fillDataNodeSubscriberNegativeClauses)
 {
     std::unique_ptr<SubscriberAttributes> subscriber_atts{new SubscriberAttributes};
     std::unique_ptr<DataNode<SubscriberAttributes>> subscriber_node{
-            new DataNode<SubscriberAttributes>{ NodeType::SUBSCRIBER, std::move(subscriber_atts) }};
+        new DataNode<SubscriberAttributes>{ NodeType::SUBSCRIBER, std::move(subscriber_atts) }};
 
     // Check that an XML_ERROR is triggered when the xml element is nullptr.
     EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::fillDataNode_wrapper(nullptr, *subscriber_node));
@@ -2302,7 +2303,7 @@ TEST_F(XMLParserTests, fillDataNodeTopicNegativeClauses)
 {
     std::unique_ptr<TopicAttributes> topic_atts{new TopicAttributes};
     std::unique_ptr<DataNode<TopicAttributes>> topic_node{
-            new DataNode<TopicAttributes>{ NodeType::TOPIC, std::move(topic_atts) }};
+        new DataNode<TopicAttributes>{ NodeType::TOPIC, std::move(topic_atts) }};
 
     // Check that an XML_ERROR is triggered when the xml element is nullptr.
     EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::fillDataNode_wrapper(nullptr, *topic_node));
@@ -2340,7 +2341,7 @@ TEST_F(XMLParserTests, fillDataNodeRequesterNegativeClauses)
 {
     std::unique_ptr<RequesterAttributes> requester_atts_error{new RequesterAttributes};
     std::unique_ptr<DataNode<RequesterAttributes>> requester_node_error{
-            new DataNode<RequesterAttributes>{ NodeType::REQUESTER, std::move(requester_atts_error) }};
+        new DataNode<RequesterAttributes>{ NodeType::REQUESTER, std::move(requester_atts_error) }};
 
     // Check that an XML_ERROR is triggered when the xml element is nullptr.
     EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::fillDataNode_wrapper(nullptr, *requester_node_error));
@@ -2469,7 +2470,7 @@ TEST_F(XMLParserTests, fillDataNodeReplierNegativeClauses)
 {
     std::unique_ptr<ReplierAttributes> replier_atts_error{new ReplierAttributes};
     std::unique_ptr<DataNode<ReplierAttributes>> replier_node_error{
-            new DataNode<ReplierAttributes>{ NodeType::REQUESTER, std::move(replier_atts_error) }};
+        new DataNode<ReplierAttributes>{ NodeType::REQUESTER, std::move(replier_atts_error) }};
 
     // Check that an XML_ERROR is triggered when the xml element is nullptr.
     EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::fillDataNode_wrapper(nullptr, *replier_node_error));
@@ -2591,7 +2592,7 @@ TEST_F(XMLParserTests, parseXMLParticipantProfNegativeClauses)
 {
     std::unique_ptr<ParticipantAttributes> participant_atts{new ParticipantAttributes};
     std::unique_ptr<DataNode<ParticipantAttributes>> participant_node{
-            new DataNode<ParticipantAttributes>{ NodeType::PARTICIPANT, std::move(participant_atts) }};
+        new DataNode<ParticipantAttributes>{ NodeType::PARTICIPANT, std::move(participant_atts) }};
 
     // Check that an XML_ERROR is triggered when the xml element is nullptr.
     EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::parseXMLParticipantProf_wrapper(nullptr, *participant_node));
@@ -2605,7 +2606,7 @@ TEST_F(XMLParserTests, parseXMLPublisherProfNegativeClauses)
 {
     std::unique_ptr<PublisherAttributes> publisher_atts{new PublisherAttributes};
     std::unique_ptr<DataNode<PublisherAttributes>> publisher_node{
-            new DataNode<PublisherAttributes>{ NodeType::PUBLISHER, std::move(publisher_atts) }};
+        new DataNode<PublisherAttributes>{ NodeType::PUBLISHER, std::move(publisher_atts) }};
 
     // Check that an XML_ERROR is triggered when the xml element is nullptr.
     EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::parseXMLPublisherProf_wrapper(nullptr, *publisher_node));
@@ -2619,7 +2620,7 @@ TEST_F(XMLParserTests, parseXMLSubscriberProfNegativeClauses)
 {
     std::unique_ptr<SubscriberAttributes> subscriber_atts{new SubscriberAttributes};
     std::unique_ptr<DataNode<SubscriberAttributes>> subscriber_node{
-            new DataNode<SubscriberAttributes>{ NodeType::SUBSCRIBER, std::move(subscriber_atts) }};
+        new DataNode<SubscriberAttributes>{ NodeType::SUBSCRIBER, std::move(subscriber_atts) }};
 
     // Check that an XML_ERROR is triggered when the xml element is nullptr.
     EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::parseXMLSubscriberProf_wrapper(nullptr, *subscriber_node));
@@ -2633,7 +2634,7 @@ TEST_F(XMLParserTests, parseXMLRequesterProfNegativeClauses)
 {
     std::unique_ptr<RequesterAttributes> requester_atts{new RequesterAttributes};
     std::unique_ptr<DataNode<RequesterAttributes>> requester_node{
-            new DataNode<RequesterAttributes>{ NodeType::REQUESTER, std::move(requester_atts) }};
+        new DataNode<RequesterAttributes>{ NodeType::REQUESTER, std::move(requester_atts) }};
 
     // Check that an XML_ERROR is triggered when the xml element is nullptr.
     EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::parseXMLRequesterProf_wrapper(nullptr, *requester_node));
@@ -2647,7 +2648,7 @@ TEST_F(XMLParserTests, parseXMLReplierProfNegativeClauses)
 {
     std::unique_ptr<ReplierAttributes> replier_atts{new ReplierAttributes};
     std::unique_ptr<DataNode<ReplierAttributes>> replier_node{
-            new DataNode<ReplierAttributes>{ NodeType::REPLIER, std::move(replier_atts) }};
+        new DataNode<ReplierAttributes>{ NodeType::REPLIER, std::move(replier_atts) }};
 
     // Check that an XML_ERROR is triggered when the xml element is nullptr.
     EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::parseXMLReplierProf_wrapper(nullptr, *replier_node));
@@ -2661,16 +2662,11 @@ TEST_F(XMLParserTests, parseXMLTopicDataNegativeClauses)
 {
     std::unique_ptr<TopicAttributes> topic_atts{new TopicAttributes};
     std::unique_ptr<DataNode<TopicAttributes>> topic_node{
-            new DataNode<TopicAttributes>{ NodeType::TOPIC, std::move(topic_atts) }};
+        new DataNode<TopicAttributes>{ NodeType::TOPIC, std::move(topic_atts) }};
 
     // Check that an XML_ERROR is triggered when the xml element is nullptr.
     EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::parseXMLTopicData_wrapper(nullptr, *topic_node));
 }
-// FINISH RAUL SECTION
-
-// INIT PARIS SECTION
-
-// FINISH PARIS SECTION
 
 int main(
         int argc,
