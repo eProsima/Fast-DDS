@@ -157,21 +157,24 @@ void ResourceEvent::event_service()
 
         std::unique_lock<TimedMutex> lock(mutex_);
 
-        // Allow other threads to manipulate the timer collections
+        // If pending timers exist, there is some work to be done, so no need to wait.
+        if (!pending_timers_.empty())
+        {
+            continue;
+        }
+
+        // Allow other threads to manipulate the timer collections while we wait.
         allow_vector_manipulation_ = true;
         cv_manipulation_.notify_all();
 
         // If pending timers exist, there is some work to be done, so no need to wait.
-        if (pending_timers_.empty())
-        {
-            // Wait for the first timer to be triggered
-            std::chrono::steady_clock::time_point next_trigger =
-                    active_timers_.empty() ?
-                    current_time_ + std::chrono::seconds(1) :
-                    active_timers_[0]->next_trigger_time();
+        // Wait for the first timer to be triggered
+        std::chrono::steady_clock::time_point next_trigger =
+                active_timers_.empty() ?
+                current_time_ + std::chrono::seconds(1) :
+                active_timers_[0]->next_trigger_time();
 
-            cv_.wait_until(lock, next_trigger);
-        }
+        cv_.wait_until(lock, next_trigger);
 
         // Don't allow other threads to manipulate the timer collections
         allow_vector_manipulation_ = false;
