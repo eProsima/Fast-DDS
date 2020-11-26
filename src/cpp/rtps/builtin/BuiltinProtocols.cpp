@@ -24,7 +24,7 @@
 #include <fastdds/rtps/builtin/discovery/endpoint/EDP.h>
 #include <fastdds/rtps/builtin/discovery/endpoint/EDPStatic.h>
 
-#include "./discovery/participant/PDPServer2.hpp"
+#include "./discovery/participant/PDPServer.hpp"
 #include "./discovery/participant/PDPClient.h"
 
 #include <fastdds/rtps/builtin/data/ParticipantProxyData.h>
@@ -105,12 +105,12 @@ bool BuiltinProtocols::initBuiltinProtocols(
             break;
 
         case DiscoveryProtocol_t::SERVER:
-            mp_PDP = new fastdds::rtps::PDPServer2(this, allocation, DurabilityKind_t::TRANSIENT_LOCAL);
+            mp_PDP = new fastdds::rtps::PDPServer(this, allocation, DurabilityKind_t::TRANSIENT_LOCAL);
             break;
 
 #if HAVE_SQLITE3
         case DiscoveryProtocol_t::BACKUP:
-            mp_PDP = new fastdds::rtps::PDPServer2(this, allocation, DurabilityKind_t::TRANSIENT);
+            mp_PDP = new fastdds::rtps::PDPServer(this, allocation, DurabilityKind_t::TRANSIENT);
             break;
 #endif // if HAVE_SQLITE3
 

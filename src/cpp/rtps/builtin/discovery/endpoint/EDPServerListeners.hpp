@@ -13,7 +13,7 @@
 // limitations under the License.
 
 /**
- * @file EDPServerListeners2.hpp
+ * @file EDPServerListeners.hpp
  *
  */
 
@@ -38,8 +38,8 @@ namespace eprosima {
 namespace fastdds {
 namespace rtps {
 
-class PDPServer2;
-class EDPServer2;
+class PDPServer;
+class EDPServer;
 
 /*!
  * Class EDPServerPUBListener2, used to define the behavior when a new WriterProxyData is received.
@@ -54,14 +54,14 @@ public:
      * @param sedp Pointer to the EDPServer associated with this listener.
      */
     EDPServerPUBListener2(
-            EDPServer2* sedp);
+            EDPServer* sedp);
 
     virtual ~EDPServerPUBListener2()
     {
     }
 
-    //! return the PDPServer2
-    PDPServer2* get_pdp();
+    //! return the PDPServer
+    PDPServer* get_pdp();
 
     /**
      * Virtual method,
@@ -75,7 +75,7 @@ public:
 private:
 
     //!Pointer to the EDPServer
-    EDPServer2* sedp_;
+    EDPServer* sedp_;
 };
 
 /*!
@@ -91,12 +91,12 @@ public:
      * @param sedp Pointer to the EDPServer associated with this listener.
      */
     EDPServerSUBListener2(
-            EDPServer2* sedp);
+            EDPServer* sedp);
 
     virtual ~EDPServerSUBListener2() = default;
 
-    //! return the PDPServer2
-    PDPServer2* get_pdp();
+    //! return the PDPServer
+    PDPServer* get_pdp();
 
     /**
      * @param reader
@@ -109,7 +109,7 @@ public:
 private:
 
     //!Pointer to the EDPServer
-    EDPServer2* sedp_;
+    EDPServer* sedp_;
 };
 
 } /* namespace rtps */

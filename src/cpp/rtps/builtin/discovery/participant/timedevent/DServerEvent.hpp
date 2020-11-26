@@ -13,7 +13,7 @@
 // limitations under the License.
 
 /**
- * @file DServerEvent2.hpp
+ * @file DServerEvent.hpp
  *
  */
 
@@ -27,14 +27,14 @@ namespace eprosima {
 namespace fastdds {
 namespace rtps {
 
-class PDPServer2;
+class PDPServer;
 
 // is keep the 2 in class name to remember that is new version
 /**
- * Class DServerRoutineEvent2, TimedEvent used to synchronize discover-server servers
+ * Class DServerRoutineEvent, TimedEvent used to synchronize discover-server servers
  *@ingroup DISCOVERY_MODULE
  */
-class DServerRoutineEvent2 : public fastrtps::rtps::TimedEvent
+class DServerRoutineEvent : public fastrtps::rtps::TimedEvent
 {
 public:
 
@@ -43,10 +43,10 @@ public:
      * @param pdp Pointer to the PDPServer.
      * @param server_routine_period Interval in ms.
      */
-    DServerRoutineEvent2(
-            PDPServer2* pdp,
+    DServerRoutineEvent(
+            PDPServer* pdp,
             double server_routine_period);
-    ~DServerRoutineEvent2();
+    ~DServerRoutineEvent();
 
     /**
      * Method invoked when the server routine event occurs.
@@ -54,13 +54,13 @@ public:
     bool server_routine_event();
 
     //!Pointer to the PDPServer object.
-    PDPServer2* pdp_;
+    PDPServer* pdp_;
 
     //! The period in milliseconds for the server to wait for ACK and execute the server routine.
     double server_routine_period_;
 };
 
-class DServerPingEvent2 : public fastrtps::rtps::TimedEvent
+class DServerPingEvent : public fastrtps::rtps::TimedEvent
 {
 public:
 
@@ -69,10 +69,10 @@ public:
      * @param pdp Pointer to the PDPServer.
      * @param interval Interval in ms.
      */
-    DServerPingEvent2(
-            PDPServer2* pdp,
+    DServerPingEvent(
+            PDPServer* pdp,
             double interval);
-    ~DServerPingEvent2();
+    ~DServerPingEvent();
 
     /**
      * Method invoked when the server routine event occurs.
@@ -80,7 +80,7 @@ public:
     bool server_ping_event();
 
     //!Pointer to the PDPServer object.
-    PDPServer2* pdp_;
+    PDPServer* pdp_;
 };
 
 } // namespace rtps

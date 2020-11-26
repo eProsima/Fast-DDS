@@ -13,7 +13,7 @@
 // limitations under the License.
 
 /**
- * @file DServerEvent2.cpp
+ * @file DServerEvent.cpp
  *
  */
 
@@ -25,15 +25,15 @@
 
 #include <fastdds/dds/log/Log.hpp>
 
-#include "DServerEvent2.hpp"
-#include "../PDPServer2.hpp"
+#include "DServerEvent.hpp"
+#include "../PDPServer.hpp"
 
 namespace eprosima {
 namespace fastdds {
 namespace rtps {
 
-DServerRoutineEvent2::DServerRoutineEvent2(
-        PDPServer2* pdp,
+DServerRoutineEvent::DServerRoutineEvent(
+        PDPServer* pdp,
         double server_routine_period)
     : TimedEvent(pdp->get_resource_event_thread(),
             [this]()
@@ -46,11 +46,11 @@ DServerRoutineEvent2::DServerRoutineEvent2(
 
 }
 
-DServerRoutineEvent2::~DServerRoutineEvent2()
+DServerRoutineEvent::~DServerRoutineEvent()
 {
 }
 
-bool DServerRoutineEvent2::server_routine_event()
+bool DServerRoutineEvent::server_routine_event()
 {
     // logInfo(SERVER_PDP_THREAD, "Server " << pdp->getRTPSParticipant()->getGuid() << " DServerEvent Period");
 
@@ -64,8 +64,8 @@ bool DServerRoutineEvent2::server_routine_event()
     return pending_work;
 }
 
-DServerPingEvent2::DServerPingEvent2(
-        PDPServer2* pdp,
+DServerPingEvent::DServerPingEvent(
+        PDPServer* pdp,
         double interval)
     : TimedEvent(pdp->getRTPSParticipant()->getEventResource(),
             [this]()
@@ -77,11 +77,11 @@ DServerPingEvent2::DServerPingEvent2(
 
 }
 
-DServerPingEvent2::~DServerPingEvent2()
+DServerPingEvent::~DServerPingEvent()
 {
 }
 
-bool DServerPingEvent2::server_ping_event()
+bool DServerPingEvent::server_ping_event()
 {
     // Check if all servers received my discovery data
     if (!pdp_->all_servers_acknowledge_pdp())

@@ -13,7 +13,7 @@
 // limitations under the License.
 
 /**
- * @file EDPServer2.cpp
+ * @file EDPServer.cpp
  *
  */
 
@@ -26,8 +26,8 @@
 
 #include <fastrtps/utils/fixed_size_string.hpp>
 
-#include "./EDPServerListeners2.hpp"
-#include "./EDPServer2.hpp"
+#include "./EDPServerListeners.hpp"
+#include "./EDPServer.hpp"
 
 using namespace ::eprosima::fastrtps::rtps;
 
@@ -35,10 +35,10 @@ namespace eprosima {
 namespace fastdds {
 namespace rtps {
 
-bool EDPServer2::createSEDPEndpoints()
+bool EDPServer::createSEDPEndpoints()
 {
     // Assert that there is PDP SERVER
-    assert(dynamic_cast<PDPServer2*>(mp_PDP));
+    assert(dynamic_cast<PDPServer*>(mp_PDP));
 
     bool created = true;  // Return code
 
@@ -100,7 +100,7 @@ bool EDPServer2::createSEDPEndpoints()
             // 1.1. Set publications writer data filter
             IReaderDataFilter* edp_publications_filter =
                     static_cast<ddb::EDPDataFilter<ddb::DiscoveryDataBase,
-                            true>*>(&dynamic_cast<PDPServer2*>(mp_PDP)->discovery_db());
+                            true>*>(&dynamic_cast<PDPServer*>(mp_PDP)->discovery_db());
             publications_writer_.first->reader_data_filter(edp_publications_filter);
             // 1.2. Enable separate sending so the filter can be called for each change and reader proxy
             publications_writer_.first->set_separate_sending(true);
@@ -168,7 +168,7 @@ bool EDPServer2::createSEDPEndpoints()
             // 1.1. Set subscriptions writer data filter
             IReaderDataFilter* edp_subscriptions_filter =
                     static_cast<ddb::EDPDataFilter<ddb::DiscoveryDataBase,
-                            false>*>(&dynamic_cast<PDPServer2*>(mp_PDP)->discovery_db());
+                            false>*>(&dynamic_cast<PDPServer*>(mp_PDP)->discovery_db());
             subscriptions_writer_.first->reader_data_filter(edp_subscriptions_filter);
             // 1.2. Enable separate sending so the filter can be called for each change and reader proxy
             subscriptions_writer_.first->set_separate_sending(true);
@@ -216,7 +216,7 @@ bool EDPServer2::createSEDPEndpoints()
     return created;
 }
 
-bool EDPServer2::removeLocalReader(
+bool EDPServer::removeLocalReader(
         RTPSReader* R)
 {
     logInfo(RTPS_EDP, "Removing local reader: " << R->getGuid().entityId);
@@ -275,7 +275,7 @@ bool EDPServer2::removeLocalReader(
     return false;
 }
 
-bool EDPServer2::removeLocalWriter(
+bool EDPServer::removeLocalWriter(
         RTPSWriter* W)
 {
     logInfo(RTPS_EDP, "Removing local writer: " << W->getGuid().entityId);
@@ -335,7 +335,7 @@ bool EDPServer2::removeLocalWriter(
     return false;
 }
 
-bool EDPServer2::processLocalWriterProxyData(
+bool EDPServer::processLocalWriterProxyData(
         RTPSWriter* local_writer,
         WriterProxyData* wdata)
 {
@@ -385,7 +385,7 @@ bool EDPServer2::processLocalWriterProxyData(
     return false;
 }
 
-bool EDPServer2::processLocalReaderProxyData(
+bool EDPServer::processLocalReaderProxyData(
         RTPSReader* local_reader,
         ReaderProxyData* rdata)
 {

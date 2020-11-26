@@ -13,7 +13,7 @@
 // limitations under the License.
 
 /**
- * @file EDPServer2.h
+ * @file EDPServer.h
  *
  */
 
@@ -26,7 +26,7 @@
 #include "../database/DiscoveryDataFilter.hpp"
 #include "../database/DiscoveryDataBase.hpp"
 #include <fastdds/rtps/builtin/discovery/endpoint/EDPSimple.h>
-#include "../participant/PDPServer2.hpp"
+#include "../participant/PDPServer.hpp"
 
 namespace eprosima {
 namespace fastdds {
@@ -40,7 +40,7 @@ class EDPServerSUBListener2;
  * Inherits from EDPSimple class.
  *@ingroup DISCOVERY_MODULE
  */
-class EDPServer2 : public fastrtps::rtps::EDPSimple
+class EDPServer : public fastrtps::rtps::EDPSimple
 {
     friend class EDPServerPUBListener2;
     friend class EDPServerSUBListener2;
@@ -52,7 +52,7 @@ public:
      * @param p Pointer to the PDP
      * @param part Pointer to the RTPSParticipantImpl
      */
-    EDPServer2(
+    EDPServer(
             fastrtps::rtps::PDP* p,
             fastrtps::rtps::RTPSParticipantImpl* part,
             fastrtps::rtps::DurabilityKind_t durability_kind)
@@ -61,14 +61,14 @@ public:
     {
     }
 
-    ~EDPServer2() override
+    ~EDPServer() override
     {
     }
 
     //! Return the PDP reference actual type
-    PDPServer2* get_pdp()
+    PDPServer* get_pdp()
     {
-        return static_cast<PDPServer2*>(mp_PDP);
+        return static_cast<PDPServer*>(mp_PDP);
     }
 
     /**

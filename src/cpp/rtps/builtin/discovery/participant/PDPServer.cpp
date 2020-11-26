@@ -13,7 +13,7 @@
 // limitations under the License.
 
 /**
- * @file PDPServer2.cpp
+ * @file PDPServer.cpp
  *
  */
 
@@ -42,11 +42,11 @@
 
 #include <fastdds/dds/log/Log.hpp>
 
-#include "./PDPServer2.hpp"
-#include "./PDPServerListener2.hpp"
-#include "./timedevent/DServerEvent2.hpp"
-#include "../endpoint/EDPServer2.hpp"
-#include "../endpoint/EDPServerListeners2.hpp"
+#include "./PDPServer.hpp"
+#include "./PDPServerListener.hpp"
+#include "./timedevent/DServerEvent.hpp"
+#include "../endpoint/EDPServer.hpp"
+#include "../endpoint/EDPServerListeners.hpp"
 
 #include "../database/backup/SharedBackupFunctions.hpp"
 
@@ -56,7 +56,7 @@ namespace rtps {
 
 using namespace eprosima::fastrtps::rtps;
 
-PDPServer2::PDPServer2(
+PDPServer::PDPServer(
         BuiltinProtocols* builtin,
         const RTPSParticipantAllocationAttributes& allocation,
         DurabilityKind_t durability_kind /* TRANSIENT_LOCAL */)
@@ -69,7 +69,7 @@ PDPServer2::PDPServer2(
 {
 }
 
-PDPServer2::~PDPServer2()
+PDPServer::~PDPServer()
 {
     // Stop timed events
     routine_->cancel_timer();
@@ -86,7 +86,7 @@ PDPServer2::~PDPServer2()
     process_changes_release_(discovery_db_.clear());
 }
 
-bool PDPServer2::init(
+bool PDPServer::init(
         RTPSParticipantImpl* part)
 {
     if (!PDP::initPDP(part))
@@ -95,7 +95,7 @@ bool PDPServer2::init(
     }
 
     //INIT EDP
-    mp_EDP = new EDPServer2(this, mp_RTPSParticipant, durability_);
+    mp_EDP = new EDPServer(this, mp_RTPSParticipant, durability_);
     if (!mp_EDP->initEDP(m_discovery))
     {
         logError(RTPS_PDP_SERVER, "Endpoint discovery configuration failed");
@@ -131,7 +131,7 @@ bool PDPServer2::init(
     }
 
     // Activate listeners
-    EDPServer2* edp = static_cast<EDPServer2*>(mp_EDP);
+    EDPServer* edp = static_cast<EDPServer*>(mp_EDP);
     getRTPSParticipant()->enableReader(mp_PDPReader);
     getRTPSParticipant()->enableReader(edp->subscriptions_reader_.first);
     getRTPSParticipant()->enableReader(edp->publications_reader_.first);
@@ -143,7 +143,7 @@ bool PDPServer2::init(
         Given the fact that a participant is either a client or a server the
         discoveryServer_client_syncperiod parameter has a context defined meaning.
      */
-    routine_ = new DServerRoutineEvent2(this,
+    routine_ = new DServerRoutineEvent(this,
                     TimeConv::Duration_t2MilliSecondsDouble(
                         m_discovery.discovery_config.discoveryServer_client_syncperiod));
 
@@ -151,7 +151,7 @@ bool PDPServer2::init(
         Given the fact that a participant is either a client or a server the
         discoveryServer_client_syncperiod parameter has a context defined meaning.
      */
-    ping_ = new DServerPingEvent2(this,
+    ping_ = new DServerPingEvent(this,
                     TimeConv::Duration_t2MilliSecondsDouble(
                         m_discovery.discovery_config.discoveryServer_client_syncperiod));
     ping_->restart_timer();
@@ -166,7 +166,7 @@ bool PDPServer2::init(
     return true;
 }
 
-ParticipantProxyData* PDPServer2::createParticipantProxyData(
+ParticipantProxyData* PDPServer::createParticipantProxyData(
         const ParticipantProxyData& participant_data,
         const GUID_t& writer_guid)
 {
@@ -205,7 +205,7 @@ ParticipantProxyData* PDPServer2::createParticipantProxyData(
     return pdata;
 }
 
-bool PDPServer2::createPDPEndpoints()
+bool PDPServer::createPDPEndpoints()
 {
     logInfo(RTPS_PDP_SERVER, "Beginning PDPServer Endpoints creation");
 
@@ -240,7 +240,7 @@ bool PDPServer2::createPDPEndpoints()
 #endif // HAVE_SQLITE3
 
     // PDP Listener
-    mp_listener = new PDPServerListener2(this);
+    mp_listener = new PDPServerListener(this);
 
     // Create PDP Reader
     if (mp_RTPSParticipant->createReader(&mp_PDPReader, ratt, mp_PDPReaderHistory,
@@ -347,7 +347,7 @@ bool PDPServer2::createPDPEndpoints()
     return true;
 }
 
-void PDPServer2::initializeParticipantProxyData(
+void PDPServer::initializeParticipantProxyData(
         ParticipantProxyData* participant_data)
 {
     PDP::initializeParticipantProxyData(participant_data);
@@ -382,7 +382,7 @@ void PDPServer2::initializeParticipantProxyData(
         std::string>({dds::parameter_property_ds_version, dds::parameter_property_current_ds_version}));
 }
 
-void PDPServer2::assignRemoteEndpoints(
+void PDPServer::assignRemoteEndpoints(
         ParticipantProxyData* pdata)
 {
     logInfo(RTPS_PDP_SERVER, "Assigning remote endpoint for RTPSParticipant: " << pdata->m_guid.guidPrefix);
@@ -440,7 +440,7 @@ void PDPServer2::assignRemoteEndpoints(
     notifyAboveRemoteEndpoints(*pdata);
 }
 
-void PDPServer2::notifyAboveRemoteEndpoints(
+void PDPServer::notifyAboveRemoteEndpoints(
         const ParticipantProxyData& pdata)
 {
     //Inform EDP of new RTPSParticipant data:
@@ -455,7 +455,7 @@ void PDPServer2::notifyAboveRemoteEndpoints(
     }
 }
 
-void PDPServer2::removeRemoteEndpoints(
+void PDPServer::removeRemoteEndpoints(
         ParticipantProxyData* pdata)
 {
     logInfo(RTPS_PDP_SERVER, "For RTPSParticipant: " << pdata->m_guid);
@@ -486,7 +486,7 @@ void PDPServer2::removeRemoteEndpoints(
     }
 }
 
-std::ostringstream PDPServer2::get_persistence_file_name_() const
+std::ostringstream PDPServer::get_persistence_file_name_() const
 {
     assert(getRTPSParticipant());
 
@@ -503,35 +503,35 @@ std::ostringstream PDPServer2::get_persistence_file_name_() const
     return filename;
 }
 
-std::string PDPServer2::get_writer_persistence_file_name() const
+std::string PDPServer::get_writer_persistence_file_name() const
 {
     std::ostringstream filename = get_persistence_file_name_();
     filename << "_writer.db";
     return filename.str();
 }
 
-std::string PDPServer2::get_reader_persistence_file_name() const
+std::string PDPServer::get_reader_persistence_file_name() const
 {
     std::ostringstream filename = get_persistence_file_name_();
     filename << "_reader.db";
     return filename.str();
 }
 
-std::string PDPServer2::get_ddb_persistence_file_name() const
+std::string PDPServer::get_ddb_persistence_file_name() const
 {
     std::ostringstream filename = get_persistence_file_name_();
     filename << ".json";
     return filename.str();
 }
 
-std::string PDPServer2::get_ddb_queue_persistence_file_name() const
+std::string PDPServer::get_ddb_queue_persistence_file_name() const
 {
     std::ostringstream filename = get_persistence_file_name_();
     filename << "_queue.json";
     return filename.str();
 }
 
-void PDPServer2::announceParticipantState(
+void PDPServer::announceParticipantState(
         bool new_change,
         bool dispose /* = false */,
         WriteParams& )
@@ -747,7 +747,7 @@ void PDPServer2::announceParticipantState(
  * @param reason Why the participant is being removed (dropped vs removed)
  * @return true if correct.
  */
-bool PDPServer2::remove_remote_participant(
+bool PDPServer::remove_remote_participant(
         const GUID_t& partGUID,
         ParticipantDiscoveryInfo::DISCOVERY_STATUS reason)
 {
@@ -800,14 +800,14 @@ bool PDPServer2::remove_remote_participant(
     return PDP::remove_remote_participant(partGUID, reason);
 }
 
-bool PDPServer2::process_data_queues()
+bool PDPServer::process_data_queues()
 {
     logInfo(RTPS_PDP_SERVER, "process_data_queues start");
     discovery_db_.process_pdp_data_queue();
     return discovery_db_.process_edp_data_queue();
 }
 
-void PDPServer2::awake_routine_thread(
+void PDPServer::awake_routine_thread(
         double interval_ms /*= 0*/)
 {
     routine_->update_interval_millisec(interval_ms);
@@ -815,12 +815,12 @@ void PDPServer2::awake_routine_thread(
     routine_->restart_timer();
 }
 
-void PDPServer2::awake_server_thread()
+void PDPServer::awake_server_thread()
 {
     ping_->restart_timer();
 }
 
-bool PDPServer2::server_update_routine()
+bool PDPServer::server_update_routine()
 {
     // There is pending work to be done by the server if there are changes that have not been acknowledged.
     bool pending_work = true;
@@ -873,7 +873,7 @@ bool PDPServer2::server_update_routine()
     return pending_work && discovery_db_.is_enabled();
 }
 
-bool PDPServer2::process_writers_acknowledgements()
+bool PDPServer::process_writers_acknowledgements()
 {
     logInfo(RTPS_PDP_SERVER, "process_writers_acknowledgements start");
 
@@ -881,7 +881,7 @@ bool PDPServer2::process_writers_acknowledgements()
     //  which can result in false positives in EDP acknowledgements.
 
     /* EDP Subscriptions Writer's History */
-    EDPServer2* edp = static_cast<EDPServer2*>(mp_EDP);
+    EDPServer* edp = static_cast<EDPServer*>(mp_EDP);
     bool pending = process_history_acknowledgement(edp->subscriptions_writer_.first, edp->subscriptions_writer_.second);
 
     /* EDP Publications Writer's History */
@@ -894,7 +894,7 @@ bool PDPServer2::process_writers_acknowledgements()
     return pending;
 }
 
-bool PDPServer2::process_history_acknowledgement(
+bool PDPServer::process_history_acknowledgement(
         fastrtps::rtps::StatefulWriter* writer,
         fastrtps::rtps::WriterHistory* writer_history)
 {
@@ -911,7 +911,7 @@ bool PDPServer2::process_history_acknowledgement(
     return writer_history->getHistorySize() > 1;
 }
 
-History::iterator PDPServer2::process_change_acknowledgement(
+History::iterator PDPServer::process_change_acknowledgement(
         fastrtps::rtps::History::iterator cit,
         fastrtps::rtps::StatefulWriter* writer,
         fastrtps::rtps::WriterHistory* writer_history)
@@ -975,11 +975,11 @@ History::iterator PDPServer2::process_change_acknowledgement(
     return ++cit;
 }
 
-bool PDPServer2::process_disposals()
+bool PDPServer::process_disposals()
 {
     logInfo(RTPS_PDP_SERVER, "process_disposals start");
     // logInfo(RTPS_PDP_SERVER, "process_disposals start");
-    EDPServer2* edp = static_cast<EDPServer2*>(mp_EDP);
+    EDPServer* edp = static_cast<EDPServer*>(mp_EDP);
     fastrtps::rtps::WriterHistory* pubs_history = edp->publications_writer_.second;
     fastrtps::rtps::WriterHistory* subs_history = edp->subscriptions_writer_.second;
 
@@ -1056,7 +1056,7 @@ bool PDPServer2::process_disposals()
     return false;
 }
 
-bool PDPServer2::process_changes_release()
+bool PDPServer::process_changes_release()
 {
     logInfo(RTPS_PDP_SERVER, "process_changes_release start");
     process_changes_release_(discovery_db_.changes_to_release());
@@ -1064,11 +1064,11 @@ bool PDPServer2::process_changes_release()
     return false;
 }
 
-void PDPServer2::process_changes_release_(
+void PDPServer::process_changes_release_(
         const std::vector<fastrtps::rtps::CacheChange_t*>& changes)
 {
     // We will need the EDP publications/subscriptions writers, readers, and histories
-    EDPServer2* edp = static_cast<EDPServer2*>(mp_EDP);
+    EDPServer* edp = static_cast<EDPServer*>(mp_EDP);
 
     // For each change to erase, first try to erase in case is in writer history and then it releases it
     for (auto ch : changes)
@@ -1149,13 +1149,13 @@ void PDPServer2::process_changes_release_(
             }
             else
             {
-                logError(PDPServer2, "Wrong DATA received to remove");
+                logError(PDPServer, "Wrong DATA received to remove");
             }
         }
     }
 }
 
-void PDPServer2::remove_related_alive_from_history_nts(
+void PDPServer::remove_related_alive_from_history_nts(
         fastrtps::rtps::WriterHistory* writer_history,
         const fastrtps::rtps::GuidPrefix_t& entity_guid_prefix)
 {
@@ -1172,7 +1172,7 @@ void PDPServer2::remove_related_alive_from_history_nts(
     }
 }
 
-bool PDPServer2::announcement_from_same_participant_in_disposals(
+bool PDPServer::announcement_from_same_participant_in_disposals(
         const std::vector<fastrtps::rtps::CacheChange_t*>& disposals,
         const fastrtps::rtps::GuidPrefix_t& participant)
 {
@@ -1187,23 +1187,23 @@ bool PDPServer2::announcement_from_same_participant_in_disposals(
     return false;
 }
 
-bool PDPServer2::process_dirty_topics()
+bool PDPServer::process_dirty_topics()
 {
     logInfo(RTPS_PDP_SERVER, "process_dirty_topics start");
     return discovery_db_.process_dirty_topics();
 }
 
-fastdds::rtps::ddb::DiscoveryDataBase& PDPServer2::discovery_db()
+fastdds::rtps::ddb::DiscoveryDataBase& PDPServer::discovery_db()
 {
     return discovery_db_;
 }
 
-const RemoteServerList_t& PDPServer2::servers()
+const RemoteServerList_t& PDPServer::servers()
 {
     return mp_builtin->m_DiscoveryServers;
 }
 
-bool PDPServer2::process_to_send_lists()
+bool PDPServer::process_to_send_lists()
 {
     logInfo(RTPS_PDP_SERVER, "process_to_send_lists start");
     // Process pdp_to_send_
@@ -1213,7 +1213,7 @@ bool PDPServer2::process_to_send_lists()
 
     // Process edp_publications_to_send_
     logInfo(RTPS_PDP_SERVER, "Processing edp_publications_to_send");
-    EDPServer2* edp = static_cast<EDPServer2*>(mp_EDP);
+    EDPServer* edp = static_cast<EDPServer*>(mp_EDP);
     process_to_send_list(
         discovery_db_.edp_publications_to_send(),
         edp->publications_writer_.first,
@@ -1231,7 +1231,7 @@ bool PDPServer2::process_to_send_lists()
     return false;
 }
 
-bool PDPServer2::process_to_send_list(
+bool PDPServer::process_to_send_list(
         const std::vector<eprosima::fastrtps::rtps::CacheChange_t*>& send_list,
         fastrtps::rtps::RTPSWriter* writer,
         fastrtps::rtps::WriterHistory* history)
@@ -1252,7 +1252,7 @@ bool PDPServer2::process_to_send_list(
     return true;
 }
 
-bool PDPServer2::remove_change_from_writer_history(
+bool PDPServer::remove_change_from_writer_history(
         fastrtps::rtps::RTPSWriter* writer,
         fastrtps::rtps::WriterHistory* history,
         fastrtps::rtps::CacheChange_t* change,
@@ -1262,7 +1262,7 @@ bool PDPServer2::remove_change_from_writer_history(
     return remove_change_from_history_nts(history, change, release_change);
 }
 
-bool PDPServer2::remove_change_from_history_nts(
+bool PDPServer::remove_change_from_history_nts(
         fastrtps::rtps::WriterHistory* history,
         fastrtps::rtps::CacheChange_t* change,
         bool release_change /*= true*/)
@@ -1286,9 +1286,9 @@ bool PDPServer2::remove_change_from_history_nts(
     return false;
 }
 
-bool PDPServer2::pending_ack()
+bool PDPServer::pending_ack()
 {
-    EDPServer2* edp = static_cast<EDPServer2*>(mp_EDP);
+    EDPServer* edp = static_cast<EDPServer*>(mp_EDP);
     bool ret = (!discovery_db_.server_acked_by_all() ||
             mp_PDPWriterHistory->getHistorySize() > 1 ||
             edp->publications_writer_.second->getHistorySize() > 0 ||
@@ -1302,7 +1302,7 @@ bool PDPServer2::pending_ack()
     return ret;
 }
 
-std::vector<fastrtps::rtps::GuidPrefix_t> PDPServer2::servers_prefixes()
+std::vector<fastrtps::rtps::GuidPrefix_t> PDPServer::servers_prefixes()
 {
     std::vector<GuidPrefix_t> servers;
     for (const eprosima::fastdds::rtps::RemoteServerAttributes& it : mp_builtin->m_DiscoveryServers)
@@ -1312,12 +1312,12 @@ std::vector<fastrtps::rtps::GuidPrefix_t> PDPServer2::servers_prefixes()
     return servers;
 }
 
-eprosima::fastrtps::rtps::ResourceEvent& PDPServer2::get_resource_event_thread()
+eprosima::fastrtps::rtps::ResourceEvent& PDPServer::get_resource_event_thread()
 {
     return resource_event_thread_;
 }
 
-bool PDPServer2::all_servers_acknowledge_pdp()
+bool PDPServer::all_servers_acknowledge_pdp()
 {
     // check if already initialized
     assert(mp_PDPWriterHistory && mp_PDPWriter);
@@ -1325,7 +1325,7 @@ bool PDPServer2::all_servers_acknowledge_pdp()
     return discovery_db_.server_acked_by_my_servers();
 }
 
-void PDPServer2::ping_remote_servers()
+void PDPServer::ping_remote_servers()
 {
     // Get the servers that have not ACKed this server's DATA(p)
     std::vector<GuidPrefix_t> ack_pending_servers = discovery_db_.ack_pending_servers();
@@ -1348,7 +1348,7 @@ void PDPServer2::ping_remote_servers()
     send_announcement(discovery_db().cache_change_own_participant(), remote_readers, locators);
 }
 
-void PDPServer2::send_announcement(
+void PDPServer::send_announcement(
         CacheChange_t* change,
         std::vector<GUID_t> remote_readers,
         LocatorList_t locators,
@@ -1381,7 +1381,7 @@ void PDPServer2::send_announcement(
     }
 }
 
-bool PDPServer2::read_backup(
+bool PDPServer::read_backup(
         nlohmann::json& ddb_json,
         std::vector<nlohmann::json>& /* new_changes */)
 {
@@ -1421,14 +1421,14 @@ bool PDPServer2::read_backup(
     return ret;
 }
 
-bool PDPServer2::process_backup_discovery_database_restore(
+bool PDPServer::process_backup_discovery_database_restore(
         nlohmann::json& j)
 {
     logInfo(RTPS_PDP_SERVER, "Restoring DiscoveryDataBase from backup");
 
     // We need every listener to resend the changes of every entity (ALIVE) in the DDB, so the PaticipantProxy
     // is restored
-    EDPServer2* edp = static_cast<EDPServer2*>(mp_EDP);
+    EDPServer* edp = static_cast<EDPServer*>(mp_EDP);
     EDPServerPUBListener2* edp_pub_listener = static_cast<EDPServerPUBListener2*>(edp->publications_listener_);
     EDPServerSUBListener2* edp_sub_listener = static_cast<EDPServerSUBListener2*>(edp->subscriptions_listener_);
 
@@ -1566,14 +1566,14 @@ bool PDPServer2::process_backup_discovery_database_restore(
     return true;
 }
 
-bool PDPServer2::process_backup_restore_queue(
+bool PDPServer::process_backup_restore_queue(
         std::vector<nlohmann::json>& /* new_changes */)
 {
     // fastrtps::rtps::SampleIdentity sample_identity_aux;
     // fastrtps::rtps::InstanceHandle_t instance_handle_aux;
     // uint32_t length;
 
-    // EDPServer2* edp = static_cast<EDPServer2*>(mp_EDP);
+    // EDPServer* edp = static_cast<EDPServer*>(mp_EDP);
     // EDPServerPUBListener2* edp_pub_listener = static_cast<EDPServerPUBListener2*>(edp->publications_listener_);
     // EDPServerSUBListener2* edp_sub_listener = static_cast<EDPServerSUBListener2*>(edp->subscriptions_listener_);
 
@@ -1697,7 +1697,7 @@ bool PDPServer2::process_backup_restore_queue(
     return true;
 }
 
-void PDPServer2::process_backup_store()
+void PDPServer::process_backup_store()
 {
     logInfo(DISCOVERY_DATABASE, "Dump DDB in json backup");
 

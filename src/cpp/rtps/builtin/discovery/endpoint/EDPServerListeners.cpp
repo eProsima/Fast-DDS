@@ -26,9 +26,9 @@
 
 #include <fastdds/dds/log/Log.hpp>
 
-#include "./EDPServerListeners2.hpp"
-#include "./EDPServer2.hpp"
-#include "../participant/PDPServer2.hpp"
+#include "./EDPServerListeners.hpp"
+#include "./EDPServer.hpp"
+#include "../participant/PDPServer.hpp"
 
 namespace eprosima {
 namespace fastdds {
@@ -36,13 +36,13 @@ namespace rtps {
 
 using namespace eprosima::fastrtps::rtps;
 
-PDPServer2* EDPServerPUBListener2::get_pdp()
+PDPServer* EDPServerPUBListener2::get_pdp()
 {
     return sedp_->get_pdp();
 }
 
 EDPServerPUBListener2::EDPServerPUBListener2(
-        EDPServer2* sedp)
+        EDPServer* sedp)
     : EDPBasePUBListener(sedp->mp_RTPSParticipant->getAttributes().allocation.locators,
             sedp->mp_RTPSParticipant->getAttributes().allocation.data_limits)
     , sedp_(sedp)
@@ -138,13 +138,13 @@ void EDPServerPUBListener2::onNewCacheChangeAdded(
     logInfo(RTPS_EDP_LISTENER, "");
 }
 
-PDPServer2* EDPServerSUBListener2::get_pdp()
+PDPServer* EDPServerSUBListener2::get_pdp()
 {
     return sedp_->get_pdp();
 }
 
 EDPServerSUBListener2::EDPServerSUBListener2(
-        EDPServer2* sedp)
+        EDPServer* sedp)
     : EDPBaseSUBListener(sedp->mp_RTPSParticipant->getAttributes().allocation.locators,
             sedp->mp_RTPSParticipant->getAttributes().allocation.data_limits)
     , sedp_(sedp)

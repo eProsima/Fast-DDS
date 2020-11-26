@@ -13,7 +13,7 @@
 // limitations under the License.
 
 /**
- * @file PDPServerListener2.cpp
+ * @file PDPServerListener.cpp
  *
  */
 
@@ -24,8 +24,8 @@
 #include <rtps/participant/RTPSParticipantImpl.h>
 #include <fastdds/rtps/participant/RTPSParticipantListener.h>
 
-#include "./PDPServerListener2.hpp"
-#include "./PDPServer2.hpp"
+#include "./PDPServerListener.hpp"
+#include "./PDPServer.hpp"
 #include "../database/DiscoveryParticipantChangeData.hpp"
 
 #include <memory>
@@ -36,18 +36,18 @@ namespace rtps {
 
 using namespace eprosima::fastrtps::rtps;
 
-PDPServerListener2::PDPServerListener2(
-        PDPServer2* in_PDP)
+PDPServerListener::PDPServerListener(
+        PDPServer* in_PDP)
     : PDPListener(in_PDP)
 {
 }
 
-PDPServer2* PDPServerListener2::pdp_server()
+PDPServer* PDPServerListener::pdp_server()
 {
-    return static_cast<PDPServer2*>(parent_pdp_);
+    return static_cast<PDPServer*>(parent_pdp_);
 }
 
-void PDPServerListener2::onNewCacheChangeAdded(
+void PDPServerListener::onNewCacheChangeAdded(
         RTPSReader* reader,
         const CacheChange_t* const change_in)
 {

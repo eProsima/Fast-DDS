@@ -13,7 +13,7 @@
 // limitations under the License.
 
 /**
- * @file PDPServerListener2.h
+ * @file PDPServerListener.h
  *
  */
 
@@ -27,27 +27,27 @@ namespace eprosima {
 namespace fastdds {
 namespace rtps {
 
-class PDPServer2;
+class PDPServer;
 
 /**
- * Class PDPServerListener2, specification used by the PDP to perform the History check when a new message is received.
+ * Class PDPServerListener, specification used by the PDP to perform the History check when a new message is received.
  * This class is implemented in order to use the same structure than with any other RTPSReader.
  *@ingroup DISCOVERY_MODULE
  */
-class PDPServerListener2 : public fastrtps::rtps::PDPListener
+class PDPServerListener : public fastrtps::rtps::PDPListener
 {
 public:
 
     /**
      * @param in_PDP
      */
-    PDPServerListener2(
-            PDPServer2* in_PDP);
+    PDPServerListener(
+            PDPServer* in_PDP);
 
-    ~PDPServerListener2() override = default;
+    ~PDPServerListener() override = default;
 
     //!Pointer to the associated mp_SPDP;
-    PDPServer2* pdp_server();
+    PDPServer* pdp_server();
 
     /**
      * New added cache

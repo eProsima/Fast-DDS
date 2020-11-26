@@ -200,11 +200,11 @@ set(${PROJECT_NAME}_source_files
     rtps/builtin/discovery/participant/timedevent/DSClientEvent.cpp
     rtps/builtin/discovery/participant/PDPClient.cpp
     rtps/builtin/discovery/endpoint/EDPClient.cpp
-    rtps/builtin/discovery/participant/timedevent/DServerEvent2.cpp
-    rtps/builtin/discovery/participant/PDPServer2.cpp
-    rtps/builtin/discovery/participant/PDPServerListener2.cpp
-    rtps/builtin/discovery/endpoint/EDPServer2.cpp
-    rtps/builtin/discovery/endpoint/EDPServerListeners2.cpp
+    rtps/builtin/discovery/participant/timedevent/DServerEvent.cpp
+    rtps/builtin/discovery/participant/PDPServer.cpp
+    rtps/builtin/discovery/participant/PDPServerListener.cpp
+    rtps/builtin/discovery/endpoint/EDPServer.cpp
+    rtps/builtin/discovery/endpoint/EDPServerListeners.cpp
 
     utils/IPFinder.cpp
     utils/md5.cpp

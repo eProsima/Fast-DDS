@@ -613,7 +613,7 @@ void DiscoveryDataBase::create_participant_from_change_(
                 // If the participant is a new participant, mark that not everyone has ACKed this server's DATA(p)
                 // TODO if the new participant is a server it may be that our DATA(p) is already acked because he is
                 //  our server and we have pinged it. But also if we are its server it could be the case that
-                //  our DATA(p) is not acked even when he is our server. Solution: see in PDPServer2 how the change has
+                //  our DATA(p) is not acked even when he is our server. Solution: see in PDPServer how the change has
                 //  arrived, if because our ping or because their DATA(p). MINOR PROBLEM
                 server_acked_by_all(false);
             }

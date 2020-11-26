@@ -13,7 +13,7 @@
 // limitations under the License.
 
 /**
- * @file PDPServer2.hpp
+ * @file PDPServer.hpp
  *
  */
 
@@ -27,22 +27,22 @@
 
 #include "../database/DiscoveryDataFilter.hpp"
 #include "../database/DiscoveryDataBase.hpp"
-#include "./timedevent/DServerEvent2.hpp"
+#include "./timedevent/DServerEvent.hpp"
 
 namespace eprosima {
 namespace fastdds {
 namespace rtps {
 
 /**
- * Class PDPServer2 manages server side of the discovery server mechanism
+ * Class PDPServer manages server side of the discovery server mechanism
  *@ingroup DISCOVERY_MODULE
  */
-class PDPServer2 : public fastrtps::rtps::PDP
+class PDPServer : public fastrtps::rtps::PDP
 {
-    friend class DServerRoutineEvent2;
-    friend class DServerPingEvent2;
-    friend class EDPServer2;
-    friend class PDPServerListener2;
+    friend class DServerRoutineEvent;
+    friend class DServerPingEvent;
+    friend class EDPServer;
+    friend class PDPServerListener;
     friend class EDPServerListener2;
 
 public:
@@ -53,12 +53,12 @@ public:
      * @param allocation participant's allocation settings
      * @param durability_kind the kind of persistence we want for the discovery data
      */
-    PDPServer2(
+    PDPServer(
             fastrtps::rtps::BuiltinProtocols* builtin,
             const fastrtps::rtps::RTPSParticipantAllocationAttributes& allocation,
             fastrtps::rtps::DurabilityKind_t durability_kind = fastrtps::rtps::TRANSIENT_LOCAL);
 
-    ~PDPServer2();
+    ~PDPServer();
 
     void initializeParticipantProxyData(
             fastrtps::rtps::ParticipantProxyData* participant_data) override;
@@ -143,7 +143,7 @@ public:
     std::string get_ddb_queue_persistence_file_name() const;
 
     /*
-     * Wakes up the DServerRoutineEvent2 for new matching or trimming
+     * Wakes up the DServerRoutineEvent for new matching or trimming
      * By default the server execute the routine instantly
      */
     void awake_routine_thread(
@@ -269,12 +269,12 @@ private:
     /**
      * TimedEvent for server routine
      */
-    DServerRoutineEvent2* routine_;
+    DServerRoutineEvent* routine_;
 
     /**
      * TimedEvent for server ping to other servers
      */
-    DServerPingEvent2* ping_;
+    DServerPingEvent* ping_;
 
     //! Discovery database
     fastdds::rtps::ddb::DiscoveryDataBase discovery_db_;
