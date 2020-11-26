@@ -31,15 +31,17 @@
 class LoanableHelloWorldSubscriber
 {
 public:
-	LoanableHelloWorldSubscriber();
 
-	virtual ~LoanableHelloWorldSubscriber();
+    LoanableHelloWorldSubscriber();
 
-	bool init();
+    virtual ~LoanableHelloWorldSubscriber();
 
-	void run();
+    bool init();
+
+    void run();
 
 private:
+
     eprosima::fastdds::dds::DomainParticipant* participant_;
     eprosima::fastdds::dds::Subscriber* subscriber_;
     eprosima::fastdds::dds::Topic* topic_;
@@ -47,13 +49,12 @@ private:
     eprosima::fastdds::dds::TypeSupport type_;
 
     class SubListener : public eprosima::fastdds::dds::DataReaderListener
-	{
-	public:
-		SubListener() = default;
+    {
+    public:
 
-		~SubListener() override
-		{
-		}
+        SubListener() = default;
+
+        ~SubListener() override = default;
 
         void on_data_available(
                 eprosima::fastdds::dds::DataReader* reader) override;
@@ -63,8 +64,9 @@ private:
                 const eprosima::fastdds::dds::SubscriptionMatchedStatus& info) override;
 
         int matched = 0;
-        uint32_t samples = 0 ;
-	} listener_;
+        uint32_t samples = 0;
+    }
+    listener_;
 };
 
 #endif // _LOANABLEHELLOWORLD_SUBSCRIBER_H_

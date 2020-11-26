@@ -32,34 +32,38 @@
 class LoanableHelloWorldPublisher
 {
 public:
-	LoanableHelloWorldPublisher();
 
-	virtual ~LoanableHelloWorldPublisher();
+    LoanableHelloWorldPublisher();
 
-	bool init();
+    virtual ~LoanableHelloWorldPublisher();
 
-	void run();
+    bool init();
+
+    void run();
 
 private:
+
     eprosima::fastdds::dds::DomainParticipant* participant_;
     eprosima::fastdds::dds::Publisher* publisher_;
     eprosima::fastdds::dds::Topic* topic_;
     eprosima::fastdds::dds::DataWriter* writer_;
     eprosima::fastdds::dds::TypeSupport type_;
 
-	class PubListener : public eprosima::fastdds::dds::DataWriterListener
-	{
-	public:
-		PubListener() = default;
+    class PubListener : public eprosima::fastdds::dds::DataWriterListener
+    {
+    public:
 
-		~PubListener() override {}
+        PubListener() = default;
+
+        ~PubListener() override = default;
 
         void on_publication_matched(
                 eprosima::fastdds::dds::DataWriter* writer,
                 const eprosima::fastdds::dds::PublicationMatchedStatus& info) override;
 
-		int matched = 0;
-	} listener_;
+        int matched = 0;
+    }
+    listener_;
 };
 
 #endif // _LOANABLEHELLOWORLD_PUBLISHER_H_

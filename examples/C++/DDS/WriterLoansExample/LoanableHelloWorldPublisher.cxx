@@ -84,7 +84,10 @@ bool LoanableHelloWorldPublisher::init()
     }
 
     //CREATE THE TOPIC
-    topic_ = participant_->create_topic("HelloWorldTopic", type_.get_type_name(), TOPIC_QOS_DEFAULT);
+    topic_ = participant_->create_topic(
+        "LoanableHelloWorldTopic",
+        type_.get_type_name(),
+        TOPIC_QOS_DEFAULT);
     if (topic_ == nullptr)
     {
         return false;
@@ -125,7 +128,7 @@ void LoanableHelloWorldPublisher::PubListener::on_publication_matched(
 void LoanableHelloWorldPublisher::run()
 {
     std::cout << "LoanableHelloWorld DataWriter waiting for DataReaders." << std::endl;
-    while(listener_.matched == 0)
+    while (listener_.matched == 0)
     {
         std::this_thread::sleep_for(std::chrono::milliseconds(250)); // Sleep 250 ms
     }
@@ -134,7 +137,7 @@ void LoanableHelloWorldPublisher::run()
     char ch = 'y';
     do
     {
-        if(ch == 'y')
+        if (ch == 'y')
         {
             void* sample = nullptr;
             if (ReturnCode_t::RETCODE_OK == writer_->loan_sample(sample))
@@ -147,7 +150,7 @@ void LoanableHelloWorldPublisher::run()
             ++msgsent;
             std::cout << "Sending sample, count=" << msgsent << ", send another sample?(y-yes,n-stop): ";
         }
-        else if(ch == 'n')
+        else if (ch == 'n')
         {
             std::cout << "Stopping execution " << std::endl;
             break;
@@ -156,5 +159,5 @@ void LoanableHelloWorldPublisher::run()
         {
             std::cout << "Command " << ch << " not recognized, please enter \"y/n\":";
         }
-    } while(std::cin >> ch);
+    } while (std::cin >> ch);
 }

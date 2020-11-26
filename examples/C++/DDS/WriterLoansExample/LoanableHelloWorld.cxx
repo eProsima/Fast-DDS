@@ -21,8 +21,10 @@
 
 #ifdef _WIN32
 // Remove linker warning LNK4221 on Visual Studio
-namespace { char dummy; }
-#endif
+namespace {
+char dummy;
+}  // namespace
+#endif  // _WIN32
 
 #include "LoanableHelloWorld.h"
 #include <fastcdr/Cdr.h>
@@ -34,9 +36,9 @@ using namespace eprosima::fastcdr::exception;
 
 LoanableHelloWorld::LoanableHelloWorld()
 {
-    // m_index com.eprosima.idl.parser.typecode.PrimitiveTypeCode@1caeb3e
+    // m_index com.eprosima.idl.parser.typecode.PrimitiveTypeCode@1e88b3c
     m_index = 0;
-    // m_message com.eprosima.idl.parser.typecode.ArrayTypeCode@d80b78
+    // m_message com.eprosima.idl.parser.typecode.ArrayTypeCode@1fdc050
     memset(&m_message, 0, (256) * 1);
 
 }
@@ -47,19 +49,22 @@ LoanableHelloWorld::~LoanableHelloWorld()
 
 }
 
-LoanableHelloWorld::LoanableHelloWorld(const LoanableHelloWorld &x)
+LoanableHelloWorld::LoanableHelloWorld(
+        const LoanableHelloWorld& x)
 {
     m_index = x.m_index;
     m_message = x.m_message;
 }
 
-LoanableHelloWorld::LoanableHelloWorld(LoanableHelloWorld &&x)
+LoanableHelloWorld::LoanableHelloWorld(
+        LoanableHelloWorld&& x)
 {
     m_index = x.m_index;
     m_message = std::move(x.m_message);
 }
 
-LoanableHelloWorld& LoanableHelloWorld::operator=(const LoanableHelloWorld &x)
+LoanableHelloWorld& LoanableHelloWorld::operator =(
+        const LoanableHelloWorld& x)
 {
 
     m_index = x.m_index;
@@ -68,7 +73,8 @@ LoanableHelloWorld& LoanableHelloWorld::operator=(const LoanableHelloWorld &x)
     return *this;
 }
 
-LoanableHelloWorld& LoanableHelloWorld::operator=(LoanableHelloWorld &&x)
+LoanableHelloWorld& LoanableHelloWorld::operator =(
+        LoanableHelloWorld&& x)
 {
 
     m_index = x.m_index;
@@ -77,7 +83,8 @@ LoanableHelloWorld& LoanableHelloWorld::operator=(LoanableHelloWorld &&x)
     return *this;
 }
 
-size_t LoanableHelloWorld::getMaxCdrSerializedSize(size_t current_alignment)
+size_t LoanableHelloWorld::getMaxCdrSerializedSize(
+        size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
 
@@ -92,27 +99,38 @@ size_t LoanableHelloWorld::getMaxCdrSerializedSize(size_t current_alignment)
     return current_alignment - initial_alignment;
 }
 
-size_t LoanableHelloWorld::getCdrSerializedSize(const LoanableHelloWorld& data, size_t current_alignment)
+size_t LoanableHelloWorld::getCdrSerializedSize(
+        const LoanableHelloWorld& data,
+        size_t current_alignment)
 {
     (void)data;
     size_t initial_alignment = current_alignment;
 
+
     current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
 
-    current_alignment += ((256) * 1) + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
+
+    if ((256) > 0)
+    {
+        current_alignment += ((256) * 1) + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
+    }
+
 
     return current_alignment - initial_alignment;
 }
 
-void LoanableHelloWorld::serialize(eprosima::fastcdr::Cdr &scdr) const
+void LoanableHelloWorld::serialize(
+        eprosima::fastcdr::Cdr& scdr) const
 {
 
     scdr << m_index;
     scdr << m_message;
 
+
 }
 
-void LoanableHelloWorld::deserialize(eprosima::fastcdr::Cdr &dcdr)
+void LoanableHelloWorld::deserialize(
+        eprosima::fastcdr::Cdr& dcdr)
 {
 
     dcdr >> m_index;
@@ -124,9 +142,10 @@ void LoanableHelloWorld::deserialize(eprosima::fastcdr::Cdr &dcdr)
  * @brief This function sets a value in member index
  * @param _index New value for member index
  */
-void LoanableHelloWorld::index(uint32_t _index)
+void LoanableHelloWorld::index(
+        uint32_t _index)
 {
-m_index = _index;
+    m_index = _index;
 }
 
 /*!
@@ -151,18 +170,20 @@ uint32_t& LoanableHelloWorld::index()
  * @brief This function copies the value in member message
  * @param _message New value to be copied in member message
  */
-void LoanableHelloWorld::message(const std::array<char, 256> &_message)
+void LoanableHelloWorld::message(
+        const std::array<char, 256>& _message)
 {
-m_message = _message;
+    m_message = _message;
 }
 
 /*!
  * @brief This function moves the value in member message
  * @param _message New value to be moved in member message
  */
-void LoanableHelloWorld::message(std::array<char, 256> &&_message)
+void LoanableHelloWorld::message(
+        std::array<char, 256>&& _message)
 {
-m_message = std::move(_message);
+    m_message = std::move(_message);
 }
 
 /*!
@@ -183,7 +204,8 @@ std::array<char, 256>& LoanableHelloWorld::message()
     return m_message;
 }
 
-size_t LoanableHelloWorld::getKeyMaxCdrSerializedSize(size_t current_alignment)
+size_t LoanableHelloWorld::getKeyMaxCdrSerializedSize(
+        size_t current_alignment)
 {
     size_t current_align = current_alignment;
 
@@ -196,12 +218,12 @@ size_t LoanableHelloWorld::getKeyMaxCdrSerializedSize(size_t current_alignment)
 
 bool LoanableHelloWorld::isKeyDefined()
 {
-   return false;
+    return false;
 }
 
-void LoanableHelloWorld::serializeKey(eprosima::fastcdr::Cdr &scdr) const
+void LoanableHelloWorld::serializeKey(
+        eprosima::fastcdr::Cdr& scdr) const
 {
     (void) scdr;
-     
-     
+      
 }

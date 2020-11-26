@@ -79,9 +79,9 @@ bool LoanableHelloWorldSubscriber::init()
 
     //CREATE THE TOPIC
     topic_ = participant_->create_topic(
-            "HelloWorldTopic",
-            type_.get_type_name(),
-            TOPIC_QOS_DEFAULT);
+        "LoanableHelloWorldTopic",
+        type_.get_type_name(),
+        TOPIC_QOS_DEFAULT);
     if (topic_ == nullptr)
     {
         return false;
@@ -132,16 +132,15 @@ void LoanableHelloWorldSubscriber::SubListener::on_data_available(
         if (info.instance_state == ALIVE)
         {
             // Print your structure data here.
-            std::cout << "Received: " << st.message().data() << st.index() << std::endl;
             ++samples;
+            std::cout << "Sample received, count=" << samples << std::endl;
         }
     }
 }
 
 void LoanableHelloWorldSubscriber::run()
 {
-    std::cout << "Waiting for Data, press Enter to stop the DataReader. "<<std::endl;
+    std::cout << "Waiting for Data, press Enter to stop the DataReader. " << std::endl;
     std::cin.ignore();
     std::cout << "Shutting down the Subscriber." << std::endl;
 }
-
