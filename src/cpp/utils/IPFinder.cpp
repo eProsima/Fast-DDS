@@ -226,7 +226,43 @@ bool IPFinder::getIPs(
 
 bool IPFinder::getAllMACAddress(std::vector<info_MAC>* macs)
 {
-    return false;
+    DWORD rv, size = DEFAULT_ADAPTER_ADDRESSES_SIZE;
+    PIP_ADAPTER_ADDRESSES adapter_addresses, aa;
+    PIP_ADAPTER_UNICAST_ADDRESS ua;
+
+    adapter_addresses = (PIP_ADAPTER_ADDRESSES)malloc(DEFAULT_ADAPTER_ADDRESSES_SIZE);
+
+    rv = GetAdaptersAddresses(AF_UNSPEC, GAA_FLAG_INCLUDE_PREFIX, NULL, adapter_addresses, &size);
+
+    if (rv != ERROR_SUCCESS)
+    {
+        adapter_addresses = (PIP_ADAPTER_ADDRESSES)realloc(adapter_addresses, size);
+
+        rv = GetAdaptersAddresses(AF_UNSPEC, GAA_FLAG_INCLUDE_PREFIX, NULL, adapter_addresses, &size);
+    }
+
+    if (rv != ERROR_SUCCESS)
+    {
+        fprintf(stderr, "GetAdaptersAddresses() failed...");
+        free(adapter_addresses);
+        return false;
+    }
+
+    for (aa = adapter_addresses; aa != NULL; aa = aa->Next) {
+        if (aa->OperStatus == 1) //is ENABLED
+        {
+            info_MAC mac;
+            memcpy(mac.address, aa->PhysicalAddress, aa->PhysicalAddressLength);
+
+            if (std::find(macs->begin(), macs->end(), mac) == macs->end())
+            {
+                macs->push_back(mac);
+            }
+        }
+    }
+
+    free(adapter_addresses);
+    return true;
 }
 
 #elif defined(__APPLE__)
