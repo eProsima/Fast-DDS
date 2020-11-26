@@ -754,6 +754,35 @@ TEST_F(XMLParserTests, parseXMLProfilesRoot)
 }
 
 /*
+ * This test checks the postive cases of the TLS configuration via XML.
+ * 1. Check that parse_tls_config() return an XML_OK code for a valid configurations of <verify_paths>.
+ */
+TEST_F(XMLParserTests, parseTLSConfigPositiveClauses)
+{
+    tinyxml2::XMLDocument xml_doc;
+    std::unique_ptr<BaseNode> root;
+    tinyxml2::XMLElement* titleElement;
+    std::shared_ptr<eprosima::fastdds::rtps::TransportDescriptorInterface> tcp_transport =
+            std::make_shared<rtps::TCPv4TransportDescriptor>();
+
+    // Parametrized XML
+    const char* xml =
+            "\
+            <tls>\
+                <verify_paths>\
+                    <verify_path>path_1</verify_path>\
+                    <verify_path>path_2</verify_path>\
+                </verify_paths>\
+            </tls>\
+            ";
+
+    ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+    titleElement = xml_doc.RootElement();
+    // Check that parse_tls_config() return an XML_OK code for a valid configurations of <verify_paths>.
+    EXPECT_EQ(XMLP_ret::XML_OK, XMLParserTest::parse_tls_config_wrapper(titleElement, tcp_transport));
+}
+
+/*
  * This test checks the negative cases of the TLS configuration via XML.
  * 1. Check that elements <password>, <private_key_file>, <rsa_private_key_file>, <cert_chain_file>, <tmp_dh_file>,
  * <verify_file>, <verify_depth>, <default_verify_path>, and <bad_element> return an xml error if their value is empty.
