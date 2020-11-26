@@ -446,6 +446,13 @@ public:
         return fillDataNode(p_profile, requester_node);
     }
 
+    static XMLP_ret fillDataNode_wrapper(
+        tinyxml2::XMLElement* p_profile,
+        DataNode<ReplierAttributes>& replier_node)
+    {
+        return fillDataNode(p_profile, replier_node);
+    }
+
 // FINISH RAUL SECTION
 
 // INIT PARIS SECTION
