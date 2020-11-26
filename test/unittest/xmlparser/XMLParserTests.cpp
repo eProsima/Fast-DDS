@@ -1377,6 +1377,7 @@ TEST_F(XMLParserTests, fillDataNodeParticipant_negative)
 
         std::vector<std::string> parameters = {
             "<name></name>",
+            "<prefix><bad_element></bad_element></prefix>",
             "<defaultUnicastLocatorList><bad_element></bad_element></defaultUnicastLocatorList>",
             "<defaultMulticastLocatorList><bad_element></bad_element></defaultMulticastLocatorList>",
             "<sendSocketBufferSize><bad_element></bad_element></sendSocketBufferSize>",
