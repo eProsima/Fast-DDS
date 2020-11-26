@@ -1461,6 +1461,52 @@ TEST_F(XMLParserTests, fillDataNodeParticipantNegativeClauses)
         }
     }
 
+}
+
+/*
+ * This test checks the return of the unsupported cases of the fillDataNode given a ParticipantAttributes DataNode
+ * 1. Check passing a a UserData parameter
+ */
+TEST_F(XMLParserTests, fillDataNodeParticipantUnsupported)
+{
+    tinyxml2::XMLDocument xml_doc;
+    tinyxml2::XMLElement* titleElement;
+
+    up_participant_t participant_atts{new ParticipantAttributes};
+    up_node_participant_t participant_node{new node_participant_t{NodeType::PARTICIPANT, std::move(participant_atts)}};
+
+    mock_consumer = new eprosima::fastdds::dds::XMLMockConsumer(xml_mutex_);
+    Log::RegisterConsumer(std::unique_ptr<LogConsumer>(mock_consumer));
+    Log::SetVerbosity(Log::Warning);
+    Log::SetCategoryFilter(std::regex("(XMLPARSER)"));
+
+    // Unsuported fields
+    const char * xml =
+            "\
+            <participant profile_name=\"domainparticipant_profile_name\">\
+                <rtps>\
+                    <userData>data</userData>\
+                </rtps>\
+            </participant>\
+            ";
+
+    ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+    titleElement = xml_doc.RootElement();
+    EXPECT_EQ(XMLP_ret::XML_OK, XMLParserTest::fillDataNode_wrapper(titleElement, *participant_node));
+
+    helper_block_for_at_least_entries(1);
+    auto consumed_entries = mock_consumer->ConsumedEntries();
+    // Expect 1 log error.
+    uint32_t num_errors = 0;
+    for (const auto& entry : consumed_entries)
+    {
+        if (entry.kind == Log::Kind::Error)
+        {
+            num_errors++;
+        }
+    }
+
+    EXPECT_EQ(num_errors, 1);
 
 }
 
