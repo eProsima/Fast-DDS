@@ -1381,7 +1381,7 @@ TEST_F(XMLParserTests, fillDataNodeSubscriberNegativeClauses)
 {
     std::unique_ptr<SubscriberAttributes> subscriber_atts{new SubscriberAttributes};
     std::unique_ptr<DataNode<SubscriberAttributes>> subscriber_node{
-            new DataNode<SubscriberAttributes>{ NodeType::PUBLISHER, std::move(subscriber_atts) }};
+            new DataNode<SubscriberAttributes>{ NodeType::SUBSCRIBER, std::move(subscriber_atts) }};
 
     // Check that an XML_ERROR is triggered when the xml element is nullptr.
     EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::fillDataNode_wrapper(nullptr, *subscriber_node));
@@ -1413,7 +1413,7 @@ TEST_F(XMLParserTests, fillDataNodeTopicNegativeClauses)
 {
     std::unique_ptr<TopicAttributes> topic_atts{new TopicAttributes};
     std::unique_ptr<DataNode<TopicAttributes>> topic_node{
-            new DataNode<TopicAttributes>{ NodeType::PUBLISHER, std::move(topic_atts) }};
+            new DataNode<TopicAttributes>{ NodeType::TOPIC, std::move(topic_atts) }};
 
     // Check that an XML_ERROR is triggered when the xml element is nullptr.
     EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::fillDataNode_wrapper(nullptr, *topic_node));
@@ -1434,6 +1434,135 @@ TEST_F(XMLParserTests, fillDataNodeTopicNegativeClauses)
     titleElement = xml_doc.RootElement();
     // Check that an XML_ERROR is triggered when the <topic> element does not contains any attributes.
     EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::fillDataNode_wrapper(titleElement, *topic_node));
+}
+
+/*
+ * This test checks the negative case in the fillDataNode function when it refers to a requester node.
+ * 1. Check that fillDataNode() returns an XML_ERROR when the xml element is nullptr.
+ * 2. Check that fillDataNode() returns an XML_ERROR when the profile_name attribute is missing.
+ * 3. Check that fillDataNode() returns an XML_ERROR when the service_name attribute is missing.
+ * 4. Check that fillDataNode() returns an XML_ERROR when the request_type attribute is missing.
+ * 5. Check that fillDataNode() returns an XML_ERROR when the reply_type attribute is missing.
+ * 5. Check that fillDataNode() returns an XML_ERROR when the <request_topic_name>, <reply_topic_name>, <publisher>, and <subscriber>
+ *    does not contains a valid xml element.
+ * 6. Check that fillDataNode() returns an XML_ERROR when child xml element of <requester> is not valid.
+ */
+TEST_F(XMLParserTests, fillDataNodeRequesterNegativeClauses)
+{
+    std::unique_ptr<RequesterAttributes> requester_atts_error{new RequesterAttributes};
+    std::unique_ptr<DataNode<RequesterAttributes>> requester_node_error{
+            new DataNode<RequesterAttributes>{ NodeType::REQUESTER, std::move(requester_atts_error) }};
+
+    // Check that an XML_ERROR is triggered when the xml element is nullptr.
+    EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::fillDataNode_wrapper(nullptr, *requester_node_error));
+
+    tinyxml2::XMLDocument xml_doc;
+    tinyxml2::XMLElement* titleElement;
+
+    // Check that fillDataNode() returns an XML_ERROR when the profile_name attribute is missing.
+    {
+        const char* xml =
+                "\
+                <requester>\
+                </requester>\
+                ";
+
+        ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+        titleElement = xml_doc.RootElement();
+        std::unique_ptr<RequesterAttributes> requester_atts{new RequesterAttributes};
+        std::unique_ptr<DataNode<RequesterAttributes>> requester_node{
+            new DataNode<RequesterAttributes>{ NodeType::REQUESTER, std::move(requester_atts) }};
+        EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::fillDataNode_wrapper(titleElement, *requester_node));
+    }
+
+    // Check that fillDataNode() returns an XML_ERROR when the service_name attribute is missing.
+    {
+        const char* xml =
+                "\
+                <requester profile_name=\"test_requester_profile\">\
+                </requester>\
+                ";
+
+        ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+        titleElement = xml_doc.RootElement();
+        std::unique_ptr<RequesterAttributes> requester_atts{new RequesterAttributes};
+        std::unique_ptr<DataNode<RequesterAttributes>> requester_node{
+            new DataNode<RequesterAttributes>{ NodeType::REQUESTER, std::move(requester_atts) }};
+        EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::fillDataNode_wrapper(titleElement, *requester_node));
+    }
+
+    // Check that fillDataNode() returns an XML_ERROR when the request_type attribute is missing.
+    {
+        const char* xml =
+                "\
+                <requester profile_name=\"test_requester_profile\"\
+                           service_name=\"service_name\">\
+                </requester>\
+                ";
+
+        ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+        titleElement = xml_doc.RootElement();
+        std::unique_ptr<RequesterAttributes> requester_atts{new RequesterAttributes};
+        std::unique_ptr<DataNode<RequesterAttributes>> requester_node{
+            new DataNode<RequesterAttributes>{ NodeType::REQUESTER, std::move(requester_atts) }};
+        EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::fillDataNode_wrapper(titleElement, *requester_node));
+    }
+
+    // Check that fillDataNode() returns an XML_ERROR when the reply_type attribute is missing.
+    {
+        const char* xml =
+                "\
+                <requester profile_name=\"test_requester_profile\"\
+                           service_name=\"service_name\"\
+                           request_type=\"request_type\">\
+                </requester>\
+                ";
+
+        ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+        titleElement = xml_doc.RootElement();
+        std::unique_ptr<RequesterAttributes> requester_atts{new RequesterAttributes};
+        std::unique_ptr<DataNode<RequesterAttributes>> requester_node{
+            new DataNode<RequesterAttributes>{ NodeType::REQUESTER, std::move(requester_atts) }};
+        EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::fillDataNode_wrapper(titleElement, *requester_node));
+    }
+
+    // Check that fillDataNode() returns an XML_ERROR when the <request_topic_name>, <reply_topic_name>, <publisher>,
+    // and <subscriber> does not contains a valid xml element.
+    // Check that fillDataNode() returns an XML_ERROR when child xml element of <requester> is not valid.
+    {
+        std::unique_ptr<RequesterAttributes> requester_atts;
+        std::unique_ptr<DataNode<RequesterAttributes>> requester_node;
+
+        const char* xml_p =
+                "\
+                <requester profile_name=\"test_requester_profile\"\
+                           service_name=\"service_name\"\
+                           request_type=\"request_type\"\
+                           reply_type=\"reply_type\">\
+                    <%s>\
+                        <bad_element></bad_element>\
+                    </%s>\
+                </requester>\
+                ";
+        char xml[800];
+
+        std::vector<std::string> elements {
+            "request_topic_name",
+            "reply_topic_name",
+            "publisher",
+            "subscriber",
+            "bad_element"
+        };
+        for (std::string e : elements)
+        {
+            sprintf(xml, xml_p, e.c_str(), e.c_str());
+            ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+            titleElement = xml_doc.RootElement();
+            requester_atts.reset(new RequesterAttributes);
+            requester_node.reset(new DataNode<RequesterAttributes>{ NodeType::REQUESTER, std::move(requester_atts) });
+            EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::fillDataNode_wrapper(titleElement, *requester_node));
+        }
+    }
 }
 
 // FINISH RAUL SECTION
