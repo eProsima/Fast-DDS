@@ -218,6 +218,6 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             ${TINYXML2_LIBRARY}
             fastcdr
         )
-        add_gtest(XMLParserTests SOURCES XMLParserTests.cpp)
+        add_gtest(XMLParserTests SOURCES XMLParserTests.cpp XMLElementParserTests.cpp)
     endif()
 endif()

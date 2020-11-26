@@ -28,18 +28,29 @@ class XMLMockConsumer : public LogConsumer
 {
 public:
 
+    XMLMockConsumer(
+            std::mutex* mutex)
+        : mutex_(mutex)
+    {
+    }
+
     virtual void Consume(
             const Log::Entry& entry)
     {
-        std::unique_lock<std::mutex> guard(mMutex);
-        mEntriesConsumed.push_back(entry);
+        std::unique_lock<std::mutex> guard(*mutex_);
+        entries_consumed_.push_back(entry);
         cv_.notify_one();
     }
 
-    const std::vector<Log::Entry> ConsumedEntries() const
+    std::vector<Log::Entry> ConsumedEntries() const
     {
-        std::unique_lock<std::mutex> guard(mMutex);
-        return mEntriesConsumed;
+        std::unique_lock<std::mutex> guard(*mutex_);
+        return entries_consumed_;
+    }
+
+    size_t ConsumedEntriesSize_nts() const
+    {
+        return entries_consumed_.size();
     }
 
     std::condition_variable& cv()
@@ -47,10 +58,16 @@ public:
         return cv_;
     }
 
+    void clear_entries()
+    {
+        std::unique_lock<std::mutex> guard(*mutex_);
+        entries_consumed_.clear();
+    }
+
 private:
 
-    std::vector<Log::Entry> mEntriesConsumed;
-    mutable std::mutex mMutex;
+    std::vector<Log::Entry> entries_consumed_;
+    mutable std::mutex* mutex_;
     std::condition_variable cv_;
 };
 
