@@ -157,6 +157,12 @@ void ResourceEvent::event_service()
 
         std::unique_lock<TimedMutex> lock(mutex_);
 
+        // If the thread has already been instructed to stop, do it.
+        if (stop_.load())
+        {
+            break;
+        }
+
         // If pending timers exist, there is some work to be done, so no need to wait.
         if (!pending_timers_.empty())
         {
