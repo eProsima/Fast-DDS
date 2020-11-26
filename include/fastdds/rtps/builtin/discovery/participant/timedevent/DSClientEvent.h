@@ -55,7 +55,6 @@ public:
     */
     bool event();
 
-    //!Pointer to the PDPServer object.
     PDPClient* mp_PDP;
 };
 } /* namespace rtps */

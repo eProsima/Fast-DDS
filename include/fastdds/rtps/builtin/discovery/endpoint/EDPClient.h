@@ -24,8 +24,10 @@
 #include <fastdds/rtps/builtin/discovery/endpoint/EDPSimple.h>
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
 namespace rtps {
+
+using namespace fastrtps::rtps;
 
 /**
  * Class EDPClient, extends the EDPSimple functionality to accommodate client side needs
@@ -82,8 +84,8 @@ public:
 
 };
 
-}
 } /* namespace rtps */
+} /* namespace fastdds */
 } /* namespace eprosima */
 
 #endif
