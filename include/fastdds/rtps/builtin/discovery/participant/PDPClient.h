@@ -26,8 +26,10 @@
 #include <fastdds/rtps/builtin/discovery/participant/timedevent/DSClientEvent.h>
 
 namespace eprosima {
-namespace fastrtps{
+namespace fastdds{
 namespace rtps {
+
+using namespace fastrtps::rtps;
 
 class StatefulWriter;
 class StatefulReader;
@@ -133,8 +135,8 @@ public:
     bool _serverPing;
 };
 
-}
 } /* namespace rtps */
+} /* namespace fastdds */
 } /* namespace eprosima */
 #endif
 #endif /* _FASTDDS_RTPS_PDPCLIENT_H_ */

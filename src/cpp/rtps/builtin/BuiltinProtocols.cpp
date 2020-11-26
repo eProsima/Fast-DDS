@@ -21,7 +21,6 @@
 #include <fastdds/rtps/common/Locator.h>
 
 #include <fastdds/rtps/builtin/discovery/participant/PDPSimple.h>
-// #include "./discovery/participant/PDPClient2.hpp"
 #include <fastdds/rtps/builtin/discovery/participant/PDPClient.h>
 #include "./discovery/participant/PDPServer2.hpp"
 #include <fastdds/rtps/builtin/discovery/endpoint/EDP.h>
@@ -104,7 +103,7 @@ bool BuiltinProtocols::initBuiltinProtocols(
             return false;
 
         case DiscoveryProtocol_t::CLIENT:
-            mp_PDP = new fastrtps::rtps::PDPClient(this, allocation);
+            mp_PDP = new fastdds::rtps::PDPClient(this, allocation);
             break;
 
         case DiscoveryProtocol_t::SERVER:

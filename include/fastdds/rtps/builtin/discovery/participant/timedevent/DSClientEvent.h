@@ -24,8 +24,10 @@
 #include <fastdds/rtps/resources/TimedEvent.h>
 
 namespace eprosima {
-namespace fastrtps{
+namespace fastdds{
 namespace rtps {
+
+using namespace fastrtps::rtps;
 
 class PDPClient;
 
@@ -56,8 +58,8 @@ public:
     //!Pointer to the PDPServer object.
     PDPClient* mp_PDP;
 };
-}
 } /* namespace rtps */
+} /* namespace fastdds */
 } /* namespace eprosima */
 #endif
 #endif /* _FASTDDS_RTPS_DSCLIENTEVENT_H_ */

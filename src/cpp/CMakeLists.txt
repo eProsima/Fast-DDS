@@ -194,13 +194,8 @@ set(${PROJECT_NAME}_source_files
     # old discovery-server sources
 
     rtps/builtin/discovery/participant/timedevent/DSClientEvent.cpp
-    rtps/builtin/discovery/participant/timedevent/DServerEvent.cpp
     rtps/builtin/discovery/participant/PDPClient.cpp
-    rtps/builtin/discovery/participant/PDPServer.cpp
-    rtps/builtin/discovery/participant/PDPServerListener.cpp
     rtps/builtin/discovery/endpoint/EDPClient.cpp
-    rtps/builtin/discovery/endpoint/EDPServer.cpp
-    rtps/builtin/discovery/endpoint/EDPServerListeners.cpp
 
     # new discovery-server sources
 
@@ -217,18 +212,12 @@ set(${PROJECT_NAME}_source_files
 #   rtps/builtin/discovery/database/backup/SharedBackupFunctions.hpp
     rtps/builtin/discovery/database/backup/SharedBackupFunctions.cpp
 
-#   rtps/builtin/discovery/participant/DSClientEvent2.hpp
-    rtps/builtin/discovery/participant/DSClientEvent2.cpp
 #   rtps/builtin/discovery/participant/DServerEvent2.hpp
     rtps/builtin/discovery/participant/DServerEvent2.cpp
-#   rtps/builtin/discovery/participant/PDPClient2.hpp
-    rtps/builtin/discovery/participant/PDPClient2.cpp
 #   rtps/builtin/discovery/participant/PDPServer2.hpp
     rtps/builtin/discovery/participant/PDPServer2.cpp
 #   rtps/builtin/discovery/participant/PDPServerListener2.hpp
     rtps/builtin/discovery/participant/PDPServerListener2.cpp
-#   rtps/builtin/discovery/endpoint/EDPClient2.hpp
-    rtps/builtin/discovery/endpoint/EDPClient2.cpp
 #   rtps/builtin/discovery/endpoint/EDPServer2.hpp
     rtps/builtin/discovery/endpoint/EDPServer2.cpp
 #   rtps/builtin/discovery/endpoint/EDPServerListeners2.hpp
