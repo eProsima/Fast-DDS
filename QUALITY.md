@@ -115,8 +115,8 @@ The tests aim to cover typical usage. Currently, efforts are being made to impro
 *eProsima Fast DDS* aims to provide a line coverage **above 95%**.
 *Fast DDS* code coverage policy comprises:
 1. All contributions to *Fast DDS* must increase (or at least keep) current line coverage.
-   This is done to ensure that the **95%** line coverage goal is in time met,
-1. Line coverage regressions only are permitted if properly justified and accepted by maintainers.
+   This is done to ensure that the **95%** line coverage goal is eventually met.
+1. Line coverage regressions are only permitted if properly justified and accepted by maintainers.
 1. If the CI system reports a coverage regression after a pull request has been merged, the maintainers must study the case and decide how to proceed, mostly reverting the changes and asking for a more thorough testing of the committed changes.
 1. External dependencies are excluded from the coverage report.
 1. *Fast DDS* examples are excluded from the coverage report.
