@@ -392,10 +392,10 @@ TEST(TimedEventMultithread, PendingRaceCheck)
             {
                 return true;
             };
-    TimedEvent main_event(*env->service_, periodic_callback, 1.0 * periodic_ms.count());
+    TimedEvent periodic_event(*env->service_, periodic_callback, 1.0 * periodic_ms.count());
 
     // Let the periodic event run for several periods
-    main_event.restart_timer();
+    periodic_event.restart_timer();
     std::this_thread::sleep_for(periodic_ms * 2);
 
     // Launch the checking thread and let it run for several periods
