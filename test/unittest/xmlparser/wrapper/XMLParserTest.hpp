@@ -436,6 +436,13 @@ public:
     {
         return parseLogConfig(p_root);
     }
+
+    static XMLP_ret parseXMLTransportsProf_wrapper(
+        tinyxml2::XMLElement* p_root)
+    {
+        return parseXMLTransportsProf(p_root);
+    }
+
 // FINISH NACHO SECTION
 
 // INIT RAUL SECTION

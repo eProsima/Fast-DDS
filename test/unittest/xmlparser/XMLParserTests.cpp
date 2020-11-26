@@ -747,7 +747,7 @@ TEST_F(XMLParserTests, parseXMLTransportData)
                     <rtps_dump_file>rtsp_messages.log</rtps_dump_file>\
                 </transport_descriptor>\
                 ";
-        char xml[1600];
+        char xml[2000];
 
         // UDPv4
         sprintf(xml, xml_p, "4");
@@ -803,7 +803,7 @@ TEST_F(XMLParserTests, parseXMLTransportData)
                     <tls><!-- TLS Section --></tls>\
                 </transport_descriptor>\
                 ";
-        char xml[1600];
+        char xml[2000];
 
         // TCPv4
         sprintf(xml, xml_p, "4");
@@ -1043,6 +1043,24 @@ TEST_F(XMLParserTests, parseXMLTransportDataNegativeClauses)
     titleElement = xml_doc.RootElement();
     EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::parseXMLTransportData_wrapper(titleElement));
     xmlparser::XMLProfileManager::DeleteInstance();
+}
+
+TEST_F(XMLParserTests, parseXMLTransportsProf)
+{
+    tinyxml2::XMLDocument xml_doc;
+    tinyxml2::XMLElement* titleElement;
+    std::string xml =
+            "\
+            <transport_descriptors>\
+                <transport_descriptor>\
+                    <bad_element></bad_element>\
+                </transport_descriptor>\
+            </transport_descriptors>\
+            ";
+
+    ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml.c_str()));
+    titleElement = xml_doc.RootElement();
+    EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::parseXMLTransportsProf_wrapper(titleElement));
 }
 
 /*
@@ -1321,30 +1339,37 @@ TEST_F(XMLParserTests, parseLogConfig)
                     <consumer>\
                         <class>%s</class>\
                     </consumer>\
-                    %s\
                 </log>\
                 ";
         char xml[500];
 
         // Check wrong class of consumer
-        sprintf(xml, xml_p, "FALSE", "wrong_class", "");
+        sprintf(xml, xml_p, "FALSE", "wrong_class");
         ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
         titleElement = xml_doc.RootElement();
         EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::parseLogConfig_wrapper(titleElement));
 
         // Check both values of use_default
-        sprintf(xml, xml_p, "TRUE", "StdoutConsumer", "");
+        sprintf(xml, xml_p, "TRUE", "StdoutConsumer");
         ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
         titleElement = xml_doc.RootElement();
-        EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::parseLogConfig_wrapper(titleElement));
+        EXPECT_EQ(XMLP_ret::XML_OK, XMLParserTest::parseLogConfig_wrapper(titleElement));
 
-        sprintf(xml, xml_p, "FALSE", "StdoutConsumer", "");
+        sprintf(xml, xml_p, "FALSE", "StdoutConsumer");
         ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
         titleElement = xml_doc.RootElement();
-        EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::parseLogConfig_wrapper(titleElement));
+        EXPECT_EQ(XMLP_ret::XML_OK, XMLParserTest::parseLogConfig_wrapper(titleElement));
+    }
 
+    {
         // Check bad tag
-        sprintf(xml, xml_p, "FALSE", "StdoutConsumer", "<bad_element></bad_element>");
+        const char * xml =
+                "\
+                <log>\
+                    <bad_element></bad_element>\
+                </log>\
+                ";
+
         ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
         titleElement = xml_doc.RootElement();
         EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::parseLogConfig_wrapper(titleElement));
