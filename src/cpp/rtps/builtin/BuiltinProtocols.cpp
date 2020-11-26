@@ -21,10 +21,11 @@
 #include <fastdds/rtps/common/Locator.h>
 
 #include <fastdds/rtps/builtin/discovery/participant/PDPSimple.h>
-#include <fastdds/rtps/builtin/discovery/participant/PDPClient.h>
-#include "./discovery/participant/PDPServer2.hpp"
 #include <fastdds/rtps/builtin/discovery/endpoint/EDP.h>
 #include <fastdds/rtps/builtin/discovery/endpoint/EDPStatic.h>
+
+#include "./discovery/participant/PDPServer2.hpp"
+#include "./discovery/participant/PDPClient.h"
 
 #include <fastdds/rtps/builtin/data/ParticipantProxyData.h>
 

@@ -191,21 +191,16 @@ set(${PROJECT_NAME}_source_files
     rtps/reader/StatefulPersistentReader.cpp
     rtps/persistence/PersistenceFactory.cpp
 
-    # old discovery-server sources
-
-    rtps/builtin/discovery/participant/timedevent/DSClientEvent.cpp
-    rtps/builtin/discovery/participant/PDPClient.cpp
-    rtps/builtin/discovery/endpoint/EDPClient.cpp
-
-    # new discovery-server sources
-
     rtps/builtin/discovery/database/DiscoveryDataBase.cpp
     rtps/builtin/discovery/database/DiscoveryParticipantsAckStatus.cpp
     rtps/builtin/discovery/database/DiscoveryParticipantInfo.cpp
     rtps/builtin/discovery/database/DiscoverySharedInfo.cpp
     rtps/builtin/discovery/database/backup/SharedBackupFunctions.cpp
 
-    rtps/builtin/discovery/participant/DServerEvent2.cpp
+    rtps/builtin/discovery/participant/timedevent/DSClientEvent.cpp
+    rtps/builtin/discovery/participant/PDPClient.cpp
+    rtps/builtin/discovery/endpoint/EDPClient.cpp
+    rtps/builtin/discovery/participant/timedevent/DServerEvent2.cpp
     rtps/builtin/discovery/participant/PDPServer2.cpp
     rtps/builtin/discovery/participant/PDPServerListener2.cpp
     rtps/builtin/discovery/endpoint/EDPServer2.cpp

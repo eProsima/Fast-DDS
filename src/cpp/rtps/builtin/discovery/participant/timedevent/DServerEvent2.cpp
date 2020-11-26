@@ -25,8 +25,8 @@
 
 #include <fastdds/dds/log/Log.hpp>
 
-#include "./DServerEvent2.hpp"
-#include "./PDPServer2.hpp"
+#include "DServerEvent2.hpp"
+#include "../PDPServer2.hpp"
 
 namespace eprosima {
 namespace fastdds {

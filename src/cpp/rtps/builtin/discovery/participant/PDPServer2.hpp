@@ -27,7 +27,7 @@
 
 #include "../database/DiscoveryDataFilter.hpp"
 #include "../database/DiscoveryDataBase.hpp"
-#include "./DServerEvent2.hpp"
+#include "./timedevent/DServerEvent2.hpp"
 
 namespace eprosima {
 namespace fastdds {

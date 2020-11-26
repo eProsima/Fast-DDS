@@ -17,12 +17,6 @@
  *
  */
 
-#include <fastdds/rtps/builtin/discovery/participant/PDPClient.h>
-#include <fastdds/rtps/builtin/discovery/participant/PDPListener.h>
-#include <fastdds/rtps/builtin/discovery/participant/timedevent/DSClientEvent.h>
-
-#include <fastdds/rtps/builtin/discovery/endpoint/EDPClient.h>
-
 #include <fastdds/rtps/builtin/BuiltinProtocols.h>
 #include <fastdds/rtps/builtin/liveliness/WLP.h>
 
@@ -39,9 +33,13 @@
 
 #include <rtps/builtin/discovery/participant/DirectMessageSender.hpp>
 #include <rtps/participant/RTPSParticipantImpl.h>
+#include <fastdds/rtps/builtin/discovery/participant/PDPListener.h>
 
 #include <fastdds/dds/log/Log.hpp>
 
+#include "./PDPClient.h"
+#include "./timedevent/DSClientEvent.h"
+#include "../endpoint/EDPClient.h"
 
 using namespace eprosima::fastrtps;
 

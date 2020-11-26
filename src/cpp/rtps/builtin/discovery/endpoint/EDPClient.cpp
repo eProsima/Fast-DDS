@@ -17,7 +17,6 @@
  *
  */
 
-#include <fastdds/rtps/builtin/discovery/endpoint/EDPClient.h>
 #include <fastdds/rtps/builtin/discovery/participant/PDP.h>
 #include <fastdds/rtps/writer/StatefulWriter.h>
 #include <fastdds/rtps/reader/RTPSReader.h>
@@ -29,6 +28,8 @@
 #include <fastdds/dds/log/Log.hpp>
 
 #include <mutex>
+
+#include "./EDPClient.h"
 
 namespace eprosima {
 namespace fastdds {
