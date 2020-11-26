@@ -39,9 +39,6 @@
 
 #include <algorithm>
 
-// TODO: remove once backup is merge for discovery server version 2
-#include <fastdds/rtps/builtin/discovery/participant/PDPServer.h>
-
 using namespace eprosima::fastrtps;
 
 namespace eprosima {
