@@ -37,6 +37,9 @@
 #include <unistd.h>
 #include <string.h>
 #include <net/if.h>
+#include <sys/ioctl.h>
+#include <net/if_arp.h>
+#include <errno.h>
 #endif // if defined(_WIN32)
 
 #if defined(__FreeBSD__)
@@ -45,6 +48,7 @@
 
 #include <cstddef>
 #include <cstring>
+#include <algorithm>
 
 using namespace eprosima::fastrtps::rtps;
 
@@ -230,7 +234,40 @@ bool IPFinder::getAllMACAddress(std::vector<info_MAC>* macs)
 
 bool IPFinder::getAllMACAddress(std::vector<info_MAC>* macs)
 {
-    return false;
+    std::vector<IPFinder::info_IP> ips;
+    IPFinder::getIPs(&ips);
+    for (auto& ip : ips)
+    {
+        struct ifreq ifr;
+        strncpy(ifr.ifr_name, ip.dev.c_str(), sizeof(ifr.ifr_name)-1);
+        int fd = socket(PF_INET, SOCK_DGRAM, 0);
+        if (fd == -1)
+        {
+           printf("Error creating socket:  %s\n", strerror(errno));
+           return false;
+        }
+
+        if (ioctl(fd, SIOCGIFHWADDR, &ifr) == -1)
+        {
+           printf("Error on ioctl:  %s\n", strerror(errno));
+           close(fd);
+           return false;
+        }
+
+        if (ifr.ifr_hwaddr.sa_family != ARPHRD_ETHER)
+        {
+           continue;
+        }
+
+        info_MAC mac;
+        memcpy(mac.address, ifr.ifr_hwaddr.sa_data, 6);
+
+        if (std::find(macs->begin(), macs->end(), mac) == macs->end())
+        {
+            macs->push_back(mac);
+        }
+    }
+    return true;
 }
 
 #else
