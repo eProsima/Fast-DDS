@@ -123,10 +123,12 @@ const octet* IPLocator::getIPv4(
 bool IPLocator::hasIPv4(
         const Locator_t& locator)
 {
-    return locator.address[12] != 0 &&
-           locator.address[13] != 0 &&
-           locator.address[14] != 0 &&
-           locator.address[15] != 0;
+    // TODO
+    if (!(locator.kind == LOCATOR_KIND_UDPv4 || locator.kind == LOCATOR_KIND_TCPv4))
+    {
+        return false;
+    }
+    return !(isEmpty(locator));
 }
 
 std::string IPLocator::toIPv4string(
@@ -304,22 +306,11 @@ const octet* IPLocator::getIPv6(
 bool IPLocator::hasIPv6(
         const Locator_t& locator)
 {
-    return locator.address[0] != 0 &&
-           locator.address[1] != 0 &&
-           locator.address[2] != 0 &&
-           locator.address[3] != 0 &&
-           locator.address[4] != 0 &&
-           locator.address[5] != 0 &&
-           locator.address[6] != 0 &&
-           locator.address[7] != 0 &&
-           locator.address[8] != 0 &&
-           locator.address[9] != 0 &&
-           locator.address[10] != 0 &&
-           locator.address[11] != 0 &&
-           locator.address[12] != 0 &&
-           locator.address[13] != 0 &&
-           locator.address[14] != 0 &&
-           locator.address[15] != 0;
+    if (!(locator.kind == LOCATOR_KIND_UDPv6 || locator.kind == LOCATOR_KIND_TCPv6))
+    {
+        return false;
+    }
+    return !(isEmpty(locator));
 }
 
 std::string IPLocator::toIPv6string(
@@ -730,6 +721,41 @@ bool IPLocator::isMulticast(
     {
         return locator.address[0] == 0xFF;
     }
+}
+
+bool IPLocator::isEmpty(const Locator_t& locator)
+{
+    switch (locator.kind)
+    {
+        case LOCATOR_KIND_TCPv4:
+        case LOCATOR_KIND_UDPv4:
+        {
+            return IPLocator::isEmpty(locator, 12);
+        }
+        case LOCATOR_KIND_TCPv6:
+        case LOCATOR_KIND_UDPv6:
+        {
+            return IPLocator::isEmpty(locator, 0);
+        }
+    }
+    return false;
+}
+
+bool IPLocator::isEmpty(
+        const Locator_t& locator,
+        uint16_t index)
+{
+    Locator_t aux_locator;
+    LOCATOR_INVALID(aux_locator);
+
+    for (int i=index; i<16; ++i)
+    {
+        if (locator.address[i] != aux_locator.address[i])
+        {
+            return false;
+        }
+    }
+    return true;
 }
 
 } // namespace rtps
