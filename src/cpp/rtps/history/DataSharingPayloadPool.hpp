@@ -85,8 +85,9 @@ public:
 
     /**
      * Fills the metadata of the shared payload from the cache change information
+     * and advances the reference to the end of notified changes
      */
-    void fill_metadata(const CacheChange_t* cache_change);
+    virtual void prepare_for_notification(const CacheChange_t* cache_change) = 0;
 
     /**
      * Advances a pointer in the pool to the next payload
@@ -282,8 +283,8 @@ protected:
     {
         Segment::Offset payloads_base;      //< Base address for the payloads buffer
         Segment::Offset payloads_limit;     //< One beyond the reserved for the payloadas buffer
-        Segment::Offset first_used_payload; //< The oldest payload in the pool
-        Segment::Offset first_free_payload; //< The payload that will be written next
+        Segment::Offset notified_begin;     //< The oldest payload in the pool already notified (ready to read)
+        Segment::Offset notified_end;       //< The payload that will be notified next
         uint32_t free_payloads;             //< Number of free payloads
         uint32_t aligned_payload_size;      //< The offset from a payload to the next in the buffer
     };

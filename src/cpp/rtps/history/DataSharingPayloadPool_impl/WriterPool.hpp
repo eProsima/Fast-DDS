@@ -76,8 +76,8 @@ public:
         }
 
         PayloadNode* payload = static_cast<PayloadNode*>(
-                segment_->get_address_from_offset(descriptor_->first_free_payload));
-        descriptor_->first_free_payload = advance(descriptor_->first_free_payload);
+                segment_->get_address_from_offset(next_free_payload_));
+        next_free_payload_ = advance(next_free_payload_);
         --descriptor_->free_payloads;
 
         cache_change.serializedPayload.data = payload->data();
@@ -139,10 +139,10 @@ public:
         assert(cache_change.payload_owner() == this);
 
         PayloadNode* payload = PayloadNode::get_from_data(cache_change.serializedPayload.data);
-        assert(segment_->get_offset_from_address(payload) == descriptor_->first_used_payload);
+        assert(segment_->get_offset_from_address(payload) == descriptor_->notified_begin);
 
         payload->reset();
-        descriptor_->first_used_payload = advance(descriptor_->first_used_payload);
+        descriptor_->notified_begin = advance(descriptor_->notified_begin);
         ++descriptor_->free_payloads;
         return DataSharingPayloadPool::release_payload(cache_change);
     }
@@ -209,10 +209,11 @@ public:
             // Initialize the data in the descriptor
             descriptor_->payloads_base = segment_->get_offset_from_address(payloads_buffer_);
             descriptor_->payloads_limit = segment_->get_offset_from_address(payloads_buffer_ + size_for_payloads_buffer);
-            descriptor_->first_free_payload = descriptor_->payloads_base;
-            descriptor_->first_used_payload = descriptor_->payloads_base;
+            descriptor_->notified_begin = descriptor_->payloads_base;
+            descriptor_->notified_end = descriptor_->payloads_base;
             descriptor_->free_payloads = pool_size_;
             descriptor_->aligned_payload_size = aligned_payload_size;
+            next_free_payload_ = descriptor_->payloads_base;
         }
         catch (std::exception& e)
         {
@@ -226,10 +227,32 @@ public:
         return true;
     }
 
+    void prepare_for_notification(const CacheChange_t* cache_change) override
+    {
+        assert(cache_change);
+        assert(cache_change->serializedPayload.data);
+        assert(cache_change->payload_owner() == this);
+
+        // Fill the payload metadata with the change info
+        PayloadNode* node = PayloadNode::get_from_data(cache_change->serializedPayload.data);
+        node->sequence_number(cache_change->sequenceNumber);
+        node->status(ALIVE);
+        node->data_length(cache_change->serializedPayload.length);
+        node->source_timestamp(cache_change->sourceTimestamp);
+        node->writer_GUID(cache_change->writerGUID);
+        node->instance_handle(cache_change->instanceHandle);
+        node->related_sample_identity(cache_change->write_params.sample_identity());
+
+        descriptor_->notified_end = advance(descriptor_->notified_end);
+    }
+
+
 private:
 
     uint32_t max_data_size_;    //< Maximum size of the serialized payload data
     size_t pool_size_;          //< Number of payloads in the pool
+
+    Segment::Offset next_free_payload_; //< Next available payload in the pool
 };
 
 
