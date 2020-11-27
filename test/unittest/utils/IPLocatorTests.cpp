@@ -222,18 +222,18 @@ TEST_F(IPLocatorTests, toIPv4string)
 {
     Locator_t locator;
     IPLocator::setIPv4(locator, 127, 0, 0, 1);
-    ASSERT_EQ(IPLocator::toIPv4string, ipv4_lo_address);
+    ASSERT_EQ(IPLocator::toIPv4string(locator), ipv4_lo_address);
     IPLocator::setIPv4(locator, ipv4_address.c_str());
-    ASSERT_EQ(IPLocator::toIPv4string, ipv4_address);
+    ASSERT_EQ(IPLocator::toIPv4string(locator), ipv4_address);
 }
 
 TEST_F(IPLocatorTests, toIPv6string)
 {
     Locator_t locator;
     IPLocator::setIPv6(locator, 0, 0, 0, 0, 0, 0, 0, 1);
-    ASSERT_EQ(IPLocator::toIPv6string, ipv6_lo_address);
+    ASSERT_EQ(IPLocator::toIPv6string(locator), ipv6_lo_address);
     IPLocator::setIPv6(locator, ipv6_address_repeated.c_str());
-    ASSERT_EQ(IPLocator::toIPv6string, ipv6_address);
+    ASSERT_EQ(IPLocator::toIPv6string(locator), ipv6_address);
 }
 
 TEST_F(IPLocatorTests, copyIPv4)
@@ -243,6 +243,144 @@ TEST_F(IPLocatorTests, copyIPv4)
 }
 
 TEST_F(IPLocatorTests, copyIPv6)
+{
+    // TODO
+    ASSERT_TRUE(false);
+}
+
+TEST_F(IPLocatorTests, ip)
+{
+    // TODO
+    ASSERT_TRUE(false);
+}
+
+TEST_F(IPLocatorTests, ip_to_string)
+{
+    // TODO
+    ASSERT_TRUE(false);
+}
+
+TEST_F(IPLocatorTests, setLogicalPort)
+{
+    // TODO
+    ASSERT_TRUE(false);
+}
+
+TEST_F(IPLocatorTests, getLogicalPort)
+{
+    // TODO
+    ASSERT_TRUE(false);
+}
+
+TEST_F(IPLocatorTests, setPhysicalPort)
+{
+    // TODO
+    ASSERT_TRUE(false);
+}
+
+TEST_F(IPLocatorTests, getPhysicalPort)
+{
+    // TODO
+    ASSERT_TRUE(false);
+}
+
+TEST_F(IPLocatorTests, setWan)
+{
+    // TODO
+    ASSERT_TRUE(false);
+}
+
+TEST_F(IPLocatorTests, getWan)
+{
+    // TODO
+    ASSERT_TRUE(false);
+}
+
+TEST_F(IPLocatorTests, hasWan)
+{
+    // TODO
+    ASSERT_TRUE(false);
+}
+
+TEST_F(IPLocatorTests, toWanstring)
+{
+    // TODO
+    ASSERT_TRUE(false);
+}
+
+TEST_F(IPLocatorTests, setLanID)
+{
+    // TODO
+    ASSERT_TRUE(false);
+}
+
+TEST_F(IPLocatorTests, getLanID)
+{
+    // TODO
+    ASSERT_TRUE(false);
+}
+
+TEST_F(IPLocatorTests, toLanIDstring)
+{
+    // TODO
+    ASSERT_TRUE(false);
+}
+
+TEST_F(IPLocatorTests, toPhysicalLocator)
+{
+    // TODO
+    ASSERT_TRUE(false);
+}
+
+TEST_F(IPLocatorTests, ip_equals_wan)
+{
+    // TODO
+    ASSERT_TRUE(false);
+}
+
+TEST_F(IPLocatorTests, setPortRTPS)
+{
+    // TODO
+    ASSERT_TRUE(false);
+}
+
+TEST_F(IPLocatorTests, getPortRTPS)
+{
+    // TODO
+    ASSERT_TRUE(false);
+}
+
+TEST_F(IPLocatorTests, isLocal)
+{
+    // TODO
+    ASSERT_TRUE(false);
+}
+
+TEST_F(IPLocatorTests, isAny)
+{
+    // TODO
+    ASSERT_TRUE(false);
+}
+
+TEST_F(IPLocatorTests, compareAddress)
+{
+    // TODO
+    ASSERT_TRUE(false);
+}
+
+TEST_F(IPLocatorTests, compareAddressAndPhysicalPort)
+{
+    // TODO
+    ASSERT_TRUE(false);
+}
+
+TEST_F(IPLocatorTests, to_string)
+{
+    // TODO
+    ASSERT_TRUE(false);
+}
+
+TEST_F(IPLocatorTests, isMulticast)
 {
     // TODO
     ASSERT_TRUE(false);
