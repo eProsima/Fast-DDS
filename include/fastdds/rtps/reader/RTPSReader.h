@@ -382,8 +382,6 @@ protected:
     bool is_datasharing_compatible_ = false;
     //! The listener for the datasharing notifications
     std::unique_ptr<DataSharingListener> datasharing_listener_;
-    //! Data sharing directory
-    std::string data_sharing_directory_;
 
 private:
 

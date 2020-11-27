@@ -27,6 +27,7 @@
 #include <rtps/history/BasicPayloadPool.hpp>
 #include <rtps/history/CacheChangePool.h>
 #include <rtps/history/DataSharingNotifier.hpp>
+#include <rtps/history/DataSharingPayloadPool_impl/WriterPool.hpp>
 #include <rtps/flowcontrol/FlowController.h>
 #include <rtps/participant/RTPSParticipantImpl.h>
 
@@ -114,9 +115,13 @@ void RTPSWriter::init(
         att.endpoint.properties, "fastdds.datasharing_directory");
     if (data_sharing_directory != nullptr)
     {
-        data_sharing_directory_ = *data_sharing_directory;
         is_datasharing_compatible_ = true;
         datasharing_notifier_.reset(new DataSharingNotifier(att.matched_readers_allocation, *data_sharing_directory));
+        std::shared_ptr<WriterPool> p = std::dynamic_pointer_cast<WriterPool>(payload_pool);
+        if (!p || !p->init_shared_memory(getGuid(), *data_sharing_directory))
+        {
+            logError(RTPS_WRITER, "Could not initialize DataSharing writer pool");
+        }
     }
 
     mp_history->mp_writer = this;
