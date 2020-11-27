@@ -818,8 +818,8 @@ inline uint32_t QosPoliciesSerializer<DataSharingQosPolicy>::cdr_serialized_size
 {
     // Size of data (8 bytes each)
     uint32_t data_size = static_cast<uint32_t>(qos_policy.domain_ids().size()) * 8;
-    // p_id + p_length + str_length + str_data
-    return 2 + 2 + 4 + data_size;
+    // p_id + p_length + kind + str_length + str_data
+    return 2 + 2 + 4 + 4 + data_size;
 }
 
 template<>
@@ -829,11 +829,17 @@ inline bool QosPoliciesSerializer<DataSharingQosPolicy>::add_to_cdr_message(
 {
     bool valid = fastrtps::rtps::CDRMessage::addUInt16(cdr_message, qos_policy.Pid);
 
-    //Obtain qos_policy.length:
-    uint16_t len = 4 + static_cast<uint16_t>(qos_policy.domain_ids().size()) * 8;
+    //Obtain qos_policy.length: kind + str_length + str_data
+
+    uint16_t len = 4 + 4 + static_cast<uint16_t>(qos_policy.domain_ids().size()) * 8;
     valid &= fastrtps::rtps::CDRMessage::addUInt16(cdr_message, len);
 
     //Add the values:
+    valid &= fastrtps::rtps::CDRMessage::addOctet(cdr_message, qos_policy.kind());
+    valid &= fastrtps::rtps::CDRMessage::addOctet(cdr_message, 0);
+    valid &= fastrtps::rtps::CDRMessage::addOctet(cdr_message, 0);
+    valid &= fastrtps::rtps::CDRMessage::addOctet(cdr_message, 0);
+
     valid &= fastrtps::rtps::CDRMessage::addUInt32(cdr_message,
                     static_cast<uint32_t>(qos_policy.domain_ids().size()));
     for (uint64_t id : qos_policy.domain_ids())
@@ -851,17 +857,36 @@ inline bool QosPoliciesSerializer<DataSharingQosPolicy>::read_content_from_cdr_m
         const uint16_t parameter_length)
 {
     qos_policy.length = parameter_length;
-
     uint32_t pos_ref = cdr_message->pos;
+
+    DataSharingKind kind;
+    bool valid = fastrtps::rtps::CDRMessage::readOctet(cdr_message,
+                    (fastrtps::rtps::octet*)&kind);
+    cdr_message->pos += 3; //padding
+
+    switch (kind)
+    {
+        case AUTO:
+            qos_policy.automatic("default"); //< We don't really care about the directory here
+            break;
+        case FORCED:
+            qos_policy.force("default"); //< We don't really care about the directory here
+            break;
+        case DISABLED:
+            qos_policy.disable(); //< Should not be sent, but anyways
+            break;
+        default:
+            return false;
+    }
+
     uint32_t num_domains = 0;
-    bool valid = fastrtps::rtps::CDRMessage::readUInt32(cdr_message, &num_domains);
+    valid &= fastrtps::rtps::CDRMessage::readUInt32(cdr_message, &num_domains);
 
     if (!valid || (qos_policy.max_domains() != 0 && num_domains > qos_policy.max_domains()))
     {
         return false;
     }
 
-    qos_policy.forced("default"); //< We don't really care about the directory here
     for (size_t i = 0; i < num_domains; ++i)
     {
         uint64_t domain;

@@ -174,18 +174,21 @@ ReturnCode_t DataReaderImpl::enable()
         att.endpoint.properties.properties().push_back(std::move(property));
     }
 
-    ReturnCode_t ret_code = check_datasharing_compatible(att);
+    bool is_datasharing_compatible = false;
+    ReturnCode_t ret_code = check_datasharing_compatible(att, is_datasharing_compatible);
     if (ret_code != ReturnCode_t::RETCODE_OK)
     {
         return ret_code;
     }
-
-    // Add datasharing information
-    if (is_data_sharing_compatible_)
+    if (is_datasharing_compatible)
     {
-        property.name("fastdds.datasharing_directory");
-        property.value(qos_.data_sharing().shm_directory());
-        att.endpoint.properties.properties().push_back(std::move(property));
+        att.endpoint.set_data_sharing_configuration(qos_.data_sharing());
+    }
+    else
+    {
+        DataSharingQosPolicy datasharing;
+        datasharing.disable();
+        att.endpoint.set_data_sharing_configuration(datasharing);
     }
 
     std::shared_ptr<IPayloadPool> pool = get_payload_pool();
@@ -220,9 +223,8 @@ ReturnCode_t DataReaderImpl::enable()
 
     // Register the reader
     ReaderQos rqos = qos_.get_readerqos(subscriber_->get_qos());
-    if (!is_data_sharing_compatible_)
+    if (!is_datasharing_compatible)
     {
-        // Do not send datasharing info on discovery
         rqos.data_sharing.disable();
     }
     subscriber_->rtps_participant()->registerReader(reader_, topic_attributes(), rqos);
@@ -1369,7 +1371,8 @@ void DataReaderImpl::release_payload_pool()
 
 
 ReturnCode_t DataReaderImpl::check_datasharing_compatible(
-        const ReaderAttributes& reader_attributes)
+        const ReaderAttributes& reader_attributes,
+        bool& is_datasharing_compatible) const
 {
 #if HAVE_SECURITY
     bool has_security_enabled = subscriber_->rtps_participant()->is_security_enabled_for_reader(reader_attributes);
@@ -1377,10 +1380,10 @@ ReturnCode_t DataReaderImpl::check_datasharing_compatible(
     (void) reader_attributes;
 #endif // HAVE_SECURITY
 
+    is_datasharing_compatible = false;
     switch (qos_.data_sharing().kind())
     {
         case DataSharingKind::DISABLED:
-            is_data_sharing_compatible_ = false;
             return ReturnCode_t::RETCODE_OK;
             break;
         case DataSharingKind::FORCED:
@@ -1388,18 +1391,16 @@ ReturnCode_t DataReaderImpl::check_datasharing_compatible(
             if (has_security_enabled)
             {
                 logError(DATA_READER, "Data sharing cannot be used with security protection.");
-                is_data_sharing_compatible_ = false;
                 return ReturnCode_t::RETCODE_NOT_ALLOWED_BY_SECURITY;
             }
 #endif
             if (!type_.is_bounded())
             {
                 logInfo(DATA_READER, "Data sharing cannot be used with unbounded data types");
-                is_data_sharing_compatible_ = false;
                 return ReturnCode_t::RETCODE_BAD_PARAMETER;
             }
 
-            is_data_sharing_compatible_ = true;
+            is_datasharing_compatible = true;
             return ReturnCode_t::RETCODE_OK;
             break;
         case DataSharingKind::AUTO:
@@ -1407,7 +1408,6 @@ ReturnCode_t DataReaderImpl::check_datasharing_compatible(
             if (has_security_enabled)
             {
                 logInfo(DATA_READER, "Data sharing disabled due to security configuration.");
-                is_data_sharing_compatible_ = false;
                 return ReturnCode_t::RETCODE_OK;
             }
 #endif
@@ -1415,16 +1415,14 @@ ReturnCode_t DataReaderImpl::check_datasharing_compatible(
             if (!type_.is_bounded())
             {
                 logInfo(DATA_READER, "Data sharing disabled because data type is not bounded");
-                is_data_sharing_compatible_ = false;
                 return ReturnCode_t::RETCODE_OK;
         }
 
-            is_data_sharing_compatible_ = true;
+            is_datasharing_compatible = true;
             return ReturnCode_t::RETCODE_OK;
             break;
         default:
             logError(DATA_WRITER, "Unknown data sharing kind.");
-            is_data_sharing_compatible_ = false;
             return ReturnCode_t::RETCODE_BAD_PARAMETER;
     }
 }

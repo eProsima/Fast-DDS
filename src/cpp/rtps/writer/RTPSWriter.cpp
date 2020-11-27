@@ -111,14 +111,13 @@ void RTPSWriter::init(
         fixed_payload_size_ = mp_history->m_att.payloadMaxSize;
     }
 
-    const std::string* data_sharing_directory = PropertyPolicyHelper::find_property(
-        att.endpoint.properties, "fastdds.datasharing_directory");
-    if (data_sharing_directory != nullptr)
+    if (att.endpoint.data_sharing_configuration().kind() != DISABLED)
     {
         is_datasharing_compatible_ = true;
-        datasharing_notifier_.reset(new DataSharingNotifier(att.matched_readers_allocation, *data_sharing_directory));
+        datasharing_notifier_.reset(new DataSharingNotifier(
+                att.matched_readers_allocation, att.endpoint.data_sharing_configuration().shm_directory()));
         std::shared_ptr<WriterPool> p = std::dynamic_pointer_cast<WriterPool>(payload_pool);
-        if (!p || !p->init_shared_memory(getGuid(), *data_sharing_directory))
+        if (!p || !p->init_shared_memory(getGuid(), att.endpoint.data_sharing_configuration().shm_directory()))
         {
             logError(RTPS_WRITER, "Could not initialize DataSharing writer pool");
         }
