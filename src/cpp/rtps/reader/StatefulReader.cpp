@@ -178,6 +178,9 @@ bool StatefulReader::matched_writer_add(
         }
         else
         {
+            logError(RTPS_READER, "Failed to add Writer Proxy " << wdata.guid()
+                    << " to " << this->m_guid.entityId 
+                    << " with data sharing.");
             return false;
         }
 
@@ -1121,7 +1124,7 @@ void StatefulReader::send_acknack(
         RTPSMessageGroup group(getRTPSParticipant(), this, sender);
         group.add_acknack(sns, acknack_count_, is_final);
     }
-    else
+    else if (!is_datasharing_compatible_ || !datasharing_listener_->writer_is_matched(writer->guid()))
     {
         GUID_t reader_guid = m_guid;
         uint32_t acknack_count = acknack_count_;
