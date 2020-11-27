@@ -172,25 +172,22 @@ void DomainParticipantImpl::disable()
     }
     rtps_listener_.participant_ = nullptr;
 
-    // We only need to disable lower entities if we have been previously enabled
+    // The function to disable the DomainParticipantImpl is called exclusively from
+    // DomainParticipantFactory::delete_participant(), which returns RETCODE_PRECONDITION_NOT_MET in case the
+    // participant has lower entities. Therefore, at this point the DomainParticipantImpl should never have publishers
+    // or subscribers.
     if (rtps_participant_ != nullptr)
     {
         rtps_participant_->set_listener(nullptr);
 
         {
             std::lock_guard<std::mutex> lock(mtx_pubs_);
-            for (auto pub_it = publishers_.begin(); pub_it != publishers_.end(); ++pub_it)
-            {
-                pub_it->second->disable();
-            }
+            assert(publishers_.empty());
         }
 
         {
             std::lock_guard<std::mutex> lock(mtx_subs_);
-            for (auto sub_it = subscribers_.begin(); sub_it != subscribers_.end(); ++sub_it)
-            {
-                sub_it->second->disable();
-            }
+            assert(subscribers_.empty());
         }
     }
 }
@@ -459,8 +456,10 @@ Publisher* DomainParticipantImpl::create_publisher(
 {
     if (!PublisherImpl::check_qos(qos))
     {
-        logError(PARTICIPANT, "PublisherQos inconsistent or not supported");
-        return nullptr;
+        // The PublisherImpl::check_qos() function is not yet implemented and always returns ReturnCode_t::RETCODE_OK.
+        // It will be implemented in future releases of Fast DDS.
+        // logError(PARTICIPANT, "PublisherQos inconsistent or not supported");
+        // return nullptr;
     }
 
     //TODO CONSTRUIR LA IMPLEMENTACION DENTRO DEL OBJETO DEL USUARIO.
@@ -855,8 +854,10 @@ Subscriber* DomainParticipantImpl::create_subscriber(
 {
     if (!SubscriberImpl::check_qos(qos))
     {
-        logError(PARTICIPANT, "SubscriberQos inconsistent or not supported");
-        return nullptr;
+        // The SubscriberImpl::check_qos() function is not yet implemented and always returns ReturnCode_t::RETCODE_OK.
+        // It will be implemented in future releases of Fast DDS.
+        // logError(PARTICIPANT, "SubscriberQos inconsistent or not supported");
+        // return nullptr;
     }
 
     //TODO CONSTRUIR LA IMPLEMENTACION DENTRO DEL OBJETO DEL USUARIO.

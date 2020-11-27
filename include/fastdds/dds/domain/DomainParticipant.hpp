@@ -630,12 +630,6 @@ protected:
     RTPS_DllAPI DomainParticipant(
             const StatusMask& mask = StatusMask::all());
 
-    RTPS_DllAPI DomainParticipant(
-            DomainId_t domain_id,
-            const DomainParticipantQos& qos,
-            DomainParticipantListener* listener,
-            const StatusMask& mask = StatusMask::all());
-
     DomainParticipantImpl* impl_;
 
     friend class DomainParticipantFactory;

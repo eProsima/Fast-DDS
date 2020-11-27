@@ -98,6 +98,11 @@ public:
         return true;
     }
 
+    void clearName()
+    {
+        setName("");
+    }
+
 };
 
 TEST(ParticipantTests, DomainParticipantFactoryGetInstance)
@@ -385,6 +390,12 @@ TEST(ParticipantTests, EntityFactoryBehavior)
     ASSERT_NE(nullptr, sub);
     EXPECT_FALSE(sub->is_enabled());
 
+    TypeSupport type(new TopicDataTypeMock());
+    type.register_type(participant);
+    Topic* topic = participant->create_topic("footopic", type.get_type_name(), TOPIC_QOS_DEFAULT);
+    ASSERT_NE(topic, nullptr);
+    EXPECT_FALSE(topic->is_enabled());
+
     // Enabling should fail on lower entities until participant is enabled
     EXPECT_EQ(ReturnCode_t::RETCODE_PRECONDITION_NOT_MET, pub->enable());
     EXPECT_EQ(ReturnCode_t::RETCODE_PRECONDITION_NOT_MET, sub->enable());
@@ -431,6 +442,7 @@ TEST(ParticipantTests, EntityFactoryBehavior)
     EXPECT_EQ(ReturnCode_t::RETCODE_OK, participant->delete_publisher(pub2));
     EXPECT_EQ(ReturnCode_t::RETCODE_OK, participant->delete_subscriber(sub));
     EXPECT_EQ(ReturnCode_t::RETCODE_OK, participant->delete_publisher(pub));
+    EXPECT_EQ(ReturnCode_t::RETCODE_OK, participant->delete_topic(topic));
     EXPECT_EQ(ReturnCode_t::RETCODE_OK, DomainParticipantFactory::get_instance()->delete_participant(participant));
 }
 
@@ -801,16 +813,25 @@ TEST(ParticipantTests, GetTopicProfileQos)
 
 TEST(ParticipantTests, CreateTopic)
 {
+    DomainParticipantFactory::get_instance()->load_XML_profiles_file("test_xml_profiles.xml");
     DomainParticipant* participant =
             DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
 
     TypeSupport type(new TopicDataTypeMock());
     type.register_type(participant, "footype");
 
+    // Topic using the default profile
     Topic* topic = participant->create_topic("footopic", "footype", TOPIC_QOS_DEFAULT);
     ASSERT_NE(topic, nullptr);
 
     ASSERT_TRUE(participant->delete_topic(topic) == ReturnCode_t::RETCODE_OK);
+
+    // Topic using non-default profile
+    Topic* topic_profile = participant->create_topic_with_profile("footopic", "footype", "test_topic_profile");
+    ASSERT_NE(topic_profile, nullptr);
+    check_topic_with_profile(topic_profile, "test_topic_profile");
+    ASSERT_TRUE(participant->delete_topic(topic_profile) == ReturnCode_t::RETCODE_OK);
+
     ASSERT_TRUE(DomainParticipantFactory::get_instance()->delete_participant(participant) == ReturnCode_t::RETCODE_OK);
 }
 
@@ -975,6 +996,93 @@ TEST(ParticipantTests, SetListener)
     }
 
     ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), ReturnCode_t::RETCODE_OK);
+}
+
+TEST(ParticipantTests, CheckDomainParticipantQos)
+{
+
+    DomainParticipantFactory* factory = DomainParticipantFactory::get_instance();
+
+    {
+        DomainParticipantFactoryQos qos;
+        qos.entity_factory().autoenable_created_entities = false;
+
+        ASSERT_TRUE(factory->set_qos(qos) == ReturnCode_t::RETCODE_OK);
+    }
+
+    DomainParticipant* participant =
+            DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
+    DomainParticipantQos qos;
+    ASSERT_TRUE(participant->get_qos(qos) == ReturnCode_t::RETCODE_OK);
+
+    qos.user_data().set_max_size(5);
+    std::vector<eprosima::fastrtps::rtps::octet> my_data {0, 1, 2, 3, 4};
+    qos.user_data().setValue(my_data);
+    ASSERT_TRUE(participant->set_qos(qos) == ReturnCode_t::RETCODE_OK);
+
+    qos.allocation().data_limits.max_user_data = 1;
+    ASSERT_EQ(qos.allocation().data_limits.max_user_data, 1);
+    ASSERT_TRUE(participant->set_qos(qos) == ReturnCode_t::RETCODE_INCONSISTENT_POLICY);
+
+    EXPECT_EQ(ReturnCode_t::RETCODE_OK, participant->enable());
+
+    ASSERT_TRUE(DomainParticipantFactory::get_instance()->delete_participant(participant) == ReturnCode_t::RETCODE_OK);
+}
+
+TEST(ParticipantTests, DeleteEntitiesNegativeClauses)
+{
+    DomainParticipant* participant_1 =
+            DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
+    DomainParticipant* participant_2 =
+            DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
+
+    Subscriber* subscriber_1 = participant_1->create_subscriber(SUBSCRIBER_QOS_DEFAULT);
+    ASSERT_NE(subscriber_1, nullptr);
+    ASSERT_EQ(participant_2->delete_subscriber(subscriber_1), ReturnCode_t::RETCODE_PRECONDITION_NOT_MET);
+    ASSERT_EQ(participant_1->delete_subscriber(subscriber_1), ReturnCode_t::RETCODE_OK);
+
+    Publisher* publisher_1 = participant_1->create_publisher(PUBLISHER_QOS_DEFAULT);
+    ASSERT_NE(publisher_1, nullptr);
+    ASSERT_EQ(participant_2->delete_publisher(publisher_1), ReturnCode_t::RETCODE_PRECONDITION_NOT_MET);
+    ASSERT_EQ(participant_1->delete_publisher(publisher_1), ReturnCode_t::RETCODE_OK);
+
+    ASSERT_TRUE(DomainParticipantFactory::get_instance()->delete_participant(participant_1) == ReturnCode_t::RETCODE_OK);
+    ASSERT_TRUE(DomainParticipantFactory::get_instance()->delete_participant(participant_2) == ReturnCode_t::RETCODE_OK);
+}
+
+TEST(ParticipantTests, CreateEntitiesWithProfileNegativeClauses)
+{
+    DomainParticipant* participant =
+            DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
+
+    // Create publisher with an empty profile should return nullptr
+    Publisher* publisher = participant->create_publisher_with_profile("");
+    ASSERT_EQ(publisher, nullptr);
+
+    // Create subscriber with an empty profile should return nullptr
+    Subscriber* subscriber = participant->create_subscriber_with_profile("");
+    ASSERT_EQ(subscriber, nullptr);
+
+    // Create topic with an empty profile should return nullptr
+    Topic* topic = participant->create_topic_with_profile("footopic", "footype", "");
+    ASSERT_EQ(topic, nullptr);
+
+    ASSERT_TRUE(DomainParticipantFactory::get_instance()->delete_participant(participant) == ReturnCode_t::RETCODE_OK);
+}
+
+TEST(ParticipantTests, RegisterTypeNegativeClauses)
+{
+    DomainParticipantFactory::get_instance()->load_XML_profiles_file("test_xml_profiles.xml");
+    DomainParticipant* participant =
+            DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
+
+    TopicDataTypeMock* data_type = new TopicDataTypeMock();
+    data_type->clearName();
+
+    TypeSupport type(data_type);
+    EXPECT_EQ(type.register_type(participant), ReturnCode_t::RETCODE_BAD_PARAMETER);
+
+    ASSERT_TRUE(DomainParticipantFactory::get_instance()->delete_participant(participant) == ReturnCode_t::RETCODE_OK);
 }
 
 } // namespace dds
