@@ -31,7 +31,10 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             )
 
         if(WIN32)
-            add_definitions(-D_WIN32_WINNT=0x0601)
+            add_definitions(
+                -D_WIN32_WINNT=0x0601
+                -D_CRT_SECURE_NO_WARNINGS
+                )
         endif()
 
         add_executable(PublisherTests ${PUBLISHERTESTS_SOURCE})

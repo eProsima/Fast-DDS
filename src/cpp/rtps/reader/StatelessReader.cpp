@@ -371,8 +371,7 @@ bool StatelessReader::nextUnreadCache(
         logInfo(RTPS_READER, "No Unread elements left");
     }
 
-    for (std::vector<CacheChange_t*>::iterator it = toremove.begin();
-            it != toremove.end(); ++it)
+    for (it = toremove.begin(); it != toremove.end(); ++it)
     {
         mp_history->remove_change(*it);
     }

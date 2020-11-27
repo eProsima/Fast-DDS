@@ -57,10 +57,10 @@ bool DataSharingNotification::create_and_init_notification(
     segment_name_ = generate_segment_name(shared_dir, reader_guid);
 
     // Extra size for the internal allocator structures (512bytes estimated)
-    size_t extra = 512;
-    size_t per_allocation_extra_size = Segment::compute_per_allocation_extra_size(
+    uint32_t extra = 512;
+    uint32_t per_allocation_extra_size = Segment::compute_per_allocation_extra_size(
         alignof(Notification), DataSharingNotification::domain_name());
-    size_t segment_size = Notification::aligned_size() + per_allocation_extra_size;
+    uint32_t segment_size = Notification::aligned_size() + per_allocation_extra_size;
 
     //Open the segment
     Segment::remove(segment_name_);

@@ -156,14 +156,14 @@ public:
         segment_name_ = generate_segment_name(shared_dir, writer_guid);
 
         // Extra size for the internal allocator structures (512bytes estimated)
-        size_t extra = 512;
-        size_t per_allocation_extra_size = fastdds::rtps::SharedMemSegment::compute_per_allocation_extra_size(
+        uint32_t extra = 512;
+        uint32_t per_allocation_extra_size = fastdds::rtps::SharedMemSegment::compute_per_allocation_extra_size(
                 alignof(PayloadNode), DataSharingPayloadPool::domain_name());
-        size_t aligned_payload_size = DataSharingPayloadPool::aligned_node_size(max_data_size_);
+        uint32_t aligned_payload_size = DataSharingPayloadPool::aligned_node_size(max_data_size_);
         //Reserve one extra to avoid pointer overlapping
-        size_t size_for_payloads_buffer = (pool_size_ + 1) * aligned_payload_size;
-        size_t aligned_descriptor_size = DataSharingPayloadPool::aligned_descriptor_size();
-        size_t segment_size = size_for_payloads_buffer + per_allocation_extra_size +
+        uint32_t size_for_payloads_buffer = (pool_size_ + 1) * aligned_payload_size;
+        uint32_t aligned_descriptor_size = DataSharingPayloadPool::aligned_descriptor_size();
+        uint32_t segment_size = size_for_payloads_buffer + per_allocation_extra_size +
                 aligned_descriptor_size + per_allocation_extra_size;
 
         //Open the segment
