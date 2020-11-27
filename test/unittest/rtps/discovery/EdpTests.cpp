@@ -388,6 +388,39 @@ TEST_F(EdpTests, CheckPositiveAckCompatibility)
     }
 }
 
+TEST_F(EdpTests, CheckDataSharingCompatibility)
+{
+    // None is datasharing
+    wdata->m_qos.data_sharing.disable();
+    rdata->m_qos.data_sharing.disable();
+    check_expectations(true);
+
+    // One is datasharing, the other one is not
+    wdata->m_qos.data_sharing.force("path");
+    rdata->m_qos.data_sharing.disable();
+    check_expectations(false, fastdds::dds::DATASHARING_QOS_POLICY_ID);
+
+    rdata->m_qos.data_sharing.force("path");
+    wdata->m_qos.data_sharing.disable();
+    check_expectations(false, fastdds::dds::DATASHARING_QOS_POLICY_ID);
+
+    // Both are datasharing with no common ID
+    std::vector<uint16_t> wdomain_ids;
+    wdomain_ids.push_back(10);
+    wdata->m_qos.data_sharing.force("path", wdomain_ids);
+    std::vector<uint16_t> rdomain_ids;
+    rdomain_ids.push_back(20);
+    rdata->m_qos.data_sharing.force("path", rdomain_ids);
+    check_expectations(false, fastdds::dds::DATASHARING_QOS_POLICY_ID);
+
+    // Add a common ID
+    wdomain_ids.push_back(30);
+    wdata->m_qos.data_sharing.force("path", wdomain_ids);
+    rdomain_ids.push_back(30);
+    rdata->m_qos.data_sharing.force("path", rdomain_ids);
+    check_expectations(true);
+}
+
 
 } // namespace rtps
 } // namespace fastrtps
