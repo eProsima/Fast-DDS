@@ -21,10 +21,16 @@
 #define XMLENDPOINTPARSER_H_
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
-#include <fastrtps/xmlparser/XMLParserCommon.h>
-#include <set>
-#include <vector>
 #include <cstdint>
+#include <set>
+#include <string>
+#include <vector>
+
+#include <tinyxml2.h>
+
+#include <fastdds/rtps/builtin/data/ReaderProxyData.h>
+#include <fastdds/rtps/builtin/data/WriterProxyData.h>
+#include <fastrtps/xmlparser/XMLParserCommon.h>
 
 namespace tinyxml2
 {
