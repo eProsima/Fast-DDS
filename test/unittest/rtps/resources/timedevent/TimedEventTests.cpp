@@ -333,6 +333,80 @@ TEST(TimedEventMultithread, Event_FourAutoRestart)
     std::this_thread::sleep_for(std::chrono::milliseconds(200));
 }
 
+TEST(TimedEventMultithread, PendingRaceCheck)
+{
+    using TimedEvent = eprosima::fastrtps::rtps::TimedEvent;
+    using TimeClock = std::chrono::high_resolution_clock;
+    using TimePoint = std::chrono::time_point<TimeClock>;
+
+    constexpr auto periodic_ms = std::chrono::milliseconds(1000);
+    constexpr auto newcomer_ms = std::chrono::milliseconds(10);
+
+    bool stop_test = false;
+
+    // Code to check the newcomer event
+    auto newcomer_thread_code = [&]()
+            {
+                std::condition_variable cv;
+                std::mutex mtx;
+                bool triggered = false;
+
+                // The event will just inform it has been triggered
+                auto callback = [&]()
+                        {
+                            std::lock_guard<std::mutex> guard(mtx);
+                            triggered = true;
+                            cv.notify_one();
+
+                            return false;
+                        };
+
+                // We create the timed event and then enter in a loop where we will start
+                // it and wait for its completion. We will then check that it is triggered
+                // in less time than half the periodic timed event
+                TimedEvent newcomer_event(*env->service_, callback, 1.0 * newcomer_ms.count());
+                while (!stop_test)
+                {
+                    TimePoint start_time;
+                    TimePoint stop_time;
+
+                    start_time = TimeClock::now();
+
+                    {
+                        std::unique_lock<std::mutex> lock(mtx);
+                        triggered = false;
+                        newcomer_event.restart_timer();
+                        cv.wait(lock, [&]()
+                                {
+                                    return triggered;
+                                });
+                        stop_time = TimeClock::now();
+                    }
+
+                    EXPECT_LT(stop_time - start_time, periodic_ms / 2);
+                }
+            };
+
+    // Periodic event that triggers every second
+    auto periodic_callback = []()
+            {
+                return true;
+            };
+    TimedEvent periodic_event(*env->service_, periodic_callback, 1.0 * periodic_ms.count());
+
+    // Let the periodic event run for several periods
+    periodic_event.restart_timer();
+    std::this_thread::sleep_for(periodic_ms * 2);
+
+    // Launch the checking thread and let it run for several periods
+    std::thread* checking_thr = new std::thread(newcomer_thread_code);
+    std::this_thread::sleep_for(periodic_ms * 10);
+
+    stop_test = true;
+    checking_thr->join();
+    delete checking_thr;
+}
+
 int main(
         int argc,
         char** argv)
