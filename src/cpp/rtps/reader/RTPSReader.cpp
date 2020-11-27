@@ -334,6 +334,44 @@ uint64_t RTPSReader::get_unread_count() const
     return total_unread_;
 }
 
+bool RTPSReader::is_datasharing_compatible_with(
+        const WriterProxyData& wdata)
+{
+    // Illegal matches have been rejected by EDP,
+    // including unmatching domain IDs
+    // so the only possibilities are:
+    // FORCED - FORCED -> yes
+    // FORCED - AUTO -> yes
+    // DISABLED - AUTO -> no
+    // DISABLED - DISABLED -> no
+    // AUTO - AUTO -> Depends on the domain IDs
+
+    if (m_att.data_sharing_configuration().kind() == fastdds::dds::DISABLED ||
+        wdata.m_qos.data_sharing.kind() == fastdds::dds::DISABLED)
+    {
+        return false;
+    }
+
+    if (m_att.data_sharing_configuration().kind() == fastdds::dds::FORCED ||
+        wdata.m_qos.data_sharing.kind() == fastdds::dds::FORCED)
+    {
+        return true;
+    }
+
+    // AUTO-AUTO
+    for (auto id : wdata.m_qos.data_sharing.domain_ids())
+    {
+        if (std::find(m_att.data_sharing_configuration().domain_ids().begin(),
+                m_att.data_sharing_configuration().domain_ids().end(), id)
+                != m_att.data_sharing_configuration().domain_ids().end())
+        {
+            return true;
+        }
+    }
+
+    return false;
+}
+
 } /* namespace rtps */
 } /* namespace fastrtps */
 } /* namespace eprosima */
