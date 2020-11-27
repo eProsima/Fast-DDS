@@ -35,6 +35,7 @@
 
 #include <fastdds/dds/log/Log.hpp>
 #include <fastrtps/utils/TimeConversion.h>
+#include <utils/Host.hpp>
 #include <fastdds/rtps/resources/ResourceEvent.h>
 #include <fastdds/rtps/resources/TimedEvent.h>
 #include <fastdds/rtps/builtin/liveliness/WLP.h>
@@ -203,11 +204,24 @@ ReturnCode_t DataWriterImpl::enable()
     {
         property.name("fastdds.datasharing_domains");
         std::stringstream ss;
-        bool is_first_domain = true;
-        for (auto id : qos_.data_sharing().domain_ids())
+        if (qos_.data_sharing().domain_ids().empty())
         {
-            ss << (is_first_domain ? "" : ";") << id;
-            is_first_domain = false;
+            uint64_t id = 0;
+            Host::uint48 mac_id = Host::get().mac_id();
+            for (size_t i = 0; i < Host::mac_id_length; ++i)
+            {
+                id |= mac_id.value[i] << (64 - i);
+            }
+            ss << id;
+        }
+        else
+        {
+            bool is_first_domain = true;
+            for (auto id : qos_.data_sharing().domain_ids())
+            {
+                ss << (is_first_domain ? "" : ";") << id;
+                is_first_domain = false;
+            }
         }
         property.value(ss.str());
         w_att.endpoint.properties.properties().push_back(std::move(property));

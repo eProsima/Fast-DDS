@@ -179,11 +179,6 @@ bool WriterQos::checkQos() const
             return false;
         }
     }
-    if (data_sharing.kind() != DISABLED && data_sharing.domain_ids().empty())
-    {
-        logError(RTPS_QOS_CHECK, "WRITERQOS: Data sharing compatible but no domain ID defined");
-        return false;
-    }
     return true;
 }
 
