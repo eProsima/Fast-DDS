@@ -218,6 +218,7 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             ${TINYXML2_LIBRARY}
             fastcdr
         )
+        add_gtest(XMLParserTests SOURCES XMLParserTests.cpp XMLElementParserTests.cpp)
 
         set(XMLTREE_SOURCE
             XMLTreeTests.cpp
@@ -239,5 +240,34 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             $<$<BOOL:${WIN32}>:ws2_32>
         )
         add_gtest(XMLTreeTests SOURCES XMLTreeTests.cpp)
+
+        set(XMLENDPOINTPARSERTESTS_SOURCE
+            XMLEndpointParserTests.cpp
+        )
+
+        # External sources
+        if(TINYXML2_SOURCE_DIR)
+            list(APPEND XMLENDPOINTPARSERTESTS_SOURCE
+                ${TINYXML2_SOURCE_DIR}/tinyxml2.cpp
+                )
+        endif()
+
+        include_directories(${TINYXML2_INCLUDE_DIR})
+
+        add_executable(XMLEndpointParserTests ${XMLENDPOINTPARSERTESTS_SOURCE})
+        target_compile_definitions(XMLEndpointParserTests PRIVATE FASTRTPS_NO_LIB)
+        target_include_directories(XMLEndpointParserTests PRIVATE
+            ${GTEST_INCLUDE_DIRS}
+            )
+
+        target_link_libraries(XMLEndpointParserTests ${GTEST_LIBRARIES}
+            $<$<BOOL:${WIN32}>:iphlpapi$<SEMICOLON>Shlwapi>
+            $<$<BOOL:${WIN32}>:ws2_32>
+            fastrtps fastcdr foonathan_memory
+            ${TINYXML2_LIBRARY}
+            fastcdr
+            foonathan_memory
+        )
+        add_gtest(XMLEndpointParserTests SOURCES XMLEndpointParserTests.cpp)
     endif()
 endif()
