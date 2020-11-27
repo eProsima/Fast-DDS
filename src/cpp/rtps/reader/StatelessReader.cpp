@@ -103,6 +103,9 @@ bool StatelessReader::matched_writer_add(
         }
         else
         {
+            logError(RTPS_READER, "Failed to add Writer Proxy " << wdata.guid()
+                    << " to " << this->m_guid.entityId 
+                    << " with data sharing.");
             return false;
         }
 
