@@ -228,7 +228,6 @@ bool IPFinder::getAllMACAddress(std::vector<info_MAC>* macs)
 {
     DWORD rv, size = DEFAULT_ADAPTER_ADDRESSES_SIZE;
     PIP_ADAPTER_ADDRESSES adapter_addresses, aa;
-    PIP_ADAPTER_UNICAST_ADDRESS ua;
 
     adapter_addresses = (PIP_ADAPTER_ADDRESSES)malloc(DEFAULT_ADAPTER_ADDRESSES_SIZE);
 

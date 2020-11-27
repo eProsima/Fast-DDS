@@ -103,6 +103,7 @@ std::shared_ptr<DataSharingPayloadPool> DataSharingPayloadPool::get_reader_pool(
         const PoolConfig& config,
         bool is_volatile)
 {
+    (void) config;
     assert (config.memory_policy == PREALLOCATED_MEMORY_MODE);
     
     return std::make_shared<ReaderPool>(is_volatile);
