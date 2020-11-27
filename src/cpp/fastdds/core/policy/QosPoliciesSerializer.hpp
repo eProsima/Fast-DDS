@@ -861,7 +861,7 @@ inline bool QosPoliciesSerializer<DataSharingQosPolicy>::read_content_from_cdr_m
         return false;
     }
 
-    qos_policy.automatic();
+    qos_policy.forced("default"); //< We don't really care about the directory here
     for (size_t i = 0; i < num_domains; ++i)
     {
         uint64_t domain;

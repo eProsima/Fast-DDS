@@ -89,6 +89,7 @@ enum QosPolicyId_t : uint32_t
     TYPECONSISTENCY_QOS_POLICY_ID           = 34,   //< TipeConsistencyQos
     WIREPROTOCOLCONFIG_QOS_POLICY_ID        = 35,   //< WireProtocolConfigQos
     WRITERRESOURCELIMITS_QOS_POLICY_ID      = 36,   //< WriterResourceLimitsQos
+    DATASHARING_QOS_POLICY_ID               = 37,   //< DataSharingQosPolicy
 
     NEXT_QOS_POLICY_ID                              //< Keep always the last element. For internal use only
 };
