@@ -381,6 +381,43 @@ const Duration_t& RTPSWriter::get_liveliness_announcement_period() const
     return liveliness_announcement_period_;
 }
 
+bool RTPSWriter::is_datasharing_compatible_with(
+        const ReaderProxyData& rdata)
+{
+    // Illegal matches have been rejected by EDP,
+    // including unmatching domain IDs
+    // so the only possibilities are:
+    // FORCED - FORCED -> yes
+    // FORCED - AUTO -> yes
+    // DISABLED - AUTO -> no
+    // DISABLED - DISABLED -> no
+    // AUTO - AUTO -> Depends on the domain IDs
+
+    if (m_att.data_sharing_configuration().kind() == fastdds::dds::DISABLED ||
+        rdata.m_qos.data_sharing.kind() == fastdds::dds::DISABLED)
+    {
+        return false;
+    }
+
+    if (m_att.data_sharing_configuration().kind() == fastdds::dds::FORCED ||
+        rdata.m_qos.data_sharing.kind() == fastdds::dds::FORCED)
+    {
+        return true;
+    }
+
+    // AUTO-AUTO
+    for (auto id : rdata.m_qos.data_sharing.domain_ids())
+    {
+        if (std::find(m_att.data_sharing_configuration().domain_ids().begin(),
+                m_att.data_sharing_configuration().domain_ids().end(), id)
+                != m_att.data_sharing_configuration().domain_ids().end())
+        {
+            return true;
+        }
+    }
+
+    return false;
+}
 
 }  // namespace rtps
 }  // namespace fastrtps

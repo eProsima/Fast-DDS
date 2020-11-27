@@ -468,6 +468,9 @@ protected:
     virtual bool change_removed_by_history(
             CacheChange_t* a_change) = 0;
 
+    bool is_datasharing_compatible_with(
+            const ReaderProxyData& rdata);
+
 private:
 
     RTPSWriter& operator =(

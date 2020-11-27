@@ -92,8 +92,7 @@ bool StatelessReader::matched_writer_add(
         }
     }
 
-    if (is_datasharing_compatible_ &&
-            wdata.m_qos.data_sharing.kind() != fastdds::dds::DISABLED)
+    if (is_datasharing_compatible_with(wdata))
     {
         if (datasharing_listener_->add_datasharing_writer(wdata.guid(),
             PoolConfig::from_history_attributes(mp_history->m_att),
