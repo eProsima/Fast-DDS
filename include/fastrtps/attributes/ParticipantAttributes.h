@@ -57,7 +57,7 @@ public:
 
 };
 
-}
-}
+} // namespace fastrtps
+} // namespace eprosima
 
 #endif /* PARTICIPANTATTRIBUTES_H_ */
