@@ -708,26 +708,6 @@ GUID_t RemoteServerAttributes::GetPDPWriter() const
     return GUID_t(guidPrefix, c_EntityId_SPDPWriter);
 }
 
-GUID_t RemoteServerAttributes::GetEDPPublicationsReader() const
-{
-    return GUID_t(guidPrefix, c_EntityId_SEDPPubReader);
-}
-
-GUID_t RemoteServerAttributes::GetEDPSubscriptionsWriter() const
-{
-    return GUID_t(guidPrefix, c_EntityId_SEDPSubWriter);
-}
-
-GUID_t RemoteServerAttributes::GetEDPPublicationsWriter() const
-{
-    return GUID_t(guidPrefix, c_EntityId_SEDPPubWriter);
-}
-
-GUID_t RemoteServerAttributes::GetEDPSubscriptionsReader() const
-{
-    return GUID_t(guidPrefix, c_EntityId_SEDPSubReader);
-}
-
 bool get_server_client_default_guidPrefix(
         int id,
         GuidPrefix_t& guid)
