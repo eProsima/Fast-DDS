@@ -118,20 +118,6 @@ void DataSharingListener::process_new_data ()
                 logInfo(RTPS_READER, "New data found on writer " <<(*it)->writer()
                         << " with SN " << ch.sequenceNumber);
 
-                // TODO [ILG] process security attributes
-/*
-#if HAVE_SECURITY
-               if (getAttributes().security_attributes().is_payload_protected)
-                {
-                   if (mp_RTPSParticipant->security_manager().decode_serialized_payload(ch.serializedPayload, crypto_payload_,
-                          getGuid(), ch.writerGUID))
-                   {
-                        ch.serializedPayload.data = crypto_payload_.data;
-                        ch.serializedPayload.length = crypto_payload_.length;
-                    }
-                }
-#endif  // HAVE_SECURITY
-*/
                 callback_(&ch);
                 (*it)->release_payload(ch);
             }

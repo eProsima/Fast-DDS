@@ -38,24 +38,6 @@ bool DataSharingPayloadPool::release_payload(
     return true;
 }
 
-void DataSharingPayloadPool::fill_metadata(const CacheChange_t* cache_change)
-{
-    assert(cache_change);
-    assert(cache_change->serializedPayload.data);
-    assert(cache_change->payload_owner() == this);
-
-    // Fill the payload metadata with the change info
-    PayloadNode* node = PayloadNode::get_from_data(cache_change->serializedPayload.data);
-    node->status(ALIVE);
-    //node->encapsulation();
-    node->data_length(cache_change->serializedPayload.length);
-    node->source_timestamp(cache_change->sourceTimestamp);
-    node->sequence_number(cache_change->sequenceNumber);
-    node->writer_GUID(cache_change->writerGUID);
-    node->instance_handle(cache_change->instanceHandle);
-    node->related_sample_identity(cache_change->write_params.sample_identity());
-}
-
 DataSharingPayloadPool::Segment::Offset DataSharingPayloadPool::advance(
         Segment::Offset offset) const
 {
@@ -69,17 +51,17 @@ DataSharingPayloadPool::Segment::Offset DataSharingPayloadPool::advance(
 
 DataSharingPayloadPool::Segment::Offset DataSharingPayloadPool::begin() const
 {
-    return descriptor_->first_used_payload;
+    return descriptor_->notified_begin;
 }
 
 DataSharingPayloadPool::Segment::Offset DataSharingPayloadPool::end() const
 {
-    return descriptor_->first_free_payload;
+    return descriptor_->notified_end;
 }
 
 bool DataSharingPayloadPool::emtpy() const
 {
-    return descriptor_->first_used_payload == descriptor_->first_free_payload;
+    return descriptor_->notified_begin == descriptor_->notified_end;
 }
 
 bool DataSharingPayloadPool::full() const

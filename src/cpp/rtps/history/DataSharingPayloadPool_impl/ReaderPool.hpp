@@ -73,7 +73,7 @@ public:
     }
 
     bool release_payload(
-            CacheChange_t& cache_change)
+            CacheChange_t& cache_change) override
     {
         assert(cache_change.payload_owner() == this);
 
@@ -130,7 +130,6 @@ public:
 bool get_next_unread_payload(
         CacheChange_t& cache_change) override
 {
-    // TODO [ILG] access to next_payload is protected?
     while (next_payload_ != end())
     {
         PayloadNode* payload = static_cast<PayloadNode*>(segment_->get_address_from_offset(next_payload_));
@@ -168,6 +167,11 @@ bool get_next_unread_payload(
     }
 
     return false;
+}
+
+void prepare_for_notification(const CacheChange_t* /*cache_change*/) override
+{
+    // Only the Writer pool can do this
 }
 
 private:

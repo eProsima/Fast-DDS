@@ -245,7 +245,7 @@ bool StatelessWriter::datasharing_delivery(
         auto pool = std::dynamic_pointer_cast<DataSharingPayloadPool>(payload_pool_);
         if (pool)
         {
-            pool->fill_metadata(change);
+            pool->prepare_for_notification(change);
             logInfo(RTPS_WRITER, "Notifying readers of cache change with SN " << change->sequenceNumber);
             datasharing_notifier_->notify();
             return true;
