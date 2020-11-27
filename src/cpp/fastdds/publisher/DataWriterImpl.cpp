@@ -193,18 +193,21 @@ ReturnCode_t DataWriterImpl::enable()
         w_att.keep_duration = qos_.reliable_writer_qos().disable_positive_acks.duration;
     }
 
-    ReturnCode_t ret_code = check_datasharing_compatible(w_att);
+    ReturnCode_t ret_code = check_datasharing_compatible(w_att, is_data_sharing_compatible_);
     if (ret_code != ReturnCode_t::RETCODE_OK)
     {
         return ret_code;
     }
 
-    // Add datasharing information
     if (is_data_sharing_compatible_)
     {
-        property.name("fastdds.datasharing_directory");
-        property.value(qos_.data_sharing().shm_directory());
-        w_att.endpoint.properties.properties().push_back(std::move(property));
+        w_att.endpoint.set_data_sharing_configuration(qos_.data_sharing());
+    }
+    else
+    {
+        DataSharingQosPolicy datasharing;
+        datasharing.disable();
+        w_att.endpoint.set_data_sharing_configuration(datasharing);
     }
 
     auto pool = get_payload_pool();
@@ -276,7 +279,6 @@ ReturnCode_t DataWriterImpl::enable()
     WriterQos wqos = qos_.get_writerqos(get_publisher()->get_qos(), topic_->get_qos());
     if (!is_data_sharing_compatible_)
     {
-        // Do not send datasharing info on discovery
         wqos.data_sharing.disable();
     }
     publisher_->rtps_participant()->registerWriter(writer_, get_topic_attributes(qos_, *topic_, type_), wqos);
@@ -1480,7 +1482,8 @@ bool DataWriterImpl::check_and_remove_loan(
 }
 
 ReturnCode_t DataWriterImpl::check_datasharing_compatible(
-        const WriterAttributes& writer_attributes)
+        const WriterAttributes& writer_attributes,
+        bool& is_datasharing_compatible) const
 {
 
 #if HAVE_SECURITY
@@ -1493,10 +1496,10 @@ ReturnCode_t DataWriterImpl::check_datasharing_compatible(
             qos_.endpoint().history_memory_policy == eprosima::fastrtps::rtps::PREALLOCATED_MEMORY_MODE &&
             type_.is_bounded();
 
+    is_datasharing_compatible = false;
     switch (qos_.data_sharing().kind())
     {
         case DataSharingKind::DISABLED:
-            is_data_sharing_compatible_ = false;
             return ReturnCode_t::RETCODE_OK;
             break;
         case DataSharingKind::FORCED:
@@ -1504,7 +1507,6 @@ ReturnCode_t DataWriterImpl::check_datasharing_compatible(
             if (has_security_enabled)
             {
                 logError(DATA_WRITER, "Data sharing cannot be used with security protection.");
-                is_data_sharing_compatible_ = false;
                 return ReturnCode_t::RETCODE_NOT_ALLOWED_BY_SECURITY;
             }
 #endif // HAVE_SECURITY
@@ -1513,11 +1515,10 @@ ReturnCode_t DataWriterImpl::check_datasharing_compatible(
             {
                 logError(DATA_WRITER, "Data sharing cannot be used with " <<
                         (type_.is_bounded() ? "memory policies other than PREALLOCATED" : "unbounded data types"));
-                is_data_sharing_compatible_ = false;
                 return ReturnCode_t::RETCODE_BAD_PARAMETER;
             }
 
-            is_data_sharing_compatible_ = true;
+            is_datasharing_compatible = true;
             return ReturnCode_t::RETCODE_OK;
             break;
         case DataSharingKind::AUTO:
@@ -1525,7 +1526,6 @@ ReturnCode_t DataWriterImpl::check_datasharing_compatible(
             if (has_security_enabled)
             {
                 logInfo(DATA_WRITER, "Data sharing disabled due to security configuration.");
-                is_data_sharing_compatible_ = false;
                 return ReturnCode_t::RETCODE_OK;
             }
 #endif // HAVE_SECURITY
@@ -1534,16 +1534,14 @@ ReturnCode_t DataWriterImpl::check_datasharing_compatible(
             {
                 logInfo(DATA_WRITER, "Data sharing disabled because " <<
                         (type_.is_bounded() ? "memory policy is not PREALLOCATED" : "data type is not bounded"));
-                is_data_sharing_compatible_ = false;
                 return ReturnCode_t::RETCODE_OK;
             }
 
-            is_data_sharing_compatible_ = true;
+            is_datasharing_compatible = true;
             return ReturnCode_t::RETCODE_OK;
             break;
         default:
             logError(DATA_WRITER, "Unknown data sharing kind.");
-            is_data_sharing_compatible_ = false;
             return ReturnCode_t::RETCODE_BAD_PARAMETER;
     }
 }

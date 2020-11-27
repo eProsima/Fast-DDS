@@ -446,7 +446,8 @@ protected:
     bool release_payload_pool();
 
     ReturnCode_t check_datasharing_compatible(
-            const fastrtps::rtps::WriterAttributes& writer_attributes);
+            const fastrtps::rtps::WriterAttributes& writer_attributes,
+            bool& is_datasharing_compatible) const;
 
     template<typename SizeFunctor>
     bool get_free_payload_from_pool(

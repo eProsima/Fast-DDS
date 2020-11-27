@@ -113,17 +113,16 @@ void RTPSReader::init(
         fixed_payload_size_ = mp_history->m_att.payloadMaxSize;
     }
 
-    const std::string* data_sharing_directory = PropertyPolicyHelper::find_property(
-        att.endpoint.properties, "fastdds.datasharing_directory");
-    if (data_sharing_directory != nullptr)
+    if (att.endpoint.data_sharing_configuration().kind() != DISABLED)
     {
         is_datasharing_compatible_ = true;
         using std::placeholders::_1;
         std::shared_ptr<DataSharingNotification> notification =
-                DataSharingNotification::create_notification(getGuid(), *data_sharing_directory);
+                DataSharingNotification::create_notification(
+                    getGuid(), att.endpoint.data_sharing_configuration().shm_directory());
         datasharing_listener_.reset(new DataSharingListener(
                 notification,
-                *data_sharing_directory,
+                att.endpoint.data_sharing_configuration().shm_directory(),
                 att.matched_writers_allocation,
                 std::bind(&RTPSReader::processDataMsg, this, _1 )));
         datasharing_listener_->start();

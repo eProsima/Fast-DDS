@@ -2751,22 +2751,22 @@ public:
     fastrtps::ResourceLimitedContainerConfig matched_subscriber_allocation;
 };
 
-enum DataSharingKind : uint16_t
+enum DataSharingKind : fastrtps::rtps::octet
 {
     /**
      * Automatic configuration.
      * DataSharing will be used if requirements are met.
      */
-    AUTO,
+    AUTO = 0x01,
     /**
      * Disable the use of DataSharing
      */
-    DISABLED,
+    DISABLED = 0x02,
     /**
      * Force the use of DataSharing.
      * Entity creation will fail if requirements for DataSharing are not met
      */
-    FORCED
+    FORCED = 0x03
 };
 
 
