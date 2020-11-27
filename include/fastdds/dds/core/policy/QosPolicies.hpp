@@ -3001,17 +3001,9 @@ private:
         shm_directory_ = directory;
         domain_ids_.clear();
 
-        if (domain_ids.empty() && kind != DISABLED)
+        for (uint16_t id : domain_ids)
         {
-            uint64_t id = (1l << 16);
             add_domain_id(id);
-        }
-        else
-        {
-            for (uint16_t id : domain_ids)
-            {
-                add_domain_id(id);
-            }
         }
     }
 
