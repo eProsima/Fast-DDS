@@ -179,7 +179,6 @@ TEST_F(XMLEndpointParserTests, loadXMLNodeNegativeClauses)
 
 
 
-/* WIP
 
 //
 // This test checks the negative cases of the XMLEndpointParser::loadXMLParticipantEndpoint method.
@@ -188,7 +187,7 @@ TEST_F(XMLEndpointParserTests, loadXMLParticipantEndpoint)
 {
     tinyxml2::XMLDocument xml_doc;
     tinyxml2::XMLElement* titleElement;
-    StaticRTPSParticipantInfo* pdata;
+    StaticRTPSParticipantInfo* pdata = new StaticRTPSParticipantInfo();
 
     // Parametrized XML
     const char* xml =
@@ -239,6 +238,7 @@ TEST_F(XMLEndpointParserTests, loadXMLParticipantEndpoint)
     mp_edpXML->loadXMLParticipantEndpoint(titleElement, pdata);
 }
 
+
 //
 // This test checks the negative cases of the XMLEndpointParser::loadXMLReaderEndpoint method.
 //
@@ -275,7 +275,6 @@ TEST_F(XMLEndpointParserTests, loadXMLReaderEndpoint)
     mp_edpXML->loadXMLReaderEndpoint(titleElement, pdata);
 }
 
-
 //
 // This test checks the negative cases of the XMLEndpointParser::loadXMLWriterEndpoint method.
 //
@@ -283,7 +282,7 @@ TEST_F(XMLEndpointParserTests, loadXMLWriterEndpoint)
 {
     tinyxml2::XMLDocument xml_doc;
     tinyxml2::XMLElement* titleElement;
-    StaticRTPSParticipantInfo* pdata;
+    StaticRTPSParticipantInfo* pdata = new StaticRTPSParticipantInfo();
 
     // Parametrized XML
     // Parametrized XML
@@ -312,6 +311,7 @@ TEST_F(XMLEndpointParserTests, loadXMLWriterEndpoint)
     mp_edpXML->loadXMLWriterEndpoint(titleElement, pdata);
 }
 
+/* WIP
 
 //
 // This test checks the negative cases of the XMLEndpointParser::lookforReader method.
