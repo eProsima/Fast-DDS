@@ -692,6 +692,49 @@ bool EDP::valid_matching(
         incompatible_qos.set(fastdds::dds::LIVELINESS_QOS_POLICY_ID);
     }
 
+    //DataSharing & DataSharing domain ID check:
+
+    if (wdata->m_qos.data_sharing.kind() == fastdds::dds::FORCED && 
+            rdata->m_qos.data_sharing.kind() == fastdds::dds::DISABLED)
+    {
+        logWarning(RTPS_EDP, "INCOMPATIBLE QOS (topic: " <<  rdata->topicName()
+                << "): Forced data sharing but remote reader " << rdata->guid()
+                << " is not configured as data sharing.");
+        incompatible_qos.set(fastdds::dds::DATASHARING_QOS_POLICY_ID);
+    }
+    else if (wdata->m_qos.data_sharing.kind() == fastdds::dds::DISABLED && 
+            rdata->m_qos.data_sharing.kind() == fastdds::dds::FORCED)
+    {
+        logWarning(RTPS_EDP, "INCOMPATIBLE QOS (topic: " <<  rdata->topicName()
+                << "): Disabled data sharing but remote reader " << rdata->guid()
+                << " is configured as data sharing.");
+        incompatible_qos.set(fastdds::dds::DATASHARING_QOS_POLICY_ID);
+    }
+    else if (wdata->m_qos.data_sharing.kind() == fastdds::dds::FORCED&& 
+            rdata->m_qos.data_sharing.kind() == fastdds::dds::FORCED)
+    {
+        assert (!wdata->m_qos.data_sharing.domain_ids().empty());
+        assert (!rdata->m_qos.data_sharing.domain_ids().empty());
+
+        bool matched = false;
+        for (auto id : wdata->m_qos.data_sharing.domain_ids())
+        {
+            if (std::find(rdata->m_qos.data_sharing.domain_ids().begin(),
+                    rdata->m_qos.data_sharing.domain_ids().end(), id)
+                    != rdata->m_qos.data_sharing.domain_ids().end())
+            {
+                matched = true;
+            }
+        }
+        if (!matched) //Different domain id partitions
+        {
+            logWarning(RTPS_EDP, "INCOMPATIBLE QOS (topic: " <<  rdata->topicName()
+                    << "): Forced data sharing but remote reader " << rdata->guid()
+                    << " has no matching domain ID.");
+            incompatible_qos.set(fastdds::dds::DATASHARING_QOS_POLICY_ID);
+        }
+    }
+
 #if HAVE_SECURITY
     // TODO: Check EndpointSecurityInfo
 #endif // if HAVE_SECURITY
@@ -917,6 +960,49 @@ bool EDP::valid_matching(
         logWarning(RTPS_EDP, "Incompatible liveliness kinds: offered kind is < than requested kind");
         incompatible_qos.set(fastdds::dds::LIVELINESS_QOS_POLICY_ID);
     }
+
+    //DataSharing & DataSharing domain ID check:
+    if (rdata->m_qos.data_sharing.kind() == fastdds::dds::FORCED && 
+            wdata->m_qos.data_sharing.kind() == fastdds::dds::DISABLED)
+    {
+        logWarning(RTPS_EDP, "INCOMPATIBLE QOS (topic: " <<  wdata->topicName()
+                << "): Forced data sharing but remote writer " << wdata->guid()
+                << " is not configured as data sharing.");
+        incompatible_qos.set(fastdds::dds::DATASHARING_QOS_POLICY_ID);
+    }
+    else if (rdata->m_qos.data_sharing.kind() == fastdds::dds::DISABLED && 
+            wdata->m_qos.data_sharing.kind() == fastdds::dds::FORCED)
+    {
+        logWarning(RTPS_EDP, "INCOMPATIBLE QOS (topic: " <<  wdata->topicName()
+                << "): Disabled data sharing but remote writer " << wdata->guid()
+                << " is configured as data sharing.");
+        incompatible_qos.set(fastdds::dds::DATASHARING_QOS_POLICY_ID);
+    }
+    else if (rdata->m_qos.data_sharing.kind() == fastdds::dds::FORCED&& 
+            wdata->m_qos.data_sharing.kind() == fastdds::dds::FORCED)
+    {
+        assert (!rdata->m_qos.data_sharing.domain_ids().empty());
+        assert (!wdata->m_qos.data_sharing.domain_ids().empty());
+
+        bool matched = false;
+        for (auto id : rdata->m_qos.data_sharing.domain_ids())
+        {
+            if (std::find(wdata->m_qos.data_sharing.domain_ids().begin(),
+                    wdata->m_qos.data_sharing.domain_ids().end(), id)
+                    != wdata->m_qos.data_sharing.domain_ids().end())
+            {
+                matched = true;
+            }
+        }
+        if (!matched) //Different domain id partitions
+        {
+            logWarning(RTPS_EDP, "INCOMPATIBLE QOS (topic: " <<  wdata->topicName()
+                    << "): Forced data sharing but remote writer " << wdata->guid()
+                    << " has no matching domain ID.");
+            incompatible_qos.set(fastdds::dds::DATASHARING_QOS_POLICY_ID);
+        }
+    }
+
 #if HAVE_SECURITY
     // TODO: Check EndpointSecurityInfo
 #endif // if HAVE_SECURITY
