@@ -24,14 +24,6 @@ namespace eprosima {
 namespace fastrtps {
 namespace rtps {
 
-IPLocator::IPLocator()
-{
-}
-
-IPLocator::~IPLocator()
-{
-}
-
 // Factory
 void IPLocator::createLocator(
         int32_t kindin,
@@ -88,6 +80,7 @@ bool IPLocator::setIPv4(
         Locator_t& locator,
         const std::string& ipv4)
 {
+    LOCATOR_ADDRESS_INVALID(locator.address);
     //std::string _ipv4 = IPFinder::getIPv4Address(ipv4);
     std::stringstream ss(ipv4);
     int a, b, c, d; //to store the 4 ints
@@ -95,7 +88,10 @@ bool IPLocator::setIPv4(
 
     if (ss >> a >> ch >> b >> ch >> c >> ch >> d)
     {
-        LOCATOR_ADDRESS_INVALID(locator.address);
+        if (a > 255 || b > 255 || c > 255 || d > 255)
+        {
+            return false;
+        }
         locator.address[12] = (octet)a;
         locator.address[13] = (octet)b;
         locator.address[14] = (octet)c;
@@ -193,102 +189,262 @@ bool IPLocator::setIPv6(
         Locator_t& locator,
         const std::string& ipv6)
 {
-    //std::string _ipv6 = IPFinder::getIPv6Address(ipv6);
-    std::vector<std::string> hexdigits;
-
-    size_t start = 0, end = 0;
-    std::string auxstr;
-
-    while (end != std::string::npos)
+    if (!IPv6isCorrect(ipv6))
     {
-        end = ipv6.find(':', start);
-        if (end - start > 1)
-        {
-            hexdigits.push_back(ipv6.substr(start, end - start));
-        }
-        else
-        {
-            hexdigits.push_back(std::string("EMPTY"));
-        }
-        start = end + 1;
-    }
-
-    //FOUND a . in the last element (MAP TO IP4 address)
-    if ((hexdigits.end() - 1)->find('.') != std::string::npos)
-    {
+        // ERROR
         return false;
     }
 
-    *(hexdigits.end() - 1) = (hexdigits.end() - 1)->substr(0, (hexdigits.end() - 1)->find('%'));
+    LOCATOR_ADDRESS_INVALID(locator.address);
+    size_t count = std::count_if( ipv6.begin(), ipv6.end(), []( char c ){return c == ':';});
 
-    int auxnumber = 0;
-    uint8_t index = 15;
-    for (auto it = hexdigits.rbegin(); it != hexdigits.rend(); ++it)
+    int initial_zeros = -1, final_zeros = -1; // bytes to 0 at the beggining or end
+    int position_zeros = 0, number_zeros = 0; // position of 0 in the middle and length of them
+    size_t aux, aux_prev;
+
+    // if first element equal :
+    if (ipv6.at(0) == ':')
     {
-        if (*it != std::string("EMPTY"))
+        // it starts with zeros
+        // it ends with zeros
+        if (ipv6.at(ipv6.size()-1) == ':')
         {
-            if (it->length() <= 2)
-            {
-                locator.address[index - 1] = 0;
-                std::stringstream ss;
-                ss << std::hex << (*it);
-                ss >> auxnumber;
-                locator.address[index] = (octet)auxnumber;
-            }
-            else
-            {
-                std::stringstream ss;
-                ss << std::hex << it->substr(it->length() - 2);
-                ss >> auxnumber;
-                locator.address[index] = (octet)auxnumber;
-                ss.str("");
-                ss.clear();
-                ss << std::hex << it->substr(0, it->length() - 2);
-                ss >> auxnumber;
-                locator.address[index - 1] = (octet)auxnumber;
-            }
-            index -= 2;
+            // empty string
+            initial_zeros = 16;
         }
         else
         {
-            break;
+            // always 2 : at the beggining => - 2
+            // 2 bytes per string => * 2
+            // 7 std : => 7 - count
+            initial_zeros = (7 - (count - 2)) * 2;
         }
     }
-    index = 0;
-    for (auto it = hexdigits.begin(); it != hexdigits.end(); ++it)
+    else if (ipv6.at(ipv6.size()-1) == ':')
     {
-        if (*it != std::string("EMPTY"))
+        // it ends with double ::
+        // it does not start with ::
+        final_zeros = (7 - (count - 2)) * 2;
+    }
+    else
+    {
+        // it could have :: in the middle or not have it
+        aux_prev = -1;
+        aux = ipv6.find(':');
+
+        // look for "::" will loop string twice, while this loop less or equal once
+        while (aux != std::string::npos)
         {
-            if (it->length() <= 2)
+            if (aux_prev == aux - 1)
             {
-                locator.address[index] = 0;
-                std::stringstream ss;
-                ss << std::hex << (*it);
-                ss >> auxnumber;
-                locator.address[index + 1] = (octet)auxnumber;
+                // found :: together
+                number_zeros = (7 - (count - 1)) * 2;
+                break;
             }
-            else
-            {
-                std::stringstream ss;
-                ss << std::hex << it->substr(it->length() - 2);
-                ss >> auxnumber;
-                locator.address[index + 1] = (octet)auxnumber;
-                ss.str("");
-                ss.clear();
-                ss << std::hex << it->substr(0, it->length() - 2);
-                ss >> auxnumber;
-                locator.address[index] = (octet)auxnumber;
-            }
-            index += 2;
+
+            // keep searching
+            position_zeros += 2;
+            aux_prev = aux;
+            aux = ipv6.find(':', aux+1);
         }
-        else
+    }
+
+    char punct;
+    std::stringstream ss;
+    ss << std::hex << ipv6;
+    int i;
+    long input_aux;
+
+    // build the bytes string
+    if (initial_zeros != -1)
+    {
+        for (i=0; i<initial_zeros;)
         {
-            break;
+            locator.address[i++] = 0;
+        }
+
+        ss >> punct;
+
+        for (; i<16;)
+        {
+            ss >> punct >> input_aux;
+            if (input_aux >= 65536)
+            {
+                return false;
+            }
+            locator.address[i++] = octet(input_aux >> 8);
+            locator.address[i++] = octet(input_aux % 256);
+        }
+    }
+    else if (final_zeros != -1)
+    {
+        for (i=0; i<16-final_zeros;)
+        {
+            ss >> input_aux >> punct;
+            if (input_aux >= 65536)
+            {
+                return false;
+            }
+            locator.address[i++] = octet(input_aux >> 8);
+            locator.address[i++] = octet(input_aux % 256);
+        }
+        for (; i<16;)
+        {
+            locator.address[i++] = 0;
+        }
+    }
+    else if (number_zeros != 0)
+    {
+        for (i=0; i<position_zeros;)
+        {
+            ss >> input_aux >> punct;
+            if (input_aux >= 65536)
+            {
+                return false;
+            }
+            locator.address[i++] = octet(input_aux >> 8);
+            locator.address[i++] = octet(input_aux % 256);
+        }
+
+        for (; i<position_zeros+number_zeros;)
+        {
+            locator.address[i++] = 0;
+        }
+
+        for (; i<16;)
+        {
+            ss >> punct >> input_aux;
+            if (input_aux >= 65536)
+            {
+                return false;
+            }
+            locator.address[i++] = octet(input_aux >> 8);
+            locator.address[i++] = octet(input_aux % 256);
+        }
+    }
+    else
+    {
+        ss >> input_aux;
+        locator.address[0] = octet(input_aux >> 8);
+        locator.address[1] = octet(input_aux % 256);
+        for (int i=2; i<16;)
+        {
+            ss >> punct >> input_aux;
+            if (input_aux >= 65536)
+            {
+                return false;
+            }
+            locator.address[i++] = octet(input_aux >> 8);
+            locator.address[i++] = octet(input_aux % 256);
         }
     }
 
     return true;
 }
+
+
+
+
+// bool IPLocator::setIPv6(
+//         Locator_t& locator,
+//         const std::string& ipv6 )
+// {
+//     //std::string _ipv6 = IPFinder::getIPv6Address(ipv6);
+//     std::vector<std::string> hexdigits;
+
+//     size_t start = 0, end = 0;
+//     std::string auxstr;
+
+//     while (end != std::string::npos)
+//     {
+//         end = ipv6.find(':', start);
+//         if (end - start > 1)
+//         {
+//             hexdigits.push_back(ipv6.substr(start, end - start));
+//         }
+//         else
+//         {
+//             hexdigits.push_back(std::string("EMPTY"));
+//         }
+//         start = end + 1;
+//     }
+
+//     //FOUND a . in the last element (MAP TO IP4 address)
+//     if ((hexdigits.end() - 1)->find('.') != std::string::npos)
+//     {
+//         return false;
+//     }
+
+//     *(hexdigits.end() - 1) = (hexdigits.end() - 1)->substr(0, (hexdigits.end() - 1)->find('%'));
+
+//     int auxnumber = 0;
+//     uint8_t index = 15;
+//     for (auto it = hexdigits.rbegin(); it != hexdigits.rend(); ++it)
+//     {
+//         if (*it != std::string("EMPTY"))
+//         {
+//             if (it->length() <= 2)
+//             {
+//                 locator.address[index - 1] = 0;
+//                 std::stringstream ss;
+//                 ss << std::hex << (*it);
+//                 ss >> auxnumber;
+//                 locator.address[index] = (octet)auxnumber;
+//             }
+//             else
+//             {
+//                 std::stringstream ss;
+//                 ss << std::hex << it->substr(it->length() - 2);
+//                 ss >> auxnumber;
+//                 locator.address[index] = (octet)auxnumber;
+//                 ss.str("");
+//                 ss.clear();
+//                 ss << std::hex << it->substr(0, it->length() - 2);
+//                 ss >> auxnumber;
+//                 locator.address[index - 1] = (octet)auxnumber;
+//             }
+//             index -= 2;
+//         }
+//         else
+//         {
+//             break;
+//         }
+//     }
+//     index = 0;
+//     for (auto it = hexdigits.begin(); it != hexdigits.end(); ++it)
+//     {
+//         if (*it != std::string("EMPTY"))
+//         {
+//             if (it->length() <= 2)
+//             {
+//                 locator.address[index] = 0;
+//                 std::stringstream ss;
+//                 ss << std::hex << (*it);
+//                 ss >> auxnumber;
+//                 locator.address[index + 1] = (octet)auxnumber;
+//             }
+//             else
+//             {
+//                 std::stringstream ss;
+//                 ss << std::hex << it->substr(it->length() - 2);
+//                 ss >> auxnumber;
+//                 locator.address[index + 1] = (octet)auxnumber;
+//                 ss.str("");
+//                 ss.clear();
+//                 ss << std::hex << it->substr(0, it->length() - 2);
+//                 ss >> auxnumber;
+//                 locator.address[index] = (octet)auxnumber;
+//             }
+//             index += 2;
+//         }
+//         else
+//         {
+//             break;
+//         }
+//     }
+
+//     return true;
+// }
 
 bool IPLocator::setIPv6(
         Locator_t& destlocator,
@@ -318,13 +474,37 @@ std::string IPLocator::toIPv6string(
 {
     std::stringstream ss;
     ss << std::hex;
-    for (int i = 0; i != 14; i += 2)
+    bool already_compress = false, in_compress = false;
+    for (int i = 0; i != 16; i += 2)
     {
-        auto field = (locator.address[i] << 8) + locator.address[i + 1];
-        ss << field << ":";
+        if (locator.address[i] == 0 && locator.address[i+1] == 0)
+        {
+            if (!in_compress && !already_compress)
+            {
+                already_compress = true;
+                in_compress = true;
+                ss << ":";
+                if (i == 0)
+                {
+                    ss << ":";
+                }
+            }
+        }
+        else
+        {
+            in_compress = false;
+            auto field = (locator.address[i] << 8) + locator.address[i + 1];
+            if (i != 14)
+            {
+                ss << field << ":";
+            }
+            else
+            {
+                ss << field;
+            }
+        }
     }
-    auto field = (locator.address[14] << 8) + locator.address[15];
-    ss << field;
+
     return ss.str();
 }
 
@@ -579,7 +759,7 @@ uint16_t IPLocator::getPortRTPS(
     {
         return getLogicalPort(locator);
     }
-    return false;
+    return 0;
 }
 
 bool IPLocator::isLocal(
@@ -670,7 +850,7 @@ bool IPLocator::compareAddressAndPhysicalPort(
         const Locator_t& loc1,
         const Locator_t& loc2)
 {
-    return compareAddress(loc1, loc2, true) && getPhysicalPort(loc1) == getPhysicalPort(loc2);
+    return compareAddress(loc1, loc2, true) && (getPhysicalPort(loc1) == getPhysicalPort(loc2));
 }
 
 std::string IPLocator::to_string(
@@ -699,6 +879,7 @@ std::string IPLocator::to_string(
         }
         ss << ":" << loc.port;
     }
+
     return ss.str();
 }
 
@@ -755,6 +936,42 @@ bool IPLocator::isEmpty(
             return false;
         }
     }
+    return true;
+}
+
+bool IPLocator::IPv6isCorrect(
+        const std::string& ipv6)
+{
+    size_t count = std::count_if( ipv6.begin(), ipv6.end(), []( char c ){return c == ':';});
+
+    // proper number of :
+    if (count < 2 || count > 8)
+    {
+        return false;
+    }
+
+    // only case of 8 : is with a :: at the beggining or end
+    if (count == 8 && (ipv6.at(0) != ':' || ipv6.at(ipv6.size()-1) != ':'))
+    {
+        return false;
+    }
+
+    // only one :: is available
+    size_t ind = ipv6.find("::");
+    if (ind != std::string::npos)
+    {
+        if (ipv6.find("::", ind+1) != std::string::npos)
+        {
+            return false;
+        }
+    }
+
+    // does not have start and end in :
+    if (ipv6.at(0) == ':' && ipv6.at(ipv6.size()-1) == ':' && ipv6.size() > 2)
+    {
+        return false;
+    }
+
     return true;
 }
 

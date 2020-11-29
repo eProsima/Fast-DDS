@@ -21,33 +21,16 @@
 
 using namespace eprosima::fastrtps::rtps;
 
-// Check if an address given by string is equal to the locator addresss
-// This function assumes setIPv4 and setIPv6 are well tested
-static bool address_match(const std::string str_addr, const Locator_t& locator)
+static bool address_match(const Locator_t& loc1, const Locator_t& loc2)
 {
-    Locator_t aux_locator;
-    bool res = true;
-
-    switch (locator.kind)
-    {
-        case LOCATOR_KIND_TCPv4:
-        case LOCATOR_KIND_UDPv4:
-        {
-            IPLocator::setIPv4(aux_locator, str_addr);
-            break;
-        }
-        case LOCATOR_KIND_TCPv6:
-        case LOCATOR_KIND_UDPv6:
-        {
-            IPLocator::setIPv6(aux_locator, str_addr);
-            break;
-        }
-    }
     for (int i=0; i<16; i++)
     {
-        res &= locator.address[i] == aux_locator.address[i];
+        if (loc1.address[i] != loc2.address[i])
+        {
+            return false;
+        }
     }
-    return res;
+    return true;
 }
 
 class IPLocatorTests: public ::testing::Test
@@ -55,138 +38,291 @@ class IPLocatorTests: public ::testing::Test
 
 public:
     const std::string ipv4_address = "74.65.86.73";
+    const std::string ipv4_address_repeated = "74.65.86.073";
     const std::string ipv4_address_2 = "106.97.118.105";
     const std::string ipv4_lo_address = "127.0.0.1";
+    const std::string ipv4_multicast_address = "224.0.0.0";
+    const std::string ipv4_multicast_address_2 = "239.255.255.255";
 
     const std::string ipv6_address = "4a41:5649::50:4152:4953";
     const std::string ipv6_address_repeated = "4a41:5649:0000:0000:0000:0050:4152:4953";
     const std::string ipv6_address_2 = "4a41:5649::150:4152:4953";
     const std::string ipv6_address_full = "4a41:5649:85a3:a8d3:1319:0050:4152:4953";
     const std::string ipv6_lo_address = "::1";
+    const std::string ipv6_multicast_address = "FF00::";
+    const std::string ipv6_multicast_address_2 = "FFFF::";
+    const std::string ipv6_multicast_address_3 = "FF0A::1:2:3";
 
-    const std::string ip_invalid = "0:0:0:0:0:0:0:0";
+    const std::string ipv4_any = "0.0.0.0";
+    const std::string ipv4_invalid = "0.0.0.0";
+    const std::string ipv6_any = "::";
+    const std::string ipv6_invalid = "0:0:0:0:0:0:0:0";
+
     const uint32_t port1 = 6666;
     const uint32_t port2 = 7400;
 };
 
-TEST_F(IPLocatorTests, address_match)
+// All the tests of ipv4 depends on this function
+TEST_F(IPLocatorTests, setIPv4_from_string)
 {
     Locator_t locator;
-    ASSERT_TRUE(address_match(ip_invalid, locator));
 
-    IPLocator::createLocator(LOCATOR_KIND_UDPv4, ipv4_address, port1, locator);
-    ASSERT_TRUE(address_match(ipv4_address, locator));
-    ASSERT_FALSE(address_match(ip_invalid, locator));
-    ASSERT_FALSE(address_match(ipv4_lo_address, locator));
-    ASSERT_FALSE(address_match(ipv6_lo_address, locator));
+    {
+        // empty string
+        ASSERT_TRUE(IPLocator::setIPv4(locator, "0.0.0.0"));
+        std::vector<int> vec{0, 0, 0, 0};
+        for (int i=0; i<12; i++)
+        {
+            ASSERT_EQ(locator.address[i], 0);
+        }
+        for (int i=0; i<4; i++)
+        {
+            ASSERT_EQ(locator.address[i+12], vec[i]);
+        }
+    }
 
-    IPLocator::createLocator(LOCATOR_KIND_UDPv6, ipv6_address, port1, locator);
-    ASSERT_TRUE(address_match(ipv6_address, locator));
-    ASSERT_TRUE(address_match(ipv6_address_repeated, locator));
-    ASSERT_FALSE(address_match(ip_invalid, locator));
-    ASSERT_FALSE(address_match(ipv4_address, locator));
-    ASSERT_FALSE(address_match(ipv6_address_full, locator));
+    {
+        // std string
+        ASSERT_TRUE(IPLocator::setIPv4(locator, "1.2.3.4"));
+        std::vector<int> vec{1, 2, 3, 4};
+
+        for (int i=0; i<12; i++)
+        {
+            ASSERT_EQ(locator.address[i], 0);
+        }
+        for (int i=0; i<4; i++)
+        {
+            ASSERT_EQ(locator.address[i+12], vec[i]);
+        }
+    }
+
+    {
+        // std string with 0
+        ASSERT_TRUE(IPLocator::setIPv4(locator, "01.002.0003.000104"));
+        std::vector<int> vec{1, 2, 3, 104};
+
+        for (int i=0; i<12; i++)
+        {
+            ASSERT_EQ(locator.address[i], 0);
+        }
+        for (int i=0; i<4; i++)
+        {
+            ASSERT_EQ(locator.address[i+12], vec[i]);
+        }
+    }
+
+    {
+        // multicast
+        ASSERT_TRUE(IPLocator::setIPv4(locator, "255.255.255.255"));
+        std::vector<int> vec{255, 255, 255, 255};
+
+        for (int i=0; i<12; i++)
+        {
+            ASSERT_EQ(locator.address[i], 0);
+        }
+        for (int i=0; i<4; i++)
+        {
+            ASSERT_EQ(locator.address[i+12], vec[i]);
+        }
+    }
+
+    {
+        // error
+        ASSERT_FALSE(IPLocator::setIPv4(locator, "1.1.1.256"));
+        ASSERT_FALSE(IPLocator::setIPv4(locator, "1.1.1"));
+    }
+}
+
+TEST_F(IPLocatorTests, setIPv6_from_string_empty)
+{
+    Locator_t locator;
+    locator.kind = LOCATOR_KIND_UDPv6;
+
+    // empty string
+    std::vector<int> vec(16, 0);
+
+    ASSERT_TRUE(IPLocator::setIPv6(locator, "::"));
+    for (int i=0; i<16; i++)
+    {
+        ASSERT_EQ(locator.address[i], vec[i]);
+    }
+
+    ASSERT_TRUE(IPLocator::setIPv6(locator, "::0"));
+    for (int i=0; i<16; i++)
+    {
+        ASSERT_EQ(locator.address[i], vec[i]);
+    }
+
+    ASSERT_TRUE(IPLocator::setIPv6(locator, "0000000::"));
+    for (int i=0; i<16; i++)
+    {
+        ASSERT_EQ(locator.address[i], vec[i]);
+    }
+
+    ASSERT_TRUE(IPLocator::setIPv6(locator, "0::0"));
+    for (int i=0; i<16; i++)
+    {
+        ASSERT_EQ(locator.address[i], vec[i]);
+    }
+
+    ASSERT_TRUE(IPLocator::setIPv6(locator, "0:0:0:0::0:0"));
+    for (int i=0; i<16; i++)
+    {
+        ASSERT_EQ(locator.address[i], vec[i]);
+    }
+
+    ASSERT_TRUE(IPLocator::setIPv6(locator, "0000::0000"));
+    for (int i=0; i<16; i++)
+    {
+        ASSERT_EQ(locator.address[i], vec[i]);
+    }
+
+    ASSERT_TRUE(IPLocator::setIPv6(locator, "0000:0000:0000:0000:0000:0000:0000:0000"));
+    for (int i=0; i<16; i++)
+    {
+        ASSERT_EQ(locator.address[i], vec[i]);
+    }
+}
+
+TEST_F(IPLocatorTests, setIPv6_from_string_std)
+{
+    // TODO
+}
+
+// All the tests of ipv6 depends on this function
+TEST_F(IPLocatorTests, setIPv6_from_string_invalid)
+{
+    Locator_t locator;
+    ASSERT_FALSE(IPLocator::setIPv6(locator, ":"));
+    ASSERT_FALSE(IPLocator::setIPv6(locator, "::1:"));
+    ASSERT_FALSE(IPLocator::setIPv6(locator, ":1::"));
+    ASSERT_FALSE(IPLocator::setIPv6(locator, "::1::"));
+    ASSERT_FALSE(IPLocator::setIPv6(locator, "1::1::1"));
+    ASSERT_FALSE(IPLocator::setIPv6(locator, "1:::1"));
+    ASSERT_FALSE(IPLocator::setIPv6(locator, "1:1:1:1:1:1:1:1:1"));
+    ASSERT_FALSE(IPLocator::setIPv6(locator, "1:1:1:1:1:1:1::1"));
+    ASSERT_FALSE(IPLocator::setIPv6(locator, "10000::"));
+    ASSERT_FALSE(IPLocator::setIPv6(locator, "::10000"));
+    ASSERT_FALSE(IPLocator::setIPv6(locator, "1:10000::1"));
 }
 
 TEST_F(IPLocatorTests, createLocator)
 {
     int32_t kind;
     Locator_t res_locator;
+    Locator_t probe_locator;
 
     // create UDP IPv4
     kind = LOCATOR_KIND_UDPv4;
-    eprosima::fastrtps::rtps::IPLocator::createLocator(kind, ipv4_address, port1, res_locator);
-    ASSERT_EQ(res_locator.kind, kind);
-    ASSERT_EQ(res_locator.port, port1);
-    ASSERT_TRUE(address_match(ipv4_address, res_locator));
-
-    // create TCP IPv4
-    kind = LOCATOR_KIND_TCPv4;
     IPLocator::createLocator(kind, ipv4_address, port1, res_locator);
     ASSERT_EQ(res_locator.kind, kind);
     ASSERT_EQ(res_locator.port, port1);
-    ASSERT_TRUE(address_match(ipv4_address, res_locator));
+    IPLocator::setIPv4(probe_locator, ipv4_address_repeated);
+    ASSERT_TRUE(address_match(probe_locator, res_locator));
+
+    // create TCP IPv4
+    kind = LOCATOR_KIND_TCPv4;
+    IPLocator::createLocator(kind, ipv4_lo_address, port2, res_locator);
+    ASSERT_EQ(res_locator.kind, kind);
+    ASSERT_EQ(res_locator.port, port2);
+    IPLocator::setIPv4(probe_locator, ipv4_lo_address);
+    ASSERT_TRUE(address_match(probe_locator, res_locator));
 
     // create UDP IPv6
     kind = LOCATOR_KIND_UDPv6;
     IPLocator::createLocator(kind, ipv6_address, port1, res_locator);
     ASSERT_EQ(res_locator.kind, kind);
     ASSERT_EQ(res_locator.port, port1);
-    ASSERT_TRUE(address_match(ipv6_address, res_locator));
+    IPLocator::setIPv6(probe_locator, ipv6_address_repeated);
+    ASSERT_TRUE(address_match(probe_locator, res_locator));
 
     // create TCP IPv6
     kind = LOCATOR_KIND_TCPv6;
-    IPLocator::createLocator(kind, ipv6_address, port1, res_locator);
+    IPLocator::createLocator(kind, ipv6_any, port2, res_locator);
     ASSERT_EQ(res_locator.kind, kind);
-    ASSERT_EQ(res_locator.port, port1);
-    ASSERT_TRUE(address_match(ipv6_address, res_locator));
+    ASSERT_EQ(res_locator.port, port2);
+    IPLocator::setIPv6(probe_locator, ipv6_invalid);
+    ASSERT_TRUE(address_match(probe_locator, res_locator));
 
     // create SHM
     kind = LOCATOR_KIND_SHM;
     IPLocator::createLocator(kind, ipv6_address, port1, res_locator);
     ASSERT_EQ(res_locator.kind, kind);
     ASSERT_EQ(res_locator.port, port1);
-    ASSERT_TRUE(address_match(ip_invalid, res_locator));
+    IPLocator::setIPv6(probe_locator, ipv6_invalid);
+    ASSERT_TRUE(address_match(probe_locator, res_locator));
 }
 
 TEST_F(IPLocatorTests, setIPv4)
 {
     Locator_t locator;
+    Locator_t probe_locator;
     IPLocator::createLocator(LOCATOR_KIND_UDPv4, ipv4_lo_address, port1, locator);
 
     // setIPv4 char*
-    IPLocator::setIPv4(locator, ipv4_address.c_str());
-    ASSERT_TRUE(address_match(ipv4_address, locator));
+    // TODO
+    IPLocator::setIPv4(probe_locator, ipv4_lo_address);
+    unsigned char arr[4]{127, 0, 0, 1};
+    ASSERT_TRUE(IPLocator::setIPv4(locator, arr));
+    ASSERT_TRUE(address_match(probe_locator, locator));
 
     // setIPv4 4xoctet
-    IPLocator::setIPv4(locator, 106, 97, 118, 105);
-    ASSERT_TRUE(address_match(ipv4_address_2, locator));
-
-    // setIPv4 string
-    IPLocator::setIPv4(locator, ipv4_address);
-    ASSERT_TRUE(address_match(ipv4_address, locator));
+    IPLocator::setIPv4(probe_locator, ipv4_address_2);
+    ASSERT_TRUE(IPLocator::setIPv4(locator, 106, 97, 118, 105));
+    ASSERT_TRUE(address_match(probe_locator, locator));
 
     // setIPv4 locator
     Locator_t ipv4_locator;
     IPLocator::createLocator(LOCATOR_KIND_TCPv4, ipv4_address_2, port1, ipv4_locator);
-    IPLocator::setIPv4(locator, ipv4_locator);
-    ASSERT_TRUE(address_match(ipv4_address_2, locator));
+    ASSERT_TRUE(IPLocator::setIPv4(locator, ipv4_locator));
+    ASSERT_TRUE(address_match(ipv4_locator, locator));
 }
 
 TEST_F(IPLocatorTests, setIPv6)
 {
     Locator_t locator;
+    Locator_t probe_locator;
     IPLocator::createLocator(LOCATOR_KIND_UDPv6, ipv6_lo_address, port1, locator);
 
     // setIPv6 char*
-    IPLocator::setIPv6(locator, ipv6_lo_address.c_str());
-    ASSERT_TRUE(address_match(ipv6_lo_address, locator));
+    IPLocator::setIPv6(probe_locator, ipv6_lo_address);
+    unsigned char arr[16]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1};
+    ASSERT_TRUE(IPLocator::setIPv6(locator, arr));
+    ASSERT_TRUE(address_match(probe_locator, locator));
 
     // setIPv6 4xoctet
-    IPLocator::setIPv6(locator, 0x4a41, 0x5649, 0x0000, 0x0000, 0x0000, 0x0050, 0x4152, 0x4953);
-    ASSERT_TRUE(address_match(ipv6_address, locator));
-
-    // setIPv6 string
-    IPLocator::setIPv6(locator, ipv6_address_2);
-    ASSERT_TRUE(address_match(ipv6_address_2, locator));
+    IPLocator::setIPv6(probe_locator, ipv6_address);
+    ASSERT_TRUE(IPLocator::setIPv6(locator, 0x4a41, 0x5649, 0x0000, 0x0000, 0x0000, 0x0050, 0x4152, 0x4953));
+    ASSERT_TRUE(address_match(probe_locator, locator));
 
     // setIPv6 locator
-    Locator_t ipv4_locator;
-    IPLocator::createLocator(LOCATOR_KIND_TCPv6, ipv6_address, port1, ipv4_locator);
-    IPLocator::setIPv6(locator, ipv6_address_repeated);
-    ASSERT_TRUE(address_match(ipv6_address, locator));
+    Locator_t ipv6_locator;
+    IPLocator::createLocator(LOCATOR_KIND_TCPv6, ipv6_address, port1, ipv6_locator);
+    ASSERT_TRUE(IPLocator::setIPv6(locator, ipv6_locator));
+    ASSERT_TRUE(address_match(ipv6_locator, locator));
 }
 
 TEST_F(IPLocatorTests, getIPv4)
 {
-    // TODO
-    ASSERT_TRUE(false);
+    Locator_t locator;
+    IPLocator::setIPv4(locator, ipv4_lo_address);
+    auto res = IPLocator::getIPv4(locator);
+    ASSERT_EQ(res[0], 127);
+    ASSERT_EQ(res[1], 0);
+    ASSERT_EQ(res[2], 0);
+    ASSERT_EQ(res[3], 1);
 }
 
 TEST_F(IPLocatorTests, getIPv6)
 {
-    // TODO
-    ASSERT_TRUE(false);
+    Locator_t locator;
+    IPLocator::setIPv6(locator, ipv6_lo_address);
+    auto res = IPLocator::getIPv6(locator);
+    for (int i=0; i<15; i++)
+    {
+        ASSERT_EQ(res[i], 0);
+    }
+    ASSERT_EQ(res[15], 1);
 }
 
 TEST_F(IPLocatorTests, hasIP)
@@ -234,156 +370,325 @@ TEST_F(IPLocatorTests, toIPv6string)
     ASSERT_EQ(IPLocator::toIPv6string(locator), ipv6_lo_address);
     IPLocator::setIPv6(locator, ipv6_address_repeated.c_str());
     ASSERT_EQ(IPLocator::toIPv6string(locator), ipv6_address);
+
+    IPLocator::setIPv6(locator, "11::");
+    ASSERT_EQ(IPLocator::toIPv6string(locator), "11::");
+    IPLocator::setIPv6(locator, "::11");
+    ASSERT_EQ(IPLocator::toIPv6string(locator), "::11");
+    IPLocator::setIPv6(locator, "11::01");
+    ASSERT_EQ(IPLocator::toIPv6string(locator), "11::1");
+    IPLocator::setIPv6(locator, "0::01");
+    ASSERT_EQ(IPLocator::toIPv6string(locator), "::1");
+    IPLocator::setIPv6(locator, "0::0:0");
+    ASSERT_EQ(IPLocator::toIPv6string(locator), "::");
 }
 
 TEST_F(IPLocatorTests, copyIPv4)
 {
-    // TODO
-    ASSERT_TRUE(false);
+    Locator_t locator;
+    IPLocator::setIPv4(locator, ipv4_lo_address);
+    unsigned char arr[4];
+    ASSERT_TRUE(IPLocator::copyIPv4(locator, arr));
+    ASSERT_EQ(arr[0], 127);
+    ASSERT_EQ(arr[1], 0);
+    ASSERT_EQ(arr[2], 0);
+    ASSERT_EQ(arr[3], 1);
 }
 
 TEST_F(IPLocatorTests, copyIPv6)
 {
-    // TODO
-    ASSERT_TRUE(false);
+    Locator_t locator;
+    IPLocator::setIPv6(locator, ipv6_lo_address);
+    unsigned char arr[16];
+    ASSERT_TRUE(IPLocator::copyIPv6(locator, arr));
+    for (int i=0; i<15; i++)
+    {
+        ASSERT_EQ(arr[i], 0);
+    }
+    ASSERT_EQ(arr[15], 1);
 }
 
 TEST_F(IPLocatorTests, ip)
 {
-    // TODO
-    ASSERT_TRUE(false);
+    Locator_t locator;
+
+    // UDPv4
+    locator.kind = LOCATOR_KIND_UDPv4;
+    ASSERT_TRUE(IPLocator::ip(locator, ipv4_address_repeated));
+    ASSERT_EQ(IPLocator::toIPv4string(locator), ipv4_address);
+
+    // TCPv4
+    locator.kind = LOCATOR_KIND_TCPv4;
+    ASSERT_TRUE(IPLocator::ip(locator, ipv4_lo_address));
+    ASSERT_EQ(IPLocator::toIPv4string(locator), ipv4_lo_address);
+
+    // UDPv6
+    locator.kind = LOCATOR_KIND_UDPv6;
+    ASSERT_TRUE(IPLocator::ip(locator, ipv6_address_repeated));
+    ASSERT_EQ(IPLocator::toIPv6string(locator), ipv6_address);
+
+    // TCPv6
+    locator.kind = LOCATOR_KIND_TCPv6;
+    ASSERT_TRUE(IPLocator::ip(locator, ipv6_lo_address));
+    ASSERT_EQ(IPLocator::toIPv6string(locator), ipv6_lo_address);
 }
 
 TEST_F(IPLocatorTests, ip_to_string)
 {
-    // TODO
-    ASSERT_TRUE(false);
+    Locator_t locator;
+
+    // v4
+    IPLocator::setIPv4(locator, 127, 0, 0, 1);
+    locator.kind = LOCATOR_KIND_UDPv4;
+    ASSERT_EQ(IPLocator::ip_to_string(locator), ipv4_lo_address);
+    IPLocator::setIPv4(locator, ipv4_address_repeated);
+    locator.kind = LOCATOR_KIND_TCPv4;
+    ASSERT_EQ(IPLocator::ip_to_string(locator), ipv4_address);
+
+    // v6
+    IPLocator::setIPv6(locator, 0, 0, 0, 0, 0, 0, 0, 1);
+    locator.kind = LOCATOR_KIND_UDPv6;
+    ASSERT_EQ(IPLocator::ip_to_string(locator), ipv6_lo_address);
+    IPLocator::setIPv6(locator, ipv6_address_repeated);
+    locator.kind = LOCATOR_KIND_TCPv6;
+    ASSERT_EQ(IPLocator::ip_to_string(locator), ipv6_address);
 }
 
-TEST_F(IPLocatorTests, setLogicalPort)
+TEST_F(IPLocatorTests, logicalPort)
 {
-    // TODO
-    ASSERT_TRUE(false);
-}
-
-TEST_F(IPLocatorTests, getLogicalPort)
-{
-    // TODO
-    ASSERT_TRUE(false);
+    Locator_t locator;
+    ASSERT_TRUE(IPLocator::setLogicalPort(locator, port1));
+    ASSERT_EQ(IPLocator::getLogicalPort(locator), port1);
+    ASSERT_NE(IPLocator::getLogicalPort(locator), port2);
+    ASSERT_TRUE(IPLocator::setLogicalPort(locator, port2));
+    ASSERT_EQ(IPLocator::getLogicalPort(locator), port2);
 }
 
 TEST_F(IPLocatorTests, setPhysicalPort)
 {
-    // TODO
-    ASSERT_TRUE(false);
+    Locator_t locator;
+    ASSERT_TRUE(IPLocator::setPhysicalPort(locator, port1));
+    ASSERT_EQ(IPLocator::getPhysicalPort(locator), port1);
+    ASSERT_NE(IPLocator::getPhysicalPort(locator), port2);
+    ASSERT_TRUE(IPLocator::setPhysicalPort(locator, port2));
+    ASSERT_EQ(IPLocator::getPhysicalPort(locator), port2);
 }
 
-TEST_F(IPLocatorTests, getPhysicalPort)
-{
-    // TODO
-    ASSERT_TRUE(false);
-}
+// TEST_F(IPLocatorTests, setWan)
+// {
+//     // TODO
+//     ASSERT_TRUE(false);
+// }
 
-TEST_F(IPLocatorTests, setWan)
-{
-    // TODO
-    ASSERT_TRUE(false);
-}
+// TEST_F(IPLocatorTests, getWan)
+// {
+//     // TODO
+//     ASSERT_TRUE(false);
+// }
 
-TEST_F(IPLocatorTests, getWan)
-{
-    // TODO
-    ASSERT_TRUE(false);
-}
+// TEST_F(IPLocatorTests, hasWan)
+// {
+//     // TODO
+//     ASSERT_TRUE(false);
+// }
 
-TEST_F(IPLocatorTests, hasWan)
-{
-    // TODO
-    ASSERT_TRUE(false);
-}
+// TEST_F(IPLocatorTests, toWanstring)
+// {
+//     // TODO
+//     ASSERT_TRUE(false);
+// }
 
-TEST_F(IPLocatorTests, toWanstring)
-{
-    // TODO
-    ASSERT_TRUE(false);
-}
+// TEST_F(IPLocatorTests, setLanID)
+// {
+//     // TODO
+//     ASSERT_TRUE(false);
+// }
 
-TEST_F(IPLocatorTests, setLanID)
-{
-    // TODO
-    ASSERT_TRUE(false);
-}
+// TEST_F(IPLocatorTests, getLanID)
+// {
+//     // TODO
+//     ASSERT_TRUE(false);
+// }
 
-TEST_F(IPLocatorTests, getLanID)
-{
-    // TODO
-    ASSERT_TRUE(false);
-}
-
-TEST_F(IPLocatorTests, toLanIDstring)
-{
-    // TODO
-    ASSERT_TRUE(false);
-}
+// TEST_F(IPLocatorTests, toLanIDstring)
+// {
+//     // TODO
+//     ASSERT_TRUE(false);
+// }
 
 TEST_F(IPLocatorTests, toPhysicalLocator)
 {
-    // TODO
-    ASSERT_TRUE(false);
+    Locator_t locator;
+    ASSERT_TRUE(IPLocator::setLogicalPort(locator, port1));
+    ASSERT_EQ(IPLocator::getLogicalPort(locator), port1);
+    locator = IPLocator::toPhysicalLocator(locator);
+    ASSERT_NE(IPLocator::getLogicalPort(locator), port1);
 }
 
-TEST_F(IPLocatorTests, ip_equals_wan)
-{
-    // TODO
-    ASSERT_TRUE(false);
-}
+// TEST_F(IPLocatorTests, ip_equals_wan)
+// {
+//     // TODO
+//     ASSERT_TRUE(false);
+// }
 
 TEST_F(IPLocatorTests, setPortRTPS)
 {
-    // TODO
-    ASSERT_TRUE(false);
-}
+    Locator_t locator;
+    IPLocator::createLocator(LOCATOR_KIND_UDPv4, ipv4_address, port1, locator);
+    ASSERT_TRUE(IPLocator::setPortRTPS(locator, port2));
+    ASSERT_EQ(IPLocator::getPortRTPS(locator), static_cast<uint16_t>(port2));
 
-TEST_F(IPLocatorTests, getPortRTPS)
-{
-    // TODO
-    ASSERT_TRUE(false);
+    IPLocator::createLocator(LOCATOR_KIND_UDPv6, ipv6_address, port2, locator);
+    IPLocator::setPortRTPS(locator, port1);
+    ASSERT_EQ(IPLocator::getPortRTPS(locator), static_cast<uint16_t>(port1));
+
+    IPLocator::createLocator(LOCATOR_KIND_TCPv4, ipv4_address_2, port1, locator);
+    ASSERT_TRUE(IPLocator::setPortRTPS(locator, port2));
+    ASSERT_EQ(IPLocator::getPortRTPS(locator), static_cast<uint16_t>(port2));
+
+    IPLocator::createLocator(LOCATOR_KIND_TCPv6, ipv6_address_2, port2, locator);
+    ASSERT_TRUE(IPLocator::setPortRTPS(locator, port1));
+    ASSERT_EQ(IPLocator::getPortRTPS(locator), static_cast<uint16_t>(port1));
+
+    IPLocator::createLocator(LOCATOR_KIND_SHM, ipv4_lo_address, port1, locator);
+    ASSERT_FALSE(IPLocator::setPortRTPS(locator, port1));
+    ASSERT_EQ(IPLocator::getPortRTPS(locator), 0);
 }
 
 TEST_F(IPLocatorTests, isLocal)
 {
-    // TODO
-    ASSERT_TRUE(false);
+    // ipv4 UDP
+    Locator_t locator;
+    locator.kind = LOCATOR_KIND_UDPv4;
+    IPLocator::setIPv4(locator, ipv4_address);
+    ASSERT_FALSE(IPLocator::isLocal(locator));
+    IPLocator::setIPv4(locator, ipv4_any);
+    ASSERT_FALSE(IPLocator::isLocal(locator));
+    IPLocator::setIPv4(locator, ipv4_lo_address);
+    ASSERT_TRUE(IPLocator::isLocal(locator));
+
+    // ipv4 TCP
+    locator.kind = LOCATOR_KIND_TCPv4;
+    IPLocator::setIPv4(locator, ipv4_address);
+    ASSERT_FALSE(IPLocator::isLocal(locator));
+    IPLocator::setIPv4(locator, ipv4_any);
+    ASSERT_FALSE(IPLocator::isLocal(locator));
+    IPLocator::setIPv4(locator, ipv4_lo_address);
+    ASSERT_TRUE(IPLocator::isLocal(locator));
+
+    // ipv6 UDP
+    locator.kind = LOCATOR_KIND_UDPv6;
+    IPLocator::setIPv6(locator, ipv6_address);
+    ASSERT_FALSE(IPLocator::isLocal(locator));
+    IPLocator::setIPv6(locator, ipv6_any);
+    ASSERT_FALSE(IPLocator::isLocal(locator));
+    IPLocator::setIPv6(locator, ipv6_lo_address);
+    ASSERT_TRUE(IPLocator::isLocal(locator));
+
+    // ipv6 TCP
+    locator.kind = LOCATOR_KIND_TCPv6;
+    IPLocator::setIPv6(locator, ipv6_address);
+    ASSERT_FALSE(IPLocator::isLocal(locator));
+    IPLocator::setIPv6(locator, ipv6_any);
+    ASSERT_FALSE(IPLocator::isLocal(locator));
+    IPLocator::setIPv6(locator, ipv6_lo_address);
+    ASSERT_TRUE(IPLocator::isLocal(locator));
 }
 
 TEST_F(IPLocatorTests, isAny)
 {
-    // TODO
-    ASSERT_TRUE(false);
+    // IPv4
+    Locator_t locator;
+    IPLocator::createLocator(LOCATOR_KIND_UDPv4, ipv4_address, port1, locator);
+    ASSERT_FALSE(IPLocator::isAny(locator));
+    IPLocator::setIPv4(locator, ipv4_any);
+    ASSERT_TRUE(IPLocator::isAny(locator));
+
+    // IPv6
+    IPLocator::createLocator(LOCATOR_KIND_UDPv6, ipv6_address, port1, locator);
+    ASSERT_FALSE(IPLocator::isAny(locator));
+    IPLocator::setIPv4(locator, ipv6_any);
+    ASSERT_TRUE(IPLocator::isAny(locator));
 }
 
 TEST_F(IPLocatorTests, compareAddress)
 {
-    // TODO
-    ASSERT_TRUE(false);
+    Locator_t locator1, locator2;
+
+    // UDP v4
+    IPLocator::createLocator(LOCATOR_KIND_UDPv4, ipv4_address, port1, locator1);
+    IPLocator::createLocator(LOCATOR_KIND_UDPv4, ipv4_address_repeated, port1, locator2);
+    ASSERT_TRUE(IPLocator::compareAddressAndPhysicalPort(locator1, locator2));
+    IPLocator::createLocator(LOCATOR_KIND_UDPv4, ipv4_address_2, port1, locator2);
+    ASSERT_FALSE(IPLocator::compareAddressAndPhysicalPort(locator1, locator2));
+
+    // TCP v4
+    IPLocator::createLocator(LOCATOR_KIND_TCPv4, ipv4_address, port1, locator1);
+    IPLocator::createLocator(LOCATOR_KIND_TCPv4, ipv4_address_repeated, port1, locator2);
+    ASSERT_TRUE(IPLocator::compareAddressAndPhysicalPort(locator1, locator2));
+    IPLocator::createLocator(LOCATOR_KIND_TCPv4, ipv4_address_2, port1, locator2);
+    ASSERT_FALSE(IPLocator::compareAddressAndPhysicalPort(locator1, locator2));
+
+    // UDP v6
+    IPLocator::createLocator(LOCATOR_KIND_UDPv6, ipv6_address, port1, locator1);
+    IPLocator::createLocator(LOCATOR_KIND_UDPv6, ipv6_address_repeated, port1, locator2);
+    ASSERT_TRUE(IPLocator::compareAddressAndPhysicalPort(locator1, locator2));
+    IPLocator::createLocator(LOCATOR_KIND_UDPv6, ipv6_address_2, port1, locator2);
+    ASSERT_FALSE(IPLocator::compareAddressAndPhysicalPort(locator1, locator2));
+
+    // TCP v6
+    IPLocator::createLocator(LOCATOR_KIND_TCPv6, ipv6_address, port1, locator1);
+    IPLocator::createLocator(LOCATOR_KIND_TCPv6, ipv6_address_repeated, port1, locator2);
+    ASSERT_TRUE(IPLocator::compareAddressAndPhysicalPort(locator1, locator2));
+    IPLocator::createLocator(LOCATOR_KIND_TCPv6, ipv6_address_2, port1, locator2);
+    ASSERT_FALSE(IPLocator::compareAddressAndPhysicalPort(locator1, locator2));
 }
 
 TEST_F(IPLocatorTests, compareAddressAndPhysicalPort)
 {
-    // TODO
-    ASSERT_TRUE(false);
+    Locator_t locator1, locator2;
+    IPLocator::createLocator(LOCATOR_KIND_UDPv4, ipv4_address, port1, locator1);
+    IPLocator::createLocator(LOCATOR_KIND_UDPv4, ipv4_address, port1, locator2);
+    ASSERT_TRUE(IPLocator::compareAddressAndPhysicalPort(locator1, locator2));
+    IPLocator::createLocator(LOCATOR_KIND_TCPv4, ipv4_address, port1, locator2);
+    ASSERT_FALSE(IPLocator::compareAddressAndPhysicalPort(locator1, locator2));
+
+    IPLocator::createLocator(LOCATOR_KIND_UDPv6, ipv6_address, port1, locator1);
+    IPLocator::createLocator(LOCATOR_KIND_UDPv6, ipv6_address, port1, locator2);
+    ASSERT_TRUE(IPLocator::compareAddressAndPhysicalPort(locator1, locator2));
+    IPLocator::createLocator(LOCATOR_KIND_TCPv6, ipv6_address, port1, locator2);
+    ASSERT_FALSE(IPLocator::compareAddressAndPhysicalPort(locator1, locator2));
 }
 
-TEST_F(IPLocatorTests, to_string)
-{
-    // TODO
-    ASSERT_TRUE(false);
-}
+// TEST_F(IPLocatorTests, to_string)
+// {
+//     // TODO
+//     ASSERT_TRUE(false);
+// }
 
 TEST_F(IPLocatorTests, isMulticast)
 {
-    // TODO
-    ASSERT_TRUE(false);
+    Locator_t locator;
+
+    // UDP v4
+    locator.kind = LOCATOR_KIND_UDPv4;
+    IPLocator::setIPv4(locator, ipv4_address);
+    ASSERT_FALSE(IPLocator::isMulticast(locator));
+    IPLocator::setIPv4(locator, ipv4_multicast_address);
+    ASSERT_TRUE(IPLocator::isMulticast(locator));
+    IPLocator::setIPv4(locator, ipv4_multicast_address_2);
+    ASSERT_TRUE(IPLocator::isMulticast(locator));
+
+    // UDP v6
+    locator.kind = LOCATOR_KIND_UDPv6;
+    IPLocator::setIPv6(locator, ipv6_address);
+    ASSERT_FALSE(IPLocator::isMulticast(locator));
+    IPLocator::setIPv6(locator, ipv6_multicast_address);
+    ASSERT_TRUE(IPLocator::isMulticast(locator));
+    IPLocator::setIPv6(locator, ipv6_multicast_address_2);
+    ASSERT_TRUE(IPLocator::isMulticast(locator));
+    IPLocator::setIPv6(locator, ipv6_multicast_address_3);
+    ASSERT_TRUE(IPLocator::isMulticast(locator));
 }
 
 int main(int argc, char **argv)

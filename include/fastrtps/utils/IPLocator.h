@@ -234,12 +234,16 @@ class IPLocator
 
         // Checks if the locator address is equal to 0
         // It checks the proper locator address depending the locator kind
-        RTPS_DllAPI static bool isEmpty(const Locator_t& locator);
+        static bool isEmpty(const Locator_t& locator);
 
         // Checks if the locator address from index till the end is equal to 0
-        RTPS_DllAPI static bool isEmpty(
+        static bool isEmpty(
                 const Locator_t& locator,
                 uint16_t index);
+
+        // Checks if the locator address from index till the end is equal to 0
+        static bool IPv6isCorrect(
+                const std::string& ipv6);
 };
 
 }
