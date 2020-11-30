@@ -457,7 +457,7 @@ const ReturnCode_t SubscriberImpl::get_datareader_qos_from_profile(
 
 const DomainParticipant* SubscriberImpl::get_participant() const
 {
-    return participant_->get_participant();
+    return const_cast<const DomainParticipantImpl*>(participant_)->get_participant();
 }
 
 void SubscriberImpl::SubscriberReaderListener::on_data_available(
