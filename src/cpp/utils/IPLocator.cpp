@@ -230,7 +230,7 @@ bool IPLocator::setIPv6(
     else
     {
         // it could have :: in the middle or not have it
-        aux_prev = -1; // aux cannot be 0 in this else
+        aux_prev = ipv6.size(); // aux could be 1 so this number must be unreacheable
         aux = ipv6.find(':');
 
         // look for "::" will loop string twice, while this loop less or equal once
