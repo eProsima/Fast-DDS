@@ -16,8 +16,8 @@
  * @file DataSharingPayloadPool.hpp
  */
 
-#ifndef RTPS_HISTORY_DATASHARINGPAYLOADPOOL_HPP
-#define RTPS_HISTORY_DATASHARINGPAYLOADPOOL_HPP
+#ifndef RTPS_DATASHARING_DATASHARINGPAYLOADPOOL_HPP
+#define RTPS_DATASHARING_DATASHARINGPAYLOADPOOL_HPP
 
 #include <fastdds/rtps/common/CacheChange.h>
 #include <fastdds/rtps/history/IPayloadPool.h>
@@ -56,8 +56,7 @@ public:
             CacheChange_t& cache_change) override;
 
     static std::shared_ptr<DataSharingPayloadPool> get_reader_pool(
-            const PoolConfig& config,
-            bool is_volatile);
+            bool is_reader_volatile);
 
     static std::shared_ptr<DataSharingPayloadPool> get_writer_pool(
             const PoolConfig& config);
@@ -329,4 +328,4 @@ protected:
 }  // namespace fastrtps
 }  // namespace eprosima
 
-#endif  // RTPS_HISTORY_DATASHARINGPAYLOADPOOL_HPP
+#endif  // RTPS_DATASHARING_DATASHARINGPAYLOADPOOL_HPP

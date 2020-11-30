@@ -16,7 +16,7 @@
  * @file DataSharingNotification.cpp
  */
 
-#include <rtps/history/DataSharingNotification.hpp>
+#include <rtps/DataSharing/DataSharingNotification.hpp>
 
 #include <memory>
 #include <mutex>

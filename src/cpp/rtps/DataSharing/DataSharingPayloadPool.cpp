@@ -16,10 +16,10 @@
  * @file DataSharingPayloadPool.cpp
  */
 
-#include <rtps/history/DataSharingPayloadPool.hpp>
+#include <rtps/DataSharing/DataSharingPayloadPool.hpp>
 
-#include "./DataSharingPayloadPool_impl/ReaderPool.hpp"
-#include "./DataSharingPayloadPool_impl/WriterPool.hpp"
+#include "./ReaderPool.hpp"
+#include "./WriterPool.hpp"
 
 #include <memory>
 
@@ -80,15 +80,10 @@ bool DataSharingPayloadPool::check_sequence_number(
     return (PayloadNode::get_from_data(data)->sequence_number() == sn);
 }
 
-
 std::shared_ptr<DataSharingPayloadPool> DataSharingPayloadPool::get_reader_pool(
-        const PoolConfig& config,
-        bool is_volatile)
+        bool is_reader_volatile)
 {
-    (void) config;
-    assert (config.memory_policy == PREALLOCATED_MEMORY_MODE);
-    
-    return std::make_shared<ReaderPool>(is_volatile);
+    return std::make_shared<ReaderPool>(is_reader_volatile);
 }
 
 std::shared_ptr<DataSharingPayloadPool> DataSharingPayloadPool::get_writer_pool(

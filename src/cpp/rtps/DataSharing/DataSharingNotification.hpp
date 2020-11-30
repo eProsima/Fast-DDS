@@ -135,4 +135,4 @@ protected:
 }  // namespace fastrtps
 }  // namespace eprosima
 
-#endif  // RTPS_HISTORY_DATASHARINGNOTIFICATION_HPP
+#endif  // RTPS_DATASHARING_DATASHARINGNOTIFICATION_HPP

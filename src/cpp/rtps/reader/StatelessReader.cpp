@@ -26,8 +26,8 @@
 #include <fastdds/rtps/builtin/liveliness/WLP.h>
 #include <fastdds/rtps/writer/LivelinessManager.h>
 #include <rtps/participant/RTPSParticipantImpl.h>
-#include <rtps/history/DataSharingListener.hpp>
-#include <rtps/history/DataSharingPayloadPool_impl/ReaderPool.hpp>
+#include <rtps/DataSharing/DataSharingListener.hpp>
+#include <rtps/DataSharing/ReaderPool.hpp>
 
 #include <mutex>
 #include <thread>
@@ -95,7 +95,6 @@ bool StatelessReader::matched_writer_add(
     if (is_datasharing_compatible_with(wdata))
     {
         if (datasharing_listener_->add_datasharing_writer(wdata.guid(),
-            PoolConfig::from_history_attributes(mp_history->m_att),
             m_att.durabilityKind == VOLATILE))
         {
             logInfo(RTPS_READER, "Writer Proxy " << wdata.guid() << " added to " << this->m_guid.entityId 

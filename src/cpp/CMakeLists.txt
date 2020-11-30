@@ -52,15 +52,15 @@ set(${PROJECT_NAME}_source_files
     rtps/writer/StatelessWriter.cpp
     rtps/writer/ReaderLocator.cpp
     rtps/history/CacheChangePool.cpp
-    rtps/history/DataSharingPayloadPool.cpp
-    rtps/history/DataSharingListener.cpp
-    rtps/history/DataSharingNotification.cpp
-    rtps/history/DataSharingNotifier.cpp
     rtps/history/History.cpp
     rtps/history/WriterHistory.cpp
     rtps/history/ReaderHistory.cpp
     rtps/history/TopicPayloadPool.cpp
     rtps/history/TopicPayloadPoolRegistry.cpp
+    rtps/DataSharing/DataSharingPayloadPool.cpp
+    rtps/DataSharing/DataSharingListener.cpp
+    rtps/DataSharing/DataSharingNotification.cpp
+    rtps/DataSharing/DataSharingNotifier.cpp
     rtps/reader/WriterProxy.cpp
     rtps/reader/StatefulReader.cpp
     rtps/reader/StatelessReader.cpp

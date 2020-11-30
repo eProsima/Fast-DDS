@@ -16,7 +16,7 @@
  * @file DataSharingListener.cpp
  */
 
-#include <rtps/history/DataSharingListener.hpp>
+#include <rtps/DataSharing/DataSharingListener.hpp>
 
 #include <memory>
 #include <mutex>
@@ -127,17 +127,16 @@ void DataSharingListener::process_new_data ()
 
 bool DataSharingListener::add_datasharing_writer(
     const GUID_t& writer_guid,
-    const PoolConfig& pool_config,
     bool is_volatile)
 {
-    // TODO [ULG] adding and removing must be protected
+    // TODO [ILG] adding and removing must be protected
     if (writer_is_matched(writer_guid))
     {
         logInfo(RTPS_READER, "Attempting to add existing datasharing writer " << writer_guid);
         return false;
     }
 
-    std::shared_ptr<DataSharingPayloadPool> pool = DataSharingPayloadPool::get_reader_pool(pool_config, is_volatile);
+    std::shared_ptr<DataSharingPayloadPool> pool = DataSharingPayloadPool::get_reader_pool(is_volatile);
     pool->init_shared_memory(writer_guid, datasharing_pools_directory_);
     writer_pools_.push_back(pool);
 

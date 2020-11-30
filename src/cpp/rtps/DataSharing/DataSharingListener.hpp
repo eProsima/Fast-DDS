@@ -16,12 +16,13 @@
  * @file DataSharingListener.hpp
  */
 
-#ifndef RTPS_HISTORY_DATASHARINGLISTENER_HPP
-#define RTPS_HISTORY_DATASHARINGLISTENER_HPP
+#ifndef RTPS_DATASHARING_DATASHARINGLISTENER_HPP
+#define RTPS_DATASHARING_DATASHARINGLISTENER_HPP
 
 #include <fastdds/dds/log/Log.hpp>
-#include <rtps/history/DataSharingNotification.hpp>
-#include <rtps/history/DataSharingPayloadPool.hpp>
+#include <rtps/DataSharing/IDataSharingListener.hpp>
+#include <rtps/DataSharing/DataSharingNotification.hpp>
+#include <rtps/DataSharing/DataSharingPayloadPool.hpp>
 #include <fastrtps/utils/collections/ResourceLimitedVector.hpp>
 
 #include <memory>
@@ -32,7 +33,7 @@ namespace eprosima {
 namespace fastrtps {
 namespace rtps {
 
-class DataSharingListener
+class DataSharingListener : public IDataSharingListener
 {
 
 public:
@@ -52,26 +53,25 @@ public:
      * Starts the listening thread.
      * @throw std::exception on error
      */
-    void start();
+    void start() override;
 
     /**
      * Stops the listening thread.
      * @throw std::exception on error
      */
-    void stop();
+    void stop() override;
 
     bool add_datasharing_writer(
             const GUID_t& writer_guid,
-            const PoolConfig& pool_config,
-            bool is_volatile);
+            bool is_volatile) override;
 
     bool remove_datasharing_writer(
-            const GUID_t& writer_guid);
+            const GUID_t& writer_guid) override;
 
     bool writer_is_matched(
-            const GUID_t& writer_guid) const;
+            const GUID_t& writer_guid) const override;
 
-    void notify();
+    void notify() override;
 
 protected:
 
@@ -99,4 +99,4 @@ protected:
 }  // namespace fastrtps
 }  // namespace eprosima
 
-#endif  // RTPS_HISTORY_DATASHARINGLISTENER_HPP
+#endif  // RTPS_DATASHARING_DATASHARINGLISTENER_HPP
