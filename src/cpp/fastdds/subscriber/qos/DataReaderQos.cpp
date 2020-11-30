@@ -51,7 +51,7 @@ ReaderQos DataReaderQos::get_readerqos(
     qos.representation = type_consistency().representation;
     qos.data_sharing = data_sharing();
 
-    if (qos.data_sharing.kind() != DISABLED &&
+    if (qos.data_sharing.kind() != OFF &&
         qos.data_sharing.domain_ids().empty())
     {
         uint64_t id = 0;

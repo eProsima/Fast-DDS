@@ -294,7 +294,7 @@ uint32_t ReaderProxyData::get_serialized_size(
             m_qos.type_consistency);
     }
     if ((m_qos.data_sharing.send_always() || m_qos.data_sharing.hasChanged) &&
-            m_qos.data_sharing.kind() != fastdds::dds::DISABLED)
+            m_qos.data_sharing.kind() != fastdds::dds::OFF)
     {
         ret_val += fastdds::dds::QosPoliciesSerializer<DataSharingQosPolicy>::cdr_serialized_size(
             m_qos.data_sharing);
@@ -582,7 +582,7 @@ bool ReaderProxyData::writeToCDRMessage(
     }
 
     if ((m_qos.data_sharing.send_always() || m_qos.data_sharing.hasChanged) &&
-            m_qos.data_sharing.kind() != fastdds::dds::DISABLED)
+            m_qos.data_sharing.kind() != fastdds::dds::OFF)
     {
         if (!fastdds::dds::QosPoliciesSerializer<DataSharingQosPolicy>::add_to_cdr_message(m_qos.data_sharing, msg))
         {

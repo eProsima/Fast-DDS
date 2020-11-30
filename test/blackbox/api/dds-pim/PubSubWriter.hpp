@@ -1111,9 +1111,9 @@ public:
         return *this;
     }
 
-    PubSubWriter& datasharing_disable()
+    PubSubWriter& datasharing_off()
     {
-        datawriter_qos_.data_sharing().disable();
+        datawriter_qos_.data_sharing().off();
         return *this;
     }
 
@@ -1124,11 +1124,11 @@ public:
         return *this;
     }
 
-    PubSubWriter& datasharing_force(
+    PubSubWriter& datasharing_on(
             const std::string directory,
             std::vector<uint16_t> domain_id = std::vector<uint16_t>())
     {
-        datawriter_qos_.data_sharing().force(directory, domain_id);
+        datawriter_qos_.data_sharing().on(directory, domain_id);
         return *this;
     }
 

@@ -182,12 +182,23 @@ ReturnCode_t DataReaderImpl::enable()
     }
     if (is_datasharing_compatible)
     {
-        att.endpoint.set_data_sharing_configuration(qos_.data_sharing());
+        DataSharingQosPolicy datasharing(qos_.data_sharing());
+        if (datasharing.domain_ids().empty())
+        {
+            uint64_t id = 0;
+            Host::uint48 mac_id = Host::get().mac_id();
+            for (size_t i = 0; i < Host::mac_id_length; ++i)
+            {
+                id |= mac_id.value[i] << (64 - i);
+            }
+            datasharing.add_domain_id(id);
+        }
+        att.endpoint.set_data_sharing_configuration(datasharing);
     }
     else
     {
         DataSharingQosPolicy datasharing;
-        datasharing.disable();
+        datasharing.off();
         att.endpoint.set_data_sharing_configuration(datasharing);
     }
 
@@ -225,7 +236,7 @@ ReturnCode_t DataReaderImpl::enable()
     ReaderQos rqos = qos_.get_readerqos(subscriber_->get_qos());
     if (!is_datasharing_compatible)
     {
-        rqos.data_sharing.disable();
+        rqos.data_sharing.off();
     }
     subscriber_->rtps_participant()->registerReader(reader_, topic_attributes(), rqos);
 
@@ -1383,10 +1394,10 @@ ReturnCode_t DataReaderImpl::check_datasharing_compatible(
     is_datasharing_compatible = false;
     switch (qos_.data_sharing().kind())
     {
-        case DataSharingKind::DISABLED:
+        case DataSharingKind::OFF:
             return ReturnCode_t::RETCODE_OK;
             break;
-        case DataSharingKind::FORCED:
+        case DataSharingKind::ON:
 #if HAVE_SECURITY
             if (has_security_enabled)
             {
@@ -1416,7 +1427,7 @@ ReturnCode_t DataReaderImpl::check_datasharing_compatible(
             {
                 logInfo(DATA_READER, "Data sharing disabled because data type is not bounded");
                 return ReturnCode_t::RETCODE_OK;
-        }
+            }
 
             is_datasharing_compatible = true;
             return ReturnCode_t::RETCODE_OK;

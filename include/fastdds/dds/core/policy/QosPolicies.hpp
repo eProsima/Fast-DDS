@@ -89,7 +89,6 @@ enum QosPolicyId_t : uint32_t
     TYPECONSISTENCY_QOS_POLICY_ID           = 34,   //< TipeConsistencyQos
     WIREPROTOCOLCONFIG_QOS_POLICY_ID        = 35,   //< WireProtocolConfigQos
     WRITERRESOURCELIMITS_QOS_POLICY_ID      = 36,   //< WriterResourceLimitsQos
-    DATASHARING_QOS_POLICY_ID               = 37,   //< DataSharingQosPolicy
 
     NEXT_QOS_POLICY_ID                              //< Keep always the last element. For internal use only
 };
@@ -2759,14 +2758,14 @@ enum DataSharingKind : fastrtps::rtps::octet
      */
     AUTO = 0x01,
     /**
-     * Disable the use of DataSharing
-     */
-    DISABLED = 0x02,
-    /**
-     * Force the use of DataSharing.
+     * Activate the use of DataSharing.
      * Entity creation will fail if requirements for DataSharing are not met
      */
-    FORCED = 0x03
+    ON = 0x02,
+    /**
+     * Disable the use of DataSharing
+     */
+    OFF = 0x03
 };
 
 
@@ -2946,41 +2945,41 @@ public:
     }
 
     /**
-     * @brief Configures the DataSharing in forced mode
+     * @brief Configures the DataSharing in active mode
      *
      * A default domain ID is automatically computed.
      * 
      * @param directory The shared memory directory to use.
      *      It is mandatory to provide a non-empty name or the creation of endpoints will fail.
      */
-    RTPS_DllAPI void force(
+    RTPS_DllAPI void on(
             const std::string& directory)
     {
         assert(!directory.empty());
-        setup (FORCED, directory, std::vector<uint16_t>());
+        setup (ON, directory, std::vector<uint16_t>());
     }
 
     /**
-     * @brief Configures the DataSharing in forced mode
+     * @brief Configures the DataSharing in active mode
      *
      * @param directory The shared memory directory to use.
      *      It is mandatory to provide a non-empty name or the creation of endpoints will fail.
      * @param domain_ids the user configured DataSharing domain IDs (16 bits).
      */
-    RTPS_DllAPI void force(
+    RTPS_DllAPI void on(
             const std::string& directory,
             const std::vector<uint16_t>& domain_ids)
     {
         assert(!directory.empty());
-        setup (FORCED, directory, domain_ids);
+        setup (ON, directory, domain_ids);
     }
 
     /**
      * @brief Configures the DataSharing in disabled mode
      */
-    RTPS_DllAPI void disable()
+    RTPS_DllAPI void off()
     {
-        setup (DISABLED, "", std::vector<uint16_t>());
+        setup (OFF, "", std::vector<uint16_t>());
     }
 
     void add_domain_id(uint64_t id)

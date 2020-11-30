@@ -78,7 +78,7 @@ public:
         , m_userDefinedID(-1)
         , m_entityID(-1)
     {
-        datasharing_.disable();
+        datasharing_.off();
     }
 
     virtual ~EndpointAttributes()

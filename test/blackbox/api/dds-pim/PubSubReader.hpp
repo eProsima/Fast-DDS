@@ -1059,9 +1059,9 @@ public:
         return *this;
     }
 
-    PubSubReader& datasharing_disable()
+    PubSubReader& datasharing_off()
     {
-        datareader_qos_.data_sharing().disable();
+        datareader_qos_.data_sharing().off();
         return *this;
     }
 
@@ -1072,11 +1072,11 @@ public:
         return *this;
     }
 
-    PubSubReader& datasharing_force(
+    PubSubReader& datasharing_on(
             const std::string directory,
             std::vector<uint16_t> domain_id = std::vector<uint16_t>())
     {
-        datareader_qos_.data_sharing().force(directory, domain_id);
+        datareader_qos_.data_sharing().on(directory, domain_id);
         return *this;
     }
 
