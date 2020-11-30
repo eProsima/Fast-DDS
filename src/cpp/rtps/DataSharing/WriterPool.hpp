@@ -16,13 +16,13 @@
  * @file WriterPool.hpp
  */
 
-#ifndef RTPS_HISTORY_DATASHARINGPAYLOADPOOLIMPL_WRITERPOOL_HPP
-#define RTPS_HISTORY_DATASHARINGPAYLOADPOOLIMPL_WRITERPOOL_HPP
+#ifndef RTPS_DATASHARING_WRITERPOOL_HPP
+#define RTPS_DATASHARING_WRITERPOOL_HPP
 
 #include <fastdds/rtps/common/CacheChange.h>
 #include <fastdds/rtps/resources/ResourceManagement.h>
 #include <fastdds/dds/log/Log.hpp>
-#include <rtps/history/DataSharingPayloadPool.hpp>
+#include <rtps/DataSharing/DataSharingPayloadPool.hpp>
 
 #include <memory>
 #include <vector>
@@ -260,4 +260,4 @@ private:
 }  // namespace fastrtps
 }  // namespace eprosima
 
-#endif  // RTPS_HISTORY_DATASHARINGPAYLOADPOOLIMPL_WRITERPOOL_HPP
+#endif  // RTPS_DATASHARING_WRITERPOOL_HPP

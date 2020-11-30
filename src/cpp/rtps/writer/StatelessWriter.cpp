@@ -35,8 +35,8 @@
 
 #include <fastdds/dds/log/Log.hpp>
 #include <rtps/history/BasicPayloadPool.hpp>
-#include <rtps/history/DataSharingPayloadPool.hpp>
-#include <rtps/history/DataSharingNotifier.hpp>
+#include <rtps/DataSharing/DataSharingPayloadPool.hpp>
+#include <rtps/DataSharing/DataSharingNotifier.hpp>
 #include <rtps/history/CacheChangePool.h>
 #include <rtps/RTPSDomainImpl.hpp>
 

@@ -42,7 +42,7 @@
 #include <fastdds/core/policy/ParameterSerializer.hpp>
 
 #include <rtps/history/TopicPayloadPoolRegistry.hpp>
-#include <rtps/history/DataSharingPayloadPool.hpp>
+#include <rtps/DataSharing/DataSharingPayloadPool.hpp>
 
 #include <functional>
 #include <iostream>

@@ -16,7 +16,7 @@
  * @file DataSharingNotifier.hpp
  */
 
-#include "rtps/history/DataSharingNotifier.hpp"
+#include "rtps/DataSharing/DataSharingNotifier.hpp"
 
 namespace eprosima {
 namespace fastrtps {

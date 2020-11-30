@@ -13,54 +13,45 @@
 // limitations under the License.
 
 /**
- * @file DataSharingNotifier.hpp
+ * @file IDataSharingNotifier.hpp
  */
 
-#ifndef RTPS_HISTORY_DATASHARINGNOTIFIER_HPP
-#define RTPS_HISTORY_DATASHARINGNOTIFIER_HPP
+#ifndef RTPS_DATASHARING_IDATASHARINGNOTIFIER_HPP
+#define RTPS_DATASHARING_IDATASHARINGNOTIFIER_HPP
 
-#include "rtps/history/DataSharingNotification.hpp"
-#include <fastrtps/utils/collections/ResourceLimitedVector.hpp>
-
-#include <map>
-#include <memory>
 
 namespace eprosima {
 namespace fastrtps {
 namespace rtps {
 
-class DataSharingNotifier
+class GUID_t;
+
+class IDataSharingNotifier
 {
 
 public:
 
-    DataSharingNotifier(
-            ResourceLimitedContainerConfig limits,
-            std::string directory)
-        : shared_notifications_(limits)
-        , data_sharing_directory_(directory)
-    {
-    }
+    IDataSharingNotifier() = default;
 
-    ~DataSharingNotifier() = default;
+    ~IDataSharingNotifier() = default;
 
     /**
-     * Initializes a datasharing notifier for the reader
+     * Adds a new reader to notify
      * 
      * @param reader_guid GUID of the reader to add to the notification list
      * @return Whether the initialization was  successful
      */
-    bool add_reader(
-            const GUID_t& reader_guid);
+    virtual bool add_reader(
+            const GUID_t& reader_guid) = 0;
 
     /**
-     * Stops the datasharing notifier for the reader
+     * Removes a reader from notifications
      * 
      * @param reader_guid GUID of the reader to remove from the notification list
      * @return Whether the stop was successful
      */
-    bool remove_reader(
-            const GUID_t& reader_guid);
+    virtual bool remove_reader(
+            const GUID_t& reader_guid) = 0;
 
     /**
      * Checks if the reader with the given GUID is subscribed to data sharing notifications
@@ -68,28 +59,21 @@ public:
      * @param reader_guid GUID of the reader to check
      * @return Whether the reader is subscribed or not
      */
-    bool reader_is_subscribed(
-            const GUID_t& reader_guid) const;
+    virtual bool reader_is_subscribed(
+            const GUID_t& reader_guid) const = 0;
 
     /**
      * Notifies to all subscribed readers
      */
-    void notify();
+    virtual void notify() = 0;
 
     /**
-     * Checks if there is any listener subscribed
+     * Checks if there is any reader subscribed to notifications
      * 
-     * @return True if there is no listener subscribed
+     * @return True if there is no reader subscribed
      */
-    inline bool empty() const
-    {
-        return shared_notifications_.empty();
-    }
+    virtual inline bool empty() const = 0;
 
-protected:
-
-    ResourceLimitedVector<std::shared_ptr<DataSharingNotification>> shared_notifications_;
-    std::string data_sharing_directory_;
 };
 
 
@@ -97,4 +81,4 @@ protected:
 }  // namespace fastrtps
 }  // namespace eprosima
 
-#endif  // RTPS_HISTORY_DATASHARINGNOTIFIER_HPP
+#endif  // RTPS_DATASHARING_IDATASHARINGNOTIFIER_HPP
