@@ -3,6 +3,7 @@ Forthcoming
 
 * TopicDataType interface extended (ABI break)
 * Upgrade to Quality Level 1
+* New DataWriter API for loaning samples (DataWriter API extension)
 
 Version 2.1.0
 -------------
