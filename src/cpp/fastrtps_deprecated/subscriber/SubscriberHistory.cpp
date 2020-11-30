@@ -26,6 +26,7 @@
 #include <fastdds/dds/topic/TopicDataType.hpp>
 #include <fastdds/dds/log/Log.hpp>
 
+#include <limits>
 #include <mutex>
 
 namespace eprosima {
@@ -91,6 +92,21 @@ SubscriberHistory::SubscriberHistory(
         get_key_object_ = type_->createData();
     }
 
+    if (resource_limited_qos_.max_samples == 0)
+    {
+        resource_limited_qos_.max_samples = std::numeric_limits<int32_t>::max();
+    }
+
+    if (resource_limited_qos_.max_instances == 0)
+    {
+        resource_limited_qos_.max_instances = std::numeric_limits<int32_t>::max();
+    }
+
+    if (resource_limited_qos_.max_samples_per_instance == 0)
+    {
+        resource_limited_qos_.max_samples_per_instance = std::numeric_limits<int32_t>::max();
+    }
+
     using std::placeholders::_1;
     using std::placeholders::_2;
 
@@ -135,7 +151,7 @@ bool SubscriberHistory::received_change_keep_all_no_key(
         size_t unknown_missing_changes_up_to)
 {
     // TODO(Ricardo) Check
-    if (m_changes.size() + unknown_missing_changes_up_to < static_cast<size_t>(resource_limited_qos_.max_samples) )
+    if (m_changes.size() + unknown_missing_changes_up_to < static_cast<size_t>(resource_limited_qos_.max_samples))
     {
         return add_received_change(a_change);
     }
@@ -148,7 +164,7 @@ bool SubscriberHistory::received_change_keep_last_no_key(
         size_t /* unknown_missing_changes_up_to */ )
 {
     bool add = false;
-    if (m_changes.size() < static_cast<size_t>(history_qos_.depth) )
+    if (m_changes.size() < static_cast<size_t>(history_qos_.depth))
     {
         add = true;
     }
@@ -178,7 +194,7 @@ bool SubscriberHistory::received_change_keep_all_with_key(
     if (find_key_for_change(a_change, vit))
     {
         std::vector<CacheChange_t*>& instance_changes = vit->second.cache_changes;
-        if (instance_changes.size() < static_cast<size_t>(resource_limited_qos_.max_samples_per_instance) )
+        if (instance_changes.size() < static_cast<size_t>(resource_limited_qos_.max_samples_per_instance))
         {
             return add_received_change_with_key(a_change, vit->second.cache_changes);
         }
@@ -198,7 +214,7 @@ bool SubscriberHistory::received_change_keep_last_with_key(
     {
         bool add = false;
         std::vector<CacheChange_t*>& instance_changes = vit->second.cache_changes;
-        if (instance_changes.size() < static_cast<size_t>(history_qos_.depth) )
+        if (instance_changes.size() < static_cast<size_t>(history_qos_.depth))
         {
             add = true;
         }

@@ -477,7 +477,6 @@ void StatefulWriter::unsent_change_added_to_history(
     {
         logInfo(RTPS_WRITER, "No reader proxy to add change.");
         check_acked_status();
-
     }
 }
 
@@ -1581,11 +1580,18 @@ bool StatefulWriter::is_acked_by_all(
         return false;
     }
 
-    assert(mp_history->next_sequence_number() > change->sequenceNumber);
-    return std::all_of(matched_readers_.begin(), matched_readers_.end(),
-                   [change](const ReaderProxy* reader)
+    return is_acked_by_all(change->sequenceNumber);
+}
+
+bool StatefulWriter::is_acked_by_all(
+        const SequenceNumber_t seq) const
+{
+    assert(mp_history->next_sequence_number() > seq);
+    return (seq < next_all_acked_notify_sequence_) ||
+           std::all_of(matched_readers_.begin(), matched_readers_.end(),
+                   [seq](const ReaderProxy* reader)
                    {
-                       return reader->change_is_acked(change->sequenceNumber);
+                       return reader->change_is_acked(seq);
                    });
 }
 
@@ -1668,6 +1674,7 @@ void StatefulWriter::check_acked_status()
         }
     }
 
+    bool something_changed = all_acked;
     SequenceNumber_t min_seq = get_seq_num_min();
     if (min_seq != SequenceNumber_t::unknown())
     {
@@ -1731,17 +1738,25 @@ void StatefulWriter::check_acked_status()
         if (min_low_mark >= get_seq_num_min())
         {
             may_remove_change_ = 1;
-            may_remove_change_cond_.notify_one();
         }
 
         min_readers_low_mark_ = min_low_mark;
+        something_changed = true;
     }
 
     if (all_acked)
     {
         std::unique_lock<std::mutex> all_acked_lock(all_acked_mutex_);
+        SequenceNumber_t next_seq = mp_history->next_sequence_number();
+        next_all_acked_notify_sequence_ = next_seq;
+        min_readers_low_mark_ = next_seq - 1;
         all_acked_ = true;
         all_acked_cond_.notify_all();
+    }
+
+    if (something_changed)
+    {
+        may_remove_change_cond_.notify_one();
     }
 }
 
@@ -1785,6 +1800,18 @@ bool StatefulWriter::try_remove_change(
     }
 
     return false;
+}
+
+bool StatefulWriter::wait_for_acknowledgement(
+        const SequenceNumber_t& seq,
+        const std::chrono::steady_clock::time_point& max_blocking_time_point,
+        std::unique_lock<RecursiveTimedMutex>& lock)
+{
+    return may_remove_change_cond_.wait_until(lock, max_blocking_time_point,
+                   [this, &seq]()
+                   {
+                       return is_acked_by_all(seq);
+                   });
 }
 
 /*
@@ -2111,8 +2138,8 @@ bool StatefulWriter::process_acknack(
                             }
                         }
 
-                        // Check if all CacheChange are acknowledge, because a user could be waiting
-                        // for this, of if VOLATILE should be removed CacheChanges
+                        // Check if all CacheChange are acknowledged, because a user could be waiting
+                        // for this, or some CacheChanges could be removed if we are VOLATILE
                         check_acked_status();
                     }
                     break;

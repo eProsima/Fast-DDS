@@ -225,6 +225,11 @@ public:
             const std::chrono::steady_clock::time_point& max_blocking_time_point,
             std::unique_lock<RecursiveTimedMutex>& lock) override;
 
+    bool wait_for_acknowledgement(
+            const SequenceNumber_t& seq,
+            const std::chrono::steady_clock::time_point& max_blocking_time_point,
+            std::unique_lock<RecursiveTimedMutex>& lock) override;
+
     /**
      * Update the Attributes of the Writer.
      * @param att New attributes
@@ -365,6 +370,9 @@ public:
     const fastdds::rtps::IReaderDataFilter* reader_data_filter() const;
 
 private:
+
+    bool is_acked_by_all(
+            const SequenceNumber_t seq) const;
 
     void update_reader_info(
             bool create_sender_resources);
