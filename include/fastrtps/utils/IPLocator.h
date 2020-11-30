@@ -241,7 +241,7 @@ class IPLocator
                 const Locator_t& locator,
                 uint16_t index);
 
-        // Checks if the locator address from index till the end is equal to 0
+        // Checks if a string matches an ipv6 address
         static bool IPv6isCorrect(
                 const std::string& ipv6);
 };
