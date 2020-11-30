@@ -859,7 +859,7 @@ inline bool QosPoliciesSerializer<DataSharingQosPolicy>::read_content_from_cdr_m
     qos_policy.length = parameter_length;
     uint32_t pos_ref = cdr_message->pos;
 
-    DataSharingKind kind = DISABLED;
+    DataSharingKind kind = OFF;
     bool valid = fastrtps::rtps::CDRMessage::readOctet(cdr_message,
                     (fastrtps::rtps::octet*)&kind);
     cdr_message->pos += 3; //padding
@@ -869,11 +869,11 @@ inline bool QosPoliciesSerializer<DataSharingQosPolicy>::read_content_from_cdr_m
         case AUTO:
             qos_policy.automatic("default"); //< We don't really care about the directory here
             break;
-        case FORCED:
-            qos_policy.force("default"); //< We don't really care about the directory here
+        case ON:
+            qos_policy.on("default"); //< We don't really care about the directory here
             break;
-        case DISABLED:
-            qos_policy.disable(); //< Should not be sent, but anyways
+        case OFF:
+            qos_policy.off(); //< Should not be sent, but anyways
             break;
         default:
             return false;

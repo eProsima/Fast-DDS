@@ -279,7 +279,7 @@ uint32_t WriterProxyData::get_serialized_size(
             m_qos.m_disablePositiveACKs);
     }
     if ((m_qos.data_sharing.send_always() || m_qos.data_sharing.hasChanged) &&
-            m_qos.data_sharing.kind() != fastdds::dds::DISABLED)
+            m_qos.data_sharing.kind() != fastdds::dds::OFF)
     {
         ret_val += fastdds::dds::QosPoliciesSerializer<DataSharingQosPolicy>::cdr_serialized_size(
             m_qos.data_sharing);
@@ -522,7 +522,7 @@ bool WriterProxyData::writeToCDRMessage(
         }
     }
     if ((m_qos.data_sharing.send_always() || m_qos.data_sharing.hasChanged) &&
-            m_qos.data_sharing.kind() != fastdds::dds::DISABLED)
+            m_qos.data_sharing.kind() != fastdds::dds::OFF)
     {
         if (!fastdds::dds::QosPoliciesSerializer<DataSharingQosPolicy>::add_to_cdr_message(m_qos.data_sharing, msg))
         {

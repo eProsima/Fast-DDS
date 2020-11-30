@@ -33,7 +33,7 @@ WriterQos::WriterQos()
 {
     m_reliability.kind = RELIABLE_RELIABILITY_QOS;
     m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
-    data_sharing.disable();
+    data_sharing.off();
 }
 
 WriterQos::~WriterQos()
@@ -255,7 +255,7 @@ void WriterQos::clear()
     m_ownershipStrength.clear();
     m_publishMode.clear();
     representation.clear();
-    data_sharing.disable();
+    data_sharing.off();
 
     m_reliability.kind = RELIABLE_RELIABILITY_QOS;
 }

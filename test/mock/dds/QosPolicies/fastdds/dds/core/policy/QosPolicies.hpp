@@ -1290,8 +1290,8 @@ public:
 enum DataSharingKind : uint16_t
 {
     AUTO,
-    DISABLED,
-    FORCED
+    ON,
+    OFF
 };
 
 /**
@@ -1377,17 +1377,17 @@ public:
         }
     }
 
-    void force(
+    void on(
             const std::string& directory)
     {
-        force(directory, std::vector<uint16_t> (1, 1));
+        on(directory, std::vector<uint16_t> (1, 1));
     }
 
-    void force(
+    void on(
             const std::string& directory,
             const std::vector<uint16_t>& domain_ids)
     {
-        kind_ = FORCED;
+        kind_ = ON;
         shm_directory_ = directory;
         domain_ids_.clear();
         for (auto id : domain_ids)
@@ -1399,9 +1399,9 @@ public:
     /**
      * @brief Configures the DataSharing in disabled mode
      */
-    RTPS_DllAPI void disable()
+    RTPS_DllAPI void off()
     {
-        kind_ = DISABLED;
+        kind_ = OFF;
         shm_directory_ = "directory";
         domain_ids_.clear();
     }

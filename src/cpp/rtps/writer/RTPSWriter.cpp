@@ -111,7 +111,7 @@ void RTPSWriter::init(
         fixed_payload_size_ = mp_history->m_att.payloadMaxSize;
     }
 
-    if (att.endpoint.data_sharing_configuration().kind() != DISABLED)
+    if (att.endpoint.data_sharing_configuration().kind() != OFF)
     {
         is_datasharing_compatible_ = true;
         datasharing_notifier_.reset(new DataSharingNotifier(
@@ -384,28 +384,12 @@ const Duration_t& RTPSWriter::get_liveliness_announcement_period() const
 bool RTPSWriter::is_datasharing_compatible_with(
         const ReaderProxyData& rdata)
 {
-    // Illegal matches have been rejected by EDP,
-    // including unmatching domain IDs
-    // so the only possibilities are:
-    // FORCED - FORCED -> yes
-    // FORCED - AUTO -> yes
-    // DISABLED - AUTO -> no
-    // DISABLED - DISABLED -> no
-    // AUTO - AUTO -> Depends on the domain IDs
-
-    if (m_att.data_sharing_configuration().kind() == fastdds::dds::DISABLED ||
-        rdata.m_qos.data_sharing.kind() == fastdds::dds::DISABLED)
+    if (!is_datasharing_compatible_ ||
+            rdata.m_qos.data_sharing.kind() == fastdds::dds::OFF)
     {
         return false;
     }
 
-    if (m_att.data_sharing_configuration().kind() == fastdds::dds::FORCED ||
-        rdata.m_qos.data_sharing.kind() == fastdds::dds::FORCED)
-    {
-        return true;
-    }
-
-    // AUTO-AUTO
     for (auto id : rdata.m_qos.data_sharing.domain_ids())
     {
         if (std::find(m_att.data_sharing_configuration().domain_ids().begin(),

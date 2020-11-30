@@ -247,21 +247,21 @@ TEST(DataWriterTests, FocedDataSharing)
     ASSERT_NE(datawriter, nullptr);
     ASSERT_EQ(publisher->delete_datawriter(datawriter), ReturnCode_t::RETCODE_OK);
 
-    // DataSharing forced, unbounded topic data type
+    // DataSharing enabled, unbounded topic data type
     qos = DATAWRITER_QOS_DEFAULT;
     qos.endpoint().history_memory_policy = fastrtps::rtps::PREALLOCATED_MEMORY_MODE;
-    qos.data_sharing().force("path");
+    qos.data_sharing().on("path");
     datawriter = publisher->create_datawriter(topic, qos);
     ASSERT_EQ(datawriter, nullptr);
 
-    // DataSharing forced, bounded topic data type
+    // DataSharing enabled, bounded topic data type
     datawriter = publisher->create_datawriter(bounded_topic, qos);
     ASSERT_NE(datawriter, nullptr);
     ASSERT_EQ(publisher->delete_datawriter(datawriter), ReturnCode_t::RETCODE_OK);
 
-    // DataSharing forced, bounded topic data type, Dynamic memory policy
+    // DataSharing enabled, bounded topic data type, Dynamic memory policy
     qos = DATAWRITER_QOS_DEFAULT;
-    qos.data_sharing().force("path");
+    qos.data_sharing().on("path");
     qos.endpoint().history_memory_policy = fastrtps::rtps::DYNAMIC_RESERVE_MEMORY_MODE;
     datawriter = publisher->create_datawriter(bounded_topic, qos);
     ASSERT_EQ(datawriter, nullptr);
@@ -304,7 +304,7 @@ TEST(DataWriterTests, FocedDataSharing)
     ASSERT_NE(bounded_topic, nullptr);
 
     qos = DATAWRITER_QOS_DEFAULT;
-    qos.data_sharing().force("path");
+    qos.data_sharing().on("path");
     qos.endpoint().history_memory_policy = fastrtps::rtps::PREALLOCATED_MEMORY_MODE;
 
 
@@ -360,7 +360,7 @@ TEST(DataWriterTests, InvalidQos)
     ASSERT_TRUE(datawriter->set_qos(qos) == ReturnCode_t::RETCODE_INCONSISTENT_POLICY);
 
     qos = DATAWRITER_QOS_DEFAULT;
-    qos.data_sharing().force("/tmp");
+    qos.data_sharing().on("/tmp");
     qos.endpoint().history_memory_policy = eprosima::fastrtps::rtps::DYNAMIC_RESERVE_MEMORY_MODE;
     ASSERT_TRUE(datawriter->set_qos(qos) == ReturnCode_t::RETCODE_INCONSISTENT_POLICY);
 

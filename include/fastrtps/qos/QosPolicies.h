@@ -97,8 +97,8 @@ using DisablePositiveACKsQosPolicy = fastdds::dds::DisablePositiveACKsQosPolicy;
 using DataSharingQosPolicy = fastdds::dds::DataSharingQosPolicy;
 using DataSharingKind = fastdds::dds::DataSharingKind;
 constexpr DataSharingKind AUTO = DataSharingKind::AUTO;
-constexpr DataSharingKind FORCED = DataSharingKind::FORCED;
-constexpr DataSharingKind DISABLED = DataSharingKind::DISABLED;
+constexpr DataSharingKind ON = DataSharingKind::ON;
+constexpr DataSharingKind OFF = DataSharingKind::OFF;
 using TypeIdV1 = fastdds::dds::TypeIdV1;
 using TypeObjectV1 = fastdds::dds::TypeObjectV1;
 

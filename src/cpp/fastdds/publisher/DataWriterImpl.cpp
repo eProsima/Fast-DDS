@@ -201,12 +201,23 @@ ReturnCode_t DataWriterImpl::enable()
 
     if (is_data_sharing_compatible_)
     {
-        w_att.endpoint.set_data_sharing_configuration(qos_.data_sharing());
+        DataSharingQosPolicy datasharing(qos_.data_sharing());
+        if (datasharing.domain_ids().empty())
+        {
+            uint64_t id = 0;
+            Host::uint48 mac_id = Host::get().mac_id();
+            for (size_t i = 0; i < Host::mac_id_length; ++i)
+            {
+                id |= mac_id.value[i] << (64 - i);
+            }
+            datasharing.add_domain_id(id);
+        }
+        w_att.endpoint.set_data_sharing_configuration(datasharing);
     }
     else
     {
         DataSharingQosPolicy datasharing;
-        datasharing.disable();
+        datasharing.off();
         w_att.endpoint.set_data_sharing_configuration(datasharing);
     }
 
@@ -279,7 +290,7 @@ ReturnCode_t DataWriterImpl::enable()
     WriterQos wqos = qos_.get_writerqos(get_publisher()->get_qos(), topic_->get_qos());
     if (!is_data_sharing_compatible_)
     {
-        wqos.data_sharing.disable();
+        wqos.data_sharing.off();
     }
     publisher_->rtps_participant()->registerWriter(writer_, get_topic_attributes(qos_, *topic_, type_), wqos);
 
@@ -1295,7 +1306,7 @@ ReturnCode_t DataWriterImpl::check_qos(
             return ReturnCode_t::RETCODE_INCONSISTENT_POLICY;
         }
     }
-    if (qos.data_sharing().kind() == DataSharingKind::FORCED &&
+    if (qos.data_sharing().kind() == DataSharingKind::ON &&
             (qos.endpoint().history_memory_policy != PREALLOCATED_MEMORY_MODE &&
             qos.endpoint().history_memory_policy != PREALLOCATED_WITH_REALLOC_MEMORY_MODE))
     {
@@ -1499,10 +1510,10 @@ ReturnCode_t DataWriterImpl::check_datasharing_compatible(
     is_datasharing_compatible = false;
     switch (qos_.data_sharing().kind())
     {
-        case DataSharingKind::DISABLED:
+        case DataSharingKind::OFF:
             return ReturnCode_t::RETCODE_OK;
             break;
-        case DataSharingKind::FORCED:
+        case DataSharingKind::ON:
 #if HAVE_SECURITY
             if (has_security_enabled)
             {
