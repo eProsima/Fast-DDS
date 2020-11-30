@@ -109,6 +109,8 @@ public:
 
 protected:
 
+#pragma warning(push)
+#pragma warning(disable:4324)
     class alignas(8) PayloadNode
     {
 
@@ -288,6 +290,7 @@ protected:
         uint32_t free_payloads;             //< Number of free payloads
         uint32_t aligned_payload_size;      //< The offset from a payload to the next in the buffer
     };
+#pragma warning(pop)
 
     static std::string generate_segment_name(
             const std::string& /*shared_dir*/,

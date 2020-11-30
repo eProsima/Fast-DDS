@@ -60,7 +60,7 @@ bool DataSharingNotification::create_and_init_notification(
     uint32_t extra = 512;
     uint32_t per_allocation_extra_size = Segment::compute_per_allocation_extra_size(
         alignof(Notification), DataSharingNotification::domain_name());
-    uint32_t segment_size = Notification::aligned_size() + per_allocation_extra_size;
+    uint32_t segment_size = static_cast<uint32_t>(Notification::aligned_size() + per_allocation_extra_size);
 
     //Open the segment
     Segment::remove(segment_name_);

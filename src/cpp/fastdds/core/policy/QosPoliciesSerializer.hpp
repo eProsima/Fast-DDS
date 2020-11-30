@@ -859,7 +859,7 @@ inline bool QosPoliciesSerializer<DataSharingQosPolicy>::read_content_from_cdr_m
     qos_policy.length = parameter_length;
     uint32_t pos_ref = cdr_message->pos;
 
-    DataSharingKind kind;
+    DataSharingKind kind = DISABLED;
     bool valid = fastrtps::rtps::CDRMessage::readOctet(cdr_message,
                     (fastrtps::rtps::octet*)&kind);
     cdr_message->pos += 3; //padding
