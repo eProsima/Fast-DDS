@@ -857,29 +857,7 @@ std::string IPLocator::to_string(
         const Locator_t& loc)
 {
     std::stringstream ss;
-    if (loc.kind == LOCATOR_KIND_UDPv4 || loc.kind == LOCATOR_KIND_TCPv4)
-    {
-        ss << (int)loc.address[8] << "."
-           << (int)loc.address[9] << "."
-           << (int)loc.address[10] << "."
-           << (int)loc.address[11] << "@";
-        ss << (int)loc.address[12] << "." << (int)loc.address[13]
-           << "." << (int)loc.address[14] << "." << (int)loc.address[15]
-           << ":" << loc.port;
-    }
-    else if (loc.kind == LOCATOR_KIND_UDPv6 || loc.kind == LOCATOR_KIND_TCPv6)
-    {
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            ss << (int)loc.address[i];
-            if (i < 15)
-            {
-                ss << ".";
-            }
-        }
-        ss << ":" << loc.port;
-    }
-
+    ss << loc;
     return ss.str();
 }
 
@@ -951,7 +929,7 @@ bool IPLocator::IPv6isCorrect(
     }
 
     // only case of 8 : is with a :: at the beggining or end
-    if (count == 8 && (ipv6.at(0) != ':' || ipv6.at(ipv6.size()-1) != ':'))
+    if (count == 8 && (ipv6.at(0) != ':' && ipv6.at(ipv6.size()-1) != ':'))
     {
         return false;
     }

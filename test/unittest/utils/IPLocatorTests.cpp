@@ -186,10 +186,87 @@ TEST_F(IPLocatorTests, setIPv6_from_string_empty)
 
 TEST_F(IPLocatorTests, setIPv6_from_string_std)
 {
-    // TODO
+    Locator_t locator;
+    locator.kind = LOCATOR_KIND_UDPv6;
+
+    // localhost IP
+    {
+        std::vector<int> vec(15, 0);
+        vec.push_back(1);
+
+        ASSERT_TRUE(IPLocator::setIPv6(locator, "::1"));
+        for (int i=0; i<16; i++)
+        {
+            ASSERT_EQ(locator.address[i], vec[i]);
+        }
+
+        ASSERT_TRUE(IPLocator::setIPv6(locator, "0:0::0:0001"));
+        for (int i=0; i<16; i++)
+        {
+            ASSERT_EQ(locator.address[i], vec[i]);
+        }
+    }
+
+    // std IP
+    {
+        std::vector<int> vec(16, 0);
+        vec[2] = 2;
+        vec[3] = 3;
+        vec[6] = 6;
+        vec[7] = 7;
+        vec[12] = 12;
+        vec[13] = 13;
+
+        ASSERT_TRUE(IPLocator::setIPv6(
+            locator,
+            "0000:0203:0000:0607:0000:0000:0c0d:0000"));
+        for (int i=0; i<16; i++)
+        {
+            ASSERT_EQ(locator.address[i], vec[i]);
+        }
+
+        ASSERT_TRUE(IPLocator::setIPv6(
+            locator,
+            "0:203:0:607:0:0:c0d:0"));
+        for (int i=0; i<16; i++)
+        {
+            ASSERT_EQ(locator.address[i], vec[i]);
+        }
+
+        ASSERT_TRUE(IPLocator::setIPv6(
+            locator,
+            "::203:0:607:0:0:c0d:0"));
+        for (int i=0; i<16; i++)
+        {
+            ASSERT_EQ(locator.address[i], vec[i]);
+        }
+
+        ASSERT_TRUE(IPLocator::setIPv6(
+            locator,
+            "0:203:0:607:0:0:c0d::"));
+        for (int i=0; i<16; i++)
+        {
+            ASSERT_EQ(locator.address[i], vec[i]);
+        }
+
+        ASSERT_TRUE(IPLocator::setIPv6(
+            locator,
+            "0:203::607:0:0:c0d:0"));
+        for (int i=0; i<16; i++)
+        {
+            ASSERT_EQ(locator.address[i], vec[i]);
+        }
+
+        ASSERT_TRUE(IPLocator::setIPv6(
+            locator,
+            "0:203:0:607::c0d:0"));
+        for (int i=0; i<16; i++)
+        {
+            ASSERT_EQ(locator.address[i], vec[i]);
+        }
+    }
 }
 
-// All the tests of ipv6 depends on this function
 TEST_F(IPLocatorTests, setIPv6_from_string_invalid)
 {
     Locator_t locator;
@@ -480,11 +557,16 @@ TEST_F(IPLocatorTests, setPhysicalPort)
 //     ASSERT_TRUE(false);
 // }
 
-// TEST_F(IPLocatorTests, getWan)
-// {
-//     // TODO
-//     ASSERT_TRUE(false);
-// }
+TEST_F(IPLocatorTests, getWan)
+{
+    Locator_t locator;
+    IPLocator::createLocator(LOCATOR_KIND_TCPv4, ipv4_address, port1, locator);
+    IPLocator::setWan(locator, "0.1.2.3");
+    for (int i=0; i<4; i++)
+    {
+        ASSERT_EQ(IPLocator::getWan(locator)[i], i);
+    }
+}
 
 // TEST_F(IPLocatorTests, hasWan)
 // {
@@ -492,11 +574,13 @@ TEST_F(IPLocatorTests, setPhysicalPort)
 //     ASSERT_TRUE(false);
 // }
 
-// TEST_F(IPLocatorTests, toWanstring)
-// {
-//     // TODO
-//     ASSERT_TRUE(false);
-// }
+TEST_F(IPLocatorTests, toWanstring)
+{
+    Locator_t locator;
+    IPLocator::createLocator(LOCATOR_KIND_TCPv4, ipv4_address, port1, locator);
+    IPLocator::setWan(locator, "0.1.2.3");
+    ASSERT_EQ(IPLocator::toWanstring(locator), "0.1.2.3");
+}
 
 // TEST_F(IPLocatorTests, setLanID)
 // {
@@ -504,17 +588,28 @@ TEST_F(IPLocatorTests, setPhysicalPort)
 //     ASSERT_TRUE(false);
 // }
 
-// TEST_F(IPLocatorTests, getLanID)
-// {
-//     // TODO
-//     ASSERT_TRUE(false);
-// }
+TEST_F(IPLocatorTests, getLanID)
+{
+    Locator_t locator;
+    IPLocator::createLocator(LOCATOR_KIND_TCPv4, ipv4_address, port1, locator);
+    IPLocator::setLanID(locator, "0.1.2.3.4.5.6.7");
+    for (int i=0; i<8; i++)
+    {
+        ASSERT_EQ(IPLocator::getLanID(locator)[i], i);
+    }
+}
 
-// TEST_F(IPLocatorTests, toLanIDstring)
-// {
-//     // TODO
-//     ASSERT_TRUE(false);
-// }
+TEST_F(IPLocatorTests, toLanIDstring)
+{
+    Locator_t locator;
+    IPLocator::createLocator(LOCATOR_KIND_TCPv4, ipv4_address, port1, locator);
+    IPLocator::setLanID(locator, "0.1.2.3.4.5.6.7");
+    ASSERT_EQ(IPLocator::toLanIDstring(locator), "0.1.2.3.4.5.6.7");
+
+    IPLocator::createLocator(LOCATOR_KIND_UDPv4, ipv4_address, port1, locator);
+    IPLocator::setWan(locator, ipv4_lo_address);
+    ASSERT_EQ(IPLocator::toLanIDstring(locator), "");
+}
 
 TEST_F(IPLocatorTests, toPhysicalLocator)
 {
@@ -525,11 +620,16 @@ TEST_F(IPLocatorTests, toPhysicalLocator)
     ASSERT_NE(IPLocator::getLogicalPort(locator), port1);
 }
 
-// TEST_F(IPLocatorTests, ip_equals_wan)
-// {
-//     // TODO
-//     ASSERT_TRUE(false);
-// }
+TEST_F(IPLocatorTests, ip_equals_wan)
+{
+    Locator_t locator;
+    IPLocator::createLocator(LOCATOR_KIND_TCPv4, ipv4_address, port1, locator);
+    IPLocator::setWan(locator, ipv4_address);
+    ASSERT_TRUE(IPLocator::ip_equals_wan(locator));
+
+    IPLocator::setWan(locator, ipv4_lo_address);
+    ASSERT_FALSE(IPLocator::ip_equals_wan(locator));
+}
 
 TEST_F(IPLocatorTests, setPortRTPS)
 {
@@ -660,11 +760,30 @@ TEST_F(IPLocatorTests, compareAddressAndPhysicalPort)
     ASSERT_FALSE(IPLocator::compareAddressAndPhysicalPort(locator1, locator2));
 }
 
-// TEST_F(IPLocatorTests, to_string)
-// {
-//     // TODO
-//     ASSERT_TRUE(false);
-// }
+TEST_F(IPLocatorTests, to_string)
+{
+    Locator_t locator;
+
+    // UDPv4
+    IPLocator::createLocator(LOCATOR_KIND_UDPv4, "0.0.0.1", 1, locator);
+    ASSERT_EQ(IPLocator::to_string(locator), "1:0.0.0.1:1");
+
+    // TCPv4
+    IPLocator::createLocator(LOCATOR_KIND_TCPv4, "0.0.1.1", 2, locator);
+    ASSERT_EQ(IPLocator::to_string(locator), "4:0.0.1.1:2");
+
+    // UDPv6
+    IPLocator::createLocator(LOCATOR_KIND_UDPv6, "200::", 3, locator);
+    ASSERT_EQ(IPLocator::to_string(locator), "2:2.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0:3");
+
+    // TCPv6
+    IPLocator::createLocator(LOCATOR_KIND_TCPv6, "::2", 4, locator);
+    ASSERT_EQ(IPLocator::to_string(locator), "8:0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.2:4");
+
+    // SHM
+    IPLocator::createLocator(LOCATOR_KIND_SHM, "", 5, locator);
+    ASSERT_EQ(IPLocator::to_string(locator), "16:SHM::5");
+}
 
 TEST_F(IPLocatorTests, isMulticast)
 {

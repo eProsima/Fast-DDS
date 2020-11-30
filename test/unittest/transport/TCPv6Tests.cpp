@@ -71,19 +71,19 @@ TEST_F(TCPv6Tests, conversion_to_ip6_string)
 {
     Locator_t locator;
     locator.kind = LOCATOR_KIND_TCPv6;
-    ASSERT_EQ("0:0:0:0:0:0:0:0", IPLocator::toIPv6string(locator));
+    ASSERT_EQ("::", IPLocator::toIPv6string(locator));
 
     locator.address[0] = 0xff;
-    ASSERT_EQ("ff00:0:0:0:0:0:0:0", IPLocator::toIPv6string(locator));
+    ASSERT_EQ("ff00::", IPLocator::toIPv6string(locator));
 
     locator.address[1] = 0xaa;
-    ASSERT_EQ("ffaa:0:0:0:0:0:0:0", IPLocator::toIPv6string(locator));
+    ASSERT_EQ("ffaa::", IPLocator::toIPv6string(locator));
 
     locator.address[2] = 0x0a;
-    ASSERT_EQ("ffaa:a00:0:0:0:0:0:0", IPLocator::toIPv6string(locator));
+    ASSERT_EQ("ffaa:a00::", IPLocator::toIPv6string(locator));
 
     locator.address[5] = 0x0c;
-    ASSERT_EQ("ffaa:a00:c:0:0:0:0:0", IPLocator::toIPv6string(locator));
+    ASSERT_EQ("ffaa:a00:c::", IPLocator::toIPv6string(locator));
 }
 
 TEST_F(TCPv6Tests, setting_ip6_values_on_locators)
@@ -92,7 +92,7 @@ TEST_F(TCPv6Tests, setting_ip6_values_on_locators)
     locator.kind = LOCATOR_KIND_TCPv6;
 
     IPLocator::setIPv6(locator, 0xffff,0xa, 0xaba, 0, 0, 0, 0, 0);
-    ASSERT_EQ("ffff:a:aba:0:0:0:0:0", IPLocator::toIPv6string(locator));
+    ASSERT_EQ("ffff:a:aba::", IPLocator::toIPv6string(locator));
 }
 
 TEST_F(TCPv6Tests, locators_with_kind_2_supported)
