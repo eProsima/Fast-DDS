@@ -6,7 +6,7 @@ This document is a declaration of software quality for *eprosima Fast DDS* inspi
 eProsima Fast DDS implements the RTPS (Real Time Publish Subscribe) protocol, which provides publisher-subscriber communications over unreliable transports such as UDP,
 as defined and maintained by the Object Management Group (OMG) consortium.
 
-*eprosima Fast DDS* claims to be in the **Quality Level 2** category.
+*eprosima Fast DDS* claims to be in the **Quality Level 1** category.
 
 Below are the rationales, notes and caveats for this claim, organized by the requirements listed in the [Package Requirements for Quality Level 1 in REP-2004](https://www.ros.org/reps/rep-2004.html#package-requirements).
 
@@ -162,12 +162,10 @@ However, the tendency will be to homogenize the older source files to the code s
 The first two dependencies are suggested to be installed for Linux using apt package manager, which would pull them from the Debian upstream.
 Therefore, these dependencies can be considered Quality Level 1 following the [advantages of being packaged for Debian](https://wiki.debian.org/AdvantagesForUpstream).
 
-**eProsima Fast CDR** Quality Declaration can be found [here](https://github.com/eProsima/Fast-CDR/blob/master/QUALITY.md). Currently, **eProsima Fast CDR** claims to be in the **Quality Level 2** category.
+**eProsima Fast CDR** Quality Declaration can be found [here](https://github.com/eProsima/Fast-CDR/blob/master/QUALITY.md). Currently, **eProsima Fast CDR** claims to be in the **Quality Level 1** category.
 
 `foonathan_memory` Quality Declaration can be found [here](Quality_Declaration_foonathan_memory.md).
-This declaration claims that, even though `foonathan_memory` does not meet several quality requirements, it is considered to fulfill the **Quality Level 2** requirements for its use within *eprosima Fast DDS* with the caveats explained in the declaration.
-
-Therefore, *eprosima Fast DDS* currently could claim to be **Quality Level 2** at most.
+This declaration claims that, even though `foonathan_memory` does not meet several quality requirements, it is considered to fulfill the **Quality Level 1** requirements for its use within *eprosima Fast DDS* with the caveats explained in the declaration.
 
 ## Platform Support [6]
 

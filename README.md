@@ -162,7 +162,7 @@ You can access the documentation online, which is hosted on [Read the Docs](http
 
 ## Quality Declaration
 
-*eprosima Fast DDS* claims to be in the **Quality Level 2** category based on the guidelines provided by [ROS 2](https://ros.org/reps/rep-2004.html). See the [Quality Declaration](https://github.com/eProsima/Fast-DDS/blob/master/QUALITY.md) for more details.
+*eprosima Fast DDS* claims to be in the **Quality Level 1** category based on the guidelines provided by [ROS 2](https://ros.org/reps/rep-2004.html). See the [Quality Declaration](https://github.com/eProsima/Fast-DDS/blob/master/QUALITY.md) for more details.
 
 ## Quick Demo
 

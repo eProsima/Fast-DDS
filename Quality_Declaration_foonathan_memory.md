@@ -6,8 +6,8 @@ guidelines provided in the [ROS2 REP-2004 document](https://ros.org/reps/rep-200
 Foonathan's [`memory`](https://github.com/foonathan/memory) is a C++ library to manage memory allocations that improves upon the STL.
 *eprosima Fast DDS* started using this library following the advice of ROS's and eProsima's partner, Apex.AI.
 
-Even though several requirements established in REP-2004 are not met and, consequently, `foonathan_memory` cannot claim a high Quality Level, this document assesses the quality risks that can be introduced by the use of this library in *eprosima Fast DDS*.
-This Quality Declaration claims that the external dependency `foonathan_memory` qualifies to Quality Level 2 category for its use within *eprosima Fast DDS*.
+This Quality Declaration claims that the external dependency `foonathan_memory` qualifies to Quality Level 1 category for its use within *eprosima Fast DDS*.
+This document assesses the quality risks that can be introduced by the use of this library in *eprosima Fast DDS*.
 
 Below are the rationales, notes and caveats for this claim, organized by the requirements listed in the [Package Requirements for Quality Level 1 in REP-2004](https://www.ros.org/reps/rep-2004.html#package-requirements).
 
@@ -46,7 +46,7 @@ However, by pinning *eprosima Fast DDS* CI tests and `foonathan_memory_vendor` u
 
 `foonathan_memory` does not have a stated change control process.
 Nevertheless, only when the pinned commit is updated is *eprosima Fast DDS* affected.
-The change control process for the  update of the `foonathan_memory_vendor` utility follows [eProsima Contributing guidelines](https://github.com/eProsima/policies/blob/main/CONTRIBUTING.md). 
+The change control process for the  update of the `foonathan_memory_vendor` utility follows [eProsima Contributing guidelines](https://github.com/eProsima/policies/blob/main/CONTRIBUTING.md).
 
 ### Change Requests [2.i]
 
@@ -127,7 +127,8 @@ Regardless, *eprosima Fast DDS* tests these features in the [PersistenceTests](h
 ### Coverage [4.iii]
 
 `foonathan_memory` does not track testing coverage.
-Anyway, *eprosima Fast DDS* ensures that every feature and API used within the library has been tested.
+However, *eprosima Fast DDS* ensures that every feature and API used within the library has been tested by running its own [coverage analysis](http://jenkins.eprosima.com:8080/job/nightly_fastdds_coverage_linux/), which completely covers all API used by Fast DDS.
+In order to change the `foonathan_memory` commit used in Fast DDS, maintainers must ensure that all new API is tested accordingly.
 
 ### Performance [4.iv]
 
@@ -192,9 +193,9 @@ The chart below compares the requirements in the [REP-2004](https://www.ros.org/
 |4.i| Feature items tests |✓|
 |4.ii| Public API tests |✓|
 |4.iii.a| Using coverage |■|
-|4.iii.b| Coverage policy ||
+|4.iii.b| Coverage policy |✓|
 |4.iv.a| Performance tests (if applicable) |■|
-|4.iv.b| Performance tests policy||
+|4.iv.b| Performance tests policy|✓|
 |4.v.a| Code style enforcement (linters)|●|
 |4.v.b| Use of static analysis tools |●|
 |5| **Dependencies** | --- |

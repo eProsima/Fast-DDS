@@ -2,6 +2,7 @@ Forthcoming
 -----------
 
 * TopicDataType interface extended (ABI break)
+* Upgrade to Quality Level 1
 
 Version 2.1.0
 -------------
