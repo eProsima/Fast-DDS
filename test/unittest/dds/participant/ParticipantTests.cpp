@@ -1245,6 +1245,124 @@ TEST(ParticipantTests, ContainsEntity)
     ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), ReturnCode_t::RETCODE_OK);
 }
 
+TEST(ParticipantTests, UnregisterType)
+{
+    DomainParticipant* participant =
+            DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
+
+    ASSERT_EQ(participant->unregister_type(""), ReturnCode_t::RETCODE_BAD_PARAMETER);
+
+    ASSERT_EQ(participant->unregister_type("missing_type"), ReturnCode_t::RETCODE_OK);
+
+    TypeSupport type(new TopicDataTypeMock());
+    type.register_type(participant);
+
+    Topic* topic = participant->create_topic("footopic", type.get_type_name(), TOPIC_QOS_DEFAULT);
+    ASSERT_NE(topic, nullptr);
+
+    Subscriber* subscriber = participant->create_subscriber(SUBSCRIBER_QOS_DEFAULT);
+    ASSERT_NE(subscriber, nullptr);
+    DataReader* data_reader = subscriber->create_datareader(topic, DATAREADER_QOS_DEFAULT);
+    ASSERT_NE(data_reader, nullptr);
+    ASSERT_EQ(participant->unregister_type(type.get_type_name()), ReturnCode_t::RETCODE_PRECONDITION_NOT_MET);
+
+    ASSERT_EQ(subscriber->delete_datareader(data_reader), ReturnCode_t::RETCODE_OK);
+    ASSERT_EQ(participant->delete_subscriber(subscriber), ReturnCode_t::RETCODE_OK);
+
+    Publisher* publisher = participant->create_publisher(PUBLISHER_QOS_DEFAULT);
+    ASSERT_NE(publisher, nullptr);
+    DataWriter* data_writer = publisher->create_datawriter(topic, DATAWRITER_QOS_DEFAULT);
+    ASSERT_NE(data_writer, nullptr);
+    ASSERT_EQ(participant->unregister_type(type.get_type_name()), ReturnCode_t::RETCODE_PRECONDITION_NOT_MET);
+
+    ASSERT_EQ(publisher->delete_datawriter(data_writer), ReturnCode_t::RETCODE_OK);
+    ASSERT_EQ(participant->delete_publisher(publisher), ReturnCode_t::RETCODE_OK);
+
+    ASSERT_EQ(participant->delete_topic(topic), ReturnCode_t::RETCODE_OK);
+    ASSERT_EQ(participant->unregister_type(type.get_type_name()), ReturnCode_t::RETCODE_OK);
+
+    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), ReturnCode_t::RETCODE_OK);
+}
+
+TEST(ParticipantTests, NewRemoteEndpointDiscovered)
+{
+    DomainParticipantFactory* factory = DomainParticipantFactory::get_instance();
+    {
+        DomainParticipantFactoryQos qos;
+        qos.entity_factory().autoenable_created_entities = false;
+
+        ASSERT_TRUE(factory->set_qos(qos) == ReturnCode_t::RETCODE_OK);
+    }
+
+    DomainParticipant* participant =
+            DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
+    ASSERT_NE(nullptr, participant);
+    ASSERT_FALSE(participant->is_enabled());
+
+    eprosima::fastrtps::rtps::GUID_t remote_endpoint_guid;
+    std::istringstream("72.61.75.6c.5f.73.61.6e.63.68.65.7a") >> remote_endpoint_guid;
+    ASSERT_FALSE(participant->new_remote_endpoint_discovered(
+            remote_endpoint_guid, 1, eprosima::fastrtps::rtps::EndpointKind_t::WRITER));
+
+    EXPECT_EQ(ReturnCode_t::RETCODE_OK, participant->enable());
+    EXPECT_TRUE(participant->is_enabled());
+
+    ASSERT_FALSE(participant->new_remote_endpoint_discovered(
+            remote_endpoint_guid, 1, eprosima::fastrtps::rtps::EndpointKind_t::WRITER));
+    ASSERT_FALSE(participant->new_remote_endpoint_discovered(
+            remote_endpoint_guid, 1, eprosima::fastrtps::rtps::EndpointKind_t::READER));
+
+    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), ReturnCode_t::RETCODE_OK);
+}
+
+TEST(ParticipantTests, SetDomainParticipantQos)
+{
+    DomainParticipantQos pqos;
+    pqos.properties().properties().emplace_back("dds.persistence.guid", "72.61.75.6c.5f.73.61.6e.63.68.65.7a");
+    pqos.transport().listen_socket_buffer_size = 262144;
+    ASSERT_TRUE(
+            DomainParticipantFactory::get_instance()->set_default_participant_qos(pqos) == ReturnCode_t::RETCODE_OK);
+
+    DomainParticipant* participant =
+            DomainParticipantFactory::get_instance()->create_participant(0, pqos);
+
+    DomainParticipantQos qos;
+    participant->get_qos(qos);
+
+    const std::string* persistence_property_old =
+            eprosima::fastrtps::rtps::PropertyPolicyHelper::find_property(pqos.properties(), "dds.persistence.guid");
+    ASSERT_NE(persistence_property_old, nullptr);
+    eprosima::fastrtps::rtps::GUID_t persistence_guid_old;
+    std::istringstream(persistence_property_old->c_str()) >> persistence_guid_old;
+    const std::string* persistence_property_new =
+            eprosima::fastrtps::rtps::PropertyPolicyHelper::find_property(qos.properties(), "dds.persistence.guid");
+    ASSERT_NE(persistence_property_new, nullptr);
+    eprosima::fastrtps::rtps::GUID_t persistence_guid_new;
+    std::istringstream(persistence_property_old->c_str()) >> persistence_guid_new;
+    ASSERT_EQ(persistence_guid_new, persistence_guid_old);
+
+    ASSERT_EQ(qos.transport().listen_socket_buffer_size, pqos.transport().listen_socket_buffer_size);
+
+    ASSERT_TRUE(DomainParticipantFactory::get_instance()->delete_participant(participant) == ReturnCode_t::RETCODE_OK);
+}
+
+TEST(ParticipantTests, UpdatableDomainParticipantQos)
+{
+    DomainParticipant* participant =
+            DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
+
+    DomainParticipantQos pqos;
+
+    participant->get_qos(pqos);
+    pqos.properties().properties().emplace_back("dds.persistence.guid", "72.61.75.6c.5f.73.61.6e.63.68.65.7a");
+    ASSERT_EQ(participant->set_qos(pqos), ReturnCode_t::RETCODE_IMMUTABLE_POLICY);
+
+    participant->get_qos(pqos);
+    pqos.transport().listen_socket_buffer_size = 262144;
+    ASSERT_EQ(participant->set_qos(pqos), ReturnCode_t::RETCODE_IMMUTABLE_POLICY);
+
+    ASSERT_TRUE(DomainParticipantFactory::get_instance()->delete_participant(participant) == ReturnCode_t::RETCODE_OK);
+}
 
 } // namespace dds
 } // namespace fastdds
