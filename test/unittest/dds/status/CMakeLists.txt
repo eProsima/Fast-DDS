@@ -144,6 +144,10 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             ${TINYXML2_LIBRARY}
             ${GTEST_LIBRARIES} ${GMOCK_LIBRARIES}
             ${CMAKE_THREAD_LIBS_INIT} ${CMAKE_DL_LIBS})
+        if(MSVC OR MSVC_IDE)
+            target_link_libraries(ListenerTests iphlpapi Shlwapi ws2_32)
+        endif()
+            
         add_gtest(ListenerTests SOURCES ${LISTENERTESTS_SOURCE})
 
     endif()

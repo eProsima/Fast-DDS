@@ -51,7 +51,7 @@ public:
         logInfo(HISTORY_DATASHARING_PAYLOADPOOL, "DataSharingPayloadPool::WriterPool destructor");
 
         // Destroy each node in the buffer
-        size_t aligned_size = DataSharingPayloadPool::aligned_node_size(max_data_size_);
+        uint32_t aligned_size = static_cast<uint32_t>(DataSharingPayloadPool::aligned_node_size(max_data_size_));
         for (octet* payload = payloads_buffer_;
                 payload < payloads_buffer_ + (pool_size_ * aligned_size);
                 payload += aligned_size)
@@ -159,10 +159,10 @@ public:
         uint32_t extra = 512;
         uint32_t per_allocation_extra_size = fastdds::rtps::SharedMemSegment::compute_per_allocation_extra_size(
                 alignof(PayloadNode), DataSharingPayloadPool::domain_name());
-        uint32_t aligned_payload_size = DataSharingPayloadPool::aligned_node_size(max_data_size_);
+        uint32_t aligned_payload_size = static_cast<uint32_t>(DataSharingPayloadPool::aligned_node_size(max_data_size_));
         //Reserve one extra to avoid pointer overlapping
         uint32_t size_for_payloads_buffer = (pool_size_ + 1) * aligned_payload_size;
-        uint32_t aligned_descriptor_size = DataSharingPayloadPool::aligned_descriptor_size();
+        uint32_t aligned_descriptor_size = static_cast<uint32_t>(DataSharingPayloadPool::aligned_descriptor_size());
         uint32_t segment_size = size_for_payloads_buffer + per_allocation_extra_size +
                 aligned_descriptor_size + per_allocation_extra_size;
 
@@ -250,7 +250,7 @@ public:
 private:
 
     uint32_t max_data_size_;    //< Maximum size of the serialized payload data
-    size_t pool_size_;          //< Number of payloads in the pool
+    uint32_t pool_size_;        //< Number of payloads in the pool
 
     Segment::Offset next_free_payload_; //< Next available payload in the pool
 };
