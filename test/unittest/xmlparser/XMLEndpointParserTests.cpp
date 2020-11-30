@@ -279,7 +279,8 @@ TEST_F(XMLEndpointParserTests, loadXMLReaderEndpoint)
 {
     tinyxml2::XMLDocument xml_doc;
     tinyxml2::XMLElement* titleElement;
-    int id = 1;
+    int user_id = 3;
+    int entity_id = 4;
 
     {
         StaticRTPSParticipantInfo* pdata = new StaticRTPSParticipantInfo();
@@ -346,30 +347,40 @@ TEST_F(XMLEndpointParserTests, loadXMLReaderEndpoint)
                 ";
         char xml[500];
 
-        sprintf(xml, xml_p, id++, id++,  "AUTOMATIC_LIVELINESS_QOS", "1000");
+        user_id+=2;
+        entity_id+=2;
+        sprintf(xml, xml_p, user_id, entity_id, "AUTOMATIC_LIVELINESS_QOS", "1000");
         ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
         titleElement = xml_doc.FirstChildElement();
-        EXPECT_EQ(XMLP_ret::XML_OK, mp_edpXML->loadXMLReaderEndpoint(titleElement, pdata));
+        EXPECT_EQ(XMLP_ret::XML_OK, mp_edpXML->loadXMLWriterEndpoint(titleElement, pdata));
 
-        sprintf(xml, xml_p, id++, id++, "MANUAL_BY_PARTICIPANT_LIVELINESS_QOS", "1000");
+        user_id+=2;
+        entity_id+=2;
+        sprintf(xml, xml_p, user_id, entity_id, "MANUAL_BY_PARTICIPANT_LIVELINESS_QOS", "1000");
         ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
         titleElement = xml_doc.FirstChildElement();
-        EXPECT_EQ(XMLP_ret::XML_OK, mp_edpXML->loadXMLReaderEndpoint(titleElement, pdata));
+        EXPECT_EQ(XMLP_ret::XML_OK, mp_edpXML->loadXMLWriterEndpoint(titleElement, pdata));
 
-        sprintf(xml, xml_p, id++, id++, "MANUAL_BY_TOPIC_LIVELINESS_QOS", "1000");
+        user_id+=2;
+        entity_id+=2;
+        sprintf(xml, xml_p, user_id, entity_id, "MANUAL_BY_TOPIC_LIVELINESS_QOS", "1000");
         ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
         titleElement = xml_doc.FirstChildElement();
-        EXPECT_EQ(XMLP_ret::XML_OK, mp_edpXML->loadXMLReaderEndpoint(titleElement, pdata));
+        EXPECT_EQ(XMLP_ret::XML_OK, mp_edpXML->loadXMLWriterEndpoint(titleElement, pdata));
 
-        sprintf(xml, xml_p, id++, id++, "MANUAL_BY_TOPIC_LIVELINESS_QOS", "INF");
+        user_id+=2;
+        entity_id+=2;
+        sprintf(xml, xml_p, user_id, entity_id, "MANUAL_BY_TOPIC_LIVELINESS_QOS", "INF");
         ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
         titleElement = xml_doc.FirstChildElement();
-        EXPECT_EQ(XMLP_ret::XML_OK, mp_edpXML->loadXMLReaderEndpoint(titleElement, pdata));
+        EXPECT_EQ(XMLP_ret::XML_OK, mp_edpXML->loadXMLWriterEndpoint(titleElement, pdata));
 
-        sprintf(xml, xml_p, id++, id++, "MANUAL_BY_TOPIC_LIVELINESS_QOS", "0");
+        user_id+=2;
+        entity_id+=2;
+        sprintf(xml, xml_p, user_id, entity_id, "MANUAL_BY_TOPIC_LIVELINESS_QOS", "0");
         ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
         titleElement = xml_doc.FirstChildElement();
-        EXPECT_EQ(XMLP_ret::XML_OK, mp_edpXML->loadXMLReaderEndpoint(titleElement, pdata));
+        EXPECT_EQ(XMLP_ret::XML_OK, mp_edpXML->loadXMLWriterEndpoint(titleElement, pdata));
     }
 
     {
@@ -385,12 +396,16 @@ TEST_F(XMLEndpointParserTests, loadXMLReaderEndpoint)
                 ";
         char xml[500];
 
-        sprintf(xml, xml_p, id++, id++,  "SHARED_OWNERSHIP_QOS");
+        user_id+=2;
+        entity_id+=2;
+        sprintf(xml, xml_p, user_id, entity_id,  "SHARED_OWNERSHIP_QOS");
         ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
         titleElement = xml_doc.FirstChildElement();
         EXPECT_EQ(XMLP_ret::XML_OK, mp_edpXML->loadXMLReaderEndpoint(titleElement, pdata));
 
-        sprintf(xml, xml_p, id++, id++, "EXCLUSIVE_OWNERSHIP_QOS");
+        user_id+=2;
+        entity_id+=2;
+        sprintf(xml, xml_p, user_id, entity_id, "EXCLUSIVE_OWNERSHIP_QOS");
         ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
         titleElement = xml_doc.FirstChildElement();
         EXPECT_EQ(XMLP_ret::XML_OK, mp_edpXML->loadXMLReaderEndpoint(titleElement, pdata));
@@ -474,7 +489,8 @@ TEST_F(XMLEndpointParserTests, loadXMLWriterEndpoint)
 {
     tinyxml2::XMLDocument xml_doc;
     tinyxml2::XMLElement* titleElement;
-    int id = 1;
+    int user_id = 3;
+    int entity_id = 4;
 
     {
         StaticRTPSParticipantInfo* pdata = new StaticRTPSParticipantInfo();
@@ -547,27 +563,37 @@ TEST_F(XMLEndpointParserTests, loadXMLWriterEndpoint)
                 ";
         char xml[500];
 
-        sprintf(xml, xml_p, id++, id++,  "AUTOMATIC_LIVELINESS_QOS", "1000");
+        user_id+=2;
+        entity_id+=2;
+        sprintf(xml, xml_p, user_id, entity_id, "AUTOMATIC_LIVELINESS_QOS", "1000");
         ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
         titleElement = xml_doc.FirstChildElement();
         EXPECT_EQ(XMLP_ret::XML_OK, mp_edpXML->loadXMLWriterEndpoint(titleElement, pdata));
 
-        sprintf(xml, xml_p, id++, id++, "MANUAL_BY_PARTICIPANT_LIVELINESS_QOS", "1000");
+        user_id+=2;
+        entity_id+=2;
+        sprintf(xml, xml_p, user_id, entity_id, "MANUAL_BY_PARTICIPANT_LIVELINESS_QOS", "1000");
         ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
         titleElement = xml_doc.FirstChildElement();
         EXPECT_EQ(XMLP_ret::XML_OK, mp_edpXML->loadXMLWriterEndpoint(titleElement, pdata));
 
-        sprintf(xml, xml_p, id++, id++, "MANUAL_BY_TOPIC_LIVELINESS_QOS", "1000");
+        user_id+=2;
+        entity_id+=2;
+        sprintf(xml, xml_p, user_id, entity_id, "MANUAL_BY_TOPIC_LIVELINESS_QOS", "1000");
         ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
         titleElement = xml_doc.FirstChildElement();
         EXPECT_EQ(XMLP_ret::XML_OK, mp_edpXML->loadXMLWriterEndpoint(titleElement, pdata));
 
-        sprintf(xml, xml_p, id++, id++, "MANUAL_BY_TOPIC_LIVELINESS_QOS", "INF");
+        user_id+=2;
+        entity_id+=2;
+        sprintf(xml, xml_p, user_id, entity_id, "MANUAL_BY_TOPIC_LIVELINESS_QOS", "INF");
         ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
         titleElement = xml_doc.FirstChildElement();
         EXPECT_EQ(XMLP_ret::XML_OK, mp_edpXML->loadXMLWriterEndpoint(titleElement, pdata));
 
-        sprintf(xml, xml_p, id++, id++, "MANUAL_BY_TOPIC_LIVELINESS_QOS", "0");
+        user_id+=2;
+        entity_id+=2;
+        sprintf(xml, xml_p, user_id, entity_id, "MANUAL_BY_TOPIC_LIVELINESS_QOS", "0");
         ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
         titleElement = xml_doc.FirstChildElement();
         EXPECT_EQ(XMLP_ret::XML_OK, mp_edpXML->loadXMLWriterEndpoint(titleElement, pdata));
@@ -586,12 +612,16 @@ TEST_F(XMLEndpointParserTests, loadXMLWriterEndpoint)
                 ";
         char xml[500];
 
-        sprintf(xml, xml_p, id++, id++,  "SHARED_OWNERSHIP_QOS");
+        user_id+=2;
+        entity_id+=2;
+        sprintf(xml, xml_p, user_id, entity_id,  "SHARED_OWNERSHIP_QOS");
         ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
         titleElement = xml_doc.FirstChildElement();
         EXPECT_EQ(XMLP_ret::XML_OK, mp_edpXML->loadXMLWriterEndpoint(titleElement, pdata));
 
-        sprintf(xml, xml_p, id++, id++, "EXCLUSIVE_OWNERSHIP_QOS");
+        user_id+=2;
+        entity_id+=2;
+        sprintf(xml, xml_p, user_id, entity_id, "EXCLUSIVE_OWNERSHIP_QOS");
         ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
         titleElement = xml_doc.FirstChildElement();
         EXPECT_EQ(XMLP_ret::XML_OK, mp_edpXML->loadXMLWriterEndpoint(titleElement, pdata));
@@ -673,8 +703,7 @@ TEST_F(XMLEndpointParserTests, loadXMLWriterEndpoint)
 TEST_F(XMLEndpointParserTests, lookforReader)
 {
     tinyxml2::XMLDocument xml_doc;
-    tinyxml2::XMLElement* titleElement;
-    ReaderProxyData** rdataptr;
+    ReaderProxyData* rdataptr = nullptr;
 
     const char* xml =
             "\
@@ -698,23 +727,23 @@ TEST_F(XMLEndpointParserTests, lookforReader)
     ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
     EXPECT_EQ(XMLP_ret::XML_OK, mp_edpXML->loadXMLNode(xml_doc));
 
-    ASSERT_EQ(XMLP_ret::XML_OK, mp_edpXML->lookforReader("HelloWorldPublisher", 3, rdataptr));
-    ASSERT_NE((*rdataptr), nullptr);
-    EXPECT_EQ((*rdataptr)->topicName(), "HelloWorldTopic");
-    EXPECT_EQ((*rdataptr)->topicKind(), TopicKind_t::WITH_KEY);
-    EXPECT_EQ((*rdataptr)->typeName(), "HelloWorld");
-    EXPECT_EQ((*rdataptr)->has_locators(), true);
+    ASSERT_EQ(XMLP_ret::XML_OK, mp_edpXML->lookforReader("HelloWorldPublisher", 3, &rdataptr));
+    ASSERT_NE(rdataptr, nullptr);
+    EXPECT_EQ(rdataptr->topicName(), "HelloWorldTopic");
+    EXPECT_EQ(rdataptr->topicKind(), TopicKind_t::WITH_KEY);
+    EXPECT_EQ(rdataptr->typeName(), "HelloWorld");
+    EXPECT_EQ(rdataptr->has_locators(), true);
 
     // Locators
     Locator_t uni_loc;
     IPLocator::setIPv4(uni_loc, "192.168.0.128");
     uni_loc.port = static_cast<uint16_t>(5000);
-    EXPECT_EQ((*rdataptr)->remote_locators().unicast[0],  uni_loc);
+    EXPECT_EQ(rdataptr->remote_locators().unicast[0],  uni_loc);
 
     Locator_t multi_loc;
     IPLocator::setIPv4(multi_loc, "239.255.1.1");
     multi_loc.port = static_cast<uint16_t>(7000);
-    EXPECT_EQ((*rdataptr)->remote_locators().multicast[0],  multi_loc);
+    EXPECT_EQ(rdataptr->remote_locators().multicast[0],  multi_loc);
 }
 
 /*
@@ -724,8 +753,7 @@ TEST_F(XMLEndpointParserTests, lookforReader)
 TEST_F(XMLEndpointParserTests, lookforWriter)
 {
     tinyxml2::XMLDocument xml_doc;
-    tinyxml2::XMLElement* titleElement;
-    WriterProxyData** wdataptr;
+    WriterProxyData* wdataptr = nullptr;
 
     const char* xml =
             "\
@@ -749,23 +777,22 @@ TEST_F(XMLEndpointParserTests, lookforWriter)
     ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
     EXPECT_EQ(XMLP_ret::XML_OK, mp_edpXML->loadXMLNode(xml_doc));
 
-    ASSERT_EQ(XMLP_ret::XML_OK, mp_edpXML->lookforWriter("HelloWorldPublisher", 3, wdataptr));
-    ASSERT_NE((*wdataptr), nullptr);
-    EXPECT_EQ((*wdataptr)->topicName(), "HelloWorldTopic");
-    EXPECT_EQ((*wdataptr)->topicKind(), TopicKind_t::WITH_KEY);
-    EXPECT_EQ((*wdataptr)->typeName(), "HelloWorld");
-    EXPECT_EQ((*wdataptr)->has_locators(), true);
+    ASSERT_EQ(XMLP_ret::XML_OK, mp_edpXML->lookforWriter("HelloWorldPublisher", 3, &wdataptr));
+    EXPECT_EQ(wdataptr->topicName(), "HelloWorldTopic");
+    EXPECT_EQ(wdataptr->topicKind(), TopicKind_t::WITH_KEY);
+    EXPECT_EQ(wdataptr->typeName(), "HelloWorld");
+    EXPECT_EQ(wdataptr->has_locators(), true);
 
     // Locators
     Locator_t uni_loc;
     IPLocator::setIPv4(uni_loc, "192.168.0.128");
     uni_loc.port = static_cast<uint16_t>(5000);
-    EXPECT_EQ((*wdataptr)->remote_locators().unicast[0],  uni_loc);
+    EXPECT_EQ(wdataptr->remote_locators().unicast[0],  uni_loc);
 
     Locator_t multi_loc;
     IPLocator::setIPv4(multi_loc, "239.255.1.1");
     multi_loc.port = static_cast<uint16_t>(7000);
-    EXPECT_EQ((*wdataptr)->remote_locators().multicast[0],  multi_loc);
+    EXPECT_EQ(wdataptr->remote_locators().multicast[0],  multi_loc);
 }
 
 
