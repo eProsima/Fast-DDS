@@ -58,8 +58,8 @@ public:
     const std::string ipv6_any = "::";
     const std::string ipv6_invalid = "0:0:0:0:0:0:0:0";
 
-    const uint32_t port1 = 6666;
-    const uint32_t port2 = 7400;
+    const uint16_t port1 = 6666;
+    const uint16_t port2 = 7400;
 };
 
 // All the tests of ipv4 depends on this function
