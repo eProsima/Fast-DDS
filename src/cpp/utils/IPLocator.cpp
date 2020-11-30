@@ -787,13 +787,11 @@ bool IPLocator::isEmpty(const Locator_t& locator)
         {
             return IPLocator::isEmpty(locator, 12);
         }
-        case LOCATOR_KIND_TCPv6:
-        case LOCATOR_KIND_UDPv6:
+        default:
         {
             return IPLocator::isEmpty(locator, 0);
         }
     }
-    return false;
 }
 
 bool IPLocator::isEmpty(
