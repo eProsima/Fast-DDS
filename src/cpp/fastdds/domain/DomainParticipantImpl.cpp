@@ -604,7 +604,9 @@ ReturnCode_t DomainParticipantImpl::set_default_publisher_qos(
     ReturnCode_t ret_val = PublisherImpl::check_qos(qos);
     if (!ret_val)
     {
-        return ret_val;
+        // The PublisherImpl::check_qos() function is not yet implemented and always returns ReturnCode_t::RETCODE_OK.
+        // It will be implemented in future releases of Fast DDS.
+        // return ret_val;
     }
     PublisherImpl::set_qos(default_pub_qos_, qos, true);
     return ReturnCode_t::RETCODE_OK;
@@ -650,7 +652,9 @@ ReturnCode_t DomainParticipantImpl::set_default_subscriber_qos(
     ReturnCode_t check_result = SubscriberImpl::check_qos(qos);
     if (!check_result)
     {
-        return check_result;
+        // The SubscriberImpl::check_qos() function is not yet implemented and always returns ReturnCode_t::RETCODE_OK.
+        // It will be implemented in future releases of Fast DDS.
+        // return check_result;
     }
     SubscriberImpl::set_qos(default_sub_qos_, qos, true);
     return ReturnCode_t::RETCODE_OK;
@@ -799,8 +803,8 @@ bool DomainParticipantImpl::contains_entity(
         }
 
         // Look into subscribers
-        std::vector<DataReader*> readers;
         {
+            std::lock_guard<std::mutex> lock(mtx_subs_);
             for (auto sit : subscribers_)
             {
                 if (sit.second->contains_entity(handle))
@@ -1261,16 +1265,6 @@ bool DomainParticipantImpl::new_remote_endpoint_discovered(
 ResourceEvent& DomainParticipantImpl::get_resource_event() const
 {
     return rtps_participant_->get_resource_event();
-}
-
-bool DomainParticipantImpl::exists_entity_id(
-        const fastrtps::rtps::EntityId_t& entity_id) const
-{
-    GUID_t g = guid();
-    g.entityId = entity_id;
-    InstanceHandle_t instance(g);
-
-    return contains_entity(instance, false);
 }
 
 fastrtps::rtps::SampleIdentity DomainParticipantImpl::get_type_dependencies(

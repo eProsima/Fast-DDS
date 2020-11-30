@@ -515,9 +515,6 @@ protected:
     void create_instance_handle(
             fastrtps::rtps::InstanceHandle_t& handle);
 
-    bool exists_entity_id(
-            const fastrtps::rtps::EntityId_t& entity_id) const;
-
     ReturnCode_t register_dynamic_type(
             fastrtps::types::DynamicType_ptr dyn_type);
 

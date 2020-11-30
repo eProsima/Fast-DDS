@@ -23,6 +23,8 @@
 #include <fastdds/dds/subscriber/Subscriber.hpp>
 #include <fastdds/dds/subscriber/qos/SubscriberQos.hpp>
 #include <fastdds/dds/topic/qos/TopicQos.hpp>
+#include <fastdds/dds/publisher/DataWriter.hpp>
+#include <fastdds/dds/subscriber/DataReader.hpp>
 #include <dds/domain/DomainParticipant.hpp>
 #include <dds/domain/qos/DomainParticipantQos.hpp>
 #include <dds/pub/qos/PublisherQos.hpp>
@@ -512,6 +514,8 @@ TEST(ParticipantTests, ChangeDefaultPublisherQos)
     DomainParticipant* participant =
             DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
 
+    ASSERT_TRUE(participant->set_default_publisher_qos(PUBLISHER_QOS_DEFAULT) == ReturnCode_t::RETCODE_OK);
+
     PublisherQos qos;
     ASSERT_TRUE(participant->get_default_publisher_qos(qos) == ReturnCode_t::RETCODE_OK);
 
@@ -693,6 +697,8 @@ TEST(ParticipantTests, ChangeDefaultSubscriberQos)
     DomainParticipant* participant =
             DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
 
+    ASSERT_EQ(participant->set_default_subscriber_qos(SUBSCRIBER_QOS_DEFAULT), ReturnCode_t::RETCODE_OK);
+
     SubscriberQos qos;
     ASSERT_EQ(participant->get_default_subscriber_qos(qos), ReturnCode_t::RETCODE_OK);
 
@@ -731,6 +737,9 @@ TEST(ParticipantTests, ChangeDefaultTopicQos)
 {
     DomainParticipant* participant =
             DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
+
+    ASSERT_TRUE(participant->set_default_topic_qos(TOPIC_QOS_DEFAULT) == ReturnCode_t::RETCODE_OK);
+
     TopicQos qos;
     participant->get_default_topic_qos(qos);
 
@@ -745,6 +754,9 @@ TEST(ParticipantTests, ChangeDefaultTopicQos)
 
     ASSERT_EQ(qos, tqos);
     ASSERT_EQ(tqos.reliability().kind, BEST_EFFORT_RELIABILITY_QOS);
+
+    qos.durability().kind = PERSISTENT_DURABILITY_QOS;
+    ASSERT_FALSE(participant->set_default_topic_qos(qos) == ReturnCode_t::RETCODE_OK);
 
     ASSERT_TRUE(DomainParticipantFactory::get_instance()->delete_participant(participant) == ReturnCode_t::RETCODE_OK);
 }
@@ -1084,6 +1096,155 @@ TEST(ParticipantTests, RegisterTypeNegativeClauses)
 
     ASSERT_TRUE(DomainParticipantFactory::get_instance()->delete_participant(participant) == ReturnCode_t::RETCODE_OK);
 }
+
+TEST(ParticipantTests, AssertLivelinesNegativeClauses)
+{
+    DomainParticipantFactory* factory = DomainParticipantFactory::get_instance();
+
+    {
+        DomainParticipantFactoryQos qos;
+        qos.entity_factory().autoenable_created_entities = false;
+
+        ASSERT_TRUE(factory->set_qos(qos) == ReturnCode_t::RETCODE_OK);
+    }
+
+    DomainParticipant* participant =
+            DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
+    ASSERT_NE(nullptr, participant);
+    ASSERT_FALSE(participant->is_enabled());
+
+    ASSERT_EQ(participant->assert_liveliness(), ReturnCode_t::RETCODE_NOT_ENABLED);
+
+    DomainParticipantQos pqos;
+    ASSERT_EQ(participant->get_qos(pqos), ReturnCode_t::RETCODE_OK);
+    pqos.wire_protocol().builtin.use_WriterLivelinessProtocol = false;
+    ASSERT_EQ(participant->set_qos(pqos), ReturnCode_t::RETCODE_OK);
+
+    EXPECT_EQ(ReturnCode_t::RETCODE_OK, participant->enable());
+    EXPECT_TRUE(participant->is_enabled());
+    ASSERT_EQ(participant->assert_liveliness(), ReturnCode_t::RETCODE_ERROR);
+
+    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), ReturnCode_t::RETCODE_OK);
+}
+
+TEST(ParticipantTests, GetCurrentTime)
+{
+    DomainParticipant* participant =
+            DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
+
+    eprosima::fastrtps::Time_t now;
+    ASSERT_EQ(participant->get_current_time(now), ReturnCode_t::RETCODE_OK);
+    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), ReturnCode_t::RETCODE_OK);
+}
+
+TEST(ParticipantTests, GetParticipantConst)
+{
+    DomainParticipant* participant =
+            DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
+
+    Publisher* publisher = participant->create_publisher(PUBLISHER_QOS_DEFAULT);
+    ASSERT_NE(publisher, nullptr);
+
+    const DomainParticipant* participant_pub = publisher->get_participant();
+
+    ASSERT_EQ(participant_pub->guid(), participant->guid());
+
+    ASSERT_EQ(participant->delete_publisher(publisher), ReturnCode_t::RETCODE_OK);
+    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), ReturnCode_t::RETCODE_OK);
+}
+
+TEST(ParticipantTests, GetParticipantNames)
+{
+    DomainParticipantFactory* factory = DomainParticipantFactory::get_instance();
+
+    {
+        DomainParticipantFactoryQos qos;
+        qos.entity_factory().autoenable_created_entities = false;
+
+        ASSERT_TRUE(factory->set_qos(qos) == ReturnCode_t::RETCODE_OK);
+    }
+
+    DomainParticipant* participant =
+            DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
+    ASSERT_NE(nullptr, participant);
+    ASSERT_FALSE(participant->is_enabled());
+
+    std::vector<std::string> participant_names = participant->get_participant_names();
+    ASSERT_TRUE(participant_names.empty());
+
+    EXPECT_EQ(ReturnCode_t::RETCODE_OK, participant->enable());
+    EXPECT_TRUE(participant->is_enabled());
+    participant_names = participant->get_participant_names();
+    ASSERT_FALSE(participant_names.empty());
+
+    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), ReturnCode_t::RETCODE_OK);
+}
+
+TEST(ParticipantTests, CreateTopicNegativeClauses)
+{
+    DomainParticipant* participant =
+            DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
+
+    TypeSupport type(new TopicDataTypeMock());
+    type.register_type(participant);
+
+    Topic* topic;
+    topic = participant->create_topic("footopic", "fake_type_name", TOPIC_QOS_DEFAULT);
+    ASSERT_EQ(topic, nullptr);
+
+    TopicQos tqos;
+    participant->get_default_topic_qos(tqos);
+    tqos.durability().kind = PERSISTENT_DURABILITY_QOS;
+    topic = participant->create_topic("footopic", type.get_type_name(), tqos);
+    ASSERT_EQ(topic, nullptr);
+
+    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), ReturnCode_t::RETCODE_OK);
+}
+
+TEST(ParticipantTests, ContainsEntity)
+{
+    DomainParticipant* participant =
+            DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
+
+    TypeSupport type(new TopicDataTypeMock());
+    type.register_type(participant);
+
+    Topic* topic = participant->create_topic("footopic", type.get_type_name(), TOPIC_QOS_DEFAULT);
+    ASSERT_NE(topic, nullptr);
+    eprosima::fastrtps::rtps::InstanceHandle_t topic_ihandle = topic->get_instance_handle();
+    ASSERT_TRUE(participant->contains_entity(topic_ihandle, false));
+
+    Publisher* publisher = participant->create_publisher(PUBLISHER_QOS_DEFAULT);
+    ASSERT_NE(publisher, nullptr);
+    eprosima::fastrtps::rtps::InstanceHandle_t pub_ihandle = publisher->get_instance_handle();
+    ASSERT_TRUE(participant->contains_entity(pub_ihandle, false));
+
+    Subscriber* subscriber = participant->create_subscriber(SUBSCRIBER_QOS_DEFAULT);
+    ASSERT_NE(subscriber, nullptr);
+    eprosima::fastrtps::rtps::InstanceHandle_t sub_ihandle = subscriber->get_instance_handle();
+    ASSERT_TRUE(participant->contains_entity(sub_ihandle, false));
+
+    DataWriter* data_writer = publisher->create_datawriter(topic, DATAWRITER_QOS_DEFAULT);
+    ASSERT_NE(data_writer, nullptr);
+    eprosima::fastrtps::rtps::InstanceHandle_t data_writer_ihandle = data_writer->get_instance_handle();
+    ASSERT_TRUE(participant->contains_entity(data_writer_ihandle, true));
+
+    DataReader* data_reader = subscriber->create_datareader(topic, DATAREADER_QOS_DEFAULT);
+    ASSERT_NE(data_reader, nullptr);
+    eprosima::fastrtps::rtps::InstanceHandle_t data_reader_ihandle = data_reader->get_instance_handle();
+    ASSERT_TRUE(participant->contains_entity(data_reader_ihandle, true));
+
+    ASSERT_EQ(publisher->delete_datawriter(data_writer), ReturnCode_t::RETCODE_OK);
+    ASSERT_EQ(subscriber->delete_datareader(data_reader), ReturnCode_t::RETCODE_OK);
+    ASSERT_EQ(participant->delete_publisher(publisher), ReturnCode_t::RETCODE_OK);
+    ASSERT_EQ(participant->delete_subscriber(subscriber), ReturnCode_t::RETCODE_OK);
+    ASSERT_EQ(participant->delete_topic(topic), ReturnCode_t::RETCODE_OK);
+
+    ASSERT_FALSE(participant->contains_entity(pub_ihandle, false));
+
+    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), ReturnCode_t::RETCODE_OK);
+}
+
 
 } // namespace dds
 } // namespace fastdds
