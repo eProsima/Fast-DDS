@@ -26,28 +26,31 @@
 #include <fastdds/rtps/common/InstanceHandle.h>
 #include <fastdds/rtps/common/SampleIdentity.h>
 
+#include <fastdds/dds/subscriber/InstanceState.hpp>
+#include <fastdds/dds/subscriber/SampleState.hpp>
+#include <fastdds/dds/subscriber/ViewState.hpp>
+
 namespace eprosima {
 namespace fastdds {
 namespace dds {
 
-
 enum SampleStateKind
 {
-    READ,
-    NOT_READ
+    READ     = READ_SAMPLE_STATE,
+    NOT_READ = NOT_READ_SAMPLE_STATE
 };
 
 enum ViewStateKind
 {
-    NEW,
-    NOT_NEW
+    NEW      = NEW_VIEW_STATE,
+    NOT_NEW  = NOT_NEW_VIEW_STATE
 };
 
 enum InstanceStateKind
 {
-    ALIVE,
-    NOT_ALIVE_DISPOSED,
-    NOT_ALIVE_NO_WRITERS
+    ALIVE                = ALIVE_INSTANCE_STATE,
+    NOT_ALIVE_DISPOSED   = NOT_ALIVE_DISPOSED_INSTANCE_STATE,
+    NOT_ALIVE_NO_WRITERS = NOT_ALIVE_NO_WRITERS_INSTANCE_STATE
 };
 
 /*!
