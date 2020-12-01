@@ -26,20 +26,20 @@ namespace fastdds {
 namespace dds {
 
 /**
- * Indicates if the samples are from a live @ref DataWriter or not.
+ * Indicates if the samples are from an alive @ref DataWriter or not.
  *
  * For each instance, the middleware internally maintains an instance state. The instance state
  * can be:
  *
  * @li @ref ALIVE_INSTANCE_STATE indicates that (a) samples have been received for the instance,
- *     (b) there are live @ref DataWriter entities writing the instance, and (c) the instance has
+ *     (b) there are alive @ref DataWriter entities writing the instance, and (c) the instance has
  *     not been explicitly disposed (or else more samples have been received after it was disposed).
  *
  * @li @ref NOT_ALIVE_DISPOSED_INSTANCE_STATE indicates the instance was explicitly disposed by a
  *     @ref DataWriter by means of the dispose operation.
  *
  * @li @ref NOT_ALIVE_NO_WRITERS_INSTANCE_STATE indicates the instance has been declared as
- *     not-alive by the @ref DataReader because it detected that there are no live @ref DataWriter
+ *     not-alive by the @ref DataReader because it detected that there are no alive @ref DataWriter
  *     entities writing that instance.
  *
  * The precise behavior events that cause the instance state to change depends on the setting of the
