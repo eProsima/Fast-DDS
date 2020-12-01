@@ -60,7 +60,7 @@ namespace dds {
  * instance state is therefore the same for all samples in the returned collection that refer to the
  * same instance.
  */
-enum DDSInstanceStateKind : uint16_t
+enum InstanceStateKind : uint16_t
 {
     /// Instance is currently in existence.
     ALIVE_INSTANCE_STATE = 0x0001 << 0,
@@ -71,14 +71,14 @@ enum DDSInstanceStateKind : uint16_t
     NOT_ALIVE_NO_WRITERS_INSTANCE_STATE = 0x0001 << 2
 };
 
-/// A bit-mask (list) of instance states, i.e. @ref DDSInstanceStateKind
-using DDSInstanceStateMask = uint16_t;
+/// A bit-mask (list) of instance states, i.e. @ref InstanceStateKind
+using InstanceStateMask = uint16_t;
 
 /// Not alive instance state
-constexpr DDSInstanceStateMask NOT_ALIVE_INSTANCE_STATE =
+constexpr InstanceStateMask NOT_ALIVE_INSTANCE_STATE =
         NOT_ALIVE_DISPOSED_INSTANCE_STATE | NOT_ALIVE_NO_WRITERS_INSTANCE_STATE;
 /// Any instance state
-constexpr DDSInstanceStateMask ANY_INSTANCE_STATE = ALIVE_INSTANCE_STATE | NOT_ALIVE_INSTANCE_STATE;
+constexpr InstanceStateMask ANY_INSTANCE_STATE = ALIVE_INSTANCE_STATE | NOT_ALIVE_INSTANCE_STATE;
 
 }  // namespace dds
 }  // namespace fastdds

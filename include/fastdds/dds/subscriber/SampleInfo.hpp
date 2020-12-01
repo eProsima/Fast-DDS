@@ -36,31 +36,31 @@ namespace dds {
 
 FASTDDS_DEPRECATED_UNTIL(3, "eprosima::fastdds::dds::READ",
     "Use eprosima::fastdds::dds::READ_SAMPLE_STATE instead.")
-constexpr DDSSampleStateKind READ = READ_SAMPLE_STATE;
+constexpr SampleStateKind READ = READ_SAMPLE_STATE;
 
 FASTDDS_DEPRECATED_UNTIL(3, "eprosima::fastdds::dds::NOT_READ",
     "Use eprosima::fastdds::dds::NOT_READ_SAMPLE_STATE instead.")
-constexpr DDSSampleStateKind NOT_READ = NOT_READ_SAMPLE_STATE;
+constexpr SampleStateKind NOT_READ = NOT_READ_SAMPLE_STATE;
 
 FASTDDS_DEPRECATED_UNTIL(3, "eprosima::fastdds::dds::NEW",
     "Use eprosima::fastdds::dds::NEW_VIEW_STATE instead.")
-constexpr DDSViewStateKind NEW = NEW_VIEW_STATE;
+constexpr ViewStateKind NEW = NEW_VIEW_STATE;
 
 FASTDDS_DEPRECATED_UNTIL(3, "eprosima::fastdds::dds::NOT_NEW",
     "Use eprosima::fastdds::dds::NOT_NEW_VIEW_STATE instead.")
-constexpr DDSViewStateKind NOT_NEW = NOT_NEW_VIEW_STATE;
+constexpr ViewStateKind NOT_NEW = NOT_NEW_VIEW_STATE;
 
 FASTDDS_DEPRECATED_UNTIL(3, "eprosima::fastdds::dds::ALIVE",
     "Use eprosima::fastdds::dds::ALIVE_INSTANCE_STATE instead.")
-constexpr DDSInstanceStateKind ALIVE = ALIVE_INSTANCE_STATE;
+constexpr InstanceStateKind ALIVE = ALIVE_INSTANCE_STATE;
 
 FASTDDS_DEPRECATED_UNTIL(3, "eprosima::fastdds::dds::NOT_ALIVE_DISPOSED",
     "Use eprosima::fastdds::dds::NOT_ALIVE_DISPOSED_INSTANCE_STATE instead.")
-constexpr DDSInstanceStateKind NOT_ALIVE_DISPOSED = NOT_ALIVE_DISPOSED_INSTANCE_STATE;
+constexpr InstanceStateKind NOT_ALIVE_DISPOSED = NOT_ALIVE_DISPOSED_INSTANCE_STATE;
 
 FASTDDS_DEPRECATED_UNTIL(3, "eprosima::fastdds::dds::NOT_ALIVE_NO_WRITERS",
     "Use eprosima::fastdds::dds::NOT_ALIVE_NO_WRITERS_INSTANCE_STATE instead.")
-constexpr DDSInstanceStateKind NOT_ALIVE_NO_WRITERS = NOT_ALIVE_NO_WRITERS_INSTANCE_STATE;
+constexpr InstanceStateKind NOT_ALIVE_NO_WRITERS = NOT_ALIVE_NO_WRITERS_INSTANCE_STATE;
 
 /*!
  * @brief SampleInfo is the information that accompanies each sample that is ‘read’ or ‘taken.’
@@ -68,13 +68,13 @@ constexpr DDSInstanceStateKind NOT_ALIVE_NO_WRITERS = NOT_ALIVE_NO_WRITERS_INSTA
 struct SampleInfo
 {
     //! indicates whether or not the corresponding data sample has already been read
-    DDSSampleStateKind sample_state;
+    SampleStateKind sample_state;
 
     //! indicates whether the DataReader has already seen samples for the most-current generation of the related instance.
-    DDSViewStateKind view_state;
+    ViewStateKind view_state;
 
     //! indicates whether the instance is currently in existence or, if it has been disposed, the reason why it was disposed.
-    DDSInstanceStateKind instance_state;
+    InstanceStateKind instance_state;
 
     //! number of times the instance had become alive after it was disposed
     int32_t disposed_generation_count;

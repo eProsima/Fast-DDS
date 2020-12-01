@@ -38,7 +38,7 @@ namespace dds {
  *
  * The sample state will, in general, be different for each sample in the collection returned by read or take.
  */
-enum DDSSampleStateKind : uint16_t
+enum SampleStateKind : uint16_t
 {
     /// Sample has been read.
     READ_SAMPLE_STATE = 0x0001 << 0,
@@ -47,11 +47,11 @@ enum DDSSampleStateKind : uint16_t
     NOT_READ_SAMPLE_STATE = 0x0001 << 1,
 };
 
-/// A bit-mask (list) of sample states, i.e. @ref DDSSampleStateKind
-using DDSSampleStateMask = uint16_t;
+/// A bit-mask (list) of sample states, i.e. @ref SampleStateKind
+using SampleStateMask = uint16_t;
 
 /// Any sample state
-constexpr DDSSampleStateMask ANY_SAMPLE_STATE = READ_SAMPLE_STATE | NOT_READ_SAMPLE_STATE;
+constexpr SampleStateMask ANY_SAMPLE_STATE = READ_SAMPLE_STATE | NOT_READ_SAMPLE_STATE;
 
 }  // namespace dds
 }  // namespace fastdds

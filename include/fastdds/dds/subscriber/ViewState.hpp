@@ -49,7 +49,7 @@ namespace dds {
  * with the instance are "taken" from the DDSDataReader, the middleware can reclaim all local resources
  * regarding the instance. Future samples will be treated as "never seen."
  */
-enum DDSViewStateKind : uint16_t
+enum ViewStateKind : uint16_t
 {
     /// New instance.This latest generation of the instance has not previously been accessed.
     NEW_VIEW_STATE = 0x0001 << 0,
@@ -58,11 +58,11 @@ enum DDSViewStateKind : uint16_t
     NOT_NEW_VIEW_STATE = 0x0001 << 1,
 };
 
-/// A bit-mask (list) of view states, i.e. @ref DDSViewStateKind
-using DDSViewStateMask = uint16_t;
+/// A bit-mask (list) of view states, i.e. @ref ViewStateKind
+using ViewStateMask = uint16_t;
 
 /// Any view state
-constexpr DDSViewStateMask ANY_VIEW_STATE = NEW_VIEW_STATE | NOT_NEW_VIEW_STATE;
+constexpr ViewStateMask ANY_VIEW_STATE = NEW_VIEW_STATE | NOT_NEW_VIEW_STATE;
 
 }  // namespace dds
 }  // namespace fastdds
