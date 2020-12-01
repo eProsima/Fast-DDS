@@ -20,15 +20,14 @@
 #ifndef _FASTDDS_DDS_SUBSCRIBER_SAMPLEINFO_HPP_
 #define _FASTDDS_DDS_SUBSCRIBER_SAMPLEINFO_HPP_
 
+#include <fastdds/dds/subscriber/InstanceState.hpp>
+#include <fastdds/dds/subscriber/SampleState.hpp>
+#include <fastdds/dds/subscriber/ViewState.hpp>
 
 #include <fastdds/rtps/common/Types.h>
 #include <fastdds/rtps/common/Time_t.h>
 #include <fastdds/rtps/common/InstanceHandle.h>
 #include <fastdds/rtps/common/SampleIdentity.h>
-
-#include <fastdds/dds/subscriber/InstanceState.hpp>
-#include <fastdds/dds/subscriber/SampleState.hpp>
-#include <fastdds/dds/subscriber/ViewState.hpp>
 
 namespace eprosima {
 namespace fastdds {
