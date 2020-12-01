@@ -483,5 +483,11 @@ std::shared_ptr<rtps::IPayloadPool> SubscriberImpl::payload_pool()
     return payload_pool_;
 }
 
+LocatorList_t SubscriberImpl::get_locators()
+{
+    assert(mp_reader != nullptr);
+    return mp_reader->getAttributes().unicastLocatorList;
+}
+
 } /* namespace fastrtps */
 } /* namespace eprosima */

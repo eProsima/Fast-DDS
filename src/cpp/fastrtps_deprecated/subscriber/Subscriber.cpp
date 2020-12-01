@@ -88,3 +88,9 @@ void Subscriber::get_liveliness_changed_status(
 {
     mp_impl->get_liveliness_changed_status(status);
 }
+
+LocatorList_t Subscriber::get_locators()
+{
+    assert(mp_impl != nullptr);
+    return mp_impl->get_locators();
+}

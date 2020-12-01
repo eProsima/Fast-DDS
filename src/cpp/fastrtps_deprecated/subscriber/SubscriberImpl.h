@@ -172,6 +172,11 @@ public:
 
     std::shared_ptr<rtps::IPayloadPool> payload_pool();
 
+    /**
+     * @return Returns Endpoint associated LocatorList_t
+     */
+    rtps::LocatorList_t get_locators();
+
 private:
 
     //!Participant

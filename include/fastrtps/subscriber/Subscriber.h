@@ -22,6 +22,7 @@
 
 #include <fastdds/rtps/common/Guid.h>
 #include <fastdds/rtps/common/Time_t.h>
+#include <fastdds/rtps/common/Locator.h>
 #include <fastrtps/attributes/SubscriberAttributes.h>
 #include <fastrtps/qos/DeadlineMissedStatus.h>
 #include <fastrtps/qos/LivelinessChangedStatus.h>
@@ -167,6 +168,11 @@ public:
      */
     void get_liveliness_changed_status(
             LivelinessChangedStatus& status);
+
+    /**
+     * @return Returns Endpoint associated LocatorList_t
+     */
+    rtps::LocatorList_t get_locators();
 
 private:
 
