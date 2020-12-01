@@ -203,7 +203,7 @@ XMLP_ret XMLProfileManager::loadXMLProfiles(
         tinyxml2::XMLElement& profiles)
 {
     up_base_node_t root_node;
-    if (profiles.FirstChildElement(PROFILES) != nullptr)
+    if (strcmp(profiles.Name(), "profiles") != 0)
     {
         logError(XMLPARSER, "Profiles tag not found");
         return XMLP_ret::XML_ERROR;
@@ -217,8 +217,6 @@ XMLP_ret XMLProfileManager::loadXMLProfiles(
     {
         return XMLProfileManager::extractProfiles(std::move(root_node), "-XML Node-");
     }
-
-    return XMLP_ret::XML_ERROR;
 }
 
 XMLP_ret XMLProfileManager::loadXMLDynamicTypes(
