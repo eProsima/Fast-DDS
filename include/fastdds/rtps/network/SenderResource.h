@@ -75,6 +75,13 @@ public:
         send_lambda_.swap(rValueResource.send_lambda_);
     }
 
+    SenderResource& operator=(SenderResource&& rValueResource)
+    {
+        clean_up.swap(rValueResource.clean_up);
+        send_lambda_.swap(rValueResource.send_lambda_);
+        return *this;
+    }
+
     virtual ~SenderResource() = default;
 
     int32_t kind() const { return transport_kind_; }

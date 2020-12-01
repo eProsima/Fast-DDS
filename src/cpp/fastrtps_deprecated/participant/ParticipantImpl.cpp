@@ -120,7 +120,8 @@ const GUID_t& ParticipantImpl::getGuid() const
 
 Publisher* ParticipantImpl::createPublisher(
         const PublisherAttributes& att,
-        PublisherListener* listen)
+        PublisherListener* listen,
+        bool devoted_receiver_resource)
 {
     logInfo(PARTICIPANT, "CREATING PUBLISHER IN TOPIC: " << att.topic.getTopicName());
     //Look for the correct type registration
@@ -231,7 +232,8 @@ Publisher* ParticipantImpl::createPublisher(
         this->mp_rtpsParticipant,
         watt, pubimpl->payload_pool(),
         (WriterHistory*)&pubimpl->m_history,
-        (WriterListener*)&pubimpl->m_writerListener);
+        (WriterListener*)&pubimpl->m_writerListener,
+        devoted_receiver_resource);
     if (writer == nullptr)
     {
         logError(PARTICIPANT, "Problem creating associated Writer");

@@ -85,6 +85,15 @@ protected:
 public:
 
     /**
+     * Associate specific sender resources to the writer
+     * @param send_resource_list
+     */
+    void set_sender_resources(const fastdds::rtps::SendResourceList& send_resources)
+    {
+        send_resource_list = send_resources;
+    }
+
+    /**
      * Create a new change based with the provided changeKind.
      * @param data Data of the change.
      * @param changeKind The type of change.
@@ -469,6 +478,8 @@ private:
 
 
     RTPSWriter* next_[2] = { nullptr, nullptr };
+
+    fastdds::rtps::SendResourceList send_resource_list;
 };
 
 } /* namespace rtps */

@@ -288,13 +288,14 @@ RTPSWriter* RTPSDomain::createRTPSWriter(
         WriterAttributes& watt,
         const std::shared_ptr<IPayloadPool>& payload_pool,
         WriterHistory* hist,
-        WriterListener* listen)
+        WriterListener* listen,
+        bool devoted_receiver_resource)
 {
     RTPSParticipantImpl* impl = RTPSDomainImpl::find_local_participant(p->getGuid());
     if (impl)
     {
         RTPSWriter* ret_val = nullptr;
-        if (impl->createWriter(&ret_val, watt, payload_pool, hist, listen))
+        if (impl->createWriter(&ret_val, watt, payload_pool, hist, listen, c_EntityId_Unknown, false, devoted_receiver_resource))
         {
             return ret_val;
         }

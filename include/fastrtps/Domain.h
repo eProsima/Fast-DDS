@@ -100,12 +100,14 @@ class Domain
          * @param part Pointer to the participant where you want to create the Publisher.
          * @param att PublisherAttributes.
          * @param listen Pointer to the PublisherListener.
+         * @param devoted_receiver_resource bool that specifies if the Publisher shares sending port
          * @return Pointer to the created Publisher (nullptr if not created).
          */
         RTPS_DllAPI static Publisher* createPublisher(
                 Participant* part,
                 const PublisherAttributes& att,
-                PublisherListener* listen = nullptr);
+                PublisherListener* listen = nullptr,
+                bool devoted_receiver_resource = false);
 
         //!Fills publisher_attributes with the default values.
         RTPS_DllAPI static void getDefaultPublisherAttributes(PublisherAttributes& publisher_attributes);

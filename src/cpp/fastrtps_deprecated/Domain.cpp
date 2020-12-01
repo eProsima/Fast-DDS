@@ -237,14 +237,15 @@ Publisher* Domain::createPublisher(
 Publisher* Domain::createPublisher(
         Participant* part,
         const PublisherAttributes& att,
-        PublisherListener* listen)
+        PublisherListener* listen,
+        bool devoted_receiver_resource)
 {
     std::lock_guard<std::mutex> guard(m_mutex);
     for (auto it = m_participants.begin(); it != m_participants.end(); ++it)
     {
         if (it->second->getGuid() == part->getGuid())
         {
-            return part->mp_impl->createPublisher(att, listen);
+            return part->mp_impl->createPublisher(att, listen, devoted_receiver_resource);
         }
     }
     //TODO MOSTRAR MENSAJE DE ERROR WARNING y COMPROBAR QUE EL PUNTERO QUE ME PASA NO ES NULL

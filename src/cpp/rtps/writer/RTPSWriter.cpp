@@ -321,10 +321,30 @@ bool RTPSWriter::send(
         CDRMessage_t* message,
         std::chrono::steady_clock::time_point& max_blocking_time_point) const
 {
-    RTPSParticipantImpl* participant = getRTPSParticipant();
+    if (send_resource_list.empty())
+    {
+        RTPSParticipantImpl* participant = getRTPSParticipant();
 
-    return locator_selector_.selected_size() == 0 ||
-           participant->sendSync(message, locator_selector_.begin(), locator_selector_.end(), max_blocking_time_point);
+        return locator_selector_.selected_size() == 0 ||
+               participant->sendSync(message, locator_selector_.begin(), locator_selector_.end(), max_blocking_time_point);
+    }
+    else if ( locator_selector_.selected_size() )
+    {
+        // Use this writer specific Sender Resources
+        for (const std::shared_ptr<SenderResource>& send_resource : send_resource_list)
+        {
+            LocatorSelector::iterator locators_begin = locator_selector_.begin();
+            LocatorSelector::iterator locators_end = locator_selector_.end();
+            send_resource->send(
+                    message->buffer,
+                    message->length,
+                    &locators_begin,
+                    &locators_end,
+                    max_blocking_time_point);
+        }
+    }
+
+    return true;
 }
 
 const LivelinessQosPolicyKind& RTPSWriter::get_liveliness_kind() const

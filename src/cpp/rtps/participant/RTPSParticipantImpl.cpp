@@ -795,7 +795,8 @@ bool RTPSParticipantImpl::createWriter(
         WriterHistory* hist,
         WriterListener* listen,
         const EntityId_t& entityId,
-        bool isBuiltin)
+        bool isBuiltin,
+        bool devoted_receiver_resource)
 {
     if (!payload_pool)
     {
@@ -803,33 +804,61 @@ bool RTPSParticipantImpl::createWriter(
         return false;
     }
 
-    auto callback = [hist, listen, &payload_pool, this]
+    // Populate the SendResourceList if required specific sending resources for the writer
+    fastdds::rtps::SendResourceList send_resource_list;
+    if (devoted_receiver_resource)
+    {
+        LocatorList_t defaultLocators;
+        m_network_Factory.GetDefaultOutputLocators(defaultLocators);
+
+        std::lock_guard<std::timed_mutex> guard(m_send_resources_mutex_);
+
+        for (const Locator_t & loc : defaultLocators)
+        {
+            if (!m_network_Factory.build_send_resources(send_resource_list, loc))
+                return false;
+        }
+    }
+
+    auto callback = [hist, listen, &payload_pool, send_resource_list, this]
                 (const GUID_t& guid, WriterAttributes& param, IPersistenceService* persistence,
                     bool is_reliable) -> RTPSWriter*
             {
+                RTPSWriter* pwriter = nullptr;
+
                 if (is_reliable)
                 {
                     if (persistence != nullptr)
                     {
-                        return new StatefulPersistentWriter(this, guid, param, payload_pool, hist, listen, persistence);
+                        pwriter= new StatefulPersistentWriter(this, guid, param, payload_pool, hist, listen, persistence);
                     }
                     else
                     {
-                        return new StatefulWriter(this, guid, param, payload_pool, hist, listen);
+                        pwriter= new StatefulWriter(this, guid, param, payload_pool, hist, listen);
                     }
                 }
                 else
                 {
                     if (persistence != nullptr)
                     {
-                        return new StatelessPersistentWriter(this, guid, param, payload_pool, hist, listen,
+                        pwriter= new StatelessPersistentWriter(this, guid, param, payload_pool, hist, listen,
                                        persistence);
                     }
                     else
                     {
-                        return new StatelessWriter(this, guid, param, payload_pool, hist, listen);
+                        pwriter= new StatelessWriter(this, guid, param, payload_pool, hist, listen);
                     }
                 }
+
+                // If specific transport is required set it
+                if ( pwriter != nullptr
+                        &&  !send_resource_list.empty() )
+                {
+                    pwriter->set_sender_resources(send_resource_list);
+                }
+
+                return pwriter;
+
             };
     return create_writer(WriterOut, param, entityId, isBuiltin, callback);
 }

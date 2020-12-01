@@ -111,6 +111,7 @@ public:
      * @param payload_pool Shared pointer to the IPayloadPool
      * @param hist Pointer to the WriterHistory.
      * @param listen Pointer to the WriterListener.
+     * @param devoted_receiver_resource bool that specifies if the Publisher shares sending port
      * @return Pointer to the created RTPSWriter.
      */
     RTPS_DllAPI static RTPSWriter* createRTPSWriter(
@@ -118,7 +119,8 @@ public:
             WriterAttributes& watt,
             const std::shared_ptr<IPayloadPool>& payload_pool,
             WriterHistory* hist,
-            WriterListener* listen = nullptr);
+            WriterListener* listen = nullptr,
+            bool devoted_receiver_resource = false);
 
     /**
      * Remove a RTPSWriter.

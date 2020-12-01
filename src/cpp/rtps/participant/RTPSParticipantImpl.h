@@ -676,6 +676,7 @@ public:
      * @param listen Pointer to the WriterListener.
      * @param entityId EntityId assigned to the Writer.
      * @param isBuiltin Bool value indicating if the Writer is builtin (Discovery or Liveliness protocol) or is created for the end user.
+     * @param devoted_receiver_resource bool that specifies if the Publisher share sending port
      * @return True if the Writer was correctly created.
      */
     bool createWriter(
@@ -685,7 +686,8 @@ public:
             WriterHistory* hist,
             WriterListener* listen,
             const EntityId_t& entityId = c_EntityId_Unknown,
-            bool isBuiltin = false);
+            bool isBuiltin = false,
+            bool devoted_receiver_resource = false);
 
     /**
      * Create a Reader in this RTPSParticipant.

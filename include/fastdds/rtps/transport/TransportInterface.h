@@ -34,7 +34,7 @@ static const uint32_t s_minimumSocketBuffer = 65536;
 static const std::string s_IPv4AddressAny = "0.0.0.0";
 static const std::string s_IPv6AddressAny = "::";
 
-using SendResourceList = std::vector<std::unique_ptr<fastrtps::rtps::SenderResource>>;
+using SendResourceList = std::vector<std::shared_ptr<fastrtps::rtps::SenderResource>>;
 
 class ChannelResource;
 

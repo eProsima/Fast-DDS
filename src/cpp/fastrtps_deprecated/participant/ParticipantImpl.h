@@ -90,11 +90,13 @@ class ParticipantImpl
      * Create a Publisher in this Participant.
      * @param att Attributes of the Publisher.
      * @param listen Pointer to the listener.
+     * @param devoted_receiver_resource bool that specifies if the Publisher share sending port
      * @return Pointer to the created Publisher.
      */
     Publisher* createPublisher(
         const PublisherAttributes& att,
-        PublisherListener* listen=nullptr);
+        PublisherListener* listen=nullptr,
+        bool devoted_receiver_resource = false);
 
     /**
      * Create a Subscriber in this Participant.
