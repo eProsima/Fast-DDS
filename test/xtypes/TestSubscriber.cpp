@@ -95,7 +95,7 @@ bool TestSubscriber::init(
         std::cout << "ERROR" << std::endl;
         return false;
     }
-    mp_participant -> enable();
+    mp_participant->enable();
 
     std::ostringstream t;
     t << topicName << "_" << asio::ip::host_name() << "_" << domain;
@@ -123,9 +123,9 @@ bool TestSubscriber::init(
 
         //CREATE THE TOPIC
         topic_ = mp_participant->create_topic(
-                topic_name_,
-                m_Type->getName(),
-                TOPIC_QOS_DEFAULT);
+            topic_name_,
+            m_Type->getName(),
+            TOPIC_QOS_DEFAULT);
 
         if (topic_ == nullptr)
         {
@@ -144,7 +144,7 @@ bool TestSubscriber::init(
         reader_qos = mp_subscriber->get_default_datareader_qos();
         if (typeConsistencyQos_ != nullptr)
         {
-            reader_qos.type_consistency().type_consistency =*typeConsistencyQos_;
+            reader_qos.type_consistency().type_consistency = *typeConsistencyQos_;
         }
         if (dataRepresentationQos_ != nullptr)
         {
@@ -329,9 +329,9 @@ DataReader* TestSubscriber::create_datareader()
 
     //CREATE THE TOPIC
     topic_ = mp_participant->create_topic(
-            topic_name_,
-            disc_type_->get_name(),
-            TOPIC_QOS_DEFAULT);
+        topic_name_,
+        disc_type_->get_name(),
+        TOPIC_QOS_DEFAULT);
 
     if (topic_ == nullptr)
     {
@@ -348,7 +348,7 @@ DataReader* TestSubscriber::create_datareader()
     reader_qos = mp_subscriber->get_default_datareader_qos();
     if (typeConsistencyQos_ != nullptr)
     {
-        reader_qos.type_consistency().type_consistency =*typeConsistencyQos_;
+        reader_qos.type_consistency().type_consistency = *typeConsistencyQos_;
     }
     if (dataRepresentationQos_ != nullptr)
     {

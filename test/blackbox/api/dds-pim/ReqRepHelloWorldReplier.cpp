@@ -147,9 +147,10 @@ void ReqRepHelloWorldReplier::wait_discovery()
 
     std::cout << "Replier is waiting discovery..." << std::endl;
 
-    cvDiscovery_.wait(lock, [&](){
-        return matched_ > 1;
-    });
+    cvDiscovery_.wait(lock, [&]()
+            {
+                return matched_ > 1;
+            });
 
     std::cout << "Replier discovery finished..." << std::endl;
 }

@@ -35,31 +35,31 @@ namespace fastdds {
 namespace dds {
 
 FASTDDS_DEPRECATED_UNTIL(3, "eprosima::fastdds::dds::READ",
-    "Use eprosima::fastdds::dds::READ_SAMPLE_STATE instead.")
+        "Use eprosima::fastdds::dds::READ_SAMPLE_STATE instead.")
 constexpr SampleStateKind READ = READ_SAMPLE_STATE;
 
 FASTDDS_DEPRECATED_UNTIL(3, "eprosima::fastdds::dds::NOT_READ",
-    "Use eprosima::fastdds::dds::NOT_READ_SAMPLE_STATE instead.")
+        "Use eprosima::fastdds::dds::NOT_READ_SAMPLE_STATE instead.")
 constexpr SampleStateKind NOT_READ = NOT_READ_SAMPLE_STATE;
 
 FASTDDS_DEPRECATED_UNTIL(3, "eprosima::fastdds::dds::NEW",
-    "Use eprosima::fastdds::dds::NEW_VIEW_STATE instead.")
+        "Use eprosima::fastdds::dds::NEW_VIEW_STATE instead.")
 constexpr ViewStateKind NEW = NEW_VIEW_STATE;
 
 FASTDDS_DEPRECATED_UNTIL(3, "eprosima::fastdds::dds::NOT_NEW",
-    "Use eprosima::fastdds::dds::NOT_NEW_VIEW_STATE instead.")
+        "Use eprosima::fastdds::dds::NOT_NEW_VIEW_STATE instead.")
 constexpr ViewStateKind NOT_NEW = NOT_NEW_VIEW_STATE;
 
 FASTDDS_DEPRECATED_UNTIL(3, "eprosima::fastdds::dds::ALIVE",
-    "Use eprosima::fastdds::dds::ALIVE_INSTANCE_STATE instead.")
+        "Use eprosima::fastdds::dds::ALIVE_INSTANCE_STATE instead.")
 constexpr InstanceStateKind ALIVE = ALIVE_INSTANCE_STATE;
 
 FASTDDS_DEPRECATED_UNTIL(3, "eprosima::fastdds::dds::NOT_ALIVE_DISPOSED",
-    "Use eprosima::fastdds::dds::NOT_ALIVE_DISPOSED_INSTANCE_STATE instead.")
+        "Use eprosima::fastdds::dds::NOT_ALIVE_DISPOSED_INSTANCE_STATE instead.")
 constexpr InstanceStateKind NOT_ALIVE_DISPOSED = NOT_ALIVE_DISPOSED_INSTANCE_STATE;
 
 FASTDDS_DEPRECATED_UNTIL(3, "eprosima::fastdds::dds::NOT_ALIVE_NO_WRITERS",
-    "Use eprosima::fastdds::dds::NOT_ALIVE_NO_WRITERS_INSTANCE_STATE instead.")
+        "Use eprosima::fastdds::dds::NOT_ALIVE_NO_WRITERS_INSTANCE_STATE instead.")
 constexpr InstanceStateKind NOT_ALIVE_NO_WRITERS = NOT_ALIVE_NO_WRITERS_INSTANCE_STATE;
 
 /*!
