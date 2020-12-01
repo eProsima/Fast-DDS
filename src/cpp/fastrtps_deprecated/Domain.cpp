@@ -293,14 +293,15 @@ Subscriber* Domain::createSubscriber(
 Subscriber* Domain::createSubscriber(
         Participant* part,
         const SubscriberAttributes& att,
-        SubscriberListener* listen)
+        SubscriberListener* listen,
+        bool devoted_receiver_resource)
 {
     std::lock_guard<std::mutex> guard(m_mutex);
     for (auto it = m_participants.begin(); it != m_participants.end(); ++it)
     {
         if (it->second->getGuid() == part->getGuid())
         {
-            return part->mp_impl->createSubscriber(att, listen);
+            return part->mp_impl->createSubscriber(att, listen, devoted_receiver_resource);
         }
     }
     return nullptr;

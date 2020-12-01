@@ -345,13 +345,14 @@ RTPSReader* RTPSDomain::createRTPSReader(
         ReaderAttributes& ratt,
         const std::shared_ptr<IPayloadPool>& payload_pool,
         ReaderHistory* rhist,
-        ReaderListener* rlisten)
+        ReaderListener* rlisten,
+        bool devoted_receiver_resource)
 {
     RTPSParticipantImpl* impl = RTPSDomainImpl::find_local_participant(p->getGuid());
     if (impl)
     {
         RTPSReader* reader;
-        if (impl->createReader(&reader, ratt, payload_pool, rhist, rlisten))
+        if (impl->createReader(&reader, ratt, payload_pool, rhist, rlisten, c_EntityId_Unknown, false, true, devoted_receiver_resource))
         {
             return reader;
         }

@@ -262,7 +262,8 @@ std::vector<std::string> ParticipantImpl::getParticipantNames() const
 
 Subscriber* ParticipantImpl::createSubscriber(
         const SubscriberAttributes& att,
-        SubscriberListener* listen)
+        SubscriberListener* listen,
+        bool devoted_receiver_resource)
 {
     logInfo(PARTICIPANT, "CREATING SUBSCRIBER IN TOPIC: " << att.topic.getTopicName())
     //Look for the correct type registration
@@ -359,10 +360,12 @@ Subscriber* ParticipantImpl::createSubscriber(
         ratt.disable_positive_acks = true;
     }
 
-    RTPSReader* reader = RTPSDomain::createRTPSReader(this->mp_rtpsParticipant,
+    RTPSReader* reader = RTPSDomain::createRTPSReader(
+                    mp_rtpsParticipant,
                     ratt, subimpl->payload_pool(),
                     (ReaderHistory*)&subimpl->m_history,
-                    (ReaderListener*)&subimpl->m_readerListener);
+                    (ReaderListener*)&subimpl->m_readerListener,
+                    devoted_receiver_resource);
     if (reader == nullptr)
     {
         logError(PARTICIPANT, "Problem creating associated Reader");

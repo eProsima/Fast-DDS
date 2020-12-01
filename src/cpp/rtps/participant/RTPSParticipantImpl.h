@@ -717,6 +717,7 @@ public:
      * @param entityId EntityId assigned to the Reader.
      * @param isBuiltin Bool value indicating if the Reader is builtin (Discovery or Liveliness protocol) or is created for the end user.
      * @param enable Whether the reader should be automatically enabled.
+     * @param devoted_receiver_resource bool that specifies if the Subscriber shares listening ports
      * @return True if the Reader was correctly created.
      */
     bool createReader(
@@ -727,7 +728,8 @@ public:
             ReaderListener* listen,
             const EntityId_t& entityId = c_EntityId_Unknown,
             bool isBuiltin = false,
-            bool enable = true);
+            bool enable = true,
+            bool devoted_receiver_resource = false);
 
     bool enableReader(
             RTPSReader* reader);

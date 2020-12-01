@@ -100,11 +100,13 @@ class ParticipantImpl
      * Create a Subscriber in this Participant.
      * @param att Attributes of the Subscriber
      * @param listen Pointer to the listener.
+     * @param devoted_receiver_resource bool that specifies if the Subscriber shares listening ports
      * @return Pointer to the created Subscriber.
      */
     Subscriber* createSubscriber(
         const SubscriberAttributes& att,
-        SubscriberListener* listen=nullptr);
+        SubscriberListener* listen=nullptr,
+        bool devoted_receiver_resource = false);
 
     /**
      * Remove a Publisher from this participant.

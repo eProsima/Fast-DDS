@@ -149,6 +149,7 @@ public:
      * @param payload_pool Shared pointer to the IPayloadPool
      * @param hist Pointer to the ReaderHistory.
      * @param listen Pointer to the ReaderListener.
+     * @param devoted_receiver_resource bool that specifies if the Subscriber shares listening ports
      * @return Pointer to the created RTPSReader.
      */
     RTPS_DllAPI static RTPSReader* createRTPSReader(
@@ -156,8 +157,8 @@ public:
             ReaderAttributes& ratt,
             const std::shared_ptr<IPayloadPool>& payload_pool,
             ReaderHistory* hist,
-            ReaderListener* listen = nullptr);
-
+            ReaderListener* listen = nullptr,
+            bool devoted_receiver_resource = false);
     /**
      * Remove a RTPSReader.
      * @param reader Pointer to the reader you want to remove.

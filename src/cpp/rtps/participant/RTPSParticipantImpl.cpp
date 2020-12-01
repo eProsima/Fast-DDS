@@ -881,11 +881,22 @@ bool RTPSParticipantImpl::createReader(
         ReaderListener* listen,
         const EntityId_t& entityId,
         bool isBuiltin,
-        bool enable)
+        bool enable,
+        bool devoted_receiver_resource)
 {
     if (!payload_pool)
     {
         logError(RTPS_PARTICIPANT, "Trying to create reader with null payload pool");
+        return false;
+    }
+
+    // Generate locator for devoted listener port if required
+    if (devoted_receiver_resource
+        && !m_network_Factory.getDefaultUnicastLocators(
+                domain_id_,
+                param.endpoint.unicastLocatorList,
+                m_att))
+    {
         return false;
     }
 
@@ -1086,7 +1097,7 @@ bool RTPSParticipantImpl::createAndAssociateReceiverswithEndpoint(
         //Default unicast
         pend->getAttributes().unicastLocatorList = m_att.defaultUnicastLocatorList;
     }
-    createReceiverResources(pend->getAttributes().unicastLocatorList, false, true);
+    createReceiverResources(pend->getAttributes().unicastLocatorList, true, true);
     createReceiverResources(pend->getAttributes().multicastLocatorList, false, true);
 
     // Associate the Endpoint with ReceiverControlBlock
