@@ -203,10 +203,13 @@ XMLP_ret XMLProfileManager::loadXMLProfiles(
         tinyxml2::XMLElement& profiles)
 {
     up_base_node_t root_node;
-    XMLParser::loadXMLProfiles(profiles, root_node);
+    if (profiles.FirstChildElement(PROFILES) != nullptr)
+    {
+        logError(XMLPARSER, "Profiles tag not found");
+        return XMLP_ret::XML_ERROR;
+    }
 
-    // should not be null
-    assert(root_node);
+    XMLParser::loadXMLProfiles(profiles, root_node);
 
     logInfo(XMLPARSER, "Node parsed successfully");
 
@@ -302,6 +305,11 @@ XMLP_ret XMLProfileManager::loadXMLFile(
         return loaded_ret;
     }
 
+    if (NodeType::LIBRARY_SETTINGS == root_node->getType())
+    {
+        return loaded_ret;
+    }
+
     if (NodeType::ROOT == root_node->getType())
     {
         for (auto&& child: root_node->getChildren())
@@ -317,6 +325,10 @@ XMLP_ret XMLProfileManager::loadXMLFile(
                 return loaded_ret;
             }
             else if (NodeType::LOG == child.get()->getType())
+            {
+                return loaded_ret;
+            }
+            else if (NodeType::LIBRARY_SETTINGS == child.get()->getType())
             {
                 return loaded_ret;
             }
@@ -415,9 +427,9 @@ XMLP_ret XMLProfileManager::extractProfiles(
 
     profile_count += static_cast<unsigned int>(transport_profiles_.size()); // Count transport profiles
 
-    if (ret != XMLP_ret::XML_OK && profile_count == 0)
+    if (profile_count == 0)
     {
-        // Could not extract any profile
+        logError(XMLProfileManager, "Could not extract any profile")
         ret = XMLP_ret::XML_ERROR;
     }
 

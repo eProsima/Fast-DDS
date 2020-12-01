@@ -27,7 +27,8 @@ enum class NodeType
     TYPES,
     LOG,
     REQUESTER,
-    REPLIER
+    REPLIER,
+    LIBRARY_SETTINGS
 };
 
 class BaseNode
