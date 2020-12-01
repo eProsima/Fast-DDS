@@ -534,6 +534,9 @@ protected:
     // Whether the database is enabled
     std::atomic<bool> enabled_;
 
+    // Whether it has been a new entity discovered or update of an old one
+    std::atomic<bool> new_entity_discovered_;
+
     // Wheter the database is restoring a backup
     std::atomic<bool> processing_backup_;
 

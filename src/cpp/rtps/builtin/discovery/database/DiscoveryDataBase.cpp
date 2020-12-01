@@ -41,8 +41,9 @@ DiscoveryDataBase::DiscoveryDataBase(
     , server_acked_by_all_(servers.size() == 0)
     , servers_(servers)
     , enabled_(true)
+    , new_entity_discovered_(false)
     , processing_backup_(false)
-    , is_persistent_ (false)
+    , is_persistent_(false)
 {
 }
 
@@ -381,6 +382,13 @@ void DiscoveryDataBase::clear_changes_to_dispose()
 // Functions to process_to_send_lists()
 const std::vector<eprosima::fastrtps::rtps::CacheChange_t*> DiscoveryDataBase::pdp_to_send()
 {
+    if (!new_entity_discovered_)
+    {
+        // TODO change to Info
+        logWarning(DISCOVERY_DATABASE, "All DATA already sent, no changes must be updated");
+        return std::vector<eprosima::fastrtps::rtps::CacheChange_t*>();
+    }
+
     // lock(sharing mode) mutex locally
     std::unique_lock<std::recursive_mutex> lock(mutex_);
     return pdp_to_send_;
@@ -444,6 +452,9 @@ void DiscoveryDataBase::process_pdp_data_queue()
         logInfo(DISCOVERY_DATABASE, "Discovery Database is disabled");
         return;
     }
+
+    // The are not new entities before having read the queues
+    new_entity_discovered_.store(false);
 
     // Lock(exclusive mode) mutex locally
     std::unique_lock<std::recursive_mutex> lock(mutex_);
@@ -573,7 +584,12 @@ void DiscoveryDataBase::create_participant_from_change_(
             if (change_guid.guidPrefix != server_guid_prefix_ &&
                     !participant_it->second.is_acked_by_all())
             {
-                add_pdp_to_send_(ch);
+                // The change could be newer but has no update, so we do not send it
+                if (!(ch->serializedPayload == participant_it->second.change()->serializedPayload))
+                {
+                    new_entity_discovered_.store(true);
+                    add_pdp_to_send_(ch);
+                }
             }
         }
         // if the cache is not new we have to release it, because it is repeated or outdated
@@ -601,6 +617,9 @@ void DiscoveryDataBase::create_participant_from_change_(
         // If insert was successful
         if (ret.second)
         {
+            // New participant found
+            new_entity_discovered_.store(true);
+
             logInfo(DISCOVERY_DATABASE, "New participant added: " << change_guid.guidPrefix);
 
             // Manually set to 1 the relevant participants ACK status of the participant that sent the change. This way,
@@ -700,7 +719,12 @@ void DiscoveryDataBase::create_writers_from_change_(
             // It needs to be sent in case it has unacked participants
             if (!writer_it->second.is_acked_by_all())
             {
-                add_edp_publications_to_send_(ch);
+                // The change could be newer but has no update, so we do not send it
+                if (!(ch->serializedPayload == writer_it->second.change()->serializedPayload))
+                {
+                    new_entity_discovered_.store(true);
+                    add_edp_publications_to_send_(ch);
+                }
             }
         }
         // if the cache is not new we have to release it, because it is repeated or outdated
@@ -736,6 +760,9 @@ void DiscoveryDataBase::create_writers_from_change_(
             return;
         }
         writer_it = ret.first;
+
+        // New writer found
+        new_entity_discovered_.store(true);
 
         // Add entry to participants_[guid_prefix]::writers
         std::map<eprosima::fastrtps::rtps::GuidPrefix_t, DiscoveryParticipantInfo>::iterator writer_part_it =
@@ -806,7 +833,12 @@ void DiscoveryDataBase::create_readers_from_change_(
             // It needs to be sent in case it has unacked participants
             if (!reader_it->second.is_acked_by_all())
             {
-                add_edp_subscriptions_to_send_(ch);
+                // The change could be newer but has no update, so we do not send it
+                if (!(ch->serializedPayload == reader_it->second.change()->serializedPayload))
+                {
+                    new_entity_discovered_.store(true);
+                    add_edp_subscriptions_to_send_(ch);
+                }
             }
         }
         // if the cache is not new we have to release it, because it is repeated or outdated
@@ -842,6 +874,9 @@ void DiscoveryDataBase::create_readers_from_change_(
             return;
         }
         reader_it = ret.first;
+
+        // New reader found
+        new_entity_discovered_.store(true);
 
         // Add entry to participants_[guid_prefix]::readers
         std::map<eprosima::fastrtps::rtps::GuidPrefix_t, DiscoveryParticipantInfo>::iterator reader_part_it =
@@ -1097,6 +1132,9 @@ void DiscoveryDataBase::process_dispose_participant_(
         // Only update DATA(p), leaving the change info untouched. This is because DATA(Up) does not have the
         // participant's meta-information, but we don't want to loose it here.
         update_change_and_unmatch_(ch, pit->second);
+
+        // Any change in the entities known must be reported as a change in the discovery
+        new_entity_discovered_.store(true);
     }
     else
     {
@@ -1166,6 +1204,9 @@ void DiscoveryDataBase::process_dispose_writer_(
                 disposals_.push_back(ch);
             }
         }
+
+        // Any change in the entities known must be reported as a change in the discovery
+        new_entity_discovered_.store(true);
     }
 }
 
@@ -1193,6 +1234,9 @@ void DiscoveryDataBase::process_dispose_reader_(
                 disposals_.push_back(ch);
             }
         }
+
+        // Any change in the entities known must be reported as a change in the discovery
+        new_entity_discovered_.store(true);
     }
 }
 
@@ -1569,14 +1613,21 @@ void DiscoveryDataBase::AckedFunctor::operator () (
         }
         else
         {
-            // If the reader proxy is from a server that we are pinging, the data is set as acked
-            for (auto it = db_->servers_.begin(); it < db_->servers_.end(); ++it)
-            {
-                if (reader_proxy->guid().guidPrefix == *it)
+            // If the data we are sending is our own DATA(p) we should not wait to acked
+            // if (db_->guid_from_change(change_).guidPrefix == db_->server_guid_prefix_)
+            // {
+                logWarning(DISCOVERY_DATABASE, "not acked yet");
+                // If the reader proxy is from a server that we are pinging, the data is set as acked
+                auto p_it = db_->participants_.find(db_->server_guid_prefix_);
+                for (auto it = db_->servers_.begin(); it < db_->servers_.end(); ++it)
                 {
-                    return;
+                    if (reader_proxy->guid().guidPrefix == *it && !p_it->second.is_matched(*it))
+                    {
+                        logWarning(DISCOVERY_DATABASE, "not pinged back yet");
+                        return;
+                    }
                 }
-            }
+            // }
             // This change is relevant and has not been acked, and does not belongs to the reader proxy
             // of a server that has not been paired yet, so there are pending acknowledgements
             external_pending_ = true;

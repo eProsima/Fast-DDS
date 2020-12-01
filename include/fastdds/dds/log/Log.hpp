@@ -130,6 +130,7 @@ public:
         int line;
         const char* function;
         const char* category;
+        std::thread::id thread_p;
     };
 
     struct Entry
@@ -244,7 +245,7 @@ protected:
         using namespace eprosima::fastdds::dds;                                                      \
         std::stringstream ss;                                                                        \
         ss << msg;                                                                                   \
-        Log::QueueLog(ss.str(), Log::Context{__FILE__, __LINE__, __func__, #cat}, Log::Kind::Error); \
+        Log::QueueLog(ss.str(), Log::Context{__FILE__, __LINE__, __func__, #cat, std::this_thread::get_id()}, Log::Kind::Error); \
     }
 #elif (defined(__INTERNALDEBUG) || defined(_INTERNALDEBUG))
 #define logError_(cat, msg)        \
@@ -268,7 +269,7 @@ protected:
         {                                                                                                  \
             std::stringstream ss;                                                                          \
             ss << msg;                                                                                     \
-            Log::QueueLog(ss.str(), Log::Context{__FILE__, __LINE__, __func__, #cat}, Log::Kind::Warning); \
+            Log::QueueLog(ss.str(), Log::Context{__FILE__, __LINE__, __func__, #cat, std::this_thread::get_id()}, Log::Kind::Warning); \
         }                                                                                                  \
     }
 #elif (defined(__INTERNALDEBUG) || defined(_INTERNALDEBUG))
@@ -294,7 +295,7 @@ protected:
         {                                                                                               \
             std::stringstream ss;                                                                       \
             ss << msg;                                                                                  \
-            Log::QueueLog(ss.str(), Log::Context{__FILE__, __LINE__, __func__, #cat}, Log::Kind::Info); \
+            Log::QueueLog(ss.str(), Log::Context{__FILE__, __LINE__, __func__, #cat, std::this_thread::get_id()}, Log::Kind::Info); \
         }                                                                                               \
     }
 #elif (defined(__INTERNALDEBUG) || defined(_INTERNALDEBUG))

@@ -949,6 +949,7 @@ History::iterator PDPServer2::process_change_acknowledgement(
                 {
                     // Remove the entry from writer history, but do not release the cache.
                     // This CacheChange will only be released in the case that is substituted by a DATA(Up|Uw|Ur).
+                    logWarning(RTPS_PDP_SERVER, "Remove change " << c->instanceHandle << " from history");
                     return writer_history->remove_change(cit, false);
                 }
             }
@@ -1269,8 +1270,7 @@ bool PDPServer2::remove_change_from_history_nts(
 {
     for (auto chit = history->changesRbegin(); chit != history->changesRend(); chit++)
     {
-        if (change->instanceHandle == (*chit)->instanceHandle &&
-                change->write_params.sample_identity() == (*chit)->write_params.sample_identity())
+        if (change == (*chit))
         {
             if (release_change)
             {
