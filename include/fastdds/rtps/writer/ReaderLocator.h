@@ -134,6 +134,11 @@ public:
             const GUID_t& remote_guid);
 
     /**
+     * Try to stop using this object for an unmatched reader.
+     */
+    void stop();
+
+    /**
      * Check if the destinations managed by this sender interface have changed.
      *
      * @return true if destinations have changed, false otherwise.
