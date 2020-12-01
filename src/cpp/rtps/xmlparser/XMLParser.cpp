@@ -59,8 +59,17 @@ XMLP_ret XMLParser::parseXML(
                 // Just log config in the XML.
                 if (nullptr == (p_root = xmlDoc.FirstChildElement(LOG)))
                 {
-                    logError(XMLPARSER, "Not found root tag");
-                    ret = XMLP_ret::XML_ERROR;
+                     // Just library_settings config in the XML.
+                    if (nullptr == (p_root = xmlDoc.FirstChildElement(LIBRARY_SETTINGS)))
+                    {
+                        logError(XMLPARSER, "Not found root tag");
+                        ret = XMLP_ret::XML_ERROR;
+                    }
+                    else
+                    {
+                        root.reset(new BaseNode{NodeType::LIBRARY_SETTINGS});
+                        ret  = parseXMLLibrarySettings(p_root);
+                    }
                 }
                 else
                 {
@@ -99,7 +108,14 @@ XMLP_ret XMLParser::parseXML(
                 }
                 else if (strcmp(tag, LIBRARY_SETTINGS) == 0)
                 {
-                    ret = parseXMLLibrarySettings(node);
+                    // TODO Workaround to propagate the return code upstream. A refactor is needed to propagate the
+                    // return code in some other more sensible way or populate the object and change code upstream to
+                    // read this new object.
+                    up_base_node_t library_node = up_base_node_t{ new BaseNode{NodeType::LIBRARY_SETTINGS} };
+                    if (XMLP_ret::XML_OK == (ret = parseXMLLibrarySettings(node)))
+                    {
+                        root->addChild(std::move(library_node));
+                    }
                 }
                 else if (strcmp(tag, PARTICIPANT) == 0)
                 {
