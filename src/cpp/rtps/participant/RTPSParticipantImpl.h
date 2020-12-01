@@ -257,8 +257,8 @@ public:
     template<class LocatorIteratorT>
     bool sendSync(
             CDRMessage_t* msg,
-            const LocatorIteratorT& destination_locators_begin,
-            const LocatorIteratorT& destination_locators_end,
+            const LocatorIteratorT* destination_locators_begin,
+            const LocatorIteratorT* destination_locators_end,
             std::chrono::steady_clock::time_point& max_blocking_time_point)
     {
         bool ret_code = false;
@@ -270,9 +270,9 @@ public:
 
             for (auto& send_resource : send_resource_list_)
             {
-                LocatorIteratorT locators_begin = destination_locators_begin;
-                LocatorIteratorT locators_end = destination_locators_end;
-                send_resource->send(msg->buffer, msg->length, &locators_begin, &locators_end,
+                LocatorIteratorT* locators_begin = const_cast<LocatorIteratorT*>(destination_locators_begin);
+                LocatorIteratorT* locators_end = const_cast<LocatorIteratorT*>(destination_locators_end);
+                send_resource->send(msg->buffer, msg->length, locators_begin, locators_end,
                         max_blocking_time_point);
             }
         }

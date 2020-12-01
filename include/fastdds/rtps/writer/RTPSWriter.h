@@ -418,6 +418,21 @@ public:
             CDRMessage_t* message,
             std::chrono::steady_clock::time_point& max_blocking_time_point) const override;
 
+    /**
+     * Sends to a destination locator, through this writer's sender resources
+     * the previous parameter.
+     * @param message Pointer to the buffer with the message already serialized.
+     * @param destination_locators_begin destination endpoint Locators iterator begin.
+     * @param destination_locators_end destination endpoint Locators iterator end.
+     * @param max_blocking_time_point If transport supports it then it will use it as maximum blocking time.
+     * @return Success of the send operation.
+     */
+    bool send(
+        CDRMessage_t* message,
+        LocatorsIterator* destination_locators_begin,
+        LocatorsIterator* destination_locators_end,
+        std::chrono::steady_clock::time_point& max_blocking_time_point) const;
+
 protected:
 
     //!Is the data sent directly or announced by HB and THEN sent to the ones who ask for it?.

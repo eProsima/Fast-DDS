@@ -317,34 +317,46 @@ const std::vector<GUID_t>& RTPSWriter::remote_guids() const
     return all_remote_readers_;
 }
 
+
 bool RTPSWriter::send(
         CDRMessage_t* message,
+        LocatorsIterator* destination_locators_begin,
+        LocatorsIterator* destination_locators_end,
         std::chrono::steady_clock::time_point& max_blocking_time_point) const
 {
     if (send_resource_list.empty())
     {
         RTPSParticipantImpl* participant = getRTPSParticipant();
 
-        return locator_selector_.selected_size() == 0 ||
-               participant->sendSync(message, locator_selector_.begin(), locator_selector_.end(), max_blocking_time_point);
+        return participant->sendSync(message, destination_locators_begin, destination_locators_end, max_blocking_time_point);
     }
-    else if ( locator_selector_.selected_size() )
+    else
     {
         // Use this writer specific Sender Resources
         for (const std::shared_ptr<SenderResource>& send_resource : send_resource_list)
         {
-            LocatorSelector::iterator locators_begin = locator_selector_.begin();
-            LocatorSelector::iterator locators_end = locator_selector_.end();
-            send_resource->send(
+           send_resource->send(
                     message->buffer,
                     message->length,
-                    &locators_begin,
-                    &locators_end,
+                    destination_locators_begin,
+                    destination_locators_end,
                     max_blocking_time_point);
         }
     }
 
     return true;
+}
+
+bool RTPSWriter::send(
+        CDRMessage_t* message,
+        std::chrono::steady_clock::time_point& max_blocking_time_point) const
+{
+    if ( locator_selector_.selected_size() == 0 )
+        return true;
+
+    auto b = locator_selector_.begin();
+    auto e = locator_selector_.end();
+    return send(message, &b, &e, max_blocking_time_point);
 }
 
 const LivelinessQosPolicyKind& RTPSWriter::get_liveliness_kind() const

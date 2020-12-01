@@ -880,10 +880,12 @@ bool StatelessWriter::send(
         return false;
     }
 
-    return ignore_fixed_locators_ ||
-           fixed_locators_.empty() ||
-           mp_RTPSParticipant->sendSync(message, Locators(fixed_locators_.begin()), Locators(
-                       fixed_locators_.end()), max_blocking_time_point);
+    if (ignore_fixed_locators_ || fixed_locators_.empty())
+        return true;
+
+    Locators b(fixed_locators_.begin());
+    Locators e(fixed_locators_.end());
+    return RTPSWriter::send(message, &b, &e, max_blocking_time_point);
 }
 
 } /* namespace rtps */

@@ -98,7 +98,8 @@ bool DirectMessageSender::send(
         CDRMessage_t* message,
         std::chrono::steady_clock::time_point& max_blocking_time_point) const
 {
-    return participant_->sendSync(message, Locators(locators_->begin()), Locators(locators_->end()), max_blocking_time_point);
+    Locators b(locators_->begin()), e(locators_->end());
+    return participant_->sendSync(message, &b, &e, max_blocking_time_point);
 }
 
 } /* namespace rtps */
