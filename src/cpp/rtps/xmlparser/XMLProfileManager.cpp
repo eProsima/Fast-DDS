@@ -205,28 +205,14 @@ XMLP_ret XMLProfileManager::loadXMLProfiles(
     up_base_node_t root_node;
     XMLParser::loadXMLProfiles(profiles, root_node);
 
-    if (!root_node)
-    {
-        logError(XMLPARSER, "Error parsing node");
-        return XMLP_ret::XML_ERROR;
-    }
+    // should not be null
+    assert(root_node);
 
     logInfo(XMLPARSER, "Node parsed successfully");
 
     if (NodeType::PROFILES == root_node->getType())
     {
         return XMLProfileManager::extractProfiles(std::move(root_node), "-XML Node-");
-    }
-
-    if (NodeType::ROOT == root_node->getType())
-    {
-        for (auto&& child: root_node->getChildren())
-        {
-            if (NodeType::PROFILES == child.get()->getType())
-            {
-                return XMLProfileManager::extractProfiles(std::move(child), "-XML Node-");
-            }
-        }
     }
 
     return XMLP_ret::XML_ERROR;
@@ -338,46 +324,6 @@ XMLP_ret XMLProfileManager::loadXMLFile(
     }
 
     return XMLP_ret::XML_ERROR;
-}
-
-XMLP_ret XMLProfileManager::extractDynamicTypes(
-        up_base_node_t profiles,
-        const std::string& filename)
-{
-    if (nullptr == profiles)
-    {
-        logError(XMLPARSER, "Bad parameters");
-        return XMLP_ret::XML_ERROR;
-    }
-
-    unsigned int profile_count = 0u;
-
-    for (auto&& profile: profiles->getChildren())
-    {
-        if (NodeType::TYPE == profile->getType())
-        {
-            tinyxml2::XMLElement* node = dynamic_cast<tinyxml2::XMLElement*>(profile.get());
-            if (XMLP_ret::XML_OK == XMLParser::loadXMLDynamicTypes(*node))
-            {
-                ++profile_count;
-            }
-        }
-        else
-        {
-            logError(XMLPARSER, "Not expected tag");
-        }
-    }
-
-    if (0 == profile_count)
-    {
-        xml_files_.emplace(filename, XMLP_ret::XML_ERROR);
-        logError(XMLPARSER, "Error, file '" << filename << "' bad content");
-        return XMLP_ret::XML_ERROR;
-    }
-
-    xml_files_.emplace(filename, XMLP_ret::XML_OK);
-
-    return XMLP_ret::XML_OK;
 }
 
 XMLP_ret XMLProfileManager::extractProfiles(
