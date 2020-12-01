@@ -176,7 +176,7 @@ void OwnershipStrengthSubscriber::SubListener::on_data_available(
     ExampleMessage st;
     if (reader->take_next_sample(&st, &info) == ReturnCode_t::RETCODE_OK)
     {
-        if (info.instance_state == eprosima::fastdds::dds::ALIVE && m_hierarchy.IsMessageStrong(st, info))
+        if (info.instance_state == eprosima::fastdds::dds::ALIVE_INSTANCE_STATE && m_hierarchy.IsMessageStrong(st, info))
         {
             // User message handling here, for a strong message
             ++n_msg;

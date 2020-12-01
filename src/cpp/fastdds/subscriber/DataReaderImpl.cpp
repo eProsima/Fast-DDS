@@ -52,8 +52,8 @@ void sample_info_to_dds (
         const SampleInfo_t& rtps_info,
         SampleInfo* dds_info)
 {
-    dds_info->sample_state = NOT_READ;
-    dds_info->view_state = NOT_NEW;
+    dds_info->sample_state = NOT_READ_SAMPLE_STATE;
+    dds_info->view_state = NOT_NEW_VIEW_STATE;
     dds_info->disposed_generation_count = 0;
     dds_info->no_writers_generation_count = 1;
     dds_info->sample_rank = 0;
@@ -69,14 +69,14 @@ void sample_info_to_dds (
     switch (rtps_info.sampleKind)
     {
         case eprosima::fastrtps::rtps::ALIVE:
-            dds_info->instance_state = ALIVE;
+            dds_info->instance_state = ALIVE_INSTANCE_STATE;
             break;
         case eprosima::fastrtps::rtps::NOT_ALIVE_DISPOSED:
-            dds_info->instance_state = NOT_ALIVE_DISPOSED;
+            dds_info->instance_state = NOT_ALIVE_DISPOSED_INSTANCE_STATE;
             break;
         default:
             //TODO [ILG] change this if the other kinds ever get implemented
-            dds_info->instance_state = ALIVE;
+            dds_info->instance_state = ALIVE_INSTANCE_STATE;
             break;
     }
 }

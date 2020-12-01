@@ -137,7 +137,7 @@ void LivelinessSubscriber::SubListener::on_data_available(
     SampleInfo info;
     if (reader->take_next_sample(&topic, &info) == ReturnCode_t::RETCODE_OK)
     {
-        if (info.instance_state == eprosima::fastdds::dds::ALIVE)
+        if (info.instance_state == eprosima::fastdds::dds::ALIVE_INSTANCE_STATE)
         {
             this->n_samples++;
 

@@ -26,6 +26,8 @@
 #include <fastdds/dds/core/status/StatusMask.hpp>
 #include <fastdds/dds/core/status/IncompatibleQosStatus.hpp>
 #include <fastdds/dds/core/Entity.hpp>
+#include <fastdds/dds/subscriber/SampleInfo.hpp>
+
 #include <fastrtps/types/TypesBase.h>
 
 
@@ -65,7 +67,6 @@ class TypeSupport;
 class DataReaderQos;
 class TopicDescription;
 struct LivelinessChangedStatus;
-struct SampleInfo;
 
 /**
  * Class DataReader, contains the actual implementation of the behaviour of the Subscriber.

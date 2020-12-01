@@ -127,7 +127,7 @@ void HelloWorldSubscriber::SubListener::on_data_available(
     SampleInfo info;
     if (reader->take_next_sample(&hello_, &info) == ReturnCode_t::RETCODE_OK)
     {
-        if (info.instance_state == ALIVE)
+        if (info.instance_state == ALIVE_INSTANCE_STATE)
         {
             samples_++;
             // Print your structure data here.

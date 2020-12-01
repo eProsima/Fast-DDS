@@ -236,7 +236,7 @@ public:
 
             if (nullptr != reader && !!reader->take_next_sample(sample.get(), &info))
             {
-                if (info.instance_state == eprosima::fastdds::dds::ALIVE)
+                if (info.instance_state == eprosima::fastdds::dds::ALIVE_INSTANCE_STATE)
                 {
                     std::unique_lock<std::mutex> lock(mutex_);
                     ++number_samples_;

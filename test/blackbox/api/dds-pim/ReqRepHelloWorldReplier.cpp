@@ -174,7 +174,7 @@ void ReqRepHelloWorldReplier::ReplyListener::on_data_available(
 
     if (ReturnCode_t::RETCODE_OK == datareader->take_next_sample((void*)&hello, &info))
     {
-        if (info.instance_state == eprosima::fastdds::dds::InstanceStateKind::ALIVE)
+        if (info.instance_state == eprosima::fastdds::dds::ALIVE_INSTANCE_STATE)
         {
             ASSERT_EQ(hello.message().compare("HelloWorld"), 0);
             replier_.newNumber(info.sample_identity, hello.index());

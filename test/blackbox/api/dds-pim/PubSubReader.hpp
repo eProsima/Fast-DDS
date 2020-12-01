@@ -1236,7 +1236,7 @@ private:
             ASSERT_LT(last_seq, info.sample_identity.sequence_number());
             last_seq = info.sample_identity.sequence_number();
 
-            if (info.instance_state == eprosima::fastdds::dds::ALIVE)
+            if (info.instance_state == eprosima::fastdds::dds::ALIVE_INSTANCE_STATE)
             {
                 auto it = std::find(total_msgs_.begin(), total_msgs_.end(), data);
                 ASSERT_NE(it, total_msgs_.end());
