@@ -316,16 +316,26 @@ public:
             // Register type
             ASSERT_EQ(participant_->register_type(type_), ReturnCode_t::RETCODE_OK);
 
-            // Create publisher
-            publisher_ = participant_->create_publisher(publisher_qos_);
-            ASSERT_NE(publisher_, nullptr);
-            ASSERT_TRUE(publisher_->is_enabled());
-
             // Create topic
             topic_ = participant_->create_topic(topic_name_, type_->getName(),
                             eprosima::fastdds::dds::TOPIC_QOS_DEFAULT);
             ASSERT_NE(topic_, nullptr);
             ASSERT_TRUE(topic_->is_enabled());
+
+            // Create publisher
+            createPublisher();
+        }
+        return;
+    }
+
+    void createPublisher()
+    {
+        if  (participant_ != nullptr)
+        {
+            // Create publisher
+            publisher_ = participant_->create_publisher(publisher_qos_);
+            ASSERT_NE(publisher_, nullptr);
+            ASSERT_TRUE(publisher_->is_enabled());
 
             if (!xml_file_.empty())
             {
@@ -350,6 +360,20 @@ public:
 
                 initialized_ = datawriter_->is_enabled();
             }
+        }
+        return;
+    }
+
+    void removePublisher()
+    {
+        initialized_ = false;
+        if (datawriter_ != nullptr)
+        {
+            publisher_ ->delete_datawriter(datawriter_ );
+        }
+        if (publisher_  != nullptr)
+        {
+            participant_->delete_publisher(publisher_ );
         }
         return;
     }

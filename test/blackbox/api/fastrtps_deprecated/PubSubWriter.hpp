@@ -311,6 +311,32 @@ public:
         }
     }
 
+    void createPublisher()
+    {
+        if (participant_ != nullptr)
+        {
+            //Create publisher
+            publisher_ = eprosima::fastrtps::Domain::createPublisher(participant_, publisher_attr, &listener_);
+
+            if (publisher_ != nullptr)
+            {
+                publisher_guid_ = publisher_->getGuid();
+                std::cout << "Created publisher " << publisher_guid_ << " for topic " <<
+                    publisher_attr_.topic.topicName << std::endl;
+                initialized_ = true;
+                return;
+            }
+        }
+        return;
+    }
+
+    void removePublisher()
+    {
+        initialized_ = false;
+        eprosima::fastrtps::Domain::removePublisher(publisher_);
+        return;
+    }
+
     bool isInitialized() const
     {
         return initialized_;
