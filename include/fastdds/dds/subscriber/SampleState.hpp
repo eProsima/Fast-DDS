@@ -25,14 +25,32 @@ namespace eprosima {
 namespace fastdds {
 namespace dds {
 
+/**
+ * Indicates whether or not a sample has ever been read.
+ *
+ * For each sample received, the middleware internally maintains a sample state relative to each @ref DataReader. This
+ * sample state can have the following values:
+ *
+ * @li @ref READ_SAMPLE_STATE indicates that the \ref DataReader has already accessed that sample by means of a read
+ *          or take operation
+ *
+ * @li @ref NOT_READ_SAMPLE_STATE indicates that the \ref DataReader has not accessed that sample before.
+ *
+ * The sample state will, in general, be different for each sample in the collection returned by read or take.
+ */
 enum DDSSampleStateKind : uint16_t
 {
-    READ_SAMPLE_STATE     = 0x0001 << 0,
+    /// Sample has been read.
+    READ_SAMPLE_STATE = 0x0001 << 0,
+
+    /// Sample has not been read.
     NOT_READ_SAMPLE_STATE = 0x0001 << 1,
 };
 
+/// A bit-mask (list) of sample states, i.e. @ref DDSSampleStateKind
 using DDSSampleStateMask = uint16_t;
 
+/// Any sample state
 constexpr DDSSampleStateMask ANY_SAMPLE_STATE = READ_SAMPLE_STATE | NOT_READ_SAMPLE_STATE;
 
 }  // namespace dds
