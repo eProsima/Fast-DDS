@@ -17,8 +17,8 @@
  *
  */
 
-#ifndef _FASTRTPS_SAMPLEINFO_HPP_
-#define _FASTRTPS_SAMPLEINFO_HPP_
+#ifndef _FASTDDS_DDS_SUBSCRIBER_SAMPLEINFO_HPP_
+#define _FASTDDS_DDS_SUBSCRIBER_SAMPLEINFO_HPP_
 
 
 #include <fastdds/rtps/common/Types.h>
@@ -118,4 +118,4 @@ struct SampleInfo
 }  // namespace fastdds
 }  // namespace eprosima
 
-#endif /* _FASTRTPS_SAMPLEINFO_HPP_*/
+#endif /* _FASTDDS_DDS_SUBSCRIBER_SAMPLEINFO_HPP_*/
