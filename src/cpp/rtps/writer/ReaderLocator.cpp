@@ -113,21 +113,26 @@ bool ReaderLocator::stop(
 {
     if (locator_info_.remote_guid == remote_guid)
     {
-        locator_info_.enable(false);
-        locator_info_.reset();
-        locator_info_.multicast.clear();
-        locator_info_.unicast.clear();
-        locator_info_.remote_guid = c_Guid_Unknown;
-        guid_as_vector_.at(0) = c_Guid_Unknown;
-        guid_prefix_as_vector_.at(0) = c_GuidPrefix_Unknown;
-        expects_inline_qos_ = false;
-        is_local_reader_ = false;
-        local_reader_ = nullptr;
-        is_datasharing_reader_ = false;
+        stop();
         return true;
     }
 
     return false;
+}
+
+void ReaderLocator::stop()
+{
+    locator_info_.enable(false);
+    locator_info_.reset();
+    locator_info_.multicast.clear();
+    locator_info_.unicast.clear();
+    locator_info_.remote_guid = c_Guid_Unknown;
+    guid_as_vector_.at(0) = c_Guid_Unknown;
+    guid_prefix_as_vector_.at(0) = c_GuidPrefix_Unknown;
+    expects_inline_qos_ = false;
+    is_local_reader_ = false;
+    local_reader_ = nullptr;
+    is_datasharing_reader_ = false;
 }
 
 bool ReaderLocator::send(
