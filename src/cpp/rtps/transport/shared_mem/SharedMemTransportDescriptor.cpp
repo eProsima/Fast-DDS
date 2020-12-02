@@ -47,4 +47,5 @@ TransportInterface* SharedMemTransportDescriptor::create_transport() const
 {
     return nullptr;
 }
-#endif
+
+#endif // ifdef FASTDDS_SHM_TRANSPORT_DISABLED
