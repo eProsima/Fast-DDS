@@ -144,6 +144,11 @@ XMLP_ret XMLParser::parseXMLTypes(
                     return XMLP_ret::XML_ERROR;
                 }
             }
+            else
+            {
+                logError(XMLPARSER, "Invalid element found into 'types'. Name: " << name);
+                return XMLP_ret::XML_ERROR;
+            }
         }
     }
     return ret;
