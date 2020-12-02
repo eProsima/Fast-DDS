@@ -41,13 +41,6 @@ typedef struct SharedMemTransportDescriptor : public TransportDescriptorInterfac
 
     }
 
-    RTPS_DllAPI SharedMemTransportDescriptor(
-            const SharedMemTransportDescriptor& t)
-        : TransportDescriptorInterface(t)
-    {
-        (void)t;
-    }
-
     virtual TransportInterface* create_transport() const override
     {
         return nullptr;

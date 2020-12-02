@@ -55,7 +55,7 @@ struct SharedMemTransportDescriptor : public TransportDescriptorInterface
 
     //! Copy constructor
     RTPS_DllAPI SharedMemTransportDescriptor(
-            const SharedMemTransportDescriptor& t);
+            const SharedMemTransportDescriptor& t) = default;
 
     //! Copy assignment
     SharedMemTransportDescriptor& operator =(

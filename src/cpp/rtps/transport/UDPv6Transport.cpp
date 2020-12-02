@@ -124,12 +124,6 @@ UDPv6TransportDescriptor::UDPv6TransportDescriptor()
 {
 }
 
-UDPv6TransportDescriptor::UDPv6TransportDescriptor(
-        const UDPv6TransportDescriptor& t)
-    : UDPTransportDescriptor(t)
-{
-}
-
 TransportInterface* UDPv6TransportDescriptor::create_transport() const
 {
     return new UDPv6Transport(*this);

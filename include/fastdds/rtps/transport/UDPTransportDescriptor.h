@@ -25,7 +25,7 @@ namespace rtps {
 /**
  * UDP Transport configuration
  *
- * - m_output_udp_socket: port number for the outgoing messages.
+ * - m_output_udp_socket: source port to use for outgoing datagrams.
  *
  * - non_blocking_send: do not block on send operations. When it is set to true, send operations will return
  * immediately if the buffer is full, but no error will be returned to the upper layer. This means that the
@@ -43,13 +43,13 @@ struct UDPTransportDescriptor : public SocketTransportDescriptor
 
     //! Copy constructor
     RTPS_DllAPI UDPTransportDescriptor(
-            const UDPTransportDescriptor& t);
+            const UDPTransportDescriptor& t) = default;
 
     //! Copy assignment
     UDPTransportDescriptor& operator =(
             const UDPTransportDescriptor& t) = default;
 
-    //! Port number for the outgoing messages
+    //! Source port to use for outgoing datagrams
     uint16_t m_output_udp_socket;
 
     /**

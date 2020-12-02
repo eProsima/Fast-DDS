@@ -42,17 +42,6 @@ SharedMemTransportDescriptor::SharedMemTransportDescriptor()
     maxMessageSize = s_maximumMessageSize;
 }
 
-SharedMemTransportDescriptor::SharedMemTransportDescriptor(
-        const SharedMemTransportDescriptor& t)
-    : TransportDescriptorInterface(t.segment_size_, s_maximumInitialPeersRange)
-    , segment_size_(t.segment_size_)
-    , port_queue_capacity_(t.port_queue_capacity_)
-    , healthy_check_timeout_ms_(t.healthy_check_timeout_ms_)
-    , rtps_dump_file_(t.rtps_dump_file_)
-{
-    maxMessageSize = t.max_message_size();
-}
-
 #ifdef FASTDDS_SHM_TRANSPORT_DISABLED
 TransportInterface* SharedMemTransportDescriptor::create_transport() const
 {
