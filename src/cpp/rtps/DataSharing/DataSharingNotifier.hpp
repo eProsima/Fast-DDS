@@ -21,7 +21,6 @@
 
 #include "rtps/DataSharing/IDataSharingNotifier.hpp"
 #include "rtps/DataSharing/DataSharingNotification.hpp"
-#include <fastrtps/utils/collections/ResourceLimitedVector.hpp>
 
 #include <map>
 #include <memory>
@@ -35,62 +34,60 @@ class DataSharingNotifier : public IDataSharingNotifier
 
 public:
 
+    /**
+     * Initializes a datasharing notifier for a reader
+     * @param directory Sahred memory directory to use to open the shared notification
+     */
     DataSharingNotifier(
-            ResourceLimitedContainerConfig limits,
             std::string directory)
-        : shared_notifications_(limits)
-        , data_sharing_directory_(directory)
+        : directory_(directory)
     {
     }
 
     ~DataSharingNotifier() = default;
 
     /**
-     * Initializes a datasharing notifier for the reader
-     * 
-     * @param reader_guid GUID of the reader to add to the notification list
-     * @return Whether the initialization was  successful
+     * Links the notifier to a reader that will be notified
+     * @param reader_guid GUID of the reader to notify
      */
-    bool add_reader(
-            const GUID_t& reader_guid) override;
-
-    /**
-     * Stops the datasharing notifier for the reader
-     * 
-     * @param reader_guid GUID of the reader to remove from the notification list
-     * @return Whether the stop was successful
-     */
-    bool remove_reader(
-            const GUID_t& reader_guid) override;
-
-    /**
-     * Checks if the reader with the given GUID is subscribed to data sharing notifications
-     * 
-     * @param reader_guid GUID of the reader to check
-     * @return Whether the reader is subscribed or not
-     */
-    bool reader_is_subscribed(
-            const GUID_t& reader_guid) const override;
-
-    /**
-     * Notifies to all subscribed readers
-     */
-    void notify() override;
-
-    /**
-     * Checks if there is any listener subscribed
-     * 
-     * @return True if there is no listener subscribed
-     */
-    inline bool empty() const override
+    void enable(
+            const GUID_t& reader_guid) override
     {
-        return shared_notifications_.empty();
+        shared_notification_ = DataSharingNotification::open_notification(reader_guid, directory_);
+    }
+
+    /**
+     * Unlinks the notifier and its reader
+     */
+    void disable() override
+    {
+        shared_notification_.reset();
+    }
+
+    /**
+     * @return whether the notifier is linked to a reader or not
+     */
+    bool is_enabled() override
+    {
+        return shared_notification_ != nullptr;
+    }
+
+    /**
+     * Notifies to the reader
+     */
+    void notify() override
+    {
+        if (is_enabled())
+        {
+            logInfo(RTPS_WRITER, "Notifying reader " << shared_notification_->reader());
+            shared_notification_->notify();
+        }
     }
 
 protected:
 
-    ResourceLimitedVector<std::shared_ptr<DataSharingNotification>> shared_notifications_;
-    std::string data_sharing_directory_;
+    std::shared_ptr<DataSharingNotification> shared_notification_;
+    std::string directory_;
 };
 
 

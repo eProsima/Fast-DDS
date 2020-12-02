@@ -212,11 +212,21 @@ bool StatelessReader::matched_writer_is_matched(
         const GUID_t& writer_guid)
 {
     std::lock_guard<RecursiveTimedMutex> guard(mp_mutex);
-    return std::any_of(matched_writers_.begin(), matched_writers_.end(),
+    if(std::any_of(matched_writers_.begin(), matched_writers_.end(),
                    [writer_guid](const RemoteWriterInfo_t& item)
                    {
                        return item.guid == writer_guid;
-                   });
+                   }))
+    {
+        return true;
+    }
+
+    if (is_datasharing_compatible_)
+    {
+        return datasharing_listener_->writer_is_matched(writer_guid);
+    }
+
+    return false;
 }
 
 bool StatelessReader::change_received(

@@ -164,18 +164,8 @@ StatelessWriter::~StatelessWriter()
     // the AsyncWriterThread.
     flow_controllers_.clear();
 
-    // Stop all active proxies
-    {
-        std::lock_guard<RecursiveTimedMutex> guard(mp_mutex);
-        while (!matched_readers_.empty())
-        {
-            matched_readers_.back()->stop();
-            matched_readers_.pop_back();
-        }
-    }
-
     // TOODO [ILG] Shold we force this on all cases?
-    if(is_datasharing_compatible_)
+    if(is_datasharing_compatible())
     {
         //Release payloads orderly
         for (std::vector<CacheChange_t*>::iterator chit = mp_history->changesBegin();
@@ -254,14 +244,20 @@ void StatelessWriter::update_reader_info(
 bool StatelessWriter::datasharing_delivery(
         CacheChange_t* change)
 {
-    if (is_datasharing_compatible_)
+    if (is_datasharing_compatible())
     {
         auto pool = std::dynamic_pointer_cast<DataSharingPayloadPool>(payload_pool_);
         if (pool)
         {
             pool->prepare_for_notification(change);
             logInfo(RTPS_WRITER, "Notifying readers of cache change with SN " << change->sequenceNumber);
-            datasharing_notifier_->notify();
+            for (const std::unique_ptr<ReaderLocator>& reader : matched_readers_)
+            {
+                if (reader->is_datasharing_reader())
+                {
+                    reader->datasharing_notifier()->notify();
+                }
+            }
             return true;
         }
         else
@@ -303,6 +299,10 @@ void StatelessWriter::unsent_change_added_to_history(
                     std::vector<GUID_t> guids(1);
                     for (std::unique_ptr<ReaderLocator>& it : matched_readers_)
                     {
+                        if (it->datasharing_notifier())
+                        {
+                            continue;
+                        }
                         if (it->is_local_reader())
                         {
                             intraprocess_delivery(change, *it);
@@ -337,7 +337,7 @@ void StatelessWriter::unsent_change_added_to_history(
                 {
                     for (std::unique_ptr<ReaderLocator>& it : matched_readers_)
                     {
-                        if (it->is_local_reader())
+                        if (it->is_local_reader() && !it->is_datasharing_reader())
                         {
                             intraprocess_delivery(change, *it);
                         }
@@ -589,7 +589,7 @@ void StatelessWriter::send_all_unsent_changes()
             last_intraprocess_sequence_number_ = sequence_number;
             for (std::unique_ptr<ReaderLocator>& it : matched_readers_)
             {
-                if (it->is_local_reader())
+                if (it->is_local_reader() && !it->is_datasharing_reader())
                 {
                     intraprocess_delivery(cache_change, *it);
                 }
@@ -651,7 +651,7 @@ void StatelessWriter::send_unsent_changes_with_flow_control()
                 last_intraprocess_sequence_number_ = sequence_number;
                 for (std::unique_ptr<ReaderLocator>& it : matched_readers_)
                 {
-                    if (it->is_local_reader())
+                    if (it->is_local_reader() && !it->is_datasharing_reader())
                     {
                         intraprocess_delivery(cache_change, *it);
                     }
@@ -785,21 +785,6 @@ bool StatelessWriter::matched_reader_add(
         }
     }
 
-    if (is_datasharing_compatible_with(data))
-    {
-        if (datasharing_notifier_->add_reader(data.guid()))
-        {
-            logInfo(RTPS_WRITER, "Reader " << data.guid() << " added to " << this->m_guid.entityId 
-                                           << " with data sharing");
-            return true;
-        }
-
-        logError(RTPS_WRITER, "Failed to add Reader Proxy " << data.guid()
-                << " to " << this->m_guid.entityId 
-                << " with data sharing.");
-        return false;
-    }
-
     // Get a locator from the inactive pool (or create a new one if necessary and allowed)
     std::unique_ptr<ReaderLocator> new_reader;
     if (matched_readers_pool_.empty())
@@ -831,14 +816,14 @@ bool StatelessWriter::matched_reader_add(
     new_reader->start(data.guid(),
         data.remote_locators().unicast,
         data.remote_locators().multicast,
-        data.m_expectsInlineQos);
+        data.m_expectsInlineQos,
+        is_datasharing_compatible_with(data));
     locator_selector_.add_entry(new_reader->locator_selector_entry());
-    matched_readers_.push_back(std::move(new_reader));
 
-    update_reader_info(true);
-
-    if ((mp_history->getHistorySize() > 0) &&
-            (data.m_qos.m_durability.kind >= TRANSIENT_LOCAL_DURABILITY_QOS))
+    // Datasharing readers handle transient history themselves
+    if (!new_reader->is_datasharing_reader() &&
+        mp_history->getHistorySize() > 0 &&
+        data.m_qos.m_durability.kind >= TRANSIENT_LOCAL_DURABILITY_QOS)
     {
         // Resend all changes
         unsent_changes_.assign(mp_history->changesBegin(), mp_history->changesEnd());
@@ -849,6 +834,10 @@ bool StatelessWriter::matched_reader_add(
         // History is always sent asynchronously to late joiners
         mp_RTPSParticipant->async_thread().wake_up(this);
     }
+
+    matched_readers_.push_back(std::move(new_reader));
+
+    update_reader_info(true);
 
     logInfo(RTPS_WRITER, "Reader " << data.guid() << " added to " << m_guid.entityId);
     return true;
@@ -879,38 +868,29 @@ bool StatelessWriter::matched_reader_remove(
 {
     std::lock_guard<RecursiveTimedMutex> guard(mp_mutex);
 
-    bool found = false;
-    if (is_datasharing_compatible_)
+    if (locator_selector_.remove_entry(reader_guid))
     {
-        found = datasharing_notifier_->remove_reader(reader_guid);
-    }
-
-    if (!found)
-    {
-        found = locator_selector_.remove_entry(reader_guid);
-        if (found)
+        bool found = false;
+        for (auto it = matched_readers_.begin(); it != matched_readers_.end(); ++it)
         {
-            found = false;
-            for (auto it = matched_readers_.begin(); it != matched_readers_.end(); ++it)
+            if ((*it)->remote_guid() == reader_guid)
             {
-                if ((*it)->remote_guid() == reader_guid)
-                {
-                    (*it)->stop();
-                    matched_readers_pool_.push_back(std::move((*it)));
-                    matched_readers_.erase(it);
-                    found = true;
-                    break;
-                }
+                (*it)->stop();
+                matched_readers_pool_.push_back(std::move((*it)));
+                matched_readers_.erase(it);
+                found = true;
+                break;
             }
-            // guid should be both on locator_selector_ and matched_readers_
-            assert(found);
-
-            late_joiner_guids_.remove(reader_guid);
-            update_reader_info(false);
         }
+        // guid should be both on locator_selector_ and matched_readers_
+        assert(found);
+
+        late_joiner_guids_.remove(reader_guid);
+        update_reader_info(false);
+        return true;
     }
 
-    return found;
+    return false;
 }
 
 bool StatelessWriter::matched_reader_is_matched(

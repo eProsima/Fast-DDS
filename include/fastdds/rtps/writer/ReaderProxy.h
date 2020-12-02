@@ -48,6 +48,7 @@ namespace rtps {
 class StatefulWriter;
 class TimedEvent;
 class RTPSReader;
+class IDataSharingNotifier;
 
 /**
  * ReaderProxy class that helps to keep the state of a specific Reader with respect to the RTPSWriter.
@@ -406,15 +407,15 @@ public:
         return locator_info_;
     }
 
-    /**
-     * Check if the reader is datasharing compatible with this writer
-     * @return true if the reader datasharing compatible with this writer
-     */
-    inline bool is_datasharing_reader() const
+    bool is_datasharing_reader() const
     {
-        return is_datasharing_reader_;
+        return locator_info_.is_datasharing_reader();
     }
 
+    IDataSharingNotifier* datasharing_notifier()
+    {
+        return locator_info_.datasharing_notifier();
+    }
 
 private:
 
@@ -445,8 +446,6 @@ private:
     uint32_t last_nackfrag_count_;
 
     SequenceNumber_t changes_low_mark_;
-    //! True if the reader is datasharing compatible with this writer
-    bool is_datasharing_reader_;
 
     using ChangeIterator = ResourceLimitedVector<ChangeForReader_t, std::true_type>::iterator;
     using ChangeConstIterator = ResourceLimitedVector<ChangeForReader_t, std::true_type>::const_iterator;

@@ -113,9 +113,6 @@ void RTPSWriter::init(
 
     if (att.endpoint.data_sharing_configuration().kind() != OFF)
     {
-        is_datasharing_compatible_ = true;
-        datasharing_notifier_.reset(new DataSharingNotifier(
-                att.matched_readers_allocation, att.endpoint.data_sharing_configuration().shm_directory()));
         std::shared_ptr<WriterPool> p = std::dynamic_pointer_cast<WriterPool>(payload_pool);
         if (!p || !p->init_shared_memory(getGuid(), att.endpoint.data_sharing_configuration().shm_directory()))
         {
@@ -381,11 +378,16 @@ const Duration_t& RTPSWriter::get_liveliness_announcement_period() const
     return liveliness_announcement_period_;
 }
 
-bool RTPSWriter::is_datasharing_compatible_with(
-        const ReaderProxyData& rdata)
+bool RTPSWriter::is_datasharing_compatible() const
 {
-    if (!is_datasharing_compatible_ ||
-            rdata.m_qos.data_sharing.kind() == fastdds::dds::OFF)
+    return (m_att.data_sharing_configuration().kind() != OFF);
+}
+
+bool RTPSWriter::is_datasharing_compatible_with(
+        const ReaderProxyData& rdata) const
+{
+    if (!is_datasharing_compatible() ||
+            rdata.m_qos.data_sharing.domain_ids().empty())
     {
         return false;
     }
@@ -399,7 +401,6 @@ bool RTPSWriter::is_datasharing_compatible_with(
             return true;
         }
     }
-
     return false;
 }
 

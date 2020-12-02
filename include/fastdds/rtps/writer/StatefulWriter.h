@@ -449,6 +449,7 @@ private:
 
     //! The filter for the reader
     fastdds::rtps::IReaderDataFilter* reader_data_filter_ = nullptr;
+    bool there_are_datasharing_readers_ = false;
 };
 
 } /* namespace rtps */
