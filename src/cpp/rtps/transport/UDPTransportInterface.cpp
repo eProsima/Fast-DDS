@@ -63,13 +63,6 @@ UDPTransportDescriptor::UDPTransportDescriptor()
 {
 }
 
-UDPTransportDescriptor::UDPTransportDescriptor(
-        const UDPTransportDescriptor& t)
-    : SocketTransportDescriptor(t)
-    , m_output_udp_socket(t.m_output_udp_socket)
-{
-}
-
 UDPTransportInterface::UDPTransportInterface(
         int32_t transport_kind)
     : TransportInterface(transport_kind)

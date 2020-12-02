@@ -38,11 +38,7 @@ namespace rtps {
  *
  * - logical_port_increment: increment between logical ports to try during RTCP negotiation.
  *
- * - tcp_negotiation_timeout:
- *
  * - enable_tcp_nodelay: enables the TCP_NODELAY socket option.
- *
- * - wait_for_tcp_negotiation:
  *
  * - calculate_crc: true to calculate and send CRC on message headers.
  *
@@ -163,7 +159,7 @@ struct TCPTransportDescriptor : public SocketTransportDescriptor
         //! Password of the private_key_file or rsa_private_key_file
         std::string password;
         //! SSL context options mask
-        uint32_t options = NONE;
+        uint32_t options = TLSOptions::NONE;
         //! Path to the public certificate chain file
         std::string cert_chain_file;
         //! Path to the private key certificate file
@@ -173,7 +169,7 @@ struct TCPTransportDescriptor : public SocketTransportDescriptor
         //! Path to the CA (Certification-Authority) file.
         std::string verify_file;
         //! Verification mode mask
-        uint8_t verify_mode = UNUSED;
+        uint8_t verify_mode = TLSVerifyMode::UNUSED;
         //! Paths where the system will look for verification files
         std::vector<std::string> verify_paths;
         //! Look for verification files on the default paths. Do not invoque
@@ -183,7 +179,7 @@ struct TCPTransportDescriptor : public SocketTransportDescriptor
         //! Path to the private key RSA certificate file
         std::string rsa_private_key_file;
         //! Role that the transport will take on handshaking
-        TLSHandShakeRole handshake_role = DEFAULT;
+        TLSHandShakeRole handshake_role = TLSHandShakeRole::DEFAULT;
 
         //! Add verification modes to the verification mode mask
         void add_verify_mode(

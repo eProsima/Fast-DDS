@@ -41,7 +41,7 @@ struct UDPv6TransportDescriptor : public UDPTransportDescriptor
 
     //! Copy constructor
     RTPS_DllAPI UDPv6TransportDescriptor(
-            const UDPv6TransportDescriptor& t);
+            const UDPv6TransportDescriptor& t) = default;
 
     //! Copy assignment
     UDPv6TransportDescriptor& operator =(

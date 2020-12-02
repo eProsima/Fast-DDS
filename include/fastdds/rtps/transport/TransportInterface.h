@@ -124,7 +124,7 @@ public:
             const fastrtps::rtps::Locator_t&) = 0;
 
     /** Opens an input channel to receive incomming connections.
-     *   If there is an existing channel it registers the receiver resource.
+     *   If there is an existing channel it registers the receiver interface.
      */
     virtual bool OpenInputChannel(
             const fastrtps::rtps::Locator_t&,

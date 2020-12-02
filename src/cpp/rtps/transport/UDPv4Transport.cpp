@@ -139,12 +139,6 @@ UDPv4TransportDescriptor::UDPv4TransportDescriptor()
 {
 }
 
-UDPv4TransportDescriptor::UDPv4TransportDescriptor(
-        const UDPv4TransportDescriptor& t)
-    : UDPTransportDescriptor(t)
-{
-}
-
 TransportInterface* UDPv4TransportDescriptor::create_transport() const
 {
     return new UDPv4Transport(*this);
