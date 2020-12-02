@@ -121,3 +121,9 @@ void Publisher::assert_liveliness()
 {
     mp_impl->assert_liveliness();
 }
+
+LocatorList_t Publisher::get_locators()
+{
+    assert(mp_impl != nullptr);
+    return mp_impl->get_locators();
+}

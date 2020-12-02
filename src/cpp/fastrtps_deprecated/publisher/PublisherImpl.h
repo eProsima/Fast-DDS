@@ -190,6 +190,12 @@ public:
             LivelinessLostStatus& status);
 
     /**
+     * @brief Returns Publisher sending ports
+     * @return Returns Endpoint associated LocatorList_t
+     */
+    rtps::LocatorList_t get_locators();
+
+    /**
      * @brief Asserts liveliness
      */
     void assert_liveliness();

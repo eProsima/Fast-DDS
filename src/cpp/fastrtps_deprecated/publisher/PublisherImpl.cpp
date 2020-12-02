@@ -666,3 +666,10 @@ std::shared_ptr<rtps::IPayloadPool> PublisherImpl::payload_pool()
 {
     return payload_pool_;
 }
+
+
+LocatorList_t PublisherImpl::get_locators()
+{
+    assert(mp_writer != nullptr);
+    return mp_writer->get_locators();
+}

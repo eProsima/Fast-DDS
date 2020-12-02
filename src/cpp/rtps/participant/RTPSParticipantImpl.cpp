@@ -1805,6 +1805,18 @@ DurabilityKind_t RTPSParticipantImpl::get_persistence_durability_red_line(
     return durability_red_line;
 }
 
+LocatorList_t RTPSParticipantImpl::get_sender_locators()
+{
+    LocatorList_t res;
+    // Traverse the sender list and query
+    for (const std::shared_ptr<SenderResource>& send_resource : send_resource_list_)
+    {
+       LocatorList_t rl = send_resource->get_locators();
+       std::copy(rl.begin(),rl.end(),std::back_inserter(res));
+    }
+    return res;
+}
+
 } /* namespace rtps */
 } /* namespace fastrtps */
 } /* namespace eprosima */

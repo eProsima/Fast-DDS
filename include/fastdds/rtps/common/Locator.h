@@ -421,6 +421,8 @@ class LocatorList_t
 {
 public:
 
+    using value_type = Locator_t;
+
     RTPS_DllAPI LocatorList_t()
     {
     }

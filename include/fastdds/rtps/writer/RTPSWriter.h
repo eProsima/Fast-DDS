@@ -85,6 +85,12 @@ protected:
 public:
 
     /**
+     * @brief Returns RTPSWriter sending ports
+     * @return Returns Endpoint associated LocatorList_t
+     */
+    rtps::LocatorList_t get_locators();
+
+    /**
      * Associate specific sender resources to the writer
      * @param send_resource_list
      */

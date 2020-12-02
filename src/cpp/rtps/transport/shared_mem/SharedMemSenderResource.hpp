@@ -22,6 +22,8 @@ namespace eprosima {
 namespace fastdds {
 namespace rtps {
 
+using LocatorList_t = fastrtps::rtps::LocatorList_t;
+
 class SharedMemSenderResource : public fastrtps::rtps::SenderResource
 {
 public:
@@ -69,6 +71,11 @@ public:
         }
 
         return returned_resource;
+    }
+
+    LocatorList_t get_locators() override
+    {
+        return LocatorList_t();
     }
 
 private:

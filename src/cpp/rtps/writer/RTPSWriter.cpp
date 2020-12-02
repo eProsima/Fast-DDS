@@ -326,9 +326,11 @@ bool RTPSWriter::send(
 {
     if (send_resource_list.empty())
     {
-        RTPSParticipantImpl* participant = getRTPSParticipant();
-
-        return participant->sendSync(message, destination_locators_begin, destination_locators_end, max_blocking_time_point);
+        return getRTPSParticipant()->sendSync(
+                message,
+                destination_locators_begin,
+                destination_locators_end,
+                max_blocking_time_point);
     }
     else
     {
@@ -372,6 +374,27 @@ const Duration_t& RTPSWriter::get_liveliness_lease_duration() const
 const Duration_t& RTPSWriter::get_liveliness_announcement_period() const
 {
     return liveliness_announcement_period_;
+}
+
+LocatorList_t RTPSWriter::get_locators()
+{
+    LocatorList_t res;
+
+    if ( send_resource_list.empty() )
+    {
+        res = getRTPSParticipant()->get_sender_locators();
+    }
+    else
+    {
+        // Traverse the sender list and query
+        for (const std::shared_ptr<SenderResource>& send_resource : send_resource_list)
+        {
+           LocatorList_t rl = send_resource->get_locators();
+           std::copy(rl.begin(),rl.end(),std::back_inserter(res));
+        }
+    }
+
+    return res;
 }
 
 }  // namespace rtps

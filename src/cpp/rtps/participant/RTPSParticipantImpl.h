@@ -195,6 +195,12 @@ public:
     void setGuid(
             GUID_t& guid);
 
+    /**
+     * @brief Returns RTPSParticipantImpl sending ports
+     * @return Returns Endpoint associated LocatorList_t
+     */
+    LocatorList_t get_sender_locators();
+
     //! Announce RTPSParticipantState (force the sending of a DPD message.)
     void announceRTPSParticipantState();
 

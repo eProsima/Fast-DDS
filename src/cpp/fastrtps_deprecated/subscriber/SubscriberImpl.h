@@ -173,6 +173,7 @@ public:
     std::shared_ptr<rtps::IPayloadPool> payload_pool();
 
     /**
+     * @brief Returns Subscriber listening ports
      * @return Returns Endpoint associated LocatorList_t
      */
     rtps::LocatorList_t get_locators();

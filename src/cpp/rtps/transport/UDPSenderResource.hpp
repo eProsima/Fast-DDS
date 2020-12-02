@@ -17,10 +17,17 @@
 
 #include <fastdds/rtps/network/SenderResource.h>
 #include <fastdds/rtps/transport/UDPTransportInterface.h>
+#include <fastrtps/utils/IPLocator.h>
+
+#include <regex>
 
 namespace eprosima {
 namespace fastdds {
 namespace rtps {
+
+using LocatorList_t = fastrtps::rtps::LocatorList_t;
+using Locator_t = fastrtps::rtps::Locator_t;
+using IPLocator = fastrtps::rtps::IPLocator;
 
 class UDPSenderResource : public fastrtps::rtps::SenderResource
 {
@@ -70,6 +77,36 @@ class UDPSenderResource : public fastrtps::rtps::SenderResource
             }
 
             return returned_resource;
+        }
+
+        LocatorList_t get_locators() override
+        {
+            using namespace std;
+
+            const regex ASIO_IPV4_PATTERN(R"(^((?:[0-9]{1,3}\.){3}[0-9]{1,3})?:?(?:(\d+))?$)");
+            ostringstream os;
+            smatch mr;
+            LocatorList_t list;
+
+            os << getSocketPtr(socket_)->local_endpoint();
+            string locstr(os.str());
+            if (regex_match( locstr, mr, ASIO_IPV4_PATTERN, regex_constants::match_not_null))
+            {
+                Locator_t loc(LOCATOR_KIND_UDPv4,0);
+                smatch::iterator it = mr.cbegin();
+                if( ++it != mr.cend() )
+                {
+                    IPLocator::setIPv4(loc, it->str());
+                    if( ++it != mr.cend()
+                        && it->matched )
+                    {
+                        IPLocator::setPhysicalPort(loc,static_cast<uint16_t>(stoi(it->str())));
+                        // add valid locator to the list
+                        list.push_back(loc);
+                    }
+                }
+            }
+            return list;
         }
 
     private:

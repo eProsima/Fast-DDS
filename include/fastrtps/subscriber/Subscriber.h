@@ -170,6 +170,7 @@ public:
             LivelinessChangedStatus& status);
 
     /**
+     * @brief Retrieves Subscriber listening locators
      * @return Returns Endpoint associated LocatorList_t
      */
     rtps::LocatorList_t get_locators();

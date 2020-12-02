@@ -173,6 +173,12 @@ public:
     void get_liveliness_lost_status(
             LivelinessLostStatus& status);
 
+    /**
+     * @brief Retrieves Publisher sending locators
+     * @return Returns Endpoint associated LocatorList_t
+     */
+    rtps::LocatorList_t get_locators();
+
 private:
 
     PublisherImpl* mp_impl;

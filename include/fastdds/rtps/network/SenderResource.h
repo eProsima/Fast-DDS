@@ -18,6 +18,7 @@
 #include <functional>
 #include <vector>
 #include <chrono>
+#include <fastdds/rtps/common/Locator.h>
 
 namespace eprosima{
 namespace fastrtps{
@@ -25,7 +26,6 @@ namespace rtps{
 
 class RTPSParticipantImpl;
 class MessageReceiver;
-class Locator_t;
 
 /**
  * RAII object that encapsulates the Send operation over one chanel in an unknown transport.
@@ -85,6 +85,8 @@ public:
     virtual ~SenderResource() = default;
 
     int32_t kind() const { return transport_kind_; }
+
+    virtual LocatorList_t get_locators() = 0;
 
 protected:
 
