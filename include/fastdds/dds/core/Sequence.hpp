@@ -27,205 +27,220 @@ namespace eprosima {
 namespace fastdds {
 namespace dds {
 
-template<typename T, typename T_ptr = T*, T_ptr default_value = T_ptr()>
+template<typename T>
 class GenericSequence
 {
 public:
-	using size_type = uint32_t;
-	using element_type = T_ptr;
+    using size_type = uint32_t;
+    using element_type = T*;
 
-	GenericSequence() = default;
+    GenericSequence() = default;
 
-	GenericSequence(
-			size_type maximum)
-	{
-		elements_ = new element_type[maximum];
-		maximum_ = maximum;
-		for (size_type n = 0; n < maximum_; ++n)
-		{
-			elements_[n] = default_value;
-		}
-	}
+    GenericSequence(
+            size_type maximum)
+    {
+        if (!maximum)
+        {
+            return;
+        }
 
-	GenericSequence(
-			size_type maximum,
-			size_type length,
-			element_type* data,
-			bool take_ownership = false)
-	{
-		replace(maximum, length, data, take_ownership);
-	}
+        resize(maximum);
+    }
 
-	~GenericSequence()
-	{
-		if (elements_ && !has_ownership_)
-		{
-			// Warning
-		}
+    GenericSequence(
+            size_type maximum,
+            size_type length,
+            element_type* data,
+            bool take_ownership = false)
+    {
+        replace(maximum, length, data, take_ownership);
+    }
 
-		release();
-	}
+    ~GenericSequence()
+    {
+        if (elements_ && !has_ownership_)
+        {
+            // Warning
+            return;
+        }
 
-	GenericSequence(
-			const GenericSequence& other)
-	{
-		*this = other;
-	}
+        release();
+    }
 
-	GenericSequence& operator=(
-			const GenericSequence& other)
-	{
-		// shallow copy
-		release();
-		replace(other.maximum(), other.length(), other.get_buffer(), false);
-		return *this;
-	}
+    GenericSequence(
+            const GenericSequence& other)
+    {
+        *this = other;
+    }
 
-	size_type maximum() const
-	{
-		return maximum_;
-	}
+    GenericSequence& operator=(
+            const GenericSequence& other)
+    {
+        bool other_ownership = other.has_ownership();
 
-	size_type length() const
-	{
-		return length_;
-	}
+        if (has_ownership_ != other_ownership)
+        {
+            release();
+        }
 
-	bool length(
-			size_type new_length)
-	{
-		if (new_length > maximum_)
-		{
-			return false;
-		}
+        if (!other_ownership)
+        {
+            replace(other.maximum(), other.length(), other.get_buffer(), false);
+        }
+        else
+        {
+            length(other.length());
+            element_type* other_buf = other.get_buffer();
+            for (size_type n = 0; n < length_; ++n)
+            {
+                *(elements_[n]) = *(other_buf[n]);
+            }
+        }
 
-		length_ = new_length;
-		return true;
-	}
+        return *this;
+    }
 
-	element_type& operator[](
-			size_type index)
-	{
-		if (index >= length_)
-		{
-			throw std::out_of_range();
-		}
+    size_type maximum() const
+    {
+        return maximum_;
+    }
 
-		return allocate(elements_[index]);
-	}
+    size_type length() const
+    {
+        return length_;
+    }
 
-	const element_type& operator[](
-			size_type index) const
-	{
-		if (index >= length_)
-		{
-			throw std::out_of_range();
-		}
+    bool length(
+            size_type new_length)
+    {
+        if (new_length > maximum_)
+        {
+            if (!has_ownership_)
+            {
+                return false;
+            }
 
-		return allocate(elements_[index]);
-	}
+            resize(new_length);
+        }
 
-	bool has_ownership() const
-	{
-		return has_ownership_;
-	}
+        length_ = new_length;
+        return true;
+    }
 
-	bool replace(
-			size_type maximum,
-		    size_type length,
-			element_type* data,
-			bool take_ownership = false)
-	{
-		if (!has_ownership_ || maximum_ > 0)
-		{
-			return false;
-		}
+    element_type& operator[](
+            size_type index)
+    {
+        if (index >= length_)
+        {
+            throw std::out_of_range();
+        }
 
-		maximum_ = maximum;
-		length_ = length;
-		elements_ = data;
-		has_ownership_ = take_ownership;
-		return true;
-	}
+        return elements_[index];
+    }
 
-	element_type* get_buffer(
-			bool orphan = false)
-	{
-		if (!orphan)
-		{
-			return elements_;
-		}
+    const element_type& operator[](
+            size_type index) const
+    {
+        if (index >= length_)
+        {
+            throw std::out_of_range();
+        }
 
-		if (!has_ownership_)
-		{
-			return nullptr;
-		}
+        return elements_[index];
+    }
 
-		element_type* ret_val = elements_;
+    bool has_ownership() const
+    {
+        return has_ownership_;
+    }
 
-		maximum_ = 0u;
-		length_ = 0u;
-		elements_ = nullptr;
+    bool replace(
+            size_type maximum,
+            size_type length,
+            element_type* data,
+            bool take_ownership = false)
+    {
+        if (!has_ownership_ || maximum_ > 0)
+        {
+            return false;
+        }
 
-		return ret_val;
-	}
+        maximum_ = maximum;
+        length_ = length;
+        elements_ = data;
+        has_ownership_ = take_ownership;
+        return true;
+    }
 
-	const element_type* get_buffer() const
-	{
-		return elements_;
-	}
+    element_type* get_buffer(
+            bool orphan = false)
+    {
+        if (!orphan)
+        {
+            return elements_;
+        }
+
+        if (!has_ownership_)
+        {
+            return nullptr;
+        }
+
+        element_type* ret_val = elements_;
+
+        maximum_ = 0u;
+        length_ = 0u;
+        elements_ = nullptr;
+
+        return ret_val;
+    }
+
+    const element_type* get_buffer() const
+    {
+        return elements_;
+    }
 
 private:
 
-	void release()
-	{
-		if (has_ownership_ && elements_)
-		{
-			for (size_t n = 0; n < maximum_; ++n)
-			{
-				deallocate(elements_[n]);
-			}
-			delete[] elements_;
-			elements_ = nullptr;
-		}
-	}
+    void resize(
+            size_type maximum)
+    {
+        assert(has_ownership_);
 
-	template<bool condition = std::is_same<typename T, typename T_ptr>::value>
-	element_type& allocate(
-			element_type& value)
-	{
-		return value;
-	}
+        // Resize collection and get new pointer
+        data_.reserve(maximum);
+        data_.resize(maximum);
+        elements_ = data_.data();
 
-	template<>
-	element_type& allocate<false>(
-			element_type& value)
-	{
-		if (value == default_value)
-		{
-			value = new T();
-		}
-		return value;
-	}
+        // Allocate individual elements
+        while (maximum_ < maximum)
+        {
+            elements_[maximum_++] = new T();
+        }
+    }
 
-	template<bool condition = std::is_same<typename T, typename T_ptr>::value>
-	void deallocate(
-			element_type& value)
-	{
-	}
+    void release()
+    {
+        if (has_ownership_ && elements_)
+        {
+            for (size_t n = 0; n < maximum_; ++n)
+            {
+                element_type elem = elements_[n];
+                delete elem;
+            }
+            std::vector<element_type>().swap(data_);
+        }
 
-	template<>
-	void deallocate<false>(
-			element_type& value)
-	{
-		delete value;
-		value = default_value;
-	}
+        maximum_ = 0u;
+        length_ = 0u;
+        elements_ = nullptr;
+        has_ownership_ = true;
+    }
 
-	size_type maximum_ = 0u;
-	size_type length_ = 0u;
-	element_type* elements_ = nullptr;
-	bool has_ownership_ = true;
+    size_type maximum_ = 0u;
+    size_type length_ = 0u;
+    element_type* elements_ = nullptr;
+    bool has_ownership_ = true;
+    std::vector<element_type> data_;
 };
 
 } // namespace dds
