@@ -129,7 +129,7 @@ void LoanableHelloWorldSubscriber::SubListener::on_data_available(
 
     if (reader->take_next_sample(&st, &info) == ReturnCode_t::RETCODE_OK)
     {
-        if (info.instance_state == ALIVE)
+        if (info.instance_state == ALIVE_INSTANCE_STATE)
         {
             // Print your structure data here.
             ++samples;
