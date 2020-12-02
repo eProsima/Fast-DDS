@@ -316,7 +316,7 @@ public:
         if (participant_ != nullptr)
         {
             //Create publisher
-            publisher_ = eprosima::fastrtps::Domain::createPublisher(participant_, publisher_attr, &listener_);
+            publisher_ = eprosima::fastrtps::Domain::createPublisher(participant_, publisher_attr_, &listener_);
 
             if (publisher_ != nullptr)
             {

@@ -330,7 +330,7 @@ public:
 
     void createPublisher()
     {
-        if  (participant_ != nullptr)
+        if (participant_ != nullptr)
         {
             // Create publisher
             publisher_ = participant_->create_publisher(publisher_qos_);
@@ -369,11 +369,11 @@ public:
         initialized_ = false;
         if (datawriter_ != nullptr)
         {
-            publisher_ ->delete_datawriter(datawriter_ );
+            publisher_->delete_datawriter(datawriter_);
         }
-        if (publisher_  != nullptr)
+        if (publisher_ != nullptr)
         {
-            participant_->delete_publisher(publisher_ );
+            participant_->delete_publisher(publisher_);
         }
         return;
     }
