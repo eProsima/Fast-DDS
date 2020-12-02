@@ -756,8 +756,7 @@ TEST_F(XMLParserTests, getXMLPortParameters_NegativeClauses)
                     <port>\
                         <portBase>" + parameters[0] + "</portBase>\
                         <domainIDGain>" + parameters[1] + "</domainIDGain>\
-                        <participantIDGain>" + parameters[2] +
-                    "</participantIDGain>\
+                        <participantIDGain>" + parameters[2] + "</participantIDGain>\
                         <offsetd0>" + parameters[3] + "</offsetd0>\
                         <offsetd1>" + parameters[4] + "</offsetd1>\
                         <offsetd2>" + parameters[5] + "</offsetd2>\
