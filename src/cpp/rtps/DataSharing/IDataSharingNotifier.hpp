@@ -33,46 +33,30 @@ public:
 
     IDataSharingNotifier() = default;
 
-    ~IDataSharingNotifier() = default;
+    virtual ~IDataSharingNotifier() = default;
 
     /**
-     * Adds a new reader to notify
-     * 
-     * @param reader_guid GUID of the reader to add to the notification list
-     * @return Whether the initialization was  successful
+     * Links the notifier to a reader that will be notified
+     * @param reader_guid GUID of the reader to notify
      */
-    virtual bool add_reader(
+    virtual void enable(
             const GUID_t& reader_guid) = 0;
 
     /**
-     * Removes a reader from notifications
-     * 
-     * @param reader_guid GUID of the reader to remove from the notification list
-     * @return Whether the stop was successful
+     * Unlinks the notifier and its reader
      */
-    virtual bool remove_reader(
-            const GUID_t& reader_guid) = 0;
+    virtual void disable() = 0;
 
     /**
-     * Checks if the reader with the given GUID is subscribed to data sharing notifications
-     * 
-     * @param reader_guid GUID of the reader to check
-     * @return Whether the reader is subscribed or not
+     * @return whether the notifier is linked to a reader or not
      */
-    virtual bool reader_is_subscribed(
-            const GUID_t& reader_guid) const = 0;
+    virtual bool is_enabled() = 0;
+
 
     /**
-     * Notifies to all subscribed readers
+     * Notifies to the reader
      */
     virtual void notify() = 0;
-
-    /**
-     * Checks if there is any reader subscribed to notifications
-     * 
-     * @return True if there is no reader subscribed
-     */
-    virtual inline bool empty() const = 0;
 
 };
 

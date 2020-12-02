@@ -34,6 +34,7 @@ namespace rtps {
 class RTPSParticipantImpl;
 class RTPSWriter;
 class RTPSReader;
+class IDataSharingNotifier;
 
 /**
  * Class ReaderLocator, contains information about a remote reader, without saving its state.
@@ -44,7 +45,7 @@ class ReaderLocator : public RTPSMessageSenderInterface
 {
 public:
 
-    virtual ~ReaderLocator() = default;
+    virtual ~ReaderLocator();
 
     /**
      * Construct a ReaderLocator.
@@ -66,11 +67,6 @@ public:
     bool is_local_reader() const
     {
         return is_local_reader_;
-    }
-
-    bool is_datasharing_reader() const
-    {
-        return is_datasharing_reader_;
     }
 
     RTPSReader* local_reader();
@@ -190,6 +186,20 @@ public:
             CDRMessage_t* message,
             std::chrono::steady_clock::time_point& max_blocking_time_point) const override;
 
+    /**
+     * Check if the reader is datasharing compatible with this writer
+     * @return true if the reader datasharing compatible with this writer
+     */
+    bool is_datasharing_reader() const;
+
+    /**
+     * @return The datasharing notifier for this reader or nullptr if the reader is not datasharing.
+     */
+    IDataSharingNotifier* datasharing_notifier()
+    {
+        return datasharing_notifier_;
+    }
+
 private:
 
     RTPSWriter* owner_;
@@ -200,7 +210,7 @@ private:
     RTPSReader* local_reader_;
     std::vector<GuidPrefix_t> guid_prefix_as_vector_;
     std::vector<GUID_t> guid_as_vector_;
-    bool is_datasharing_reader_;
+    IDataSharingNotifier* datasharing_notifier_;
 };
 
 } /* namespace rtps */

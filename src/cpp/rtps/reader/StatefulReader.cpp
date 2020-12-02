@@ -333,7 +333,13 @@ bool StatefulReader::matched_writer_is_matched(
                 return true;
             }
         }
+
+        if (is_datasharing_compatible_)
+        {
+            return datasharing_listener_->writer_is_matched(writer_guid);
+        }
     }
+    
     return false;
 }
 

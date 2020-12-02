@@ -30,6 +30,7 @@
 #include <rtps/history/HistoryAttributesExtension.hpp>
 
 #include "rtps/messages/RTPSGapBuilder.hpp"
+#include <rtps/DataSharing/DataSharingNotifier.hpp>
 
 #include <mutex>
 #include <cassert>
@@ -58,7 +59,6 @@ ReaderProxy::ReaderProxy(
     , timers_enabled_(false)
     , last_acknack_count_(0)
     , last_nackfrag_count_(0)
-    , is_datasharing_reader_(false)
 {
     nack_supression_event_ = new TimedEvent(writer_->getRTPSParticipant()->getEventResource(),
                     [&]() -> bool
@@ -114,7 +114,8 @@ void ReaderProxy::start(
         reader_attributes.guid(),
         reader_attributes.remote_locators().unicast,
         reader_attributes.remote_locators().multicast,
-        reader_attributes.m_expectsInlineQos);
+        reader_attributes.m_expectsInlineQos,
+        is_datasharing);
 
     is_active_ = true;
     durability_kind_ = reader_attributes.m_qos.m_durability.durabilityKind();
@@ -138,8 +139,6 @@ void ReaderProxy::start(
         initial_heartbeat_event_->restart_timer();
     }
 
-    is_datasharing_reader_ = is_datasharing;
-
     logInfo(RTPS_READER_PROXY, "Reader Proxy started");
 }
 
@@ -161,8 +160,7 @@ bool ReaderProxy::update(
 
 void ReaderProxy::stop()
 {
-    is_datasharing_reader_ = false;
-    locator_info_.stop(guid());
+    locator_info_.stop();
     is_active_ = false;
     disable_timers();
 
