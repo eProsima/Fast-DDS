@@ -25,30 +25,6 @@
 #include <fastdds/rtps/common/Locator.h>
 #include <fastdds/rtps/common/SerializedPayload.h>
 
-#if defined(_WIN32)
-#if defined(EPROSIMA_USER_DLL_EXPORT)
-#define eProsima_user_DllExport __declspec( dllexport )
-#else
-#define eProsima_user_DllExport
-#endif // if defined(EPROSIMA_USER_DLL_EXPORT)
-#else
-#define eProsima_user_DllExport
-#endif // if defined(_WIN32)
-
-#if defined(_WIN32)
-#if defined(EPROSIMA_USER_DLL_EXPORT)
-#if defined(tcp_idl_SOURCE)
-#define tcp_idl_DllAPI __declspec( dllexport )
-#else
-#define tcp_idl_DllAPI __declspec( dllimport )
-#endif // tcp_idl_SOURCE
-#else
-#define tcp_idl_DllAPI
-#endif // if defined(EPROSIMA_USER_DLL_EXPORT)
-#else
-#define tcp_idl_DllAPI
-#endif // _WIN32
-
 namespace eprosima {
 namespace fastcdr {
 class Cdr;
@@ -84,18 +60,18 @@ public:
     /*!
      * @brief Default constructor.
      */
-    eProsima_user_DllExport ConnectionRequest_t();
+    ConnectionRequest_t();
 
     /*!
      * @brief Default destructor.
      */
-    eProsima_user_DllExport ~ConnectionRequest_t();
+    ~ConnectionRequest_t();
 
     /*!
      * @brief This function sets a value in member protocolVersion
      * @param _protocolVersion New value for member protocolVersion
      */
-    inline eProsima_user_DllExport void protocolVersion(
+    inline void protocolVersion(
             const fastrtps::rtps::ProtocolVersion_t& _protocolVersion)
     {
         m_protocolVersion = _protocolVersion;
@@ -105,7 +81,7 @@ public:
      * @brief This function returns the value of member protocolVersion
      * @return Value of member protocolVersion
      */
-    inline eProsima_user_DllExport fastrtps::rtps::ProtocolVersion_t protocolVersion() const
+    inline fastrtps::rtps::ProtocolVersion_t protocolVersion() const
     {
         return m_protocolVersion;
     }
@@ -114,7 +90,7 @@ public:
      * @brief This function returns a reference to member protocolVersion
      * @return Reference to member protocolVersion
      */
-    inline eProsima_user_DllExport fastrtps::rtps::ProtocolVersion_t& protocolVersion()
+    inline fastrtps::rtps::ProtocolVersion_t& protocolVersion()
     {
         return m_protocolVersion;
     }
@@ -123,7 +99,7 @@ public:
      * @brief This function sets a value in member vendorId
      * @param _vendorId New value for member vendorId
      */
-    inline eProsima_user_DllExport void vendorId(
+    inline void vendorId(
             const fastrtps::rtps::VendorId_t& _vendorId)
     {
         m_vendorId = _vendorId;
@@ -133,7 +109,7 @@ public:
      * @brief This function returns the value of member vendorId
      * @return Value of member vendorId
      */
-    inline eProsima_user_DllExport fastrtps::rtps::VendorId_t vendorId() const
+    inline fastrtps::rtps::VendorId_t vendorId() const
     {
         return m_vendorId;
     }
@@ -142,7 +118,7 @@ public:
      * @brief This function returns a reference to member vendorId
      * @return Reference to member vendorId
      */
-    inline eProsima_user_DllExport fastrtps::rtps::VendorId_t& vendorId()
+    inline fastrtps::rtps::VendorId_t& vendorId()
     {
         return m_vendorId;
     }
@@ -151,7 +127,7 @@ public:
      * @brief This function sets a value in member transportLocator
      * @param _transportLocator New value for member transportLocator
      */
-    inline eProsima_user_DllExport void transportLocator(
+    inline void transportLocator(
             const fastrtps::rtps::Locator_t& _transportLocator)
     {
         m_transportLocator = _transportLocator;
@@ -161,7 +137,7 @@ public:
      * @brief This function returns the value of member transportLocator
      * @return Value of member transportLocator
      */
-    inline eProsima_user_DllExport fastrtps::rtps::Locator_t transportLocator() const
+    inline fastrtps::rtps::Locator_t transportLocator() const
     {
         return m_transportLocator;
     }
@@ -173,7 +149,7 @@ public:
      * @param current_alignment Buffer alignment.
      * @return Maximum serialized size.
      */
-    eProsima_user_DllExport static size_t getBufferCdrSerializedSize(
+    static size_t getBufferCdrSerializedSize(
             const ConnectionRequest_t& data,
             size_t current_alignment = 0);
 
@@ -183,7 +159,7 @@ public:
      * @param current_alignment Buffer alignment.
      * @return Serialized size.
      */
-    eProsima_user_DllExport static size_t getCdrSerializedSize(
+    static size_t getCdrSerializedSize(
             const ConnectionRequest_t& data,
             size_t current_alignment = 0);
 
@@ -192,14 +168,14 @@ public:
      * @brief This function serializes an object using CDR serialization.
      * @param cdr CDR serialization object.
      */
-    eProsima_user_DllExport void serialize(
+    void serialize(
             eprosima::fastcdr::Cdr& cdr) const;
 
     /*!
      * @brief This function deserializes an object using CDR serialization.
      * @param cdr CDR serialization object.
      */
-    eProsima_user_DllExport void deserialize(
+    void deserialize(
             eprosima::fastcdr::Cdr& cdr);
 
     bool serialize(
@@ -224,18 +200,18 @@ public:
     /*!
      * @brief Default constructor.
      */
-    eProsima_user_DllExport OpenLogicalPortRequest_t();
+    OpenLogicalPortRequest_t();
 
     /*!
      * @brief Default destructor.
      */
-    eProsima_user_DllExport ~OpenLogicalPortRequest_t();
+    ~OpenLogicalPortRequest_t();
 
     /*!
      * @brief This function sets a value in member logicalPort
      * @param _logicalPort New value for member logicalPort
      */
-    inline eProsima_user_DllExport void logicalPort(
+    inline void logicalPort(
             uint16_t _logicalPort)
     {
         m_logicalPort = _logicalPort;
@@ -245,7 +221,7 @@ public:
      * @brief This function returns the value of member logicalPort
      * @return Value of member logicalPort
      */
-    inline eProsima_user_DllExport uint16_t logicalPort() const
+    inline uint16_t logicalPort() const
     {
         return m_logicalPort;
     }
@@ -257,7 +233,7 @@ public:
      * @param current_alignment Buffer alignment.
      * @return Maximum serialized size.
      */
-    eProsima_user_DllExport static size_t getBufferCdrSerializedSize(
+    static size_t getBufferCdrSerializedSize(
             const OpenLogicalPortRequest_t& data,
             size_t current_alignment = 0);
 
@@ -267,7 +243,7 @@ public:
      * @param current_alignment Buffer alignment.
      * @return Serialized size.
      */
-    eProsima_user_DllExport static size_t getCdrSerializedSize(
+    static size_t getCdrSerializedSize(
             const OpenLogicalPortRequest_t& data,
             size_t current_alignment = 0);
 
@@ -276,14 +252,14 @@ public:
      * @brief This function serializes an object using CDR serialization.
      * @param cdr CDR serialization object.
      */
-    eProsima_user_DllExport void serialize(
+    void serialize(
             eprosima::fastcdr::Cdr& cdr) const;
 
     /*!
      * @brief This function deserializes an object using CDR serialization.
      * @param cdr CDR serialization object.
      */
-    eProsima_user_DllExport void deserialize(
+    void deserialize(
             eprosima::fastcdr::Cdr& cdr);
 
     bool serialize(
@@ -306,18 +282,18 @@ public:
     /*!
      * @brief Default constructor.
      */
-    eProsima_user_DllExport CheckLogicalPortsRequest_t();
+    CheckLogicalPortsRequest_t();
 
     /*!
      * @brief Default destructor.
      */
-    eProsima_user_DllExport ~CheckLogicalPortsRequest_t();
+    ~CheckLogicalPortsRequest_t();
 
     /*!
      * @brief This function copies the value in member logicalPortsRange
      * @param _logicalPortsRange New value to be copied in member logicalPortsRange
      */
-    inline eProsima_user_DllExport void logicalPortsRange(
+    inline void logicalPortsRange(
             const std::vector<uint16_t>& _logicalPortsRange)
     {
         m_logicalPortsRange = _logicalPortsRange;
@@ -327,7 +303,7 @@ public:
      * @brief This function moves the value in member logicalPortsRange
      * @param _logicalPortsRange New value to be moved in member logicalPortsRange
      */
-    inline eProsima_user_DllExport void logicalPortsRange(
+    inline void logicalPortsRange(
             std::vector<uint16_t>&& _logicalPortsRange)
     {
         m_logicalPortsRange = std::move(_logicalPortsRange);
@@ -337,7 +313,7 @@ public:
      * @brief This function returns a constant reference to member logicalPortsRange
      * @return Constant reference to member logicalPortsRange
      */
-    inline eProsima_user_DllExport const std::vector<uint16_t>& logicalPortsRange() const
+    inline const std::vector<uint16_t>& logicalPortsRange() const
     {
         return m_logicalPortsRange;
     }
@@ -346,7 +322,7 @@ public:
      * @brief This function returns a reference to member logicalPortsRange
      * @return Reference to member logicalPortsRange
      */
-    inline eProsima_user_DllExport std::vector<uint16_t>& logicalPortsRange()
+    inline std::vector<uint16_t>& logicalPortsRange()
     {
         return m_logicalPortsRange;
     }
@@ -358,7 +334,7 @@ public:
      * @param current_alignment Buffer alignment.
      * @return Maximum serialized size.
      */
-    eProsima_user_DllExport static size_t getBufferCdrSerializedSize(
+    static size_t getBufferCdrSerializedSize(
             const CheckLogicalPortsRequest_t& data,
             size_t current_alignment = 0);
 
@@ -368,7 +344,7 @@ public:
      * @param current_alignment Buffer alignment.
      * @return Serialized size.
      */
-    eProsima_user_DllExport static size_t getCdrSerializedSize(
+    static size_t getCdrSerializedSize(
             const CheckLogicalPortsRequest_t& data,
             size_t current_alignment = 0);
 
@@ -377,14 +353,14 @@ public:
      * @brief This function serializes an object using CDR serialization.
      * @param cdr CDR serialization object.
      */
-    eProsima_user_DllExport void serialize(
+    void serialize(
             eprosima::fastcdr::Cdr& cdr) const;
 
     /*!
      * @brief This function deserializes an object using CDR serialization.
      * @param cdr CDR serialization object.
      */
-    eProsima_user_DllExport void deserialize(
+    void deserialize(
             eprosima::fastcdr::Cdr& cdr);
 
     bool serialize(
@@ -407,18 +383,18 @@ public:
     /*!
      * @brief Default constructor.
      */
-    eProsima_user_DllExport KeepAliveRequest_t();
+    KeepAliveRequest_t();
 
     /*!
      * @brief Default destructor.
      */
-    eProsima_user_DllExport ~KeepAliveRequest_t();
+    ~KeepAliveRequest_t();
 
     /*!
      * @brief This function sets a value in member locator
      * @param _locator New value for member locator
      */
-    inline eProsima_user_DllExport void locator(
+    inline void locator(
             const fastrtps::rtps::Locator_t& _locator)
     {
         m_locator = _locator;
@@ -428,7 +404,7 @@ public:
      * @brief This function returns the value of member locator
      * @return Value of member locator
      */
-    inline eProsima_user_DllExport fastrtps::rtps::Locator_t locator() const
+    inline fastrtps::rtps::Locator_t locator() const
     {
         return m_locator;
     }
@@ -440,7 +416,7 @@ public:
      * @param current_alignment Buffer alignment.
      * @return Maximum serialized size.
      */
-    eProsima_user_DllExport static size_t getBufferCdrSerializedSize(
+    static size_t getBufferCdrSerializedSize(
             const KeepAliveRequest_t& data,
             size_t current_alignment = 0);
 
@@ -450,7 +426,7 @@ public:
      * @param current_alignment Buffer alignment.
      * @return Serialized size.
      */
-    eProsima_user_DllExport static size_t getCdrSerializedSize(
+    static size_t getCdrSerializedSize(
             const KeepAliveRequest_t& data,
             size_t current_alignment = 0);
 
@@ -459,14 +435,14 @@ public:
      * @brief This function serializes an object using CDR serialization.
      * @param cdr CDR serialization object.
      */
-    eProsima_user_DllExport void serialize(
+    void serialize(
             eprosima::fastcdr::Cdr& cdr) const;
 
     /*!
      * @brief This function deserializes an object using CDR serialization.
      * @param cdr CDR serialization object.
      */
-    eProsima_user_DllExport void deserialize(
+    void deserialize(
             eprosima::fastcdr::Cdr& cdr);
 
     bool serialize(
@@ -490,18 +466,18 @@ public:
     /*!
      * @brief Default constructor.
      */
-    eProsima_user_DllExport LogicalPortIsClosedRequest_t();
+    LogicalPortIsClosedRequest_t();
 
     /*!
      * @brief Default destructor.
      */
-    eProsima_user_DllExport ~LogicalPortIsClosedRequest_t();
+    ~LogicalPortIsClosedRequest_t();
 
     /*!
      * @brief This function sets a value in member logicalPort
      * @param _logicalPort New value for member logicalPort
      */
-    inline eProsima_user_DllExport void logicalPort(
+    inline void logicalPort(
             uint16_t _logicalPort)
     {
         m_logicalPort = _logicalPort;
@@ -511,7 +487,7 @@ public:
      * @brief This function returns the value of member logicalPort
      * @return Value of member logicalPort
      */
-    inline eProsima_user_DllExport uint16_t logicalPort() const
+    inline uint16_t logicalPort() const
     {
         return m_logicalPort;
     }
@@ -523,7 +499,7 @@ public:
      * @param current_alignment Buffer alignment.
      * @return Maximum serialized size.
      */
-    eProsima_user_DllExport static size_t getBufferCdrSerializedSize(
+    static size_t getBufferCdrSerializedSize(
             const LogicalPortIsClosedRequest_t& data,
             size_t current_alignment = 0);
 
@@ -533,7 +509,7 @@ public:
      * @param current_alignment Buffer alignment.
      * @return Serialized size.
      */
-    eProsima_user_DllExport static size_t getCdrSerializedSize(
+    static size_t getCdrSerializedSize(
             const LogicalPortIsClosedRequest_t& data,
             size_t current_alignment = 0);
 
@@ -542,14 +518,14 @@ public:
      * @brief This function serializes an object using CDR serialization.
      * @param cdr CDR serialization object.
      */
-    eProsima_user_DllExport void serialize(
+    void serialize(
             eprosima::fastcdr::Cdr& cdr) const;
 
     /*!
      * @brief This function deserializes an object using CDR serialization.
      * @param cdr CDR serialization object.
      */
-    eProsima_user_DllExport void deserialize(
+    void deserialize(
             eprosima::fastcdr::Cdr& cdr);
 
     bool serialize(
@@ -588,18 +564,18 @@ public:
     /*!
      * @brief Default constructor.
      */
-    eProsima_user_DllExport BindConnectionResponse_t();
+    BindConnectionResponse_t();
 
     /*!
      * @brief Default destructor.
      */
-    eProsima_user_DllExport ~BindConnectionResponse_t();
+    ~BindConnectionResponse_t();
 
     /*!
      * @brief This function sets a value in member locator
      * @param _locator New value for member locator
      */
-    inline eProsima_user_DllExport void locator(
+    inline void locator(
             const fastrtps::rtps::Locator_t& _locator)
     {
         m_locator = _locator;
@@ -609,7 +585,7 @@ public:
      * @brief This function returns the value of member locator
      * @return Value of member locator
      */
-    inline eProsima_user_DllExport fastrtps::rtps::Locator_t locator() const
+    inline fastrtps::rtps::Locator_t locator() const
     {
         return m_locator;
     }
@@ -621,7 +597,7 @@ public:
      * @param current_alignment Buffer alignment.
      * @return Maximum serialized size.
      */
-    eProsima_user_DllExport static size_t getBufferCdrSerializedSize(
+    static size_t getBufferCdrSerializedSize(
             const BindConnectionResponse_t& data,
             size_t current_alignment = 0);
 
@@ -631,7 +607,7 @@ public:
      * @param current_alignment Buffer alignment.
      * @return Serialized size.
      */
-    eProsima_user_DllExport static size_t getCdrSerializedSize(
+    static size_t getCdrSerializedSize(
             const BindConnectionResponse_t& data,
             size_t current_alignment = 0);
 
@@ -640,14 +616,14 @@ public:
      * @brief This function serializes an object using CDR serialization.
      * @param cdr CDR serialization object.
      */
-    eProsima_user_DllExport void serialize(
+    void serialize(
             eprosima::fastcdr::Cdr& cdr) const;
 
     /*!
      * @brief This function deserializes an object using CDR serialization.
      * @param cdr CDR serialization object.
      */
-    eProsima_user_DllExport void deserialize(
+    void deserialize(
             eprosima::fastcdr::Cdr& cdr);
 
     bool serialize(
@@ -670,18 +646,18 @@ public:
     /*!
      * @brief Default constructor.
      */
-    eProsima_user_DllExport CheckLogicalPortsResponse_t();
+    CheckLogicalPortsResponse_t();
 
     /*!
      * @brief Default destructor.
      */
-    eProsima_user_DllExport ~CheckLogicalPortsResponse_t();
+    ~CheckLogicalPortsResponse_t();
 
     /*!
      * @brief This function copies the value in member availableLogicalPorts
      * @param _availableLogicalPorts New value to be copied in member availableLogicalPorts
      */
-    inline eProsima_user_DllExport void availableLogicalPorts(
+    inline void availableLogicalPorts(
             const std::vector<uint16_t>& _availableLogicalPorts)
     {
         m_availableLogicalPorts = _availableLogicalPorts;
@@ -691,7 +667,7 @@ public:
      * @brief This function moves the value in member availableLogicalPorts
      * @param _availableLogicalPorts New value to be moved in member availableLogicalPorts
      */
-    inline eProsima_user_DllExport void availableLogicalPorts(
+    inline void availableLogicalPorts(
             std::vector<uint16_t>&& _availableLogicalPorts)
     {
         m_availableLogicalPorts = std::move(_availableLogicalPorts);
@@ -701,7 +677,7 @@ public:
      * @brief This function returns a constant reference to member availableLogicalPorts
      * @return Constant reference to member availableLogicalPorts
      */
-    inline eProsima_user_DllExport const std::vector<uint16_t>& availableLogicalPorts() const
+    inline const std::vector<uint16_t>& availableLogicalPorts() const
     {
         return m_availableLogicalPorts;
     }
@@ -710,7 +686,7 @@ public:
      * @brief This function returns a reference to member availableLogicalPorts
      * @return Reference to member availableLogicalPorts
      */
-    inline eProsima_user_DllExport std::vector<uint16_t>& availableLogicalPorts()
+    inline std::vector<uint16_t>& availableLogicalPorts()
     {
         return m_availableLogicalPorts;
     }
@@ -722,7 +698,7 @@ public:
      * @param current_alignment Buffer alignment.
      * @return Maximum serialized size.
      */
-    eProsima_user_DllExport static size_t getBufferCdrSerializedSize(
+    static size_t getBufferCdrSerializedSize(
             const CheckLogicalPortsResponse_t& data,
             size_t current_alignment = 0);
 
@@ -732,7 +708,7 @@ public:
      * @param current_alignment Buffer alignment.
      * @return Serialized size.
      */
-    eProsima_user_DllExport static size_t getCdrSerializedSize(
+    static size_t getCdrSerializedSize(
             const CheckLogicalPortsResponse_t& data,
             size_t current_alignment = 0);
 
@@ -741,14 +717,14 @@ public:
      * @brief This function serializes an object using CDR serialization.
      * @param cdr CDR serialization object.
      */
-    eProsima_user_DllExport void serialize(
+    void serialize(
             eprosima::fastcdr::Cdr& cdr) const;
 
     /*!
      * @brief This function deserializes an object using CDR serialization.
      * @param cdr CDR serialization object.
      */
-    eProsima_user_DllExport void deserialize(
+    void deserialize(
             eprosima::fastcdr::Cdr& cdr);
 
     bool serialize(
