@@ -37,6 +37,10 @@
 #include <fastrtps/attributes/PublisherAttributes.h>
 #include <fastrtps/attributes/SubscriberAttributes.h>
 #include <fastrtps/xmlparser/XMLProfileManager.h>
+#include <fastrtps/types/DynamicDataFactory.h>
+#include <fastrtps/types/TypeDescriptor.h>
+#include <fastrtps/types/DynamicType.h>
+#include <fastrtps/types/TypeObjectFactory.h>
 
 
 namespace eprosima {
@@ -48,6 +52,11 @@ using fastrtps::PublisherAttributes;
 using fastrtps::SubscriberAttributes;
 using fastrtps::xmlparser::XMLProfileManager;
 using fastrtps::xmlparser::XMLP_ret;
+using fastrtps::types::DynamicType_ptr;
+using fastrtps::types::DynamicData_ptr;
+using fastrtps::types::DynamicTypeBuilder_ptr;
+using fastrtps::types::DynamicDataFactory;
+using fastrtps::types::DynamicTypeBuilderFactory;
 
 
 // Mocked TopicDataType for Topic creation tests
@@ -140,6 +149,7 @@ TEST(ParticipantTests, CreateDomainParticipant)
             DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
 
     ASSERT_NE(participant, nullptr);
+    EXPECT_EQ(participant->get_listener(), nullptr);
 
     ASSERT_TRUE(DomainParticipantFactory::get_instance()->delete_participant(participant) == ReturnCode_t::RETCODE_OK);
 
@@ -677,6 +687,7 @@ TEST(ParticipantTests, DeletePublisher)
     ASSERT_NE(publisher, nullptr);
 
     ASSERT_TRUE(participant->delete_publisher(publisher) == ReturnCode_t::RETCODE_OK);
+    ASSERT_TRUE(participant->delete_publisher(publisher) == ReturnCode_t::RETCODE_ERROR);
     ASSERT_TRUE(DomainParticipantFactory::get_instance()->delete_participant(participant) == ReturnCode_t::RETCODE_OK);
 }
 
@@ -835,6 +846,10 @@ TEST(ParticipantTests, CreateTopic)
     // Topic using the default profile
     Topic* topic = participant->create_topic("footopic", "footype", TOPIC_QOS_DEFAULT);
     ASSERT_NE(topic, nullptr);
+
+    // Try to create the same topic twice
+    Topic* topic_duplicated = participant->create_topic("footopic", "footype", TOPIC_QOS_DEFAULT);
+    ASSERT_EQ(topic_duplicated, nullptr);
 
     ASSERT_TRUE(participant->delete_topic(topic) == ReturnCode_t::RETCODE_OK);
 
@@ -1361,7 +1376,319 @@ TEST(ParticipantTests, UpdatableDomainParticipantQos)
     pqos.transport().listen_socket_buffer_size = 262144;
     ASSERT_EQ(participant->set_qos(pqos), ReturnCode_t::RETCODE_IMMUTABLE_POLICY);
 
-    ASSERT_TRUE(DomainParticipantFactory::get_instance()->delete_participant(participant) == ReturnCode_t::RETCODE_OK);
+    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), ReturnCode_t::RETCODE_OK);
+}
+
+TEST(ParticipantTests, RegisterDynamicTypeToFactories)
+{
+    //Do not enable entities on creation
+    DomainParticipantFactoryQos factory_qos;
+    factory_qos.entity_factory().autoenable_created_entities = false;
+    DomainParticipantFactory::get_instance()->set_qos(factory_qos);
+
+    DomainParticipant* participant =
+            DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
+
+    DynamicType_ptr base_type = DynamicTypeBuilderFactory::get_instance()->create_uint32_type();
+    DynamicTypeBuilder_ptr builder = DynamicTypeBuilderFactory::get_instance()->create_struct_builder();
+    builder->add_member(0, "uint", base_type);
+
+    // Create the data instance
+    DynamicType_ptr dyn_type = builder->build();
+    TypeSupport type(new eprosima::fastrtps::types::DynamicPubSubType(dyn_type));
+    DynamicData_ptr data(DynamicDataFactory::get_instance()->create_data(dyn_type));
+
+    type->auto_fill_type_information(true);
+    type->auto_fill_type_object(true);
+    ASSERT_EQ(type.register_type(participant), ReturnCode_t::RETCODE_OK);
+
+    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), ReturnCode_t::RETCODE_OK);
+}
+
+TEST(ParticipantTests, RegisterDynamicTypeToFactoriesNotFillTypeInfo)
+{
+    //Do not enable entities on creation
+    DomainParticipantFactoryQos factory_qos;
+    factory_qos.entity_factory().autoenable_created_entities = false;
+    DomainParticipantFactory::get_instance()->set_qos(factory_qos);
+
+    DomainParticipant* participant =
+            DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
+
+    DynamicType_ptr base_type = DynamicTypeBuilderFactory::get_instance()->create_uint32_type();
+    DynamicTypeBuilder_ptr builder = DynamicTypeBuilderFactory::get_instance()->create_struct_builder();
+    builder->add_member(0, "uint", base_type);
+
+    // Create the data instance
+    DynamicType_ptr dyn_type = builder->build();
+    TypeSupport type(new eprosima::fastrtps::types::DynamicPubSubType(dyn_type));
+    DynamicData_ptr data(DynamicDataFactory::get_instance()->create_data(dyn_type));
+
+    type->auto_fill_type_information(false);
+    type->auto_fill_type_object(true);
+    ASSERT_EQ(type.register_type(participant), ReturnCode_t::RETCODE_OK);
+
+    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), ReturnCode_t::RETCODE_OK);
+}
+
+// Mocked DynamicType for DynamicType creation tests
+class DynamicTypeMock : public eprosima::fastrtps::types::DynamicType
+{
+public:
+
+    DynamicTypeMock(const eprosima::fastrtps::types::TypeDescriptor* descriptor)
+        : eprosima::fastrtps::types::DynamicType(descriptor)
+    {
+    }
+
+};
+
+TEST(ParticipantTests, RegisterDynamicTypeToFactoriesNotTypeIdentifier)
+{
+    //Do not enable entities on creation
+    DomainParticipantFactoryQos factory_qos;
+    factory_qos.entity_factory().autoenable_created_entities = false;
+    DomainParticipantFactory::get_instance()->set_qos(factory_qos);
+
+    DomainParticipant* participant =
+            DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
+
+    const eprosima::fastrtps::types::TypeDescriptor* myDescriptor(
+            new eprosima::fastrtps::types::TypeDescriptor("my_descriptor", 0x11));
+    DynamicType_ptr base_type(new DynamicTypeMock(myDescriptor));
+
+    // DynamicType_ptr base_type = DynamicTypeBuilderFactory::get_instance()->create_uint32_type();
+    DynamicTypeBuilder_ptr builder =
+            DynamicTypeBuilderFactory::get_instance()->create_custom_builder(myDescriptor, "my_dynamic_type");
+    builder->add_member(0, "uint", base_type);
+
+    // Create the data instance
+    DynamicType_ptr dyn_type = builder->build();
+    TypeSupport type(new eprosima::fastrtps::types::DynamicPubSubType(dyn_type));
+    DynamicData_ptr data(DynamicDataFactory::get_instance()->create_data(dyn_type));
+
+    type->auto_fill_type_information(true);
+    type->auto_fill_type_object(true);
+    type.register_type(participant);
+
+    TypeSupport ret_type = participant->find_type("my_dynamic_type");
+
+    // The type is registered in the participant but not in the dynamic types factories
+    ASSERT_FALSE(ret_type.empty());
+
+    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), ReturnCode_t::RETCODE_OK);
+}
+
+TEST(ParticipantTests, GetTypes)
+{
+    DomainParticipantQos pqos;
+    pqos.wire_protocol().builtin.typelookup_config.use_client = true;
+    DomainParticipant* participant =
+            DomainParticipantFactory::get_instance()->create_participant(0, pqos);
+
+    DynamicTypeBuilder_ptr builder_string = DynamicTypeBuilderFactory::get_instance()->create_string_builder(100);
+    DynamicType_ptr dyn_type_string = builder_string->build();
+    TypeSupport type_string(new eprosima::fastrtps::types::DynamicPubSubType(dyn_type_string));
+    DynamicData_ptr data_string(DynamicDataFactory::get_instance()->create_data(dyn_type_string));
+    data_string->set_string_value("Dynamic String");
+
+    type_string->auto_fill_type_information(true);
+    type_string->auto_fill_type_object(true);
+    type_string.register_type(participant);
+
+    const fastrtps::types::TypeIdentifier* indentifier_string =
+            fastrtps::types::TypeObjectFactory::get_instance()->get_type_identifier_trying_complete(
+                    type_string.get_type_name());
+
+    fastrtps::types::TypeIdentifierSeq types;
+    types.push_back(*indentifier_string);
+
+    ASSERT_EQ(participant->guid().guidPrefix, participant->get_types(types).writer_guid().guidPrefix);
+
+    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), ReturnCode_t::RETCODE_OK);
+}
+
+TEST(ParticipantTests, GetTypeDependencies)
+{
+    DomainParticipantQos pqos;
+    pqos.wire_protocol().builtin.typelookup_config.use_client = true;
+    DomainParticipant* participant =
+            DomainParticipantFactory::get_instance()->create_participant(0, pqos);
+
+    DynamicTypeBuilder_ptr builder_string = DynamicTypeBuilderFactory::get_instance()->create_string_builder(100);
+    DynamicType_ptr dyn_type_string = builder_string->build();
+    TypeSupport type_string(new eprosima::fastrtps::types::DynamicPubSubType(dyn_type_string));
+    DynamicData_ptr data_string(DynamicDataFactory::get_instance()->create_data(dyn_type_string));
+    data_string->set_string_value("Dynamic String");
+
+    type_string->auto_fill_type_information(true);
+    type_string->auto_fill_type_object(true);
+    type_string.register_type(participant);
+
+    const fastrtps::types::TypeIdentifier* indentifier_string =
+            fastrtps::types::TypeObjectFactory::get_instance()->get_type_identifier_trying_complete(
+                    type_string.get_type_name());
+
+    fastrtps::types::TypeIdentifierSeq types;
+    types.push_back(*indentifier_string);
+
+    ASSERT_EQ(participant->guid().guidPrefix, participant->get_type_dependencies(types).writer_guid().guidPrefix);
+
+    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), ReturnCode_t::RETCODE_OK);
+}
+
+TEST(ParticipantTests, RegisterRemoteTypeComplete)
+{
+    //Do not enable entities on creation
+    DomainParticipantFactoryQos factory_qos;
+    factory_qos.entity_factory().autoenable_created_entities = false;
+    DomainParticipantFactory::get_instance()->set_qos(factory_qos);
+
+    DomainParticipant* remote_participant =
+            DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
+    EXPECT_EQ(ReturnCode_t::RETCODE_OK, remote_participant->enable());
+    EXPECT_TRUE(remote_participant->is_enabled());
+
+    DomainParticipant* participant =
+            DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
+
+    DynamicTypeBuilder_ptr int32_builder = DynamicTypeBuilderFactory::get_instance()->create_int32_builder();
+    DynamicTypeBuilder_ptr seqLong_builder =
+            DynamicTypeBuilderFactory::get_instance()->create_sequence_builder(int32_builder.get());
+    DynamicTypeBuilder_ptr mySequenceLong_builder =
+            DynamicTypeBuilderFactory::get_instance()->create_alias_builder(seqLong_builder.get(), "MySequenceLong");
+    DynamicType_ptr dyn_type = mySequenceLong_builder->build();
+
+    TypeSupport type(new eprosima::fastrtps::types::DynamicPubSubType(dyn_type));
+    type.register_type(remote_participant);
+
+    const fastrtps::types::TypeIdentifier* identifier =
+            fastrtps::types::TypeObjectFactory::get_instance()->get_type_identifier_trying_complete(
+                    type.get_type_name());
+
+    std::string type_name = fastrtps::types::TypeObjectFactory::get_instance()->get_type_name(identifier);
+
+    const fastrtps::types::TypeInformation* type_information =
+            fastrtps::types::TypeObjectFactory::get_instance()->get_type_information(type_name);
+
+    Topic* topic = remote_participant->create_topic("footopic", type.get_type_name(), TOPIC_QOS_DEFAULT);
+    ASSERT_NE(topic, nullptr);
+
+    std::string topic_name = "footopic";
+    std::function<void(const std::string&, const fastrtps::types::DynamicType_ptr)> callback =
+            [this, topic_name](const std::string&, const fastrtps::types::DynamicType_ptr type)
+            {
+                std::cout << "Callback for type: " << type->get_name() << " on topic: " << topic_name << std::endl;
+            };
+
+    ASSERT_EQ(participant->register_remote_type(*type_information, type.get_type_name(), callback),
+            ReturnCode_t::RETCODE_NOT_ENABLED);
+
+    EXPECT_EQ(ReturnCode_t::RETCODE_OK, participant->enable());
+    EXPECT_TRUE(participant->is_enabled());
+
+    ASSERT_EQ(participant->register_remote_type(*type_information, type_name, callback),
+            ReturnCode_t::RETCODE_OK);
+
+    ASSERT_EQ(remote_participant->delete_topic(topic), ReturnCode_t::RETCODE_OK);
+    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(remote_participant),
+            ReturnCode_t::RETCODE_OK);
+    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), ReturnCode_t::RETCODE_OK);
+}
+
+TEST(ParticipantTests, RegisterRemoteTypeMinimal)
+{
+    //Do not enable entities on creation
+    DomainParticipantFactoryQos factory_qos;
+    factory_qos.entity_factory().autoenable_created_entities = false;
+    DomainParticipantFactory::get_instance()->set_qos(factory_qos);
+
+    DomainParticipant* remote_participant =
+            DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
+    EXPECT_EQ(ReturnCode_t::RETCODE_OK, remote_participant->enable());
+    EXPECT_TRUE(remote_participant->is_enabled());
+
+    DomainParticipant* participant =
+            DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
+
+    DynamicTypeBuilder_ptr builder = DynamicTypeBuilderFactory::get_instance()->create_char16_builder();
+    DynamicType_ptr dyn_type = DynamicTypeBuilderFactory::get_instance()->create_type(builder.get());
+    DynamicData_ptr data(DynamicDataFactory::get_instance()->create_data(dyn_type));
+    data->set_string_value("Dynamic Char16");
+
+    TypeSupport type(new eprosima::fastrtps::types::DynamicPubSubType(dyn_type));
+    type.register_type(remote_participant);
+
+    const fastrtps::types::TypeIdentifier* identifier =
+            fastrtps::types::TypeObjectFactory::get_instance()->get_type_identifier_trying_complete(
+                    type.get_type_name());
+
+    std::string type_name = fastrtps::types::TypeObjectFactory::get_instance()->get_type_name(identifier);
+
+    const fastrtps::types::TypeInformation* type_information =
+            fastrtps::types::TypeObjectFactory::get_instance()->get_type_information(type_name);
+
+    Topic* topic = remote_participant->create_topic("footopic", type.get_type_name(), TOPIC_QOS_DEFAULT);
+    ASSERT_NE(topic, nullptr);
+
+    std::string topic_name = "footopic";
+    std::function<void(const std::string&, const fastrtps::types::DynamicType_ptr)> callback =
+            [this, topic_name](const std::string&, const fastrtps::types::DynamicType_ptr type)
+            {
+                std::cout << "Callback for type: " << type->get_name() << " on topic: " << topic_name << std::endl;
+            };
+
+    ASSERT_EQ(participant->register_remote_type(*type_information, type.get_type_name(), callback),
+            ReturnCode_t::RETCODE_NOT_ENABLED);
+
+    EXPECT_EQ(ReturnCode_t::RETCODE_OK, participant->enable());
+    EXPECT_TRUE(participant->is_enabled());
+
+    ASSERT_EQ(participant->register_remote_type(*type_information, type_name, callback),
+            ReturnCode_t::RETCODE_OK);
+
+    ASSERT_EQ(remote_participant->delete_topic(topic), ReturnCode_t::RETCODE_OK);
+    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(remote_participant),
+            ReturnCode_t::RETCODE_OK);
+    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), ReturnCode_t::RETCODE_OK);
+}
+
+TEST(ParticipantTests, RegisterRemoteTypePreconditionNotMet)
+{
+    DomainParticipant* remote_participant =
+            DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
+
+    DomainParticipant* participant =
+            DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
+
+    DynamicTypeBuilder_ptr int32_builder = DynamicTypeBuilderFactory::get_instance()->create_int32_builder();
+    DynamicTypeBuilder_ptr seqLong_builder =
+            DynamicTypeBuilderFactory::get_instance()->create_sequence_builder(int32_builder.get());
+    DynamicTypeBuilder_ptr mySequenceLong_builder =
+            DynamicTypeBuilderFactory::get_instance()->create_alias_builder(seqLong_builder.get(), "MySequenceLong");
+    DynamicType_ptr dyn_type = mySequenceLong_builder->build();
+
+    TypeSupport type(new eprosima::fastrtps::types::DynamicPubSubType(dyn_type));
+    type.register_type(remote_participant);
+
+    Topic* topic = remote_participant->create_topic("footopic", type.get_type_name(), TOPIC_QOS_DEFAULT);
+    ASSERT_NE(topic, nullptr);
+
+    std::string topic_name = "footopic";
+    std::function<void(const std::string&, const fastrtps::types::DynamicType_ptr)> callback =
+            [this, topic_name](const std::string&, const fastrtps::types::DynamicType_ptr type)
+            {
+                std::cout << "Callback for type: " << type->get_name() << " on topic: " << topic_name << std::endl;
+            };
+
+    fastrtps::types::TypeInformation info = fastrtps::types::TypeInformation();
+    ASSERT_EQ(participant->register_remote_type(info, type.get_type_name(), callback),
+            ReturnCode_t::RETCODE_PRECONDITION_NOT_MET);
+
+    ASSERT_EQ(remote_participant->delete_topic(topic), ReturnCode_t::RETCODE_OK);
+    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(remote_participant),
+            ReturnCode_t::RETCODE_OK);
+    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), ReturnCode_t::RETCODE_OK);
 }
 
 } // namespace dds
