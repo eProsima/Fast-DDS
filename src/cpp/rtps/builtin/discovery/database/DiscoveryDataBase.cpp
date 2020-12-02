@@ -41,7 +41,7 @@ DiscoveryDataBase::DiscoveryDataBase(
     , server_acked_by_all_(servers.size() == 0)
     , servers_(servers)
     , enabled_(true)
-    , new_entity_discovered_(false)
+    , entity_updates_(false)
     , processing_backup_(false)
     , is_persistent_(false)
 {
@@ -382,10 +382,10 @@ void DiscoveryDataBase::clear_changes_to_dispose()
 // Functions to process_to_send_lists()
 const std::vector<eprosima::fastrtps::rtps::CacheChange_t*> DiscoveryDataBase::pdp_to_send()
 {
-    if (!new_entity_discovered_)
+    if (!entity_updates_)
     {
         // TODO change to Info
-        logWarning(DISCOVERY_DATABASE, "All DATA already sent, no changes must be updated");
+        logInfo(DISCOVERY_DATABASE, "There has no been entities updates, no changes must be updated");
         return std::vector<eprosima::fastrtps::rtps::CacheChange_t*>();
     }
 
@@ -452,9 +452,6 @@ void DiscoveryDataBase::process_pdp_data_queue()
         logInfo(DISCOVERY_DATABASE, "Discovery Database is disabled");
         return;
     }
-
-    // The are not new entities before having read the queues
-    new_entity_discovered_.store(false);
 
     // Lock(exclusive mode) mutex locally
     std::unique_lock<std::recursive_mutex> lock(mutex_);
@@ -584,10 +581,10 @@ void DiscoveryDataBase::create_participant_from_change_(
             if (change_guid.guidPrefix != server_guid_prefix_ &&
                     !participant_it->second.is_acked_by_all())
             {
-                // The change could be newer but has no update, so we do not send it
+                // The change could be newer but has no update, so we do not send it if it is not new
                 if (!(ch->serializedPayload == participant_it->second.change()->serializedPayload))
                 {
-                    new_entity_discovered_.store(true);
+                    entity_updates_.store(true);
                     add_pdp_to_send_(ch);
                 }
             }
@@ -618,7 +615,7 @@ void DiscoveryDataBase::create_participant_from_change_(
         if (ret.second)
         {
             // New participant found
-            new_entity_discovered_.store(true);
+            entity_updates_.store(true);
 
             logInfo(DISCOVERY_DATABASE, "New participant added: " << change_guid.guidPrefix);
 
@@ -722,7 +719,7 @@ void DiscoveryDataBase::create_writers_from_change_(
                 // The change could be newer but has no update, so we do not send it
                 if (!(ch->serializedPayload == writer_it->second.change()->serializedPayload))
                 {
-                    new_entity_discovered_.store(true);
+                    entity_updates_.store(true);
                     add_edp_publications_to_send_(ch);
                 }
             }
@@ -762,7 +759,7 @@ void DiscoveryDataBase::create_writers_from_change_(
         writer_it = ret.first;
 
         // New writer found
-        new_entity_discovered_.store(true);
+        entity_updates_.store(true);
 
         // Add entry to participants_[guid_prefix]::writers
         std::map<eprosima::fastrtps::rtps::GuidPrefix_t, DiscoveryParticipantInfo>::iterator writer_part_it =
@@ -836,7 +833,7 @@ void DiscoveryDataBase::create_readers_from_change_(
                 // The change could be newer but has no update, so we do not send it
                 if (!(ch->serializedPayload == reader_it->second.change()->serializedPayload))
                 {
-                    new_entity_discovered_.store(true);
+                    entity_updates_.store(true);
                     add_edp_subscriptions_to_send_(ch);
                 }
             }
@@ -876,7 +873,7 @@ void DiscoveryDataBase::create_readers_from_change_(
         reader_it = ret.first;
 
         // New reader found
-        new_entity_discovered_.store(true);
+        entity_updates_.store(true);
 
         // Add entry to participants_[guid_prefix]::readers
         std::map<eprosima::fastrtps::rtps::GuidPrefix_t, DiscoveryParticipantInfo>::iterator reader_part_it =
@@ -1134,7 +1131,7 @@ void DiscoveryDataBase::process_dispose_participant_(
         update_change_and_unmatch_(ch, pit->second);
 
         // Any change in the entities known must be reported as a change in the discovery
-        new_entity_discovered_.store(true);
+        entity_updates_.store(true);
     }
     else
     {
@@ -1206,7 +1203,7 @@ void DiscoveryDataBase::process_dispose_writer_(
         }
 
         // Any change in the entities known must be reported as a change in the discovery
-        new_entity_discovered_.store(true);
+        entity_updates_.store(true);
     }
 }
 
@@ -1236,7 +1233,7 @@ void DiscoveryDataBase::process_dispose_reader_(
         }
 
         // Any change in the entities known must be reported as a change in the discovery
-        new_entity_discovered_.store(true);
+        entity_updates_.store(true);
     }
 }
 
@@ -1613,23 +1610,28 @@ void DiscoveryDataBase::AckedFunctor::operator () (
         }
         else
         {
-            // If the data we are sending is our own DATA(p) we should not wait to acked
-            // if (db_->guid_from_change(change_).guidPrefix == db_->server_guid_prefix_)
-            // {
-                logWarning(DISCOVERY_DATABASE, "not acked yet");
-                // If the reader proxy is from a server that we are pinging, the data is set as acked
-                auto p_it = db_->participants_.find(db_->server_guid_prefix_);
-                for (auto it = db_->servers_.begin(); it < db_->servers_.end(); ++it)
+            // If the reader proxy is from a server that we are pinging, we may not want to wait
+            //  for it to be acked as the routine will not stop
+            for (auto it = db_->servers_.begin(); it < db_->servers_.end(); ++it)
+            {
+                if (reader_proxy->guid().guidPrefix == *it)
                 {
-                    if (reader_proxy->guid().guidPrefix == *it && !p_it->second.is_matched(*it))
+                    // If the participant is already in the DB it means it has answer to the pinging
+                    // *It could be that it has not answered yet but it is pinging us, so db has it as well
+                    // We have to check it as unacked anycase because we cannot know which case it is
+                    auto remote_server_it = db_->participants_.find(*it);
+                    if (remote_server_it == db_->participants_.end())
                     {
-                        logWarning(DISCOVERY_DATABASE, "not pinged back yet");
+                        logInfo(DISCOVERY_DATABASE, "Change " << change_->instanceHandle <<
+                            "check as acked for " << reader_proxy->guid() << " as it has not answered pinging yet");
                         return;
                     }
                 }
-            // }
+            }
+
             // This change is relevant and has not been acked, and does not belongs to the reader proxy
             // of a server that has not been paired yet, so there are pending acknowledgements
+            logInfo(DISCOVERY_DATABASE, "Change " << change_->instanceHandle << " not acked yet");
             external_pending_ = true;
         }
     }
@@ -2480,8 +2482,8 @@ void DiscoveryDataBase::clean_backup()
     logInfo(DISCOVERY_DATABASE, "Restoring queue DDB in json backup");
 
     // This will erase the last backup stored
-    backup_file_.close();
-    backup_file_.open(backup_file_name_, std::ios_base::out);
+    // backup_file_.close();
+    // backup_file_.open(backup_file_name_, std::ios_base::out);
 }
 
 void DiscoveryDataBase::persistence_enable(

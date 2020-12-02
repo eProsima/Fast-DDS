@@ -837,6 +837,9 @@ bool PDPServer2::server_update_routine()
         logInfo(RTPS_PDP_SERVER, "-------------------- Server routine start --------------------");
         logInfo(RTPS_PDP_SERVER, "-------------------- " << mp_RTPSParticipant->getGuid() << " --------------------");
 
+        // Set value as nothing new for new loop iteration
+        discovery_db_.reset_entity_updates();
+
         process_writers_acknowledgements();     // server + ddb(functor_with_ddb)
         process_data_queues();                  // all ddb
         process_dirty_topics();                 // all ddb
@@ -949,7 +952,8 @@ History::iterator PDPServer2::process_change_acknowledgement(
                 {
                     // Remove the entry from writer history, but do not release the cache.
                     // This CacheChange will only be released in the case that is substituted by a DATA(Up|Uw|Ur).
-                    logWarning(RTPS_PDP_SERVER, "Remove change " << c->instanceHandle << " from history");
+                    logInfo(RTPS_PDP_SERVER, "Remove change " << c->instanceHandle
+                        << " from history as it has been acked");
                     return writer_history->remove_change(cit, false);
                 }
             }
@@ -1270,6 +1274,9 @@ bool PDPServer2::remove_change_from_history_nts(
 {
     for (auto chit = history->changesRbegin(); chit != history->changesRend(); chit++)
     {
+        // We compare by pointer because we maintain the same pointer everywhere and it is unique
+        // We cannot compare by cache info because there is no distinct attributes for the same change arrived
+        //  from different servers, and one of them could be in the history while the other arrive to ddb
         if (change == (*chit))
         {
             if (release_change)

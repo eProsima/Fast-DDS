@@ -331,6 +331,11 @@ public:
         return virtual_topic_;
     }
 
+    void reset_entity_updates()
+    {
+            return entity_updates_.store(false);
+    }
+
 protected:
 
     // change a cacheChange by update or new disposal
@@ -534,8 +539,8 @@ protected:
     // Whether the database is enabled
     std::atomic<bool> enabled_;
 
-    // Whether it has been a new entity discovered or update of an old one
-    std::atomic<bool> new_entity_discovered_;
+    // Whether it has been a new entity discovered or updated in this subroutine loop
+    std::atomic<bool> entity_updates_;
 
     // Wheter the database is restoring a backup
     std::atomic<bool> processing_backup_;

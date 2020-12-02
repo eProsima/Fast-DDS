@@ -361,7 +361,6 @@ void LogConsumer::print_context(
         }
         stream << entry.context.function;
     }
-    stream << " [" << entry.context.thread_p << "]";
 }
 
 void LogConsumer::print_message(
