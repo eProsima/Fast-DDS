@@ -1,4 +1,4 @@
-// Copyright 2017 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+// Copyright 2020 Proyectos y Sistemas de Mantenimiento SL (eProsima).
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -3001,7 +3001,7 @@ XMLP_ret XMLParser::getXMLOctetVector(
 {
     (void)(elem);
     logError(XMLPARSER, "octetVector do not supported for now");
-    return XMLP_ret::XML_OK;
+    return XMLP_ret::XML_ERROR;
 }
 
 XMLP_ret XMLParser::getXMLInt(

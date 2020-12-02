@@ -1,4 +1,4 @@
-// Copyright 2017 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+// Copyright 2020 Proyectos y Sistemas de Mantenimiento SL (eProsima).
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -21,12 +21,14 @@
 #include <fastrtps/transport/UDPv6TransportDescriptor.h>
 #include <fastrtps/transport/TCPv4TransportDescriptor.h>
 #include <fastrtps/transport/TCPv6TransportDescriptor.h>
+#include <fastdds/rtps/transport/shared_mem/SharedMemTransportDescriptor.h>
 #include <fastdds/dds/log/Log.hpp>
 #include <fastdds/dds/log/OStreamConsumer.hpp>
 #include <fastdds/dds/log/FileConsumer.hpp>
 #include <fastdds/dds/log/StdoutConsumer.hpp>
 #include <fastdds/dds/log/StdoutErrConsumer.hpp>
-#include "mock/XMLMockConsumer.h"
+#include "../logging/mock/MockConsumer.h"
+#include "XMLParserTests.hpp"
 #include "wrapper/XMLParserTest.hpp"
 
 #include <tinyxml2.h>
@@ -48,169 +50,7 @@ using eprosima::fastrtps::xmlparser::XMLParser;
 using eprosima::fastdds::dds::Log;
 using eprosima::fastdds::dds::LogConsumer;
 
-class XMLTreeTests : public ::testing::Test
-{
-public:
-
-    XMLTreeTests()
-    {
-    }
-
-    ~XMLTreeTests()
-    {
-    }
-
-};
-
-TEST_F(XMLTreeTests, OnlyRoot)
-{
-    BaseNode test_base{NodeType::ROOT};
-    ASSERT_EQ(NodeType::ROOT, test_base.getType());
-    ASSERT_EQ(false, test_base.removeChild(0));
-    ASSERT_EQ(nullptr, test_base.getChild(0));
-    ASSERT_EQ(nullptr, test_base.getParent());
-    ASSERT_EQ(0u, test_base.getNumChildren());
-}
-
-TEST_F(XMLTreeTests, RootChildren)
-{
-    BaseNode test_base{NodeType::ROOT};
-
-    ASSERT_EQ(false, test_base.removeChild(0));
-    ASSERT_EQ(nullptr, test_base.getChild(0));
-    ASSERT_EQ(0u, test_base.getNumChildren());
-
-    BaseNode* child = new BaseNode{NodeType::APPLICATION};
-    test_base.addChild(std::unique_ptr<BaseNode>(child));
-
-    ASSERT_EQ(1u, test_base.getNumChildren());
-    ASSERT_EQ(child, test_base.getChild(0));
-    ASSERT_EQ(&test_base, test_base.getChild(0)->getParent());
-    ASSERT_EQ(NodeType::APPLICATION, test_base.getChild(0)->getType());
-    ASSERT_EQ(true, test_base.removeChild(0));
-    ASSERT_EQ(0u, test_base.getNumChildren());
-    ASSERT_EQ(false, test_base.removeChild(0));
-}
-
-TEST_F(XMLTreeTests, RootMultipleChildren)
-{
-    const unsigned int num_children = 10;
-    BaseNode test_base{NodeType::ROOT};
-
-    ASSERT_EQ(false, test_base.removeChild(0));
-    ASSERT_EQ(nullptr, test_base.getChild(0));
-    ASSERT_EQ(0u, test_base.getNumChildren());
-
-    std::vector<BaseNode*> children_backup;
-    for (unsigned int i = 0; i < num_children; ++i)
-    {
-        children_backup.push_back(new BaseNode{NodeType::APPLICATION});
-        test_base.addChild(std::unique_ptr<BaseNode>(children_backup[i]));
-    }
-
-    for (unsigned int i = 0; i < num_children; ++i)
-    {
-        ASSERT_EQ(children_backup[i], test_base.getChild(i));
-        ASSERT_EQ(&test_base, test_base.getChild(i)->getParent());
-        ASSERT_EQ(NodeType::APPLICATION, test_base.getChild(i)->getType());
-    }
-
-    for (unsigned int i = 0; i < num_children; ++i)
-    {
-        ASSERT_EQ(num_children - i, test_base.getNumChildren());
-        ASSERT_EQ(true, test_base.removeChild(0));
-        ASSERT_EQ(num_children - i - 1, test_base.getNumChildren());
-        ASSERT_EQ(false, test_base.removeChild(num_children - i));
-    }
-}
-
-TEST_F(XMLTreeTests, DataNode)
-{
-    const std::string attribute_name0{"Attribute0"};
-    const std::string attribute_name1{"Attribute1"};
-    const std::string attribute_value0{"TESTATTRIBUTE"};
-    const std::string attribute_value1{"TESTATTRIBUTE1"};
-
-    DataNode<std::string> data_node{NodeType::PUBLISHER};
-    std::string* data = new std::string("TESTDATA");
-
-    data_node.setData(std::unique_ptr<std::string>(data));
-    data_node.addAttribute(attribute_name0, attribute_value0);
-    data_node.addAttribute(attribute_name1, attribute_value1);
-
-    ASSERT_EQ(NodeType::PUBLISHER, data_node.getType());
-    ASSERT_EQ(data, data_node.getData().get());
-    ASSERT_STREQ(attribute_value0.data(), data_node.getAttributes().at(attribute_name0).data());
-    ASSERT_STREQ(attribute_value1.data(), data_node.getAttributes().at(attribute_name1).data());
-}
-
-class XMLParserTests : public ::testing::Test
-{
-public:
-
-    XMLParserTests()
-    {
-    }
-
-    ~XMLParserTests()
-    {
-        eprosima::fastdds::dds::Log::Reset();
-        eprosima::fastdds::dds::Log::KillThread();
-    }
-
-    bool get_participant_attributes(
-            std::unique_ptr<BaseNode>& root,
-            ParticipantAttributes& participant_atts)
-    {
-        const std::string name_attribute{"profile_name"};
-        const std::string profile_name{"missing_profile"};
-        bool participant_profile = false;
-        for (const auto& profile : root->getChildren())
-        {
-            if (profile->getType() == NodeType::PARTICIPANT)
-            {
-                auto data_node = dynamic_cast<DataNode<ParticipantAttributes>*>(profile.get());
-                auto search    = data_node->getAttributes().find(name_attribute);
-                if ((search != data_node->getAttributes().end()) && (search->second == profile_name))
-                {
-                    participant_atts    = *data_node->get();
-                    participant_profile = true;
-                }
-            }
-        }
-        return participant_profile;
-    }
-
-    void helper_block_for_at_least_entries(
-            uint32_t amount)
-    {
-        std::unique_lock<std::mutex> lck(*xml_mutex_);
-        mock_consumer->cv().wait(lck, [this, amount]
-                {
-                    return mock_consumer->ConsumedEntriesSize_nts() >= amount;
-                });
-    }
-
-    eprosima::fastdds::dds::XMLMockConsumer* mock_consumer;
-
-    mutable std::mutex* xml_mutex_;
-
-protected:
-
-    void SetUp() override
-    {
-        xml_mutex_ = new std::mutex();
-    }
-
-    void TearDown() override
-    {
-        delete xml_mutex_;
-        xml_mutex_ = nullptr;
-    }
-
-};
-
-TEST_F(XMLParserTests, NoFIle)
+TEST_F(XMLParserTests, NoFile)
 {
     std::unique_ptr<BaseNode> root;
     ASSERT_EQ(XMLParser::loadXML("missing_file.xml", root), XMLP_ret::XML_ERROR);
@@ -753,8 +593,19 @@ TEST_F(XMLParserTests, parseXMLTransportData)
         ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
         titleElement = xml_doc.RootElement();
         EXPECT_EQ(XMLP_ret::XML_OK, XMLParserTest::parseXMLTransportData_wrapper(titleElement));
-        EXPECT_EQ(xmlparser::XMLProfileManager::getTransportById("TransportId1")->max_initial_peers_range(), 100);
-        EXPECT_EQ(xmlparser::XMLProfileManager::getTransportById("TransportId1")->max_message_size(), 16384);
+        std::shared_ptr<rtps::UDPv4TransportDescriptor> pUDPv4Desc =
+                    std::dynamic_pointer_cast<rtps::UDPv4TransportDescriptor>(
+                        xmlparser::XMLProfileManager::getTransportById("TransportId1"));
+        EXPECT_EQ(pUDPv4Desc->sendBufferSize, 8192);
+        EXPECT_EQ(pUDPv4Desc->receiveBufferSize, 8192);
+        EXPECT_EQ(pUDPv4Desc->TTL, 250);
+        EXPECT_EQ(pUDPv4Desc->non_blocking_send, false);
+        EXPECT_EQ(pUDPv4Desc->max_message_size(), 16384);
+        EXPECT_EQ(pUDPv4Desc->max_initial_peers_range(), 100);
+        EXPECT_EQ(pUDPv4Desc->interfaceWhiteList[0], "192.168.1.41");
+        EXPECT_EQ(pUDPv4Desc->interfaceWhiteList[1], "127.0.0.1");
+        EXPECT_EQ(pUDPv4Desc->m_output_udp_socket, 5101);
+
         xmlparser::XMLProfileManager::DeleteInstance();
 
         // UDPv6
@@ -762,8 +613,18 @@ TEST_F(XMLParserTests, parseXMLTransportData)
         ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
         titleElement = xml_doc.RootElement();
         EXPECT_EQ(XMLP_ret::XML_OK, XMLParserTest::parseXMLTransportData_wrapper(titleElement));
-        EXPECT_EQ(xmlparser::XMLProfileManager::getTransportById("TransportId1")->max_initial_peers_range(), 100);
-        EXPECT_EQ(xmlparser::XMLProfileManager::getTransportById("TransportId1")->max_message_size(), 16384);
+        std::shared_ptr<rtps::UDPv6TransportDescriptor> pUDPv6Desc =
+                    std::dynamic_pointer_cast<rtps::UDPv6TransportDescriptor>(
+                        xmlparser::XMLProfileManager::getTransportById("TransportId1"));
+        EXPECT_EQ(pUDPv6Desc->sendBufferSize, 8192);
+        EXPECT_EQ(pUDPv6Desc->receiveBufferSize, 8192);
+        EXPECT_EQ(pUDPv6Desc->TTL, 250);
+        EXPECT_EQ(pUDPv6Desc->non_blocking_send, false);
+        EXPECT_EQ(pUDPv6Desc->max_message_size(), 16384);
+        EXPECT_EQ(pUDPv6Desc->max_initial_peers_range(), 100);
+        EXPECT_EQ(pUDPv6Desc->interfaceWhiteList[0], "192.168.1.41");
+        EXPECT_EQ(pUDPv6Desc->interfaceWhiteList[1], "127.0.0.1");
+        EXPECT_EQ(pUDPv6Desc->m_output_udp_socket, 5101);
         xmlparser::XMLProfileManager::DeleteInstance();
     }
 
@@ -809,8 +670,28 @@ TEST_F(XMLParserTests, parseXMLTransportData)
         ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
         titleElement = xml_doc.RootElement();
         EXPECT_EQ(XMLP_ret::XML_OK, XMLParserTest::parseXMLTransportData_wrapper(titleElement));
-        EXPECT_EQ(xmlparser::XMLProfileManager::getTransportById("TransportId1")->max_initial_peers_range(), 100);
-        EXPECT_EQ(xmlparser::XMLProfileManager::getTransportById("TransportId1")->max_message_size(), 16384);
+        std::shared_ptr<rtps::TCPv4TransportDescriptor> pTCPv4Desc =
+                    std::dynamic_pointer_cast<rtps::TCPv4TransportDescriptor>(
+                        xmlparser::XMLProfileManager::getTransportById("TransportId1"));
+        EXPECT_EQ(pTCPv4Desc->sendBufferSize, 8192);
+        EXPECT_EQ(pTCPv4Desc->receiveBufferSize, 8192);
+        EXPECT_EQ(pTCPv4Desc->TTL, 250);
+        EXPECT_EQ(pTCPv4Desc->max_message_size(), 16384);
+        EXPECT_EQ(pTCPv4Desc->max_initial_peers_range(), 100);
+        EXPECT_EQ(pTCPv4Desc->interfaceWhiteList[0], "192.168.1.41");
+        EXPECT_EQ(pTCPv4Desc->interfaceWhiteList[1], "127.0.0.1");
+        EXPECT_EQ(pTCPv4Desc->wan_addr[0], (octet)80);
+        EXPECT_EQ(pTCPv4Desc->wan_addr[1], (octet)80);
+        EXPECT_EQ(pTCPv4Desc->wan_addr[2], (octet)55);
+        EXPECT_EQ(pTCPv4Desc->wan_addr[3], (octet)44);
+        EXPECT_EQ(pTCPv4Desc->keep_alive_frequency_ms, 5000);
+        EXPECT_EQ(pTCPv4Desc->keep_alive_timeout_ms, 25000);
+        EXPECT_EQ(pTCPv4Desc->max_logical_port, 9000);
+        EXPECT_EQ(pTCPv4Desc->logical_port_range, 100);
+        EXPECT_EQ(pTCPv4Desc->logical_port_increment, 2);
+        EXPECT_EQ(pTCPv4Desc->logical_port_increment, 2);
+        EXPECT_EQ(pTCPv4Desc->listening_ports[0], 5100);
+        EXPECT_EQ(pTCPv4Desc->listening_ports[1], 5200);
         xmlparser::XMLProfileManager::DeleteInstance();
 
         // TCPv6
@@ -818,8 +699,24 @@ TEST_F(XMLParserTests, parseXMLTransportData)
         ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
         titleElement = xml_doc.RootElement();
         EXPECT_EQ(XMLP_ret::XML_OK, XMLParserTest::parseXMLTransportData_wrapper(titleElement));
-        EXPECT_EQ(xmlparser::XMLProfileManager::getTransportById("TransportId1")->max_initial_peers_range(), 100);
-        EXPECT_EQ(xmlparser::XMLProfileManager::getTransportById("TransportId1")->max_message_size(), 16384);
+        std::shared_ptr<rtps::TCPv6TransportDescriptor> pTCPv6Desc =
+                    std::dynamic_pointer_cast<rtps::TCPv6TransportDescriptor>(
+                        xmlparser::XMLProfileManager::getTransportById("TransportId1"));
+        EXPECT_EQ(pTCPv6Desc->sendBufferSize, 8192);
+        EXPECT_EQ(pTCPv6Desc->receiveBufferSize, 8192);
+        EXPECT_EQ(pTCPv6Desc->TTL, 250);
+        EXPECT_EQ(pTCPv6Desc->max_message_size(), 16384);
+        EXPECT_EQ(pTCPv6Desc->max_initial_peers_range(), 100);
+        EXPECT_EQ(pTCPv6Desc->interfaceWhiteList[0], "192.168.1.41");
+        EXPECT_EQ(pTCPv6Desc->interfaceWhiteList[1], "127.0.0.1");
+        EXPECT_EQ(pTCPv6Desc->keep_alive_frequency_ms, 5000);
+        EXPECT_EQ(pTCPv6Desc->keep_alive_timeout_ms, 25000);
+        EXPECT_EQ(pTCPv6Desc->max_logical_port, 9000);
+        EXPECT_EQ(pTCPv6Desc->logical_port_range, 100);
+        EXPECT_EQ(pTCPv6Desc->logical_port_increment, 2);
+        EXPECT_EQ(pTCPv6Desc->logical_port_increment, 2);
+        EXPECT_EQ(pTCPv6Desc->listening_ports[0], 5100);
+        EXPECT_EQ(pTCPv6Desc->listening_ports[1], 5200);
         xmlparser::XMLProfileManager::DeleteInstance();
     }
 
@@ -845,15 +742,23 @@ TEST_F(XMLParserTests, parseXMLTransportData)
         ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
         titleElement = xml_doc.RootElement();
         EXPECT_EQ(XMLP_ret::XML_OK, XMLParserTest::parseXMLTransportData_wrapper(titleElement));
-        EXPECT_EQ(xmlparser::XMLProfileManager::getTransportById("TransportId1")->max_initial_peers_range(), 100);
-        EXPECT_EQ(xmlparser::XMLProfileManager::getTransportById("TransportId1")->max_message_size(), 16384);
+        std::shared_ptr<eprosima::fastdds::rtps::SharedMemTransportDescriptor> pSHMDesc =
+            std::dynamic_pointer_cast<eprosima::fastdds::rtps::SharedMemTransportDescriptor>(
+                xmlparser::XMLProfileManager::getTransportById("TransportId1"));
+        EXPECT_EQ(pSHMDesc->segment_size(), 262144);
+        EXPECT_EQ(pSHMDesc->port_queue_capacity(), 512);
+        EXPECT_EQ(pSHMDesc->healthy_check_timeout_ms(), 1000);
+        EXPECT_EQ(pSHMDesc->rtps_dump_file(), "rtsp_messages.log");
+        EXPECT_EQ(pSHMDesc->max_message_size(), 16384);
+        EXPECT_EQ(pSHMDesc->max_initial_peers_range(), 100);
+
         xmlparser::XMLProfileManager::DeleteInstance();
     }
 }
 
 /*
  * This test checks the return of the negative cases of th parseXMLTransportData method.
- * 1. Check an XMLP_ret::XML_ERROR retur on an incorrectly formated parameter of every posible parameter of the
+ * 1. Check an XMLP_ret::XML_ERROR return on an incorrectly formated parameter of every possible parameter of the
  * UDPv4, UDPv6, TCPv4, TCPv6, and SHM.
  * 2. Check the correct parsing of a TCP transport descriptor for birth v4 and v6
  * 3. Check the correct parsing of a SHM transport descriptor
@@ -861,13 +766,11 @@ TEST_F(XMLParserTests, parseXMLTransportData)
  * 5. Check missing type
  * 6. Check wrong type
  */
-TEST_F(XMLParserTests, parseXMLTransportDataNegativeClauses)
+TEST_F(XMLParserTests, parseXMLTransportData_NegativeClauses)
 {
     tinyxml2::XMLDocument xml_doc;
     tinyxml2::XMLElement* titleElement;
     std::string xml;
-    std::vector<std::string> transport_types {"UDPv4", "UDPv6", "TCPv4", "TCPv6", "SHM"};
-
     std::vector<std::string> parameters_UDP =
     {
         "maxMessageSize",
@@ -914,37 +817,27 @@ TEST_F(XMLParserTests, parseXMLTransportDataNegativeClauses)
         "bad_element"
     };
 
-    std::vector<std::string> parameters;
-    for (std::vector<std::string>::iterator transport_type = transport_types.begin();
-            transport_type != transport_types.end(); ++transport_type)
-    {
-        parameters.clear();
-        if ((*transport_type).substr(0, 3) == "UDP" )
-        {
-            parameters = parameters_UDP;
-        }
-        else if ((*transport_type).substr(0, 3) == "TCP" )
-        {
-            parameters = parameters_TCP;
-            if ((*transport_type) == "TCPv4" )
-            {
-                parameters.insert(parameters.end(), "wan_addr");
-            }
-        }
-        else if ((*transport_type).substr(0, 3) == "SHM" )
-        {
-            parameters = parameters_SHM;
-        }
+    std::vector<std::string> parameters_TCPv4 = parameters_TCP;
+    parameters_TCPv4.insert(parameters_TCPv4.end(), "wan_addr");
 
-        for (std::vector<std::string>::iterator it = parameters.begin(); it != parameters.end(); ++it)
+    std::map<std::string, std::vector<std::string>> transport_parameters =
+    {
+        {"UDPv4", parameters_UDP},
+        {"UDPv6", parameters_UDP},
+        {"TCPv4", parameters_TCPv4},
+        {"TCPv6", parameters_TCP},
+        {"SHM", parameters_SHM}
+    };
+
+    for (const auto& parameters : transport_parameters) {
+        for (const auto & field : parameters.second)
         {
             xml =
                     "\
                     <transport_descriptor>\
                         <transport_id>TransportId1</transport_id>\
-                        <type>" + *transport_type + "</type>\
-                        <" + *it + "><bad_element></bad_element></" + *it +
-                    ">\
+                        <type>" + parameters.first + "</type>\
+                        <" + field + "><bad_element></bad_element></" + field + ">\
                     </transport_descriptor>\
                     ";
 
@@ -954,14 +847,13 @@ TEST_F(XMLParserTests, parseXMLTransportDataNegativeClauses)
             xmlparser::XMLProfileManager::DeleteInstance();
         }
 
-        if ((*transport_type).substr(0, 3) == "TCP" )
+        if (parameters.first.substr(0, 3) == "TCP" )
         {
             xml =
                     "\
                     <transport_descriptor>\
                         <transport_id>TransportId1</transport_id>\
-                        <type>" + *transport_type +
-                    "</type>\
+                        <type>" + parameters.first + "</type>\
                         <listening_ports>\
                             <port>not_an_int</port>\
                         </listening_ports>\
@@ -977,7 +869,7 @@ TEST_F(XMLParserTests, parseXMLTransportDataNegativeClauses)
             EXPECT_EQ(XMLP_ret::XML_ERROR,
                     XMLParserTest::parseXMLCommonTCPTransportData_wrapper(titleElement, nullptr));
         }
-        else if ((*transport_type).substr(0, 3) == "SHM" )
+        else if (parameters.first == "SHM" )
         {
             // Check empty pointer
             EXPECT_EQ(XMLP_ret::XML_ERROR,
@@ -1049,7 +941,11 @@ TEST_F(XMLParserTests, parseXMLTransportDataNegativeClauses)
     xmlparser::XMLProfileManager::DeleteInstance();
 }
 
-TEST_F(XMLParserTests, parseXMLTransportsProf)
+/*
+ * This test checks the return of the negative cases of th parseXMLTransportsProf method.
+ * 1. Check an XMLP_ret::XML_ERROR return on an incorrect element inside the <transport_descriptor> tag
+ */
+TEST_F(XMLParserTests, parseXMLTransportsProfNegativeClauses)
 {
     tinyxml2::XMLDocument xml_doc;
     tinyxml2::XMLElement* titleElement;
@@ -1069,14 +965,9 @@ TEST_F(XMLParserTests, parseXMLTransportsProf)
 
 /*
  * This test checks the return of the parseXMLConsumer method.
- * 1. Check an XMLP_ret::XML_ERROR retur on an incorrectly formated parameter of every posible parameter of the
- * UDPv4, UDPv6, TCPv4, UDPv6, and SHM.
- * 2. Check the correct return parsing a StdoutConsumer.
- * 3. Check the correct return parsing a StdoutErrConsumer with default configuration.
- * 4. Check the correct return parsing a StdoutErrConsumer with a custom configuration.
- * 5. Check the correct return parsing a FileConsumer with default configuration.
+ * 1. Check the correct return parsing a StdoutConsumer.
  */
-TEST_F(XMLParserTests, parseXMLConsumer)
+TEST_F(XMLParserTests, parseXMLStdoutConsumer)
 {
     tinyxml2::XMLDocument xml_doc;
     tinyxml2::XMLElement* titleElement;
@@ -1094,7 +985,17 @@ TEST_F(XMLParserTests, parseXMLConsumer)
         titleElement = xml_doc.RootElement();
         EXPECT_EQ(XMLP_ret::XML_OK, XMLParserTest::parseXMLConsumer_wrapper(*titleElement));
     }
+}
 
+/*
+ * This test checks the return of the parseXMLConsumer method.
+ * 1. Check the correct return parsing a StdoutErrConsumer with default configuration.
+ * 2. Check the correct return parsing a StdoutErrConsumer with a custom configuration.
+ */
+TEST_F(XMLParserTests, parseXMLStdoutErrConsumer)
+{
+    tinyxml2::XMLDocument xml_doc;
+    tinyxml2::XMLElement* titleElement;
     {
         // StdoutErrConsumer without properties
         const char* xml =
@@ -1133,6 +1034,16 @@ TEST_F(XMLParserTests, parseXMLConsumer)
 
 
     }
+}
+
+/*
+ * This test checks the return of the parseXMLConsumer method.
+ * 1. Check the correct return parsing a FileConsumer with default configuration.
+ */
+TEST_F(XMLParserTests, parseXMLFileConsumer)
+{
+    tinyxml2::XMLDocument xml_doc;
+    tinyxml2::XMLElement* titleElement;
 
     {
         // FileConsumer without properties
@@ -1175,15 +1086,13 @@ TEST_F(XMLParserTests, parseXMLConsumer)
 
 /*
  * This test checks the return of the negative cases of the parseXMLConsumer method.
- * 1. Check an XMLP_ret::XML_ERROR retur on an incorrectly formated parameter of every posible parameter of the
- * UDPv4, UDPv6, TCPv4, UDPv6, and SHM.
- * 2. Check a non-existant Consumer class.
- * 3. Check a StdoutErrConsumer with incorrect propertiy values.
- * 4. Check a StdoutErrConsumer with std_threshold set twice.
- * 5. Check a StdoutErrConsumer with an incorrect property.
- * 6. Check a FileConsumer without a filename property.
- * 7. Check a FileConsumer without a value for the append property.
- * 8. Check a FileConsumer with an incorrect property.
+ * 1. Check a non-existant Consumer class.
+ * 2. Check a StdoutErrConsumer with incorrect property values.
+ * 3. Check a StdoutErrConsumer with std_threshold set twice.
+ * 4. Check a StdoutErrConsumer with an incorrect property.
+ * 5. Check a FileConsumer without a filename property.
+ * 6. Check a FileConsumer without a value for the append property.
+ * 7. Check a FileConsumer with an incorrect property.
  */
 TEST_F(XMLParserTests, parseXMLConsumerNegativeClauses)
 {
@@ -1386,9 +1295,9 @@ TEST_F(XMLParserTests, parseLogConfig)
  * This test checks the return of the negative cases of the fillDataNode given a ParticipantAttributes DataNode
  * 1. Check passing a nullptr as if the XMLElement was wrongly parsed above
  * 2. Check missing required rtps tag
- * 3. Check missing DomaiId value in tag
+ * 3. Check missing DomainId value in tag
  * 4. Check bad values for all attributes
- * 5. Check a non existant atribute tag
+ * 5. Check a non existant attribute tag
  */
 TEST_F(XMLParserTests, fillDataNodeParticipantNegativeClauses)
 {
@@ -1398,7 +1307,7 @@ TEST_F(XMLParserTests, fillDataNodeParticipantNegativeClauses)
     up_participant_t participant_atts{new ParticipantAttributes};
     up_node_participant_t participant_node{new node_participant_t{NodeType::PARTICIPANT, std::move(participant_atts)}};
 
-    // missing profile XMLElemnt
+    // missing profile XMLElement
     EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::fillDataNode_wrapper(nullptr, *participant_node));
 
     {
@@ -1469,7 +1378,8 @@ TEST_F(XMLParserTests, fillDataNodeParticipantNegativeClauses)
 
 /*
  * This test checks the return of the unsupported cases of the fillDataNode given a ParticipantAttributes DataNode
- * 1. Check passing a a UserData parameter
+ * 1. Check passing a a UserData parameter.
+ * 2. Check that it outputs a Log Error when reading an unsupported element.
  */
 TEST_F(XMLParserTests, fillDataNodeParticipantUnsupported)
 {
@@ -1479,12 +1389,11 @@ TEST_F(XMLParserTests, fillDataNodeParticipantUnsupported)
     up_participant_t participant_atts{new ParticipantAttributes};
     up_node_participant_t participant_node{new node_participant_t{NodeType::PARTICIPANT, std::move(participant_atts)}};
 
-    mock_consumer = new eprosima::fastdds::dds::XMLMockConsumer(xml_mutex_);
+    mock_consumer = new eprosima::fastdds::dds::MockConsumer(xml_mutex_);
     Log::RegisterConsumer(std::unique_ptr<LogConsumer>(mock_consumer));
-    Log::SetVerbosity(Log::Warning);
     Log::SetCategoryFilter(std::regex("(XMLPARSER)"));
 
-    // Unsuported fields
+    // Unsupported fields
     const char* xml =
             "\
             <participant profile_name=\"domainparticipant_profile_name\">\
@@ -1496,7 +1405,7 @@ TEST_F(XMLParserTests, fillDataNodeParticipantUnsupported)
 
     ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
     titleElement = xml_doc.RootElement();
-    EXPECT_EQ(XMLP_ret::XML_OK, XMLParserTest::fillDataNode_wrapper(titleElement, *participant_node));
+    EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::fillDataNode_wrapper(titleElement, *participant_node));
 
     helper_block_for_at_least_entries(1);
     auto consumed_entries = mock_consumer->ConsumedEntries();
@@ -1517,7 +1426,7 @@ TEST_F(XMLParserTests, fillDataNodeParticipantUnsupported)
 /*
  * This test checks the correct functioning of the parseXML function when the <dds> root element does not exist.
  * 1. Check that elements <profiles>, <types> and <log> are read as root elements.
- * 2. Check that it triggers an error when reading an wrong element.
+ * 2. Check that it triggers an error when reading a wrong element.
  */
 TEST_F(XMLParserTests, parseXMLNoRoot)
 {
@@ -1547,7 +1456,7 @@ TEST_F(XMLParserTests, parseXMLNoRoot)
         EXPECT_EQ(XMLP_ret::XML_OK, XMLParserTest::parseXML_wrapper(xml_doc, root));
     }
 
-    // Check that it triggers an error when reading an wrong element.
+    // Check that it triggers an error when reading a wrong element.
     sprintf(xml, xml_p, "bad_root", "bad_root");
     ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
     EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::parseXML_wrapper(xml_doc, root));
@@ -1558,7 +1467,7 @@ TEST_F(XMLParserTests, parseXMLNoRoot)
  * when the <profiles> element is an xml child element of the <dds> root element.
  * 1. Check that elements <library_settings>, <participant>, <publisher>, <data_writer>, <subscriber>, <data_reader>,
  * <topic>, <requester>, <replier>, <types>, and <log> are read as xml child elements of the <profiles> root element.
- * 2. Check that it triggers an error when reading an wrong element.
+ * 2. Check that it triggers an error when reading a wrong element.
  */
 TEST_F(XMLParserTests, parseXMLProfilesRoot)
 {
@@ -1608,14 +1517,14 @@ TEST_F(XMLParserTests, parseXMLProfilesRoot)
         EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::parseXML_wrapper(xml_doc, root));
     }
 
-    // Check that it triggers an error when reading an wrong element.
+    // Check that it triggers an error when reading a wrong element.
     sprintf(xml, xml_p, "bad_element", "bad_element");
     ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
     EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::parseXML_wrapper(xml_doc, root));
 }
 
 /*
- * This test checks the postive cases of the TLS configuration via XML.
+ * This test checks the positive cases of the TLS configuration via XML.
  * 1. Check that parse_tls_config() return an XML_OK code for a valid configurations of <verify_paths>.
  */
 TEST_F(XMLParserTests, parseTLSConfigPositiveClauses)
@@ -2083,7 +1992,7 @@ TEST_F(XMLParserTests, parseTLSConfigOptions)
  * 1. Check that elements <transport_descriptors>, <library_settings>, <participant>, <publisher>, <data_writer>,
  * <subscriber>, <data_reader>, <topic>, <requester>, <replier>, and <types> are read as xml child elements of the
  * <profiles> root element.
- * 2. Check that it triggers an error when reading an wrong element.
+ * 2. Check that it triggers an error when reading a wrong element.
  */
 TEST_F(XMLParserTests, parseProfiles)
 {
@@ -2123,16 +2032,31 @@ TEST_F(XMLParserTests, parseProfiles)
         EXPECT_EQ(XMLP_ret::XML_OK, XMLParserTest::parseProfiles_wrapper(titleElement, *profilesNode));
     }
 
+    const char* xml_p_error =
+        "\
+        <profiles>\
+            <%s>\
+                <bad_element></bad_element>\
+            </%s>\
+        </profiles>\
+        ";
+
     std::vector<std::string> elements_error {
         "library_settings",
         "participant",
         "requester",
         "replier",
+        "publisher",
+        "data_writer",
+        "subscriber",
+        "data_reader",
+        "topic",
         "bad_element"
     };
+
     for (std::string e : elements_error)
     {
-        sprintf(xml, xml_p, e.c_str(), e.c_str());
+        sprintf(xml, xml_p_error, e.c_str(), e.c_str());
         ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
         titleElement = xml_doc.RootElement();
         profilesNode.reset(new BaseNode{ NodeType::PROFILES });
@@ -2153,7 +2077,7 @@ TEST_F(XMLParserTests, parseUnsupportedProfiles)
     tinyxml2::XMLElement* titleElement;
     std::unique_ptr<BaseNode> profilesNode;
 
-    mock_consumer = new eprosima::fastdds::dds::XMLMockConsumer(xml_mutex_);
+    mock_consumer = new eprosima::fastdds::dds::MockConsumer(xml_mutex_);
 
     eprosima::fastdds::dds::Log::RegisterConsumer(std::unique_ptr<eprosima::fastdds::dds::LogConsumer>(mock_consumer));
     eprosima::fastdds::dds::Log::SetVerbosity(eprosima::fastdds::dds::Log::Warning);
@@ -2186,7 +2110,7 @@ TEST_F(XMLParserTests, parseUnsupportedProfiles)
 
     helper_block_for_at_least_entries(3);
     auto consumed_entries = mock_consumer->ConsumedEntries();
-    // Expect 1 log error.
+    // Expect 3 log errors.
     uint32_t num_errors = 0;
     for (const auto& entry : consumed_entries)
     {

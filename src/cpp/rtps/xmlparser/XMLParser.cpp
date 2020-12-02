@@ -1,4 +1,4 @@
-// Copyright 2017 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+// Copyright 2020 Proyectos y Sistemas de Mantenimiento SL (eProsima).
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -1820,8 +1820,8 @@ XMLP_ret XMLParser::fillDataNode(
             // userData
             if (XMLP_ret::XML_OK != getXMLOctetVector(p_aux0, participant_node.get()->rtps.userData, ident))
             {
-                // Not supported for now - never returns Error
-                // return XMLP_ret::XML_ERROR;
+                // Not supported for now - returns Error
+                return XMLP_ret::XML_ERROR;
             }
         }
         else if (strcmp(name, PART_ID) == 0)

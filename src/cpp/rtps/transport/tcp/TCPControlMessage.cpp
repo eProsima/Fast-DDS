@@ -1,4 +1,4 @@
-// Copyright 2016 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+// Copyright 2020 Proyectos y Sistemas de Mantenimiento SL (eProsima).
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -21,8 +21,10 @@
 
 #ifdef _WIN32
 // Remove linker warning LNK4221 on Visual Studio
-namespace { char dummy; }
-#endif
+namespace {
+char dummy;
+} // namespace
+#endif // ifdef _WIN32
 
 #include <fastdds/rtps/transport/tcp/TCPControlMessage.h>
 #include <fastdds/rtps/common/Types.h>
@@ -35,28 +37,34 @@ using namespace eprosima::fastcdr::exception;
 
 #include <utility>
 
-namespace eprosima{
-namespace fastdds{
-namespace rtps{
+namespace eprosima {
+namespace fastdds {
+namespace rtps {
 
 using ProtocolVersion_t = fastrtps::rtps::ProtocolVersion_t;
 using VendorId_t = fastrtps::rtps::VendorId_t;
 using Locator_t = fastrtps::rtps::Locator_t;
 using SerializedPayload_t = fastrtps::rtps::SerializedPayload_t;
 
-static void operator<<(eprosima::fastcdr::Cdr &scdr, const ProtocolVersion_t &protocolVersion)
+static void operator <<(
+        eprosima::fastcdr::Cdr& scdr,
+        const ProtocolVersion_t& protocolVersion)
 {
     scdr << protocolVersion.m_major;
     scdr << protocolVersion.m_minor;
 }
 
-static void operator<<(eprosima::fastcdr::Cdr &scdr, const VendorId_t &vendorId)
+static void operator <<(
+        eprosima::fastcdr::Cdr& scdr,
+        const VendorId_t& vendorId)
 {
     scdr << vendorId[0];
     scdr << vendorId[1];
 }
 
-static void operator<<(eprosima::fastcdr::Cdr &scdr, const Locator_t &locator)
+static void operator <<(
+        eprosima::fastcdr::Cdr& scdr,
+        const Locator_t& locator)
 {
     scdr << locator.kind;
     scdr << locator.port;
@@ -66,19 +74,25 @@ static void operator<<(eprosima::fastcdr::Cdr &scdr, const Locator_t &locator)
     }
 }
 
-static void operator>>(eprosima::fastcdr::Cdr &scdr, ProtocolVersion_t &protocolVersion)
+static void operator >>(
+        eprosima::fastcdr::Cdr& scdr,
+        ProtocolVersion_t& protocolVersion)
 {
     scdr >> protocolVersion.m_major;
     scdr >> protocolVersion.m_minor;
 }
 
-static void operator>>(eprosima::fastcdr::Cdr &scdr, VendorId_t &vendorId)
+static void operator >>(
+        eprosima::fastcdr::Cdr& scdr,
+        VendorId_t& vendorId)
 {
     scdr >> vendorId[0];
     scdr >> vendorId[1];
 }
 
-static void operator>>(eprosima::fastcdr::Cdr &scdr, Locator_t &locator)
+static void operator >>(
+        eprosima::fastcdr::Cdr& scdr,
+        Locator_t& locator)
 {
     scdr >> locator.kind;
     scdr >> locator.port;
@@ -88,7 +102,8 @@ static void operator>>(eprosima::fastcdr::Cdr &scdr, Locator_t &locator)
     }
 }
 
-ConnectionRequest_t::ConnectionRequest_t() : m_vendorId(fastrtps::rtps::c_VendorId_eProsima)
+ConnectionRequest_t::ConnectionRequest_t()
+    : m_vendorId(fastrtps::rtps::c_VendorId_eProsima)
 {
 }
 
@@ -96,12 +111,16 @@ ConnectionRequest_t::~ConnectionRequest_t()
 {
 }
 
-size_t ConnectionRequest_t::getBufferCdrSerializedSize(const ConnectionRequest_t& data, size_t current_alignment)
+size_t ConnectionRequest_t::getBufferCdrSerializedSize(
+        const ConnectionRequest_t& data,
+        size_t current_alignment)
 {
     return getCdrSerializedSize(data, current_alignment) + 4;
 }
 
-size_t ConnectionRequest_t::getCdrSerializedSize(const ConnectionRequest_t& /*data*/, size_t current_alignment)
+size_t ConnectionRequest_t::getCdrSerializedSize(
+        const ConnectionRequest_t& /*data*/,
+        size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
 
@@ -115,23 +134,26 @@ size_t ConnectionRequest_t::getCdrSerializedSize(const ConnectionRequest_t& /*da
     return current_alignment - initial_alignment;
 }
 
-void ConnectionRequest_t::serialize(eprosima::fastcdr::Cdr &scdr) const
+void ConnectionRequest_t::serialize(
+        eprosima::fastcdr::Cdr& scdr) const
 {
     scdr << m_protocolVersion;
     scdr << m_vendorId;
     scdr << m_transportLocator;
 }
 
-void ConnectionRequest_t::deserialize(eprosima::fastcdr::Cdr &dcdr)
+void ConnectionRequest_t::deserialize(
+        eprosima::fastcdr::Cdr& dcdr)
 {
     dcdr >> m_protocolVersion;
     dcdr >> m_vendorId;
     dcdr >> m_transportLocator;
 }
 
-bool ConnectionRequest_t::serialize(SerializedPayload_t *payload)
+bool ConnectionRequest_t::serialize(
+        SerializedPayload_t* payload)
 {
-    ConnectionRequest_t *p_type = this;
+    ConnectionRequest_t* p_type = this;
     eprosima::fastcdr::FastBuffer fastbuffer((char*) payload->data, payload->max_size); // Object that manages the raw buffer.
     eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN,
             eprosima::fastcdr::Cdr::DDS_CDR); // Object that serializes the data.
@@ -143,7 +165,7 @@ bool ConnectionRequest_t::serialize(SerializedPayload_t *payload)
     {
         p_type->serialize(ser); // Serialize the object:
     }
-    catch(eprosima::fastcdr::exception::NotEnoughMemoryException& /*exception*/)
+    catch (eprosima::fastcdr::exception::NotEnoughMemoryException& /*exception*/)
     {
         return false;
     }
@@ -152,7 +174,8 @@ bool ConnectionRequest_t::serialize(SerializedPayload_t *payload)
     return true;
 }
 
-bool ConnectionRequest_t::deserialize(SerializedPayload_t* payload)
+bool ConnectionRequest_t::deserialize(
+        SerializedPayload_t* payload)
 {
     ConnectionRequest_t* p_type = this;     //Convert DATA to pointer of your type
     eprosima::fastcdr::FastBuffer fastbuffer((char*) payload->data, payload->length + 4); // Object that manages the raw buffer.
@@ -166,7 +189,7 @@ bool ConnectionRequest_t::deserialize(SerializedPayload_t* payload)
     {
         p_type->deserialize(deser); //Deserialize the object:
     }
-    catch(eprosima::fastcdr::exception::NotEnoughMemoryException& /*exception*/)
+    catch (eprosima::fastcdr::exception::NotEnoughMemoryException& /*exception*/)
     {
         return false;
     }
@@ -183,12 +206,16 @@ OpenLogicalPortRequest_t::~OpenLogicalPortRequest_t()
 {
 }
 
-size_t OpenLogicalPortRequest_t::getBufferCdrSerializedSize(const OpenLogicalPortRequest_t& data, size_t current_alignment)
+size_t OpenLogicalPortRequest_t::getBufferCdrSerializedSize(
+        const OpenLogicalPortRequest_t& data,
+        size_t current_alignment)
 {
     return getCdrSerializedSize(data, current_alignment) + 4;
 }
 
-size_t OpenLogicalPortRequest_t::getCdrSerializedSize(const OpenLogicalPortRequest_t& /*data*/, size_t current_alignment)
+size_t OpenLogicalPortRequest_t::getCdrSerializedSize(
+        const OpenLogicalPortRequest_t& /*data*/,
+        size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
 
@@ -198,19 +225,22 @@ size_t OpenLogicalPortRequest_t::getCdrSerializedSize(const OpenLogicalPortReque
     return current_alignment - initial_alignment;
 }
 
-void OpenLogicalPortRequest_t::serialize(eprosima::fastcdr::Cdr &scdr) const
+void OpenLogicalPortRequest_t::serialize(
+        eprosima::fastcdr::Cdr& scdr) const
 {
     scdr << m_logicalPort;
 }
 
-void OpenLogicalPortRequest_t::deserialize(eprosima::fastcdr::Cdr &dcdr)
+void OpenLogicalPortRequest_t::deserialize(
+        eprosima::fastcdr::Cdr& dcdr)
 {
     dcdr >> m_logicalPort;
 }
 
-bool OpenLogicalPortRequest_t::serialize(SerializedPayload_t *payload)
+bool OpenLogicalPortRequest_t::serialize(
+        SerializedPayload_t* payload)
 {
-    OpenLogicalPortRequest_t *p_type = this;
+    OpenLogicalPortRequest_t* p_type = this;
     eprosima::fastcdr::FastBuffer fastbuffer((char*) payload->data, payload->max_size); // Object that manages the raw buffer.
     eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN,
             eprosima::fastcdr::Cdr::DDS_CDR); // Object that serializes the data.
@@ -222,7 +252,7 @@ bool OpenLogicalPortRequest_t::serialize(SerializedPayload_t *payload)
     {
         p_type->serialize(ser); // Serialize the object:
     }
-    catch(eprosima::fastcdr::exception::NotEnoughMemoryException& /*exception*/)
+    catch (eprosima::fastcdr::exception::NotEnoughMemoryException& /*exception*/)
     {
         return false;
     }
@@ -231,7 +261,8 @@ bool OpenLogicalPortRequest_t::serialize(SerializedPayload_t *payload)
     return true;
 }
 
-bool OpenLogicalPortRequest_t::deserialize(SerializedPayload_t* payload)
+bool OpenLogicalPortRequest_t::deserialize(
+        SerializedPayload_t* payload)
 {
     OpenLogicalPortRequest_t* p_type = this;     //Convert DATA to pointer of your type
     eprosima::fastcdr::FastBuffer fastbuffer((char*) payload->data, payload->length + 4); // Object that manages the raw buffer.
@@ -245,7 +276,7 @@ bool OpenLogicalPortRequest_t::deserialize(SerializedPayload_t* payload)
     {
         p_type->deserialize(deser); //Deserialize the object:
     }
-    catch(eprosima::fastcdr::exception::NotEnoughMemoryException& /*exception*/)
+    catch (eprosima::fastcdr::exception::NotEnoughMemoryException& /*exception*/)
     {
         return false;
     }
@@ -261,35 +292,43 @@ CheckLogicalPortsRequest_t::~CheckLogicalPortsRequest_t()
 {
 }
 
-size_t CheckLogicalPortsRequest_t::getBufferCdrSerializedSize(const CheckLogicalPortsRequest_t& data, size_t current_alignment)
+size_t CheckLogicalPortsRequest_t::getBufferCdrSerializedSize(
+        const CheckLogicalPortsRequest_t& data,
+        size_t current_alignment)
 {
     return getCdrSerializedSize(data, current_alignment) + 4;
 }
 
-size_t CheckLogicalPortsRequest_t::getCdrSerializedSize(const CheckLogicalPortsRequest_t& data, size_t current_alignment)
+size_t CheckLogicalPortsRequest_t::getCdrSerializedSize(
+        const CheckLogicalPortsRequest_t& data,
+        size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
 
     current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
-    current_alignment += (data.logicalPortsRange().size() * 2) + eprosima::fastcdr::Cdr::alignment(current_alignment, 2);
+    current_alignment += (data.logicalPortsRange().size() * 2) +
+            eprosima::fastcdr::Cdr::alignment(current_alignment, 2);
 
 
     return current_alignment - initial_alignment;
 }
 
-void CheckLogicalPortsRequest_t::serialize(eprosima::fastcdr::Cdr &scdr) const
+void CheckLogicalPortsRequest_t::serialize(
+        eprosima::fastcdr::Cdr& scdr) const
 {
     scdr << m_logicalPortsRange;
 }
 
-void CheckLogicalPortsRequest_t::deserialize(eprosima::fastcdr::Cdr &dcdr)
+void CheckLogicalPortsRequest_t::deserialize(
+        eprosima::fastcdr::Cdr& dcdr)
 {
     dcdr >> m_logicalPortsRange;
 }
 
-bool CheckLogicalPortsRequest_t::serialize(SerializedPayload_t *payload)
+bool CheckLogicalPortsRequest_t::serialize(
+        SerializedPayload_t* payload)
 {
-    CheckLogicalPortsRequest_t *p_type = this;
+    CheckLogicalPortsRequest_t* p_type = this;
     eprosima::fastcdr::FastBuffer fastbuffer((char*) payload->data, payload->max_size); // Object that manages the raw buffer.
     eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN,
             eprosima::fastcdr::Cdr::DDS_CDR); // Object that serializes the data.
@@ -301,7 +340,7 @@ bool CheckLogicalPortsRequest_t::serialize(SerializedPayload_t *payload)
     {
         p_type->serialize(ser); // Serialize the object:
     }
-    catch(eprosima::fastcdr::exception::NotEnoughMemoryException& /*exception*/)
+    catch (eprosima::fastcdr::exception::NotEnoughMemoryException& /*exception*/)
     {
         return false;
     }
@@ -310,7 +349,8 @@ bool CheckLogicalPortsRequest_t::serialize(SerializedPayload_t *payload)
     return true;
 }
 
-bool CheckLogicalPortsRequest_t::deserialize(SerializedPayload_t* payload)
+bool CheckLogicalPortsRequest_t::deserialize(
+        SerializedPayload_t* payload)
 {
     CheckLogicalPortsRequest_t* p_type = this;     //Convert DATA to pointer of your type
     eprosima::fastcdr::FastBuffer fastbuffer((char*) payload->data, payload->length + 4); // Object that manages the raw buffer.
@@ -324,7 +364,7 @@ bool CheckLogicalPortsRequest_t::deserialize(SerializedPayload_t* payload)
     {
         p_type->deserialize(deser); //Deserialize the object:
     }
-    catch(eprosima::fastcdr::exception::NotEnoughMemoryException& /*exception*/)
+    catch (eprosima::fastcdr::exception::NotEnoughMemoryException& /*exception*/)
     {
         return false;
     }
@@ -341,12 +381,16 @@ KeepAliveRequest_t::~KeepAliveRequest_t()
 {
 }
 
-size_t KeepAliveRequest_t::getBufferCdrSerializedSize(const KeepAliveRequest_t& data, size_t current_alignment)
+size_t KeepAliveRequest_t::getBufferCdrSerializedSize(
+        const KeepAliveRequest_t& data,
+        size_t current_alignment)
 {
     return getCdrSerializedSize(data, current_alignment) + 4;
 }
 
-size_t KeepAliveRequest_t::getCdrSerializedSize(const KeepAliveRequest_t& /*data*/, size_t current_alignment)
+size_t KeepAliveRequest_t::getCdrSerializedSize(
+        const KeepAliveRequest_t& /*data*/,
+        size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
 
@@ -356,19 +400,22 @@ size_t KeepAliveRequest_t::getCdrSerializedSize(const KeepAliveRequest_t& /*data
     return current_alignment - initial_alignment;
 }
 
-void KeepAliveRequest_t::serialize(eprosima::fastcdr::Cdr &scdr) const
+void KeepAliveRequest_t::serialize(
+        eprosima::fastcdr::Cdr& scdr) const
 {
     scdr << m_locator;
 }
 
-void KeepAliveRequest_t::deserialize(eprosima::fastcdr::Cdr &dcdr)
+void KeepAliveRequest_t::deserialize(
+        eprosima::fastcdr::Cdr& dcdr)
 {
     dcdr >> m_locator;
 }
 
-bool KeepAliveRequest_t::serialize(SerializedPayload_t *payload)
+bool KeepAliveRequest_t::serialize(
+        SerializedPayload_t* payload)
 {
-    KeepAliveRequest_t *p_type = this;
+    KeepAliveRequest_t* p_type = this;
     eprosima::fastcdr::FastBuffer fastbuffer((char*) payload->data, payload->max_size); // Object that manages the raw buffer.
     eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN,
             eprosima::fastcdr::Cdr::DDS_CDR); // Object that serializes the data.
@@ -380,7 +427,7 @@ bool KeepAliveRequest_t::serialize(SerializedPayload_t *payload)
     {
         p_type->serialize(ser); // Serialize the object:
     }
-    catch(eprosima::fastcdr::exception::NotEnoughMemoryException& /*exception*/)
+    catch (eprosima::fastcdr::exception::NotEnoughMemoryException& /*exception*/)
     {
         return false;
     }
@@ -389,7 +436,8 @@ bool KeepAliveRequest_t::serialize(SerializedPayload_t *payload)
     return true;
 }
 
-bool KeepAliveRequest_t::deserialize(SerializedPayload_t* payload)
+bool KeepAliveRequest_t::deserialize(
+        SerializedPayload_t* payload)
 {
     KeepAliveRequest_t* p_type = this;     //Convert DATA to pointer of your type
     eprosima::fastcdr::FastBuffer fastbuffer((char*) payload->data, payload->length + 4); // Object that manages the raw buffer.
@@ -403,7 +451,7 @@ bool KeepAliveRequest_t::deserialize(SerializedPayload_t* payload)
     {
         p_type->deserialize(deser); //Deserialize the object:
     }
-    catch(eprosima::fastcdr::exception::NotEnoughMemoryException& /*exception*/)
+    catch (eprosima::fastcdr::exception::NotEnoughMemoryException& /*exception*/)
     {
         return false;
     }
@@ -420,12 +468,16 @@ LogicalPortIsClosedRequest_t::~LogicalPortIsClosedRequest_t()
 {
 }
 
-size_t LogicalPortIsClosedRequest_t::getBufferCdrSerializedSize(const LogicalPortIsClosedRequest_t& data, size_t current_alignment)
+size_t LogicalPortIsClosedRequest_t::getBufferCdrSerializedSize(
+        const LogicalPortIsClosedRequest_t& data,
+        size_t current_alignment)
 {
     return getCdrSerializedSize(data, current_alignment) + 4;
 }
 
-size_t LogicalPortIsClosedRequest_t::getCdrSerializedSize(const LogicalPortIsClosedRequest_t& /*data*/, size_t current_alignment)
+size_t LogicalPortIsClosedRequest_t::getCdrSerializedSize(
+        const LogicalPortIsClosedRequest_t& /*data*/,
+        size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
 
@@ -435,19 +487,22 @@ size_t LogicalPortIsClosedRequest_t::getCdrSerializedSize(const LogicalPortIsClo
     return current_alignment - initial_alignment;
 }
 
-void LogicalPortIsClosedRequest_t::serialize(eprosima::fastcdr::Cdr &scdr) const
+void LogicalPortIsClosedRequest_t::serialize(
+        eprosima::fastcdr::Cdr& scdr) const
 {
     scdr << m_logicalPort;
 }
 
-void LogicalPortIsClosedRequest_t::deserialize(eprosima::fastcdr::Cdr &dcdr)
+void LogicalPortIsClosedRequest_t::deserialize(
+        eprosima::fastcdr::Cdr& dcdr)
 {
     dcdr >> m_logicalPort;
 }
 
-bool LogicalPortIsClosedRequest_t::serialize(SerializedPayload_t *payload)
+bool LogicalPortIsClosedRequest_t::serialize(
+        SerializedPayload_t* payload)
 {
-    LogicalPortIsClosedRequest_t *p_type = this;
+    LogicalPortIsClosedRequest_t* p_type = this;
     eprosima::fastcdr::FastBuffer fastbuffer((char*) payload->data, payload->max_size); // Object that manages the raw buffer.
     eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN,
             eprosima::fastcdr::Cdr::DDS_CDR); // Object that serializes the data.
@@ -459,7 +514,7 @@ bool LogicalPortIsClosedRequest_t::serialize(SerializedPayload_t *payload)
     {
         p_type->serialize(ser); // Serialize the object:
     }
-    catch(eprosima::fastcdr::exception::NotEnoughMemoryException& /*exception*/)
+    catch (eprosima::fastcdr::exception::NotEnoughMemoryException& /*exception*/)
     {
         return false;
     }
@@ -468,7 +523,8 @@ bool LogicalPortIsClosedRequest_t::serialize(SerializedPayload_t *payload)
     return true;
 }
 
-bool LogicalPortIsClosedRequest_t::deserialize(SerializedPayload_t* payload)
+bool LogicalPortIsClosedRequest_t::deserialize(
+        SerializedPayload_t* payload)
 {
     LogicalPortIsClosedRequest_t* p_type = this;     //Convert DATA to pointer of your type
     eprosima::fastcdr::FastBuffer fastbuffer((char*) payload->data, payload->length + 4); // Object that manages the raw buffer.
@@ -482,7 +538,7 @@ bool LogicalPortIsClosedRequest_t::deserialize(SerializedPayload_t* payload)
     {
         p_type->deserialize(deser); //Deserialize the object:
     }
-    catch(eprosima::fastcdr::exception::NotEnoughMemoryException& /*exception*/)
+    catch (eprosima::fastcdr::exception::NotEnoughMemoryException& /*exception*/)
     {
         return false;
     }
@@ -499,12 +555,16 @@ BindConnectionResponse_t::~BindConnectionResponse_t()
 {
 }
 
-size_t BindConnectionResponse_t::getBufferCdrSerializedSize(const BindConnectionResponse_t& data, size_t current_alignment)
+size_t BindConnectionResponse_t::getBufferCdrSerializedSize(
+        const BindConnectionResponse_t& data,
+        size_t current_alignment)
 {
     return getCdrSerializedSize(data, current_alignment) + 4;
 }
 
-size_t BindConnectionResponse_t::getCdrSerializedSize(const BindConnectionResponse_t& /*data*/, size_t current_alignment)
+size_t BindConnectionResponse_t::getCdrSerializedSize(
+        const BindConnectionResponse_t& /*data*/,
+        size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
 
@@ -514,19 +574,22 @@ size_t BindConnectionResponse_t::getCdrSerializedSize(const BindConnectionRespon
     return current_alignment - initial_alignment;
 }
 
-void BindConnectionResponse_t::serialize(eprosima::fastcdr::Cdr &scdr) const
+void BindConnectionResponse_t::serialize(
+        eprosima::fastcdr::Cdr& scdr) const
 {
     scdr << m_locator;
 }
 
-void BindConnectionResponse_t::deserialize(eprosima::fastcdr::Cdr &dcdr)
+void BindConnectionResponse_t::deserialize(
+        eprosima::fastcdr::Cdr& dcdr)
 {
     dcdr >> m_locator;
 }
 
-bool BindConnectionResponse_t::serialize(SerializedPayload_t *payload)
+bool BindConnectionResponse_t::serialize(
+        SerializedPayload_t* payload)
 {
-    BindConnectionResponse_t *p_type = this;
+    BindConnectionResponse_t* p_type = this;
     eprosima::fastcdr::FastBuffer fastbuffer((char*) payload->data, payload->max_size); // Object that manages the raw buffer.
     eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN,
             eprosima::fastcdr::Cdr::DDS_CDR); // Object that serializes the data.
@@ -538,7 +601,7 @@ bool BindConnectionResponse_t::serialize(SerializedPayload_t *payload)
     {
         p_type->serialize(ser); // Serialize the object:
     }
-    catch(eprosima::fastcdr::exception::NotEnoughMemoryException& /*exception*/)
+    catch (eprosima::fastcdr::exception::NotEnoughMemoryException& /*exception*/)
     {
         return false;
     }
@@ -547,7 +610,8 @@ bool BindConnectionResponse_t::serialize(SerializedPayload_t *payload)
     return true;
 }
 
-bool BindConnectionResponse_t::deserialize(SerializedPayload_t* payload)
+bool BindConnectionResponse_t::deserialize(
+        SerializedPayload_t* payload)
 {
     BindConnectionResponse_t* p_type = this;     //Convert DATA to pointer of your type
     eprosima::fastcdr::FastBuffer fastbuffer((char*) payload->data, payload->length + 4); // Object that manages the raw buffer.
@@ -561,7 +625,7 @@ bool BindConnectionResponse_t::deserialize(SerializedPayload_t* payload)
     {
         p_type->deserialize(deser); //Deserialize the object:
     }
-    catch(eprosima::fastcdr::exception::NotEnoughMemoryException& /*exception*/)
+    catch (eprosima::fastcdr::exception::NotEnoughMemoryException& /*exception*/)
     {
         return false;
     }
@@ -577,35 +641,43 @@ CheckLogicalPortsResponse_t::~CheckLogicalPortsResponse_t()
 {
 }
 
-size_t CheckLogicalPortsResponse_t::getBufferCdrSerializedSize(const CheckLogicalPortsResponse_t& data, size_t current_alignment)
+size_t CheckLogicalPortsResponse_t::getBufferCdrSerializedSize(
+        const CheckLogicalPortsResponse_t& data,
+        size_t current_alignment)
 {
     return getCdrSerializedSize(data, current_alignment) + 4;
 }
 
-size_t CheckLogicalPortsResponse_t::getCdrSerializedSize(const CheckLogicalPortsResponse_t& data, size_t current_alignment)
+size_t CheckLogicalPortsResponse_t::getCdrSerializedSize(
+        const CheckLogicalPortsResponse_t& data,
+        size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
 
     current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
-    current_alignment += (data.availableLogicalPorts().size() * 2) + eprosima::fastcdr::Cdr::alignment(current_alignment, 2);
+    current_alignment += (data.availableLogicalPorts().size() * 2) + eprosima::fastcdr::Cdr::alignment(
+        current_alignment, 2);
 
 
     return current_alignment - initial_alignment;
 }
 
-void CheckLogicalPortsResponse_t::serialize(eprosima::fastcdr::Cdr &scdr) const
+void CheckLogicalPortsResponse_t::serialize(
+        eprosima::fastcdr::Cdr& scdr) const
 {
     scdr << m_availableLogicalPorts;
 }
 
-void CheckLogicalPortsResponse_t::deserialize(eprosima::fastcdr::Cdr &dcdr)
+void CheckLogicalPortsResponse_t::deserialize(
+        eprosima::fastcdr::Cdr& dcdr)
 {
     dcdr >> m_availableLogicalPorts;
 }
 
-bool CheckLogicalPortsResponse_t::serialize(SerializedPayload_t *payload)
+bool CheckLogicalPortsResponse_t::serialize(
+        SerializedPayload_t* payload)
 {
-    CheckLogicalPortsResponse_t *p_type = this;
+    CheckLogicalPortsResponse_t* p_type = this;
     eprosima::fastcdr::FastBuffer fastbuffer((char*) payload->data, payload->max_size); // Object that manages the raw buffer.
     eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN,
             eprosima::fastcdr::Cdr::DDS_CDR); // Object that serializes the data.
@@ -617,7 +689,7 @@ bool CheckLogicalPortsResponse_t::serialize(SerializedPayload_t *payload)
     {
         p_type->serialize(ser); // Serialize the object:
     }
-    catch(eprosima::fastcdr::exception::NotEnoughMemoryException& /*exception*/)
+    catch (eprosima::fastcdr::exception::NotEnoughMemoryException& /*exception*/)
     {
         return false;
     }
@@ -626,7 +698,8 @@ bool CheckLogicalPortsResponse_t::serialize(SerializedPayload_t *payload)
     return true;
 }
 
-bool CheckLogicalPortsResponse_t::deserialize(SerializedPayload_t* payload)
+bool CheckLogicalPortsResponse_t::deserialize(
+        SerializedPayload_t* payload)
 {
     CheckLogicalPortsResponse_t* p_type = this;     //Convert DATA to pointer of your type
     eprosima::fastcdr::FastBuffer fastbuffer((char*) payload->data, payload->length + 4); // Object that manages the raw buffer.
@@ -640,7 +713,7 @@ bool CheckLogicalPortsResponse_t::deserialize(SerializedPayload_t* payload)
     {
         p_type->deserialize(deser); //Deserialize the object:
     }
-    catch(eprosima::fastcdr::exception::NotEnoughMemoryException& /*exception*/)
+    catch (eprosima::fastcdr::exception::NotEnoughMemoryException& /*exception*/)
     {
         return false;
     }
@@ -648,6 +721,6 @@ bool CheckLogicalPortsResponse_t::deserialize(SerializedPayload_t* payload)
     return true;
 }
 
-}
-}
+} // namespace rtps
+} // namespace fastdds
 } // Namespaces

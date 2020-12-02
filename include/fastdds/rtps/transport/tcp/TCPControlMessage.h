@@ -1,4 +1,4 @@
-// Copyright 2019 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+// Copyright 2020 Proyectos y Sistemas de Mantenimiento SL (eProsima).
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -30,10 +30,10 @@
 #define eProsima_user_DllExport __declspec( dllexport )
 #else
 #define eProsima_user_DllExport
-#endif
+#endif // if defined(EPROSIMA_USER_DLL_EXPORT)
 #else
 #define eProsima_user_DllExport
-#endif
+#endif // if defined(_WIN32)
 
 #if defined(_WIN32)
 #if defined(EPROSIMA_USER_DLL_EXPORT)
@@ -44,23 +44,21 @@
 #endif // tcp_idl_SOURCE
 #else
 #define tcp_idl_DllAPI
-#endif
+#endif // if defined(EPROSIMA_USER_DLL_EXPORT)
 #else
 #define tcp_idl_DllAPI
 #endif // _WIN32
 
-namespace eprosima
-{
-    namespace fastcdr
-    {
-        class Cdr;
-    }
-}
+namespace eprosima {
+namespace fastcdr {
+class Cdr;
+} // namespace fastcdr
+} // namespace eprosima
 
 
-namespace eprosima{
-namespace fastdds{
-namespace rtps{
+namespace eprosima {
+namespace fastdds {
+namespace rtps {
 
 /*!
  * @brief This class represents the enumeration TCPCommonKind defined by the user in the IDL file.
@@ -97,7 +95,8 @@ public:
      * @brief This function sets a value in member protocolVersion
      * @param _protocolVersion New value for member protocolVersion
      */
-    inline eProsima_user_DllExport void protocolVersion(const fastrtps::rtps::ProtocolVersion_t& _protocolVersion)
+    inline eProsima_user_DllExport void protocolVersion(
+            const fastrtps::rtps::ProtocolVersion_t& _protocolVersion)
     {
         m_protocolVersion = _protocolVersion;
     }
@@ -119,11 +118,13 @@ public:
     {
         return m_protocolVersion;
     }
+
     /*!
      * @brief This function sets a value in member vendorId
      * @param _vendorId New value for member vendorId
      */
-    inline eProsima_user_DllExport void vendorId(const fastrtps::rtps::VendorId_t& _vendorId)
+    inline eProsima_user_DllExport void vendorId(
+            const fastrtps::rtps::VendorId_t& _vendorId)
     {
         m_vendorId = _vendorId;
     }
@@ -145,11 +146,13 @@ public:
     {
         return m_vendorId;
     }
+
     /*!
      * @brief This function sets a value in member transportLocator
      * @param _transportLocator New value for member transportLocator
      */
-    inline eProsima_user_DllExport void transportLocator(const fastrtps::rtps::Locator_t& _transportLocator)
+    inline eProsima_user_DllExport void transportLocator(
+            const fastrtps::rtps::Locator_t& _transportLocator)
     {
         m_transportLocator = _transportLocator;
     }
@@ -180,25 +183,32 @@ public:
      * @param current_alignment Buffer alignment.
      * @return Serialized size.
      */
-    eProsima_user_DllExport static size_t getCdrSerializedSize(const ConnectionRequest_t& data, size_t current_alignment = 0);
+    eProsima_user_DllExport static size_t getCdrSerializedSize(
+            const ConnectionRequest_t& data,
+            size_t current_alignment = 0);
 
 
     /*!
      * @brief This function serializes an object using CDR serialization.
      * @param cdr CDR serialization object.
      */
-    eProsima_user_DllExport void serialize(eprosima::fastcdr::Cdr &cdr) const;
+    eProsima_user_DllExport void serialize(
+            eprosima::fastcdr::Cdr& cdr) const;
 
     /*!
      * @brief This function deserializes an object using CDR serialization.
      * @param cdr CDR serialization object.
      */
-    eProsima_user_DllExport void deserialize(eprosima::fastcdr::Cdr &cdr);
+    eProsima_user_DllExport void deserialize(
+            eprosima::fastcdr::Cdr& cdr);
 
-    bool serialize(fastrtps::rtps::SerializedPayload_t *payload);
-    bool deserialize(fastrtps::rtps::SerializedPayload_t *payload);
+    bool serialize(
+            fastrtps::rtps::SerializedPayload_t* payload);
+    bool deserialize(
+            fastrtps::rtps::SerializedPayload_t* payload);
 
 private:
+
     fastrtps::rtps::ProtocolVersion_t m_protocolVersion;
     fastrtps::rtps::VendorId_t m_vendorId;
     fastrtps::rtps::Locator_t m_transportLocator;
@@ -225,7 +235,8 @@ public:
      * @brief This function sets a value in member logicalPort
      * @param _logicalPort New value for member logicalPort
      */
-    inline eProsima_user_DllExport void logicalPort(uint16_t _logicalPort)
+    inline eProsima_user_DllExport void logicalPort(
+            uint16_t _logicalPort)
     {
         m_logicalPort = _logicalPort;
     }
@@ -256,25 +267,32 @@ public:
      * @param current_alignment Buffer alignment.
      * @return Serialized size.
      */
-    eProsima_user_DllExport static size_t getCdrSerializedSize(const OpenLogicalPortRequest_t& data, size_t current_alignment = 0);
+    eProsima_user_DllExport static size_t getCdrSerializedSize(
+            const OpenLogicalPortRequest_t& data,
+            size_t current_alignment = 0);
 
 
     /*!
      * @brief This function serializes an object using CDR serialization.
      * @param cdr CDR serialization object.
      */
-    eProsima_user_DllExport void serialize(eprosima::fastcdr::Cdr &cdr) const;
+    eProsima_user_DllExport void serialize(
+            eprosima::fastcdr::Cdr& cdr) const;
 
     /*!
      * @brief This function deserializes an object using CDR serialization.
      * @param cdr CDR serialization object.
      */
-    eProsima_user_DllExport void deserialize(eprosima::fastcdr::Cdr &cdr);
+    eProsima_user_DllExport void deserialize(
+            eprosima::fastcdr::Cdr& cdr);
 
-    bool serialize(fastrtps::rtps::SerializedPayload_t *payload);
-    bool deserialize(fastrtps::rtps::SerializedPayload_t *payload);
+    bool serialize(
+            fastrtps::rtps::SerializedPayload_t* payload);
+    bool deserialize(
+            fastrtps::rtps::SerializedPayload_t* payload);
 
 private:
+
     uint16_t m_logicalPort;
 };
 /*!
@@ -299,7 +317,8 @@ public:
      * @brief This function copies the value in member logicalPortsRange
      * @param _logicalPortsRange New value to be copied in member logicalPortsRange
      */
-    inline eProsima_user_DllExport void logicalPortsRange(const std::vector<uint16_t> &_logicalPortsRange)
+    inline eProsima_user_DllExport void logicalPortsRange(
+            const std::vector<uint16_t>& _logicalPortsRange)
     {
         m_logicalPortsRange = _logicalPortsRange;
     }
@@ -308,7 +327,8 @@ public:
      * @brief This function moves the value in member logicalPortsRange
      * @param _logicalPortsRange New value to be moved in member logicalPortsRange
      */
-    inline eProsima_user_DllExport void logicalPortsRange(std::vector<uint16_t> &&_logicalPortsRange)
+    inline eProsima_user_DllExport void logicalPortsRange(
+            std::vector<uint16_t>&& _logicalPortsRange)
     {
         m_logicalPortsRange = std::move(_logicalPortsRange);
     }
@@ -348,25 +368,32 @@ public:
      * @param current_alignment Buffer alignment.
      * @return Serialized size.
      */
-    eProsima_user_DllExport static size_t getCdrSerializedSize(const CheckLogicalPortsRequest_t& data, size_t current_alignment = 0);
+    eProsima_user_DllExport static size_t getCdrSerializedSize(
+            const CheckLogicalPortsRequest_t& data,
+            size_t current_alignment = 0);
 
 
     /*!
      * @brief This function serializes an object using CDR serialization.
      * @param cdr CDR serialization object.
      */
-    eProsima_user_DllExport void serialize(eprosima::fastcdr::Cdr &cdr) const;
+    eProsima_user_DllExport void serialize(
+            eprosima::fastcdr::Cdr& cdr) const;
 
     /*!
      * @brief This function deserializes an object using CDR serialization.
      * @param cdr CDR serialization object.
      */
-    eProsima_user_DllExport void deserialize(eprosima::fastcdr::Cdr &cdr);
+    eProsima_user_DllExport void deserialize(
+            eprosima::fastcdr::Cdr& cdr);
 
-    bool serialize(fastrtps::rtps::SerializedPayload_t *payload);
-    bool deserialize(fastrtps::rtps::SerializedPayload_t *payload);
+    bool serialize(
+            fastrtps::rtps::SerializedPayload_t* payload);
+    bool deserialize(
+            fastrtps::rtps::SerializedPayload_t* payload);
 
 private:
+
     std::vector<uint16_t> m_logicalPortsRange;
 };
 /*!
@@ -391,7 +418,8 @@ public:
      * @brief This function sets a value in member locator
      * @param _locator New value for member locator
      */
-    inline eProsima_user_DllExport void locator(const fastrtps::rtps::Locator_t& _locator)
+    inline eProsima_user_DllExport void locator(
+            const fastrtps::rtps::Locator_t& _locator)
     {
         m_locator = _locator;
     }
@@ -422,25 +450,32 @@ public:
      * @param current_alignment Buffer alignment.
      * @return Serialized size.
      */
-    eProsima_user_DllExport static size_t getCdrSerializedSize(const KeepAliveRequest_t& data, size_t current_alignment = 0);
+    eProsima_user_DllExport static size_t getCdrSerializedSize(
+            const KeepAliveRequest_t& data,
+            size_t current_alignment = 0);
 
 
     /*!
      * @brief This function serializes an object using CDR serialization.
      * @param cdr CDR serialization object.
      */
-    eProsima_user_DllExport void serialize(eprosima::fastcdr::Cdr &cdr) const;
+    eProsima_user_DllExport void serialize(
+            eprosima::fastcdr::Cdr& cdr) const;
 
     /*!
      * @brief This function deserializes an object using CDR serialization.
      * @param cdr CDR serialization object.
      */
-    eProsima_user_DllExport void deserialize(eprosima::fastcdr::Cdr &cdr);
+    eProsima_user_DllExport void deserialize(
+            eprosima::fastcdr::Cdr& cdr);
 
-    bool serialize(fastrtps::rtps::SerializedPayload_t *payload);
-    bool deserialize(fastrtps::rtps::SerializedPayload_t *payload);
+    bool serialize(
+            fastrtps::rtps::SerializedPayload_t* payload);
+    bool deserialize(
+            fastrtps::rtps::SerializedPayload_t* payload);
 
 private:
+
     fastrtps::rtps::Locator_t m_locator;
 };
 
@@ -466,7 +501,8 @@ public:
      * @brief This function sets a value in member logicalPort
      * @param _logicalPort New value for member logicalPort
      */
-    inline eProsima_user_DllExport void logicalPort(uint16_t _logicalPort)
+    inline eProsima_user_DllExport void logicalPort(
+            uint16_t _logicalPort)
     {
         m_logicalPort = _logicalPort;
     }
@@ -497,25 +533,32 @@ public:
      * @param current_alignment Buffer alignment.
      * @return Serialized size.
      */
-    eProsima_user_DllExport static size_t getCdrSerializedSize(const LogicalPortIsClosedRequest_t& data, size_t current_alignment = 0);
+    eProsima_user_DllExport static size_t getCdrSerializedSize(
+            const LogicalPortIsClosedRequest_t& data,
+            size_t current_alignment = 0);
 
 
     /*!
      * @brief This function serializes an object using CDR serialization.
      * @param cdr CDR serialization object.
      */
-    eProsima_user_DllExport void serialize(eprosima::fastcdr::Cdr &cdr) const;
+    eProsima_user_DllExport void serialize(
+            eprosima::fastcdr::Cdr& cdr) const;
 
     /*!
      * @brief This function deserializes an object using CDR serialization.
      * @param cdr CDR serialization object.
      */
-    eProsima_user_DllExport void deserialize(eprosima::fastcdr::Cdr &cdr);
+    eProsima_user_DllExport void deserialize(
+            eprosima::fastcdr::Cdr& cdr);
 
-    bool serialize(fastrtps::rtps::SerializedPayload_t *payload);
-    bool deserialize(fastrtps::rtps::SerializedPayload_t *payload);
+    bool serialize(
+            fastrtps::rtps::SerializedPayload_t* payload);
+    bool deserialize(
+            fastrtps::rtps::SerializedPayload_t* payload);
 
 private:
+
     uint16_t m_logicalPort;
 };
 
@@ -556,7 +599,8 @@ public:
      * @brief This function sets a value in member locator
      * @param _locator New value for member locator
      */
-    inline eProsima_user_DllExport void locator(const fastrtps::rtps::Locator_t& _locator)
+    inline eProsima_user_DllExport void locator(
+            const fastrtps::rtps::Locator_t& _locator)
     {
         m_locator = _locator;
     }
@@ -587,25 +631,32 @@ public:
      * @param current_alignment Buffer alignment.
      * @return Serialized size.
      */
-    eProsima_user_DllExport static size_t getCdrSerializedSize(const BindConnectionResponse_t& data, size_t current_alignment = 0);
+    eProsima_user_DllExport static size_t getCdrSerializedSize(
+            const BindConnectionResponse_t& data,
+            size_t current_alignment = 0);
 
 
     /*!
      * @brief This function serializes an object using CDR serialization.
      * @param cdr CDR serialization object.
      */
-    eProsima_user_DllExport void serialize(eprosima::fastcdr::Cdr &cdr) const;
+    eProsima_user_DllExport void serialize(
+            eprosima::fastcdr::Cdr& cdr) const;
 
     /*!
      * @brief This function deserializes an object using CDR serialization.
      * @param cdr CDR serialization object.
      */
-    eProsima_user_DllExport void deserialize(eprosima::fastcdr::Cdr &cdr);
+    eProsima_user_DllExport void deserialize(
+            eprosima::fastcdr::Cdr& cdr);
 
-    bool serialize(fastrtps::rtps::SerializedPayload_t *payload);
-    bool deserialize(fastrtps::rtps::SerializedPayload_t *payload);
+    bool serialize(
+            fastrtps::rtps::SerializedPayload_t* payload);
+    bool deserialize(
+            fastrtps::rtps::SerializedPayload_t* payload);
 
 private:
+
     fastrtps::rtps::Locator_t m_locator;
 };
 /*!
@@ -630,7 +681,8 @@ public:
      * @brief This function copies the value in member availableLogicalPorts
      * @param _availableLogicalPorts New value to be copied in member availableLogicalPorts
      */
-    inline eProsima_user_DllExport void availableLogicalPorts(const std::vector<uint16_t> &_availableLogicalPorts)
+    inline eProsima_user_DllExport void availableLogicalPorts(
+            const std::vector<uint16_t>& _availableLogicalPorts)
     {
         m_availableLogicalPorts = _availableLogicalPorts;
     }
@@ -639,7 +691,8 @@ public:
      * @brief This function moves the value in member availableLogicalPorts
      * @param _availableLogicalPorts New value to be moved in member availableLogicalPorts
      */
-    inline eProsima_user_DllExport void availableLogicalPorts(std::vector<uint16_t> &&_availableLogicalPorts)
+    inline eProsima_user_DllExport void availableLogicalPorts(
+            std::vector<uint16_t>&& _availableLogicalPorts)
     {
         m_availableLogicalPorts = std::move(_availableLogicalPorts);
     }
@@ -679,30 +732,37 @@ public:
      * @param current_alignment Buffer alignment.
      * @return Serialized size.
      */
-    eProsima_user_DllExport static size_t getCdrSerializedSize(const CheckLogicalPortsResponse_t& data, size_t current_alignment = 0);
+    eProsima_user_DllExport static size_t getCdrSerializedSize(
+            const CheckLogicalPortsResponse_t& data,
+            size_t current_alignment = 0);
 
 
     /*!
      * @brief This function serializes an object using CDR serialization.
      * @param cdr CDR serialization object.
      */
-    eProsima_user_DllExport void serialize(eprosima::fastcdr::Cdr &cdr) const;
+    eProsima_user_DllExport void serialize(
+            eprosima::fastcdr::Cdr& cdr) const;
 
     /*!
      * @brief This function deserializes an object using CDR serialization.
      * @param cdr CDR serialization object.
      */
-    eProsima_user_DllExport void deserialize(eprosima::fastcdr::Cdr &cdr);
+    eProsima_user_DllExport void deserialize(
+            eprosima::fastcdr::Cdr& cdr);
 
-    bool serialize(fastrtps::rtps::SerializedPayload_t *payload);
-    bool deserialize(fastrtps::rtps::SerializedPayload_t *payload);
+    bool serialize(
+            fastrtps::rtps::SerializedPayload_t* payload);
+    bool deserialize(
+            fastrtps::rtps::SerializedPayload_t* payload);
 
 private:
+
     std::vector<uint16_t> m_availableLogicalPorts;
 };
 
-}
-}
+} // namespace rtps
+} // namespace fastdds
 } // Namespaces
 
 #endif // _FASTDDS_TCP_CONTROL_MESSAGE_H_

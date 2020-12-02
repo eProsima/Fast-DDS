@@ -139,7 +139,7 @@ class DataNode : public BaseNode
     DataNode& operator=(DataNode&& other)
     {
         BaseNode::operator=(std::move(other));
-        attributes__      = std::move(other.attributes_);
+        attributes_      = std::move(other.attributes_);
         data_             = std::move(other.data_);
         return *this;
     }
