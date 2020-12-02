@@ -107,8 +107,10 @@ TEST_F(XMLProfileParserTests, XMLoadProfiles)
 
 /*
  * This test checks The return of the loadXMLProfiles method
- * 1. Check correct parsing of an XMLElements when <profiles> is the root tag
- * 2. Check correct parsing of an XMLElements when <profiles> is the child
+ * 1. Check correct parsing of an XMLElement
+ * 2. Check return on parsing of an XMLElement with an unknown tag
+ * 3. Check return on parsing of an XMLElement with an empty profiles tag
+ * 4. Check return on parsing of an XMLElement with a root element difrent from <profiles>
  */
 TEST_F(XMLProfileParserTests, loadXMLProfiles)
 {
@@ -135,19 +137,24 @@ TEST_F(XMLProfileParserTests, loadXMLProfiles)
         titleElement = xml_doc.RootElement();
         EXPECT_EQ(xmlparser::XMLP_ret::XML_OK, xmlparser::XMLProfileManager::loadXMLProfiles(*titleElement));
         xmlparser::XMLProfileManager::DeleteInstance();
-        EXPECT_EQ(xmlparser::XMLP_ret::XML_OK, xmlparser::XMLProfileManager::loadXMLNode(xml_doc));
-        xmlparser::XMLProfileManager::DeleteInstance();
 
-        std::string xml_dds =
-        "<?xml version=\"1.0\" encoding=\"utf-8\"?>\
-        <dds xmlns=\"http://www.eprosima.com/XMLSchemas/fastRTPS_Profiles\">"+xml_profile+"</dds>";
-        ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml_dds.c_str()));
-        titleElement = xml_doc.RootElement();
-        EXPECT_EQ(xmlparser::XMLP_ret::XML_OK, xmlparser::XMLProfileManager::loadXMLProfiles(*titleElement));
-        xmlparser::XMLProfileManager::DeleteInstance();
-        EXPECT_EQ(xmlparser::XMLP_ret::XML_OK, xmlparser::XMLProfileManager::loadXMLNode(xml_doc));
-        xmlparser::XMLProfileManager::DeleteInstance();
+    }
 
+    {
+        std::vector<std::string> errors =
+        {
+            "<profiles><bad_tag></bad_tag></profiles>", // wrong profile xml
+            "<profiles></profiles>", // empty profile xml
+            "<dds></dds>" // not a profile tag as root
+        };
+
+        for (std::string& xml_profile : errors)
+        {
+            ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml_profile.c_str()));
+            titleElement = xml_doc.RootElement();
+            EXPECT_EQ(xmlparser::XMLP_ret::XML_ERROR, xmlparser::XMLProfileManager::loadXMLProfiles(*titleElement));
+            xmlparser::XMLProfileManager::DeleteInstance();
+        }
     }
 }
 
@@ -196,51 +203,6 @@ TEST_F(XMLProfileParserTests, loadXMLDynamicTypes)
         EXPECT_EQ(xmlparser::XMLP_ret::XML_ERROR, xmlparser::XMLProfileManager::loadXMLDynamicTypes(*titleElement));
     }
 }
-
-/*
- * This test checks the return of the methods to extract profiles
- * 1. Check correct return
- * 1. Check error return
- */
-
-TEST_F(XMLProfileParserTests, extractProfilesNegativeClauses)
-{
-    std::string filename = "dynamic_types.xml";
-    tinyxml2::XMLDocument xml_doc;
-
-    // error return on null pointer
-    //EXPECT_EQ(xmlparser::XMLP_ret::XML_ERROR, xmlparser::XMLProfileManager::loadXMLProfiles(nullptr));
-
-    {
-        // extractProfile
-        const char * xml_p =
-                "\
-                <dds>\
-                    <profiles>\
-                        <%s></%s>\
-                    </profiles>\
-                </dds>\
-                ";
-        char xml[500];
-
-        std::vector<std::string> elements {
-                "participant",
-                "data_writer",
-                "data_reader",
-                "requester",
-                "replier",
-                "bad_profile"
-            };
-
-        for (const std::string& e : elements)
-        {
-            sprintf(xml, xml_p, e.c_str(), e.c_str());
-            ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
-            EXPECT_EQ(xmlparser::XMLP_ret::XML_ERROR, xmlparser::XMLProfileManager::loadXMLNode(xml_doc));
-        }
-    }
-}
-
 
 TEST_F(XMLProfileParserTests, XMLParserLibrarySettings)
 {
@@ -1033,97 +995,280 @@ TEST_F(XMLProfileParserTests, SHM_transport_descriptors_config)
     ASSERT_EQ(descriptor->max_message_size(), 128000u);
 }
 
-//! Tests whether the extraction of XML profiles succeeds when all profiles are correct.
-//! XMLProfileManager::loadXMLNode returns XMLProfileManager::extractProfiles.
-//! The expected return value is XMLP_ret::XML_OK.
+/*
+ * Test return code of the insertTransportById method when trying to insert two transports with the same id
+ */
+TEST_F(XMLProfileParserTests, insertTransportByIdNegativeClauses)
+{
+    std::shared_ptr<eprosima::fastdds::rtps::TransportDescriptorInterface> transport;
+    EXPECT_EQ(true, xmlparser::XMLProfileManager::insertTransportById("duplicated_id", transport));
+    EXPECT_EQ(false, xmlparser::XMLProfileManager::insertTransportById("duplicated_id", transport));
+}
+
+/*
+ * Test return code of the getDynamicTypeByName method when trying to retrieve a type which has not been parsed
+ */
+TEST_F(XMLProfileParserTests, getDynamicTypeByNameNegativeClauses)
+{
+    EXPECT_EQ(nullptr, xmlparser::XMLProfileManager::getDynamicTypeByName("wrong_type"));
+}
+
+/*
+ * Test return code of the getTransportById method when trying to retrieve a transport descriptor which has not been
+ * parsed
+ */
+TEST_F(XMLProfileParserTests, getTransportByIdNegativeClauses)
+{
+    EXPECT_EQ(nullptr, xmlparser::XMLProfileManager::getTransportById("wrong_type"));
+}
+
+/*
+ * Tests whether the extraction of XML profiles succeeds when all profiles are correct.
+ * XMLProfileManager::loadXMLNode returns XMLProfileManager::extractProfiles.
+ * The following cases are tested:
+ *  1. A corrrect standalone profile tag is parsed, return value of XMLP_ret::XML_OK is expected
+ *  1. A corrrect rooted profile tag is parsed, return value of XMLP_ret::XML_OK is expected
+ *  1. An incorrect profile tag is parsed, return value of XMLP_ret::XML_ERROR is expected
+ */
 TEST_F(XMLProfileParserTests, extract_profiles_ok)
 {
-    const char* xml =
-            "                                                                                                \
-        <profiles>                                                                                                     \
-            <participant profile_name=\"participant_prof\">                                                            \
-                <rtps></rtps>                                                                                          \
-            </participant>                                                                                             \
-            <publisher profile_name=\"publisher_prof\"></publisher>                                                    \
-            <subscriber profile_name=\"subscriber_prof\"></subscriber>                                                 \
-            <topic profile_name=\"topic_prof\"></topic>                                                                \
-            <requester profile_name=\"req_prof\" service_name=\"serv\" request_type=\"req\" reply_type=\"reply\">      \
-            </requester>                                                                                               \
-            <replier profile_name=\"replier_prof\" service_name=\"serv\" request_type=\"req\" reply_type=\"reply\">    \
-            </replier>                                                                                                 \
-        </profiles>                                                                                                    \
-    ";
-
     tinyxml2::XMLDocument xml_doc;
-    ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
-    EXPECT_EQ(xmlparser::XMLP_ret::XML_OK, xmlparser::XMLProfileManager::loadXMLNode(xml_doc));
+    {
+        const char* xml =
+        "                                                                                                            \n\
+        <profiles>                                                                                                   \n\
+            <participant profile_name=\"participant_prof\">                                                          \n\
+                <rtps></rtps>                                                                                        \n\
+            </participant>                                                                                           \n\
+            <publisher profile_name=\"publisher_prof\"></publisher>                                                  \n\
+            <subscriber profile_name=\"subscriber_prof\"></subscriber>                                               \n\
+            <topic profile_name=\"topic_prof\"></topic>                                                              \n\
+            <requester profile_name=\"req_prof\" service_name=\"serv\" request_type=\"req\" reply_type=\"reply\">    \n\
+            </requester>                                                                                             \n\
+            <replier profile_name=\"replier_prof\" service_name=\"serv\" request_type=\"req\" reply_type=\"reply\">  \n\
+            </replier>                                                                                               \n\
+        </profiles>                                                                                                  \n\
+        ";
+
+        // Standalone
+        ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+        EXPECT_EQ(xmlparser::XMLP_ret::XML_OK, xmlparser::XMLProfileManager::loadXMLNode(xml_doc));
+        xmlparser::XMLProfileManager::DeleteInstance();
+
+        // Rooted
+        std::string xml_dds = "<dds>"+std::string(xml)+"</dds>";
+        ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml_dds.c_str()));
+        EXPECT_EQ(xmlparser::XMLP_ret::XML_OK, xmlparser::XMLProfileManager::loadXMLNode(xml_doc));
+        xmlparser::XMLProfileManager::DeleteInstance();
+    }
 
     {
         // wrong xml
         std::string xml = "<bad_tag></bad_tag>";
         ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml.c_str()));
         EXPECT_EQ(xmlparser::XMLP_ret::XML_ERROR, xmlparser::XMLProfileManager::loadXMLNode(xml_doc));
+        xmlparser::XMLProfileManager::DeleteInstance();
+    }
+
+
+}
+
+/*
+ * Tests whether the extraction of XML profiles succeeds when some profiles are correct and some are not.
+ * XMLProfileManager::loadXMLNode returns XMLProfileManager::extractProfiles.
+ * The expected return value is XMLP_ret::XML_NOK.
+ * Checks a combination of a correct profile with an incorrectprofile of each profyle type
+ */
+TEST_F(XMLProfileParserTests, extract_profiles_nok)
+{
+    tinyxml2::XMLDocument xml_doc;
+
+    const char* xml_p =
+            "\
+                <profiles>\
+                    <!-- OK PROFILE -->\
+                    <participant profile_name=\"participant_prof\">\
+                        <rtps></rtps>\
+                    </participant>\
+                    \
+                    <!-- NOK PROFILE --> \
+                    <%s></%s>\
+                </profiles>\
+            ";
+    char xml[500];
+
+    std::vector<std::string> elements {
+        "participant",
+        "publisher",
+        "subscriber",
+        "topic",
+        "requester",
+        "replier",
+    };
+
+    for (const std::string& e : elements)
+    {
+        sprintf(xml, xml_p, e.c_str(), e.c_str());
+        ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+        EXPECT_EQ(xmlparser::XMLP_ret::XML_NOK, xmlparser::XMLProfileManager::loadXMLNode(xml_doc));
+        xmlparser::XMLProfileManager::DeleteInstance();
     }
 }
 
-//! Tests whether the extraction of XML profiles succeeds when some profiles are correct and some are not.
-//! XMLProfileManager::loadXMLNode returns XMLProfileManager::extractProfiles.
-//! The expected return value is XMLP_ret::XML_NOK.
-TEST_F(XMLProfileParserTests, extract_profiles_nok)
-{
-    const char* xml =
-            "                                                                                                \
-        <profiles>                                                                                                     \
-            <!-- OK PROFILE -->                                                                                        \
-            <participant profile_name=\"participant_prof\">                                                            \
-                <rtps></rtps>                                                                                          \
-            </participant>                                                                                             \
-                                                                                                                       \
-            <!-- NOK PROFILE -->                                                                                       \
-            <publisher></publisher>                                                                                    \
-                                                                                                                       \
-            <!-- NOK PROFILE -->                                                                                       \
-            <subscriber></subscriber>                                                                                  \
-                                                                                                                       \
-            <!-- OK PROFILE -->                                                                                        \
-            <topic profile_name=\"topic_prof\"></topic>                                                                \
-                                                                                                                       \
-            <!-- NOK PROFILE -->                                                                                       \
-            <requester profile_name=\"req_prof\"></requester>                                                          \
-                                                                                                                       \
-            <!-- NOK PROFILE -->                                                                                       \
-            <replier profile_name=\"replier_prof\"></replier>                                                          \
-        </profiles>                                                                                                    \
-    ";
-
-    tinyxml2::XMLDocument xml_doc;
-    ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
-    EXPECT_EQ(xmlparser::XMLP_ret::XML_NOK, xmlparser::XMLProfileManager::loadXMLNode(xml_doc));
-}
-
-//! Tests whether the extraction of XML profiles succeeds when all profiles are wrong.
-//! XMLProfileManager::loadXMLNode returns XMLProfileManager::extractProfiles.
-//! The expected return value is XMLP_ret::XML_ERROR.
+/*
+ * Tests whether the extraction of XML profiles succeeds when all profiles are wrong.
+ * XMLProfileManager::loadXMLNode returns XMLProfileManager::extractProfiles.
+ * The expected return value is XMLP_ret::XML_ERROR.
+ * Checks an incorrec profile of each type as the only present in the profiles tag
+ */
 TEST_F(XMLProfileParserTests, extract_profiles_error)
 {
-
-    const char* xml =
-            "                                                                                                \
-        <profiles>                                                                                                     \
-            <participant>                                                                                              \
-            </participant>                                                                                             \
-            <publisher></publisher>                                                                                    \
-            <subscriber></subscriber>                                                                                  \
-            <topic></topic>                                                                                            \
-            <requester></requester>                                                                                    \
-            <replier></replier>                                                                                        \
-        </profiles>                                                                                                    \
-    ";
-
     tinyxml2::XMLDocument xml_doc;
-    ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
-    EXPECT_EQ(xmlparser::XMLP_ret::XML_ERROR, xmlparser::XMLProfileManager::loadXMLNode(xml_doc));
+
+    {
+        // XML Without a root
+        const char* xml = "<a/>";
+        ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+        EXPECT_EQ(xmlparser::XMLP_ret::XML_ERROR, xmlparser::XMLProfileManager::loadXMLNode(xml_doc));
+    }
+
+    {
+        const char* xml_p =
+                "\
+                    <profiles>\
+                        <%s>\
+                        </%s>\
+                    </profiles>\
+                ";
+        char xml[500];
+
+        std::vector<std::string> elements {
+            "participant",
+            "publisher",
+            "subscriber",
+            "topic",
+            "requester",
+            "replier",
+        };
+
+        for (const std::string& e : elements)
+        {
+            sprintf(xml, xml_p, e.c_str(), e.c_str());
+            ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+            EXPECT_EQ(xmlparser::XMLP_ret::XML_ERROR, xmlparser::XMLProfileManager::loadXMLNode(xml_doc));
+            xmlparser::XMLProfileManager::DeleteInstance();
+        }
+    }
+
+    {
+        // XMLNode with no profile tag
+        const char* xml = "<log></log>";
+        ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+        EXPECT_EQ(xmlparser::XMLP_ret::XML_ERROR, xmlparser::XMLProfileManager::loadXMLNode(xml_doc));
+    }
 }
+
+/*
+ * This test check the possible errors in the parsing of the profile of each type and the loading of a profile as
+ * the default profile.
+ * Errors tested:
+ *  1. Empty profile name
+ *  2. Loading the same profile twice
+ */
+TEST_F(XMLProfileParserTests, extract_type_profiles)
+{
+    tinyxml2::XMLDocument xml_doc;
+
+    // Participant
+    {
+        const char* xml_p =
+        "<profiles>\
+            <participant profile_name=\"%s\">\
+                <rtps></rtps>\
+            </participant>\
+        </profiles>";
+        char xml[500];
+
+        // empty name
+        sprintf(xml, xml_p, "");
+        ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+        EXPECT_EQ(xmlparser::XMLP_ret::XML_ERROR, xmlparser::XMLProfileManager::loadXMLNode(xml_doc));
+
+        // same profile name twice
+        sprintf(xml, xml_p, "test_name");
+        ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+        EXPECT_EQ(xmlparser::XMLP_ret::XML_OK, xmlparser::XMLProfileManager::loadXMLNode(xml_doc));
+        EXPECT_EQ(xmlparser::XMLP_ret::XML_ERROR, xmlparser::XMLProfileManager::loadXMLNode(xml_doc));
+
+        xmlparser::XMLProfileManager::DeleteInstance();
+    }
+
+    {
+        const char* xml_p =
+        "<profiles>\
+            <%s profile_name=\"%s\" %s>\
+            </%s>\
+        </profiles>";
+        char xml[500];
+
+        std::vector<std::string> elements {
+            "publisher",
+            "subscriber",
+            "topic",
+        };
+
+        for (const std::string& e : elements)
+        {
+            // empty profile name
+            sprintf(xml, xml_p, e.c_str(), "", "" ,e.c_str());
+            ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+            EXPECT_EQ(xmlparser::XMLP_ret::XML_ERROR, xmlparser::XMLProfileManager::loadXMLNode(xml_doc));
+
+            // default profile
+            sprintf(xml, xml_p, e.c_str(), "default_name_1", "is_default_profile=\"true\"" ,e.c_str());
+            ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+            EXPECT_EQ(xmlparser::XMLP_ret::XML_OK, xmlparser::XMLProfileManager::loadXMLNode(xml_doc));
+
+            // same profile name twice
+            sprintf(xml, xml_p, e.c_str(), "test_name", "" ,e.c_str());
+            ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+            EXPECT_EQ(xmlparser::XMLP_ret::XML_OK, xmlparser::XMLProfileManager::loadXMLNode(xml_doc));
+            EXPECT_EQ(xmlparser::XMLP_ret::XML_ERROR, xmlparser::XMLProfileManager::loadXMLNode(xml_doc));
+            xmlparser::XMLProfileManager::DeleteInstance();
+        }
+    }
+
+    {
+        const char* xml_p =
+        "<profiles>\
+            <%s profile_name=\"%s\" service_name=\"serv\" request_type=\"req\" reply_type=\"reply\">\
+            </%s>\
+        </profiles>";
+        char xml[500];
+
+        std::vector<std::string> elements {
+            "requester",
+            "replier"
+        };
+
+        for (const std::string& e : elements)
+        {
+            // empty profile name
+            sprintf(xml, xml_p, e.c_str(), "" ,e.c_str());
+            ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+            EXPECT_EQ(xmlparser::XMLP_ret::XML_ERROR, xmlparser::XMLProfileManager::loadXMLNode(xml_doc));
+
+            // same profile name twice
+            sprintf(xml, xml_p, e.c_str(), "test_name" ,e.c_str());
+            ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+            EXPECT_EQ(xmlparser::XMLP_ret::XML_OK, xmlparser::XMLProfileManager::loadXMLNode(xml_doc));
+            EXPECT_EQ(xmlparser::XMLP_ret::XML_ERROR, xmlparser::XMLProfileManager::loadXMLNode(xml_doc));
+            xmlparser::XMLProfileManager::DeleteInstance();
+        }
+    }
+
+}
+
 
 //! Tests whether the SKIP_DEFAULT_XML_FILE variable prevents the xmlparser from loading the default XML file.
 //! participant_atts_none skips the default and obtains the values from the constructors.
@@ -1166,6 +1311,11 @@ TEST_F(XMLProfileParserTests, skip_default_xml)
     EXPECT_NE(participant_atts_none.domainId, participant_atts_default.domainId);
 }
 
+/*
+ * Tests whether the FASTRTPS_DEFAULT_PROFILES_FILE environment file correctly loads the selected file as default.
+ * - participant_atts_default contains the attributes in the default file in this folder.
+ * - participant_atts_file contains the attributes in the default file created by the test.
+ */
 TEST_F(XMLProfileParserTests, default_env_variable)
 {
     const char* xml =
@@ -1198,31 +1348,117 @@ TEST_F(XMLProfileParserTests, default_env_variable)
     EXPECT_NE(participant_atts_file.domainId, participant_atts_default.domainId);
 }
 
-TEST_F(XMLProfileParserTests, loadXMLFileNegativeClauses)
-{
-    std::string filename;
-    EXPECT_EQ(xmlparser::XMLP_ret::XML_ERROR, xmlparser::XMLProfileManager::loadXMLFile(filename));
-
 /*
-    // minimal profile
-    const char* xml =
-    "                                                                                                                  \
-        <profiles>                                                                                                     \
-            <participant profile_name=\"test_participant_profile\" is_default_profile=\"true\">                        \
-                <domainId>2020268</domainId>                                                                           \
-                <rtps></rtps>                                                                                          \
-            </participant>                                                                                             \
-        </profiles>                                                                                                    \
-    ";
+ * Tests the return codes of the loadXMLFile method.
+ *  1. On parsing a correctly parsed standalone profiles file, expect XMLP_ret::XML_OK.
+ *  1. On parsing a correctly parsed rooted profiles file, expect XMLP_ret::XML_OK.
+ *  1. On parsing an incorrect tag inside profiles tag, expect XMLP_ret::XML_ERROR.
+ *  1. On giving an empty string as a filename, expect XMLP_ret::XML_ERROR.
+ *  1. On parsing the same file twice, expect XMLP_ret::XML_OK.
+ *  1. On parsing an incorrect tag inside profiles tag, expect XMLP_ret::XML_ERROR.
+ */
+TEST_F(XMLProfileParserTests, loadXMLFile)
+{
+    const char * filename = "minimal_file.xml";
     tinyxml2::XMLDocument xml_doc;
-    xml_doc.Parse(xml);
-    xml_doc.SaveFile("minimal_file.xml");
 
-    EXPECT_EQ(xmlparser::XMLP_ret::XML_OK, xmlparser::XMLProfileManager::loadXMLFile("minimal_file.xml"));
-    // error on loading same file twice
-    EXPECT_EQ(xmlparser::XMLP_ret::XML_ERROR, xmlparser::XMLProfileManager::loadXMLFile("minimal_file.xml"));
-    remove("minimal_file.xml");
-*/
+    {
+        std::vector<std::string> correct_xmls =
+        {
+        "<profiles>\
+            <participant profile_name=\"test_participant_profile\" is_default_profile=\"true\">\
+                <domainId>20203011</domainId>\
+                <rtps></rtps>\
+            </participant>\
+        </profiles>",
+        "<types>\
+            <type>\
+                <enum name=\"MyAloneEnumType\">\
+                    <enumerator name=\"A\" value=\"0\"/>\
+                    <enumerator name=\"B\" value=\"1\"/>\
+                </enum>\
+            </type>\
+        </types>",
+        "<log>\
+            <use_default>FALSE</use_default>\
+            <consumer>\
+                <class>StdoutErrConsumer</class>\
+            </consumer>\
+        </log>",
+        "<library_settings>\
+            <intraprocess_delivery>FULL</intraprocess_delivery>\
+        </library_settings>"
+        };
+
+        // Standalone
+        for(std::string& xml : correct_xmls)
+        {
+            ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse((xml).c_str()));
+            xml_doc.SaveFile(filename);
+            EXPECT_EQ(xmlparser::XMLP_ret::XML_OK, xmlparser::XMLProfileManager::loadXMLFile(filename));
+            remove(filename);
+            xmlparser::XMLProfileManager::DeleteInstance();
+        }
+
+        // Rooted
+        for(std::string& xml : correct_xmls)
+        {
+            ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(("<dds>"+xml+"</dds>").c_str()));
+            xml_doc.SaveFile(filename);
+            EXPECT_EQ(xmlparser::XMLP_ret::XML_OK, xmlparser::XMLProfileManager::loadXMLFile(filename));
+            remove(filename);
+            xmlparser::XMLProfileManager::DeleteInstance();
+        }
+    }
+
+    {
+        // Negatve clauses
+        const char * xml_p =
+                "\
+                <%s>\
+                    <bad_tag></bad_tag>\
+                </%s>\
+                ";
+        char xml[500];
+
+        std::vector<std::string> elements {
+                "profiles",
+                "types",
+                "log",
+                "library_settings",
+                "bad_profile"
+            };
+
+        for (const std::string& e : elements)
+        {
+            sprintf(xml, xml_p, e.c_str(), e.c_str());
+            ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+            xml_doc.SaveFile(filename);
+            EXPECT_EQ(xmlparser::XMLP_ret::XML_ERROR, xmlparser::XMLProfileManager::loadXMLFile(filename));
+            remove(filename);
+            xmlparser::XMLProfileManager::DeleteInstance();
+        }
+    }
+
+    {
+        const char* xml =
+            "<profiles>\
+                <participant profile_name=\"test_participant_profile\" is_default_profile=\"true\">\
+                    <domainId>20203011</domainId>\
+                    <rtps></rtps>\
+                </participant>\
+            </profiles>";
+        ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+        xml_doc.SaveFile(filename);
+
+        // passing an empty string as a filename
+        EXPECT_EQ(xmlparser::XMLP_ret::XML_ERROR, xmlparser::XMLProfileManager::loadXMLFile(""));
+        EXPECT_EQ(xmlparser::XMLP_ret::XML_OK, xmlparser::XMLProfileManager::loadXMLFile(filename));
+        EXPECT_EQ(xmlparser::XMLP_ret::XML_OK, xmlparser::XMLProfileManager::loadXMLFile(filename));
+        remove(filename);
+        xmlparser::XMLProfileManager::DeleteInstance();
+    }
+
 }
 
 int main(
