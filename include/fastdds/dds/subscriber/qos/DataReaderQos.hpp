@@ -84,9 +84,7 @@ public:
     /**
      * @brief Constructor
      */
-    RTPS_DllAPI ReaderResourceLimitsQos()
-    {
-    }
+    RTPS_DllAPI ReaderResourceLimitsQos() = default;
 
     /**
      * @brief Destructor
@@ -105,8 +103,14 @@ public:
         std::swap(*this, reset);
     }
 
-    //!Matched publishers allocation limits.
-    fastrtps::ResourceLimitedContainerConfig matched_publisher_allocation;
+    //! Matched publishers allocation limits.
+    fastrtps::ResourceLimitedContainerConfig matched_publisher_allocation{ 1u };
+    //! SampleInfo allocation limits.
+    fastrtps::ResourceLimitedContainerConfig sample_infos_allocation{ 32u };
+    //! Loaned collections allocation limits.
+    fastrtps::ResourceLimitedContainerConfig outstanding_reads_allocation{ 2u };
+    //! Maximum number of samples to return on a single call to read / take
+    uint32_t max_samples_per_read = 32u;
 };
 
 //! Qos Policy to configure the XTypes Qos associated to the DataReader
