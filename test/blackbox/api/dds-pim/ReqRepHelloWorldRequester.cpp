@@ -156,9 +156,9 @@ void ReqRepHelloWorldRequester::block(
     std::unique_lock<std::mutex> lock(mutex_);
 
     bool timeout = cv_.wait_for(lock, seconds, [&]() -> bool
-    {
-        return current_number_ == number_received_;
-    });
+                    {
+                        return current_number_ == number_received_;
+                    });
 
     ASSERT_TRUE(timeout);
     ASSERT_EQ(current_number_, number_received_);
@@ -171,9 +171,10 @@ void ReqRepHelloWorldRequester::wait_discovery()
 
     std::cout << "Requester is waiting discovery..." << std::endl;
 
-    cvDiscovery_.wait(lock, [&](){
-        return matched_ > 1;
-    });
+    cvDiscovery_.wait(lock, [&]()
+            {
+                return matched_ > 1;
+            });
 
     std::cout << "Requester discovery finished..." << std::endl;
 }
@@ -198,7 +199,7 @@ void ReqRepHelloWorldRequester::ReplyListener::on_data_available(
 
     if (ReturnCode_t::RETCODE_OK == datareader->take_next_sample((void*)&hello, &info))
     {
-        if (info.instance_state == eprosima::fastdds::dds::InstanceStateKind::ALIVE)
+        if (info.instance_state == eprosima::fastdds::dds::ALIVE_INSTANCE_STATE)
         {
             ASSERT_EQ(hello.message().compare("GoodBye"), 0);
             requester_.newNumber(info.related_sample_identity, hello.index());

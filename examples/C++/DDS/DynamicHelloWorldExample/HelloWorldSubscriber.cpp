@@ -117,7 +117,7 @@ void HelloWorldSubscriber::SubListener::on_data_available(
         SampleInfo info;
         if (reader->take_next_sample(data.get(), &info) == ReturnCode_t::RETCODE_OK)
         {
-            if (info.instance_state == ALIVE)
+            if (info.instance_state == ALIVE_INSTANCE_STATE)
             {
                 eprosima::fastrtps::types::DynamicType_ptr type = subscriber_->readers_[reader];
                 this->n_samples++;

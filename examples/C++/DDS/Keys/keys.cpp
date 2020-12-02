@@ -20,10 +20,22 @@ using namespace eprosima::fastdds::dds;
 using namespace eprosima::fastrtps::rtps;
 
 //Enums and configuration structure
-enum Reliability_type { Best_Effort, Reliable };
-enum Durability_type { Transient_Local, Volatile };
-enum HistoryKind_type { Keep_Last, Keep_All };
-enum Key_type { No_Key, With_Key};
+enum Reliability_type
+{
+    Best_Effort, Reliable
+};
+enum Durability_type
+{
+    Transient_Local, Volatile
+};
+enum HistoryKind_type
+{
+    Keep_Last, Keep_All
+};
+enum Key_type
+{
+    No_Key, With_Key
+};
 
 typedef struct
 {
@@ -129,7 +141,7 @@ public:
         SampleInfo info;
         if (reader->take_next_sample(&m_sample, &info) == ReturnCode_t::RETCODE_OK)
         {
-            if (info.instance_state == eprosima::fastdds::dds::ALIVE)
+            if (info.instance_state == eprosima::fastdds::dds::ALIVE_INSTANCE_STATE)
             {
                 this->n_samples++;
                 // Print your structure data here.
@@ -320,9 +332,9 @@ void keys()
     // wait for the connection
     std::unique_lock<std::mutex> lock(pubListener.mutex_);
     pubListener.cv_.wait(lock, [&pubListener]()
-    {
-        return pubListener.n_matched > 0;
-    });
+            {
+                return pubListener.n_matched > 0;
+            });
 
     //Send 10 samples
     std::cout << "Publishing 5 keys, 10 samples per key..." << std::endl;
@@ -349,7 +361,7 @@ void keys()
     std::this_thread::sleep_for(std::chrono::milliseconds(1500));
 
     //Read the contents of both histories:
-    std::vector< std::pair<int, int> > sampleList;
+    std::vector< std::pair<int, int>> sampleList;
     std::cout << "The Subscriber holds: " << std::endl;
     while (myReader->read_next_sample(&my_sample, &sample_info) == ReturnCode_t::RETCODE_OK)
     {
@@ -382,9 +394,9 @@ void publisherKeys()
     // wait for the connection
     std::unique_lock<std::mutex> lock(pubListener.mutex_);
     pubListener.cv_.wait(lock, [&pubListener]()
-    {
-        return pubListener.n_matched > 0;
-    });
+            {
+                return pubListener.n_matched > 0;
+            });
 
     //Send 10 samples
     std::cout << "Publishing 5 keys, 10 samples per key..." << std::endl;
@@ -426,9 +438,9 @@ void subscriberKeys()
 
     std::unique_lock<std::mutex> lock(subListener.mutex_);
     subListener.cv_.wait(lock, [&subListener]()
-    {
-        return subListener.n_matched > 0;
-    });
+            {
+                return subListener.n_matched > 0;
+            });
 
     std::cin.ignore();
 

@@ -149,7 +149,7 @@ void HelloWorldSubscriber::SubListener::on_data_available(
     SampleInfo info;
     if (reader->take_next_sample(hello_.get(), &info) == ReturnCode_t::RETCODE_OK)
     {
-        if (info.instance_state == eprosima::fastdds::dds::ALIVE)
+        if (info.instance_state == eprosima::fastdds::dds::ALIVE_INSTANCE_STATE)
         {
             samples_++;
             const size_t data_size = hello_->data().size();

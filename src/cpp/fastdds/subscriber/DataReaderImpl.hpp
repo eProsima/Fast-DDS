@@ -24,6 +24,7 @@
 #include <fastdds/dds/core/status/StatusMask.hpp>
 #include <fastdds/dds/subscriber/qos/DataReaderQos.hpp>
 #include <fastdds/dds/subscriber/DataReaderListener.hpp>
+#include <fastdds/dds/subscriber/SampleInfo.hpp>
 #include <fastdds/dds/topic/TypeSupport.hpp>
 
 #include <fastdds/rtps/attributes/ReaderAttributes.h>
@@ -57,7 +58,6 @@ namespace dds {
 class Subscriber;
 class SubscriberImpl;
 class TopicDescription;
-struct SampleInfo;
 
 /**
  * Class DataReader, contains the actual implementation of the behaviour of the Subscriber.

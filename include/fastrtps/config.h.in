@@ -90,4 +90,9 @@
 #define FASTRTPS_DEPRECATED(msg)
 #endif
 
+// Deprecation with version
+#define FASTDDS_DEPRECATED_UNTIL(major, entity_name, msg) \
+    static_assert(FASTRTPS_VERSION_MAJOR < major, #entity_name " reached deprecation version " #major); \
+    FASTRTPS_DEPRECATED(#entity_name " has been deprecated and will be removed on major version " #major ". " msg)
+
 #endif // _FASTRTPS_CONFIG_H_

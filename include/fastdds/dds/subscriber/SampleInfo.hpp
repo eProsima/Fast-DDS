@@ -17,9 +17,12 @@
  *
  */
 
-#ifndef _FASTRTPS_SAMPLEINFO_HPP_
-#define _FASTRTPS_SAMPLEINFO_HPP_
+#ifndef _FASTDDS_DDS_SUBSCRIBER_SAMPLEINFO_HPP_
+#define _FASTDDS_DDS_SUBSCRIBER_SAMPLEINFO_HPP_
 
+#include <fastdds/dds/subscriber/InstanceState.hpp>
+#include <fastdds/dds/subscriber/SampleState.hpp>
+#include <fastdds/dds/subscriber/ViewState.hpp>
 
 #include <fastdds/rtps/common/Types.h>
 #include <fastdds/rtps/common/Time_t.h>
@@ -30,25 +33,33 @@ namespace eprosima {
 namespace fastdds {
 namespace dds {
 
+FASTDDS_DEPRECATED_UNTIL(3, "eprosima::fastdds::dds::READ",
+        "Use eprosima::fastdds::dds::READ_SAMPLE_STATE instead.")
+constexpr SampleStateKind READ = READ_SAMPLE_STATE;
 
-enum SampleStateKind
-{
-    READ,
-    NOT_READ
-};
+FASTDDS_DEPRECATED_UNTIL(3, "eprosima::fastdds::dds::NOT_READ",
+        "Use eprosima::fastdds::dds::NOT_READ_SAMPLE_STATE instead.")
+constexpr SampleStateKind NOT_READ = NOT_READ_SAMPLE_STATE;
 
-enum ViewStateKind
-{
-    NEW,
-    NOT_NEW
-};
+FASTDDS_DEPRECATED_UNTIL(3, "eprosima::fastdds::dds::NEW",
+        "Use eprosima::fastdds::dds::NEW_VIEW_STATE instead.")
+constexpr ViewStateKind NEW = NEW_VIEW_STATE;
 
-enum InstanceStateKind
-{
-    ALIVE,
-    NOT_ALIVE_DISPOSED,
-    NOT_ALIVE_NO_WRITERS
-};
+FASTDDS_DEPRECATED_UNTIL(3, "eprosima::fastdds::dds::NOT_NEW",
+        "Use eprosima::fastdds::dds::NOT_NEW_VIEW_STATE instead.")
+constexpr ViewStateKind NOT_NEW = NOT_NEW_VIEW_STATE;
+
+FASTDDS_DEPRECATED_UNTIL(3, "eprosima::fastdds::dds::ALIVE",
+        "Use eprosima::fastdds::dds::ALIVE_INSTANCE_STATE instead.")
+constexpr InstanceStateKind ALIVE = ALIVE_INSTANCE_STATE;
+
+FASTDDS_DEPRECATED_UNTIL(3, "eprosima::fastdds::dds::NOT_ALIVE_DISPOSED",
+        "Use eprosima::fastdds::dds::NOT_ALIVE_DISPOSED_INSTANCE_STATE instead.")
+constexpr InstanceStateKind NOT_ALIVE_DISPOSED = NOT_ALIVE_DISPOSED_INSTANCE_STATE;
+
+FASTDDS_DEPRECATED_UNTIL(3, "eprosima::fastdds::dds::NOT_ALIVE_NO_WRITERS",
+        "Use eprosima::fastdds::dds::NOT_ALIVE_NO_WRITERS_INSTANCE_STATE instead.")
+constexpr InstanceStateKind NOT_ALIVE_NO_WRITERS = NOT_ALIVE_NO_WRITERS_INSTANCE_STATE;
 
 /*!
  * @brief SampleInfo is the information that accompanies each sample that is ‘read’ or ‘taken.’
@@ -102,8 +113,8 @@ struct SampleInfo
 
 };
 
-} /* namespace dds */
-} /* namespace fastdds */
-} /* namespace eprosima */
+}  // namespace dds
+}  // namespace fastdds
+}  // namespace eprosima
 
-#endif /* _FASTRTPS_SAMPLEINFO_HPP_*/
+#endif /* _FASTDDS_DDS_SUBSCRIBER_SAMPLEINFO_HPP_*/

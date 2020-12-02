@@ -180,9 +180,9 @@ Result::RESULTTYPE EprosimaClient::calculate(
         resetResult();
         mp_result_reader->wait_for_unread_message({10, 0});
         mp_result_reader->take_next_sample((void*)&m_result, &m_sampleInfo);
-    } while (m_sampleInfo.instance_state != eprosima::fastdds::dds::ALIVE ||
-            m_result.m_guid != m_operation.m_guid ||
-            m_result.m_operationId != m_operation.m_operationId);
+    } while (m_sampleInfo.instance_state != eprosima::fastdds::dds::ALIVE_INSTANCE_STATE ||
+    m_result.m_guid != m_operation.m_guid ||
+    m_result.m_operationId != m_operation.m_operationId);
     if (m_result.m_resultType == Result::GOOD_RESULT)
     {
         *result = m_result.m_result;
