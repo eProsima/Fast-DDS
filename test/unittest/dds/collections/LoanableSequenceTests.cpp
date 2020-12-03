@@ -13,6 +13,7 @@
 // limitations under the License.
 
 #include <fastdds/dds/core/LoanableSequence.hpp>
+#include <fastdds/dds/log/Log.hpp>
 
 #include <array>
 
@@ -445,6 +446,10 @@ TEST(LoanableSequenceTests, loan_unloan)
     EXPECT_EQ(1u, uut.maximum());
     EXPECT_EQ(1u, uut.length());
     EXPECT_EQ(stack2.buffer, uut.buffer());
+
+    // Note: When uut is deleted upon exiting this test, a warning log will be produced.
+    // This is done on purpose in order to have coverage for the generation of that warning.
+    Log::SetVerbosity(Log::Kind::Warning);
 }
 
 template<typename T>

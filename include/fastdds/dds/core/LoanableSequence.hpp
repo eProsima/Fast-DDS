@@ -24,6 +24,7 @@
 #include <vector>
 
 #include <fastdds/dds/core/LoanableCollection.hpp>
+#include <fastdds/dds/log/Log.hpp>
 
 namespace eprosima {
 namespace fastdds {
@@ -75,7 +76,7 @@ public:
     {
         if (elements_ && !has_ownership_)
         {
-            // Warning
+            logWarning(SUBSCRIBER, "Sequence destroyed with active loan");
             return;
         }
 
