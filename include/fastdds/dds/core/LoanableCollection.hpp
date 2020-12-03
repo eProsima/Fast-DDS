@@ -33,6 +33,7 @@ namespace dds {
 class LoanableCollection
 {
 public:
+
     using size_type = uint32_t;
     using element_type = void*;
 
@@ -144,7 +145,7 @@ public:
             return false;
         }
 
-        if ( (nullptr == buffer) || (new_maximum < new_length) || (new_maximum < 1) )
+        if ((nullptr == buffer) || (new_maximum < new_length) || (new_maximum < 1))
         {
             return false;
         }
@@ -163,7 +164,7 @@ public:
      * @param [out] length   number of accessible elements on the returned buffer.
      *
      * @pre has_ownership() == false
-     * 
+     *
      * @return nullptr if preconditions are not met.
      * @return pointer to the previously loaned buffer of elements.
      *
@@ -197,7 +198,7 @@ public:
      * Remove the loan from the collection.
      *
      * @pre has_ownership() == false
-     * 
+     *
      * @return nullptr if preconditions are not met.
      * @return pointer to the previously loaned buffer of elements.
      *

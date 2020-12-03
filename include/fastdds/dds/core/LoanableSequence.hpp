@@ -118,7 +118,7 @@ public:
      * @post length() == other.length()
      * @post buffer() != nullptr when other.length() > 0
      */
-    LoanableSequence& operator=(
+    LoanableSequence& operator =(
             const LoanableSequence& other)
     {
         if (!has_ownership_)
@@ -136,7 +136,7 @@ public:
         return *this;
     }
 
-    T& operator[](
+    T& operator [](
             size_type index)
     {
         if (index >= length_)
@@ -147,7 +147,7 @@ public:
         return *static_cast<T*>(elements_[index]);
     }
 
-    const T& operator[](
+    const T& operator [](
             size_type index) const
     {
         if (index >= length_)
