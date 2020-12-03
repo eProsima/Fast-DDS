@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include <fastdds/dds/core/Sequence.hpp>
+#include <fastdds/dds/core/LoanableSequence.hpp>
 
 #include <array>
 
@@ -47,7 +47,7 @@ struct StackAllocatedBuffer
 };
 
 void clear_values(
-        GenericSequence<int>& seq)
+        LoanableSequence<int>& seq)
 {
     // Keep current length for later
     auto len = seq.length();
@@ -63,7 +63,7 @@ void clear_values(
 }
 
 void set_result_values(
-        GenericSequence<int>& seq)
+        LoanableSequence<int>& seq)
 {
     ASSERT_TRUE(seq.length(num_test_elements));
     LoanableCollection::size_type n = 0;
@@ -74,7 +74,7 @@ void set_result_values(
 }
 
 void check_result(
-        const GenericSequence<int>& result,
+        const LoanableSequence<int>& result,
         LoanableCollection::size_type num_elems = num_test_elements)
 {
     EXPECT_EQ(num_elems, result.length());
@@ -88,7 +88,7 @@ TEST(GenericCollectionTests, construct)
 {
     // Check post-conditions of default constructor
     {
-        GenericSequence<int> uut;
+        LoanableSequence<int> uut;
         EXPECT_EQ(nullptr, uut.buffer());
         EXPECT_TRUE(uut.has_ownership());
         EXPECT_EQ(0u, uut.maximum());
@@ -97,7 +97,7 @@ TEST(GenericCollectionTests, construct)
 
     // Check post-conditions of constructor with maximum
     {
-        GenericSequence<int> uut(num_test_elements);
+        LoanableSequence<int> uut(num_test_elements);
         EXPECT_NE(nullptr, uut.buffer());
         EXPECT_TRUE(uut.has_ownership());
         EXPECT_EQ(num_test_elements, uut.maximum());
@@ -106,7 +106,7 @@ TEST(GenericCollectionTests, construct)
 
     // Check maximum of 0 behaves as default
     {
-        GenericSequence<int> uut(0u);
+        LoanableSequence<int> uut(0u);
         EXPECT_EQ(nullptr, uut.buffer());
         EXPECT_TRUE(uut.has_ownership());
         EXPECT_EQ(0u, uut.maximum());
@@ -118,16 +118,16 @@ TEST(GenericCollectionTests, copy_construct)
 {
     // Helper loaned sequence (max = num_test_elements, len = 0)
     StackAllocatedBuffer<int> stack;
-    GenericSequence<int> loaned;
+    LoanableSequence<int> loaned;
     loaned.loan(stack.buffer, stack.size(), 0);
 
     // Helper owned sequence (max = num_test_elements, len = 0)
-    GenericSequence<int> owned(num_test_elements);
+    LoanableSequence<int> owned(num_test_elements);
 
     // Copy-constructing an empty sequence behaves as default constructor
     {
-        GenericSequence<int> empty;
-        GenericSequence<int> uut(empty);
+        LoanableSequence<int> empty;
+        LoanableSequence<int> uut(empty);
         EXPECT_EQ(nullptr, uut.buffer());
         EXPECT_TRUE(uut.has_ownership());
         EXPECT_EQ(0u, uut.maximum());
@@ -136,7 +136,7 @@ TEST(GenericCollectionTests, copy_construct)
 
     // Copy-constructing an empty allocated sequence behaves as default constructor
     {
-        GenericSequence<int> uut(owned);
+        LoanableSequence<int> uut(owned);
         EXPECT_EQ(nullptr, uut.buffer());
         EXPECT_TRUE(uut.has_ownership());
         EXPECT_EQ(0u, uut.maximum());
@@ -145,7 +145,7 @@ TEST(GenericCollectionTests, copy_construct)
 
     // Copy-constructing an empty loaned sequence behaves as default constructor
     {
-        GenericSequence<int> uut(loaned);
+        LoanableSequence<int> uut(loaned);
         EXPECT_EQ(nullptr, uut.buffer());
         EXPECT_TRUE(uut.has_ownership());
         EXPECT_EQ(0u, uut.maximum());
@@ -158,7 +158,7 @@ TEST(GenericCollectionTests, copy_construct)
 
     // Copy-constructing a non-empty allocated sequence allocates and copies
     {
-        GenericSequence<int> uut(owned);
+        LoanableSequence<int> uut(owned);
         EXPECT_NE(nullptr, uut.buffer());
         EXPECT_NE(owned.buffer(), uut.buffer());
         EXPECT_TRUE(uut.has_ownership());
@@ -168,7 +168,7 @@ TEST(GenericCollectionTests, copy_construct)
 
     // Copy-constructing a non-empty loaned sequence allocates and copies
     {
-        GenericSequence<int> uut(loaned);
+        LoanableSequence<int> uut(loaned);
         EXPECT_NE(nullptr, uut.buffer());
         EXPECT_NE(loaned.buffer(), uut.buffer());
         EXPECT_TRUE(uut.has_ownership());
@@ -184,7 +184,7 @@ TEST(GenericCollectionTests, copy_construct)
 
     // Copy-constructing a non-empty allocated sequence with max > len allocates and copies
     {
-        GenericSequence<int> uut(owned);
+        LoanableSequence<int> uut(owned);
         EXPECT_NE(nullptr, uut.buffer());
         EXPECT_NE(owned.buffer(), uut.buffer());
         EXPECT_TRUE(uut.has_ownership());
@@ -194,7 +194,7 @@ TEST(GenericCollectionTests, copy_construct)
 
     // Copy-constructing a non-empty loaned sequence with max > len allocates and copies
     {
-        GenericSequence<int> uut(loaned);
+        LoanableSequence<int> uut(loaned);
         EXPECT_NE(nullptr, uut.buffer());
         EXPECT_NE(loaned.buffer(), uut.buffer());
         EXPECT_TRUE(uut.has_ownership());
@@ -210,16 +210,16 @@ TEST(GenericCollectionTests, copy_assign)
 {
     // Helper loaned sequence (max = num_test_elements, len = 0)
     StackAllocatedBuffer<int> stack;
-    GenericSequence<int> loaned;
+    LoanableSequence<int> loaned;
     loaned.loan(stack.buffer, stack.size(), 0);
 
     // Helper owned sequence (max = num_test_elements, len = 0)
-    GenericSequence<int> owned(num_test_elements);
+    LoanableSequence<int> owned(num_test_elements);
 
     // Copying an empty sequence behaves as default constructor
     {
-        GenericSequence<int> empty;
-        GenericSequence<int> uut = empty;
+        LoanableSequence<int> empty;
+        LoanableSequence<int> uut = empty;
         EXPECT_EQ(nullptr, uut.buffer());
         EXPECT_TRUE(uut.has_ownership());
         EXPECT_EQ(0u, uut.maximum());
@@ -228,7 +228,7 @@ TEST(GenericCollectionTests, copy_assign)
 
     // Copying an empty allocated sequence behaves as default constructor
     {
-        GenericSequence<int> uut = owned;
+        LoanableSequence<int> uut = owned;
         EXPECT_EQ(nullptr, uut.buffer());
         EXPECT_TRUE(uut.has_ownership());
         EXPECT_EQ(0u, uut.maximum());
@@ -237,7 +237,7 @@ TEST(GenericCollectionTests, copy_assign)
 
     // Copying an empty loaned sequence behaves as default constructor
     {
-        GenericSequence<int> uut = loaned;
+        LoanableSequence<int> uut = loaned;
         EXPECT_EQ(nullptr, uut.buffer());
         EXPECT_TRUE(uut.has_ownership());
         EXPECT_EQ(0u, uut.maximum());
@@ -250,7 +250,7 @@ TEST(GenericCollectionTests, copy_assign)
 
     // Copying a non-empty allocated sequence allocates and copies
     {
-        GenericSequence<int> uut = owned;
+        LoanableSequence<int> uut = owned;
         EXPECT_NE(nullptr, uut.buffer());
         EXPECT_NE(owned.buffer(), uut.buffer());
         EXPECT_TRUE(uut.has_ownership());
@@ -260,7 +260,7 @@ TEST(GenericCollectionTests, copy_assign)
 
     // Copying a non-empty loaned sequence allocates and copies
     {
-        GenericSequence<int> uut = loaned;
+        LoanableSequence<int> uut = loaned;
         EXPECT_NE(nullptr, uut.buffer());
         EXPECT_NE(loaned.buffer(), uut.buffer());
         EXPECT_TRUE(uut.has_ownership());
@@ -276,7 +276,7 @@ TEST(GenericCollectionTests, copy_assign)
 
     // Copying a non-empty allocated sequence with max > len allocates and copies
     {
-        GenericSequence<int> uut = owned;
+        LoanableSequence<int> uut = owned;
         EXPECT_NE(nullptr, uut.buffer());
         EXPECT_NE(owned.buffer(), uut.buffer());
         EXPECT_TRUE(uut.has_ownership());
@@ -286,7 +286,7 @@ TEST(GenericCollectionTests, copy_assign)
 
     // Copying a non-empty loaned sequence with max > len allocates and copies
     {
-        GenericSequence<int> uut = loaned;
+        LoanableSequence<int> uut = loaned;
         EXPECT_NE(nullptr, uut.buffer());
         EXPECT_NE(loaned.buffer(), uut.buffer());
         EXPECT_TRUE(uut.has_ownership());
@@ -331,7 +331,7 @@ TEST(GenericCollectionTests, loan_unloan)
 
     {
         // Create default sequence
-        GenericSequence<int> uut;
+        LoanableSequence<int> uut;
         EXPECT_EQ(nullptr, uut.buffer());
         EXPECT_TRUE(uut.has_ownership());
         EXPECT_EQ(0u, uut.maximum());
@@ -358,7 +358,7 @@ TEST(GenericCollectionTests, loan_unloan)
 
     {
         // Create allocated sequence
-        GenericSequence<int> uut(num_test_elements);
+        LoanableSequence<int> uut(num_test_elements);
         EXPECT_NE(nullptr, uut.buffer());
         EXPECT_TRUE(uut.has_ownership());
         EXPECT_EQ(num_test_elements, uut.maximum());
@@ -373,7 +373,7 @@ TEST(GenericCollectionTests, loan_unloan)
     }
 
     // Create a loaned sequence and check postconditions
-    GenericSequence<int> uut;
+    LoanableSequence<int> uut;
     EXPECT_TRUE(uut.loan(stack.buffer, num_test_elements, 0));
     EXPECT_FALSE(uut.has_ownership());
     EXPECT_EQ(num_test_elements, uut.maximum());
@@ -449,9 +449,9 @@ TEST(GenericCollectionTests, loan_unloan)
 
 template<typename T>
 void sum_collections(
-        GenericSequence<T>& out,
-        const GenericSequence<T>& in1,
-        const GenericSequence<T>& in2)
+        LoanableSequence<T>& out,
+        const LoanableSequence<T>& in1,
+        const LoanableSequence<T>& in2)
 {
     auto length = std::min(in1.length(), in2.length());
     ASSERT_TRUE(out.length(length));
@@ -463,7 +463,7 @@ void sum_collections(
 
 TEST(GenericCollectionTests, sum_collections)
 {
-    GenericSequence<int> fibonacci;
+    LoanableSequence<int> fibonacci;
     fibonacci.length(num_test_elements);
     fibonacci[0] = 1;
     fibonacci[1] = 1;
@@ -474,7 +474,7 @@ TEST(GenericCollectionTests, sum_collections)
 
     // Check non-loaned version
     {
-        GenericSequence<int> result;
+        LoanableSequence<int> result;
         sum_collections(result, fibonacci, fibonacci);
         check_result(result);
         EXPECT_TRUE(result.has_ownership());
@@ -487,7 +487,7 @@ TEST(GenericCollectionTests, sum_collections)
         StackAllocatedBuffer<int> stack;
 
         // Create a loaned sequence and check postconditions
-        GenericSequence<int> result;
+        LoanableSequence<int> result;
         EXPECT_TRUE(result.loan(stack.buffer, num_test_elements, 0));
         EXPECT_FALSE(result.has_ownership());
         EXPECT_EQ(num_test_elements, result.maximum());

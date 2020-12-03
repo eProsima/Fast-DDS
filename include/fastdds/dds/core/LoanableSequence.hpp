@@ -13,11 +13,11 @@
 // limitations under the License.
 
 /**
- * @file Sequence.hpp
+ * @file LoanableSequence.hpp
  */
 
-#ifndef _FASTDDS_DDS_CORE_SEQUENCE_HPP_
-#define _FASTDDS_DDS_CORE_SEQUENCE_HPP_
+#ifndef _FASTDDS_DDS_CORE_LOANABLESEQUENCE_HPP_
+#define _FASTDDS_DDS_CORE_LOANABLESEQUENCE_HPP_
 
 #include <cassert>
 #include <cstdint>
@@ -30,7 +30,7 @@ namespace fastdds {
 namespace dds {
 
 template<typename T>
-class GenericSequence : public LoanableCollection
+class LoanableSequence : public LoanableCollection
 {
 public:
 
@@ -44,7 +44,7 @@ public:
      * @post length() == 0
      * @post maximum() == 0
      */
-    GenericSequence() = default;
+    LoanableSequence() = default;
 
     /**
      * Pre-allocation constructor.
@@ -60,7 +60,7 @@ public:
      * @post length() == 0
      * @post maximum() == max
      */
-    GenericSequence(
+    LoanableSequence(
             size_type max)
     {
         if (!max)
@@ -71,7 +71,7 @@ public:
         resize(max);
     }
 
-    ~GenericSequence()
+    ~LoanableSequence()
     {
         if (elements_ && !has_ownership_)
         {
@@ -95,8 +95,8 @@ public:
      * @post length() == other.length()
      * @post buffer() != nullptr when other.length() > 0
      */
-    GenericSequence(
-            const GenericSequence& other)
+    LoanableSequence(
+            const LoanableSequence& other)
     {
         *this = other;
     }
@@ -117,8 +117,8 @@ public:
      * @post length() == other.length()
      * @post buffer() != nullptr when other.length() > 0
      */
-    GenericSequence& operator=(
-            const GenericSequence& other)
+    LoanableSequence& operator=(
+            const LoanableSequence& other)
     {
         if (!has_ownership_)
         {
@@ -201,4 +201,4 @@ private:
 } // namespace fastdds
 } // namespace eprosima
 
-#endif // _FASTDDS_DDS_CORE_SEQUENCE_HPP_
+#endif // _FASTDDS_DDS_CORE_LOANABLESEQUENCE_HPP_
