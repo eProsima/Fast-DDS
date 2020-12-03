@@ -50,11 +50,11 @@ public:
     }
 
     /**
-      * This method generates the corresponding change in the subscription writer and send it to all known remote endpoints.
-      * @param reader Pointer to the Reader object.
-      * @param rdata Pointer to the ReaderProxyData object.
-      * @return true if correct.
-      */
+     * This method generates the corresponding change in the subscription writer and send it to all known remote endpoints.
+     * @param reader Pointer to the Reader object.
+     * @param rdata Pointer to the ReaderProxyData object.
+     * @return true if correct.
+     */
     bool processLocalReaderProxyData(
             RTPSReader* reader,
             ReaderProxyData* rdata) override;
@@ -73,14 +73,14 @@ public:
      * @return True if correct.
      */
     bool removeLocalReader(
-            RTPSReader*R) override;
+            RTPSReader* R) override;
     /**
      * This methods generates the change disposing of the local Writer and calls the unpairing and removal methods of the base class.
      * @param W Pointer to the RTPSWriter object.
      * @return True if correct.
      */
     bool removeLocalWriter(
-            RTPSWriter*W) override;
+            RTPSWriter* W) override;
 
 };
 
@@ -88,5 +88,5 @@ public:
 } /* namespace fastdds */
 } /* namespace eprosima */
 
-#endif
+#endif // ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 #endif /* _FASTDDS_RTPS_EDPCLIENT_H_ */

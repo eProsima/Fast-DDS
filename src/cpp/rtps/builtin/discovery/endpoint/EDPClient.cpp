@@ -51,7 +51,7 @@ bool EDPClient::processLocalReaderProxyData(
     {
         writer = &subscriptions_secure_writer_;
     }
-#endif
+#endif // if HAVE_SECURITY
 
     CacheChange_t* change = nullptr;
     bool ret_val = serialize_reader_proxy_data(*rdata, *writer, true, &change);
@@ -84,7 +84,7 @@ bool EDPClient::processLocalWriterProxyData(
     {
         writer = &publications_secure_writer_;
     }
-#endif
+#endif // if HAVE_SECURITY
 
     CacheChange_t* change = nullptr;
     bool ret_val = serialize_writer_proxy_data(*wdata, *writer, true, &change);
@@ -115,7 +115,7 @@ bool EDPClient::removeLocalWriter(
     {
         writer = &publications_secure_writer_;
     }
-#endif
+#endif // if HAVE_SECURITY
 
     if (writer->first != nullptr)
     {
@@ -168,7 +168,7 @@ bool EDPClient::removeLocalReader(
     {
         writer = &subscriptions_secure_writer_;
     }
-#endif
+#endif // if HAVE_SECURITY
 
     if (writer->first != nullptr)
     {

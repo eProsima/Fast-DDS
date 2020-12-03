@@ -27,7 +27,7 @@
 #include <rtps/builtin/discovery/participant/timedevent/DSClientEvent.h>
 
 namespace eprosima {
-namespace fastdds{
+namespace fastdds {
 namespace rtps {
 
 using namespace fastrtps::rtps;
@@ -55,14 +55,16 @@ public:
             const RTPSParticipantAllocationAttributes& allocation);
     ~PDPClient();
 
-    void initializeParticipantProxyData(ParticipantProxyData* participant_data) override;
+    void initializeParticipantProxyData(
+            ParticipantProxyData* participant_data) override;
 
     /**
      * Initialize the PDP.
      * @param part Pointer to the RTPSParticipant.
      * @return True on success
      */
-    bool init(RTPSParticipantImpl* part) override;
+    bool init(
+            RTPSParticipantImpl* part) override;
 
     /**
      * Creates an initializes a new participant proxy from a DATA(p) raw info
@@ -71,8 +73,8 @@ public:
      * @return new ParticipantProxyData * or nullptr on failure
      */
     ParticipantProxyData* createParticipantProxyData(
-        const ParticipantProxyData& p,
-        const GUID_t& writer_guid) override;
+            const ParticipantProxyData& p,
+            const GUID_t& writer_guid) override;
 
     /**
      * Create the SPDP Writer and Reader
@@ -102,9 +104,9 @@ public:
      * @param wparams allows to identify the change
      */
     void announceParticipantState(
-        bool new_change,
-        bool dispose = false,
-        WriteParams& wparams = WriteParams::WRITE_PARAM_DEFAULT) override;
+            bool new_change,
+            bool dispose = false,
+            WriteParams& wparams = WriteParams::WRITE_PARAM_DEFAULT) override;
 
     /**
      * These methods wouldn't be needed under perfect server operation
@@ -112,24 +114,27 @@ public:
      * to solve server shutdown situations.
      * @param pdata Pointer to the RTPSParticipantProxyData object.
      */
-    void assignRemoteEndpoints(ParticipantProxyData* pdata) override;
-    void removeRemoteEndpoints(ParticipantProxyData* pdata) override;
-    void notifyAboveRemoteEndpoints(const ParticipantProxyData& pdata) override;
+    void assignRemoteEndpoints(
+            ParticipantProxyData* pdata) override;
+    void removeRemoteEndpoints(
+            ParticipantProxyData* pdata) override;
+    void notifyAboveRemoteEndpoints(
+            const ParticipantProxyData& pdata) override;
 
     /**
-    * Matching server EDP endpoints
-    * @return true if all servers have been discovered
-    */
+     * Matching server EDP endpoints
+     * @return true if all servers have been discovered
+     */
     bool match_servers_EDP_endpoints();
 
-    private:
+private:
 
     /**
-    * TimedEvent for server synchronization:
-    *   first stage: periodically resend the local RTPSParticipant information until
-    *    all servers have acknowledge reception
-    *   second stage: waiting PDP info is up to date before allowing EDP matching
-    */
+     * TimedEvent for server synchronization:
+     *   first stage: periodically resend the local RTPSParticipant information until
+     *    all servers have acknowledge reception
+     *   second stage: waiting PDP info is up to date before allowing EDP matching
+     */
     DSClientEvent* mp_sync;
 
     //! flag to hightlight we need a server ping announcement
@@ -139,5 +144,5 @@ public:
 } /* namespace rtps */
 } /* namespace fastdds */
 } /* namespace eprosima */
-#endif
+#endif // ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 #endif /* _FASTDDS_RTPS_PDPCLIENT_H_ */

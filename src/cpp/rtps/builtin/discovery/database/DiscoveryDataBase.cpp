@@ -2348,7 +2348,7 @@ bool DiscoveryDataBase::from_json(
 
             logInfo(DISCOVERY_DATABASE,
                     "Writer " << guid_aux << " created with instance handle " <<
-                                    wit.first->second.change()->instanceHandle);
+                    wit.first->second.change()->instanceHandle);
 
             if (change->kind != fastrtps::rtps::ALIVE)
             {
