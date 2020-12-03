@@ -20,10 +20,10 @@
 #include <fastdds/rtps/common/CacheChange.h>
 #include <fastdds/rtps/common/GuidPrefix_t.hpp>
 
-#include "./DiscoverySharedInfo.hpp"
+#include <rtps/builtin/discovery/database/DiscoverySharedInfo.hpp>
 
 #include <json.hpp>
-#include "backup/SharedBackupFunctions.hpp"
+#include <rtps/builtin/discovery/database/backup/SharedBackupFunctions.hpp>
 
 namespace eprosima {
 namespace fastdds {

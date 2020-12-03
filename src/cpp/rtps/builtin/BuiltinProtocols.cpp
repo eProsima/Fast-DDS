@@ -24,8 +24,8 @@
 #include <fastdds/rtps/builtin/discovery/endpoint/EDP.h>
 #include <fastdds/rtps/builtin/discovery/endpoint/EDPStatic.h>
 
-#include "./discovery/participant/PDPServer.hpp"
-#include "./discovery/participant/PDPClient.h"
+#include <rtps/builtin/discovery/participant/PDPServer.hpp>
+#include <rtps/builtin/discovery/participant/PDPClient.h>
 
 #include <fastdds/rtps/builtin/data/ParticipantProxyData.h>
 

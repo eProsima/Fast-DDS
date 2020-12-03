@@ -25,8 +25,8 @@
 
 #include <fastdds/dds/log/Log.hpp>
 
-#include "./DSClientEvent.h"
-#include "../PDPClient.h"
+#include <rtps/builtin/discovery/participant/timedevent/DSClientEvent.h>
+#include <rtps/builtin/discovery/participant/PDPClient.h>
 
 namespace eprosima {
 namespace fastdds {

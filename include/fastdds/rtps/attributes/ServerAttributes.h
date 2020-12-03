@@ -68,6 +68,12 @@ public:
     RTPS_DllAPI fastrtps::rtps::GUID_t GetPDPReader() const;
     RTPS_DllAPI fastrtps::rtps::GUID_t GetPDPWriter() const;
 
+    RTPS_DllAPI fastrtps::rtps::GUID_t GetEDPPublicationsReader() const; // Not implemented
+    RTPS_DllAPI fastrtps::rtps::GUID_t GetEDPSubscriptionsWriter() const; // Not implemented
+
+    RTPS_DllAPI fastrtps::rtps::GUID_t GetEDPPublicationsWriter() const; // Not implemented
+    RTPS_DllAPI fastrtps::rtps::GUID_t GetEDPSubscriptionsReader() const; // Not implemented
+
     RTPS_DllAPI inline bool ReadguidPrefix(
             const char* pfx)
     {

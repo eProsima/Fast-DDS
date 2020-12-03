@@ -17,7 +17,7 @@
  *
  */
 
-#include "EDPSimpleListeners.h"
+#include <rtps/builtin/discovery/endpoint/EDPSimpleListeners.h>
 
 #include <fastdds/dds/log/Log.hpp>
 

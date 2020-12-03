@@ -37,9 +37,9 @@
 
 #include <fastdds/dds/log/Log.hpp>
 
-#include "./PDPClient.h"
-#include "./timedevent/DSClientEvent.h"
-#include "../endpoint/EDPClient.h"
+#include <rtps/builtin/discovery/participant/PDPClient.h>
+#include <rtps/builtin/discovery/participant/timedevent/DSClientEvent.h>
+#include <rtps/builtin/discovery/endpoint/EDPClient.h>
 
 using namespace eprosima::fastrtps;
 

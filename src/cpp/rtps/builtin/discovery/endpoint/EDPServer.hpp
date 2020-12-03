@@ -23,17 +23,17 @@
 
 #include <fastdds/rtps/common/CacheChange.h>
 #include <fastdds/rtps/builtin/data/ParticipantProxyData.h>
-#include "../database/DiscoveryDataFilter.hpp"
-#include "../database/DiscoveryDataBase.hpp"
+#include <rtps/builtin/discovery/database/DiscoveryDataFilter.hpp>
+#include <rtps/builtin/discovery/database/DiscoveryDataBase.hpp>
 #include <fastdds/rtps/builtin/discovery/endpoint/EDPSimple.h>
-#include "../participant/PDPServer.hpp"
+#include <rtps/builtin/discovery/participant/PDPServer.hpp>
 
 namespace eprosima {
 namespace fastdds {
 namespace rtps {
 
-class EDPServerPUBListener2;
-class EDPServerSUBListener2;
+class EDPServerPUBListener;
+class EDPServerSUBListener;
 
 /**
  * Class EDPServer, implements the Endpoint Discovery Protocol for server participants
@@ -42,8 +42,8 @@ class EDPServerSUBListener2;
  */
 class EDPServer : public fastrtps::rtps::EDPSimple
 {
-    friend class EDPServerPUBListener2;
-    friend class EDPServerSUBListener2;
+    friend class EDPServerPUBListener;
+    friend class EDPServerSUBListener;
 
 public:
 

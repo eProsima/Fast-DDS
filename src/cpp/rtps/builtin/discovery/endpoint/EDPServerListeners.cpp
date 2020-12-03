@@ -1,4 +1,4 @@
-// Copyright 2020 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+// Copyright 2016 Proyectos y Sistemas de Mantenimiento SL (eProsima).
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -13,7 +13,7 @@
 // limitations under the License.
 
 /**
- * @file EDPServerListener2.cpp
+ * @file EDPServerListener.cpp
  *
  */
 
@@ -26,9 +26,9 @@
 
 #include <fastdds/dds/log/Log.hpp>
 
-#include "./EDPServerListeners.hpp"
-#include "./EDPServer.hpp"
-#include "../participant/PDPServer.hpp"
+#include <rtps/builtin/discovery/endpoint/EDPServerListeners.hpp>
+#include <rtps/builtin/discovery/endpoint/EDPServer.hpp>
+#include <rtps/builtin/discovery/participant/PDPServer.hpp>
 
 namespace eprosima {
 namespace fastdds {
@@ -36,12 +36,12 @@ namespace rtps {
 
 using namespace eprosima::fastrtps::rtps;
 
-PDPServer* EDPServerPUBListener2::get_pdp()
+PDPServer* EDPServerPUBListener::get_pdp()
 {
     return sedp_->get_pdp();
 }
 
-EDPServerPUBListener2::EDPServerPUBListener2(
+EDPServerPUBListener::EDPServerPUBListener(
         EDPServer* sedp)
     : EDPBasePUBListener(sedp->mp_RTPSParticipant->getAttributes().allocation.locators,
             sedp->mp_RTPSParticipant->getAttributes().allocation.data_limits)
@@ -49,7 +49,7 @@ EDPServerPUBListener2::EDPServerPUBListener2(
 {
 }
 
-void EDPServerPUBListener2::onNewCacheChangeAdded(
+void EDPServerPUBListener::onNewCacheChangeAdded(
         RTPSReader* reader,
         const CacheChange_t* const change_in)
 {
@@ -138,12 +138,12 @@ void EDPServerPUBListener2::onNewCacheChangeAdded(
     logInfo(RTPS_EDP_LISTENER, "");
 }
 
-PDPServer* EDPServerSUBListener2::get_pdp()
+PDPServer* EDPServerSUBListener::get_pdp()
 {
     return sedp_->get_pdp();
 }
 
-EDPServerSUBListener2::EDPServerSUBListener2(
+EDPServerSUBListener::EDPServerSUBListener(
         EDPServer* sedp)
     : EDPBaseSUBListener(sedp->mp_RTPSParticipant->getAttributes().allocation.locators,
             sedp->mp_RTPSParticipant->getAttributes().allocation.data_limits)
@@ -151,7 +151,7 @@ EDPServerSUBListener2::EDPServerSUBListener2(
 {
 }
 
-void EDPServerSUBListener2::onNewCacheChangeAdded(
+void EDPServerSUBListener::onNewCacheChangeAdded(
         RTPSReader* reader,
         const CacheChange_t* const change_in)
 {

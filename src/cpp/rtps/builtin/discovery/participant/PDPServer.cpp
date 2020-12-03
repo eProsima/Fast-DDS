@@ -1,4 +1,4 @@
-// Copyright 2020 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+// Copyright 2019 Proyectos y Sistemas de Mantenimiento SL (eProsima).
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -42,13 +42,13 @@
 
 #include <fastdds/dds/log/Log.hpp>
 
-#include "./PDPServer.hpp"
-#include "./PDPServerListener.hpp"
-#include "./timedevent/DServerEvent.hpp"
-#include "../endpoint/EDPServer.hpp"
-#include "../endpoint/EDPServerListeners.hpp"
+#include <rtps/builtin/discovery/participant/PDPServer.hpp>
+#include <rtps/builtin/discovery/participant/PDPServerListener.hpp>
+#include <rtps/builtin/discovery/participant/timedevent/DServerEvent.hpp>
+#include <rtps/builtin/discovery/endpoint/EDPServer.hpp>
+#include <rtps/builtin/discovery/endpoint/EDPServerListeners.hpp>
 
-#include "../database/backup/SharedBackupFunctions.hpp"
+#include <rtps/builtin/discovery/database/backup/SharedBackupFunctions.hpp>
 
 namespace eprosima {
 namespace fastdds {
@@ -1429,8 +1429,8 @@ bool PDPServer::process_backup_discovery_database_restore(
     // We need every listener to resend the changes of every entity (ALIVE) in the DDB, so the PaticipantProxy
     // is restored
     EDPServer* edp = static_cast<EDPServer*>(mp_EDP);
-    EDPServerPUBListener2* edp_pub_listener = static_cast<EDPServerPUBListener2*>(edp->publications_listener_);
-    EDPServerSUBListener2* edp_sub_listener = static_cast<EDPServerSUBListener2*>(edp->subscriptions_listener_);
+    EDPServerPUBListener* edp_pub_listener = static_cast<EDPServerPUBListener*>(edp->publications_listener_);
+    EDPServerSUBListener* edp_sub_listener = static_cast<EDPServerSUBListener*>(edp->subscriptions_listener_);
 
     // These mutexes are necessary to send messages to the listeners
     std::unique_lock<fastrtps::RecursiveTimedMutex> lock(mp_PDPReader->getMutex());
@@ -1574,8 +1574,8 @@ bool PDPServer::process_backup_restore_queue(
     // uint32_t length;
 
     // EDPServer* edp = static_cast<EDPServer*>(mp_EDP);
-    // EDPServerPUBListener2* edp_pub_listener = static_cast<EDPServerPUBListener2*>(edp->publications_listener_);
-    // EDPServerSUBListener2* edp_sub_listener = static_cast<EDPServerSUBListener2*>(edp->subscriptions_listener_);
+    // EDPServerPUBListener* edp_pub_listener = static_cast<EDPServerPUBListener*>(edp->publications_listener_);
+    // EDPServerSUBListener* edp_sub_listener = static_cast<EDPServerSUBListener*>(edp->subscriptions_listener_);
 
     // std::unique_lock<fastrtps::RecursiveTimedMutex> lock(mp_PDPReader->getMutex());
     // std::unique_lock<fastrtps::RecursiveTimedMutex> lock_edpp(edp->publications_reader_.first->getMutex());

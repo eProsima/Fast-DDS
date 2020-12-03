@@ -42,10 +42,10 @@ class PDPServer;
 class EDPServer;
 
 /*!
- * Class EDPServerPUBListener2, used to define the behavior when a new WriterProxyData is received.
+ * Class EDPServerPUBListener, used to define the behavior when a new WriterProxyData is received.
  * @ingroup DISCOVERY_MODULE
  */
-class EDPServerPUBListener2 : public fastrtps::rtps::EDPBasePUBListener
+class EDPServerPUBListener : public fastrtps::rtps::EDPBasePUBListener
 {
 public:
 
@@ -53,10 +53,10 @@ public:
        Constructor
      * @param sedp Pointer to the EDPServer associated with this listener.
      */
-    EDPServerPUBListener2(
+    EDPServerPUBListener(
             EDPServer* sedp);
 
-    virtual ~EDPServerPUBListener2()
+    virtual ~EDPServerPUBListener()
     {
     }
 
@@ -79,10 +79,10 @@ private:
 };
 
 /*!
- * Class EDPServerSUBListener2, used to define the behavior when a new ReaderProxyData is received.
+ * Class EDPServerSUBListener, used to define the behavior when a new ReaderProxyData is received.
  * @ingroup DISCOVERY_MODULE
  */
-class EDPServerSUBListener2 : public fastrtps::rtps::EDPBaseSUBListener
+class EDPServerSUBListener : public fastrtps::rtps::EDPBaseSUBListener
 {
 public:
 
@@ -90,10 +90,10 @@ public:
        Constructor
      * @param sedp Pointer to the EDPServer associated with this listener.
      */
-    EDPServerSUBListener2(
+    EDPServerSUBListener(
             EDPServer* sedp);
 
-    virtual ~EDPServerSUBListener2() = default;
+    virtual ~EDPServerSUBListener() = default;
 
     //! return the PDPServer
     PDPServer* get_pdp();

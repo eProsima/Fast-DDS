@@ -191,20 +191,19 @@ set(${PROJECT_NAME}_source_files
     rtps/reader/StatefulPersistentReader.cpp
     rtps/persistence/PersistenceFactory.cpp
 
-    rtps/builtin/discovery/database/DiscoveryDataBase.cpp
-    rtps/builtin/discovery/database/DiscoveryParticipantsAckStatus.cpp
-    rtps/builtin/discovery/database/DiscoveryParticipantInfo.cpp
-    rtps/builtin/discovery/database/DiscoverySharedInfo.cpp
     rtps/builtin/discovery/database/backup/SharedBackupFunctions.cpp
-
-    rtps/builtin/discovery/participant/timedevent/DSClientEvent.cpp
-    rtps/builtin/discovery/participant/PDPClient.cpp
     rtps/builtin/discovery/endpoint/EDPClient.cpp
-    rtps/builtin/discovery/participant/timedevent/DServerEvent.cpp
-    rtps/builtin/discovery/participant/PDPServer.cpp
-    rtps/builtin/discovery/participant/PDPServerListener.cpp
     rtps/builtin/discovery/endpoint/EDPServer.cpp
     rtps/builtin/discovery/endpoint/EDPServerListeners.cpp
+    rtps/builtin/discovery/database/DiscoveryDataBase.cpp
+    rtps/builtin/discovery/database/DiscoveryParticipantInfo.cpp
+    rtps/builtin/discovery/database/DiscoveryParticipantsAckStatus.cpp
+    rtps/builtin/discovery/database/DiscoverySharedInfo.cpp
+    rtps/builtin/discovery/participant/PDPClient.cpp
+    rtps/builtin/discovery/participant/PDPServer.cpp
+    rtps/builtin/discovery/participant/PDPServerListener.cpp
+    rtps/builtin/discovery/participant/timedevent/DSClientEvent.cpp
+    rtps/builtin/discovery/participant/timedevent/DServerEvent.cpp
 
     utils/IPFinder.cpp
     utils/md5.cpp

@@ -24,7 +24,7 @@
 #include <fastdds/rtps/builtin/discovery/participant/PDP.h>
 #include <fastdds/rtps/messages/RTPSMessageGroup.h>
 
-#include "./timedevent/DSClientEvent.h"
+#include <rtps/builtin/discovery/participant/timedevent/DSClientEvent.h>
 
 namespace eprosima {
 namespace fastdds{

@@ -24,7 +24,7 @@
 #include <fastdds/dds/core/policy/ParameterTypes.hpp>
 
 #include <json.hpp>
-#include "backup/SharedBackupFunctions.hpp"
+#include <rtps/builtin/discovery/database/backup/SharedBackupFunctions.hpp>
 
 namespace eprosima {
 namespace fastdds {

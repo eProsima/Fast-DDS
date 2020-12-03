@@ -1,4 +1,4 @@
-// Copyright 2020 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+// Copyright 2016 Proyectos y Sistemas de Mantenimiento SL (eProsima).
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -26,8 +26,8 @@
 
 #include <fastrtps/utils/fixed_size_string.hpp>
 
-#include "./EDPServerListeners.hpp"
-#include "./EDPServer.hpp"
+#include <rtps/builtin/discovery/endpoint/EDPServerListeners.hpp>
+#include <rtps/builtin/discovery/endpoint/EDPServer.hpp>
 
 using namespace ::eprosima::fastrtps::rtps;
 
@@ -37,7 +37,7 @@ namespace rtps {
 
 bool EDPServer::createSEDPEndpoints()
 {
-    // Assert that there is PDP SERVER
+    // Assert that PDP object is a PDP SERVER
     assert(dynamic_cast<PDPServer*>(mp_PDP));
 
     bool created = true;  // Return code
@@ -73,8 +73,8 @@ bool EDPServer::createSEDPEndpoints()
     watt.mode = ASYNCHRONOUS_WRITER;
 
     /* EDP Listeners */
-    publications_listener_ = new EDPServerPUBListener2(this);
-    subscriptions_listener_ = new EDPServerSUBListener2(this);
+    publications_listener_ = new EDPServerPUBListener(this);
+    subscriptions_listener_ = new EDPServerSUBListener(this);
 
     /* Manage publications */
     if (m_discovery.discovery_config.m_simpleEDP.use_PublicationWriterANDSubscriptionReader)

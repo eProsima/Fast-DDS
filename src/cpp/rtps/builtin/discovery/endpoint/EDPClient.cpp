@@ -29,7 +29,7 @@
 
 #include <mutex>
 
-#include "./EDPClient.h"
+#include <rtps/builtin/discovery/endpoint/EDPClient.h>
 
 namespace eprosima {
 namespace fastdds {

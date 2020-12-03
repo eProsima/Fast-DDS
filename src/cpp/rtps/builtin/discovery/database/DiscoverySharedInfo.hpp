@@ -24,7 +24,7 @@
 #include <fastdds/rtps/common/GuidPrefix_t.hpp>
 #include <fastdds/dds/log/Log.hpp>
 
-#include "./DiscoveryParticipantsAckStatus.hpp"
+#include <rtps/builtin/discovery/database/DiscoveryParticipantsAckStatus.hpp>
 
 #include <json.hpp>
 

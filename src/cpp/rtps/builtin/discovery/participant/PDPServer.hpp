@@ -25,9 +25,9 @@
 #include <fastdds/rtps/history/History.h>
 #include <fastdds/rtps/resources/ResourceEvent.h>
 
-#include "../database/DiscoveryDataFilter.hpp"
-#include "../database/DiscoveryDataBase.hpp"
-#include "./timedevent/DServerEvent.hpp"
+#include <rtps/builtin/discovery/database/DiscoveryDataFilter.hpp>
+#include <rtps/builtin/discovery/database/DiscoveryDataBase.hpp>
+#include <rtps/builtin/discovery/participant/timedevent/DServerEvent.hpp>
 
 namespace eprosima {
 namespace fastdds {
