@@ -570,19 +570,21 @@ void DiscoveryDataBase::create_participant_from_change_(
         if (ch->write_params.sample_identity().sequence_number() >
                 participant_it->second.change()->write_params.sample_identity().sequence_number())
         {
-            // Update the change related to the participant and return the old change to the pool
-            logInfo(DISCOVERY_DATABASE, "Participant updating. Marking old change to release");
-            // Update participant's change in the database, set all relevant participants ACK status to 0, and add
-            // old change to changes_to_release_.
-            update_change_and_unmatch_(ch, participant_it->second);
+            logInfo(DISCOVERY_DATABASE, "Participant already known with newer sequence number");
 
-            // If it is an update of our own server, is already in history
-            // Else, it needs to be sent in case it has unacked participants
-            if (change_guid.guidPrefix != server_guid_prefix_ &&
-                    !participant_it->second.is_acked_by_all())
+            // The change could be newer but has no update, so we do not update it if it is not new
+            if (!(ch->serializedPayload == participant_it->second.change()->serializedPayload))
             {
-                // The change could be newer but has no update, so we do not send it if it is not new
-                if (!(ch->serializedPayload == participant_it->second.change()->serializedPayload))
+                // Update the change related to the participant and return the old change to the pool
+                logInfo(DISCOVERY_DATABASE, "Participant updating. Marking old change to release");
+                // Update participant's change in the database, set all relevant participants ACK status to 0, and add
+                // old change to changes_to_release_.
+                update_change_and_unmatch_(ch, participant_it->second);
+
+                // If it is an update of our own server, is already in history
+                // Else, it needs to be sent in case it has unacked participants
+                if (change_guid.guidPrefix != server_guid_prefix_ &&
+                        !participant_it->second.is_acked_by_all())
                 {
                     entity_updates_.store(true);
                     add_pdp_to_send_(ch);
@@ -638,6 +640,13 @@ void DiscoveryDataBase::create_participant_from_change_(
             if (change_guid.guidPrefix != server_guid_prefix_ &&
                     !ret.first->second.is_client() && ret.first->second.is_local())
             {
+                // Send Our DATA(p) to the new participant
+                // If this is not done, our data could be skip afterwards because a gap sent in newer DATA(p)s
+                //  so the new participant could never receive out data
+                auto our_data_it = participants_.find(server_guid_prefix_);
+                assert(our_data_it != participants_.end());
+                add_pdp_to_send_(our_data_it->second.change());
+
                 logInfo(DISCOVERY_DATABASE, "Creating virtual entities for " << change_guid.guidPrefix);
                 /* Create virtual writer */
                 // Create a GUID for the virtual writer from the local server GUID prefix and the virtual writer entity
@@ -707,17 +716,17 @@ void DiscoveryDataBase::create_writers_from_change_(
         if (ch->write_params.sample_identity().sequence_number() >
                 writer_it->second.change()->write_params.sample_identity().sequence_number())
         {
-            // Update the change related to the writer and return the old change to the pool
-            // TODO (Paris): when updating, be careful of not to do unmatch if the only endpoint in the other
-            // participant is NOT ALIVE. This means that you still have to send your Data(Ux) to him but not the
-            // updates
-            update_change_and_unmatch_(ch, writer_it->second);
-
-            // It needs to be sent in case it has unacked participants
-            if (!writer_it->second.is_acked_by_all())
+            // The change could be newer but has no update, so we do not update it
+            if (!(ch->serializedPayload == writer_it->second.change()->serializedPayload))
             {
-                // The change could be newer but has no update, so we do not send it
-                if (!(ch->serializedPayload == writer_it->second.change()->serializedPayload))
+                // Update the change related to the writer and return the old change to the pool
+                // TODO (Paris): when updating, be careful of not to do unmatch if the only endpoint in the other
+                // participant is NOT ALIVE. This means that you still have to send your Data(Ux) to him but not the
+                // updates
+                update_change_and_unmatch_(ch, writer_it->second);
+
+                // It needs to be sent in case it has unacked participants
+                if (!writer_it->second.is_acked_by_all())
                 {
                     entity_updates_.store(true);
                     add_edp_publications_to_send_(ch);
@@ -817,21 +826,21 @@ void DiscoveryDataBase::create_readers_from_change_(
     // The reader was already known in the database
     if (reader_it != readers_.end())
     {
-        // Only update database if the change is newer than the one we already have
-        if (ch->write_params.sample_identity().sequence_number() >
-                reader_it->second.change()->write_params.sample_identity().sequence_number())
+        // The change could be newer but has no update, so we do not update it
+        if (!(ch->serializedPayload == reader_it->second.change()->serializedPayload))
         {
-            // Update the change related to the reader and return the old change to the pool
-            // TODO (Paris): when updating, be careful of not to do unmatch if the only endpoint in the other
-            // participant is NOT ALIVE. This means that you still have to send your Data(Ux) to him but not the
-            // updates
-            update_change_and_unmatch_(ch, reader_it->second);
-
-            // It needs to be sent in case it has unacked participants
-            if (!reader_it->second.is_acked_by_all())
+            // Only update database if the change is newer than the one we already have
+            if (ch->write_params.sample_identity().sequence_number() >
+                    reader_it->second.change()->write_params.sample_identity().sequence_number())
             {
-                // The change could be newer but has no update, so we do not send it
-                if (!(ch->serializedPayload == reader_it->second.change()->serializedPayload))
+                // Update the change related to the reader and return the old change to the pool
+                // TODO (Paris): when updating, be careful of not to do unmatch if the only endpoint in the other
+                // participant is NOT ALIVE. This means that you still have to send your Data(Ux) to him but not the
+                // updates
+                update_change_and_unmatch_(ch, reader_it->second);
+
+                // It needs to be sent in case it has unacked participants
+                if (!reader_it->second.is_acked_by_all())
                 {
                     entity_updates_.store(true);
                     add_edp_subscriptions_to_send_(ch);
