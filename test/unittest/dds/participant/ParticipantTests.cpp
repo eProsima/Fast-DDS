@@ -1429,7 +1429,7 @@ TEST(ParticipantTests, NewRemoteEndpointDiscovered)
 
     // Check that the remote endpoint is not registered in a disabled participant
     ASSERT_FALSE(participant->new_remote_endpoint_discovered(
-            remote_endpoint_guid, 1, eprosima::fastrtps::rtps::EndpointKind_t::WRITER));
+                remote_endpoint_guid, 1, eprosima::fastrtps::rtps::EndpointKind_t::WRITER));
 
     // Enable the participant
     EXPECT_EQ(ReturnCode_t::RETCODE_OK, participant->enable());
@@ -1437,10 +1437,10 @@ TEST(ParticipantTests, NewRemoteEndpointDiscovered)
 
     // Check that a WRITER remote endpoint is registered in an enabled participant
     ASSERT_FALSE(participant->new_remote_endpoint_discovered(
-            remote_endpoint_guid, 1, eprosima::fastrtps::rtps::EndpointKind_t::WRITER));
+                remote_endpoint_guid, 1, eprosima::fastrtps::rtps::EndpointKind_t::WRITER));
     // Check that a READER remote endpoint is registered in an enabled participant
     ASSERT_FALSE(participant->new_remote_endpoint_discovered(
-            remote_endpoint_guid, 1, eprosima::fastrtps::rtps::EndpointKind_t::READER));
+                remote_endpoint_guid, 1, eprosima::fastrtps::rtps::EndpointKind_t::READER));
 
     // Remove the participant
     ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), ReturnCode_t::RETCODE_OK);
@@ -1584,7 +1584,8 @@ class DynamicTypeMock : public eprosima::fastrtps::types::DynamicType
 {
 public:
 
-    DynamicTypeMock(const eprosima::fastrtps::types::TypeDescriptor* descriptor)
+    DynamicTypeMock(
+            const eprosima::fastrtps::types::TypeDescriptor* descriptor)
         : eprosima::fastrtps::types::DynamicType(descriptor)
     {
     }
@@ -1608,7 +1609,7 @@ TEST(ParticipantTests, RegisterDynamicTypeToFactoriesNotTypeIdentifier)
 
     // Create a not supported TypeDescriptor
     const eprosima::fastrtps::types::TypeDescriptor* myDescriptor(
-            new eprosima::fastrtps::types::TypeDescriptor("my_descriptor", 0x11));
+        new eprosima::fastrtps::types::TypeDescriptor("my_descriptor", 0x11));
     // Create the base type for the dynamic type
     DynamicType_ptr base_type(new DynamicTypeMock(myDescriptor));
     // Create a custom dynamic type builder using the wrong TypeDescriptor
@@ -1665,7 +1666,7 @@ TEST(ParticipantTests, GetTypes)
     // Create the sequence of TypeIdentifiers
     const fastrtps::types::TypeIdentifier* indentifier_string =
             fastrtps::types::TypeObjectFactory::get_instance()->get_type_identifier_trying_complete(
-                    type_string.get_type_name());
+        type_string.get_type_name());
 
     fastrtps::types::TypeIdentifierSeq types;
     types.push_back(*indentifier_string);
@@ -1707,7 +1708,7 @@ TEST(ParticipantTests, GetTypeDependencies)
     // Create the sequence of TypeIdentifiers
     const fastrtps::types::TypeIdentifier* indentifier_string =
             fastrtps::types::TypeObjectFactory::get_instance()->get_type_identifier_trying_complete(
-                    type_string.get_type_name());
+        type_string.get_type_name());
 
     fastrtps::types::TypeIdentifierSeq types;
     types.push_back(*indentifier_string);
@@ -1760,7 +1761,7 @@ TEST(ParticipantTests, RegisterRemoteTypeComplete)
     // Retrieve the Typeidentifier, the type name and the TypeInformation from the TypeObjectFactory
     const fastrtps::types::TypeIdentifier* identifier =
             fastrtps::types::TypeObjectFactory::get_instance()->get_type_identifier_trying_complete(
-                    type.get_type_name());
+        type.get_type_name());
 
     std::string type_name = fastrtps::types::TypeObjectFactory::get_instance()->get_type_name(identifier);
 
@@ -1836,7 +1837,7 @@ TEST(ParticipantTests, RegisterRemoteTypeMinimal)
     // Retrieve the Typeidentifier, the type name and the TypeInformation from the TypeObjectFactory
     const fastrtps::types::TypeIdentifier* identifier =
             fastrtps::types::TypeObjectFactory::get_instance()->get_type_identifier_trying_complete(
-                    type.get_type_name());
+        type.get_type_name());
 
     std::string type_name = fastrtps::types::TypeObjectFactory::get_instance()->get_type_name(identifier);
 
