@@ -308,11 +308,8 @@ XMLP_ret XMLProfileManager::loadXMLFile(
             {
                 return XMLProfileManager::extractProfiles(std::move(child), filename);
             }
-            else
-            {
-                return loaded_ret;
-            }
         }
+        return loaded_ret;
     }
 
     if (NodeType::PROFILES == root_node->getType())
