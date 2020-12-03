@@ -299,7 +299,7 @@ public:
      */
     inline bool is_remote_and_reliable() const
     {
-        return !locator_info_.is_local_reader() && is_reliable_;
+        return !locator_info_.is_local_reader() && !locator_info_.is_datasharing_reader() && is_reliable_;
     }
 
     /**
