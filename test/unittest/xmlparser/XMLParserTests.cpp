@@ -594,8 +594,8 @@ TEST_F(XMLParserTests, parseXMLTransportData)
         titleElement = xml_doc.RootElement();
         EXPECT_EQ(XMLP_ret::XML_OK, XMLParserTest::parseXMLTransportData_wrapper(titleElement));
         std::shared_ptr<rtps::UDPv4TransportDescriptor> pUDPv4Desc =
-                    std::dynamic_pointer_cast<rtps::UDPv4TransportDescriptor>(
-                        xmlparser::XMLProfileManager::getTransportById("TransportId1"));
+                std::dynamic_pointer_cast<rtps::UDPv4TransportDescriptor>(
+            xmlparser::XMLProfileManager::getTransportById("TransportId1"));
         EXPECT_EQ(pUDPv4Desc->sendBufferSize, 8192);
         EXPECT_EQ(pUDPv4Desc->receiveBufferSize, 8192);
         EXPECT_EQ(pUDPv4Desc->TTL, 250);
@@ -614,8 +614,8 @@ TEST_F(XMLParserTests, parseXMLTransportData)
         titleElement = xml_doc.RootElement();
         EXPECT_EQ(XMLP_ret::XML_OK, XMLParserTest::parseXMLTransportData_wrapper(titleElement));
         std::shared_ptr<rtps::UDPv6TransportDescriptor> pUDPv6Desc =
-                    std::dynamic_pointer_cast<rtps::UDPv6TransportDescriptor>(
-                        xmlparser::XMLProfileManager::getTransportById("TransportId1"));
+                std::dynamic_pointer_cast<rtps::UDPv6TransportDescriptor>(
+            xmlparser::XMLProfileManager::getTransportById("TransportId1"));
         EXPECT_EQ(pUDPv6Desc->sendBufferSize, 8192);
         EXPECT_EQ(pUDPv6Desc->receiveBufferSize, 8192);
         EXPECT_EQ(pUDPv6Desc->TTL, 250);
@@ -671,8 +671,8 @@ TEST_F(XMLParserTests, parseXMLTransportData)
         titleElement = xml_doc.RootElement();
         EXPECT_EQ(XMLP_ret::XML_OK, XMLParserTest::parseXMLTransportData_wrapper(titleElement));
         std::shared_ptr<rtps::TCPv4TransportDescriptor> pTCPv4Desc =
-                    std::dynamic_pointer_cast<rtps::TCPv4TransportDescriptor>(
-                        xmlparser::XMLProfileManager::getTransportById("TransportId1"));
+                std::dynamic_pointer_cast<rtps::TCPv4TransportDescriptor>(
+            xmlparser::XMLProfileManager::getTransportById("TransportId1"));
         EXPECT_EQ(pTCPv4Desc->sendBufferSize, 8192);
         EXPECT_EQ(pTCPv4Desc->receiveBufferSize, 8192);
         EXPECT_EQ(pTCPv4Desc->TTL, 250);
@@ -700,8 +700,8 @@ TEST_F(XMLParserTests, parseXMLTransportData)
         titleElement = xml_doc.RootElement();
         EXPECT_EQ(XMLP_ret::XML_OK, XMLParserTest::parseXMLTransportData_wrapper(titleElement));
         std::shared_ptr<rtps::TCPv6TransportDescriptor> pTCPv6Desc =
-                    std::dynamic_pointer_cast<rtps::TCPv6TransportDescriptor>(
-                        xmlparser::XMLProfileManager::getTransportById("TransportId1"));
+                std::dynamic_pointer_cast<rtps::TCPv6TransportDescriptor>(
+            xmlparser::XMLProfileManager::getTransportById("TransportId1"));
         EXPECT_EQ(pTCPv6Desc->sendBufferSize, 8192);
         EXPECT_EQ(pTCPv6Desc->receiveBufferSize, 8192);
         EXPECT_EQ(pTCPv6Desc->TTL, 250);
@@ -743,8 +743,8 @@ TEST_F(XMLParserTests, parseXMLTransportData)
         titleElement = xml_doc.RootElement();
         EXPECT_EQ(XMLP_ret::XML_OK, XMLParserTest::parseXMLTransportData_wrapper(titleElement));
         std::shared_ptr<eprosima::fastdds::rtps::SharedMemTransportDescriptor> pSHMDesc =
-            std::dynamic_pointer_cast<eprosima::fastdds::rtps::SharedMemTransportDescriptor>(
-                xmlparser::XMLProfileManager::getTransportById("TransportId1"));
+                std::dynamic_pointer_cast<eprosima::fastdds::rtps::SharedMemTransportDescriptor>(
+            xmlparser::XMLProfileManager::getTransportById("TransportId1"));
         EXPECT_EQ(pSHMDesc->segment_size(), 262144);
         EXPECT_EQ(pSHMDesc->port_queue_capacity(), 512);
         EXPECT_EQ(pSHMDesc->healthy_check_timeout_ms(), 1000);
@@ -829,15 +829,17 @@ TEST_F(XMLParserTests, parseXMLTransportData_NegativeClauses)
         {"SHM", parameters_SHM}
     };
 
-    for (const auto& parameters : transport_parameters) {
-        for (const auto & field : parameters.second)
+    for (const auto& parameters : transport_parameters)
+    {
+        for (const auto& field : parameters.second)
         {
             xml =
                     "\
                     <transport_descriptor>\
                         <transport_id>TransportId1</transport_id>\
                         <type>" + parameters.first + "</type>\
-                        <" + field + "><bad_element></bad_element></" + field + ">\
+                        <" + field + "><bad_element></bad_element></" + field +
+                    ">\
                     </transport_descriptor>\
                     ";
 
@@ -853,7 +855,8 @@ TEST_F(XMLParserTests, parseXMLTransportData_NegativeClauses)
                     "\
                     <transport_descriptor>\
                         <transport_id>TransportId1</transport_id>\
-                        <type>" + parameters.first + "</type>\
+                        <type>" + parameters.first +
+                    "</type>\
                         <listening_ports>\
                             <port>not_an_int</port>\
                         </listening_ports>\
@@ -2033,7 +2036,7 @@ TEST_F(XMLParserTests, parseProfiles)
     }
 
     const char* xml_p_error =
-        "\
+            "\
         <profiles>\
             <%s>\
                 <bad_element></bad_element>\
