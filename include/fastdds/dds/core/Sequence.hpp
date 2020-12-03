@@ -19,41 +19,56 @@
 #ifndef _FASTDDS_DDS_CORE_SEQUENCE_HPP_
 #define _FASTDDS_DDS_CORE_SEQUENCE_HPP_
 
+#include <cassert>
 #include <cstdint>
-#include <type_traits>
 #include <vector>
+
+#include <fastdds/dds/core/LoanableCollection.hpp>
 
 namespace eprosima {
 namespace fastdds {
 namespace dds {
 
 template<typename T>
-class GenericSequence
+class GenericSequence : public LoanableCollection
 {
 public:
-    using size_type = uint32_t;
-    using element_type = T*;
 
+    /**
+     * Default constructor.
+     *
+     * Creates the sequence with no data.
+     *
+     * @post buffer() == nullptr
+     * @post has_ownership() == true
+     * @post length() == 0
+     * @post maximum() == 0
+     */
     GenericSequence() = default;
 
+    /**
+     * Pre-allocation constructor.
+     *
+     * Creates the sequence with an initial number of allocated elements.
+     * When the input parameter is 0, the behavior is equivalent to the default constructor.
+     * Otherwise, the post-conditions below will apply.
+     *
+     * @param max Number of elements to pre-allocate.
+     *
+     * @post buffer() != nullptr
+     * @post has_ownership() == true
+     * @post length() == 0
+     * @post maximum() == max
+     */
     GenericSequence(
-            size_type maximum)
+            size_type max)
     {
-        if (!maximum)
+        if (!max)
         {
             return;
         }
 
-        resize(maximum);
-    }
-
-    GenericSequence(
-            size_type maximum,
-            size_type length,
-            element_type* data,
-            bool take_ownership = false)
-    {
-        replace(maximum, length, data, take_ownership);
+        resize(max);
     }
 
     ~GenericSequence()
@@ -67,154 +82,97 @@ public:
         release();
     }
 
+    /**
+     * Construct a sequence with the contents of another sequence.
+     *
+     * This method performs a deep copy of the sequence received into this one.
+     * Allocations will happen when other.length() > 0
+     *
+     * @param other The sequence from where contents are to be copied.
+     *
+     * @post has_ownership() == true
+     * @post maximum() == other.length()
+     * @post length() == other.length()
+     * @post buffer() != nullptr when other.length() > 0
+     */
     GenericSequence(
             const GenericSequence& other)
     {
         *this = other;
     }
 
+    /**
+     * Copy the contents of another sequence into this one.
+     *
+     * This method performs a deep copy of the sequence received into this one.
+     * If this sequence had a buffer loaned, it will behave as if @ref unloan has been called.
+     * Allocations will happen when
+     * (a) has_ownership() == false and other.length() > 0
+     * (b) has_ownership() == true and other.length() > maximum()
+     *
+     * @param other The sequence from where contents are to be copied.
+     *
+     * @post has_ownership() == true
+     * @post maximum() >= other.length()
+     * @post length() == other.length()
+     * @post buffer() != nullptr when other.length() > 0
+     */
     GenericSequence& operator=(
             const GenericSequence& other)
     {
-        bool other_ownership = other.has_ownership();
-
-        if (has_ownership_ != other_ownership)
+        if (!has_ownership_)
         {
             release();
         }
 
-        if (!other_ownership)
+        length(other.length());
+        const element_type* other_buf = other.buffer();
+        for (size_type n = 0; n < length_; ++n)
         {
-            replace(other.maximum(), other.length(), other.get_buffer(), false);
-        }
-        else
-        {
-            length(other.length());
-            element_type* other_buf = other.get_buffer();
-            for (size_type n = 0; n < length_; ++n)
-            {
-                *(elements_[n]) = *(other_buf[n]);
-            }
+            *static_cast<T*>(elements_[n]) = *static_cast<const T*>(other_buf[n]);
         }
 
         return *this;
     }
 
-    size_type maximum() const
-    {
-        return maximum_;
-    }
-
-    size_type length() const
-    {
-        return length_;
-    }
-
-    bool length(
-            size_type new_length)
-    {
-        if (new_length > maximum_)
-        {
-            if (!has_ownership_)
-            {
-                return false;
-            }
-
-            resize(new_length);
-        }
-
-        length_ = new_length;
-        return true;
-    }
-
-    element_type& operator[](
+    T& operator[](
             size_type index)
     {
         if (index >= length_)
         {
-            throw std::out_of_range();
+            throw std::out_of_range("");
         }
 
-        return elements_[index];
+        return *static_cast<T*>(elements_[index]);
     }
 
-    const element_type& operator[](
+    const T& operator[](
             size_type index) const
     {
         if (index >= length_)
         {
-            throw std::out_of_range();
+            throw std::out_of_range("");
         }
 
-        return elements_[index];
-    }
-
-    bool has_ownership() const
-    {
-        return has_ownership_;
-    }
-
-    bool replace(
-            size_type maximum,
-            size_type length,
-            element_type* data,
-            bool take_ownership = false)
-    {
-        if (!has_ownership_ || maximum_ > 0)
-        {
-            return false;
-        }
-
-        maximum_ = maximum;
-        length_ = length;
-        elements_ = data;
-        has_ownership_ = take_ownership;
-        return true;
-    }
-
-    element_type* get_buffer(
-            bool orphan = false)
-    {
-        if (!orphan)
-        {
-            return elements_;
-        }
-
-        if (!has_ownership_)
-        {
-            return nullptr;
-        }
-
-        element_type* ret_val = elements_;
-
-        maximum_ = 0u;
-        length_ = 0u;
-        elements_ = nullptr;
-
-        return ret_val;
-    }
-
-    const element_type* get_buffer() const
-    {
-        return elements_;
+        return *static_cast<const T*>(elements_[index]);
     }
 
 private:
 
     void resize(
-            size_type maximum)
+            size_type maximum) override
     {
         assert(has_ownership_);
 
         // Resize collection and get new pointer
         data_.reserve(maximum);
         data_.resize(maximum);
-        elements_ = data_.data();
+        elements_ = reinterpret_cast<element_type*>(data_.data());
 
         // Allocate individual elements
         while (maximum_ < maximum)
         {
-            elements_[maximum_++] = new T();
+            data_[maximum_++] = new T();
         }
     }
 
@@ -224,10 +182,10 @@ private:
         {
             for (size_t n = 0; n < maximum_; ++n)
             {
-                element_type elem = elements_[n];
+                T* elem = data_[n];
                 delete elem;
             }
-            std::vector<element_type>().swap(data_);
+            std::vector<T*>().swap(data_);
         }
 
         maximum_ = 0u;
@@ -236,11 +194,7 @@ private:
         has_ownership_ = true;
     }
 
-    size_type maximum_ = 0u;
-    size_type length_ = 0u;
-    element_type* elements_ = nullptr;
-    bool has_ownership_ = true;
-    std::vector<element_type> data_;
+    std::vector<T*> data_;
 };
 
 } // namespace dds
