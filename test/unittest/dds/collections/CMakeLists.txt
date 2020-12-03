@@ -21,14 +21,14 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             add_definitions(-D_WIN32_WINNT=0x0601)
         endif()
 
-        set(GENERIC_COLLECTION_TESTS_SOURCE
-            GenericCollectionTests.cpp)
+        set(LOANABLE_SEQUENCE_TESTS_SOURCE
+            LoanableSequenceTests.cpp)
 
-        add_executable(GenericCollectionTests ${GENERIC_COLLECTION_TESTS_SOURCE})
-        target_compile_definitions(GenericCollectionTests PRIVATE FASTRTPS_NO_LIB)
-        target_include_directories(GenericCollectionTests PRIVATE ${GTEST_INCLUDE_DIRS}
+        add_executable(LoanableSequenceTests ${LOANABLE_SEQUENCE_TESTS_SOURCE})
+        target_compile_definitions(LoanableSequenceTests PRIVATE FASTRTPS_NO_LIB)
+        target_include_directories(LoanableSequenceTests PRIVATE ${GTEST_INCLUDE_DIRS}
             ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include)
-        target_link_libraries(GenericCollectionTests ${GTEST_LIBRARIES} ${MOCKS})
-        add_gtest(GenericCollectionTests SOURCES ${GENERIC_COLLECTION_TESTS_SOURCE})
+        target_link_libraries(LoanableSequenceTests ${GTEST_LIBRARIES} ${MOCKS})
+        add_gtest(LoanableSequenceTests SOURCES ${LOANABLE_SEQUENCE_TESTS_SOURCE})
     endif()
 endif()

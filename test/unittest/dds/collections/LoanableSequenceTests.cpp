@@ -84,7 +84,7 @@ void check_result(
     }
 }
 
-TEST(GenericCollectionTests, construct)
+TEST(LoanableSequenceTests, construct)
 {
     // Check post-conditions of default constructor
     {
@@ -114,7 +114,7 @@ TEST(GenericCollectionTests, construct)
     }
 }
 
-TEST(GenericCollectionTests, copy_construct)
+TEST(LoanableSequenceTests, copy_construct)
 {
     // Helper loaned sequence (max = num_test_elements, len = 0)
     StackAllocatedBuffer<int> stack;
@@ -206,7 +206,7 @@ TEST(GenericCollectionTests, copy_construct)
     loaned.unloan();
 }
 
-TEST(GenericCollectionTests, copy_assign)
+TEST(LoanableSequenceTests, copy_assign)
 {
     // Helper loaned sequence (max = num_test_elements, len = 0)
     StackAllocatedBuffer<int> stack;
@@ -323,7 +323,7 @@ TEST(GenericCollectionTests, copy_assign)
     check_result(loaned, num_test_elements);
 }
 
-TEST(GenericCollectionTests, loan_unloan)
+TEST(LoanableSequenceTests, loan_unloan)
 {
     StackAllocatedBuffer<int> stack;
     LoanableCollection::size_type max = 0u, len = 0u;
@@ -461,7 +461,7 @@ void sum_collections(
     }
 }
 
-TEST(GenericCollectionTests, sum_collections)
+TEST(LoanableSequenceTests, sum_collections)
 {
     LoanableSequence<int> fibonacci;
     fibonacci.length(num_test_elements);
