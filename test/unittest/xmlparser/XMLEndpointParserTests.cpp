@@ -251,8 +251,7 @@ TEST_F(XMLEndpointParserTests, loadXMLParticipantEndpoint)
             mp_edpXML->loadXMLParticipantEndpoint(titleElement, pdata);
         }
 
-        std::this_thread::sleep_for(std::chrono::nanoseconds(20));
-        helper_block_for_at_least_entries(3);
+        helper_block_for_at_least_entries(5);
         auto consumed_entries = mock_consumer->ConsumedEntries();
         // Expect 3 log error.
         uint32_t num_errors = 0;
