@@ -949,6 +949,8 @@ History::iterator PDPServer::process_change_acknowledgement(
                 {
                     // Remove the entry from writer history, but do not release the cache.
                     // This CacheChange will only be released in the case that is substituted by a DATA(Up|Uw|Ur).
+                    logInfo(RTPS_PDP_SERVER, "Removingfix de DS change " << c->instanceHandle
+                        << " from history as it has been acked");
                     return writer_history->remove_change(cit, false);
                 }
             }
@@ -1206,9 +1208,17 @@ const RemoteServerList_t& PDPServer::servers()
 bool PDPServer::process_to_send_lists()
 {
     logInfo(RTPS_PDP_SERVER, "process_to_send_lists start");
-    // Process pdp_to_send_
-    logInfo(RTPS_PDP_SERVER, "Processing pdp_to_send");
-    process_to_send_list(discovery_db_.pdp_to_send(), mp_PDPWriter, mp_PDPWriterHistory);
+
+    if (discovery_db_.get_etinties_updated_and_reset() > 0)
+    {
+        // Process pdp_to_send_
+        logInfo(RTPS_PDP_SERVER, "Processing pdp_to_send");
+        process_to_send_list(discovery_db_.pdp_to_send(), mp_PDPWriter, mp_PDPWriterHistory);
+    }
+    else
+    {
+        logInfo(RTPS_PDP_SERVER, "Skiping sending PDP data because no entities have been discovered or updated");
+    }
     discovery_db_.clear_pdp_to_send();
 
     // Process edp_publications_to_send_
@@ -1269,8 +1279,10 @@ bool PDPServer::remove_change_from_history_nts(
 {
     for (auto chit = history->changesRbegin(); chit != history->changesRend(); chit++)
     {
-        if (change->instanceHandle == (*chit)->instanceHandle &&
-                change->write_params.sample_identity() == (*chit)->write_params.sample_identity())
+        // We compare by pointer because we maintain the same pointer everywhere and it is unique
+        // We cannot compare by cache info because there is no distinct attributes for the same change arrived
+        //  from different servers, and one of them could be in the history while the other arrive to ddb
+        if (change == (*chit))
         {
             if (release_change)
             {

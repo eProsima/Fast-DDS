@@ -41,8 +41,9 @@ DiscoveryDataBase::DiscoveryDataBase(
     , server_acked_by_all_(servers.size() == 0)
     , servers_(servers)
     , enabled_(true)
+    , entities_updated_(false)
     , processing_backup_(false)
-    , is_persistent_ (false)
+    , is_persistent_(false)
 {
 }
 
@@ -52,7 +53,11 @@ DiscoveryDataBase::~DiscoveryDataBase()
     {
         logError(DISCOVERY_DATABASE, "Destroying a NOT cleared database");
     }
-    // TODO close file
+
+    if (is_persistent_)
+    {
+        backup_file_.close();
+    }
 }
 
 std::vector<fastrtps::rtps::CacheChange_t*> DiscoveryDataBase::clear()
@@ -562,18 +567,28 @@ void DiscoveryDataBase::create_participant_from_change_(
         if (ch->write_params.sample_identity().sequence_number() >
                 participant_it->second.change()->write_params.sample_identity().sequence_number())
         {
-            // Update the change related to the participant and return the old change to the pool
-            logInfo(DISCOVERY_DATABASE, "Participant updating. Marking old change to release");
-            // Update participant's change in the database, set all relevant participants ACK status to 0, and add
-            // old change to changes_to_release_.
-            update_change_and_unmatch_(ch, participant_it->second);
+            logInfo(DISCOVERY_DATABASE, "Participant already known with newer sequence number");
 
-            // If it is an update of our own server, is already in history
-            // Else, it needs to be sent in case it has unacked participants
-            if (change_guid.guidPrefix != server_guid_prefix_ &&
-                    !participant_it->second.is_acked_by_all())
+            // The change could be newer and at the same time not being an update.
+            // This happens with DATAs coming from servers, since they take their own DATAs in and out frequently,
+            // so the sequence number in `write_params` changes.
+            // To account for that, we discard the DATA if the payload is exactly the same as what wee have.
+            if (!(ch->serializedPayload == participant_it->second.change()->serializedPayload))
             {
-                add_pdp_to_send_(ch);
+                // Update the change related to the participant and return the old change to the pool
+                logInfo(DISCOVERY_DATABASE, "Participant updating. Marking old change to release");
+                // Update participant's change in the database, set all relevant participants ACK status to 0, and add
+                // old change to changes_to_release_.
+                update_change_and_unmatch_(ch, participant_it->second);
+
+                // If it is an update of our own server, is already in history
+                // Else, it needs to be sent in case it has unacked participants
+                if (change_guid.guidPrefix != server_guid_prefix_ &&
+                        !participant_it->second.is_acked_by_all())
+                {
+                    entities_updated_.store(true);
+                    add_pdp_to_send_(ch);
+                }
             }
         }
         // if the cache is not new we have to release it, because it is repeated or outdated
@@ -601,6 +616,9 @@ void DiscoveryDataBase::create_participant_from_change_(
         // If insert was successful
         if (ret.second)
         {
+            // New participant found
+            entities_updated_.store(true);
+
             logInfo(DISCOVERY_DATABASE, "New participant added: " << change_guid.guidPrefix);
 
             // Manually set to 1 the relevant participants ACK status of the participant that sent the change. This way,
@@ -622,6 +640,13 @@ void DiscoveryDataBase::create_participant_from_change_(
             if (change_guid.guidPrefix != server_guid_prefix_ &&
                     !ret.first->second.is_client() && ret.first->second.is_local())
             {
+                // Send Our DATA(p) to the new participant
+                // If this is not done, our data could be skip afterwards because a gap sent in newer DATA(p)s
+                //  so the new participant could never receive out data
+                auto our_data_it = participants_.find(server_guid_prefix_);
+                assert(our_data_it != participants_.end());
+                add_pdp_to_send_(our_data_it->second.change());
+
                 logInfo(DISCOVERY_DATABASE, "Creating virtual entities for " << change_guid.guidPrefix);
                 /* Create virtual writer */
                 // Create a GUID for the virtual writer from the local server GUID prefix and the virtual writer entity
@@ -691,16 +716,24 @@ void DiscoveryDataBase::create_writers_from_change_(
         if (ch->write_params.sample_identity().sequence_number() >
                 writer_it->second.change()->write_params.sample_identity().sequence_number())
         {
-            // Update the change related to the writer and return the old change to the pool
-            // TODO (Paris): when updating, be careful of not to do unmatch if the only endpoint in the other
-            // participant is NOT ALIVE. This means that you still have to send your Data(Ux) to him but not the
-            // updates
-            update_change_and_unmatch_(ch, writer_it->second);
-
-            // It needs to be sent in case it has unacked participants
-            if (!writer_it->second.is_acked_by_all())
+            // The change could be newer and at the same time not being an update.
+            // This happens with DATAs coming from servers, since they take their own DATAs in and out frequently,
+            // so the sequence number in `write_params` changes.
+            // To account for that, we discard the DATA if the payload is exactly the same as what wee have.
+            if (!(ch->serializedPayload == writer_it->second.change()->serializedPayload))
             {
-                add_edp_publications_to_send_(ch);
+                // Update the change related to the writer and return the old change to the pool
+                // TODO (Paris): when updating, be careful of not to do unmatch if the only endpoint in the other
+                // participant is NOT ALIVE. This means that you still have to send your Data(Ux) to him but not the
+                // updates
+                update_change_and_unmatch_(ch, writer_it->second);
+
+                // It needs to be sent in case it has unacked participants
+                if (!writer_it->second.is_acked_by_all())
+                {
+                    entities_updated_.store(true);
+                    add_edp_publications_to_send_(ch);
+                }
             }
         }
         // if the cache is not new we have to release it, because it is repeated or outdated
@@ -736,6 +769,9 @@ void DiscoveryDataBase::create_writers_from_change_(
             return;
         }
         writer_it = ret.first;
+
+        // New writer found
+        entities_updated_.store(true);
 
         // Add entry to participants_[guid_prefix]::writers
         std::map<eprosima::fastrtps::rtps::GuidPrefix_t, DiscoveryParticipantInfo>::iterator writer_part_it =
@@ -797,16 +833,24 @@ void DiscoveryDataBase::create_readers_from_change_(
         if (ch->write_params.sample_identity().sequence_number() >
                 reader_it->second.change()->write_params.sample_identity().sequence_number())
         {
-            // Update the change related to the reader and return the old change to the pool
-            // TODO (Paris): when updating, be careful of not to do unmatch if the only endpoint in the other
-            // participant is NOT ALIVE. This means that you still have to send your Data(Ux) to him but not the
-            // updates
-            update_change_and_unmatch_(ch, reader_it->second);
-
-            // It needs to be sent in case it has unacked participants
-            if (!reader_it->second.is_acked_by_all())
+            // The change could be newer and at the same time not being an update.
+            // This happens with DATAs coming from servers, since they take their own DATAs in and out frequently,
+            // so the sequence number in `write_params` changes.
+            // To account for that, we discard the DATA if the payload is exactly the same as what wee have.
+            if (!(ch->serializedPayload == reader_it->second.change()->serializedPayload))
             {
-                add_edp_subscriptions_to_send_(ch);
+                // Update the change related to the reader and return the old change to the pool
+                // TODO (Paris): when updating, be careful of not to do unmatch if the only endpoint in the other
+                // participant is NOT ALIVE. This means that you still have to send your Data(Ux) to him but not the
+                // updates
+                update_change_and_unmatch_(ch, reader_it->second);
+
+                // It needs to be sent in case it has unacked participants
+                if (!reader_it->second.is_acked_by_all())
+                {
+                    entities_updated_.store(true);
+                    add_edp_subscriptions_to_send_(ch);
+                }
             }
         }
         // if the cache is not new we have to release it, because it is repeated or outdated
@@ -842,6 +886,9 @@ void DiscoveryDataBase::create_readers_from_change_(
             return;
         }
         reader_it = ret.first;
+
+        // New reader found
+        entities_updated_.store(true);
 
         // Add entry to participants_[guid_prefix]::readers
         std::map<eprosima::fastrtps::rtps::GuidPrefix_t, DiscoveryParticipantInfo>::iterator reader_part_it =
@@ -1097,6 +1144,9 @@ void DiscoveryDataBase::process_dispose_participant_(
         // Only update DATA(p), leaving the change info untouched. This is because DATA(Up) does not have the
         // participant's meta-information, but we don't want to loose it here.
         update_change_and_unmatch_(ch, pit->second);
+
+        // Any change in the entities known must be reported as a change in the discovery
+        entities_updated_.store(true);
     }
     else
     {
@@ -1166,6 +1216,9 @@ void DiscoveryDataBase::process_dispose_writer_(
                 disposals_.push_back(ch);
             }
         }
+
+        // Any change in the entities known must be reported as a change in the discovery
+        entities_updated_.store(true);
     }
 }
 
@@ -1193,6 +1246,9 @@ void DiscoveryDataBase::process_dispose_reader_(
                 disposals_.push_back(ch);
             }
         }
+
+        // Any change in the entities known must be reported as a change in the discovery
+        entities_updated_.store(true);
     }
 }
 
@@ -1569,16 +1625,29 @@ void DiscoveryDataBase::AckedFunctor::operator () (
         }
         else
         {
-            // If the reader proxy is from a server that we are pinging, the data is set as acked
+            // If the reader proxy is from a server that we are pinging, we may not want to wait
+            // for it to be acked as the routine will not stop
             for (auto it = db_->servers_.begin(); it < db_->servers_.end(); ++it)
             {
                 if (reader_proxy->guid().guidPrefix == *it)
                 {
-                    return;
+                    // If the participant is already in the DB it means it has answered to the pinging
+                    // or that is pinging us and we have already received its DATA(p)
+                    // If neither of both has happenned we should not wait for it to ack this data, so we
+                    // skip it and leave it as acked
+                    auto remote_server_it = db_->participants_.find(*it);
+                    if (remote_server_it == db_->participants_.end())
+                    {
+                        logInfo(DISCOVERY_DATABASE, "Change " << change_->instanceHandle <<
+                            "check as acked for " << reader_proxy->guid() << " as it has not answered pinging yet");
+                        return;
+                    }
                 }
             }
+
             // This change is relevant and has not been acked, and does not belongs to the reader proxy
             // of a server that has not been paired yet, so there are pending acknowledgements
+            logInfo(DISCOVERY_DATABASE, "Change " << change_->instanceHandle << " not acked yet");
             external_pending_ = true;
         }
     }
@@ -2348,7 +2417,7 @@ bool DiscoveryDataBase::from_json(
 
             logInfo(DISCOVERY_DATABASE,
                     "Writer " << guid_aux << " created with instance handle " <<
-                    wit.first->second.change()->instanceHandle);
+                                    wit.first->second.change()->instanceHandle);
 
             if (change->kind != fastrtps::rtps::ALIVE)
             {
