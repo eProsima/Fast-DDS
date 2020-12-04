@@ -452,6 +452,56 @@ TEST(LoanableSequenceTests, loan_unloan)
     Log::SetVerbosity(Log::Kind::Warning);
 }
 
+void perform_accessors_test_step(
+        LoanableSequence<int>& uut,
+        const LoanableSequence<int>& c_uut)
+{
+    int n = 1000;
+    auto len = uut.length();
+
+    // Accessing past last element should throw
+    for (LoanableCollection::size_type i = 0; i < num_test_elements; ++i)
+    {
+        EXPECT_THROW(uut[len + i] = n, std::out_of_range);
+        EXPECT_THROW(n = c_uut[len + i], std::out_of_range);
+    }
+
+    // Accessing from len-1 to 0 should not throw
+    while (len > 0)
+    {
+        --len;
+        EXPECT_NO_THROW(uut[len] = n);
+        EXPECT_NO_THROW(n = c_uut[len]);
+    }
+}
+
+void perform_accessors_tests(
+        LoanableSequence<int>& uut)
+{
+    const LoanableSequence<int>& c_uut = uut;
+
+    // Perform test on empty sequence
+    perform_accessors_test_step(uut, c_uut);
+
+    // Perform test on sequence with values
+    set_result_values(uut);
+    perform_accessors_test_step(uut, c_uut);
+}
+
+TEST(LoanableSequenceTests, accessors)
+{
+    LoanableSequence<int> uut;
+
+    // Perform test on loaned sequence
+    StackAllocatedBuffer<int> stack;
+    uut.loan(stack.buffer, stack.size(), 0);
+    perform_accessors_tests(uut);
+
+    // Perform test on owned sequence
+    uut.unloan();
+    perform_accessors_tests(uut);
+}
+
 template<typename T>
 void sum_collections(
         LoanableSequence<T>& out,
