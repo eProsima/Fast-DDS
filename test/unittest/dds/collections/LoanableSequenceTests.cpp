@@ -16,28 +16,31 @@
 #include <fastdds/dds/log/Log.hpp>
 
 #include <array>
+#include <memory>
+#include <string>
 
 #include <gtest/gtest.h>
 
 using namespace eprosima::fastdds::dds;
+using test_size_type = LoanableCollection::size_type;
 
-static constexpr LoanableCollection::size_type num_test_elements = 10u;
+static constexpr test_size_type num_test_elements = 10u;
 static const std::array<int, num_test_elements> result_values =
 {
     2, 2, 4, 6, 10, 16, 26, 42, 68, 110
 };
 
-template<typename T, LoanableCollection::size_type num_items = num_test_elements>
+template<typename T, test_size_type num_items = num_test_elements>
 struct StackAllocatedBuffer
 {
-    constexpr LoanableCollection::size_type size()
+    constexpr test_size_type size()
     {
         return num_items;
     }
 
     StackAllocatedBuffer()
     {
-        for (LoanableCollection::size_type n = 0; n < num_items; ++n)
+        for (test_size_type n = 0; n < num_items; ++n)
         {
             buffer[n] = &elems[n];
         }
@@ -47,15 +50,18 @@ struct StackAllocatedBuffer
     void* buffer[num_items];
 };
 
+// Declare test sequence using declaration macro
+FASTDDS_SEQUENCE(TestSeq, int);
+
 void clear_values(
-        LoanableSequence<int>& seq)
+        TestSeq& seq)
 {
     // Keep current length for later
-    auto len = seq.length();
+    test_size_type len = seq.length();
     // Set length to current maximum
     seq.length(seq.maximum());
     // Clear all values
-    for (auto n = seq.length(); n > 0; )
+    for (test_size_type n = seq.length(); n > 0; )
     {
         seq[--n] = 0;
     }
@@ -64,10 +70,10 @@ void clear_values(
 }
 
 void set_result_values(
-        LoanableSequence<int>& seq)
+        TestSeq& seq)
 {
     ASSERT_TRUE(seq.length(num_test_elements));
-    LoanableCollection::size_type n = 0;
+    test_size_type n = 0;
     for (int v : result_values)
     {
         seq[n++] = v;
@@ -75,11 +81,11 @@ void set_result_values(
 }
 
 void check_result(
-        const LoanableSequence<int>& result,
-        LoanableCollection::size_type num_elems = num_test_elements)
+        const TestSeq& result,
+        test_size_type num_elems = num_test_elements)
 {
     EXPECT_EQ(num_elems, result.length());
-    for (LoanableCollection::size_type n = 0; n < num_elems; ++n)
+    for (test_size_type n = 0; n < num_elems; ++n)
     {
         EXPECT_EQ(result_values[n], result[n]);
     }
@@ -89,7 +95,7 @@ TEST(LoanableSequenceTests, construct)
 {
     // Check post-conditions of default constructor
     {
-        LoanableSequence<int> uut;
+        TestSeq uut;
         EXPECT_EQ(nullptr, uut.buffer());
         EXPECT_TRUE(uut.has_ownership());
         EXPECT_EQ(0u, uut.maximum());
@@ -98,7 +104,7 @@ TEST(LoanableSequenceTests, construct)
 
     // Check post-conditions of constructor with maximum
     {
-        LoanableSequence<int> uut(num_test_elements);
+        TestSeq uut(num_test_elements);
         EXPECT_NE(nullptr, uut.buffer());
         EXPECT_TRUE(uut.has_ownership());
         EXPECT_EQ(num_test_elements, uut.maximum());
@@ -107,7 +113,7 @@ TEST(LoanableSequenceTests, construct)
 
     // Check maximum of 0 behaves as default
     {
-        LoanableSequence<int> uut(0u);
+        TestSeq uut(0u);
         EXPECT_EQ(nullptr, uut.buffer());
         EXPECT_TRUE(uut.has_ownership());
         EXPECT_EQ(0u, uut.maximum());
@@ -119,16 +125,16 @@ TEST(LoanableSequenceTests, copy_construct)
 {
     // Helper loaned sequence (max = num_test_elements, len = 0)
     StackAllocatedBuffer<int> stack;
-    LoanableSequence<int> loaned;
+    TestSeq loaned;
     loaned.loan(stack.buffer, stack.size(), 0);
 
     // Helper owned sequence (max = num_test_elements, len = 0)
-    LoanableSequence<int> owned(num_test_elements);
+    TestSeq owned(num_test_elements);
 
     // Copy-constructing an empty sequence behaves as default constructor
     {
-        LoanableSequence<int> empty;
-        LoanableSequence<int> uut(empty);
+        TestSeq empty;
+        TestSeq uut(empty);
         EXPECT_EQ(nullptr, uut.buffer());
         EXPECT_TRUE(uut.has_ownership());
         EXPECT_EQ(0u, uut.maximum());
@@ -137,7 +143,7 @@ TEST(LoanableSequenceTests, copy_construct)
 
     // Copy-constructing an empty allocated sequence behaves as default constructor
     {
-        LoanableSequence<int> uut(owned);
+        TestSeq uut(owned);
         EXPECT_EQ(nullptr, uut.buffer());
         EXPECT_TRUE(uut.has_ownership());
         EXPECT_EQ(0u, uut.maximum());
@@ -146,7 +152,7 @@ TEST(LoanableSequenceTests, copy_construct)
 
     // Copy-constructing an empty loaned sequence behaves as default constructor
     {
-        LoanableSequence<int> uut(loaned);
+        TestSeq uut(loaned);
         EXPECT_EQ(nullptr, uut.buffer());
         EXPECT_TRUE(uut.has_ownership());
         EXPECT_EQ(0u, uut.maximum());
@@ -159,7 +165,7 @@ TEST(LoanableSequenceTests, copy_construct)
 
     // Copy-constructing a non-empty allocated sequence allocates and copies
     {
-        LoanableSequence<int> uut(owned);
+        TestSeq uut(owned);
         EXPECT_NE(nullptr, uut.buffer());
         EXPECT_NE(owned.buffer(), uut.buffer());
         EXPECT_TRUE(uut.has_ownership());
@@ -169,7 +175,7 @@ TEST(LoanableSequenceTests, copy_construct)
 
     // Copy-constructing a non-empty loaned sequence allocates and copies
     {
-        LoanableSequence<int> uut(loaned);
+        TestSeq uut(loaned);
         EXPECT_NE(nullptr, uut.buffer());
         EXPECT_NE(loaned.buffer(), uut.buffer());
         EXPECT_TRUE(uut.has_ownership());
@@ -185,7 +191,7 @@ TEST(LoanableSequenceTests, copy_construct)
 
     // Copy-constructing a non-empty allocated sequence with max > len allocates and copies
     {
-        LoanableSequence<int> uut(owned);
+        TestSeq uut(owned);
         EXPECT_NE(nullptr, uut.buffer());
         EXPECT_NE(owned.buffer(), uut.buffer());
         EXPECT_TRUE(uut.has_ownership());
@@ -195,7 +201,7 @@ TEST(LoanableSequenceTests, copy_construct)
 
     // Copy-constructing a non-empty loaned sequence with max > len allocates and copies
     {
-        LoanableSequence<int> uut(loaned);
+        TestSeq uut(loaned);
         EXPECT_NE(nullptr, uut.buffer());
         EXPECT_NE(loaned.buffer(), uut.buffer());
         EXPECT_TRUE(uut.has_ownership());
@@ -211,16 +217,16 @@ TEST(LoanableSequenceTests, copy_assign)
 {
     // Helper loaned sequence (max = num_test_elements, len = 0)
     StackAllocatedBuffer<int> stack;
-    LoanableSequence<int> loaned;
+    TestSeq loaned;
     loaned.loan(stack.buffer, stack.size(), 0);
 
     // Helper owned sequence (max = num_test_elements, len = 0)
-    LoanableSequence<int> owned(num_test_elements);
+    TestSeq owned(num_test_elements);
 
     // Copying an empty sequence behaves as default constructor
     {
-        LoanableSequence<int> empty;
-        LoanableSequence<int> uut = empty;
+        TestSeq empty;
+        TestSeq uut = empty;
         EXPECT_EQ(nullptr, uut.buffer());
         EXPECT_TRUE(uut.has_ownership());
         EXPECT_EQ(0u, uut.maximum());
@@ -229,7 +235,7 @@ TEST(LoanableSequenceTests, copy_assign)
 
     // Copying an empty allocated sequence behaves as default constructor
     {
-        LoanableSequence<int> uut = owned;
+        TestSeq uut = owned;
         EXPECT_EQ(nullptr, uut.buffer());
         EXPECT_TRUE(uut.has_ownership());
         EXPECT_EQ(0u, uut.maximum());
@@ -238,7 +244,7 @@ TEST(LoanableSequenceTests, copy_assign)
 
     // Copying an empty loaned sequence behaves as default constructor
     {
-        LoanableSequence<int> uut = loaned;
+        TestSeq uut = loaned;
         EXPECT_EQ(nullptr, uut.buffer());
         EXPECT_TRUE(uut.has_ownership());
         EXPECT_EQ(0u, uut.maximum());
@@ -251,7 +257,7 @@ TEST(LoanableSequenceTests, copy_assign)
 
     // Copying a non-empty allocated sequence allocates and copies
     {
-        LoanableSequence<int> uut = owned;
+        TestSeq uut = owned;
         EXPECT_NE(nullptr, uut.buffer());
         EXPECT_NE(owned.buffer(), uut.buffer());
         EXPECT_TRUE(uut.has_ownership());
@@ -261,7 +267,7 @@ TEST(LoanableSequenceTests, copy_assign)
 
     // Copying a non-empty loaned sequence allocates and copies
     {
-        LoanableSequence<int> uut = loaned;
+        TestSeq uut = loaned;
         EXPECT_NE(nullptr, uut.buffer());
         EXPECT_NE(loaned.buffer(), uut.buffer());
         EXPECT_TRUE(uut.has_ownership());
@@ -277,7 +283,7 @@ TEST(LoanableSequenceTests, copy_assign)
 
     // Copying a non-empty allocated sequence with max > len allocates and copies
     {
-        LoanableSequence<int> uut = owned;
+        TestSeq uut = owned;
         EXPECT_NE(nullptr, uut.buffer());
         EXPECT_NE(owned.buffer(), uut.buffer());
         EXPECT_TRUE(uut.has_ownership());
@@ -287,7 +293,7 @@ TEST(LoanableSequenceTests, copy_assign)
 
     // Copying a non-empty loaned sequence with max > len allocates and copies
     {
-        LoanableSequence<int> uut = loaned;
+        TestSeq uut = loaned;
         EXPECT_NE(nullptr, uut.buffer());
         EXPECT_NE(loaned.buffer(), uut.buffer());
         EXPECT_TRUE(uut.has_ownership());
@@ -327,12 +333,12 @@ TEST(LoanableSequenceTests, copy_assign)
 TEST(LoanableSequenceTests, loan_unloan)
 {
     StackAllocatedBuffer<int> stack;
-    LoanableCollection::size_type max = 0u, len = 0u;
+    test_size_type max = 0u, len = 0u;
     void** result_buffer;
 
     {
         // Create default sequence
-        LoanableSequence<int> uut;
+        TestSeq uut;
         EXPECT_EQ(nullptr, uut.buffer());
         EXPECT_TRUE(uut.has_ownership());
         EXPECT_EQ(0u, uut.maximum());
@@ -359,7 +365,7 @@ TEST(LoanableSequenceTests, loan_unloan)
 
     {
         // Create allocated sequence
-        LoanableSequence<int> uut(num_test_elements);
+        TestSeq uut(num_test_elements);
         EXPECT_NE(nullptr, uut.buffer());
         EXPECT_TRUE(uut.has_ownership());
         EXPECT_EQ(num_test_elements, uut.maximum());
@@ -406,7 +412,7 @@ TEST(LoanableSequenceTests, loan_unloan)
 
     {
         // Create a loaned sequence and check postconditions
-        LoanableSequence<int> uut;
+        TestSeq uut;
         EXPECT_TRUE(uut.loan(stack.buffer, num_test_elements, 0));
         EXPECT_FALSE(uut.has_ownership());
         EXPECT_EQ(num_test_elements, uut.maximum());
@@ -485,14 +491,14 @@ TEST(LoanableSequenceTests, loan_unloan)
 }
 
 void perform_accessors_test_step(
-        LoanableSequence<int>& uut,
-        const LoanableSequence<int>& c_uut)
+        TestSeq& uut,
+        const TestSeq& c_uut)
 {
     int n = 1000;
-    auto len = uut.length();
+    test_size_type len = uut.length();
 
     // Accessing past last element should throw
-    for (LoanableCollection::size_type i = 0; i < num_test_elements; ++i)
+    for (test_size_type i = 0; i < num_test_elements; ++i)
     {
         EXPECT_THROW(uut[len + i] = n, std::out_of_range);
         EXPECT_THROW(n = c_uut[len + i], std::out_of_range);
@@ -508,9 +514,9 @@ void perform_accessors_test_step(
 }
 
 void perform_accessors_tests(
-        LoanableSequence<int>& uut)
+        TestSeq& uut)
 {
-    const LoanableSequence<int>& c_uut = uut;
+    const TestSeq& c_uut = uut;
 
     // Perform test on empty sequence
     perform_accessors_test_step(uut, c_uut);
@@ -522,7 +528,7 @@ void perform_accessors_tests(
 
 TEST(LoanableSequenceTests, accessors)
 {
-    LoanableSequence<int> uut;
+    TestSeq uut;
 
     // Perform test on loaned sequence
     StackAllocatedBuffer<int> stack;
@@ -540,9 +546,9 @@ void sum_collections(
         const LoanableSequence<T>& in1,
         const LoanableSequence<T>& in2)
 {
-    auto length = std::min(in1.length(), in2.length());
+    test_size_type length = std::min(in1.length(), in2.length());
     ASSERT_TRUE(out.length(length));
-    for (LoanableCollection::size_type n = 0; n < length; ++n)
+    for (test_size_type n = 0; n < length; ++n)
     {
         out[n] = in1[n] + in2[n];
     }
@@ -550,18 +556,18 @@ void sum_collections(
 
 TEST(LoanableSequenceTests, sum_collections)
 {
-    LoanableSequence<int> fibonacci;
+    TestSeq fibonacci;
     fibonacci.length(num_test_elements);
     fibonacci[0] = 1;
     fibonacci[1] = 1;
-    for (LoanableCollection::size_type n = 2u; n < num_test_elements; ++n)
+    for (test_size_type n = 2u; n < num_test_elements; ++n)
     {
         fibonacci[n] = fibonacci[n - 1] + fibonacci[n - 2];
     }
 
     // Check non-loaned version
     {
-        LoanableSequence<int> result;
+        TestSeq result;
         sum_collections(result, fibonacci, fibonacci);
         check_result(result);
         EXPECT_TRUE(result.has_ownership());
@@ -574,7 +580,7 @@ TEST(LoanableSequenceTests, sum_collections)
         StackAllocatedBuffer<int> stack;
 
         // Create a loaned sequence and check postconditions
-        LoanableSequence<int> result;
+        TestSeq result;
         EXPECT_TRUE(result.loan(stack.buffer, num_test_elements, 0));
         EXPECT_FALSE(result.has_ownership());
         EXPECT_EQ(num_test_elements, result.maximum());
@@ -589,7 +595,7 @@ TEST(LoanableSequenceTests, sum_collections)
         EXPECT_EQ(stack.buffer, result.buffer());
 
         // Test unloan.
-        LoanableCollection::size_type max, len;
+        test_size_type max, len;
         void** result_buffer = result.unloan(max, len);
         EXPECT_EQ(stack.buffer, result_buffer);
         EXPECT_EQ(num_test_elements, max);
