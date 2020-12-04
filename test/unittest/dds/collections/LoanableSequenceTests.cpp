@@ -373,83 +373,115 @@ TEST(LoanableSequenceTests, loan_unloan)
         EXPECT_FALSE(uut.loan(stack.buffer, num_test_elements, 0u));
     }
 
-    // Create a loaned sequence and check postconditions
-    LoanableSequence<int> uut;
-    EXPECT_TRUE(uut.loan(stack.buffer, num_test_elements, 0));
-    EXPECT_FALSE(uut.has_ownership());
-    EXPECT_EQ(num_test_elements, uut.maximum());
-    EXPECT_EQ(0u, uut.length());
-    EXPECT_EQ(stack.buffer, uut.buffer());
-    EXPECT_TRUE(uut.length(num_test_elements));
-    EXPECT_EQ(num_test_elements, uut.length());
-
-    // Check unloan
-    result_buffer = uut.unloan(max, len);
-    EXPECT_EQ(stack.buffer, result_buffer);
-    EXPECT_EQ(num_test_elements, max);
-    EXPECT_EQ(num_test_elements, len);
-
-    // Check unloan postconditions
-    EXPECT_EQ(nullptr, uut.buffer());
-    EXPECT_TRUE(uut.has_ownership());
-    EXPECT_EQ(0u, uut.length());
-    EXPECT_EQ(0u, uut.maximum());
-
-    // Loan again
-    EXPECT_TRUE(uut.loan(stack.buffer, num_test_elements, 0));
-    EXPECT_FALSE(uut.has_ownership());
-    EXPECT_EQ(num_test_elements, uut.maximum());
-    EXPECT_EQ(0u, uut.length());
-    EXPECT_EQ(stack.buffer, uut.buffer());
-
-    // Check other version of unloan
-    result_buffer = uut.unloan();
-    EXPECT_EQ(stack.buffer, result_buffer);
-    EXPECT_EQ(num_test_elements, max);
-    EXPECT_EQ(num_test_elements, len);
-
-    // Check unloan postconditions
-    EXPECT_EQ(nullptr, uut.buffer());
-    EXPECT_TRUE(uut.has_ownership());
-    EXPECT_EQ(0u, uut.length());
-    EXPECT_EQ(0u, uut.maximum());
-
-    // Check with wrong parameters
-    EXPECT_FALSE(uut.loan(stack.buffer, 0u, 0u));
-    EXPECT_FALSE(uut.loan(stack.buffer, 1u, 2u));
-    EXPECT_FALSE(uut.loan(nullptr, 1u, 1u));
-
-    // Check that we can loan more than once
-    EXPECT_TRUE(uut.loan(stack.buffer, num_test_elements, 0u));
-    EXPECT_FALSE(uut.has_ownership());
-    EXPECT_EQ(num_test_elements, uut.maximum());
-    EXPECT_EQ(0u, uut.length());
-    EXPECT_EQ(stack.buffer, uut.buffer());
-    EXPECT_TRUE(uut.loan(stack.buffer, num_test_elements, num_test_elements));
-    EXPECT_FALSE(uut.has_ownership());
-    EXPECT_EQ(num_test_elements, uut.maximum());
-    EXPECT_EQ(num_test_elements, uut.length());
-    EXPECT_EQ(stack.buffer, uut.buffer());
-
-    // Now loan a different buffer
-    StackAllocatedBuffer<int, 1u> stack2;
-    EXPECT_TRUE(uut.loan(stack2.buffer, 1u, 0u));
-    EXPECT_FALSE(uut.has_ownership());
-    EXPECT_EQ(1u, uut.maximum());
-    EXPECT_EQ(0u, uut.length());
-    EXPECT_EQ(stack2.buffer, uut.buffer());
-
-    // Check that loaned buffer cannot grow above maximum
-    EXPECT_TRUE(uut.length(1u));
-    EXPECT_FALSE(uut.length(10u));
-    EXPECT_FALSE(uut.has_ownership());
-    EXPECT_EQ(1u, uut.maximum());
-    EXPECT_EQ(1u, uut.length());
-    EXPECT_EQ(stack2.buffer, uut.buffer());
-
-    // Note: When uut is deleted upon exiting this test, a warning log will be produced.
-    // This is done on purpose in order to have coverage for the generation of that warning.
+    // Note: When uut is deleted upon exiting its scope, a warning log will be produced.
+    // We will check the generation of that warning with a custom consumer.
     Log::SetVerbosity(Log::Kind::Warning);
+    bool log_has_been_detected = false;
+
+    class CustomLogConsumer : public LogConsumer
+    {
+        const char* log_function = "eprosima::fastdds::dds::LoanableSequence<int>::~LoanableSequence";
+
+    public:
+
+        CustomLogConsumer(
+                bool* log_detected_ptr)
+            : log_detected_(log_detected_ptr)
+        {
+        }
+
+        void Consume(
+                const Log::Entry& entry) override
+        {
+            *log_detected_ |=
+                    (Log::Kind::Warning == entry.kind) &&
+                    (std::string(entry.context.function) == log_function);
+        }
+
+        bool* log_detected_;
+    };
+    std::unique_ptr<CustomLogConsumer> consumer(new CustomLogConsumer(&log_has_been_detected));
+    Log::ClearConsumers();
+    Log::RegisterConsumer(std::move(consumer));
+
+    {
+        // Create a loaned sequence and check postconditions
+        LoanableSequence<int> uut;
+        EXPECT_TRUE(uut.loan(stack.buffer, num_test_elements, 0));
+        EXPECT_FALSE(uut.has_ownership());
+        EXPECT_EQ(num_test_elements, uut.maximum());
+        EXPECT_EQ(0u, uut.length());
+        EXPECT_EQ(stack.buffer, uut.buffer());
+        EXPECT_TRUE(uut.length(num_test_elements));
+        EXPECT_EQ(num_test_elements, uut.length());
+
+        // Check unloan
+        result_buffer = uut.unloan(max, len);
+        EXPECT_EQ(stack.buffer, result_buffer);
+        EXPECT_EQ(num_test_elements, max);
+        EXPECT_EQ(num_test_elements, len);
+
+        // Check unloan postconditions
+        EXPECT_EQ(nullptr, uut.buffer());
+        EXPECT_TRUE(uut.has_ownership());
+        EXPECT_EQ(0u, uut.length());
+        EXPECT_EQ(0u, uut.maximum());
+
+        // Loan again
+        EXPECT_TRUE(uut.loan(stack.buffer, num_test_elements, 0));
+        EXPECT_FALSE(uut.has_ownership());
+        EXPECT_EQ(num_test_elements, uut.maximum());
+        EXPECT_EQ(0u, uut.length());
+        EXPECT_EQ(stack.buffer, uut.buffer());
+
+        // Check other version of unloan
+        result_buffer = uut.unloan();
+        EXPECT_EQ(stack.buffer, result_buffer);
+        EXPECT_EQ(num_test_elements, max);
+        EXPECT_EQ(num_test_elements, len);
+
+        // Check unloan postconditions
+        EXPECT_EQ(nullptr, uut.buffer());
+        EXPECT_TRUE(uut.has_ownership());
+        EXPECT_EQ(0u, uut.length());
+        EXPECT_EQ(0u, uut.maximum());
+
+        // Check with wrong parameters
+        EXPECT_FALSE(uut.loan(stack.buffer, 0u, 0u));
+        EXPECT_FALSE(uut.loan(stack.buffer, 1u, 2u));
+        EXPECT_FALSE(uut.loan(nullptr, 1u, 1u));
+
+        // Check that we can loan more than once
+        EXPECT_TRUE(uut.loan(stack.buffer, num_test_elements, 0u));
+        EXPECT_FALSE(uut.has_ownership());
+        EXPECT_EQ(num_test_elements, uut.maximum());
+        EXPECT_EQ(0u, uut.length());
+        EXPECT_EQ(stack.buffer, uut.buffer());
+        EXPECT_TRUE(uut.loan(stack.buffer, num_test_elements, num_test_elements));
+        EXPECT_FALSE(uut.has_ownership());
+        EXPECT_EQ(num_test_elements, uut.maximum());
+        EXPECT_EQ(num_test_elements, uut.length());
+        EXPECT_EQ(stack.buffer, uut.buffer());
+
+        // Now loan a different buffer
+        StackAllocatedBuffer<int, 1u> stack2;
+        EXPECT_TRUE(uut.loan(stack2.buffer, 1u, 0u));
+        EXPECT_FALSE(uut.has_ownership());
+        EXPECT_EQ(1u, uut.maximum());
+        EXPECT_EQ(0u, uut.length());
+        EXPECT_EQ(stack2.buffer, uut.buffer());
+
+        // Check that loaned buffer cannot grow above maximum
+        EXPECT_TRUE(uut.length(1u));
+        EXPECT_FALSE(uut.length(10u));
+        EXPECT_FALSE(uut.has_ownership());
+        EXPECT_EQ(1u, uut.maximum());
+        EXPECT_EQ(1u, uut.length());
+        EXPECT_EQ(stack2.buffer, uut.buffer());
+    }
+
+    Log::Flush();
+    EXPECT_TRUE(log_has_been_detected);
 }
 
 void perform_accessors_test_step(
