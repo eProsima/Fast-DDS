@@ -485,28 +485,28 @@ bool AESGCMGMAC_Transform::encode_rtps_message(
 
     // If the maximum number of blocks have been processed, generate a new SessionKey
     bool update_specific_keys = false;
-    if (local_participant->session_block_counter >= local_participant->max_blocks_per_session)
+    if (local_participant->Session.session_block_counter >= local_participant->max_blocks_per_session)
     {
-        local_participant->session_id += 1;
+        local_participant->Session.session_id += 1;
         update_specific_keys = true;
-        compute_sessionkey(local_participant->SessionKey, local_participant->ParticipantKeyMaterial,
-                local_participant->session_id);
+        compute_sessionkey(local_participant->Session.SessionKey, local_participant->ParticipantKeyMaterial,
+                local_participant->Session.session_id);
 
         //ReceiverSpecific keys shall be computed specifically when needed
-        local_participant->session_block_counter = 0;
+        local_participant->Session.session_block_counter = 0;
         //Insert outdate session_id values in all RemoteParticipant trackers to trigger a SessionkeyUpdate
     }
 
-    local_participant->session_block_counter += 1;
+    local_participant->Session.session_block_counter += 1;
 
     //Build remaining NONCE elements
     std::array<uint8_t, initialization_vector_suffix_length> initialization_vector_suffix;  //iv suffix changes with every operation
     RAND_bytes(initialization_vector_suffix.data(), initialization_vector_suffix_length);
     std::array<uint8_t, 12> initialization_vector; //96 bytes, session_id + suffix
-    memcpy(initialization_vector.data(), &(local_participant->session_id), 4);
+    memcpy(initialization_vector.data(), &(local_participant->Session.session_id), 4);
     memcpy(initialization_vector.data() + 4, initialization_vector_suffix.data(), 8);
     std::array<uint8_t, 4> session_id;
-    memcpy(session_id.data(), &(local_participant->session_id), 4);
+    memcpy(session_id.data(), &(local_participant->Session.session_id), 4);
 
 #if FASTDDS_IS_BIG_ENDIAN_TARGET
     octet flags = 0x0;
@@ -548,7 +548,7 @@ bool AESGCMGMAC_Transform::encode_rtps_message(
     try
     {
         if (!serialize_SecureDataBody(serializer, local_participant->ParticipantKeyMaterial.transformation_kind,
-                local_participant->SessionKey,
+                local_participant->Session.SessionKey,
                 initialization_vector, output_buffer, &plain_rtps_message.buffer[plain_rtps_message.pos],
                 plain_rtps_message.length - plain_rtps_message.pos, tag, true))
         {
@@ -1860,13 +1860,14 @@ bool AESGCMGMAC_Transform::serialize_SecureDataTag(
         int key_len = use_256_bits ? 32 : 16;
 
         //Update the key if needed
-        if ((update_specific_keys || remote_participant->session_id != local_participant->session_id) &&
+        if ((update_specific_keys || remote_participant->Session.session_id != local_participant->Session.session_id) &&
                 (*remote_participant != *local_participant))
         {
             //Update triggered!
-            remote_participant->session_id = local_participant->session_id;
-            compute_sessionkey(remote_participant->SessionKey, true,
-                    keyMat.master_receiver_specific_key, keyMat.master_salt, remote_participant->session_id, key_len);
+            remote_participant->Session.session_id = local_participant->Session.session_id;
+            compute_sessionkey(remote_participant->Session.SessionKey, true,
+                    keyMat.master_receiver_specific_key, keyMat.master_salt, remote_participant->Session.session_id,
+                    key_len);
         }
 
         //Obtain MAC using ReceiverSpecificKey and the same Initialization Vector as before
@@ -1877,7 +1878,7 @@ bool AESGCMGMAC_Transform::serialize_SecureDataTag(
                 trans_kind == c_transfrom_kind_aes128_gmac)
         {
             if (!EVP_EncryptInit(e_ctx, EVP_aes_128_gcm(),
-                    (const unsigned char*)(remote_participant->SessionKey.data()),
+                    (const unsigned char*)(remote_participant->Session.SessionKey.data()),
                     initialization_vector.data()))
             {
                 logError(SECURITY_CRYPTO, "Unable to encode the payload. EVP_EncryptInit function returns an error");
@@ -1889,7 +1890,7 @@ bool AESGCMGMAC_Transform::serialize_SecureDataTag(
                 trans_kind == c_transfrom_kind_aes256_gmac)
         {
             if (!EVP_EncryptInit(e_ctx, EVP_aes_256_gcm(),
-                    (const unsigned char*)(remote_participant->SessionKey.data()),
+                    (const unsigned char*)(remote_participant->Session.SessionKey.data()),
                     initialization_vector.data()))
             {
                 logError(SECURITY_CRYPTO, "Unable to encode the payload. EVP_EncryptInit function returns an error");

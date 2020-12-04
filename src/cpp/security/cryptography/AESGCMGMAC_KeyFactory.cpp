@@ -156,9 +156,9 @@ ParticipantCryptoHandle* AESGCMGMAC_KeyFactory::register_local_participant(
 
     //Set values related to key update policy
     (*PCrypto)->max_blocks_per_session = maxblockspersession;
-    (*PCrypto)->session_block_counter = maxblockspersession + 1; //Set to update upon first usage
+    (*PCrypto)->Session.session_block_counter = maxblockspersession + 1; //Set to update upon first usage
 
-    RAND_bytes((unsigned char*)( &((*PCrypto)->session_id )), sizeof(uint32_t));
+    RAND_bytes((unsigned char*)( &((*PCrypto)->Session.session_id )), sizeof(uint32_t));
 
     // Fill data to use with ourselves.
     KeyMaterial_AES_GCM_GMAC buffer;  //Buffer = Participant2ParticipantKeyMaterial
@@ -270,11 +270,11 @@ ParticipantCryptoHandle* AESGCMGMAC_KeyFactory::register_matched_remote_particip
 
 
         (*RPCrypto)->max_blocks_per_session = local_participant_handle->max_blocks_per_session;
-        (*RPCrypto)->session_block_counter = local_participant_handle->max_blocks_per_session + 1;
-        (*RPCrypto)->session_id = std::numeric_limits<uint32_t>::max();
-        if ((*RPCrypto)->session_id == local_participant_handle->session_id)
+        (*RPCrypto)->Session.session_block_counter = local_participant_handle->max_blocks_per_session + 1;
+        (*RPCrypto)->Session.session_id = std::numeric_limits<uint32_t>::max();
+        if ((*RPCrypto)->Session.session_id == local_participant_handle->Session.session_id)
         {
-            (*RPCrypto)->session_id -= 1;
+            (*RPCrypto)->Session.session_id -= 1;
         }
 
         //Attack to PartipantCryptoHandles - both local and remote
@@ -288,9 +288,9 @@ ParticipantCryptoHandle* AESGCMGMAC_KeyFactory::register_matched_remote_particip
         (*wHandle)->EntityKeyMaterial.push_back(buffer);
         (*wHandle)->Entity2RemoteKeyMaterial.push_back(buffer);
         (*wHandle)->Remote2EntityKeyMaterial.push_back(buffer);
-        (*wHandle)->Sessions[0].session_id = (*RPCrypto)->session_id;
+        (*wHandle)->Sessions[0].session_id = (*RPCrypto)->Session.session_id;
         (*wHandle)->max_blocks_per_session = (*RPCrypto)->max_blocks_per_session;
-        (*wHandle)->Sessions[0].session_block_counter = (*RPCrypto)->session_block_counter;
+        (*wHandle)->Sessions[0].session_block_counter = (*RPCrypto)->Session.session_block_counter;
         (*RPCrypto)->Writers.push_back(wHandle);
 
         // Create builtin key exchange reader handle
@@ -301,9 +301,9 @@ ParticipantCryptoHandle* AESGCMGMAC_KeyFactory::register_matched_remote_particip
         (*rHandle)->EntityKeyMaterial.push_back(buffer);
         (*rHandle)->Entity2RemoteKeyMaterial.push_back(buffer);
         (*rHandle)->Remote2EntityKeyMaterial.push_back(buffer);
-        (*rHandle)->Sessions[0].session_id = (*RPCrypto)->session_id;
+        (*rHandle)->Sessions[0].session_id = (*RPCrypto)->Session.session_id;
         (*rHandle)->max_blocks_per_session = (*RPCrypto)->max_blocks_per_session;
-        (*rHandle)->Sessions[0].session_block_counter = (*RPCrypto)->session_block_counter;
+        (*rHandle)->Sessions[0].session_block_counter = (*RPCrypto)->Session.session_block_counter;
         (*RPCrypto)->Readers.push_back(rHandle);
     }
 
