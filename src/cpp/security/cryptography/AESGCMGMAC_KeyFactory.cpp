@@ -123,7 +123,7 @@ ParticipantCryptoHandle* AESGCMGMAC_KeyFactory::register_local_participant(
     bool is_origin_auth =
             (plugin_attrs & PLUGIN_PARTICIPANT_SECURITY_ATTRIBUTES_FLAG_IS_RTPS_ORIGIN_AUTHENTICATED) != 0;
     bool use_256_bits = true;
-    int maxblockspersession = 32; //Default to key update every 32 usages if the user does not specify otherwise
+    uint64_t maxblockspersession = 32; //Default to key update every 32 usages if the user does not specify otherwise
     if (!participant_properties.empty())
     {
         for (auto it = participant_properties.begin(); it != participant_properties.end(); ++it)
@@ -139,7 +139,11 @@ ParticipantCryptoHandle* AESGCMGMAC_KeyFactory::register_local_participant(
             {
                 try
                 {
-                    maxblockspersession = std::stoi((it)->value());
+                    int tmp = std::stoi((it)->value());
+                    if (tmp > 0)
+                    {
+                        maxblockspersession = tmp;
+                    }
                 }
                 catch (std::invalid_argument&)
                 {
@@ -152,9 +156,9 @@ ParticipantCryptoHandle* AESGCMGMAC_KeyFactory::register_local_participant(
 
     //Set values related to key update policy
     (*PCrypto)->max_blocks_per_session = maxblockspersession;
-    (*PCrypto)->session_block_counter = maxblockspersession + 1; //Set to update upon first usage
+    (*PCrypto)->Session.session_block_counter = maxblockspersession + 1; //Set to update upon first usage
 
-    RAND_bytes((unsigned char*)( &((*PCrypto)->session_id )), sizeof(uint32_t));
+    RAND_bytes((unsigned char*)( &((*PCrypto)->Session.session_id )), sizeof(uint32_t));
 
     // Fill data to use with ourselves.
     KeyMaterial_AES_GCM_GMAC buffer;  //Buffer = Participant2ParticipantKeyMaterial
@@ -193,7 +197,7 @@ ParticipantCryptoHandle* AESGCMGMAC_KeyFactory::register_matched_remote_particip
     const std::vector<uint8_t>* challenge_1 = SharedSecretHelper::find_data_value(**shared_secret, "Challenge1");
     const std::vector<uint8_t>* shared_secret_ss = SharedSecretHelper::find_data_value(**shared_secret, "SharedSecret");
     const std::vector<uint8_t>* challenge_2 = SharedSecretHelper::find_data_value(**shared_secret, "Challenge2");
-    if ((challenge_1 == nullptr) | (shared_secret_ss == nullptr) | (challenge_2 == nullptr))
+    if ((challenge_1 == nullptr) || (shared_secret_ss == nullptr) || (challenge_2 == nullptr))
     {
         logWarning(SECURITY_CRYPTO, "Malformed SharedSecretHandle");
         exception = SecurityException("Unable to read SharedSecret and Challenges");
@@ -266,11 +270,11 @@ ParticipantCryptoHandle* AESGCMGMAC_KeyFactory::register_matched_remote_particip
 
 
         (*RPCrypto)->max_blocks_per_session = local_participant_handle->max_blocks_per_session;
-        (*RPCrypto)->session_block_counter = local_participant_handle->max_blocks_per_session + 1;
-        (*RPCrypto)->session_id = std::numeric_limits<uint32_t>::max();
-        if ((*RPCrypto)->session_id == local_participant_handle->session_id)
+        (*RPCrypto)->Session.session_block_counter = local_participant_handle->max_blocks_per_session + 1;
+        (*RPCrypto)->Session.session_id = std::numeric_limits<uint32_t>::max();
+        if ((*RPCrypto)->Session.session_id == local_participant_handle->Session.session_id)
         {
-            (*RPCrypto)->session_id -= 1;
+            (*RPCrypto)->Session.session_id -= 1;
         }
 
         //Attack to PartipantCryptoHandles - both local and remote
@@ -284,9 +288,9 @@ ParticipantCryptoHandle* AESGCMGMAC_KeyFactory::register_matched_remote_particip
         (*wHandle)->EntityKeyMaterial.push_back(buffer);
         (*wHandle)->Entity2RemoteKeyMaterial.push_back(buffer);
         (*wHandle)->Remote2EntityKeyMaterial.push_back(buffer);
-        (*wHandle)->Sessions[0].session_id = (*RPCrypto)->session_id;
+        (*wHandle)->Sessions[0].session_id = (*RPCrypto)->Session.session_id;
         (*wHandle)->max_blocks_per_session = (*RPCrypto)->max_blocks_per_session;
-        (*wHandle)->Sessions[0].session_block_counter = (*RPCrypto)->session_block_counter;
+        (*wHandle)->Sessions[0].session_block_counter = (*RPCrypto)->Session.session_block_counter;
         (*RPCrypto)->Writers.push_back(wHandle);
 
         // Create builtin key exchange reader handle
@@ -297,9 +301,9 @@ ParticipantCryptoHandle* AESGCMGMAC_KeyFactory::register_matched_remote_particip
         (*rHandle)->EntityKeyMaterial.push_back(buffer);
         (*rHandle)->Entity2RemoteKeyMaterial.push_back(buffer);
         (*rHandle)->Remote2EntityKeyMaterial.push_back(buffer);
-        (*rHandle)->Sessions[0].session_id = (*RPCrypto)->session_id;
+        (*rHandle)->Sessions[0].session_id = (*RPCrypto)->Session.session_id;
         (*rHandle)->max_blocks_per_session = (*RPCrypto)->max_blocks_per_session;
-        (*rHandle)->Sessions[0].session_block_counter = (*RPCrypto)->session_block_counter;
+        (*rHandle)->Sessions[0].session_block_counter = (*RPCrypto)->Session.session_block_counter;
         (*RPCrypto)->Readers.push_back(rHandle);
     }
 
@@ -326,7 +330,7 @@ DatawriterCryptoHandle* AESGCMGMAC_KeyFactory::register_local_datawriter(
     bool is_payload_encrypted = (plugin_attrs & PLUGIN_ENDPOINT_SECURITY_ATTRIBUTES_FLAG_IS_PAYLOAD_ENCRYPTED) != 0;
     bool use_256_bits = true;
     bool use_kx_keys = false;
-    int maxblockspersession = 32; //Default to key update every 32 usages
+    uint64_t maxblockspersession = 32; //Default to key update every 32 usages
     if (!datawriter_prop.empty())
     {
         for (auto it = datawriter_prop.begin(); it != datawriter_prop.end(); ++it)
@@ -342,7 +346,11 @@ DatawriterCryptoHandle* AESGCMGMAC_KeyFactory::register_local_datawriter(
             {
                 try
                 {
-                    maxblockspersession = std::stoi((it)->value());
+                    int tmp = std::stoi((it)->value());
+                    if (tmp > 0)
+                    {
+                        maxblockspersession = tmp;
+                    }
                 }
                 catch (std::invalid_argument&)
                 {
@@ -545,7 +553,7 @@ DatareaderCryptoHandle* AESGCMGMAC_KeyFactory::register_local_datareader(
     bool is_sub_encrypted = (plugin_attrs & PLUGIN_ENDPOINT_SECURITY_ATTRIBUTES_FLAG_IS_SUBMESSAGE_ENCRYPTED) != 0;
     bool use_256_bits = true;
     bool use_kx_keys = false;
-    int maxblockspersession = 32; //Default to key update every 32 usages
+    uint64_t maxblockspersession = 32; //Default to key update every 32 usages
     if (!datareader_properties.empty())
     {
         for (auto it = datareader_properties.begin(); it != datareader_properties.end(); ++it)
@@ -561,7 +569,11 @@ DatareaderCryptoHandle* AESGCMGMAC_KeyFactory::register_local_datareader(
             {
                 try
                 {
-                    maxblockspersession = std::stoi((it)->value());
+                    int tmp = std::stoi((it)->value());
+                    if (tmp > 0)
+                    {
+                        maxblockspersession = tmp;
+                    }
                 }
                 catch (std::invalid_argument&)
                 {
