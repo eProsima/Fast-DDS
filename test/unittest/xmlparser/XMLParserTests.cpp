@@ -874,7 +874,7 @@ TEST_F(XMLParserTests, parseXMLTransportData_NegativeClauses)
         }
         else if (parameters.first == "SHM" )
         {
-            xml = "<transport_descriptor></transport_descriptor>"
+            xml = "<transport_descriptor></transport_descriptor>";
             ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml.c_str()));
             titleElement = xml_doc.RootElement();
             // Check empty pointer
