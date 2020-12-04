@@ -88,11 +88,26 @@ protected:
     void process_new_data();
 
 
+    struct WriterInfo
+    {
+        std::shared_ptr<DataSharingPayloadPool> pool;
+        uint32_t last_assertion_sequence = 0;
+
+        WriterInfo() = default;
+        WriterInfo(
+                std::shared_ptr<DataSharingPayloadPool> writer_pool,
+                uint32_t assertion)
+            : pool(writer_pool)
+            , last_assertion_sequence(assertion)
+        {
+        }
+    };
+
     std::shared_ptr<DataSharingNotification> notification_;
     std::atomic<bool> is_running_;
     RTPSReader* reader_;
     std::thread* listening_thread_;
-    ResourceLimitedVector<std::shared_ptr<DataSharingPayloadPool>> writer_pools_;
+    ResourceLimitedVector<WriterInfo> writer_pools_;
     std::string datasharing_pools_directory_;
 
 };

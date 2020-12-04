@@ -104,6 +104,10 @@ public:
 
     const GUID_t& writer() const;
 
+    uint32_t last_liveliness_sequence() const;
+
+    virtual void assert_liveliness() = 0;
+
     static bool check_sequence_number(octet* data, SequenceNumber_t sn);
 
 protected:
@@ -288,6 +292,7 @@ protected:
         Segment::Offset notified_end;       //< The payload that will be notified next
         uint32_t free_payloads;             //< Number of free payloads
         uint32_t aligned_payload_size;      //< The offset from a payload to the next in the buffer
+        uint32_t liveliness_sequence;       //< The ID of the last liveliness assertion sent by the writer
     };
 #pragma warning(pop)
 

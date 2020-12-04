@@ -74,6 +74,11 @@ const GUID_t& DataSharingPayloadPool::writer() const
     return segment_id_;
 }
 
+uint32_t DataSharingPayloadPool::last_liveliness_sequence() const
+{
+    return descriptor_->liveliness_sequence;
+}
+
 bool DataSharingPayloadPool::check_sequence_number(
         octet* data, SequenceNumber_t sn)
 {
