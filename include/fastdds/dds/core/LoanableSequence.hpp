@@ -202,4 +202,7 @@ private:
 } // namespace fastdds
 } // namespace eprosima
 
+// Macro to easyly declare a LoanableSequence for a data type
+#define FASTDDS_SEQUENCE(FooSeq, Foo) using FooSeq = eprosima::fastdds::dds::LoanableSequence<Foo>
+
 #endif // _FASTDDS_DDS_CORE_LOANABLESEQUENCE_HPP_
