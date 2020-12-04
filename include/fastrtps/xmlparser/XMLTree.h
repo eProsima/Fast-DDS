@@ -56,7 +56,7 @@ public:
             BaseNode&& other)
         : data_type_(std::move(other.data_type_))
         , parent_(std::move(other.parent_))
-        , children(std::move(children))
+        , children(std::move(other.children))
     {
     }
 

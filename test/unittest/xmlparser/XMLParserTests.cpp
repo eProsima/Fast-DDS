@@ -749,7 +749,7 @@ TEST_F(XMLParserTests, parseXMLTransportData)
         EXPECT_EQ(pSHMDesc->port_queue_capacity(), 512u);
         EXPECT_EQ(pSHMDesc->healthy_check_timeout_ms(), 1000u);
         EXPECT_EQ(pSHMDesc->rtps_dump_file(), "rtsp_messages.log");
-        EXPECT_EQ(pSHMDesc->max_message_size(), 16384);
+        EXPECT_EQ(pSHMDesc->max_message_size(), 16384u);
         EXPECT_EQ(pSHMDesc->max_initial_peers_range(), 100u);
 
         xmlparser::XMLProfileManager::DeleteInstance();

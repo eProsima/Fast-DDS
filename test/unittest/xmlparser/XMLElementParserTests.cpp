@@ -242,7 +242,7 @@ TEST_F(XMLParserTests, getXMLLocatorUDPv6)
     ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
     titleElement = xml_doc.RootElement();
     EXPECT_EQ(XMLP_ret::XML_OK, XMLParserTest::getXMLLocatorList_wrapper(titleElement, list, ident));
-    EXPECT_EQ(list.begin()->port, 8844);
+    EXPECT_EQ(list.begin()->port, 8844u);
     EXPECT_EQ(list.begin()->address[15], 1);
     EXPECT_EQ(list.begin()->kind, LOCATOR_KIND_UDPv6);
 
@@ -307,8 +307,8 @@ TEST_F(XMLParserTests, getXMLLocatorTCPv4)
     ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
     titleElement = xml_doc.RootElement();
     EXPECT_EQ(XMLP_ret::XML_OK, XMLParserTest::getXMLLocatorList_wrapper(titleElement, list, ident));
-    EXPECT_EQ(IPLocator::getPhysicalPort(list.begin()->port), 5100);
-    EXPECT_EQ(IPLocator::getLogicalPort(list.begin()->port), 8844);
+    EXPECT_EQ(IPLocator::getPhysicalPort(list.begin()->port), 5100u);
+    EXPECT_EQ(IPLocator::getLogicalPort(list.begin()->port), 8844u);
 
     //<unique_lan_id>
     EXPECT_EQ(list.begin()->address[0], 192);
@@ -409,8 +409,8 @@ TEST_F(XMLParserTests, getXMLLocatorTCPv6)
     ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
     titleElement = xml_doc.RootElement();
     EXPECT_EQ(XMLP_ret::XML_OK, XMLParserTest::getXMLLocatorList_wrapper(titleElement, list, ident));
-    EXPECT_EQ(IPLocator::getPhysicalPort(list.begin()->port), 5100);
-    EXPECT_EQ(IPLocator::getLogicalPort(list.begin()->port), 8844);
+    EXPECT_EQ(IPLocator::getPhysicalPort(list.begin()->port), 5100u);
+    EXPECT_EQ(IPLocator::getLogicalPort(list.begin()->port), 8844u);
     EXPECT_EQ(list.begin()->address[15], 1);
     EXPECT_EQ(list.begin()->kind, LOCATOR_KIND_TCPv6);
 
@@ -486,7 +486,7 @@ TEST_F(XMLParserTests, getXMLTransports)
     ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
     titleElement = xml_doc.RootElement();
     ASSERT_EQ(XMLP_ret::XML_OK, XMLParserTest::getXMLTransports_wrapper(titleElement, transports, ident));
-    EXPECT_EQ(transports[0]->max_message_size(), 31416);
+    EXPECT_EQ(transports[0]->max_message_size(), 31416u);
 
     // Wrong ID
     sprintf(xml, xml_p, "WrongTransportId");
@@ -691,9 +691,9 @@ TEST_F(XMLParserTests, getXMLRemoteServer)
     EXPECT_EQ(attr.guidPrefix.value[10], (octet)0x52);
     EXPECT_EQ(attr.guidPrefix.value[11], (octet)0x4f);
 
-    EXPECT_EQ(attr.metatrafficUnicastLocatorList.begin()->port, 8844);
+    EXPECT_EQ(attr.metatrafficUnicastLocatorList.begin()->port, 8844u);
     EXPECT_EQ(attr.metatrafficUnicastLocatorList.begin()->address[15], 1);
-    EXPECT_EQ(attr.metatrafficMulticastLocatorList.begin()->port, 8844);
+    EXPECT_EQ(attr.metatrafficMulticastLocatorList.begin()->port, 8844u);
     EXPECT_EQ(attr.metatrafficMulticastLocatorList.begin()->address[15], 1);
 
     // nullptr element
@@ -1117,7 +1117,7 @@ TEST_F(XMLParserTests, getXMLList_positive)
     ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
     titleElement = xml_doc.RootElement();
     EXPECT_EQ(XMLP_ret::XML_OK, XMLParserTest::getXMLList_wrapper(titleElement, list, ident));
-    EXPECT_EQ(list.begin()->metatrafficUnicastLocatorList.begin()->port, 8844);
+    EXPECT_EQ(list.begin()->metatrafficUnicastLocatorList.begin()->port, 8844u);
     EXPECT_EQ(list.begin()->metatrafficUnicastLocatorList.begin()->address[15], 1);
     EXPECT_EQ(list.begin()->guidPrefix.value[0], 0x4d);
     EXPECT_EQ(list.begin()->guidPrefix.value[1], 0x49);
