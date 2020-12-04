@@ -1638,7 +1638,7 @@ void DiscoveryDataBase::AckedFunctor::operator () (
                     if (remote_server_it == db_->participants_.end())
                     {
                         logInfo(DISCOVERY_DATABASE, "Change " << change_->instanceHandle <<
-                            "check as acked for " << reader_proxy->guid() << " as it has not answered pinging yet");
+                                "check as acked for " << reader_proxy->guid() << " as it has not answered pinging yet");
                         return;
                     }
                 }
@@ -2416,7 +2416,7 @@ bool DiscoveryDataBase::from_json(
 
             logInfo(DISCOVERY_DATABASE,
                     "Writer " << guid_aux << " created with instance handle " <<
-                                    wit.first->second.change()->instanceHandle);
+                    wit.first->second.change()->instanceHandle);
 
             if (change->kind != fastrtps::rtps::ALIVE)
             {

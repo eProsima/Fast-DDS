@@ -333,7 +333,7 @@ public:
 
     int get_etinties_updated_and_reset()
     {
-            return entities_updated_.exchange(0);
+        return entities_updated_.exchange(0);
     }
 
 protected:

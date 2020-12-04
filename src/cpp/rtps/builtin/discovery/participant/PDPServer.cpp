@@ -950,7 +950,7 @@ History::iterator PDPServer::process_change_acknowledgement(
                     // Remove the entry from writer history, but do not release the cache.
                     // This CacheChange will only be released in the case that is substituted by a DATA(Up|Uw|Ur).
                     logInfo(RTPS_PDP_SERVER, "Removing change " << c->instanceHandle
-                        << " from history as it has been acked for everyone");
+                                                                << " from history as it has been acked for everyone");
                     return writer_history->remove_change(cit, false);
                 }
             }
