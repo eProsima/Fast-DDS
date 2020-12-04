@@ -1,5 +1,8 @@
 #include <fastrtps/xmlparser/XMLTree.h>
 
+#include <vector>
+#include <string>
+
 #include <gtest/gtest.h>
 
 using namespace eprosima::fastrtps::xmlparser;

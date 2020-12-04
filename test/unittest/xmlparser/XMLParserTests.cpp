@@ -596,15 +596,15 @@ TEST_F(XMLParserTests, parseXMLTransportData)
         std::shared_ptr<rtps::UDPv4TransportDescriptor> pUDPv4Desc =
                 std::dynamic_pointer_cast<rtps::UDPv4TransportDescriptor>(
             xmlparser::XMLProfileManager::getTransportById("TransportId1"));
-        EXPECT_EQ(pUDPv4Desc->sendBufferSize, 8192);
-        EXPECT_EQ(pUDPv4Desc->receiveBufferSize, 8192);
-        EXPECT_EQ(pUDPv4Desc->TTL, 250);
+        EXPECT_EQ(pUDPv4Desc->sendBufferSize, 8192u);
+        EXPECT_EQ(pUDPv4Desc->receiveBufferSize, 8192u);
+        EXPECT_EQ(pUDPv4Desc->TTL, 250u);
         EXPECT_EQ(pUDPv4Desc->non_blocking_send, false);
-        EXPECT_EQ(pUDPv4Desc->max_message_size(), 16384);
-        EXPECT_EQ(pUDPv4Desc->max_initial_peers_range(), 100);
+        EXPECT_EQ(pUDPv4Desc->max_message_size(), 16384u);
+        EXPECT_EQ(pUDPv4Desc->max_initial_peers_range(), 100u);
         EXPECT_EQ(pUDPv4Desc->interfaceWhiteList[0], "192.168.1.41");
         EXPECT_EQ(pUDPv4Desc->interfaceWhiteList[1], "127.0.0.1");
-        EXPECT_EQ(pUDPv4Desc->m_output_udp_socket, 5101);
+        EXPECT_EQ(pUDPv4Desc->m_output_udp_socket, 5101u);
 
         xmlparser::XMLProfileManager::DeleteInstance();
 
@@ -616,15 +616,15 @@ TEST_F(XMLParserTests, parseXMLTransportData)
         std::shared_ptr<rtps::UDPv6TransportDescriptor> pUDPv6Desc =
                 std::dynamic_pointer_cast<rtps::UDPv6TransportDescriptor>(
             xmlparser::XMLProfileManager::getTransportById("TransportId1"));
-        EXPECT_EQ(pUDPv6Desc->sendBufferSize, 8192);
-        EXPECT_EQ(pUDPv6Desc->receiveBufferSize, 8192);
-        EXPECT_EQ(pUDPv6Desc->TTL, 250);
+        EXPECT_EQ(pUDPv6Desc->sendBufferSize, 8192u);
+        EXPECT_EQ(pUDPv6Desc->receiveBufferSize, 8192u);
+        EXPECT_EQ(pUDPv6Desc->TTL, 250u);
         EXPECT_EQ(pUDPv6Desc->non_blocking_send, false);
-        EXPECT_EQ(pUDPv6Desc->max_message_size(), 16384);
-        EXPECT_EQ(pUDPv6Desc->max_initial_peers_range(), 100);
+        EXPECT_EQ(pUDPv6Desc->max_message_size(), 16384u);
+        EXPECT_EQ(pUDPv6Desc->max_initial_peers_range(), 100u);
         EXPECT_EQ(pUDPv6Desc->interfaceWhiteList[0], "192.168.1.41");
         EXPECT_EQ(pUDPv6Desc->interfaceWhiteList[1], "127.0.0.1");
-        EXPECT_EQ(pUDPv6Desc->m_output_udp_socket, 5101);
+        EXPECT_EQ(pUDPv6Desc->m_output_udp_socket, 5101u);
         xmlparser::XMLProfileManager::DeleteInstance();
     }
 
@@ -673,25 +673,25 @@ TEST_F(XMLParserTests, parseXMLTransportData)
         std::shared_ptr<rtps::TCPv4TransportDescriptor> pTCPv4Desc =
                 std::dynamic_pointer_cast<rtps::TCPv4TransportDescriptor>(
             xmlparser::XMLProfileManager::getTransportById("TransportId1"));
-        EXPECT_EQ(pTCPv4Desc->sendBufferSize, 8192);
-        EXPECT_EQ(pTCPv4Desc->receiveBufferSize, 8192);
-        EXPECT_EQ(pTCPv4Desc->TTL, 250);
-        EXPECT_EQ(pTCPv4Desc->max_message_size(), 16384);
-        EXPECT_EQ(pTCPv4Desc->max_initial_peers_range(), 100);
+        EXPECT_EQ(pTCPv4Desc->sendBufferSize, 8192u);
+        EXPECT_EQ(pTCPv4Desc->receiveBufferSize, 8192u);
+        EXPECT_EQ(pTCPv4Desc->TTL, 250u);
+        EXPECT_EQ(pTCPv4Desc->max_message_size(), 16384u);
+        EXPECT_EQ(pTCPv4Desc->max_initial_peers_range(), 100u);
         EXPECT_EQ(pTCPv4Desc->interfaceWhiteList[0], "192.168.1.41");
         EXPECT_EQ(pTCPv4Desc->interfaceWhiteList[1], "127.0.0.1");
         EXPECT_EQ(pTCPv4Desc->wan_addr[0], (octet)80);
         EXPECT_EQ(pTCPv4Desc->wan_addr[1], (octet)80);
         EXPECT_EQ(pTCPv4Desc->wan_addr[2], (octet)55);
         EXPECT_EQ(pTCPv4Desc->wan_addr[3], (octet)44);
-        EXPECT_EQ(pTCPv4Desc->keep_alive_frequency_ms, 5000);
-        EXPECT_EQ(pTCPv4Desc->keep_alive_timeout_ms, 25000);
-        EXPECT_EQ(pTCPv4Desc->max_logical_port, 9000);
-        EXPECT_EQ(pTCPv4Desc->logical_port_range, 100);
-        EXPECT_EQ(pTCPv4Desc->logical_port_increment, 2);
-        EXPECT_EQ(pTCPv4Desc->logical_port_increment, 2);
-        EXPECT_EQ(pTCPv4Desc->listening_ports[0], 5100);
-        EXPECT_EQ(pTCPv4Desc->listening_ports[1], 5200);
+        EXPECT_EQ(pTCPv4Desc->keep_alive_frequency_ms, 5000u);
+        EXPECT_EQ(pTCPv4Desc->keep_alive_timeout_ms, 25000u);
+        EXPECT_EQ(pTCPv4Desc->max_logical_port, 9000u);
+        EXPECT_EQ(pTCPv4Desc->logical_port_range, 100u);
+        EXPECT_EQ(pTCPv4Desc->logical_port_increment, 2u);
+        EXPECT_EQ(pTCPv4Desc->logical_port_increment, 2u);
+        EXPECT_EQ(pTCPv4Desc->listening_ports[0], 5100u);
+        EXPECT_EQ(pTCPv4Desc->listening_ports[1], 5200u);
         xmlparser::XMLProfileManager::DeleteInstance();
 
         // TCPv6
@@ -702,21 +702,21 @@ TEST_F(XMLParserTests, parseXMLTransportData)
         std::shared_ptr<rtps::TCPv6TransportDescriptor> pTCPv6Desc =
                 std::dynamic_pointer_cast<rtps::TCPv6TransportDescriptor>(
             xmlparser::XMLProfileManager::getTransportById("TransportId1"));
-        EXPECT_EQ(pTCPv6Desc->sendBufferSize, 8192);
-        EXPECT_EQ(pTCPv6Desc->receiveBufferSize, 8192);
-        EXPECT_EQ(pTCPv6Desc->TTL, 250);
-        EXPECT_EQ(pTCPv6Desc->max_message_size(), 16384);
-        EXPECT_EQ(pTCPv6Desc->max_initial_peers_range(), 100);
+        EXPECT_EQ(pTCPv6Desc->sendBufferSize, 8192u);
+        EXPECT_EQ(pTCPv6Desc->receiveBufferSize, 8192u);
+        EXPECT_EQ(pTCPv6Desc->TTL, 250u);
+        EXPECT_EQ(pTCPv6Desc->max_message_size(), 16384u);
+        EXPECT_EQ(pTCPv6Desc->max_initial_peers_range(), 100u);
         EXPECT_EQ(pTCPv6Desc->interfaceWhiteList[0], "192.168.1.41");
         EXPECT_EQ(pTCPv6Desc->interfaceWhiteList[1], "127.0.0.1");
-        EXPECT_EQ(pTCPv6Desc->keep_alive_frequency_ms, 5000);
-        EXPECT_EQ(pTCPv6Desc->keep_alive_timeout_ms, 25000);
-        EXPECT_EQ(pTCPv6Desc->max_logical_port, 9000);
-        EXPECT_EQ(pTCPv6Desc->logical_port_range, 100);
-        EXPECT_EQ(pTCPv6Desc->logical_port_increment, 2);
-        EXPECT_EQ(pTCPv6Desc->logical_port_increment, 2);
-        EXPECT_EQ(pTCPv6Desc->listening_ports[0], 5100);
-        EXPECT_EQ(pTCPv6Desc->listening_ports[1], 5200);
+        EXPECT_EQ(pTCPv6Desc->keep_alive_frequency_ms, 5000u);
+        EXPECT_EQ(pTCPv6Desc->keep_alive_timeout_ms, 25000u);
+        EXPECT_EQ(pTCPv6Desc->max_logical_port, 9000u);
+        EXPECT_EQ(pTCPv6Desc->logical_port_range, 100u);
+        EXPECT_EQ(pTCPv6Desc->logical_port_increment, 2u);
+        EXPECT_EQ(pTCPv6Desc->logical_port_increment, 2u);
+        EXPECT_EQ(pTCPv6Desc->listening_ports[0], 5100u);
+        EXPECT_EQ(pTCPv6Desc->listening_ports[1], 5200u);
         xmlparser::XMLProfileManager::DeleteInstance();
     }
 
@@ -745,12 +745,12 @@ TEST_F(XMLParserTests, parseXMLTransportData)
         std::shared_ptr<eprosima::fastdds::rtps::SharedMemTransportDescriptor> pSHMDesc =
                 std::dynamic_pointer_cast<eprosima::fastdds::rtps::SharedMemTransportDescriptor>(
             xmlparser::XMLProfileManager::getTransportById("TransportId1"));
-        EXPECT_EQ(pSHMDesc->segment_size(), 262144);
-        EXPECT_EQ(pSHMDesc->port_queue_capacity(), 512);
-        EXPECT_EQ(pSHMDesc->healthy_check_timeout_ms(), 1000);
+        EXPECT_EQ(pSHMDesc->segment_size(), 262144u);
+        EXPECT_EQ(pSHMDesc->port_queue_capacity(), 512u);
+        EXPECT_EQ(pSHMDesc->healthy_check_timeout_ms(), 1000u);
         EXPECT_EQ(pSHMDesc->rtps_dump_file(), "rtsp_messages.log");
         EXPECT_EQ(pSHMDesc->max_message_size(), 16384);
-        EXPECT_EQ(pSHMDesc->max_initial_peers_range(), 100);
+        EXPECT_EQ(pSHMDesc->max_initial_peers_range(), 100u);
 
         xmlparser::XMLProfileManager::DeleteInstance();
     }
@@ -874,6 +874,9 @@ TEST_F(XMLParserTests, parseXMLTransportData_NegativeClauses)
         }
         else if (parameters.first == "SHM" )
         {
+            xml = "<transport_descriptor></transport_descriptor>"
+            ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml.c_str()));
+            titleElement = xml_doc.RootElement();
             // Check empty pointer
             EXPECT_EQ(XMLP_ret::XML_ERROR,
                     XMLParserTest::parseXMLCommonSharedMemTransportData_wrapper(titleElement, nullptr));

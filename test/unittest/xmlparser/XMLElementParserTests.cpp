@@ -119,8 +119,8 @@ TEST_F(XMLParserTests, getXMLLifespanQos)
     ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
     titleElement = xml_doc.RootElement();
     EXPECT_EQ(XMLP_ret::XML_OK, XMLParserTest::getXMLLifespanQos_wrapper(titleElement, lifespan, ident));
-    EXPECT_EQ(lifespan.duration.seconds, (uint)5);
-    EXPECT_EQ(lifespan.duration.nanosec, (uint)0);
+    EXPECT_EQ(lifespan.duration.seconds, 5);
+    EXPECT_EQ(lifespan.duration.nanosec, 0u);
 
     // Missing data
     sprintf(xml, xml_p, "", "", "");
@@ -182,8 +182,8 @@ TEST_F(XMLParserTests, getXMLDisablePositiveAcksQos)
             XMLParserTest::getXMLDisablePositiveAcksQos_wrapper(titleElement, disablePositiveACKs, ident));
     EXPECT_EQ(disablePositiveACKs.enabled, true);
     EXPECT_EQ(disablePositiveACKs.enabled, true);
-    EXPECT_EQ(disablePositiveACKs.duration.seconds, (uint)5);
-    EXPECT_EQ(disablePositiveACKs.duration.nanosec, (uint)0);
+    EXPECT_EQ(disablePositiveACKs.duration.seconds, 5);
+    EXPECT_EQ(disablePositiveACKs.duration.nanosec, 0u);
 
     // Missing data - enabled
     sprintf(xml, xml_p, "", "", "", "");
