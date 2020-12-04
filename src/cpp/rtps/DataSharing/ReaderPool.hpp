@@ -174,6 +174,11 @@ void prepare_for_notification(const CacheChange_t* /*cache_change*/) override
     // Only the Writer pool can do this
 }
 
+void assert_liveliness() override
+{
+    // Only the Writer pool can do this
+}
+
 private:
 
     bool is_volatile_;              //< Whether the reader is volatile or not

@@ -28,6 +28,7 @@
 #include <rtps/history/BasicPayloadPool.hpp>
 #include <rtps/DataSharing/DataSharingPayloadPool.hpp>
 #include <rtps/DataSharing/DataSharingNotifier.hpp>
+#include <rtps/DataSharing/WriterPool.hpp>
 
 #include <fastdds/rtps/messages/RTPSMessageCreator.h>
 #include <fastdds/rtps/messages/RTPSMessageGroup.h>
@@ -2143,6 +2144,9 @@ bool StatefulWriter::send_periodic_heartbeat(
 
             for(ReaderProxy* reader : matched_datasharing_readers_)
             {
+                std::shared_ptr<WriterPool> p = std::dynamic_pointer_cast<WriterPool>(payload_pool_);
+                assert(p);
+                p->assert_liveliness();
                 reader->datasharing_notifier()->notify();
             }
 

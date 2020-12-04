@@ -213,6 +213,8 @@ public:
             descriptor_->notified_end = descriptor_->payloads_base;
             descriptor_->free_payloads = pool_size_;
             descriptor_->aligned_payload_size = aligned_payload_size;
+            descriptor_->liveliness_sequence = 0u;
+
             next_free_payload_ = descriptor_->payloads_base;
         }
         catch (std::exception& e)
@@ -244,6 +246,11 @@ public:
         node->related_sample_identity(cache_change->write_params.sample_identity());
 
         descriptor_->notified_end = advance(descriptor_->notified_end);
+    }
+
+    void assert_liveliness() override
+    {
+        ++descriptor_->liveliness_sequence;
     }
 
 

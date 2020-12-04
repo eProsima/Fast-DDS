@@ -108,19 +108,27 @@ void DataSharingListener::process_new_data ()
     // Loop on the writers looking for data not read yet
     for (auto it = writer_pools_.begin(); it != writer_pools_.end(); ++it)
     {
+        //First see if we have some liveliness asertion pending
+        uint32_t new_assertion_sequence = it->pool->last_liveliness_sequence();
+        if (it->last_assertion_sequence != new_assertion_sequence)
+        {
+            reader_->assert_writer_liveliness(it->pool->writer());
+            it->last_assertion_sequence = new_assertion_sequence;
+        }
+
         bool has_new_payload = true;
         while(has_new_payload)
         {
             CacheChange_t ch;
-            has_new_payload = (*it)->get_next_unread_payload(ch);
+            has_new_payload = it->pool->get_next_unread_payload(ch);
 
             if (has_new_payload)
             {
-                logInfo(RTPS_READER, "New data found on writer " <<(*it)->writer()
+                logInfo(RTPS_READER, "New data found on writer " <<it->pool->writer()
                         << " with SN " << ch.sequenceNumber);
 
                 reader_->processDataMsg(&ch);
-                (*it)->release_payload(ch);
+                it->pool->release_payload(ch);
             }
         }
     }
@@ -139,7 +147,7 @@ bool DataSharingListener::add_datasharing_writer(
 
     std::shared_ptr<DataSharingPayloadPool> pool = DataSharingPayloadPool::get_reader_pool(is_volatile);
     pool->init_shared_memory(writer_guid, datasharing_pools_directory_);
-    writer_pools_.push_back(pool);
+    writer_pools_.emplace_back(pool, pool->last_liveliness_sequence());
 
     return true;
 }
@@ -148,9 +156,9 @@ bool DataSharingListener::remove_datasharing_writer(
     const GUID_t& writer_guid)
 {
     return writer_pools_.remove_if (
-            [writer_guid](const std::shared_ptr<DataSharingPayloadPool> pool)
+            [writer_guid](const WriterInfo& info)
             {
-                return pool->writer() == writer_guid;
+                return info.pool->writer() == writer_guid;
             }
     );
 }
@@ -159,9 +167,9 @@ bool DataSharingListener::writer_is_matched(
         const GUID_t& writer_guid) const
 {
     auto it = std::find_if(writer_pools_.begin(), writer_pools_.end(),
-        [writer_guid](const std::shared_ptr<DataSharingPayloadPool> pool)
+        [writer_guid](const WriterInfo& info)
         {
-            return pool->writer() == writer_guid;
+            return info.pool->writer() == writer_guid;
         }
     );
     return (it != writer_pools_.end());
