@@ -124,7 +124,7 @@ void RTPSReader::init(
                 notification,
                 att.endpoint.data_sharing_configuration().shm_directory(),
                 att.matched_writers_allocation,
-                std::bind(&RTPSReader::processDataMsg, this, _1 )));
+                this));
         datasharing_listener_->start();
     }
 

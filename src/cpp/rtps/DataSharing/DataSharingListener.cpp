@@ -17,6 +17,7 @@
  */
 
 #include <rtps/DataSharing/DataSharingListener.hpp>
+#include <fastdds/rtps/reader/RTPSReader.h>
 
 #include <memory>
 #include <mutex>
@@ -30,10 +31,10 @@ DataSharingListener::DataSharingListener(
         std::shared_ptr<DataSharingNotification> notification,
         const std::string& datasharing_pools_directory,
         ResourceLimitedContainerConfig limits,
-        std::function<void(CacheChange_t*)> callback)
+        RTPSReader* reader)
     : notification_(notification)
     , is_running_(false)
-    , callback_(callback)
+    , reader_(reader)
     , writer_pools_(limits)
     , datasharing_pools_directory_(datasharing_pools_directory)
 {
@@ -118,7 +119,7 @@ void DataSharingListener::process_new_data ()
                 logInfo(RTPS_READER, "New data found on writer " <<(*it)->writer()
                         << " with SN " << ch.sequenceNumber);
 
-                callback_(&ch);
+                reader_->processDataMsg(&ch);
                 (*it)->release_payload(ch);
             }
         }
