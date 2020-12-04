@@ -61,7 +61,7 @@ public:
     }
 
     /**
-     * Get the maximum number of elements currently allowed.
+     * Get the maximum number of elements currently allocated.
      *
      * @return the maximum number of elements currently allocated.
      */
