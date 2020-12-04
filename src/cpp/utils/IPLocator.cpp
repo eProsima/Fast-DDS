@@ -68,7 +68,6 @@ bool IPLocator::setIPv4(
         octet o3,
         octet o4)
 {
-    LOCATOR_ADDRESS_INVALID(locator.address);
     locator.address[12] = o1;
     locator.address[13] = o2;
     locator.address[14] = o3;
@@ -80,10 +79,11 @@ bool IPLocator::setIPv4(
         Locator_t& locator,
         const std::string& ipv4)
 {
-    LOCATOR_ADDRESS_INVALID(locator.address);
-    //std::string _ipv4 = IPFinder::getIPv4Address(ipv4);
+    // This function do not set address to 0 in case it fails
+    // Be careful, do not set all IP to 0 because WAN and LAN could be set beforehand
+
     std::stringstream ss(ipv4);
-    int a, b, c, d; //to store the 4 ints
+    uint32_t a, b, c, d; //to store the 4 ints
     char ch; //to temporarily store the '.'
 
     if (ss >> a >> ch >> b >> ch >> c >> ch >> d)
@@ -97,7 +97,8 @@ bool IPLocator::setIPv4(
         locator.address[14] = (octet)c;
         locator.address[15] = (octet)d;
 
-        return true;
+        // If there are more info to read, it fails
+        return ss.rdbuf()->in_avail() == 0;
     }
 
     return false;
@@ -119,7 +120,6 @@ const octet* IPLocator::getIPv4(
 bool IPLocator::hasIPv4(
         const Locator_t& locator)
 {
-    // TODO
     if (!(locator.kind == LOCATOR_KIND_UDPv4 || locator.kind == LOCATOR_KIND_TCPv4))
     {
         return false;
@@ -189,62 +189,80 @@ bool IPLocator::setIPv6(
         Locator_t& locator,
         const std::string& ipv6)
 {
+    /* An IPv6 must contain 16 bytes of information
+     * These bytes are given by a string of 8 numbers of 4 digits in hexadecimal format separed by ':'
+     * The string to store this info is not unique, as it could be transform in two different ways:
+     *  1. Erasing leading zeros forwarding each number
+     *     00X = X
+     *  2. Encapsulating following blocks of zeros as leaving empty an space
+     *     X:0000:0000:Y = X::Y
+     *
+     * This fcuntion implements the following:
+     *  1. Check if the string is in correct format : IPv6isCorrect
+     *  2. Analyze the string to know if:
+     *      - it starts with blocks of zeros
+     *      - it ends with blocks of zeros
+     *      - it has blocks of zeros in the middle
+     *    and it stores the size of the zeros block to build the address afterwards
+     *  3. Build the bytes array by reading the string or either filling with 0 the zero blocks
+     * */
+
     if (!IPv6isCorrect(ipv6))
     {
         // ERROR
+        // Does not send a log for avoid API functionallity break
         return false;
     }
 
     LOCATOR_ADDRESS_INVALID(locator.address);
-    size_t count = std::count_if( ipv6.begin(), ipv6.end(), []( char c ){return c == ':';});
+    uint16_t count = std::count_if( ipv6.begin(), ipv6.end(), []( char c ){return c == ':';});
 
-    size_t initial_zeros = 0, final_zeros = 0; // bytes to 0 at the beggining or end
-    size_t position_zeros = 0, number_zeros = 0; // position of 0 in the middle and length of them
-    size_t aux, aux_prev;
+    uint16_t initial_zeros = 0, final_zeros = 0, position_zeros = 0, number_zeros = 0;
+    size_t aux, aux_prev; // This must be size_t as string::npos could change value depending on size_t size
 
-    // check whether is an empty block and where
-    // if first element equal :
+    // Check whether is a zero block and where
     if (ipv6.at(0) == ':')
     {
-        // it starts with zeros
-        // it ends with zeros
+        // First element equal : -> starts with zeros
         if (ipv6.at(ipv6.size()-1) == ':')
         {
-            // empty string
+            // Empty string (we already know it is a correct ipv6 format)
             initial_zeros = 16;
         }
         else
         {
-            // always 2 : at the beggining => - 2
-            // 2 bytes per string => * 2
+            // Calculate number of 0 blocks by the number of ':'
+            // 2 ':' at the beggining => - 2
             // 7 std : => 7 - count
+            // 2 bytes per string => * 2
             initial_zeros = (7 - (count - 2)) * 2;
         }
     }
     else if (ipv6.at(ipv6.size()-1) == ':')
     {
-        // it ends with double ::
-        // it does not start with ::
+        // Last element equal : -> ends with zeros
+        // It does not start with :: (previous if)
         final_zeros = (7 - (count - 2)) * 2;
     }
     else
     {
-        // it could have :: in the middle or not have it
-        aux_prev = ipv6.size(); // aux could be 1 so this number must be unreacheable
-        aux = ipv6.find(':');
+        // It does not starts or ends with zeros, but it could have :: in the middle or not have it
+        aux_prev = ipv6.size(); // Aux could be 1 so this number must be unreacheable
+        aux = ipv6.find(':'); // Index of first ':'
 
-        // look for "::" will loop string twice, while this loop less or equal once
+        // Look for "::" will loop string twice
+        // Therefore, we use this loop that will go over less or equal once
         while (aux != std::string::npos)
         {
             if (aux_prev == aux - 1)
             {
-                // found :: together
+                // Found "::"". Store the size of the block
                 number_zeros = (7 - (count - 1)) * 2;
                 break;
             }
 
-            // keep searching
-            position_zeros += 2;
+            // Not "::" found, keep searching in next ':'
+            position_zeros += 2; // It stores the point where the 0 block is
             aux_prev = aux;
             aux = ipv6.find(':', aux+1);
         }
@@ -253,12 +271,13 @@ bool IPLocator::setIPv6(
     char punct;
     std::stringstream ss;
     ss << std::hex << ipv6;
-    size_t i;
-    long input_aux;
+    uint16_t i;
+    uint32_t input_aux; // It cannot be uint16_t or we could not find wether the input number is bigger than allowed
 
-    // build the bytes string
+    // Build the bytes string knowing already if there is a zero block, where and which size
     if (initial_zeros != 0)
     {
+        // Zero block at the begginning
         for (i=0; i<initial_zeros;)
         {
             locator.address[i++] = 0;
@@ -276,9 +295,16 @@ bool IPLocator::setIPv6(
             locator.address[i++] = octet(input_aux >> 8);
             locator.address[i++] = octet(input_aux % 256);
         }
+
+        // In the case of empty ip it would be still a ':' without parsing
+        if (initial_zeros == 16)
+        {
+            ss >> punct;
+        }
     }
     else if (final_zeros != 0)
     {
+        // Zero block at the end
         for (i=0; i<16-final_zeros;)
         {
             ss >> input_aux >> punct;
@@ -289,6 +315,9 @@ bool IPLocator::setIPv6(
             locator.address[i++] = octet(input_aux >> 8);
             locator.address[i++] = octet(input_aux % 256);
         }
+
+        ss >> punct;
+
         for (; i<16;)
         {
             locator.address[i++] = 0;
@@ -296,6 +325,7 @@ bool IPLocator::setIPv6(
     }
     else if (number_zeros != 0)
     {
+        // Zero block in the middle
         for (i=0; i<position_zeros;)
         {
             ss >> input_aux >> punct;
@@ -325,6 +355,7 @@ bool IPLocator::setIPv6(
     }
     else
     {
+        // No zero block
         ss >> input_aux;
         locator.address[0] = octet(input_aux >> 8);
         locator.address[1] = octet(input_aux % 256);
@@ -340,7 +371,7 @@ bool IPLocator::setIPv6(
         }
     }
 
-    return true;
+    return ss.rdbuf()->in_avail() == 0;
 }
 
 bool IPLocator::setIPv6(
@@ -525,8 +556,9 @@ bool IPLocator::setWan(
         locator.address[9]  = (octet)b;
         locator.address[10] = (octet)c;
         locator.address[11] = (octet)d;
+        return true;
     }
-    return true;
+    return false;
 }
 
 const octet* IPLocator::getWan(
@@ -815,7 +847,16 @@ bool IPLocator::isEmpty(
 bool IPLocator::IPv6isCorrect(
         const std::string& ipv6)
 {
-    size_t count = std::count_if( ipv6.begin(), ipv6.end(), []( char c ){return c == ':';});
+    /* An incorrect IPv6 format could be because:
+     *  1. it has not ':' - bad format
+     *  2. it has just one ':' - not enough info
+     *  3. it has more than 8 ':' - too much info
+     *  4. it has 8 ':' - it could only happen if it starts or ends with "::", if not is too much bytes
+     *  5. it has more than one "::" - impossible to build the ip because unknown size of zero blocks
+     *  6. it starts with ':' - it must be doble ("::") - bad format
+     *  7. it ends with ':' - it must be doble ("::") - bad format
+     * */
+    uint16_t count = std::count_if( ipv6.begin(), ipv6.end(), []( char c ){return c == ':';});
 
     // proper number of :
     if (count < 2 || count > 8)
@@ -829,7 +870,7 @@ bool IPLocator::IPv6isCorrect(
         return false;
     }
 
-    // only one :: is available
+    // only one :: is allowed
     size_t ind = ipv6.find("::");
     if (ind != std::string::npos)
     {
@@ -839,13 +880,32 @@ bool IPLocator::IPv6isCorrect(
         }
     }
 
-    // does not have start and end in :
-    if (ipv6.at(0) == ':' && ipv6.at(ipv6.size()-1) == ':' && ipv6.size() > 2)
+    // does not start with only one ':'
+    if (ipv6.at(0) == ':' && ipv6.at(1) != ':')
+    {
+        return false;
+    }
+
+    // does not end with only one ':'
+    if (ipv6.at(ipv6.size()-1) == ':' && ipv6.at(ipv6.size()-2) != ':')
     {
         return false;
     }
 
     return true;
+}
+
+bool IPLocator::setIPv4address(
+        Locator_t& destlocator,
+        const std::string& lan,
+        const std::string& wan,
+        const std::string& ipv4)
+{
+    if (setLanID(destlocator, lan) && setWan(destlocator, wan) && setIPv4(destlocator, ipv4)){
+        return true;
+    }
+    LOCATOR_ADDRESS_INVALID(destlocator.address);
+    return false;
 }
 
 } // namespace rtps

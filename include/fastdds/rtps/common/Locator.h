@@ -22,6 +22,7 @@
 #include <fastrtps/fastrtps_dll.h>
 
 #include <fastdds/rtps/common/Types.h>
+#include <fastrtps/utils/IPLocator.h>
 
 #include <sstream>
 #include <vector>
@@ -33,6 +34,7 @@
 namespace eprosima {
 namespace fastrtps {
 namespace rtps {
+
 
 #define LOCATOR_INVALID(loc)  {loc.kind = LOCATOR_KIND_INVALID; loc.port = LOCATOR_PORT_INVALID; \
                                LOCATOR_ADDRESS_INVALID(loc.address); \
@@ -47,6 +49,8 @@ namespace rtps {
 #define LOCATOR_KIND_TCPv4 4
 #define LOCATOR_KIND_TCPv6 8
 #define LOCATOR_KIND_SHM 16
+
+// class IPLocator;
 
 //!@brief Class Locator_t, uniquely identifies a communication channel for a particular transport.
 //For example, an address+port combination in the case of UDP.
@@ -213,44 +217,68 @@ inline bool operator !=(
 }
 
 /*
- * kind : address[N] . address[1] . ... . address[16] : port
- * N = 0 if IPv6
- * N = 12 if IPv4
+ * kind:[address (in IP version)]:port
  */
 inline std::ostream& operator <<(
         std::ostream& output,
         const Locator_t& loc)
 {
-    output << loc.kind << ":";
+
+
+    // Stream Locator kind
+    switch (loc.kind)
+    {
+        case LOCATOR_KIND_TCPv4:
+        {
+            output << "TCPv4:[";
+            break;
+        }
+        case LOCATOR_KIND_UDPv4:
+        {
+            output << "UDPv4:[";
+            break;
+        }
+        case LOCATOR_KIND_TCPv6:
+        {
+            output << "TCPv6:[";
+            break;
+        }
+        case LOCATOR_KIND_UDPv6:
+        {
+            output << "UDPv6:[";
+            break;
+        }
+        case LOCATOR_KIND_SHM:
+        {
+            output << "SHM:[";
+            break;
+        }
+        default:
+        {
+            output << "Invalid_locator";
+            return output;
+        }
+    }
+
+    // Stream address
     if (loc.kind == LOCATOR_KIND_UDPv4 || loc.kind == LOCATOR_KIND_TCPv4)
     {
-        output << (int)loc.address[12] << "." << (int)loc.address[13]
-               << "." << (int)loc.address[14] << "." << (int)loc.address[15]
-               << ":" << loc.port;
+        output << IPLocator::toIPv4string(loc);
     }
     else if (loc.kind == LOCATOR_KIND_UDPv6 || loc.kind == LOCATOR_KIND_TCPv6)
     {
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            output << (int)loc.address[i];
-            if (i < 15)
-            {
-                output << ".";
-            }
-        }
-        output << ":" << loc.port;
+        output << IPLocator::toIPv6string(loc);
     }
     else if (loc.kind == LOCATOR_KIND_SHM)
     {
         if (loc.address[0] == 'M')
         {
-            output << "SHM:M:" << loc.port;
-        }
-        else
-        {
-            output << "SHM::" << loc.port;
+            output << "M";
         }
     }
+
+    // Stream port
+    output << "]:" << loc.port;
 
     return output;
 }
@@ -263,78 +291,78 @@ inline std::istream& operator >>(
 
     if (s)
     {
-        char punctuation;
-        unsigned short kind;
-        unsigned short value;
+        unsigned int bracket_index;
+        std::string address;
+        std::string str_locator;
+
         std::ios_base::iostate excp_mask = input.exceptions();
 
         try
         {
             input.exceptions(excp_mask | std::ios_base::failbit | std::ios_base::badbit);
 
-            input >> kind >> punctuation;
-            loc.kind = kind;
+            // First check the locator kind
+            input >> str_locator;
 
-            if (kind == LOCATOR_KIND_SHM)
+            bracket_index = str_locator.find(']');
+            if (bracket_index == std::string::npos)
             {
-                // ignore till second :
-                input.ignore(16, ':');
-                input.get(punctuation);
-                if (punctuation == 'M')
+                // Not correct format
+                input.setstate(std::ios_base::failbit);
+                return input;
+            }
+
+            if (str_locator.at(0) == 'S')
+            {
+                loc.kind = LOCATOR_KIND_SHM;
+                if (str_locator.at(5) == 'M')
                 {
                     loc.address[0] = 'M';
-                    input.get(punctuation);
                 }
-            }
-            else if (kind == LOCATOR_KIND_UDPv4 || kind == LOCATOR_KIND_TCPv4)
-            {
-                for (int i = 12; i < 15; ++i)
-                {
-                    input >> value >> punctuation;
-                    if ( punctuation != '.' || value > 255 )
-                    {
-                        input.setstate(std::ios_base::failbit);
-                    }
-                    loc.address[i] = static_cast<octet>(value);
-                }
-
-                // last value
-                input >> value >> punctuation;
-                if ( punctuation != ':' || value > 255 )
-                {
-                    input.setstate(std::ios_base::failbit);
-                }
-                loc.address[15] = static_cast<octet>(value);
-
-            }
-            else if (kind == LOCATOR_KIND_UDPv6 || kind == LOCATOR_KIND_TCPv6)
-            {
-                input >> std::hex;
-                for (int i = 0; i < 15; ++i)
-                {
-                    input >> value >> punctuation;
-                    if ( punctuation != '.' || value > 255 )
-                    {
-                        input.setstate(std::ios_base::failbit);
-                    }
-                    loc.address[i] = static_cast<octet>(value);
-                }
-
-                input >> value >> punctuation;
-                if ( punctuation != ':' || value > 255 )
-                {
-                    input.setstate(std::ios_base::failbit);
-                }
-                loc.address[15] = static_cast<octet>(value);
-
-                input >> std::dec;
             }
             else
             {
-                input.setstate(std::ios_base::failbit);
+                if (str_locator.at(4) == '4')
+                {
+                    if (str_locator.at(0) == 'T')
+                    {
+                        loc.kind = LOCATOR_KIND_TCPv4;
+                    }
+                    else if (str_locator.at(0) == 'U')
+                    {
+                        loc.kind = LOCATOR_KIND_UDPv4;
+                    }
+                    else
+                    {
+                        input.setstate(std::ios_base::failbit);
+                        return input;
+                    }
+
+                    // set address
+                    fastrtps::rtps::IPLocator::setIPv4(loc, str_locator.substr(7, bracket_index-7));
+                }
+                else if (str_locator.at(4) == '6')
+                {
+                    if (str_locator.at(0) == 'T')
+                    {
+                        loc.kind = LOCATOR_KIND_TCPv6;
+                    }
+                    else if (str_locator.at(0) == 'U')
+                    {
+                        loc.kind = LOCATOR_KIND_UDPv6;
+                    }
+                    else
+                    {
+                        input.setstate(std::ios_base::failbit);
+                        return input;
+                    }
+
+                    // set address
+                    fastrtps::rtps::IPLocator::setIPv6(loc, str_locator.substr(7, bracket_index-7));
+                }
             }
-            input >> value;
-            loc.port = value;
+
+            loc.port = stoi(str_locator.substr(bracket_index+1));
         }
         catch (std::ios_base::failure& )
         {

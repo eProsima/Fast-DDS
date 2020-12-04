@@ -20,14 +20,19 @@
 #ifndef IP_LOCATOR_H_
 #define IP_LOCATOR_H_
 
+#include <fastdds/rtps/common/Types.h>
+
 #include <vector>
 #include <string>
 
-#include <fastdds/rtps/common/Locator.h>
+// #include <fastdds/rtps/common/Locator.h>
 
 namespace eprosima {
 namespace fastrtps {
 namespace rtps {
+
+class Locator_t;
+
 /**
  * Class IPLocator, to provide helper functions to the IP based transports.
  * @ingroup UTILITIES_MODULE
@@ -70,6 +75,13 @@ class IPLocator
         RTPS_DllAPI static bool setIPv4(
                 Locator_t& destlocator,
                 const Locator_t& origlocator);
+
+        //! Copies locator's IPv4.
+        RTPS_DllAPI static bool setIPv4address(
+                Locator_t& destlocator,
+                const std::string& lan,
+                const std::string& wan,
+                const std::string& ipv4);
 
         //! Retrieves locator's IPv4 as octet array.
         RTPS_DllAPI static const octet* getIPv4(const Locator_t& locator);
