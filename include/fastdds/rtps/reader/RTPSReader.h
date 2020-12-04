@@ -271,6 +271,13 @@ public:
         m_trustedWriterEntityId = writer;
     }
 
+    /**
+     * Assert the livelines of a matched writer.
+     * @param writer GUID of the writer to assert.
+     */
+    virtual void assert_writer_liveliness(
+            const GUID_t& writer) = 0;
+
 protected:
 
     virtual bool may_remove_history_record(

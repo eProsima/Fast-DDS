@@ -388,6 +388,26 @@ bool StatefulReader::findWriterProxy(
     return false;
 }
 
+void StatefulReader::assert_writer_liveliness(
+        const GUID_t& writer)
+{
+    if (liveliness_lease_duration_ < c_TimeInfinite)
+    {
+        auto wlp = this->mp_RTPSParticipant->wlp();
+        if (wlp != nullptr)
+        {
+            wlp->sub_liveliness_manager_->assert_liveliness(
+                writer,
+                liveliness_kind_,
+                liveliness_lease_duration_);
+        }
+        else
+        {
+            logError(RTPS_LIVELINESS, "Finite liveliness lease duration but WLP not enabled");
+        }
+    }
+}
+
 bool StatefulReader::processDataMsg(
         CacheChange_t* change)
 {
@@ -403,21 +423,7 @@ bool StatefulReader::processDataMsg(
 
     if (acceptMsgFrom(change->writerGUID, &pWP))
     {
-        if (liveliness_lease_duration_ < c_TimeInfinite)
-        {
-            auto wlp = this->mp_RTPSParticipant->wlp();
-            if (wlp != nullptr)
-            {
-                wlp->sub_liveliness_manager_->assert_liveliness(
-                    change->writerGUID,
-                    liveliness_kind_,
-                    liveliness_lease_duration_);
-            }
-            else
-            {
-                logError(RTPS_LIVELINESS, "Finite liveliness lease duration but WLP not enabled");
-            }
-        }
+        assert_writer_liveliness(change->writerGUID);
 
         // Check if CacheChange was received or is framework data
         if (!pWP || !pWP->change_was_received(change->sequenceNumber))
@@ -490,21 +496,7 @@ bool StatefulReader::processDataFragMsg(
     // TODO: see if we need manage framework fragmented DATA message
     if (acceptMsgFrom(incomingChange->writerGUID, &pWP) && pWP)
     {
-        if (liveliness_lease_duration_ < c_TimeInfinite)
-        {
-            auto wlp = this->mp_RTPSParticipant->wlp();
-            if ( wlp != nullptr)
-            {
-                wlp->sub_liveliness_manager_->assert_liveliness(
-                    incomingChange->writerGUID,
-                    liveliness_kind_,
-                    liveliness_lease_duration_);
-            }
-            else
-            {
-                logError(RTPS_LIVELINESS, "Finite liveliness lease duration but WLP not enabled");
-            }
-        }
+        assert_writer_liveliness(incomingChange->writerGUID);
 
         // Check if CacheChange was received.
         if (!pWP->change_was_received(incomingChange->sequenceNumber))
