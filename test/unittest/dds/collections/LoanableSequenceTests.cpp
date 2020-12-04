@@ -33,7 +33,7 @@ static const std::array<int, num_test_elements> result_values =
 template<typename T, test_size_type num_items = num_test_elements>
 struct StackAllocatedBuffer
 {
-    constexpr test_size_type size()
+    constexpr test_size_type size() const
     {
         return num_items;
     }
