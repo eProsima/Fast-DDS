@@ -193,7 +193,7 @@ ParticipantCryptoHandle* AESGCMGMAC_KeyFactory::register_matched_remote_particip
     const std::vector<uint8_t>* challenge_1 = SharedSecretHelper::find_data_value(**shared_secret, "Challenge1");
     const std::vector<uint8_t>* shared_secret_ss = SharedSecretHelper::find_data_value(**shared_secret, "SharedSecret");
     const std::vector<uint8_t>* challenge_2 = SharedSecretHelper::find_data_value(**shared_secret, "Challenge2");
-    if ((challenge_1 == nullptr) | (shared_secret_ss == nullptr) | (challenge_2 == nullptr))
+    if ((challenge_1 == nullptr) || (shared_secret_ss == nullptr) || (challenge_2 == nullptr))
     {
         logWarning(SECURITY_CRYPTO, "Malformed SharedSecretHandle");
         exception = SecurityException("Unable to read SharedSecret and Challenges");
