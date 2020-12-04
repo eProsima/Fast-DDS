@@ -572,10 +572,9 @@ void DiscoveryDataBase::create_participant_from_change_(
             // The change could be newer and at the same time not being an update.
             // This happens with DATAs coming from servers, since they take their own DATAs in and out frequently,
             // so the sequence number in `write_params` changes.
-            // To account for that, we discard the DATA if the payload is exactly the same as what wee have.
+            // To account for that, we discard the DATA if the payload is exactly the same as what we have.
             if (!(ch->serializedPayload == participant_it->second.change()->serializedPayload))
             {
-                // Update the change related to the participant and return the old change to the pool
                 logInfo(DISCOVERY_DATABASE, "Participant updating. Marking old change to release");
                 // Update participant's change in the database, set all relevant participants ACK status to 0, and add
                 // old change to changes_to_release_.

@@ -949,8 +949,8 @@ History::iterator PDPServer::process_change_acknowledgement(
                 {
                     // Remove the entry from writer history, but do not release the cache.
                     // This CacheChange will only be released in the case that is substituted by a DATA(Up|Uw|Ur).
-                    logInfo(RTPS_PDP_SERVER, "Removingfix de DS change " << c->instanceHandle
-                        << " from history as it has been acked");
+                    logInfo(RTPS_PDP_SERVER, "Removing change " << c->instanceHandle
+                        << " from history as it has been acked for everyone");
                     return writer_history->remove_change(cit, false);
                 }
             }
@@ -1281,7 +1281,7 @@ bool PDPServer::remove_change_from_history_nts(
     {
         // We compare by pointer because we maintain the same pointer everywhere and it is unique
         // We cannot compare by cache info because there is no distinct attributes for the same change arrived
-        //  from different servers, and one of them could be in the history while the other arrive to ddb
+        // from different servers, and one of them could be in the history while the other arrive to db
         if (change == (*chit))
         {
             if (release_change)
