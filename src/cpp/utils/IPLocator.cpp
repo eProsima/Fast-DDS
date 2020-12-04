@@ -215,7 +215,10 @@ bool IPLocator::setIPv6(
     }
 
     LOCATOR_ADDRESS_INVALID(locator.address);
-    uint16_t count = std::count_if( ipv6.begin(), ipv6.end(), []( char c ){return c == ':';});
+    uint16_t count = std::count_if( ipv6.begin(), ipv6.end(), []( char c )
+                    {
+                        return c == ':';
+                    });
 
     uint16_t initial_zeros = 0, final_zeros = 0, position_zeros = 0, number_zeros = 0;
     size_t aux, aux_prev; // This must be size_t as string::npos could change value depending on size_t size
@@ -224,7 +227,7 @@ bool IPLocator::setIPv6(
     if (ipv6.at(0) == ':')
     {
         // First element equal : -> starts with zeros
-        if (ipv6.at(ipv6.size()-1) == ':')
+        if (ipv6.at(ipv6.size() - 1) == ':')
         {
             // Empty string (we already know it is a correct ipv6 format)
             initial_zeros = 16;
@@ -238,7 +241,7 @@ bool IPLocator::setIPv6(
             initial_zeros = (7 - (count - 2)) * 2;
         }
     }
-    else if (ipv6.at(ipv6.size()-1) == ':')
+    else if (ipv6.at(ipv6.size() - 1) == ':')
     {
         // Last element equal : -> ends with zeros
         // It does not start with :: (previous if)
@@ -264,7 +267,7 @@ bool IPLocator::setIPv6(
             // Not "::" found, keep searching in next ':'
             position_zeros += 2; // It stores the point where the 0 block is
             aux_prev = aux;
-            aux = ipv6.find(':', aux+1);
+            aux = ipv6.find(':', aux + 1);
         }
     }
 
@@ -278,14 +281,14 @@ bool IPLocator::setIPv6(
     if (initial_zeros != 0)
     {
         // Zero block at the begginning
-        for (i=0; i<initial_zeros;)
+        for (i = 0; i < initial_zeros;)
         {
             locator.address[i++] = 0;
         }
 
         ss >> punct;
 
-        for (; i<16;)
+        for (; i < 16;)
         {
             ss >> punct >> input_aux;
             if (input_aux >= 65536)
@@ -305,7 +308,7 @@ bool IPLocator::setIPv6(
     else if (final_zeros != 0)
     {
         // Zero block at the end
-        for (i=0; i<16-final_zeros;)
+        for (i = 0; i < 16 - final_zeros;)
         {
             ss >> input_aux >> punct;
             if (input_aux >= 65536)
@@ -318,7 +321,7 @@ bool IPLocator::setIPv6(
 
         ss >> punct;
 
-        for (; i<16;)
+        for (; i < 16;)
         {
             locator.address[i++] = 0;
         }
@@ -326,7 +329,7 @@ bool IPLocator::setIPv6(
     else if (number_zeros != 0)
     {
         // Zero block in the middle
-        for (i=0; i<position_zeros;)
+        for (i = 0; i < position_zeros;)
         {
             ss >> input_aux >> punct;
             if (input_aux >= 65536)
@@ -337,12 +340,12 @@ bool IPLocator::setIPv6(
             locator.address[i++] = octet(input_aux % 256);
         }
 
-        for (; i<position_zeros+number_zeros;)
+        for (; i < position_zeros + number_zeros;)
         {
             locator.address[i++] = 0;
         }
 
-        for (; i<16;)
+        for (; i < 16;)
         {
             ss >> punct >> input_aux;
             if (input_aux >= 65536)
@@ -359,7 +362,7 @@ bool IPLocator::setIPv6(
         ss >> input_aux;
         locator.address[0] = octet(input_aux >> 8);
         locator.address[1] = octet(input_aux % 256);
-        for (i=2; i<16;)
+        for (i = 2; i < 16;)
         {
             ss >> punct >> input_aux;
             if (input_aux >= 65536)
@@ -405,7 +408,7 @@ std::string IPLocator::toIPv6string(
     bool already_compress = false, in_compress = false;
     for (int i = 0; i != 16; i += 2)
     {
-        if (locator.address[i] == 0 && locator.address[i+1] == 0)
+        if (locator.address[i] == 0 && locator.address[i + 1] == 0)
         {
             if (!in_compress && !already_compress)
             {
@@ -811,7 +814,8 @@ bool IPLocator::isMulticast(
     }
 }
 
-bool IPLocator::isEmpty(const Locator_t& locator)
+bool IPLocator::isEmpty(
+        const Locator_t& locator)
 {
     switch (locator.kind)
     {
@@ -834,7 +838,7 @@ bool IPLocator::isEmpty(
     Locator_t aux_locator;
     LOCATOR_INVALID(aux_locator);
 
-    for (int i=index; i<16; ++i)
+    for (int i = index; i < 16; ++i)
     {
         if (locator.address[i] != aux_locator.address[i])
         {
@@ -856,7 +860,10 @@ bool IPLocator::IPv6isCorrect(
      *  6. it starts with ':' - it must be doble ("::") - bad format
      *  7. it ends with ':' - it must be doble ("::") - bad format
      * */
-    uint16_t count = std::count_if( ipv6.begin(), ipv6.end(), []( char c ){return c == ':';});
+    uint16_t count = std::count_if( ipv6.begin(), ipv6.end(), []( char c )
+                    {
+                        return c == ':';
+                    });
 
     // proper number of :
     if (count < 2 || count > 8)
@@ -865,7 +872,7 @@ bool IPLocator::IPv6isCorrect(
     }
 
     // only case of 8 : is with a :: at the beggining or end
-    if (count == 8 && (ipv6.at(0) != ':' && ipv6.at(ipv6.size()-1) != ':'))
+    if (count == 8 && (ipv6.at(0) != ':' && ipv6.at(ipv6.size() - 1) != ':'))
     {
         return false;
     }
@@ -874,7 +881,7 @@ bool IPLocator::IPv6isCorrect(
     size_t ind = ipv6.find("::");
     if (ind != std::string::npos)
     {
-        if (ipv6.find("::", ind+1) != std::string::npos)
+        if (ipv6.find("::", ind + 1) != std::string::npos)
         {
             return false;
         }
@@ -887,7 +894,7 @@ bool IPLocator::IPv6isCorrect(
     }
 
     // does not end with only one ':'
-    if (ipv6.at(ipv6.size()-1) == ':' && ipv6.at(ipv6.size()-2) != ':')
+    if (ipv6.at(ipv6.size() - 1) == ':' && ipv6.at(ipv6.size() - 2) != ':')
     {
         return false;
     }
@@ -901,7 +908,8 @@ bool IPLocator::setIPv4address(
         const std::string& wan,
         const std::string& ipv4)
 {
-    if (setLanID(destlocator, lan) && setWan(destlocator, wan) && setIPv4(destlocator, ipv4)){
+    if (setLanID(destlocator, lan) && setWan(destlocator, wan) && setIPv4(destlocator, ipv4))
+    {
         return true;
     }
     LOCATOR_ADDRESS_INVALID(destlocator.address);

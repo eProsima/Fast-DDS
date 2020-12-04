@@ -22,9 +22,11 @@
 using namespace eprosima::fastrtps::rtps;
 
 // Checks whether the address of two locators are equal byte to byte
-static bool address_match(const Locator_t& loc1, const Locator_t& loc2)
+static bool address_match(
+        const Locator_t& loc1,
+        const Locator_t& loc2)
 {
-    for (int i=0; i<16; i++)
+    for (int i = 0; i < 16; i++)
     {
         if (loc1.address[i] != loc2.address[i])
         {
@@ -34,7 +36,7 @@ static bool address_match(const Locator_t& loc1, const Locator_t& loc2)
     return true;
 }
 
-class IPLocatorTests: public ::testing::Test
+class IPLocatorTests : public ::testing::Test
 {
 
 public:
@@ -79,13 +81,13 @@ TEST_F(IPLocatorTests, setIPv4_from_string)
         // Empty string
         ASSERT_TRUE(IPLocator::setIPv4(locator, "0.0.0.0"));
         std::vector<int> vec{0, 0, 0, 0};
-        for (int i=0; i<12; i++)
+        for (int i = 0; i < 12; i++)
         {
             ASSERT_EQ(locator.address[i], 0);
         }
-        for (int i=0; i<4; i++)
+        for (int i = 0; i < 4; i++)
         {
-            ASSERT_EQ(locator.address[i+12], vec[i]);
+            ASSERT_EQ(locator.address[i + 12], vec[i]);
         }
     }
 
@@ -94,13 +96,13 @@ TEST_F(IPLocatorTests, setIPv4_from_string)
         ASSERT_TRUE(IPLocator::setIPv4(locator, "1.2.3.4"));
         std::vector<int> vec{1, 2, 3, 4};
 
-        for (int i=0; i<12; i++)
+        for (int i = 0; i < 12; i++)
         {
             ASSERT_EQ(locator.address[i], 0);
         }
-        for (int i=0; i<4; i++)
+        for (int i = 0; i < 4; i++)
         {
-            ASSERT_EQ(locator.address[i+12], vec[i]);
+            ASSERT_EQ(locator.address[i + 12], vec[i]);
         }
     }
 
@@ -109,13 +111,13 @@ TEST_F(IPLocatorTests, setIPv4_from_string)
         ASSERT_TRUE(IPLocator::setIPv4(locator, "01.002.0003.000104"));
         std::vector<int> vec{1, 2, 3, 104};
 
-        for (int i=0; i<12; i++)
+        for (int i = 0; i < 12; i++)
         {
             ASSERT_EQ(locator.address[i], 0);
         }
-        for (int i=0; i<4; i++)
+        for (int i = 0; i < 4; i++)
         {
-            ASSERT_EQ(locator.address[i+12], vec[i]);
+            ASSERT_EQ(locator.address[i + 12], vec[i]);
         }
     }
 
@@ -124,13 +126,13 @@ TEST_F(IPLocatorTests, setIPv4_from_string)
         ASSERT_TRUE(IPLocator::setIPv4(locator, "255.255.255.255"));
         std::vector<int> vec{255, 255, 255, 255};
 
-        for (int i=0; i<12; i++)
+        for (int i = 0; i < 12; i++)
         {
             ASSERT_EQ(locator.address[i], 0);
         }
-        for (int i=0; i<4; i++)
+        for (int i = 0; i < 4; i++)
         {
-            ASSERT_EQ(locator.address[i+12], vec[i]);
+            ASSERT_EQ(locator.address[i + 12], vec[i]);
         }
     }
 
@@ -167,7 +169,7 @@ TEST_F(IPLocatorTests, setIPv6_from_string_empty)
     for (std::string s : str_vec)
     {
         ASSERT_TRUE(IPLocator::setIPv6(locator, s));
-        for (int i=0; i<16; i++)
+        for (int i = 0; i < 16; i++)
         {
             ASSERT_EQ(locator.address[i], vec[i]);
         }
@@ -190,13 +192,13 @@ TEST_F(IPLocatorTests, setIPv6_from_string_std)
         vec.push_back(1);
 
         ASSERT_TRUE(IPLocator::setIPv6(locator, "::1"));
-        for (int i=0; i<16; i++)
+        for (int i = 0; i < 16; i++)
         {
             ASSERT_EQ(locator.address[i], vec[i]);
         }
 
         ASSERT_TRUE(IPLocator::setIPv6(locator, "0:0::0:0001"));
-        for (int i=0; i<16; i++)
+        for (int i = 0; i < 16; i++)
         {
             ASSERT_EQ(locator.address[i], vec[i]);
         }
@@ -214,54 +216,54 @@ TEST_F(IPLocatorTests, setIPv6_from_string_std)
 
         // Full hexadecimal address
         ASSERT_TRUE(IPLocator::setIPv6(
-            locator,
-            "0000:0203:0000:0607:0000:0000:0c0d:0000"));
-        for (int i=0; i<16; i++)
+                    locator,
+                    "0000:0203:0000:0607:0000:0000:0c0d:0000"));
+        for (int i = 0; i < 16; i++)
         {
             ASSERT_EQ(locator.address[i], vec[i]);
         }
 
         // Removing forwarding zeros
         ASSERT_TRUE(IPLocator::setIPv6(
-            locator,
-            "0:203:0:607:0:0:c0d:0"));
-        for (int i=0; i<16; i++)
+                    locator,
+                    "0:203:0:607:0:0:c0d:0"));
+        for (int i = 0; i < 16; i++)
         {
             ASSERT_EQ(locator.address[i], vec[i]);
         }
 
         // Initial zero block
         ASSERT_TRUE(IPLocator::setIPv6(
-            locator,
-            "::203:0:607:0:0:c0d:0"));
-        for (int i=0; i<16; i++)
+                    locator,
+                    "::203:0:607:0:0:c0d:0"));
+        for (int i = 0; i < 16; i++)
         {
             ASSERT_EQ(locator.address[i], vec[i]);
         }
 
         // Final zero block
         ASSERT_TRUE(IPLocator::setIPv6(
-            locator,
-            "0:203:0:607:0:0:c0d::"));
-        for (int i=0; i<16; i++)
+                    locator,
+                    "0:203:0:607:0:0:c0d::"));
+        for (int i = 0; i < 16; i++)
         {
             ASSERT_EQ(locator.address[i], vec[i]);
         }
 
         // Middle zero block
         ASSERT_TRUE(IPLocator::setIPv6(
-            locator,
-            "0:203::607:0:0:c0d:0"));
-        for (int i=0; i<16; i++)
+                    locator,
+                    "0:203::607:0:0:c0d:0"));
+        for (int i = 0; i < 16; i++)
         {
             ASSERT_EQ(locator.address[i], vec[i]);
         }
 
         // Another middle zero block
         ASSERT_TRUE(IPLocator::setIPv6(
-            locator,
-            "0:203:0:607::c0d:0"));
-        for (int i=0; i<16; i++)
+                    locator,
+                    "0:203:0:607::c0d:0"));
+        for (int i = 0; i < 16; i++)
         {
             ASSERT_EQ(locator.address[i], vec[i]);
         }
@@ -427,7 +429,7 @@ TEST_F(IPLocatorTests, getIPv6)
     Locator_t locator;
     IPLocator::setIPv6(locator, ipv6_lo_address);
     auto res = IPLocator::getIPv6(locator);
-    for (int i=0; i<15; i++)
+    for (int i = 0; i < 15; i++)
     {
         ASSERT_EQ(res[i], 0);
     }
@@ -533,7 +535,7 @@ TEST_F(IPLocatorTests, copyIPv6)
     IPLocator::setIPv6(locator, ipv6_lo_address);
     unsigned char arr[16];
     ASSERT_TRUE(IPLocator::copyIPv6(locator, arr));
-    for (int i=0; i<15; i++)
+    for (int i = 0; i < 15; i++)
     {
         ASSERT_EQ(arr[i], 0);
     }
@@ -634,20 +636,20 @@ TEST_F(IPLocatorTests, wan)
     Locator_t locator;
     IPLocator::createLocator(LOCATOR_KIND_TCPv4, ipv4_address, port1, locator);
     ASSERT_TRUE(IPLocator::setWan(locator, "0.1.2.3"));
-    for (int i=0; i<4; i++)
+    for (int i = 0; i < 4; i++)
     {
-        ASSERT_EQ(locator.address[8+i], i);
+        ASSERT_EQ(locator.address[8 + i], i);
     }
 
     ASSERT_TRUE(IPLocator::setWan(locator, 3, 2, 1, 0));
-    for (int i=0; i<4; i++)
+    for (int i = 0; i < 4; i++)
     {
-        ASSERT_EQ(locator.address[8+i], 3-i);
+        ASSERT_EQ(locator.address[8 + i], 3 - i);
     }
 
-    for (int i=0; i<4; i++)
+    for (int i = 0; i < 4; i++)
     {
-        ASSERT_EQ(IPLocator::getWan(locator)[i], 3-i);
+        ASSERT_EQ(IPLocator::getWan(locator)[i], 3 - i);
     }
 }
 
@@ -689,14 +691,14 @@ TEST_F(IPLocatorTests, lanID)
     Locator_t locator;
     IPLocator::createLocator(LOCATOR_KIND_TCPv4, ipv4_address, port1, locator);
     ASSERT_TRUE(IPLocator::setLanID(locator, "0.1.2.3.4.5.6.7"));
-    for (int i=0; i<8; i++)
+    for (int i = 0; i < 8; i++)
     {
         ASSERT_EQ(locator.address[i], i);
     }
     locator.kind = LOCATOR_KIND_UDPv4;
     ASSERT_FALSE(IPLocator::setLanID(locator, "0.1.2.3.4.5.6.7"));
 
-    for (int i=0; i<8; i++)
+    for (int i = 0; i < 8; i++)
     {
         ASSERT_EQ(IPLocator::getLanID(locator)[i], i);
     }
@@ -956,9 +958,9 @@ TEST_F(IPLocatorTests, setIPv4address)
     locator.kind = LOCATOR_KIND_TCPv4;
 
     ASSERT_TRUE(IPLocator::setIPv4address(locator, "1.2.3.4.5.6.7.8", "9.10.11.12", "13.14.15.16"));
-    for (int i=0; i<16; i++)
+    for (int i = 0; i < 16; i++)
     {
-        ASSERT_EQ(locator.address[i], i+1);
+        ASSERT_EQ(locator.address[i], i + 1);
     }
 
     ASSERT_FALSE(IPLocator::setIPv4address(locator, "1.2.3.4.5.6.7", "9.10.11.12", "13.14.15.16"));
@@ -969,7 +971,9 @@ TEST_F(IPLocatorTests, setIPv4address)
     ASSERT_FALSE(IPLocator::setIPv4address(locator, "1.2.3.4.5.6.7.8", "9.10.11.12", "13.14.15.16"));
 }
 
-int main(int argc, char **argv)
+int main(
+        int argc,
+        char** argv)
 {
     testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();

@@ -29,13 +29,13 @@ using namespace eprosima::fastrtps;
 
 #ifndef __APPLE__
 const uint32_t ReceiveBufferCapacity = 65536;
-#endif
+#endif // ifndef __APPLE__
 
 #if defined(_WIN32)
 #define GET_PID _getpid
 #else
 #define GET_PID getpid
-#endif
+#endif // if defined(_WIN32)
 
 static uint16_t g_default_port = 0;
 
@@ -43,7 +43,7 @@ uint16_t get_port()
 {
     uint16_t port = static_cast<uint16_t>(GET_PID());
 
-    if(4000 > port)
+    if (4000 > port)
     {
         port += 4000;
     }
@@ -51,24 +51,25 @@ uint16_t get_port()
     return port;
 }
 
-class UDPv6Tests: public ::testing::Test
+class UDPv6Tests : public ::testing::Test
 {
-    public:
-        UDPv6Tests()
-        {
-            HELPER_SetDescriptorDefaults();
-        }
+public:
 
-        ~UDPv6Tests()
-        {
-            eprosima::fastdds::dds::Log::KillThread();
-        }
+    UDPv6Tests()
+    {
+        HELPER_SetDescriptorDefaults();
+    }
 
-        void HELPER_SetDescriptorDefaults();
+    ~UDPv6Tests()
+    {
+        eprosima::fastdds::dds::Log::KillThread();
+    }
 
-        UDPv6TransportDescriptor descriptor;
-        std::unique_ptr<std::thread> senderThread;
-        std::unique_ptr<std::thread> receiverThread;
+    void HELPER_SetDescriptorDefaults();
+
+    UDPv6TransportDescriptor descriptor;
+    std::unique_ptr<std::thread> senderThread;
+    std::unique_ptr<std::thread> receiverThread;
 };
 
 TEST_F(UDPv6Tests, conversion_to_ip6_string)
@@ -127,13 +128,13 @@ TEST_F(UDPv6Tests, opening_and_closing_output_channel)
 
     // Then
     /*
-    ASSERT_FALSE (transportUnderTest.IsOutputChannelOpen(genericOutputChannelLocator));
-    ASSERT_TRUE  (transportUnderTest.OpenOutputChannel(genericOutputChannelLocator));
-    ASSERT_TRUE  (transportUnderTest.IsOutputChannelOpen(genericOutputChannelLocator));
-    ASSERT_TRUE  (transportUnderTest.CloseOutputChannel(genericOutputChannelLocator));
-    ASSERT_FALSE (transportUnderTest.IsOutputChannelOpen(genericOutputChannelLocator));
-    ASSERT_FALSE (transportUnderTest.CloseOutputChannel(genericOutputChannelLocator));
-    */
+       ASSERT_FALSE (transportUnderTest.IsOutputChannelOpen(genericOutputChannelLocator));
+       ASSERT_TRUE  (transportUnderTest.OpenOutputChannel(genericOutputChannelLocator));
+       ASSERT_TRUE  (transportUnderTest.IsOutputChannelOpen(genericOutputChannelLocator));
+       ASSERT_TRUE  (transportUnderTest.CloseOutputChannel(genericOutputChannelLocator));
+       ASSERT_FALSE (transportUnderTest.IsOutputChannelOpen(genericOutputChannelLocator));
+       ASSERT_FALSE (transportUnderTest.CloseOutputChannel(genericOutputChannelLocator));
+     */
 }
 
 #ifndef __APPLE__
@@ -157,8 +158,8 @@ TEST_F(UDPv6Tests, opening_and_closing_input_channel)
     ASSERT_FALSE (transportUnderTest.CloseInputChannel(multicastFilterLocator));
 }
 /*
-TEST_F(UDPv6Tests, send_and_receive_between_ports)
-{
+   TEST_F(UDPv6Tests, send_and_receive_between_ports)
+   {
     UDPv6Transport transportUnderTest(descriptor);
     transportUnderTest.init();
 
@@ -198,10 +199,10 @@ TEST_F(UDPv6Tests, send_and_receive_between_ports)
     senderThread->join();
     sem.wait();
     ASSERT_TRUE(transportUnderTest.CloseOutputChannel(outputChannelLocator));
-}
+   }
 
-TEST_F(UDPv6Tests, send_to_loopback)
-{
+   TEST_F(UDPv6Tests, send_to_loopback)
+   {
     UDPv6Transport transportUnderTest(descriptor);
     transportUnderTest.init();
 
@@ -241,9 +242,9 @@ TEST_F(UDPv6Tests, send_to_loopback)
     senderThread->join();
     sem.wait();
     ASSERT_TRUE(transportUnderTest.CloseOutputChannel(outputChannelLocator));
-}
-*/
-#endif
+   }
+ */
+#endif // ifndef __APPLE__
 
 void UDPv6Tests::HELPER_SetDescriptorDefaults()
 {
@@ -252,7 +253,9 @@ void UDPv6Tests::HELPER_SetDescriptorDefaults()
     descriptor.receiveBufferSize = 5;
 }
 
-int main(int argc, char **argv)
+int main(
+        int argc,
+        char** argv)
 {
     eprosima::fastdds::dds::Log::SetVerbosity(eprosima::fastdds::dds::Log::Info);
     g_default_port = get_port();

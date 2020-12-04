@@ -339,7 +339,7 @@ inline std::istream& operator >>(
                     }
 
                     // set address
-                    fastrtps::rtps::IPLocator::setIPv4(loc, str_locator.substr(7, bracket_index-7));
+                    fastrtps::rtps::IPLocator::setIPv4(loc, str_locator.substr(7, bracket_index - 7));
                 }
                 else if (str_locator.at(4) == '6')
                 {
@@ -358,11 +358,11 @@ inline std::istream& operator >>(
                     }
 
                     // set address
-                    fastrtps::rtps::IPLocator::setIPv6(loc, str_locator.substr(7, bracket_index-7));
+                    fastrtps::rtps::IPLocator::setIPv6(loc, str_locator.substr(7, bracket_index - 7));
                 }
             }
 
-            loc.port = stoi(str_locator.substr(bracket_index+1));
+            loc.port = stoi(str_locator.substr(bracket_index + 1));
         }
         catch (std::ios_base::failure& )
         {
