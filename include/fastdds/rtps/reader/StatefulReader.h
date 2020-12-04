@@ -272,6 +272,13 @@ public:
             const Locators& locators_end,
             std::chrono::steady_clock::time_point& max_blocking_time_point);
 
+    /**
+     * Assert the livelines of a matched writer.
+     * @param writer GUID of the writer to assert.
+     */
+    void assert_writer_liveliness(
+            const GUID_t& writer) override;
+
 private:
 
     void init(

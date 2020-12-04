@@ -206,6 +206,13 @@ public:
         return mp_RTPSParticipant;
     }
 
+    /**
+     * @brief Assert liveliness of remote writer
+     * @param guid The guid of the remote writer
+     */
+    void assert_writer_liveliness(
+            const GUID_t& guid) override;
+            
 private:
 
     struct RemoteWriterInfo_t
@@ -223,13 +230,6 @@ private:
     bool thereIsUpperRecordOf(
             const GUID_t& guid,
             const SequenceNumber_t& seq);
-
-    /**
-     * @brief Assert liveliness of remote writer
-     * @param guid The guid of the remote writer
-     */
-    void assert_writer_liveliness(
-            const GUID_t& guid);
 
     /**
      * @brief A method to check if a matched writer has manual_by_topic liveliness
