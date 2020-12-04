@@ -1,4 +1,4 @@
-// Copyright 2017 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+// Copyright 2020 Proyectos y Sistemas de Mantenimiento SL (eProsima).
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -18,7 +18,7 @@
 #include <fastdds/dds/log/FileConsumer.hpp>
 #include <fastdds/dds/log/StdoutConsumer.hpp>
 #include <fastdds/dds/log/StdoutErrConsumer.hpp>
-#include "mock/XMLMockConsumer.h"
+#include "../logging/mock/MockConsumer.h"
 
 #include <tinyxml2.h>
 #include <gtest/gtest.h>
@@ -64,7 +64,7 @@ public:
                 });
     }
 
-    eprosima::fastdds::dds::XMLMockConsumer* mock_consumer;
+    eprosima::fastdds::dds::MockConsumer* mock_consumer;
 
     mutable std::mutex* xml_mutex_;
     XMLEndpointParser* mp_edpXML;
@@ -89,8 +89,8 @@ protected:
 
 /*
  * This test checks the negative cases of the XMLEndpointParser::loadXMLFileNegativeClauses method.
- * 1. Check passing non existant file.
- * 2. Check passing an empty file.
+ *     1. Check passing non existant file.
+ *     2. Check passing an empty file.
  */
 TEST_F(XMLEndpointParserTests, loadXMLFileNegativeClauses)
 {
@@ -110,9 +110,9 @@ TEST_F(XMLEndpointParserTests, loadXMLFileNegativeClauses)
 }
 
 /*
- * This test checks the negative cases of the XMLEndpointParser::loadXMLNode method.
- * 1. Check the return for a correct XML
- * 2. Check the return for an incorrect XML
+ * This test checks the method XMLEndpointParser::loadXMLNode.
+ *     1. Check the return for a correct XML
+ *     2. Check the return for an incorrect XML
  */
 TEST_F(XMLEndpointParserTests, loadXMLNode)
 {
@@ -177,24 +177,20 @@ TEST_F(XMLEndpointParserTests, loadXMLNode)
 
 }
 
-
-
-
 /*
  * This test checks the XMLEndpointParser::loadXMLReaderEndpoint method.
- * 2. Check incorrect values for the writer tag
- * 2. Check incorrect values for the reader tag
- * 3. Check an incorrect tag
+ *     1. Check incorrect values for the writer tag
+ *     2. Check incorrect values for the reader tag
+ *     3. Check an incorrect tag
  */
 TEST_F(XMLEndpointParserTests, loadXMLParticipantEndpoint)
 {
     tinyxml2::XMLDocument xml_doc;
     tinyxml2::XMLElement* titleElement;
 
-    mock_consumer = new eprosima::fastdds::dds::XMLMockConsumer(xml_mutex_);
+    mock_consumer = new eprosima::fastdds::dds::MockConsumer();
 
     Log::RegisterConsumer(std::unique_ptr<LogConsumer>(mock_consumer));
-    Log::SetVerbosity(Log::Warning);
 
     {
         StaticRTPSParticipantInfo* pdata = new StaticRTPSParticipantInfo();
@@ -210,6 +206,7 @@ TEST_F(XMLEndpointParserTests, loadXMLParticipantEndpoint)
                         <topicName>HelloWorldTopic</topicName>\
                         <topicDataType>HelloWorld</topicDataType>\
                         <topicKind>WITH_KEY</topicKind>\
+                        <topic name=\"HelloWorldTopic\" dataType=\"HelloWorld\" kind=\"WITH_KEY\"/>\
                         <partitionQos>HelloPartition</partitionQos>\
                         <partitionQos>WorldPartition</partitionQos>\
                         <unicastLocator address=\"192.168.0.128\" port=\"5000\"/>\
@@ -268,11 +265,11 @@ TEST_F(XMLEndpointParserTests, loadXMLParticipantEndpoint)
 
 /*
  * This test checks the XMLEndpointParser::loadXMLReaderEndpoint method.
- * 1. Check correct parsing of the XML int ReaderProxyData
- * 2. Check incorrect values for the livelinesQos
- * 3. Check incorrect values for the ownershipQos
- * 4. Check an incorrect value for tags with parsable content
- * 5. Check an incorrect value for tags with parsable attributes
+ *     1. Check correct parsing of the XML int ReaderProxyData
+ *     2. Check incorrect values for the livelinesQos
+ *     3. Check incorrect values for the ownershipQos
+ *     4. Check an incorrect value for tags with parsable content
+ *     5. Check an incorrect value for tags with parsable attributes
  */
 TEST_F(XMLEndpointParserTests, loadXMLReaderEndpoint)
 {
@@ -293,6 +290,7 @@ TEST_F(XMLEndpointParserTests, loadXMLReaderEndpoint)
                     <topicName>HelloWorldTopic</topicName>\
                     <topicDataType>HelloWorld</topicDataType>\
                     <topicKind>WITH_KEY</topicKind>\
+                    <topic name=\"HelloWorldTopic\" dataType=\"HelloWorld\" kind=\"WITH_KEY\"/>\
                     <partitionQos>HelloPartition</partitionQos>\
                     <partitionQos>WorldPartition</partitionQos>\
                     <unicastLocator address=\"192.168.0.128\" port=\"5000\"/>\
@@ -478,11 +476,11 @@ TEST_F(XMLEndpointParserTests, loadXMLReaderEndpoint)
 
 /*
  * This test checks the XMLEndpointParser::loadXMLWriterEndpoint method.
- * 1. Check correct parsing of the XML int WriterProxyData
- * 2. Check incorrect values for the livelinesQos
- * 3. Check incorrect values for the ownershipQos
- * 4. Check an incorrect value for tags with parsable content
- * 5. Check an incorrect value for tags with parsable attributes
+ *     1. Check correct parsing of the XML int WriterProxyData
+ *     2. Check incorrect values for the livelinesQos
+ *     3. Check incorrect values for the ownershipQos
+ *     4. Check an incorrect value for tags with parsable content
+ *     5. Check an incorrect value for tags with parsable attributes
  */
 TEST_F(XMLEndpointParserTests, loadXMLWriterEndpoint)
 {
@@ -503,7 +501,8 @@ TEST_F(XMLEndpointParserTests, loadXMLWriterEndpoint)
                     <expectsInlineQos>true</expectsInlineQos>\
                     <topicName>HelloWorldTopic</topicName>\
                     <topicDataType>HelloWorld</topicDataType>\
-                    <topicKind>WITH_KEY</topicKind>\
+                    <topicKind>NO_KEY</topicKind>\
+                    <topic name=\"HelloWorldTopic\" dataType=\"HelloWorld\" kind=\"NO_KEY\"/>\
                     <partitionQos>HelloPartition</partitionQos>\
                     <partitionQos>WorldPartition</partitionQos>\
                     <unicastLocator address=\"192.168.0.128\" port=\"5000\"/>\
@@ -521,13 +520,13 @@ TEST_F(XMLEndpointParserTests, loadXMLWriterEndpoint)
 
         // Topic attributes
         EXPECT_EQ(pdata->m_writers[0]->topicName(), "HelloWorldTopic");
-        EXPECT_EQ(pdata->m_writers[0]->topicKind(), TopicKind_t::WITH_KEY);
+        EXPECT_EQ(pdata->m_writers[0]->topicKind(), TopicKind_t::NO_KEY);
         EXPECT_EQ(pdata->m_writers[0]->typeName(), "HelloWorld");
         EXPECT_EQ(pdata->m_writers[0]->has_locators(), true);
 
         // Topic attributes
         EXPECT_EQ(pdata->m_writers[0]->topicName(), "HelloWorldTopic");
-        EXPECT_EQ(pdata->m_writers[0]->topicKind(), TopicKind_t::WITH_KEY);
+        EXPECT_EQ(pdata->m_writers[0]->topicKind(), TopicKind_t::NO_KEY);
         EXPECT_EQ(pdata->m_writers[0]->typeName(), "HelloWorld");
         EXPECT_EQ(pdata->m_writers[0]->has_locators(), true);
 
@@ -743,6 +742,8 @@ TEST_F(XMLEndpointParserTests, lookforReader)
     IPLocator::setIPv4(multi_loc, "239.255.1.1");
     multi_loc.port = static_cast<uint16_t>(7000);
     EXPECT_EQ(rdataptr->remote_locators().multicast[0],  multi_loc);
+
+    ASSERT_EQ(XMLP_ret::XML_ERROR, mp_edpXML->lookforReader("WrongName", 15, &rdataptr));
 }
 
 /*
@@ -792,6 +793,8 @@ TEST_F(XMLEndpointParserTests, lookforWriter)
     IPLocator::setIPv4(multi_loc, "239.255.1.1");
     multi_loc.port = static_cast<uint16_t>(7000);
     EXPECT_EQ(wdataptr->remote_locators().multicast[0],  multi_loc);
+
+    ASSERT_EQ(XMLP_ret::XML_ERROR, mp_edpXML->lookforWriter("WrongName", 15, &wdataptr));
 }
 
 
