@@ -24,7 +24,7 @@
 #include <fastdds/rtps/common/GuidPrefix_t.hpp>
 #include <fastrtps/utils/fixed_size_string.hpp>
 
-#include "./DiscoverySharedInfo.hpp"
+#include <rtps/builtin/discovery/database/DiscoverySharedInfo.hpp>
 
 #include <json.hpp>
 

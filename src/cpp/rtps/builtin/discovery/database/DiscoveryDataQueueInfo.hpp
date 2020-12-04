@@ -21,7 +21,7 @@
 #include <fastrtps/utils/fixed_size_string.hpp>
 #include <fastdds/rtps/common/Guid.h>
 
-#include "./DiscoveryParticipantChangeData.hpp"
+#include <rtps/builtin/discovery/database/DiscoveryParticipantChangeData.hpp>
 
 
 namespace eprosima {

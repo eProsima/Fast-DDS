@@ -13,7 +13,7 @@
 // limitations under the License.
 
 /**
- * @file EDPServerListeners2.hpp
+ * @file EDPServerListeners.hpp
  *
  */
 
@@ -38,14 +38,14 @@ namespace eprosima {
 namespace fastdds {
 namespace rtps {
 
-class PDPServer2;
-class EDPServer2;
+class PDPServer;
+class EDPServer;
 
 /*!
- * Class EDPServerPUBListener2, used to define the behavior when a new WriterProxyData is received.
+ * Class EDPServerPUBListener, used to define the behavior when a new WriterProxyData is received.
  * @ingroup DISCOVERY_MODULE
  */
-class EDPServerPUBListener2 : public fastrtps::rtps::EDPBasePUBListener
+class EDPServerPUBListener : public fastrtps::rtps::EDPBasePUBListener
 {
 public:
 
@@ -53,15 +53,15 @@ public:
        Constructor
      * @param sedp Pointer to the EDPServer associated with this listener.
      */
-    EDPServerPUBListener2(
-            EDPServer2* sedp);
+    EDPServerPUBListener(
+            EDPServer* sedp);
 
-    virtual ~EDPServerPUBListener2()
+    virtual ~EDPServerPUBListener()
     {
     }
 
-    //! return the PDPServer2
-    PDPServer2* get_pdp();
+    //! return the PDPServer
+    PDPServer* get_pdp();
 
     /**
      * Virtual method,
@@ -75,14 +75,14 @@ public:
 private:
 
     //!Pointer to the EDPServer
-    EDPServer2* sedp_;
+    EDPServer* sedp_;
 };
 
 /*!
- * Class EDPServerSUBListener2, used to define the behavior when a new ReaderProxyData is received.
+ * Class EDPServerSUBListener, used to define the behavior when a new ReaderProxyData is received.
  * @ingroup DISCOVERY_MODULE
  */
-class EDPServerSUBListener2 : public fastrtps::rtps::EDPBaseSUBListener
+class EDPServerSUBListener : public fastrtps::rtps::EDPBaseSUBListener
 {
 public:
 
@@ -90,13 +90,13 @@ public:
        Constructor
      * @param sedp Pointer to the EDPServer associated with this listener.
      */
-    EDPServerSUBListener2(
-            EDPServer2* sedp);
+    EDPServerSUBListener(
+            EDPServer* sedp);
 
-    virtual ~EDPServerSUBListener2() = default;
+    virtual ~EDPServerSUBListener() = default;
 
-    //! return the PDPServer2
-    PDPServer2* get_pdp();
+    //! return the PDPServer
+    PDPServer* get_pdp();
 
     /**
      * @param reader
@@ -109,7 +109,7 @@ public:
 private:
 
     //!Pointer to the EDPServer
-    EDPServer2* sedp_;
+    EDPServer* sedp_;
 };
 
 } /* namespace rtps */

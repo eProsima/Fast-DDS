@@ -68,10 +68,19 @@ public:
     RTPS_DllAPI fastrtps::rtps::GUID_t GetPDPReader() const;
     RTPS_DllAPI fastrtps::rtps::GUID_t GetPDPWriter() const;
 
+
+    FASTDDS_DEPRECATED_UNTIL(3, "eprosima::fastrtps::rtps:GetEDPPublicationsReader()",
+            "Not implemented nor used functions.")
     RTPS_DllAPI fastrtps::rtps::GUID_t GetEDPPublicationsReader() const;
+    FASTDDS_DEPRECATED_UNTIL(3, "eprosima::fastrtps::rtps:GetEDPSubscriptionsWriter()",
+            "Not implemented nor used functions.")
     RTPS_DllAPI fastrtps::rtps::GUID_t GetEDPSubscriptionsWriter() const;
 
+    FASTDDS_DEPRECATED_UNTIL(3, "eprosima::fastrtps::rtps:GetEDPPublicationsWriter()",
+            "Not implemented nor used functions.")
     RTPS_DllAPI fastrtps::rtps::GUID_t GetEDPPublicationsWriter() const;
+    FASTDDS_DEPRECATED_UNTIL(3, "eprosima::fastrtps::rtps:GetEDPSubscriptionsReader()",
+            "Not implemented nor used functions.")
     RTPS_DllAPI fastrtps::rtps::GUID_t GetEDPSubscriptionsReader() const;
 
     RTPS_DllAPI inline bool ReadguidPrefix(

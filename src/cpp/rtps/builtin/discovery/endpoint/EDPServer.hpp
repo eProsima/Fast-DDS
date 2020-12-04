@@ -13,28 +13,38 @@
 // limitations under the License.
 
 /**
- * @file EDPClient2.hpp
+ * @file EDPServer.h
  *
  */
 
-#ifndef _FASTDDS_RTPS_EDPCLIENT2_H_
-#define _FASTDDS_RTPS_EDPCLIENT2_H_
+#ifndef _FASTDDS_RTPS_EDPSERVER2_H_
+#define _FASTDDS_RTPS_EDPSERVER2_H_
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
+#include <fastdds/rtps/common/CacheChange.h>
+#include <fastdds/rtps/builtin/data/ParticipantProxyData.h>
+#include <rtps/builtin/discovery/database/DiscoveryDataFilter.hpp>
+#include <rtps/builtin/discovery/database/DiscoveryDataBase.hpp>
 #include <fastdds/rtps/builtin/discovery/endpoint/EDPSimple.h>
+#include <rtps/builtin/discovery/participant/PDPServer.hpp>
 
 namespace eprosima {
 namespace fastdds {
 namespace rtps {
 
-using namespace fastrtps::rtps;
+class EDPServerPUBListener;
+class EDPServerSUBListener;
 
 /**
- * Class EDPClient2, extends the EDPSimple functionality to accommodate client side needs
+ * Class EDPServer, implements the Endpoint Discovery Protocol for server participants
+ * Inherits from EDPSimple class.
  *@ingroup DISCOVERY_MODULE
  */
-class EDPClient2 : public EDPSimple
+class EDPServer : public fastrtps::rtps::EDPSimple
 {
+    friend class EDPServerPUBListener;
+    friend class EDPServerSUBListener;
+
 public:
 
     /**
@@ -42,11 +52,23 @@ public:
      * @param p Pointer to the PDP
      * @param part Pointer to the RTPSParticipantImpl
      */
-    EDPClient2(
-            PDP* p,
-            RTPSParticipantImpl* part)
+    EDPServer(
+            fastrtps::rtps::PDP* p,
+            fastrtps::rtps::RTPSParticipantImpl* part,
+            fastrtps::rtps::DurabilityKind_t durability_kind)
         : EDPSimple(p, part)
+        , durability_(durability_kind)
     {
+    }
+
+    ~EDPServer() override
+    {
+    }
+
+    //! Return the PDP reference actual type
+    PDPServer* get_pdp()
+    {
+        return static_cast<PDPServer*>(mp_PDP);
     }
 
     /**
@@ -56,8 +78,8 @@ public:
      * @return true if correct.
      */
     bool processLocalReaderProxyData(
-            RTPSReader* reader,
-            ReaderProxyData* rdata) override;
+            fastrtps::rtps::RTPSReader* reader,
+            fastrtps::rtps::ReaderProxyData* rdata) override;
     /**
      * This method generates the corresponding change in the publciations writer and send it to all known remote endpoints.
      * @param writer Pointer to the Writer object.
@@ -65,22 +87,33 @@ public:
      * @return true if correct.
      */
     bool processLocalWriterProxyData(
-            RTPSWriter* writer,
-            WriterProxyData* wdata) override;
+            fastrtps::rtps::RTPSWriter* writer,
+            fastrtps::rtps::WriterProxyData* wdata) override;
     /**
      * This methods generates the change disposing of the local Reader and calls the unpairing and removal methods of the base class.
      * @param R Pointer to the RTPSReader object.
      * @return True if correct.
      */
     bool removeLocalReader(
-            RTPSReader* R) override;
+            fastrtps::rtps::RTPSReader* R) override;
     /**
      * This methods generates the change disposing of the local Writer and calls the unpairing and removal methods of the base class.
      * @param W Pointer to the RTPSWriter object.
      * @return True if correct.
      */
     bool removeLocalWriter(
-            RTPSWriter* W) override;
+            fastrtps::rtps::RTPSWriter* W) override;
+
+private:
+
+    /**
+     * Create local SEDP Endpoints based on the DiscoveryAttributes.
+     * @return True if correct.
+     */
+    virtual bool createSEDPEndpoints() override;
+
+    //! TRANSIENT or TRANSIENT_LOCAL durability;
+    fastrtps::rtps::DurabilityKind_t durability_;
 
 };
 
@@ -89,4 +122,4 @@ public:
 } // namespace eprosima
 
 #endif // ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
-#endif /* _FASTDDS_RTPS_EDPCLIENT2_H_ */
+#endif /* _FASTDDS_RTPS_EDPSERVER2_H_ */

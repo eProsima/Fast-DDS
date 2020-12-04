@@ -13,53 +13,54 @@
 // limitations under the License.
 
 /**
- * @file DServerEvent.h
+ * @file DSClientEvent.h
  *
  */
 
-#ifndef _FASTDDS_RTPS_DSERVEREVENT_H_
-#define _FASTDDS_RTPS_DSERVEREVENT_H_
+#ifndef _FASTDDS_RTPS_DSCLIENTEVENT_H_
+#define _FASTDDS_RTPS_DSCLIENTEVENT_H_
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
 #include <fastdds/rtps/resources/TimedEvent.h>
 
 namespace eprosima {
-namespace fastrtps{
+namespace fastdds {
 namespace rtps {
 
-class PDPServer;
+using namespace fastrtps::rtps;
+
+class PDPClient;
 
 /**
- * Class DServerEvent, TimedEvent used to synchronize discover-server servers
+ * Class DSClientEvent, TimedEvent used to synchronize discover-server clients
  *@ingroup DISCOVERY_MODULE
  */
-class DServerEvent : public TimedEvent {
+class DSClientEvent : public TimedEvent
+{
 public:
 
     /**
      * Constructor.
-     * @param p_PDP Pointer to the PDPServer.
+     * @param p_PDP Pointer to the PDPClient.
      * @param interval Interval in ms.
      */
-    DServerEvent(PDPServer* p_PDP,
+    DSClientEvent(
+            PDPClient* p_PDP,
             double interval);
-    ~DServerEvent();
+    ~DSClientEvent();
 
     /**
-    * Method invoked when the event occurs.
-    * This temporal event:
-        + resends the client RTPSParticipantProxyData to all remote servers.
-        + matches the EDP endpoints when the servers are all aware of this client existence
-    */
+     * Method invoked when the event occurs.
+     * This temporal event:
+     + resends the client RTPSParticipantProxyData to all remote servers.
+     + matches the EDP endpoints when the servers are all aware of this client existence
+     */
     bool event();
 
-    //!Pointer to the PDPServer object.
-    PDPServer* mp_PDP;
-    //!Initialize PDP reception when first run
-    bool messages_enabled_;
+    PDPClient* mp_PDP;
 };
-}
 } /* namespace rtps */
+} /* namespace fastdds */
 } /* namespace eprosima */
-#endif
-#endif /* _FASTDDS_RTPS_DSERVEREVENT_H_ */
+#endif // ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
+#endif /* _FASTDDS_RTPS_DSCLIENTEVENT_H_ */

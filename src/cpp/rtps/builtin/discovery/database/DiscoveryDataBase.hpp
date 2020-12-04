@@ -31,10 +31,10 @@
 #include <fastdds/rtps/common/CacheChange.h>
 #include <fastrtps/utils/DBQueue.h>
 
-#include "./DiscoveryDataFilter.hpp"
-#include "./DiscoveryParticipantInfo.hpp"
-#include "./DiscoveryEndpointInfo.hpp"
-#include "./DiscoveryDataQueueInfo.hpp"
+#include <rtps/builtin/discovery/database/DiscoveryDataFilter.hpp>
+#include <rtps/builtin/discovery/database/DiscoveryParticipantInfo.hpp>
+#include <rtps/builtin/discovery/database/DiscoveryEndpointInfo.hpp>
+#include <rtps/builtin/discovery/database/DiscoveryDataQueueInfo.hpp>
 
 #include <json.hpp>
 

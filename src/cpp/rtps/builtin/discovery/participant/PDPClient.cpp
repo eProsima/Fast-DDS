@@ -17,18 +17,11 @@
  *
  */
 
-#include <fastdds/rtps/builtin/discovery/participant/PDPClient.h>
-#include <fastdds/rtps/builtin/discovery/participant/PDPListener.h>
-#include <fastdds/rtps/builtin/discovery/participant/timedevent/DSClientEvent.h>
-
-#include <fastdds/rtps/builtin/discovery/endpoint/EDPClient.h>
-
 #include <fastdds/rtps/builtin/BuiltinProtocols.h>
 #include <fastdds/rtps/builtin/liveliness/WLP.h>
 
 #include <fastdds/rtps/participant/RTPSParticipantListener.h>
 #include <fastdds/rtps/reader/StatefulReader.h>
-
 #include <fastdds/rtps/writer/StatefulWriter.h>
 
 #include <fastdds/rtps/writer/ReaderProxy.h>
@@ -40,15 +33,21 @@
 
 #include <rtps/builtin/discovery/participant/DirectMessageSender.hpp>
 #include <rtps/participant/RTPSParticipantImpl.h>
+#include <fastdds/rtps/builtin/discovery/participant/PDPListener.h>
 
 #include <fastdds/dds/log/Log.hpp>
 
+#include <rtps/builtin/discovery/participant/PDPClient.h>
+#include <rtps/builtin/discovery/participant/timedevent/DSClientEvent.h>
+#include <rtps/builtin/discovery/endpoint/EDPClient.h>
 
 using namespace eprosima::fastrtps;
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
 namespace rtps {
+
+using namespace fastrtps::rtps;
 
 PDPClient::PDPClient(
         BuiltinProtocols* builtin,
@@ -413,7 +412,7 @@ bool PDPClient::all_servers_acknowledge_PDP()
 bool PDPClient::is_all_servers_PDPdata_updated()
 {
     // Assess all server DATA has been received
-    StatefulReader* pR = dynamic_cast<StatefulReader*>(mp_PDPReader);
+    fastrtps::rtps::StatefulReader* pR = dynamic_cast<fastrtps::rtps::StatefulReader*>(mp_PDPReader);
     assert(pR);
     return pR->isInCleanState();
 }
@@ -447,7 +446,7 @@ void PDPClient::announceParticipantState(
         // note here we can no longer receive and DATA or ACKNACK from clients.
         // In order to avoid that we send the message directly as in the standard stateless PDP
 
-        StatefulWriter* pW = dynamic_cast<StatefulWriter*>(mp_PDPWriter);
+        fastrtps::rtps::StatefulWriter* pW = dynamic_cast<fastrtps::rtps::StatefulWriter*>(mp_PDPWriter);
         assert(pW);
 
         CacheChange_t* change = nullptr;
@@ -575,6 +574,157 @@ bool PDPClient::match_servers_EDP_endpoints()
     return all;
 }
 
+bool load_environment_server_info(
+        std::string list,
+        RemoteServerList_t& attributes)
+{
+    using namespace std;
+
+    // parsing ancillary regex
+    const regex ROS2_IPV4_PATTERN(R"(^((?:[0-9]{1,3}\.){3}[0-9]{1,3})?:?(?:(\d+))?$)");
+    const regex ROS2_SERVER_LIST_PATTERN(R"(([^;]*);?)");
+
+    try
+    {
+        // Do the parsing and populate the list
+        attributes.clear();
+        RemoteServerAttributes server_att;
+        Locator_t server_locator(LOCATOR_KIND_UDPv4, DEFAULT_ROS2_SERVER_PORT);
+        int server_id = 0;
+
+        sregex_iterator server_it(
+            list.begin(),
+            list.end(),
+            ROS2_SERVER_LIST_PATTERN,
+            regex_constants::match_not_null);
+
+        while (server_it != sregex_iterator())
+        {
+            const smatch::value_type sm = *++(server_it->cbegin());
+
+            if (sm.matched)
+            {
+                // now we must parse the inner expression
+                smatch mr;
+                string locator(sm);
+                if (regex_match(locator, mr, ROS2_IPV4_PATTERN, regex_constants::match_not_null))
+                {
+                    smatch::iterator it = mr.cbegin();
+
+                    while (++it != mr.cend())
+                    {
+                        if ( !IPLocator::setIPv4(server_locator, it->str()))
+                        {
+                            stringstream ss;
+                            ss << "Wrong ipv4 address passed into the server's list " << it->str();
+                            throw std::invalid_argument(ss.str());
+                        }
+
+                        if (IPLocator::isAny(server_locator))
+                        {
+                            // A server cannot be reach in all interfaces, it's clearly a localhost call
+                            IPLocator::setIPv4(server_locator, "127.0.0.1");
+                        }
+
+                        if ( ++it != mr.cend())
+                        {
+                            // reset the locator to default
+                            IPLocator::setPhysicalPort(server_locator, DEFAULT_ROS2_SERVER_PORT);
+
+                            if ( it->matched)
+                            {
+                                // note stoi throws also an invalid_argument
+                                int port = stoi(it->str());
+
+                                if ( port > std::numeric_limits<uint16_t>::max())
+                                {
+                                    throw out_of_range("Too larget udp port passed into the server's list");
+                                }
+
+                                if ( !IPLocator::setPhysicalPort(server_locator, static_cast<uint16_t>(port)))
+                                {
+                                    stringstream ss;
+                                    ss << "Wrong udp port passed into the server's list " << it->str();
+                                    throw invalid_argument(ss.str());
+                                }
+                            }
+                        }
+                    }
+
+                    // add the server to the list
+                    if (!get_server_client_default_guidPrefix(server_id, server_att.guidPrefix))
+                    {
+                        throw std::invalid_argument("The maximum number of default discovery servers have been reached");
+                    }
+
+                    server_att.metatrafficUnicastLocatorList.clear();
+                    server_att.metatrafficUnicastLocatorList.push_back(server_locator);
+                    attributes.push_back(server_att);
+                }
+                else
+                {
+                    if (!locator.empty())
+                    {
+                        stringstream ss;
+                        ss << "Wrong locator passed into the server's list " << locator;
+                        throw std::invalid_argument(ss.str());
+                    }
+                    // else: it's intencionally empty to hint us to ignore this server
+                }
+            }
+            // advance to the next server if any
+            ++server_it;
+            ++server_id;
+        }
+
+        // Check for server info
+        if (attributes.empty())
+        {
+            throw std::invalid_argument("No default server locators were provided.");
+        }
+    }
+    catch ( std::exception& e )
+    {
+        logError(SERVER_CLIENT_DISCOVERY, e.what());
+        attributes.clear();
+        return false;
+    }
+
+    return true;
+}
+
+GUID_t RemoteServerAttributes::GetParticipant() const
+{
+    return GUID_t(guidPrefix, c_EntityId_RTPSParticipant);
+}
+
+GUID_t RemoteServerAttributes::GetPDPReader() const
+{
+    return GUID_t(guidPrefix, c_EntityId_SPDPReader);
+}
+
+GUID_t RemoteServerAttributes::GetPDPWriter() const
+{
+    return GUID_t(guidPrefix, c_EntityId_SPDPWriter);
+}
+
+bool get_server_client_default_guidPrefix(
+        int id,
+        GuidPrefix_t& guid)
+{
+    if ( id >= 0
+            && id < 256
+            && std::istringstream(DEFAULT_ROS2_SERVER_GUIDPREFIX) >> guid)
+    {
+        // Last octet denotes the default server id but to ease debugging it starts on char '0' = 48
+        guid.value[11] = static_cast<octet>((48 + id) % 256);
+
+        return true;
+    }
+
+    return false;
+}
+
 } /* namespace rtps */
-} /* namespace fastrtps */
+} /* namespace fastdds */
 } /* namespace eprosima */

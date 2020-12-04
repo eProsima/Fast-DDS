@@ -191,48 +191,19 @@ set(${PROJECT_NAME}_source_files
     rtps/reader/StatefulPersistentReader.cpp
     rtps/persistence/PersistenceFactory.cpp
 
-    # old discovery-server sources
-
-    rtps/builtin/discovery/participant/timedevent/DSClientEvent.cpp
-    rtps/builtin/discovery/participant/timedevent/DServerEvent.cpp
-    rtps/builtin/discovery/participant/PDPClient.cpp
-    rtps/builtin/discovery/participant/PDPServer.cpp
-    rtps/builtin/discovery/participant/PDPServerListener.cpp
+    rtps/builtin/discovery/database/backup/SharedBackupFunctions.cpp
     rtps/builtin/discovery/endpoint/EDPClient.cpp
     rtps/builtin/discovery/endpoint/EDPServer.cpp
     rtps/builtin/discovery/endpoint/EDPServerListeners.cpp
-
-    # new discovery-server sources
-
-#   rtps/builtin/discovery/database/DiscoveryDataFilter.hpp
-#   rtps/builtin/discovery/database/DiscoveryDataBase.hpp
     rtps/builtin/discovery/database/DiscoveryDataBase.cpp
-#   rtps/builtin/discovery/database/DiscoveryParticipantsAckStatus.hpp
-    rtps/builtin/discovery/database/DiscoveryParticipantsAckStatus.cpp
-#   rtps/builtin/discovery/database/DiscoveryParticipantInfo.hpp
     rtps/builtin/discovery/database/DiscoveryParticipantInfo.cpp
-#   rtps/builtin/discovery/database/DiscoverySharedInfo.hpp
+    rtps/builtin/discovery/database/DiscoveryParticipantsAckStatus.cpp
     rtps/builtin/discovery/database/DiscoverySharedInfo.cpp
-#   rtps/builtin/discovery/database/DiscoveryDataQueueInfo.hpp
-#   rtps/builtin/discovery/database/backup/SharedBackupFunctions.hpp
-    rtps/builtin/discovery/database/backup/SharedBackupFunctions.cpp
-
-#   rtps/builtin/discovery/participant/DSClientEvent2.hpp
-    rtps/builtin/discovery/participant/DSClientEvent2.cpp
-#   rtps/builtin/discovery/participant/DServerEvent2.hpp
-    rtps/builtin/discovery/participant/DServerEvent2.cpp
-#   rtps/builtin/discovery/participant/PDPClient2.hpp
-    rtps/builtin/discovery/participant/PDPClient2.cpp
-#   rtps/builtin/discovery/participant/PDPServer2.hpp
-    rtps/builtin/discovery/participant/PDPServer2.cpp
-#   rtps/builtin/discovery/participant/PDPServerListener2.hpp
-    rtps/builtin/discovery/participant/PDPServerListener2.cpp
-#   rtps/builtin/discovery/endpoint/EDPClient2.hpp
-    rtps/builtin/discovery/endpoint/EDPClient2.cpp
-#   rtps/builtin/discovery/endpoint/EDPServer2.hpp
-    rtps/builtin/discovery/endpoint/EDPServer2.cpp
-#   rtps/builtin/discovery/endpoint/EDPServerListeners2.hpp
-    rtps/builtin/discovery/endpoint/EDPServerListeners2.cpp
+    rtps/builtin/discovery/participant/PDPClient.cpp
+    rtps/builtin/discovery/participant/PDPServer.cpp
+    rtps/builtin/discovery/participant/PDPServerListener.cpp
+    rtps/builtin/discovery/participant/timedevent/DSClientEvent.cpp
+    rtps/builtin/discovery/participant/timedevent/DServerEvent.cpp
 
     utils/IPFinder.cpp
     utils/md5.cpp

@@ -21,11 +21,11 @@
 #include <fastdds/rtps/common/Locator.h>
 
 #include <fastdds/rtps/builtin/discovery/participant/PDPSimple.h>
-// #include "./discovery/participant/PDPClient2.hpp"
-#include <fastdds/rtps/builtin/discovery/participant/PDPClient.h>
-#include "./discovery/participant/PDPServer2.hpp"
 #include <fastdds/rtps/builtin/discovery/endpoint/EDP.h>
 #include <fastdds/rtps/builtin/discovery/endpoint/EDPStatic.h>
+
+#include <rtps/builtin/discovery/participant/PDPServer.hpp>
+#include <rtps/builtin/discovery/participant/PDPClient.h>
 
 #include <fastdds/rtps/builtin/data/ParticipantProxyData.h>
 
@@ -39,9 +39,6 @@
 #include <fastrtps/utils/IPFinder.h>
 
 #include <algorithm>
-
-// TODO: remove once backup is merge for discovery server version 2
-#include <fastdds/rtps/builtin/discovery/participant/PDPServer.h>
 
 using namespace eprosima::fastrtps;
 
@@ -104,16 +101,16 @@ bool BuiltinProtocols::initBuiltinProtocols(
             return false;
 
         case DiscoveryProtocol_t::CLIENT:
-            mp_PDP = new fastrtps::rtps::PDPClient(this, allocation);
+            mp_PDP = new fastdds::rtps::PDPClient(this, allocation);
             break;
 
         case DiscoveryProtocol_t::SERVER:
-            mp_PDP = new fastdds::rtps::PDPServer2(this, allocation, DurabilityKind_t::TRANSIENT_LOCAL);
+            mp_PDP = new fastdds::rtps::PDPServer(this, allocation, DurabilityKind_t::TRANSIENT_LOCAL);
             break;
 
 #if HAVE_SQLITE3
         case DiscoveryProtocol_t::BACKUP:
-            mp_PDP = new fastdds::rtps::PDPServer2(this, allocation, DurabilityKind_t::TRANSIENT);
+            mp_PDP = new fastdds::rtps::PDPServer(this, allocation, DurabilityKind_t::TRANSIENT);
             break;
 #endif // if HAVE_SQLITE3
 

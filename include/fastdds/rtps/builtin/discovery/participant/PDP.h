@@ -37,7 +37,7 @@ namespace eprosima {
 namespace fastdds {
 namespace rtps {
 
-class PDPServerListener2;
+class PDPServerListener;
 
 /**
  * Struct to define participant types to set participant type parameter property
@@ -83,7 +83,7 @@ class PDP
 {
     friend class PDPListener;
     friend class PDPServerListener;
-    friend class fastdds::rtps::PDPServerListener2;
+    friend class fastdds::rtps::PDPServerListener;
 
 public:
 

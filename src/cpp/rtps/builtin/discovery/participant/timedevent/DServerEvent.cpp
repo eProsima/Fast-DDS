@@ -25,110 +25,77 @@
 
 #include <fastdds/dds/log/Log.hpp>
 
-#include <fastdds/rtps/builtin/discovery/participant/timedevent/DServerEvent.h>
-#include <fastdds/rtps/builtin/discovery/participant/PDPServer.h>
+#include <rtps/builtin/discovery/participant/timedevent/DServerEvent.hpp>
+#include <rtps/builtin/discovery/participant/PDPServer.hpp>
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
 namespace rtps {
 
-
-DServerEvent::DServerEvent(
-        PDPServer* p_PDP,
-        double interval)
-    : TimedEvent(p_PDP->getRTPSParticipant()->getEventResource(),
+DServerRoutineEvent::DServerRoutineEvent(
+        PDPServer* pdp,
+        double server_routine_period)
+    : TimedEvent(pdp->get_resource_event_thread(),
             [this]()
             {
-                return event();
+                return server_routine_event();
+            }, 0)
+    , pdp_(pdp)
+    , server_routine_period_(server_routine_period)
+{
+
+}
+
+DServerRoutineEvent::~DServerRoutineEvent()
+{
+}
+
+bool DServerRoutineEvent::server_routine_event()
+{
+    bool pending_work = pdp_->server_update_routine();
+    if (pending_work)
+    {
+        // Update timer to the server routine period (Default: 450 ms)
+        pdp_->awake_routine_thread(server_routine_period_);
+    }
+
+    return pending_work;
+}
+
+DServerPingEvent::DServerPingEvent(
+        PDPServer* pdp,
+        double interval)
+    : TimedEvent(pdp->getRTPSParticipant()->getEventResource(),
+            [this]()
+            {
+                return server_ping_event();
             }, interval)
-    , mp_PDP(p_PDP)
-    , messages_enabled_(false)
+    , pdp_(pdp)
 {
 
 }
 
-DServerEvent::~DServerEvent()
+DServerPingEvent::~DServerPingEvent()
 {
 }
 
-bool DServerEvent::event()
+bool DServerPingEvent::server_ping_event()
 {
-    // logInfo(SERVER_PDP_THREAD, "Server " << mp_PDP->getRTPSParticipant()->getGuid() << " DServerEvent Period");
-
-    bool restart = false;
-
-    // messges_enabled is only modified from this thread
-    if (!messages_enabled_)
+    // Check if all servers received my discovery data
+    if (!pdp_->all_servers_acknowledge_pdp())
     {
-        if (mp_PDP->_durability == TRANSIENT)
-        {
-            // backup servers must process its own data before before receiving any callbacks
-            mp_PDP->processPersistentData();
-        }
+        // Not all servers have yet received our DATA(p) thus resend
+        pdp_->ping_remote_servers();
+        logInfo(SERVER_PING_THREAD, "Server " << pdp_->getRTPSParticipant()->getGuid() << " PDP announcement");
 
-        messages_enabled_ = true;
-        mp_PDP->getRTPSParticipant()->enableReader(mp_PDP->mp_PDPReader);
+        // restart
+        return true;
     }
 
-    // Check Server matching
-    if (mp_PDP->all_servers_acknowledge_PDP())
-    {
-        // Wait until we have received all network discovery info currently available
-        if (mp_PDP->is_all_servers_PDPdata_updated())
-        {
-            restart |= !mp_PDP->match_servers_EDP_endpoints();
-            // we must keep this TimedEvent alive to cope with servers' shutdown
-            // PDPServer::removeRemoteEndpoints would restart_timer if a server vanishes
-        }
-        else
-        {
-            logInfo(SERVER_PDP_THREAD,
-                    "Server " << mp_PDP->getRTPSParticipant()->getGuid() <<
-                    " not all servers acknowledge PDP info")
-            restart = true;
-        }
-    }
-    else
-    {
-        // awake the other servers
-        mp_PDP->announceParticipantState(false);
-        restart = true;
-    }
-
-    // Check EDP matching
-    if (mp_PDP->pendingEDPMatches())
-    {
-        if (mp_PDP->all_clients_acknowledge_PDP())
-        {
-            // Do the matching
-            mp_PDP->match_all_clients_EDP_endpoints();
-            // Whenever new clients appear restart_timer()
-            // see PDPServer::queueParticipantForEDPMatch
-
-            logInfo(SERVER_PDP_THREAD,
-                    "Server " << mp_PDP->getRTPSParticipant()->getGuid() << " clients EDP points matched")
-        }
-        else
-        {
-            // keep trying the match
-            restart = true;
-
-            logInfo(SERVER_PDP_THREAD,
-                    "Server " << mp_PDP->getRTPSParticipant()->getGuid() <<
-                    " not all clients acknowledge PDP info")
-        }
-    }
-
-    if (mp_PDP->pendingHistoryCleaning())
-    {
-        restart |= !mp_PDP->trimWriterHistory();
-
-        logInfo(SERVER_PDP_THREAD, "trimming PDP history from removed endpoints")
-    }
-
-    return restart;
+    // do not restart
+    return false;
 }
 
-} /* namespace rtps */
-} /* namespace fastrtps */
-} /* namespace eprosima */
+} // namespace rtps
+} // namespace fastdds
+} // namespace eprosima

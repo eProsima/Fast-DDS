@@ -17,528 +17,424 @@
  *
  */
 
-#include <rtps/builtin/discovery/endpoint/EDPServerListeners.h>
-#include <fastrtps_deprecated/participant/ParticipantImpl.h>
-#include <fastdds/rtps/builtin/discovery/endpoint/EDPServer.h>
-#include <fastdds/rtps/builtin/discovery/participant/PDPServer.h>
+#include <fastdds/dds/log/Log.hpp>
+#include <fastdds/rtps/attributes/HistoryAttributes.h>
+#include <fastdds/rtps/attributes/ReaderAttributes.h>
+#include <fastdds/rtps/history/WriterHistory.h>
 #include <fastdds/rtps/writer/StatefulWriter.h>
 #include <fastdds/rtps/reader/StatefulReader.h>
-#include <fastdds/rtps/attributes/HistoryAttributes.h>
-#include <fastdds/rtps/attributes/WriterAttributes.h>
-#include <fastdds/rtps/attributes/ReaderAttributes.h>
-#include <fastdds/rtps/history/ReaderHistory.h>
-#include <fastdds/rtps/history/WriterHistory.h>
-#include <fastdds/rtps/builtin/data/ParticipantProxyData.h>
-#include <fastdds/rtps/builtin/BuiltinProtocols.h>
 
-#include <rtps/builtin/data/ProxyHashTables.hpp>
+#include <fastrtps/utils/fixed_size_string.hpp>
 
-#include <fastdds/dds/log/Log.hpp>
+#include <rtps/builtin/discovery/endpoint/EDPServerListeners.hpp>
+#include <rtps/builtin/discovery/endpoint/EDPServer.hpp>
 
-#include <mutex>
-#include <forward_list>
+using namespace ::eprosima::fastrtps::rtps;
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
 namespace rtps {
-
 
 bool EDPServer::createSEDPEndpoints()
 {
-    WriterAttributes watt;
+    // Assert that PDP object is a PDP SERVER
+    assert(dynamic_cast<PDPServer*>(mp_PDP));
+
+    bool created = true;  // Return code
+
+    /* EDP Readers attributes */
     ReaderAttributes ratt;
     HistoryAttributes reader_history_att;
-    HistoryAttributes writer_history_att;
-    bool created = true;
     RTPSReader* raux = nullptr;
-    RTPSWriter* waux = nullptr;
-
-    PDPServer* pPDP = dynamic_cast<PDPServer*>(mp_PDP);
-    assert(pPDP);
-
     set_builtin_reader_history_attributes(reader_history_att);
-    set_builtin_writer_history_attributes(writer_history_att);
     set_builtin_reader_attributes(ratt);
+    ratt.endpoint.durabilityKind = durability_;
+
+#if HAVE_SQLITE3
+    ratt.endpoint.properties.properties().push_back(Property("dds.persistence.plugin", "builtin.SQLITE3"));
+    ratt.endpoint.properties.properties().push_back(Property("dds.persistence.sqlite3.filename",
+            get_pdp()->get_reader_persistence_file_name()));
+#endif // if HAVE_SQLITE3
+
+    /* EDP Writers attributes */
+    WriterAttributes watt;
+    HistoryAttributes writer_history_att;
+    RTPSWriter* waux = nullptr;
+    set_builtin_writer_history_attributes(writer_history_att);
     set_builtin_writer_attributes(watt);
 
 #if HAVE_SQLITE3
     watt.endpoint.properties.properties().push_back(Property("dds.persistence.plugin", "builtin.SQLITE3"));
     watt.endpoint.properties.properties().push_back(Property("dds.persistence.sqlite3.filename",
-            pPDP->GetPersistenceFileName()));
+            get_pdp()->get_writer_persistence_file_name()));
 #endif // if HAVE_SQLITE3
-    watt.endpoint.durabilityKind = _durability;
 
+    watt.endpoint.durabilityKind = durability_;
+    watt.mode = ASYNCHRONOUS_WRITER;
+
+    /* EDP Listeners */
     publications_listener_ = new EDPServerPUBListener(this);
     subscriptions_listener_ = new EDPServerSUBListener(this);
 
+    /* Manage publications */
     if (m_discovery.discovery_config.m_simpleEDP.use_PublicationWriterANDSubscriptionReader)
     {
+        /* If the participant declares that it will have publications, then it needs a writer to announce them, and a
+         * reader to receive information about subscriptions that might match the participant's publications.
+         *    1. Create publications writer
+         *       1.1. Set writer's data filter
+         *       1.2. Enable separate sending
+         *    2. Create subscriptions reader
+         */
+
+        // 1. Set publications writer history and create the writer. Set `created` to the result.
         publications_writer_.second = new WriterHistory(writer_history_att);
+
         created &= this->mp_RTPSParticipant->createWriter(&waux, watt, publications_writer_.second,
                         publications_listener_, c_EntityId_SEDPPubWriter, true);
 
         if (created)
         {
+            // Cast publications writer to a StatefulWriter, since we now that's what it is
             publications_writer_.first = dynamic_cast<StatefulWriter*>(waux);
-            logInfo(RTPS_EDP, "SEDP Publication Writer created");
+            // 1.1. Set publications writer data filter
+            IReaderDataFilter* edp_publications_filter =
+                    static_cast<ddb::EDPDataFilter<ddb::DiscoveryDataBase,
+                            true>*>(&dynamic_cast<PDPServer*>(mp_PDP)->discovery_db());
+            publications_writer_.first->reader_data_filter(edp_publications_filter);
+            // 1.2. Enable separate sending so the filter can be called for each change and reader proxy
+            publications_writer_.first->set_separate_sending(true);
+            logInfo(RTPS_EDP, "SEDP Publications Writer created");
+
+            // TODO check if this should be done here or below
+            publications_writer_.second->remove_all_changes();
         }
         else
         {
+            // Something went wrong. Delete publications writer history and set it to nullptr. Return false
             delete(publications_writer_.second);
             publications_writer_.second = nullptr;
+            logError(RTPS_EDP, "Error creating SEDP Publications Writer");
+            return false;
         }
 
+        // 2. Set subscriptions reader history and create the reader. Set `created` to the result.
         subscriptions_reader_.second = new ReaderHistory(reader_history_att);
+
         created &= this->mp_RTPSParticipant->createReader(&raux, ratt, subscriptions_reader_.second,
-                        subscriptions_listener_, c_EntityId_SEDPSubReader, true);
+                        subscriptions_listener_, c_EntityId_SEDPSubReader, true, false);
 
         if (created)
         {
+            // Cast subscriptions reader to a StatefulReader, since we now that's what it is
             subscriptions_reader_.first = dynamic_cast<StatefulReader*>(raux);
-            logInfo(RTPS_EDP, "SEDP Subscription Reader created");
+            logInfo(RTPS_EDP, "SEDP Subscriptions Reader created");
         }
         else
         {
+            // Something went wrong. Delete subscriptions reader history and set it to nullptr. Return false
             delete(subscriptions_reader_.second);
             subscriptions_reader_.second = nullptr;
+            logError(RTPS_EDP, "Error creating SEDP Subscriptions Reader");
+            return false;
         }
     }
+    else
+    {
+        logError(RTPS_EDP, "Server operation requires the presence of all 4 builtin endpoints");
+        return false;
+    }
+
+    /* Manage subscriptions */
     if (m_discovery.discovery_config.m_simpleEDP.use_PublicationReaderANDSubscriptionWriter)
     {
-        publications_reader_.second = new ReaderHistory(writer_history_att);
-        created &= this->mp_RTPSParticipant->createReader(&raux, ratt, publications_reader_.second,
-                        publications_listener_, c_EntityId_SEDPPubReader, true);
+        /* If the participant declares that it will have subscriptions, then it needs a writer to announce them, and a
+         * reader to receive information about publications that might match the participant's subscriptions.
+         *    1. Create subscriptions writer
+         *       1.1. Set writer's data filter
+         *       1.2. Enable separate sending
+         *    2. Create publications reader
+         */
 
-        if (created)
-        {
-            publications_reader_.first = dynamic_cast<StatefulReader*>(raux);
-            logInfo(RTPS_EDP, "SEDP Publication Reader created");
-
-        }
-        else
-        {
-            delete(publications_reader_.second);
-            publications_reader_.second = nullptr;
-        }
-
+        // 1. Set subscriptions writer history and create the writer. Set `created` to the result.
         subscriptions_writer_.second = new WriterHistory(writer_history_att);
         created &= this->mp_RTPSParticipant->createWriter(&waux, watt, subscriptions_writer_.second,
                         subscriptions_listener_, c_EntityId_SEDPSubWriter, true);
 
         if (created)
         {
+            // Cast subscriptions writer to a StatefulWriter, since we now that's what it is
             subscriptions_writer_.first = dynamic_cast<StatefulWriter*>(waux);
-            logInfo(RTPS_EDP, "SEDP Subscription Writer created");
+            // 1.1. Set subscriptions writer data filter
+            IReaderDataFilter* edp_subscriptions_filter =
+                    static_cast<ddb::EDPDataFilter<ddb::DiscoveryDataBase,
+                            false>*>(&dynamic_cast<PDPServer*>(mp_PDP)->discovery_db());
+            subscriptions_writer_.first->reader_data_filter(edp_subscriptions_filter);
+            // 1.2. Enable separate sending so the filter can be called for each change and reader proxy
+            subscriptions_writer_.first->set_separate_sending(true);
+            logInfo(RTPS_EDP, "SEDP Subscriptions Writer created");
 
+            // TODO check if this should be done here or below
+            subscriptions_writer_.second->remove_all_changes();
         }
         else
         {
+            // Something went wrong. Delete subscriptions writer history and set it to nullptr. Return false
             delete(subscriptions_writer_.second);
             subscriptions_writer_.second = nullptr;
+            logError(RTPS_EDP, "Error creating SEDP Subscriptions Writer");
+            return false;
         }
-    }
-    logInfo(RTPS_EDP, "Creation finished");
-    return created;
-}
 
-bool EDPServer::trimPUBWriterHistory()
-{
-    std::lock_guard<std::recursive_mutex> guardP(*mp_PDP->getMutex());
+        // 2. Set publications reader history and create the reader. Set `created` to the result.
+        publications_reader_.second = new ReaderHistory(writer_history_att);
+        created &= this->mp_RTPSParticipant->createReader(&raux, ratt, publications_reader_.second,
+                        publications_listener_, c_EntityId_SEDPPubReader, true, false);
 
-    return trimWriterHistory<ProxyHashTable<WriterProxyData>>(_PUBdemises,
-                   *publications_writer_.first, *publications_writer_.second, &ParticipantProxyData::m_writers);
-}
-
-bool EDPServer::trimSUBWriterHistory()
-{
-    std::lock_guard<std::recursive_mutex> guardP(*mp_PDP->getMutex());
-
-    return trimWriterHistory<ProxyHashTable<ReaderProxyData>>(_SUBdemises,
-                   *subscriptions_writer_.first, *subscriptions_writer_.second, &ParticipantProxyData::m_readers);
-}
-
-template<class ProxyCont>
-bool EDPServer::trimWriterHistory(
-        key_list& _demises,
-        StatefulWriter& writer,
-        WriterHistory& history,
-        ProxyCont* ParticipantProxyData::* pC)
-{
-    logInfo(RTPS_PDPSERVER_TRIM, "In trimWriteHistory EDP history count: " << history.getHistorySize());
-
-    // trim demises container
-    key_list disposal, aux;
-
-    if (_demises.empty())
-    {
-        return true;
-    }
-
-    // sweep away any resurrected endpoint
-    for (auto iD = mp_PDP->ParticipantProxiesBegin(); iD != mp_PDP->ParticipantProxiesEnd(); ++iD)
-    {
-        ProxyCont& endpoints = *(*iD->*pC);
-
-        for (auto iE : endpoints)
+        if (created)
         {
-            disposal.insert(iE.second->key());
-        }
-    }
-    std::set_difference(_demises.cbegin(), _demises.cend(), disposal.cbegin(), disposal.cend(),
-            std::inserter(aux, aux.begin()));
-    _demises.swap(aux);
-
-    if (_demises.empty())
-    {
-        return true;
-    }
-
-    // traverse the WriterHistory searching CacheChanges_t with demised keys
-    std::forward_list<CacheChange_t*> removal;
-    std::lock_guard<RecursiveTimedMutex> guardW(writer.getMutex());
-
-    std::copy_if(history.changesBegin(), history.changesEnd(), std::front_inserter(removal),
-            [_demises](const CacheChange_t* chan)
-            {
-                return _demises.find(chan->instanceHandle) != _demises.cend();
-            });
-
-    logInfo(RTPS_PDPSERVER_TRIM, "I've classified the following EDP history data for removal "
-            << std::distance(removal.begin(), removal.end()));
-
-    if (removal.empty())
-    {
-        return true;
-    }
-
-    aux.clear();
-    key_list& pending = aux;
-
-    // remove outdate CacheChange_ts
-    for (auto pCh : removal)
-    {
-        if (writer.is_acked_by_all(pCh))
-        {
-            logInfo(RTPS_PDPSERVER_TRIM, "EDPServer is removing DATA("
-                    << (pCh->kind == ALIVE ? "w|r" : "w|r[UD]" ) << ") of participant "
-                    << pCh->instanceHandle << " from history");
-
-            history.remove_change(pCh);
+            // Cast publications reader to a StatefulReader, since we now that's what it is
+            publications_reader_.first = dynamic_cast<StatefulReader*>(raux);
+            logInfo(RTPS_EDP, "SEDP Publications Reader created");
         }
         else
         {
-            logInfo(RTPS_PDPSERVER_TRIM, "EDPServer is procrastinating DATA("
-                    << (pCh->kind == ALIVE ? "w|r" : "w|r[UD]" ) << ") of participant "
-                    << pCh->instanceHandle << " from history");
-
-            pending.insert(pCh->instanceHandle);
+            // Something went wrong. Delete publications reader history and set it to nullptr. Return false
+            delete(publications_reader_.second);
+            publications_reader_.second = nullptr;
+            logError(RTPS_EDP, "Error creating SEDP Publications Reader");
+            return false;
         }
     }
-
-    // update demises
-    _demises.swap(pending);
-
-    logInfo(RTPS_PDPSERVER_TRIM, "After trying to trim EDP we still must remove " << _demises.size());
-
-    return _demises.empty(); // is finished?
-
-}
-
-bool EDPServer::ongoingDeserialization()
-{
-    return static_cast<PDPServer*>(mp_PDP)->ongoingDeserialization();
-}
-
-void EDPServer::processPersistentData()
-{
-    EDPSimple::processPersistentData(publications_reader_, publications_writer_, _PUBdemises);
-    EDPSimple::processPersistentData(subscriptions_reader_, subscriptions_writer_, _SUBdemises);
-}
-
-template<class Proxy>
-bool EDPServer::addEndpointFromHistory(
-        StatefulWriter& writer,
-        WriterHistory& history,
-        CacheChange_t& c)
-{
-    std::lock_guard<RecursiveTimedMutex> guardW(writer.getMutex());
-    CacheChange_t* pCh = nullptr;
-
-    if (ongoingDeserialization())
+    else
     {
-        return true;
-    }
-
-    // validate the sample, if no sample data update it
-    WriteParams& wp = c.write_params;
-    SampleIdentity& sid = wp.sample_identity();
-    if (sid == SampleIdentity::unknown())
-    {
-        sid.writer_guid(c.writerGUID);
-        sid.sequence_number(c.sequenceNumber);
-        logError(RTPS_EDP,
-                "A DATA(r|w) received by server " << writer.getGuid()
-                                                  << " from participant " << c.writerGUID
-                                                  << " without a valid SampleIdentity");
+        logError(RTPS_EDP, "Server operation requires the presence of all 4 builtin endpoints");
         return false;
     }
 
-    if (wp.related_sample_identity() == SampleIdentity::unknown())
-    {
-        wp.related_sample_identity(sid);
-    }
-
-    // See if this sample is already in the cache.
-    // TODO: Accelerate this search by using a PublisherHistory as mp_PDPWriterHistory
-    auto it = std::find_if(history.changesRbegin(), history.changesRend(),
-                    [&sid](CacheChange_t* c)
-                    {
-                        return sid == c->write_params.sample_identity();
-                    });
-
-    if ( it == history.changesRend())
-    {
-        pCh = writer.new_change(
-            [&c]()
-            {
-                return c.serializedPayload.max_size;
-            }, ALIVE);
-        if (pCh)
-        {
-            if ( writer.getAttributes().durabilityKind == TRANSIENT_LOCAL )
-            {
-                // an ordinary server just copies the payload to history
-                pCh->copy(&c);
-                pCh->writerGUID = writer.getGuid();
-                return history.add_change(pCh, pCh->write_params);
-            }
-            else
-            {
-                pCh->copy_not_memcpy(&c);
-
-                if (c.kind == ALIVE)
-                {
-                    // a backup server must add extra context properties to replace WriteParams functionality
-                    RemoteLocatorsAllocationAttributes& locators_alloc =
-                            mp_RTPSParticipant->getAttributes().allocation.locators;
-                    Proxy local_data(locators_alloc.max_unicast_locators, locators_alloc.max_multicast_locators);
-                    CDRMessage_t deserialization_msg(c.serializedPayload);
-                    if (local_data.readFromCDRMessage(&deserialization_msg,
-                            mp_RTPSParticipant->network_factory(),
-                            mp_RTPSParticipant->has_shm_transport()))
-                    {
-                        // insert identity within the payload
-                        // deserialized payload
-                        local_data.set_sample_identity(wp.sample_identity());
-
-                        // Update the payload
-                        pCh->serializedPayload.reserve(local_data.get_serialized_size(true));
-
-                        // serialized payload
-                        CDRMessage_t serialization_msg(pCh->serializedPayload);
-                        if (local_data.writeToCDRMessage(&serialization_msg, true))
-                        {
-                            pCh->writerGUID = writer.getGuid();
-                            pCh->serializedPayload.length = (uint16_t)serialization_msg.length;
-                            // keep the original sample identity by using wp
-                            return history.add_change(pCh, wp);
-                        }
-                    }
-                }
-                else
-                {
-                    // It's a DATA(w|r[UD]). We need to generate the payload
-                    pCh->serializedPayload.reserve(PDPServer::get_data_disposal_payload_serialized_size());
-                    CDRMessage_t msg(pCh->serializedPayload);
-                    if (PDPServer::set_data_disposal_payload(&msg, wp.sample_identity()))
-                    {
-                        pCh->writerGUID = writer.getGuid();
-                        pCh->serializedPayload.length = (uint16_t)msg.length;
-                        // keep the original sample identity by using wp
-                        return history.add_change(pCh, wp);
-                    }
-                }
-            }
-        }
-    }
-
-    return false;
-}
-
-bool EDPServer::addPublisherFromHistory(
-        CacheChange_t& c)
-{
-    return addEndpointFromHistory<WriterProxyData>(*publications_writer_.first, *publications_writer_.second, c);
-}
-
-bool EDPServer::addSubscriberFromHistory(
-        CacheChange_t& c)
-{
-    return addEndpointFromHistory<ReaderProxyData>(*subscriptions_writer_.first, *subscriptions_writer_.second, c);
-}
-
-void EDPServer::removePublisherFromHistory(
-        const InstanceHandle_t& key)
-{
-    {
-        std::lock_guard<std::recursive_mutex> guardP(*mp_PDP->getMutex());
-        _PUBdemises.insert(key);
-    }
-
-    if ( !trimPUBWriterHistory())
-    {
-        PDPServer* pS = dynamic_cast<PDPServer*>(mp_PDP);
-        assert(pS); // EDPServer should always be associated with a PDPServer
-        pS->awakeServerThread();
-    }
-}
-
-void EDPServer::removeSubscriberFromHistory(
-        const InstanceHandle_t& key)
-{
-    {
-        std::lock_guard<std::recursive_mutex> guardP(*mp_PDP->getMutex());
-        _SUBdemises.insert(key);
-    }
-
-    if (!trimSUBWriterHistory())
-    {
-        PDPServer* pS = dynamic_cast<PDPServer*>(mp_PDP);
-        assert(pS); // EDPServer should always be associated with a PDPServer
-        pS->awakeServerThread();
-    }
+    logInfo(RTPS_EDP, "Creation finished");
+    return created;
 }
 
 bool EDPServer::removeLocalReader(
         RTPSReader* R)
 {
-    logInfo(RTPS_EDP, R->getGuid().entityId);
+    logInfo(RTPS_EDP, "Removing local reader: " << R->getGuid().entityId);
 
+    // Get subscriptions writer and reader guid
     auto* writer = &subscriptions_writer_;
     GUID_t guid = R->getGuid();
-    bool ret = mp_PDP->removeReaderProxyData(guid);
 
-    if (writer->first != nullptr)
+    // Recover reader information
+    std::string topic_name;
     {
+        std::lock_guard<std::mutex> data_guard(temp_data_lock_);
+        mp_PDP->lookupReaderProxyData(guid, temp_reader_proxy_data_);
+        topic_name = temp_reader_proxy_data_.topicName().to_string();
+    }
+
+    // Remove proxy data associated with the reader
+    if (mp_PDP->removeReaderProxyData(guid)
+            && writer->first != nullptr)
+    {
+        // We need to create a DATA(Ur) here to added it to the discovery database, so that the disposal can be
+        // propagated to remote clients
         CacheChange_t* change = writer->first->new_change(
             [this]() -> uint32_t
             {
                 return mp_PDP->builtin_attributes().readerPayloadSize;
             },
             NOT_ALIVE_DISPOSED_UNREGISTERED, guid);
+
+        // Populate the DATA(Ur)
         if (change != nullptr)
         {
-            // unlike on EDPSimple we would remove old WriterHistory related entities when all
-            // clients-servers have acknownledge reception
-            // We must key-signed the CacheChange_t to avoid duplications:
-            WriteParams wp;
+            WriteParams& wp = change->write_params;
             SampleIdentity local;
             local.writer_guid(writer->first->getGuid());
             local.sequence_number(writer->second->next_sequence_number());
             wp.sample_identity(local);
             wp.related_sample_identity(local);
 
-            writer->second->add_change(change, wp);
-
-            removeSubscriberFromHistory(change->instanceHandle);
+            // Notify the DiscoveryDataBase
+            if (get_pdp()->discovery_db().update(change, topic_name))
+            {
+                // From here on, the discovery database takes ownership of the CacheChange_t. Henceforth there are no
+                // references to the CacheChange_t.
+                // Ensure processing time for the cache by triggering the Server thread (which process the updates)
+                get_pdp()->awake_routine_thread();
+            }
+            else
+            {
+                // If the database doesn't take the ownership, then return the CacheChante_t to the pool.
+                get_pdp()->mp_PDPWriter->release_change(change);
+            }
+            return true;
         }
     }
-    return ret;
+    return false;
 }
 
 bool EDPServer::removeLocalWriter(
         RTPSWriter* W)
 {
-    logInfo(RTPS_EDP, W->getGuid().entityId);
+    logInfo(RTPS_EDP, "Removing local writer: " << W->getGuid().entityId);
 
+    // Get publications writer and writer guid
     auto* writer = &publications_writer_;
     GUID_t guid = W->getGuid();
-    bool ret = mp_PDP->removeWriterProxyData(guid);
 
-    if (writer->first != nullptr)
+    // Recover writer information
+    std::string topic_name;
+
     {
+        std::lock_guard<std::mutex> data_guard(temp_data_lock_);
+        mp_PDP->lookupWriterProxyData(guid, temp_writer_proxy_data_);
+        topic_name = temp_writer_proxy_data_.topicName().to_string();
+    }
+
+    // Remove proxy data associated with the writer
+    if (mp_PDP->removeWriterProxyData(guid)
+            && writer->first != nullptr)
+    {
+        // We need to create a DATA(Uw) here to added it to the discovery database, so that the disposal can be
+        // propagated to remote clients
         CacheChange_t* change = writer->first->new_change(
             [this]() -> uint32_t
             {
                 return mp_PDP->builtin_attributes().writerPayloadSize;
             },
             NOT_ALIVE_DISPOSED_UNREGISTERED, guid);
+
+        // Populate the DATA(Uw)
         if (change != nullptr)
         {
-            // unlike on EDPSimple we would remove old WriterHistory related
-            // entities when all clients-servers have acknownledge reception
-            // We must key-signed the CacheChange_t to avoid duplications:
-            WriteParams wp;
+            WriteParams& wp = change->write_params;
             SampleIdentity local;
             local.writer_guid(writer->first->getGuid());
             local.sequence_number(writer->second->next_sequence_number());
             wp.sample_identity(local);
             wp.related_sample_identity(local);
 
-            writer->second->add_change(change, wp);
-
-            removePublisherFromHistory(change->instanceHandle);
+            // Notify the DiscoveryDataBase
+            if (get_pdp()->discovery_db().update(change, topic_name))
+            {
+                // From here on, the discovery database takes ownership of the CacheChange_t. Henceforth there are no
+                // references to the CacheChange_t.
+                // Ensure processing time for the cache by triggering the Server thread (which process the updates)
+                get_pdp()->awake_routine_thread();
+            }
+            else
+            {
+                // If the database doesn't take the ownership, then return the CacheChante_t to the pool.
+                get_pdp()->mp_PDPWriter->release_change(change);
+            }
+            return true;
         }
     }
-    return ret;
+    return false;
 }
 
 bool EDPServer::processLocalWriterProxyData(
         RTPSWriter* local_writer,
         WriterProxyData* wdata)
 {
-    logInfo(RTPS_EDP, wdata->guid().entityId);
+    logInfo(RTPS_EDP, "Processing local writer: " << wdata->guid().entityId);
+    // We actually don't need the writer here
     (void)local_writer;
 
+    // Get publications writer
     auto* writer = &publications_writer_;
-    CacheChange_t* change = nullptr;
 
-    // unlike on EDPSimple we wouldn't remove endpoint outdate info till all
-    // client-servers acknowledge reception
-    bool ret_val = serialize_writer_proxy_data(*wdata, *writer, false, &change);
+    // Since the listeners will not be triggered for local writers, we need to manually create the DATA(w) and add it
+    // to the discovery database.
+    // Create an empty change add populate it with writer's information from its proxy
+    CacheChange_t* change = nullptr;
+    bool ret_val = serialize_writer_proxy_data(*wdata, *writer, true, &change);
+
+    // If the was information about the writer, then fill some other DATA(w) fields and notify database
     if (change != nullptr)
     {
         // We must key-signed the CacheChange_t to avoid duplications:
-        WriteParams wp;
+        WriteParams& wp = change->write_params;
         SampleIdentity local;
         local.writer_guid(writer->first->getGuid());
         local.sequence_number(writer->second->next_sequence_number());
         wp.sample_identity(local);
         wp.related_sample_identity(local);
 
-        writer->second->add_change(change, wp);
+        // Notify the DiscoveryDataBase
+        if (get_pdp()->discovery_db().update(change, wdata->topicName().to_string()))
+        {
+            // From here on, the discovery database takes ownership of the CacheChange_t. Henceforth there are no
+            // references to the CacheChange_t.
+            // Ensure processing time for the cache by triggering the Server thread (which process the updates)
+            get_pdp()->awake_routine_thread();
+        }
+        else
+        {
+            // If the database doesn't take the ownership, then return the CacheChante_t to the pool.
+            get_pdp()->mp_PDPWriter->release_change(change);
+        }
+        // Return whether the DATA(w) was generated correctly
+        return ret_val;
     }
-    return ret_val;
+
+    // Return the change to the pool and return false
+    get_pdp()->mp_PDPWriter->release_change(change);
+    return false;
 }
 
 bool EDPServer::processLocalReaderProxyData(
         RTPSReader* local_reader,
         ReaderProxyData* rdata)
 {
-    logInfo(RTPS_EDP, rdata->guid().entityId);
+    logInfo(RTPS_EDP, "Processing local reader: " << rdata->guid().entityId);
+    // We actually don't need the reader here
     (void)local_reader;
 
+    // Get subscriptions writer
     auto* writer = &subscriptions_writer_;
-    CacheChange_t* change = nullptr;
 
-    // unlike on EDPSimple we wouldn't remove endpoint outdate info till all
-    // client-servers acknowledge reception
-    bool ret_val = serialize_reader_proxy_data(*rdata, *writer, false, &change);
+    // Since the listeners will not be triggered for local readers, we need to manually create the DATA(r) and add it
+    // to the discovery database.
+    // Create an empty change add populate it with readers's information from its proxy
+    CacheChange_t* change = nullptr;
+    bool ret_val = serialize_reader_proxy_data(*rdata, *writer, true, &change);
+
+    // If the was information about the reader, then fill some other DATA(r) fields and notify database
     if (change != nullptr)
     {
         // We must key-signed the CacheChange_t to avoid duplications:
-        WriteParams wp;
+        WriteParams& wp = change->write_params;
         SampleIdentity local;
         local.writer_guid(writer->first->getGuid());
         local.sequence_number(writer->second->next_sequence_number());
         wp.sample_identity(local);
         wp.related_sample_identity(local);
 
-        writer->second->add_change(change, wp);
+        // Notify the DiscoveryDataBase
+        if (get_pdp()->discovery_db().update(change, rdata->topicName().to_string()))
+        {
+            // From here on, the discovery database takes ownership of the CacheChange_t. Henceforth there are no
+            // references to the CacheChange_t.
+            // Ensure processing time for the cache by triggering the Server thread (which process the updates)
+            get_pdp()->awake_routine_thread();
+        }
+        else
+        {
+            // If the database doesn't take the ownership, then return the CacheChante_t to the pool.
+            get_pdp()->mp_PDPWriter->release_change(change);
+        }
+        // Return whether the DATA(w) was generated correctly
+        return ret_val;
     }
-    return ret_val;
+
+    // Return the change to the pool and return false
+    get_pdp()->mp_PDPWriter->release_change(change);
+    return false;
 }
 
 } /* namespace rtps */
-} /* namespace fastrtps */
+} /* namespace fastdds */
 } /* namespace eprosima */

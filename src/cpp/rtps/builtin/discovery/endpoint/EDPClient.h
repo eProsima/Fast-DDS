@@ -1,4 +1,4 @@
-// Copyright 2020 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+// Copyright 2019 Proyectos y Sistemas de Mantenimiento SL (eProsima).
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -13,38 +13,28 @@
 // limitations under the License.
 
 /**
- * @file EDPServer2.h
+ * @file EDPClient.h
  *
  */
 
-#ifndef _FASTDDS_RTPS_EDPSERVER2_H_
-#define _FASTDDS_RTPS_EDPSERVER2_H_
+#ifndef _FASTDDS_RTPS_EDPCLIENT_H_
+#define _FASTDDS_RTPS_EDPCLIENT_H_
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
-#include <fastdds/rtps/common/CacheChange.h>
-#include <fastdds/rtps/builtin/data/ParticipantProxyData.h>
-#include "../database/DiscoveryDataFilter.hpp"
-#include "../database/DiscoveryDataBase.hpp"
 #include <fastdds/rtps/builtin/discovery/endpoint/EDPSimple.h>
-#include "../participant/PDPServer2.hpp"
 
 namespace eprosima {
 namespace fastdds {
 namespace rtps {
 
-class EDPServerPUBListener2;
-class EDPServerSUBListener2;
+using namespace fastrtps::rtps;
 
 /**
- * Class EDPServer, implements the Endpoint Discovery Protocol for server participants
- * Inherits from EDPSimple class.
+ * Class EDPClient, extends the EDPSimple functionality to accommodate client side needs
  *@ingroup DISCOVERY_MODULE
  */
-class EDPServer2 : public fastrtps::rtps::EDPSimple
+class EDPClient : public EDPSimple
 {
-    friend class EDPServerPUBListener2;
-    friend class EDPServerSUBListener2;
-
 public:
 
     /**
@@ -52,23 +42,11 @@ public:
      * @param p Pointer to the PDP
      * @param part Pointer to the RTPSParticipantImpl
      */
-    EDPServer2(
-            fastrtps::rtps::PDP* p,
-            fastrtps::rtps::RTPSParticipantImpl* part,
-            fastrtps::rtps::DurabilityKind_t durability_kind)
+    EDPClient(
+            PDP* p,
+            RTPSParticipantImpl* part)
         : EDPSimple(p, part)
-        , durability_(durability_kind)
     {
-    }
-
-    ~EDPServer2() override
-    {
-    }
-
-    //! Return the PDP reference actual type
-    PDPServer2* get_pdp()
-    {
-        return static_cast<PDPServer2*>(mp_PDP);
     }
 
     /**
@@ -78,8 +56,8 @@ public:
      * @return true if correct.
      */
     bool processLocalReaderProxyData(
-            fastrtps::rtps::RTPSReader* reader,
-            fastrtps::rtps::ReaderProxyData* rdata) override;
+            RTPSReader* reader,
+            ReaderProxyData* rdata) override;
     /**
      * This method generates the corresponding change in the publciations writer and send it to all known remote endpoints.
      * @param writer Pointer to the Writer object.
@@ -87,39 +65,28 @@ public:
      * @return true if correct.
      */
     bool processLocalWriterProxyData(
-            fastrtps::rtps::RTPSWriter* writer,
-            fastrtps::rtps::WriterProxyData* wdata) override;
+            RTPSWriter* writer,
+            WriterProxyData* wdata) override;
     /**
      * This methods generates the change disposing of the local Reader and calls the unpairing and removal methods of the base class.
      * @param R Pointer to the RTPSReader object.
      * @return True if correct.
      */
     bool removeLocalReader(
-            fastrtps::rtps::RTPSReader* R) override;
+            RTPSReader* R) override;
     /**
      * This methods generates the change disposing of the local Writer and calls the unpairing and removal methods of the base class.
      * @param W Pointer to the RTPSWriter object.
      * @return True if correct.
      */
     bool removeLocalWriter(
-            fastrtps::rtps::RTPSWriter* W) override;
-
-private:
-
-    /**
-     * Create local SEDP Endpoints based on the DiscoveryAttributes.
-     * @return True if correct.
-     */
-    virtual bool createSEDPEndpoints() override;
-
-    //! TRANSIENT or TRANSIENT_LOCAL durability;
-    fastrtps::rtps::DurabilityKind_t durability_;
+            RTPSWriter* W) override;
 
 };
 
-} // namespace rtps
-} // namespace fastdds
-} // namespace eprosima
+} /* namespace rtps */
+} /* namespace fastdds */
+} /* namespace eprosima */
 
 #endif // ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
-#endif /* _FASTDDS_RTPS_EDPSERVER2_H_ */
+#endif /* _FASTDDS_RTPS_EDPCLIENT_H_ */
