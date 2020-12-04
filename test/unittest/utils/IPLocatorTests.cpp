@@ -14,6 +14,8 @@
 
 #include <fastrtps/utils/IPLocator.h>
 #include <fastrtps/rtps/common/Locator.h>
+#include <fastrtps/utils/collections/ResourceLimitedVector.hpp>
+#include <fastrtps/rtps/common/LocatorListComparisons.hpp>
 
 #include <gtest/gtest.h>
 
@@ -68,6 +70,10 @@ public:
     const uint16_t port1 = 6666;
     const uint16_t port2 = 7400;
 };
+
+/*******************
+ * IPLocator Tests *
+ *******************/
 
 /*
  * Check to create an IPv4 by string
@@ -919,6 +925,11 @@ TEST_F(IPLocatorTests, to_string)
     // SHM
     IPLocator::createLocator(LOCATOR_KIND_SHM, "", 5, locator);
     ASSERT_EQ(IPLocator::to_string(locator), "SHM:[_]:5");
+
+    // SHM M
+    IPLocator::createLocator(LOCATOR_KIND_SHM, "", 6, locator);
+    locator.address[0] = 'M';
+    ASSERT_EQ(IPLocator::to_string(locator), "SHM:[M]:6");
 }
 
 /*
@@ -975,8 +986,13 @@ TEST_F(IPLocatorTests, setIPv4address)
     ASSERT_FALSE(IPLocator::setIPv4address(locator, "1.2.3.4.5.6.7.8", "9.10.11.12", "13.14.15.16"));
 }
 
+/*******************
+ * Locator_t Tests *
+ *******************/
+
 /*
- * Check locator deserialization
+ * Check creation of a locator from string
+ * Serialization is testing in IPLocatorTests::to_string
  */
 TEST_F(IPLocatorTests, locator_deserialization)
 {
@@ -1032,7 +1048,39 @@ TEST_F(IPLocatorTests, locator_deserialization)
     ss >> locator_res;
     IPLocator::createLocator(LOCATOR_KIND_TCPv4, "0.0.1.1", 2, locator);
     ASSERT_EQ(locator, locator_res);
+}
 
+
+/*******************************
+ * LocatorListComparison Tests *
+ *******************************/
+
+/*
+ * Check LocatorLists comparison
+ */
+TEST(LocatorListComparison, locatorList_comparison)
+{
+    Locator_t locator;
+    eprosima::fastrtps::ResourceLimitedVector<Locator_t> locator_list_1, locator_list_2;
+
+    IPLocator::createLocator(LOCATOR_KIND_TCPv4, "1.2.3.4", 1, locator);
+    locator_list_1.push_back(locator);
+    locator_list_2.push_back(locator);
+    IPLocator::createLocator(LOCATOR_KIND_UDPv6, "1.2.3.4", 2, locator);
+    locator_list_1.push_back(locator);
+    locator_list_2.push_back(locator);
+
+    ASSERT_TRUE(locator_list_1 == locator_list_2);
+
+    IPLocator::createLocator(LOCATOR_KIND_TCPv6, "100::1", 3, locator);
+    locator_list_1.push_back(locator);
+
+    ASSERT_FALSE(locator_list_1 == locator_list_2);
+
+    IPLocator::createLocator(LOCATOR_KIND_UDPv6, "100::1", 3, locator);
+    locator_list_1.push_back(locator);
+
+    ASSERT_FALSE(locator_list_1 == locator_list_2);
 }
 
 int main(
