@@ -1392,7 +1392,7 @@ TEST_F(XMLParserTests, fillDataNodeParticipantUnsupported)
     up_participant_t participant_atts{new ParticipantAttributes};
     up_node_participant_t participant_node{new node_participant_t{NodeType::PARTICIPANT, std::move(participant_atts)}};
 
-    mock_consumer = new eprosima::fastdds::dds::MockConsumer(xml_mutex_);
+    mock_consumer = new eprosima::fastdds::dds::MockConsumer();
     Log::RegisterConsumer(std::unique_ptr<LogConsumer>(mock_consumer));
     Log::SetCategoryFilter(std::regex("(XMLPARSER)"));
 
@@ -2080,7 +2080,7 @@ TEST_F(XMLParserTests, parseUnsupportedProfiles)
     tinyxml2::XMLElement* titleElement;
     std::unique_ptr<BaseNode> profilesNode;
 
-    mock_consumer = new eprosima::fastdds::dds::MockConsumer(xml_mutex_);
+    mock_consumer = new eprosima::fastdds::dds::MockConsumer();
 
     eprosima::fastdds::dds::Log::RegisterConsumer(std::unique_ptr<eprosima::fastdds::dds::LogConsumer>(mock_consumer));
     eprosima::fastdds::dds::Log::SetVerbosity(eprosima::fastdds::dds::Log::Warning);

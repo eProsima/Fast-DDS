@@ -1385,7 +1385,7 @@ TEST_F(XMLParserTests, getXMLWriterReaderUnsupportedQosPolicies)
     tinyxml2::XMLDocument xml_doc;
     tinyxml2::XMLElement* titleElement;
 
-    mock_consumer = new MockConsumer(xml_mutex_);
+    mock_consumer = new MockConsumer();
 
     Log::RegisterConsumer(std::unique_ptr<LogConsumer>(mock_consumer));
     Log::SetCategoryFilter(std::regex("(XMLPARSER)"));
@@ -3142,7 +3142,7 @@ TEST_F(XMLParserTests, getXMLOctetVector_NegativeClauses)
     tinyxml2::XMLElement* titleElement;
     const char* xml = "</void>";
 
-    mock_consumer = new MockConsumer(xml_mutex_);
+    mock_consumer = new MockConsumer();
 
     Log::RegisterConsumer(std::unique_ptr<LogConsumer>(mock_consumer));
     Log::SetCategoryFilter(std::regex("(XMLPARSER)"));
