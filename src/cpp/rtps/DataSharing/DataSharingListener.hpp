@@ -33,6 +33,8 @@ namespace eprosima {
 namespace fastrtps {
 namespace rtps {
 
+class RTPSReader;
+
 class DataSharingListener : public IDataSharingListener
 {
 
@@ -45,7 +47,7 @@ public:
         std::shared_ptr<DataSharingNotification> notification,
         const std::string& datasharing_pools_directory,
         ResourceLimitedContainerConfig limits,
-        std::function<void(CacheChange_t*)> callback);
+        RTPSReader* reader);
 
     virtual ~DataSharingListener();
 
@@ -88,7 +90,7 @@ protected:
 
     std::shared_ptr<DataSharingNotification> notification_;
     std::atomic<bool> is_running_;
-    std::function<void(CacheChange_t*)> callback_;
+    RTPSReader* reader_;
     std::thread* listening_thread_;
     ResourceLimitedVector<std::shared_ptr<DataSharingPayloadPool>> writer_pools_;
     std::string datasharing_pools_directory_;
