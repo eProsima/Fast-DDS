@@ -1474,7 +1474,7 @@ TEST_F(XMLParserTests, getXMLWriterReaderUnsupportedQosPolicies)
             num_errors++;
         }
     }
-    EXPECT_EQ(num_errors, 18);
+    EXPECT_EQ(num_errors, 18u);
 }
 
 /*
@@ -3162,7 +3162,7 @@ TEST_F(XMLParserTests, getXMLOctetVector_NegativeClauses)
             num_errors++;
         }
     }
-    EXPECT_EQ(num_errors, 1);
+    EXPECT_EQ(num_errors, 1u);
 }
 
 /*

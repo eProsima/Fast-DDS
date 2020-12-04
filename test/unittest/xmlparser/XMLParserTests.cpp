@@ -1425,7 +1425,7 @@ TEST_F(XMLParserTests, fillDataNodeParticipantUnsupported)
         }
     }
 
-    EXPECT_EQ(num_errors, 1);
+    EXPECT_EQ(num_errors, 1u);
 
 }
 
@@ -2125,7 +2125,7 @@ TEST_F(XMLParserTests, parseUnsupportedProfiles)
             num_errors++;
         }
     }
-    EXPECT_EQ(num_errors, 3);
+    EXPECT_EQ(num_errors, 3u);
 }
 
 /*
