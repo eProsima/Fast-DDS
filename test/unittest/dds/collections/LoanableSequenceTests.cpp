@@ -472,7 +472,7 @@ TEST(LoanableSequenceTests, sum_collections)
     fibonacci.length(num_test_elements);
     fibonacci[0] = 1;
     fibonacci[1] = 1;
-    for (int n = 2; n < num_test_elements; ++n)
+    for (LoanableCollection::size_type n = 2u; n < num_test_elements; ++n)
     {
         fibonacci[n] = fibonacci[n - 1] + fibonacci[n - 2];
     }
