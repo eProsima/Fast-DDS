@@ -193,6 +193,14 @@ public:
             const RTPSParticipantAttributes& m_att) const;
 
     /**
+     * Adds locators to devoted port unicast configuration.
+     * */
+    bool getDevotedUnicastLocators(
+            uint32_t domain_id,
+            LocatorList_t& locators,
+            const RTPSParticipantAttributes& m_att) const;
+
+    /**
      * Fills the locator with the default unicast configuration.
      * */
     bool fill_default_locator_port(

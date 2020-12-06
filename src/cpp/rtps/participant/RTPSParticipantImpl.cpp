@@ -921,7 +921,7 @@ bool RTPSParticipantImpl::createReader(
 
     // Generate locator for devoted listener port if required
     if (devoted_receiver_resource
-        && !m_network_Factory.getDefaultUnicastLocators(
+        && !m_network_Factory.getDevotedUnicastLocators(
                 domain_id_,
                 param.endpoint.unicastLocatorList,
                 m_att))

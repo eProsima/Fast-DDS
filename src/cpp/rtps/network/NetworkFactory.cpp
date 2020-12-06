@@ -332,6 +332,23 @@ bool NetworkFactory::getDefaultUnicastLocators(
     return result;
 }
 
+
+bool NetworkFactory::getDevotedUnicastLocators(
+        uint32_t domain_id,
+        LocatorList_t& locators,
+        const RTPSParticipantAttributes& m_att) const
+{
+    // select devoted ports downwards from the corresponding shared ones
+    static uint16_t last = calculate_well_known_port(domain_id, m_att, false);
+
+    bool result = false;
+    for (auto& transport : mRegisteredTransports)
+    {
+        result |= transport->getDefaultUnicastLocators(locators,--last);
+    }
+    return result;
+}
+
 bool NetworkFactory::fill_default_locator_port(
         uint32_t domain_id,
         Locator_t& locator,
