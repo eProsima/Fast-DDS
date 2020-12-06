@@ -136,9 +136,12 @@ void TCPTransportInterface::clean()
     alive_.store(false);
 
     keep_alive_event_.cancel();
-    io_service_timers_.stop();
-    io_service_timers_thread_->join();
-    io_service_timers_thread_ = nullptr;
+    if (io_service_timers_thread_)
+    {
+        io_service_timers_.stop();
+        io_service_timers_thread_->join();
+        io_service_timers_thread_ = nullptr;
+    }
 
     {
         std::vector<std::shared_ptr<TCPChannelResource>> channels;
