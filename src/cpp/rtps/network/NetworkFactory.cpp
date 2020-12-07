@@ -344,7 +344,8 @@ bool NetworkFactory::getDevotedUnicastLocators(
     bool result = false;
     for (auto& transport : mRegisteredTransports)
     {
-        result |= transport->getDefaultUnicastLocators(locators,--last);
+        last -= 10; // give some room for mutation tries
+        result |= transport->getDefaultUnicastLocators(locators,last);
     }
     return result;
 }
