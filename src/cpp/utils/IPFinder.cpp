@@ -138,7 +138,7 @@ bool IPFinder::getIPs(std::vector<info_IP>* vec_name, bool return_loopback)
     // TODO arm64 doesn't seem to support getifaddrs
     if (getifaddrs(&ifaddr) == -1) {
         perror("getifaddrs");
-        exit(EXIT_FAILURE);
+        return false;
     }
 
     for (ifa = ifaddr; ifa != NULL; ifa = ifa->ifa_next)
@@ -153,9 +153,8 @@ bool IPFinder::getIPs(std::vector<info_IP>* vec_name, bool return_loopback)
             s = getnameinfo(ifa->ifa_addr, sizeof(struct sockaddr_in),
                     host, NI_MAXHOST, NULL, 0, NI_NUMERICHOST);
             if (s != 0) {
-                printf("getnameinfo() failed: %s\n", gai_strerror(s));
-                freeifaddrs(ifaddr);
-                exit(EXIT_FAILURE);
+                fprintf(stderr, "getnameinfo() failed: %s\n", gai_strerror(s));
+                continue;
             }
             info_IP info;
             info.type = IP4;
@@ -171,9 +170,8 @@ bool IPFinder::getIPs(std::vector<info_IP>* vec_name, bool return_loopback)
             s = getnameinfo(ifa->ifa_addr, sizeof(struct sockaddr_in6),
                     host, NI_MAXHOST, NULL, 0, NI_NUMERICHOST);
             if (s != 0) {
-                printf("getnameinfo() failed: %s\n", gai_strerror(s));
-                freeifaddrs(ifaddr);
-                exit(EXIT_FAILURE);
+                fprintf(stderr, "getnameinfo() failed: %s\n", gai_strerror(s));
+                continue;
             }
             info_IP info;
             info.type = IP6;
