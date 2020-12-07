@@ -245,7 +245,7 @@ void WriterQos::clear()
     m_ownershipStrength.clear();
     m_publishMode.clear();
     representation.clear();
-    
+
     m_reliability.kind = RELIABLE_RELIABILITY_QOS;
 }
 
