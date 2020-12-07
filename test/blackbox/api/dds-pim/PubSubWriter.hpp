@@ -371,10 +371,12 @@ public:
         {
             publisher_->delete_datawriter(datawriter_);
         }
+        datawriter_ = nullptr;
         if (publisher_ != nullptr)
         {
             participant_->delete_publisher(publisher_);
         }
+        publisher_ = nullptr;
         return;
     }
 
