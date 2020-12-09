@@ -59,7 +59,7 @@ XMLP_ret XMLParser::parseXML(
                 // Just log config in the XML.
                 if (nullptr == (p_root = xmlDoc.FirstChildElement(LOG)))
                 {
-                     // Just library_settings config in the XML.
+                    // Just library_settings config in the XML.
                     if (nullptr == (p_root = xmlDoc.FirstChildElement(LIBRARY_SETTINGS)))
                     {
                         logError(XMLPARSER, "Not found root tag");

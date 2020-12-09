@@ -209,10 +209,13 @@ XMLP_ret XMLProfileManager::loadXMLProfiles(
         return XMLP_ret::XML_ERROR;
     }
 
-    if(XMLParser::loadXMLProfiles(profiles, root_node) != XMLP_ret::XML_ERROR){
+    if (XMLParser::loadXMLProfiles(profiles, root_node) != XMLP_ret::XML_ERROR)
+    {
         logInfo(XMLPARSER, "Node parsed successfully");
         return XMLProfileManager::extractProfiles(std::move(root_node), "-XML Node-");
-    }else{
+    }
+    else
+    {
         logError(XMLPARSER, "Error parsing profiles");
         return XMLP_ret::XML_ERROR;
     }
@@ -242,7 +245,8 @@ XMLP_ret XMLProfileManager::loadXMLNode(
     if (NodeType::PROFILES == root_node->getType())
     {
         parse_ret = XMLProfileManager::extractProfiles(std::move(root_node), "-XML Node-");
-        if(parse_ret == XMLP_ret::XML_OK && loaded_ret != XMLP_ret::XML_OK){
+        if (parse_ret == XMLP_ret::XML_OK && loaded_ret != XMLP_ret::XML_OK)
+        {
             return XMLP_ret::XML_NOK;
         }
         else
@@ -258,7 +262,8 @@ XMLP_ret XMLProfileManager::loadXMLNode(
             if (NodeType::PROFILES == child.get()->getType())
             {
                 parse_ret = XMLProfileManager::extractProfiles(std::move(child), "-XML Node-");
-                if(parse_ret == XMLP_ret::XML_OK && loaded_ret != XMLP_ret::XML_OK){
+                if (parse_ret == XMLP_ret::XML_OK && loaded_ret != XMLP_ret::XML_OK)
+                {
                     return XMLP_ret::XML_NOK;
                 }
                 else
@@ -312,7 +317,8 @@ XMLP_ret XMLProfileManager::loadXMLFile(
             }
         }
         return loaded_ret;
-    }else if (NodeType::PROFILES == root_node->getType())
+    }
+    else if (NodeType::PROFILES == root_node->getType())
     {
         return XMLProfileManager::extractProfiles(std::move(root_node), filename);
     }
@@ -324,7 +330,7 @@ XMLP_ret XMLProfileManager::extractProfiles(
         up_base_node_t profiles,
         const std::string& filename)
 {
-    assert(profiles!=nullptr);
+    assert(profiles != nullptr);
 
     unsigned int profile_count = 0u;
 

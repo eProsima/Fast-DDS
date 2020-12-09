@@ -690,7 +690,7 @@ TEST_F(XMLProfileParserTests, XMLParserRequesterProfile)
     EXPECT_EQ(
         xmlparser::XMLP_ret::XML_ERROR,
         xmlparser::XMLProfileManager::fillRequesterAttributes(missing_profile, requester_atts)
-    );
+        );
 }
 
 /*
@@ -727,7 +727,7 @@ TEST_F(XMLProfileParserTests, XMLParserReplierProfile)
     EXPECT_EQ(
         xmlparser::XMLP_ret::XML_ERROR,
         xmlparser::XMLProfileManager::fillReplierAttributes(missing_profile, replier_atts)
-    );
+        );
 }
 
 #if HAVE_SECURITY
@@ -1035,7 +1035,7 @@ TEST_F(XMLProfileParserTests, extract_profiles_ok)
     tinyxml2::XMLDocument xml_doc;
     {
         const char* xml =
-        "                                                                                                            \n\
+                "                                                                                                            \n\
         <profiles>                                                                                                   \n\
             <participant profile_name=\"participant_prof\">                                                          \n\
                 <rtps></rtps>                                                                                        \n\
@@ -1056,7 +1056,7 @@ TEST_F(XMLProfileParserTests, extract_profiles_ok)
         xmlparser::XMLProfileManager::DeleteInstance();
 
         // Rooted
-        std::string xml_dds = "<dds>"+std::string(xml)+"</dds>";
+        std::string xml_dds = "<dds>" + std::string(xml) + "</dds>";
         ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml_dds.c_str()));
         EXPECT_EQ(xmlparser::XMLP_ret::XML_OK, xmlparser::XMLProfileManager::loadXMLNode(xml_doc));
         xmlparser::XMLProfileManager::DeleteInstance();
@@ -1182,7 +1182,7 @@ TEST_F(XMLProfileParserTests, extract_type_profiles)
     // Participant
     {
         const char* xml_p =
-        "<profiles>\
+                "<profiles>\
             <participant profile_name=\"%s\">\
                 <rtps></rtps>\
             </participant>\
@@ -1205,7 +1205,7 @@ TEST_F(XMLProfileParserTests, extract_type_profiles)
 
     {
         const char* xml_p =
-        "<profiles>\
+                "<profiles>\
             <%s profile_name=\"%s\" %s>\
             </%s>\
         </profiles>";
@@ -1220,17 +1220,17 @@ TEST_F(XMLProfileParserTests, extract_type_profiles)
         for (const std::string& e : elements)
         {
             // empty profile name
-            sprintf(xml, xml_p, e.c_str(), "", "" ,e.c_str());
+            sprintf(xml, xml_p, e.c_str(), "", "", e.c_str());
             ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
             EXPECT_EQ(xmlparser::XMLP_ret::XML_ERROR, xmlparser::XMLProfileManager::loadXMLNode(xml_doc));
 
             // default profile
-            sprintf(xml, xml_p, e.c_str(), "default_name_1", "is_default_profile=\"true\"" ,e.c_str());
+            sprintf(xml, xml_p, e.c_str(), "default_name_1", "is_default_profile=\"true\"", e.c_str());
             ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
             EXPECT_EQ(xmlparser::XMLP_ret::XML_OK, xmlparser::XMLProfileManager::loadXMLNode(xml_doc));
 
             // same profile name twice
-            sprintf(xml, xml_p, e.c_str(), "test_name", "" ,e.c_str());
+            sprintf(xml, xml_p, e.c_str(), "test_name", "", e.c_str());
             ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
             EXPECT_EQ(xmlparser::XMLP_ret::XML_OK, xmlparser::XMLProfileManager::loadXMLNode(xml_doc));
             EXPECT_EQ(xmlparser::XMLP_ret::XML_ERROR, xmlparser::XMLProfileManager::loadXMLNode(xml_doc));
@@ -1240,7 +1240,7 @@ TEST_F(XMLProfileParserTests, extract_type_profiles)
 
     {
         const char* xml_p =
-        "<profiles>\
+                "<profiles>\
             <%s profile_name=\"%s\" service_name=\"serv\" request_type=\"req\" reply_type=\"reply\">\
             </%s>\
         </profiles>";
@@ -1254,12 +1254,12 @@ TEST_F(XMLProfileParserTests, extract_type_profiles)
         for (const std::string& e : elements)
         {
             // empty profile name
-            sprintf(xml, xml_p, e.c_str(), "" ,e.c_str());
+            sprintf(xml, xml_p, e.c_str(), "", e.c_str());
             ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
             EXPECT_EQ(xmlparser::XMLP_ret::XML_ERROR, xmlparser::XMLProfileManager::loadXMLNode(xml_doc));
 
             // same profile name twice
-            sprintf(xml, xml_p, e.c_str(), "test_name" ,e.c_str());
+            sprintf(xml, xml_p, e.c_str(), "test_name", e.c_str());
             ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
             EXPECT_EQ(xmlparser::XMLP_ret::XML_OK, xmlparser::XMLProfileManager::loadXMLNode(xml_doc));
             EXPECT_EQ(xmlparser::XMLP_ret::XML_ERROR, xmlparser::XMLProfileManager::loadXMLNode(xml_doc));
@@ -1321,7 +1321,7 @@ TEST_F(XMLProfileParserTests, skip_default_xml)
 TEST_F(XMLProfileParserTests, default_env_variable)
 {
     const char* xml =
-    "                                                                                                                  \
+            "                                                                                                                  \
         <profiles>                                                                                                     \
             <participant profile_name=\"test_participant_profile\" is_default_profile=\"true\">                        \
                 <domainId>20203011</domainId>                                                                          \
@@ -1361,19 +1361,19 @@ TEST_F(XMLProfileParserTests, default_env_variable)
  */
 TEST_F(XMLProfileParserTests, loadXMLFile)
 {
-    const char * filename = "minimal_file.xml";
+    const char* filename = "minimal_file.xml";
     tinyxml2::XMLDocument xml_doc;
 
     {
         std::vector<std::string> correct_xmls =
         {
-        "<profiles>\
+            "<profiles>\
             <participant profile_name=\"test_participant_profile\" is_default_profile=\"true\">\
                 <domainId>20203011</domainId>\
                 <rtps></rtps>\
             </participant>\
         </profiles>",
-        "<types>\
+            "<types>\
             <type>\
                 <enum name=\"MyAloneEnumType\">\
                     <enumerator name=\"A\" value=\"0\"/>\
@@ -1381,19 +1381,19 @@ TEST_F(XMLProfileParserTests, loadXMLFile)
                 </enum>\
             </type>\
         </types>",
-        "<log>\
+            "<log>\
             <use_default>FALSE</use_default>\
             <consumer>\
                 <class>StdoutErrConsumer</class>\
             </consumer>\
         </log>",
-        "<library_settings>\
+            "<library_settings>\
             <intraprocess_delivery>FULL</intraprocess_delivery>\
         </library_settings>"
         };
 
         // Standalone
-        for(std::string& xml : correct_xmls)
+        for (std::string& xml : correct_xmls)
         {
             ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse((xml).c_str()));
             xml_doc.SaveFile(filename);
@@ -1403,9 +1403,9 @@ TEST_F(XMLProfileParserTests, loadXMLFile)
         }
 
         // Rooted
-        for(std::string& xml : correct_xmls)
+        for (std::string& xml : correct_xmls)
         {
-            ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(("<dds>"+xml+"</dds>").c_str()));
+            ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(("<dds>" + xml + "</dds>").c_str()));
             xml_doc.SaveFile(filename);
             EXPECT_EQ(xmlparser::XMLP_ret::XML_OK, xmlparser::XMLProfileManager::loadXMLFile(filename));
             remove(filename);
@@ -1415,7 +1415,7 @@ TEST_F(XMLProfileParserTests, loadXMLFile)
 
     {
         // Negatve clauses
-        const char * xml_p =
+        const char* xml_p =
                 "\
                 <%s>\
                     <bad_tag></bad_tag>\
@@ -1424,12 +1424,12 @@ TEST_F(XMLProfileParserTests, loadXMLFile)
         char xml[500];
 
         std::vector<std::string> elements {
-                "profiles",
-                "types",
-                "log",
-                "library_settings",
-                "bad_profile"
-            };
+            "profiles",
+            "types",
+            "log",
+            "library_settings",
+            "bad_profile"
+        };
 
         for (const std::string& e : elements)
         {
@@ -1444,7 +1444,7 @@ TEST_F(XMLProfileParserTests, loadXMLFile)
 
     {
         const char* xml =
-            "<profiles>\
+                "<profiles>\
                 <participant profile_name=\"test_participant_profile\" is_default_profile=\"true\">\
                     <domainId>20203011</domainId>\
                     <rtps></rtps>\
