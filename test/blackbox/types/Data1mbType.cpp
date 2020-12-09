@@ -102,3 +102,12 @@ bool Data1mbType::getKey(void *data, InstanceHandle_t* handle, bool force_md5) {
     return true;
 }
 
+bool Data1mbType::is_bounded() const
+{
+    return true;
+}
+
+bool Data1mbType::is_plain() const
+{
+    return false;
+}

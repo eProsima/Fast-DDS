@@ -102,3 +102,12 @@ bool Data64kbType::getKey(void *data, InstanceHandle_t* handle, bool force_md5) 
     return true;
 }
 
+bool Data64kbType::is_bounded() const
+{
+    return true;
+}
+
+bool Data64kbType::is_plain() const
+{
+    return false;
+}

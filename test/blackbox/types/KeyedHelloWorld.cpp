@@ -89,7 +89,7 @@ size_t KeyedHelloWorld::getMaxCdrSerializedSize(size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
     current_alignment += 2 + eprosima::fastcdr::Cdr::alignment(current_alignment, 2);
-    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4) + 256 + 1;
+    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4) + 128 + 1;
     return current_alignment - initial_alignment;
 }
 
@@ -106,7 +106,7 @@ void KeyedHelloWorld::serialize(eprosima::fastcdr::Cdr &scdr) const
     scdr << m_key;
     scdr << m_index;
 
-    if(m_message.length() <= 256)
+    if(m_message.length() <= 128)
     {
         scdr << m_message;
     }

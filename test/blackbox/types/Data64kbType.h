@@ -47,6 +47,8 @@ public:
 	void deleteData(void * data);
 	MD5 m_md5;
 	unsigned char* m_keyBuffer;
+    bool is_bounded() const;
+    bool is_plain() const;
 };
 
 #endif // _Data64kb_TYPE_H_

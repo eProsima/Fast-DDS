@@ -1,5 +1,5 @@
 struct HelloWorld
 {
 	unsigned short index;
-	string message;
+	string<128> message;
 };

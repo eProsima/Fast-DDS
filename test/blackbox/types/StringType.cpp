@@ -88,3 +88,13 @@ bool StringType::getKey(void* /*data*/, InstanceHandle_t* /*ihandle*/, bool /*fo
 {
     return false;
 }
+
+bool StringType::is_bounded() const
+{
+    return true;
+}
+
+bool StringType::is_plain() const
+{
+    return false;
+}
