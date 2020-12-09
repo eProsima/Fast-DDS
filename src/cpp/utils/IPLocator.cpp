@@ -215,10 +215,10 @@ bool IPLocator::setIPv6(
     }
 
     LOCATOR_ADDRESS_INVALID(locator.address);
-    std::ptrdiff_t count = std::count_if( ipv6.begin(), ipv6.end(), []( char c )
+    uint16_t count = (uint16_t) std::count_if( ipv6.begin(), ipv6.end(), []( char c )
                     {
                         return c == ':';
-                    });
+                    }); // C type cast to avoid Windows warnings
 
     uint16_t initial_zeros = 0, final_zeros = 0, position_zeros = 0, number_zeros = 0;
     size_t aux, aux_prev; // This must be size_t as string::npos could change value depending on size_t size
