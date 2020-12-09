@@ -151,6 +151,17 @@ public:
         , sub_times_liveliness_recovered_(0)
     {
 
+        if (enable_datasharing)
+        {
+            datareader_qos_.data_sharing().automatic();
+            datawriter_qos_.data_sharing().automatic();
+        }
+        else
+        {
+            datareader_qos_.data_sharing().off();
+            datawriter_qos_.data_sharing().off();
+        }
+
 #if defined(PREALLOCATED_WITH_REALLOC_MEMORY_MODE_TEST)
         datawriter_qos_.historyMemoryPolicy = rtps::PREALLOCATED_WITH_REALLOC_MEMORY_MODE;
 #elif defined(DYNAMIC_RESERVE_MEMORY_MODE_TEST)
