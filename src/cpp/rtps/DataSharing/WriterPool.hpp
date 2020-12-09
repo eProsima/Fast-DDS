@@ -64,6 +64,10 @@ public:
 
         // Free the descriptor
         segment_->get().destroy<PoolDescriptor>("descriptor");
+
+        // Destroy the shared segment.
+        // The file will be deleted once the last reader has closed it.
+        segment_->remove(segment_name_);
     }
 
     bool get_payload(

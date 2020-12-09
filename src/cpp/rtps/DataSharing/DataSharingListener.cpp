@@ -43,6 +43,7 @@ DataSharingListener::DataSharingListener(
 DataSharingListener::~DataSharingListener()
 {
     stop();
+    notification_->destroy();
 }
 
 void DataSharingListener::run()
