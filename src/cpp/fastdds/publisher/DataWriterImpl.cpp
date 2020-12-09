@@ -1504,7 +1504,8 @@ ReturnCode_t DataWriterImpl::check_datasharing_compatible(
 #endif // HAVE_SECURITY
 
     bool has_bound_payload_size =
-            qos_.endpoint().history_memory_policy == eprosima::fastrtps::rtps::PREALLOCATED_MEMORY_MODE &&
+            (qos_.endpoint().history_memory_policy == eprosima::fastrtps::rtps::PREALLOCATED_MEMORY_MODE ||
+            qos_.endpoint().history_memory_policy == eprosima::fastrtps::rtps::PREALLOCATED_WITH_REALLOC_MEMORY_MODE) &&
             type_.is_bounded();
 
     is_datasharing_compatible = false;
