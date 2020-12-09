@@ -218,13 +218,12 @@ inline bool operator !=(
 
 /*
  * kind:[address (in IP version)]:port
+ * <address> cannot be empty or deserialization process fails
  */
 inline std::ostream& operator <<(
         std::ostream& output,
         const Locator_t& loc)
 {
-
-
     // Stream Locator kind
     switch (loc.kind)
     {
@@ -255,7 +254,7 @@ inline std::ostream& operator <<(
         }
         default:
         {
-            output << "Invalid_locator";
+            output << "Invalid_locator:[_]:0";
             return output;
         }
     }
@@ -275,6 +274,10 @@ inline std::ostream& operator <<(
         {
             output << "M";
         }
+        else
+        {
+            output << "_";
+        }
     }
 
     // Stream port
@@ -291,77 +294,64 @@ inline std::istream& operator >>(
 
     if (s)
     {
-
         std::ios_base::iostate excp_mask = input.exceptions();
 
         try
         {
             input.exceptions(excp_mask | std::ios_base::failbit | std::ios_base::badbit);
 
-            std::string str_locator;
+            // Locator info
+            uint32_t kind, port;
+            std::string address;
 
-            // First check the locator kind
-            input >> str_locator;
+            // Deserialization variables
+            std::stringbuf sb_kind, sb_address;
+            std::string str_kind;
+            char punct;
 
-            auto bracket_index = str_locator.find(']');
-            if (bracket_index == std::string::npos)
+            // Check the locator kind
+            input.get(sb_kind, ':');
+            str_kind = sb_kind.str();
+
+            if (str_kind == "SHM")
             {
-                // Not correct format
-                input.setstate(std::ios_base::failbit);
-                return input;
+                kind = LOCATOR_KIND_SHM;
             }
-
-            if (str_locator.at(0) == 'S')
+            else if (str_kind == "TCPv4")
             {
-                loc.kind = LOCATOR_KIND_SHM;
-                if (str_locator.at(5) == 'M')
-                {
-                    loc.address[0] = 'M';
-                }
+                kind = LOCATOR_KIND_TCPv4;
+            }
+            else if (str_kind == "TCPv6")
+            {
+                kind = LOCATOR_KIND_TCPv6;
+            }
+            else if (str_kind == "UDPv4")
+            {
+                kind = LOCATOR_KIND_UDPv4;
+            }
+            else if (str_kind == "UDPv6")
+            {
+                kind = LOCATOR_KIND_UDPv6;
             }
             else
             {
-                if (str_locator.at(4) == '4')
-                {
-                    if (str_locator.at(0) == 'T')
-                    {
-                        loc.kind = LOCATOR_KIND_TCPv4;
-                    }
-                    else if (str_locator.at(0) == 'U')
-                    {
-                        loc.kind = LOCATOR_KIND_UDPv4;
-                    }
-                    else
-                    {
-                        input.setstate(std::ios_base::failbit);
-                        return input;
-                    }
-
-                    // set address
-                    fastrtps::rtps::IPLocator::setIPv4(loc, str_locator.substr(7, bracket_index - 7));
-                }
-                else if (str_locator.at(4) == '6')
-                {
-                    if (str_locator.at(0) == 'T')
-                    {
-                        loc.kind = LOCATOR_KIND_TCPv6;
-                    }
-                    else if (str_locator.at(0) == 'U')
-                    {
-                        loc.kind = LOCATOR_KIND_UDPv6;
-                    }
-                    else
-                    {
-                        input.setstate(std::ios_base::failbit);
-                        return input;
-                    }
-
-                    // set address
-                    fastrtps::rtps::IPLocator::setIPv6(loc, str_locator.substr(7, bracket_index - 7));
-                }
+                kind = LOCATOR_PORT_INVALID;
             }
 
-            loc.port = stoi(str_locator.substr(bracket_index + 1));
+            // Get char :[
+            input >> punct >> punct;
+
+            // Get address in string
+            input.get(sb_address, ']');
+            address = sb_address.str();
+
+            // Get char ]:
+            input >> punct >> punct;
+
+            // Get port
+            input >> port;
+
+            IPLocator::createLocator(kind, address, port, loc);
         }
         catch (std::ios_base::failure& )
         {
@@ -369,7 +359,6 @@ inline std::istream& operator >>(
 
         input.exceptions(excp_mask);
     }
-
     return input;
 }
 

@@ -896,6 +896,10 @@ TEST_F(IPLocatorTests, to_string)
 {
     Locator_t locator;
 
+    // Invalid
+    IPLocator::createLocator(LOCATOR_PORT_INVALID, "1", 10, locator);
+    ASSERT_EQ(IPLocator::to_string(locator), "Invalid_locator:[_]:0");
+
     // UDPv4
     IPLocator::createLocator(LOCATOR_KIND_UDPv4, "0.1.0.1", 1, locator);
     ASSERT_EQ(IPLocator::to_string(locator), "UDPv4:[0.1.0.1]:1");
@@ -914,7 +918,7 @@ TEST_F(IPLocatorTests, to_string)
 
     // SHM
     IPLocator::createLocator(LOCATOR_KIND_SHM, "", 5, locator);
-    ASSERT_EQ(IPLocator::to_string(locator), "SHM:[]:5");
+    ASSERT_EQ(IPLocator::to_string(locator), "SHM:[_]:5");
 }
 
 /*
@@ -969,6 +973,66 @@ TEST_F(IPLocatorTests, setIPv4address)
 
     locator.kind = LOCATOR_KIND_TCPv6;
     ASSERT_FALSE(IPLocator::setIPv4address(locator, "1.2.3.4.5.6.7.8", "9.10.11.12", "13.14.15.16"));
+}
+
+/*
+ * Check locator deserialization
+ */
+TEST_F(IPLocatorTests, locator_deserialization)
+{
+    Locator_t locator, locator_res;
+    std::stringstream ss;
+    // std::stringstream::str construct stringstream from string
+    // std::stringstream::clear clear stringstream flags to reuse it
+
+    // UDPv4
+    ss.str("UDPv4:[0.1.0.1]:1");
+    ss >> locator_res;
+    IPLocator::createLocator(LOCATOR_KIND_UDPv4, "0.1.0.1", 1, locator);
+    ASSERT_EQ(locator, locator_res);
+
+    // TCPv4
+    ss.clear();
+    ss.str("TCPv4:[0.0.1.1]:2");
+    ss >> locator_res;
+    IPLocator::createLocator(LOCATOR_KIND_TCPv4, "0.0.1.1", 2, locator);
+    ASSERT_EQ(locator, locator_res);
+
+    // UDPv6
+    ss.clear();
+    ss.str("UDPv6:[200::]:3");
+    ss >> locator_res;
+    IPLocator::createLocator(LOCATOR_KIND_UDPv6, "200::", 3, locator);
+    ASSERT_EQ(locator, locator_res);
+
+    // TCPv6
+    ss.clear();
+    ss.str("TCPv6:[::2]:4");
+    ss >> locator_res;
+    IPLocator::createLocator(LOCATOR_KIND_TCPv6, "::2", 4, locator);
+    ASSERT_EQ(locator, locator_res);
+
+    // SHM
+    ss.clear();
+    ss.str("SHM:[_]:5");
+    ss >> locator_res;
+    IPLocator::createLocator(LOCATOR_KIND_SHM, "", 5, locator);
+    ASSERT_EQ(locator, locator_res);
+
+    // Deserializate 2 locators
+    ss.clear();
+    ss.str("UDPv4:[0.1.0.1]:1,TCPv4:[0.0.1.1]:2");
+    ss >> locator_res;
+    IPLocator::createLocator(LOCATOR_KIND_UDPv4, "0.1.0.1", 1, locator);
+    ASSERT_EQ(locator, locator_res);
+
+    char coma;
+    ss >> coma;
+
+    ss >> locator_res;
+    IPLocator::createLocator(LOCATOR_KIND_TCPv4, "0.0.1.1", 2, locator);
+    ASSERT_EQ(locator, locator_res);
+
 }
 
 int main(

@@ -215,7 +215,7 @@ bool IPLocator::setIPv6(
     }
 
     LOCATOR_ADDRESS_INVALID(locator.address);
-    uint16_t count = std::count_if( ipv6.begin(), ipv6.end(), []( char c )
+    std::ptrdiff_t count = std::count_if( ipv6.begin(), ipv6.end(), []( char c )
                     {
                         return c == ':';
                     });
@@ -860,7 +860,7 @@ bool IPLocator::IPv6isCorrect(
      *  6. it starts with ':' - it must be doble ("::") - bad format
      *  7. it ends with ':' - it must be doble ("::") - bad format
      * */
-    uint16_t count = std::count_if( ipv6.begin(), ipv6.end(), []( char c )
+    std::ptrdiff_t count = std::count_if( ipv6.begin(), ipv6.end(), []( char c )
                     {
                         return c == ':';
                     });
