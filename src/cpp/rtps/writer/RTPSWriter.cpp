@@ -387,7 +387,7 @@ bool RTPSWriter::is_datasharing_compatible_with(
         const ReaderProxyData& rdata) const
 {
     if (!is_datasharing_compatible() ||
-            rdata.m_qos.data_sharing.domain_ids().empty())
+            rdata.m_qos.data_sharing.kind() == fastdds::dds::OFF)
     {
         return false;
     }
