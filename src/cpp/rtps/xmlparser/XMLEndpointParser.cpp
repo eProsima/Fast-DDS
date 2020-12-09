@@ -268,9 +268,9 @@ XMLP_ret XMLEndpointParser::loadXMLReaderEndpoint(
         }
         else if (key == TOPIC) // deprecated api
         {
-            const char *topicName = element->Attribute(NAME);
-            const char *typeName = element->Attribute(DATA_TYPE);
-            const char *kind = element->Attribute(KIND);
+            const char* topicName = element->Attribute(NAME);
+            const char* typeName = element->Attribute(DATA_TYPE);
+            const char* kind = element->Attribute(KIND);
 
             rdata->topicName() = topicName ? std::string(topicName) : std::string("");
             rdata->typeName() = typeName ? std::string(typeName) : std::string("");
@@ -293,7 +293,9 @@ XMLP_ret XMLEndpointParser::loadXMLReaderEndpoint(
             }
             if (rdata->topicName() == EPROSIMA_UNKNOWN_STRING || rdata->typeName() == EPROSIMA_UNKNOWN_STRING)
             {
-                logError(RTPS_EDP, "Bad XML file, topic: " << rdata->topicName() << " or typeName: " << rdata->typeName() << " undefined");
+                logError(RTPS_EDP,
+                        "Bad XML file, topic: " << rdata->topicName() << " or typeName: " << rdata->typeName() <<
+                        " undefined");
                 delete(rdata);
                 return XMLP_ret::XML_ERROR;
             }
@@ -537,15 +539,15 @@ XMLP_ret XMLEndpointParser::loadXMLWriterEndpoint(
         {
             logWarning(RTPS_EDP, "BAD XML tag: Writers don't use expectInlineQos tag");
         }
-        else if(key == TOPIC)
+        else if (key == TOPIC)
         {
-            const char * topicName = element->Attribute(NAME);
+            const char* topicName = element->Attribute(NAME);
             wdata->topicName(std::string(topicName ? topicName : EPROSIMA_UNKNOWN_STRING));
-            const char * typeName = element->Attribute(DATA_TYPE);
+            const char* typeName = element->Attribute(DATA_TYPE);
             wdata->typeName(std::string(typeName ? typeName : EPROSIMA_UNKNOWN_STRING));
-            const char * kind = element->Attribute(KIND);
+            const char* kind = element->Attribute(KIND);
             std::string auxString(kind ? kind : "");
-            if(auxString == _NO_KEY)
+            if (auxString == _NO_KEY)
             {
                 wdata->topicKind(NO_KEY);
                 wdata->guid().entityId.value[3] = 0x03;
@@ -557,18 +559,20 @@ XMLP_ret XMLEndpointParser::loadXMLWriterEndpoint(
             }
             else
             {
-                logError(RTPS_EDP,"Bad XML file, topic of kind: " << auxString << " is not valid");
+                logError(RTPS_EDP, "Bad XML file, topic of kind: " << auxString << " is not valid");
                 delete(wdata);
                 return XMLP_ret::XML_ERROR;
             }
-            if(wdata->topicName() == EPROSIMA_UNKNOWN_STRING || wdata->typeName() == EPROSIMA_UNKNOWN_STRING)
+            if (wdata->topicName() == EPROSIMA_UNKNOWN_STRING || wdata->typeName() == EPROSIMA_UNKNOWN_STRING)
             {
-                logError(RTPS_EDP,"Bad XML file, topic: "<<wdata->topicName() << " or typeName: "<<wdata->typeName() << " undefined");
+                logError(RTPS_EDP,
+                        "Bad XML file, topic: " << wdata->topicName() << " or typeName: " << wdata->typeName() <<
+                        " undefined");
                 delete(wdata);
                 return XMLP_ret::XML_ERROR;
             }
         }
-        else if(key == TOPIC_NAME)
+        else if (key == TOPIC_NAME)
         {
             wdata->topicName(std::string(element->GetText()));
         }
@@ -622,7 +626,7 @@ XMLP_ret XMLEndpointParser::loadXMLWriterEndpoint(
         {
             // Empty but necessary to avoid warning on last else
         }
-        else if(key == DURABILITY_QOS)
+        else if (key == DURABILITY_QOS)
         {
             std::string auxstring = std::string(element->GetText());
             if (auxstring == _TRANSIENT_LOCAL_DURABILITY_QOS)
