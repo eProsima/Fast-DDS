@@ -1119,7 +1119,7 @@ TEST_F(XMLProfileParserTests, extract_profiles_nok)
  * Tests whether the extraction of XML profiles succeeds when all profiles are wrong.
  * XMLProfileManager::loadXMLNode returns XMLProfileManager::extractProfiles.
  * The expected return value is XMLP_ret::XML_ERROR.
- * Checks an incorrec profile of each type as the only present in the profiles tag
+ * Checks an incorrect profile of each type as the only present in the profiles tag
  */
 TEST_F(XMLProfileParserTests, extract_profiles_error)
 {
@@ -1414,7 +1414,7 @@ TEST_F(XMLProfileParserTests, loadXMLFile)
     }
 
     {
-        // Negatve clauses
+        // Negative clauses
         const char* xml_p =
                 "\
                 <%s>\
