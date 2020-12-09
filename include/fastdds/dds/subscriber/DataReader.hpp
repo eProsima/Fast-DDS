@@ -17,19 +17,19 @@
  *
  */
 
-#ifndef _FASTRTPS_DATAREADER_HPP_
-#define _FASTRTPS_DATAREADER_HPP_
-#ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
+#ifndef _FASTDDS_DDS_SUBSCRIBER_DATAREADER_HPP_
+#define _FASTDDS_DDS_SUBSCRIBER_DATAREADER_HPP_
 
 #include <fastrtps/qos/DeadlineMissedStatus.h>
 #include <fastdds/rtps/common/Time_t.h>
+#include <fastdds/dds/core/LoanableCollection.hpp>
+#include <fastdds/dds/core/LoanableSequence.hpp>
 #include <fastdds/dds/core/status/StatusMask.hpp>
 #include <fastdds/dds/core/status/IncompatibleQosStatus.hpp>
 #include <fastdds/dds/core/Entity.hpp>
 #include <fastdds/dds/subscriber/SampleInfo.hpp>
 
 #include <fastrtps/types/TypesBase.h>
-
 
 #include <vector>
 #include <cstdint>
@@ -67,6 +67,8 @@ class TypeSupport;
 class DataReaderQos;
 class TopicDescription;
 struct LivelinessChangedStatus;
+
+using SampleInfoSeq = LoanableSequence<SampleInfo>;
 
 /**
  * Class DataReader, contains the actual implementation of the behaviour of the Subscriber.
@@ -123,12 +125,151 @@ public:
 
     ///@{
 
-    /* TODO
-       RTPS_DllAPI bool read(
-            std::vector<void*>& data_values,
-            std::vector<SampleInfo>& sample_infos,
-            uint32_t max_samples);
+    /**
+     * Access a collection of data samples from the DataReader.
+     *
+     * This operation accesses a collection of Data values from the DataReader. The caller can limit the size
+     * of the returned collection with the @c max_samples parameter.
+     *
+     * The properties of the @c data_values collection and the setting of the @ref PresentationQosPolicy may
+     * impose further limits on the size of the returned ‘list.’
+     *
+     * 1. If @ref PresentationQosPolicy::access_scope is @ref INSTANCE_PRESENTATION_QOS, then the returned
+     *    collection is a 'list' where samples belonging to the same data-instance are consecutive.
+     * 2. If @ref PresentationQosPolicy::access_scope is @ref TOPIC_PRESENTATION_QOS and
+     *    @ref PresentationQosPolicy::ordered_access is set to @c false, then the returned collection is a
+     *    'list' where samples belonging to the same data-instance are consecutive.
+     * 3. If @ref PresentationQosPolicy::access_scope is @ref TOPIC_PRESENTATION_QOS and
+     *    @ref PresentationQosPolicy::ordered_access is set to @c true, then the returned collection is a
+     *    'list' where samples belonging to the same instance may or may not be consecutive. This is because to
+     *    preserve order it may be necessary to mix samples from different instances.
+     * 4. If @ref PresentationQosPolicy::access_scope is @ref GROUP_PRESENTATION_QOS and
+     *    @ref PresentationQosPolicy::ordered_access is set to @c false, then the returned collection is a
+     *    'list' where samples belonging to the same data instance are consecutive.
+     * 5. If @ref PresentationQosPolicy::access_scope is @ref GROUP_PRESENTATION_QOS and
+     *    @ref PresentationQosPolicy::ordered_access is set to @c true, then the returned collection contains at
+     *    most one sample. The difference in this case is due to the fact that it is required that the application
+     *    is able to read samples belonging to different DataReader objects in a specific order.
+     *
+     * In any case, the relative order between the samples of one instance is consistent with the
+     * @ref DestinationOrderQosPolicy:
+     *
+     * - If @ref DestinationOrderQosPolicy::kind is @ref BY_RECEPTION_TIMESTAMP_DESTINATIONORDER_QOS, samples
+     *   belonging to the same instances will appear in the relative order in which there were received (FIFO,
+     *   earlier samples ahead of the later samples).
+     * - If @ref DestinationOrderQosPolicy::kind is @ref BY_SOURCE_TIMESTAMP_DESTINATIONORDER_QOS, samples
+     *   belonging to the same instances will appear in the relative order implied by the source_timestamp (FIFO,
+     *   smaller values of source_timestamp ahead of the larger values).
+     *
+     * The actual number of samples returned depends on the information that has been received by the middleware
+     * as well as the @ref HistoryQosPolicy, @ref ResourceLimitsQosPolicy, and @ref ReaderResourceLimitsQos:
+     *
+     * - In the case where the @ref HistoryQosPolicy::kind is KEEP_LAST_HISTORY_QOS, the call will return at most
+     *   @ref HistoryQosPolicy::depth samples per instance.
+     * - The maximum number of samples returned is limited by @ref ResourceLimitsQosPolicy::max_samples, and by
+     *   @ref ReaderResourceLimitsQos::max_samples_per_read.
+     * - For multiple instances, the number of samples returned is additionally limited by the product
+     *   (@ref ResourceLimitsQosPolicy::max_samples_per_instance * @ref ResourceLimitsQosPolicy::max_instances).
+     * - If ReaderResourceLimitsQos::sample_infos_allocation has a maximum limit, the number of samples returned
+     *   may also be limited if insufficient @ref SampleInfo resources are available.
+     *
+     * If the operation succeeds and the number of samples returned has been limited (by means of a maximum limit,
+     * as listed above, or insufficient @ref SampleInfo resources), the call will complete successfully and provide
+     * those samples the reader is able to return. The user may need to make additional calls, or return outstanding
+     * loaned buffers in the case of insufficient resources, in order to access remaining samples.
+     *
+     * In addition to the collection of samples, the read operation also uses a collection of @ref SampleInfo
+     * structures (@c sample_infos).
+     *
+     * The initial (input) properties of the @c data_values and @c sample_infos collections will determine the
+     * precise behavior of this operation. For the purposes of this description the collections are modeled as having
+     * three properties:
+     * - the current length (@c len, see @ref LoanableCollection::length())
+     * - the maximum length (@c max_len, see @ref LoanableCollection::maximum())
+     * - whether the collection container owns the memory of the elements within
+     *   (@c owns, see @ref LoanableCollection::has_ownership())
+     *
+     * The initial (input) values of the @c len, @c max_len, and @c owns properties for the @c data_values and
+     * @c sample_infos collections govern the behavior of the read operation as specified by the following rules:
+     *
+     * 1. The values of @c len, @c max_len, and @c owns for the two collections must be identical. Otherwise read
+     *    will fail with RETCODE_PRECONDITION_NOT_MET.
+     * 2. On successful output, the values of @c len, @c max_len, and @c owns will be the same for both collections.
+     * 3. If the input <tt> max_len == 0 </tt>, then the @c data_values and @c sample_infos collections will be
+     *    filled with elements that are 'loaned' by the DataReader. On output, @c owns will be @c false, @c len will
+     *    be set to the number of values returned, and @c max_len will be set to a value verifying
+     *    <tt> max_len >= len </tt>. The use of this variant allows for zero-copy access to the data and the
+     *    application will need to return the loan to the DataReader using the @ref return_loan operation.
+     * 4. If the input <tt> max_len > 0 </tt> and the input <tt> owns == false </tt>, then the read operation will
+     *    fail with RETCODE_PRECONDITION_NOT_MET. This avoids the potential hard-to-detect memory leaks caused by an
+     *    application forgetting to return the loan.
+     * 5. If input <tt> max_len > 0 </tt> and the input <tt> owns == true </tt>, then the read operation will copy
+     *    the Data values and SampleInfo values into the elements already inside the collections. On output, @c owns
+     *    will be @c true, @c len will be set to the number of values copied, and @c max_len will remain unchanged.
+     *    The use of this variant forces a copy but the application can control where the copy is placed and the
+     *    application will not need to return the loan. The number of samples copied depends on the values of
+     *    @c max_len and @c max_samples:
+     *    - If <tt> max_samples == LENGTH_UNLIMITED </tt>, then at most @c max_len values will be copied. The use of
+     *      this variant lets the application limit the number of samples returned to what the sequence can
+     *      accommodate.
+     *    - If <tt> max_samples <= max_len </tt>, then at most @c max_samples values will be copied. The use of this
+     *      variant lets the application limit the number of samples returned to fewer that what the sequence can
+     *      accommodate.
+     *    - If <tt> max_samples > max_len </tt>, then the read operation will fail with RETCODE_PRECONDITION_NOT_MET.
+     *      This avoids the potential confusion where the application expects to be able to access up to
+     *      @c max_samples, but that number can never be returned, even if they are available in the DataReader,
+     *      because the output sequence cannot accommodate them.
+     *
+     * As described above, upon return the @c data_values and @c sample_infos collections may contain elements
+     * 'loaned' from the DataReader. If this is the case, the application will need to use the @ref return_loan
+     * operation to return the loan once it is no longer using the Data in the collection. Upon return from
+     * @ref return_loan, the collection will have <tt> max_len == 0 </tt> and <tt> owns == false </tt>.
+     *
+     * The application can determine whether it is necessary to return the loan or not based on the state of the
+     * collections when the read operation was called, or by accessing the @c owns property. However, in many cases
+     * it may be simpler to always call @ref return_loan, as this operation is harmless (i.e., leaves all elements
+     * unchanged) if the collection does not have a loan.
+     *
+     * On output, the collection of Data values and the collection of SampleInfo structures are of the same length
+     * and are in a one-to-one correspondence. Each SampleInfo provides information, such as the @c source_timestamp,
+     * the @c sample_state, @c view_state, and @c instance_state, etc., about the corresponding sample.
+     *
+     * Some elements in the returned collection may not have valid data. If the @c instance_state in the SampleInfo is
+     * @ref NOT_ALIVE_DISPOSED_INSTANCE_STATE or @ref NOT_ALIVE_NO_WRITERS_INSTANCE_STATE, then the last sample for
+     * that instance in the collection, that is, the one whose SampleInfo has <tt> sample_rank == 0 </tt> does not
+     * contain valid data. Samples that contain no data do not count towards the limits imposed by the
+     * @ref ResourceLimitsQosPolicy.
+     *
+     * The act of reading a sample changes its @c sample_state to @ref READ_SAMPLE_STATE. If the sample belongs
+     * to the most recent generation of the instance, it will also set the @c view_state of the instance to be
+     * @ref NOT_NEW_VIEW_STATE. It will not affect the @c instance_state of the instance.
+     *
+     * If the DataReader has no samples that meet the constraints, the operations fails with RETCODE_NO_DATA.
+     *
+     * @em Important: If the samples "returned" by this method are loaned from the middleware (see @ref take
+     * for more information on memory loaning), it is important that their contents not be changed. Because the
+     * memory in which the data is stored belongs to the middleware, any modifications made to the data will be
+     * seen the next time the same samples are read or taken; the samples will no longer reflect the state that
+     * was received from the network.
+     *
+     * @param [in,out] data_values     A LoanableCollection object where the received data samples will be returned.
+     * @param [in,out] sample_infos    A SampleInfoSeq object where the received sample info will be returned.
+     * @param [in]     max_samples     The maximum number of samples to be returned. If the special value
+     *                                 @ref LENGTH_UNLIMITED is provided, as many samples will be returned as are
+     *                                 available, up to the limits described above.
+     * @param [in]     sample_states   Only data samples with @c sample_state matching one of these will be returned.
+     * @param [in]     view_states     Only data samples with @c view_state matching one of these will be returned.
+     * @param [in]     instance_states Only data samples with @c instance_state matching one of these will be returned.
+     *
+     * @return Any of the standard return codes.
      */
+    RTPS_DllAPI ReturnCode_t read(
+            LoanableCollection& data_values,
+            SampleInfoSeq& sample_infos,
+            int32_t max_samples = LENGTH_UNLIMITED,
+            SampleStateMask sample_states = ANY_SAMPLE_STATE,
+            ViewStateMask view_states = ANY_VIEW_STATE,
+            InstanceStateMask instance_states = ANY_INSTANCE_STATE);
 
     /**
      * @brief This operation copies the next, non-previously accessed Data value from the DataReader; the operation also
@@ -323,5 +464,5 @@ protected:
 } /* namespace dds */
 } /* namespace fastdds */
 } /* namespace eprosima */
-#endif // ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
-#endif /* _FASTRTPS_DATAREADER_HPP_*/
+
+#endif /* _FASTDDS_DDS_SUBSCRIBER_DATAREADER_HPP_*/
