@@ -88,3 +88,13 @@ bool HelloWorldType::getKey(void* /*data*/, InstanceHandle_t* /*ihandle*/, bool 
 {
     return false;
 }
+
+bool HelloWorldType::is_bounded() const
+{
+    return true;
+}
+
+bool HelloWorldType::is_plain() const
+{
+    return false;
+}

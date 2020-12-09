@@ -123,3 +123,13 @@ bool KeyedHelloWorldType::getKey(void *data, InstanceHandle_t* handle, bool forc
     }
     return true;
 }
+
+bool KeyedHelloWorldType::is_bounded() const
+{
+    return true;
+}
+
+bool KeyedHelloWorldType::is_plain() const
+{
+    return false;
+}
