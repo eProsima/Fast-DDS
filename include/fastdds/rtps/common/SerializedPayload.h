@@ -53,6 +53,9 @@ namespace rtps {
 //!@ingroup COMMON_MODULE
 struct RTPS_DllAPI SerializedPayload_t
 {
+    //!Size in bytes of the representation header as specified in the RTPS 2.3 specification chapter 10.
+    static constexpr size_t representation_header_size = 4u;
+
     //!Encapsulation of the data as suggested in the RTPS 2.1 specification chapter 10.
     uint16_t encapsulation;
     //!Actual length of the data

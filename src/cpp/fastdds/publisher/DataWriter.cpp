@@ -65,6 +65,19 @@ ReturnCode_t DataWriter::enable()
     return ret_code;
 }
 
+ReturnCode_t DataWriter::loan_sample(
+        void*& sample,
+        LoanInitializationKind initialization)
+{
+    return impl_->loan_sample(sample, initialization);
+}
+
+ReturnCode_t DataWriter::discard_loan(
+        void*& sample)
+{
+    return impl_->discard_loan(sample);
+}
+
 bool DataWriter::write(
         void* data)
 {
@@ -105,7 +118,7 @@ ReturnCode_t DataWriter::dispose(
     return impl_->unregister_instance(data, handle, true);
 }
 
-const fastrtps::rtps::GUID_t& DataWriter::guid()
+const fastrtps::rtps::GUID_t& DataWriter::guid() const
 {
     return impl_->guid();
 }

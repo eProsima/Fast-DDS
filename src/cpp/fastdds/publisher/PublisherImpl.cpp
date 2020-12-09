@@ -318,6 +318,11 @@ ReturnCode_t PublisherImpl::delete_datawriter(
         {
             //First extract the writer from the maps to free the mutex
             DataWriterImpl* writer_impl = *dw_it;
+            ReturnCode_t ret_code = writer_impl->check_delete_preconditions();
+            if (!ret_code)
+            {
+                return ret_code;
+            }
             writer_impl->set_listener(nullptr);
             vit->second.erase(dw_it);
             if (vit->second.empty())

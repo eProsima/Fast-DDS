@@ -162,6 +162,30 @@ CacheChange_t* RTPSWriter::new_change(
     return reserved_change;
 }
 
+CacheChange_t* RTPSWriter::new_change(
+        ChangeKind_t changeKind,
+        InstanceHandle_t handle)
+{
+    logInfo(RTPS_WRITER, "Creating new change");
+
+    std::lock_guard<RecursiveTimedMutex> guard(mp_mutex);
+    CacheChange_t* reserved_change = nullptr;
+    if (!change_pool_->reserve_cache(reserved_change))
+    {
+        logWarning(RTPS_WRITER, "Problem reserving cache from pool");
+        return nullptr;
+    }
+
+    reserved_change->kind = changeKind;
+    if (m_att.topicKind == WITH_KEY && !handle.isDefined())
+    {
+        logWarning(RTPS_WRITER, "Changes in KEYED Writers need a valid instanceHandle");
+    }
+    reserved_change->instanceHandle = handle;
+    reserved_change->writerGUID = m_guid;
+    return reserved_change;
+}
+
 bool RTPSWriter::release_change(
         CacheChange_t* change)
 {
