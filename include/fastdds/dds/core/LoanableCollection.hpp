@@ -28,7 +28,7 @@ namespace dds {
 /**
  * A collection of generic opaque pointers that can receive the buffer from outside (loan).
  *
- * TODO: deeper explanation
+ * This is an abstract class. See @ref LoanableSequence for details.
  */
 class LoanableCollection
 {

@@ -30,6 +30,33 @@ namespace eprosima {
 namespace fastdds {
 namespace dds {
 
+/**
+ * A type-safe, ordered collection of elements that can receive the buffer from outside (loan).
+ *
+ * For users who define data types in OMG IDL, this type corresponds to the IDL express sequence<T>.
+ *
+ * For any user-data type Foo that an application defines for the purpose of data-distribution with
+ * Fast DDS, a using FooSeq = LoanableSequence<Foo> is generated. The sequence offers a subset of the
+ * methods defined by the standard OMG IDL to C++ mapping for sequences.
+ * We refer to an IDL sequence<Foo> as FooSeq.
+ *
+ * The state of a sequence is described by the properties 'maximum', 'length' and 'has_ownership'.
+ * @li The 'maximum' represents the size of the underlying buffer; this is the maximum number of elements
+ *     it can possibly hold. It is returned by the maximum() operation.
+ * @li The 'length' represents the actual number of elements it currently holds. It is returned by the
+ *     length() operation.
+ * @li The 'has_ownership' flag represents whether the sequence owns the underlying buffer. It is returned
+ *     by the has_ownership() operation. If the sequence does not own the underlying buffer, the underlying
+ *     buffer is loaned from somewhere else. This flag influences the lifecycle of the sequence and what
+ *     operations are allowed on it. The general guidelines are provided below and more details are described
+ *     in detail as pre-conditions and post-conditions of each of the sequence's operations:
+ *
+ *     @li If has_ownership == true, the sequence has ownership on the buffer. It is then responsible for
+ *         destroying the buffer when the sequence is destroyed.
+ *     @li If has_ownership == false, the sequence does not have ownership on the buffer. This implies that
+ *         the sequence is loaning the buffer. The sequence should not be destroyed until the loan is returned.
+ *     @li A sequence with a zero maximum always has has_ownership == true
+ */
 template<typename T>
 class LoanableSequence : public LoanableCollection
 {
@@ -54,7 +81,7 @@ public:
      * When the input parameter is 0, the behavior is equivalent to the default constructor.
      * Otherwise, the post-conditions below will apply.
      *
-     * @param max Number of elements to pre-allocate.
+     * @param [in] max Number of elements to pre-allocate.
      *
      * @post buffer() != nullptr
      * @post has_ownership() == true
@@ -72,6 +99,13 @@ public:
         resize(max);
     }
 
+    /**
+     * Deallocate this sequence's buffer.
+     *
+     * @pre has_ownership() == true. If this precondition is not met, no memory will be released and
+     *      a warning will be logged.
+     * @post maximum() == 0 and the underlying buffer is released.
+     */
     ~LoanableSequence()
     {
         if (elements_ && !has_ownership_)
@@ -89,7 +123,7 @@ public:
      * This method performs a deep copy of the sequence received into this one.
      * Allocations will happen when other.length() > 0
      *
-     * @param other The sequence from where contents are to be copied.
+     * @param [in] other The sequence from where contents are to be copied.
      *
      * @post has_ownership() == true
      * @post maximum() == other.length()
@@ -111,7 +145,7 @@ public:
      * (a) has_ownership() == false and other.length() > 0
      * (b) has_ownership() == true and other.length() > maximum()
      *
-     * @param other The sequence from where contents are to be copied.
+     * @param [in] other The sequence from where contents are to be copied.
      *
      * @post has_ownership() == true
      * @post maximum() >= other.length()
@@ -136,26 +170,55 @@ public:
         return *this;
     }
 
+    /**
+     * Set the n-th element of the sequence.
+     *
+     * This is the operator that is invoked when the application indexes into a @em non-const sequence:
+     * @code{.cpp}
+     * element = sequence[n];
+     * sequence[n] = element;
+     * @endcode
+     *
+     * Note that a @em reference to the n-th element is returned (and not a copy)
+     *
+     * @param [in] n index of element to access, must be >= 0 and less than length().
+     *
+     * @return a reference to the n-th element
+     */
     T& operator [](
-            size_type index)
+            size_type n)
     {
-        if (index >= length_)
+        if (n >= length_)
         {
             throw std::out_of_range("");
         }
 
-        return *static_cast<T*>(elements_[index]);
+        return *static_cast<T*>(elements_[n]);
     }
 
+    /**
+     * Get the n-th element of the sequence.
+     *
+     * This is the operator that is invoked when the application indexes into a @em const sequence:
+     * @code{.cpp}
+     * element = sequence[n];
+     * @endcode
+     *
+     * Note that a @em reference to the n-th element is returned (and not a copy)
+     *
+     * @param [in] n index of element to access, must be >= 0 and less than length().
+     *
+     * @return a const reference to the n-th element
+     */
     const T& operator [](
-            size_type index) const
+            size_type n) const
     {
-        if (index >= length_)
+        if (n >= length_)
         {
             throw std::out_of_range("");
         }
 
-        return *static_cast<const T*>(elements_[index]);
+        return *static_cast<const T*>(elements_[n]);
     }
 
 private:
@@ -202,7 +265,7 @@ private:
 } // namespace fastdds
 } // namespace eprosima
 
-// Macro to easyly declare a LoanableSequence for a data type
+// Macro to easily declare a LoanableSequence for a data type
 #define FASTDDS_SEQUENCE(FooSeq, Foo) using FooSeq = eprosima::fastdds::dds::LoanableSequence<Foo>
 
 #endif // _FASTDDS_DDS_CORE_LOANABLESEQUENCE_HPP_
