@@ -75,6 +75,7 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             XMLProfileParserTests.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/rtps/xmlparser/XMLProfileManager.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/rtps/xmlparser/XMLParser.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/rtps/xmlparser/XMLDynamicParser.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/rtps/xmlparser/XMLElementParser.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/rtps/xmlparser/XMLParserCommon.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/publisher/qos/WriterQos.cpp
@@ -143,8 +144,10 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
 
         set(XMLPARSER_SOURCE
             XMLParserTests.cpp
+            XMLElementParserTests.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/rtps/xmlparser/XMLProfileManager.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/rtps/xmlparser/XMLParser.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/rtps/xmlparser/XMLDynamicParser.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/rtps/xmlparser/XMLElementParser.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/rtps/xmlparser/XMLParserCommon.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/publisher/qos/WriterQos.cpp
@@ -215,6 +218,26 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             ${TINYXML2_LIBRARY}
             fastcdr
         )
-        add_gtest(XMLParserTests SOURCES XMLParserTests.cpp)
+
+        set(XMLTREE_SOURCE
+            XMLTreeTests.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/utils/string_convert.cpp
+        )
+
+        include_directories(${TINYXML2_INCLUDE_DIR})
+
+        add_executable(XMLTreeTests ${XMLTREE_SOURCE})
+        target_compile_definitions(XMLTreeTests PRIVATE FASTRTPS_NO_LIB)
+        target_include_directories(XMLTreeTests PRIVATE
+            ${GTEST_INCLUDE_DIRS}
+            ${PROJECT_SOURCE_DIR}/include
+            ${PROJECT_BINARY_DIR}/include
+            )
+
+        target_link_libraries(XMLTreeTests ${GTEST_LIBRARIES}
+            $<$<BOOL:${WIN32}>:iphlpapi$<SEMICOLON>Shlwapi>
+            $<$<BOOL:${WIN32}>:ws2_32>
+        )
+        add_gtest(XMLTreeTests SOURCES XMLTreeTests.cpp)
     endif()
 endif()

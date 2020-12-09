@@ -181,6 +181,7 @@ set(${PROJECT_NAME}_source_files
     rtps/common/Token.cpp
     rtps/xmlparser/XMLParserCommon.cpp
     rtps/xmlparser/XMLElementParser.cpp
+    rtps/xmlparser/XMLDynamicParser.cpp
     rtps/xmlparser/XMLEndpointParser.cpp
     rtps/xmlparser/XMLParser.cpp
     rtps/xmlparser/XMLProfileManager.cpp
