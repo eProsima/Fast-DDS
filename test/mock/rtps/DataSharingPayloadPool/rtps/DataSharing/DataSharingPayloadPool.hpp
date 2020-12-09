@@ -64,7 +64,7 @@ public:
     }
 
     bool release_payload(
-            CacheChange_t& cache_change)
+            CacheChange_t& cache_change) override
     {
         delete[] cache_change.serializedPayload.data;
         cache_change.serializedPayload.max_size = 0;

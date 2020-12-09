@@ -172,7 +172,7 @@ public:
         return true;
     }
 
-    inline bool is_bounded() const
+    inline bool is_bounded() const override
     {
         return true;
     }
