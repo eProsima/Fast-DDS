@@ -33,13 +33,19 @@ TEST(DDSDataSharing, BasicCommunication)
     PubSubReader<FixedSizedType> reader(TEST_TOPIC_NAME);
     PubSubWriter<FixedSizedType> writer(TEST_TOPIC_NAME);
 
+    // Disable transports to ensure we are using datasharing
+    auto testTransport = std::make_shared<test_UDPv4TransportDescriptor>();
+    testTransport->dropDataMessagesPercentage = 100;
+
     reader.history_depth(100)
+            .add_user_transport_to_pparams(testTransport)
             .datasharing_on("Unused. change when ready")
             .reliability(BEST_EFFORT_RELIABILITY_QOS).init();
 
     ASSERT_TRUE(reader.isInitialized());
 
     writer.history_depth(100)
+            .add_user_transport_to_pparams(testTransport)
             .datasharing_on("Unused. change when ready")
             .reliability(BEST_EFFORT_RELIABILITY_QOS).init();
 
@@ -68,10 +74,15 @@ TEST(DDSDataSharing, TransientReader)
     PubSubReader<FixedSizedType> reader(TEST_TOPIC_NAME);
     PubSubWriter<FixedSizedType> writer(TEST_TOPIC_NAME);
 
+    // Disable transports to ensure we are using datasharing
+    auto testTransport = std::make_shared<test_UDPv4TransportDescriptor>();
+    testTransport->dropDataMessagesPercentage = 100;
+
     constexpr int writer_history_depth = 2;
     constexpr int writer_sent_data = 4;
 
     writer.history_depth(writer_history_depth)
+            .add_user_transport_to_pparams(testTransport)
             .datasharing_on("Unused. change when ready")
             .reliability(BEST_EFFORT_RELIABILITY_QOS).init();
 
@@ -89,6 +100,7 @@ TEST(DDSDataSharing, TransientReader)
     ASSERT_TRUE(data.empty());
 
     reader.history_depth(writer_sent_data)
+            .add_user_transport_to_pparams(testTransport)
             .datasharing_on("Unused. change when ready")
             .reliability(BEST_EFFORT_RELIABILITY_QOS)
             .durability_kind(TRANSIENT_LOCAL_DURABILITY_QOS).init();
@@ -109,22 +121,29 @@ TEST(DDSDataSharing, BestEffortDirtyPayloads)
     PubSubReader<FixedSizedType> read_reader(TEST_TOPIC_NAME, false);
     PubSubWriter<FixedSizedType> writer(TEST_TOPIC_NAME);
 
+    // Disable transports to ensure we are using datasharing
+    auto testTransport = std::make_shared<test_UDPv4TransportDescriptor>();
+    testTransport->dropDataMessagesPercentage = 100;
+
     constexpr int writer_history_depth = 2;
     constexpr int writer_sent_data = 4;
 
     writer.history_depth(writer_history_depth)
+            .add_user_transport_to_pparams(testTransport)
             .datasharing_on("Unused. change when ready")
             .reliability(BEST_EFFORT_RELIABILITY_QOS).init();
 
     ASSERT_TRUE(writer.isInitialized());
 
     take_reader.history_depth(writer_sent_data)
+            .add_user_transport_to_pparams(testTransport)
             .datasharing_on("Unused. change when ready")
             .reliability(BEST_EFFORT_RELIABILITY_QOS).init();
 
     ASSERT_TRUE(take_reader.isInitialized());
 
     read_reader.history_depth(writer_sent_data)
+            .add_user_transport_to_pparams(testTransport)
             .datasharing_on("Unused. change when ready")
             .reliability(BEST_EFFORT_RELIABILITY_QOS).init();
 
@@ -161,22 +180,29 @@ TEST(DDSDataSharing, ReliableDirtyPayloads)
     PubSubReader<FixedSizedType> read_reader(TEST_TOPIC_NAME, false);
     PubSubWriter<FixedSizedType> writer(TEST_TOPIC_NAME);
 
+    // Disable transports to ensure we are using datasharing
+    auto testTransport = std::make_shared<test_UDPv4TransportDescriptor>();
+    testTransport->dropDataMessagesPercentage = 100;
+
     constexpr int writer_history_depth = 2;
     constexpr int writer_sent_data = 4;
 
     writer.history_depth(writer_history_depth)
+            .add_user_transport_to_pparams(testTransport)
             .datasharing_on("Unused. change when ready")
             .reliability(RELIABLE_RELIABILITY_QOS).init();
 
     ASSERT_TRUE(writer.isInitialized());
 
     take_reader.history_depth(writer_sent_data)
+            .add_user_transport_to_pparams(testTransport)
             .datasharing_on("Unused. change when ready")
             .reliability(RELIABLE_RELIABILITY_QOS).init();
 
     ASSERT_TRUE(take_reader.isInitialized());
 
     read_reader.history_depth(writer_sent_data)
+            .add_user_transport_to_pparams(testTransport)
             .datasharing_on("Unused. change when ready")
             .reliability(BEST_EFFORT_RELIABILITY_QOS).init();
 
