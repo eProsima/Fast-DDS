@@ -170,7 +170,7 @@ TEST_F(XMLEndpointParserTests, loadXMLNode)
 
     {
         // Wrong XML
-        const char* xml ="<bad_xml></bad_xml>";
+        const char* xml = "<bad_xml></bad_xml>";
         ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
         EXPECT_EQ(XMLP_ret::XML_ERROR, mp_edpXML->loadXMLNode(xml_doc));
     }
@@ -344,36 +344,36 @@ TEST_F(XMLEndpointParserTests, loadXMLReaderEndpoint)
                 ";
         char xml[500];
 
-        user_id+=2;
-        entity_id+=2;
+        user_id += 2;
+        entity_id += 2;
         sprintf(xml, xml_p, user_id, entity_id, "AUTOMATIC_LIVELINESS_QOS", "1000");
         ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
         titleElement = xml_doc.FirstChildElement();
         EXPECT_EQ(XMLP_ret::XML_OK, mp_edpXML->loadXMLWriterEndpoint(titleElement, pdata));
 
-        user_id+=2;
-        entity_id+=2;
+        user_id += 2;
+        entity_id += 2;
         sprintf(xml, xml_p, user_id, entity_id, "MANUAL_BY_PARTICIPANT_LIVELINESS_QOS", "1000");
         ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
         titleElement = xml_doc.FirstChildElement();
         EXPECT_EQ(XMLP_ret::XML_OK, mp_edpXML->loadXMLWriterEndpoint(titleElement, pdata));
 
-        user_id+=2;
-        entity_id+=2;
+        user_id += 2;
+        entity_id += 2;
         sprintf(xml, xml_p, user_id, entity_id, "MANUAL_BY_TOPIC_LIVELINESS_QOS", "1000");
         ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
         titleElement = xml_doc.FirstChildElement();
         EXPECT_EQ(XMLP_ret::XML_OK, mp_edpXML->loadXMLWriterEndpoint(titleElement, pdata));
 
-        user_id+=2;
-        entity_id+=2;
+        user_id += 2;
+        entity_id += 2;
         sprintf(xml, xml_p, user_id, entity_id, "MANUAL_BY_TOPIC_LIVELINESS_QOS", "INF");
         ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
         titleElement = xml_doc.FirstChildElement();
         EXPECT_EQ(XMLP_ret::XML_OK, mp_edpXML->loadXMLWriterEndpoint(titleElement, pdata));
 
-        user_id+=2;
-        entity_id+=2;
+        user_id += 2;
+        entity_id += 2;
         sprintf(xml, xml_p, user_id, entity_id, "MANUAL_BY_TOPIC_LIVELINESS_QOS", "0");
         ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
         titleElement = xml_doc.FirstChildElement();
@@ -393,15 +393,15 @@ TEST_F(XMLEndpointParserTests, loadXMLReaderEndpoint)
                 ";
         char xml[500];
 
-        user_id+=2;
-        entity_id+=2;
+        user_id += 2;
+        entity_id += 2;
         sprintf(xml, xml_p, user_id, entity_id,  "SHARED_OWNERSHIP_QOS");
         ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
         titleElement = xml_doc.FirstChildElement();
         EXPECT_EQ(XMLP_ret::XML_OK, mp_edpXML->loadXMLReaderEndpoint(titleElement, pdata));
 
-        user_id+=2;
-        entity_id+=2;
+        user_id += 2;
+        entity_id += 2;
         sprintf(xml, xml_p, user_id, entity_id, "EXCLUSIVE_OWNERSHIP_QOS");
         ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
         titleElement = xml_doc.FirstChildElement();
@@ -561,36 +561,36 @@ TEST_F(XMLEndpointParserTests, loadXMLWriterEndpoint)
                 ";
         char xml[500];
 
-        user_id+=2;
-        entity_id+=2;
+        user_id += 2;
+        entity_id += 2;
         sprintf(xml, xml_p, user_id, entity_id, "AUTOMATIC_LIVELINESS_QOS", "1000");
         ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
         titleElement = xml_doc.FirstChildElement();
         EXPECT_EQ(XMLP_ret::XML_OK, mp_edpXML->loadXMLWriterEndpoint(titleElement, pdata));
 
-        user_id+=2;
-        entity_id+=2;
+        user_id += 2;
+        entity_id += 2;
         sprintf(xml, xml_p, user_id, entity_id, "MANUAL_BY_PARTICIPANT_LIVELINESS_QOS", "1000");
         ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
         titleElement = xml_doc.FirstChildElement();
         EXPECT_EQ(XMLP_ret::XML_OK, mp_edpXML->loadXMLWriterEndpoint(titleElement, pdata));
 
-        user_id+=2;
-        entity_id+=2;
+        user_id += 2;
+        entity_id += 2;
         sprintf(xml, xml_p, user_id, entity_id, "MANUAL_BY_TOPIC_LIVELINESS_QOS", "1000");
         ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
         titleElement = xml_doc.FirstChildElement();
         EXPECT_EQ(XMLP_ret::XML_OK, mp_edpXML->loadXMLWriterEndpoint(titleElement, pdata));
 
-        user_id+=2;
-        entity_id+=2;
+        user_id += 2;
+        entity_id += 2;
         sprintf(xml, xml_p, user_id, entity_id, "MANUAL_BY_TOPIC_LIVELINESS_QOS", "INF");
         ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
         titleElement = xml_doc.FirstChildElement();
         EXPECT_EQ(XMLP_ret::XML_OK, mp_edpXML->loadXMLWriterEndpoint(titleElement, pdata));
 
-        user_id+=2;
-        entity_id+=2;
+        user_id += 2;
+        entity_id += 2;
         sprintf(xml, xml_p, user_id, entity_id, "MANUAL_BY_TOPIC_LIVELINESS_QOS", "0");
         ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
         titleElement = xml_doc.FirstChildElement();
@@ -610,15 +610,15 @@ TEST_F(XMLEndpointParserTests, loadXMLWriterEndpoint)
                 ";
         char xml[500];
 
-        user_id+=2;
-        entity_id+=2;
+        user_id += 2;
+        entity_id += 2;
         sprintf(xml, xml_p, user_id, entity_id,  "SHARED_OWNERSHIP_QOS");
         ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
         titleElement = xml_doc.FirstChildElement();
         EXPECT_EQ(XMLP_ret::XML_OK, mp_edpXML->loadXMLWriterEndpoint(titleElement, pdata));
 
-        user_id+=2;
-        entity_id+=2;
+        user_id += 2;
+        entity_id += 2;
         sprintf(xml, xml_p, user_id, entity_id, "EXCLUSIVE_OWNERSHIP_QOS");
         ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
         titleElement = xml_doc.FirstChildElement();
@@ -805,4 +805,3 @@ int main(
     testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();
 }
-
