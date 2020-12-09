@@ -52,12 +52,12 @@ public:
     bool operator ==(
             const ParticipantAttributes& b) const
     {
-        return (this->rtps == b.rtps);
+        return (this->domainId == b.domainId && this->rtps == b.rtps);
     }
 
 };
 
-}
-}
+} // namespace fastrtps
+} // namespace eprosima
 
 #endif /* PARTICIPANTATTRIBUTES_H_ */
