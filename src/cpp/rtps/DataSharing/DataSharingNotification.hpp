@@ -68,10 +68,11 @@ public:
             const GUID_t& reader_guid,
             const std::string& shared_dir = std::string());
 
-
     static std::shared_ptr<DataSharingNotification> open_notification(
             const GUID_t& reader_guid,
             const std::string& shared_dir = std::string());
+
+    void destroy();
 
     static std::string get_default_directory()
     {
@@ -129,6 +130,7 @@ protected:
 
     std::unique_ptr<Segment> segment_;  //< Shared memory segment
     Notification* notification_;        //< The notification data
+    bool owned_ = false;                //< Whether the shared segment is owned by this instance
 };
 
 }  // namespace rtps

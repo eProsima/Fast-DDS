@@ -49,6 +49,25 @@ std::shared_ptr<DataSharingNotification> DataSharingNotification::open_notificat
     return notification;
 }
 
+void DataSharingNotification::destroy()
+{
+    if (owned_)
+    {
+        // Free the notification
+        segment_->get().destroy<Notification>("notification_node");
+
+        // Destroy the shared segment.
+        // The file will be deleted once the last writer has closed it.
+        segment_->remove(segment_name_);
+
+        owned_ = false;
+    }
+    else
+    {
+        logError(HISTORY_DATASHARING_LISTENER, "Trying to destroy non-owned notification segment " << segment_name_);
+    }
+}
+
 bool DataSharingNotification::create_and_init_notification(
         const GUID_t& reader_guid,
         const std::string& shared_dir)
@@ -98,6 +117,7 @@ bool DataSharingNotification::create_and_init_notification(
         return false;
     }
 
+    owned_ = true;
     return true;
 }
 
