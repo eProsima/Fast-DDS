@@ -1656,6 +1656,9 @@ public:
     int32_t depth;
 };
 
+//! A special value indicating an unlimited quantity
+constexpr int32_t LENGTH_UNLIMITED = -1;
+
 /**
  * Specifies the resources that the Service can consume in order to meet the requested QoS
  * @note Immutable Qos Policy
@@ -1746,9 +1749,9 @@ public:
         , QosPolicy(false)
         , history_kind(KEEP_LAST_HISTORY_QOS)
         , history_depth(1)
-        , max_samples(-1)
-        , max_instances(-1)
-        , max_samples_per_instance(-1)
+        , max_samples(LENGTH_UNLIMITED)
+        , max_instances(LENGTH_UNLIMITED)
+        , max_samples_per_instance(LENGTH_UNLIMITED)
     {
     }
 
@@ -1799,20 +1802,20 @@ public:
      * Specifies the maximum number of data-samples the DataWriter (or DataReader) can manage across all the instances
      * associated with it. Represents the maximum samples the middleware can store for any one DataWriter (or DataReader).
      * It is inconsistent for this value to be less than max_samples_per_instance. <br>
-     * By default, -1 (Length Unlimited).
+     * By default, LENGTH_UNLIMITED.
      */
     int32_t max_samples;
     /**
      * @brief Control the ResourceLimitsQos of the implied DataReader that stores the data within the durability service.
      * Represents the maximum number of instances DataWriter (or DataReader) can manage. <br>
-     * By default, -1 (Length Unlimited).
+     * By default, LENGTH_UNLIMITED.
      */
     int32_t max_instances;
     /**
      * @brief Control the ResourceLimitsQos of the implied DataReader that stores the data within the durability service.
      * Represents the maximum number of samples of any one instance a DataWriter(or DataReader) can manage.
      * It is inconsistent for this value to be greater than max_samples. <br>
-     * By default, -1 (Length Unlimited).
+     * By default, LENGTH_UNLIMITED.
      */
     int32_t max_samples_per_instance;
 };
