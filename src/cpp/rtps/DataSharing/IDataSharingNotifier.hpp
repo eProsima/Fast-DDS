@@ -24,7 +24,7 @@ namespace eprosima {
 namespace fastrtps {
 namespace rtps {
 
-class GUID_t;
+struct GUID_t;
 
 class IDataSharingNotifier
 {

@@ -313,6 +313,7 @@ bool IPFinder::getAllMACAddress(std::vector<info_MAC>* macs)
 
         free(buf);
     }
+    return true;
 }
 
 #elif defined(__linux__)
