@@ -106,11 +106,11 @@ TEST_F(XMLProfileParserTests, XMLoadProfiles)
 }
 
 /*
- * This test checks The return of the loadXMLProfiles method
+ * This test checks the loadXMLProfiles function```
  * 1. Check correct parsing of an XMLElement
- * 2. Check return on parsing of an XMLElement with an unknown tag
+ * 2. that an error is returned when trying to parse an XMLElement with an unknown tag.
  * 3. Check return on parsing of an XMLElement with an empty profiles tag
- * 4. Check return on parsing of an XMLElement with a root element difrent from <profiles>
+ * 4. Check return on parsing of an XMLElement with a root element different from <profiles>
  */
 TEST_F(XMLProfileParserTests, loadXMLProfiles)
 {
@@ -657,7 +657,7 @@ TEST_F(XMLProfileParserTests, XMLParserDefaultSubscriberProfile)
 }
 
 /*
- *  Tests the correct parsing of a requester XML profile
+ * Tests the correct parsing of a requester XML profile
  * 1. Check if attributes were filled correctly
  * 2. Check error return on a missing requester profile name
  */
@@ -694,7 +694,7 @@ TEST_F(XMLProfileParserTests, XMLParserRequesterProfile)
 }
 
 /*
- *  Tests the correct parsing of a replier XML profile
+ * Tests the correct parsing of a replier XML profile
  * 1. Check if attributes were filled correctly
  * 2. Check error return on a missing replier profile name
  */
@@ -1026,9 +1026,9 @@ TEST_F(XMLProfileParserTests, getTransportByIdNegativeClauses)
  * Tests whether the extraction of XML profiles succeeds when all profiles are correct.
  * XMLProfileManager::loadXMLNode returns XMLProfileManager::extractProfiles.
  * The following cases are tested:
- *  1. A corrrect standalone profile tag is parsed, return value of XMLP_ret::XML_OK is expected
- *  1. A corrrect rooted profile tag is parsed, return value of XMLP_ret::XML_OK is expected
- *  1. An incorrect profile tag is parsed, return value of XMLP_ret::XML_ERROR is expected
+ *  1. A corrrect standalone profile element is parsed, return value of XMLP_ret::XML_OK is expected
+ *  1. A corrrect rooted profile element is parsed, return value of XMLP_ret::XML_OK is expected
+ *  1. An incorrect profile element is parsed, return value of XMLP_ret::XML_ERROR is expected
  */
 TEST_F(XMLProfileParserTests, extract_profiles_ok)
 {
@@ -1161,7 +1161,7 @@ TEST_F(XMLProfileParserTests, extract_profiles_error)
     }
 
     {
-        // XMLNode with no profile tag
+        // XMLNode with no profile element
         const char* xml = "<log></log>";
         ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
         EXPECT_EQ(xmlparser::XMLP_ret::XML_ERROR, xmlparser::XMLProfileManager::loadXMLNode(xml_doc));
@@ -1270,9 +1270,11 @@ TEST_F(XMLProfileParserTests, extract_type_profiles)
 }
 
 
-//! Tests whether the SKIP_DEFAULT_XML_FILE variable prevents the xmlparser from loading the default XML file.
-//! participant_atts_none skips the default and obtains the values from the constructors.
-//! participant_atts_default contains the attributes in the default file in this folder which should be different.
+/*
+ * Tests whether the SKIP_DEFAULT_XML_FILE variable prevents the xmlparser from loading the default XML file.
+ * participant_atts_none skips the default and obtains the values from the constructors.
+ * participant_atts_default contains the attributes in the default file in this folder which should be different.
+ */
 TEST_F(XMLProfileParserTests, skip_default_xml)
 {
     const char* xml =
@@ -1351,11 +1353,11 @@ TEST_F(XMLProfileParserTests, default_env_variable)
 /*
  * Tests the return codes of the loadXMLFile method.
  *  1. On parsing a correctly parsed standalone profiles file, expect XMLP_ret::XML_OK.
- *  1. On parsing a correctly parsed rooted profiles file, expect XMLP_ret::XML_OK.
- *  1. On parsing an incorrect tag inside profiles tag, expect XMLP_ret::XML_ERROR.
- *  1. On giving an empty string as a filename, expect XMLP_ret::XML_ERROR.
- *  1. On parsing the same file twice, expect XMLP_ret::XML_OK.
- *  1. On parsing an incorrect tag inside profiles tag, expect XMLP_ret::XML_ERROR.
+ *  2. On parsing a correctly parsed rooted profiles file, expect XMLP_ret::XML_OK.
+ *  3. On parsing an incorrect element inside profiles element, expect XMLP_ret::XML_ERROR.
+ *  4. On giving an empty string as a filename, expect XMLP_ret::XML_ERROR.
+ *  5. On parsing the same file twice, expect XMLP_ret::XML_OK.
+ *  6. On parsing an incorrect element inside profiles element, expect XMLP_ret::XML_ERROR.
  */
 TEST_F(XMLProfileParserTests, loadXMLFile)
 {

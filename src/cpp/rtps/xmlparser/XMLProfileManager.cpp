@@ -203,17 +203,19 @@ XMLP_ret XMLProfileManager::loadXMLProfiles(
         tinyxml2::XMLElement& profiles)
 {
     up_base_node_t root_node;
-    if (strcmp(profiles.Name(), "profiles") != 0)
+    if (strcmp(profiles.Name(), PROFILES) != 0)
     {
-        logError(XMLPARSER, "Profiles tag not found");
+        logError(XMLPARSER, "<profiles> element not found");
         return XMLP_ret::XML_ERROR;
     }
 
-    XMLParser::loadXMLProfiles(profiles, root_node);
-
-    logInfo(XMLPARSER, "Node parsed successfully");
-
-    return XMLProfileManager::extractProfiles(std::move(root_node), "-XML Node-");
+    if(XMLParser::loadXMLProfiles(profiles, root_node) != XMLP_ret::XML_ERROR){
+        logInfo(XMLPARSER, "Node parsed successfully");
+        return XMLProfileManager::extractProfiles(std::move(root_node), "-XML Node-");
+    }else{
+        logError(XMLPARSER, "Error parsing profiles");
+        return XMLP_ret::XML_ERROR;
+    }
 }
 
 XMLP_ret XMLProfileManager::loadXMLDynamicTypes(
@@ -310,9 +312,7 @@ XMLP_ret XMLProfileManager::loadXMLFile(
             }
         }
         return loaded_ret;
-    }
-
-    if (NodeType::PROFILES == root_node->getType())
+    }else if (NodeType::PROFILES == root_node->getType())
     {
         return XMLProfileManager::extractProfiles(std::move(root_node), filename);
     }
