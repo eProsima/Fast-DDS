@@ -213,7 +213,7 @@ TEST_F(XMLProfileParserTests, XMLParserLibrarySettings)
     EXPECT_EQ(library_settings.intraprocess_delivery, IntraprocessDeliveryType::INTRAPROCESS_FULL);
 }
 
-TEST_F(XMLProfileParserTests, XMLParserParcipant)
+TEST_F(XMLProfileParserTests, XMLParserParticipant)
 {
     std::string participant_profile = std::string("test_participant_profile");
     ParticipantAttributes participant_atts;
@@ -306,7 +306,7 @@ TEST_F(XMLProfileParserTests, XMLParserParcipant)
     EXPECT_EQ(std::string(rtps_atts.getName()), "test_name");
 }
 
-TEST_F(XMLProfileParserTests, XMLParserDefaultParcipantProfile)
+TEST_F(XMLProfileParserTests, XMLParserDefaultParticipantProfile)
 {
     std::string participant_profile = std::string("test_participant_profile");
     ParticipantAttributes participant_atts;
@@ -1077,7 +1077,7 @@ TEST_F(XMLProfileParserTests, extract_profiles_ok)
  * Tests whether the extraction of XML profiles succeeds when some profiles are correct and some are not.
  * XMLProfileManager::loadXMLNode returns XMLProfileManager::extractProfiles.
  * The expected return value is XMLP_ret::XML_NOK.
- * Checks a combination of a correct profile with an incorrectprofile of each profyle type
+ * Checks a combination of a correct profile with an incorrect profile of each profile type
  */
 TEST_F(XMLProfileParserTests, extract_profiles_nok)
 {
