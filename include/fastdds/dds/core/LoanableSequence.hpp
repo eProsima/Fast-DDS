@@ -36,9 +36,9 @@ namespace dds {
  * For users who define data types in OMG IDL, this type corresponds to the IDL express sequence<T>.
  *
  * For any user-data type Foo that an application defines for the purpose of data-distribution with
- * Fast DDS, a using FooSeq = LoanableSequence<Foo> is generated. The sequence offers a subset of the
+ * Fast DDS, a '<tt>using FooSeq = LoanableSequence<Foo></tt>' is generated. The sequence offers a subset of the
  * methods defined by the standard OMG IDL to C++ mapping for sequences.
- * We refer to an IDL sequence<Foo> as FooSeq.
+ * We refer to an IDL '<tt>sequence<Foo></tt>' as \c FooSeq.
  *
  * The state of a sequence is described by the properties 'maximum', 'length' and 'has_ownership'.
  * @li The 'maximum' represents the size of the underlying buffer; this is the maximum number of elements
