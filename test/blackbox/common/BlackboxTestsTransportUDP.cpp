@@ -19,11 +19,11 @@
 
 #include <gtest/gtest.h>
 
-#include <rtps/transport/UDPv4Transport.h>
+#include <fastdds/rtps/transport/UDPv4TransportDescriptor.h>
+#include <fastrtps/utils/IPFinder.h>
 
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
-using UDPv4Transport = eprosima::fastdds::rtps::UDPv4Transport;
 
 TEST(BlackBox, UDPv4TransportWrongConfig)
 {
