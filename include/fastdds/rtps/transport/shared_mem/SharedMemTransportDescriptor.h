@@ -74,6 +74,7 @@ struct SharedMemTransportDescriptor : public TransportDescriptorInterface
         segment_size_ = segment_size;
     }
 
+    //! Return the maximum size of a single message in the transport (in octets)
     virtual uint32_t max_message_size() const override
     {
         return maxMessageSize;
