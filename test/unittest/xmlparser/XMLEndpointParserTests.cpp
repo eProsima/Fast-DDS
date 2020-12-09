@@ -524,12 +524,6 @@ TEST_F(XMLEndpointParserTests, loadXMLWriterEndpoint)
         EXPECT_EQ(pdata->m_writers[0]->typeName(), "HelloWorld");
         EXPECT_EQ(pdata->m_writers[0]->has_locators(), true);
 
-        // Topic attributes
-        EXPECT_EQ(pdata->m_writers[0]->topicName(), "HelloWorldTopic");
-        EXPECT_EQ(pdata->m_writers[0]->topicKind(), TopicKind_t::NO_KEY);
-        EXPECT_EQ(pdata->m_writers[0]->typeName(), "HelloWorld");
-        EXPECT_EQ(pdata->m_writers[0]->has_locators(), true);
-
         // Locators
         Locator_t uni_loc;
         IPLocator::setIPv4(uni_loc, "192.168.0.128");

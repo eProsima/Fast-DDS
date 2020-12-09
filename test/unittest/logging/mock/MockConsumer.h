@@ -62,22 +62,6 @@ public:
         mEntriesConsumed.clear();
     }
 
-    size_t ConsumedEntriesSize_nts() const
-    {
-        return mEntriesConsumed.size();
-    }
-
-    std::condition_variable& cv()
-    {
-        return cv_;
-    }
-
-    void clear_entries()
-    {
-        std::unique_lock<std::mutex> guard(*mMutex);
-        mEntriesConsumed.clear();
-    }
-
 private:
 
     std::vector<Log::Entry> mEntriesConsumed;
