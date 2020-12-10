@@ -1117,6 +1117,53 @@ TEST(LocatorTests, isValid_negative)
     ASSERT_FALSE(locator_list.isValid());
 }
 
+/*
+ * Check LocatorList serialization
+ */
+TEST(LocatorTests, LocatorList_serialization)
+{
+    Locator_t locator;
+    LocatorList_t locator_list;
+    std::stringstream ss_empty, ss_filled;
+
+    // Empty list
+    ss_empty << locator_list;
+    ASSERT_EQ(ss_empty.str(), "[_]");
+
+    IPLocator::createLocator(LOCATOR_KIND_UDPv4, "1.1.1.1", 1, locator);
+    locator_list.push_back(locator);
+    IPLocator::createLocator(LOCATOR_KIND_TCPv4, "2.2.2.2", 2, locator);
+    locator_list.push_back(locator);
+
+    // Full list
+    ss_filled << locator_list;
+    ASSERT_EQ(ss_filled.str(), "[UDPv4:[1.1.1.1]:1,TCPv4:[2.2.2.2]:2]");
+}
+
+/*
+ * Check LocatorList deserialization
+ */
+TEST(LocatorTests, LocatorList_deserialization)
+{
+    Locator_t locator;
+    LocatorList_t locator_list;
+    std::stringstream ss;
+
+    ASSERT_EQ(locator_list.size(), 0);
+
+    // Empty list
+    ss.str("[_]");
+    ss >> locator_list;
+    ASSERT_EQ(locator_list.size(), 0);
+
+    // Filled list
+    ss.clear();
+    ss.str("[UDPv4:[1.1.1.1]:1,TCPv4:[2.2.2.2]:2]");
+    ss >> locator_list;
+    ASSERT_EQ(locator_list.size(), 2);
+}
+
+
 /*******************************
  * RemoteLocators Tests *
  *******************************/

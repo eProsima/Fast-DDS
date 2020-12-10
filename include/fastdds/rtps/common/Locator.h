@@ -591,6 +591,8 @@ public:
         }
     }
 
+    FASTDDS_DEPRECATED_UNTIL(3, "eprosima::fastrtps::rtps::LocatorList_t::contains(const Locator_t&)",
+            "Not specify function with unknown functionality.")
     RTPS_DllAPI bool contains(
             const Locator_t& loc)
     {
@@ -650,7 +652,7 @@ inline std::ostream& operator <<(
     if (locList.size() > 0)
     {
         output << *(locList.begin()) ;
-        for (auto it = locList.m_locators.begin(); it != locList.m_locators.end(); ++it)
+        for (auto it = locList.m_locators.begin()+1; it != locList.m_locators.end(); ++it)
         {
             output << "," << *it;
         }

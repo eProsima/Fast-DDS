@@ -428,7 +428,27 @@ struct ShrinkLocatorCase_t
         selector.for_each(
             [this](const Locator_t& locator)
             {
-                ASSERT_TRUE(output.contains(locator));
+                bool contains = false;
+                for (LocatorListIterator it = output.begin(); it != output.end(); ++it)
+                {
+                    if (IsAddressDefined(*it))
+                    {
+                        if (locator == *it)
+                        {
+                            contains = true;
+                            break;
+                        }
+                    }
+                    else
+                    {
+                        if (locator.kind == (*it).kind && locator.port == (*it).port)
+                        {
+                            contains = true;
+                            break;
+                        }
+                    }
+                }
+                ASSERT_TRUE(contains);
             });
     }
 };
