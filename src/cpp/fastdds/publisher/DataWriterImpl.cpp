@@ -442,7 +442,7 @@ ReturnCode_t DataWriterImpl::write(
 
     //Check if the Handle is different from the special value HANDLE_NIL and
     //does not correspond with the instance referred by the data
-    if (handle.isDefined() && handle.value != instance_handle.value)
+    if (handle.isDefined() && handle != instance_handle)
     {
         return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
     }

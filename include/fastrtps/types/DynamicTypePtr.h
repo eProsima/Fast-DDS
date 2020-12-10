@@ -54,6 +54,16 @@ public:
 
     RTPS_DllAPI DynamicType_ptr& operator =(
             DynamicType*);
+
+    RTPS_DllAPI bool operator!=(std::nullptr_t) const
+    {
+            return bool(*this);
+    }
+
+    RTPS_DllAPI bool operator==(std::nullptr_t) const
+    {
+            return !*this;
+    }
 };
 
 } // namespace types

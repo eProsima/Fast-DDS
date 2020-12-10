@@ -42,6 +42,16 @@ public:
     RTPS_DllAPI DynamicTypeBuilder_ptr(DynamicTypeBuilder_ptr&& other) = default;
 
     RTPS_DllAPI DynamicTypeBuilder_ptr& operator=(DynamicTypeBuilder_ptr&&) = default;
+
+    RTPS_DllAPI bool operator!=(std::nullptr_t) const
+    {
+            return bool(*this);
+    }
+
+    RTPS_DllAPI bool operator==(std::nullptr_t) const
+    {
+            return !*this;
+    }
 };
 
 } // namespace types
