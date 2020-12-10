@@ -20,19 +20,20 @@
 #ifndef _FASTDDS_DDS_SUBSCRIBER_DATAREADER_HPP_
 #define _FASTDDS_DDS_SUBSCRIBER_DATAREADER_HPP_
 
-#include <fastrtps/qos/DeadlineMissedStatus.h>
-#include <fastdds/rtps/common/Time_t.h>
+#include <vector>
+#include <cstdint>
+
+#include <fastdds/dds/core/Entity.hpp>
 #include <fastdds/dds/core/LoanableCollection.hpp>
 #include <fastdds/dds/core/LoanableSequence.hpp>
 #include <fastdds/dds/core/status/StatusMask.hpp>
 #include <fastdds/dds/core/status/IncompatibleQosStatus.hpp>
-#include <fastdds/dds/core/Entity.hpp>
+#include <fastdds/dds/core/status/DeadlineMissedStatus.hpp>
 #include <fastdds/dds/subscriber/SampleInfo.hpp>
+#include <fastdds/dds/topic/TypeSupport.hpp>
+#include <fastdds/rtps/common/Time_t.h>
 
 #include <fastrtps/types/TypesBase.h>
-
-#include <vector>
-#include <cstdint>
 
 using eprosima::fastrtps::types::ReturnCode_t;
 
@@ -52,7 +53,6 @@ class TopicAttributes;
 namespace rtps {
 class ReaderAttributes;
 struct GUID_t;
-struct InstanceHandle_t;
 } // namespace rtps
 } // namespace fastrtps
 
@@ -63,7 +63,6 @@ class Subscriber;
 class SubscriberImpl;
 class DataReaderImpl;
 class DataReaderListener;
-class TypeSupport;
 class DataReaderQos;
 class TopicDescription;
 struct LivelinessChangedStatus;
@@ -267,6 +266,49 @@ public:
             LoanableCollection& data_values,
             SampleInfoSeq& sample_infos,
             int32_t max_samples = LENGTH_UNLIMITED,
+            SampleStateMask sample_states = ANY_SAMPLE_STATE,
+            ViewStateMask view_states = ANY_VIEW_STATE,
+            InstanceStateMask instance_states = ANY_INSTANCE_STATE);
+
+    /**
+     * Access a collection of data samples from the DataReader.
+     *
+     * This operation accesses a collection of data values from the DataReader. The behavior is identical to
+     * @ref read, except that all samples returned belong to the single specified instance whose handle is
+     * @c a_handle.
+     *
+     * Upon successful completion, the data collection will contain samples all belonging to the same instance.
+     * The corresponding @ref SampleInfo verifies ef SampleInfo::instance_handle == @c a_handle.
+     *
+     * This operation is semantically equivalent to the @ref read operation, except in building the collection.
+     * The DataReader will check that the sample belongs to the specified instance and otherwise it will not place
+     * the sample in the returned collection.
+     *
+     * The behavior of this operation follows the same rules as the @read operation regarding the pre-conditions and
+     * post-conditions for the @c data_values and @c sample_infos. Similar to @ref read, this operation may 'loan'
+     * elements to the output collections, which must then be returned by means of @ref return_loan.
+     *
+     * If the DataReader has no samples that meet the constraints, the operations fails with RETCODE_NO_DATA.
+     *
+     * @param [in,out] data_values     A LoanableCollection object where the received data samples will be returned.
+     * @param [in,out] sample_infos    A SampleInfoSeq object where the received sample info will be returned.
+     * @param [in]     max_samples     The maximum number of samples to be returned. If the special value
+     *                                 @ref LENGTH_UNLIMITED is provided, as many samples will be returned as are
+     *                                 available, up to the limits described in the documentation for @ref read().
+     * @param [in]     a_handle        The specified instance to return samples for. The method will fail with
+     *                                 RETCODE_BAD_PARAMETER if the handle does not correspond to an existing
+     *                                 data-object known to the DataReader.
+     * @param [in]     sample_states   Only data samples with @c sample_state matching one of these will be returned.
+     * @param [in]     view_states     Only data samples with @c view_state matching one of these will be returned.
+     * @param [in]     instance_states Only data samples with @c instance_state matching one of these will be returned.
+     *
+     * @return Any of the standard return codes.
+     */
+    RTPS_DllAPI ReturnCode_t read_instance(
+            LoanableCollection& data_values,
+            SampleInfoSeq& sample_infos,
+            int32_t max_samples = LENGTH_UNLIMITED,
+            const InstanceHandle_t& a_handle = HANDLE_NIL,
             SampleStateMask sample_states = ANY_SAMPLE_STATE,
             ViewStateMask view_states = ANY_VIEW_STATE,
             InstanceStateMask instance_states = ANY_INSTANCE_STATE);
