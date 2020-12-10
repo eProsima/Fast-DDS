@@ -269,9 +269,7 @@ bool UDPTransportInterface::OpenOutputChannel(
     // already reuses a SenderResource.
     for (auto& sender_resource : sender_resource_list)
     {
-        UDPSenderResource* udp_sender_resource = UDPSenderResource::cast(*this, sender_resource.get());
-
-        if (udp_sender_resource)
+        if (sender_resource->kind() == this->kind())
         {
             statistics_info_.add_entry(locator);
             return true;
