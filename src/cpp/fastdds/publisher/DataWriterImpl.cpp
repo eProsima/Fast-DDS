@@ -1310,6 +1310,7 @@ ReturnCode_t DataWriterImpl::check_qos(
             (qos.endpoint().history_memory_policy != PREALLOCATED_MEMORY_MODE &&
             qos.endpoint().history_memory_policy != PREALLOCATED_WITH_REALLOC_MEMORY_MODE))
     {
+        logError(RTPS_QOS_CHECK, "DATA_SHARING cannot be used with memory policies other than PREALLOCATED.");
         return ReturnCode_t::RETCODE_INCONSISTENT_POLICY;
     }
     return ReturnCode_t::RETCODE_OK;
