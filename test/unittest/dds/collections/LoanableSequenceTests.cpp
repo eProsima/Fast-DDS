@@ -388,7 +388,7 @@ TEST(LoanableSequenceTests, loan_unloan)
 
     class CustomLogConsumer : public LogConsumer
     {
-        const char* log_function = "eprosima::fastdds::dds::LoanableSequence<int>::~LoanableSequence";
+        const char* log_function = "~LoanableSequence";
 
     public:
 
@@ -402,7 +402,7 @@ TEST(LoanableSequenceTests, loan_unloan)
                 const Log::Entry& entry) override
         {
             if ((Log::Kind::Warning == entry.kind) &&
-                    (std::string(entry.context.function) == log_function))
+                    (std::string::npos != std::string(entry.context.function).find(log_function)))
             {
                 log_detected_->store(true, std::memory_order::memory_order_seq_cst);
             }
@@ -411,6 +411,7 @@ TEST(LoanableSequenceTests, loan_unloan)
         std::atomic_bool* log_detected_;
     };
     std::unique_ptr<CustomLogConsumer> consumer(new CustomLogConsumer(&log_has_been_detected));
+    Log::ClearConsumers();
     Log::RegisterConsumer(std::move(consumer));
 
     {
