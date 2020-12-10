@@ -31,6 +31,12 @@ namespace eprosima {
 namespace fastdds {
 namespace dds {
 
+//! Handle to identiy different instances of the same Topic of a certain type.
+using InstanceHandle_t = eprosima::fastrtps::rtps::InstanceHandle_t;
+
+//! The NIL instance handle.
+extern RTPS_DllAPI const InstanceHandle_t HANDLE_NIL;
+
 class DomainParticipant;
 
 /**
