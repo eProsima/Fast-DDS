@@ -138,19 +138,31 @@ inline std::ostream& operator <<(
         std::ostream& output,
         const RemoteLocatorList& remote_locators)
 {
-    output << remote_locators.multicast.max_size() << ",";
-    output << remote_locators.multicast.size() << ",";
-    output << remote_locators.unicast.max_size() << ",";
-    output << remote_locators.unicast.size() << "(";
-    for (auto it = remote_locators.multicast.begin(); it != remote_locators.multicast.end(); ++it)
+    // Store multicast locatos
+    output << "{";
+    if (remote_locators.multicast.size() >= 1)
     {
-        output << *it << ",";
+        output << "MULTICAST:[";
+        output << remote_locators.multicast[0];
+        for (auto it = remote_locators.multicast.begin() + 1; it != remote_locators.multicast.end(); ++it)
+        {
+            output << "," << *it;
+        }
+        output << "]";
     }
-    for (auto it = remote_locators.unicast.begin(); it != remote_locators.unicast.end(); ++it)
+
+    // Store unicast locatos
+    if (remote_locators.unicast.size() >= 1)
     {
-        output << *it << ",";
+        output << "UNICAST:[";
+        output << remote_locators.unicast[0];
+        for (auto it = remote_locators.unicast.begin() + 1; it != remote_locators.unicast.end(); ++it)
+        {
+            output << "," << *it;
+        }
+        output << "]";
     }
-    output << ")";
+    output << "}";
     return output;
 }
 
@@ -159,43 +171,52 @@ inline std::istream& operator >>(
         RemoteLocatorList& locList)
 {
     std::istream::sentry s(input);
+    locList = RemoteLocatorList();
 
     if (s)
     {
-        unsigned long size_m, size_m_max, size_u, size_u_max;
-        char coma;
+        char punct, letter;
         Locator_t l;
         std::ios_base::iostate excp_mask = input.exceptions();
 
         try
         {
             input.exceptions(excp_mask | std::ios_base::failbit | std::ios_base::badbit);
+            std::stringbuf sb_aux;
+            Locator_t locator;
 
-            input >> size_m_max >> coma >> size_m >> coma;
-            input >> size_u_max >> coma >> size_u >> coma; // last coma is (
+            // Read {_
+            input >> punct >> letter;
 
-            // locList = RemoteLocatorList(size_u_max, size_m_max);
-
-            for (unsigned int i = 0; i < size_m; ++i)
+            if (letter == 'M')
             {
-                input >> l >> coma;
-                if ( coma != ',')
+                input.get(sb_aux, '[');
+
+                // Read every locator
+                while (punct != ']')
                 {
-                    input.setstate(std::ios_base::failbit);
+                    input >> locator;
+                    locList.add_multicast_locator(locator);
+                    input >> punct;
                 }
-                locList.add_multicast_locator(l);
+
+                input >> letter;
             }
 
-            for (unsigned int i = 0; i < size_u; ++i)
+            if (letter == 'U')
             {
-                input >> l >> coma;
-                if ( coma != ',')
+                input >> punct;
+
+                // Read every locator
+                while (punct != ']')
                 {
-                    input.setstate(std::ios_base::failbit);
+                    input >> locator;
+                    locList.add_unicast_locator(locator);
+                    input >> punct;
                 }
-                locList.add_unicast_locator(l);
+
+                input >> letter;
             }
-            input >> coma; // read )
         }
         catch (std::ios_base::failure& )
         {

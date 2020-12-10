@@ -333,7 +333,7 @@ inline std::istream& operator >>(
             }
             else
             {
-                kind = LOCATOR_PORT_INVALID;
+                kind = LOCATOR_KIND_INVALID;
             }
 
             // Get char :[
@@ -353,6 +353,7 @@ inline std::istream& operator >>(
         }
         catch (std::ios_base::failure& )
         {
+            loc.kind = LOCATOR_KIND_INVALID;
         }
 
         input.exceptions(excp_mask);
@@ -645,10 +646,20 @@ inline std::ostream& operator <<(
         std::ostream& output,
         const LocatorList_t& locList)
 {
-    for (auto it = locList.m_locators.begin(); it != locList.m_locators.end(); ++it)
+    output << "[";
+    if (locList.size() > 0)
     {
-        output << *it << ",";
+        output << *(locList.begin()) ;
+        for (auto it = locList.m_locators.begin(); it != locList.m_locators.end(); ++it)
+        {
+            output << "," << *it;
+        }
     }
+    else
+    {
+        output << "_";
+    }
+    output << "]";
     return output;
 }
 
@@ -660,25 +671,23 @@ inline std::istream& operator >>(
 
     if (s)
     {
-        char coma;
-        Locator_t l;
+        char punct;
+        Locator_t loc;
         std::ios_base::iostate excp_mask = input.exceptions();
 
         try
         {
             input.exceptions(excp_mask | std::ios_base::failbit | std::ios_base::badbit);
 
-            input >> l;
-            locList.push_back(l);
+            // Get []
+            input >> punct;
 
-            for (int i = 1; i < 12; ++i)
+            while (punct != ']')
             {
-                input >> coma >> l;
-                if ( coma != ',' )
-                {
-                    input.setstate(std::ios_base::failbit);
+                input >> loc >> punct;
+                if (loc.kind != LOCATOR_KIND_INVALID){
+                    locList.push_back(loc);
                 }
-                locList.push_back(l);
             }
         }
         catch (std::ios_base::failure& )
