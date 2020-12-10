@@ -272,17 +272,17 @@ XMLP_ret XMLEndpointParser::loadXMLReaderEndpoint(
             const char* typeName = element->Attribute(DATA_TYPE);
             const char* kind = element->Attribute(KIND);
 
-            rdata->topicName() = topicName ? std::string(topicName) : std::string("");
-            rdata->typeName() = typeName ? std::string(typeName) : std::string("");
+            rdata->topicName((topicName != nullptr) ? std::string(topicName) : std::string(""));
+            rdata->typeName((topicName != nullptr) ? std::string(typeName) : std::string(""));
             std::string auxString(kind ? kind : "");
             if (auxString == _NO_KEY)
             {
-                rdata->topicKind() = NO_KEY;
+                rdata->topicKind(NO_KEY);
                 rdata->guid().entityId.value[3] = 0x04;
             }
             else if (auxString == _WITH_KEY)
             {
-                rdata->topicKind() = WITH_KEY;
+                rdata->topicKind(WITH_KEY);
                 rdata->guid().entityId.value[3] = 0x07;
             }
             else
