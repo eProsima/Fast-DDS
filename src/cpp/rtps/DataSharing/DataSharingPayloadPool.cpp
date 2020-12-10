@@ -38,23 +38,18 @@ bool DataSharingPayloadPool::release_payload(
     return true;
 }
 
-DataSharingPayloadPool::Segment::Offset DataSharingPayloadPool::advance(
-        Segment::Offset offset) const
+uint32_t DataSharingPayloadPool::advance(
+        uint32_t index) const
 {
-    offset += descriptor_->aligned_payload_size;
-    if (offset >= descriptor_->payloads_limit)
-    {
-        offset = descriptor_->payloads_base;
-    }
-    return offset;
+    return (++index % descriptor_->history_size);
 }
 
-DataSharingPayloadPool::Segment::Offset DataSharingPayloadPool::begin() const
+uint32_t DataSharingPayloadPool::begin() const
 {
     return descriptor_->notified_begin;
 }
 
-DataSharingPayloadPool::Segment::Offset DataSharingPayloadPool::end() const
+uint32_t DataSharingPayloadPool::end() const
 {
     return descriptor_->notified_end;
 }
@@ -62,11 +57,6 @@ DataSharingPayloadPool::Segment::Offset DataSharingPayloadPool::end() const
 bool DataSharingPayloadPool::emtpy() const
 {
     return descriptor_->notified_begin == descriptor_->notified_end;
-}
-
-bool DataSharingPayloadPool::full() const
-{
-    return descriptor_->free_payloads == 0;
 }
 
 const GUID_t& DataSharingPayloadPool::writer() const
@@ -94,7 +84,8 @@ std::shared_ptr<DataSharingPayloadPool> DataSharingPayloadPool::get_reader_pool(
 std::shared_ptr<DataSharingPayloadPool> DataSharingPayloadPool::get_writer_pool(
         const PoolConfig& config)
 {
-    assert (config.memory_policy == PREALLOCATED_MEMORY_MODE);
+    assert (config.memory_policy == PREALLOCATED_MEMORY_MODE ||
+            config.memory_policy == PREALLOCATED_WITH_REALLOC_MEMORY_MODE);
 
     return std::make_shared<WriterPool>(
         config.maximum_size,

@@ -77,30 +77,51 @@ public:
         return "fast_datasharing";
     }
 
-    constexpr static const char* pool_chunck_name()
+    constexpr static const char* descriptor_chunk_name()
     {
-        return "pool";
+        return "descriptor";
+    }
+
+    constexpr static const char* history_chunk_name()
+    {
+        return "history";
     }
 
     /**
      * Fills the metadata of the shared payload from the cache change information
-     * and advances the reference to the end of notified changes
+     * and adds the payload's offset to the shared history
      */
-    virtual void prepare_for_notification(const CacheChange_t* cache_change) = 0;
+    virtual void add_to_shared_history(const CacheChange_t* cache_change) = 0;
 
     /**
-     * Advances a pointer in the pool to the next payload
+     * Removes the payload's offset to the shared history
+     * 
+     * Payloads must be removed from the history in the same order
+     * they where added, i.e., payload for sequence number 7
+     * cannot be removed before payload for sequence number 5.  
+     */
+    virtual void remove_from_shared_history(const CacheChange_t* cache_change) = 0;
+
+    /**
+     * Advances an index to the history to the next position
      */
     uint32_t advance(
-            uint32_t pointer) const;
+            uint32_t index) const;
 
+    /**
+     * The index of the first valid position in the history
+     */
     uint32_t begin() const;
 
+    /**
+     * The index of one past the last valid position in the history
+     */
     uint32_t end() const;
 
+    /**
+     * Whether the history is empty or not
+     */
     bool emtpy() const;
-
-    bool full() const;
 
     const GUID_t& writer() const;
 
@@ -286,13 +307,10 @@ protected:
 
     struct alignas(8) PoolDescriptor
     {
-        Segment::Offset payloads_base;      //< Base address for the payloads buffer
-        Segment::Offset payloads_limit;     //< One beyond the reserved for the payloadas buffer
-        Segment::Offset notified_begin;     //< The oldest payload in the pool already notified (ready to read)
-        Segment::Offset notified_end;       //< The payload that will be notified next
-        uint32_t free_payloads;             //< Number of free payloads
-        uint32_t aligned_payload_size;      //< The offset from a payload to the next in the buffer
-        uint32_t liveliness_sequence;       //< The ID of the last liveliness assertion sent by the writer
+        uint32_t history_size;          //< Number of payloads in the history
+        uint32_t notified_begin;        //< The index of the oldest history entry already notified (ready to read)
+        uint32_t notified_end;          //< The index of the history entry that will be notified next
+        uint32_t liveliness_sequence;   //< The ID of the last liveliness assertion sent by the writer
     };
 #pragma warning(pop)
 
@@ -305,25 +323,19 @@ protected:
         return ss.str();
     }
 
-    static size_t aligned_node_size (size_t payload_size)
+    static size_t node_size (size_t payload_size)
     {
         return (payload_size + PayloadNode::data_offset + alignof(PayloadNode) - 1)
             & ~(alignof(PayloadNode) - 1);
-    }
-
-    constexpr static size_t aligned_descriptor_size()
-    {
-        return (sizeof(PoolDescriptor) + alignof(PoolDescriptor) - 1)
-                & ~(alignof(PoolDescriptor) - 1);
     }
 
     GUID_t segment_id_;         //< The ID of the segment
     std::string segment_name_;  //< Segment name
 
     std::unique_ptr<Segment> segment_;    //< Shared memory segment
-    //eprosima::fastdds::rtps::RobustExclusiveLock segment_name_lock_;        //< Segment access lock
 
-    octet* payloads_buffer_;        //< Shared buffer of payloads
+    octet* payloads_pool_;          //< Shared pool of payloads
+    Segment::Offset* history_;      //< Offsets of the payloads that are currently in the writer's history
     PoolDescriptor* descriptor_;    //< Shared descriptor of the pool
 
 };

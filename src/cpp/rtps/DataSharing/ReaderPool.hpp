@@ -102,7 +102,7 @@ public:
         }
 
         // Get the pool description
-        descriptor_ = segment_->get().find<PoolDescriptor>("descriptor").first;
+        descriptor_ = segment_->get().find<PoolDescriptor>(descriptor_chunk_name()).first;
         if (!descriptor_)
         {
             segment_.reset();
@@ -111,8 +111,15 @@ public:
             return false;
         }
 
-        // Get the pool buffer
-        payloads_buffer_ = static_cast<octet*>(segment_->get_address_from_offset(descriptor_->payloads_base));
+        // Get the history
+        history_ = segment_->get().find<Segment::Offset>(history_chunk_name()).first;
+        if (!history_)
+        {
+            segment_.reset();
+
+            logError(HISTORY_DATASHARING_PAYLOADPOOL, "Failed to open payload history " << segment_name_);
+            return false;
+        }
 
         // Set the reading pointer
         if (is_volatile_)
@@ -132,7 +139,8 @@ bool get_next_unread_payload(
 {
     while (next_payload_ != end())
     {
-        PayloadNode* payload = static_cast<PayloadNode*>(segment_->get_address_from_offset(next_payload_));
+        // history_[next_payload_] contains the offset to the payload
+        PayloadNode* payload = static_cast<PayloadNode*>(segment_->get_address_from_offset(history_[next_payload_]));
 
         // The SN is the first thing to be invalidated on the writer
         cache_change.sequenceNumber = payload->sequence_number();
@@ -169,7 +177,12 @@ bool get_next_unread_payload(
     return false;
 }
 
-void prepare_for_notification(const CacheChange_t* /*cache_change*/) override
+void add_to_shared_history(const CacheChange_t* /*cache_change*/) override
+{
+    // Only the Writer pool can do this
+}
+
+void remove_from_shared_history(const CacheChange_t* /*cache_change*/) override
 {
     // Only the Writer pool can do this
 }
@@ -181,8 +194,8 @@ void assert_liveliness() override
 
 private:
 
-    bool is_volatile_;              //< Whether the reader is volatile or not
-    Segment::Offset next_payload_;  //< Next payload to read
+    bool is_volatile_;       //< Whether the reader is volatile or not
+    uint32_t next_payload_;  //< Index of the next history position to read
 };
 
 }  // namespace rtps

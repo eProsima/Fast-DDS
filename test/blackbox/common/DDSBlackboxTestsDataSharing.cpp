@@ -20,7 +20,6 @@
 #include "PubSubWriter.hpp"
 #include <fastrtps/transport/test_UDPv4Transport.h>
 #include <fastrtps/xmlparser/XMLProfileManager.h>
-#include <fastdds/dds/log/Log.hpp>
 
 #include <gtest/gtest.h>
 
