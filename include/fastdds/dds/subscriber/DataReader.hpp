@@ -314,6 +314,71 @@ public:
             InstanceStateMask instance_states = ANY_INSTANCE_STATE);
 
     /**
+     * Access a collection of data samples from the DataReader.
+     *
+     * This operation accesses a collection of data values from the DataReader where all the samples belong to a
+     * single instance. The behavior is similar to @ref read_instance, except that the actual instance is not
+     * directly specified. Rather, the samples will all belong to the 'next' instance with @c instance_handle
+     * 'greater' than the specified 'previous_handle' that has available samples.
+     *
+     * This operation implies the existence of a total order 'greater-than' relationship between the instance
+     * handles. The specifics of this relationship are not all important and are implementation specific. The
+     * important thing is that, according to the middleware, all instances are ordered relative to each other.
+     * This ordering is between the instance handles, and should not depend on the state of the instance (e.g.
+     * whether it has data or not) and must be defined even for instance handles that do not correspond to instances
+     * currently managed by the DataReader. For the purposes of the ordering, it should be 'as if' each instance
+     * handle was represented as an integer.
+     *
+     * The behavior of this operation is 'as if' the DataReader invoked @ref read_instance, passing the smallest
+     * @c instance_handle among all the ones that: (a) are greater than @c previous_handle, and (b) have available
+     * samples (i.e. samples that meet the constraints imposed by the specified states).
+     *
+     * The special value @ref HANDLE_NIL is guaranteed to be 'less than' any valid @c instance_handle. So the use
+     * of the parameter value @c previous_handle == @ref HANDLE_NIL will return the samples for the instance which
+     * has the smallest @c instance_handle among all the instances that contain available samples.
+     *
+     * This operation is intended to be used in an application-driven iteration, where the application starts by
+     * passing @c previous_handle == @ref HANDLE_NIL, examines the samples returned, and then uses the
+     * @c instance_handle returned in the @ref SampleInfo as the value of the @c previous_handle argument to the
+     * next call to @ref read_next_instance. The iteration continues until @ref read_next_instance fails with
+     * RETCODE_NO_DATA.
+     *
+     * Note that it is possible to call the @ref read_next_instance operation with a @c previous_handle that does not
+     * correspond to an instance currently managed by the DataReader. This is because as stated earlier the
+     * 'greater-than' relationship is defined even for handles not managed by the DataReader. One practical situation
+     * where this may occur is when an application is iterating through all the instances, takes all the samples of a
+     * @ref NOT_ALIVE_NO_WRITERS_INSTANCE_STATE instance, returns the loan (at which point the instance information
+     * may be removed, and thus the handle becomes invalid), and tries to read the next instance.
+     *
+     * The behavior of this operation follows the same rules as the @read operation regarding the pre-conditions and
+     * post-conditions for the @c data_values and @c sample_infos. Similar to @ref read, this operation may 'loan'
+     * elements to the output collections, which must then be returned by means of @ref return_loan.
+     *
+     * If the DataReader has no samples that meet the constraints, the operations fails with RETCODE_NO_DATA.
+     *
+     * @param [in,out] data_values     A LoanableCollection object where the received data samples will be returned.
+     * @param [in,out] sample_infos    A SampleInfoSeq object where the received sample info will be returned.
+     * @param [in]     max_samples     The maximum number of samples to be returned. If the special value
+     *                                 @ref LENGTH_UNLIMITED is provided, as many samples will be returned as are
+     *                                 available, up to the limits described in the documentation for @ref read().
+     * @param [in]     previous_handle The 'next smallest' instance with a value greater than this value that has
+     *                                 available samples will be returned.
+     * @param [in]     sample_states   Only data samples with @c sample_state matching one of these will be returned.
+     * @param [in]     view_states     Only data samples with @c view_state matching one of these will be returned.
+     * @param [in]     instance_states Only data samples with @c instance_state matching one of these will be returned.
+     *
+     * @return Any of the standard return codes.
+     */
+    RTPS_DllAPI ReturnCode_t read_next_instance(
+            LoanableCollection& data_values,
+            SampleInfoSeq& sample_infos,
+            int32_t max_samples = LENGTH_UNLIMITED,
+            const InstanceHandle_t& previous_handle = HANDLE_NIL,
+            SampleStateMask sample_states = ANY_SAMPLE_STATE,
+            ViewStateMask view_states = ANY_VIEW_STATE,
+            InstanceStateMask instance_states = ANY_INSTANCE_STATE);
+
+    /**
      * @brief This operation copies the next, non-previously accessed Data value from the DataReader; the operation also
      * copies the corresponding SampleInfo. The implied order among the samples stored in the DataReader is the same as for
      * the read operation.
