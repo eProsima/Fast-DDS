@@ -29,8 +29,8 @@ public:
 
     typedef std::shared_ptr<DynamicType> Base;
 
-    using Base::operator->;
-    using Base::operator*;
+    using Base::operator ->;
+    using Base::operator *;
     using Base::operator bool;
 
     DynamicType_ptr()
@@ -55,15 +55,18 @@ public:
     RTPS_DllAPI DynamicType_ptr& operator =(
             DynamicType*);
 
-    RTPS_DllAPI bool operator!=(std::nullptr_t) const
+    RTPS_DllAPI bool operator !=(
+            std::nullptr_t) const
     {
-            return bool(*this);
+        return bool(*this);
     }
 
-    RTPS_DllAPI bool operator==(std::nullptr_t) const
+    RTPS_DllAPI bool operator ==(
+            std::nullptr_t) const
     {
-            return !*this;
+        return !*this;
     }
+
 };
 
 } // namespace types
