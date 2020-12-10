@@ -353,7 +353,7 @@ bool StatelessWriter::datasharing_delivery(
     auto pool = std::dynamic_pointer_cast<DataSharingPayloadPool>(payload_pool_);
     assert(pool != nullptr);
 
-    pool->prepare_for_notification(change);
+    pool->add_to_shared_history(change);
     logInfo(RTPS_WRITER, "Notifying readers of cache change with SN " << change->sequenceNumber);
     for (std::unique_ptr<ReaderLocator>& reader : matched_datasharing_readers_)
     {
@@ -505,6 +505,16 @@ bool StatelessWriter::change_removed_by_history(
         CacheChange_t* change)
 {
     std::lock_guard<RecursiveTimedMutex> guard(mp_mutex);
+
+    // remove from datasharing pool history
+    if (is_datasharing_compatible())
+    {
+        auto pool = std::dynamic_pointer_cast<DataSharingPayloadPool>(payload_pool_);
+        assert (pool != nullptr);
+
+        pool->remove_from_shared_history(change);
+        logInfo(RTPS_WRITER, "Removing shared cache change with SN " << change->sequenceNumber);
+    }
 
     if (unsent_changes_.remove_if(
                 [change](ChangeForReader_t& cptr)

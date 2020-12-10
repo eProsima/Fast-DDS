@@ -140,11 +140,6 @@ public:
         return true;
     }
 
-    bool full() const
-    {
-        return false;
-    }
-
     const GUID_t& writer() const
     {
         return writer_guid_;

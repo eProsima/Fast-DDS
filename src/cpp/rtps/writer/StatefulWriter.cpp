@@ -433,7 +433,7 @@ bool StatefulWriter::datasharing_delivery(
     auto pool = std::dynamic_pointer_cast<DataSharingPayloadPool>(payload_pool_);
     assert (pool != nullptr);
 
-    pool->prepare_for_notification(change);
+    pool->add_to_shared_history(change);
     logInfo(RTPS_WRITER, "Notifying readers of cache change with SN " << change->sequenceNumber);
 
     for (ReaderProxy* reader : matched_datasharing_readers_)
@@ -736,6 +736,16 @@ bool StatefulWriter::change_removed_by_history(
             return false;
         }
     );
+
+    // remove from datasharing pool history
+    if (is_datasharing_compatible())
+    {
+        auto pool = std::dynamic_pointer_cast<DataSharingPayloadPool>(payload_pool_);
+        assert (pool != nullptr);
+
+        pool->remove_from_shared_history(a_change);
+        logInfo(RTPS_WRITER, "Removing shared cache change with SN " << a_change->sequenceNumber);
+    }
 
     may_remove_change_ = 2;
     may_remove_change_cond_.notify_one();
