@@ -195,7 +195,7 @@ public:
      */
     RTPS_DllAPI virtual bool get_key(
             void* data,
-            fastrtps::rtps::InstanceHandle_t* i_handle,
+            InstanceHandle_t* i_handle,
             bool force_md5 = false)
     {
         return get()->getKey(data, i_handle, force_md5);

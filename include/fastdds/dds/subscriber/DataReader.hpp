@@ -338,7 +338,7 @@ public:
      * @brief Getter for the associated InstanceHandle
      * @return Copy of the InstanceHandle
      */
-    RTPS_DllAPI fastrtps::rtps::InstanceHandle_t get_instance_handle() const;
+    RTPS_DllAPI InstanceHandle_t get_instance_handle() const;
 
     /**
      * Getter for the data type
@@ -357,7 +357,7 @@ public:
      * @return The deadline missed status
      */
     RTPS_DllAPI ReturnCode_t get_requested_deadline_missed_status(
-            fastrtps::RequestedDeadlineMissedStatus& status);
+            RequestedDeadlineMissedStatus& status);
 
     /**
      * @brief Get the requested incompatible qos status
@@ -416,7 +416,7 @@ public:
     /* TODO
        RTPS_DllAPI bool get_key_value(
             void* data,
-            const fastrtps::rtps::InstanceHandle_t& handle);
+            const InstanceHandle_t& handle);
      */
 
     /**

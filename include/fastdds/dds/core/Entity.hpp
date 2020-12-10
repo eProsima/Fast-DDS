@@ -21,7 +21,7 @@
 #define _FASTDDS_ENTITY_HPP_
 
 #include <fastdds/dds/core/status/StatusMask.hpp>
-#include <fastdds/rtps/common/InstanceHandle.h>
+#include <fastdds/dds/topic/TypeSupport.hpp>
 #include <fastrtps/types/TypesBase.h>
 
 namespace eprosima {
@@ -99,7 +99,7 @@ public:
      * @brief Retrieves the instance handler that represents the Entity
      * @return Reference to the InstanceHandle
      */
-    const fastrtps::rtps::InstanceHandle_t& get_instance_handle() const
+    const InstanceHandle_t& get_instance_handle() const
     {
         return instance_handle_;
     }
@@ -126,7 +126,7 @@ protected:
      * @param handle Instance Handle
      */
     RTPS_DllAPI void set_instance_handle(
-            const fastrtps::rtps::InstanceHandle_t& handle)
+            const InstanceHandle_t& handle)
     {
         instance_handle_ = handle;
     }
@@ -138,7 +138,7 @@ protected:
     StatusMask status_changes_;
 
     //! InstanceHandle associated to the Entity
-    fastrtps::rtps::InstanceHandle_t instance_handle_;
+    InstanceHandle_t instance_handle_;
 
     //! Boolean that states if the Entity is enabled or disabled
     bool enable_;

@@ -309,7 +309,7 @@ public:
      * Returns the Publisher's handle.
      * @return InstanceHandle of this Publisher.
      */
-    RTPS_DllAPI const fastrtps::rtps::InstanceHandle_t& get_instance_handle() const;
+    RTPS_DllAPI const InstanceHandle_t& get_instance_handle() const;
 
 protected:
 

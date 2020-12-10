@@ -201,7 +201,7 @@ const DataReaderListener* DataReader::get_listener() const
 /* TODO
    bool DataReader::get_key_value(
         void* data,
-        const rtps::InstanceHandle_t& handle)
+        const InstanceHandle_t& handle)
    {
     return impl->get_key_value(...);
    }

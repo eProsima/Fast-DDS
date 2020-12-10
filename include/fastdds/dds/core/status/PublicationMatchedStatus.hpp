@@ -20,8 +20,8 @@
 #define _PUBLICATION_MATCHED_STATUS_HPP_
 
 #include <cstdint>
-#include <fastrtps/rtps/common/InstanceHandle.h>
 #include <fastdds/dds/core/status/MatchedStatus.hpp>
+#include <fastdds/dds/topic/TypeSupport.hpp>
 
 namespace eprosima {
 namespace fastdds {
@@ -31,7 +31,7 @@ namespace dds {
 struct PublicationMatchedStatus: public MatchedStatus
 {
 	//! @brief Handle to the last reader that matched the writer causing the status to change
-	eprosima::fastrtps::rtps::InstanceHandle_t last_subscription_handle;
+	InstanceHandle_t last_subscription_handle;
 };
 
 } // namespace dds
