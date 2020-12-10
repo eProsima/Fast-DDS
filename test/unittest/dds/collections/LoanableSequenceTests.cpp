@@ -16,6 +16,7 @@
 #include <fastdds/dds/log/Log.hpp>
 
 #include <array>
+#include <atomic>
 #include <memory>
 #include <string>
 
@@ -382,7 +383,8 @@ TEST(LoanableSequenceTests, loan_unloan)
     // Note: When uut is deleted upon exiting its scope, a warning log will be produced.
     // We will check the generation of that warning with a custom consumer.
     Log::SetVerbosity(Log::Kind::Warning);
-    bool log_has_been_detected = false;
+    std::atomic_bool log_has_been_detected;
+    log_has_been_detected.store(false);
 
     class CustomLogConsumer : public LogConsumer
     {
@@ -391,7 +393,7 @@ TEST(LoanableSequenceTests, loan_unloan)
     public:
 
         CustomLogConsumer(
-                bool* log_detected_ptr)
+                std::atomic_bool* log_detected_ptr)
             : log_detected_(log_detected_ptr)
         {
         }
@@ -399,15 +401,16 @@ TEST(LoanableSequenceTests, loan_unloan)
         void Consume(
                 const Log::Entry& entry) override
         {
-            *log_detected_ |=
-                    (Log::Kind::Warning == entry.kind) &&
-                    (std::string(entry.context.function) == log_function);
+            if ((Log::Kind::Warning == entry.kind) &&
+                    (std::string(entry.context.function) == log_function))
+            {
+                log_detected_->store(true, std::memory_order::memory_order_seq_cst);
+            }
         }
 
-        bool* log_detected_;
+        std::atomic_bool* log_detected_;
     };
     std::unique_ptr<CustomLogConsumer> consumer(new CustomLogConsumer(&log_has_been_detected));
-    Log::ClearConsumers();
     Log::RegisterConsumer(std::move(consumer));
 
     {
@@ -487,7 +490,7 @@ TEST(LoanableSequenceTests, loan_unloan)
     }
 
     Log::Flush();
-    EXPECT_TRUE(log_has_been_detected);
+    EXPECT_TRUE(log_has_been_detected.load(std::memory_order::memory_order_seq_cst));
 }
 
 void perform_accessors_test_step(
