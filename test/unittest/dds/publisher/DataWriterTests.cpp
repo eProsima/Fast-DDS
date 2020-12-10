@@ -211,7 +211,7 @@ TEST(DataWriterTests, ChangeDataWriterQos)
     ASSERT_TRUE(DomainParticipantFactory::get_instance()->delete_participant(participant) == ReturnCode_t::RETCODE_OK);
 }
 
-TEST(DataWriterTests, FocedDataSharing)
+TEST(DataWriterTests, ForcedDataSharing)
 {
     DomainParticipant* participant =
             DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
@@ -274,6 +274,11 @@ TEST(DataWriterTests, FocedDataSharing)
 
     // DataSharing forced, bounded topic data type, security enabled
     static const char* certs_path = std::getenv("CERTS_PATH");
+    if (certs_path == nullptr)
+    {
+        std::cout << "Cannot get enviroment variable CERTS_PATH" << std::endl;
+        exit(-1);
+    }
 
     fastrtps::rtps::PropertyPolicy security_property;
     security_property.properties().emplace_back(fastrtps::rtps::Property("dds.sec.auth.plugin",
