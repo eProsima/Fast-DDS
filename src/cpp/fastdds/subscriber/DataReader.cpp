@@ -136,6 +136,24 @@ ReturnCode_t DataReader::read_next_instance(
     return ReturnCode_t::RETCODE_UNSUPPORTED;
 }
 
+ReturnCode_t DataReader::take(
+        LoanableCollection& data_values,
+        SampleInfoSeq& sample_infos,
+        int32_t max_samples,
+        SampleStateMask sample_states,
+        ViewStateMask view_states,
+        InstanceStateMask instance_states)
+{
+    static_cast<void>(data_values);
+    static_cast<void>(sample_infos);
+    static_cast<void>(max_samples);
+    static_cast<void>(sample_states);
+    static_cast<void>(view_states);
+    static_cast<void>(instance_states);
+
+    return ReturnCode_t::RETCODE_UNSUPPORTED;
+}
+
 ReturnCode_t DataReader::take_instance(
         LoanableCollection& data_values,
         SampleInfoSeq& sample_infos,

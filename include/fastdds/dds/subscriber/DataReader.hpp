@@ -401,6 +401,45 @@ public:
     /**
      * Access a collection of data samples from the DataReader.
      *
+     * This operation accesses a collection of data-samples from the DataReader and a corresponding collection of
+     * SampleInfo structures, and 'removes' them from the DataReader. The operation will return either a 'list' of
+     * samples or else a single sample. This is controlled by the @ref PresentationQosPolicy using the same logic
+     * as for the @ref read operation.
+     *
+     * The act of taking a sample removes it from the DataReader so it cannot be 'read' or 'taken' again. If the
+     * sample belongs to the most recent generation of the instance, it will also set the @c view_state of the
+     * instance to NOT_NEW. It will not affect the @c instance_state of the instance.
+     *
+     * The behavior of the take operation follows the same rules than the @ref read operation regarding the
+     * pre-conditions and post-conditions for the @c data_values and @c sample_infos collections. Similar to
+     * @ref read, the take operation may 'loan' elements to the output collections which must then be returned by
+     * means of @ref return_loan. The only difference with @ref read is that, as stated, the samples returned by
+     * take will no longer be accessible to successive calls to read or take.
+     *
+     * If the DataReader has no samples that meet the constraints, the operations fails with RETCODE_NO_DATA.
+     *
+     * @param [in,out] data_values     A LoanableCollection object where the received data samples will be returned.
+     * @param [in,out] sample_infos    A SampleInfoSeq object where the received sample info will be returned.
+     * @param [in]     max_samples     The maximum number of samples to be returned. If the special value
+     *                                 @ref LENGTH_UNLIMITED is provided, as many samples will be returned as are
+     *                                 available, up to the limits described in the documentation for @ref read().
+     * @param [in]     sample_states   Only data samples with @c sample_state matching one of these will be returned.
+     * @param [in]     view_states     Only data samples with @c view_state matching one of these will be returned.
+     * @param [in]     instance_states Only data samples with @c instance_state matching one of these will be returned.
+     *
+     * @return Any of the standard return codes.
+     */
+    RTPS_DllAPI ReturnCode_t take(
+            LoanableCollection& data_values,
+            SampleInfoSeq& sample_infos,
+            int32_t max_samples = LENGTH_UNLIMITED,
+            SampleStateMask sample_states = ANY_SAMPLE_STATE,
+            ViewStateMask view_states = ANY_VIEW_STATE,
+            InstanceStateMask instance_states = ANY_INSTANCE_STATE);
+
+    /**
+     * Access a collection of data samples from the DataReader.
+     *
      * This operation accesses a collection of data values from the DataReader and 'removes' them from the DataReader.
      *
      * This operation has the same behavior as @ref read_instance, except that the samples are 'taken' from the
