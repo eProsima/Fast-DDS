@@ -1094,6 +1094,7 @@ bool RTPSParticipantImpl::createAndAssociateReceiverswithEndpoint(
     {
         //Default unicast
         pend->getAttributes().unicastLocatorList = m_att.defaultUnicastLocatorList;
+        pend->getAttributes().multicastLocatorList = m_att.defaultMulticastLocatorList;
     }
     createReceiverResources(pend->getAttributes().unicastLocatorList, false, true);
     createReceiverResources(pend->getAttributes().multicastLocatorList, false, true);
