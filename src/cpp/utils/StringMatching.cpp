@@ -150,6 +150,8 @@ bool StringMatching::matchString(
     return false;
 }
 
+#endif // if defined(__cplusplus_winrt)
+
 std::vector<std::string> StringMatching::split(const std::string& str, const std::string& delim)
 {
     std::vector<std::string> tokens;
@@ -177,8 +179,6 @@ bool StringMatching::readUint32(uint32_t& n, std::string const& str, int base)
     n = value;
     return true;
 }
-
-#endif // if defined(__cplusplus_winrt)
 
 } // namespace rtps
 } /* namespace rtps */

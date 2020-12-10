@@ -37,7 +37,7 @@ public:
                 {
                 };
 
-        send_lambda_ = [this, &transport] (
+        send_lambda_ = [this, &transport](
             const fastrtps::rtps::octet* data,
             uint32_t dataSize,
             fastrtps::rtps::LocatorsIterator* destination_locators_begin,
@@ -60,20 +60,6 @@ public:
         {
             clean_up();
         }
-    }
-
-    static ChainingSenderResource* cast(
-            TransportInterface& transport,
-            SenderResource* sender_resource)
-    {
-        ChainingSenderResource* returned_resource = nullptr;
-
-        if (sender_resource->kind() == transport.kind())
-        {
-            returned_resource = dynamic_cast<ChainingSenderResource*>(sender_resource);
-        }
-
-        return returned_resource;
     }
 
 private:
