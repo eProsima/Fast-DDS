@@ -536,6 +536,43 @@ public:
     ///@}
 
     /**
+     * This operation indicates to the DataReader that the application is done accessing the collection of
+     * @c data_values and @c sample_infos obtained by some earlier invocation of @ref read or @ref take on the
+     * DataReader.
+     *
+     * The @c data_values and @c sample_infos must belong to a single related ‘pair’; that is, they should correspond
+     * to a pair returned from a single call to read or take. The @c data_values and @c sample_infos must also have
+     * been obtained from the same DataReader to which they are returned. If either of these conditions is not met,
+     * the operation will fail and return RETCODE_PRECONDITION_NOT_MET.
+     *
+     * This operation allows implementations of the @ref read and @ref take operations to "loan" buffers from the
+     * DataReader to the application and in this manner provide "zero-copy" access to the data. During the loan, the
+     * DataReader will guarantee that the data and sample-information are not modified.
+     *
+     * It is not necessary for an application to return the loans immediately after the read or take calls. However,
+     * as these buffers correspond to internal resources inside the DataReader, the application should not retain them
+     * indefinitely.
+     *
+     * The use of the @ref return_loan operation is only necessary if the read or take calls "loaned" buffers to the
+     * application. This only occurs if the @c data_values and @c sample_infos collections had <tt> max_len == 0 </tt>
+     * at the time read or take was called. The application may also examine the @c owns property of the collection to
+     * determine if there is an outstanding loan. However, calling @ref return_loan on a collection that does not have
+     * a loan is safe and has no side effects.
+     *
+     * If the collections had a loan, upon return from return_loan the collections will have <tt> max_len == 0 </tt>.
+     *
+     * @param [in,out] data_values   A LoanableCollection object where the received data samples were obtained from
+     *                               an earlier invocation of read or take on this DataReader.
+     * @param [in,out] sample_infos  A SampleInfoSeq object where the received sample infos were obtained from
+     *                               an earlier invocation of read or take on this DataReader.
+     *
+     * @return Any of the standard return codes.
+     */
+    RTPS_DllAPI ReturnCode_t return_loan(
+            LoanableCollection& data_values,
+            SampleInfoSeq& sample_infos);
+
+    /**
      * @brief Returns information about the first untaken sample.
      * @param [out] info Pointer to a SampleInfo_t structure to store first untaken sample information.
      * @return RETCODE_OK if sample info was returned. RETCODE_NO_DATA if there is no sample to take.

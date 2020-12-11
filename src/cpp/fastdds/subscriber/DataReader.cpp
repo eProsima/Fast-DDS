@@ -194,6 +194,16 @@ ReturnCode_t DataReader::take_next_instance(
     return ReturnCode_t::RETCODE_UNSUPPORTED;
 }
 
+ReturnCode_t DataReader::return_loan(
+        LoanableCollection& data_values,
+        SampleInfoSeq& sample_infos)
+{
+    static_cast<void>(data_values);
+    static_cast<void>(sample_infos);
+
+    return ReturnCode_t::RETCODE_UNSUPPORTED;
+}
+
 ReturnCode_t DataReader::read_next_sample(
         void* data,
         SampleInfo* info)
