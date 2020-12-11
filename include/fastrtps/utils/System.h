@@ -31,10 +31,11 @@ namespace fastrtps {
  */
 class System
 {
-    public:
-        //! Returns current process identifier.
-        FASTDDS_DEPRECATED_UNTIL(3, "eprosima::fastrtps::System::GetPID", "")
-        RTPS_DllAPI static int GetPID();
+public:
+
+    //! Returns current process identifier.
+    FASTDDS_DEPRECATED_UNTIL(3, "eprosima::fastrtps::System::GetPID", "")
+    RTPS_DllAPI static int GetPID();
 };
 
 } /* namespace fastrtps */
