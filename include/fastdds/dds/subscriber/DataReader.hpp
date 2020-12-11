@@ -98,20 +98,23 @@ protected:
 public:
 
     /**
-     * @brief Destructor
+     * @brief Destructor.
      */
     RTPS_DllAPI virtual ~DataReader();
 
     /**
-     * @brief This operation enables the DataReader
+     * @brief This operation enables the DataReader.
+     *
      * @return RETCODE_OK is successfully enabled. RETCODE_PRECONDITION_NOT_MET if the Subscriber creating this
      *         DataReader is not enabled.
      */
     RTPS_DllAPI ReturnCode_t enable() override;
 
     /**
-     * Method to block the current thread until an unread message is available
-     * @param timeout Max blocking time for this operation
+     * Method to block the current thread until an unread message is available.
+     *
+     * @param [in] timeout Max blocking time for this operation.
+     *
      * @return true if there is new unread message, false if timeout
      */
     RTPS_DllAPI bool wait_for_unread_message(
@@ -379,20 +382,23 @@ public:
             InstanceStateMask instance_states = ANY_INSTANCE_STATE);
 
     /**
-     * @brief This operation copies the next, non-previously accessed Data value from the DataReader; the operation also
-     * copies the corresponding SampleInfo. The implied order among the samples stored in the DataReader is the same as for
-     * the read operation.
+     * @brief This operation copies the next, non-previously accessed Data value from the DataReader; the operation
+     * also copies the corresponding SampleInfo. The implied order among the samples stored in the DataReader is the
+     * same as for the read operation.
      *
-     * The read_next_sample operation is semantically equivalent to the read operation where the input Data sequence has
-     * max_length=1, the sample_states=NOT_READ, the view_states=ANY_VIEW_STATE, and the instance_states=ANY_INSTANCE_STATE.
+     * The read_next_sample operation is semantically equivalent to the read operation where the input Data sequence
+     * has <tt> max_length = 1 </tt>, the <tt> sample_states = NOT_READ_SAMPLE_STATE </tt>, the
+     * <tt> view_states = ANY_VIEW_STATE </tt>, and the <tt> instance_states = ANY_INSTANCE_STATE </tt>.
      *
-     * The read_next_sample operation provides a simplified API to ‘read’ samples avoiding the need for the application to
-     * manage sequences and specify states.
+     * The read_next_sample operation provides a simplified API to ‘read’ samples avoiding the need for the
+     * application to manage sequences and specify states.
      *
-     * If there is no unread data in the DataReader, the operation will return NO_DATA and nothing is copied
-     * @param data Data pointer to store the sample
-     * @param info SampleInfo pointer to store the sample information
-     * @return RETCODE_NO_DATA if the history is empty, RETCODE_OK if the next sample is returned and RETCODE_ERROR otherwise
+     * If there is no unread data in the DataReader, the operation will return RETCODE_NO_DATA and nothing is copied
+     *
+     * @param [out] data Data pointer to store the sample
+     * @param [out] info SampleInfo pointer to store the sample information
+     *
+     * @return Any of the standard return codes.
      */
     RTPS_DllAPI ReturnCode_t read_next_sample(
             void* data,
@@ -514,20 +520,25 @@ public:
             InstanceStateMask instance_states = ANY_INSTANCE_STATE);
 
     /**
-     * @brief This operation copies the next, non-previously accessed Data value from the DataReader and ‘removes’ it from
-     * the DataReader so it is no longer accessible. The operation also copies the corresponding SampleInfo. This operation
-     * is analogous to the read_next_sample except for the fact that the sample is ‘removed’ from the DataReader.
+     * @brief This operation copies the next, non-previously accessed Data value from the DataReader and ‘removes’ it
+     * from the DataReader so it is no longer accessible. The operation also copies the corresponding SampleInfo.
      *
-     * The take_next_sample operation is semantically equivalent to the take operation where the input sequence has
-     * max_length=1, the sample_states=NOT_READ, the view_states=ANY_VIEW_STATE, and the instance_states=ANY_INSTANCE_STATE.
+     * This operation is analogous to @ref read_next_sample except for the fact that the sample is ‘removed’ from the
+     * DataReader.
      *
-     * This operation provides a simplified API to ’take’ samples avoiding the need for the application to manage sequences
-     * and specify states.
+     * This operation is semantically equivalent to the @ref take operation where the input sequence has
+     * <tt> max_length = 1 </tt>, the <tt> sample_states = NOT_READ_SAMPLE_STATE </tt>, the
+     * <tt> view_states = ANY_VIEW_STATE </tt>, and the <tt> instance_states = ANY_INSTANCE_STATE </tt>.
      *
-     * If there is no unread data in the DataReader, the operation will return NO_DATA and nothing is copied.
-     * @param data Data pointer to store the sample
-     * @param info SampleInfo pointer to store the sample information
-     * @return RETCODE_NO_DATA if the history is empty, RETCODE_OK if the next sample is returned and RETCODE_ERROR otherwise
+     * This operation provides a simplified API to ’take’ samples avoiding the need for the application to manage
+     * sequences and specify states.
+     *
+     * If there is no unread data in the DataReader, the operation will return RETCODE_NO_DATA and nothing is copied.
+     *
+     * @param [out] data Data pointer to store the sample
+     * @param [out] info SampleInfo pointer to store the sample information
+     *
+     * @return Any of the standard return codes.
      */
     RTPS_DllAPI ReturnCode_t take_next_sample(
             void* data,
@@ -574,77 +585,93 @@ public:
 
     /**
      * @brief Returns information about the first untaken sample.
+     *
      * @param [out] info Pointer to a SampleInfo_t structure to store first untaken sample information.
+     *
      * @return RETCODE_OK if sample info was returned. RETCODE_NO_DATA if there is no sample to take.
      */
     RTPS_DllAPI ReturnCode_t get_first_untaken_info(
             SampleInfo* info);
 
     /**
-     * Get associated GUID
+     * Get associated GUID.
+     *
      * @return Associated GUID
      */
     RTPS_DllAPI const fastrtps::rtps::GUID_t& guid();
 
     /**
-     * @brief Getter for the associated InstanceHandle
+     * @brief Getter for the associated InstanceHandle.
+     *
      * @return Copy of the InstanceHandle
      */
     RTPS_DllAPI InstanceHandle_t get_instance_handle() const;
 
     /**
-     * Getter for the data type
-     * @return TypeSupport associated to the DataReader
+     * Getter for the data type.
+     *
+     * @return TypeSupport associated to the DataReader.
      */
     TypeSupport type();
 
     /**
-     * Get TopicDescription
-     * @return TopicDescription pointer
+     * Get TopicDescription.
+     *
+     * @return TopicDescription pointer.
      */
     RTPS_DllAPI const TopicDescription* get_topicdescription() const;
 
     /**
-     * @brief Get the requested deadline missed status
-     * @return The deadline missed status
+     * @brief Get the requested deadline missed status.
+     *
+     * @return The deadline missed status.
      */
     RTPS_DllAPI ReturnCode_t get_requested_deadline_missed_status(
             RequestedDeadlineMissedStatus& status);
 
     /**
-     * @brief Get the requested incompatible qos status
-     * @param[out] status Requested incompatible qos status
+     * @brief Get the requested incompatible qos status.
+     *
+     * @param [out] status Requested incompatible qos status.
+     *
      * @return RETCODE_OK
      */
     RTPS_DllAPI ReturnCode_t get_requested_incompatible_qos_status(
             RequestedIncompatibleQosStatus& status);
 
     /**
-     * @brief Setter for the DataReaderQos
-     * @param qos new value for the DataReaderQos
-     * @return RETCODE_IMMUTABLE_POLICY if any of the Qos cannot be changed, RETCODE_INCONSISTENT_POLICY if the Qos is not
-     * self consistent and RETCODE_OK if the qos is changed correctly.
+     * @brief Setter for the DataReaderQos.
+     *
+     * @param [in] qos new value for the DataReaderQos.
+     *
+     * @return RETCODE_IMMUTABLE_POLICY if any of the Qos cannot be changed, RETCODE_INCONSISTENT_POLICY if the Qos is
+     *         not self consistent and RETCODE_OK if the qos is changed correctly.
      */
     RTPS_DllAPI ReturnCode_t set_qos(
             const DataReaderQos& qos);
 
     /**
-     * @brief Getter for the DataReaderQos
-     * @return Pointer to the DataReaderQos
+     * @brief Getter for the DataReaderQos.
+     *
+     * @return Pointer to the DataReaderQos.
      */
     RTPS_DllAPI const DataReaderQos& get_qos() const;
 
     /**
-     * @brief Getter for the DataReaderQos
-     * @param qos DataReaderQos where the qos is returned
+     * @brief Getter for the DataReaderQos.
+     *
+     * @param [in] qos DataReaderQos where the qos is returned.
+     *
      * @return RETCODE_OK
      */
     RTPS_DllAPI ReturnCode_t get_qos(
             DataReaderQos& qos) const;
 
     /**
-     * Modifies the DataReaderListener, sets the mask to StatusMask::all()
-     * @param listener new value for the DataReaderListener
+     * Modifies the DataReaderListener, sets the mask to StatusMask::all().
+     *
+     * @param [in] listener new value for the DataReaderListener.
+     *
      * @return RETCODE_OK
      */
     RTPS_DllAPI ReturnCode_t set_listener(
@@ -652,8 +679,10 @@ public:
 
     /**
      * Modifies the DataReaderListener.
-     * @param listener new value for the DataReaderListener
-     * @param mask StatusMask that holds statuses the listener responds to (default: all).
+     *
+     * @param [in] listener new value for the DataReaderListener.
+     * @param [in] mask StatusMask that holds statuses the listener responds to (default: all).
+     *
      * @return RETCODE_OK
      */
     RTPS_DllAPI ReturnCode_t set_listener(
@@ -672,8 +701,10 @@ public:
      */
 
     /**
-     * @brief Get the liveliness changed status
-     * @param status LivelinessChangedStatus object where the status is returned
+     * @brief Get the liveliness changed status.
+     *
+     * @param [out] status LivelinessChangedStatus object where the status is returned.
+     *
      * @return RETCODE_OK
      */
     RTPS_DllAPI ReturnCode_t get_liveliness_changed_status(
