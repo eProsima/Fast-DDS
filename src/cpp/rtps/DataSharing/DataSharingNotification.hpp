@@ -98,11 +98,6 @@ protected:
         Segment::mutex              notification_mutex;     //< synchronization mutex
         std::atomic<bool>           new_data;               //< New data available
 
-        static constexpr size_t aligned_size ()
-        {
-            return (sizeof(Notification) + alignof(Notification) - 1)
-                & ~(alignof(Notification) - 1);
-        }
     };
 #pragma warning(pop)
     
