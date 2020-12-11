@@ -26,6 +26,8 @@
 
 #include <fastrtps/fastrtps_dll.h>
 
+#include <fastdds/rtps/common/VendorId_t.hpp>
+
 namespace eprosima {
 namespace fastrtps {
 namespace rtps {
@@ -159,67 +161,9 @@ const ProtocolVersion_t c_ProtocolVersion_2_3(2, 3);
 const ProtocolVersion_t c_ProtocolVersion;
 
 //!@brief Structure VendorId_t, specifying the vendor Id of the implementation.
-class VendorId_t
-{
-public:
-
-    VendorId_t(
-            const VendorId_t& v)   // : m_vendor{v[0], v[1]}
-    {
-        // There isn't a explicit constructor because VS2013 doesn't support it.
-        m_vendor[0] = v[0];
-        m_vendor[1] = v[1];
-    }
-
-    VendorId_t(
-            const octet id0,
-            const octet id1)                    // : m_vendor{id0, id1}
-    {
-        // There isn't a explicit constructor because VS2013 doesn't support it.
-        m_vendor[0] = id0;
-        m_vendor[1] = id1;
-    }
-
-    VendorId_t& operator =(
-            const VendorId_t& v)
-    {
-        m_vendor[0] = v[0];
-        m_vendor[1] = v[1];
-        return *this;
-    }
-
-    octet& operator [](
-            const int index)
-    {
-        return m_vendor[index];
-    }
-
-    octet operator [](
-            const int index) const
-    {
-        return m_vendor[index];
-    }
-
-    bool operator ==(
-            const VendorId_t& v) const
-    {
-        return m_vendor[0] == v[0] && m_vendor[1] == v[1];
-    }
-
-    bool operator !=(
-            const VendorId_t& v) const
-    {
-        return !(*this == v);
-    }
-
-private:
-
-    octet m_vendor[2];
-};
-//typedef octet VendorId_t[2];
-
-const VendorId_t c_VendorId_Unknown = {0x00, 0x00};
-const VendorId_t c_VendorId_eProsima = {0x01, 0x0F};
+using VendorId_t = eprosima::fastdds::rtps::VendorId_t;
+using eprosima::fastdds::rtps::c_VendorId_Unknown;
+using eprosima::fastdds::rtps::c_VendorId_eProsima;
 
 } // namespace rtps
 } // namespace fastrtps
