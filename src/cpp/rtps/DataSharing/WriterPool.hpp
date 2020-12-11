@@ -48,7 +48,7 @@ public:
 
     ~WriterPool()
     {
-        logInfo(HISTORY_DATASHARING_PAYLOADPOOL, "DataSharingPayloadPool::WriterPool destructor");
+        logInfo(DATASHARING_PAYLOADPOOL, "DataSharingPayloadPool::WriterPool destructor");
 
         // Destroy each node in the pool
         uint32_t aligned_size = static_cast<uint32_t>(DataSharingPayloadPool::node_size(max_data_size_));
@@ -60,13 +60,22 @@ public:
         }
 
         // Free the pool
-        segment_->get().deallocate(payloads_pool_);
+        if (payloads_pool_ != nullptr)
+        {
+            segment_->get().deallocate(payloads_pool_);
+        }
 
         // Free the history
-        segment_->get().destroy<Segment::Offset>(history_chunk_name());
+        if (history_ != nullptr)
+        {
+            segment_->get().destroy<Segment::Offset>(history_chunk_name());
+        }
 
         // Free the descriptor
-        segment_->get().destroy<PoolDescriptor>(descriptor_chunk_name());
+        if (descriptor_ != nullptr)
+        {
+           segment_->get().destroy<PoolDescriptor>(descriptor_chunk_name());
+        }
 
         // Destroy the shared segment.
         // The file will be deleted once the last reader has closed it.
@@ -146,7 +155,7 @@ public:
         PayloadNode* payload = PayloadNode::get_from_data(cache_change.serializedPayload.data);
         payload->reset();
         free_payloads_.push_back(payload);
-        logInfo(HISTORY_DATASHARING_PAYLOADPOOL, "Change released with SN " << cache_change.sequenceNumber);
+        logInfo(DATASHARING_PAYLOADPOOL, "Change released with SN " << cache_change.sequenceNumber);
 
         return DataSharingPayloadPool::release_payload(cache_change);
     }
@@ -158,18 +167,38 @@ public:
         segment_id_ = writer_guid;
         segment_name_ = generate_segment_name(shared_dir, writer_guid);
 
-        // Extra size for the internal allocator structures (512bytes estimated)
-        uint32_t extra = 512;
-        uint32_t per_allocation_extra_size = fastdds::rtps::SharedMemSegment::compute_per_allocation_extra_size(
+        // We need to reserve the whole segment at once, and the underlying classes use uint32_t as size type.
+        // In order to avoid overflows, we will calculate using uint64 and check the casting
+        bool overflow = false;
+
+        size_t per_allocation_extra_size = fastdds::rtps::SharedMemSegment::compute_per_allocation_extra_size(
                 alignof(PayloadNode), DataSharingPayloadPool::domain_name());
-        uint32_t payload_size = static_cast<uint32_t>(DataSharingPayloadPool::node_size(max_data_size_));
-        uint32_t size_for_payloads_pool = pool_size_ * payload_size;
+        size_t payload_size = DataSharingPayloadPool::node_size(max_data_size_);
+
+        uint64_t estimated_size_for_payloads_pool = pool_size_ * payload_size;
+        overflow |= (estimated_size_for_payloads_pool != static_cast<uint32_t>(estimated_size_for_payloads_pool));
+        uint32_t size_for_payloads_pool = static_cast<uint32_t>(estimated_size_for_payloads_pool);
+
         //Reserve one extra to avoid pointer overlapping
-        uint32_t size_for_history = (pool_size_ + 1) * static_cast<uint32_t>(sizeof(Segment::Offset));
+        uint64_t estimated_size_for_history = (pool_size_ + 1) * sizeof(Segment::Offset);
+        overflow |= (estimated_size_for_history != static_cast<uint32_t>(estimated_size_for_history));
+        uint32_t size_for_history = static_cast<uint32_t>(estimated_size_for_history);
+
         uint32_t descriptor_size = static_cast<uint32_t>(sizeof(PoolDescriptor));
-        uint32_t segment_size = size_for_payloads_pool + per_allocation_extra_size +
+        uint64_t estimated_segment_size = size_for_payloads_pool + per_allocation_extra_size +
                 size_for_history + per_allocation_extra_size + 
                 descriptor_size + per_allocation_extra_size;
+        overflow |= (estimated_segment_size != static_cast<uint32_t>(estimated_segment_size));
+        uint32_t segment_size = static_cast<uint32_t>(estimated_segment_size);
+
+        if (overflow)
+        {
+            logError(DATASHARING_PAYLOADPOOL, "Failed to create segment " << segment_name_
+                        << ": Segment size is too large: " << estimated_size_for_payloads_pool
+                        << " (max is " << std::numeric_limits<uint32_t>::max() << ")."
+                        << " Please reduce the maximum size of the history");
+            return false;
+        }
 
         //Open the segment
         fastdds::rtps::SharedMemSegment::remove(segment_name_);
@@ -178,12 +207,12 @@ public:
             segment_ = std::unique_ptr<Segment>(
                 new Segment(boost::interprocess::create_only,
                     segment_name_,
-                    segment_size + extra));
+                    segment_size + fastdds::rtps::SharedMemSegment::EXTRA_SEGMENT_SIZE));
         }
         catch (const std::exception& e)
         {
-            logError(HISTORY_DATASHARING_PAYLOADPOOL, "Failed to create segment " << segment_name_
-                                                                                  << ": " << e.what());
+            logError(DATASHARING_PAYLOADPOOL, "Failed to create segment " << segment_name_
+                                                                          << ": " << e.what());
             return false;
         }
 
@@ -228,8 +257,8 @@ public:
         {
             Segment::remove(segment_name_);
 
-            logError(HISTORY_DATASHARING_PAYLOADPOOL, "Failed to initialize segment " << segment_name_
-                                                                                      << ": " << e.what());
+            logError(DATASHARING_PAYLOADPOOL, "Failed to initialize segment " << segment_name_
+                                                                              << ": " << e.what());
             return false;
         }
 
@@ -255,7 +284,7 @@ public:
 
         // Add it to the history
         history_[descriptor_->notified_end] = segment_->get_offset_from_address(node);
-        logInfo(HISTORY_DATASHARING_PAYLOADPOOL, "Change added to shared history"
+        logInfo(DATASHARING_PAYLOADPOOL, "Change added to shared history"
                 << " with SN " << cache_change->sequenceNumber);
         descriptor_->notified_end = advance(descriptor_->notified_end);
     }
@@ -270,7 +299,7 @@ public:
         PayloadNode* payload = PayloadNode::get_from_data(cache_change->serializedPayload.data);
         assert(segment_->get_offset_from_address(payload) == history_[descriptor_->notified_begin]);
         payload->reset();
-        logInfo(HISTORY_DATASHARING_PAYLOADPOOL, "Change removed from shared history"
+        logInfo(DATASHARING_PAYLOADPOOL, "Change removed from shared history"
                 << " with SN " << cache_change->sequenceNumber);
         descriptor_->notified_begin = advance(descriptor_->notified_begin);
     }

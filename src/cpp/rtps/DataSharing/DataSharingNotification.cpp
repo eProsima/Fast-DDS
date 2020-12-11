@@ -75,11 +75,9 @@ bool DataSharingNotification::create_and_init_notification(
     segment_id_ = reader_guid;
     segment_name_ = generate_segment_name(shared_dir, reader_guid);
 
-    // Extra size for the internal allocator structures (512bytes estimated)
-    uint32_t extra = 512;
     uint32_t per_allocation_extra_size = Segment::compute_per_allocation_extra_size(
         alignof(Notification), DataSharingNotification::domain_name());
-    uint32_t segment_size = static_cast<uint32_t>(Notification::aligned_size() + per_allocation_extra_size);
+    uint32_t segment_size = static_cast<uint32_t>(sizeof(Notification)) + per_allocation_extra_size;
 
     //Open the segment
     Segment::remove(segment_name_);
@@ -88,12 +86,12 @@ bool DataSharingNotification::create_and_init_notification(
         segment_ = std::unique_ptr<Segment>(
             new Segment(boost::interprocess::create_only,
                 segment_name_,
-                segment_size + extra));
+                segment_size + fastdds::rtps::SharedMemSegment::EXTRA_SEGMENT_SIZE));
     }
     catch (const std::exception& e)
     {
         logError(HISTORY_DATASHARING_LISTENER, "Failed to create segment " << segment_name_
-                                                                            << ": " << e.what());
+                                                                           << ": " << e.what());
         return false;
     }
 
