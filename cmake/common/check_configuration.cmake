@@ -13,7 +13,11 @@
 # limitations under the License.
 
 macro(check_stdcxx)
-    # Check C++11
+
+    # Note that FASTDDS_REQUIRED_FLAGS provides access to the compiler flags in the try-compile testing like
+    # CheckLibatomic module 
+
+    # Check C++20
     include(CheckCXXCompilerFlag)
     if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_COMPILER_IS_CLANG OR
         CMAKE_CXX_COMPILER_ID MATCHES "Clang" OR
@@ -25,6 +29,7 @@ macro(check_stdcxx)
         set(HAVE_CXX11 0)
         set(HAVE_CXX0X 0)
         if(SUPPORTS_CXX20 AND (NOT FORCE_CXX OR "${FORCE_CXX}" STREQUAL "20"))
+            set(FASTDDS_REQUIRED_FLAGS "-std=c++2a ${FASTDDS_REQUIRED_FLAGS}")
             add_compile_options($<$<COMPILE_LANGUAGE:CXX>:-std=c++2a>)
             set(HAVE_CXX20 1)
             set(HAVE_CXX14 1)
@@ -36,6 +41,7 @@ macro(check_stdcxx)
         else()
             check_cxx_compiler_flag(-std=c++14 SUPPORTS_CXX14)
             if(SUPPORTS_CXX14 AND (NOT FORCE_CXX OR "${FORCE_CXX}" STREQUAL "14"))
+                set(FASTDDS_REQUIRED_FLAGS "-std=c++14 ${FASTDDS_REQUIRED_FLAGS}")
                 add_compile_options($<$<COMPILE_LANGUAGE:CXX>:-std=c++14>)
                 set(HAVE_CXX14 1)
                 set(HAVE_CXX1Y 1)
@@ -46,6 +52,7 @@ macro(check_stdcxx)
             else()
                 check_cxx_compiler_flag(-std=c++1y SUPPORTS_CXX1Y)
                 if(SUPPORTS_CXX1Y AND (NOT FORCE_CXX OR "${FORCE_CXX}" STREQUAL "1Y"))
+                    set(FASTDDS_REQUIRED_FLAGS "-std=c++1y ${FASTDDS_REQUIRED_FLAGS}")
                     add_compile_options($<$<COMPILE_LANGUAGE:CXX>:-std=c++1y>)
                     set(HAVE_CXX1Y 1)
                     set(HAVE_CXX11 1)
@@ -55,6 +62,7 @@ macro(check_stdcxx)
                 else()
                     check_cxx_compiler_flag(-std=c++11 SUPPORTS_CXX11)
                     if(SUPPORTS_CXX11 AND (NOT FORCE_CXX OR "${FORCE_CXX}" STREQUAL "11"))
+                        set(FASTDDS_REQUIRED_FLAGS "-std=c++11 ${FASTDDS_REQUIRED_FLAGS}")
                         add_compile_options($<$<COMPILE_LANGUAGE:CXX>:-std=c++11>)
                         set(HAVE_CXX11 1)
                         set(HAVE_CXX0X 1)
@@ -63,6 +71,7 @@ macro(check_stdcxx)
                     else()
                         check_cxx_compiler_flag(-std=c++0x SUPPORTS_CXX0X)
                         if(SUPPORTS_CXX0X AND (NOT FORCE_CXX OR "${FORCE_CXX}" STREQUAL "0X"))
+                            set(FASTDDS_REQUIRED_FLAGS "-std=c++0x ${FASTDDS_REQUIRED_FLAGS}")
                             add_compile_options($<$<COMPILE_LANGUAGE:CXX>:-std=c++0x>)
                             set(HAVE_CXX0X 1)
                         elseif(NOT SUPPORTS_CXX0X AND FORCE_CXX AND "${FORCE_CXX}" STREQUAL "0X")
@@ -75,6 +84,9 @@ macro(check_stdcxx)
             endif()
         endif()
     elseif(MSVC OR MSVC_IDE)
+        set(FASTDDS_REQUIRED_FLAGS "/std:c11 ${FASTDDS_REQUIRED_FLAGS}")
+        add_compile_options($<$<COMPILE_LANGUAGE:CXX>:/std:c11>)
+
         set(HAVE_CXX11 1)
         set(HAVE_CXX0X 1)
     else()
