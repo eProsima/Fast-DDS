@@ -53,7 +53,6 @@
 #include <fastrtps/utils/IPFinder.h>
 
 #include <fastrtps/utils/Semaphore.h>
-#include <fastrtps/utils/System.h>
 
 #include <mutex>
 #include <functional>

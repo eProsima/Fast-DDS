@@ -21,18 +21,18 @@
 #include <fastdds/rtps/transport/TCPChannelResource.h>
 #include <fastdds/dds/log/Log.hpp>
 #include <fastrtps/utils/IPLocator.h>
-#include <fastrtps/utils/System.h>
 #include <fastdds/rtps/transport/TCPTransportInterface.h>
 #include <fastdds/rtps/transport/TCPv4TransportDescriptor.h>
 #include <fastdds/rtps/transport/TCPv6TransportDescriptor.h>
 
+#include <utils/SystemInfo.hpp>
 
 #define IDSTRING "(ID:" << std::this_thread::get_id() <<") "<<
 
 //using namespace eprosima::fastrtps;
 
 namespace eprosima {
-namespace fastdds{
+namespace fastdds {
 namespace rtps {
 
 using Locator_t = fastrtps::rtps::Locator_t;
@@ -42,7 +42,6 @@ using octet = fastrtps::rtps::octet;
 using CDRMessage_t = fastrtps::rtps::CDRMessage_t;
 using RTPSMessageCreator = fastrtps::rtps::RTPSMessageCreator;
 using ProtocolVersion_t = fastrtps::rtps::ProtocolVersion_t;
-using System = fastrtps::System;
 using Log = fastdds::dds::Log;
 
 static void endpoint_to_locator(
@@ -306,7 +305,7 @@ TCPTransactionId RTCPMessageManager::sendConnectionRequest(
     }
     else
     {
-        IPLocator::setPhysicalPort(locator, static_cast<uint16_t>(System::GetPID()));
+        IPLocator::setPhysicalPort(locator, static_cast<uint16_t>(SystemInfo::get().process_id()));
     }
 
     if (locator.kind == LOCATOR_KIND_TCPv4)

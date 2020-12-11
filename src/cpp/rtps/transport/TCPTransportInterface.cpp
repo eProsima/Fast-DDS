@@ -18,7 +18,6 @@
 //#include "TCPSenderResource.hpp"
 #include <fastdds/dds/log/Log.hpp>
 #include <fastrtps/utils/IPLocator.h>
-#include <fastrtps/utils/System.h>
 #include <fastdds/rtps/transport/TCPChannelResourceBasic.h>
 #include <fastdds/rtps/transport/TCPAcceptorBasic.h>
 #if TLS_FOUND
@@ -33,6 +32,8 @@
 
 #include <chrono>
 #include <thread>
+
+#include <utils/SystemInfo.hpp>
 
 using namespace std;
 using namespace asio;
@@ -50,7 +51,6 @@ using CDRMessage_t = fastrtps::rtps::CDRMessage_t;
 using LocatorSelector = fastrtps::rtps::LocatorSelector;
 using LocatorSelectorEntry = fastrtps::rtps::LocatorSelectorEntry;
 using PortParameters = fastrtps::rtps::PortParameters;
-using System = fastrtps::System;
 using Log = fastdds::dds::Log;
 
 static const int s_default_keep_alive_frequency = 5000; // 5 SECONDS
@@ -1315,7 +1315,7 @@ bool TCPTransportInterface::fillMetatrafficUnicastLocator(
             }
             else
             {
-                IPLocator::setPhysicalPort(locator, static_cast<uint16_t>(System::GetPID()));
+                IPLocator::setPhysicalPort(locator, static_cast<uint16_t>(SystemInfo::get().process_id()));
             }
         }
     }
@@ -1384,7 +1384,7 @@ bool TCPTransportInterface::fillUnicastLocator(
             }
             else
             {
-                IPLocator::setPhysicalPort(locator, static_cast<uint16_t>(System::GetPID()));
+                IPLocator::setPhysicalPort(locator, static_cast<uint16_t>(SystemInfo::get().process_id()));
             }
         }
     }
