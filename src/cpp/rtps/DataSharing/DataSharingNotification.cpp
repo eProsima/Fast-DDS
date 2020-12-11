@@ -97,11 +97,6 @@ bool DataSharingNotification::create_and_init_notification(
 
     try
     {
-        // Memset the whole segment to zero in order to force physical map of the buffer
-        auto payload = segment_->get().allocate(segment_size);
-        memset(payload, 0, segment_size);
-        segment_->get().deallocate(payload);
-
         // Alloc and initialize the Node
         notification_ = segment_->get().construct<Notification>("notification_node")();
         notification_->new_data.store(false);

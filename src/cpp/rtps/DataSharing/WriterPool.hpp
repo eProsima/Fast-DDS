@@ -218,11 +218,6 @@ public:
 
         try
         {
-            // Memset the whole segment to zero in order to force physical map of the buffer
-            auto tmp = segment_->get().allocate(segment_size - per_allocation_extra_size);
-            memset(tmp, 0, segment_size - per_allocation_extra_size);
-            segment_->get().deallocate(tmp);
-
             // Alloc the memory for the pool
             // Cannot use 'construct' because we need to reserve extra space for the data,
             // which is not considered in sizeof(PayloadNode).
