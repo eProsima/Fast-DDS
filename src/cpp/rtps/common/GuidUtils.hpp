@@ -92,7 +92,7 @@ private:
         // - One of them is when using a Kubernetes pod on which several containers with their own PID namespace are
         //   created.
         // - Another one is when a system in which a Fast DDS application is started during boot time. If the system
-        //   is crashes and is then re-started, it may happen that the participant may be considered an old one if the
+        //   crashes and is then re-started, it may happen that the participant may be considered an old one if the
         //   announcement lease duration did not expire.
         // In order to behave correctly in those situations, we will use the 16 least-significant bits of the PID,
         // along with a random 16 bits value. This should not be a problem, as the PID is known to be 16 bits long on
