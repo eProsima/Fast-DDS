@@ -40,7 +40,7 @@
 #define GET_PID getpid
 #include <sys/types.h>
 #include <unistd.h>
-#endif
+#endif // if defined(_WIN32)
 
 using namespace eprosima::fastdds::dds;
 using namespace eprosima::fastrtps::rtps;
@@ -224,7 +224,8 @@ TEST_F(xtypestests, TypeDiscoverySubs)
     pub.init("TypeDiscoverySubs", DOMAIN_ID_, type, type_obj, type_id, nullptr, "Pub1", &dataRepQos);
     ASSERT_TRUE(pub.isInitialized());
 
-    sub.init("TypeDiscoverySubs", DOMAIN_ID_, TypeSupport(nullptr), nullptr, nullptr, nullptr, "Sub1", &dataRepQos, nullptr);
+    sub.init("TypeDiscoverySubs", DOMAIN_ID_, TypeSupport(
+                nullptr), nullptr, nullptr, nullptr, "Sub1", &dataRepQos, nullptr);
     ASSERT_TRUE(sub.isInitialized());
 
     // Wait for discovery.
