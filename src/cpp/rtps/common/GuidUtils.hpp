@@ -42,6 +42,39 @@ class GuidUtils
 
 public:
 
+    /**
+     * Create a GUID prefix based on a participant id.
+     *
+     * @param [in]  participant_id  Identifier of the participant for which to generate the GUID prefix.
+     * @param [out] guid_prefix     Generated GUID prefix.
+     */
+    void guid_prefix_create(
+            uint32_t participant_id,
+            GuidPrefix_t& guid_prefix) const
+    {
+        // Use precalculated vendor-host-process part of the prefix
+        std::copy(prefix_.value, prefix_.value + 8, guid_prefix.value);
+
+        // Add little endian serialization of participant_id
+        guid_prefix.value[8] = static_cast<octet>(participant_id & 0xFF);
+        guid_prefix.value[9] = static_cast<octet>((participant_id >> 8) & 0xFF);
+        guid_prefix.value[10] = static_cast<octet>((participant_id >> 16) & 0xFF);
+        guid_prefix.value[11] = static_cast<octet>((participant_id >> 24) & 0xFF);
+    }
+
+    /**
+     * Get a reference to the singleton instance.
+     *
+     * @return reference to the singleton instance.
+     */
+    static const GuidUtils& get()
+    {
+        static GuidUtils singleton;
+        return singleton;
+    }
+
+private:
+
     GuidUtils()
     {
         // This is to comply with RTPS section 9.3.1.5 - Mapping of the GUID_t
@@ -75,39 +108,6 @@ public:
         prefix_.value[6] = static_cast<octet>(rand_value & 0xFF);
         prefix_.value[7] = static_cast<octet>((rand_value >> 8) & 0xFF);
     }
-
-    /**
-     * Create a GUID prefix based on a participant id.
-     *
-     * @param [in]  participant_id  Identifier of the participant for which to generate the GUID prefix.
-     * @param [out] guid_prefix     Generated GUID prefix.
-     */
-    void guid_prefix_create(
-            uint32_t participant_id,
-            GuidPrefix_t& guid_prefix) const
-    {
-        // Use precalculated vendor-host-process part of the prefix
-        std::copy(prefix_.value, prefix_.value + 8, guid_prefix.value);
-
-        // Add little endian serialization of participant_id
-        guid_prefix.value[8] = static_cast<octet>(participant_id & 0xFF);
-        guid_prefix.value[9] = static_cast<octet>((participant_id >> 8) & 0xFF);
-        guid_prefix.value[10] = static_cast<octet>((participant_id >> 16) & 0xFF);
-        guid_prefix.value[11] = static_cast<octet>((participant_id >> 24) & 0xFF);
-    }
-
-    /**
-     * Get a reference to the singleton instance.
-     *
-     * @return reference to the singleton instance.
-     */
-    static const GuidUtils& get()
-    {
-        static GuidUtils singleton;
-        return singleton;
-    }
-
-private:
 
     GuidPrefix_t prefix_;
 };
