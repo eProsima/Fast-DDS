@@ -224,7 +224,7 @@ public:
      */
     inline size_t getMatchedWritersSize() const
     {
-        return matched_writers_.size();
+        return matched_writers_.size() + matched_datasharing_writers_.size();
     }
 
     /*!
@@ -303,6 +303,14 @@ private:
             const GUID_t& writerGUID,
             bool is_payload_pool_lost = false);
 
+    /**
+     * Sends an acknack message from this reader to the datasharing writer when the sample has been processed
+     * @param change Pointer to the change to ACK
+     * @param sender Message sender interface.
+     */
+    void send_datasharing_ack(
+            const WriterProxy& writer);
+
     //! Acknack Count
     uint32_t acknack_count_;
     //! NACKFRAG Count
@@ -319,6 +327,8 @@ private:
     bool disable_positive_acks_;
     //! False when being destroyed
     bool is_alive_;
+    //! Vector containing pointers to the active DataSharing WriterProxies.
+    ResourceLimitedVector<WriterProxy*> matched_datasharing_writers_;
 };
 
 } /* namespace rtps */
