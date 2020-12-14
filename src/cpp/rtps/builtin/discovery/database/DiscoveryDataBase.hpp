@@ -23,8 +23,8 @@
 #include <vector>
 #include <map>
 #include <mutex>
-#include <iostream> 
-#include <fstream> 
+#include <iostream>
+#include <fstream>
 
 #include <fastrtps/utils/fixed_size_string.hpp>
 #include <fastdds/rtps/writer/ReaderProxy.h>
@@ -309,7 +309,7 @@ public:
     // an state in the middle of an routine execution, and every message that has arrived and has not
     // been process.
     // By this, we do not lose any change or information in any case
-    // This function must be called with the incoming datas blocked    
+    // This function must be called with the incoming datas blocked
     void clean_backup();
 
     // Lock the incoming of new data to the DDB queue. This locks the Listener as well
@@ -327,6 +327,11 @@ public:
     std::string virtual_topic() const
     {
         return virtual_topic_;
+    }
+
+    int get_etinties_updated_and_reset()
+    {
+        return entities_updated_.exchange(0);
     }
 
 protected:
@@ -535,6 +540,9 @@ protected:
     // Wheter the database is restoring a backup
     std::atomic<bool> processing_backup_;
 
+    // Whether it has been a new entity discovered or updated in this subroutine loop
+    std::atomic<int> entities_updated_;
+
     // Wheter the database is persistent, so it must store every cache it arrives
     bool is_persistent_;
 
@@ -542,7 +550,7 @@ protected:
     std::string backup_file_name_;
     // This file will keep open to write it fast every time a new cache arrives
     // It needs a flush every time a new change is added
-    std::ofstream backup_file_; 
+    std::ofstream backup_file_;
 };
 
 
