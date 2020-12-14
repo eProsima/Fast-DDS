@@ -19,6 +19,8 @@
 #ifndef RTPS_COMMON_GUIDUTILS_HPP_
 #define RTPS_COMMON_GUIDUTILS_HPP_
 
+#include <cstdint>
+#include <limits>
 #include <random>
 
 #include <fastdds/rtps/common/GuidPrefix_t.hpp>
@@ -68,7 +70,7 @@ public:
         prefix_.value[5] = static_cast<octet>((pid >> 8) & 0xFF);
 
         std::random_device generator;
-        std::uniform_int_distribution<uint16_t> distribution(0, 0xFFFFu);
+        std::uniform_int_distribution<uint16_t> distribution(0, std::numeric_limits<uint16_t>::max());
         uint16_t rand_value = distribution(generator);
         prefix_.value[6] = static_cast<octet>(rand_value & 0xFF);
         prefix_.value[7] = static_cast<octet>((rand_value >> 8) & 0xFF);
