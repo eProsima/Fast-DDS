@@ -159,10 +159,13 @@ endif()
 # Test system configuration
 ###############################################################################
 include(${PROJECT_SOURCE_DIR}/cmake/common/check_configuration.cmake)
+
 set(FORCE_CXX "11" CACHE STRING "C++ standard fulfillment selection")
 check_stdcxx()
+
 check_compile_feature()
 check_endianness()
+include(${PROJECT_SOURCE_DIR}/cmake/modules/CheckLibatomic.cmake)
 
 ###############################################################################
 # Check MSVC architecture

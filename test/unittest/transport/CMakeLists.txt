@@ -314,6 +314,7 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
                 )
             target_link_libraries(SharedMemTests ${GTEST_LIBRARIES} ${MOCKS}
                     $<$<BOOL:${TLS_FOUND}>:OpenSSL::SSL$<SEMICOLON>OpenSSL::Crypto>
+                    $<$<BOOL:${LINK_LIBATOMIC}>:atomic>
                     ${THIRDPARTY_BOOST_LINK_LIBS})
             if(MSVC OR MSVC_IDE)
                 target_link_libraries(SharedMemTests ${PRIVACY} iphlpapi Shlwapi )

@@ -136,7 +136,7 @@ macro(check_stdcxx)
                 elseif(NOT SUPPORTS_CXX14 AND FORCE_CXX AND "${FORCE_CXX}" STREQUAL "14")
                     message(FATAL_ERROR "Force to support stdc++14 but not supported by the compiler")
                 else()
-                    message(STATUS "The especified C++${FORCE_CXX} option is not supported using compiler default.")
+                    message(STATUS "The specified C++${FORCE_CXX} option is not supported using compiler default.")
                     set(HAVE_CXX11 1)
                     set(HAVE_CXX0X 1)
                 endif() # C++14

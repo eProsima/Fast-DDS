@@ -14,7 +14,6 @@
 
 include(${PROJECT_SOURCE_DIR}/cmake/dev/set_sources.cmake)
 include(${PROJECT_SOURCE_DIR}/cmake/dev/generate_msvc_libraries.cmake)
-include(CheckLibatomic)
 
 # Set source files
 
