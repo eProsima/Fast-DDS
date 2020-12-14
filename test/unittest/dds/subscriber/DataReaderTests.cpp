@@ -112,13 +112,83 @@ public:
 
 };
 
+FASTDDS_SEQUENCE(FooSeq, FooType);
+
+void check_return_loan(
+        const ReturnCode_t& code,
+        DataReader* data_reader,
+        FooSeq& data_values,
+        SampleInfoSeq& infos)
+{
+    ReturnCode_t expected_return_loan_ret = code;
+    if (ReturnCode_t::RETCODE_NO_DATA == code)
+    {
+        // When read returns NO_DATA, no loan will be performed
+        expected_return_loan_ret = ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
+    }
+    EXPECT_EQ(expected_return_loan_ret, data_reader->return_loan(data_values, infos));
+
+    if (ReturnCode_t::RETCODE_OK == expected_return_loan_ret)
+    {
+        EXPECT_TRUE(data_values.has_ownership());
+        EXPECT_EQ(0u, data_values.maximum());
+        EXPECT_TRUE(infos.has_ownership());
+        EXPECT_EQ(0u, infos.maximum());
+    }
+}
+
+void basic_read_apis_check(
+        const ReturnCode_t& code,
+        DataReader* data_reader)
+{
+    // Check read_next_sample
+    {
+        FooType data;
+        SampleInfo info;
+
+        EXPECT_EQ(code, data_reader->read_next_sample(&data, &info));
+    }
+
+    // Check read and variants with loan
+    {
+        FooSeq data_values;
+        SampleInfoSeq infos;
+
+        EXPECT_EQ(code, data_reader->read(data_values, infos));
+        check_return_loan(code, data_reader, data_values, infos);
+        EXPECT_EQ(code, data_reader->read_next_instance(data_values, infos));
+        check_return_loan(code, data_reader, data_values, infos);
+    }
+
+    // Check read and variants without loan
+    {
+        FooSeq data_values(1u);
+        SampleInfoSeq infos(1u);
+
+        ReturnCode_t expected_return_loan_ret = code;
+        if (ReturnCode_t::RETCODE_OK == code)
+        {
+            // Even when read returns data, no loan will be performed
+            expected_return_loan_ret = ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
+        }
+
+        EXPECT_EQ(code, data_reader->read(data_values, infos));
+        check_return_loan(expected_return_loan_ret, data_reader, data_values, infos);
+        EXPECT_EQ(code, data_reader->read_next_instance(data_values, infos));
+        check_return_loan(expected_return_loan_ret, data_reader, data_values, infos);
+    }
+}
+
 TEST(DataReaderTests, ReadData)
 {
     DomainParticipant* participant =
             DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
     ASSERT_NE(participant, nullptr);
 
-    Subscriber* subscriber = participant->create_subscriber(SUBSCRIBER_QOS_DEFAULT);
+    // We will create a disabled DataReader, so we can check RETCODE_NOT_ENABLED
+    SubscriberQos subscriber_qos = SUBSCRIBER_QOS_DEFAULT;
+    subscriber_qos.entity_factory().autoenable_created_entities = false;
+    Subscriber* subscriber = participant->create_subscriber(subscriber_qos);
     ASSERT_NE(subscriber, nullptr);
 
     TypeSupport type(new TopicDataTypeMock());
@@ -129,10 +199,15 @@ TEST(DataReaderTests, ReadData)
 
     DataReader* data_reader = subscriber->create_datareader(topic, DATAREADER_QOS_DEFAULT);
     ASSERT_NE(data_reader, nullptr);
+    EXPECT_FALSE(data_reader->is_enabled());
 
-    FooType data;
-    SampleInfo info;
-    ASSERT_EQ(data_reader->read_next_sample(&data, &info), ReturnCode_t::RETCODE_NO_DATA);
+    // Read / take operations should all return NOT_ENABLED
+    basic_read_apis_check(ReturnCode_t::RETCODE_NOT_ENABLED, data_reader);
+
+    // Enable the DataReader and check NO_DATA should be returned
+    EXPECT_EQ(ReturnCode_t::RETCODE_OK, data_reader->enable());
+    EXPECT_TRUE(data_reader->is_enabled());
+    basic_read_apis_check(ReturnCode_t::RETCODE_NO_DATA, data_reader);
 
     ASSERT_EQ(subscriber->delete_datareader(data_reader), ReturnCode_t::RETCODE_OK);
     ASSERT_EQ(participant->delete_topic(topic), ReturnCode_t::RETCODE_OK);
