@@ -168,7 +168,7 @@ bool DataSharingListener::writer_is_matched(
         const GUID_t& writer_guid) const
 {
     auto it = std::find_if(writer_pools_.begin(), writer_pools_.end(),
-        [writer_guid](const WriterInfo& info)
+        [&writer_guid](const WriterInfo& info)
         {
             return info.pool->writer() == writer_guid;
         }

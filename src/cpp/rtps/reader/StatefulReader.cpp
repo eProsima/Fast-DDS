@@ -59,6 +59,10 @@ StatefulReader::~StatefulReader()
     {
         delete(writer);
     }
+    for (WriterProxy* writer : matched_datasharing_writers_)
+    {
+        delete(writer);
+    }
     for (WriterProxy* writer : matched_writers_pool_)
     {
         delete(writer);
@@ -80,6 +84,7 @@ StatefulReader::StatefulReader(
     , proxy_changes_config_(resource_limits_from_history(hist->m_att, 0))
     , disable_positive_acks_(att.disable_positive_acks)
     , is_alive_(true)
+    , matched_datasharing_writers_(att.matched_writers_allocation)
 {
     init(pimpl, att);
 }
@@ -100,6 +105,7 @@ StatefulReader::StatefulReader(
     , proxy_changes_config_(resource_limits_from_history(hist->m_att, 0))
     , disable_positive_acks_(att.disable_positive_acks)
     , is_alive_(true)
+    , matched_datasharing_writers_(att.matched_writers_allocation)
 {
     init(pimpl, att);
 }
@@ -121,6 +127,7 @@ StatefulReader::StatefulReader(
     , proxy_changes_config_(resource_limits_from_history(hist->m_att, 0))
     , disable_positive_acks_(att.disable_positive_acks)
     , is_alive_(true)
+    , matched_datasharing_writers_(att.matched_writers_allocation)
 {
     init(pimpl, att);
 }
@@ -148,7 +155,8 @@ bool StatefulReader::matched_writer_add(
         return false;
     }
 
-    bool is_same_process = RTPSDomainImpl::should_intraprocess_between(m_guid, wdata.guid());
+    bool is_datasharing = is_datasharing_compatible_with(wdata);
+    bool is_same_process = !is_datasharing && RTPSDomainImpl::should_intraprocess_between(m_guid, wdata.guid());
 
     for (WriterProxy* it : matched_writers_)
     {
@@ -167,11 +175,63 @@ bool StatefulReader::matched_writer_add(
         }
     }
 
-    if (is_datasharing_compatible_with(wdata))
+    for (WriterProxy* it : matched_datasharing_writers_)
+    {
+        if (it->guid() == wdata.guid())
+        {
+            logInfo(RTPS_READER, "Attempting to add existing datasharing writer, updating information");
+            it->update(wdata);
+            for (const Locator_t& locator : it->remote_locators_shrinked())
+            {
+                getRTPSParticipant()->createSenderResources(locator);
+            }
+            return false;
+        }
+    }
+
+    // Get a writer proxy from the inactive pool (or create a new one if necessary and allowed)
+    WriterProxy* wp = nullptr;
+    if (matched_writers_pool_.empty())
+    {
+        size_t max_readers = matched_writers_pool_.max_size();
+        if (getMatchedWritersSize() + matched_writers_pool_.size() < max_readers)
+        {
+            const RTPSParticipantAttributes& part_att = mp_RTPSParticipant->getRTPSParticipantAttributes();
+            wp = new WriterProxy(this, part_att.allocation.locators, proxy_changes_config_);
+        }
+        else
+        {
+            logWarning(RTPS_READER, "Maximum number of reader proxies (" << max_readers << \
+                    ") reached for writer " << m_guid);
+            return false;
+        }
+    }
+    else
+    {
+        wp = matched_writers_pool_.back();
+        matched_writers_pool_.pop_back();
+    }
+
+    if (!is_same_process)
+    {
+        for (const Locator_t& locator : wp->remote_locators_shrinked())
+        {
+            getRTPSParticipant()->createSenderResources(locator);
+        }
+    }
+
+    SequenceNumber_t initial_sequence;
+    add_persistence_guid(wdata.guid(), wdata.persistence_guid());
+    initial_sequence = get_last_notified(wdata.guid());
+
+    wp->start(wdata, initial_sequence);
+
+    if (is_datasharing)
     {
         if (datasharing_listener_->add_datasharing_writer(wdata.guid(),
             m_att.durabilityKind == VOLATILE))
         {
+            matched_datasharing_writers_.push_back(wp);
             logInfo(RTPS_READER, "Writer Proxy " << wdata.guid() << " added to " << this->m_guid.entityId 
                                                  << " with data sharing");
         }
@@ -180,6 +240,8 @@ bool StatefulReader::matched_writer_add(
             logError(RTPS_READER, "Failed to add Writer Proxy " << wdata.guid()
                     << " to " << this->m_guid.entityId 
                     << " with data sharing.");
+            wp->stop();
+            matched_writers_pool_.push_back(wp);
             return false;
         }
 
@@ -191,42 +253,6 @@ bool StatefulReader::matched_writer_add(
     }
     else
     {
-        // Get a writer proxy from the inactive pool (or create a new one if necessary and allowed)
-        WriterProxy* wp = nullptr;
-        if (matched_writers_pool_.empty())
-        {
-            size_t max_readers = matched_writers_pool_.max_size();
-            if (matched_writers_.size() + matched_writers_pool_.size() < max_readers)
-            {
-                const RTPSParticipantAttributes& part_att = mp_RTPSParticipant->getRTPSParticipantAttributes();
-                wp = new WriterProxy(this, part_att.allocation.locators, proxy_changes_config_);
-            }
-            else
-            {
-                logWarning(RTPS_READER, "Maximum number of reader proxies (" << max_readers << \
-                        ") reached for writer " << m_guid);
-                return false;
-            }
-        }
-        else
-        {
-            wp = matched_writers_pool_.back();
-            matched_writers_pool_.pop_back();
-        }
-
-        if (!is_same_process)
-        {
-            for (const Locator_t& locator : wp->remote_locators_shrinked())
-            {
-                getRTPSParticipant()->createSenderResources(locator);
-            }
-        }
-
-        SequenceNumber_t initial_sequence;
-        add_persistence_guid(wdata.guid(), wdata.persistence_guid());
-        initial_sequence = get_last_notified(wdata.guid());
-
-        wp->start(wdata, initial_sequence);
 
         matched_writers_.push_back(wp);
         logInfo(RTPS_READER, "Writer Proxy " << wp->guid() << " added to " << m_guid.entityId);
@@ -256,7 +282,7 @@ bool StatefulReader::matched_writer_remove(
         bool removed_by_lease)
 {
     std::unique_lock<RecursiveTimedMutex> lock(mp_mutex);
-    bool found = false;
+    WriterProxy* wproxy = nullptr;
     if (is_alive_)
     {
         //Remove cachechanges belonging to the unmatched writer
@@ -279,17 +305,25 @@ bool StatefulReader::matched_writer_remove(
             }
         }
 
-        if (is_datasharing_compatible_)
+        for (ResourceLimitedVector<WriterProxy*>::iterator it = matched_datasharing_writers_.begin();
+                it != matched_datasharing_writers_.end();
+                ++it)
         {
-            if (datasharing_listener_->remove_datasharing_writer(writer_guid))
+            if ((*it)->guid() == writer_guid)
             {
-                found = true;
-                logInfo(RTPS_READER, "Data sharing writer " << writer_guid << " removed from " << m_guid.entityId);
+                logInfo(RTPS_READER, "Data sharing writer proxy " << writer_guid << " removed from " << m_guid.entityId);
+                wproxy = *it;
+                matched_datasharing_writers_.erase(it);
+
+                // If it is in the list of datasharing, it must be in the listener
+                bool removed_from_listener = datasharing_listener_->remove_datasharing_writer(writer_guid);
+                assert(removed_from_listener);
                 remove_changes_from(writer_guid, true);
+
+                break;
             }
         }
-        
-        if (!found)
+        if (wproxy == nullptr)
         {
             for (ResourceLimitedVector<WriterProxy*>::iterator it = matched_writers_.begin(); it != matched_writers_.end();
                     ++it)
@@ -297,27 +331,27 @@ bool StatefulReader::matched_writer_remove(
                 if ((*it)->guid() == writer_guid)
                 {
                     logInfo(RTPS_READER, "Writer proxy " << writer_guid << " removed from " << m_guid.entityId);
-                    found = true;
-
-                    WriterProxy* wproxy = *it;
+                    wproxy = *it;
                     matched_writers_.erase(it);
-                    remove_persistence_guid(wproxy->guid(), wproxy->persistence_guid(), removed_by_lease);
-
-                    wproxy->stop();
-                    matched_writers_pool_.push_back(wproxy);
 
                     break;
                 }
             }
         }
 
-        if (!found)
+        if (wproxy != nullptr)
+        {
+            remove_persistence_guid(wproxy->guid(), wproxy->persistence_guid(), removed_by_lease);
+            wproxy->stop();
+            matched_writers_pool_.push_back(wproxy);
+        }
+        else
         {
             logInfo(RTPS_READER, "Writer Proxy " << writer_guid << " doesn't exist in reader " << this->getGuid().entityId);
         }
     }
 
-    return found;
+    return (wproxy != nullptr);
 }
 
 bool StatefulReader::matched_writer_is_matched(
@@ -334,9 +368,12 @@ bool StatefulReader::matched_writer_is_matched(
             }
         }
 
-        if (is_datasharing_compatible_)
+        for (WriterProxy* it : matched_datasharing_writers_)
         {
-            return datasharing_listener_->writer_is_matched(writer_guid);
+            if (it->guid() == writer_guid && it->is_alive())
+            {
+                return true;
+            }
         }
     }
     
@@ -360,12 +397,12 @@ bool StatefulReader::matched_writer_lookup(
     if (returnedValue)
     {
         logInfo(RTPS_READER, this->getGuid().entityId << " FINDS writerProxy " << writerGUID << " from "
-                                                      << matched_writers_.size());
+                                                      << getMatchedWritersSize());
     }
     else
     {
         logInfo(RTPS_READER, this->getGuid().entityId << " NOT FINDS writerProxy " << writerGUID << " from "
-                                                      << matched_writers_.size());
+                                                      << getMatchedWritersSize());
     }
 
     return returnedValue;
@@ -378,6 +415,14 @@ bool StatefulReader::findWriterProxy(
     assert(WP);
 
     for (WriterProxy* it : matched_writers_)
+    {
+        if (it->guid() == writerGUID && it->is_alive())
+        {
+            *WP = it;
+            return true;
+        }
+    }
+    for (WriterProxy* it : matched_datasharing_writers_)
     {
         if (it->guid() == writerGUID && it->is_alive())
         {
@@ -699,10 +744,13 @@ bool StatefulReader::acceptMsgFrom(
         }
     }
 
-    if (is_datasharing_compatible_ && datasharing_listener_->writer_is_matched(writerId))
+    for (WriterProxy* it : matched_datasharing_writers_)
     {
-        *wp = nullptr;
-        return true;
+        if (it->guid() == writerId && it->is_alive())
+        {
+            *wp = nullptr;
+            return true;
+        }
     }
 
     // Check if it's a framework's one. In this case, m_acceptMessagesFromUnkownWriters
@@ -911,34 +959,34 @@ bool StatefulReader::nextUntakenCache(
 
     std::vector<CacheChange_t*> toremove;
     bool takeok = false;
+    WriterProxy* wp;
     for (std::vector<CacheChange_t*>::iterator it = mp_history->changesBegin();
             it != mp_history->changesEnd(); ++it)
     {
-        WriterProxy* wp;
         if (this->matched_writer_lookup((*it)->writerGUID, &wp))
-        {
-            // TODO Revisar la comprobacion
-            SequenceNumber_t seq;
-            seq = wp->available_changes_max();
-            if (seq < (*it)->sequenceNumber)
-            {
-                continue;
-            }
-            takeok = true;
-        }
-        else
         {
             if (is_datasharing_compatible_ && datasharing_listener_->writer_is_matched((*it)->writerGUID))
             {
                 //Check if the payload is dirty
-                if (DataSharingPayloadPool::check_sequence_number(
+                if (!DataSharingPayloadPool::check_sequence_number(
                         (*it)->serializedPayload.data, (*it)->sequenceNumber))
                 {
-                    takeok = true;
+                    continue;
                 }
             }
+            else
+            {
+                // TODO Revisar la comprobacion
+                SequenceNumber_t seq;
+                seq = wp->available_changes_max();
+                if (seq < (*it)->sequenceNumber)
+                {
+                    continue;
+                }
+            }
+            takeok = true;
         }
-        
+
         if (takeok)
         {
             *change = *it;
@@ -974,6 +1022,12 @@ bool StatefulReader::nextUntakenCache(
                 " because is no longer paired");
         mp_history->remove_change(*it);
     }
+
+    if (is_datasharing_compatible_)
+    {
+        send_datasharing_ack(*wp);
+    }
+
     return takeok;
 }
 
@@ -990,6 +1044,7 @@ bool StatefulReader::nextUnreadCache(
 
     std::vector<CacheChange_t*> toremove;
     bool readok = false;
+    WriterProxy* wp = nullptr;
     for (std::vector<CacheChange_t*>::iterator it = mp_history->changesBegin();
             it != mp_history->changesEnd(); ++it)
     {
@@ -998,28 +1053,27 @@ bool StatefulReader::nextUnreadCache(
             continue;
         }
 
-        WriterProxy* wp = nullptr;
-        if (this->matched_writer_lookup((*it)->writerGUID, &wp))
-        {
-            SequenceNumber_t seq;
-            seq = wp->available_changes_max();
-            if (seq < (*it)->sequenceNumber)
-            {
-                continue;
-            }
-            readok = true;
-        }
-        else
+        if (matched_writer_lookup((*it)->writerGUID, &wp))
         {
             if (is_datasharing_compatible_ && datasharing_listener_->writer_is_matched((*it)->writerGUID))
             {
                 //Check if the payload is dirty
-                if (DataSharingPayloadPool::check_sequence_number(
+                if (!DataSharingPayloadPool::check_sequence_number(
                         (*it)->serializedPayload.data, (*it)->sequenceNumber))
                 {
-                    readok = true;
+                    continue;
                 }
             }
+            else
+            {
+                SequenceNumber_t seq;
+                seq = wp->available_changes_max();
+                if (seq < (*it)->sequenceNumber)
+                {
+                    continue;
+                }
+            }
+            readok = true;
         }
 
         if (readok)
@@ -1056,6 +1110,11 @@ bool StatefulReader::nextUnreadCache(
         mp_history->remove_change(*it);
     }
 
+    if (is_datasharing_compatible_)
+    {
+        send_datasharing_ack(*wp);
+    }
+
     return readok;
 }
 
@@ -1079,7 +1138,6 @@ bool StatefulReader::updateTimes(
 
 bool StatefulReader::isInCleanState()
 {
-    bool cleanState = true;
     std::unique_lock<RecursiveTimedMutex> lock(mp_mutex);
 
     if (is_alive_)
@@ -1088,13 +1146,51 @@ bool StatefulReader::isInCleanState()
         {
             if (wp->number_of_changes_from_writer() != 0)
             {
-                cleanState = false;
-                break;
+                return false;
+            }
+        }
+        for (WriterProxy* wp : matched_datasharing_writers_)
+        {
+            if (wp->number_of_changes_from_writer() != 0)
+            {
+                return false;
             }
         }
     }
 
-    return cleanState;
+    return true;
+}
+
+void StatefulReader::send_datasharing_ack(
+        const WriterProxy& writer)
+{
+    std::unique_lock<RecursiveTimedMutex> lock(mp_mutex);
+
+    if (!datasharing_listener_->writer_is_matched(writer.guid()))
+    {
+        return;
+    }
+
+    acknack_count_++;
+
+    for (std::vector<CacheChange_t*>::iterator it = mp_history->changesBegin();
+            it != mp_history->changesEnd(); ++it)
+    {
+        if ((*it)->writerGUID == writer.guid() && !(*it)->isRead)
+        {
+            RTPSMessageGroup group(getRTPSParticipant(), this, writer);
+            SequenceNumberSet_t sns((*it)->sequenceNumber + 1);
+            group.add_acknack(sns, acknack_count_, false);
+            logInfo(RTPS_READER, "Sending datasharing ACK for SN " << (*it)->sequenceNumber);
+            return;
+        }
+    }
+
+    CacheChange_t* last = *mp_history->changesRbegin();
+    RTPSMessageGroup group(getRTPSParticipant(), this, writer);
+    SequenceNumberSet_t sns(last->sequenceNumber + 1);
+    group.add_acknack(sns, acknack_count_, false);
+    logInfo(RTPS_READER, "Sending datasharing ACK for last SN " << last->sequenceNumber);
 }
 
 void StatefulReader::send_acknack(
