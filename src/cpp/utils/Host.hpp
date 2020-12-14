@@ -27,6 +27,19 @@ class Host
 {
 public:
 
+    inline uint16_t id() const
+    {
+        return id_;
+    }
+
+    static Host& get()
+    {
+        static Host singleton;
+        return singleton;
+    }
+
+private:
+
     Host()
     {
         // Compute the host id
@@ -55,23 +68,6 @@ public:
             }
         }
     }
-
-    ~Host()
-    {
-    }
-
-    inline uint16_t id() const
-    {
-        return id_;
-    }
-
-    static Host& get()
-    {
-        static Host singleton;
-        return singleton;
-    }
-
-private:
 
     uint16_t id_;
 };
