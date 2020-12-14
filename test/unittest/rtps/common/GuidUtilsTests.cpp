@@ -45,7 +45,9 @@ TEST(GuidUtilities, prefix_create)
     EXPECT_TRUE(guid_1.is_on_same_process_as(guid_2));
 }
 
-int main(int argc, char **argv)
+int main(
+        int argc,
+        char** argv)
 {
     testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();

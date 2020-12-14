@@ -29,9 +29,9 @@ class SHMLocator
 {
 public:
 
-    enum class Type 
+    enum class Type
     {
-        UNICAST, 
+        UNICAST,
         MULTICAST
     };
 
@@ -42,13 +42,13 @@ public:
      * @return The created shared-memory locator.
      */
     static fastrtps::rtps::Locator_t create_locator(
-        uint32_t port,
-        Type type)
+            uint32_t port,
+            Type type)
     {
         using namespace fastrtps::rtps;
-        
+
         Locator_t locator(LOCATOR_KIND_SHM, port);
-        
+
         locator.get_address()[0] = (type == Type::UNICAST) ? 'U' : 'M';
 
         auto host_id = Host::instance().id();
@@ -61,21 +61,23 @@ public:
     /**
      * Check whether a given locator is shared-memory kind and belongs to this host
      * @param locator Locator to check
-     * @return boolean 
+     * @return boolean
      */
-    static bool is_shm_and_from_this_host(const fastrtps::rtps::Locator_t& locator)
+    static bool is_shm_and_from_this_host(
+            const fastrtps::rtps::Locator_t& locator)
     {
         using namespace fastrtps::rtps;
 
-        if(locator.kind == LOCATOR_KIND_SHM)
+        if (locator.kind == LOCATOR_KIND_SHM)
         {
             auto host_id = Host::instance().id();
-     
+
             return locator.address[1] == octet(host_id) && locator.address[2] == octet(host_id >> 8);
         }
 
         return false;
     }
+
 };
 
 } // namespace rtps
