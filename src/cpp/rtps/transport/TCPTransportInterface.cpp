@@ -1334,7 +1334,11 @@ bool TCPTransportInterface::fillMetatrafficUnicastLocator(
             }
             else
             {
+<<<<<<< HEAD
                 IPLocator::setPhysicalPort(locator, static_cast<uint16_t>(System::GetPID()));
+=======
+                IPLocator::setPhysicalPort(locator, static_cast<uint16_t>(SystemInfo::instance().process_id()));
+>>>>>>> c3c51b39b... Refs 10124. Rename singletons instance getters.
             }
         }
     }
@@ -1403,7 +1407,11 @@ bool TCPTransportInterface::fillUnicastLocator(
             }
             else
             {
+<<<<<<< HEAD
                 IPLocator::setPhysicalPort(locator, static_cast<uint16_t>(System::GetPID()));
+=======
+                IPLocator::setPhysicalPort(locator, static_cast<uint16_t>(SystemInfo::instance().process_id()));
+>>>>>>> c3c51b39b... Refs 10124. Rename singletons instance getters.
             }
         }
     }

@@ -41,7 +41,7 @@ static void guid_prefix_create(
         uint32_t ID,
         GuidPrefix_t& guidP)
 {
-    eprosima::fastdds::rtps::GuidUtils::get().guid_prefix_create(ID, guidP);
+    eprosima::fastdds::rtps::GuidUtils::instance().guid_prefix_create(ID, guidP);
 }
 
 // environment variables that forces server-client discovery
