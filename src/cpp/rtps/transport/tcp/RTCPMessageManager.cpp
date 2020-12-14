@@ -305,7 +305,7 @@ TCPTransactionId RTCPMessageManager::sendConnectionRequest(
     }
     else
     {
-        IPLocator::setPhysicalPort(locator, static_cast<uint16_t>(SystemInfo::get().process_id()));
+        IPLocator::setPhysicalPort(locator, static_cast<uint16_t>(SystemInfo::instance().process_id()));
     }
 
     if (locator.kind == LOCATOR_KIND_TCPv4)
