@@ -71,6 +71,10 @@ public:
         return singleton;
     }
 
+private:
+
+    SystemInfo() = default;
+
 };
 
 } // namespace eprosima
