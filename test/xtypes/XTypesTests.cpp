@@ -85,6 +85,9 @@ TEST_F(xtypestests, NoTypeObjectSameType)
     TestPublisher pub;
     TestSubscriber sub;
 
+    ASSERT_TRUE(type != nullptr);
+    ASSERT_FALSE(type == nullptr);
+
     pub.init("NoTypeObjectSameType", DOMAIN_ID_, type, nullptr, nullptr, nullptr, "Pub1", nullptr);
     ASSERT_TRUE(pub.isInitialized());
 

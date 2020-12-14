@@ -5,30 +5,30 @@
 set(LINK_LIBATOMIC 0)
 
 set(ATOMIC_TEST_CODE
-"#define _ENABLE_ATOMIC_ALIGNMENT_FIX
+    "#define _ENABLE_ATOMIC_ALIGNMENT_FIX
 
-#include <atomic>
-#include <cstdint>
+    #include <atomic>
+    #include <cstdint>
 
-int main()
-{
-    using namespace std;
-
-    volatile atomic_ullong i(0xcafebabedeadbeeful);
-    i += 0xfeedbadc0de8f00dul;
-
-    struct Pointer
+    int main()
     {
-        uint32_t write_p;
-        uint32_t free_cells;
-    };
+        using namespace std;
 
-    Pointer dummy{1,1};
-    atomic<Pointer> pointer;
-    pointer = dummy;
+        volatile atomic_ullong i(0xcafebabedeadbeeful);
+        i += 0xfeedbadc0de8f00dul;
 
-    return 0;
-}"
+        struct Pointer
+        {
+            uint32_t write_p;
+            uint32_t free_cells;
+        };
+
+        Pointer dummy{1,1};
+        atomic<Pointer> pointer;
+        pointer = dummy;
+
+        return 0;
+    }"
 )
 
 include(CheckLibraryExists)
