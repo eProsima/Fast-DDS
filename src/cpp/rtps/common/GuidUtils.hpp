@@ -67,7 +67,7 @@ public:
         prefix_.value[4] = static_cast<octet>(pid & 0xFF);
         prefix_.value[5] = static_cast<octet>((pid >> 8) & 0xFF);
 
-        std::default_random_engine generator;
+        std::random_device generator;
         std::uniform_int_distribution<uint16_t> distribution(0, 0xFFFFu);
         uint16_t rand_value = distribution(generator);
         prefix_.value[6] = static_cast<octet>(rand_value & 0xFF);
