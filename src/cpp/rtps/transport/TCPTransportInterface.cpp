@@ -1334,7 +1334,7 @@ bool TCPTransportInterface::fillMetatrafficUnicastLocator(
             }
             else
             {
-                IPLocator::setPhysicalPort(locator, static_cast<uint16_t>(System::GetPID()));
+                IPLocator::setPhysicalPort(locator, static_cast<uint16_t>(SystemInfo::instance().process_id()));
             }
         }
     }
@@ -1403,7 +1403,7 @@ bool TCPTransportInterface::fillUnicastLocator(
             }
             else
             {
-                IPLocator::setPhysicalPort(locator, static_cast<uint16_t>(System::GetPID()));
+                IPLocator::setPhysicalPort(locator, static_cast<uint16_t>(SystemInfo::instance().process_id()));
             }
         }
     }

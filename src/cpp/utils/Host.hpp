@@ -32,7 +32,7 @@ public:
         return id_;
     }
 
-    static Host& get()
+    static Host& instance()
     {
         static Host singleton;
         return singleton;

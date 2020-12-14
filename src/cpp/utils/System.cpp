@@ -25,7 +25,7 @@ namespace fastrtps {
 
 int System::GetPID()
 {
-    return SystemInfo::get().process_id();
+    return SystemInfo::instance().process_id();
 }
 
 } // namespace fastrtps

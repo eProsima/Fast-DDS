@@ -67,7 +67,7 @@ public:
      *
      * @return reference to the singleton instance.
      */
-    static const GuidUtils& get()
+    static const GuidUtils& instance()
     {
         static GuidUtils singleton;
         return singleton;
@@ -82,7 +82,7 @@ private:
         prefix_.value[1] = c_VendorId_eProsima[1];
 
         // On Fast DDS, next two bytes should be the same across all processes on the same host
-        uint16_t host_id = SystemInfo::get().host_id();
+        uint16_t host_id = SystemInfo::instance().host_id();
         prefix_.value[2] = static_cast<octet>(host_id & 0xFF);
         prefix_.value[3] = static_cast<octet>((host_id >> 8) & 0xFF);
 
@@ -98,7 +98,7 @@ private:
         // along with a random 16 bits value. This should not be a problem, as the PID is known to be 16 bits long on
         // several systems. On those where it is longer, using the 16 least-significant ones along with a random value
         // should still give enough uniqueness for our use cases.
-        int pid = SystemInfo::get().process_id();
+        int pid = SystemInfo::instance().process_id();
         prefix_.value[4] = static_cast<octet>(pid & 0xFF);
         prefix_.value[5] = static_cast<octet>((pid >> 8) & 0xFF);
 

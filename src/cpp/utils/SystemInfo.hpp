@@ -57,7 +57,7 @@ public:
      */
     inline uint16_t host_id() const
     {
-        return Host::get().id();
+        return Host::instance().id();
     }
 
     /**
@@ -65,7 +65,7 @@ public:
      *
      * @return reference to the singleton instance.
      */
-    static const SystemInfo& get()
+    static const SystemInfo& instance()
     {
         static SystemInfo singleton;
         return singleton;
