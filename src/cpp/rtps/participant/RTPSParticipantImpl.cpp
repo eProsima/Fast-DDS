@@ -291,6 +291,12 @@ RTPSParticipantImpl::RTPSParticipantImpl(
                     m_network_Factory.fill_default_locator_port(domain_id_, loc, m_att, false);
                 });
 
+        std::for_each(m_att.defaultMulticastLocatorList.begin(), m_att.defaultMulticastLocatorList.end(),
+                [&](Locator_t& loc)
+                {
+                    m_network_Factory.fill_default_locator_port(domain_id_, loc, m_att, false);
+                });
+
     }
 
     // Normalize unicast locators.
@@ -1082,7 +1088,7 @@ bool RTPSParticipantImpl::createAndAssociateReceiverswithEndpoint(
     //In that case, just use the standard
     if (pend->getAttributes().unicastLocatorList.empty() && pend->getAttributes().multicastLocatorList.empty())
     {
-        //Default unicast
+        // Take default locators from the participant.
         pend->getAttributes().unicastLocatorList = m_att.defaultUnicastLocatorList;
         pend->getAttributes().multicastLocatorList = m_att.defaultMulticastLocatorList;
     }

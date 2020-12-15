@@ -770,10 +770,10 @@ public:
         return *this;
     }
 
-    PubSubReader& defaultUnicastLocatorList(
-            eprosima::fastrtps::rtps::LocatorList_t unicastLocators)
+    PubSubReader& set_default_unicast_locators(
+            const eprosima::fastrtps::rtps::LocatorList_t& locators)
     {
-        participant_attr_.rtps.defaultUnicastLocatorList = unicastLocators;
+        participant_attr_.rtps.defaultUnicastLocatorList = locators;
         return *this;
     }
 
@@ -789,10 +789,10 @@ public:
         return *this;
     }
 
-    PubSubReader& defaultMulticastLocatorList(
-            eprosima::fastrtps::rtps::LocatorList_t multicastLocators)
+    PubSubReader& set_default_multicast_locators(
+            const eprosima::fastrtps::rtps::LocatorList_t& locators)
     {
-        participant_attr_.rtps.defaultMulticastLocatorList = multicastLocators;
+        participant_attr_.rtps.defaultMulticastLocatorList = locators;
         return *this;
     }
 

@@ -33,7 +33,7 @@ TEST(BlackBox, UDPv4TransportWrongConfig)
         testTransport->maxMessageSize = 100000;
 
         writer.disable_builtin_transport().
-        add_user_transport_to_pparams(testTransport).init();
+                add_user_transport_to_pparams(testTransport).init();
 
         ASSERT_FALSE(writer.isInitialized());
     }
@@ -45,7 +45,7 @@ TEST(BlackBox, UDPv4TransportWrongConfig)
         testTransport->sendBufferSize = 64000;
 
         writer.disable_builtin_transport().
-        add_user_transport_to_pparams(testTransport).init();
+                add_user_transport_to_pparams(testTransport).init();
 
         ASSERT_FALSE(writer.isInitialized());
     }
@@ -57,7 +57,7 @@ TEST(BlackBox, UDPv4TransportWrongConfig)
         testTransport->receiveBufferSize = 64000;
 
         writer.disable_builtin_transport().
-        add_user_transport_to_pparams(testTransport).init();
+                add_user_transport_to_pparams(testTransport).init();
 
         ASSERT_FALSE(writer.isInitialized());
     }
@@ -305,6 +305,76 @@ TEST(BlackBox, MetatraficMulticastLocatorsParticipant)
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     reader.disable_builtin_transport().add_user_transport_to_pparams(transport);
     reader.add_to_metatraffic_multicast_locator_list("239.255.1.1", 22222);
+    reader.init();
+    ASSERT_TRUE(reader.isInitialized());
+
+    // Wait for discovery.
+    writer.wait_discovery(std::chrono::seconds(3));
+    reader.wait_discovery(std::chrono::seconds(3));
+    ASSERT_TRUE(writer.is_matched());
+    ASSERT_TRUE(reader.is_matched());
+
+    auto data = default_helloworld_data_generator(writer_samples);
+    reader.startReception(data);
+    // Send data
+    writer.send(data);
+    // In this test all data should be sent.
+    ASSERT_TRUE(data.empty());
+
+    // Block reader until reception finished or timeout.
+    reader.block_for_all();
+}
+
+// Checking correct copying of participant user data locators to the writers/readers
+TEST(BlackBox, DefaultMulticastLocatorsParticipantZeroPort)
+{
+    size_t writer_samples = 5;
+
+    PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
+    writer.add_to_default_multicast_locator_list("239.255.0.2", 0);
+    writer.init();
+    ASSERT_TRUE(writer.isInitialized());
+
+    PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
+    reader.add_to_default_multicast_locator_list("239.255.0.1", 0);
+    reader.init();
+    ASSERT_TRUE(reader.isInitialized());
+
+    // Wait for discovery.
+    writer.wait_discovery(std::chrono::seconds(3));
+    reader.wait_discovery(std::chrono::seconds(3));
+    ASSERT_TRUE(writer.is_matched());
+    ASSERT_TRUE(reader.is_matched());
+
+    auto data = default_helloworld_data_generator(writer_samples);
+    reader.startReception(data);
+    // Send data
+    writer.send(data);
+    // In this test all data should be sent.
+    ASSERT_TRUE(data.empty());
+
+    // Block reader until reception finished or timeout.
+    reader.block_for_all();
+}
+
+// Checking correct copying of participant metatraffic locators to the datawriters/datatreaders
+TEST(BlackBox, MetatraficMulticastLocatorsParticipantZeroPort)
+{
+    Log::SetVerbosity(Log::Kind::Warning);
+
+    size_t writer_samples = 5;
+
+    auto transport = std::make_shared<UDPv4TransportDescriptor>();
+
+    PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
+    writer.disable_builtin_transport().add_user_transport_to_pparams(transport);
+    writer.add_to_metatraffic_multicast_locator_list("239.255.1.2", 0);
+    writer.init();
+    ASSERT_TRUE(writer.isInitialized());
+
+    PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
+    reader.disable_builtin_transport().add_user_transport_to_pparams(transport);
+    reader.add_to_metatraffic_multicast_locator_list("239.255.1.1", 0);
     reader.init();
     ASSERT_TRUE(reader.isInitialized());
 
