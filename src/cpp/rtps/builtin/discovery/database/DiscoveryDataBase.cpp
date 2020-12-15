@@ -81,7 +81,7 @@ std::vector<fastrtps::rtps::CacheChange_t*> DiscoveryDataBase::clear()
     }
     pdp_data_queue_.Clear(
 
-    );
+        );
     while (!edp_data_queue_.Empty())
     {
         DiscoveryEDPDataQueueInfo data_queue_info = edp_data_queue_.Front();
@@ -830,7 +830,7 @@ void DiscoveryDataBase::create_readers_from_change_(
         if (ch->write_params.sample_identity().sequence_number() >
                 reader_it->second.change()->write_params.sample_identity().sequence_number())
         {
-             // The change could be newer and at the same time not being an update.
+            // The change could be newer and at the same time not being an update.
             // This happens with DATAs coming from servers, since they take their own DATAs in and out frequently,
             // so the sequence number in `write_params` changes.
             // To account for that, we discard the DATA if the payload is exactly the same as what wee have.
@@ -1675,7 +1675,7 @@ void DiscoveryDataBase::unmatch_participant_(
                 // when the match is not reciprocal
                 logInfo(DISCOVERY_DATABASE,
                         "Participant " << relevant_participant << " matched with an unexisting participant: " <<
-                                        guid_prefix);
+                        guid_prefix);
             }
             else
             {
@@ -2250,12 +2250,13 @@ bool DiscoveryDataBase::add_edp_subscriptions_to_send_(
     return false;
 }
 
-void DiscoveryDataBase::to_json(nlohmann::json& j) const
+void DiscoveryDataBase::to_json(
+        nlohmann::json& j) const
 {
     // participants
     auto pit = participants_.begin();
     j["participants"] = nlohmann::json({});
-    while(pit != participants_.end())
+    while (pit != participants_.end())
     {
         if (pit->first != server_guid_prefix_)
         {
@@ -2272,7 +2273,7 @@ void DiscoveryDataBase::to_json(nlohmann::json& j) const
     {
         j["writers"] = nlohmann::json({});
     }
-    while(wit != writers_.end())
+    while (wit != writers_.end())
     {
         nlohmann::json j_w;
         wit->second.to_json(j_w);
@@ -2286,7 +2287,7 @@ void DiscoveryDataBase::to_json(nlohmann::json& j) const
     {
         j["readers"] = nlohmann::json({});
     }
-    while(rit != readers_.end())
+    while (rit != readers_.end())
     {
         nlohmann::json j_r;
         rit->second.to_json(j_r);
@@ -2296,7 +2297,6 @@ void DiscoveryDataBase::to_json(nlohmann::json& j) const
 
     // TODO add version
 }
-
 
 bool DiscoveryDataBase::from_json(
         nlohmann::json& j,
@@ -2334,9 +2334,9 @@ bool DiscoveryDataBase::from_json(
 
             // Populate DiscoveryParticipantChangeData
             DiscoveryParticipantChangeData dpcd(
-                    rll,
-                    it.value()["is_client"].get<bool>(),
-                    it.value()["is_local"].get<bool>());
+                rll,
+                it.value()["is_client"].get<bool>(),
+                it.value()["is_local"].get<bool>());
 
             // Populate DiscoveryParticipantInfo
             DiscoveryParticipantInfo dpi(change, server_guid_prefix_, dpcd);
@@ -2356,7 +2356,7 @@ bool DiscoveryDataBase::from_json(
             logInfo(DISCOVERY_DATABASE, "Participant " << prefix_aux << " created");
 
             // In case the change is NOT ALIVE it must be set as dispose so it can be communicate to others and erased
-            if(change->kind != fastrtps::rtps::ALIVE)
+            if (change->kind != fastrtps::rtps::ALIVE)
             {
                 disposals_.push_back(change);
             }
@@ -2412,9 +2412,11 @@ bool DiscoveryDataBase::from_json(
                 return false;
             }
 
-            logInfo(DISCOVERY_DATABASE, "Writer " << guid_aux << " created with instance handle " << wit.first->second.change()->instanceHandle);
+            logInfo(DISCOVERY_DATABASE,
+                    "Writer " << guid_aux << " created with instance handle " <<
+                                    wit.first->second.change()->instanceHandle);
 
-            if(change->kind != fastrtps::rtps::ALIVE)
+            if (change->kind != fastrtps::rtps::ALIVE)
             {
                 disposals_.push_back(change);
             }
@@ -2468,7 +2470,7 @@ bool DiscoveryDataBase::from_json(
             }
             logInfo(DISCOVERY_DATABASE, "Reader " << guid_aux << " created");
 
-            if(change->kind != fastrtps::rtps::ALIVE)
+            if (change->kind != fastrtps::rtps::ALIVE)
             {
                 disposals_.push_back(change);
             }
@@ -2497,14 +2499,14 @@ void DiscoveryDataBase::clean_backup()
     backup_file_.open(backup_file_name_, std::ios_base::out);
 }
 
-void DiscoveryDataBase::persistence_enable(std::string backup_file_name)
+void DiscoveryDataBase::persistence_enable(
+        std::string backup_file_name)
 {
     is_persistent_ = true;
     backup_file_name_ = backup_file_name;
     // It opens the file in append mode because the info in it has not been yet
     backup_file_.open(backup_file_name_, std::ios::app);
 }
-
 
 } // namespace ddb
 } // namespace rtps

@@ -534,7 +534,8 @@ void PDPServer2::announceParticipantState(
         bool dispose /* = false */,
         WriteParams& )
 {
-    logInfo(RTPS_PDP_SERVER, "Announcing Server " << mp_RTPSParticipant->getGuid() << " (new change: " << new_change << ")");
+    logInfo(RTPS_PDP_SERVER,
+            "Announcing Server " << mp_RTPSParticipant->getGuid() << " (new change: " << new_change << ")");
     CacheChange_t* change = nullptr;
 
     StatefulWriter* pW = dynamic_cast<StatefulWriter*>(mp_PDPWriter);
@@ -944,7 +945,7 @@ History::iterator PDPServer2::process_change_acknowledgement(
                     // Remove the entry from writer history, but do not release the cache.
                     // This CacheChange will only be released in the case that is substituted by a DATA(Up|Uw|Ur).
                     logInfo(RTPS_PDP_SERVER, "Removing change " << c->instanceHandle
-                                            << " from history as it has been acked for everyone");
+                                                                << " from history as it has been acked for everyone");
                     return writer_history->remove_change(cit, false);
                 }
             }
@@ -1387,7 +1388,9 @@ void PDPServer2::send_announcement(
     }
 }
 
-bool PDPServer2::read_backup(nlohmann::json& ddb_json, std::vector<nlohmann::json>& /* new_changes */)
+bool PDPServer2::read_backup(
+        nlohmann::json& ddb_json,
+        std::vector<nlohmann::json>& /* new_changes */)
 {
     std::ifstream myfile;
     bool ret = true;
@@ -1398,7 +1401,7 @@ bool PDPServer2::read_backup(nlohmann::json& ddb_json, std::vector<nlohmann::jso
         myfile >> ddb_json;
         myfile.close();
     }
-    catch(const std::exception& )
+    catch (const std::exception& )
     {
         ret = false;
     }
@@ -1425,8 +1428,8 @@ bool PDPServer2::read_backup(nlohmann::json& ddb_json, std::vector<nlohmann::jso
     return ret;
 }
 
-
-bool PDPServer2::process_backup_discovery_database_restore(nlohmann::json& j)
+bool PDPServer2::process_backup_discovery_database_restore(
+        nlohmann::json& j)
 {
     logInfo(RTPS_PDP_SERVER, "Restoring DiscoveryDataBase from backup");
 
@@ -1480,12 +1483,12 @@ bool PDPServer2::process_backup_discovery_database_restore(nlohmann::json& j)
 
             // Insert into the map so the DDB can store it
             changes_map.insert(
-                    std::make_pair(change_aux->instanceHandle, change_aux));
+                std::make_pair(change_aux->instanceHandle, change_aux));
 
             // If the change was read as is_local we must pass it to listener with his own writer_guid
             if (it.value()["is_local"].get<bool>() &&
                     change_aux->write_params.sample_identity().writer_guid().guidPrefix !=
-                        mp_PDPWriter->getGuid().guidPrefix &&
+                    mp_PDPWriter->getGuid().guidPrefix &&
                     change_aux->kind == fastrtps::rtps::ALIVE)
             {
                 change_aux->writerGUID = change_aux->write_params.sample_identity().writer_guid();
@@ -1531,7 +1534,7 @@ bool PDPServer2::process_backup_discovery_database_restore(nlohmann::json& j)
             ddb::from_json(it.value()["change"], *change_aux);
 
             changes_map.insert(
-                    std::make_pair(change_aux->instanceHandle, change_aux));
+                std::make_pair(change_aux->instanceHandle, change_aux));
 
             // TODO refactor for multiple servers
             // should not send the virtual changes by the listener
@@ -1582,7 +1585,7 @@ bool PDPServer2::process_backup_discovery_database_restore(nlohmann::json& j)
             ddb::from_json(it.value()["change"], *change_aux);
 
             changes_map.insert(
-                    std::make_pair(change_aux->instanceHandle, change_aux));
+                std::make_pair(change_aux->instanceHandle, change_aux));
 
             // call listener to create proxy info for other entities different than server
             if (change_aux->write_params.sample_identity().writer_guid().guidPrefix !=
@@ -1606,7 +1609,8 @@ bool PDPServer2::process_backup_discovery_database_restore(nlohmann::json& j)
     return true;
 }
 
-bool PDPServer2::process_backup_restore_queue(std::vector<nlohmann::json>& new_changes)
+bool PDPServer2::process_backup_restore_queue(
+        std::vector<nlohmann::json>& new_changes)
 {
     fastrtps::rtps::SampleIdentity sample_identity_aux;
     fastrtps::rtps::InstanceHandle_t instance_handle_aux;
@@ -1748,8 +1752,6 @@ void PDPServer2::process_backup_store()
     // Clear queue ddb backup
     discovery_db_.clean_backup();
 }
-
-
 
 } // namespace rtps
 } // namespace fastdds

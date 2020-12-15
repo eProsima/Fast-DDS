@@ -143,7 +143,8 @@ public:
     }
 
     // enable ddb in persistence mode and open the file to backup up in append mode
-    void persistence_enable(std::string backup_file_name);
+    void persistence_enable(
+            std::string backup_file_name);
 
     //! Disable the possibility to add new entries to the database
     void disable()
@@ -168,11 +169,11 @@ public:
     // This is different than lock_incoming_data() because it does not store the changes or lock the listener
     // This method is only used when the Server is restoring the backup file, and so sending messages to the
     // listener that should not be process
-    void backup_in_progress(bool v)
+    void backup_in_progress(
+            bool v)
     {
         processing_backup_ = v;
     }
-
 
     /* Clear all the collections in the database
      * @return: The changes that can be released
@@ -297,7 +298,8 @@ public:
     // Check if the data queue is empty
     bool data_queue_empty();
 
-    void to_json(nlohmann::json& j) const;
+    void to_json(
+            nlohmann::json& j) const;
 
     bool from_json(
             nlohmann::json& j,
