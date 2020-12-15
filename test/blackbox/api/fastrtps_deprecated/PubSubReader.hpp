@@ -791,6 +791,44 @@ public:
         return *this;
     }
 
+    PubSubReader& defaultUnicastLocatorList(
+            eprosima::fastrtps::rtps::LocatorList_t unicastLocators)
+    {
+        participant_attr_.rtps.defaultUnicastLocatorList = unicastLocators;
+        return *this;
+    }
+
+    PubSubReader& add_to_default_unicast_locator_list(
+            const std::string& ip,
+            uint32_t port)
+    {
+        eprosima::fastrtps::rtps::Locator_t loc;
+        IPLocator::setIPv4(loc, ip);
+        loc.port = port;
+        participant_attr_.rtps.defaultUnicastLocatorList.push_back(loc);
+
+        return *this;
+    }
+
+    PubSubReader& defaultMulticastLocatorList(
+            eprosima::fastrtps::rtps::LocatorList_t multicastLocators)
+    {
+        participant_attr_.rtps.defaultMulticastLocatorList = multicastLocators;
+        return *this;
+    }
+
+    PubSubReader& add_to_default_multicast_locator_list(
+            const std::string& ip,
+            uint32_t port)
+    {
+        eprosima::fastrtps::rtps::Locator_t loc;
+        IPLocator::setIPv4(loc, ip);
+        loc.port = port;
+        participant_attr_.rtps.defaultMulticastLocatorList.push_back(loc);
+
+        return *this;
+    }
+
     PubSubReader& initial_peers(
             eprosima::fastrtps::rtps::LocatorList_t initial_peers)
     {
