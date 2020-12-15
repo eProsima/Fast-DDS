@@ -294,7 +294,7 @@ RTPSParticipantImpl::RTPSParticipantImpl(
         std::for_each(m_att.defaultMulticastLocatorList.begin(), m_att.defaultMulticastLocatorList.end(),
                 [&](Locator_t& loc)
                 {
-                    m_network_Factory.fill_default_locator_port(domain_id_, loc, m_att, false);
+                    m_network_Factory.fill_default_locator_port(domain_id_, loc, m_att, true);
                 });
 
     }
