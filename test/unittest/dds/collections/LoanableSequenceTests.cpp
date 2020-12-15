@@ -14,6 +14,7 @@
 
 #include <fastdds/dds/core/LoanableArray.hpp>
 #include <fastdds/dds/core/LoanableSequence.hpp>
+#include <fastdds/dds/core/StackAllocatedSequence.hpp>
 #include <fastdds/dds/log/Log.hpp>
 
 #include <array>
@@ -45,8 +46,11 @@ struct StackAllocatedBuffer : public LoanableArray<T, num_items>
 // Declare test sequence using declaration macro
 FASTDDS_SEQUENCE(TestSeq, int);
 
+using StackAllocatedSeq = eprosima::fastdds::dds::StackAllocatedSequence<int, num_test_elements>;
+
+template<typename T>
 void clear_values(
-        TestSeq& seq)
+        T& seq)
 {
     // Keep current length for later
     test_size_type len = seq.length();
@@ -61,8 +65,9 @@ void clear_values(
     seq.length(len);
 }
 
+template<typename T>
 void set_result_values(
-        TestSeq& seq)
+        T& seq)
 {
     ASSERT_TRUE(seq.length(num_test_elements));
     test_size_type n = 0;
@@ -72,8 +77,9 @@ void set_result_values(
     }
 }
 
+template<typename T>
 void check_result(
-        const TestSeq& result,
+        const T& result,
         test_size_type num_elems = num_test_elements)
 {
     EXPECT_EQ(num_elems, result.length());
@@ -110,6 +116,18 @@ TEST(LoanableSequenceTests, construct)
         EXPECT_TRUE(uut.has_ownership());
         EXPECT_EQ(0u, uut.maximum());
         EXPECT_EQ(0u, uut.length());
+    }
+
+    // Check stack-allocated behaves as TestSeq costructed with maximum
+    {
+        StackAllocatedSeq uut;
+        EXPECT_NE(nullptr, uut.buffer());
+        EXPECT_TRUE(uut.has_ownership());
+        EXPECT_EQ(num_test_elements, uut.maximum());
+        EXPECT_EQ(0u, uut.length());
+
+        // Trying to grow beyond maximum makes assertion fail
+        EXPECT_DEATH_IF_SUPPORTED(uut.length(uut.maximum() + 1u), "Assertion failed: new_length <= num_items.*");
     }
 }
 
@@ -371,6 +389,22 @@ TEST(LoanableSequenceTests, loan_unloan)
         EXPECT_FALSE(uut.loan(stack.buffer_for_loans(), num_test_elements, 0u));
     }
 
+    {
+        // Create stack-allocated sequence
+        StackAllocatedSeq uut;
+        EXPECT_NE(nullptr, uut.buffer());
+        EXPECT_TRUE(uut.has_ownership());
+        EXPECT_EQ(num_test_elements, uut.maximum());
+        EXPECT_EQ(0u, uut.length());
+
+        // Check that loan cannot be returned
+        EXPECT_EQ(nullptr, uut.unloan());
+        EXPECT_EQ(nullptr, uut.unloan(max, len));
+
+        // Check that loan cannot be performed
+        EXPECT_FALSE(uut.loan(stack.buffer_for_loans(), num_test_elements, 0u));
+    }
+
     // Note: When uut is deleted upon exiting its scope, a warning log will be produced.
     // We will check the generation of that warning with a custom consumer.
     Log::SetVerbosity(Log::Kind::Warning);
@@ -485,9 +519,10 @@ TEST(LoanableSequenceTests, loan_unloan)
     EXPECT_TRUE(log_has_been_detected.load(std::memory_order::memory_order_seq_cst));
 }
 
+template<typename T>
 void perform_accessors_test_step(
-        TestSeq& uut,
-        const TestSeq& c_uut)
+        T& uut,
+        const T& c_uut)
 {
     int n = 1000;
     test_size_type len = uut.length();
@@ -508,10 +543,11 @@ void perform_accessors_test_step(
     }
 }
 
+template<typename T>
 void perform_accessors_tests(
-        TestSeq& uut)
+        T& uut)
 {
-    const TestSeq& c_uut = uut;
+    const T& c_uut = uut;
 
     // Perform test on empty sequence
     perform_accessors_test_step(uut, c_uut);
@@ -533,13 +569,17 @@ TEST(LoanableSequenceTests, accessors)
     // Perform test on owned sequence
     uut.unloan();
     perform_accessors_tests(uut);
+
+    // Perform test on stack-allocated sequence
+    StackAllocatedSeq stack_seq;
+    perform_accessors_tests(stack_seq);
 }
 
-template<typename T>
+template<typename T, typename T2, typename T3>
 void sum_collections(
-        LoanableSequence<T>& out,
-        const LoanableSequence<T>& in1,
-        const LoanableSequence<T>& in2)
+        T& out,
+        const T2& in1,
+        const T3& in2)
 {
     test_size_type length = std::min(in1.length(), in2.length());
     ASSERT_TRUE(out.length(length));
@@ -563,6 +603,15 @@ TEST(LoanableSequenceTests, sum_collections)
     // Check non-loaned version
     {
         TestSeq result;
+        sum_collections(result, fibonacci, fibonacci);
+        check_result(result);
+        EXPECT_TRUE(result.has_ownership());
+        EXPECT_EQ(num_test_elements, result.maximum());
+    }
+
+    // Check stack-allocated version
+    {
+        StackAllocatedSeq result;
         sum_collections(result, fibonacci, fibonacci);
         check_result(result);
         EXPECT_TRUE(result.has_ownership());
