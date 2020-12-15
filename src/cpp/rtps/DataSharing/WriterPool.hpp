@@ -23,11 +23,9 @@
 #include <fastdds/rtps/resources/ResourceManagement.h>
 #include <fastdds/dds/log/Log.hpp>
 #include <rtps/DataSharing/DataSharingPayloadPool.hpp>
+#include <utils/collections/FixedSizeQueue.hpp>
 
 #include <memory>
-#include <vector>
-#include <mutex>
-#include <atomic>
 
 namespace eprosima {
 namespace fastrtps {
@@ -91,8 +89,10 @@ public:
             return false;
         }
 
-        PayloadNode* payload = free_payloads_.back();
-        free_payloads_.pop_back();
+        PayloadNode* payload = free_payloads_.front();
+        free_payloads_.pop();
+        // Reset all the metadata to signal the reader that the payload is dirty
+        payload->reset();
 
         cache_change.serializedPayload.data = payload->data();
         cache_change.serializedPayload.max_size = max_data_size_;
@@ -152,9 +152,9 @@ public:
     {
         assert(cache_change.payload_owner() == this);
 
+        // Payloads are reset on the `get` operation, the `release` leaves the data to give more chances to the reader
         PayloadNode* payload = PayloadNode::get_from_data(cache_change.serializedPayload.data);
-        payload->reset();
-        free_payloads_.push_back(payload);
+        free_payloads_.push(payload);
         logInfo(DATASHARING_PAYLOADPOOL, "Change released with SN " << cache_change.sequenceNumber);
 
         return DataSharingPayloadPool::release_payload(cache_change);
@@ -224,14 +224,14 @@ public:
             payloads_pool_ = static_cast<octet*>(segment_->get().allocate(size_for_payloads_pool));
 
             // Initialize each node in the pool
-            free_payloads_.reserve(pool_size_);
+            free_payloads_.init(pool_size_);
             octet* payload = payloads_pool_;
             for (uint32_t i = 0; i < pool_size_; ++i)
             {
                 new (payload) PayloadNode();
 
                 // All payloads are free
-                free_payloads_.push_back(reinterpret_cast<PayloadNode*>(payload));
+                free_payloads_.push(reinterpret_cast<PayloadNode*>(payload));
 
                 payload += (ptrdiff_t)payload_size;
             }
@@ -293,7 +293,6 @@ public:
 
         PayloadNode* payload = PayloadNode::get_from_data(cache_change->serializedPayload.data);
         assert(segment_->get_offset_from_address(payload) == history_[descriptor_->notified_begin]);
-        payload->reset();
         logInfo(DATASHARING_PAYLOADPOOL, "Change removed from shared history"
                 << " with SN " << cache_change->sequenceNumber);
         descriptor_->notified_begin = advance(descriptor_->notified_begin);
@@ -310,7 +309,7 @@ private:
     uint32_t max_data_size_;    //< Maximum size of the serialized payload data
     uint32_t pool_size_;        //< Number of payloads in the pool
 
-    std::vector<PayloadNode*> free_payloads_;   //< Pointers to the free payloads in the pool
+    FixedSizeQueue<PayloadNode*> free_payloads_;    //< Pointers to the free payloads in the pool
 };
 
 

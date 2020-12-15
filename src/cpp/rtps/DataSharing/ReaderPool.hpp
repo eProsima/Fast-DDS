@@ -25,9 +25,6 @@
 #include <rtps/DataSharing/DataSharingPayloadPool.hpp>
 
 #include <memory>
-#include <vector>
-#include <mutex>
-#include <atomic>
 
 namespace eprosima {
 namespace fastrtps {
