@@ -25,8 +25,6 @@
 #include <vector>
 #include <string>
 
-// #include <fastdds/rtps/common/Locator.h>
-
 namespace eprosima {
 namespace fastrtps {
 namespace rtps {
@@ -40,6 +38,9 @@ class Locator_t;
 class IPLocator
 {
 public:
+
+    IPLocator() = default;
+    ~IPLocator() = default;
 
     /**
      * Fills locator with the given parameters.
@@ -258,12 +259,6 @@ public:
     //! Checks if the locator has a multicast IP address.
     RTPS_DllAPI static bool isMulticast(
             const Locator_t& locator);
-
-private:
-
-    IPLocator();
-
-    virtual ~IPLocator();
 
 protected:
 

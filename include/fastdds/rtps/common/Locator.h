@@ -35,7 +35,6 @@ namespace eprosima {
 namespace fastrtps {
 namespace rtps {
 
-
 #define LOCATOR_INVALID(loc)  {loc.kind = LOCATOR_KIND_INVALID; loc.port = LOCATOR_PORT_INVALID; \
                                LOCATOR_ADDRESS_INVALID(loc.address); \
 }
@@ -49,8 +48,6 @@ namespace rtps {
 #define LOCATOR_KIND_TCPv4 4
 #define LOCATOR_KIND_TCPv6 8
 #define LOCATOR_KIND_SHM 16
-
-// class IPLocator;
 
 //!@brief Class Locator_t, uniquely identifies a communication channel for a particular transport.
 //For example, an address+port combination in the case of UDP.

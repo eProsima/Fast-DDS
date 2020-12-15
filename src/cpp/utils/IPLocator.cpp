@@ -296,7 +296,7 @@ bool IPLocator::setIPv6(
                 return false;
             }
             locator.address[i++] = octet(input_aux >> 8);
-            locator.address[i++] = octet(input_aux % 256);
+            locator.address[i++] = octet(input_aux & 0xFF);
         }
 
         // In the case of empty ip it would be still a ':' without parsing
@@ -316,7 +316,7 @@ bool IPLocator::setIPv6(
                 return false;
             }
             locator.address[i++] = octet(input_aux >> 8);
-            locator.address[i++] = octet(input_aux % 256);
+            locator.address[i++] = octet(input_aux & 0xFF);
         }
 
         ss >> punct;
@@ -337,7 +337,7 @@ bool IPLocator::setIPv6(
                 return false;
             }
             locator.address[i++] = octet(input_aux >> 8);
-            locator.address[i++] = octet(input_aux % 256);
+            locator.address[i++] = octet(input_aux & 0xFF);
         }
 
         for (; i < position_zeros + number_zeros;)
@@ -353,7 +353,7 @@ bool IPLocator::setIPv6(
                 return false;
             }
             locator.address[i++] = octet(input_aux >> 8);
-            locator.address[i++] = octet(input_aux % 256);
+            locator.address[i++] = octet(input_aux & 0xFF);
         }
     }
     else
@@ -361,7 +361,7 @@ bool IPLocator::setIPv6(
         // No zero block
         ss >> input_aux;
         locator.address[0] = octet(input_aux >> 8);
-        locator.address[1] = octet(input_aux % 256);
+        locator.address[1] = octet(input_aux & 0xFF);
         for (i = 2; i < 16;)
         {
             ss >> punct >> input_aux;
@@ -370,7 +370,7 @@ bool IPLocator::setIPv6(
                 return false;
             }
             locator.address[i++] = octet(input_aux >> 8);
-            locator.address[i++] = octet(input_aux % 256);
+            locator.address[i++] = octet(input_aux & 0xFF);
         }
     }
 
