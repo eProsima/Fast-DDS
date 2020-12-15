@@ -416,6 +416,9 @@ private:
     void send_all_intraprocess_changes(
             SequenceNumber_t max_sequence);
 
+    void send_all_datasharing_changes(
+            SequenceNumber_t max_sequence);
+
     void send_all_unsent_changes(
             SequenceNumber_t max_sequence,
             bool& activateHeartbeatPeriod);
@@ -431,9 +434,16 @@ private:
             SequenceNumber_t seq,
             RTPSMessageGroup& group);
 
-    bool datasharing_delivery(
+    void prepare_datasharing_delivery(
             CacheChange_t* change);
 
+    void async_delivery(
+            CacheChange_t* change,
+            const std::chrono::time_point<std::chrono::steady_clock>& max_blocking_time);
+
+    void sync_delivery(
+            CacheChange_t* change,
+            const std::chrono::time_point<std::chrono::steady_clock>& max_blocking_time);
 
     //! True to disable piggyback heartbeats
     bool disable_heartbeat_piggyback_;
