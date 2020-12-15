@@ -746,6 +746,13 @@ public:
         return *this;
     }
 
+    PubSubWriter& resource_limits_extra_samples(
+            const int32_t extra)
+    {
+        publisher_attr_.topic.resourceLimitsQos.extra_samples = extra;
+        return *this;
+    }
+
     PubSubWriter& matched_readers_allocation(
             size_t initial,
             size_t maximum)

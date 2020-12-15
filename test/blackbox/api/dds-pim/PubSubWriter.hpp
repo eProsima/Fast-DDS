@@ -265,6 +265,7 @@ public:
         if (enable_datasharing)
         {
             datawriter_qos_.data_sharing().automatic();
+            datawriter_qos_.resource_limits().extra_samples = 5;
         }
         else
         {
@@ -850,6 +851,13 @@ public:
             const int32_t max)
     {
         datawriter_qos_.resource_limits().max_samples_per_instance = max;
+        return *this;
+    }
+
+    PubSubWriter& resource_limits_extra_samples(
+            const int32_t extra)
+    {
+        datawriter_qos_.resource_limits().extra_samples = extra;
         return *this;
     }
 
