@@ -27,7 +27,7 @@
 
 
 namespace eprosima {
-namespace fastrtps{
+namespace fastrtps {
 namespace rtps {
 
 class RTPSWriter;
@@ -41,19 +41,42 @@ class ReceiverResource;
  */
 class MessageReceiver
 {
-    public:
-        MessageReceiver(RTPSParticipantImpl* /*participant*/, ReceiverResource* /*receiverResource*/)
-        {
+public:
 
-        }
-        virtual ~MessageReceiver(){}
-        void reset(){}
-        void init(uint32_t /*rec_buffer_size*/){}
-        virtual void processCDRMsg(const Locator_t& /*loc*/, CDRMessage_t* /*msg*/){}
-        void setReceiverResource(ReceiverResource* /*receiverResource*/){}
+    MessageReceiver(
+            RTPSParticipantImpl* /*participant*/,
+            ReceiverResource* /*receiverResource*/)
+    {
+
+    }
+
+    virtual ~MessageReceiver()
+    {
+    }
+
+    void reset()
+    {
+    }
+
+    void init(
+            uint32_t /*rec_buffer_size*/)
+    {
+    }
+
+    virtual void processCDRMsg(
+            const Locator_t& /*loc*/,
+            CDRMessage_t* /*msg*/)
+    {
+    }
+
+    void setReceiverResource(
+            ReceiverResource* /*receiverResource*/)
+    {
+    }
+
 };
-}
+} // namespace rtps
 } /* namespace rtps */
 } /* namespace eprosima */
-#endif
+#endif // ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 #endif /* _FASTDDS_RTPS_MESSAGERECEIVER_H_*/
