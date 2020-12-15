@@ -39,9 +39,6 @@ class IPLocator
 {
 public:
 
-    IPLocator() = default;
-    ~IPLocator() = default;
-
     /**
      * Fills locator with the given parameters.
      * @param kindin Kind of the locator.
@@ -275,6 +272,12 @@ protected:
     // Checks if a string matches an ipv6 address
     static bool IPv6isCorrect(
             const std::string& ipv6);
+
+private:
+
+    IPLocator() = delete;
+    ~IPLocator() = delete;
+
 };
 
 } // namespace rtps
