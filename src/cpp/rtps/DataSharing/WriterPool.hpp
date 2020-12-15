@@ -57,6 +57,11 @@ public:
             reinterpret_cast<PayloadNode*>(payload)->~PayloadNode();
         }
 
+        if (segment_ == nullptr)
+        {
+            return;
+        }
+
         // Free the pool
         if (payloads_pool_ != nullptr)
         {
