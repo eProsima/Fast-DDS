@@ -71,16 +71,15 @@ struct PoolConfig : public BasicPoolConfig
                 history_attr.memoryPolicy,
                 history_attr.payloadMaxSize,
                 // Negative or 0 means no preallocation.
-                // Otherwise, to avoid dynamic allocations after the pools are created, we need to
-                // reserve an extra slot, as a call to `reserve` needs to succeed even if the history is full.
+                // Otherwise, we need to reserve the extra to avoid dynamic allocations after the pools are created.
                 static_cast<uint32_t>(
-                    history_attr.initialReservedCaches <= 0 ? 0 : history_attr.initialReservedCaches + 1),
+                    history_attr.initialReservedCaches <= 0 ?
+                        0 : history_attr.initialReservedCaches + history_attr.extraReservedCaches),
                 // Negative or 0 means infinite maximum.
-                // Otherwise, we need to allow one extra slot, as a call to `reserve` needs to succeed
-                // even if the history is full, as old changes will only be removed when a change is added
-                // to the history.
+                // Otherwise, we need to allow the extra.
                 static_cast<uint32_t>(
-                    history_attr.maximumReservedCaches <= 0 ? 0 : history_attr.maximumReservedCaches + 1)
+                    history_attr.maximumReservedCaches <= 0 ?
+                        0 : history_attr.maximumReservedCaches + history_attr.extraReservedCaches)
             };
     }
 

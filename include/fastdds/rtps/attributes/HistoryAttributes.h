@@ -53,12 +53,22 @@ class RTPS_DllAPI HistoryAttributes
          */
         int32_t maximumReservedCaches;
 
+        /**
+         * Number of extra caches that can be reserved for other purposes than the history.
+         * For example, on a full history, the writer could give as many as these to be used by the application
+         * but they will not be able to be inserted in the history unless some cache from the history is released.
+         * 
+         * Default value is 1.
+         */
+        int32_t extraReservedCaches;
+
         //! Default constructor
         HistoryAttributes()
             : memoryPolicy(PREALLOCATED_MEMORY_MODE)
             , payloadMaxSize(500)
             , initialReservedCaches(500)
             , maximumReservedCaches(0)
+            , extraReservedCaches(1)
         {}
 
         /** Constructor
@@ -78,6 +88,29 @@ class RTPS_DllAPI HistoryAttributes
             , payloadMaxSize(payload)
             , initialReservedCaches(initial)
             , maximumReservedCaches(maxRes)
+            , extraReservedCaches(1)
+        {}
+
+        /** Constructor
+         * @param memoryPolicy Set wether memory can be dynamically reallocated or not
+         * @param payload Maximum payload size. It is used when memory management polycy is
+         * PREALLOCATED_MEMORY_MODE or PREALLOCATED_WITH_REALLOC_MEMORY_MODE.
+         * @param initial Initial reserved caches. It is used when memory management policy is
+         * PREALLOCATED_MEMORY_MODE or PREALLOCATED_WITH_REALLOC_MEMORY_MODE.
+         * @param maxRes Maximum reserved caches.
+         * @param extra Extra reserved caches.
+         */
+        HistoryAttributes(
+                MemoryManagementPolicy_t memoryPolicy,
+                uint32_t payload,
+                int32_t initial,
+                int32_t maxRes,
+                int32_t extra)
+            : memoryPolicy(memoryPolicy)
+            , payloadMaxSize(payload)
+            , initialReservedCaches(initial)
+            , maximumReservedCaches(maxRes)
+            , extraReservedCaches(extra)
         {}
 
         virtual ~HistoryAttributes(){}
