@@ -19,22 +19,26 @@
 
 #ifndef _EPROSIMA_SYSTEM_UTILS_H
 #define _EPROSIMA_SYSTEM_UTILS_H
+
 #include "../fastrtps_dll.h"
 
 namespace eprosima {
 namespace fastrtps {
+
 /**
  * Class System, to provide helper functions to access system information.
  * @ingroup UTILITIES_MODULE
  */
 class System
 {
-    public:
-        //! Returns current process identifier.
-        RTPS_DllAPI static int GetPID();
+public:
+
+    //! Returns current process identifier.
+    FASTDDS_DEPRECATED_UNTIL(3, "eprosima::fastrtps::System::GetPID", "")
+    RTPS_DllAPI static int GetPID();
 };
 
-}
+} /* namespace fastrtps */
 } /* namespace eprosima */
 
 #endif /* _EPROSIMA_SYSTEM_UTILS_H */
