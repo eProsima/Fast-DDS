@@ -17,33 +17,16 @@
 
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
 #include <fastdds/dds/domain/DomainParticipant.hpp>
+#include <fastdds/dds/subscriber/DataReader.hpp>
+#include <fastdds/dds/subscriber/DataReaderListener.hpp>
+#include <fastdds/dds/subscriber/Subscriber.hpp>
+#include <fastdds/dds/subscriber/SampleInfo.hpp>
 #include <fastdds/dds/subscriber/qos/SubscriberQos.hpp>
 #include <fastdds/dds/subscriber/qos/DataReaderQos.hpp>
-#include <dds/domain/DomainParticipant.hpp>
-#include <dds/core/types.hpp>
-#include <fastdds/dds/subscriber/Subscriber.hpp>
-#include <fastdds/dds/subscriber/DataReaderListener.hpp>
-#include <fastdds/dds/subscriber/SampleInfo.hpp>
-#include <dds/sub/Subscriber.hpp>
-#include <dds/sub/DataReader.hpp>
-#include <dds/sub/qos/DataReaderQos.hpp>
-#include <dds/topic/Topic.hpp>
-
-#include <fastrtps/rtps/history/ReaderHistory.h>
-#include <fastrtps/attributes/PublisherAttributes.h>
-#include <fastrtps/attributes/SubscriberAttributes.h>
-#include <fastrtps/xmlparser/XMLProfileManager.h>
-
 
 namespace eprosima {
 namespace fastdds {
 namespace dds {
-
-using fastrtps::PublisherAttributes;
-using fastrtps::SubscriberAttributes;
-using fastrtps::xmlparser::XMLProfileManager;
-using fastrtps::xmlparser::XMLP_ret;
-
 
 class FooType
 {
