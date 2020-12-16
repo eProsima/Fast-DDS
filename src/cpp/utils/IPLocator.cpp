@@ -118,7 +118,7 @@ bool IPLocator::setIPv4(
         // If there are more info to read, it fails
         return ss.rdbuf()->in_avail() == 0;
     }
-    logError(IP_LOCATOR, "IPv4 " << ipv4 << " error format. Expected X.X.X.X");
+    logWarning(IP_LOCATOR, "IPv4 " << ipv4 << " error format. Expected X.X.X.X");
     return false;
 }
 
@@ -247,7 +247,7 @@ bool IPLocator::setIPv6(
 
     if (!IPv6isCorrect(ipv6))
     {
-        logError(IP_LOCATOR, "IPv6 " << ipv6 << " is not well defined");
+        logWarning(IP_LOCATOR, "IPv6 " << ipv6 << " is not well defined");
         return false;
     }
 
@@ -334,7 +334,7 @@ bool IPLocator::setIPv6(
             ss >> punct >> input_aux;
             if (input_aux >= 65536)
             {
-                logError(IP_LOCATOR, "IPv6 " << ipv6 << " has values higher than expected (65536)");
+                logWarning(IP_LOCATOR, "IPv6 " << ipv6 << " has values higher than expected (65536)");
                 return false;
             }
             locator.address[i++] = octet(input_aux >> 8);
@@ -355,7 +355,7 @@ bool IPLocator::setIPv6(
             ss >> input_aux >> punct;
             if (input_aux >= 65536)
             {
-                logError(IP_LOCATOR, "IPv6 " << ipv6 << " has values higher than expected (65536)");
+                logWarning(IP_LOCATOR, "IPv6 " << ipv6 << " has values higher than expected (65536)");
                 return false;
             }
             locator.address[i++] = octet(input_aux >> 8);
@@ -377,7 +377,7 @@ bool IPLocator::setIPv6(
             ss >> input_aux >> punct;
             if (input_aux >= 65536)
             {
-                logError(IP_LOCATOR, "IPv6 " << ipv6 << " has values higher than expected (65536)");
+                logWarning(IP_LOCATOR, "IPv6 " << ipv6 << " has values higher than expected (65536)");
                 return false;
             }
             locator.address[i++] = octet(input_aux >> 8);
@@ -394,7 +394,7 @@ bool IPLocator::setIPv6(
             ss >> punct >> input_aux;
             if (input_aux >= 65536)
             {
-                logError(IP_LOCATOR, "IPv6 " << ipv6 << " has values higher than expected (65536)");
+                logWarning(IP_LOCATOR, "IPv6 " << ipv6 << " has values higher than expected (65536)");
                 return false;
             }
             locator.address[i++] = octet(input_aux >> 8);
@@ -412,7 +412,7 @@ bool IPLocator::setIPv6(
             ss >> punct >> input_aux;
             if (input_aux >= 65536)
             {
-                logError(IP_LOCATOR, "IPv6 " << ipv6 << " has values higher than expected (65536)");
+                logWarning(IP_LOCATOR, "IPv6 " << ipv6 << " has values higher than expected (65536)");
                 return false;
             }
             locator.address[i++] = octet(input_aux >> 8);

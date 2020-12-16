@@ -238,21 +238,22 @@ protected:
 #define __func__ __FUNCTION__
 #endif // if defined(WIN32)
 
+// Name of variables inside macros must be unique, or it could produce an error with external variables
 #ifndef LOG_NO_ERROR
 #define logError_(cat, msg)                                                                          \
     {                                                                                                \
         using namespace eprosima::fastdds::dds;                                                      \
-        std::stringstream ss;                                                                        \
-        ss << msg;                                                                                   \
-        Log::QueueLog(ss.str(), Log::Context{__FILE__, __LINE__, __func__, #cat}, Log::Kind::Error); \
+        std::stringstream fastdds_log_ss_tmp__;                                                                        \
+        fastdds_log_ss_tmp__ << msg;                                                                                   \
+        Log::QueueLog(fastdds_log_ss_tmp__.str(), Log::Context{__FILE__, __LINE__, __func__, #cat}, Log::Kind::Error); \
     }
 #elif (defined(__INTERNALDEBUG) || defined(_INTERNALDEBUG))
 #define logError_(cat, msg)        \
     {                              \
         auto tmp_lambda = [&]()    \
                 {                          \
-                    std::stringstream ss;  \
-                    ss << msg;             \
+                    std::stringstream fastdds_log_ss_tmp__;  \
+                    fastdds_log_ss_tmp__ << msg;             \
                 };                         \
         (void)tmp_lambda;          \
     }
@@ -266,9 +267,9 @@ protected:
         using namespace eprosima::fastdds::dds;                                                            \
         if (Log::GetVerbosity() >= Log::Kind::Warning)                                                     \
         {                                                                                                  \
-            std::stringstream ss;                                                                          \
-            ss << msg;                                                                                     \
-            Log::QueueLog(ss.str(), Log::Context{__FILE__, __LINE__, __func__, #cat}, Log::Kind::Warning); \
+            std::stringstream fastdds_log_ss_tmp__;                                                                          \
+            fastdds_log_ss_tmp__ << msg;                                                                                     \
+            Log::QueueLog(fastdds_log_ss_tmp__.str(), Log::Context{__FILE__, __LINE__, __func__, #cat}, Log::Kind::Warning); \
         }                                                                                                  \
     }
 #elif (defined(__INTERNALDEBUG) || defined(_INTERNALDEBUG))
@@ -276,8 +277,8 @@ protected:
     {                              \
         auto tmp_lambda = [&]()    \
                 {                          \
-                    std::stringstream ss;  \
-                    ss << msg;             \
+                    std::stringstream fastdds_log_ss_tmp__;  \
+                    fastdds_log_ss_tmp__ << msg;             \
                 };                         \
         (void)tmp_lambda;          \
     }
@@ -292,9 +293,9 @@ protected:
         using namespace eprosima::fastdds::dds;                                                         \
         if (Log::GetVerbosity() >= Log::Kind::Info)                                                     \
         {                                                                                               \
-            std::stringstream ss;                                                                       \
-            ss << msg;                                                                                  \
-            Log::QueueLog(ss.str(), Log::Context{__FILE__, __LINE__, __func__, #cat}, Log::Kind::Info); \
+            std::stringstream fastdds_log_ss_tmp__;                                                                       \
+            fastdds_log_ss_tmp__ << msg;                                                                                  \
+            Log::QueueLog(fastdds_log_ss_tmp__.str(), Log::Context{__FILE__, __LINE__, __func__, #cat}, Log::Kind::Info); \
         }                                                                                               \
     }
 #elif (defined(__INTERNALDEBUG) || defined(_INTERNALDEBUG))
@@ -302,8 +303,8 @@ protected:
     {                              \
         auto tmp_lambda = [&]()    \
                 {                          \
-                    std::stringstream ss;  \
-                    ss << msg;             \
+                    std::stringstream fastdds_log_ss_tmp__;  \
+                    fastdds_log_ss_tmp__ << msg;             \
                 };                         \
         (void)tmp_lambda;          \
     }
