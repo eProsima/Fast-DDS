@@ -337,7 +337,6 @@ bool StatelessReader::nextUnreadCache(
 {
     std::lock_guard<RecursiveTimedMutex> guard(mp_mutex);
     bool found = false;
-    std::vector<CacheChange_t*> toremove;
     std::vector<CacheChange_t*>::iterator it;
 
     for (it = mp_history->changesBegin();
@@ -358,8 +357,7 @@ bool StatelessReader::nextUnreadCache(
                 logWarning(RTPS_READER,
                         "Removing change " << (*it)->sequenceNumber << " from " << (*it)->writerGUID <<
                         " because it was overriden by the writer");
-
-                toremove.push_back((*it));
+                mp_history->remove_change(*it);
             }
             else
             {
@@ -381,11 +379,6 @@ bool StatelessReader::nextUnreadCache(
     else
     {
         logInfo(RTPS_READER, "No Unread elements left");
-    }
-
-    for (it = toremove.begin(); it != toremove.end(); ++it)
-    {
-        mp_history->remove_change(*it);
     }
 
     return found;
