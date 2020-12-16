@@ -21,6 +21,7 @@
 
 #include <fastdds/rtps/common/Locator.h>
 #include <fastrtps/utils/collections/ResourceLimitedVector.hpp>
+#include <fastdds/dds/log/Log.hpp>
 
 namespace eprosima {
 namespace fastrtps {
@@ -138,9 +139,9 @@ inline std::ostream& operator <<(
         std::ostream& output,
         const RemoteLocatorList& remote_locators)
 {
-    // Store multicast locatos
+    // Stored multicast locators
     output << "{";
-    if (remote_locators.multicast.size() >= 1)
+    if (remote_locators.multicast.empty())
     {
         output << "MULTICAST:[";
         output << remote_locators.multicast[0];
@@ -151,8 +152,8 @@ inline std::ostream& operator <<(
         output << "]";
     }
 
-    // Store unicast locatos
-    if (remote_locators.unicast.size() >= 1)
+    // Stored unicast locators
+    if (remote_locators.unicast.empty())
     {
         output << "UNICAST:[";
         output << remote_locators.unicast[0];
@@ -175,7 +176,8 @@ inline std::istream& operator >>(
 
     if (s)
     {
-        char punct, letter;
+        char punct;
+        char letter;
         Locator_t l;
         std::ios_base::iostate excp_mask = input.exceptions();
 
@@ -220,6 +222,7 @@ inline std::istream& operator >>(
         }
         catch (std::ios_base::failure& )
         {
+            logWarning(REMOTE_LOCATOR_LIST, "Error deserializing RemoteLocatorList");
         }
 
         input.exceptions(excp_mask);

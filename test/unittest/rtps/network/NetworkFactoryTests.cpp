@@ -430,10 +430,11 @@ struct ShrinkLocatorCase_t
             {
                 bool contains = false;
                 for (LocatorListIterator it = output.begin(); it != output.end(); ++it)
+                for (auto locator_in_list : output)
                 {
-                    if (IsAddressDefined(*it))
+                    if (IsAddressDefined(locator_in_list))
                     {
-                        if (locator == *it)
+                        if (locator == locator_in_list)
                         {
                             contains = true;
                             break;
@@ -441,7 +442,7 @@ struct ShrinkLocatorCase_t
                     }
                     else
                     {
-                        if (locator.kind == (*it).kind && locator.port == (*it).port)
+                        if (locator.kind == locator_in_list.kind && locator.port == locator_in_list.port)
                         {
                             contains = true;
                             break;

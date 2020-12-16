@@ -24,6 +24,8 @@
 #include <fastdds/rtps/common/Types.h>
 #include <fastrtps/utils/IPLocator.h>
 
+#include <fastdds/dds/log/Log.hpp>
+
 #include <sstream>
 #include <vector>
 #include <cstdint>
@@ -295,15 +297,16 @@ inline std::istream& operator >>(
 
         try
         {
-            std::string str_locator;
             input.exceptions(excp_mask | std::ios_base::failbit | std::ios_base::badbit);
 
             // Locator info
-            uint32_t kind, port;
+            uint32_t kind;
+            uint32_t port;
             std::string address;
 
             // Deserialization variables
-            std::stringbuf sb_kind, sb_address;
+            std::stringbuf sb_kind;
+            std::stringbuf sb_address;
             std::string str_kind;
             char punct;
 
@@ -336,7 +339,7 @@ inline std::istream& operator >>(
                 kind = LOCATOR_KIND_INVALID;
             }
 
-            // Get char :[
+            // Get chars :[
             input >> punct >> punct;
 
             // Get address in string
@@ -354,6 +357,7 @@ inline std::istream& operator >>(
         catch (std::ios_base::failure& )
         {
             loc.kind = LOCATOR_KIND_INVALID;
+            logWarning(LOCATOR, "Error deserializing Locator");
         }
 
         input.exceptions(excp_mask);
@@ -592,7 +596,7 @@ public:
     }
 
     FASTDDS_DEPRECATED_UNTIL(3, "eprosima::fastrtps::rtps::LocatorList_t::contains(const Locator_t&)",
-            "Not specify function with unknown functionality.")
+            "Unused method.")
     RTPS_DllAPI bool contains(
             const Locator_t& loc)
     {
@@ -649,9 +653,9 @@ inline std::ostream& operator <<(
         const LocatorList_t& locList)
 {
     output << "[";
-    if (locList.size() > 0)
+    if (!locList.empty())
     {
-        output << *(locList.begin()) ;
+        output << *(locList.begin());
         for (auto it = locList.m_locators.begin()+1; it != locList.m_locators.end(); ++it)
         {
             output << "," << *it;
@@ -681,7 +685,7 @@ inline std::istream& operator >>(
         {
             input.exceptions(excp_mask | std::ios_base::failbit | std::ios_base::badbit);
 
-            // Get []
+            // Get [
             input >> punct;
 
             while (punct != ']')
@@ -694,6 +698,7 @@ inline std::istream& operator >>(
         }
         catch (std::ios_base::failure& )
         {
+            logWarning(LOCATOR_LIST, "Error deserializing LocatorList");
         }
 
         input.exceptions(excp_mask);
