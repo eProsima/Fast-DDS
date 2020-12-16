@@ -73,8 +73,8 @@ public:
 };
 
 /*******************
- * IPLocator Tests *
- *******************/
+* IPLocator Tests *
+*******************/
 
 /*
  * Check to create an IPv4 by string
@@ -999,8 +999,8 @@ TEST_F(IPLocatorTests, setIPv4address)
 }
 
 /*******************
- * Locator_t Tests *
- *******************/
+* Locator_t Tests *
+*******************/
 
 /*
  * Check creation of a locator from string
@@ -1179,8 +1179,8 @@ TEST(LocatorTests, LocatorList_deserialization)
 
 
 /*******************************
- * RemoteLocators Tests *
- *******************************/
+* RemoteLocators Tests *
+*******************************/
 
 /*
  * Check RemoteLocators add unicast locator that already exists
@@ -1263,8 +1263,8 @@ TEST(RemoteLocatorsTests, RemoteLocator_serialization)
 
     // Check List
     std::string str_result = // this variable is needed to separate string in 2 lines
-        "{MULTICAST:[UDPv4:[224.0.0.0]:1,UDPv4:[239.255.255.255]:2]"
-        "UNICAST:[UDPv4:[1.2.3.4]:3,UDPv4:[4.3.2.1]:4]}";
+            "{MULTICAST:[UDPv4:[224.0.0.0]:1,UDPv4:[239.255.255.255]:2]"
+            "UNICAST:[UDPv4:[1.2.3.4]:3,UDPv4:[4.3.2.1]:4]}";
     serialized_ss << rll;
     ASSERT_EQ(serialized_ss.str(), str_result);
 
@@ -1302,8 +1302,8 @@ TEST(RemoteLocatorsTests, RemoteLocator_deserialization)
 
     // Check Filled list
     std::string str_result = // this variable is needed to separate string in 2 lines
-        "{MULTICAST:[UDPv4:[224.0.0.0]:1,UDPv4:[239.255.255.255]:2]"
-        "UNICAST:[UDPv4:[1.2.3.4]:3,UDPv4:[4.3.2.1]:4]}";
+            "{MULTICAST:[UDPv4:[224.0.0.0]:1,UDPv4:[239.255.255.255]:2]"
+            "UNICAST:[UDPv4:[1.2.3.4]:3,UDPv4:[4.3.2.1]:4]}";
     serialized_ss.clear();
     serialized_ss.str(str_result);
     serialized_ss >> rll;
@@ -1320,8 +1320,8 @@ TEST(RemoteLocatorsTests, RemoteLocator_deserialization)
 }
 
 /*******************************
- * LocatorListComparison Tests *
- *******************************/
+* LocatorListComparison Tests *
+*******************************/
 
 /*
  * Check LocatorLists comparison

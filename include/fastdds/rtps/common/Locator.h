@@ -656,7 +656,7 @@ inline std::ostream& operator <<(
     if (!locList.empty())
     {
         output << *(locList.begin());
-        for (auto it = locList.m_locators.begin()+1; it != locList.m_locators.end(); ++it)
+        for (auto it = locList.m_locators.begin() + 1; it != locList.m_locators.end(); ++it)
         {
             output << "," << *it;
         }
@@ -691,7 +691,8 @@ inline std::istream& operator >>(
             while (punct != ']')
             {
                 input >> loc >> punct;
-                if (loc.kind != LOCATOR_KIND_INVALID){
+                if (loc.kind != LOCATOR_KIND_INVALID)
+                {
                     locList.push_back(loc);
                 }
             }
