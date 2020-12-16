@@ -197,8 +197,9 @@ void MessageReceiver::processCDRMsg(
 
     if (decode_ret == 0)
     {
-        // Swap
-        std::swap(msg, auxiliary_buffer);
+        // The original CDRMessage buffer (msg) now points to the proprietary temporary CDRMessage buffer (crypto_msg_).
+        // This way the already decoded proprietary buffer is processed while it is being modified.
+        *msg = CDRMessage_t(crypto_msg_);
     }
 #endif
 
