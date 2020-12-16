@@ -19,9 +19,10 @@
 #ifndef _FASTDDS_DDS_CORE_STACKALLOCATEDSEQUENCE_HPP_
 #define _FASTDDS_DDS_CORE_STACKALLOCATEDSEQUENCE_HPP_
 
+#include <array>
 #include <cassert>
 #include <cstdint>
-#include <array>
+#include <stdexcept>
 
 #include <fastdds/dds/core/LoanableArray.hpp>
 #include <fastdds/dds/core/LoanableCollection.hpp>
@@ -115,8 +116,10 @@ protected:
             LoanableCollection::size_type new_length) override
     {
         // This kind of collection cannot grow above its stack-allocated size
-        static_cast<void>(new_length);
-        assert(new_length <= num_items);
+        if (new_length > num_items)
+        {
+            throw std::bad_alloc();
+        }
     }
 
 private:

@@ -126,8 +126,8 @@ TEST(LoanableSequenceTests, construct)
         EXPECT_EQ(num_test_elements, uut.maximum());
         EXPECT_EQ(0u, uut.length());
 
-        // Trying to grow beyond maximum makes assertion fail
-        EXPECT_DEATH_IF_SUPPORTED(uut.length(uut.maximum() + 1u), "Assertion failed: new_length <= num_items.*");
+        // Trying to grow beyond maximum will throw
+        EXPECT_THROW(uut.length(uut.maximum() + 1u), std::bad_alloc);
     }
 }
 
