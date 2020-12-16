@@ -34,6 +34,67 @@ namespace dds {
 #include "./FooTypeSupport.hpp"
 
 FASTDDS_SEQUENCE(FooSeq, FooType);
+class DataReaderTests : public testing::Test
+{
+public:
+
+    void SetUp() override
+    {
+        type_.reset(new FooTypeSupport());
+    }
+
+    void TearDown() override
+    {
+        if (data_reader_)
+        {
+            ASSERT_EQ(subscriber_->delete_datareader(data_reader_), ReturnCode_t::RETCODE_OK);
+        }
+        if (topic_)
+        {
+            ASSERT_EQ(participant_->delete_topic(topic_), ReturnCode_t::RETCODE_OK);
+        }
+        if (subscriber_)
+        {
+            ASSERT_EQ(participant_->delete_subscriber(subscriber_), ReturnCode_t::RETCODE_OK);
+        }
+        if (participant_)
+        {
+            auto factory = DomainParticipantFactory::get_instance();
+            ASSERT_EQ(factory->delete_participant(participant_), ReturnCode_t::RETCODE_OK);
+        }
+    }
+
+protected:
+
+    void create_entities(
+            DataReaderListener* rlistener = nullptr,
+            const DataReaderQos& rqos = DATAREADER_QOS_DEFAULT,
+            const SubscriberQos& sqos = SUBSCRIBER_QOS_DEFAULT,
+            const TopicQos& tqos = TOPIC_QOS_DEFAULT,
+            const DomainParticipantQos& pqos = PARTICIPANT_QOS_DEFAULT)
+    {
+        participant_ = DomainParticipantFactory::get_instance()->create_participant(0, pqos);
+        ASSERT_NE(participant_, nullptr);
+
+        // We will create a disabled DataReader, so we can check RETCODE_NOT_ENABLED
+        subscriber_ = participant_->create_subscriber(sqos);
+        ASSERT_NE(subscriber_, nullptr);
+
+        type_.register_type(participant_);
+
+        topic_ = participant_->create_topic("footopic", type_.get_type_name(), tqos);
+        ASSERT_NE(topic_, nullptr);
+
+        data_reader_ = subscriber_->create_datareader(topic_, rqos, rlistener);
+        ASSERT_NE(data_reader_, nullptr);
+    }
+
+    DomainParticipant* participant_ = nullptr;
+    Subscriber* subscriber_ = nullptr;
+    Topic* topic_ = nullptr;
+    DataReader* data_reader_ = nullptr;
+    TypeSupport type_;
+};
 
 void check_return_loan(
         const ReturnCode_t& code,
@@ -100,40 +161,22 @@ void basic_read_apis_check(
     }
 }
 
-TEST(DataReaderTests, ReadData)
+TEST_F(DataReaderTests, ReadData)
 {
-    DomainParticipant* participant =
-            DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
-    ASSERT_NE(participant, nullptr);
-
     // We will create a disabled DataReader, so we can check RETCODE_NOT_ENABLED
     SubscriberQos subscriber_qos = SUBSCRIBER_QOS_DEFAULT;
     subscriber_qos.entity_factory().autoenable_created_entities = false;
-    Subscriber* subscriber = participant->create_subscriber(subscriber_qos);
-    ASSERT_NE(subscriber, nullptr);
+    create_entities(nullptr, DATAREADER_QOS_DEFAULT, subscriber_qos);
 
-    TypeSupport type(new FooTypeSupport());
-    type.register_type(participant);
-
-    Topic* topic = participant->create_topic("footopic", type.get_type_name(), TOPIC_QOS_DEFAULT);
-    ASSERT_NE(topic, nullptr);
-
-    DataReader* data_reader = subscriber->create_datareader(topic, DATAREADER_QOS_DEFAULT);
-    ASSERT_NE(data_reader, nullptr);
-    EXPECT_FALSE(data_reader->is_enabled());
+    EXPECT_FALSE(data_reader_->is_enabled());
 
     // Read / take operations should all return NOT_ENABLED
-    basic_read_apis_check(ReturnCode_t::RETCODE_NOT_ENABLED, data_reader);
+    basic_read_apis_check(ReturnCode_t::RETCODE_NOT_ENABLED, data_reader_);
 
     // Enable the DataReader and check NO_DATA should be returned
-    EXPECT_EQ(ReturnCode_t::RETCODE_OK, data_reader->enable());
-    EXPECT_TRUE(data_reader->is_enabled());
-    basic_read_apis_check(ReturnCode_t::RETCODE_NO_DATA, data_reader);
-
-    ASSERT_EQ(subscriber->delete_datareader(data_reader), ReturnCode_t::RETCODE_OK);
-    ASSERT_EQ(participant->delete_topic(topic), ReturnCode_t::RETCODE_OK);
-    ASSERT_EQ(participant->delete_subscriber(subscriber), ReturnCode_t::RETCODE_OK);
-    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), ReturnCode_t::RETCODE_OK);
+    EXPECT_EQ(ReturnCode_t::RETCODE_OK, data_reader_->enable());
+    EXPECT_TRUE(data_reader_->is_enabled());
+    basic_read_apis_check(ReturnCode_t::RETCODE_NO_DATA, data_reader_);
 }
 
 
@@ -152,47 +195,33 @@ class CustomListener : public DataReaderListener
 
 };
 
-TEST(DataReaderTests, SetListener)
+TEST_F(DataReaderTests, SetListener)
 {
     CustomListener listener;
+    create_entities(&listener);
 
-    DomainParticipant* participant =
-            DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
-    ASSERT_NE(participant, nullptr);
-
-    Subscriber* subscriber = participant->create_subscriber(SUBSCRIBER_QOS_DEFAULT);
-    ASSERT_NE(subscriber, nullptr);
-
-    TypeSupport type(new FooTypeSupport());
-    type.register_type(participant);
-
-    Topic* topic = participant->create_topic("footopic", type.get_type_name(), TOPIC_QOS_DEFAULT);
-    ASSERT_NE(topic, nullptr);
-
-    DataReader* datareader = subscriber->create_datareader(topic, DATAREADER_QOS_DEFAULT, &listener);
-    ASSERT_NE(datareader, nullptr);
-    ASSERT_EQ(datareader->get_status_mask(), StatusMask::all());
+    ASSERT_EQ(data_reader_->get_status_mask(), StatusMask::all());
 
     std::vector<std::tuple<DataReader*, DataReaderListener*, StatusMask>> testing_cases{
         //statuses, one by one
-        { datareader, &listener, StatusMask::data_available() },
-        { datareader, &listener, StatusMask::sample_rejected() },
-        { datareader, &listener, StatusMask::liveliness_changed() },
-        { datareader, &listener, StatusMask::requested_deadline_missed() },
-        { datareader, &listener, StatusMask::requested_incompatible_qos() },
-        { datareader, &listener, StatusMask::subscription_matched() },
-        { datareader, &listener, StatusMask::sample_lost() },
+        { data_reader_, &listener, StatusMask::data_available() },
+        { data_reader_, &listener, StatusMask::sample_rejected() },
+        { data_reader_, &listener, StatusMask::liveliness_changed() },
+        { data_reader_, &listener, StatusMask::requested_deadline_missed() },
+        { data_reader_, &listener, StatusMask::requested_incompatible_qos() },
+        { data_reader_, &listener, StatusMask::subscription_matched() },
+        { data_reader_, &listener, StatusMask::sample_lost() },
         //all except one
-        { datareader, &listener, StatusMask::all() >> StatusMask::data_available() },
-        { datareader, &listener, StatusMask::all() >> StatusMask::sample_rejected() },
-        { datareader, &listener, StatusMask::all() >> StatusMask::liveliness_changed() },
-        { datareader, &listener, StatusMask::all() >> StatusMask::requested_deadline_missed() },
-        { datareader, &listener, StatusMask::all() >> StatusMask::requested_incompatible_qos() },
-        { datareader, &listener, StatusMask::all() >> StatusMask::subscription_matched() },
-        { datareader, &listener, StatusMask::all() >> StatusMask::sample_lost() },
+        { data_reader_, &listener, StatusMask::all() >> StatusMask::data_available() },
+        { data_reader_, &listener, StatusMask::all() >> StatusMask::sample_rejected() },
+        { data_reader_, &listener, StatusMask::all() >> StatusMask::liveliness_changed() },
+        { data_reader_, &listener, StatusMask::all() >> StatusMask::requested_deadline_missed() },
+        { data_reader_, &listener, StatusMask::all() >> StatusMask::requested_incompatible_qos() },
+        { data_reader_, &listener, StatusMask::all() >> StatusMask::subscription_matched() },
+        { data_reader_, &listener, StatusMask::all() >> StatusMask::sample_lost() },
         //all and none
-        { datareader, &listener, StatusMask::all() },
-        { datareader, &listener, StatusMask::none() }
+        { data_reader_, &listener, StatusMask::all() },
+        { data_reader_, &listener, StatusMask::none() }
     };
 
     for (auto testing_case : testing_cases)
@@ -201,11 +230,6 @@ TEST(DataReaderTests, SetListener)
                 std::get<1>(testing_case),
                 std::get<2>(testing_case));
     }
-
-    ASSERT_EQ(subscriber->delete_datareader(datareader), ReturnCode_t::RETCODE_OK);
-    ASSERT_EQ(participant->delete_topic(topic), ReturnCode_t::RETCODE_OK);
-    ASSERT_EQ(participant->delete_subscriber(subscriber), ReturnCode_t::RETCODE_OK);
-    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), ReturnCode_t::RETCODE_OK);
 }
 
 } // namespace dds
