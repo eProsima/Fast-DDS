@@ -125,12 +125,13 @@ TEST(DDSDataSharing, BestEffortDirtyPayloads)
     testTransport->dropDataMessagesPercentage = 100;
 
     constexpr int writer_history_depth = 2;
-    constexpr int writer_sent_data = 4;
+    constexpr int writer_sent_data = 5;
 
     writer.history_depth(writer_history_depth)
             .add_user_transport_to_pparams(testTransport)
             .datasharing_on("Unused. change when ready")
-            .reliability(BEST_EFFORT_RELIABILITY_QOS).init();
+            .reliability(BEST_EFFORT_RELIABILITY_QOS)
+            .resource_limits_extra_samples(1).init();
 
     ASSERT_TRUE(writer.isInitialized());
 
@@ -154,15 +155,14 @@ TEST(DDSDataSharing, BestEffortDirtyPayloads)
 
     // Send the data to fill the history and overwrite old changes
     // The reader will receive all changes but the application will see only the last ones
+    // (the last on the writer's pool of size writer_history_depth + resource_limits_extra_samples)
     std::list<FixedSized> data = default_fixed_sized_data_generator(writer_sent_data);
     std::list<FixedSized> received_data;
     auto data_it = data.begin();
-    std::advance(data_it, writer_sent_data - writer_history_depth);
+    std::advance(data_it, writer_sent_data - writer_history_depth -1);
     std::copy(data_it, data.end(), std::back_inserter(received_data));
 
-    // Until the ACK system is in place,
-    // we have to give the listener time to get the payload before the read/write pointers get messed
-    // Remove the sleep time once the ACK are in place.
+    // we have to give the listener time to get the payload before the writer overwrites
     writer.send(data, 100);
     ASSERT_TRUE(data.empty());
 
@@ -184,12 +184,13 @@ TEST(DDSDataSharing, ReliableDirtyPayloads)
     testTransport->dropDataMessagesPercentage = 100;
 
     constexpr int writer_history_depth = 2;
-    constexpr int writer_sent_data = 4;
+    constexpr int writer_sent_data = 5;
 
     writer.history_depth(writer_history_depth)
             .add_user_transport_to_pparams(testTransport)
             .datasharing_on("Unused. change when ready")
-            .reliability(RELIABLE_RELIABILITY_QOS).init();
+            .reliability(RELIABLE_RELIABILITY_QOS)
+            .resource_limits_extra_samples(1).init();
 
     ASSERT_TRUE(writer.isInitialized());
 
@@ -216,12 +217,10 @@ TEST(DDSDataSharing, ReliableDirtyPayloads)
     std::list<FixedSized> data = default_fixed_sized_data_generator(writer_sent_data);
     std::list<FixedSized> received_data;
     auto data_it = data.begin();
-    std::advance(data_it, writer_sent_data - writer_history_depth);
+    std::advance(data_it, writer_sent_data - writer_history_depth -1);
     std::copy(data_it, data.end(), std::back_inserter(received_data));
 
-    // Until the ACK system is in place,
-    // we have to give the listener time to get the payload before the read/write pointers get messed
-    // Remove the sleep time once the ACK are in place.
+    // we have to give the listener time to get the payload before the writer overwrites
     writer.send(data, 100);
     ASSERT_TRUE(data.empty());
 
@@ -250,7 +249,8 @@ TEST(DDSDataSharing, DataSharingWriter_DifferentDomainReaders)
 
     writer.disable_builtin_transport()
             .add_user_transport_to_pparams(testTransport)
-            .datasharing_on("Unused. change when ready", writer_ids).init();
+            .datasharing_on("Unused. change when ready", writer_ids)
+            .resource_limits_extra_samples(5).init();
     ASSERT_TRUE(writer.isInitialized());
 
     datasharing_reader.disable_builtin_transport()
@@ -278,10 +278,7 @@ TEST(DDSDataSharing, DataSharingWriter_DifferentDomainReaders)
     non_datasharing_reader.startReception(data);
     auto_reader.startReception(data);
 
-    // Until the ACK system is in place,
-    // we have to give the listener time to get the payload before the read/write pointers get messed
-    // Remove the sleep time once the ACK are in place.
-    writer.send(data, 100);
+    writer.send(data);
     ASSERT_TRUE(data.empty());
 
     ASSERT_EQ(datasharing_reader.block_for_all(std::chrono::seconds(2)), 0u);
@@ -309,7 +306,8 @@ TEST(DDSDataSharing, DataSharingWriter_CommonDomainReaders)
 
     writer.disable_builtin_transport()
             .add_user_transport_to_pparams(testTransport)
-            .datasharing_on("Unused. change when ready", writer_ids).init();
+            .datasharing_on("Unused. change when ready", writer_ids)
+            .resource_limits_extra_samples(5).init();
     ASSERT_TRUE(writer.isInitialized());
 
     datasharing_reader.disable_builtin_transport()
@@ -337,10 +335,7 @@ TEST(DDSDataSharing, DataSharingWriter_CommonDomainReaders)
     non_datasharing_reader.startReception(data);
     auto_reader.startReception(data);
 
-    // Until the ACK system is in place,
-    // we have to give the listener time to get the payload before the read/write pointers get messed
-    // Remove the sleep time once the ACK are in place.
-    writer.send(data, 100);
+    writer.send(data);
     ASSERT_TRUE(data.empty());
 
     ASSERT_EQ(non_datasharing_reader.block_for_all(std::chrono::seconds(2)), 0u);
@@ -366,7 +361,8 @@ TEST(DDSDataSharing, DataSharingReader_DifferentDomainWriters)
 
     datasharing_writer.disable_builtin_transport()
             .add_user_transport_to_pparams(testTransport)
-            .datasharing_on("Unused. change when ready", writer_ids).init();
+            .datasharing_on("Unused. change when ready", writer_ids)
+            .resource_limits_extra_samples(5).init();
     ASSERT_TRUE(datasharing_writer.isInitialized());
 
     non_datasharing_writer.disable_builtin_transport()
@@ -376,7 +372,8 @@ TEST(DDSDataSharing, DataSharingReader_DifferentDomainWriters)
 
     auto_writer.disable_builtin_transport()
             .add_user_transport_to_pparams(testTransport)
-            .datasharing_auto(writer_ids).init();
+            .datasharing_auto(writer_ids)
+            .resource_limits_extra_samples(5).init();
     ASSERT_TRUE(datasharing_writer.isInitialized());
 
     reader.disable_builtin_transport()
@@ -392,30 +389,21 @@ TEST(DDSDataSharing, DataSharingReader_DifferentDomainWriters)
     std::list<FixedSized> data = default_fixed_sized_data_generator(4);
     reader.startReception(data);
 
-    // Until the ACK system is in place,
-    // we have to give the listener time to get the payload before the read/write pointers get messed
-    // Remove the sleep time once the ACK are in place.
-    datasharing_writer.send(data, 100);
+    datasharing_writer.send(data);
     ASSERT_TRUE(data.empty());
     ASSERT_EQ(reader.block_for_all(std::chrono::seconds(2)), 0u);
 
     data = default_fixed_sized_data_generator(4);
     reader.startReception(data);
 
-    // Until the ACK system is in place,
-    // we have to give the listener time to get the payload before the read/write pointers get messed
-    // Remove the sleep time once the ACK are in place.
-    non_datasharing_writer.send(data, 100);
+    non_datasharing_writer.send(data);
     ASSERT_TRUE(data.empty());
     ASSERT_EQ(reader.block_for_all(std::chrono::seconds(2)), 0u);
 
     data = default_fixed_sized_data_generator(4);
     reader.startReception(data);
 
-    // Until the ACK system is in place,
-    // we have to give the listener time to get the payload before the read/write pointers get messed
-    // Remove the sleep time once the ACK are in place.
-    auto_writer.send(data, 100);
+    auto_writer.send(data);
     ASSERT_TRUE(data.empty());
     ASSERT_EQ(reader.block_for_all(std::chrono::seconds(2)), 0u);
 }
@@ -440,7 +428,8 @@ TEST(DDSDataSharing, DataSharingReader_CommonDomainWriters)
 
     datasharing_writer.disable_builtin_transport()
             .add_user_transport_to_pparams(testTransport)
-            .datasharing_on("Unused. change when ready", writer_ids).init();
+            .datasharing_on("Unused. change when ready", writer_ids)
+            .resource_limits_extra_samples(5).init();
     ASSERT_TRUE(datasharing_writer.isInitialized());
 
     non_datasharing_writer.disable_builtin_transport()
@@ -450,7 +439,8 @@ TEST(DDSDataSharing, DataSharingReader_CommonDomainWriters)
 
     auto_writer.disable_builtin_transport()
             .add_user_transport_to_pparams(testTransport)
-            .datasharing_auto(writer_ids).init();
+            .datasharing_auto(writer_ids)
+            .resource_limits_extra_samples(5).init();
     ASSERT_TRUE(datasharing_writer.isInitialized());
 
     reader.disable_builtin_transport()
@@ -466,30 +456,21 @@ TEST(DDSDataSharing, DataSharingReader_CommonDomainWriters)
     std::list<FixedSized> data = default_fixed_sized_data_generator(4);
     reader.startReception(data);
 
-    // Until the ACK system is in place,
-    // we have to give the listener time to get the payload before the read/write pointers get messed
-    // Remove the sleep time once the ACK are in place.
-    datasharing_writer.send(data, 100);
+    datasharing_writer.send(data);
     ASSERT_TRUE(data.empty());
     reader.block_for_all();
 
     data = default_fixed_sized_data_generator(4);
     reader.startReception(data);
 
-    // Until the ACK system is in place,
-    // we have to give the listener time to get the payload before the read/write pointers get messed
-    // Remove the sleep time once the ACK are in place.
-    non_datasharing_writer.send(data, 100);
+    non_datasharing_writer.send(data);
     ASSERT_TRUE(data.empty());
     ASSERT_EQ(reader.block_for_all(std::chrono::seconds(2)), 0u);
 
     data = default_fixed_sized_data_generator(4);
     reader.startReception(data);
 
-    // Until the ACK system is in place,
-    // we have to give the listener time to get the payload before the read/write pointers get messed
-    // Remove the sleep time once the ACK are in place.
-    auto_writer.send(data, 100);
+    auto_writer.send(data);
     ASSERT_TRUE(data.empty());
     reader.block_for_all();
 }
