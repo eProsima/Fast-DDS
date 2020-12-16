@@ -42,8 +42,9 @@ public:
             unsigned int channels);
 };
 
-TEST_F(NetworkTests,
-        registering_transport_with_descriptor_instantiates_and_populates_a_transport_with_descriptor_options)
+// for uncrustify sake *INDENT-OFF*
+TEST_F(NetworkTests, registering_transport_with_descriptor_instantiates_and_populates_a_transport_with_descriptor_options)
+// *INDENT-ON*
 {
     // Given
     const int ExpectedMaximumChannels = 10;
@@ -234,8 +235,9 @@ TEST_F(NetworkTests, BuildSenderResources_returns_empty_vector_if_no_registered_
     ASSERT_TRUE(send_resource_list.empty());
 }
 
-TEST_F(NetworkTests,
-        BuildSenderResources_returns_empty_vector_if_all_compatible_transports_have_that_channel_open_already)
+// for uncrustify sake *INDENT-OFF*
+TEST_F(NetworkTests, BuildSenderResources_returns_empty_vector_if_all_compatible_transports_have_that_channel_open_already)
+// *INDENT-ON*
 {
     // Given
     int ArbitraryKind = 1;
@@ -439,25 +441,22 @@ struct ShrinkLocatorCase_t
             [this](const Locator_t& locator)
             {
                 bool contains = false;
-                for (LocatorListIterator it = output.begin(); it != output.end(); ++it)
+                for (auto locator_in_list : output)
                 {
-                    for (auto locator_in_list : output)
+                    if (IsAddressDefined(locator_in_list))
                     {
-                        if (IsAddressDefined(locator_in_list))
+                        if (locator == locator_in_list)
                         {
-                            if (locator == locator_in_list)
-                            {
-                                contains = true;
-                                break;
-                            }
+                            contains = true;
+                            break;
                         }
-                        else
+                    }
+                    else
+                    {
+                        if (locator.kind == locator_in_list.kind && locator.port == locator_in_list.port)
                         {
-                            if (locator.kind == locator_in_list.kind && locator.port == locator_in_list.port)
-                            {
-                                contains = true;
-                                break;
-                            }
+                            contains = true;
+                            break;
                         }
                     }
                 }
