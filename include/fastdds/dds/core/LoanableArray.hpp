@@ -42,12 +42,16 @@ struct LoanableArray : public std::array<T, num_items>
     }
 
     // Non-copyable
-    LoanableArray(const LoanableArray&) = delete;
-    LoanableArray& operator = (const LoanableArray&) = delete;
+    LoanableArray(
+            const LoanableArray&) = delete;
+    LoanableArray& operator = (
+            const LoanableArray&) = delete;
 
     // Non-moveable
-    LoanableArray(LoanableArray&&) = delete;
-    LoanableArray& operator = (LoanableArray&&) = delete;
+    LoanableArray(
+            LoanableArray&&) = delete;
+    LoanableArray& operator = (
+            LoanableArray&&) = delete;
 
     /**
      * Get a buffer pointer that could be used on @ref LoanableCollection::loan.

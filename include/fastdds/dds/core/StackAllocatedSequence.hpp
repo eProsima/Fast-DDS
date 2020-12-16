@@ -47,12 +47,16 @@ struct StackAllocatedSequence : public LoanableCollection
     ~StackAllocatedSequence() = default;
 
     // Non-copyable
-    StackAllocatedSequence(const StackAllocatedSequence&) = delete;
-    StackAllocatedSequence& operator = (const StackAllocatedSequence&) = delete;
+    StackAllocatedSequence(
+            const StackAllocatedSequence&) = delete;
+    StackAllocatedSequence& operator = (
+            const StackAllocatedSequence&) = delete;
 
     // Non-moveable
-    StackAllocatedSequence(StackAllocatedSequence&&) = delete;
-    StackAllocatedSequence& operator = (StackAllocatedSequence&&) = delete;
+    StackAllocatedSequence(
+            StackAllocatedSequence&&) = delete;
+    StackAllocatedSequence& operator = (
+            StackAllocatedSequence&&) = delete;
 
     /**
      * Set the n-th element of the sequence.
