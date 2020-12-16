@@ -14,7 +14,7 @@
 
 /**
  * @file SubscriptionMatchedStatus.hpp
-*/
+ */
 
 #ifndef _SUBSCRIPTION_MATCHED_STATUS_HPP_
 #define _SUBSCRIPTION_MATCHED_STATUS_HPP_
@@ -29,10 +29,10 @@ namespace fastdds {
 namespace dds {
 
 //! @brief A structure storing the subscription status
-struct SubscriptionMatchedStatus: public MatchedStatus
+struct SubscriptionMatchedStatus : public MatchedStatus
 {
-	//! @brief Handle to the last writer that matched the reader causing the status change
-	InstanceHandle_t last_publication_handle;
+    //! @brief Handle to the last writer that matched the reader causing the status change
+    InstanceHandle_t last_publication_handle;
 };
 
 } // namespace dds
