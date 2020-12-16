@@ -141,7 +141,7 @@ inline std::ostream& operator <<(
 {
     // Stored multicast locators
     output << "{";
-    if (remote_locators.multicast.empty())
+    if (!remote_locators.multicast.empty())
     {
         output << "MULTICAST:[";
         output << remote_locators.multicast[0];
@@ -153,7 +153,7 @@ inline std::ostream& operator <<(
     }
 
     // Stored unicast locators
-    if (remote_locators.unicast.empty())
+    if (!remote_locators.unicast.empty())
     {
         output << "UNICAST:[";
         output << remote_locators.unicast[0];

@@ -300,7 +300,7 @@ inline std::istream& operator >>(
             input.exceptions(excp_mask | std::ios_base::failbit | std::ios_base::badbit);
 
             // Locator info
-            uint32_t kind;
+            int32_t kind;
             uint32_t port;
             std::string address;
 

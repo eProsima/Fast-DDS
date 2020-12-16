@@ -1335,7 +1335,7 @@ TEST(LocatorListComparisonTests, locatorList_comparison)
     IPLocator::createLocator(LOCATOR_KIND_TCPv4, "1.2.3.4", 1, locator);
     locator_list_1.push_back(locator);
     locator_list_2.push_back(locator);
-    IPLocator::createLocator(LOCATOR_KIND_UDPv6, "1.2.3.4", 2, locator);
+    IPLocator::createLocator(LOCATOR_KIND_UDPv4, "1.2.3.4", 2, locator);
     locator_list_1.push_back(locator);
     locator_list_2.push_back(locator);
 
@@ -1356,7 +1356,7 @@ TEST(LocatorListComparisonTests, locatorList_comparison)
     IPLocator::createLocator(LOCATOR_KIND_TCPv4, "1.2.3.4", 1, locator);
     locator_list_1.push_back(locator);
     locator_list_2.push_back(locator);
-    IPLocator::createLocator(LOCATOR_KIND_UDPv6, "1.2.3.4", 2, locator);
+    IPLocator::createLocator(LOCATOR_KIND_UDPv4, "1.2.3.4", 2, locator);
     locator_list_1.push_back(locator);
     locator_list_2.push_back(locator);
     IPLocator::createLocator(LOCATOR_KIND_TCPv4, "0.0.0.1", 4, locator);
