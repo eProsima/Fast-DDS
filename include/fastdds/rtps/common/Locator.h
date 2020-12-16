@@ -22,6 +22,7 @@
 #include <fastrtps/fastrtps_dll.h>
 
 #include <fastdds/rtps/common/Types.h>
+#include <fastrtps/utils/IPLocator.h>
 
 #include <sstream>
 #include <vector>
@@ -213,44 +214,71 @@ inline bool operator !=(
 }
 
 /*
- * kind : address[N] . address[1] . ... . address[16] : port
- * N = 0 if IPv6
- * N = 12 if IPv4
+ * kind:[address (in IP version)]:port
+ * <address> cannot be empty or deserialization process fails
  */
 inline std::ostream& operator <<(
         std::ostream& output,
         const Locator_t& loc)
 {
-    output << loc.kind << ":";
+    // Stream Locator kind
+    switch (loc.kind)
+    {
+        case LOCATOR_KIND_TCPv4:
+        {
+            output << "TCPv4:[";
+            break;
+        }
+        case LOCATOR_KIND_UDPv4:
+        {
+            output << "UDPv4:[";
+            break;
+        }
+        case LOCATOR_KIND_TCPv6:
+        {
+            output << "TCPv6:[";
+            break;
+        }
+        case LOCATOR_KIND_UDPv6:
+        {
+            output << "UDPv6:[";
+            break;
+        }
+        case LOCATOR_KIND_SHM:
+        {
+            output << "SHM:[";
+            break;
+        }
+        default:
+        {
+            output << "Invalid_locator:[_]:0";
+            return output;
+        }
+    }
+
+    // Stream address
     if (loc.kind == LOCATOR_KIND_UDPv4 || loc.kind == LOCATOR_KIND_TCPv4)
     {
-        output << (int)loc.address[12] << "." << (int)loc.address[13]
-               << "." << (int)loc.address[14] << "." << (int)loc.address[15]
-               << ":" << loc.port;
+        output << IPLocator::toIPv4string(loc);
     }
     else if (loc.kind == LOCATOR_KIND_UDPv6 || loc.kind == LOCATOR_KIND_TCPv6)
     {
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            output << (int)loc.address[i];
-            if (i < 15)
-            {
-                output << ".";
-            }
-        }
-        output << ":" << loc.port;
+        output << IPLocator::toIPv6string(loc);
     }
     else if (loc.kind == LOCATOR_KIND_SHM)
     {
         if (loc.address[0] == 'M')
         {
-            output << "SHM:M:" << loc.port;
+            output << "M";
         }
         else
         {
-            output << "SHM::" << loc.port;
+            output << "_";
         }
     }
+
+    // Stream port
+    output << "]:" << loc.port;
 
     return output;
 }
@@ -263,78 +291,64 @@ inline std::istream& operator >>(
 
     if (s)
     {
-        char punctuation;
-        unsigned short kind;
-        unsigned short value;
         std::ios_base::iostate excp_mask = input.exceptions();
 
         try
         {
             input.exceptions(excp_mask | std::ios_base::failbit | std::ios_base::badbit);
 
-            input >> kind >> punctuation;
-            loc.kind = kind;
+            // Locator info
+            uint32_t kind, port;
+            std::string address;
 
-            if (kind == LOCATOR_KIND_SHM)
+            // Deserialization variables
+            std::stringbuf sb_kind, sb_address;
+            std::string str_kind;
+            char punct;
+
+            // Check the locator kind
+            input.get(sb_kind, ':');
+            str_kind = sb_kind.str();
+
+            if (str_kind == "SHM")
             {
-                // ignore till second :
-                input.ignore(16, ':');
-                input.get(punctuation);
-                if (punctuation == 'M')
-                {
-                    loc.address[0] = 'M';
-                    input.get(punctuation);
-                }
+                kind = LOCATOR_KIND_SHM;
             }
-            else if (kind == LOCATOR_KIND_UDPv4 || kind == LOCATOR_KIND_TCPv4)
+            else if (str_kind == "TCPv4")
             {
-                for (int i = 12; i < 15; ++i)
-                {
-                    input >> value >> punctuation;
-                    if ( punctuation != '.' || value > 255 )
-                    {
-                        input.setstate(std::ios_base::failbit);
-                    }
-                    loc.address[i] = static_cast<octet>(value);
-                }
-
-                // last value
-                input >> value >> punctuation;
-                if ( punctuation != ':' || value > 255 )
-                {
-                    input.setstate(std::ios_base::failbit);
-                }
-                loc.address[15] = static_cast<octet>(value);
-
+                kind = LOCATOR_KIND_TCPv4;
             }
-            else if (kind == LOCATOR_KIND_UDPv6 || kind == LOCATOR_KIND_TCPv6)
+            else if (str_kind == "TCPv6")
             {
-                input >> std::hex;
-                for (int i = 0; i < 15; ++i)
-                {
-                    input >> value >> punctuation;
-                    if ( punctuation != '.' || value > 255 )
-                    {
-                        input.setstate(std::ios_base::failbit);
-                    }
-                    loc.address[i] = static_cast<octet>(value);
-                }
-
-                input >> value >> punctuation;
-                if ( punctuation != ':' || value > 255 )
-                {
-                    input.setstate(std::ios_base::failbit);
-                }
-                loc.address[15] = static_cast<octet>(value);
-
-                input >> std::dec;
+                kind = LOCATOR_KIND_TCPv6;
+            }
+            else if (str_kind == "UDPv4")
+            {
+                kind = LOCATOR_KIND_UDPv4;
+            }
+            else if (str_kind == "UDPv6")
+            {
+                kind = LOCATOR_KIND_UDPv6;
             }
             else
             {
-                input.setstate(std::ios_base::failbit);
+                kind = LOCATOR_PORT_INVALID;
             }
-            input >> value;
-            loc.port = value;
+
+            // Get char :[
+            input >> punct >> punct;
+
+            // Get address in string
+            input.get(sb_address, ']');
+            address = sb_address.str();
+
+            // Get char ]:
+            input >> punct >> punct;
+
+            // Get port
+            input >> port;
+
+            IPLocator::createLocator(kind, address, port, loc);
         }
         catch (std::ios_base::failure& )
         {
@@ -342,7 +356,6 @@ inline std::istream& operator >>(
 
         input.exceptions(excp_mask);
     }
-
     return input;
 }
 

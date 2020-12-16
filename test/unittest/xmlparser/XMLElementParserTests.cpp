@@ -1510,11 +1510,11 @@ TEST_F(XMLParserTests, ParticipantAllocationAttributesDataLimits)
         XMLP_ret::XML_OK,
         XMLParserTest::getXMLParticipantAllocationAttributes_wrapper(titleElement, allocation, ident));
     // Check that the maximum number of properties attribute (max_properties) is set correctly.
-    EXPECT_EQ(allocation.data_limits.max_properties, 10);
+    EXPECT_EQ(allocation.data_limits.max_properties, 10ul);
     // Check that the maximum user data attribute (max_user_data) is set correctly.
-    EXPECT_EQ(allocation.data_limits.max_user_data, 20);
+    EXPECT_EQ(allocation.data_limits.max_user_data, 20ul);
     // Check that the maximum number of partitions attribute (max_partitions) is set correctly.
-    EXPECT_EQ(allocation.data_limits.max_partitions, 3);
+    EXPECT_EQ(allocation.data_limits.max_partitions, 3ul);
 }
 
 /*

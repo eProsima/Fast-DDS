@@ -31,7 +31,7 @@ using namespace eprosima::fastrtps;
 #define GET_PID _getpid
 #else
 #define GET_PID getpid
-#endif
+#endif // if defined(_WIN32)
 
 static uint16_t g_default_port = 0;
 
@@ -39,7 +39,7 @@ uint16_t get_port()
 {
     uint16_t port = static_cast<uint16_t>(GET_PID());
 
-    if(4000 > port)
+    if (4000 > port)
     {
         port += 4000;
     }
@@ -47,43 +47,44 @@ uint16_t get_port()
     return port;
 }
 
-class TCPv6Tests: public ::testing::Test
+class TCPv6Tests : public ::testing::Test
 {
-    public:
-        TCPv6Tests()
-        {
-            HELPER_SetDescriptorDefaults();
-        }
+public:
 
-        ~TCPv6Tests()
-        {
-            eprosima::fastdds::dds::Log::KillThread();
-        }
+    TCPv6Tests()
+    {
+        HELPER_SetDescriptorDefaults();
+    }
 
-        void HELPER_SetDescriptorDefaults();
+    ~TCPv6Tests()
+    {
+        eprosima::fastdds::dds::Log::KillThread();
+    }
 
-        TCPv6TransportDescriptor descriptor;
-        std::unique_ptr<std::thread> senderThread;
-        std::unique_ptr<std::thread> receiverThread;
+    void HELPER_SetDescriptorDefaults();
+
+    TCPv6TransportDescriptor descriptor;
+    std::unique_ptr<std::thread> senderThread;
+    std::unique_ptr<std::thread> receiverThread;
 };
 
 TEST_F(TCPv6Tests, conversion_to_ip6_string)
 {
     Locator_t locator;
     locator.kind = LOCATOR_KIND_TCPv6;
-    ASSERT_EQ("0:0:0:0:0:0:0:0", IPLocator::toIPv6string(locator));
+    ASSERT_EQ("::", IPLocator::toIPv6string(locator));
 
     locator.address[0] = 0xff;
-    ASSERT_EQ("ff00:0:0:0:0:0:0:0", IPLocator::toIPv6string(locator));
+    ASSERT_EQ("ff00::", IPLocator::toIPv6string(locator));
 
     locator.address[1] = 0xaa;
-    ASSERT_EQ("ffaa:0:0:0:0:0:0:0", IPLocator::toIPv6string(locator));
+    ASSERT_EQ("ffaa::", IPLocator::toIPv6string(locator));
 
     locator.address[2] = 0x0a;
-    ASSERT_EQ("ffaa:a00:0:0:0:0:0:0", IPLocator::toIPv6string(locator));
+    ASSERT_EQ("ffaa:a00::", IPLocator::toIPv6string(locator));
 
     locator.address[5] = 0x0c;
-    ASSERT_EQ("ffaa:a00:c:0:0:0:0:0", IPLocator::toIPv6string(locator));
+    ASSERT_EQ("ffaa:a00:c::", IPLocator::toIPv6string(locator));
 }
 
 TEST_F(TCPv6Tests, setting_ip6_values_on_locators)
@@ -91,8 +92,8 @@ TEST_F(TCPv6Tests, setting_ip6_values_on_locators)
     Locator_t locator;
     locator.kind = LOCATOR_KIND_TCPv6;
 
-    IPLocator::setIPv6(locator, 0xffff,0xa, 0xaba, 0, 0, 0, 0, 0);
-    ASSERT_EQ("ffff:a:aba:0:0:0:0:0", IPLocator::toIPv6string(locator));
+    IPLocator::setIPv6(locator, 0xffff, 0xa, 0xaba, 0, 0, 0, 0, 0);
+    ASSERT_EQ("ffff:a:aba::", IPLocator::toIPv6string(locator));
 }
 
 TEST_F(TCPv6Tests, locators_with_kind_2_supported)
@@ -125,13 +126,13 @@ TEST_F(TCPv6Tests, opening_and_closing_output_channel)
 
     // Then
     /*
-    ASSERT_FALSE (transportUnderTest.IsOutputChannelOpen(genericOutputChannelLocator));
-    ASSERT_TRUE  (transportUnderTest.OpenOutputChannel(genericOutputChannelLocator));
-    ASSERT_TRUE  (transportUnderTest.IsOutputChannelOpen(genericOutputChannelLocator));
-    ASSERT_TRUE  (transportUnderTest.CloseOutputChannel(genericOutputChannelLocator));
-    ASSERT_FALSE (transportUnderTest.IsOutputChannelOpen(genericOutputChannelLocator));
-    ASSERT_FALSE (transportUnderTest.CloseOutputChannel(genericOutputChannelLocator));
-    */
+       ASSERT_FALSE (transportUnderTest.IsOutputChannelOpen(genericOutputChannelLocator));
+       ASSERT_TRUE  (transportUnderTest.OpenOutputChannel(genericOutputChannelLocator));
+       ASSERT_TRUE  (transportUnderTest.IsOutputChannelOpen(genericOutputChannelLocator));
+       ASSERT_TRUE  (transportUnderTest.CloseOutputChannel(genericOutputChannelLocator));
+       ASSERT_FALSE (transportUnderTest.IsOutputChannelOpen(genericOutputChannelLocator));
+       ASSERT_FALSE (transportUnderTest.CloseOutputChannel(genericOutputChannelLocator));
+     */
 }
 
 #ifndef __APPLE__
@@ -161,8 +162,8 @@ TEST_F(TCPv6Tests, opening_and_closing_input_channel)
     ASSERT_FALSE (transportUnderTest.CloseInputChannel(multicastFilterLocator));
 }
 /*
-TEST_F(TCPv6Tests, send_and_receive_between_both_secure_ports)
-{
+   TEST_F(TCPv6Tests, send_and_receive_between_both_secure_ports)
+   {
     eprosima::fastdds::dds::Log::SetVerbosity(eprosima::fastdds::dds::Log::Kind::Info);
 
     using TLSOptions = TCPTransportDescriptor::TLSConfig::TLSOptions;
@@ -247,12 +248,12 @@ TEST_F(TCPv6Tests, send_and_receive_between_both_secure_ports)
         sem.wait();
     }
     ASSERT_TRUE(sendTransportUnderTest.CloseOutputChannel(outputLocator));
-}
-*/
+   }
+ */
 // TODO SKIP AT THIS MOMENT
 /*
-TEST_F(TCPv6Tests, send_and_receive_between_ports)
-{
+   TEST_F(TCPv6Tests, send_and_receive_between_ports)
+   {
     descriptor.listening_ports.push_back(g_default_port);
     TCPv6Transport transportUnderTest(descriptor);
     transportUnderTest.init();
@@ -295,10 +296,10 @@ TEST_F(TCPv6Tests, send_and_receive_between_ports)
     senderThread->join();
     sem.wait();
     ASSERT_TRUE(transportUnderTest.CloseOutputChannel(outputChannelLocator));
-}
+   }
 
-TEST_F(TCPv6Tests, send_to_loopback)
-{
+   TEST_F(TCPv6Tests, send_to_loopback)
+   {
     TCPv6Transport transportUnderTest(descriptor);
     transportUnderTest.init();
 
@@ -338,15 +339,17 @@ TEST_F(TCPv6Tests, send_to_loopback)
     senderThread->join();
     sem.wait();
     ASSERT_TRUE(transportUnderTest.CloseOutputChannel(outputChannelLocator));
-}
-*/
-#endif
+   }
+ */
+#endif // ifndef __APPLE__
 
 void TCPv6Tests::HELPER_SetDescriptorDefaults()
 {
 }
 
-int main(int argc, char **argv)
+int main(
+        int argc,
+        char** argv)
 {
     eprosima::fastdds::dds::Log::SetVerbosity(eprosima::fastdds::dds::Log::Info);
     g_default_port = get_port();
