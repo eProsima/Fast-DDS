@@ -971,6 +971,7 @@ bool StatefulReader::nextUntakenCache(
                 if (!DataSharingPayloadPool::check_sequence_number(
                         (*it)->serializedPayload.data, (*it)->sequenceNumber))
                 {
+                    toremove.push_back((*it));
                     continue;
                 }
             }
@@ -985,6 +986,10 @@ bool StatefulReader::nextUntakenCache(
                 }
             }
             takeok = true;
+        }
+        else
+        {
+            toremove.push_back((*it));
         }
 
         if (takeok)
@@ -1007,10 +1012,6 @@ bool StatefulReader::nextUntakenCache(
             }
 
             break;
-        }
-        else
-        {
-            toremove.push_back((*it));
         }
     }
 
@@ -1061,6 +1062,7 @@ bool StatefulReader::nextUnreadCache(
                 if (!DataSharingPayloadPool::check_sequence_number(
                         (*it)->serializedPayload.data, (*it)->sequenceNumber))
                 {
+                    toremove.push_back((*it));
                     continue;
                 }
             }
@@ -1074,6 +1076,10 @@ bool StatefulReader::nextUnreadCache(
                 }
             }
             readok = true;
+        }
+        else
+        {
+            toremove.push_back((*it));
         }
 
         if (readok)
@@ -1094,10 +1100,6 @@ bool StatefulReader::nextUnreadCache(
             }
 
             break;
-        }
-        else
-        {
-            toremove.push_back((*it));
         }
     }
 
