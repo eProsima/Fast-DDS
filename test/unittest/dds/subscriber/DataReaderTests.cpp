@@ -17,8 +17,12 @@
 
 #include <fastcdr/Cdr.h>
 
+#include <fastdds/dds/core/LoanableArray.hpp>
+#include <fastdds/dds/core/StackAllocatedSequence.hpp>
+
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
 #include <fastdds/dds/domain/DomainParticipant.hpp>
+
 #include <fastdds/dds/subscriber/DataReader.hpp>
 #include <fastdds/dds/subscriber/DataReaderListener.hpp>
 #include <fastdds/dds/subscriber/Subscriber.hpp>
@@ -33,7 +37,13 @@ namespace dds {
 #include "./FooType.hpp"
 #include "./FooTypeSupport.hpp"
 
+static constexpr LoanableCollection::size_type num_test_elements = 10u;
+
 FASTDDS_SEQUENCE(FooSeq, FooType);
+using FooArray = LoanableArray<FooType, num_test_elements>;
+using FooStack = StackAllocatedSequence<FooType, num_test_elements>;
+using SampleInfoArray = LoanableArray<SampleInfo, num_test_elements>;
+
 class DataReaderTests : public testing::Test
 {
 public:
@@ -179,7 +189,136 @@ TEST_F(DataReaderTests, ReadData)
     basic_read_apis_check(ReturnCode_t::RETCODE_NO_DATA, data_reader_);
 }
 
+void check_collection(
+        const LoanableCollection& collection,
+        bool owns,
+        LoanableCollection::size_type max,
+        LoanableCollection::size_type len)
+{
+    EXPECT_EQ(owns, collection.has_ownership());
+    EXPECT_EQ(max, collection.maximum());
+    EXPECT_EQ(len, collection.length());
+}
 
+void check_collection_preconditions(
+        DataReader* data_reader)
+{
+    // This should be called on an enabled reader with no data
+    const ReturnCode_t& ok_code = ReturnCode_t::RETCODE_NO_DATA;
+    const ReturnCode_t& wrong_code = ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
+
+    // Helper buffers to create loaned sequences
+    FooArray arr;
+    SampleInfoArray info_arr;
+
+    // This variables are named following the convention owns_len_max
+    FooSeq true_0_0;
+    FooSeq true_10_0(num_test_elements);
+    FooStack true_10_1;
+    FooSeq false_10_0;
+    FooSeq false_10_1;
+    SampleInfoSeq info_true_0_0;
+    SampleInfoSeq info_true_10_0(num_test_elements);
+    SampleInfoSeq info_true_10_1(num_test_elements);
+    SampleInfoSeq info_false_10_0;
+    SampleInfoSeq info_false_10_1;
+
+    // Make the sequences have the corresponding values
+    true_10_1.length(1u);
+    false_10_0.loan(arr.buffer_for_loans(), num_test_elements, 0u);
+    false_10_1.loan(arr.buffer_for_loans(), num_test_elements, 1u);
+    info_true_10_1.length(1u);
+    info_false_10_0.loan(info_arr.buffer_for_loans(), num_test_elements, 0u);
+    info_false_10_1.loan(info_arr.buffer_for_loans(), num_test_elements, 1u);
+
+    // Check we did it right
+    check_collection(true_0_0, true, 0u, 0u);
+    check_collection(true_10_0, true, 10u, 0u);
+    check_collection(true_10_1, true, 10u, 1u);
+    check_collection(false_10_0, false, 10u, 0u);
+    check_collection(false_10_1, false, 10u, 1u);
+    check_collection(info_true_0_0, true, 0u, 0u);
+    check_collection(info_true_10_0, true, 10u, 0u);
+    check_collection(info_true_10_1, true, 10u, 1u);
+    check_collection(info_false_10_0, false, 10u, 0u);
+    check_collection(info_false_10_1, false, 10u, 1u);
+
+    // Check all wrong combinations
+    using test_case_t = std::pair<LoanableCollection&, SampleInfoSeq&>;
+    std::vector<test_case_t> wrong_cases
+    {
+        // true_0_0
+        {true_0_0, info_true_10_0},
+        {true_0_0, info_true_10_1},
+        {true_0_0, info_false_10_0},
+        {true_0_0, info_false_10_1},
+        // true_10_0
+        {true_10_0, info_true_0_0},
+        {true_10_0, info_true_10_1},
+        {true_10_0, info_false_10_0},
+        {true_10_0, info_false_10_1},
+        // true_10_1
+        {true_10_1, info_true_10_0},
+        {true_10_1, info_true_0_0},
+        {true_10_1, info_false_10_0},
+        {true_10_1, info_false_10_1},
+        // false_10_0
+        {false_10_0, info_true_10_0},
+        {false_10_0, info_true_10_1},
+        {false_10_0, info_true_0_0},
+        {false_10_0, info_false_10_1},
+        // false_10_1
+        {false_10_1, info_true_10_0},
+        {false_10_1, info_true_10_1},
+        {false_10_1, info_false_10_0},
+        {false_10_1, info_true_0_0},
+    };
+
+    for (const test_case_t& test : wrong_cases)
+    {
+        EXPECT_EQ(wrong_code, data_reader->read(test.first, test.second));
+        EXPECT_EQ(wrong_code, data_reader->read_next_instance(test.first, test.second));
+        EXPECT_EQ(wrong_code, data_reader->take(test.first, test.second));
+        EXPECT_EQ(wrong_code, data_reader->take_next_instance(test.first, test.second));
+    }
+
+    // Check compatible combinations
+    using ok_test_case_t = std::pair<test_case_t, const ReturnCode_t&>;
+    std::vector<ok_test_case_t> ok_cases
+    {
+        // max == 0. Loaned data will be returned.
+        { {true_0_0, info_true_0_0}, ok_code},
+        // max > 0 && owns == true. Data will be copied.
+        { {true_10_0, info_true_10_0}, ok_code},
+        { {true_10_1, info_true_10_1}, ok_code},
+        // max > 0 && owns == false. Precondition not met.
+        { {false_10_0, info_false_10_0}, wrong_code},
+        { {false_10_1, info_false_10_1}, wrong_code}
+    };
+
+    for (const ok_test_case_t& test : ok_cases)
+    {
+        EXPECT_EQ(test.second, data_reader->read(test.first.first, test.first.second));
+        EXPECT_EQ(wrong_code, data_reader->return_loan(test.first.first, test.first.second));
+        EXPECT_EQ(test.second, data_reader->read_next_instance(test.first.first, test.first.second));
+        EXPECT_EQ(wrong_code, data_reader->return_loan(test.first.first, test.first.second));
+        EXPECT_EQ(test.second, data_reader->take(test.first.first, test.first.second));
+        EXPECT_EQ(wrong_code, data_reader->return_loan(test.first.first, test.first.second));
+        EXPECT_EQ(test.second, data_reader->take_next_instance(test.first.first, test.first.second));
+        EXPECT_EQ(wrong_code, data_reader->return_loan(test.first.first, test.first.second));
+    }
+
+    false_10_0.unloan();
+    false_10_1.unloan();
+    info_false_10_0.unloan();
+    info_false_10_1.unloan();
+}
+
+TEST_F(DataReaderTests, collection_preconditions)
+{
+    create_entities();
+    check_collection_preconditions(data_reader_);
+}
 
 void set_listener_test (
         DataReader* reader,
