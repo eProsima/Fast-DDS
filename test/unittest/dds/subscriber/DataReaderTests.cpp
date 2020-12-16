@@ -15,6 +15,8 @@
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
 
+#include <fastcdr/Cdr.h>
+
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
 #include <fastdds/dds/domain/DomainParticipant.hpp>
 #include <fastdds/dds/subscriber/DataReader.hpp>
@@ -32,81 +34,210 @@ class FooType
 {
 public:
 
-    FooType()
+    inline uint32_t index() const
     {
+        return index_;
     }
 
-    ~FooType()
+    inline uint32_t& index()
     {
+        return index_;
     }
 
-    inline std::string& message()
+    inline void index(
+            uint32_t value)
+    {
+        index_ = value;
+    }
+
+    inline const std::array<char, 256>& message() const
+    {
+        return message_;
+    }
+
+    inline std::array<char, 256>& message()
     {
         return message_;
     }
 
     inline void message(
-            const std::string& message)
+            const std::array<char, 256>& value)
     {
-        message_ = message;
+        message_ = value;
     }
 
-    bool isKeyDefined()
+    inline void serialize(
+            eprosima::fastcdr::Cdr& scdr) const
     {
-        return false;
+        scdr << index_;
+        scdr << message_;
     }
 
-private:
-
-    std::string message_;
-};
-
-class TopicDataTypeMock : public TopicDataType
-{
-public:
-
-    TopicDataTypeMock()
-        : TopicDataType()
+    inline void deserialize(
+            eprosima::fastcdr::Cdr& dcdr)
     {
-        m_typeSize = 4u;
-        setName("footype");
+        dcdr >> index_;
+        dcdr >> message_;
     }
 
-    bool serialize(
-            void* /*data*/,
-            fastrtps::rtps::SerializedPayload_t* /*payload*/) override
+    inline bool isKeyDefined()
     {
         return true;
     }
 
-    bool deserialize(
-            fastrtps::rtps::SerializedPayload_t* /*payload*/,
-            void* /*data*/) override
+    inline void serializeKey(
+            eprosima::fastcdr::Cdr& scdr) const
     {
+        scdr << index_;
+    }
+
+private:
+
+    uint32_t index_ = 0;
+    std::array<char, 256> message_;
+};
+
+class FooTypeSupport : public TopicDataType
+{
+public:
+
+    FooTypeSupport()
+        : TopicDataType()
+    {
+        setName("FooType");
+        m_typeSize = 4u + 4u + 256u; // encapsulation + index + message
+        m_isGetKeyDefined = true;
+    }
+
+    bool serialize(
+            void* data,
+            fastrtps::rtps::SerializedPayload_t* payload) override
+    {
+        FooType* p_type = static_cast<FooType*>(data);
+
+        // Object that manages the raw buffer.
+        eprosima::fastcdr::FastBuffer fb(reinterpret_cast<char*>(payload->data), payload->max_size);
+        // Object that serializes the data.
+        eprosima::fastcdr::Cdr ser(fb, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN, eprosima::fastcdr::Cdr::DDS_CDR);
+        payload->encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
+        // Serialize encapsulation
+        ser.serialize_encapsulation();
+
+        try
+        {
+            // Serialize the object.
+            p_type->serialize(ser);
+        }
+        catch (eprosima::fastcdr::exception::NotEnoughMemoryException& /*exception*/)
+        {
+            return false;
+        }
+
+        // Get the serialized length
+        payload->length = static_cast<uint32_t>(ser.getSerializedDataLength());
+        return true;
+    }
+
+    bool deserialize(
+            fastrtps::rtps::SerializedPayload_t* payload,
+            void* data) override
+    {
+        //Convert DATA to pointer of your type
+        FooType* p_type = static_cast<FooType*>(data);
+
+        // Object that manages the raw buffer.
+        eprosima::fastcdr::FastBuffer fb(reinterpret_cast<char*>(payload->data), payload->length);
+
+        // Object that deserializes the data.
+        eprosima::fastcdr::Cdr deser(fb, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN, eprosima::fastcdr::Cdr::DDS_CDR);
+
+        // Deserialize encapsulation.
+        deser.read_encapsulation();
+        payload->encapsulation = deser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
+
+        try
+        {
+            // Deserialize the object.
+            p_type->deserialize(deser);
+        }
+        catch (eprosima::fastcdr::exception::NotEnoughMemoryException& /*exception*/)
+        {
+            return false;
+        }
+
         return true;
     }
 
     std::function<uint32_t()> getSerializedSizeProvider(
             void* /*data*/) override
     {
-        return std::function<uint32_t()>();
+        return [this]
+               {
+                   return m_typeSize;
+               };
     }
 
     void* createData() override
     {
-        return nullptr;
+        return static_cast<void*>(new FooType());
     }
 
     void deleteData(
-            void* /*data*/) override
+            void* data) override
     {
+        FooType* p_type = static_cast<FooType*>(data);
+        delete p_type;
     }
 
     bool getKey(
-            void* /*data*/,
-            fastrtps::rtps::InstanceHandle_t* /*ihandle*/,
-            bool /*force_md5*/) override
+            void* data,
+            fastrtps::rtps::InstanceHandle_t* handle,
+            bool force_md5) override
     {
+        FooType* p_type = static_cast<FooType*>(data);
+        char key_buf[16]{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+
+        // Object that manages the raw buffer.
+        eprosima::fastcdr::FastBuffer fastbuffer(key_buf, 16);
+
+        // Object that serializes the data.
+        eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS);
+        p_type->serializeKey(ser);
+        if (force_md5)
+        {
+            MD5 md5;
+            md5.init();
+            md5.update(key_buf, static_cast<unsigned int>(ser.getSerializedDataLength()));
+            md5.finalize();
+            for (uint8_t i = 0; i < 16; ++i)
+            {
+                handle->value[i] = md5.digest[i];
+            }
+        }
+        else
+        {
+            for (uint8_t i = 0; i < 16; ++i)
+            {
+                handle->value[i] = key_buf[i];
+            }
+        }
+        return true;
+    }
+
+    inline bool is_bounded() const override
+    {
+        return true;
+    }
+
+    inline bool is_plain() const override
+    {
+        return true;
+    }
+
+    inline bool construct_sample(
+            void* memory) const override
+    {
+        new (memory) FooType();
         return true;
     }
 
@@ -191,7 +322,7 @@ TEST(DataReaderTests, ReadData)
     Subscriber* subscriber = participant->create_subscriber(subscriber_qos);
     ASSERT_NE(subscriber, nullptr);
 
-    TypeSupport type(new TopicDataTypeMock());
+    TypeSupport type(new FooTypeSupport());
     type.register_type(participant);
 
     Topic* topic = participant->create_topic("footopic", type.get_type_name(), TOPIC_QOS_DEFAULT);
@@ -242,7 +373,7 @@ TEST(DataReaderTests, SetListener)
     Subscriber* subscriber = participant->create_subscriber(SUBSCRIBER_QOS_DEFAULT);
     ASSERT_NE(subscriber, nullptr);
 
-    TypeSupport type(new TopicDataTypeMock());
+    TypeSupport type(new FooTypeSupport());
     type.register_type(participant);
 
     Topic* topic = participant->create_topic("footopic", type.get_type_name(), TOPIC_QOS_DEFAULT);
