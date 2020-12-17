@@ -68,8 +68,8 @@ public:
     const std::string ipv6_any = "::";
     const std::string ipv6_invalid = "0:0:0:0:0:0:0:0";
 
-    const uint16_t port1 = 6666;
-    const uint16_t port2 = 7400;
+    const uint32_t port1 = 6666;
+    const uint32_t port2 = 7400;
 };
 
 /*******************
@@ -88,10 +88,10 @@ TEST_F(IPLocatorTests, setIPv4_from_string)
     {
         // Empty string
         ASSERT_TRUE(IPLocator::setIPv4(locator, "0.0.0.0"));
-        std::vector<int> vec{0, 0, 0, 0};
+        std::vector<unsigned int> vec{0, 0, 0, 0};
         for (int i = 0; i < 12; i++)
         {
-            ASSERT_EQ(locator.address[i], 0);
+            ASSERT_EQ(locator.address[i], 0u);
         }
         for (int i = 0; i < 4; i++)
         {
@@ -102,11 +102,11 @@ TEST_F(IPLocatorTests, setIPv4_from_string)
     {
         // Std random string
         ASSERT_TRUE(IPLocator::setIPv4(locator, "1.2.3.4"));
-        std::vector<int> vec{1, 2, 3, 4};
+        std::vector<unsigned int> vec{1, 2, 3, 4};
 
         for (int i = 0; i < 12; i++)
         {
-            ASSERT_EQ(locator.address[i], 0);
+            ASSERT_EQ(locator.address[i], 0u);
         }
         for (int i = 0; i < 4; i++)
         {
@@ -117,11 +117,11 @@ TEST_F(IPLocatorTests, setIPv4_from_string)
     {
         // Std string with 0 forwarding number
         ASSERT_TRUE(IPLocator::setIPv4(locator, "01.002.0003.000104"));
-        std::vector<int> vec{1, 2, 3, 104};
+        std::vector<unsigned int> vec{1, 2, 3, 104};
 
         for (int i = 0; i < 12; i++)
         {
-            ASSERT_EQ(locator.address[i], 0);
+            ASSERT_EQ(locator.address[i], 0u);
         }
         for (int i = 0; i < 4; i++)
         {
@@ -132,11 +132,11 @@ TEST_F(IPLocatorTests, setIPv4_from_string)
     {
         // Multicast address
         ASSERT_TRUE(IPLocator::setIPv4(locator, "255.255.255.255"));
-        std::vector<int> vec{255, 255, 255, 255};
+        std::vector<unsigned int> vec{255, 255, 255, 255};
 
         for (int i = 0; i < 12; i++)
         {
-            ASSERT_EQ(locator.address[i], 0);
+            ASSERT_EQ(locator.address[i], 0u);
         }
         for (int i = 0; i < 4; i++)
         {
@@ -166,7 +166,7 @@ TEST_F(IPLocatorTests, setIPv6_from_string_empty)
     locator.kind = LOCATOR_KIND_UDPv6;
 
     // Empty string
-    std::vector<int> vec(16, 0);
+    std::vector<unsigned int> vec(16, 0);
     std::vector<std::string> str_vec
     {
         "::",
@@ -200,7 +200,7 @@ TEST_F(IPLocatorTests, setIPv6_from_string_std)
     // Localhost address
     {
         // Localhost IPv6 = 0:0:0:0:0:0:0:1
-        std::vector<int> vec(15, 0);
+        std::vector<unsigned int> vec(15, 0);
         vec.push_back(1);
 
         ASSERT_TRUE(IPLocator::setIPv6(locator, "::1"));
@@ -218,7 +218,7 @@ TEST_F(IPLocatorTests, setIPv6_from_string_std)
 
     // Std random address
     {
-        std::vector<int> vec(16, 0);
+        std::vector<unsigned int> vec(16, 0);
         vec[2] = 2;
         vec[3] = 3;
         vec[6] = 6;
@@ -479,10 +479,10 @@ TEST_F(IPLocatorTests, getIPv4)
     Locator_t locator;
     IPLocator::setIPv4(locator, ipv4_lo_address);
     auto res = IPLocator::getIPv4(locator);
-    ASSERT_EQ(res[0], 127);
-    ASSERT_EQ(res[1], 0);
-    ASSERT_EQ(res[2], 0);
-    ASSERT_EQ(res[3], 1);
+    ASSERT_EQ(res[0], 127u);
+    ASSERT_EQ(res[1], 0u);
+    ASSERT_EQ(res[2], 0u);
+    ASSERT_EQ(res[3], 1u);
 }
 
 /*
@@ -496,9 +496,9 @@ TEST_F(IPLocatorTests, getIPv6)
     auto res = IPLocator::getIPv6(locator);
     for (int i = 0; i < 15; i++)
     {
-        ASSERT_EQ(res[i], 0);
+        ASSERT_EQ(res[i], 0u);
     }
-    ASSERT_EQ(res[15], 1);
+    ASSERT_EQ(res[15], 1u);
 }
 
 /*
@@ -586,10 +586,10 @@ TEST_F(IPLocatorTests, copyIPv4)
     IPLocator::setIPv4(locator, ipv4_lo_address);
     unsigned char arr[4];
     ASSERT_TRUE(IPLocator::copyIPv4(locator, arr));
-    ASSERT_EQ(arr[0], 127);
-    ASSERT_EQ(arr[1], 0);
-    ASSERT_EQ(arr[2], 0);
-    ASSERT_EQ(arr[3], 1);
+    ASSERT_EQ(arr[0], 127u);
+    ASSERT_EQ(arr[1], 0u);
+    ASSERT_EQ(arr[2], 0u);
+    ASSERT_EQ(arr[3], 1u);
 }
 
 /*
@@ -604,9 +604,9 @@ TEST_F(IPLocatorTests, copyIPv6)
     ASSERT_TRUE(IPLocator::copyIPv6(locator, arr));
     for (int i = 0; i < 15; i++)
     {
-        ASSERT_EQ(arr[i], 0);
+        ASSERT_EQ(arr[i], 0u);
     }
-    ASSERT_EQ(arr[15], 1);
+    ASSERT_EQ(arr[15], 1u);
 }
 
 /*
@@ -705,18 +705,18 @@ TEST_F(IPLocatorTests, wan)
     Locator_t locator;
     IPLocator::createLocator(LOCATOR_KIND_TCPv4, ipv4_address, port1, locator);
     ASSERT_TRUE(IPLocator::setWan(locator, "0.1.2.3"));
-    for (int i = 0; i < 4; i++)
+    for (unsigned int i = 0; i < 4; i++)
     {
         ASSERT_EQ(locator.address[8 + i], i);
     }
 
-    ASSERT_TRUE(IPLocator::setWan(locator, 3, 2, 1, 0));
-    for (int i = 0; i < 4; i++)
+    ASSERT_TRUE(IPLocator::setWan(locator, 3u, 2u, 1u, 0u));
+    for (unsigned int i = 0; i < 4; i++)
     {
         ASSERT_EQ(locator.address[8 + i], 3 - i);
     }
 
-    for (int i = 0; i < 4; i++)
+    for (unsigned int i = 0; i < 4; i++)
     {
         ASSERT_EQ(IPLocator::getWan(locator)[i], 3 - i);
     }
@@ -838,7 +838,7 @@ TEST_F(IPLocatorTests, setPortRTPS)
 
     IPLocator::createLocator(LOCATOR_KIND_SHM, ipv4_lo_address, port1, locator);
     ASSERT_FALSE(IPLocator::setPortRTPS(locator, port1));
-    ASSERT_EQ(IPLocator::getPortRTPS(locator), 0);
+    ASSERT_EQ(IPLocator::getPortRTPS(locator), 0u);
 }
 
 /*
@@ -966,31 +966,31 @@ TEST_F(IPLocatorTests, to_string)
     Locator_t locator;
 
     // Invalid
-    IPLocator::createLocator(LOCATOR_KIND_INVALID, "1", 10, locator);
+    IPLocator::createLocator(LOCATOR_KIND_INVALID, "1", 10u, locator);
     ASSERT_EQ(IPLocator::to_string(locator), "Invalid_locator:[_]:0");
 
     // UDPv4
-    IPLocator::createLocator(LOCATOR_KIND_UDPv4, "0.1.0.1", 1, locator);
+    IPLocator::createLocator(LOCATOR_KIND_UDPv4, "0.1.0.1", 1u, locator);
     ASSERT_EQ(IPLocator::to_string(locator), "UDPv4:[0.1.0.1]:1");
 
     // TCPv4
-    IPLocator::createLocator(LOCATOR_KIND_TCPv4, "0.0.1.1", 2, locator);
+    IPLocator::createLocator(LOCATOR_KIND_TCPv4, "0.0.1.1", 2u, locator);
     ASSERT_EQ(IPLocator::to_string(locator), "TCPv4:[0.0.1.1]:2");
 
     // UDPv6
-    IPLocator::createLocator(LOCATOR_KIND_UDPv6, "200::", 3, locator);
+    IPLocator::createLocator(LOCATOR_KIND_UDPv6, "200::", 3u, locator);
     ASSERT_EQ(IPLocator::to_string(locator), "UDPv6:[200::]:3");
 
     // TCPv6
-    IPLocator::createLocator(LOCATOR_KIND_TCPv6, "::2", 4, locator);
+    IPLocator::createLocator(LOCATOR_KIND_TCPv6, "::2", 4u, locator);
     ASSERT_EQ(IPLocator::to_string(locator), "TCPv6:[::2]:4");
 
     // SHM
-    IPLocator::createLocator(LOCATOR_KIND_SHM, "", 5, locator);
+    IPLocator::createLocator(LOCATOR_KIND_SHM, "", 5u, locator);
     ASSERT_EQ(IPLocator::to_string(locator), "SHM:[_]:5");
 
     // SHM M
-    IPLocator::createLocator(LOCATOR_KIND_SHM, "", 6, locator);
+    IPLocator::createLocator(LOCATOR_KIND_SHM, "", 6u, locator);
     locator.address[0] = 'M';
     ASSERT_EQ(IPLocator::to_string(locator), "SHM:[M]:6");
 }
@@ -1036,7 +1036,7 @@ TEST_F(IPLocatorTests, setIPv4address)
     locator.kind = LOCATOR_KIND_TCPv4;
 
     ASSERT_TRUE(IPLocator::setIPv4address(locator, "1.2.3.4.5.6.7.8", "9.10.11.12", "13.14.15.16"));
-    for (int i = 0; i < 16; i++)
+    for (unsigned int i = 0; i < 16; i++)
     {
         ASSERT_EQ(locator.address[i], i + 1);
     }
@@ -1058,8 +1058,8 @@ TEST_F(IPLocatorTests, setIPv4address)
  */
 TEST(LocatorTests, locator_port_constructor)
 {
-    Locator_t locator(314);
-    ASSERT_EQ(locator.port, 314);
+    Locator_t locator(314u);
+    ASSERT_EQ(locator.port, 314u);
     ASSERT_EQ(locator.kind, LOCATOR_KIND_UDPv4);
     ASSERT_FALSE(IPLocator::hasIPv4(locator));
 }
