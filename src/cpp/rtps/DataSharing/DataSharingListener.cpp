@@ -153,6 +153,13 @@ void DataSharingListener::process_new_data ()
                     reader_->processGapMsg(pool->writer(), last_sequence + 1, SequenceNumberSet_t(ch.sequenceNumber));
                 }
 
+                if (last_sequence == c_SequenceNumber_Unknown)
+                {
+                    logInfo(RTPS_READER, "First change with SN " << ch.sequenceNumber
+                            << " detected on datasharing writer " << pool->writer());
+                    reader_->processGapMsg(pool->writer(), SequenceNumber_t(0, 0), SequenceNumberSet_t(ch.sequenceNumber));
+                }
+
                 logInfo(RTPS_READER, "New data found on writer " << pool->writer()
                         << " with SN " << ch.sequenceNumber);
 
