@@ -13,26 +13,26 @@
 // limitations under the License.
 
 #include <fastdds/rtps/transport/TCPTransportInterface.h>
-#include <fastdds/rtps/transport/tcp/RTCPMessageManager.h>
-#include <rtps/transport/TCPSenderResource.hpp>
-//#include "TCPSenderResource.hpp"
+
+#include <algorithm>
+#include <chrono>
+#include <cstring>
+#include <thread>
+#include <utility>
+
+#include <asio/steady_timer.hpp>
 #include <fastdds/dds/log/Log.hpp>
-#include <fastrtps/utils/IPLocator.h>
-#include <fastrtps/utils/System.h>
-#include <fastdds/rtps/transport/TCPChannelResourceBasic.h>
+#include <fastdds/rtps/transport/tcp/RTCPMessageManager.h>
 #include <fastdds/rtps/transport/TCPAcceptorBasic.h>
+#include <fastdds/rtps/transport/TCPChannelResourceBasic.h>
 #if TLS_FOUND
 #include <fastdds/rtps/transport/TCPChannelResourceSecure.h>
 #include <fastdds/rtps/transport/TCPAcceptorSecure.h>
 #endif // if TLS_FOUND
-
-#include <asio/steady_timer.hpp>
-#include <utility>
-#include <cstring>
-#include <algorithm>
-
-#include <chrono>
-#include <thread>
+#include <fastrtps/utils/IPLocator.h>
+#include <fastrtps/utils/System.h>
+#include <rtps/transport/TCPSenderResource.hpp>
+#include <utils/SystemInfo.hpp>
 
 using namespace std;
 using namespace asio;
