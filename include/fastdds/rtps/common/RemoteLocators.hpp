@@ -222,6 +222,8 @@ inline std::istream& operator >>(
         }
         catch (std::ios_base::failure& )
         {
+            locList.unicast.clear();
+            locList.multicast.clear();
             logWarning(REMOTE_LOCATOR_LIST, "Error deserializing RemoteLocatorList");
         }
 

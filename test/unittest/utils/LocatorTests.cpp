@@ -83,6 +83,7 @@ public:
 TEST_F(IPLocatorTests, setIPv4_from_string)
 {
     Locator_t locator;
+    locator.kind = LOCATOR_KIND_UDPv4;
 
     {
         // Empty string
@@ -148,6 +149,10 @@ TEST_F(IPLocatorTests, setIPv4_from_string)
         ASSERT_FALSE(IPLocator::setIPv4(locator, "1.1.1.256")); // Too high number
         ASSERT_FALSE(IPLocator::setIPv4(locator, "1.1.1"));     // Too few args
         ASSERT_FALSE(IPLocator::setIPv4(locator, "1.1.1.1.1")); // Too much args
+
+        // Change to IPv6
+        locator.kind = LOCATOR_KIND_UDPv6;
+        ASSERT_FALSE(IPLocator::setIPv4(locator, "255.255.255.255"));
     }
 }
 
@@ -284,6 +289,8 @@ TEST_F(IPLocatorTests, setIPv6_from_string_std)
 TEST_F(IPLocatorTests, setIPv6_from_string_invalid)
 {
     Locator_t locator;
+    locator.kind = LOCATOR_KIND_UDPv6;
+
     ASSERT_FALSE(IPLocator::setIPv6(locator, ":"));
     ASSERT_FALSE(IPLocator::setIPv6(locator, "::1:"));
     ASSERT_FALSE(IPLocator::setIPv6(locator, ":1::"));
@@ -302,6 +309,10 @@ TEST_F(IPLocatorTests, setIPv6_from_string_invalid)
     ASSERT_FALSE(IPLocator::setIPv6(locator, "1:10000:0:0:0:0:0:1"));
     ASSERT_FALSE(IPLocator::setIPv6(locator, "1::0:10000:0:1"));
     ASSERT_FALSE(IPLocator::setIPv6(locator, "1:10::10:1,"));
+
+    // Change to IPv4
+    locator.kind = LOCATOR_KIND_UDPv4;
+    ASSERT_FALSE(IPLocator::setIPv4(locator, "::1"));
 }
 
 /*
@@ -372,21 +383,41 @@ TEST_F(IPLocatorTests, setIPv4)
     IPLocator::createLocator(LOCATOR_KIND_UDPv4, ipv4_lo_address, port1, locator);
 
     // setIPv4 char*
-    IPLocator::setIPv4(probe_locator, ipv4_lo_address);
-    unsigned char arr[4]{127, 0, 0, 1};
-    ASSERT_TRUE(IPLocator::setIPv4(locator, arr));
-    ASSERT_TRUE(address_match(probe_locator, locator));
+    {
+        IPLocator::setIPv4(probe_locator, ipv4_lo_address);
+        unsigned char arr[4]{127, 0, 0, 1};
+        ASSERT_TRUE(IPLocator::setIPv4(locator, arr));
+        ASSERT_TRUE(address_match(probe_locator, locator));
+
+        // try set IPv6
+        locator.kind = LOCATOR_KIND_UDPv6;
+        ASSERT_FALSE(IPLocator::setIPv4(locator, arr));
+        locator.kind = LOCATOR_KIND_UDPv4;
+    }
 
     // setIPv4 4xoctet
-    IPLocator::setIPv4(probe_locator, ipv4_address_2);
-    ASSERT_TRUE(IPLocator::setIPv4(locator, 106, 97, 118, 105));
-    ASSERT_TRUE(address_match(probe_locator, locator));
+    {
+        IPLocator::setIPv4(probe_locator, ipv4_address_2);
+        ASSERT_TRUE(IPLocator::setIPv4(locator, 106, 97, 118, 105));
+        ASSERT_TRUE(address_match(probe_locator, locator));
+
+        // try set IPv6
+        locator.kind = LOCATOR_KIND_UDPv6;
+        ASSERT_FALSE(IPLocator::setIPv4(locator, 106, 97, 118, 105));
+        locator.kind = LOCATOR_KIND_UDPv4;
+    }
 
     // setIPv4 locator
-    Locator_t ipv4_locator;
-    IPLocator::createLocator(LOCATOR_KIND_TCPv4, ipv4_address_2, port1, ipv4_locator);
-    ASSERT_TRUE(IPLocator::setIPv4(locator, ipv4_locator));
-    ASSERT_TRUE(address_match(ipv4_locator, locator));
+    {
+        Locator_t ipv4_locator;
+        IPLocator::createLocator(LOCATOR_KIND_TCPv4, ipv4_address_2, port1, ipv4_locator);
+        ASSERT_TRUE(IPLocator::setIPv4(locator, ipv4_locator));
+        ASSERT_TRUE(address_match(ipv4_locator, locator));
+
+        // try set IPv6
+        locator.kind = LOCATOR_KIND_UDPv6;
+        ASSERT_FALSE(IPLocator::setIPv4(locator, ipv4_locator));
+    }
 }
 
 /*
@@ -403,21 +434,41 @@ TEST_F(IPLocatorTests, setIPv6)
     IPLocator::createLocator(LOCATOR_KIND_UDPv6, ipv6_lo_address, port1, locator);
 
     // setIPv6 char*
-    IPLocator::setIPv6(probe_locator, ipv6_lo_address);
-    unsigned char arr[16]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1};
-    ASSERT_TRUE(IPLocator::setIPv6(locator, arr));
-    ASSERT_TRUE(address_match(probe_locator, locator));
+    {
+        IPLocator::setIPv6(probe_locator, ipv6_lo_address);
+        unsigned char arr[16]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1};
+        ASSERT_TRUE(IPLocator::setIPv6(locator, arr));
+        ASSERT_TRUE(address_match(probe_locator, locator));
+
+        // try set IPv4
+        locator.kind = LOCATOR_KIND_UDPv4;
+        ASSERT_FALSE(IPLocator::setIPv6(locator, arr));
+        locator.kind = LOCATOR_KIND_UDPv6;
+    }
 
     // setIPv6 4xoctet
-    IPLocator::setIPv6(probe_locator, ipv6_address);
-    ASSERT_TRUE(IPLocator::setIPv6(locator, 0x4a41, 0x5649, 0x0000, 0x0000, 0x0000, 0x0050, 0x4152, 0x4953));
-    ASSERT_TRUE(address_match(probe_locator, locator));
+    {
+        IPLocator::setIPv6(probe_locator, ipv6_address);
+        ASSERT_TRUE(IPLocator::setIPv6(locator, 0x4a41, 0x5649, 0x0000, 0x0000, 0x0000, 0x0050, 0x4152, 0x4953));
+        ASSERT_TRUE(address_match(probe_locator, locator));
+
+        // try set IPv4
+        locator.kind = LOCATOR_KIND_UDPv4;
+        ASSERT_FALSE(IPLocator::setIPv6(locator, 0x4a41, 0x5649, 0x0000, 0x0000, 0x0000, 0x0050, 0x4152, 0x4953));
+        locator.kind = LOCATOR_KIND_UDPv6;
+    }
 
     // setIPv6 locator
-    Locator_t ipv6_locator;
-    IPLocator::createLocator(LOCATOR_KIND_TCPv6, ipv6_address, port1, ipv6_locator);
-    ASSERT_TRUE(IPLocator::setIPv6(locator, ipv6_locator));
-    ASSERT_TRUE(address_match(ipv6_locator, locator));
+    {
+        Locator_t ipv6_locator;
+        IPLocator::createLocator(LOCATOR_KIND_TCPv6, ipv6_address, port1, ipv6_locator);
+        ASSERT_TRUE(IPLocator::setIPv6(locator, ipv6_locator));
+        ASSERT_TRUE(address_match(ipv6_locator, locator));
+
+        // try set IPv4
+        locator.kind = LOCATOR_KIND_UDPv4;
+        ASSERT_FALSE(IPLocator::setIPv6(locator, ipv6_locator));
+    }
 }
 
 /*
@@ -1003,6 +1054,55 @@ TEST_F(IPLocatorTests, setIPv4address)
 *******************/
 
 /*
+ * Check creation of a locator with port constructor
+ */
+TEST(LocatorTests, locator_port_constructor)
+{
+    Locator_t locator(314);
+    ASSERT_EQ(locator.port, 314);
+    ASSERT_EQ(locator.kind, LOCATOR_KIND_UDPv4);
+    ASSERT_FALSE(IPLocator::hasIPv4(locator));
+}
+
+/*
+ * Check set_addres Locator_t function
+ */
+TEST(LocatorTests, locator_set_address)
+{
+    Locator_t locator;
+    Locator_t locator_copy;
+    IPLocator::createLocator(LOCATOR_KIND_UDPv6, "::2", 3, locator_copy);
+
+    ASSERT_TRUE(locator.set_address(locator_copy));
+
+    ASSERT_EQ(locator.address[0], 0u);
+    ASSERT_EQ(locator.address[10], 0u);
+    ASSERT_EQ(locator.address[15], 2u);
+}
+
+/*
+ * Check Locator_t operators
+ */
+TEST(LocatorTests, locator_minor)
+{
+    Locator_t locator1;
+    Locator_t locator2;
+    Locator_t locator3;
+    IPLocator::createLocator(LOCATOR_KIND_UDPv6, "::2", 3, locator1);
+    IPLocator::createLocator(LOCATOR_KIND_UDPv6, "::3", 3, locator2);
+    IPLocator::createLocator(LOCATOR_KIND_UDPv6, "::3", 3, locator3);
+
+    ASSERT_TRUE(locator1 < locator2);
+    ASSERT_FALSE(locator2 < locator1);
+    ASSERT_FALSE(locator1 < locator1);
+
+    ASSERT_TRUE(locator1 != locator2);
+    ASSERT_TRUE(locator2 != locator1);
+    ASSERT_FALSE(locator2 != locator2);
+    ASSERT_FALSE(locator2 != locator3);
+}
+
+/*
  * Check creation of a locator from string
  * Serialization is tested in IPLocatorTests::to_string
  */
@@ -1077,9 +1177,28 @@ TEST(LocatorTests, IsAddressDefined_v6)
 }
 
 /*
- * Check == operator for LocatorLists in negative case of different sizes
+ * Check LocatorList copy constructor
  */
-TEST(LocatorTests, LocatorList_equal_negative)
+TEST(LocatorTests, LocatorList_copy_constructor)
+{
+    Locator_t locator;
+    LocatorList_t locator_list_1;
+
+    IPLocator::createLocator(LOCATOR_KIND_UDPv6, "::1", 1, locator);
+    locator_list_1.push_back(locator);
+    IPLocator::createLocator(LOCATOR_KIND_TCPv6, "::2", 2, locator);
+    locator_list_1.push_back(locator);
+
+    LocatorList_t locator_list_2(locator_list_1);
+    ASSERT_EQ(locator_list_2.size(), 2u);
+    ASSERT_EQ(locator_list_2.begin()->kind, LOCATOR_KIND_UDPv6);
+    ASSERT_EQ((locator_list_2.begin() + 1)->kind, LOCATOR_KIND_TCPv6);
+}
+
+/*
+ * Check == operator for LocatorLists
+ */
+TEST(LocatorTests, LocatorList_equal)
 {
     Locator_t locator;
     LocatorList_t locator_list_1;
@@ -1091,6 +1210,21 @@ TEST(LocatorTests, LocatorList_equal_negative)
     IPLocator::createLocator(LOCATOR_KIND_TCPv6, "::1", 2, locator);
     locator_list_1.push_back(locator);
     ASSERT_FALSE(locator_list_1 == locator_list_2);
+
+    locator_list_2.push_back(locator);
+    ASSERT_TRUE(locator_list_1 == locator_list_2);
+
+    IPLocator::createLocator(LOCATOR_KIND_UDPv6, "::2", 1, locator);
+    locator_list_1.push_back(locator);
+    IPLocator::createLocator(LOCATOR_KIND_TCPv6, "::2", 2, locator);
+    locator_list_2.push_back(locator);
+    ASSERT_FALSE(locator_list_1 == locator_list_2);
+
+    IPLocator::createLocator(LOCATOR_KIND_UDPv6, "::2", 1, locator);
+    locator_list_2.push_back(locator);
+    IPLocator::createLocator(LOCATOR_KIND_TCPv6, "::2", 2, locator);
+    locator_list_1.push_back(locator);
+    ASSERT_TRUE(locator_list_1 == locator_list_2);
 }
 
 /*
@@ -1176,7 +1310,6 @@ TEST(LocatorTests, LocatorList_deserialization)
     ss >> locator_list;
     ASSERT_EQ(locator_list.size(), 2u);
 }
-
 
 /*******************************
 * RemoteLocators Tests *
@@ -1301,7 +1434,7 @@ TEST(RemoteLocatorsTests, RemoteLocator_deserialization)
     ASSERT_EQ(rll.unicast.size(), 0u);
 
     // Check Filled list
-    std::string str_result = // this variable is needed to separate string in 2 lines
+    std::string str_result = // this variable is needed to not separate string in 2 lines
             "{MULTICAST:[UDPv4:[224.0.0.0]:1,UDPv4:[239.255.255.255]:2]"
             "UNICAST:[UDPv4:[1.2.3.4]:3,UDPv4:[4.3.2.1]:4]}";
     serialized_ss.clear();
@@ -1311,9 +1444,8 @@ TEST(RemoteLocatorsTests, RemoteLocator_deserialization)
     ASSERT_EQ(rll.unicast.size(), 2u);
 
     // Check error List
-    str_result = "{ERROR}";
     serialized_ss.clear();
-    serialized_ss.str(str_result);
+    serialized_ss.str("{MUL_ERROR:[UDPv4:[224.0.0.0]:1}"); // With an invalid locator it does not fail
     serialized_ss >> rll;
     ASSERT_EQ(rll.multicast.size(), 0u);
     ASSERT_EQ(rll.unicast.size(), 0u);
