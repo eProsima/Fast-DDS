@@ -121,11 +121,20 @@ void DataSharingListener::process_new_data ()
         while(has_new_payload)
         {
             CacheChange_t ch;
-            has_new_payload = it->pool->get_next_unread_payload(ch);
+            SequenceNumber_t last_sequence = c_SequenceNumber_Unknown;
+            it->pool->get_next_unread_payload(ch, last_sequence);
+            has_new_payload = ch.sequenceNumber != c_SequenceNumber_Unknown;
 
             if (has_new_payload)
             {
-                logInfo(RTPS_READER, "New data found on writer " <<it->pool->writer()
+                if (last_sequence != c_SequenceNumber_Unknown && ch.sequenceNumber != last_sequence + 1)
+                {
+                    logWarning(RTPS_READER, "GAP ("  << last_sequence << " - " << ch.sequenceNumber << ")"
+                            << " detected on datasharing writer " << it->pool->writer());
+                    reader_->processGapMsg(it->pool->writer(), last_sequence + 1, SequenceNumberSet_t(ch.sequenceNumber));
+                }
+
+                logInfo(RTPS_READER, "New data found on writer " << pool->writer()
                         << " with SN " << ch.sequenceNumber);
 
                 reader_->processDataMsg(&ch);
