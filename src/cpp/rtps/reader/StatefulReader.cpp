@@ -792,8 +792,7 @@ bool StatefulReader::change_removed_by_history(
         }
         else
         {
-            if ((!is_datasharing_compatible_ || !datasharing_listener_->writer_is_matched(a_change->writerGUID)) &&
-                    a_change->writerGUID.entityId != m_trustedWriterEntityId)
+            if (a_change->writerGUID.entityId != m_trustedWriterEntityId)
             {
                 // trusted entities messages mean no havoc
                 logError(RTPS_READER, " You should always find the WP associated with a change, something is very wrong");
@@ -814,8 +813,7 @@ bool StatefulReader::change_received(
         if (!findWriterProxy(a_change->writerGUID, &prox))
         {
             // discard non framework messages from unknown writer
-            if ((!is_datasharing_compatible_ || !datasharing_listener_->writer_is_matched(a_change->writerGUID)) &&
-                a_change->writerGUID.entityId != m_trustedWriterEntityId)
+            if (a_change->writerGUID.entityId != m_trustedWriterEntityId)
             {
                 logInfo(RTPS_READER,
                         "Writer Proxy " << a_change->writerGUID << " not matched to this Reader " << m_guid.entityId);

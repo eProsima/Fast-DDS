@@ -434,7 +434,7 @@ bool ReaderProxy::set_change_to_status(
         {
             status = ACKNOWLEDGED;
         }
-        else if (is_local_reader())
+        else if (is_local_reader() || is_datasharing_reader())
         {
             status = UNACKNOWLEDGED;
         }
