@@ -331,7 +331,7 @@ protected:
 
 };
 
-TEST_F(DataReaderTests, ReadData)
+TEST_F(DataReaderTests, read_take_apis)
 {
     // We will create a disabled DataReader, so we can check RETCODE_NOT_ENABLED
     SubscriberQos subscriber_qos = SUBSCRIBER_QOS_DEFAULT;
