@@ -36,6 +36,7 @@
 #include <fastdds/dds/log/Log.hpp>
 #include <rtps/history/BasicPayloadPool.hpp>
 #include <rtps/DataSharing/DataSharingPayloadPool.hpp>
+#include <rtps/DataSharing/WriterPool.hpp>
 #include <rtps/DataSharing/DataSharingNotifier.hpp>
 #include <rtps/history/CacheChangePool.h>
 #include <rtps/RTPSDomainImpl.hpp>
@@ -350,7 +351,7 @@ void StatelessWriter::update_reader_info(
 bool StatelessWriter::datasharing_delivery(
         CacheChange_t* change)
 {
-    auto pool = std::dynamic_pointer_cast<DataSharingPayloadPool>(payload_pool_);
+    auto pool = std::dynamic_pointer_cast<WriterPool>(payload_pool_);
     assert(pool != nullptr);
 
     pool->add_to_shared_history(change);
@@ -509,7 +510,7 @@ bool StatelessWriter::change_removed_by_history(
     // remove from datasharing pool history
     if (is_datasharing_compatible())
     {
-        auto pool = std::dynamic_pointer_cast<DataSharingPayloadPool>(payload_pool_);
+        auto pool = std::dynamic_pointer_cast<WriterPool>(payload_pool_);
         assert (pool != nullptr);
 
         pool->remove_from_shared_history(change);

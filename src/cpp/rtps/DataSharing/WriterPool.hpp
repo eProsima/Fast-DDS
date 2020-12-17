@@ -145,13 +145,6 @@ public:
         return false;
     }
 
-    bool get_next_unread_payload(
-            CacheChange_t& /*cache_change*/) override
-    {
-        // Only ReaderPool has a reading pointer
-        return false;
-    }
-
     bool release_payload(
             CacheChange_t& cache_change) override
     {
@@ -265,7 +258,11 @@ public:
         return true;
     }
 
-    void add_to_shared_history(const CacheChange_t* cache_change) override
+    /**
+     * Fills the metadata of the shared payload from the cache change information
+     * and adds the payload's offset to the shared history
+     */
+    void add_to_shared_history(const CacheChange_t* cache_change)
     {
         assert(cache_change);
         assert(cache_change->serializedPayload.data);
@@ -289,7 +286,14 @@ public:
         descriptor_->notified_end = advance(descriptor_->notified_end);
     }
 
-    void remove_from_shared_history(const CacheChange_t* cache_change) override
+    /**
+     * Removes the payload's offset to the shared history
+     * 
+     * Payloads must be removed from the history in the same order
+     * they where added, i.e., payload for sequence number 7
+     * cannot be removed before payload for sequence number 5.  
+     */
+    void remove_from_shared_history(const CacheChange_t* cache_change)
     {
         assert(cache_change);
         assert(cache_change->serializedPayload.data);
@@ -303,7 +307,7 @@ public:
         descriptor_->notified_begin = advance(descriptor_->notified_begin);
     }
 
-    void assert_liveliness() override
+    void assert_liveliness()
     {
         ++descriptor_->liveliness_sequence;
     }
