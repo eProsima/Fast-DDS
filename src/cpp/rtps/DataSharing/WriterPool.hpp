@@ -277,7 +277,10 @@ public:
         node->source_timestamp(cache_change->sourceTimestamp);
         node->writer_GUID(cache_change->writerGUID);
         node->instance_handle(cache_change->instanceHandle);
-        node->related_sample_identity(cache_change->write_params.sample_identity());
+        if (cache_change->write_params.related_sample_identity() != SampleIdentity::unknown())
+        {
+            node->related_sample_identity(cache_change->write_params.related_sample_identity());
+        }
 
         // Add it to the history
         history_[descriptor_->notified_end] = segment_->get_offset_from_address(node);
