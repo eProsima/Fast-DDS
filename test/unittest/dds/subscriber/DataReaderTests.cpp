@@ -23,12 +23,17 @@
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
 #include <fastdds/dds/domain/DomainParticipant.hpp>
 
+#include <fastdds/dds/publisher/DataWriter.hpp>
+#include <fastdds/dds/publisher/Publisher.hpp>
+#include <fastdds/dds/publisher/qos/DataWriterQos.hpp>
+#include <fastdds/dds/publisher/qos/PublisherQos.hpp>
+
 #include <fastdds/dds/subscriber/DataReader.hpp>
 #include <fastdds/dds/subscriber/DataReaderListener.hpp>
 #include <fastdds/dds/subscriber/Subscriber.hpp>
 #include <fastdds/dds/subscriber/SampleInfo.hpp>
-#include <fastdds/dds/subscriber/qos/SubscriberQos.hpp>
 #include <fastdds/dds/subscriber/qos/DataReaderQos.hpp>
+#include <fastdds/dds/subscriber/qos/SubscriberQos.hpp>
 
 namespace eprosima {
 namespace fastdds {
@@ -55,6 +60,10 @@ public:
 
     void TearDown() override
     {
+        if (data_writer_)
+        {
+            ASSERT_EQ(publisher_->delete_datawriter(data_writer_), ReturnCode_t::RETCODE_OK);
+        }
         if (data_reader_)
         {
             ASSERT_EQ(subscriber_->delete_datareader(data_reader_), ReturnCode_t::RETCODE_OK);
@@ -62,6 +71,10 @@ public:
         if (topic_)
         {
             ASSERT_EQ(participant_->delete_topic(topic_), ReturnCode_t::RETCODE_OK);
+        }
+        if (publisher_)
+        {
+            ASSERT_EQ(participant_->delete_publisher(publisher_), ReturnCode_t::RETCODE_OK);
         }
         if (subscriber_)
         {
@@ -80,15 +93,20 @@ protected:
             DataReaderListener* rlistener = nullptr,
             const DataReaderQos& rqos = DATAREADER_QOS_DEFAULT,
             const SubscriberQos& sqos = SUBSCRIBER_QOS_DEFAULT,
+            const DataWriterQos& wqos = DATAWRITER_QOS_DEFAULT,
+            const PublisherQos& pqos = PUBLISHER_QOS_DEFAULT,
             const TopicQos& tqos = TOPIC_QOS_DEFAULT,
-            const DomainParticipantQos& pqos = PARTICIPANT_QOS_DEFAULT)
+            const DomainParticipantQos& part_qos = PARTICIPANT_QOS_DEFAULT
+        )
     {
-        participant_ = DomainParticipantFactory::get_instance()->create_participant(0, pqos);
+        participant_ = DomainParticipantFactory::get_instance()->create_participant(0, part_qos);
         ASSERT_NE(participant_, nullptr);
 
-        // We will create a disabled DataReader, so we can check RETCODE_NOT_ENABLED
         subscriber_ = participant_->create_subscriber(sqos);
         ASSERT_NE(subscriber_, nullptr);
+
+        publisher_ = participant_->create_publisher(pqos);
+        ASSERT_NE(publisher_, nullptr);
 
         type_.register_type(participant_);
 
@@ -96,6 +114,9 @@ protected:
         ASSERT_NE(topic_, nullptr);
 
         data_reader_ = subscriber_->create_datareader(topic_, rqos, rlistener);
+        ASSERT_NE(data_reader_, nullptr);
+
+        data_writer_ = publisher_->create_datawriter(topic_, wqos);
         ASSERT_NE(data_reader_, nullptr);
     }
 
@@ -112,8 +133,10 @@ protected:
 
     DomainParticipant* participant_ = nullptr;
     Subscriber* subscriber_ = nullptr;
+    Publisher* publisher_ = nullptr;
     Topic* topic_ = nullptr;
     DataReader* data_reader_ = nullptr;
+    DataWriter* data_writer_ = nullptr;
     TypeSupport type_;
 
     InstanceHandle_t handle_ok_ = HANDLE_NIL;
