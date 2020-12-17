@@ -748,7 +748,7 @@ bool StatefulReader::acceptMsgFrom(
     {
         if (it->guid() == writerId && it->is_alive())
         {
-            *wp = nullptr;
+            *wp = it;
             return true;
         }
     }
