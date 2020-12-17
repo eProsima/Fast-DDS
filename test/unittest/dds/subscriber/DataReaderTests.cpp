@@ -143,6 +143,22 @@ protected:
     InstanceHandle_t handle_wrong_ = HANDLE_NIL;
 };
 
+void send_data(
+        DataWriter* data_writer,
+        LoanableCollection& data_values,
+        SampleInfoSeq& infos)
+{
+    LoanableCollection::size_type n = infos.length();
+    auto buffer = data_values.buffer();
+    for (LoanableCollection::size_type i = 0u; i < n; ++i)
+    {
+        if (infos[i].valid_data)
+        {
+            EXPECT_EQ(ReturnCode_t::RETCODE_OK, data_writer->write(buffer[i], HANDLE_NIL));
+        }
+    }
+}
+
 void check_return_loan(
         const ReturnCode_t& code,
         DataReader* data_reader,
@@ -173,6 +189,7 @@ void check_instance_methods(
         const ReturnCode_t& instance_bad_code,
         const ReturnCode_t& loan_return_code,
         DataReader* data_reader,
+        DataWriter* data_writer,
         LoanableCollection& data_values,
         SampleInfoSeq& infos)
 {
@@ -190,7 +207,8 @@ void check_instance_methods(
     EXPECT_EQ(instance_ok_code, data_reader->read_instance(data_values, infos, LENGTH_UNLIMITED, handle_ok));
     if (ReturnCode_t::RETCODE_OK == instance_ok_code)
     {
-        // TODO: write received data so it can be taken again
+        // Write received data so it can be taken again
+        send_data(data_writer, data_values, infos);
     }
     check_return_loan(loan_return_code, data_reader, data_values, infos);
 }
@@ -198,6 +216,7 @@ void check_instance_methods(
 void basic_read_apis_check(
         const ReturnCode_t& code,
         DataReader* data_reader,
+        DataWriter* data_writer,
         const InstanceHandle_t& handle_ok,
         const InstanceHandle_t& handle_wrong)
 {
@@ -234,7 +253,7 @@ void basic_read_apis_check(
         check_return_loan(code, data_reader, data_values, infos);
 
         check_instance_methods(handle_ok, handle_wrong, instance_ok_code, instance_bad_code, instance_ok_code,
-            data_reader, data_values, infos);
+            data_reader, data_writer, data_values, infos);
     }
 
     // Check read and variants without loan
@@ -255,7 +274,7 @@ void basic_read_apis_check(
         check_return_loan(expected_return_loan_ret, data_reader, data_values, infos);
 
         check_instance_methods(handle_ok, handle_wrong, instance_ok_code, instance_bad_code, expected_return_loan_ret,
-            data_reader, data_values, infos);
+            data_reader, data_writer, data_values, infos);
     }
 }
 
@@ -269,12 +288,22 @@ TEST_F(DataReaderTests, ReadData)
     EXPECT_FALSE(data_reader_->is_enabled());
 
     // Read / take operations should all return NOT_ENABLED
-    basic_read_apis_check(ReturnCode_t::RETCODE_NOT_ENABLED, data_reader_, handle_ok_, handle_wrong_);
+    basic_read_apis_check(ReturnCode_t::RETCODE_NOT_ENABLED, data_reader_, data_writer_, handle_ok_, handle_wrong_);
 
     // Enable the DataReader and check NO_DATA should be returned
     EXPECT_EQ(ReturnCode_t::RETCODE_OK, data_reader_->enable());
     EXPECT_TRUE(data_reader_->is_enabled());
-    basic_read_apis_check(ReturnCode_t::RETCODE_NO_DATA, data_reader_, handle_ok_, handle_wrong_);
+    basic_read_apis_check(ReturnCode_t::RETCODE_NO_DATA, data_reader_, data_writer_, handle_ok_, handle_wrong_);
+
+    // Send data
+    FooType data;
+    data.index(1u);
+    EXPECT_EQ(ReturnCode_t::RETCODE_OK, data_writer_->write(&data, HANDLE_NIL));
+
+    // Wait for data to arrive and check OK should be returned
+    Duration_t wait_time(1, 0);
+    EXPECT_TRUE(data_reader_->wait_for_unread_message(wait_time));
+    basic_read_apis_check(ReturnCode_t::RETCODE_OK, data_reader_, data_writer_, handle_ok_, handle_wrong_);
 }
 
 void check_collection(
@@ -372,7 +401,7 @@ void check_collection_preconditions(
         EXPECT_EQ(wrong_code, data_reader->take_next_instance(test.first, test.second));
 
         check_instance_methods(handle_ok, handle_wrong, wrong_code, wrong_code, wrong_code,
-            data_reader, test.first, test.second);
+            data_reader, nullptr, test.first, test.second);
     }
 
     // Check compatible combinations
@@ -404,7 +433,7 @@ void check_collection_preconditions(
         // When collection preconditions are ok, as the reader has no data, BAD_PARAMETER will be returned
         const ReturnCode_t& instance_code = (test.second == ok_code) ? instance_bad_code : test.second;
         check_instance_methods(handle_ok, handle_wrong, instance_code, instance_code, wrong_code,
-            data_reader, test.first.first, test.first.second);
+            data_reader, nullptr, test.first.first, test.first.second);
     }
 
     false_10_0.unloan();
