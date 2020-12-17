@@ -123,13 +123,16 @@ History::iterator ReaderHistory::remove_change_nts(
     }
 
     CacheChange_t* change = *removal;
+    auto ret_val = m_changes.erase(removal);
+    m_isHistoryFull = false;
+
     mp_reader->change_removed_by_history(change);
-    if ( release )
+    if (release)
     {
         mp_reader->releaseCache(change);
     }
 
-    return m_changes.erase(removal);
+    return ret_val;
 }
 
 bool ReaderHistory::remove_changes_with_guid(

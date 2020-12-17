@@ -1012,6 +1012,50 @@ TEST_P(PubSubHistory, WriterWithoutReadersTransientLocal)
 
 }
 
+TEST_P(PubSubHistory, WriterUnmatchClearsHistory)
+{
+    // A reader that READS instead of TAKE
+    PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME, false);
+    PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldType> writer2(TEST_TOPIC_NAME);
+
+    //Reader with limited history size
+    reader.history_depth(2).reliability(RELIABLE_RELIABILITY_QOS).init();
+    ASSERT_TRUE(reader.isInitialized());
+
+    writer.history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS).init();
+    ASSERT_TRUE(writer.isInitialized());
+
+    // Wait for discovery.
+    writer.wait_discovery();
+    reader.wait_discovery();
+
+    // Writer fills the reader's history
+    auto data = default_helloworld_data_generator(2);
+    reader.startReception(data);
+
+    writer.send(data);
+    ASSERT_TRUE(data.empty());
+    reader.block_for_all();
+
+    // Writer's undiscovery should free the reader's history
+    writer.destroy();
+    reader.wait_writer_undiscovery();
+
+    // Create another writer and send more data
+    // Reader should be able to get the new data
+    writer2.history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS).init();
+    ASSERT_TRUE(writer.isInitialized());
+    writer2.wait_discovery();
+    reader.wait_discovery();
+
+    data = default_helloworld_data_generator(2);
+    reader.startReception(data);
+
+    writer2.send(data);
+    ASSERT_TRUE(data.empty());
+    reader.block_for_all();
+}
 
 #ifdef INSTANTIATE_TEST_SUITE_P
 #define GTEST_INSTANTIATE_TEST_MACRO(x, y, z, w) INSTANTIATE_TEST_SUITE_P(x, y, z, w)
