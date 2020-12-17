@@ -1009,6 +1009,11 @@ bool StatefulReader::nextUntakenCache(
                 *wpout = wp;
             }
 
+            if (is_datasharing_compatible_)
+            {
+                send_datasharing_ack(*wp);
+            }
+
             break;
         }
     }
@@ -1020,11 +1025,6 @@ bool StatefulReader::nextUntakenCache(
                 "Removing change " << (*it)->sequenceNumber << " from " << (*it)->writerGUID <<
                 " because is no longer paired");
         mp_history->remove_change(*it);
-    }
-
-    if (is_datasharing_compatible_)
-    {
-        send_datasharing_ack(*wp);
     }
 
     return takeok;
@@ -1097,6 +1097,11 @@ bool StatefulReader::nextUnreadCache(
                 *wpout = wp;
             }
 
+            if (is_datasharing_compatible_)
+            {
+                send_datasharing_ack(*wp);
+            }
+
             break;
         }
     }
@@ -1108,11 +1113,6 @@ bool StatefulReader::nextUnreadCache(
                 "Removing change " << (*it)->sequenceNumber << " from " << (*it)->writerGUID <<
                 " because is no longer paired");
         mp_history->remove_change(*it);
-    }
-
-    if (is_datasharing_compatible_)
-    {
-        send_datasharing_ack(*wp);
     }
 
     return readok;
