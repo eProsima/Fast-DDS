@@ -1102,15 +1102,15 @@ TEST(LocatorTests, push_back_negative)
     Locator_t locator_2;
     LocatorList_t locator_list;
 
-    ASSERT_EQ(locator_list.size(), 0);
+    ASSERT_EQ(locator_list.size(), 0u);
 
     IPLocator::createLocator(LOCATOR_KIND_UDPv6, "::1", 1, locator_1);
     locator_list.push_back(locator_1);
-    ASSERT_EQ(locator_list.size(), 1);
+    ASSERT_EQ(locator_list.size(), 1u);
 
     IPLocator::createLocator(LOCATOR_KIND_UDPv6, "::1", 1, locator_2);
     locator_list.push_back(locator_2);
-    ASSERT_EQ(locator_list.size(), 1);
+    ASSERT_EQ(locator_list.size(), 1u);
 }
 
 /*
@@ -1163,18 +1163,18 @@ TEST(LocatorTests, LocatorList_deserialization)
     LocatorList_t locator_list;
     std::stringstream ss;
 
-    ASSERT_EQ(locator_list.size(), 0);
+    ASSERT_EQ(locator_list.size(), 0u);
 
     // Empty list
     ss.str("[_]");
     ss >> locator_list;
-    ASSERT_EQ(locator_list.size(), 0);
+    ASSERT_EQ(locator_list.size(), 0u);
 
     // Filled list
     ss.clear();
     ss.str("[UDPv4:[1.1.1.1]:1,TCPv4:[2.2.2.2]:2]");
     ss >> locator_list;
-    ASSERT_EQ(locator_list.size(), 2);
+    ASSERT_EQ(locator_list.size(), 2u);
 }
 
 
@@ -1292,13 +1292,13 @@ TEST(RemoteLocatorsTests, RemoteLocator_deserialization)
     IPLocator::createLocator(LOCATOR_KIND_UDPv4, "224.0.0.0", 1, locator);
     rll.add_multicast_locator(locator);
     rll.add_unicast_locator(locator);
-    ASSERT_EQ(rll.multicast.size(), 1);
-    ASSERT_EQ(rll.unicast.size(), 1);
+    ASSERT_EQ(rll.multicast.size(), 1u);
+    ASSERT_EQ(rll.unicast.size(), 1u);
 
     serialized_ss.str("{}");
     serialized_ss >> rll;
-    ASSERT_EQ(rll.multicast.size(), 0);
-    ASSERT_EQ(rll.unicast.size(), 0);
+    ASSERT_EQ(rll.multicast.size(), 0u);
+    ASSERT_EQ(rll.unicast.size(), 0u);
 
     // Check Filled list
     std::string str_result = // this variable is needed to separate string in 2 lines
@@ -1307,16 +1307,16 @@ TEST(RemoteLocatorsTests, RemoteLocator_deserialization)
     serialized_ss.clear();
     serialized_ss.str(str_result);
     serialized_ss >> rll;
-    ASSERT_EQ(rll.multicast.size(), 2);
-    ASSERT_EQ(rll.unicast.size(), 2);
+    ASSERT_EQ(rll.multicast.size(), 2u);
+    ASSERT_EQ(rll.unicast.size(), 2u);
 
     // Check error List
     str_result = "{ERROR}";
     serialized_ss.clear();
     serialized_ss.str(str_result);
     serialized_ss >> rll;
-    ASSERT_EQ(rll.multicast.size(), 0);
-    ASSERT_EQ(rll.unicast.size(), 0);
+    ASSERT_EQ(rll.multicast.size(), 0u);
+    ASSERT_EQ(rll.unicast.size(), 0u);
 }
 
 /*******************************

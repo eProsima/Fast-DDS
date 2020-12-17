@@ -269,7 +269,8 @@ protected:
         {                                                                                                  \
             std::stringstream fastdds_log_ss_tmp__;                                                                          \
             fastdds_log_ss_tmp__ << msg;                                                                                     \
-            Log::QueueLog(fastdds_log_ss_tmp__.str(), Log::Context{__FILE__, __LINE__, __func__, #cat}, Log::Kind::Warning); \
+            Log::QueueLog( \
+                fastdds_log_ss_tmp__.str(), Log::Context{__FILE__, __LINE__, __func__, #cat}, Log::Kind::Warning); \
         }                                                                                                  \
     }
 #elif (defined(__INTERNALDEBUG) || defined(_INTERNALDEBUG))
@@ -295,7 +296,8 @@ protected:
         {                                                                                               \
             std::stringstream fastdds_log_ss_tmp__;                                                                       \
             fastdds_log_ss_tmp__ << msg;                                                                                  \
-            Log::QueueLog(fastdds_log_ss_tmp__.str(), Log::Context{__FILE__, __LINE__, __func__, #cat}, Log::Kind::Info); \
+            Log::QueueLog(fastdds_log_ss_tmp__.str(), Log::Context{__FILE__, __LINE__, __func__, #cat}, \
+                    Log::Kind::Info); \
         }                                                                                               \
     }
 #elif (defined(__INTERNALDEBUG) || defined(_INTERNALDEBUG))
