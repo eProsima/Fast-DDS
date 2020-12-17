@@ -109,7 +109,9 @@ protected:
     RTPSReader* reader_;
     std::thread* listening_thread_;
     ResourceLimitedVector<WriterInfo> writer_pools_;
+    std::atomic<bool> writer_pools_changed_;
     std::string datasharing_pools_directory_;
+    mutable std::mutex mutex_;
 
 };
 
