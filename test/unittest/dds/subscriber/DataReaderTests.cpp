@@ -142,6 +142,14 @@ protected:
     InstanceHandle_t handle_ok_ = HANDLE_NIL;
     InstanceHandle_t handle_wrong_ = HANDLE_NIL;
 
+    void reset_lengths(
+            LoanableCollection& data_values,
+            SampleInfoSeq& infos)
+    {
+        data_values.length(0u);
+        infos.length(0u);
+    }
+
     void send_data(
             LoanableCollection& data_values,
             SampleInfoSeq& infos)
@@ -199,25 +207,37 @@ protected:
 
         EXPECT_EQ(instance_ok_code, data_reader->read_instance(data_values, infos, LENGTH_UNLIMITED, handle_ok_));
         check_return_loan(loan_return_code, data_reader, data_values, infos);
-        EXPECT_EQ(instance_ok_code, data_reader->read_instance(data_values, infos, LENGTH_UNLIMITED, handle_ok_));
+        reset_lengths(data_values, infos);
+
+        EXPECT_EQ(instance_ok_code, data_reader->take_instance(data_values, infos, LENGTH_UNLIMITED, handle_ok_));
         if (ReturnCode_t::RETCODE_OK == instance_ok_code)
         {
             // Write received data so it can be taken again
             send_data(data_values, infos);
         }
         check_return_loan(loan_return_code, data_reader, data_values, infos);
+        reset_lengths(data_values, infos);
     }
 
     void basic_read_apis_check(
             const ReturnCode_t& code,
             DataReader* data_reader)
     {
-        // Check read_next_sample
+        static const Duration_t time_to_wait(1, 0);
+
+        // Check read_next_sample / take_next_sample
         {
             FooType data;
             SampleInfo info;
 
             EXPECT_EQ(code, data_reader->read_next_sample(&data, &info));
+            EXPECT_EQ(code, data_reader->take_next_sample(&data, &info));
+            if (ReturnCode_t::RETCODE_OK == code)
+            {
+                // Send taken sample so it can be read again
+                data_writer_->write(&data);
+                data_reader->wait_for_unread_message(time_to_wait);
+            }
         }
 
         // Return code when requesting a bad instance
@@ -234,21 +254,41 @@ protected:
             instance_ok_code = code;
         }
 
-        // Check read and variants with loan
+        // Check read/take and variants with loan
         {
             FooSeq data_values;
             SampleInfoSeq infos;
 
             EXPECT_EQ(code, data_reader->read(data_values, infos));
             check_return_loan(code, data_reader, data_values, infos);
+            reset_lengths(data_values, infos);
             EXPECT_EQ(code, data_reader->read_next_instance(data_values, infos));
             check_return_loan(code, data_reader, data_values, infos);
+            reset_lengths(data_values, infos);
+
+            EXPECT_EQ(code, data_reader->take(data_values, infos));
+            if (ReturnCode_t::RETCODE_OK == code)
+            {
+                send_data(data_values, infos);
+                data_reader->wait_for_unread_message(time_to_wait);
+            }
+            check_return_loan(code, data_reader, data_values, infos);
+            reset_lengths(data_values, infos);
+
+            EXPECT_EQ(code, data_reader->take_next_instance(data_values, infos));
+            if (ReturnCode_t::RETCODE_OK == code)
+            {
+                send_data(data_values, infos);
+                data_reader->wait_for_unread_message(time_to_wait);
+            }
+            check_return_loan(code, data_reader, data_values, infos);
+            reset_lengths(data_values, infos);
 
             check_instance_methods(instance_ok_code, instance_bad_code, instance_ok_code,
                 data_reader, data_values, infos);
         }
 
-        // Check read and variants without loan
+        // Check read/take and variants without loan
         {
             FooSeq data_values(1u);
             SampleInfoSeq infos(1u);
@@ -262,8 +302,28 @@ protected:
 
             EXPECT_EQ(code, data_reader->read(data_values, infos));
             check_return_loan(expected_return_loan_ret, data_reader, data_values, infos);
+            reset_lengths(data_values, infos);
             EXPECT_EQ(code, data_reader->read_next_instance(data_values, infos));
             check_return_loan(expected_return_loan_ret, data_reader, data_values, infos);
+            reset_lengths(data_values, infos);
+
+            EXPECT_EQ(code, data_reader->take(data_values, infos));
+            if (ReturnCode_t::RETCODE_OK == code)
+            {
+                send_data(data_values, infos);
+                data_reader->wait_for_unread_message(time_to_wait);
+            }
+            check_return_loan(expected_return_loan_ret, data_reader, data_values, infos);
+            reset_lengths(data_values, infos);
+
+            EXPECT_EQ(code, data_reader->take_next_instance(data_values, infos));
+            if (ReturnCode_t::RETCODE_OK == code)
+            {
+                send_data(data_values, infos);
+                data_reader->wait_for_unread_message(time_to_wait);
+            }
+            check_return_loan(expected_return_loan_ret, data_reader, data_values, infos);
+            reset_lengths(data_values, infos);
 
             check_instance_methods(instance_ok_code, instance_bad_code, expected_return_loan_ret,
                 data_reader, data_values, infos);
@@ -278,7 +338,6 @@ TEST_F(DataReaderTests, ReadData)
     SubscriberQos subscriber_qos = SUBSCRIBER_QOS_DEFAULT;
     subscriber_qos.entity_factory().autoenable_created_entities = false;
     create_entities(nullptr, DATAREADER_QOS_DEFAULT, subscriber_qos);
-
     EXPECT_FALSE(data_reader_->is_enabled());
 
     // Read / take operations should all return NOT_ENABLED
