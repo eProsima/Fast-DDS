@@ -12,27 +12,26 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include <fastdds/rtps/transport/TCPTransportInterface.h>
-#include <fastdds/rtps/transport/tcp/RTCPMessageManager.h>
-#include <rtps/transport/TCPSenderResource.hpp>
-//#include "TCPSenderResource.hpp"
+#include <algorithm>
+#include <chrono>
+#include <cstring>
+#include <thread>
+#include <utility>
+
+#include <asio/steady_timer.hpp>
 #include <fastdds/dds/log/Log.hpp>
-#include <fastrtps/utils/IPLocator.h>
-#include <fastrtps/utils/System.h>
-#include <fastdds/rtps/transport/TCPChannelResourceBasic.h>
+#include <fastdds/rtps/transport/tcp/RTCPMessageManager.h>
 #include <fastdds/rtps/transport/TCPAcceptorBasic.h>
+#include <fastdds/rtps/transport/TCPChannelResourceBasic.h>
+#include <fastdds/rtps/transport/TCPTransportInterface.h>
 #if TLS_FOUND
 #include <fastdds/rtps/transport/TCPChannelResourceSecure.h>
 #include <fastdds/rtps/transport/TCPAcceptorSecure.h>
 #endif // if TLS_FOUND
-
-#include <asio/steady_timer.hpp>
-#include <utility>
-#include <cstring>
-#include <algorithm>
-
-#include <chrono>
-#include <thread>
+#include <fastrtps/utils/IPLocator.h>
+#include <fastrtps/utils/System.h>
+#include <rtps/transport/TCPSenderResource.hpp>
+#include <utils/SystemInfo.hpp>
 
 using namespace std;
 using namespace asio;
@@ -56,7 +55,7 @@ using Log = fastdds::dds::Log;
 static const int s_default_keep_alive_frequency = 5000; // 5 SECONDS
 static const int s_default_keep_alive_timeout = 15000; // 15 SECONDS
 //static const int s_clean_deleted_sockets_pool_timeout = 100; // 100 MILLISECONDS
-static const int s_default_tcp_negotitation_timeout = 5000; // 5 Seconds
+static const int s_default_tcp_negotiation_timeout = 5000; // 5 Seconds
 
 TCPTransportDescriptor::TCPTransportDescriptor()
     : SocketTransportDescriptor(s_maximumMessageSize, s_maximumInitialPeersRange)
@@ -65,7 +64,7 @@ TCPTransportDescriptor::TCPTransportDescriptor()
     , max_logical_port(100)
     , logical_port_range(20)
     , logical_port_increment(2)
-    , tcp_negotiation_timeout(s_default_tcp_negotitation_timeout)
+    , tcp_negotiation_timeout(s_default_tcp_negotiation_timeout)
     , enable_tcp_nodelay(false)
     , wait_for_tcp_negotiation(false)
     , calculate_crc(true)
@@ -1334,11 +1333,7 @@ bool TCPTransportInterface::fillMetatrafficUnicastLocator(
             }
             else
             {
-<<<<<<< HEAD
-                IPLocator::setPhysicalPort(locator, static_cast<uint16_t>(System::GetPID()));
-=======
                 IPLocator::setPhysicalPort(locator, static_cast<uint16_t>(SystemInfo::instance().process_id()));
->>>>>>> c3c51b39b... Refs 10124. Rename singletons instance getters.
             }
         }
     }
@@ -1407,11 +1402,7 @@ bool TCPTransportInterface::fillUnicastLocator(
             }
             else
             {
-<<<<<<< HEAD
-                IPLocator::setPhysicalPort(locator, static_cast<uint16_t>(System::GetPID()));
-=======
                 IPLocator::setPhysicalPort(locator, static_cast<uint16_t>(SystemInfo::instance().process_id()));
->>>>>>> c3c51b39b... Refs 10124. Rename singletons instance getters.
             }
         }
     }

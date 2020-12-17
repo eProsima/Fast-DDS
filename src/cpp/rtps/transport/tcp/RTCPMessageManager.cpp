@@ -25,14 +25,14 @@
 #include <fastdds/rtps/transport/TCPTransportInterface.h>
 #include <fastdds/rtps/transport/TCPv4TransportDescriptor.h>
 #include <fastdds/rtps/transport/TCPv6TransportDescriptor.h>
-
+#include <utils/SystemInfo.hpp>
 
 #define IDSTRING "(ID:" << std::this_thread::get_id() << ") " <<
 
 //using namespace eprosima::fastrtps;
 
 namespace eprosima {
-namespace fastdds{
+namespace fastdds {
 namespace rtps {
 
 using Locator_t = fastrtps::rtps::Locator_t;
