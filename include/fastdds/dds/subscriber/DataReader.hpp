@@ -20,8 +20,8 @@
 #ifndef _FASTDDS_DDS_SUBSCRIBER_DATAREADER_HPP_
 #define _FASTDDS_DDS_SUBSCRIBER_DATAREADER_HPP_
 
-#include <vector>
 #include <cstdint>
+#include <vector>
 
 #include <fastdds/dds/core/Entity.hpp>
 #include <fastdds/dds/core/LoanableCollection.hpp>

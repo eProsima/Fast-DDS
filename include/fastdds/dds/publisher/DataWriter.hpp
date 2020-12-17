@@ -19,14 +19,15 @@
 #ifndef _FASTRTPS_DATAWRITER_HPP_
 #define _FASTRTPS_DATAWRITER_HPP_
 
-#include <fastdds/rtps/common/Time_t.h>
-#include <fastrtps/qos/DeadlineMissedStatus.h>
-#include <fastdds/dds/core/status/IncompatibleQosStatus.hpp>
-#include <fastdds/dds/core/status/BaseStatus.hpp>
-#include <fastrtps/types/TypesBase.h>
 #include <fastdds/dds/core/Entity.hpp>
+#include <fastdds/dds/core/status/BaseStatus.hpp>
+#include <fastdds/dds/core/status/DeadlineMissedStatus.hpp>
+#include <fastdds/dds/core/status/IncompatibleQosStatus.hpp>
 #include <fastdds/dds/core/status/StatusMask.hpp>
 #include <fastdds/dds/publisher/qos/DataWriterQos.hpp>
+#include <fastdds/dds/topic/TypeSupport.hpp>
+#include <fastdds/rtps/common/Time_t.h>
+#include <fastrtps/types/TypesBase.h>
 
 using eprosima::fastrtps::types::ReturnCode_t;
 
@@ -217,7 +218,7 @@ public:
      * @return RETCODE_OK
      */
     RTPS_DllAPI ReturnCode_t get_offered_deadline_missed_status(
-            fastrtps::OfferedDeadlineMissedStatus& status);
+            OfferedDeadlineMissedStatus& status);
 
     /**
      * @brief Returns the offered incompatible qos status

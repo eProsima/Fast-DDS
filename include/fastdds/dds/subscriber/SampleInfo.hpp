@@ -25,9 +25,9 @@
 #include <fastdds/dds/subscriber/ViewState.hpp>
 #include <fastdds/dds/topic/TypeSupport.hpp>
 
-#include <fastdds/rtps/common/Types.h>
-#include <fastdds/rtps/common/Time_t.h>
 #include <fastdds/rtps/common/SampleIdentity.h>
+#include <fastdds/rtps/common/Time_t.h>
+#include <fastdds/rtps/common/Types.h>
 
 namespace eprosima {
 namespace fastdds {
