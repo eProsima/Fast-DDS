@@ -235,7 +235,7 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER) AND fastcdr_FOUND)
                 --xml-pub secure_msg_crypto_besteffort_pub.xml
                 --sub $<TARGET_FILE:SimpleCommunicationSubscriber>
                 --xml-sub secure_msg_crypto_besteffort_sub.xml
-                --samples 20 --wait 2 --n-subs 5)
+                --samples 10 --wait 2 --n-subs 5)
 
             # Set test with label NoMemoryCheck
             set_property(TEST SimpleCommunicationSecureMsgCryptoBestEffort PROPERTY LABELS "NoMemoryCheck")
@@ -252,7 +252,7 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER) AND fastcdr_FOUND)
                 --xml-pub secure_msg_submsg_crypto_besteffort_pub.xml
                 --sub $<TARGET_FILE:SimpleCommunicationSubscriber>
                 --xml-sub secure_msg_submsg_crypto_besteffort_sub.xml
-                --samples 20 --wait 2 --n-subs 5)
+                --samples 10 --wait 2 --n-subs 5)
 
             # Set test with label NoMemoryCheck
             set_property(TEST SimpleCommunicationSecureMsgSubmsgCryptoBestEffort PROPERTY LABELS "NoMemoryCheck")
@@ -269,7 +269,7 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER) AND fastcdr_FOUND)
                 --xml-pub secure_submsg_crypto_besteffort_pub.xml
                 --sub $<TARGET_FILE:SimpleCommunicationSubscriber>
                 --xml-sub secure_submsg_crypto_besteffort_sub.xml
-                --samples 20 --wait 2 --n-subs 5)
+                --samples 10 --wait 2 --n-subs 5)
 
             # Set test with label NoMemoryCheck
             set_property(TEST SimpleCommunicationSecureSubmsgCryptoBestEffort PROPERTY LABELS "NoMemoryCheck")

@@ -662,7 +662,7 @@ bool MessageReceiver::proc_Submsg_Data(
 
     //Look for the correct reader to add the change
     findAllReaders(readerID,
-            [&ch] (RTPSReader* reader)
+            [&ch](RTPSReader* reader)
             {
                 reader->processDataMsg(&ch);
             });
@@ -838,7 +838,7 @@ bool MessageReceiver::proc_Submsg_DataFrag(
 
     //Look for the correct reader to add the change
     findAllReaders(readerID,
-            [&ch, sampleSize, fragmentStartingNum, fragmentsInSubmessage] (RTPSReader* reader)
+            [&ch, sampleSize, fragmentStartingNum, fragmentsInSubmessage](RTPSReader* reader)
             {
                 reader->processDataFragMsg(&ch, sampleSize, fragmentStartingNum, fragmentsInSubmessage);
             });
@@ -889,7 +889,7 @@ bool MessageReceiver::proc_Submsg_Heartbeat(
     std::lock_guard<std::mutex> guard(mtx_);
     //Look for the correct reader and writers:
     findAllReaders(readerGUID.entityId,
-            [&writerGUID, &HBCount, &firstSN, &lastSN, finalFlag, livelinessFlag] (RTPSReader* reader)
+            [&writerGUID, &HBCount, &firstSN, &lastSN, finalFlag, livelinessFlag](RTPSReader* reader)
             {
                 reader->processHeartbeatMsg(writerGUID, HBCount, firstSN, lastSN, finalFlag, livelinessFlag);
             });
@@ -974,7 +974,7 @@ bool MessageReceiver::proc_Submsg_Gap(
 
     std::lock_guard<std::mutex> guard(mtx_);
     findAllReaders(readerGUID.entityId,
-            [&writerGUID, &gapStart, &gapList] (RTPSReader* reader)
+            [&writerGUID, &gapStart, &gapList](RTPSReader* reader)
             {
                 reader->processGapMsg(writerGUID, gapStart, gapList);
             });
