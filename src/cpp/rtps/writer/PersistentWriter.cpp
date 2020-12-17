@@ -21,7 +21,7 @@
 #include <fastdds/rtps/history/WriterHistory.h>
 #include <rtps/persistence/PersistenceService.h>
 #include <fastrtps_deprecated/participant/ParticipantImpl.h>
-#include <rtps/DataSharing/DataSharingPayloadPool.hpp>
+#include <rtps/DataSharing/WriterPool.hpp>
 
 namespace eprosima {
 namespace fastrtps {
@@ -55,7 +55,7 @@ PersistentWriter::PersistentWriter(
     // Prepare the changes for datasharing if compatible
     if (att.endpoint.data_sharing_configuration().kind() != OFF)
     {
-        auto pool = std::dynamic_pointer_cast<DataSharingPayloadPool>(payload_pool);
+        auto pool = std::dynamic_pointer_cast<WriterPool>(payload_pool);
         assert(pool != nullptr);
         for (auto change : hist->m_changes)
         {

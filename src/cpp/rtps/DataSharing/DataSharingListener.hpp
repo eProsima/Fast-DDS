@@ -23,6 +23,7 @@
 #include <rtps/DataSharing/IDataSharingListener.hpp>
 #include <rtps/DataSharing/DataSharingNotification.hpp>
 #include <rtps/DataSharing/DataSharingPayloadPool.hpp>
+#include <rtps/DataSharing/ReaderPool.hpp>
 #include <fastrtps/utils/collections/ResourceLimitedVector.hpp>
 
 #include <memory>
@@ -90,12 +91,12 @@ protected:
 
     struct WriterInfo
     {
-        std::shared_ptr<DataSharingPayloadPool> pool;
+        std::shared_ptr<ReaderPool> pool;
         uint32_t last_assertion_sequence = 0;
 
         WriterInfo() = default;
         WriterInfo(
-                std::shared_ptr<DataSharingPayloadPool> writer_pool,
+                std::shared_ptr<ReaderPool> writer_pool,
                 uint32_t assertion)
             : pool(writer_pool)
             , last_assertion_sequence(assertion)

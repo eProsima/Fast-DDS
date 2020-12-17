@@ -132,7 +132,7 @@ public:
     }
 
 bool get_next_unread_payload(
-        CacheChange_t& cache_change) override
+        CacheChange_t& cache_change)
 {
     while (next_payload_ != end())
     {
@@ -174,20 +174,6 @@ bool get_next_unread_payload(
     return false;
 }
 
-void add_to_shared_history(const CacheChange_t* /*cache_change*/) override
-{
-    // Only the Writer pool can do this
-}
-
-void remove_from_shared_history(const CacheChange_t* /*cache_change*/) override
-{
-    // Only the Writer pool can do this
-}
-
-void assert_liveliness() override
-{
-    // Only the Writer pool can do this
-}
 
 private:
 

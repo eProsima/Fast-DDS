@@ -146,7 +146,7 @@ bool DataSharingListener::add_datasharing_writer(
         return false;
     }
 
-    std::shared_ptr<DataSharingPayloadPool> pool = DataSharingPayloadPool::get_reader_pool(is_volatile);
+    std::shared_ptr<ReaderPool> pool = std::static_pointer_cast<ReaderPool>(DataSharingPayloadPool::get_reader_pool(is_volatile));
     pool->init_shared_memory(writer_guid, datasharing_pools_directory_);
     writer_pools_.emplace_back(pool, pool->last_liveliness_sequence());
 

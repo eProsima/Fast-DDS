@@ -46,9 +46,6 @@ public:
 
     ~DataSharingPayloadPool() = default;
 
-    virtual bool get_next_unread_payload(
-        CacheChange_t& cache_change) = 0;
-
     virtual bool release_payload(
             CacheChange_t& cache_change) override;
 
@@ -85,21 +82,6 @@ public:
     }
 
     /**
-     * Fills the metadata of the shared payload from the cache change information
-     * and adds the payload's offset to the shared history
-     */
-    virtual void add_to_shared_history(const CacheChange_t* cache_change) = 0;
-
-    /**
-     * Removes the payload's offset to the shared history
-     * 
-     * Payloads must be removed from the history in the same order
-     * they where added, i.e., payload for sequence number 7
-     * cannot be removed before payload for sequence number 5.  
-     */
-    virtual void remove_from_shared_history(const CacheChange_t* cache_change) = 0;
-
-    /**
      * Advances an index to the history to the next position
      */
     uint32_t advance(
@@ -123,8 +105,6 @@ public:
     const GUID_t& writer() const;
 
     uint32_t last_liveliness_sequence() const;
-
-    virtual void assert_liveliness() = 0;
 
     static bool check_sequence_number(octet* data, SequenceNumber_t sn);
 
