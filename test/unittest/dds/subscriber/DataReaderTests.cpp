@@ -96,8 +96,7 @@ protected:
             const DataWriterQos& wqos = DATAWRITER_QOS_DEFAULT,
             const PublisherQos& pqos = PUBLISHER_QOS_DEFAULT,
             const TopicQos& tqos = TOPIC_QOS_DEFAULT,
-            const DomainParticipantQos& part_qos = PARTICIPANT_QOS_DEFAULT
-        )
+            const DomainParticipantQos& part_qos = PARTICIPANT_QOS_DEFAULT)
     {
         participant_ = DomainParticipantFactory::get_instance()->create_participant(0, part_qos);
         ASSERT_NE(participant_, nullptr);
@@ -166,10 +165,10 @@ protected:
     }
 
     void check_return_loan(
-        const ReturnCode_t& code,
-        DataReader* data_reader,
-        LoanableCollection& data_values,
-        SampleInfoSeq& infos)
+            const ReturnCode_t& code,
+            DataReader* data_reader,
+            LoanableCollection& data_values,
+            SampleInfoSeq& infos)
     {
         ReturnCode_t expected_return_loan_ret = code;
         if (ReturnCode_t::RETCODE_NO_DATA == code)
@@ -285,7 +284,7 @@ protected:
             reset_lengths(data_values, infos);
 
             check_instance_methods(instance_ok_code, instance_bad_code, instance_ok_code,
-                data_reader, data_values, infos);
+                    data_reader, data_values, infos);
         }
 
         // Check read/take and variants without loan
@@ -326,7 +325,7 @@ protected:
             reset_lengths(data_values, infos);
 
             check_instance_methods(instance_ok_code, instance_bad_code, expected_return_loan_ret,
-                data_reader, data_values, infos);
+                    data_reader, data_values, infos);
         }
     }
 
@@ -453,7 +452,7 @@ TEST_F(DataReaderTests, collection_preconditions)
         EXPECT_EQ(wrong_code, data_reader_->take_next_instance(test.first, test.second));
 
         check_instance_methods(wrong_code, wrong_code, wrong_code,
-            data_reader_, test.first, test.second);
+                data_reader_, test.first, test.second);
     }
 
     // Check compatible combinations
@@ -485,7 +484,7 @@ TEST_F(DataReaderTests, collection_preconditions)
         // When collection preconditions are ok, as the reader has no data, BAD_PARAMETER will be returned
         const ReturnCode_t& instance_code = (test.second == ok_code) ? instance_bad_code : test.second;
         check_instance_methods(instance_code, instance_code, wrong_code,
-            data_reader_, test.first.first, test.first.second);
+                data_reader_, test.first.first, test.first.second);
     }
 
     false_10_0.unloan();
