@@ -19,14 +19,15 @@
 #ifndef _FASTRTPS_DATAWRITER_HPP_
 #define _FASTRTPS_DATAWRITER_HPP_
 
-#include <fastdds/rtps/common/Time_t.h>
-#include <fastrtps/qos/DeadlineMissedStatus.h>
-#include <fastdds/dds/core/status/IncompatibleQosStatus.hpp>
-#include <fastdds/dds/core/status/BaseStatus.hpp>
-#include <fastrtps/types/TypesBase.h>
 #include <fastdds/dds/core/Entity.hpp>
+#include <fastdds/dds/core/status/BaseStatus.hpp>
+#include <fastdds/dds/core/status/DeadlineMissedStatus.hpp>
+#include <fastdds/dds/core/status/IncompatibleQosStatus.hpp>
 #include <fastdds/dds/core/status/StatusMask.hpp>
 #include <fastdds/dds/publisher/qos/DataWriterQos.hpp>
+#include <fastdds/dds/topic/TypeSupport.hpp>
+#include <fastdds/rtps/common/Time_t.h>
+#include <fastrtps/types/TypesBase.h>
 
 using eprosima::fastrtps::types::ReturnCode_t;
 
@@ -39,7 +40,6 @@ namespace rtps {
 
 class WriteParams;
 class WriterAttributes;
-struct InstanceHandle_t;
 struct GUID_t;
 
 } // namespace rtps
@@ -159,7 +159,7 @@ public:
      */
     RTPS_DllAPI ReturnCode_t write(
             void* data,
-            const fastrtps::rtps::InstanceHandle_t& handle);
+            const InstanceHandle_t& handle);
 
     /*!
      * @brief Informs that the application will be modifying a particular instance.
@@ -169,7 +169,7 @@ public:
      * This handle could be used in successive `write` or `dispose` operations.
      * In case of error, HANDLE_NIL will be returned.
      */
-    RTPS_DllAPI fastrtps::rtps::InstanceHandle_t register_instance(
+    RTPS_DllAPI InstanceHandle_t register_instance(
             void* instance);
 
     /*!
@@ -184,7 +184,7 @@ public:
      */
     RTPS_DllAPI ReturnCode_t unregister_instance(
             void* instance,
-            const fastrtps::rtps::InstanceHandle_t& handle);
+            const InstanceHandle_t& handle);
 
     /**
      * Returns the DataWriter's GUID
@@ -196,7 +196,7 @@ public:
      * Returns the DataWriter's InstanceHandle
      * @return Copy of the DataWriter InstanceHandle
      */
-    RTPS_DllAPI fastrtps::rtps::InstanceHandle_t get_instance_handle() const;
+    RTPS_DllAPI InstanceHandle_t get_instance_handle() const;
 
     /**
      * Get data type associated to the DataWriter
@@ -218,7 +218,7 @@ public:
      * @return RETCODE_OK
      */
     RTPS_DllAPI ReturnCode_t get_offered_deadline_missed_status(
-            fastrtps::OfferedDeadlineMissedStatus& status);
+            OfferedDeadlineMissedStatus& status);
 
     /**
      * @brief Returns the offered incompatible qos status
@@ -284,7 +284,7 @@ public:
     /* TODO
        bool get_key_value(
             void* key_holder,
-            const fastrtps::rtps::InstanceHandle_t& handle);
+            const InstanceHandle_t& handle);
      */
 
     /**
@@ -303,7 +303,7 @@ public:
      */
     RTPS_DllAPI ReturnCode_t dispose(
             void* data,
-            const fastrtps::rtps::InstanceHandle_t& handle);
+            const InstanceHandle_t& handle);
 
     /**
      * @brief Returns the liveliness lost status

@@ -20,7 +20,11 @@
 #include <fastdds/dds/topic/TypeSupport.hpp>
 #include <fastdds/dds/domain/DomainParticipant.hpp>
 
-using namespace eprosima::fastdds::dds;
+namespace eprosima {
+namespace fastdds {
+namespace dds {
+
+const InstanceHandle_t HANDLE_NIL;
 
 ReturnCode_t TypeSupport::register_type(
         DomainParticipant* participant,
@@ -34,3 +38,7 @@ ReturnCode_t TypeSupport::register_type(
 {
     return participant->register_type(*this, get_type_name());
 }
+
+}  // namespace dds
+}  // namespace fastdds
+}  // namespace eprosima

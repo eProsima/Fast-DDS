@@ -78,6 +78,132 @@ bool DataReader::wait_for_unread_message(
     return impl_->wait_for_unread_message(timeout);
 }
 
+ReturnCode_t DataReader::read(
+        LoanableCollection& data_values,
+        SampleInfoSeq& sample_infos,
+        int32_t max_samples,
+        SampleStateMask sample_states,
+        ViewStateMask view_states,
+        InstanceStateMask instance_states)
+{
+    static_cast<void>(data_values);
+    static_cast<void>(sample_infos);
+    static_cast<void>(max_samples);
+    static_cast<void>(sample_states);
+    static_cast<void>(view_states);
+    static_cast<void>(instance_states);
+
+    return ReturnCode_t::RETCODE_UNSUPPORTED;
+}
+
+ReturnCode_t DataReader::read_instance(
+        LoanableCollection& data_values,
+        SampleInfoSeq& sample_infos,
+        int32_t max_samples,
+        const InstanceHandle_t& a_handle,
+        SampleStateMask sample_states,
+        ViewStateMask view_states,
+        InstanceStateMask instance_states)
+{
+    static_cast<void>(data_values);
+    static_cast<void>(sample_infos);
+    static_cast<void>(max_samples);
+    static_cast<void>(a_handle);
+    static_cast<void>(sample_states);
+    static_cast<void>(view_states);
+    static_cast<void>(instance_states);
+
+    return ReturnCode_t::RETCODE_UNSUPPORTED;
+}
+
+ReturnCode_t DataReader::read_next_instance(
+        LoanableCollection& data_values,
+        SampleInfoSeq& sample_infos,
+        int32_t max_samples,
+        const InstanceHandle_t& previous_handle,
+        SampleStateMask sample_states,
+        ViewStateMask view_states,
+        InstanceStateMask instance_states)
+{
+    static_cast<void>(data_values);
+    static_cast<void>(sample_infos);
+    static_cast<void>(max_samples);
+    static_cast<void>(previous_handle);
+    static_cast<void>(sample_states);
+    static_cast<void>(view_states);
+    static_cast<void>(instance_states);
+
+    return ReturnCode_t::RETCODE_UNSUPPORTED;
+}
+
+ReturnCode_t DataReader::take(
+        LoanableCollection& data_values,
+        SampleInfoSeq& sample_infos,
+        int32_t max_samples,
+        SampleStateMask sample_states,
+        ViewStateMask view_states,
+        InstanceStateMask instance_states)
+{
+    static_cast<void>(data_values);
+    static_cast<void>(sample_infos);
+    static_cast<void>(max_samples);
+    static_cast<void>(sample_states);
+    static_cast<void>(view_states);
+    static_cast<void>(instance_states);
+
+    return ReturnCode_t::RETCODE_UNSUPPORTED;
+}
+
+ReturnCode_t DataReader::take_instance(
+        LoanableCollection& data_values,
+        SampleInfoSeq& sample_infos,
+        int32_t max_samples,
+        const InstanceHandle_t& a_handle,
+        SampleStateMask sample_states,
+        ViewStateMask view_states,
+        InstanceStateMask instance_states)
+{
+    static_cast<void>(data_values);
+    static_cast<void>(sample_infos);
+    static_cast<void>(max_samples);
+    static_cast<void>(a_handle);
+    static_cast<void>(sample_states);
+    static_cast<void>(view_states);
+    static_cast<void>(instance_states);
+
+    return ReturnCode_t::RETCODE_UNSUPPORTED;
+}
+
+ReturnCode_t DataReader::take_next_instance(
+        LoanableCollection& data_values,
+        SampleInfoSeq& sample_infos,
+        int32_t max_samples,
+        const InstanceHandle_t& previous_handle,
+        SampleStateMask sample_states,
+        ViewStateMask view_states,
+        InstanceStateMask instance_states)
+{
+    static_cast<void>(data_values);
+    static_cast<void>(sample_infos);
+    static_cast<void>(max_samples);
+    static_cast<void>(previous_handle);
+    static_cast<void>(sample_states);
+    static_cast<void>(view_states);
+    static_cast<void>(instance_states);
+
+    return ReturnCode_t::RETCODE_UNSUPPORTED;
+}
+
+ReturnCode_t DataReader::return_loan(
+        LoanableCollection& data_values,
+        SampleInfoSeq& sample_infos)
+{
+    static_cast<void>(data_values);
+    static_cast<void>(sample_infos);
+
+    return ReturnCode_t::RETCODE_UNSUPPORTED;
+}
+
 ReturnCode_t DataReader::read_next_sample(
         void* data,
         SampleInfo* info)
@@ -183,7 +309,7 @@ const DataReaderListener* DataReader::get_listener() const
 /* TODO
    bool DataReader::get_key_value(
         void* data,
-        const rtps::InstanceHandle_t& handle)
+        const InstanceHandle_t& handle)
    {
     return impl->get_key_value(...);
    }

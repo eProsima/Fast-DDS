@@ -21,8 +21,6 @@
 
 #include <fastdds/dds/core/status/LivelinessChangedStatus.hpp>
 
-#include <fastdds/rtps/common/InstanceHandle.h>
-
 namespace eprosima {
 namespace fastrtps {
 
