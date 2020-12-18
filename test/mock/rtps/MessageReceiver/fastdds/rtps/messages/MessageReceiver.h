@@ -27,7 +27,7 @@
 
 
 namespace eprosima {
-namespace fastrtps{
+namespace fastrtps {
 namespace rtps {
 
 class RTPSWriter;
@@ -41,46 +41,42 @@ class ReceiverResource;
  */
 class MessageReceiver
 {
-    public:
-        MessageReceiver(RTPSParticipantImpl* /*participant*/, ReceiverResource* /*receiverResource*/)
-        : sourceVendorId(c_VendorId_Unknown)
-        {
+public:
 
-        }
-        virtual ~MessageReceiver(){}
-        void reset(){}
-        void init(uint32_t /*rec_buffer_size*/){}
-        virtual void processCDRMsg(const Locator_t& /*loc*/, CDRMessage_t* /*msg*/){}
-        void setReceiverResource(ReceiverResource* /*receiverResource*/){}
+    MessageReceiver(
+            RTPSParticipantImpl* /*participant*/,
+            ReceiverResource* /*receiverResource*/)
+    {
 
-    private:
-        std::mutex mtx;
-        ProtocolVersion_t sourceVersion;
-        VendorId_t sourceVendorId;
-        GuidPrefix_t sourceGuidPrefix;
-        GuidPrefix_t destGuidPrefix;
-        LocatorList_t multicastReplyLocatorList;
-        Time_t timestamp;
-        ProtocolVersion_t destVersion;
-        Locator_t defUniLoc;
+    }
 
-        bool checkRTPSHeader(CDRMessage_t* /*msg*/){ return true;    }
-        bool readSubmessageHeader(CDRMessage_t* /*msg*/, SubmessageHeader_t* /*smh*/){ return true;    }
-        bool proc_Submsg_Data(CDRMessage_t* /* msg*/, SubmessageHeader_t* /*smh*/,bool* /*last*/){ return true;    }
-        bool proc_Submsg_DataFrag(CDRMessage_t* /* msg*/, SubmessageHeader_t* /*smh*/, bool* /*last*/){ return true;    }
-        bool proc_Submsg_Acknack(CDRMessage_t* /* msg*/, SubmessageHeader_t* /*smh*/,bool* /*last*/){ return true;    }
-        bool proc_Submsg_Heartbeat(CDRMessage_t* /* msg*/, SubmessageHeader_t* /*smh*/,bool* /*last*/){ return true;    }
-        bool proc_Submsg_Gap(CDRMessage_t* /* msg*/, SubmessageHeader_t* /*smh*/,bool* /*last*/){ return true;    }
-        bool proc_Submsg_InfoTS(CDRMessage_t* /* msg*/, SubmessageHeader_t* /*smh*/,bool* /*last*/){ return true;    }
-        bool proc_Submsg_InfoDST(CDRMessage_t* /* msg*/,SubmessageHeader_t* /*smh*/,bool* /*last*/){ return true;    }
-        bool proc_Submsg_InfoSRC(CDRMessage_t* /* msg*/,SubmessageHeader_t* /*smh*/,bool* /*last*/){ return true;    }
-        bool proc_Submsg_NackFrag(CDRMessage_t* /* msg*/, SubmessageHeader_t* /*smh*/, bool* /*last*/){ return true;    }
-        bool proc_Submsg_HeartbeatFrag(CDRMessage_t* /* msg*/, SubmessageHeader_t* /*smh*/, bool* /*last*/){ return true;    }
-        bool proc_Submsg_SecureMessage(CDRMessage_t* /* msg*/, SubmessageHeader_t* /*smh*/,bool* /*last*/){ return true;    }
-        bool proc_Submsg_SecureSubMessage(CDRMessage_t* /* msg*/, SubmessageHeader_t* /*smh*/,bool* /*last*/){ return true;    }
+    virtual ~MessageReceiver()
+    {
+    }
+
+    void reset()
+    {
+    }
+
+    void init(
+            uint32_t /*rec_buffer_size*/)
+    {
+    }
+
+    virtual void processCDRMsg(
+            const Locator_t& /*loc*/,
+            CDRMessage_t* /*msg*/)
+    {
+    }
+
+    void setReceiverResource(
+            ReceiverResource* /*receiverResource*/)
+    {
+    }
+
 };
-}
+} // namespace rtps
 } /* namespace rtps */
 } /* namespace eprosima */
-#endif
+#endif // ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 #endif /* _FASTDDS_RTPS_MESSAGERECEIVER_H_*/
