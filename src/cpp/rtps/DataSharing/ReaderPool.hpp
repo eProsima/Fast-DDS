@@ -123,28 +123,14 @@ public:
         if (is_volatile_)
         {
             next_payload_ = end();
-            reader_loop_counter_ = descriptor_->writer_loop_counter;
         }
         else
         {
             next_payload_ = begin();
-            if (end() >= begin())
-            {
-                reader_loop_counter_ = descriptor_->writer_loop_counter;
-            }
-            else
-            {
-                reader_loop_counter_ = descriptor_->writer_loop_counter - 1;
-            }
         }
 
         return true;
     }
-
-bool is_reader_at_end()
-{
-    return (reader_loop_counter_ == descriptor_->writer_loop_counter && next_payload_ == end());
-}
 
 void get_next_unread_payload(
         CacheChange_t& cache_change,
@@ -152,13 +138,14 @@ void get_next_unread_payload(
 {
     last_sequence_number = last_sn_;
 
-    while (!is_reader_at_end())
+    while (next_payload_ < end())
     {
         // First ensure we are not too far behind
         ensure_reading_reference_is_in_bounds();
 
         // history_[next_payload_] contains the offset to the payload
-        PayloadNode* payload = static_cast<PayloadNode*>(segment_->get_address_from_offset(history_[next_payload_]));
+        PayloadNode* payload = static_cast<PayloadNode*>(
+                segment_->get_address_from_offset(history_[static_cast<uint32_t>(next_payload_)]));
 
         // The SN is the first thing to be invalidated on the writer
         cache_change.sequenceNumber = payload->sequence_number();
@@ -193,7 +180,6 @@ void get_next_unread_payload(
         if (!ensure_reading_reference_is_in_bounds())
         {
             // We may have been taken over and read a payload that is too far forward. Discard and continue
-            logWarning(RTPS_READER, "Dirty data detected on datasharing writer " << writer());
             continue;
         }
 
@@ -212,12 +198,9 @@ const SequenceNumber_t& get_last_read_sequence_number()
 
 bool advance_to_next_payload()
 {
-    if (!is_reader_at_end())
+    if (next_payload_ < end())
     {
-        if (advance(next_payload_))
-        {
-            ++reader_loop_counter_;
-        }
+        advance(next_payload_);
         return true;
     }
     return false;
@@ -227,12 +210,14 @@ protected:
 
 bool ensure_reading_reference_is_in_bounds()
 {
-    if (reader_loop_counter_ < descriptor_->writer_loop_counter &&
-            next_payload_ <= descriptor_->notified_end)
+    if ((next_payload_ >> 32) < (descriptor_->notified_end >> 32) &&
+            static_cast<uint32_t>(next_payload_) <= static_cast<uint32_t>(descriptor_->notified_end))
     {
         logWarning(RTPS_READER, "Writer " << writer() << " overtook reader in datasharing pool."
                 << " Some changes will be missing.");
-        next_payload_ = descriptor_->notified_end;
+        
+        // lower part is the index, upper part is the loop counter
+        next_payload_ = ((next_payload_ >> 32) << 32) + static_cast<uint32_t>(descriptor_->notified_end);
         advance(next_payload_);
         return false;
     }
@@ -242,9 +227,8 @@ bool ensure_reading_reference_is_in_bounds()
 private:
 
     bool is_volatile_;              //< Whether the reader is volatile or not
-    uint32_t next_payload_;         //< Index of the next history position to read
+    uint64_t next_payload_;         //< Index of the next history position to read
     SequenceNumber_t last_sn_;      //< Sequence number of the last read payload
-    uint32_t reader_loop_counter_;  //< Number of full loops to the queue that the next_payload_ has done
 };
 
 }  // namespace rtps
