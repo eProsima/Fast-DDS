@@ -246,7 +246,7 @@ protected:
         std::stringstream fastdds_log_ss_tmp__;                                                                        \
         fastdds_log_ss_tmp__ << msg;                                                                                   \
         Log::QueueLog(fastdds_log_ss_tmp__.str(), Log::Context{__FILE__, __LINE__, __func__, #cat}, Log::Kind::Error); \
-    }while(0)
+    }while (0)
 #elif (defined(__INTERNALDEBUG) || defined(_INTERNALDEBUG))
 #define logError_(cat, msg)                                     \
     do{                                                         \
@@ -256,7 +256,7 @@ protected:
                     fastdds_log_ss_tmp__ << msg;                \
                 };                                              \
         (void)fastdds_log_lambda_tmp__;                         \
-    }while(0)
+    }while (0)
 #else
 #define logError_(cat, msg)
 #endif // ifndef LOG_NO_ERROR
@@ -272,7 +272,7 @@ protected:
             Log::QueueLog(                                                                                          \
                 fastdds_log_ss_tmp__.str(), Log::Context{__FILE__, __LINE__, __func__, #cat}, Log::Kind::Warning);  \
         }                                                                                                           \
-    }while(0)
+    }while (0)
 #elif (defined(__INTERNALDEBUG) || defined(_INTERNALDEBUG))
 #define logWarning_(cat, msg)                                   \
     do{                                                         \
@@ -282,7 +282,7 @@ protected:
                     fastdds_log_ss_tmp__ << msg;                \
                 };                                              \
         (void)fastdds_log_lambda_tmp__;                         \
-    }while(0)
+    }while (0)
 #else
 #define logWarning_(cat, msg)
 #endif // ifndef LOG_NO_WARNING
@@ -299,7 +299,7 @@ protected:
             Log::QueueLog(fastdds_log_ss_tmp__.str(), Log::Context{__FILE__, __LINE__, __func__, #cat}, \
                     Log::Kind::Info);                                                                   \
         }                                                                                               \
-    }while(0)
+    }while (0)
 #elif (defined(__INTERNALDEBUG) || defined(_INTERNALDEBUG))
 #define logInfo_(cat, msg)                                  \
     do{                                                     \
@@ -309,7 +309,7 @@ protected:
                     fastdds_log_ss_tmp__ << msg;            \
                 };                                          \
         (void)fastdds_log_lambda_tmp__;                     \
-    }while(0)
+    }while (0)
 #else
 #define logInfo_(cat, msg)
 #endif // if (defined(__INTERNALDEBUG) || defined(_INTERNALDEBUG)) && (defined(_DEBUG) || defined(__DEBUG)) && (!defined(LOG_NO_INFO))
