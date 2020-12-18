@@ -90,6 +90,7 @@ private:
 
 #if HAVE_SECURITY
     CDRMessage_t crypto_msg_;
+    CDRMessage_t crypto_submsg_;
 #endif
 
     //!Reset the MessageReceiver to process a new message.

@@ -53,6 +53,7 @@ MessageReceiver::MessageReceiver(
     , timestamp_(c_TimeInvalid)
 #if HAVE_SECURITY
     , crypto_msg_(participant->is_secure() ? rec_buffer_size : 0)
+    , crypto_submsg_(participant->is_secure() ? rec_buffer_size : 0)
 #endif // if HAVE_SECURITY
 {
     (void)rec_buffer_size;
@@ -199,7 +200,8 @@ void MessageReceiver::processCDRMsg(
     {
         // The original CDRMessage buffer (msg) now points to the proprietary temporary CDRMessage buffer (crypto_msg_).
         // This way the already decoded proprietary buffer is processed while it is being modified.
-        *msg = CDRMessage_t(crypto_msg_);
+        msg = auxiliary_buffer;
+        auxiliary_buffer = &crypto_submsg_;
     }
 #endif // if HAVE_SECURITY
 
