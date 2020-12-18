@@ -200,7 +200,7 @@ void MessageReceiver::processCDRMsg(
     {
         // The original CDRMessage buffer (msg) now points to the proprietary temporary buffer crypto_msg_.
         // The auxiliary buffer now points to the propietary temporary buffer crypto_submsg_.
-        // This way each decoded submessage will be process using the crypto_submsg_ buffer.
+        // This way each decoded sub-message will be processed using the crypto_submsg_ buffer.
         msg = auxiliary_buffer;
         auxiliary_buffer = &crypto_submsg_;
     }
@@ -1165,6 +1165,6 @@ bool MessageReceiver::proc_Submsg_HeartbeatFrag(
     return true;
 }
 
-} // namespace rtps
 } /* namespace rtps */
+} /* namespace fastrtps */
 } /* namespace eprosima */

@@ -91,7 +91,7 @@ private:
 #if HAVE_SECURITY
     //!Buffer to process the decoded RTPS message
     CDRMessage_t crypto_msg_;
-    //!Buffer to process each decoded RTPS submessage
+    //!Buffer to process each decoded RTPS sub-message
     CDRMessage_t crypto_submsg_;
 #endif
 
