@@ -72,7 +72,7 @@ private:
 
     std::mutex mtx_;
     std::vector<RTPSWriter*> associated_writers_;
-    std::unordered_map<EntityId_t, std::vector<RTPSReader*> > associated_readers_;
+    std::unordered_map<EntityId_t, std::vector<RTPSReader*>> associated_readers_;
 
     RTPSParticipantImpl* participant_;
     //!Protocol version of the message
@@ -93,7 +93,7 @@ private:
     CDRMessage_t crypto_msg_;
     //!Buffer to process each decoded RTPS sub-message
     CDRMessage_t crypto_submsg_;
-#endif
+#endif // if HAVE_SECURITY
 
     //!Reset the MessageReceiver to process a new message.
     void reset();
@@ -186,5 +186,5 @@ private:
 } /* namespace fastrtps */
 } /* namespace eprosima */
 
-#endif
+#endif // ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 #endif /* _FASTDDS_RTPS_MESSAGERECEIVER_H_ */
