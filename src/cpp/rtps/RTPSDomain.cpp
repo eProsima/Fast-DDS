@@ -13,38 +13,25 @@
 // limitations under the License.
 
 /*
- * RTPSDomain.cpp
- *
+ * @file RTPSDomain.cpp
  */
 
-#include <fastdds/rtps/RTPSDomain.h>
-
-#include <fastdds/rtps/participant/RTPSParticipant.h>
-#include <rtps/participant/RTPSParticipantImpl.h>
-
-#include <fastdds/dds/log/Log.hpp>
-
-#include <fastdds/rtps/transport/UDPv4Transport.h>
-#include <fastdds/rtps/transport/UDPv6Transport.h>
-#include <fastdds/rtps/transport/test_UDPv4Transport.h>
-
-#include <fastrtps/utils/IPFinder.h>
-#include <fastrtps/utils/IPLocator.h>
-#include <fastrtps/utils/System.h>
-#include <fastrtps/utils/md5.h>
-
-#include <fastdds/rtps/writer/RTPSWriter.h>
-#include <fastdds/rtps/reader/RTPSReader.h>
-
-#include <fastrtps/xmlparser/XMLProfileManager.h>
-
 #include "RTPSDomainImpl.hpp"
-#include <utils/Host.hpp>
 
 #include <chrono>
-#include <thread>
 #include <cstdlib>
 #include <regex>
+#include <thread>
+
+#include <fastdds/dds/log/Log.hpp>
+#include <fastdds/rtps/participant/RTPSParticipant.h>
+#include <fastdds/rtps/reader/RTPSReader.h>
+#include <fastdds/rtps/RTPSDomain.h>
+#include <fastdds/rtps/writer/RTPSWriter.h>
+#include <fastrtps/utils/IPFinder.h>
+#include <fastrtps/xmlparser/XMLProfileManager.h>
+#include <rtps/common/GuidUtils.hpp>
+#include <rtps/participant/RTPSParticipantImpl.h>
 
 namespace eprosima {
 namespace fastrtps {
@@ -54,24 +41,7 @@ static void guid_prefix_create(
         uint32_t ID,
         GuidPrefix_t& guidP)
 {
-    // Make a new participant GuidPrefix_t up
-    int pid = System::GetPID();
-
-    guidP.value[0] = c_VendorId_eProsima[0];
-    guidP.value[1] = c_VendorId_eProsima[1];
-
-    uint16_t host_id = Host::get().id();
-    guidP.value[2] = octet(host_id);
-    guidP.value[3] = octet(host_id >> 8);
-
-    guidP.value[4] = octet(pid);
-    guidP.value[5] = octet(pid >> 8);
-    guidP.value[6] = octet(pid >> 16);
-    guidP.value[7] = octet(pid >> 24);
-    guidP.value[8] = octet(ID);
-    guidP.value[9] = octet(ID >> 8);
-    guidP.value[10] = octet(ID >> 16);
-    guidP.value[11] = octet(ID >> 24);
+    eprosima::fastdds::rtps::GuidUtils::instance().guid_prefix_create(ID, guidP);
 }
 
 // environment variables that forces server-client discovery
