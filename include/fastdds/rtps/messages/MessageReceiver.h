@@ -90,7 +90,9 @@ private:
     Time_t timestamp_;
 
 #if HAVE_SECURITY
+    //!Buffer to process the decoded RTPS message
     CDRMessage_t crypto_msg_;
+    //!Buffer to process each decoded RTPS submessage
     CDRMessage_t crypto_submsg_;
     SerializedPayload_t crypto_payload_;
 #endif // if HAVE_SECURITY
