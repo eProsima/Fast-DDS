@@ -365,8 +365,9 @@ void check_collection(
         LoanableCollection::size_type len)
 {
     EXPECT_EQ(owns, collection.has_ownership());
-    EXPECT_EQ(max, collection.maximum());
+    EXPECT_LE(max, collection.maximum());
     EXPECT_EQ(len, collection.length());
+    EXPECT_LE(len, collection.maximum());
 }
 
 TEST_F(DataReaderTests, collection_preconditions)
