@@ -148,7 +148,7 @@ void get_next_unread_payload(
         if (cache_change.sequenceNumber == c_SequenceNumber_Unknown)
         {
             // Reset by the writer. Discard and continue
-            next_payload_ = advance(next_payload_);
+            advance(next_payload_);
             if (last_sn_ != c_SequenceNumber_Unknown)
             {
                 ++last_sn_;
@@ -182,13 +182,13 @@ void get_next_unread_payload(
         if (payload->sequence_number() != cache_change.sequenceNumber)
         {
             // Overriden while retrieving. Discard and continue
-            next_payload_ = advance(next_payload_);
+            advance(next_payload_);
             ++last_sn_;
             logWarning(RTPS_READER, "Dirty data detected on datasharing writer " << writer());
             continue;
         }
 
-        next_payload_ = advance(next_payload_);
+        advance(next_payload_);
         return;
     }
 

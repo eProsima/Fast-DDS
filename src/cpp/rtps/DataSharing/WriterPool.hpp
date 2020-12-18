@@ -41,6 +41,7 @@ public:
         uint32_t payload_size)
         : max_data_size_(payload_size)
         , pool_size_(pool_size)
+        , free_history_size_(0)
     {
     }
 
@@ -245,6 +246,9 @@ public:
             descriptor_->notified_begin = 0u;
             descriptor_->notified_end = 0u;
             descriptor_->liveliness_sequence = 0u;
+            descriptor_->writer_loop_counter = 0u;
+
+            free_history_size_ = pool_size_;
         }
         catch (std::exception& e)
         {
@@ -267,7 +271,7 @@ public:
         assert(cache_change);
         assert(cache_change->serializedPayload.data);
         assert(cache_change->payload_owner() == this);
-        assert(advance(descriptor_->notified_end) != descriptor_->notified_begin);
+        assert(free_history_size_ > 0);
 
         // Fill the payload metadata with the change info
         PayloadNode* node = PayloadNode::get_from_data(cache_change->serializedPayload.data);
@@ -286,7 +290,8 @@ public:
         history_[descriptor_->notified_end] = segment_->get_offset_from_address(node);
         logInfo(DATASHARING_PAYLOADPOOL, "Change added to shared history"
                 << " with SN " << cache_change->sequenceNumber);
-        descriptor_->notified_end = advance(descriptor_->notified_end);
+        advance(descriptor_->notified_end);
+        --free_history_size_;
     }
 
     /**
@@ -302,12 +307,14 @@ public:
         assert(cache_change->serializedPayload.data);
         assert(cache_change->payload_owner() == this);
         assert(descriptor_->notified_end != descriptor_->notified_begin);
+        assert(free_history_size_ < descriptor_->history_size);
 
         PayloadNode* payload = PayloadNode::get_from_data(cache_change->serializedPayload.data);
         assert(segment_->get_offset_from_address(payload) == history_[descriptor_->notified_begin]);
         logInfo(DATASHARING_PAYLOADPOOL, "Change removed from shared history"
                 << " with SN " << cache_change->sequenceNumber);
-        descriptor_->notified_begin = advance(descriptor_->notified_begin);
+        advance(descriptor_->notified_begin);
+        ++free_history_size_;
     }
 
     void assert_liveliness()
@@ -318,8 +325,9 @@ public:
 
 private:
 
-    uint32_t max_data_size_;    //< Maximum size of the serialized payload data
-    uint32_t pool_size_;        //< Number of payloads in the pool
+    uint32_t max_data_size_;        //< Maximum size of the serialized payload data
+    uint32_t pool_size_;            //< Number of payloads in the pool
+    uint32_t free_history_size_;    //< Number of elements currently unused in the shared history
 
     FixedSizeQueue<PayloadNode*> free_payloads_;    //< Pointers to the free payloads in the pool
 };
