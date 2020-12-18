@@ -148,6 +148,8 @@ private:
                 eprosima::fastrtps::Subscriber* sub) override
         {
             ASSERT_NE(sub, nullptr);
+            reader_.message_receive_count_.fetch_add(1);
+            reader_.message_receive_cv_.notify_one();
 
             if (reader_.receiving_.load())
             {
@@ -238,7 +240,7 @@ public:
         , matched_(0)
         , participant_matched_(0)
         , receiving_(false)
-        , current_received_count_(0)
+        , current_processed_count_(0)
         , number_samples_expected_(0)
         , discovery_result_(false)
         , onDiscovery_(nullptr)
@@ -252,6 +254,7 @@ public:
         , liveliness_cv_()
         , times_liveliness_lost_(0)
         , times_liveliness_recovered_(0)
+        , message_receive_count_(0)
     {
         subscriber_attr_.topic.topicDataType = type_.getName();
         // Generate topic name
@@ -334,7 +337,7 @@ public:
         mutex_.lock();
         total_msgs_ = msgs;
         number_samples_expected_ = total_msgs_.size();
-        current_received_count_ = 0;
+        current_processed_count_ = 0;
         last_seq = eprosima::fastrtps::rtps::SequenceNumber_t();
         mutex_.unlock();
 
@@ -353,11 +356,29 @@ public:
         receiving_.store(false);
     }
 
+    template<class _Rep,
+            class _Period
+            >
+    void wait_for_all_received(
+            const std::chrono::duration<_Rep, _Period>& max_wait,
+            size_t num_messages = 0)
+    {
+        if (num_messages == 0)
+        {
+            num_messages = number_samples_expected_;
+        }
+        std::unique_lock<std::mutex> lock(message_receive_mutex_);
+        message_receive_cv_.wait_for(lock, max_wait, [this, num_messages]() -> bool
+                {
+                    return num_messages == message_receive_count_;
+                });
+    }
+
     void block_for_all()
     {
         block([this]() -> bool
                 {
-                    return number_samples_expected_ == current_received_count_;
+                    return number_samples_expected_ == current_processed_count_;
                 });
     }
 
@@ -375,9 +396,9 @@ public:
     {
         block([this, at_least]() -> bool
                 {
-                    return current_received_count_ >= at_least;
+                    return current_processed_count_ >= at_least;
                 });
-        return current_received_count_;
+        return current_processed_count_;
     }
 
     void block(
@@ -396,10 +417,10 @@ public:
         std::unique_lock<std::mutex> lock(mutex_);
         cv_.wait_for(lock, max_wait, [this]() -> bool
                 {
-                    return number_samples_expected_ == current_received_count_;
+                    return number_samples_expected_ == current_processed_count_;
                 });
 
-        return current_received_count_;
+        return current_processed_count_;
     }
 
     void wait_discovery(
@@ -534,7 +555,7 @@ public:
 
     size_t getReceivedCount() const
     {
-        return current_received_count_;
+        return current_processed_count_;
     }
 
     eprosima::fastrtps::rtps::SequenceNumber_t get_last_sequence_received()
@@ -993,7 +1014,7 @@ public:
         eprosima::fastrtps::SampleInfo_t info;
         if (subscriber_->takeNextData(data, &info))
         {
-            current_received_count_++;
+            current_processed_count_++;
             return true;
         }
         return false;
@@ -1087,7 +1108,7 @@ private:
                 auto it = std::find(total_msgs_.begin(), total_msgs_.end(), data);
                 ASSERT_NE(it, total_msgs_.end());
                 total_msgs_.erase(it);
-                ++current_received_count_;
+                ++current_processed_count_;
                 default_receive_print<type>(data);
                 cv_.notify_one();
             }
@@ -1161,7 +1182,7 @@ private:
     std::atomic<bool> receiving_;
     type_support type_;
     eprosima::fastrtps::rtps::SequenceNumber_t last_seq;
-    size_t current_received_count_;
+    size_t current_processed_count_;
     size_t number_samples_expected_;
     bool discovery_result_;
 
@@ -1188,6 +1209,13 @@ private:
     unsigned int times_liveliness_recovered_;
     //! The liveliness changed status
     eprosima::fastrtps::LivelinessChangedStatus liveliness_changed_status_;
+
+    //! A mutex for messages received but not yet processed by the application
+    std::mutex message_receive_mutex_;
+    //! A condition variable for messages received but not yet processed by the application
+    std::condition_variable message_receive_cv_;
+    //! Number of messages received but not yet processed by the application
+    std::atomic<size_t> message_receive_count_;
 };
 
 #endif // _TEST_BLACKBOX_PUBSUBREADER_HPP_
