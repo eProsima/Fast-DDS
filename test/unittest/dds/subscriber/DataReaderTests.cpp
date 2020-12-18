@@ -12,6 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include <cassert>
+
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
 
@@ -492,6 +494,157 @@ TEST_F(DataReaderTests, collection_preconditions)
     false_10_1.unloan();
     info_false_10_0.unloan();
     info_false_10_1.unloan();
+}
+
+void forward_loan(
+        LoanableCollection& to,
+        const LoanableCollection& from)
+{
+    assert(from.has_ownership() == false);
+    auto buf = const_cast<LoanableCollection::element_type*>(from.buffer());
+    to.loan(buf, from.maximum(), from.length());
+}
+
+TEST_F(DataReaderTests, return_loan)
+{
+    static constexpr int32_t num_samples = 10;
+
+    DataWriterQos writer_qos = DATAWRITER_QOS_DEFAULT;
+    writer_qos.history().kind = KEEP_LAST_HISTORY_QOS;
+    writer_qos.history().depth = num_samples;
+    writer_qos.publish_mode().kind = SYNCHRONOUS_PUBLISH_MODE;
+    writer_qos.reliability().kind = RELIABLE_RELIABILITY_QOS;
+
+    SubscriberQos subscriber_qos = SUBSCRIBER_QOS_DEFAULT;
+    subscriber_qos.entity_factory().autoenable_created_entities = false;
+
+    DataReaderQos reader_qos = DATAREADER_QOS_DEFAULT;
+    reader_qos.reliability().kind = RELIABLE_RELIABILITY_QOS;
+    reader_qos.history().kind = KEEP_ALL_HISTORY_QOS;
+    reader_qos.resource_limits().max_instances = 2;
+    reader_qos.resource_limits().max_samples_per_instance = num_samples;
+    reader_qos.resource_limits().max_samples = num_samples * 2;
+
+    create_instance_handles();
+    create_entities(nullptr, reader_qos, subscriber_qos, writer_qos);
+    DataReader* reader2 = subscriber_->create_datareader(topic_, reader_qos);
+
+    FooSeq data_values;
+    SampleInfoSeq infos;
+    FooSeq data_values_2;
+    SampleInfoSeq infos_2;
+
+    const ReturnCode_t& ok_code = ReturnCode_t::RETCODE_OK;
+    const ReturnCode_t& precondition_code = ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
+
+    // Calling return loan on disabled reader should return NOT_ENABLED
+    EXPECT_EQ(ReturnCode_t::RETCODE_NOT_ENABLED, data_reader_->return_loan(data_values, infos));
+
+    // Enable both readers
+    EXPECT_EQ(ok_code, data_reader_->enable());
+    EXPECT_EQ(ok_code, reader2->enable());
+
+    FooType data;
+    data.index(1u);
+
+    // Send a bunch of samples
+    for (int32_t i = 0; i < num_samples; ++i)
+    {
+        EXPECT_EQ(ok_code, data_writer_->write(&data, handle_ok_));
+    }
+
+    // Returning a loan without having called read or take should return PRECONDITION_NOT_MET
+    EXPECT_EQ(precondition_code, data_reader_->return_loan(data_values, infos));
+
+    // Read with loan from both readers
+    EXPECT_EQ(ok_code, data_reader_->read(data_values, infos));
+    EXPECT_EQ(ok_code, reader2->read(data_values_2, infos_2));
+    check_collection(data_values, false, num_samples, num_samples);
+    check_collection(infos, false, num_samples, num_samples);
+    check_collection(data_values_2, false, num_samples, num_samples);
+    check_collection(infos_2, false, num_samples, num_samples);
+
+    // Mixing collections on return_loan should fail and keep collections state
+    EXPECT_EQ(precondition_code, data_reader_->return_loan(data_values, infos_2));
+    check_collection(data_values, false, num_samples, num_samples);
+    check_collection(infos_2, false, num_samples, num_samples);
+
+    EXPECT_EQ(precondition_code, data_reader_->return_loan(data_values_2, infos));
+    check_collection(infos, false, num_samples, num_samples);
+    check_collection(data_values_2, false, num_samples, num_samples);
+
+    EXPECT_EQ(precondition_code, reader2->return_loan(data_values, infos_2));
+    check_collection(data_values, false, num_samples, num_samples);
+    check_collection(infos_2, false, num_samples, num_samples);
+
+    EXPECT_EQ(precondition_code, reader2->return_loan(data_values_2, infos));
+    check_collection(infos, false, num_samples, num_samples);
+    check_collection(data_values_2, false, num_samples, num_samples);
+
+    // Return loan to the other reader should fail and keep collections state
+    EXPECT_EQ(precondition_code, reader2->return_loan(data_values, infos));
+    check_collection(data_values, false, num_samples, num_samples);
+    check_collection(infos, false, num_samples, num_samples);
+
+    EXPECT_EQ(precondition_code, data_reader_->return_loan(data_values_2, infos_2));
+    check_collection(data_values_2, false, num_samples, num_samples);
+    check_collection(infos_2, false, num_samples, num_samples);
+
+    // Return loan to original reader should reset collections
+    EXPECT_EQ(ok_code, data_reader_->return_loan(data_values, infos));
+    check_collection(data_values, true, 0, 0);
+    check_collection(infos, true, 0, 0);
+
+    EXPECT_EQ(ok_code, reader2->return_loan(data_values_2, infos_2));
+    check_collection(data_values_2, true, 0, 0);
+    check_collection(infos_2, true, 0, 0);
+
+    // Take with loan from both readers
+    EXPECT_EQ(ok_code, data_reader_->take(data_values, infos));
+    EXPECT_EQ(ok_code, reader2->take(data_values_2, infos_2));
+    check_collection(data_values, false, num_samples, num_samples);
+    check_collection(infos, false, num_samples, num_samples);
+    check_collection(data_values_2, false, num_samples, num_samples);
+    check_collection(infos_2, false, num_samples, num_samples);
+
+    // Save a copy of the loaned buffers to try returning the same loan twice
+    FooSeq aux_values;
+    SampleInfoSeq aux_infos;
+    FooSeq aux_values_2;
+    SampleInfoSeq aux_infos_2;
+
+    forward_loan(aux_values, data_values);
+    forward_loan(aux_infos, infos);
+    forward_loan(aux_values_2, data_values_2);
+    forward_loan(aux_infos_2, infos_2);
+    check_collection(aux_values, false, num_samples, num_samples);
+    check_collection(aux_infos, false, num_samples, num_samples);
+    check_collection(aux_values_2, false, num_samples, num_samples);
+    check_collection(aux_infos_2, false, num_samples, num_samples);
+
+    // Return loan to original reader should reset collections
+    EXPECT_EQ(ok_code, data_reader_->return_loan(data_values, infos));
+    check_collection(data_values, true, 0, 0);
+    check_collection(infos, true, 0, 0);
+
+    EXPECT_EQ(ok_code, reader2->return_loan(data_values_2, infos_2));
+    check_collection(data_values_2, true, 0, 0);
+    check_collection(infos_2, true, 0, 0);
+
+    // Returning the same loans again should fail
+    EXPECT_EQ(precondition_code, data_reader_->return_loan(aux_values, aux_infos));
+    check_collection(aux_values, false, num_samples, num_samples);
+    check_collection(aux_infos, false, num_samples, num_samples);
+
+    EXPECT_EQ(precondition_code, reader2->return_loan(aux_values_2, aux_infos_2));
+    check_collection(aux_values_2, false, num_samples, num_samples);
+    check_collection(aux_infos_2, false, num_samples, num_samples);
+
+    // Return forward loans to avoid warnings when destroying them
+    aux_values.unloan();
+    aux_infos.unloan();
+    aux_values_2.unloan();
+    aux_infos_2.unloan();
 }
 
 void set_listener_test (
