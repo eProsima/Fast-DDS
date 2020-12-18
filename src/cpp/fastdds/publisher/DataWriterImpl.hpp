@@ -156,7 +156,7 @@ public:
      */
     ReturnCode_t write(
             void* data,
-            const fastrtps::rtps::InstanceHandle_t& handle);
+            const InstanceHandle_t& handle);
 
     /*!
      * @brief Implementation of the DDS `register_instance` operation.
@@ -166,7 +166,7 @@ public:
      * This handle could be used in successive `write` or `dispose` operations.
      * In case of error, HANDLE_NIL will be returned.
      */
-    fastrtps::rtps::InstanceHandle_t register_instance(
+    InstanceHandle_t register_instance(
             void* instance);
 
     /*!
@@ -184,7 +184,7 @@ public:
      */
     ReturnCode_t unregister_instance(
             void* instance,
-            const fastrtps::rtps::InstanceHandle_t& handle,
+            const InstanceHandle_t& handle,
             bool dispose = false);
 
     /**
@@ -193,7 +193,7 @@ public:
      */
     const fastrtps::rtps::GUID_t& guid() const;
 
-    fastrtps::rtps::InstanceHandle_t get_instance_handle() const;
+    InstanceHandle_t get_instance_handle() const;
 
     /**
      * Get topic data type
@@ -228,7 +228,7 @@ public:
     /* TODO
        bool get_key_value(
             void* key_holder,
-            const fastrtps::rtps::InstanceHandle_t& handle);
+            const InstanceHandle_t& handle);
      */
 
     ReturnCode_t get_liveliness_lost_status(
@@ -316,7 +316,7 @@ protected:
     std::chrono::duration<double, std::ratio<1, 1000000>> deadline_duration_us_;
 
     //! The current timer owner, i.e. the instance which started the deadline timer
-    fastrtps::rtps::InstanceHandle_t timer_owner_;
+    InstanceHandle_t timer_owner_;
 
     //! The offered deadline missed status
     fastrtps::OfferedDeadlineMissedStatus deadline_missed_status_;
@@ -372,7 +372,7 @@ protected:
             fastrtps::rtps::ChangeKind_t kind,
             void* data,
             fastrtps::rtps::WriteParams& wparams,
-            const fastrtps::rtps::InstanceHandle_t& handle);
+            const InstanceHandle_t& handle);
 
     /**
      * Removes the cache change with the minimum sequence number
@@ -403,7 +403,7 @@ protected:
             fastrtps::rtps::ChangeKind_t change_kind,
             void* data,
             fastrtps::rtps::WriteParams& wparams,
-            const fastrtps::rtps::InstanceHandle_t& handle);
+            const InstanceHandle_t& handle);
 
     static fastrtps::TopicAttributes get_topic_attributes(
             const DataWriterQos& qos,
