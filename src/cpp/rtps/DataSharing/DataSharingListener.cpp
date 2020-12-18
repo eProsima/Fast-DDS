@@ -148,16 +148,16 @@ void DataSharingListener::process_new_data ()
             {
                 if (last_sequence != c_SequenceNumber_Unknown && ch.sequenceNumber != last_sequence + 1)
                 {
-                    logWarning(RTPS_READER, "GAP ("  << last_sequence << " - " << ch.sequenceNumber << ")"
+                    logWarning(RTPS_READER, "GAP ("  << last_sequence + 1 << " - " << ch.sequenceNumber - 1 << ")"
                             << " detected on datasharing writer " << pool->writer());
                     reader_->processGapMsg(pool->writer(), last_sequence + 1, SequenceNumberSet_t(ch.sequenceNumber));
                 }
 
-                if (last_sequence == c_SequenceNumber_Unknown)
+                if (last_sequence == c_SequenceNumber_Unknown && ch.sequenceNumber != SequenceNumber_t(0, 1))
                 {
                     logInfo(RTPS_READER, "First change with SN " << ch.sequenceNumber
                             << " detected on datasharing writer " << pool->writer());
-                    reader_->processGapMsg(pool->writer(), SequenceNumber_t(0, 0), SequenceNumberSet_t(ch.sequenceNumber));
+                    reader_->processGapMsg(pool->writer(), SequenceNumber_t(0, 1), SequenceNumberSet_t(ch.sequenceNumber));
                 }
 
                 logInfo(RTPS_READER, "New data found on writer " << pool->writer()

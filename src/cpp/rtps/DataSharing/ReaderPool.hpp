@@ -149,22 +149,8 @@ void get_next_unread_payload(
         {
             // Reset by the writer. Discard and continue
             advance(next_payload_);
-            if (last_sn_ != c_SequenceNumber_Unknown)
-            {
-                ++last_sn_;
-            }
             logWarning(RTPS_READER, "Dirty data detected on datasharing writer " << writer());
             continue;
-        }
-
-        if (last_sn_ != c_SequenceNumber_Unknown && cache_change.sequenceNumber != last_sn_ + 1)
-        {
-            ++last_sn_;
-            logWarning(RTPS_READER, "GAP for SN " << last_sn_ << " detected on datasharing writer " << writer());
-        }
-        else
-        {
-            last_sn_ = cache_change.sequenceNumber;
         }
 
         cache_change.serializedPayload.data = payload->data();
@@ -183,10 +169,11 @@ void get_next_unread_payload(
         {
             // Overriden while retrieving. Discard and continue
             advance(next_payload_);
-            ++last_sn_;
             logWarning(RTPS_READER, "Dirty data detected on datasharing writer " << writer());
             continue;
         }
+
+        last_sn_ = cache_change.sequenceNumber;
 
         return;
     }
