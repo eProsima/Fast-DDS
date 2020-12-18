@@ -23,11 +23,11 @@
 #include <fastdds/dds/subscriber/InstanceState.hpp>
 #include <fastdds/dds/subscriber/SampleState.hpp>
 #include <fastdds/dds/subscriber/ViewState.hpp>
+#include <fastdds/dds/topic/TypeSupport.hpp>
 
-#include <fastdds/rtps/common/Types.h>
-#include <fastdds/rtps/common/Time_t.h>
-#include <fastdds/rtps/common/InstanceHandle.h>
 #include <fastdds/rtps/common/SampleIdentity.h>
+#include <fastdds/rtps/common/Time_t.h>
+#include <fastdds/rtps/common/Types.h>
 
 namespace eprosima {
 namespace fastdds {
@@ -95,12 +95,12 @@ struct SampleInfo
     fastrtps::rtps::Time_t source_timestamp;
 
     //! identifies locally the corresponding instance
-    fastrtps::rtps::InstanceHandle_t instance_handle;
+    InstanceHandle_t instance_handle;
 
     //! identifies locally the DataWriter that modified the instance
     //!
     //! Is the same InstanceHandle_t that is returned by the operation get_matched_publications on the DataReader
-    fastrtps::rtps::InstanceHandle_t publication_handle;
+    InstanceHandle_t publication_handle;
 
     //! whether the DataSample contains data or is only used to communicate of a change in the instance
     bool valid_data;
