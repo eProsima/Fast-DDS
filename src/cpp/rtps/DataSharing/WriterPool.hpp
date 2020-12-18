@@ -290,7 +290,10 @@ public:
         history_[descriptor_->notified_end] = segment_->get_offset_from_address(node);
         logInfo(DATASHARING_PAYLOADPOOL, "Change added to shared history"
                 << " with SN " << cache_change->sequenceNumber);
-        advance(descriptor_->notified_end);
+        if (advance(descriptor_->notified_end))
+        {
+            ++descriptor_->writer_loop_counter;
+        }
         --free_history_size_;
     }
 
