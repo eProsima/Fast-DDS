@@ -302,7 +302,7 @@ bool SubscriberHistory::find_key_for_change(
 {
     if (!a_change->instanceHandle.isDefined() && type_ != nullptr)
     {
-        logInfo(SUBSCRIBER, "Getting Key of change with no Key transmitted")
+        logInfo(SUBSCRIBER, "Getting Key of change with no Key transmitted");
         type_->deserialize(&a_change->serializedPayload, get_key_object_);
         bool is_key_protected = false;
 #if HAVE_SECURITY

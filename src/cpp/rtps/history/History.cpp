@@ -103,7 +103,7 @@ bool History::remove_change(
 
     if (it == changesEnd())
     {
-        logInfo(RTPS_WRITER_HISTORY, "Trying to remove a change not in history")
+        logInfo(RTPS_WRITER_HISTORY, "Trying to remove a change not in history");
         return false;
     }
 

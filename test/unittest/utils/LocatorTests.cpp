@@ -1309,6 +1309,12 @@ TEST(LocatorTests, LocatorList_deserialization)
     ss.str("[UDPv4:[1.1.1.1]:1,TCPv4:[2.2.2.2]:2]");
     ss >> locator_list;
     ASSERT_EQ(locator_list.size(), 2u);
+
+    // Error
+    ss.clear();
+    ss.str("[UDP_ERROR:]");
+    ss >> locator_list;
+    ASSERT_EQ(locator_list.size(), 0u);
 }
 
 /*******************************

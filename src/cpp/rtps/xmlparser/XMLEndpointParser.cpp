@@ -397,7 +397,7 @@ XMLP_ret XMLEndpointParser::loadXMLReaderEndpoint(tinyxml2::XMLElement* xml_endp
         }
         else
         {
-            logWarning(RTPS_EDP, "Unkown Endpoint-XML tag, ignoring " << key)
+            logWarning(RTPS_EDP, "Unkown Endpoint-XML tag, ignoring " << key);
         }
 
         element = element->NextSiblingElement();
@@ -648,7 +648,7 @@ XMLP_ret XMLEndpointParser::loadXMLWriterEndpoint(tinyxml2::XMLElement* xml_endp
         }
         else
         {
-            logWarning(RTPS_EDP,"Unkown Endpoint-XML tag, ignoring "<< key)
+            logWarning(RTPS_EDP,"Unkown Endpoint-XML tag, ignoring "<< key);
         }
 
         element = element->NextSiblingElement();

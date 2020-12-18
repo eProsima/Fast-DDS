@@ -69,7 +69,7 @@ bool DSClientEvent::event()
         {
             logInfo(CLIENT_PDP_THREAD,
                     "Client " << mp_PDP->getRTPSParticipant()->getGuid() <<
-                    " not all servers acknowledge PDP info")
+                    " not all servers acknowledge PDP info");
         }
     }
     else
@@ -77,7 +77,7 @@ bool DSClientEvent::event()
         // Not all servers have yet received our DATA(p) thus resend
         mp_PDP->_serverPing = true;
         mp_PDP->announceParticipantState(false);
-        logInfo(CLIENT_PDP_THREAD, "Client " << mp_PDP->getRTPSParticipant()->getGuid() << " PDP announcement")
+        logInfo(CLIENT_PDP_THREAD, "Client " << mp_PDP->getRTPSParticipant()->getGuid() << " PDP announcement");
     }
 
     return restart;

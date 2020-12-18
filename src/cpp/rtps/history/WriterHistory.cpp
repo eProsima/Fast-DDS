@@ -123,7 +123,7 @@ bool WriterHistory::matches_change(
     if (nullptr == outer_change
             || nullptr == inner_change)
     {
-        logError(RTPS_WRITER_HISTORY, "Pointer is not valid")
+        logError(RTPS_WRITER_HISTORY, "Pointer is not valid");
         return false;
     }
 

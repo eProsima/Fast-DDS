@@ -674,6 +674,7 @@ inline std::istream& operator >>(
         LocatorList_t& locList)
 {
     std::istream::sentry s(input);
+    locList = LocatorList_t();
 
     if (s)
     {
@@ -699,6 +700,7 @@ inline std::istream& operator >>(
         }
         catch (std::ios_base::failure& )
         {
+            locList.clear();
             logWarning(LOCATOR_LIST, "Error deserializing LocatorList");
         }
 
