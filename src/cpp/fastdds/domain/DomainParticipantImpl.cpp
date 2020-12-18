@@ -491,6 +491,7 @@ Publisher* DomainParticipantImpl::create_publisher(
     {
         ReturnCode_t ret_publisher_enable = pub->enable();
         assert(ReturnCode_t::RETCODE_OK == ret_publisher_enable);
+        (void)ret_publisher_enable;
     }
 
     return pub;
@@ -891,6 +892,7 @@ Subscriber* DomainParticipantImpl::create_subscriber(
     {
         ReturnCode_t ret_subscriber_enable = sub->enable();
         assert(ReturnCode_t::RETCODE_OK == ret_subscriber_enable);
+        (void)ret_subscriber_enable;
     }
 
     return sub;
@@ -963,6 +965,7 @@ Topic* DomainParticipantImpl::create_topic(
     {
         ReturnCode_t ret_topic_enable = topic->enable();
         assert(ReturnCode_t::RETCODE_OK == ret_topic_enable);
+        (void)ret_topic_enable;
     }
 
     return topic;
