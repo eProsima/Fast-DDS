@@ -109,12 +109,12 @@ void DataSharingListener::process_new_data ()
 {
     logInfo(RTPS_READER, "Received new data notification");
 
+    std::unique_lock<std::mutex> lock(mutex_);
+ 
     // It is safe to 'forget' any change now
     notification_->notification_->new_data.store(false);
     writer_pools_changed_.store(false);
 
-    std::unique_lock<std::mutex> lock(mutex_);
-    
     // Loop on the writers looking for data not read yet
     for (auto it = writer_pools_.begin(); it != writer_pools_.end(); ++it)
     {

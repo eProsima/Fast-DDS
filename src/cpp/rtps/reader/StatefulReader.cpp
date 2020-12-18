@@ -248,7 +248,7 @@ bool StatefulReader::matched_writer_add(
         if (m_att.durabilityKind != VOLATILE)
         {
             // simulate a notification to force reading of transient changes
-            this->datasharing_listener_->notify();
+            datasharing_listener_->notify();
         }
     }
     else
