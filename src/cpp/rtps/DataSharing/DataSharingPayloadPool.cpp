@@ -38,10 +38,15 @@ bool DataSharingPayloadPool::release_payload(
     return true;
 }
 
-uint32_t DataSharingPayloadPool::advance(
-        uint32_t index) const
+bool DataSharingPayloadPool::advance(
+        uint32_t& index) const
 {
-    return (++index % descriptor_->history_size);
+    if (++index % descriptor_->history_size == 0)
+    {
+        index = 0;
+        return true;
+    }
+    return false;
 }
 
 uint32_t DataSharingPayloadPool::begin() const
@@ -67,6 +72,11 @@ const GUID_t& DataSharingPayloadPool::writer() const
 uint32_t DataSharingPayloadPool::last_liveliness_sequence() const
 {
     return descriptor_->liveliness_sequence;
+}
+
+uint32_t DataSharingPayloadPool::writer_loop_counter() const
+{
+    return descriptor_->writer_loop_counter;
 }
 
 bool DataSharingPayloadPool::check_sequence_number(
