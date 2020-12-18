@@ -331,9 +331,9 @@ public:
         return virtual_topic_;
     }
 
-    int get_etinties_updated_and_reset()
+    int new_entities()
     {
-        return entities_updated_.exchange(0);
+        return new_entities_.exchange(0);
     }
 
 protected:
@@ -540,7 +540,7 @@ protected:
     std::atomic<bool> enabled_;
 
     // Whether it has been a new entity discovered or updated in this subroutine loop
-    std::atomic<int> entities_updated_;
+    std::atomic<int> new_entities_;
 
     // Wheter the database is restoring a backup
     std::atomic<bool> processing_backup_;

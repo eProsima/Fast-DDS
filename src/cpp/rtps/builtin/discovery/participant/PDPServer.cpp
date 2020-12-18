@@ -1209,7 +1209,7 @@ bool PDPServer::process_to_send_lists()
 {
     logInfo(RTPS_PDP_SERVER, "process_to_send_lists start");
 
-    if (discovery_db_.get_etinties_updated_and_reset() > 0)
+    if (discovery_db_.new_entities() > 0)
     {
         // Process pdp_to_send_
         logInfo(RTPS_PDP_SERVER, "Processing pdp_to_send");
