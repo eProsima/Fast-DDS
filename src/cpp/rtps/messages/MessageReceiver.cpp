@@ -348,8 +348,9 @@ void MessageReceiver::processCDRMsg(
 
     if (decode_ret == 0)
     {
-        // The original CDRMessage buffer (msg) now points to the proprietary temporary CDRMessage buffer (crypto_msg_).
-        // This way the already decoded proprietary buffer is processed while it is being modified.
+        // The original CDRMessage buffer (msg) now points to the proprietary temporary buffer crypto_msg_.
+        // The auxiliary buffer now points to the propietary temporary buffer crypto_submsg_.
+        // This way each decoded submessage will be process using the crypto_submsg_ buffer.
         msg = auxiliary_buffer;
         auxiliary_buffer = &crypto_submsg_;
     }
