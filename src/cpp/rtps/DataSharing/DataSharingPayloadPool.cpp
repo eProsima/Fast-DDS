@@ -38,23 +38,23 @@ bool DataSharingPayloadPool::release_payload(
     return true;
 }
 
-bool DataSharingPayloadPool::advance(
-        uint32_t& index) const
+void DataSharingPayloadPool::advance(
+        uint64_t& index) const
 {
-    if (++index % descriptor_->history_size == 0)
+    // lower part is the index, upper part is the loop counter
+    ++index;
+    if (static_cast<uint32_t>(index) % descriptor_->history_size == 0)
     {
-        index = 0;
-        return true;
+        index = ((index >> 32) + 1) << 32;
     }
-    return false;
 }
 
-uint32_t DataSharingPayloadPool::begin() const
+uint64_t DataSharingPayloadPool::begin() const
 {
     return descriptor_->notified_begin;
 }
 
-uint32_t DataSharingPayloadPool::end() const
+uint64_t DataSharingPayloadPool::end() const
 {
     return descriptor_->notified_end;
 }
@@ -72,11 +72,6 @@ const GUID_t& DataSharingPayloadPool::writer() const
 uint32_t DataSharingPayloadPool::last_liveliness_sequence() const
 {
     return descriptor_->liveliness_sequence;
-}
-
-uint32_t DataSharingPayloadPool::writer_loop_counter() const
-{
-    return descriptor_->writer_loop_counter;
 }
 
 bool DataSharingPayloadPool::check_sequence_number(

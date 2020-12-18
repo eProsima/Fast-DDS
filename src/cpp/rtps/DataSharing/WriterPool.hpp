@@ -246,7 +246,6 @@ public:
             descriptor_->notified_begin = 0u;
             descriptor_->notified_end = 0u;
             descriptor_->liveliness_sequence = 0u;
-            descriptor_->writer_loop_counter = 0u;
 
             free_history_size_ = pool_size_;
         }
@@ -287,13 +286,10 @@ public:
         }
 
         // Add it to the history
-        history_[descriptor_->notified_end] = segment_->get_offset_from_address(node);
+        history_[static_cast<uint32_t>(descriptor_->notified_end)] = segment_->get_offset_from_address(node);
         logInfo(DATASHARING_PAYLOADPOOL, "Change added to shared history"
                 << " with SN " << cache_change->sequenceNumber);
-        if (advance(descriptor_->notified_end))
-        {
-            ++descriptor_->writer_loop_counter;
-        }
+        advance(descriptor_->notified_end);
         --free_history_size_;
     }
 
@@ -313,7 +309,7 @@ public:
         assert(free_history_size_ < descriptor_->history_size);
 
         PayloadNode* payload = PayloadNode::get_from_data(cache_change->serializedPayload.data);
-        assert(segment_->get_offset_from_address(payload) == history_[descriptor_->notified_begin]);
+        assert(segment_->get_offset_from_address(payload) == history_[static_cast<uint32_t>(descriptor_->notified_begin)]);
         logInfo(DATASHARING_PAYLOADPOOL, "Change removed from shared history"
                 << " with SN " << cache_change->sequenceNumber);
         advance(descriptor_->notified_begin);

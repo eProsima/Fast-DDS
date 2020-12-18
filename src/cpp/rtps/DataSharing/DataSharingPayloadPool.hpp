@@ -83,20 +83,19 @@ public:
 
     /**
      * Advances an index to the history to the next position
-     * @return true if the index has performed a full loop on the history
      */
-    bool advance(
-            uint32_t& index) const;
+    void advance(
+            uint64_t& index) const;
 
     /**
      * The index of the first valid position in the history
      */
-    uint32_t begin() const;
+    uint64_t begin() const;
 
     /**
      * The index of one past the last valid position in the history
      */
-    uint32_t end() const;
+    uint64_t end() const;
 
     /**
      * Whether the history is empty or not
@@ -106,8 +105,6 @@ public:
     const GUID_t& writer() const;
 
     uint32_t last_liveliness_sequence() const;
-
-    uint32_t writer_loop_counter() const;
 
     static bool check_sequence_number(octet* data, SequenceNumber_t sn);
 
@@ -288,10 +285,9 @@ protected:
     struct alignas(8) PoolDescriptor
     {
         uint32_t history_size;          //< Number of payloads in the history
-        uint32_t notified_begin;        //< The index of the oldest history entry already notified (ready to read)
-        uint32_t notified_end;          //< The index of the history entry that will be notified next
+        uint64_t notified_begin;        //< The index of the oldest history entry already notified (ready to read)
+        uint64_t notified_end;          //< The index of the history entry that will be notified next
         uint32_t liveliness_sequence;   //< The ID of the last liveliness assertion sent by the writer
-        uint32_t writer_loop_counter;   //< Number of full loops to the queue that the notified_end has done
     };
 #pragma warning(pop)
 
