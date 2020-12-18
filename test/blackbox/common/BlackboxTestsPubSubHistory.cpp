@@ -180,10 +180,13 @@ TEST_P(PubSubHistory, PubSubAsReliableKeepLastReaderSmallDepth)
     reader.wait_discovery();
 
     auto data = default_helloworld_data_generator();
+    size_t num_messages = 0;
 
     while (data.size() > 1)
     {
         auto data_backup(data);
+        num_messages += data.size();
+
         decltype(data) expected_data;
         expected_data.push_back(data_backup.back()); data_backup.pop_back();
         expected_data.push_back(data_backup.back()); data_backup.pop_back();
@@ -192,7 +195,15 @@ TEST_P(PubSubHistory, PubSubAsReliableKeepLastReaderSmallDepth)
         writer.send(data);
         // In this test all data should be sent.
         ASSERT_TRUE(data.empty());
-        writer.waitForAllAcked(std::chrono::seconds(300));
+        if (enable_datasharing)
+        {
+            reader.wait_for_all_received(std::chrono::seconds(300), num_messages);
+        }
+        else
+        {
+            writer.waitForAllAcked(std::chrono::seconds(300));
+        }
+
         // Should be received only two samples.
         reader.startReception(expected_data);
         // Block reader until reception finished or timeout.
@@ -261,10 +272,12 @@ TEST(PubSubHistory, PubSubKeepAll)
     reader.wait_discovery();
 
     auto data = default_helloworld_data_generator();
+    size_t num_messages = 0;
 
     while (!data.empty())
     {
         auto expected_data(data);
+        num_messages += data.size();
 
         // Send data
         writer.send(data);
@@ -276,7 +289,14 @@ TEST(PubSubHistory, PubSubKeepAll)
 
         // In this test the history has 20 max_samples.
         ASSERT_LE(expected_data.size(), 2u);
-        writer.waitForAllAcked(std::chrono::seconds(300));
+        if (enable_datasharing)
+        {
+            reader.wait_for_all_received(std::chrono::seconds(300), num_messages);
+        }
+        else
+        {
+            writer.waitForAllAcked(std::chrono::seconds(300));
+        }
         reader.startReception(expected_data);
         // Block reader until reception finished or timeout.
         reader.block_for_all();
@@ -311,10 +331,12 @@ TEST(PubSubHistory, PubSubKeepAllTransient)
     reader.wait_discovery();
 
     auto data = default_helloworld_data_generator();
+    size_t num_messages = 0;
 
     while (!data.empty())
     {
         auto expected_data(data);
+        num_messages += data.size();
 
         // Send data
         writer.send(data);
@@ -326,7 +348,14 @@ TEST(PubSubHistory, PubSubKeepAllTransient)
 
         // In this test the history has 20 max_samples.
         ASSERT_LE(expected_data.size(), 2u);
-        writer.waitForAllAcked(std::chrono::seconds(300));
+        if (enable_datasharing)
+        {
+            reader.wait_for_all_received(std::chrono::seconds(300), num_messages);
+        }
+        else
+        {
+            writer.waitForAllAcked(std::chrono::seconds(300));
+        }
         reader.startReception(expected_data);
         // Block reader until reception finished or timeout.
         reader.block_for_all();
@@ -386,7 +415,14 @@ TEST_P(PubSubHistory, StatefulReaderCacheChangeRelease)
 
     writer.send(data);
     ASSERT_TRUE(data.empty());
-    writer.waitForAllAcked(std::chrono::seconds(300));
+    if (enable_datasharing)
+    {
+        reader.wait_for_all_received(std::chrono::seconds(300), 2);
+    }
+    else
+    {
+        writer.waitForAllAcked(std::chrono::seconds(300));
+    }
     writer.destroy();
     std::this_thread::sleep_for(std::chrono::seconds(1));
     reader.startReception(expected_data);
@@ -484,8 +520,13 @@ TEST_P(PubSubHistory, PubSubAsReliableKeepLastReaderSmallDepthTwoPublishers)
     ASSERT_TRUE(writer.send_sample(data));
 
     // Wait for reader to acknowledge samples
-    while (!writer.waitForAllAcked(std::chrono::milliseconds(100)))
+    if (enable_datasharing)
     {
+        reader.wait_for_all_received(std::chrono::seconds(100), 2);
+    }
+    else
+    {
+        writer.waitForAllAcked(std::chrono::seconds(100));
     }
 
     // Second writer sends one sample (reader should discard previous one)
@@ -493,8 +534,13 @@ TEST_P(PubSubHistory, PubSubAsReliableKeepLastReaderSmallDepthTwoPublishers)
     ASSERT_TRUE(writer2.send_sample(data));
 
     // Wait for reader to acknowledge sample
-    while (!writer2.waitForAllAcked(std::chrono::milliseconds(100)))
+    if (enable_datasharing)
     {
+        reader.wait_for_all_received(std::chrono::seconds(100), 3);
+    }
+    else
+    {
+        writer.waitForAllAcked(std::chrono::seconds(100));
     }
 
     // Only last sample should be present
