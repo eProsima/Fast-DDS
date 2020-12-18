@@ -26,9 +26,9 @@
 #include <fastdds/dds/core/Entity.hpp>
 #include <fastdds/dds/core/LoanableCollection.hpp>
 #include <fastdds/dds/core/LoanableSequence.hpp>
-#include <fastdds/dds/core/status/StatusMask.hpp>
-#include <fastdds/dds/core/status/IncompatibleQosStatus.hpp>
 #include <fastdds/dds/core/status/DeadlineMissedStatus.hpp>
+#include <fastdds/dds/core/status/IncompatibleQosStatus.hpp>
+#include <fastdds/dds/core/status/StatusMask.hpp>
 #include <fastdds/dds/subscriber/SampleInfo.hpp>
 #include <fastdds/dds/topic/TypeSupport.hpp>
 #include <fastdds/rtps/common/Time_t.h>
