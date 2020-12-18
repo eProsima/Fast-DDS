@@ -75,7 +75,6 @@ using fastrtps::rtps::ReaderDiscoveryInfo;
 using fastrtps::rtps::ReaderProxyData;
 using fastrtps::rtps::WriterDiscoveryInfo;
 using fastrtps::rtps::WriterProxyData;
-using fastrtps::rtps::InstanceHandle_t;
 using fastrtps::rtps::GUID_t;
 using fastrtps::rtps::EndpointKind_t;
 using fastrtps::rtps::ResourceEvent;
@@ -524,7 +523,7 @@ Publisher* DomainParticipantImpl::create_publisher_with_profile(
 
 /* TODO
    bool DomainParticipantImpl::ignore_participant(
-        const fastrtps::rtps::InstanceHandle_t& handle)
+        const InstanceHandle_t& handle)
    {
     (void)handle;
     logError(PARTICIPANT, "Not implemented.");
@@ -534,7 +533,7 @@ Publisher* DomainParticipantImpl::create_publisher_with_profile(
 
 /* TODO
    bool DomainParticipantImpl::ignore_topic(
-        const fastrtps::rtps::InstanceHandle_t& handle)
+        const InstanceHandle_t& handle)
    {
     (void)handle;
     logError(PARTICIPANT, "Not implemented.");
@@ -544,7 +543,7 @@ Publisher* DomainParticipantImpl::create_publisher_with_profile(
 
 /* TODO
    bool DomainParticipantImpl::ignore_publication(
-        const fastrtps::rtps::InstanceHandle_t& handle)
+        const InstanceHandle_t& handle)
    {
     (void)handle;
     logError(PARTICIPANT, "Not implemented.");
@@ -554,7 +553,7 @@ Publisher* DomainParticipantImpl::create_publisher_with_profile(
 
 /* TODO
    bool DomainParticipantImpl::ignore_subscription(
-        const fastrtps::rtps::InstanceHandle_t& handle)
+        const InstanceHandle_t& handle)
    {
     (void)handle;
     logError(PARTICIPANT, "Not implemented.");
@@ -743,7 +742,7 @@ const ReturnCode_t DomainParticipantImpl::get_topic_qos_from_profile(
 
 /* TODO
    bool DomainParticipantImpl::get_discovered_participants(
-        std::vector<fastrtps::rtps::InstanceHandle_t>& participant_handles) const
+        std::vector<InstanceHandle_t>& participant_handles) const
    {
     (void)participant_handles;
     logError(PARTICIPANT, "Not implemented.");
@@ -753,7 +752,7 @@ const ReturnCode_t DomainParticipantImpl::get_topic_qos_from_profile(
 
 /* TODO
    bool DomainParticipantImpl::get_discovered_topics(
-        std::vector<fastrtps::rtps::InstanceHandle_t>& topic_handles) const
+        std::vector<InstanceHandle_t>& topic_handles) const
    {
     (void)topic_handles;
     logError(PARTICIPANT, "Not implemented.");
@@ -762,7 +761,7 @@ const ReturnCode_t DomainParticipantImpl::get_topic_qos_from_profile(
  */
 
 bool DomainParticipantImpl::contains_entity(
-        const fastrtps::rtps::InstanceHandle_t& handle,
+        const InstanceHandle_t& handle,
         bool recursive) const
 {
     // Look for publishers
@@ -1796,7 +1795,7 @@ bool DomainParticipantImpl::can_qos_be_updated(
 }
 
 void DomainParticipantImpl::create_instance_handle(
-        fastrtps::rtps::InstanceHandle_t& handle)
+        InstanceHandle_t& handle)
 {
     using eprosima::fastrtps::rtps::octet;
 

@@ -16,16 +16,15 @@
  * @file Subscriber.hpp
  */
 
-
 #ifndef _FASTDDS_SUBSCRIBER_HPP_
 #define _FASTDDS_SUBSCRIBER_HPP_
 
-#include <fastrtps/attributes/SubscriberAttributes.h>
-
+#include <fastdds/dds/core/Entity.hpp>
 #include <fastdds/dds/subscriber/DataReaderListener.hpp>
 #include <fastdds/dds/subscriber/qos/SubscriberQos.hpp>
+#include <fastdds/dds/topic/TypeSupport.hpp>
+
 #include <fastrtps/types/TypesBase.h>
-#include <fastdds/dds/core/Entity.hpp>
 
 using eprosima::fastrtps::types::ReturnCode_t;
 
@@ -311,7 +310,7 @@ public:
      * Returns the Subscriber's handle.
      * @return InstanceHandle of this Subscriber.
      */
-    RTPS_DllAPI const fastrtps::rtps::InstanceHandle_t& get_instance_handle() const;
+    RTPS_DllAPI const InstanceHandle_t& get_instance_handle() const;
 
 protected:
 

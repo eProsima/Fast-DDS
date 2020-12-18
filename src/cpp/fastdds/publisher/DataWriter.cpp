@@ -93,12 +93,12 @@ bool DataWriter::write(
 
 ReturnCode_t DataWriter::write(
         void* data,
-        const fastrtps::rtps::InstanceHandle_t& handle)
+        const InstanceHandle_t& handle)
 {
     return impl_->write(data, handle);
 }
 
-fastrtps::rtps::InstanceHandle_t DataWriter::register_instance(
+InstanceHandle_t DataWriter::register_instance(
         void* instance)
 {
     return impl_->register_instance(instance);
@@ -106,14 +106,14 @@ fastrtps::rtps::InstanceHandle_t DataWriter::register_instance(
 
 ReturnCode_t DataWriter::unregister_instance(
         void* instance,
-        const fastrtps::rtps::InstanceHandle_t& handle)
+        const InstanceHandle_t& handle)
 {
     return impl_->unregister_instance(instance, handle);
 }
 
 ReturnCode_t DataWriter::dispose(
         void* data,
-        const fastrtps::rtps::InstanceHandle_t& handle)
+        const InstanceHandle_t& handle)
 {
     return impl_->unregister_instance(data, handle, true);
 }
@@ -123,7 +123,7 @@ const fastrtps::rtps::GUID_t& DataWriter::guid() const
     return impl_->guid();
 }
 
-fastrtps::rtps::InstanceHandle_t DataWriter::get_instance_handle() const
+InstanceHandle_t DataWriter::get_instance_handle() const
 {
     return impl_->get_instance_handle();
 }

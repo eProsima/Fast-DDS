@@ -423,7 +423,7 @@ bool DataWriterImpl::write(
 
 ReturnCode_t DataWriterImpl::write(
         void* data,
-        const fastrtps::rtps::InstanceHandle_t& handle)
+        const InstanceHandle_t& handle)
 {
     if (writer_ == nullptr)
     {
@@ -451,7 +451,7 @@ ReturnCode_t DataWriterImpl::write(
     return create_new_change_with_params(ALIVE, data, wparams, instance_handle);
 }
 
-fastrtps::rtps::InstanceHandle_t DataWriterImpl::register_instance(
+InstanceHandle_t DataWriterImpl::register_instance(
         void* key)
 {
     /// Preconditions
@@ -715,7 +715,7 @@ ReturnCode_t DataWriterImpl::create_new_change_with_params(
         ChangeKind_t changeKind,
         void* data,
         WriteParams& wparams,
-        const fastrtps::rtps::InstanceHandle_t& handle)
+        const InstanceHandle_t& handle)
 {
     ReturnCode_t ret_code = check_new_change_preconditions(changeKind, data);
     if (!ret_code)

@@ -200,7 +200,7 @@ ReturnCode_t DomainParticipant::unregister_type(
 
 /* TODO
    bool DomainParticipant::ignore_participant(
-        const fastrtps::rtps::InstanceHandle_t& handle)
+        const InstanceHandle_t& handle)
    {
     return impl_->ignore_participant(handle);
    }
@@ -208,7 +208,7 @@ ReturnCode_t DomainParticipant::unregister_type(
 
 /* TODO
    bool DomainParticipant::ignore_topic(
-        const fastrtps::rtps::InstanceHandle_t& handle)
+        const InstanceHandle_t& handle)
    {
     return impl_->ignore_topic(handle);
    }
@@ -216,7 +216,7 @@ ReturnCode_t DomainParticipant::unregister_type(
 
 /* TODO
    bool DomainParticipant::ignore_publication(
-        const fastrtps::rtps::InstanceHandle_t& handle)
+        const InstanceHandle_t& handle)
    {
     return impl_->ignore_publication(handle);
    }
@@ -224,7 +224,7 @@ ReturnCode_t DomainParticipant::unregister_type(
 
 /* TODO
    bool DomainParticipant::ignore_subscription(
-        const fastrtps::rtps::InstanceHandle_t& handle)
+        const InstanceHandle_t& handle)
    {
     return impl_->ignore_subscription(handle);
    }
@@ -324,7 +324,7 @@ ReturnCode_t DomainParticipant::get_topic_qos_from_profile(
 
 /* TODO
    bool DomainParticipant::get_discovered_participants(
-        std::vector<fastrtps::rtps::InstanceHandle_t>& participant_handles) const
+        std::vector<InstanceHandle_t>& participant_handles) const
    {
     return impl_->get_discovered_participants(participant_handles);
    }
@@ -332,14 +332,14 @@ ReturnCode_t DomainParticipant::get_topic_qos_from_profile(
 
 /* TODO
    bool DomainParticipant::get_discovered_topics(
-        std::vector<fastrtps::rtps::InstanceHandle_t>& topic_handles) const
+        std::vector<InstanceHandle_t>& topic_handles) const
    {
     return impl_->get_discovered_topics(topic_handles);
    }
  */
 
 bool DomainParticipant::contains_entity(
-        const fastrtps::rtps::InstanceHandle_t& handle,
+        const InstanceHandle_t& handle,
         bool recursive) const
 {
     return impl_->contains_entity(handle, recursive);
@@ -357,7 +357,7 @@ TypeSupport DomainParticipant::find_type(
     return impl_->find_type(type_name);
 }
 
-const fastrtps::rtps::InstanceHandle_t& DomainParticipant::get_instance_handle() const
+const InstanceHandle_t& DomainParticipant::get_instance_handle() const
 {
     return impl_->get_instance_handle();
 }
