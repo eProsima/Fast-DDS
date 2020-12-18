@@ -511,9 +511,10 @@ bool StatefulReader::processDataMsg(
             // Perform reception of cache change
             if (!change_received(change_to_add, pWP))
             {
-                logInfo(RTPS_MSG_IN, IDSTRING "MessageReceiver not add change " << change_to_add->sequenceNumber);
+                logInfo(RTPS_MSG_IN, IDSTRING "Change " << change_to_add->sequenceNumber << " not added to history");
                 change_to_add->payload_owner()->release_payload(*change_to_add);
                 change_pool_->release_cache(change_to_add);
+                return false;
             }
         }
         return true;
