@@ -539,7 +539,7 @@ bool IPLocator::setLogicalPort(
 {
     uint16_t* loc_logical = reinterpret_cast<uint16_t*>(&locator.port);
 #if FASTDDS_IS_BIG_ENDIAN_TARGET
-    loc_logical[0] = port; // Logical port is stored at 2nd and 3rd bytes of port
+    loc_logical[0] = port; // Logical port is stored at 0th and 1st bytes of port
 #else
     loc_logical[1] = port; // Logical port is stored at 2nd and 3rd bytes of port
 #endif // if FASTDDS_IS_BIG_ENDIAN_TARGET

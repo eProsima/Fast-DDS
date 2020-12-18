@@ -70,6 +70,9 @@ public:
 
     const uint32_t port1 = 6666;
     const uint32_t port2 = 7400;
+
+    const uint16_t rtps_port1 = 6666;
+    const uint16_t rtps_port2 = 7400;
 };
 
 /*******************
@@ -677,11 +680,11 @@ TEST_F(IPLocatorTests, ip_to_string)
 TEST_F(IPLocatorTests, logicalPort)
 {
     Locator_t locator;
-    ASSERT_TRUE(IPLocator::setLogicalPort(locator, port1));
-    ASSERT_EQ(IPLocator::getLogicalPort(locator), port1);
-    ASSERT_NE(IPLocator::getLogicalPort(locator), port2);
-    ASSERT_TRUE(IPLocator::setLogicalPort(locator, port2));
-    ASSERT_EQ(IPLocator::getLogicalPort(locator), port2);
+    ASSERT_TRUE(IPLocator::setLogicalPort(locator, rtps_port1));
+    ASSERT_EQ(IPLocator::getLogicalPort(locator), rtps_port1);
+    ASSERT_NE(IPLocator::getLogicalPort(locator), rtps_port2);
+    ASSERT_TRUE(IPLocator::setLogicalPort(locator, rtps_port2));
+    ASSERT_EQ(IPLocator::getLogicalPort(locator), rtps_port2);
 }
 
 /*
@@ -690,11 +693,11 @@ TEST_F(IPLocatorTests, logicalPort)
 TEST_F(IPLocatorTests, physicalPort)
 {
     Locator_t locator;
-    ASSERT_TRUE(IPLocator::setPhysicalPort(locator, port1));
-    ASSERT_EQ(IPLocator::getPhysicalPort(locator), port1);
-    ASSERT_NE(IPLocator::getPhysicalPort(locator), port2);
-    ASSERT_TRUE(IPLocator::setPhysicalPort(locator, port2));
-    ASSERT_EQ(IPLocator::getPhysicalPort(locator), port2);
+    ASSERT_TRUE(IPLocator::setPhysicalPort(locator, rtps_port1));
+    ASSERT_EQ(IPLocator::getPhysicalPort(locator), rtps_port1);
+    ASSERT_NE(IPLocator::getPhysicalPort(locator), rtps_port2);
+    ASSERT_TRUE(IPLocator::setPhysicalPort(locator, rtps_port2));
+    ASSERT_EQ(IPLocator::getPhysicalPort(locator), rtps_port2);
 }
 
 /*
@@ -794,10 +797,10 @@ TEST_F(IPLocatorTests, toLanIDstring)
 TEST_F(IPLocatorTests, toPhysicalLocator)
 {
     Locator_t locator;
-    ASSERT_TRUE(IPLocator::setLogicalPort(locator, port1));
-    ASSERT_EQ(IPLocator::getLogicalPort(locator), port1);
+    ASSERT_TRUE(IPLocator::setLogicalPort(locator, rtps_port1));
+    ASSERT_EQ(IPLocator::getLogicalPort(locator), rtps_port1);
     locator = IPLocator::toPhysicalLocator(locator);
-    ASSERT_NE(IPLocator::getLogicalPort(locator), port1);
+    ASSERT_NE(IPLocator::getLogicalPort(locator), rtps_port1);
 }
 
 /*
@@ -821,23 +824,23 @@ TEST_F(IPLocatorTests, setPortRTPS)
 {
     Locator_t locator;
     IPLocator::createLocator(LOCATOR_KIND_UDPv4, ipv4_address, port1, locator);
-    ASSERT_TRUE(IPLocator::setPortRTPS(locator, port2));
-    ASSERT_EQ(IPLocator::getPortRTPS(locator), static_cast<uint16_t>(port2));
+    ASSERT_TRUE(IPLocator::setPortRTPS(locator, rtps_port2));
+    ASSERT_EQ(IPLocator::getPortRTPS(locator), static_cast<uint16_t>(rtps_port2));
 
     IPLocator::createLocator(LOCATOR_KIND_UDPv6, ipv6_address, port2, locator);
-    IPLocator::setPortRTPS(locator, port1);
-    ASSERT_EQ(IPLocator::getPortRTPS(locator), static_cast<uint16_t>(port1));
+    IPLocator::setPortRTPS(locator, rtps_port1);
+    ASSERT_EQ(IPLocator::getPortRTPS(locator), static_cast<uint16_t>(rtps_port1));
 
     IPLocator::createLocator(LOCATOR_KIND_TCPv4, ipv4_address_2, port1, locator);
-    ASSERT_TRUE(IPLocator::setPortRTPS(locator, port2));
-    ASSERT_EQ(IPLocator::getPortRTPS(locator), static_cast<uint16_t>(port2));
+    ASSERT_TRUE(IPLocator::setPortRTPS(locator, rtps_port2));
+    ASSERT_EQ(IPLocator::getPortRTPS(locator), static_cast<uint16_t>(rtps_port2));
 
     IPLocator::createLocator(LOCATOR_KIND_TCPv6, ipv6_address_2, port2, locator);
-    ASSERT_TRUE(IPLocator::setPortRTPS(locator, port1));
-    ASSERT_EQ(IPLocator::getPortRTPS(locator), static_cast<uint16_t>(port1));
+    ASSERT_TRUE(IPLocator::setPortRTPS(locator, rtps_port1));
+    ASSERT_EQ(IPLocator::getPortRTPS(locator), static_cast<uint16_t>(rtps_port1));
 
     IPLocator::createLocator(LOCATOR_KIND_SHM, ipv4_lo_address, port1, locator);
-    ASSERT_FALSE(IPLocator::setPortRTPS(locator, port1));
+    ASSERT_FALSE(IPLocator::setPortRTPS(locator, rtps_port1));
     ASSERT_EQ(IPLocator::getPortRTPS(locator), 0u);
 }
 
