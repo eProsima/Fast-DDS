@@ -108,6 +108,7 @@ protected:
 
         writer
                 .history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS)
+                .resource_limits_max_samples(100)
                 .reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS)
                 .make_persistent(db_file_name(), "77.72.69.74.65.72.5f.70.65.72.73.5f|67.75.69.64")
                 .disable_builtin_transport()
