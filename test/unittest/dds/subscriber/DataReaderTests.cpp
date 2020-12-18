@@ -130,17 +130,6 @@ protected:
         type_.get_key(&data, &handle_wrong_);
     }
 
-    DomainParticipant* participant_ = nullptr;
-    Subscriber* subscriber_ = nullptr;
-    Publisher* publisher_ = nullptr;
-    Topic* topic_ = nullptr;
-    DataReader* data_reader_ = nullptr;
-    DataWriter* data_writer_ = nullptr;
-    TypeSupport type_;
-
-    InstanceHandle_t handle_ok_ = HANDLE_NIL;
-    InstanceHandle_t handle_wrong_ = HANDLE_NIL;
-
     void reset_lengths(
             LoanableCollection& data_values,
             SampleInfoSeq& infos)
@@ -328,6 +317,17 @@ protected:
                     data_reader, data_values, infos);
         }
     }
+
+    DomainParticipant* participant_ = nullptr;
+    Subscriber* subscriber_ = nullptr;
+    Publisher* publisher_ = nullptr;
+    Topic* topic_ = nullptr;
+    DataReader* data_reader_ = nullptr;
+    DataWriter* data_writer_ = nullptr;
+    TypeSupport type_;
+
+    InstanceHandle_t handle_ok_ = HANDLE_NIL;
+    InstanceHandle_t handle_wrong_ = HANDLE_NIL;
 
 };
 
