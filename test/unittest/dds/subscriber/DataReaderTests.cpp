@@ -647,6 +647,148 @@ TEST_F(DataReaderTests, return_loan)
     aux_infos_2.unloan();
 }
 
+TEST_F(DataReaderTests, resource_limits)
+{
+    using ResLimitCfg = fastrtps::ResourceLimitedContainerConfig;
+
+    static constexpr int32_t num_samples = 100;
+
+    const ReturnCode_t& ok_code = ReturnCode_t::RETCODE_OK;
+    const ReturnCode_t& precondition_code = ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
+    const ReturnCode_t& resources_code = ReturnCode_t::RETCODE_OUT_OF_RESOURCES;
+
+    DataWriterQos writer_qos = DATAWRITER_QOS_DEFAULT;
+    writer_qos.history().kind = KEEP_LAST_HISTORY_QOS;
+    writer_qos.history().depth = num_samples;
+    writer_qos.publish_mode().kind = SYNCHRONOUS_PUBLISH_MODE;
+    writer_qos.reliability().kind = RELIABLE_RELIABILITY_QOS;
+
+    DataReaderQos reader_qos = DATAREADER_QOS_DEFAULT;
+    reader_qos.reliability().kind = RELIABLE_RELIABILITY_QOS;
+    reader_qos.history().kind = KEEP_ALL_HISTORY_QOS;
+    reader_qos.resource_limits().max_instances = 1;
+    reader_qos.resource_limits().max_samples_per_instance = num_samples;
+    reader_qos.resource_limits().max_samples = num_samples;
+    
+    // Specify resource limits for this test
+    // - max_samples_per_read = 10. This means that even if the max_samples parameter is greater than 10 (or even
+    //   LENGTH_UNLIMITED, no more than 10 samples will be returned by a single call to read / take
+    // - A maximum of 3 outstanding reads. The 4th call to read / take without a call to return_loan will fail
+    // - A maximum of 15 total SampleInfo structures can be loaned. We use this value so that after a first call to
+    //   read / take returns max_samples_per_read (10), a second one should only return 5 due to this limit
+    reader_qos.reader_resource_limits().max_samples_per_read = 10;
+    reader_qos.reader_resource_limits().outstanding_reads_allocation = ResLimitCfg::fixed_size_configuration(3);
+    reader_qos.reader_resource_limits().sample_infos_allocation = ResLimitCfg::fixed_size_configuration(15);
+
+    create_instance_handles();
+    create_entities(nullptr, reader_qos, SUBSCRIBER_QOS_DEFAULT, writer_qos);
+
+    FooType data;
+    data.index(1u);
+
+    // Send a bunch of samples
+    for (int32_t i = 0; i < num_samples; ++i)
+    {
+        EXPECT_EQ(ok_code, data_writer_->write(&data, handle_ok_));
+    }
+
+    // Check outstanding reads maximum
+    {
+        FooSeq data_seqs[4];
+        SampleInfoSeq info_seqs[4];
+
+        // Loan 1 sample each time, so the other limits are not surpassed
+        for (int32_t i = 0; i < 3; ++i)
+        {
+            EXPECT_EQ(ok_code, data_reader_->read(data_seqs[i], info_seqs[i], 1));
+            check_collection(data_seqs[i], false, 1, 1);
+            check_collection(info_seqs[i], false, 1, 1);
+        }
+        // The 4th should fail
+        EXPECT_EQ(resources_code, data_reader_->read(data_seqs[3], info_seqs[3], 1));
+        check_collection(data_seqs[3], true, 0, 0);
+        check_collection(info_seqs[3], true, 0, 0);
+
+        // Returning a loan will allow a new loan
+        EXPECT_EQ(ok_code, data_reader_->return_loan(data_seqs[2], info_seqs[2]));
+        EXPECT_EQ(ok_code, data_reader_->read(data_seqs[3], info_seqs[3], 1));
+        // Return all remaining loans
+        EXPECT_EQ(ok_code, data_reader_->return_loan(data_seqs[0], info_seqs[0]));
+        EXPECT_EQ(ok_code, data_reader_->return_loan(data_seqs[1], info_seqs[1]));
+        EXPECT_EQ(ok_code, data_reader_->return_loan(data_seqs[3], info_seqs[3]));
+    }
+
+    // Check max_samples and max_samples_per_read
+    {
+        FooSeq data_seq;
+        SampleInfoSeq info_seq;
+
+        // The standard is not clear on what shold be done if max_samples is 0. NO_DATA? OK with length = 0?
+        // EXPECT_EQ(ok_code, data_reader_->read(data_seq, info_seq, 0));
+
+        // Up to max_samples_per_read, max_samples will be returned
+        for (int32_t i = 1; i <= 10; ++i)
+        {
+            EXPECT_EQ(ok_code, data_reader_->read(data_seq, info_seq, i));
+            check_collection(data_seq, false, i, i);
+            check_collection(info_seq, false, i, i);
+            EXPECT_EQ(ok_code, data_reader_->return_loan(data_seq, info_seq));
+        }
+
+        // For values greater than max_samples_per_read, only max_samples_per_read are returned
+        for (int32_t i = 11; i <= 20; ++i)
+        {
+            EXPECT_EQ(ok_code, data_reader_->read(data_seq, info_seq, i));
+            check_collection(data_seq, false, 10, 10);
+            check_collection(info_seq, false, 10, 10);
+            EXPECT_EQ(ok_code, data_reader_->return_loan(data_seq, info_seq));
+        }
+
+        // For LENGTH_UNLIMITED, max_samples_per_read are returned
+        EXPECT_EQ(ok_code, data_reader_->read(data_seq, info_seq, LENGTH_UNLIMITED));
+        check_collection(data_seq, false, 10, 10);
+        check_collection(info_seq, false, 10, 10);
+        EXPECT_EQ(ok_code, data_reader_->return_loan(data_seq, info_seq));
+    }
+
+    // Check SampleInfo allocation limits
+    {
+        FooSeq data_seqs[3];
+        SampleInfoSeq info_seqs[3];
+
+        // On the first call, max_samples_per_read should be returned
+        EXPECT_EQ(ok_code, data_reader_->read(data_seqs[0], info_seqs[0], LENGTH_UNLIMITED));
+        check_collection(data_seqs[0], false, 10, 10);
+        check_collection(info_seqs[0], false, 10, 10);
+
+        // On the second call, sample_infos_max - max_samples_per_read should be returned
+        EXPECT_EQ(ok_code, data_reader_->read(data_seqs[1], info_seqs[1], LENGTH_UNLIMITED));
+        check_collection(data_seqs[1], false, 5, 5);
+        check_collection(info_seqs[1], false, 5, 5);
+
+        // On the third call, no sample_info will be available, and should fail with OUT_OF_RESOURCES
+        EXPECT_EQ(resources_code, data_reader_->read(data_seqs[2], info_seqs[2], LENGTH_UNLIMITED));
+
+        // Return the first loan. Now max_samples_per_read infos are available
+        EXPECT_EQ(ok_code, data_reader_->return_loan(data_seqs[0], info_seqs[0]));
+        
+        // Loan max_samples_per_read - 1. 1 sample_info still available
+        EXPECT_EQ(ok_code, data_reader_->read(data_seqs[0], info_seqs[0], 9));
+        check_collection(data_seqs[0], false, 9, 9);
+        check_collection(info_seqs[0], false, 9, 9);
+
+        // This call should loan the last available info
+        EXPECT_EQ(ok_code, data_reader_->read(data_seqs[2], info_seqs[2], LENGTH_UNLIMITED));
+        check_collection(data_seqs[2], false, 1, 1);
+        check_collection(info_seqs[2], false, 1, 1);
+
+        // Return all loans
+        EXPECT_EQ(ok_code, data_reader_->return_loan(data_seqs[0], info_seqs[0]));
+        EXPECT_EQ(ok_code, data_reader_->return_loan(data_seqs[1], info_seqs[1]));
+        EXPECT_EQ(ok_code, data_reader_->return_loan(data_seqs[2], info_seqs[2]));
+    }
+}
+
 void set_listener_test (
         DataReader* reader,
         DataReaderListener* listener,
