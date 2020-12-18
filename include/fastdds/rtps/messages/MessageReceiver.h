@@ -91,6 +91,7 @@ private:
 
 #if HAVE_SECURITY
     CDRMessage_t crypto_msg_;
+    CDRMessage_t crypto_submsg_;
     SerializedPayload_t crypto_payload_;
 #endif // if HAVE_SECURITY
 
@@ -105,7 +106,6 @@ private:
                 uint32_t,
                 uint32_t,
                 uint16_t)> process_data_fragment_message_function_;
-
 
     //!Reset the MessageReceiver to process a new message.
     void reset();
