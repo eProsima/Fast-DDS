@@ -800,6 +800,12 @@ bool StatefulReader::change_removed_by_history(
         }
     }
 
+    //Simulate a datasharing notification to process any pending payloads that were waiting due to full history
+    if (is_datasharing_compatible_)
+    {
+        datasharing_listener_->notify();
+    }
+
     return false;
 }
 

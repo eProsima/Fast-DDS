@@ -163,8 +163,11 @@ void DataSharingListener::process_new_data ()
                 logInfo(RTPS_READER, "New data found on writer " << pool->writer()
                         << " with SN " << ch.sequenceNumber);
 
-                reader_->processDataMsg(&ch);
-                pool->release_payload(ch);
+                if (reader_->processDataMsg(&ch))
+                {
+                    pool->release_payload(ch);
+                    pool->advance_to_next_payload();
+                }
             }
 
             if (writer_pools_changed_.load())

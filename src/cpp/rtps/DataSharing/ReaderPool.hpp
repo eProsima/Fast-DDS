@@ -188,7 +188,6 @@ void get_next_unread_payload(
             continue;
         }
 
-        advance(next_payload_);
         return;
     }
 
@@ -198,6 +197,16 @@ void get_next_unread_payload(
 const SequenceNumber_t& get_last_read_sequence_number()
 {
     return last_sn_;
+}
+
+bool advance_to_next_payload()
+{
+    if (next_payload_ != end())
+    {
+        advance(next_payload_);
+        return true;
+    }
+    return false;
 }
 
 private:
