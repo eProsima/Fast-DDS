@@ -421,7 +421,7 @@ elseif(NOT EPROSIMA_INSTALLER)
         $<$<BOOL:${LINK_SSL}>:OpenSSL::SSL$<SEMICOLON>OpenSSL::Crypto>
         $<$<BOOL:${WIN32}>:iphlpapi$<SEMICOLON>Shlwapi>
         ${THIRDPARTY_BOOST_LINK_LIBS}
-        $<$<BOOL:${LINK_LIBATOMIC}>:atomic>
+        fastdds_atomic
         )
 
     if(MSVC OR MSVC_IDE)

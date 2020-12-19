@@ -165,7 +165,6 @@ check_stdcxx()
 
 check_compile_feature()
 check_endianness()
-include(${PROJECT_SOURCE_DIR}/cmake/modules/CheckLibatomic.cmake)
 
 ###############################################################################
 # Check MSVC architecture
@@ -225,6 +224,7 @@ eprosima_find_thirdparty(TinyXML2 tinyxml2)
 
 find_package(foonathan_memory REQUIRED)
 message(STATUS "Found foonathan_memory: ${foonathan_memory_DIR}")
+find_package(Atomic MODULE)
 find_package(ThirdpartyBoost REQUIRED)
 
 if(ANDROID)
