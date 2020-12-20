@@ -1,5 +1,11 @@
-# Check if platform needs to explicitly specify linking with libatomic
-# It creates an interface target fastdds_atomic that will include the dependency if needed
+# Check if platform needs to explicitly specify linking with libatomic.
+# It creates an interface target eProsima::atomic that will include the dependency if needed.
+# The variable FASTDDS_REQUIRED_FLAGS can be used to pass specific compiler flags use in the build
+# and that we want to mimick in the testing like --std=c++20
+
+if(TARGET eProsima::atomic)
+    return()
+endif()
 
 set(Atomic_FOUND FALSE)
 
@@ -42,7 +48,7 @@ set(OLD_CMAKE_REQUIRED_LIBRARIES ${CMAKE_REQUIRED_LIBRARIES})
 # fastrtps project). C compiler will complain if C++ flags are passed via CMAKE_REQUIRED_FLAGS ruining the check. We
 # must locally change CMAKE_C_COMPILER_LOADED value to force the use of C++ compiler. Note that future changes in
 # CheckLibraryExists module may alter this workaround.
-set(CMAKE_REQUIRED_FLAGS ${FASTDDS_REQUIRED_FLAGS})
+set(CMAKE_REQUIRED_FLAGS ${CMAKE_REQUIRED_FLAGS} ${FASTDDS_REQUIRED_FLAGS})
 set(CMAKE_C_COMPILER_LOADED 0)
 
 # Test linking without atomic
@@ -63,16 +69,16 @@ if (HAVE_LIBATOMIC)
 endif()
 
 # add interface target associated
-add_library(fastdds_atomic INTERFACE IMPORTED)
+add_library(eProsima::atomic INTERFACE IMPORTED)
 
 # Set LINK_LIBATOMIC to true only if linking with atomic is required
 if (NOT ATOMIC_WITHOUT_LIB)
     if (ATOMIC_WITH_LIB)
         # force to link to atomic when the dummy target is present
         if (CMAKE_VERSION VERSION_GREATER_EQUAL "3.11.4")
-            target_link_libraries(fastdds_atomic INTERFACE atomic)
+            target_link_libraries(eProsima::atomic INTERFACE atomic)
         else()
-            set_property(TARGET fastdds_atomic PROPERTY INTERFACE_LINK_LIBRARIES atomic)
+            set_property(TARGET eProsima::atomic PROPERTY INTERFACE_LINK_LIBRARIES atomic)
         endif()
     else()
         message(FATAL_ERROR "Unable to create binaries with atomic dependencies")
