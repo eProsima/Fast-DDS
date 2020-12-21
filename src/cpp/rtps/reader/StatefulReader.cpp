@@ -999,26 +999,12 @@ bool StatefulReader::nextUntakenCache(
 
         if (takeok)
         {
+
             *change = *it;
-
-            if (!(*change)->isRead)
-            {
-                if (0 < total_unread_)
-                {
-                    --total_unread_;
-                }
-            }
-
-            (*change)->isRead = true;
-
+       
             if (wpout != nullptr)
             {
                 *wpout = wp;
-            }
-
-            if (is_datasharing_compatible_)
-            {
-                send_datasharing_ack(*wp);
             }
 
             break;
@@ -1091,22 +1077,10 @@ bool StatefulReader::nextUnreadCache(
         {
 
             *change = *it;
-
-            if (0 < total_unread_)
-            {
-                --total_unread_;
-            }
-
-            (*change)->isRead = true;
-
+       
             if (wpout != nullptr)
             {
                 *wpout = wp;
-            }
-
-            if (is_datasharing_compatible_)
-            {
-                send_datasharing_ack(*wp);
             }
 
             break;
@@ -1168,36 +1142,66 @@ bool StatefulReader::isInCleanState()
     return true;
 }
 
-void StatefulReader::send_datasharing_ack(
-        const WriterProxy& writer)
+void StatefulReader::change_read_by_user(
+            CacheChange_t* change,
+            const WriterProxy* writer,
+            bool mark_as_read)
 {
+    assert(writer != nullptr);
+    assert(change->writerGUID == writer->guid());
+
+    // Mark change as read
+    if (mark_as_read && !change->isRead)
+    {
+        change->isRead = true;
+        if (0 < total_unread_)
+        {
+            --total_unread_;
+        }
+    }
+
     std::unique_lock<RecursiveTimedMutex> lock(mp_mutex);
 
-    if (!datasharing_listener_->writer_is_matched(writer.guid()))
+    // If not datasharing, we are done
+    if (!is_datasharing_compatible_ || !datasharing_listener_->writer_is_matched(writer->guid()))
     {
         return;
     }
 
-    acknack_count_++;
+    // Unlock the payload
+    DataSharingPayloadPool::shared_mutex(change->serializedPayload.data).unlock_sharable();
 
-    for (std::vector<CacheChange_t*>::iterator it = mp_history->changesBegin();
-            it != mp_history->changesEnd(); ++it)
+    if (mark_as_read)
     {
-        if ((*it)->writerGUID == writer.guid() && !(*it)->isRead)
+        // This may not be the change read with highest SN,
+        // need to find largest SN to ACK
+        std::vector<CacheChange_t*>::iterator last_read_from_writer;
+        for (std::vector<CacheChange_t*>::iterator it = mp_history->changesBegin();
+                it != mp_history->changesEnd(); ++it)
         {
-            RTPSMessageGroup group(getRTPSParticipant(), this, writer);
-            SequenceNumberSet_t sns((*it)->sequenceNumber + 1);
-            group.add_acknack(sns, acknack_count_, false);
-            logInfo(RTPS_READER, "Sending datasharing ACK for SN " << (*it)->sequenceNumber);
-            return;
+            if ((*it)->writerGUID == writer->guid() && !(*it)->isRead)
+            {
+                if ((*it)->sequenceNumber < change->sequenceNumber)
+                {
+                    //ACK for this already sent earlier
+                    return;
+                }
+                acknack_count_++;
+                RTPSMessageGroup group(getRTPSParticipant(), this, *writer);
+                SequenceNumberSet_t sns((*it)->sequenceNumber);
+                group.add_acknack(sns, acknack_count_, false);
+                logInfo(RTPS_READER, "Sending datasharing ACK for SN " << (*it)->sequenceNumber - 1);
+                return;
+            }
         }
-    }
 
-    CacheChange_t* last = *mp_history->changesRbegin();
-    RTPSMessageGroup group(getRTPSParticipant(), this, writer);
-    SequenceNumberSet_t sns(last->sequenceNumber + 1);
-    group.add_acknack(sns, acknack_count_, false);
-    logInfo(RTPS_READER, "Sending datasharing ACK for last SN " << last->sequenceNumber);
+        // Must ACK all in the writer
+        acknack_count_++;
+        RTPSMessageGroup group(getRTPSParticipant(), this, *writer);
+        SequenceNumberSet_t sns(writer->available_changes_max() + 1);
+        group.add_acknack(sns, acknack_count_, false);
+        logInfo(RTPS_READER, "Sending datasharing ACK for last SN " << writer->available_changes_max());
+    }
 }
 
 void StatefulReader::send_acknack(
