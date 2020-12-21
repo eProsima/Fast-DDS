@@ -1025,6 +1025,11 @@ ReturnCode_t DataReaderImpl::check_qos (
         logError(DDS_QOS_CHECK, "BEST_EFFORT incompatible with EXCLUSIVE ownership");
         return ReturnCode_t::RETCODE_INCONSISTENT_POLICY;
     }
+    if (qos.reader_resource_limits().max_samples_per_read <= 0)
+    {
+        logError(DDS_QOS_CHECK, "max_samples_per_read should be strictly possitive");
+        return ReturnCode_t::RETCODE_INCONSISTENT_POLICY;
+    }
     return ReturnCode_t::RETCODE_OK;
 }
 
