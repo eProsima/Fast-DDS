@@ -654,7 +654,6 @@ TEST_F(DataReaderTests, resource_limits)
     static constexpr int32_t num_samples = 100;
 
     const ReturnCode_t& ok_code = ReturnCode_t::RETCODE_OK;
-    const ReturnCode_t& precondition_code = ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
     const ReturnCode_t& resources_code = ReturnCode_t::RETCODE_OUT_OF_RESOURCES;
 
     DataWriterQos writer_qos = DATAWRITER_QOS_DEFAULT;
