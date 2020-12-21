@@ -40,6 +40,7 @@
 #include <fastrtps/qos/LivelinessChangedStatus.h>
 #include <fastrtps/types/TypesBase.h>
 
+#include <fastdds/subscriber/DataReaderLoanManager.hpp>
 #include <fastdds/subscriber/SubscriberImpl.hpp>
 #include <rtps/history/ITopicPayloadPool.h>
 
@@ -352,6 +353,8 @@ protected:
     DataReader* user_datareader_ = nullptr;
 
     std::shared_ptr<ITopicPayloadPool> payload_pool_;
+
+    DataReaderLoanManager loan_manager_;
 
     ReturnCode_t check_collection_preconditions_and_calc_max_samples(
             LoanableCollection& data_values,

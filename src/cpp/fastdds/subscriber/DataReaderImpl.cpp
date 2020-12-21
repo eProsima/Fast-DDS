@@ -104,6 +104,7 @@ DataReaderImpl::DataReaderImpl(
     , reader_listener_(this)
     , deadline_duration_us_(qos_.deadline().period.to_ns() * 1e-3)
     , lifespan_duration_us_(qos_.lifespan().duration.to_ns() * 1e-3)
+    , loan_manager_(qos)
 {
 }
 
@@ -289,6 +290,11 @@ ReturnCode_t DataReaderImpl::prepare_loan(
     }
 
     // Check if there are enough loans
+    ReturnCode_t code = loan_manager_.get_loan(data_values, sample_infos);
+    if (!code)
+    {
+        return code;
+    }
 
     // Check if there are enough sample_infos
 
@@ -521,7 +527,16 @@ ReturnCode_t DataReaderImpl::return_loan(
         return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
     }
 
-    return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
+    // Check if they were loaned by this reader
+    ReturnCode_t code = loan_manager_.return_loan(data_values, sample_infos);
+    if (!code)
+    {
+        return code;
+    }
+
+    // TODO: Return samples and infos
+
+    return ReturnCode_t::RETCODE_OK;
 }
 
 ReturnCode_t DataReaderImpl::read_next_sample(
