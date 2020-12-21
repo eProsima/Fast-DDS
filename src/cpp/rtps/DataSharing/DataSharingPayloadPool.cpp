@@ -75,7 +75,7 @@ uint32_t DataSharingPayloadPool::last_liveliness_sequence() const
 }
 
 bool DataSharingPayloadPool::check_sequence_number(
-        octet* data, SequenceNumber_t sn)
+        const octet* data, const SequenceNumber_t& sn)
 {
     return (PayloadNode::get_from_data(data)->sequence_number() == sn);
 }

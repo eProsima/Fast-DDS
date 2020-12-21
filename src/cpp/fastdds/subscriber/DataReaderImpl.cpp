@@ -1438,6 +1438,13 @@ ReturnCode_t DataReaderImpl::check_datasharing_compatible(
     }
 }
 
+bool DataReaderImpl::is_sample_valid(
+    const void* data,
+    const SampleInfo* info) const
+{
+    return reader_->is_sample_valid(data, info->sample_identity.writer_guid(), info->sample_identity.sequence_number());
+}
+
 } /* namespace dds */
 } /* namespace fastdds */
 } /* namespace eprosima */
