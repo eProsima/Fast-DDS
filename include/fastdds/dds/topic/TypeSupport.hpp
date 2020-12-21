@@ -215,6 +215,18 @@ public:
         return get() == nullptr;
     }
 
+    RTPS_DllAPI bool operator !=(
+            std::nullptr_t) const
+    {
+        return bool(*this);
+    }
+
+    RTPS_DllAPI bool operator ==(
+            std::nullptr_t) const
+    {
+        return !*this;
+    }
+
 };
 
 } /* namespace dds */

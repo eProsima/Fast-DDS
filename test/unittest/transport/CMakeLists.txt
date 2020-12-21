@@ -313,8 +313,10 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
                 ${THIRDPARTY_BOOST_INCLUDE_DIR}
                 )
             target_link_libraries(SharedMemTests ${GTEST_LIBRARIES} ${MOCKS}
-                    $<$<BOOL:${TLS_FOUND}>:OpenSSL::SSL$<SEMICOLON>OpenSSL::Crypto>
-                    ${THIRDPARTY_BOOST_LINK_LIBS})
+                $<$<BOOL:${TLS_FOUND}>:OpenSSL::SSL$<SEMICOLON>OpenSSL::Crypto>
+                ${THIRDPARTY_BOOST_LINK_LIBS}
+                eProsima::atomic
+                )
             if(MSVC OR MSVC_IDE)
                 target_link_libraries(SharedMemTests ${PRIVACY} iphlpapi Shlwapi )
             else()

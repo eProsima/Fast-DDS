@@ -159,8 +159,10 @@ endif()
 # Test system configuration
 ###############################################################################
 include(${PROJECT_SOURCE_DIR}/cmake/common/check_configuration.cmake)
-set(FORCE_CXX "11")
+
+set(FORCE_CXX "11" CACHE STRING "C++ standard fulfillment selection")
 check_stdcxx()
+
 check_compile_feature()
 check_endianness()
 
@@ -222,6 +224,7 @@ eprosima_find_thirdparty(TinyXML2 tinyxml2)
 
 find_package(foonathan_memory REQUIRED)
 message(STATUS "Found foonathan_memory: ${foonathan_memory_DIR}")
+find_package(Atomic MODULE)
 find_package(ThirdpartyBoost REQUIRED)
 
 if(ANDROID)

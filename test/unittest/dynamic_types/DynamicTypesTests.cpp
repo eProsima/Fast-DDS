@@ -92,8 +92,10 @@ TEST_F(DynamicTypesTests, DynamicType_basic_unit_tests)
     // Create basic types
     DynamicTypeBuilder_ptr int32_builder = DynamicTypeBuilderFactory::get_instance()->create_int32_builder();
     ASSERT_TRUE(int32_builder != nullptr);
+    ASSERT_FALSE(int32_builder == nullptr);
     DynamicType_ptr int32_type = DynamicTypeBuilderFactory::get_instance()->create_type(int32_builder.get());
     ASSERT_TRUE(int32_type != nullptr);
+    ASSERT_FALSE(int32_type == nullptr);
     DynamicType_ptr type2 = DynamicTypeBuilderFactory::get_instance()->create_type(int32_builder.get());
     ASSERT_TRUE(type2 != nullptr);
     ASSERT_TRUE(type2->equals(int32_type.get()));

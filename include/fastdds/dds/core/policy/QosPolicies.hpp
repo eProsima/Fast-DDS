@@ -1312,13 +1312,13 @@ public:
         }
 
         bool operator ==(
-                const self_type& rhs)
+                const self_type& rhs) const
         {
             return ptr_ == rhs.ptr_;
         }
 
         bool operator !=(
-                const self_type& rhs)
+                const self_type& rhs) const
         {
             return ptr_ != rhs.ptr_;
         }
