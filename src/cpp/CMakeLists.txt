@@ -405,6 +405,9 @@ elseif(NOT EPROSIMA_INSTALLER)
         ${THIRDPARTY_BOOST_INCLUDE_DIR}
         )
 
+    # PRIVACY is PUBLIC by default
+    set(PRIVACY "PUBLIC")
+
     # Made linked libraries PRIVATE to prevent local directories in Windows installer.
     if(EPROSIMA_INSTALLER_MINION)
         set(PRIVACY "PRIVATE")
@@ -422,8 +425,10 @@ elseif(NOT EPROSIMA_INSTALLER)
         $<$<BOOL:${LINK_SSL}>:OpenSSL::SSL$<SEMICOLON>OpenSSL::Crypto>
         $<$<BOOL:${WIN32}>:iphlpapi$<SEMICOLON>Shlwapi>
         ${THIRDPARTY_BOOST_LINK_LIBS}
-        eProsima::atomic
         )
+
+    # Link library to eProsima::atomic privately
+    target_link_libraries(${PROJECT_NAME} PRIVATE eProsima::atomic)
 
     if(MSVC OR MSVC_IDE)
         set_target_properties(${PROJECT_NAME} PROPERTIES RELEASE_POSTFIX -${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR})
@@ -630,6 +635,7 @@ elseif(NOT EPROSIMA_INSTALLER)
         COMPONENT cmake
         )
 
+    # Install FindAtomic.cmake in case external application want to make use of it
     install(FILES ${PROJECT_SOURCE_DIR}/cmake/modules/FindAtomic.cmake
         DESTINATION ${INSTALL_DESTINATION_PATH}/modules
         COMPONENT cmake
