@@ -630,6 +630,11 @@ elseif(NOT EPROSIMA_INSTALLER)
         COMPONENT cmake
         )
 
+    install(FILES ${PROJECT_SOURCE_DIR}/cmake/modules/FindAtomic.cmake
+        DESTINATION ${INSTALL_DESTINATION_PATH}/modules
+        COMPONENT cmake
+        )
+
     if(MSVCARCH_EXTENSION)
         string(TOUPPER "${MSVC_ARCH}" MSVC_ARCH_UPPER)
         set(CPACK_COMPONENT_LIBRARIES_${MSVC_ARCH_UPPER}_DISPLAY_NAME "${MSVC_ARCH}" PARENT_SCOPE)
