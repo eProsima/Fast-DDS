@@ -428,9 +428,6 @@ elseif(NOT EPROSIMA_INSTALLER)
         eProsima::atomic
         )
 
-    # Link library to eProsima::atomic privately
-    # target_link_libraries(${PROJECT_NAME} PRIVATE eProsima::atomic)
-
     if(MSVC OR MSVC_IDE)
         set_target_properties(${PROJECT_NAME} PROPERTIES RELEASE_POSTFIX -${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR})
         set_target_properties(${PROJECT_NAME} PROPERTIES RELWITHDEBINFO_POSTFIX -${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR})
