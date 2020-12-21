@@ -352,6 +352,11 @@ protected:
 
     std::shared_ptr<ITopicPayloadPool> payload_pool_;
 
+    ReturnCode_t check_collection_preconditions_and_calc_max_samples(
+            LoanableCollection& data_values,
+            SampleInfoSeq& sample_infos,
+            int32_t& max_samples);
+
     /**
      * @brief A method called when a new cache change is added
      * @param change The cache change that has been added
