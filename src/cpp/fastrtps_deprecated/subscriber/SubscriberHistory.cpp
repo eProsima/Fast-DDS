@@ -411,8 +411,8 @@ bool SubscriberHistory::takeNextData(
             uint32_t ownership = wp && qos_.m_ownership.kind == EXCLUSIVE_OWNERSHIP_QOS ?
                     wp->ownership_strength() : 0;
             bool deserialized = deserialize_change(change, ownership, data, info);
-            bool removed = remove_change_sub(change);
             mp_reader->change_read_by_user(change, wp);
+            bool removed = remove_change_sub(change);
             return (deserialized && removed);
         }
     }

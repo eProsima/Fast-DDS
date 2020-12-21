@@ -460,6 +460,13 @@ const TopicDescription* DataReader::get_topicdescription() const
     return impl_->get_topicdescription();
 }
 
+bool DataReader::is_sample_valid(
+        const void* data,
+        const SampleInfo* info) const
+{
+    return impl_->is_sample_valid(data, info);
+}
+
 } /* namespace dds */
 } /* namespace fastdds */
 } /* namespace eprosima */

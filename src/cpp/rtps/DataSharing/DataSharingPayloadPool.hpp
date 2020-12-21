@@ -106,7 +106,7 @@ public:
 
     uint32_t last_liveliness_sequence() const;
 
-    static bool check_sequence_number(octet* data, SequenceNumber_t sn);
+    static bool check_sequence_number(const octet* data, const SequenceNumber_t& sn);
 
 protected:
 
@@ -174,6 +174,12 @@ protected:
             metadata_.writer_GUID = c_Guid_Unknown;
             metadata_.instance_handle = c_InstanceHandle_Unknown;
             metadata_.related_sample_identity = fastrtps::rtps::SampleIdentity();
+        }
+
+        static const PayloadNode* get_from_data(
+                const octet* data)
+        {
+            return reinterpret_cast<const PayloadNode*>(data - data_offset);
         }
 
         static PayloadNode* get_from_data(
