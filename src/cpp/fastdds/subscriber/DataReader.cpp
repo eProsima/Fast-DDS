@@ -93,6 +93,11 @@ ReturnCode_t DataReader::read(
     static_cast<void>(view_states);
     static_cast<void>(instance_states);
 
+    if (!enable_)
+    {
+        return ReturnCode_t::RETCODE_NOT_ENABLED;
+    }
+
     return ReturnCode_t::RETCODE_UNSUPPORTED;
 }
 
@@ -112,6 +117,11 @@ ReturnCode_t DataReader::read_instance(
     static_cast<void>(sample_states);
     static_cast<void>(view_states);
     static_cast<void>(instance_states);
+
+    if (!enable_)
+    {
+        return ReturnCode_t::RETCODE_NOT_ENABLED;
+    }
 
     return ReturnCode_t::RETCODE_UNSUPPORTED;
 }
@@ -133,6 +143,11 @@ ReturnCode_t DataReader::read_next_instance(
     static_cast<void>(view_states);
     static_cast<void>(instance_states);
 
+    if (!enable_)
+    {
+        return ReturnCode_t::RETCODE_NOT_ENABLED;
+    }
+
     return ReturnCode_t::RETCODE_UNSUPPORTED;
 }
 
@@ -150,6 +165,11 @@ ReturnCode_t DataReader::take(
     static_cast<void>(sample_states);
     static_cast<void>(view_states);
     static_cast<void>(instance_states);
+
+    if (!enable_)
+    {
+        return ReturnCode_t::RETCODE_NOT_ENABLED;
+    }
 
     return ReturnCode_t::RETCODE_UNSUPPORTED;
 }
@@ -171,6 +191,11 @@ ReturnCode_t DataReader::take_instance(
     static_cast<void>(view_states);
     static_cast<void>(instance_states);
 
+    if (!enable_)
+    {
+        return ReturnCode_t::RETCODE_NOT_ENABLED;
+    }
+
     return ReturnCode_t::RETCODE_UNSUPPORTED;
 }
 
@@ -191,6 +216,11 @@ ReturnCode_t DataReader::take_next_instance(
     static_cast<void>(view_states);
     static_cast<void>(instance_states);
 
+    if (!enable_)
+    {
+        return ReturnCode_t::RETCODE_NOT_ENABLED;
+    }
+
     return ReturnCode_t::RETCODE_UNSUPPORTED;
 }
 
@@ -200,6 +230,11 @@ ReturnCode_t DataReader::return_loan(
 {
     static_cast<void>(data_values);
     static_cast<void>(sample_infos);
+
+    if (!enable_)
+    {
+        return ReturnCode_t::RETCODE_NOT_ENABLED;
+    }
 
     return ReturnCode_t::RETCODE_UNSUPPORTED;
 }
