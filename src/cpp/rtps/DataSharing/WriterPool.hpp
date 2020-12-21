@@ -294,7 +294,7 @@ public:
     }
 
     /**
-     * Removes the payload's offset to the shared history
+     * Removes the payload's offset from the shared history
      * 
      * Payloads must be removed from the history in the same order
      * they where added, i.e., payload for sequence number 7
@@ -310,6 +310,7 @@ public:
 
         PayloadNode* payload = PayloadNode::get_from_data(cache_change->serializedPayload.data);
         assert(segment_->get_offset_from_address(payload) == history_[static_cast<uint32_t>(descriptor_->notified_begin)]);
+        (void)payload;
         logInfo(DATASHARING_PAYLOADPOOL, "Change removed from shared history"
                 << " with SN " << cache_change->sequenceNumber);
         advance(descriptor_->notified_begin);
