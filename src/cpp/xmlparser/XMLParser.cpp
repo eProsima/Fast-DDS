@@ -13,28 +13,25 @@
 // limitations under the License.
 //
 #include <fastrtps/xmlparser/XMLParser.h>
-#include <fastrtps/xmlparser/XMLParserCommon.h>
-#include <fastrtps/xmlparser/XMLTree.h>
-#include <fastrtps/xmlparser/XMLProfileManager.h>
 
+#include <iostream>
+#include <cstdlib>
+
+#include <tinyxml2.h>
+#include <fastrtps/log/StdoutConsumer.h>
+#include <fastrtps/log/FileConsumer.h>
 #include <fastrtps/transport/UDPv4TransportDescriptor.h>
 #include <fastrtps/transport/UDPv6TransportDescriptor.h>
 #include <fastrtps/transport/TCPv4TransportDescriptor.h>
 #include <fastrtps/transport/TCPv6TransportDescriptor.h>
-
-#include <fastrtps/xmlparser/XMLProfileManager.h>
-
 #include <fastrtps/types/DynamicTypeBuilder.h>
 #include <fastrtps/types/DynamicTypeBuilderPtr.h>
 #include <fastrtps/types/DynamicTypeBuilderFactory.h>
 #include <fastrtps/types/DynamicTypeMember.h>
-
-#include <fastrtps/log/StdoutConsumer.h>
-#include <fastrtps/log/FileConsumer.h>
-
-#include <tinyxml2.h>
-#include <iostream>
-#include <cstdlib>
+#include <fastrtps/xmlparser/XMLParserCommon.h>
+#include <fastrtps/xmlparser/XMLTree.h>
+#include <fastrtps/xmlparser/XMLProfileManager.h>
+#include "XMLParserImpl.hpp"
 
 namespace eprosima {
 namespace fastrtps {
@@ -42,7 +39,7 @@ namespace xmlparser {
 
 XMLP_ret XMLParser::loadDefaultXMLFile(up_base_node_t& root)
 {
-    return loadXML(DEFAULT_FASTRTPS_PROFILES, root);
+    return XMLParserImpl::loadXML(DEFAULT_FASTRTPS_PROFILES, root, true);
 }
 
 XMLP_ret XMLParser::parseXML(tinyxml2::XMLDocument& xmlDoc, up_base_node_t& root)
@@ -2575,26 +2572,11 @@ XMLP_ret XMLParser::parseXMLConsumer(tinyxml2::XMLElement& consumer)
     return ret;
 }
 
-XMLP_ret XMLParser::loadXML(const std::string& filename, up_base_node_t& root)
+XMLP_ret XMLParser::loadXML(
+        const std::string& filename,
+        up_base_node_t& root)
 {
-    if (filename.empty())
-    {
-        logError(XMLPARSER, "Error loading XML file, filename empty");
-        return XMLP_ret::XML_ERROR;
-    }
-
-    tinyxml2::XMLDocument xmlDoc;
-    if (tinyxml2::XMLError::XML_SUCCESS != xmlDoc.LoadFile(filename.c_str()))
-    {
-        if (filename != std::string(DEFAULT_FASTRTPS_PROFILES))
-        {
-            logError(XMLPARSER, "Error opening '" << filename << "'");
-        }
-        return XMLP_ret::XML_ERROR;
-    }
-
-    logInfo(XMLPARSER, "File '" << filename << "' opened successfully");
-    return parseXML(xmlDoc, root);
+    return XMLParserImpl::loadXML(filename, root, false);
 }
 
 XMLP_ret XMLParser::loadXMLProfiles(tinyxml2::XMLElement &xmlDoc, up_base_node_t& root)
@@ -3102,6 +3084,31 @@ XMLP_ret XMLParser::fillDataNode(tinyxml2::XMLElement* p_profile, DataNode<Subsc
     }
 
     return XMLP_ret::XML_OK;
+}
+
+XMLP_ret XMLParserImpl::loadXML(
+        const std::string& filename,
+        up_base_node_t& root,
+        const bool& is_default)
+{
+    if (filename.empty())
+    {
+        logError(XMLPARSER, "Error loading XML file, filename empty");
+        return XMLP_ret::XML_ERROR;
+    }
+
+    tinyxml2::XMLDocument xmlDoc;
+    if (tinyxml2::XMLError::XML_SUCCESS != xmlDoc.LoadFile(filename.c_str()))
+    {
+        if (!is_default)
+        {
+            logError(XMLPARSER, "Error opening '" << filename << "'");
+        }
+        return XMLP_ret::XML_ERROR;
+    }
+
+    logInfo(XMLPARSER, "File '" << filename << "' opened successfully");
+    return XMLParser::parseXML(xmlDoc, root);
 }
 
 } // namespace xmlparser

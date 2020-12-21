@@ -12,16 +12,19 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 //
-#include <tinyxml2.h>
 #include <fastrtps/xmlparser/XMLProfileManager.h>
-#include <fastrtps/xmlparser/XMLTree.h>
-#include <fastrtps/log/Log.h>
 
 #include <cstdlib>
 #include <unistd.h>
 #ifdef _WIN32
 #include <windows.h>
 #endif
+
+#include <tinyxml2.h>
+#include <fastrtps/log/Log.h>
+#include <fastrtps/xmlparser/XMLTree.h>
+#include "XMLParserImpl.hpp"
+
 
 using namespace eprosima::fastrtps;
 using namespace ::xmlparser;
@@ -294,7 +297,7 @@ XMLP_ret XMLProfileManager::loadXMLFile(
     }
 
     up_base_node_t root_node;
-    XMLP_ret loaded_ret = XMLParser::loadXML(filename, root_node);
+    XMLP_ret loaded_ret = XMLParserImpl::loadXML(filename, root_node, true);
     if (!root_node || loaded_ret != XMLP_ret::XML_OK)
     {
         if (!is_default)

@@ -81,7 +81,10 @@ typedef std::unique_ptr<node_topic_t>          up_node_topic_t;
 class XMLParser
 {
 
-  public:
+    friend class XMLParserImpl;
+
+public:
+
     /**
      * Load the default XML file.
      * @return XMLP_ret::XML_OK on success, XMLP_ret::XML_ERROR in other case.
