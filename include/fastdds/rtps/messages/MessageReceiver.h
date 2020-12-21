@@ -94,6 +94,7 @@ private:
     CDRMessage_t crypto_msg_;
     //!Buffer to process each decoded RTPS sub-message
     CDRMessage_t crypto_submsg_;
+    //!Buffer to process a decoded payload
     SerializedPayload_t crypto_payload_;
 #endif // if HAVE_SECURITY
 

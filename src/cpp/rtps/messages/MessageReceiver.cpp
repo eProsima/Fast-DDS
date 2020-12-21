@@ -53,8 +53,8 @@ MessageReceiver::MessageReceiver(
     , timestamp_(c_TimeInvalid)
 #if HAVE_SECURITY
     , crypto_msg_(participant->is_secure() ? rec_buffer_size : 0)
-    , crypto_payload_(participant->is_secure() ? rec_buffer_size : 0)
     , crypto_submsg_(participant->is_secure() ? rec_buffer_size : 0)
+    , crypto_payload_(participant->is_secure() ? rec_buffer_size : 0)
 #endif // if HAVE_SECURITY
 {
     (void)rec_buffer_size;
