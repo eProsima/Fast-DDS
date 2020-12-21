@@ -40,6 +40,7 @@
 #include <fastrtps/types/DynamicDataFactory.h>
 #include <fastrtps/types/TypeDescriptor.h>
 #include <fastrtps/types/DynamicType.h>
+#include <fastrtps/types/DynamicTypePtr.h>
 #include <fastrtps/types/TypeObjectFactory.h>
 
 
@@ -687,7 +688,6 @@ TEST(ParticipantTests, DeletePublisher)
     ASSERT_NE(publisher, nullptr);
 
     ASSERT_TRUE(participant->delete_publisher(publisher) == ReturnCode_t::RETCODE_OK);
-    ASSERT_TRUE(participant->delete_publisher(publisher) == ReturnCode_t::RETCODE_ERROR);
     ASSERT_TRUE(DomainParticipantFactory::get_instance()->delete_participant(participant) == ReturnCode_t::RETCODE_OK);
 }
 
@@ -1054,6 +1054,82 @@ TEST(ParticipantTests, CheckDomainParticipantQos)
     EXPECT_EQ(ReturnCode_t::RETCODE_OK, participant->enable());
 
     ASSERT_TRUE(DomainParticipantFactory::get_instance()->delete_participant(participant) == ReturnCode_t::RETCODE_OK);
+}
+
+/*
+ * This test checks the cases in which the allocation QoS is modified.
+ * 1. Check that the qos is modified if the participant is not enabled.
+ * 2. Check that the qos is not changed and it generates an error code if the participant is already enabled.
+ */
+TEST(ParticipantTests, ChangeAllocationDomainParticipantQos)
+{
+    DomainParticipantFactory* factory = DomainParticipantFactory::get_instance();
+    DomainParticipantFactoryQos pfqos;
+    pfqos.entity_factory().autoenable_created_entities = false;
+    ASSERT_EQ(factory->set_qos(pfqos), ReturnCode_t::RETCODE_OK);
+
+    DomainParticipant* participant =
+            DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
+    ASSERT_FALSE(participant->is_enabled());
+    DomainParticipantQos qos;
+    participant->get_qos(qos);
+
+    ASSERT_EQ(qos, PARTICIPANT_QOS_DEFAULT);
+
+    qos.allocation().data_limits.max_properties = 10;
+    ASSERT_EQ(participant->set_qos(qos), ReturnCode_t::RETCODE_OK);
+    DomainParticipantQos pqos;
+    participant->get_qos(pqos);
+
+    ASSERT_FALSE(pqos == PARTICIPANT_QOS_DEFAULT);
+    ASSERT_EQ(qos, pqos);
+    ASSERT_EQ(pqos.allocation().data_limits.max_properties, 10);
+
+    participant->enable();
+    ASSERT_TRUE(participant->is_enabled());
+    participant->get_qos(pqos);
+    pqos.allocation().data_limits.max_properties = 20;
+    ASSERT_EQ(participant->set_qos(pqos), ReturnCode_t::RETCODE_IMMUTABLE_POLICY);
+
+    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), ReturnCode_t::RETCODE_OK);
+}
+
+/*
+ * This test checks the cases in which the participant name is modified.
+ * 1. Check that the name is modified if the participant is not enabled.
+ * 2. Check that the name is not changed and it generates an error code if the participant is already enabled.
+ */
+TEST(ParticipantTests, ChangeDomainParcipantName)
+{
+    DomainParticipantFactory* factory = DomainParticipantFactory::get_instance();
+    DomainParticipantFactoryQos pfqos;
+    pfqos.entity_factory().autoenable_created_entities = false;
+    ASSERT_EQ(factory->set_qos(pfqos), ReturnCode_t::RETCODE_OK);
+
+    DomainParticipant* participant =
+            DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
+    ASSERT_FALSE(participant->is_enabled());
+    DomainParticipantQos qos;
+    participant->get_qos(qos);
+
+    ASSERT_EQ(qos, PARTICIPANT_QOS_DEFAULT);
+
+    qos.name() = "part1";
+    ASSERT_EQ(participant->set_qos(qos), ReturnCode_t::RETCODE_OK);
+    DomainParticipantQos pqos;
+    participant->get_qos(pqos);
+
+    ASSERT_FALSE(pqos == PARTICIPANT_QOS_DEFAULT);
+    ASSERT_EQ(qos, pqos);
+    ASSERT_EQ(pqos.name(), "part1");
+
+    participant->enable();
+    ASSERT_TRUE(participant->is_enabled());
+    participant->get_qos(pqos);
+    pqos.name() = "new_part1";
+    ASSERT_EQ(participant->set_qos(pqos), ReturnCode_t::RETCODE_IMMUTABLE_POLICY);
+
+    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), ReturnCode_t::RETCODE_OK);
 }
 
 /*
@@ -1590,6 +1666,11 @@ public:
     {
     }
 
+    DynamicType_ptr get_base_type_wrapper() const
+    {
+        return get_base_type();
+    }
+
 };
 
 /*
@@ -1611,11 +1692,11 @@ TEST(ParticipantTests, RegisterDynamicTypeToFactoriesNotTypeIdentifier)
     const eprosima::fastrtps::types::TypeDescriptor* myDescriptor(
         new eprosima::fastrtps::types::TypeDescriptor("my_descriptor", 0x11));
     // Create the base type for the dynamic type
-    DynamicType_ptr base_type(new DynamicTypeMock(myDescriptor));
+    DynamicTypeMock* base_type = new DynamicTypeMock(myDescriptor);
     // Create a custom dynamic type builder using the wrong TypeDescriptor
     DynamicTypeBuilder_ptr builder =
             DynamicTypeBuilderFactory::get_instance()->create_custom_builder(myDescriptor, "my_dynamic_type");
-    builder->add_member(0, "uint", base_type);
+    builder->add_member(0, "uint", base_type->get_base_type_wrapper());
     // Create the dynamic type
     DynamicType_ptr dyn_type = builder->build();
     // Create the data instance
