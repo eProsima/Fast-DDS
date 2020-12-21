@@ -172,8 +172,8 @@ void XMLProfileManager::loadDefaultXMLFile()
 
     if (const char* file_path = std::getenv(DEFAULT_FASTRTPS_ENV_VARIABLE))
     {
-        absolute_path = realpath(file_path, NULL);
-        if (absolute_path == NULL)
+        absolute_path = realpath(file_path, nullptr);
+        if (absolute_path == nullptr)
         {
             logError(XMLPARSER, "realpath failed " << std::strerror(errno));
         }
@@ -184,11 +184,11 @@ void XMLProfileManager::loadDefaultXMLFile()
         }
     }
 
-    absolute_path = NULL;
+    absolute_path = nullptr;
 
     // Try to load the default XML file.
     absolute_path = getcwd(absolute_path, PATH_MAX);
-    if (absolute_path == NULL)
+    if (absolute_path == nullptr)
     {
         logError(XMLPARSER, "getcwd failed " << std::strerror(errno));
     }
