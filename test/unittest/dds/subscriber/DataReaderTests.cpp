@@ -37,12 +37,12 @@
 #include <fastdds/dds/subscriber/qos/DataReaderQos.hpp>
 #include <fastdds/dds/subscriber/qos/SubscriberQos.hpp>
 
+#include "./FooType.hpp"
+#include "./FooTypeSupport.hpp"
+
 namespace eprosima {
 namespace fastdds {
 namespace dds {
-
-#include "./FooType.hpp"
-#include "./FooTypeSupport.hpp"
 
 static constexpr LoanableCollection::size_type num_test_elements = 10u;
 
