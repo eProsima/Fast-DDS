@@ -318,6 +318,7 @@ bool StatefulReader::matched_writer_remove(
                 // If it is in the list of datasharing, it must be in the listener
                 bool removed_from_listener = datasharing_listener_->remove_datasharing_writer(writer_guid);
                 assert(removed_from_listener);
+                (void)removed_from_listener;
                 remove_changes_from(writer_guid, true);
 
                 break;
