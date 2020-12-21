@@ -18,6 +18,7 @@
 #include <fastrtps/log/Log.h>
 
 #include <cstdlib>
+#include <unistd.h>
 #ifdef _WIN32
 #include <windows.h>
 #endif
@@ -136,20 +137,65 @@ void XMLProfileManager::loadDefaultXMLFile()
     // Try to load the default XML file set with an environment variable.
 #ifdef _WIN32
     char file_path[MAX_PATH];
+    char absolute_path[MAX_PATH];
+    char current_directory[MAX_PATH];
+    char** filename;
     size_t size = MAX_PATH;
     if (getenv_s(&size, file_path, size, DEFAULT_FASTRTPS_ENV_VARIABLE) == 0 && size > 0)
     {
-        loadXMLFile(file_path);
+        // Use absolute path to ensure the file is loaded only once
+        if (GetFullPathName(file_path, MAX_PATH, absolute_path, filename) == 0)
+        {
+            logError(XMLPARSER, "GetFullPathName failed " << GetLastError());
+        }
+        else
+        {
+            loadXMLFile(absolute_path);
+        }
     }
-#else
-    if (const char* file_path = std::getenv(DEFAULT_FASTRTPS_ENV_VARIABLE))
-    {
-        loadXMLFile(file_path);
-    }
-#endif
 
     // Try to load the default XML file.
-    loadXMLFile(DEFAULT_FASTRTPS_PROFILES);
+    if (GetCurrentDirectory(MAX_PATH, current_directory) == 0)
+    {
+        logError(XMLPARSER, "GetCurrentDirectory failed " << GetLastError());
+    }
+    else
+    {
+        strcat(current_directory, DEFAULT_FASTRTPS_PROFILES);
+        loadXMLFile(current_directory, true);
+    }
+#else
+    char* absolute_path;
+
+    if (const char* file_path = std::getenv(DEFAULT_FASTRTPS_ENV_VARIABLE))
+    {
+        absolute_path = realpath(file_path, NULL);
+        if (absolute_path == NULL)
+        {
+            logError(XMLPARSER, "realpath failed " << std::strerror(errno));
+        }
+        else
+        {
+            loadXMLFile(absolute_path);
+            free(absolute_path);
+        }
+    }
+
+    absolute_path = NULL;
+
+    // Try to load the default XML file.
+    absolute_path = getcwd(absolute_path, PATH_MAX);
+    if (absolute_path == NULL)
+    {
+        logError(XMLPARSER, "getcwd failed " << std::strerror(errno));
+    }
+    else
+    {
+        strcat(absolute_path,"/");
+        strcat(absolute_path, DEFAULT_FASTRTPS_PROFILES);
+        loadXMLFile(absolute_path, true);
+    }
+#endif
 }
 
 XMLP_ret XMLProfileManager::loadXMLProfiles(
@@ -227,6 +273,13 @@ XMLP_ret XMLProfileManager::loadXMLNode(
 XMLP_ret XMLProfileManager::loadXMLFile(
         const std::string& filename)
 {
+    return loadXMLFile(filename, false);
+}
+
+XMLP_ret XMLProfileManager::loadXMLFile(
+        const std::string& filename,
+        const bool& is_default)
+{
     if (filename.empty())
     {
         logError(XMLPARSER, "Error loading XML file, filename empty");
@@ -244,7 +297,7 @@ XMLP_ret XMLProfileManager::loadXMLFile(
     XMLP_ret loaded_ret = XMLParser::loadXML(filename, root_node);
     if (!root_node || loaded_ret != XMLP_ret::XML_OK)
     {
-        if (filename != std::string(DEFAULT_FASTRTPS_PROFILES))
+        if (!is_default)
         {
             logError(XMLPARSER, "Error parsing '" << filename << "'");
         }

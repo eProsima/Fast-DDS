@@ -230,6 +230,10 @@ public:
 
 private:
 
+    static XMLP_ret loadXMLFile(
+            const std::string& filename,
+            const bool& is_default);
+
     RTPS_DllAPI static XMLP_ret extractDynamicTypes(
             up_base_node_t properties,
             const std::string& filename);
