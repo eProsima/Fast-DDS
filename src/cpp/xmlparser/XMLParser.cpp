@@ -16,6 +16,10 @@
 
 #include <iostream>
 #include <cstdlib>
+#include <unistd.h>
+#ifdef _WIN32
+#include <windows.h>
+#endif // _WIN32
 
 #include <tinyxml2.h>
 #include <fastrtps/log/StdoutConsumer.h>
@@ -39,7 +43,33 @@ namespace xmlparser {
 
 XMLP_ret XMLParser::loadDefaultXMLFile(up_base_node_t& root)
 {
-    return XMLParserImpl::loadXML(DEFAULT_FASTRTPS_PROFILES, root, true);
+    // Use absolute path to ensure that the file is loaded only once
+#ifdef _WIN32
+    char current_directory[MAX_PATH];
+    if (GetCurrentDirectory(MAX_PATH, current_directory) == 0)
+    {
+        logError(XMLPARSER, "GetCurrentDirectory failed " << GetLastError());
+    }
+    else
+    {
+        strcat(current_directory, DEFAULT_FASTRTPS_PROFILES);
+        return XMLParserImpl::loadXML(current_directory, root, true);
+    }
+#else
+    char* current_directory = nullptr;
+    current_directory = getcwd(current_directory, PATH_MAX);
+    if (current_directory == nullptr)
+    {
+        logError(XMLPARSER, "getcwd failed " << std::strerror(errno));
+    }
+    else
+    {
+        strcat(current_directory, "/");
+        strcat(current_directory, DEFAULT_FASTRTPS_PROFILES);
+        return XMLParserImpl::loadXML(current_directory, root, true);
+    }
+#endif // _WIN32
+    return XMLP_ret::XML_ERROR;
 }
 
 XMLP_ret XMLParser::parseXML(tinyxml2::XMLDocument& xmlDoc, up_base_node_t& root)
