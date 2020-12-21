@@ -450,7 +450,21 @@ ReturnCode_t DataReaderImpl::return_loan(
         return ReturnCode_t::RETCODE_NOT_ENABLED;
     }
 
-    return ReturnCode_t::RETCODE_UNSUPPORTED;
+    // Properties should be the same on both collections
+    if ((data_values.has_ownership() != sample_infos.has_ownership()) ||
+            (data_values.maximum() != sample_infos.maximum()) ||
+            (data_values.length() != sample_infos.length()))
+    {
+        return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
+    }
+
+    // They should have a loan
+    if (data_values.has_ownership() == true)
+    {
+        return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
+    }
+
+    return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
 }
 
 ReturnCode_t DataReaderImpl::read_next_sample(
