@@ -16,9 +16,10 @@
 
 #include <iostream>
 #include <cstdlib>
-#include <unistd.h>
 #ifdef _WIN32
 #include <windows.h>
+#else
+#include <unistd.h>
 #endif // _WIN32
 
 #include <tinyxml2.h>

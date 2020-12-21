@@ -15,9 +15,10 @@
 #include <fastrtps/xmlparser/XMLProfileManager.h>
 
 #include <cstdlib>
-#include <unistd.h>
 #ifdef _WIN32
 #include <windows.h>
+#else
+#include <unistd.h>
 #endif // ifdef _WIN32
 
 #include <tinyxml2.h>
