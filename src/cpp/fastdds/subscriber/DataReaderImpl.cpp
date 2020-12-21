@@ -274,6 +274,24 @@ ReturnCode_t DataReaderImpl::check_collection_preconditions_and_calc_max_samples
     return ReturnCode_t::RETCODE_OK;
 }
 
+ReturnCode_t DataReaderImpl::prepare_loan(
+        LoanableCollection& data_values,
+        SampleInfoSeq& sample_infos,
+        int32_t& max_samples)
+{
+    if (0 < data_values.maximum())
+    {
+        // A loan was not requested
+        return ReturnCode_t::RETCODE_OK;
+    }
+
+    // Check if there are enough loans
+
+    // Check if there are enough sample_infos
+
+    return ReturnCode_t::RETCODE_OUT_OF_RESOURCES;
+}
+
 ReturnCode_t DataReaderImpl::read(
         LoanableCollection& data_values,
         SampleInfoSeq& sample_infos,
@@ -292,6 +310,12 @@ ReturnCode_t DataReaderImpl::read(
     }
 
     ReturnCode_t code = check_collection_preconditions_and_calc_max_samples(data_values, sample_infos, max_samples);
+    if (!code)
+    {
+        return code;
+    }
+
+    code = prepare_loan(data_values, sample_infos, max_samples);
     if (!code)
     {
         return code;
@@ -325,6 +349,12 @@ ReturnCode_t DataReaderImpl::read_instance(
         return code;
     }
 
+    code = prepare_loan(data_values, sample_infos, max_samples);
+    if (!code)
+    {
+        return code;
+    }
+
     return ReturnCode_t::RETCODE_UNSUPPORTED;
 }
 
@@ -353,6 +383,12 @@ ReturnCode_t DataReaderImpl::read_next_instance(
         return code;
     }
 
+    code = prepare_loan(data_values, sample_infos, max_samples);
+    if (!code)
+    {
+        return code;
+    }
+
     return ReturnCode_t::RETCODE_UNSUPPORTED;
 }
 
@@ -374,6 +410,12 @@ ReturnCode_t DataReaderImpl::take(
     }
 
     ReturnCode_t code = check_collection_preconditions_and_calc_max_samples(data_values, sample_infos, max_samples);
+    if (!code)
+    {
+        return code;
+    }
+
+    code = prepare_loan(data_values, sample_infos, max_samples);
     if (!code)
     {
         return code;
@@ -407,6 +449,12 @@ ReturnCode_t DataReaderImpl::take_instance(
         return code;
     }
 
+    code = prepare_loan(data_values, sample_infos, max_samples);
+    if (!code)
+    {
+        return code;
+    }
+
     return ReturnCode_t::RETCODE_UNSUPPORTED;
 }
 
@@ -430,6 +478,12 @@ ReturnCode_t DataReaderImpl::take_next_instance(
     }
 
     ReturnCode_t code = check_collection_preconditions_and_calc_max_samples(data_values, sample_infos, max_samples);
+    if (!code)
+    {
+        return code;
+    }
+
+    code = prepare_loan(data_values, sample_infos, max_samples);
     if (!code)
     {
         return code;

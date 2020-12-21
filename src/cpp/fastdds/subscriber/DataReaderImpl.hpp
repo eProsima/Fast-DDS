@@ -357,6 +357,11 @@ protected:
             SampleInfoSeq& sample_infos,
             int32_t& max_samples);
 
+    ReturnCode_t prepare_loan(
+            LoanableCollection& data_values,
+            SampleInfoSeq& sample_infos,
+            int32_t& max_samples);
+
     /**
      * @brief A method called when a new cache change is added
      * @param change The cache change that has been added
