@@ -234,27 +234,27 @@ private:
             const std::string& filename,
             const bool& is_default);
 
-    RTPS_DllAPI static XMLP_ret extractDynamicTypes(
+    static XMLP_ret extractDynamicTypes(
             up_base_node_t properties,
             const std::string& filename);
 
-    RTPS_DllAPI static XMLP_ret extractProfiles(
+    static XMLP_ret extractProfiles(
             up_base_node_t properties,
             const std::string& filename);
 
-    RTPS_DllAPI static XMLP_ret extractParticipantProfile(
+    static XMLP_ret extractParticipantProfile(
             up_base_node_t& profile,
             const std::string& filename);
 
-    RTPS_DllAPI static XMLP_ret extractPublisherProfile(
+    static XMLP_ret extractPublisherProfile(
             up_base_node_t& profile,
             const std::string& filename);
 
-    RTPS_DllAPI static XMLP_ret extractSubscriberProfile(
+    static XMLP_ret extractSubscriberProfile(
             up_base_node_t& profile,
             const std::string& filename);
 
-    RTPS_DllAPI static XMLP_ret extractTopicProfile(
+    static XMLP_ret extractTopicProfile(
             up_base_node_t& profile,
             const std::string& filename);
 
