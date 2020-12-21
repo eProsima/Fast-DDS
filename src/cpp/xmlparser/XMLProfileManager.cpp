@@ -18,7 +18,7 @@
 #include <unistd.h>
 #ifdef _WIN32
 #include <windows.h>
-#endif
+#endif // ifdef _WIN32
 
 #include <tinyxml2.h>
 #include <fastrtps/log/Log.h>
@@ -194,11 +194,11 @@ void XMLProfileManager::loadDefaultXMLFile()
     }
     else
     {
-        strcat(absolute_path,"/");
+        strcat(absolute_path, "/");
         strcat(absolute_path, DEFAULT_FASTRTPS_PROFILES);
         loadXMLFile(absolute_path, true);
     }
-#endif
+#endif // ifdef _WIN32
 }
 
 XMLP_ret XMLProfileManager::loadXMLProfiles(
@@ -457,7 +457,7 @@ XMLP_ret XMLProfileManager::extractParticipantProfile(
     if (it != node_part->getAttributes().end() && it->second == "true") // Set as default profile
     {
         // +V+ TODO: LOG ERROR IN SECOND ATTEMPT
-        default_participant_attributes = *(emplace.first->second.get() );
+        default_participant_attributes = *(emplace.first->second.get());
     }
     return XMLP_ret::XML_OK;
 }
@@ -490,7 +490,7 @@ XMLP_ret XMLProfileManager::extractPublisherProfile(
     if (it != node_part->getAttributes().end() && it->second == "true") // Set as default profile
     {
         // +V+ TODO: LOG ERROR IN SECOND ATTEMPT
-        default_publisher_attributes = *(emplace.first->second.get() );
+        default_publisher_attributes = *(emplace.first->second.get());
     }
     return XMLP_ret::XML_OK;
 }
@@ -523,7 +523,7 @@ XMLP_ret XMLProfileManager::extractSubscriberProfile(
     if (it != node_part->getAttributes().end() && it->second == "true") // Set as default profile
     {
         // +V+ TODO: LOG ERROR IN SECOND ATTEMPT
-        default_subscriber_attributes = *(emplace.first->second.get() );
+        default_subscriber_attributes = *(emplace.first->second.get());
     }
     return XMLP_ret::XML_OK;
 }

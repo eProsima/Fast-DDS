@@ -37,9 +37,9 @@ public:
      * @return XMLP_ret::XML_OK on success, XMLP_ret::XML_ERROR in other case.
      */
     static XMLP_ret loadXML(
-        const std::string& filename,
-        up_base_node_t& root,
-        const bool& is_default);
+            const std::string& filename,
+            up_base_node_t& root,
+            const bool& is_default);
 };
 
 } // namespace xmlparser

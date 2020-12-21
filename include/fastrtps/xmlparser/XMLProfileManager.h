@@ -281,4 +281,4 @@ private:
 } /* namespace */
 } /* namespace eprosima */
 
-#endif
+#endif // ifndef XML_PROFILE_MANAGER_H_
