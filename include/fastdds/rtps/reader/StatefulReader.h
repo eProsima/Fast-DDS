@@ -279,6 +279,17 @@ public:
     void assert_writer_liveliness(
             const GUID_t& writer) override;
 
+    /**
+     * Called when the user has retrieved a change from the history.
+     * @param change Pointer to the change to ACK
+     * @param writer Writer proxy of the \c change.
+     * @param mark_as_read Whether the \c change should be marked as read or not
+     */
+    void change_read_by_user(
+            CacheChange_t* change,
+            const WriterProxy* writer,
+            bool mark_as_read = true) override;
+
 private:
 
     void init(
@@ -302,14 +313,6 @@ private:
     void remove_changes_from(
             const GUID_t& writerGUID,
             bool is_payload_pool_lost = false);
-
-    /**
-     * Sends an acknack message from this reader to the datasharing writer when the sample has been processed
-     * @param change Pointer to the change to ACK
-     * @param sender Message sender interface.
-     */
-    void send_datasharing_ack(
-            const WriterProxy& writer);
 
     //! Acknack Count
     uint32_t acknack_count_;

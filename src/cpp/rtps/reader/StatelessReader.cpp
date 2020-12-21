@@ -315,19 +315,6 @@ bool StatelessReader::nextUntakenCache(
         }
     }
 
-    if (found)
-    {
-        if (!(*change)->isRead)
-        {
-            if (0 < total_unread_)
-            {
-                --total_unread_;
-            }
-        }
-
-        (*change)->isRead = true;
-    }
-
     return found;
 }
 
@@ -370,11 +357,6 @@ bool StatelessReader::nextUnreadCache(
     if (found)
     {
         *change = *it;
-        if (0 < total_unread_)
-        {
-            --total_unread_;
-        }
-        (*change)->isRead = true;
     }
     else
     {
@@ -397,6 +379,28 @@ bool StatelessReader::change_removed_by_history(
     }
 
     return true;
+}
+
+void StatelessReader::change_read_by_user(
+            CacheChange_t* change,
+            const WriterProxy* /*writer*/,
+            bool mark_as_read)
+{
+    // Mark change as read
+    if (mark_as_read && !change->isRead)
+    {
+        change->isRead = true;
+        if (0 < total_unread_)
+        {
+            --total_unread_;
+        }
+    }
+    
+    // If datasharing, unlock
+    if (is_datasharing_compatible_ && datasharing_listener_->writer_is_matched(change->writerGUID))
+    {
+        DataSharingPayloadPool::shared_mutex(change->serializedPayload.data).unlock_sharable();
+    }
 }
 
 bool StatelessReader::processDataMsg(

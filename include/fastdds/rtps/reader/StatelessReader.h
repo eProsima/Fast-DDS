@@ -212,6 +212,17 @@ public:
      */
     void assert_writer_liveliness(
             const GUID_t& guid) override;
+
+    /**
+     * Called when the user has retrieved a change from the history.
+     * @param change Pointer to the change to ACK
+     * @param writer Writer proxy of the \c change.
+     * @param mark_as_read Whether the \c change should be marked as read or not
+     */
+    void change_read_by_user(
+            CacheChange_t* change,
+            const WriterProxy* writer,
+            bool mark_as_read = true) override;
             
 private:
 
