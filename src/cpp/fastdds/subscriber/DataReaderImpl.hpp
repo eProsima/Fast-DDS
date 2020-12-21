@@ -21,6 +21,8 @@
 #define _FASTRTPS_DATAREADERIMPL_HPP_
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
+#include <fastdds/dds/core/LoanableCollection.hpp>
+#include <fastdds/dds/core/LoanableSequence.hpp>
 #include <fastdds/dds/core/status/StatusMask.hpp>
 #include <fastdds/dds/subscriber/qos/DataReaderQos.hpp>
 #include <fastdds/dds/subscriber/DataReaderListener.hpp>
@@ -58,6 +60,8 @@ namespace dds {
 class Subscriber;
 class SubscriberImpl;
 class TopicDescription;
+
+using SampleInfoSeq = LoanableSequence<SampleInfo>;
 
 /**
  * Class DataReader, contains the actual implementation of the behaviour of the Subscriber.
@@ -101,29 +105,71 @@ public:
 
     ///@{
 
-    /* TODO
-       bool read(
-            std::vector<void*>& data_values,
-            std::vector<fastrtps::SampleInfo>& sample_infos,
-            uint32_t max_samples);
-     */
+    ReturnCode_t read(
+            LoanableCollection& data_values,
+            SampleInfoSeq& sample_infos,
+            int32_t max_samples = LENGTH_UNLIMITED,
+            SampleStateMask sample_states = ANY_SAMPLE_STATE,
+            ViewStateMask view_states = ANY_VIEW_STATE,
+            InstanceStateMask instance_states = ANY_INSTANCE_STATE);
+
+    ReturnCode_t read_instance(
+            LoanableCollection& data_values,
+            SampleInfoSeq& sample_infos,
+            int32_t max_samples = LENGTH_UNLIMITED,
+            const InstanceHandle_t& a_handle = HANDLE_NIL,
+            SampleStateMask sample_states = ANY_SAMPLE_STATE,
+            ViewStateMask view_states = ANY_VIEW_STATE,
+            InstanceStateMask instance_states = ANY_INSTANCE_STATE);
+
+    ReturnCode_t read_next_instance(
+            LoanableCollection& data_values,
+            SampleInfoSeq& sample_infos,
+            int32_t max_samples = LENGTH_UNLIMITED,
+            const InstanceHandle_t& previous_handle = HANDLE_NIL,
+            SampleStateMask sample_states = ANY_SAMPLE_STATE,
+            ViewStateMask view_states = ANY_VIEW_STATE,
+            InstanceStateMask instance_states = ANY_INSTANCE_STATE);
 
     ReturnCode_t read_next_sample(
             void* data,
             SampleInfo* info);
 
-    /* TODO
-       bool take(
-            std::vector<void*>& data_values,
-            std::vector<fastrtps::SampleInfo>& sample_infos,
-            uint32_t max_samples);
-     */
+    ReturnCode_t take(
+            LoanableCollection& data_values,
+            SampleInfoSeq& sample_infos,
+            int32_t max_samples = LENGTH_UNLIMITED,
+            SampleStateMask sample_states = ANY_SAMPLE_STATE,
+            ViewStateMask view_states = ANY_VIEW_STATE,
+            InstanceStateMask instance_states = ANY_INSTANCE_STATE);
+
+    ReturnCode_t take_instance(
+            LoanableCollection& data_values,
+            SampleInfoSeq& sample_infos,
+            int32_t max_samples = LENGTH_UNLIMITED,
+            const InstanceHandle_t& a_handle = HANDLE_NIL,
+            SampleStateMask sample_states = ANY_SAMPLE_STATE,
+            ViewStateMask view_states = ANY_VIEW_STATE,
+            InstanceStateMask instance_states = ANY_INSTANCE_STATE);
+
+    ReturnCode_t take_next_instance(
+            LoanableCollection& data_values,
+            SampleInfoSeq& sample_infos,
+            int32_t max_samples = LENGTH_UNLIMITED,
+            const InstanceHandle_t& previous_handle = HANDLE_NIL,
+            SampleStateMask sample_states = ANY_SAMPLE_STATE,
+            ViewStateMask view_states = ANY_VIEW_STATE,
+            InstanceStateMask instance_states = ANY_INSTANCE_STATE);
 
     ReturnCode_t take_next_sample(
             void* data,
             SampleInfo* info);
 
     ///@}
+
+    ReturnCode_t return_loan(
+            LoanableCollection& data_values,
+            SampleInfoSeq& sample_infos);
 
     /**
      * @brief Returns information about the first untaken sample.
