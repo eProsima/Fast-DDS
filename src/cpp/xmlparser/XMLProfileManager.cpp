@@ -165,6 +165,7 @@ void XMLProfileManager::loadDefaultXMLFile()
     }
     else
     {
+        strcat_s(current_directory, MAX_PATH, "\\");
         strcat_s(current_directory, MAX_PATH, DEFAULT_FASTRTPS_PROFILES);
         loadXMLFile(current_directory, true);
     }
