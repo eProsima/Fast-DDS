@@ -186,14 +186,20 @@ protected:
             LoanableCollection& data_values,
             SampleInfoSeq& infos)
     {
+        ReturnCode_t wrong_loan_code = ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
+        if (ReturnCode_t::RETCODE_NOT_ENABLED == instance_bad_code)
+        {
+            wrong_loan_code = instance_bad_code;
+        }
+
         EXPECT_EQ(instance_bad_code, data_reader->read_instance(data_values, infos, LENGTH_UNLIMITED, HANDLE_NIL));
-        check_return_loan(ReturnCode_t::RETCODE_PRECONDITION_NOT_MET, data_reader, data_values, infos);
+        check_return_loan(wrong_loan_code, data_reader, data_values, infos);
         EXPECT_EQ(instance_bad_code, data_reader->read_instance(data_values, infos, LENGTH_UNLIMITED, handle_wrong_));
-        check_return_loan(ReturnCode_t::RETCODE_PRECONDITION_NOT_MET, data_reader, data_values, infos);
+        check_return_loan(wrong_loan_code, data_reader, data_values, infos);
         EXPECT_EQ(instance_bad_code, data_reader->take_instance(data_values, infos, LENGTH_UNLIMITED, HANDLE_NIL));
-        check_return_loan(ReturnCode_t::RETCODE_PRECONDITION_NOT_MET, data_reader, data_values, infos);
+        check_return_loan(wrong_loan_code, data_reader, data_values, infos);
         EXPECT_EQ(instance_bad_code, data_reader->take_instance(data_values, infos, LENGTH_UNLIMITED, handle_wrong_));
-        check_return_loan(ReturnCode_t::RETCODE_PRECONDITION_NOT_MET, data_reader, data_values, infos);
+        check_return_loan(wrong_loan_code, data_reader, data_values, infos);
 
         EXPECT_EQ(instance_ok_code, data_reader->read_instance(data_values, infos, LENGTH_UNLIMITED, handle_ok_));
         check_return_loan(loan_return_code, data_reader, data_values, infos);
