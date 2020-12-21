@@ -12,6 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include <fastrtps/rtps/builtin/data/WriterProxyData.h>
+#include <fastrtps/rtps/builtin/data/ReaderProxyData.h>
 #include <fastrtps/xmlparser/XMLEndpointParser.h>
 #include <fastdds/dds/log/Log.hpp>
 #include <fastdds/dds/log/OStreamConsumer.hpp>

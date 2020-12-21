@@ -92,6 +92,23 @@ public:
         return false;
     }
 
+    void add_unicast_locator(
+        const Locator_t& locator)
+    {
+        remote_locators_.add_unicast_locator(locator);
+    }
+
+    void add_multicast_locator(
+        const Locator_t& locator)
+    {
+        remote_locators_.add_multicast_locator(locator);
+    }
+
+    bool has_locators() const
+    {
+        return !remote_locators_.unicast.empty() || !remote_locators_.multicast.empty();
+    }
+
     const RemoteLocatorList& remote_locators() const
     {
         return remote_locators_;
@@ -144,6 +161,12 @@ public:
         return type_name_;
     }
 
+    string_255& typeName()
+    {
+        return type_name_;
+    }
+
+
     void topicName(
             const string_255& topicName)
     {
@@ -155,6 +178,11 @@ public:
         return topic_name_;
     }
 
+    string_255& topicName()
+    {
+        return topic_name_;
+    }
+
     void topicKind(
             TopicKind_t topicKind)
     {
@@ -162,6 +190,11 @@ public:
     }
 
     TopicKind_t topicKind() const
+    {
+        return topic_kind_;
+    }
+
+    TopicKind_t& topicKind()
     {
         return topic_kind_;
     }
