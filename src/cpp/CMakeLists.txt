@@ -425,10 +425,11 @@ elseif(NOT EPROSIMA_INSTALLER)
         $<$<BOOL:${LINK_SSL}>:OpenSSL::SSL$<SEMICOLON>OpenSSL::Crypto>
         $<$<BOOL:${WIN32}>:iphlpapi$<SEMICOLON>Shlwapi>
         ${THIRDPARTY_BOOST_LINK_LIBS}
+        eProsima::atomic
         )
 
     # Link library to eProsima::atomic privately
-    target_link_libraries(${PROJECT_NAME} PRIVATE eProsima::atomic)
+    # target_link_libraries(${PROJECT_NAME} PRIVATE eProsima::atomic)
 
     if(MSVC OR MSVC_IDE)
         set_target_properties(${PROJECT_NAME} PROPERTIES RELEASE_POSTFIX -${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR})
