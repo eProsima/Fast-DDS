@@ -405,6 +405,9 @@ elseif(NOT EPROSIMA_INSTALLER)
         ${THIRDPARTY_BOOST_INCLUDE_DIR}
         )
 
+    # PRIVACY is PUBLIC by default
+    set(PRIVACY "PUBLIC")
+
     # Made linked libraries PRIVATE to prevent local directories in Windows installer.
     if(EPROSIMA_INSTALLER_MINION)
         set(PRIVACY "PRIVATE")
@@ -627,6 +630,12 @@ elseif(NOT EPROSIMA_INSTALLER)
     install(FILES ${PROJECT_BINARY_DIR}/cmake/config/${PROJECT_NAME}-config.cmake
         ${PROJECT_BINARY_DIR}/cmake/config/${PROJECT_NAME}-config-version.cmake
         DESTINATION ${INSTALL_DESTINATION_PATH}
+        COMPONENT cmake
+        )
+
+    # Install FindAtomic.cmake in case external application want to make use of it
+    install(FILES ${PROJECT_SOURCE_DIR}/cmake/modules/FindAtomic.cmake
+        DESTINATION ${INSTALL_DESTINATION_PATH}/modules
         COMPONENT cmake
         )
 
