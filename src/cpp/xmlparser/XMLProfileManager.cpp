@@ -143,7 +143,7 @@ void XMLProfileManager::loadDefaultXMLFile()
     char file_path[MAX_PATH];
     char absolute_path[MAX_PATH];
     char current_directory[MAX_PATH];
-    char** filename;
+    char** filename = {nullptr};
     size_t size = MAX_PATH;
     if (getenv_s(&size, file_path, size, DEFAULT_FASTRTPS_ENV_VARIABLE) == 0 && size > 0)
     {
