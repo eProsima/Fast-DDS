@@ -71,6 +71,7 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             ${CMAKE_CURRENT_BINARY_DIR}/SHM_transport_descriptors_config.xml
             COPYONLY)
 
+        ###################################  XMLProfileParserTests  ####################################################
         set(XMLPROFILEPARSER_SOURCE
             XMLProfileParserTests.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/rtps/xmlparser/XMLProfileManager.cpp
@@ -140,8 +141,11 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             fastcdr
             )
         add_gtest(XMLProfileParserTests SOURCES XMLProfileParserTests.cpp)
+        ###################################  XMLProfileParserTests  ####################################################
 
 
+
+        ######################################  XMLParserTests  ########################################################
         set(XMLPARSER_SOURCE
             XMLParserTests.cpp
             XMLElementParserTests.cpp
@@ -219,7 +223,10 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             fastcdr
         )
         add_gtest(XMLParserTests SOURCES XMLParserTests.cpp XMLElementParserTests.cpp)
+        ######################################  XMLParserTests  ########################################################
 
+
+        #######################################  XMLTreeTests  #########################################################
         set(XMLTREE_SOURCE
             XMLTreeTests.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/utils/string_convert.cpp
@@ -240,9 +247,55 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             $<$<BOOL:${WIN32}>:ws2_32>
         )
         add_gtest(XMLTreeTests SOURCES XMLTreeTests.cpp)
+        #######################################  XMLTreeTests  #########################################################
 
+
+        ###################################  XMLENDPOINTPARSERTESTS  ###################################################
         set(XMLENDPOINTPARSERTESTS_SOURCE
             XMLEndpointParserTests.cpp
+
+            # parser
+            ${PROJECT_SOURCE_DIR}/src/cpp/rtps/xmlparser/XMLEndpointParser.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/rtps/xmlparser/XMLParserCommon.cpp
+
+            # log
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/Log.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/OStreamConsumer.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/StdoutConsumer.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/StdoutErrConsumer.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/FileConsumer.cpp
+
+            ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/AnnotationDescriptor.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/DynamicData.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/DynamicDataFactory.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/DynamicType.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/DynamicPubSubType.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/DynamicTypePtr.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/DynamicDataPtr.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/DynamicTypeBuilder.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/DynamicTypeBuilderPtr.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/DynamicTypeBuilderFactory.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/DynamicTypeMember.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/TypeDescriptor.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/MemberDescriptor.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/AnnotationParameterValue.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/TypeIdentifier.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/TypeIdentifierTypes.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/TypeObject.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/TypeObjectFactory.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/TypeObjectHashId.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/TypeNamesGenerator.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/TypesBase.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/BuiltinAnnotationsTypeObject.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/utils/md5.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/Time_t.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/utils/string_convert.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/publisher/qos/WriterQos.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/subscriber/qos/ReaderQos.cpp
+
+            # locators
+            ${PROJECT_SOURCE_DIR}/src/cpp/utils/IPLocator.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/Time_t.cpp
         )
 
         # External sources
@@ -258,16 +311,20 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
         target_compile_definitions(XMLEndpointParserTests PRIVATE FASTRTPS_NO_LIB)
         target_include_directories(XMLEndpointParserTests PRIVATE
             ${GTEST_INCLUDE_DIRS}
+            ${PROJECT_SOURCE_DIR}/test/mock/rtps/ReaderProxyData
+            ${PROJECT_SOURCE_DIR}/test/mock/rtps/WriterProxyData
+            ${PROJECT_SOURCE_DIR}/include
+            ${PROJECT_BINARY_DIR}/include
             )
 
         target_link_libraries(XMLEndpointParserTests ${GTEST_LIBRARIES}
             $<$<BOOL:${WIN32}>:iphlpapi$<SEMICOLON>Shlwapi>
             $<$<BOOL:${WIN32}>:ws2_32>
-            fastrtps fastcdr foonathan_memory
             ${TINYXML2_LIBRARY}
             fastcdr
-            foonathan_memory
         )
         add_gtest(XMLEndpointParserTests SOURCES XMLEndpointParserTests.cpp)
+        ###################################  XMLENDPOINTPARSERTESTS  ###################################################
+
     endif()
 endif()
