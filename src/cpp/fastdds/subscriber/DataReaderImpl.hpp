@@ -40,7 +40,7 @@
 #include <fastrtps/qos/LivelinessChangedStatus.h>
 #include <fastrtps/types/TypesBase.h>
 
-#include <fastdds/subscriber/DataReaderLoanManager.hpp>
+#include <fastdds/subscriber/DataReaderImpl/DataReaderLoanManager.hpp>
 #include <fastdds/subscriber/SubscriberImpl.hpp>
 #include <rtps/history/ITopicPayloadPool.h>
 
