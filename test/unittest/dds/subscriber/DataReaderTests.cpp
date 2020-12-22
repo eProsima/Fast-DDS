@@ -339,6 +339,25 @@ protected:
 
 };
 
+/*
+ * This test checks all variants of read / take in several situations.
+ *
+ * The APIs tested are:
+ * - read_next_sample / take_next_sample
+ * - read / take
+ * - read_next_instance / take_next_instance
+ * - read_instance / take_instance
+ * - return_loan
+ *
+ * The test checks that:
+ * - Calling the APIs on a disabled reader return NOT_ENABLED
+ * - Calling the APIs on an enabled reader with no data return NO_DATA
+ * - Calling the xxx_instance APIs with a wrong instance handle return BAD_PARAMETER
+ * - Calling the APIs when data has been received return OK
+ *
+ * Checks are done both with and without loans. A call to return_loan is always performed, and its return value is
+ * checked to be OK when a loan was performed and PRECONDITION_NOT_MET when not.
+ */
 TEST_F(DataReaderTests, read_take_apis)
 {
     // We will create a disabled DataReader, so we can check RETCODE_NOT_ENABLED
@@ -378,6 +397,22 @@ void check_collection(
     EXPECT_LE(len, collection.maximum());
 }
 
+/*
+ * This test checks the preconditions on the data_values and sample_infos arguments to the read / take APIs
+ *
+ * The APIs tested are:
+ * - read / take
+ * - read_next_instance / take_next_instance
+ * - read_instance / take_instance
+ * - return_loan
+ *
+ * All possible combinations of owns, max_len, and len are used as input on an enabled reader with no data.
+ * For collections where the preconditions are met, NO_DATA will be returned, except for read_instance and
+ * take_instance, where no instance would exist and the return will be BAD_PARAMETER. Otherwise, PRECONDITION_NOT_MET
+ * should be returned.
+ *
+ * As no data will ever be returned, return_loan will always return PRECONDITION_NOT_MET.
+ */
 TEST_F(DataReaderTests, collection_preconditions)
 {
     create_entities();
@@ -511,6 +546,9 @@ void forward_loan(
     to.loan(buf, from.maximum(), from.length());
 }
 
+/*
+ * This test checks the preconditions on the data_values and sample_infos arguments to the return_loan API.
+ */
 TEST_F(DataReaderTests, return_loan)
 {
     static constexpr int32_t num_samples = 10;
@@ -653,6 +691,9 @@ TEST_F(DataReaderTests, return_loan)
     aux_infos_2.unloan();
 }
 
+/*
+ * This test checks that the limits imposed by reader_resource_limits QoS are taken into account when performing loans.
+ */
 TEST_F(DataReaderTests, resource_limits)
 {
     using ResLimitCfg = fastrtps::ResourceLimitedContainerConfig;
@@ -808,6 +849,9 @@ class CustomListener : public DataReaderListener
 
 };
 
+/*
+ * This test checks the calls to set_listener and get_status_mask
+ */
 TEST_F(DataReaderTests, SetListener)
 {
     CustomListener listener;
