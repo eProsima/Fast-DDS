@@ -37,6 +37,8 @@
 #include <fastdds/rtps/resources/TimedEvent.h>
 
 #include <fastdds/subscriber/SubscriberImpl.hpp>
+#include <fastdds/subscriber/DataReaderImpl/ReadTakeCommand.hpp>
+#include <fastdds/subscriber/DataReaderImpl/StateFilter.hpp>
 
 #include <fastrtps/utils/TimeConversion.h>
 #include <fastrtps/subscriber/SampleInfo.h>
@@ -326,10 +328,6 @@ ReturnCode_t DataReaderImpl::read(
         ViewStateMask view_states,
         InstanceStateMask instance_states)
 {
-    static_cast<void>(sample_states);
-    static_cast<void>(view_states);
-    static_cast<void>(instance_states);
-
     if (reader_ == nullptr)
     {
         return ReturnCode_t::RETCODE_NOT_ENABLED;
@@ -347,7 +345,14 @@ ReturnCode_t DataReaderImpl::read(
         return code;
     }
 
-    return ReturnCode_t::RETCODE_UNSUPPORTED;
+    auto instance = history_.lookup_instance(HANDLE_NIL, false).second;
+    detail::StateFilter states{ sample_states, view_states, instance_states };
+    detail::ReadTakeCommand cmd(history_, sample_info_pool_, data_values, sample_infos, max_samples, states, instance);
+    while (!cmd.is_finished())
+    {
+        cmd.add_instance(false);
+    }
+    return cmd.return_value();
 }
 
 ReturnCode_t DataReaderImpl::read_instance(
@@ -359,11 +364,6 @@ ReturnCode_t DataReaderImpl::read_instance(
         ViewStateMask view_states,
         InstanceStateMask instance_states)
 {
-    static_cast<void>(a_handle);
-    static_cast<void>(sample_states);
-    static_cast<void>(view_states);
-    static_cast<void>(instance_states);
-
     if (reader_ == nullptr)
     {
         return ReturnCode_t::RETCODE_NOT_ENABLED;
@@ -388,7 +388,14 @@ ReturnCode_t DataReaderImpl::read_instance(
         return code;
     }
 
-    return ReturnCode_t::RETCODE_UNSUPPORTED;
+    detail::StateFilter states{ sample_states, view_states, instance_states };
+    detail::ReadTakeCommand cmd(history_, sample_info_pool_, data_values, sample_infos, max_samples, states, it.second,
+            true);
+    while (!cmd.is_finished())
+    {
+        cmd.add_instance(false);
+    }
+    return cmd.return_value();
 }
 
 ReturnCode_t DataReaderImpl::read_next_instance(
@@ -400,11 +407,6 @@ ReturnCode_t DataReaderImpl::read_next_instance(
         ViewStateMask view_states,
         InstanceStateMask instance_states)
 {
-    static_cast<void>(previous_handle);
-    static_cast<void>(sample_states);
-    static_cast<void>(view_states);
-    static_cast<void>(instance_states);
-
     if (reader_ == nullptr)
     {
         return ReturnCode_t::RETCODE_NOT_ENABLED;
@@ -422,7 +424,14 @@ ReturnCode_t DataReaderImpl::read_next_instance(
         return code;
     }
 
-    return ReturnCode_t::RETCODE_UNSUPPORTED;
+    auto instance = history_.lookup_instance(previous_handle, false).second;
+    detail::StateFilter states{ sample_states, view_states, instance_states };
+    detail::ReadTakeCommand cmd(history_, sample_info_pool_, data_values, sample_infos, max_samples, states, instance);
+    while (!cmd.is_finished())
+    {
+        cmd.add_instance(false);
+    }
+    return cmd.return_value();
 }
 
 ReturnCode_t DataReaderImpl::take(
@@ -433,10 +442,6 @@ ReturnCode_t DataReaderImpl::take(
         ViewStateMask view_states,
         InstanceStateMask instance_states)
 {
-    static_cast<void>(sample_states);
-    static_cast<void>(view_states);
-    static_cast<void>(instance_states);
-
     if (reader_ == nullptr)
     {
         return ReturnCode_t::RETCODE_NOT_ENABLED;
@@ -454,7 +459,14 @@ ReturnCode_t DataReaderImpl::take(
         return code;
     }
 
-    return ReturnCode_t::RETCODE_UNSUPPORTED;
+    auto instance = history_.lookup_instance(HANDLE_NIL, false).second;
+    detail::StateFilter states{ sample_states, view_states, instance_states };
+    detail::ReadTakeCommand cmd(history_, sample_info_pool_, data_values, sample_infos, max_samples, states, instance);
+    while (!cmd.is_finished())
+    {
+        cmd.add_instance(true);
+    }
+    return cmd.return_value();
 }
 
 ReturnCode_t DataReaderImpl::take_instance(
@@ -466,11 +478,6 @@ ReturnCode_t DataReaderImpl::take_instance(
         ViewStateMask view_states,
         InstanceStateMask instance_states)
 {
-    static_cast<void>(a_handle);
-    static_cast<void>(sample_states);
-    static_cast<void>(view_states);
-    static_cast<void>(instance_states);
-
     if (reader_ == nullptr)
     {
         return ReturnCode_t::RETCODE_NOT_ENABLED;
@@ -495,7 +502,14 @@ ReturnCode_t DataReaderImpl::take_instance(
         return code;
     }
 
-    return ReturnCode_t::RETCODE_UNSUPPORTED;
+    detail::StateFilter states{ sample_states, view_states, instance_states };
+    detail::ReadTakeCommand cmd(history_, sample_info_pool_, data_values, sample_infos, max_samples, states, it.second,
+            true);
+    while (!cmd.is_finished())
+    {
+        cmd.add_instance(true);
+    }
+    return cmd.return_value();
 }
 
 ReturnCode_t DataReaderImpl::take_next_instance(
@@ -507,11 +521,6 @@ ReturnCode_t DataReaderImpl::take_next_instance(
         ViewStateMask view_states,
         InstanceStateMask instance_states)
 {
-    static_cast<void>(previous_handle);
-    static_cast<void>(sample_states);
-    static_cast<void>(view_states);
-    static_cast<void>(instance_states);
-
     if (reader_ == nullptr)
     {
         return ReturnCode_t::RETCODE_NOT_ENABLED;
@@ -529,7 +538,14 @@ ReturnCode_t DataReaderImpl::take_next_instance(
         return code;
     }
 
-    return ReturnCode_t::RETCODE_UNSUPPORTED;
+    auto instance = history_.lookup_instance(previous_handle, false).second;
+    detail::StateFilter states{ sample_states, view_states, instance_states };
+    detail::ReadTakeCommand cmd(history_, sample_info_pool_, data_values, sample_infos, max_samples, states, instance);
+    while (!cmd.is_finished())
+    {
+        cmd.add_instance(true);
+    }
+    return cmd.return_value();
 }
 
 ReturnCode_t DataReaderImpl::return_loan(
