@@ -51,7 +51,7 @@ using FooArray = LoanableArray<FooType, num_test_elements>;
 using FooStack = StackAllocatedSequence<FooType, num_test_elements>;
 using SampleInfoArray = LoanableArray<SampleInfo, num_test_elements>;
 
-class DataReaderTests : public testing::Test
+class DataReaderTests : public ::testing::Test
 {
 public:
 
@@ -506,7 +506,7 @@ void forward_loan(
         LoanableCollection& to,
         const LoanableCollection& from)
 {
-    assert(from.has_ownership() == false);
+    assert(("Cannot forward loan if there is no loan", from.has_ownership() == false));
     auto buf = const_cast<LoanableCollection::element_type*>(from.buffer());
     to.loan(buf, from.maximum(), from.length());
 }
