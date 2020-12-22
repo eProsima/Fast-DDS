@@ -61,6 +61,13 @@ def test_fast_discovery_closure(fast_discovery_tool):
     exit_code = 0
     # exit_code is set to 1 on python script failure
     if not proc.poll() is None:
+        proc.kill()
+        output, err = proc.communicate()
+        print('test_fast_discovery_closure FAILED on launching tool')
+        print('STDOUT:')
+        print(output)
+        print('STDERR:')
+        print(err)
         exit_code = 2
         sys.exit(exit_code)
 
@@ -97,6 +104,10 @@ def test_fast_discovery_closure(fast_discovery_tool):
     else:
         # failure
         print('test_fast_discovery_closure FAILED')
+        print('STDOUT:')
+        print(output)
+        print('STDERR:')
+        print(err)
         exit_code = 3
 
     sys.exit(exit_code)
