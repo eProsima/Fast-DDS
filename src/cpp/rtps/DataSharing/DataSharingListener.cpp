@@ -73,7 +73,7 @@ void DataSharingListener::run()
             // If some writer added new data, there may be something to read.
             // If there were matching/unmatching, we may not have finished our last loop
         } while (is_running_.load() && 
-                (notification_->notification_->new_data.load() || writer_pools_changed_.load()));
+                (notification_->notification_->new_data.load() || writer_pools_changed_.load(std::memory_order_relaxed)));
     }
 }
 
@@ -113,7 +113,8 @@ void DataSharingListener::process_new_data ()
  
     // It is safe to 'forget' any change now
     notification_->notification_->new_data.store(false);
-    writer_pools_changed_.store(false);
+    // All places where this is set to true is locked by the same mutex, memory_order_relaxed is enough
+    writer_pools_changed_.store(false, std::memory_order_relaxed);
 
     // Loop on the writers looking for data not read yet
     for (auto it = writer_pools_.begin(); it != writer_pools_.end(); ++it)
@@ -170,7 +171,7 @@ void DataSharingListener::process_new_data ()
                 }
             }
 
-            if (writer_pools_changed_.load())
+            if (writer_pools_changed_.load(std::memory_order_relaxed))
             {
                 // Break the while on the current writer (it may have been removed)
                 break;
@@ -180,7 +181,7 @@ void DataSharingListener::process_new_data ()
         // Lock again for the next loop
         lock.lock();
 
-        if (writer_pools_changed_.load())
+        if (writer_pools_changed_.load(std::memory_order_relaxed))
         {
             // Break the loop over the writers (itearators may have been invalidated)
             break;
