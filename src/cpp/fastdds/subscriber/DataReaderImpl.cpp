@@ -297,9 +297,25 @@ ReturnCode_t DataReaderImpl::prepare_loan(
         return code;
     }
 
-    // Check if there are enough sample_infos
+    if (max_samples > 0)
+    {
+        // Check if there are enough sample_infos
+        size_t num_infos = sample_info_pool_.num_allocated();
+        if (num_infos == qos_.reader_resource_limits().sample_infos_allocation.maximum)
+        {
+            return ReturnCode_t::RETCODE_OUT_OF_RESOURCES;
+        }
 
-    return ReturnCode_t::RETCODE_OUT_OF_RESOURCES;
+        // Limit max_samples to available sample_infos
+        num_infos += max_samples;
+        if (num_infos > qos_.reader_resource_limits().sample_infos_allocation.maximum)
+        {
+            size_t exceed = num_infos - qos_.reader_resource_limits().sample_infos_allocation.maximum;
+            max_samples -= static_cast<uint32_t>(exceed);
+        }
+    }
+
+    return ReturnCode_t::RETCODE_OK;
 }
 
 ReturnCode_t DataReaderImpl::read(
