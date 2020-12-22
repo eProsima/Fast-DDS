@@ -2988,6 +2988,20 @@ public:
         setup (OFF, "", std::vector<uint16_t>());
     }
 
+    /**
+     * @brief Adds a user-specific DataSharing domain ID
+     * 
+     * @param id 16 bit identifier
+     */
+    RTPS_DllAPI void add_domain_id(uint16_t id)
+    {
+        if (max_domains_ == 0 || domain_ids_.size() < max_domains_)
+        {
+            domain_ids_.push_back(id);
+        }
+    }
+
+    // Not on the exported API, but must be public for other internal classes
     void add_domain_id(uint64_t id)
     {
         if (max_domains_ == 0 || domain_ids_.size() < max_domains_)
@@ -3010,14 +3024,6 @@ private:
         for (uint16_t id : domain_ids)
         {
             add_domain_id(id);
-        }
-    }
-
-    RTPS_DllAPI void add_domain_id(uint16_t id)
-    {
-        if (max_domains_ == 0 || domain_ids_.size() < max_domains_)
-        {
-            domain_ids_.push_back(id);
         }
     }
 
