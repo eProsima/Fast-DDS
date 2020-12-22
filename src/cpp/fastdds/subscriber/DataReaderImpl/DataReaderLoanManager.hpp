@@ -16,8 +16,8 @@
  * @file DataReaderLoanManager.hpp
  */
 
-#ifndef _FASTDDS_SUBSCRIBER_DATAREADERLOANMANAGER_HPP_
-#define _FASTDDS_SUBSCRIBER_DATAREADERLOANMANAGER_HPP_
+#ifndef _FASTDDS_SUBSCRIBER_DATAREADERIMPL_DATAREADERLOANMANAGER_HPP_
+#define _FASTDDS_SUBSCRIBER_DATAREADERIMPL_DATAREADERLOANMANAGER_HPP_
 
 #include <algorithm>
 #include <cassert>
@@ -34,6 +34,7 @@
 namespace eprosima {
 namespace fastdds {
 namespace dds {
+namespace detail {
 
 struct DataReaderLoanManager
 {
@@ -143,8 +144,9 @@ private:
     collection_type used_loans_;
 };
 
+} /* namespace detail */
 } /* namespace dds */
 } /* namespace fastdds */
 } /* namespace eprosima */
 
-#endif  // _FASTDDS_SUBSCRIBER_DATAREADERLOANMANAGER_HPP_
+#endif  // _FASTDDS_SUBSCRIBER_DATAREADERIMPL_DATAREADERLOANMANAGER_HPP_

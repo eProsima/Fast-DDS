@@ -354,7 +354,7 @@ protected:
 
     std::shared_ptr<ITopicPayloadPool> payload_pool_;
 
-    DataReaderLoanManager loan_manager_;
+    detail::DataReaderLoanManager loan_manager_;
 
     ReturnCode_t check_collection_preconditions_and_calc_max_samples(
             LoanableCollection& data_values,
