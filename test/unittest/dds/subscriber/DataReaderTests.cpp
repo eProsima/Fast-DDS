@@ -541,7 +541,7 @@ void forward_loan(
         LoanableCollection& to,
         const LoanableCollection& from)
 {
-    assert(("Cannot forward loan if there is no loan", from.has_ownership() == false));
+    assert("Cannot forward loan if there is no loan" && (from.has_ownership() == false));
     auto buf = const_cast<LoanableCollection::element_type*>(from.buffer());
     to.loan(buf, from.maximum(), from.length());
 }
