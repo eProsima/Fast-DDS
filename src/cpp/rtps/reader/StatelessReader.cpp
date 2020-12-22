@@ -295,6 +295,9 @@ bool StatelessReader::nextUntakenCache(
     {
         if (is_datasharing_compatible_ && datasharing_listener_->writer_is_matched((*change)->writerGUID))
         {
+            // Lock the payload. The lock will NOT be freed for the returned change
+            DataSharingPayloadPool::shared_mutex((*change)->serializedPayload.data).lock_sharable();
+
             //Check if the payload is dirty
             if (DataSharingPayloadPool::check_sequence_number(
                     (*change)->serializedPayload.data, (*change)->sequenceNumber))
@@ -303,9 +306,11 @@ bool StatelessReader::nextUntakenCache(
                 break;
             }
 
+            // Unlock, remove and continue
+            DataSharingPayloadPool::shared_mutex((*change)->serializedPayload.data).unlock_sharable();
             logWarning(RTPS_READER,
                     "Removing change " << (*change)->sequenceNumber << " from " << (*change)->writerGUID <<
-                    " because it was overriden by the writer");
+                    " because is overidden");
             mp_history->remove_change(*change);
         }
         else
@@ -324,15 +329,16 @@ bool StatelessReader::nextUnreadCache(
 {
     std::lock_guard<RecursiveTimedMutex> guard(mp_mutex);
     bool found = false;
-    std::vector<CacheChange_t*>::iterator it;
-
-    for (it = mp_history->changesBegin();
-            it != mp_history->changesEnd(); ++it)
+    std::vector<CacheChange_t*>::iterator it = mp_history->changesBegin();
+    while (it != mp_history->changesEnd())
     {
         if (!(*it)->isRead)
         {
             if (is_datasharing_compatible_ && datasharing_listener_->writer_is_matched((*it)->writerGUID))
             {
+                // Lock the payload. The lock will NOT be freed for the returned change
+                DataSharingPayloadPool::shared_mutex((*it)->serializedPayload.data).lock_sharable();
+
                 //Check if the payload is dirty
                 if (DataSharingPayloadPool::check_sequence_number(
                         (*it)->serializedPayload.data, (*it)->sequenceNumber))
@@ -341,9 +347,11 @@ bool StatelessReader::nextUnreadCache(
                     break;
                 }
 
+                // Unlock, remove and continue
+                DataSharingPayloadPool::shared_mutex((*it)->serializedPayload.data).unlock_sharable();
                 logWarning(RTPS_READER,
                         "Removing change " << (*it)->sequenceNumber << " from " << (*it)->writerGUID <<
-                        " because it was overriden by the writer");
+                        " because is overidden");
                 mp_history->remove_change(*it);
             }
             else

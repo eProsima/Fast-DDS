@@ -49,40 +49,8 @@ public:
     {
         logInfo(DATASHARING_PAYLOADPOOL, "DataSharingPayloadPool::WriterPool destructor");
 
-        // Destroy each node in the pool
-        uint32_t aligned_size = static_cast<uint32_t>(DataSharingPayloadPool::node_size(max_data_size_));
-        for (octet* payload = payloads_pool_;
-                payload < payloads_pool_ + (pool_size_ * aligned_size);
-                payload += aligned_size)
-        {
-            reinterpret_cast<PayloadNode*>(payload)->~PayloadNode();
-        }
-
-        if (segment_ == nullptr)
-        {
-            return;
-        }
-
-        // Free the pool
-        if (payloads_pool_ != nullptr)
-        {
-            segment_->get().deallocate(payloads_pool_);
-        }
-
-        // Free the history
-        if (history_ != nullptr)
-        {
-            segment_->get().destroy<Segment::Offset>(history_chunk_name());
-        }
-
-        // Free the descriptor
-        if (descriptor_ != nullptr)
-        {
-           segment_->get().destroy<PoolDescriptor>(descriptor_chunk_name());
-        }
-
-        // Destroy the shared segment.
-        // The file will be deleted once the last reader has closed it.
+        // We cannot destroy the objects in the SHM, as the Reader may still be using them.
+        // We just remove the segment, and when the Reader closes it, it will be removed from the system.
         segment_->remove(segment_name_);
     }
 
@@ -97,8 +65,12 @@ public:
 
         PayloadNode* payload = free_payloads_.front();
         free_payloads_.pop();
+
+        payload->mutex().lock();
         // Reset all the metadata to signal the reader that the payload is dirty
         payload->reset();
+        // Now we can unlock
+        payload->mutex().unlock();
 
         cache_change.serializedPayload.data = payload->data();
         cache_change.serializedPayload.max_size = max_data_size_;

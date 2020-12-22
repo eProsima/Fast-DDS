@@ -53,11 +53,8 @@ void DataSharingNotification::destroy()
 {
     if (owned_)
     {
-        // Free the notification
-        segment_->get().destroy<Notification>("notification_node");
-
-        // Destroy the shared segment.
-        // The file will be deleted once the last writer has closed it.
+        // We cannot destroy the objects in the SHM, as the Writer may still be using them.
+        // We just remove the segment, and when the Writer closes it, it will be removed from the system.
         segment_->remove(segment_name_);
 
         owned_ = false;

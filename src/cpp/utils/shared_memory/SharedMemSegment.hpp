@@ -33,6 +33,8 @@
 
 #include <boost/interprocess/sync/interprocess_condition.hpp>
 #include <boost/interprocess/sync/named_mutex.hpp>
+#include <boost/interprocess/sync/interprocess_sharable_mutex.hpp>
+#include <boost/interprocess/sync/sharable_lock.hpp>
 #include <boost/interprocess/sync/spin/wait.hpp>
 #include <boost/interprocess/offset_ptr.hpp>
 #include <boost/thread/thread_time.hpp>
@@ -53,6 +55,10 @@ using Log = fastdds::dds::Log;
 class SharedMemSegment
 {
 public:
+
+    template <class M> 
+    using sharable_lock = boost::interprocess::sharable_lock<M>;
+    using sharable_mutex = boost::interprocess::interprocess_sharable_mutex;
 
     typedef RobustInterprocessCondition condition_variable;
     typedef boost::interprocess::interprocess_mutex mutex;

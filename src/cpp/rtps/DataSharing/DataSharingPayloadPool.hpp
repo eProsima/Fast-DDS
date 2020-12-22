@@ -40,7 +40,10 @@ protected:
 
 public:
 
-    typedef fastdds::rtps::SharedMemSegment Segment;
+    using Segment = fastdds::rtps::SharedMemSegment;
+    using sharable_mutex = Segment::sharable_mutex;
+    template <class M> 
+    using sharable_lock = Segment::sharable_lock<M>;
 
     DataSharingPayloadPool() = default;
 
@@ -108,6 +111,8 @@ public:
 
     static bool check_sequence_number(const octet* data, const SequenceNumber_t& sn);
 
+    static sharable_mutex& shared_mutex(octet*);
+
 protected:
 
 #pragma warning(push)
@@ -153,6 +158,9 @@ protected:
 
             // Related sample identity for the change
             fastrtps::rtps::SampleIdentity related_sample_identity;
+
+            // Mutex for shared read / exclusive write access to the payload
+            sharable_mutex mutex;
 
         };
 
@@ -279,6 +287,11 @@ protected:
                 fastrtps::rtps::SampleIdentity identity)
         {
             metadata_.related_sample_identity = identity;
+        }
+
+        sharable_mutex& mutex()
+        {
+            return metadata_.mutex;
         }
 
 
