@@ -23,39 +23,43 @@
 namespace eprosima {
 namespace fastrtps {
 
-class MockConsumer: public LogConsumer {
+class MockConsumer : public LogConsumer
+{
 public:
-   virtual void Consume(const Log::Entry& entry)
-   {
-      std::unique_lock<std::mutex> guard(mMutex);
-      mEntriesConsumed.push_back(entry);
-      cv_.notify_one();
-   }
 
-   const std::vector<Log::Entry> ConsumedEntries() const
-   {
-      std::unique_lock<std::mutex> guard(mMutex);
-      return mEntriesConsumed;
-   }
+    virtual void Consume(
+            const Log::Entry& entry)
+    {
+        std::unique_lock<std::mutex> guard(mMutex);
+        mEntriesConsumed.push_back(entry);
+        cv_.notify_one();
+    }
 
-   size_t ConsumedEntriesSize_nts() const
-   {
-      return mEntriesConsumed.size();
-   }
+    const std::vector<Log::Entry> ConsumedEntries() const
+    {
+        std::unique_lock<std::mutex> guard(mMutex);
+        return mEntriesConsumed;
+    }
 
-   std::condition_variable& cv()
-   {
-      return cv_;
-   }
+    size_t ConsumedEntriesSize_nts() const
+    {
+        return mEntriesConsumed.size();
+    }
+
+    std::condition_variable& cv()
+    {
+        return cv_;
+    }
 
 private:
-   std::vector<Log::Entry> mEntriesConsumed;
-   mutable std::mutex mMutex;
-   std::condition_variable cv_;
+
+    std::vector<Log::Entry> mEntriesConsumed;
+    mutable std::mutex mMutex;
+    std::condition_variable cv_;
 };
 
 } // namespace fastrtps
 } // namespace eprosima
 
-#endif
+#endif // ifndef MOCK_LOG_CONSUMER_H
 

@@ -36,6 +36,7 @@ using namespace ::testing;
 class XMLLoadFileTests : public ::testing::Test
 {
 public:
+
     void helper_block_for_at_least_entries(
             uint32_t amount)
     {
@@ -127,7 +128,9 @@ TEST_F(XMLLoadFileTests, load_twice_default_xml)
     std::remove("DEFAULT_FASTRTPS_PROFILES.xml");
 }
 
-int main(int argc, char **argv)
+int main(
+        int argc,
+        char** argv)
 {
     testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();
