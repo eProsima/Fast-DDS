@@ -375,6 +375,13 @@ ReturnCode_t DataReaderImpl::read_instance(
         return code;
     }
 
+    // Check if the instance exists
+    auto it = history_.lookup_instance(a_handle, true);
+    if (!it.first)
+    {
+        return ReturnCode_t::RETCODE_BAD_PARAMETER;
+    }
+
     code = prepare_loan(data_values, sample_infos, max_samples);
     if (!code)
     {
@@ -473,6 +480,13 @@ ReturnCode_t DataReaderImpl::take_instance(
     if (!code)
     {
         return code;
+    }
+
+    // Check if the instance exists
+    auto it = history_.lookup_instance(a_handle, true);
+    if (!it.first)
+    {
+        return ReturnCode_t::RETCODE_BAD_PARAMETER;
     }
 
     code = prepare_loan(data_values, sample_infos, max_samples);
