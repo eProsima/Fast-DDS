@@ -30,10 +30,6 @@ int main(
         int argc,
         char** argv)
 {
-    Log::SetVerbosity(Log::Warning);
-    //Log::SetCategoryFilter(std::regex("RTPS_TRANSPORT_SHM"));
-
-
     std::cout << "Starting "<< std::endl;
     int type = 1;
     int count = 10;

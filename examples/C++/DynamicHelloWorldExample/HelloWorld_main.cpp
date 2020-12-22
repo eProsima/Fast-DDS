@@ -108,10 +108,6 @@ bool parseArgs(int argc, char** argv)
 
 int main(int argc, char** argv)
 {
-    //Log::SetVerbosity(Log::Kind::Info);
-    //std::regex filter("RTPS_HISTORY");
-    //std::regex filter("RTPS_EDP");
-    //Log::SetCategoryFilter(filter);
     std::cout << "Starting "<< std::endl;
 
     if(!parseArgs(argc, argv))
@@ -120,7 +116,6 @@ int main(int argc, char** argv)
         return 0;
     }
 
-    //Log::SetVerbosity(Log::Kind::Info);
     switch(type)
     {
         case 1:

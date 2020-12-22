@@ -44,9 +44,6 @@ int main(int argc, char** argv)
         return 0;
     }
 
-    //Log::SetVerbosity(Log::Info);
-    //Log::SetCategoryFilter(std::regex("(SECURITY)"));
-
     switch(type)
     {
         case 1:
