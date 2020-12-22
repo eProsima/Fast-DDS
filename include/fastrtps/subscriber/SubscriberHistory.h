@@ -44,6 +44,8 @@ class SubscriberHistory : public rtps::ReaderHistory
 {
 public:
 
+    using instance_iterator = std::map<rtps::InstanceHandle_t, KeyedChanges>::iterator;
+
     /**
      * Constructor. Requires information about the subscriber.
      * @param topic_att TopicAttributes.
@@ -126,6 +128,18 @@ public:
     bool get_next_deadline(
             rtps::InstanceHandle_t& handle,
             std::chrono::steady_clock::time_point& next_deadline_us);
+
+    /**
+     * @brief Get an iterator to the instances map corresponding to certain instance handle.
+     * @param handle The handle to the instance.
+     * @param exact  Indicates if the handle should match exactly (true) or if the first instance greater than the
+     *               input handle should be returned.
+     * @return A pair where @c first is a boolean indicating if an instance was found, and second is an iterator to
+     *         the instance map pointing to the relevant instance.
+     */
+    std::pair<bool, instance_iterator> lookup_instance(
+            const rtps::InstanceHandle_t& handle,
+            bool exact);
 
 private:
 

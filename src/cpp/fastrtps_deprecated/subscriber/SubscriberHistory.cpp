@@ -572,5 +572,28 @@ bool SubscriberHistory::get_next_deadline(
     return false;
 }
 
+std::pair<bool, SubscriberHistory::instance_iterator> SubscriberHistory::lookup_instance(
+        const InstanceHandle_t& handle,
+        bool exact)
+{
+    std::pair<bool, instance_iterator> ret_val;
+
+    if (exact)
+    {
+        ret_val.second = keyed_changes_.find(handle);
+    }
+    else
+    {
+        auto comp = [](const InstanceHandle_t& h, const std::pair<InstanceHandle_t, KeyedChanges>& it)
+        {
+            return h < it.first;
+        };
+        ret_val.second = std::upper_bound(keyed_changes_.begin(), keyed_changes_.end(), handle, comp);
+    }
+
+    ret_val.first = ret_val.second != keyed_changes_.end();
+    return ret_val;
+}
+
 } // namespace fastrtps
 } // namsepace eprosima
