@@ -93,13 +93,13 @@ public:
     }
 
     void add_unicast_locator(
-        const Locator_t& locator)
+            const Locator_t& locator)
     {
         remote_locators_.add_unicast_locator(locator);
     }
 
     void add_multicast_locator(
-        const Locator_t& locator)
+            const Locator_t& locator)
     {
         remote_locators_.add_multicast_locator(locator);
     }
@@ -165,7 +165,6 @@ public:
     {
         return type_name_;
     }
-
 
     void topicName(
             const string_255& topicName)

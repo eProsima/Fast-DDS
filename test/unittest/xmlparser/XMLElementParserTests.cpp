@@ -321,10 +321,10 @@ TEST_F(XMLParserTests, getXMLLocatorTCPv4)
     EXPECT_EQ(list.begin()->address[7], 55);
 
     //<wan_address>
-    EXPECT_EQ(list.begin()->address[8], 192);
-    EXPECT_EQ(list.begin()->address[9], 168);
-    EXPECT_EQ(list.begin()->address[10], 1);
-    EXPECT_EQ(list.begin()->address[11], 55);
+    EXPECT_EQ(list.begin()->address[8], 80);
+    EXPECT_EQ(list.begin()->address[9], 80);
+    EXPECT_EQ(list.begin()->address[10], 99);
+    EXPECT_EQ(list.begin()->address[11], 45);
 
     // <address>
     EXPECT_EQ(list.begin()->address[12], 192);
