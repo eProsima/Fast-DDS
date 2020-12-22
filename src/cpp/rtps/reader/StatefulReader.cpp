@@ -963,21 +963,28 @@ bool StatefulReader::nextUntakenCache(
         return false;
     }
 
-    std::vector<CacheChange_t*> toremove;
     bool takeok = false;
     WriterProxy* wp;
-    for (std::vector<CacheChange_t*>::iterator it = mp_history->changesBegin();
-            it != mp_history->changesEnd(); ++it)
+    std::vector<CacheChange_t*>::iterator it = mp_history->changesBegin();
+    while (it != mp_history->changesEnd())
     {
         if (this->matched_writer_lookup((*it)->writerGUID, &wp))
         {
             if (is_datasharing_compatible_ && datasharing_listener_->writer_is_matched((*it)->writerGUID))
             {
+                // Lock the payload. The lock will NOT be freed for the returned change
+                DataSharingPayloadPool::shared_mutex((*it)->serializedPayload.data).lock_sharable();
+
                 //Check if the payload is dirty
                 if (!DataSharingPayloadPool::check_sequence_number(
                         (*it)->serializedPayload.data, (*it)->sequenceNumber))
                 {
-                    toremove.push_back((*it));
+                    // Unlock, remove and continue
+                    DataSharingPayloadPool::shared_mutex((*it)->serializedPayload.data).unlock_sharable();
+                    logWarning(RTPS_READER,
+                            "Removing change " << (*it)->sequenceNumber << " from " << (*it)->writerGUID <<
+                            " because is overidden");
+                    mp_history->remove_change(*it);
                     continue;
                 }
             }
@@ -988,6 +995,7 @@ bool StatefulReader::nextUntakenCache(
                 seq = wp->available_changes_max();
                 if (seq < (*it)->sequenceNumber)
                 {
+                    ++it;
                     continue;
                 }
             }
@@ -995,7 +1003,10 @@ bool StatefulReader::nextUntakenCache(
         }
         else
         {
-            toremove.push_back((*it));
+            logWarning(RTPS_READER,
+                    "Removing change " << (*it)->sequenceNumber << " from " << (*it)->writerGUID <<
+                    " because is no longer paired");
+            mp_history->remove_change(*it);
         }
 
         if (takeok)
@@ -1010,15 +1021,6 @@ bool StatefulReader::nextUntakenCache(
 
             break;
         }
-    }
-
-    for (std::vector<CacheChange_t*>::iterator it = toremove.begin();
-            it != toremove.end(); ++it)
-    {
-        logWarning(RTPS_READER,
-                "Removing change " << (*it)->sequenceNumber << " from " << (*it)->writerGUID <<
-                " because is no longer paired");
-        mp_history->remove_change(*it);
     }
 
     return takeok;
@@ -1038,11 +1040,12 @@ bool StatefulReader::nextUnreadCache(
     std::vector<CacheChange_t*> toremove;
     bool readok = false;
     WriterProxy* wp = nullptr;
-    for (std::vector<CacheChange_t*>::iterator it = mp_history->changesBegin();
-            it != mp_history->changesEnd(); ++it)
+    std::vector<CacheChange_t*>::iterator it = mp_history->changesBegin();
+    while (it != mp_history->changesEnd())
     {
         if ((*it)->isRead)
         {
+            ++it;
             continue;
         }
 
@@ -1050,11 +1053,19 @@ bool StatefulReader::nextUnreadCache(
         {
             if (is_datasharing_compatible_ && datasharing_listener_->writer_is_matched((*it)->writerGUID))
             {
+                // Lock the payload. The lock will NOT be freed for the returned change
+                DataSharingPayloadPool::shared_mutex((*it)->serializedPayload.data).lock_sharable();
+
                 //Check if the payload is dirty
                 if (!DataSharingPayloadPool::check_sequence_number(
                         (*it)->serializedPayload.data, (*it)->sequenceNumber))
                 {
-                    toremove.push_back((*it));
+                    // Unlock, remove and continue
+                    DataSharingPayloadPool::shared_mutex((*it)->serializedPayload.data).unlock_sharable();
+                    logWarning(RTPS_READER,
+                            "Removing change " << (*it)->sequenceNumber << " from " << (*it)->writerGUID <<
+                            " because is overidden");
+                    mp_history->remove_change(*it);
                     continue;
                 }
             }
@@ -1064,6 +1075,7 @@ bool StatefulReader::nextUnreadCache(
                 seq = wp->available_changes_max();
                 if (seq < (*it)->sequenceNumber)
                 {
+                    ++it;
                     continue;
                 }
             }
@@ -1071,7 +1083,11 @@ bool StatefulReader::nextUnreadCache(
         }
         else
         {
-            toremove.push_back((*it));
+            logWarning(RTPS_READER,
+                    "Removing change " << (*it)->sequenceNumber << " from " << (*it)->writerGUID <<
+                    " because is no longer paired");
+            mp_history->remove_change(*it);
+            continue;
         }
 
         if (readok)
@@ -1086,15 +1102,6 @@ bool StatefulReader::nextUnreadCache(
 
             break;
         }
-    }
-
-    for (std::vector<CacheChange_t*>::iterator it = toremove.begin();
-            it != toremove.end(); ++it)
-    {
-        logWarning(RTPS_READER,
-                "Removing change " << (*it)->sequenceNumber << " from " << (*it)->writerGUID <<
-                " because is no longer paired");
-        mp_history->remove_change(*it);
     }
 
     return readok;

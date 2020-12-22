@@ -80,6 +80,12 @@ bool DataSharingPayloadPool::check_sequence_number(
     return (PayloadNode::get_from_data(data)->sequence_number() == sn);
 }
 
+DataSharingPayloadPool::sharable_mutex& DataSharingPayloadPool::shared_mutex(
+        octet* data)
+{
+    return PayloadNode::get_from_data(data)->mutex();
+}
+
 std::shared_ptr<DataSharingPayloadPool> DataSharingPayloadPool::get_reader_pool(
         bool is_reader_volatile)
 {
