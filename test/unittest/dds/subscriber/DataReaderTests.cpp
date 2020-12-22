@@ -715,7 +715,7 @@ TEST_F(DataReaderTests, resource_limits)
     reader_qos.resource_limits().max_instances = 1;
     reader_qos.resource_limits().max_samples_per_instance = num_samples;
     reader_qos.resource_limits().max_samples = num_samples;
-    
+
     // Specify resource limits for this test
     // - max_samples_per_read = 10. This means that even if the max_samples parameter is greater than 10 (or even
     //   LENGTH_UNLIMITED, no more than 10 samples will be returned by a single call to read / take
@@ -817,7 +817,7 @@ TEST_F(DataReaderTests, resource_limits)
 
         // Return the first loan. Now max_samples_per_read infos are available
         EXPECT_EQ(ok_code, data_reader_->return_loan(data_seqs[0], info_seqs[0]));
-        
+
         // Loan max_samples_per_read - 1. 1 sample_info still available
         EXPECT_EQ(ok_code, data_reader_->read(data_seqs[0], info_seqs[0], 9));
         check_collection(data_seqs[0], false, 9, 9);
