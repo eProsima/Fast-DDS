@@ -57,11 +57,13 @@ def test_fast_discovery_closure(fast_discovery_tool):
     # sleep to let the server run
     time.sleep(1)
 
-    # On launching error report
+    # An exit code of 0 means everything was alright
     exit_code = 0
-    # exit_code is set to 1 on python script failure
+
+    # Check whether the process has terminated already
     if not proc.poll() is None:
-        proc.kill()
+        # If the process has already exit means something has gone wrong.
+        # Capture and print output for traceability and exit with 2.
         output, err = proc.communicate()
         print('test_fast_discovery_closure FAILED on launching tool')
         print('STDOUT:')
@@ -92,23 +94,29 @@ def test_fast_discovery_closure(fast_discovery_tool):
         else:
             break
 
-    # check output
-    proc.kill()
+    # Check whether SIGINT was able to terminate the process
+    if proc.poll() is None:
+        # SIGINT couldn't terminate the process. Kill it and set exit code to 3
+        proc.kill()
+        exit_code = 3
+        print('Signal could not kill process')
+
+    # Get process output
     output, err = proc.communicate()
 
     EXPECTED_CLOSURE = "### Server shut down ###"
 
-    if EXPECTED_CLOSURE in output:
-        # success
+    # Check whether everything closed down nicely
+    if (exit_code == 0) and (EXPECTED_CLOSURE in output):
+        # Success
         print('test_fast_discovery_closure SUCCEED')
     else:
-        # failure
+        # Failure
         print('test_fast_discovery_closure FAILED')
         print('STDOUT:')
         print(output)
         print('STDERR:')
         print(err)
-        exit_code = 3
 
     sys.exit(exit_code)
 
