@@ -41,6 +41,7 @@
 #include <fastrtps/types/TypesBase.h>
 
 #include <fastdds/subscriber/DataReaderImpl/DataReaderLoanManager.hpp>
+#include <fastdds/subscriber/DataReaderImpl/SampleInfoPool.hpp>
 #include <fastdds/subscriber/SubscriberImpl.hpp>
 #include <rtps/history/ITopicPayloadPool.h>
 
@@ -354,6 +355,7 @@ protected:
 
     std::shared_ptr<ITopicPayloadPool> payload_pool_;
 
+    detail::SampleInfoPool sample_info_pool_;
     detail::DataReaderLoanManager loan_manager_;
 
     ReturnCode_t check_collection_preconditions_and_calc_max_samples(

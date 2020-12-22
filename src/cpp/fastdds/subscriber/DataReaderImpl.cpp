@@ -104,6 +104,7 @@ DataReaderImpl::DataReaderImpl(
     , reader_listener_(this)
     , deadline_duration_us_(qos_.deadline().period.to_ns() * 1e-3)
     , lifespan_duration_us_(qos_.lifespan().duration.to_ns() * 1e-3)
+    , sample_info_pool_(qos)
     , loan_manager_(qos)
 {
 }
