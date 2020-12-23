@@ -57,12 +57,25 @@ def test_fast_discovery_closure(fast_discovery_tool):
     # sleep to let the server run
     time.sleep(1)
 
-    # On launching error report
+    # 1. An exit code of 0 means everything was alright
+    # 2. An exit code of 1 means the tool's process terminated before even
+    #    sending the kill signal.
+    # 3. An exit code of 2 means the signal could not terminate the process
+    # 4. An exit code of 3 means the signal terminated the process, but the
+    #    output was different than expected
     exit_code = 0
-    # exit_code is set to 1 on python script failure
+
+    # Check whether the process has terminated already
     if not proc.poll() is None:
-        exit_code = 2
-        sys.exit(exit_code)
+        # If the process has already exit means something has gone wrong.
+        # Capture and print output for traceability and exit with code s1.
+        output, err = proc.communicate()
+        print('test_fast_discovery_closure FAILED on launching tool')
+        print('STDOUT:')
+        print(output)
+        print('STDERR:')
+        print(err)
+        sys.exit(1)
 
     # direct this script to ignore SIGINT
     signal.signal(signal.SIGINT, signal_handler)
@@ -85,18 +98,29 @@ def test_fast_discovery_closure(fast_discovery_tool):
         else:
             break
 
-    # check output
-    proc.kill()
+    # Check whether SIGINT was able to terminate the process
+    if proc.poll() is None:
+        # SIGINT couldn't terminate the process. Kill it and exit with code 2
+        proc.kill()
+        print('Signal could not kill process')
+        sys.exit(2)
+
+    # Get process output
     output, err = proc.communicate()
 
     EXPECTED_CLOSURE = "### Server shut down ###"
 
+    # Check whether everything closed down nicely
     if EXPECTED_CLOSURE in output:
-        # success
+        # Success
         print('test_fast_discovery_closure SUCCEED')
     else:
-        # failure
+        # Failure
         print('test_fast_discovery_closure FAILED')
+        print('STDOUT:')
+        print(output)
+        print('STDERR:')
+        print(err)
         exit_code = 3
 
     sys.exit(exit_code)
