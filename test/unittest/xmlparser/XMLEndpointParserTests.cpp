@@ -261,7 +261,7 @@ TEST_F(XMLEndpointParserTests, loadXMLParticipantEndpoint)
                 num_errors++;
             }
         }
-        EXPECT_EQ(num_errors, 5);
+        EXPECT_EQ(num_errors, 5u);
     }
 }
 
