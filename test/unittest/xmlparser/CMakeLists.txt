@@ -120,7 +120,10 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
         include_directories(${TINYXML2_INCLUDE_DIR})
 
         add_executable(XMLProfileParserTests ${XMLPROFILEPARSER_SOURCE})
-        target_compile_definitions(XMLProfileParserTests PRIVATE FASTRTPS_NO_LIB)
+        target_compile_definitions(XMLProfileParserTests PRIVATE FASTRTPS_NO_LIB
+            $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
+            $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
+            )
         target_include_directories(XMLProfileParserTests PRIVATE
             ${GTEST_INCLUDE_DIRS} ${GMOCK_INCLUDE_DIRS}
             ${PROJECT_SOURCE_DIR}/test/mock/rtps/Log
@@ -198,7 +201,10 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
         include_directories(${TINYXML2_INCLUDE_DIR})
 
         add_executable(XMLParserTests ${XMLPARSER_SOURCE})
-        target_compile_definitions(XMLParserTests PRIVATE FASTRTPS_NO_LIB)
+        target_compile_definitions(XMLParserTests PRIVATE FASTRTPS_NO_LIB
+            $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
+            $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
+            )
         target_include_directories(XMLParserTests PRIVATE
             ${GTEST_INCLUDE_DIRS}
             ${PROJECT_SOURCE_DIR}/test/mock/rtps/TCPTransportDescriptor
@@ -227,7 +233,10 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
         include_directories(${TINYXML2_INCLUDE_DIR})
 
         add_executable(XMLTreeTests ${XMLTREE_SOURCE})
-        target_compile_definitions(XMLTreeTests PRIVATE FASTRTPS_NO_LIB)
+        target_compile_definitions(XMLTreeTests PRIVATE FASTRTPS_NO_LIB
+            $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
+            $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
+            )
         target_include_directories(XMLTreeTests PRIVATE
             ${GTEST_INCLUDE_DIRS}
             ${PROJECT_SOURCE_DIR}/include

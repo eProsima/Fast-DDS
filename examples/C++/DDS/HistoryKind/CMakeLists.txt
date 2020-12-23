@@ -47,6 +47,10 @@ message(STATUS "Configuring DDS History Kind example...")
 file(GLOB DDS_HISTORY_EXAMPLE_SOURCES "*.cxx")
 
 add_executable(DDSHistoryKind ${DDS_HISTORY_EXAMPLE_SOURCES} pastsamples.cpp)
+target_compile_definitions(DDSHistoryKind PRIVATE
+    $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
+    $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
+    )
 target_link_libraries(DDSHistoryKind fastrtps fastcdr foonathan_memory)
 install(TARGETS DDSHistoryKind
     RUNTIME DESTINATION examples/C++/DDS/HistoryKind/${BIN_INSTALL_DIR}

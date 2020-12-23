@@ -29,12 +29,20 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER) AND fastcdr_FOUND)
         Publisher.cpp
         )
     add_executable(DDSSimpleCommunicationPublisher ${DDS_PUBLISHER_SOURCE})
+    target_compile_definitions(DDSSimpleCommunicationPublisher PRIVATE
+        $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
+        $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
+        )
     target_link_libraries(DDSSimpleCommunicationPublisher fastrtps fastcdr foonathan_memory ${CMAKE_DL_LIBS})
 
     set(DDS_SUBSCRIBER_SOURCE
         Subscriber.cpp
         )
     add_executable(DDSSimpleCommunicationSubscriber ${DDS_SUBSCRIBER_SOURCE})
+    target_compile_definitions(DDSSimpleCommunicationSubscriber PRIVATE
+        $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
+        $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
+        )
     target_link_libraries(DDSSimpleCommunicationSubscriber fastrtps fastcdr foonathan_memory ${CMAKE_DL_LIBS})
 
     ###############################################################################

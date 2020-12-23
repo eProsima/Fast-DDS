@@ -52,6 +52,10 @@ file(GLOB DDS_BENCHMARK_SOURCES_CPP "*.cpp")
 # configure_file("BenchmarkPublisher.xml" "BenchmarkPublisher.xml" COPYONLY)
 
 add_executable(DDSBenchmark ${DDS_BENCHMARK_SOURCES_CXX} ${DDS_BENCHMARK_SOURCES_CPP})
+target_compile_definitions(DDSBenchmark PRIVATE
+    $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
+    $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
+)
 target_link_libraries(DDSBenchmark fastrtps fastcdr foonathan_memory)
 install(TARGETS DDSBenchmark
     RUNTIME DESTINATION examples/C++/DDS/Benchmark/${BIN_INSTALL_DIR})

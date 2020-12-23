@@ -44,6 +44,10 @@ file(GLOB DDS_HELLOWORLD_EXAMPLE_SOURCES_CXX "*.cxx")
 file(GLOB DDS_HELLOWORLD_EXAMPLE_SOURCES_CPP "*.cpp")
 
 add_executable(DDSHelloWorldExample ${DDS_HELLOWORLD_EXAMPLE_SOURCES_CXX} ${DDS_HELLOWORLD_EXAMPLE_SOURCES_CPP})
+target_compile_definitions(DDSHelloWorldExample PRIVATE
+    $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
+    $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
+)
 target_link_libraries(DDSHelloWorldExample fastrtps fastcdr)
 install(TARGETS DDSHelloWorldExample
     RUNTIME DESTINATION examples/C++/DDS/HelloWorldExample/${BIN_INSTALL_DIR})

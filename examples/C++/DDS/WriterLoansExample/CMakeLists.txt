@@ -44,6 +44,10 @@ file(GLOB DDS_WRITER_LOANS_EXAMPLE_SOURCES_CXX "*.cxx")
 file(GLOB DDS_WRITER_LOANS_EXAMPLE_SOURCES_CPP "*.cpp")
 
 add_executable(DDSWriterLoansExample ${DDS_WRITER_LOANS_EXAMPLE_SOURCES_CXX} ${DDS_WRITER_LOANS_EXAMPLE_SOURCES_CPP})
+target_compile_definitions(DDSWriterLoansExample PRIVATE
+    $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
+    $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
+    )
 target_link_libraries(DDSWriterLoansExample fastrtps fastcdr)
 install(TARGETS DDSWriterLoansExample
     RUNTIME DESTINATION examples/C++/DDS/HelloWorldExample/${BIN_INSTALL_DIR})

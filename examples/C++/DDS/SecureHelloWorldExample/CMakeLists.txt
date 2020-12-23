@@ -48,6 +48,10 @@ file(GLOB DDS_SECURE_HELLOWORLD_EXAMPLE_SOURCES_CXX "*.cxx")
 file(GLOB DDS_SECURE_HELLOWORLD_EXAMPLE_SOURCES_CPP "*.cpp")
 
 add_executable(DDSSecureHelloWorldExample ${DDS_SECURE_HELLOWORLD_EXAMPLE_SOURCES_CXX} ${DDS_SECURE_HELLOWORLD_EXAMPLE_SOURCES_CPP})
+target_compile_definitions(DDSSecureHelloWorldExample PRIVATE
+    $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
+    $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
+    )
 target_include_directories(DDSSecureHelloWorldExample PRIVATE)
 target_link_libraries(DDSSecureHelloWorldExample fastrtps fastcdr foonathan_memory)
 install(TARGETS DDSSecureHelloWorldExample

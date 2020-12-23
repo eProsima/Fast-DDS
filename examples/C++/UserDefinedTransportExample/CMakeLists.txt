@@ -49,6 +49,10 @@ file(GLOB USERDEFINEDTRANSPORTEXAMPLE_SOURCES_HXX "*.cpp")
 include_directories(${PROJECT_SOURCE_DIR}/../../../thirdparty/asio/asio/include)
 
 add_executable(UserDefinedTransportExample ${USERDEFINEDTRANSPORTEXAMPLE_SOURCES_HXX})
+target_compile_definitions(UserDefinedTransportExample PRIVATE
+    $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
+    $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
+)
 target_link_libraries(UserDefinedTransportExample fastrtps fastcdr foonathan_memory)
 install(TARGETS UserDefinedTransportExample
     RUNTIME DESTINATION examples/C++/UserDefinedTransportExample/${BIN_INSTALL_DIR})

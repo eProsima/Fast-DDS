@@ -47,6 +47,10 @@ message(STATUS "Configuring DDS Keys example...")
 file(GLOB DDS_KEYS_EXAMPLE_SOURCES "*.cxx")
 
 add_executable(DDSKeys ${DDS_KEYS_EXAMPLE_SOURCES} keys.cpp)
+target_compile_definitions(DDSKeys PRIVATE
+    $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
+    $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
+    )
 target_link_libraries(DDSKeys fastrtps fastcdr foonathan_memory)
 install(TARGETS DDSKeys
     RUNTIME DESTINATION examples/C++/DDS/Keys/${BIN_INSTALL_DIR}

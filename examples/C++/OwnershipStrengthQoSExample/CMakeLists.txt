@@ -47,6 +47,10 @@ message(STATUS "Configuring OwnershipStrengthQoS example...")
 file(GLOB OWNERSHIPSTRENGTH_EXAMPLE_SOURCES "*.cxx")
 
 add_executable(OwnershipStrengthQoSExample ${OWNERSHIPSTRENGTH_EXAMPLE_SOURCES})
+target_compile_definitions(OwnershipStrengthQoSExample PRIVATE
+    $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
+    $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
+)
 target_link_libraries(OwnershipStrengthQoSExample fastrtps fastcdr foonathan_memory)
 install(TARGETS OwnershipStrengthQoSExample
     RUNTIME DESTINATION examples/C++/OwnershipStrengthQoSExample/${BIN_INSTALL_DIR}

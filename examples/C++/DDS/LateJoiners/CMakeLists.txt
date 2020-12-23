@@ -47,6 +47,10 @@ message(STATUS "Configuring DDS LateJoiners example...")
 file(GLOB DDS_LATEJOINERS_EXAMPLE_SOURCES "*.cxx")
 
 add_executable(DDSLateJoiners ${DDS_LATEJOINERS_EXAMPLE_SOURCES} latejoiners.cpp)
+target_compile_definitions(DDSLateJoiners PRIVATE
+    $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
+    $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
+    )
 target_link_libraries(DDSLateJoiners fastrtps fastcdr foonathan_memory)
 install(TARGETS DDSLateJoiners
     RUNTIME DESTINATION examples/C++/DDS/LateJoiners/${BIN_INSTALL_DIR}

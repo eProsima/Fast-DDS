@@ -44,7 +44,10 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             ${PROJECT_SOURCE_DIR}/src/cpp/security/accesscontrol/AccessPermissionsHandle.cpp
             ${CMAKE_CURRENT_SOURCE_DIR}/builtinAESGCMGMACTests.cpp)
 
-        target_compile_definitions(BuiltinAESGCMGMAC PRIVATE FASTRTPS_NO_LIB)
+        target_compile_definitions(BuiltinAESGCMGMAC PRIVATE FASTRTPS_NO_LIB
+            $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
+            $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
+            )
         target_include_directories(BuiltinAESGCMGMAC PRIVATE
             ${GTEST_INCLUDE_DIRS}
             ${OPENSSL_INCLUDE_DIR}

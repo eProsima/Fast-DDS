@@ -52,6 +52,10 @@ if(WIN32)
 endif()
 
 add_executable(HelloWorldExampleSharedMem ${HELLOWORLD_EXAMPLE_SOURCES_CXX} ${HELLOWORLD_EXAMPLE_SOURCES_CPP})
+target_compile_definitions(HelloWorldExampleSharedMem PRIVATE
+    $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
+    $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
+)
 target_link_libraries(HelloWorldExampleSharedMem fastrtps fastcdr foonathan_memory)
 install(TARGETS HelloWorldExampleSharedMem
     RUNTIME DESTINATION examples/C++/HelloWorldExampleSharedMem/${BIN_INSTALL_DIR})

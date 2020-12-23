@@ -37,7 +37,10 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
         include_directories(mock/)
 
         add_executable(LogTests ${LOGTESTS_SOURCE})
-        target_compile_definitions(LogTests PRIVATE FASTRTPS_NO_LIB)
+        target_compile_definitions(LogTests PRIVATE FASTRTPS_NO_LIB
+            $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
+            $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
+            )
         target_include_directories(LogTests PRIVATE ${GTEST_INCLUDE_DIRS}
             ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include)
         target_link_libraries(LogTests ${GTEST_LIBRARIES} ${MOCKS}
@@ -62,7 +65,10 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
         include_directories(${TINYXML2_INCLUDE_DIR})
 
         add_executable(LogFileTests ${LOGFILETESTS_SOURCE})
-        target_compile_definitions(LogFileTests PRIVATE FASTRTPS_NO_LIB)
+        target_compile_definitions(LogFileTests PRIVATE FASTRTPS_NO_LIB
+            $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
+            $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
+            )
         target_include_directories(LogFileTests PRIVATE ${GTEST_INCLUDE_DIRS}
             ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include)
         target_link_libraries(LogFileTests ${GTEST_LIBRARIES} ${MOCKS}

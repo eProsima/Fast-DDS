@@ -52,6 +52,10 @@ file(GLOB BENCHMARK_SOURCES_CPP "*.cpp")
 # configure_file("BenchmarkPublisher.xml" "BenchmarkPublisher.xml" COPYONLY)
 
 add_executable(Benchmark ${BENCHMARK_SOURCES_CXX} ${BENCHMARK_SOURCES_CPP})
+target_compile_definitions(Benchmark PRIVATE
+    $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
+    $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
+)
 target_link_libraries(Benchmark fastrtps fastcdr foonathan_memory)
 install(TARGETS Benchmark
     RUNTIME DESTINATION examples/C++/Benchmark/${BIN_INSTALL_DIR})

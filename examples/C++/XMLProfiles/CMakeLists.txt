@@ -51,6 +51,10 @@ file(COPY ${PROJECT_SOURCE_DIR}/XMLProfilesExample.xml
     )
 
 add_executable(XMLProfiles ${XMLPROFILESEXAMPLE_SOURCES_CXX} ${XMLPROFILESEXAMPLE_SOURCES_CPP})
+target_compile_definitions(XMLProfiles PRIVATE
+    $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
+    $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
+)
 target_link_libraries(XMLProfiles fastrtps fastcdr foonathan_memory)
 install(TARGETS XMLProfiles
     RUNTIME DESTINATION examples/C++/XMLProfilesExample/${BIN_INSTALL_DIR})

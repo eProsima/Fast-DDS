@@ -108,6 +108,10 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER) AND fastcdr_FOUND)
             )
 
         add_executable(XTypesBlackBoxTests ${XTYPES_TESTS_SOURCE})
+        target_compile_definitions(XTypesBlackBoxTests PRIVATE
+            $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
+            $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
+            )
         target_include_directories(XTypesBlackBoxTests PRIVATE ${GTEST_INCLUDE_DIRS})
         target_link_libraries(XTypesBlackBoxTests fastrtps fastcdr ${GTEST_LIBRARIES})
         add_xtypes_gtest(XTypesBlackBoxTests SOURCES ${XTYPES_TESTS_SOURCE})

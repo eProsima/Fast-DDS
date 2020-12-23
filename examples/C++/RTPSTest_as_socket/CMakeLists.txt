@@ -47,6 +47,10 @@ message(STATUS "Configuring RTPSTest_as_socket...")
 file(GLOB RTPSTESTASSOCKET_SOURCES "*.cpp")
 
 add_executable(RTPSTest_as_socket ${RTPSTESTASSOCKET_SOURCES})
+target_compile_definitions(RTPSTest_as_socket PRIVATE
+    $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
+    $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
+)
 target_link_libraries(RTPSTest_as_socket fastrtps fastcdr foonathan_memory)
 install(TARGETS RTPSTest_as_socket
     RUNTIME DESTINATION examples/C++/RTPSTest_as_socket/${BIN_INSTALL_DIR}

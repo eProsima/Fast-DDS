@@ -47,12 +47,20 @@ message(STATUS "Configuring DDS Configurability example...")
 file(GLOB DDS_CONFIGURABILITY_EXAMPLE_SOURCES "*.cxx")
 
 add_executable(DDSUseCasePublisher ${DDS_CONFIGURABILITY_EXAMPLE_SOURCES} UseCasePublisher.cpp)
+target_compile_definitions(DDSUseCasePublisher PRIVATE
+    $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
+    $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
+)
 target_link_libraries(DDSUseCasePublisher fastrtps fastcdr foonathan_memory)
 install(TARGETS DDSUseCasePublisher
     RUNTIME DESTINATION examples/C++/DDS/UseCaseDemonstrator/${BIN_INSTALL_DIR}
     )
 
 add_executable(DDSUseCaseSubscriber ${DDS_CONFIGURABILITY_EXAMPLE_SOURCES} UseCaseSubscriber.cpp)
+target_compile_definitions(DDSUseCaseSubscriber PRIVATE
+    $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
+    $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
+)
 target_link_libraries(DDSUseCaseSubscriber fastrtps fastcdr foonathan_memory)
 install(TARGETS DDSUseCaseSubscriber
     RUNTIME DESTINATION examples/C++/DDS/UseCaseDemonstrator/${BIN_INSTALL_DIR}

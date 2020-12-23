@@ -44,6 +44,10 @@ file(GLOB DDS_LIFESPAN_EXAMPLE_SOURCES_CXX "*.cxx")
 file(GLOB DDS_LIFESPAN_EXAMPLE_SOURCES_CPP "*.cpp")
 
 add_executable(DDSLifespanQoSExample ${DDS_LIFESPAN_EXAMPLE_SOURCES_CXX} ${DDS_LIFESPAN_EXAMPLE_SOURCES_CPP})
+target_compile_definitions(DDSLifespanQoSExample PRIVATE
+    $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
+    $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
+    )
 target_link_libraries(DDSLifespanQoSExample fastrtps fastcdr)
 install(TARGETS DDSLifespanQoSExample
     RUNTIME DESTINATION examples/C++/DDS/LifespanQoSExample/${BIN_INSTALL_DIR})

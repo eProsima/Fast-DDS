@@ -47,6 +47,10 @@ message(STATUS "Configuring RTPSTest_registered...")
 file(GLOB RTPSTESTREGISTERED_SOURCES "*.cpp")
 
 add_executable(RTPSTest_registered ${RTPSTESTREGISTERED_SOURCES})
+target_compile_definitions(RTPSTest_registered PRIVATE
+    $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
+    $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
+)
 target_link_libraries(RTPSTest_registered fastrtps fastcdr foonathan_memory)
 install(TARGETS RTPSTest_registered
     RUNTIME DESTINATION examples/C++/RTPSTest_registered/${BIN_INSTALL_DIR}

@@ -47,6 +47,10 @@ message(STATUS "Configuring RTPSTest_persistent...")
 file(GLOB RTPSTESTPERSISTENT_SOURCES "*.cpp")
 
 add_executable(RTPSTest_persistent ${RTPSTESTPERSISTENT_SOURCES})
+target_compile_definitions(RTPSTest_persistent PRIVATE
+    $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
+    $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
+    )
 target_link_libraries(RTPSTest_persistent fastrtps fastcdr foonathan_memory)
 install(TARGETS RTPSTest_persistent
     RUNTIME DESTINATION examples/C++/RTPSTest_persistent/${BIN_INSTALL_DIR}
