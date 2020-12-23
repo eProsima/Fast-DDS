@@ -161,11 +161,10 @@ protected:
             LoanableCollection& data_values,
             SampleInfoSeq& infos)
     {
-        ReturnCode_t expected_return_loan_ret = code;
-        if (ReturnCode_t::RETCODE_NO_DATA == code)
+        ReturnCode_t expected_return_loan_ret = ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
+        if (ReturnCode_t::RETCODE_OK == code || ReturnCode_t::RETCODE_NOT_ENABLED == code)
         {
-            // When read returns NO_DATA, no loan will be performed
-            expected_return_loan_ret = ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
+            expected_return_loan_ret = code;
         }
         EXPECT_EQ(expected_return_loan_ret, data_reader->return_loan(data_values, infos));
 
