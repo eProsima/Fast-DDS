@@ -743,8 +743,8 @@ public:
      * @return true if the sample is valid
      */
     RTPS_DllAPI bool is_sample_valid(
-        const void* data,
-        const SampleInfo* info) const;
+            const void* data,
+            const SampleInfo* info) const;
 
 protected:
 

@@ -37,8 +37,8 @@ class WriterPool : public DataSharingPayloadPool
 public:
 
     WriterPool(
-        uint32_t pool_size,
-        uint32_t payload_size)
+            uint32_t pool_size,
+            uint32_t payload_size)
         : max_data_size_(payload_size)
         , pool_size_(pool_size)
         , free_history_size_(0)
@@ -143,7 +143,7 @@ public:
         bool overflow = false;
 
         size_t per_allocation_extra_size = fastdds::rtps::SharedMemSegment::compute_per_allocation_extra_size(
-                alignof(PayloadNode), DataSharingPayloadPool::domain_name());
+            alignof(PayloadNode), DataSharingPayloadPool::domain_name());
         size_t payload_size = DataSharingPayloadPool::node_size(max_data_size_);
 
         uint64_t estimated_size_for_payloads_pool = pool_size_ * payload_size;
@@ -157,7 +157,7 @@ public:
 
         uint32_t descriptor_size = static_cast<uint32_t>(sizeof(PoolDescriptor));
         uint64_t estimated_segment_size = size_for_payloads_pool + per_allocation_extra_size +
-                size_for_history + per_allocation_extra_size + 
+                size_for_history + per_allocation_extra_size +
                 descriptor_size + per_allocation_extra_size;
         overflow |= (estimated_segment_size != static_cast<uint32_t>(estimated_segment_size));
         uint32_t segment_size = static_cast<uint32_t>(estimated_segment_size);
@@ -165,9 +165,9 @@ public:
         if (overflow)
         {
             logError(DATASHARING_PAYLOADPOOL, "Failed to create segment " << segment_name_
-                        << ": Segment size is too large: " << estimated_size_for_payloads_pool
-                        << " (max is " << std::numeric_limits<uint32_t>::max() << ")."
-                        << " Please reduce the maximum size of the history");
+                                                                          << ": Segment size is too large: " << estimated_size_for_payloads_pool
+                                                                          << " (max is " << std::numeric_limits<uint32_t>::max() << ")."
+                                                                          << " Please reduce the maximum size of the history");
             return false;
         }
 
@@ -177,8 +177,8 @@ public:
         {
             segment_ = std::unique_ptr<Segment>(
                 new Segment(boost::interprocess::create_only,
-                    segment_name_,
-                    segment_size + fastdds::rtps::SharedMemSegment::EXTRA_SEGMENT_SIZE));
+                segment_name_,
+                segment_size + fastdds::rtps::SharedMemSegment::EXTRA_SEGMENT_SIZE));
         }
         catch (const std::exception& e)
         {
@@ -237,7 +237,8 @@ public:
      * Fills the metadata of the shared payload from the cache change information
      * and adds the payload's offset to the shared history
      */
-    void add_to_shared_history(const CacheChange_t* cache_change)
+    void add_to_shared_history(
+            const CacheChange_t* cache_change)
     {
         assert(cache_change);
         assert(cache_change->serializedPayload.data);
@@ -267,12 +268,13 @@ public:
 
     /**
      * Removes the payload's offset from the shared history
-     * 
+     *
      * Payloads must be removed from the history in the same order
      * they where added, i.e., payload for sequence number 7
-     * cannot be removed before payload for sequence number 5.  
+     * cannot be removed before payload for sequence number 5.
      */
-    void remove_from_shared_history(const CacheChange_t* cache_change)
+    void remove_from_shared_history(
+            const CacheChange_t* cache_change)
     {
         assert(cache_change);
         assert(cache_change->serializedPayload.data);
@@ -281,7 +283,8 @@ public:
         assert(free_history_size_ < descriptor_->history_size);
 
         PayloadNode* payload = PayloadNode::get_from_data(cache_change->serializedPayload.data);
-        assert(segment_->get_offset_from_address(payload) == history_[static_cast<uint32_t>(descriptor_->notified_begin)]);
+        assert(segment_->get_offset_from_address(
+                    payload) == history_[static_cast<uint32_t>(descriptor_->notified_begin)]);
         (void)payload;
         logInfo(DATASHARING_PAYLOADPOOL, "Change removed from shared history"
                 << " with SN " << cache_change->sequenceNumber);
@@ -293,7 +296,6 @@ public:
     {
         ++descriptor_->liveliness_sequence;
     }
-
 
 private:
 

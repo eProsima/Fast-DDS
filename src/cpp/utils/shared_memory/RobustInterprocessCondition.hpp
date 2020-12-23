@@ -32,7 +32,7 @@ public:
 
     RobustInterprocessCondition()
         : list_listening_(SemaphoreList::LIST_NULL, SemaphoreList::LIST_NULL)
-        , list_free_(0, MAX_LISTENERS-1)
+        , list_free_(0, MAX_LISTENERS - 1)
     {
         init_sem_list();
     }
@@ -192,7 +192,7 @@ private:
             {
                 sem_pool[tail_].next = sem_index;
             }
-            
+
             sem_pool[sem_index].prev = tail_;
             sem_pool[sem_index].next = LIST_NULL;
 
@@ -223,7 +223,7 @@ private:
             {
                 head_ = LIST_NULL;
             }
-            
+
             return sem_index;
         }
 
@@ -266,6 +266,7 @@ private:
                 tail_ = prev;
             }
         }
+
     };
 
     SemaphoreList list_listening_;
@@ -277,14 +278,14 @@ private:
         semaphores_pool_[0].prev = SemaphoreList::LIST_NULL;
         semaphores_pool_[0].next = 1;
 
-        for (uint32_t i = 1; i < MAX_LISTENERS-1; i++)
+        for (uint32_t i = 1; i < MAX_LISTENERS - 1; i++)
         {
-            semaphores_pool_[i].next = i+1;
-            semaphores_pool_[i].prev = i-1;
+            semaphores_pool_[i].next = i + 1;
+            semaphores_pool_[i].prev = i - 1;
         }
 
-        semaphores_pool_[MAX_LISTENERS-1].prev = MAX_LISTENERS-2;
-        semaphores_pool_[MAX_LISTENERS-1].next = SemaphoreList::LIST_NULL;
+        semaphores_pool_[MAX_LISTENERS - 1].prev = MAX_LISTENERS - 2;
+        semaphores_pool_[MAX_LISTENERS - 1].next = SemaphoreList::LIST_NULL;
     }
 
     inline uint32_t enqueue_listener()
@@ -314,7 +315,7 @@ private:
         {
             // Release caller's lock
             bi::ipcdetail::lock_inverter<bi::interprocess_mutex> inverted_lock(mut);
-            bi::scoped_lock<bi::ipcdetail::lock_inverter<bi::interprocess_mutex> > unlock(inverted_lock);
+            bi::scoped_lock<bi::ipcdetail::lock_inverter<bi::interprocess_mutex>> unlock(inverted_lock);
 
             // timed_wait (infin) is used, instead wait, because wait on semaphores could throw when
             // BOOST_INTERPROCESS_ENABLE_TIMEOUT_WHEN_LOCKING is set. We don't want that for our condition_variables
@@ -342,7 +343,7 @@ private:
         {
             // Release caller's lock
             bi::ipcdetail::lock_inverter<bi::interprocess_mutex> inverted_lock(mut);
-            bi::scoped_lock<bi::ipcdetail::lock_inverter<bi::interprocess_mutex> > unlock(inverted_lock);
+            bi::scoped_lock<bi::ipcdetail::lock_inverter<bi::interprocess_mutex>> unlock(inverted_lock);
 
             ret = semaphores_pool_[sem_index].sem.timed_wait(abs_time);
         }
@@ -354,6 +355,7 @@ private:
 
         return ret;
     }
+
 };
 
 } // namespace rtps

@@ -19,7 +19,7 @@
 #include <io.h>
 #else
 #include <sys/file.h>
-#endif
+#endif // ifdef  _MSC_VER
 
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -42,7 +42,7 @@ public:
     /**
      * Open or create and acquire the interprocess lock.
      * @param in name Is the object's interprocess global name, visible for all processes in the same machine.
-     * @param out was_lock_created If the lock succeeded, this parameter return whether the lock has been created 
+     * @param out was_lock_created If the lock succeeded, this parameter return whether the lock has been created
      * or it already exist.
      * @throw std::exception if lock coulnd't be acquired
      */
@@ -129,11 +129,11 @@ private:
         // Try open exclusive
         auto ret = _sopen_s(&test_exist, file_path.c_str(), _O_WRONLY, _SH_DENYWR, _S_IREAD | _S_IWRITE);
 
-        if(ret == 0)
+        if (ret == 0)
         {
             *was_lock_created = false;
 
-            if(was_lock_released)
+            if (was_lock_released)
             {
                 *was_lock_released = true;
             }
@@ -141,24 +141,24 @@ private:
             _close(test_exist);
         }
         else
-        {   
+        {
             // Try open shared
             ret = _sopen_s(&test_exist, file_path.c_str(), _O_RDONLY, _SH_DENYWR, _S_IREAD | _S_IWRITE);
 
-            if(ret == 0)
+            if (ret == 0)
             {
-                if(was_lock_released)
+                if (was_lock_released)
                 {
                     *was_lock_released = false;
                 }
-                
+
                 *was_lock_created = false;
 
                 return test_exist;
             }
             else
             {
-                if(was_lock_released)
+                if (was_lock_released)
                 {
                     *was_lock_released = true;
                 }
@@ -166,7 +166,7 @@ private:
                 *was_lock_created = true;
             }
         }
-        
+
         int fd;
         // Open or create shared
         ret = _sopen_s(&fd, file_path.c_str(), O_CREAT | _O_RDONLY, _SH_DENYWR, _S_IREAD | _S_IWRITE);
@@ -249,7 +249,7 @@ private:
             fd = open(file_path.c_str(), O_CREAT | O_RDONLY, 0666);
         }
 
-        if(was_lock_released != nullptr)
+        if (was_lock_released != nullptr)
         {
             // Lock exclusive
             if (0 == flock(fd, LOCK_EX | LOCK_NB))
@@ -266,7 +266,7 @@ private:
         }
 
         // Lock shared
-        if (0 != flock(fd, LOCK_SH |LOCK_NB))
+        if (0 != flock(fd, LOCK_SH | LOCK_NB))
         {
             close(fd);
             throw std::runtime_error(("failed to lock " + file_path).c_str());
@@ -296,7 +296,7 @@ private:
             lock_status = LockStatus::NOT_LOCKED;
 
             // Try lock exclusive
-            if (0 != flock(fd, LOCK_EX |LOCK_NB))
+            if (0 != flock(fd, LOCK_EX | LOCK_NB))
             {
                 // Failed so the file is locked shared
                 flock(fd, LOCK_UN | LOCK_NB);
@@ -321,7 +321,7 @@ private:
         return lock_status;
     }
 
-#endif
+#endif // ifdef _MSC_VER
 
 };
 

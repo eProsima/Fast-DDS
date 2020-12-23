@@ -159,7 +159,7 @@ TEST(DDSDataSharing, BestEffortDirtyPayloads)
     std::list<FixedSized> data = default_fixed_sized_data_generator(writer_sent_data);
     std::list<FixedSized> received_data;
     auto data_it = data.begin();
-    std::advance(data_it, writer_sent_data - writer_history_depth -1);
+    std::advance(data_it, writer_sent_data - writer_history_depth - 1);
     std::copy(data_it, data.end(), std::back_inserter(received_data));
 
     // we have to give the listener time to get the payload before the writer overwrites
@@ -217,7 +217,7 @@ TEST(DDSDataSharing, ReliableDirtyPayloads)
     std::list<FixedSized> data = default_fixed_sized_data_generator(writer_sent_data);
     std::list<FixedSized> received_data;
     auto data_it = data.begin();
-    std::advance(data_it, writer_sent_data - writer_history_depth -1);
+    std::advance(data_it, writer_sent_data - writer_history_depth - 1);
     std::copy(data_it, data.end(), std::back_inserter(received_data));
 
     // we have to give the listener time to get the payload before the writer overwrites

@@ -119,12 +119,12 @@ void RTPSReader::init(
         using std::placeholders::_1;
         std::shared_ptr<DataSharingNotification> notification =
                 DataSharingNotification::create_notification(
-                    getGuid(), att.endpoint.data_sharing_configuration().shm_directory());
+            getGuid(), att.endpoint.data_sharing_configuration().shm_directory());
         datasharing_listener_.reset(new DataSharingListener(
-                notification,
-                att.endpoint.data_sharing_configuration().shm_directory(),
-                att.matched_writers_allocation,
-                this));
+                    notification,
+                    att.endpoint.data_sharing_configuration().shm_directory(),
+                    att.matched_writers_allocation,
+                    this));
         datasharing_listener_->start();
     }
 

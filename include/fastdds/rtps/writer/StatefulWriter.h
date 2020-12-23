@@ -282,9 +282,10 @@ public:
     {
         std::lock_guard<RecursiveTimedMutex> guard(mp_mutex);
         return matched_remote_readers_.size()
-                + matched_local_readers_.size()
-                + matched_datasharing_readers_.size();
+               + matched_local_readers_.size()
+               + matched_datasharing_readers_.size();
     }
+
     /**
      * @brief Returns true if disable positive ACKs QoS is enabled
      * @return True if positive acks are disabled, false otherwise

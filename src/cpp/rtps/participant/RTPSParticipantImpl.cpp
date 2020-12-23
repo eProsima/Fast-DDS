@@ -1503,7 +1503,6 @@ bool RTPSParticipantImpl::pairing_remote_writer_with_local_reader_after_security
     return return_value;
 }
 
-
 bool RTPSParticipantImpl::is_security_enabled_for_writer(
         const WriterAttributes& writer_attributes)
 {
@@ -1521,7 +1520,7 @@ bool RTPSParticipantImpl::is_security_enabled_for_writer(
     if (security_manager().get_datawriter_sec_attributes(writer_attributes.endpoint.properties, security_attributes))
     {
         return (security_attributes.is_payload_protected == true ||
-                security_attributes.is_submessage_protected == true);
+               security_attributes.is_submessage_protected == true);
     }
 
     return false;
@@ -1544,7 +1543,7 @@ bool RTPSParticipantImpl::is_security_enabled_for_reader(
     if (security_manager().get_datareader_sec_attributes(reader_attributes.endpoint.properties, security_attributes))
     {
         return (security_attributes.is_payload_protected == true ||
-                security_attributes.is_submessage_protected == true);
+               security_attributes.is_submessage_protected == true);
     }
 
     return false;

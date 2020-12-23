@@ -109,12 +109,13 @@ public:
         return "pool";
     }
 
-    void fill_metadata(const CacheChange_t* /*cache_change*/)
+    void fill_metadata(
+            const CacheChange_t* /*cache_change*/)
     {
     }
 
     bool get_next_unread_payload(
-        CacheChange_t& cache_change)
+            CacheChange_t& cache_change)
     {
         return get_payload(1, cache_change);
     }

@@ -55,16 +55,16 @@ public:
 
     /**
      * Add a new writer to the listening
-     * 
+     *
      * On volatile readers, the listener will discard any previous change published by the writer
      * and will notify only of the changes published from the moment the writer is added to the listening.
      * On transient readers, immediately after this method is called, the listener will notify
      * of all the changes available in the writer's history before starting the listening operation
      * for new changes.
-     * 
+     *
      * @param writer_guid The GUID of the writer to listen to
      * @param is_reader_volatile Whether the listening reader is volatile.
-     * 
+     *
      * @return true if the writer was added, false if the writer was already being listened.
      */
     virtual bool add_datasharing_writer(
@@ -74,9 +74,9 @@ public:
     /**
      * Removes a writer from the listening. The changes in the writer's history will not be
      * notified anymore.
-     * 
+     *
      * @param writer_guid The GUID of the writer to remove
-     * 
+     *
      * @return true if the writer was removed, false if the writer was not being listened.
      */
     virtual bool remove_datasharing_writer(

@@ -224,7 +224,7 @@ public:
             CacheChange_t* change,
             const WriterProxy* writer,
             bool mark_as_read = true) override;
-            
+
 private:
 
     struct RemoteWriterInfo_t

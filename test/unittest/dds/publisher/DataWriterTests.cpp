@@ -172,6 +172,7 @@ public:
     {
         return true;
     }
+
 };
 
 TEST(DataWriterTests, ChangeDataWriterQos)
@@ -229,7 +230,8 @@ TEST(DataWriterTests, ForcedDataSharing)
     TypeSupport bounded_type(new BoundedTopicDataTypeMock());
     bounded_type.register_type(participant);
 
-    Topic* bounded_topic = participant->create_topic("bounded_footopic", bounded_type.get_type_name(), TOPIC_QOS_DEFAULT);
+    Topic* bounded_topic =
+            participant->create_topic("bounded_footopic", bounded_type.get_type_name(), TOPIC_QOS_DEFAULT);
     ASSERT_NE(bounded_topic, nullptr);
 
     DataWriterQos qos;
@@ -285,8 +287,9 @@ TEST(DataWriterTests, ForcedDataSharing)
             "builtin.PKI-DH"));
     security_property.properties().emplace_back(fastrtps::rtps::Property("dds.sec.auth.builtin.PKI-DH.identity_ca",
             "file://" + std::string(certs_path) + "/maincacert.pem"));
-    security_property.properties().emplace_back(fastrtps::rtps::Property("dds.sec.auth.builtin.PKI-DH.identity_certificate",
-            "file://" + std::string(certs_path) + "/mainsubcert.pem"));
+    security_property.properties().emplace_back(fastrtps::rtps::Property(
+                "dds.sec.auth.builtin.PKI-DH.identity_certificate",
+                "file://" + std::string(certs_path) + "/mainsubcert.pem"));
     security_property.properties().emplace_back(fastrtps::rtps::Property("dds.sec.auth.builtin.PKI-DH.private_key",
             "file://" + std::string(certs_path) + "/mainsubkey.pem"));
     security_property.properties().emplace_back(fastrtps::rtps::Property("dds.sec.crypto.plugin",

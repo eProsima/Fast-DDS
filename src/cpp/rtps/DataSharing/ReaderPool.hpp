@@ -90,7 +90,7 @@ public:
         {
             segment_ = std::unique_ptr<fastdds::rtps::SharedMemSegment>(
                 new fastdds::rtps::SharedMemSegment(boost::interprocess::open_only,
-                    segment_name_.c_str()));
+                segment_name_.c_str()));
         }
         catch (const std::exception& e)
         {
@@ -132,97 +132,97 @@ public:
         return true;
     }
 
-void get_next_unread_payload(
-        CacheChange_t& cache_change,
-        SequenceNumber_t& last_sequence_number)
-{
-    last_sequence_number = last_sn_;
-
-    while (next_payload_ < end())
+    void get_next_unread_payload(
+            CacheChange_t& cache_change,
+            SequenceNumber_t& last_sequence_number)
     {
-        // First ensure we are not too far behind
-        ensure_reading_reference_is_in_bounds();
+        last_sequence_number = last_sn_;
 
-        // history_[next_payload_] contains the offset to the payload
-        PayloadNode* payload = static_cast<PayloadNode*>(
+        while (next_payload_ < end())
+        {
+            // First ensure we are not too far behind
+            ensure_reading_reference_is_in_bounds();
+
+            // history_[next_payload_] contains the offset to the payload
+            PayloadNode* payload = static_cast<PayloadNode*>(
                 segment_->get_address_from_offset(history_[static_cast<uint32_t>(next_payload_)]));
 
-        // The SN is the first thing to be invalidated on the writer
-        cache_change.sequenceNumber = payload->sequence_number();
-        if (cache_change.sequenceNumber == c_SequenceNumber_Unknown)
-        {
-            // Reset by the writer. Discard and continue
-            advance(next_payload_);
-            logWarning(RTPS_READER, "Dirty data detected on datasharing writer " << writer());
-            continue;
+            // The SN is the first thing to be invalidated on the writer
+            cache_change.sequenceNumber = payload->sequence_number();
+            if (cache_change.sequenceNumber == c_SequenceNumber_Unknown)
+            {
+                // Reset by the writer. Discard and continue
+                advance(next_payload_);
+                logWarning(RTPS_READER, "Dirty data detected on datasharing writer " << writer());
+                continue;
+            }
+
+            cache_change.serializedPayload.data = payload->data();
+            cache_change.serializedPayload.max_size = payload->data_length();
+            cache_change.serializedPayload.length = payload->data_length();
+
+            cache_change.kind = static_cast<ChangeKind_t>(payload->status());
+            cache_change.writerGUID = payload->writer_GUID();
+            cache_change.instanceHandle = payload->instance_handle();
+            cache_change.sourceTimestamp = payload->source_timestamp();
+            cache_change.write_params.sample_identity(payload->related_sample_identity());
+
+            cache_change.payload_owner(this);
+
+            if (payload->sequence_number() != cache_change.sequenceNumber)
+            {
+                // Overriden while retrieving. Discard and continue
+                advance(next_payload_);
+                logWarning(RTPS_READER, "Dirty data detected on datasharing writer " << writer());
+                continue;
+            }
+
+            if (!ensure_reading_reference_is_in_bounds())
+            {
+                // We may have been taken over and read a payload that is too far forward. Discard and continue
+                continue;
+            }
+
+            last_sn_ = cache_change.sequenceNumber;
+
+            return;
         }
 
-        cache_change.serializedPayload.data = payload->data();
-        cache_change.serializedPayload.max_size = payload->data_length();
-        cache_change.serializedPayload.length = payload->data_length();
-
-        cache_change.kind = static_cast<ChangeKind_t>(payload->status());
-        cache_change.writerGUID = payload->writer_GUID();
-        cache_change.instanceHandle = payload->instance_handle();
-        cache_change.sourceTimestamp = payload->source_timestamp();
-        cache_change.write_params.sample_identity(payload->related_sample_identity());
-
-        cache_change.payload_owner(this);
-
-        if (payload->sequence_number() != cache_change.sequenceNumber)
-        {
-            // Overriden while retrieving. Discard and continue
-            advance(next_payload_);
-            logWarning(RTPS_READER, "Dirty data detected on datasharing writer " << writer());
-            continue;
-        }
-
-        if (!ensure_reading_reference_is_in_bounds())
-        {
-            // We may have been taken over and read a payload that is too far forward. Discard and continue
-            continue;
-        }
-
-        last_sn_ = cache_change.sequenceNumber;
-
-        return;
+        cache_change.sequenceNumber = c_SequenceNumber_Unknown;
     }
 
-    cache_change.sequenceNumber = c_SequenceNumber_Unknown;
-}
-
-const SequenceNumber_t& get_last_read_sequence_number()
-{
-    return last_sn_;
-}
-
-bool advance_to_next_payload()
-{
-    if (next_payload_ < end())
+    const SequenceNumber_t& get_last_read_sequence_number()
     {
-        advance(next_payload_);
-        return true;
+        return last_sn_;
     }
-    return false;
-}
+
+    bool advance_to_next_payload()
+    {
+        if (next_payload_ < end())
+        {
+            advance(next_payload_);
+            return true;
+        }
+        return false;
+    }
 
 protected:
 
-bool ensure_reading_reference_is_in_bounds()
-{
-    if ((next_payload_ >> 32) < (descriptor_->notified_end >> 32) &&
-            static_cast<uint32_t>(next_payload_) <= static_cast<uint32_t>(descriptor_->notified_end))
+    bool ensure_reading_reference_is_in_bounds()
     {
-        logWarning(RTPS_READER, "Writer " << writer() << " overtook reader in datasharing pool."
-                << " Some changes will be missing.");
-        
-        // lower part is the index, upper part is the loop counter
-        next_payload_ = ((next_payload_ >> 32) << 32) + static_cast<uint32_t>(descriptor_->notified_end);
-        advance(next_payload_);
-        return false;
+        if ((next_payload_ >> 32) < (descriptor_->notified_end >> 32) &&
+                static_cast<uint32_t>(next_payload_) <= static_cast<uint32_t>(descriptor_->notified_end))
+        {
+            logWarning(RTPS_READER, "Writer " << writer() << " overtook reader in datasharing pool."
+                                              << " Some changes will be missing.");
+
+            // lower part is the index, upper part is the loop counter
+            next_payload_ = ((next_payload_ >> 32) << 32) + static_cast<uint32_t>(descriptor_->notified_end);
+            advance(next_payload_);
+            return false;
+        }
+        return true;
     }
-    return true;
-}
 
 private:
 

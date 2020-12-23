@@ -56,7 +56,7 @@ class SharedMemSegment
 {
 public:
 
-    template <class M> 
+    template <class M>
     using sharable_lock = boost::interprocess::sharable_lock<M>;
     using sharable_mutex = boost::interprocess::interprocess_sharable_mutex;
 

@@ -24,18 +24,22 @@
 
 using namespace eprosima::fastrtps::rtps;
 
-StringType::StringType() {
+StringType::StringType()
+{
     setName("StringType");
     m_typeSize = (uint32_t)String::getMaxCdrSerializedSize() + 4 /*encapsulation*/;
     m_isGetKeyDefined = false;
 
 }
 
-StringType::~StringType() {
+StringType::~StringType()
+{
     // TODO Auto-generated destructor stub
 }
 
-bool StringType::serialize(void* data, SerializedPayload_t* payload)
+bool StringType::serialize(
+        void* data,
+        SerializedPayload_t* payload)
 {
     String* hw = (String*) data;
     // Object that manages the raw buffer.
@@ -52,7 +56,9 @@ bool StringType::serialize(void* data, SerializedPayload_t* payload)
     return true;
 }
 
-bool StringType::deserialize(SerializedPayload_t* payload, void* data)
+bool StringType::deserialize(
+        SerializedPayload_t* payload,
+        void* data)
 {
     String* hw = (String*) data;
     // Object that manages the raw buffer.
@@ -68,23 +74,30 @@ bool StringType::deserialize(SerializedPayload_t* payload, void* data)
     return true;
 }
 
-std::function<uint32_t()> StringType::getSerializedSizeProvider(void *data)
+std::function<uint32_t()> StringType::getSerializedSizeProvider(
+        void* data)
 {
-    return [data]() -> uint32_t {
-        return (uint32_t)type::getCdrSerializedSize(*static_cast<String*>(data)) + 4 /*encapsulation*/;
-    };
+    return [data]() -> uint32_t
+           {
+               return (uint32_t)type::getCdrSerializedSize(*static_cast<String*>(data)) + 4 /*encapsulation*/;
+           };
 }
 
 void* StringType::createData()
 {
     return (void*)new String();
 }
-void StringType::deleteData(void* data)
+
+void StringType::deleteData(
+        void* data)
 {
     delete((String*)data);
 }
 
-bool StringType::getKey(void* /*data*/, InstanceHandle_t* /*ihandle*/, bool /*force_md5*/)
+bool StringType::getKey(
+        void* /*data*/,
+        InstanceHandle_t* /*ihandle*/,
+        bool /*force_md5*/)
 {
     return false;
 }

@@ -92,7 +92,7 @@ void ReaderQos::setQos(
         m_topicData = qos.m_topicData;
         m_topicData.hasChanged = true;
     }
-    if (m_groupData.getValue() != qos.m_groupData.getValue() )
+    if (m_groupData.getValue() != qos.m_groupData.getValue())
     {
         m_groupData = qos.m_groupData;
         m_groupData.hasChanged = true;
@@ -160,7 +160,7 @@ bool ReaderQos::checkQos() const
         logError(RTPS_QOS_CHECK, "BEST_EFFORT incompatible with EXCLUSIVE ownership");
         return false;
     }
-    
+
     return true;
 }
 

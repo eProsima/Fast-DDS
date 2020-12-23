@@ -109,14 +109,13 @@ bool for_matched_readers(
     return for_matched_readers(reader_vector_3, fun);
 }
 
-
 /**
  * Loops over all the readers in the vector, applying the given routine.
  * The loop continues until the result of the routine is true for any reader
  * or all readers have been processes.
  * The returned value is true if the routine returned true at any point,
  * or false otherwise.
- * 
+ *
  * const version
  */
 bool for_matched_readers(
@@ -158,7 +157,6 @@ bool for_matched_readers(
     }
     return for_matched_readers(reader_vector_3, fun);
 }
-
 
 template<typename UnaryFun>
 bool send_data_or_fragments(
@@ -409,7 +407,7 @@ StatefulWriter::~StatefulWriter()
     }
 
     // TODO [ILG] Should we force this on all cases?
-    if(is_datasharing_compatible())
+    if (is_datasharing_compatible())
     {
         //Release payloads orderly
         for (std::vector<CacheChange_t*>::iterator chit = mp_history->changesBegin();
@@ -442,24 +440,24 @@ void StatefulWriter::async_delivery(
         const std::chrono::time_point<std::chrono::steady_clock>& max_blocking_time)
 {
     for_matched_readers(matched_local_readers_, matched_datasharing_readers_, matched_remote_readers_,
-        [this, &change, &max_blocking_time](ReaderProxy* reader)
-        {
-            ChangeForReader_t changeForReader(change);
-
-            if (m_pushMode)
+            [this, &change, &max_blocking_time](ReaderProxy* reader)
             {
-                changeForReader.setStatus(UNSENT);
-            }
-            else
-            {
-                changeForReader.setStatus(UNACKNOWLEDGED);
-            }
-            changeForReader.setRelevance(reader->rtps_is_relevant(change));
-            reader->add_change(changeForReader, false, max_blocking_time);
+                ChangeForReader_t changeForReader(change);
 
-            return false;
-        }
-    );
+                if (m_pushMode)
+                {
+                    changeForReader.setStatus(UNSENT);
+                }
+                else
+                {
+                    changeForReader.setStatus(UNACKNOWLEDGED);
+                }
+                changeForReader.setRelevance(reader->rtps_is_relevant(change));
+                reader->add_change(changeForReader, false, max_blocking_time);
+
+                return false;
+            }
+            );
 
     if (m_pushMode)
     {
@@ -478,33 +476,33 @@ void StatefulWriter::sync_delivery(
     // It has to be done before sending, because if a timeout is caught, we will not include the
     // CacheChange_t in some reader proxies.
     for_matched_readers(matched_local_readers_, matched_datasharing_readers_, matched_remote_readers_,
-        [this, &change, &max_blocking_time, &expectsInlineQos](ReaderProxy* reader)
-        {
-            ChangeForReader_t changeForReader(change);
-
-            if (m_pushMode)
+            [this, &change, &max_blocking_time, &expectsInlineQos](ReaderProxy* reader)
             {
-                if (reader->is_reliable())
+                ChangeForReader_t changeForReader(change);
+
+                if (m_pushMode)
                 {
-                    changeForReader.setStatus(UNDERWAY);
+                    if (reader->is_reliable())
+                    {
+                        changeForReader.setStatus(UNDERWAY);
+                    }
+                    else
+                    {
+                        changeForReader.setStatus(ACKNOWLEDGED);
+                    }
                 }
                 else
                 {
-                    changeForReader.setStatus(ACKNOWLEDGED);
+                    changeForReader.setStatus(UNACKNOWLEDGED);
                 }
-            }
-            else
-            {
-                changeForReader.setStatus(UNACKNOWLEDGED);
-            }
 
-            changeForReader.setRelevance(reader->rtps_is_relevant(change));
-            reader->add_change(changeForReader, true, max_blocking_time);
-            expectsInlineQos |= reader->expects_inline_qos();
+                changeForReader.setRelevance(reader->rtps_is_relevant(change));
+                reader->add_change(changeForReader, true, max_blocking_time);
+                expectsInlineQos |= reader->expects_inline_qos();
 
-            return false;
-        }
-    );
+                return false;
+            }
+            );
 
     // Notify the datasharing readers
     for (ReaderProxy* reader : matched_datasharing_readers_)
@@ -747,12 +745,12 @@ bool StatefulWriter::change_removed_by_history(
 
     // Invalidate CacheChange pointer in ReaderProxies.
     for_matched_readers(matched_local_readers_, matched_datasharing_readers_, matched_remote_readers_,
-        [sequence_number](ReaderProxy* reader)
-        {
-            reader->change_has_been_removed(sequence_number);
-            return false;
-        }
-    );
+            [sequence_number](ReaderProxy* reader)
+            {
+                reader->change_has_been_removed(sequence_number);
+                return false;
+            }
+            );
 
     // remove from datasharing pool history
     if (is_datasharing_compatible())
@@ -1042,7 +1040,7 @@ void StatefulWriter::send_all_datasharing_changes(
                     }
                     else
                     {
-                    remoteReader->set_change_to_status(seq_num, UNACKNOWLEDGED, false);
+                        remoteReader->set_change_to_status(seq_num, UNACKNOWLEDGED, false);
                     }
                 };
 
@@ -1080,7 +1078,7 @@ void StatefulWriter::send_all_unsent_changes(
     {
         send_all_datasharing_changes(max_sequence);
     }
-    
+
     if (there_are_remote_readers_)
     {
         static constexpr uint32_t implicit_flow_controller_size = RTPSMessageGroup::get_max_fragment_payload_size();
@@ -1213,7 +1211,7 @@ void StatefulWriter::send_unsent_changes_with_flow_control(
     {
         send_all_datasharing_changes(max_sequence);
     }
-    
+
     // From here onwards, only remote readers should be accessed
 
     RTPSWriterCollector<ReaderProxy*> relevantChanges;
@@ -1454,16 +1452,16 @@ void StatefulWriter::select_all_readers_with_lowmark_below(
     locator_selector_.reset(false);
 
     for_matched_readers(matched_local_readers_, matched_remote_readers_,
-        [this, &seq](ReaderProxy* reader)
-        {
-            if (reader->changes_low_mark() < seq)
+            [this, &seq](ReaderProxy* reader)
             {
-                locator_selector_.enable(reader->guid());
-            }
+                if (reader->changes_low_mark() < seq)
+                {
+                    locator_selector_.enable(reader->guid());
+                }
 
-            return false;
-        }
-    );
+                return false;
+            }
+            );
 
     if (locator_selector_.state_has_changed())
     {
@@ -1510,19 +1508,19 @@ bool StatefulWriter::matched_reader_add(
 
     // Check if it is already matched.
     if (for_matched_readers(matched_local_readers_, matched_datasharing_readers_, matched_remote_readers_,
-        [this, &rdata](ReaderProxy* reader)
-        {
-            if (reader->guid() == rdata.guid())
+            [this, &rdata](ReaderProxy* reader)
             {
-                logInfo(RTPS_WRITER, "Attempting to add existing reader, updating information.");
-                if (reader->update(rdata))
+                if (reader->guid() == rdata.guid())
                 {
-                    update_reader_info(true);
+                    logInfo(RTPS_WRITER, "Attempting to add existing reader, updating information.");
+                    if (reader->update(rdata))
+                    {
+                        update_reader_info(true);
+                    }
+                    return true;
                 }
-                return true;
-            }
-            return false;
-        }))
+                return false;
+            }))
     {
         return false;
     }
@@ -1557,7 +1555,7 @@ bool StatefulWriter::matched_reader_add(
     if (rp->is_datasharing_reader())
     {
         matched_datasharing_readers_.push_back(rp);
-        logInfo(RTPS_WRITER, "Adding reader " << rdata.guid() << " to " << this->m_guid.entityId 
+        logInfo(RTPS_WRITER, "Adding reader " << rdata.guid() << " to " << this->m_guid.entityId
                                               << " as data sharing");
     }
     else
@@ -1565,13 +1563,13 @@ bool StatefulWriter::matched_reader_add(
         if (rp->is_local_reader())
         {
             matched_local_readers_.push_back(rp);
-            logInfo(RTPS_WRITER, "Adding reader " << rdata.guid() << " to " << this->m_guid.entityId 
+            logInfo(RTPS_WRITER, "Adding reader " << rdata.guid() << " to " << this->m_guid.entityId
                                                   << " as local reader");
         }
         else
         {
             matched_remote_readers_.push_back(rp);
-            logInfo(RTPS_WRITER, "Adding reader " << rdata.guid() << " to " << this->m_guid.entityId 
+            logInfo(RTPS_WRITER, "Adding reader " << rdata.guid() << " to " << this->m_guid.entityId
                                                   << " as remote reader");
         }
     }
@@ -1745,7 +1743,7 @@ bool StatefulWriter::matched_reader_remove(
     std::unique_lock<RecursiveTimedMutex> lock(mp_mutex);
 
     for (ReaderProxyIterator it = matched_local_readers_.begin();
-         it != matched_local_readers_.end(); ++it)
+            it != matched_local_readers_.end(); ++it)
     {
         if ((*it)->guid() == reader_guid)
         {
@@ -1759,7 +1757,7 @@ bool StatefulWriter::matched_reader_remove(
     if (rproxy == nullptr)
     {
         for (ReaderProxyIterator it = matched_datasharing_readers_.begin();
-            it != matched_datasharing_readers_.end(); ++it)
+                it != matched_datasharing_readers_.end(); ++it)
         {
             if ((*it)->guid() == reader_guid)
             {
@@ -1774,7 +1772,7 @@ bool StatefulWriter::matched_reader_remove(
     if (rproxy == nullptr)
     {
         for (ReaderProxyIterator it = matched_remote_readers_.begin();
-            it != matched_remote_readers_.end(); ++it)
+                it != matched_remote_readers_.end(); ++it)
         {
             if ((*it)->guid() == reader_guid)
             {
@@ -1814,11 +1812,11 @@ bool StatefulWriter::matched_reader_is_matched(
 {
     std::lock_guard<RecursiveTimedMutex> guard(mp_mutex);
     return for_matched_readers(matched_local_readers_, matched_datasharing_readers_, matched_remote_readers_,
-        [&reader_guid](ReaderProxy* reader)
-        {
-            return (reader->guid() == reader_guid);
-        }
-    );
+                   [&reader_guid](ReaderProxy* reader)
+                   {
+                       return (reader->guid() == reader_guid);
+                   }
+                   );
 }
 
 bool StatefulWriter::matched_reader_lookup(
@@ -1827,16 +1825,16 @@ bool StatefulWriter::matched_reader_lookup(
 {
     std::lock_guard<RecursiveTimedMutex> guard(mp_mutex);
     return for_matched_readers(matched_local_readers_, matched_datasharing_readers_, matched_remote_readers_,
-        [&readerGuid, RP](ReaderProxy* reader)
-        {
-            if (reader->guid() == readerGuid)
-            {
-                *RP = reader;
-                return true;
-            }
-            return false;
-        }
-    );
+                   [&readerGuid, RP](ReaderProxy* reader)
+                   {
+                       if (reader->guid() == readerGuid)
+                       {
+                           *RP = reader;
+                           return true;
+                       }
+                       return false;
+                   }
+                   );
 }
 
 bool StatefulWriter::is_acked_by_all(
@@ -1870,11 +1868,11 @@ bool StatefulWriter::all_readers_updated()
     std::lock_guard<RecursiveTimedMutex> guard(mp_mutex);
 
     return !for_matched_readers(matched_local_readers_, matched_datasharing_readers_, matched_remote_readers_,
-        [](const ReaderProxy* reader)
-        {
-            return (reader->has_changes());
-        }
-    );
+                   [](const ReaderProxy* reader)
+                   {
+                       return (reader->has_changes());
+                   }
+                   );
 }
 
 bool StatefulWriter::wait_for_all_acked(
@@ -1884,11 +1882,11 @@ bool StatefulWriter::wait_for_all_acked(
     std::unique_lock<std::mutex> all_acked_lock(all_acked_mutex_);
 
     all_acked_ = !for_matched_readers(matched_local_readers_, matched_datasharing_readers_, matched_remote_readers_,
-        [](const ReaderProxy* reader)
-        {
-            return reader->has_changes();
-        }
-    );
+                    [](const ReaderProxy* reader)
+                    {
+                        return reader->has_changes();
+                    }
+                    );
     lock.unlock();
 
     if (!all_acked_)
@@ -1928,23 +1926,23 @@ void StatefulWriter::check_acked_status()
     SequenceNumber_t min_low_mark = mp_history->next_sequence_number() - 1;
 
     for_matched_readers(matched_local_readers_, matched_datasharing_readers_, matched_remote_readers_,
-        [&all_acked, &has_min_low_mark, &min_low_mark](ReaderProxy* reader)
-        {
-            SequenceNumber_t reader_low_mark = reader->changes_low_mark();
-            if (reader_low_mark < min_low_mark || !has_min_low_mark)
+            [&all_acked, &has_min_low_mark, &min_low_mark](ReaderProxy* reader)
             {
-                has_min_low_mark = true;
-                min_low_mark = reader_low_mark;
-            }
+                SequenceNumber_t reader_low_mark = reader->changes_low_mark();
+                if (reader_low_mark < min_low_mark || !has_min_low_mark)
+                {
+                    has_min_low_mark = true;
+                    min_low_mark = reader_low_mark;
+                }
 
-            if (reader->has_changes())
-            {
-                all_acked = false;
-            }
+                if (reader->has_changes())
+                {
+                    all_acked = false;
+                }
 
-            return false;
-        }
-    );
+                return false;
+            }
+            );
 
     bool something_changed = all_acked;
     SequenceNumber_t min_seq = get_seq_num_min();
@@ -2113,12 +2111,12 @@ void StatefulWriter::updateTimes(
     if (m_times.nackSupressionDuration != times.nackSupressionDuration)
     {
         for_matched_readers(matched_local_readers_, matched_datasharing_readers_, matched_remote_readers_,
-            [&times](ReaderProxy* reader)
-            {
-                reader->update_nack_supression_interval(times.nackSupressionDuration);
-                return false;
-            }
-        );
+                [&times](ReaderProxy* reader)
+                {
+                    reader->update_nack_supression_interval(times.nackSupressionDuration);
+                    return false;
+                }
+                );
 
         for (ReaderProxy* it : matched_readers_pool_)
         {
@@ -2151,13 +2149,13 @@ bool StatefulWriter::send_periodic_heartbeat(
         if (liveliness)
         {
             for_matched_readers(matched_local_readers_, matched_datasharing_readers_, matched_remote_readers_,
-                [this, &liveliness, &unacked_changes](ReaderProxy* reader)
-                {
-                    send_heartbeat_to_nts(*reader, liveliness);
-                    unacked_changes = true;
-                    return false;
-                }
-            );
+                    [this, &liveliness, &unacked_changes](ReaderProxy* reader)
+                    {
+                        send_heartbeat_to_nts(*reader, liveliness);
+                        unacked_changes = true;
+                        return false;
+                    }
+                    );
         }
         else
         {
@@ -2186,12 +2184,13 @@ bool StatefulWriter::send_periodic_heartbeat(
         {
             assert(firstSeq <= lastSeq);
 
-            unacked_changes = for_matched_readers(matched_local_readers_, matched_datasharing_readers_, matched_remote_readers_,
-                [](ReaderProxy* reader)
-                {
-                    return reader->has_unacknowledged();
-                }
-            );
+            unacked_changes = for_matched_readers(matched_local_readers_, matched_datasharing_readers_,
+                            matched_remote_readers_,
+                            [](ReaderProxy* reader)
+                            {
+                                return reader->has_unacknowledged();
+                            }
+                            );
 
             if (unacked_changes)
             {
@@ -2217,7 +2216,7 @@ bool StatefulWriter::send_periodic_heartbeat(
                 intraprocess_heartbeat(reader, true);
             }
 
-            for(ReaderProxy* reader : matched_datasharing_readers_)
+            for (ReaderProxy* reader : matched_datasharing_readers_)
             {
                 std::shared_ptr<WriterPool> p = std::dynamic_pointer_cast<WriterPool>(payload_pool_);
                 assert(p);
@@ -2236,7 +2235,6 @@ bool StatefulWriter::send_periodic_heartbeat(
 
     return unacked_changes;
 }
-
 
 void StatefulWriter::send_heartbeat_to_nts(
         ReaderProxy& remoteReaderProxy,
@@ -2348,16 +2346,16 @@ void StatefulWriter::perform_nack_response()
     std::unique_lock<RecursiveTimedMutex> lock(mp_mutex);
     bool must_wake_up_async_thread = false;
     for_matched_readers(matched_local_readers_, matched_datasharing_readers_, matched_remote_readers_,
-        [&must_wake_up_async_thread](ReaderProxy* reader)
-        {
-            if (reader->perform_acknack_response() || reader->are_there_gaps())
+            [&must_wake_up_async_thread](ReaderProxy* reader)
             {
-                must_wake_up_async_thread = true;
-                // Do not exit the loop, perform_acknack_response must be executed for all readers
+                if (reader->perform_acknack_response() || reader->are_there_gaps())
+                {
+                    must_wake_up_async_thread = true;
+                    // Do not exit the loop, perform_acknack_response must be executed for all readers
+                }
+                return false;
             }
-            return false;
-        }
-    );
+            );
 
     if (must_wake_up_async_thread)
     {
@@ -2371,17 +2369,17 @@ void StatefulWriter::perform_nack_supression(
     std::unique_lock<RecursiveTimedMutex> lock(mp_mutex);
 
     for_matched_readers(matched_local_readers_, matched_datasharing_readers_, matched_remote_readers_,
-        [this, &reader_guid](ReaderProxy* reader)
-        {
-            if (reader->guid() == reader_guid)
+            [this, &reader_guid](ReaderProxy* reader)
             {
-                reader->perform_nack_supression();
-                periodic_hb_event_->restart_timer();
-                return true;
+                if (reader->guid() == reader_guid)
+                {
+                    reader->perform_nack_supression();
+                    periodic_hb_event_->restart_timer();
+                    return true;
+                }
+                return false;
             }
-            return false;
-        }
-    );
+            );
 }
 
 bool StatefulWriter::process_acknack(
@@ -2401,60 +2399,60 @@ bool StatefulWriter::process_acknack(
         if (received_sequence_number <= next_sequence_number())
         {
             for_matched_readers(matched_local_readers_, matched_datasharing_readers_, matched_remote_readers_,
-                [&](ReaderProxy* remote_reader)
-                {
-                    if (remote_reader->guid() == reader_guid)
+                    [&](ReaderProxy* remote_reader)
                     {
-                        if (remote_reader->check_and_set_acknack_count(ack_count))
+                        if (remote_reader->guid() == reader_guid)
                         {
-                            // Sequence numbers before Base are set as Acknowledged.
-                            remote_reader->acked_changes_set(sn_set.base());
-                            if (sn_set.base() > SequenceNumber_t(0, 0))
+                            if (remote_reader->check_and_set_acknack_count(ack_count))
                             {
-                                if (remote_reader->requested_changes_set(sn_set) || remote_reader->are_there_gaps())
+                                // Sequence numbers before Base are set as Acknowledged.
+                                remote_reader->acked_changes_set(sn_set.base());
+                                if (sn_set.base() > SequenceNumber_t(0, 0))
                                 {
-                                    nack_response_event_->restart_timer();
-                                }
-                                else if (!final_flag)
-                                {
-                                    periodic_hb_event_->restart_timer();
-                                }
-                            }
-                            else if (sn_set.empty() && !final_flag)
-                            {
-                                // This is the preemptive acknack.
-                                if (remote_reader->process_initial_acknack())
-                                {
-                                    if (!remote_reader->is_datasharing_reader())
+                                    if (remote_reader->requested_changes_set(sn_set) || remote_reader->are_there_gaps())
                                     {
-                                        if (remote_reader->is_local_reader())
+                                        nack_response_event_->restart_timer();
+                                    }
+                                    else if (!final_flag)
+                                    {
+                                        periodic_hb_event_->restart_timer();
+                                    }
+                                }
+                                else if (sn_set.empty() && !final_flag)
+                                {
+                                    // This is the preemptive acknack.
+                                    if (remote_reader->process_initial_acknack())
+                                    {
+                                        if (!remote_reader->is_datasharing_reader())
                                         {
-                                            mp_RTPSParticipant->async_thread().wake_up(this);
+                                            if (remote_reader->is_local_reader())
+                                            {
+                                                mp_RTPSParticipant->async_thread().wake_up(this);
+                                            }
+                                            else
+                                            {
+                                                // Send heartbeat if requested
+                                                send_heartbeat_to_nts(*remote_reader, false, true);
+                                            }
                                         }
-                                        else
-                                        {
-                                            // Send heartbeat if requested
-                                            send_heartbeat_to_nts(*remote_reader, false, true);
-                                        }
+                                    }
+
+                                    if (remote_reader->is_local_reader() && !remote_reader->is_datasharing_reader())
+                                    {
+                                        intraprocess_heartbeat(remote_reader);
                                     }
                                 }
 
-                                if (remote_reader->is_local_reader() && !remote_reader->is_datasharing_reader())
-                                {
-                                    intraprocess_heartbeat(remote_reader);
-                                }
+                                // Check if all CacheChange are acknowledge, because a user could be waiting
+                                // for this, or some CacheChanges could be removed if we are VOLATILE
+                                check_acked_status();
                             }
-
-                            // Check if all CacheChange are acknowledge, because a user could be waiting
-                            // for this, or some CacheChanges could be removed if we are VOLATILE
-                            check_acked_status();
+                            return true;
                         }
-                        return true;
-                    }
 
-                    return false;
-                }
-            );
+                        return false;
+                    }
+                    );
         }
         else
         {
@@ -2465,6 +2463,7 @@ bool StatefulWriter::process_acknack(
 
     return result;
 }
+
 bool StatefulWriter::process_nack_frag(
         const GUID_t& writer_guid,
         const GUID_t& reader_guid,
@@ -2479,24 +2478,23 @@ bool StatefulWriter::process_nack_frag(
     {
         result = true;
         for_matched_readers(matched_local_readers_, matched_datasharing_readers_, matched_remote_readers_,
-            [this, &reader_guid, &ack_count, &seq_num, &fragments_state](ReaderProxy* reader)
-            {
-                if (reader->guid() == reader_guid)
+                [this, &reader_guid, &ack_count, &seq_num, &fragments_state](ReaderProxy* reader)
                 {
-                    if (reader->process_nack_frag(reader_guid, ack_count, seq_num, fragments_state))
+                    if (reader->guid() == reader_guid)
                     {
-                        nack_response_event_->restart_timer();
+                        if (reader->process_nack_frag(reader_guid, ack_count, seq_num, fragments_state))
+                        {
+                            nack_response_event_->restart_timer();
+                        }
+                        return true;
                     }
-                    return true;
+                    return false;
                 }
-                return false;
-            }
-        );
+                );
     }
 
     return result;
 }
-
 
 bool StatefulWriter::ack_timer_expired()
 {
@@ -2515,15 +2513,15 @@ bool StatefulWriter::ack_timer_expired()
     while (interval.count() < 0)
     {
         for_matched_readers(matched_local_readers_, matched_datasharing_readers_, matched_remote_readers_,
-            [this](ReaderProxy* reader)
-            {
-                if (reader->disable_positive_acks())
+                [this](ReaderProxy* reader)
                 {
-                    reader->acked_changes_set(last_sequence_number_ + 1);
+                    if (reader->disable_positive_acks())
+                    {
+                        reader->acked_changes_set(last_sequence_number_ + 1);
+                    }
+                    return false;
                 }
-                return false;
-            }
-        );
+                );
         last_sequence_number_++;
 
         // Get the next cache change from the history

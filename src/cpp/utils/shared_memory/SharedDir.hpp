@@ -29,7 +29,8 @@ class SharedDir
 {
 public:
 
-    static void get_default_shared_dir (std::string& shared_dir)
+    static void get_default_shared_dir (
+            std::string& shared_dir)
     {
 
 #if !defined(BOOST_INTERPROCESS_POSIX_SHARED_MEMORY_OBJECTS)
@@ -46,7 +47,7 @@ public:
         const bool add_leading_slash = !boost::interprocess::shared_memory_object_detail::use_filesystem_based_posix();
         #else
         const bool add_leading_slash = true;
-        #endif
+        #endif // if defined(BOOST_INTERPROCESS_FILESYSTEM_BASED_POSIX_SHARED_MEMORY)
         if (add_leading_slash)
         {
             shared_dir = defaultdir;
@@ -55,7 +56,7 @@ public:
         {
             boost::interprocess::ipcdetail::get_shared_dir(shared_dir);
         }
-#endif
+#endif // if !defined(BOOST_INTERPROCESS_POSIX_SHARED_MEMORY_OBJECTS)
     }
 
     static std::string get_file_path(
@@ -65,6 +66,7 @@ public:
         get_default_shared_dir(path);
         return path + "/" + filename;
     }
+
 };
 
 } // namespace rtps

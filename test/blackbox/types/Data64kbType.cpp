@@ -27,75 +27,101 @@
 
 using namespace eprosima::fastrtps::rtps;
 
-Data64kbType::Data64kbType() {
+Data64kbType::Data64kbType()
+{
     setName("Data64kbType");
     m_typeSize = (uint32_t)Data64kb::getMaxCdrSerializedSize() + 4 /*encapsulation*/;
     m_isGetKeyDefined = Data64kb::isKeyDefined();
-    m_keyBuffer = (unsigned char*)malloc(Data64kb::getKeyMaxCdrSerializedSize()>16 ? Data64kb::getKeyMaxCdrSerializedSize() : 16);
+    m_keyBuffer = (unsigned char*)malloc(
+        Data64kb::getKeyMaxCdrSerializedSize() > 16 ? Data64kb::getKeyMaxCdrSerializedSize() : 16);
 }
 
-Data64kbType::~Data64kbType() {
-    if(m_keyBuffer!=nullptr)
+Data64kbType::~Data64kbType()
+{
+    if (m_keyBuffer != nullptr)
+    {
         free(m_keyBuffer);
+    }
 }
 
-bool Data64kbType::serialize(void *data, SerializedPayload_t *payload) {
-    Data64kb *p_type = (Data64kb*) data;
+bool Data64kbType::serialize(
+        void* data,
+        SerializedPayload_t* payload)
+{
+    Data64kb* p_type = (Data64kb*) data;
     eprosima::fastcdr::FastBuffer fastbuffer((char*)payload->data, payload->max_size); // Object that manages the raw buffer.
     eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN,
             eprosima::fastcdr::Cdr::DDS_CDR);
     payload->encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
     // Serialize encapsulation
     ser.serialize_encapsulation();
-    p_type->serialize(ser); 	// Serialize the object:
-    payload->length = (uint32_t)ser.getSerializedDataLength(); 	//Get the serialized length
+    p_type->serialize(ser);     // Serialize the object:
+    payload->length = (uint32_t)ser.getSerializedDataLength();  //Get the serialized length
     return true;
 }
 
-bool Data64kbType::deserialize(SerializedPayload_t* payload, void* data) {
-    Data64kb* p_type = (Data64kb*) data; 	//Convert DATA to pointer of your type
-    eprosima::fastcdr::FastBuffer fastbuffer((char*)payload->data, payload->length); 	// Object that manages the raw buffer.
+bool Data64kbType::deserialize(
+        SerializedPayload_t* payload,
+        void* data)
+{
+    Data64kb* p_type = (Data64kb*) data;    //Convert DATA to pointer of your type
+    eprosima::fastcdr::FastBuffer fastbuffer((char*)payload->data, payload->length);    // Object that manages the raw buffer.
     eprosima::fastcdr::Cdr deser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN,
             eprosima::fastcdr::Cdr::DDS_CDR); // Object that deserializes the data.
     // Deserialize encapsulation.
     deser.read_encapsulation();
     payload->encapsulation = deser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
-    p_type->deserialize(deser);	//Deserialize the object:
+    p_type->deserialize(deser); //Deserialize the object:
     return true;
 }
 
-std::function<uint32_t()> Data64kbType::getSerializedSizeProvider(void *data)
+std::function<uint32_t()> Data64kbType::getSerializedSizeProvider(
+        void* data)
 {
-    return [data]() -> uint32_t {
-        return (uint32_t)type::getCdrSerializedSize(*static_cast<Data64kb*>(data)) + 4 /*encapsulation*/;
-    };
+    return [data]() -> uint32_t
+           {
+               return (uint32_t)type::getCdrSerializedSize(*static_cast<Data64kb*>(data)) + 4 /*encapsulation*/;
+           };
 }
 
-void* Data64kbType::createData() {
+void* Data64kbType::createData()
+{
     return (void*)new Data64kb();
 }
 
-void Data64kbType::deleteData(void* data) {
+void Data64kbType::deleteData(
+        void* data)
+{
     delete((Data64kb*)data);
 }
 
-bool Data64kbType::getKey(void *data, InstanceHandle_t* handle, bool force_md5) {
-    if(!m_isGetKeyDefined)
+bool Data64kbType::getKey(
+        void* data,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!m_isGetKeyDefined)
+    {
         return false;
+    }
     Data64kb* p_type = (Data64kb*) data;
-    eprosima::fastcdr::FastBuffer fastbuffer((char*)m_keyBuffer,Data64kb::getKeyMaxCdrSerializedSize()); 	// Object that manages the raw buffer.
-    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS); 	// Object that serializes the data.
+    eprosima::fastcdr::FastBuffer fastbuffer((char*)m_keyBuffer, Data64kb::getKeyMaxCdrSerializedSize());    // Object that manages the raw buffer.
+    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS);     // Object that serializes the data.
     p_type->serializeKey(ser);
-    if(force_md5 || Data64kb::getKeyMaxCdrSerializedSize()>16)	{
+    if (force_md5 || Data64kb::getKeyMaxCdrSerializedSize() > 16)
+    {
         m_md5.init();
-        m_md5.update(m_keyBuffer,(unsigned int)ser.getSerializedDataLength());
+        m_md5.update(m_keyBuffer, (unsigned int)ser.getSerializedDataLength());
         m_md5.finalize();
-        for(uint8_t i = 0;i<16;++i)    	{
+        for (uint8_t i = 0; i < 16; ++i)
+        {
             handle->value[i] = m_md5.digest[i];
         }
     }
-    else    {
-        for(uint8_t i = 0;i<16;++i)    	{
+    else
+    {
+        for (uint8_t i = 0; i < 16; ++i)
+        {
             handle->value[i] = m_keyBuffer[i];
         }
     }

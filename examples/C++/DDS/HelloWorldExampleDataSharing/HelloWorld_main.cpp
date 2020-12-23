@@ -30,8 +30,8 @@ int main(
         int argc,
         char** argv)
 {
-//    Log::SetVerbosity(Log::Kind::Info);
-//    Log::SetCategoryFilter(std::regex("(RTPS_WRITER)|(RTPS_READER)"));
+    //    Log::SetVerbosity(Log::Kind::Info);
+    //    Log::SetCategoryFilter(std::regex("(RTPS_WRITER)|(RTPS_READER)"));
 
     std::cout << "Starting " << std::endl;
     int type = 1;
@@ -63,26 +63,26 @@ int main(
         return 0;
     }
 
-    switch(type)
+    switch (type)
     {
         case 1:
+        {
+            HelloWorldPublisher mypub;
+            if (mypub.init())
             {
-                HelloWorldPublisher mypub;
-                if(mypub.init())
-                {
-                    mypub.run(static_cast<uint32_t>(count), static_cast<uint32_t>(sleep));
-                }
-                break;
+                mypub.run(static_cast<uint32_t>(count), static_cast<uint32_t>(sleep));
             }
+            break;
+        }
         case 2:
+        {
+            HelloWorldSubscriber mysub;
+            if (mysub.init())
             {
-                HelloWorldSubscriber mysub;
-                if(mysub.init())
-                {
-                    mysub.run();
-                }
-                break;
+                mysub.run();
             }
+            break;
+        }
     }
     Log::Reset();
     return 0;

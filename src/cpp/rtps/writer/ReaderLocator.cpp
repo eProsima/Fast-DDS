@@ -47,7 +47,8 @@ ReaderLocator::ReaderLocator(
 {
     if (owner->is_datasharing_compatible())
     {
-        datasharing_notifier_ = new DataSharingNotifier(owner->getAttributes().data_sharing_configuration().shm_directory());
+        datasharing_notifier_ = new DataSharingNotifier(
+            owner->getAttributes().data_sharing_configuration().shm_directory());
     }
 }
 
@@ -74,7 +75,8 @@ bool ReaderLocator::start(
         guid_prefix_as_vector_.at(0) = remote_guid.guidPrefix;
         locator_info_.remote_guid = remote_guid;
 
-        is_local_reader_ = !is_datasharing && RTPSDomainImpl::should_intraprocess_between(owner_->getGuid(), remote_guid);
+        is_local_reader_ = !is_datasharing &&
+                RTPSDomainImpl::should_intraprocess_between(owner_->getGuid(), remote_guid);
         local_reader_ = nullptr;
 
         if (!is_local_reader_ && !is_datasharing)

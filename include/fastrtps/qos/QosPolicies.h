@@ -106,7 +106,7 @@ namespace xtypes {
 using TypeInformation = fastdds::dds::xtypes::TypeInformation;
 } //namespace xtypes
 
-}
-}
+} // namespace fastrtps
+} // namespace eprosima
 
 #endif /* QOS_POLICIES_H_ */

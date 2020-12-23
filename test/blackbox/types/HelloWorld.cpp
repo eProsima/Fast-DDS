@@ -39,90 +39,104 @@ HelloWorld::~HelloWorld()
 {
 }
 
-HelloWorld::HelloWorld(const HelloWorld &x)
+HelloWorld::HelloWorld(
+        const HelloWorld& x)
 {
     m_index = x.m_index;
     m_message = x.m_message;
 }
 
-HelloWorld::HelloWorld(HelloWorld &&x)
+HelloWorld::HelloWorld(
+        HelloWorld&& x)
 {
     m_index = x.m_index;
     m_message = std::move(x.m_message);
 }
 
-HelloWorld& HelloWorld::operator=(const HelloWorld &x)
+HelloWorld& HelloWorld::operator =(
+        const HelloWorld& x)
 {
     m_index = x.m_index;
     m_message = x.m_message;
-    
+
     return *this;
 }
 
-HelloWorld& HelloWorld::operator=(HelloWorld &&x)
+HelloWorld& HelloWorld::operator =(
+        HelloWorld&& x)
 {
     m_index = x.m_index;
     m_message = std::move(x.m_message);
-    
+
     return *this;
 }
 
-bool HelloWorld::operator==(const HelloWorld &x) const
+bool HelloWorld::operator ==(
+        const HelloWorld& x) const
 {
-    if(m_index == x.m_index &&
+    if (m_index == x.m_index &&
             m_message == x.m_message)
+    {
         return true;
+    }
 
     return false;
 }
 
-size_t HelloWorld::getMaxCdrSerializedSize(size_t current_alignment)
+size_t HelloWorld::getMaxCdrSerializedSize(
+        size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
-            
+
     current_alignment += 2 + eprosima::fastcdr::Cdr::alignment(current_alignment, 2);
     current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4) + 128 + 1;
 
     return current_alignment - initial_alignment;
 }
 
-size_t HelloWorld::getCdrSerializedSize(const HelloWorld& data, size_t current_alignment)
+size_t HelloWorld::getCdrSerializedSize(
+        const HelloWorld& data,
+        size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
-            
+
     current_alignment += 2 + eprosima::fastcdr::Cdr::alignment(current_alignment, 2);
     current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4) + data.m_message.size() + 1;
 
     return current_alignment - initial_alignment;
 }
 
-size_t HelloWorld::getKeyMaxCdrSerializedSize(size_t current_alignment)
+size_t HelloWorld::getKeyMaxCdrSerializedSize(
+        size_t current_alignment)
 {
-	size_t current_align = current_alignment;
-            
+    size_t current_align = current_alignment;
+
 
     return current_align;
 }
 
 bool HelloWorld::isKeyDefined()
 {
- return false;
+    return false;
 }
 
-void HelloWorld::serialize(eprosima::fastcdr::Cdr &scdr) const
+void HelloWorld::serialize(
+        eprosima::fastcdr::Cdr& scdr) const
 {
     scdr << m_index;
     scdr << m_message;
 }
 
-void HelloWorld::deserialize(eprosima::fastcdr::Cdr &dcdr)
+void HelloWorld::deserialize(
+        eprosima::fastcdr::Cdr& dcdr)
 {
     dcdr >> m_index;
     dcdr >> m_message;
 }
 
-void HelloWorld::serializeKey(eprosima::fastcdr::Cdr &/*scdr*/) const
+void HelloWorld::serializeKey(
+        eprosima::fastcdr::Cdr& /*scdr*/) const
 {
-	 
-	 
+
+
 }

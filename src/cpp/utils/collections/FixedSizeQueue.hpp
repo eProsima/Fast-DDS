@@ -35,7 +35,7 @@ namespace fastrtps {
  *
  * @tparam _Ty                 Element type.
  * @tparam _Alloc              Allocator to use on the underlying collection type, defaults to std::allocator<_Ty>.
- * 
+ *
  * @ingroup UTILITIES_MODULE
  */
 template <
@@ -45,6 +45,7 @@ class FixedSizeQueue
 {
 
 public:
+
     using allocator_type = _Alloc;
     using value_type = _Ty;
     using pointer = _Ty*;
@@ -191,7 +192,7 @@ public:
      * This constructor receives a buffer already allocated that will be used to back the queue.
      * The queue is not the owner of the buffer, so no deallocation will be done on destruction.
      * It is the responsibility of the caller to deallocate the buffer.
-     * 
+     *
      * \pre The buffer has capacity to hold \c capacity elements
      *
      * @param buffer    Buffer where to construct the queue.
@@ -214,7 +215,7 @@ public:
      *
      * This constructor receives another FixedSizeQueue that will be copied into the constructed one.
      * The new FixedSizeQueue will have the same content and capacity of the given argument.
-     * 
+     *
      * The new queue always owns the buffer and will reserve new memory for it.
      *
      * @param other   Queue to copy.
@@ -231,7 +232,7 @@ public:
 
     virtual ~FixedSizeQueue ()
     {
-        while(pop())
+        while (pop())
         {
         }
 
@@ -248,7 +249,7 @@ public:
      * Only queues that have not been initialized before can be initialized.
      *
      * @param capacity  Number of elements to reserve for the queue.
-     * 
+     *
      * \pre The queue is not initialized yet
      */
     void init(
@@ -269,7 +270,7 @@ public:
      * It receives a buffer already allocated that will be used to back the queue.
      * The queue is not the owner of the buffer, so no deallocation will be done on destruction.
      * It is the responsibility of the caller to deallocate the buffer.
-     * 
+     *
      * \pre The buffer has capacity to hold \c capacity elements
      *
      * @param buffer    Buffer where to construct the queue.
@@ -302,7 +303,7 @@ public:
     FixedSizeQueue& operator = (
             const FixedSizeQueue& other)
     {
-        if(this != &other)
+        if (this != &other)
         {
             // This also resets the pointers
             clear();
@@ -372,7 +373,7 @@ public:
         {
             return false;
         }
-        allocator_.construct(&(*tail_), std::forward<Args&&>(args)...);
+        allocator_.construct(&(*tail_), std::forward<Args &&>(args)...);
         ++tail_;
         ++size_;
         return true;
@@ -401,7 +402,7 @@ public:
      *
      * @return A reference to the first element at the beginning of the queue.
      *         Calling \c head on an empty queue is undefined.
-     * 
+     *
      * \pre The queue is not empty
      */
     reference front()
@@ -414,7 +415,7 @@ public:
      *
      * @return A const reference to the first element at the beginning of the queue.
      *         Calling \c head on an empty queue is undefined.
-     * 
+     *
      * \pre The queue is not empty
      */
     const_reference front() const

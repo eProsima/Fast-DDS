@@ -26,20 +26,32 @@
 
 #include "String.h"
 
-class StringType:public eprosima::fastrtps::TopicDataType {
+class StringType : public eprosima::fastrtps::TopicDataType
+{
 public:
+
     typedef String type;
 
-	StringType();
-	virtual ~StringType();
-	bool serialize(void*data, eprosima::fastrtps::rtps::SerializedPayload_t* payload);
-	bool deserialize(eprosima::fastrtps::rtps::SerializedPayload_t* payload,void * data);
-        std::function<uint32_t()> getSerializedSizeProvider(void *data);
-	bool getKey(void*data, eprosima::fastrtps::rtps::InstanceHandle_t* ihandle, bool force_md5);
-	void* createData();
-	void deleteData(void* data);
+    StringType();
+    virtual ~StringType();
+    bool serialize(
+            void* data,
+            eprosima::fastrtps::rtps::SerializedPayload_t* payload);
+    bool deserialize(
+            eprosima::fastrtps::rtps::SerializedPayload_t* payload,
+            void* data);
+    std::function<uint32_t()> getSerializedSizeProvider(
+            void* data);
+    bool getKey(
+            void* data,
+            eprosima::fastrtps::rtps::InstanceHandle_t* ihandle,
+            bool force_md5);
+    void* createData();
+    void deleteData(
+            void* data);
     bool is_bounded() const;
-    bool is_plain() const;};
+    bool is_plain() const;
+};
 
 
 

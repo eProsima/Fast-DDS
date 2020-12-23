@@ -323,5 +323,5 @@ inline bool addParticipantGenericMessage(
 #include <fastdds/rtps/messages/CDRMessage.hpp>
 
 #endif /* DOXYGEN_SHOULD_SKIP_THIS */
-#endif
+#endif // ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 #endif /* _FASTDDS_RTPS_CDRMESSAGE_H_ */

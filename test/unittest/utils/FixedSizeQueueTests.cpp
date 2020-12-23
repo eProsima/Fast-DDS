@@ -19,16 +19,18 @@ using namespace eprosima::fastrtps;
 
 constexpr size_t CAPACITY = 32;
 
-class FixedSizeQueueTests: public ::testing::Test
+class FixedSizeQueueTests : public ::testing::Test
 {
 public:
-    const int testbed[CAPACITY] = 
+
+    const int testbed[CAPACITY] =
     {
-            1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14, 15, 16,
+        1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14, 15, 16,
         17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32
     };
 
-    void test_limits(FixedSizeQueue<int> &uut)
+    void test_limits(
+            FixedSizeQueue<int>& uut)
     {
         // Should be empty and allocated
         ASSERT_TRUE(uut.empty());
@@ -66,7 +68,7 @@ public:
 
         // Add some data to force overflow on buffer
         size_t c = CAPACITY / 2;
-        while(--c)
+        while (--c)
         {
             ASSERT_EQ (uut.push(-1), true);
         }
@@ -107,6 +109,7 @@ public:
         // Try to remove one more fails
         ASSERT_EQ (uut.pop(), false);
     }
+
 };
 
 TEST_F(FixedSizeQueueTests, default_construct_and_initialize)
@@ -139,7 +142,9 @@ TEST_F(FixedSizeQueueTests, buffer_constructor)
 }
 
 
-int main(int argc, char **argv)
+int main(
+        int argc,
+        char** argv)
 {
     testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();
