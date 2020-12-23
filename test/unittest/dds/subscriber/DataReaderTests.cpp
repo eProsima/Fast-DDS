@@ -132,12 +132,16 @@ protected:
         type_.get_key(&data, &handle_wrong_);
     }
 
-    void reset_lengths(
+    void reset_lengths_if_ok(
+            const ReturnCode_t& code,
             LoanableCollection& data_values,
             SampleInfoSeq& infos)
     {
-        data_values.length(0u);
-        infos.length(0u);
+        if (ReturnCode_t::RETCODE_OK == code)
+        {
+            data_values.length(0u);
+            infos.length(0u);
+        }
     }
 
     void send_data(
@@ -202,7 +206,7 @@ protected:
 
         EXPECT_EQ(instance_ok_code, data_reader->read_instance(data_values, infos, LENGTH_UNLIMITED, handle_ok_));
         check_return_loan(loan_return_code, data_reader, data_values, infos);
-        reset_lengths(data_values, infos);
+        reset_lengths_if_ok(instance_ok_code, data_values, infos);
 
         EXPECT_EQ(instance_ok_code, data_reader->take_instance(data_values, infos, LENGTH_UNLIMITED, handle_ok_));
         if (ReturnCode_t::RETCODE_OK == instance_ok_code)
@@ -211,7 +215,7 @@ protected:
             send_data(data_values, infos);
         }
         check_return_loan(loan_return_code, data_reader, data_values, infos);
-        reset_lengths(data_values, infos);
+        reset_lengths_if_ok(instance_ok_code, data_values, infos);
     }
 
     void basic_read_apis_check(
@@ -256,10 +260,10 @@ protected:
 
             EXPECT_EQ(code, data_reader->read(data_values, infos));
             check_return_loan(code, data_reader, data_values, infos);
-            reset_lengths(data_values, infos);
+            reset_lengths_if_ok(code, data_values, infos);
             EXPECT_EQ(code, data_reader->read_next_instance(data_values, infos));
             check_return_loan(code, data_reader, data_values, infos);
-            reset_lengths(data_values, infos);
+            reset_lengths_if_ok(code, data_values, infos);
 
             EXPECT_EQ(code, data_reader->take(data_values, infos));
             if (ReturnCode_t::RETCODE_OK == code)
@@ -268,7 +272,7 @@ protected:
                 data_reader->wait_for_unread_message(time_to_wait);
             }
             check_return_loan(code, data_reader, data_values, infos);
-            reset_lengths(data_values, infos);
+            reset_lengths_if_ok(code, data_values, infos);
 
             EXPECT_EQ(code, data_reader->take_next_instance(data_values, infos));
             if (ReturnCode_t::RETCODE_OK == code)
@@ -277,7 +281,7 @@ protected:
                 data_reader->wait_for_unread_message(time_to_wait);
             }
             check_return_loan(code, data_reader, data_values, infos);
-            reset_lengths(data_values, infos);
+            reset_lengths_if_ok(code, data_values, infos);
 
             check_instance_methods(instance_ok_code, instance_bad_code, instance_ok_code,
                     data_reader, data_values, infos);
@@ -297,10 +301,10 @@ protected:
 
             EXPECT_EQ(code, data_reader->read(data_values, infos));
             check_return_loan(expected_return_loan_ret, data_reader, data_values, infos);
-            reset_lengths(data_values, infos);
+            reset_lengths_if_ok(code, data_values, infos);
             EXPECT_EQ(code, data_reader->read_next_instance(data_values, infos));
             check_return_loan(expected_return_loan_ret, data_reader, data_values, infos);
-            reset_lengths(data_values, infos);
+            reset_lengths_if_ok(code, data_values, infos);
 
             EXPECT_EQ(code, data_reader->take(data_values, infos));
             if (ReturnCode_t::RETCODE_OK == code)
@@ -309,7 +313,7 @@ protected:
                 data_reader->wait_for_unread_message(time_to_wait);
             }
             check_return_loan(expected_return_loan_ret, data_reader, data_values, infos);
-            reset_lengths(data_values, infos);
+            reset_lengths_if_ok(code, data_values, infos);
 
             EXPECT_EQ(code, data_reader->take_next_instance(data_values, infos));
             if (ReturnCode_t::RETCODE_OK == code)
@@ -318,7 +322,7 @@ protected:
                 data_reader->wait_for_unread_message(time_to_wait);
             }
             check_return_loan(expected_return_loan_ret, data_reader, data_values, infos);
-            reset_lengths(data_values, infos);
+            reset_lengths_if_ok(code, data_values, infos);
 
             check_instance_methods(instance_ok_code, instance_bad_code, expected_return_loan_ret,
                     data_reader, data_values, infos);
