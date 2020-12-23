@@ -83,6 +83,7 @@ public:
     /**
      * Remove a WriterProxyData from the matached writers.
      * @param writer_guid GUID of the writer to remove.
+     * @param removed_by_lease true it the writer was removed due to lease duration.
      * @return True if correct.
      */
     bool matched_writer_remove(

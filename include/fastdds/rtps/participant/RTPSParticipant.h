@@ -243,7 +243,7 @@ public:
 
     /**
      * @brief Checks whether the writer has security attributes enabled
-     * @param writer_attributes Attibutes of the writer as given to the RTPSParticipantImpl::create_writer
+     * @param writer_attributes Attributes of the writer as given to the RTPSParticipantImpl::create_writer
      */
 
     bool is_security_enabled_for_writer(
@@ -251,7 +251,7 @@ public:
 
     /**
      * @brief Checks whether the writer has security attributes enabled
-     * @param writer_attributes Attibutes of the writer as given to the RTPSParticipantImpl::create_writer
+     * @param writer_attributes Attributes of the writer as given to the RTPSParticipantImpl::create_writer
      */
 
     bool is_security_enabled_for_reader(

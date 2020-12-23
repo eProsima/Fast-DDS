@@ -415,7 +415,7 @@ public:
             std::chrono::steady_clock::time_point& max_blocking_time_point) const override;
 
     /**
-     * @return Whether the writer is datasharing compatible or not
+     * @return Whether the writer is data sharing compatible or not
      */
     bool is_datasharing_compatible() const;
 

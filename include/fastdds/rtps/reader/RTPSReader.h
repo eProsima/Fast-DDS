@@ -272,7 +272,7 @@ public:
     }
 
     /**
-     * Assert the livelines of a matched writer.
+     * Assert the liveliness of a matched writer.
      * @param writer GUID of the writer to assert.
      */
     virtual void assert_writer_liveliness(
