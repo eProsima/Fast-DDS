@@ -81,7 +81,7 @@ if(GST_FOUND)
     target_compile_definitions(VideoTest PRIVATE
         $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
         $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
-)
+        )
     target_compile_options(VideoTest PUBLIC ${GST_CFLAGS})
 
     if(NOT WIN32)

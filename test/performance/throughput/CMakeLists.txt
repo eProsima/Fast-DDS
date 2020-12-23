@@ -26,7 +26,7 @@ add_executable(ThroughputTest ${THROUGHPUTTEST_SOURCE})
 target_compile_definitions(ThroughputTest PRIVATE
     $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
     $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
-)
+    )
 
 target_include_directories(ThroughputTest PRIVATE)
 target_link_libraries(
