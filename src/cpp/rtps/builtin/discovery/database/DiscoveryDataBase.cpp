@@ -41,7 +41,7 @@ DiscoveryDataBase::DiscoveryDataBase(
     , server_acked_by_all_(servers.size() == 0)
     , servers_(servers)
     , enabled_(true)
-    , entities_updated_(false)
+    , new_updates_(0)
     , processing_backup_(false)
     , is_persistent_(false)
 {
@@ -585,7 +585,7 @@ void DiscoveryDataBase::create_participant_from_change_(
                 if (change_guid.guidPrefix != server_guid_prefix_ &&
                         !participant_it->second.is_acked_by_all())
                 {
-                    entities_updated_.store(true);
+                    new_updates_++;
                     add_pdp_to_send_(ch);
                 }
             }
@@ -616,7 +616,7 @@ void DiscoveryDataBase::create_participant_from_change_(
         if (ret.second)
         {
             // New participant found
-            entities_updated_.store(true);
+            new_updates_++;
 
             logInfo(DISCOVERY_DATABASE, "New participant added: " << change_guid.guidPrefix);
 
@@ -730,7 +730,7 @@ void DiscoveryDataBase::create_writers_from_change_(
                 // It needs to be sent in case it has unacked participants
                 if (!writer_it->second.is_acked_by_all())
                 {
-                    entities_updated_.store(true);
+                    new_updates_++;
                     add_edp_publications_to_send_(ch);
                 }
             }
@@ -770,7 +770,7 @@ void DiscoveryDataBase::create_writers_from_change_(
         writer_it = ret.first;
 
         // New writer found
-        entities_updated_.store(true);
+        new_updates_++;
 
         // Add entry to participants_[guid_prefix]::writers
         std::map<eprosima::fastrtps::rtps::GuidPrefix_t, DiscoveryParticipantInfo>::iterator writer_part_it =
@@ -847,7 +847,7 @@ void DiscoveryDataBase::create_readers_from_change_(
                 // It needs to be sent in case it has unacked participants
                 if (!reader_it->second.is_acked_by_all())
                 {
-                    entities_updated_.store(true);
+                    new_updates_++;
                     add_edp_subscriptions_to_send_(ch);
                 }
             }
@@ -887,7 +887,7 @@ void DiscoveryDataBase::create_readers_from_change_(
         reader_it = ret.first;
 
         // New reader found
-        entities_updated_.store(true);
+        new_updates_++;
 
         // Add entry to participants_[guid_prefix]::readers
         std::map<eprosima::fastrtps::rtps::GuidPrefix_t, DiscoveryParticipantInfo>::iterator reader_part_it =
@@ -1145,7 +1145,7 @@ void DiscoveryDataBase::process_dispose_participant_(
         update_change_and_unmatch_(ch, pit->second);
 
         // Any change in the entities known must be reported as a change in the discovery
-        entities_updated_.store(true);
+        new_updates_++;
     }
     else
     {
@@ -1217,7 +1217,7 @@ void DiscoveryDataBase::process_dispose_writer_(
         }
 
         // Any change in the entities known must be reported as a change in the discovery
-        entities_updated_.store(true);
+        new_updates_++;
     }
 }
 
@@ -1247,7 +1247,7 @@ void DiscoveryDataBase::process_dispose_reader_(
         }
 
         // Any change in the entities known must be reported as a change in the discovery
-        entities_updated_.store(true);
+        new_updates_++;
     }
 }
 
