@@ -31,8 +31,7 @@ using namespace eprosima::fastrtps::rtps;
 enum communication_type
 {
     TRANSPORT,
-    INTRAPROCESS,
-    DATASHARING
+    INTRAPROCESS
 };
 
 class RTPS : public testing::TestWithParam<communication_type>
@@ -48,9 +47,6 @@ public:
                 library_settings.intraprocess_delivery = IntraprocessDeliveryType::INTRAPROCESS_FULL;
                 xmlparser::XMLProfileManager::library_settings(library_settings);
                 break;
-            case DATASHARING:
-                enable_datasharing = true;
-                break;
             case TRANSPORT:
             default:
                 break;
@@ -65,9 +61,6 @@ public:
             case INTRAPROCESS:
                 library_settings.intraprocess_delivery = IntraprocessDeliveryType::INTRAPROCESS_OFF;
                 xmlparser::XMLProfileManager::library_settings(library_settings);
-                break;
-            case DATASHARING:
-                enable_datasharing = false;
                 break;
             case TRANSPORT:
             default:
@@ -476,16 +469,13 @@ TEST_P(RTPS, RTPSAsReliableWithRegistrationAndHolesInHistory)
 
 GTEST_INSTANTIATE_TEST_MACRO(RTPS,
         RTPS,
-        testing::Values(TRANSPORT, INTRAPROCESS, DATASHARING),
+        testing::Values(TRANSPORT, INTRAPROCESS),
         [](const testing::TestParamInfo<RTPS::ParamType>& info)
         {
             switch (info.param)
             {
                 case INTRAPROCESS:
                     return "Intraprocess";
-                    break;
-                case DATASHARING:
-                    return "Datasharing";
                     break;
                 case TRANSPORT:
                 default:

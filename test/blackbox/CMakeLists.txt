@@ -104,20 +104,22 @@ macro(add_blackbox_gtest)
                 # Add labels
                 set_property(TEST ${test}.${GTEST_GROUP_NAME}.${GTEST_TEST_NAME}.Intraprocess PROPERTY LABELS "${GTEST_LABELS}")
 
-                add_test(NAME ${test}.${GTEST_GROUP_NAME}.${GTEST_TEST_NAME}.Datasharing
-                    COMMAND ${command} --gtest_filter=*/${GTEST_GROUP_NAME}.${GTEST_TEST_NAME}/Datasharing)
+                if(${test} MATCHES ".*_DDS_PIM$")
+                    add_test(NAME ${test}.${GTEST_GROUP_NAME}.${GTEST_TEST_NAME}.Datasharing
+                        COMMAND ${command} --gtest_filter=*/${GTEST_GROUP_NAME}.${GTEST_TEST_NAME}/Datasharing)
 
-                # Add environment
-                if(WIN32)
-                    set_property(TEST ${test}.${GTEST_GROUP_NAME}.${GTEST_TEST_NAME}.Datasharing APPEND PROPERTY ENVIRONMENT "PATH=${WIN_PATH}")
+                    # Add environment
+                    if(WIN32)
+                        set_property(TEST ${test}.${GTEST_GROUP_NAME}.${GTEST_TEST_NAME}.Datasharing APPEND PROPERTY ENVIRONMENT "PATH=${WIN_PATH}")
+                    endif()
+
+                    foreach(property ${GTEST_ENVIRONMENTS})
+                        set_property(TEST ${test}.${GTEST_GROUP_NAME}.${GTEST_TEST_NAME}.Datasharing APPEND PROPERTY ENVIRONMENT "${property}")
+                    endforeach()
+
+                    # Add labels
+                    set_property(TEST ${test}.${GTEST_GROUP_NAME}.${GTEST_TEST_NAME}.Datasharing PROPERTY LABELS "${GTEST_LABELS}")
                 endif()
-
-                foreach(property ${GTEST_ENVIRONMENTS})
-                    set_property(TEST ${test}.${GTEST_GROUP_NAME}.${GTEST_TEST_NAME}.Datasharing APPEND PROPERTY ENVIRONMENT "${property}")
-                endforeach()
-
-                # Add labels
-                set_property(TEST ${test}.${GTEST_GROUP_NAME}.${GTEST_TEST_NAME}.Datasharing PROPERTY LABELS "${GTEST_LABELS}")
 
             endforeach()
         endforeach()
