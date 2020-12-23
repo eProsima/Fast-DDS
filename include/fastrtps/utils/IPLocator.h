@@ -21,6 +21,7 @@
 #define IP_LOCATOR_H_
 
 #include <fastdds/rtps/common/Types.h>
+#include <fastdds/dds/log/Log.hpp>
 
 #include <vector>
 #include <string>
@@ -220,12 +221,12 @@ public:
             const Locator_t& locator);
 
     // Common
-    //! Sets locator's RTPC port. Physical for UDP and logical for TCP (as in RTCP protocol)
+    //! Sets locator's RTCP port. Physical for UDP and logical for TCP (as in RTCP protocol)
     RTPS_DllAPI static bool setPortRTPS(
             Locator_t& locator,
             uint16_t port);
 
-    //! Gets locator's RTPC port. Physical for UDP and logical for TCP (as in RTCP protocol)
+    //! Gets locator's RTCP port. Physical for UDP and logical for TCP (as in RTCP protocol)
     RTPS_DllAPI static uint16_t getPortRTPS(
             Locator_t& locator);
 
@@ -237,7 +238,7 @@ public:
     RTPS_DllAPI static bool isAny(
             const Locator_t& locator);
 
-    //! Checks if a both locators has the same IP address.
+    //! Checks if both locators has the same IP address.
     RTPS_DllAPI static bool compareAddress(
             const Locator_t& loc1,
             const Locator_t& loc2,
@@ -260,7 +261,7 @@ public:
 protected:
 
     // Checks if the locator address is equal to 0
-    // It checks the proper locator address depending the locator kind
+    // It checks the proper locator address depending on the locator kind
     static bool isEmpty(
             const Locator_t& locator);
 

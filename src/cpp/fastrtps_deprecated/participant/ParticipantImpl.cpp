@@ -264,7 +264,7 @@ Subscriber* ParticipantImpl::createSubscriber(
         const SubscriberAttributes& att,
         SubscriberListener* listen)
 {
-    logInfo(PARTICIPANT, "CREATING SUBSCRIBER IN TOPIC: " << att.topic.getTopicName())
+    logInfo(PARTICIPANT, "CREATING SUBSCRIBER IN TOPIC: " << att.topic.getTopicName());
     //Look for the correct type registration
 
     TopicDataType* p_type = nullptr;

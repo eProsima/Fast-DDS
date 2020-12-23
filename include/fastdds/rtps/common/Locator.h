@@ -24,6 +24,8 @@
 #include <fastdds/rtps/common/Types.h>
 #include <fastrtps/utils/IPLocator.h>
 
+#include <fastdds/dds/log/Log.hpp>
+
 #include <sstream>
 #include <vector>
 #include <cstdint>
@@ -298,11 +300,13 @@ inline std::istream& operator >>(
             input.exceptions(excp_mask | std::ios_base::failbit | std::ios_base::badbit);
 
             // Locator info
-            uint32_t kind, port;
+            int32_t kind;
+            uint32_t port;
             std::string address;
 
             // Deserialization variables
-            std::stringbuf sb_kind, sb_address;
+            std::stringbuf sb_kind;
+            std::stringbuf sb_address;
             std::string str_kind;
             char punct;
 
@@ -332,10 +336,10 @@ inline std::istream& operator >>(
             }
             else
             {
-                kind = LOCATOR_PORT_INVALID;
+                kind = LOCATOR_KIND_INVALID;
             }
 
-            // Get char :[
+            // Get chars :[
             input >> punct >> punct;
 
             // Get address in string
@@ -352,6 +356,8 @@ inline std::istream& operator >>(
         }
         catch (std::ios_base::failure& )
         {
+            loc.kind = LOCATOR_KIND_INVALID;
+            logWarning(LOCATOR, "Error deserializing Locator");
         }
 
         input.exceptions(excp_mask);
@@ -589,6 +595,8 @@ public:
         }
     }
 
+    FASTDDS_DEPRECATED_UNTIL(3, "eprosima::fastrtps::rtps::LocatorList_t::contains(const Locator_t&)",
+            "Unused method.")
     RTPS_DllAPI bool contains(
             const Locator_t& loc)
     {
@@ -644,10 +652,20 @@ inline std::ostream& operator <<(
         std::ostream& output,
         const LocatorList_t& locList)
 {
-    for (auto it = locList.m_locators.begin(); it != locList.m_locators.end(); ++it)
+    output << "[";
+    if (!locList.empty())
     {
-        output << *it << ",";
+        output << *(locList.begin());
+        for (auto it = locList.m_locators.begin() + 1; it != locList.m_locators.end(); ++it)
+        {
+            output << "," << *it;
+        }
     }
+    else
+    {
+        output << "_";
+    }
+    output << "]";
     return output;
 }
 
@@ -656,32 +674,34 @@ inline std::istream& operator >>(
         LocatorList_t& locList)
 {
     std::istream::sentry s(input);
+    locList = LocatorList_t();
 
     if (s)
     {
-        char coma;
-        Locator_t l;
+        char punct;
+        Locator_t loc;
         std::ios_base::iostate excp_mask = input.exceptions();
 
         try
         {
             input.exceptions(excp_mask | std::ios_base::failbit | std::ios_base::badbit);
 
-            input >> l;
-            locList.push_back(l);
+            // Get [
+            input >> punct;
 
-            for (int i = 1; i < 12; ++i)
+            while (punct != ']')
             {
-                input >> coma >> l;
-                if ( coma != ',' )
+                input >> loc >> punct;
+                if (loc.kind != LOCATOR_KIND_INVALID)
                 {
-                    input.setstate(std::ios_base::failbit);
+                    locList.push_back(loc);
                 }
-                locList.push_back(l);
             }
         }
         catch (std::ios_base::failure& )
         {
+            locList.clear();
+            logWarning(LOCATOR_LIST, "Error deserializing LocatorList");
         }
 
         input.exceptions(excp_mask);

@@ -98,7 +98,7 @@ bool ReaderHistory::matches_change(
     if (nullptr == outer_change
             || nullptr == inner_change)
     {
-        logError(RTPS_READER_HISTORY, "Pointer is not valid")
+        logError(RTPS_READER_HISTORY, "Pointer is not valid");
         return false;
     }
 

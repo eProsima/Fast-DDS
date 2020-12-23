@@ -57,6 +57,11 @@ bool IPLocator::setIPv4(
         Locator_t& locator,
         const unsigned char* addr)
 {
+    if (locator.kind != LOCATOR_KIND_TCPv4 && locator.kind != LOCATOR_KIND_UDPv4)
+    {
+        logWarning(IP_LOCATOR, "Trying to set an IPv4 in a non IPv4 Locator");
+        return false;
+    }
     memcpy(&locator.address[12], addr, 4 * sizeof(char));
     return true;
 }
@@ -68,6 +73,11 @@ bool IPLocator::setIPv4(
         octet o3,
         octet o4)
 {
+    if (locator.kind != LOCATOR_KIND_TCPv4 && locator.kind != LOCATOR_KIND_UDPv4)
+    {
+        logWarning(IP_LOCATOR, "Trying to set an IPv4 in a non IPv4 Locator");
+        return false;
+    }
     locator.address[12] = o1;
     locator.address[13] = o2;
     locator.address[14] = o3;
@@ -79,11 +89,19 @@ bool IPLocator::setIPv4(
         Locator_t& locator,
         const std::string& ipv4)
 {
+    if (locator.kind != LOCATOR_KIND_TCPv4 && locator.kind != LOCATOR_KIND_UDPv4)
+    {
+        logWarning(IP_LOCATOR, "Trying to set an IPv4 in a non IPv4 Locator");
+        return false;
+    }
     // This function do not set address to 0 in case it fails
     // Be careful, do not set all IP to 0 because WAN and LAN could be set beforehand
 
     std::stringstream ss(ipv4);
-    uint32_t a, b, c, d; //to store the 4 ints
+    uint32_t a;
+    uint32_t b;
+    uint32_t c;
+    uint32_t d; //to store the 4 ints
     char ch; //to temporarily store the '.'
 
     if (ss >> a >> ch >> b >> ch >> c >> ch >> d)
@@ -100,7 +118,7 @@ bool IPLocator::setIPv4(
         // If there are more info to read, it fails
         return ss.rdbuf()->in_avail() == 0;
     }
-
+    logWarning(IP_LOCATOR, "IPv4 " << ipv4 << " error format. Expected X.X.X.X");
     return false;
 }
 
@@ -108,6 +126,11 @@ bool IPLocator::setIPv4(
         Locator_t& destlocator,
         const Locator_t& origlocator)
 {
+    if (destlocator.kind != LOCATOR_KIND_TCPv4 && destlocator.kind != LOCATOR_KIND_UDPv4)
+    {
+        logWarning(IP_LOCATOR, "Trying to set an IPv4 in a non IPv4 Locator");
+        return false;
+    }
     return setIPv4(destlocator, getIPv4(origlocator));
 }
 
@@ -151,6 +174,11 @@ bool IPLocator::setIPv6(
         Locator_t& locator,
         const unsigned char* addr)
 {
+    if (locator.kind != LOCATOR_KIND_TCPv6 && locator.kind != LOCATOR_KIND_UDPv6)
+    {
+        logWarning(IP_LOCATOR, "Trying to set an IPv6 in a non IPv6 Locator");
+        return false;
+    }
     memcpy(locator.address, addr, 16 * sizeof(char));
     return true;
 }
@@ -166,6 +194,11 @@ bool IPLocator::setIPv6(
         uint16_t group6,
         uint16_t group7)
 {
+    if (locator.kind != LOCATOR_KIND_TCPv6 && locator.kind != LOCATOR_KIND_UDPv6)
+    {
+        logWarning(IP_LOCATOR, "Trying to set an IPv6 in a non IPv6 Locator");
+        return false;
+    }
     locator.address[0] = (octet)(group0 >> 8);
     locator.address[1] = (octet)group0;
     locator.address[2] = (octet)(group1 >> 8);
@@ -197,7 +230,7 @@ bool IPLocator::setIPv6(
      *  2. Encapsulating following blocks of zeros as leaving empty an space
      *     X:0000:0000:Y = X::Y
      *
-     * This fcuntion implements the following:
+     * This function implements the following:
      *  1. Check if the string is in correct format : IPv6isCorrect
      *  2. Analyze the string to know if:
      *      - it starts with blocks of zeros
@@ -206,11 +239,15 @@ bool IPLocator::setIPv6(
      *    and it stores the size of the zeros block to build the address afterwards
      *  3. Build the bytes array by reading the string or either filling with 0 the zero blocks
      * */
+    if (locator.kind != LOCATOR_KIND_TCPv6 && locator.kind != LOCATOR_KIND_UDPv6)
+    {
+        logWarning(IP_LOCATOR, "Trying to set an IPv6 in a non IPv6 Locator");
+        return false;
+    }
 
     if (!IPv6isCorrect(ipv6))
     {
-        // ERROR
-        // Does not send a log for avoid API functionallity break
+        logWarning(IP_LOCATOR, "IPv6 " << ipv6 << " is not well defined");
         return false;
     }
 
@@ -220,16 +257,20 @@ bool IPLocator::setIPv6(
                         return c == ':';
                     }); // C type cast to avoid Windows warnings
 
-    uint16_t initial_zeros = 0, final_zeros = 0, position_zeros = 0, number_zeros = 0;
-    size_t aux, aux_prev; // This must be size_t as string::npos could change value depending on size_t size
+    uint16_t initial_zeros = 0;
+    uint16_t final_zeros = 0;
+    uint16_t position_zeros = 0;
+    uint16_t number_zeros = 0;
+    size_t aux;
+    size_t aux_prev; // This must be size_t as string::npos could change value depending on size_t size
 
     // Check whether is a zero block and where
-    if (ipv6.at(0) == ':')
+    if (ipv6.front() == ':')
     {
         // First element equal : -> starts with zeros
-        if (ipv6.at(ipv6.size() - 1) == ':')
+        if (ipv6.back() == ':')
         {
-            // Empty string (we already know it is a correct ipv6 format)
+            // Empty string (correct ipv6 format)
             initial_zeros = 16;
         }
         else
@@ -241,7 +282,7 @@ bool IPLocator::setIPv6(
             initial_zeros = (7 - (count - 2)) * 2;
         }
     }
-    else if (ipv6.at(ipv6.size() - 1) == ':')
+    else if (ipv6.back() == ':')
     {
         // Last element equal : -> ends with zeros
         // It does not start with :: (previous if)
@@ -293,6 +334,7 @@ bool IPLocator::setIPv6(
             ss >> punct >> input_aux;
             if (input_aux >= 65536)
             {
+                logWarning(IP_LOCATOR, "IPv6 " << ipv6 << " has values higher than expected (65536)");
                 return false;
             }
             locator.address[i++] = octet(input_aux >> 8);
@@ -313,6 +355,7 @@ bool IPLocator::setIPv6(
             ss >> input_aux >> punct;
             if (input_aux >= 65536)
             {
+                logWarning(IP_LOCATOR, "IPv6 " << ipv6 << " has values higher than expected (65536)");
                 return false;
             }
             locator.address[i++] = octet(input_aux >> 8);
@@ -334,6 +377,7 @@ bool IPLocator::setIPv6(
             ss >> input_aux >> punct;
             if (input_aux >= 65536)
             {
+                logWarning(IP_LOCATOR, "IPv6 " << ipv6 << " has values higher than expected (65536)");
                 return false;
             }
             locator.address[i++] = octet(input_aux >> 8);
@@ -350,6 +394,7 @@ bool IPLocator::setIPv6(
             ss >> punct >> input_aux;
             if (input_aux >= 65536)
             {
+                logWarning(IP_LOCATOR, "IPv6 " << ipv6 << " has values higher than expected (65536)");
                 return false;
             }
             locator.address[i++] = octet(input_aux >> 8);
@@ -367,6 +412,7 @@ bool IPLocator::setIPv6(
             ss >> punct >> input_aux;
             if (input_aux >= 65536)
             {
+                logWarning(IP_LOCATOR, "IPv6 " << ipv6 << " has values higher than expected (65536)");
                 return false;
             }
             locator.address[i++] = octet(input_aux >> 8);
@@ -381,6 +427,11 @@ bool IPLocator::setIPv6(
         Locator_t& destlocator,
         const Locator_t& origlocator)
 {
+    if (destlocator.kind != LOCATOR_KIND_TCPv6 && destlocator.kind != LOCATOR_KIND_UDPv6)
+    {
+        logWarning(IP_LOCATOR, "Trying to set an IPv6 in a non IPv6 Locator");
+        return false;
+    }
     return setIPv6(destlocator, getIPv6(origlocator));
 }
 
@@ -488,7 +539,7 @@ bool IPLocator::setLogicalPort(
 {
     uint16_t* loc_logical = reinterpret_cast<uint16_t*>(&locator.port);
 #if FASTDDS_IS_BIG_ENDIAN_TARGET
-    loc_logical[0] = port; // Logical port is stored at 2nd and 3rd bytes of port
+    loc_logical[0] = port; // Logical port is stored at 0th and 1st bytes of port
 #else
     loc_logical[1] = port; // Logical port is stored at 2nd and 3rd bytes of port
 #endif // if FASTDDS_IS_BIG_ENDIAN_TARGET
@@ -872,7 +923,7 @@ bool IPLocator::IPv6isCorrect(
     }
 
     // only case of 8 : is with a :: at the beggining or end
-    if (count == 8 && (ipv6.at(0) != ':' && ipv6.at(ipv6.size() - 1) != ':'))
+    if (count == 8 && (ipv6.front() != ':' && ipv6.back() != ':'))
     {
         return false;
     }
@@ -888,13 +939,13 @@ bool IPLocator::IPv6isCorrect(
     }
 
     // does not start with only one ':'
-    if (ipv6.at(0) == ':' && ipv6.at(1) != ':')
+    if (ipv6.front() == ':' && ipv6.at(1) != ':')
     {
         return false;
     }
 
     // does not end with only one ':'
-    if (ipv6.at(ipv6.size() - 1) == ':' && ipv6.at(ipv6.size() - 2) != ':')
+    if (ipv6.back() == ':' && ipv6.at(ipv6.size() - 2) != ':')
     {
         return false;
     }

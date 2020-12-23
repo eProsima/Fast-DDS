@@ -32,105 +32,110 @@ using namespace std;
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
 
-class NetworkTests: public ::testing::Test
+class NetworkTests : public ::testing::Test
 {
-   public:
-   NetworkFactory networkFactoryUnderTest;
-   void HELPER_RegisterTransportWithKindAndChannels(int kind, unsigned int channels);
+public:
+
+    NetworkFactory networkFactoryUnderTest;
+    void HELPER_RegisterTransportWithKindAndChannels(
+            int kind,
+            unsigned int channels);
 };
 
+// for uncrustify sake *INDENT-OFF*
 TEST_F(NetworkTests, registering_transport_with_descriptor_instantiates_and_populates_a_transport_with_descriptor_options)
+// *INDENT-ON*
 {
-   // Given
-   const int ExpectedMaximumChannels = 10;
-   const int ExpectedSupportedKind = 3;
+    // Given
+    const int ExpectedMaximumChannels = 10;
+    const int ExpectedSupportedKind = 3;
 
-   // When
-   HELPER_RegisterTransportWithKindAndChannels(ExpectedSupportedKind, ExpectedMaximumChannels);
+    // When
+    HELPER_RegisterTransportWithKindAndChannels(ExpectedSupportedKind, ExpectedMaximumChannels);
 
-   // Then
-   const MockTransport* lastRegisteredTransport = MockTransport::mockTransportInstances.back();
-   ASSERT_EQ(ExpectedMaximumChannels, lastRegisteredTransport->mockMaximumChannels);
-   ASSERT_EQ(ExpectedSupportedKind, lastRegisteredTransport->kind());
+    // Then
+    const MockTransport* lastRegisteredTransport = MockTransport::mockTransportInstances.back();
+    ASSERT_EQ(ExpectedMaximumChannels, lastRegisteredTransport->mockMaximumChannels);
+    ASSERT_EQ(ExpectedSupportedKind, lastRegisteredTransport->kind());
 }
 
 TEST_F(NetworkTests, build_sender_resource_returns_send_resource_for_a_kind_compatible_transport)
 {
-   // Given
-   int ArbitraryKind = 1;
-   HELPER_RegisterTransportWithKindAndChannels(ArbitraryKind, 10);
+    // Given
+    int ArbitraryKind = 1;
+    HELPER_RegisterTransportWithKindAndChannels(ArbitraryKind, 10);
 
-   SendResourceList send_resource_list;
+    SendResourceList send_resource_list;
 
-   Locator_t kindCompatibleLocator;
-   kindCompatibleLocator.kind = ArbitraryKind;
+    Locator_t kindCompatibleLocator;
+    kindCompatibleLocator.kind = ArbitraryKind;
 
-   // When
-   ASSERT_TRUE(networkFactoryUnderTest.build_send_resources(send_resource_list, kindCompatibleLocator));
+    // When
+    ASSERT_TRUE(networkFactoryUnderTest.build_send_resources(send_resource_list, kindCompatibleLocator));
 
-   // Then
-   ASSERT_EQ(1u, send_resource_list.size());
+    // Then
+    ASSERT_EQ(1u, send_resource_list.size());
 }
 
 TEST_F(NetworkTests, BuildReceiverResource_returns_receive_resource_for_a_kind_compatible_transport)
 {
-   // Given
-   int ArbitraryKind = 1;
-   HELPER_RegisterTransportWithKindAndChannels(ArbitraryKind, 10);
+    // Given
+    int ArbitraryKind = 1;
+    HELPER_RegisterTransportWithKindAndChannels(ArbitraryKind, 10);
 
-   Locator_t kindCompatibleLocator;
-   kindCompatibleLocator.kind = ArbitraryKind;
+    Locator_t kindCompatibleLocator;
+    kindCompatibleLocator.kind = ArbitraryKind;
 
-   // When
-   std::vector<std::shared_ptr<ReceiverResource>> resources;
-   bool ret = networkFactoryUnderTest.BuildReceiverResources(kindCompatibleLocator, resources, 0x8FFF);
+    // When
+    std::vector<std::shared_ptr<ReceiverResource>> resources;
+    bool ret = networkFactoryUnderTest.BuildReceiverResources(kindCompatibleLocator, resources, 0x8FFF);
 
-   // Then
-   ASSERT_TRUE(ret);
-   ASSERT_EQ(1u, resources.size());
+    // Then
+    ASSERT_TRUE(ret);
+    ASSERT_EQ(1u, resources.size());
 }
 
 TEST_F(NetworkTests, BuildReceiverResource_returns_multiple_resources_if_multiple_transports_compatible)
 {
-   // Given
-   HELPER_RegisterTransportWithKindAndChannels(3, 10);
-   HELPER_RegisterTransportWithKindAndChannels(2, 10);
-   HELPER_RegisterTransportWithKindAndChannels(2, 10);
+    // Given
+    HELPER_RegisterTransportWithKindAndChannels(3, 10);
+    HELPER_RegisterTransportWithKindAndChannels(2, 10);
+    HELPER_RegisterTransportWithKindAndChannels(2, 10);
 
-   Locator_t locatorCompatibleWithTwoTransports;
-   locatorCompatibleWithTwoTransports.kind = 2;
+    Locator_t locatorCompatibleWithTwoTransports;
+    locatorCompatibleWithTwoTransports.kind = 2;
 
-   // When
-   std::vector<std::shared_ptr<ReceiverResource>> resources;
-   bool ret = networkFactoryUnderTest.BuildReceiverResources(locatorCompatibleWithTwoTransports, resources, 0x8FFF);
+    // When
+    std::vector<std::shared_ptr<ReceiverResource>> resources;
+    bool ret = networkFactoryUnderTest.BuildReceiverResources(locatorCompatibleWithTwoTransports, resources, 0x8FFF);
 
-   // Then
-   ASSERT_TRUE(ret);
-   ASSERT_EQ(2u, resources.size());
+    // Then
+    ASSERT_TRUE(ret);
+    ASSERT_EQ(2u, resources.size());
 }
 
 TEST_F(NetworkTests, build_sender_resource_returns_multiple_resources_if_multiple_transports_compatible)
 {
-   // Given
-   HELPER_RegisterTransportWithKindAndChannels(3, 10);
-   HELPER_RegisterTransportWithKindAndChannels(2, 10);
-   HELPER_RegisterTransportWithKindAndChannels(2, 10);
+    // Given
+    HELPER_RegisterTransportWithKindAndChannels(3, 10);
+    HELPER_RegisterTransportWithKindAndChannels(2, 10);
+    HELPER_RegisterTransportWithKindAndChannels(2, 10);
 
-   SendResourceList send_resource_list;
+    SendResourceList send_resource_list;
 
-   Locator_t locatorCompatibleWithTwoTransports;
-   locatorCompatibleWithTwoTransports.kind = 2;
+    Locator_t locatorCompatibleWithTwoTransports;
+    locatorCompatibleWithTwoTransports.kind = 2;
 
-   // When
-   ASSERT_TRUE(networkFactoryUnderTest.build_send_resources(send_resource_list, locatorCompatibleWithTwoTransports));
+    // When
+    ASSERT_TRUE(networkFactoryUnderTest.build_send_resources(send_resource_list, locatorCompatibleWithTwoTransports));
 
-   // Then
-   ASSERT_EQ(1u, send_resource_list.size());
+    // Then
+    ASSERT_EQ(1u, send_resource_list.size());
 }
 
 /*
-TEST_F(NetworkTests, creating_send_resource_from_locator_opens_channels_mapped_to_that_locator)
-{
+   TEST_F(NetworkTests, creating_send_resource_from_locator_opens_channels_mapped_to_that_locator)
+   {
    // Given
    int ArbitraryKind = 1;
    HELPER_RegisterTransportWithKindAndChannels(ArbitraryKind, 10);
@@ -144,32 +149,32 @@ TEST_F(NetworkTests, creating_send_resource_from_locator_opens_channels_mapped_t
    // Then
    const MockTransport* lastRegisteredTransport = MockTransport::mockTransportInstances.back();
    ASSERT_TRUE(lastRegisteredTransport->IsOutputChannelOpen(locator));
-}
-*/
+   }
+ */
 
 TEST_F(NetworkTests, creating_receive_resource_from_locator_opens_channels_mapped_to_that_locator)
 {
-   // Given
-   int ArbitraryKind = 1;
-   HELPER_RegisterTransportWithKindAndChannels(ArbitraryKind, 10);
+    // Given
+    int ArbitraryKind = 1;
+    HELPER_RegisterTransportWithKindAndChannels(ArbitraryKind, 10);
 
-   Locator_t locator;
-   locator.kind = ArbitraryKind;
+    Locator_t locator;
+    locator.kind = ArbitraryKind;
 
-   // When
-   std::vector<std::shared_ptr<ReceiverResource>> resources;
-   bool ret = networkFactoryUnderTest.BuildReceiverResources(locator, resources, 0x8FFF);
+    // When
+    std::vector<std::shared_ptr<ReceiverResource>> resources;
+    bool ret = networkFactoryUnderTest.BuildReceiverResources(locator, resources, 0x8FFF);
 
-   ASSERT_TRUE(ret);
+    ASSERT_TRUE(ret);
 
-   // Then
-   const MockTransport* lastRegisteredTransport = MockTransport::mockTransportInstances.back();
-   ASSERT_TRUE(lastRegisteredTransport->IsInputChannelOpen(locator));
+    // Then
+    const MockTransport* lastRegisteredTransport = MockTransport::mockTransportInstances.back();
+    ASSERT_TRUE(lastRegisteredTransport->IsInputChannelOpen(locator));
 }
 
 /*
-TEST_F(NetworkTests, destroying_a_send_resource_will_close_all_channels_mapped_to_it_on_destruction)
-{
+   TEST_F(NetworkTests, destroying_a_send_resource_will_close_all_channels_mapped_to_it_on_destruction)
+   {
    // Given
    int ArbitraryKind = 1;
    HELPER_RegisterTransportWithKindAndChannels(ArbitraryKind, 10);
@@ -187,97 +192,99 @@ TEST_F(NetworkTests, destroying_a_send_resource_will_close_all_channels_mapped_t
    // Then
    const MockTransport* lastRegisteredTransport = MockTransport::mockTransportInstances.back();
    ASSERT_FALSE(lastRegisteredTransport->IsOutputChannelOpen(locator));
-}
-*/
+   }
+ */
 
 TEST_F(NetworkTests, destroying_a_receive_resource_will_close_all_channels_mapped_to_it_on_destruction)
 {
-   // Given
-   int ArbitraryKind = 1;
-   HELPER_RegisterTransportWithKindAndChannels(ArbitraryKind, 10);
-   Locator_t locator;
-   locator.kind = ArbitraryKind;
+    // Given
+    int ArbitraryKind = 1;
+    HELPER_RegisterTransportWithKindAndChannels(ArbitraryKind, 10);
+    Locator_t locator;
+    locator.kind = ArbitraryKind;
 
-   std::vector<std::shared_ptr<ReceiverResource>> resources;
-   bool ret = networkFactoryUnderTest.BuildReceiverResources(locator, resources, 0x8FFF);
-   ASSERT_TRUE(ret);
+    std::vector<std::shared_ptr<ReceiverResource>> resources;
+    bool ret = networkFactoryUnderTest.BuildReceiverResources(locator, resources, 0x8FFF);
+    ASSERT_TRUE(ret);
 
-   // When
-   resources.clear();
+    // When
+    resources.clear();
 
-   // Then
-   const MockTransport* lastRegisteredTransport = MockTransport::mockTransportInstances.back();
-   ASSERT_FALSE(lastRegisteredTransport->IsInputChannelOpen(locator));
+    // Then
+    const MockTransport* lastRegisteredTransport = MockTransport::mockTransportInstances.back();
+    ASSERT_FALSE(lastRegisteredTransport->IsInputChannelOpen(locator));
 }
 
 TEST_F(NetworkTests, BuildSenderResources_returns_empty_vector_if_no_registered_transport_is_kind_compatible)
 {
-   // Given
-   MockTransportDescriptor mockTransportDescriptor;
-   mockTransportDescriptor.supportedKind = 1;
-   mockTransportDescriptor.maximumChannels = 10;
-   networkFactoryUnderTest.RegisterTransport<MockTransport, MockTransportDescriptor>(mockTransportDescriptor);
+    // Given
+    MockTransportDescriptor mockTransportDescriptor;
+    mockTransportDescriptor.supportedKind = 1;
+    mockTransportDescriptor.maximumChannels = 10;
+    networkFactoryUnderTest.RegisterTransport<MockTransport, MockTransportDescriptor>(mockTransportDescriptor);
 
-   SendResourceList send_resource_list;
+    SendResourceList send_resource_list;
 
-   Locator_t locatorOfDifferentKind;
-   locatorOfDifferentKind.kind = 2;
+    Locator_t locatorOfDifferentKind;
+    locatorOfDifferentKind.kind = 2;
 
-   // When
-   ASSERT_FALSE(networkFactoryUnderTest.build_send_resources(send_resource_list, locatorOfDifferentKind));
+    // When
+    ASSERT_FALSE(networkFactoryUnderTest.build_send_resources(send_resource_list, locatorOfDifferentKind));
 
-   // Then
-   ASSERT_TRUE(send_resource_list.empty());
+    // Then
+    ASSERT_TRUE(send_resource_list.empty());
 }
 
+// for uncrustify sake *INDENT-OFF*
 TEST_F(NetworkTests, BuildSenderResources_returns_empty_vector_if_all_compatible_transports_have_that_channel_open_already)
+// *INDENT-ON*
 {
-   // Given
-   int ArbitraryKind = 1;
-   HELPER_RegisterTransportWithKindAndChannels(ArbitraryKind, 10);
-   SendResourceList send_resource_list;
-   Locator_t locator;
-   locator.kind = ArbitraryKind;
+    // Given
+    int ArbitraryKind = 1;
+    HELPER_RegisterTransportWithKindAndChannels(ArbitraryKind, 10);
+    SendResourceList send_resource_list;
+    Locator_t locator;
+    locator.kind = ArbitraryKind;
 
-   ASSERT_TRUE(networkFactoryUnderTest.build_send_resources(send_resource_list, locator));
+    ASSERT_TRUE(networkFactoryUnderTest.build_send_resources(send_resource_list, locator));
 
-   ASSERT_EQ(1u, send_resource_list.size());
+    ASSERT_EQ(1u, send_resource_list.size());
 
-   // When
-   // We do it again for a locator that maps to the same channel
-   locator.address[0]++; // Address can differ, since they map to the same port
+    // When
+    // We do it again for a locator that maps to the same channel
+    locator.address[0]++; // Address can differ, since they map to the same port
 
-   ASSERT_TRUE(networkFactoryUnderTest.build_send_resources(send_resource_list, locator));
+    ASSERT_TRUE(networkFactoryUnderTest.build_send_resources(send_resource_list, locator));
 
-   // Then
-   ASSERT_EQ(1u, send_resource_list.size());
+    // Then
+    ASSERT_EQ(1u, send_resource_list.size());
 }
 
 TEST_F(NetworkTests, A_receiver_resource_accurately_reports_whether_it_supports_a_locator)
 {
-   // Given
-   int ArbitraryKind = 1;
-   HELPER_RegisterTransportWithKindAndChannels(ArbitraryKind, 10);
-   Locator_t locator;
-   locator.kind = ArbitraryKind;
-   std::vector<std::shared_ptr<ReceiverResource>> resources;
-   bool ret = networkFactoryUnderTest.BuildReceiverResources(locator, resources, 0x8FFF);
-   ASSERT_TRUE(ret);
-   auto& resource = resources.back();
+    // Given
+    int ArbitraryKind = 1;
+    HELPER_RegisterTransportWithKindAndChannels(ArbitraryKind, 10);
+    Locator_t locator;
+    locator.kind = ArbitraryKind;
+    std::vector<std::shared_ptr<ReceiverResource>> resources;
+    bool ret = networkFactoryUnderTest.BuildReceiverResources(locator, resources, 0x8FFF);
+    ASSERT_TRUE(ret);
+    auto& resource = resources.back();
 
-   // Then
-   ASSERT_TRUE(resource->SupportsLocator(locator));
+    // Then
+    ASSERT_TRUE(resource->SupportsLocator(locator));
 
-   // When
-   locator.port++;
+    // When
+    locator.port++;
 
-   // Then
-   ASSERT_FALSE(resource->SupportsLocator(locator));
+    // Then
+    ASSERT_FALSE(resource->SupportsLocator(locator));
 }
 
 /*
-TEST_F(NetworkTests, A_sender_resource_accurately_reports_whether_it_supports_a_locator)
-{
+   TEST_F(NetworkTests, A_sender_resource_accurately_reports_whether_it_supports_a_locator)
+   {
    // Given
    int ArbitraryKind = 1;
    HELPER_RegisterTransportWithKindAndChannels(ArbitraryKind, 10);
@@ -295,12 +302,12 @@ TEST_F(NetworkTests, A_sender_resource_accurately_reports_whether_it_supports_a_
 
    // Then
    ASSERT_TRUE(resource.SupportsLocator(locator));
-}
-*/
+   }
+ */
 
 /*
-TEST_F(NetworkTests, A_Sender_Resource_will_always_send_through_its_original_outbound_locator)
-{
+   TEST_F(NetworkTests, A_Sender_Resource_will_always_send_through_its_original_outbound_locator)
+   {
    // Given
    int ArbitraryKind = 1;
    HELPER_RegisterTransportWithKindAndChannels(ArbitraryKind, 10);
@@ -323,12 +330,12 @@ TEST_F(NetworkTests, A_Sender_Resource_will_always_send_through_its_original_out
 
    ASSERT_TRUE(0 == memcmp(messageSent.data.data(), testData, testDataLength));
    ASSERT_EQ(messageSent.destination, destinationLocator);
-}
-*/
+   }
+ */
 
 /*
-TEST_F(NetworkTests, A_Receiver_Resource_will_always_receive_through_its_original_inbound_locator_and_from_the_specified_remote_locator)
-{
+   TEST_F(NetworkTests, A_Receiver_Resource_will_always_receive_through_its_original_inbound_locator_and_from_the_specified_remote_locator)
+   {
    // Given
    int ArbitraryKind = 1;
    HELPER_RegisterTransportWithKindAndChannels(ArbitraryKind, 10);
@@ -357,15 +364,17 @@ TEST_F(NetworkTests, A_Receiver_Resource_will_always_receive_through_its_origina
    // Then
    ASSERT_EQ(memcmp(receivedData, testData.data(), 3), 0);
    ASSERT_EQ(receivedLocator, originLocator);
-}
-*/
+   }
+ */
 
-void NetworkTests::HELPER_RegisterTransportWithKindAndChannels(int kind, unsigned int channels)
+void NetworkTests::HELPER_RegisterTransportWithKindAndChannels(
+        int kind,
+        unsigned int channels)
 {
-   MockTransportDescriptor mockTransportDescriptor;
-   mockTransportDescriptor.supportedKind = kind;
-   mockTransportDescriptor.maximumChannels = channels;
-   networkFactoryUnderTest.RegisterTransport<MockTransport>(mockTransportDescriptor);
+    MockTransportDescriptor mockTransportDescriptor;
+    mockTransportDescriptor.supportedKind = kind;
+    mockTransportDescriptor.maximumChannels = channels;
+    networkFactoryUnderTest.RegisterTransport<MockTransport>(mockTransportDescriptor);
 }
 
 #define SHRINK_TEST_MAX_ENTRIES 4u
@@ -384,14 +393,16 @@ struct ShrinkLocatorCase_t
 
     std::vector<LocatorSelectorEntry> temp_entries;
 
-    void clear(const char* case_name)
+    void clear(
+            const char* case_name)
     {
         name = case_name;
         input.clear();
         output.clear();
     }
 
-    void prepare_selector(LocatorSelector& selector)
+    void prepare_selector(
+            LocatorSelector& selector)
     {
         uint32_t id = 1;
         selector.clear();
@@ -418,7 +429,8 @@ struct ShrinkLocatorCase_t
         }
     }
 
-    void perform_selector_test(const NetworkFactory& network)
+    void perform_selector_test(
+            const NetworkFactory& network)
     {
         LocatorSelector selector(ResourceLimitedContainerConfig::fixed_size_configuration(SHRINK_TEST_MAX_ENTRIES));
         prepare_selector(selector);
@@ -428,18 +440,39 @@ struct ShrinkLocatorCase_t
         selector.for_each(
             [this](const Locator_t& locator)
             {
-                ASSERT_TRUE(output.contains(locator));
+                bool contains = false;
+                for (auto locator_in_list : output)
+                {
+                    if (IsAddressDefined(locator_in_list))
+                    {
+                        if (locator == locator_in_list)
+                        {
+                            contains = true;
+                            break;
+                        }
+                    }
+                    else
+                    {
+                        if (locator.kind == locator_in_list.kind && locator.port == locator_in_list.port)
+                        {
+                            contains = true;
+                            break;
+                        }
+                    }
+                }
+                ASSERT_TRUE(contains);
             });
     }
+
 };
 
 void add_test_three_lists(
-    const char* case_name,
-    const LocatorList_t& list1,
-    const LocatorList_t& list2,
-    const LocatorList_t& list3,
-    LocatorList_t result,
-    std::vector<ShrinkLocatorCase_t>& cases)
+        const char* case_name,
+        const LocatorList_t& list1,
+        const LocatorList_t& list2,
+        const LocatorList_t& list3,
+        LocatorList_t result,
+        std::vector<ShrinkLocatorCase_t>& cases)
 {
     ShrinkLocatorCase_t test;
 
@@ -465,7 +498,8 @@ void add_test_three_lists(
     cases.push_back(test);
 }
 
-void fill_blackbox_locators_test_cases(std::vector<ShrinkLocatorCase_t>& cases)
+void fill_blackbox_locators_test_cases(
+        std::vector<ShrinkLocatorCase_t>& cases)
 {
     ShrinkLocatorCase_t test;
 
@@ -564,7 +598,7 @@ void fill_blackbox_locators_test_cases(std::vector<ShrinkLocatorCase_t>& cases)
     result.push_back(multicast1);
     result.push_back(unicast3);
     add_test_three_lists("Three UDP lists with shared multicast and unicast",
-        list1, list2, list3, result, cases);
+            list1, list2, list3, result, cases);
 
     // Three. Two use same multicast, the other another multicast.
     list1.clear();
@@ -580,7 +614,7 @@ void fill_blackbox_locators_test_cases(std::vector<ShrinkLocatorCase_t>& cases)
     result.push_back(multicast1);
     result.push_back(unicast3);
     add_test_three_lists("Three UDP lists with shared multicast x2",
-        list1, list2, list3, result, cases);
+            list1, list2, list3, result, cases);
 
     // Three. One uses multicast, the others unicast
     list1.clear();
@@ -595,7 +629,7 @@ void fill_blackbox_locators_test_cases(std::vector<ShrinkLocatorCase_t>& cases)
     result.push_back(unicast2);
     result.push_back(unicast3);
     add_test_three_lists("Three UDP lists with only one multicast",
-        list1, list2, list3, result, cases);
+            list1, list2, list3, result, cases);
 
     // Three using same multicast
     list1.clear();
@@ -608,7 +642,7 @@ void fill_blackbox_locators_test_cases(std::vector<ShrinkLocatorCase_t>& cases)
     list3.push_back(unicast3);
     result.push_back(multicast2);
     add_test_three_lists("Three UDP lists with same shared multicast",
-        list1, list2, list3, result, cases);
+            list1, list2, list3, result, cases);
 }
 
 TEST_F(NetworkTests, LocatorShrink)
@@ -627,7 +661,9 @@ TEST_F(NetworkTests, LocatorShrink)
     }
 }
 
-int main(int argc, char **argv)
+int main(
+        int argc,
+        char** argv)
 {
     testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();
