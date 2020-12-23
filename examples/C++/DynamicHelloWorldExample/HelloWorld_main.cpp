@@ -37,17 +37,20 @@ void usage()
     std::cout << "DynamicHelloWorld [role] [-c count] [-s sleep]" << std::endl;
     std::cout << "role: Can be 'publisher' (default) or 'subscriber'." << std::endl;
     std::cout << "count: Number of samples sent by a publisher. Without effect on subcribers." << std::endl;
-    std::cout << "sleep: Time between samples sent by a publisher in millisecond. Without effect on subcribers." << std::endl;
+    std::cout << "sleep: Time between samples sent by a publisher in millisecond. Without effect on subcribers." <<
+        std::endl;
 }
 
-bool parseArgs(int argc, char** argv)
+bool parseArgs(
+        int argc,
+        char** argv)
 {
     bool roleDefined = false;
     try
     {
         for (int i = 1; i < argc; ++i)
         {
-            if(strcmp(argv[i],"publisher")==0)
+            if (strcmp(argv[i], "publisher") == 0)
             {
                 if (!roleDefined)
                 {
@@ -61,7 +64,7 @@ bool parseArgs(int argc, char** argv)
                     return false;
                 }
             }
-            else if(strcmp(argv[i],"subscriber")==0)
+            else if (strcmp(argv[i], "subscriber") == 0)
             {
                 if (!roleDefined)
                 {
@@ -75,9 +78,9 @@ bool parseArgs(int argc, char** argv)
                     return false;
                 }
             }
-            else if(strcmp(argv[i],"-c")==0)
+            else if (strcmp(argv[i], "-c") == 0)
             {
-                if (argc <= i+1)
+                if (argc <= i + 1)
                 {
                     std::cout << "count expected" << std::endl;
                     Log::Reset();
@@ -85,9 +88,9 @@ bool parseArgs(int argc, char** argv)
                 }
                 count = atoi(argv[++i]);
             }
-            else if(strcmp(argv[i],"-s")==0)
+            else if (strcmp(argv[i], "-s") == 0)
             {
-                if (argc <= i+1)
+                if (argc <= i + 1)
                 {
                     std::cout << "sleep expected" << std::endl;
                     Log::Reset();
@@ -97,7 +100,7 @@ bool parseArgs(int argc, char** argv)
             }
         }
     }
-    catch(std::exception&)
+    catch (std::exception&)
     {
         usage();
         return false;
@@ -106,41 +109,38 @@ bool parseArgs(int argc, char** argv)
     return true;
 }
 
-int main(int argc, char** argv)
+int main(
+        int argc,
+        char** argv)
 {
-    //Log::SetVerbosity(Log::Kind::Info);
-    //std::regex filter("RTPS_HISTORY");
-    //std::regex filter("RTPS_EDP");
-    //Log::SetCategoryFilter(filter);
-    std::cout << "Starting "<< std::endl;
+    std::cout << "Starting " << std::endl;
 
-    if(!parseArgs(argc, argv))
+    if (!parseArgs(argc, argv))
     {
         usage();
         return 0;
     }
 
-    //Log::SetVerbosity(Log::Kind::Info);
-    switch(type)
+    switch (type)
     {
         case 1:
+        {
+            HelloWorldPublisher mypub;
+            if (mypub.init())
             {
-                HelloWorldPublisher mypub;
-                if(mypub.init())
-                {
-                    mypub.run(count, sleep);
-                }
-                break;
+                mypub.run(count, sleep);
             }
+            break;
+        }
         case 2:
+        {
+            HelloWorldSubscriber mysub;
+            if (mysub.init())
             {
-                HelloWorldSubscriber mysub;
-                if(mysub.init())
-                {
-                    mysub.run();
-                }
-                break;
+                mysub.run();
             }
+            break;
+        }
     }
     Domain::stopAll();
     Log::Reset();
