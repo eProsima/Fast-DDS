@@ -90,7 +90,11 @@ private:
     Time_t timestamp_;
 
 #if HAVE_SECURITY
+    //!Buffer to process the decoded RTPS message
     CDRMessage_t crypto_msg_;
+    //!Buffer to process each decoded RTPS sub-message
+    CDRMessage_t crypto_submsg_;
+    //!Buffer to process a decoded payload
     SerializedPayload_t crypto_payload_;
 #endif // if HAVE_SECURITY
 
@@ -105,7 +109,6 @@ private:
                 uint32_t,
                 uint32_t,
                 uint16_t)> process_data_fragment_message_function_;
-
 
     //!Reset the MessageReceiver to process a new message.
     void reset();
