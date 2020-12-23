@@ -302,7 +302,8 @@ protected:
             rtps::MemoryManagementPolicy_t& historyMemoryPolicy,
             uint8_t ident);
 
-    static XMLP_ret getXMLLocatorList(
+    // TODO(jlbueno) Remove RTPS_DllAPI once Discovery Server is not using this protected method
+    RTPS_DllAPI static XMLP_ret getXMLLocatorList(
             tinyxml2::XMLElement* elem,
             rtps::LocatorList_t& locatorList,
             uint8_t ident);
