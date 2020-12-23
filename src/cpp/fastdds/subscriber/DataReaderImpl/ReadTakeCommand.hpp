@@ -57,7 +57,8 @@ struct ReadTakeCommand
             const StateFilter& states,
             history_type::instance_iterator instance,
             bool single_instance = false)
-        : loan_manager_(reader.loan_manager_)
+        : type_(reader.type_)
+        , loan_manager_(reader.loan_manager_)
         , history_(reader.history_)
         , info_pool_(reader.sample_info_pool_)
         , data_values_(data_values)
@@ -152,6 +153,7 @@ struct ReadTakeCommand
 
 private:
 
+    const TypeSupport& type_;
     DataReaderLoanManager& loan_manager_;
     history_type& history_;
     SampleInfoPool& info_pool_;
@@ -242,16 +244,28 @@ private:
     void deserialize_sample(
             CacheChange_t* change)
     {
+        auto payload = &(change->serializedPayload);
         if (data_values_.has_ownership())
         {
             // perform deserialization
+            type_->deserialize(payload, data_values_.buffer()[current_slot_]);
         }
         else
         {
             // loan
-            auto ptr = change->serializedPayload.data;
-            ptr += change->serializedPayload.representation_header_size;
-            const_cast<void**>(data_values_.buffer())[current_slot_] = ptr;
+            if (type_->is_plain())
+            {
+                // TODO: reference should be incremented
+                auto ptr = change->serializedPayload.data;
+                ptr += change->serializedPayload.representation_header_size;
+                const_cast<void**>(data_values_.buffer())[current_slot_] = ptr;
+            }
+            else
+            {
+                void* ptr = type_->createData();
+                type_->deserialize(payload, ptr);
+                const_cast<void**>(data_values_.buffer())[current_slot_] = ptr;
+            }
         }
     }
 
