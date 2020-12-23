@@ -42,10 +42,11 @@ protected:
     void SetUp() override
     {
         eprosima::fastrtps::LibrarySettingsAttributes library_settings;
-        switch(GetParam())
+        switch (GetParam())
         {
             case INTRAPROCESS:
-                library_settings.intraprocess_delivery = eprosima::fastrtps::IntraprocessDeliveryType::INTRAPROCESS_FULL;
+                library_settings.intraprocess_delivery =
+                        eprosima::fastrtps::IntraprocessDeliveryType::INTRAPROCESS_FULL;
                 eprosima::fastrtps::xmlparser::XMLProfileManager::library_settings(library_settings);
                 break;
             case DATASHARING:
@@ -60,7 +61,7 @@ protected:
     void TearDown() override
     {
         eprosima::fastrtps::LibrarySettingsAttributes library_settings;
-        switch(GetParam())
+        switch (GetParam())
         {
             case INTRAPROCESS:
                 library_settings.intraprocess_delivery = eprosima::fastrtps::IntraprocessDeliveryType::INTRAPROCESS_OFF;

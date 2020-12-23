@@ -39,7 +39,7 @@ public:
     void SetUp() override
     {
         LibrarySettingsAttributes library_settings;
-        switch(GetParam())
+        switch (GetParam())
         {
             case INTRAPROCESS:
                 library_settings.intraprocess_delivery = IntraprocessDeliveryType::INTRAPROCESS_FULL;
@@ -54,7 +54,7 @@ public:
     void TearDown() override
     {
         LibrarySettingsAttributes library_settings;
-        switch(GetParam())
+        switch (GetParam())
         {
             case INTRAPROCESS:
                 library_settings.intraprocess_delivery = IntraprocessDeliveryType::INTRAPROCESS_OFF;
@@ -333,7 +333,7 @@ TEST_P(RTPSCustomPools, RTPSAsReliableWithRegistrationWriterPool)
 TEST_P(RTPSCustomPools, RTPSAsReliableWithRegistrationBothPools)
 {
     auto data = default_helloworld_data_generator();
-    do_test<HelloWorld, HelloWorldType>(TEST_TOPIC_NAME, data, true, true, GetParam()==INTRAPROCESS);
+    do_test<HelloWorld, HelloWorldType>(TEST_TOPIC_NAME, data, true, true, GetParam() == INTRAPROCESS);
 }
 
 TEST_P(RTPSCustomPools, RTPSAsReliableWithRegistrationNoPools300Kb)

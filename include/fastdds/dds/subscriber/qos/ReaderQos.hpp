@@ -126,7 +126,7 @@ public:
 
     //!Information for data sharing compatibility check.
     DataSharingQosPolicy data_sharing;
-    
+
     /**
      * Set Qos from another class
      * @param readerqos Reference from a ReaderQos object.

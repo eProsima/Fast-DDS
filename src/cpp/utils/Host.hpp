@@ -31,12 +31,13 @@ public:
     static const size_t mac_id_length = 6;
     struct uint48
     {
-        unsigned char value [mac_id_length];
+        unsigned char value[mac_id_length];
 
         uint48()
         {
             memset(value, 0, mac_id_length);
         }
+
     };
 
     inline uint16_t id() const

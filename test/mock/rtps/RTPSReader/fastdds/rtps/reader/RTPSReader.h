@@ -163,9 +163,9 @@ public:
     }
 
     bool is_sample_valid(
-        const void* /*data*/,
-        const GUID_t& /*writer*/,
-        const SequenceNumber_t& /*sn*/) const
+            const void* /*data*/,
+            const GUID_t& /*writer*/,
+            const SequenceNumber_t& /*sn*/) const
     {
         return true;
     }
@@ -177,7 +177,6 @@ public:
     {
         (void) mark_as_read;
     }
-
 
     ReaderHistory* history_;
 

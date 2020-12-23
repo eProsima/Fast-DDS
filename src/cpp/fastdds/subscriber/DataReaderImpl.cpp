@@ -1380,7 +1380,6 @@ void DataReaderImpl::release_payload_pool()
     TopicPayloadPoolRegistry::release(payload_pool_);
 }
 
-
 ReturnCode_t DataReaderImpl::check_datasharing_compatible(
         const ReaderAttributes& reader_attributes,
         bool& is_datasharing_compatible) const
@@ -1404,7 +1403,7 @@ ReturnCode_t DataReaderImpl::check_datasharing_compatible(
                 logError(DATA_READER, "Data sharing cannot be used with security protection.");
                 return ReturnCode_t::RETCODE_NOT_ALLOWED_BY_SECURITY;
             }
-#endif
+#endif // if HAVE_SECURITY
             if (!type_.is_bounded())
             {
                 logInfo(DATA_READER, "Data sharing cannot be used with unbounded data types");
@@ -1421,7 +1420,7 @@ ReturnCode_t DataReaderImpl::check_datasharing_compatible(
                 logInfo(DATA_READER, "Data sharing disabled due to security configuration.");
                 return ReturnCode_t::RETCODE_OK;
             }
-#endif
+#endif // if HAVE_SECURITY
 
             if (!type_.is_bounded())
             {
@@ -1439,8 +1438,8 @@ ReturnCode_t DataReaderImpl::check_datasharing_compatible(
 }
 
 bool DataReaderImpl::is_sample_valid(
-    const void* data,
-    const SampleInfo* info) const
+        const void* data,
+        const SampleInfo* info) const
 {
     return reader_->is_sample_valid(data, info->sample_identity.writer_guid(), info->sample_identity.sequence_number());
 }

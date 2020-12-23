@@ -61,9 +61,9 @@ bool HelloWorldSubscriber::init()
 
     //CREATE THE TOPIC
     topic_ = participant_->create_topic(
-            "HelloWorldTopic",
-            "HelloWorld",
-            TOPIC_QOS_DEFAULT);
+        "HelloWorldTopic",
+        "HelloWorld",
+        TOPIC_QOS_DEFAULT);
 
     if (topic_ == nullptr)
     {

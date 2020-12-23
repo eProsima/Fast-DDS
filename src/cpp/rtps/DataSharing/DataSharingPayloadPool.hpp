@@ -36,13 +36,14 @@ class DataSharingPayloadPool : public IPayloadPool
 {
 
 protected:
+
     class PayloadNode;
 
 public:
 
     using Segment = fastdds::rtps::SharedMemSegment;
     using sharable_mutex = Segment::sharable_mutex;
-    template <class M> 
+    template <class M>
     using sharable_lock = Segment::sharable_lock<M>;
 
     DataSharingPayloadPool() = default;
@@ -109,15 +110,18 @@ public:
 
     uint32_t last_liveliness_sequence() const;
 
-    static bool check_sequence_number(const octet* data, const SequenceNumber_t& sn);
+    static bool check_sequence_number(
+            const octet* data,
+            const SequenceNumber_t& sn);
 
-    static sharable_mutex& shared_mutex(octet*);
+    static sharable_mutex& shared_mutex(
+            octet*);
 
 protected:
 
 #pragma warning(push)
 #pragma warning(disable:4324)
-    class alignas(8) PayloadNode
+    class alignas (8) PayloadNode
     {
 
         struct PayloadNodeMetaData
@@ -144,7 +148,7 @@ protected:
             // Actual data size of the payload. Must be less than the configured maximum
             uint32_t data_length;
 
-            // Writer's timestamp 
+            // Writer's timestamp
             Time_t source_timestamp;
 
             // Sequence number of the payload inside the writer
@@ -294,14 +298,13 @@ protected:
             return metadata_.mutex;
         }
 
-
     private:
 
         PayloadNodeMetaData metadata_;
 
     };
 
-    struct alignas(8) PoolDescriptor
+    struct alignas (8) PoolDescriptor
     {
         uint32_t history_size;          //< Number of payloads in the history
         uint64_t notified_begin;        //< The index of the oldest history entry already notified (ready to read)
@@ -319,10 +322,11 @@ protected:
         return ss.str();
     }
 
-    static size_t node_size (size_t payload_size)
+    static size_t node_size (
+            size_t payload_size)
     {
         return (payload_size + PayloadNode::data_offset + alignof(PayloadNode) - 1)
-            & ~(alignof(PayloadNode) - 1);
+               & ~(alignof(PayloadNode) - 1);
     }
 
     GUID_t segment_id_;         //< The ID of the segment

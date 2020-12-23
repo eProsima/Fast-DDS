@@ -297,9 +297,9 @@ public:
      * @return true if the sample is valid
      */
     RTPS_DllAPI bool is_sample_valid(
-        const void* data,
-        const GUID_t& writer,
-        const SequenceNumber_t& sn) const;
+            const void* data,
+            const GUID_t& writer,
+            const SequenceNumber_t& sn) const;
 
 protected:
 
@@ -376,7 +376,7 @@ protected:
 
     /**
      * Creates the listener for the datasharing notifications
-     * 
+     *
      * @param limits Resource limits for the number of matched datasharing writers
      */
     void create_datasharing_listener(

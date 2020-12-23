@@ -1441,7 +1441,7 @@ std::shared_ptr<IPayloadPool> DataWriterImpl::get_payload_pool()
             payload_pool_ = TopicPayloadPoolRegistry::get(topic_->get_name(), config);
             if (!std::static_pointer_cast<ITopicPayloadPool>(payload_pool_)->reserve_history(config, false))
             {
-                auto topic_pool= std::static_pointer_cast<ITopicPayloadPool>(payload_pool_);
+                auto topic_pool = std::static_pointer_cast<ITopicPayloadPool>(payload_pool_);
                 TopicPayloadPoolRegistry::release(topic_pool);
             }
         }
@@ -1471,7 +1471,7 @@ bool DataWriterImpl::release_payload_pool()
     }
     else
     {
-        auto topic_pool= std::static_pointer_cast<ITopicPayloadPool>(payload_pool_);
+        auto topic_pool = std::static_pointer_cast<ITopicPayloadPool>(payload_pool_);
         result = topic_pool->release_history(config, false);
         TopicPayloadPoolRegistry::release(topic_pool);
     }

@@ -116,7 +116,7 @@ protected:
     virtual void SetUp()
     {
         LibrarySettingsAttributes library_settings;
-        switch(GetParam())
+        switch (GetParam())
         {
             case INTRAPROCESS:
                 library_settings.intraprocess_delivery = IntraprocessDeliveryType::INTRAPROCESS_FULL;
@@ -164,7 +164,7 @@ protected:
     {
         std::remove(db_file_name_.c_str());
         LibrarySettingsAttributes library_settings;
-        switch(GetParam())
+        switch (GetParam())
         {
             case INTRAPROCESS:
                 library_settings.intraprocess_delivery = IntraprocessDeliveryType::INTRAPROCESS_OFF;

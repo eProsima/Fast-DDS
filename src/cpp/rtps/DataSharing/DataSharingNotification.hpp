@@ -37,7 +37,7 @@ namespace rtps {
 class DataSharingNotification
 {
 
-friend class DataSharingListener;
+    friend class DataSharingListener;
 
 public:
 
@@ -90,17 +90,17 @@ protected:
 
 #pragma warning(push)
 #pragma warning(disable:4324)
-    class alignas(void*) Notification
+    class alignas (void*) Notification
     {
     public:
 
         Segment::condition_variable notification_cv;        //< CV to wait for new notifications
-        Segment::mutex              notification_mutex;     //< synchronization mutex
+        Segment::mutex notification_mutex;                  //< synchronization mutex
         std::atomic<bool>           new_data;               //< New data available
 
     };
 #pragma warning(pop)
-    
+
     static std::string generate_segment_name(
             const std::string& /*shared_dir*/,
             const GUID_t& reader_guid)

@@ -229,17 +229,17 @@ bool StatefulReader::matched_writer_add(
     if (is_datasharing)
     {
         if (datasharing_listener_->add_datasharing_writer(wdata.guid(),
-            m_att.durabilityKind == VOLATILE))
+                m_att.durabilityKind == VOLATILE))
         {
             matched_datasharing_writers_.push_back(wp);
-            logInfo(RTPS_READER, "Writer Proxy " << wdata.guid() << " added to " << this->m_guid.entityId 
+            logInfo(RTPS_READER, "Writer Proxy " << wdata.guid() << " added to " << this->m_guid.entityId
                                                  << " with data sharing");
         }
         else
         {
             logError(RTPS_READER, "Failed to add Writer Proxy " << wdata.guid()
-                    << " to " << this->m_guid.entityId 
-                    << " with data sharing.");
+                                                                << " to " << this->m_guid.entityId
+                                                                << " with data sharing.");
             wp->stop();
             matched_writers_pool_.push_back(wp);
             return false;
@@ -311,7 +311,8 @@ bool StatefulReader::matched_writer_remove(
         {
             if ((*it)->guid() == writer_guid)
             {
-                logInfo(RTPS_READER, "Data sharing writer proxy " << writer_guid << " removed from " << m_guid.entityId);
+                logInfo(RTPS_READER,
+                        "Data sharing writer proxy " << writer_guid << " removed from " << m_guid.entityId);
                 wproxy = *it;
                 matched_datasharing_writers_.erase(it);
 
@@ -326,7 +327,8 @@ bool StatefulReader::matched_writer_remove(
         }
         if (wproxy == nullptr)
         {
-            for (ResourceLimitedVector<WriterProxy*>::iterator it = matched_writers_.begin(); it != matched_writers_.end();
+            for (ResourceLimitedVector<WriterProxy*>::iterator it = matched_writers_.begin();
+                    it != matched_writers_.end();
                     ++it)
             {
                 if ((*it)->guid() == writer_guid)
@@ -348,7 +350,8 @@ bool StatefulReader::matched_writer_remove(
         }
         else
         {
-            logInfo(RTPS_READER, "Writer Proxy " << writer_guid << " doesn't exist in reader " << this->getGuid().entityId);
+            logInfo(RTPS_READER,
+                    "Writer Proxy " << writer_guid << " doesn't exist in reader " << this->getGuid().entityId);
         }
     }
 
@@ -377,7 +380,7 @@ bool StatefulReader::matched_writer_is_matched(
             }
         }
     }
-    
+
     return false;
 }
 
@@ -797,7 +800,8 @@ bool StatefulReader::change_removed_by_history(
             if (a_change->writerGUID.entityId != m_trustedWriterEntityId)
             {
                 // trusted entities messages mean no havoc
-                logError(RTPS_READER, " You should always find the WP associated with a change, something is very wrong");
+                logError(RTPS_READER,
+                        " You should always find the WP associated with a change, something is very wrong");
             }
         }
     }
@@ -944,7 +948,7 @@ void StatefulReader::remove_changes_from(
     {
         logInfo(RTPS_READER,
                 "Removing change " << (*it)->sequenceNumber << " from " << (*it)->writerGUID);
-        if(is_payload_pool_lost)
+        if (is_payload_pool_lost)
         {
             (*it)->serializedPayload.data = nullptr;
             (*it)->payload_owner(nullptr);
@@ -977,7 +981,7 @@ bool StatefulReader::nextUntakenCache(
 
                 //Check if the payload is dirty
                 if (!DataSharingPayloadPool::check_sequence_number(
-                        (*it)->serializedPayload.data, (*it)->sequenceNumber))
+                            (*it)->serializedPayload.data, (*it)->sequenceNumber))
                 {
                     // Unlock, remove and continue
                     DataSharingPayloadPool::shared_mutex((*it)->serializedPayload.data).unlock_sharable();
@@ -1013,7 +1017,7 @@ bool StatefulReader::nextUntakenCache(
         {
 
             *change = *it;
-       
+
             if (wpout != nullptr)
             {
                 *wpout = wp;
@@ -1058,7 +1062,7 @@ bool StatefulReader::nextUnreadCache(
 
                 //Check if the payload is dirty
                 if (!DataSharingPayloadPool::check_sequence_number(
-                        (*it)->serializedPayload.data, (*it)->sequenceNumber))
+                            (*it)->serializedPayload.data, (*it)->sequenceNumber))
                 {
                     // Unlock, remove and continue
                     DataSharingPayloadPool::shared_mutex((*it)->serializedPayload.data).unlock_sharable();
@@ -1094,7 +1098,7 @@ bool StatefulReader::nextUnreadCache(
         {
 
             *change = *it;
-       
+
             if (wpout != nullptr)
             {
                 *wpout = wp;
@@ -1151,9 +1155,9 @@ bool StatefulReader::isInCleanState()
 }
 
 void StatefulReader::change_read_by_user(
-            CacheChange_t* change,
-            const WriterProxy* writer,
-            bool mark_as_read)
+        CacheChange_t* change,
+        const WriterProxy* writer,
+        bool mark_as_read)
 {
     assert(writer != nullptr);
     assert(change->writerGUID == writer->guid());

@@ -57,7 +57,7 @@ void DataSharingListener::run()
                 {
                     return !is_running_.load() || notification_->notification_->new_data.load();
                 });
-        
+
         lock.unlock();
 
         if (!is_running_.load())
@@ -72,8 +72,8 @@ void DataSharingListener::run()
 
             // If some writer added new data, there may be something to read.
             // If there were matching/unmatching, we may not have finished our last loop
-        } while (is_running_.load() && 
-                (notification_->notification_->new_data.load() || writer_pools_changed_.load(std::memory_order_relaxed)));
+        } while (is_running_.load() &&
+        (notification_->notification_->new_data.load() || writer_pools_changed_.load(std::memory_order_relaxed)));
     }
 }
 
@@ -110,7 +110,7 @@ void DataSharingListener::process_new_data ()
     logInfo(RTPS_READER, "Received new data notification");
 
     std::unique_lock<std::mutex> lock(mutex_);
- 
+
     // It is safe to 'forget' any change now
     notification_->notification_->new_data.store(false);
     // All places where this is set to true is locked by the same mutex, memory_order_relaxed is enough
@@ -138,7 +138,7 @@ void DataSharingListener::process_new_data ()
         }
 
         bool has_new_payload = true;
-        while(has_new_payload)
+        while (has_new_payload)
         {
             CacheChange_t ch;
             SequenceNumber_t last_sequence = c_SequenceNumber_Unknown;
@@ -149,20 +149,22 @@ void DataSharingListener::process_new_data ()
             {
                 if (last_sequence != c_SequenceNumber_Unknown && ch.sequenceNumber != last_sequence + 1)
                 {
-                    logWarning(RTPS_READER, "GAP ("  << last_sequence + 1 << " - " << ch.sequenceNumber - 1 << ")"
-                            << " detected on datasharing writer " << pool->writer());
+                    logWarning(RTPS_READER, "GAP (" << last_sequence + 1 << " - " << ch.sequenceNumber - 1 << ")"
+                                                    << " detected on datasharing writer " << pool->writer());
                     reader_->processGapMsg(pool->writer(), last_sequence + 1, SequenceNumberSet_t(ch.sequenceNumber));
                 }
 
                 if (last_sequence == c_SequenceNumber_Unknown && ch.sequenceNumber != SequenceNumber_t(0, 1))
                 {
                     logInfo(RTPS_READER, "First change with SN " << ch.sequenceNumber
-                            << " detected on datasharing writer " << pool->writer());
-                    reader_->processGapMsg(pool->writer(), SequenceNumber_t(0, 1), SequenceNumberSet_t(ch.sequenceNumber));
+                                                                 << " detected on datasharing writer " <<
+                                        pool->writer());
+                    reader_->processGapMsg(pool->writer(), SequenceNumber_t(0, 1), SequenceNumberSet_t(
+                                ch.sequenceNumber));
                 }
 
                 logInfo(RTPS_READER, "New data found on writer " << pool->writer()
-                        << " with SN " << ch.sequenceNumber);
+                                                                 << " with SN " << ch.sequenceNumber);
 
                 if (reader_->processDataMsg(&ch))
                 {
@@ -191,8 +193,8 @@ void DataSharingListener::process_new_data ()
 }
 
 bool DataSharingListener::add_datasharing_writer(
-    const GUID_t& writer_guid,
-    bool is_volatile)
+        const GUID_t& writer_guid,
+        bool is_volatile)
 {
     std::lock_guard<std::mutex> lock(mutex_);
 
@@ -202,7 +204,8 @@ bool DataSharingListener::add_datasharing_writer(
         return false;
     }
 
-    std::shared_ptr<ReaderPool> pool = std::static_pointer_cast<ReaderPool>(DataSharingPayloadPool::get_reader_pool(is_volatile));
+    std::shared_ptr<ReaderPool> pool =
+            std::static_pointer_cast<ReaderPool>(DataSharingPayloadPool::get_reader_pool(is_volatile));
     pool->init_shared_memory(writer_guid, datasharing_pools_directory_);
     writer_pools_.emplace_back(pool, pool->last_liveliness_sequence());
     writer_pools_changed_.store(true);
@@ -211,15 +214,15 @@ bool DataSharingListener::add_datasharing_writer(
 }
 
 bool DataSharingListener::remove_datasharing_writer(
-    const GUID_t& writer_guid)
+        const GUID_t& writer_guid)
 {
     std::lock_guard<std::mutex> lock(mutex_);
     bool found = writer_pools_.remove_if (
-            [writer_guid](const WriterInfo& info)
-            {
-                return info.pool->writer() == writer_guid;
-            }
-    );
+        [writer_guid](const WriterInfo& info)
+        {
+            return info.pool->writer() == writer_guid;
+        }
+        );
 
     if (found)
     {
@@ -233,11 +236,11 @@ bool DataSharingListener::writer_is_matched(
         const GUID_t& writer_guid) const
 {
     auto it = std::find_if(writer_pools_.begin(), writer_pools_.end(),
-        [&writer_guid](const WriterInfo& info)
-        {
-            return info.pool->writer() == writer_guid;
-        }
-    );
+                    [&writer_guid](const WriterInfo& info)
+                    {
+                        return info.pool->writer() == writer_guid;
+                    }
+                    );
     return (it != writer_pools_.end());
 }
 

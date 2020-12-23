@@ -2870,15 +2870,15 @@ public:
 
     /**
      * Gets the set of DataSharing domain IDs.
-     * 
+     *
      * Each domain ID is 64 bit long.
      * However, user-defined domain IDs are only 16 bit long,
      * while the rest of the 48 bits are used for the
      * automatically generated domain ID (if any).
-     * 
+     *
      * - Automatic domain IDs use the 48 MSB and leave the 16 LSB as zero.
      * - User defined domain IDs use the 16 LSB and leave the 48 MSB as zero.
-     * 
+     *
      * @return the current DataSharing domain IDs
      */
     RTPS_DllAPI const std::vector<uint64_t>& domain_ids() const
@@ -2889,7 +2889,8 @@ public:
     /**
      * @param size the new maximum number of domain IDs
      */
-    RTPS_DllAPI void set_max_domains(uint32_t size)
+    RTPS_DllAPI void set_max_domains(
+            uint32_t size)
     {
         domain_ids_.reserve(size);
         max_domains_ = size;
@@ -2905,9 +2906,9 @@ public:
 
     /**
      * @brief Configures the DataSharing in automatic mode
-     * 
+     *
      * The default shared memory directory of the OS is used.
-     * A default domain ID is automatically computed. 
+     * A default domain ID is automatically computed.
      */
     RTPS_DllAPI void automatic()
     {
@@ -2918,7 +2919,7 @@ public:
      * @brief Configures the DataSharing in automatic mode
      *
      * The default shared memory directory of the OS is used.
-     * 
+     *
      * @param domain_ids the user configured DataSharing domain IDs (16 bits).
      */
     RTPS_DllAPI void automatic(
@@ -2930,8 +2931,8 @@ public:
     /**
      * @brief Configures the DataSharing in automatic mode
      *
-     * A default domain ID is automatically computed. 
-     * 
+     * A default domain ID is automatically computed.
+     *
      * @param directory The shared memory directory to use.
      */
     RTPS_DllAPI void automatic(
@@ -2957,7 +2958,7 @@ public:
      * @brief Configures the DataSharing in active mode
      *
      * A default domain ID is automatically computed.
-     * 
+     *
      * @param directory The shared memory directory to use.
      *      It is mandatory to provide a non-empty name or the creation of endpoints will fail.
      */
@@ -2993,10 +2994,11 @@ public:
 
     /**
      * @brief Adds a user-specific DataSharing domain ID
-     * 
+     *
      * @param id 16 bit identifier
      */
-    RTPS_DllAPI void add_domain_id(uint16_t id)
+    RTPS_DllAPI void add_domain_id(
+            uint16_t id)
     {
         if (max_domains_ == 0 || domain_ids_.size() < max_domains_)
         {
@@ -3005,7 +3007,8 @@ public:
     }
 
     // Not on the exported API, but must be public for other internal classes
-    void add_domain_id(uint64_t id)
+    void add_domain_id(
+            uint64_t id)
     {
         if (max_domains_ == 0 || domain_ids_.size() < max_domains_)
         {

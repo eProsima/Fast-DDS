@@ -176,8 +176,8 @@ public:
     {
         std::lock_guard<RecursiveTimedMutex> guard(mp_mutex);
         return matched_remote_readers_.size()
-                + matched_local_readers_.size()
-                + matched_datasharing_readers_.size();
+               + matched_local_readers_.size()
+               + matched_datasharing_readers_.size();
     }
 
 private:

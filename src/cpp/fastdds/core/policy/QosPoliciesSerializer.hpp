@@ -858,7 +858,7 @@ inline bool QosPoliciesSerializer<DataSharingQosPolicy>::read_content_from_cdr_m
     qos_policy.automatic();
 
     uint32_t num_domains = 0;
-   bool  valid = fastrtps::rtps::CDRMessage::readUInt32(cdr_message, &num_domains);
+    bool valid = fastrtps::rtps::CDRMessage::readUInt32(cdr_message, &num_domains);
 
     if (!valid || (qos_policy.max_domains() != 0 && num_domains > qos_policy.max_domains()))
     {

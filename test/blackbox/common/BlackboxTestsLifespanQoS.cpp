@@ -41,7 +41,7 @@ public:
     void SetUp() override
     {
         LibrarySettingsAttributes library_settings;
-        switch(GetParam())
+        switch (GetParam())
         {
             case INTRAPROCESS:
                 library_settings.intraprocess_delivery = IntraprocessDeliveryType::INTRAPROCESS_FULL;
@@ -59,7 +59,7 @@ public:
     void TearDown() override
     {
         LibrarySettingsAttributes library_settings;
-        switch(GetParam())
+        switch (GetParam())
         {
             case INTRAPROCESS:
                 library_settings.intraprocess_delivery = IntraprocessDeliveryType::INTRAPROCESS_OFF;

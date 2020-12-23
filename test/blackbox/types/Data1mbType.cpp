@@ -27,20 +27,28 @@
 
 using namespace eprosima::fastrtps::rtps;
 
-Data1mbType::Data1mbType() {
+Data1mbType::Data1mbType()
+{
     setName("Data1mb");
     m_typeSize = (uint32_t)Data1mb::getMaxCdrSerializedSize() + 4 /*encapsulation*/;
     m_isGetKeyDefined = Data1mb::isKeyDefined();
-    m_keyBuffer = (unsigned char*)malloc(Data1mb::getKeyMaxCdrSerializedSize()>16 ? Data1mb::getKeyMaxCdrSerializedSize() : 16);
+    m_keyBuffer = (unsigned char*)malloc(
+        Data1mb::getKeyMaxCdrSerializedSize() > 16 ? Data1mb::getKeyMaxCdrSerializedSize() : 16);
 }
 
-Data1mbType::~Data1mbType() {
-    if(m_keyBuffer!=nullptr)
+Data1mbType::~Data1mbType()
+{
+    if (m_keyBuffer != nullptr)
+    {
         free(m_keyBuffer);
+    }
 }
 
-bool Data1mbType::serialize(void *data, SerializedPayload_t *payload) {
-    Data1mb *p_type = (Data1mb*) data;
+bool Data1mbType::serialize(
+        void* data,
+        SerializedPayload_t* payload)
+{
+    Data1mb* p_type = (Data1mb*) data;
     eprosima::fastcdr::FastBuffer fastbuffer((char*)payload->data, payload->max_size); // Object that manages the raw buffer.
     eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN,
             eprosima::fastcdr::Cdr::DDS_CDR);
@@ -48,13 +56,16 @@ bool Data1mbType::serialize(void *data, SerializedPayload_t *payload) {
     // Serialize encapsulation
     ser.serialize_encapsulation();
     p_type->serialize(ser); // Serialize the object:
-    payload->length = (uint32_t)ser.getSerializedDataLength(); 	//Get the serialized length
+    payload->length = (uint32_t)ser.getSerializedDataLength();  //Get the serialized length
     return true;
 }
 
-bool Data1mbType::deserialize(SerializedPayload_t* payload, void* data) {
-    Data1mb* p_type = (Data1mb*) data; 	//Convert DATA to pointer of your type
-    eprosima::fastcdr::FastBuffer fastbuffer((char*)payload->data, payload->length); 	// Object that manages the raw buffer.
+bool Data1mbType::deserialize(
+        SerializedPayload_t* payload,
+        void* data)
+{
+    Data1mb* p_type = (Data1mb*) data;  //Convert DATA to pointer of your type
+    eprosima::fastcdr::FastBuffer fastbuffer((char*)payload->data, payload->length);    // Object that manages the raw buffer.
     eprosima::fastcdr::Cdr deser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN,
             eprosima::fastcdr::Cdr::DDS_CDR); // Object that deserializes the data.
     // Deserialize encapsulation.
@@ -64,38 +75,53 @@ bool Data1mbType::deserialize(SerializedPayload_t* payload, void* data) {
     return true;
 }
 
-void* Data1mbType::createData() {
+void* Data1mbType::createData()
+{
     return (void*)new Data1mb();
 }
 
-void Data1mbType::deleteData(void* data) {
+void Data1mbType::deleteData(
+        void* data)
+{
     delete((Data1mb*)data);
 }
 
-std::function<uint32_t()> Data1mbType::getSerializedSizeProvider(void *data)
+std::function<uint32_t()> Data1mbType::getSerializedSizeProvider(
+        void* data)
 {
-    return [data]() -> uint32_t {
-        return (uint32_t)type::getCdrSerializedSize(*static_cast<Data1mb*>(data)) + 4 /*encapsulation*/;
-    };
+    return [data]() -> uint32_t
+           {
+               return (uint32_t)type::getCdrSerializedSize(*static_cast<Data1mb*>(data)) + 4 /*encapsulation*/;
+           };
 }
 
-bool Data1mbType::getKey(void *data, InstanceHandle_t* handle, bool force_md5) {
-    if(!m_isGetKeyDefined)
+bool Data1mbType::getKey(
+        void* data,
+        InstanceHandle_t* handle,
+        bool force_md5)
+{
+    if (!m_isGetKeyDefined)
+    {
         return false;
+    }
     Data1mb* p_type = (Data1mb*) data;
-    eprosima::fastcdr::FastBuffer fastbuffer((char*)m_keyBuffer,Data1mb::getKeyMaxCdrSerializedSize()); 	// Object that manages the raw buffer.
-    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS); 	// Object that serializes the data.
+    eprosima::fastcdr::FastBuffer fastbuffer((char*)m_keyBuffer, Data1mb::getKeyMaxCdrSerializedSize());     // Object that manages the raw buffer.
+    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS);     // Object that serializes the data.
     p_type->serializeKey(ser);
-    if(force_md5 || Data1mb::getKeyMaxCdrSerializedSize()>16)	{
+    if (force_md5 || Data1mb::getKeyMaxCdrSerializedSize() > 16)
+    {
         m_md5.init();
-        m_md5.update(m_keyBuffer,(unsigned int)ser.getSerializedDataLength());
+        m_md5.update(m_keyBuffer, (unsigned int)ser.getSerializedDataLength());
         m_md5.finalize();
-        for(uint8_t i = 0;i<16;++i)    	{
+        for (uint8_t i = 0; i < 16; ++i)
+        {
             handle->value[i] = m_md5.digest[i];
         }
     }
-    else    {
-        for(uint8_t i = 0;i<16;++i)    	{
+    else
+    {
+        for (uint8_t i = 0; i < 16; ++i)
+        {
             handle->value[i] = m_keyBuffer[i];
         }
     }

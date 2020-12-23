@@ -45,10 +45,10 @@ public:
     typedef DataSharingNotification::Segment Segment;
 
     DataSharingListener(
-        std::shared_ptr<DataSharingNotification> notification,
-        const std::string& datasharing_pools_directory,
-        ResourceLimitedContainerConfig limits,
-        RTPSReader* reader);
+            std::shared_ptr<DataSharingNotification> notification,
+            const std::string& datasharing_pools_directory,
+            ResourceLimitedContainerConfig limits,
+            RTPSReader* reader);
 
     virtual ~DataSharingListener();
 
@@ -102,6 +102,7 @@ protected:
             , last_assertion_sequence(assertion)
         {
         }
+
     };
 
     std::shared_ptr<DataSharingNotification> notification_;

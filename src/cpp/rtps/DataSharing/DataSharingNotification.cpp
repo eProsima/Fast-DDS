@@ -82,8 +82,8 @@ bool DataSharingNotification::create_and_init_notification(
     {
         segment_ = std::unique_ptr<Segment>(
             new Segment(boost::interprocess::create_only,
-                segment_name_,
-                segment_size + fastdds::rtps::SharedMemSegment::EXTRA_SEGMENT_SIZE));
+            segment_name_,
+            segment_size + fastdds::rtps::SharedMemSegment::EXTRA_SEGMENT_SIZE));
     }
     catch (const std::exception& e)
     {
@@ -103,7 +103,7 @@ bool DataSharingNotification::create_and_init_notification(
         Segment::remove(segment_name_);
 
         logError(HISTORY_DATASHARING_LISTENER, "Failed to create listener queue " << segment_name_
-                                                                                    << ": " << e.what());
+                                                                                  << ": " << e.what());
         return false;
     }
 
@@ -112,8 +112,8 @@ bool DataSharingNotification::create_and_init_notification(
 }
 
 bool DataSharingNotification::open_and_init_notification(
-            const GUID_t& reader_guid,
-            const std::string& shared_dir)
+        const GUID_t& reader_guid,
+        const std::string& shared_dir)
 {
     segment_id_ = reader_guid;
     segment_name_ = generate_segment_name(shared_dir, reader_guid);
@@ -123,18 +123,18 @@ bool DataSharingNotification::open_and_init_notification(
     {
         segment_ = std::unique_ptr<Segment>(
             new Segment(boost::interprocess::open_only,
-                segment_name_.c_str()));
+            segment_name_.c_str()));
     }
     catch (const std::exception& e)
     {
         logError(HISTORY_DATASHARING_LISTENER, "Failed to open segment " << segment_name_
-                                                                            << ": " << e.what());
+                                                                         << ": " << e.what());
         return false;
     }
 
     // Initialize values from the segment
     notification_ = segment_->get().find<Notification>(
-            "notification_node").first;
+        "notification_node").first;
     if (!notification_)
     {
         segment_.reset();
@@ -145,7 +145,6 @@ bool DataSharingNotification::open_and_init_notification(
 
     return true;
 }
-
 
 }  // namespace rtps
 }  // namespace fastrtps

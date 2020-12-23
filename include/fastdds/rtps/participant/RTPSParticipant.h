@@ -247,7 +247,7 @@ public:
      */
 
     bool is_security_enabled_for_writer(
-        const WriterAttributes& writer_attributes);
+            const WriterAttributes& writer_attributes);
 
     /**
      * @brief Checks whether the writer has security attributes enabled
@@ -255,7 +255,7 @@ public:
      */
 
     bool is_security_enabled_for_reader(
-        const ReaderAttributes& reader_attributes);
+            const ReaderAttributes& reader_attributes);
 
 #endif // if HAVE_SECURITY
 
@@ -265,7 +265,7 @@ private:
     RTPSParticipantImpl* mp_impl;
 };
 
-}
+} // namespace rtps
 } /* namespace rtps */
 } /* namespace eprosima */
 

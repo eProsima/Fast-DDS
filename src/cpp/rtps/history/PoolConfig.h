@@ -74,12 +74,12 @@ struct PoolConfig : public BasicPoolConfig
                 // Otherwise, we need to reserve the extra to avoid dynamic allocations after the pools are created.
                 static_cast<uint32_t>(
                     history_attr.initialReservedCaches <= 0 ?
-                        0 : history_attr.initialReservedCaches + history_attr.extraReservedCaches),
+                    0 : history_attr.initialReservedCaches + history_attr.extraReservedCaches),
                 // Negative or 0 means infinite maximum.
                 // Otherwise, we need to allow the extra.
                 static_cast<uint32_t>(
                     history_attr.maximumReservedCaches <= 0 ?
-                        0 : history_attr.maximumReservedCaches + history_attr.extraReservedCaches)
+                    0 : history_attr.maximumReservedCaches + history_attr.extraReservedCaches)
             };
     }
 

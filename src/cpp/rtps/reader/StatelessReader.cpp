@@ -95,16 +95,16 @@ bool StatelessReader::matched_writer_add(
     if (is_datasharing_compatible_with(wdata))
     {
         if (datasharing_listener_->add_datasharing_writer(wdata.guid(),
-            m_att.durabilityKind == VOLATILE))
+                m_att.durabilityKind == VOLATILE))
         {
-            logInfo(RTPS_READER, "Writer Proxy " << wdata.guid() << " added to " << this->m_guid.entityId 
+            logInfo(RTPS_READER, "Writer Proxy " << wdata.guid() << " added to " << this->m_guid.entityId
                                                  << " with data sharing");
         }
         else
         {
             logError(RTPS_READER, "Failed to add Writer Proxy " << wdata.guid()
-                    << " to " << this->m_guid.entityId 
-                    << " with data sharing.");
+                                                                << " to " << this->m_guid.entityId
+                                                                << " with data sharing.");
             return false;
         }
 
@@ -212,11 +212,11 @@ bool StatelessReader::matched_writer_is_matched(
         const GUID_t& writer_guid)
 {
     std::lock_guard<RecursiveTimedMutex> guard(mp_mutex);
-    if(std::any_of(matched_writers_.begin(), matched_writers_.end(),
-                   [writer_guid](const RemoteWriterInfo_t& item)
-                   {
-                       return item.guid == writer_guid;
-                   }))
+    if (std::any_of(matched_writers_.begin(), matched_writers_.end(),
+            [writer_guid](const RemoteWriterInfo_t& item)
+            {
+                return item.guid == writer_guid;
+            }))
     {
         return true;
     }
@@ -275,7 +275,7 @@ void StatelessReader::remove_changes_from(
     {
         logInfo(RTPS_READER,
                 "Removing change " << (*it)->sequenceNumber << " from " << (*it)->writerGUID);
-        if(is_payload_pool_lost)
+        if (is_payload_pool_lost)
         {
             (*it)->serializedPayload.data = nullptr;
             (*it)->payload_owner(nullptr);
@@ -300,7 +300,7 @@ bool StatelessReader::nextUntakenCache(
 
             //Check if the payload is dirty
             if (DataSharingPayloadPool::check_sequence_number(
-                    (*change)->serializedPayload.data, (*change)->sequenceNumber))
+                        (*change)->serializedPayload.data, (*change)->sequenceNumber))
             {
                 found = true;
                 break;
@@ -341,7 +341,7 @@ bool StatelessReader::nextUnreadCache(
 
                 //Check if the payload is dirty
                 if (DataSharingPayloadPool::check_sequence_number(
-                        (*it)->serializedPayload.data, (*it)->sequenceNumber))
+                            (*it)->serializedPayload.data, (*it)->sequenceNumber))
                 {
                     found = true;
                     break;
@@ -390,9 +390,9 @@ bool StatelessReader::change_removed_by_history(
 }
 
 void StatelessReader::change_read_by_user(
-            CacheChange_t* change,
-            const WriterProxy* /*writer*/,
-            bool mark_as_read)
+        CacheChange_t* change,
+        const WriterProxy* /*writer*/,
+        bool mark_as_read)
 {
     // Mark change as read
     if (mark_as_read && !change->isRead)
@@ -403,7 +403,7 @@ void StatelessReader::change_read_by_user(
             --total_unread_;
         }
     }
-    
+
     // If datasharing, unlock
     if (is_datasharing_compatible_ && datasharing_listener_->writer_is_matched(change->writerGUID))
     {

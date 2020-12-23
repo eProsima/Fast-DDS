@@ -52,7 +52,7 @@ ReaderQos DataReaderQos::get_readerqos(
     qos.data_sharing = data_sharing();
 
     if (qos.data_sharing.kind() != OFF &&
-        qos.data_sharing.domain_ids().empty())
+            qos.data_sharing.domain_ids().empty())
     {
         uint64_t id = 0;
         Host::uint48 mac_id = Host::instance().mac_id();
