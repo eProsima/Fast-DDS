@@ -13,8 +13,7 @@
 // limitations under the License.
 
 /**
- * @file ThreadEvent.cpp
- *
+ * @file ResourceEvent.cpp
  */
 
 #include <fastdds/rtps/resources/ResourceEvent.h>
@@ -75,9 +74,9 @@ void ResourceEvent::unregister_timer(
     std::unique_lock<TimedMutex> lock(mutex_);
 
     cv_manipulation_.wait(lock, [&]()
-                {
-                    return allow_vector_manipulation_;
-                });
+            {
+                return allow_vector_manipulation_;
+            });
 
     bool should_notify = false;
     std::vector<TimedEventImpl*>::iterator it;
@@ -158,7 +157,19 @@ void ResourceEvent::event_service()
 
         std::unique_lock<TimedMutex> lock(mutex_);
 
-        // Allow other threads to manipulate the timer collections
+        // If the thread has already been instructed to stop, do it.
+        if (stop_.load())
+        {
+            break;
+        }
+
+        // If pending timers exist, there is some work to be done, so no need to wait.
+        if (!pending_timers_.empty())
+        {
+            continue;
+        }
+
+        // Allow other threads to manipulate the timer collections while we wait.
         allow_vector_manipulation_ = true;
         cv_manipulation_.notify_all();
 
@@ -243,10 +254,10 @@ void ResourceEvent::do_timer_actions()
             [cancel_time](
                 TimedEventImpl* a,
                 TimedEventImpl* b)
-                    {
-                        (void)b;
-                        return a->next_trigger_time() < cancel_time;
-                    }),
+            {
+                (void)b;
+                return a->next_trigger_time() < cancel_time;
+            }),
             active_timers_.end()
             );
     }
