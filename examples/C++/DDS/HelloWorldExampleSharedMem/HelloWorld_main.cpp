@@ -30,13 +30,13 @@ int main(
         int argc,
         char** argv)
 {
-    std::cout << "Starting "<< std::endl;
+    std::cout << "Starting " << std::endl;
     int type = 1;
     int count = 10;
     long sleep = 100;
     if (argc > 1)
     {
-        if (strcmp(argv[1],"publisher")==0)
+        if (strcmp(argv[1], "publisher") == 0)
         {
             type = 1;
             if (argc >= 3)
@@ -48,7 +48,7 @@ int main(
                 }
             }
         }
-        else if (strcmp(argv[1],"subscriber")==0)
+        else if (strcmp(argv[1], "subscriber") == 0)
         {
             type = 2;
         }
@@ -66,49 +66,49 @@ int main(
 
     switch (type)
     {
-    case 1:
-    {
-        HelloWorldPublisher mypub;
-        if (mypub.init())
+        case 1:
         {
-            mypub.run(count, sleep);
+            HelloWorldPublisher mypub;
+            if (mypub.init())
+            {
+                mypub.run(count, sleep);
+            }
+            break;
         }
-        break;
-    }
-    case 2:
-    {
-        HelloWorldSubscriber mysub;
-        if (mysub.init())
+        case 2:
         {
-            mysub.run();
+            HelloWorldSubscriber mysub;
+            if (mysub.init())
+            {
+                mysub.run();
+            }
+            break;
         }
-        break;
-    }
-    case 3:
-    {
-        std::thread thread_sub([]
-                {
-                HelloWorldSubscriber mysub;
-                if (mysub.init())
-                {
-                    mysub.run();
-                }
-                });
+        case 3:
+        {
+            std::thread thread_sub([]
+                    {
+                        HelloWorldSubscriber mysub;
+                        if (mysub.init())
+                        {
+                            mysub.run();
+                        }
+                    });
 
-        std::thread thread_pub([&]
-                {
-                HelloWorldPublisher mypub;
-                if (mypub.init())
-                {
-                    mypub.run(count, sleep);
-                }
-                });
+            std::thread thread_pub([&]
+                    {
+                        HelloWorldPublisher mypub;
+                        if (mypub.init())
+                        {
+                            mypub.run(count, sleep);
+                        }
+                    });
 
-        thread_sub.join();
-        thread_pub.join();
+            thread_sub.join();
+            thread_pub.join();
 
-        break;
-    }
+            break;
+        }
     }
     Domain::stopAll();
     Log::Reset();
