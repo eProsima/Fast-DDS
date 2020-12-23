@@ -694,6 +694,8 @@ TEST_F(DataReaderTests, return_loan)
     aux_infos.unloan();
     aux_values_2.unloan();
     aux_infos_2.unloan();
+
+    EXPECT_EQ(ok_code, subscriber_->delete_datareader(reader2));
 }
 
 /*
