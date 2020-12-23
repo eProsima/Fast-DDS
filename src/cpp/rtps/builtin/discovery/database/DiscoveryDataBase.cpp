@@ -590,7 +590,7 @@ void DiscoveryDataBase::match_new_server_(
 void DiscoveryDataBase::create_virtual_endpoints_(
         eprosima::fastrtps::rtps::GuidPrefix_t& participant_prefix)
 {
-logInfo(DISCOVERY_DATABASE, "Creating virtual entities for " << participant_prefix);
+    logInfo(DISCOVERY_DATABASE, "Creating virtual entities for " << participant_prefix);
     /* Create virtual writer */
     // Create a GUID for the virtual writer from the local server GUID prefix and the virtual writer entity
     // ID.
@@ -643,7 +643,7 @@ bool DiscoveryDataBase::participant_data_has_changed_(
         const DiscoveryParticipantChangeData& new_change_data)
 {
     return !(participant_info.is_local() == new_change_data.is_local() &&
-        participant_info.is_client() == new_change_data.is_client());
+           participant_info.is_client() == new_change_data.is_client());
 }
 
 void DiscoveryDataBase::create_new_participant_from_change_(
@@ -704,7 +704,7 @@ void DiscoveryDataBase::update_participant_from_change_(
     // The entity A changes to local
     // Must be local data, or else it is a remote endpoint and should not be changed
     if (change_guid.guidPrefix != server_guid_prefix_ && change_data.is_local() &&
-        DiscoveryDataBase::participant_data_has_changed_(participant_info, change_data))
+            DiscoveryDataBase::participant_data_has_changed_(participant_info, change_data))
     {
         // If the participant changes to server local, virtual endpoints must be added
         // If it is local and server the only possibility is it was a remote server and it must be converted to local
@@ -732,13 +732,13 @@ void DiscoveryDataBase::update_participant_from_change_(
     }
 
     // Only update database if the change is newer than the one we already have
-        else if (ch->write_params.sample_identity().sequence_number() >
+    else if (ch->write_params.sample_identity().sequence_number() >
             participant_info.change()->write_params.sample_identity().sequence_number())
     {
         logInfo(DISCOVERY_DATABASE, "Participant already known with newer sequence number");
 
         // The change could be newer and at the same time not being an update.
-                // This happens with DATAs coming from servers, since they take their own DATAs in and out frequently,
+        // This happens with DATAs coming from servers, since they take their own DATAs in and out frequently,
         // so the sequence number in `write_params` changes.
         // To account for that, we discard the DATA if the payload is exactly the same as what we have.
         if (!(ch->serializedPayload == participant_info.change()->serializedPayload))
@@ -762,7 +762,7 @@ void DiscoveryDataBase::update_participant_from_change_(
     // if the cache is not new we have to release it, because it is repeated or outdated
     else
     {
-                // if the change is the same that we already have, we update the ack list. This is because we have
+        // if the change is the same that we already have, we update the ack list. This is because we have
         //  received the data from two servers, so we have to set that both of them already know this data
         if (ch->write_params.sample_identity().sequence_number() ==
                 participant_info.change()->write_params.sample_identity().sequence_number())
@@ -2490,7 +2490,7 @@ bool DiscoveryDataBase::from_json(
 
             logInfo(DISCOVERY_DATABASE,
                     "Writer " << guid_aux << " created with instance handle " <<
-                                    wit.first->second.change()->instanceHandle);
+                    wit.first->second.change()->instanceHandle);
 
             if (change->kind != fastrtps::rtps::ALIVE)
             {
@@ -2584,7 +2584,8 @@ void DiscoveryDataBase::persistence_enable(
     backup_file_.open(backup_file_name_, std::ios::app);
 }
 
-bool DiscoveryDataBase::is_participant_local(const eprosima::fastrtps::rtps::GuidPrefix_t& participant_prefix)
+bool DiscoveryDataBase::is_participant_local(
+        const eprosima::fastrtps::rtps::GuidPrefix_t& participant_prefix)
 {
     auto pit = participants_.find(participant_prefix);
     if (pit != participants_.end())

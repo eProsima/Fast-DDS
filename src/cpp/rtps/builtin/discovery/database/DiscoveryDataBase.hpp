@@ -332,10 +332,10 @@ public:
         return virtual_topic_;
     }
 
-    // Return number of updated entities since last call to this same function 
+    // Return number of updated entities since last call to this same function
     int updates_since_last_checked()
     {
-            return new_updates_.exchange(0);
+        return new_updates_.exchange(0);
     }
 
     // Check if an participant is stored as local. If the participant does not exist, it returns false
