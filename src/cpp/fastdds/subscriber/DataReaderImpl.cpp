@@ -292,13 +292,6 @@ ReturnCode_t DataReaderImpl::prepare_loan(
         return ReturnCode_t::RETCODE_OK;
     }
 
-    // Check if there are enough loans
-    ReturnCode_t code = loan_manager_.get_loan(data_values, sample_infos);
-    if (!code)
-    {
-        return code;
-    }
-
     if (max_samples > 0)
     {
         // Check if there are enough sample_infos
@@ -315,6 +308,13 @@ ReturnCode_t DataReaderImpl::prepare_loan(
             size_t exceed = num_infos - qos_.reader_resource_limits().sample_infos_allocation.maximum;
             max_samples -= static_cast<uint32_t>(exceed);
         }
+    }
+
+    // Check if there are enough loans
+    ReturnCode_t code = loan_manager_.get_loan(data_values, sample_infos);
+    if (!code)
+    {
+        return code;
     }
 
     return ReturnCode_t::RETCODE_OK;
