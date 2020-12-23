@@ -298,20 +298,21 @@ private:
 
         switch (change->kind)
         {
-        case eprosima::fastrtps::rtps::ALIVE:
-            info.instance_state = ALIVE_INSTANCE_STATE;
-            break;
-        case eprosima::fastrtps::rtps::NOT_ALIVE_DISPOSED:
-        case eprosima::fastrtps::rtps::NOT_ALIVE_DISPOSED_UNREGISTERED:
-            info.instance_state = NOT_ALIVE_DISPOSED_INSTANCE_STATE;
-            info.valid_data = false;
-            break;
-        default:
-            //TODO [ILG] change this if the other kinds ever get implemented
-            info.instance_state = ALIVE_INSTANCE_STATE;
-            break;
+            case eprosima::fastrtps::rtps::ALIVE:
+                info.instance_state = ALIVE_INSTANCE_STATE;
+                break;
+            case eprosima::fastrtps::rtps::NOT_ALIVE_DISPOSED:
+            case eprosima::fastrtps::rtps::NOT_ALIVE_DISPOSED_UNREGISTERED:
+                info.instance_state = NOT_ALIVE_DISPOSED_INSTANCE_STATE;
+                info.valid_data = false;
+                break;
+            default:
+                //TODO [ILG] change this if the other kinds ever get implemented
+                info.instance_state = ALIVE_INSTANCE_STATE;
+                break;
         }
     }
+
 };
 
 } /* namespace detail */

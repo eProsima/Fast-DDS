@@ -585,9 +585,9 @@ std::pair<bool, SubscriberHistory::instance_iterator> SubscriberHistory::lookup_
     else
     {
         auto comp = [](const InstanceHandle_t& h, const std::pair<InstanceHandle_t, KeyedChanges>& it)
-        {
-            return h < it.first;
-        };
+                {
+                    return h < it.first;
+                };
         ret_val.second = std::upper_bound(keyed_changes_.begin(), keyed_changes_.end(), handle, comp);
     }
 

@@ -228,6 +228,6 @@ private:
 } // namespace fastrtps
 } // namespace eprosima
 
-#endif
+#endif // ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
 #endif /* SUBSCRIBERHISTORY_H_ */
