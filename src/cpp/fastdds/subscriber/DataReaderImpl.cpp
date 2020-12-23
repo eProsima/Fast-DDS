@@ -429,7 +429,10 @@ ReturnCode_t DataReaderImpl::read_next_instance(
     detail::ReadTakeCommand cmd(*this, data_values, sample_infos, max_samples, states, instance);
     while (!cmd.is_finished())
     {
-        cmd.add_instance(false);
+        if (cmd.add_instance(false))
+        {
+            break;
+        }
     }
     return cmd.return_value();
 }
@@ -543,7 +546,10 @@ ReturnCode_t DataReaderImpl::take_next_instance(
     detail::ReadTakeCommand cmd(*this, data_values, sample_infos, max_samples, states, instance);
     while (!cmd.is_finished())
     {
-        cmd.add_instance(true);
+        if (cmd.add_instance(true))
+        {
+            break;
+        }
     }
     return cmd.return_value();
 }

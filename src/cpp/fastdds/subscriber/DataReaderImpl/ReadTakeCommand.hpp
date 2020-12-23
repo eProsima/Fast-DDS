@@ -83,16 +83,17 @@ struct ReadTakeCommand
         }
     }
 
-    void add_instance(
+    bool add_instance(
             bool take_samples)
     {
         // Advance to the first instance with a valid state
         if (!go_to_first_valid_instance())
         {
-            return;
+            return false;
         }
 
         // Traverse changes on current instance
+        bool ret_val = false;
         LoanableCollection::size_type first_slot = current_slot_;
         auto it = instance_->second.cache_changes.begin();
         while (!finished_ && it != instance_->second.cache_changes.end())
@@ -122,6 +123,8 @@ struct ReadTakeCommand
 
         if (current_slot_ > first_slot)
         {
+            ret_val = true;
+
             // complete sample infos
             LoanableCollection::size_type slot = current_slot_;
             LoanableCollection::size_type n = 0;
@@ -134,6 +137,7 @@ struct ReadTakeCommand
         }
 
         next_instance();
+        return ret_val;
     }
 
     inline bool is_finished() const
