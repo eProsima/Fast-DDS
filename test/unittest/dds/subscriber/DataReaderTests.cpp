@@ -363,6 +363,8 @@ protected:
  */
 TEST_F(DataReaderTests, read_take_apis)
 {
+    create_instance_handles();
+
     // We will create a disabled DataReader, so we can check RETCODE_NOT_ENABLED
     SubscriberQos subscriber_qos = SUBSCRIBER_QOS_DEFAULT;
     subscriber_qos.entity_factory().autoenable_created_entities = false;
