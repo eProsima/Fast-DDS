@@ -347,7 +347,7 @@ ReturnCode_t DataReaderImpl::read(
 
     auto instance = history_.lookup_instance(HANDLE_NIL, false).second;
     detail::StateFilter states{ sample_states, view_states, instance_states };
-    detail::ReadTakeCommand cmd(history_, sample_info_pool_, data_values, sample_infos, max_samples, states, instance);
+    detail::ReadTakeCommand cmd(*this, data_values, sample_infos, max_samples, states, instance);
     while (!cmd.is_finished())
     {
         cmd.add_instance(false);
@@ -389,7 +389,7 @@ ReturnCode_t DataReaderImpl::read_instance(
     }
 
     detail::StateFilter states{ sample_states, view_states, instance_states };
-    detail::ReadTakeCommand cmd(history_, sample_info_pool_, data_values, sample_infos, max_samples, states, it.second,
+    detail::ReadTakeCommand cmd(*this, data_values, sample_infos, max_samples, states, it.second,
             true);
     while (!cmd.is_finished())
     {
@@ -426,7 +426,7 @@ ReturnCode_t DataReaderImpl::read_next_instance(
 
     auto instance = history_.lookup_instance(previous_handle, false).second;
     detail::StateFilter states{ sample_states, view_states, instance_states };
-    detail::ReadTakeCommand cmd(history_, sample_info_pool_, data_values, sample_infos, max_samples, states, instance);
+    detail::ReadTakeCommand cmd(*this, data_values, sample_infos, max_samples, states, instance);
     while (!cmd.is_finished())
     {
         cmd.add_instance(false);
@@ -461,7 +461,7 @@ ReturnCode_t DataReaderImpl::take(
 
     auto instance = history_.lookup_instance(HANDLE_NIL, false).second;
     detail::StateFilter states{ sample_states, view_states, instance_states };
-    detail::ReadTakeCommand cmd(history_, sample_info_pool_, data_values, sample_infos, max_samples, states, instance);
+    detail::ReadTakeCommand cmd(*this, data_values, sample_infos, max_samples, states, instance);
     while (!cmd.is_finished())
     {
         cmd.add_instance(true);
@@ -503,7 +503,7 @@ ReturnCode_t DataReaderImpl::take_instance(
     }
 
     detail::StateFilter states{ sample_states, view_states, instance_states };
-    detail::ReadTakeCommand cmd(history_, sample_info_pool_, data_values, sample_infos, max_samples, states, it.second,
+    detail::ReadTakeCommand cmd(*this, data_values, sample_infos, max_samples, states, it.second,
             true);
     while (!cmd.is_finished())
     {
@@ -540,7 +540,7 @@ ReturnCode_t DataReaderImpl::take_next_instance(
 
     auto instance = history_.lookup_instance(previous_handle, false).second;
     detail::StateFilter states{ sample_states, view_states, instance_states };
-    detail::ReadTakeCommand cmd(history_, sample_info_pool_, data_values, sample_infos, max_samples, states, instance);
+    detail::ReadTakeCommand cmd(*this, data_values, sample_infos, max_samples, states, instance);
     while (!cmd.is_finished())
     {
         cmd.add_instance(true);

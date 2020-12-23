@@ -30,6 +30,8 @@
 #include <fastrtps/subscriber/SubscriberHistory.h>
 #include <fastrtps/types/TypesBase.h>
 
+#include <fastdds/subscriber/DataReaderImpl.hpp>
+#include <fastdds/subscriber/DataReaderImpl/DataReaderLoanManager.hpp>
 #include <fastdds/subscriber/DataReaderImpl/StateFilter.hpp>
 #include <fastdds/subscriber/DataReaderImpl/SampleInfoPool.hpp>
 
@@ -48,16 +50,16 @@ struct ReadTakeCommand
     using SampleInfoSeq = LoanableSequence<SampleInfo>;
 
     ReadTakeCommand(
-            history_type& history,
-            SampleInfoPool& info_pool,
+            DataReaderImpl& reader,
             LoanableCollection& data_values,
             SampleInfoSeq& sample_infos,
             int32_t max_samples,
             const StateFilter& states,
             history_type::instance_iterator instance,
             bool single_instance = false)
-        : history_(history)
-        , info_pool_(info_pool)
+        : loan_manager_(reader.loan_manager_)
+        , history_(reader.history_)
+        , info_pool_(reader.sample_info_pool_)
         , data_values_(data_values)
         , sample_infos_(sample_infos)
         , remaining_samples_(max_samples)
@@ -69,6 +71,16 @@ struct ReadTakeCommand
         assert(0 <= remaining_samples_);
 
         current_slot_ = data_values_.length();
+    }
+
+    ~ReadTakeCommand()
+    {
+        if (!data_values_.has_ownership() && ReturnCode_t::RETCODE_NO_DATA == return_value_)
+        {
+            loan_manager_.return_loan(data_values_, sample_infos_);
+            data_values_.unloan();
+            sample_infos_.unloan();
+        }
     }
 
     void add_instance(
@@ -136,6 +148,7 @@ struct ReadTakeCommand
 
 private:
 
+    DataReaderLoanManager& loan_manager_;
     history_type& history_;
     SampleInfoPool& info_pool_;
     LoanableCollection& data_values_;

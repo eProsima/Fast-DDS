@@ -66,12 +66,20 @@ class TopicDescription;
 
 using SampleInfoSeq = LoanableSequence<SampleInfo>;
 
+namespace detail {
+
+struct ReadTakeCommand;
+
+} // namespace detail
+
 /**
  * Class DataReader, contains the actual implementation of the behaviour of the Subscriber.
  *  @ingroup FASTDDS_MODULE
  */
 class DataReaderImpl
 {
+    friend struct detail::ReadTakeCommand;
+
 protected:
 
     using ITopicPayloadPool = eprosima::fastrtps::rtps::ITopicPayloadPool;
