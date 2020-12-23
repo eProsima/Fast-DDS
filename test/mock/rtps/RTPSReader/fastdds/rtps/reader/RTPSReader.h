@@ -162,6 +162,23 @@ public:
         return history_;
     }
 
+    bool is_sample_valid(
+        const void* /*data*/,
+        const GUID_t& /*writer*/,
+        const SequenceNumber_t& /*sn*/) const
+    {
+        return true;
+    }
+
+    virtual void change_read_by_user(
+            CacheChange_t* /*change*/,
+            const WriterProxy* /*writer*/,
+            bool mark_as_read = true)
+    {
+        (void) mark_as_read;
+    }
+
+
     ReaderHistory* history_;
 
     ReaderListener* listener_;
