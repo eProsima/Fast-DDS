@@ -12,12 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifdef _WIN32
-#include <windows.h>
-#else
-#include <limits.h>
-#include <unistd.h>
-#endif // ifdef _WIN32
 
 #include <thread>
 #include <mutex>
@@ -28,6 +22,13 @@
 #include <fastrtps/xmlparser/XMLProfileManager.h>
 #include <fastrtps/xmlparser/XMLParserCommon.h>
 #include "../logging/mock/MockConsumer.h"
+
+#ifdef _WIN32
+#include <windows.h>
+#else
+#include <limits.h>
+#include <unistd.h>
+#endif // ifdef _WIN32
 
 using namespace eprosima::fastrtps;
 using namespace ::xmlparser;
@@ -92,18 +93,20 @@ TEST_F(XMLLoadFileTests, load_twice_default_xml)
 #ifdef _WIN32
     char current_directory[MAX_PATH];
     uint32_t ret = GetCurrentDirectory(MAX_PATH, current_directory);
-    ASSERT_NE(ret, 0);
+    ASSERT_NE(ret, 0u);
     strcat_s(current_directory, MAX_PATH, "\\");
     strcat_s(current_directory, MAX_PATH, DEFAULT_FASTRTPS_PROFILES);
+    // Set environment variable
+    _putenv_s("FASTRTPS_DEFAULT_PROFILES_FILE", current_directory);
 #else
     char* current_directory = nullptr;
     current_directory = getcwd(current_directory, PATH_MAX);
     ASSERT_NE(current_directory, nullptr);
     strcat(current_directory, "/");
     strcat(current_directory, DEFAULT_FASTRTPS_PROFILES);
-#endif // _WIN32
     // Set environment variable
     setenv("FASTRTPS_DEFAULT_PROFILES_FILE", current_directory, 1);
+#endif // _WIN32
 
     // Write DEFAULT_FASTRTPS_PROFILES.xml
     std::ofstream xmlFile;

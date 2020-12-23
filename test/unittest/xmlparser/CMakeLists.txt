@@ -255,9 +255,9 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
         target_compile_definitions(XMLLoadFileTests PRIVATE FASTRTPS_NO_LIB
             $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
             $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
-        )
+            )
         target_include_directories(XMLLoadFileTests PRIVATE
-            ${GTEST_INCLUDE_DIRS}
+            ${GTEST_INCLUDE_DIRS} ${GMOCK_INCLUDE_DIRS}
             ${PROJECT_SOURCE_DIR}/test/unittest/logging/mock
             ${PROJECT_SOURCE_DIR}/test/mock/rtps/TCPTransportDescriptor
             ${PROJECT_SOURCE_DIR}/test/mock/rtps/TCPv4TransportDescriptor
@@ -267,14 +267,14 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             ${PROJECT_SOURCE_DIR}/test/mock/rtps/UDPv6TransportDescriptor
             ${PROJECT_SOURCE_DIR}/include
             ${PROJECT_BINARY_DIR}/include
-        )
+            )
 
         target_link_libraries(XMLLoadFileTests ${GTEST_LIBRARIES}
             $<$<BOOL:${WIN32}>:iphlpapi$<SEMICOLON>Shlwapi>
             $<$<BOOL:${WIN32}>:ws2_32>
             ${TINYXML2_LIBRARY}
             fastcdr
-        )
+            )
         add_gtest(XMLLoadFileTests SOURCES XMLLoadFileTests.cpp)
 
     endif()
