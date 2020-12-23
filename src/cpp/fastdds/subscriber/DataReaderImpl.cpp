@@ -581,7 +581,24 @@ ReturnCode_t DataReaderImpl::return_loan(
         return code;
     }
 
-    // TODO: Return samples and infos
+    // Return samples and infos
+    LoanableCollection::size_type n = sample_infos.length();
+    while (n > 0)
+    {
+        --n;
+        if (sample_infos[n].valid_data)
+        {
+            if (!type_->is_plain())
+            {
+                // Return loaned sample
+            }
+        }
+
+        sample_info_pool_.return_item(&sample_infos[n]);
+    }
+
+    data_values.unloan();
+    sample_infos.unloan();
 
     return ReturnCode_t::RETCODE_OK;
 }
