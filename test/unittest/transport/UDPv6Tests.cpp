@@ -143,7 +143,7 @@ TEST_F(UDPv6Tests, conversion_to_ip6_string)
     locator.address[15] = 0x20;
     ASSERT_EQ("::1020", IPLocator::toIPv6string(locator));
 
-    //Embedded Zeros in 2001:DB8:a::/48
+    //Embedded Zeros in 2001:DB8:a::
     reset_locator_address(locator);
     locator.address[0] = 0x20;
     locator.address[1] = 0x01;
