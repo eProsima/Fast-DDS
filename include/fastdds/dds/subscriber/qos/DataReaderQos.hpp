@@ -108,7 +108,7 @@ public:
     }
 
     //! Matched publishers allocation limits.
-    fastrtps::ResourceLimitedContainerConfig matched_publisher_allocation{ 1u };
+    fastrtps::ResourceLimitedContainerConfig matched_publisher_allocation;
     //! SampleInfo allocation limits.
     fastrtps::ResourceLimitedContainerConfig sample_infos_allocation{ 32u };
     //! Loaned collections allocation limits.
