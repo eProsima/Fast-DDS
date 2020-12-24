@@ -198,11 +198,11 @@ private:
         OutstandingLoanItem() = default;
         OutstandingLoanItem(
                 const OutstandingLoanItem&) = default;
-        OutstandingLoanItem& operator=(
+        OutstandingLoanItem& operator =(
                 const OutstandingLoanItem&) = default;
         OutstandingLoanItem(
                 OutstandingLoanItem&&) = default;
-        OutstandingLoanItem& operator=(
+        OutstandingLoanItem& operator =(
                 OutstandingLoanItem&&) = default;
 
         bool operator == (
