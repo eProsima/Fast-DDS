@@ -576,6 +576,28 @@ std::pair<bool, SubscriberHistory::instance_info> SubscriberHistory::lookup_inst
         const InstanceHandle_t& handle,
         bool exact)
 {
+    if (topic_att_.getTopicKind() == NO_KEY)
+    {
+        if (handle.isDefined())
+        {
+            if (exact)
+            {
+                return {true, { handle, &m_changes }};
+            }
+            return { false, {InstanceHandle_t(), nullptr} };
+        }
+        else
+        {
+            if (exact)
+            {
+                return { false, {InstanceHandle_t(), nullptr} };
+            }
+            InstanceHandle_t tmp;
+            tmp.value[0] = 1;
+            return { true, {tmp, &m_changes} };
+        }
+    }
+
     t_m_Inst_Caches::iterator it;
 
     if (exact)
