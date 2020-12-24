@@ -1417,6 +1417,7 @@ std::shared_ptr<IPayloadPool> DataReaderImpl::get_payload_pool()
     if (!payload_pool_)
     {
         payload_pool_ = TopicPayloadPoolRegistry::get(topic_->get_name(), config);
+        sample_pool_ = std::make_shared<detail::SampleLoanManager>(config, type_);
     }
 
     payload_pool_->reserve_history(config, true);

@@ -42,6 +42,7 @@
 
 #include <fastdds/subscriber/DataReaderImpl/DataReaderLoanManager.hpp>
 #include <fastdds/subscriber/DataReaderImpl/SampleInfoPool.hpp>
+#include <fastdds/subscriber/DataReaderImpl/SampleLoanManager.hpp>
 #include <fastdds/subscriber/SubscriberImpl.hpp>
 #include <rtps/history/ITopicPayloadPool.h>
 
@@ -364,6 +365,7 @@ protected:
     DataReader* user_datareader_ = nullptr;
 
     std::shared_ptr<ITopicPayloadPool> payload_pool_;
+    std::shared_ptr<detail::SampleLoanManager> sample_pool_;
 
     detail::SampleInfoPool sample_info_pool_;
     detail::DataReaderLoanManager loan_manager_;
