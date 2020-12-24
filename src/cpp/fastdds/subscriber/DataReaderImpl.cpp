@@ -619,11 +619,7 @@ ReturnCode_t DataReaderImpl::return_loan(
         --n;
         if (sample_infos[n].valid_data)
         {
-            if (!type_->is_plain())
-            {
-                // Return loaned sample
-                type_->deleteData(data_values.buffer()[n]);
-            }
+            sample_pool_->return_loan(data_values.buffer()[n]);
         }
 
         sample_info_pool_.return_item(&sample_infos[n]);

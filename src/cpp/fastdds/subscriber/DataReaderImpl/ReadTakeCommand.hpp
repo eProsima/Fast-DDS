@@ -34,6 +34,7 @@
 #include <fastdds/subscriber/DataReaderImpl/DataReaderLoanManager.hpp>
 #include <fastdds/subscriber/DataReaderImpl/StateFilter.hpp>
 #include <fastdds/subscriber/DataReaderImpl/SampleInfoPool.hpp>
+#include <fastdds/subscriber/DataReaderImpl/SampleLoanManager.hpp>
 
 #include <fastdds/rtps/common/CacheChange.h>
 
@@ -61,6 +62,7 @@ struct ReadTakeCommand
         , loan_manager_(reader.loan_manager_)
         , history_(reader.history_)
         , info_pool_(reader.sample_info_pool_)
+        , sample_pool_(reader.sample_pool_)
         , data_values_(data_values)
         , sample_infos_(sample_infos)
         , remaining_samples_(max_samples)
@@ -158,6 +160,7 @@ private:
     DataReaderLoanManager& loan_manager_;
     history_type& history_;
     SampleInfoPool& info_pool_;
+    std::shared_ptr<detail::SampleLoanManager> sample_pool_;
     LoanableCollection& data_values_;
     SampleInfoSeq& sample_infos_;
     int32_t remaining_samples_;
@@ -254,19 +257,9 @@ private:
         else
         {
             // loan
-            if (type_->is_plain())
-            {
-                // TODO: reference should be incremented
-                auto ptr = change->serializedPayload.data;
-                ptr += change->serializedPayload.representation_header_size;
-                const_cast<void**>(data_values_.buffer())[current_slot_] = ptr;
-            }
-            else
-            {
-                void* ptr = type_->createData();
-                type_->deserialize(payload, ptr);
-                const_cast<void**>(data_values_.buffer())[current_slot_] = ptr;
-            }
+            void* sample;
+            sample_pool_->get_loan(change, sample);
+            const_cast<void**>(data_values_.buffer())[current_slot_] = sample;
         }
     }
 
