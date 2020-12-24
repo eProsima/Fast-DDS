@@ -572,15 +572,15 @@ bool SubscriberHistory::get_next_deadline(
     return false;
 }
 
-std::pair<bool, SubscriberHistory::instance_iterator> SubscriberHistory::lookup_instance(
+std::pair<bool, SubscriberHistory::instance_info> SubscriberHistory::lookup_instance(
         const InstanceHandle_t& handle,
         bool exact)
 {
-    std::pair<bool, instance_iterator> ret_val;
+    t_m_Inst_Caches::iterator it;
 
     if (exact)
     {
-        ret_val.second = keyed_changes_.find(handle);
+        it = keyed_changes_.find(handle);
     }
     else
     {
@@ -588,11 +588,14 @@ std::pair<bool, SubscriberHistory::instance_iterator> SubscriberHistory::lookup_
                 {
                     return h < it.first;
                 };
-        ret_val.second = std::upper_bound(keyed_changes_.begin(), keyed_changes_.end(), handle, comp);
+        it = std::upper_bound(keyed_changes_.begin(), keyed_changes_.end(), handle, comp);
     }
 
-    ret_val.first = ret_val.second != keyed_changes_.end();
-    return ret_val;
+    if (it != keyed_changes_.end())
+    {
+        return { true, {it->first, &(it->second.cache_changes)} };
+    }
+    return { false, {InstanceHandle_t(), nullptr} };
 }
 
 } // namespace fastrtps

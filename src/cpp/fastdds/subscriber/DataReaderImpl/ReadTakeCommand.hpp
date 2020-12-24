@@ -55,7 +55,7 @@ struct ReadTakeCommand
             SampleInfoSeq& sample_infos,
             int32_t max_samples,
             const StateFilter& states,
-            history_type::instance_iterator instance,
+            history_type::instance_info instance,
             bool single_instance = false)
         : type_(reader.type_)
         , loan_manager_(reader.loan_manager_)
@@ -66,7 +66,7 @@ struct ReadTakeCommand
         , remaining_samples_(max_samples)
         , states_(states)
         , instance_(instance)
-        , handle_(instance->first)
+        , handle_(instance.first)
         , single_instance_(single_instance)
     {
         assert(0 <= remaining_samples_);
@@ -96,8 +96,8 @@ struct ReadTakeCommand
         // Traverse changes on current instance
         bool ret_val = false;
         LoanableCollection::size_type first_slot = current_slot_;
-        auto it = instance_->second.cache_changes.begin();
-        while (!finished_ && it != instance_->second.cache_changes.end())
+        auto it = instance_.second->begin();
+        while (!finished_ && it != instance_.second->end())
         {
             CacheChange_t* change = *it;
             SampleStateKind check;
@@ -161,7 +161,7 @@ private:
     SampleInfoSeq& sample_infos_;
     int32_t remaining_samples_;
     StateFilter states_;
-    history_type::instance_iterator instance_;
+    history_type::instance_info instance_;
     InstanceHandle_t handle_;
     bool single_instance_;
 
@@ -206,7 +206,7 @@ private:
         }
 
         instance_ = result.second;
-        handle_ = instance_->first;
+        handle_ = instance_.first;
         return true;
     }
 

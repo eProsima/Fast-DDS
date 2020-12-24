@@ -44,7 +44,7 @@ class SubscriberHistory : public rtps::ReaderHistory
 {
 public:
 
-    using instance_iterator = std::map<rtps::InstanceHandle_t, KeyedChanges>::iterator;
+    using instance_info = std::pair<rtps::InstanceHandle_t, std::vector<rtps::CacheChange_t*>*>;
 
     /**
      * Constructor. Requires information about the subscriber.
@@ -137,7 +137,7 @@ public:
      * @return A pair where @c first is a boolean indicating if an instance was found, and second is an iterator to
      *         the instance map pointing to the relevant instance.
      */
-    std::pair<bool, instance_iterator> lookup_instance(
+    std::pair<bool, instance_info> lookup_instance(
             const rtps::InstanceHandle_t& handle,
             bool exact);
 
