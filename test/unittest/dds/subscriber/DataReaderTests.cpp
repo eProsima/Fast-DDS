@@ -671,6 +671,9 @@ TEST_F(DataReaderTests, return_loan)
     check_collection(aux_values_2, false, num_samples, num_samples);
     check_collection(aux_infos_2, false, num_samples, num_samples);
 
+    // Deleting a reader with an outstanding loan should fail
+    ASSERT_EQ(precondition_code, subscriber_->delete_datareader(reader2));
+
     // Return loan to original reader should reset collections
     EXPECT_EQ(ok_code, data_reader_->return_loan(data_values, infos));
     check_collection(data_values, true, 0, 0);
