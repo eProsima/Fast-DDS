@@ -597,6 +597,7 @@ ReturnCode_t DataReaderImpl::return_loan(
             if (!type_->is_plain())
             {
                 // Return loaned sample
+                type_->deleteData(data_values.buffer()[n]);
             }
         }
 
