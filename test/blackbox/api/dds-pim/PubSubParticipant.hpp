@@ -151,6 +151,10 @@ public:
         , sub_times_liveliness_recovered_(0)
     {
 
+        // By default, only allow participants on the same host
+        participant_qos_.wire_protocol().builtin.discovery_config.ignoreParticipantFlags =
+            eprosima::fastrtps::rtps::FILTER_DIFFERENT_HOST;
+
 #if defined(PREALLOCATED_WITH_REALLOC_MEMORY_MODE_TEST)
         datawriter_qos_.historyMemoryPolicy = rtps::PREALLOCATED_WITH_REALLOC_MEMORY_MODE;
 #elif defined(DYNAMIC_RESERVE_MEMORY_MODE_TEST)
