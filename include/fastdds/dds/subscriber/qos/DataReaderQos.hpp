@@ -94,7 +94,11 @@ public:
     bool operator ==(
             const ReaderResourceLimitsQos& b) const
     {
-        return (this->matched_publisher_allocation == b.matched_publisher_allocation);
+        return
+            (matched_publisher_allocation == b.matched_publisher_allocation) &&
+            (sample_infos_allocation == b.sample_infos_allocation) &&
+            (outstanding_reads_allocation == b.outstanding_reads_allocation) &&
+            (max_samples_per_read == b.max_samples_per_read);
     }
 
     inline void clear()
