@@ -339,6 +339,8 @@ ReturnCode_t DataReaderImpl::read(
         return code;
     }
 
+    std::lock_guard<RecursiveTimedMutex> lock(reader_->getMutex());
+
     code = prepare_loan(data_values, sample_infos, max_samples);
     if (!code)
     {
@@ -374,6 +376,8 @@ ReturnCode_t DataReaderImpl::read_instance(
     {
         return code;
     }
+
+    std::lock_guard<RecursiveTimedMutex> lock(reader_->getMutex());
 
     // Check if the instance exists
     auto it = history_.lookup_instance(a_handle, true);
@@ -418,6 +422,8 @@ ReturnCode_t DataReaderImpl::read_next_instance(
         return code;
     }
 
+    std::lock_guard<RecursiveTimedMutex> lock(reader_->getMutex());
+
     code = prepare_loan(data_values, sample_infos, max_samples);
     if (!code)
     {
@@ -456,6 +462,8 @@ ReturnCode_t DataReaderImpl::take(
         return code;
     }
 
+    std::lock_guard<RecursiveTimedMutex> lock(reader_->getMutex());
+
     code = prepare_loan(data_values, sample_infos, max_samples);
     if (!code)
     {
@@ -491,6 +499,8 @@ ReturnCode_t DataReaderImpl::take_instance(
     {
         return code;
     }
+
+    std::lock_guard<RecursiveTimedMutex> lock(reader_->getMutex());
 
     // Check if the instance exists
     auto it = history_.lookup_instance(a_handle, true);
@@ -534,6 +544,8 @@ ReturnCode_t DataReaderImpl::take_next_instance(
     {
         return code;
     }
+
+    std::lock_guard<RecursiveTimedMutex> lock(reader_->getMutex());
 
     code = prepare_loan(data_values, sample_infos, max_samples);
     if (!code)
@@ -579,6 +591,8 @@ ReturnCode_t DataReaderImpl::return_loan(
     {
         return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
     }
+
+    std::lock_guard<RecursiveTimedMutex> lock(reader_->getMutex());
 
     // Check if they were loaned by this reader
     ReturnCode_t code = loan_manager_.return_loan(data_values, sample_infos);
