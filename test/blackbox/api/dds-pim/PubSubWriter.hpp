@@ -262,6 +262,10 @@ public:
         t << topic_name << "_" << asio::ip::host_name() << "_" << GET_PID();
         topic_name_ = t.str();
 
+        // By default, only allow participants on the same process
+        participant_qos_.wire_protocol().builtin.discovery_config.ignoreParticipantFlags =
+            eprosima::fastrtps::rtps::FILTER_DIFFERENT_HOST;
+
         // By default, memory mode is preallocated (the most restritive)
         datawriter_qos_.endpoint().history_memory_policy = eprosima::fastrtps::rtps::PREALLOCATED_MEMORY_MODE;
 
