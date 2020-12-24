@@ -225,6 +225,17 @@ DataReaderImpl::~DataReaderImpl()
     delete user_datareader_;
 }
 
+bool DataReaderImpl::can_be_deleted() const
+{
+    if (reader_ != nullptr)
+    {
+        std::lock_guard<RecursiveTimedMutex> lock(reader_->getMutex());
+        return !loan_manager_.has_outstanding_loans();
+    }
+
+    return true;
+}
+
 bool DataReaderImpl::wait_for_unread_message(
         const fastrtps::Duration_t& timeout)
 {

@@ -103,6 +103,8 @@ public:
 
     ReturnCode_t enable();
 
+    bool can_be_deleted() const;
+
     /**
      * Method to block the current thread until an unread message is available
      */
