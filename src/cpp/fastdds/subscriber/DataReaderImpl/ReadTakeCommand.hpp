@@ -72,6 +72,7 @@ struct ReadTakeCommand
         assert(0 <= remaining_samples_);
 
         current_slot_ = data_values_.length();
+        finished_ = nullptr == instance.second;
     }
 
     ~ReadTakeCommand()
