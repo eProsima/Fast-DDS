@@ -233,7 +233,7 @@ public:
     RTPS_DllAPI TypeSupport& operator =(
             const TypeSupport& other)
     {
-        *this = other;
+        Base::operator=(other);
         return *this;
     }
 
