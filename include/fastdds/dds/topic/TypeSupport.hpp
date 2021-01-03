@@ -236,6 +236,7 @@ public:
         *this = other;
         return *this;
     }
+
 };
 
 } /* namespace dds */
