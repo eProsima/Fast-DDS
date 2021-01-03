@@ -230,7 +230,8 @@ public:
     /**
      * Copy assignment operator
      */
-    RTPS_DllAPI TypeSupport& operator =(const TypeSupport& other)
+    RTPS_DllAPI TypeSupport& operator =(
+            const TypeSupport& other)
     {
       *this = other;
       return *this;
