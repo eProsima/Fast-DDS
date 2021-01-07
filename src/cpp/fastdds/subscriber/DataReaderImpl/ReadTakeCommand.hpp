@@ -119,10 +119,10 @@ struct ReadTakeCommand
                         continue;
                     }
                 }
-
-                // Go to next sample on instance
-                ++it;
             }
+
+            // Go to next sample on instance
+            ++it;
         }
 
         if (current_slot_ > first_slot)
@@ -305,6 +305,8 @@ private:
                 info.instance_state = ALIVE_INSTANCE_STATE;
                 break;
         }
+
+        change->isRead = true;
     }
 
 };
