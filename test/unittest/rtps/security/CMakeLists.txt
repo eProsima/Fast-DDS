@@ -59,7 +59,10 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             set_source_files_properties(${CMAKE_CURRENT_SOURCE_DIR}/SecurityValidationRemoteTests.cpp PROPERTIES COMPILE_OPTIONS /bigobj)
         endif()
 
-        target_compile_definitions(SecurityAuthentication PRIVATE FASTRTPS_NO_LIB)
+        target_compile_definitions(SecurityAuthentication PRIVATE FASTRTPS_NO_LIB
+            $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
+            $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
+            )
         target_include_directories(SecurityAuthentication PRIVATE
             ${GTEST_INCLUDE_DIRS} ${GMOCK_INCLUDE_DIRS}
             ${OPENSSL_INCLUDE_DIR}

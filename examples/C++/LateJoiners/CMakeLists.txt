@@ -47,6 +47,10 @@ message(STATUS "Configuring UseCaseDemonstrator example...")
 file(GLOB USECASEDEMONSTRATOR_EXAMPLE_SOURCES "*.cxx")
 
 add_executable(LateJoiners ${USECASEDEMONSTRATOR_EXAMPLE_SOURCES} latejoiners.cpp)
+target_compile_definitions(LateJoiners PRIVATE
+    $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
+    $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
+)
 target_link_libraries(LateJoiners fastrtps fastcdr foonathan_memory)
 install(TARGETS LateJoiners
     RUNTIME DESTINATION examples/C++/UseCaseDemonstrator/${BIN_INSTALL_DIR}

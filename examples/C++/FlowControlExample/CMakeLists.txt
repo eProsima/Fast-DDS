@@ -48,6 +48,10 @@ file(GLOB FLOWCONTROL_EXAMPLE_SOURCES_CXX "*.cxx")
 file(GLOB FLOWCONTROL_EXAMPLE_SOURCES_CPP "*.cpp")
 
 add_executable(FlowControlExample ${FLOWCONTROL_EXAMPLE_SOURCES_CXX} ${FLOWCONTROL_EXAMPLE_SOURCES_CPP})
+target_compile_definitions(FlowControlExample PRIVATE
+    $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
+    $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
+)
 target_link_libraries(FlowControlExample fastrtps fastcdr foonathan_memory)
 install(TARGETS FlowControlExample
     RUNTIME DESTINATION examples/C++/FlowControlExample/${BIN_INSTALL_DIR})

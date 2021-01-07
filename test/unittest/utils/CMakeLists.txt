@@ -50,7 +50,10 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
         include_directories(mock/)
 
         add_executable(StringMatchingTests ${STRINGMATCHINGTESTS_SOURCE})
-        target_compile_definitions(StringMatchingTests PRIVATE FASTRTPS_NO_LIB)
+        target_compile_definitions(StringMatchingTests PRIVATE FASTRTPS_NO_LIB
+            $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
+            $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
+            )
         target_include_directories(StringMatchingTests PRIVATE ${GTEST_INCLUDE_DIRS}
             ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include)
         target_link_libraries(StringMatchingTests ${GTEST_LIBRARIES} ${MOCKS})
@@ -62,7 +65,10 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
 
 
         add_executable(FixedSizeStringTests ${FIXEDSIZESTRINGTESTS_SOURCE})
-        target_compile_definitions(FixedSizeStringTests PRIVATE FASTRTPS_NO_LIB)
+        target_compile_definitions(FixedSizeStringTests PRIVATE FASTRTPS_NO_LIB
+            $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
+            $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
+            )
         target_include_directories(FixedSizeStringTests PRIVATE ${GTEST_INCLUDE_DIRS}
             ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include)
         target_link_libraries(FixedSizeStringTests ${GTEST_LIBRARIES} ${MOCKS})
@@ -70,7 +76,10 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
 
 
         add_executable(BitmapRangeTests ${BITMAPRANGETESTS_SOURCE})
-        target_compile_definitions(BitmapRangeTests PRIVATE FASTRTPS_NO_LIB)
+        target_compile_definitions(BitmapRangeTests PRIVATE FASTRTPS_NO_LIB
+            $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
+            $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
+            )
         target_include_directories(BitmapRangeTests PRIVATE ${GTEST_INCLUDE_DIRS}
             ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include)
         target_link_libraries(BitmapRangeTests ${GTEST_LIBRARIES} ${MOCKS})
@@ -78,15 +87,20 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
 
 
         add_executable(ResourceLimitedVectorTests ${RESOURCELIMITEDVECTORTESTS_SOURCE})
-        target_compile_definitions(ResourceLimitedVectorTests PRIVATE FASTRTPS_NO_LIB)
+        target_compile_definitions(ResourceLimitedVectorTests PRIVATE FASTRTPS_NO_LIB
+            $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
+            $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
+            )
         target_include_directories(ResourceLimitedVectorTests PRIVATE ${GTEST_INCLUDE_DIRS}
             ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include)
         target_link_libraries(ResourceLimitedVectorTests ${GTEST_LIBRARIES} ${MOCKS})
         add_gtest(ResourceLimitedVectorTests SOURCES ${RESOURCELIMITEDVECTORTESTS_SOURCE})
 
-
         add_executable(LocatorTests ${LOCATORTESTS_SOURCE})
-        target_compile_definitions(LocatorTests PRIVATE FASTRTPS_NO_LIB)
+        target_compile_definitions(LocatorTests PRIVATE FASTRTPS_NO_LIB
+            $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
+            $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
+            )
         target_include_directories(LocatorTests PRIVATE ${GTEST_INCLUDE_DIRS}
             ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include)
         target_link_libraries(LocatorTests ${GTEST_LIBRARIES} ${MOCKS})

@@ -69,6 +69,10 @@ add_definitions(
 include_directories(${ASIO_INCLUDE_DIR})
 
 add_executable(DDSDeadlineQoSExample ${DDS_DEADLINEQOS_EXAMPLE_SOURCES})
+target_compile_definitions(DDSDeadlineQoSExample PRIVATE
+    $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
+    $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
+    )
 target_link_libraries(DDSDeadlineQoSExample fastrtps fastcdr foonathan_memory)
 if(UNIX)
   target_link_libraries(DDSDeadlineQoSExample pthread)

@@ -53,6 +53,10 @@ file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/HelloWorldPublisher.xml
     )
 
 add_executable(StaticHelloWorldExample ${HELLOWORLD_EXAMPLE_SOURCES_CXX} ${HELLOWORLD_EXAMPLE_SOURCES_CPP})
+target_compile_definitions(StaticHelloWorldExample PRIVATE
+    $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
+    $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
+)
 target_link_libraries(StaticHelloWorldExample fastrtps fastcdr foonathan_memory)
 install(TARGETS StaticHelloWorldExample
     RUNTIME DESTINATION examples/C++/HelloWorldExample/${BIN_INSTALL_DIR})

@@ -47,6 +47,10 @@ message(STATUS "Configuring DDS OwnershipStrengthQoS example...")
 file(GLOB DDS_OWNERSHIPSTRENGTH_EXAMPLE_SOURCES "*.cxx")
 
 add_executable(DDSOwnershipStrengthQoSExample ${DDS_OWNERSHIPSTRENGTH_EXAMPLE_SOURCES})
+target_compile_definitions(DDSOwnershipStrengthQoSExample PRIVATE
+    $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
+    $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
+    )
 target_link_libraries(DDSOwnershipStrengthQoSExample fastrtps fastcdr foonathan_memory)
 install(TARGETS DDSOwnershipStrengthQoSExample
     RUNTIME DESTINATION examples/C++/DDS/OwnershipStrengthQoSExample/${BIN_INSTALL_DIR}

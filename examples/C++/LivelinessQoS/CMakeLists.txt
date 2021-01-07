@@ -44,6 +44,10 @@ file(GLOB LIVELINESSQOS_SOURCES_CXX "*.cxx")
 file(GLOB LIVELINESSQOS_SOURCES_CPP "*.cpp")
 
 add_executable(LivelinessQoS ${LIVELINESSQOS_SOURCES_CXX} ${LIVELINESSQOS_SOURCES_CPP})
+target_compile_definitions(LivelinessQoS PRIVATE
+    $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
+    $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
+)
 target_link_libraries(LivelinessQoS fastrtps fastcdr)
 install(TARGETS LivelinessQoS
     RUNTIME DESTINATION examples/C++/LivelinessQoS/${BIN_INSTALL_DIR})

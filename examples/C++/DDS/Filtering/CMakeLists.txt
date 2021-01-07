@@ -47,6 +47,10 @@ message(STATUS "Configuring DDSFiltering example...")
 file(GLOB DDS_FILTERING_EXAMPLE_SOURCES "*.cxx")
 
 add_executable(DDSFiltering ${DDS_FILTERING_EXAMPLE_SOURCES})
+target_compile_definitions(DDSFiltering PRIVATE
+    $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
+    $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
+    )
 target_link_libraries(DDSFiltering fastrtps fastcdr foonathan_memory)
 install(TARGETS DDSFiltering
     RUNTIME DESTINATION examples/C++/DDS/Filtering/${BIN_INSTALL_DIR}

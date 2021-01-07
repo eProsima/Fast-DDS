@@ -47,6 +47,10 @@ message(STATUS "Configuring UseCaseDemonstrator example...")
 file(GLOB USECASEDEMONSTRATOR_EXAMPLE_SOURCES "*.cxx")
 
 add_executable(HistoryKind ${USECASEDEMONSTRATOR_EXAMPLE_SOURCES} pastsamples.cpp)
+target_compile_definitions(HistoryKind PRIVATE
+    $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
+    $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
+)
 target_link_libraries(HistoryKind fastrtps fastcdr foonathan_memory)
 install(TARGETS HistoryKind
     RUNTIME DESTINATION examples/C++/UseCaseDemonstrator/${BIN_INSTALL_DIR}

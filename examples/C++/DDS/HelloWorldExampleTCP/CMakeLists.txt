@@ -56,6 +56,10 @@ configure_file("ca.pem" "ca.pem" COPYONLY)
 
 
 add_executable(DDSHelloWorldExampleTCP ${DDS_TCP_HELLOWORLD_EXAMPLE_SOURCES_CXX} ${DDS_TCP_HELLOWORLD_EXAMPLE_SOURCES_CPP})
+target_compile_definitions(DDSHelloWorldExampleTCP PRIVATE
+    $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
+    $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
+    )
 target_link_libraries(DDSHelloWorldExampleTCP fastrtps fastcdr foonathan_memory)
 install(TARGETS DDSHelloWorldExampleTCP
     RUNTIME DESTINATION examples/C++/DDS/HelloWorldExampleTCP/${BIN_INSTALL_DIR})

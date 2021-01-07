@@ -23,6 +23,11 @@ set(
 )
 add_executable(LatencyTest ${LATENCYTEST_SOURCE})
 
+target_compile_definitions(LatencyTest PRIVATE
+    $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
+    $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
+    )
+
 target_link_libraries(
     LatencyTest
     fastrtps

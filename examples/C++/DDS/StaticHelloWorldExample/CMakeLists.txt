@@ -53,6 +53,10 @@ file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/HelloWorldPublisher.xml
     )
 
 add_executable(DDSStaticHelloWorldExample ${DDS_STATIC_HELLOWORLD_EXAMPLE_SOURCES_CXX} ${DDS_STATIC_HELLOWORLD_EXAMPLE_SOURCES_CPP})
+target_compile_definitions(DDSStaticHelloWorldExample PRIVATE
+    $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
+    $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
+    )
 target_link_libraries(DDSStaticHelloWorldExample fastrtps fastcdr foonathan_memory)
 install(TARGETS DDSStaticHelloWorldExample
     RUNTIME DESTINATION examples/C++/DDS/StaticHelloWorldExample/${BIN_INSTALL_DIR})

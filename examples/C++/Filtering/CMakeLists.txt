@@ -47,6 +47,10 @@ message(STATUS "Configuring Filtering example...")
 file(GLOB DEADLINEQOS_EXAMPLE_SOURCES "*.cxx")
 
 add_executable(Filtering ${DEADLINEQOS_EXAMPLE_SOURCES})
+target_compile_definitions(Filtering PRIVATE
+    $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
+    $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
+)
 target_link_libraries(Filtering fastrtps fastcdr foonathan_memory)
 install(TARGETS Filtering
     RUNTIME DESTINATION examples/C++/Filtering/${BIN_INSTALL_DIR}

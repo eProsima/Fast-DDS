@@ -44,6 +44,11 @@ file(GLOB DDS_DYNAMIC_HELLOWORLD_EXAMPLE_SOURCES_CPP "*.cpp")
 
 add_executable(DDSDynamicHelloWorldExample
     ${DDS_DYNAMIC_HELLOWORLD_EXAMPLE_SOURCES_CPP})
+    
+target_compile_definitions(DDSDynamicHelloWorldExample PRIVATE
+    $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
+    $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
+)
 
 target_link_libraries(DDSDynamicHelloWorldExample fastrtps fastcdr)
 install(TARGETS DDSDynamicHelloWorldExample
