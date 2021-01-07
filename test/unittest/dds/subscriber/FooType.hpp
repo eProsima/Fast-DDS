@@ -28,10 +28,11 @@ class FooType
 {
 public:
 
-    inline bool operator == (const FooType& other) const
+    inline bool operator == (
+            const FooType& other) const
     {
         return other.index_ == index_ &&
-            other.message_ == message_;
+               other.message_ == message_;
     }
 
     inline uint32_t index() const
