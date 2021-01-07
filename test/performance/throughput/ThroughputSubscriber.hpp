@@ -69,6 +69,7 @@ public:
     void run();
 
 private:
+
     void process_message();
 
     // Entities
@@ -138,6 +139,7 @@ private:
 
         uint32_t saved_last_seq_num_;
         uint32_t saved_lost_samples_;
+
     private:
 
         ThroughputSubscriber& throughput_subscriber_;
@@ -145,13 +147,13 @@ private:
         uint32_t lost_samples_;
         bool first_;
         eprosima::fastrtps::SampleInfo_t info_;
-    } data_sub_listener_;
+    }
+    data_sub_listener_;
 
     // Command listeners
     class CommandSubListener : public eprosima::fastrtps::SubscriberListener
     {
     public:
-
 
         CommandSubListener(
                 ThroughputSubscriber& throughput_subscriber);
@@ -173,9 +175,10 @@ private:
 
     private:
 
-        CommandSubListener& operator=(
-            const CommandSubListener&);
-    } command_sub_listener_;
+        CommandSubListener& operator =(
+                const CommandSubListener&);
+    }
+    command_sub_listener_;
 
     class CommandPubListener : public eprosima::fastrtps::PublisherListener
     {
@@ -194,8 +197,9 @@ private:
 
     private:
 
-        CommandPubListener& operator=(
-            const CommandPubListener&);
-    } command_pub_listener_;
+        CommandPubListener& operator =(
+                const CommandPubListener&);
+    }
+    command_pub_listener_;
 };
 #endif /* THROUGHPUTSUBSCRIBER_H_ */
