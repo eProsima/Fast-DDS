@@ -227,6 +227,7 @@ TEST_F(XMLEndpointParserTests, loadXMLParticipantEndpoint)
         mp_edpXML->loadXMLParticipantEndpoint(titleElement, pdata);
         EXPECT_EQ(pdata->m_RTPSParticipantName, "HelloWorldSubscriber");
         EXPECT_EQ(pdata->m_readers.size(), (size_t)1);
+        delete pdata;
     }
 
     {
@@ -262,6 +263,7 @@ TEST_F(XMLEndpointParserTests, loadXMLParticipantEndpoint)
             }
         }
         EXPECT_EQ(num_errors, 5u);
+        delete pdata;
     }
 }
 
@@ -331,6 +333,7 @@ TEST_F(XMLEndpointParserTests, loadXMLReaderEndpoint)
         EXPECT_EQ(pdata->m_readers[0]->m_qos.m_durability.kind,  VOLATILE_DURABILITY_QOS);
         EXPECT_EQ(pdata->m_readers[0]->m_qos.m_ownership.kind,  SHARED_OWNERSHIP_QOS);
         EXPECT_EQ(pdata->m_readers[0]->m_qos.m_liveliness.kind,  AUTOMATIC_LIVELINESS_QOS);
+        delete pdata;
     }
 
     {
@@ -380,6 +383,7 @@ TEST_F(XMLEndpointParserTests, loadXMLReaderEndpoint)
         ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
         titleElement = xml_doc.FirstChildElement();
         EXPECT_EQ(XMLP_ret::XML_OK, mp_edpXML->loadXMLWriterEndpoint(titleElement, pdata));
+        delete pdata;
     }
 
     {
@@ -408,6 +412,7 @@ TEST_F(XMLEndpointParserTests, loadXMLReaderEndpoint)
         ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
         titleElement = xml_doc.FirstChildElement();
         EXPECT_EQ(XMLP_ret::XML_OK, mp_edpXML->loadXMLReaderEndpoint(titleElement, pdata));
+        delete pdata;
     }
 
     {
@@ -443,6 +448,7 @@ TEST_F(XMLEndpointParserTests, loadXMLReaderEndpoint)
             titleElement = xml_doc.FirstChildElement();
             EXPECT_EQ(XMLP_ret::XML_ERROR, mp_edpXML->loadXMLReaderEndpoint(titleElement, pdata));
         }
+        delete pdata;
     }
 
     {
@@ -472,6 +478,7 @@ TEST_F(XMLEndpointParserTests, loadXMLReaderEndpoint)
             titleElement = xml_doc.FirstChildElement();
             EXPECT_EQ(XMLP_ret::XML_ERROR, mp_edpXML->loadXMLReaderEndpoint(titleElement, pdata));
         }
+        delete pdata;
     }
 
 }
@@ -542,6 +549,7 @@ TEST_F(XMLEndpointParserTests, loadXMLWriterEndpoint)
         EXPECT_EQ(pdata->m_writers[0]->m_qos.m_durability.kind,  VOLATILE_DURABILITY_QOS);
         EXPECT_EQ(pdata->m_writers[0]->m_qos.m_ownership.kind,  SHARED_OWNERSHIP_QOS);
         EXPECT_EQ(pdata->m_writers[0]->m_qos.m_liveliness.kind,  AUTOMATIC_LIVELINESS_QOS);
+        delete pdata;
     }
 
     {
@@ -591,6 +599,7 @@ TEST_F(XMLEndpointParserTests, loadXMLWriterEndpoint)
         ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
         titleElement = xml_doc.FirstChildElement();
         EXPECT_EQ(XMLP_ret::XML_OK, mp_edpXML->loadXMLWriterEndpoint(titleElement, pdata));
+        delete pdata;
     }
 
     {
@@ -619,6 +628,7 @@ TEST_F(XMLEndpointParserTests, loadXMLWriterEndpoint)
         ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
         titleElement = xml_doc.FirstChildElement();
         EXPECT_EQ(XMLP_ret::XML_OK, mp_edpXML->loadXMLWriterEndpoint(titleElement, pdata));
+        delete pdata;
     }
 
     {
@@ -657,7 +667,7 @@ TEST_F(XMLEndpointParserTests, loadXMLWriterEndpoint)
             EXPECT_EQ(XMLP_ret::XML_ERROR, mp_edpXML->loadXMLWriterEndpoint(titleElement, pdata));
         }
 
-
+        delete pdata;
     }
 
     {
@@ -687,6 +697,7 @@ TEST_F(XMLEndpointParserTests, loadXMLWriterEndpoint)
             titleElement = xml_doc.FirstChildElement();
             EXPECT_EQ(XMLP_ret::XML_ERROR, mp_edpXML->loadXMLWriterEndpoint(titleElement, pdata));
         }
+        delete pdata;
     }
 }
 
