@@ -51,13 +51,14 @@ namespace dds {
 using fastrtps::ParticipantAttributes;
 using fastrtps::PublisherAttributes;
 using fastrtps::SubscriberAttributes;
-using fastrtps::xmlparser::XMLProfileManager;
-using fastrtps::xmlparser::XMLP_ret;
-using fastrtps::types::DynamicType_ptr;
 using fastrtps::types::DynamicData_ptr;
-using fastrtps::types::DynamicTypeBuilder_ptr;
 using fastrtps::types::DynamicDataFactory;
+using fastrtps::types::DynamicType_ptr;
+using fastrtps::types::DynamicTypeBuilder_ptr;
 using fastrtps::types::DynamicTypeBuilderFactory;
+using fastrtps::types::TypeDescriptor;
+using fastrtps::xmlparser::XMLP_ret;
+using fastrtps::xmlparser::XMLProfileManager;
 
 
 // Mocked TopicDataType for Topic creation tests
@@ -1689,14 +1690,13 @@ TEST(ParticipantTests, RegisterDynamicTypeToFactoriesNotTypeIdentifier)
             DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
 
     // Create a not supported TypeDescriptor
-    const eprosima::fastrtps::types::TypeDescriptor* myDescriptor(
-        new eprosima::fastrtps::types::TypeDescriptor("my_descriptor", 0x11));
+    const TypeDescriptor* myDescriptor(new TypeDescriptor("my_descriptor", 0x11));
     // Create the base type for the dynamic type
-    DynamicTypeMock* base_type = new DynamicTypeMock(myDescriptor);
+    DynamicType_ptr base_type(new DynamicTypeMock(myDescriptor));
     // Create a custom dynamic type builder using the wrong TypeDescriptor
     DynamicTypeBuilder_ptr builder =
             DynamicTypeBuilderFactory::get_instance()->create_custom_builder(myDescriptor, "my_dynamic_type");
-    builder->add_member(0, "uint", base_type->get_base_type_wrapper());
+    builder->add_member(0, "uint", base_type);
     // Create the dynamic type
     DynamicType_ptr dyn_type = builder->build();
     // Create the data instance

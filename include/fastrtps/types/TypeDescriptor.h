@@ -50,9 +50,9 @@ protected:
 public:
     TypeDescriptor();
 
-    TypeDescriptor(const TypeDescriptor* other);
+    RTPS_DllAPI TypeDescriptor(const TypeDescriptor* other);
 
-    TypeDescriptor(
+    RTPS_DllAPI TypeDescriptor(
             const std::string& name,
             TypeKind kind);
 

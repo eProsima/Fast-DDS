@@ -51,13 +51,13 @@ protected:
 
     DynamicType();
 
-    DynamicType(const TypeDescriptor* descriptor);
+    RTPS_DllAPI DynamicType(const TypeDescriptor* descriptor);
 
     DynamicType(const DynamicTypeBuilder* other);
 
-    virtual ~DynamicType();
+    RTPS_DllAPI virtual ~DynamicType();
 
-    virtual void clear();
+    RTPS_DllAPI virtual void clear();
 
     ReturnCode_t copy_from_builder(const DynamicTypeBuilder* other);
 
