@@ -706,8 +706,6 @@ TEST_F(DataReaderTests, return_loan)
  */
 TEST_F(DataReaderTests, resource_limits)
 {
-    using ResLimitCfg = fastrtps::ResourceLimitedContainerConfig;
-
     static constexpr int32_t num_samples = 100;
 
     const ReturnCode_t& ok_code = ReturnCode_t::RETCODE_OK;
@@ -733,8 +731,8 @@ TEST_F(DataReaderTests, resource_limits)
     // - A maximum of 15 total SampleInfo structures can be loaned. We use this value so that after a first call to
     //   read / take returns max_samples_per_read (10), a second one should only return 5 due to this limit
     reader_qos.reader_resource_limits().max_samples_per_read = 10;
-    reader_qos.reader_resource_limits().outstanding_reads_allocation = ResLimitCfg::fixed_size_configuration(3);
-    reader_qos.reader_resource_limits().sample_infos_allocation = ResLimitCfg::fixed_size_configuration(15);
+    reader_qos.reader_resource_limits().outstanding_reads_allocation = { 1, 3, 1 };
+    reader_qos.reader_resource_limits().sample_infos_allocation = { 1, 15, 1 };
 
     create_instance_handles();
     create_entities(nullptr, reader_qos, SUBSCRIBER_QOS_DEFAULT, writer_qos);
