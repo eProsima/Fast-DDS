@@ -912,6 +912,218 @@ TEST_F(DataReaderTests, resource_limits)
     }
 }
 
+void check_sample(
+        const SampleInfo& info_1,
+        const SampleInfo& info_2,
+        const FooType& data_1,
+        const FooType& data_2,
+        bool should_be_equal)
+{
+    EXPECT_EQ(should_be_equal, info_1.sample_identity == info_2.sample_identity);
+    EXPECT_EQ(should_be_equal, data_1 == data_2);
+}
+
+void check_sample_values(
+        const FooSeq& data,
+        const std::string& values)
+{
+    EXPECT_EQ(data.length(), values.size());
+
+    for (FooSeq::size_type i = 0; i < data.length(); ++i)
+    {
+        EXPECT_EQ(values[i], data[i].message()[0]);
+    }
+}
+
+/*
+ * This test checks that the behaviour of the sample_states parameter of read/take calls.
+ */
+TEST_F(DataReaderTests, read_unread)
+{
+    static constexpr int32_t num_samples = 10;
+
+    const ReturnCode_t& ok_code = ReturnCode_t::RETCODE_OK;
+    const ReturnCode_t& no_data_code = ReturnCode_t::RETCODE_NO_DATA;
+
+    DataWriterQos writer_qos = DATAWRITER_QOS_DEFAULT;
+    writer_qos.history().kind = KEEP_LAST_HISTORY_QOS;
+    writer_qos.history().depth = num_samples;
+    writer_qos.publish_mode().kind = SYNCHRONOUS_PUBLISH_MODE;
+    writer_qos.reliability().kind = RELIABLE_RELIABILITY_QOS;
+
+    DataReaderQos reader_qos = DATAREADER_QOS_DEFAULT;
+    reader_qos.reliability().kind = RELIABLE_RELIABILITY_QOS;
+    reader_qos.history().kind = KEEP_ALL_HISTORY_QOS;
+    reader_qos.resource_limits().max_instances = 1;
+    reader_qos.resource_limits().max_samples_per_instance = num_samples;
+    reader_qos.resource_limits().max_samples = num_samples;
+
+    create_instance_handles();
+    create_entities(nullptr, reader_qos, SUBSCRIBER_QOS_DEFAULT, writer_qos);
+
+    FooType data;
+    data.index(1u);
+    data.message()[1] = '\0';
+
+    // Send a bunch of samples
+    for (char i = 0; i < num_samples; ++i)
+    {
+        data.message()[0] = i + '0';
+        EXPECT_EQ(ok_code, data_writer_->write(&data, handle_ok_));
+    }
+
+    // Trying to get READ samples should return NO_DATA
+    {
+        FooSeq data_seq;
+        SampleInfoSeq info_seq;
+
+        EXPECT_EQ(no_data_code, data_reader_->read(data_seq, info_seq, LENGTH_UNLIMITED, READ_SAMPLE_STATE));
+        EXPECT_EQ(no_data_code,
+                data_reader_->read_instance(data_seq, info_seq, LENGTH_UNLIMITED, handle_ok_,
+                READ_SAMPLE_STATE));
+        EXPECT_EQ(no_data_code,
+                data_reader_->read_next_instance(data_seq, info_seq, LENGTH_UNLIMITED, HANDLE_NIL,
+                READ_SAMPLE_STATE));
+
+        EXPECT_EQ(no_data_code, data_reader_->take(data_seq, info_seq, LENGTH_UNLIMITED, READ_SAMPLE_STATE));
+        EXPECT_EQ(no_data_code,
+                data_reader_->take_instance(data_seq, info_seq, LENGTH_UNLIMITED, handle_ok_,
+                READ_SAMPLE_STATE));
+        EXPECT_EQ(no_data_code,
+                data_reader_->take_next_instance(data_seq, info_seq, LENGTH_UNLIMITED, HANDLE_NIL,
+                READ_SAMPLE_STATE));
+    }
+
+    // Checks with read API
+    {
+        FooSeq data_seq[6];
+        SampleInfoSeq info_seq[6];
+
+        // This should return the first sample
+        EXPECT_EQ(ok_code, data_reader_->read(data_seq[0], info_seq[0], 1, NOT_READ_SAMPLE_STATE));
+        check_collection(data_seq[0], false, 1, 1);
+        check_sample_values(data_seq[0], "0");
+        // This should return the first sample
+        EXPECT_EQ(ok_code, data_reader_->read(data_seq[1], info_seq[1], 1, READ_SAMPLE_STATE));
+        check_collection(data_seq[1], false, 1, 1);
+        check_sample_values(data_seq[1], "0");
+        // This should return the first sample
+        EXPECT_EQ(ok_code, data_reader_->read(data_seq[2], info_seq[2], LENGTH_UNLIMITED, READ_SAMPLE_STATE));
+        check_collection(data_seq[2], false, 1, 1);
+        check_sample_values(data_seq[2], "0");
+        // This should return the second sample
+        EXPECT_EQ(ok_code, data_reader_->read(data_seq[3], info_seq[3], 1, NOT_READ_SAMPLE_STATE));
+        check_collection(data_seq[3], false, 1, 1);
+        check_sample_values(data_seq[3], "1");
+        // This should return the first sample
+        EXPECT_EQ(ok_code, data_reader_->read(data_seq[4], info_seq[4], 1, READ_SAMPLE_STATE));
+        check_collection(data_seq[4], false, 1, 1);
+        check_sample_values(data_seq[4], "0");
+        // This should return the first and second samples
+        EXPECT_EQ(ok_code, data_reader_->read(data_seq[5], info_seq[5], LENGTH_UNLIMITED, READ_SAMPLE_STATE));
+        check_collection(data_seq[5], false, 2, 2);
+        check_sample_values(data_seq[5], "01");
+
+        using compare_case_t = std::pair<std::pair<int, int>, bool>;
+        const compare_case_t compare_cases[] =
+        {
+            // 0
+            {{0, 1}, true},
+            {{0, 2}, true},
+            {{0, 3}, false},
+            {{0, 4}, true},
+            {{0, 5}, true},
+
+            // 1
+            {{1, 2}, true},
+            {{1, 3}, false},
+            {{1, 4}, true},
+            {{1, 5}, true},
+
+            // 2
+            {{2, 3}, false},
+            {{2, 4}, true},
+            {{2, 5}, true},
+
+            // 3
+            {{3, 4}, false},
+            {{3, 5}, false},
+
+            // 4
+            {{4, 5}, true},
+        };
+
+        // This compares [0] element of all collections
+        for (const compare_case_t& test : compare_cases)
+        {
+            check_sample(
+                info_seq[test.first.first][0], info_seq[test.first.second][0],
+                data_seq[test.first.first][0], data_seq[test.first.second][0],
+                test.second);
+        }
+
+        // This compares [1] of last collection against [0] of all collections
+        for (size_t i = 0; i < 6; ++i)
+        {
+            check_sample(
+                info_seq[5][1], info_seq[i][0],
+                data_seq[5][1], data_seq[i][0],
+                i == 3);
+        }
+
+        // Return all loans
+        for (size_t i = 0; i < 6; ++i)
+        {
+            EXPECT_EQ(ok_code, data_reader_->return_loan(data_seq[i], info_seq[i]));
+        }
+    }
+
+    // Checks with take API
+    {
+        FooSeq data_seq[6];
+        SampleInfoSeq info_seq[6];
+
+        // This should return the third sample
+        EXPECT_EQ(ok_code, data_reader_->take(data_seq[0], info_seq[0], 1, NOT_READ_SAMPLE_STATE));
+        check_collection(data_seq[0], false, 1, 1);
+        check_sample_values(data_seq[0], "2");
+        // This should return the first sample
+        EXPECT_EQ(ok_code, data_reader_->take(data_seq[1], info_seq[1], 1, READ_SAMPLE_STATE));
+        check_collection(data_seq[1], false, 1, 1);
+        check_sample_values(data_seq[1], "0");
+        // This should return samples 2 and 4
+        EXPECT_EQ(ok_code, data_reader_->take(data_seq[2], info_seq[2], 2));
+        check_collection(data_seq[2], false, 2, 2);
+        check_sample_values(data_seq[2], "13");
+        // This should return no data
+        EXPECT_EQ(no_data_code, data_reader_->take(data_seq[3], info_seq[3], LENGTH_UNLIMITED, READ_SAMPLE_STATE));
+        check_collection(data_seq[3], true, 0, 0);
+        // This should return samples 5 and 6
+        EXPECT_EQ(ok_code, data_reader_->read(data_seq[3], info_seq[3], 2));
+        check_collection(data_seq[3], false, 2, 2);
+        check_sample_values(data_seq[3], "45");
+        // This should return samples 7, ... num_samples
+        EXPECT_EQ(ok_code, data_reader_->take(data_seq[4], info_seq[4], LENGTH_UNLIMITED, NOT_READ_SAMPLE_STATE));
+        check_collection(data_seq[4], false, num_samples - 6, num_samples - 6);
+        check_sample_values(data_seq[4], "6789");
+
+        // Add a new sample to have a NOT_READ one
+        data.message()[0] = 'A';
+        EXPECT_EQ(ok_code, data_writer_->write(&data, handle_ok_));
+
+        // This should return samples 5, 6 and new
+        EXPECT_EQ(ok_code, data_reader_->take(data_seq[5], info_seq[5]));
+        check_collection(data_seq[5], false, 3, 3);
+        check_sample_values(data_seq[5], "45A");
+
+        // Return all loans
+        for (size_t i = 0; i < 6; ++i)
+        {
+            EXPECT_EQ(ok_code, data_reader_->return_loan(data_seq[i], info_seq[i]));
+        }
+    }
+}
+
 void set_listener_test (
         DataReader* reader,
         DataReaderListener* listener,
