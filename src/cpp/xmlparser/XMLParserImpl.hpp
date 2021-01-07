@@ -15,6 +15,8 @@
 #ifndef FASTRTPS_XMLPARSER_XMLPARSERIMPL_H_
 #define FASTRTPS_XMLPARSER_XMLPARSERIMPL_H_
 
+#include <string>
+
 #include <fastrtps/xmlparser/XMLParser.h>
 
 namespace eprosima {
