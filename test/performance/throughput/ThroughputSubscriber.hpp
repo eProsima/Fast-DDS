@@ -85,6 +85,7 @@ private:
     // Test synchronization
     std::mutex command_mutex_;
     std::mutex data_mutex_;
+    std::mutex lecture_available_mutex;
     std::condition_variable command_discovery_cv_;
     std::condition_variable data_discovery_cv_;
     uint32_t command_discovery_count_;
