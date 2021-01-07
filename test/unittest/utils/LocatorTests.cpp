@@ -39,6 +39,16 @@ static bool address_match(
     return true;
 }
 
+// Reset locator address to 0
+void reset_locator_address(
+        Locator_t& locator)
+{
+    for (size_t i = 0; i < 16; ++i)
+    {
+        locator.address[i] = 0;
+    }
+}
+
 class IPLocatorTests : public ::testing::Test
 {
 
@@ -247,6 +257,15 @@ TEST_F(IPLocatorTests, setIPv6_from_string_std)
             ASSERT_EQ(locator.address[i], vec[i]);
         }
 
+        // Removing some forwarding zeros
+        ASSERT_TRUE(IPLocator::setIPv6(
+                    locator,
+                    "0000:203:0:0607:000:0:c0d:00"));
+        for (int i = 0; i < 16; i++)
+        {
+            ASSERT_EQ(locator.address[i], vec[i]);
+        }
+
         // Initial zero block
         ASSERT_TRUE(IPLocator::setIPv6(
                     locator,
@@ -278,6 +297,15 @@ TEST_F(IPLocatorTests, setIPv6_from_string_std)
         ASSERT_TRUE(IPLocator::setIPv6(
                     locator,
                     "0:203:0:607::c0d:0"));
+        for (int i = 0; i < 16; i++)
+        {
+            ASSERT_EQ(locator.address[i], vec[i]);
+        }
+
+        // Uppercase
+        ASSERT_TRUE(IPLocator::setIPv6(
+                    locator,
+                    "0:203:0:607::C0D:0"));
         for (int i = 0; i < 16; i++)
         {
             ASSERT_EQ(locator.address[i], vec[i]);
@@ -651,27 +679,117 @@ TEST_F(IPLocatorTests, ip_to_string)
 {
     Locator_t locator;
 
-    // v4
-    locator.kind = LOCATOR_KIND_UDPv4;
-    IPLocator::setIPv4(locator, 127, 0, 0, 1);
-    locator.kind = LOCATOR_KIND_UDPv4;
-    ASSERT_EQ(IPLocator::ip_to_string(locator), ipv4_lo_address);
-    IPLocator::setIPv4(locator, ipv4_address_repeated);
-    locator.kind = LOCATOR_KIND_TCPv4;
-    ASSERT_EQ(IPLocator::ip_to_string(locator), ipv4_address);
+    {
+        // v4
+        locator.kind = LOCATOR_KIND_UDPv4;
+        IPLocator::setIPv4(locator, 127, 0, 0, 1);
+        ASSERT_EQ(IPLocator::ip_to_string(locator), ipv4_lo_address);
 
-    // v6
-    locator.kind = LOCATOR_KIND_UDPv6;
-    IPLocator::setIPv6(locator, 0, 0, 0, 0, 0, 0, 0, 1);
-    locator.kind = LOCATOR_KIND_UDPv6;
-    ASSERT_EQ(IPLocator::ip_to_string(locator), ipv6_lo_address);
-    IPLocator::setIPv6(locator, ipv6_address_repeated);
-    locator.kind = LOCATOR_KIND_TCPv6;
-    ASSERT_EQ(IPLocator::ip_to_string(locator), ipv6_address);
+        locator.kind = LOCATOR_KIND_TCPv4;
+        IPLocator::setIPv4(locator, ipv4_address_repeated);
+        ASSERT_EQ(IPLocator::ip_to_string(locator), ipv4_address);
+    }
 
-    // v6
-    locator.kind = LOCATOR_KIND_SHM;
-    ASSERT_EQ(IPLocator::ip_to_string(locator), "");
+    {
+        // v6
+        locator.kind = LOCATOR_KIND_UDPv6;
+        IPLocator::setIPv6(locator, 0, 0, 0, 0, 0, 0, 0, 1);
+        ASSERT_EQ(IPLocator::ip_to_string(locator), ipv6_lo_address);
+
+        locator.kind = LOCATOR_KIND_TCPv6;
+        IPLocator::setIPv6(locator, ipv6_address_repeated);
+        ASSERT_EQ(IPLocator::ip_to_string(locator), ipv6_address);
+
+        // RFRIEDM tests
+        // Zero Compression of 2001:DB8:0:0:8:800:200C:417A
+        reset_locator_address(locator);
+        locator.address[0] = 0x20;
+        locator.address[1] = 0x01;
+        locator.address[2] = 0x0d;
+        locator.address[3] = 0xb8;
+        locator.address[9] = 0x08;
+        locator.address[10] = 0x08;
+        locator.address[12] = 0x20;
+        locator.address[13] = 0x0c;
+        locator.address[14] = 0x41;
+        locator.address[15] = 0x7a;
+        ASSERT_EQ("2001:db8::8:800:200c:417a", IPLocator::ip_to_string(locator));
+
+        // Zero Compression of FF01:0:0:0:0:0:0:101
+        reset_locator_address(locator);
+        locator.address[0] = 0xff;
+        locator.address[1] = 0x01;
+        locator.address[14] = 0x01;
+        locator.address[15] = 0x01;
+        ASSERT_EQ("ff01::101", IPLocator::ip_to_string(locator));
+
+        // Zero Compression of 0:0:0:0:0:0:0:1
+        reset_locator_address(locator);
+        locator.address[15] = 0x01;
+        ASSERT_EQ("::1", IPLocator::ip_to_string(locator));
+
+        // Zero Compression of 0:0:0:0:0:0:0:0
+        reset_locator_address(locator);
+        locator.address[15] = 0x00;
+        ASSERT_EQ("::", IPLocator::ip_to_string(locator));
+
+        // Trailing Zeros
+        reset_locator_address(locator);
+        locator.address[14] = 0x10;
+        ASSERT_EQ("::1000", IPLocator::ip_to_string(locator));
+        locator.address[15] = 0x20;
+        ASSERT_EQ("::1020", IPLocator::ip_to_string(locator));
+
+        // Embedded Zeros in 2001:DB8:a::
+        reset_locator_address(locator);
+        locator.address[0] = 0x20;
+        locator.address[1] = 0x01;
+        locator.address[2] = 0x0d;
+        locator.address[3] = 0xb8;
+        locator.address[5] = 0xa;
+        ASSERT_EQ("2001:db8:a::", IPLocator::ip_to_string(locator));
+
+        locator.address[15] = 0x01;
+        ASSERT_EQ("2001:db8:a::1", IPLocator::ip_to_string(locator));
+        locator.address[15] = 0x10;
+        ASSERT_EQ("2001:db8:a::10", IPLocator::ip_to_string(locator));
+        locator.address[15] = 0;
+        locator.address[14] = 0x01;
+        ASSERT_EQ("2001:db8:a::100", IPLocator::ip_to_string(locator));
+        locator.address[14] = 0x10;
+        ASSERT_EQ("2001:db8:a::1000", IPLocator::ip_to_string(locator));
+        locator.address[14] = 0;
+
+        locator.address[13] = 0x01;
+        ASSERT_EQ("2001:db8:a::1:0", IPLocator::ip_to_string(locator));
+        locator.address[13] = 0x10;
+        ASSERT_EQ("2001:db8:a::10:0", IPLocator::ip_to_string(locator));
+        locator.address[13] = 0;
+
+        // 2001:db8:a:0:0:1:0:0 special case for two equal compressible blocks
+        // When this occurs, it's recommended to collapse the left
+        locator.address[11] = 0x01;
+        ASSERT_EQ("2001:db8:a::1:0:0", IPLocator::ip_to_string(locator));
+        locator.address[11] = 0;
+
+        // When there are two compressible blocks, the RFC4291 does not specify which is recommended
+        // We have chosen to use the fastest way, that compress the first block in the IP 2001:db8:a::1:0:0:0
+        // Other way could be to compress the larger block 2001:db8:a:0:1::
+        // Both are correct and both are recognizable as IPv6 for Locator functions
+        locator.address[9] = 0x01;
+        ASSERT_EQ("2001:db8:a::1:0:0:0", IPLocator::ip_to_string(locator));
+        locator.address[9] = 0;
+
+        locator.address[7] = 0x01;
+        ASSERT_EQ("2001:db8:a:1::", IPLocator::ip_to_string(locator));
+        locator.address[7] = 0;
+    }
+
+    {
+        // shm
+        locator.kind = LOCATOR_KIND_SHM;
+        ASSERT_EQ(IPLocator::ip_to_string(locator), "");
+    }
 }
 
 /*
