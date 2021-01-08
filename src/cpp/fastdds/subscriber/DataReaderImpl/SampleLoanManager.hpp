@@ -81,18 +81,26 @@ struct SampleLoanManager
         }
     }
 
-    ReturnCode_t get_loan(
+    int32_t num_allocated() const
+    {
+        assert(used_loans_.size() <= std::numeric_limits<int32_t>::max());
+        return static_cast<int32_t>(used_loans_.size());
+    }
+
+    void get_loan(
             CacheChange_t* change,
             void*& sample)
     {
+        // Early return an already loaned item
         OutstandingLoanItem* item = find_by_change(change);
         if (nullptr != item)
         {
             item->num_refs += 1;
             sample = item->sample;
-            return ReturnCode_t::RETCODE_OK;
+            return;
         }
 
+        // Get an item from the pool
         if (free_loans_.empty())
         {
             // Try to create a new entry
@@ -114,42 +122,37 @@ struct SampleLoanManager
             free_loans_.pop_back();
         }
 
-        // Early return if could not find an entry
-        if (nullptr == item)
+        // Should always find an entry, as resource limits are checked before calling this method
+        assert(nullptr != item);
+
+        // Should be the first time we loan this item
+        assert(item->num_refs == 0);
+
+        // Increment references of input payload
+        CacheChange_t tmp;
+        tmp.copy_not_memcpy(change);
+        item->owner = change->payload_owner();
+        change->payload_owner()->get_payload(change->serializedPayload, item->owner, tmp);
+        item->owner = tmp.payload_owner();
+        item->payload = tmp.serializedPayload;
+        tmp.payload_owner(nullptr);
+        tmp.serializedPayload.data = nullptr;
+
+        // Perform deserialization
+        if (type_->is_plain())
         {
-            return ReturnCode_t::RETCODE_OUT_OF_RESOURCES;
+            auto ptr = item->payload.data;
+            ptr += item->payload.representation_header_size;
+            item->sample = ptr;
         }
-
-        // Only deserialize the first time
-        if (item->num_refs == 0)
+        else
         {
-            // Increment references of input payload
-            CacheChange_t tmp;
-            tmp.copy_not_memcpy(change);
-            item->owner = change->payload_owner();
-            change->payload_owner()->get_payload(change->serializedPayload, item->owner, tmp);
-            item->owner = tmp.payload_owner();
-            item->payload = tmp.serializedPayload;
-            tmp.payload_owner(nullptr);
-            tmp.serializedPayload.data = nullptr;
-
-            // Perform deserialization
-            if (type_->is_plain())
-            {
-                auto ptr = item->payload.data;
-                ptr += item->payload.representation_header_size;
-                item->sample = ptr;
-            }
-            else
-            {
-                type_->deserialize(&item->payload, item->sample);
-            }
+            type_->deserialize(&item->payload, item->sample);
         }
 
         // Increment reference counter and return sample
         item->num_refs += 1;
         sample = item->sample;
-        return ReturnCode_t::RETCODE_OK;
     }
 
     void return_loan(

@@ -321,6 +321,29 @@ ReturnCode_t DataReaderImpl::prepare_loan(
         }
     }
 
+    if (max_samples > 0)
+    {
+        // Check if there are enough samples
+        int32_t num_samples = sample_pool_->num_allocated();
+        int32_t max_resource_samples = qos_.resource_limits().max_samples;
+        if (max_resource_samples <= 0)
+        {
+            max_resource_samples = std::numeric_limits<int32_t>::max();
+        }
+        if (num_samples == max_resource_samples)
+        {
+            return ReturnCode_t::RETCODE_OUT_OF_RESOURCES;
+        }
+
+        // Limit max_samples to available samples
+        num_samples += max_samples;
+        if (num_samples > max_resource_samples)
+        {
+            int32_t exceed = num_samples - max_resource_samples;
+            max_samples -= exceed;
+        }
+    }
+
     // Check if there are enough loans
     ReturnCode_t code = loan_manager_.get_loan(data_values, sample_infos);
     if (!code)
