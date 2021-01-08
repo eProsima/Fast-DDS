@@ -416,7 +416,7 @@ ReturnCode_t DataReaderImpl::read(
         InstanceStateMask instance_states)
 {
     return read_or_take(data_values, sample_infos, max_samples, HANDLE_NIL,
-        sample_states, view_states, instance_states, false, false, false);
+                   sample_states, view_states, instance_states, false, false, false);
 }
 
 ReturnCode_t DataReaderImpl::read_instance(
@@ -429,7 +429,7 @@ ReturnCode_t DataReaderImpl::read_instance(
         InstanceStateMask instance_states)
 {
     return read_or_take(data_values, sample_infos, max_samples, a_handle,
-        sample_states, view_states, instance_states, true, true, false);
+                   sample_states, view_states, instance_states, true, true, false);
 }
 
 ReturnCode_t DataReaderImpl::read_next_instance(
@@ -442,7 +442,7 @@ ReturnCode_t DataReaderImpl::read_next_instance(
         InstanceStateMask instance_states)
 {
     return read_or_take(data_values, sample_infos, max_samples, previous_handle,
-        sample_states, view_states, instance_states, false, true, false);
+                   sample_states, view_states, instance_states, false, true, false);
 }
 
 ReturnCode_t DataReaderImpl::take(
@@ -454,7 +454,7 @@ ReturnCode_t DataReaderImpl::take(
         InstanceStateMask instance_states)
 {
     return read_or_take(data_values, sample_infos, max_samples, HANDLE_NIL,
-        sample_states, view_states, instance_states, false, false, true);
+                   sample_states, view_states, instance_states, false, false, true);
 }
 
 ReturnCode_t DataReaderImpl::take_instance(
@@ -467,7 +467,7 @@ ReturnCode_t DataReaderImpl::take_instance(
         InstanceStateMask instance_states)
 {
     return read_or_take(data_values, sample_infos, max_samples, a_handle,
-        sample_states, view_states, instance_states, true, true, true);
+                   sample_states, view_states, instance_states, true, true, true);
 }
 
 ReturnCode_t DataReaderImpl::take_next_instance(
@@ -480,7 +480,7 @@ ReturnCode_t DataReaderImpl::take_next_instance(
         InstanceStateMask instance_states)
 {
     return read_or_take(data_values, sample_infos, max_samples, previous_handle,
-        sample_states, view_states, instance_states, false, true, true);
+                   sample_states, view_states, instance_states, false, true, true);
 }
 
 ReturnCode_t DataReaderImpl::return_loan(
