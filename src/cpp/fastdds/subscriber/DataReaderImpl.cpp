@@ -86,6 +86,15 @@ static void sample_info_to_dds (
     }
 }
 
+static bool collections_have_same_properties(
+        const LoanableCollection& data_values,
+        const SampleInfoSeq& sample_infos)
+{
+    return ((data_values.has_ownership() == sample_infos.has_ownership()) &&
+           (data_values.maximum() == sample_infos.maximum()) &&
+           (data_values.length() == sample_infos.length()));
+}
+
 DataReaderImpl::DataReaderImpl(
         SubscriberImpl* s,
         TypeSupport& type,
@@ -248,9 +257,7 @@ ReturnCode_t DataReaderImpl::check_collection_preconditions_and_calc_max_samples
         int32_t& max_samples)
 {
     // Properties should be the same on both collections
-    if ((data_values.has_ownership() != sample_infos.has_ownership()) ||
-            (data_values.maximum() != sample_infos.maximum()) ||
-            (data_values.length() != sample_infos.length()))
+    if (!collections_have_same_properties(data_values, sample_infos))
     {
         return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
     }
@@ -613,9 +620,7 @@ ReturnCode_t DataReaderImpl::return_loan(
     }
 
     // Properties should be the same on both collections
-    if ((data_values.has_ownership() != sample_infos.has_ownership()) ||
-            (data_values.maximum() != sample_infos.maximum()) ||
-            (data_values.length() != sample_infos.length()))
+    if (!collections_have_same_properties(data_values, sample_infos))
     {
         return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
     }
