@@ -83,18 +83,16 @@ struct SampleInfoPool
         return result ? *result : nullptr;
     }
 
-    ReturnCode_t return_item(
+    void return_item(
             SampleInfo* item)
     {
-        if (!used_items_.remove(item))
-        {
-            return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
-        }
+        bool removed = used_items_.remove(item);
+        static_cast<void>(removed);
+        assert(removed);
 
         SampleInfo** result = free_items_.push_back(item);
         static_cast<void>(result);
         assert(result != nullptr);
-        return ReturnCode_t::RETCODE_OK;
     }
 
 private:

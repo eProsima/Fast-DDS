@@ -152,15 +152,11 @@ struct SampleLoanManager
         return ReturnCode_t::RETCODE_OK;
     }
 
-    ReturnCode_t return_loan(
+    void return_loan(
             void* sample)
     {
         OutstandingLoanItem* item = find_by_sample(sample);
-
-        if (nullptr == item)
-        {
-            return ReturnCode_t::RETCODE_BAD_PARAMETER;
-        }
+        assert(nullptr != item);
 
         item->num_refs -= 1;
         if (item->num_refs == 0)
@@ -176,8 +172,6 @@ struct SampleLoanManager
             assert(nullptr != item);
             used_loans_.remove(*item);
         }
-
-        return ReturnCode_t::RETCODE_OK;
     }
 
 private:
@@ -247,11 +241,8 @@ private:
                     return sample == item.sample;
                 };
         auto it = std::find_if(used_loans_.begin(), used_loans_.end(), comp);
-        if (it != used_loans_.end())
-        {
-            return &(*it);
-        }
-        return nullptr;
+        assert(it != used_loans_.end());
+        return &(*it);
     }
 
 };
