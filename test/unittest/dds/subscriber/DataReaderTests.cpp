@@ -729,13 +729,15 @@ TEST_F(DataReaderTests, resource_limits)
     writer_qos.history().depth = num_samples;
     writer_qos.publish_mode().kind = SYNCHRONOUS_PUBLISH_MODE;
     writer_qos.reliability().kind = RELIABLE_RELIABILITY_QOS;
+    writer_qos.durability().kind = TRANSIENT_LOCAL_DURABILITY_QOS;
 
     DataReaderQos reader_qos = DATAREADER_QOS_DEFAULT;
     reader_qos.reliability().kind = RELIABLE_RELIABILITY_QOS;
     reader_qos.history().kind = KEEP_ALL_HISTORY_QOS;
     reader_qos.resource_limits().max_instances = 1;
     reader_qos.resource_limits().max_samples_per_instance = num_samples;
-    reader_qos.resource_limits().max_samples = num_samples;
+    reader_qos.resource_limits().max_samples = LENGTH_UNLIMITED;
+    reader_qos.durability().kind = TRANSIENT_LOCAL_DURABILITY_QOS;
 
     // Specify resource limits for this test
     // - max_samples_per_read = 10. This means that even if the max_samples parameter is greater than 10 (or even
@@ -853,6 +855,51 @@ TEST_F(DataReaderTests, resource_limits)
         EXPECT_EQ(ok_code, data_reader_->return_loan(data_seqs[0], info_seqs[0]));
         EXPECT_EQ(ok_code, data_reader_->return_loan(data_seqs[1], info_seqs[1]));
         EXPECT_EQ(ok_code, data_reader_->return_loan(data_seqs[2], info_seqs[2]));
+    }
+
+    // Check resource_limits.max_samples
+    {
+        static constexpr int32_t additional_samples = 10;
+
+        // Create a second reader with unlimited loans and sample infos and wait for data
+        reader_qos.resource_limits().max_samples = num_samples;
+        reader_qos.reader_resource_limits().max_samples_per_read = num_samples;
+        reader_qos.reader_resource_limits().outstanding_reads_allocation.maximum = 2 * num_samples;
+        reader_qos.reader_resource_limits().sample_infos_allocation.maximum = 2 * num_samples;
+
+        DataReader* reader2 = subscriber_->create_datareader(topic_, reader_qos);
+        EXPECT_TRUE(reader2->wait_for_unread_message({ 10, 0 }));
+
+        // First take all samples without returning the loan
+        FooSeq data_seq;
+        SampleInfoSeq info_seq;
+        EXPECT_EQ(ok_code, reader2->take(data_seq, info_seq));
+        check_collection(data_seq, false, num_samples, num_samples);
+        check_collection(info_seq, false, num_samples, num_samples);
+
+        // Write some more samples
+        for (int32_t i = 0; i < additional_samples; ++i)
+        {
+            EXPECT_EQ(ok_code, data_writer_->write(&data, handle_ok_));
+        }
+
+        // OUT_OF_RESOURCES should be returned due to resource_limits.max_samples
+        FooSeq data_seq2;
+        SampleInfoSeq info_seq2;
+        EXPECT_EQ(resources_code, reader2->take(data_seq2, info_seq2));
+        check_collection(data_seq2, true, 0, 0);
+        check_collection(info_seq2, true, 0, 0);
+
+        // Should succeed after returning the loan
+        EXPECT_EQ(ok_code, reader2->return_loan(data_seq, info_seq));
+        check_collection(data_seq, true, 0, 0);
+        check_collection(info_seq, true, 0, 0);
+        EXPECT_EQ(ok_code, reader2->take(data_seq2, info_seq2));
+        check_collection(data_seq2, false, additional_samples, additional_samples);
+        check_collection(info_seq2, false, additional_samples, additional_samples);
+        EXPECT_EQ(ok_code, reader2->return_loan(data_seq2, info_seq2));
+
+        EXPECT_EQ(ok_code, subscriber_->delete_datareader(reader2));
     }
 }
 
