@@ -545,7 +545,7 @@ TEST_F(DataReaderTests, collection_preconditions)
         EXPECT_EQ(wrong_code, data_reader_->take_next_instance(true_10_0, info_true_10_0, 20));
 
         check_instance_methods(wrong_code, wrong_code, wrong_code,
-            data_reader_, true_10_0, info_true_10_0, 20);
+                data_reader_, true_10_0, info_true_10_0, 20);
 
     }
 
