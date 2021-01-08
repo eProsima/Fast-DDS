@@ -361,13 +361,17 @@ ReturnCode_t DataReaderImpl::prepare_loan(
     return ReturnCode_t::RETCODE_OK;
 }
 
-ReturnCode_t DataReaderImpl::read(
+ReturnCode_t DataReaderImpl::read_or_take(
         LoanableCollection& data_values,
         SampleInfoSeq& sample_infos,
         int32_t max_samples,
+        const InstanceHandle_t& handle,
         SampleStateMask sample_states,
         ViewStateMask view_states,
-        InstanceStateMask instance_states)
+        InstanceStateMask instance_states,
+        bool exact_instance,
+        bool single_instance,
+        bool should_take)
 {
     if (reader_ == nullptr)
     {
@@ -382,20 +386,37 @@ ReturnCode_t DataReaderImpl::read(
 
     std::lock_guard<RecursiveTimedMutex> lock(reader_->getMutex());
 
+    auto it = history_.lookup_instance(handle, exact_instance);
+    if (!it.first)
+    {
+        return exact_instance ? ReturnCode_t::RETCODE_BAD_PARAMETER : ReturnCode_t::RETCODE_NO_DATA;
+    }
+
     code = prepare_loan(data_values, sample_infos, max_samples);
     if (!code)
     {
         return code;
     }
 
-    auto instance = history_.lookup_instance(HANDLE_NIL, false).second;
     detail::StateFilter states{ sample_states, view_states, instance_states };
-    detail::ReadTakeCommand cmd(*this, data_values, sample_infos, max_samples, states, instance);
+    detail::ReadTakeCommand cmd(*this, data_values, sample_infos, max_samples, states, it.second, single_instance);
     while (!cmd.is_finished())
     {
-        cmd.add_instance(false);
+        cmd.add_instance(should_take);
     }
     return cmd.return_value();
+}
+
+ReturnCode_t DataReaderImpl::read(
+        LoanableCollection& data_values,
+        SampleInfoSeq& sample_infos,
+        int32_t max_samples,
+        SampleStateMask sample_states,
+        ViewStateMask view_states,
+        InstanceStateMask instance_states)
+{
+    return read_or_take(data_values, sample_infos, max_samples, HANDLE_NIL,
+        sample_states, view_states, instance_states, false, false, false);
 }
 
 ReturnCode_t DataReaderImpl::read_instance(
@@ -407,40 +428,8 @@ ReturnCode_t DataReaderImpl::read_instance(
         ViewStateMask view_states,
         InstanceStateMask instance_states)
 {
-    if (reader_ == nullptr)
-    {
-        return ReturnCode_t::RETCODE_NOT_ENABLED;
-    }
-
-    ReturnCode_t code = check_collection_preconditions_and_calc_max_samples(data_values, sample_infos, max_samples);
-    if (!code)
-    {
-        return code;
-    }
-
-    std::lock_guard<RecursiveTimedMutex> lock(reader_->getMutex());
-
-    // Check if the instance exists
-    auto it = history_.lookup_instance(a_handle, true);
-    if (!it.first)
-    {
-        return ReturnCode_t::RETCODE_BAD_PARAMETER;
-    }
-
-    code = prepare_loan(data_values, sample_infos, max_samples);
-    if (!code)
-    {
-        return code;
-    }
-
-    detail::StateFilter states{ sample_states, view_states, instance_states };
-    detail::ReadTakeCommand cmd(*this, data_values, sample_infos, max_samples, states, it.second,
-            true);
-    while (!cmd.is_finished())
-    {
-        cmd.add_instance(false);
-    }
-    return cmd.return_value();
+    return read_or_take(data_values, sample_infos, max_samples, a_handle,
+        sample_states, view_states, instance_states, true, true, false);
 }
 
 ReturnCode_t DataReaderImpl::read_next_instance(
@@ -452,36 +441,8 @@ ReturnCode_t DataReaderImpl::read_next_instance(
         ViewStateMask view_states,
         InstanceStateMask instance_states)
 {
-    if (reader_ == nullptr)
-    {
-        return ReturnCode_t::RETCODE_NOT_ENABLED;
-    }
-
-    ReturnCode_t code = check_collection_preconditions_and_calc_max_samples(data_values, sample_infos, max_samples);
-    if (!code)
-    {
-        return code;
-    }
-
-    std::lock_guard<RecursiveTimedMutex> lock(reader_->getMutex());
-
-    code = prepare_loan(data_values, sample_infos, max_samples);
-    if (!code)
-    {
-        return code;
-    }
-
-    auto instance = history_.lookup_instance(previous_handle, false).second;
-    detail::StateFilter states{ sample_states, view_states, instance_states };
-    detail::ReadTakeCommand cmd(*this, data_values, sample_infos, max_samples, states, instance);
-    while (!cmd.is_finished())
-    {
-        if (cmd.add_instance(false))
-        {
-            break;
-        }
-    }
-    return cmd.return_value();
+    return read_or_take(data_values, sample_infos, max_samples, previous_handle,
+        sample_states, view_states, instance_states, false, true, false);
 }
 
 ReturnCode_t DataReaderImpl::take(
@@ -492,33 +453,8 @@ ReturnCode_t DataReaderImpl::take(
         ViewStateMask view_states,
         InstanceStateMask instance_states)
 {
-    if (reader_ == nullptr)
-    {
-        return ReturnCode_t::RETCODE_NOT_ENABLED;
-    }
-
-    ReturnCode_t code = check_collection_preconditions_and_calc_max_samples(data_values, sample_infos, max_samples);
-    if (!code)
-    {
-        return code;
-    }
-
-    std::lock_guard<RecursiveTimedMutex> lock(reader_->getMutex());
-
-    code = prepare_loan(data_values, sample_infos, max_samples);
-    if (!code)
-    {
-        return code;
-    }
-
-    auto instance = history_.lookup_instance(HANDLE_NIL, false).second;
-    detail::StateFilter states{ sample_states, view_states, instance_states };
-    detail::ReadTakeCommand cmd(*this, data_values, sample_infos, max_samples, states, instance);
-    while (!cmd.is_finished())
-    {
-        cmd.add_instance(true);
-    }
-    return cmd.return_value();
+    return read_or_take(data_values, sample_infos, max_samples, HANDLE_NIL,
+        sample_states, view_states, instance_states, false, false, true);
 }
 
 ReturnCode_t DataReaderImpl::take_instance(
@@ -530,40 +466,8 @@ ReturnCode_t DataReaderImpl::take_instance(
         ViewStateMask view_states,
         InstanceStateMask instance_states)
 {
-    if (reader_ == nullptr)
-    {
-        return ReturnCode_t::RETCODE_NOT_ENABLED;
-    }
-
-    ReturnCode_t code = check_collection_preconditions_and_calc_max_samples(data_values, sample_infos, max_samples);
-    if (!code)
-    {
-        return code;
-    }
-
-    std::lock_guard<RecursiveTimedMutex> lock(reader_->getMutex());
-
-    // Check if the instance exists
-    auto it = history_.lookup_instance(a_handle, true);
-    if (!it.first)
-    {
-        return ReturnCode_t::RETCODE_BAD_PARAMETER;
-    }
-
-    code = prepare_loan(data_values, sample_infos, max_samples);
-    if (!code)
-    {
-        return code;
-    }
-
-    detail::StateFilter states{ sample_states, view_states, instance_states };
-    detail::ReadTakeCommand cmd(*this, data_values, sample_infos, max_samples, states, it.second,
-            true);
-    while (!cmd.is_finished())
-    {
-        cmd.add_instance(true);
-    }
-    return cmd.return_value();
+    return read_or_take(data_values, sample_infos, max_samples, a_handle,
+        sample_states, view_states, instance_states, true, true, true);
 }
 
 ReturnCode_t DataReaderImpl::take_next_instance(
@@ -575,36 +479,8 @@ ReturnCode_t DataReaderImpl::take_next_instance(
         ViewStateMask view_states,
         InstanceStateMask instance_states)
 {
-    if (reader_ == nullptr)
-    {
-        return ReturnCode_t::RETCODE_NOT_ENABLED;
-    }
-
-    ReturnCode_t code = check_collection_preconditions_and_calc_max_samples(data_values, sample_infos, max_samples);
-    if (!code)
-    {
-        return code;
-    }
-
-    std::lock_guard<RecursiveTimedMutex> lock(reader_->getMutex());
-
-    code = prepare_loan(data_values, sample_infos, max_samples);
-    if (!code)
-    {
-        return code;
-    }
-
-    auto instance = history_.lookup_instance(previous_handle, false).second;
-    detail::StateFilter states{ sample_states, view_states, instance_states };
-    detail::ReadTakeCommand cmd(*this, data_values, sample_infos, max_samples, states, instance);
-    while (!cmd.is_finished())
-    {
-        if (cmd.add_instance(true))
-        {
-            break;
-        }
-    }
-    return cmd.return_value();
+    return read_or_take(data_values, sample_infos, max_samples, previous_handle,
+        sample_states, view_states, instance_states, false, true, true);
 }
 
 ReturnCode_t DataReaderImpl::return_loan(

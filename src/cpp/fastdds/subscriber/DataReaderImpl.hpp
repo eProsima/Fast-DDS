@@ -380,6 +380,18 @@ protected:
             SampleInfoSeq& sample_infos,
             int32_t& max_samples);
 
+    ReturnCode_t read_or_take(
+            LoanableCollection& data_values,
+            SampleInfoSeq& sample_infos,
+            int32_t max_samples,
+            const InstanceHandle_t& handle,
+            SampleStateMask sample_states,
+            ViewStateMask view_states,
+            InstanceStateMask instance_states,
+            bool exact_instance,
+            bool single_instance,
+            bool should_take);
+
     /**
      * @brief A method called when a new cache change is added
      * @param change The cache change that has been added
