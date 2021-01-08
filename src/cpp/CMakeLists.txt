@@ -406,14 +406,16 @@ elseif(NOT EPROSIMA_INSTALLER)
         )
 
     # Made linked libraries PRIVATE to prevent local directories in Windows installer.
-    if(EPROSIMA_INSTALLER_MINION)
+    if(EPROSIMA_INSTALLER_MINION
+        # No need to expose linked libs when target is a shared library on MSVC.
+            OR (BUILD_SHARED_LIBS AND MSVC))
         set(PRIVACY "PRIVATE")
+    else()
+        set(PRIVACY "PUBLIC")
     endif()
 
-    # No need to expose linked libs when target is a shared library on MSVC.
-    if(BUILD_SHARED_LIBS AND MSVC)
-        set(PRIVACY "PRIVATE")
-    endif()
+    # Find out if libatomic link is required in this platform
+    find_package(Atomic MODULE)
 
     # Link library to external libraries.
     target_link_libraries(${PROJECT_NAME} ${PRIVACY} fastcdr foonathan_memory
@@ -422,7 +424,7 @@ elseif(NOT EPROSIMA_INSTALLER)
         $<$<BOOL:${LINK_SSL}>:OpenSSL::SSL$<SEMICOLON>OpenSSL::Crypto>
         $<$<BOOL:${WIN32}>:iphlpapi$<SEMICOLON>Shlwapi>
         ${THIRDPARTY_BOOST_LINK_LIBS}
-        eProsima::atomic
+        PRIVATE eProsima_atomic
         )
 
     if(MSVC OR MSVC_IDE)
@@ -536,7 +538,7 @@ if((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER)
         COMPONENT cmake
         )
 elseif(NOT EPROSIMA_INSTALLER)
-    install(TARGETS ${PROJECT_NAME}
+    install(TARGETS ${PROJECT_NAME} eProsima_atomic
         EXPORT ${PROJECT_NAME}-targets
         RUNTIME DESTINATION ${BIN_INSTALL_DIR}${MSVCARCH_DIR_EXTENSION}
         LIBRARY DESTINATION ${LIB_INSTALL_DIR}${MSVCARCH_DIR_EXTENSION}
@@ -544,7 +546,7 @@ elseif(NOT EPROSIMA_INSTALLER)
         COMPONENT libraries${MSVCARCH_EXTENSION}
         )
 
-    export(TARGETS ${PROJECT_NAME} FILE ${PROJECT_BINARY_DIR}/cmake/config/${PROJECT_NAME}-targets.cmake)
+    export(TARGETS ${PROJECT_NAME} eProsima_atomic FILE ${PROJECT_BINARY_DIR}/cmake/config/${PROJECT_NAME}-targets.cmake)
 
     if(INSTALLER_PLATFORM)
         set(INSTALL_DESTINATION_PATH ${DATA_INSTALL_DIR}/${PROJECT_NAME}-${INSTALLER_PLATFORM}/cmake)
