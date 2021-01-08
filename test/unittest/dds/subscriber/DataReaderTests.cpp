@@ -187,7 +187,8 @@ protected:
             const ReturnCode_t& loan_return_code,
             DataReader* data_reader,
             LoanableCollection& data_values,
-            SampleInfoSeq& infos)
+            SampleInfoSeq& infos,
+            int32_t max_samples = LENGTH_UNLIMITED)
     {
         ReturnCode_t wrong_loan_code = ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
         if (ReturnCode_t::RETCODE_NOT_ENABLED == instance_bad_code)
@@ -195,20 +196,20 @@ protected:
             wrong_loan_code = instance_bad_code;
         }
 
-        EXPECT_EQ(instance_bad_code, data_reader->read_instance(data_values, infos, LENGTH_UNLIMITED, HANDLE_NIL));
+        EXPECT_EQ(instance_bad_code, data_reader->read_instance(data_values, infos, max_samples, HANDLE_NIL));
         check_return_loan(wrong_loan_code, data_reader, data_values, infos);
-        EXPECT_EQ(instance_bad_code, data_reader->read_instance(data_values, infos, LENGTH_UNLIMITED, handle_wrong_));
+        EXPECT_EQ(instance_bad_code, data_reader->read_instance(data_values, infos, max_samples, handle_wrong_));
         check_return_loan(wrong_loan_code, data_reader, data_values, infos);
-        EXPECT_EQ(instance_bad_code, data_reader->take_instance(data_values, infos, LENGTH_UNLIMITED, HANDLE_NIL));
+        EXPECT_EQ(instance_bad_code, data_reader->take_instance(data_values, infos, max_samples, HANDLE_NIL));
         check_return_loan(wrong_loan_code, data_reader, data_values, infos);
-        EXPECT_EQ(instance_bad_code, data_reader->take_instance(data_values, infos, LENGTH_UNLIMITED, handle_wrong_));
+        EXPECT_EQ(instance_bad_code, data_reader->take_instance(data_values, infos, max_samples, handle_wrong_));
         check_return_loan(wrong_loan_code, data_reader, data_values, infos);
 
-        EXPECT_EQ(instance_ok_code, data_reader->read_instance(data_values, infos, LENGTH_UNLIMITED, handle_ok_));
+        EXPECT_EQ(instance_ok_code, data_reader->read_instance(data_values, infos, max_samples, handle_ok_));
         check_return_loan(loan_return_code, data_reader, data_values, infos);
         reset_lengths_if_ok(instance_ok_code, data_values, infos);
 
-        EXPECT_EQ(instance_ok_code, data_reader->take_instance(data_values, infos, LENGTH_UNLIMITED, handle_ok_));
+        EXPECT_EQ(instance_ok_code, data_reader->take_instance(data_values, infos, max_samples, handle_ok_));
         if (ReturnCode_t::RETCODE_OK == instance_ok_code)
         {
             // Write received data so it can be taken again
@@ -534,6 +535,18 @@ TEST_F(DataReaderTests, collection_preconditions)
         const ReturnCode_t& instance_code = (test.second == ok_code) ? instance_bad_code : test.second;
         check_instance_methods(instance_code, instance_code, wrong_code,
                 data_reader_, test.first.first, test.first.second);
+    }
+
+    // Check for  max_samples > max_len
+    {
+        EXPECT_EQ(wrong_code, data_reader_->read(true_10_0, info_true_10_0, 20));
+        EXPECT_EQ(wrong_code, data_reader_->read_next_instance(true_10_0, info_true_10_0, 20));
+        EXPECT_EQ(wrong_code, data_reader_->take(true_10_0, info_true_10_0, 20));
+        EXPECT_EQ(wrong_code, data_reader_->take_next_instance(true_10_0, info_true_10_0, 20));
+
+        check_instance_methods(wrong_code, wrong_code, wrong_code,
+            data_reader_, true_10_0, info_true_10_0, 20);
+
     }
 
     false_10_0.unloan();
