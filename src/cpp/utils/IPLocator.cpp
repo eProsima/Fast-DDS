@@ -461,7 +461,11 @@ std::string IPLocator::toIPv6string(
     {
         if (locator.address[i] == 0 && locator.address[i + 1] == 0)
         {
-            if (!in_compress && !already_compress)
+            if (in_compress)
+            {
+                continue;
+            }
+            else if (!already_compress)
             {
                 already_compress = true;
                 in_compress = true;
@@ -470,20 +474,19 @@ std::string IPLocator::toIPv6string(
                 {
                     ss << ":";
                 }
+                continue;
             }
+        }
+
+        in_compress = false;
+        auto field = (locator.address[i] << 8) + locator.address[i + 1];
+        if (i != 14)
+        {
+            ss << field << ":";
         }
         else
         {
-            in_compress = false;
-            auto field = (locator.address[i] << 8) + locator.address[i + 1];
-            if (i != 14)
-            {
-                ss << field << ":";
-            }
-            else
-            {
-                ss << field;
-            }
+            ss << field;
         }
     }
 
