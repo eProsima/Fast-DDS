@@ -863,6 +863,7 @@ TEST_F(DataReaderTests, resource_limits)
 
         // Create a second reader with unlimited loans and sample infos and wait for data
         reader_qos.resource_limits().max_samples = num_samples;
+        reader_qos.resource_limits().allocated_samples = num_samples / 2;
         reader_qos.reader_resource_limits().max_samples_per_read = num_samples;
         reader_qos.reader_resource_limits().outstanding_reads_allocation.maximum = 2 * num_samples;
         reader_qos.reader_resource_limits().sample_infos_allocation.maximum = 2 * num_samples;
