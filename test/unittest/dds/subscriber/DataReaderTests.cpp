@@ -912,18 +912,6 @@ TEST_F(DataReaderTests, resource_limits)
     }
 }
 
-void check_sample(
-        const SampleInfo& info_1,
-        const SampleInfo& info_2,
-        const FooType& data_1,
-        const FooType& data_2,
-        bool should_be_equal)
-{
-    bool equal_identity = (info_1.sample_identity == info_2.sample_identity);
-    bool equal_value = (data_1 == data_2);
-    EXPECT_EQ(should_be_equal, equal_identity && equal_value);
-}
-
 void check_sample_values(
         const FooSeq& data,
         const std::string& values)
@@ -1021,53 +1009,6 @@ TEST_F(DataReaderTests, read_unread)
         EXPECT_EQ(ok_code, data_reader_->read(data_seq[5], info_seq[5], LENGTH_UNLIMITED, READ_SAMPLE_STATE));
         check_collection(data_seq[5], false, 2, 2);
         check_sample_values(data_seq[5], "01");
-
-        using compare_case_t = std::pair<std::pair<int, int>, bool>;
-        const compare_case_t compare_cases[] =
-        {
-            // 0
-            {{0, 1}, true},
-            {{0, 2}, true},
-            {{0, 3}, false},
-            {{0, 4}, true},
-            {{0, 5}, true},
-
-            // 1
-            {{1, 2}, true},
-            {{1, 3}, false},
-            {{1, 4}, true},
-            {{1, 5}, true},
-
-            // 2
-            {{2, 3}, false},
-            {{2, 4}, true},
-            {{2, 5}, true},
-
-            // 3
-            {{3, 4}, false},
-            {{3, 5}, false},
-
-            // 4
-            {{4, 5}, true},
-        };
-
-        // This compares [0] element of all collections
-        for (const compare_case_t& test : compare_cases)
-        {
-            check_sample(
-                info_seq[test.first.first][0], info_seq[test.first.second][0],
-                data_seq[test.first.first][0], data_seq[test.first.second][0],
-                test.second);
-        }
-
-        // This compares [1] of last collection against [0] of all collections
-        for (size_t i = 0; i < 6; ++i)
-        {
-            check_sample(
-                info_seq[5][1], info_seq[i][0],
-                data_seq[5][1], data_seq[i][0],
-                i == 3);
-        }
 
         // Return all loans
         for (size_t i = 0; i < 6; ++i)
