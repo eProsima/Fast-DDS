@@ -957,7 +957,7 @@ TEST_F(DataReaderTests, read_unread)
     reader_qos.history().kind = KEEP_ALL_HISTORY_QOS;
     reader_qos.resource_limits().max_instances = 1;
     reader_qos.resource_limits().max_samples_per_instance = num_samples;
-    reader_qos.resource_limits().max_samples = num_samples;
+    reader_qos.resource_limits().max_samples = 3 * num_samples;
 
     create_instance_handles();
     create_entities(nullptr, reader_qos, SUBSCRIBER_QOS_DEFAULT, writer_qos);
@@ -980,19 +980,16 @@ TEST_F(DataReaderTests, read_unread)
 
         EXPECT_EQ(no_data_code, data_reader_->read(data_seq, info_seq, LENGTH_UNLIMITED, READ_SAMPLE_STATE));
         EXPECT_EQ(no_data_code,
-                data_reader_->read_instance(data_seq, info_seq, LENGTH_UNLIMITED, handle_ok_,
-                READ_SAMPLE_STATE));
+                data_reader_->read_instance(data_seq, info_seq, LENGTH_UNLIMITED, handle_ok_, READ_SAMPLE_STATE));
         EXPECT_EQ(no_data_code,
                 data_reader_->read_next_instance(data_seq, info_seq, LENGTH_UNLIMITED, HANDLE_NIL,
                 READ_SAMPLE_STATE));
 
         EXPECT_EQ(no_data_code, data_reader_->take(data_seq, info_seq, LENGTH_UNLIMITED, READ_SAMPLE_STATE));
         EXPECT_EQ(no_data_code,
-                data_reader_->take_instance(data_seq, info_seq, LENGTH_UNLIMITED, handle_ok_,
-                READ_SAMPLE_STATE));
+                data_reader_->take_instance(data_seq, info_seq, LENGTH_UNLIMITED, handle_ok_, READ_SAMPLE_STATE));
         EXPECT_EQ(no_data_code,
-                data_reader_->take_next_instance(data_seq, info_seq, LENGTH_UNLIMITED, HANDLE_NIL,
-                READ_SAMPLE_STATE));
+                data_reader_->take_next_instance(data_seq, info_seq, LENGTH_UNLIMITED, HANDLE_NIL, READ_SAMPLE_STATE));
     }
 
     // Checks with read API
