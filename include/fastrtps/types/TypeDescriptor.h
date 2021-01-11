@@ -56,7 +56,7 @@ public:
             const std::string& name,
             TypeKind kind);
 
-    ~TypeDescriptor();
+    RTPS_DllAPI ~TypeDescriptor();
 
     ReturnCode_t copy_from(const TypeDescriptor* descriptor);
 
