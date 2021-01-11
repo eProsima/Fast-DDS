@@ -919,8 +919,9 @@ void check_sample(
         const FooType& data_2,
         bool should_be_equal)
 {
-    EXPECT_EQ(should_be_equal, info_1.sample_identity == info_2.sample_identity);
-    EXPECT_EQ(should_be_equal, data_1 == data_2);
+    bool equal_identity = (info_1.sample_identity == info_2.sample_identity);
+    bool equal_value = (data_1 == data_2);
+    EXPECT_EQ(should_be_equal, equal_identity && equal_value);
 }
 
 void check_sample_values(
