@@ -37,6 +37,9 @@
 #include <fastdds/dds/subscriber/qos/DataReaderQos.hpp>
 #include <fastdds/dds/subscriber/qos/SubscriberQos.hpp>
 
+#include "./FooBoundedType.hpp"
+#include "./FooBoundedTypeSupport.hpp"
+
 #include "./FooType.hpp"
 #include "./FooTypeSupport.hpp"
 
