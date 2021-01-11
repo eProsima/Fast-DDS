@@ -96,6 +96,20 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER) AND fastcdr_FOUND)
         ${CMAKE_CURRENT_BINARY_DIR}/liveliness_assertion.120.xml COPYONLY)
     configure_file(${CMAKE_CURRENT_SOURCE_DIR}/liveliness_assertion.360.xml
         ${CMAKE_CURRENT_BINARY_DIR}/liveliness_assertion.360.xml COPYONLY)
+    configure_file(${CMAKE_CURRENT_SOURCE_DIR}/multiple_subs_secure_crypto_communication.py
+        ${CMAKE_CURRENT_BINARY_DIR}/multiple_subs_secure_crypto_communication.py COPYONLY)
+    configure_file(${CMAKE_CURRENT_SOURCE_DIR}/secure_msg_crypto_besteffort_pub.xml
+        ${CMAKE_CURRENT_BINARY_DIR}/secure_msg_crypto_besteffort_pub.xml COPYONLY)
+    configure_file(${CMAKE_CURRENT_SOURCE_DIR}/secure_msg_crypto_besteffort_sub.xml
+        ${CMAKE_CURRENT_BINARY_DIR}/secure_msg_crypto_besteffort_sub.xml COPYONLY)
+    configure_file(${CMAKE_CURRENT_SOURCE_DIR}/secure_msg_submsg_crypto_besteffort_pub.xml
+        ${CMAKE_CURRENT_BINARY_DIR}/secure_msg_submsg_crypto_besteffort_pub.xml COPYONLY)
+    configure_file(${CMAKE_CURRENT_SOURCE_DIR}/secure_msg_submsg_crypto_besteffort_sub.xml
+        ${CMAKE_CURRENT_BINARY_DIR}/secure_msg_submsg_crypto_besteffort_sub.xml COPYONLY)
+    configure_file(${CMAKE_CURRENT_SOURCE_DIR}/secure_submsg_crypto_besteffort_pub.xml
+        ${CMAKE_CURRENT_BINARY_DIR}/secure_submsg_crypto_besteffort_pub.xml COPYONLY)
+    configure_file(${CMAKE_CURRENT_SOURCE_DIR}/secure_submsg_crypto_besteffort_sub.xml
+        ${CMAKE_CURRENT_BINARY_DIR}/secure_submsg_crypto_besteffort_sub.xml COPYONLY)
     if(SECURITY)
         configure_file(${PROJECT_SOURCE_DIR}/test/certs/maincacert.pem
             ${CMAKE_CURRENT_BINARY_DIR}/maincacert.pem COPYONLY)
@@ -224,6 +238,57 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER) AND fastcdr_FOUND)
             if(WIN32)
                 string(REPLACE ";" "\\;" WIN_PATH "$ENV{PATH}")
                 set_property(TEST SimpleCommunicationSecureBestEffort APPEND PROPERTY ENVIRONMENT
+                    "PATH=$<TARGET_FILE_DIR:${PROJECT_NAME}>\\;$<TARGET_FILE_DIR:fastcdr>\\;${WIN_PATH}")
+            endif()
+
+            add_test(NAME SimpleCommunicationSecureMsgCryptoBestEffort
+                COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/multiple_subs_secure_crypto_communication.py
+                --pub $<TARGET_FILE:SimpleCommunicationPublisher>
+                --xml-pub secure_msg_crypto_besteffort_pub.xml
+                --sub $<TARGET_FILE:SimpleCommunicationSubscriber>
+                --xml-sub secure_msg_crypto_besteffort_sub.xml
+                --samples 10 --wait 2 --n-subs 5)
+
+            # Set test with label NoMemoryCheck
+            set_property(TEST SimpleCommunicationSecureMsgCryptoBestEffort PROPERTY LABELS "NoMemoryCheck")
+
+            if(WIN32)
+                string(REPLACE ";" "\\;" WIN_PATH "$ENV{PATH}")
+                set_property(TEST SimpleCommunicationSecureMsgCryptoBestEffort APPEND PROPERTY ENVIRONMENT
+                    "PATH=$<TARGET_FILE_DIR:${PROJECT_NAME}>\\;$<TARGET_FILE_DIR:fastcdr>\\;${WIN_PATH}")
+            endif()
+
+            add_test(NAME SimpleCommunicationSecureMsgSubmsgCryptoBestEffort
+                COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/multiple_subs_secure_crypto_communication.py
+                --pub $<TARGET_FILE:SimpleCommunicationPublisher>
+                --xml-pub secure_msg_submsg_crypto_besteffort_pub.xml
+                --sub $<TARGET_FILE:SimpleCommunicationSubscriber>
+                --xml-sub secure_msg_submsg_crypto_besteffort_sub.xml
+                --samples 10 --wait 2 --n-subs 5)
+
+            # Set test with label NoMemoryCheck
+            set_property(TEST SimpleCommunicationSecureMsgSubmsgCryptoBestEffort PROPERTY LABELS "NoMemoryCheck")
+
+            if(WIN32)
+                string(REPLACE ";" "\\;" WIN_PATH "$ENV{PATH}")
+                set_property(TEST SimpleCommunicationSecureMsgSubmsgCryptoBestEffort APPEND PROPERTY ENVIRONMENT
+                    "PATH=$<TARGET_FILE_DIR:${PROJECT_NAME}>\\;$<TARGET_FILE_DIR:fastcdr>\\;${WIN_PATH}")
+            endif()
+
+            add_test(NAME SimpleCommunicationSecureSubmsgCryptoBestEffort
+                COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/multiple_subs_secure_crypto_communication.py
+                --pub $<TARGET_FILE:SimpleCommunicationPublisher>
+                --xml-pub secure_submsg_crypto_besteffort_pub.xml
+                --sub $<TARGET_FILE:SimpleCommunicationSubscriber>
+                --xml-sub secure_submsg_crypto_besteffort_sub.xml
+                --samples 10 --wait 2 --n-subs 5)
+
+            # Set test with label NoMemoryCheck
+            set_property(TEST SimpleCommunicationSecureSubmsgCryptoBestEffort PROPERTY LABELS "NoMemoryCheck")
+
+            if(WIN32)
+                string(REPLACE ";" "\\;" WIN_PATH "$ENV{PATH}")
+                set_property(TEST SimpleCommunicationSecureSubmsgCryptoBestEffort APPEND PROPERTY ENVIRONMENT
                     "PATH=$<TARGET_FILE_DIR:${PROJECT_NAME}>\\;$<TARGET_FILE_DIR:fastcdr>\\;${WIN_PATH}")
             endif()
         endif()

@@ -53,6 +53,7 @@ MessageReceiver::MessageReceiver(
     , timestamp_(c_TimeInvalid)
 #if HAVE_SECURITY
     , crypto_msg_(participant->is_secure() ? rec_buffer_size : 0)
+    , crypto_submsg_(participant->is_secure() ? rec_buffer_size : 0)
     , crypto_payload_(participant->is_secure() ? rec_buffer_size : 0)
 #endif // if HAVE_SECURITY
 {
@@ -347,8 +348,11 @@ void MessageReceiver::processCDRMsg(
 
     if (decode_ret == 0)
     {
-        // Swap
-        std::swap(msg, auxiliary_buffer);
+        // The original CDRMessage buffer (msg) now points to the proprietary temporary buffer crypto_msg_.
+        // The auxiliary buffer now points to the propietary temporary buffer crypto_submsg_.
+        // This way each decoded sub-message will be processed using the crypto_submsg_ buffer.
+        msg = auxiliary_buffer;
+        auxiliary_buffer = &crypto_submsg_;
     }
 #endif // if HAVE_SECURITY
 
