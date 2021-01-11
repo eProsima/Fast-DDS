@@ -86,14 +86,7 @@ ReturnCode_t DataReader::read(
         ViewStateMask view_states,
         InstanceStateMask instance_states)
 {
-    static_cast<void>(data_values);
-    static_cast<void>(sample_infos);
-    static_cast<void>(max_samples);
-    static_cast<void>(sample_states);
-    static_cast<void>(view_states);
-    static_cast<void>(instance_states);
-
-    return ReturnCode_t::RETCODE_UNSUPPORTED;
+    return impl_->read(data_values, sample_infos, max_samples, sample_states, view_states, instance_states);
 }
 
 ReturnCode_t DataReader::read_instance(
@@ -105,15 +98,8 @@ ReturnCode_t DataReader::read_instance(
         ViewStateMask view_states,
         InstanceStateMask instance_states)
 {
-    static_cast<void>(data_values);
-    static_cast<void>(sample_infos);
-    static_cast<void>(max_samples);
-    static_cast<void>(a_handle);
-    static_cast<void>(sample_states);
-    static_cast<void>(view_states);
-    static_cast<void>(instance_states);
-
-    return ReturnCode_t::RETCODE_UNSUPPORTED;
+    return impl_->read_instance(data_values, sample_infos, max_samples, a_handle, sample_states, view_states,
+                   instance_states);
 }
 
 ReturnCode_t DataReader::read_next_instance(
@@ -125,15 +111,8 @@ ReturnCode_t DataReader::read_next_instance(
         ViewStateMask view_states,
         InstanceStateMask instance_states)
 {
-    static_cast<void>(data_values);
-    static_cast<void>(sample_infos);
-    static_cast<void>(max_samples);
-    static_cast<void>(previous_handle);
-    static_cast<void>(sample_states);
-    static_cast<void>(view_states);
-    static_cast<void>(instance_states);
-
-    return ReturnCode_t::RETCODE_UNSUPPORTED;
+    return impl_->read_next_instance(data_values, sample_infos, max_samples, previous_handle, sample_states,
+                   view_states, instance_states);
 }
 
 ReturnCode_t DataReader::take(
@@ -144,14 +123,7 @@ ReturnCode_t DataReader::take(
         ViewStateMask view_states,
         InstanceStateMask instance_states)
 {
-    static_cast<void>(data_values);
-    static_cast<void>(sample_infos);
-    static_cast<void>(max_samples);
-    static_cast<void>(sample_states);
-    static_cast<void>(view_states);
-    static_cast<void>(instance_states);
-
-    return ReturnCode_t::RETCODE_UNSUPPORTED;
+    return impl_->take(data_values, sample_infos, max_samples, sample_states, view_states, instance_states);
 }
 
 ReturnCode_t DataReader::take_instance(
@@ -163,15 +135,8 @@ ReturnCode_t DataReader::take_instance(
         ViewStateMask view_states,
         InstanceStateMask instance_states)
 {
-    static_cast<void>(data_values);
-    static_cast<void>(sample_infos);
-    static_cast<void>(max_samples);
-    static_cast<void>(a_handle);
-    static_cast<void>(sample_states);
-    static_cast<void>(view_states);
-    static_cast<void>(instance_states);
-
-    return ReturnCode_t::RETCODE_UNSUPPORTED;
+    return impl_->take_instance(data_values, sample_infos, max_samples, a_handle, sample_states, view_states,
+                   instance_states);
 }
 
 ReturnCode_t DataReader::take_next_instance(
@@ -183,25 +148,15 @@ ReturnCode_t DataReader::take_next_instance(
         ViewStateMask view_states,
         InstanceStateMask instance_states)
 {
-    static_cast<void>(data_values);
-    static_cast<void>(sample_infos);
-    static_cast<void>(max_samples);
-    static_cast<void>(previous_handle);
-    static_cast<void>(sample_states);
-    static_cast<void>(view_states);
-    static_cast<void>(instance_states);
-
-    return ReturnCode_t::RETCODE_UNSUPPORTED;
+    return impl_->take_next_instance(data_values, sample_infos, max_samples, previous_handle, sample_states,
+                   view_states, instance_states);
 }
 
 ReturnCode_t DataReader::return_loan(
         LoanableCollection& data_values,
         SampleInfoSeq& sample_infos)
 {
-    static_cast<void>(data_values);
-    static_cast<void>(sample_infos);
-
-    return ReturnCode_t::RETCODE_UNSUPPORTED;
+    return impl_->return_loan(data_values, sample_infos);
 }
 
 ReturnCode_t DataReader::read_next_sample(
@@ -263,24 +218,6 @@ ReturnCode_t DataReader::get_requested_incompatible_qos_status(
 {
     return impl_->get_requested_incompatible_qos_status(status);
 }
-
-/* TODO
-   bool DataReader::read(
-        std::vector<void *>& data_values,
-        std::vector<SampleInfo>& sample_infos,
-        uint32_t max_samples)
-   {
-    return impl_->read(...);
-   }
-
-   bool DataReader::take(
-        std::vector<void *>& data_values,
-        std::vector<SampleInfo>& sample_infos,
-        uint32_t max_samples)
-   {
-    return impl_->take(...);
-   }
- */
 
 ReturnCode_t DataReader::set_listener(
         DataReaderListener* listener)

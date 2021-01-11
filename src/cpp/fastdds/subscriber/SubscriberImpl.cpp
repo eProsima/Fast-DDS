@@ -286,6 +286,11 @@ ReturnCode_t SubscriberImpl::delete_datareader(
         {
             //First extract the reader from the maps to free the mutex
             DataReaderImpl* reader_impl = *dr_it;
+            if (!reader_impl->can_be_deleted())
+            {
+                return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
+            }
+
             reader_impl->set_listener(nullptr);
             it->second.erase(dr_it);
             if (it->second.empty())
