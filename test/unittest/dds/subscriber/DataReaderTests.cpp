@@ -873,6 +873,14 @@ TEST_F(DataReaderTests, resource_limits)
         // First take all samples without returning the loan
         FooSeq data_seq;
         SampleInfoSeq info_seq;
+        EXPECT_EQ(ok_code, reader2->read(data_seq, info_seq));
+        while (data_seq.length() != num_samples)
+        {
+            EXPECT_EQ(ok_code, reader2->return_loan(data_seq, info_seq));
+            std::this_thread::sleep_for(std::chrono::seconds(1));
+            EXPECT_EQ(ok_code, reader2->read(data_seq, info_seq));
+        }
+        EXPECT_EQ(ok_code, reader2->return_loan(data_seq, info_seq));
         EXPECT_EQ(ok_code, reader2->take(data_seq, info_seq));
         check_collection(data_seq, false, num_samples, num_samples);
         check_collection(info_seq, false, num_samples, num_samples);
