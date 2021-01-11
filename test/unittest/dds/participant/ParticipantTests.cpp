@@ -1690,7 +1690,7 @@ TEST(ParticipantTests, RegisterDynamicTypeToFactoriesNotTypeIdentifier)
             DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
 
     // Create a not supported TypeDescriptor
-    const TypeDescriptor* myDescriptor(new TypeDescriptor("my_descriptor", 0x11));
+    const TypeDescriptor* myDescriptor = new TypeDescriptor("my_descriptor", 0x11);
     // Create the base type for the dynamic type
     DynamicType_ptr base_type(new DynamicTypeMock(myDescriptor));
     // Create a custom dynamic type builder using the wrong TypeDescriptor
@@ -1712,6 +1712,9 @@ TEST(ParticipantTests, RegisterDynamicTypeToFactoriesNotTypeIdentifier)
 
     // The type is registered in the participant but not in the dynamic types factories
     ASSERT_FALSE(ret_type.empty());
+
+    // Remove TypeDescriptor before closing
+    delete myDescriptor;
 
     // Remove the participant
     ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), ReturnCode_t::RETCODE_OK);
