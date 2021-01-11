@@ -132,12 +132,16 @@ protected:
         type_.get_key(&data, &handle_wrong_);
     }
 
-    void reset_lengths(
+    void reset_lengths_if_ok(
+            const ReturnCode_t& code,
             LoanableCollection& data_values,
             SampleInfoSeq& infos)
     {
-        data_values.length(0u);
-        infos.length(0u);
+        if (ReturnCode_t::RETCODE_OK == code)
+        {
+            data_values.length(0u);
+            infos.length(0u);
+        }
     }
 
     void send_data(
@@ -161,11 +165,10 @@ protected:
             LoanableCollection& data_values,
             SampleInfoSeq& infos)
     {
-        ReturnCode_t expected_return_loan_ret = code;
-        if (ReturnCode_t::RETCODE_NO_DATA == code)
+        ReturnCode_t expected_return_loan_ret = ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
+        if (ReturnCode_t::RETCODE_OK == code || ReturnCode_t::RETCODE_NOT_ENABLED == code)
         {
-            // When read returns NO_DATA, no loan will be performed
-            expected_return_loan_ret = ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
+            expected_return_loan_ret = code;
         }
         EXPECT_EQ(expected_return_loan_ret, data_reader->return_loan(data_values, infos));
 
@@ -184,7 +187,8 @@ protected:
             const ReturnCode_t& loan_return_code,
             DataReader* data_reader,
             LoanableCollection& data_values,
-            SampleInfoSeq& infos)
+            SampleInfoSeq& infos,
+            int32_t max_samples = LENGTH_UNLIMITED)
     {
         ReturnCode_t wrong_loan_code = ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
         if (ReturnCode_t::RETCODE_NOT_ENABLED == instance_bad_code)
@@ -192,27 +196,27 @@ protected:
             wrong_loan_code = instance_bad_code;
         }
 
-        EXPECT_EQ(instance_bad_code, data_reader->read_instance(data_values, infos, LENGTH_UNLIMITED, HANDLE_NIL));
+        EXPECT_EQ(instance_bad_code, data_reader->read_instance(data_values, infos, max_samples, HANDLE_NIL));
         check_return_loan(wrong_loan_code, data_reader, data_values, infos);
-        EXPECT_EQ(instance_bad_code, data_reader->read_instance(data_values, infos, LENGTH_UNLIMITED, handle_wrong_));
+        EXPECT_EQ(instance_bad_code, data_reader->read_instance(data_values, infos, max_samples, handle_wrong_));
         check_return_loan(wrong_loan_code, data_reader, data_values, infos);
-        EXPECT_EQ(instance_bad_code, data_reader->take_instance(data_values, infos, LENGTH_UNLIMITED, HANDLE_NIL));
+        EXPECT_EQ(instance_bad_code, data_reader->take_instance(data_values, infos, max_samples, HANDLE_NIL));
         check_return_loan(wrong_loan_code, data_reader, data_values, infos);
-        EXPECT_EQ(instance_bad_code, data_reader->take_instance(data_values, infos, LENGTH_UNLIMITED, handle_wrong_));
+        EXPECT_EQ(instance_bad_code, data_reader->take_instance(data_values, infos, max_samples, handle_wrong_));
         check_return_loan(wrong_loan_code, data_reader, data_values, infos);
 
-        EXPECT_EQ(instance_ok_code, data_reader->read_instance(data_values, infos, LENGTH_UNLIMITED, handle_ok_));
+        EXPECT_EQ(instance_ok_code, data_reader->read_instance(data_values, infos, max_samples, handle_ok_));
         check_return_loan(loan_return_code, data_reader, data_values, infos);
-        reset_lengths(data_values, infos);
+        reset_lengths_if_ok(instance_ok_code, data_values, infos);
 
-        EXPECT_EQ(instance_ok_code, data_reader->take_instance(data_values, infos, LENGTH_UNLIMITED, handle_ok_));
+        EXPECT_EQ(instance_ok_code, data_reader->take_instance(data_values, infos, max_samples, handle_ok_));
         if (ReturnCode_t::RETCODE_OK == instance_ok_code)
         {
             // Write received data so it can be taken again
             send_data(data_values, infos);
         }
         check_return_loan(loan_return_code, data_reader, data_values, infos);
-        reset_lengths(data_values, infos);
+        reset_lengths_if_ok(instance_ok_code, data_values, infos);
     }
 
     void basic_read_apis_check(
@@ -257,10 +261,10 @@ protected:
 
             EXPECT_EQ(code, data_reader->read(data_values, infos));
             check_return_loan(code, data_reader, data_values, infos);
-            reset_lengths(data_values, infos);
+            reset_lengths_if_ok(code, data_values, infos);
             EXPECT_EQ(code, data_reader->read_next_instance(data_values, infos));
             check_return_loan(code, data_reader, data_values, infos);
-            reset_lengths(data_values, infos);
+            reset_lengths_if_ok(code, data_values, infos);
 
             EXPECT_EQ(code, data_reader->take(data_values, infos));
             if (ReturnCode_t::RETCODE_OK == code)
@@ -269,7 +273,7 @@ protected:
                 data_reader->wait_for_unread_message(time_to_wait);
             }
             check_return_loan(code, data_reader, data_values, infos);
-            reset_lengths(data_values, infos);
+            reset_lengths_if_ok(code, data_values, infos);
 
             EXPECT_EQ(code, data_reader->take_next_instance(data_values, infos));
             if (ReturnCode_t::RETCODE_OK == code)
@@ -278,7 +282,7 @@ protected:
                 data_reader->wait_for_unread_message(time_to_wait);
             }
             check_return_loan(code, data_reader, data_values, infos);
-            reset_lengths(data_values, infos);
+            reset_lengths_if_ok(code, data_values, infos);
 
             check_instance_methods(instance_ok_code, instance_bad_code, instance_ok_code,
                     data_reader, data_values, infos);
@@ -298,10 +302,10 @@ protected:
 
             EXPECT_EQ(code, data_reader->read(data_values, infos));
             check_return_loan(expected_return_loan_ret, data_reader, data_values, infos);
-            reset_lengths(data_values, infos);
+            reset_lengths_if_ok(code, data_values, infos);
             EXPECT_EQ(code, data_reader->read_next_instance(data_values, infos));
             check_return_loan(expected_return_loan_ret, data_reader, data_values, infos);
-            reset_lengths(data_values, infos);
+            reset_lengths_if_ok(code, data_values, infos);
 
             EXPECT_EQ(code, data_reader->take(data_values, infos));
             if (ReturnCode_t::RETCODE_OK == code)
@@ -310,7 +314,7 @@ protected:
                 data_reader->wait_for_unread_message(time_to_wait);
             }
             check_return_loan(expected_return_loan_ret, data_reader, data_values, infos);
-            reset_lengths(data_values, infos);
+            reset_lengths_if_ok(code, data_values, infos);
 
             EXPECT_EQ(code, data_reader->take_next_instance(data_values, infos));
             if (ReturnCode_t::RETCODE_OK == code)
@@ -319,7 +323,7 @@ protected:
                 data_reader->wait_for_unread_message(time_to_wait);
             }
             check_return_loan(expected_return_loan_ret, data_reader, data_values, infos);
-            reset_lengths(data_values, infos);
+            reset_lengths_if_ok(code, data_values, infos);
 
             check_instance_methods(instance_ok_code, instance_bad_code, expected_return_loan_ret,
                     data_reader, data_values, infos);
@@ -360,6 +364,8 @@ protected:
  */
 TEST_F(DataReaderTests, read_take_apis)
 {
+    create_instance_handles();
+
     // We will create a disabled DataReader, so we can check RETCODE_NOT_ENABLED
     SubscriberQos subscriber_qos = SUBSCRIBER_QOS_DEFAULT;
     subscriber_qos.entity_factory().autoenable_created_entities = false;
@@ -531,6 +537,18 @@ TEST_F(DataReaderTests, collection_preconditions)
                 data_reader_, test.first.first, test.first.second);
     }
 
+    // Check for  max_samples > max_len
+    {
+        EXPECT_EQ(wrong_code, data_reader_->read(true_10_0, info_true_10_0, 20));
+        EXPECT_EQ(wrong_code, data_reader_->read_next_instance(true_10_0, info_true_10_0, 20));
+        EXPECT_EQ(wrong_code, data_reader_->take(true_10_0, info_true_10_0, 20));
+        EXPECT_EQ(wrong_code, data_reader_->take_next_instance(true_10_0, info_true_10_0, 20));
+
+        check_instance_methods(wrong_code, wrong_code, wrong_code,
+                data_reader_, true_10_0, info_true_10_0, 20);
+
+    }
+
     false_10_0.unloan();
     false_10_1.unloan();
     info_false_10_0.unloan();
@@ -666,6 +684,9 @@ TEST_F(DataReaderTests, return_loan)
     check_collection(aux_values_2, false, num_samples, num_samples);
     check_collection(aux_infos_2, false, num_samples, num_samples);
 
+    // Deleting a reader with an outstanding loan should fail
+    ASSERT_EQ(precondition_code, subscriber_->delete_datareader(reader2));
+
     // Return loan to original reader should reset collections
     EXPECT_EQ(ok_code, data_reader_->return_loan(data_values, infos));
     check_collection(data_values, true, 0, 0);
@@ -689,6 +710,8 @@ TEST_F(DataReaderTests, return_loan)
     aux_infos.unloan();
     aux_values_2.unloan();
     aux_infos_2.unloan();
+
+    EXPECT_EQ(ok_code, subscriber_->delete_datareader(reader2));
 }
 
 /*
@@ -696,8 +719,6 @@ TEST_F(DataReaderTests, return_loan)
  */
 TEST_F(DataReaderTests, resource_limits)
 {
-    using ResLimitCfg = fastrtps::ResourceLimitedContainerConfig;
-
     static constexpr int32_t num_samples = 100;
 
     const ReturnCode_t& ok_code = ReturnCode_t::RETCODE_OK;
@@ -708,13 +729,15 @@ TEST_F(DataReaderTests, resource_limits)
     writer_qos.history().depth = num_samples;
     writer_qos.publish_mode().kind = SYNCHRONOUS_PUBLISH_MODE;
     writer_qos.reliability().kind = RELIABLE_RELIABILITY_QOS;
+    writer_qos.durability().kind = TRANSIENT_LOCAL_DURABILITY_QOS;
 
     DataReaderQos reader_qos = DATAREADER_QOS_DEFAULT;
     reader_qos.reliability().kind = RELIABLE_RELIABILITY_QOS;
     reader_qos.history().kind = KEEP_ALL_HISTORY_QOS;
     reader_qos.resource_limits().max_instances = 1;
     reader_qos.resource_limits().max_samples_per_instance = num_samples;
-    reader_qos.resource_limits().max_samples = num_samples;
+    reader_qos.resource_limits().max_samples = LENGTH_UNLIMITED;
+    reader_qos.durability().kind = TRANSIENT_LOCAL_DURABILITY_QOS;
 
     // Specify resource limits for this test
     // - max_samples_per_read = 10. This means that even if the max_samples parameter is greater than 10 (or even
@@ -723,8 +746,8 @@ TEST_F(DataReaderTests, resource_limits)
     // - A maximum of 15 total SampleInfo structures can be loaned. We use this value so that after a first call to
     //   read / take returns max_samples_per_read (10), a second one should only return 5 due to this limit
     reader_qos.reader_resource_limits().max_samples_per_read = 10;
-    reader_qos.reader_resource_limits().outstanding_reads_allocation = ResLimitCfg::fixed_size_configuration(3);
-    reader_qos.reader_resource_limits().sample_infos_allocation = ResLimitCfg::fixed_size_configuration(15);
+    reader_qos.reader_resource_limits().outstanding_reads_allocation = { 1, 3, 1 };
+    reader_qos.reader_resource_limits().sample_infos_allocation = { 1, 15, 1 };
 
     create_instance_handles();
     create_entities(nullptr, reader_qos, SUBSCRIBER_QOS_DEFAULT, writer_qos);
@@ -832,6 +855,60 @@ TEST_F(DataReaderTests, resource_limits)
         EXPECT_EQ(ok_code, data_reader_->return_loan(data_seqs[0], info_seqs[0]));
         EXPECT_EQ(ok_code, data_reader_->return_loan(data_seqs[1], info_seqs[1]));
         EXPECT_EQ(ok_code, data_reader_->return_loan(data_seqs[2], info_seqs[2]));
+    }
+
+    // Check resource_limits.max_samples
+    {
+        static constexpr int32_t additional_samples = 10;
+
+        // Create a second reader with unlimited loans and sample infos and wait for data
+        reader_qos.resource_limits().max_samples = num_samples;
+        reader_qos.resource_limits().allocated_samples = num_samples / 2;
+        reader_qos.reader_resource_limits().max_samples_per_read = num_samples;
+        reader_qos.reader_resource_limits().outstanding_reads_allocation.maximum = 2 * num_samples;
+        reader_qos.reader_resource_limits().sample_infos_allocation.maximum = 2 * num_samples;
+
+        DataReader* reader2 = subscriber_->create_datareader(topic_, reader_qos);
+        EXPECT_TRUE(reader2->wait_for_unread_message({ 10, 0 }));
+
+        // First take all samples without returning the loan
+        FooSeq data_seq;
+        SampleInfoSeq info_seq;
+        EXPECT_EQ(ok_code, reader2->read(data_seq, info_seq));
+        while (data_seq.length() != num_samples)
+        {
+            EXPECT_EQ(ok_code, reader2->return_loan(data_seq, info_seq));
+            std::this_thread::sleep_for(std::chrono::seconds(1));
+            EXPECT_EQ(ok_code, reader2->read(data_seq, info_seq));
+        }
+        EXPECT_EQ(ok_code, reader2->return_loan(data_seq, info_seq));
+        EXPECT_EQ(ok_code, reader2->take(data_seq, info_seq));
+        check_collection(data_seq, false, num_samples, num_samples);
+        check_collection(info_seq, false, num_samples, num_samples);
+
+        // Write some more samples
+        for (int32_t i = 0; i < additional_samples; ++i)
+        {
+            EXPECT_EQ(ok_code, data_writer_->write(&data, handle_ok_));
+        }
+
+        // OUT_OF_RESOURCES should be returned due to resource_limits.max_samples
+        FooSeq data_seq2;
+        SampleInfoSeq info_seq2;
+        EXPECT_EQ(resources_code, reader2->take(data_seq2, info_seq2));
+        check_collection(data_seq2, true, 0, 0);
+        check_collection(info_seq2, true, 0, 0);
+
+        // Should succeed after returning the loan
+        EXPECT_EQ(ok_code, reader2->return_loan(data_seq, info_seq));
+        check_collection(data_seq, true, 0, 0);
+        check_collection(info_seq, true, 0, 0);
+        EXPECT_EQ(ok_code, reader2->take(data_seq2, info_seq2));
+        check_collection(data_seq2, false, additional_samples, additional_samples);
+        check_collection(info_seq2, false, additional_samples, additional_samples);
+        EXPECT_EQ(ok_code, reader2->return_loan(data_seq2, info_seq2));
+
+        EXPECT_EQ(ok_code, subscriber_->delete_datareader(reader2));
     }
 }
 

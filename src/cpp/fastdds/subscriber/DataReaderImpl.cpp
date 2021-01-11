@@ -16,27 +16,32 @@
  * @file DataReaderImpl.cpp
  *
  */
+
 #include <fastrtps/config.h>
 
 #include <fastdds/subscriber/DataReaderImpl.hpp>
-#include <fastdds/dds/subscriber/DataReader.hpp>
-#include <fastdds/dds/subscriber/Subscriber.hpp>
-#include <fastdds/dds/subscriber/SampleInfo.hpp>
-#include <fastdds/dds/subscriber/SubscriberListener.hpp>
-#include <fastdds/subscriber/SubscriberImpl.hpp>
-#include <fastdds/dds/topic/TypeSupport.hpp>
-#include <fastdds/dds/topic/Topic.hpp>
-#include <fastdds/rtps/reader/RTPSReader.h>
-#include <fastdds/rtps/reader/StatefulReader.h>
-#include <fastdds/rtps/RTPSDomain.h>
-#include <fastdds/rtps/participant/RTPSParticipant.h>
-#include <fastdds/dds/domain/DomainParticipant.hpp>
-#include <fastdds/rtps/resources/ResourceEvent.h>
-#include <fastdds/rtps/resources/TimedEvent.h>
-#include <fastrtps/utils/TimeConversion.h>
-#include <fastrtps/subscriber/SampleInfo.h>
 
 #include <fastdds/dds/log/Log.hpp>
+#include <fastdds/dds/domain/DomainParticipant.hpp>
+#include <fastdds/dds/subscriber/DataReader.hpp>
+#include <fastdds/dds/subscriber/SampleInfo.hpp>
+#include <fastdds/dds/subscriber/Subscriber.hpp>
+#include <fastdds/dds/subscriber/SubscriberListener.hpp>
+#include <fastdds/dds/topic/TypeSupport.hpp>
+#include <fastdds/dds/topic/Topic.hpp>
+
+#include <fastdds/rtps/RTPSDomain.h>
+#include <fastdds/rtps/participant/RTPSParticipant.h>
+#include <fastdds/rtps/reader/RTPSReader.h>
+#include <fastdds/rtps/resources/ResourceEvent.h>
+#include <fastdds/rtps/resources/TimedEvent.h>
+
+#include <fastdds/subscriber/SubscriberImpl.hpp>
+#include <fastdds/subscriber/DataReaderImpl/ReadTakeCommand.hpp>
+#include <fastdds/subscriber/DataReaderImpl/StateFilter.hpp>
+
+#include <fastrtps/utils/TimeConversion.h>
+#include <fastrtps/subscriber/SampleInfo.h>
 
 #include <rtps/history/TopicPayloadPoolRegistry.hpp>
 
@@ -48,7 +53,7 @@ namespace eprosima {
 namespace fastdds {
 namespace dds {
 
-void sample_info_to_dds (
+static void sample_info_to_dds (
         const SampleInfo_t& rtps_info,
         SampleInfo* dds_info)
 {
@@ -81,6 +86,15 @@ void sample_info_to_dds (
     }
 }
 
+static bool collections_have_same_properties(
+        const LoanableCollection& data_values,
+        const SampleInfoSeq& sample_infos)
+{
+    return ((data_values.has_ownership() == sample_infos.has_ownership()) &&
+           (data_values.maximum() == sample_infos.maximum()) &&
+           (data_values.length() == sample_infos.length()));
+}
+
 DataReaderImpl::DataReaderImpl(
         SubscriberImpl* s,
         TypeSupport& type,
@@ -101,6 +115,8 @@ DataReaderImpl::DataReaderImpl(
     , reader_listener_(this)
     , deadline_duration_us_(qos_.deadline().period.to_ns() * 1e-3)
     , lifespan_duration_us_(qos_.lifespan().duration.to_ns() * 1e-3)
+    , sample_info_pool_(qos)
+    , loan_manager_(qos)
 {
 }
 
@@ -218,10 +234,305 @@ DataReaderImpl::~DataReaderImpl()
     delete user_datareader_;
 }
 
+bool DataReaderImpl::can_be_deleted() const
+{
+    if (reader_ != nullptr)
+    {
+        std::lock_guard<RecursiveTimedMutex> lock(reader_->getMutex());
+        return !loan_manager_.has_outstanding_loans();
+    }
+
+    return true;
+}
+
 bool DataReaderImpl::wait_for_unread_message(
         const fastrtps::Duration_t& timeout)
 {
     return reader_ ? reader_->wait_for_unread_cache(timeout) : false;
+}
+
+ReturnCode_t DataReaderImpl::check_collection_preconditions_and_calc_max_samples(
+        LoanableCollection& data_values,
+        SampleInfoSeq& sample_infos,
+        int32_t& max_samples)
+{
+    // Properties should be the same on both collections
+    if (!collections_have_same_properties(data_values, sample_infos))
+    {
+        return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
+    }
+
+    // Check if a loan is required
+    if (0 < data_values.maximum())
+    {
+        // Loan not required, input collections should not be already loaned
+        if (false == data_values.has_ownership())
+        {
+            return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
+        }
+
+        uint32_t collection_input_max = data_values.maximum();
+        int32_t collection_max = (collection_input_max > std::numeric_limits<uint32_t>::max() / 2u) ?
+                std::numeric_limits<int32_t>::max() : static_cast<int32_t>(collection_input_max);
+
+        // We consider all negative value to be LENGTH_UNLIMITED
+        if (0 > max_samples)
+        {
+            // When max_samples is LENGTH_UNLIMITED, the collection imposes the maximum number of samples
+            max_samples = collection_max;
+        }
+        else
+        {
+            if (max_samples > collection_max)
+            {
+                return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
+            }
+        }
+    }
+
+    // All preconditions have been checked. Now apply resource limits on max_samples.
+    if ((0 > max_samples) || (max_samples > qos_.reader_resource_limits().max_samples_per_read))
+    {
+        max_samples = qos_.reader_resource_limits().max_samples_per_read;
+    }
+
+    return ReturnCode_t::RETCODE_OK;
+}
+
+ReturnCode_t DataReaderImpl::prepare_loan(
+        LoanableCollection& data_values,
+        SampleInfoSeq& sample_infos,
+        int32_t& max_samples)
+{
+    if (0 < data_values.maximum())
+    {
+        // A loan was not requested
+        return ReturnCode_t::RETCODE_OK;
+    }
+
+    if (max_samples > 0)
+    {
+        // Check if there are enough sample_infos
+        size_t num_infos = sample_info_pool_.num_allocated();
+        if (num_infos == qos_.reader_resource_limits().sample_infos_allocation.maximum)
+        {
+            return ReturnCode_t::RETCODE_OUT_OF_RESOURCES;
+        }
+
+        // Limit max_samples to available sample_infos
+        num_infos += max_samples;
+        if (num_infos > qos_.reader_resource_limits().sample_infos_allocation.maximum)
+        {
+            size_t exceed = num_infos - qos_.reader_resource_limits().sample_infos_allocation.maximum;
+            max_samples -= static_cast<uint32_t>(exceed);
+        }
+    }
+
+    if (max_samples > 0)
+    {
+        // Check if there are enough samples
+        int32_t num_samples = sample_pool_->num_allocated();
+        int32_t max_resource_samples = qos_.resource_limits().max_samples;
+        if (max_resource_samples <= 0)
+        {
+            max_resource_samples = std::numeric_limits<int32_t>::max();
+        }
+        if (num_samples == max_resource_samples)
+        {
+            return ReturnCode_t::RETCODE_OUT_OF_RESOURCES;
+        }
+
+        // Limit max_samples to available samples
+        num_samples += max_samples;
+        if (num_samples > max_resource_samples)
+        {
+            int32_t exceed = num_samples - max_resource_samples;
+            max_samples -= exceed;
+        }
+    }
+
+    // Check if there are enough loans
+    ReturnCode_t code = loan_manager_.get_loan(data_values, sample_infos);
+    if (!code)
+    {
+        return code;
+    }
+
+    return ReturnCode_t::RETCODE_OK;
+}
+
+ReturnCode_t DataReaderImpl::read_or_take(
+        LoanableCollection& data_values,
+        SampleInfoSeq& sample_infos,
+        int32_t max_samples,
+        const InstanceHandle_t& handle,
+        SampleStateMask sample_states,
+        ViewStateMask view_states,
+        InstanceStateMask instance_states,
+        bool exact_instance,
+        bool single_instance,
+        bool should_take)
+{
+    if (reader_ == nullptr)
+    {
+        return ReturnCode_t::RETCODE_NOT_ENABLED;
+    }
+
+    ReturnCode_t code = check_collection_preconditions_and_calc_max_samples(data_values, sample_infos, max_samples);
+    if (!code)
+    {
+        return code;
+    }
+
+    std::lock_guard<RecursiveTimedMutex> lock(reader_->getMutex());
+
+    auto it = history_.lookup_instance(handle, exact_instance);
+    if (!it.first)
+    {
+        return exact_instance ? ReturnCode_t::RETCODE_BAD_PARAMETER : ReturnCode_t::RETCODE_NO_DATA;
+    }
+
+    code = prepare_loan(data_values, sample_infos, max_samples);
+    if (!code)
+    {
+        return code;
+    }
+
+    detail::StateFilter states{ sample_states, view_states, instance_states };
+    detail::ReadTakeCommand cmd(*this, data_values, sample_infos, max_samples, states, it.second, single_instance);
+    while (!cmd.is_finished())
+    {
+        cmd.add_instance(should_take);
+    }
+    return cmd.return_value();
+}
+
+ReturnCode_t DataReaderImpl::read(
+        LoanableCollection& data_values,
+        SampleInfoSeq& sample_infos,
+        int32_t max_samples,
+        SampleStateMask sample_states,
+        ViewStateMask view_states,
+        InstanceStateMask instance_states)
+{
+    return read_or_take(data_values, sample_infos, max_samples, HANDLE_NIL,
+                   sample_states, view_states, instance_states, false, false, false);
+}
+
+ReturnCode_t DataReaderImpl::read_instance(
+        LoanableCollection& data_values,
+        SampleInfoSeq& sample_infos,
+        int32_t max_samples,
+        const InstanceHandle_t& a_handle,
+        SampleStateMask sample_states,
+        ViewStateMask view_states,
+        InstanceStateMask instance_states)
+{
+    return read_or_take(data_values, sample_infos, max_samples, a_handle,
+                   sample_states, view_states, instance_states, true, true, false);
+}
+
+ReturnCode_t DataReaderImpl::read_next_instance(
+        LoanableCollection& data_values,
+        SampleInfoSeq& sample_infos,
+        int32_t max_samples,
+        const InstanceHandle_t& previous_handle,
+        SampleStateMask sample_states,
+        ViewStateMask view_states,
+        InstanceStateMask instance_states)
+{
+    return read_or_take(data_values, sample_infos, max_samples, previous_handle,
+                   sample_states, view_states, instance_states, false, true, false);
+}
+
+ReturnCode_t DataReaderImpl::take(
+        LoanableCollection& data_values,
+        SampleInfoSeq& sample_infos,
+        int32_t max_samples,
+        SampleStateMask sample_states,
+        ViewStateMask view_states,
+        InstanceStateMask instance_states)
+{
+    return read_or_take(data_values, sample_infos, max_samples, HANDLE_NIL,
+                   sample_states, view_states, instance_states, false, false, true);
+}
+
+ReturnCode_t DataReaderImpl::take_instance(
+        LoanableCollection& data_values,
+        SampleInfoSeq& sample_infos,
+        int32_t max_samples,
+        const InstanceHandle_t& a_handle,
+        SampleStateMask sample_states,
+        ViewStateMask view_states,
+        InstanceStateMask instance_states)
+{
+    return read_or_take(data_values, sample_infos, max_samples, a_handle,
+                   sample_states, view_states, instance_states, true, true, true);
+}
+
+ReturnCode_t DataReaderImpl::take_next_instance(
+        LoanableCollection& data_values,
+        SampleInfoSeq& sample_infos,
+        int32_t max_samples,
+        const InstanceHandle_t& previous_handle,
+        SampleStateMask sample_states,
+        ViewStateMask view_states,
+        InstanceStateMask instance_states)
+{
+    return read_or_take(data_values, sample_infos, max_samples, previous_handle,
+                   sample_states, view_states, instance_states, false, true, true);
+}
+
+ReturnCode_t DataReaderImpl::return_loan(
+        LoanableCollection& data_values,
+        SampleInfoSeq& sample_infos)
+{
+    static_cast<void>(data_values);
+    static_cast<void>(sample_infos);
+
+    if (reader_ == nullptr)
+    {
+        return ReturnCode_t::RETCODE_NOT_ENABLED;
+    }
+
+    // Properties should be the same on both collections
+    if (!collections_have_same_properties(data_values, sample_infos))
+    {
+        return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
+    }
+
+    // They should have a loan
+    if (data_values.has_ownership() == true)
+    {
+        return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
+    }
+
+    std::lock_guard<RecursiveTimedMutex> lock(reader_->getMutex());
+
+    // Check if they were loaned by this reader
+    ReturnCode_t code = loan_manager_.return_loan(data_values, sample_infos);
+    if (!code)
+    {
+        return code;
+    }
+
+    // Return samples and infos
+    LoanableCollection::size_type n = sample_infos.length();
+    while (n > 0)
+    {
+        --n;
+        if (sample_infos[n].valid_data)
+        {
+            sample_pool_->return_loan(data_values.buffer()[n]);
+        }
+
+        sample_info_pool_.return_item(&sample_infos[n]);
+    }
+
+    data_values.unloan();
+    sample_infos.unloan();
+
+    return ReturnCode_t::RETCODE_OK;
 }
 
 ReturnCode_t DataReaderImpl::read_next_sample(
@@ -796,6 +1107,11 @@ ReturnCode_t DataReaderImpl::check_qos (
         logError(DDS_QOS_CHECK, "BEST_EFFORT incompatible with EXCLUSIVE ownership");
         return ReturnCode_t::RETCODE_INCONSISTENT_POLICY;
     }
+    if (qos.reader_resource_limits().max_samples_per_read <= 0)
+    {
+        logError(DDS_QOS_CHECK, "max_samples_per_read should be strictly possitive");
+        return ReturnCode_t::RETCODE_INCONSISTENT_POLICY;
+    }
     return ReturnCode_t::RETCODE_OK;
 }
 
@@ -842,6 +1158,11 @@ bool DataReaderImpl::can_qos_be_updated(
     {
         updatable = false;
         logWarning(DDS_QOS_CHECK, "Destination order Kind cannot be changed after the creation of a DataReader.");
+    }
+    if (!(to.reader_resource_limits() == from.reader_resource_limits()))
+    {
+        updatable = false;
+        logWarning(DDS_QOS_CHECK, "reader_resource_limits cannot be changed after the creation of a DataReader.");
     }
     return updatable;
 }
@@ -996,6 +1317,7 @@ std::shared_ptr<IPayloadPool> DataReaderImpl::get_payload_pool()
     if (!payload_pool_)
     {
         payload_pool_ = TopicPayloadPoolRegistry::get(topic_->get_name(), config);
+        sample_pool_ = std::make_shared<detail::SampleLoanManager>(config, type_);
     }
 
     payload_pool_->reserve_history(config, true);

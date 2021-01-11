@@ -94,7 +94,11 @@ public:
     bool operator ==(
             const ReaderResourceLimitsQos& b) const
     {
-        return (this->matched_publisher_allocation == b.matched_publisher_allocation);
+        return
+            (matched_publisher_allocation == b.matched_publisher_allocation) &&
+            (sample_infos_allocation == b.sample_infos_allocation) &&
+            (outstanding_reads_allocation == b.outstanding_reads_allocation) &&
+            (max_samples_per_read == b.max_samples_per_read);
     }
 
     inline void clear()
@@ -104,13 +108,23 @@ public:
     }
 
     //! Matched publishers allocation limits.
-    fastrtps::ResourceLimitedContainerConfig matched_publisher_allocation{ 1u };
+    fastrtps::ResourceLimitedContainerConfig matched_publisher_allocation;
     //! SampleInfo allocation limits.
     fastrtps::ResourceLimitedContainerConfig sample_infos_allocation{ 32u };
     //! Loaned collections allocation limits.
     fastrtps::ResourceLimitedContainerConfig outstanding_reads_allocation{ 2u };
-    //! Maximum number of samples to return on a single call to read / take
-    uint32_t max_samples_per_read = 32u;
+
+    /**
+     * Maximum number of samples to return on a single call to read / take.
+     *
+     * This attribute is a signed integer to be consistent with the @c max_samples argument of
+     * @ref DataReader methods, but should always have a strict positive value. Bear in mind that
+     * a big number here may cause the creation of the DataReader to fail due to pre-allocation of
+     * internal resources.
+     *
+     * Default value: 32.
+     */
+    int32_t max_samples_per_read = 32;
 };
 
 //! Qos Policy to configure the XTypes Qos associated to the DataReader
