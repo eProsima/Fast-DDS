@@ -83,7 +83,7 @@ struct SampleLoanManager
 
     int32_t num_allocated() const
     {
-        assert(used_loans_.size() <= std::numeric_limits<int32_t>::max());
+        assert(used_loans_.size() <= static_cast<size_t>(std::numeric_limits<int32_t>::max()));
         return static_cast<int32_t>(used_loans_.size());
     }
 
