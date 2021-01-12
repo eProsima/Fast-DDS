@@ -23,8 +23,9 @@
 #include <regex>
 
 /**
- * eProsima log layer. Logging categories and verbosities can be specified dynamically at runtime. However, even on a category
- * not covered by the current verbosity level, there is some overhead on calling a log macro. For maximum performance, you can
+ * eProsima log layer. Logging categories and verbosities can be specified dynamically at runtime.
+ * However, even on a category not covered by the current verbosity level,
+ * there is some overhead on calling a log macro. For maximum performance, you can
  * opt out of logging any particular level by defining the following symbols:
  *
  * * define LOG_NO_ERROR
@@ -287,8 +288,7 @@ protected:
 #define logWarning_(cat, msg)
 #endif // ifndef LOG_NO_WARNING
 
-#if (defined(__INTERNALDEBUG) || defined(_INTERNALDEBUG)) && (defined(_DEBUG) || defined(__DEBUG)) &&   \
-    (!defined(LOG_NO_INFO))
+#ifndef LOG_NO_INFO
 #define logInfo_(cat, msg)                                                                              \
     {                                                                                                   \
         using namespace eprosima::fastdds::dds;                                                         \
@@ -312,7 +312,8 @@ protected:
     }
 #else
 #define logInfo_(cat, msg)
-#endif // if (defined(__INTERNALDEBUG) || defined(_INTERNALDEBUG)) && (defined(_DEBUG) || defined(__DEBUG)) && (!defined(LOG_NO_INFO))
+#endif // ifndef LOG_NO_INFO
+
 
 } // namespace dds
 } // namespace fastdds

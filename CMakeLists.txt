@@ -279,6 +279,15 @@ if(LOG_CONSUMER_DEFAULT STREQUAL "STDOUTERR")
 endif()
 
 ###############################################################################
+# Log Info default setup
+###############################################################################
+if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+    option(LOG_NO_INFO "Do not compile Info Log level" OFF)
+else()
+    option(LOG_NO_INFO "Compile Info Log level" ON)
+endif()
+
+###############################################################################
 # Tools default setup
 ###############################################################################
 option(COMPILE_TOOLS "Build tools" ON)
