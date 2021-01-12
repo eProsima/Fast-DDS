@@ -1026,11 +1026,19 @@ TEST(ParticipantTests, SetListener)
     ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), ReturnCode_t::RETCODE_OK);
 }
 
+/*
+ * This test checks the negative cases of the check_qos() function.
+ * 1. User data is set to be a 5-element size octet vector.
+ * 2. The participant's qos are set to save these the user data.
+ * 3. Change the ParticipantResourceLimitsQos to a maximum user data value less than the current user data size.
+ * 4. Check that the previous operation returns an Inconsistent Policy error code
+ */
 TEST(ParticipantTests, CheckDomainParticipantQos)
 {
-
+    // Create the participant factory
     DomainParticipantFactory* factory = DomainParticipantFactory::get_instance();
 
+    // Disable automatic entity enablement on the participant
     {
         DomainParticipantFactoryQos qos;
         qos.entity_factory().autoenable_created_entities = false;
@@ -1038,22 +1046,30 @@ TEST(ParticipantTests, CheckDomainParticipantQos)
         ASSERT_TRUE(factory->set_qos(qos) == ReturnCode_t::RETCODE_OK);
     }
 
+    // Create the participant
     DomainParticipant* participant =
             DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
+
+    // Get the participant qos
     DomainParticipantQos qos;
     ASSERT_TRUE(participant->get_qos(qos) == ReturnCode_t::RETCODE_OK);
 
+    // Change the user data
     qos.user_data().set_max_size(5);
     std::vector<eprosima::fastrtps::rtps::octet> my_data {0, 1, 2, 3, 4};
     qos.user_data().setValue(my_data);
     ASSERT_TRUE(participant->set_qos(qos) == ReturnCode_t::RETCODE_OK);
 
+    // Change the ParticipantResourceLimitsQos to a maximum user data value less than the current user data size
+    // This should return an Inconsistent Policy error code
     qos.allocation().data_limits.max_user_data = 1;
-    ASSERT_EQ(qos.allocation().data_limits.max_user_data, 1);
+    ASSERT_EQ(qos.allocation().data_limits.max_user_data, 1ul);
     ASSERT_TRUE(participant->set_qos(qos) == ReturnCode_t::RETCODE_INCONSISTENT_POLICY);
 
+    // Enable the participant
     EXPECT_EQ(ReturnCode_t::RETCODE_OK, participant->enable());
 
+    // Remove the participant
     ASSERT_TRUE(DomainParticipantFactory::get_instance()->delete_participant(participant) == ReturnCode_t::RETCODE_OK);
 }
 
@@ -1481,11 +1497,13 @@ TEST(ParticipantTests, UnregisterType)
 }
 
 /*
- * This test checks the new_remote_endpoint_discovered() DomainParticipant memeber function used in the
- * STATIC discovery.
+ * This test checks the negative clauses of new_remote_endpoint_discovered() DomainParticipant memeber function
+ * used in the STATIC discovery.
  * 1. Check that the remote endpoint is not registered in a disabled participant.
- * 2. Check that a WRITER remote endpoint is registered in an enabled participant.
- * 3. Check that a READER remote endpoint is registered in an enabled participant.
+ * 2. Check that a remote WRITER endpoint is not registered in an enabled participant if the discovery protocol is
+ *    SIMPLE.
+ * 3. Check that a remote READER endpoint is not registered in an enabled participant if the discovery protocol is
+ *    SIMPLE.
  */
 TEST(ParticipantTests, NewRemoteEndpointDiscovered)
 {
@@ -1509,8 +1527,8 @@ TEST(ParticipantTests, NewRemoteEndpointDiscovered)
                 remote_endpoint_guid, 1, eprosima::fastrtps::rtps::EndpointKind_t::WRITER));
 
     // Enable the participant
-    EXPECT_EQ(ReturnCode_t::RETCODE_OK, participant->enable());
-    EXPECT_TRUE(participant->is_enabled());
+    ASSERT_EQ(ReturnCode_t::RETCODE_OK, participant->enable());
+    ASSERT_TRUE(participant->is_enabled());
 
     // Check that a WRITER remote endpoint is registered in an enabled participant
     ASSERT_FALSE(participant->new_remote_endpoint_discovered(
