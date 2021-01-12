@@ -580,10 +580,6 @@ std::pair<bool, SubscriberHistory::instance_info> SubscriberHistory::lookup_inst
     {
         if (handle.isDefined())
         {
-            if (exact)
-            {
-                return {true, { handle, &m_changes }};
-            }
             return { false, {InstanceHandle_t(), nullptr} };
         }
         else
