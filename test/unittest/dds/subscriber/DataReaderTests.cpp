@@ -222,6 +222,7 @@ protected:
         reset_lengths_if_ok(instance_ok_code, data_values, infos);
     }
 
+    template<typename DataType, typename DataSeq>
     void basic_read_apis_check(
             const ReturnCode_t& code,
             DataReader* data_reader)
@@ -230,7 +231,7 @@ protected:
 
         // Check read_next_sample / take_next_sample
         {
-            FooType data;
+            DataType data;
             SampleInfo info;
 
             EXPECT_EQ(code, data_reader->read_next_sample(&data, &info));
@@ -259,7 +260,7 @@ protected:
 
         // Check read/take and variants with loan
         {
-            FooSeq data_values;
+            DataSeq data_values;
             SampleInfoSeq infos;
 
             EXPECT_EQ(code, data_reader->read(data_values, infos));
@@ -293,7 +294,7 @@ protected:
 
         // Check read/take and variants without loan
         {
-            FooSeq data_values(1);
+            DataSeq data_values(1);
             SampleInfoSeq infos(1);
 
             ReturnCode_t expected_return_loan_ret = code;
@@ -376,12 +377,12 @@ TEST_F(DataReaderTests, read_take_apis)
     EXPECT_FALSE(data_reader_->is_enabled());
 
     // Read / take operations should all return NOT_ENABLED
-    basic_read_apis_check(ReturnCode_t::RETCODE_NOT_ENABLED, data_reader_);
+    basic_read_apis_check<FooType, FooSeq>(ReturnCode_t::RETCODE_NOT_ENABLED, data_reader_);
 
     // Enable the DataReader and check NO_DATA should be returned
     EXPECT_EQ(ReturnCode_t::RETCODE_OK, data_reader_->enable());
     EXPECT_TRUE(data_reader_->is_enabled());
-    basic_read_apis_check(ReturnCode_t::RETCODE_NO_DATA, data_reader_);
+    basic_read_apis_check<FooType, FooSeq>(ReturnCode_t::RETCODE_NO_DATA, data_reader_);
 
     // Send data
     FooType data;
@@ -391,7 +392,7 @@ TEST_F(DataReaderTests, read_take_apis)
     // Wait for data to arrive and check OK should be returned
     Duration_t wait_time(1, 0);
     EXPECT_TRUE(data_reader_->wait_for_unread_message(wait_time));
-    basic_read_apis_check(ReturnCode_t::RETCODE_OK, data_reader_);
+    basic_read_apis_check<FooType, FooSeq>(ReturnCode_t::RETCODE_OK, data_reader_);
 }
 
 void check_collection(
@@ -954,7 +955,7 @@ TEST_F(DataReaderTests, read_unread)
     create_entities(nullptr, reader_qos, SUBSCRIBER_QOS_DEFAULT, writer_qos);
 
     FooType data;
-    data.index(1u);
+    data.index(1);
     data.message()[1] = '\0';
 
     // Send a bunch of samples
