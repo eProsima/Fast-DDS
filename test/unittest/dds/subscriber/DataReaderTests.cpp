@@ -192,7 +192,8 @@ protected:
             DataReader* data_reader,
             LoanableCollection& data_values,
             SampleInfoSeq& infos,
-            int32_t max_samples = LENGTH_UNLIMITED)
+            int32_t max_samples = LENGTH_UNLIMITED,
+            bool two_instances = false)
     {
         ReturnCode_t wrong_loan_code = ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
         if (ReturnCode_t::RETCODE_NOT_ENABLED == instance_bad_code)
@@ -202,12 +203,31 @@ protected:
 
         EXPECT_EQ(instance_bad_code, data_reader->read_instance(data_values, infos, max_samples, HANDLE_NIL));
         check_return_loan(wrong_loan_code, data_reader, data_values, infos);
-        EXPECT_EQ(instance_bad_code, data_reader->read_instance(data_values, infos, max_samples, handle_wrong_));
-        check_return_loan(wrong_loan_code, data_reader, data_values, infos);
         EXPECT_EQ(instance_bad_code, data_reader->take_instance(data_values, infos, max_samples, HANDLE_NIL));
         check_return_loan(wrong_loan_code, data_reader, data_values, infos);
-        EXPECT_EQ(instance_bad_code, data_reader->take_instance(data_values, infos, max_samples, handle_wrong_));
-        check_return_loan(wrong_loan_code, data_reader, data_values, infos);
+
+        if (two_instances)
+        {
+            EXPECT_EQ(instance_ok_code, data_reader->read_instance(data_values, infos, max_samples, handle_wrong_));
+            check_return_loan(loan_return_code, data_reader, data_values, infos);
+            reset_lengths_if_ok(instance_ok_code, data_values, infos);
+
+            EXPECT_EQ(instance_ok_code, data_reader->take_instance(data_values, infos, max_samples, handle_wrong_));
+            if (ReturnCode_t::RETCODE_OK == instance_ok_code)
+            {
+                // Write received data so it can be taken again
+                send_data(data_values, infos);
+            }
+            check_return_loan(loan_return_code, data_reader, data_values, infos);
+            reset_lengths_if_ok(instance_ok_code, data_values, infos);
+        }
+        else
+        {
+            EXPECT_EQ(instance_bad_code, data_reader->read_instance(data_values, infos, max_samples, handle_wrong_));
+            check_return_loan(wrong_loan_code, data_reader, data_values, infos);
+            EXPECT_EQ(instance_bad_code, data_reader->take_instance(data_values, infos, max_samples, handle_wrong_));
+            check_return_loan(wrong_loan_code, data_reader, data_values, infos);
+        }
 
         EXPECT_EQ(instance_ok_code, data_reader->read_instance(data_values, infos, max_samples, handle_ok_));
         check_return_loan(loan_return_code, data_reader, data_values, infos);
@@ -226,7 +246,8 @@ protected:
     template<typename DataType, typename DataSeq>
     void basic_read_apis_check(
             const ReturnCode_t& code,
-            DataReader* data_reader)
+            DataReader* data_reader,
+            bool two_instances = false)
     {
         static const Duration_t time_to_wait(1, 0);
 
@@ -290,7 +311,7 @@ protected:
             reset_lengths_if_ok(code, data_values, infos);
 
             check_instance_methods(instance_ok_code, instance_bad_code, instance_ok_code,
-                    data_reader, data_values, infos);
+                    data_reader, data_values, infos, LENGTH_UNLIMITED, two_instances);
         }
 
         // Check read/take and variants without loan
@@ -331,7 +352,7 @@ protected:
             reset_lengths_if_ok(code, data_values, infos);
 
             check_instance_methods(instance_ok_code, instance_bad_code, expected_return_loan_ret,
-                    data_reader, data_values, infos);
+                    data_reader, data_values, infos, LENGTH_UNLIMITED, two_instances);
         }
     }
 
@@ -382,6 +403,11 @@ protected:
         Duration_t wait_time(1, 0);
         EXPECT_TRUE(data_reader_->wait_for_unread_message(wait_time));
         basic_read_apis_check<DataType, DataSeq>(ReturnCode_t::RETCODE_OK, data_reader_);
+
+        // Check with data on second instance
+        data.index(2u);
+        EXPECT_EQ(ReturnCode_t::RETCODE_OK, data_writer_->write(&data, HANDLE_NIL));
+        basic_read_apis_check<DataType, DataSeq>(ReturnCode_t::RETCODE_OK, data_reader_, true);
     }
 
     DomainParticipant* participant_ = nullptr;
