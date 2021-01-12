@@ -1100,7 +1100,7 @@ TEST(ParticipantTests, ChangeAllocationDomainParticipantQos)
 
     ASSERT_FALSE(pqos == PARTICIPANT_QOS_DEFAULT);
     ASSERT_EQ(qos, pqos);
-    ASSERT_EQ(pqos.allocation().data_limits.max_properties, 10);
+    ASSERT_EQ(pqos.allocation().data_limits.max_properties, 10ul);
 
     participant->enable();
     ASSERT_TRUE(participant->is_enabled());
@@ -1530,10 +1530,10 @@ TEST(ParticipantTests, NewRemoteEndpointDiscovered)
     ASSERT_EQ(ReturnCode_t::RETCODE_OK, participant->enable());
     ASSERT_TRUE(participant->is_enabled());
 
-    // Check that a WRITER remote endpoint is registered in an enabled participant
+    // Check that a WRITER remote endpoint is not registered in an enabled participant
     ASSERT_FALSE(participant->new_remote_endpoint_discovered(
                 remote_endpoint_guid, 1, eprosima::fastrtps::rtps::EndpointKind_t::WRITER));
-    // Check that a READER remote endpoint is registered in an enabled participant
+    // Check that a READER remote endpoint is not registered in an enabled participant
     ASSERT_FALSE(participant->new_remote_endpoint_discovered(
                 remote_endpoint_guid, 1, eprosima::fastrtps::rtps::EndpointKind_t::READER));
 
