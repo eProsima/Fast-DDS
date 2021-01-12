@@ -349,6 +349,141 @@ TEST(LoanableSequenceTests, copy_assign)
     check_result(loaned, num_test_elements);
 }
 
+TEST(LoanableSequenceTests, length)
+{
+    // Checks on default constructed sequence
+    {
+        TestSeq uut;
+        EXPECT_EQ(nullptr, uut.buffer());
+        EXPECT_TRUE(uut.has_ownership());
+        EXPECT_EQ(0, uut.maximum());
+        EXPECT_EQ(0, uut.length());
+
+        // Positive should grow collection
+        EXPECT_TRUE(uut.length(num_test_elements));
+        EXPECT_NE(nullptr, uut.buffer());
+        EXPECT_TRUE(uut.has_ownership());
+        EXPECT_LE(num_test_elements, uut.maximum());
+        EXPECT_EQ(num_test_elements, uut.length());
+
+        // Negative should fail
+        EXPECT_FALSE(uut.length(-100));
+        EXPECT_NE(nullptr, uut.buffer());
+        EXPECT_TRUE(uut.has_ownership());
+        EXPECT_LE(num_test_elements, uut.maximum());
+        EXPECT_EQ(num_test_elements, uut.length());
+
+        // Decreasing should not shrink
+        EXPECT_TRUE(uut.length(1));
+        EXPECT_NE(nullptr, uut.buffer());
+        EXPECT_TRUE(uut.has_ownership());
+        EXPECT_LE(num_test_elements, uut.maximum());
+        EXPECT_EQ(1, uut.length());
+    }
+
+    // Checks on sequence constructed with maximum
+    {
+        TestSeq uut(1);
+        EXPECT_NE(nullptr, uut.buffer());
+        EXPECT_TRUE(uut.has_ownership());
+        EXPECT_LE(1, uut.maximum());
+        EXPECT_EQ(0, uut.length());
+
+        // Positive should grow collection
+        EXPECT_TRUE(uut.length(num_test_elements));
+        EXPECT_NE(nullptr, uut.buffer());
+        EXPECT_TRUE(uut.has_ownership());
+        EXPECT_LE(num_test_elements, uut.maximum());
+        EXPECT_EQ(num_test_elements, uut.length());
+
+        // Negative should fail
+        EXPECT_FALSE(uut.length(-100));
+        EXPECT_NE(nullptr, uut.buffer());
+        EXPECT_TRUE(uut.has_ownership());
+        EXPECT_LE(num_test_elements, uut.maximum());
+        EXPECT_EQ(num_test_elements, uut.length());
+
+        // Decreasing should not shrink
+        EXPECT_TRUE(uut.length(1));
+        EXPECT_NE(nullptr, uut.buffer());
+        EXPECT_TRUE(uut.has_ownership());
+        EXPECT_LE(num_test_elements, uut.maximum());
+        EXPECT_EQ(1, uut.length());
+    }
+
+    // Checks on stack-allocated sequence
+    {
+        StackAllocatedSeq uut;
+        EXPECT_NE(nullptr, uut.buffer());
+        EXPECT_TRUE(uut.has_ownership());
+        EXPECT_LE(num_test_elements, uut.maximum());
+        EXPECT_EQ(0, uut.length());
+
+        // Positive should be ok
+        EXPECT_TRUE(uut.length(num_test_elements));
+        EXPECT_NE(nullptr, uut.buffer());
+        EXPECT_TRUE(uut.has_ownership());
+        EXPECT_LE(num_test_elements, uut.maximum());
+        EXPECT_EQ(num_test_elements, uut.length());
+
+        // Negative should fail
+        EXPECT_FALSE(uut.length(-100));
+        EXPECT_NE(nullptr, uut.buffer());
+        EXPECT_TRUE(uut.has_ownership());
+        EXPECT_LE(num_test_elements, uut.maximum());
+        EXPECT_EQ(num_test_elements, uut.length());
+
+        // Decreasing should not shrink
+        EXPECT_TRUE(uut.length(1));
+        EXPECT_NE(nullptr, uut.buffer());
+        EXPECT_TRUE(uut.has_ownership());
+        EXPECT_LE(num_test_elements, uut.maximum());
+        EXPECT_EQ(1, uut.length());
+    }
+
+    // Checks on loaned sequence
+    {
+        StackAllocatedBuffer<int> stack;
+        TestSeq uut;
+        uut.loan(stack.buffer_for_loans(), stack.size(), 0);
+        EXPECT_NE(nullptr, uut.buffer());
+        EXPECT_FALSE(uut.has_ownership());
+        EXPECT_LE(num_test_elements, uut.maximum());
+        EXPECT_EQ(0, uut.length());
+
+        // Positive should be ok
+        EXPECT_TRUE(uut.length(num_test_elements));
+        EXPECT_NE(nullptr, uut.buffer());
+        EXPECT_FALSE(uut.has_ownership());
+        EXPECT_LE(num_test_elements, uut.maximum());
+        EXPECT_EQ(num_test_elements, uut.length());
+
+        // Negative should fail
+        EXPECT_FALSE(uut.length(-100));
+        EXPECT_NE(nullptr, uut.buffer());
+        EXPECT_FALSE(uut.has_ownership());
+        EXPECT_LE(num_test_elements, uut.maximum());
+        EXPECT_EQ(num_test_elements, uut.length());
+
+        // Growing should fail
+        EXPECT_FALSE(uut.length(num_test_elements + 1));
+        EXPECT_NE(nullptr, uut.buffer());
+        EXPECT_FALSE(uut.has_ownership());
+        EXPECT_LE(num_test_elements, uut.maximum());
+        EXPECT_EQ(num_test_elements, uut.length());
+
+        // Decreasing should be ok
+        EXPECT_TRUE(uut.length(1));
+        EXPECT_NE(nullptr, uut.buffer());
+        EXPECT_FALSE(uut.has_ownership());
+        EXPECT_LE(num_test_elements, uut.maximum());
+        EXPECT_EQ(1, uut.length());
+
+        // Return loan
+        uut.unloan();
+    }
+}
+
 TEST(LoanableSequenceTests, loan_unloan)
 {
     StackAllocatedBuffer<int> stack;
