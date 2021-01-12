@@ -78,7 +78,7 @@ public:
      * Pre-allocation constructor.
      *
      * Creates the sequence with an initial number of allocated elements.
-     * When the input parameter is 0, the behavior is equivalent to the default constructor.
+     * When the input parameter is less than or equal to 0, the behavior is equivalent to the default constructor.
      * Otherwise, the post-conditions below will apply.
      *
      * @param [in] max Number of elements to pre-allocate.
@@ -91,7 +91,7 @@ public:
     LoanableSequence(
             size_type max)
     {
-        if (!max)
+        if (max <= 0)
         {
             return;
         }

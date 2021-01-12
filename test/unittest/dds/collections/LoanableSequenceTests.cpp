@@ -118,6 +118,15 @@ TEST(LoanableSequenceTests, construct)
         EXPECT_EQ(0, uut.length());
     }
 
+    // Check negative maximum behaves as default
+    {
+        TestSeq uut(-100);
+        EXPECT_EQ(nullptr, uut.buffer());
+        EXPECT_TRUE(uut.has_ownership());
+        EXPECT_EQ(0, uut.maximum());
+        EXPECT_EQ(0, uut.length());
+    }
+
     // Check stack-allocated behaves as TestSeq costructed with maximum
     {
         StackAllocatedSeq uut;
