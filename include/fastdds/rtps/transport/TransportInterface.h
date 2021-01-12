@@ -66,11 +66,19 @@ public:
 
     //! Copy constructor
     TransportInterface(
-            const TransportInterface& t) = default;
+            const TransportInterface& t) = delete;
 
     //! Copy assignment
     TransportInterface& operator =(
-            const TransportInterface& t) = default;
+            const TransportInterface& t) = delete;
+
+    //! Move constructor
+    TransportInterface(
+            TransportInterface&& t) = delete;
+
+    //! Move assignment
+    TransportInterface& operator=(
+            TransportInterface&& t) = delete; 
 
     /**
      * Initialize this transport. This method will prepare all the internals of the transport.

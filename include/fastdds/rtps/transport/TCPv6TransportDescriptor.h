@@ -42,7 +42,7 @@ struct TCPv6TransportDescriptor : public TCPTransportDescriptor
             const TCPv6TransportDescriptor& t);
 
     //! Copy assignment
-    TCPv6TransportDescriptor& operator =(
+    RTPS_DllAPI TCPv6TransportDescriptor& operator =(
             const TCPv6TransportDescriptor& t) = default;
 };
 

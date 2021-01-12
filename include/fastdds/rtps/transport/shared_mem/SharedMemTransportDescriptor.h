@@ -58,7 +58,7 @@ struct SharedMemTransportDescriptor : public TransportDescriptorInterface
             const SharedMemTransportDescriptor& t) = default;
 
     //! Copy assignment
-    SharedMemTransportDescriptor& operator =(
+    RTPS_DllAPI SharedMemTransportDescriptor& operator =(
             const SharedMemTransportDescriptor& t) = default;
 
     //! Return the size of the shared memory segment
