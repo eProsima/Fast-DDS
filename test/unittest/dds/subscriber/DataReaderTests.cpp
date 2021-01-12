@@ -44,7 +44,7 @@ namespace eprosima {
 namespace fastdds {
 namespace dds {
 
-static constexpr LoanableCollection::size_type num_test_elements = 10u;
+static constexpr LoanableCollection::size_type num_test_elements = 10;
 
 FASTDDS_SEQUENCE(FooSeq, FooType);
 using FooArray = LoanableArray<FooType, num_test_elements>;
@@ -139,8 +139,8 @@ protected:
     {
         if (ReturnCode_t::RETCODE_OK == code)
         {
-            data_values.length(0u);
-            infos.length(0u);
+            data_values.length(0);
+            infos.length(0);
         }
     }
 
@@ -150,7 +150,7 @@ protected:
     {
         LoanableCollection::size_type n = infos.length();
         auto buffer = data_values.buffer();
-        for (LoanableCollection::size_type i = 0u; i < n; ++i)
+        for (LoanableCollection::size_type i = 0; i < n; ++i)
         {
             if (infos[i].valid_data)
             {
@@ -175,9 +175,9 @@ protected:
         if (ReturnCode_t::RETCODE_OK == expected_return_loan_ret)
         {
             EXPECT_TRUE(data_values.has_ownership());
-            EXPECT_EQ(0u, data_values.maximum());
+            EXPECT_EQ(0, data_values.maximum());
             EXPECT_TRUE(infos.has_ownership());
-            EXPECT_EQ(0u, infos.maximum());
+            EXPECT_EQ(0, infos.maximum());
         }
     }
 
@@ -290,8 +290,8 @@ protected:
 
         // Check read/take and variants without loan
         {
-            FooSeq data_values(1u);
-            SampleInfoSeq infos(1u);
+            FooSeq data_values(1);
+            SampleInfoSeq infos(1);
 
             ReturnCode_t expected_return_loan_ret = code;
             if (ReturnCode_t::RETCODE_OK == code)
@@ -382,7 +382,7 @@ TEST_F(DataReaderTests, read_take_apis)
 
     // Send data
     FooType data;
-    data.index(1u);
+    data.index(1);
     EXPECT_EQ(ReturnCode_t::RETCODE_OK, data_writer_->write(&data, HANDLE_NIL));
 
     // Wait for data to arrive and check OK should be returned
@@ -444,24 +444,24 @@ TEST_F(DataReaderTests, collection_preconditions)
     SampleInfoSeq info_false_10_1;
 
     // Make the sequences have the corresponding values
-    true_10_1.length(1u);
-    false_10_0.loan(arr.buffer_for_loans(), num_test_elements, 0u);
-    false_10_1.loan(arr.buffer_for_loans(), num_test_elements, 1u);
-    info_true_10_1.length(1u);
-    info_false_10_0.loan(info_arr.buffer_for_loans(), num_test_elements, 0u);
-    info_false_10_1.loan(info_arr.buffer_for_loans(), num_test_elements, 1u);
+    true_10_1.length(1);
+    false_10_0.loan(arr.buffer_for_loans(), num_test_elements, 0);
+    false_10_1.loan(arr.buffer_for_loans(), num_test_elements, 1);
+    info_true_10_1.length(1);
+    info_false_10_0.loan(info_arr.buffer_for_loans(), num_test_elements, 0);
+    info_false_10_1.loan(info_arr.buffer_for_loans(), num_test_elements, 1);
 
     // Check we did it right
-    check_collection(true_0_0, true, 0u, 0u);
-    check_collection(true_10_0, true, 10u, 0u);
-    check_collection(true_10_1, true, 10u, 1u);
-    check_collection(false_10_0, false, 10u, 0u);
-    check_collection(false_10_1, false, 10u, 1u);
-    check_collection(info_true_0_0, true, 0u, 0u);
-    check_collection(info_true_10_0, true, 10u, 0u);
-    check_collection(info_true_10_1, true, 10u, 1u);
-    check_collection(info_false_10_0, false, 10u, 0u);
-    check_collection(info_false_10_1, false, 10u, 1u);
+    check_collection(true_0_0, true, 0, 0);
+    check_collection(true_10_0, true, 10, 0);
+    check_collection(true_10_1, true, 10, 1);
+    check_collection(false_10_0, false, 10, 0);
+    check_collection(false_10_1, false, 10, 1);
+    check_collection(info_true_0_0, true, 0, 0);
+    check_collection(info_true_10_0, true, 10, 0);
+    check_collection(info_true_10_1, true, 10, 1);
+    check_collection(info_false_10_0, false, 10, 0);
+    check_collection(info_false_10_1, false, 10, 1);
 
     // Check all wrong combinations
     using test_case_t = std::pair<LoanableCollection&, SampleInfoSeq&>;
@@ -607,7 +607,7 @@ TEST_F(DataReaderTests, return_loan)
     EXPECT_EQ(ok_code, reader2->enable());
 
     FooType data;
-    data.index(1u);
+    data.index(1);
 
     // Send a bunch of samples
     for (int32_t i = 0; i < num_samples; ++i)
@@ -753,7 +753,7 @@ TEST_F(DataReaderTests, resource_limits)
     create_entities(nullptr, reader_qos, SUBSCRIBER_QOS_DEFAULT, writer_qos);
 
     FooType data;
-    data.index(1u);
+    data.index(1);
 
     // Send a bunch of samples
     for (int32_t i = 0; i < num_samples; ++i)
