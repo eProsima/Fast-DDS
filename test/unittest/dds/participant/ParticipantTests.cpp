@@ -1876,7 +1876,7 @@ TEST(ParticipantTests, RegisterRemoteTypeComplete)
     // Create the functor for the remote type registration
     std::string topic_name = "footopic";
     std::function<void(const std::string&, const fastrtps::types::DynamicType_ptr)> callback =
-            [this, topic_name](const std::string&, const fastrtps::types::DynamicType_ptr type)
+            [topic_name](const std::string&, const fastrtps::types::DynamicType_ptr type)
             {
                 std::cout << "Callback for type: " << type->get_name() << " on topic: " << topic_name << std::endl;
             };
@@ -1952,7 +1952,7 @@ TEST(ParticipantTests, RegisterRemoteTypeMinimal)
     // Create the functor for the remote type registration
     std::string topic_name = "footopic";
     std::function<void(const std::string&, const fastrtps::types::DynamicType_ptr)> callback =
-            [this, topic_name](const std::string&, const fastrtps::types::DynamicType_ptr type)
+            [topic_name](const std::string&, const fastrtps::types::DynamicType_ptr type)
             {
                 std::cout << "Callback for type: " << type->get_name() << " on topic: " << topic_name << std::endl;
             };
@@ -2009,7 +2009,7 @@ TEST(ParticipantTests, RegisterRemoteTypePreconditionNotMet)
     // Create the functor for the remote type registration
     std::string topic_name = "footopic";
     std::function<void(const std::string&, const fastrtps::types::DynamicType_ptr)> callback =
-            [this, topic_name](const std::string&, const fastrtps::types::DynamicType_ptr type)
+            [topic_name](const std::string&, const fastrtps::types::DynamicType_ptr type)
             {
                 std::cout << "Callback for type: " << type->get_name() << " on topic: " << topic_name << std::endl;
             };
