@@ -54,6 +54,7 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/TypeNamesGenerator.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/TypesBase.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/BuiltinAnnotationsTypeObject.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/utils/IPLocator.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/utils/md5.cpp
             )
 
