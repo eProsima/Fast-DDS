@@ -34,7 +34,7 @@ class LoanableCollection
 {
 public:
 
-    using size_type = uint32_t;
+    using size_type = int32_t;
     using element_type = void*;
 
     /**
@@ -89,6 +89,8 @@ public:
      * (i.e. @ref has_ownership() is false) then no allocation will be performed, the length will
      * remain unchanged, and false will be returned.
      *
+     * @pre new_length >= 0
+     *
      * @param [in] new_length New number of elements to be accessible.
      *
      * @return true if the new length was correcly set.
@@ -99,6 +101,11 @@ public:
     bool length(
             size_type new_length)
     {
+        if (new_length < 0)
+        {
+            return false;
+        }
+
         if (new_length <= maximum_)
         {
             length_ = new_length;
@@ -186,8 +193,8 @@ public:
         maximum = maximum_;
         length = length_;
 
-        maximum_ = 0u;
-        length_ = 0u;
+        maximum_ = 0;
+        length_ = 0;
         elements_ = nullptr;
         has_ownership_ = true;
 
@@ -230,8 +237,8 @@ protected:
     virtual void resize(
             size_type new_length) = 0;
 
-    size_type maximum_ = 0u;
-    size_type length_ = 0u;
+    size_type maximum_ = 0;
+    size_type length_ = 0;
     element_type* elements_ = nullptr;
     bool has_ownership_ = true;
 };
