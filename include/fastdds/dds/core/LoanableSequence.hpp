@@ -244,7 +244,7 @@ private:
     {
         if (has_ownership_ && elements_)
         {
-            for (size_t n = 0; n < maximum_; ++n)
+            for (size_type n = 0; n < maximum_; ++n)
             {
                 T* elem = data_[n];
                 delete elem;
