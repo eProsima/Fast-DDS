@@ -50,6 +50,7 @@ namespace dds {
 static constexpr LoanableCollection::size_type num_test_elements = 10;
 
 FASTDDS_SEQUENCE(FooSeq, FooType);
+FASTDDS_SEQUENCE(FooBoundedSeq, FooBoundedType);
 using FooArray = LoanableArray<FooType, num_test_elements>;
 using FooStack = StackAllocatedSequence<FooType, num_test_elements>;
 using SampleInfoArray = LoanableArray<SampleInfo, num_test_elements>;
@@ -253,7 +254,7 @@ protected:
 
         // Return code when requesting a correct instance
         ReturnCode_t instance_ok_code = instance_bad_code;
-        if (ReturnCode_t::RETCODE_OK == code)
+        if (ReturnCode_t::RETCODE_OK == code && type_->m_isGetKeyDefined)
         {
             instance_ok_code = code;
         }
@@ -334,6 +335,55 @@ protected:
         }
     }
 
+    /*
+     * This test checks all variants of read / take in several situations.
+     *
+     * The APIs tested are:
+     * - read_next_sample / take_next_sample
+     * - read / take
+     * - read_next_instance / take_next_instance
+     * - read_instance / take_instance
+     * - return_loan
+     *
+     * The test checks that:
+     * - Calling the APIs on a disabled reader return NOT_ENABLED
+     * - Calling the APIs on an enabled reader with no data return NO_DATA
+     * - Calling the xxx_instance APIs with a wrong instance handle return BAD_PARAMETER
+     * - Calling the APIs when data has been received return OK
+     *
+     * Checks are done both with and without loans. A call to return_loan is always performed, and its return value is
+     * checked to be OK when a loan was performed and PRECONDITION_NOT_MET when not.
+     */
+    template<typename DataType, typename DataSeq>
+    void read_take_apis_test()
+    {
+        create_instance_handles();
+
+        // We will create a disabled DataReader, so we can check RETCODE_NOT_ENABLED
+        SubscriberQos subscriber_qos = SUBSCRIBER_QOS_DEFAULT;
+        subscriber_qos.entity_factory().autoenable_created_entities = false;
+        create_entities(nullptr, DATAREADER_QOS_DEFAULT, subscriber_qos);
+        EXPECT_FALSE(data_reader_->is_enabled());
+
+        // Read / take operations should all return NOT_ENABLED
+        basic_read_apis_check<DataType, DataSeq>(ReturnCode_t::RETCODE_NOT_ENABLED, data_reader_);
+
+        // Enable the DataReader and check NO_DATA should be returned
+        EXPECT_EQ(ReturnCode_t::RETCODE_OK, data_reader_->enable());
+        EXPECT_TRUE(data_reader_->is_enabled());
+        basic_read_apis_check<DataType, DataSeq>(ReturnCode_t::RETCODE_NO_DATA, data_reader_);
+
+        // Send data
+        DataType data;
+        data.index(1);
+        EXPECT_EQ(ReturnCode_t::RETCODE_OK, data_writer_->write(&data, HANDLE_NIL));
+
+        // Wait for data to arrive and check OK should be returned
+        Duration_t wait_time(1, 0);
+        EXPECT_TRUE(data_reader_->wait_for_unread_message(wait_time));
+        basic_read_apis_check<DataType, DataSeq>(ReturnCode_t::RETCODE_OK, data_reader_);
+    }
+
     DomainParticipant* participant_ = nullptr;
     Subscriber* subscriber_ = nullptr;
     Publisher* publisher_ = nullptr;
@@ -347,52 +397,16 @@ protected:
 
 };
 
-/*
- * This test checks all variants of read / take in several situations.
- *
- * The APIs tested are:
- * - read_next_sample / take_next_sample
- * - read / take
- * - read_next_instance / take_next_instance
- * - read_instance / take_instance
- * - return_loan
- *
- * The test checks that:
- * - Calling the APIs on a disabled reader return NOT_ENABLED
- * - Calling the APIs on an enabled reader with no data return NO_DATA
- * - Calling the xxx_instance APIs with a wrong instance handle return BAD_PARAMETER
- * - Calling the APIs when data has been received return OK
- *
- * Checks are done both with and without loans. A call to return_loan is always performed, and its return value is
- * checked to be OK when a loan was performed and PRECONDITION_NOT_MET when not.
- */
 TEST_F(DataReaderTests, read_take_apis)
 {
-    create_instance_handles();
+    read_take_apis_test<FooType, FooSeq>();
+}
 
-    // We will create a disabled DataReader, so we can check RETCODE_NOT_ENABLED
-    SubscriberQos subscriber_qos = SUBSCRIBER_QOS_DEFAULT;
-    subscriber_qos.entity_factory().autoenable_created_entities = false;
-    create_entities(nullptr, DATAREADER_QOS_DEFAULT, subscriber_qos);
-    EXPECT_FALSE(data_reader_->is_enabled());
+TEST_F(DataReaderTests, read_take_apis_not_plain)
+{
+    type_.reset(new FooBoundedTypeSupport());
 
-    // Read / take operations should all return NOT_ENABLED
-    basic_read_apis_check<FooType, FooSeq>(ReturnCode_t::RETCODE_NOT_ENABLED, data_reader_);
-
-    // Enable the DataReader and check NO_DATA should be returned
-    EXPECT_EQ(ReturnCode_t::RETCODE_OK, data_reader_->enable());
-    EXPECT_TRUE(data_reader_->is_enabled());
-    basic_read_apis_check<FooType, FooSeq>(ReturnCode_t::RETCODE_NO_DATA, data_reader_);
-
-    // Send data
-    FooType data;
-    data.index(1);
-    EXPECT_EQ(ReturnCode_t::RETCODE_OK, data_writer_->write(&data, HANDLE_NIL));
-
-    // Wait for data to arrive and check OK should be returned
-    Duration_t wait_time(1, 0);
-    EXPECT_TRUE(data_reader_->wait_for_unread_message(wait_time));
-    basic_read_apis_check<FooType, FooSeq>(ReturnCode_t::RETCODE_OK, data_reader_);
+    read_take_apis_test<FooBoundedType, FooBoundedSeq>();
 }
 
 void check_collection(
