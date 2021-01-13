@@ -359,6 +359,24 @@ TEST(SHM, SHM_UDPvsUDP)
     reader.wait_participant_undiscovery();
 }
 
+// Test copy constructor and copy assignment
+TEST(SHM, SHM_copy)
+{
+    SharedMemTransportDescriptor shm_transport;
+    shm_transport.segment_size(32 * 1024);
+    shm_transport.max_message_size(64 * 1024);
+
+    // Copy constructor
+    SharedMemTransportDescriptor shm_transport_copy_constructor(shm_transport);
+    EXPECT_EQ(shm_transport_copy_constructor.segment_size(), 32u * 1024u);
+    EXPECT_EQ(shm_transport_copy_constructor.max_message_size(), 64u * 1024u);
+
+    // Copy assignment
+    SharedMemTransportDescriptor shm_transport_copy = shm_transport;
+    EXPECT_EQ(shm_transport_copy.segment_size(), 32u * 1024u);
+    EXPECT_EQ(shm_transport_copy.max_message_size(), 64u * 1024u);
+}
+
 #endif // EPROSIMA_SHM_TRANSPORT_DISABLED
 
 
