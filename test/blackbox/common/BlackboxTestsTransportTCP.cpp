@@ -14,10 +14,11 @@
 
 #include "BlackboxTests.hpp"
 
+#include <gtest/gtest.h>
+#include <fastrtps/transport/TCPv4TransportDescriptor.h>
+#include <fastrtps/transport/TCPv6TransportDescriptor.h>
 #include "TCPReqRepHelloWorldRequester.hpp"
 #include "TCPReqRepHelloWorldReplier.hpp"
-
-#include <gtest/gtest.h>
 
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
@@ -423,4 +424,28 @@ TEST(BlackBox, TCPLocalhost)
         requester.send(count);
         requester.block();
     }
+}
+
+// Test copy constructor and copy assignment
+TEST(BlackBox, TCP_copy)
+{
+    TCPv4TransportDescriptor tcpv4_transport;
+    tcpv4_transport.set_WAN_address("80.80.99.45");
+    tcpv4_transport.sendBufferSize = 64 * 1024;
+
+    // Copy constructor
+    TCPv4TransportDescriptor tcpv4_transport_copy_constructor(tcpv4_transport);
+    EXPECT_EQ(tcpv4_transport_copy_constructor.wan_addr[0], 80u);
+    EXPECT_EQ(tcpv4_transport_copy_constructor.wan_addr[1], 80u);
+    EXPECT_EQ(tcpv4_transport_copy_constructor.wan_addr[2], 99u);
+    EXPECT_EQ(tcpv4_transport_copy_constructor.wan_addr[3], 45u);
+    EXPECT_EQ(tcpv4_transport_copy_constructor.max_message_size(), 64u * 1024u);
+
+    // Copy assignment
+    TCPv4TransportDescriptor tcpv4_transport_copy = tcpv4_transport;
+    EXPECT_EQ(tcpv4_transport_copy.wan_addr[0], 80u);
+    EXPECT_EQ(tcpv4_transport_copy.wan_addr[1], 80u);
+    EXPECT_EQ(tcpv4_transport_copy.wan_addr[2], 99u);
+    EXPECT_EQ(tcpv4_transport_copy.wan_addr[3], 45u);
+    EXPECT_EQ(tcpv4_transport_copy.max_message_size(), 64u * 1024u);
 }
