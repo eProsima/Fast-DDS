@@ -536,11 +536,11 @@ void ThroughputSubscriber::run()
     {
         std::unique_lock<std::mutex> lock(command_mutex_);
         std::cout << "Sub: lock command_mutex_ and wait to " << command_discovery_count_ <<
-                " == 2" << std::endl; // TODO remove if error disappear"
+            " == 2" << std::endl;     // TODO remove if error disappear"
         command_discovery_cv_.wait(lock, [&]()
                 {
                     std::cout << "Sub: wait to " << command_discovery_count_ << " == 2" <<
-                            std::endl; // TODO remove if error disappear"
+                        std::endl;     // TODO remove if error disappear"
                     return command_discovery_count_ >= 2;
                 });
     }
