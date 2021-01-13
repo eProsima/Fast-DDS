@@ -588,11 +588,11 @@ TEST_F(XMLEndpointParserTests, loadXMLWriterEndpoint)
         // Parametrized XML
         const char* xml_p =
                 "\
-                <reader>\
+                <writer>\
                     <userId>%d</userId>\
                     <entityID>%d</entityID>\
                     <livelinessQos kind=\"%s\" leaseDuration_ms=\"%s\"/>\
-                </reader>\
+                </writer>\
                 ";
         char xml[500];
 
@@ -647,11 +647,11 @@ TEST_F(XMLEndpointParserTests, loadXMLWriterEndpoint)
         // Parametrized XML
         const char* xml_p =
                 "\
-                <reader>\
+                <writer>\
                     <userId>%d</userId>\
                     <entityID>%d</entityID>\
                     <ownershipQos kind=\"%s\"/>\
-                </reader>\
+                </writer>\
                 ";
         char xml[500];
 
@@ -684,9 +684,9 @@ TEST_F(XMLEndpointParserTests, loadXMLWriterEndpoint)
         // Tags with child tags
         const char* xml_content =
                 "\
-                <reader>\
+                <writer>\
                     <%s>bad_value</%s>\
-                </reader>\
+                </writer>\
                 ";
         char xml[500];
 
@@ -723,9 +723,9 @@ TEST_F(XMLEndpointParserTests, loadXMLWriterEndpoint)
         StaticRTPSParticipantInfo* pdata = new StaticRTPSParticipantInfo();
         const char* xml_attribute =
                 "\
-                <reader>\
+                <writer>\
                     <%s bad_attribute=\"bad_value\"/>\
-                </reader>\
+                </writer>\
                 ";
         char xml[500];
 
