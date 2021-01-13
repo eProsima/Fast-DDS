@@ -426,8 +426,12 @@ void ThroughputPublisher::run(
     std::cout << "Pub: Waiting for command discovery" << std::endl;
     {
         std::unique_lock<std::mutex> disc_lock(command_mutex_);
+        std::cout << "Pub: lock command_mutex_ and wait to " << command_discovery_count_ <<
+                " == " << static_cast<int>(subscribers_ * 2) << std::endl; // TODO remove if error disappear"
         command_discovery_cv_.wait(disc_lock, [&]()
                 {
+                    std::cout << "Pub: wait to " << command_discovery_count_ << " == " <<
+                            static_cast<int>(subscribers_ * 2) << std::endl; // TODO remove if error disappear"
                     return command_discovery_count_ == static_cast<int>(subscribers_ * 2);
                 });
     }
