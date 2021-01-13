@@ -144,22 +144,25 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
         # This test is commented as it has a special way of failure
         # In case this test fails, it fails de compilation
 
-        # set(LOGMACROS_INTERNALDEBUG_TEST_SOURCE LogMacrosInternalDebugOffTests.cpp)
+        set(LOGMACROS_INTERNALDEBUG_TEST_SOURCE LogMacrosInternalDebugOffTests.cpp)
 
-        # set(LOGMACROS_SOURCE
-        #     ${LOG_COMMON_SOURCE}
-        #     ${LOGMACROS_INTERNALDEBUG_TEST_SOURCE})
+        set(LOGMACROS_SOURCE
+            ${LOG_COMMON_SOURCE}
+            ${LOGMACROS_INTERNALDEBUG_TEST_SOURCE})
 
-        # include_directories(mock/)
+        include_directories(mock/)
 
-        # add_executable(LogMacrosInternalDebugOffTests ${LOGMACROS_SOURCE})
-
-        # target_include_directories(LogMacrosInternalDebugOffTests PRIVATE ${GTEST_INCLUDE_DIRS}
-        #     ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include)
-        # target_link_libraries(LogMacrosInternalDebugOffTests ${GTEST_LIBRARIES} ${MOCKS}
-        #     $<$<BOOL:${WIN32}>:iphlpapi$<SEMICOLON>Shlwapi>
-        #     )
-        # add_gtest(LogMacrosInternalDebugOffTests SOURCES ${LOGMACROS_INTERNALDEBUG_TEST_SOURCE})
+        add_executable(LogMacrosInternalDebugOffTests ${LOGMACROS_SOURCE})
+        target_compile_definitions(LogMacrosDefaultTests PRIVATE FASTRTPS_NO_LIB
+            $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
+            $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
+            )
+        target_include_directories(LogMacrosInternalDebugOffTests PRIVATE ${GTEST_INCLUDE_DIRS}
+            ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include)
+        target_link_libraries(LogMacrosInternalDebugOffTests ${GTEST_LIBRARIES} ${MOCKS}
+            $<$<BOOL:${WIN32}>:iphlpapi$<SEMICOLON>Shlwapi>
+            )
+        add_gtest(LogMacrosInternalDebugOffTests SOURCES ${LOGMACROS_INTERNALDEBUG_TEST_SOURCE})
 
 
     endif()

@@ -97,7 +97,7 @@ std::vector<Log::Entry> LogMacrosInternalDebugOffTests::HELPER_WaitForEntries(
 void LogMacrosInternalDebugOffTests::internal_debug_ERROR_function(
         int& i)
 {
-    i++;
+    i++; // Not reachable instruction
 }
 
 /*
@@ -113,8 +113,8 @@ TEST_F(LogMacrosInternalDebugOffTests, internal_debug_off)
     logInfo(SampleCategory, internal_debug_auxiliar_function(n));
 
     auto consumedEntries = HELPER_WaitForEntries(0);
-    ASSERT_EQ(0u, consumedEntries.size());
-    ASSERT_EQ(n, 0);
+    ASSERT_EQ(0u, consumedEntries.size()); // no logs must be shown
+    ASSERT_EQ(n, 0); // n must not increase as INTERNAL_DEBUG does not force code to execute, just to compile
 }
 
 int main(
