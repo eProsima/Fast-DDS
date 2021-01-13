@@ -227,6 +227,11 @@ TEST_F(XMLEndpointParserTests, loadXMLParticipantEndpoint)
         mp_edpXML->loadXMLParticipantEndpoint(titleElement, pdata);
         EXPECT_EQ(pdata->m_RTPSParticipantName, "HelloWorldSubscriber");
         EXPECT_EQ(pdata->m_readers.size(), (size_t)1);
+
+        // Delete the ReaderProxyData created inside loadXMLParticipantEndpoint
+        delete pdata->m_readers[0];
+
+        // Then delete StaticRTPSParticipantInfo
         delete pdata;
     }
 
@@ -333,6 +338,11 @@ TEST_F(XMLEndpointParserTests, loadXMLReaderEndpoint)
         EXPECT_EQ(pdata->m_readers[0]->m_qos.m_durability.kind,  VOLATILE_DURABILITY_QOS);
         EXPECT_EQ(pdata->m_readers[0]->m_qos.m_ownership.kind,  SHARED_OWNERSHIP_QOS);
         EXPECT_EQ(pdata->m_readers[0]->m_qos.m_liveliness.kind,  AUTOMATIC_LIVELINESS_QOS);
+
+        // Delete the ReaderProxyData created inside loadXMLParticipantEndpoint
+        delete pdata->m_readers[0];
+
+        // Then delete StaticRTPSParticipantInfo
         delete pdata;
     }
 
@@ -383,6 +393,14 @@ TEST_F(XMLEndpointParserTests, loadXMLReaderEndpoint)
         ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
         titleElement = xml_doc.FirstChildElement();
         EXPECT_EQ(XMLP_ret::XML_OK, mp_edpXML->loadXMLWriterEndpoint(titleElement, pdata));
+
+        // Delete the WriterProxyData created inside loadXMLWriterEndpoint
+        for(auto wdata : pdata->m_writers)
+        {
+            delete wdata;
+        }
+
+        // Then delete StaticRTPSParticipantInfo
         delete pdata;
     }
 
@@ -412,6 +430,14 @@ TEST_F(XMLEndpointParserTests, loadXMLReaderEndpoint)
         ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
         titleElement = xml_doc.FirstChildElement();
         EXPECT_EQ(XMLP_ret::XML_OK, mp_edpXML->loadXMLReaderEndpoint(titleElement, pdata));
+
+        // Delete the ReaderProxyData created inside loadXMLReaderEndpoint
+        for(auto rdata : pdata->m_readers)
+        {
+            delete rdata;
+        }
+
+        // Then delete StaticRTPSParticipantInfo
         delete pdata;
     }
 
@@ -549,6 +575,11 @@ TEST_F(XMLEndpointParserTests, loadXMLWriterEndpoint)
         EXPECT_EQ(pdata->m_writers[0]->m_qos.m_durability.kind,  VOLATILE_DURABILITY_QOS);
         EXPECT_EQ(pdata->m_writers[0]->m_qos.m_ownership.kind,  SHARED_OWNERSHIP_QOS);
         EXPECT_EQ(pdata->m_writers[0]->m_qos.m_liveliness.kind,  AUTOMATIC_LIVELINESS_QOS);
+
+        // Delete the WriterProxyData created inside loadXMLWriterEndpoint
+        delete pdata->m_writers[0];
+
+        // Then delete StaticRTPSParticipantInfo
         delete pdata;
     }
 
@@ -599,6 +630,15 @@ TEST_F(XMLEndpointParserTests, loadXMLWriterEndpoint)
         ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
         titleElement = xml_doc.FirstChildElement();
         EXPECT_EQ(XMLP_ret::XML_OK, mp_edpXML->loadXMLWriterEndpoint(titleElement, pdata));
+
+
+        // Delete the WriterProxyData created inside loadXMLWriterEndpoint
+        for(auto wdata : pdata->m_writers)
+        {
+            delete wdata;
+        }
+
+        // Then delete StaticRTPSParticipantInfo
         delete pdata;
     }
 
@@ -628,6 +668,14 @@ TEST_F(XMLEndpointParserTests, loadXMLWriterEndpoint)
         ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
         titleElement = xml_doc.FirstChildElement();
         EXPECT_EQ(XMLP_ret::XML_OK, mp_edpXML->loadXMLWriterEndpoint(titleElement, pdata));
+
+        // Delete the WriterProxyData created inside loadXMLWriterEndpoint
+        for(auto wdata : pdata->m_writers)
+        {
+            delete wdata;
+        }
+
+        // Then delete StaticRTPSParticipantInfo
         delete pdata;
     }
 
