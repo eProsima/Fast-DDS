@@ -197,7 +197,7 @@ endif()
 ###############################################################################
 
 if(EPROSIMA_BUILD AND NOT EPROSIMA_INSTALLER_MINION)
-    set(INTERNAL_DEBUG ON)
+    option(INTERNAL_DEBUG ON)
 endif()
 
 ###############################################################################
@@ -285,6 +285,28 @@ if(CMAKE_BUILD_TYPE STREQUAL "Debug")
     option(LOG_NO_INFO "Do not compile Info Log level" OFF)
 else()
     option(LOG_NO_INFO "Compile Info Log level" ON)
+endif()
+
+option(LOG_NO_WARNING "Compile Warning Log level" OFF)
+
+option(LOG_NO_ERROR "Compile Error Log level" OFF)
+
+if(LOG_NO_INFO)
+    set(HAVE_LOG_NO_INFO 1)
+else()
+    set(HAVE_LOG_NO_INFO 0)
+endif()
+
+if(LOG_NO_WARNING)
+    set(HAVE_LOG_NO_WARNING 1)
+else()
+    set(HAVE_LOG_NO_WARNING 0)
+endif()
+
+if(LOG_NO_ERROR)
+    set(HAVE_LOG_NO_ERROR 1)
+else()
+    set(HAVE_LOG_NO_ERROR 0)
 endif()
 
 ###############################################################################

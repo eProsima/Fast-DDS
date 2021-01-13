@@ -76,8 +76,9 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             ${TINYXML2_LIBRARY}
             fastcdr
             )
-
         add_gtest(LogFileTests SOURCES ${LOGFILETESTS_TEST_SOURCE})
 
     endif()
 endif()
+
+add_subdirectory(log_macros)
