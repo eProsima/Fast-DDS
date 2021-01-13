@@ -271,9 +271,7 @@ ReturnCode_t DataReaderImpl::check_collection_preconditions_and_calc_max_samples
             return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
         }
 
-        uint32_t collection_input_max = data_values.maximum();
-        int32_t collection_max = (collection_input_max > std::numeric_limits<uint32_t>::max() / 2u) ?
-                std::numeric_limits<int32_t>::max() : static_cast<int32_t>(collection_input_max);
+        int32_t collection_max = data_values.maximum();
 
         // We consider all negative value to be LENGTH_UNLIMITED
         if (0 > max_samples)

@@ -96,8 +96,8 @@ TEST(LoanableSequenceTests, construct)
         TestSeq uut;
         EXPECT_EQ(nullptr, uut.buffer());
         EXPECT_TRUE(uut.has_ownership());
-        EXPECT_EQ(0u, uut.maximum());
-        EXPECT_EQ(0u, uut.length());
+        EXPECT_EQ(0, uut.maximum());
+        EXPECT_EQ(0, uut.length());
     }
 
     // Check post-conditions of constructor with maximum
@@ -106,16 +106,25 @@ TEST(LoanableSequenceTests, construct)
         EXPECT_NE(nullptr, uut.buffer());
         EXPECT_TRUE(uut.has_ownership());
         EXPECT_EQ(num_test_elements, uut.maximum());
-        EXPECT_EQ(0u, uut.length());
+        EXPECT_EQ(0, uut.length());
     }
 
     // Check maximum of 0 behaves as default
     {
-        TestSeq uut(0u);
+        TestSeq uut(0);
         EXPECT_EQ(nullptr, uut.buffer());
         EXPECT_TRUE(uut.has_ownership());
-        EXPECT_EQ(0u, uut.maximum());
-        EXPECT_EQ(0u, uut.length());
+        EXPECT_EQ(0, uut.maximum());
+        EXPECT_EQ(0, uut.length());
+    }
+
+    // Check negative maximum behaves as default
+    {
+        TestSeq uut(-100);
+        EXPECT_EQ(nullptr, uut.buffer());
+        EXPECT_TRUE(uut.has_ownership());
+        EXPECT_EQ(0, uut.maximum());
+        EXPECT_EQ(0, uut.length());
     }
 
     // Check stack-allocated behaves as TestSeq costructed with maximum
@@ -124,10 +133,10 @@ TEST(LoanableSequenceTests, construct)
         EXPECT_NE(nullptr, uut.buffer());
         EXPECT_TRUE(uut.has_ownership());
         EXPECT_EQ(num_test_elements, uut.maximum());
-        EXPECT_EQ(0u, uut.length());
+        EXPECT_EQ(0, uut.length());
 
         // Trying to grow beyond maximum will throw
-        EXPECT_THROW(uut.length(uut.maximum() + 1u), std::bad_alloc);
+        EXPECT_THROW(uut.length(uut.maximum() + 1), std::bad_alloc);
     }
 }
 
@@ -147,8 +156,8 @@ TEST(LoanableSequenceTests, copy_construct)
         TestSeq uut(empty);
         EXPECT_EQ(nullptr, uut.buffer());
         EXPECT_TRUE(uut.has_ownership());
-        EXPECT_EQ(0u, uut.maximum());
-        EXPECT_EQ(0u, uut.length());
+        EXPECT_EQ(0, uut.maximum());
+        EXPECT_EQ(0, uut.length());
     }
 
     // Copy-constructing an empty allocated sequence behaves as default constructor
@@ -156,8 +165,8 @@ TEST(LoanableSequenceTests, copy_construct)
         TestSeq uut(owned);
         EXPECT_EQ(nullptr, uut.buffer());
         EXPECT_TRUE(uut.has_ownership());
-        EXPECT_EQ(0u, uut.maximum());
-        EXPECT_EQ(0u, uut.length());
+        EXPECT_EQ(0, uut.maximum());
+        EXPECT_EQ(0, uut.length());
     }
 
     // Copy-constructing an empty loaned sequence behaves as default constructor
@@ -165,8 +174,8 @@ TEST(LoanableSequenceTests, copy_construct)
         TestSeq uut(loaned);
         EXPECT_EQ(nullptr, uut.buffer());
         EXPECT_TRUE(uut.has_ownership());
-        EXPECT_EQ(0u, uut.maximum());
-        EXPECT_EQ(0u, uut.length());
+        EXPECT_EQ(0, uut.maximum());
+        EXPECT_EQ(0, uut.length());
     }
 
     // Give length and values to sequences
@@ -194,9 +203,9 @@ TEST(LoanableSequenceTests, copy_construct)
     }
 
     // Reduce length of sequences
-    EXPECT_TRUE(owned.length(1u));
+    EXPECT_TRUE(owned.length(1));
     EXPECT_GT(owned.maximum(), owned.length());
-    EXPECT_TRUE(loaned.length(1u));
+    EXPECT_TRUE(loaned.length(1));
     EXPECT_GT(loaned.maximum(), loaned.length());
 
     // Copy-constructing a non-empty allocated sequence with max > len allocates and copies
@@ -205,8 +214,8 @@ TEST(LoanableSequenceTests, copy_construct)
         EXPECT_NE(nullptr, uut.buffer());
         EXPECT_NE(owned.buffer(), uut.buffer());
         EXPECT_TRUE(uut.has_ownership());
-        EXPECT_EQ(1u, uut.maximum());
-        check_result(uut, 1u);
+        EXPECT_EQ(1, uut.maximum());
+        check_result(uut, 1);
     }
 
     // Copy-constructing a non-empty loaned sequence with max > len allocates and copies
@@ -215,8 +224,8 @@ TEST(LoanableSequenceTests, copy_construct)
         EXPECT_NE(nullptr, uut.buffer());
         EXPECT_NE(loaned.buffer(), uut.buffer());
         EXPECT_TRUE(uut.has_ownership());
-        EXPECT_EQ(1u, uut.maximum());
-        check_result(uut, 1u);
+        EXPECT_EQ(1, uut.maximum());
+        check_result(uut, 1);
     }
 
     // Return loan to avoid warning on destructor
@@ -239,8 +248,8 @@ TEST(LoanableSequenceTests, copy_assign)
         TestSeq uut = empty;
         EXPECT_EQ(nullptr, uut.buffer());
         EXPECT_TRUE(uut.has_ownership());
-        EXPECT_EQ(0u, uut.maximum());
-        EXPECT_EQ(0u, uut.length());
+        EXPECT_EQ(0, uut.maximum());
+        EXPECT_EQ(0, uut.length());
     }
 
     // Copying an empty allocated sequence behaves as default constructor
@@ -248,8 +257,8 @@ TEST(LoanableSequenceTests, copy_assign)
         TestSeq uut = owned;
         EXPECT_EQ(nullptr, uut.buffer());
         EXPECT_TRUE(uut.has_ownership());
-        EXPECT_EQ(0u, uut.maximum());
-        EXPECT_EQ(0u, uut.length());
+        EXPECT_EQ(0, uut.maximum());
+        EXPECT_EQ(0, uut.length());
     }
 
     // Copying an empty loaned sequence behaves as default constructor
@@ -257,8 +266,8 @@ TEST(LoanableSequenceTests, copy_assign)
         TestSeq uut = loaned;
         EXPECT_EQ(nullptr, uut.buffer());
         EXPECT_TRUE(uut.has_ownership());
-        EXPECT_EQ(0u, uut.maximum());
-        EXPECT_EQ(0u, uut.length());
+        EXPECT_EQ(0, uut.maximum());
+        EXPECT_EQ(0, uut.length());
     }
 
     // Give length and values to sequences
@@ -286,9 +295,9 @@ TEST(LoanableSequenceTests, copy_assign)
     }
 
     // Reduce length of sequences
-    EXPECT_TRUE(owned.length(1u));
+    EXPECT_TRUE(owned.length(1));
     EXPECT_GT(owned.maximum(), owned.length());
-    EXPECT_TRUE(loaned.length(1u));
+    EXPECT_TRUE(loaned.length(1));
     EXPECT_GT(loaned.maximum(), loaned.length());
 
     // Copying a non-empty allocated sequence with max > len allocates and copies
@@ -297,8 +306,8 @@ TEST(LoanableSequenceTests, copy_assign)
         EXPECT_NE(nullptr, uut.buffer());
         EXPECT_NE(owned.buffer(), uut.buffer());
         EXPECT_TRUE(uut.has_ownership());
-        EXPECT_EQ(1u, uut.maximum());
-        check_result(uut, 1u);
+        EXPECT_EQ(1, uut.maximum());
+        check_result(uut, 1);
     }
 
     // Copying a non-empty loaned sequence with max > len allocates and copies
@@ -307,8 +316,8 @@ TEST(LoanableSequenceTests, copy_assign)
         EXPECT_NE(nullptr, uut.buffer());
         EXPECT_NE(loaned.buffer(), uut.buffer());
         EXPECT_TRUE(uut.has_ownership());
-        EXPECT_EQ(1u, uut.maximum());
-        check_result(uut, 1u);
+        EXPECT_EQ(1, uut.maximum());
+        check_result(uut, 1);
     }
 
     // Copying loaned into allocated changes length
@@ -322,13 +331,13 @@ TEST(LoanableSequenceTests, copy_assign)
     check_result(owned, num_test_elements);
 
     // Copying allocated into loaned releases loan
-    EXPECT_TRUE(owned.length(1u));
+    EXPECT_TRUE(owned.length(1));
     loaned = owned;
     EXPECT_EQ(loaned.length(), owned.length());
     EXPECT_NE(loaned.buffer(), owned.buffer());
     EXPECT_TRUE(loaned.has_ownership());
-    EXPECT_EQ(1u, loaned.maximum());
-    check_result(loaned, 1u);
+    EXPECT_EQ(1, loaned.maximum());
+    check_result(loaned, 1);
 
     // Copying a bigger collection makes collection grow
     EXPECT_TRUE(owned.length(num_test_elements));
@@ -340,10 +349,145 @@ TEST(LoanableSequenceTests, copy_assign)
     check_result(loaned, num_test_elements);
 }
 
+TEST(LoanableSequenceTests, length)
+{
+    // Checks on default constructed sequence
+    {
+        TestSeq uut;
+        EXPECT_EQ(nullptr, uut.buffer());
+        EXPECT_TRUE(uut.has_ownership());
+        EXPECT_EQ(0, uut.maximum());
+        EXPECT_EQ(0, uut.length());
+
+        // Positive should grow collection
+        EXPECT_TRUE(uut.length(num_test_elements));
+        EXPECT_NE(nullptr, uut.buffer());
+        EXPECT_TRUE(uut.has_ownership());
+        EXPECT_LE(num_test_elements, uut.maximum());
+        EXPECT_EQ(num_test_elements, uut.length());
+
+        // Negative should fail
+        EXPECT_FALSE(uut.length(-100));
+        EXPECT_NE(nullptr, uut.buffer());
+        EXPECT_TRUE(uut.has_ownership());
+        EXPECT_LE(num_test_elements, uut.maximum());
+        EXPECT_EQ(num_test_elements, uut.length());
+
+        // Decreasing should not shrink
+        EXPECT_TRUE(uut.length(1));
+        EXPECT_NE(nullptr, uut.buffer());
+        EXPECT_TRUE(uut.has_ownership());
+        EXPECT_LE(num_test_elements, uut.maximum());
+        EXPECT_EQ(1, uut.length());
+    }
+
+    // Checks on sequence constructed with maximum
+    {
+        TestSeq uut(1);
+        EXPECT_NE(nullptr, uut.buffer());
+        EXPECT_TRUE(uut.has_ownership());
+        EXPECT_LE(1, uut.maximum());
+        EXPECT_EQ(0, uut.length());
+
+        // Positive should grow collection
+        EXPECT_TRUE(uut.length(num_test_elements));
+        EXPECT_NE(nullptr, uut.buffer());
+        EXPECT_TRUE(uut.has_ownership());
+        EXPECT_LE(num_test_elements, uut.maximum());
+        EXPECT_EQ(num_test_elements, uut.length());
+
+        // Negative should fail
+        EXPECT_FALSE(uut.length(-100));
+        EXPECT_NE(nullptr, uut.buffer());
+        EXPECT_TRUE(uut.has_ownership());
+        EXPECT_LE(num_test_elements, uut.maximum());
+        EXPECT_EQ(num_test_elements, uut.length());
+
+        // Decreasing should not shrink
+        EXPECT_TRUE(uut.length(1));
+        EXPECT_NE(nullptr, uut.buffer());
+        EXPECT_TRUE(uut.has_ownership());
+        EXPECT_LE(num_test_elements, uut.maximum());
+        EXPECT_EQ(1, uut.length());
+    }
+
+    // Checks on stack-allocated sequence
+    {
+        StackAllocatedSeq uut;
+        EXPECT_NE(nullptr, uut.buffer());
+        EXPECT_TRUE(uut.has_ownership());
+        EXPECT_LE(num_test_elements, uut.maximum());
+        EXPECT_EQ(0, uut.length());
+
+        // Positive should be ok
+        EXPECT_TRUE(uut.length(num_test_elements));
+        EXPECT_NE(nullptr, uut.buffer());
+        EXPECT_TRUE(uut.has_ownership());
+        EXPECT_LE(num_test_elements, uut.maximum());
+        EXPECT_EQ(num_test_elements, uut.length());
+
+        // Negative should fail
+        EXPECT_FALSE(uut.length(-100));
+        EXPECT_NE(nullptr, uut.buffer());
+        EXPECT_TRUE(uut.has_ownership());
+        EXPECT_LE(num_test_elements, uut.maximum());
+        EXPECT_EQ(num_test_elements, uut.length());
+
+        // Decreasing should not shrink
+        EXPECT_TRUE(uut.length(1));
+        EXPECT_NE(nullptr, uut.buffer());
+        EXPECT_TRUE(uut.has_ownership());
+        EXPECT_LE(num_test_elements, uut.maximum());
+        EXPECT_EQ(1, uut.length());
+    }
+
+    // Checks on loaned sequence
+    {
+        StackAllocatedBuffer<int> stack;
+        TestSeq uut;
+        uut.loan(stack.buffer_for_loans(), stack.size(), 0);
+        EXPECT_NE(nullptr, uut.buffer());
+        EXPECT_FALSE(uut.has_ownership());
+        EXPECT_LE(num_test_elements, uut.maximum());
+        EXPECT_EQ(0, uut.length());
+
+        // Positive should be ok
+        EXPECT_TRUE(uut.length(num_test_elements));
+        EXPECT_NE(nullptr, uut.buffer());
+        EXPECT_FALSE(uut.has_ownership());
+        EXPECT_LE(num_test_elements, uut.maximum());
+        EXPECT_EQ(num_test_elements, uut.length());
+
+        // Negative should fail
+        EXPECT_FALSE(uut.length(-100));
+        EXPECT_NE(nullptr, uut.buffer());
+        EXPECT_FALSE(uut.has_ownership());
+        EXPECT_LE(num_test_elements, uut.maximum());
+        EXPECT_EQ(num_test_elements, uut.length());
+
+        // Growing should fail
+        EXPECT_FALSE(uut.length(num_test_elements + 1));
+        EXPECT_NE(nullptr, uut.buffer());
+        EXPECT_FALSE(uut.has_ownership());
+        EXPECT_LE(num_test_elements, uut.maximum());
+        EXPECT_EQ(num_test_elements, uut.length());
+
+        // Decreasing should be ok
+        EXPECT_TRUE(uut.length(1));
+        EXPECT_NE(nullptr, uut.buffer());
+        EXPECT_FALSE(uut.has_ownership());
+        EXPECT_LE(num_test_elements, uut.maximum());
+        EXPECT_EQ(1, uut.length());
+
+        // Return loan
+        uut.unloan();
+    }
+}
+
 TEST(LoanableSequenceTests, loan_unloan)
 {
     StackAllocatedBuffer<int> stack;
-    test_size_type max = 0u, len = 0u;
+    test_size_type max = 0, len = 0;
     void** result_buffer;
 
     {
@@ -351,8 +495,8 @@ TEST(LoanableSequenceTests, loan_unloan)
         TestSeq uut;
         EXPECT_EQ(nullptr, uut.buffer());
         EXPECT_TRUE(uut.has_ownership());
-        EXPECT_EQ(0u, uut.maximum());
-        EXPECT_EQ(0u, uut.length());
+        EXPECT_EQ(0, uut.maximum());
+        EXPECT_EQ(0, uut.length());
 
         // Check that loan cannot be returned
         EXPECT_EQ(nullptr, uut.unloan());
@@ -370,7 +514,7 @@ TEST(LoanableSequenceTests, loan_unloan)
         EXPECT_EQ(nullptr, uut.unloan(max, len));
 
         // Check that loan cannot be performed
-        EXPECT_FALSE(uut.loan(stack.buffer_for_loans(), num_test_elements, 0u));
+        EXPECT_FALSE(uut.loan(stack.buffer_for_loans(), num_test_elements, 0));
     }
 
     {
@@ -379,14 +523,14 @@ TEST(LoanableSequenceTests, loan_unloan)
         EXPECT_NE(nullptr, uut.buffer());
         EXPECT_TRUE(uut.has_ownership());
         EXPECT_EQ(num_test_elements, uut.maximum());
-        EXPECT_EQ(0u, uut.length());
+        EXPECT_EQ(0, uut.length());
 
         // Check that loan cannot be returned
         EXPECT_EQ(nullptr, uut.unloan());
         EXPECT_EQ(nullptr, uut.unloan(max, len));
 
         // Check that loan cannot be performed
-        EXPECT_FALSE(uut.loan(stack.buffer_for_loans(), num_test_elements, 0u));
+        EXPECT_FALSE(uut.loan(stack.buffer_for_loans(), num_test_elements, 0));
     }
 
     {
@@ -395,14 +539,14 @@ TEST(LoanableSequenceTests, loan_unloan)
         EXPECT_NE(nullptr, uut.buffer());
         EXPECT_TRUE(uut.has_ownership());
         EXPECT_EQ(num_test_elements, uut.maximum());
-        EXPECT_EQ(0u, uut.length());
+        EXPECT_EQ(0, uut.length());
 
         // Check that loan cannot be returned
         EXPECT_EQ(nullptr, uut.unloan());
         EXPECT_EQ(nullptr, uut.unloan(max, len));
 
         // Check that loan cannot be performed
-        EXPECT_FALSE(uut.loan(stack.buffer_for_loans(), num_test_elements, 0u));
+        EXPECT_FALSE(uut.loan(stack.buffer_for_loans(), num_test_elements, 0));
     }
 
     // Note: When uut is deleted upon exiting its scope, a warning log will be produced.
@@ -445,7 +589,7 @@ TEST(LoanableSequenceTests, loan_unloan)
         EXPECT_TRUE(uut.loan(stack.buffer_for_loans(), num_test_elements, 0));
         EXPECT_FALSE(uut.has_ownership());
         EXPECT_EQ(num_test_elements, uut.maximum());
-        EXPECT_EQ(0u, uut.length());
+        EXPECT_EQ(0, uut.length());
         EXPECT_EQ(stack.buffer_for_loans(), uut.buffer());
         EXPECT_TRUE(uut.length(num_test_elements));
         EXPECT_EQ(num_test_elements, uut.length());
@@ -459,14 +603,14 @@ TEST(LoanableSequenceTests, loan_unloan)
         // Check unloan postconditions
         EXPECT_EQ(nullptr, uut.buffer());
         EXPECT_TRUE(uut.has_ownership());
-        EXPECT_EQ(0u, uut.length());
-        EXPECT_EQ(0u, uut.maximum());
+        EXPECT_EQ(0, uut.length());
+        EXPECT_EQ(0, uut.maximum());
 
         // Loan again
         EXPECT_TRUE(uut.loan(stack.buffer_for_loans(), num_test_elements, 0));
         EXPECT_FALSE(uut.has_ownership());
         EXPECT_EQ(num_test_elements, uut.maximum());
-        EXPECT_EQ(0u, uut.length());
+        EXPECT_EQ(0, uut.length());
         EXPECT_EQ(stack.buffer_for_loans(), uut.buffer());
 
         // Check other version of unloan
@@ -478,19 +622,19 @@ TEST(LoanableSequenceTests, loan_unloan)
         // Check unloan postconditions
         EXPECT_EQ(nullptr, uut.buffer());
         EXPECT_TRUE(uut.has_ownership());
-        EXPECT_EQ(0u, uut.length());
-        EXPECT_EQ(0u, uut.maximum());
+        EXPECT_EQ(0, uut.length());
+        EXPECT_EQ(0, uut.maximum());
 
         // Check with wrong parameters
-        EXPECT_FALSE(uut.loan(stack.buffer_for_loans(), 0u, 0u));
-        EXPECT_FALSE(uut.loan(stack.buffer_for_loans(), 1u, 2u));
-        EXPECT_FALSE(uut.loan(nullptr, 1u, 1u));
+        EXPECT_FALSE(uut.loan(stack.buffer_for_loans(), 0, 0));
+        EXPECT_FALSE(uut.loan(stack.buffer_for_loans(), 1, 2u));
+        EXPECT_FALSE(uut.loan(nullptr, 1, 1));
 
         // Check that we can loan more than once
-        EXPECT_TRUE(uut.loan(stack.buffer_for_loans(), num_test_elements, 0u));
+        EXPECT_TRUE(uut.loan(stack.buffer_for_loans(), num_test_elements, 0));
         EXPECT_FALSE(uut.has_ownership());
         EXPECT_EQ(num_test_elements, uut.maximum());
-        EXPECT_EQ(0u, uut.length());
+        EXPECT_EQ(0, uut.length());
         EXPECT_EQ(stack.buffer_for_loans(), uut.buffer());
         EXPECT_TRUE(uut.loan(stack.buffer_for_loans(), num_test_elements, num_test_elements));
         EXPECT_FALSE(uut.has_ownership());
@@ -499,19 +643,19 @@ TEST(LoanableSequenceTests, loan_unloan)
         EXPECT_EQ(stack.buffer_for_loans(), uut.buffer());
 
         // Now loan a different buffer
-        StackAllocatedBuffer<int, 1u> stack2;
-        EXPECT_TRUE(uut.loan(stack2.buffer_for_loans(), 1u, 0u));
+        StackAllocatedBuffer<int, 1> stack2;
+        EXPECT_TRUE(uut.loan(stack2.buffer_for_loans(), 1, 0));
         EXPECT_FALSE(uut.has_ownership());
-        EXPECT_EQ(1u, uut.maximum());
-        EXPECT_EQ(0u, uut.length());
+        EXPECT_EQ(1, uut.maximum());
+        EXPECT_EQ(0, uut.length());
         EXPECT_EQ(stack2.buffer_for_loans(), uut.buffer());
 
         // Check that loaned buffer cannot grow above maximum
-        EXPECT_TRUE(uut.length(1u));
+        EXPECT_TRUE(uut.length(1));
         EXPECT_FALSE(uut.length(10u));
         EXPECT_FALSE(uut.has_ownership());
-        EXPECT_EQ(1u, uut.maximum());
-        EXPECT_EQ(1u, uut.length());
+        EXPECT_EQ(1, uut.maximum());
+        EXPECT_EQ(1, uut.length());
         EXPECT_EQ(stack2.buffer_for_loans(), uut.buffer());
     }
 
@@ -628,7 +772,7 @@ TEST(LoanableSequenceTests, sum_collections)
         EXPECT_TRUE(result.loan(stack.buffer_for_loans(), num_test_elements, 0));
         EXPECT_FALSE(result.has_ownership());
         EXPECT_EQ(num_test_elements, result.maximum());
-        EXPECT_EQ(0u, result.length());
+        EXPECT_EQ(0, result.length());
         EXPECT_EQ(stack.buffer_for_loans(), result.buffer());
 
         // Test increasing length and accessors
@@ -648,8 +792,8 @@ TEST(LoanableSequenceTests, sum_collections)
         // Check unloan postconditions
         EXPECT_EQ(nullptr, result.buffer());
         EXPECT_TRUE(result.has_ownership());
-        EXPECT_EQ(0u, result.length());
-        EXPECT_EQ(0u, result.maximum());
+        EXPECT_EQ(0, result.length());
+        EXPECT_EQ(0, result.maximum());
     }
 }
 
