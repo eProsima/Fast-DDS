@@ -380,10 +380,15 @@ protected:
     {
         create_instance_handles();
 
+        // We need depth = 2 for the disposed instance test
+        DataReaderQos reader_qos = DATAREADER_QOS_DEFAULT;
+        reader_qos.history().depth = 2;
+
         // We will create a disabled DataReader, so we can check RETCODE_NOT_ENABLED
         SubscriberQos subscriber_qos = SUBSCRIBER_QOS_DEFAULT;
         subscriber_qos.entity_factory().autoenable_created_entities = false;
-        create_entities(nullptr, DATAREADER_QOS_DEFAULT, subscriber_qos);
+
+        create_entities(nullptr, reader_qos, subscriber_qos);
         EXPECT_FALSE(data_reader_->is_enabled());
 
         // Read / take operations should all return NOT_ENABLED
@@ -408,6 +413,13 @@ protected:
         data.index(2u);
         EXPECT_EQ(ReturnCode_t::RETCODE_OK, data_writer_->write(&data, HANDLE_NIL));
         basic_read_apis_check<DataType, DataSeq>(ReturnCode_t::RETCODE_OK, data_reader_, true);
+
+        // Check with disposed instance
+        if (type_->m_isGetKeyDefined)
+        {
+            EXPECT_EQ(ReturnCode_t::RETCODE_OK, data_writer_->dispose(&data, handle_wrong_));
+            basic_read_apis_check<DataType, DataSeq>(ReturnCode_t::RETCODE_OK, data_reader_, true);
+        }
     }
 
     DomainParticipant* participant_ = nullptr;
