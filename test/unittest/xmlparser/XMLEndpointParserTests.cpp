@@ -395,7 +395,7 @@ TEST_F(XMLEndpointParserTests, loadXMLReaderEndpoint)
         EXPECT_EQ(XMLP_ret::XML_OK, mp_edpXML->loadXMLWriterEndpoint(titleElement, pdata));
 
         // Delete the WriterProxyData created inside loadXMLWriterEndpoint
-        for(auto wdata : pdata->m_writers)
+        for (auto wdata : pdata->m_writers)
         {
             delete wdata;
         }
@@ -432,7 +432,7 @@ TEST_F(XMLEndpointParserTests, loadXMLReaderEndpoint)
         EXPECT_EQ(XMLP_ret::XML_OK, mp_edpXML->loadXMLReaderEndpoint(titleElement, pdata));
 
         // Delete the ReaderProxyData created inside loadXMLReaderEndpoint
-        for(auto rdata : pdata->m_readers)
+        for (auto rdata : pdata->m_readers)
         {
             delete rdata;
         }
@@ -633,7 +633,7 @@ TEST_F(XMLEndpointParserTests, loadXMLWriterEndpoint)
 
 
         // Delete the WriterProxyData created inside loadXMLWriterEndpoint
-        for(auto wdata : pdata->m_writers)
+        for (auto wdata : pdata->m_writers)
         {
             delete wdata;
         }
@@ -670,7 +670,7 @@ TEST_F(XMLEndpointParserTests, loadXMLWriterEndpoint)
         EXPECT_EQ(XMLP_ret::XML_OK, mp_edpXML->loadXMLWriterEndpoint(titleElement, pdata));
 
         // Delete the WriterProxyData created inside loadXMLWriterEndpoint
-        for(auto wdata : pdata->m_writers)
+        for (auto wdata : pdata->m_writers)
         {
             delete wdata;
         }
