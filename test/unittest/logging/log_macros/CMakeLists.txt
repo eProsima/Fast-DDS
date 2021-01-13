@@ -104,28 +104,6 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
         add_gtest(LogMacrosNoErrorTests SOURCES ${LOGMACROS_NOERROR_TEST_SOURCE})
 
 
-        # MACROS LOG TEST INTERNALDEBUG
-        # This test is commented as it has a special way of failure
-        # In case this test fails, it fails de compilation
-
-        # set(LOGMACROS_INTERNALDEBUG_TEST_SOURCE LogMacrosInternalDebugOffTests.cpp)
-
-        # set(LOGMACROS_SOURCE
-        #     ${LOG_COMMON_SOURCE}
-        #     ${LOGMACROS_INTERNALDEBUG_TEST_SOURCE})
-
-        # include_directories(mock/)
-
-        # add_executable(LogMacrosInternalDebugOffTests ${LOGMACROS_SOURCE})
-
-        # target_include_directories(LogMacrosInternalDebugOffTests PRIVATE ${GTEST_INCLUDE_DIRS}
-        #     ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include)
-        # target_link_libraries(LogMacrosInternalDebugOffTests ${GTEST_LIBRARIES} ${MOCKS}
-        #     $<$<BOOL:${WIN32}>:iphlpapi$<SEMICOLON>Shlwapi>
-        #     )
-        # add_gtest(LogMacrosInternalDebugOffTests SOURCES ${LOGMACROS_INTERNALDEBUG_TEST_SOURCE})
-
-
         # MACROS LOG TEST NO DEFAULT
         set(LOGMACROS_DEFAULT_TEST_SOURCE LogMacrosDefaultTests.cpp)
 
@@ -148,6 +126,29 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             $<$<BOOL:${WIN32}>:iphlpapi$<SEMICOLON>Shlwapi>
             )
         add_gtest(LogMacrosDefaultTests SOURCES ${LOGMACROS_DEFAULT_TEST_SOURCE})
+
+
+        # MACROS LOG TEST INTERNALDEBUG
+        # This test is commented as it has a special way of failure
+        # In case this test fails, it fails de compilation
+
+        # set(LOGMACROS_INTERNALDEBUG_TEST_SOURCE LogMacrosInternalDebugOffTests.cpp)
+
+        # set(LOGMACROS_SOURCE
+        #     ${LOG_COMMON_SOURCE}
+        #     ${LOGMACROS_INTERNALDEBUG_TEST_SOURCE})
+
+        # include_directories(mock/)
+
+        # add_executable(LogMacrosInternalDebugOffTests ${LOGMACROS_SOURCE})
+
+        # target_include_directories(LogMacrosInternalDebugOffTests PRIVATE ${GTEST_INCLUDE_DIRS}
+        #     ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include)
+        # target_link_libraries(LogMacrosInternalDebugOffTests ${GTEST_LIBRARIES} ${MOCKS}
+        #     $<$<BOOL:${WIN32}>:iphlpapi$<SEMICOLON>Shlwapi>
+        #     )
+        # add_gtest(LogMacrosInternalDebugOffTests SOURCES ${LOGMACROS_INTERNALDEBUG_TEST_SOURCE})
+
 
     endif()
 endif()

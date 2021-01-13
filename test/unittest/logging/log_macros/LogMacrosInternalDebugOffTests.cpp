@@ -94,7 +94,8 @@ std::vector<Log::Entry> LogMacrosInternalDebugOffTests::HELPER_WaitForEntries(
     return mockConsumer->ConsumedEntries();
 }
 
-void LogMacrosInternalDebugOffTests::internal_debug_ERROR_function(int& i)
+void LogMacrosInternalDebugOffTests::internal_debug_ERROR_function(
+        int& i)
 {
     i++;
 }
@@ -103,7 +104,7 @@ void LogMacrosInternalDebugOffTests::internal_debug_ERROR_function(int& i)
  * WARNING: If this test is not properly working, the expected behaviour would be a compilation failure
  * This test try to send in a macro a value (void) that is not convertible to string, so the compilation
  * must fail if INTERNAL_DEBUG is ON or any HAVE_LOG_NO_... is OFF
-*/
+ */
 TEST_F(LogMacrosInternalDebugOffTests, internal_debug_off)
 {
     int n = 0;
