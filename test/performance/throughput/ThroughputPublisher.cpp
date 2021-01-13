@@ -70,11 +70,12 @@ void ThroughputPublisher::DataPubListener::onPublicationMatched(
         --throughput_publisher_.data_discovery_count_;
     }
 
+    lock.unlock();
+
     if (throughput_publisher_.data_discovery_count_ == static_cast<int>(throughput_publisher_.subscribers_))
     {
         throughput_publisher_.data_discovery_cv_.notify_one();
     }
-    lock.unlock();
 }
 
 // *******************************************************************************************
@@ -108,12 +109,12 @@ void ThroughputPublisher::CommandSubListener::onSubscriptionMatched(
         --throughput_publisher_.command_discovery_count_;
     }
 
+    lock.unlock();
+
     if (throughput_publisher_.command_discovery_count_ == static_cast<int>(throughput_publisher_.subscribers_ * 2))
     {
         throughput_publisher_.command_discovery_cv_.notify_one();
     }
-
-    lock.unlock();
 }
 
 // *******************************************************************************************
@@ -148,12 +149,12 @@ void ThroughputPublisher::CommandPubListener::onPublicationMatched(
         --throughput_publisher_.command_discovery_count_;
     }
 
-    if (throughput_publisher_.command_discovery_count_ == static_cast<int>(throughput_publisher_.subscribers_ * 2) )
+    lock.unlock();
+
+    if (throughput_publisher_.command_discovery_count_ == static_cast<int>(throughput_publisher_.subscribers_ * 2))
     {
         throughput_publisher_.command_discovery_cv_.notify_one();
     }
-
-    lock.unlock();
 }
 
 // *******************************************************************************************
