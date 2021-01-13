@@ -526,6 +526,9 @@ bool RTPSParticipantImpl::preprocess_endpoint_attributes(
         }
     }
 
+    // Error log level can be disable. Avoid unused warning
+    (void) debug_label;
+
     return true;
 }
 
@@ -1553,6 +1556,8 @@ bool RTPSParticipantImpl::get_persistence_service(
         {
             logError(RTPS_PARTICIPANT,
                     "Couldn't create writer persistence service for transient/persistent " << debug_label);
+            // Error log level can be disable. Avoid unused warning
+            (void) debug_label;
             return false;
         }
     }

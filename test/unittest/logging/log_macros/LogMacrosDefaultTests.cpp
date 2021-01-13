@@ -71,7 +71,8 @@ std::vector<Log::Entry> LogMacrosDefaultTests::HELPER_WaitForEntries(
     return mockConsumer->ConsumedEntries();
 }
 
-/* Check all log levels are active in debug mode, or INFO is not active in Release mode */
+/* WARNING - This test will fail with any LOG_NO_ CMake option set different than default configuration
+ * Check all log levels are active in debug mode, or INFO is not active in Release mode */
 TEST_F(LogMacrosDefaultTests, default_macros_test)
 {
     logError(SampleCategory, "Sample error message");
