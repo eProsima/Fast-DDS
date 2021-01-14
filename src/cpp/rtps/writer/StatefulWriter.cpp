@@ -2242,12 +2242,12 @@ void StatefulWriter::print_inconsistent_acknack(
             << writer_guid << " next SequenceNumber " << next_sequence_number << ". Remote Reader "
             << reader_guid << " requested range is  [" << min_requested_sequence_number
             << ", " << max_requested_sequence_number << "].");
-        // This is necessary to avoid Warning of unused variable in case warning log level is disable
-        (void) writer_guid;
-        (void) reader_guid;
-        (void) min_requested_sequence_number;
-        (void) max_requested_sequence_number;
-        (void) next_sequence_number;
+    // This is necessary to avoid Warning of unused variable in case warning log level is disable
+    (void) writer_guid;
+    (void) reader_guid;
+    (void) min_requested_sequence_number;
+    (void) max_requested_sequence_number;
+    (void) next_sequence_number;
 }
 
 void StatefulWriter::reader_data_filter(
