@@ -93,7 +93,6 @@ TEST_F(LogMacrosNoInfoTests, no_info)
     logError(SampleCategory, "Sample error message");
     logWarning(SampleCategory, "Sample warning message");
     logInfo(SampleCategory, "Sample info message");
-    logInfo(SampleCategory, assert(false));
 
     auto consumedEntries = HELPER_WaitForEntries(2);
     ASSERT_EQ(2u, consumedEntries.size());
