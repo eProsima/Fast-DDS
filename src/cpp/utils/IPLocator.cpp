@@ -454,31 +454,90 @@ bool IPLocator::hasIPv6(
 std::string IPLocator::toIPv6string(
         const Locator_t& locator)
 {
+    /* RFC 5952 Recommendation
+     *  4.1     No leading zeros before each block
+     *  4.2.1   Shorten as much as possible (do not leave 0 blocks at sides of ::)
+     *  4.2.2   No collapse size 1 blocks
+     *  4.2.3   Collapse the largest block (or the first one in case of tie)
+     *  4.3     Lowercase
+     */
+
+    int max_block_index = 0;
+    int max_block_size = 0;
+    int actual_block_index = 0;
+    int actual_block_size = 0;
+
+    // 4.1, 4.3     By default using << std::hex
     std::stringstream ss;
     ss << std::hex;
-    bool already_compress = false, in_compress = false;
+    bool compress = false;
+
+    // First calculate if any 0 block must be collapsed and which one
     for (int i = 0; i != 16; i += 2)
     {
         if (locator.address[i] == 0 && locator.address[i + 1] == 0)
         {
-            if (in_compress)
+            // 4.2.1 Shorten if it has already shortened the previous block
+            if (compress)
             {
-                continue;
+                ++actual_block_size;
             }
-            else if (!already_compress)
+            else
             {
-                already_compress = true;
-                in_compress = true;
-                ss << ":";
-                if (i == 0)
-                {
-                    ss << ":";
-                }
-                continue;
+                compress = true;
+                actual_block_index = i;
+                actual_block_size = 1;
             }
         }
+        else
+        {
+            if (compress)
+            {
+                compress = false;
+                // 4.2.3 Choose the largest block
+                if (actual_block_size > max_block_size)
+                {
+                    max_block_index = actual_block_index;
+                    max_block_size = actual_block_size;
+                }
+            }
+        }
+    }
 
-        in_compress = false;
+    // In case the last block is the one to compress
+    if (compress && actual_block_size > max_block_size)
+    {
+        max_block_index = actual_block_index;
+        max_block_size = actual_block_size;
+    }
+
+    // Use compress variable to know if there will be compression
+    // 4.2.2 compress only if block size > 1
+    compress = max_block_size >= 2;
+
+    // Case that first block is compressed
+    if (compress && max_block_index == 0)
+    {
+        ss << ":";
+    }
+
+    for (int i = 0; i != 16; i += 2)
+    {
+        // If it is after compress index and not all blocks has been compressed, compress it
+        if (compress && i >= max_block_index && max_block_size > 0)
+        {
+            // Reduce number of blocks to compress
+            --max_block_size;
+
+            // Last block prints second :
+            if (max_block_size == 0)
+            {
+                ss << ":";
+            }
+            continue;
+        }
+
+        // Stream the following block
         auto field = (locator.address[i] << 8) + locator.address[i + 1];
         if (i != 14)
         {
