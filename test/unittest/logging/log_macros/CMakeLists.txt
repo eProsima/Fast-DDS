@@ -38,7 +38,7 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
         include_directories(mock/)
 
         add_executable(LogMacrosAllActiveTests ${LOGMACROS_SOURCE})
-            target_compile_definitions(LogTests PRIVATE FASTRTPS_NO_LIB
+            target_compile_definitions(LogMacrosAllActiveTests PRIVATE FASTRTPS_NO_LIB
             $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
             $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
             )
@@ -60,7 +60,7 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
         include_directories(mock/)
 
         add_executable(LogMacrosNoInfoTests ${LOGMACROS_SOURCE})
-        target_compile_definitions(LogTests PRIVATE FASTRTPS_NO_LIB
+        target_compile_definitions(LogMacrosNoInfoTests PRIVATE FASTRTPS_NO_LIB
             $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
             $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
             )
@@ -82,7 +82,7 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
         include_directories(mock/)
 
         add_executable(LogMacrosNoWarningTests ${LOGMACROS_SOURCE})
-        target_compile_definitions(LogTests PRIVATE FASTRTPS_NO_LIB
+        target_compile_definitions(LogMacrosNoWarningTests PRIVATE FASTRTPS_NO_LIB
             $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
             $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
             )
@@ -104,7 +104,7 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
         include_directories(mock/)
 
         add_executable(LogMacrosNoErrorTests ${LOGMACROS_SOURCE})
-        target_compile_definitions(LogTests PRIVATE FASTRTPS_NO_LIB
+        target_compile_definitions(LogMacrosNoErrorTests PRIVATE FASTRTPS_NO_LIB
             $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
             $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
             )
@@ -153,7 +153,7 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
         include_directories(mock/)
 
         add_executable(LogMacrosInternalDebugOffTests ${LOGMACROS_SOURCE})
-        target_compile_definitions(LogMacrosDefaultTests PRIVATE FASTRTPS_NO_LIB
+        target_compile_definitions(LogMacrosInternalDebugOffTests PRIVATE FASTRTPS_NO_LIB
             $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
             $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
             )
