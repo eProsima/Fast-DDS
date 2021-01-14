@@ -195,8 +195,9 @@ endif()
 ###############################################################################
 # Internal debug messages
 ###############################################################################
+
 if(EPROSIMA_BUILD AND NOT EPROSIMA_INSTALLER_MINION)
-    set(INTERNAL_DEBUG "Activate developer debug messages" ON)
+    set(INTERNAL_DEBUG ON)
 endif()
 
 ###############################################################################
@@ -283,7 +284,7 @@ endif()
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
     option(LOG_NO_INFO "Do not compile Info Log level" OFF)
 else()
-    option(LOG_NO_INFO "Do not Compile Info Log level" ON)
+    option(LOG_NO_INFO "Do not compile Info Log level" ON)
 endif()
 
 option(LOG_NO_WARNING "Do not compile Warning Log level" OFF)
