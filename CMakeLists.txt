@@ -195,11 +195,8 @@ endif()
 ###############################################################################
 # Internal debug messages
 ###############################################################################
-
 if(EPROSIMA_BUILD AND NOT EPROSIMA_INSTALLER_MINION)
-    option(INTERNAL_DEBUG "Activate developer debug messages" ON)
-else()
-    option(INTERNAL_DEBUG OFF)
+    set(INTERNAL_DEBUG "Activate developer debug messages" ON)
 endif()
 
 ###############################################################################
@@ -268,7 +265,7 @@ option(SQLITE3_SUPPORT "Activate SQLITE3 support" ON)
 ###############################################################################
 # SHM as Default transport
 ###############################################################################
-option(SHM_TRANSPORT_DEFAULT "Adds SHM transport to the default transports" ON)
+option(SHM_TRANSPORT_DEFAULT "Add SHM transport to the default transports" ON)
 
 ###############################################################################
 # LogConsumer default setup
@@ -286,12 +283,12 @@ endif()
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
     option(LOG_NO_INFO "Do not compile Info Log level" OFF)
 else()
-    option(LOG_NO_INFO "Compile Info Log level" ON)
+    option(LOG_NO_INFO "Do not Compile Info Log level" ON)
 endif()
 
-option(LOG_NO_WARNING "Compile Warning Log level" OFF)
+option(LOG_NO_WARNING "Do not compile Warning Log level" OFF)
 
-option(LOG_NO_ERROR "Compile Error Log level" OFF)
+option(LOG_NO_ERROR "Do not compile Error Log level" OFF)
 
 if(LOG_NO_INFO)
     set(HAVE_LOG_NO_INFO 1)
