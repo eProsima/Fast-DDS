@@ -85,6 +85,9 @@ void ThroughputSubscriber::DataSubListener::onSubscriptionMatched(
 void ThroughputSubscriber::DataSubListener::onNewDataMessage(
         Subscriber* subscriber)
 {
+    // In case the TSubscriber is removing entities because a TEST_ENDS msg, it waits
+    std::unique_lock<std::mutex> lecture_lock(throughput_subscriber_.data_mutex_);
+
     if (throughput_subscriber_.dynamic_data_)
     {
         while (subscriber->takeNextData((void*)throughput_subscriber_.dynamic_data_type_, &info_))
@@ -105,7 +108,7 @@ void ThroughputSubscriber::DataSubListener::onNewDataMessage(
     }
     else
     {
-        if (throughput_subscriber_.throughput_type_ != nullptr)
+        if (nullptr != throughput_subscriber_.throughput_type_)
         {
             while (subscriber->takeNextData((void*)throughput_subscriber_.throughput_type_, &info_))
             {
@@ -490,6 +493,11 @@ void ThroughputSubscriber::process_message()
                     std::unique_lock<std::mutex> lock(command_mutex_);
                     stop_count_ = 1;
                     lock.unlock();
+
+                    // It stops the data listener to avoid seg faults with already removed entities
+                    // It waits if the data listener is in the middle of a reading
+                    std::unique_lock<std::mutex> lecture_lock(data_mutex_);
+
                     if (dynamic_data_)
                     {
                         DynamicTypeBuilderFactory::delete_instance();
@@ -500,6 +508,8 @@ void ThroughputSubscriber::process_message()
                         delete(throughput_type_);
                         throughput_type_ = nullptr;
                     }
+                    lecture_lock.unlock();
+
                     sub_attrs_ = data_subscriber_->getAttributes();
                     break;
                 }
