@@ -324,7 +324,7 @@ protected:
      * - return_loan
      *
      * @param code                 Expected return from read/take_xxx APIs
-     * @param data_reader          DataReadet on which to perform the test
+     * @param data_reader          DataReader on which to perform the test
      * @param two_valid_instances  Whether `handle_wrong_` is considered a valid instance
      *
      * @see check_instance_methods to see how read_instance / take_instance are tested.
