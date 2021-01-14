@@ -254,10 +254,6 @@ public:
 
 private:
 
-    RTPS_DllAPI static XMLP_ret extractDynamicTypes(
-            up_base_node_t properties,
-            const std::string& filename);
-
     RTPS_DllAPI static XMLP_ret extractProfiles(
             up_base_node_t properties,
             const std::string& filename);
