@@ -211,9 +211,9 @@ public:
             ReplierAttributes& atts);
 
     /**
-     * Deletes the XMLProsileManager instance.
-     * FastRTPS's Domain calls this method automatically on its destructor, but
-     * if using XMLProfileManager outside of FastRTPS, it should be called manually.
+     * Deletes the XMLProfileManager instance.
+     * FastDDS's Domain calls this method automatically on its destructor, but
+     * if using XMLProfileManager outside of FastDDS, it should be called manually.
      */
     RTPS_DllAPI static void DeleteInstance()
     {

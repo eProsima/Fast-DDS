@@ -209,7 +209,7 @@ XMLP_ret XMLProfileManager::loadXMLProfiles(
         return XMLP_ret::XML_ERROR;
     }
 
-    if (XMLParser::loadXMLProfiles(profiles, root_node) != XMLP_ret::XML_ERROR)
+    if (XMLParser::loadXMLProfiles(profiles, root_node) == XMLP_ret::XML_OK)
     {
         logInfo(XMLPARSER, "Node parsed successfully");
         return XMLProfileManager::extractProfiles(std::move(root_node), "-XML Node-");
@@ -324,6 +324,46 @@ XMLP_ret XMLProfileManager::loadXMLFile(
     }
 
     return loaded_ret;
+}
+
+XMLP_ret XMLProfileManager::extractDynamicTypes(
+        up_base_node_t profiles,
+        const std::string& filename)
+{
+    if (nullptr == profiles)
+    {
+        logError(XMLPARSER, "Bad parameters");
+        return XMLP_ret::XML_ERROR;
+    }
+
+    unsigned int profile_count = 0u;
+
+    for (auto&& profile: profiles->getChildren())
+    {
+        if (NodeType::TYPE == profile->getType())
+        {
+            tinyxml2::XMLElement* node = dynamic_cast<tinyxml2::XMLElement*>(profile.get());
+            if (XMLP_ret::XML_OK == XMLParser::loadXMLDynamicTypes(*node))
+            {
+                ++profile_count;
+            }
+        }
+        else
+        {
+            logError(XMLPARSER, "Not expected tag");
+        }
+    }
+
+    if (0 == profile_count)
+    {
+        xml_files_.emplace(filename, XMLP_ret::XML_ERROR);
+        logError(XMLPARSER, "Error, file '" << filename << "' bad content");
+        return XMLP_ret::XML_ERROR;
+    }
+
+    xml_files_.emplace(filename, XMLP_ret::XML_OK);
+
+    return XMLP_ret::XML_OK;
 }
 
 XMLP_ret XMLProfileManager::extractProfiles(

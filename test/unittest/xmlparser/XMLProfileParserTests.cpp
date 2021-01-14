@@ -161,7 +161,7 @@ TEST_F(XMLProfileParserTests, loadXMLProfiles)
 /*
  * This test checks the return of the loadXMLDynamicTypes method
  * 1. Check correct return
- * 1. Check error return
+ * 2. Check error return
  */
 TEST_F(XMLProfileParserTests, loadXMLDynamicTypes)
 {
@@ -1008,9 +1008,17 @@ TEST_F(XMLProfileParserTests, insertTransportByIdNegativeClauses)
 /*
  * Test return code of the getDynamicTypeByName method when trying to retrieve a type which has not been parsed
  */
-TEST_F(XMLProfileParserTests, getDynamicTypeByNameNegativeClauses)
+TEST_F(XMLProfileParserTests, getDynamicTypeByNameNegativeClausesNegativeClauses)
 {
     EXPECT_EQ(nullptr, xmlparser::XMLProfileManager::getDynamicTypeByName("wrong_type"));
+}
+
+/*
+ * Test return code of the CreateDynamicPubSubType method when trying to retrieve a type which has not been parsed
+ */
+TEST_F(XMLProfileParserTests, CreateDynamicPubSubType)
+{
+    EXPECT_EQ(nullptr, xmlparser::XMLProfileManager::CreateDynamicPubSubType("wrong_type"));
 }
 
 /*
@@ -1027,8 +1035,8 @@ TEST_F(XMLProfileParserTests, getTransportByIdNegativeClauses)
  * XMLProfileManager::loadXMLNode returns XMLProfileManager::extractProfiles.
  * The following cases are tested:
  *  1. A corrrect standalone profile element is parsed, return value of XMLP_ret::XML_OK is expected
- *  1. A corrrect rooted profile element is parsed, return value of XMLP_ret::XML_OK is expected
- *  1. An incorrect profile element is parsed, return value of XMLP_ret::XML_ERROR is expected
+ *  2. A corrrect rooted profile element is parsed, return value of XMLP_ret::XML_OK is expected
+ *  3. An incorrect profile element is parsed, return value of XMLP_ret::XML_ERROR is expected
  */
 TEST_F(XMLProfileParserTests, extract_profiles_ok)
 {
@@ -1179,8 +1187,10 @@ TEST_F(XMLProfileParserTests, extract_type_profiles)
 {
     tinyxml2::XMLDocument xml_doc;
 
-    // Participant
+
     {
+        // Participant
+
         const char* xml_p =
                 "<profiles>\
             <participant profile_name=\"%s\">\
@@ -1204,6 +1214,8 @@ TEST_F(XMLProfileParserTests, extract_type_profiles)
     }
 
     {
+        // Publisher, Subscriber, and Topic
+
         const char* xml_p =
                 "<profiles>\
             <%s profile_name=\"%s\" %s>\
@@ -1239,6 +1251,8 @@ TEST_F(XMLProfileParserTests, extract_type_profiles)
     }
 
     {
+        // Requested and Replier
+
         const char* xml_p =
                 "<profiles>\
             <%s profile_name=\"%s\" service_name=\"serv\" request_type=\"req\" reply_type=\"reply\">\
@@ -1455,6 +1469,8 @@ TEST_F(XMLProfileParserTests, loadXMLFile)
 
         // passing an empty string as a filename
         EXPECT_EQ(xmlparser::XMLP_ret::XML_ERROR, xmlparser::XMLProfileManager::loadXMLFile(""));
+
+        // Parsing same file twice
         EXPECT_EQ(xmlparser::XMLP_ret::XML_OK, xmlparser::XMLProfileManager::loadXMLFile(filename));
         EXPECT_EQ(xmlparser::XMLP_ret::XML_OK, xmlparser::XMLProfileManager::loadXMLFile(filename));
         remove(filename);
