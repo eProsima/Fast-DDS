@@ -69,10 +69,12 @@ public:
         return mockConsumer->ConsumedEntries();
     }
 
-    void non_valid_function(int& n)
+    void non_valid_function(
+            int& n)
     {
         n++;
     }
+
 };
 
 #endif // ifndef LOG_MACROS_HPP
