@@ -972,7 +972,7 @@ void check_sample_values(
         const FooSeq& data,
         const std::string& values)
 {
-    EXPECT_EQ(data.length(), values.size());
+    EXPECT_EQ(static_cast<size_t>(data.length()), values.size());
 
     for (FooSeq::size_type i = 0; i < data.length(); ++i)
     {
