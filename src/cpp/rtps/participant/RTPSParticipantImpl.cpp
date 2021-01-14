@@ -449,24 +449,50 @@ RTPSParticipantImpl::~RTPSParticipantImpl()
 
 template <EndpointKind_t kind, octet no_key, octet with_key>
 bool RTPSParticipantImpl::preprocess_endpoint_attributes(
-        const char* debug_label,
         const EntityId_t& entity_id,
         EndpointAttributes& att,
         EntityId_t& entId)
 {
     if (!att.unicastLocatorList.isValid())
     {
-        logError(RTPS_PARTICIPANT, "Unicast Locator List for " << debug_label << " contains invalid Locator");
+        if (att.endpointKind == WRITER)
+        {
+            logError(RTPS_PARTICIPANT,
+                    "Unicast Locator List for writer contains invalid Locator");
+        }
+        else
+        {
+            logError(RTPS_PARTICIPANT,
+                    "Unicast Locator List for reader contains invalid Locator");
+        }
         return false;
     }
     if (!att.multicastLocatorList.isValid())
     {
-        logError(RTPS_PARTICIPANT, "Multicast Locator List for " << debug_label << " contains invalid Locator");
+        if (att.endpointKind == WRITER)
+        {
+            logError(RTPS_PARTICIPANT,
+                    "Multicast Locator List for writer contains invalid Locator");
+        }
+        else
+        {
+            logError(RTPS_PARTICIPANT,
+                    "Multicast Locator List for reader contains invalid Locator");
+        }
         return false;
     }
     if (!att.remoteLocatorList.isValid())
     {
-        logError(RTPS_PARTICIPANT, "Remote Locator List for " << debug_label << " contains invalid Locator");
+        if (att.endpointKind == WRITER)
+        {
+            logError(RTPS_PARTICIPANT,
+                    "Remote Locator List for writer contains invalid Locator");
+        }
+        else
+        {
+            logError(RTPS_PARTICIPANT,
+                    "Remote Locator List for reader contains invalid Locator");
+        }
         return false;
     }
 
@@ -496,8 +522,16 @@ bool RTPSParticipantImpl::preprocess_endpoint_attributes(
         entId.value[0] = octet(idnum >> 16);
         if (this->existsEntityId(entId, kind))
         {
-            logError(RTPS_PARTICIPANT,
-                    "A " << debug_label << " with the same entityId already exists in this RTPSParticipant");
+            if (att.endpointKind == WRITER)
+            {
+                logError(RTPS_PARTICIPANT,
+                        "A writer with the same entityId already exists in this RTPSParticipant");
+            }
+            else
+            {
+                logError(RTPS_PARTICIPANT,
+                        "A reader with the same entityId already exists in this RTPSParticipant");
+            }
             return false;
         }
     }
@@ -518,17 +552,24 @@ bool RTPSParticipantImpl::preprocess_endpoint_attributes(
             if (att.persistence_guid == c_Guid_Unknown)
             {
                 // Wrongly configured property
-                logError(RTPS_PARTICIPANT, "Cannot configure " << debug_label << "'s persistence GUID from '"
-                                                               << persistence_guid_property->c_str()
-                                                               << "'. Wrong input");
+                if (att.endpointKind == WRITER)
+                {
+                    logError(RTPS_PARTICIPANT,
+                            "Cannot configure writer's persistence GUID from '"
+                            << persistence_guid_property->c_str()
+                            << "'. Wrong input");
+                }
+                else
+                {
+                    logError(RTPS_PARTICIPANT,
+                            "Cannot configure readers's persistence GUID from '"
+                            << persistence_guid_property->c_str()
+                            << "'. Wrong input");
+                }
                 return false;
             }
         }
     }
-
-    // Error log level can be disable. Avoid unused warning
-    (void) debug_label;
-
     return true;
 }
 
@@ -543,7 +584,7 @@ bool RTPSParticipantImpl::create_writer(
     std::string type = (param.endpoint.reliabilityKind == RELIABLE) ? "RELIABLE" : "BEST_EFFORT";
     logInfo(RTPS_PARTICIPANT, "Creating writer of type " << type);
     EntityId_t entId;
-    if (!preprocess_endpoint_attributes<WRITER, 0x03, 0x02>("writer", entity_id, param.endpoint, entId))
+    if (!preprocess_endpoint_attributes<WRITER, 0x03, 0x02>(entity_id, param.endpoint, entId))
     {
         return false;
     }
@@ -572,7 +613,7 @@ bool RTPSParticipantImpl::create_writer(
 
     // Get persistence service
     IPersistenceService* persistence = nullptr;
-    if (!get_persistence_service("writer", is_builtin, param.endpoint, persistence))
+    if (!get_persistence_service(is_builtin, param.endpoint, persistence))
     {
         return false;
     }
@@ -656,7 +697,7 @@ bool RTPSParticipantImpl::create_reader(
     std::string type = (param.endpoint.reliabilityKind == RELIABLE) ? "RELIABLE" : "BEST_EFFORT";
     logInfo(RTPS_PARTICIPANT, "Creating reader of type " << type);
     EntityId_t entId;
-    if (!preprocess_endpoint_attributes<READER, 0x04, 0x07>("reader", entity_id, param.endpoint, entId))
+    if (!preprocess_endpoint_attributes<READER, 0x04, 0x07>(entity_id, param.endpoint, entId))
     {
         return false;
     }
@@ -676,7 +717,7 @@ bool RTPSParticipantImpl::create_reader(
 
     // Get persistence service
     IPersistenceService* persistence = nullptr;
-    if (!get_persistence_service("reader", is_builtin, param.endpoint, persistence))
+    if (!get_persistence_service(is_builtin, param.endpoint, persistence))
     {
         return false;
     }
@@ -1535,7 +1576,6 @@ IPersistenceService* RTPSParticipantImpl::get_persistence_service(
 }
 
 bool RTPSParticipantImpl::get_persistence_service(
-        const char* debug_label,
         bool is_builtin,
         const EndpointAttributes& param,
         IPersistenceService*& service)
@@ -1548,16 +1588,33 @@ bool RTPSParticipantImpl::get_persistence_service(
     {
         if (param.persistence_guid == c_Guid_Unknown)
         {
-            logError(RTPS_PARTICIPANT, "Cannot create persistence service. Persistence GUID not specified");
+            if (param.endpointKind == WRITER)
+            {
+                logError(RTPS_PARTICIPANT,
+                        "Cannot create persistence service for transient/persistent writer. " <<
+                        "Persistence GUID not specified");
+            }
+            else
+            {
+                logError(RTPS_PARTICIPANT,
+                        "Cannot create persistence service for transient/persistent reader. " <<
+                        "Persistence GUID not specified");
+            }
             return false;
         }
         service = get_persistence_service(param);
         if (service == nullptr)
         {
-            logError(RTPS_PARTICIPANT,
-                    "Couldn't create writer persistence service for transient/persistent " << debug_label);
-            // Error log level can be disable. Avoid unused warning
-            (void) debug_label;
+            if (param.endpointKind == WRITER)
+            {
+                logError(RTPS_PARTICIPANT,
+                        "Couldn't create persistence service for transient/persistent writer");
+            }
+            else
+            {
+                logError(RTPS_PARTICIPANT,
+                        "Couldn't create persistence service for transient/persistent reader");
+            }
             return false;
         }
     }
