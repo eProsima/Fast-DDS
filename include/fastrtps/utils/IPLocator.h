@@ -136,7 +136,7 @@ public:
     RTPS_DllAPI static bool hasIPv6(
             const Locator_t& locator);
 
-    //! Returns a string representation of the locator's IPv6.
+    //! Returns a string representation of the locator's IPv6 following RFC 5952 recommendation.
     RTPS_DllAPI static std::string toIPv6string(
             const Locator_t& locator);
 

@@ -766,23 +766,51 @@ TEST_F(IPLocatorTests, ip_to_string)
         ASSERT_EQ("2001:db8:a::10:0", IPLocator::ip_to_string(locator));
         locator.address[13] = 0;
 
+
+        // Do not compress a single block of zeros
+        locator.address[9] = 0x01;
+        locator.address[11] = 0x01;
+        locator.address[13] = 0x01;
+        ASSERT_EQ("2001:db8:a:0:1:1:1:0", IPLocator::ip_to_string(locator));
+        locator.address[9] = 0;
+        locator.address[11] = 0;
+        locator.address[13] = 0;
+
         // 2001:db8:a:0:0:1:0:0 special case for two equal compressible blocks
         // When this occurs, it's recommended to collapse the left
         locator.address[11] = 0x01;
         ASSERT_EQ("2001:db8:a::1:0:0", IPLocator::ip_to_string(locator));
         locator.address[11] = 0;
 
-        // When there are two compressible blocks, the RFC4291 does not specify which is recommended
-        // We have chosen to use the fastest way, that compress the first block in the IP 2001:db8:a::1:0:0:0
-        // Other way could be to compress the larger block 2001:db8:a:0:1::
-        // Both are correct and both are recognizable as IPv6 for Locator functions
+        // Compress larger block
         locator.address[9] = 0x01;
-        ASSERT_EQ("2001:db8:a::1:0:0:0", IPLocator::ip_to_string(locator));
+        ASSERT_EQ("2001:db8:a:0:1::", IPLocator::ip_to_string(locator));
         locator.address[9] = 0;
 
         locator.address[7] = 0x01;
         ASSERT_EQ("2001:db8:a:1::", IPLocator::ip_to_string(locator));
         locator.address[7] = 0;
+
+        // Compress the larger block v.2
+        // IP 0:0:0:a:0:0:0:0 = 0:0:0:a::
+        reset_locator_address(locator);
+        locator.address[7] = 0x0a;
+        ASSERT_EQ("0:0:0:a::", IPLocator::ip_to_string(locator));
+        locator.address[7] = 0;
+
+        // IP 0:0:0:0:a:0:0:0 = ::a:0:0:0
+        locator.address[9] = 0x0a;
+        ASSERT_EQ("::a:0:0:0", IPLocator::ip_to_string(locator));
+        locator.address[9] = 0;
+
+        // IP 0:0:0:a:b:0:0:0 = ::a:b:0:0:0
+        locator.address[7] = 0x0a;
+        locator.address[9] = 0x0b;
+        ASSERT_EQ("::a:b:0:0:0", IPLocator::ip_to_string(locator));
+
+        // IP 100:0:0:a:b:0:0:0 = 100:0:0::a:b::
+        locator.address[0] = 0x01;
+        ASSERT_EQ("100:0:0:a:b::", IPLocator::ip_to_string(locator));
     }
 
     {
