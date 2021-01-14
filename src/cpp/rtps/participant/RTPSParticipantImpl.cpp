@@ -454,6 +454,8 @@ bool RTPSParticipantImpl::preprocess_endpoint_attributes(
         EndpointAttributes& att,
         EntityId_t& entId)
 {
+    (void)debug_label;
+
     if (!att.unicastLocatorList.isValid())
     {
         logError(RTPS_PARTICIPANT, "Unicast Locator List for " << debug_label << " contains invalid Locator");
@@ -1537,6 +1539,8 @@ bool RTPSParticipantImpl::get_persistence_service(
         const EndpointAttributes& param,
         IPersistenceService*& service)
 {
+    (void)debug_label;
+
     service = nullptr;
 
     // Check if also support persistence with TRANSIENT_LOCAL.

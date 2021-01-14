@@ -2238,6 +2238,12 @@ void StatefulWriter::print_inconsistent_acknack(
         const SequenceNumber_t& max_requested_sequence_number,
         const SequenceNumber_t& next_sequence_number)
 {
+    (void)writer_guid;
+    (void)reader_guid;
+    (void)min_requested_sequence_number;
+    (void)max_requested_sequence_number;
+    (void)next_sequence_number;
+
     logWarning(RTPS_WRITER, "Inconsistent acknack received. Local Writer "
             << writer_guid << " next SequenceNumber " << next_sequence_number << ". Remote Reader "
             << reader_guid << " requested range is  [" << min_requested_sequence_number
