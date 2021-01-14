@@ -86,7 +86,7 @@ void ThroughputSubscriber::DataSubListener::onNewDataMessage(
         Subscriber* subscriber)
 {
     // In case the TSubscriber is removing entities because a TEST_ENDS msg, it waits
-    std::unique_lock<std::mutex> lecture_lock(throughput_subscriber_.lecture_available_mutex);
+    std::unique_lock<std::mutex> lecture_lock(throughput_subscriber_.data_mutex_);
 
     if (throughput_subscriber_.dynamic_data_)
     {
@@ -496,7 +496,7 @@ void ThroughputSubscriber::process_message()
 
                     // It stops the data listener to avoid seg faults with already removed entities
                     // It waits if the data listener is in the middle of a reading
-                    std::unique_lock<std::mutex> lecture_lock(lecture_available_mutex);
+                    std::unique_lock<std::mutex> lecture_lock(data_mutex_);
 
                     if (dynamic_data_)
                     {
