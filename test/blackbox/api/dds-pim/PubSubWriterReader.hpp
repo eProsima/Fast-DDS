@@ -707,6 +707,13 @@ public:
         return *this;
     }
 
+    PubSubWriterReader& ignore_participant_flags(
+            eprosima::fastrtps::rtps::ParticipantFilteringFlags_t flags)
+    {
+        participant_qos_.wire_protocol().builtin.discovery_config.ignoreParticipantFlags = flags;
+        return *this;
+    }
+
     PubSubWriterReader& pub_property_policy(
             const eprosima::fastrtps::rtps::PropertyPolicy property_policy)
     {

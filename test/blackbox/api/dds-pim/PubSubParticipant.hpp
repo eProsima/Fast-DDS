@@ -459,6 +459,13 @@ public:
         return *this;
     }
 
+    PubSubParticipant& ignore_participant_flags(
+            eprosima::fastrtps::rtps::ParticipantFilteringFlags_t flags)
+    {
+        participant_qos_.wire_protocol().builtin.discovery_config.ignoreParticipantFlags = flags;
+        return *this;
+    }
+
     PubSubParticipant& pub_topic_name(
             std::string topicName)
     {
