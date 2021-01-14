@@ -276,7 +276,7 @@ void TestSubscriber::SubListener::on_data_available(
     SampleInfo info;
     if (!!reader->take_next_sample(mParent->m_Data, &info))
     {
-        if (info.instance_state == eprosima::fastdds::dds::ALIVE_INSTANCE_STATE)
+        if (info.valid_data)
         {
             ++n_samples;
             mParent->cv_.notify_one();

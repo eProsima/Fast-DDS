@@ -216,7 +216,7 @@ void EprosimaServer::OperationListener::on_data_available(
 {
     SampleInfo m_sampleInfo;
     mp_up->mp_operation_reader->take_next_sample((void*)&m_operation, &m_sampleInfo);
-    if (m_sampleInfo.instance_state == eprosima::fastdds::dds::ALIVE_INSTANCE_STATE)
+    if (m_sampleInfo.valid_data)
     {
         ++mp_up->m_n_served;
         m_result.m_guid = m_operation.m_guid;

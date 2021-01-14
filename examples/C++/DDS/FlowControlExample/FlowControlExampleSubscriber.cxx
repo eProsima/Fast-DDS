@@ -126,7 +126,7 @@ void FlowControlExampleSubscriber::SubListener::on_data_available(
     FlowControlExample st;
     if (reader->take_next_sample(&st, &info) == ReturnCode_t::RETCODE_OK)
     {
-        if (info.instance_state == eprosima::fastdds::dds::ALIVE_INSTANCE_STATE)
+        if (info.valid_data)
         {
             ++n_msg;
             static unsigned int fastMessages = 0;
