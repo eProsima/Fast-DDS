@@ -365,8 +365,6 @@ elseif(NOT EPROSIMA_INSTALLER)
     set_target_properties(${PROJECT_NAME} PROPERTIES VERSION ${PROJECT_VERSION})
     set_target_properties(${PROJECT_NAME} PROPERTIES SOVERSION ${PROJECT_VERSION_MAJOR})
 
-    option(INTERNAL_DEBUG "Activate developer debug messages" OFF)
-
     # make visual studio more clang like
     if(MSVC)
         # C4101 'identifier' : unreferenced local variable

@@ -1,4 +1,4 @@
-# Copyright 2016 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+# Copyright 2021 Proyectos y Sistemas de Mantenimiento SL (eProsima).
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -35,8 +35,6 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             ${LOG_COMMON_SOURCE}
             ${LOGMACROS_ALL_TEST_SOURCE})
 
-        include_directories(mock/)
-
         add_executable(LogMacrosAllActiveTests ${LOGMACROS_SOURCE})
             target_compile_definitions(LogMacrosAllActiveTests PRIVATE FASTRTPS_NO_LIB
             $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
@@ -56,8 +54,6 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
         set(LOGMACROS_SOURCE
             ${LOG_COMMON_SOURCE}
             ${LOGMACROS_NOINFO_TEST_SOURCE})
-
-        include_directories(mock/)
 
         add_executable(LogMacrosNoInfoTests ${LOGMACROS_SOURCE})
         target_compile_definitions(LogMacrosNoInfoTests PRIVATE FASTRTPS_NO_LIB
@@ -79,8 +75,6 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             ${LOG_COMMON_SOURCE}
             ${LOGMACROS_NOWARNING_TEST_SOURCE})
 
-        include_directories(mock/)
-
         add_executable(LogMacrosNoWarningTests ${LOGMACROS_SOURCE})
         target_compile_definitions(LogMacrosNoWarningTests PRIVATE FASTRTPS_NO_LIB
             $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
@@ -100,8 +94,6 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
         set(LOGMACROS_SOURCE
             ${LOG_COMMON_SOURCE}
             ${LOGMACROS_NOERROR_TEST_SOURCE})
-
-        include_directories(mock/)
 
         add_executable(LogMacrosNoErrorTests ${LOGMACROS_SOURCE})
         target_compile_definitions(LogMacrosNoErrorTests PRIVATE FASTRTPS_NO_LIB
@@ -123,10 +115,6 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             ${LOG_COMMON_SOURCE}
             ${LOGMACROS_DEFAULT_TEST_SOURCE})
 
-        include_directories(mock/)
-
-        message(${CMAKE_BUILD_TYPE})
-
         add_executable(LogMacrosDefaultTests ${LOGMACROS_SOURCE})
         target_compile_definitions(LogMacrosDefaultTests PRIVATE FASTRTPS_NO_LIB
             $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
@@ -141,7 +129,6 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
 
 
         # MACROS LOG TEST INTERNALDEBUG
-        # This test is commented as it has a special way of failure
         # In case this test fails, it fails de compilation
 
         set(LOGMACROS_INTERNALDEBUG_TEST_SOURCE LogMacrosInternalDebugOffTests.cpp)
@@ -149,8 +136,6 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
         set(LOGMACROS_SOURCE
             ${LOG_COMMON_SOURCE}
             ${LOGMACROS_INTERNALDEBUG_TEST_SOURCE})
-
-        include_directories(mock/)
 
         add_executable(LogMacrosInternalDebugOffTests ${LOGMACROS_SOURCE})
         target_compile_definitions(LogMacrosInternalDebugOffTests PRIVATE FASTRTPS_NO_LIB
@@ -163,7 +148,6 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             $<$<BOOL:${WIN32}>:iphlpapi$<SEMICOLON>Shlwapi>
             )
         add_gtest(LogMacrosInternalDebugOffTests SOURCES ${LOGMACROS_INTERNALDEBUG_TEST_SOURCE})
-
 
     endif()
 endif()

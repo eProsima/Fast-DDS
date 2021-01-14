@@ -197,7 +197,9 @@ endif()
 ###############################################################################
 
 if(EPROSIMA_BUILD AND NOT EPROSIMA_INSTALLER_MINION)
-    option(INTERNAL_DEBUG ON)
+    option(INTERNAL_DEBUG "Activate developer debug messages" ON)
+else()
+    option(INTERNAL_DEBUG OFF)
 endif()
 
 ###############################################################################

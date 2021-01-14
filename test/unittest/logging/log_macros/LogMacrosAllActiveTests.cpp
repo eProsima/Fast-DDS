@@ -30,64 +30,14 @@
 #define HAVE_LOG_NO_ERROR 0
 
 #include <fastdds/dds/log/Log.hpp>
-#include <fastdds/dds/log/OStreamConsumer.hpp>
-#include <fastdds/dds/log/StdoutConsumer.hpp>
-#include <fastdds/dds/log/StdoutErrConsumer.hpp>
-#include "../mock/MockConsumer.h"
+#include "LogMacros.hpp"
 #include <gtest/gtest.h>
 
-using namespace eprosima::fastdds::dds;
-using namespace std;
-
-class LogMacrosAllActiveTests : public ::testing::Test
-{
-public:
-
-    LogMacrosAllActiveTests()
-    {
-        Log::ClearConsumers();
-        mockConsumer = new MockConsumer();
-        Log::RegisterConsumer(std::unique_ptr<LogConsumer>(mockConsumer));
-        Log::SetVerbosity(Log::Info);
-        std::unique_ptr<StdoutConsumer> stdout_consumer(new StdoutConsumer());
-        Log::RegisterConsumer(std::move(stdout_consumer));
-        Log::SetVerbosity(Log::Info);
-    }
-
-    ~LogMacrosAllActiveTests()
-    {
-        Log::Reset();
-        Log::KillThread();
-    }
-
-    MockConsumer* mockConsumer;
-
-    const uint32_t AsyncTries = 5;
-    const uint32_t AsyncWaitMs = 25;
-
-    std::vector<Log::Entry> HELPER_WaitForEntries(
-            uint32_t amount);
-};
-
-std::vector<Log::Entry> LogMacrosAllActiveTests::HELPER_WaitForEntries(
-        uint32_t amount)
-{
-    size_t entries = 0;
-    for (uint32_t i = 0; i != AsyncTries; i++)
-    {
-        entries = mockConsumer->ConsumedEntries().size();
-        if (entries == amount)
-        {
-            break;
-        }
-        this_thread::sleep_for(chrono::milliseconds(AsyncWaitMs));
-    }
-
-    return mockConsumer->ConsumedEntries();
-}
-
-/* Check all log levels are consumed */
-TEST_F(LogMacrosAllActiveTests, all_active)
+/* Check all log levels are actived and consumed
+ * This test's name can be misunderstood. All active refers to all log level activated, that is why
+ * all define clauses are set to 0 (negative macros)
+ */
+TEST_F(LogMacrosTests, all_active)
 {
     logError(SampleCategory, "Sample error message");
     logWarning(SampleCategory, "Sample warning message");

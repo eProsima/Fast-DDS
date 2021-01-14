@@ -35,86 +35,26 @@
 #define __INTERNALDEBUG 0
 
 #include <fastdds/dds/log/Log.hpp>
-#include <fastdds/dds/log/OStreamConsumer.hpp>
-#include <fastdds/dds/log/StdoutConsumer.hpp>
-#include <fastdds/dds/log/StdoutErrConsumer.hpp>
-#include "../mock/MockConsumer.h"
+#include "LogMacros.hpp"
 #include <gtest/gtest.h>
-
-using namespace eprosima::fastdds::dds;
-using namespace std;
-
-class LogMacrosInternalDebugOffTests : public ::testing::Test
-{
-public:
-
-    LogMacrosInternalDebugOffTests()
-    {
-        Log::ClearConsumers();
-        mockConsumer = new MockConsumer();
-        Log::RegisterConsumer(std::unique_ptr<LogConsumer>(mockConsumer));
-        Log::SetVerbosity(Log::Info);
-        std::unique_ptr<StdoutConsumer> stdout_consumer(new StdoutConsumer());
-        Log::RegisterConsumer(std::move(stdout_consumer));
-        Log::SetVerbosity(Log::Info);
-    }
-
-    ~LogMacrosInternalDebugOffTests()
-    {
-        Log::Reset();
-        Log::KillThread();
-    }
-
-    MockConsumer* mockConsumer;
-
-    const uint32_t AsyncTries = 5;
-    const uint32_t AsyncWaitMs = 25;
-
-    std::vector<Log::Entry> HELPER_WaitForEntries(
-            uint32_t amount);
-
-    void internal_debug_ERROR_function(
-            int& i);
-};
-
-std::vector<Log::Entry> LogMacrosInternalDebugOffTests::HELPER_WaitForEntries(
-        uint32_t amount)
-{
-    size_t entries = 0;
-    for (uint32_t i = 0; i != AsyncTries; i++)
-    {
-        entries = mockConsumer->ConsumedEntries().size();
-        if (entries == amount)
-        {
-            break;
-        }
-        this_thread::sleep_for(chrono::milliseconds(AsyncWaitMs));
-    }
-
-    return mockConsumer->ConsumedEntries();
-}
-
-void LogMacrosInternalDebugOffTests::internal_debug_ERROR_function(
-        int& i)
-{
-    i++; // Not reachable instruction
-}
 
 /*
  * WARNING: If this test is not properly working, the expected behaviour would be a compilation failure
  * This test try to send in a macro a value (void) that is not convertible to string, so the compilation
  * must fail if INTERNAL_DEBUG is ON or any HAVE_LOG_NO_... is OFF
  */
-TEST_F(LogMacrosInternalDebugOffTests, internal_debug_off)
+TEST_F(LogMacrosTests, internal_debug_off)
 {
     int n = 0;
-    logError(SampleCategory, internal_debug_auxiliar_function(n));
-    logWarning(SampleCategory, internal_debug_auxiliar_function(n));
-    logInfo(SampleCategory, internal_debug_auxiliar_function(n));
+    logError(SampleCategory, non_valid_function(n));
+    logWarning(SampleCategory, non_valid_function(n));
+    logInfo(SampleCategory, non_valid_function(n));
 
     auto consumedEntries = HELPER_WaitForEntries(0);
-    ASSERT_EQ(0u, consumedEntries.size()); // no logs must be shown
-    ASSERT_EQ(n, 0); // n must not increase as INTERNAL_DEBUG does not force code to execute, just to compile
+    // No logs must be shown
+    ASSERT_EQ(0u, consumedEntries.size());
+    // n must not increase as INTERNAL_DEBUG does not force code to execute, just to compile
+    ASSERT_EQ(n, 0);
 }
 
 int main(
