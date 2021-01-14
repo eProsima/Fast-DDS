@@ -31,16 +31,6 @@ DomainParticipant::DomainParticipant(
 {
 }
 
-DomainParticipant::DomainParticipant(
-        DomainId_t domain_id,
-        const DomainParticipantQos& qos,
-        DomainParticipantListener* listener,
-        const StatusMask& mask)
-    : Entity(mask)
-    , impl_(DomainParticipantFactory::get_instance()->create_participant(domain_id, qos, listener, mask)->impl_)
-{
-}
-
 DomainParticipant::~DomainParticipant()
 {
     if (impl_)

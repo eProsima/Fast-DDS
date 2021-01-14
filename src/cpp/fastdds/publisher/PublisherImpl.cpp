@@ -512,7 +512,7 @@ ReturnCode_t PublisherImpl::wait_for_acknowledgments(
 
 const DomainParticipant* PublisherImpl::get_participant() const
 {
-    return participant_->get_participant();
+    return const_cast<const DomainParticipantImpl*>(participant_)->get_participant();
 }
 
 const Publisher* PublisherImpl::get_publisher() const

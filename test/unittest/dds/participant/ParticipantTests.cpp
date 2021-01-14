@@ -23,6 +23,8 @@
 #include <fastdds/dds/subscriber/Subscriber.hpp>
 #include <fastdds/dds/subscriber/qos/SubscriberQos.hpp>
 #include <fastdds/dds/topic/qos/TopicQos.hpp>
+#include <fastdds/dds/publisher/DataWriter.hpp>
+#include <fastdds/dds/subscriber/DataReader.hpp>
 #include <dds/domain/DomainParticipant.hpp>
 #include <dds/domain/qos/DomainParticipantQos.hpp>
 #include <dds/pub/qos/PublisherQos.hpp>
@@ -35,6 +37,11 @@
 #include <fastrtps/attributes/PublisherAttributes.h>
 #include <fastrtps/attributes/SubscriberAttributes.h>
 #include <fastrtps/xmlparser/XMLProfileManager.h>
+#include <fastrtps/types/DynamicDataFactory.h>
+#include <fastrtps/types/TypeDescriptor.h>
+#include <fastrtps/types/DynamicType.h>
+#include <fastrtps/types/DynamicTypePtr.h>
+#include <fastrtps/types/TypeObjectFactory.h>
 
 
 namespace eprosima {
@@ -44,8 +51,14 @@ namespace dds {
 using fastrtps::ParticipantAttributes;
 using fastrtps::PublisherAttributes;
 using fastrtps::SubscriberAttributes;
-using fastrtps::xmlparser::XMLProfileManager;
+using fastrtps::types::DynamicData_ptr;
+using fastrtps::types::DynamicDataFactory;
+using fastrtps::types::DynamicType_ptr;
+using fastrtps::types::DynamicTypeBuilder_ptr;
+using fastrtps::types::DynamicTypeBuilderFactory;
+using fastrtps::types::TypeDescriptor;
 using fastrtps::xmlparser::XMLP_ret;
+using fastrtps::xmlparser::XMLProfileManager;
 
 
 // Mocked TopicDataType for Topic creation tests
@@ -98,6 +111,11 @@ public:
         return true;
     }
 
+    void clearName()
+    {
+        setName("");
+    }
+
 };
 
 TEST(ParticipantTests, DomainParticipantFactoryGetInstance)
@@ -133,6 +151,7 @@ TEST(ParticipantTests, CreateDomainParticipant)
             DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
 
     ASSERT_NE(participant, nullptr);
+    EXPECT_EQ(participant->get_listener(), nullptr);
 
     ASSERT_TRUE(DomainParticipantFactory::get_instance()->delete_participant(participant) == ReturnCode_t::RETCODE_OK);
 
@@ -385,6 +404,12 @@ TEST(ParticipantTests, EntityFactoryBehavior)
     ASSERT_NE(nullptr, sub);
     EXPECT_FALSE(sub->is_enabled());
 
+    TypeSupport type(new TopicDataTypeMock());
+    type.register_type(participant);
+    Topic* topic = participant->create_topic("footopic", type.get_type_name(), TOPIC_QOS_DEFAULT);
+    ASSERT_NE(topic, nullptr);
+    EXPECT_FALSE(topic->is_enabled());
+
     // Enabling should fail on lower entities until participant is enabled
     EXPECT_EQ(ReturnCode_t::RETCODE_PRECONDITION_NOT_MET, pub->enable());
     EXPECT_EQ(ReturnCode_t::RETCODE_PRECONDITION_NOT_MET, sub->enable());
@@ -431,6 +456,7 @@ TEST(ParticipantTests, EntityFactoryBehavior)
     EXPECT_EQ(ReturnCode_t::RETCODE_OK, participant->delete_publisher(pub2));
     EXPECT_EQ(ReturnCode_t::RETCODE_OK, participant->delete_subscriber(sub));
     EXPECT_EQ(ReturnCode_t::RETCODE_OK, participant->delete_publisher(pub));
+    EXPECT_EQ(ReturnCode_t::RETCODE_OK, participant->delete_topic(topic));
     EXPECT_EQ(ReturnCode_t::RETCODE_OK, DomainParticipantFactory::get_instance()->delete_participant(participant));
 }
 
@@ -499,6 +525,8 @@ TEST(ParticipantTests, ChangeDefaultPublisherQos)
 {
     DomainParticipant* participant =
             DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
+
+    ASSERT_TRUE(participant->set_default_publisher_qos(PUBLISHER_QOS_DEFAULT) == ReturnCode_t::RETCODE_OK);
 
     PublisherQos qos;
     ASSERT_TRUE(participant->get_default_publisher_qos(qos) == ReturnCode_t::RETCODE_OK);
@@ -681,6 +709,8 @@ TEST(ParticipantTests, ChangeDefaultSubscriberQos)
     DomainParticipant* participant =
             DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
 
+    ASSERT_EQ(participant->set_default_subscriber_qos(SUBSCRIBER_QOS_DEFAULT), ReturnCode_t::RETCODE_OK);
+
     SubscriberQos qos;
     ASSERT_EQ(participant->get_default_subscriber_qos(qos), ReturnCode_t::RETCODE_OK);
 
@@ -719,6 +749,9 @@ TEST(ParticipantTests, ChangeDefaultTopicQos)
 {
     DomainParticipant* participant =
             DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
+
+    ASSERT_TRUE(participant->set_default_topic_qos(TOPIC_QOS_DEFAULT) == ReturnCode_t::RETCODE_OK);
+
     TopicQos qos;
     participant->get_default_topic_qos(qos);
 
@@ -733,6 +766,9 @@ TEST(ParticipantTests, ChangeDefaultTopicQos)
 
     ASSERT_EQ(qos, tqos);
     ASSERT_EQ(tqos.reliability().kind, BEST_EFFORT_RELIABILITY_QOS);
+
+    qos.durability().kind = PERSISTENT_DURABILITY_QOS;
+    ASSERT_FALSE(participant->set_default_topic_qos(qos) == ReturnCode_t::RETCODE_OK);
 
     ASSERT_TRUE(DomainParticipantFactory::get_instance()->delete_participant(participant) == ReturnCode_t::RETCODE_OK);
 }
@@ -801,16 +837,29 @@ TEST(ParticipantTests, GetTopicProfileQos)
 
 TEST(ParticipantTests, CreateTopic)
 {
+    DomainParticipantFactory::get_instance()->load_XML_profiles_file("test_xml_profiles.xml");
     DomainParticipant* participant =
             DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
 
     TypeSupport type(new TopicDataTypeMock());
     type.register_type(participant, "footype");
 
+    // Topic using the default profile
     Topic* topic = participant->create_topic("footopic", "footype", TOPIC_QOS_DEFAULT);
     ASSERT_NE(topic, nullptr);
 
+    // Try to create the same topic twice
+    Topic* topic_duplicated = participant->create_topic("footopic", "footype", TOPIC_QOS_DEFAULT);
+    ASSERT_EQ(topic_duplicated, nullptr);
+
     ASSERT_TRUE(participant->delete_topic(topic) == ReturnCode_t::RETCODE_OK);
+
+    // Topic using non-default profile
+    Topic* topic_profile = participant->create_topic_with_profile("footopic", "footype", "test_topic_profile");
+    ASSERT_NE(topic_profile, nullptr);
+    check_topic_with_profile(topic_profile, "test_topic_profile");
+    ASSERT_TRUE(participant->delete_topic(topic_profile) == ReturnCode_t::RETCODE_OK);
+
     ASSERT_TRUE(DomainParticipantFactory::get_instance()->delete_participant(participant) == ReturnCode_t::RETCODE_OK);
 }
 
@@ -974,6 +1023,1007 @@ TEST(ParticipantTests, SetListener)
                 std::get<2>(testing_case));
     }
 
+    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), ReturnCode_t::RETCODE_OK);
+}
+
+/*
+ * This test checks the negative cases of the check_qos() function.
+ * 1. User data is set to be a 5-element size octet vector.
+ * 2. The participant's qos are set to save these the user data.
+ * 3. Change the ParticipantResourceLimitsQos to a maximum user data value less than the current user data size.
+ * 4. Check that the previous operation returns an Inconsistent Policy error code
+ */
+TEST(ParticipantTests, CheckDomainParticipantQos)
+{
+    // Create the participant factory
+    DomainParticipantFactory* factory = DomainParticipantFactory::get_instance();
+
+    // Disable automatic entity enablement on the participant
+    {
+        DomainParticipantFactoryQos qos;
+        qos.entity_factory().autoenable_created_entities = false;
+
+        ASSERT_TRUE(factory->set_qos(qos) == ReturnCode_t::RETCODE_OK);
+    }
+
+    // Create the participant
+    DomainParticipant* participant =
+            DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
+
+    // Get the participant qos
+    DomainParticipantQos qos;
+    ASSERT_TRUE(participant->get_qos(qos) == ReturnCode_t::RETCODE_OK);
+
+    // Change the user data
+    qos.user_data().set_max_size(5);
+    std::vector<eprosima::fastrtps::rtps::octet> my_data {0, 1, 2, 3, 4};
+    qos.user_data().setValue(my_data);
+    ASSERT_TRUE(participant->set_qos(qos) == ReturnCode_t::RETCODE_OK);
+
+    // Change the ParticipantResourceLimitsQos to a maximum user data value less than the current user data size
+    // This should return an Inconsistent Policy error code
+    qos.allocation().data_limits.max_user_data = 1;
+    ASSERT_EQ(qos.allocation().data_limits.max_user_data, 1ul);
+    ASSERT_TRUE(participant->set_qos(qos) == ReturnCode_t::RETCODE_INCONSISTENT_POLICY);
+
+    // Enable the participant
+    EXPECT_EQ(ReturnCode_t::RETCODE_OK, participant->enable());
+
+    // Remove the participant
+    ASSERT_TRUE(DomainParticipantFactory::get_instance()->delete_participant(participant) == ReturnCode_t::RETCODE_OK);
+}
+
+/*
+ * This test checks the cases in which the allocation QoS is modified.
+ * 1. Check that the qos is modified if the participant is not enabled.
+ * 2. Check that the qos is not changed and it generates an error code if the participant is already enabled.
+ */
+TEST(ParticipantTests, ChangeAllocationDomainParticipantQos)
+{
+    DomainParticipantFactory* factory = DomainParticipantFactory::get_instance();
+    DomainParticipantFactoryQos pfqos;
+    pfqos.entity_factory().autoenable_created_entities = false;
+    ASSERT_EQ(factory->set_qos(pfqos), ReturnCode_t::RETCODE_OK);
+
+    DomainParticipant* participant =
+            DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
+    ASSERT_FALSE(participant->is_enabled());
+    DomainParticipantQos qos;
+    participant->get_qos(qos);
+
+    ASSERT_EQ(qos, PARTICIPANT_QOS_DEFAULT);
+
+    qos.allocation().data_limits.max_properties = 10;
+    ASSERT_EQ(participant->set_qos(qos), ReturnCode_t::RETCODE_OK);
+    DomainParticipantQos pqos;
+    participant->get_qos(pqos);
+
+    ASSERT_FALSE(pqos == PARTICIPANT_QOS_DEFAULT);
+    ASSERT_EQ(qos, pqos);
+    ASSERT_EQ(pqos.allocation().data_limits.max_properties, 10ul);
+
+    participant->enable();
+    ASSERT_TRUE(participant->is_enabled());
+    participant->get_qos(pqos);
+    pqos.allocation().data_limits.max_properties = 20;
+    ASSERT_EQ(participant->set_qos(pqos), ReturnCode_t::RETCODE_IMMUTABLE_POLICY);
+
+    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), ReturnCode_t::RETCODE_OK);
+}
+
+/*
+ * This test checks the cases in which the participant name is modified.
+ * 1. Check that the name is modified if the participant is not enabled.
+ * 2. Check that the name is not changed and it generates an error code if the participant is already enabled.
+ */
+TEST(ParticipantTests, ChangeDomainParcipantName)
+{
+    DomainParticipantFactory* factory = DomainParticipantFactory::get_instance();
+    DomainParticipantFactoryQos pfqos;
+    pfqos.entity_factory().autoenable_created_entities = false;
+    ASSERT_EQ(factory->set_qos(pfqos), ReturnCode_t::RETCODE_OK);
+
+    DomainParticipant* participant =
+            DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
+    ASSERT_FALSE(participant->is_enabled());
+    DomainParticipantQos qos;
+    participant->get_qos(qos);
+
+    ASSERT_EQ(qos, PARTICIPANT_QOS_DEFAULT);
+
+    qos.name() = "part1";
+    ASSERT_EQ(participant->set_qos(qos), ReturnCode_t::RETCODE_OK);
+    DomainParticipantQos pqos;
+    participant->get_qos(pqos);
+
+    ASSERT_FALSE(pqos == PARTICIPANT_QOS_DEFAULT);
+    ASSERT_EQ(qos, pqos);
+    ASSERT_EQ(pqos.name(), "part1");
+
+    participant->enable();
+    ASSERT_TRUE(participant->is_enabled());
+    participant->get_qos(pqos);
+    pqos.name() = "new_part1";
+    ASSERT_EQ(participant->set_qos(pqos), ReturnCode_t::RETCODE_IMMUTABLE_POLICY);
+
+    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), ReturnCode_t::RETCODE_OK);
+}
+
+/*
+ * This test checks the scenarios in which an error is given at trying to delete the publisher and subscriber entites.
+ */
+TEST(ParticipantTests, DeleteEntitiesNegativeClauses)
+{
+    // Create two participants
+    DomainParticipant* participant_1 =
+            DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
+    DomainParticipant* participant_2 =
+            DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
+
+    // Create a subscriber in the first participant
+    Subscriber* subscriber_1 = participant_1->create_subscriber(SUBSCRIBER_QOS_DEFAULT);
+    ASSERT_NE(subscriber_1, nullptr);
+    // Try to delete this subscriber using the second partipant. This should return a RETCODE_PRECONDITION_NOT_MET
+    // error code as this subscriber does not belong to the second participant
+    ASSERT_EQ(participant_2->delete_subscriber(subscriber_1), ReturnCode_t::RETCODE_PRECONDITION_NOT_MET);
+    ASSERT_EQ(participant_1->delete_subscriber(subscriber_1), ReturnCode_t::RETCODE_OK);
+
+    // Create a publisher in the first participant
+    Publisher* publisher_1 = participant_1->create_publisher(PUBLISHER_QOS_DEFAULT);
+    ASSERT_NE(publisher_1, nullptr);
+    // Try to delete this publisher using the second partipant. This should return a RETCODE_PRECONDITION_NOT_MET
+    // error code as this publisher does not belong to the second participant
+    ASSERT_EQ(participant_2->delete_publisher(publisher_1), ReturnCode_t::RETCODE_PRECONDITION_NOT_MET);
+    ASSERT_EQ(participant_1->delete_publisher(publisher_1), ReturnCode_t::RETCODE_OK);
+
+    // Remove both participants
+    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant_1), ReturnCode_t::RETCODE_OK);
+    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant_2), ReturnCode_t::RETCODE_OK);
+}
+
+/*
+ * This test checks that the participant's child entities are not created if an empty profile if provided for these
+ * entities.
+ */
+TEST(ParticipantTests, CreateEntitiesWithProfileNegativeClauses)
+{
+    DomainParticipant* participant =
+            DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
+
+    // Create publisher with an empty profile should return nullptr
+    Publisher* publisher = participant->create_publisher_with_profile("");
+    ASSERT_EQ(publisher, nullptr);
+
+    // Create subscriber with an empty profile should return nullptr
+    Subscriber* subscriber = participant->create_subscriber_with_profile("");
+    ASSERT_EQ(subscriber, nullptr);
+
+    // Create topic with an empty profile should return nullptr
+    Topic* topic = participant->create_topic_with_profile("footopic", "footype", "");
+    ASSERT_EQ(topic, nullptr);
+
+    // Remove the participant
+    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), ReturnCode_t::RETCODE_OK);
+}
+
+/*
+ * This test checks that an error is given when registering a TypeSupport with an empty name in the TopicDataType.
+ */
+TEST(ParticipantTests, RegisterTypeNegativeClauses)
+{
+    DomainParticipantFactory::get_instance()->load_XML_profiles_file("test_xml_profiles.xml");
+    DomainParticipant* participant =
+            DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
+
+    // Create the TopicDataType and delete the topic data type name
+    TopicDataTypeMock* data_type = new TopicDataTypeMock();
+    data_type->clearName();
+
+    // Create the TypeSupport with the TopicDataType with an empty name
+    TypeSupport type(data_type);
+    // Register the type shoul return a RETCODE_BAD_PARAMETER return code
+    EXPECT_EQ(type.register_type(participant), ReturnCode_t::RETCODE_BAD_PARAMETER);
+
+    // Remove the participant
+    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), ReturnCode_t::RETCODE_OK);
+}
+
+/*
+ * This test checks that an error is given when trying to assert the liveliness.
+ * 1. Check that an error is given at trying to assert the livelines from a non enabled participant.
+ * 2. Check that an error is given at trying to assert the livelines from a participant with a disabled
+ *    Writer Liveliness Protocol (WLP writer is not defined).
+ */
+TEST(ParticipantTests, AssertLivelinesNegativeClauses)
+{
+    // Do not enable entities on creation
+    DomainParticipantFactory* factory = DomainParticipantFactory::get_instance();
+    DomainParticipantFactoryQos qos;
+    qos.entity_factory().autoenable_created_entities = false;
+    ASSERT_EQ(factory->set_qos(qos), ReturnCode_t::RETCODE_OK);
+
+    // Create a disabled participant
+    DomainParticipant* participant =
+            DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
+    ASSERT_NE(nullptr, participant);
+    ASSERT_FALSE(participant->is_enabled());
+
+    // Assert liveliness from a disabled participant should return a RETCODE_NOT_ENABLED return code.
+    ASSERT_EQ(participant->assert_liveliness(), ReturnCode_t::RETCODE_NOT_ENABLED);
+
+    // Change the participant QoS to disable the Writer Liveliness Protocol
+    DomainParticipantQos pqos;
+    ASSERT_EQ(participant->get_qos(pqos), ReturnCode_t::RETCODE_OK);
+    pqos.wire_protocol().builtin.use_WriterLivelinessProtocol = false;
+    ASSERT_EQ(participant->set_qos(pqos), ReturnCode_t::RETCODE_OK);
+
+    // Enable the participant
+    EXPECT_EQ(ReturnCode_t::RETCODE_OK, participant->enable());
+    EXPECT_TRUE(participant->is_enabled());
+    // Check that an error is given at trying to assert the livelines from a participant with a disabled
+    // Writer Liveliness Protocol (WLP writer is not defined).
+    ASSERT_EQ(participant->assert_liveliness(), ReturnCode_t::RETCODE_ERROR);
+
+    // Remove the participant
+    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), ReturnCode_t::RETCODE_OK);
+}
+
+/*
+ * This test check the get_current_time public member function of the DomainParticipant.
+ */
+TEST(ParticipantTests, GetCurrentTime)
+{
+    DomainParticipant* participant =
+            DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
+
+    eprosima::fastrtps::Time_t now;
+    ASSERT_EQ(participant->get_current_time(now), ReturnCode_t::RETCODE_OK);
+    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), ReturnCode_t::RETCODE_OK);
+}
+
+/*
+ * This test checks that a constant pointer to the DomainParticipant is returned when calling the get_participant()
+ * function from a publisher of this participant.
+ */
+TEST(ParticipantTests, GetParticipantConst)
+{
+    // Create the participant
+    DomainParticipant* participant =
+            DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
+
+    // Create the publisher
+    Publisher* publisher = participant->create_publisher(PUBLISHER_QOS_DEFAULT);
+    ASSERT_NE(publisher, nullptr);
+
+    // Call the get_participant() Publisher member function
+    const DomainParticipant* participant_pub = publisher->get_participant();
+
+    // Check that the GUIDs of the created DomainParticipant and the returned one match.
+    ASSERT_EQ(participant_pub->guid(), participant->guid());
+
+    // Remove the publisher and the participant
+    ASSERT_EQ(participant->delete_publisher(publisher), ReturnCode_t::RETCODE_OK);
+    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), ReturnCode_t::RETCODE_OK);
+}
+
+
+/*
+ * This test checks the get_participant_names() DomainParticipant member function.
+ * 1. Check that the participant name is empty if the participant is not enabled.
+ * 2. Check that the participant name is filled when the participant is enabled.
+ */
+TEST(ParticipantTests, GetParticipantNames)
+{
+    // Do not enable entities on creation
+    DomainParticipantFactory* factory = DomainParticipantFactory::get_instance();
+    DomainParticipantFactoryQos qos;
+    qos.entity_factory().autoenable_created_entities = false;
+    ASSERT_EQ(factory->set_qos(qos), ReturnCode_t::RETCODE_OK);
+
+    // Create a disabled participant
+    DomainParticipant* participant =
+            DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
+    ASSERT_NE(nullptr, participant);
+    ASSERT_FALSE(participant->is_enabled());
+
+    // Check that the participant name is empty if the participant is not enabled
+    std::vector<std::string> participant_names = participant->get_participant_names();
+    ASSERT_TRUE(participant_names.empty());
+
+    // Enable the participant
+    EXPECT_EQ(ReturnCode_t::RETCODE_OK, participant->enable());
+    EXPECT_TRUE(participant->is_enabled());
+
+    // Check that the participant name is filled when the participant is enabled
+    participant_names = participant->get_participant_names();
+    ASSERT_FALSE(participant_names.empty());
+
+    // Remove the participant
+    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), ReturnCode_t::RETCODE_OK);
+}
+
+/*
+ * This test checks that a topic is not created with a wrong settings.
+ * 1. Check that the topic is not created if a wrong type name is provided.
+ * 2. Check that the topic is not created if a non supported durability QoS is provided.
+ */
+TEST(ParticipantTests, CreateTopicNegativeClauses)
+{
+    // Create the participant
+    DomainParticipant* participant =
+            DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
+
+    // Register the type
+    TypeSupport type(new TopicDataTypeMock());
+    type.register_type(participant);
+
+    // Check that the topic is not created if a wrong type name is provided
+    Topic* topic;
+    topic = participant->create_topic("footopic", "fake_type_name", TOPIC_QOS_DEFAULT);
+    ASSERT_EQ(topic, nullptr);
+
+    // Check that the topic is not created if a non supported durability QoS is provided
+    TopicQos tqos;
+    participant->get_default_topic_qos(tqos);
+    tqos.durability().kind = PERSISTENT_DURABILITY_QOS;
+    topic = participant->create_topic("footopic", type.get_type_name(), tqos);
+    ASSERT_EQ(topic, nullptr);
+
+    // Remove the participant
+    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), ReturnCode_t::RETCODE_OK);
+}
+
+/*
+ * This test checks the contais_entity() DomainParticipant member function.
+ * 1. Check that the participant contains an already created topic in this participant.
+ * 2. Check that the participant contains an already created publisher in this participant.
+ * 3. Check that the participant contains an already created subscriber in this participant.
+ * 4. Check that the participant contains an already created data_writer in this participant.
+ * 5. Check that the participant contains an already created data_reader in this participant.
+ * 6. Check that the participant does not contains a removed publisher.
+ */
+TEST(ParticipantTests, ContainsEntity)
+{
+    // Create the participant
+    DomainParticipant* participant =
+            DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
+
+    TypeSupport type(new TopicDataTypeMock());
+    type.register_type(participant);
+
+    // Create the topic
+    Topic* topic = participant->create_topic("footopic", type.get_type_name(), TOPIC_QOS_DEFAULT);
+    ASSERT_NE(topic, nullptr);
+    eprosima::fastrtps::rtps::InstanceHandle_t topic_ihandle = topic->get_instance_handle();
+    // Check that the participant contains an already created topic in this participant
+    ASSERT_TRUE(participant->contains_entity(topic_ihandle, false));
+
+    // Create the publisher
+    Publisher* publisher = participant->create_publisher(PUBLISHER_QOS_DEFAULT);
+    ASSERT_NE(publisher, nullptr);
+    eprosima::fastrtps::rtps::InstanceHandle_t pub_ihandle = publisher->get_instance_handle();
+    // Check that the participant contains an already created publisher in this participant
+    ASSERT_TRUE(participant->contains_entity(pub_ihandle, false));
+
+    // Create the subscriber
+    Subscriber* subscriber = participant->create_subscriber(SUBSCRIBER_QOS_DEFAULT);
+    ASSERT_NE(subscriber, nullptr);
+    eprosima::fastrtps::rtps::InstanceHandle_t sub_ihandle = subscriber->get_instance_handle();
+    // Check that the participant contains an already created subscriber in this participant
+    ASSERT_TRUE(participant->contains_entity(sub_ihandle, false));
+
+    // Create the data_writer
+    DataWriter* data_writer = publisher->create_datawriter(topic, DATAWRITER_QOS_DEFAULT);
+    ASSERT_NE(data_writer, nullptr);
+    eprosima::fastrtps::rtps::InstanceHandle_t data_writer_ihandle = data_writer->get_instance_handle();
+    // Check that the participant contains an already created data_writer in this participant
+    ASSERT_TRUE(participant->contains_entity(data_writer_ihandle, true));
+
+    // Create the data_reader
+    DataReader* data_reader = subscriber->create_datareader(topic, DATAREADER_QOS_DEFAULT);
+    ASSERT_NE(data_reader, nullptr);
+    eprosima::fastrtps::rtps::InstanceHandle_t data_reader_ihandle = data_reader->get_instance_handle();
+    // Check that the participant contains an already created data_reader in this participant
+    ASSERT_TRUE(participant->contains_entity(data_reader_ihandle, true));
+
+    // Remove data_writer, data_reader, publisher, subscriber and topic entities.
+    ASSERT_EQ(publisher->delete_datawriter(data_writer), ReturnCode_t::RETCODE_OK);
+    ASSERT_EQ(subscriber->delete_datareader(data_reader), ReturnCode_t::RETCODE_OK);
+    ASSERT_EQ(participant->delete_publisher(publisher), ReturnCode_t::RETCODE_OK);
+    ASSERT_EQ(participant->delete_subscriber(subscriber), ReturnCode_t::RETCODE_OK);
+    ASSERT_EQ(participant->delete_topic(topic), ReturnCode_t::RETCODE_OK);
+
+    // Check that the participant does not contains a removed publisher
+    ASSERT_FALSE(participant->contains_entity(pub_ihandle, false));
+
+    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), ReturnCode_t::RETCODE_OK);
+}
+
+/*
+ * This test checks the unregister_type() DomainParticipant member function.
+ * 1. Check that an error is given at trying to unregister a type with an empty name.
+ * 2. Check that no error is given at trying to unregister a non registered type.
+ * 3. Check that an error is given at trying to unregister a type that is been used by a data_reader/data_writer.
+ * 4. Check that no errors result when an unused topic is unregistered.
+ */
+TEST(ParticipantTests, UnregisterType)
+{
+    // Create the participant
+    DomainParticipant* participant =
+            DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
+
+    // Check that an error is given at trying to unregister a type with an empty name
+    ASSERT_EQ(participant->unregister_type(""), ReturnCode_t::RETCODE_BAD_PARAMETER);
+
+    // Check that no error is given at trying to unregister a non registered type
+    ASSERT_EQ(participant->unregister_type("missing_type"), ReturnCode_t::RETCODE_OK);
+
+    TypeSupport type(new TopicDataTypeMock());
+    type.register_type(participant);
+
+    Topic* topic = participant->create_topic("footopic", type.get_type_name(), TOPIC_QOS_DEFAULT);
+    ASSERT_NE(topic, nullptr);
+
+    // Create the subscriber and a data_reader that use the above topic
+    Subscriber* subscriber = participant->create_subscriber(SUBSCRIBER_QOS_DEFAULT);
+    ASSERT_NE(subscriber, nullptr);
+    DataReader* data_reader = subscriber->create_datareader(topic, DATAREADER_QOS_DEFAULT);
+    ASSERT_NE(data_reader, nullptr);
+    // Check that an error is given at trying to unregister a type that is been used by a data_reader
+    ASSERT_EQ(participant->unregister_type(type.get_type_name()), ReturnCode_t::RETCODE_PRECONDITION_NOT_MET);
+
+    ASSERT_EQ(subscriber->delete_datareader(data_reader), ReturnCode_t::RETCODE_OK);
+    ASSERT_EQ(participant->delete_subscriber(subscriber), ReturnCode_t::RETCODE_OK);
+
+    // Create the publisher and a data_writer that use the above topic
+    Publisher* publisher = participant->create_publisher(PUBLISHER_QOS_DEFAULT);
+    ASSERT_NE(publisher, nullptr);
+    DataWriter* data_writer = publisher->create_datawriter(topic, DATAWRITER_QOS_DEFAULT);
+    ASSERT_NE(data_writer, nullptr);
+    // Check that an error is given at trying to unregister a type that is been used by a data_writer
+    ASSERT_EQ(participant->unregister_type(type.get_type_name()), ReturnCode_t::RETCODE_PRECONDITION_NOT_MET);
+
+    ASSERT_EQ(publisher->delete_datawriter(data_writer), ReturnCode_t::RETCODE_OK);
+    ASSERT_EQ(participant->delete_publisher(publisher), ReturnCode_t::RETCODE_OK);
+
+    ASSERT_EQ(participant->delete_topic(topic), ReturnCode_t::RETCODE_OK);
+
+    // At this point, the type is not been used by any entity.
+    // Check that no errors result when an unused topic is unregistered
+    ASSERT_EQ(participant->unregister_type(type.get_type_name()), ReturnCode_t::RETCODE_OK);
+
+    // Remove the participant
+    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), ReturnCode_t::RETCODE_OK);
+}
+
+/*
+ * This test checks the negative clauses of new_remote_endpoint_discovered() DomainParticipant memeber function
+ * used in the STATIC discovery.
+ * 1. Check that the remote endpoint is not registered in a disabled participant.
+ * 2. Check that a remote WRITER endpoint is not registered in an enabled participant if the discovery protocol is
+ *    SIMPLE.
+ * 3. Check that a remote READER endpoint is not registered in an enabled participant if the discovery protocol is
+ *    SIMPLE.
+ */
+TEST(ParticipantTests, NewRemoteEndpointDiscovered)
+{
+    // Do not enable entities on creation
+    DomainParticipantFactory* factory = DomainParticipantFactory::get_instance();
+    DomainParticipantFactoryQos qos;
+    qos.entity_factory().autoenable_created_entities = false;
+    ASSERT_TRUE(factory->set_qos(qos) == ReturnCode_t::RETCODE_OK);
+
+    // Create a disabled participant
+    DomainParticipant* participant =
+            DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
+    ASSERT_NE(nullptr, participant);
+    ASSERT_FALSE(participant->is_enabled());
+
+    eprosima::fastrtps::rtps::GUID_t remote_endpoint_guid;
+    std::istringstream("72.61.75.6c.5f.73.61.6e.63.68.65.7a") >> remote_endpoint_guid;
+
+    // Check that the remote endpoint is not registered in a disabled participant
+    ASSERT_FALSE(participant->new_remote_endpoint_discovered(
+                remote_endpoint_guid, 1, eprosima::fastrtps::rtps::EndpointKind_t::WRITER));
+
+    // Enable the participant
+    ASSERT_EQ(ReturnCode_t::RETCODE_OK, participant->enable());
+    ASSERT_TRUE(participant->is_enabled());
+
+    // Check that a WRITER remote endpoint is not registered in an enabled participant
+    ASSERT_FALSE(participant->new_remote_endpoint_discovered(
+                remote_endpoint_guid, 1, eprosima::fastrtps::rtps::EndpointKind_t::WRITER));
+    // Check that a READER remote endpoint is not registered in an enabled participant
+    ASSERT_FALSE(participant->new_remote_endpoint_discovered(
+                remote_endpoint_guid, 1, eprosima::fastrtps::rtps::EndpointKind_t::READER));
+
+    // Remove the participant
+    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), ReturnCode_t::RETCODE_OK);
+}
+
+/*
+ * This test checks the set_qos() DomainParticipant member function for the PropertyPolicyQos and TransportConfigQos.
+ */
+TEST(ParticipantTests, SetDomainParticipantQos)
+{
+    // Create the DomainParticipantQos object
+    DomainParticipantQos pqos;
+    // Change in the DomainParticipantQos object the persistence guid property
+    pqos.properties().properties().emplace_back("dds.persistence.guid", "72.61.75.6c.5f.73.61.6e.63.68.65.7a");
+    // Change in the DomainParticipantQos object the listening socket buffer size setting of the transport qos
+    pqos.transport().listen_socket_buffer_size = 262144;
+    // Set the modified participant qos as the default qos
+    ASSERT_EQ(DomainParticipantFactory::get_instance()->set_default_participant_qos(pqos), ReturnCode_t::RETCODE_OK);
+
+    DomainParticipant* participant =
+            DomainParticipantFactory::get_instance()->create_participant(0, pqos);
+
+    DomainParticipantQos qos;
+    participant->get_qos(qos);
+
+    // Check that the participant QoS are the modified qos
+    const std::string* persistence_property_old =
+            eprosima::fastrtps::rtps::PropertyPolicyHelper::find_property(pqos.properties(), "dds.persistence.guid");
+    ASSERT_NE(persistence_property_old, nullptr);
+    eprosima::fastrtps::rtps::GUID_t persistence_guid_old;
+    std::istringstream(persistence_property_old->c_str()) >> persistence_guid_old;
+    const std::string* persistence_property_new =
+            eprosima::fastrtps::rtps::PropertyPolicyHelper::find_property(qos.properties(), "dds.persistence.guid");
+    ASSERT_NE(persistence_property_new, nullptr);
+    eprosima::fastrtps::rtps::GUID_t persistence_guid_new;
+    std::istringstream(persistence_property_old->c_str()) >> persistence_guid_new;
+    ASSERT_EQ(persistence_guid_new, persistence_guid_old);
+
+    ASSERT_EQ(qos.transport().listen_socket_buffer_size, pqos.transport().listen_socket_buffer_size);
+
+    // Remove the participant
+    ASSERT_TRUE(DomainParticipantFactory::get_instance()->delete_participant(participant) == ReturnCode_t::RETCODE_OK);
+}
+
+/*
+ * This test checks that the PropertyPolicyQos and TransportConfigQos are immutable policy qos, i.e. these can not be
+ * changed in an enabled participant
+ */
+TEST(ParticipantTests, UpdatableDomainParticipantQos)
+{
+
+    DomainParticipant* participant =
+            DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
+
+    DomainParticipantQos pqos;
+
+    // Check that the PropertyPolicyQos can not be changed in an enabled participant
+    participant->get_qos(pqos);
+    pqos.properties().properties().emplace_back("dds.persistence.guid", "72.61.75.6c.5f.73.61.6e.63.68.65.7a");
+    ASSERT_EQ(participant->set_qos(pqos), ReturnCode_t::RETCODE_IMMUTABLE_POLICY);
+
+    // Check that the TransportConfigQos can not be changed in an enabled participant
+    participant->get_qos(pqos);
+    pqos.transport().listen_socket_buffer_size = 262144;
+    ASSERT_EQ(participant->set_qos(pqos), ReturnCode_t::RETCODE_IMMUTABLE_POLICY);
+
+    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), ReturnCode_t::RETCODE_OK);
+}
+
+/*
+ * This test adds a complete dynamic type to the participant dynamic type factories
+ */
+TEST(ParticipantTests, RegisterDynamicTypeToFactories)
+{
+    // Do not enable entities on creation
+    DomainParticipantFactoryQos factory_qos;
+    factory_qos.entity_factory().autoenable_created_entities = false;
+    DomainParticipantFactory::get_instance()->set_qos(factory_qos);
+
+    // Create a disabled participant
+    DomainParticipant* participant =
+            DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
+
+    // Create the dynamic type builder
+    DynamicType_ptr base_type = DynamicTypeBuilderFactory::get_instance()->create_uint32_type();
+    DynamicTypeBuilder_ptr builder = DynamicTypeBuilderFactory::get_instance()->create_struct_builder();
+    builder->add_member(0, "uint", base_type);
+    // Build the complete dynamic type
+    DynamicType_ptr dyn_type = builder->build();
+    // Create the data instance
+    DynamicData_ptr data(DynamicDataFactory::get_instance()->create_data(dyn_type));
+    // Register the type
+    TypeSupport type(new eprosima::fastrtps::types::DynamicPubSubType(dyn_type));
+    // Activating the auto_fill_type_information or the auto_fill_type_object settings, the participant will try to
+    // add the type dynamic type factories
+    type->auto_fill_type_information(true);
+    type->auto_fill_type_object(true);
+    ASSERT_EQ(type.register_type(participant), ReturnCode_t::RETCODE_OK);
+
+    // Remove the participant
+    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), ReturnCode_t::RETCODE_OK);
+}
+
+/*
+ * This test adds a complete dynamic type to the participant dynamic type factories without enabling the
+ * auto_fill_type_information setting
+ */
+TEST(ParticipantTests, RegisterDynamicTypeToFactoriesNotFillTypeInfo)
+{
+    // Do not enable entities on creation
+    DomainParticipantFactoryQos factory_qos;
+    factory_qos.entity_factory().autoenable_created_entities = false;
+    DomainParticipantFactory::get_instance()->set_qos(factory_qos);
+
+    // Create a disabled participant
+    DomainParticipant* participant =
+            DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
+
+    // Create the dynamic type builder
+    DynamicType_ptr base_type = DynamicTypeBuilderFactory::get_instance()->create_uint32_type();
+    DynamicTypeBuilder_ptr builder = DynamicTypeBuilderFactory::get_instance()->create_struct_builder();
+    builder->add_member(0, "uint", base_type);
+
+    // Build the complete dynamic type
+    DynamicType_ptr dyn_type = builder->build();
+    // Create the data instance
+    DynamicData_ptr data(DynamicDataFactory::get_instance()->create_data(dyn_type));
+
+    // Register the type
+    TypeSupport type(new eprosima::fastrtps::types::DynamicPubSubType(dyn_type));
+    type->auto_fill_type_information(false);
+    type->auto_fill_type_object(true);
+    ASSERT_EQ(type.register_type(participant), ReturnCode_t::RETCODE_OK);
+
+    // Remove the participant
+    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), ReturnCode_t::RETCODE_OK);
+}
+
+// Mocked DynamicType for DynamicType creation tests
+class DynamicTypeMock : public eprosima::fastrtps::types::DynamicType
+{
+public:
+
+    DynamicTypeMock(
+            const eprosima::fastrtps::types::TypeDescriptor* descriptor)
+        : eprosima::fastrtps::types::DynamicType(descriptor)
+    {
+    }
+
+    DynamicType_ptr get_base_type_wrapper() const
+    {
+        return get_base_type();
+    }
+
+};
+
+/*
+ * This test attempts to add a non supported custom dynamic type to the participant dynamic type factories. The type
+ * should be registered in the participant but not added to the dynamic types factories.
+ */
+TEST(ParticipantTests, RegisterDynamicTypeToFactoriesNotTypeIdentifier)
+{
+    // Do not enable entities on creation
+    DomainParticipantFactoryQos factory_qos;
+    factory_qos.entity_factory().autoenable_created_entities = false;
+    DomainParticipantFactory::get_instance()->set_qos(factory_qos);
+
+    // Create a disabled participant
+    DomainParticipant* participant =
+            DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
+
+    // Create a not supported TypeDescriptor
+    const TypeDescriptor* myDescriptor = new TypeDescriptor("my_descriptor", 0x11);
+    // Create the base type for the dynamic type
+    DynamicType_ptr base_type(new DynamicTypeMock(myDescriptor));
+    // Create a custom dynamic type builder using the wrong TypeDescriptor
+    DynamicTypeBuilder_ptr builder =
+            DynamicTypeBuilderFactory::get_instance()->create_custom_builder(myDescriptor, "my_dynamic_type");
+    builder->add_member(0, "uint", base_type);
+    // Create the dynamic type
+    DynamicType_ptr dyn_type = builder->build();
+    // Create the data instance
+    DynamicData_ptr data(DynamicDataFactory::get_instance()->create_data(dyn_type));
+
+    // Register the type
+    TypeSupport type(new eprosima::fastrtps::types::DynamicPubSubType(dyn_type));
+    type->auto_fill_type_information(true);
+    type->auto_fill_type_object(true);
+    type.register_type(participant);
+
+    TypeSupport ret_type = participant->find_type("my_dynamic_type");
+
+    // The type is registered in the participant but not in the dynamic types factories
+    ASSERT_FALSE(ret_type.empty());
+
+    // Remove TypeDescriptor before closing
+    delete myDescriptor;
+
+    // Remove the participant
+    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), ReturnCode_t::RETCODE_OK);
+}
+
+/*
+ * This test create a sequence of TypeIdentifiers to call the get_types() DomainParticipant function. It should return
+ * the TypeObjects associated with the TypeIdentifiers. Finally, the test checks that the writer guid prefix given by
+ * the TypeObject is the same as the DomainPartipant guid prefix.
+ */
+TEST(ParticipantTests, GetTypes)
+{
+    // Create the participant
+    DomainParticipantQos pqos;
+    pqos.wire_protocol().builtin.typelookup_config.use_client = true;
+    DomainParticipant* participant =
+            DomainParticipantFactory::get_instance()->create_participant(0, pqos);
+
+    // Create the dynamic type builder
+    DynamicTypeBuilder_ptr builder_string = DynamicTypeBuilderFactory::get_instance()->create_string_builder(100);
+    // Create the dynamic type
+    DynamicType_ptr dyn_type_string = builder_string->build();
+    TypeSupport type_string(new eprosima::fastrtps::types::DynamicPubSubType(dyn_type_string));
+    // Create the data instance
+    DynamicData_ptr data_string(DynamicDataFactory::get_instance()->create_data(dyn_type_string));
+    data_string->set_string_value("Dynamic String");
+
+    // Register the type
+    type_string->auto_fill_type_information(true);
+    type_string->auto_fill_type_object(true);
+    type_string.register_type(participant);
+
+    // Create the sequence of TypeIdentifiers
+    const fastrtps::types::TypeIdentifier* indentifier_string =
+            fastrtps::types::TypeObjectFactory::get_instance()->get_type_identifier_trying_complete(
+        type_string.get_type_name());
+
+    fastrtps::types::TypeIdentifierSeq types;
+    types.push_back(*indentifier_string);
+
+    // Checks that the writer guid prefix given by the TypeObject is the same as the DomainPartipant guid prefix
+    ASSERT_EQ(participant->guid().guidPrefix, participant->get_types(types).writer_guid().guidPrefix);
+
+    // Remove the participant
+    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), ReturnCode_t::RETCODE_OK);
+}
+
+/*
+ * This test create a sequence of TypeIdentifiers to call the get_type_dependencies() DomainParticipant function.
+ * Finally, the test checks that the writer guid prefix given by the TypeObject is the same as the DomainPartipant
+ * guid prefix.
+ */
+TEST(ParticipantTests, GetTypeDependencies)
+{
+    // Create the participant
+    DomainParticipantQos pqos;
+    pqos.wire_protocol().builtin.typelookup_config.use_client = true;
+    DomainParticipant* participant =
+            DomainParticipantFactory::get_instance()->create_participant(0, pqos);
+
+    // Create the dynamic type builder
+    DynamicTypeBuilder_ptr builder_string = DynamicTypeBuilderFactory::get_instance()->create_string_builder(100);
+    // Create the dynamic type
+    DynamicType_ptr dyn_type_string = builder_string->build();
+    TypeSupport type_string(new eprosima::fastrtps::types::DynamicPubSubType(dyn_type_string));
+    // Create the data instance
+    DynamicData_ptr data_string(DynamicDataFactory::get_instance()->create_data(dyn_type_string));
+    data_string->set_string_value("Dynamic String");
+
+    // Register the type
+    type_string->auto_fill_type_information(true);
+    type_string->auto_fill_type_object(true);
+    type_string.register_type(participant);
+
+    // Create the sequence of TypeIdentifiers
+    const fastrtps::types::TypeIdentifier* indentifier_string =
+            fastrtps::types::TypeObjectFactory::get_instance()->get_type_identifier_trying_complete(
+        type_string.get_type_name());
+
+    fastrtps::types::TypeIdentifierSeq types;
+    types.push_back(*indentifier_string);
+
+    // Checks that the writer guid prefix given by the TypeObject is the same as the DomainPartipant guid prefix
+    ASSERT_EQ(participant->guid().guidPrefix, participant->get_type_dependencies(types).writer_guid().guidPrefix);
+
+    // Remove the participant
+    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), ReturnCode_t::RETCODE_OK);
+}
+
+/*
+ * This test create two participants which will share a complete dynamic type.
+ * 1. The remote participant registers a dynamic type
+ * 2. The local participant register the dynamic type of the remote participant using the TypeInformation and the type
+ *    name
+ * 3. Check that the type is not registered if the local participant is disabled
+ * 4. Check that the type is registered if the local participant is enabled
+ */
+TEST(ParticipantTests, RegisterRemoteTypeComplete)
+{
+    // Do not enable entities on creation
+    DomainParticipantFactoryQos factory_qos;
+    factory_qos.entity_factory().autoenable_created_entities = false;
+    DomainParticipantFactory::get_instance()->set_qos(factory_qos);
+
+    // Create the remote participant and enable it
+    DomainParticipant* remote_participant =
+            DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
+    EXPECT_EQ(ReturnCode_t::RETCODE_OK, remote_participant->enable());
+    EXPECT_TRUE(remote_participant->is_enabled());
+
+    // Create the local participant
+    DomainParticipant* participant =
+            DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
+
+    // Create the complete dynamic type builder
+    DynamicTypeBuilder_ptr int32_builder = DynamicTypeBuilderFactory::get_instance()->create_int32_builder();
+    DynamicTypeBuilder_ptr seqLong_builder =
+            DynamicTypeBuilderFactory::get_instance()->create_sequence_builder(int32_builder.get());
+    DynamicTypeBuilder_ptr mySequenceLong_builder =
+            DynamicTypeBuilderFactory::get_instance()->create_alias_builder(seqLong_builder.get(), "MySequenceLong");
+    // Build the dynamic type
+    DynamicType_ptr dyn_type = mySequenceLong_builder->build();
+
+    // Register the type
+    TypeSupport type(new eprosima::fastrtps::types::DynamicPubSubType(dyn_type));
+    type.register_type(remote_participant);
+
+    // Retrieve the Typeidentifier, the type name and the TypeInformation from the TypeObjectFactory
+    const fastrtps::types::TypeIdentifier* identifier =
+            fastrtps::types::TypeObjectFactory::get_instance()->get_type_identifier_trying_complete(
+        type.get_type_name());
+
+    std::string type_name = fastrtps::types::TypeObjectFactory::get_instance()->get_type_name(identifier);
+
+    const fastrtps::types::TypeInformation* type_information =
+            fastrtps::types::TypeObjectFactory::get_instance()->get_type_information(type_name);
+
+    Topic* topic = remote_participant->create_topic("footopic", type.get_type_name(), TOPIC_QOS_DEFAULT);
+    ASSERT_NE(topic, nullptr);
+
+    // Create the functor for the remote type registration
+    std::string topic_name = "footopic";
+    std::function<void(const std::string&, const fastrtps::types::DynamicType_ptr)> callback =
+            [topic_name](const std::string&, const fastrtps::types::DynamicType_ptr type)
+            {
+                std::cout << "Callback for type: " << type->get_name() << " on topic: " << topic_name << std::endl;
+            };
+
+    // Register the remote type in the disabled local participant. This should return a RETCODE_NOT_ENABLED return code
+    ASSERT_EQ(participant->register_remote_type(*type_information, type.get_type_name(), callback),
+            ReturnCode_t::RETCODE_NOT_ENABLED);
+
+    // Enable the local participant
+    EXPECT_EQ(ReturnCode_t::RETCODE_OK, participant->enable());
+    EXPECT_TRUE(participant->is_enabled());
+
+    // Register the remote type in the disabled local participant
+    ASSERT_EQ(participant->register_remote_type(*type_information, type_name, callback),
+            ReturnCode_t::RETCODE_OK);
+
+    // Remove the topic and both participants
+    ASSERT_EQ(remote_participant->delete_topic(topic), ReturnCode_t::RETCODE_OK);
+    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(remote_participant),
+            ReturnCode_t::RETCODE_OK);
+    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), ReturnCode_t::RETCODE_OK);
+}
+
+/*
+ * This test create two participants which will share a minimal dynamic type.
+ * 1. The remote participant registers a dynamic type
+ * 2. The local participant register the dynamic type of the remote participant using the TypeInformation and the type
+ *    name
+ * 3. Check that the type is not registered if the local participant is disabled
+ * 4. Check that the type is registered if the local participant is enabled
+ */
+TEST(ParticipantTests, RegisterRemoteTypeMinimal)
+{
+    // Do not enable entities on creation
+    DomainParticipantFactoryQos factory_qos;
+    factory_qos.entity_factory().autoenable_created_entities = false;
+    DomainParticipantFactory::get_instance()->set_qos(factory_qos);
+
+    // Create the remote participant and enable it
+    DomainParticipant* remote_participant =
+            DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
+    EXPECT_EQ(ReturnCode_t::RETCODE_OK, remote_participant->enable());
+    EXPECT_TRUE(remote_participant->is_enabled());
+
+    // Create the local participant
+    DomainParticipant* participant =
+            DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
+
+    // Create the minimal dynamic type builder
+    DynamicTypeBuilder_ptr builder = DynamicTypeBuilderFactory::get_instance()->create_char16_builder();
+    // Build the dynamic type
+    DynamicType_ptr dyn_type = DynamicTypeBuilderFactory::get_instance()->create_type(builder.get());
+    DynamicData_ptr data(DynamicDataFactory::get_instance()->create_data(dyn_type));
+    data->set_string_value("Dynamic Char16");
+
+    // Register the type
+    TypeSupport type(new eprosima::fastrtps::types::DynamicPubSubType(dyn_type));
+    type.register_type(remote_participant);
+
+    // Retrieve the Typeidentifier, the type name and the TypeInformation from the TypeObjectFactory
+    const fastrtps::types::TypeIdentifier* identifier =
+            fastrtps::types::TypeObjectFactory::get_instance()->get_type_identifier_trying_complete(
+        type.get_type_name());
+
+    std::string type_name = fastrtps::types::TypeObjectFactory::get_instance()->get_type_name(identifier);
+
+    const fastrtps::types::TypeInformation* type_information =
+            fastrtps::types::TypeObjectFactory::get_instance()->get_type_information(type_name);
+
+    Topic* topic = remote_participant->create_topic("footopic", type.get_type_name(), TOPIC_QOS_DEFAULT);
+    ASSERT_NE(topic, nullptr);
+
+    // Create the functor for the remote type registration
+    std::string topic_name = "footopic";
+    std::function<void(const std::string&, const fastrtps::types::DynamicType_ptr)> callback =
+            [topic_name](const std::string&, const fastrtps::types::DynamicType_ptr type)
+            {
+                std::cout << "Callback for type: " << type->get_name() << " on topic: " << topic_name << std::endl;
+            };
+
+    // Register the remote type in the disabled local participant. This should return a RETCODE_NOT_ENABLED return code
+    ASSERT_EQ(participant->register_remote_type(*type_information, type.get_type_name(), callback),
+            ReturnCode_t::RETCODE_NOT_ENABLED);
+
+    // Enable the local participant
+    EXPECT_EQ(ReturnCode_t::RETCODE_OK, participant->enable());
+    EXPECT_TRUE(participant->is_enabled());
+
+    // Register the remote type in the disabled local participant
+    ASSERT_EQ(participant->register_remote_type(*type_information, type_name, callback),
+            ReturnCode_t::RETCODE_OK);
+
+    // Remove the topic and both participants
+    ASSERT_EQ(remote_participant->delete_topic(topic), ReturnCode_t::RETCODE_OK);
+    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(remote_participant),
+            ReturnCode_t::RETCODE_OK);
+    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), ReturnCode_t::RETCODE_OK);
+}
+
+/*
+ * This test checks that a RETCODE_PRECONDITION_NOT_MET error code is returned when registering a dynamic remote type
+ * with an empty TypeInformation
+ */
+TEST(ParticipantTests, RegisterRemoteTypePreconditionNotMet)
+{
+    // Create the remote participant
+    DomainParticipant* remote_participant =
+            DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
+
+    // Create the local participant
+    DomainParticipant* participant =
+            DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
+
+    // Create the type builder
+    DynamicTypeBuilder_ptr int32_builder = DynamicTypeBuilderFactory::get_instance()->create_int32_builder();
+    DynamicTypeBuilder_ptr seqLong_builder =
+            DynamicTypeBuilderFactory::get_instance()->create_sequence_builder(int32_builder.get());
+    DynamicTypeBuilder_ptr mySequenceLong_builder =
+            DynamicTypeBuilderFactory::get_instance()->create_alias_builder(seqLong_builder.get(), "MySequenceLong");
+    // Build the dynamic type
+    DynamicType_ptr dyn_type = mySequenceLong_builder->build();
+
+    // Register the type
+    TypeSupport type(new eprosima::fastrtps::types::DynamicPubSubType(dyn_type));
+    type.register_type(remote_participant);
+
+    Topic* topic = remote_participant->create_topic("footopic", type.get_type_name(), TOPIC_QOS_DEFAULT);
+    ASSERT_NE(topic, nullptr);
+
+    // Create the functor for the remote type registration
+    std::string topic_name = "footopic";
+    std::function<void(const std::string&, const fastrtps::types::DynamicType_ptr)> callback =
+            [topic_name](const std::string&, const fastrtps::types::DynamicType_ptr type)
+            {
+                std::cout << "Callback for type: " << type->get_name() << " on topic: " << topic_name << std::endl;
+            };
+
+    // Create an empty TypeInformation
+    fastrtps::types::TypeInformation info = fastrtps::types::TypeInformation();
+    // Check that register_remote_type() returns RETCODE_PRECONDITION_NOT_MET if the TypeInformation is empty
+    ASSERT_EQ(participant->register_remote_type(info, type.get_type_name(), callback),
+            ReturnCode_t::RETCODE_PRECONDITION_NOT_MET);
+
+    // Remove the topic and both participants
+    ASSERT_EQ(remote_participant->delete_topic(topic), ReturnCode_t::RETCODE_OK);
+    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(remote_participant),
+            ReturnCode_t::RETCODE_OK);
     ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), ReturnCode_t::RETCODE_OK);
 }
 
