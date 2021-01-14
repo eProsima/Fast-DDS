@@ -849,10 +849,11 @@ TEST_F(DataReaderTests, resource_limits)
         SampleInfoSeq info_seq;
 
         // The standard is not clear on what shold be done if max_samples is 0. NO_DATA? OK with length = 0?
-        // EXPECT_EQ(ok_code, data_reader_->read(data_seq, info_seq, 0));
+        // We have assumed the correct interpretation is the second one, so the following loop starts at 0.
+        // This test should change whenever this interpretation becomes invalid.
 
         // Up to max_samples_per_read, max_samples will be returned
-        for (int32_t i = 1; i <= 10; ++i)
+        for (int32_t i = 0; i <= 10; ++i)
         {
             EXPECT_EQ(ok_code, data_reader_->read(data_seq, info_seq, i));
             check_collection(data_seq, false, i, i);
