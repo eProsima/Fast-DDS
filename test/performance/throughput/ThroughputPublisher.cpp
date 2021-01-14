@@ -72,9 +72,11 @@ void ThroughputPublisher::DataPubListener::onPublicationMatched(
 
     if (throughput_publisher_.data_discovery_count_ == static_cast<int>(throughput_publisher_.subscribers_))
     {
+        // In case it does not enter the if, the lock will be unlock in destruction
+        lock.unlock();
+
         throughput_publisher_.data_discovery_cv_.notify_one();
     }
-    lock.unlock();
 }
 
 // *******************************************************************************************
@@ -110,10 +112,11 @@ void ThroughputPublisher::CommandSubListener::onSubscriptionMatched(
 
     if (throughput_publisher_.command_discovery_count_ == static_cast<int>(throughput_publisher_.subscribers_ * 2))
     {
+        // In case it does not enter the if, the lock will be unlock in destruction
+        lock.unlock();
+
         throughput_publisher_.command_discovery_cv_.notify_one();
     }
-
-    lock.unlock();
 }
 
 // *******************************************************************************************
@@ -148,12 +151,13 @@ void ThroughputPublisher::CommandPubListener::onPublicationMatched(
         --throughput_publisher_.command_discovery_count_;
     }
 
-    if (throughput_publisher_.command_discovery_count_ == static_cast<int>(throughput_publisher_.subscribers_ * 2) )
+    if (throughput_publisher_.command_discovery_count_ == static_cast<int>(throughput_publisher_.subscribers_ * 2))
     {
+        // In case it does not enter the if, the lock will be unlock in destruction
+        lock.unlock();
+
         throughput_publisher_.command_discovery_cv_.notify_one();
     }
-
-    lock.unlock();
 }
 
 // *******************************************************************************************
@@ -425,8 +429,12 @@ void ThroughputPublisher::run(
     std::cout << "Pub: Waiting for command discovery" << std::endl;
     {
         std::unique_lock<std::mutex> disc_lock(command_mutex_);
+        std::cout << "Pub: lock command_mutex_ and wait to " << command_discovery_count_ <<
+            " == " << static_cast<int>(subscribers_ * 2) << std::endl;     // TODO remove if error disappear"
         command_discovery_cv_.wait(disc_lock, [&]()
                 {
+                    std::cout << "Pub: wait to " << command_discovery_count_ << " == " <<
+                        static_cast<int>(subscribers_ * 2) << std::endl;     // TODO remove if error disappear"
                     return command_discovery_count_ == static_cast<int>(subscribers_ * 2);
                 });
     }
