@@ -261,7 +261,7 @@ TEST(BlackBox, DefaultMulticastLocatorsParticipant)
     size_t writer_samples = 5;
 
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
-    writer.add_to_default_multicast_locator_list("239.255.0.2", 22222);
+    writer.add_to_default_multicast_locator_list("239.255.0.1", 22222);
     writer.init();
     ASSERT_TRUE(writer.isInitialized());
 
@@ -298,7 +298,7 @@ TEST(BlackBox, MetatraficMulticastLocatorsParticipant)
 
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
     writer.disable_builtin_transport().add_user_transport_to_pparams(transport);
-    writer.add_to_metatraffic_multicast_locator_list("239.255.1.2", 22222);
+    writer.add_to_metatraffic_multicast_locator_list("239.255.1.1", 22222);
     writer.init();
     ASSERT_TRUE(writer.isInitialized());
 
@@ -331,7 +331,7 @@ TEST(BlackBox, DefaultMulticastLocatorsParticipantZeroPort)
     size_t writer_samples = 5;
 
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
-    writer.add_to_default_multicast_locator_list("239.255.0.2", 0);
+    writer.add_to_default_multicast_locator_list("239.255.0.1", 0);
     writer.init();
     ASSERT_TRUE(writer.isInitialized());
 
@@ -368,7 +368,7 @@ TEST(BlackBox, MetatraficMulticastLocatorsParticipantZeroPort)
 
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
     writer.disable_builtin_transport().add_user_transport_to_pparams(transport);
-    writer.add_to_metatraffic_multicast_locator_list("239.255.1.2", 0);
+    writer.add_to_metatraffic_multicast_locator_list("239.255.1.1", 0);
     writer.init();
     ASSERT_TRUE(writer.isInitialized());
 
