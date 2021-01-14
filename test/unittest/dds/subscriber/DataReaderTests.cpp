@@ -185,6 +185,78 @@ protected:
         }
     }
 
+    /**
+     * @brief Test calls to `read_instance` and `take_instance` with a valid instance handle
+     *
+     * @param handle            Handle of instance to read
+     * @param instance_ok_code  Expected result of calls to `read/take_instance`
+     * @param loan_return_code  Expected result of calls to `return_loan`
+     * @param data_reader       DataReader on which to perform calls
+     * @param data_values       The data collection to use
+     * @param infos             The sample_info collection to use
+     * @param max_samples       The value to pass as `max_samples` on calls to `read/take_instance`
+     */
+    void check_correct_instance_methods(
+            const InstanceHandle_t& handle,
+            const ReturnCode_t& instance_ok_code,
+            const ReturnCode_t& loan_return_code,
+            DataReader* data_reader,
+            LoanableCollection& data_values,
+            SampleInfoSeq& infos,
+            int32_t max_samples = LENGTH_UNLIMITED)
+    {
+        EXPECT_EQ(instance_ok_code, data_reader->read_instance(data_values, infos, max_samples, handle));
+        check_return_loan(loan_return_code, data_reader, data_values, infos);
+        reset_lengths_if_ok(instance_ok_code, data_values, infos);
+
+        EXPECT_EQ(instance_ok_code, data_reader->take_instance(data_values, infos, max_samples, handle));
+        if (ReturnCode_t::RETCODE_OK == instance_ok_code)
+        {
+            // Write received data so it can be taken again
+            send_data(data_values, infos);
+        }
+        check_return_loan(loan_return_code, data_reader, data_values, infos);
+        reset_lengths_if_ok(instance_ok_code, data_values, infos);
+    }
+
+    /**
+     * @brief Test calls to `read_instance` and `take_instance` with an invalid instance handle
+     *
+     * @param handle            Handle of instance to read
+     * @param instance_bad_code Expected result of calls to `read/take_instance`
+     * @param wrong_loan_code   Expected result of calls to `return_loan`
+     * @param data_reader       DataReader on which to perform calls
+     * @param data_values       The data collection to use
+     * @param infos             The sample_info collection to use
+     * @param max_samples       The value to pass as `max_samples` on calls to `read/take_instance`
+     */
+    void check_wrong_instance_methods(
+            const InstanceHandle_t& handle,
+            const ReturnCode_t& instance_bad_code,
+            const ReturnCode_t& wrong_loan_code,
+            DataReader* data_reader,
+            LoanableCollection& data_values,
+            SampleInfoSeq& infos,
+            int32_t max_samples = LENGTH_UNLIMITED)
+    {
+        EXPECT_EQ(instance_bad_code, data_reader->read_instance(data_values, infos, max_samples, handle));
+        check_return_loan(wrong_loan_code, data_reader, data_values, infos);
+        EXPECT_EQ(instance_bad_code, data_reader->take_instance(data_values, infos, max_samples, handle));
+        check_return_loan(wrong_loan_code, data_reader, data_values, infos);
+    }
+
+    /**
+     * @brief Test calls to `read_instance` and `take_instance`
+     *
+     * @param instance_ok_code    Expected result of calls to `read/take_instance` for valid instance handles
+     * @param instance_bad_code   Expected result of calls to `read/take_instance` for invalid instance handles
+     * @param loan_return_code    Expected result of calls to `return_loan` for valid instance handles
+     * @param data_reader         DataReader on which to perform calls
+     * @param data_values         The data collection to use
+     * @param infos               The sample_info collection to use
+     * @param max_samples         The value to pass as `max_samples` on calls to `read/take_instance`
+     * @param two_valid_instances Whether `handle_wrong_` is considered a valid instance
+     */
     void check_instance_methods(
             const ReturnCode_t& instance_ok_code,
             const ReturnCode_t& instance_bad_code,
@@ -193,54 +265,34 @@ protected:
             LoanableCollection& data_values,
             SampleInfoSeq& infos,
             int32_t max_samples = LENGTH_UNLIMITED,
-            bool two_instances = false)
+            bool two_valid_instances = false)
     {
+        // Calc expected result of `return_loan` for calls with a wrong instance handle.
         ReturnCode_t wrong_loan_code = ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
         if (ReturnCode_t::RETCODE_NOT_ENABLED == instance_bad_code)
         {
             wrong_loan_code = instance_bad_code;
         }
 
-        EXPECT_EQ(instance_bad_code, data_reader->read_instance(data_values, infos, max_samples, HANDLE_NIL));
-        check_return_loan(wrong_loan_code, data_reader, data_values, infos);
-        EXPECT_EQ(instance_bad_code, data_reader->take_instance(data_values, infos, max_samples, HANDLE_NIL));
-        check_return_loan(wrong_loan_code, data_reader, data_values, infos);
+        // Trying to get data for HANDLE_NIL should always use instance_bad_code.
+        check_wrong_instance_methods(HANDLE_NIL, instance_bad_code, wrong_loan_code,
+                data_reader, data_values, infos, max_samples);
 
-        if (two_instances)
+        // Trying to get data for handle_wrong_ depends on `two_instances`
+        if (two_valid_instances)
         {
-            EXPECT_EQ(instance_ok_code, data_reader->read_instance(data_values, infos, max_samples, handle_wrong_));
-            check_return_loan(loan_return_code, data_reader, data_values, infos);
-            reset_lengths_if_ok(instance_ok_code, data_values, infos);
-
-            EXPECT_EQ(instance_ok_code, data_reader->take_instance(data_values, infos, max_samples, handle_wrong_));
-            if (ReturnCode_t::RETCODE_OK == instance_ok_code)
-            {
-                // Write received data so it can be taken again
-                send_data(data_values, infos);
-            }
-            check_return_loan(loan_return_code, data_reader, data_values, infos);
-            reset_lengths_if_ok(instance_ok_code, data_values, infos);
+            check_correct_instance_methods(handle_wrong_, instance_ok_code, loan_return_code,
+                    data_reader, data_values, infos, max_samples);
         }
         else
         {
-            EXPECT_EQ(instance_bad_code, data_reader->read_instance(data_values, infos, max_samples, handle_wrong_));
-            check_return_loan(wrong_loan_code, data_reader, data_values, infos);
-            EXPECT_EQ(instance_bad_code, data_reader->take_instance(data_values, infos, max_samples, handle_wrong_));
-            check_return_loan(wrong_loan_code, data_reader, data_values, infos);
+            check_wrong_instance_methods(handle_wrong_, instance_bad_code, wrong_loan_code,
+                    data_reader, data_values, infos, max_samples);
         }
 
-        EXPECT_EQ(instance_ok_code, data_reader->read_instance(data_values, infos, max_samples, handle_ok_));
-        check_return_loan(loan_return_code, data_reader, data_values, infos);
-        reset_lengths_if_ok(instance_ok_code, data_values, infos);
-
-        EXPECT_EQ(instance_ok_code, data_reader->take_instance(data_values, infos, max_samples, handle_ok_));
-        if (ReturnCode_t::RETCODE_OK == instance_ok_code)
-        {
-            // Write received data so it can be taken again
-            send_data(data_values, infos);
-        }
-        check_return_loan(loan_return_code, data_reader, data_values, infos);
-        reset_lengths_if_ok(instance_ok_code, data_values, infos);
+        // Trying to get data for handle_ok_ should always use instance_ok_code
+        check_correct_instance_methods(handle_ok_, instance_ok_code, loan_return_code,
+                data_reader, data_values, infos, max_samples);
     }
 
     template<typename DataType, typename DataSeq>
