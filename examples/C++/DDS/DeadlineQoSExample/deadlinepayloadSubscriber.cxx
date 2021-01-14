@@ -126,7 +126,7 @@ void deadlinepayloadSubscriber::SubListener::on_data_available(
     HelloMsg st;
     if (reader->take_next_sample(&st, &info) == ReturnCode_t::RETCODE_OK)
     {
-        if (info.instance_state == eprosima::fastdds::dds::ALIVE_INSTANCE_STATE)
+        if (info.valid_data)
         {
             std::cout << "Message with key " << st.deadlinekey() << " received" << std::endl;
         }

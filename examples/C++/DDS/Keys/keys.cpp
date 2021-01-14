@@ -141,7 +141,7 @@ public:
         SampleInfo info;
         if (reader->take_next_sample(&m_sample, &info) == ReturnCode_t::RETCODE_OK)
         {
-            if (info.instance_state == eprosima::fastdds::dds::ALIVE_INSTANCE_STATE)
+            if (info.valid_data)
             {
                 this->n_samples++;
                 // Print your structure data here.

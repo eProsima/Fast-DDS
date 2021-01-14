@@ -306,7 +306,7 @@ void BenchMarkSubscriber::SubListener::on_data_available(
         {
             if (reader->take_next_sample((void*)&mParent->m_Hello, &m_info) == ReturnCode_t::RETCODE_OK)
             {
-                if (m_info.instance_state == eprosima::fastdds::dds::ALIVE_INSTANCE_STATE)
+                if (m_info.valid_data)
                 {
                     mParent->m_Hello.index(mParent->m_Hello.index() + 1);
                     mParent->mp_writer->write((void*)&mParent->m_Hello);
@@ -318,7 +318,7 @@ void BenchMarkSubscriber::SubListener::on_data_available(
         {
             if (reader->take_next_sample((void*)&mParent->m_HelloSmall, &m_info) == ReturnCode_t::RETCODE_OK)
             {
-                if (m_info.instance_state == eprosima::fastdds::dds::ALIVE_INSTANCE_STATE)
+                if (m_info.valid_data)
                 {
                     mParent->m_HelloSmall.index(mParent->m_HelloSmall.index() + 1);
                     mParent->mp_writer->write((void*)&mParent->m_HelloSmall);
@@ -330,7 +330,7 @@ void BenchMarkSubscriber::SubListener::on_data_available(
         {
             if (reader->take_next_sample((void*)&mParent->m_HelloMedium, &m_info) == ReturnCode_t::RETCODE_OK)
             {
-                if (m_info.instance_state == eprosima::fastdds::dds::ALIVE_INSTANCE_STATE)
+                if (m_info.valid_data)
                 {
                     mParent->m_HelloMedium.index(mParent->m_HelloMedium.index() + 1);
                     mParent->mp_writer->write((void*)&mParent->m_HelloMedium);
@@ -342,7 +342,7 @@ void BenchMarkSubscriber::SubListener::on_data_available(
         {
             if (reader->take_next_sample((void*)&mParent->m_HelloBig, &m_info) == ReturnCode_t::RETCODE_OK)
             {
-                if (m_info.instance_state == eprosima::fastdds::dds::ALIVE_INSTANCE_STATE)
+                if (m_info.valid_data)
                 {
                     mParent->m_HelloBig.index(mParent->m_HelloBig.index() + 1);
                     mParent->mp_writer->write((void*)&mParent->m_HelloBig);

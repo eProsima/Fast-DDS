@@ -129,7 +129,7 @@ void FilteringExampleSubscriber::SubListener::on_data_available(
     FilteringExample st;
     if (reader->take_next_sample(&st, &info) == ReturnCode_t::RETCODE_OK)
     {
-        if (info.instance_state == eprosima::fastdds::dds::ALIVE_INSTANCE_STATE)
+        if (info.valid_data)
         {
             ++n_msg;
             std::cout << "Sample received, count=" << n_msg << std::endl;

@@ -300,7 +300,7 @@ void BenchMarkPublisher::SubListener::on_data_available(
             {
                 if (reader->take_next_sample((void*)&m_Hello, &m_info) == ReturnCode_t::RETCODE_OK)
                 {
-                    if (m_info.instance_state == eprosima::fastdds::dds::ALIVE_INSTANCE_STATE)
+                    if (m_info.valid_data)
                     {
                         if (m_Hello.index() > mParent->m_iCount)
                         {
@@ -321,7 +321,7 @@ void BenchMarkPublisher::SubListener::on_data_available(
             {
                 if (reader->take_next_sample((void*)&m_HelloSmall, &m_info) == ReturnCode_t::RETCODE_OK)
                 {
-                    if (m_info.instance_state == eprosima::fastdds::dds::ALIVE_INSTANCE_STATE)
+                    if (m_info.valid_data)
                     {
                         if (m_HelloSmall.index() > mParent->m_iCount)
                         {
@@ -342,7 +342,7 @@ void BenchMarkPublisher::SubListener::on_data_available(
             {
                 if (reader->take_next_sample((void*)&m_HelloMedium, &m_info) == ReturnCode_t::RETCODE_OK)
                 {
-                    if (m_info.instance_state == eprosima::fastdds::dds::ALIVE_INSTANCE_STATE)
+                    if (m_info.valid_data)
                     {
                         if (m_HelloMedium.index() > mParent->m_iCount)
                         {
@@ -363,7 +363,7 @@ void BenchMarkPublisher::SubListener::on_data_available(
             {
                 if (reader->take_next_sample((void*)&m_HelloBig, &m_info) == ReturnCode_t::RETCODE_OK)
                 {
-                    if (m_info.instance_state == eprosima::fastdds::dds::ALIVE_INSTANCE_STATE)
+                    if (m_info.valid_data)
                     {
                         if (m_HelloBig.index() > mParent->m_iCount)
                         {
