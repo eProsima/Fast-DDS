@@ -163,6 +163,22 @@ protected:
         }
     }
 
+    /**
+     * @brief Calls `return_loan` on a DataReader and checks the result.
+     *
+     * This method is designed to be used inside `check_instance_methods` and `basic_read_apis_check`, but may be
+     * used on future tests if desired.
+     *
+     * @param code         Return code that was expected on the `read/take` call.
+     *                     The return value to expect from `return_loan` will be calculated from this one as follows:
+     *                     - NOT_ENABLED => NOT_ENABLED (calling `return_loan` on a not enabled reader).
+     *                     - OK => OK (successfully returning a loan).
+     *                     - Any other => RETCODE_PRECONDITION_NOT_MET (trying to return collections which the reader
+     *                       did not loan).
+     * @param data_reader  The reader on which to return the loan.
+     * @param data_values  The data collection to return.
+     * @param infos        The SampleInfo collection to return.
+     */
     void check_return_loan(
             const ReturnCode_t& code,
             DataReader* data_reader,
@@ -295,11 +311,29 @@ protected:
                 data_reader, data_values, infos, max_samples);
     }
 
+    /**
+     * @brief This test checks all variants of read / take on a specific state of the reader.
+     *
+     * This method is designed to be used inside `read_take_apis_test`, and may require changes if used on new tests.
+     *
+     * The APIs tested are:
+     * - read_next_sample / take_next_sample
+     * - read / take
+     * - read_next_instance / take_next_instance
+     * - read_instance / take_instance
+     * - return_loan
+     *
+     * @param code                 Expected return from read/take_xxx APIs
+     * @param data_reader          DataReadet on which to perform the test
+     * @param two_valid_instances  Whether `handle_wrong_` is considered a valid instance
+     *
+     * @see check_instance_methods to see how read_instance / take_instance are tested.
+     */
     template<typename DataType, typename DataSeq>
     void basic_read_apis_check(
             const ReturnCode_t& code,
             DataReader* data_reader,
-            bool two_instances = false)
+            bool two_valid_instances = false)
     {
         static const Duration_t time_to_wait(1, 0);
 
@@ -363,7 +397,7 @@ protected:
             reset_lengths_if_ok(code, data_values, infos);
 
             check_instance_methods(instance_ok_code, instance_bad_code, instance_ok_code,
-                    data_reader, data_values, infos, LENGTH_UNLIMITED, two_instances);
+                    data_reader, data_values, infos, LENGTH_UNLIMITED, two_valid_instances);
         }
 
         // Check read/take and variants without loan
@@ -404,7 +438,7 @@ protected:
             reset_lengths_if_ok(code, data_values, infos);
 
             check_instance_methods(instance_ok_code, instance_bad_code, expected_return_loan_ret,
-                    data_reader, data_values, infos, LENGTH_UNLIMITED, two_instances);
+                    data_reader, data_values, infos, LENGTH_UNLIMITED, two_valid_instances);
         }
     }
 
@@ -426,6 +460,8 @@ protected:
      *
      * Checks are done both with and without loans. A call to return_loan is always performed, and its return value is
      * checked to be OK when a loan was performed and PRECONDITION_NOT_MET when not.
+     *
+     * @see basic_read_apis_check for how the checks are done on each reader state.
      */
     template<typename DataType, typename DataSeq>
     void read_take_apis_test()
@@ -487,11 +523,17 @@ protected:
 
 };
 
+/**
+ * This test checks all variants of read / take in several situations for a keyed plain type.
+ */
 TEST_F(DataReaderTests, read_take_apis)
 {
     read_take_apis_test<FooType, FooSeq>();
 }
 
+/**
+ * This test checks all variants of read / take in several situations for a non-keyed not-plain type.
+ */
 TEST_F(DataReaderTests, read_take_apis_not_plain)
 {
     type_.reset(new FooBoundedTypeSupport());
