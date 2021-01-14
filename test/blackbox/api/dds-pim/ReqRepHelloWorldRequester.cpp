@@ -199,7 +199,7 @@ void ReqRepHelloWorldRequester::ReplyListener::on_data_available(
 
     if (ReturnCode_t::RETCODE_OK == datareader->take_next_sample((void*)&hello, &info))
     {
-        if (info.instance_state == eprosima::fastdds::dds::ALIVE_INSTANCE_STATE)
+        if (info.valid_data)
         {
             ASSERT_EQ(hello.message().compare("GoodBye"), 0);
             requester_.newNumber(info.related_sample_identity, hello.index());
