@@ -334,7 +334,6 @@ protected:
 
     std::unique_ptr<Segment> segment_;    //< Shared memory segment
 
-    octet* payloads_pool_;          //< Shared pool of payloads
     Segment::Offset* history_;      //< Offsets of the payloads that are currently in the writer's history
     PoolDescriptor* descriptor_;    //< Shared descriptor of the pool
 
