@@ -332,33 +332,36 @@ bool StatelessReader::nextUnreadCache(
     std::vector<CacheChange_t*>::iterator it = mp_history->changesBegin();
     while (it != mp_history->changesEnd())
     {
-        if (!(*it)->isRead)
+        if ((*it)->isRead)
         {
-            if (is_datasharing_compatible_ && datasharing_listener_->writer_is_matched((*it)->writerGUID))
-            {
-                // Lock the payload. The lock will NOT be freed for the returned change
-                DataSharingPayloadPool::shared_mutex((*it)->serializedPayload.data).lock_sharable();
+            ++it;
+            continue;
+        }
 
-                //Check if the payload is dirty
-                if (DataSharingPayloadPool::check_sequence_number(
-                            (*it)->serializedPayload.data, (*it)->sequenceNumber))
-                {
-                    found = true;
-                    break;
-                }
+        if (is_datasharing_compatible_ && datasharing_listener_->writer_is_matched((*it)->writerGUID))
+        {
+            // Lock the payload. The lock will NOT be freed for the returned change
+            DataSharingPayloadPool::shared_mutex((*it)->serializedPayload.data).lock_sharable();
 
-                // Unlock, remove and continue
-                DataSharingPayloadPool::shared_mutex((*it)->serializedPayload.data).unlock_sharable();
-                logWarning(RTPS_READER,
-                        "Removing change " << (*it)->sequenceNumber << " from " << (*it)->writerGUID <<
-                        " because is overidden");
-                mp_history->remove_change(*it);
-            }
-            else
+            //Check if the payload is dirty
+            if (DataSharingPayloadPool::check_sequence_number(
+                        (*it)->serializedPayload.data, (*it)->sequenceNumber))
             {
                 found = true;
                 break;
             }
+
+            // Unlock, remove and continue
+            DataSharingPayloadPool::shared_mutex((*it)->serializedPayload.data).unlock_sharable();
+            logWarning(RTPS_READER,
+                    "Removing change " << (*it)->sequenceNumber << " from " << (*it)->writerGUID <<
+                    " because is overidden");
+            it = mp_history->remove_change(it);
+        }
+        else
+        {
+            found = true;
+            break;
         }
     }
 
