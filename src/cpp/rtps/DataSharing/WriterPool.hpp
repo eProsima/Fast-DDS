@@ -298,6 +298,7 @@ public:
     }
 
 private:
+    octet* payloads_pool_;          //< Shared pool of payloads
 
     uint32_t max_data_size_;        //< Maximum size of the serialized payload data
     uint32_t pool_size_;            //< Number of payloads in the pool
