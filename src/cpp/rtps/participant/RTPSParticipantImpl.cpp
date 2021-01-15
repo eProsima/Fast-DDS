@@ -453,7 +453,7 @@ bool RTPSParticipantImpl::preprocess_endpoint_attributes(
         EndpointAttributes& att,
         EntityId_t& entId)
 {
-    std::string debug_label = (att.endpointKind == WRITER ? "writer" : "reader");
+    const char* debug_label = (att.endpointKind == WRITER ? "writer" : "reader");
 
     if (!att.unicastLocatorList.isValid())
     {
@@ -1542,7 +1542,7 @@ bool RTPSParticipantImpl::get_persistence_service(
 {
     service = nullptr;
 
-    std::string debug_label = (param.endpointKind == WRITER ? "writer" : "reader");
+    const char* debug_label = (param.endpointKind == WRITER ? "writer" : "reader");
 
     // Check if also support persistence with TRANSIENT_LOCAL.
     DurabilityKind_t durability_red_line = get_persistence_durability_red_line(is_builtin);
