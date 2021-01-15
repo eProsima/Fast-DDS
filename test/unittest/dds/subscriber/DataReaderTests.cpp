@@ -37,6 +37,9 @@
 #include <fastdds/dds/subscriber/qos/DataReaderQos.hpp>
 #include <fastdds/dds/subscriber/qos/SubscriberQos.hpp>
 
+#include "./FooBoundedType.hpp"
+#include "./FooBoundedTypeSupport.hpp"
+
 #include "./FooType.hpp"
 #include "./FooTypeSupport.hpp"
 
@@ -47,6 +50,7 @@ namespace dds {
 static constexpr LoanableCollection::size_type num_test_elements = 10;
 
 FASTDDS_SEQUENCE(FooSeq, FooType);
+FASTDDS_SEQUENCE(FooBoundedSeq, FooBoundedType);
 using FooArray = LoanableArray<FooType, num_test_elements>;
 using FooStack = StackAllocatedSequence<FooType, num_test_elements>;
 using SampleInfoArray = LoanableArray<SampleInfo, num_test_elements>;
@@ -159,6 +163,22 @@ protected:
         }
     }
 
+    /**
+     * @brief Calls `return_loan` on a DataReader and checks the result.
+     *
+     * This method is designed to be used inside `check_instance_methods` and `basic_read_apis_check`, but may be
+     * used on future tests if desired.
+     *
+     * @param code         Return code that was expected on the `read/take` call.
+     *                     The return value to expect from `return_loan` will be calculated from this one as follows:
+     *                     - NOT_ENABLED => NOT_ENABLED (calling `return_loan` on a not enabled reader).
+     *                     - OK => OK (successfully returning a loan).
+     *                     - Any other => RETCODE_PRECONDITION_NOT_MET (trying to return collections which the reader
+     *                       did not loan).
+     * @param data_reader  The reader on which to return the loan.
+     * @param data_values  The data collection to return.
+     * @param infos        The SampleInfo collection to return.
+     */
     void check_return_loan(
             const ReturnCode_t& code,
             DataReader* data_reader,
@@ -181,35 +201,31 @@ protected:
         }
     }
 
-    void check_instance_methods(
+    /**
+     * @brief Test calls to `read_instance` and `take_instance` with a valid instance handle
+     *
+     * @param handle            Handle of instance to read
+     * @param instance_ok_code  Expected result of calls to `read/take_instance`
+     * @param loan_return_code  Expected result of calls to `return_loan`
+     * @param data_reader       DataReader on which to perform calls
+     * @param data_values       The data collection to use
+     * @param infos             The sample_info collection to use
+     * @param max_samples       The value to pass as `max_samples` on calls to `read/take_instance`
+     */
+    void check_correct_instance_methods(
+            const InstanceHandle_t& handle,
             const ReturnCode_t& instance_ok_code,
-            const ReturnCode_t& instance_bad_code,
             const ReturnCode_t& loan_return_code,
             DataReader* data_reader,
             LoanableCollection& data_values,
             SampleInfoSeq& infos,
             int32_t max_samples = LENGTH_UNLIMITED)
     {
-        ReturnCode_t wrong_loan_code = ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
-        if (ReturnCode_t::RETCODE_NOT_ENABLED == instance_bad_code)
-        {
-            wrong_loan_code = instance_bad_code;
-        }
-
-        EXPECT_EQ(instance_bad_code, data_reader->read_instance(data_values, infos, max_samples, HANDLE_NIL));
-        check_return_loan(wrong_loan_code, data_reader, data_values, infos);
-        EXPECT_EQ(instance_bad_code, data_reader->read_instance(data_values, infos, max_samples, handle_wrong_));
-        check_return_loan(wrong_loan_code, data_reader, data_values, infos);
-        EXPECT_EQ(instance_bad_code, data_reader->take_instance(data_values, infos, max_samples, HANDLE_NIL));
-        check_return_loan(wrong_loan_code, data_reader, data_values, infos);
-        EXPECT_EQ(instance_bad_code, data_reader->take_instance(data_values, infos, max_samples, handle_wrong_));
-        check_return_loan(wrong_loan_code, data_reader, data_values, infos);
-
-        EXPECT_EQ(instance_ok_code, data_reader->read_instance(data_values, infos, max_samples, handle_ok_));
+        EXPECT_EQ(instance_ok_code, data_reader->read_instance(data_values, infos, max_samples, handle));
         check_return_loan(loan_return_code, data_reader, data_values, infos);
         reset_lengths_if_ok(instance_ok_code, data_values, infos);
 
-        EXPECT_EQ(instance_ok_code, data_reader->take_instance(data_values, infos, max_samples, handle_ok_));
+        EXPECT_EQ(instance_ok_code, data_reader->take_instance(data_values, infos, max_samples, handle));
         if (ReturnCode_t::RETCODE_OK == instance_ok_code)
         {
             // Write received data so it can be taken again
@@ -219,15 +235,111 @@ protected:
         reset_lengths_if_ok(instance_ok_code, data_values, infos);
     }
 
+    /**
+     * @brief Test calls to `read_instance` and `take_instance` with an invalid instance handle
+     *
+     * @param handle            Handle of instance to read
+     * @param instance_bad_code Expected result of calls to `read/take_instance`
+     * @param wrong_loan_code   Expected result of calls to `return_loan`
+     * @param data_reader       DataReader on which to perform calls
+     * @param data_values       The data collection to use
+     * @param infos             The sample_info collection to use
+     * @param max_samples       The value to pass as `max_samples` on calls to `read/take_instance`
+     */
+    void check_wrong_instance_methods(
+            const InstanceHandle_t& handle,
+            const ReturnCode_t& instance_bad_code,
+            const ReturnCode_t& wrong_loan_code,
+            DataReader* data_reader,
+            LoanableCollection& data_values,
+            SampleInfoSeq& infos,
+            int32_t max_samples = LENGTH_UNLIMITED)
+    {
+        EXPECT_EQ(instance_bad_code, data_reader->read_instance(data_values, infos, max_samples, handle));
+        check_return_loan(wrong_loan_code, data_reader, data_values, infos);
+        EXPECT_EQ(instance_bad_code, data_reader->take_instance(data_values, infos, max_samples, handle));
+        check_return_loan(wrong_loan_code, data_reader, data_values, infos);
+    }
+
+    /**
+     * @brief Test calls to `read_instance` and `take_instance`
+     *
+     * @param instance_ok_code    Expected result of calls to `read/take_instance` for valid instance handles
+     * @param instance_bad_code   Expected result of calls to `read/take_instance` for invalid instance handles
+     * @param loan_return_code    Expected result of calls to `return_loan` for valid instance handles
+     * @param data_reader         DataReader on which to perform calls
+     * @param data_values         The data collection to use
+     * @param infos               The sample_info collection to use
+     * @param max_samples         The value to pass as `max_samples` on calls to `read/take_instance`
+     * @param two_valid_instances Whether `handle_wrong_` is considered a valid instance
+     */
+    void check_instance_methods(
+            const ReturnCode_t& instance_ok_code,
+            const ReturnCode_t& instance_bad_code,
+            const ReturnCode_t& loan_return_code,
+            DataReader* data_reader,
+            LoanableCollection& data_values,
+            SampleInfoSeq& infos,
+            int32_t max_samples = LENGTH_UNLIMITED,
+            bool two_valid_instances = false)
+    {
+        // Calc expected result of `return_loan` for calls with a wrong instance handle.
+        ReturnCode_t wrong_loan_code = ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
+        if (ReturnCode_t::RETCODE_NOT_ENABLED == instance_bad_code)
+        {
+            wrong_loan_code = instance_bad_code;
+        }
+
+        // Trying to get data for HANDLE_NIL should always use instance_bad_code.
+        check_wrong_instance_methods(HANDLE_NIL, instance_bad_code, wrong_loan_code,
+                data_reader, data_values, infos, max_samples);
+
+        // Trying to get data for handle_wrong_ depends on `two_instances`
+        if (two_valid_instances)
+        {
+            check_correct_instance_methods(handle_wrong_, instance_ok_code, loan_return_code,
+                    data_reader, data_values, infos, max_samples);
+        }
+        else
+        {
+            check_wrong_instance_methods(handle_wrong_, instance_bad_code, wrong_loan_code,
+                    data_reader, data_values, infos, max_samples);
+        }
+
+        // Trying to get data for handle_ok_ should always use instance_ok_code
+        check_correct_instance_methods(handle_ok_, instance_ok_code, loan_return_code,
+                data_reader, data_values, infos, max_samples);
+    }
+
+    /**
+     * @brief This test checks all variants of read / take on a specific state of the reader.
+     *
+     * This method is designed to be used inside `read_take_apis_test`, and may require changes if used on new tests.
+     *
+     * The APIs tested are:
+     * - read_next_sample / take_next_sample
+     * - read / take
+     * - read_next_instance / take_next_instance
+     * - read_instance / take_instance
+     * - return_loan
+     *
+     * @param code                 Expected return from read/take_xxx APIs
+     * @param data_reader          DataReader on which to perform the test
+     * @param two_valid_instances  Whether `handle_wrong_` is considered a valid instance
+     *
+     * @see check_instance_methods to see how read_instance / take_instance are tested.
+     */
+    template<typename DataType, typename DataSeq>
     void basic_read_apis_check(
             const ReturnCode_t& code,
-            DataReader* data_reader)
+            DataReader* data_reader,
+            bool two_valid_instances = false)
     {
         static const Duration_t time_to_wait(1, 0);
 
         // Check read_next_sample / take_next_sample
         {
-            FooType data;
+            DataType data;
             SampleInfo info;
 
             EXPECT_EQ(code, data_reader->read_next_sample(&data, &info));
@@ -249,14 +361,14 @@ protected:
 
         // Return code when requesting a correct instance
         ReturnCode_t instance_ok_code = instance_bad_code;
-        if (ReturnCode_t::RETCODE_OK == code)
+        if (ReturnCode_t::RETCODE_OK == code && type_->m_isGetKeyDefined)
         {
             instance_ok_code = code;
         }
 
         // Check read/take and variants with loan
         {
-            FooSeq data_values;
+            DataSeq data_values;
             SampleInfoSeq infos;
 
             EXPECT_EQ(code, data_reader->read(data_values, infos));
@@ -285,12 +397,12 @@ protected:
             reset_lengths_if_ok(code, data_values, infos);
 
             check_instance_methods(instance_ok_code, instance_bad_code, instance_ok_code,
-                    data_reader, data_values, infos);
+                    data_reader, data_values, infos, LENGTH_UNLIMITED, two_valid_instances);
         }
 
         // Check read/take and variants without loan
         {
-            FooSeq data_values(1);
+            DataSeq data_values(1);
             SampleInfoSeq infos(1);
 
             ReturnCode_t expected_return_loan_ret = code;
@@ -326,7 +438,75 @@ protected:
             reset_lengths_if_ok(code, data_values, infos);
 
             check_instance_methods(instance_ok_code, instance_bad_code, expected_return_loan_ret,
-                    data_reader, data_values, infos);
+                    data_reader, data_values, infos, LENGTH_UNLIMITED, two_valid_instances);
+        }
+    }
+
+    /*
+     * This test checks all variants of read / take in several situations.
+     *
+     * The APIs tested are:
+     * - read_next_sample / take_next_sample
+     * - read / take
+     * - read_next_instance / take_next_instance
+     * - read_instance / take_instance
+     * - return_loan
+     *
+     * The test checks that:
+     * - Calling the APIs on a disabled reader return NOT_ENABLED
+     * - Calling the APIs on an enabled reader with no data return NO_DATA
+     * - Calling the xxx_instance APIs with a wrong instance handle return BAD_PARAMETER
+     * - Calling the APIs when data has been received return OK
+     *
+     * Checks are done both with and without loans. A call to return_loan is always performed, and its return value is
+     * checked to be OK when a loan was performed and PRECONDITION_NOT_MET when not.
+     *
+     * @see basic_read_apis_check for how the checks are done on each reader state.
+     */
+    template<typename DataType, typename DataSeq>
+    void read_take_apis_test()
+    {
+        create_instance_handles();
+
+        // We need depth = 2 for the disposed instance test
+        DataReaderQos reader_qos = DATAREADER_QOS_DEFAULT;
+        reader_qos.history().depth = 2;
+
+        // We will create a disabled DataReader, so we can check RETCODE_NOT_ENABLED
+        SubscriberQos subscriber_qos = SUBSCRIBER_QOS_DEFAULT;
+        subscriber_qos.entity_factory().autoenable_created_entities = false;
+
+        create_entities(nullptr, reader_qos, subscriber_qos);
+        EXPECT_FALSE(data_reader_->is_enabled());
+
+        // Read / take operations should all return NOT_ENABLED
+        basic_read_apis_check<DataType, DataSeq>(ReturnCode_t::RETCODE_NOT_ENABLED, data_reader_);
+
+        // Enable the DataReader and check NO_DATA should be returned
+        EXPECT_EQ(ReturnCode_t::RETCODE_OK, data_reader_->enable());
+        EXPECT_TRUE(data_reader_->is_enabled());
+        basic_read_apis_check<DataType, DataSeq>(ReturnCode_t::RETCODE_NO_DATA, data_reader_);
+
+        // Send data
+        DataType data;
+        data.index(1);
+        EXPECT_EQ(ReturnCode_t::RETCODE_OK, data_writer_->write(&data, HANDLE_NIL));
+
+        // Wait for data to arrive and check OK should be returned
+        Duration_t wait_time(1, 0);
+        EXPECT_TRUE(data_reader_->wait_for_unread_message(wait_time));
+        basic_read_apis_check<DataType, DataSeq>(ReturnCode_t::RETCODE_OK, data_reader_);
+
+        // Check with data on second instance
+        data.index(2u);
+        EXPECT_EQ(ReturnCode_t::RETCODE_OK, data_writer_->write(&data, HANDLE_NIL));
+        basic_read_apis_check<DataType, DataSeq>(ReturnCode_t::RETCODE_OK, data_reader_, true);
+
+        // Check with disposed instance
+        if (type_->m_isGetKeyDefined)
+        {
+            EXPECT_EQ(ReturnCode_t::RETCODE_OK, data_writer_->dispose(&data, handle_wrong_));
+            basic_read_apis_check<DataType, DataSeq>(ReturnCode_t::RETCODE_OK, data_reader_, true);
         }
     }
 
@@ -343,52 +523,22 @@ protected:
 
 };
 
-/*
- * This test checks all variants of read / take in several situations.
- *
- * The APIs tested are:
- * - read_next_sample / take_next_sample
- * - read / take
- * - read_next_instance / take_next_instance
- * - read_instance / take_instance
- * - return_loan
- *
- * The test checks that:
- * - Calling the APIs on a disabled reader return NOT_ENABLED
- * - Calling the APIs on an enabled reader with no data return NO_DATA
- * - Calling the xxx_instance APIs with a wrong instance handle return BAD_PARAMETER
- * - Calling the APIs when data has been received return OK
- *
- * Checks are done both with and without loans. A call to return_loan is always performed, and its return value is
- * checked to be OK when a loan was performed and PRECONDITION_NOT_MET when not.
+/**
+ * This test checks all variants of read / take in several situations for a keyed plain type.
  */
 TEST_F(DataReaderTests, read_take_apis)
 {
-    create_instance_handles();
+    read_take_apis_test<FooType, FooSeq>();
+}
 
-    // We will create a disabled DataReader, so we can check RETCODE_NOT_ENABLED
-    SubscriberQos subscriber_qos = SUBSCRIBER_QOS_DEFAULT;
-    subscriber_qos.entity_factory().autoenable_created_entities = false;
-    create_entities(nullptr, DATAREADER_QOS_DEFAULT, subscriber_qos);
-    EXPECT_FALSE(data_reader_->is_enabled());
+/**
+ * This test checks all variants of read / take in several situations for a non-keyed not-plain type.
+ */
+TEST_F(DataReaderTests, read_take_apis_not_plain)
+{
+    type_.reset(new FooBoundedTypeSupport());
 
-    // Read / take operations should all return NOT_ENABLED
-    basic_read_apis_check(ReturnCode_t::RETCODE_NOT_ENABLED, data_reader_);
-
-    // Enable the DataReader and check NO_DATA should be returned
-    EXPECT_EQ(ReturnCode_t::RETCODE_OK, data_reader_->enable());
-    EXPECT_TRUE(data_reader_->is_enabled());
-    basic_read_apis_check(ReturnCode_t::RETCODE_NO_DATA, data_reader_);
-
-    // Send data
-    FooType data;
-    data.index(1);
-    EXPECT_EQ(ReturnCode_t::RETCODE_OK, data_writer_->write(&data, HANDLE_NIL));
-
-    // Wait for data to arrive and check OK should be returned
-    Duration_t wait_time(1, 0);
-    EXPECT_TRUE(data_reader_->wait_for_unread_message(wait_time));
-    basic_read_apis_check(ReturnCode_t::RETCODE_OK, data_reader_);
+    read_take_apis_test<FooBoundedType, FooBoundedSeq>();
 }
 
 void check_collection(
@@ -793,10 +943,11 @@ TEST_F(DataReaderTests, resource_limits)
         SampleInfoSeq info_seq;
 
         // The standard is not clear on what shold be done if max_samples is 0. NO_DATA? OK with length = 0?
-        // EXPECT_EQ(ok_code, data_reader_->read(data_seq, info_seq, 0));
+        // We have assumed the correct interpretation is the second one, so the following loop starts at 0.
+        // This test should change whenever this interpretation becomes invalid.
 
         // Up to max_samples_per_read, max_samples will be returned
-        for (int32_t i = 1; i <= 10; ++i)
+        for (int32_t i = 0; i <= 10; ++i)
         {
             EXPECT_EQ(ok_code, data_reader_->read(data_seq, info_seq, i));
             check_collection(data_seq, false, i, i);
@@ -909,6 +1060,184 @@ TEST_F(DataReaderTests, resource_limits)
         EXPECT_EQ(ok_code, reader2->return_loan(data_seq2, info_seq2));
 
         EXPECT_EQ(ok_code, subscriber_->delete_datareader(reader2));
+    }
+}
+
+void check_sample_values(
+        const FooSeq& data,
+        const std::string& values)
+{
+    EXPECT_EQ(static_cast<size_t>(data.length()), values.size());
+
+    for (FooSeq::size_type i = 0; i < data.length(); ++i)
+    {
+        EXPECT_EQ(values[i], data[i].message()[0]);
+    }
+}
+
+/*
+ * This test checks that the behaviour of the sample_states parameter of read/take calls.
+ */
+TEST_F(DataReaderTests, read_unread)
+{
+    static constexpr int32_t num_samples = 10;
+
+    const ReturnCode_t& ok_code = ReturnCode_t::RETCODE_OK;
+    const ReturnCode_t& no_data_code = ReturnCode_t::RETCODE_NO_DATA;
+
+    DataWriterQos writer_qos = DATAWRITER_QOS_DEFAULT;
+    writer_qos.history().kind = KEEP_LAST_HISTORY_QOS;
+    writer_qos.history().depth = num_samples;
+    writer_qos.publish_mode().kind = SYNCHRONOUS_PUBLISH_MODE;
+    writer_qos.reliability().kind = RELIABLE_RELIABILITY_QOS;
+
+    DataReaderQos reader_qos = DATAREADER_QOS_DEFAULT;
+    reader_qos.reliability().kind = RELIABLE_RELIABILITY_QOS;
+    reader_qos.history().kind = KEEP_ALL_HISTORY_QOS;
+    reader_qos.resource_limits().max_instances = 1;
+    reader_qos.resource_limits().max_samples_per_instance = num_samples;
+    reader_qos.resource_limits().max_samples = 3 * num_samples;
+
+    create_instance_handles();
+    create_entities(nullptr, reader_qos, SUBSCRIBER_QOS_DEFAULT, writer_qos);
+
+    FooType data;
+    data.index(1);
+    data.message()[1] = '\0';
+
+    // Send a bunch of samples
+    for (char i = 0; i < num_samples; ++i)
+    {
+        data.message()[0] = i + '0';
+        EXPECT_EQ(ok_code, data_writer_->write(&data, handle_ok_));
+    }
+
+    // Reader should have 10 samples with the following states (R = read, N = not-read, / = removed from history)
+    // {N, N, N, N, N, N, N, N, N, N}
+
+    // Trying to get READ samples should return NO_DATA
+    {
+        FooSeq data_seq;
+        SampleInfoSeq info_seq;
+
+        EXPECT_EQ(no_data_code, data_reader_->read(data_seq, info_seq, LENGTH_UNLIMITED, READ_SAMPLE_STATE));
+        EXPECT_EQ(no_data_code,
+                data_reader_->read_instance(data_seq, info_seq, LENGTH_UNLIMITED, handle_ok_, READ_SAMPLE_STATE));
+        EXPECT_EQ(no_data_code,
+                data_reader_->read_next_instance(data_seq, info_seq, LENGTH_UNLIMITED, HANDLE_NIL,
+                READ_SAMPLE_STATE));
+
+        EXPECT_EQ(no_data_code, data_reader_->take(data_seq, info_seq, LENGTH_UNLIMITED, READ_SAMPLE_STATE));
+        EXPECT_EQ(no_data_code,
+                data_reader_->take_instance(data_seq, info_seq, LENGTH_UNLIMITED, handle_ok_, READ_SAMPLE_STATE));
+        EXPECT_EQ(no_data_code,
+                data_reader_->take_next_instance(data_seq, info_seq, LENGTH_UNLIMITED, HANDLE_NIL, READ_SAMPLE_STATE));
+    }
+
+    // Checks with read API
+    {
+        FooSeq data_seq[6];
+        SampleInfoSeq info_seq[6];
+
+        // This should return the first sample
+        EXPECT_EQ(ok_code, data_reader_->read(data_seq[0], info_seq[0], 1, NOT_READ_SAMPLE_STATE));
+        check_collection(data_seq[0], false, 1, 1);
+        check_sample_values(data_seq[0], "0");
+
+        // Current state: {R, N, N, N, N, N, N, N, N, N}
+        // This should return the first sample
+        EXPECT_EQ(ok_code, data_reader_->read(data_seq[1], info_seq[1], 1, READ_SAMPLE_STATE));
+        check_collection(data_seq[1], false, 1, 1);
+        check_sample_values(data_seq[1], "0");
+
+        // Current state: {R, N, N, N, N, N, N, N, N, N}
+        // This should return the first sample
+        EXPECT_EQ(ok_code, data_reader_->read(data_seq[2], info_seq[2], LENGTH_UNLIMITED, READ_SAMPLE_STATE));
+        check_collection(data_seq[2], false, 1, 1);
+        check_sample_values(data_seq[2], "0");
+
+        // Current state: {R, N, N, N, N, N, N, N, N, N}
+        // This should return the second sample
+        EXPECT_EQ(ok_code, data_reader_->read(data_seq[3], info_seq[3], 1, NOT_READ_SAMPLE_STATE));
+        check_collection(data_seq[3], false, 1, 1);
+        check_sample_values(data_seq[3], "1");
+
+        // Current state: {R, R, N, N, N, N, N, N, N, N}
+        // This should return the first sample
+        EXPECT_EQ(ok_code, data_reader_->read(data_seq[4], info_seq[4], 1, READ_SAMPLE_STATE));
+        check_collection(data_seq[4], false, 1, 1);
+        check_sample_values(data_seq[4], "0");
+
+        // Current state: {R, R, N, N, N, N, N, N, N, N}
+        // This should return the first and second samples
+        EXPECT_EQ(ok_code, data_reader_->read(data_seq[5], info_seq[5], LENGTH_UNLIMITED, READ_SAMPLE_STATE));
+        check_collection(data_seq[5], false, 2, 2);
+        check_sample_values(data_seq[5], "01");
+
+        // Return all loans
+        for (size_t i = 0; i < 6; ++i)
+        {
+            EXPECT_EQ(ok_code, data_reader_->return_loan(data_seq[i], info_seq[i]));
+        }
+    }
+
+    // Checks with take API
+    {
+        FooSeq data_seq[6];
+        SampleInfoSeq info_seq[6];
+
+        // Current state: {R, R, N, N, N, N, N, N, N, N}
+        // This should return the third sample
+        EXPECT_EQ(ok_code, data_reader_->take(data_seq[0], info_seq[0], 1, NOT_READ_SAMPLE_STATE));
+        check_collection(data_seq[0], false, 1, 1);
+        check_sample_values(data_seq[0], "2");
+
+        // Current state: {R, R, /, N, N, N, N, N, N, N}
+        // This should return the first sample
+        EXPECT_EQ(ok_code, data_reader_->take(data_seq[1], info_seq[1], 1, READ_SAMPLE_STATE));
+        check_collection(data_seq[1], false, 1, 1);
+        check_sample_values(data_seq[1], "0");
+
+        // Current state: {/, R, /, N, N, N, N, N, N, N}
+        // This should return samples 2 and 4
+        EXPECT_EQ(ok_code, data_reader_->take(data_seq[2], info_seq[2], 2));
+        check_collection(data_seq[2], false, 2, 2);
+        check_sample_values(data_seq[2], "13");
+
+        // Current state: {/, /, /, /, N, N, N, N, N, N}
+        // This should return no data
+        EXPECT_EQ(no_data_code, data_reader_->take(data_seq[3], info_seq[3], LENGTH_UNLIMITED, READ_SAMPLE_STATE));
+        check_collection(data_seq[3], true, 0, 0);
+
+        // Current state: {/, /, /, /, N, N, N, N, N, N}
+        // This should return samples 5 and 6
+        EXPECT_EQ(ok_code, data_reader_->read(data_seq[3], info_seq[3], 2));
+        check_collection(data_seq[3], false, 2, 2);
+        check_sample_values(data_seq[3], "45");
+
+        // Current state: {/, /, /, /, R, R, N, N, N, N}
+        // This should return samples 7, ... num_samples
+        EXPECT_EQ(ok_code, data_reader_->take(data_seq[4], info_seq[4], LENGTH_UNLIMITED, NOT_READ_SAMPLE_STATE));
+        check_collection(data_seq[4], false, num_samples - 6, num_samples - 6);
+        check_sample_values(data_seq[4], "6789");
+
+        // Current state: {/, /, /, /, R, R, /, /, /, /}
+        // Add a new sample to have a NOT_READ one
+        data.message()[0] = 'A';
+        EXPECT_EQ(ok_code, data_writer_->write(&data, handle_ok_));
+
+        // Current state: {/, /, /, /, R, R, /, /, /, /, N}
+        // This should return samples 5, 6 and new
+        EXPECT_EQ(ok_code, data_reader_->take(data_seq[5], info_seq[5]));
+        check_collection(data_seq[5], false, 3, 3);
+        check_sample_values(data_seq[5], "45A");
+
+        // Current state: {/, /, /, /, /, /, /, /, /, /, /}
+        // Return all loans
+        for (size_t i = 0; i < 6; ++i)
+        {
+            EXPECT_EQ(ok_code, data_reader_->return_loan(data_seq[i], info_seq[i]));
+        }
     }
 }
 
