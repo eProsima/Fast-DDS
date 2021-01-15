@@ -121,11 +121,28 @@ public:
     {
     }
 
+    void add_unicast_locator(
+            const Locator_t& locator)
+    {
+        remote_locators_.add_unicast_locator(locator);
+    }
+
+    void add_multicast_locator(
+            const Locator_t& locator)
+    {
+        remote_locators_.add_multicast_locator(locator);
+    }
+
     void set_multicast_locators(
             const LocatorList_t& /*locators*/,
             const NetworkFactory& /*network*/)
     {
 
+    }
+
+    bool has_locators() const
+    {
+        return !remote_locators_.unicast.empty() || !remote_locators_.multicast.empty();
     }
 
     const RemoteLocatorList& remote_locators() const

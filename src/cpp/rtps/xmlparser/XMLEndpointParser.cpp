@@ -266,6 +266,40 @@ XMLP_ret XMLEndpointParser::loadXMLReaderEndpoint(
                 return XMLP_ret::XML_ERROR;
             }
         }
+        else if (key == TOPIC) // deprecated api
+        {
+            const char* topicName = element->Attribute(NAME);
+            const char* typeName = element->Attribute(DATA_TYPE);
+            const char* kind = element->Attribute(KIND);
+
+            rdata->topicName((topicName != nullptr) ? std::string(topicName) : std::string(""));
+            rdata->typeName((topicName != nullptr) ? std::string(typeName) : std::string(""));
+            std::string auxString(kind ? kind : "");
+            if (auxString == _NO_KEY)
+            {
+                rdata->topicKind(NO_KEY);
+                rdata->guid().entityId.value[3] = 0x04;
+            }
+            else if (auxString == _WITH_KEY)
+            {
+                rdata->topicKind(WITH_KEY);
+                rdata->guid().entityId.value[3] = 0x07;
+            }
+            else
+            {
+                logError(RTPS_EDP, "Bad XML file, topic of kind: " << auxString << " is not valid");
+                delete(rdata);
+                return XMLP_ret::XML_ERROR;
+            }
+            if (rdata->topicName() == EPROSIMA_UNKNOWN_STRING || rdata->typeName() == EPROSIMA_UNKNOWN_STRING)
+            {
+                logError(RTPS_EDP,
+                        "Bad XML file, topic: " << rdata->topicName() << " or typeName: " << rdata->typeName() <<
+                        " undefined");
+                delete(rdata);
+                return XMLP_ret::XML_ERROR;
+            }
+        }
         else if (key == TOPIC_NAME)
         {
             rdata->topicName() = element->GetText();
@@ -319,40 +353,6 @@ XMLP_ret XMLEndpointParser::loadXMLReaderEndpoint(
         else if (key == MULTICAST_LOCATOR)
         {
             // Empty but necessary to avoid warning on last else
-        }
-        else if (key == TOPIC)
-        {
-            const char* topicName = element->Attribute(NAME);
-            const char* typeName = element->Attribute(DATA_TYPE);
-            const char* kind = element->Attribute(KIND);
-
-            rdata->topicName() = topicName ? std::string(topicName) : std::string("");
-            rdata->typeName() = typeName ? std::string(typeName) : std::string("");
-            std::string auxString(kind ? kind : "");
-            if (auxString == _NO_KEY)
-            {
-                rdata->topicKind() = NO_KEY;
-                rdata->guid().entityId.value[3] = 0x04;
-            }
-            else if (auxString == _WITH_KEY)
-            {
-                rdata->topicKind() = WITH_KEY;
-                rdata->guid().entityId.value[3] = 0x07;
-            }
-            else
-            {
-                logError(RTPS_EDP, "Bad XML file, topic of kind: " << auxString << " is not valid");
-                delete(rdata);
-                return XMLP_ret::XML_ERROR;
-            }
-            if (rdata->topicName() == EPROSIMA_UNKNOWN_STRING || rdata->typeName() == EPROSIMA_UNKNOWN_STRING)
-            {
-                logError(RTPS_EDP,
-                        "Bad XML file, topic: " << rdata->topicName() << " or typeName: " << rdata->typeName() <<
-                        " undefined");
-                delete(rdata);
-                return XMLP_ret::XML_ERROR;
-            }
         }
         else if (key == DURABILITY_QOS)
         {
@@ -539,6 +539,39 @@ XMLP_ret XMLEndpointParser::loadXMLWriterEndpoint(
         {
             logWarning(RTPS_EDP, "BAD XML tag: Writers don't use expectInlineQos tag");
         }
+        else if (key == TOPIC)
+        {
+            const char* topicName = element->Attribute(NAME);
+            wdata->topicName(std::string(topicName ? topicName : EPROSIMA_UNKNOWN_STRING));
+            const char* typeName = element->Attribute(DATA_TYPE);
+            wdata->typeName(std::string(typeName ? typeName : EPROSIMA_UNKNOWN_STRING));
+            const char* kind = element->Attribute(KIND);
+            std::string auxString(kind ? kind : "");
+            if (auxString == _NO_KEY)
+            {
+                wdata->topicKind(NO_KEY);
+                wdata->guid().entityId.value[3] = 0x03;
+            }
+            else if (auxString == _WITH_KEY)
+            {
+                wdata->topicKind(WITH_KEY);
+                wdata->guid().entityId.value[3] = 0x02;
+            }
+            else
+            {
+                logError(RTPS_EDP, "Bad XML file, topic of kind: " << auxString << " is not valid");
+                delete(wdata);
+                return XMLP_ret::XML_ERROR;
+            }
+            if (wdata->topicName() == EPROSIMA_UNKNOWN_STRING || wdata->typeName() == EPROSIMA_UNKNOWN_STRING)
+            {
+                logError(RTPS_EDP,
+                        "Bad XML file, topic: " << wdata->topicName() << " or typeName: " << wdata->typeName() <<
+                        " undefined");
+                delete(wdata);
+                return XMLP_ret::XML_ERROR;
+            }
+        }
         else if (key == TOPIC_NAME)
         {
             wdata->topicName(std::string(element->GetText()));
@@ -592,39 +625,6 @@ XMLP_ret XMLEndpointParser::loadXMLWriterEndpoint(
         else if (key == MULTICAST_LOCATOR)
         {
             // Empty but necessary to avoid warning on last else
-        }
-        else if (key == TOPIC)
-        {
-            const char* topicName = element->Attribute(NAME);
-            wdata->topicName(std::string(topicName ? topicName : EPROSIMA_UNKNOWN_STRING));
-            const char* typeName = element->Attribute(DATA_TYPE);
-            wdata->typeName(std::string(typeName ? typeName : EPROSIMA_UNKNOWN_STRING));
-            const char* kind = element->Attribute(KIND);
-            std::string auxString(kind ? kind : "");
-            if (auxString == _NO_KEY)
-            {
-                wdata->topicKind(NO_KEY);
-                wdata->guid().entityId.value[3] = 0x03;
-            }
-            else if (auxString == _WITH_KEY)
-            {
-                wdata->topicKind(WITH_KEY);
-                wdata->guid().entityId.value[3] = 0x02;
-            }
-            else
-            {
-                logError(RTPS_EDP, "Bad XML file, topic of kind: " << auxString << " is not valid");
-                delete(wdata);
-                return XMLP_ret::XML_ERROR;
-            }
-            if (wdata->topicName() == EPROSIMA_UNKNOWN_STRING || wdata->typeName() == EPROSIMA_UNKNOWN_STRING)
-            {
-                logError(RTPS_EDP,
-                        "Bad XML file, topic: " << wdata->topicName() << " or typeName: " << wdata->typeName() <<
-                        " undefined");
-                delete(wdata);
-                return XMLP_ret::XML_ERROR;
-            }
         }
         else if (key == DURABILITY_QOS)
         {
