@@ -988,7 +988,7 @@ bool StatefulReader::nextUntakenCache(
                     logWarning(RTPS_READER,
                             "Removing change " << (*it)->sequenceNumber << " from " << (*it)->writerGUID <<
                             " because is overidden");
-                    mp_history->remove_change(*it);
+                    it = mp_history->remove_change(it);
                     continue;
                 }
             }
@@ -1010,7 +1010,7 @@ bool StatefulReader::nextUntakenCache(
             logWarning(RTPS_READER,
                     "Removing change " << (*it)->sequenceNumber << " from " << (*it)->writerGUID <<
                     " because is no longer paired");
-            mp_history->remove_change(*it);
+            it = mp_history->remove_change(it);
         }
 
         if (takeok)
@@ -1069,7 +1069,7 @@ bool StatefulReader::nextUnreadCache(
                     logWarning(RTPS_READER,
                             "Removing change " << (*it)->sequenceNumber << " from " << (*it)->writerGUID <<
                             " because is overidden");
-                    mp_history->remove_change(*it);
+                    it = mp_history->remove_change(it);
                     continue;
                 }
             }
@@ -1090,7 +1090,7 @@ bool StatefulReader::nextUnreadCache(
             logWarning(RTPS_READER,
                     "Removing change " << (*it)->sequenceNumber << " from " << (*it)->writerGUID <<
                     " because is no longer paired");
-            mp_history->remove_change(*it);
+            it = mp_history->remove_change(it);
             continue;
         }
 
