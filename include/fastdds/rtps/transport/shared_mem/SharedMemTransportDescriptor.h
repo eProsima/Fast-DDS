@@ -126,6 +126,10 @@ struct SharedMemTransportDescriptor : public TransportDescriptorInterface
         rtps_dump_file_ = rtps_dump_file;
     }
 
+    //! Comparison operator
+    RTPS_DllAPI bool operator ==(
+            const SharedMemTransportDescriptor& t) const;
+
 private:
 
     uint32_t segment_size_;

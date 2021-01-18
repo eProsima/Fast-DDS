@@ -68,12 +68,17 @@ struct test_UDPv4TransportDescriptor : public SocketTransportDescriptor
     virtual TransportInterface* create_transport() const override;
 
     //! Copy constructor
-    test_UDPv4TransportDescriptor(
+    RTPS_DllAPI test_UDPv4TransportDescriptor(
             const test_UDPv4TransportDescriptor& t) = default;
 
     //! Copy assignment
-    test_UDPv4TransportDescriptor& operator =(
+    RTPS_DllAPI test_UDPv4TransportDescriptor& operator =(
             const test_UDPv4TransportDescriptor& t) = default;
+
+    //! Comparison operator
+    // Filters are not included
+    RTPS_DllAPI bool operator ==(
+            const test_UDPv4TransportDescriptor& t) const;
 };
 
 } // namespace rtps

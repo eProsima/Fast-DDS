@@ -42,8 +42,11 @@ struct UDPv4TransportDescriptor : public UDPTransportDescriptor
             const UDPv4TransportDescriptor& t) = default;
 
     //! Copy assignment
-    UDPv4TransportDescriptor& operator =(
+    RTPS_DllAPI UDPv4TransportDescriptor& operator =(
             const UDPv4TransportDescriptor& t) = default;
+
+    RTPS_DllAPI bool operator ==(
+            const UDPv4TransportDescriptor& t) const;
 };
 
 } // namespace rtps

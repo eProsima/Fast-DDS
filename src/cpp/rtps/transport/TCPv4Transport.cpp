@@ -129,6 +129,13 @@ TCPv4TransportDescriptor& TCPv4TransportDescriptor::operator =(
     return *this;
 }
 
+bool TCPv4TransportDescriptor::operator ==(
+        const TCPv4TransportDescriptor& t) const
+{
+    return (this->wan_addr == t.wan_addr &&
+            TCPTransportDescriptor::operator==(t));
+}
+
 TransportInterface* TCPv4TransportDescriptor::create_transport() const
 {
     return new TCPv4Transport(*this);

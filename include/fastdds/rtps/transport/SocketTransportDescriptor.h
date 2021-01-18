@@ -58,7 +58,7 @@ struct SocketTransportDescriptor : public TransportDescriptorInterface
     SocketTransportDescriptor(
             const SocketTransportDescriptor& t) = default;
 
-    // Copy assignment
+    //! Copy assignment
     SocketTransportDescriptor& operator =(
             const SocketTransportDescriptor& t) = default;
 
@@ -68,6 +68,17 @@ struct SocketTransportDescriptor : public TransportDescriptorInterface
     virtual uint32_t min_send_buffer_size() const override
     {
         return sendBufferSize;
+    }
+
+    //! Comparison operator
+    bool operator ==(
+            const SocketTransportDescriptor& t) const
+    {
+        return (this->sendBufferSize == t.min_send_buffer_size() &&
+                this->receiveBufferSize == t.receiveBufferSize &&
+                this->interfaceWhiteList == t.interfaceWhiteList &&
+                this->TTL == t.TTL &&
+                TransportDescriptorInterface::operator==(t));
     }
 
     //! Length of the send buffer.

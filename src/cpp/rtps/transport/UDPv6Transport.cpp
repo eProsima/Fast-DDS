@@ -129,6 +129,12 @@ TransportInterface* UDPv6TransportDescriptor::create_transport() const
     return new UDPv6Transport(*this);
 }
 
+bool UDPv6TransportDescriptor::operator ==(
+        const UDPv6TransportDescriptor& t) const
+{
+    return (UDPTransportDescriptor::operator==(t));
+}
+
 bool UDPv6Transport::getDefaultMetatrafficMulticastLocators(
         LocatorList_t& locators,
         uint32_t metatraffic_multicast_port) const

@@ -79,6 +79,10 @@ struct TCPv4TransportDescriptor : public TCPTransportDescriptor
     //! Copy assignment
     RTPS_DllAPI TCPv4TransportDescriptor& operator =(
             const TCPv4TransportDescriptor& t);
+
+    //! Comparison operator
+    RTPS_DllAPI bool operator ==(
+            const TCPv4TransportDescriptor& t) const;
 };
 
 } // namespace rtps

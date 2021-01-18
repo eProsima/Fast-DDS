@@ -209,6 +209,24 @@ struct TCPTransportDescriptor : public SocketTransportDescriptor
             return (options & option) == option;
         }
 
+        //! Comparison operator
+        bool operator ==(
+                const TLSConfig& t) const
+        {
+            return (this->password == t.password &&
+                    this->options == t.options &&
+                    this->cert_chain_file == t.cert_chain_file &&
+                    this->private_key_file == t.private_key_file &&
+                    this->tmp_dh_file == t.tmp_dh_file &&
+                    this->verify_file == t.verify_file &&
+                    this->verify_mode == t.verify_mode &&
+                    this->verify_paths == t.verify_paths &&
+                    this->default_verify_path == t.default_verify_path &&
+                    this->verify_depth == t.verify_depth &&
+                    this->rsa_private_key_file == t.rsa_private_key_file &&
+                    this->handshake_role == t.handshake_role);
+        }
+
     };
 
     //! List of ports to listen as server
@@ -259,6 +277,10 @@ struct TCPTransportDescriptor : public SocketTransportDescriptor
 
     //! Destructor
     virtual ~TCPTransportDescriptor() = default;
+
+    //! Comparison operator
+    RTPS_DllAPI bool operator ==(
+            const TCPTransportDescriptor& t) const;
 };
 
 } // namespace rtps

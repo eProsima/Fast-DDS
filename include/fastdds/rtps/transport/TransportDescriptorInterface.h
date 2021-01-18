@@ -83,6 +83,14 @@ struct TransportDescriptorInterface
         return maxInitialPeersRange;
     }
 
+    //! Comparison operator
+    bool operator ==(
+            const TransportDescriptorInterface& t) const
+    {
+        return (this->maxMessageSize == t.max_message_size() &&
+                this->maxInitialPeersRange == t.max_initial_peers_range());
+    }
+
     //! Maximum size of a single message in the transport
     uint32_t maxMessageSize;
 

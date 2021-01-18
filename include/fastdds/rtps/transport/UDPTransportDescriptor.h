@@ -46,8 +46,12 @@ struct UDPTransportDescriptor : public SocketTransportDescriptor
             const UDPTransportDescriptor& t) = default;
 
     //! Copy assignment
-    UDPTransportDescriptor& operator =(
+    RTPS_DllAPI UDPTransportDescriptor& operator =(
             const UDPTransportDescriptor& t) = default;
+
+    //! Comparison operator
+    RTPS_DllAPI bool operator ==(
+            const UDPTransportDescriptor& t) const;
 
     //! Source port to use for outgoing datagrams
     uint16_t m_output_udp_socket;

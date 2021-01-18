@@ -44,6 +44,10 @@ struct TCPv6TransportDescriptor : public TCPTransportDescriptor
     //! Copy assignment
     RTPS_DllAPI TCPv6TransportDescriptor& operator =(
             const TCPv6TransportDescriptor& t) = default;
+
+    //! Comparison operator
+    RTPS_DllAPI bool operator ==(
+            const TCPv6TransportDescriptor& t) const;
 };
 
 } // namespace rtps

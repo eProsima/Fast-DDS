@@ -114,6 +114,23 @@ TransportInterface* test_UDPv4TransportDescriptor::create_transport() const
     return new test_UDPv4Transport(*this);
 }
 
+bool test_UDPv4TransportDescriptor::operator ==(
+        const test_UDPv4TransportDescriptor& t) const
+{
+    return (this->dropDataMessagesPercentage == t.dropDataMessagesPercentage &&
+            this->dropParticipantBuiltinTopicData == t.dropParticipantBuiltinTopicData &&
+            this->dropPublicationBuiltinTopicData == t.dropPublicationBuiltinTopicData &&
+            this->dropSubscriptionBuiltinTopicData == t.dropSubscriptionBuiltinTopicData &&
+            this->dropDataFragMessagesPercentage == t.dropDataFragMessagesPercentage &&
+            this->dropHeartbeatMessagesPercentage == t.dropHeartbeatMessagesPercentage &&
+            this->dropAckNackMessagesPercentage == t.dropAckNackMessagesPercentage &&
+            this->dropGapMessagesPercentage == t.dropGapMessagesPercentage &&
+            this->percentageOfMessagesToDrop == t.percentageOfMessagesToDrop &&
+            this->sequenceNumberDataMessagesToDrop == t.sequenceNumberDataMessagesToDrop &&
+            this->dropLogLength == t.dropLogLength &&
+            SocketTransportDescriptor::operator==(t));
+}
+
 void test_UDPv4Transport::get_ips(
         std::vector<fastrtps::rtps::IPFinder::info_IP>& locNames,
         bool return_loopback)
