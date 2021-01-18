@@ -368,13 +368,11 @@ TEST(SHM, SHM_copy)
 
     // Copy constructor
     SharedMemTransportDescriptor shm_transport_copy_constructor(shm_transport);
-    EXPECT_EQ(shm_transport_copy_constructor.segment_size(), 32u * 1024u);
-    EXPECT_EQ(shm_transport_copy_constructor.max_message_size(), 64u * 1024u);
+    EXPECT_EQ(shm_transport_copy_constructor, shm_transport);
 
     // Copy assignment
     SharedMemTransportDescriptor shm_transport_copy = shm_transport;
-    EXPECT_EQ(shm_transport_copy.segment_size(), 32u * 1024u);
-    EXPECT_EQ(shm_transport_copy.max_message_size(), 64u * 1024u);
+    EXPECT_EQ(shm_transport_copy, shm_transport);
 }
 
 #endif // EPROSIMA_SHM_TRANSPORT_DISABLED
