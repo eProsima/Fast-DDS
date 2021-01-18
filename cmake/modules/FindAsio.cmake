@@ -1,7 +1,4 @@
-# ASIO_FOUND
 # ASIO_INCLUDE_DIR
-
-set(ASIO_REQUIRED_VERSION 1.13.0)
 
 if (THIRDPARTY_ASIO STREQUAL "FORCE" OR ANDROID)
     find_path(ASIO_INCLUDE_DIR NAMES asio.hpp NO_CMAKE_FIND_ROOT_PATH)
@@ -28,15 +25,15 @@ else()
         math(EXPR ASIO_MAYOR_VERSION ${ASIO_VERSION}/100000)
         set(ASIO_VERSION "${ASIO_MAYOR_VERSION}.${ASIO_MINOR_VERSION}.${ASIO_PATCH_VERSION}")
 
-        if(${ASIO_VERSION} VERSION_LESS ${ASIO_REQUIRED_VERSION})
+        if(${ASIO_VERSION} VERSION_LESS ${Asio_FIND_VERSION})
             # If THIRDPARTY_ASIO=ON the Asio version from thirdparty is used.
             if(THIRDPARTY_ASIO STREQUAL "ON")
                 find_path(ASIO_INCLUDE_DIR NAMES asio.hpp NO_CMAKE_FIND_ROOT_PATH)
             # If THIRDPARTY_ASIO=OFF the search is stopped and an error is shown
             else()
                 message(SEND_ERROR
-                    "Found Asio version ${ASIO_VERSION}, which is not compatible with Fast DDS. \n"
-                    "Minimum required Asio version: ${ASIO_REQUIRED_VERSION}"
+                    "Found Asio version ${ASIO_VERSION}, which is not compatible with Fast DDS. "
+                    "Minimum required Asio version: ${Asio_FIND_VERSION}"
                 )
             endif()
         endif()

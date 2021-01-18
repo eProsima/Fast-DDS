@@ -171,6 +171,9 @@ endmacro()
 #         2.3. Try to find the package again.
 #   3. If the package was not found anywhere, then print an FATAL_ERROR message.
 macro(eprosima_find_thirdparty package thirdparty_name)
+    # Parse arguments.
+    set(oneValueArgs VERSION)
+    cmake_parse_arguments(FIND "" "${oneValueArgs}" "" ${ARGN})
     # Define a list of allowed values for the options THIRDPARTY and THIRDPARTY_${package}
     set(ALLOWED_VALUES ON OFF FORCE)
 
@@ -205,7 +208,7 @@ macro(eprosima_find_thirdparty package thirdparty_name)
     #    use thirdparty, meaning we have more control over what is built.
     if((NOT (THIRDPARTY_${package} STREQUAL "FORCE")) AND (NOT (EPROSIMA_INSTALLER AND (MSVC OR MSVC_IDE))))
         # Try to quietly find the package outside thridparty first.
-        find_package(${package} QUIET)
+        find_package(${package} ${FIND_VERSION} QUIET)
 
         # Show message if package is found here.
         if(${package}_FOUND)
