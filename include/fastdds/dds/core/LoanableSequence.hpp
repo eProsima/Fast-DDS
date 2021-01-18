@@ -23,7 +23,7 @@
 #include <cstdint>
 #include <vector>
 
-#include <fastdds/dds/core/LoanableCollection.hpp>
+#include <fastdds/dds/core/LoanableTypedCollection.hpp>
 #include <fastdds/dds/log/Log.hpp>
 
 namespace eprosima {
@@ -58,7 +58,7 @@ namespace dds {
  *     @li A sequence with a zero maximum always has has_ownership == true
  */
 template<typename T>
-class LoanableSequence : public LoanableCollection
+class LoanableSequence : public LoanableTypedCollection<T>
 {
 public:
 
@@ -168,57 +168,6 @@ public:
         }
 
         return *this;
-    }
-
-    /**
-     * Set an element of the sequence.
-     *
-     * This is the operator that is invoked when the application indexes into a @em non-const sequence:
-     * @code{.cpp}
-     * element = sequence[n];
-     * sequence[n] = element;
-     * @endcode
-     *
-     * Note that a @em reference to the element is returned (and not a copy)
-     *
-     * @param [in] n index of element to access, must be >= 0 and less than length().
-     *
-     * @return a reference to the element at position @c n
-     */
-    T& operator [](
-            size_type n)
-    {
-        if (n >= length_)
-        {
-            throw std::out_of_range("");
-        }
-
-        return *static_cast<T*>(elements_[n]);
-    }
-
-    /**
-     * Get an element of the sequence.
-     *
-     * This is the operator that is invoked when the application indexes into a @em const sequence:
-     * @code{.cpp}
-     * element = sequence[n];
-     * @endcode
-     *
-     * Note that a @em reference to the element is returned (and not a copy)
-     *
-     * @param [in] n index of element to access, must be >= 0 and less than length().
-     *
-     * @return a const reference to the element at position @n
-     */
-    const T& operator [](
-            size_type n) const
-    {
-        if (n >= length_)
-        {
-            throw std::out_of_range("");
-        }
-
-        return *static_cast<const T*>(elements_[n]);
     }
 
 private:
