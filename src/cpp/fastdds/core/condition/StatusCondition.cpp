@@ -13,44 +13,34 @@
 // limitations under the License.
 
 /**
- * @file WaitSet.cpp
+ * @file StatusCondition.cpp
  *
  */
 
-#include <fastdds/dds/core/condition/WaitSet.hpp>
+#include <fastdds/dds/core/condition/StatusCondition.hpp>
 #include <fastrtps/types/TypesBase.h>
 
 namespace eprosima {
 namespace fastdds {
 namespace dds {
 
-fastrtps::types::ReturnCode_t WaitSet::attach_condition(const Condition& cond)
+fastrtps::types::ReturnCode_t StatusCondition::set_enabled_statuses(const StatusKind& mask)
 {
-    static_cast<void>(cond);
+    static_cast<void>(mask);
     return fastrtps::types::ReturnCode_t::RETCODE_UNSUPPORTED;
 }
 
-fastrtps::types::ReturnCode_t WaitSet::detach_condition(const Condition& cond)
+StatusMask& StatusCondition::get_enabled_statuses()
 {
-    static_cast<void>(cond);
-    return fastrtps::types::ReturnCode_t::RETCODE_UNSUPPORTED;
+    logWarning(CONDITION, "get_trigger_value method not implemented");
+    return nullptr;
 }
 
-fastrtps::types::ReturnCode_t WaitSet::wait(
-        ConditionSeq& active_conditions,
-        const fastrtps::Duration_t timeout) const
+Entity& StatusCondition::get_entity()
 {
-    static_cast<void>(active_conditions);
-    static_cast<void>(timeout);
-    return fastrtps::types::ReturnCode_t::RETCODE_UNSUPPORTED;
+    logWarning(CONDITION, "get_trigger_value method not implemented");
+    return nullptr;
 }
-
-fastrtps::types::ReturnCode_t WaitSet::get_conditions(ConditionSeq& attached_conditions) const
-{
-    static_cast<void>(attached_conditions);
-    return fastrtps::types::ReturnCode_t::RETCODE_UNSUPPORTED;
-}
-
 
 }  // namespace dds
 }  // namespace fastdds

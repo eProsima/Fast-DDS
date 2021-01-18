@@ -34,8 +34,6 @@
 
 #include <utility>
 
-#include <fastdds/dds/core/condition/WaitSet.hpp>
-
 using eprosima::fastrtps::types::ReturnCode_t;
 
 namespace dds {

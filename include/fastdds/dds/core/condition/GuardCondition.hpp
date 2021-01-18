@@ -13,39 +13,40 @@
 // limitations under the License.
 
 /**
- * @file Condition.hpp
+ * @file GuardCondition.hpp
  *
  */
 
-#ifndef _FASTDDS_CONDITION_HPP_
-#define _FASTDDS_CONDITION_HPP_
+#ifndef _FASTDDS_GUARD_CONDITION_HPP_
+#define _FASTDDS_GUARD_CONDITION_HPP_
 
 #include <fastrtps/fastrtps_dll.h>
-#include <vector>
-#include <fastdds/dds/log/Log.hpp>
+#include <fastrtps/types/TypesBase.h>
 
 namespace eprosima {
 namespace fastdds {
 namespace dds {
 
 /**
- * @brief The Condition class is the root base class  for all the conditions that may be attached to a WaitSet.
+ * @brief The GuardCondition class is a specific Condition whose trigger_value is completely under the control
+ * of the application.
  *
  */
-class Condition
+class GuardCondition
 {
 public:
 
-    // Condition class not implemented.
+    // GuardCondition not implemented.
 
     /**
-     * @brief Retrieves the trigger_value
-     * @return true if trigger_value is set to true, false otherwise
+     * @brief Set the trigger_value
+     * @param value new value for trigger
+     * @return RETURN_OK
      */
-    RTPS_DllAPI bool get_trigger_value() const
+    RTPS_DllAPI fastrtps::types::ReturnCode_t set_trigger_value(bool value)
     {
-        logWarning(CONDITION, "get_trigger_value method not implemented");
-        return false; // TODO return trigger value
+        static_cast<void>(value);
+        return fastrtps::types::ReturnCode_t::RETCODE_UNSUPPORTED;
     }
 };
 
@@ -55,4 +56,4 @@ typedef std::vector<Condition> ConditionSeq;
 } // namespace fastdds
 } // namespace eprosima
 
-#endif // _FASTDDS_CONDITION_HPP_
+#endif // _FASTDDS_GUARD_CONDITION_HPP_

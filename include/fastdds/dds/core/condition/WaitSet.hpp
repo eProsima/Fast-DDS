@@ -38,7 +38,7 @@ class WaitSet
 {
 public:
 
-    // WaitSet class does not have attributes. Implemented with default constructor.
+    // WaitSet class not implemented.
 
     /**
      * @brief Attaches a Condition to the Wait Set.
@@ -64,14 +64,16 @@ public:
      * @return RETCODE_OK if everything correct, PRECONDITION_NOT_MET if WaitSet already waiting, TIMEOUT if maximum
      * time expired, error code otherwise
      */
-    RTPS_DllAPI fastrtps::types::ReturnCode_t wait(ConditionSeq& active_conditions, const fastrtps::Duration_t timeout);
+    RTPS_DllAPI fastrtps::types::ReturnCode_t wait(
+            ConditionSeq& active_conditions,
+            const fastrtps::Duration_t timeout) const;
 
     /**
      * @brief Retrieves the list of attached conditions
      * @param attached_conditions Reference to the collection of attached conditions
      * @return RETCODE_OK if everything correct, error code otherwise
      */
-    RTPS_DllAPI fastrtps::types::ReturnCode_t get_conditions(ConditionSeq& attached_conditions);
+    RTPS_DllAPI fastrtps::types::ReturnCode_t get_conditions(ConditionSeq& attached_conditions) const;
 };
 
 } // namespace dds
