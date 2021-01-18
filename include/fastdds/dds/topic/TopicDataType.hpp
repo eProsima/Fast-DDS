@@ -19,11 +19,14 @@
 #ifndef _FASTDDS_TOPICDATATYPE_HPP_
 #define _FASTDDS_TOPICDATATYPE_HPP_
 
-#include <fastrtps/fastrtps_dll.h>
-#include <fastdds/dds/core/policy/QosPolicies.hpp>
-
 #include <string>
 #include <functional>
+
+#include <fastdds/dds/core/policy/QosPolicies.hpp>
+#include <fastdds/rtps/common/InstanceHandle.h>
+
+#include <fastrtps/fastrtps_dll.h>
+#include <fastrtps/utils/md5.h>
 
 // This version of TypeSupport has `is_bounded()`
 #define TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED

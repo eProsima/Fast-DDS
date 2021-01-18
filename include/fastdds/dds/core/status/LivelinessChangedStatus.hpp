@@ -19,7 +19,7 @@
 #ifndef _FASTDDS_DDS_QOS_LIVELINESSCHANGEDSTATUS_HPP_
 #define _FASTDDS_DDS_QOS_LIVELINESSCHANGEDSTATUS_HPP_
 
-#include <fastdds/rtps/common/InstanceHandle.h>
+#include <fastdds/dds/topic/TypeSupport.hpp>
 
 namespace eprosima {
 namespace fastdds {
@@ -49,7 +49,7 @@ struct LivelinessChangedStatus
     int32_t not_alive_count_change = 0;
 
     //! @brief Handle to the last publisher whose change in liveliness caused this status to change
-    fastrtps::rtps::InstanceHandle_t last_publication_handle;
+    InstanceHandle_t last_publication_handle;
 };
 
 } //namespace dds

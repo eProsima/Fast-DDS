@@ -20,13 +20,14 @@
 #ifndef _FASTDDS_PUBLISHER_HPP_
 #define _FASTDDS_PUBLISHER_HPP_
 
-#include <fastrtps/fastrtps_dll.h>
-#include <fastdds/rtps/common/Time_t.h>
-#include <fastrtps/attributes/PublisherAttributes.h>
-#include <fastrtps/types/TypesBase.h>
 #include <fastdds/dds/core/Entity.hpp>
 #include <fastdds/dds/publisher/qos/PublisherQos.hpp>
 #include <fastdds/dds/publisher/qos/DataWriterQos.hpp>
+#include <fastdds/dds/topic/TypeSupport.hpp>
+#include <fastdds/rtps/common/Time_t.h>
+
+#include <fastrtps/fastrtps_dll.h>
+#include <fastrtps/types/TypesBase.h>
 
 using eprosima::fastrtps::types::ReturnCode_t;
 
@@ -309,7 +310,7 @@ public:
      * Returns the Publisher's handle.
      * @return InstanceHandle of this Publisher.
      */
-    RTPS_DllAPI const fastrtps::rtps::InstanceHandle_t& get_instance_handle() const;
+    RTPS_DllAPI const InstanceHandle_t& get_instance_handle() const;
 
 protected:
 

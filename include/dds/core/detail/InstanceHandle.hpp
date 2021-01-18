@@ -18,7 +18,7 @@
 #ifndef EPROSIMA_DDS_CORE_DETAIL_INSTANCE_HANDLE_HPP_
 #define EPROSIMA_DDS_CORE_DETAIL_INSTANCE_HANDLE_HPP_
 
-#include <fastdds/rtps/common/InstanceHandle.h>
+#include <fastdds/dds/topic/TypeSupport.hpp>
 
 /**
  * @cond
@@ -29,7 +29,7 @@ namespace dds {
 namespace core {
 namespace detail {
 
-using InstanceHandle = eprosima::fastrtps::rtps::InstanceHandle_t;
+using InstanceHandle = eprosima::fastdds::dds::InstanceHandle_t;
 
 } //namespace detail
 } //namespace core

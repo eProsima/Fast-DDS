@@ -287,22 +287,22 @@ public:
 
     /* TODO
        bool ignore_participant(
-            const fastrtps::rtps::InstanceHandle_t& handle);
+            const InstanceHandle_t& handle);
      */
 
     /* TODO
        bool ignore_topic(
-            const fastrtps::rtps::InstanceHandle_t& handle);
+            const InstanceHandle_t& handle);
      */
 
     /* TODO
        bool ignore_publication(
-            const fastrtps::rtps::InstanceHandle_t& handle);
+            const InstanceHandle_t& handle);
      */
 
     /* TODO
        bool ignore_subscription(
-            const fastrtps::rtps::InstanceHandle_t& handle);
+            const InstanceHandle_t& handle);
      */
 
     /**
@@ -485,24 +485,24 @@ public:
 
     /* TODO
        bool get_discovered_participants(
-            std::vector<fastrtps::rtps::InstanceHandle_t>& participant_handles) const;
+            std::vector<InstanceHandle_t>& participant_handles) const;
      */
 
     /* TODO
        bool get_discovered_participant_data(
             ParticipantBuiltinTopicData& participant_data,
-            const fastrtps::rtps::InstanceHandle_t& participant_handle) const;
+            const InstanceHandle_t& participant_handle) const;
      */
 
     /* TODO
        bool get_discovered_topics(
-            std::vector<fastrtps::rtps::InstanceHandle_t>& topic_handles) const;
+            std::vector<InstanceHandle_t>& topic_handles) const;
      */
 
     /* TODO
        bool get_discovered_topic_data(
             TopicBuiltinTopicData& topic_data,
-            const fastrtps::rtps::InstanceHandle_t& topic_handle) const;
+            const InstanceHandle_t& topic_handle) const;
      */
 
     /**
@@ -515,7 +515,7 @@ public:
      * @return True if entity is contained. False otherwise.
      */
     RTPS_DllAPI bool contains_entity(
-            const fastrtps::rtps::InstanceHandle_t& handle,
+            const InstanceHandle_t& handle,
             bool recursive = true) const;
 
     /**
@@ -539,7 +539,7 @@ public:
      * Returns the DomainParticipant's handle.
      * @return InstanceHandle of this DomainParticipant.
      */
-    RTPS_DllAPI const fastrtps::rtps::InstanceHandle_t& get_instance_handle() const;
+    RTPS_DllAPI const InstanceHandle_t& get_instance_handle() const;
 
     // From here legacy RTPS methods.
 

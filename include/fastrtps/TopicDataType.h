@@ -20,9 +20,6 @@
 #define TOPICDATATYPE_H_
 
 #include <fastdds/dds/topic/TopicDataType.hpp>
-#include <fastdds/rtps/common/SerializedPayload.h>
-#include <fastdds/rtps/common/InstanceHandle.h>
-#include <fastrtps/utils/md5.h>
 
 namespace eprosima {
 namespace fastrtps {

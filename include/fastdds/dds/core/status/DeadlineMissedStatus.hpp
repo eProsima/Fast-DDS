@@ -19,7 +19,7 @@
 #ifndef _FASTDDS_DDS_QOS_DEADLINEMISSEDSTATUS_HPP_
 #define _FASTDDS_DDS_QOS_DEADLINEMISSEDSTATUS_HPP_
 
-#include <fastdds/rtps/common/InstanceHandle.h>
+#include <fastdds/dds/topic/TypeSupport.hpp>
 
 namespace eprosima {
 namespace fastdds {
@@ -50,7 +50,7 @@ struct DeadlineMissedStatus
     uint32_t total_count_change;
 
     //! @brief Handle to the last instance missing the deadline
-    fastrtps::rtps::InstanceHandle_t last_instance_handle;
+    InstanceHandle_t last_instance_handle;
 };
 
 //! Typedef of DeadlineMissedStatus
