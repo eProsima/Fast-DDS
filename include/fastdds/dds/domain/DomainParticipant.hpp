@@ -80,6 +80,13 @@ class DomainParticipant : public Entity
 public:
 
     /**
+     * @brief Destructor
+     */
+    RTPS_DllAPI virtual ~DomainParticipant();
+
+    // Superclass methods
+
+    /**
      * This operation returns the value of the DomainParticipant QoS policies
      * @param qos DomainParticipantQos reference where the qos is going to be returned
      * @return RETCODE_OK
@@ -94,12 +101,6 @@ public:
     RTPS_DllAPI const DomainParticipantQos& get_qos() const;
 
     /**
-     * @brief This operation enables the DomainParticipant
-     * @return RETCODE_OK
-     */
-    RTPS_DllAPI ReturnCode_t enable() override;
-
-    /**
      * This operation sets the value of the DomainParticipant QoS policies.
      * @param qos DomainParticipantQos to be set
      * @return RETCODE_IMMUTABLE_POLICY if any of the Qos cannot be changed, RETCODE_INCONSISTENT_POLICY if the Qos is not
@@ -107,6 +108,12 @@ public:
      */
     RTPS_DllAPI ReturnCode_t set_qos(
             const DomainParticipantQos& qos) const;
+
+    /**
+     * Allows accessing the DomainParticipantListener.
+     * @return DomainParticipantListener pointer
+     */
+    RTPS_DllAPI const DomainParticipantListener* get_listener() const;
 
     /**
      * Modifies the DomainParticipantListener, sets the mask to StatusMask::all()
@@ -127,10 +134,12 @@ public:
             const StatusMask& mask);
 
     /**
-     * Allows accessing the DomainParticipantListener.
-     * @return DomainParticipantListener pointer
+     * @brief This operation enables the DomainParticipant
+     * @return RETCODE_OK
      */
-    RTPS_DllAPI const DomainParticipantListener* get_listener() const;
+    RTPS_DllAPI ReturnCode_t enable() override;
+
+    // DomainParticipant specific methods from DDS API
 
     /**
      * Create a Publisher in this Participant.
@@ -199,35 +208,6 @@ public:
             Subscriber* subscriber);
 
     /**
-     * Register a type in this participant.
-     * @param type TypeSupport.
-     * @param type_name The name that will be used to identify the Type.
-     * @return RETCODE_BAD_PARAMETER if the size of the name is 0, RERCODE_PRECONDITION_NOT_MET if there is another TypeSupport
-     * with the same name and RETCODE_OK if it is correctly registered.
-     */
-    RTPS_DllAPI ReturnCode_t register_type(
-            TypeSupport type,
-            const std::string& type_name);
-
-    /**
-     * Register a type in this participant.
-     * @param type TypeSupport.
-     * @return RETCODE_BAD_PARAMETER if the size of the name is 0, RERCODE_PRECONDITION_NOT_MET if there is another TypeSupport
-     * with the same name and RETCODE_OK if it is correctly registered.
-     */
-    RTPS_DllAPI ReturnCode_t register_type(
-            TypeSupport type);
-
-    /**
-     * Unregister a type in this participant.
-     * @param typeName Name of the type
-     * @return RETCODE_BAD_PARAMETER if the size of the name is 0, RERCODE_PRECONDITION_NOT_MET if there are entities using that
-     * TypeSupport and RETCODE_OK if it is correctly unregistered.
-     */
-    RTPS_DllAPI ReturnCode_t unregister_type(
-            const std::string& typeName);
-
-    /**
      * Create a Topic in this Participant.
      * @param topic_name Name of the Topic.
      * @param type_name Data type of the Topic.
@@ -271,39 +251,12 @@ public:
     /**
      * Looks up an existing, locally created @ref TopicDescription, based on its name.
      * May be called on a disabled participant.
-     *
      * @param topic_name Name of the @ref TopicDescription to search for.
-     *
      * @return Pointer to the topic description, if it has been created locally. Otherwise, nullptr is returned.
-     *
      * @remark UNSAFE. It is unsafe to lookup a topic description while another thread is creating a topic.
      */
     RTPS_DllAPI TopicDescription* lookup_topicdescription(
             const std::string& topic_name) const;
-
-    /* TODO
-       Subscriber* get_builtin_subscriber();
-     */
-
-    /* TODO
-       bool ignore_participant(
-            const InstanceHandle_t& handle);
-     */
-
-    /* TODO
-       bool ignore_topic(
-            const InstanceHandle_t& handle);
-     */
-
-    /* TODO
-       bool ignore_publication(
-            const InstanceHandle_t& handle);
-     */
-
-    /* TODO
-       bool ignore_subscription(
-            const InstanceHandle_t& handle);
-     */
 
     /**
      * This operation retrieves the domain_id used to create the DomainParticipant.
@@ -311,10 +264,6 @@ public:
      * @return The Participant's domain_id
      */
     RTPS_DllAPI DomainId_t get_domain_id() const;
-
-    /* TODO
-       bool delete_contained_entities();
-     */
 
     /**
      * This operation manually asserts the liveliness of the DomainParticipant.
@@ -482,29 +431,6 @@ public:
             const std::string& profile_name,
             TopicQos& qos) const;
 
-
-    /* TODO
-       bool get_discovered_participants(
-            std::vector<InstanceHandle_t>& participant_handles) const;
-     */
-
-    /* TODO
-       bool get_discovered_participant_data(
-            ParticipantBuiltinTopicData& participant_data,
-            const InstanceHandle_t& participant_handle) const;
-     */
-
-    /* TODO
-       bool get_discovered_topics(
-            std::vector<InstanceHandle_t>& topic_handles) const;
-     */
-
-    /* TODO
-       bool get_discovered_topic_data(
-            TopicBuiltinTopicData& topic_data,
-            const InstanceHandle_t& topic_handle) const;
-     */
-
     /**
      * This operation checks whether or not the given handle represents an Entity that was created from the
      * DomainParticipant.
@@ -526,6 +452,37 @@ public:
      */
     RTPS_DllAPI ReturnCode_t get_current_time(
             fastrtps::Time_t& current_time) const;
+
+    // DomainParticipant methods specific from Fast-DDS
+
+    /**
+     * Register a type in this participant.
+     * @param type TypeSupport.
+     * @param type_name The name that will be used to identify the Type.
+     * @return RETCODE_BAD_PARAMETER if the size of the name is 0, RERCODE_PRECONDITION_NOT_MET if there is another TypeSupport
+     * with the same name and RETCODE_OK if it is correctly registered.
+     */
+    RTPS_DllAPI ReturnCode_t register_type(
+            TypeSupport type,
+            const std::string& type_name);
+
+    /**
+     * Register a type in this participant.
+     * @param type TypeSupport.
+     * @return RETCODE_BAD_PARAMETER if the size of the name is 0, RERCODE_PRECONDITION_NOT_MET if there is another TypeSupport
+     * with the same name and RETCODE_OK if it is correctly registered.
+     */
+    RTPS_DllAPI ReturnCode_t register_type(
+            TypeSupport type);
+
+    /**
+     * Unregister a type in this participant.
+     * @param typeName Name of the type
+     * @return RETCODE_BAD_PARAMETER if the size of the name is 0, RERCODE_PRECONDITION_NOT_MET if there are entities using that
+     * TypeSupport and RETCODE_OK if it is correctly unregistered.
+     */
+    RTPS_DllAPI ReturnCode_t unregister_type(
+            const std::string& typeName);
 
     /**
      * This method gives access to a registered type based on its name.
@@ -613,11 +570,6 @@ public:
             const fastrtps::types::TypeInformation& type_information,
             const std::string& type_name,
             std::function<void(const std::string& name, const fastrtps::types::DynamicType_ptr type)>& callback);
-
-    /**
-     * @brief Destructor
-     */
-    RTPS_DllAPI virtual ~DomainParticipant();
 
     /**
      * @brief Check if the Participant has any Publisher, Subscriber or Topic

@@ -42,25 +42,6 @@ DomainParticipant::~DomainParticipant()
     }
 }
 
-ReturnCode_t DomainParticipant::enable()
-{
-    if (enable_)
-    {
-        return ReturnCode_t::RETCODE_OK;
-    }
-
-    enable_ = true;
-    ReturnCode_t ret_code = impl_->enable();
-    enable_ = !!ret_code;
-    return ret_code;
-}
-
-ReturnCode_t DomainParticipant::set_qos(
-        const DomainParticipantQos& qos) const
-{
-    return impl_->set_qos(qos);
-}
-
 ReturnCode_t DomainParticipant::get_qos(
         DomainParticipantQos& qos) const
 {
@@ -70,6 +51,17 @@ ReturnCode_t DomainParticipant::get_qos(
 const DomainParticipantQos& DomainParticipant::get_qos() const
 {
     return impl_->get_qos();
+}
+
+ReturnCode_t DomainParticipant::set_qos(
+        const DomainParticipantQos& qos) const
+{
+    return impl_->set_qos(qos);
+}
+
+const DomainParticipantListener* DomainParticipant::get_listener() const
+{
+    return impl_->get_listener();
 }
 
 ReturnCode_t DomainParticipant::set_listener(
@@ -91,9 +83,17 @@ ReturnCode_t DomainParticipant::set_listener(
     return ret_val;
 }
 
-const DomainParticipantListener* DomainParticipant::get_listener() const
+ReturnCode_t DomainParticipant::enable()
 {
-    return impl_->get_listener();
+    if (enable_)
+    {
+        return ReturnCode_t::RETCODE_OK;
+    }
+
+    enable_ = true;
+    ReturnCode_t ret_code = impl_->enable();
+    enable_ = !!ret_code;
+    return ret_code;
 }
 
 Publisher* DomainParticipant::create_publisher(
@@ -172,75 +172,10 @@ TopicDescription* DomainParticipant::lookup_topicdescription(
     return impl_->lookup_topicdescription(topic_name);
 }
 
-ReturnCode_t DomainParticipant::register_type(
-        TypeSupport type,
-        const std::string& type_name)
-{
-    return impl_->register_type(type, type_name);
-}
-
-ReturnCode_t DomainParticipant::register_type(
-        TypeSupport type)
-{
-    return impl_->register_type(type, type.get_type_name());
-}
-
-ReturnCode_t DomainParticipant::unregister_type(
-        const std::string& typeName)
-{
-    return impl_->unregister_type(typeName);
-}
-
-/* TODO
-   Subscriber* DomainParticipant::get_builtin_subscriber()
-   {
-    return impl_->get_builtin_subscriber();
-   }
- */
-
-/* TODO
-   bool DomainParticipant::ignore_participant(
-        const InstanceHandle_t& handle)
-   {
-    return impl_->ignore_participant(handle);
-   }
- */
-
-/* TODO
-   bool DomainParticipant::ignore_topic(
-        const InstanceHandle_t& handle)
-   {
-    return impl_->ignore_topic(handle);
-   }
- */
-
-/* TODO
-   bool DomainParticipant::ignore_publication(
-        const InstanceHandle_t& handle)
-   {
-    return impl_->ignore_publication(handle);
-   }
- */
-
-/* TODO
-   bool DomainParticipant::ignore_subscription(
-        const InstanceHandle_t& handle)
-   {
-    return impl_->ignore_subscription(handle);
-   }
- */
-
 DomainId_t DomainParticipant::get_domain_id() const
 {
     return impl_->get_domain_id();
 }
-
-/* TODO
-   bool DomainParticipant::delete_contained_entities()
-   {
-    return impl_->delete_contained_entities();
-   }
- */
 
 ReturnCode_t DomainParticipant::assert_liveliness()
 {
@@ -349,6 +284,25 @@ ReturnCode_t DomainParticipant::get_current_time(
         fastrtps::Time_t& current_time) const
 {
     return impl_->get_current_time(current_time);
+}
+
+ReturnCode_t DomainParticipant::register_type(
+        TypeSupport type,
+        const std::string& type_name)
+{
+    return impl_->register_type(type, type_name);
+}
+
+ReturnCode_t DomainParticipant::register_type(
+        TypeSupport type)
+{
+    return impl_->register_type(type, type.get_type_name());
+}
+
+ReturnCode_t DomainParticipant::unregister_type(
+        const std::string& typeName)
+{
+    return impl_->unregister_type(typeName);
 }
 
 TypeSupport DomainParticipant::find_type(
