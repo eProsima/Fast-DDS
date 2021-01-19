@@ -220,14 +220,55 @@ ReturnCode_t Publisher::get_datawriter_qos_from_profile(
     return impl_->get_datawriter_qos_from_profile(profile_name, qos);
 }
 
-/* TODO
-   bool Publisher::copy_from_topic_qos(
-        fastrtps::WriterQos& writer_qos,
-        const fastrtps::TopicAttributes& topic_qos) const
-   {
+ReturnCode_t Publisher::copy_from_topic_qos(
+        fastdds::dds::DataWriterQos& writer_qos,
+        const fastdds::dds::TopicQos& topic_qos) const
+{
+    return ReturnCode_t::RETCODE_UNSUPPORTED;
+    /*
     return impl_->copy_from_topic_qos(writer_qos, topic_qos);
-   }
- */
+    */
+}
+
+ReturnCode_t Publisher::delete_contained_entities() const
+{
+    return ReturnCode_t::RETCODE_UNSUPPORTED;
+    /*
+    return impl_->delete_contained_entities();
+    */
+}
+
+ReturnCode_t Publisher::suspend_publications() const
+{
+    return ReturnCode_t::RETCODE_UNSUPPORTED;
+    /*
+    return impl_->suspend_publications();
+    */
+}
+
+ReturnCode_t Publisher::resume_publications() const
+{
+    return ReturnCode_t::RETCODE_UNSUPPORTED;
+    /*
+    return impl_->resume_publications();
+    */
+}
+
+ReturnCode_t Publisher::begin_coherent_changes() const
+{
+    return ReturnCode_t::RETCODE_UNSUPPORTED;
+    /*
+    return impl_->begin_coherent_changes();
+    */
+}
+
+ReturnCode_t Publisher::end_coherent_changes() const
+{
+    return ReturnCode_t::RETCODE_UNSUPPORTED;
+    /*
+    return impl_->end_coherent_changes();
+    */
+}
 
 const fastrtps::rtps::InstanceHandle_t& Publisher::get_instance_handle() const
 {
