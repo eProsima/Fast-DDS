@@ -41,7 +41,7 @@ class WriterProxy;
 struct CacheChange_t;
 struct ReaderHistoryState;
 class WriterProxyData;
-class DataSharingListener;
+class IDataSharingListener;
 
 /**
  * Class RTPSReader, manages the reception of data from its matched writers.
@@ -301,7 +301,7 @@ public:
             const GUID_t& writer,
             const SequenceNumber_t& sn) const;
 
-    const std::unique_ptr<DataSharingListener>& datasharing_listener() const
+    const std::unique_ptr<IDataSharingListener>& datasharing_listener() const
     {
         return datasharing_listener_;
     }
@@ -419,7 +419,7 @@ protected:
     //! Whether the writer is datasharing compatible or not
     bool is_datasharing_compatible_ = false;
     //! The listener for the datasharing notifications
-    std::unique_ptr<DataSharingListener> datasharing_listener_;
+    std::unique_ptr<IDataSharingListener> datasharing_listener_;
 
 private:
 
