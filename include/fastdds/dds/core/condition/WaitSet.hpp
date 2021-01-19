@@ -45,7 +45,8 @@ public:
      * @param cond Condition
      * @return RETCODE_OK if attached correctly, error code otherwise
      */
-    RTPS_DllAPI fastrtps::types::ReturnCode_t attach_condition(const Condition& cond);
+    RTPS_DllAPI fastrtps::types::ReturnCode_t attach_condition(
+            const Condition& cond);
 
 
     /**
@@ -53,7 +54,8 @@ public:
      * @param cond Condition
      * @return RETCODE_OK if detached correctly, PRECONDITION_NOT_MET if condition was not attached
      */
-    RTPS_DllAPI fastrtps::types::ReturnCode_t detach_condition(const Condition& cond);
+    RTPS_DllAPI fastrtps::types::ReturnCode_t detach_condition(
+            const Condition& cond);
 
     /**
      * @brief Allows an application thread to wait for the occurrence of certain conditions.
@@ -73,7 +75,8 @@ public:
      * @param attached_conditions Reference to the collection of attached conditions
      * @return RETCODE_OK if everything correct, error code otherwise
      */
-    RTPS_DllAPI fastrtps::types::ReturnCode_t get_conditions(ConditionSeq& attached_conditions) const;
+    RTPS_DllAPI fastrtps::types::ReturnCode_t get_conditions(
+            ConditionSeq& attached_conditions) const;
 };
 
 } // namespace dds

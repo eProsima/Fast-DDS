@@ -47,6 +47,7 @@ public:
         logWarning(CONDITION, "get_trigger_value method not implemented");
         return false; // TODO return trigger value
     }
+
 };
 
 typedef std::vector<Condition> ConditionSeq;

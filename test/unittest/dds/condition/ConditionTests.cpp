@@ -70,6 +70,7 @@ public:
 
         ASSERT_EQ(amount, mockConsumer->ConsumedEntries().size());
     }
+
 };
 
 TEST_F(ConditionTests, unsupported_condition_methods)
@@ -86,7 +87,7 @@ TEST_F(ConditionTests, unsupported_wait_set_methods)
     WaitSet ws;
     Condition aux_cond;
     ConditionSeq aux_cond_seq;
-    eprosima::fastrtps::Duration_t timeout(1,0u);
+    eprosima::fastrtps::Duration_t timeout(1, 0u);
 
     ASSERT_EQ(ws.attach_condition(aux_cond), eprosima::fastrtps::types::ReturnCode_t::RETCODE_UNSUPPORTED);
     ASSERT_EQ(ws.detach_condition(aux_cond), eprosima::fastrtps::types::ReturnCode_t::RETCODE_UNSUPPORTED);

@@ -24,7 +24,8 @@ namespace eprosima {
 namespace fastdds {
 namespace dds {
 
-fastrtps::types::ReturnCode_t StatusCondition::set_enabled_statuses(const StatusMask& mask)
+fastrtps::types::ReturnCode_t StatusCondition::set_enabled_statuses(
+        const StatusMask& mask)
 {
     static_cast<void>(mask);
     return fastrtps::types::ReturnCode_t::RETCODE_UNSUPPORTED;

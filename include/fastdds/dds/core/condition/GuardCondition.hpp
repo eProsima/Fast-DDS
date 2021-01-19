@@ -44,11 +44,13 @@ public:
      * @param value new value for trigger
      * @return RETURN_OK
      */
-    RTPS_DllAPI eprosima::fastrtps::types::ReturnCode_t set_trigger_value(bool value)
+    RTPS_DllAPI eprosima::fastrtps::types::ReturnCode_t set_trigger_value(
+            bool value)
     {
         static_cast<void>(value);
         return eprosima::fastrtps::types::ReturnCode_t::RETCODE_UNSUPPORTED;
     }
+
 };
 
 typedef std::vector<Condition> ConditionSeq;

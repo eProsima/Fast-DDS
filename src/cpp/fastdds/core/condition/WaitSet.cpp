@@ -24,13 +24,15 @@ namespace eprosima {
 namespace fastdds {
 namespace dds {
 
-fastrtps::types::ReturnCode_t WaitSet::attach_condition(const Condition& cond)
+fastrtps::types::ReturnCode_t WaitSet::attach_condition(
+        const Condition& cond)
 {
     static_cast<void>(cond);
     return fastrtps::types::ReturnCode_t::RETCODE_UNSUPPORTED;
 }
 
-fastrtps::types::ReturnCode_t WaitSet::detach_condition(const Condition& cond)
+fastrtps::types::ReturnCode_t WaitSet::detach_condition(
+        const Condition& cond)
 {
     static_cast<void>(cond);
     return fastrtps::types::ReturnCode_t::RETCODE_UNSUPPORTED;
@@ -45,12 +47,12 @@ fastrtps::types::ReturnCode_t WaitSet::wait(
     return fastrtps::types::ReturnCode_t::RETCODE_UNSUPPORTED;
 }
 
-fastrtps::types::ReturnCode_t WaitSet::get_conditions(ConditionSeq& attached_conditions) const
+fastrtps::types::ReturnCode_t WaitSet::get_conditions(
+        ConditionSeq& attached_conditions) const
 {
     static_cast<void>(attached_conditions);
     return fastrtps::types::ReturnCode_t::RETCODE_UNSUPPORTED;
 }
-
 
 }  // namespace dds
 }  // namespace fastdds
