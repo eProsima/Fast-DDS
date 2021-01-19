@@ -281,7 +281,7 @@ public:
      * @c a_handle.
      *
      * Upon successful completion, the data collection will contain samples all belonging to the same instance.
-     * The corresponding @ref SampleInfo verifies ef SampleInfo::instance_handle == @c a_handle.
+     * The corresponding @ref SampleInfo verifies @ref SampleInfo::instance_handle == @c a_handle.
      *
      * This operation is semantically equivalent to the @ref read operation, except in building the collection.
      * The DataReader will check that the sample belongs to the specified instance and otherwise it will not place
