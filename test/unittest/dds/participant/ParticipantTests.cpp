@@ -2027,6 +2027,78 @@ TEST(ParticipantTests, RegisterRemoteTypePreconditionNotMet)
     ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), ReturnCode_t::RETCODE_OK);
 }
 
+
+/*
+ * This test checks that following methods are not implemented and returns an error
+ *  create_contentfilteredtopic
+ *  delete_contentfilteredtopic
+ *  create_multitopic
+ *  delete_multitopic
+ *  find_topic
+ *  get_builtin_subscriber
+ *  ignore_participant
+ *  ignore_topic
+ *  ignore_publictaion
+ *  ignore_subscription
+ *  delete_contained_entities
+ *  get_discovered_participants
+ *  get_discovered_topics
+ *
+ * Tests missing: get_discovered_participant_data & get_discovered_topic_data
+ * These methods cannot be tested because there are no implementation of their parameter classes
+ */
+TEST(ParticipantTests, unsupportedMethods)
+{
+    // Create the participant
+    DomainParticipant* participant =
+            DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
+
+    // Create a type and a topic
+    TypeSupport type(new TopicDataTypeMock());
+    type.register_type(participant);
+
+    Topic* topic = participant->create_topic("topic", type.get_type_name(), TOPIC_QOS_DEFAULT);
+    ASSERT_NE(topic, nullptr);
+
+    ASSERT_EQ(
+        participant->create_contentfilteredtopic(
+            "contentfilteredtopic",
+            topic,
+            "filter_expression",
+            std::vector<std::string>({"a","b"})),
+        nullptr);
+
+    // nullptr use as there are not such a class
+    ASSERT_EQ(participant->delete_contentfilteredtopic(nullptr), ReturnCode_t::RETCODE_UNSUPPORTED);
+
+    ASSERT_EQ(
+        participant->create_multitopic(
+            "multitopic",
+            "type",
+            "subscription_expression",
+            std::vector<std::string>({"a","b"})),
+        nullptr);
+
+    // nullptr use as there are not such a class
+    ASSERT_EQ(participant->delete_multitopic(nullptr), ReturnCode_t::RETCODE_UNSUPPORTED);
+
+    ASSERT_EQ(participant->find_topic("topic", Duration_t(1,0)), nullptr);
+
+    ASSERT_EQ(participant->get_builtin_subscriber(), nullptr);
+
+    ASSERT_EQ(participant->ignore_participant(InstanceHandle_t()), ReturnCode_t::RETCODE_UNSUPPORTED);
+    ASSERT_EQ(participant->ignore_topic(InstanceHandle_t()), ReturnCode_t::RETCODE_UNSUPPORTED);
+    ASSERT_EQ(participant->ignore_publictaion(InstanceHandle_t()), ReturnCode_t::RETCODE_UNSUPPORTED);
+    ASSERT_EQ(participant->ignore_subscription(InstanceHandle_t()), ReturnCode_t::RETCODE_UNSUPPORTED);
+
+    ASSERT_EQ(participant->delete_contained_entities(), ReturnCode_t::RETCODE_UNSUPPORTED);
+
+    std::vector<InstanceHandle_t> handle_vector({InstanceHandle_t()});
+
+    ASSERT_EQ(participant->get_discovered_participants(handle_vector), ReturnCode_t::RETCODE_UNSUPPORTED);
+    ASSERT_EQ(participant->get_discovered_topics(handle_vector), ReturnCode_t::RETCODE_UNSUPPORTED);
+}
+
 } // namespace dds
 } // namespace fastdds
 } // namespace eprosima
