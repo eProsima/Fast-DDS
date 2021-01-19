@@ -12,7 +12,7 @@ else()
             find_path(ASIO_INCLUDE_DIR NAMES asio.hpp NO_CMAKE_FIND_ROOT_PATH)
         # If THIRDPARTY_ASIO=OFF the search is stopped and an error is shown
         else()
-            message(SEND_ERROR "Not found a local version of Asio installed.")
+            message(FATAL_ERROR "Not found a local version of Asio installed.")
         endif()
     # An installed version of Asio has been found.
     # Check that the Asio version is equal to or greater than the minimum version required in Fast DDS.
@@ -31,7 +31,7 @@ else()
                 find_path(ASIO_INCLUDE_DIR NAMES asio.hpp NO_CMAKE_FIND_ROOT_PATH)
             # If THIRDPARTY_ASIO=OFF the search is stopped and an error is shown
             else()
-                message(SEND_ERROR
+                message(FATAL_ERROR
                     "Found Asio version ${ASIO_VERSION}, which is not compatible with Fast DDS. "
                     "Minimum required Asio version: ${Asio_FIND_VERSION}"
                 )

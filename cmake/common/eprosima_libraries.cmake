@@ -143,8 +143,9 @@ endmacro()
 # Macro to find all Fast DDS thirdparty libraries expect for Fast CDR (look at eprosima_find_package).
 #
 # Arguments:
-#   :package: The name of the packge to find. Used for find_package(${package})
+#   :package: The name of the package to find. Used for find_package(${package})
 #   :thirdparty_name: The name of the package directory under thirdparty, i.e. thirdparty/${thirdparty_name}
+#   :VERSION: [Optional] The minimum required version of the package.
 #
 # Related CMake options:
 #   :THIRDPARTY: Activate the use of internal thirdparties [Defaults: OFF]. Set to ON if EPROSIMA_BUILD is set to ON.
