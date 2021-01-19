@@ -74,7 +74,8 @@ public:
     bool writer_is_matched(
             const GUID_t& writer_guid) const override;
 
-    void notify() override;
+    void notify(
+            bool same_thread) override;
 
 protected:
 
