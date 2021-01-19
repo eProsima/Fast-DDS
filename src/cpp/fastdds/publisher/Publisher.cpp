@@ -138,44 +138,37 @@ DataWriter* Publisher::lookup_datawriter(
     return impl_->lookup_datawriter(topic_name);
 }
 
-bool Publisher::get_datawriters(
-        std::vector<DataWriter*>& writers) const
+ReturnCode_t Publisher::suspend_publications() const
 {
-    return impl_->get_datawriters(writers);
+    return ReturnCode_t::RETCODE_UNSUPPORTED;
+    /*
+       return impl_->suspend_publications();
+     */
 }
 
-bool Publisher::has_datawriters() const
+ReturnCode_t Publisher::resume_publications() const
 {
-    return impl_->has_datawriters();
+    return ReturnCode_t::RETCODE_UNSUPPORTED;
+    /*
+       return impl_->resume_publications();
+     */
 }
 
-/* TODO
-   bool Publisher::suspend_publications()
-   {
-    return impl_->suspend_publications();
-   }
- */
+ReturnCode_t Publisher::begin_coherent_changes() const
+{
+    return ReturnCode_t::RETCODE_UNSUPPORTED;
+    /*
+       return impl_->begin_coherent_changes();
+     */
+}
 
-/* TODO
-   bool Publisher::resume_publications()
-   {
-    return impl_->resume_publications();
-   }
- */
-
-/* TODO
-   bool Publisher::begin_coherent_changes()
-   {
-    return impl_->begin_coherent_changes();
-   }
- */
-
-/* TODO
-   bool Publisher::end_coherent_changes()
-   {
-    return impl_->end_coherent_changes();
-   }
- */
+ReturnCode_t Publisher::end_coherent_changes() const
+{
+    return ReturnCode_t::RETCODE_UNSUPPORTED;
+    /*
+       return impl_->end_coherent_changes();
+     */
+}
 
 ReturnCode_t Publisher::wait_for_acknowledgments(
         const fastrtps::Duration_t& max_wait)
@@ -188,12 +181,13 @@ const DomainParticipant* Publisher::get_participant() const
     return impl_->get_participant();
 }
 
-/* TODO
-   bool Publisher::delete_contained_entities()
-   {
-    return impl_->delete_contained_entities();
-   }
- */
+ReturnCode_t Publisher::delete_contained_entities() const
+{
+    return ReturnCode_t::RETCODE_UNSUPPORTED;
+    /*
+       return impl_->delete_contained_entities();
+     */
+}
 
 ReturnCode_t Publisher::set_default_datawriter_qos(
         const DataWriterQos& qos)
@@ -213,64 +207,35 @@ ReturnCode_t Publisher::get_default_datawriter_qos(
     return ReturnCode_t::RETCODE_OK;
 }
 
-ReturnCode_t Publisher::get_datawriter_qos_from_profile(
-        const std::string& profile_name,
-        DataWriterQos& qos) const
-{
-    return impl_->get_datawriter_qos_from_profile(profile_name, qos);
-}
-
 ReturnCode_t Publisher::copy_from_topic_qos(
         fastdds::dds::DataWriterQos& writer_qos,
         const fastdds::dds::TopicQos& topic_qos) const
 {
     return ReturnCode_t::RETCODE_UNSUPPORTED;
     /*
-    return impl_->copy_from_topic_qos(writer_qos, topic_qos);
-    */
-}
-
-ReturnCode_t Publisher::delete_contained_entities() const
-{
-    return ReturnCode_t::RETCODE_UNSUPPORTED;
-    /*
-    return impl_->delete_contained_entities();
-    */
-}
-
-ReturnCode_t Publisher::suspend_publications() const
-{
-    return ReturnCode_t::RETCODE_UNSUPPORTED;
-    /*
-    return impl_->suspend_publications();
-    */
-}
-
-ReturnCode_t Publisher::resume_publications() const
-{
-    return ReturnCode_t::RETCODE_UNSUPPORTED;
-    /*
-    return impl_->resume_publications();
-    */
-}
-
-ReturnCode_t Publisher::begin_coherent_changes() const
-{
-    return ReturnCode_t::RETCODE_UNSUPPORTED;
-    /*
-    return impl_->begin_coherent_changes();
-    */
-}
-
-ReturnCode_t Publisher::end_coherent_changes() const
-{
-    return ReturnCode_t::RETCODE_UNSUPPORTED;
-    /*
-    return impl_->end_coherent_changes();
-    */
+       return impl_->copy_from_topic_qos(writer_qos, topic_qos);
+     */
 }
 
 const fastrtps::rtps::InstanceHandle_t& Publisher::get_instance_handle() const
 {
     return impl_->get_instance_handle();
+}
+
+bool Publisher::get_datawriters(
+        std::vector<DataWriter*>& writers) const
+{
+    return impl_->get_datawriters(writers);
+}
+
+bool Publisher::has_datawriters() const
+{
+    return impl_->has_datawriters();
+}
+
+ReturnCode_t Publisher::get_datawriter_qos_from_profile(
+        const std::string& profile_name,
+        DataWriterQos& qos) const
+{
+    return impl_->get_datawriter_qos_from_profile(profile_name, qos);
 }

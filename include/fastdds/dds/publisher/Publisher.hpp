@@ -198,18 +198,28 @@ public:
             const std::string& topic_name) const;
 
     /**
-     * Fills the given vector with all the datawriters of this publisher.
-     * @param writers Vector where the DataWriters are returned
-     * @return true
+     * @brief Indicates to FastDDS that the contained DataWriters are about to be modified
+     * @return RETCODE_OK if successful, RETCODE_ERROR otherwise
      */
-    RTPS_DllAPI bool get_datawriters(
-            std::vector<DataWriter*>& writers) const;
+    RTPS_DllAPI ReturnCode_t suspend_publications() const;
 
     /**
-     * This operation checks if the publisher has DataWriters
-     * @return true if the publisher has one or several DataWriters, false otherwise
+     * @brief Indicates to FastDDS that the modifications to the DataWriters are complete.
+     * @return RETCODE_OK if successful, RETCODE_ERROR otherwise
      */
-    RTPS_DllAPI bool has_datawriters() const;
+    RTPS_DllAPI ReturnCode_t resume_publications() const;
+
+    /**
+     * @brief Signals the begining of a set of coherent cache changes using th Datawriters attached to the publisher
+     * @return RETCODE_OK if successful, RETCODE_ERROR otherwise
+     */
+    RTPS_DllAPI ReturnCode_t begin_coherent_changes() const;
+
+    /**
+     * @brief Signals the end of a set of coherent cache changes
+     * @return RETCODE_OK if successful, RETCODE_ERROR otherwise
+     */
+    RTPS_DllAPI ReturnCode_t end_coherent_changes() const;
 
     /**
      * This operation blocks the calling thread until either all data written by the reliable DataWriter entities
@@ -230,9 +240,11 @@ public:
      */
     RTPS_DllAPI const DomainParticipant* get_participant() const;
 
-    /* TODO
-       bool delete_contained_entities();
+    /**
+     * @brief Deletes all contained DataWriters
+     * @return RETCODE_OK if successful, RETCODE_ERROR otherwise
      */
+    RTPS_DllAPI ReturnCode_t delete_contained_entities() const;
 
     /**
      * This operation sets a default value of the DataWriter QoS policies which will be used for newly created
@@ -275,6 +287,16 @@ public:
             DataWriterQos& qos) const;
 
     /**
+     * @brief Copies TopicQos into the corresponding DataWriterQos
+     * @param[out] writer_qos
+     * @param[in] topic_qos
+     * @return RETCODE_OK if successful, RETCODE_ERROR otherwise
+     */
+    RTPS_DllAPI ReturnCode_t copy_from_topic_qos(
+            fastdds::dds::DataWriterQos& writer_qos,
+            const fastdds::dds::TopicQos& topic_qos) const;
+
+    /**
      * Fills the DataWriterQos with the values of the XML profile.
      * @param profile_name DataWriter profile name.
      * @param qos DataWriterQos object where the qos is returned.
@@ -285,50 +307,24 @@ public:
             DataWriterQos& qos) const;
 
     /**
-     * @brief Copies TopicQos into the corresponding DataWriterQos
-     * @param[out] writer_qos
-     * @param[in] topic_qos
-     * @return RETCODE_OK if successful, RETCODE_ERROR otherwise
-     */
-    RTPS_DllAPI ReturnCode_t copy_from_topic_qos(
-        fastdds::dds::DataWriterQos& writer_qos,
-        const fastdds::dds::TopicQos& topic_qos) const;
-
-    /**
-     * @brief Deletes all contained DataWriters
-     * @return RETCODE_OK if successful, RETCODE_ERROR otherwise
-     */
-    RTPS_DllAPI ReturnCode_t delete_contained_entities() const;
-
-    /**
-     * @brief Indicates to FastDDS that the contained DataWriters are about to be modified
-     * @return RETCODE_OK if successful, RETCODE_ERROR otherwise
-     */
-    RTPS_DllAPI ReturnCode_t suspend_publications() const;
-
-    /**
-     * @brief Indicates to FastDDS that the modifications to the DataWriters are complete.
-     * @return RETCODE_OK if successful, RETCODE_ERROR otherwise
-     */
-    RTPS_DllAPI ReturnCode_t resume_publications() const;
-
-    /**
-     * @brief Signals the begining of a set of coherent cache changes using th Datawriters attached to the publisher
-     * @return RETCODE_OK if successful, RETCODE_ERROR otherwise
-     */
-    RTPS_DllAPI ReturnCode_t begin_coherent_changes() const;
-
-    /**
-     * @brief Signals the end of a set of coherent cache changes
-     * @return RETCODE_OK if successful, RETCODE_ERROR otherwise
-     */
-    RTPS_DllAPI ReturnCode_t end_coherent_changes() const;
-
-    /**
      * Returns the Publisher's handle.
      * @return InstanceHandle of this Publisher.
      */
     RTPS_DllAPI const InstanceHandle_t& get_instance_handle() const;
+
+    /**
+     * Fills the given vector with all the datawriters of this publisher.
+     * @param writers Vector where the DataWriters are returned
+     * @return true
+     */
+    RTPS_DllAPI bool get_datawriters(
+            std::vector<DataWriter*>& writers) const;
+
+    /**
+     * This operation checks if the publisher has DataWriters
+     * @return true if the publisher has one or several DataWriters, false otherwise
+     */
+    RTPS_DllAPI bool has_datawriters() const;
 
 protected:
 
