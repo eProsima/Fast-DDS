@@ -31,15 +31,15 @@ fastrtps::types::ReturnCode_t StatusCondition::set_enabled_statuses(
     return fastrtps::types::ReturnCode_t::RETCODE_UNSUPPORTED;
 }
 
-StatusMask StatusCondition::get_enabled_statuses() const
+const StatusMask& StatusCondition::get_enabled_statuses() const
 {
-    logWarning(CONDITION, "get_trigger_value method not implemented");
-    return StatusMask();
+    logWarning(CONDITION, "get_enabled_statuses method not implemented");
+    return status_mask;
 }
 
 Entity* StatusCondition::get_entity() const
 {
-    logWarning(CONDITION, "get_trigger_value method not implemented");
+    logWarning(CONDITION, "get_entity method not implemented");
     return nullptr;
 }
 

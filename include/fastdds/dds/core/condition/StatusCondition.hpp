@@ -52,13 +52,19 @@ public:
      * @brief Retrieves the list of communication statuses that are taken into account to determine the trigger_value
      * @return Status set or default status if it has not been set
      */
-    RTPS_DllAPI StatusMask get_enabled_statuses() const;
+    RTPS_DllAPI const StatusMask& get_enabled_statuses() const;
 
     /**
      * @brief Returns the Entity associated
      * @return Entity
      */
     RTPS_DllAPI Entity* get_entity() const;
+
+protected:
+
+    //! StatusMask with relevant statuses set to 1
+    StatusMask status_mask;
+
 };
 
 } // namespace dds
