@@ -20,6 +20,7 @@
 #ifndef _FASTDDS_STATUS_CONDITION_HPP_
 #define _FASTDDS_STATUS_CONDITION_HPP_
 
+#include <fastdds/dds/core/condition/Condition.hpp>
 #include <fastdds/dds/core/Entity.hpp>
 #include <fastdds/dds/core/status/StatusMask.hpp>
 #include <fastrtps/fastrtps_dll.h>
@@ -33,7 +34,7 @@ namespace dds {
  * @brief The StatusCondition class is a specific Condition that is associated with each Entity.
  *
  */
-class StatusCondition
+class StatusCondition : public Condition
 {
 public:
 
@@ -50,16 +51,14 @@ public:
      * @brief Retrieves the list of communication statuses that are taken into account to determine the trigger_value
      * @return Status set or default status if it has not been set
      */
-    RTPS_DllAPI StatusMask& get_enabled_statuses();
+    RTPS_DllAPI StatusMask get_enabled_statuses() const;
 
     /**
      * @brief Returns the Entity associated
      * @return Entity
      */
-    RTPS_DllAPI Entity& get_entity();
+    RTPS_DllAPI Entity* get_entity() const;
 };
-
-typedef std::vector<Condition> ConditionSeq;
 
 } // namespace dds
 } // namespace fastdds

@@ -20,6 +20,7 @@
 #ifndef _FASTDDS_GUARD_CONDITION_HPP_
 #define _FASTDDS_GUARD_CONDITION_HPP_
 
+#include <fastdds/dds/core/condition/Condition.hpp>
 #include <fastrtps/fastrtps_dll.h>
 #include <fastrtps/types/TypesBase.h>
 
@@ -32,7 +33,7 @@ namespace dds {
  * of the application.
  *
  */
-class GuardCondition
+class GuardCondition : public Condition
 {
 public:
 
@@ -43,10 +44,10 @@ public:
      * @param value new value for trigger
      * @return RETURN_OK
      */
-    RTPS_DllAPI fastrtps::types::ReturnCode_t set_trigger_value(bool value)
+    RTPS_DllAPI eprosima::fastrtps::types::ReturnCode_t set_trigger_value(bool value)
     {
         static_cast<void>(value);
-        return fastrtps::types::ReturnCode_t::RETCODE_UNSUPPORTED;
+        return eprosima::fastrtps::types::ReturnCode_t::RETCODE_UNSUPPORTED;
     }
 };
 
