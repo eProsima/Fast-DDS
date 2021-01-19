@@ -166,15 +166,102 @@ ReturnCode_t DomainParticipant::delete_topic(
     return impl_->delete_topic(topic);
 }
 
+ContentFilteredTopic* DomainParticipant::create_contentfilteredtopic(
+        const std::string& name,
+        const Topic* related_topic,
+        const std::string& filter_expression,
+        const std::vector<std::string>& expression_parameters)
+{
+    static_cast<void> (name);
+    static_cast<void> (related_topic);
+    static_cast<void> (filter_expression);
+    static_cast<void> (expression_parameters);
+    return nullptr;
+}
+
+ReturnCode_t DomainParticipant::delete_contentfilteredtopic(
+        const ContentFilteredTopic* a_contentfilteredtopic)
+{
+    static_cast<void> (a_contentfilteredtopic);
+    return ReturnCode_t::RETCODE_UNSUPPORTED;
+}
+
+MultiTopic* DomainParticipant::create_multitopic(
+        const std::string& name,
+        const std::string& type_name,
+        const std::string& subscription_expression,
+        const std::vector<std::string>& expression_parameters)
+{
+    static_cast<void> (name);
+    static_cast<void> (type_name);
+    static_cast<void> (subscription_expression);
+    static_cast<void> (expression_parameters);
+    return nullptr;
+}
+
+ReturnCode_t DomainParticipant::delete_multitopic(
+        const MultiTopic* a_multitopic)
+{
+    static_cast<void> (a_multitopic);
+    return ReturnCode_t::RETCODE_UNSUPPORTED;
+}
+
+Topic* DomainParticipant::find_topic(
+        const std::string& topic_name,
+        const fastrtps::Duration_t& timeout)
+{
+    static_cast<void> (topic_name);
+    static_cast<void> (timeout);
+    return nullptr;
+}
+
 TopicDescription* DomainParticipant::lookup_topicdescription(
         const std::string& topic_name) const
 {
     return impl_->lookup_topicdescription(topic_name);
 }
 
+const Subscriber* DomainParticipant::get_builtin_subscriber() const
+{
+    return nullptr;
+}
+
+ReturnCode_t DomainParticipant::ignore_participant(
+        const InstanceHandle_t& handle)
+{
+    static_cast<void> (handle);
+    return ReturnCode_t::RETCODE_UNSUPPORTED;
+}
+
+ReturnCode_t DomainParticipant::ignore_topic(
+        const InstanceHandle_t& handle)
+{
+    static_cast<void> (handle);
+    return ReturnCode_t::RETCODE_UNSUPPORTED;
+}
+
+ReturnCode_t DomainParticipant::ignore_publictaion(
+        const InstanceHandle_t& handle)
+{
+    static_cast<void> (handle);
+    return ReturnCode_t::RETCODE_UNSUPPORTED;
+}
+
+ReturnCode_t DomainParticipant::ignore_subscription(
+        const InstanceHandle_t& handle)
+{
+    static_cast<void> (handle);
+    return ReturnCode_t::RETCODE_UNSUPPORTED;
+}
+
 DomainId_t DomainParticipant::get_domain_id() const
 {
     return impl_->get_domain_id();
+}
+
+ReturnCode_t DomainParticipant::delete_contained_entities()
+{
+    return ReturnCode_t::RETCODE_UNSUPPORTED;
 }
 
 ReturnCode_t DomainParticipant::assert_liveliness()
@@ -257,21 +344,40 @@ ReturnCode_t DomainParticipant::get_topic_qos_from_profile(
     return impl_->get_topic_qos_from_profile(profile_name, qos);
 }
 
-/* TODO
-   bool DomainParticipant::get_discovered_participants(
+ReturnCode_t DomainParticipant::get_discovered_participants(
         std::vector<InstanceHandle_t>& participant_handles) const
-   {
-    return impl_->get_discovered_participants(participant_handles);
-   }
- */
+{
+    static_cast<void> (participant_handles);
+    return ReturnCode_t::RETCODE_UNSUPPORTED;
+}
 
-/* TODO
-   bool DomainParticipant::get_discovered_topics(
+
+ReturnCode_t DomainParticipant::get_discovered_participant_data(
+        ParticipantBuiltinTopicData& participant_data,
+        const InstanceHandle_t& participant_handle) const
+{
+    static_cast<void> (participant_data);
+    static_cast<void> (participant_handle);
+    return ReturnCode_t::RETCODE_UNSUPPORTED;
+}
+
+
+ReturnCode_t DomainParticipant::get_discovered_topics(
         std::vector<InstanceHandle_t>& topic_handles) const
-   {
-    return impl_->get_discovered_topics(topic_handles);
-   }
- */
+{
+    static_cast<void> (topic_handles);
+    return ReturnCode_t::RETCODE_UNSUPPORTED;
+}
+
+
+ReturnCode_t DomainParticipant::get_discovered_topic_data(
+        TopicBuiltinTopicData& topic_data,
+        const InstanceHandle_t& topic_handle) const
+{
+    static_cast<void> (topic_data);
+    static_cast<void> (topic_handle);
+    return ReturnCode_t::RETCODE_UNSUPPORTED;
+}
 
 bool DomainParticipant::contains_entity(
         const InstanceHandle_t& handle,
