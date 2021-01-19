@@ -17,16 +17,16 @@
 
 #include <fastdds/dds/core/Entity.hpp>
 
-namespace eprosima{
-namespace fastdds{
-namespace dds{
+namespace eprosima {
+namespace fastdds {
+namespace dds {
 
 class MockEntity : public Entity
 {
 public:
 
     void mock_set_instance_handle(
-        const InstanceHandle_t& handle)
+            const InstanceHandle_t& handle)
     {
         set_instance_handle(handle);
     }
