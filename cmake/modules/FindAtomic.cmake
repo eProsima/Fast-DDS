@@ -1,9 +1,9 @@
 # Check if platform needs to explicitly specify linking with libatomic.
-# It creates an interface target eProsima::atomic that will include the dependency if needed.
+# It creates an interface target eProsima_atomic that will include the dependency if needed.
 # The variable FASTDDS_REQUIRED_FLAGS can be used to pass specific compiler flags use in the build
 # and that we want to mimick in the testing like --std=c++20
 
-if(TARGET eProsima::atomic)
+if(TARGET eProsima_atomic)
     return()
 endif()
 
@@ -68,17 +68,17 @@ if (HAVE_LIBATOMIC)
     )
 endif()
 
-# add interface target associated
-add_library(eProsima::atomic INTERFACE IMPORTED)
+# add interface target associated (cannot be imported to avoid propagation on static libraries)
+add_library(eProsima_atomic INTERFACE)
 
-# Set LINK_LIBATOMIC to true only if linking with atomic is required
+# Populate the interface target properties
 if (NOT ATOMIC_WITHOUT_LIB)
     if (ATOMIC_WITH_LIB)
         # force to link to atomic when the dummy target is present
         if (CMAKE_VERSION VERSION_GREATER_EQUAL "3.11.4")
-            target_link_libraries(eProsima::atomic INTERFACE atomic)
+            target_link_libraries(eProsima_atomic INTERFACE atomic)
         else()
-            set_property(TARGET eProsima::atomic PROPERTY INTERFACE_LINK_LIBRARIES atomic)
+            set_property(TARGET eProsima_atomic PROPERTY INTERFACE_LINK_LIBRARIES atomic)
         endif()
     else()
         message(FATAL_ERROR "Unable to create binaries with atomic dependencies")
