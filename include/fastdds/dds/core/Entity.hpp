@@ -20,6 +20,7 @@
 #ifndef _FASTDDS_ENTITY_HPP_
 #define _FASTDDS_ENTITY_HPP_
 
+#include <fastdds/dds/core/condition/StatusCondition.hpp>
 #include <fastdds/dds/core/status/StatusMask.hpp>
 #include <fastdds/dds/topic/TypeSupport.hpp>
 #include <fastrtps/types/TypesBase.h>
@@ -125,6 +126,7 @@ public:
      */
     RTPS_DllAPI const StatusCondition& get_statuscondition() const
     {
+        logWarning(CONDITION, "get_statuscondition method not implemented");
         return status_condition_;
     }
 
