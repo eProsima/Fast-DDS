@@ -40,8 +40,13 @@ else()
     endif()
 endif()
 
-include(FindPackageHandleStandardArgs)
-find_package_handle_standard_args(Asio DEFAULT_MSG ASIO_INCLUDE_DIR)
-mark_as_advanced(ASIO_INCLUDE_DIR)
-message(STATUS "Found Asio: ${ASIO_INCLUDE_DIR}/asio ")
-
+# The fact that at this point Asio has not yet been found means that the package is not among the Fast DDS submodules.
+# It could be updated later and retry the search for the package among the local dependencies.
+if(ASIO_INCLUDE_DIR)
+    include(FindPackageHandleStandardArgs)
+    find_package_handle_standard_args(Asio DEFAULT_MSG ASIO_INCLUDE_DIR)
+    mark_as_advanced(ASIO_INCLUDE_DIR)
+    message(STATUS "Found Asio: ${ASIO_INCLUDE_DIR}/asio")
+else()
+    message(STATUS "Cannot find package Asio")
+endif()
