@@ -75,7 +75,7 @@ add_library(eProsima_atomic INTERFACE)
 if (NOT ATOMIC_WITHOUT_LIB)
     if (ATOMIC_WITH_LIB)
         # force to link to atomic when the dummy target is present
-        if (CMAKE_VERSION VERSION_GREATER_EQUAL "3.11.4")
+        if (NOT (CMAKE_VERSION VERSION_LESS "3.11.4"))
             target_link_libraries(eProsima_atomic INTERFACE atomic)
         else()
             set_property(TARGET eProsima_atomic PROPERTY INTERFACE_LINK_LIBRARIES atomic)

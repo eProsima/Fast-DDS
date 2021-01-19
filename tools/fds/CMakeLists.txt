@@ -41,7 +41,7 @@ endif()
 
 if (MSVC)
 
-    # For isolated builds provide some IDE aids 
+    # For isolated builds provide some IDE aids
     if (CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
 
         # add fast headers to enable class view on visual studio IDE
@@ -59,7 +59,7 @@ if (MSVC)
     endif()
 
     # add project headers to enable class view on visual studio IDE
-    set(FAST_SERVER_HEADERS server.h optionparser.h) 
+    set(FAST_SERVER_HEADERS server.h optionparser.h)
 
 endif(MSVC)
 
@@ -69,8 +69,8 @@ add_executable(${PROJECT_NAME}
     ${ALL_FAST_HEADERS})
 
 # we pass the version as a preprocessor definition
-target_compile_definitions(${PROJECT_NAME} 
-    PRIVATE FAST_SERVER_VERSION=\"${PROJECT_VERSION}\" 
+target_compile_definitions(${PROJECT_NAME}
+    PRIVATE FAST_SERVER_VERSION=\"${PROJECT_VERSION}\"
     PRIVATE FAST_SERVER_BINARY=\"$<TARGET_FILE_NAME:${PROJECT_NAME}>\" )
 
 target_link_libraries(${PROJECT_NAME} fastrtps fastcdr)
@@ -83,10 +83,10 @@ set_target_properties(${PROJECT_NAME} PROPERTIES RELWITHDEBINFO_POSTFIX rd-${PRO
 set_target_properties(${PROJECT_NAME} PROPERTIES DEBUG_POSTFIX d-${PROJECT_VERSION})
 
 ###############################################################################
-# Installation 
+# Installation
 ###############################################################################
 
-# If not isolated integrate 
+# If not isolated integrate
 if(CMAKE_PROJECT_NAME STREQUAL "fastrtps" )
     set(BIN_INSTALL_DIR tools/fds/${BIN_INSTALL_DIR} CACHE PATH "Installation directory for binaries within Fast-DDS")
 else()
@@ -116,7 +116,7 @@ install(EXPORT ${PROJECT_NAME}-targets
 #   - install( CODE using generator expressions (legacy code is provided for all cmake versions)
 #   - on windows privileges to create symlinks (a .bat file is provided on unprivileged installations)
 
-if(CMAKE_VERSION VERSION_GREATER_EQUAL "3.14")
+if (NOT (CMAKE_VERSION VERSION_LESS "3.14"))
 
     cmake_policy(SET CMP0087 NEW)
 
@@ -127,7 +127,7 @@ if(CMAKE_VERSION VERSION_GREATER_EQUAL "3.14")
           CODE "execute_process( COMMAND PowerShell -Command \"if( test-path ${PROJECT_NAME}.exe -PathType Leaf ) { rm ${PROJECT_NAME}.exe } ; New-Item -ItemType SymbolicLink -Target $<TARGET_FILE_NAME:${PROJECT_NAME}> -Path ${PROJECT_NAME}.exe \" ERROR_QUIET RESULTS_VARIABLE SYMLINK_FAILED WORKING_DIRECTORY \"${CMAKE_INSTALL_PREFIX}/${BIN_INSTALL_DIR}\") \n if( SYMLINK_FAILED ) \n message(STATUS \"Windows requires admin installation rights to create symlinks. A bat script will be provided instead.\") \n set(FAST_SERVER_BINARY_NAME $<TARGET_FILE_NAME:${PROJECT_NAME}>) \n configure_file(${CMAKE_CURRENT_LIST_DIR}/fast-discovery-server.bat.in ${CMAKE_INSTALL_PREFIX}/${BIN_INSTALL_DIR}${MSVCARCH_DIR_EXTENSION}/${PROJECT_NAME}.bat @ONLY) \n endif()"
           COMPONENT discovery)
     else()
-        # Use ln to create the symbolic link. We remove the version from the file name but keep the debug suffix 
+        # Use ln to create the symbolic link. We remove the version from the file name but keep the debug suffix
         install(
             CODE "execute_process(COMMAND bash -c \"if [[ -h ${PROJECT_NAME} ]]; then rm ${PROJECT_NAME}; fi;  ln -s $<TARGET_FILE_NAME:${PROJECT_NAME}> ${PROJECT_NAME}\" WORKING_DIRECTORY \"${CMAKE_INSTALL_PREFIX}/${BIN_INSTALL_DIR}${MSVCARCH_DIR_EXTENSION}\")"
             COMPONENT discovery)
@@ -155,7 +155,7 @@ else() # fallback to all strategies
                     CODE "if(NOT BUILD_TYPE OR BUILD_TYPE MATCHES \"${CONFIG}\") \n execute_process(COMMAND PowerShell -Command \"if( test-path ${LINK_NAME}.exe -PathType Leaf ) { rm ${LINK_NAME}.exe };New-Item -ItemType SymbolicLink -Path ${LINK_NAME}.exe -Target ${BINARY_NAME}.exe \" ERROR_QUIET RESULTS_VARIABLE SYMLINK_FAILED WORKING_DIRECTORY \"${CMAKE_INSTALL_PREFIX}/${BIN_INSTALL_DIR}\" ) \n if( SYMLINK_FAILED ) \n message(STATUS \"Windows requires admin installation rights to create symlinks. A bat script will be provided instead.\") \n set(FAST_SERVER_BINARY_NAME ${BINARY_NAME}.exe) \n configure_file(${CMAKE_CURRENT_LIST_DIR}/fast-discovery-server.bat.in ${CMAKE_INSTALL_PREFIX}/${BIN_INSTALL_DIR}${MSVCARCH_DIR_EXTENSION}/${LINK_NAME}.bat @ONLY) \n endif() \n endif()"
                     COMPONENT discovery)
             else()
-                # Use ln to create the symbolic link. We remove the version from the file name but keep the debug suffix 
+                # Use ln to create the symbolic link. We remove the version from the file name but keep the debug suffix
                 install(
                     CODE "if(NOT BUILD_TYPE OR BUILD_TYPE MATCHES \"${CONFIG}\") \n execute_process(COMMAND bash -c \"if [[ -h ${LINK_NAME} ]]; then rm ${LINK_NAME}; fi ; ln -s ${BINARY_NAME} ${LINK_NAME}\" WORKING_DIRECTORY \"${CMAKE_INSTALL_PREFIX}/${BIN_INSTALL_DIR}${MSVCARCH_DIR_EXTENSION}\") \n endif()"
                     COMPONENT discovery
@@ -164,7 +164,7 @@ else() # fallback to all strategies
 
     endfunction()
 
-    get_property(IS_MULTI GLOBAL PROPERTY GENERATOR_IS_MULTI_CONFIG) 
+    get_property(IS_MULTI GLOBAL PROPERTY GENERATOR_IS_MULTI_CONFIG)
 
     if( IS_MULTI )
 
