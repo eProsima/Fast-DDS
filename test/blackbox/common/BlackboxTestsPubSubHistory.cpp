@@ -540,7 +540,7 @@ TEST_P(PubSubHistory, PubSubAsReliableKeepLastReaderSmallDepthTwoPublishers)
     }
     else
     {
-        writer.waitForAllAcked(std::chrono::seconds(100));
+        writer2.waitForAllAcked(std::chrono::seconds(100));
     }
 
     // Only last sample should be present
