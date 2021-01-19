@@ -345,7 +345,7 @@ struct hash<eprosima::fastrtps::rtps::EntityId_t>
         value[1] = k.value[1];
         value[0] = k.value[2];
 #endif // if FASTDDS_IS_BIG_ENDIAN_TARGET
-        return static_cast<std::size_t>(*reinterpret_cast<const uint32_t*>(&value));
+        return static_cast<std::size_t>(*reinterpret_cast<const unsigned char*>(&value));
     }
 
 };
