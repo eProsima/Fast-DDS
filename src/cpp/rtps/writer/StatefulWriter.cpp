@@ -507,7 +507,7 @@ void StatefulWriter::sync_delivery(
     // Notify the datasharing readers
     for (ReaderProxy* reader : matched_datasharing_readers_)
     {
-        reader->datasharing_notifier()->notify();
+        reader->datasharing_notify();
         reader->set_change_to_status(change->sequenceNumber, UNDERWAY, false);
     }
 
@@ -821,7 +821,7 @@ void StatefulWriter::send_heartbeat_to_all_readers()
 
     for (ReaderProxy* reader : matched_datasharing_readers_)
     {
-        reader->datasharing_notifier()->notify();
+        reader->datasharing_notify();
     }
 
     if (m_separateSendingEnabled)
@@ -1052,7 +1052,7 @@ void StatefulWriter::send_all_datasharing_changes(
         }
 
         // Finally notify the reader it has some data to read
-        remoteReader->datasharing_notifier()->notify();
+        remoteReader->datasharing_notify();
     }
 }
 
@@ -2221,7 +2221,7 @@ bool StatefulWriter::send_periodic_heartbeat(
                 std::shared_ptr<WriterPool> p = std::dynamic_pointer_cast<WriterPool>(payload_pool_);
                 assert(p);
                 p->assert_liveliness();
-                reader->datasharing_notifier()->notify();
+                reader->datasharing_notify();
             }
 
             RTPSMessageGroup group(mp_RTPSParticipant, this, *this);

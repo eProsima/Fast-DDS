@@ -417,6 +417,11 @@ public:
         return locator_info_.datasharing_notifier();
     }
 
+    void datasharing_notify()
+    {
+        locator_info_.datasharing_notify();
+    }
+
 private:
 
     //!Is this proxy active? I.e. does it have a remote reader associated?
