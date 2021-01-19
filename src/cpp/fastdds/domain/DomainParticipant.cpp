@@ -351,7 +351,6 @@ ReturnCode_t DomainParticipant::get_discovered_participants(
     return ReturnCode_t::RETCODE_UNSUPPORTED;
 }
 
-
 ReturnCode_t DomainParticipant::get_discovered_participant_data(
         ParticipantBuiltinTopicData& participant_data,
         const InstanceHandle_t& participant_handle) const
@@ -361,14 +360,12 @@ ReturnCode_t DomainParticipant::get_discovered_participant_data(
     return ReturnCode_t::RETCODE_UNSUPPORTED;
 }
 
-
 ReturnCode_t DomainParticipant::get_discovered_topics(
         std::vector<InstanceHandle_t>& topic_handles) const
 {
     static_cast<void> (topic_handles);
     return ReturnCode_t::RETCODE_UNSUPPORTED;
 }
-
 
 ReturnCode_t DomainParticipant::get_discovered_topic_data(
         TopicBuiltinTopicData& topic_data,

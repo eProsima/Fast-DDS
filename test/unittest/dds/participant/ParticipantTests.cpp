@@ -2065,7 +2065,7 @@ TEST(ParticipantTests, unsupportedMethods)
             "contentfilteredtopic",
             topic,
             "filter_expression",
-            std::vector<std::string>({"a","b"})),
+            std::vector<std::string>({"a", "b"})),
         nullptr);
 
     // nullptr use as there are not such a class
@@ -2076,13 +2076,13 @@ TEST(ParticipantTests, unsupportedMethods)
             "multitopic",
             "type",
             "subscription_expression",
-            std::vector<std::string>({"a","b"})),
+            std::vector<std::string>({"a", "b"})),
         nullptr);
 
     // nullptr use as there are not such a class
     ASSERT_EQ(participant->delete_multitopic(nullptr), ReturnCode_t::RETCODE_UNSUPPORTED);
 
-    ASSERT_EQ(participant->find_topic("topic", Duration_t(1,0)), nullptr);
+    ASSERT_EQ(participant->find_topic("topic", Duration_t(1, 0)), nullptr);
 
     ASSERT_EQ(participant->get_builtin_subscriber(), nullptr);
 
