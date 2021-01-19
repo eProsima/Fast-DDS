@@ -198,6 +198,16 @@ ReturnCode_t DataWriter::get_offered_incompatible_qos_status(
     return impl_->get_offered_incompatible_qos_status(status);
 }
 
+ReturnCode_t DataWriter::get_publication_matched_status(
+        PublicationMatchedStatus& status)
+{
+    static_cast<void> (status);
+    return ReturnCode_t::RETCODE_UNSUPPORTED;
+    /*
+       return impl_->get_publication_matched_status(status);
+     */
+}
+
 ReturnCode_t DataWriter::get_liveliness_lost_status(
         LivelinessLostStatus& status)
 {
@@ -207,6 +217,28 @@ ReturnCode_t DataWriter::get_liveliness_lost_status(
 ReturnCode_t DataWriter::assert_liveliness()
 {
     return impl_->assert_liveliness();
+}
+
+ReturnCode_t DataWriter::get_matched_subscription_data(
+        SubscriptionBuiltinTopicData& subscription_data,
+        fastrtps::rtps::InstanceHandle_t subscription_handle)
+{
+    static_cast<void> (subscription_data);
+    static_cast<void> (subscription_handle);
+    return ReturnCode_t::RETCODE_UNSUPPORTED;
+    /*
+       return impl_->get_matched_subscription_data(subscription_data, subscription_handle);
+     */
+}
+
+ReturnCode_t DataWriter::get_matched_subscriptions(
+        std::vector<fastrtps::rtps::InstanceHandle_t*>& subscription_handles)
+{
+    static_cast<void> (subscription_handles);
+    return ReturnCode_t::RETCODE_UNSUPPORTED;
+    /*
+       return impl_->get_matched_subscription_data(subscription_handles);
+     */
 }
 
 ReturnCode_t DataWriter::clear_history(

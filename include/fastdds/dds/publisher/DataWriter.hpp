@@ -24,6 +24,7 @@
 #include <fastdds/dds/core/status/DeadlineMissedStatus.hpp>
 #include <fastdds/dds/core/status/IncompatibleQosStatus.hpp>
 #include <fastdds/dds/core/status/StatusMask.hpp>
+#include <fastdds/dds/core/status/PublicationMatchedStatus.hpp>
 #include <fastdds/dds/publisher/qos/DataWriterQos.hpp>
 #include <fastdds/dds/topic/TypeSupport.hpp>
 #include <fastdds/rtps/common/Time_t.h>
@@ -59,6 +60,8 @@ class DataWriterImpl;
 class DataWriterListener;
 class DataWriterQos;
 class Topic;
+
+struct SubscriptionBuiltinTopicData;
 
 /**
  * Class DataWriter, contains the actual implementation of the behaviour of the DataWriter.
@@ -229,6 +232,14 @@ public:
             OfferedIncompatibleQosStatus& status);
 
     /**
+     * @brief Returns the publication matched status
+     * @param[out] status publication matched status struct
+     * @return RETCODE_OK
+     */
+    RTPS_DllAPI ReturnCode_t get_publication_matched_status(
+            PublicationMatchedStatus& status);
+
+    /**
      * Establishes the DataWriterQos for this DataWriter.
      * @param qos DataWriterQos to be set
      * @return RETCODE_IMMUTABLE_POLICY if any of the Qos cannot be changed, RETCODE_INCONSISTENT_POLICY if the Qos is not
@@ -330,6 +341,25 @@ public:
      * @return RETCODE_OK if asserted, RETCODE_ERROR otherwise
      */
     RTPS_DllAPI ReturnCode_t assert_liveliness();
+
+    /**
+     * @brief Retrieves in a subscription associated with the DataWriter
+     * @param[out] subscription_data subscription data struct
+     * @param subscription_handle InstanceHandle_t of the subscription
+     * @return RETCODE_OK
+     *
+     */
+    RTPS_DllAPI ReturnCode_t get_matched_subscription_data(
+            SubscriptionBuiltinTopicData& subscription_data,
+            fastrtps::rtps::InstanceHandle_t subscription_handle);
+
+    /**
+     * @brief Fills the given vector with the InstanceHandle_t of matched DataReaders
+     * @param[out] subscription_handles Vector where the InstanceHandle_t are returned
+     * @return RETCODE_OK
+     */
+    RTPS_DllAPI ReturnCode_t get_matched_subscriptions(
+            std::vector<fastrtps::rtps::InstanceHandle_t*>& subscription_handles);
 
     /**
      * @brief Clears the DataWriter history
