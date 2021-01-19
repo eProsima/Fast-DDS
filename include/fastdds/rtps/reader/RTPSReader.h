@@ -301,6 +301,11 @@ public:
             const GUID_t& writer,
             const SequenceNumber_t& sn) const;
 
+    const std::unique_ptr<DataSharingListener>& datasharing_listener() const
+    {
+        return datasharing_listener_;
+    }
+
 protected:
 
     virtual bool may_remove_history_record(
