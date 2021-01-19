@@ -119,6 +119,15 @@ public:
         return (this->instance_handle_ == other.instance_handle_);
     }
 
+    /**
+     * @brief Allows access to the StatusCondition associated with the Entity
+     * @return Reference to StatusCondition object
+     */
+    RTPS_DllAPI const StatusCondition& get_statuscondition() const
+    {
+        return status_condition_;
+    }
+
 protected:
 
     /**
@@ -138,11 +147,13 @@ protected:
     StatusMask status_changes_;
 
     //! InstanceHandle associated to the Entity
+    StatusCondition status_condition_;
+
+    //! InstanceHandle associated to the Entity
     InstanceHandle_t instance_handle_;
 
     //! Boolean that states if the Entity is enabled or disabled
     bool enable_;
-
 };
 
 /**
