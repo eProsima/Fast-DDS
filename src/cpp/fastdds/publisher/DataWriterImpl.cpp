@@ -1509,6 +1509,8 @@ ReturnCode_t DataWriterImpl::check_datasharing_compatible(
             qos_.endpoint().history_memory_policy == eprosima::fastrtps::rtps::PREALLOCATED_WITH_REALLOC_MEMORY_MODE) &&
             type_.is_bounded();
 
+    bool has_key = type_->m_isGetKeyDefined;
+
     is_datasharing_compatible = false;
     switch (qos_.data_sharing().kind())
     {
@@ -1531,6 +1533,12 @@ ReturnCode_t DataWriterImpl::check_datasharing_compatible(
                 return ReturnCode_t::RETCODE_BAD_PARAMETER;
             }
 
+            if (has_key)
+            {
+                logError(DATA_WRITER, "Data sharing cannot be used with keyed data types");
+                return ReturnCode_t::RETCODE_BAD_PARAMETER;
+            }
+
             is_datasharing_compatible = true;
             return ReturnCode_t::RETCODE_OK;
             break;
@@ -1547,6 +1555,12 @@ ReturnCode_t DataWriterImpl::check_datasharing_compatible(
             {
                 logInfo(DATA_WRITER, "Data sharing disabled because " <<
                         (type_.is_bounded() ? "memory policy is not PREALLOCATED" : "data type is not bounded"));
+                return ReturnCode_t::RETCODE_OK;
+            }
+
+            if (has_key)
+            {
+                logInfo(DATA_WRITER, "Data sharing disabled because data type is keyed");
                 return ReturnCode_t::RETCODE_OK;
             }
 
