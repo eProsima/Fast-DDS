@@ -248,7 +248,7 @@ bool StatefulReader::matched_writer_add(
         if (m_att.durabilityKind != VOLATILE)
         {
             // simulate a notification to force reading of transient changes
-            datasharing_listener_->notify();
+            datasharing_listener_->notify(true);
         }
     }
     else
@@ -809,7 +809,7 @@ bool StatefulReader::change_removed_by_history(
     //Simulate a datasharing notification to process any pending payloads that were waiting due to full history
     if (is_datasharing_compatible_)
     {
-        datasharing_listener_->notify();
+        datasharing_listener_->notify(true);
     }
 
     return false;

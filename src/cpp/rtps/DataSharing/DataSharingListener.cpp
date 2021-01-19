@@ -244,9 +244,17 @@ bool DataSharingListener::writer_is_matched(
     return (it != writer_pools_.end());
 }
 
-void DataSharingListener::notify()
+void DataSharingListener::notify(
+        bool same_thread)
 {
-    notification_->notify();
+    if (same_thread)
+    {
+        process_new_data();
+    }
+    else
+    {
+        notification_->notify();
+    }
 }
 
 }  // namespace rtps

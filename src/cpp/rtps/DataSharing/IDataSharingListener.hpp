@@ -91,8 +91,12 @@ public:
     /**
      * Wakes the listener and signals that there is some new data in any of the writers
      * being listened.
+     *
+     * @param same_thread Whether the data processing should be done on the thread calling this method or
+     *                    the listener thread.
      */
-    virtual void notify() = 0;
+    virtual void notify(
+            bool same_thread) = 0;
 
 };
 
