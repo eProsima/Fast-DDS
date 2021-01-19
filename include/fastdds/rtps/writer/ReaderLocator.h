@@ -200,6 +200,11 @@ public:
         return datasharing_notifier_;
     }
 
+    /**
+     * Performs datasharing notification of changes on the state of a writer to the reader represented by this class.
+     */
+    void datasharing_notify();
+
 private:
 
     RTPSWriter* owner_;

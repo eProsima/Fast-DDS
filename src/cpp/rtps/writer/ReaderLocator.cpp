@@ -18,12 +18,14 @@
  */
 
 #include <fastdds/rtps/writer/ReaderLocator.h>
+
 #include <fastdds/rtps/common/CacheChange.h>
-#include <fastdds/rtps/resources/AsyncWriterThread.h>
-#include <fastdds/rtps/writer/StatelessWriter.h>
 #include <fastdds/rtps/common/LocatorListComparisons.hpp>
+#include <fastdds/rtps/reader/RTPSReader.h>
+#include <fastdds/rtps/resources/AsyncWriterThread.h>
 
 #include <rtps/participant/RTPSParticipantImpl.h>
+#include <rtps/DataSharing/DataSharingListener.hpp>
 #include <rtps/DataSharing/DataSharingNotifier.hpp>
 #include "rtps/RTPSDomainImpl.hpp"
 
@@ -75,8 +77,7 @@ bool ReaderLocator::start(
         guid_prefix_as_vector_.at(0) = remote_guid.guidPrefix;
         locator_info_.remote_guid = remote_guid;
 
-        is_local_reader_ = !is_datasharing &&
-                RTPSDomainImpl::should_intraprocess_between(owner_->getGuid(), remote_guid);
+        is_local_reader_ = RTPSDomainImpl::should_intraprocess_between(owner_->getGuid(), remote_guid);
         local_reader_ = nullptr;
 
         if (!is_local_reader_ && !is_datasharing)
@@ -192,6 +193,24 @@ RTPSReader* ReaderLocator::local_reader()
 bool ReaderLocator::is_datasharing_reader() const
 {
     return datasharing_notifier_ && datasharing_notifier_->is_enabled();
+}
+
+void ReaderLocator::datasharing_notify()
+{
+    RTPSReader* reader = nullptr;
+    if (is_local_reader())
+    {
+        reader = local_reader();
+    }
+
+    if (reader)
+    {
+        reader->datasharing_listener()->notify(true);
+    }
+    else
+    {
+        datasharing_notifier()->notify();
+    }
 }
 
 } /* namespace rtps */

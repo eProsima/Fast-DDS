@@ -216,6 +216,10 @@ public:
         return nullptr;
     }
 
+    void datasharing_notify()
+    {
+    }
+
 private:
 
     GUID_t remote_guid_;
