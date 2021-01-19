@@ -1390,6 +1390,8 @@ ReturnCode_t DataReaderImpl::check_datasharing_compatible(
     (void) reader_attributes;
 #endif // HAVE_SECURITY
 
+    bool has_key = type_->m_isGetKeyDefined;
+
     is_datasharing_compatible = false;
     switch (qos_.data_sharing().kind())
     {
@@ -1410,6 +1412,12 @@ ReturnCode_t DataReaderImpl::check_datasharing_compatible(
                 return ReturnCode_t::RETCODE_BAD_PARAMETER;
             }
 
+            if (has_key)
+            {
+                logError(DATA_READER, "Data sharing cannot be used with keyed data types");
+                return ReturnCode_t::RETCODE_BAD_PARAMETER;
+            }
+
             is_datasharing_compatible = true;
             return ReturnCode_t::RETCODE_OK;
             break;
@@ -1425,6 +1433,12 @@ ReturnCode_t DataReaderImpl::check_datasharing_compatible(
             if (!type_.is_bounded())
             {
                 logInfo(DATA_READER, "Data sharing disabled because data type is not bounded");
+                return ReturnCode_t::RETCODE_OK;
+            }
+
+            if (has_key)
+            {
+                logInfo(DATA_READER, "Data sharing disabled because data type is keyed");
                 return ReturnCode_t::RETCODE_OK;
             }
 
