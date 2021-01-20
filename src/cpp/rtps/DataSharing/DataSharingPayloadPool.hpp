@@ -131,6 +131,22 @@ public:
      */
     void notify();
 
+    template<typename ConditionFunctor>
+    bool wait_until(
+            const std::chrono::time_point<std::chrono::steady_clock>& max_blocking_time,
+            const ConditionFunctor& condition)
+    {
+        std::unique_lock<Segment::mutex> lock(descriptor_->notification_mutex);
+        bool success = false;
+        descriptor_->notification_cv.timed_wait(lock, max_blocking_time,
+                    [&success, &condition]()
+                    {
+                        success = condition();
+                        return success;
+                    });
+        return success;
+    }
+
     static bool check_sequence_number(
             const octet* data,
             const SequenceNumber_t& sn);

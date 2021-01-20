@@ -153,6 +153,14 @@ public:
         return true;
     }
 
+    template<typename ConditionFunctor>
+    bool wait_until(
+            const std::chrono::time_point<std::chrono::steady_clock>& /*max_blocking_time*/,
+            const ConditionFunctor& condition)
+    {
+        return condition();
+    }
+
 protected:
 
     GUID_t writer_guid_;
