@@ -332,8 +332,8 @@ struct hash<eprosima::fastrtps::rtps::EntityId_t>
             const eprosima::fastrtps::rtps::EntityId_t& k) const
     {
         return (static_cast<size_t>(k.value[0]) << 16) |
-            (static_cast<size_t>(k.value[1]) << 8) |
-            static_cast<size_t>(k.value[2]);
+               (static_cast<size_t>(k.value[1]) << 8) |
+               static_cast<size_t>(k.value[2]);
     }
 
 };
