@@ -170,6 +170,20 @@ public:
         return true;
     }
 
+    virtual bool begin_sample_access_nts(
+            CacheChange_t* /*change*/,
+            WriterProxy*& /*wp*/)
+    {
+        return true;
+    }
+
+    virtual void end_sample_access_nts(
+            CacheChange_t* /*change*/,
+            WriterProxy*& /*wp*/,
+            bool /*mark_as_read*/)
+    {
+    }
+
     virtual void change_read_by_user(
             CacheChange_t* /*change*/,
             const WriterProxy* /*writer*/,

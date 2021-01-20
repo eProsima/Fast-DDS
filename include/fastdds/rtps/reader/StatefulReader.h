@@ -281,6 +281,28 @@ public:
             const GUID_t& writer) override;
 
     /**
+     * Called just before a change is going to be deserialized.
+     * @param [in]  change Pointer to the change being accessed.
+     * @param [out] wp     Writer proxy the @c change belongs to.
+     * 
+     * @return Whether the change is still valid or not.
+     */
+    bool begin_sample_access_nts(
+            CacheChange_t* change,
+            WriterProxy*& wp) override;
+
+    /**
+     * Called after the change has been deserialized.
+     * @param [in] change        Pointer to the change being accessed.
+     * @param [in] wp            Writer proxy the @c change belongs to.
+     * @param [in] mark_as_read  Whether the @c change should be marked as read or not.
+     */
+    void end_sample_access_nts(
+            CacheChange_t* change,
+            WriterProxy*& wp,
+            bool mark_as_read) override;
+
+    /**
      * Called when the user has retrieved a change from the history.
      * @param change Pointer to the change to ACK
      * @param writer Writer proxy of the \c change.

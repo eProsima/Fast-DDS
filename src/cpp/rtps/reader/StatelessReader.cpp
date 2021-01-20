@@ -392,6 +392,41 @@ bool StatelessReader::change_removed_by_history(
     return true;
 }
 
+bool StatelessReader::begin_sample_access_nts(
+        CacheChange_t* change,
+        WriterProxy*& /*wp*/)
+{
+    const GUID_t& writer_guid = change->writerGUID;
+
+    if (is_datasharing_compatible_ && datasharing_listener_->writer_is_matched(writer_guid))
+    {
+        // Lock the payload. Will remain locked until end_sample_access_nts is called
+        DataSharingPayloadPool::shared_mutex(change->serializedPayload.data).lock_sharable();
+
+        //Check if the payload is dirty
+        if (!DataSharingPayloadPool::check_sequence_number(
+            change->serializedPayload.data, change->sequenceNumber))
+        {
+            // Unlock and return false
+            DataSharingPayloadPool::shared_mutex(change->serializedPayload.data).unlock_sharable();
+            logWarning(RTPS_READER,
+                "Removing change " << change->sequenceNumber << " from " << writer_guid <<
+                " because is overidden");
+            return false;
+        }
+    }
+
+    return true;
+}
+
+void StatelessReader::end_sample_access_nts(
+        CacheChange_t* change,
+        WriterProxy*& wp,
+        bool mark_as_read)
+{
+    change_read_by_user(change, wp, mark_as_read);
+}
+
 void StatelessReader::change_read_by_user(
         CacheChange_t* change,
         const WriterProxy* /*writer*/,
