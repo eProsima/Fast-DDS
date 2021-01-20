@@ -105,6 +105,7 @@ if(GST_FOUND)
         target_link_libraries(
             VideoTest
             fastrtps
+            fastcdr
             foonathan_memory
             ${CMAKE_THREAD_LIBS_INIT}
             ${CMAKE_DL_LIBS}
@@ -119,6 +120,7 @@ if(GST_FOUND)
         target_link_libraries(
             VideoTest
             fastrtps
+            fastcdr
             foonathan_memory
             ${CMAKE_THREAD_LIBS_INIT}
             ${CMAKE_DL_LIBS}
@@ -174,14 +176,26 @@ if(GST_FOUND)
                     TEST performance.video.${video_test_name}
                     APPEND PROPERTY ENVIRONMENT "VIDEO_TEST_BIN=$<TARGET_FILE:VideoTest>"
                 )
+
+                # Add environment
                 if(WIN32)
                     set(WIN_PATH "$ENV{PATH}")
-                    set(WIN_PATH "$<TARGET_FILE_DIR:${PROJECT_NAME}>;$ENV{PATH}")
+                    get_target_property(LINK_LIBRARIES_ ${PROJECT_NAME} LINK_LIBRARIES)
+                    if(NOT "${LINK_LIBRARIES_}" STREQUAL "LINK_LIBRARIES_-NOTFOUND")
+                    list(APPEND LINK_LIBRARIES_ ${PROJECT_NAME})
+                        foreach(LIBRARY_LINKED ${LINK_LIBRARIES_})
+                            if(TARGET ${LIBRARY_LINKED})
+                                # Check if is a real target or a target interface
+                                get_target_property(dependency_type ${LIBRARY_LINKED} TYPE)
+                                if(NOT dependency_type STREQUAL "INTERFACE_LIBRARY")
+                                    set(WIN_PATH "$<TARGET_FILE_DIR:${LIBRARY_LINKED}>;${WIN_PATH}")
+                                endif()
+                                unset(dependency_type)
+                            endif()
+                        endforeach()
+                    endif()
                     string(REPLACE ";" "\\;" WIN_PATH "${WIN_PATH}")
-                    set_property(
-                        TEST performance.video.${video_test_name}
-                        APPEND PROPERTY ENVIRONMENT "PATH=${WIN_PATH}"
-                    )
+                    set_property(TEST performance.video.${video_test_name} APPEND PROPERTY ENVIRONMENT "PATH=${WIN_PATH}")
                 endif()
 
                 # If there is security, add a secure test as well
@@ -203,14 +217,9 @@ if(GST_FOUND)
                         TEST performance.video.${video_test_name}_security
                         APPEND PROPERTY ENVIRONMENT "VIDEO_TEST_BIN=$<TARGET_FILE:VideoTest>"
                     )
+
                     if(WIN32)
-                        set(WIN_PATH "$ENV{PATH}")
-                        set(WIN_PATH "$<TARGET_FILE_DIR:${PROJECT_NAME}>;$ENV{PATH}")
-                        string(REPLACE ";" "\\;" WIN_PATH "${WIN_PATH}")
-                        set_property(
-                            TEST performance.video.${video_test_name}_security
-                            APPEND PROPERTY ENVIRONMENT "PATH=${WIN_PATH}"
-                        )
+                        set_property(TEST performance.video.${video_test_name}_security APPEND PROPERTY ENVIRONMENT "PATH=${WIN_PATH}")
                     endif()
                 endif()
             endforeach(video_test_name)

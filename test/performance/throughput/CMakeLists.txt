@@ -32,6 +32,7 @@ target_include_directories(ThroughputTest PRIVATE)
 target_link_libraries(
     ThroughputTest
     fastrtps
+    fastcdr
     foonathan_memory
     ${CMAKE_THREAD_LIBS_INIT}
     ${CMAKE_DL_LIBS}
@@ -149,14 +150,9 @@ if(PYTHONINTERP_FOUND)
                 TEST performance.throughput.${throughput_test_name}_security
                 APPEND PROPERTY ENVIRONMENT "CMAKE_CURRENT_SOURCE_DIR=${CMAKE_CURRENT_SOURCE_DIR}"
             )
+
             if(WIN32)
-                set(WIN_PATH "$ENV{PATH}")
-                set(WIN_PATH "$<TARGET_FILE_DIR:${PROJECT_NAME}>;$ENV{PATH}")
-                string(REPLACE ";" "\\;" WIN_PATH "${WIN_PATH}")
-                set_property(
-                    TEST performance.throughput.${throughput_test_name}_security
-                    APPEND PROPERTY ENVIRONMENT "PATH=${WIN_PATH}"
-                )
+                set_property(TEST performance.throughput.${throughput_test_name}_security APPEND PROPERTY ENVIRONMENT "PATH=${WIN_PATH}")
             endif()
 
             set_property(
