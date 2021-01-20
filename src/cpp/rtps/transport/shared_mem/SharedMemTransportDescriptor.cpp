@@ -46,10 +46,10 @@ bool SharedMemTransportDescriptor::operator ==(
         const SharedMemTransportDescriptor& t) const
 {
     return (this->segment_size_ == t.segment_size() &&
-            this->port_queue_capacity_ == t.port_queue_capacity() &&
-            this->healthy_check_timeout_ms_ == t.healthy_check_timeout_ms() &&
-            this->rtps_dump_file_ == t.rtps_dump_file() &&
-            TransportDescriptorInterface::operator==(t));
+           this->port_queue_capacity_ == t.port_queue_capacity() &&
+           this->healthy_check_timeout_ms_ == t.healthy_check_timeout_ms() &&
+           this->rtps_dump_file_ == t.rtps_dump_file() &&
+           TransportDescriptorInterface::operator ==(t));
 }
 
 #ifdef FASTDDS_SHM_TRANSPORT_DISABLED
