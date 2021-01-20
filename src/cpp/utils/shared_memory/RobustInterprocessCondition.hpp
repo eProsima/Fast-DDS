@@ -153,6 +153,64 @@ public:
         return true;
     }
 
+    /**
+     * Converts a std::chrono::time_point to a boost::posix_time::ptime.
+     * As timed_wait only can handle boost ptime,
+     * this conversion is required when the deadline is expressed as a time_point.
+     * The resulting ptime will have microsecond precision if the library supports it,
+     * or second precision otherwise.
+     * @return boost ptime equivalent of the input std time_point.
+     */
+    static boost::posix_time::ptime steady_clock_time_point_to_ptime (
+        const std::chrono::time_point<std::chrono::steady_clock>& time_point)
+    {
+        auto now = std::chrono::steady_clock::now();
+        auto boost_now  =
+#ifdef BOOST_DATE_TIME_HAS_HIGH_PRECISION_CLOCK
+                boost::posix_time::microsec_clock::local_time();
+#endif //BOOST_DATE_TIME_HAS_HIGH_PRECISION_CLOCK
+                boost::posix_time::second_clock::local_time();
+
+        std::chrono::microseconds remaining =
+                std::chrono::duration_cast<std::chrono::microseconds>(time_point - now);
+
+        return boost_now + boost::posix_time::microseconds(remaining.count());
+    }
+
+    /**
+     * Releases the lock on the interprocess_mutex object associated with lock, blocks
+     * the current thread of execution until readied by a call to
+     * this->notify_one() or this->notify_all(), or until time abs_time is reached,
+     * and then reacquires the lock.
+     * @return false if time abs_time is reached, otherwise true.
+     * @throw boost::interprocess::interprocess_exception on error.
+     */
+    template <typename L>
+    bool timed_wait(
+            L& lock,
+            const std::chrono::time_point<std::chrono::steady_clock>& max_blocking_time)
+    {
+        return timed_wait(lock, RobustInterprocessCondition::steady_clock_time_point_to_ptime(max_blocking_time));
+    }
+
+    /**
+     * The same as:
+     * while (!pred())
+     * {
+     *     if (!timed_wait(lock, abs_time)) return pred();
+     * }
+     * return true;
+     */
+    template <typename L, typename Pr>
+    bool timed_wait(
+            L& lock,
+            const std::chrono::time_point<std::chrono::steady_clock>& max_blocking_time,
+            Pr pred)
+    {
+        return timed_wait(lock, RobustInterprocessCondition::steady_clock_time_point_to_ptime(max_blocking_time), pred);
+    }
+
+
 private:
 
     struct SemaphoreNode
