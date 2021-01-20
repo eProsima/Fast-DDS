@@ -21,9 +21,13 @@
 
 #include <fastdds/dds/core/Entity.hpp>
 #include <fastdds/dds/subscriber/DataReaderListener.hpp>
+#include <fastdds/dds/subscriber/InstanceState.hpp>
+#include <fastdds/dds/subscriber/qos/DataReaderQos.hpp>
 #include <fastdds/dds/subscriber/qos/SubscriberQos.hpp>
+#include <fastdds/dds/subscriber/SampleState.hpp>
+#include <fastdds/dds/subscriber/ViewState.hpp>
+#include <fastdds/dds/topic/qos/TopicQos.hpp>
 #include <fastdds/dds/topic/TypeSupport.hpp>
-
 #include <fastrtps/types/TypesBase.h>
 
 using eprosima::fastrtps::types::ReturnCode_t;
@@ -205,18 +209,40 @@ public:
             std::vector<DataReader*>& readers) const;
 
     /**
+     * @brief This operation allows the application to access the DataReader objects s that contain samples with the
+     * specified sample_states, view_states, and instance_states.
+     * @param[out] readers Vector of DataReader where the list of existing readers is returned
+     * @param sample_states Vector of SampleStateKind
+     * @param view_states Vector of ViewStateKind
+     * @param instance_states Vector of InstanceStateKind
+     * @return RETCODE_OK
+     */
+    RTPS_DllAPI ReturnCode_t get_datareaders(
+            std::vector<DataReader*>& readers,
+            std::vector<SampleStateKind> sample_states,
+            std::vector<ViewStateKind> view_states,
+            std::vector<InstanceStateKind> instance_states) const;
+
+    /**
      * This operation checks if the subscriber has DataReaders
      * @return true if the subscriber has one or several DataReaders, false in other case
      */
     RTPS_DllAPI bool has_datareaders() const;
 
-    /* TODO
-       bool begin_access();
+    /**
+     * @brief Indicates that the application is about to access the data samples in any of the DataReader objects
+     * attached to the Subscriber.
+     * @return RETCODE_OK
      */
+    RTPS_DllAPI ReturnCode_t begin_access();
 
-    /* TODO
-       bool end_access();
+    /**
+     * @brief Indicates that the application has finished accessing the data samples in DataReader objects managed by
+     * the Subscriber.
+     * @return RETCODE_OK
      */
+    RTPS_DllAPI ReturnCode_t end_access();
+
 
     /**
      * This operation invokes the operation on_data_available on the DataReaderListener objects attached to
@@ -228,9 +254,11 @@ public:
      */
     RTPS_DllAPI ReturnCode_t notify_datareaders() const;
 
-    /* TODO
-       bool delete_contained_entities();
+    /**
+     * @brief Deletes all contained DataReaders
+     * @return RETCODE_OK if successful, an error code otherwise
      */
+    RTPS_DllAPI ReturnCode_t delete_contained_entities();
 
     /**
      * This operation sets a default value of the DataReader QoS policies which will be used for newly created
@@ -294,11 +322,15 @@ public:
             const std::string& profile_name,
             DataReaderQos& qos) const;
 
-    /* TODO
-       bool copy_from_topic_qos(
-            DataReaderQos& reader_qos,
-            const fastrtps::TopicAttributes& topic_qos) const;
+    /**
+     * @brief Copies TopicQos into the corresponding DataReaderQos
+     * @param[out] reader_qos
+     * @param[in] topic_qos
+     * @return RETCODE_OK if successful, an error code otherwise
      */
+    RTPS_DllAPI ReturnCode_t copy_from_topic_qos(
+            DataReaderQos& reader_qos,
+            const TopicQos& topic_qos) const;
 
     /**
      * This operation returns the DomainParticipant to which the Subscriber belongs.

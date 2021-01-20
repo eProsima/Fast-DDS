@@ -17,8 +17,8 @@
  *
  */
 
-#include <fastdds/dds/subscriber/Subscriber.hpp>
 #include <fastdds/dds/domain/DomainParticipant.hpp>
+#include <fastdds/dds/subscriber/Subscriber.hpp>
 #include <fastdds/subscriber/SubscriberImpl.hpp>
 
 using namespace eprosima;
@@ -138,36 +138,54 @@ ReturnCode_t Subscriber::get_datareaders(
     return impl_->get_datareaders(readers);
 }
 
+ReturnCode_t Subscriber::get_datareaders(
+        std::vector<DataReader*>& readers,
+        std::vector<SampleStateKind> sample_states,
+        std::vector<ViewStateKind> view_states,
+        std::vector<InstanceStateKind> instance_states) const
+{
+    static_cast<void> (sample_states);
+    static_cast<void> (view_states);
+    static_cast<void> (instance_states);
+    return ReturnCode_t::RETCODE_UNSUPPORTED;
+    /*
+       return impl_->get_datareaders(readers);
+     */
+}
+
 bool Subscriber::has_datareaders() const
 {
     return impl_->has_datareaders();
 }
 
-/* TODO
-   bool Subscriber::begin_access()
-   {
-    return impl_->begin_access();
-   }
- */
+ReturnCode_t Subscriber::begin_access()
+{
+    return ReturnCode_t::RETCODE_UNSUPPORTED;
+    /*
+       return impl_->begin_access();
+     */
+}
 
-/* TODO
-   bool Subscriber::end_access()
-   {
-    return impl_->end_access();
-   }
- */
+ReturnCode_t Subscriber::end_access()
+{
+    return ReturnCode_t::RETCODE_UNSUPPORTED;
+    /*
+       return impl_->end_access();
+     */
+}
 
 ReturnCode_t Subscriber::notify_datareaders() const
 {
     return impl_->notify_datareaders();
 }
 
-/* TODO
-   bool Subscriber::delete_contained_entities()
-   {
-    return impl_->delete_contained_entities();
-   }
- */
+ReturnCode_t Subscriber::delete_contained_entities()
+{
+    return ReturnCode_t::RETCODE_UNSUPPORTED;
+    /*
+       return impl_->delete_contained_entities();
+     */
+}
 
 ReturnCode_t Subscriber::set_default_datareader_qos(
         const DataReaderQos& qos)
@@ -199,14 +217,17 @@ ReturnCode_t Subscriber::get_datareader_qos_from_profile(
     return impl_->get_datareader_qos_from_profile(profile_name, qos);
 }
 
-/* TODO
-   bool Subscriber::copy_from_topic_qos(
+ReturnCode_t Subscriber::copy_from_topic_qos(
         DataReaderQos& reader_qos,
-        const fastrtps::TopicAttributes& topic_qos) const
-   {
-    return impl_->copy_from_topic_qos(reader_qos, topic_qos);
-   }
- */
+        const TopicQos& topic_qos) const
+{
+    static_cast<void> (reader_qos);
+    static_cast<void> (topic_qos);
+    return ReturnCode_t::RETCODE_UNSUPPORTED;
+    /*
+       return impl_->copy_from_topic_qos(reader_qos, topic_qos);
+     */
+}
 
 const DomainParticipant* Subscriber::get_participant() const
 {
