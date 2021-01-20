@@ -662,7 +662,7 @@ ReturnCode_t DataWriterImpl::perform_create_new_change(
     bool was_loaned = check_and_remove_loan(data, payload);
     if (!was_loaned)
     {
-        if (!get_free_payload_from_pool(type_->getSerializedSizeProvider(data), payload))
+        if (!get_free_payload_from_pool(type_->getSerializedSizeProvider(data), payload, max_blocking_time))
         {
             return ReturnCode_t::RETCODE_OUT_OF_RESOURCES;
         }
