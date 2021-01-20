@@ -38,6 +38,7 @@ class DataSharingNotification
 {
 
     friend class DataSharingListener;
+    friend class DataSharingNotifier;
 
 public:
 
