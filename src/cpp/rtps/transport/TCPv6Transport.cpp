@@ -125,7 +125,7 @@ TCPv6TransportDescriptor::TCPv6TransportDescriptor(
 bool TCPv6TransportDescriptor::operator ==(
         const TCPv6TransportDescriptor& t) const
 {
-    return TCPTransportDescriptor::operator==(t);
+    return TCPTransportDescriptor::operator ==(t);
 }
 
 TransportInterface* TCPv6TransportDescriptor::create_transport() const

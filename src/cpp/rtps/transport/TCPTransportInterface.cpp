@@ -121,19 +121,19 @@ bool TCPTransportDescriptor::operator ==(
         const TCPTransportDescriptor& t) const
 {
     return (this->listening_ports == t.listening_ports &&
-            this->keep_alive_frequency_ms == t.keep_alive_frequency_ms &&
-            this->keep_alive_timeout_ms == t.keep_alive_timeout_ms &&
-            this->max_logical_port == t.max_logical_port &&
-            this->logical_port_range == t.logical_port_range &&
-            this->logical_port_increment == t.logical_port_increment &&
-            this->tcp_negotiation_timeout == t.tcp_negotiation_timeout &&
-            this->enable_tcp_nodelay == t.enable_tcp_nodelay &&
-            this->wait_for_tcp_negotiation == t.wait_for_tcp_negotiation &&
-            this->calculate_crc == t.calculate_crc &&
-            this->check_crc == t.check_crc &&
-            this->apply_security == t.apply_security &&
-            this->tls_config == t.tls_config &&
-            SocketTransportDescriptor::operator==(t));
+           this->keep_alive_frequency_ms == t.keep_alive_frequency_ms &&
+           this->keep_alive_timeout_ms == t.keep_alive_timeout_ms &&
+           this->max_logical_port == t.max_logical_port &&
+           this->logical_port_range == t.logical_port_range &&
+           this->logical_port_increment == t.logical_port_increment &&
+           this->tcp_negotiation_timeout == t.tcp_negotiation_timeout &&
+           this->enable_tcp_nodelay == t.enable_tcp_nodelay &&
+           this->wait_for_tcp_negotiation == t.wait_for_tcp_negotiation &&
+           this->calculate_crc == t.calculate_crc &&
+           this->check_crc == t.check_crc &&
+           this->apply_security == t.apply_security &&
+           this->tls_config == t.tls_config &&
+           SocketTransportDescriptor::operator ==(t));
 }
 
 TCPTransportInterface::TCPTransportInterface(

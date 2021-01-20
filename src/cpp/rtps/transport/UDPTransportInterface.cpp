@@ -67,8 +67,8 @@ bool UDPTransportDescriptor::operator ==(
         const UDPTransportDescriptor& t) const
 {
     return (this->m_output_udp_socket == t.m_output_udp_socket &&
-            this->non_blocking_send == t.non_blocking_send &&
-            SocketTransportDescriptor::operator==(t));
+           this->non_blocking_send == t.non_blocking_send &&
+           SocketTransportDescriptor::operator ==(t));
 }
 
 UDPTransportInterface::UDPTransportInterface(

@@ -75,10 +75,10 @@ struct SocketTransportDescriptor : public TransportDescriptorInterface
             const SocketTransportDescriptor& t) const
     {
         return (this->sendBufferSize == t.min_send_buffer_size() &&
-                this->receiveBufferSize == t.receiveBufferSize &&
-                this->interfaceWhiteList == t.interfaceWhiteList &&
-                this->TTL == t.TTL &&
-                TransportDescriptorInterface::operator==(t));
+               this->receiveBufferSize == t.receiveBufferSize &&
+               this->interfaceWhiteList == t.interfaceWhiteList &&
+               this->TTL == t.TTL &&
+               TransportDescriptorInterface::operator ==(t));
     }
 
     //! Length of the send buffer.

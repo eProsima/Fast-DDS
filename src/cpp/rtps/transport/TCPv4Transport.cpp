@@ -133,10 +133,10 @@ bool TCPv4TransportDescriptor::operator ==(
         const TCPv4TransportDescriptor& t) const
 {
     return (this->wan_addr[0] == t.wan_addr[0] &&
-            this->wan_addr[1] == t.wan_addr[1] &&
-            this->wan_addr[2] == t.wan_addr[2] &&
-            this->wan_addr[3] == t.wan_addr[3] &&
-            TCPTransportDescriptor::operator==(t));
+           this->wan_addr[1] == t.wan_addr[1] &&
+           this->wan_addr[2] == t.wan_addr[2] &&
+           this->wan_addr[3] == t.wan_addr[3] &&
+           TCPTransportDescriptor::operator ==(t));
 }
 
 TransportInterface* TCPv4TransportDescriptor::create_transport() const

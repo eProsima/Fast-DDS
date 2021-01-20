@@ -147,7 +147,7 @@ TransportInterface* UDPv4TransportDescriptor::create_transport() const
 bool UDPv4TransportDescriptor::operator ==(
         const UDPv4TransportDescriptor& t) const
 {
-    return (UDPTransportDescriptor::operator==(t));
+    return (UDPTransportDescriptor::operator ==(t));
 }
 
 bool UDPv4Transport::getDefaultMetatrafficMulticastLocators(

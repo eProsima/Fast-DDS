@@ -77,8 +77,8 @@ public:
             TransportInterface&& t) = delete;
 
     //! Move assignment
-    TransportInterface& operator=(
-            TransportInterface&& t) = delete; 
+    TransportInterface& operator =(
+            TransportInterface&& t) = delete;
 
     /**
      * Initialize this transport. This method will prepare all the internals of the transport.
