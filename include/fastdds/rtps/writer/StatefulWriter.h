@@ -381,6 +381,12 @@ public:
      */
     const fastdds::rtps::IReaderDataFilter* reader_data_filter() const;
 
+    /**
+     * @param source_timestamp the timestamp of the payload we want to recycle
+     * @return whether a payload with the given source timestamp can be reused for a new change
+     */
+    bool is_datasharing_payload_reusable(const Time_t& source_timestamp) const override;
+
 private:
 
     bool is_acked_by_all(

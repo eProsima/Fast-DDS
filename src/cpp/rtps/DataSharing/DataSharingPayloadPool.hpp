@@ -32,6 +32,8 @@ namespace eprosima {
 namespace fastrtps {
 namespace rtps {
 
+class RTPSWriter;
+
 class DataSharingPayloadPool : public IPayloadPool
 {
 
@@ -67,8 +69,22 @@ public:
     }
 
     virtual bool init_shared_memory(
-            const GUID_t& writer_guid,
-            const std::string& shared_dir) = 0;
+            const GUID_t& /*writer_guid*/,
+            const std::string& /*shared_dir*/)
+    {
+        // Default implementation is NOP
+        // will be overriden by children if needed
+        return false;
+    }
+
+    virtual bool init_shared_memory(
+            const RTPSWriter* /*writer*/,
+            const std::string& /*shared_dir*/)
+    {
+        // Default implementation is NOP
+        // will be overriden by children if needed
+        return false;
+    }
 
     constexpr static const char* domain_name()
     {
