@@ -138,7 +138,7 @@ DataWriter* Publisher::lookup_datawriter(
     return impl_->lookup_datawriter(topic_name);
 }
 
-ReturnCode_t Publisher::suspend_publications() const
+ReturnCode_t Publisher::suspend_publications()
 {
     return ReturnCode_t::RETCODE_UNSUPPORTED;
     /*
@@ -146,7 +146,7 @@ ReturnCode_t Publisher::suspend_publications() const
      */
 }
 
-ReturnCode_t Publisher::resume_publications() const
+ReturnCode_t Publisher::resume_publications()
 {
     return ReturnCode_t::RETCODE_UNSUPPORTED;
     /*
@@ -154,7 +154,7 @@ ReturnCode_t Publisher::resume_publications() const
      */
 }
 
-ReturnCode_t Publisher::begin_coherent_changes() const
+ReturnCode_t Publisher::begin_coherent_changes()
 {
     return ReturnCode_t::RETCODE_UNSUPPORTED;
     /*
@@ -162,7 +162,7 @@ ReturnCode_t Publisher::begin_coherent_changes() const
      */
 }
 
-ReturnCode_t Publisher::end_coherent_changes() const
+ReturnCode_t Publisher::end_coherent_changes()
 {
     return ReturnCode_t::RETCODE_UNSUPPORTED;
     /*
@@ -181,7 +181,7 @@ const DomainParticipant* Publisher::get_participant() const
     return impl_->get_participant();
 }
 
-ReturnCode_t Publisher::delete_contained_entities() const
+ReturnCode_t Publisher::delete_contained_entities()
 {
     return ReturnCode_t::RETCODE_UNSUPPORTED;
     /*

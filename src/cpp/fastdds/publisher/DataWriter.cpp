@@ -199,7 +199,7 @@ ReturnCode_t DataWriter::get_offered_incompatible_qos_status(
 }
 
 ReturnCode_t DataWriter::get_publication_matched_status(
-        PublicationMatchedStatus& status)
+        PublicationMatchedStatus& status) const
 {
     static_cast<void> (status);
     return ReturnCode_t::RETCODE_UNSUPPORTED;
@@ -221,7 +221,7 @@ ReturnCode_t DataWriter::assert_liveliness()
 
 ReturnCode_t DataWriter::get_matched_subscription_data(
         SubscriptionBuiltinTopicData& subscription_data,
-        fastrtps::rtps::InstanceHandle_t subscription_handle)
+        fastrtps::rtps::InstanceHandle_t subscription_handle) const
 {
     static_cast<void> (subscription_data);
     static_cast<void> (subscription_handle);
@@ -232,7 +232,7 @@ ReturnCode_t DataWriter::get_matched_subscription_data(
 }
 
 ReturnCode_t DataWriter::get_matched_subscriptions(
-        std::vector<fastrtps::rtps::InstanceHandle_t*>& subscription_handles)
+        std::vector<fastrtps::rtps::InstanceHandle_t*>& subscription_handles) const
 {
     static_cast<void> (subscription_handles);
     return ReturnCode_t::RETCODE_UNSUPPORTED;

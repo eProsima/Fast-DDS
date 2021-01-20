@@ -447,51 +447,6 @@ TEST(PublisherTests, UnsupportedPublisherMethods)
     ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), ReturnCode_t::RETCODE_OK);
 }
 
-/*
- * This test checks that the DataWriter methods defined in the standard not yet implemented in FastDDS return
- * ReturnCode_t::RETCODE_UNSUPPORTED. The following methods are checked:
- * 1. copy_from_topic_qos
- * 2. delete_contained_entities
- */
-TEST(PublisherTests, UnsupportedDataWriterMethods)
-{
-    DomainParticipant* participant =
-            DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
-    ASSERT_NE(participant, nullptr);
-
-    Publisher* publisher = participant->create_publisher(PUBLISHER_QOS_DEFAULT);
-    ASSERT_NE(publisher, nullptr);
-
-    TypeSupport type(new TopicDataTypeMock());
-    type.register_type(participant);
-
-    Topic* topic = participant->create_topic("footopic", type.get_type_name(), TOPIC_QOS_DEFAULT);
-    ASSERT_NE(topic, nullptr);
-
-    DataWriter* data_writer = publisher->create_datawriter(topic, DATAWRITER_QOS_DEFAULT);
-    ASSERT_NE(publisher, nullptr);
-
-    PublicationMatchedStatus status;
-    EXPECT_EQ(
-        ReturnCode_t::RETCODE_UNSUPPORTED,
-        data_writer->get_publication_matched_status(status));
-
-    // Test requires unimplemented struct SubscriptionBuiltinTopicData
-    //
-    // SubscriptionBuiltinTopicData subscription_data;
-    // fastrtps::rtps::InstanceHandle_t subscription_handle;
-    // EXPECT_EQ(
-    //        ReturnCode_t::RETCODE_UNSUPPORTED,
-    //        data_writer->get_matched_subscription_data(void,subscription_handle));
-    //
-    // std::vector<fastrtps::rtps::InstanceHandle_t*> subscription_handles;
-    // EXPECT_EQ(ReturnCode_t::RETCODE_UNSUPPORTED, data_writer->get_matched_subscriptions(subscription_handles));
-
-    ASSERT_EQ(publisher->delete_datawriter(data_writer), ReturnCode_t::RETCODE_OK);
-    ASSERT_EQ(participant->delete_publisher(publisher), ReturnCode_t::RETCODE_OK);
-    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), ReturnCode_t::RETCODE_OK);
-}
-
 } // namespace dds
 } // namespace fastdds
 } // namespace eprosima

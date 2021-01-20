@@ -199,27 +199,27 @@ public:
 
     /**
      * @brief Indicates to FastDDS that the contained DataWriters are about to be modified
-     * @return RETCODE_OK if successful, RETCODE_ERROR otherwise
+     * @return RETCODE_OK if successful, an error code otherwise
      */
-    RTPS_DllAPI ReturnCode_t suspend_publications() const;
+    RTPS_DllAPI ReturnCode_t suspend_publications();
 
     /**
      * @brief Indicates to FastDDS that the modifications to the DataWriters are complete.
-     * @return RETCODE_OK if successful, RETCODE_ERROR otherwise
+     * @return RETCODE_OK if successful, an error code otherwise
      */
-    RTPS_DllAPI ReturnCode_t resume_publications() const;
+    RTPS_DllAPI ReturnCode_t resume_publications();
 
     /**
      * @brief Signals the begining of a set of coherent cache changes using th Datawriters attached to the publisher
-     * @return RETCODE_OK if successful, RETCODE_ERROR otherwise
+     * @return RETCODE_OK if successful, an error code otherwise
      */
-    RTPS_DllAPI ReturnCode_t begin_coherent_changes() const;
+    RTPS_DllAPI ReturnCode_t begin_coherent_changes();
 
     /**
      * @brief Signals the end of a set of coherent cache changes
-     * @return RETCODE_OK if successful, RETCODE_ERROR otherwise
+     * @return RETCODE_OK if successful, an error code otherwise
      */
-    RTPS_DllAPI ReturnCode_t end_coherent_changes() const;
+    RTPS_DllAPI ReturnCode_t end_coherent_changes();
 
     /**
      * This operation blocks the calling thread until either all data written by the reliable DataWriter entities
@@ -242,9 +242,9 @@ public:
 
     /**
      * @brief Deletes all contained DataWriters
-     * @return RETCODE_OK if successful, RETCODE_ERROR otherwise
+     * @return RETCODE_OK if successful, an error code otherwise
      */
-    RTPS_DllAPI ReturnCode_t delete_contained_entities() const;
+    RTPS_DllAPI ReturnCode_t delete_contained_entities();
 
     /**
      * This operation sets a default value of the DataWriter QoS policies which will be used for newly created
@@ -290,7 +290,7 @@ public:
      * @brief Copies TopicQos into the corresponding DataWriterQos
      * @param[out] writer_qos
      * @param[in] topic_qos
-     * @return RETCODE_OK if successful, RETCODE_ERROR otherwise
+     * @return RETCODE_OK if successful, an error code otherwise
      */
     RTPS_DllAPI ReturnCode_t copy_from_topic_qos(
             fastdds::dds::DataWriterQos& writer_qos,
