@@ -55,11 +55,9 @@ public:
     using size_type = std::size_t;
     using difference_type = std::ptrdiff_t;
 
-    class iterator
+    class iterator : public std::iterator<std::bidirectional_iterator_tag, difference_type, value_type, pointer, reference>
     {
     public:
-
-        using iterator_category = std::forward_iterator_tag;
 
         /**
          * @brief Constructor using a pointer and a range of the managed buffer
@@ -89,26 +87,35 @@ public:
 
         iterator operator ++()
         {
-            iterator i = *this;
             advance();
-            return i;
+            return *this;
         }
 
         iterator operator ++(
                 int)
         {
+            iterator i = *this;
             advance();
+            return i;
+        }
+
+        iterator operator --()
+        {
+            recede();
             return *this;
+        }
+
+        iterator operator --(
+                int)
+        {
+            iterator i = *this;
+            recede();
+            return i;
         }
 
         reference operator *()
         {
             return *ptr_;
-        }
-
-        pointer operator ->()
-        {
-            return ptr_;
         }
 
         bool operator ==(
@@ -120,7 +127,41 @@ public:
         bool operator !=(
                 const iterator& rhs) const
         {
-            return ptr_ != rhs.ptr_;
+            return !(ptr_ == rhs.ptr_);
+        }
+
+        // Compares raw positions of the pointer, not order in the queue
+        bool operator <(
+            const iterator& rhs) const
+        {
+            return ptr_ < rhs.ptr_;
+        }
+
+        // Compares raw positions of the pointer, not order in the queue
+        bool operator <=(
+            const iterator& rhs) const
+        {
+            return *this < rhs || *this == rhs;
+        }
+
+        // Compares raw positions of the pointer, not order in the queue
+        bool operator >(
+            const iterator& rhs) const
+        {
+            return !(*this <= rhs);
+        }
+
+        // Compares raw positions of the pointer, not order in the queue
+        bool operator >=(
+            const iterator& rhs) const
+        {
+            return !(*this < rhs);
+        }
+
+        size_t operator -(
+            const iterator& rhs) const
+        {
+            return ptr_ - rhs.ptr_;
         }
 
     protected:
@@ -137,6 +178,18 @@ public:
             }
         }
 
+        /**
+         * @brief Shift the pointer to the previous value
+         */
+        void recede()
+        {
+            if (ptr_ == begin_)
+            {
+                ptr_ = end_;
+            }
+            --ptr_;
+        }
+
     private:
 
         //! Current pointer
@@ -148,6 +201,8 @@ public:
     };
 
     using const_iterator = const iterator;
+    using reverse_iterator = std::reverse_iterator<iterator>;
+    using const_reverse_iterator = std::reverse_iterator<const_iterator>;
 
     /**
      * Construct an unitialized FixedSizeQueue.
@@ -161,7 +216,6 @@ public:
         , capacity_(0)
         , size_(0)
         , allocator_(alloc)
-        , owns_(false)
     {
     }
 
@@ -179,34 +233,11 @@ public:
         : capacity_(capacity)
         , size_(0)
         , allocator_(alloc)
-        , owns_(true)
     {
-        collection_ = allocator_.allocate(capacity_);
-        head_ = iterator(collection_, collection_, collection_ + capacity_);
-        tail_ = head_;
-    }
-
-    /**
-     * Construct and initialize a FixedSizeQueue on the given buffer.
-     *
-     * This constructor receives a buffer already allocated that will be used to back the queue.
-     * The queue is not the owner of the buffer, so no deallocation will be done on destruction.
-     * It is the responsibility of the caller to deallocate the buffer.
-     *
-     * \pre The buffer has capacity to hold \c capacity elements
-     *
-     * @param buffer    Buffer where to construct the queue.
-     * @param capacity  Number of elements to reserve for the queue.
-     */
-    FixedSizeQueue(
-            pointer buffer,
-            size_type capacity)
-        : capacity_(capacity)
-        , size_(0)
-        , owns_(false)
-    {
-        collection_ = buffer;
-        head_ = iterator(collection_, collection_, collection_ + capacity_);
+        // Allocate one extra element to avoid head/tail overlapping when full
+        // This is needed to support iterating on the queue, otherwise begin() == end()
+        collection_ = allocator_.allocate(capacity_ + 1);
+        head_ = iterator(collection_, collection_, collection_ + capacity_ + 1);
         tail_ = head_;
     }
 
@@ -232,14 +263,11 @@ public:
 
     virtual ~FixedSizeQueue ()
     {
-        while (pop())
+        while (pop_front())
         {
         }
 
-        if (owns_)
-        {
-            allocator_.deallocate(collection_, capacity_);
-        }
+        allocator_.deallocate(collection_, capacity_ + 1);
     }
 
     /**
@@ -258,35 +286,11 @@ public:
         assert(capacity_ == 0);
 
         capacity_ = capacity;
-        collection_ = allocator_.allocate(capacity_);
-        head_ = iterator(collection_, collection_, collection_ + capacity_);
+        // Allocate one extra element to avoid head/tail overlapping when full
+        // This is needed to support iterating on the queue, otherwise begin() == end()
+        collection_ = allocator_.allocate(capacity_ + 1);
+        head_ = iterator(collection_, collection_, collection_ + capacity_ + 1);
         tail_ = head_;
-        owns_ = true;
-    }
-
-    /**
-     * Initialize a FixedSizeQueue on the given buffer.
-     *
-     * It receives a buffer already allocated that will be used to back the queue.
-     * The queue is not the owner of the buffer, so no deallocation will be done on destruction.
-     * It is the responsibility of the caller to deallocate the buffer.
-     *
-     * \pre The buffer has capacity to hold \c capacity elements
-     *
-     * @param buffer    Buffer where to construct the queue.
-     * @param capacity  Number of elements to reserve for the queue.
-     */
-    void init(
-            pointer buffer,
-            size_type capacity)
-    {
-        assert(capacity_ == 0);
-
-        collection_ = buffer;
-        capacity_ = capacity;
-        head_ = iterator(collection_, collection_, collection_ + capacity_);
-        tail_ = head_;
-        owns_ = false;
     }
 
     /**
@@ -319,6 +323,67 @@ public:
     }
 
     /**
+     * Enqueue elements at the beginning.
+     * The content of val is copied to the queue.
+     *
+     * @param val   Value to be copied to the queue.
+     *
+     * @return true if the value was enqueued, false if queue limit is reached.
+     */
+    bool push_front(
+            const value_type& val)
+    {
+        if (full())
+        {
+            return false;
+        }
+        --head_;
+        allocator_.construct(&(*head_), val);
+        ++size_;
+        return true;
+    }
+
+    /**
+     * Enqueue elements and the beginning.
+     * The content of val is moved to the queue.
+     *
+     * @param val   Value to be moved to the queue.
+     *
+     * @return true if the value was enqueued, false if queue limit is reached.
+     */
+    bool push_front(
+            value_type&& val)
+    {
+        if (full())
+        {
+            return false;
+        }
+        return emplace_front(std::move(val));
+    }
+
+    /**
+     * Construct and insert element at the beginning of the queue.
+     * This new element is constructed in place using args as the arguments for its constructor.
+     *
+     * @param args   Arguments forwarded to construct the new element.
+     *
+     * @return pointer to the new element, nullptr if resource limit is reached.
+     */
+    template<typename ... Args>
+    bool emplace_front(
+            Args&& ... args)
+    {
+        if (full())
+        {
+            return false;
+        }
+        --head_;
+        allocator_.construct(&(*head_), std::forward<Args &&>(args)...);
+        ++size_;
+        return true;
+    }
+
+    /**
      * Enqueue elements at the end.
      * The content of val is copied to the queue.
      *
@@ -326,7 +391,7 @@ public:
      *
      * @return true if the value was enqueued, false if queue limit is reached.
      */
-    bool push(
+    bool push_back(
             const value_type& val)
     {
         if (full())
@@ -347,14 +412,14 @@ public:
      *
      * @return true if the value was enqueued, false if queue limit is reached.
      */
-    bool push(
+    bool push_back(
             value_type&& val)
     {
         if (full())
         {
             return false;
         }
-        return emplace(std::move(val));
+        return emplace_back(std::move(val));
     }
 
     /**
@@ -366,7 +431,7 @@ public:
      * @return pointer to the new element, nullptr if resource limit is reached.
      */
     template<typename ... Args>
-    bool emplace(
+    bool emplace_back(
             Args&& ... args)
     {
         if (full())
@@ -385,7 +450,7 @@ public:
      *
      * @return true if something was dequeued, false if the queue is empty.
      */
-    bool pop()
+    bool pop_front()
     {
         if (empty())
         {
@@ -393,6 +458,24 @@ public:
         }
         allocator_.destroy(&(*head_));
         ++head_;
+        --size_;
+        return true;
+    }
+
+    /**
+     * Dequeue elements at the end.
+     * The first element is removed from the queue.
+     *
+     * @return true if something was dequeued, false if the queue is empty.
+     */
+    bool pop_back()
+    {
+        if (empty())
+        {
+            return false;
+        }
+        --tail_;
+        allocator_.destroy(&(*tail_));
         --size_;
         return true;
     }
@@ -423,6 +506,36 @@ public:
         return *head_;
     }
 
+    /**
+     * Return the last element at the end of the queue.
+     *
+     * @return A reference to the last element at the end of the queue.
+     *         Calling \c head on an empty queue is undefined.
+     *
+     * \pre The queue is not empty
+     */
+    reference back()
+    {
+        iterator last = tail_;
+        --last;
+        return *last;
+    }
+
+    /**
+     * Return the last element at the end of the queue.
+     *
+     * @return A const reference to the last element at the end of the queue.
+     *         Calling \c head on an empty queue is undefined.
+     *
+     * \pre The queue is not empty
+     */
+    const_reference back() const
+    {
+        const_iterator last = tail_;
+        --last;
+        return *last;
+    }
+
     iterator begin() noexcept
     {
         return head_;
@@ -438,6 +551,21 @@ public:
         return head_;
     }
 
+    reverse_iterator rbegin() noexcept
+    {
+        return reverse_iterator(end());
+    }
+
+    const_reverse_iterator rbegin() const noexcept
+    {
+        return const_reverse_iterator(end());
+    }
+
+    const_reverse_iterator crbegin() const noexcept
+    {
+        return const_reverse_iterator(cend());
+    }
+
     iterator end() noexcept
     {
         return tail_;
@@ -451,6 +579,21 @@ public:
     const_iterator cend() const noexcept
     {
         return tail_;
+    }
+
+    reverse_iterator rend() noexcept
+    {
+        return reverse_iterator(begin());
+    }
+
+    const_reverse_iterator rend() const noexcept
+    {
+        return const_reverse_iterator(begin());
+    }
+
+    const_reverse_iterator crend() const noexcept
+    {
+        return const_reverse_iterator(cbegin());
     }
 
     bool empty() const noexcept
@@ -480,10 +623,45 @@ public:
 
     void clear()
     {
-        head_ = iterator(collection_, collection_, collection_ + capacity_);
+        head_ = iterator(collection_, collection_, collection_ + capacity_ + 1);
         tail_ = head_;
         size_ = 0;
     }
+
+    /**
+     * Remove the element referenced by @c pos.
+     * It keeps the order of the queue.
+     * 
+     * @param pos the iterator referencing the element to remove from the queue.
+     * @return the iterator to the next element on the queue
+     */
+    iterator erase(
+            iterator pos)
+    {
+        if (head_ <= pos)
+        {
+            iterator old_head = head_;
+            ++head_;
+            memmove(&(*head_), &(*old_head), (pos - old_head) * sizeof(value_type));
+
+            allocator_.destroy(&(*old_head));
+            --size_;
+            iterator next = pos;
+            return ++next;
+        }
+        else
+        {
+            iterator next = pos;
+            ++next;
+            memmove(&(*pos), &(*next), (tail_ - pos) * sizeof(value_type));
+
+            --tail_;
+            allocator_.destroy(&(*tail_));
+            --size_;
+            return pos;
+        }
+    }
+
 
     allocator_type& get_allocator()
     {
@@ -498,7 +676,6 @@ protected:
     iterator head_;
     iterator tail_;
     allocator_type allocator_;
-    bool owns_;
 
 };
 

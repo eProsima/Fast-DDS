@@ -64,7 +64,7 @@ public:
         }
 
         PayloadNode* payload = free_payloads_.front();
-        free_payloads_.pop();
+        free_payloads_.pop_front();
 
         payload->mutex().lock();
         // Reset all the metadata to signal the reader that the payload is dirty
@@ -125,7 +125,7 @@ public:
 
         // Payloads are reset on the `get` operation, the `release` leaves the data to give more chances to the reader
         PayloadNode* payload = PayloadNode::get_from_data(cache_change.serializedPayload.data);
-        free_payloads_.push(payload);
+        free_payloads_.push_back(payload);
         logInfo(DATASHARING_PAYLOADPOOL, "Change released with SN " << cache_change.sequenceNumber);
 
         return DataSharingPayloadPool::release_payload(cache_change);
@@ -202,7 +202,7 @@ public:
                 new (payload) PayloadNode();
 
                 // All payloads are free
-                free_payloads_.push(reinterpret_cast<PayloadNode*>(payload));
+                free_payloads_.push_back(reinterpret_cast<PayloadNode*>(payload));
 
                 payload += (ptrdiff_t)payload_size;
             }
