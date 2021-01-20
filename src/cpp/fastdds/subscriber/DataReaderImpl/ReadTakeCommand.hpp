@@ -37,6 +37,7 @@
 #include <fastdds/subscriber/DataReaderImpl/SampleLoanManager.hpp>
 
 #include <fastdds/rtps/common/CacheChange.h>
+#include <fastdds/rtps/reader/RTPSReader.h>
 
 namespace eprosima {
 namespace fastdds {
@@ -48,6 +49,8 @@ struct ReadTakeCommand
     using ReturnCode_t = eprosima::fastrtps::types::ReturnCode_t;
     using history_type = eprosima::fastrtps::SubscriberHistory;
     using CacheChange_t = eprosima::fastrtps::rtps::CacheChange_t;
+    using RTPSReader = eprosima::fastrtps::rtps::RTPSReader;
+    using WriterProxy = eprosima::fastrtps::rtps::WriterProxy;
     using SampleInfoSeq = LoanableSequence<SampleInfo>;
 
     ReadTakeCommand(
@@ -61,6 +64,7 @@ struct ReadTakeCommand
         : type_(reader.type_)
         , loan_manager_(reader.loan_manager_)
         , history_(reader.history_)
+        , reader_(reader.reader_)
         , info_pool_(reader.sample_info_pool_)
         , sample_pool_(reader.sample_pool_)
         , data_values_(data_values)
@@ -107,17 +111,26 @@ struct ReadTakeCommand
             check = change->isRead ? SampleStateKind::READ_SAMPLE_STATE : SampleStateKind::NOT_READ_SAMPLE_STATE;
             if ((check & states_.sample_states) != 0)
             {
-                // Add sample and info to collections
-                if (add_sample(*it))
+                WriterProxy* wp = nullptr;
+                if (!reader_->begin_sample_access_nts(change, wp))
                 {
-                    if (take_samples)
-                    {
-                        // Remove from history
-                        history_.remove_change_sub(change);
+                    // Remove from history
+                    history_.remove_change_sub(change);
 
-                        // Current iterator will point to change next to the one removed. Avoid incrementing.
-                        continue;
-                    }
+                    // Current iterator will point to change next to the one removed. Avoid incrementing.
+                    continue;
+                }
+
+                // Add sample and info to collections
+                bool added = add_sample(*it);
+                reader_->end_sample_access_nts(change, wp, added);
+                if (added && take_samples)
+                {
+                    // Remove from history
+                    history_.remove_change_sub(change);
+
+                    // Current iterator will point to change next to the one removed. Avoid incrementing.
+                    continue;
                 }
             }
 
@@ -159,6 +172,7 @@ private:
     const TypeSupport& type_;
     DataReaderLoanManager& loan_manager_;
     history_type& history_;
+    RTPSReader* reader_;
     SampleInfoPool& info_pool_;
     std::shared_ptr<detail::SampleLoanManager> sample_pool_;
     LoanableCollection& data_values_;
@@ -305,8 +319,6 @@ private:
                 info.instance_state = ALIVE_INSTANCE_STATE;
                 break;
         }
-
-        change->isRead = true;
     }
 
 };
