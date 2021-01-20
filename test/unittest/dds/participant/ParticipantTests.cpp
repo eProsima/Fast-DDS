@@ -2029,7 +2029,7 @@ TEST(ParticipantTests, RegisterRemoteTypePreconditionNotMet)
 
 
 /*
- * This test checks that following methods are not implemented and returns an error
+ * This test checks that the following methods are not implemented and returns an error
  *  create_contentfilteredtopic
  *  delete_contentfilteredtopic
  *  create_multitopic
@@ -2047,15 +2047,16 @@ TEST(ParticipantTests, RegisterRemoteTypePreconditionNotMet)
  * Tests missing: get_discovered_participant_data & get_discovered_topic_data
  * These methods cannot be tested because there are no implementation of their parameter classes
  */
-TEST(ParticipantTests, unsupportedMethods)
+TEST(ParticipantTests, UnsupportedMethods)
 {
     // Create the participant
     DomainParticipant* participant =
             DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
+    ASSERT_NE(participant, nullptr);
 
     // Create a type and a topic
     TypeSupport type(new TopicDataTypeMock());
-    type.register_type(participant);
+    ASSERT_EQ(type.register_type(participant), ReturnCode_t::RETCODE_OK);
 
     Topic* topic = participant->create_topic("topic", type.get_type_name(), TOPIC_QOS_DEFAULT);
     ASSERT_NE(topic, nullptr);
@@ -2097,6 +2098,9 @@ TEST(ParticipantTests, unsupportedMethods)
 
     ASSERT_EQ(participant->get_discovered_participants(handle_vector), ReturnCode_t::RETCODE_UNSUPPORTED);
     ASSERT_EQ(participant->get_discovered_topics(handle_vector), ReturnCode_t::RETCODE_UNSUPPORTED);
+
+    ASSERT_EQ(participant->delete_topic(topic), ReturnCode_t::RETCODE_OK);
+    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), ReturnCode_t::RETCODE_OK);
 }
 
 } // namespace dds

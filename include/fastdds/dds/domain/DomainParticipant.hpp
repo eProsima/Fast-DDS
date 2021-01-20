@@ -570,7 +570,7 @@ public:
             std::vector<InstanceHandle_t>& topic_handles) const;
 
     /**
-     * Retrieves the Topic ata of a discovered not ignored topic.
+     * Retrieves the Topic data of a discovered not ignored topic.
      * @param topic_data Reference to the TopicBuiltinTopicData object to return the data
      * @param topic_handle InstanceHandle of Topic to retrieve the data from
      * @return RETCODE_OK if everything correct, PRECONDITION_NOT_MET if topic does not exist
@@ -589,7 +589,7 @@ public:
      * @return True if entity is contained. False otherwise.
      */
     RTPS_DllAPI bool contains_entity(
-            const InstanceHandle_t& handle,
+            const InstanceHandle_t& a_handle,
             bool recursive = true) const;
 
     /**

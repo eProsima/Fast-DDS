@@ -377,10 +377,10 @@ ReturnCode_t DomainParticipant::get_discovered_topic_data(
 }
 
 bool DomainParticipant::contains_entity(
-        const InstanceHandle_t& handle,
-        bool recursive) const
+        const InstanceHandle_t& a_handle,
+        bool recursive /* = true */) const
 {
-    return impl_->contains_entity(handle, recursive);
+    return impl_->contains_entity(a_handle, recursive);
 }
 
 ReturnCode_t DomainParticipant::get_current_time(
