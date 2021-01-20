@@ -258,42 +258,113 @@ ReturnCode_t DataReader::get_liveliness_changed_status(
     return impl_->get_liveliness_changed_status(status);
 }
 
-/* TODO
-   bool DataReader::get_requested_incompatible_qos_status(
-        RequestedIncompatibleQosStatus& status) const
-   {
-    return impl_->get...;
-   }
- */
-
-/* TODO
-   bool DataReader::get_sample_lost_status(
+ReturnCode_t DataReader::get_sample_lost_status(
         SampleLostStatus& status) const
-   {
-    return impl_->get...;
-   }
- */
+{
+    static_cast<void> (status);
+    return ReturnCode_t::RETCODE_UNSUPPORTED;
+    /*
+       return impl_->get_sample_lost_status(status);
+     */
+}
 
-/* TODO
-   bool DataReader::get_sample_rejected_status(
+ReturnCode_t DataReader::get_sample_rejected_status(
         SampleRejectedStatus& status) const
-   {
-    return impl_->get...;
-   }
- */
+{
+    static_cast<void> (status);
+    return ReturnCode_t::RETCODE_UNSUPPORTED;
+    /*
+       return impl_->get_sample_rejected_status(status);
+     */
+}
+
+ReturnCode_t DataReader::get_subscription_matched_status(
+        SubscriptionMatchedStatus& status) const
+{
+    static_cast<void> (status);
+    return ReturnCode_t::RETCODE_UNSUPPORTED;
+    /*
+       return impl_->get_subscription_matched_status(status);
+     */
+}
+
+ReturnCode_t DataReader::get_matched_publication_data(
+        PublicationBuiltinTopicData& publication_data,
+        fastrtps::rtps::InstanceHandle_t publication_handle) const
+{
+    static_cast<void> (publication_data);
+    static_cast<void> (publication_handle);
+    return ReturnCode_t::RETCODE_UNSUPPORTED;
+    /*
+       return impl_->get_matched_publication_data(publication_data, publication_handle);
+     */
+}
+
+ReturnCode_t DataReader::get_matched_publications(
+        std::vector<fastrtps::rtps::InstanceHandle_t*>& publication_handles) const
+{
+    static_cast<void> (publication_handles);
+    return ReturnCode_t::RETCODE_UNSUPPORTED;
+    /*
+       return impl_->get_matched_publication_data(publication_handles);
+     */
+}
+
+ReadCondition* DataReader::create_readcondition(
+        std::vector<SampleStateKind> sample_states,
+        std::vector<ViewStateKind> view_states,
+        std::vector<InstanceStateKind> instance_states)
+{
+    logWarning(DataReader, "create_readcondition method not implemented");
+    static_cast<void> (sample_states);
+    static_cast<void> (view_states);
+    static_cast<void> (instance_states);
+    return nullptr;
+    /*
+       return impl_->create_readcondition(sample_states, view_states, instance_states);
+     */
+}
+
+QueryCondition* DataReader::create_querycondition(
+        std::vector<SampleStateKind> sample_states,
+        std::vector<ViewStateKind> view_states,
+        std::vector<InstanceStateKind> instance_states,
+        std::string& query_expression,
+        std::vector<std::string> query_parameters)
+{
+    logWarning(DataReader, "create_querycondition method not implemented");
+    static_cast<void> (sample_states);
+    static_cast<void> (view_states);
+    static_cast<void> (instance_states);
+    static_cast<void> (query_expression);
+    static_cast<void> (query_parameters);
+    return nullptr;
+    /*
+       return impl_->create_querycondition(sample_states, view_states, instance_states, query_expression, query_parameters);
+     */
+}
+
+ReturnCode_t DataReader::delete_readcondition(
+        ReadCondition* a_condition)
+{
+    static_cast<void> (a_condition);
+    return ReturnCode_t::RETCODE_UNSUPPORTED;
+    /*
+       return impl_->delete_readcondition(a_condition);
+     */
+}
 
 const Subscriber* DataReader::get_subscriber() const
 {
     return impl_->get_subscriber();
 }
 
-/* TODO
-   bool DataReader::wait_for_historical_data(
-        const Duration_t& max_wait) const
-   {
-    return impl_->wait_for_historical_data(max_wait);
-   }
- */
+ReturnCode_t DataReader::wait_for_historical_data(
+        const Duration_t& max_wait)
+{
+    bool success = impl_->wait_for_unread_message(max_wait);
+    return (success) ? ReturnCode_t::RETCODE_OK : ReturnCode_t::RETCODE_TIMEOUT;
+}
 
 TypeSupport DataReader::type()
 {

@@ -26,9 +26,12 @@
 #include <fastdds/dds/core/Entity.hpp>
 #include <fastdds/dds/core/LoanableCollection.hpp>
 #include <fastdds/dds/core/LoanableSequence.hpp>
+#include <fastdds/dds/core/status/BaseStatus.hpp>
 #include <fastdds/dds/core/status/DeadlineMissedStatus.hpp>
 #include <fastdds/dds/core/status/IncompatibleQosStatus.hpp>
+#include <fastdds/dds/core/status/SampleRejectedStatus.hpp>
 #include <fastdds/dds/core/status/StatusMask.hpp>
+#include <fastdds/dds/core/status/SubscriptionMatchedStatus.hpp>
 #include <fastdds/dds/subscriber/SampleInfo.hpp>
 #include <fastdds/dds/topic/TypeSupport.hpp>
 #include <fastdds/rtps/common/Time_t.h>
@@ -66,6 +69,11 @@ class DataReaderListener;
 class DataReaderQos;
 class TopicDescription;
 struct LivelinessChangedStatus;
+
+// Not yet implemented
+class QueryCondition;
+class ReadCondition;
+struct PublicationBuiltinTopicData;
 
 using SampleInfoSeq = LoanableSequence<SampleInfo>;
 
@@ -119,6 +127,14 @@ public:
      */
     RTPS_DllAPI bool wait_for_unread_message(
             const fastrtps::Duration_t& timeout);
+
+    /**
+     * @brief Method to block the current thread until an unread message is available.
+     * @param [in] max_wait Max blocking time for this operation.
+     * @return RETCODE_OK if there is new unread message, ReturnCode_t::RETCODE_TIMEOUT if timeout
+     */
+    RTPS_DllAPI ReturnCode_t wait_for_historical_data(
+            const fastrtps::Duration_t& max_wait);
 
 
     /** @name Read or take data methods.
@@ -710,20 +726,91 @@ public:
     RTPS_DllAPI ReturnCode_t get_liveliness_changed_status(
             LivelinessChangedStatus& status) const;
 
-    /* TODO
-       RTPS_DllAPI bool get_requested_incompatible_qos_status(
-            fastrtps::RequestedIncompatibleQosStatus& status) const;
-     */
 
-    /* TODO
-       RTPS_DllAPI bool get_sample_lost_status(
-            fastrtps::SampleLostStatus& status) const;
+    /**
+     * @brief Get the SAMPLE_LOST communication status
+     *
+     * @param [out] status SampleLostStatus object where the status is returned.
+     *
+     * @return RETCODE_OK
      */
+    RTPS_DllAPI ReturnCode_t get_sample_lost_status(
+            SampleLostStatus& status) const;
 
-    /* TODO
-       RTPS_DllAPI bool get_sample_rejected_status(
-            fastrtps::SampleRejectedStatus& status) const;
+    /**
+     * @brief Get the SAMPLE_REJECTED communication status
+     *
+     * @param [out] status SampleRejectedStatus object where the status is returned.
+     *
+     * @return RETCODE_OK
      */
+    RTPS_DllAPI ReturnCode_t get_sample_rejected_status(
+            SampleRejectedStatus& status) const;
+
+    /**
+     * @brief Returns the subscription matched status
+     * @param[out] status subscription matched status struct
+     * @return RETCODE_OK
+     */
+    RTPS_DllAPI ReturnCode_t get_subscription_matched_status(
+            SubscriptionMatchedStatus& status) const;
+
+    /**
+     * @brief Retrieves in a publication associated with the DataWriter
+     * @param[out] publication_data publication data struct
+     * @param publication_handle InstanceHandle_t of the publication
+     * @return RETCODE_OK
+     *
+     */
+    RTPS_DllAPI ReturnCode_t get_matched_publication_data(
+            PublicationBuiltinTopicData& publication_data,
+            fastrtps::rtps::InstanceHandle_t publication_handle) const;
+
+    /**
+     * @brief Fills the given vector with the InstanceHandle_t of matched DataReaders
+     * @param[out] publication_handles Vector where the InstanceHandle_t are returned
+     * @return RETCODE_OK
+     */
+    RTPS_DllAPI ReturnCode_t get_matched_publications(
+            std::vector<fastrtps::rtps::InstanceHandle_t*>& publication_handles) const;
+
+    /**
+     * @brief This operation creates a ReadCondition. The returned ReadCondition will be attached and belong to the
+     * DataReader.
+     * @param sample_states Vector of SampleStateKind
+     * @param view_states Vector of ViewStateKind
+     * @param instance_states Vector of InstanceStateKind
+     * @return ReadCondition pointer
+     */
+    RTPS_DllAPI ReadCondition* create_readcondition(
+            std::vector<SampleStateKind> sample_states,
+            std::vector<ViewStateKind> view_states,
+            std::vector<InstanceStateKind> instance_states);
+
+    /**
+     * @brief This operation creates a QueryCondition. The returned QueryCondition will be attached and belong to the
+     * DataReader.
+     * @param sample_states Vector of SampleStateKind
+     * @param view_states Vector of ViewStateKind
+     * @param instance_states Vector of InstanceStateKind
+     * @param query_expression string containing query
+     * @param query_parameters Vector of strings containing parameters of query expresion
+     * @return QueryCondition pointer
+     */
+    RTPS_DllAPI QueryCondition* create_querycondition(
+            std::vector<SampleStateKind> sample_states,
+            std::vector<ViewStateKind> view_states,
+            std::vector<InstanceStateKind> instance_states,
+            std::string& query_expression,
+            std::vector<std::string> query_parameters);
+
+    /**
+     * @brief This operation deletes a ReadCondition attached to the DataReader.
+     * @param a_condition pointer to a ReadCondition belonging to the DataReader
+     * @return RETCODE_OK
+     */
+    RTPS_DllAPI ReturnCode_t delete_readcondition(
+            ReadCondition* a_condition);
 
     /**
      * @brief Getter for the Subscriber
