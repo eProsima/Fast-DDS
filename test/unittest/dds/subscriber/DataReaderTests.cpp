@@ -1091,6 +1091,7 @@ void check_sample_values(
  */
 TEST_F(DataReaderTests, read_unread)
 {
+    static const Duration_t time_to_wait(0, 100 * 1000 * 1000);
     static constexpr int32_t num_samples = 10;
 
     const ReturnCode_t& ok_code = ReturnCode_t::RETCODE_OK;
@@ -1126,6 +1127,9 @@ TEST_F(DataReaderTests, read_unread)
     // Reader should have 10 samples with the following states (R = read, N = not-read, / = removed from history)
     // {N, N, N, N, N, N, N, N, N, N}
 
+    // There are unread samples, so wait_for_unread should be ok
+    EXPECT_TRUE(data_reader_->wait_for_unread_message(time_to_wait));
+
     // Trying to get READ samples should return NO_DATA
     {
         FooSeq data_seq;
@@ -1144,6 +1148,9 @@ TEST_F(DataReaderTests, read_unread)
         EXPECT_EQ(no_data_code,
                 data_reader_->take_next_instance(data_seq, info_seq, LENGTH_UNLIMITED, HANDLE_NIL, READ_SAMPLE_STATE));
     }
+
+    // There are unread samples, so wait_for_unread should be ok
+    EXPECT_TRUE(data_reader_->wait_for_unread_message(time_to_wait));
 
     // Checks with read API
     {
@@ -1192,6 +1199,9 @@ TEST_F(DataReaderTests, read_unread)
         }
     }
 
+    // There are unread samples, so wait_for_unread should be ok
+    EXPECT_TRUE(data_reader_->wait_for_unread_message(time_to_wait));
+
     // Checks with take API
     {
         FooSeq data_seq[6];
@@ -1233,9 +1243,16 @@ TEST_F(DataReaderTests, read_unread)
         check_sample_values(data_seq[4], "6789");
 
         // Current state: {/, /, /, /, R, R, /, /, /, /}
+        // There are not unread samples, so wait_for_unread should return false
+        EXPECT_FALSE(data_reader_->wait_for_unread_message(time_to_wait));
+
+        // Current state: {/, /, /, /, R, R, /, /, /, /}
         // Add a new sample to have a NOT_READ one
         data.message()[0] = 'A';
         EXPECT_EQ(ok_code, data_writer_->write(&data, handle_ok_));
+
+        // Wait for new sample to arrive
+        EXPECT_TRUE(data_reader_->wait_for_unread_message(time_to_wait));
 
         // Current state: {/, /, /, /, R, R, /, /, /, /, N}
         // This should return samples 5, 6 and new
@@ -1244,6 +1261,9 @@ TEST_F(DataReaderTests, read_unread)
         check_sample_values(data_seq[5], "45A");
 
         // Current state: {/, /, /, /, /, /, /, /, /, /, /}
+        // There are not unread samples, so wait_for_unread should return false
+        EXPECT_FALSE(data_reader_->wait_for_unread_message(time_to_wait));
+
         // Return all loans
         for (size_t i = 0; i < 6; ++i)
         {
