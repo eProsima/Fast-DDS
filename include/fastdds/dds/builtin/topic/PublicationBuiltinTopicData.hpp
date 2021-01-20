@@ -13,12 +13,12 @@
 // limitations under the License.
 
 /**
- * @file publicationBuiltinTopicData.hpp
+ * @file PublicationBuiltinTopicData.hpp
  *
  */
 
-#ifndef PUBLICATION_BUILTIN_TOPIC_DATA_HPP
-#define PUBLICATION_BUILTIN_TOPIC_DATA_HPP
+#ifndef FASTDDS_DDS_PUBLICATION_BUILTIN_TOPIC_DATA_HPP
+#define FASTDDS_DDS_PUBLICATION_BUILTIN_TOPIC_DATA_HPP
 
 #include <fastdds/dds/builtin/topic/BuiltinTopicKey.hpp>
 #include <fastdds/dds/core/policy/QosPolicies.hpp>
@@ -28,7 +28,7 @@ namespace fastdds {
 namespace dds {
 namespace builtin {
 
-struct publicationBuiltinTopicData
+struct PublicationBuiltinTopicData
 {
     //! Builtin topic Key
     BuiltinTopicKey_t key;
@@ -97,4 +97,4 @@ struct publicationBuiltinTopicData
 } // fastdds
 } // eprosima
 
-#endif // PUBLICATION_BUILTIN_TOPIC_DATA_HPP
+#endif // FASTDDS_DDS_PUBLICATION_BUILTIN_TOPIC_DATA_HPP

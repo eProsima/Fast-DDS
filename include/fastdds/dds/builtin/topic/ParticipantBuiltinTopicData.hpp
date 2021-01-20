@@ -17,8 +17,8 @@
  *
  */
 
-#ifndef PARTICIPANT_BUILTIN_TOPIC_DATA_HPP
-#define PARTICIPANT_BUILTIN_TOPIC_DATA_HPP
+#ifndef FASTDDS_DDS_PARTICIPANT_BUILTIN_TOPIC_DATA_HPP
+#define FASTDDS_DDS_PARTICIPANT_BUILTIN_TOPIC_DATA_HPP
 
 #include <fastdds/dds/builtin/topic/BuiltinTopicKey.hpp>
 #include <fastdds/dds/core/policy/QosPolicies.hpp>
@@ -42,4 +42,4 @@ struct ParticipantBuiltinTopicData
 } // fastdds
 } // eprosima
 
-#endif // PARTICIPANT_BUILTIN_TOPIC_DATA_HPP
+#endif // FASTDDS_DDS_PARTICIPANT_BUILTIN_TOPIC_DATA_HPP

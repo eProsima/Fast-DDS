@@ -17,8 +17,8 @@
  *
  */
 
-#ifndef BUILTIN_TOPIC_KEY_HPP
-#define BUILTIN_TOPIC_KEY_HPP
+#ifndef FASTDDS_DDS_BUILTIN_TOPIC_KEY_HPP
+#define FASTDDS_DDS_BUILTIN_TOPIC_KEY_HPP
 
 #include <stdint.h>
 
@@ -42,4 +42,4 @@ struct BuiltinTopicKey_t
 } // fastdds
 } // eprosima
 
-#endif // BUILTIN_TOPIC_KEY_HPP
+#endif // FASTDDS_DDS_BUILTIN_TOPIC_KEY_HPP

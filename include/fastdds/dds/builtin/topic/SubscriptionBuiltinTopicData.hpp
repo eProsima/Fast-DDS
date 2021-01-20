@@ -17,8 +17,8 @@
  *
  */
 
-#ifndef SUBSCRIPTION_BUILTIN_TOPIC_DATA_HPP
-#define SUBSCRIPTION_BUILTIN_TOPIC_DATA_HPP
+#ifndef FASTDDS_DDS_SUBSCRIPTION_BUILTIN_TOPIC_DATA_HPP
+#define FASTDDS_DDS_SUBSCRIPTION_BUILTIN_TOPIC_DATA_HPP
 
 #include <fastdds/dds/builtin/topic/BuiltinTopicKey.hpp>
 #include <fastdds/dds/core/policy/QosPolicies.hpp>
@@ -91,4 +91,4 @@ struct SubscriptionBuiltinTopicData
 } // fastdds
 } // eprosima
 
-#endif // SUBSCRIPTION_BUILTIN_TOPIC_DATA_HPP
+#endif // FASTDDS_DDS_SUBSCRIPTION_BUILTIN_TOPIC_DATA_HPP
