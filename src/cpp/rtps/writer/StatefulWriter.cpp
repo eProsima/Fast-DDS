@@ -2575,6 +2575,11 @@ const fastdds::rtps::IReaderDataFilter* StatefulWriter::reader_data_filter() con
     return reader_data_filter_;
 }
 
+bool StatefulWriter::is_datasharing_payload_reusable(const Time_t& source_timestamp) const
+{
+    return true;
+}
+
 }  // namespace rtps
 }  // namespace fastrtps
 }  // namespace eprosima

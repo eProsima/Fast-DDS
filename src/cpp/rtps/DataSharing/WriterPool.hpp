@@ -20,6 +20,7 @@
 #define RTPS_DATASHARING_WRITERPOOL_HPP
 
 #include <fastdds/rtps/common/CacheChange.h>
+#include <fastdds/rtps/writer/RTPSWriter.h>
 #include <fastdds/rtps/resources/ResourceManagement.h>
 #include <fastdds/dds/log/Log.hpp>
 #include <rtps/DataSharing/DataSharingPayloadPool.hpp>
@@ -42,6 +43,7 @@ public:
         : max_data_size_(payload_size)
         , pool_size_(pool_size)
         , free_history_size_(0)
+        , writer_(nullptr)
     {
     }
 
@@ -63,8 +65,21 @@ public:
             return false;
         }
 
-        PayloadNode* payload = free_payloads_.front();
-        free_payloads_.pop_front();
+        // Look for a free payload that is recyclable
+        PayloadNode* payload = nullptr;
+        for (auto it = free_payloads_.begin(); it != free_payloads_.end(); ++it)
+        {
+            if (writer_->is_datasharing_payload_reusable((*it)->source_timestamp()))
+            {
+                payload = *it;
+                free_payloads_.erase(it);
+                break;
+            }
+        }
+        if (payload == nullptr)
+        {
+            return false;
+        }
 
         payload->mutex().lock();
         // Reset all the metadata to signal the reader that the payload is dirty
@@ -132,11 +147,12 @@ public:
     }
 
     bool init_shared_memory(
-            const GUID_t& writer_guid,
+            const RTPSWriter* writer,
             const std::string& shared_dir) override
     {
-        segment_id_ = writer_guid;
-        segment_name_ = generate_segment_name(shared_dir, writer_guid);
+        writer_ = writer;
+        segment_id_ = writer_->getGuid();
+        segment_name_ = generate_segment_name(shared_dir, segment_id_);
 
         // We need to reserve the whole segment at once, and the underlying classes use uint32_t as size type.
         // In order to avoid overflows, we will calculate using uint64 and check the casting
@@ -306,6 +322,9 @@ private:
     uint32_t free_history_size_;    //< Number of elements currently unused in the shared history
 
     FixedSizeQueue<PayloadNode*> free_payloads_;    //< Pointers to the free payloads in the pool
+
+    const RTPSWriter* writer_;      //< Writer that is owner of the pool
+
 };
 
 
