@@ -95,9 +95,9 @@ protected:
     public:
 
         Segment::condition_variable notification_cv;        //< CV to wait for new notifications
-        Segment::mutex notification_mutex;                  //< synchronization mutex
+        Segment::mutex              notification_mutex;     //< synchronization mutex
         std::atomic<bool>           new_data;               //< New data available
-
+        int64_t                     ack_timestamp;          //< Timestamp of the reader's first sample NOT ack'd
     };
 #pragma warning(pop)
 
