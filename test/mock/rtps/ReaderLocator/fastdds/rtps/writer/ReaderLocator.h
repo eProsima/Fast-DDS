@@ -216,6 +216,14 @@ public:
         return nullptr;
     }
 
+    /**
+     * @return The datasharing notifier for this reader or nullptr if the reader is not datasharing.
+     */
+    const IDataSharingNotifier* datasharing_notifier() const
+    {
+        return nullptr;
+    }
+
     void datasharing_notify()
     {
     }

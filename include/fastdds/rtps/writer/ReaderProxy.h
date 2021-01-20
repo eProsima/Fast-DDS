@@ -417,6 +417,11 @@ public:
         return locator_info_.datasharing_notifier();
     }
 
+    const IDataSharingNotifier* datasharing_notifier() const
+    {
+        return locator_info_.datasharing_notifier();
+    }
+
     void datasharing_notify()
     {
         locator_info_.datasharing_notify();
