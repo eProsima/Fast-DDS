@@ -59,7 +59,7 @@ uint64_t DataSharingPayloadPool::end() const
     return descriptor_->notified_end;
 }
 
-bool DataSharingPayloadPool::emtpy() const
+bool DataSharingPayloadPool::empty() const
 {
     return descriptor_->notified_begin == descriptor_->notified_end;
 }
@@ -102,6 +102,15 @@ std::shared_ptr<DataSharingPayloadPool> DataSharingPayloadPool::get_writer_pool(
     return std::make_shared<WriterPool>(
         config.maximum_size,
         config.payload_initial_size);
+}
+
+/**
+ * Notifies to the writer
+ */
+void DataSharingPayloadPool::notify()
+{
+    logInfo(RTPS_WRITER, "Notifying writer " << writer());
+    descriptor_->notification_cv.notify_all();
 }
 
 }  // namespace rtps
