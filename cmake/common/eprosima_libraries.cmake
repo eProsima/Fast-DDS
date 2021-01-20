@@ -209,7 +209,7 @@ macro(eprosima_find_thirdparty package thirdparty_name)
     #    use thirdparty, meaning we have more control over what is built.
     if((NOT (THIRDPARTY_${package} STREQUAL "FORCE")) AND (NOT (EPROSIMA_INSTALLER AND (MSVC OR MSVC_IDE))))
         # Try to quietly find the package outside thridparty first.
-        find_package(${package} ${FIND_VERSION} QUIET)
+        find_package(${package} QUIET)
 
         # Show message if package is found here.
         if(${package}_FOUND)
