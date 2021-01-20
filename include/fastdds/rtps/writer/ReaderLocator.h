@@ -201,6 +201,14 @@ public:
     }
 
     /**
+     * @return The datasharing notifier for this reader or nullptr if the reader is not datasharing.
+     */
+    const IDataSharingNotifier* datasharing_notifier() const
+    {
+        return datasharing_notifier_;
+    }
+
+    /**
      * Performs datasharing notification of changes on the state of a writer to the reader represented by this class.
      */
     void datasharing_notify();
