@@ -188,7 +188,6 @@ void DataSharingListener::process_new_data ()
             // Break the loop over the writers (itearators may have been invalidated)
             break;
         }
-
     }
 }
 
@@ -254,6 +253,26 @@ void DataSharingListener::notify(
     else
     {
         notification_->notify();
+    }
+}
+
+void DataSharingListener::change_removed_with_timestamp(int64_t timestamp)
+{
+    // This method should be called from the RTPSReader,
+    // then, the reader's lock is protecting the concurrency on the value updates.
+    if (timestamp > notification_->notification_->ack_timestamp)
+    {
+        notification_->notification_->ack_timestamp = timestamp;
+    }
+}
+
+void DataSharingListener::change_added_with_timestamp(int64_t timestamp)
+{
+    // This method should be called from the RTPSReader,
+    // then, the reader's lock is protecting the concurrency on the value updates.
+    if (timestamp < notification_->notification_->ack_timestamp)
+    {
+        notification_->notification_->ack_timestamp = timestamp;
     }
 }
 

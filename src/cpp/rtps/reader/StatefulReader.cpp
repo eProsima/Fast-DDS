@@ -847,6 +847,14 @@ bool StatefulReader::change_received(
                         // position within the WriterHistory preventing effective data exchange.
                         update_last_notified(a_change->writerGUID, SequenceNumber_t(0, 1));
 
+                        ReaderPool* datasharing_pool = dynamic_cast<ReaderPool*>(a_change->payload_owner());
+                        if (datasharing_pool)
+                        {
+                            // Change was added to the history. May need to update datasharing ACK timestamp
+                            // because we can receive changes in a different order (due to processing of writers or late-joiners)
+                            datasharing_listener_->change_added_with_timestamp(a_change->sourceTimestamp.to_ns());
+                        }
+
                         if (getListener() != nullptr)
                         {
                             getListener()->onNewCacheChangeAdded((RTPSReader*)this, a_change);
@@ -1237,26 +1245,42 @@ void StatefulReader::change_read_by_user(
         // This may not be the change read with highest SN,
         // need to find largest SN to ACK
         std::vector<CacheChange_t*>::iterator last_read_from_writer;
+        bool first_not_read_found = false;
         for (std::vector<CacheChange_t*>::iterator it = mp_history->changesBegin();
                 it != mp_history->changesEnd(); ++it)
         {
-            if ((*it)->writerGUID == writer->guid() && !(*it)->isRead)
+            if (!(*it)->isRead)
             {
-                if ((*it)->sequenceNumber < change->sequenceNumber)
+                // First update the last ACK timestamp in the shared memory
+                if (!first_not_read_found)
                 {
-                    //ACK for this already sent earlier
+                    datasharing_listener_->change_removed_with_timestamp((*it)->sourceTimestamp.to_ns());
+                    first_not_read_found = true;
+                }
+
+                // Then check if we have to send the ACk to the writer
+                if ((*it)->writerGUID == writer->guid())
+                {
+                    if ((*it)->sequenceNumber < change->sequenceNumber)
+                    {
+                        //There are earlier changes not read yet. Do not send ACK.
+                        return;
+                    }
+                    acknack_count_++;
+                    RTPSMessageGroup group(getRTPSParticipant(), this, *writer);
+                    SequenceNumberSet_t sns((*it)->sequenceNumber);
+                    group.add_acknack(sns, acknack_count_, false);
+                    logInfo(RTPS_READER, "Sending datasharing ACK for SN " << (*it)->sequenceNumber - 1);
                     return;
                 }
-                acknack_count_++;
-                RTPSMessageGroup group(getRTPSParticipant(), this, *writer);
-                SequenceNumberSet_t sns((*it)->sequenceNumber);
-                group.add_acknack(sns, acknack_count_, false);
-                logInfo(RTPS_READER, "Sending datasharing ACK for SN " << (*it)->sequenceNumber - 1);
-                return;
             }
         }
 
         // Must ACK all in the writer
+        if (!first_not_read_found)
+        {
+            datasharing_listener_->change_removed_with_timestamp(c_RTPSTimeInfinite.to_ns());
+        }
         acknack_count_++;
         RTPSMessageGroup group(getRTPSParticipant(), this, *writer);
         SequenceNumberSet_t sns(writer->available_changes_max() + 1);
