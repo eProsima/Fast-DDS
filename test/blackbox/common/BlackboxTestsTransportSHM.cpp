@@ -359,12 +359,41 @@ TEST(SHM, SHM_UDPvsUDP)
     reader.wait_participant_undiscovery();
 }
 
+// Test == operator for UDPv4
+TEST(BlackBox, SHM_equal_operator)
+{
+    // UDPv4TransportDescriptor
+    SharedMemTransportDescriptor shm_transport_1;
+    SharedMemTransportDescriptor shm_transport_2;
+
+    // Compare equal in defult values
+    ASSERT_EQ(shm_transport_1, shm_transport_2);
+
+    // Modify some default values in 1
+    shm_transport_1.segment_size(shm_transport_1.segment_size() * 10u); // change default value
+    shm_transport_1.max_message_size(shm_transport_1.max_message_size() + 20u); // change default value
+    shm_transport_1.healthy_check_timeout_ms(shm_transport_1.healthy_check_timeout_ms() - 30u); // change default value
+    shm_transport_1.rtps_dump_file("test"); // change default value
+
+    ASSERT_FALSE(shm_transport_1 == shm_transport_2); // operator== != operator!=, using operator== == false instead
+
+    // Modify default values in 2
+    shm_transport_2.segment_size(shm_transport_2.segment_size() * 10u); // change default value
+    shm_transport_2.max_message_size(shm_transport_2.max_message_size() + 20u); // change default value
+    shm_transport_2.healthy_check_timeout_ms(shm_transport_2.healthy_check_timeout_ms() - 30u); // change default value
+    shm_transport_2.rtps_dump_file("test"); // change default value
+
+    ASSERT_EQ(shm_transport_1, shm_transport_2);
+}
+
 // Test copy constructor and copy assignment
 TEST(SHM, SHM_copy)
 {
     SharedMemTransportDescriptor shm_transport;
-    shm_transport.segment_size(32 * 1024);
-    shm_transport.max_message_size(64 * 1024);
+    shm_transport.segment_size(shm_transport.segment_size() * 10u); // change default value
+    shm_transport.max_message_size(shm_transport.max_message_size() + 20u); // change default value
+    shm_transport.healthy_check_timeout_ms(shm_transport.healthy_check_timeout_ms() - 30u); // change default value
+    shm_transport.rtps_dump_file("test"); // change default value
 
     // Copy constructor
     SharedMemTransportDescriptor shm_transport_copy_constructor(shm_transport);

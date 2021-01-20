@@ -426,26 +426,85 @@ TEST(BlackBox, TCPLocalhost)
     }
 }
 
-// Test copy constructor and copy assignment
-TEST(BlackBox, TCP_copy)
+// Test for ==operator TCPTransportDescriptor is not required as it is an abstract class and in TCPv6 is same method
+// Test for copy TCPTransportDescriptor is not required as it is an abstract class and in TCPv6 is same method
+
+// Test == operator for TCPv4
+TEST(BlackBox, TCPv4_equal_operator)
+{
+    // TCPv4TransportDescriptor
+    TCPv4TransportDescriptor tcpv4_transport_1;
+    TCPv4TransportDescriptor tcpv4_transport_2;
+
+    // Compare equal in defult values
+    ASSERT_EQ(tcpv4_transport_1, tcpv4_transport_2);
+
+    // Modify default values in 1
+    tcpv4_transport_1.set_WAN_address("80.80.99.45");
+
+    ASSERT_FALSE(tcpv4_transport_1 == tcpv4_transport_2); // operator== != operator!=, using operator== == false instead
+
+    // Modify default values in 2
+    tcpv4_transport_2.set_WAN_address("80.80.99.45");
+
+    ASSERT_EQ(tcpv4_transport_1, tcpv4_transport_2);
+}
+
+// Test copy constructor and copy assignment for TCPv4
+TEST(BlackBox, TCPv4_copy)
 {
     TCPv4TransportDescriptor tcpv4_transport;
     tcpv4_transport.set_WAN_address("80.80.99.45");
-    tcpv4_transport.sendBufferSize = 64 * 1024;
 
     // Copy constructor
     TCPv4TransportDescriptor tcpv4_transport_copy_constructor(tcpv4_transport);
-    EXPECT_EQ(tcpv4_transport_copy_constructor.wan_addr[0], 80u);
-    EXPECT_EQ(tcpv4_transport_copy_constructor.wan_addr[1], 80u);
-    EXPECT_EQ(tcpv4_transport_copy_constructor.wan_addr[2], 99u);
-    EXPECT_EQ(tcpv4_transport_copy_constructor.wan_addr[3], 45u);
-    EXPECT_EQ(tcpv4_transport_copy_constructor.max_message_size(), 64u * 1024u);
+    EXPECT_EQ(tcpv4_transport, tcpv4_transport_copy_constructor);
 
     // Copy assignment
     TCPv4TransportDescriptor tcpv4_transport_copy = tcpv4_transport;
-    EXPECT_EQ(tcpv4_transport_copy.wan_addr[0], 80u);
-    EXPECT_EQ(tcpv4_transport_copy.wan_addr[1], 80u);
-    EXPECT_EQ(tcpv4_transport_copy.wan_addr[2], 99u);
-    EXPECT_EQ(tcpv4_transport_copy.wan_addr[3], 45u);
-    EXPECT_EQ(tcpv4_transport_copy.max_message_size(), 64u * 1024u);
+    EXPECT_EQ(tcpv4_transport_copy, tcpv4_transport);
+}
+
+// Test == operator for TCPv6
+TEST(BlackBox, TCPv6_equal_operator)
+{
+    // TCPv6TransportDescriptor
+    TCPv6TransportDescriptor tcpv6_transport_1;
+    TCPv6TransportDescriptor tcpv6_transport_2;
+
+    // Compare equal in defult values
+    ASSERT_EQ(tcpv6_transport_1, tcpv6_transport_2);
+
+    // Modify some default values in 1
+    tcpv6_transport_1.enable_tcp_nodelay = !tcpv6_transport_1.enable_tcp_nodelay; // change default value
+    tcpv6_transport_1.max_logical_port = tcpv6_transport_1.max_logical_port + 10; // change default value
+    tcpv6_transport_1.add_listener_port(123u * 98u);
+
+    ASSERT_FALSE(tcpv6_transport_1 == tcpv6_transport_2); // operator== != operator!=, using operator== == false instead
+
+
+    // Modify some default values in 2
+    tcpv6_transport_2.enable_tcp_nodelay = !tcpv6_transport_2.enable_tcp_nodelay; // change default value
+    tcpv6_transport_2.max_logical_port = tcpv6_transport_2.max_logical_port + 10; // change default value
+    tcpv6_transport_2.add_listener_port(123u * 98u);
+
+    ASSERT_EQ(tcpv6_transport_1, tcpv6_transport_2);
+}
+
+// Test copy constructor and copy assignment for TCPv6
+TEST(BlackBox, TCPv6_copy)
+{
+    // Change some varibles in order to check the non default cretion
+    TCPv6TransportDescriptor tcpv6_transport;
+    tcpv6_transport.enable_tcp_nodelay = !tcpv6_transport.enable_tcp_nodelay; // change default value
+    tcpv6_transport.max_logical_port = tcpv6_transport.max_logical_port + 10; // change default value
+    tcpv6_transport.add_listener_port(123u * 98u);
+
+    // Copy constructor
+    TCPv6TransportDescriptor tcpv6_transport_copy_constructor(tcpv6_transport);
+    EXPECT_EQ(tcpv6_transport, tcpv6_transport_copy_constructor);
+
+    // Copy assignment
+    TCPv6TransportDescriptor tcpv6_transport_copy = tcpv6_transport;
+    EXPECT_EQ(tcpv6_transport_copy, tcpv6_transport);
 }

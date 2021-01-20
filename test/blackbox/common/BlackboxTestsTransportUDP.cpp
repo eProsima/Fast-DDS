@@ -20,6 +20,7 @@
 #include <gtest/gtest.h>
 
 #include <fastdds/rtps/transport/UDPv4TransportDescriptor.h>
+#include <fastdds/rtps/transport/UDPv6TransportDescriptor.h>
 #include <fastrtps/utils/IPFinder.h>
 
 using namespace eprosima::fastrtps;
@@ -273,3 +274,85 @@ TEST(BlackBox, whitelisting_udp_localhost_alone)
     }
 }
 
+// Test for ==operator UDPTransportDescriptor is not required as it is an abstract class and in UDPv4 is same method
+// Test for copy UDPTransportDescriptor is not required as it is an abstract class and in UDPv4 is same method
+
+// Test == operator for UDPv4
+TEST(BlackBox, UDPv4_equal_operator)
+{
+    // UDPv4TransportDescriptor
+    UDPv4TransportDescriptor udpv4_transport_1;
+    UDPv4TransportDescriptor udpv4_transport_2;
+
+    // Compare equal in defult values
+    ASSERT_EQ(udpv4_transport_1, udpv4_transport_2);
+
+    // Modify some default values in 1
+    udpv4_transport_1.non_blocking_send = !udpv4_transport_1.non_blocking_send; // change default value
+    udpv4_transport_1.m_output_udp_socket = udpv4_transport_1.m_output_udp_socket + 10; // change default value
+
+    ASSERT_FALSE(udpv4_transport_1 == udpv4_transport_2); // operator== != operator!=, using operator== == false instead
+
+    // Modify default values in 2
+    udpv4_transport_2.non_blocking_send = !udpv4_transport_2.non_blocking_send; // change default value
+    udpv4_transport_2.m_output_udp_socket = udpv4_transport_2.m_output_udp_socket + 10; // change default value
+
+    ASSERT_EQ(udpv4_transport_1, udpv4_transport_2);
+}
+
+// Test copy constructor and copy assignment for UDPv4
+TEST(BlackBox, UDPv4_copy)
+{
+    UDPv4TransportDescriptor udpv4_transport;
+    udpv4_transport.non_blocking_send = !udpv4_transport.non_blocking_send; // change default value
+    udpv4_transport.m_output_udp_socket = udpv4_transport.m_output_udp_socket + 10; // change default value
+
+    // Copy constructor
+    UDPv4TransportDescriptor udpv4_transport_copy_constructor(udpv4_transport);
+    EXPECT_EQ(udpv4_transport, udpv4_transport_copy_constructor);
+
+    // Copy assignment
+    UDPv4TransportDescriptor udpv4_transport_copy = udpv4_transport;
+    EXPECT_EQ(udpv4_transport_copy, udpv4_transport);
+}
+
+// Test == operator for UDPv6
+TEST(BlackBox, UDPv6_equal_operator)
+{
+    // UDPv6TransportDescriptor
+    eprosima::fastdds::rtps::UDPv6TransportDescriptor udpv6_transport_1;
+    eprosima::fastdds::rtps::UDPv6TransportDescriptor udpv6_transport_2;
+
+    // Compare equal in defult values
+    ASSERT_EQ(udpv6_transport_1, udpv6_transport_2);
+
+    // Modify some default values in 1
+    udpv6_transport_1.non_blocking_send = !udpv6_transport_1.non_blocking_send; // change default value
+    udpv6_transport_1.m_output_udp_socket = udpv6_transport_1.m_output_udp_socket + 10; // change default value
+
+    ASSERT_FALSE(udpv6_transport_1 == udpv6_transport_2); // operator== != operator!=, using operator== == false instead
+
+
+    // Modify some default values in 2
+    udpv6_transport_2.non_blocking_send = !udpv6_transport_2.non_blocking_send; // change default value
+    udpv6_transport_2.m_output_udp_socket = udpv6_transport_2.m_output_udp_socket + 10; // change default value
+
+    ASSERT_EQ(udpv6_transport_1, udpv6_transport_2);
+}
+
+// Test copy constructor and copy assignment for UDPv6
+TEST(BlackBox, UDPv6_copy)
+{
+    // Change some varibles in order to check the non default cretion
+    eprosima::fastdds::rtps::UDPv6TransportDescriptor udpv6_transport;
+    udpv6_transport.non_blocking_send = !udpv6_transport.non_blocking_send; // change default value
+    udpv6_transport.m_output_udp_socket = udpv6_transport.m_output_udp_socket + 10; // change default value
+
+    // Copy constructor
+    eprosima::fastdds::rtps::UDPv6TransportDescriptor udpv6_transport_copy_constructor(udpv6_transport);
+    EXPECT_EQ(udpv6_transport, udpv6_transport_copy_constructor);
+
+    // Copy assignment
+    eprosima::fastdds::rtps::UDPv6TransportDescriptor udpv6_transport_copy = udpv6_transport;
+    EXPECT_EQ(udpv6_transport_copy, udpv6_transport);
+}
