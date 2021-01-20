@@ -284,7 +284,7 @@ public:
      * Called just before a change is going to be deserialized.
      * @param [in]  change Pointer to the change being accessed.
      * @param [out] wp     Writer proxy the @c change belongs to.
-     * 
+     *
      * @return Whether the change is still valid or not.
      */
     bool begin_sample_access_nts(

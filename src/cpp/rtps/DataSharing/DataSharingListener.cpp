@@ -158,7 +158,7 @@ void DataSharingListener::process_new_data ()
                 {
                     logInfo(RTPS_READER, "First change with SN " << ch.sequenceNumber
                                                                  << " detected on datasharing writer " <<
-                                        pool->writer());
+                            pool->writer());
                     reader_->processGapMsg(pool->writer(), SequenceNumber_t(0, 1), SequenceNumberSet_t(
                                 ch.sequenceNumber));
                 }

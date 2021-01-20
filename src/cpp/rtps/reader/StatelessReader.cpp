@@ -405,13 +405,13 @@ bool StatelessReader::begin_sample_access_nts(
 
         //Check if the payload is dirty
         if (!DataSharingPayloadPool::check_sequence_number(
-            change->serializedPayload.data, change->sequenceNumber))
+                    change->serializedPayload.data, change->sequenceNumber))
         {
             // Unlock and return false
             DataSharingPayloadPool::shared_mutex(change->serializedPayload.data).unlock_sharable();
             logWarning(RTPS_READER,
-                "Removing change " << change->sequenceNumber << " from " << writer_guid <<
-                " because is overidden");
+                    "Removing change " << change->sequenceNumber << " from " << writer_guid <<
+                    " because is overidden");
             return false;
         }
     }
