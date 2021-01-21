@@ -579,6 +579,11 @@ protected:
             DisablePositiveACKsQosPolicy& disablePositiveAcks,
             uint8_t ident);
 
+    RTPS_DllAPI static XMLP_ret getXMLDataSharingQos(
+        tinyxml2::XMLElement* elem,
+        DataSharingQosPolicy& data_sharing,
+        uint8_t ident);
+
     RTPS_DllAPI static XMLP_ret getXMLguidPrefix(
             tinyxml2::XMLElement* elem,
             rtps::GuidPrefix_t& prefix,

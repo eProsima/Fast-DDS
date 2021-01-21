@@ -65,6 +65,7 @@ const char* HEALTHY_CHECK_TIMEOUT_MS = "healthy_check_timeout_ms";
 const char* DISCARD = "DISCARD";
 const char* FAIL = "FAIL";
 const char* RTPS_DUMP_FILE = "rtps_dump_file";
+const char* ON = "ON";
 
 const char* OFF = "OFF";
 const char* USER_DATA_ONLY = "USER_DATA_ONLY";
@@ -190,6 +191,7 @@ const char* TOPIC_DATA = "topicData";
 const char* GROUP_DATA = "groupData";
 const char* PUB_MODE = "publishMode";
 const char* DISABLE_POSITIVE_ACKS = "disablePositiveAcks";
+const char* DATA_SHARING = "data_sharing";
 
 const char* SYNCHRONOUS = "SYNCHRONOUS";
 const char* ASYNCHRONOUS = "ASYNCHRONOUS";
@@ -277,6 +279,9 @@ const char* WRITER_PAYLOAD_SIZE = "writerPayloadSize";
 const char* MUTATION_TRIES = "mutation_tries";
 const char* ACCESS_SCOPE = "access_scope";
 const char* ENABLED = "enabled";
+const char* DOMAIN_IDS = "domainIds";
+const char* SHARED_DIR = "sharedDir";
+const char* MAX_DOMAINS = "maxDomains";
 
 // Endpoint parser
 const char* STATICDISCOVERY = "staticdiscovery";

@@ -81,6 +81,7 @@ extern const char* HEALTHY_CHECK_TIMEOUT_MS;
 extern const char* DISCARD;
 extern const char* FAIL;
 extern const char* RTPS_DUMP_FILE;
+extern const char* ON;
 
 // IntraprocessDeliveryType
 extern const char* OFF;
@@ -206,6 +207,7 @@ extern const char* TOPIC_DATA;
 extern const char* GROUP_DATA;
 extern const char* PUB_MODE;
 extern const char* DISABLE_POSITIVE_ACKS;
+extern const char* DATA_SHARING;
 
 extern const char* SYNCHRONOUS;
 extern const char* ASYNCHRONOUS;
@@ -293,6 +295,9 @@ extern const char* WRITER_PAYLOAD_SIZE;
 extern const char* MUTATION_TRIES;
 extern const char* ACCESS_SCOPE;
 extern const char* ENABLED;
+extern const char* DOMAIN_IDS;
+extern const char* SHARED_DIR;
+extern const char* MAX_DOMAINS;
 
 // Endpoint parser
 extern const char* STATICDISCOVERY;
