@@ -92,7 +92,6 @@ public:
         return shared_notification_->notification_->ack_timestamp;
     }
 
-
 protected:
 
     std::shared_ptr<DataSharingNotification> shared_notification_;

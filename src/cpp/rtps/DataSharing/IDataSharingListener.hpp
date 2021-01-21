@@ -100,7 +100,7 @@ public:
 
     /**
      * Updates the ACK'd timestamp of the notification due to a change read/removed from the history
-     * 
+     *
      * @param timestamp the source timestamp of the change
      */
     virtual void change_removed_with_timestamp(
@@ -108,7 +108,7 @@ public:
 
     /**
      * Updates the ACK'd timestamp of the notification due to a new change added to the history
-     * 
+     *
      * @param timestamp the source timestamp of the added change
      */
     virtual void change_added_with_timestamp(

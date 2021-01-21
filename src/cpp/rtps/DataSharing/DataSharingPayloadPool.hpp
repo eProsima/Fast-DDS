@@ -139,11 +139,11 @@ public:
         std::unique_lock<Segment::mutex> lock(descriptor_->notification_mutex);
         bool success = false;
         descriptor_->notification_cv.timed_wait(lock, max_blocking_time,
-                    [&success, &condition]()
-                    {
-                        success = condition();
-                        return success;
-                    });
+                [&success, &condition]()
+                {
+                    success = condition();
+                    return success;
+                });
         return success;
     }
 
@@ -349,7 +349,7 @@ protected:
         uint32_t liveliness_sequence;   //< The ID of the last liveliness assertion sent by the writer
 
         Segment::condition_variable notification_cv;        //< CV to wait for notifications from the reader
-        Segment::mutex              notification_mutex;     //< synchronization mutex
+        Segment::mutex notification_mutex;                  //< synchronization mutex
     };
 #pragma warning(pop)
 

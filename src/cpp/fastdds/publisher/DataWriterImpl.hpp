@@ -469,10 +469,10 @@ protected:
             assert (pool != nullptr);
 
             bool payload_reserved = pool->wait_until(max_blocking_time,
-                    [&]()
-                    {
-                        return pool->get_payload(size, change);
-                    });
+                            [&]()
+                            {
+                                return pool->get_payload(size, change);
+                            });
             if (!payload_reserved)
             {
                 return false;

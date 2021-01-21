@@ -32,8 +32,8 @@ public:
     bool back_insertion;
 
     bool push(
-        FixedSizeQueue<int>& uut,
-        int value)
+            FixedSizeQueue<int>& uut,
+            int value)
     {
         if (back_insertion)
         {
@@ -46,7 +46,7 @@ public:
     }
 
     bool pop(
-        FixedSizeQueue<int>& uut)
+            FixedSizeQueue<int>& uut)
     {
         if (back_insertion)
         {
@@ -59,7 +59,7 @@ public:
     }
 
     int get(
-        FixedSizeQueue<int>& uut)
+            FixedSizeQueue<int>& uut)
     {
         if (back_insertion)
         {
