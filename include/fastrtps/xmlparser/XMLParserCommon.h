@@ -247,6 +247,7 @@ extern const char* HISTORY_QOS;
 extern const char* RES_LIMITS_QOS;
 extern const char* DEPTH;
 extern const char* ALLOCATED_SAMPLES;
+extern const char* EXTRA_SAMPLES;
 extern const char* BYTES_PER_SECOND;
 extern const char* PERIOD_MILLISECS;
 extern const char* PORT_BASE;

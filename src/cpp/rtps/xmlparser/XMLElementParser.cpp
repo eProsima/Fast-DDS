@@ -852,6 +852,7 @@ XMLP_ret XMLParser::getXMLResourceLimitsQos(
                 <xs:element name="max_instances" type="int32Type" minOccurs="0"/>
                 <xs:element name="max_samples_per_instance" type="int32Type" minOccurs="0"/>
                 <xs:element name="allocated_samples" type="int32Type" minOccurs="0"/>
+                <xs:element name="extra_samples" type="int32Type" minOccurs="0"/>
             </xs:all>
         </xs:complexType>
      */
@@ -889,6 +890,14 @@ XMLP_ret XMLParser::getXMLResourceLimitsQos(
         {
             // allocated_samples - int32Type
             if (XMLP_ret::XML_OK != getXMLInt(p_aux0, &resourceLimitsQos.allocated_samples, ident))
+            {
+                return XMLP_ret::XML_ERROR;
+            }
+        }
+        else if (strcmp(name, EXTRA_SAMPLES) == 0)
+        {
+            // extra_samples - int32Type
+            if (XMLP_ret::XML_OK != getXMLInt(p_aux0, &resourceLimitsQos.extra_samples, ident))
             {
                 return XMLP_ret::XML_ERROR;
             }

@@ -231,6 +231,7 @@ const char* HISTORY_QOS = "historyQos";
 const char* RES_LIMITS_QOS = "resourceLimitsQos";
 const char* DEPTH = "depth";
 const char* ALLOCATED_SAMPLES = "allocated_samples";
+const char* EXTRA_SAMPLES = "extra_samples";
 const char* BYTES_PER_SECOND = "bytesPerPeriod";
 const char* PERIOD_MILLISECS = "periodMillisecs";
 const char* PORT_BASE = "portBase";
