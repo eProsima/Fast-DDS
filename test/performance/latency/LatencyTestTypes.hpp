@@ -94,7 +94,7 @@ inline bool operator ==(
     return true;
 }
 
-class LatencyDataType : public eprosima::fastrtps::TopicDataType
+class LatencyDataType : public eprosima::fastdds::dds::TopicDataType
 {
 public:
 
@@ -156,7 +156,7 @@ typedef struct TestCommandType
 
 }TestCommandType;
 
-class TestCommandDataType : public eprosima::fastrtps::TopicDataType
+class TestCommandDataType : public eprosima::fastdds::dds::TopicDataType
 {
 public:
 

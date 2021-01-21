@@ -33,6 +33,14 @@
 #include <fastrtps/types/DynamicData.h>
 #include <fastrtps/types/DynamicPubSubType.h>
 
+#include <fastdds/dds/topic/TypeSupport.hpp>
+
+#include <fastdds/dds/subscriber/Subscriber.hpp>
+#include <fastdds/dds/publisher/Publisher.hpp>
+
+#include <fastdds/dds/subscriber/DataReaderListener.hpp>
+#include <fastdds/dds/publisher/DataWriterListener.hpp>
+
 class LatencyTestSubscriber
 {
 public:
@@ -59,22 +67,24 @@ public:
     bool test(
             uint32_t datasize);
 
+    int32_t total_matches() const;
+
     /* Entities */
-    eprosima::fastrtps::Participant* participant_;
-    eprosima::fastrtps::Publisher* data_publisher_;
-    eprosima::fastrtps::Publisher* command_publisher_;
-    eprosima::fastrtps::Subscriber* data_subscriber_;
-    eprosima::fastrtps::Subscriber* command_subscriber_;
+    eprosima::fastdds::dds::DomainParticipant* participant_;
+    eprosima::fastdds::dds::Publisher* publisher_;
+    eprosima::fastdds::dds::DataWriter* data_writer_;
+    eprosima::fastdds::dds::DataWriter* command_writer_;
+    eprosima::fastdds::dds::Subscriber* subscriber_;
+    eprosima::fastdds::dds::DataReader* data_reader_;
+    eprosima::fastdds::dds::DataReader* command_reader_;
 
     /* Data */
-    eprosima::fastrtps::SampleInfo_t sample_info_;
     int received_;
 
     /* Test synchronization */
     std::mutex mutex_;
     std::condition_variable discovery_cv_;
     std::condition_variable command_msg_cv_;
-    int discovery_count_;
     int command_msg_count_;
     int test_status_;
 
@@ -87,113 +97,104 @@ public:
     bool dynamic_data_ = false;
     int forced_domain_;
 
+    /* Topics */
+    eprosima::fastdds::dds::Topic* latency_data_sub_topic_;
+    eprosima::fastdds::dds::Topic* latency_data_pub_topic_;
+    eprosima::fastdds::dds::Topic* latency_command_sub_topic_;
+    eprosima::fastdds::dds::Topic* latency_command_pub_topic_;
+
     /* Static Types */
-    LatencyDataType latency_data_type_;
     LatencyType* latency_type_;
-    TestCommandDataType latency_command_type_;
+    eprosima::fastdds::dds::TypeSupport latency_data_type_;
+    eprosima::fastdds::dds::TypeSupport latency_command_type_;
 
     /* Dynamic Types */
     eprosima::fastrtps::types::DynamicData* dynamic_data_type_;
-    eprosima::fastrtps::types::DynamicPubSubType dynamic_data_pub_sub_type_;
-    eprosima::fastrtps::types::DynamicType_ptr dynamic_type_;
+    eprosima::fastdds::dds::TypeSupport dynamic_pub_sub_type_;
 
     std::vector<uint32_t> data_size_sub_;
 
     /* Data Listeners */
-    class DataPubListener : public eprosima::fastrtps::PublisherListener
+    class LatencyDataWriterListener : public eprosima::fastdds::dds::DataWriterListener
     {
     public:
-
-        DataPubListener(
-                LatencyTestSubscriber* latency_publisher)
-            : latency_publisher_(latency_publisher)
+        LatencyDataWriterListener(
+                LatencyTestSubscriber* latency_subscriber)
+            : latency_subscriber_(latency_subscriber)
+            , matched_(0)
         {
         }
 
-        ~DataPubListener()
-        {
-        }
+        void on_publication_matched(
+                eprosima::fastdds::dds::DataWriter* writer,
+                const eprosima::fastdds::dds::PublicationMatchedStatus& info) override;
 
-        void onPublicationMatched(
-                eprosima::fastrtps::Publisher* pub,
-                eprosima::fastrtps::rtps::MatchingInfo& info);
-
-        LatencyTestSubscriber* latency_publisher_;
+        LatencyTestSubscriber* latency_subscriber_;
+        int matched_;
     }
-    data_pub_listener_;
+    data_writer_listener_;
 
-    class DataSubListener : public eprosima::fastrtps::SubscriberListener
+    class LatencyDataReaderListener : public eprosima::fastdds::dds::DataReaderListener
     {
     public:
-
-        DataSubListener(
-                LatencyTestSubscriber* latency_publisher)
-            : latency_publisher_(latency_publisher)
+        LatencyDataReaderListener(
+                 LatencyTestSubscriber* latency_subscriber)
+            : latency_subscriber_(latency_subscriber)
+            , matched_(0)
         {
         }
 
-        ~DataSubListener()
-        {
-        }
+        void on_data_available(
+                eprosima::fastdds::dds::DataReader* reader) override;
 
-        void onSubscriptionMatched(
-                eprosima::fastrtps::Subscriber* sub,
-                eprosima::fastrtps::rtps::MatchingInfo& info);
+        void on_subscription_matched(
+                eprosima::fastdds::dds::DataReader* reader,
+                const eprosima::fastdds::dds::SubscriptionMatchedStatus& info) override;
 
-        void onNewDataMessage(
-                eprosima::fastrtps::Subscriber* sub);
-
-        LatencyTestSubscriber* latency_publisher_;
-    }
-    data_sub_listener_;
+        LatencyTestSubscriber* latency_subscriber_;
+        int matched_;
+    } data_reader_listener_;
 
     /* Command Listeners */
-    class CommandPubListener : public eprosima::fastrtps::PublisherListener
+    class ComandWriterListener : public eprosima::fastdds::dds::DataWriterListener
     {
     public:
-
-        CommandPubListener(
-                LatencyTestSubscriber* latency_publisher)
-            : latency_publisher_(latency_publisher)
+        ComandWriterListener(
+                  LatencyTestSubscriber* latency_subscriber)
+            : latency_subscriber_(latency_subscriber)
+            , matched_(0)
         {
         }
 
-        ~CommandPubListener()
-        {
-        }
+        void on_publication_matched(
+                eprosima::fastdds::dds::DataWriter* writer,
+                const eprosima::fastdds::dds::PublicationMatchedStatus& info) override;
 
-        void onPublicationMatched(
-                eprosima::fastrtps::Publisher* pub,
-                eprosima::fastrtps::rtps::MatchingInfo& info);
-
-        LatencyTestSubscriber* latency_publisher_;
+        LatencyTestSubscriber* latency_subscriber_;
+        int matched_;
     }
-    command_pub_listener_;
+    command_writer_listener_;
 
-    class CommandSubListener : public eprosima::fastrtps::SubscriberListener
+    class CommandReaderListener : public eprosima::fastdds::dds::DataReaderListener
     {
     public:
-
-        CommandSubListener(
-                LatencyTestSubscriber* latency_publisher)
-            : latency_publisher_(latency_publisher)
+        CommandReaderListener(
+                   LatencyTestSubscriber* latency_subscriber)
+            : latency_subscriber_(latency_subscriber)
+            , matched_(0)
         {
         }
 
-        ~CommandSubListener()
-        {
-        }
+        void on_data_available(
+                eprosima::fastdds::dds::DataReader* reader) override;
 
-        void onSubscriptionMatched(
-                eprosima::fastrtps::Subscriber* sub,
-                eprosima::fastrtps::rtps::MatchingInfo& into);
+        void on_subscription_matched(
+                eprosima::fastdds::dds::DataReader* reader,
+                const eprosima::fastdds::dds::SubscriptionMatchedStatus& info) override;
 
-        void onNewDataMessage(
-                eprosima::fastrtps::Subscriber* sub);
-
-        LatencyTestSubscriber* latency_publisher_;
-    }
-    command_sub_listener_;
+        LatencyTestSubscriber* latency_subscriber_;
+        int matched_;
+    } command_reader_listener_;
 };
 
 #endif /* LATENCYTESTSUBSCRIBER_H_ */
