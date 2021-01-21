@@ -23,6 +23,7 @@
 #include <cstdint>
 #include <vector>
 
+#include <fastdds/dds/builtin/topic/PublicationBuiltinTopicData.hpp>
 #include <fastdds/dds/core/Entity.hpp>
 #include <fastdds/dds/core/LoanableCollection.hpp>
 #include <fastdds/dds/core/LoanableSequence.hpp>
@@ -73,7 +74,6 @@ struct LivelinessChangedStatus;
 // Not yet implemented
 class QueryCondition;
 class ReadCondition;
-struct PublicationBuiltinTopicData;
 
 using SampleInfoSeq = LoanableSequence<SampleInfo>;
 
@@ -763,7 +763,7 @@ public:
      *
      */
     RTPS_DllAPI ReturnCode_t get_matched_publication_data(
-            PublicationBuiltinTopicData& publication_data,
+            builtin::PublicationBuiltinTopicData& publication_data,
             fastrtps::rtps::InstanceHandle_t& publication_handle) const;
 
     /**

@@ -289,7 +289,7 @@ ReturnCode_t DataReader::get_subscription_matched_status(
 }
 
 ReturnCode_t DataReader::get_matched_publication_data(
-        PublicationBuiltinTopicData& publication_data,
+        builtin::PublicationBuiltinTopicData& publication_data,
         fastrtps::rtps::InstanceHandle_t& publication_handle) const
 {
     static_cast<void> (publication_data);
@@ -366,7 +366,7 @@ ReturnCode_t DataReader::wait_for_historical_data(
     return ReturnCode_t::RETCODE_UNSUPPORTED;
     /*
        return impl_->wait_for_historical_data(a_condition);
-    */
+     */
 }
 
 TypeSupport DataReader::type()

@@ -20,6 +20,8 @@
 
 #include <fastcdr/Cdr.h>
 
+#include <fastdds/dds/builtin/topic/PublicationBuiltinTopicData.hpp>
+
 #include <fastdds/dds/core/LoanableArray.hpp>
 #include <fastdds/dds/core/StackAllocatedSequence.hpp>
 #include <fastdds/dds/core/status/BaseStatus.hpp>
@@ -1392,13 +1394,11 @@ TEST_F(DataReaderUnsuportedTests, UnsupportedDataReaderMethods)
         EXPECT_EQ(ReturnCode_t::RETCODE_UNSUPPORTED, data_reader->get_subscription_matched_status(status));
     }
 
-    // Tests require unimplemented struct PublicationBuiltinTopicData and classes ReadCondition and QueryCondition
-    //
-    // PublicationBuiltinTopicData publication_data;
-    // fastrtps::rtps::InstanceHandle_t publication_handle;
-    // EXPECT_EQ(
-    //        ReturnCode_t::RETCODE_UNSUPPORTED,
-    //        data_reader->get_matched_publication_data(publication_data,publication_handle));
+    builtin::PublicationBuiltinTopicData publication_data;
+    fastrtps::rtps::InstanceHandle_t publication_handle;
+    EXPECT_EQ(
+        ReturnCode_t::RETCODE_UNSUPPORTED,
+        data_reader->get_matched_publication_data(publication_data, publication_handle));
 
     {
         std::vector<SampleStateKind> sample_states;
@@ -1427,8 +1427,8 @@ TEST_F(DataReaderUnsuportedTests, UnsupportedDataReaderMethods)
 
     {
         EXPECT_EQ(
-           ReturnCode_t::RETCODE_UNSUPPORTED,
-           data_reader->delete_readcondition(nullptr));
+            ReturnCode_t::RETCODE_UNSUPPORTED,
+            data_reader->delete_readcondition(nullptr));
     }
 
 
