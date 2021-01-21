@@ -290,7 +290,7 @@ ReturnCode_t DataReader::get_subscription_matched_status(
 
 ReturnCode_t DataReader::get_matched_publication_data(
         PublicationBuiltinTopicData& publication_data,
-        fastrtps::rtps::InstanceHandle_t publication_handle) const
+        fastrtps::rtps::InstanceHandle_t& publication_handle) const
 {
     static_cast<void> (publication_data);
     static_cast<void> (publication_handle);
@@ -301,7 +301,7 @@ ReturnCode_t DataReader::get_matched_publication_data(
 }
 
 ReturnCode_t DataReader::get_matched_publications(
-        std::vector<fastrtps::rtps::InstanceHandle_t*>& publication_handles) const
+        std::vector<fastrtps::rtps::InstanceHandle_t>& publication_handles) const
 {
     static_cast<void> (publication_handles);
     return ReturnCode_t::RETCODE_UNSUPPORTED;
@@ -311,9 +311,9 @@ ReturnCode_t DataReader::get_matched_publications(
 }
 
 ReadCondition* DataReader::create_readcondition(
-        std::vector<SampleStateKind> sample_states,
-        std::vector<ViewStateKind> view_states,
-        std::vector<InstanceStateKind> instance_states)
+        std::vector<SampleStateKind>& sample_states,
+        std::vector<ViewStateKind>& view_states,
+        std::vector<InstanceStateKind>& instance_states)
 {
     logWarning(DataReader, "create_readcondition method not implemented");
     static_cast<void> (sample_states);
@@ -326,11 +326,11 @@ ReadCondition* DataReader::create_readcondition(
 }
 
 QueryCondition* DataReader::create_querycondition(
-        std::vector<SampleStateKind> sample_states,
-        std::vector<ViewStateKind> view_states,
-        std::vector<InstanceStateKind> instance_states,
+        std::vector<SampleStateKind>& sample_states,
+        std::vector<ViewStateKind>& view_states,
+        std::vector<InstanceStateKind>& instance_states,
         std::string& query_expression,
-        std::vector<std::string> query_parameters)
+        std::vector<std::string>& query_parameters)
 {
     logWarning(DataReader, "create_querycondition method not implemented");
     static_cast<void> (sample_states);
@@ -360,10 +360,13 @@ const Subscriber* DataReader::get_subscriber() const
 }
 
 ReturnCode_t DataReader::wait_for_historical_data(
-        const Duration_t& max_wait)
+        const Duration_t& max_wait) const
 {
-    bool success = impl_->wait_for_unread_message(max_wait);
-    return (success) ? ReturnCode_t::RETCODE_OK : ReturnCode_t::RETCODE_TIMEOUT;
+    static_cast<void> (max_wait);
+    return ReturnCode_t::RETCODE_UNSUPPORTED;
+    /*
+       return impl_->wait_for_historical_data(a_condition);
+    */
 }
 
 TypeSupport DataReader::type()

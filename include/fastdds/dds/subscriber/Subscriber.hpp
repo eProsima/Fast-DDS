@@ -219,9 +219,9 @@ public:
      */
     RTPS_DllAPI ReturnCode_t get_datareaders(
             std::vector<DataReader*>& readers,
-            std::vector<SampleStateKind> sample_states,
-            std::vector<ViewStateKind> view_states,
-            std::vector<InstanceStateKind> instance_states) const;
+            std::vector<SampleStateKind>& sample_states,
+            std::vector<ViewStateKind>& view_states,
+            std::vector<InstanceStateKind>& instance_states) const;
 
     /**
      * This operation checks if the subscriber has DataReaders

@@ -1400,39 +1400,39 @@ TEST_F(DataReaderUnsuportedTests, UnsupportedDataReaderMethods)
     //        ReturnCode_t::RETCODE_UNSUPPORTED,
     //        data_reader->get_matched_publication_data(publication_data,publication_handle));
 
-    // {
-    //     std::vector<SampleStateKind> sample_states;
-    //     std::vector<ViewStateKind> view_states;
-    //     std::vector<InstanceStateKind> instance_states;
-    //     EXPECT_EQ(
-    //         nullptr,
-    //         data_reader->create_readcondition(sample_states, view_states, instance_states));
-    // }
+    {
+        std::vector<SampleStateKind> sample_states;
+        std::vector<ViewStateKind> view_states;
+        std::vector<InstanceStateKind> instance_states;
+        EXPECT_EQ(
+            nullptr,
+            data_reader->create_readcondition(sample_states, view_states, instance_states));
+    }
 
-    // {
-    //     std::vector<SampleStateKind> sample_states;
-    //     std::vector<ViewStateKind> view_states;
-    //     std::vector<InstanceStateKind> instance_states;
-    //     std::string query_expression;
-    //     std::vector<std::string> query_parameters;
-    //     EXPECT_EQ(
-    //         nullptr,
-    //         data_reader->create_querycondition(
-    //             sample_states,
-    //             view_states,
-    //             instance_states,
-    //             query_expression,
-    //             query_parameters));
-    // }
+    {
+        std::vector<SampleStateKind> sample_states;
+        std::vector<ViewStateKind> view_states;
+        std::vector<InstanceStateKind> instance_states;
+        std::string query_expression;
+        std::vector<std::string> query_parameters;
+        EXPECT_EQ(
+            nullptr,
+            data_reader->create_querycondition(
+                sample_states,
+                view_states,
+                instance_states,
+                query_expression,
+                query_parameters));
+    }
 
-    // {
-    //     EXPECT_EQ(
-    //        ReturnCode_t::RETCODE_UNSUPPORTED,
-    //        data_reader->delete_readcondition(nullptr));
-    // }
+    {
+        EXPECT_EQ(
+           ReturnCode_t::RETCODE_UNSUPPORTED,
+           data_reader->delete_readcondition(nullptr));
+    }
 
 
-    std::vector<fastrtps::rtps::InstanceHandle_t*> publication_handles;
+    std::vector<fastrtps::rtps::InstanceHandle_t> publication_handles;
     EXPECT_EQ(ReturnCode_t::RETCODE_UNSUPPORTED, data_reader->get_matched_publications(publication_handles));
 
     ASSERT_EQ(subscriber->delete_datareader(data_reader), ReturnCode_t::RETCODE_OK);

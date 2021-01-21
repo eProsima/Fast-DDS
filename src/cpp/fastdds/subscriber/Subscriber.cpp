@@ -140,10 +140,11 @@ ReturnCode_t Subscriber::get_datareaders(
 
 ReturnCode_t Subscriber::get_datareaders(
         std::vector<DataReader*>& readers,
-        std::vector<SampleStateKind> sample_states,
-        std::vector<ViewStateKind> view_states,
-        std::vector<InstanceStateKind> instance_states) const
+        std::vector<SampleStateKind>& sample_states,
+        std::vector<ViewStateKind>& view_states,
+        std::vector<InstanceStateKind>& instance_states) const
 {
+    static_cast<void> (readers);
     static_cast<void> (sample_states);
     static_cast<void> (view_states);
     static_cast<void> (instance_states);

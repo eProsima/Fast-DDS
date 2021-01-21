@@ -134,7 +134,7 @@ public:
      * @return RETCODE_OK if there is new unread message, ReturnCode_t::RETCODE_TIMEOUT if timeout
      */
     RTPS_DllAPI ReturnCode_t wait_for_historical_data(
-            const fastrtps::Duration_t& max_wait);
+            const fastrtps::Duration_t& max_wait) const;
 
 
     /** @name Read or take data methods.
@@ -764,7 +764,7 @@ public:
      */
     RTPS_DllAPI ReturnCode_t get_matched_publication_data(
             PublicationBuiltinTopicData& publication_data,
-            fastrtps::rtps::InstanceHandle_t publication_handle) const;
+            fastrtps::rtps::InstanceHandle_t& publication_handle) const;
 
     /**
      * @brief Fills the given vector with the InstanceHandle_t of matched DataReaders
@@ -772,7 +772,7 @@ public:
      * @return RETCODE_OK
      */
     RTPS_DllAPI ReturnCode_t get_matched_publications(
-            std::vector<fastrtps::rtps::InstanceHandle_t*>& publication_handles) const;
+            std::vector<fastrtps::rtps::InstanceHandle_t>& publication_handles) const;
 
     /**
      * @brief This operation creates a ReadCondition. The returned ReadCondition will be attached and belong to the
@@ -783,9 +783,9 @@ public:
      * @return ReadCondition pointer
      */
     RTPS_DllAPI ReadCondition* create_readcondition(
-            std::vector<SampleStateKind> sample_states,
-            std::vector<ViewStateKind> view_states,
-            std::vector<InstanceStateKind> instance_states);
+            std::vector<SampleStateKind>& sample_states,
+            std::vector<ViewStateKind>& view_states,
+            std::vector<InstanceStateKind>& instance_states);
 
     /**
      * @brief This operation creates a QueryCondition. The returned QueryCondition will be attached and belong to the
@@ -798,11 +798,11 @@ public:
      * @return QueryCondition pointer
      */
     RTPS_DllAPI QueryCondition* create_querycondition(
-            std::vector<SampleStateKind> sample_states,
-            std::vector<ViewStateKind> view_states,
-            std::vector<InstanceStateKind> instance_states,
+            std::vector<SampleStateKind>& sample_states,
+            std::vector<ViewStateKind>& view_states,
+            std::vector<InstanceStateKind>& instance_states,
             std::string& query_expression,
-            std::vector<std::string> query_parameters);
+            std::vector<std::string>& query_parameters);
 
     /**
      * @brief This operation deletes a ReadCondition attached to the DataReader.
@@ -817,11 +817,6 @@ public:
      * @return Subscriber pointer
      */
     RTPS_DllAPI const Subscriber* get_subscriber() const;
-
-    /* TODO
-       RTPS_DllAPI bool wait_for_historical_data(
-            const fastrtps::Duration_t& max_wait) const;
-     */
 
 protected:
 
