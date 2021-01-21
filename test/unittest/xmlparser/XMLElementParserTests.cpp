@@ -3266,3 +3266,199 @@ TEST_F(XMLParserTests, getXMLEnum_positive)
         EXPECT_EQ(ParticipantFilteringFlags_t::FILTER_DIFFERENT_PROCESS, e);
     }
 }
+
+
+/*
+ * This test checks the proper parsing of the <data_sharing> xml elements to a DataSharingQosPolicy object,
+ * and negative cases.
+ * 9. Correct parsing of a valid <data_sharing> set to AUTO with domain IDs and shared memory directory.
+ * 3. Correct parsing of a valid <data_sharing> set to ON with domain IDs and shared memory directory.
+ * 6. Correct parsing of a valid <data_sharing> set to OFF with domain IDs and shared memory directory.
+ * 7. Correct parsing of a valid <data_sharing> set to AUTO with domain IDs.
+ * 1. Correct parsing of a valid <data_sharing> set to ON with domain IDs.
+ * 4. Correct parsing of a valid <data_sharing> set to OFF with domain IDs.
+ * 8. Correct parsing of a valid <data_sharing> set to AUTO with shared memory directory.
+ * 2. Correct parsing of a valid <data_sharing> set to ON with shared memory directory.
+ * 5. Correct parsing of a valid <data_sharing> set to OFF with shared memory directory.
+ * 10.Check an empty list of <domain_ids>.
+ * 11.Check a list of <domain_ids> with more domains than the maximum.
+ */
+TEST_F(XMLParserTests, getXMLDataSharingQos)
+{
+    uint8_t ident = 1;
+    DataSharingQosPolicy datasharing_policy;
+    tinyxml2::XMLDocument xml_doc;
+    tinyxml2::XMLElement* titleElement;
+
+    {
+        // Template xml
+        const char* xml_p =
+                "\
+                <data_sharing>\
+                    <kind>%s</kind>\
+                    <sharedDir>shared_dir</sharedDir>\
+                    <domainIds>\
+                        <domainId>10</domainId>\
+                        <domainId>20</domainId>\
+                    </domainIds>\
+                </data_sharing>\
+                ";
+        char xml[1000];
+
+        sprintf(xml, xml_p, "AUTOMATIC");
+        ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+        titleElement = xml_doc.RootElement();
+        EXPECT_EQ(XMLP_ret::XML_OK, XMLParserTest::propertiesPolicy_wrapper(titleElement, datasharing_policy, ident));
+        EXPECT_EQ(datasharing_policy.kind(), DataSharingKind::AUTO);
+        EXPECT_EQ(datasharing_policy.shm_directory(), "shared_dir");
+        EXPECT_EQ(datasharing_policy.max_domains(), 0);
+        EXPECT_EQ(datasharing_policy.domain_ids().size(), 2);
+        EXPECT_EQ(datasharing_policy.domain_ids()[0], 10);
+        EXPECT_EQ(datasharing_policy.domain_ids()[1], 20);
+
+        sprintf(xml, xml_p, "ON");
+        ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+        titleElement = xml_doc.RootElement();
+        EXPECT_EQ(XMLP_ret::XML_OK, XMLParserTest::propertiesPolicy_wrapper(titleElement, datasharing_policy, ident));
+        EXPECT_EQ(datasharing_policy.kind(), DataSharingKind::ON);
+        EXPECT_EQ(datasharing_policy.shm_directory(), "shared_dir");
+        EXPECT_EQ(datasharing_policy.max_domains(), 0);
+        EXPECT_EQ(datasharing_policy.domain_ids().size(), 2);
+        EXPECT_EQ(datasharing_policy.domain_ids()[0], 10);
+        EXPECT_EQ(datasharing_policy.domain_ids()[1], 20);
+        
+        sprintf(xml, xml_p, "OFF");
+        ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+        titleElement = xml_doc.RootElement();
+        EXPECT_EQ(XMLP_ret::XML_OK, XMLParserTest::propertiesPolicy_wrapper(titleElement, datasharing_policy, ident));
+        EXPECT_EQ(datasharing_policy.kind(), DataSharingKind::OFF);
+        EXPECT_EQ(datasharing_policy.shm_directory().size(), 0);
+        EXPECT_EQ(datasharing_policy.max_domains(), 0);
+        EXPECT_EQ(datasharing_policy.domain_ids().size(), 0);
+    }
+
+    {
+        // Template xml
+        const char* xml_p =
+                "\
+                <data_sharing>\
+                    <kind>%s</kind>\
+                    <maxDomains>5</maxDomains>\
+                    <domainIds>\
+                        <domainId>10</domainId>\
+                        <domainId>20</domainId>\
+                    </domainIds>\
+                </data_sharing>\
+                ";
+        char xml[1000];
+
+        sprintf(xml, xml_p, "AUTOMATIC");
+        ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+        titleElement = xml_doc.RootElement();
+        EXPECT_EQ(XMLP_ret::XML_OK, XMLParserTest::propertiesPolicy_wrapper(titleElement, datasharing_policy, ident));
+        EXPECT_EQ(datasharing_policy.kind(), DataSharingKind::AUTO);
+        EXPECT_EQ(datasharing_policy.shm_directory().size(), 0);
+        EXPECT_EQ(datasharing_policy.max_domains(), 5);
+        EXPECT_EQ(datasharing_policy.domain_ids().size(), 2);
+        EXPECT_EQ(datasharing_policy.domain_ids()[0], 10);
+        EXPECT_EQ(datasharing_policy.domain_ids()[1], 20);
+
+        sprintf(xml, xml_p, "ON");
+        ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+        titleElement = xml_doc.RootElement();
+        EXPECT_EQ(XMLP_ret::XML_OK, XMLParserTest::propertiesPolicy_wrapper(titleElement, datasharing_policy, ident));
+        EXPECT_EQ(datasharing_policy.kind(), DataSharingKind::ON);
+        EXPECT_EQ(datasharing_policy.shm_directory().size(), 0);
+        EXPECT_EQ(datasharing_policy.max_domains(), 5);
+        EXPECT_EQ(datasharing_policy.domain_ids().size(), 2);
+        EXPECT_EQ(datasharing_policy.domain_ids()[0], 10);
+        EXPECT_EQ(datasharing_policy.domain_ids()[1], 20);
+        
+        sprintf(xml, xml_p, "OFF");
+        ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+        titleElement = xml_doc.RootElement();
+        EXPECT_EQ(XMLP_ret::XML_OK, XMLParserTest::propertiesPolicy_wrapper(titleElement, datasharing_policy, ident));
+        EXPECT_EQ(datasharing_policy.kind(), DataSharingKind::OFF);
+        EXPECT_EQ(datasharing_policy.shm_directory().size(), 0);
+        EXPECT_EQ(datasharing_policy.max_domains(), 5);
+        EXPECT_EQ(datasharing_policy.domain_ids().size(), 0);
+    }
+
+    {
+        // Template xml
+        const char* xml_p =
+                "\
+                <data_sharing>\
+                    <kind>%s</kind>\
+                    <sharedDir>shared_dir</sharedDir>\
+                </data_sharing>\
+                ";
+        char xml[1000];
+
+        sprintf(xml, xml_p, "AUTOMATIC");
+        ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+        titleElement = xml_doc.RootElement();
+        EXPECT_EQ(XMLP_ret::XML_OK, XMLParserTest::propertiesPolicy_wrapper(titleElement, datasharing_policy, ident));
+        EXPECT_EQ(datasharing_policy.kind(), DataSharingKind::AUTO);
+        EXPECT_EQ(datasharing_policy.shm_directory(), "shared_dir");
+        EXPECT_EQ(datasharing_policy.max_domains(), 0);
+        EXPECT_EQ(datasharing_policy.domain_ids().size(), 0);
+
+        sprintf(xml, xml_p, "ON");
+        ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+        titleElement = xml_doc.RootElement();
+        EXPECT_EQ(XMLP_ret::XML_OK, XMLParserTest::propertiesPolicy_wrapper(titleElement, datasharing_policy, ident));
+        EXPECT_EQ(datasharing_policy.kind(), DataSharingKind::ON);
+        EXPECT_EQ(datasharing_policy.shm_directory(), "shared_dir");
+        EXPECT_EQ(datasharing_policy.max_domains(), 0);
+        EXPECT_EQ(datasharing_policy.domain_ids().size(), 0);
+
+        sprintf(xml, xml_p, "OFF");
+        ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+        titleElement = xml_doc.RootElement();
+        EXPECT_EQ(XMLP_ret::XML_OK, XMLParserTest::propertiesPolicy_wrapper(titleElement, datasharing_policy, ident));
+        EXPECT_EQ(datasharing_policy.kind(), DataSharingKind::OFF);
+        EXPECT_EQ(datasharing_policy.shm_directory().size(), 0);
+        EXPECT_EQ(datasharing_policy.max_domains(), 0);
+        EXPECT_EQ(datasharing_policy.domain_ids().size(), 0);
+    }
+
+    {
+        // Template xml
+        const char* xml_p =
+                "\
+                <data_sharing>\
+                    <kind>AUTOMATIC</kind>\
+                    <domainIds>\
+                    </domainIds>\
+                </data_sharing>\
+                ";
+        char xml[1000];
+
+        sprintf(xml, xml_p, "AUTOMATIC");
+        ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+        titleElement = xml_doc.RootElement();
+        EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::propertiesPolicy_wrapper(titleElement, datasharing_policy, ident));
+    }
+
+    {
+        // Template xml
+        const char* xml_p =
+                "\
+                <data_sharing>\
+                    <kind>AUTOMATIC</kind>\
+                    <maxDomains>1</maxDomains>\
+                    <domainIds>\
+                        <domainId>10</domainId>\
+                        <domainId>20</domainId>\
+                    </domainIds>\
+                </data_sharing>\
+                ";
+        char xml[1000];
+
+        sprintf(xml, xml_p, "AUTOMATIC");
+        ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+        titleElement = xml_doc.RootElement();
+        EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::propertiesPolicy_wrapper(titleElement, datasharing_policy, ident));
+    }
+}
