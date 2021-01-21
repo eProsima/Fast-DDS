@@ -1909,7 +1909,7 @@ XMLP_ret XMLParser::getXMLDataSharingQos(
                         <xs:element name="domainId" type="uint16Type" maxOccurs="unbounded"/>
                     </xs:sequence>
                 </xs:complexType>
-            */
+             */
 
             tinyxml2::XMLElement* p_aux1;
             const char* name1 = nullptr;
@@ -1951,7 +1951,8 @@ XMLP_ret XMLParser::getXMLDataSharingQos(
     if (max_domains != 0 && domain_ids.size() > static_cast<uint32_t>(max_domains))
     {
         logError(XMLPARSER, "Node 'data_sharing' defines a maximum of " << max_domains
-                << " domain IDs but also define " << domain_ids.size() << " domain IDs");
+                                                                        << " domain IDs but also define " << domain_ids.size() <<
+                " domain IDs");
         return XMLP_ret::XML_ERROR;
     }
 

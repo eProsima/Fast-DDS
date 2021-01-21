@@ -3323,7 +3323,7 @@ TEST_F(XMLParserTests, getXMLDataSharingQos)
         EXPECT_EQ(datasharing_policy.domain_ids().size(), 2);
         EXPECT_EQ(datasharing_policy.domain_ids()[0], 10);
         EXPECT_EQ(datasharing_policy.domain_ids()[1], 20);
-        
+
         sprintf(xml, xml_p, "OFF");
         ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
         titleElement = xml_doc.RootElement();
@@ -3370,7 +3370,7 @@ TEST_F(XMLParserTests, getXMLDataSharingQos)
         EXPECT_EQ(datasharing_policy.domain_ids().size(), 2);
         EXPECT_EQ(datasharing_policy.domain_ids()[0], 10);
         EXPECT_EQ(datasharing_policy.domain_ids()[1], 20);
-        
+
         sprintf(xml, xml_p, "OFF");
         ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
         titleElement = xml_doc.RootElement();
@@ -3449,7 +3449,8 @@ TEST_F(XMLParserTests, getXMLDataSharingQos_negativeCases)
 
         ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
         titleElement = xml_doc.RootElement();
-        EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::propertiesPolicy_wrapper(titleElement, datasharing_policy, ident));
+        EXPECT_EQ(XMLP_ret::XML_ERROR,
+                XMLParserTest::propertiesPolicy_wrapper(titleElement, datasharing_policy, ident));
     }
 
     {
@@ -3467,7 +3468,8 @@ TEST_F(XMLParserTests, getXMLDataSharingQos_negativeCases)
 
         ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
         titleElement = xml_doc.RootElement();
-        EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::propertiesPolicy_wrapper(titleElement, datasharing_policy, ident));
+        EXPECT_EQ(XMLP_ret::XML_ERROR,
+                XMLParserTest::propertiesPolicy_wrapper(titleElement, datasharing_policy, ident));
     }
 
     {
@@ -3480,7 +3482,8 @@ TEST_F(XMLParserTests, getXMLDataSharingQos_negativeCases)
 
         ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
         titleElement = xml_doc.RootElement();
-        EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::propertiesPolicy_wrapper(titleElement, datasharing_policy, ident));
+        EXPECT_EQ(XMLP_ret::XML_ERROR,
+                XMLParserTest::propertiesPolicy_wrapper(titleElement, datasharing_policy, ident));
     }
 
     {
@@ -3494,7 +3497,8 @@ TEST_F(XMLParserTests, getXMLDataSharingQos_negativeCases)
 
         ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
         titleElement = xml_doc.RootElement();
-        EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::propertiesPolicy_wrapper(titleElement, datasharing_policy, ident));
+        EXPECT_EQ(XMLP_ret::XML_ERROR,
+                XMLParserTest::propertiesPolicy_wrapper(titleElement, datasharing_policy, ident));
     }
 
     {
@@ -3508,7 +3512,8 @@ TEST_F(XMLParserTests, getXMLDataSharingQos_negativeCases)
 
         ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
         titleElement = xml_doc.RootElement();
-        EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::propertiesPolicy_wrapper(titleElement, datasharing_policy, ident));
+        EXPECT_EQ(XMLP_ret::XML_ERROR,
+                XMLParserTest::propertiesPolicy_wrapper(titleElement, datasharing_policy, ident));
     }
 
     {
@@ -3522,7 +3527,8 @@ TEST_F(XMLParserTests, getXMLDataSharingQos_negativeCases)
 
         ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
         titleElement = xml_doc.RootElement();
-        EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::propertiesPolicy_wrapper(titleElement, datasharing_policy, ident));
+        EXPECT_EQ(XMLP_ret::XML_ERROR,
+                XMLParserTest::propertiesPolicy_wrapper(titleElement, datasharing_policy, ident));
     }
 
     {
@@ -3540,6 +3546,7 @@ TEST_F(XMLParserTests, getXMLDataSharingQos_negativeCases)
 
         ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
         titleElement = xml_doc.RootElement();
-        EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::propertiesPolicy_wrapper(titleElement, datasharing_policy, ident));
+        EXPECT_EQ(XMLP_ret::XML_ERROR,
+                XMLParserTest::propertiesPolicy_wrapper(titleElement, datasharing_policy, ident));
     }
 }
