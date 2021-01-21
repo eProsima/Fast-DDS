@@ -1838,7 +1838,7 @@ XMLP_ret XMLParser::getXMLDataSharingQos(
      */
     DataSharingKind kind;
     std::string shm_directory = "";
-    uint32_t max_domains = 0;
+    int32_t max_domains = 0;
     std::vector<uint16_t> domain_ids;
 
     tinyxml2::XMLElement* p_aux0 = nullptr;
@@ -1890,10 +1890,16 @@ XMLP_ret XMLParser::getXMLDataSharingQos(
         }
         else if (strcmp(name, MAX_DOMAINS) == 0)
         {
-            if (XMLP_ret::XML_OK != getXMLUint(p_aux0, &max_domains, ident))
+            if (XMLP_ret::XML_OK != getXMLInt(p_aux0, &max_domains, ident))
             {
                 return XMLP_ret::XML_ERROR;
             }
+            if (max_domains < 0)
+            {
+                logError(XMLPARSER, "max domains cannot be negative");
+                return XMLP_ret::XML_ERROR;
+            }
+
         }
         else if (strcmp(name, DOMAIN_IDS) == 0)
         {
@@ -1905,23 +1911,34 @@ XMLP_ret XMLParser::getXMLDataSharingQos(
                 </xs:complexType>
             */
 
-            tinyxml2::XMLElement* p_aux1 = p_aux0->FirstChildElement(DOMAIN_ID);
-            if (nullptr == p_aux1)
+            tinyxml2::XMLElement* p_aux1;
+            const char* name1 = nullptr;
+            bool domain_id_found = false;
+            for (p_aux1 = p_aux0->FirstChildElement(); p_aux1 != NULL; p_aux1 = p_aux1->NextSiblingElement())
+            {
+                name1 = p_aux1->Name();
+                if (strcmp(name1, DOMAIN_ID) == 0)
+                {
+                    uint16_t id;
+                    if (XMLP_ret::XML_OK != getXMLUint(p_aux1, &id, ident))
+                    {
+                        return XMLP_ret::XML_ERROR;
+                    }
+                    domain_ids.push_back(id);
+                    domain_id_found = true;
+                }
+                else
+                {
+                    logError(XMLPARSER, "Invalid element found in 'domain_ids'. Name: " << name1);
+                    return XMLP_ret::XML_ERROR;
+                }
+            }
+
+            if (!domain_id_found)
             {
                 // Not even one
                 logError(XMLPARSER, "Node '" << DOMAIN_IDS << "' without content");
                 return XMLP_ret::XML_ERROR;
-            }
-
-            while (nullptr != p_aux1)
-            {
-                uint16_t id;
-                if (XMLP_ret::XML_OK != getXMLUint(p_aux1, &id, ident))
-                {
-                    return XMLP_ret::XML_ERROR;
-                }
-                domain_ids.push_back(id);
-                p_aux1 = p_aux1->NextSiblingElement(DOMAIN_ID);
             }
         }
         else
@@ -1931,14 +1948,14 @@ XMLP_ret XMLParser::getXMLDataSharingQos(
         }
     }
 
-    if (max_domains != 0 && domain_ids.size() > max_domains)
+    if (max_domains != 0 && domain_ids.size() > static_cast<uint32_t>(max_domains))
     {
         logError(XMLPARSER, "Node 'data_sharing' defines a maximum of " << max_domains
                 << " domain IDs but also define " << domain_ids.size() << " domain IDs");
         return XMLP_ret::XML_ERROR;
     }
 
-    data_sharing.set_max_domains(max_domains);
+    data_sharing.set_max_domains(static_cast<uint32_t>(max_domains));
 
     switch (kind)
     {
