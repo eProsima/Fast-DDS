@@ -657,9 +657,9 @@
     <xs:complexType name="dataSharingQosPolicyType">
         <xs:all>
             <xs:element name="kind" type="datasharingQosKindType" minOccurs="1"/>
-            <xs:element name="sharedDir" type="stringType" minOccurs="0"/>
-            <xs:element name="domainIds" type="domainIdVectorType" minOccurs="0"/>
-            <xs:element name="maxDomains" type="uint32Type" minOccurs="0"/>
+            <xs:element name="shared_dir" type="stringType" minOccurs="0"/>
+            <xs:element name="domain_ids" type="domainIdVectorType" minOccurs="0"/>
+            <xs:element name="max_domains" type="uint32Type" minOccurs="0"/>
         </xs:all>
     </xs:complexType>
 

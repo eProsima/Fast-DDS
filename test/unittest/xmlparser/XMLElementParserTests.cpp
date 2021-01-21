@@ -3296,11 +3296,11 @@ TEST_F(XMLParserTests, getXMLDataSharingQos)
                 "\
                 <data_sharing>\
                     <kind>%s</kind>\
-                    <sharedDir>shared_dir</sharedDir>\
-                    <domainIds>\
+                    <shared_dir>shared_dir</shared_dir>\
+                    <domain_ids>\
                         <domainId>10</domainId>\
                         <domainId>20</domainId>\
-                    </domainIds>\
+                    </domain_ids>\
                 </data_sharing>\
                 ";
         char xml[1000];
@@ -3343,11 +3343,11 @@ TEST_F(XMLParserTests, getXMLDataSharingQos)
                 "\
                 <data_sharing>\
                     <kind>%s</kind>\
-                    <maxDomains>5</maxDomains>\
-                    <domainIds>\
+                    <max_domains>5</max_domains>\
+                    <domain_ids>\
                         <domainId>10</domainId>\
                         <domainId>20</domainId>\
-                    </domainIds>\
+                    </domain_ids>\
                 </data_sharing>\
                 ";
         char xml[1000];
@@ -3390,7 +3390,7 @@ TEST_F(XMLParserTests, getXMLDataSharingQos)
                 "\
                 <data_sharing>\
                     <kind>%s</kind>\
-                    <sharedDir>shared_dir</sharedDir>\
+                    <shared_dir>shared_dir</shared_dir>\
                 </data_sharing>\
                 ";
         char xml[1000];

@@ -279,9 +279,9 @@ const char* WRITER_PAYLOAD_SIZE = "writerPayloadSize";
 const char* MUTATION_TRIES = "mutation_tries";
 const char* ACCESS_SCOPE = "access_scope";
 const char* ENABLED = "enabled";
-const char* DOMAIN_IDS = "domainIds";
-const char* SHARED_DIR = "sharedDir";
-const char* MAX_DOMAINS = "maxDomains";
+const char* DOMAIN_IDS = "domain_ids";
+const char* SHARED_DIR = "shared_dir";
+const char* MAX_DOMAINS = "max_domains";
 
 // Endpoint parser
 const char* STATICDISCOVERY = "staticdiscovery";
