@@ -2965,7 +2965,8 @@ public:
     RTPS_DllAPI void on(
             const std::string& directory)
     {
-        assert(!directory.empty());
+        // TODO [ILG]: This parameter is unused right now. Activate the assert once it is used
+        //assert(!directory.empty());
         setup (ON, directory, std::vector<uint16_t>());
     }
 
@@ -2980,7 +2981,8 @@ public:
             const std::string& directory,
             const std::vector<uint16_t>& domain_ids)
     {
-        assert(!directory.empty());
+        // TODO [ILG]: This parameter is unused right now. Activate the assert once it is used
+        //assert(!directory.empty());
         setup (ON, directory, domain_ids);
     }
 
