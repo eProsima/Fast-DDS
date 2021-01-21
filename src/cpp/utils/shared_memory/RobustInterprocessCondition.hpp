@@ -162,7 +162,7 @@ public:
      * @return boost ptime equivalent of the input std time_point.
      */
     static boost::posix_time::ptime steady_clock_time_point_to_ptime (
-        const std::chrono::time_point<std::chrono::steady_clock>& time_point)
+            const std::chrono::time_point<std::chrono::steady_clock>& time_point)
     {
         auto now = std::chrono::steady_clock::now();
         auto boost_now  =
@@ -209,7 +209,6 @@ public:
     {
         return timed_wait(lock, RobustInterprocessCondition::steady_clock_time_point_to_ptime(max_blocking_time), pred);
     }
-
 
 private:
 

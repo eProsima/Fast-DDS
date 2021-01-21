@@ -423,7 +423,8 @@ public:
      * @param source_timestamp the timestamp of the payload we want to recycle
      * @return whether a payload with the given source timestamp can be reused for a new change
      */
-    virtual bool is_datasharing_payload_reusable(const Time_t& source_timestamp) const = 0;
+    virtual bool is_datasharing_payload_reusable(
+            const Time_t& source_timestamp) const = 0;
 
 protected:
 

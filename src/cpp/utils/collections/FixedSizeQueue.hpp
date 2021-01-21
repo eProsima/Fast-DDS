@@ -55,7 +55,8 @@ public:
     using size_type = std::size_t;
     using difference_type = std::ptrdiff_t;
 
-    class iterator : public std::iterator<std::bidirectional_iterator_tag, difference_type, value_type, pointer, reference>
+    class iterator : public std::iterator<std::bidirectional_iterator_tag, difference_type, value_type, pointer,
+                reference>
     {
     public:
 
@@ -132,34 +133,34 @@ public:
 
         // Compares raw positions of the pointer, not order in the queue
         bool operator <(
-            const iterator& rhs) const
+                const iterator& rhs) const
         {
             return ptr_ < rhs.ptr_;
         }
 
         // Compares raw positions of the pointer, not order in the queue
         bool operator <=(
-            const iterator& rhs) const
+                const iterator& rhs) const
         {
             return *this < rhs || *this == rhs;
         }
 
         // Compares raw positions of the pointer, not order in the queue
         bool operator >(
-            const iterator& rhs) const
+                const iterator& rhs) const
         {
             return !(*this <= rhs);
         }
 
         // Compares raw positions of the pointer, not order in the queue
         bool operator >=(
-            const iterator& rhs) const
+                const iterator& rhs) const
         {
             return !(*this < rhs);
         }
 
         size_t operator -(
-            const iterator& rhs) const
+                const iterator& rhs) const
         {
             return ptr_ - rhs.ptr_;
         }
@@ -631,7 +632,7 @@ public:
     /**
      * Remove the element referenced by @c pos.
      * It keeps the order of the queue.
-     * 
+     *
      * @param pos the iterator referencing the element to remove from the queue.
      * @return the iterator to the next element on the queue
      */
@@ -661,7 +662,6 @@ public:
             return pos;
         }
     }
-
 
     allocator_type& get_allocator()
     {

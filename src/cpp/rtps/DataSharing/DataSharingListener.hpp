@@ -77,9 +77,11 @@ public:
     void notify(
             bool same_thread) override;
 
-    void change_removed_with_timestamp(int64_t timestamp) override;
+    void change_removed_with_timestamp(
+            int64_t timestamp) override;
 
-    void change_added_with_timestamp(int64_t timestamp) override;
+    void change_added_with_timestamp(
+            int64_t timestamp) override;
 
 protected:
 

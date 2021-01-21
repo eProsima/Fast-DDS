@@ -256,7 +256,8 @@ void DataSharingListener::notify(
     }
 }
 
-void DataSharingListener::change_removed_with_timestamp(int64_t timestamp)
+void DataSharingListener::change_removed_with_timestamp(
+        int64_t timestamp)
 {
     // This method should be called from the RTPSReader,
     // then, the reader's lock is protecting the concurrency on the value updates.
@@ -271,7 +272,8 @@ void DataSharingListener::change_removed_with_timestamp(int64_t timestamp)
     }
 }
 
-void DataSharingListener::change_added_with_timestamp(int64_t timestamp)
+void DataSharingListener::change_added_with_timestamp(
+        int64_t timestamp)
 {
     // This method should be called from the RTPSReader,
     // then, the reader's lock is protecting the concurrency on the value updates.
