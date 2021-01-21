@@ -25,13 +25,16 @@
 #include <fastdds/rtps/common/Time_t.h>
 #include <fastrtps/types/TypeIdentifier.h>
 
-#include <fastdds/rtps/common/Guid.h>
-#include <fastdds/rtps/common/SampleIdentity.h>
-#include <fastdds/rtps/attributes/RTPSParticipantAttributes.h>
-#include <fastrtps/types/TypesBase.h>
+#include <fastdds/dds/builtin/topic/ParticipantBuiltinTopicData.hpp>
+#include <fastdds/dds/builtin/topic/TopicBuiltinTopicData.hpp>
 #include <fastdds/dds/core/status/StatusMask.hpp>
 #include <fastdds/dds/core/Entity.hpp>
 #include <fastdds/dds/domain/qos/DomainParticipantQos.hpp>
+#include <fastdds/rtps/attributes/RTPSParticipantAttributes.h>
+#include <fastdds/rtps/common/Guid.h>
+#include <fastdds/rtps/common/SampleIdentity.h>
+#include <fastrtps/types/TypesBase.h>
+
 
 #include <utility>
 
@@ -75,8 +78,6 @@ class TopicQos;
 // Not implemented classes
 class ContentFilteredTopic;
 class MultiTopic;
-class ParticipantBuiltinTopicData;
-class TopicBuiltinTopicData;
 
 /**
  * Class DomainParticipant used to group Publishers and Subscribers into a single working unit.
@@ -558,7 +559,7 @@ public:
      * @return RETCODE_OK if everything correct, PRECONDITION_NOT_MET if participant does not exist
      */
     RTPS_DllAPI ReturnCode_t get_discovered_participant_data(
-            ParticipantBuiltinTopicData& participant_data,
+            builtin::ParticipantBuiltinTopicData& participant_data,
             const InstanceHandle_t& participant_handle) const;
 
     /**
@@ -576,7 +577,7 @@ public:
      * @return RETCODE_OK if everything correct, PRECONDITION_NOT_MET if topic does not exist
      */
     RTPS_DllAPI ReturnCode_t get_discovered_topic_data(
-            TopicBuiltinTopicData& topic_data,
+            builtin::TopicBuiltinTopicData& topic_data,
             const InstanceHandle_t& topic_handle) const;
 
     /**

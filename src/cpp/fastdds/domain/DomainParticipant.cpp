@@ -352,7 +352,7 @@ ReturnCode_t DomainParticipant::get_discovered_participants(
 }
 
 ReturnCode_t DomainParticipant::get_discovered_participant_data(
-        ParticipantBuiltinTopicData& participant_data,
+        builtin::ParticipantBuiltinTopicData& participant_data,
         const InstanceHandle_t& participant_handle) const
 {
     static_cast<void> (participant_data);
@@ -368,7 +368,7 @@ ReturnCode_t DomainParticipant::get_discovered_topics(
 }
 
 ReturnCode_t DomainParticipant::get_discovered_topic_data(
-        TopicBuiltinTopicData& topic_data,
+        builtin::TopicBuiltinTopicData& topic_data,
         const InstanceHandle_t& topic_handle) const
 {
     static_cast<void> (topic_data);

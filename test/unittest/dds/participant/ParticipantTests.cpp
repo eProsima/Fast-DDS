@@ -15,33 +15,35 @@
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
 
+#include <dds/core/types.hpp>
+#include <dds/domain/DomainParticipant.hpp>
+#include <dds/domain/qos/DomainParticipantQos.hpp>
+#include <dds/pub/Publisher.hpp>
+#include <dds/pub/qos/PublisherQos.hpp>
+#include <dds/sub/qos/SubscriberQos.hpp>
+#include <dds/sub/Subscriber.hpp>
+#include <dds/topic/Topic.hpp>
+#include <fastdds/dds/builtin/topic/ParticipantBuiltinTopicData.hpp>
+#include <fastdds/dds/builtin/topic/TopicBuiltinTopicData.hpp>
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
 #include <fastdds/dds/domain/DomainParticipantListener.hpp>
 #include <fastdds/dds/domain/qos/DomainParticipantQos.hpp>
+#include <fastdds/dds/publisher/DataWriter.hpp>
 #include <fastdds/dds/publisher/Publisher.hpp>
 #include <fastdds/dds/publisher/qos/PublisherQos.hpp>
-#include <fastdds/dds/subscriber/Subscriber.hpp>
-#include <fastdds/dds/subscriber/qos/SubscriberQos.hpp>
-#include <fastdds/dds/topic/qos/TopicQos.hpp>
-#include <fastdds/dds/publisher/DataWriter.hpp>
 #include <fastdds/dds/subscriber/DataReader.hpp>
-#include <dds/domain/DomainParticipant.hpp>
-#include <dds/domain/qos/DomainParticipantQos.hpp>
-#include <dds/pub/qos/PublisherQos.hpp>
-#include <dds/sub/qos/SubscriberQos.hpp>
-#include <dds/core/types.hpp>
-#include <dds/sub/Subscriber.hpp>
-#include <dds/pub/Publisher.hpp>
-#include <dds/topic/Topic.hpp>
+#include <fastdds/dds/subscriber/qos/SubscriberQos.hpp>
+#include <fastdds/dds/subscriber/Subscriber.hpp>
+#include <fastdds/dds/topic/qos/TopicQos.hpp>
 #include <fastdds/rtps/attributes/RTPSParticipantAttributes.h>
 #include <fastrtps/attributes/PublisherAttributes.h>
 #include <fastrtps/attributes/SubscriberAttributes.h>
-#include <fastrtps/xmlparser/XMLProfileManager.h>
 #include <fastrtps/types/DynamicDataFactory.h>
-#include <fastrtps/types/TypeDescriptor.h>
 #include <fastrtps/types/DynamicType.h>
 #include <fastrtps/types/DynamicTypePtr.h>
+#include <fastrtps/types/TypeDescriptor.h>
 #include <fastrtps/types/TypeObjectFactory.h>
+#include <fastrtps/xmlparser/XMLProfileManager.h>
 
 
 namespace eprosima {
@@ -2095,9 +2097,16 @@ TEST(ParticipantTests, UnsupportedMethods)
     ASSERT_EQ(participant->delete_contained_entities(), ReturnCode_t::RETCODE_UNSUPPORTED);
 
     std::vector<InstanceHandle_t> handle_vector({InstanceHandle_t()});
+    builtin::ParticipantBuiltinTopicData pbtd;
+    builtin::TopicBuiltinTopicData tbtd;
 
     ASSERT_EQ(participant->get_discovered_participants(handle_vector), ReturnCode_t::RETCODE_UNSUPPORTED);
+    ASSERT_EQ(
+        participant->get_discovered_participant_data(pbtd, InstanceHandle_t()), ReturnCode_t::RETCODE_UNSUPPORTED);
+
     ASSERT_EQ(participant->get_discovered_topics(handle_vector), ReturnCode_t::RETCODE_UNSUPPORTED);
+    ASSERT_EQ(
+        participant->get_discovered_topic_data(tbtd, InstanceHandle_t()), ReturnCode_t::RETCODE_UNSUPPORTED);
 
     ASSERT_EQ(participant->delete_topic(topic), ReturnCode_t::RETCODE_OK);
     ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), ReturnCode_t::RETCODE_OK);
