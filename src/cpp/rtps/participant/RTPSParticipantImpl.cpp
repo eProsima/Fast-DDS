@@ -449,11 +449,12 @@ RTPSParticipantImpl::~RTPSParticipantImpl()
 
 template <EndpointKind_t kind, octet no_key, octet with_key>
 bool RTPSParticipantImpl::preprocess_endpoint_attributes(
-        const char* debug_label,
         const EntityId_t& entity_id,
         EndpointAttributes& att,
         EntityId_t& entId)
 {
+    const char* debug_label = (att.endpointKind == WRITER ? "writer" : "reader");
+
     if (!att.unicastLocatorList.isValid())
     {
         logError(RTPS_PARTICIPANT, "Unicast Locator List for " << debug_label << " contains invalid Locator");
@@ -526,6 +527,9 @@ bool RTPSParticipantImpl::preprocess_endpoint_attributes(
         }
     }
 
+    // Error log level can be disable. Avoid unused warning
+    static_cast<void>(debug_label);
+
     return true;
 }
 
@@ -540,7 +544,7 @@ bool RTPSParticipantImpl::create_writer(
     std::string type = (param.endpoint.reliabilityKind == RELIABLE) ? "RELIABLE" : "BEST_EFFORT";
     logInfo(RTPS_PARTICIPANT, "Creating writer of type " << type);
     EntityId_t entId;
-    if (!preprocess_endpoint_attributes<WRITER, 0x03, 0x02>("writer", entity_id, param.endpoint, entId))
+    if (!preprocess_endpoint_attributes<WRITER, 0x03, 0x02>(entity_id, param.endpoint, entId))
     {
         return false;
     }
@@ -569,7 +573,7 @@ bool RTPSParticipantImpl::create_writer(
 
     // Get persistence service
     IPersistenceService* persistence = nullptr;
-    if (!get_persistence_service("writer", is_builtin, param.endpoint, persistence))
+    if (!get_persistence_service(is_builtin, param.endpoint, persistence))
     {
         return false;
     }
@@ -653,7 +657,7 @@ bool RTPSParticipantImpl::create_reader(
     std::string type = (param.endpoint.reliabilityKind == RELIABLE) ? "RELIABLE" : "BEST_EFFORT";
     logInfo(RTPS_PARTICIPANT, "Creating reader of type " << type);
     EntityId_t entId;
-    if (!preprocess_endpoint_attributes<READER, 0x04, 0x07>("reader", entity_id, param.endpoint, entId))
+    if (!preprocess_endpoint_attributes<READER, 0x04, 0x07>(entity_id, param.endpoint, entId))
     {
         return false;
     }
@@ -673,7 +677,7 @@ bool RTPSParticipantImpl::create_reader(
 
     // Get persistence service
     IPersistenceService* persistence = nullptr;
-    if (!get_persistence_service("reader", is_builtin, param.endpoint, persistence))
+    if (!get_persistence_service(is_builtin, param.endpoint, persistence))
     {
         return false;
     }
@@ -1532,12 +1536,13 @@ IPersistenceService* RTPSParticipantImpl::get_persistence_service(
 }
 
 bool RTPSParticipantImpl::get_persistence_service(
-        const char* debug_label,
         bool is_builtin,
         const EndpointAttributes& param,
         IPersistenceService*& service)
 {
     service = nullptr;
+
+    const char* debug_label = (param.endpointKind == WRITER ? "writer" : "reader");
 
     // Check if also support persistence with TRANSIENT_LOCAL.
     DurabilityKind_t durability_red_line = get_persistence_durability_red_line(is_builtin);
@@ -1556,6 +1561,10 @@ bool RTPSParticipantImpl::get_persistence_service(
             return false;
         }
     }
+
+    // Error log level can be disable. Avoid unused warning
+    static_cast<void>(debug_label);
+
     return true;
 }
 

@@ -12,6 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+add_subdirectory(log_macros)
+
 if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
     include(${PROJECT_SOURCE_DIR}/cmake/common/gtest.cmake)
     check_gtest()
@@ -76,7 +78,6 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             ${TINYXML2_LIBRARY}
             fastcdr
             )
-
         add_gtest(LogFileTests SOURCES ${LOGFILETESTS_TEST_SOURCE})
 
     endif()

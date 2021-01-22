@@ -23,8 +23,9 @@
 #include <regex>
 
 /**
- * eProsima log layer. Logging categories and verbosities can be specified dynamically at runtime. However, even on a category
- * not covered by the current verbosity level, there is some overhead on calling a log macro. For maximum performance, you can
+ * eProsima log layer. Logging categories and verbosities can be specified dynamically at runtime.
+ * However, even on a category not covered by the current verbosity level,
+ * there is some overhead on calling a log macro. For maximum performance, you can
  * opt out of logging any particular level by defining the following symbols:
  *
  * * define LOG_NO_ERROR
@@ -239,7 +240,7 @@ protected:
 #endif // if defined(WIN32)
 
 // Name of variables inside macros must be unique, or it could produce an error with external variables
-#ifndef LOG_NO_ERROR
+#if !HAVE_LOG_NO_ERROR
 #define logError_(cat, msg)                                                                                            \
     {                                                                                                                  \
         using namespace eprosima::fastdds::dds;                                                                        \
@@ -247,7 +248,7 @@ protected:
         fastdds_log_ss_tmp__ << msg;                                                                                   \
         Log::QueueLog(fastdds_log_ss_tmp__.str(), Log::Context{__FILE__, __LINE__, __func__, #cat}, Log::Kind::Error); \
     }
-#elif (defined(__INTERNALDEBUG) || defined(_INTERNALDEBUG))
+#elif (__INTERNALDEBUG || _INTERNALDEBUG)
 #define logError_(cat, msg)                                     \
     {                                                           \
         auto fastdds_log_lambda_tmp__ = [&]()                   \
@@ -261,7 +262,7 @@ protected:
 #define logError_(cat, msg)
 #endif // ifndef LOG_NO_ERROR
 
-#ifndef LOG_NO_WARNING
+#if !HAVE_LOG_NO_WARNING
 #define logWarning_(cat, msg)                                                                                       \
     {                                                                                                               \
         using namespace eprosima::fastdds::dds;                                                                     \
@@ -273,7 +274,7 @@ protected:
                 fastdds_log_ss_tmp__.str(), Log::Context{__FILE__, __LINE__, __func__, #cat}, Log::Kind::Warning);  \
         }                                                                                                           \
     }
-#elif (defined(__INTERNALDEBUG) || defined(_INTERNALDEBUG))
+#elif (__INTERNALDEBUG || _INTERNALDEBUG)
 #define logWarning_(cat, msg)                                   \
     {                                                           \
         auto fastdds_log_lambda_tmp__ = [&]()                   \
@@ -287,8 +288,7 @@ protected:
 #define logWarning_(cat, msg)
 #endif // ifndef LOG_NO_WARNING
 
-#if (defined(__INTERNALDEBUG) || defined(_INTERNALDEBUG)) && (defined(_DEBUG) || defined(__DEBUG)) &&   \
-    (!defined(LOG_NO_INFO))
+#if !HAVE_LOG_NO_INFO
 #define logInfo_(cat, msg)                                                                              \
     {                                                                                                   \
         using namespace eprosima::fastdds::dds;                                                         \
@@ -300,7 +300,7 @@ protected:
                     Log::Kind::Info);                                                                   \
         }                                                                                               \
     }
-#elif (defined(__INTERNALDEBUG) || defined(_INTERNALDEBUG))
+#elif (__INTERNALDEBUG || _INTERNALDEBUG)
 #define logInfo_(cat, msg)                                  \
     {                                                       \
         auto fastdds_log_lambda_tmp__ = [&]()               \
@@ -312,7 +312,8 @@ protected:
     }
 #else
 #define logInfo_(cat, msg)
-#endif // if (defined(__INTERNALDEBUG) || defined(_INTERNALDEBUG)) && (defined(_DEBUG) || defined(__DEBUG)) && (!defined(LOG_NO_INFO))
+#endif // ifndef LOG_NO_INFO
+
 
 } // namespace dds
 } // namespace fastdds

@@ -373,12 +373,11 @@ TEST_F(LogTests, stdout_consumer_stream)
     std::string out_string_out = out_stream_out.str();
     std::string::difference_type lines_out = std::count(out_string_out.begin(), out_string_out.end(), '\n');
 
-#if (defined(__INTERNALDEBUG) || defined(_INTERNALDEBUG)) && (defined(_DEBUG) || defined(__DEBUG)) && \
-    (!defined(LOG_NO_INFO))
+#if !HAVE_LOG_NO_INFO
     while (lines_out < 3)
 #else
     while (lines_out < 2)
-#endif // if (defined(__INTERNALDEBUG) || defined(_INTERNALDEBUG)) && (defined(_DEBUG) || defined(__DEBUG)) && (!defined(LOG_NO_INFO))
+#endif // !HAVE_LOG_NO_INFO
     {
         Log::Flush();
         std::cout.flush();
@@ -403,12 +402,11 @@ TEST_F(LogTests, stdout_consumer_stream)
     // then there should be 3 messages in the out buffer, one for the logError, one for the logWarning, and another one
     // for the logInfo.
     // Else, there should only be 2 messagea in the out buffer, corresponding to logError and logWarning.
-#if (defined(__INTERNALDEBUG) || defined(_INTERNALDEBUG)) && (defined(_DEBUG) || defined(__DEBUG)) && \
-    (!defined(LOG_NO_INFO))
+#if !HAVE_LOG_NO_INFO
     ASSERT_EQ(3, lines_out);
 #else
     ASSERT_EQ(2, lines_out);
-#endif // if (defined(__INTERNALDEBUG) || defined(_INTERNALDEBUG)) && (defined(_DEBUG) || defined(__DEBUG)) && (!defined(LOG_NO_INFO))
+#endif // if !HAVE_LOG_NO_INFO
     ASSERT_EQ(0, lines_err);
     std::cout << "Number of messages in the out buffer is correct: " << lines_out << std::endl;
     std::cout << "No messages in the err buffer: " << lines_err << std::endl;
@@ -460,12 +458,11 @@ TEST_F(LogTests, stdouterr_consumer_stream)
     std::string::difference_type lines_err = std::count(out_string_err.begin(), out_string_err.end(), '\n');
     std::string::difference_type lines_out = std::count(out_string_out.begin(), out_string_out.end(), '\n');
 
-#if (defined(__INTERNALDEBUG) || defined(_INTERNALDEBUG)) && (defined(_DEBUG) || defined(__DEBUG)) && \
-    (!defined(LOG_NO_INFO))
+#if !HAVE_LOG_NO_INFO
     while (lines_err < 1 || lines_out < 2)
 #else
     while (lines_err < 1 || lines_out < 1)
-#endif // if (defined(__INTERNALDEBUG) || defined(_INTERNALDEBUG)) && (defined(_DEBUG) || defined(__DEBUG)) && (!defined(LOG_NO_INFO))
+#endif // if !HAVE_LOG_NO_INFO
     {
         Log::Flush();
         std::cout.flush();
@@ -496,12 +493,11 @@ TEST_F(LogTests, stdouterr_consumer_stream)
     // If CMAKE_BUILD_TYPE is Debug, the INTERNAL_DEBUG flag was set, and the logInfo messages were not deactivated,
     // then there should be 2 messages in the out buffer, one for the logWarning, and another one for the logInfo.
     // Else, there should only be 1 message in the out buffer, corresponding to the logWarning.
-#if (defined(__INTERNALDEBUG) || defined(_INTERNALDEBUG)) && (defined(_DEBUG) || defined(__DEBUG)) && \
-    (!defined(LOG_NO_INFO))
+#if !HAVE_LOG_NO_INFO
     ASSERT_EQ(2, lines_out);
 #else
     ASSERT_EQ(1, lines_out);
-#endif // if (defined(__INTERNALDEBUG) || defined(_INTERNALDEBUG)) && (defined(_DEBUG) || defined(__DEBUG)) && (!defined(LOG_NO_INFO))
+#endif // if !HAVE_LOG_NO_INFO
     std::cout << "Number of messages in the out buffer is correct: " << lines_out << std::endl;
     // Reset the log module to the test default
     Reset();

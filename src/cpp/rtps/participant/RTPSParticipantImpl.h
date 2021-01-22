@@ -603,7 +603,6 @@ private:
      * using endpoint attributes (or participant
      * attributes if endpoint does not define a persistence service config)
      *
-     * @param [in]  debug_label Label indicating enpoint kind (reader or writer) for logs.
      * @param [in]  is_builtin  Whether the enpoint being created is a builtin one.
      * @param [in]  param       Attributes of the endpoint being created.
      * @param [out] service     Pointer to the persistence service.
@@ -613,14 +612,12 @@ private:
      * @return true if persistence service is created
      */
     bool get_persistence_service(
-            const char* debug_label,
             bool is_builtin,
             const EndpointAttributes& param,
             IPersistenceService*& service);
 
     template <EndpointKind_t kind, octet no_key, octet with_key>
     bool preprocess_endpoint_attributes(
-            const char* debug_label,
             const EntityId_t& entity_id,
             EndpointAttributes& att,
             EntityId_t& entId);
