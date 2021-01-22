@@ -546,7 +546,7 @@ public:
 
     /**
      * Retrieves the list of DomainParticipants that have been discovered in the domain and are not "ignored".
-     * @param participant_handles Reference to the vector where discovered participants will be returned
+     * @param participant_handles [out] Reference to the vector where discovered participants will be returned
      * @return RETCODE_OK if everything correct, error code otherwise
      */
     RTPS_DllAPI ReturnCode_t get_discovered_participants(
@@ -554,7 +554,7 @@ public:
 
     /**
      * Retrieves the DomainParticipant data of a discovered not ignored participant.
-     * @param participant_data Reference to the ParticipantBuiltinTopicData object to return the data
+     * @param participant_data [out] Reference to the ParticipantBuiltinTopicData object to return the data
      * @param participant_handle InstanceHandle of DomainParticipant to retrieve the data from
      * @return RETCODE_OK if everything correct, PRECONDITION_NOT_MET if participant does not exist
      */
@@ -564,7 +564,7 @@ public:
 
     /**
      * Retrieves the list of topics that have been discovered in the domain and are not "ignored".
-     * @param topic_handles Reference to the vector where discovered topics will be returned
+     * @param topic_handles [out] Reference to the vector where discovered topics will be returned
      * @return RETCODE_OK if everything correct, error code otherwise
      */
     RTPS_DllAPI ReturnCode_t get_discovered_topics(
@@ -572,7 +572,7 @@ public:
 
     /**
      * Retrieves the Topic data of a discovered not ignored topic.
-     * @param topic_data Reference to the TopicBuiltinTopicData object to return the data
+     * @param topic_data [out] Reference to the TopicBuiltinTopicData object to return the data
      * @param topic_handle InstanceHandle of Topic to retrieve the data from
      * @return RETCODE_OK if everything correct, PRECONDITION_NOT_MET if topic does not exist
      */

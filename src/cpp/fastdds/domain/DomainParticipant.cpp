@@ -18,8 +18,9 @@
  */
 
 #include <fastdds/dds/domain/DomainParticipant.hpp>
-#include <fastdds/domain/DomainParticipantImpl.hpp>
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
+#include <fastdds/dds/log/Log.hpp>
+#include <fastdds/domain/DomainParticipantImpl.hpp>
 
 using namespace eprosima;
 using namespace eprosima::fastdds::dds;
@@ -176,6 +177,7 @@ ContentFilteredTopic* DomainParticipant::create_contentfilteredtopic(
     static_cast<void> (related_topic);
     static_cast<void> (filter_expression);
     static_cast<void> (expression_parameters);
+    logWarning(DOMAIN_PARTICIPANT, "create_contentfilteredtopic method not implemented");
     return nullptr;
 }
 
@@ -196,6 +198,7 @@ MultiTopic* DomainParticipant::create_multitopic(
     static_cast<void> (type_name);
     static_cast<void> (subscription_expression);
     static_cast<void> (expression_parameters);
+    logWarning(DOMAIN_PARTICIPANT, "create_multitopic method not implemented");
     return nullptr;
 }
 
@@ -212,6 +215,7 @@ Topic* DomainParticipant::find_topic(
 {
     static_cast<void> (topic_name);
     static_cast<void> (timeout);
+    logWarning(DOMAIN_PARTICIPANT, "find_topic method not implemented");
     return nullptr;
 }
 
@@ -223,6 +227,7 @@ TopicDescription* DomainParticipant::lookup_topicdescription(
 
 const Subscriber* DomainParticipant::get_builtin_subscriber() const
 {
+    logWarning(DOMAIN_PARTICIPANT, "get_builtin_subscriber method not implemented");
     return nullptr;
 }
 
