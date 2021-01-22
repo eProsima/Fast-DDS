@@ -8,6 +8,7 @@ int main(
 {
     int arg_count = 1;
     bool notexit = false;
+    bool fixed_type = false;
     uint32_t seed = 7800;
     uint32_t samples = 4;
     uint32_t publishers = 1;
@@ -19,6 +20,11 @@ int main(
         if (strcmp(argv[arg_count], "--notexit") == 0)
         {
             notexit = true;
+        }
+        else if (strcmp(argv[arg_count], "--fixed") == 0)
+        {
+            std::cout << "--fixed set: using FixedSizedType" << std::endl;
+            fixed_type = true;
         }
         else if (strcmp(argv[arg_count], "--seed") == 0)
         {
@@ -81,7 +87,7 @@ int main(
 
     Subscriber subscriber(publishers, samples);
 
-    if (subscriber.init(seed, magic))
+    if (subscriber.init(seed, magic, fixed_type))
     {
         return subscriber.run(notexit) ? 0 : -1;
     }

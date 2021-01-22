@@ -40,7 +40,8 @@ Subscriber::~Subscriber()
 
 bool Subscriber::init(
         uint32_t seed,
-        const std::string& magic)
+        const std::string& magic,
+        bool fixed_type /* = false */)
 {
     eprosima::fastrtps::ParticipantAttributes participant_attributes;
     eprosima::fastrtps::Domain::getDefaultParticipantAttributes(participant_attributes);
@@ -52,8 +53,19 @@ bool Subscriber::init(
         return false;
     }
 
+    // Construct a FixedSizedType if fixed type is required, defult HelloWorldType
+    if (fixed_type)
+    {
+        type_ = new FixedSizedType();
+        std::cout << "type: " << type_->getName() << std::endl;
+    }
+    else
+    {
+        type_ = new HelloWorldType();
+    }
+
     //Register the type
-    eprosima::fastrtps::Domain::registerType(participant_, &type_);
+    eprosima::fastrtps::Domain::registerType(participant_, type_);
 
     // Generate topic name
     std::ostringstream topic;
@@ -63,7 +75,7 @@ bool Subscriber::init(
     eprosima::fastrtps::SubscriberAttributes subscriber_attributes;
     eprosima::fastrtps::Domain::getDefaultSubscriberAttributes(subscriber_attributes);
     subscriber_attributes.topic.topicKind = eprosima::fastrtps::rtps::NO_KEY;
-    subscriber_attributes.topic.topicDataType = type_.getName();
+    subscriber_attributes.topic.topicDataType = type_->getName();
     subscriber_attributes.topic.topicName = topic.str();
     subscriber_attributes.qos.m_liveliness.lease_duration = 3;
     subscriber_attributes.qos.m_liveliness.kind = eprosima::fastrtps::AUTOMATIC_LIVELINESS_QOS;

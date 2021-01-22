@@ -37,7 +37,8 @@ Publisher::~Publisher()
 
 bool Publisher::init(
         uint32_t seed,
-        const std::string& magic)
+        const std::string& magic,
+        bool fixed_type /* = false */)
 {
     eprosima::fastrtps::ParticipantAttributes participant_attributes;
     eprosima::fastrtps::Domain::getDefaultParticipantAttributes(participant_attributes);
@@ -49,7 +50,18 @@ bool Publisher::init(
         return false;
     }
 
-    eprosima::fastrtps::Domain::registerType(participant_, &type_);
+    // Construct a FixedSizedType if fixed type is required, defult HelloWorldType
+    if (fixed_type)
+    {
+        type_ = new FixedSizedType();
+        std::cout << "type: " << type_->getName() << std::endl;
+    }
+    else
+    {
+        type_ = new HelloWorldType();
+    }
+
+    eprosima::fastrtps::Domain::registerType(participant_, type_);
 
     // Generate topic name
     std::ostringstream topic;
@@ -59,7 +71,7 @@ bool Publisher::init(
     eprosima::fastrtps::PublisherAttributes publisher_attributes;
     eprosima::fastrtps::Domain::getDefaultPublisherAttributes(publisher_attributes);
     publisher_attributes.topic.topicKind = eprosima::fastrtps::rtps::NO_KEY;
-    publisher_attributes.topic.topicDataType = type_.getName();
+    publisher_attributes.topic.topicDataType = type_->getName();
     publisher_attributes.topic.topicName = topic.str();
     publisher_attributes.qos.m_liveliness.lease_duration = 3;
     publisher_attributes.qos.m_liveliness.announcement_period = 1;

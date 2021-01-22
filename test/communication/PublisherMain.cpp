@@ -8,6 +8,7 @@ int main(
 {
     int arg_count = 1;
     bool exit_on_lost_liveliness = false;
+    bool fixed_type = false;
     uint32_t seed = 7800, wait = 0;
     char* xml_file = nullptr;
     uint32_t samples = 4;
@@ -18,6 +19,10 @@ int main(
         if (strcmp(argv[arg_count], "--exit_on_lost_liveliness") == 0)
         {
             exit_on_lost_liveliness = true;
+        }
+        else if (strcmp(argv[arg_count], "--fixed") == 0)
+        {
+            fixed_type = true;
         }
         else if (strcmp(argv[arg_count], "--seed") == 0)
         {
@@ -70,6 +75,7 @@ int main(
             xml_file = argv[arg_count];
         }
 
+
         ++arg_count;
     }
 
@@ -80,7 +86,7 @@ int main(
 
     Publisher publisher(exit_on_lost_liveliness);
 
-    if (publisher.init(seed, magic))
+    if (publisher.init(seed, magic, fixed_type))
     {
         if (wait > 0)
         {
