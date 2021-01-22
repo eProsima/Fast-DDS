@@ -137,12 +137,13 @@ void DataSharingListener::process_new_data ()
             reader_->assert_writer_liveliness(pool->writer());
         }
 
+        uint64_t last_payload = pool->end();
         bool has_new_payload = true;
         while (has_new_payload)
         {
             CacheChange_t ch;
             SequenceNumber_t last_sequence = c_SequenceNumber_Unknown;
-            pool->get_next_unread_payload(ch, last_sequence);
+            pool->get_next_unread_payload(ch, last_sequence, last_payload);
             has_new_payload = ch.sequenceNumber != c_SequenceNumber_Unknown;
 
             if (has_new_payload)

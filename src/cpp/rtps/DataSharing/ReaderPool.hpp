@@ -136,12 +136,24 @@ public:
             CacheChange_t& cache_change,
             SequenceNumber_t& last_sequence_number)
     {
+        get_next_unread_payload(cache_change, last_sequence_number, end());
+    }
+
+    void get_next_unread_payload(
+            CacheChange_t& cache_change,
+            SequenceNumber_t& last_sequence_number,
+            uint64_t until)
+    {
         last_sequence_number = last_sn_;
 
-        while (next_payload_ < end())
+        while (next_payload_ < until)
         {
             // First ensure we are not too far behind
-            ensure_reading_reference_is_in_bounds();
+            // This may move the next_payload_ past the until value
+            if (!ensure_reading_reference_is_in_bounds() && next_payload_ >= until)
+            {
+                break;
+            }
 
             // history_[next_payload_] contains the offset to the payload
             PayloadNode* payload = static_cast<PayloadNode*>(
