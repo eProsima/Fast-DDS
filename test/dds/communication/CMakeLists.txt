@@ -25,33 +25,95 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER) AND fastcdr_FOUND)
     ###############################################################################
     # Binaries
     ###############################################################################
-    set(DDS_PUBLISHER_SOURCE
-        Publisher.cpp
-        )
-    add_executable(DDSSimpleCommunicationPublisher ${DDS_PUBLISHER_SOURCE})
-    target_compile_definitions(DDSSimpleCommunicationPublisher PRIVATE
-        $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
-        $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
-        )
-    target_link_libraries(DDSSimpleCommunicationPublisher fastrtps fastcdr foonathan_memory ${CMAKE_DL_LIBS})
 
-    set(DDS_SUBSCRIBER_SOURCE
-        Subscriber.cpp
+    # Dynamic types test
+    set(DDS_PUBLISHER_DYNAMIC_SOURCE
+        PublisherDynamic.cpp
         )
-    add_executable(DDSSimpleCommunicationSubscriber ${DDS_SUBSCRIBER_SOURCE})
-    target_compile_definitions(DDSSimpleCommunicationSubscriber PRIVATE
+    add_executable(DDSSimpleCommunicationDynamicPublisher ${DDS_PUBLISHER_DYNAMIC_SOURCE})
+    target_compile_definitions(DDSSimpleCommunicationDynamicPublisher PRIVATE
         $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
         $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
         )
-    target_link_libraries(DDSSimpleCommunicationSubscriber fastrtps fastcdr foonathan_memory ${CMAKE_DL_LIBS})
+    target_link_libraries(DDSSimpleCommunicationDynamicPublisher fastrtps fastcdr foonathan_memory ${CMAKE_DL_LIBS})
+
+    set(DDS_SUBSCRIBER_DYNAMIC_SOURCE
+        SubscriberDynamic.cpp
+        )
+    add_executable(DDSSimpleCommunicationDynamicSubscriber ${DDS_SUBSCRIBER_DYNAMIC_SOURCE})
+    target_compile_definitions(DDSSimpleCommunicationDynamicSubscriber PRIVATE
+        $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
+        $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
+        )
+    target_link_libraries(DDSSimpleCommunicationDynamicSubscriber fastrtps fastcdr foonathan_memory ${CMAKE_DL_LIBS})
+
+    # Standar tests
+    set(COMMON_SOURCE ${PROJECT_SOURCE_DIR}/test/blackbox/types/HelloWorld.cpp
+        ${PROJECT_SOURCE_DIR}/test/blackbox/types/HelloWorldType.cpp
+        ${PROJECT_SOURCE_DIR}/test/blackbox/types/FixedSized.cpp
+        ${PROJECT_SOURCE_DIR}/test/blackbox/types/FixedSizedType.cpp
+        )
+
+    set(DDS_PUBLISHER_SOURCE ${COMMON_SOURCE}
+        PublisherModule.cpp
+        PublisherMain.cpp
+        )
+    add_executable(DDSCommunicationPublisher ${DDS_PUBLISHER_SOURCE})
+    target_compile_definitions(DDSCommunicationPublisher PRIVATE
+        $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
+        $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
+        )
+    target_include_directories(DDSCommunicationPublisher PRIVATE ${PROJECT_SOURCE_DIR}/test/blackbox)
+    target_link_libraries(DDSCommunicationPublisher fastrtps fastcdr foonathan_memory ${CMAKE_DL_LIBS})
+
+    set(DDS_SUBSCRIBER_SOURCE ${COMMON_SOURCE}
+        SubscriberModule.cpp
+        SubscriberMain.cpp
+        )
+    add_executable(DDSCommunicationSubscriber ${DDS_SUBSCRIBER_SOURCE})
+    target_compile_definitions(DDSCommunicationSubscriber PRIVATE
+        $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
+        $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
+        )
+    target_include_directories(DDSCommunicationSubscriber PRIVATE ${PROJECT_SOURCE_DIR}/test/blackbox)
+    target_link_libraries(DDSCommunicationSubscriber fastrtps fastcdr foonathan_memory ${CMAKE_DL_LIBS})
 
     ###############################################################################
     # Necessary files
     ###############################################################################
+    # Dynamic types test
     configure_file(${CMAKE_CURRENT_SOURCE_DIR}/simple_communication.py
         ${CMAKE_CURRENT_BINARY_DIR}/simple_communication.py COPYONLY)
     configure_file(${CMAKE_CURRENT_SOURCE_DIR}/example_type.xml
         ${CMAKE_CURRENT_BINARY_DIR}/example_type.xml COPYONLY)
+
+    # Standar tests
+
+    list(APPEND TEST_DEFINITIONS
+            simple_communication
+        )
+
+
+    list(APPEND XML_CONFIGURATION_FILES
+        simple_reliable.xml
+    )
+    # Python file
+    configure_file(${CMAKE_CURRENT_SOURCE_DIR}/test_build.py
+        ${CMAKE_CURRENT_BINARY_DIR}/test_build.py COPYONLY)
+
+    # XML files
+    foreach(XML_FILE IN LISTS XML_CONFIGURATION_FILES)
+        configure_file(${CMAKE_CURRENT_SOURCE_DIR}/${XML_FILE}
+            ${CMAKE_CURRENT_BINARY_DIR}/${XML_FILE} COPYONLY)
+    endforeach()
+
+    # JSON files
+    foreach(TEST_FILE IN LISTS TEST_DEFINITIONS)
+        configure_file(${CMAKE_CURRENT_SOURCE_DIR}/${TEST_FILE}.json
+            ${CMAKE_CURRENT_BINARY_DIR}/${TEST_FILE}.json COPYONLY)
+    endforeach()
+
+
     if(SECURITY)
         configure_file(${PROJECT_SOURCE_DIR}/test/certs/maincacert.pem
             ${CMAKE_CURRENT_BINARY_DIR}/maincacert.pem COPYONLY)
@@ -69,7 +131,12 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER) AND fastcdr_FOUND)
             ${CMAKE_CURRENT_BINARY_DIR}/permissions_helloworld.smime COPYONLY)
     endif()
 
+
+    ###############################################################################
+    # Tests specification
+    ###############################################################################
     if(PYTHONINTERP_FOUND)
+        # Dynamic types test
         add_test(NAME DDSSimpleCommunicationTypeDiscovery
             COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/simple_communication.py)
 
@@ -77,13 +144,38 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER) AND fastcdr_FOUND)
         set_property(TEST DDSSimpleCommunicationTypeDiscovery PROPERTY LABELS "NoMemoryCheck")
 
         set_property(TEST DDSSimpleCommunicationTypeDiscovery PROPERTY ENVIRONMENT
-            "DDS_SIMPLE_COMMUNICATION_PUBLISHER_BIN=$<TARGET_FILE:DDSSimpleCommunicationPublisher>")
+            "DDS_SIMPLE_COMMUNICATION_PUBLISHER_BIN=$<TARGET_FILE:DDSSimpleCommunicationDynamicPublisher>")
         set_property(TEST DDSSimpleCommunicationTypeDiscovery APPEND PROPERTY ENVIRONMENT
-            "DDS_SIMPLE_COMMUNICATION_SUBSCRIBER_BIN=$<TARGET_FILE:DDSSimpleCommunicationSubscriber>")
+            "DDS_SIMPLE_COMMUNICATION_SUBSCRIBER_BIN=$<TARGET_FILE:DDSSimpleCommunicationDynamicSubscriber>")
         if(WIN32)
             string(REPLACE ";" "\\;" WIN_PATH "$ENV{PATH}")
             set_property(TEST DDSSimpleCommunicationTypeDiscovery APPEND PROPERTY ENVIRONMENT
                 "PATH=$<TARGET_FILE_DIR:${PROJECT_NAME}>\\;$<TARGET_FILE_DIR:fastcdr>\\;${WIN_PATH}")
         endif()
+
+        # Standar types test
+        set(TEST_BUILDER ${BINARY_TEST_DIR}test_build.py)
+
+        foreach(TEST_DEFINITION IN LISTS TEST_DEFINITIONS)
+            set(TEST_NAME DDSCommunication_${TEST_DEFINITION})
+            add_test(
+                NAME ${TEST_NAME}
+                COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/${TEST_BUILDER}
+                ${TEST_DEFINITION}.json
+            )
+
+            # Set test with label NoMemoryCheck
+            set_property(TEST ${TEST_NAME} PROPERTY LABELS "NoMemoryCheck")
+
+            set_property(TEST ${TEST_NAME} PROPERTY ENVIRONMENT
+                "DDS_SIMPLE_COMMUNICATION_PUBLISHER_BIN=$<TARGET_FILE:DDSCommunicationPublisher>")
+            set_property(TEST ${TEST_NAME} APPEND PROPERTY ENVIRONMENT
+                "DDS_SIMPLE_COMMUNICATION_SUBSCRIBER_BIN=$<TARGET_FILE:DDSCommunicationSubscriber>")
+            if(WIN32)
+                string(REPLACE ";" "\\;" WIN_PATH "$ENV{PATH}")
+                set_property(TEST ${TEST_NAME} APPEND PROPERTY ENVIRONMENT
+                    "PATH=$<TARGET_FILE_DIR:${PROJECT_NAME}>\\;$<TARGET_FILE_DIR:fastcdr>\\;${WIN_PATH}")
+            endif()
+        endforeach()
     endif()
 endif()
