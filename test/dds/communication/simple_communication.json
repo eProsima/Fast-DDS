@@ -1,0 +1,12 @@
+{
+    "participants" : [
+        {
+            "kind" : "subscriber",
+            "xmlfile" : "simple_reliable.xml"
+        },
+        {
+            "kind" : "publisher",
+            "xmlfile" : "simple_reliable.xml"
+        }
+    ]
+}
