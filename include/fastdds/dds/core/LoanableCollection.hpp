@@ -93,7 +93,7 @@ public:
      *
      * @param [in] new_length New number of elements to be accessible.
      *
-     * @return true if the new length was correcly set.
+     * @return true if the new length was correctly set.
      *
      * @post length() == new_length
      * @post maximum() >= new_length
