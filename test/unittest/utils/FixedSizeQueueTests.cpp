@@ -76,7 +76,7 @@ public:
     {
         // Should be empty and allocated
         ASSERT_TRUE(uut.empty());
-        ASSERT_EQ(uut.size(), 0);
+        ASSERT_EQ(uut.size(), 0u);
         ASSERT_EQ(uut.capacity(), CAPACITY);
 
         // Add all items and check no errors
