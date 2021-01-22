@@ -65,6 +65,7 @@ const char* HEALTHY_CHECK_TIMEOUT_MS = "healthy_check_timeout_ms";
 const char* DISCARD = "DISCARD";
 const char* FAIL = "FAIL";
 const char* RTPS_DUMP_FILE = "rtps_dump_file";
+const char* ON = "ON";
 
 const char* OFF = "OFF";
 const char* USER_DATA_ONLY = "USER_DATA_ONLY";
@@ -170,8 +171,8 @@ const char* EXCLUSIVE = "EXCLUSIVE";
 // const char* DURATION_INFINITE_SEC = R"xsd(\s*(DURATION_INFINITY|DURATION_INFINITE_SEC)\s*)xsd";
 // const char* DURATION_INFINITE_NSEC = R"xsd(\s*(DURATION_INFINITY|DURATION_INFINITE_NSEC)\s*)xsd";
 const char* DURATION_INFINITY = R"xsd(\s*(DURATION_INFINITY|DURATION_INFINITE_SEC|DURATION_INFINITE_NSEC)\s*)xsd";
-const char* DURATION_INFINITE_SEC = DURATION_INFINITY; 
-const char* DURATION_INFINITE_NSEC = DURATION_INFINITY; 
+const char* DURATION_INFINITE_SEC = DURATION_INFINITY;
+const char* DURATION_INFINITE_NSEC = DURATION_INFINITY;
 /// QOS
 const char* DURABILITY = "durability";
 const char* DURABILITY_SRV = "durabilityService";
@@ -190,6 +191,7 @@ const char* TOPIC_DATA = "topicData";
 const char* GROUP_DATA = "groupData";
 const char* PUB_MODE = "publishMode";
 const char* DISABLE_POSITIVE_ACKS = "disablePositiveAcks";
+const char* DATA_SHARING = "data_sharing";
 
 const char* SYNCHRONOUS = "SYNCHRONOUS";
 const char* ASYNCHRONOUS = "ASYNCHRONOUS";
@@ -231,6 +233,7 @@ const char* HISTORY_QOS = "historyQos";
 const char* RES_LIMITS_QOS = "resourceLimitsQos";
 const char* DEPTH = "depth";
 const char* ALLOCATED_SAMPLES = "allocated_samples";
+const char* EXTRA_SAMPLES = "extra_samples";
 const char* BYTES_PER_SECOND = "bytesPerPeriod";
 const char* PERIOD_MILLISECS = "periodMillisecs";
 const char* PORT_BASE = "portBase";
@@ -276,6 +279,9 @@ const char* WRITER_PAYLOAD_SIZE = "writerPayloadSize";
 const char* MUTATION_TRIES = "mutation_tries";
 const char* ACCESS_SCOPE = "access_scope";
 const char* ENABLED = "enabled";
+const char* DOMAIN_IDS = "domain_ids";
+const char* SHARED_DIR = "shared_dir";
+const char* MAX_DOMAINS = "max_domains";
 
 // Endpoint parser
 const char* STATICDISCOVERY = "staticdiscovery";
