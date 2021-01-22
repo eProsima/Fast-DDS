@@ -2096,6 +2096,7 @@ TEST(ParticipantTests, UnsupportedMethods)
 
     ASSERT_EQ(participant->delete_contained_entities(), ReturnCode_t::RETCODE_UNSUPPORTED);
 
+    // Discovery methods
     std::vector<InstanceHandle_t> handle_vector({InstanceHandle_t()});
     builtin::ParticipantBuiltinTopicData pbtd;
     builtin::TopicBuiltinTopicData tbtd;
