@@ -21,6 +21,8 @@
 #ifndef _FASTDDS_STATUSMASK_HPP_
 #define _FASTDDS_STATUSMASK_HPP_
 
+#include <fastrtps/fastrtps_dll.h>
+
 #include <bitset>
 #include <sstream>
 
@@ -40,7 +42,8 @@ namespace dds {
  * - set conditions in dds::core::cond::StatusCondition
  * - indicate status changes when calling dds::core::Entity::status_changes
  */
-class StatusMask : public std::bitset<FASTDDS_STATUS_COUNT>
+
+class RTPS_DllAPI StatusMask : public std::bitset<FASTDDS_STATUS_COUNT>
 {
 public:
 
