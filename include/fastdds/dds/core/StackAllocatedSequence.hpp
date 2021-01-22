@@ -60,7 +60,7 @@ struct StackAllocatedSequence : public LoanableCollection
             StackAllocatedSequence&&) = delete;
 
     /**
-     * Set the n-th element of the sequence.
+     * Set an element of the sequence.
      *
      * This is the operator that is invoked when the application indexes into a @em non-const sequence:
      * @code{.cpp}
@@ -68,11 +68,11 @@ struct StackAllocatedSequence : public LoanableCollection
      * sequence[n] = element;
      * @endcode
      *
-     * Note that a @em reference to the n-th element is returned (and not a copy)
+     * Note that a @em reference to the element is returned (and not a copy)
      *
      * @param [in] n index of element to access, must be >= 0 and less than length().
      *
-     * @return a reference to the n-th element
+     * @return a reference to the element at position @c n
      */
     T& operator [](
             size_type n)
@@ -86,18 +86,18 @@ struct StackAllocatedSequence : public LoanableCollection
     }
 
     /**
-     * Get the n-th element of the sequence.
+     * Get an element of the sequence.
      *
      * This is the operator that is invoked when the application indexes into a @em const sequence:
      * @code{.cpp}
      * element = sequence[n];
      * @endcode
      *
-     * Note that a @em reference to the n-th element is returned (and not a copy)
+     * Note that a @em reference to the element is returned (and not a copy)
      *
      * @param [in] n index of element to access, must be >= 0 and less than length().
      *
-     * @return a const reference to the n-th element
+     * @return a const reference to the element at position @n
      */
     const T& operator [](
             size_type n) const
