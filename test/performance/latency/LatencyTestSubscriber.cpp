@@ -179,6 +179,13 @@ bool LatencyTestSubscriber::init(
         return false;
     }
 
+    /* Create Subscriber */
+    subscriber_ = participant_->create_subscriber(SUBSCRIBER_QOS_DEFAULT, nullptr);
+    if (subscriber_ == nullptr)
+    {
+        return false;
+    }
+
     /* Create Topics */
     {
         ostringstream topic_name;
@@ -199,8 +206,10 @@ bool LatencyTestSubscriber::init(
             return false;
         }
 
-        topic_name.str("LatencyTest_");
+        topic_name.str("");
         topic_name.clear();
+        topic_name << "LatencyTest_";
+
         if (hostname)
         {
             topic_name << asio::ip::host_name() << "_";
@@ -217,8 +226,10 @@ bool LatencyTestSubscriber::init(
             return false;
         }
 
-        topic_name.str("LatencyTest_Command_");
+        topic_name.str("");
         topic_name.clear();
+        topic_name << "LatencyTest_Command_";
+
         if (hostname)
         {
             topic_name << asio::ip::host_name() << "_";
@@ -235,8 +246,10 @@ bool LatencyTestSubscriber::init(
             return false;
         }
 
-        topic_name.str("LatencyTest_Command_");
+        topic_name.str("");
         topic_name.clear();
+        topic_name << "LatencyTest_Command_";
+
         if (hostname)
         {
             topic_name << asio::ip::host_name() << "_";
@@ -256,7 +269,7 @@ bool LatencyTestSubscriber::init(
 
     /* Create Echo DataWriter */
     {
-        string profile_name = "sub_publisher_profile";
+       string profile_name = "sub_publisher_profile";
         DataWriterQos dw_qos;
 
         if (reliable)
@@ -373,6 +386,13 @@ bool LatencyTestSubscriber::init(
     return true;
 }
 
+/*
+ * Our current inplementation of MatchedStatus info:
+ * - total_count(_change) holds the actual number of matches
+ * - current_count(_change) is a flag to signal match or unmatch.
+ *   (TODO: review if fits standard definition)
+ * */
+
 void LatencyTestSubscriber::LatencyDataWriterListener::on_publication_matched(
         DataWriter* writer,
         const PublicationMatchedStatus& info)
@@ -381,7 +401,7 @@ void LatencyTestSubscriber::LatencyDataWriterListener::on_publication_matched(
 
     lock_guard<mutex> lock(latency_subscriber_->mutex_);
 
-    matched_ = info.current_count;
+    matched_ = info.total_count;
 
     if (info.current_count_change > 0)
     {
@@ -399,7 +419,7 @@ void LatencyTestSubscriber::LatencyDataReaderListener::on_subscription_matched(
 
     lock_guard<mutex> lock(latency_subscriber_->mutex_);
 
-    matched_ = info.current_count;
+    matched_ = info.total_count;
 
     if (info.current_count_change > 0)
     {
@@ -417,7 +437,7 @@ void LatencyTestSubscriber::ComandWriterListener::on_publication_matched(
 
     lock_guard<mutex> lock(latency_subscriber_->mutex_);
 
-    matched_ = info.current_count;
+    matched_ = info.total_count;
 
     if (info.current_count_change > 0)
     {
@@ -435,7 +455,7 @@ void LatencyTestSubscriber::CommandReaderListener::on_subscription_matched(
 
     lock_guard<mutex> lock(latency_subscriber_->mutex_);
 
-    matched_ = info.current_count;
+    matched_ = info.total_count;
 
     if (info.current_count_change > 0)
     {
@@ -582,7 +602,12 @@ bool LatencyTestSubscriber::test(
     received_ = 0;
     TestCommandType command;
     command.m_command = BEGIN;
-    command_writer_->write(&command);
+    if (!command_writer_->write(&command))
+    {
+        logError(LatencyTest, "Subscriber fail to publish the BEGIN command")
+        return false;
+    }
+
     logInfo(LatencyTest, "Testing with data size: " << datasize + 4);
 
     // Wait for the STOP or STOP_ERROR commands

@@ -255,6 +255,10 @@ int main(
         int argc,
         char** argv)
 {
+
+    Log::SetVerbosity(Log::Kind::Info);
+    Log::SetCategoryFilter( std::regex("LatencyTest"));
+
     int columns;
 
 #if defined(_WIN32)

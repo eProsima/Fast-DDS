@@ -145,11 +145,7 @@ bool LatencyTestPublisher::init(
     for (vector<uint32_t>::iterator it = data_size_pub_.begin(); it != data_size_pub_.end(); ++it)
     {
         // Reliability
-        string str_reliable = "besteffort";
-        if (reliable_)
-        {
-            str_reliable = "reliable";
-        }
+        string str_reliable = reliable_ ? "reliable" : "besteffort";
 
         // Summary files
         *output_files_[MINIMUM_INDEX] << "\"" << samples_ << " samples of " << *it + 4 << " bytes (us)\"";
@@ -248,6 +244,13 @@ bool LatencyTestPublisher::init(
         return false;
     }
 
+    /* Create Subscriber */
+    subscriber_ = participant_->create_subscriber(SUBSCRIBER_QOS_DEFAULT, nullptr);
+    if (subscriber_ == nullptr)
+    {
+        return false;
+    }
+
     /* Create Topics */
     {
         ostringstream topic_name;
@@ -268,8 +271,10 @@ bool LatencyTestPublisher::init(
             return false;
         }
 
-        topic_name.str("LatencyTest_");
+        topic_name.str("");
         topic_name.clear();
+        topic_name << "LatencyTest_";
+
         if (hostname)
         {
             topic_name << asio::ip::host_name() << "_";
@@ -286,8 +291,10 @@ bool LatencyTestPublisher::init(
             return false;
         }
 
-        topic_name.str("LatencyTest_Command_");
+        topic_name.str("");
         topic_name.clear();
+        topic_name << "LatencyTest_Command_";
+
         if (hostname)
         {
             topic_name << asio::ip::host_name() << "_";
@@ -304,8 +311,10 @@ bool LatencyTestPublisher::init(
             return false;
         }
 
-        topic_name.str("LatencyTest_Command_");
+        topic_name.str("");
         topic_name.clear();
+        topic_name << "LatencyTest_Command_";
+
         if (hostname)
         {
             topic_name << asio::ip::host_name() << "_";
@@ -458,6 +467,13 @@ bool LatencyTestPublisher::init(
     return true;
 }
 
+/*
+ * Our current inplementation of MatchedStatus info:
+ * - total_count(_change) holds the actual number of matches
+ * - current_count(_change) is a flag to signal match or unmatch.
+ *   (TODO: review if fits standard definition)
+ * */
+
 void LatencyTestPublisher::LatencyDataWriterListener::on_publication_matched(
         DataWriter* writer,
         const PublicationMatchedStatus& info)
@@ -466,7 +482,7 @@ void LatencyTestPublisher::LatencyDataWriterListener::on_publication_matched(
 
     lock_guard<mutex> lock(latency_publisher_->mutex_);
 
-    matched_ = info.current_count;
+    matched_ = info.total_count;
 
     if (info.current_count_change > 0)
     {
@@ -484,7 +500,7 @@ void LatencyTestPublisher::LatencyDataReaderListener::on_subscription_matched(
 
     lock_guard<mutex> lock(latency_publisher_->mutex_);
 
-    matched_ = info.current_count;
+    matched_ = info.total_count;
 
     if (info.current_count_change > 0)
     {
@@ -502,7 +518,7 @@ void LatencyTestPublisher::ComandWriterListener::on_publication_matched(
 
     lock_guard<mutex> lock(latency_publisher_->mutex_);
 
-    matched_ = info.current_count;
+    matched_ = info.total_count;
 
     if (info.current_count_change > 0)
     {
@@ -520,7 +536,7 @@ void LatencyTestPublisher::CommandReaderListener::on_subscription_matched(
 
     lock_guard<mutex> lock(latency_publisher_->mutex_);
 
-    matched_ = info.current_count;
+    matched_ = info.total_count;
 
     if (info.current_count_change > 0)
     {
@@ -564,7 +580,7 @@ void LatencyTestPublisher::LatencyDataReaderListener::on_data_available(
     // Retrieved echoed data
     if (reader->take_next_sample(
             data, &info) != ReturnCode_t::RETCODE_OK
-            || info.valid_data)
+            || !info.valid_data)
     {
         logInfo(LatencyTest, "Problem reading Subscriber echoed test data");
         return;
@@ -713,7 +729,11 @@ bool LatencyTestPublisher::test(
     times_.clear();
     TestCommandType command;
     command.m_command = READY;
-    command_writer_->write(&command);
+    if (!command_writer_->write(&command))
+    {
+        logError(LatencyTest, "Publisher cannot publish READY command");
+        return false;
+    }
 
     // Wait for Subscriber's BEGIN command
     {
