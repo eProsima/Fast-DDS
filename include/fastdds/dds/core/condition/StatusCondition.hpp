@@ -43,7 +43,7 @@ public:
     /**
      * @brief Defines the list of communication statuses that are taken into account to determine the trigger_value
      * @param mask defines the mask for the status
-     * @return true if trigger_value is set to true, false otherwise
+     * @return RETCODE_OK with everything ok, error code otherwise
      */
     RTPS_DllAPI fastrtps::types::ReturnCode_t set_enabled_statuses(
             const StatusMask& mask);

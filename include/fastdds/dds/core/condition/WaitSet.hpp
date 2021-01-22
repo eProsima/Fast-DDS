@@ -31,7 +31,7 @@ namespace dds {
 
 /**
  * @brief The WaitSet class allows an application to wait until one or more of the attached Condition objects
- * has a trigger_value ofTRUE or else until the timeout expires.
+ * has a trigger_value of TRUE or until timeout expires.
  *
  */
 class WaitSet
