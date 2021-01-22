@@ -148,7 +148,7 @@ protected:
     //! StatusMask with triggered statuses set to 1
     StatusMask status_changes_;
 
-    //! InstanceHandle associated to the Entity
+    //! Condition associated to the Entity
     StatusCondition status_condition_;
 
     //! InstanceHandle associated to the Entity
