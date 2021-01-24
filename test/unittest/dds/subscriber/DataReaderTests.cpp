@@ -22,7 +22,10 @@
 
 #include <fastdds/dds/builtin/topic/PublicationBuiltinTopicData.hpp>
 
+#include <fastdds/dds/core/Entity.hpp>
 #include <fastdds/dds/core/LoanableArray.hpp>
+#include <fastdds/dds/core/LoanableCollection.hpp>
+#include <fastdds/dds/core/LoanableSequence.hpp>
 #include <fastdds/dds/core/StackAllocatedSequence.hpp>
 #include <fastdds/dds/core/status/BaseStatus.hpp>
 #include <fastdds/dds/core/status/SampleRejectedStatus.hpp>
@@ -1353,8 +1356,18 @@ public:
 /*
  * This test checks that the DataReader methods defined in the standard not yet implemented in FastDDS return
  * ReturnCode_t::RETCODE_UNSUPPORTED. The following methods are checked:
- * 1. copy_from_topic_qos
- * 2. delete_contained_entities
+ * 1. get_sample_lost_status
+ * 2. get_sample_rejected_status
+ * 3. get_subscription_matched_status
+ * 4. get_subscription_matched_status
+ * 5. get_matched_publication_data
+ * 6. create_readcondition
+ * 7. create_querycondition
+ * 8. delete_readcondition
+ * 9. delete_contained_entities
+ * 10. get_matched_publications
+ * 11. get_key_value
+ * 12. lookup_instance
  */
 TEST_F(DataReaderUnsuportedTests, UnsupportedDataReaderMethods)
 {
@@ -1407,6 +1420,7 @@ TEST_F(DataReaderUnsuportedTests, UnsupportedDataReaderMethods)
         EXPECT_EQ(
             nullptr,
             data_reader->create_readcondition(sample_states, view_states, instance_states));
+        HELPER_WaitForEntries(1);
     }
 
     {
@@ -1423,6 +1437,7 @@ TEST_F(DataReaderUnsuportedTests, UnsupportedDataReaderMethods)
                 instance_states,
                 query_expression,
                 query_parameters));
+        HELPER_WaitForEntries(1);
     }
 
     {
@@ -1434,6 +1449,12 @@ TEST_F(DataReaderUnsuportedTests, UnsupportedDataReaderMethods)
 
     std::vector<fastrtps::rtps::InstanceHandle_t> publication_handles;
     EXPECT_EQ(ReturnCode_t::RETCODE_UNSUPPORTED, data_reader->get_matched_publications(publication_handles));
+
+    fastrtps::rtps::InstanceHandle_t key_handle;
+    EXPECT_EQ(ReturnCode_t::RETCODE_UNSUPPORTED, data_reader->get_key_value(nullptr, key_handle));
+
+    ASSERT_EQ(HANDLE_NIL, data_reader->lookup_instance(nullptr));
+    HELPER_WaitForEntries(1);
 
     ASSERT_EQ(subscriber->delete_datareader(data_reader), ReturnCode_t::RETCODE_OK);
     ASSERT_EQ(participant->delete_subscriber(subscriber), ReturnCode_t::RETCODE_OK);

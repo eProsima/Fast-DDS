@@ -140,9 +140,9 @@ ReturnCode_t Subscriber::get_datareaders(
 
 ReturnCode_t Subscriber::get_datareaders(
         std::vector<DataReader*>& readers,
-        std::vector<SampleStateKind>& sample_states,
-        std::vector<ViewStateKind>& view_states,
-        std::vector<InstanceStateKind>& instance_states) const
+        const std::vector<SampleStateKind>& sample_states,
+        const std::vector<ViewStateKind>& view_states,
+        const std::vector<InstanceStateKind>& instance_states) const
 {
     static_cast<void> (readers);
     static_cast<void> (sample_states);
@@ -220,7 +220,7 @@ ReturnCode_t Subscriber::get_datareader_qos_from_profile(
 
 ReturnCode_t Subscriber::copy_from_topic_qos(
         DataReaderQos& reader_qos,
-        const TopicQos& topic_qos) const
+        const TopicQos& topic_qos)
 {
     static_cast<void> (reader_qos);
     static_cast<void> (topic_qos);

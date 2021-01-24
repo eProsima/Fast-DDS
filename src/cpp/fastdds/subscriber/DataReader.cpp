@@ -89,6 +89,19 @@ ReturnCode_t DataReader::read(
     return impl_->read(data_values, sample_infos, max_samples, sample_states, view_states, instance_states);
 }
 
+ReturnCode_t DataReader::read_w_condition(
+        LoanableCollection& data_values,
+        SampleInfoSeq& sample_infos,
+        int32_t max_samples,
+        ReadCondition* a_condition)
+{
+    static_cast<void> (data_values);
+    static_cast<void> (sample_infos);
+    static_cast<void> (max_samples);
+    static_cast<void> (a_condition);
+    return ReturnCode_t::RETCODE_UNSUPPORTED;
+}
+
 ReturnCode_t DataReader::read_instance(
         LoanableCollection& data_values,
         SampleInfoSeq& sample_infos,
@@ -115,6 +128,21 @@ ReturnCode_t DataReader::read_next_instance(
                    view_states, instance_states);
 }
 
+ReturnCode_t DataReader::read_next_instance_w_condition(
+        LoanableCollection& data_values,
+        SampleInfoSeq& sample_infos,
+        int32_t max_samples,
+        const InstanceHandle_t& previous_handle,
+        ReadCondition* a_condition)
+{
+    static_cast<void> (data_values);
+    static_cast<void> (sample_infos);
+    static_cast<void> (max_samples);
+    static_cast<void> (previous_handle);
+    static_cast<void> (a_condition);
+    return ReturnCode_t::RETCODE_UNSUPPORTED;
+}
+
 ReturnCode_t DataReader::take(
         LoanableCollection& data_values,
         SampleInfoSeq& sample_infos,
@@ -124,6 +152,19 @@ ReturnCode_t DataReader::take(
         InstanceStateMask instance_states)
 {
     return impl_->take(data_values, sample_infos, max_samples, sample_states, view_states, instance_states);
+}
+
+ReturnCode_t DataReader::take_w_condition(
+        LoanableCollection& data_values,
+        SampleInfoSeq& sample_infos,
+        int32_t max_samples,
+        ReadCondition* a_condition)
+{
+    static_cast<void> (data_values);
+    static_cast<void> (sample_infos);
+    static_cast<void> (max_samples);
+    static_cast<void> (a_condition);
+    return ReturnCode_t::RETCODE_UNSUPPORTED;
 }
 
 ReturnCode_t DataReader::take_instance(
@@ -152,11 +193,43 @@ ReturnCode_t DataReader::take_next_instance(
                    view_states, instance_states);
 }
 
+ReturnCode_t DataReader::take_next_instance_w_condition(
+        LoanableCollection& data_values,
+        SampleInfoSeq& sample_infos,
+        int32_t max_samples,
+        const InstanceHandle_t& previous_handle,
+        ReadCondition* a_condition)
+{
+    static_cast<void> (data_values);
+    static_cast<void> (sample_infos);
+    static_cast<void> (max_samples);
+    static_cast<void> (previous_handle);
+    static_cast<void> (a_condition);
+    return ReturnCode_t::RETCODE_UNSUPPORTED;
+}
+
 ReturnCode_t DataReader::return_loan(
         LoanableCollection& data_values,
         SampleInfoSeq& sample_infos)
 {
     return impl_->return_loan(data_values, sample_infos);
+}
+
+ReturnCode_t DataReader::get_key_value(
+        void* key_holder,
+        const InstanceHandle_t& handle)
+{
+    static_cast<void> (key_holder);
+    static_cast<void> (handle);
+    return ReturnCode_t::RETCODE_UNSUPPORTED;
+}
+
+InstanceHandle_t DataReader::lookup_instance(
+        const void* instance) const
+{
+    static_cast<void> (instance);
+    logWarning(DataReader, "lookup_instance method not implemented")
+    return HANDLE_NIL;
 }
 
 ReturnCode_t DataReader::read_next_sample(
@@ -290,7 +363,7 @@ ReturnCode_t DataReader::get_subscription_matched_status(
 
 ReturnCode_t DataReader::get_matched_publication_data(
         builtin::PublicationBuiltinTopicData& publication_data,
-        fastrtps::rtps::InstanceHandle_t& publication_handle) const
+        const fastrtps::rtps::InstanceHandle_t& publication_handle) const
 {
     static_cast<void> (publication_data);
     static_cast<void> (publication_handle);
@@ -311,9 +384,9 @@ ReturnCode_t DataReader::get_matched_publications(
 }
 
 ReadCondition* DataReader::create_readcondition(
-        std::vector<SampleStateKind>& sample_states,
-        std::vector<ViewStateKind>& view_states,
-        std::vector<InstanceStateKind>& instance_states)
+        const std::vector<SampleStateKind>& sample_states,
+        const std::vector<ViewStateKind>& view_states,
+        const std::vector<InstanceStateKind>& instance_states)
 {
     logWarning(DataReader, "create_readcondition method not implemented");
     static_cast<void> (sample_states);
@@ -326,11 +399,11 @@ ReadCondition* DataReader::create_readcondition(
 }
 
 QueryCondition* DataReader::create_querycondition(
-        std::vector<SampleStateKind>& sample_states,
-        std::vector<ViewStateKind>& view_states,
-        std::vector<InstanceStateKind>& instance_states,
-        std::string& query_expression,
-        std::vector<std::string>& query_parameters)
+        const std::vector<SampleStateKind>& sample_states,
+        const std::vector<ViewStateKind>& view_states,
+        const std::vector<InstanceStateKind>& instance_states,
+        const std::string& query_expression,
+        const std::vector<std::string>& query_parameters)
 {
     logWarning(DataReader, "create_querycondition method not implemented");
     static_cast<void> (sample_states);

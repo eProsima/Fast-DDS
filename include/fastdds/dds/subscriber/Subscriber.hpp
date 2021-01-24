@@ -209,7 +209,7 @@ public:
             std::vector<DataReader*>& readers) const;
 
     /**
-     * @brief This operation allows the application to access the DataReader objects s that contain samples with the
+     * @brief This operation allows the application to access the DataReader objects that contain samples with the
      * specified sample_states, view_states, and instance_states.
      * @param[out] readers Vector of DataReader where the list of existing readers is returned
      * @param sample_states Vector of SampleStateKind
@@ -219,9 +219,9 @@ public:
      */
     RTPS_DllAPI ReturnCode_t get_datareaders(
             std::vector<DataReader*>& readers,
-            std::vector<SampleStateKind>& sample_states,
-            std::vector<ViewStateKind>& view_states,
-            std::vector<InstanceStateKind>& instance_states) const;
+            const std::vector<SampleStateKind>& sample_states,
+            const std::vector<ViewStateKind>& view_states,
+            const std::vector<InstanceStateKind>& instance_states) const;
 
     /**
      * This operation checks if the subscriber has DataReaders
@@ -255,7 +255,9 @@ public:
     RTPS_DllAPI ReturnCode_t notify_datareaders() const;
 
     /**
-     * @brief Deletes all contained DataReaders
+     * @brief Deletes all contained DataReaders. If the DataReaders have any QueryCondition or ReadCondition, they are
+     * deleted before the DataReader itself.
+     *
      * @return RETCODE_OK if successful, an error code otherwise
      */
     RTPS_DllAPI ReturnCode_t delete_contained_entities();
@@ -324,13 +326,13 @@ public:
 
     /**
      * @brief Copies TopicQos into the corresponding DataReaderQos
-     * @param[out] reader_qos
+     * @param[in, out] reader_qos
      * @param[in] topic_qos
      * @return RETCODE_OK if successful, an error code otherwise
      */
-    RTPS_DllAPI ReturnCode_t copy_from_topic_qos(
+    RTPS_DllAPI static ReturnCode_t copy_from_topic_qos(
             DataReaderQos& reader_qos,
-            const TopicQos& topic_qos) const;
+            const TopicQos& topic_qos);
 
     /**
      * This operation returns the DomainParticipant to which the Subscriber belongs.

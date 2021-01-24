@@ -289,6 +289,35 @@ public:
             ViewStateMask view_states = ANY_VIEW_STATE,
             InstanceStateMask instance_states = ANY_INSTANCE_STATE);
 
+    /** NOT YET IMPLEMENTED
+     * This operation accesses via ‘read’ the samples that match the criteria specified in the @ref ReadCondition.
+     * This operation is especially useful in combination with @ref QueryCondition to filter data samples based on the
+     * content.
+     *
+     * The specified @ref ReadCondition must be attached to the DataReader; otherwise the operation will fail and return
+     * RETCODE_PRECONDITION_NOT_MET.
+     *
+     * In case the @ref ReadCondition is a ‘plain’ @ref ReadCondition and not the specialized @ref QueryCondition, the
+     * operation is equivalent to calling read and passing as @c sample_states, @c view_states and @c instance_states
+     * the value of the corresponding attributes in @c a_condition. Using this operation the application can avoid
+     * repeating the same parameters specified when creating the ReadCondition.
+     *
+     * The samples are accessed with the same semantics as the read operation. If the DataReader has no samples that
+     * meet the constraints, the return value will be RETCODE_NO_DATA.
+     *
+     * @param [in,out] data_values     A LoanableCollection object where the received data samples will be returned.
+     * @param [in,out] sample_infos    A SampleInfoSeq object where the received sample info will be returned.
+     * @param [in]     max_samples     The maximum number of samples to be returned.
+     * @param [in]     a_condition     A ReadCondition that returned @c sample_states must pass
+     *
+     * @return Any of the standard return codes.
+     */
+    RTPS_DllAPI ReturnCode_t read_w_condition(
+            LoanableCollection& data_values,
+            SampleInfoSeq& sample_infos,
+            int32_t max_samples = LENGTH_UNLIMITED,
+            ReadCondition* a_condition = nullptr);
+
     /**
      * Access a collection of data samples from the DataReader.
      *
@@ -397,6 +426,42 @@ public:
             ViewStateMask view_states = ANY_VIEW_STATE,
             InstanceStateMask instance_states = ANY_INSTANCE_STATE);
 
+    /** NOT YET IMPLEMENTED
+     * This operation accesses a collection of Data values from the DataReader. The behavior is identical to
+     * @ref read_next_instance except that all samples returned satisfy the specified condition. In other words, on
+     * success all returned samples belong to the same instance, and the instance is the instance with ‘smallest’
+     *  @c instance_handle among the ones that verify (a) @c instance_handle >= @c previous_handle and (b) have samples
+     * for which the specified ReadCondition evaluates to TRUE.
+     *
+     * Similar to the operation @ref read_next_instance it is possible to call
+     * @ref read_next_instance_w_condition with a @c previous_handle that does not correspond to an instance currently
+     * managed by the DataReader.
+     *
+     * The behavior of the @ref read_next_instance_w_condition operation follows the same rules than the read operation
+     * regarding the pre-conditions and post-conditions for the @c data_values and @c sample_infos collections. Similar
+     * to read, the @ref read_next_instance_w_condition operation may ‘loan’ elements to the output collections which
+     * must then be returned by means of @ref return_loan.
+     *
+     * If the DataReader has no samples that meet the constraints, the return value will be RETCODE_NO_DATA.
+     *
+     * @param [in,out] data_values     A LoanableCollection object where the received data samples will be returned.
+     * @param [in,out] sample_infos    A SampleInfoSeq object where the received sample info will be returned.
+     * @param [in]     max_samples     The maximum number of samples to be returned. If the special value
+     *                                 @ref LENGTH_UNLIMITED is provided, as many samples will be returned as are
+     *                                 available, up to the limits described in the documentation for @ref read().
+     * @param [in]     previous_handle The 'next smallest' instance with a value greater than this value that has
+     *                                 available samples will be returned.
+     * @param [in]     a_condition     A ReadCondition that returned @c sample_states must pass
+     *
+     * @return Any of the standard return codes.
+     */
+    RTPS_DllAPI ReturnCode_t read_next_instance_w_condition(
+            LoanableCollection& data_values,
+            SampleInfoSeq& sample_infos,
+            int32_t max_samples = LENGTH_UNLIMITED,
+            const InstanceHandle_t& previous_handle = HANDLE_NIL,
+            ReadCondition* a_condition = nullptr);
+
     /**
      * @brief This operation copies the next, non-previously accessed Data value from the DataReader; the operation
      * also copies the corresponding SampleInfo. The implied order among the samples stored in the DataReader is the
@@ -459,6 +524,33 @@ public:
             ViewStateMask view_states = ANY_VIEW_STATE,
             InstanceStateMask instance_states = ANY_INSTANCE_STATE);
 
+    /** NOT YET IMPLEMENTED
+     * This operation is analogous to @ref read_w_condition except it accesses samples via the ‘take’ operation.
+     *
+     * The specified ReadCondition must be attached to the DataReader; otherwise the operation will fail and return
+     * RETCODE_PRECONDITION_NOT_MET.
+     *
+     * The samples are accessed with the same semantics as the @ref take operation.
+     *
+     * This operation is especially useful in combination with QueryCondition to filter data samples based on the
+     * content.
+     *
+     * If the DataReader has no samples that meet the constraints, the return value will be RETCODE_NO_DATA.
+     *
+     * @param [in,out] data_values     A LoanableCollection object where the received data samples will be returned.
+     * @param [in,out] sample_infos    A SampleInfoSeq object where the received sample info will be returned.
+     * @param [in]     max_samples     The maximum number of samples to be returned. If the special value
+     *                                 @ref LENGTH_UNLIMITED is provided, as many samples will be returned as are.
+     * @param [in]     a_condition     A ReadCondition that returned @c sample_states must pass
+     *
+     * @return Any of the standard return codes.
+     */
+    RTPS_DllAPI ReturnCode_t take_w_condition(
+            LoanableCollection& data_values,
+            SampleInfoSeq& sample_infos,
+            int32_t max_samples = LENGTH_UNLIMITED,
+            ReadCondition* a_condition = nullptr);
+
     /**
      * Access a collection of data samples from the DataReader.
      *
@@ -467,7 +559,7 @@ public:
      * This operation has the same behavior as @ref read_instance, except that the samples are 'taken' from the
      * DataReader such that they are no longer accessible via subsequent 'read' or 'take' operations.
      *
-     * The behavior of this operation follows the same rules as the @read operation regarding the pre-conditions and
+     * The behavior of this operation follows the same rules as the @ref read operation regarding the pre-conditions and
      * post-conditions for the @c data_values and @c sample_infos. Similar to @ref read, this operation may 'loan'
      * elements to the output collections, which must then be returned by means of @ref return_loan.
      *
@@ -535,6 +627,41 @@ public:
             ViewStateMask view_states = ANY_VIEW_STATE,
             InstanceStateMask instance_states = ANY_INSTANCE_STATE);
 
+    /** NOT YET IMPLEMENTED
+     * This operation accesses a collection of Data values from the DataReader. The behavior is identical to
+     *  @ref read_next_instance except that all samples returned satisfy the specified condition. In other words, on
+     * success all returned samples belong to the same instance, and the instance is the instance with ‘smallest’
+     *  @ref instance_handle among the ones that verify (a) @ref instance_handle >= @c previous_handle and (b) have
+     * samples for which the specified ReadCondition evaluates to TRUE.
+     *
+     * Similar to the operation @ref read_next_instance it is possible to call @ref read_next_instance_w_condition with
+     * a @c previous_handle that does not correspond to an instance currently managed by the DataReader.
+     *
+     * The behavior of the @ref read_next_instance_w_condition operation follows the same rules than the read operation
+     * regarding the pre-conditions and post-conditions for the @c data_values and @c sample_infos collections. Similar
+     * to read, the @ref read_next_instance_w_condition operation may ‘loan’ elements to the output collections which
+     * must then be returned by means of @ref return_loan.
+     *
+     * If the DataReader has no samples that meet the constraints, the return value will be RETCODE_NO_DATA
+     *
+     * @param [in,out] data_values     A LoanableCollection object where the received data samples will be returned.
+     * @param [in,out] sample_infos    A SampleInfoSeq object where the received sample info will be returned.
+     * @param [in]     max_samples     The maximum number of samples to be returned. If the special value
+     *                                 @ref LENGTH_UNLIMITED is provided, as many samples will be returned as are
+     *                                 available, up to the limits described in the documentation for @ref read().
+     * @param [in]     previous_handle The 'next smallest' instance with a value greater than this value that has
+     *                                 available samples will be returned.
+     * @param [in]     a_condition     A ReadCondition that returned @c sample_states must pass
+     *
+     * @return Any of the standard return codes.
+     */
+    RTPS_DllAPI ReturnCode_t take_next_instance_w_condition(
+            LoanableCollection& data_values,
+            SampleInfoSeq& sample_infos,
+            int32_t max_samples = LENGTH_UNLIMITED,
+            const InstanceHandle_t& previous_handle = HANDLE_NIL,
+            ReadCondition* a_condition = nullptr);
+
     /**
      * @brief This operation copies the next, non-previously accessed Data value from the DataReader and ‘removes’ it
      * from the DataReader so it is no longer accessible. The operation also copies the corresponding SampleInfo.
@@ -598,6 +725,35 @@ public:
     RTPS_DllAPI ReturnCode_t return_loan(
             LoanableCollection& data_values,
             SampleInfoSeq& sample_infos);
+
+    /** NOT YET IMPLEMENTED
+     * This operation can be used to retrieve the instance key that corresponds to an @ref instance_handle. The operation
+     * will only fill the fields that form the key inside the @ref key_holder instance.
+     *
+     * This operation may return BAD_PARAMETER if the InstanceHandle_t a_handle does not correspond to an existing
+     * dataobject known to the DataReader. If the implementation is not able to check invalid handles then the result
+     * in this situation is unspecified.
+     *
+     * @param [in,out] key
+     * @param [in] handle
+     *
+     * @return Any of the standard return codes.
+     */
+    RTPS_DllAPI ReturnCode_t get_key_value(
+            void* key_holder,
+            const InstanceHandle_t& handle);
+
+    /**
+     * Takes as a parameter an instance and returns a handle that can be used in subsequent operations that accept an
+     * instance handle as an argument. The instance parameter is only used for the purpose of examining the fields that
+     * define the key.
+     *
+     * @param [in] instance Data pointer to the sample
+     *
+     * @return handle of the given instance
+     */
+    RTPS_DllAPI InstanceHandle_t lookup_instance(
+            const void* instance) const;
 
     /**
      * @brief Returns information about the first untaken sample.
@@ -764,7 +920,7 @@ public:
      */
     RTPS_DllAPI ReturnCode_t get_matched_publication_data(
             builtin::PublicationBuiltinTopicData& publication_data,
-            fastrtps::rtps::InstanceHandle_t& publication_handle) const;
+            const fastrtps::rtps::InstanceHandle_t& publication_handle) const;
 
     /**
      * @brief Fills the given vector with the InstanceHandle_t of matched DataReaders
@@ -783,9 +939,9 @@ public:
      * @return ReadCondition pointer
      */
     RTPS_DllAPI ReadCondition* create_readcondition(
-            std::vector<SampleStateKind>& sample_states,
-            std::vector<ViewStateKind>& view_states,
-            std::vector<InstanceStateKind>& instance_states);
+            const std::vector<SampleStateKind>& sample_states,
+            const std::vector<ViewStateKind>& view_states,
+            const std::vector<InstanceStateKind>& instance_states);
 
     /**
      * @brief This operation creates a QueryCondition. The returned QueryCondition will be attached and belong to the
@@ -798,11 +954,11 @@ public:
      * @return QueryCondition pointer
      */
     RTPS_DllAPI QueryCondition* create_querycondition(
-            std::vector<SampleStateKind>& sample_states,
-            std::vector<ViewStateKind>& view_states,
-            std::vector<InstanceStateKind>& instance_states,
-            std::string& query_expression,
-            std::vector<std::string>& query_parameters);
+            const std::vector<SampleStateKind>& sample_states,
+            const std::vector<ViewStateKind>& view_states,
+            const std::vector<InstanceStateKind>& instance_states,
+            const std::string& query_expression,
+            const std::vector<std::string>& query_parameters);
 
     /**
      * @brief This operation deletes a ReadCondition attached to the DataReader.
@@ -817,6 +973,17 @@ public:
      * @return Subscriber pointer
      */
     RTPS_DllAPI const Subscriber* get_subscriber() const;
+
+    /**
+     * This operation deletes all the entities that were created by means of the “create” operations on the DataReader.
+     * That is, it deletes all contained ReadCondition and QueryCondition objects.
+     *
+     * The operation will return PRECONDITION_NOT_MET if the any of the contained entities is in a state where it cannot
+     * be deleted.
+     *
+     * @return Any of the standard return codes.
+     */
+    RTPS_DllAPI ReturnCode_t delete_contained_entities();
 
 protected:
 
