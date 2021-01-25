@@ -1,5 +1,10 @@
 # eProsima Fast DDS
 
+<a href="https://twitter.com/intent/tweet?text=I+recommend+@EProsima+%23FastRTPS,+the+ most+complete+open+source+dds+middleware!&url=https%3A%2F%2Fgithub.com%2FeProsima%2FFast-RTPS&hashtags=github&original_referer=http%3A%2F%2Fgithub.com%2F&tw_p=tweetbutton" target="_blank">
+  <img align="right"; hspace="20" src="https://www.eprosima.com/images/icons/eProsima_tweet.png"
+       alt="tweet button" title="Recommend Fast RTPS on Twitter"></img>
+</a>
+
 [![FIWARE Robotics](https://nexus.lab.fiware.org/static/badges/chapters/robotics.svg)](https://www.fiware.org/developers/catalogue/)
 [![License](https://img.shields.io/github/license/eProsima/Fast-RTPS.svg)](https://opensource.org/licenses/Apache-2.0)
 [![Releases](https://img.shields.io/github/v/release/eProsima/Fast-RTPS?sort=semver)](https://github.com/eProsima/Fast-RTPS/releases)
@@ -41,13 +46,10 @@ system input/output channel combination for each deployment.
 This project is part of [FIWARE](https://www.fiware.org/). For more information check the FIWARE Catalogue entry for
 [Robotics](https://github.com/Fiware/catalogue/tree/master/robotics).
 
-<br/>
+## Want us to share your project with the community?
 
-**Want us to share your project with the community?
-Write to Evaluation.Support@eprosima.com or mention @EProsima on Twitter.
-We are curious to get to know your use case!**
-
-<br/>
+Write to evaluation.support@eprosima.com or mention @EProsima on Twitter.
+We are curious to get to know your use case!
 
 ## Supported platforms
 
