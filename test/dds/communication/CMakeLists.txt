@@ -78,12 +78,25 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER) AND fastcdr_FOUND)
     target_include_directories(DDSCommunicationSubscriber PRIVATE ${PROJECT_SOURCE_DIR}/test/blackbox)
     target_link_libraries(DDSCommunicationSubscriber fastrtps fastcdr foonathan_memory ${CMAKE_DL_LIBS})
 
+    set(DDS_PUBSUB_SOURCE ${COMMON_SOURCE}
+        PublisherModule.cpp
+        SubscriberModule.cpp
+        PubSubMain.cpp
+        )
+    add_executable(DDSCommunicationPubSub ${DDS_PUBSUB_SOURCE})
+    target_compile_definitions(DDSCommunicationPubSub PRIVATE
+        $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
+        $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
+        )
+    target_include_directories(DDSCommunicationPubSub PRIVATE ${PROJECT_SOURCE_DIR}/test/blackbox)
+    target_link_libraries(DDSCommunicationPubSub fastrtps fastcdr foonathan_memory ${CMAKE_DL_LIBS})
+
     ###############################################################################
     # Necessary files
     ###############################################################################
     # Dynamic types test
-    configure_file(${CMAKE_CURRENT_SOURCE_DIR}/simple_communication.py
-        ${CMAKE_CURRENT_BINARY_DIR}/simple_communication.py COPYONLY)
+    configure_file(${CMAKE_CURRENT_SOURCE_DIR}/simple_communication_dynamic.py
+        ${CMAKE_CURRENT_BINARY_DIR}/simple_communication_dynamic.py COPYONLY)
     configure_file(${CMAKE_CURRENT_SOURCE_DIR}/example_type.xml
         ${CMAKE_CURRENT_BINARY_DIR}/example_type.xml COPYONLY)
 
@@ -91,11 +104,19 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER) AND fastcdr_FOUND)
 
     list(APPEND TEST_DEFINITIONS
             simple_communication
+            besteffort_communication
+            mix_communication
+            simple_communication_fixed_type
+            zero_copy_communication
+            zero_copy_pub_communication
+            zero_copy_sub_communication
+            mix_zero_copy_communication
         )
 
 
     list(APPEND XML_CONFIGURATION_FILES
         simple_reliable.xml
+        simple_besteffort.xml
     )
     # Python file
     configure_file(${CMAKE_CURRENT_SOURCE_DIR}/test_build.py
@@ -138,7 +159,7 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER) AND fastcdr_FOUND)
     if(PYTHONINTERP_FOUND)
         # Dynamic types test
         add_test(NAME DDSSimpleCommunicationTypeDiscovery
-            COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/simple_communication.py)
+            COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/simple_communication_dynamic.py)
 
         # Set test with label NoMemoryCheck
         set_property(TEST DDSSimpleCommunicationTypeDiscovery PROPERTY LABELS "NoMemoryCheck")
@@ -171,6 +192,8 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER) AND fastcdr_FOUND)
                 "DDS_SIMPLE_COMMUNICATION_PUBLISHER_BIN=$<TARGET_FILE:DDSCommunicationPublisher>")
             set_property(TEST ${TEST_NAME} APPEND PROPERTY ENVIRONMENT
                 "DDS_SIMPLE_COMMUNICATION_SUBSCRIBER_BIN=$<TARGET_FILE:DDSCommunicationSubscriber>")
+            set_property(TEST ${TEST_NAME} APPEND PROPERTY ENVIRONMENT
+                "DDS_SIMPLE_COMMUNICATION_PUBSUB_BIN=$<TARGET_FILE:DDSCommunicationPubSub>")
             if(WIN32)
                 string(REPLACE ";" "\\;" WIN_PATH "$ENV{PATH}")
                 set_property(TEST ${TEST_NAME} APPEND PROPERTY ENVIRONMENT

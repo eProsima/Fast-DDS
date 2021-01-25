@@ -60,7 +60,7 @@ def define_args(tests_definition):
 
         for argument in possible_arguments:
             if argument in test.keys():
-                test_arguments.append('-- ' + argument)
+                test_arguments.append('--' + argument)
                 test_arguments.append(test[argument])
 
         # Add arguments without value
@@ -71,7 +71,7 @@ def define_args(tests_definition):
 
         for flag in possible_flags:
             if flag in test.keys():
-                test_arguments.append('-- ' + flag)
+                test_arguments.append('--' + flag)
 
         xmlfile_arg = 'xmlfile'
         if xmlfile_arg in test.keys():
@@ -104,7 +104,7 @@ def define_commands(pub_args, sub_args, pubsub_args):
         publisher_files = glob.glob(
             os.path.join(
                 script_dir,
-                '**/DDSSimpleCommunicationPublisher*'),
+                '**/DDSCommunicationPublisher*'),
             recursive=True)
         pf = iter(publisher_files)
         publisher_command = next(pf, None)
@@ -122,7 +122,7 @@ def define_commands(pub_args, sub_args, pubsub_args):
         subscriber_files = glob.glob(
             os.path.join(
                 script_dir,
-                '**/DDSSimpleCommunicationSubscriber*'),
+                '**/DDSCommunicationSubscriber*'),
             recursive=True)
         pf = iter(subscriber_files)
         subscriber_command = next(pf, None)
@@ -136,12 +136,12 @@ def define_commands(pub_args, sub_args, pubsub_args):
     # Pub Sub executable
     pubsub_command = os.environ.get('DDS_SIMPLE_COMMUNICATION_PUBSUB_BIN')
     if not pubsub_command:
-        subscriber_files = glob.glob(
+        pubsub_files = glob.glob(
             os.path.join(
                 script_dir,
-                '**/DDSSimpleCommunicationSubscriber*'),
+                '**/DDSCommunicationPubSub*'),
             recursive=True)
-        pf = iter(subscriber_files)
+        pf = iter(pubsub_files)
         pubsub_command = next(pf, None)
         while pubsub_command and \
             (not os.path.isfile(pubsub_command)
@@ -169,15 +169,15 @@ def execute_commands(pub_commands, sub_commands, pubsub_commands, logger):
         proc = subprocess.Popen(subscriber_command)
         subs_proc.append(proc)
 
-    for pubisher_command in pub_commands:
-        logger.info(f'Executing publisher: {pubisher_command}')
-        proc = subprocess.Popen(pubisher_command)
-        pubs_proc.append(proc)
-
     for pubsub_command in pubsub_commands:
         logger.info(f'Executing pubsub: {pubsub_command}')
         proc = subprocess.Popen(pubsub_command)
         pubsubs_proc.append(proc)
+
+    for pubisher_command in pub_commands:
+        logger.info(f'Executing publisher: {pubisher_command}')
+        proc = subprocess.Popen(pubisher_command)
+        pubs_proc.append(proc)
 
     ret_value = 0
 
@@ -217,12 +217,14 @@ if __name__ == '__main__':
 
     logger.error(pub_args)
     logger.error(sub_args)
+    logger.error(pubsub_args)
 
     pub_commands, sub_commands, pubsub_commands = \
         define_commands(pub_args, sub_args, pubsub_args)
 
     logger.error(pub_commands)
     logger.error(sub_commands)
+    logger.error(pubsub_commands)
 
     test_value = execute_commands(
         pub_commands,
