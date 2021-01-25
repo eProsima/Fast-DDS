@@ -73,6 +73,13 @@
 #define HAVE_STRICT_REALTIME @HAVE_STRICT_REALTIME@
 #endif
 
+/* Log Macros */
+
+// Log Info
+#ifndef HAVE_LOG_NO_INFO
+#define HAVE_LOG_NO_INFO @HAVE_LOG_NO_INFO@
+#endif
+
 // Deprecated macro
 #if __cplusplus >= 201402L
 #define FASTRTPS_DEPRECATED(msg) [[ deprecated(msg) ]]

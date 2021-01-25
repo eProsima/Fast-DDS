@@ -251,7 +251,7 @@ class LogConsumer
 #define logWarning_(cat, msg)
 #endif
 
-#if (defined(__INTERNALDEBUG) || defined(_INTERNALDEBUG)) && (defined(_DEBUG) || defined(__DEBUG)) && (!defined(LOG_NO_INFO))
+#if !HAVE_LOG_NO_INFO
 #define logInfo_(cat, msg)                                                                              \
     {                                                                                                   \
         if (Log::GetVerbosity() >= Log::Kind::Info)                                                     \
