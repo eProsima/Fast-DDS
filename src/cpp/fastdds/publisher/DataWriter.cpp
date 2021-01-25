@@ -99,9 +99,9 @@ ReturnCode_t DataWriter::write(
 }
 
 ReturnCode_t DataWriter::write_w_timestamp(
-            void* data,
-            const InstanceHandle_t& handle,
-            const fastrtps::rtps::Time_t& timestamp)
+        void* data,
+        const InstanceHandle_t& handle,
+        const fastrtps::rtps::Time_t& timestamp)
 {
     static_cast<void> (data);
     static_cast<void> (handle);
@@ -116,8 +116,8 @@ InstanceHandle_t DataWriter::register_instance(
 }
 
 InstanceHandle_t DataWriter::register_instance_w_timestamp(
-            void* instance,
-            const fastrtps::rtps::Time_t& timestamp)
+        void* instance,
+        const fastrtps::rtps::Time_t& timestamp)
 {
     static_cast<void> (instance);
     static_cast<void> (timestamp);
@@ -133,9 +133,9 @@ ReturnCode_t DataWriter::unregister_instance(
 }
 
 ReturnCode_t DataWriter::unregister_instance_w_timestamp(
-            void* instance,
-            const InstanceHandle_t& handle,
-            const fastrtps::rtps::Time_t& timestamp)
+        void* instance,
+        const InstanceHandle_t& handle,
+        const fastrtps::rtps::Time_t& timestamp)
 {
     static_cast<void> (instance);
     static_cast<void> (handle);

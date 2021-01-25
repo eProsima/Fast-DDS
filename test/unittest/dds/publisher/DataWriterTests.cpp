@@ -606,8 +606,8 @@ TEST_F(DataWriterUnsuportedTests, UnsupportedDataWriterMethods)
     builtin::SubscriptionBuiltinTopicData subscription_data;
     fastrtps::rtps::InstanceHandle_t subscription_handle;
     EXPECT_EQ(
-           ReturnCode_t::RETCODE_UNSUPPORTED,
-           data_writer->get_matched_subscription_data(subscription_data, subscription_handle));
+        ReturnCode_t::RETCODE_UNSUPPORTED,
+        data_writer->get_matched_subscription_data(subscription_data, subscription_handle));
 
     {
         InstanceHandle_t handle;
@@ -622,7 +622,7 @@ TEST_F(DataWriterUnsuportedTests, UnsupportedDataWriterMethods)
         EXPECT_EQ(
             HANDLE_NIL,
             data_writer->register_instance_w_timestamp(nullptr /* instance */, timestamp));
-            HELPER_WaitForEntries(1);
+        HELPER_WaitForEntries(1);
     }
 
     {
