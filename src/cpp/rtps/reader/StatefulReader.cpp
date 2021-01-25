@@ -1287,7 +1287,8 @@ void StatefulReader::change_read_by_user(
         // Must ACK all in the writer
         if (!first_not_read_found)
         {
-            datasharing_listener_->change_removed_with_timestamp((*mp_history->changesRbegin())->sourceTimestamp.to_ns()+1);
+            datasharing_listener_->change_removed_with_timestamp(
+                (*mp_history->changesRbegin())->sourceTimestamp.to_ns() + 1);
         }
         acknack_count_++;
         RTPSMessageGroup group(getRTPSParticipant(), this, *writer);
