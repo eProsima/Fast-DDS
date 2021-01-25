@@ -24,7 +24,7 @@ namespace eprosima {
 namespace fastdds {
 namespace dds {
 
-using ReturnCode_t = eprosima::fastrtps::types::ReturnCode_t;
+using eprosima::fastrtps::types::ReturnCode_t;
 
 ReturnCode_t WaitSet::attach_condition(
         const Condition& cond)

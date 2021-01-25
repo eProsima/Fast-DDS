@@ -25,6 +25,8 @@
 #include <fastrtps/fastrtps_dll.h>
 #include <fastrtps/types/TypesBase.h>
 
+using eprosima::fastrtps::types::ReturnCode_t;
+
 namespace eprosima {
 namespace fastdds {
 namespace dds {
@@ -37,8 +39,6 @@ namespace dds {
 class WaitSet
 {
 public:
-
-    using ReturnCode_t = eprosima::fastrtps::types::ReturnCode_t;
 
     // WaitSet class not implemented.
 

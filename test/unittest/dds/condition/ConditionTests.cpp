@@ -23,6 +23,8 @@
 #include <fastdds/rtps/common/Time_t.h>
 #include <fastrtps/types/TypesBase.h>
 
+using eprosima::fastrtps::types::ReturnCode_t;
+
 using namespace eprosima::fastdds::dds;
 using namespace std;
 
@@ -89,24 +91,24 @@ TEST_F(ConditionTests, unsupported_wait_set_methods)
     ConditionSeq aux_cond_seq;
     eprosima::fastrtps::Duration_t timeout(1, 0u);
 
-    ASSERT_EQ(ws.attach_condition(aux_cond), eprosima::fastrtps::types::ReturnCode_t::RETCODE_UNSUPPORTED);
-    ASSERT_EQ(ws.detach_condition(aux_cond), eprosima::fastrtps::types::ReturnCode_t::RETCODE_UNSUPPORTED);
-    ASSERT_EQ(ws.get_conditions(aux_cond_seq), eprosima::fastrtps::types::ReturnCode_t::RETCODE_UNSUPPORTED);
-    ASSERT_EQ(ws.wait(aux_cond_seq, timeout), eprosima::fastrtps::types::ReturnCode_t::RETCODE_UNSUPPORTED);
+    ASSERT_EQ(ws.attach_condition(aux_cond), ReturnCode_t::RETCODE_UNSUPPORTED);
+    ASSERT_EQ(ws.detach_condition(aux_cond), ReturnCode_t::RETCODE_UNSUPPORTED);
+    ASSERT_EQ(ws.get_conditions(aux_cond_seq), ReturnCode_t::RETCODE_UNSUPPORTED);
+    ASSERT_EQ(ws.wait(aux_cond_seq, timeout), ReturnCode_t::RETCODE_UNSUPPORTED);
 }
 
 TEST_F(ConditionTests, unsupported_guard_condition_methods)
 {
     GuardCondition cond;
 
-    ASSERT_EQ(cond.set_trigger_value(true), eprosima::fastrtps::types::ReturnCode_t::RETCODE_UNSUPPORTED);
+    ASSERT_EQ(cond.set_trigger_value(true), ReturnCode_t::RETCODE_UNSUPPORTED);
 }
 
 TEST_F(ConditionTests, unsupported_status_condition_methods)
 {
     StatusCondition cond;
 
-    ASSERT_EQ(cond.set_enabled_statuses(StatusMask()), eprosima::fastrtps::types::ReturnCode_t::RETCODE_UNSUPPORTED);
+    ASSERT_EQ(cond.set_enabled_statuses(StatusMask()), ReturnCode_t::RETCODE_UNSUPPORTED);
     ASSERT_EQ(cond.get_enabled_statuses().to_string(), StatusMask().to_string());
     ASSERT_EQ(cond.get_entity(), nullptr);
 
