@@ -3425,10 +3425,11 @@ TEST_F(XMLParserTests, getXMLDataSharingQos)
  * This test checks the negative cases on parsing of the <data_sharing> xml elements to a DataSharingQosPolicy object.
  * 1. Check an empty list of <domain_ids>.
  * 2. Check a list of <domain_ids> with more domains than the maximum.
- * 3. Check an invalid kind.
- * 4. Check a negative max_domains.
- * 5. Check empty shared_dir.
- * 6. Check invalid tags (at different levels)
+ * 3. Check no kind.
+ * 4. Check an invalid kind.
+ * 5. Check a negative max_domains.
+ * 6. Check empty shared_dir.
+ * 7. Check invalid tags (at different levels)
  */
 TEST_F(XMLParserTests, getXMLDataSharingQos_negativeCases)
 {
@@ -3476,6 +3477,23 @@ TEST_F(XMLParserTests, getXMLDataSharingQos_negativeCases)
         const char* xml =
                 "\
                 <data_sharing>\
+                    <domain_ids>\
+                        <domainId>10</domainId>\
+                        <domainId>20</domainId>\
+                    </domain_ids>\
+                </data_sharing>\
+                ";
+
+        ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+        titleElement = xml_doc.RootElement();
+        EXPECT_EQ(XMLP_ret::XML_ERROR,
+                XMLParserTest::propertiesPolicy_wrapper(titleElement, datasharing_policy, ident));
+    }
+
+    {
+        const char* xml =
+                "\
+                <data_sharing>\
                     <kind>INVALID</kind>\
                 </data_sharing>\
                 ";
@@ -3485,6 +3503,7 @@ TEST_F(XMLParserTests, getXMLDataSharingQos_negativeCases)
         EXPECT_EQ(XMLP_ret::XML_ERROR,
                 XMLParserTest::propertiesPolicy_wrapper(titleElement, datasharing_policy, ident));
     }
+
 
     {
         const char* xml =

@@ -1836,7 +1836,8 @@ XMLP_ret XMLParser::getXMLDataSharingQos(
             </xs:all>
         </xs:complexType>
      */
-    DataSharingKind kind;
+    bool kind_found = false;
+    DataSharingKind kind = DataSharingKind::AUTO;
     std::string shm_directory = "";
     int32_t max_domains = 0;
     std::vector<uint16_t> domain_ids;
@@ -1880,6 +1881,7 @@ XMLP_ret XMLParser::getXMLDataSharingQos(
                 logError(XMLPARSER, "Node '" << KIND << "' with bad content");
                 return XMLP_ret::XML_ERROR;
             }
+            kind_found = true;
         }
         else if (strcmp(name, SHARED_DIR) == 0)
         {
@@ -1946,6 +1948,12 @@ XMLP_ret XMLParser::getXMLDataSharingQos(
             logError(XMLPARSER, "Invalid element found in 'data_sharing'. Name: " << name);
             return XMLP_ret::XML_ERROR;
         }
+    }
+
+    if (!kind_found)
+    {
+        logError(XMLPARSER, "Node 'data_sharing' without kind");
+        return XMLP_ret::XML_ERROR;
     }
 
     if (max_domains != 0 && domain_ids.size() > static_cast<uint32_t>(max_domains))
