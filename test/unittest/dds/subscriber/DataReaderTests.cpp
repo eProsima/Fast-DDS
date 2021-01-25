@@ -1449,10 +1449,10 @@ TEST_F(DataReaderUnsuportedTests, UnsupportedDataReaderMethods)
         SampleInfoSeq sample_infos;
         int32_t max_samples = LENGTH_UNLIMITED;
         EXPECT_EQ(ReturnCode_t::RETCODE_UNSUPPORTED, data_reader->read_w_condition(
-                data_values,
-                sample_infos,
-                max_samples,
-                nullptr));
+                    data_values,
+                    sample_infos,
+                    max_samples,
+                    nullptr));
     }
 
     {
@@ -1461,11 +1461,11 @@ TEST_F(DataReaderUnsuportedTests, UnsupportedDataReaderMethods)
         int32_t max_samples = LENGTH_UNLIMITED;
         fastrtps::rtps::InstanceHandle_t previous_handle;
         EXPECT_EQ(ReturnCode_t::RETCODE_UNSUPPORTED, data_reader->read_next_instance_w_condition(
-                data_values,
-                sample_infos,
-                max_samples,
-                previous_handle,
-                nullptr));
+                    data_values,
+                    sample_infos,
+                    max_samples,
+                    previous_handle,
+                    nullptr));
     }
 
     {
@@ -1473,10 +1473,10 @@ TEST_F(DataReaderUnsuportedTests, UnsupportedDataReaderMethods)
         SampleInfoSeq sample_infos;
         int32_t max_samples = LENGTH_UNLIMITED;
         EXPECT_EQ(ReturnCode_t::RETCODE_UNSUPPORTED, data_reader->take_w_condition(
-                data_values,
-                sample_infos,
-                max_samples,
-                nullptr));
+                    data_values,
+                    sample_infos,
+                    max_samples,
+                    nullptr));
     }
 
     {
@@ -1485,11 +1485,11 @@ TEST_F(DataReaderUnsuportedTests, UnsupportedDataReaderMethods)
         int32_t max_samples = LENGTH_UNLIMITED;
         fastrtps::rtps::InstanceHandle_t previous_handle;
         EXPECT_EQ(ReturnCode_t::RETCODE_UNSUPPORTED, data_reader->take_next_instance_w_condition(
-                data_values,
-                sample_infos,
-                max_samples,
-                previous_handle,
-                nullptr));
+                    data_values,
+                    sample_infos,
+                    max_samples,
+                    previous_handle,
+                    nullptr));
     }
 
     std::vector<fastrtps::rtps::InstanceHandle_t> publication_handles;
