@@ -469,3 +469,34 @@ TEST(DDSDataSharing, DataSharingReader_CommonDomainWriters)
     ASSERT_TRUE(data.empty());
     reader.block_for_all();
 }
+
+
+TEST(DDSDataSharing, DataSharingPoolError)
+{
+    PubSubWriter<Data1mbType> writer_datasharing(TEST_TOPIC_NAME);
+    PubSubWriter<Data1mbType> writer_auto(TEST_TOPIC_NAME);
+    PubSubReader<Data1mbType> reader(TEST_TOPIC_NAME);
+
+    writer_datasharing.resource_limits_max_samples(100000)
+            .history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS)
+            .datasharing_on("Unused. change when ready").init();
+    ASSERT_FALSE(writer_datasharing.isInitialized());
+
+    writer_auto.resource_limits_max_samples(100000)
+            .history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS)
+            .datasharing_auto().init();
+    ASSERT_TRUE(writer_auto.isInitialized());
+
+    reader.datasharing_on("Unused. change when ready").init();
+    ASSERT_TRUE(reader.isInitialized());
+
+    reader.wait_discovery();
+    writer_auto.wait_discovery();
+
+    auto data = default_data300kb_data_generator();
+    reader.startReception(data);
+
+    writer_auto.send(data);
+    ASSERT_TRUE(data.empty());
+    reader.block_for_all();
+}
