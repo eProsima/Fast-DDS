@@ -24,34 +24,36 @@ namespace eprosima {
 namespace fastdds {
 namespace dds {
 
-fastrtps::types::ReturnCode_t WaitSet::attach_condition(
+using ReturnCode_t = eprosima::fastrtps::types::ReturnCode_t;
+
+ReturnCode_t WaitSet::attach_condition(
         const Condition& cond)
 {
     static_cast<void>(cond);
-    return fastrtps::types::ReturnCode_t::RETCODE_UNSUPPORTED;
+    return ReturnCode_t::RETCODE_UNSUPPORTED;
 }
 
-fastrtps::types::ReturnCode_t WaitSet::detach_condition(
+ReturnCode_t WaitSet::detach_condition(
         const Condition& cond)
 {
     static_cast<void>(cond);
-    return fastrtps::types::ReturnCode_t::RETCODE_UNSUPPORTED;
+    return ReturnCode_t::RETCODE_UNSUPPORTED;
 }
 
-fastrtps::types::ReturnCode_t WaitSet::wait(
+ReturnCode_t WaitSet::wait(
         ConditionSeq& active_conditions,
         const fastrtps::Duration_t timeout) const
 {
     static_cast<void>(active_conditions);
     static_cast<void>(timeout);
-    return fastrtps::types::ReturnCode_t::RETCODE_UNSUPPORTED;
+    return ReturnCode_t::RETCODE_UNSUPPORTED;
 }
 
-fastrtps::types::ReturnCode_t WaitSet::get_conditions(
+ReturnCode_t WaitSet::get_conditions(
         ConditionSeq& attached_conditions) const
 {
     static_cast<void>(attached_conditions);
-    return fastrtps::types::ReturnCode_t::RETCODE_UNSUPPORTED;
+    return ReturnCode_t::RETCODE_UNSUPPORTED;
 }
 
 }  // namespace dds

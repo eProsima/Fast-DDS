@@ -32,10 +32,16 @@ namespace dds {
  * @brief The GuardCondition class is a specific Condition whose trigger_value is completely under the control
  * of the application.
  *
+ * The purpose of the GuardCondition is to provide the means for the application to manually wakeup a WaitSet. This is
+ * accomplished by attaching the GuardCondition to the WaitSet and then setting the trigger_value by means of the
+ * set_trigger_value operation.
+ *
  */
 class GuardCondition : public Condition
 {
 public:
+
+    using ReturnCode_t = eprosima::fastrtps::types::ReturnCode_t;
 
     // GuardCondition not implemented.
 
@@ -44,11 +50,11 @@ public:
      * @param value new value for trigger
      * @return RETURN_OK
      */
-    RTPS_DllAPI eprosima::fastrtps::types::ReturnCode_t set_trigger_value(
+    RTPS_DllAPI ReturnCode_t set_trigger_value(
             bool value)
     {
         static_cast<void>(value);
-        return eprosima::fastrtps::types::ReturnCode_t::RETCODE_UNSUPPORTED;
+        return ReturnCode_t::RETCODE_UNSUPPORTED;
     }
 
 };

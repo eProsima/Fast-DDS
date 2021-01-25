@@ -29,8 +29,7 @@ namespace fastdds {
 namespace dds {
 
 /**
- * @brief The Condition class is the root base class  for all the conditions that may be attached to a WaitSet.
- *
+ * @brief The Condition class is the root base class for all the conditions that may be attached to a WaitSet.
  */
 class Condition
 {
@@ -39,12 +38,12 @@ public:
     // Condition class not implemented.
 
     /**
-     * @brief Retrieves the trigger_value
-     * @return true if trigger_value is set to true, false otherwise
+     * @brief Retrieves the trigger_value of the Condition
+     * @return true if trigger_value is set to 'true', 'false' otherwise
      */
     RTPS_DllAPI bool get_trigger_value() const
     {
-        logWarning(CONDITION, "get_trigger_value method not implemented");
+        logWarning(CONDITION, "get_trigger_value public member function not implemented");
         return false; // TODO return trigger value
     }
 

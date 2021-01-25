@@ -24,22 +24,24 @@ namespace eprosima {
 namespace fastdds {
 namespace dds {
 
-fastrtps::types::ReturnCode_t StatusCondition::set_enabled_statuses(
+using ReturnCode_t = eprosima::fastrtps::types::ReturnCode_t;
+
+ReturnCode_t StatusCondition::set_enabled_statuses(
         const StatusMask& mask)
 {
     static_cast<void>(mask);
-    return fastrtps::types::ReturnCode_t::RETCODE_UNSUPPORTED;
+    return ReturnCode_t::RETCODE_UNSUPPORTED;
 }
 
 const StatusMask& StatusCondition::get_enabled_statuses() const
 {
-    logWarning(CONDITION, "get_enabled_statuses method not implemented");
+    logWarning(CONDITION, "get_enabled_statuses public member function not implemented");
     return status_mask;
 }
 
 Entity* StatusCondition::get_entity() const
 {
-    logWarning(CONDITION, "get_entity method not implemented");
+    logWarning(CONDITION, "get_entity public member function not implemented");
     return nullptr;
 }
 

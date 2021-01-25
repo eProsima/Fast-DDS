@@ -38,6 +38,8 @@ class StatusCondition : public Condition
 {
 public:
 
+    using ReturnCode_t = eprosima::fastrtps::types::ReturnCode_t;
+
     // StatusCondition not implemented.
 
     /**
@@ -45,7 +47,7 @@ public:
      * @param mask defines the mask for the status
      * @return RETCODE_OK with everything ok, error code otherwise
      */
-    RTPS_DllAPI fastrtps::types::ReturnCode_t set_enabled_statuses(
+    RTPS_DllAPI ReturnCode_t set_enabled_statuses(
             const StatusMask& mask);
 
     /**

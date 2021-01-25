@@ -38,6 +38,8 @@ class WaitSet
 {
 public:
 
+    using ReturnCode_t = eprosima::fastrtps::types::ReturnCode_t;
+
     // WaitSet class not implemented.
 
     /**
@@ -45,7 +47,7 @@ public:
      * @param cond Condition
      * @return RETCODE_OK if attached correctly, error code otherwise
      */
-    RTPS_DllAPI fastrtps::types::ReturnCode_t attach_condition(
+    RTPS_DllAPI ReturnCode_t attach_condition(
             const Condition& cond);
 
 
@@ -54,7 +56,7 @@ public:
      * @param cond Condition
      * @return RETCODE_OK if detached correctly, PRECONDITION_NOT_MET if condition was not attached
      */
-    RTPS_DllAPI fastrtps::types::ReturnCode_t detach_condition(
+    RTPS_DllAPI ReturnCode_t detach_condition(
             const Condition& cond);
 
     /**
@@ -66,7 +68,7 @@ public:
      * @return RETCODE_OK if everything correct, PRECONDITION_NOT_MET if WaitSet already waiting, TIMEOUT if maximum
      * time expired, error code otherwise
      */
-    RTPS_DllAPI fastrtps::types::ReturnCode_t wait(
+    RTPS_DllAPI ReturnCode_t wait(
             ConditionSeq& active_conditions,
             const fastrtps::Duration_t timeout) const;
 
@@ -75,7 +77,7 @@ public:
      * @param attached_conditions Reference to the collection of attached conditions
      * @return RETCODE_OK if everything correct, error code otherwise
      */
-    RTPS_DllAPI fastrtps::types::ReturnCode_t get_conditions(
+    RTPS_DllAPI ReturnCode_t get_conditions(
             ConditionSeq& attached_conditions) const;
 };
 
