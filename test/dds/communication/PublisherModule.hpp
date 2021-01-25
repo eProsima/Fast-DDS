@@ -44,7 +44,7 @@ public:
             bool fixed_type = false,
             bool zero_copy = false)
         : exit_on_lost_liveliness_(exit_on_lost_liveliness)
-        , fixed_type_(fixed_type)
+        , fixed_type_(zero_copy || fixed_type) // If zero copy active, fixed type is required
         , zero_copy_(zero_copy)
     {
     }

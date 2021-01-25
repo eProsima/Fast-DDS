@@ -1,15 +1,69 @@
-#include "Publisher.hpp"
-#include "Subscriber.hpp"
+// Copyright 2021 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
 
+/**
+ * @file PubSubMain.cpp
+ */
+#include "SubscriberModule.hpp"
+#include "PublisherModule.hpp"
+
+#include <fastdds/dds/domain/DomainParticipantFactory.hpp>
 #include <fastrtps/Domain.h>
+
+#include <thread>
+
+using namespace eprosima::fastdds::dds;
+
+/* ARGUMENTS
+ * --exit_on_lost_liveliness
+ * --notexit
+ * --fixed_type
+ * --zero_copy
+ * --seed <int>
+ * --wait <int>
+ * --samples <int>
+ * --magic <str>
+ * --xmlfile <path>
+ * --publishers <int>
+ */
+
+void publisher_run(
+        PublisherModule* publisher,
+        uint32_t wait,
+        uint32_t samples)
+{
+    if (wait > 0)
+    {
+        publisher->wait_discovery(wait);
+    }
+
+    // Run two loops because the first one could be easily skipped
+    // If it fails because some subscribers miss messages, increase the number of loops
+    publisher->run(samples, 2);
+}
 
 int main(
         int argc,
         char** argv)
 {
     int arg_count = 1;
+    bool exit_on_lost_liveliness = false;
     bool notexit = false;
-    uint32_t seed = 7800, wait = 0;
+    bool fixed_type = false;
+    bool zero_copy = false;
+    uint32_t seed = 7800;
+    uint32_t wait = 0;
     uint32_t samples = 4;
     uint32_t publishers = 1;
     char* xml_file = nullptr;
@@ -17,9 +71,21 @@ int main(
 
     while (arg_count < argc)
     {
+        if (strcmp(argv[arg_count], "--exit_on_lost_liveliness") == 0)
+        {
+            exit_on_lost_liveliness = true;
+        }
         if (strcmp(argv[arg_count], "--notexit") == 0)
         {
             notexit = true;
+        }
+        else if (strcmp(argv[arg_count], "--fixed") == 0)
+        {
+            fixed_type = true;
+        }
+        else if (strcmp(argv[arg_count], "--zero_copy") == 0)
+        {
+            zero_copy = true;
         }
         else if (strcmp(argv[arg_count], "--seed") == 0)
         {
@@ -88,29 +154,25 @@ int main(
     if (xml_file)
     {
         eprosima::fastrtps::Domain::loadXMLProfilesFile(xml_file);
+        //DomainParticipantFactory::get_instance()->load_XML_profiles_file(xml_file);
     }
 
-    Publisher publisher(false);
-    Subscriber subscriber(publishers, samples);
+    SubscriberModule subscriber(publishers, samples, fixed_type, zero_copy);
+    PublisherModule publisher(exit_on_lost_liveliness, fixed_type, zero_copy);
+
+    uint32_t result = 1;
 
     if (publisher.init(seed, magic))
     {
+        std::thread publisher_thread(publisher_run, &publisher, wait, samples);
+
         if (subscriber.init(seed, magic))
         {
-            if (wait > 0)
-            {
-                publisher.wait_discovery(wait);
-            }
-
-            do
-            {
-                publisher.run(samples, 1);
-            }
-            while (!subscriber.run_for(notexit, std::chrono::milliseconds(100)));
-
-            return 0;
+            result = subscriber.run(notexit) ? 0 : -1;
         }
+
+        publisher_thread.join();
     }
 
-    return -1;
+    return result;
 }

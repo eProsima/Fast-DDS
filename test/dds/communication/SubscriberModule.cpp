@@ -34,11 +34,6 @@ using namespace eprosima::fastdds::dds;
 
 SubscriberModule::~SubscriberModule()
 {
-    if (nullptr != topic_)
-    {
-        participant_->delete_topic(topic_);
-    }
-
     if (nullptr != reader_)
     {
         subscriber_->delete_datareader(reader_);
@@ -47,6 +42,11 @@ SubscriberModule::~SubscriberModule()
     if (nullptr != subscriber_)
     {
         participant_->delete_subscriber(subscriber_);
+    }
+
+    if (nullptr != topic_)
+    {
+        participant_->delete_topic(topic_);
     }
 
     if (nullptr != participant_)
@@ -66,9 +66,13 @@ bool SubscriberModule::init(
     // factory_qos.entity_factory().autoenable_created_entities = false;
     // DomainParticipantFactory::get_instance()->set_qos(factory_qos);
 
+    StatusMask mask = StatusMask::subscription_matched()
+            << StatusMask::data_available()
+            << StatusMask::liveliness_changed();
+
     DomainParticipantQos participant_qos;
     participant_ =
-            DomainParticipantFactory::get_instance()->create_participant(seed % 230, participant_qos, this);
+            DomainParticipantFactory::get_instance()->create_participant(seed % 230, participant_qos, this, mask);
 
     if (participant_ == nullptr)
     {
@@ -89,26 +93,17 @@ bool SubscriberModule::init(
 
     // Generate topic name
     std::ostringstream topic_name;
-    topic_name << "HelloWorldTopic_" << ((magic.empty()) ? asio::ip::host_name() : magic) << "_" << seed;
+    topic_name << "DDSCommunicationTestsTopic_" << ((magic.empty()) ? asio::ip::host_name() : magic) << "_" << seed;
 
     //CREATE THE SUBSCRIBER
-    DataReaderQos rqos;
-    rqos.liveliness().lease_duration = 3;
-    rqos.liveliness().announcement_period = 1;
-    rqos.liveliness().kind = eprosima::fastdds::dds::AUTOMATIC_LIVELINESS_QOS;
-
-    // Defaut mask
-    // StatusMask mask = StatusMask::subscription_matched()
-            // << StatusMask::data_available()
-            // << StatusMask::liveliness_changed();
-
-    subscriber_ = participant_->create_subscriber(SUBSCRIBER_QOS_DEFAULT, this);
+    subscriber_ = participant_->create_subscriber(SUBSCRIBER_QOS_DEFAULT, nullptr);
     if (subscriber_ == nullptr)
     {
         std::cout << "Error creating subscriber" << std::endl;
         return false;
     }
 
+    //CREATE THE TOPIC
     topic_ = participant_->create_topic(topic_name.str(), type_->get_type_name(), TOPIC_QOS_DEFAULT);
     if (topic_ == nullptr)
     {
@@ -116,7 +111,13 @@ bool SubscriberModule::init(
         return false;
     }
 
-    reader_ = subscriber_->create_datareader(topic_, rqos, this);
+    //CREATE THE DATAREADER
+    DataReaderQos rqos;
+    rqos.liveliness().lease_duration = 3;
+    rqos.liveliness().announcement_period = 1;
+    rqos.liveliness().kind = eprosima::fastdds::dds::AUTOMATIC_LIVELINESS_QOS;
+
+    reader_ = subscriber_->create_datareader(topic_, rqos);
     if (reader_ == nullptr)
     {
         std::cout << "Error creating subscriber datareader" << std::endl;
@@ -140,8 +141,6 @@ bool SubscriberModule::run_for(
         bool notexit,
         const std::chrono::milliseconds& timeout)
 {
-    std::cout << "Subscriber running with notexit " << notexit << std::endl;
-
     bool returned_value = false;
 
     while (notexit && run_)
@@ -151,20 +150,16 @@ bool SubscriberModule::run_for(
 
     if (run_)
     {
-        std::cout << "Subscriber running" << std::endl;
-
         std::unique_lock<std::mutex> lock(mutex_);
         returned_value = cv_.wait_for(lock, timeout, [&]
         {
             if (publishers_ < number_samples_.size())
             {
                 // Will fail later.
-                std::cout << "Subscriber fails to connect with publishers" << std::endl;
                 return true;
             }
             else if (publishers_ > number_samples_.size())
             {
-                std::cout << "Subscriber fails to connect, too much publishers" << std::endl;
                 return false;
             }
 
@@ -172,7 +167,6 @@ bool SubscriberModule::run_for(
             {
                 if (max_number_samples_ > number_samples.second)
                 {
-                    std::cout << "Subscriber fail, too few samples" << std::endl;
                     return false;
                 }
             }
@@ -290,40 +284,42 @@ void SubscriberModule::on_data_available(
     }
     else
     {
-        void* sample;
         SampleInfo info;
 
-        if (ReturnCode_t::RETCODE_OK == reader->take_next_sample(sample, &info))
+        if (fixed_type_)
         {
-            std::cout << "Subscriber take next sample from :" << info.sample_identity.writer_guid() << std::endl;
-
-            if (info.instance_state == ALIVE_INSTANCE_STATE)
+            FixedSized sample;
+            if (reader->take_next_sample((void*)&sample, &info) == ReturnCode_t::RETCODE_OK)
             {
-                std::cout << "Subscriber data received from :" << info.sample_identity.writer_guid() << std::endl;
-
-                if (fixed_type_)
+                if (info.instance_state == ALIVE_INSTANCE_STATE)
                 {
-                    FixedSized* data = static_cast<FixedSized*>(sample);
+                    std::unique_lock<std::mutex> lock(mutex_);
                     std::cout << "Received sample (" << info.sample_identity.writer_guid() << " - " <<
-                        info.sample_identity.sequence_number() << "): index(" << data->index() << ")" << std::endl;
-                }
-                else
-                {
-                    HelloWorld* data = static_cast<HelloWorld*>(sample);
-                    std::cout << "Received sample (" << info.sample_identity.writer_guid() << " - " <<
-                        info.sample_identity.sequence_number() << "): index(" << data->index() << "), message("
-                                << data->message() << ")" << std::endl;
-                }
-
-                if (max_number_samples_ <= ++number_samples_[info.sample_identity.writer_guid()])
-                {
-                    cv_.notify_all();
+                        info.sample_identity.sequence_number() << "): index(" << sample.index() << ")" << std::endl;
+                    if (max_number_samples_ <= ++number_samples_[info.sample_identity.writer_guid()])
+                    {
+                        cv_.notify_all();
+                    }
                 }
             }
         }
         else
         {
-            std::cout << "Subscriber error in take :" << std::endl;
+            HelloWorld sample;
+            if (reader->take_next_sample((void*)&sample, &info) == ReturnCode_t::RETCODE_OK)
+            {
+                if (info.instance_state == ALIVE_INSTANCE_STATE)
+                {
+                    std::unique_lock<std::mutex> lock(mutex_);
+                    std::cout << "Received sample (" << info.sample_identity.writer_guid() << " - " <<
+                        info.sample_identity.sequence_number() << "): index(" << sample.index() << "), message("
+                                << sample.message() << ")" << std::endl;
+                    if (max_number_samples_ <= ++number_samples_[info.sample_identity.writer_guid()])
+                    {
+                        cv_.notify_all();
+                    }
+                }
+            }
         }
     }
 }
@@ -341,18 +337,4 @@ void SubscriberModule::on_liveliness_changed(
         std::cout << "Subscriber lost liveliness" << std::endl;
         run_ = false;
     }
-}
-
-void SubscriberModule::on_sample_rejected(
-    DataReader* /*reader*/,
-    const SampleRejectedStatus& /*status*/)
-{
-    std::cout << "Subscriber on_sample_rejected" << std::endl;
-}
-
-void SubscriberModule::on_sample_lost(
-    DataReader* /*reader*/,
-    const SampleLostStatus& /*status*/)
-{
-    std::cout << "Subscriber on_sample_lost" << std::endl;
 }

@@ -24,7 +24,7 @@ using namespace eprosima::fastdds::dds;
 
 /* ARGUMENTS
  * --notexit
- * --fixed
+ * --fixed_type
  * --zero_copy
  * --seed <int>
  * --samples <int>
@@ -53,7 +53,7 @@ int main(
         {
             notexit = true;
         }
-        else if (strcmp(argv[arg_count], "--fixed") == 0)
+        else if (strcmp(argv[arg_count], "--fixed_type") == 0)
         {
             fixed_type = true;
         }

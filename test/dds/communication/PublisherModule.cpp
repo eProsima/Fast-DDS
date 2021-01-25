@@ -32,11 +32,6 @@ using namespace eprosima::fastdds::dds;
 
 PublisherModule::~PublisherModule()
 {
-    if (nullptr != topic_)
-    {
-        participant_->delete_topic(topic_);
-    }
-
     if (nullptr != writer_)
     {
         publisher_->delete_datawriter(writer_);
@@ -45,6 +40,11 @@ PublisherModule::~PublisherModule()
     if (nullptr != publisher_)
     {
         participant_->delete_publisher(publisher_);
+    }
+
+    if (nullptr != topic_)
+    {
+        participant_->delete_topic(topic_);
     }
 
     if (nullptr != participant_)
@@ -83,7 +83,7 @@ bool PublisherModule::init(
 
     // Generate topic name
     std::ostringstream topic_name;
-    topic_name << "HelloWorldTopic_" << ((magic.empty()) ? asio::ip::host_name() : magic) << "_" << seed;
+    topic_name << "DDSCommunicationTestsTopic_" << ((magic.empty()) ? asio::ip::host_name() : magic) << "_" << seed;
 
     //CREATE THE PUBLISHER
     DataWriterQos wqos;

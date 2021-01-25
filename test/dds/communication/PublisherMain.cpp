@@ -24,7 +24,7 @@ using namespace eprosima::fastdds::dds;
 
 /* ARGUMENTS
  * --exit_on_lost_liveliness
- * --fixed
+ * --fixed_type
  * --zero_copy
  * --seed <int>
  * --wait <int>
@@ -53,7 +53,7 @@ int main(
         {
             exit_on_lost_liveliness = true;
         }
-        else if (strcmp(argv[arg_count], "--fixed") == 0)
+        else if (strcmp(argv[arg_count], "--fixed_type") == 0)
         {
             fixed_type = true;
         }

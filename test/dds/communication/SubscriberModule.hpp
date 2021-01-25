@@ -48,7 +48,7 @@ public:
             bool zero_copy = false)
         : publishers_(publishers)
         , max_number_samples_(max_number_samples)
-        , fixed_type_(fixed_type)
+        , fixed_type_(zero_copy || fixed_type) // If zero copy active, fixed type is required
         , zero_copy_(zero_copy)
     {
     }
@@ -75,14 +75,6 @@ public:
     void on_liveliness_changed(
             DataReader* /*reader*/,
             const eprosima::fastdds::dds::LivelinessChangedStatus& status) override;
-
-    void on_sample_rejected(
-            DataReader* /*reader*/,
-            const fastrtps::SampleRejectedStatus& /*status*/) override;
-
-    void on_sample_lost(
-            DataReader* /*reader*/,
-            const SampleLostStatus& /*status*/) override;
 
     bool init(
             uint32_t seed,
