@@ -164,17 +164,10 @@ public:
     static boost::posix_time::ptime steady_clock_time_point_to_ptime (
             const std::chrono::time_point<std::chrono::steady_clock>& time_point)
     {
-        auto now = std::chrono::steady_clock::now();
-        auto boost_now  =
-#ifdef BOOST_DATE_TIME_HAS_HIGH_PRECISION_CLOCK
-                boost::posix_time::microsec_clock::local_time();
-#endif //BOOST_DATE_TIME_HAS_HIGH_PRECISION_CLOCK
-                boost::posix_time::second_clock::local_time();
-
         std::chrono::microseconds remaining =
-                std::chrono::duration_cast<std::chrono::microseconds>(time_point - now);
+                std::chrono::duration_cast<std::chrono::microseconds>(time_point - std::chrono::steady_clock::now());
 
-        return boost_now + boost::posix_time::microseconds(remaining.count());
+        return boost::get_system_time() + boost::posix_time::microseconds(remaining.count());
     }
 
     /**
