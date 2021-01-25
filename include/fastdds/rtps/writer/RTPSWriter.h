@@ -478,6 +478,8 @@ protected:
     bool is_datasharing_compatible_with(
             const ReaderProxyData& rdata) const;
 
+    bool is_pool_initialized() const;
+
 private:
 
     RTPSWriter& operator =(
@@ -490,6 +492,7 @@ private:
 
 
     RTPSWriter* next_[2] = { nullptr, nullptr };
+
 };
 
 } /* namespace rtps */

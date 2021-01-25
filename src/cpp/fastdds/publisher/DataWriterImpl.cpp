@@ -234,6 +234,29 @@ ReturnCode_t DataWriterImpl::enable()
         static_cast<WriterHistory*>(&history_),
         static_cast<WriterListener*>(&writer_listener_));
 
+    if (writer == nullptr &&
+            w_att.endpoint.data_sharing_configuration().kind() == DataSharingKind::AUTO)
+    {
+        logInfo(DATA_WRITER, "Trying with a non-datasharing pool");
+        release_payload_pool();
+        is_data_sharing_compatible_ = false;
+        DataSharingQosPolicy datasharing;
+        datasharing.off();
+        w_att.endpoint.set_data_sharing_configuration(datasharing);
+
+        pool = get_payload_pool();
+        if (!pool)
+        {
+            logError(DATA_WRITER, "Problem creating payload pool for associated Writer");
+            return ReturnCode_t::RETCODE_ERROR;
+        }
+
+        writer = RTPSDomain::createRTPSWriter(
+            publisher_->rtps_participant(),
+            w_att, pool,
+            static_cast<WriterHistory*>(&history_),
+            static_cast<WriterListener*>(&writer_listener_));
+    }
     if (writer == nullptr)
     {
         release_payload_pool();
@@ -1476,6 +1499,7 @@ bool DataWriterImpl::release_payload_pool()
         TopicPayloadPoolRegistry::release(topic_pool);
     }
 
+    payload_pool_.reset();
     return result;
 }
 

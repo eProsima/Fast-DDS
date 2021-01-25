@@ -246,6 +246,7 @@ public:
             return false;
         }
 
+        is_initialized_ = true;
         return true;
     }
 
@@ -313,6 +314,11 @@ public:
         ++descriptor_->liveliness_sequence;
     }
 
+    bool is_initialized() const
+    {
+        return is_initialized_;
+    }
+
 private:
 
     octet* payloads_pool_;          //< Shared pool of payloads
@@ -324,6 +330,8 @@ private:
     FixedSizeQueue<PayloadNode*> free_payloads_;    //< Pointers to the free payloads in the pool
 
     const RTPSWriter* writer_;      //< Writer that is owner of the pool
+
+    bool is_initialized_ = false;   //< Whether the pool has been initialized on shared memory
 
 };
 

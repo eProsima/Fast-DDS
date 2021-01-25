@@ -404,6 +404,17 @@ bool RTPSWriter::is_datasharing_compatible_with(
     return false;
 }
 
+bool RTPSWriter::is_pool_initialized() const
+{
+    if (is_datasharing_compatible())
+    {
+        auto pool = std::dynamic_pointer_cast<WriterPool>(payload_pool_);
+        assert (pool != nullptr);
+        return pool->is_initialized();
+    }
+    return true;
+}
+
 }  // namespace rtps
 }  // namespace fastrtps
 }  // namespace eprosima

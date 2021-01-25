@@ -592,6 +592,12 @@ bool RTPSParticipantImpl::create_writer(
         return false;
     }
 
+    if (!SWriter->is_pool_initialized())
+    {
+        delete(SWriter);
+        return false;
+    }
+
 #if HAVE_SECURITY
     if (!is_builtin)
     {
