@@ -15,16 +15,20 @@
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
 
-#include <fastdds/dds/domain/DomainParticipantFactory.hpp>
+#include <fastdds/dds/builtin/topic/SubscriptionBuiltinTopicData.hpp>
 #include <fastdds/dds/domain/DomainParticipant.hpp>
-#include <fastdds/dds/publisher/Publisher.hpp>
+#include <fastdds/dds/domain/DomainParticipantFactory.hpp>
 #include <fastdds/dds/publisher/DataWriter.hpp>
 #include <fastdds/dds/publisher/DataWriterListener.hpp>
+#include <fastdds/dds/publisher/Publisher.hpp>
 #include <fastdds/dds/publisher/qos/DataWriterQos.hpp>
+
 #include <dds/domain/DomainParticipant.hpp>
+#include <dds/pub/AnyDataWriter.hpp>
 #include <dds/pub/Publisher.hpp>
 #include <dds/pub/qos/DataWriterQos.hpp>
-#include <dds/pub/AnyDataWriter.hpp>
+
+#include "../../logging/mock/MockConsumer.h"
 
 namespace eprosima {
 namespace fastdds {
@@ -516,13 +520,67 @@ TEST(DataWriterTests, LoanNegativeTests)
     ASSERT_TRUE(DomainParticipantFactory::get_instance()->delete_participant(participant) == ReturnCode_t::RETCODE_OK);
 }
 
+class DataWriterUnsuportedTests : public ::testing::Test
+{
+public:
+
+    DataWriterUnsuportedTests()
+    {
+        Reset();
+    }
+
+    ~DataWriterUnsuportedTests()
+    {
+        Log::Reset();
+        Log::KillThread();
+    }
+
+    void Reset()
+    {
+        Log::ClearConsumers();
+        mockConsumer = new MockConsumer();
+        Log::RegisterConsumer(std::unique_ptr<LogConsumer>(mockConsumer));
+        Log::SetVerbosity(Log::Warning);
+    }
+
+    MockConsumer* mockConsumer;
+
+    const uint32_t AsyncTries = 5;
+    const uint32_t AsyncWaitMs = 25;
+
+    void HELPER_WaitForEntries(
+            uint32_t amount)
+    {
+        size_t entries = 0;
+        for (uint32_t i = 0; i != AsyncTries; i++)
+        {
+            entries = mockConsumer->ConsumedEntries().size();
+            if (entries == amount)
+            {
+                break;
+            }
+            std::this_thread::sleep_for(std::chrono::milliseconds(AsyncWaitMs));
+        }
+
+        ASSERT_EQ(amount, mockConsumer->ConsumedEntries().size());
+    }
+
+};
+
+
 /*
  * This test checks that the DataWriter methods defined in the standard not yet implemented in FastDDS return
  * ReturnCode_t::RETCODE_UNSUPPORTED. The following methods are checked:
- * 1. copy_from_topic_qos
- * 2. delete_contained_entities
+ * 1. get_publication_matched_status
+ * 2. get_matched_subscription_data
+ * 3. write_w_timestamp
+ * 4. register_instance_w_timestamp
+ * 5. unregister_instance_w_timestamp
+ * 6. get_matched_subscriptions
+ * 7. get_key_value
+ * 8. lookup_instance
  */
-TEST(PublisherTests, UnsupportedDataWriterMethods)
+TEST_F(DataWriterUnsuportedTests, UnsupportedDataWriterMethods)
 {
     DomainParticipant* participant =
             DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
@@ -545,17 +603,45 @@ TEST(PublisherTests, UnsupportedDataWriterMethods)
         ReturnCode_t::RETCODE_UNSUPPORTED,
         data_writer->get_publication_matched_status(status));
 
-    // Test requires unimplemented struct SubscriptionBuiltinTopicData
-    //
-    // SubscriptionBuiltinTopicData subscription_data;
-    // fastrtps::rtps::InstanceHandle_t subscription_handle;
-    // EXPECT_EQ(
-    //        ReturnCode_t::RETCODE_UNSUPPORTED,
-    //        data_writer->get_matched_subscription_data(void,subscription_handle));
-    //
+    builtin::SubscriptionBuiltinTopicData subscription_data;
+    fastrtps::rtps::InstanceHandle_t subscription_handle;
+    EXPECT_EQ(
+           ReturnCode_t::RETCODE_UNSUPPORTED,
+           data_writer->get_matched_subscription_data(subscription_data, subscription_handle));
+
+    {
+        InstanceHandle_t handle;
+        fastrtps::rtps::Time_t timestamp;
+        EXPECT_EQ(
+            ReturnCode_t::RETCODE_UNSUPPORTED,
+            data_writer->write_w_timestamp(nullptr /* data */, handle, timestamp));
+    }
+
+    {
+        fastrtps::rtps::Time_t timestamp;
+        EXPECT_EQ(
+            HANDLE_NIL,
+            data_writer->register_instance_w_timestamp(nullptr /* instance */, timestamp));
+            HELPER_WaitForEntries(1);
+    }
+
+    {
+        InstanceHandle_t handle;
+        fastrtps::rtps::Time_t timestamp;
+        EXPECT_EQ(
+            ReturnCode_t::RETCODE_UNSUPPORTED,
+            data_writer->unregister_instance_w_timestamp(nullptr /* instance */, handle, timestamp));
+    }
+
 
     std::vector<fastrtps::rtps::InstanceHandle_t*> subscription_handles;
     EXPECT_EQ(ReturnCode_t::RETCODE_UNSUPPORTED, data_writer->get_matched_subscriptions(subscription_handles));
+
+    fastrtps::rtps::InstanceHandle_t key_handle;
+    EXPECT_EQ(ReturnCode_t::RETCODE_UNSUPPORTED, data_writer->get_key_value(nullptr /* key_holder */, key_handle));
+
+    EXPECT_EQ(HANDLE_NIL, data_writer->lookup_instance(nullptr /* instance */));
+    HELPER_WaitForEntries(1);
 
     ASSERT_EQ(publisher->delete_datawriter(data_writer), ReturnCode_t::RETCODE_OK);
     ASSERT_EQ(participant->delete_publisher(publisher), ReturnCode_t::RETCODE_OK);
