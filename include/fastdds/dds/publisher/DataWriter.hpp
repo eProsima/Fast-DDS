@@ -452,7 +452,7 @@ public:
      */
     RTPS_DllAPI ReturnCode_t get_matched_subscription_data(
             builtin::SubscriptionBuiltinTopicData& subscription_data,
-            fastrtps::rtps::InstanceHandle_t subscription_handle) const;
+            const fastrtps::rtps::InstanceHandle_t subscription_handle) const;
 
     /**
      * @brief Fills the given vector with the InstanceHandle_t of matched DataReaders
