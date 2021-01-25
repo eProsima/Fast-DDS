@@ -283,7 +283,7 @@ TEST(DataWriterTests, ForcedDataSharing)
     if (certs_path == nullptr)
     {
         std::cout << "Cannot get enviroment variable CERTS_PATH" << std::endl;
-        exit(-1);
+        ASSERT_TRUE(false);
     }
 
     fastrtps::rtps::PropertyPolicy security_property;
