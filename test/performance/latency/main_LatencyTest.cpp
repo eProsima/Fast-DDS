@@ -555,7 +555,7 @@ int main(
                         xml_config_file, dynamic_types, forced_domain, data_sizes);
 
         // Initialize subscribers
-        std::vector<std::shared_ptr<LatencyTestSubscriber> > latency_subscribers;
+        std::vector<std::shared_ptr<LatencyTestSubscriber>> latency_subscribers;
 
         bool sub_init = true;
         for (int i = 0; i < subscribers; i++)

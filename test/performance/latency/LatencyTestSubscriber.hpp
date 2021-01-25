@@ -118,6 +118,7 @@ public:
     class LatencyDataWriterListener : public eprosima::fastdds::dds::DataWriterListener
     {
     public:
+
         LatencyDataWriterListener(
                 LatencyTestSubscriber* latency_subscriber)
             : latency_subscriber_(latency_subscriber)
@@ -137,8 +138,9 @@ public:
     class LatencyDataReaderListener : public eprosima::fastdds::dds::DataReaderListener
     {
     public:
+
         LatencyDataReaderListener(
-                 LatencyTestSubscriber* latency_subscriber)
+                LatencyTestSubscriber* latency_subscriber)
             : latency_subscriber_(latency_subscriber)
             , matched_(0)
         {
@@ -153,14 +155,16 @@ public:
 
         LatencyTestSubscriber* latency_subscriber_;
         int matched_;
-    } data_reader_listener_;
+    }
+    data_reader_listener_;
 
     /* Command Listeners */
     class ComandWriterListener : public eprosima::fastdds::dds::DataWriterListener
     {
     public:
+
         ComandWriterListener(
-                  LatencyTestSubscriber* latency_subscriber)
+                LatencyTestSubscriber* latency_subscriber)
             : latency_subscriber_(latency_subscriber)
             , matched_(0)
         {
@@ -178,8 +182,9 @@ public:
     class CommandReaderListener : public eprosima::fastdds::dds::DataReaderListener
     {
     public:
+
         CommandReaderListener(
-                   LatencyTestSubscriber* latency_subscriber)
+                LatencyTestSubscriber* latency_subscriber)
             : latency_subscriber_(latency_subscriber)
             , matched_(0)
         {
@@ -194,7 +199,8 @@ public:
 
         LatencyTestSubscriber* latency_subscriber_;
         int matched_;
-    } command_reader_listener_;
+    }
+    command_reader_listener_;
 };
 
 #endif /* LATENCYTESTSUBSCRIBER_H_ */

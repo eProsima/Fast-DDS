@@ -135,11 +135,11 @@ bool LatencyTestSubscriber::init(
     // Load XML configuration
     if (xml_config_file_.length() > 0)
     {
-        if( ReturnCode_t::RETCODE_OK !=
-        DomainParticipantFactory::get_instance()->
-            get_participant_qos_from_profile(
-                participant_profile_name,
-                pqos))
+        if ( ReturnCode_t::RETCODE_OK !=
+                DomainParticipantFactory::get_instance()->
+                        get_participant_qos_from_profile(
+                    participant_profile_name,
+                    pqos))
         {
             return false;
         }
@@ -203,9 +203,9 @@ bool LatencyTestSubscriber::init(
         topic_name << pid << "_PUB2SUB";
 
         latency_data_sub_topic_ = participant_->create_topic(
-                topic_name.str(),
-                "LatencyType",
-                TOPIC_QOS_DEFAULT);
+            topic_name.str(),
+            "LatencyType",
+            TOPIC_QOS_DEFAULT);
 
         if (latency_data_sub_topic_ == nullptr)
         {
@@ -223,9 +223,9 @@ bool LatencyTestSubscriber::init(
         topic_name << pid << "_SUB2PUB";
 
         latency_data_pub_topic_ = participant_->create_topic(
-                topic_name.str(),
-                "LatencyType",
-                TOPIC_QOS_DEFAULT);
+            topic_name.str(),
+            "LatencyType",
+            TOPIC_QOS_DEFAULT);
 
         if (latency_data_pub_topic_ == nullptr)
         {
@@ -243,9 +243,9 @@ bool LatencyTestSubscriber::init(
         topic_name << pid << "_PUB2SUB";
 
         latency_command_sub_topic_ = participant_->create_topic(
-                topic_name.str(),
-                "TestCommandType",
-                TOPIC_QOS_DEFAULT);
+            topic_name.str(),
+            "TestCommandType",
+            TOPIC_QOS_DEFAULT);
 
         if (latency_command_sub_topic_ == nullptr)
         {
@@ -263,9 +263,9 @@ bool LatencyTestSubscriber::init(
         topic_name << pid << "_SUB2PUB";
 
         latency_command_pub_topic_ = participant_->create_topic(
-                topic_name.str(),
-                "TestCommandType",
-                TOPIC_QOS_DEFAULT);
+            topic_name.str(),
+            "TestCommandType",
+            TOPIC_QOS_DEFAULT);
 
         if (latency_command_pub_topic_ == nullptr)
         {
@@ -275,7 +275,7 @@ bool LatencyTestSubscriber::init(
 
     /* Create Echo DataWriter */
     {
-       string profile_name = "sub_publisher_profile";
+        string profile_name = "sub_publisher_profile";
         DataWriterQos dw_qos;
 
         if (reliable)
@@ -298,16 +298,16 @@ bool LatencyTestSubscriber::init(
         if (xml_config_file_.length() > 0)
         {
             data_writer_ = publisher_->create_datawriter_with_profile(
-                    latency_data_pub_topic_,
-                    profile_name,
-                    &data_writer_listener_);
+                latency_data_pub_topic_,
+                profile_name,
+                &data_writer_listener_);
         }
         else
         {
             data_writer_ = publisher_->create_datawriter(
-                    latency_data_pub_topic_,
-                    dw_qos,
-                    &data_writer_listener_);
+                latency_data_pub_topic_,
+                dw_qos,
+                &data_writer_listener_);
         }
 
         if (data_writer_ == nullptr)
@@ -334,16 +334,16 @@ bool LatencyTestSubscriber::init(
         if (xml_config_file_.length() > 0)
         {
             data_reader_ = subscriber_->create_datareader_with_profile(
-                    latency_data_sub_topic_,
-                    profile_name,
-                    &data_reader_listener_);
+                latency_data_sub_topic_,
+                profile_name,
+                &data_reader_listener_);
         }
         else
         {
             data_reader_ = subscriber_->create_datareader(
-                    latency_data_sub_topic_,
-                    dr_qos,
-                    &data_reader_listener_);
+                latency_data_sub_topic_,
+                dr_qos,
+                &data_reader_listener_);
         }
 
         if (data_reader_ == nullptr)
@@ -361,9 +361,9 @@ bool LatencyTestSubscriber::init(
         cw_qos.publish_mode().kind = SYNCHRONOUS_PUBLISH_MODE;
 
         command_writer_ = publisher_->create_datawriter(
-                latency_command_pub_topic_,
-                cw_qos,
-                &command_writer_listener_);
+            latency_command_pub_topic_,
+            cw_qos,
+            &command_writer_listener_);
 
         if (command_writer_ == nullptr)
         {
@@ -379,9 +379,9 @@ bool LatencyTestSubscriber::init(
         cr_qos.durability().durabilityKind(TRANSIENT_LOCAL);
 
         command_reader_ = subscriber_->create_datareader(
-                latency_command_sub_topic_,
-                cr_qos,
-                &command_reader_listener_);
+            latency_command_sub_topic_,
+            cr_qos,
+            &command_reader_listener_);
 
         if (command_reader_ == nullptr)
         {
@@ -524,11 +524,11 @@ void LatencyTestSubscriber::LatencyDataReaderListener::on_data_available(
 
     SampleInfo info;
     void* data = latency_subscriber_->dynamic_data_ ?
-        (void*)latency_subscriber_->dynamic_data_type_ :
-        (void*)latency_subscriber_->latency_type_;
+            (void*)latency_subscriber_->dynamic_data_type_ :
+            (void*)latency_subscriber_->latency_type_;
 
     if (reader->take_next_sample(
-            data, &info) == ReturnCode_t::RETCODE_OK
+                data, &info) == ReturnCode_t::RETCODE_OK
             && info.valid_data)
     {
         if (latency_subscriber_->echo_)
@@ -551,11 +551,11 @@ void LatencyTestSubscriber::run()
     // EACH SUBSCRIBER NEEDS 4 Matchings (2 publishers and 2 subscribers)
     unique_lock<mutex> disc_lock(mutex_);
     discovery_cv_.wait(
-            disc_lock,
-            [this]() -> bool
-            {
-                return total_matches() == 4;
-            });
+        disc_lock,
+        [this]() -> bool
+        {
+            return total_matches() == 4;
+        });
     disc_lock.unlock();
 
     logInfo(LatencyTest, C_B_MAGENTA << "Sub: DISCOVERY COMPLETE " << C_DEF);
@@ -589,17 +589,17 @@ bool LatencyTestSubscriber::test(
     else
     {
         latency_type_ = static_cast<LatencyType*>(latency_data_type_->createData());
-        latency_type_->data.resize(datasize,0);
+        latency_type_->data.resize(datasize, 0);
     }
 
     // Wait for the Publisher READY command
     unique_lock<mutex> lock(mutex_);
     command_msg_cv_.wait(
-            lock,
-            [this]()
-            {
-                return command_msg_count_ != 0;
-            });
+        lock,
+        [this]()
+        {
+            return command_msg_count_ != 0;
+        });
     command_msg_count_ = 0;
     lock.unlock();
 
@@ -619,11 +619,11 @@ bool LatencyTestSubscriber::test(
     // Wait for the STOP or STOP_ERROR commands
     lock.lock();
     command_msg_cv_.wait(
-            lock,
-            [this]()
-            {
-                return command_msg_count_ != 0;
-            });
+        lock,
+        [this]()
+        {
+            return command_msg_count_ != 0;
+        });
     command_msg_count_ = 0;
     lock.unlock();
 
@@ -655,10 +655,10 @@ int32_t LatencyTestSubscriber::total_matches() const
     // no need to lock because is used always within a
     // condition variable wait predicate
 
-     int32_t count = data_writer_listener_.matched_
-        + data_reader_listener_.matched_
-        + command_writer_listener_.matched_
-        + command_reader_listener_.matched_;
+    int32_t count = data_writer_listener_.matched_
+            + data_reader_listener_.matched_
+            + command_writer_listener_.matched_
+            + command_reader_listener_.matched_;
 
     // Each endpoint has a mirror counterpart in the LatencyTestPublisher
     // thus, the maximun number of matches is 4

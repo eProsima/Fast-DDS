@@ -139,7 +139,7 @@ public:
     std::chrono::steady_clock::time_point start_time_;
     std::chrono::steady_clock::time_point end_time_;
     std::chrono::duration<double, std::micro> overhead_time_;
-    std::vector<std::chrono::duration<double, std::micro> > times_;
+    std::vector<std::chrono::duration<double, std::micro>> times_;
 
     /* Data */
     eprosima::fastrtps::SampleInfo_t sampleinfo_;
@@ -160,7 +160,7 @@ public:
     constexpr static uint32_t MINIMUM_INDEX = 0;
     constexpr static uint32_t AVERAGE_INDEX = 1;
     constexpr static uint32_t DATA_BASE_INDEX = 2;
-    std::vector<std::shared_ptr<std::stringstream> > output_files_;
+    std::vector<std::shared_ptr<std::stringstream>> output_files_;
     std::string xml_config_file_;
     std::string raw_data_file_;
     std::string export_prefix_;
@@ -196,6 +196,7 @@ public:
     class LatencyDataWriterListener : public eprosima::fastdds::dds::DataWriterListener
     {
     public:
+
         LatencyDataWriterListener(
                 LatencyTestPublisher* latency_publisher)
             : latency_publisher_(latency_publisher)
@@ -215,6 +216,7 @@ public:
     class LatencyDataReaderListener : public eprosima::fastdds::dds::DataReaderListener
     {
     public:
+
         LatencyDataReaderListener(
                 LatencyTestPublisher* latency_publisher)
             : latency_publisher_(latency_publisher)
@@ -231,12 +233,14 @@ public:
 
         LatencyTestPublisher* latency_publisher_;
         int matched_;
-    } data_reader_listener_;
+    }
+    data_reader_listener_;
 
     /* Command Listeners */
     class ComandWriterListener : public eprosima::fastdds::dds::DataWriterListener
     {
     public:
+
         ComandWriterListener(
                 LatencyTestPublisher* latency_publisher)
             : latency_publisher_(latency_publisher)
@@ -256,6 +260,7 @@ public:
     class CommandReaderListener : public eprosima::fastdds::dds::DataReaderListener
     {
     public:
+
         CommandReaderListener(
                 LatencyTestPublisher* latency_publisher)
             : latency_publisher_(latency_publisher)
@@ -272,7 +277,8 @@ public:
 
         LatencyTestPublisher* latency_publisher_;
         int matched_;
-    } command_reader_listener_;
+    }
+    command_reader_listener_;
 };
 
 #endif /* LATENCYPUBLISHER_H_ */
