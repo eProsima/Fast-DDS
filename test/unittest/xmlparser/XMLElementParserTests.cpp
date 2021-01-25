@@ -3308,7 +3308,7 @@ TEST_F(XMLParserTests, getXMLDataSharingQos)
         EXPECT_EQ(XMLP_ret::XML_OK, XMLParserTest::propertiesPolicy_wrapper(titleElement, datasharing_policy, ident));
         EXPECT_EQ(datasharing_policy.kind(), DataSharingKind::AUTO);
         EXPECT_EQ(datasharing_policy.shm_directory(), "shared_dir");
-        EXPECT_EQ(datasharing_policy.max_domains(), 0);
+        EXPECT_EQ(datasharing_policy.max_domains(), 0u);
         EXPECT_EQ(datasharing_policy.domain_ids().size(), 2);
         EXPECT_EQ(datasharing_policy.domain_ids()[0], 10);
         EXPECT_EQ(datasharing_policy.domain_ids()[1], 20);
@@ -3319,7 +3319,7 @@ TEST_F(XMLParserTests, getXMLDataSharingQos)
         EXPECT_EQ(XMLP_ret::XML_OK, XMLParserTest::propertiesPolicy_wrapper(titleElement, datasharing_policy, ident));
         EXPECT_EQ(datasharing_policy.kind(), DataSharingKind::ON);
         EXPECT_EQ(datasharing_policy.shm_directory(), "shared_dir");
-        EXPECT_EQ(datasharing_policy.max_domains(), 0);
+        EXPECT_EQ(datasharing_policy.max_domains(), 0u);
         EXPECT_EQ(datasharing_policy.domain_ids().size(), 2);
         EXPECT_EQ(datasharing_policy.domain_ids()[0], 10);
         EXPECT_EQ(datasharing_policy.domain_ids()[1], 20);
@@ -3330,7 +3330,7 @@ TEST_F(XMLParserTests, getXMLDataSharingQos)
         EXPECT_EQ(XMLP_ret::XML_OK, XMLParserTest::propertiesPolicy_wrapper(titleElement, datasharing_policy, ident));
         EXPECT_EQ(datasharing_policy.kind(), DataSharingKind::OFF);
         EXPECT_EQ(datasharing_policy.shm_directory().size(), 0);
-        EXPECT_EQ(datasharing_policy.max_domains(), 0);
+        EXPECT_EQ(datasharing_policy.max_domains(), 0u);
         EXPECT_EQ(datasharing_policy.domain_ids().size(), 0);
     }
 
@@ -3355,7 +3355,7 @@ TEST_F(XMLParserTests, getXMLDataSharingQos)
         EXPECT_EQ(XMLP_ret::XML_OK, XMLParserTest::propertiesPolicy_wrapper(titleElement, datasharing_policy, ident));
         EXPECT_EQ(datasharing_policy.kind(), DataSharingKind::AUTO);
         EXPECT_EQ(datasharing_policy.shm_directory().size(), 0);
-        EXPECT_EQ(datasharing_policy.max_domains(), 5);
+        EXPECT_EQ(datasharing_policy.max_domains(), 5u);
         EXPECT_EQ(datasharing_policy.domain_ids().size(), 2);
         EXPECT_EQ(datasharing_policy.domain_ids()[0], 10);
         EXPECT_EQ(datasharing_policy.domain_ids()[1], 20);
@@ -3366,7 +3366,7 @@ TEST_F(XMLParserTests, getXMLDataSharingQos)
         EXPECT_EQ(XMLP_ret::XML_OK, XMLParserTest::propertiesPolicy_wrapper(titleElement, datasharing_policy, ident));
         EXPECT_EQ(datasharing_policy.kind(), DataSharingKind::ON);
         EXPECT_EQ(datasharing_policy.shm_directory().size(), 0);
-        EXPECT_EQ(datasharing_policy.max_domains(), 5);
+        EXPECT_EQ(datasharing_policy.max_domains(), 5u);
         EXPECT_EQ(datasharing_policy.domain_ids().size(), 2);
         EXPECT_EQ(datasharing_policy.domain_ids()[0], 10);
         EXPECT_EQ(datasharing_policy.domain_ids()[1], 20);
@@ -3377,7 +3377,7 @@ TEST_F(XMLParserTests, getXMLDataSharingQos)
         EXPECT_EQ(XMLP_ret::XML_OK, XMLParserTest::propertiesPolicy_wrapper(titleElement, datasharing_policy, ident));
         EXPECT_EQ(datasharing_policy.kind(), DataSharingKind::OFF);
         EXPECT_EQ(datasharing_policy.shm_directory().size(), 0);
-        EXPECT_EQ(datasharing_policy.max_domains(), 5);
+        EXPECT_EQ(datasharing_policy.max_domains(), 5u);
         EXPECT_EQ(datasharing_policy.domain_ids().size(), 0);
     }
 
@@ -3398,7 +3398,7 @@ TEST_F(XMLParserTests, getXMLDataSharingQos)
         EXPECT_EQ(XMLP_ret::XML_OK, XMLParserTest::propertiesPolicy_wrapper(titleElement, datasharing_policy, ident));
         EXPECT_EQ(datasharing_policy.kind(), DataSharingKind::AUTO);
         EXPECT_EQ(datasharing_policy.shm_directory(), "shared_dir");
-        EXPECT_EQ(datasharing_policy.max_domains(), 0);
+        EXPECT_EQ(datasharing_policy.max_domains(), 0u);
         EXPECT_EQ(datasharing_policy.domain_ids().size(), 0);
 
         sprintf(xml, xml_p, "ON");
@@ -3407,7 +3407,7 @@ TEST_F(XMLParserTests, getXMLDataSharingQos)
         EXPECT_EQ(XMLP_ret::XML_OK, XMLParserTest::propertiesPolicy_wrapper(titleElement, datasharing_policy, ident));
         EXPECT_EQ(datasharing_policy.kind(), DataSharingKind::ON);
         EXPECT_EQ(datasharing_policy.shm_directory(), "shared_dir");
-        EXPECT_EQ(datasharing_policy.max_domains(), 0);
+        EXPECT_EQ(datasharing_policy.max_domains(), 0u);
         EXPECT_EQ(datasharing_policy.domain_ids().size(), 0);
 
         sprintf(xml, xml_p, "OFF");
@@ -3416,7 +3416,7 @@ TEST_F(XMLParserTests, getXMLDataSharingQos)
         EXPECT_EQ(XMLP_ret::XML_OK, XMLParserTest::propertiesPolicy_wrapper(titleElement, datasharing_policy, ident));
         EXPECT_EQ(datasharing_policy.kind(), DataSharingKind::OFF);
         EXPECT_EQ(datasharing_policy.shm_directory().size(), 0);
-        EXPECT_EQ(datasharing_policy.max_domains(), 0);
+        EXPECT_EQ(datasharing_policy.max_domains(), 0u);
         EXPECT_EQ(datasharing_policy.domain_ids().size(), 0);
     }
 }
