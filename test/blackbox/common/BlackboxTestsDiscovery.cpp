@@ -86,7 +86,8 @@ TEST_P(Discovery, ParticipantRemoval)
 
     ASSERT_TRUE(reader.isInitialized());
 
-    writer.init();
+    // Reader will not be reading, so datasharing needs some extra samples in pool
+    writer.resource_limits_extra_samples(10).init();
 
     ASSERT_TRUE(writer.isInitialized());
 

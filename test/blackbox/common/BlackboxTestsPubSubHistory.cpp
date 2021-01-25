@@ -86,7 +86,10 @@ TEST_P(PubSubHistory, PubSubAsNonReliableKeepLastReaderSmallDepth)
 
     ASSERT_TRUE(reader.isInitialized());
 
-    writer.reliability(eprosima::fastrtps::BEST_EFFORT_RELIABILITY_QOS).init();
+    // Needs a deeper pool for datasharing
+    // because reader does not process anything until everything is sent
+    writer.reliability(eprosima::fastrtps::BEST_EFFORT_RELIABILITY_QOS)
+            .resource_limits_extra_samples(10).init();
 
     ASSERT_TRUE(writer.isInitialized());
 
