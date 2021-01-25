@@ -3,11 +3,11 @@
     "participants" : [
         {
             "kind" : "subscriber",
-            "xmlfile" : "simple_reliable.xml"
+            "xmlfile" : "simple_besteffort.xml"
         },
         {
             "kind" : "publisher",
-            "xmlfile" : "simple_reliable.xml"
+            "xmlfile" : "simple_besteffort.xml"
         }
     ]
 }

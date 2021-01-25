@@ -1,0 +1,19 @@
+{
+    "description" : "Simple test to communicate a pubsub, a publisher and a subscriber with default values",
+    "participants" : [
+        {
+            "kind" : "subscriber",
+            "xmlfile" : "simple_reliable.xml",
+            "publishers" : "2"
+        },
+        {
+            "kind" : "publisher",
+            "xmlfile" : "simple_reliable.xml"
+        },
+        {
+            "kind" : "pubsub",
+            "xmlfile" : "simple_reliable.xml",
+            "publishers" : "2"
+        }
+    ]
+}

@@ -3,11 +3,13 @@
     "participants" : [
         {
             "kind" : "subscriber",
-            "xmlfile" : "simple_reliable.xml"
+            "xmlfile" : "simple_reliable.xml",
+            "zero_copy" : true
         },
         {
             "kind" : "publisher",
-            "xmlfile" : "simple_reliable.xml"
+            "xmlfile" : "simple_reliable.xml",
+            "zero_copy" : true
         }
     ]
 }
