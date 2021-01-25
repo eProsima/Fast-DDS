@@ -1420,7 +1420,6 @@ TEST_F(DataReaderUnsuportedTests, UnsupportedDataReaderMethods)
         EXPECT_EQ(
             nullptr,
             data_reader->create_readcondition(sample_states, view_states, instance_states));
-        HELPER_WaitForEntries(1);
     }
 
     {
@@ -1437,7 +1436,6 @@ TEST_F(DataReaderUnsuportedTests, UnsupportedDataReaderMethods)
                 instance_states,
                 query_expression,
                 query_parameters));
-        HELPER_WaitForEntries(1);
     }
 
     {
@@ -1446,6 +1444,53 @@ TEST_F(DataReaderUnsuportedTests, UnsupportedDataReaderMethods)
             data_reader->delete_readcondition(nullptr));
     }
 
+    {
+        FooBoundedSeq data_values;
+        SampleInfoSeq sample_infos;
+        int32_t max_samples = LENGTH_UNLIMITED;
+        EXPECT_EQ(ReturnCode_t::RETCODE_UNSUPPORTED, data_reader->read_w_condition(
+                data_values,
+                sample_infos,
+                max_samples,
+                nullptr));
+    }
+
+    {
+        FooBoundedSeq data_values;
+        SampleInfoSeq sample_infos;
+        int32_t max_samples = LENGTH_UNLIMITED;
+        fastrtps::rtps::InstanceHandle_t previous_handle;
+        EXPECT_EQ(ReturnCode_t::RETCODE_UNSUPPORTED, data_reader->read_next_instance_w_condition(
+                data_values,
+                sample_infos,
+                max_samples,
+                previous_handle,
+                nullptr));
+    }
+
+    {
+        FooBoundedSeq data_values;
+        SampleInfoSeq sample_infos;
+        int32_t max_samples = LENGTH_UNLIMITED;
+        EXPECT_EQ(ReturnCode_t::RETCODE_UNSUPPORTED, data_reader->take_w_condition(
+                data_values,
+                sample_infos,
+                max_samples,
+                nullptr));
+    }
+
+    {
+        FooBoundedSeq data_values;
+        SampleInfoSeq sample_infos;
+        int32_t max_samples = LENGTH_UNLIMITED;
+        fastrtps::rtps::InstanceHandle_t previous_handle;
+        EXPECT_EQ(ReturnCode_t::RETCODE_UNSUPPORTED, data_reader->take_next_instance_w_condition(
+                data_values,
+                sample_infos,
+                max_samples,
+                previous_handle,
+                nullptr));
+    }
 
     std::vector<fastrtps::rtps::InstanceHandle_t> publication_handles;
     EXPECT_EQ(ReturnCode_t::RETCODE_UNSUPPORTED, data_reader->get_matched_publications(publication_handles));
@@ -1453,8 +1498,10 @@ TEST_F(DataReaderUnsuportedTests, UnsupportedDataReaderMethods)
     fastrtps::rtps::InstanceHandle_t key_handle;
     EXPECT_EQ(ReturnCode_t::RETCODE_UNSUPPORTED, data_reader->get_key_value(nullptr, key_handle));
 
-    ASSERT_EQ(HANDLE_NIL, data_reader->lookup_instance(nullptr));
-    HELPER_WaitForEntries(1);
+    EXPECT_EQ(HANDLE_NIL, data_reader->lookup_instance(nullptr));
+
+    // Expected logWarnings: create_querycondition, create_readcondition, lookup_instance
+    HELPER_WaitForEntries(3);
 
     ASSERT_EQ(subscriber->delete_datareader(data_reader), ReturnCode_t::RETCODE_OK);
     ASSERT_EQ(participant->delete_subscriber(subscriber), ReturnCode_t::RETCODE_OK);
