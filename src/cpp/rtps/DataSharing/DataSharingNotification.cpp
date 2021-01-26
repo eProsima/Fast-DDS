@@ -100,7 +100,7 @@ bool DataSharingNotification::create_and_init_notification(
         notification_->new_data.store(false);
         Time_t now;
         Time_t::now(now);
-        notification_->ack_timestamp = now.to_ns();
+        notification_->ack_timestamp.store(now.to_ns());
     }
     catch (std::exception& e)
     {

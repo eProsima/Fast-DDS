@@ -89,7 +89,7 @@ public:
      */
     int64_t ack_timestamp() const override
     {
-        return shared_notification_->notification_->ack_timestamp;
+        return shared_notification_->notification_->ack_timestamp.load();
     }
 
 protected:

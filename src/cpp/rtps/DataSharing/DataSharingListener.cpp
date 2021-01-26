@@ -262,9 +262,9 @@ void DataSharingListener::change_removed_with_timestamp(
 {
     // This method should be called from the RTPSReader,
     // then, the reader's lock is protecting the concurrency on the value updates.
-    if (timestamp > notification_->notification_->ack_timestamp)
+    if (timestamp > notification_->notification_->ack_timestamp.load())
     {
-        notification_->notification_->ack_timestamp = timestamp;
+        notification_->notification_->ack_timestamp.store(timestamp);
         for (auto it = writer_pools_.begin(); it != writer_pools_.end(); ++it)
         {
             // Notify all writers in case any is waiting for a recyclable payload
@@ -278,9 +278,9 @@ void DataSharingListener::change_added_with_timestamp(
 {
     // This method should be called from the RTPSReader,
     // then, the reader's lock is protecting the concurrency on the value updates.
-    if (timestamp < notification_->notification_->ack_timestamp)
+    if (timestamp < notification_->notification_->ack_timestamp.load())
     {
-        notification_->notification_->ack_timestamp = timestamp;
+        notification_->notification_->ack_timestamp.store(timestamp);
     }
 }
 
