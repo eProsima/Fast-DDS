@@ -479,15 +479,18 @@ TEST(DDSDataSharing, DataSharingPoolError)
 
     writer_datasharing.resource_limits_max_samples(100000)
             .history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS)
+            .reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS)
             .datasharing_on("Unused. change when ready").init();
     ASSERT_FALSE(writer_datasharing.isInitialized());
 
     writer_auto.resource_limits_max_samples(100000)
             .history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS)
+            .reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS)
             .datasharing_auto().init();
     ASSERT_TRUE(writer_auto.isInitialized());
 
-    reader.datasharing_on("Unused. change when ready").init();
+    reader.datasharing_on("Unused. change when ready")
+            .reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).init();
     ASSERT_TRUE(reader.isInitialized());
 
     reader.wait_discovery();
