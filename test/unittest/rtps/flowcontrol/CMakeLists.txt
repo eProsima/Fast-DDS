@@ -21,7 +21,7 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             add_definitions(-D_WIN32_WINNT=0x0601)
         endif()
 
-        include_directories(${ASIO_INCLUDE_DIR})
+        include_directories(${Asio_INCLUDE_DIR})
 
         set(THROUGHPUTCONTROLLERTESTS_SOURCE
             ThroughputControllerTests.cpp

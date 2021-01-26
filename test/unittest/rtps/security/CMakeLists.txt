@@ -22,7 +22,7 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             add_definitions(-D_WIN32_WINNT=0x0601)
         endif()
 
-        include_directories(${ASIO_INCLUDE_DIR})
+        include_directories(${Asio_INCLUDE_DIR})
 
         set(SOURCES_SECURITY_TEST_SOURCE
             ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/Log.cpp

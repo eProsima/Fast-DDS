@@ -19,7 +19,7 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
     if(GTEST_FOUND)
         find_package(Threads REQUIRED)
 
-        include_directories(${ASIO_INCLUDE_DIR})
+        include_directories(${Asio_INCLUDE_DIR})
 
         set(TIMEDEVENTTESTS_SOURCE mock/MockEvent.cpp
             TimedEventTests.cpp
