@@ -1368,6 +1368,7 @@ public:
  * 10. get_matched_publications
  * 11. get_key_value
  * 12. lookup_instance
+ * 13. wait_for_historical_data
  */
 TEST_F(DataReaderUnsuportedTests, UnsupportedDataReaderMethods)
 {
@@ -1501,6 +1502,8 @@ TEST_F(DataReaderUnsuportedTests, UnsupportedDataReaderMethods)
     EXPECT_EQ(ReturnCode_t::RETCODE_UNSUPPORTED, data_reader->get_key_value(nullptr, key_handle));
 
     EXPECT_EQ(HANDLE_NIL, data_reader->lookup_instance(nullptr));
+
+    EXPECT_EQ(ReturnCode_t::RETCODE_UNSUPPORTED, data_reader->wait_for_historical_data({0, 1}));
 
     // Expected logWarnings: create_querycondition, create_readcondition, lookup_instance
     HELPER_WaitForEntries(3);
