@@ -42,8 +42,10 @@ using namespace std;
 
 LatencyTestPublisher::LatencyTestPublisher()
     : participant_(nullptr)
+    , publisher_(nullptr)
     , data_writer_(nullptr)
     , command_writer_(nullptr)
+    , subscriber_(nullptr)
     , data_reader_(nullptr)
     , command_reader_(nullptr)
     , overhead_time_(0.0)
@@ -53,15 +55,19 @@ LatencyTestPublisher::LatencyTestPublisher()
     , test_status_(0)
     , subscribers_(0)
     , samples_(0)
+    , latency_data_sub_topic_(nullptr)
+    , latency_data_pub_topic_(nullptr)
+    , latency_command_sub_topic_(nullptr)
+    , latency_command_pub_topic_(nullptr)
     , latency_type_in_(nullptr)
     , latency_type_out_(nullptr)
+    , latency_command_type_(new TestCommandDataType())
     , dynamic_data_type_in_(nullptr)
     , dynamic_data_type_out_(nullptr)
     , data_writer_listener_(this)
     , data_reader_listener_(this)
     , command_writer_listener_(this)
     , command_reader_listener_(this)
-    , latency_command_type_(new TestCommandDataType())
 {
     forced_domain_ = -1;
     export_prefix_ = "";
@@ -764,7 +770,7 @@ bool LatencyTestPublisher::test(
         }
 
         start_time_ = chrono::steady_clock::now();
-        data_writer_->write(latency_type_out_);
+        data_writer_->write(data);
 
         unique_lock<mutex> lock(mutex_);
         // the wait timeouts due possible message leaks
