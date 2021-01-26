@@ -622,7 +622,6 @@ TEST_F(DataWriterUnsuportedTests, UnsupportedDataWriterMethods)
         EXPECT_EQ(
             HANDLE_NIL,
             data_writer->register_instance_w_timestamp(nullptr /* instance */, timestamp));
-        HELPER_WaitForEntries(1);
     }
 
     {
@@ -641,7 +640,9 @@ TEST_F(DataWriterUnsuportedTests, UnsupportedDataWriterMethods)
     EXPECT_EQ(ReturnCode_t::RETCODE_UNSUPPORTED, data_writer->get_key_value(nullptr /* key_holder */, key_handle));
 
     EXPECT_EQ(HANDLE_NIL, data_writer->lookup_instance(nullptr /* instance */));
-    HELPER_WaitForEntries(1);
+
+    // Expected logWarnings: register_instance_w_timestamp, lookup_instance
+    HELPER_WaitForEntries(2);
 
     ASSERT_EQ(publisher->delete_datawriter(data_writer), ReturnCode_t::RETCODE_OK);
     ASSERT_EQ(participant->delete_publisher(publisher), ReturnCode_t::RETCODE_OK);
