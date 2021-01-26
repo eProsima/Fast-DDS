@@ -1,4 +1,4 @@
-// Copyright 2020 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+end_access// Copyright 2020 Proyectos y Sistemas de Mantenimiento SL (eProsima).
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -490,6 +490,7 @@ TEST(SubscriberTests, SetListener)
  * 1. copy_from_topic_qos
  * 2. delete_contained_entities
  * 3. begin_access
+ * 3. end_access
  * 4. get_datareaders (all parameters)
  */
 TEST(SubscriberTests, UnsupportedPublisherMethods)
@@ -510,6 +511,7 @@ TEST(SubscriberTests, UnsupportedPublisherMethods)
     EXPECT_EQ(ReturnCode_t::RETCODE_UNSUPPORTED, subscriber->copy_from_topic_qos(reader_qos, topic_qos));
     EXPECT_EQ(ReturnCode_t::RETCODE_UNSUPPORTED, subscriber->delete_contained_entities());
     EXPECT_EQ(ReturnCode_t::RETCODE_UNSUPPORTED, subscriber->begin_access());
+    EXPECT_EQ(ReturnCode_t::RETCODE_UNSUPPORTED, subscriber->end_access());
     EXPECT_EQ(ReturnCode_t::RETCODE_UNSUPPORTED, subscriber->get_datareaders(
                 readers,
                 sample_states,

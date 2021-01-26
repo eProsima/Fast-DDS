@@ -1492,6 +1492,8 @@ TEST_F(DataReaderUnsuportedTests, UnsupportedDataReaderMethods)
                     nullptr));
     }
 
+    EXPECT_EQ(ReturnCode_t::RETCODE_UNSUPPORTED, data_reader->delete_contained_entities());
+
     std::vector<fastrtps::rtps::InstanceHandle_t> publication_handles;
     EXPECT_EQ(ReturnCode_t::RETCODE_UNSUPPORTED, data_reader->get_matched_publications(publication_handles));
 
