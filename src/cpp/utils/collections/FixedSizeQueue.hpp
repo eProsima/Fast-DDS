@@ -55,11 +55,17 @@ public:
     using size_type = std::size_t;
     using difference_type = std::ptrdiff_t;
 
-    class iterator : public std::iterator<std::bidirectional_iterator_tag, difference_type, value_type, pointer,
-                reference>
+    class iterator// : public std::iterator<std::bidirectional_iterator_tag, difference_type, value_type, pointer,
+                //reference>
     {
     public:
 
+        using iterator_category = std::bidirectional_iterator_tag;
+        using value_type = FixedSizeQueue::value_type;
+        using difference_type = FixedSizeQueue::difference_type;
+        using pointer = FixedSizeQueue::pointer;
+        using reference = FixedSizeQueue::reference;
+    
         /**
          * @brief Constructor using a pointer and a range of the managed buffer
          * @param ptr Pointer to be set
