@@ -55,8 +55,7 @@ public:
     using size_type = std::size_t;
     using difference_type = std::ptrdiff_t;
 
-    class iterator// : public std::iterator<std::bidirectional_iterator_tag, difference_type, value_type, pointer,
-                //reference>
+    class iterator
     {
     public:
 
