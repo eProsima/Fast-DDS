@@ -13,14 +13,23 @@
 // limitations under the License.
 
 #include <cassert>
+#include <thread>
 
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
 
 #include <fastcdr/Cdr.h>
 
+#include <fastdds/dds/builtin/topic/PublicationBuiltinTopicData.hpp>
+
+#include <fastdds/dds/core/Entity.hpp>
 #include <fastdds/dds/core/LoanableArray.hpp>
+#include <fastdds/dds/core/LoanableCollection.hpp>
+#include <fastdds/dds/core/LoanableSequence.hpp>
 #include <fastdds/dds/core/StackAllocatedSequence.hpp>
+#include <fastdds/dds/core/status/BaseStatus.hpp>
+#include <fastdds/dds/core/status/SampleRejectedStatus.hpp>
+#include <fastdds/dds/core/status/SubscriptionMatchedStatus.hpp>
 
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
 #include <fastdds/dds/domain/DomainParticipant.hpp>
@@ -42,6 +51,8 @@
 
 #include "./FooType.hpp"
 #include "./FooTypeSupport.hpp"
+
+#include "../../logging/mock/MockConsumer.h"
 
 namespace eprosima {
 namespace fastdds {
@@ -1294,6 +1305,213 @@ TEST_F(DataReaderTests, SetListener)
                 std::get<2>(testing_case));
     }
 }
+
+class DataReaderUnsuportedTests : public ::testing::Test
+{
+public:
+
+    DataReaderUnsuportedTests()
+    {
+        Reset();
+    }
+
+    ~DataReaderUnsuportedTests()
+    {
+        Log::Reset();
+        Log::KillThread();
+    }
+
+    void Reset()
+    {
+        Log::ClearConsumers();
+        mockConsumer = new MockConsumer();
+        Log::RegisterConsumer(std::unique_ptr<LogConsumer>(mockConsumer));
+        Log::SetVerbosity(Log::Warning);
+    }
+
+    MockConsumer* mockConsumer;
+
+    const uint32_t AsyncTries = 5;
+    const uint32_t AsyncWaitMs = 25;
+
+    void HELPER_WaitForEntries(
+            uint32_t amount)
+    {
+        size_t entries = 0;
+        for (uint32_t i = 0; i != AsyncTries; i++)
+        {
+            entries = mockConsumer->ConsumedEntries().size();
+            if (entries == amount)
+            {
+                break;
+            }
+            std::this_thread::sleep_for(std::chrono::milliseconds(AsyncWaitMs));
+        }
+
+        ASSERT_EQ(amount, mockConsumer->ConsumedEntries().size());
+    }
+
+};
+
+/*
+ * This test checks that the DataReader methods defined in the standard not yet implemented in FastDDS return
+ * ReturnCode_t::RETCODE_UNSUPPORTED. The following methods are checked:
+ * 1. get_sample_lost_status
+ * 2. get_sample_rejected_status
+ * 3. get_subscription_matched_status
+ * 4. get_subscription_matched_status
+ * 5. get_matched_publication_data
+ * 6. create_readcondition
+ * 7. create_querycondition
+ * 8. delete_readcondition
+ * 9. delete_contained_entities
+ * 10. get_matched_publications
+ * 11. get_key_value
+ * 12. lookup_instance
+ */
+TEST_F(DataReaderUnsuportedTests, UnsupportedDataReaderMethods)
+{
+    DomainParticipant* participant =
+            DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
+    ASSERT_NE(participant, nullptr);
+
+    Subscriber* subscriber = participant->create_subscriber(SUBSCRIBER_QOS_DEFAULT);
+    ASSERT_NE(subscriber, nullptr);
+
+    TypeSupport type(new FooTypeSupport());
+    type.register_type(participant);
+
+    Topic* topic = participant->create_topic("footopic", type.get_type_name(), TOPIC_QOS_DEFAULT);
+    ASSERT_NE(topic, nullptr);
+
+    DataReader* data_reader = subscriber->create_datareader(topic, DATAREADER_QOS_DEFAULT);
+    ASSERT_NE(subscriber, nullptr);
+
+    {
+        SampleLostStatus status;
+        EXPECT_EQ(ReturnCode_t::RETCODE_UNSUPPORTED, data_reader->get_sample_lost_status(status));
+    }
+
+    {
+        SampleRejectedStatus status;
+        EXPECT_EQ(ReturnCode_t::RETCODE_UNSUPPORTED, data_reader->get_sample_rejected_status(status));
+    }
+
+    {
+        SubscriptionMatchedStatus status;
+        EXPECT_EQ(ReturnCode_t::RETCODE_UNSUPPORTED, data_reader->get_subscription_matched_status(status));
+    }
+
+    {
+        SubscriptionMatchedStatus status;
+        EXPECT_EQ(ReturnCode_t::RETCODE_UNSUPPORTED, data_reader->get_subscription_matched_status(status));
+    }
+
+    builtin::PublicationBuiltinTopicData publication_data;
+    fastrtps::rtps::InstanceHandle_t publication_handle;
+    EXPECT_EQ(
+        ReturnCode_t::RETCODE_UNSUPPORTED,
+        data_reader->get_matched_publication_data(publication_data, publication_handle));
+
+    {
+        std::vector<SampleStateKind> sample_states;
+        std::vector<ViewStateKind> view_states;
+        std::vector<InstanceStateKind> instance_states;
+        EXPECT_EQ(
+            nullptr,
+            data_reader->create_readcondition(sample_states, view_states, instance_states));
+    }
+
+    {
+        std::vector<SampleStateKind> sample_states;
+        std::vector<ViewStateKind> view_states;
+        std::vector<InstanceStateKind> instance_states;
+        std::string query_expression;
+        std::vector<std::string> query_parameters;
+        EXPECT_EQ(
+            nullptr,
+            data_reader->create_querycondition(
+                sample_states,
+                view_states,
+                instance_states,
+                query_expression,
+                query_parameters));
+    }
+
+    {
+        EXPECT_EQ(
+            ReturnCode_t::RETCODE_UNSUPPORTED,
+            data_reader->delete_readcondition(nullptr));
+    }
+
+    {
+        FooBoundedSeq data_values;
+        SampleInfoSeq sample_infos;
+        int32_t max_samples = LENGTH_UNLIMITED;
+        EXPECT_EQ(ReturnCode_t::RETCODE_UNSUPPORTED, data_reader->read_w_condition(
+                    data_values,
+                    sample_infos,
+                    max_samples,
+                    nullptr));
+    }
+
+    {
+        FooBoundedSeq data_values;
+        SampleInfoSeq sample_infos;
+        int32_t max_samples = LENGTH_UNLIMITED;
+        fastrtps::rtps::InstanceHandle_t previous_handle;
+        EXPECT_EQ(ReturnCode_t::RETCODE_UNSUPPORTED, data_reader->read_next_instance_w_condition(
+                    data_values,
+                    sample_infos,
+                    max_samples,
+                    previous_handle,
+                    nullptr));
+    }
+
+    {
+        FooBoundedSeq data_values;
+        SampleInfoSeq sample_infos;
+        int32_t max_samples = LENGTH_UNLIMITED;
+        EXPECT_EQ(ReturnCode_t::RETCODE_UNSUPPORTED, data_reader->take_w_condition(
+                    data_values,
+                    sample_infos,
+                    max_samples,
+                    nullptr));
+    }
+
+    {
+        FooBoundedSeq data_values;
+        SampleInfoSeq sample_infos;
+        int32_t max_samples = LENGTH_UNLIMITED;
+        fastrtps::rtps::InstanceHandle_t previous_handle;
+        EXPECT_EQ(ReturnCode_t::RETCODE_UNSUPPORTED, data_reader->take_next_instance_w_condition(
+                    data_values,
+                    sample_infos,
+                    max_samples,
+                    previous_handle,
+                    nullptr));
+    }
+
+    EXPECT_EQ(ReturnCode_t::RETCODE_UNSUPPORTED, data_reader->delete_contained_entities());
+
+    std::vector<fastrtps::rtps::InstanceHandle_t> publication_handles;
+    EXPECT_EQ(ReturnCode_t::RETCODE_UNSUPPORTED, data_reader->get_matched_publications(publication_handles));
+
+    fastrtps::rtps::InstanceHandle_t key_handle;
+    EXPECT_EQ(ReturnCode_t::RETCODE_UNSUPPORTED, data_reader->get_key_value(nullptr, key_handle));
+
+    EXPECT_EQ(HANDLE_NIL, data_reader->lookup_instance(nullptr));
+
+    // Expected logWarnings: create_querycondition, create_readcondition, lookup_instance
+    HELPER_WaitForEntries(3);
+
+    ASSERT_EQ(subscriber->delete_datareader(data_reader), ReturnCode_t::RETCODE_OK);
+    ASSERT_EQ(participant->delete_subscriber(subscriber), ReturnCode_t::RETCODE_OK);
+    ASSERT_EQ(participant->delete_topic(topic), ReturnCode_t::RETCODE_OK);
+    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), ReturnCode_t::RETCODE_OK);
+}
+
+
 
 } // namespace dds
 } // namespace fastdds
