@@ -490,6 +490,7 @@ TEST(DDSDataSharing, DataSharingPoolError)
     ASSERT_TRUE(writer_auto.isInitialized());
 
     reader.datasharing_on("Unused. change when ready")
+            .history_depth(10)
             .reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).init();
     ASSERT_TRUE(reader.isInitialized());
 
