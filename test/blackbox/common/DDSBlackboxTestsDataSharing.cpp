@@ -160,7 +160,7 @@ TEST(DDSDataSharing, BestEffortDirtyPayloads)
     ASSERT_TRUE(data.empty());
     read_reader.block_for_all();
 
-    // Doing a secong read on the same history, the application will see only the last samples
+    // Doing a second read on the same history, the application will see only the last samples
     read_reader.startReception(received_data);
     FixedSizedType::type value;
     while (read_reader.takeNextData ((void*)&value))
@@ -216,7 +216,7 @@ TEST(DDSDataSharing, ReliableDirtyPayloads)
     ASSERT_TRUE(data.empty());
     read_reader.block_for_all();
 
-    // Doing a secong read on the same history, the application will see only the last samples
+    // Doing a second read on the same history, the application will see only the last samples
     read_reader.startReception(received_data);
     FixedSizedType::type value;
     while (read_reader.takeNextData ((void*)&value))

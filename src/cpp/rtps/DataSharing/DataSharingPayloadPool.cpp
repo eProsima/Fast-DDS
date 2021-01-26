@@ -109,7 +109,7 @@ std::shared_ptr<DataSharingPayloadPool> DataSharingPayloadPool::get_writer_pool(
  */
 void DataSharingPayloadPool::notify()
 {
-    logInfo(RTPS_WRITER, "Notifying writer " << writer());
+    logInfo(RTPS_READER, "Notifying writer " << writer());
     descriptor_->notification_cv.notify_all();
 }
 

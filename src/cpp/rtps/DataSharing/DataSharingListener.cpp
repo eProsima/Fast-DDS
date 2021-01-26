@@ -267,7 +267,7 @@ void DataSharingListener::change_removed_with_timestamp(
         notification_->notification_->ack_timestamp = timestamp;
         for (auto it = writer_pools_.begin(); it != writer_pools_.end(); ++it)
         {
-            // Notify all readers in case any is waiting for a recyclable payload
+            // Notify all writers in case any is waiting for a recyclable payload
             it->pool->notify();
         }
     }

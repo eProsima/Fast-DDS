@@ -894,7 +894,7 @@ bool StatefulReader::change_received(
         }
 
         ReaderPool* datasharing_pool = dynamic_cast<ReaderPool*>(a_change->payload_owner());
-        if (datasharing_pool)
+        if (datasharing_pool && ret)
         {
             // Change was added to the history. May need to update datasharing ACK timestamp
             // because we can receive changes in a different order (due to processing of writers or late-joiners)
