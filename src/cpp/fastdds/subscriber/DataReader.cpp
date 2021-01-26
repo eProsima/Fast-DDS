@@ -427,14 +427,13 @@ ReturnCode_t DataReader::delete_readcondition(
      */
 }
 
-ReturnCode_t  DataReader::delete_contained_entities()
+ReturnCode_t DataReader::delete_contained_entities()
 {
     return ReturnCode_t::RETCODE_UNSUPPORTED;
     /*
        return impl_->delete_contained_entities();
      */
 }
-
 
 const Subscriber* DataReader::get_subscriber() const
 {
