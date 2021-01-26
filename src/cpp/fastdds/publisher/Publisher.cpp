@@ -17,8 +17,8 @@
  *
  */
 
-#include <fastdds/dds/publisher/Publisher.hpp>
 #include <fastdds/dds/domain/DomainParticipant.hpp>
+#include <fastdds/dds/publisher/Publisher.hpp>
 #include <fastdds/publisher/PublisherImpl.hpp>
 
 #include <fastdds/dds/log/Log.hpp>

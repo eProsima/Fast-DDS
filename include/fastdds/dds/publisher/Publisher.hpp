@@ -21,8 +21,8 @@
 #define _FASTDDS_PUBLISHER_HPP_
 
 #include <fastdds/dds/core/Entity.hpp>
-#include <fastdds/dds/publisher/qos/PublisherQos.hpp>
 #include <fastdds/dds/publisher/qos/DataWriterQos.hpp>
+#include <fastdds/dds/publisher/qos/PublisherQos.hpp>
 #include <fastdds/dds/topic/TypeSupport.hpp>
 #include <fastdds/rtps/common/Time_t.h>
 

@@ -162,7 +162,7 @@ public:
             void* data,
             const InstanceHandle_t& handle);
 
-    /**
+    /** NOT YET IMPLEMENTED
      * @brief This operation performs the same function as write except that it also provides the value for the
      * @ref source_timestamp that is made available to DataReader objects by means of the @ref source_timestamp
      * attribute inside the SampleInfo.
@@ -251,8 +251,8 @@ public:
      * dataobject known to the DataWriter. If the implementation is not able to check invalid handles then the result
      * in this situation is unspecified.
      *
-     * @param [in,out] key
-     * @param [in] handle
+     * @param[in,out] key
+     * @param[in] handle
      *
      * @return Any of the standard return codes.
      */
@@ -260,12 +260,12 @@ public:
             void* key_holder,
             const InstanceHandle_t& handle);
 
-    /**
+    /** NOT YET IMPLEMENTED
      * Takes as a parameter an instance and returns a handle that can be used in subsequent operations that accept an
      * instance handle as an argument. The instance parameter is only used for the purpose of examining the fields that
      * define the key.
      *
-     * @param [in] instance Data pointer to the sample
+     * @param[in] instance Data pointer to the sample
      *
      * @return handle of the given instance
      */
@@ -452,7 +452,7 @@ public:
      */
     RTPS_DllAPI ReturnCode_t get_matched_subscription_data(
             builtin::SubscriptionBuiltinTopicData& subscription_data,
-            const fastrtps::rtps::InstanceHandle_t subscription_handle) const;
+            const fastrtps::rtps::InstanceHandle_t& subscription_handle) const;
 
     /**
      * @brief Fills the given vector with the InstanceHandle_t of matched DataReaders

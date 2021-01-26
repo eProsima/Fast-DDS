@@ -15,20 +15,22 @@
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
 
-#include <fastdds/dds/domain/DomainParticipantFactory.hpp>
+#include <dds/domain/DomainParticipant.hpp>
+#include <dds/domain/DomainParticipant.hpp>
+#include <dds/pub/DataWriter.hpp>
+#include <dds/pub/Publisher.hpp>
+#include <dds/pub/Publisher.hpp>
+#include <dds/pub/qos/DataWriterQos.hpp>
+#include <dds/pub/qos/PublisherQos.hpp>
+#include <dds/topic/Topic.hpp>
+
 #include <fastdds/dds/domain/DomainParticipant.hpp>
+#include <fastdds/dds/domain/DomainParticipantFactory.hpp>
+#include <fastdds/dds/publisher/DataWriter.hpp>
 #include <fastdds/dds/publisher/Publisher.hpp>
 #include <fastdds/dds/publisher/PublisherListener.hpp>
 #include <fastdds/dds/publisher/qos/DataWriterQos.hpp>
-#include <fastdds/dds/publisher/DataWriter.hpp>
-#include <dds/domain/DomainParticipant.hpp>
-#include <dds/pub/Publisher.hpp>
-#include <dds/pub/qos/DataWriterQos.hpp>
-#include <dds/domain/DomainParticipant.hpp>
-#include <dds/pub/Publisher.hpp>
-#include <dds/pub/qos/PublisherQos.hpp>
-#include <dds/pub/DataWriter.hpp>
-#include <dds/topic/Topic.hpp>
+
 #include <fastrtps/attributes/PublisherAttributes.h>
 #include <fastrtps/attributes/SubscriberAttributes.h>
 #include <fastrtps/xmlparser/XMLProfileManager.h>
