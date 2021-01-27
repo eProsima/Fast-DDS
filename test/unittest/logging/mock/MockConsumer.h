@@ -33,7 +33,8 @@ public:
     {
     }
 
-    MockConsumer(const char* category_name)
+    MockConsumer(
+            const char* category_name)
     {
         category = category_name;
     }
@@ -41,7 +42,7 @@ public:
     virtual void Consume(
             const Log::Entry& entry)
     {
-        if(category.empty() || entry.context.category == category)
+        if (category.empty() || entry.context.category == category)
         {
             std::unique_lock<std::mutex> guard(mMutex);
             mEntriesConsumed.push_back(entry);
