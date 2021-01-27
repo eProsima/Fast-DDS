@@ -174,9 +174,9 @@ def execute_commands(pub_commands, sub_commands, pubsub_commands, logger):
         proc = subprocess.Popen(pubsub_command)
         pubsubs_proc.append(proc)
 
-    for pubisher_command in pub_commands:
-        logger.info(f'Executing publisher: {pubisher_command}')
-        proc = subprocess.Popen(pubisher_command)
+    for publisher_command in pub_commands:
+        logger.info(f'Executing publisher: {publisher_command}')
+        proc = subprocess.Popen(publisher_command)
         pubs_proc.append(proc)
 
     ret_value = 0

@@ -33,6 +33,11 @@ Publisher::~Publisher()
     {
         eprosima::fastrtps::Domain::removeParticipant(participant_);
     }
+
+    if (type_)
+    {
+        delete type_;
+    }
 }
 
 bool Publisher::init(
@@ -54,7 +59,6 @@ bool Publisher::init(
     if (fixed_type)
     {
         type_ = new FixedSizedType();
-        std::cout << "type: " << type_->getName() << std::endl;
     }
     else
     {

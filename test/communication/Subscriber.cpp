@@ -36,6 +36,11 @@ Subscriber::~Subscriber()
     {
         eprosima::fastrtps::Domain::removeParticipant(participant_);
     }
+
+    if (type_)
+    {
+        delete type_;
+    }
 }
 
 bool Subscriber::init(
@@ -57,7 +62,6 @@ bool Subscriber::init(
     if (fixed_type)
     {
         type_ = new FixedSizedType();
-        std::cout << "type: " << type_->getName() << std::endl;
     }
     else
     {

@@ -103,7 +103,7 @@ private:
     bool exit_on_lost_liveliness_ = false;
     bool run_ = true;
     eprosima::fastrtps::Participant* participant_ = nullptr;
-    eprosima::fastrtps::TopicDataType* type_;
+    eprosima::fastrtps::TopicDataType* type_ = nullptr;
     eprosima::fastrtps::Publisher* publisher_ = nullptr;
 };
 

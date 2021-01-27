@@ -92,7 +92,7 @@ private:
     bool zero_copy_ = false;
     bool run_ = true;
     DomainParticipant* participant_ = nullptr;
-    TypeSupport* type_;
+    TypeSupport type_;
     Publisher* publisher_ = nullptr;
     DataWriter* writer_ = nullptr;
     Topic* topic_ = nullptr;

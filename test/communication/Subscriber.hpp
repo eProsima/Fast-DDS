@@ -46,11 +46,9 @@ public:
 
     Subscriber(
             const uint32_t publishers,
-            const uint32_t max_number_samples,
-            bool zero_copy = false)
+            const uint32_t max_number_samples)
         : publishers_(publishers)
         , max_number_samples_(max_number_samples)
-        , zero_copy_(zero_copy)
     {
     }
 
@@ -120,8 +118,7 @@ private:
     std::map<eprosima::fastrtps::rtps::GUID_t, uint32_t> number_samples_;
     bool run_ = true;
     eprosima::fastrtps::Participant* participant_ = nullptr;
-    eprosima::fastrtps::TopicDataType* type_;
+    eprosima::fastrtps::TopicDataType* type_ = nullptr;
     eprosima::fastrtps::Subscriber* subscriber_ = nullptr;
-    bool zero_copy_;
 };
 #endif // TEST_COMMUNICATION_SUBSCRIBER_HPP

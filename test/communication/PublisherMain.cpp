@@ -20,8 +20,9 @@ int main(
         {
             exit_on_lost_liveliness = true;
         }
-        else if (strcmp(argv[arg_count], "--fixed") == 0)
+        else if (strcmp(argv[arg_count], "--fixed_type") == 0)
         {
+            std::cout << "--fixed set: using FixedSizedType" << std::endl;
             fixed_type = true;
         }
         else if (strcmp(argv[arg_count], "--seed") == 0)

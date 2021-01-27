@@ -72,14 +72,14 @@ bool PublisherModule::init(
     // Construct a FixedSizedType if fixed type is required, defult HelloWro
     if (fixed_type_)
     {
-        type_ = new TypeSupport(new FixedSizedType());
+        type_.reset(new FixedSizedType());
     }
     else
     {
-        type_ = new TypeSupport(new HelloWorldType());
+        type_.reset(new HelloWorldType());
     }
 
-    type_->register_type(participant_);
+    type_.register_type(participant_);
 
     // Generate topic name
     std::ostringstream topic_name;
@@ -101,7 +101,7 @@ bool PublisherModule::init(
         return false;
     }
 
-    topic_ = participant_->create_topic(topic_name.str(), type_->get_type_name(), TOPIC_QOS_DEFAULT);
+    topic_ = participant_->create_topic(topic_name.str(), type_.get_type_name(), TOPIC_QOS_DEFAULT);
     if (topic_ == nullptr)
     {
         std::cout << "Error creating publisher topic" << std::endl;
@@ -115,7 +115,7 @@ bool PublisherModule::init(
         return false;
     }
     std::cout << "Writer created correctly in topic " << topic_->get_name()
-            << " with type " << type_->get_type_name() << std::endl;
+            << " with type " << type_.get_type_name() << std::endl;
 
     std::cout << "Publisher initialized correctly" << std::endl;
 
@@ -151,7 +151,7 @@ void PublisherModule::run(
         }
         else
         {
-            sample = type_->create_data();
+            sample = type_.create_data();
             if (fixed_type_)
             {
                 FixedSized* data = static_cast<FixedSized*>(sample);

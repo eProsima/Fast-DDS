@@ -98,7 +98,7 @@ private:
     bool zero_copy_ = false;
     bool run_ = true;
     DomainParticipant* participant_ = nullptr;
-    TypeSupport* type_;
+    TypeSupport type_;
     Subscriber* subscriber_ = nullptr;
     DataReader* reader_ = nullptr;
     Topic* topic_ = nullptr;

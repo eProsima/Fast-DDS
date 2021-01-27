@@ -83,13 +83,13 @@ bool SubscriberModule::init(
     // Construct a FixedSizedType if fixed type is required, defult HelloWro
     if (fixed_type_)
     {
-        type_ = new TypeSupport(new FixedSizedType());
+        type_.reset(new FixedSizedType());
     }
     else
     {
-        type_ = new TypeSupport(new HelloWorldType());
+        type_.reset(new HelloWorldType());
     }
-    type_->register_type(participant_);
+    type_.register_type(participant_);
 
     // Generate topic name
     std::ostringstream topic_name;
@@ -104,7 +104,7 @@ bool SubscriberModule::init(
     }
 
     //CREATE THE TOPIC
-    topic_ = participant_->create_topic(topic_name.str(), type_->get_type_name(), TOPIC_QOS_DEFAULT);
+    topic_ = participant_->create_topic(topic_name.str(), type_.get_type_name(), TOPIC_QOS_DEFAULT);
     if (topic_ == nullptr)
     {
         std::cout << "Error creating subscriber topic" << std::endl;
@@ -124,7 +124,7 @@ bool SubscriberModule::init(
         return false;
     }
     std::cout << "Reader created correctly in topic " << topic_->get_name()
-            << " with type " << type_->get_type_name() << std::endl;
+            << " with type " << type_.get_type_name() << std::endl;
 
     std::cout << "Subscriber initialized correctly" << std::endl;
 
