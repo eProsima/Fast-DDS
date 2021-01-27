@@ -20,30 +20,25 @@
 #ifndef LATENCYPUBLISHER_H_
 #define LATENCYPUBLISHER_H_
 
-#include <asio.hpp>
-
-#include "LatencyTestTypes.hpp"
-
-#include <condition_variable>
 #include <chrono>
+#include <condition_variable>
 
-#include <fastrtps/types/DynamicTypeBuilderFactory.h>
-#include <fastrtps/types/DynamicDataFactory.h>
-#include <fastrtps/types/DynamicTypeBuilder.h>
-#include <fastrtps/types/DynamicTypeBuilderPtr.h>
-#include <fastrtps/types/TypeDescriptor.h>
-#include <fastrtps/types/MemberDescriptor.h>
-#include <fastrtps/types/DynamicType.h>
-#include <fastrtps/types/DynamicData.h>
-#include <fastrtps/types/DynamicPubSubType.h>
-
-#include <fastdds/dds/topic/TypeSupport.hpp>
-
-#include <fastdds/dds/subscriber/Subscriber.hpp>
-#include <fastdds/dds/publisher/Publisher.hpp>
-
-#include <fastdds/dds/subscriber/DataReaderListener.hpp>
+#include <asio.hpp>
 #include <fastdds/dds/publisher/DataWriterListener.hpp>
+#include <fastdds/dds/publisher/Publisher.hpp>
+#include <fastdds/dds/subscriber/DataReaderListener.hpp>
+#include <fastdds/dds/subscriber/Subscriber.hpp>
+#include <fastdds/dds/topic/TypeSupport.hpp>
+#include <fastrtps/types/DynamicData.h>
+#include <fastrtps/types/DynamicDataFactory.h>
+#include <fastrtps/types/DynamicPubSubType.h>
+#include <fastrtps/types/DynamicType.h>
+#include <fastrtps/types/DynamicTypeBuilder.h>
+#include <fastrtps/types/DynamicTypeBuilderFactory.h>
+#include <fastrtps/types/DynamicTypeBuilderPtr.h>
+#include <fastrtps/types/MemberDescriptor.h>
+#include <fastrtps/types/TypeDescriptor.h>
+#include "LatencyTestTypes.hpp"
 
 class TimeStats
 {
