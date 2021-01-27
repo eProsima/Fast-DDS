@@ -3,7 +3,7 @@
     "participants" : [
         {
             "kind" : "subscriber",
-            "xmlfile" : "simple_reliable.xml",
+            "xmlfile" : "simple_reliable_zerocopy.xml",
             "zero_copy" : true
         },
         {

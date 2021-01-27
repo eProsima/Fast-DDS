@@ -117,7 +117,9 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER) AND fastcdr_FOUND)
     list(APPEND XML_CONFIGURATION_FILES
         simple_reliable.xml
         simple_besteffort.xml
-    )
+        simple_reliable_zerocopy.xml
+        simple_besteffort_zerocopy.xml
+)
     # Python file
     configure_file(${CMAKE_CURRENT_SOURCE_DIR}/test_build.py
         ${CMAKE_CURRENT_BINARY_DIR}/test_build.py COPYONLY)

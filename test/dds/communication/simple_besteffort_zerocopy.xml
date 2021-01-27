@@ -10,7 +10,7 @@
                     <kind>BEST_EFFORT</kind>
                 </reliability>
                 <data_sharing>
-                    <kind>OFF</kind>
+                    <kind>AUTOMATIC</kind>
                 </data_sharing>
             </qos>
         </publisher>
@@ -20,7 +20,7 @@
                     <kind>BEST_EFFORT</kind>
                 </reliability>
                 <data_sharing>
-                    <kind>OFF</kind>
+                    <kind>AUTOMATIC</kind>
                 </data_sharing>
             </qos>
         </subscriber>

@@ -7,20 +7,20 @@
         <publisher profile_name="simple_publisher_profile" is_default_profile="true">
             <qos>
                 <reliability>
-                    <kind>BEST_EFFORT</kind>
+                    <kind>RELIABLE</kind>
                 </reliability>
                 <data_sharing>
-                    <kind>OFF</kind>
+                    <kind>AUTOMATIC</kind>
                 </data_sharing>
             </qos>
         </publisher>
         <subscriber profile_name="simple_subscriber_profile" is_default_profile="true">
             <qos>
                 <reliability>
-                    <kind>BEST_EFFORT</kind>
+                    <kind>RELIABLE</kind>
                 </reliability>
                 <data_sharing>
-                    <kind>OFF</kind>
+                    <kind>AUTOMATIC</kind>
                 </data_sharing>
             </qos>
         </subscriber>

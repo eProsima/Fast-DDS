@@ -9,6 +9,9 @@
                 <reliability>
                     <kind>RELIABLE</kind>
                 </reliability>
+                <data_sharing>
+                    <kind>OFF</kind>
+                </data_sharing>
             </qos>
         </publisher>
         <subscriber profile_name="simple_subscriber_profile" is_default_profile="true">
@@ -16,6 +19,9 @@
                 <reliability>
                     <kind>RELIABLE</kind>
                 </reliability>
+                <data_sharing>
+                    <kind>OFF</kind>
+                </data_sharing>
             </qos>
         </subscriber>
     </profiles>
