@@ -479,7 +479,7 @@ void StatelessReader::change_read_by_user(
 
         // Must ACK all in the writer
         datasharing_listener_->change_removed_with_timestamp(
-                (*mp_history->changesRbegin())->sourceTimestamp.to_ns() + 1);
+            (*mp_history->changesRbegin())->sourceTimestamp.to_ns() + 1);
     }
 }
 

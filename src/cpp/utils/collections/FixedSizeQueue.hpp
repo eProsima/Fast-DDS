@@ -64,7 +64,7 @@ public:
         using difference_type = FixedSizeQueue::difference_type;
         using pointer = FixedSizeQueue::pointer;
         using reference = FixedSizeQueue::reference;
-    
+
         /**
          * @brief Constructor using a pointer and a range of the managed buffer
          * @param ptr Pointer to be set

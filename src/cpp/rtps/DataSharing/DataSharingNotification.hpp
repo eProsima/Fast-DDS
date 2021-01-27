@@ -91,14 +91,19 @@ protected:
 
 #pragma warning(push)
 #pragma warning(disable:4324)
-    class alignas (void*) Notification
+    struct alignas (void*) Notification
     {
-    public:
+        //! CV to wait for new notifications
+        Segment::condition_variable notification_cv;
 
-        Segment::condition_variable notification_cv;        //< CV to wait for new notifications
-        Segment::mutex              notification_mutex;     //< synchronization mutex
-        std::atomic<bool>           new_data;               //< New data available
-        std::atomic<int64_t>        ack_timestamp;          //< Timestamp of the reader's first sample NOT ack'd
+        //! synchronization mutex
+        Segment::mutex notification_mutex;
+
+        //! New data available
+        std::atomic<bool> new_data;
+
+        //! Timestamp of the reader's first sample NOT ack'd
+        std::atomic<int64_t> ack_timestamp;
     };
 #pragma warning(pop)
 
