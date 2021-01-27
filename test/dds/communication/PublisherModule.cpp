@@ -86,10 +86,6 @@ bool PublisherModule::init(
     topic_name << "DDSCommunicationTestsTopic_" << ((magic.empty()) ? asio::ip::host_name() : magic) << "_" << seed;
 
     //CREATE THE PUBLISHER
-    DataWriterQos wqos;
-    wqos.liveliness().lease_duration = 3;
-    wqos.liveliness().announcement_period = 1;
-    wqos.liveliness().kind = eprosima::fastdds::dds::AUTOMATIC_LIVELINESS_QOS;
 
     // Default mask
     // StatusMask mask = StatusMask::publication_matched();
@@ -107,6 +103,11 @@ bool PublisherModule::init(
         std::cout << "Error creating publisher topic" << std::endl;
         return false;
     }
+
+    DataWriterQos wqos = publisher_->get_default_datawriter_qos();
+    wqos.liveliness().lease_duration = 3;
+    wqos.liveliness().announcement_period = 1;
+    wqos.liveliness().kind = eprosima::fastdds::dds::AUTOMATIC_LIVELINESS_QOS;
 
     writer_ = publisher_->create_datawriter(topic_, wqos, this);
     if (writer_ == nullptr)

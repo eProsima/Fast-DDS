@@ -112,7 +112,7 @@ bool SubscriberModule::init(
     }
 
     //CREATE THE DATAREADER
-    DataReaderQos rqos;
+    DataReaderQos rqos = subscriber_->get_default_datareader_qos();;
     rqos.liveliness().lease_duration = 3;
     rqos.liveliness().announcement_period = 1;
     rqos.liveliness().kind = eprosima::fastdds::dds::AUTOMATIC_LIVELINESS_QOS;
