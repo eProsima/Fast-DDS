@@ -19,15 +19,14 @@
 #include <cassert>
 
 #include "LatencyTestSubscriber.hpp"
-#include <fastdds/dds/log/Log.hpp>
-#include <fastdds/dds/log/Colors.hpp>
-#include <dds/core/status/Status.hpp>
-#include <fastrtps/xmlparser/XMLProfileManager.h>
-#include <fastdds/dds/domain/DomainParticipantFactory.hpp>
 #include <fastdds/dds/domain/DomainParticipant.hpp>
-#include <fastdds/dds/subscriber/qos/DataReaderQos.hpp>
-#include <fastdds/dds/subscriber/DataReader.hpp>
+#include <fastdds/dds/domain/DomainParticipantFactory.hpp>
+#include <fastdds/dds/log/Colors.hpp>
+#include <fastdds/dds/log/Log.hpp>
 #include <fastdds/dds/publisher/DataWriter.hpp>
+#include <fastdds/dds/subscriber/DataReader.hpp>
+#include <fastdds/dds/subscriber/qos/DataReaderQos.hpp>
+#include <fastrtps/xmlparser/XMLProfileManager.h>
 
 using namespace eprosima::fastrtps::rtps;
 using namespace eprosima::fastrtps::types;
@@ -276,24 +275,6 @@ bool LatencyTestSubscriber::init(
     /* Create Echo DataWriter */
     {
         string profile_name = "sub_publisher_profile";
-        DataWriterQos dw_qos;
-
-        if (reliable)
-        {
-            RTPSReliableWriterQos rw_qos;
-            rw_qos.times.heartbeatPeriod.seconds = 0;
-            rw_qos.times.heartbeatPeriod.nanosec = 100000000;
-            dw_qos.reliable_writer_qos(rw_qos);
-        }
-        else
-        {
-            ReliabilityQosPolicy rp;
-            rp.kind = eprosima::fastrtps::BEST_EFFORT_RELIABILITY_QOS;
-            dw_qos.reliability(rp);
-        }
-
-        dw_qos.properties(property_policy);
-        dw_qos.endpoint().history_memory_policy = MemoryManagementPolicy::PREALLOCATED_WITH_REALLOC_MEMORY_MODE;
 
         if (xml_config_file_.length() > 0)
         {
@@ -304,6 +285,25 @@ bool LatencyTestSubscriber::init(
         }
         else
         {
+            DataWriterQos dw_qos;
+
+            if (reliable)
+            {
+                RTPSReliableWriterQos rw_qos;
+                rw_qos.times.heartbeatPeriod.seconds = 0;
+                rw_qos.times.heartbeatPeriod.nanosec = 100000000;
+                dw_qos.reliable_writer_qos(rw_qos);
+            }
+            else
+            {
+                ReliabilityQosPolicy rp;
+                rp.kind = eprosima::fastrtps::BEST_EFFORT_RELIABILITY_QOS;
+                dw_qos.reliability(rp);
+            }
+
+            dw_qos.properties(property_policy);
+            dw_qos.endpoint().history_memory_policy = MemoryManagementPolicy::PREALLOCATED_WITH_REALLOC_MEMORY_MODE;
+
             data_writer_ = publisher_->create_datawriter(
                 latency_data_pub_topic_,
                 dw_qos,
@@ -319,17 +319,6 @@ bool LatencyTestSubscriber::init(
     /* Create Data Reader */
     {
         string profile_name = "sub_subscriber_profile";
-        DataReaderQos dr_qos;
-
-        if (reliable)
-        {
-            ReliabilityQosPolicy rp;
-            rp.kind = eprosima::fastrtps::RELIABLE_RELIABILITY_QOS;
-            dr_qos.reliability(rp);
-        }
-
-        dr_qos.properties(property_policy);
-        dr_qos.endpoint().history_memory_policy = MemoryManagementPolicy::PREALLOCATED_WITH_REALLOC_MEMORY_MODE;
 
         if (xml_config_file_.length() > 0)
         {
@@ -340,6 +329,18 @@ bool LatencyTestSubscriber::init(
         }
         else
         {
+            DataReaderQos dr_qos;
+
+            if (reliable)
+            {
+                ReliabilityQosPolicy rp;
+                rp.kind = eprosima::fastrtps::RELIABLE_RELIABILITY_QOS;
+                dr_qos.reliability(rp);
+            }
+
+            dr_qos.properties(property_policy);
+            dr_qos.endpoint().history_memory_policy = MemoryManagementPolicy::PREALLOCATED_WITH_REALLOC_MEMORY_MODE;
+
             data_reader_ = subscriber_->create_datareader(
                 latency_data_sub_topic_,
                 dr_qos,
@@ -405,7 +406,7 @@ void LatencyTestSubscriber::LatencyDataWriterListener::on_publication_matched(
 {
     (void)writer;
 
-    lock_guard<mutex> lock(latency_subscriber_->mutex_);
+    std::unique_lock<std::mutex> lock(latency_subscriber_->mutex_);
 
     matched_ = info.total_count;
 
@@ -414,6 +415,7 @@ void LatencyTestSubscriber::LatencyDataWriterListener::on_publication_matched(
         logInfo(LatencyTest, C_MAGENTA << "Data Pub Matched" << C_DEF);
     }
 
+    lock.unlock();
     latency_subscriber_->discovery_cv_.notify_one();
 }
 
@@ -423,7 +425,7 @@ void LatencyTestSubscriber::LatencyDataReaderListener::on_subscription_matched(
 {
     (void)reader;
 
-    lock_guard<mutex> lock(latency_subscriber_->mutex_);
+    std::unique_lock<std::mutex> lock(latency_subscriber_->mutex_);
 
     matched_ = info.total_count;
 
@@ -432,6 +434,7 @@ void LatencyTestSubscriber::LatencyDataReaderListener::on_subscription_matched(
         logInfo(LatencyTest, C_MAGENTA << "Data Sub Matched" << C_DEF);
     }
 
+    lock.unlock();
     latency_subscriber_->discovery_cv_.notify_one();
 }
 
@@ -441,7 +444,7 @@ void LatencyTestSubscriber::ComandWriterListener::on_publication_matched(
 {
     (void)writer;
 
-    lock_guard<mutex> lock(latency_subscriber_->mutex_);
+    std::unique_lock<std::mutex> lock(latency_subscriber_->mutex_);
 
     matched_ = info.total_count;
 
@@ -450,6 +453,7 @@ void LatencyTestSubscriber::ComandWriterListener::on_publication_matched(
         logInfo(LatencyTest, C_MAGENTA << "Command Pub Matched" << C_DEF);
     }
 
+    lock.unlock();
     latency_subscriber_->discovery_cv_.notify_one();
 }
 
@@ -459,7 +463,7 @@ void LatencyTestSubscriber::CommandReaderListener::on_subscription_matched(
 {
     (void)reader;
 
-    lock_guard<mutex> lock(latency_subscriber_->mutex_);
+    std::unique_lock<std::mutex> lock(latency_subscriber_->mutex_);
 
     matched_ = info.total_count;
 
@@ -468,6 +472,7 @@ void LatencyTestSubscriber::CommandReaderListener::on_subscription_matched(
         logInfo(LatencyTest, C_MAGENTA << "Command Sub Matched" << C_DEF);
     }
 
+    lock.unlock();
     latency_subscriber_->discovery_cv_.notify_one();
 }
 
@@ -477,12 +482,13 @@ void LatencyTestSubscriber::CommandReaderListener::on_data_available(
     TestCommandType command;
     SampleInfo info;
     ostringstream log;
+    bool notify = false;
 
     if (reader->take_next_sample(
                 &command, &info) == ReturnCode_t::RETCODE_OK
             && info.valid_data)
     {
-        lock_guard<mutex> lock(latency_subscriber_->mutex_);
+        std::unique_lock<std::mutex> lock(latency_subscriber_->mutex_);
 
         log << "RCOMMAND: " << command.m_command;
         switch ( command.m_command )
@@ -495,6 +501,7 @@ void LatencyTestSubscriber::CommandReaderListener::on_data_available(
                 break;
             case STOP_ERROR:
                 log << "Publisher has canceled the test";
+                latency_subscriber_->test_status_ = -1;
                 break;
             default:
                 log << "Something is wrong";
@@ -504,6 +511,12 @@ void LatencyTestSubscriber::CommandReaderListener::on_data_available(
         if (command.m_command != DEFAULT)
         {
             ++latency_subscriber_->command_msg_count_;
+            notify = true;
+        }
+
+        lock.unlock();
+        if (notify)
+        {
             latency_subscriber_->command_msg_cv_.notify_one();
         }
     }
@@ -600,7 +613,7 @@ bool LatencyTestSubscriber::test(
         {
             return command_msg_count_ != 0;
         });
-    command_msg_count_ = 0;
+    --command_msg_count_;
     lock.unlock();
 
     // Send to Publisher the BEGIN command
@@ -624,7 +637,7 @@ bool LatencyTestSubscriber::test(
         {
             return command_msg_count_ != 0;
         });
-    command_msg_count_ = 0;
+    --command_msg_count_;
     lock.unlock();
 
     logInfo(LatencyTest, "TEST OF SIZE: " << datasize + 4 << " ENDS");
