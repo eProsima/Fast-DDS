@@ -3309,9 +3309,9 @@ TEST_F(XMLParserTests, getXMLDataSharingQos)
         EXPECT_EQ(datasharing_policy.kind(), DataSharingKind::AUTO);
         EXPECT_EQ(datasharing_policy.shm_directory(), "shared_dir");
         EXPECT_EQ(datasharing_policy.max_domains(), 0u);
-        EXPECT_EQ(datasharing_policy.domain_ids().size(), 2);
-        EXPECT_EQ(datasharing_policy.domain_ids()[0], 10);
-        EXPECT_EQ(datasharing_policy.domain_ids()[1], 20);
+        EXPECT_EQ(datasharing_policy.domain_ids().size(), 2u);
+        EXPECT_EQ(datasharing_policy.domain_ids()[0], 10u);
+        EXPECT_EQ(datasharing_policy.domain_ids()[1], 20u);
 
         sprintf(xml, xml_p, "ON");
         ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
@@ -3320,18 +3320,18 @@ TEST_F(XMLParserTests, getXMLDataSharingQos)
         EXPECT_EQ(datasharing_policy.kind(), DataSharingKind::ON);
         EXPECT_EQ(datasharing_policy.shm_directory(), "shared_dir");
         EXPECT_EQ(datasharing_policy.max_domains(), 0u);
-        EXPECT_EQ(datasharing_policy.domain_ids().size(), 2);
-        EXPECT_EQ(datasharing_policy.domain_ids()[0], 10);
-        EXPECT_EQ(datasharing_policy.domain_ids()[1], 20);
+        EXPECT_EQ(datasharing_policy.domain_ids().size(), 2u);
+        EXPECT_EQ(datasharing_policy.domain_ids()[0], 10u);
+        EXPECT_EQ(datasharing_policy.domain_ids()[1], 20u);
 
         sprintf(xml, xml_p, "OFF");
         ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
         titleElement = xml_doc.RootElement();
         EXPECT_EQ(XMLP_ret::XML_OK, XMLParserTest::propertiesPolicy_wrapper(titleElement, datasharing_policy, ident));
         EXPECT_EQ(datasharing_policy.kind(), DataSharingKind::OFF);
-        EXPECT_EQ(datasharing_policy.shm_directory().size(), 0);
+        EXPECT_EQ(datasharing_policy.shm_directory().size(), 0u);
         EXPECT_EQ(datasharing_policy.max_domains(), 0u);
-        EXPECT_EQ(datasharing_policy.domain_ids().size(), 0);
+        EXPECT_EQ(datasharing_policy.domain_ids().size(), 0u);
     }
 
     {
@@ -3354,31 +3354,31 @@ TEST_F(XMLParserTests, getXMLDataSharingQos)
         titleElement = xml_doc.RootElement();
         EXPECT_EQ(XMLP_ret::XML_OK, XMLParserTest::propertiesPolicy_wrapper(titleElement, datasharing_policy, ident));
         EXPECT_EQ(datasharing_policy.kind(), DataSharingKind::AUTO);
-        EXPECT_EQ(datasharing_policy.shm_directory().size(), 0);
+        EXPECT_EQ(datasharing_policy.shm_directory().size(), 0u);
         EXPECT_EQ(datasharing_policy.max_domains(), 5u);
-        EXPECT_EQ(datasharing_policy.domain_ids().size(), 2);
-        EXPECT_EQ(datasharing_policy.domain_ids()[0], 10);
-        EXPECT_EQ(datasharing_policy.domain_ids()[1], 20);
+        EXPECT_EQ(datasharing_policy.domain_ids().size(), 2u);
+        EXPECT_EQ(datasharing_policy.domain_ids()[0], 10u);
+        EXPECT_EQ(datasharing_policy.domain_ids()[1], 20u);
 
         sprintf(xml, xml_p, "ON");
         ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
         titleElement = xml_doc.RootElement();
         EXPECT_EQ(XMLP_ret::XML_OK, XMLParserTest::propertiesPolicy_wrapper(titleElement, datasharing_policy, ident));
         EXPECT_EQ(datasharing_policy.kind(), DataSharingKind::ON);
-        EXPECT_EQ(datasharing_policy.shm_directory().size(), 0);
+        EXPECT_EQ(datasharing_policy.shm_directory().size(), 0u);
         EXPECT_EQ(datasharing_policy.max_domains(), 5u);
-        EXPECT_EQ(datasharing_policy.domain_ids().size(), 2);
-        EXPECT_EQ(datasharing_policy.domain_ids()[0], 10);
-        EXPECT_EQ(datasharing_policy.domain_ids()[1], 20);
+        EXPECT_EQ(datasharing_policy.domain_ids().size(), 2u);
+        EXPECT_EQ(datasharing_policy.domain_ids()[0], 10u);
+        EXPECT_EQ(datasharing_policy.domain_ids()[1], 20u);
 
         sprintf(xml, xml_p, "OFF");
         ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
         titleElement = xml_doc.RootElement();
         EXPECT_EQ(XMLP_ret::XML_OK, XMLParserTest::propertiesPolicy_wrapper(titleElement, datasharing_policy, ident));
         EXPECT_EQ(datasharing_policy.kind(), DataSharingKind::OFF);
-        EXPECT_EQ(datasharing_policy.shm_directory().size(), 0);
+        EXPECT_EQ(datasharing_policy.shm_directory().size(), 0u);
         EXPECT_EQ(datasharing_policy.max_domains(), 5u);
-        EXPECT_EQ(datasharing_policy.domain_ids().size(), 0);
+        EXPECT_EQ(datasharing_policy.domain_ids().size(), 0u);
     }
 
     {
@@ -3399,7 +3399,7 @@ TEST_F(XMLParserTests, getXMLDataSharingQos)
         EXPECT_EQ(datasharing_policy.kind(), DataSharingKind::AUTO);
         EXPECT_EQ(datasharing_policy.shm_directory(), "shared_dir");
         EXPECT_EQ(datasharing_policy.max_domains(), 0u);
-        EXPECT_EQ(datasharing_policy.domain_ids().size(), 0);
+        EXPECT_EQ(datasharing_policy.domain_ids().size(), 0u);
 
         sprintf(xml, xml_p, "ON");
         ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
@@ -3408,16 +3408,16 @@ TEST_F(XMLParserTests, getXMLDataSharingQos)
         EXPECT_EQ(datasharing_policy.kind(), DataSharingKind::ON);
         EXPECT_EQ(datasharing_policy.shm_directory(), "shared_dir");
         EXPECT_EQ(datasharing_policy.max_domains(), 0u);
-        EXPECT_EQ(datasharing_policy.domain_ids().size(), 0);
+        EXPECT_EQ(datasharing_policy.domain_ids().size(), 0u);
 
         sprintf(xml, xml_p, "OFF");
         ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
         titleElement = xml_doc.RootElement();
         EXPECT_EQ(XMLP_ret::XML_OK, XMLParserTest::propertiesPolicy_wrapper(titleElement, datasharing_policy, ident));
         EXPECT_EQ(datasharing_policy.kind(), DataSharingKind::OFF);
-        EXPECT_EQ(datasharing_policy.shm_directory().size(), 0);
+        EXPECT_EQ(datasharing_policy.shm_directory().size(), 0u);
         EXPECT_EQ(datasharing_policy.max_domains(), 0u);
-        EXPECT_EQ(datasharing_policy.domain_ids().size(), 0);
+        EXPECT_EQ(datasharing_policy.domain_ids().size(), 0u);
     }
 }
 
