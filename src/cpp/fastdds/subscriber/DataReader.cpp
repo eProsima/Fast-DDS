@@ -228,7 +228,7 @@ InstanceHandle_t DataReader::lookup_instance(
         const void* instance) const
 {
     static_cast<void> (instance);
-    logWarning(DataReader, "lookup_instance method not implemented")
+    logWarning(DATA_READER, "lookup_instance method not implemented")
     return HANDLE_NIL;
 }
 
@@ -388,7 +388,7 @@ ReadCondition* DataReader::create_readcondition(
         const std::vector<ViewStateKind>& view_states,
         const std::vector<InstanceStateKind>& instance_states)
 {
-    logWarning(DataReader, "create_readcondition method not implemented");
+    logWarning(DATA_READER, "create_readcondition method not implemented");
     static_cast<void> (sample_states);
     static_cast<void> (view_states);
     static_cast<void> (instance_states);
@@ -405,7 +405,7 @@ QueryCondition* DataReader::create_querycondition(
         const std::string& query_expression,
         const std::vector<std::string>& query_parameters)
 {
-    logWarning(DataReader, "create_querycondition method not implemented");
+    logWarning(DATA_READER, "create_querycondition method not implemented");
     static_cast<void> (sample_states);
     static_cast<void> (view_states);
     static_cast<void> (instance_states);

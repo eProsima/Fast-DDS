@@ -16,6 +16,7 @@
 #define MOCK_LOG_CONSUMER_H
 
 #include <fastdds/dds/log/Log.hpp>
+#include <fastdds/dds/log/StdoutConsumer.hpp>
 #include <thread>
 #include <mutex>
 #include <vector>
@@ -24,7 +25,7 @@ namespace eprosima {
 namespace fastdds {
 namespace dds {
 
-class MockConsumer : public LogConsumer
+class MockConsumer : public StdoutConsumer
 {
 public:
 
@@ -32,12 +33,21 @@ public:
     {
     }
 
+    MockConsumer(const char* category_name)
+    {
+        category = category_name;
+    }
+
     virtual void Consume(
             const Log::Entry& entry)
     {
-        std::unique_lock<std::mutex> guard(mMutex);
-        mEntriesConsumed.push_back(entry);
-        cv_.notify_one();
+        if(category.empty() || entry.context.category == category)
+        {
+            std::unique_lock<std::mutex> guard(mMutex);
+            mEntriesConsumed.push_back(entry);
+            cv_.notify_one();
+        }
+        StdoutConsumer::Consume(entry);
     }
 
     const std::vector<Log::Entry> ConsumedEntries() const
@@ -64,6 +74,7 @@ public:
 
 private:
 
+    std::string category;
     std::vector<Log::Entry> mEntriesConsumed;
     mutable std::mutex mMutex;
     std::condition_variable cv_;
