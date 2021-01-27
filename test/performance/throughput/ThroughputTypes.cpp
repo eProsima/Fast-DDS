@@ -24,6 +24,18 @@
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
 
+bool ThroughputDataType::compare_data(
+        const ThroughputType& lt1,
+        const ThroughputType& lt2) const
+{
+    if (lt1.seqnum != lt2.seqnum)
+    {
+        return false;
+    }
+
+    return 0 == memcmp(lt1.data, lt2.data, buffer_size_);
+}
+
 // Serialization and deserialization functions
 bool ThroughputDataType::serialize(
         void* data,
@@ -31,11 +43,8 @@ bool ThroughputDataType::serialize(
 {
     ThroughputType* lt = (ThroughputType*)data;
     memcpy(payload->data, &lt->seqnum, sizeof(lt->seqnum));
-    const auto data_size = static_cast<uint32_t>(lt->data.size());
-    memcpy(payload->data + 4, &data_size, sizeof(data_size));
-    //	std::copy(lt->data.begin(),lt->data.end(),payload->data+8);
-    memcpy(payload->data + 8, lt->data.data(), lt->data.size());
-    payload->length = 8 + static_cast<uint32_t>(lt->data.size());
+    memcpy(payload->data + 4, lt->data, buffer_size_);
+    payload->length = 4 + buffer_size;
     return true;
 }
 
@@ -45,14 +54,10 @@ bool ThroughputDataType::deserialize(
 {
     if (payload->length > 0)
     {
+        // payload members endiannes matches local machine
         ThroughputType* lt = (ThroughputType*)data;
-        memcpy(&lt->seqnum, payload->data, sizeof(lt->seqnum));
-        uint32_t size;
-        memcpy(&size, payload->data + 4, sizeof(size));
-        //std::copy(payload->data+8,payload->data+8+siz,lt->data.begin());
-        std::copy(payload->data + 8, payload->data + 8 + size, lt->data.begin());
-        //		lt->data.clear();
-        //		lt->data.insert(lt->data.end(),payload->data+8,payload->data+8+siz);
+        lt->seqnum = *static_cast<uint32_t*>(payload->data);
+        std::copy(payload->data + 4, payload->data + 4 + size, lt->data);
     }
     return true;
 }
@@ -60,26 +65,34 @@ bool ThroughputDataType::deserialize(
 std::function<uint32_t()> ThroughputDataType::getSerializedSizeProvider(
         void* data)
 {
-    return [data]() -> uint32_t
+    // uint32_t seqnum + uint32_t buffer_size_ + actual data
+    return [m_typeSize]() -> uint32_t
            {
-               ThroughputType* tdata = static_cast<ThroughputType*>(data);
-               uint32_t size = 0;
-
-               size = (uint32_t)(sizeof(uint32_t) + sizeof(uint32_t) + tdata->data.size());
-
-               return size;
+               return m_typeSize;
            };
 }
 
 void* ThroughputDataType::createData()
 {
-    return (void*)new ThroughputType(this->m_typeSize);
+    return (void*)new uint8_t[(4 + buffer_size_ + 3) / 4 * 4];
 }
 
 void ThroughputDataType::deleteData(
         void* data)
 {
-    delete((ThroughputType*)data);
+    delete[] (uint8_t*)(data);
+}
+
+bool ThroughputDataType::is_bounded() const override
+{
+    // All plain types are bounded
+    return true;
+}
+
+bool ThroughputDataType::is_plain() const override
+{
+    // It is plain because the type has a fixed sized
+    return true;
 }
 
 bool ThroughputCommandDataType::serialize(
