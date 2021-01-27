@@ -1311,6 +1311,14 @@ XMLP_ret XMLParser::getXMLReaderQosPolicies(
             //if (nullptr != (p_aux = elem->FirstChildElement(        GROUP_DATA))) getXMLGroupDataQos(p_aux, ident);
             logError(XMLPARSER, "Quality of Service '" << p_aux0->Value() << "' do not supported for now");
         }
+        else if (strcmp(name, DATA_SHARING) == 0)
+        {
+            //data sharing
+            if (XMLP_ret::XML_OK != getXMLDataSharingQos(p_aux0, qos.data_sharing, ident))
+            {
+                return XMLP_ret::XML_ERROR;
+            }
+        }
         else
         {
             logError(XMLPARSER, "Invalid element found into 'readerQosPoliciesType'. Name: " << name);
