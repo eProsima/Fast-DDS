@@ -236,7 +236,7 @@ void ReaderQos::clear()
     m_disablePositiveACKs.clear();
     representation.clear();
     type_consistency.clear();
-    data_sharing.off();
+    data_sharing.clear();
 }
 
 } //namespace dds

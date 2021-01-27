@@ -39,7 +39,6 @@ public:
 
     RTPS_DllAPI ReaderQos()
     {
-        data_sharing.off();
     }
 
     RTPS_DllAPI virtual ~ReaderQos()
