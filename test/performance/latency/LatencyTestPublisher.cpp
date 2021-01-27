@@ -510,7 +510,7 @@ void LatencyTestPublisher::LatencyDataReaderListener::on_subscription_matched(
 {
     (void)reader;
 
-    lock_guard<mutex> lock(latency_publisher_->mutex_);
+    std::unique_lock<std::mutex> lock(latency_publisher_->mutex_);
 
     matched_ = info.total_count;
 
@@ -519,6 +519,7 @@ void LatencyTestPublisher::LatencyDataReaderListener::on_subscription_matched(
         logInfo(LatencyTest, C_MAGENTA << "Data Sub Matched" << C_DEF);
     }
 
+    lock.unlock();
     latency_publisher_->discovery_cv_.notify_one();
 }
 
@@ -528,7 +529,7 @@ void LatencyTestPublisher::ComandWriterListener::on_publication_matched(
 {
     (void)writer;
 
-    lock_guard<mutex> lock(latency_publisher_->mutex_);
+    std::unique_lock<std::mutex> lock(latency_publisher_->mutex_);
 
     matched_ = info.total_count;
 
@@ -537,6 +538,7 @@ void LatencyTestPublisher::ComandWriterListener::on_publication_matched(
         logInfo(LatencyTest, C_MAGENTA << "Command Pub Matched" << C_DEF);
     }
 
+    lock.unlock();
     latency_publisher_->discovery_cv_.notify_one();
 }
 
@@ -546,7 +548,7 @@ void LatencyTestPublisher::CommandReaderListener::on_subscription_matched(
 {
     (void)reader;
 
-    lock_guard<mutex> lock(latency_publisher_->mutex_);
+    std::unique_lock<std::mutex> lock(latency_publisher_->mutex_);
 
     matched_ = info.total_count;
 
@@ -555,6 +557,7 @@ void LatencyTestPublisher::CommandReaderListener::on_subscription_matched(
         logInfo(LatencyTest, C_MAGENTA << "Command Sub Matched" << C_DEF);
     }
 
+    lock.unlock();
     latency_publisher_->discovery_cv_.notify_one();
 }
 
@@ -570,8 +573,9 @@ void LatencyTestPublisher::CommandReaderListener::on_data_available(
     {
         if (command.m_command == BEGIN)
         {
-            lock_guard<mutex> lock(latency_publisher_->mutex_);
+            latency_publisher_->mutex_.lock();
             ++latency_publisher_->command_msg_count_;
+            latency_publisher_->mutex_.unlock();
             latency_publisher_->command_msg_cv_.notify_one();
         }
     }
@@ -598,7 +602,7 @@ void LatencyTestPublisher::LatencyDataReaderListener::on_data_available(
         return;
     }
 
-    lock_guard<mutex> lock(latency_publisher_->mutex_);
+    std::unique_lock<std::mutex> lock(latency_publisher_->mutex_);
 
     // Check if is the expected echo message
     if ((latency_publisher_->dynamic_data_ &&
@@ -629,7 +633,9 @@ void LatencyTestPublisher::LatencyDataReaderListener::on_data_available(
     }
 
     ++latency_publisher_->data_msg_count_;
-    if (latency_publisher_->data_msg_count_ >= latency_publisher_->subscribers_)
+    bool notify = latency_publisher_->data_msg_count_ >= latency_publisher_->subscribers_;
+    lock.unlock();
+    if (notify)
     {
         latency_publisher_->data_msg_cv_.notify_one();
     }
