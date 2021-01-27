@@ -18,20 +18,23 @@
  */
 
 #include "LatencyTestPublisher.hpp"
-#include <fastdds/dds/log/Log.hpp>
-#include <fastdds/dds/log/Colors.hpp>
-#include <fastrtps/xmlparser/XMLProfileManager.h>
-#include <fastdds/dds/domain/DomainParticipantFactory.hpp>
-#include <fastdds/dds/domain/DomainParticipant.hpp>
-#include <fastdds/dds/publisher/DataWriterListener.hpp>
-#include <fastdds/dds/subscriber/qos/DataReaderQos.hpp>
-#include <fastdds/dds/subscriber/DataReader.hpp>
-#include <fastdds/dds/publisher/DataWriter.hpp>
+
+#include <inttypes.h>
 
 #include <numeric>
 #include <cmath>
 #include <fstream>
-#include <inttypes.h>
+
+#include <fastdds/dds/domain/DomainParticipant.hpp>
+#include <fastdds/dds/domain/DomainParticipantFactory.hpp>
+#include <fastdds/dds/log/Log.hpp>
+#include <fastdds/dds/log/Colors.hpp>
+#include <fastdds/dds/publisher/DataWriter.hpp>
+#include <fastdds/dds/publisher/DataWriterListener.hpp>
+#include <fastdds/dds/subscriber/DataReader.hpp>
+#include <fastdds/dds/subscriber/qos/DataReaderQos.hpp>
+#include <fastrtps/xmlparser/XMLProfileManager.h>
+
 
 #define TIME_LIMIT_US 10000
 
@@ -341,24 +344,6 @@ bool LatencyTestPublisher::init(
     /* Create Data DataWriter */
     {
         string profile_name = "pub_publisher_profile";
-        DataWriterQos dw_qos;
-
-        if (reliable)
-        {
-            RTPSReliableWriterQos rw_qos;
-            rw_qos.times.heartbeatPeriod.seconds = 0;
-            rw_qos.times.heartbeatPeriod.nanosec = 100000000;
-            dw_qos.reliable_writer_qos(rw_qos);
-        }
-        else
-        {
-            ReliabilityQosPolicy rp;
-            rp.kind = eprosima::fastrtps::BEST_EFFORT_RELIABILITY_QOS;
-            dw_qos.reliability(rp);
-        }
-
-        dw_qos.properties(property_policy);
-        dw_qos.endpoint().history_memory_policy = MemoryManagementPolicy::PREALLOCATED_WITH_REALLOC_MEMORY_MODE;
 
         if (xml_config_file_.length() > 0)
         {
@@ -369,6 +354,25 @@ bool LatencyTestPublisher::init(
         }
         else
         {
+            DataWriterQos dw_qos;
+
+            if (reliable)
+            {
+                RTPSReliableWriterQos rw_qos;
+                rw_qos.times.heartbeatPeriod.seconds = 0;
+                rw_qos.times.heartbeatPeriod.nanosec = 100000000;
+                dw_qos.reliable_writer_qos(rw_qos);
+            }
+            else
+            {
+                ReliabilityQosPolicy rp;
+                rp.kind = eprosima::fastrtps::BEST_EFFORT_RELIABILITY_QOS;
+                dw_qos.reliability(rp);
+            }
+
+            dw_qos.properties(property_policy);
+            dw_qos.endpoint().history_memory_policy = MemoryManagementPolicy::PREALLOCATED_WITH_REALLOC_MEMORY_MODE;
+
             data_writer_ = publisher_->create_datawriter(
                 latency_data_pub_topic_,
                 dw_qos,
@@ -384,17 +388,6 @@ bool LatencyTestPublisher::init(
     /* Create Data Echo Reader */
     {
         string profile_name = "pub_subscriber_profile";
-        DataReaderQos dr_qos;
-
-        if (reliable)
-        {
-            ReliabilityQosPolicy rp;
-            rp.kind = eprosima::fastrtps::RELIABLE_RELIABILITY_QOS;
-            dr_qos.reliability(rp);
-        }
-
-        dr_qos.properties(property_policy);
-        dr_qos.endpoint().history_memory_policy = MemoryManagementPolicy::PREALLOCATED_WITH_REALLOC_MEMORY_MODE;
 
         if (xml_config_file_.length() > 0)
         {
@@ -405,6 +398,18 @@ bool LatencyTestPublisher::init(
         }
         else
         {
+            DataReaderQos dr_qos;
+
+            if (reliable)
+            {
+                ReliabilityQosPolicy rp;
+                rp.kind = eprosima::fastrtps::RELIABLE_RELIABILITY_QOS;
+                dr_qos.reliability(rp);
+            }
+
+            dr_qos.properties(property_policy);
+            dr_qos.endpoint().history_memory_policy = MemoryManagementPolicy::PREALLOCATED_WITH_REALLOC_MEMORY_MODE;
+
             data_reader_ = subscriber_->create_datareader(
                 latency_data_sub_topic_,
                 dr_qos,
@@ -486,7 +491,7 @@ void LatencyTestPublisher::LatencyDataWriterListener::on_publication_matched(
 {
     (void)writer;
 
-    lock_guard<mutex> lock(latency_publisher_->mutex_);
+    std::unique_lock<std::mutex> lock(latency_publisher_->mutex_);
 
     matched_ = info.total_count;
 
@@ -495,6 +500,7 @@ void LatencyTestPublisher::LatencyDataWriterListener::on_publication_matched(
         logInfo(LatencyTest, C_MAGENTA << "Data Pub Matched" << C_DEF);
     }
 
+    lock.unlock();
     latency_publisher_->discovery_cv_.notify_one();
 }
 
@@ -638,7 +644,7 @@ void LatencyTestPublisher::run()
         disc_lock,
         [this]() -> bool
         {
-            return total_matches() == 4;
+            return total_matches() == 4 * subscribers_;
         });
     disc_lock.unlock();
 
@@ -936,7 +942,7 @@ int32_t LatencyTestPublisher::total_matches() const
             + command_reader_listener_.matched_;
 
     // Each endpoint has a mirror counterpart in the LatencyTestPublisher
-    // thus, the maximun number of matches is 4
-    assert(count >= 0 && count < 5);
+    // thus, the maximun number of matches is 4 * total number of subscribers
+    assert(count >= 0 && count <= 4 * subscribers_);
     return count;
 }
