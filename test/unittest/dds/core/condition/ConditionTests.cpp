@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include "../../logging/mock/MockConsumer.h"
+#include "../../../logging/mock/MockConsumer.h"
 #include <fastdds/dds/log/Log.hpp>
 #include <gtest/gtest.h>
 

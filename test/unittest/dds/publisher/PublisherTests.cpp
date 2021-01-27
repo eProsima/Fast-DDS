@@ -15,19 +15,22 @@
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
 
-#include <fastdds/dds/domain/DomainParticipantFactory.hpp>
+#include <dds/domain/DomainParticipant.hpp>
+#include <dds/domain/DomainParticipant.hpp>
+#include <dds/pub/DataWriter.hpp>
+#include <dds/pub/Publisher.hpp>
+#include <dds/pub/Publisher.hpp>
+#include <dds/pub/qos/DataWriterQos.hpp>
+#include <dds/pub/qos/PublisherQos.hpp>
+#include <dds/topic/Topic.hpp>
+
 #include <fastdds/dds/domain/DomainParticipant.hpp>
+#include <fastdds/dds/domain/DomainParticipantFactory.hpp>
+#include <fastdds/dds/publisher/DataWriter.hpp>
 #include <fastdds/dds/publisher/Publisher.hpp>
 #include <fastdds/dds/publisher/PublisherListener.hpp>
 #include <fastdds/dds/publisher/qos/DataWriterQos.hpp>
-#include <dds/domain/DomainParticipant.hpp>
-#include <dds/pub/Publisher.hpp>
-#include <dds/pub/qos/DataWriterQos.hpp>
-#include <dds/domain/DomainParticipant.hpp>
-#include <dds/pub/Publisher.hpp>
-#include <dds/pub/qos/PublisherQos.hpp>
-#include <dds/pub/DataWriter.hpp>
-#include <dds/topic/Topic.hpp>
+
 #include <fastrtps/attributes/PublisherAttributes.h>
 #include <fastrtps/attributes/SubscriberAttributes.h>
 #include <fastrtps/xmlparser/XMLProfileManager.h>
@@ -415,6 +418,36 @@ TEST(PublisherTests, SetListener)
     ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), ReturnCode_t::RETCODE_OK);
 }
 
+/*
+ * This test checks that the Publisher methods defined in the standard not yet implemented in FastDDS return
+ * ReturnCode_t::RETCODE_UNSUPPORTED. The following methods are checked:
+ * 1. copy_from_topic_qos
+ * 2. delete_contained_entities
+ * 3. suspend_publications
+ * 4. resume_publications
+ * 5. begin_coherent_changes
+ * 6. end_coherent_changes
+ */
+TEST(PublisherTests, UnsupportedPublisherMethods)
+{
+    DomainParticipant* participant =
+            DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
+    ASSERT_NE(participant, nullptr);
+    Publisher* publisher = participant->create_publisher(PUBLISHER_QOS_DEFAULT);
+    ASSERT_NE(publisher, nullptr);
+
+    fastdds::dds::DataWriterQos writer_qos;
+    fastdds::dds::TopicQos topic_qos;
+    EXPECT_EQ(ReturnCode_t::RETCODE_UNSUPPORTED, publisher->copy_from_topic_qos(writer_qos, topic_qos));
+    EXPECT_EQ(ReturnCode_t::RETCODE_UNSUPPORTED, publisher->delete_contained_entities());
+    EXPECT_EQ(ReturnCode_t::RETCODE_UNSUPPORTED, publisher->suspend_publications());
+    EXPECT_EQ(ReturnCode_t::RETCODE_UNSUPPORTED, publisher->resume_publications());
+    EXPECT_EQ(ReturnCode_t::RETCODE_UNSUPPORTED, publisher->begin_coherent_changes());
+    EXPECT_EQ(ReturnCode_t::RETCODE_UNSUPPORTED, publisher->end_coherent_changes());
+
+    ASSERT_EQ(participant->delete_publisher(publisher), ReturnCode_t::RETCODE_OK);
+    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), ReturnCode_t::RETCODE_OK);
+}
 
 } // namespace dds
 } // namespace fastdds

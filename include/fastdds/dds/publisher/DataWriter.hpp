@@ -19,14 +19,15 @@
 #ifndef _FASTRTPS_DATAWRITER_HPP_
 #define _FASTRTPS_DATAWRITER_HPP_
 
+#include <fastdds/dds/builtin/topic/SubscriptionBuiltinTopicData.hpp>
 #include <fastdds/dds/core/Entity.hpp>
 #include <fastdds/dds/core/status/BaseStatus.hpp>
-#include <fastdds/dds/core/status/DeadlineMissedStatus.hpp>
 #include <fastdds/dds/core/status/IncompatibleQosStatus.hpp>
+#include <fastdds/dds/core/status/PublicationMatchedStatus.hpp>
 #include <fastdds/dds/core/status/StatusMask.hpp>
 #include <fastdds/dds/publisher/qos/DataWriterQos.hpp>
-#include <fastdds/dds/topic/TypeSupport.hpp>
 #include <fastdds/rtps/common/Time_t.h>
+#include <fastrtps/qos/DeadlineMissedStatus.h>
 #include <fastrtps/types/TypesBase.h>
 
 using eprosima::fastrtps::types::ReturnCode_t;
@@ -161,6 +162,26 @@ public:
             void* data,
             const InstanceHandle_t& handle);
 
+    /** NOT YET IMPLEMENTED
+     * @brief This operation performs the same function as write except that it also provides the value for the
+     * @ref source_timestamp that is made available to DataReader objects by means of the @ref source_timestamp
+     * attribute inside the SampleInfo.
+     * The constraints on the values of the @c handle parameter and the corresponding error behavior are the same
+     * specified for the @ref write operation. This operation may block and return RETCODE_TIMEOUT under the same
+     * circumstances described for the @ref write operation.
+     * This operation may return RETCODE_OUT_OF_RESOURCES, RETCODE_PRECONDITION_NOT_MET or RETCODE_BAD_PARAMETER under
+     * the same circumstances described for the write operation.
+     *
+     * @param data Pointer to the data
+     * @param handle InstanceHandle_t
+     * @param timestamp Time_t used to set the source_timestamp.
+     * @return Any of the standard return codes.
+     */
+    RTPS_DllAPI ReturnCode_t write_w_timestamp(
+            void* data,
+            const InstanceHandle_t& handle,
+            const fastrtps::rtps::Time_t& timestamp);
+
     /*!
      * @brief Informs that the application will be modifying a particular instance.
      * It gives an opportunity to the middleware to pre-configure itself to improve performance.
@@ -171,6 +192,22 @@ public:
      */
     RTPS_DllAPI InstanceHandle_t register_instance(
             void* instance);
+
+    /** NOT YET IMPLEMENTED
+     * @brief This operation performs the same function as register_instance and can be used instead of
+     * @ref register_instance in the cases where the application desires to specify the value for the
+     * @ref source_timestamp. The @ref source_timestamp potentially affects the relative order in which readers observe
+     * events from multiple writers. See the QoS policy @ref DESTINATION_ORDER. This operation may block and return
+     * RETCODE_TIMEOUT under the same circumstances described for the @ref write operation. This operation may return
+     * RETCODE_OUT_OF_RESOURCES under the same circumstances described for the @ref write operation.
+     *
+     * @param instance  Sample used to get the instance's key.
+     * @param timestamp Time_t used to set the source_timestamp.
+     * @return Handle containing the instance's key.
+     */
+    RTPS_DllAPI InstanceHandle_t register_instance_w_timestamp(
+            void* instance,
+            const fastrtps::rtps::Time_t& timestamp);
 
     /*!
      * @brief This operation reverses the action of `register_instance`.
@@ -185,6 +222,55 @@ public:
     RTPS_DllAPI ReturnCode_t unregister_instance(
             void* instance,
             const InstanceHandle_t& handle);
+
+    /** NOT YET IMPLEMENTED
+     * @brief This operation performs the same function as @ref unregister_instance and can be used instead of
+     * @ref unregister_instance in the cases where the application desires to specify the value for the
+     * @ref source_timestamp. The @ref source_timestamp potentially affects the relative order in which readers observe
+     * events from multiple writers. RETCODE_DESTINATION_ORDER).
+     * The constraints on the values of the @c handle parameter and the corresponding error behavior are the same
+     * specified for the @ref unregister_instance operation.
+     * This operation may block and return RETCODE_TIMEOUT under the same circumstances described for the write
+     * operation
+     *
+     * @param instance  Sample used to deduce instance's key in case of `handle` parameter is HANDLE_NIL.
+     * @param handle Instance's key to be unregistered.
+     * @param timestamp Time_t used to set the source_timestamp.
+     * @return Handle containing the instance's key.
+     */
+    RTPS_DllAPI ReturnCode_t unregister_instance_w_timestamp(
+            void* instance,
+            const InstanceHandle_t& handle,
+            const fastrtps::rtps::Time_t& timestamp);
+
+    /** NOT YET IMPLEMENTED
+     * This operation can be used to retrieve the instance key that corresponds to an @ref instance_handle.
+     * The operation will only fill the fields that form the key inside the @ref key_holder instance.
+     *
+     * This operation may return BAD_PARAMETER if the InstanceHandle_t a_handle does not correspond to an existing
+     * dataobject known to the DataWriter. If the implementation is not able to check invalid handles then the result
+     * in this situation is unspecified.
+     *
+     * @param[in,out] key
+     * @param[in] handle
+     *
+     * @return Any of the standard return codes.
+     */
+    RTPS_DllAPI ReturnCode_t get_key_value(
+            void* key_holder,
+            const InstanceHandle_t& handle);
+
+    /** NOT YET IMPLEMENTED
+     * Takes as a parameter an instance and returns a handle that can be used in subsequent operations that accept an
+     * instance handle as an argument. The instance parameter is only used for the purpose of examining the fields that
+     * define the key.
+     *
+     * @param[in] instance Data pointer to the sample
+     *
+     * @return handle of the given instance
+     */
+    RTPS_DllAPI InstanceHandle_t lookup_instance(
+            const void* instance) const;
 
     /**
      * Returns the DataWriter's GUID
@@ -227,6 +313,14 @@ public:
      */
     RTPS_DllAPI ReturnCode_t get_offered_incompatible_qos_status(
             OfferedIncompatibleQosStatus& status);
+
+    /**
+     * @brief Returns the publication matched status
+     * @param[out] status publication matched status struct
+     * @return RETCODE_OK
+     */
+    RTPS_DllAPI ReturnCode_t get_publication_matched_status(
+            PublicationMatchedStatus& status) const;
 
     /**
      * Establishes the DataWriterQos for this DataWriter.
@@ -306,6 +400,24 @@ public:
             const InstanceHandle_t& handle);
 
     /**
+     * @brief This operation performs the same functions as @ref dispose except that the application provides the value
+     * for the @ref source_timestamp that is made available to DataReader objects by means of the @ref source_timestamp
+     * attribute inside the SampleInfo.
+     * The constraints on the values of the @c handle parameter and the corresponding error behavior are the same
+     * specified for the @ref dispose operation.
+     * This operation may return RETCODE_PRECONDITION_NOT_MET and RETCODE_BAD_PARAMETER under the same circumstances
+     * described for the @ref dispose operation.
+     * This operation may return RETCODE_TIMEOUT and RETCODE_OUT_OF_RESOURCES under the same circumstances described
+     * for the @ref write operation.
+     *
+     * @param data Pointer to the data.
+     * @param handle InstanceHandle_t
+     * @return RTPS_DllAPI
+     */
+    RTPS_DllAPI ReturnCode_t dispose_w_timestamp(
+            void* data,
+            const InstanceHandle_t& handle);
+    /**
      * @brief Returns the liveliness lost status
      * @param status Liveliness lost status struct
      * @return RETCODE_OK
@@ -330,6 +442,25 @@ public:
      * @return RETCODE_OK if asserted, RETCODE_ERROR otherwise
      */
     RTPS_DllAPI ReturnCode_t assert_liveliness();
+
+    /**
+     * @brief Retrieves in a subscription associated with the DataWriter
+     * @param[out] subscription_data subscription data struct
+     * @param subscription_handle InstanceHandle_t of the subscription
+     * @return RETCODE_OK
+     *
+     */
+    RTPS_DllAPI ReturnCode_t get_matched_subscription_data(
+            builtin::SubscriptionBuiltinTopicData& subscription_data,
+            const fastrtps::rtps::InstanceHandle_t& subscription_handle) const;
+
+    /**
+     * @brief Fills the given vector with the InstanceHandle_t of matched DataReaders
+     * @param[out] subscription_handles Vector where the InstanceHandle_t are returned
+     * @return RETCODE_OK
+     */
+    RTPS_DllAPI ReturnCode_t get_matched_subscriptions(
+            std::vector<fastrtps::rtps::InstanceHandle_t*>& subscription_handles) const;
 
     /**
      * @brief Clears the DataWriter history

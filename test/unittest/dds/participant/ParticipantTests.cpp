@@ -15,33 +15,35 @@
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
 
+#include <dds/core/types.hpp>
+#include <dds/domain/DomainParticipant.hpp>
+#include <dds/domain/qos/DomainParticipantQos.hpp>
+#include <dds/pub/Publisher.hpp>
+#include <dds/pub/qos/PublisherQos.hpp>
+#include <dds/sub/qos/SubscriberQos.hpp>
+#include <dds/sub/Subscriber.hpp>
+#include <dds/topic/Topic.hpp>
+#include <fastdds/dds/builtin/topic/ParticipantBuiltinTopicData.hpp>
+#include <fastdds/dds/builtin/topic/TopicBuiltinTopicData.hpp>
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
 #include <fastdds/dds/domain/DomainParticipantListener.hpp>
 #include <fastdds/dds/domain/qos/DomainParticipantQos.hpp>
+#include <fastdds/dds/publisher/DataWriter.hpp>
 #include <fastdds/dds/publisher/Publisher.hpp>
 #include <fastdds/dds/publisher/qos/PublisherQos.hpp>
-#include <fastdds/dds/subscriber/Subscriber.hpp>
-#include <fastdds/dds/subscriber/qos/SubscriberQos.hpp>
-#include <fastdds/dds/topic/qos/TopicQos.hpp>
-#include <fastdds/dds/publisher/DataWriter.hpp>
 #include <fastdds/dds/subscriber/DataReader.hpp>
-#include <dds/domain/DomainParticipant.hpp>
-#include <dds/domain/qos/DomainParticipantQos.hpp>
-#include <dds/pub/qos/PublisherQos.hpp>
-#include <dds/sub/qos/SubscriberQos.hpp>
-#include <dds/core/types.hpp>
-#include <dds/sub/Subscriber.hpp>
-#include <dds/pub/Publisher.hpp>
-#include <dds/topic/Topic.hpp>
+#include <fastdds/dds/subscriber/qos/SubscriberQos.hpp>
+#include <fastdds/dds/subscriber/Subscriber.hpp>
+#include <fastdds/dds/topic/qos/TopicQos.hpp>
 #include <fastdds/rtps/attributes/RTPSParticipantAttributes.h>
 #include <fastrtps/attributes/PublisherAttributes.h>
 #include <fastrtps/attributes/SubscriberAttributes.h>
-#include <fastrtps/xmlparser/XMLProfileManager.h>
 #include <fastrtps/types/DynamicDataFactory.h>
-#include <fastrtps/types/TypeDescriptor.h>
 #include <fastrtps/types/DynamicType.h>
 #include <fastrtps/types/DynamicTypePtr.h>
+#include <fastrtps/types/TypeDescriptor.h>
 #include <fastrtps/types/TypeObjectFactory.h>
+#include <fastrtps/xmlparser/XMLProfileManager.h>
 
 
 namespace eprosima {
@@ -2024,6 +2026,90 @@ TEST(ParticipantTests, RegisterRemoteTypePreconditionNotMet)
     ASSERT_EQ(remote_participant->delete_topic(topic), ReturnCode_t::RETCODE_OK);
     ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(remote_participant),
             ReturnCode_t::RETCODE_OK);
+    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), ReturnCode_t::RETCODE_OK);
+}
+
+
+/*
+ * This test checks that the following methods are not implemented and returns an error
+ *  create_contentfilteredtopic
+ *  delete_contentfilteredtopic
+ *  create_multitopic
+ *  delete_multitopic
+ *  find_topic
+ *  get_builtin_subscriber
+ *  ignore_participant
+ *  ignore_topic
+ *  ignore_publictaion
+ *  ignore_subscription
+ *  delete_contained_entities
+ *  get_discovered_participants
+ *  get_discovered_topics
+ *
+ * Tests missing: get_discovered_participant_data & get_discovered_topic_data
+ * These methods cannot be tested because there are no implementation of their parameter classes
+ */
+TEST(ParticipantTests, UnsupportedMethods)
+{
+    // Create the participant
+    DomainParticipant* participant =
+            DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
+    ASSERT_NE(participant, nullptr);
+
+    // Create a type and a topic
+    TypeSupport type(new TopicDataTypeMock());
+    ASSERT_EQ(type.register_type(participant), ReturnCode_t::RETCODE_OK);
+
+    Topic* topic = participant->create_topic("topic", type.get_type_name(), TOPIC_QOS_DEFAULT);
+    ASSERT_NE(topic, nullptr);
+
+    ASSERT_EQ(
+        participant->create_contentfilteredtopic(
+            "contentfilteredtopic",
+            topic,
+            "filter_expression",
+            std::vector<std::string>({"a", "b"})),
+        nullptr);
+
+    // nullptr use as there are not such a class
+    ASSERT_EQ(participant->delete_contentfilteredtopic(nullptr), ReturnCode_t::RETCODE_UNSUPPORTED);
+
+    ASSERT_EQ(
+        participant->create_multitopic(
+            "multitopic",
+            "type",
+            "subscription_expression",
+            std::vector<std::string>({"a", "b"})),
+        nullptr);
+
+    // nullptr use as there are not such a class
+    ASSERT_EQ(participant->delete_multitopic(nullptr), ReturnCode_t::RETCODE_UNSUPPORTED);
+
+    ASSERT_EQ(participant->find_topic("topic", Duration_t(1, 0)), nullptr);
+
+    ASSERT_EQ(participant->get_builtin_subscriber(), nullptr);
+
+    ASSERT_EQ(participant->ignore_participant(InstanceHandle_t()), ReturnCode_t::RETCODE_UNSUPPORTED);
+    ASSERT_EQ(participant->ignore_topic(InstanceHandle_t()), ReturnCode_t::RETCODE_UNSUPPORTED);
+    ASSERT_EQ(participant->ignore_publictaion(InstanceHandle_t()), ReturnCode_t::RETCODE_UNSUPPORTED);
+    ASSERT_EQ(participant->ignore_subscription(InstanceHandle_t()), ReturnCode_t::RETCODE_UNSUPPORTED);
+
+    ASSERT_EQ(participant->delete_contained_entities(), ReturnCode_t::RETCODE_UNSUPPORTED);
+
+    // Discovery methods
+    std::vector<InstanceHandle_t> handle_vector({InstanceHandle_t()});
+    builtin::ParticipantBuiltinTopicData pbtd;
+    builtin::TopicBuiltinTopicData tbtd;
+
+    ASSERT_EQ(participant->get_discovered_participants(handle_vector), ReturnCode_t::RETCODE_UNSUPPORTED);
+    ASSERT_EQ(
+        participant->get_discovered_participant_data(pbtd, InstanceHandle_t()), ReturnCode_t::RETCODE_UNSUPPORTED);
+
+    ASSERT_EQ(participant->get_discovered_topics(handle_vector), ReturnCode_t::RETCODE_UNSUPPORTED);
+    ASSERT_EQ(
+        participant->get_discovered_topic_data(tbtd, InstanceHandle_t()), ReturnCode_t::RETCODE_UNSUPPORTED);
+
+    ASSERT_EQ(participant->delete_topic(topic), ReturnCode_t::RETCODE_OK);
     ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), ReturnCode_t::RETCODE_OK);
 }
 
