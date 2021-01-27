@@ -78,6 +78,7 @@ static void set_qos_from_attributes(
     qos.publish_mode() = attr.qos.m_publishMode;
     qos.history() = attr.topic.historyQos;
     qos.resource_limits() = attr.topic.resourceLimitsQos;
+    qos.data_sharing() = attr.qos.data_sharing;
 }
 
 PublisherImpl::PublisherImpl(
