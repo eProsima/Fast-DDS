@@ -102,7 +102,7 @@ public:
 
         // Should be empty
         ASSERT_TRUE(uut.empty());
-        ASSERT_EQ(uut.size(), 0);
+        ASSERT_EQ(uut.size(), 0u);
         ASSERT_EQ(uut.capacity(), CAPACITY);
 
         // Try to remove one more fails
@@ -155,7 +155,7 @@ public:
 
         // Should be empty
         ASSERT_TRUE(uut.empty());
-        ASSERT_EQ(uut.size(), 0);
+        ASSERT_EQ(uut.size(), 0u);
         ASSERT_EQ(uut.capacity(), CAPACITY);
 
         // Try to remove one more fails
@@ -170,8 +170,8 @@ TEST_F(FixedSizeQueueTests, default_construct_and_initialize)
 
     // Should be empty and non-allocated
     ASSERT_TRUE(uut.empty());
-    ASSERT_EQ(uut.size(), 0);
-    ASSERT_EQ(uut.capacity(), 0);
+    ASSERT_EQ(uut.size(), 0u);
+    ASSERT_EQ(uut.capacity(), 0u);
 
     // Initialize
     uut.init(CAPACITY);
