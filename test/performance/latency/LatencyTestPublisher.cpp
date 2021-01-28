@@ -40,7 +40,6 @@
 using namespace eprosima::fastdds::dds;
 using namespace eprosima::fastrtps::rtps;
 using namespace eprosima::fastrtps::types;
-using namespace std;
 
 LatencyTestPublisher::LatencyTestPublisher()
     : participant_(nullptr)
@@ -101,11 +100,11 @@ bool LatencyTestPublisher::init(
         uint32_t pid,
         bool hostname,
         bool export_csv,
-        const string& export_prefix,
-        string raw_data_file,
+        const std::string& export_prefix,
+        std::string raw_data_file,
         const PropertyPolicy& part_property_policy,
         const PropertyPolicy& property_policy,
-        const string& xml_config_file,
+        const std::string& xml_config_file,
         bool dynamic_data,
         int forced_domain,
         LatencyDataSizes& latency_data_sizes)
@@ -142,15 +141,15 @@ bool LatencyTestPublisher::init(
     }
 
     // Init output files
-    output_files_.push_back(make_shared<stringstream>());
-    output_files_.push_back(make_shared<stringstream>());
+    output_files_.push_back(std::make_shared<std::stringstream>());
+    output_files_.push_back(std::make_shared<std::stringstream>());
 
     uint32_t data_index = DATA_BASE_INDEX;
 
-    for (vector<uint32_t>::iterator it = data_size_pub_.begin(); it != data_size_pub_.end(); ++it)
+    for (std::vector<uint32_t>::iterator it = data_size_pub_.begin(); it != data_size_pub_.end(); ++it)
     {
         // Reliability
-        string str_reliable = reliable_ ? "reliable" : "besteffort";
+        std::string str_reliable = reliable_ ? "reliable" : "besteffort";
 
         // Summary files
         *output_files_[MINIMUM_INDEX] << "\"" << samples_ << " samples of " << *it + 4 << " bytes (us)\"";
@@ -162,18 +161,18 @@ bool LatencyTestPublisher::init(
             *output_files_[AVERAGE_INDEX] << ",";
         }
 
-        output_files_.push_back(make_shared<stringstream>());
+        output_files_.push_back(std::make_shared<std::stringstream>());
         *output_files_[data_index] << "\"Minimum of " << samples_ << " samples (" << str_reliable << ")\",";
-        *output_files_[data_index] << "\"Average of " << samples_ << " samples (" << str_reliable << ")\"" << endl;
+        *output_files_[data_index] << "\"Average of " << samples_ << " samples (" << str_reliable << ")\"" << std::endl;
 
         data_index++;
     }
 
-    *output_files_[MINIMUM_INDEX] << endl;
-    *output_files_[AVERAGE_INDEX] << endl;
+    *output_files_[MINIMUM_INDEX] << std::endl;
+    *output_files_[AVERAGE_INDEX] << std::endl;
 
     /* Create DomainParticipant*/
-    string participant_profile_name = "pub_participant_profile";
+    std::string participant_profile_name = "pub_participant_profile";
     DomainParticipantQos pqos;
 
     // Default domain
@@ -254,7 +253,7 @@ bool LatencyTestPublisher::init(
 
     /* Create Topics */
     {
-        ostringstream topic_name;
+        std::ostringstream topic_name;
         topic_name.str("");
         topic_name.clear();
         topic_name << "LatencyTest_Command_";
@@ -300,7 +299,7 @@ bool LatencyTestPublisher::init(
     {
         if (xml_config_file_.length() > 0)
         {
-            string profile_name = "pub_publisher_profile";
+            std::string profile_name = "pub_publisher_profile";
 
             if (ReturnCode_t::RETCODE_OK != publisher_->get_datawriter_qos_from_profile(profile_name, dw_qos))
             {
@@ -332,7 +331,7 @@ bool LatencyTestPublisher::init(
     {
         if (xml_config_file_.length() > 0)
         {
-            string profile_name = "pub_subscriber_profile";
+            std::string profile_name = "pub_subscriber_profile";
             if (ReturnCode_t::RETCODE_OK != subscriber_->get_datareader_qos_from_profile(profile_name, dr_qos))
             {
                 logWarning(LATENCYPUBLISHER, "WARNING pub_subscriber_profile not loaded correctly from XML file")
@@ -388,21 +387,21 @@ bool LatencyTestPublisher::init(
     }
 
     /* Calculate Overhead */
-    start_time_ = chrono::steady_clock::now();
+    start_time_ = std::chrono::steady_clock::now();
     for (int i = 0; i < 1000; ++i)
     {
-        end_time_ = chrono::steady_clock::now();
+        end_time_ = std::chrono::steady_clock::now();
     }
-    overhead_time_ = chrono::duration<double, micro>(end_time_ - start_time_) / 1001;
-    cout << "Overhead " << overhead_time_.count() << " ns" << endl;
+    overhead_time_ = std::chrono::duration<double, std::micro>(end_time_ - start_time_) / 1001;
+    std::cout << "Overhead " << overhead_time_.count() << " ns" << std::endl;
 
     /* Create the raw_data_file and add the header */
     if (raw_data_file_ != "")
     {
         raw_sample_count_ = 0;
-        ofstream data_file;
+        std::ofstream data_file;
         data_file.open(raw_data_file_);
-        data_file << "Sample,Payload [Bytes],Latency [us]" << endl;
+        data_file << "Sample,Payload [Bytes],Latency [us]" << std::endl;
     }
 
     return true;
@@ -546,8 +545,8 @@ void LatencyTestPublisher::LatencyDataReaderListener::on_data_available(
 
     // Factor of 2 below is to calculate the roundtrip divided by two. Note that the overhead does not
     // need to be halved, as we access the clock twice per round trip
-    latency_publisher_->end_time_ = chrono::steady_clock::now();
-    latency_publisher_->times_.push_back(chrono::duration<double, micro>(
+    latency_publisher_->end_time_ = std::chrono::steady_clock::now();
+    latency_publisher_->times_.push_back(std::chrono::duration<double, std::micro>(
                 latency_publisher_->end_time_ - latency_publisher_->start_time_) / 2. -
             latency_publisher_->overhead_time_);
     ++latency_publisher_->received_count_;
@@ -573,13 +572,13 @@ void LatencyTestPublisher::LatencyDataReaderListener::on_data_available(
 
 void LatencyTestPublisher::run()
 {
-    for (vector<uint32_t>::iterator payload = data_size_pub_.begin(); payload != data_size_pub_.end(); ++payload)
+    for (std::vector<uint32_t>::iterator payload = data_size_pub_.begin(); payload != data_size_pub_.end(); ++payload)
     {
         if (!test(*payload))
         {
             break;
         }
-        this_thread::sleep_for(chrono::milliseconds(100));
+        std::this_thread::sleep_for(std::chrono::milliseconds(100));
         if (payload != data_size_pub_.end() - 1)
         {
             *output_files_[MINIMUM_INDEX] << ",";
@@ -587,7 +586,7 @@ void LatencyTestPublisher::run()
         }
     }
 
-    string str_reliable = reliable_ ? "reliable" : "besteffort";
+    std::string str_reliable = reliable_ ? "reliable" : "besteffort";
 
     // Print a summary table with the measurements
     printf("Printing round-trip times in us, statistics for %d samples\n", samples_);
@@ -599,7 +598,7 @@ void LatencyTestPublisher::run()
 
         if (export_csv_)
         {
-            export_csv("_" + to_string(stats_[i].bytes_) + "_", str_reliable, *output_files_[i + 2]);
+            export_csv("_" + std::to_string(stats_[i].bytes_) + "_", str_reliable, *output_files_[i + 2]);
         }
     }
 
@@ -611,13 +610,13 @@ void LatencyTestPublisher::run()
 }
 
 void LatencyTestPublisher::export_csv(
-        const string& data_name,
-        const string& str_reliable,
-        const stringstream& data_stream)
+        const std::string& data_name,
+        const std::string& str_reliable,
+        const std::stringstream& data_stream)
 {
-    ofstream out_file;
+    std::ofstream out_file;
 
-    string prefix = export_prefix_;
+    std::string prefix = export_prefix_;
     if (prefix.length() == 0)
     {
         prefix = "perf_LatencyTest";
@@ -684,7 +683,7 @@ bool LatencyTestPublisher::test(
 
     // WAIT FOR THE DISCOVERY PROCESS FO FINISH:
     // EACH SUBSCRIBER NEEDS 4 Matchings (2 publishers and 2 subscribers)
-    unique_lock<mutex> disc_lock(mutex_);
+    std::unique_lock<std::mutex> disc_lock(mutex_);
     discovery_cv_.wait(
         disc_lock,
         [this]() -> bool
@@ -706,7 +705,7 @@ bool LatencyTestPublisher::test(
 
     // Wait for Subscriber's BEGIN command
     {
-        unique_lock<mutex> lock(mutex_);
+        std::unique_lock<std::mutex> lock(mutex_);
         command_msg_cv_.wait(lock, [&]()
                 {
                     return command_msg_count_ >= subscribers_;
@@ -732,13 +731,13 @@ bool LatencyTestPublisher::test(
             data = latency_type_out_;
         }
 
-        start_time_ = chrono::steady_clock::now();
+        start_time_ = std::chrono::steady_clock::now();
         data_writer_->write(data);
 
-        unique_lock<mutex> lock(mutex_);
+        std::unique_lock<std::mutex> lock(mutex_);
         // the wait timeouts due possible message leaks
         data_msg_cv_.wait_for(lock,
-                chrono::milliseconds(4),
+                std::chrono::milliseconds(4),
                 [&]()
                 {
                     return data_msg_count_ >= subscribers_;
@@ -801,10 +800,10 @@ void LatencyTestPublisher::analyze_times(
     stats.minimum_ = *min_element(times_.begin(), times_.end());
     stats.maximum_ = *max_element(times_.begin(), times_.end());
     stats.mean_ = accumulate(times_.begin(), times_.end(),
-                    chrono::duration<double, micro>(0)).count() / times_.size();
+                    std::chrono::duration<double, std::micro>(0)).count() / times_.size();
 
     double aux_stdev = 0;
-    for (vector<chrono::duration<double, micro>>::iterator tit = times_.begin(); tit != times_.end();
+    for (std::vector<std::chrono::duration<double, std::micro>>::iterator tit = times_.begin(); tit != times_.end();
             ++tit)
     {
         aux_stdev += pow(((*tit).count() - stats.mean_), 2);
@@ -865,7 +864,7 @@ void LatencyTestPublisher::print_stats(
 {
     *output_files_[MINIMUM_INDEX] << "\"" << stats.minimum_.count() << "\"";
     *output_files_[AVERAGE_INDEX] << "\"" << stats.mean_ << "\"";
-    *output_files_[data_index] << "\"" << stats.minimum_.count() << "\",\"" << stats.mean_ << "\"" << endl;
+    *output_files_[data_index] << "\"" << stats.minimum_.count() << "\",\"" << stats.mean_ << "\"" << std::endl;
 
 
 #ifdef _WIN32
@@ -882,12 +881,12 @@ void LatencyTestPublisher::print_stats(
 void LatencyTestPublisher::export_raw_data(
         uint32_t datasize)
 {
-    ofstream data_file;
-    data_file.open(raw_data_file_, fstream::app);
-    for (vector<chrono::duration<double, micro>>::iterator tit = times_.begin(); tit != times_.end();
+    std::ofstream data_file;
+    data_file.open(raw_data_file_, std::fstream::app);
+    for (std::vector<std::chrono::duration<double, std::micro>>::iterator tit = times_.begin(); tit != times_.end();
             ++tit)
     {
-        data_file << ++raw_sample_count_ << "," << datasize << "," << (*tit).count() << endl;
+        data_file << ++raw_sample_count_ << "," << datasize << "," << (*tit).count() << std::endl;
     }
     data_file.close();
 }
@@ -962,7 +961,7 @@ bool LatencyTestPublisher::create_data_endpoints()
     }
 
     /* Create Data Topics */
-    ostringstream topic_name;
+    std::ostringstream topic_name;
     topic_name << "LatencyTest_";
     if (hostname_)
     {
