@@ -50,19 +50,17 @@ bool LatencyDataType::deserialize(SerializedPayload_t* payload,void * data)
 {
     // Payload members endianness matches local machine
     LatencyType* lt = (LatencyType*)data;
-    memcpy(&lt->seqnum, payload->data, sizeof(lt->seqnum));
-//    lt->seqnum = *static_cast<uint32_t*>(payload->data);       // TODO(jlbueno) Ask Miguel Barro
+    lt->seqnum = *reinterpret_cast<uint32_t*>(payload->data);
     std::copy(payload->data+4,payload->data+4+buffer_size_,lt->data);
     return true;
 }
 
-std::function<uint32_t()> LatencyDataType::getSerializedSizeProvider(void* data)
+std::function<uint32_t()> LatencyDataType::getSerializedSizeProvider(void*)
 {
-    return [data]() -> uint32_t
+    uint32_t size = m_typeSize;
+    return [size]() -> uint32_t
     {
-        LatencyDataType* tdata = static_cast<LatencyDataType*>(data);
-
-        return tdata->m_typeSize;
+        return size;
     };
 }
 
@@ -74,18 +72,6 @@ void* LatencyDataType::createData()
 void LatencyDataType::deleteData(void* data)
 {
     delete[] (uint8_t*)(data);
-}
-
-bool LatencyDataType::is_bounded() const
-{
-    // All plain types are bounded
-    return true;
-}
-
-bool LatencyDataType::is_plain() const
-{
-    // It is plain because the type has a fixed size
-    return true;
 }
 
 bool TestCommandDataType::serialize(void*data,SerializedPayload_t* payload)

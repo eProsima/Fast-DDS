@@ -32,7 +32,6 @@
 #include <fastdds/dds/publisher/DataWriter.hpp>
 #include <fastdds/dds/publisher/DataWriterListener.hpp>
 #include <fastdds/dds/subscriber/DataReader.hpp>
-#include <fastdds/dds/subscriber/qos/DataReaderQos.hpp>
 #include <fastrtps/xmlparser/XMLProfileManager.h>
 
 
@@ -139,11 +138,6 @@ bool LatencyTestPublisher::init(
         struct_type_builder->set_name("LatencyType");
         dynamic_pub_sub_type_.reset(new DynamicPubSubType(struct_type_builder->build()));
     }
-    else
-    {
-        // Create the static builder
-        latency_data_type_.reset(new LatencyDataType());
-    }
 
     // Init output files
     output_files_.push_back(make_shared<stringstream>());
@@ -221,21 +215,17 @@ bool LatencyTestPublisher::init(
         return false;
     }
 
-    // Register the data type
+    // Register the dynamic data type
     ReturnCode_t res(ReturnCode_t::RETCODE_OK);
 
     if (dynamic_data_)
     {
         res = dynamic_pub_sub_type_.register_type(participant_);
-    }
-    else
-    {
-        res = latency_data_type_.register_type(participant_);
-    }
 
-    if (ReturnCode_t::RETCODE_OK != res)
-    {
-        return false;
+        if (ReturnCode_t::RETCODE_OK != res)
+        {
+            return false;
+        }
     }
 
     // Register the command type
@@ -263,43 +253,6 @@ bool LatencyTestPublisher::init(
     /* Create Topics */
     {
         ostringstream topic_name;
-        topic_name << "LatencyTest_";
-        if (hostname)
-        {
-            topic_name << asio::ip::host_name() << "_";
-        }
-        topic_name << pid << "_PUB2SUB";
-
-        latency_data_pub_topic_ = participant_->create_topic(
-            topic_name.str(),
-            "LatencyType",
-            TOPIC_QOS_DEFAULT);
-
-        if (latency_data_pub_topic_ == nullptr)
-        {
-            return false;
-        }
-
-        topic_name.str("");
-        topic_name.clear();
-        topic_name << "LatencyTest_";
-
-        if (hostname)
-        {
-            topic_name << asio::ip::host_name() << "_";
-        }
-        topic_name << pid << "_SUB2PUB";
-
-        latency_data_sub_topic_ = participant_->create_topic(
-            topic_name.str(),
-            "LatencyType",
-            TOPIC_QOS_DEFAULT);
-
-        if (latency_data_sub_topic_ == nullptr)
-        {
-            return false;
-        }
-
         topic_name.str("");
         topic_name.clear();
         topic_name << "LatencyTest_Command_";
@@ -341,85 +294,37 @@ bool LatencyTestPublisher::init(
         }
     }
 
-    /* Create Data DataWriter */
+    /* Create Data DataWriter QoS Profile*/
     {
-        string profile_name = "pub_publisher_profile";
-
-        if (xml_config_file_.length() > 0)
+        if (reliable)
         {
-            data_writer_ = publisher_->create_datawriter_with_profile(
-                latency_data_pub_topic_,
-                profile_name,
-                &data_writer_listener_);
+            RTPSReliableWriterQos rw_qos;
+            rw_qos.times.heartbeatPeriod.seconds = 0;
+            rw_qos.times.heartbeatPeriod.nanosec = 100000000;
+            dw_qos.reliable_writer_qos(rw_qos);
         }
         else
         {
-            DataWriterQos dw_qos;
-
-            if (reliable)
-            {
-                RTPSReliableWriterQos rw_qos;
-                rw_qos.times.heartbeatPeriod.seconds = 0;
-                rw_qos.times.heartbeatPeriod.nanosec = 100000000;
-                dw_qos.reliable_writer_qos(rw_qos);
-            }
-            else
-            {
-                ReliabilityQosPolicy rp;
-                rp.kind = eprosima::fastrtps::BEST_EFFORT_RELIABILITY_QOS;
-                dw_qos.reliability(rp);
-            }
-
-            dw_qos.properties(property_policy);
-            dw_qos.endpoint().history_memory_policy = MemoryManagementPolicy::PREALLOCATED_WITH_REALLOC_MEMORY_MODE;
-
-            data_writer_ = publisher_->create_datawriter(
-                latency_data_pub_topic_,
-                dw_qos,
-                &data_writer_listener_);
+            ReliabilityQosPolicy rp;
+            rp.kind = eprosima::fastrtps::BEST_EFFORT_RELIABILITY_QOS;
+            dw_qos.reliability(rp);
         }
 
-        if (data_writer_ == nullptr)
-        {
-            return false;
-        }
+        dw_qos.properties(property_policy);
+        dw_qos.endpoint().history_memory_policy = MemoryManagementPolicy::PREALLOCATED_WITH_REALLOC_MEMORY_MODE;
     }
 
-    /* Create Data Echo Reader */
+    /* Create Data Echo Reader QoS Profile*/
     {
-        string profile_name = "pub_subscriber_profile";
-
-        if (xml_config_file_.length() > 0)
+        if (reliable)
         {
-            data_reader_ = subscriber_->create_datareader_with_profile(
-                latency_data_sub_topic_,
-                profile_name,
-                &data_reader_listener_);
-        }
-        else
-        {
-            DataReaderQos dr_qos;
-
-            if (reliable)
-            {
-                ReliabilityQosPolicy rp;
-                rp.kind = eprosima::fastrtps::RELIABLE_RELIABILITY_QOS;
-                dr_qos.reliability(rp);
-            }
-
-            dr_qos.properties(property_policy);
-            dr_qos.endpoint().history_memory_policy = MemoryManagementPolicy::PREALLOCATED_WITH_REALLOC_MEMORY_MODE;
-
-            data_reader_ = subscriber_->create_datareader(
-                latency_data_sub_topic_,
-                dr_qos,
-                &data_reader_listener_);
+            ReliabilityQosPolicy rp;
+            rp.kind = eprosima::fastrtps::RELIABLE_RELIABILITY_QOS;
+            dr_qos.reliability(rp);
         }
 
-        if (data_reader_ == nullptr)
-        {
-            return false;
-        }
+        dr_qos.properties(property_policy);
+        dr_qos.endpoint().history_memory_policy = MemoryManagementPolicy::PREALLOCATED_WITH_REALLOC_MEMORY_MODE;
     }
 
     /* Create Command Writer */
@@ -641,24 +546,13 @@ void LatencyTestPublisher::LatencyDataReaderListener::on_data_available(
     }
 }
 
-void LatencyTestPublisher::run()
+void LatencyTestPublisher::run(
+        uint32_t pid,
+        bool hostname)
 {
-    // WAIT FOR THE DISCOVERY PROCESS FO FINISH:
-    // EACH SUBSCRIBER NEEDS 4 Matchings (2 publishers and 2 subscribers)
-    unique_lock<mutex> disc_lock(mutex_);
-    discovery_cv_.wait(
-        disc_lock,
-        [this]() -> bool
-        {
-            return total_matches() == 4 * subscribers_;
-        });
-    disc_lock.unlock();
-
-    logInfo(LatencyTest, C_B_MAGENTA << "Pub: DISCOVERY COMPLETE " << C_DEF);
-
     for (vector<uint32_t>::iterator payload = data_size_pub_.begin(); payload != data_size_pub_.end(); ++payload)
     {
-        if (!test(*payload))
+        if (!test(*payload, pid, hostname))
         {
             break;
         }
@@ -712,10 +606,123 @@ void LatencyTestPublisher::export_csv(
 }
 
 bool LatencyTestPublisher::test(
-        uint32_t datasize)
+        uint32_t datasize,
+        uint32_t pid,
+        bool hostname)
 {
     test_status_ = 0;
     received_count_ = 0;
+
+    // Static data initialization
+    if (!dynamic_data_)
+    {
+        // Create the static builder
+        latency_data_type_.reset(new LatencyDataType(datasize));
+
+        ReturnCode_t res = latency_data_type_.register_type(participant_);
+        if (ReturnCode_t::RETCODE_OK != res)
+        {
+            return false;
+        }
+    }
+
+    /* Create Data Topics */
+    ostringstream topic_name;
+    topic_name << "LatencyTest_";
+    if (hostname)
+    {
+        topic_name << asio::ip::host_name() << "_";
+    }
+    topic_name << pid << "_PUB2SUB";
+
+    latency_data_pub_topic_ = participant_->create_topic(
+        topic_name.str(),
+        "LatencyType",
+        TOPIC_QOS_DEFAULT);
+
+    if (latency_data_pub_topic_ == nullptr)
+    {
+        return false;
+    }
+
+    topic_name.str("");
+    topic_name.clear();
+    topic_name << "LatencyTest_";
+
+    if (hostname)
+    {
+        topic_name << asio::ip::host_name() << "_";
+    }
+    topic_name << pid << "_SUB2PUB";
+
+    latency_data_sub_topic_ = participant_->create_topic(
+        topic_name.str(),
+        "LatencyType",
+        TOPIC_QOS_DEFAULT);
+
+    if (latency_data_sub_topic_ == nullptr)
+    {
+        return false;
+    }
+
+    // Create endpoints
+    // DataWriter
+    if (xml_config_file_.length() > 0)
+    {
+        string profile_name = "pub_publisher_profile";
+        data_writer_ = publisher_->create_datawriter_with_profile(
+            latency_data_pub_topic_,
+            profile_name,
+            &data_writer_listener_);
+    }
+    else
+    {
+        data_writer_ = publisher_->create_datawriter(
+            latency_data_pub_topic_,
+            dw_qos,
+            &data_writer_listener_);
+    }
+
+    if (data_writer_ == nullptr)
+    {
+        return false;
+    }
+
+    // Echo DataReader
+    if (xml_config_file_.length() > 0)
+    {
+        string profile_name = "pub_subscriber_profile";
+        data_reader_ = subscriber_->create_datareader_with_profile(
+            latency_data_sub_topic_,
+            profile_name,
+            &data_reader_listener_);
+    }
+    else
+    {
+        data_reader_ = subscriber_->create_datareader(
+            latency_data_sub_topic_,
+            dr_qos,
+            &data_reader_listener_);
+    }
+
+    if (data_reader_ == nullptr)
+    {
+        return false;
+    }
+
+    // WAIT FOR THE DISCOVERY PROCESS FO FINISH:
+    // EACH SUBSCRIBER NEEDS 4 Matchings (2 publishers and 2 subscribers)
+    unique_lock<mutex> disc_lock(mutex_);
+    discovery_cv_.wait(
+        disc_lock,
+        [this]() -> bool
+        {
+            return total_matches() == 4 * subscribers_;
+        });
+    disc_lock.unlock();
+
+    logInfo(LatencyTest, C_B_MAGENTA << "Pub: DISCOVERY COMPLETE " << C_DEF);
+
     if (dynamic_data_)
     {
         dynamic_data_type_in_ = static_cast<DynamicData*>(dynamic_pub_sub_type_->createData());
@@ -743,8 +750,6 @@ bool LatencyTestPublisher::test(
     {
         latency_type_in_ = static_cast<LatencyType*>(latency_data_type_->createData());
         latency_type_out_ = static_cast<LatencyType*>(latency_data_type_->createData());
-        latency_type_in_->data.resize(datasize, 0);
-        latency_type_out_->data.resize(datasize, 0);
     }
 
     times_.clear();
@@ -832,6 +837,17 @@ bool LatencyTestPublisher::test(
         latency_data_type_->deleteData(latency_type_in_);
         latency_data_type_->deleteData(latency_type_out_);
     }
+
+    // Delete endpoints
+    subscriber_->delete_datareader(data_reader_);
+    publisher_->delete_datawriter(data_writer_);
+
+    // Delete topics
+    participant_->delete_topic(latency_data_sub_topic_);
+    participant_->delete_topic(latency_data_pub_topic_);
+
+    // Unregister type
+    participant_->unregister_type(latency_data_type_->getName()); 
 
     return true;
 }

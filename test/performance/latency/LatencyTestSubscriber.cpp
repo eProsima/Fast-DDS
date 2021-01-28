@@ -25,7 +25,6 @@
 #include <fastdds/dds/log/Log.hpp>
 #include <fastdds/dds/publisher/DataWriter.hpp>
 #include <fastdds/dds/subscriber/DataReader.hpp>
-#include <fastdds/dds/subscriber/qos/DataReaderQos.hpp>
 #include <fastrtps/xmlparser/XMLProfileManager.h>
 
 using namespace eprosima::fastrtps::rtps;
@@ -115,11 +114,6 @@ bool LatencyTestSubscriber::init(
         struct_type_builder->set_name("LatencyType");
         dynamic_pub_sub_type_.reset(new DynamicPubSubType(struct_type_builder->build()));
     }
-    else
-    {
-        // Create basic builders
-        latency_data_type_.reset(new LatencyDataType());
-    }
 
     /* Create DomainParticipant*/
     string participant_profile_name = "sub_participant_profile";
@@ -169,10 +163,6 @@ bool LatencyTestSubscriber::init(
     {
         dynamic_pub_sub_type_.register_type(participant_);
     }
-    else
-    {
-        latency_data_type_.register_type(participant_);
-    }
 
     // Register the command type
     latency_command_type_.register_type(participant_);
@@ -194,43 +184,6 @@ bool LatencyTestSubscriber::init(
     /* Create Topics */
     {
         ostringstream topic_name;
-        topic_name << "LatencyTest_";
-        if (hostname)
-        {
-            topic_name << asio::ip::host_name() << "_";
-        }
-        topic_name << pid << "_PUB2SUB";
-
-        latency_data_sub_topic_ = participant_->create_topic(
-            topic_name.str(),
-            "LatencyType",
-            TOPIC_QOS_DEFAULT);
-
-        if (latency_data_sub_topic_ == nullptr)
-        {
-            return false;
-        }
-
-        topic_name.str("");
-        topic_name.clear();
-        topic_name << "LatencyTest_";
-
-        if (hostname)
-        {
-            topic_name << asio::ip::host_name() << "_";
-        }
-        topic_name << pid << "_SUB2PUB";
-
-        latency_data_pub_topic_ = participant_->create_topic(
-            topic_name.str(),
-            "LatencyType",
-            TOPIC_QOS_DEFAULT);
-
-        if (latency_data_pub_topic_ == nullptr)
-        {
-            return false;
-        }
-
         topic_name.str("");
         topic_name.clear();
         topic_name << "LatencyTest_Command_";
@@ -272,85 +225,37 @@ bool LatencyTestSubscriber::init(
         }
     }
 
-    /* Create Echo DataWriter */
+    /* Create DataWriter QoS Profile */
     {
-        string profile_name = "sub_publisher_profile";
-
-        if (xml_config_file_.length() > 0)
+        if (reliable)
         {
-            data_writer_ = publisher_->create_datawriter_with_profile(
-                latency_data_pub_topic_,
-                profile_name,
-                &data_writer_listener_);
+            RTPSReliableWriterQos rw_qos;
+            rw_qos.times.heartbeatPeriod.seconds = 0;
+            rw_qos.times.heartbeatPeriod.nanosec = 100000000;
+            dw_qos.reliable_writer_qos(rw_qos);
         }
         else
         {
-            DataWriterQos dw_qos;
-
-            if (reliable)
-            {
-                RTPSReliableWriterQos rw_qos;
-                rw_qos.times.heartbeatPeriod.seconds = 0;
-                rw_qos.times.heartbeatPeriod.nanosec = 100000000;
-                dw_qos.reliable_writer_qos(rw_qos);
-            }
-            else
-            {
-                ReliabilityQosPolicy rp;
-                rp.kind = eprosima::fastrtps::BEST_EFFORT_RELIABILITY_QOS;
-                dw_qos.reliability(rp);
-            }
-
-            dw_qos.properties(property_policy);
-            dw_qos.endpoint().history_memory_policy = MemoryManagementPolicy::PREALLOCATED_WITH_REALLOC_MEMORY_MODE;
-
-            data_writer_ = publisher_->create_datawriter(
-                latency_data_pub_topic_,
-                dw_qos,
-                &data_writer_listener_);
+            ReliabilityQosPolicy rp;
+            rp.kind = eprosima::fastrtps::BEST_EFFORT_RELIABILITY_QOS;
+            dw_qos.reliability(rp);
         }
 
-        if (data_writer_ == nullptr)
-        {
-            return false;
-        }
+        dw_qos.properties(property_policy);
+        dw_qos.endpoint().history_memory_policy = MemoryManagementPolicy::PREALLOCATED_WITH_REALLOC_MEMORY_MODE;
     }
 
-    /* Create Data Reader */
+    /* Create Data Reader QoS Profile*/
     {
-        string profile_name = "sub_subscriber_profile";
-
-        if (xml_config_file_.length() > 0)
+        if (reliable)
         {
-            data_reader_ = subscriber_->create_datareader_with_profile(
-                latency_data_sub_topic_,
-                profile_name,
-                &data_reader_listener_);
-        }
-        else
-        {
-            DataReaderQos dr_qos;
-
-            if (reliable)
-            {
-                ReliabilityQosPolicy rp;
-                rp.kind = eprosima::fastrtps::RELIABLE_RELIABILITY_QOS;
-                dr_qos.reliability(rp);
-            }
-
-            dr_qos.properties(property_policy);
-            dr_qos.endpoint().history_memory_policy = MemoryManagementPolicy::PREALLOCATED_WITH_REALLOC_MEMORY_MODE;
-
-            data_reader_ = subscriber_->create_datareader(
-                latency_data_sub_topic_,
-                dr_qos,
-                &data_reader_listener_);
+            ReliabilityQosPolicy rp;
+            rp.kind = eprosima::fastrtps::RELIABLE_RELIABILITY_QOS;
+            dr_qos.reliability(rp);
         }
 
-        if (data_reader_ == nullptr)
-        {
-            return false;
-        }
+        dr_qos.properties(property_policy);
+        dr_qos.endpoint().history_memory_policy = MemoryManagementPolicy::PREALLOCATED_WITH_REALLOC_MEMORY_MODE;
     }
 
     /* Create Command Writer */
@@ -586,6 +491,99 @@ bool LatencyTestSubscriber::test(
         uint32_t datasize)
 {
     logInfo(LatencyTest, "Preparing test with data size: " << datasize + 4);
+
+    // Init static data
+    if (!dynamic_data_)
+    {
+        latency_data_type_.reset(new LatencyDataType(datasize));
+        latency_data_type_.register_type(participant_);
+    }
+
+    /* Create Topics */
+    ostringstream topic_name;
+    topic_name << "LatencyTest_";
+    if (hostname)
+    {
+        topic_name << asio::ip::host_name() << "_";
+    }
+    topic_name << pid << "_PUB2SUB";
+
+    latency_data_sub_topic_ = participant_->create_topic(
+        topic_name.str(),
+        "LatencyType",
+        TOPIC_QOS_DEFAULT);
+
+    if (latency_data_sub_topic_ == nullptr)
+    {
+        return false;
+    }
+
+    topic_name.str("");
+    topic_name.clear();
+    topic_name << "LatencyTest_";
+
+    if (hostname)
+    {
+        topic_name << asio::ip::host_name() << "_";
+    }
+    topic_name << pid << "_SUB2PUB";
+
+    latency_data_pub_topic_ = participant_->create_topic(
+        topic_name.str(),
+        "LatencyType",
+        TOPIC_QOS_DEFAULT);
+
+    if (latency_data_pub_topic_ == nullptr)
+    {
+        return false;
+    }
+
+
+    // Create endpoints
+    // DataWriter
+    if (xml_config_file_.length() > 0)
+    {
+        string profile_name = "sub_publisher_profile";
+        data_writer_ = publisher_->create_datawriter_with_profile(
+            latency_data_pub_topic_,
+            profile_name,
+            &data_writer_listener_);
+    }
+    else
+    {
+        data_writer_ = publisher_->create_datawriter(
+            latency_data_pub_topic_,
+            dw_qos,
+            &data_writer_listener_);
+    }
+
+    if (data_writer_ == nullptr)
+    {
+        return false;
+    }
+
+    // DataReader
+    if (xml_config_file_.length() > 0)
+    {
+        string profile_name = "sub_subscriber_profile";
+        data_reader_ = subscriber_->create_datareader_with_profile(
+            latency_data_sub_topic_,
+            profile_name,
+            &data_reader_listener_);
+    }
+    else
+    {
+        data_reader_ = subscriber_->create_datareader(
+            latency_data_sub_topic_,
+            dr_qos,
+            &data_reader_listener_);
+    }
+
+    if (data_reader_ == nullptr)
+    {
+        return false;
+    }
+
     if (dynamic_data_)
     {
         dynamic_data_type_ = static_cast<DynamicData*>(dynamic_pub_sub_type_->createData());
@@ -602,7 +600,6 @@ bool LatencyTestSubscriber::test(
     else
     {
         latency_type_ = static_cast<LatencyType*>(latency_data_type_->createData());
-        latency_type_->data.resize(datasize, 0);
     }
 
     // Wait for the Publisher READY command
@@ -654,6 +651,16 @@ bool LatencyTestSubscriber::test(
     {
         latency_data_type_->deleteData(latency_type_);
     }
+
+    // Delete endpoints
+    subscriber_->delete_datareader(data_reader_);
+    publisher_->delete_datawriter(data_writer_);
+
+    // Delete topics
+    participant_->delete_topic(latency_data_sub_topic_);
+    participant_->delete_topic(latency_data_pub_topic_);
+
+    // 
 
     if (test_status_ == -1)
     {

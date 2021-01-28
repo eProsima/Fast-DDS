@@ -520,7 +520,7 @@ int main(
                 raw_data_file, pub_part_property_policy, pub_property_policy, xml_config_file,
                 dynamic_types, forced_domain, data_sizes))
         {
-            latency_publisher.run();
+            latency_publisher.run(seed, hostname);
         }
         else
         {
@@ -569,7 +569,7 @@ int main(
         // Spawn run threads
         if (pub_init && sub_init)
         {
-            std::thread pub_thread(&LatencyTestPublisher::run, &latency_publisher);
+            std::thread pub_thread(&LatencyTestPublisher::run, &latency_publisher, seed, hostname);
 
             std::vector<std::thread> sub_threads;
             for (auto& sub : latency_subscribers)

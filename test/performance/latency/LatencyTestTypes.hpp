@@ -136,9 +136,17 @@ public:
             const LatencyType& lt1,
             const LatencyType& lt2) const;
 
-    bool is_bounded() const override;
+    bool is_bounded() const override
+    {
+        // All plain types are bounded
+        return is_plain();
+    }
 
-    bool is_plain() const override;
+    bool is_plain() const override
+    {
+        // It is plain because the type has a fixed size
+        return true;
+    }
 };
 
 enum TESTCOMMAND : uint32_t

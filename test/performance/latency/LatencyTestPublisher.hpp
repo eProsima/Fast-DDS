@@ -27,6 +27,7 @@
 #include <fastdds/dds/publisher/DataWriterListener.hpp>
 #include <fastdds/dds/publisher/Publisher.hpp>
 #include <fastdds/dds/subscriber/DataReaderListener.hpp>
+#include <fastdds/dds/subscriber/qos/DataReaderQos.hpp>
 #include <fastdds/dds/subscriber/Subscriber.hpp>
 #include <fastdds/dds/topic/TypeSupport.hpp>
 #include <fastrtps/types/DynamicData.h>
@@ -99,10 +100,14 @@ public:
             int forced_domain,
             LatencyDataSizes& latency_data_sizes);
 
-    void run();
+    void run(
+            uint32_t pid,
+            bool hostname);
 
     bool test(
-            uint32_t datasize);
+            uint32_t datasize,
+            uint32_t pid,
+            bool hostname);
 
     void analyze_times(
             uint32_t datasize);
@@ -129,6 +134,10 @@ public:
     eprosima::fastdds::dds::Subscriber* subscriber_;
     eprosima::fastdds::dds::DataReader* data_reader_;
     eprosima::fastdds::dds::DataReader* command_reader_;
+
+    /* QoS Profiles */
+    eprosima::fastdds::dds::DataReaderQos dr_qos;
+    eprosima::fastdds::dds::DataWriterQos dw_qos;
 
     /* Times */
     std::chrono::steady_clock::time_point start_time_;
