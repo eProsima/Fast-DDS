@@ -126,7 +126,7 @@ public:
             const uint32_t& size)
         : buffer_size_(size)
     {
-        setName("ThroughputType");
+        setName(type_name_.c_str());
         m_typeSize = size + 4;
         m_isGetKeyDefined = false;
     }
@@ -164,6 +164,20 @@ public:
         const ThroughputType& lt1,
         const ThroughputType& lt2) const;
 
+    bool ThroughputDataType::is_bounded() const override
+    {
+        // All plain types are bounded
+        return is_plain();
+    }
+
+    bool ThroughputDataType::is_plain() const override
+    {
+        // It is plain because the type has a fixed sized
+        return true;
+    }
+
+    // Name
+    static const std::string type_name_;
 };
 
 enum e_Command : uint32_t
