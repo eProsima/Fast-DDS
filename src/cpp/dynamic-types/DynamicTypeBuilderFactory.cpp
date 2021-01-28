@@ -501,7 +501,7 @@ DynamicTypeBuilder* DynamicTypeBuilderFactory::create_map_builder(
 {
     if (key_type != nullptr && value_type != nullptr)
     {
-        if (bound == 0)
+        if (bound == BOUND_UNLIMITED)
         {
             bound = MAX_ELEMENTS_COUNT;
         }
@@ -556,7 +556,7 @@ DynamicTypeBuilder* DynamicTypeBuilderFactory::create_sequence_builder(
 {
     if (type != nullptr)
     {
-        if (bound == 0)
+        if (bound == BOUND_UNLIMITED)
         {
             bound = MAX_ELEMENTS_COUNT;
         }
@@ -581,7 +581,7 @@ DynamicTypeBuilder* DynamicTypeBuilderFactory::create_sequence_builder(
 DynamicTypeBuilder* DynamicTypeBuilderFactory::create_string_builder(
         uint32_t bound)
 {
-    if (bound == 0)
+    if (bound == BOUND_UNLIMITED)
     {
         bound = MAX_STRING_LENGTH;
     }
@@ -766,7 +766,7 @@ DynamicTypeBuilder* DynamicTypeBuilderFactory::create_union_builder(
 DynamicTypeBuilder* DynamicTypeBuilderFactory::create_wstring_builder(
         uint32_t bound)
 {
-    if (bound == 0)
+    if (bound == BOUND_UNLIMITED)
     {
         bound = MAX_STRING_LENGTH;
     }
@@ -2691,7 +2691,7 @@ DynamicType_ptr DynamicTypeBuilderFactory::create_byte_type()
 DynamicType_ptr DynamicTypeBuilderFactory::create_string_type(
         uint32_t bound /*= MAX_STRING_LENGTH*/)
 {
-    if (bound == 0)
+    if (bound == BOUND_UNLIMITED)
     {
         bound = MAX_STRING_LENGTH;
     }
@@ -2706,7 +2706,7 @@ DynamicType_ptr DynamicTypeBuilderFactory::create_string_type(
 DynamicType_ptr DynamicTypeBuilderFactory::create_wstring_type(
         uint32_t bound /*= MAX_STRING_LENGTH*/)
 {
-    if (bound == 0)
+    if (bound == BOUND_UNLIMITED)
     {
         bound = MAX_STRING_LENGTH;
     }
