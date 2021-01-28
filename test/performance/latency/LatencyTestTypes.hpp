@@ -147,6 +147,9 @@ public:
         // It is plain because the type has a fixed size
         return true;
     }
+
+    // Name
+    static const std::string type_name_;
 };
 
 enum TESTCOMMAND : uint32_t

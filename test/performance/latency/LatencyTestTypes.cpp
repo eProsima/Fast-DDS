@@ -24,6 +24,8 @@
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
 
+const std::string LatencyDataType::type_name_ = "LatencyType";
+
 bool LatencyDataType::compare_data(
         const LatencyType& lt1,
         const LatencyType& lt2) const
