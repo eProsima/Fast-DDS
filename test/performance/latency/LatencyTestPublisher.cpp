@@ -779,12 +779,12 @@ bool LatencyTestPublisher::test(
     {
         latency_data_type_.delete_data(latency_type_in_);
         latency_data_type_.delete_data(latency_type_out_);
+    }
 
-        // Remove endpoints associated with the given payload size
-        if (!destroy_data_endpoints())
-        {
-            logError(LATENCYPUBLISHER, "Static endpoints for payload size " << datasize << " could not been removed");
-        }
+    // Remove endpoints associated with the given payload size
+    if (!destroy_data_endpoints())
+    {
+        logError(LATENCYPUBLISHER, "Endpoints for payload size " << datasize << " could not been removed");
     }
 
     return true;
