@@ -102,6 +102,14 @@ public:
 
     void run();
 
+private:
+
+    bool init_static_types(uint32_t payload);
+
+    bool create_data_endpoints();
+
+    bool destroy_data_endpoints();
+
     bool test(
             uint32_t datasize);
 
