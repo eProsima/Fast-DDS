@@ -173,9 +173,6 @@ bool ThroughputPublisher::init(
         }
     }
 
-    // TODO: update the dw_qos_ from xml profile
-    dw_qos_.properties(property_policy);
-
     // Apply user's force domain
     if (forced_domain_ >= 0)
     {
@@ -226,6 +223,18 @@ bool ThroughputPublisher::init(
         logError(THROUGHPUTPUBLISHER, "ERROR creating the Subscriber");
         return false;
     }
+
+    /* Update DataWriterQoS with xml profile data */
+    std::string profile_name = "publisher_profile";
+
+    if (xml_config_file_.length() > 0
+        && ReturnCode_t::RETCODE_OK != publisher_->get_datawriter_qos_from_profile(profile_name, dw_qos_))
+    {
+        logError(THROUGHPUTPUBLISHER, "ERROR unable to retrieve the " << profile_name);
+        return false;
+    }
+    // Load the property policy specified
+    dw_qos_.properties(property_policy);
 
     // Create Command topic
     {
@@ -991,8 +1000,6 @@ bool ThroughputPublisher::create_data_endpoints()
     }
 
     // Create the DataWriter
-    std::string profile_name = "publisher_profile";
-
     // Reliability
     ReliabilityQosPolicy rp;
     if (reliable_)
@@ -1014,22 +1021,12 @@ bool ThroughputPublisher::create_data_endpoints()
         dw_qos_.reliability(rp);
     }
 
-    if (xml_config_file_.length() > 0)
-    {
-        data_writer_ = publisher_->create_datawriter_with_profile(
-                data_pub_topic_,
-                profile_name,
-                &data_writer_listener_);
-    }
-    else
-    {
-        data_writer_ = publisher_->create_datawriter(
+    // Create the endpoint
+    if (nullptr !=
+            (data_writer_ = publisher_->create_datawriter(
                 data_pub_topic_,
                 dw_qos_,
-                &data_writer_listener_);
-    }
-
-    if (data_writer_ == nullptr)
+                &data_writer_listener_)))
     {
         return false;
     }
