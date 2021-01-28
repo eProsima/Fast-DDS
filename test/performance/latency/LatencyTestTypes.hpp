@@ -61,24 +61,8 @@ class alignas(4) LatencyType
 {
 public:
 
-    uint32_t seqnum;
+    uint32_t seqnum = 0;
     uint8_t data[1];
-
-    LatencyType()
-        : seqnum(0)
-    {
-    }
-
-    LatencyType(
-            uint32_t number)
-        : seqnum(number)            // TODO(jlbueno) Ask Miguel Barro
-    {
-    }
-
-    ~LatencyType()
-    {
-    }
-
 };
 
 class LatencyDataType : public eprosima::fastdds::dds::TopicDataType

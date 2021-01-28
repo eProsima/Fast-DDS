@@ -40,6 +40,8 @@
 #include <fastrtps/types/TypeDescriptor.h>
 #include "LatencyTestTypes.hpp"
 
+#include <dds/core/LengthUnlimited.hpp>
+
 class LatencyTestSubscriber
 {
 public:
@@ -66,6 +68,16 @@ public:
     bool test(
             uint32_t datasize);
 
+private:
+
+    bool init_dynamic_types();
+
+    bool init_static_types(uint32_t payload);
+
+    bool create_data_endpoints();
+
+    bool destroy_data_endpoints();
+
     int32_t total_matches() const;
 
     /* Entities */
@@ -78,8 +90,8 @@ public:
     eprosima::fastdds::dds::DataReader* command_reader_;
 
     /* QoS Profiles */
-    eprosima::fastdds::dds::DataReaderQos dr_qos;
-    eprosima::fastdds::dds::DataWriterQos dw_qos;
+    eprosima::fastdds::dds::DataReaderQos dr_qos_;
+    eprosima::fastdds::dds::DataWriterQos dw_qos_;
 
     /* Data */
     int received_;
@@ -97,8 +109,10 @@ public:
     /* Test configuration and Flags */
     bool echo_;
     int samples_;
-    bool dynamic_data_ = false;
+    bool dynamic_types_ = false;
     int forced_domain_;
+    bool hostname_ = false;
+    uint32_t pid_ = false;
 
     /* Topics */
     eprosima::fastdds::dds::Topic* latency_data_sub_topic_;
@@ -107,12 +121,12 @@ public:
     eprosima::fastdds::dds::Topic* latency_command_pub_topic_;
 
     /* Static Types */
-    LatencyType* latency_type_;
+    LatencyType* latency_data_;
     eprosima::fastdds::dds::TypeSupport latency_data_type_;
     eprosima::fastdds::dds::TypeSupport latency_command_type_;
 
     /* Dynamic Types */
-    eprosima::fastrtps::types::DynamicData* dynamic_data_type_;
+    eprosima::fastrtps::types::DynamicData* dynamic_data_;
     eprosima::fastdds::dds::TypeSupport dynamic_pub_sub_type_;
 
     std::vector<uint32_t> data_size_sub_;
