@@ -641,13 +641,13 @@ bool LatencyTestPublisher::test(
 
         if (nullptr == dynamic_data_type_in_)
         {
-            logError(LATENCYPUBLISHER,"Iteration failed: Failed to create Dynamic Data In");
+            logError(LATENCYPUBLISHER, "Iteration failed: Failed to create Dynamic Data In");
             return false;
         }
 
         if (nullptr == dynamic_data_type_out_)
         {
-            logError(LATENCYPUBLISHER,"Iteration failed: Failed to create Dynamic Data Out");
+            logError(LATENCYPUBLISHER, "Iteration failed: Failed to create Dynamic Data Out");
             return false;
         }
 
@@ -907,7 +907,8 @@ int32_t LatencyTestPublisher::total_matches() const
     return count;
 }
 
-bool LatencyTestPublisher::init_static_types(uint32_t payload)
+bool LatencyTestPublisher::init_static_types(
+        uint32_t payload)
 {
     assert(participant_ != nullptr);
 
@@ -1022,7 +1023,7 @@ bool LatencyTestPublisher::create_data_endpoints()
     {
         return false;
     }
-    
+
     return true;
 }
 
