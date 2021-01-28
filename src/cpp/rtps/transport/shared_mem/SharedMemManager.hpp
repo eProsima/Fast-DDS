@@ -45,7 +45,7 @@ private:
     {
         struct Status
         {
-            // When buffers are enqued in a port this validity_id is copied to the BufferDescriptor in the port.
+            // When buffers are enqueued in a port this validity_id is copied to the BufferDescriptor in the port.
             // If the sender process needs to recover the buffer by force, just increment this validity_id, the
             // receiver process must check this validity_id vs the validity_id in the BufferDescriptor, if not equal
             // the buffer has been invalidated by the sender.
@@ -78,7 +78,7 @@ private:
 
         /**
          * Atomically invalidates a buffer, only, when the buffer is valid for the caller.
-         * @return true when succedded, false when the buffer was invalid for the caller.
+         * @return true when succeeded, false when the buffer was invalid for the caller.
          */
         inline bool invalidate_buffer(
                 uint32_t listener_validity_id)
@@ -97,7 +97,7 @@ private:
 
         /**
          * Atomically invalidates a buffer, only, if the buffer is not being processed.
-         * @return true when succedded, false otherwise.
+         * @return true when succeeded, false otherwise.
          */
         bool invalidate_if_not_processing()
         {
@@ -110,7 +110,7 @@ private:
                     std::memory_order_relaxed))
             {
             }
-
+            logWarning(RTPS_TRANSPORT_SHM, "Buffer is being invalidated, segment_size may be insufficient");
             return (s.processing_count == 0);
         }
 
@@ -125,7 +125,7 @@ private:
 
         /**
          * Atomically decrease enqueued count & increase the buffer processing counts, only, if the buffer is valid.
-         * @return true when succedded, false when the buffer has been invalidated.
+         * @return true when succeeded, false when the buffer has been invalidated.
          */
         inline bool dec_enqueued_inc_processing_counts(
                 uint32_t listener_validity_id)
@@ -144,7 +144,7 @@ private:
 
         /**
          * Atomically increase the buffer processing count, only, if the buffer is valid.
-         * @return true when succedded, false when the buffer has been invalidated.
+         * @return true when succeeded, false when the buffer has been invalidated.
          */
         inline bool inc_processing_count(
                 uint32_t listener_validity_id)
@@ -163,7 +163,7 @@ private:
 
         /**
          * Atomically increase the buffer enqueued count, only, if the buffer is valid.
-         * @return true when succedded, false when the buffer has been invalidated.
+         * @return true when succeeded, false when the buffer has been invalidated.
          */
         inline bool inc_enqueued_count(
                 uint32_t listener_validity_id)
@@ -182,7 +182,7 @@ private:
 
         /**
          * Atomically decrease the buffer enqueued count, only, if the buffer is valid.
-         * @return true when succedded, false when the buffer has been invalidated.
+         * @return true when succeeded, false when the buffer has been invalidated.
          */
         inline bool dec_enqueued_count(
                 uint32_t listener_validity_id)
@@ -207,7 +207,7 @@ private:
 
         /**
          * Atomically decrease the buffer processing count, only, if the buffer is valid.
-         * @return true when succedded, false when the buffer has been invalidated.
+         * @return true when succeeded, false when the buffer has been invalidated.
          */
         inline bool dec_processing_count(
                 uint32_t listener_validity_id)
@@ -582,7 +582,7 @@ public:
                 }
                 else // No enough space, try to recover oldest not processing buffers
                 {
-                    // Buffer is not beign processed by any listener
+                    // Buffer is not being processed by any listener
                     if ((*it)->invalidate_if_not_processing())
                     {
                         release_buffer(*it);
@@ -651,7 +651,7 @@ public:
         }
 
         /**
-         * Extract the first buffer enqued in the port.
+         * Extract the first buffer enqueued in the port.
          * If the queue is empty, blocks until a buffer is pushed
          * to the port.
          * @return A shared_ptr to the buffer, this shared_ptr can be nullptr if the
