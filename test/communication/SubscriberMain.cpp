@@ -23,7 +23,7 @@ int main(
         }
         else if (strcmp(argv[arg_count], "--fixed_type") == 0)
         {
-            std::cout << "--fixed set: using FixedSizedType" << std::endl;
+            std::cout << "--fixed_type set: using FixedSizedType" << std::endl;
             fixed_type = true;
         }
         else if (strcmp(argv[arg_count], "--seed") == 0)
@@ -75,6 +75,11 @@ int main(
             }
 
             publishers = strtol(argv[arg_count], nullptr, 10);
+        }
+        else
+        {
+            std::cout << "Wrong argument " << argv[arg_count] << std::endl;
+            return -1;
         }
 
         ++arg_count;

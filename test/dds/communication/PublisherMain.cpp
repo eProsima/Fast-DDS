@@ -111,7 +111,11 @@ int main(
 
             xml_file = argv[arg_count];
         }
-
+        else
+        {
+            std::cout << "Wrong argument " << argv[arg_count] << std::endl;
+            return -1;
+        }
 
         ++arg_count;
     }
@@ -119,7 +123,7 @@ int main(
     if (xml_file)
     {
         eprosima::fastrtps::Domain::loadXMLProfilesFile(xml_file);
-        // DomainParticipantFactory::get_instance()->load_XML_profiles_file(xml_file);
+        DomainParticipantFactory::get_instance()->load_XML_profiles_file(xml_file);
     }
 
     PublisherModule publisher(exit_on_lost_liveliness, fixed_type, zero_copy);

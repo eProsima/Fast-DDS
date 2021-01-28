@@ -61,11 +61,6 @@ bool SubscriberModule::init(
 {
     std::cout << "Initializing Subscriber" << std::endl;
 
-    //Do not enable entities on creation
-    // DomainParticipantFactoryQos factory_qos;
-    // factory_qos.entity_factory().autoenable_created_entities = false;
-    // DomainParticipantFactory::get_instance()->set_qos(factory_qos);
-
     StatusMask mask = StatusMask::subscription_matched()
             << StatusMask::data_available()
             << StatusMask::liveliness_changed();

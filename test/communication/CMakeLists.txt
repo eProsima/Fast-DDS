@@ -377,9 +377,9 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER) AND fastcdr_FOUND)
         set_property(TEST SimpleCommunicationBestEffortFixed APPEND PROPERTY ENVIRONMENT
             "XML_FILE=simple_besteffort.xml")
         set_property(TEST SimpleCommunicationBestEffortFixed APPEND PROPERTY ENVIRONMENT
-            "EXTRA_PUB_ARG=--fixed")
+            "EXTRA_PUB_ARG=--fixed_type")
         set_property(TEST SimpleCommunicationBestEffortFixed APPEND PROPERTY ENVIRONMENT
-            "EXTRA_SUB_ARG=--fixed")
+            "EXTRA_SUB_ARG=--fixed_type")
         if(WIN32)
             string(REPLACE ";" "\\;" WIN_PATH "$ENV{PATH}")
             set_property(TEST SimpleCommunicationBestEffortFixed APPEND PROPERTY ENVIRONMENT

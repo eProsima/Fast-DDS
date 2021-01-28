@@ -86,10 +86,6 @@ bool PublisherModule::init(
     topic_name << "DDSCommunicationTestsTopic_" << ((magic.empty()) ? asio::ip::host_name() : magic) << "_" << seed;
 
     //CREATE THE PUBLISHER
-
-    // Default mask
-    // StatusMask mask = StatusMask::publication_matched();
-
     publisher_ = participant_->create_publisher(PUBLISHER_QOS_DEFAULT, this);
     if (publisher_ == nullptr)
     {

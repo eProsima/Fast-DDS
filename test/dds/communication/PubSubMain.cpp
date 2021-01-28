@@ -36,21 +36,21 @@ using namespace eprosima::fastdds::dds;
  * --magic <str>
  * --xmlfile <path>
  * --publishers <int>
+ * --publisher_loops <int>
  */
 
 void publisher_run(
         PublisherModule* publisher,
         uint32_t wait,
-        uint32_t samples)
+        uint32_t samples,
+        uint32_t loops)
 {
     if (wait > 0)
     {
         publisher->wait_discovery(wait);
     }
 
-    // Run two loops because the first one could be easily skipped
-    // If it fails because some subscribers miss messages, increase the number of loops
-    publisher->run(samples, 2);
+    publisher->run(samples, loops);
 }
 
 int main(
@@ -66,6 +66,8 @@ int main(
     uint32_t wait = 0;
     uint32_t samples = 4;
     uint32_t publishers = 1;
+    // The first loop could be easily ignored by the reader
+    uint32_t publisher_loops = 2;
     char* xml_file = nullptr;
     std::string magic;
 
@@ -147,6 +149,21 @@ int main(
 
             publishers = strtol(argv[arg_count], nullptr, 10);
         }
+        else if (strcmp(argv[arg_count], "--publisher_loops") == 0)
+        {
+            if (++arg_count >= argc)
+            {
+                std::cout << "--publisher_loops expects a parameter" << std::endl;
+                return -1;
+            }
+
+            publisher_loops = strtol(argv[arg_count], nullptr, 10);
+        }
+        else
+        {
+            std::cout << "Wrong argument " << argv[arg_count] << std::endl;
+            return -1;
+        }
 
         ++arg_count;
     }
@@ -154,7 +171,7 @@ int main(
     if (xml_file)
     {
         eprosima::fastrtps::Domain::loadXMLProfilesFile(xml_file);
-        //DomainParticipantFactory::get_instance()->load_XML_profiles_file(xml_file);
+        DomainParticipantFactory::get_instance()->load_XML_profiles_file(xml_file);
     }
 
     SubscriberModule subscriber(publishers, samples, fixed_type, zero_copy);
@@ -164,7 +181,7 @@ int main(
 
     if (publisher.init(seed, magic))
     {
-        std::thread publisher_thread(publisher_run, &publisher, wait, samples);
+        std::thread publisher_thread(publisher_run, &publisher, wait, samples, publisher_loops);
 
         if (subscriber.init(seed, magic))
         {

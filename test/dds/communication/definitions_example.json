@@ -6,11 +6,11 @@
     "participants" : [
         {
             "kind" : "publisher",
-            "exit_on_lost_liveliness" : true,
-            "fixed_type" : true,
-            "zero_copy" : true,
+            "exit_on_lost_liveliness" : false,
+            "fixed_type" : false,
+            "zero_copy" : false,
             "seed" : 7800,
-            "wait" : 1,
+            "wait" : 0,
             "samples" : 4,
             "magic" : "str",
             "xmlfile" : "path/file.xml"
@@ -28,16 +28,17 @@
         },
         {
             "kind" : "pubsub",
-            "exit_on_lost_liveliness" : true,
-            "notexit" : true,
-            "fixed_type" : true,
-            "zero_copy" : true,
+            "exit_on_lost_liveliness" : false,
+            "notexit" : false,
+            "fixed_type" : false,
+            "zero_copy" : false,
             "seed" : 7800,
-            "wait" : 1,
+            "wait" : 0,
             "samples" : 4,
             "magic" : "str",
             "xmlfile" : "path/file.xml",
-            "publishers" : 1
+            "publishers" : 1,
+            "publisher_loops" : 2
         }
     ]
 }

@@ -100,7 +100,7 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER) AND fastcdr_FOUND)
     configure_file(${CMAKE_CURRENT_SOURCE_DIR}/example_type.xml
         ${CMAKE_CURRENT_BINARY_DIR}/example_type.xml COPYONLY)
 
-    # Standar tests
+    # Standard tests
 
     list(APPEND TEST_DEFINITIONS
             simple_communication
@@ -176,7 +176,7 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER) AND fastcdr_FOUND)
                 "PATH=$<TARGET_FILE_DIR:${PROJECT_NAME}>\\;$<TARGET_FILE_DIR:fastcdr>\\;${WIN_PATH}")
         endif()
 
-        # Standar types test
+        # Standard types test
         set(TEST_BUILDER ${BINARY_TEST_DIR}test_build.py)
 
         foreach(TEST_DEFINITION IN LISTS TEST_DEFINITIONS)
