@@ -100,14 +100,10 @@ public:
             int forced_domain,
             LatencyDataSizes& latency_data_sizes);
 
-    void run(
-            uint32_t pid,
-            bool hostname);
+    void run();
 
     bool test(
-            uint32_t datasize,
-            uint32_t pid,
-            bool hostname);
+            uint32_t datasize);
 
     void analyze_times(
             uint32_t datasize);
@@ -176,6 +172,8 @@ public:
     int forced_domain_;
     int subscribers_;
     unsigned int samples_;
+    bool hostname_ = false;
+    uint32_t pid_ = 0;
 
     /* Topics */
     eprosima::fastdds::dds::Topic* latency_data_sub_topic_;

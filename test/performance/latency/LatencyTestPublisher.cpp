@@ -120,6 +120,8 @@ bool LatencyTestPublisher::init(
     dynamic_data_ = dynamic_data;
     forced_domain_ = forced_domain;
     raw_data_file_ = raw_data_file;
+    pid_ = pid;
+    hostname_ = hostname;
 
     data_size_pub_ = latency_data_sizes.sample_sizes();
 
@@ -546,13 +548,11 @@ void LatencyTestPublisher::LatencyDataReaderListener::on_data_available(
     }
 }
 
-void LatencyTestPublisher::run(
-        uint32_t pid,
-        bool hostname)
+void LatencyTestPublisher::run()
 {
     for (vector<uint32_t>::iterator payload = data_size_pub_.begin(); payload != data_size_pub_.end(); ++payload)
     {
-        if (!test(*payload, pid, hostname))
+        if (!test(*payload))
         {
             break;
         }
@@ -606,9 +606,7 @@ void LatencyTestPublisher::export_csv(
 }
 
 bool LatencyTestPublisher::test(
-        uint32_t datasize,
-        uint32_t pid,
-        bool hostname)
+        uint32_t datasize)
 {
     test_status_ = 0;
     received_count_ = 0;
@@ -629,11 +627,11 @@ bool LatencyTestPublisher::test(
     /* Create Data Topics */
     ostringstream topic_name;
     topic_name << "LatencyTest_";
-    if (hostname)
+    if (hostname_)
     {
         topic_name << asio::ip::host_name() << "_";
     }
-    topic_name << pid << "_PUB2SUB";
+    topic_name << pid_ << "_PUB2SUB";
 
     latency_data_pub_topic_ = participant_->create_topic(
         topic_name.str(),
@@ -649,11 +647,11 @@ bool LatencyTestPublisher::test(
     topic_name.clear();
     topic_name << "LatencyTest_";
 
-    if (hostname)
+    if (hostname_)
     {
         topic_name << asio::ip::host_name() << "_";
     }
-    topic_name << pid << "_SUB2PUB";
+    topic_name << pid_ << "_SUB2PUB";
 
     latency_data_sub_topic_ = participant_->create_topic(
         topic_name.str(),
