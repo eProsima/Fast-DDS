@@ -27,6 +27,7 @@
 
 #include <rtps/history/BasicPayloadPool.hpp>
 #include <rtps/history/CacheChangePool.h>
+#include <rtps/DataSharing/DataSharingListener.hpp>
 #include <rtps/participant/RTPSParticipantImpl.h>
 #include <rtps/reader/ReaderHistoryState.hpp>
 
@@ -61,7 +62,7 @@ RTPSReader::RTPSReader(
     std::shared_ptr<IPayloadPool> payload_pool;
     payload_pool = BasicPayloadPool::get(cfg, change_pool);
 
-    init(payload_pool, change_pool);
+    init(payload_pool, change_pool, att);
 }
 
 RTPSReader::RTPSReader(
@@ -96,12 +97,13 @@ RTPSReader::RTPSReader(
     , liveliness_kind_(att.liveliness_kind_)
     , liveliness_lease_duration_(att.liveliness_lease_duration)
 {
-    init(payload_pool, change_pool);
+    init(payload_pool, change_pool, att);
 }
 
 void RTPSReader::init(
         const std::shared_ptr<IPayloadPool>& payload_pool,
-        const std::shared_ptr<IChangePool>& change_pool)
+        const std::shared_ptr<IChangePool>& change_pool,
+        const ReaderAttributes& att)
 {
     payload_pool_ = payload_pool;
     change_pool_ = change_pool;
@@ -109,6 +111,21 @@ void RTPSReader::init(
     if (mp_history->m_att.memoryPolicy == PREALLOCATED_MEMORY_MODE)
     {
         fixed_payload_size_ = mp_history->m_att.payloadMaxSize;
+    }
+
+    if (att.endpoint.data_sharing_configuration().kind() != OFF)
+    {
+        is_datasharing_compatible_ = true;
+        using std::placeholders::_1;
+        std::shared_ptr<DataSharingNotification> notification =
+                DataSharingNotification::create_notification(
+            getGuid(), att.endpoint.data_sharing_configuration().shm_directory());
+        datasharing_listener_.reset(new DataSharingListener(
+                    notification,
+                    att.endpoint.data_sharing_configuration().shm_directory(),
+                    att.matched_writers_allocation,
+                    this));
+        datasharing_listener_->start();
     }
 
     mp_history->mp_reader = this;
@@ -315,6 +332,44 @@ uint64_t RTPSReader::get_unread_count() const
 {
     std::unique_lock<RecursiveTimedMutex> lock(mp_mutex);
     return total_unread_;
+}
+
+bool RTPSReader::is_datasharing_compatible_with(
+        const WriterProxyData& wdata)
+{
+    if (!is_datasharing_compatible_ ||
+            wdata.m_qos.data_sharing.kind() == fastdds::dds::OFF)
+    {
+        return false;
+    }
+
+    for (auto id : wdata.m_qos.data_sharing.domain_ids())
+    {
+        if (std::find(m_att.data_sharing_configuration().domain_ids().begin(),
+                m_att.data_sharing_configuration().domain_ids().end(), id)
+                != m_att.data_sharing_configuration().domain_ids().end())
+        {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+bool RTPSReader::is_sample_valid(
+        const void* data,
+        const GUID_t& writer,
+        const SequenceNumber_t& sn) const
+{
+    if (is_datasharing_compatible_ && datasharing_listener_->writer_is_matched(writer))
+    {
+        //Check if the payload is dirty
+        if (!DataSharingPayloadPool::check_sequence_number(static_cast<const octet*>(data), sn))
+        {
+            return false;
+        }
+    }
+    return true;
 }
 
 } /* namespace rtps */

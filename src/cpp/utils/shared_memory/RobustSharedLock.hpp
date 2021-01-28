@@ -19,13 +19,13 @@
 #include <io.h>
 #else
 #include <sys/file.h>
-#endif
+#endif // ifdef  _MSC_VER
 
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
 
-#include "RobustLock.hpp"
+#include "SharedDir.hpp"
 
 namespace eprosima {
 namespace fastdds {
@@ -42,7 +42,7 @@ public:
     /**
      * Open or create and acquire the interprocess lock.
      * @param in name Is the object's interprocess global name, visible for all processes in the same machine.
-     * @param out was_lock_created If the lock succeeded, this parameter return whether the lock has been created 
+     * @param out was_lock_created If the lock succeeded, this parameter return whether the lock has been created
      * or it already exist.
      * @throw std::exception if lock coulnd't be acquired
      */
@@ -51,7 +51,7 @@ public:
             bool* was_lock_created,
             bool* was_lock_released)
     {
-        auto file_path = RobustLock::get_file_path(name);
+        auto file_path = SharedDir::get_file_path(name);
 
         fd_ = open_and_lock_file(file_path, was_lock_created, was_lock_released);
 
@@ -68,7 +68,7 @@ public:
     {
         bool was_lock_created;
 
-        auto file_path = RobustLock::get_file_path(name);
+        auto file_path = SharedDir::get_file_path(name);
 
         fd_ = open_and_lock_file(file_path, &was_lock_created, nullptr);
 
@@ -91,7 +91,7 @@ public:
     static bool is_locked(
             const std::string& name)
     {
-        return test_lock(RobustLock::get_file_path(name)) == LockStatus::LOCKED;
+        return test_lock(SharedDir::get_file_path(name)) == LockStatus::LOCKED;
     }
 
     /**
@@ -102,7 +102,7 @@ public:
     static bool remove(
             const std::string& name)
     {
-        return 0 == std::remove(RobustLock::get_file_path(name).c_str());
+        return 0 == std::remove(SharedDir::get_file_path(name).c_str());
     }
 
 private:
@@ -129,11 +129,11 @@ private:
         // Try open exclusive
         auto ret = _sopen_s(&test_exist, file_path.c_str(), _O_WRONLY, _SH_DENYWR, _S_IREAD | _S_IWRITE);
 
-        if(ret == 0)
+        if (ret == 0)
         {
             *was_lock_created = false;
 
-            if(was_lock_released)
+            if (was_lock_released)
             {
                 *was_lock_released = true;
             }
@@ -141,24 +141,24 @@ private:
             _close(test_exist);
         }
         else
-        {   
+        {
             // Try open shared
             ret = _sopen_s(&test_exist, file_path.c_str(), _O_RDONLY, _SH_DENYWR, _S_IREAD | _S_IWRITE);
 
-            if(ret == 0)
+            if (ret == 0)
             {
-                if(was_lock_released)
+                if (was_lock_released)
                 {
                     *was_lock_released = false;
                 }
-                
+
                 *was_lock_created = false;
 
                 return test_exist;
             }
             else
             {
-                if(was_lock_released)
+                if (was_lock_released)
                 {
                     *was_lock_released = true;
                 }
@@ -166,7 +166,7 @@ private:
                 *was_lock_created = true;
             }
         }
-        
+
         int fd;
         // Open or create shared
         ret = _sopen_s(&fd, file_path.c_str(), O_CREAT | _O_RDONLY, _SH_DENYWR, _S_IREAD | _S_IWRITE);
@@ -185,7 +185,7 @@ private:
     {
         _close(fd_);
 
-        test_lock(RobustLock::get_file_path(name_), true);
+        test_lock(SharedDir::get_file_path(name_), true);
     }
 
     static LockStatus test_lock(
@@ -249,7 +249,7 @@ private:
             fd = open(file_path.c_str(), O_CREAT | O_RDONLY, 0666);
         }
 
-        if(was_lock_released != nullptr)
+        if (was_lock_released != nullptr)
         {
             // Lock exclusive
             if (0 == flock(fd, LOCK_EX | LOCK_NB))
@@ -266,7 +266,7 @@ private:
         }
 
         // Lock shared
-        if (0 != flock(fd, LOCK_SH |LOCK_NB))
+        if (0 != flock(fd, LOCK_SH | LOCK_NB))
         {
             close(fd);
             throw std::runtime_error(("failed to lock " + file_path).c_str());
@@ -280,7 +280,7 @@ private:
         flock(fd_, LOCK_UN | LOCK_NB);
         close(fd_);
 
-        test_lock(RobustLock::get_file_path(name_), true);
+        test_lock(SharedDir::get_file_path(name_), true);
     }
 
     static LockStatus test_lock(
@@ -296,7 +296,7 @@ private:
             lock_status = LockStatus::NOT_LOCKED;
 
             // Try lock exclusive
-            if (0 != flock(fd, LOCK_EX |LOCK_NB))
+            if (0 != flock(fd, LOCK_EX | LOCK_NB))
             {
                 // Failed so the file is locked shared
                 flock(fd, LOCK_UN | LOCK_NB);
@@ -321,7 +321,7 @@ private:
         return lock_status;
     }
 
-#endif
+#endif // ifdef _MSC_VER
 
 };
 

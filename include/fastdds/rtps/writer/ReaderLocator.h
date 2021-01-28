@@ -34,6 +34,7 @@ namespace rtps {
 class RTPSParticipantImpl;
 class RTPSWriter;
 class RTPSReader;
+class IDataSharingNotifier;
 
 /**
  * Class ReaderLocator, contains information about a remote reader, without saving its state.
@@ -44,7 +45,7 @@ class ReaderLocator : public RTPSMessageSenderInterface
 {
 public:
 
-    virtual ~ReaderLocator() = default;
+    virtual ~ReaderLocator();
 
     /**
      * Construct a ReaderLocator.
@@ -93,6 +94,7 @@ public:
      * @param unicast_locators    Unicast locators of the remote reader.
      * @param multicast_locators  Multicast locators of the remote reader.
      * @param expects_inline_qos  Whether remote reader expects to receive inline QoS.
+     * @param is_datasharing      Whether remote reader can be reached through datasharing.
      *
      * @return false when this object was already started, true otherwise.
      */
@@ -100,7 +102,8 @@ public:
             const GUID_t& remote_guid,
             const ResourceLimitedVector<Locator_t>& unicast_locators,
             const ResourceLimitedVector<Locator_t>& multicast_locators,
-            bool expects_inline_qos);
+            bool expects_inline_qos,
+            bool is_datasharing = false);
 
     /**
      * Try to update information of this object.
@@ -125,6 +128,11 @@ public:
      */
     bool stop(
             const GUID_t& remote_guid);
+
+    /**
+     * Try to stop using this object for an unmatched reader.
+     */
+    void stop();
 
     /**
      * Check if the destinations managed by this sender interface have changed.
@@ -178,6 +186,33 @@ public:
             CDRMessage_t* message,
             std::chrono::steady_clock::time_point& max_blocking_time_point) const override;
 
+    /**
+     * Check if the reader is datasharing compatible with this writer
+     * @return true if the reader datasharing compatible with this writer
+     */
+    bool is_datasharing_reader() const;
+
+    /**
+     * @return The datasharing notifier for this reader or nullptr if the reader is not datasharing.
+     */
+    IDataSharingNotifier* datasharing_notifier()
+    {
+        return datasharing_notifier_;
+    }
+
+    /**
+     * @return The datasharing notifier for this reader or nullptr if the reader is not datasharing.
+     */
+    const IDataSharingNotifier* datasharing_notifier() const
+    {
+        return datasharing_notifier_;
+    }
+
+    /**
+     * Performs datasharing notification of changes on the state of a writer to the reader represented by this class.
+     */
+    void datasharing_notify();
+
 private:
 
     RTPSWriter* owner_;
@@ -188,11 +223,12 @@ private:
     RTPSReader* local_reader_;
     std::vector<GuidPrefix_t> guid_prefix_as_vector_;
     std::vector<GUID_t> guid_as_vector_;
+    IDataSharingNotifier* datasharing_notifier_;
 };
 
 } /* namespace rtps */
 } /* namespace fastrtps */
 } /* namespace eprosima */
 
-#endif
+#endif // ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 #endif /* _FASTDDS_RTPS_READERLOCATOR_H_ */

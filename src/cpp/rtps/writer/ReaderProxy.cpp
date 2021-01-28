@@ -30,6 +30,7 @@
 #include <rtps/history/HistoryAttributesExtension.hpp>
 
 #include "rtps/messages/RTPSGapBuilder.hpp"
+#include <rtps/DataSharing/DataSharingNotifier.hpp>
 
 #include <mutex>
 #include <cassert>
@@ -106,13 +107,15 @@ ReaderProxy::~ReaderProxy()
 }
 
 void ReaderProxy::start(
-        const ReaderProxyData& reader_attributes)
+        const ReaderProxyData& reader_attributes,
+        bool is_datasharing)
 {
     locator_info_.start(
         reader_attributes.guid(),
         reader_attributes.remote_locators().unicast,
         reader_attributes.remote_locators().multicast,
-        reader_attributes.m_expectsInlineQos);
+        reader_attributes.m_expectsInlineQos,
+        is_datasharing);
 
     is_active_ = true;
     durability_kind_ = reader_attributes.m_qos.m_durability.durabilityKind();
@@ -157,7 +160,7 @@ bool ReaderProxy::update(
 
 void ReaderProxy::stop()
 {
-    locator_info_.stop(guid());
+    locator_info_.stop();
     is_active_ = false;
     disable_timers();
 
@@ -431,7 +434,7 @@ bool ReaderProxy::set_change_to_status(
         {
             status = ACKNOWLEDGED;
         }
-        else if (is_local_reader())
+        else if (is_local_reader() || is_datasharing_reader())
         {
             status = UNACKNOWLEDGED;
         }

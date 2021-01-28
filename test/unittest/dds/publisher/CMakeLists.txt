@@ -31,7 +31,10 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             )
 
         if(WIN32)
-            add_definitions(-D_WIN32_WINNT=0x0601)
+            add_definitions(
+                -D_WIN32_WINNT=0x0601
+                -D_CRT_SECURE_NO_WARNINGS
+                )
         endif()
 
         add_executable(PublisherTests ${PUBLISHERTESTS_SOURCE})
@@ -62,6 +65,8 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
         target_link_libraries(DataWriterTests fastrtps fastcdr foonathan_memory
             ${GTEST_LIBRARIES} ${GMOCK_LIBRARIES}
             ${CMAKE_THREAD_LIBS_INIT} ${CMAKE_DL_LIBS})
-        add_gtest(DataWriterTests SOURCES ${DATAWRITERTESTS_SOURCE})
+        add_gtest(DataWriterTests
+            SOURCES ${DATAWRITERTESTS_SOURCE}
+            ENVIRONMENTS "CERTS_PATH=${PROJECT_SOURCE_DIR}/test/certs")
     endif()
 endif()

@@ -24,20 +24,24 @@
 
 using namespace eprosima::fastrtps::rtps;
 
-HelloWorldType::HelloWorldType() {
+HelloWorldType::HelloWorldType()
+{
     setName("HelloWorldType");
     m_typeSize = (uint32_t)HelloWorld::getMaxCdrSerializedSize() + 4 /*encapsulation*/;
     m_isGetKeyDefined = false;
 
 }
 
-HelloWorldType::~HelloWorldType() {
+HelloWorldType::~HelloWorldType()
+{
     // TODO Auto-generated destructor stub
 }
 
-bool HelloWorldType::serialize(void* data, SerializedPayload_t* payload)
+bool HelloWorldType::serialize(
+        void* data,
+        SerializedPayload_t* payload)
 {
-    HelloWorld* hw = (HelloWorld*) data;	
+    HelloWorld* hw = (HelloWorld*) data;
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer((char*)payload->data, payload->max_size);
     // Object that serializes the data.
@@ -52,7 +56,9 @@ bool HelloWorldType::serialize(void* data, SerializedPayload_t* payload)
     return true;
 }
 
-bool HelloWorldType::deserialize(SerializedPayload_t* payload, void* data)
+bool HelloWorldType::deserialize(
+        SerializedPayload_t* payload,
+        void* data)
 {
     HelloWorld* hw = (HelloWorld*) data;
     // Object that manages the raw buffer.
@@ -68,23 +74,40 @@ bool HelloWorldType::deserialize(SerializedPayload_t* payload, void* data)
     return true;
 }
 
-std::function<uint32_t()> HelloWorldType::getSerializedSizeProvider(void *data)
+std::function<uint32_t()> HelloWorldType::getSerializedSizeProvider(
+        void* data)
 {
-    return [data]() -> uint32_t { 
-        return (uint32_t)type::getCdrSerializedSize(*static_cast<HelloWorld*>(data)) + 4 /*encapsulation*/;
-    };
+    return [data]() -> uint32_t
+           {
+               return (uint32_t)type::getCdrSerializedSize(*static_cast<HelloWorld*>(data)) + 4 /*encapsulation*/;
+           };
 }
 
 void* HelloWorldType::createData()
 {
     return (void*)new HelloWorld();
 }
-void HelloWorldType::deleteData(void* data)
+
+void HelloWorldType::deleteData(
+        void* data)
 {
     delete((HelloWorld*)data);
 }
 
-bool HelloWorldType::getKey(void* /*data*/, InstanceHandle_t* /*ihandle*/, bool /*force_md5*/)
+bool HelloWorldType::getKey(
+        void* /*data*/,
+        InstanceHandle_t* /*ihandle*/,
+        bool /*force_md5*/)
+{
+    return false;
+}
+
+bool HelloWorldType::is_bounded() const
+{
+    return true;
+}
+
+bool HelloWorldType::is_plain() const
 {
     return false;
 }

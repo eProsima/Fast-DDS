@@ -18,6 +18,7 @@
  */
 
 #include <fastdds/dds/publisher/qos/DataWriterQos.hpp>
+#include <utils/Host.hpp>
 
 using namespace eprosima::fastdds::dds;
 
@@ -52,5 +53,19 @@ WriterQos DataWriterQos::get_writerqos(
     qos.m_topicData = tqos.topic_data();
     qos.m_userData = user_data();
     qos.representation = representation();
+    qos.data_sharing = data_sharing();
+
+    if (qos.data_sharing.kind() != OFF &&
+            qos.data_sharing.domain_ids().empty())
+    {
+        uint64_t id = 0;
+        Host::uint48 mac_id = Host::instance().mac_id();
+        for (size_t i = 0; i < Host::mac_id_length; ++i)
+        {
+            id |= mac_id.value[i] << (64 - i);
+        }
+        qos.data_sharing.add_domain_id(id);
+    }
+
     return qos;
 }

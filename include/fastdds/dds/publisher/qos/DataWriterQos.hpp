@@ -109,7 +109,8 @@ public:
                (this->reliable_writer_qos_ == b.reliable_writer_qos()) &&
                (this->endpoint_ == b.endpoint()) &&
                (this->writer_resource_limits_ == b.writer_resource_limits()) &&
-               (this->throughput_controller_ == b.throughput_controller());
+               (this->throughput_controller_ == b.throughput_controller()) &&
+               (this->data_sharing_ == b.data_sharing());
     }
 
     RTPS_DllAPI WriterQos get_writerqos(
@@ -732,6 +733,34 @@ public:
         throughput_controller_ = throughput_controller;
     }
 
+    /**
+     * Getter for DataSharingQosPolicy
+     * @return DataSharingQosPolicy reference
+     */
+    RTPS_DllAPI DataSharingQosPolicy& data_sharing()
+    {
+        return data_sharing_;
+    }
+
+    /**
+     * Getter for DataSharingQosPolicy
+     * @return DataSharingQosPolicy reference
+     */
+    RTPS_DllAPI const DataSharingQosPolicy& data_sharing() const
+    {
+        return data_sharing_;
+    }
+
+    /**
+     * Setter for DataSharingQosPolicy
+     * @param data_sharing new value for the DataSharingQosPolicy
+     */
+    RTPS_DllAPI void data_sharing(
+            const DataSharingQosPolicy& data_sharing)
+    {
+        data_sharing_ = data_sharing;
+    }
+
 private:
 
     //!Durability Qos, implemented in the library.
@@ -799,6 +828,9 @@ private:
 
     //!Throughput controller
     fastrtps::rtps::ThroughputControllerDescriptor throughput_controller_;
+
+    //!DataSharing configuration
+    DataSharingQosPolicy data_sharing_;
 };
 
 RTPS_DllAPI extern const DataWriterQos DATAWRITER_QOS_DEFAULT;

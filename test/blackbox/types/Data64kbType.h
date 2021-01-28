@@ -33,20 +33,33 @@
  * @brief This class represents the TopicDataType of the type Data64kb defined by the user in the IDL file.
  * @ingroup DATA64KB
  */
-class Data64kbType : public eprosima::fastrtps::TopicDataType {
+class Data64kbType : public eprosima::fastrtps::TopicDataType
+{
 public:
+
     typedef Data64kb type;
 
-	Data64kbType();
-	virtual ~Data64kbType();
-	bool serialize(void *data, eprosima::fastrtps::rtps::SerializedPayload_t *payload);
-	bool deserialize(eprosima::fastrtps::rtps::SerializedPayload_t *payload, void *data);
-	bool getKey(void *data, eprosima::fastrtps::rtps::InstanceHandle_t *ihandle, bool force_md5);
-	void* createData();
-	std::function<uint32_t()> getSerializedSizeProvider(void *data);
-	void deleteData(void * data);
-	MD5 m_md5;
-	unsigned char* m_keyBuffer;
+    Data64kbType();
+    virtual ~Data64kbType();
+    bool serialize(
+            void* data,
+            eprosima::fastrtps::rtps::SerializedPayload_t* payload);
+    bool deserialize(
+            eprosima::fastrtps::rtps::SerializedPayload_t* payload,
+            void* data);
+    bool getKey(
+            void* data,
+            eprosima::fastrtps::rtps::InstanceHandle_t* ihandle,
+            bool force_md5);
+    void* createData();
+    std::function<uint32_t()> getSerializedSizeProvider(
+            void* data);
+    void deleteData(
+            void* data);
+    MD5 m_md5;
+    unsigned char* m_keyBuffer;
+    bool is_bounded() const;
+    bool is_plain() const;
 };
 
 #endif // _Data64kb_TYPE_H_

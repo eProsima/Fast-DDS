@@ -92,7 +92,7 @@ void ReaderQos::setQos(
         m_topicData = qos.m_topicData;
         m_topicData.hasChanged = true;
     }
-    if (m_groupData.getValue() != qos.m_groupData.getValue() )
+    if (m_groupData.getValue() != qos.m_groupData.getValue())
     {
         m_groupData = qos.m_groupData;
         m_groupData.hasChanged = true;
@@ -135,6 +135,12 @@ void ReaderQos::setQos(
         type_consistency = qos.type_consistency;
         type_consistency.hasChanged = true;
     }
+
+    if (!(data_sharing == qos.data_sharing))
+    {
+        data_sharing = qos.data_sharing;
+        data_sharing.hasChanged = true;
+    }
 }
 
 bool ReaderQos::checkQos() const
@@ -154,6 +160,7 @@ bool ReaderQos::checkQos() const
         logError(RTPS_QOS_CHECK, "BEST_EFFORT incompatible with EXCLUSIVE ownership");
         return false;
     }
+
     return true;
 }
 
@@ -200,6 +207,12 @@ bool ReaderQos::canQosBeUpdated(
         updatable = false;
         logWarning(RTPS_QOS_CHECK, "Destination order Kind cannot be changed after the creation of a subscriber.");
     }
+    if (data_sharing.kind() != qos.data_sharing.kind() ||
+            data_sharing.domain_ids() != qos.data_sharing.domain_ids())
+    {
+        updatable = false;
+        logWarning(RTPS_QOS_CHECK, "Data sharing configuration cannot be changed after the creation of a subscriber.");
+    }
     return updatable;
 }
 
@@ -223,6 +236,7 @@ void ReaderQos::clear()
     m_disablePositiveACKs.clear();
     representation.clear();
     type_consistency.clear();
+    data_sharing.clear();
 }
 
 } //namespace dds

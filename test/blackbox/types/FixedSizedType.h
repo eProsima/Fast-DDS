@@ -26,18 +26,31 @@
 
 #include "FixedSized.h"
 
-class FixedSizedType:public eprosima::fastrtps::TopicDataType {
+class FixedSizedType : public eprosima::fastrtps::TopicDataType
+{
 public:
+
     typedef FixedSized type;
 
-	FixedSizedType();
-	virtual ~FixedSizedType();
-	bool serialize(void*data, eprosima::fastrtps::rtps::SerializedPayload_t* payload);
-	bool deserialize(eprosima::fastrtps::rtps::SerializedPayload_t* payload,void * data);
-        std::function<uint32_t()> getSerializedSizeProvider(void *data);
-	bool getKey(void*data, eprosima::fastrtps::rtps::InstanceHandle_t* ihandle, bool force_md5);
-	void* createData();
-	void deleteData(void* data);
+    FixedSizedType();
+    virtual ~FixedSizedType();
+    bool serialize(
+            void* data,
+            eprosima::fastrtps::rtps::SerializedPayload_t* payload);
+    bool deserialize(
+            eprosima::fastrtps::rtps::SerializedPayload_t* payload,
+            void* data);
+    std::function<uint32_t()> getSerializedSizeProvider(
+            void* data);
+    bool getKey(
+            void* data,
+            eprosima::fastrtps::rtps::InstanceHandle_t* ihandle,
+            bool force_md5);
+    void* createData();
+    void deleteData(
+            void* data);
+    bool is_bounded() const;
+    bool is_plain() const;
 };
 
 

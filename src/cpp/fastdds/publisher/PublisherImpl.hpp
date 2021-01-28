@@ -58,6 +58,7 @@ class DomainParticipant;
 class Publisher;
 class DataWriterImpl;
 class Topic;
+class TypeSupport;
 
 /**
  * Class PublisherImpl, contains the actual implementation of the behaviour of the Publisher.

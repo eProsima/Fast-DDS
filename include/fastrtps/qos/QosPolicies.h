@@ -94,6 +94,11 @@ constexpr TypeConsistencyKind DISALLOW_TYPE_COERCION = TypeConsistencyKind::DISA
 constexpr TypeConsistencyKind ALLOW_TYPE_COERCION = TypeConsistencyKind::ALLOW_TYPE_COERCION;
 using TypeConsistencyEnforcementQosPolicy = fastdds::dds::TypeConsistencyEnforcementQosPolicy;
 using DisablePositiveACKsQosPolicy = fastdds::dds::DisablePositiveACKsQosPolicy;
+using DataSharingQosPolicy = fastdds::dds::DataSharingQosPolicy;
+using DataSharingKind = fastdds::dds::DataSharingKind;
+constexpr DataSharingKind AUTO = DataSharingKind::AUTO;
+constexpr DataSharingKind ON = DataSharingKind::ON;
+constexpr DataSharingKind OFF = DataSharingKind::OFF;
 using TypeIdV1 = fastdds::dds::TypeIdV1;
 using TypeObjectV1 = fastdds::dds::TypeObjectV1;
 
@@ -101,7 +106,7 @@ namespace xtypes {
 using TypeInformation = fastdds::dds::xtypes::TypeInformation;
 } //namespace xtypes
 
-}
-}
+} // namespace fastrtps
+} // namespace eprosima
 
 #endif /* QOS_POLICIES_H_ */

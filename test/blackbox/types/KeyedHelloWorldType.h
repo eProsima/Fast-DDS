@@ -31,20 +31,33 @@
  * @brief This class represents the TopicDataType of the type HelloMsg defined by the user in the IDL file.
  * @ingroup DEADLINEPAYLOAD
  */
-class KeyedHelloWorldType : public eprosima::fastrtps::TopicDataType {
+class KeyedHelloWorldType : public eprosima::fastrtps::TopicDataType
+{
 public:
-        typedef KeyedHelloWorld type;
 
-        KeyedHelloWorldType();
-        virtual ~KeyedHelloWorldType();
-	bool serialize(void *data, eprosima::fastrtps::rtps::SerializedPayload_t *payload);
-	bool deserialize(eprosima::fastrtps::rtps::SerializedPayload_t *payload, void *data);
-        std::function<uint32_t()> getSerializedSizeProvider(void* data);
-	bool getKey(void *data, eprosima::fastrtps::rtps::InstanceHandle_t *ihandle, bool force_md5);
-	void* createData();
-	void deleteData(void * data);
-	MD5 m_md5;
-	unsigned char* m_keyBuffer;
+    typedef KeyedHelloWorld type;
+
+    KeyedHelloWorldType();
+    virtual ~KeyedHelloWorldType();
+    bool serialize(
+            void* data,
+            eprosima::fastrtps::rtps::SerializedPayload_t* payload);
+    bool deserialize(
+            eprosima::fastrtps::rtps::SerializedPayload_t* payload,
+            void* data);
+    std::function<uint32_t()> getSerializedSizeProvider(
+            void* data);
+    bool getKey(
+            void* data,
+            eprosima::fastrtps::rtps::InstanceHandle_t* ihandle,
+            bool force_md5);
+    void* createData();
+    void deleteData(
+            void* data);
+    MD5 m_md5;
+    unsigned char* m_keyBuffer;
+    bool is_bounded() const;
+    bool is_plain() const;
 };
 
 #endif // _deadlinepayload_PUBSUBTYPE_H_

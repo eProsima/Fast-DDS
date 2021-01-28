@@ -37,6 +37,15 @@
 #include <unistd.h>
 #include <string.h>
 #include <net/if.h>
+#include <sys/ioctl.h>
+#include <net/if_arp.h>
+#include <errno.h>
+#if defined(__APPLE__)
+#include <sys/types.h>
+#include <sys/sysctl.h>
+#include <net/if_dl.h>
+#include <netinet/in.h>
+#endif // if defined(__APPLE__)
 #endif // if defined(_WIN32)
 
 #if defined(__FreeBSD__)
@@ -45,6 +54,7 @@
 
 #include <cstddef>
 #include <cstring>
+#include <algorithm>
 
 using namespace eprosima::fastrtps::rtps;
 
@@ -211,6 +221,158 @@ bool IPFinder::getIPs(
 }
 
 #endif // if defined(_WIN32)
+
+#if defined(_WIN32)
+
+bool IPFinder::getAllMACAddress(
+        std::vector<info_MAC>* macs)
+{
+    DWORD rv, size = DEFAULT_ADAPTER_ADDRESSES_SIZE;
+    PIP_ADAPTER_ADDRESSES adapter_addresses, aa;
+
+    adapter_addresses = (PIP_ADAPTER_ADDRESSES)malloc(DEFAULT_ADAPTER_ADDRESSES_SIZE);
+
+    rv = GetAdaptersAddresses(AF_UNSPEC, GAA_FLAG_INCLUDE_PREFIX, NULL, adapter_addresses, &size);
+
+    if (rv != ERROR_SUCCESS)
+    {
+        adapter_addresses = (PIP_ADAPTER_ADDRESSES)realloc(adapter_addresses, size);
+
+        rv = GetAdaptersAddresses(AF_UNSPEC, GAA_FLAG_INCLUDE_PREFIX, NULL, adapter_addresses, &size);
+    }
+
+    if (rv != ERROR_SUCCESS)
+    {
+        fprintf(stderr, "GetAdaptersAddresses() failed...");
+        free(adapter_addresses);
+        return false;
+    }
+
+    for (aa = adapter_addresses; aa != NULL; aa = aa->Next)
+    {
+        if (aa->OperStatus == 1) //is ENABLED
+        {
+            info_MAC mac;
+            memcpy(mac.address, aa->PhysicalAddress, aa->PhysicalAddressLength);
+
+            if (std::find(macs->begin(), macs->end(), mac) == macs->end())
+            {
+                macs->push_back(mac);
+            }
+        }
+    }
+
+    free(adapter_addresses);
+    return true;
+}
+
+#elif defined(__APPLE__)
+
+bool IPFinder::getAllMACAddress(
+        std::vector<info_MAC>* macs)
+{
+    int mib[6];
+    mib[0] = CTL_NET;
+    mib[1] = AF_ROUTE;
+    mib[2] = 0;
+    mib[3] = AF_LINK;
+    mib[4] = NET_RT_IFLIST;
+
+    std::vector<IPFinder::info_IP> ips;
+    IPFinder::getIPs(&ips);
+    for (auto& ip : ips)
+    {
+        if ((mib[5] = if_nametoindex(ip.dev.c_str())) == 0)
+        {
+            printf("Error on nametoindex: %s\n", strerror(errno));
+            return false;
+        }
+
+        size_t len;
+        unsigned char* buf;
+        if (sysctl(mib, 6, NULL, &len, NULL, 0) < 0)
+        {
+            printf("Error on sysctl: %s\n", strerror(errno));
+            return false;
+        }
+
+        if ((buf = (unsigned char*)malloc(len)) == NULL)
+        {
+            printf("Falure allocating %ld octets", len);
+            return false;
+        }
+
+        if (sysctl(mib, 6, buf, &len, NULL, 0) < 0)
+        {
+            printf("Error on sysctl: %s\n", strerror(errno));
+            return false;
+        }
+
+        sockaddr_dl* sdl = (sockaddr_dl*)(buf + sizeof(if_msghdr));
+        info_MAC mac;
+        memcpy(mac.address, LLADDR(sdl), 6);
+
+        if (std::find(macs->begin(), macs->end(), mac) == macs->end())
+        {
+            macs->push_back(mac);
+        }
+
+        free(buf);
+    }
+    return true;
+}
+
+#elif defined(__linux__)
+
+bool IPFinder::getAllMACAddress(
+        std::vector<info_MAC>* macs)
+{
+    std::vector<IPFinder::info_IP> ips;
+    IPFinder::getIPs(&ips);
+    for (auto& ip : ips)
+    {
+        struct ifreq ifr;
+        strncpy(ifr.ifr_name, ip.dev.c_str(), sizeof(ifr.ifr_name) - 1);
+        int fd = socket(PF_INET, SOCK_DGRAM, 0);
+        if (fd == -1)
+        {
+            printf("Error creating socket:  %s\n", strerror(errno));
+            return false;
+        }
+
+        if (ioctl(fd, SIOCGIFHWADDR, &ifr) == -1)
+        {
+            printf("Error on ioctl:  %s\n", strerror(errno));
+            close(fd);
+            return false;
+        }
+
+        if (ifr.ifr_hwaddr.sa_family != ARPHRD_ETHER)
+        {
+            continue;
+        }
+
+        info_MAC mac;
+        memcpy(mac.address, ifr.ifr_hwaddr.sa_data, 6);
+
+        if (std::find(macs->begin(), macs->end(), mac) == macs->end())
+        {
+            macs->push_back(mac);
+        }
+    }
+    return true;
+}
+
+#else
+
+bool IPFinder::getAllMACAddress(
+        std::vector<info_MAC>* macs)
+{
+    return false;
+}
+
+#endif // if defined(_WIN32)
+
 
 bool IPFinder::getIP4Address(
         LocatorList_t* locators)

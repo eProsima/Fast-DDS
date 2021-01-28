@@ -152,6 +152,8 @@ private:
                 eprosima::fastdds::dds::DataReader* datareader) override
         {
             ASSERT_NE(datareader, nullptr);
+            reader_.message_receive_count_.fetch_add(1);
+            reader_.message_receive_cv_.notify_one();
 
             if (reader_.receiving_.load())
             {
@@ -253,7 +255,7 @@ public:
         , matched_(0)
         , participant_matched_(0)
         , receiving_(false)
-        , current_received_count_(0)
+        , current_processed_count_(0)
         , number_samples_expected_(0)
         , discovery_result_(false)
         , onDiscovery_(nullptr)
@@ -269,11 +271,21 @@ public:
         , times_liveliness_recovered_(0)
         , times_incompatible_qos_(0)
         , last_incompatible_qos_(eprosima::fastdds::dds::INVALID_QOS_POLICY_ID)
+        , message_receive_count_(0)
     {
         // Generate topic name
         std::ostringstream t;
         t << topic_name_ << "_" << asio::ip::host_name() << "_" << GET_PID();
         topic_name_ = t.str();
+
+        if (enable_datasharing)
+        {
+            datareader_qos_.data_sharing().automatic();
+        }
+        else
+        {
+            datareader_qos_.data_sharing().off();
+        }
 
         // By default, memory mode is preallocated (the most restritive)
         datareader_qos_.endpoint().history_memory_policy = eprosima::fastrtps::rtps::PREALLOCATED_MEMORY_MODE;
@@ -396,7 +408,7 @@ public:
         mutex_.lock();
         total_msgs_ = msgs;
         number_samples_expected_ = total_msgs_.size();
-        current_received_count_ = 0;
+        current_processed_count_ = 0;
         last_seq = eprosima::fastrtps::rtps::SequenceNumber_t();
         mutex_.unlock();
 
@@ -416,11 +428,29 @@ public:
         receiving_.store(false);
     }
 
+    template<class _Rep,
+            class _Period
+            >
+    void wait_for_all_received(
+            const std::chrono::duration<_Rep, _Period>& max_wait,
+            size_t num_messages = 0)
+    {
+        if (num_messages == 0)
+        {
+            num_messages = number_samples_expected_;
+        }
+        std::unique_lock<std::mutex> lock(message_receive_mutex_);
+        message_receive_cv_.wait_for(lock, max_wait, [this, num_messages]() -> bool
+                {
+                    return num_messages == message_receive_count_;
+                });
+    }
+
     void block_for_all()
     {
         block([this]() -> bool
                 {
-                    return number_samples_expected_ == current_received_count_;
+                    return number_samples_expected_ == current_processed_count_;
                 });
     }
 
@@ -438,9 +468,9 @@ public:
     {
         block([this, at_least]() -> bool
                 {
-                    return current_received_count_ >= at_least;
+                    return current_processed_count_ >= at_least;
                 });
-        return current_received_count_;
+        return current_processed_count_;
     }
 
     void block(
@@ -459,10 +489,10 @@ public:
         std::unique_lock<std::mutex> lock(mutex_);
         cv_.wait_for(lock, max_wait, [this]() -> bool
                 {
-                    return number_samples_expected_ == current_received_count_;
+                    return number_samples_expected_ == current_processed_count_;
                 });
 
-        return current_received_count_;
+        return current_processed_count_;
     }
 
     void wait_discovery(
@@ -618,7 +648,7 @@ public:
 
     size_t getReceivedCount() const
     {
-        return current_received_count_;
+        return current_processed_count_;
     }
 
     eprosima::fastrtps::rtps::SequenceNumber_t get_last_sequence_received()
@@ -1059,6 +1089,27 @@ public:
         return *this;
     }
 
+    PubSubReader& datasharing_off()
+    {
+        datareader_qos_.data_sharing().off();
+        return *this;
+    }
+
+    PubSubReader& datasharing_auto(
+            std::vector<uint16_t> domain_id = std::vector<uint16_t>())
+    {
+        datareader_qos_.data_sharing().automatic(domain_id);
+        return *this;
+    }
+
+    PubSubReader& datasharing_on(
+            const std::string directory,
+            std::vector<uint16_t> domain_id = std::vector<uint16_t>())
+    {
+        datareader_qos_.data_sharing().on(directory, domain_id);
+        return *this;
+    }
+
     bool update_partition(
             const std::string& partition)
     {
@@ -1101,7 +1152,7 @@ public:
         eprosima::fastdds::dds::SampleInfo dds_info;
         if (datareader_->take_next_sample(data, &dds_info) == ReturnCode_t::RETCODE_OK)
         {
-            current_received_count_++;
+            current_processed_count_++;
             return true;
         }
         return false;
@@ -1241,7 +1292,7 @@ private:
                 auto it = std::find(total_msgs_.begin(), total_msgs_.end(), data);
                 ASSERT_NE(it, total_msgs_.end());
                 total_msgs_.erase(it);
-                ++current_received_count_;
+                ++current_processed_count_;
                 default_receive_print<type>(data);
                 cv_.notify_one();
             }
@@ -1319,7 +1370,7 @@ private:
     std::atomic<bool> receiving_;
     eprosima::fastdds::dds::TypeSupport type_;
     eprosima::fastrtps::rtps::SequenceNumber_t last_seq;
-    size_t current_received_count_;
+    size_t current_processed_count_;
     size_t number_samples_expected_;
     bool discovery_result_;
 
@@ -1360,6 +1411,12 @@ private:
     //! Latest conflicting PolicyId
     eprosima::fastdds::dds::QosPolicyId_t last_incompatible_qos_;
 
+    //! A mutex for messages received but not yet processed by the application
+    std::mutex message_receive_mutex_;
+    //! A condition variable for messages received but not yet processed by the application
+    std::condition_variable message_receive_cv_;
+    //! Number of messages received but not yet processed by the application
+    std::atomic<size_t> message_receive_count_;
 };
 
 #endif // _TEST_BLACKBOX_PUBSUBREADER_HPP_

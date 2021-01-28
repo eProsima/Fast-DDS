@@ -41,6 +41,7 @@ namespace rtps {
 class WriterListener;
 class WriterHistory;
 class FlowController;
+class DataSharingNotifier;
 struct CacheChange_t;
 
 /**
@@ -413,6 +414,18 @@ public:
             CDRMessage_t* message,
             std::chrono::steady_clock::time_point& max_blocking_time_point) const override;
 
+    /**
+     * @return Whether the writer is data sharing compatible or not
+     */
+    bool is_datasharing_compatible() const;
+
+    /**
+     * @param source_timestamp the timestamp of the payload we want to recycle
+     * @return whether a payload with the given source timestamp can be reused for a new change
+     */
+    virtual bool is_datasharing_payload_reusable(
+            const Time_t& source_timestamp) const = 0;
+
 protected:
 
     //!Is the data sent directly or announced by HB and THEN sent to the ones who ask for it?.
@@ -462,6 +475,11 @@ protected:
     virtual bool change_removed_by_history(
             CacheChange_t* a_change) = 0;
 
+    bool is_datasharing_compatible_with(
+            const ReaderProxyData& rdata) const;
+
+    bool is_pool_initialized() const;
+
 private:
 
     RTPSWriter& operator =(
@@ -469,10 +487,12 @@ private:
 
     void init(
             const std::shared_ptr<IPayloadPool>& payload_pool,
-            const std::shared_ptr<IChangePool>& change_pool);
+            const std::shared_ptr<IChangePool>& change_pool,
+            const WriterAttributes& att);
 
 
     RTPSWriter* next_[2] = { nullptr, nullptr };
+
 };
 
 } /* namespace rtps */

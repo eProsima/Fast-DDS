@@ -592,6 +592,12 @@ bool RTPSParticipantImpl::create_writer(
         return false;
     }
 
+    if (!SWriter->is_pool_initialized())
+    {
+        delete(SWriter);
+        return false;
+    }
+
 #if HAVE_SECURITY
     if (!is_builtin)
     {
@@ -1505,6 +1511,52 @@ bool RTPSParticipantImpl::pairing_remote_writer_with_local_reader_after_security
     }
 
     return return_value;
+}
+
+bool RTPSParticipantImpl::is_security_enabled_for_writer(
+        const WriterAttributes& writer_attributes)
+{
+    if (!is_security_initialized() || !is_secure())
+    {
+        return false;
+    }
+
+    if (security_attributes().is_rtps_protected)
+    {
+        return true;
+    }
+
+    security::EndpointSecurityAttributes security_attributes;
+    if (security_manager().get_datawriter_sec_attributes(writer_attributes.endpoint.properties, security_attributes))
+    {
+        return (security_attributes.is_payload_protected == true ||
+               security_attributes.is_submessage_protected == true);
+    }
+
+    return false;
+}
+
+bool RTPSParticipantImpl::is_security_enabled_for_reader(
+        const ReaderAttributes& reader_attributes)
+{
+    if (!is_security_initialized() || !is_secure())
+    {
+        return false;
+    }
+
+    if (security_attributes().is_rtps_protected)
+    {
+        return true;
+    }
+
+    security::EndpointSecurityAttributes security_attributes;
+    if (security_manager().get_datareader_sec_attributes(reader_attributes.endpoint.properties, security_attributes))
+    {
+        return (security_attributes.is_payload_protected == true ||
+               security_attributes.is_submessage_protected == true);
+    }
+
+    return false;
 }
 
 #endif // if HAVE_SECURITY

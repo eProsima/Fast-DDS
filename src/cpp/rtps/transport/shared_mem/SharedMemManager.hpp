@@ -20,8 +20,9 @@
 #include <unordered_map>
 
 #include <rtps/transport/shared_mem/SharedMemGlobal.hpp>
-#include <rtps/transport/shared_mem/RobustSharedLock.hpp>
-#include <rtps/transport/shared_mem/SharedMemWatchdog.hpp>
+
+#include <utils/shared_memory/RobustSharedLock.hpp>
+#include <utils/shared_memory/SharedMemWatchdog.hpp>
 
 namespace eprosima {
 namespace fastdds {
@@ -671,7 +672,7 @@ public:
                     SharedMemGlobal::PortCell* head_cell = nullptr;
                     buffer_ref.reset();
 
-                    while ( !is_closed_.load() && nullptr == (head_cell = global_listener_->head()) )
+                    while ( !is_closed_.load() && nullptr == (head_cell = global_listener_->head()))
                     {
                         // Wait until there's data to pop
                         global_port_->wait_pop(*global_listener_, is_closed_, listener_index_);
@@ -692,7 +693,7 @@ public:
                     auto segment = shared_mem_manager_->find_segment(buffer_descriptor.source_segment_id);
                     auto buffer_node =
                             static_cast<BufferNode*>(segment->get_address_from_offset(buffer_descriptor.
-                            buffer_node_offset));
+                                    buffer_node_offset));
 
                     // TODO(Adolfo) : Dynamic allocation. Use foonathan to convert it to static allocation
                     buffer_ref = std::make_shared<SharedMemBuffer>(segment, buffer_descriptor.source_segment_id,
@@ -1029,8 +1030,8 @@ private:
             std::unordered_map<std::shared_ptr<SegmentWrapper>, uint32_t>::iterator watched_it_;
 
             std::mutex to_add_remove_mutex_;
-            std::vector<std::shared_ptr<SegmentWrapper> > to_add_;
-            std::vector<std::shared_ptr<SegmentWrapper> > to_remove_;
+            std::vector<std::shared_ptr<SegmentWrapper>> to_add_;
+            std::vector<std::shared_ptr<SegmentWrapper>> to_remove_;
 
             WatchTask()
                 : watched_it_(watched_segments_.end())
@@ -1185,7 +1186,7 @@ private:
     uint32_t per_allocation_extra_size_;
 
     std::unordered_map<SharedMemSegment::Id::type, std::shared_ptr<SegmentWrapper>,
-            std::hash<SharedMemSegment::Id::type> > ids_segments_;
+            std::hash<SharedMemSegment::Id::type>> ids_segments_;
     std::mutex ids_segments_mutex_;
     uint64_t segments_mem_;
 

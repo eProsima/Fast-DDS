@@ -16,6 +16,7 @@
 #define _FASTDDS_SHAREDMEM_UUID_H_
 
 #ifdef _MSC_VER
+#define WIN32_LEAN_AND_MEAN
 #include <Windows.h>
 #endif // ifdef _MSC_VER
 
@@ -186,7 +187,7 @@ private:
 
 namespace std {
 template <>
-struct hash<eprosima::fastdds::rtps::UUID<8> >
+struct hash<eprosima::fastdds::rtps::UUID<8>>
 {
     std::size_t operator ()(
             const eprosima::fastdds::rtps::UUID<8>& k) const

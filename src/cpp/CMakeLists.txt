@@ -57,6 +57,9 @@ set(${PROJECT_NAME}_source_files
     rtps/history/ReaderHistory.cpp
     rtps/history/TopicPayloadPool.cpp
     rtps/history/TopicPayloadPoolRegistry.cpp
+    rtps/DataSharing/DataSharingPayloadPool.cpp
+    rtps/DataSharing/DataSharingListener.cpp
+    rtps/DataSharing/DataSharingNotification.cpp
     rtps/reader/WriterProxy.cpp
     rtps/reader/StatefulReader.cpp
     rtps/reader/StatelessReader.cpp

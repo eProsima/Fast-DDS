@@ -83,6 +83,10 @@ inline bool readInt64(
         CDRMessage_t* msg,
         int64_t* lolo);
 
+inline bool readUInt64(
+        CDRMessage_t* msg,
+        uint64_t* lolo);
+
 inline bool readSequenceNumber(
         CDRMessage_t* msg,
         SequenceNumber_t* sn);
@@ -225,6 +229,10 @@ inline bool addInt64(
         CDRMessage_t* msg,
         int64_t lo);
 
+inline bool addUInt64(
+        CDRMessage_t* msg,
+        uint64_t lo);
+
 inline bool addEntityId(
         CDRMessage_t* msg,
         const EntityId_t* id);
@@ -315,5 +323,5 @@ inline bool addParticipantGenericMessage(
 #include <fastdds/rtps/messages/CDRMessage.hpp>
 
 #endif /* DOXYGEN_SHOULD_SKIP_THIS */
-#endif
+#endif // ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 #endif /* _FASTDDS_RTPS_CDRMESSAGE_H_ */

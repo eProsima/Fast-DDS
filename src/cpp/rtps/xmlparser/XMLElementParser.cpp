@@ -852,6 +852,7 @@ XMLP_ret XMLParser::getXMLResourceLimitsQos(
                 <xs:element name="max_instances" type="int32Type" minOccurs="0"/>
                 <xs:element name="max_samples_per_instance" type="int32Type" minOccurs="0"/>
                 <xs:element name="allocated_samples" type="int32Type" minOccurs="0"/>
+                <xs:element name="extra_samples" type="int32Type" minOccurs="0"/>
             </xs:all>
         </xs:complexType>
      */
@@ -889,6 +890,14 @@ XMLP_ret XMLParser::getXMLResourceLimitsQos(
         {
             // allocated_samples - int32Type
             if (XMLP_ret::XML_OK != getXMLInt(p_aux0, &resourceLimitsQos.allocated_samples, ident))
+            {
+                return XMLP_ret::XML_ERROR;
+            }
+        }
+        else if (strcmp(name, EXTRA_SAMPLES) == 0)
+        {
+            // extra_samples - int32Type
+            if (XMLP_ret::XML_OK != getXMLInt(p_aux0, &resourceLimitsQos.extra_samples, ident))
             {
                 return XMLP_ret::XML_ERROR;
             }
@@ -1072,6 +1081,7 @@ XMLP_ret XMLParser::getXMLWriterQosPolicies(
                 <xs:element name="topicData" type="topicDataQosPolicyType" minOccurs="0"/>
                 <xs:element name="groupData" type="groupDataQosPolicyType" minOccurs="0"/>
                 <xs:element name="publishMode" type="publishModeQosPolicyType" minOccurs="0"/>
+                <xs:element name="data_sharing" type="dataSharingQosPolicyType" minOccurs="0"/>
             </xs:all>
         </xs:complexType>
      */
@@ -1171,6 +1181,14 @@ XMLP_ret XMLParser::getXMLWriterQosPolicies(
             //if (nullptr != (p_aux = elem->FirstChildElement(        GROUP_DATA))) getXMLGroupDataQos(p_aux, ident);
             logError(XMLPARSER, "Quality of Service '" << p_aux0->Value() << "' do not supported for now");
         }
+        else if (strcmp(name, DATA_SHARING) == 0)
+        {
+            //data sharing
+            if (XMLP_ret::XML_OK != getXMLDataSharingQos(p_aux0, qos.data_sharing, ident))
+            {
+                return XMLP_ret::XML_ERROR;
+            }
+        }
         else
         {
             logError(XMLPARSER, "Invalid element found into 'writerQosPoliciesType'. Name: " << name);
@@ -1203,6 +1221,7 @@ XMLP_ret XMLParser::getXMLReaderQosPolicies(
                 <xs:element name="partition" type="partitionQosPolicyType" minOccurs="0"/>
                 <xs:element name="topicData" type="topicDataQosPolicyType" minOccurs="0"/>
                 <xs:element name="groupData" type="groupDataQosPolicyType" minOccurs="0"/>
+                <xs:element name="data_sharing" type="dataSharingQosPolicyType" minOccurs="0"/>
             </xs:all>
         </xs:complexType>
      */
@@ -1291,6 +1310,14 @@ XMLP_ret XMLParser::getXMLReaderQosPolicies(
             //if (nullptr != (p_aux = elem->FirstChildElement(        TOPIC_DATA))) getXMLTopicDataQos(p_aux, ident);
             //if (nullptr != (p_aux = elem->FirstChildElement(        GROUP_DATA))) getXMLGroupDataQos(p_aux, ident);
             logError(XMLPARSER, "Quality of Service '" << p_aux0->Value() << "' do not supported for now");
+        }
+        else if (strcmp(name, DATA_SHARING) == 0)
+        {
+            //data sharing
+            if (XMLP_ret::XML_OK != getXMLDataSharingQos(p_aux0, qos.data_sharing, ident))
+            {
+                return XMLP_ret::XML_ERROR;
+            }
         }
         else
         {
@@ -1797,6 +1824,172 @@ XMLP_ret XMLParser::getXMLDisablePositiveAcksQos(
             logError(XMLPARSER, "Node 'disablePositiveAcksQosPolicyType' with unknown content");
             return XMLP_ret::XML_ERROR;
         }
+    }
+
+    return XMLP_ret::XML_OK;
+}
+
+XMLP_ret XMLParser::getXMLDataSharingQos(
+        tinyxml2::XMLElement* elem,
+        DataSharingQosPolicy& data_sharing,
+        uint8_t ident)
+{
+    /*
+        <xs:complexType name="dataSharingQosPolicyType">
+            <xs:all>
+                <xs:element name="kind" type="datasharingQosKindType" minOccurs="1"/>
+                <xs:element name="shared_dir" type="stringType" minOccurs="0"/>
+                <xs:element name="domain_ids" type="domainIdVectorType" minOccurs="0"/>
+                <xs:element name="max_domains" type="uint32Type" minOccurs="0"/>
+            </xs:all>
+        </xs:complexType>
+     */
+    bool kind_found = false;
+    DataSharingKind kind = DataSharingKind::AUTO;
+    std::string shm_directory = "";
+    int32_t max_domains = 0;
+    std::vector<uint16_t> domain_ids;
+
+    tinyxml2::XMLElement* p_aux0 = nullptr;
+    const char* name = nullptr;
+    for (p_aux0 = elem->FirstChildElement(); p_aux0 != NULL; p_aux0 = p_aux0->NextSiblingElement())
+    {
+        name = p_aux0->Name();
+        if (strcmp(name, KIND) == 0)
+        {
+            /*
+                <xs:simpleType name="datasharingQosKindType">
+                    <xs:restriction base="xs:string">
+                        <xs:enumeration value="ON"/>
+                        <xs:enumeration value="OFF"/>
+                        <xs:enumeration value="DEFAULT"/>
+                    </xs:restriction>
+                </xs:simpleType>
+             */
+            const char* text = p_aux0->GetText();
+            if (nullptr == text)
+            {
+                logError(XMLPARSER, "Node '" << KIND << "' without content");
+                return XMLP_ret::XML_ERROR;
+            }
+            if (strcmp(text, ON) == 0)
+            {
+                kind = DataSharingKind::ON;
+            }
+            else if (strcmp(text, OFF) == 0)
+            {
+                kind = DataSharingKind::OFF;
+            }
+            else if (strcmp(text, AUTOMATIC) == 0)
+            {
+                kind = DataSharingKind::AUTO;
+            }
+            else
+            {
+                logError(XMLPARSER, "Node '" << KIND << "' with bad content");
+                return XMLP_ret::XML_ERROR;
+            }
+            kind_found = true;
+        }
+        else if (strcmp(name, SHARED_DIR) == 0)
+        {
+            if (XMLP_ret::XML_OK != getXMLString(p_aux0, &shm_directory, ident))
+            {
+                return XMLP_ret::XML_ERROR;
+            }
+        }
+        else if (strcmp(name, MAX_DOMAINS) == 0)
+        {
+            if (XMLP_ret::XML_OK != getXMLInt(p_aux0, &max_domains, ident))
+            {
+                return XMLP_ret::XML_ERROR;
+            }
+            if (max_domains < 0)
+            {
+                logError(XMLPARSER, "max domains cannot be negative");
+                return XMLP_ret::XML_ERROR;
+            }
+
+        }
+        else if (strcmp(name, DOMAIN_IDS) == 0)
+        {
+            /*
+                <xs:complexType name="domainIdVectorType">
+                    <xs:sequence>
+                        <xs:element name="domainId" type="uint16Type" maxOccurs="unbounded"/>
+                    </xs:sequence>
+                </xs:complexType>
+             */
+
+            tinyxml2::XMLElement* p_aux1;
+            const char* name1 = nullptr;
+            bool domain_id_found = false;
+            for (p_aux1 = p_aux0->FirstChildElement(); p_aux1 != NULL; p_aux1 = p_aux1->NextSiblingElement())
+            {
+                name1 = p_aux1->Name();
+                if (strcmp(name1, DOMAIN_ID) == 0)
+                {
+                    uint16_t id;
+                    if (XMLP_ret::XML_OK != getXMLUint(p_aux1, &id, ident))
+                    {
+                        return XMLP_ret::XML_ERROR;
+                    }
+                    domain_ids.push_back(id);
+                    domain_id_found = true;
+                }
+                else
+                {
+                    logError(XMLPARSER, "Invalid element found in 'domain_ids'. Name: " << name1);
+                    return XMLP_ret::XML_ERROR;
+                }
+            }
+
+            if (!domain_id_found)
+            {
+                // Not even one
+                logError(XMLPARSER, "Node '" << DOMAIN_IDS << "' without content");
+                return XMLP_ret::XML_ERROR;
+            }
+        }
+        else
+        {
+            logError(XMLPARSER, "Invalid element found in 'data_sharing'. Name: " << name);
+            return XMLP_ret::XML_ERROR;
+        }
+    }
+
+    if (!kind_found)
+    {
+        logError(XMLPARSER, "Node 'data_sharing' without kind");
+        return XMLP_ret::XML_ERROR;
+    }
+
+    if (max_domains != 0 && domain_ids.size() > static_cast<uint32_t>(max_domains))
+    {
+        logError(XMLPARSER, "Node 'data_sharing' defines a maximum of " << max_domains
+                                                                        << " domain IDs but also define " << domain_ids.size() <<
+                " domain IDs");
+        return XMLP_ret::XML_ERROR;
+    }
+
+    data_sharing.set_max_domains(static_cast<uint32_t>(max_domains));
+
+    switch (kind)
+    {
+        case DataSharingKind::ON:
+            data_sharing.on(shm_directory, domain_ids);
+            break;
+
+        case DataSharingKind::AUTO:
+            data_sharing.automatic(shm_directory, domain_ids);
+            break;
+
+        case DataSharingKind::OFF:
+            data_sharing.off();
+            break;
+
+        default:
+            break;
     }
 
     return XMLP_ret::XML_OK;

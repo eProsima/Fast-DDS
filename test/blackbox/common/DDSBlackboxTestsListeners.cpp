@@ -27,28 +27,50 @@ using namespace eprosima::fastrtps::rtps;
         std::string("incompatible_") + TEST_TOPIC_NAME)
 
 
-class DDSStatus : public testing::TestWithParam<bool>
+enum communication_type
+{
+    TRANSPORT,
+    INTRAPROCESS,
+    DATASHARING
+};
+
+class DDSStatus : public testing::TestWithParam<communication_type>
 {
 public:
 
     void SetUp() override
     {
         LibrarySettingsAttributes library_settings;
-        if (GetParam())
+        switch (GetParam())
         {
-            library_settings.intraprocess_delivery = IntraprocessDeliveryType::INTRAPROCESS_FULL;
-            xmlparser::XMLProfileManager::library_settings(library_settings);
+            case INTRAPROCESS:
+                library_settings.intraprocess_delivery = IntraprocessDeliveryType::INTRAPROCESS_FULL;
+                xmlparser::XMLProfileManager::library_settings(library_settings);
+                break;
+            case DATASHARING:
+                enable_datasharing = true;
+                break;
+            case TRANSPORT:
+            default:
+                break;
         }
-
     }
 
     void TearDown() override
     {
         LibrarySettingsAttributes library_settings;
-        if (GetParam())
+        switch (GetParam())
         {
-            library_settings.intraprocess_delivery = IntraprocessDeliveryType::INTRAPROCESS_OFF;
-            xmlparser::XMLProfileManager::library_settings(library_settings);
+            case INTRAPROCESS:
+                library_settings.intraprocess_delivery = IntraprocessDeliveryType::INTRAPROCESS_OFF;
+                xmlparser::XMLProfileManager::library_settings(library_settings);
+                break;
+            case DATASHARING:
+                enable_datasharing = false;
+                break;
+            case TRANSPORT:
+            default:
+                break;
         }
     }
 
@@ -362,13 +384,21 @@ TEST_P(DDSStatus, IncompatibleQosGetters)
 
 GTEST_INSTANTIATE_TEST_MACRO(DDSStatus,
         DDSStatus,
-        testing::Values(false, true),
+        testing::Values(TRANSPORT, INTRAPROCESS, DATASHARING),
         [](const testing::TestParamInfo<DDSStatus::ParamType>& info)
         {
-            if (info.param)
+            switch (info.param)
             {
-                return "Intraprocess";
+                case INTRAPROCESS:
+                    return "Intraprocess";
+                    break;
+                case DATASHARING:
+                    return "Datasharing";
+                    break;
+                case TRANSPORT:
+                default:
+                    return "Transport";
             }
-            return "NonIntraprocess";
+
         });
 

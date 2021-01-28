@@ -83,6 +83,7 @@ public:
     /**
      * Remove a WriterProxyData from the matached writers.
      * @param writer_guid GUID of the writer to remove.
+     * @param removed_by_lease true it the writer was removed due to lease duration.
      * @return True if correct.
      */
     bool matched_writer_remove(
@@ -206,6 +207,46 @@ public:
         return mp_RTPSParticipant;
     }
 
+    /**
+     * @brief Assert liveliness of remote writer
+     * @param guid The guid of the remote writer
+     */
+    void assert_writer_liveliness(
+            const GUID_t& guid) override;
+
+    /**
+     * Called just before a change is going to be deserialized.
+     * @param [in]  change Pointer to the change being accessed.
+     * @param [out] wp     Writer proxy the @c change belongs to.
+     *
+     * @return Whether the change is still valid or not.
+     */
+    bool begin_sample_access_nts(
+            CacheChange_t* change,
+            WriterProxy*& wp) override;
+
+    /**
+     * Called after the change has been deserialized.
+     * @param [in] change        Pointer to the change being accessed.
+     * @param [in] wp            Writer proxy the @c change belongs to.
+     * @param [in] mark_as_read  Whether the @c change should be marked as read or not.
+     */
+    void end_sample_access_nts(
+            CacheChange_t* change,
+            WriterProxy*& wp,
+            bool mark_as_read) override;
+
+    /**
+     * Called when the user has retrieved a change from the history.
+     * @param change Pointer to the change to ACK
+     * @param writer Writer proxy of the \c change.
+     * @param mark_as_read Whether the \c change should be marked as read or not
+     */
+    void change_read_by_user(
+            CacheChange_t* change,
+            const WriterProxy* writer,
+            bool mark_as_read = true) override;
+
 private:
 
     struct RemoteWriterInfo_t
@@ -225,19 +266,17 @@ private:
             const SequenceNumber_t& seq);
 
     /**
-     * @brief Assert liveliness of remote writer
-     * @param guid The guid of the remote writer
-     */
-    void assert_writer_liveliness(
-            const GUID_t& guid);
-
-    /**
      * @brief A method to check if a matched writer has manual_by_topic liveliness
      * @param guid The guid of the remote writer
      * @return True if writer has manual_by_topic livelinesss
      */
     bool writer_has_manual_liveliness(
             const GUID_t& guid);
+
+    void remove_changes_from(
+            const GUID_t& writerGUID,
+            bool is_payload_pool_lost = false);
+
 
     //!List of GUID_t os matched writers.
     //!Is only used in the Discovery, to correctly notify the user using SubscriptionListener::onSubscriptionMatched();

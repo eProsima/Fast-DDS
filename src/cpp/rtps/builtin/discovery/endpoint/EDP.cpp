@@ -917,6 +917,7 @@ bool EDP::valid_matching(
         logWarning(RTPS_EDP, "Incompatible liveliness kinds: offered kind is < than requested kind");
         incompatible_qos.set(fastdds::dds::LIVELINESS_QOS_POLICY_ID);
     }
+
 #if HAVE_SECURITY
     // TODO: Check EndpointSecurityInfo
 #endif // if HAVE_SECURITY

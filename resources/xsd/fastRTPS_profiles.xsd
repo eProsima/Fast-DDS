@@ -640,6 +640,29 @@
         </xs:all>
     </xs:complexType>
 
+    <xs:complexType name="domainIdVectorType">
+        <xs:sequence>
+            <xs:element name="domainId" type="uint16Type" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:simpleType name="datasharingQosKindType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="ON"/>
+            <xs:enumeration value="OFF"/>
+            <xs:enumeration value="AUTOMATIC"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:complexType name="dataSharingQosPolicyType">
+        <xs:all>
+            <xs:element name="kind" type="datasharingQosKindType" minOccurs="1"/>
+            <xs:element name="shared_dir" type="stringType" minOccurs="0"/>
+            <xs:element name="domain_ids" type="domainIdVectorType" minOccurs="0"/>
+            <xs:element name="max_domains" type="uint32Type" minOccurs="0"/>
+        </xs:all>
+    </xs:complexType>
+
     <xs:complexType name="writerQosPoliciesType">
         <xs:all minOccurs="0">
             <xs:element name="durability" type="durabilityQosPolicyType" minOccurs="0"/>
@@ -659,6 +682,7 @@
             <xs:element name="topicData" type="topicDataQosPolicyType" minOccurs="0"/>
             <xs:element name="groupData" type="groupDataQosPolicyType" minOccurs="0"/>
             <xs:element name="publishMode" type="publishModeQosPolicyType" minOccurs="0"/>
+            <xs:element name="data_sharing" type="dataSharingQosPolicyType" minOccurs="0"/>
         </xs:all>
     </xs:complexType>
 
@@ -679,6 +703,7 @@
             <xs:element name="partition" type="partitionQosPolicyType" minOccurs="0"/>
             <xs:element name="topicData" type="topicDataQosPolicyType" minOccurs="0"/>
             <xs:element name="groupData" type="groupDataQosPolicyType" minOccurs="0"/>
+            <xs:element name="data_sharing" type="dataSharingQosPolicyType" minOccurs="0"/>
         </xs:all>
     </xs:complexType>
 

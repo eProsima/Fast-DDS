@@ -168,6 +168,25 @@ public:
             CDRMessage_t* message,
             std::chrono::steady_clock::time_point& max_blocking_time_point) const override;
 
+    /**
+     * Get the number of matched readers
+     * @return Number of the matched readers
+     */
+    inline size_t getMatchedReadersSize() const
+    {
+        std::lock_guard<RecursiveTimedMutex> guard(mp_mutex);
+        return matched_remote_readers_.size()
+               + matched_local_readers_.size()
+               + matched_datasharing_readers_.size();
+    }
+
+    /**
+     * @param source_timestamp the timestamp of the payload we want to recycle
+     * @return whether a payload with the given source timestamp can be reused for a new change
+     */
+    bool is_datasharing_payload_reusable(
+            const Time_t& source_timestamp) const override;
+
 private:
 
     void init(
@@ -181,6 +200,9 @@ private:
     void update_reader_info(
             bool create_sender_resources);
 
+    bool datasharing_delivery(
+            CacheChange_t* change);
+
     bool intraprocess_delivery(
             CacheChange_t* change,
             ReaderLocator& reader_locator);
@@ -191,7 +213,7 @@ private:
 
     bool is_inline_qos_expected_ = false;
     LocatorList_t fixed_locators_;
-    ResourceLimitedVector<ReaderLocator> matched_readers_;
+    ResourceLimitedVector<std::unique_ptr<ReaderLocator>> matched_remote_readers_;
 
     ResourceLimitedVector<GUID_t> late_joiner_guids_;
     SequenceNumber_t first_seq_for_all_readers_;
@@ -202,6 +224,10 @@ private:
     std::vector<std::unique_ptr<FlowController>> flow_controllers_;
     uint64_t last_intraprocess_sequence_number_;
     bool there_are_remote_readers_ = false;
+    ResourceLimitedVector<std::unique_ptr<ReaderLocator>> matched_local_readers_;
+    ResourceLimitedVector<std::unique_ptr<ReaderLocator>> matched_datasharing_readers_;
+    ResourceLimitedVector<std::unique_ptr<ReaderLocator>> matched_readers_pool_;
+
 };
 
 } /* namespace rtps */

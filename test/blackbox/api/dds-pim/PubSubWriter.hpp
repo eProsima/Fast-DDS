@@ -262,6 +262,16 @@ public:
         t << topic_name << "_" << asio::ip::host_name() << "_" << GET_PID();
         topic_name_ = t.str();
 
+        if (enable_datasharing)
+        {
+            datawriter_qos_.data_sharing().automatic();
+            datawriter_qos_.resource_limits().extra_samples = 5;
+        }
+        else
+        {
+            datawriter_qos_.data_sharing().off();
+        }
+
         // By default, memory mode is preallocated (the most restritive)
         datawriter_qos_.endpoint().history_memory_policy = eprosima::fastrtps::rtps::PREALLOCATED_MEMORY_MODE;
 
@@ -844,6 +854,13 @@ public:
         return *this;
     }
 
+    PubSubWriter& resource_limits_extra_samples(
+            const int32_t extra)
+    {
+        datawriter_qos_.resource_limits().extra_samples = extra;
+        return *this;
+    }
+
     PubSubWriter& matched_readers_allocation(
             size_t initial,
             size_t maximum)
@@ -1108,6 +1125,27 @@ public:
             int32_t participantId)
     {
         participant_qos_.wire_protocol().participant_id = participantId;
+        return *this;
+    }
+
+    PubSubWriter& datasharing_off()
+    {
+        datawriter_qos_.data_sharing().off();
+        return *this;
+    }
+
+    PubSubWriter& datasharing_auto(
+            std::vector<uint16_t> domain_id = std::vector<uint16_t>())
+    {
+        datawriter_qos_.data_sharing().automatic(domain_id);
+        return *this;
+    }
+
+    PubSubWriter& datasharing_on(
+            const std::string directory,
+            std::vector<uint16_t> domain_id = std::vector<uint16_t>())
+    {
+        datawriter_qos_.data_sharing().on(directory, domain_id);
         return *this;
     }
 

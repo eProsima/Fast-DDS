@@ -26,6 +26,8 @@
 
 #include <rtps/history/BasicPayloadPool.hpp>
 #include <rtps/history/CacheChangePool.h>
+#include <rtps/DataSharing/DataSharingNotifier.hpp>
+#include <rtps/DataSharing/WriterPool.hpp>
 #include <rtps/flowcontrol/FlowController.h>
 #include <rtps/participant/RTPSParticipantImpl.h>
 
@@ -57,7 +59,7 @@ RTPSWriter::RTPSWriter(
     std::shared_ptr<IPayloadPool> payload_pool;
     payload_pool = BasicPayloadPool::get(cfg, change_pool);
 
-    init(payload_pool, change_pool);
+    init(payload_pool, change_pool, att);
 }
 
 RTPSWriter::RTPSWriter(
@@ -93,12 +95,13 @@ RTPSWriter::RTPSWriter(
     , liveliness_lease_duration_(att.liveliness_lease_duration)
     , liveliness_announcement_period_(att.liveliness_announcement_period)
 {
-    init(payload_pool, change_pool);
+    init(payload_pool, change_pool, att);
 }
 
 void RTPSWriter::init(
         const std::shared_ptr<IPayloadPool>& payload_pool,
-        const std::shared_ptr<IChangePool>& change_pool)
+        const std::shared_ptr<IChangePool>& change_pool,
+        const WriterAttributes& att)
 {
     payload_pool_ = payload_pool;
     change_pool_ = change_pool;
@@ -106,6 +109,15 @@ void RTPSWriter::init(
     if (mp_history->m_att.memoryPolicy == PREALLOCATED_MEMORY_MODE)
     {
         fixed_payload_size_ = mp_history->m_att.payloadMaxSize;
+    }
+
+    if (att.endpoint.data_sharing_configuration().kind() != OFF)
+    {
+        std::shared_ptr<WriterPool> pool = std::dynamic_pointer_cast<WriterPool>(payload_pool);
+        if (!pool || !pool->init_shared_memory(this, att.endpoint.data_sharing_configuration().shm_directory()))
+        {
+            logError(RTPS_WRITER, "Could not initialize DataSharing writer pool");
+        }
     }
 
     mp_history->mp_writer = this;
@@ -364,6 +376,43 @@ const Duration_t& RTPSWriter::get_liveliness_lease_duration() const
 const Duration_t& RTPSWriter::get_liveliness_announcement_period() const
 {
     return liveliness_announcement_period_;
+}
+
+bool RTPSWriter::is_datasharing_compatible() const
+{
+    return (m_att.data_sharing_configuration().kind() != OFF);
+}
+
+bool RTPSWriter::is_datasharing_compatible_with(
+        const ReaderProxyData& rdata) const
+{
+    if (!is_datasharing_compatible() ||
+            rdata.m_qos.data_sharing.kind() == fastdds::dds::OFF)
+    {
+        return false;
+    }
+
+    for (auto id : rdata.m_qos.data_sharing.domain_ids())
+    {
+        if (std::find(m_att.data_sharing_configuration().domain_ids().begin(),
+                m_att.data_sharing_configuration().domain_ids().end(), id)
+                != m_att.data_sharing_configuration().domain_ids().end())
+        {
+            return true;
+        }
+    }
+    return false;
+}
+
+bool RTPSWriter::is_pool_initialized() const
+{
+    if (is_datasharing_compatible())
+    {
+        auto pool = std::dynamic_pointer_cast<WriterPool>(payload_pool_);
+        assert (pool != nullptr);
+        return pool->is_initialized();
+    }
+    return true;
 }
 
 }  // namespace rtps

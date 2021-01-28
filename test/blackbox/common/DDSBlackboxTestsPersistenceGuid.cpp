@@ -23,20 +23,57 @@
 #include <thread>
 
 #include <gtest/gtest.h>
+#include <fastrtps/xmlparser/XMLProfileManager.h>
 
 using namespace eprosima::fastrtps::rtps;
 using namespace eprosima::fastdds::dds;
 
-class PersistenceGuid : public ::testing::TestWithParam<bool>
+enum communication_type
+{
+    TRANSPORT,
+    INTRAPROCESS,
+    DATASHARING
+};
+
+class PersistenceGuid : public ::testing::TestWithParam<communication_type>
 {
 protected:
 
-    virtual void SetUp()
+    void SetUp() override
     {
+        eprosima::fastrtps::LibrarySettingsAttributes library_settings;
+        switch (GetParam())
+        {
+            case INTRAPROCESS:
+                library_settings.intraprocess_delivery =
+                        eprosima::fastrtps::IntraprocessDeliveryType::INTRAPROCESS_FULL;
+                eprosima::fastrtps::xmlparser::XMLProfileManager::library_settings(library_settings);
+                break;
+            case DATASHARING:
+                enable_datasharing = true;
+                break;
+            case TRANSPORT:
+            default:
+                break;
+        }
     }
 
-    virtual void TearDown()
+    void TearDown() override
     {
+        eprosima::fastrtps::LibrarySettingsAttributes library_settings;
+        switch (GetParam())
+        {
+            case INTRAPROCESS:
+                library_settings.intraprocess_delivery = eprosima::fastrtps::IntraprocessDeliveryType::INTRAPROCESS_OFF;
+                eprosima::fastrtps::xmlparser::XMLProfileManager::library_settings(library_settings);
+                break;
+            case DATASHARING:
+                enable_datasharing = false;
+                break;
+            case TRANSPORT:
+            default:
+                break;
+        }
         std::remove("persistence.db");
     }
 
@@ -357,13 +394,21 @@ TEST_P(PersistenceGuid, NoSetPersistenceForTransientLocal)
 
 GTEST_INSTANTIATE_TEST_MACRO(PersistenceGuid,
         PersistenceGuid,
-        testing::Values(false, true),
+        testing::Values(TRANSPORT, INTRAPROCESS, DATASHARING),
         [](const testing::TestParamInfo<PersistenceGuid::ParamType>& info)
         {
-            if (info.param)
+            switch (info.param)
             {
-                return "Intraprocess";
+                case INTRAPROCESS:
+                    return "Intraprocess";
+                    break;
+                case DATASHARING:
+                    return "Datasharing";
+                    break;
+                case TRANSPORT:
+                default:
+                    return "Transport";
             }
-            return "NonIntraprocess";
+
         });
 #endif // if HAVE_SQLITE3

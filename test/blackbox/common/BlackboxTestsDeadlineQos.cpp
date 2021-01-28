@@ -27,28 +27,50 @@
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
 
-class DeadlineQos : public testing::TestWithParam<bool>
+enum communication_type
+{
+    TRANSPORT,
+    INTRAPROCESS,
+    DATASHARING
+};
+
+class DeadlineQos : public testing::TestWithParam<communication_type>
 {
 public:
 
     void SetUp() override
     {
         LibrarySettingsAttributes library_settings;
-        if (GetParam())
+        switch (GetParam())
         {
-            library_settings.intraprocess_delivery = IntraprocessDeliveryType::INTRAPROCESS_FULL;
-            xmlparser::XMLProfileManager::library_settings(library_settings);
+            case INTRAPROCESS:
+                library_settings.intraprocess_delivery = IntraprocessDeliveryType::INTRAPROCESS_FULL;
+                xmlparser::XMLProfileManager::library_settings(library_settings);
+                break;
+            case DATASHARING:
+                enable_datasharing = true;
+                break;
+            case TRANSPORT:
+            default:
+                break;
         }
-
     }
 
     void TearDown() override
     {
         LibrarySettingsAttributes library_settings;
-        if (GetParam())
+        switch (GetParam())
         {
-            library_settings.intraprocess_delivery = IntraprocessDeliveryType::INTRAPROCESS_OFF;
-            xmlparser::XMLProfileManager::library_settings(library_settings);
+            case INTRAPROCESS:
+                library_settings.intraprocess_delivery = IntraprocessDeliveryType::INTRAPROCESS_OFF;
+                xmlparser::XMLProfileManager::library_settings(library_settings);
+                break;
+            case DATASHARING:
+                enable_datasharing = false;
+                break;
+            case TRANSPORT:
+            default:
+                break;
         }
     }
 
@@ -242,12 +264,19 @@ TEST_P(DeadlineQos, KeyedTopicShortDeadline)
 
 GTEST_INSTANTIATE_TEST_MACRO(DeadlineQos,
         DeadlineQos,
-        testing::Values(false, true),
+        testing::Values(TRANSPORT, INTRAPROCESS, DATASHARING),
         [](const testing::TestParamInfo<DeadlineQos::ParamType>& info)
         {
-            if (info.param)
+            switch (info.param)
             {
-                return "Intraprocess";
+                case INTRAPROCESS:
+                    return "Intraprocess";
+                    break;
+                case DATASHARING:
+                    return "Datasharing";
+                    break;
+                case TRANSPORT:
+                default:
+                    return "Transport";
             }
-            return "NonIntraprocess";
         });

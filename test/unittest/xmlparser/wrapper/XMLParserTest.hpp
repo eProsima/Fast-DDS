@@ -104,6 +104,14 @@ public:
 
     static XMLP_ret propertiesPolicy_wrapper(
             tinyxml2::XMLElement* elem,
+            DataSharingQosPolicy& datasharingQos,
+            uint8_t ident)
+    {
+        return getXMLDataSharingQos(elem, datasharingQos, ident);
+    }
+
+    static XMLP_ret propertiesPolicy_wrapper(
+            tinyxml2::XMLElement* elem,
             PropertyPolicy& propertiesPolicy,
             uint8_t ident)
     {

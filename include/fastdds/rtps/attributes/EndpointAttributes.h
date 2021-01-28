@@ -20,6 +20,7 @@
 #define _FASTDDS_ENDPOINTATTRIBUTES_H_
 
 #include <fastdds/rtps/attributes/PropertyPolicy.h>
+#include <fastrtps/qos/QosPolicies.h>
 
 #include <fastdds/rtps/common/Guid.h>
 #include <fastdds/rtps/common/Locator.h>
@@ -77,6 +78,7 @@ public:
         , m_userDefinedID(-1)
         , m_entityID(-1)
     {
+        datasharing_.off();
     }
 
     virtual ~EndpointAttributes()
@@ -121,6 +123,25 @@ public:
         m_entityID = id;
     }
 
+    /**
+     * Set the DataSharing configuration
+     * @param cfg Configuration to be set
+     */
+    inline void set_data_sharing_configuration(
+            DataSharingQosPolicy cfg)
+    {
+        datasharing_ = cfg;
+    }
+
+    /**
+     * Get the DataSharing configuration
+     * @return Configuration of data sharing
+     */
+    inline const DataSharingQosPolicy& data_sharing_configuration() const
+    {
+        return datasharing_;
+    }
+
 #if HAVE_SECURITY
     const security::EndpointSecurityAttributes& security_attributes() const
     {
@@ -145,6 +166,8 @@ private:
 #if HAVE_SECURITY
     security::EndpointSecurityAttributes security_attributes_;
 #endif // HAVE_SECURITY
+
+    DataSharingQosPolicy datasharing_;
 };
 
 } /* namespace rtps */

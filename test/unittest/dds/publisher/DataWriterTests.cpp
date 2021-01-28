@@ -18,6 +18,7 @@
 #include <fastdds/dds/builtin/topic/SubscriptionBuiltinTopicData.hpp>
 #include <fastdds/dds/domain/DomainParticipant.hpp>
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
+#include <fastdds/dds/domain/qos/DomainParticipantQos.hpp>
 #include <fastdds/dds/publisher/DataWriter.hpp>
 #include <fastdds/dds/publisher/DataWriterListener.hpp>
 #include <fastdds/dds/publisher/Publisher.hpp>
@@ -120,6 +121,64 @@ public:
 
 };
 
+class BoundedTopicDataTypeMock : public TopicDataType
+{
+public:
+
+    typedef FooType type;
+
+    BoundedTopicDataTypeMock()
+        : TopicDataType()
+    {
+        m_typeSize = 4u;
+        setName("bounded_footype");
+    }
+
+    bool serialize(
+            void* /*data*/,
+            fastrtps::rtps::SerializedPayload_t* /*payload*/) override
+    {
+        return true;
+    }
+
+    bool deserialize(
+            fastrtps::rtps::SerializedPayload_t* /*payload*/,
+            void* /*data*/) override
+    {
+        return true;
+    }
+
+    std::function<uint32_t()> getSerializedSizeProvider(
+            void* /*data*/) override
+    {
+        return std::function<uint32_t()>();
+    }
+
+    void* createData() override
+    {
+        return nullptr;
+    }
+
+    void deleteData(
+            void* /*data*/) override
+    {
+    }
+
+    bool getKey(
+            void* /*data*/,
+            fastrtps::rtps::InstanceHandle_t* /*ihandle*/,
+            bool /*force_md5*/) override
+    {
+        return true;
+    }
+
+    inline bool is_bounded() const override
+    {
+        return true;
+    }
+
+};
+
 TEST(DataWriterTests, ChangeDataWriterQos)
 {
     DomainParticipant* participant =
@@ -157,6 +216,180 @@ TEST(DataWriterTests, ChangeDataWriterQos)
     ASSERT_TRUE(DomainParticipantFactory::get_instance()->delete_participant(participant) == ReturnCode_t::RETCODE_OK);
 }
 
+TEST(DataWriterTests, ForcedDataSharing)
+{
+    DomainParticipant* participant =
+            DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
+    ASSERT_NE(participant, nullptr);
+
+    Publisher* publisher = participant->create_publisher(PUBLISHER_QOS_DEFAULT);
+    ASSERT_NE(publisher, nullptr);
+
+    TypeSupport type(new TopicDataTypeMock());
+    type.register_type(participant);
+
+    Topic* topic = participant->create_topic("footopic", type.get_type_name(), TOPIC_QOS_DEFAULT);
+    ASSERT_NE(topic, nullptr);
+
+    TypeSupport bounded_type(new BoundedTopicDataTypeMock());
+    bounded_type.register_type(participant);
+
+    Topic* bounded_topic =
+            participant->create_topic("bounded_footopic", bounded_type.get_type_name(), TOPIC_QOS_DEFAULT);
+    ASSERT_NE(bounded_topic, nullptr);
+
+    DataWriterQos qos;
+    DataWriter* datawriter = nullptr;
+
+    // DataSharing automatic, unbounded topic data type
+    qos = DATAWRITER_QOS_DEFAULT;
+    qos.endpoint().history_memory_policy = fastrtps::rtps::PREALLOCATED_MEMORY_MODE;
+    datawriter = publisher->create_datawriter(topic, qos);
+    ASSERT_NE(datawriter, nullptr);
+    ASSERT_EQ(publisher->delete_datawriter(datawriter), ReturnCode_t::RETCODE_OK);
+
+    // DataSharing automatic, bounded topic data type
+    datawriter = publisher->create_datawriter(bounded_topic, qos);
+    ASSERT_NE(datawriter, nullptr);
+    ASSERT_EQ(publisher->delete_datawriter(datawriter), ReturnCode_t::RETCODE_OK);
+
+    // DataSharing enabled, unbounded topic data type
+    qos = DATAWRITER_QOS_DEFAULT;
+    qos.endpoint().history_memory_policy = fastrtps::rtps::PREALLOCATED_MEMORY_MODE;
+    qos.data_sharing().on("path");
+    datawriter = publisher->create_datawriter(topic, qos);
+    ASSERT_EQ(datawriter, nullptr);
+
+    // DataSharing enabled, bounded topic data type
+    datawriter = publisher->create_datawriter(bounded_topic, qos);
+    ASSERT_NE(datawriter, nullptr);
+    ASSERT_EQ(publisher->delete_datawriter(datawriter), ReturnCode_t::RETCODE_OK);
+
+    // DataSharing enabled, bounded topic data type, Dynamic memory policy
+    qos = DATAWRITER_QOS_DEFAULT;
+    qos.data_sharing().on("path");
+    qos.endpoint().history_memory_policy = fastrtps::rtps::DYNAMIC_RESERVE_MEMORY_MODE;
+    datawriter = publisher->create_datawriter(bounded_topic, qos);
+    ASSERT_EQ(datawriter, nullptr);
+
+    ASSERT_EQ(participant->delete_topic(topic), ReturnCode_t::RETCODE_OK);
+    ASSERT_EQ(participant->delete_topic(bounded_topic), ReturnCode_t::RETCODE_OK);
+    ASSERT_EQ(participant->delete_publisher(publisher), ReturnCode_t::RETCODE_OK);
+    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), ReturnCode_t::RETCODE_OK);
+
+
+    // DataSharing forced, bounded topic data type, security enabled
+    static const char* certs_path = std::getenv("CERTS_PATH");
+    if (certs_path == nullptr)
+    {
+        std::cout << "Cannot get enviroment variable CERTS_PATH" << std::endl;
+        ASSERT_TRUE(false);
+    }
+
+    fastrtps::rtps::PropertyPolicy security_property;
+    security_property.properties().emplace_back(fastrtps::rtps::Property("dds.sec.auth.plugin",
+            "builtin.PKI-DH"));
+    security_property.properties().emplace_back(fastrtps::rtps::Property("dds.sec.auth.builtin.PKI-DH.identity_ca",
+            "file://" + std::string(certs_path) + "/maincacert.pem"));
+    security_property.properties().emplace_back(fastrtps::rtps::Property(
+                "dds.sec.auth.builtin.PKI-DH.identity_certificate",
+                "file://" + std::string(certs_path) + "/mainsubcert.pem"));
+    security_property.properties().emplace_back(fastrtps::rtps::Property("dds.sec.auth.builtin.PKI-DH.private_key",
+            "file://" + std::string(certs_path) + "/mainsubkey.pem"));
+    security_property.properties().emplace_back(fastrtps::rtps::Property("dds.sec.crypto.plugin",
+            "builtin.AES-GCM-GMAC"));
+    security_property.properties().emplace_back("rtps.participant.rtps_protection_kind", "ENCRYPT");
+
+    DomainParticipantQos pqos = PARTICIPANT_QOS_DEFAULT;
+    pqos.properties() = security_property;
+
+    participant =
+            DomainParticipantFactory::get_instance()->create_participant(0, pqos);
+    ASSERT_NE(participant, nullptr);
+
+    publisher = participant->create_publisher(PUBLISHER_QOS_DEFAULT);
+    ASSERT_NE(publisher, nullptr);
+
+    bounded_type.register_type(participant);
+
+    bounded_topic = participant->create_topic("bounded_footopic", bounded_type.get_type_name(), TOPIC_QOS_DEFAULT);
+    ASSERT_NE(bounded_topic, nullptr);
+
+    qos = DATAWRITER_QOS_DEFAULT;
+    qos.data_sharing().on("path");
+    qos.endpoint().history_memory_policy = fastrtps::rtps::PREALLOCATED_MEMORY_MODE;
+
+
+    datawriter = publisher->create_datawriter(bounded_topic, qos);
+    ASSERT_EQ(datawriter, nullptr);
+
+    ASSERT_EQ(participant->delete_topic(bounded_topic), ReturnCode_t::RETCODE_OK);
+    ASSERT_EQ(participant->delete_publisher(publisher), ReturnCode_t::RETCODE_OK);
+    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), ReturnCode_t::RETCODE_OK);
+}
+
+TEST(DataWriterTests, InvalidQos)
+{
+    DomainParticipantQos pqos = PARTICIPANT_QOS_DEFAULT;
+    pqos.entity_factory().autoenable_created_entities = false;
+    DomainParticipant* participant =
+            DomainParticipantFactory::get_instance()->create_participant(0, pqos);
+    ASSERT_NE(participant, nullptr);
+
+    Publisher* publisher = participant->create_publisher(PUBLISHER_QOS_DEFAULT);
+    ASSERT_NE(publisher, nullptr);
+
+    TypeSupport type(new TopicDataTypeMock());
+    type.register_type(participant);
+
+    Topic* topic = participant->create_topic("footopic", type.get_type_name(), TOPIC_QOS_DEFAULT);
+    ASSERT_NE(topic, nullptr);
+
+    DataWriter* datawriter = publisher->create_datawriter(topic, DATAWRITER_QOS_DEFAULT);
+    ASSERT_NE(datawriter, nullptr);
+
+    DataWriterQos qos;
+    qos = DATAWRITER_QOS_DEFAULT;
+    qos.durability().kind = PERSISTENT_DURABILITY_QOS;
+    ASSERT_TRUE(datawriter->set_qos(qos) == ReturnCode_t::RETCODE_UNSUPPORTED);
+
+    qos = DATAWRITER_QOS_DEFAULT;
+    qos.destination_order().kind = BY_SOURCE_TIMESTAMP_DESTINATIONORDER_QOS;
+    ASSERT_TRUE(datawriter->set_qos(qos) == ReturnCode_t::RETCODE_UNSUPPORTED);
+
+    qos = DATAWRITER_QOS_DEFAULT;
+    qos.reliability().kind = BEST_EFFORT_RELIABILITY_QOS;
+    qos.ownership().kind = EXCLUSIVE_OWNERSHIP_QOS;
+    ASSERT_TRUE(datawriter->set_qos(qos) == ReturnCode_t::RETCODE_INCONSISTENT_POLICY);
+
+    qos = DATAWRITER_QOS_DEFAULT;
+    qos.liveliness().kind = AUTOMATIC_LIVELINESS_QOS;
+    qos.liveliness().announcement_period = 20;
+    qos.liveliness().lease_duration = 10;
+    ASSERT_TRUE(datawriter->set_qos(qos) == ReturnCode_t::RETCODE_INCONSISTENT_POLICY);
+
+    qos.liveliness().kind = MANUAL_BY_PARTICIPANT_LIVELINESS_QOS;
+    ASSERT_TRUE(datawriter->set_qos(qos) == ReturnCode_t::RETCODE_INCONSISTENT_POLICY);
+
+    qos = DATAWRITER_QOS_DEFAULT;
+    qos.data_sharing().on("/tmp");
+    qos.endpoint().history_memory_policy = eprosima::fastrtps::rtps::DYNAMIC_RESERVE_MEMORY_MODE;
+    ASSERT_TRUE(datawriter->set_qos(qos) == ReturnCode_t::RETCODE_INCONSISTENT_POLICY);
+
+    qos.endpoint().history_memory_policy = eprosima::fastrtps::rtps::DYNAMIC_REUSABLE_MEMORY_MODE;
+    ASSERT_TRUE(datawriter->set_qos(qos) == ReturnCode_t::RETCODE_INCONSISTENT_POLICY);
+
+    qos.endpoint().history_memory_policy = eprosima::fastrtps::rtps::PREALLOCATED_MEMORY_MODE;
+    ASSERT_TRUE(datawriter->set_qos(qos) == ReturnCode_t::RETCODE_OK);
+
+    qos.endpoint().history_memory_policy = eprosima::fastrtps::rtps::PREALLOCATED_WITH_REALLOC_MEMORY_MODE;
+    ASSERT_TRUE(datawriter->set_qos(qos) == ReturnCode_t::RETCODE_OK);
+
+    ASSERT_TRUE(publisher->delete_datawriter(datawriter) == ReturnCode_t::RETCODE_OK);
+    ASSERT_TRUE(participant->delete_topic(topic) == ReturnCode_t::RETCODE_OK);
+    ASSERT_TRUE(participant->delete_publisher(publisher) == ReturnCode_t::RETCODE_OK);
+    ASSERT_TRUE(DomainParticipantFactory::get_instance()->delete_participant(participant) == ReturnCode_t::RETCODE_OK);
+}
 
 //TODO: Activate the test once PSM API for DataWriter is in place
 //TEST(DataWriterTests, DISABLED_ChangePSMDataWriterQos)

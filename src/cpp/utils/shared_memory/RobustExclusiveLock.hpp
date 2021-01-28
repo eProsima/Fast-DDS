@@ -25,7 +25,7 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 
-#include "RobustLock.hpp"
+#include "SharedDir.hpp"
 
 namespace eprosima {
 namespace fastdds {
@@ -50,7 +50,7 @@ public:
             const std::string& name,
             bool* was_lock_created)
     {
-        auto file_path = RobustLock::get_file_path(name);
+        auto file_path = SharedDir::get_file_path(name);
 
         if ((fd_ = open_and_lock_file(file_path, was_lock_created)) == -1)
         {
@@ -70,7 +70,7 @@ public:
     {
         bool was_lock_created;
 
-        auto file_path = RobustLock::get_file_path(name);
+        auto file_path = SharedDir::get_file_path(name);
 
         if ((fd_ = open_and_lock_file(file_path, &was_lock_created)) == -1)
         {
@@ -89,7 +89,7 @@ public:
     {
         bool was_lock_created;
 
-        auto file_path = RobustLock::get_file_path(name);
+        auto file_path = SharedDir::get_file_path(name);
 
         int fd;
         if ((fd = open_and_lock_file(file_path, &was_lock_created)) == -1)
@@ -117,7 +117,7 @@ public:
     static bool remove(
             const std::string& name)
     {
-        return 0 == std::remove(RobustLock::get_file_path(name).c_str());
+        return 0 == std::remove(SharedDir::get_file_path(name).c_str());
     }
 
 private:
@@ -159,9 +159,9 @@ private:
     {
         _close(fd);
 
-        if (0 != std::remove(RobustLock::get_file_path(name).c_str()))
+        if (0 != std::remove(SharedDir::get_file_path(name).c_str()))
         {
-            logWarning(RTPS_TRANSPORT_SHM, "Failed to remove " << RobustLock::get_file_path(name));
+            logWarning(RTPS_TRANSPORT_SHM, "Failed to remove " << SharedDir::get_file_path(name));
         }
     }
 
@@ -205,9 +205,9 @@ private:
         flock(fd, LOCK_UN | LOCK_NB);
         close(fd);
 
-        if (0 != std::remove(RobustLock::get_file_path(name).c_str()))
+        if (0 != std::remove(SharedDir::get_file_path(name).c_str()))
         {
-            logWarning(RTPS_TRANSPORT_SHM, "Failed to remove " << RobustLock::get_file_path(name));
+            logWarning(RTPS_TRANSPORT_SHM, "Failed to remove " << SharedDir::get_file_path(name));
         }
     }
 

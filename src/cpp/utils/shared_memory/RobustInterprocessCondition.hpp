@@ -32,7 +32,7 @@ public:
 
     RobustInterprocessCondition()
         : list_listening_(SemaphoreList::LIST_NULL, SemaphoreList::LIST_NULL)
-        , list_free_(0, MAX_LISTENERS-1)
+        , list_free_(0, MAX_LISTENERS - 1)
     {
         init_sem_list();
     }
@@ -153,6 +153,56 @@ public:
         return true;
     }
 
+    /**
+     * Converts a std::chrono::time_point to a boost::posix_time::ptime.
+     * As timed_wait only can handle boost ptime,
+     * this conversion is required when the deadline is expressed as a time_point.
+     * The resulting ptime will have microsecond precision if the library supports it,
+     * or second precision otherwise.
+     * @return boost ptime equivalent of the input std time_point.
+     */
+    static boost::posix_time::ptime steady_clock_time_point_to_ptime (
+            const std::chrono::time_point<std::chrono::steady_clock>& time_point)
+    {
+        std::chrono::microseconds remaining =
+                std::chrono::duration_cast<std::chrono::microseconds>(time_point - std::chrono::steady_clock::now());
+
+        return boost::get_system_time() + boost::posix_time::microseconds(remaining.count());
+    }
+
+    /**
+     * Releases the lock on the interprocess_mutex object associated with lock, blocks
+     * the current thread of execution until readied by a call to
+     * this->notify_one() or this->notify_all(), or until time abs_time is reached,
+     * and then reacquires the lock.
+     * @return false if time abs_time is reached, otherwise true.
+     * @throw boost::interprocess::interprocess_exception on error.
+     */
+    template <typename L>
+    bool timed_wait(
+            L& lock,
+            const std::chrono::time_point<std::chrono::steady_clock>& max_blocking_time)
+    {
+        return timed_wait(lock, RobustInterprocessCondition::steady_clock_time_point_to_ptime(max_blocking_time));
+    }
+
+    /**
+     * The same as:
+     * while (!pred())
+     * {
+     *     if (!timed_wait(lock, abs_time)) return pred();
+     * }
+     * return true;
+     */
+    template <typename L, typename Pr>
+    bool timed_wait(
+            L& lock,
+            const std::chrono::time_point<std::chrono::steady_clock>& max_blocking_time,
+            Pr pred)
+    {
+        return timed_wait(lock, RobustInterprocessCondition::steady_clock_time_point_to_ptime(max_blocking_time), pred);
+    }
+
 private:
 
     struct SemaphoreNode
@@ -192,7 +242,7 @@ private:
             {
                 sem_pool[tail_].next = sem_index;
             }
-            
+
             sem_pool[sem_index].prev = tail_;
             sem_pool[sem_index].next = LIST_NULL;
 
@@ -223,7 +273,7 @@ private:
             {
                 head_ = LIST_NULL;
             }
-            
+
             return sem_index;
         }
 
@@ -266,6 +316,7 @@ private:
                 tail_ = prev;
             }
         }
+
     };
 
     SemaphoreList list_listening_;
@@ -277,14 +328,14 @@ private:
         semaphores_pool_[0].prev = SemaphoreList::LIST_NULL;
         semaphores_pool_[0].next = 1;
 
-        for (uint32_t i = 1; i < MAX_LISTENERS-1; i++)
+        for (uint32_t i = 1; i < MAX_LISTENERS - 1; i++)
         {
-            semaphores_pool_[i].next = i+1;
-            semaphores_pool_[i].prev = i-1;
+            semaphores_pool_[i].next = i + 1;
+            semaphores_pool_[i].prev = i - 1;
         }
 
-        semaphores_pool_[MAX_LISTENERS-1].prev = MAX_LISTENERS-2;
-        semaphores_pool_[MAX_LISTENERS-1].next = SemaphoreList::LIST_NULL;
+        semaphores_pool_[MAX_LISTENERS - 1].prev = MAX_LISTENERS - 2;
+        semaphores_pool_[MAX_LISTENERS - 1].next = SemaphoreList::LIST_NULL;
     }
 
     inline uint32_t enqueue_listener()
@@ -314,7 +365,7 @@ private:
         {
             // Release caller's lock
             bi::ipcdetail::lock_inverter<bi::interprocess_mutex> inverted_lock(mut);
-            bi::scoped_lock<bi::ipcdetail::lock_inverter<bi::interprocess_mutex> > unlock(inverted_lock);
+            bi::scoped_lock<bi::ipcdetail::lock_inverter<bi::interprocess_mutex>> unlock(inverted_lock);
 
             // timed_wait (infin) is used, instead wait, because wait on semaphores could throw when
             // BOOST_INTERPROCESS_ENABLE_TIMEOUT_WHEN_LOCKING is set. We don't want that for our condition_variables
@@ -342,7 +393,7 @@ private:
         {
             // Release caller's lock
             bi::ipcdetail::lock_inverter<bi::interprocess_mutex> inverted_lock(mut);
-            bi::scoped_lock<bi::ipcdetail::lock_inverter<bi::interprocess_mutex> > unlock(inverted_lock);
+            bi::scoped_lock<bi::ipcdetail::lock_inverter<bi::interprocess_mutex>> unlock(inverted_lock);
 
             ret = semaphores_pool_[sem_index].sem.timed_wait(abs_time);
         }
@@ -354,6 +405,7 @@ private:
 
         return ret;
     }
+
 };
 
 } // namespace rtps

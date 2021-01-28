@@ -83,6 +83,7 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             ${PROJECT_SOURCE_DIR}/src/cpp/rtps/xmlparser/XMLParserCommon.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/utils/TimedConditionVariable.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/utils/IPLocator.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/utils/IPFinder.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/utils/md5.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/utils/string_convert.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps_deprecated/publisher/PublisherHistory.cpp
@@ -109,6 +110,7 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             )
         target_include_directories(ListenerTests PRIVATE
             ${GTEST_INCLUDE_DIRS} ${GMOCK_INCLUDE_DIRS}
+            ${PROJECT_SOURCE_DIR}/test/mock/rtps/DataSharingPayloadPool
             ${PROJECT_SOURCE_DIR}/test/mock/rtps/RTPSReader
             ${PROJECT_SOURCE_DIR}/test/mock/rtps/RTPSWriter
             ${PROJECT_SOURCE_DIR}/test/mock/rtps/RTPSDomain
@@ -142,6 +144,10 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             ${TINYXML2_LIBRARY}
             ${GTEST_LIBRARIES} ${GMOCK_LIBRARIES}
             ${CMAKE_THREAD_LIBS_INIT} ${CMAKE_DL_LIBS})
+        if(MSVC OR MSVC_IDE)
+            target_link_libraries(ListenerTests iphlpapi Shlwapi ws2_32)
+        endif()
+            
         add_gtest(ListenerTests SOURCES ${LISTENERTESTS_SOURCE})
 
     endif()

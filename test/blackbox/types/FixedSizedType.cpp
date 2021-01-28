@@ -24,20 +24,24 @@
 
 using namespace eprosima::fastrtps::rtps;
 
-FixedSizedType::FixedSizedType() {
+FixedSizedType::FixedSizedType()
+{
     setName("FixedSizedType");
     m_typeSize = (uint32_t)FixedSized::getMaxCdrSerializedSize() + 4 /*encapsulation*/;
     m_isGetKeyDefined = false;
 
 }
 
-FixedSizedType::~FixedSizedType() {
+FixedSizedType::~FixedSizedType()
+{
     // TODO Auto-generated destructor stub
 }
 
-bool FixedSizedType::serialize(void* data, SerializedPayload_t* payload)
+bool FixedSizedType::serialize(
+        void* data,
+        SerializedPayload_t* payload)
 {
-    FixedSized* fs = (FixedSized*) data;	
+    FixedSized* fs = (FixedSized*) data;
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer((char*)payload->data, payload->max_size);
     // Object that serializes the data.
@@ -52,7 +56,9 @@ bool FixedSizedType::serialize(void* data, SerializedPayload_t* payload)
     return true;
 }
 
-bool FixedSizedType::deserialize(SerializedPayload_t* payload, void* data)
+bool FixedSizedType::deserialize(
+        SerializedPayload_t* payload,
+        void* data)
 {
     FixedSized* fs = (FixedSized*) data;
     // Object that manages the raw buffer.
@@ -68,23 +74,40 @@ bool FixedSizedType::deserialize(SerializedPayload_t* payload, void* data)
     return true;
 }
 
-std::function<uint32_t()> FixedSizedType::getSerializedSizeProvider(void *data)
+std::function<uint32_t()> FixedSizedType::getSerializedSizeProvider(
+        void* data)
 {
-    return [data]() -> uint32_t { 
-        return (uint32_t)type::getCdrSerializedSize(*static_cast<FixedSized*>(data)) + 4 /*encapsulation*/;
-    };
+    return [data]() -> uint32_t
+           {
+               return (uint32_t)type::getCdrSerializedSize(*static_cast<FixedSized*>(data)) + 4 /*encapsulation*/;
+           };
 }
 
 void* FixedSizedType::createData()
 {
     return (void*)new FixedSized();
 }
-void FixedSizedType::deleteData(void* data)
+
+void FixedSizedType::deleteData(
+        void* data)
 {
     delete((FixedSized*)data);
 }
 
-bool FixedSizedType::getKey(void* /*data*/, InstanceHandle_t* /*ihandle*/, bool /*force_md5*/)
+bool FixedSizedType::getKey(
+        void* /*data*/,
+        InstanceHandle_t* /*ihandle*/,
+        bool /*force_md5*/)
 {
     return false;
+}
+
+bool FixedSizedType::is_bounded() const
+{
+    return true;
+}
+
+bool FixedSizedType::is_plain() const
+{
+    return true;
 }

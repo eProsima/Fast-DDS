@@ -21,15 +21,33 @@
 namespace eprosima {
 
 /**
- * This singleton generates a host_id based on system interfaces ip addresses
+ * This singleton generates a host_id based on system interfaces
+ * ip addresses or mac addresses
  */
 class Host
 {
 public:
 
+    static const size_t mac_id_length = 6;
+    struct uint48
+    {
+        unsigned char value[mac_id_length];
+
+        uint48()
+        {
+            memset(value, 0, mac_id_length);
+        }
+
+    };
+
     inline uint16_t id() const
     {
         return id_;
+    }
+
+    inline uint48 mac_id() const
+    {
+        return mac_id_;
     }
 
     static Host& instance()
@@ -67,9 +85,40 @@ private:
                 reinterpret_cast<uint8_t*>(&id_)[1] = 1;
             }
         }
+
+        // Compute the MAC id
+        std::vector<fastrtps::rtps::IPFinder::info_MAC> macs;
+        if (fastrtps::rtps::IPFinder::getAllMACAddress(&macs) &&
+                macs.size() > 0)
+        {
+            MD5 md5;
+            for (auto& m : macs)
+            {
+                md5.update(m.address, sizeof(m.address));
+            }
+            md5.finalize();
+            for (size_t i = 0, j = 0; i < sizeof(md5.digest); ++i, ++j)
+            {
+                if (j >= mac_id_length)
+                {
+                    j = 0;
+                }
+                mac_id_.value[j] ^= md5.digest[i];
+            }
+        }
+        else
+        {
+            printf("Cannot get MAC addresses. Failing back to IP based ID\n");
+            for (size_t i = 0; i < mac_id_length; i += 2)
+            {
+                mac_id_.value[i] = (id_ >> 8);
+                mac_id_.value[i + 1] = (id_ & 0xFF);
+            }
+        }
     }
 
     uint16_t id_;
+    uint48 mac_id_;
 };
 
 } // eprosima

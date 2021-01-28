@@ -49,6 +49,7 @@ extern void tls_init();
 #endif // if TLS_FOUND
 
 extern uint16_t global_port;
+extern bool enable_datasharing;
 
 /****** Auxiliary print functions  ******/
 template<class Type>

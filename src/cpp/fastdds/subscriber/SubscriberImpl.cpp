@@ -77,6 +77,7 @@ static void set_qos_from_attributes(
     qos.time_based_filter() = attr.qos.m_timeBasedFilter;
     qos.history() = attr.topic.historyQos;
     qos.resource_limits() = attr.topic.resourceLimitsQos;
+    qos.data_sharing() = attr.qos.data_sharing;
 }
 
 SubscriberImpl::SubscriberImpl(

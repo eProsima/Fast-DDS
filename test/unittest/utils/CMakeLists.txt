@@ -47,6 +47,9 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/StdoutErrConsumer.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/utils/IPLocator.cpp)
 
+        set(FIXEDSIZEQUEUETESTS_SOURCE
+            FixedSizeQueueTests.cpp)
+
         include_directories(mock/)
 
         add_executable(StringMatchingTests ${STRINGMATCHINGTESTS_SOURCE})
@@ -105,6 +108,14 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include)
         target_link_libraries(LocatorTests ${GTEST_LIBRARIES} ${MOCKS})
         add_gtest(LocatorTests SOURCES ${LOCATORTESTS_SOURCE})
+
+
+        add_executable(FixedSizeQueueTests ${FIXEDSIZEQUEUETESTS_SOURCE})
+        target_compile_definitions(FixedSizeQueueTests PRIVATE FASTRTPS_NO_LIB)
+        target_include_directories(FixedSizeQueueTests PRIVATE ${GTEST_INCLUDE_DIRS}
+            ${PROJECT_SOURCE_DIR}/include ${PROJECT_SOURCE_DIR}/src/cpp ${PROJECT_BINARY_DIR}/include)
+        target_link_libraries(FixedSizeQueueTests ${GTEST_LIBRARIES} ${MOCKS})
+        add_gtest(FixedSizeQueueTests SOURCES ${FIXEDSIZEQUEUETESTS_SOURCE})
 
     endif()
 endif()

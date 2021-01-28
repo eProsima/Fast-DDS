@@ -41,6 +41,7 @@
 #include <fastdds/subscriber/DataReaderImpl/StateFilter.hpp>
 
 #include <fastrtps/utils/TimeConversion.h>
+#include <utils/Host.hpp>
 #include <fastrtps/subscriber/SampleInfo.h>
 
 #include <rtps/history/TopicPayloadPoolRegistry.hpp>
@@ -173,6 +174,34 @@ ReturnCode_t DataReaderImpl::enable()
         att.endpoint.properties.properties().push_back(std::move(property));
     }
 
+    bool is_datasharing_compatible = false;
+    ReturnCode_t ret_code = check_datasharing_compatible(att, is_datasharing_compatible);
+    if (ret_code != ReturnCode_t::RETCODE_OK)
+    {
+        return ret_code;
+    }
+    if (is_datasharing_compatible)
+    {
+        DataSharingQosPolicy datasharing(qos_.data_sharing());
+        if (datasharing.domain_ids().empty())
+        {
+            uint64_t id = 0;
+            Host::uint48 mac_id = Host::instance().mac_id();
+            for (size_t i = 0; i < Host::mac_id_length; ++i)
+            {
+                id |= mac_id.value[i] << (64 - i);
+            }
+            datasharing.add_domain_id(id);
+        }
+        att.endpoint.set_data_sharing_configuration(datasharing);
+    }
+    else
+    {
+        DataSharingQosPolicy datasharing;
+        datasharing.off();
+        att.endpoint.set_data_sharing_configuration(datasharing);
+    }
+
     std::shared_ptr<IPayloadPool> pool = get_payload_pool();
     RTPSReader* reader = RTPSDomain::createRTPSReader(
         subscriber_->rtps_participant(),
@@ -205,6 +234,10 @@ ReturnCode_t DataReaderImpl::enable()
 
     // Register the reader
     ReaderQos rqos = qos_.get_readerqos(subscriber_->get_qos());
+    if (!is_datasharing_compatible)
+    {
+        rqos.data_sharing.off();
+    }
     subscriber_->rtps_participant()->registerReader(reader_, topic_attributes(), rqos);
 
     return ReturnCode_t::RETCODE_OK;
@@ -1162,6 +1195,21 @@ bool DataReaderImpl::can_qos_be_updated(
         updatable = false;
         logWarning(DDS_QOS_CHECK, "reader_resource_limits cannot be changed after the creation of a DataReader.");
     }
+    if (to.data_sharing().kind() != from.data_sharing().kind())
+    {
+        updatable = false;
+        logWarning(RTPS_QOS_CHECK, "Data sharing configuration cannot be changed after the creation of a DataReader.");
+    }
+    if (to.data_sharing().shm_directory() != from.data_sharing().shm_directory())
+    {
+        updatable = false;
+        logWarning(RTPS_QOS_CHECK, "Data sharing configuration cannot be changed after the creation of a DataReader.");
+    }
+    if (to.data_sharing().domain_ids() != from.data_sharing().domain_ids())
+    {
+        updatable = false;
+        logWarning(RTPS_QOS_CHECK, "Data sharing configuration cannot be changed after the creation of a DataReader.");
+    }
     return updatable;
 }
 
@@ -1330,6 +1378,84 @@ void DataReaderImpl::release_payload_pool()
     payload_pool_->release_history(config, true);
 
     TopicPayloadPoolRegistry::release(payload_pool_);
+}
+
+ReturnCode_t DataReaderImpl::check_datasharing_compatible(
+        const ReaderAttributes& reader_attributes,
+        bool& is_datasharing_compatible) const
+{
+#if HAVE_SECURITY
+    bool has_security_enabled = subscriber_->rtps_participant()->is_security_enabled_for_reader(reader_attributes);
+#else
+    (void) reader_attributes;
+#endif // HAVE_SECURITY
+
+    bool has_key = type_->m_isGetKeyDefined;
+
+    is_datasharing_compatible = false;
+    switch (qos_.data_sharing().kind())
+    {
+        case DataSharingKind::OFF:
+            return ReturnCode_t::RETCODE_OK;
+            break;
+        case DataSharingKind::ON:
+#if HAVE_SECURITY
+            if (has_security_enabled)
+            {
+                logError(DATA_READER, "Data sharing cannot be used with security protection.");
+                return ReturnCode_t::RETCODE_NOT_ALLOWED_BY_SECURITY;
+            }
+#endif // if HAVE_SECURITY
+            if (!type_.is_bounded())
+            {
+                logInfo(DATA_READER, "Data sharing cannot be used with unbounded data types");
+                return ReturnCode_t::RETCODE_BAD_PARAMETER;
+            }
+
+            if (has_key)
+            {
+                logError(DATA_READER, "Data sharing cannot be used with keyed data types");
+                return ReturnCode_t::RETCODE_BAD_PARAMETER;
+            }
+
+            is_datasharing_compatible = true;
+            return ReturnCode_t::RETCODE_OK;
+            break;
+        case DataSharingKind::AUTO:
+#if HAVE_SECURITY
+            if (has_security_enabled)
+            {
+                logInfo(DATA_READER, "Data sharing disabled due to security configuration.");
+                return ReturnCode_t::RETCODE_OK;
+            }
+#endif // if HAVE_SECURITY
+
+            if (!type_.is_bounded())
+            {
+                logInfo(DATA_READER, "Data sharing disabled because data type is not bounded");
+                return ReturnCode_t::RETCODE_OK;
+            }
+
+            if (has_key)
+            {
+                logInfo(DATA_READER, "Data sharing disabled because data type is keyed");
+                return ReturnCode_t::RETCODE_OK;
+            }
+
+            is_datasharing_compatible = true;
+            return ReturnCode_t::RETCODE_OK;
+            break;
+        default:
+            logError(DATA_WRITER, "Unknown data sharing kind.");
+            return ReturnCode_t::RETCODE_BAD_PARAMETER;
+    }
+}
+
+bool DataReaderImpl::is_sample_valid(
+        const void* data,
+        const SampleInfo* info) const
+{
+    return reader_->is_sample_valid(data, info->sample_identity.writer_guid(), info->sample_identity.sequence_number());
 }
 
 } /* namespace dds */

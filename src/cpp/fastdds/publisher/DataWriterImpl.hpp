@@ -42,6 +42,7 @@
 
 #include <rtps/common/PayloadInfo_t.hpp>
 #include <rtps/history/ITopicPayloadPool.h>
+#include <rtps/DataSharing/DataSharingPayloadPool.hpp>
 
 using eprosima::fastrtps::types::ReturnCode_t;
 
@@ -332,9 +333,11 @@ protected:
 
     DataWriter* user_datawriter_ = nullptr;
 
+    bool is_data_sharing_compatible_ = false;
+
     uint32_t fixed_payload_size_ = 0u;
 
-    std::shared_ptr<ITopicPayloadPool> payload_pool_;
+    std::shared_ptr<IPayloadPool> payload_pool_;
 
     std::unique_ptr<LoanCollection> loans_;
 
@@ -441,7 +444,51 @@ protected:
 
     std::shared_ptr<IPayloadPool> get_payload_pool();
 
-    void release_payload_pool();
+    bool release_payload_pool();
+
+    ReturnCode_t check_datasharing_compatible(
+            const fastrtps::rtps::WriterAttributes& writer_attributes,
+            bool& is_datasharing_compatible) const;
+
+    template<typename SizeFunctor>
+    bool get_free_payload_from_pool(
+            const SizeFunctor& size_getter,
+            PayloadInfo_t& payload,
+            const std::chrono::time_point<std::chrono::steady_clock>& max_blocking_time)
+    {
+        CacheChange_t change;
+        if (!payload_pool_)
+        {
+            return false;
+        }
+
+        uint32_t size = fixed_payload_size_ ? fixed_payload_size_ : size_getter();
+        if (is_data_sharing_compatible_)
+        {
+            auto pool = std::dynamic_pointer_cast<eprosima::fastrtps::rtps::DataSharingPayloadPool>(payload_pool_);
+            assert (pool != nullptr);
+
+            bool payload_reserved = pool->wait_until(max_blocking_time,
+                            [&]()
+                            {
+                                return pool->get_payload(size, change);
+                            });
+            if (!payload_reserved)
+            {
+                return false;
+            }
+        }
+        else
+        {
+            if (!payload_pool_->get_payload(size, change))
+            {
+                return false;
+            }
+        }
+
+        payload.move_from_change(change);
+        return true;
+    }
 
     template<typename SizeFunctor>
     bool get_free_payload_from_pool(

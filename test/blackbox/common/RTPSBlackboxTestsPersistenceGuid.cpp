@@ -23,20 +23,49 @@
 #include "RTPSWithRegistrationReader.hpp"
 
 #include <gtest/gtest.h>
+#include <fastrtps/xmlparser/XMLProfileManager.h>
 
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
 
-class PersistenceGuid : public ::testing::TestWithParam<bool>
+enum communication_type
+{
+    TRANSPORT,
+    INTRAPROCESS
+};
+
+class PersistenceGuid : public ::testing::TestWithParam<communication_type>
 {
 protected:
 
-    virtual void SetUp()
+    void SetUp() override
     {
+        LibrarySettingsAttributes library_settings;
+        switch (GetParam())
+        {
+            case INTRAPROCESS:
+                library_settings.intraprocess_delivery = IntraprocessDeliveryType::INTRAPROCESS_FULL;
+                xmlparser::XMLProfileManager::library_settings(library_settings);
+                break;
+            case TRANSPORT:
+            default:
+                break;
+        }
     }
 
-    virtual void TearDown()
+    void TearDown() override
     {
+        LibrarySettingsAttributes library_settings;
+        switch (GetParam())
+        {
+            case INTRAPROCESS:
+                library_settings.intraprocess_delivery = IntraprocessDeliveryType::INTRAPROCESS_OFF;
+                xmlparser::XMLProfileManager::library_settings(library_settings);
+                break;
+            case TRANSPORT:
+            default:
+                break;
+        }
         std::remove("persistence.db");
     }
 
@@ -223,13 +252,17 @@ TEST_P(PersistenceGuid, CheckPrevalenceBetweenManualAndPropertyConfiguration)
 
 GTEST_INSTANTIATE_TEST_MACRO(PersistenceGuid,
         PersistenceGuid,
-        testing::Values(false, true),
+        testing::Values(TRANSPORT, INTRAPROCESS),
         [](const testing::TestParamInfo<PersistenceGuid::ParamType>& info)
         {
-            if (info.param)
+            switch (info.param)
             {
-                return "Intraprocess";
+                case INTRAPROCESS:
+                    return "Intraprocess";
+                    break;
+                case TRANSPORT:
+                default:
+                    return "Transport";
             }
-            return "NonIntraprocess";
         });
 #endif // if HAVE_SQLITE3

@@ -283,6 +283,16 @@ public:
             const DataReaderQos& from,
             bool first_time);
 
+    /**
+     * Checks whether the sample is still valid or is corrupted
+     * @param data Pointer to the sample data to check
+     * @param info Pointer to the SampleInfo related to \c data
+     * @return true if the sample is valid
+     */
+    RTPS_DllAPI bool is_sample_valid(
+            const void* data,
+            const SampleInfo* info) const;
+
 protected:
 
     //!Subscriber
@@ -435,6 +445,10 @@ protected:
     std::shared_ptr<IPayloadPool> get_payload_pool();
 
     void release_payload_pool();
+
+    ReturnCode_t check_datasharing_compatible(
+            const fastrtps::rtps::ReaderAttributes& reader_attributes,
+            bool& is_datasharing_compatible) const;
 
 };
 

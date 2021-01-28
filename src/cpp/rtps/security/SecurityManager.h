@@ -140,6 +140,14 @@ public:
             WriterProxyData& remote_writer_guid,
             const EndpointSecurityAttributes& security_attributes);
 
+    bool get_datawriter_sec_attributes(
+            const PropertyPolicy& writer_properties,
+            EndpointSecurityAttributes& security_attributes);
+
+    bool get_datareader_sec_attributes(
+            const PropertyPolicy& reader_properties,
+            EndpointSecurityAttributes& security_attributes);
+
     bool get_identity_token(
             IdentityToken** identity_token);
 

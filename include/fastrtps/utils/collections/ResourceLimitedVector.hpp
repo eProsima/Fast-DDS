@@ -148,7 +148,17 @@ public:
     pointer push_back(
             value_type&& val)
     {
-        return emplace_back(std::move(val));
+        if (!ensure_capacity())
+        {
+            // Indicate error by returning null pointer
+            return nullptr;
+        }
+
+        // Move the element at the end of the collection
+        collection_.push_back(std::move(val));
+
+        // Return pointer to newly created element
+        return &collection_.back();
     }
 
     /**

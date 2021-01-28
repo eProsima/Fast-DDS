@@ -58,10 +58,12 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             ${PROJECT_SOURCE_DIR}/include
             ${PROJECT_BINARY_DIR}/include
             ${PROJECT_SOURCE_DIR}/src/cpp
+            ${THIRDPARTY_BOOST_INCLUDE_DIR}
             )
         target_link_libraries(ReaderProxyTests
             ${GTEST_LIBRARIES} ${GMOCK_LIBRARIES} foonathan_memory
-            ${CMAKE_THREAD_LIBS_INIT} ${CMAKE_DL_LIBS})
+            ${CMAKE_THREAD_LIBS_INIT} ${CMAKE_DL_LIBS}
+            ${THIRDPARTY_BOOST_LINK_LIBS})
         add_gtest(ReaderProxyTests SOURCES ${WRITERPROXYTESTS_SOURCE})
 
     # LivelinessManager

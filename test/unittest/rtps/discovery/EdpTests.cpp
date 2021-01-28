@@ -255,7 +255,7 @@ TEST_F(EdpTests, CheckPartitionCompatibility)
 
 TEST_F(EdpTests, CheckDurabilityCompatibility)
 {
-    std::vector<QosTestingCase<DurabilityQosPolicyKind> > testing_cases{
+    std::vector<QosTestingCase<DurabilityQosPolicyKind>> testing_cases{
         { PERSISTENT_DURABILITY_QOS, PERSISTENT_DURABILITY_QOS, fastdds::dds::INVALID_QOS_POLICY_ID},
         { PERSISTENT_DURABILITY_QOS, TRANSIENT_DURABILITY_QOS, fastdds::dds::INVALID_QOS_POLICY_ID},
         { PERSISTENT_DURABILITY_QOS, TRANSIENT_LOCAL_DURABILITY_QOS, fastdds::dds::INVALID_QOS_POLICY_ID},
@@ -284,7 +284,7 @@ TEST_F(EdpTests, CheckDurabilityCompatibility)
 
 TEST_F(EdpTests, CheckDeadlineCompatibility)
 {
-    std::vector<QosTestingCase<unsigned int> > testing_cases{
+    std::vector<QosTestingCase<unsigned int>> testing_cases{
         { 5, 5, fastdds::dds::INVALID_QOS_POLICY_ID},
         { 5, 10, fastdds::dds::INVALID_QOS_POLICY_ID},
         { 10, 5, fastdds::dds::DEADLINE_QOS_POLICY_ID}
@@ -300,7 +300,7 @@ TEST_F(EdpTests, CheckDeadlineCompatibility)
 
 TEST_F(EdpTests, CheckOwnershipCompatibility)
 {
-    std::vector<QosTestingCase<OwnershipQosPolicyKind> > testing_cases{
+    std::vector<QosTestingCase<OwnershipQosPolicyKind>> testing_cases{
         { SHARED_OWNERSHIP_QOS, SHARED_OWNERSHIP_QOS, fastdds::dds::INVALID_QOS_POLICY_ID},
         { SHARED_OWNERSHIP_QOS, EXCLUSIVE_OWNERSHIP_QOS, fastdds::dds::OWNERSHIP_QOS_POLICY_ID},
         { EXCLUSIVE_OWNERSHIP_QOS, SHARED_OWNERSHIP_QOS, fastdds::dds::OWNERSHIP_QOS_POLICY_ID},
@@ -317,7 +317,7 @@ TEST_F(EdpTests, CheckOwnershipCompatibility)
 
 TEST_F(EdpTests, CheckLivelinessKindCompatibility)
 {
-    std::vector<QosTestingCase<LivelinessQosPolicyKind> > testing_cases{
+    std::vector<QosTestingCase<LivelinessQosPolicyKind>> testing_cases{
         { MANUAL_BY_TOPIC_LIVELINESS_QOS, MANUAL_BY_TOPIC_LIVELINESS_QOS, fastdds::dds::INVALID_QOS_POLICY_ID},
         { MANUAL_BY_TOPIC_LIVELINESS_QOS, MANUAL_BY_PARTICIPANT_LIVELINESS_QOS, fastdds::dds::INVALID_QOS_POLICY_ID},
         { MANUAL_BY_TOPIC_LIVELINESS_QOS, AUTOMATIC_LIVELINESS_QOS, fastdds::dds::INVALID_QOS_POLICY_ID},
@@ -340,7 +340,7 @@ TEST_F(EdpTests, CheckLivelinessKindCompatibility)
 
 TEST_F(EdpTests, CheckLeaseDurationCompatibility)
 {
-    std::vector<QosTestingCase<unsigned int> > testing_cases{
+    std::vector<QosTestingCase<unsigned int>> testing_cases{
         { 5, 5, fastdds::dds::INVALID_QOS_POLICY_ID},
         { 5, 10, fastdds::dds::INVALID_QOS_POLICY_ID},
         { 10, 5, fastdds::dds::LIVELINESS_QOS_POLICY_ID},
@@ -356,7 +356,7 @@ TEST_F(EdpTests, CheckLeaseDurationCompatibility)
 
 TEST_F(EdpTests, CheckReliabilityCompatibility)
 {
-    std::vector<QosTestingCase<ReliabilityQosPolicyKind> > testing_cases{
+    std::vector<QosTestingCase<ReliabilityQosPolicyKind>> testing_cases{
         { RELIABLE_RELIABILITY_QOS, RELIABLE_RELIABILITY_QOS, fastdds::dds::INVALID_QOS_POLICY_ID},
         { RELIABLE_RELIABILITY_QOS, BEST_EFFORT_RELIABILITY_QOS, fastdds::dds::INVALID_QOS_POLICY_ID},
         { BEST_EFFORT_RELIABILITY_QOS, RELIABLE_RELIABILITY_QOS, fastdds::dds::RELIABILITY_QOS_POLICY_ID},
@@ -373,7 +373,7 @@ TEST_F(EdpTests, CheckReliabilityCompatibility)
 
 TEST_F(EdpTests, CheckPositiveAckCompatibility)
 {
-    std::vector<QosTestingCase<bool> > testing_cases{
+    std::vector<QosTestingCase<bool>> testing_cases{
         { true, true, fastdds::dds::INVALID_QOS_POLICY_ID},
         { true, false, fastdds::dds::INVALID_QOS_POLICY_ID},
         { false, true, fastdds::dds::DISABLEPOSITIVEACKS_QOS_POLICY_ID},
@@ -387,7 +387,6 @@ TEST_F(EdpTests, CheckPositiveAckCompatibility)
         check_expectations(testing_case.failed_qos);
     }
 }
-
 
 } // namespace rtps
 } // namespace fastrtps

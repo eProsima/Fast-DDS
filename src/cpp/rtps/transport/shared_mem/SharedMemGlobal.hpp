@@ -19,11 +19,12 @@
 #include <mutex>
 #include <memory>
 
-#include <rtps/transport/shared_mem/SharedMemSegment.hpp>
+#include <utils/shared_memory/SharedMemSegment.hpp>
+#include <utils/shared_memory/RobustExclusiveLock.hpp>
+#include <utils/shared_memory/RobustSharedLock.hpp>
+#include <utils/shared_memory/SharedMemWatchdog.hpp>
+
 #include <rtps/transport/shared_mem/MultiProducerConsumerRingBuffer.hpp>
-#include <rtps/transport/shared_mem/RobustExclusiveLock.hpp>
-#include <rtps/transport/shared_mem/RobustSharedLock.hpp>
-#include <rtps/transport/shared_mem/SharedMemWatchdog.hpp>
 
 #define THREADID "(ID:" << std::this_thread::get_id() << ") "
 
@@ -127,7 +128,7 @@ public:
 
         PortNode* node_;
 
-        std::unique_ptr<MultiProducerConsumerRingBuffer<BufferDescriptor> > buffer_;
+        std::unique_ptr<MultiProducerConsumerRingBuffer<BufferDescriptor>> buffer_;
 
         uint64_t overflows_count_;
 
@@ -204,7 +205,7 @@ public:
 
         private:
 
-            std::vector<std::shared_ptr<PortContext> > watched_ports_;
+            std::vector<std::shared_ptr<PortContext>> watched_ports_;
             std::mutex watched_ports_mutex_;
 
             WatchTask()
@@ -385,7 +386,7 @@ public:
             auto buffer_node = static_cast<MultiProducerConsumerRingBuffer<BufferDescriptor>::Node*>(
                 port_segment_->get_address_from_offset(node_->buffer_node));
 
-            buffer_ = std::unique_ptr<MultiProducerConsumerRingBuffer<BufferDescriptor> >(
+            buffer_ = std::unique_ptr<MultiProducerConsumerRingBuffer<BufferDescriptor>>(
                 new MultiProducerConsumerRingBuffer<BufferDescriptor>(buffer_base, buffer_node));
 
             node_->ref_counter.fetch_add(1);

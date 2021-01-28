@@ -96,7 +96,8 @@ struct VariableLengthDataLimits
     {
         return (this->max_properties == b.max_properties) &&
                (this->max_user_data == b.max_user_data) &&
-               (this->max_partitions == b.max_partitions);
+               (this->max_partitions == b.max_partitions) &&
+               (this->max_datasharing_domains == b.max_datasharing_domains);
     }
 
     //! Defines the maximum size (in octets) of properties data in the local or remote participant
@@ -105,6 +106,8 @@ struct VariableLengthDataLimits
     size_t max_user_data = 0;
     //! Defines the maximum size (in octets) of partitions data
     size_t max_partitions = 0;
+    //! Defines the maximum size (in elements) of the list of data sharing domain IDs
+    size_t max_datasharing_domains = 0;
 };
 
 /**

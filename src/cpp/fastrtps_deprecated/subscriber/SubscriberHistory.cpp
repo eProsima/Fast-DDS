@@ -373,13 +373,15 @@ bool SubscriberHistory::readNextData(
     if (lock.try_lock_until(max_blocking_time))
     {
         CacheChange_t* change;
-        WriterProxy* wp;
+        WriterProxy* wp = nullptr;
         if (mp_reader->nextUnreadCache(&change, &wp))
         {
             logInfo(SUBSCRIBER, mp_reader->getGuid().entityId << ": reading " << change->sequenceNumber);
             uint32_t ownership = wp && qos_.m_ownership.kind == EXCLUSIVE_OWNERSHIP_QOS ?
                     wp->ownership_strength() : 0;
-            return deserialize_change(change, ownership, data, info);
+            bool deserialized = deserialize_change(change, ownership, data, info);
+            mp_reader->change_read_by_user(change, wp);
+            return deserialized;
         }
     }
     return false;
@@ -409,6 +411,7 @@ bool SubscriberHistory::takeNextData(
             uint32_t ownership = wp && qos_.m_ownership.kind == EXCLUSIVE_OWNERSHIP_QOS ?
                     wp->ownership_strength() : 0;
             bool deserialized = deserialize_change(change, ownership, data, info);
+            mp_reader->change_read_by_user(change, wp);
             bool removed = remove_change_sub(change);
             return (deserialized && removed);
         }
@@ -428,6 +431,7 @@ bool SubscriberHistory::get_first_untaken_info(
     {
         uint32_t ownership = wp && qos_.m_ownership.kind == EXCLUSIVE_OWNERSHIP_QOS ? wp->ownership_strength() : 0;
         get_sample_info(info, change, ownership);
+        mp_reader->change_read_by_user(change, wp, false);
         return true;
     }
 

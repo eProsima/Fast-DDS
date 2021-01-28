@@ -23,20 +23,31 @@
 #include <fastrtps/TopicDataType.h>
 #include "HelloWorld.h"
 
-class HelloWorldType:public eprosima::fastrtps::TopicDataType
+class HelloWorldType : public eprosima::fastrtps::TopicDataType
 {
-    public:
+public:
 
-        typedef HelloWorld type;
+    typedef HelloWorld type;
 
-        HelloWorldType();
-        virtual ~HelloWorldType();
-        bool serialize(void*data, eprosima::fastrtps::rtps::SerializedPayload_t* payload);
-        bool deserialize(eprosima::fastrtps::rtps::SerializedPayload_t* payload,void * data);
-        std::function<uint32_t()> getSerializedSizeProvider(void *data);
-        bool getKey(void*data, eprosima::fastrtps::rtps::InstanceHandle_t* ihandle, bool force_md5);
-        void* createData();
-        void deleteData(void* data);
+    HelloWorldType();
+    virtual ~HelloWorldType();
+    bool serialize(
+            void* data,
+            eprosima::fastrtps::rtps::SerializedPayload_t* payload);
+    bool deserialize(
+            eprosima::fastrtps::rtps::SerializedPayload_t* payload,
+            void* data);
+    std::function<uint32_t()> getSerializedSizeProvider(
+            void* data);
+    bool getKey(
+            void* data,
+            eprosima::fastrtps::rtps::InstanceHandle_t* ihandle,
+            bool force_md5);
+    void* createData();
+    void deleteData(
+            void* data);
+    bool is_bounded() const;
+    bool is_plain() const;
 };
 
 #endif /* HELLOWORLDTOPIC_H_ */

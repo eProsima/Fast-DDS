@@ -35,12 +35,14 @@
 
 #include <fastdds/dds/log/Log.hpp>
 #include <fastrtps/utils/TimeConversion.h>
+#include <utils/Host.hpp>
 #include <fastdds/rtps/resources/ResourceEvent.h>
 #include <fastdds/rtps/resources/TimedEvent.h>
 #include <fastdds/rtps/builtin/liveliness/WLP.h>
 #include <fastdds/core/policy/ParameterSerializer.hpp>
 
 #include <rtps/history/TopicPayloadPoolRegistry.hpp>
+#include <rtps/DataSharing/DataSharingPayloadPool.hpp>
 
 #include <functional>
 #include <iostream>
@@ -191,13 +193,70 @@ ReturnCode_t DataWriterImpl::enable()
         w_att.keep_duration = qos_.reliable_writer_qos().disable_positive_acks.duration;
     }
 
+    ReturnCode_t ret_code = check_datasharing_compatible(w_att, is_data_sharing_compatible_);
+    if (ret_code != ReturnCode_t::RETCODE_OK)
+    {
+        return ret_code;
+    }
+
+    if (is_data_sharing_compatible_)
+    {
+        DataSharingQosPolicy datasharing(qos_.data_sharing());
+        if (datasharing.domain_ids().empty())
+        {
+            uint64_t id = 0;
+            Host::uint48 mac_id = Host::instance().mac_id();
+            for (size_t i = 0; i < Host::mac_id_length; ++i)
+            {
+                id |= mac_id.value[i] << (64 - i);
+            }
+            datasharing.add_domain_id(id);
+        }
+        w_att.endpoint.set_data_sharing_configuration(datasharing);
+    }
+    else
+    {
+        DataSharingQosPolicy datasharing;
+        datasharing.off();
+        w_att.endpoint.set_data_sharing_configuration(datasharing);
+    }
+
     auto pool = get_payload_pool();
+    if (!pool)
+    {
+        logError(DATA_WRITER, "Problem creating payload pool for associated Writer");
+        return ReturnCode_t::RETCODE_ERROR;
+    }
+
     RTPSWriter* writer = RTPSDomain::createRTPSWriter(
         publisher_->rtps_participant(),
         w_att, pool,
         static_cast<WriterHistory*>(&history_),
         static_cast<WriterListener*>(&writer_listener_));
 
+    if (writer == nullptr &&
+            w_att.endpoint.data_sharing_configuration().kind() == DataSharingKind::AUTO)
+    {
+        logInfo(DATA_WRITER, "Trying with a non-datasharing pool");
+        release_payload_pool();
+        is_data_sharing_compatible_ = false;
+        DataSharingQosPolicy datasharing;
+        datasharing.off();
+        w_att.endpoint.set_data_sharing_configuration(datasharing);
+
+        pool = get_payload_pool();
+        if (!pool)
+        {
+            logError(DATA_WRITER, "Problem creating payload pool for associated Writer");
+            return ReturnCode_t::RETCODE_ERROR;
+        }
+
+        writer = RTPSDomain::createRTPSWriter(
+            publisher_->rtps_participant(),
+            w_att, pool,
+            static_cast<WriterHistory*>(&history_),
+            static_cast<WriterListener*>(&writer_listener_));
+    }
     if (writer == nullptr)
     {
         release_payload_pool();
@@ -252,6 +311,10 @@ ReturnCode_t DataWriterImpl::enable()
 
     // REGISTER THE WRITER
     WriterQos wqos = qos_.get_writerqos(get_publisher()->get_qos(), topic_->get_qos());
+    if (!is_data_sharing_compatible_)
+    {
+        wqos.data_sharing.off();
+    }
     publisher_->rtps_participant()->registerWriter(writer_, get_topic_attributes(qos_, *topic_, type_), wqos);
 
     return ReturnCode_t::RETCODE_OK;
@@ -622,7 +685,7 @@ ReturnCode_t DataWriterImpl::perform_create_new_change(
     bool was_loaned = check_and_remove_loan(data, payload);
     if (!was_loaned)
     {
-        if (!get_free_payload_from_pool(type_->getSerializedSizeProvider(data), payload))
+        if (!get_free_payload_from_pool(type_->getSerializedSizeProvider(data), payload, max_blocking_time))
         {
             return ReturnCode_t::RETCODE_OUT_OF_RESOURCES;
         }
@@ -1266,6 +1329,13 @@ ReturnCode_t DataWriterImpl::check_qos(
             return ReturnCode_t::RETCODE_INCONSISTENT_POLICY;
         }
     }
+    if (qos.data_sharing().kind() == DataSharingKind::ON &&
+            (qos.endpoint().history_memory_policy != PREALLOCATED_MEMORY_MODE &&
+            qos.endpoint().history_memory_policy != PREALLOCATED_WITH_REALLOC_MEMORY_MODE))
+    {
+        logError(RTPS_QOS_CHECK, "DATA_SHARING cannot be used with memory policies other than PREALLOCATED.");
+        return ReturnCode_t::RETCODE_INCONSISTENT_POLICY;
+    }
     return ReturnCode_t::RETCODE_OK;
 }
 
@@ -1312,6 +1382,21 @@ bool DataWriterImpl::can_qos_be_updated(
     {
         updatable = false;
         logWarning(RTPS_QOS_CHECK, "Destination order Kind cannot be changed after the creation of a DataWriter.");
+    }
+    if (to.data_sharing().kind() != from.data_sharing().kind())
+    {
+        updatable = false;
+        logWarning(RTPS_QOS_CHECK, "Data sharing configuration cannot be changed after the creation of a DataWriter.");
+    }
+    if (to.data_sharing().shm_directory() != from.data_sharing().shm_directory())
+    {
+        updatable = false;
+        logWarning(RTPS_QOS_CHECK, "Data sharing configuration cannot be changed after the creation of a DataWriter.");
+    }
+    if (to.data_sharing().domain_ids() != from.data_sharing().domain_ids())
+    {
+        updatable = false;
+        logWarning(RTPS_QOS_CHECK, "Data sharing configuration cannot be changed after the creation of a DataWriter.");
     }
     return updatable;
 }
@@ -1370,8 +1455,19 @@ std::shared_ptr<IPayloadPool> DataWriterImpl::get_payload_pool()
         fixed_payload_size_ = config.memory_policy == PREALLOCATED_MEMORY_MODE ? config.payload_initial_size : 0u;
 
         // Get payload pool reference and allocate space for our history
-        payload_pool_ = TopicPayloadPoolRegistry::get(topic_->get_name(), config);
-        payload_pool_->reserve_history(config, false);
+        if (is_data_sharing_compatible_)
+        {
+            payload_pool_ = DataSharingPayloadPool::get_writer_pool(config);
+        }
+        else
+        {
+            payload_pool_ = TopicPayloadPoolRegistry::get(topic_->get_name(), config);
+            if (!std::static_pointer_cast<ITopicPayloadPool>(payload_pool_)->reserve_history(config, false))
+            {
+                auto topic_pool = std::static_pointer_cast<ITopicPayloadPool>(payload_pool_);
+                TopicPayloadPoolRegistry::release(topic_pool);
+            }
+        }
 
         // Prepare loans collection for plain types only
         if (type_->is_plain())
@@ -1383,16 +1479,28 @@ std::shared_ptr<IPayloadPool> DataWriterImpl::get_payload_pool()
     return payload_pool_;
 }
 
-void DataWriterImpl::release_payload_pool()
+bool DataWriterImpl::release_payload_pool()
 {
     assert(payload_pool_);
 
     loans_.reset();
 
-    PoolConfig config = PoolConfig::from_history_attributes(history_.m_att);
-    payload_pool_->release_history(config, false);
+    bool result = true;
 
-    TopicPayloadPoolRegistry::release(payload_pool_);
+    PoolConfig config = PoolConfig::from_history_attributes(history_.m_att);
+    if (is_data_sharing_compatible_)
+    {
+        // No-op
+    }
+    else
+    {
+        auto topic_pool = std::static_pointer_cast<ITopicPayloadPool>(payload_pool_);
+        result = topic_pool->release_history(config, false);
+        TopicPayloadPoolRegistry::release(topic_pool);
+    }
+
+    payload_pool_.reset();
+    return result;
 }
 
 bool DataWriterImpl::add_loan(
@@ -1407,6 +1515,86 @@ bool DataWriterImpl::check_and_remove_loan(
         PayloadInfo_t& payload)
 {
     return loans_ && loans_->check_and_remove_loan(data, payload);
+}
+
+ReturnCode_t DataWriterImpl::check_datasharing_compatible(
+        const WriterAttributes& writer_attributes,
+        bool& is_datasharing_compatible) const
+{
+
+#if HAVE_SECURITY
+    bool has_security_enabled = publisher_->rtps_participant()->is_security_enabled_for_writer(writer_attributes);
+#else
+    (void) writer_attributes;
+#endif // HAVE_SECURITY
+
+    bool has_bound_payload_size =
+            (qos_.endpoint().history_memory_policy == eprosima::fastrtps::rtps::PREALLOCATED_MEMORY_MODE ||
+            qos_.endpoint().history_memory_policy == eprosima::fastrtps::rtps::PREALLOCATED_WITH_REALLOC_MEMORY_MODE) &&
+            type_.is_bounded();
+
+    bool has_key = type_->m_isGetKeyDefined;
+
+    is_datasharing_compatible = false;
+    switch (qos_.data_sharing().kind())
+    {
+        case DataSharingKind::OFF:
+            return ReturnCode_t::RETCODE_OK;
+            break;
+        case DataSharingKind::ON:
+#if HAVE_SECURITY
+            if (has_security_enabled)
+            {
+                logError(DATA_WRITER, "Data sharing cannot be used with security protection.");
+                return ReturnCode_t::RETCODE_NOT_ALLOWED_BY_SECURITY;
+            }
+#endif // HAVE_SECURITY
+
+            if (!has_bound_payload_size)
+            {
+                logError(DATA_WRITER, "Data sharing cannot be used with " <<
+                        (type_.is_bounded() ? "memory policies other than PREALLOCATED" : "unbounded data types"));
+                return ReturnCode_t::RETCODE_BAD_PARAMETER;
+            }
+
+            if (has_key)
+            {
+                logError(DATA_WRITER, "Data sharing cannot be used with keyed data types");
+                return ReturnCode_t::RETCODE_BAD_PARAMETER;
+            }
+
+            is_datasharing_compatible = true;
+            return ReturnCode_t::RETCODE_OK;
+            break;
+        case DataSharingKind::AUTO:
+#if HAVE_SECURITY
+            if (has_security_enabled)
+            {
+                logInfo(DATA_WRITER, "Data sharing disabled due to security configuration.");
+                return ReturnCode_t::RETCODE_OK;
+            }
+#endif // HAVE_SECURITY
+
+            if (!has_bound_payload_size)
+            {
+                logInfo(DATA_WRITER, "Data sharing disabled because " <<
+                        (type_.is_bounded() ? "memory policy is not PREALLOCATED" : "data type is not bounded"));
+                return ReturnCode_t::RETCODE_OK;
+            }
+
+            if (has_key)
+            {
+                logInfo(DATA_WRITER, "Data sharing disabled because data type is keyed");
+                return ReturnCode_t::RETCODE_OK;
+            }
+
+            is_datasharing_compatible = true;
+            return ReturnCode_t::RETCODE_OK;
+            break;
+        default:
+            logError(DATA_WRITER, "Unknown data sharing kind.");
+            return ReturnCode_t::RETCODE_BAD_PARAMETER;
+    }
 }
 
 } // namespace dds
