@@ -110,7 +110,7 @@ private:
                     std::memory_order_relaxed))
             {
             }
-
+            logWarning(RTPS_TRANSPORT_SHM, "Buffer is being invalidated, segment_size may be insufficient");
             return (s.processing_count == 0);
         }
 
