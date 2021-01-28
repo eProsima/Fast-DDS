@@ -1263,7 +1263,7 @@
 	<li/>
 <p class="western" style="margin-bottom: 0in"><font color="#000000" face="Arial, sans-serif" size="3" style="font-size: 12pt">Installation, User Manual and Release notes. (<a class="western" href="http://eprosima-fast-rtps.readthedocs.io/en/latest/">http://eprosima-fast-rtps.readthedocs.io/en/latest/</a>)</font></p>
 	<li/>
-<p class="western" style="margin-bottom: 0in"><font color="#000000" face="Arial, sans-serif" size="3" style="font-size: 12pt"><i>eProsima Fast RTPS</i> C++ API html documentation. (<a class="western" href="http://www.eprosima.com/docs/fast-rtps/@PROJECT_VERSION@/html/index.html">http://www.eprosima.com/docs/fast-rtps/@PROJECT_VERSION@/html/index.html</a>)</font></p>
+<p class="western" style="margin-bottom: 0in"><font color="#000000" face="Arial, sans-serif" size="3" style="font-size: 12pt"><i>eProsima Fast RTPS</i> C++ API html documentation. (<a class="western" href="https://fast-dds.docs.eprosima.com/en/latest/fastdds/api_reference/api_reference.html">https://fast-dds.docs.eprosima.com/en/latest/fastdds/api_reference/api_reference.html</a>)</font></p>
 	<li/>
 <p class="western" style="margin-bottom: 0in"><font color="#000000" face="Arial, sans-serif" size="3" style="font-size: 12pt">Product Page: Video Tutorials, Whitepapers, benchmarkings (<a class="western" href="http://www.eprosima.com/index.php/products-all/eprosima-fast-rtps">http://www.eprosima.com/index.php/products-all/eprosima-fast-rtps</a>)</font></p>
 </ul>
