@@ -95,9 +95,10 @@ void Publisher::wait_discovery(
         uint32_t how_many)
 {
     std::unique_lock<std::mutex> lock(mutex_);
-    cv_.wait(lock, [&] {
-        return matched_ >= how_many;
-    });
+    cv_.wait(lock, [&]
+            {
+                return matched_ >= how_many;
+            });
 }
 
 void Publisher::run(
@@ -174,4 +175,4 @@ void Publisher::onParticipantAuthentication(
     }
 }
 
-#endif
+#endif // if HAVE_SECURITY

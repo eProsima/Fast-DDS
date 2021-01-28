@@ -35,8 +35,8 @@ namespace eprosima {
 namespace fastrtps {
 class Participant;
 class Subscriber;
-}
-}
+} // namespace fastrtps
+} // namespace eprosima
 
 class Subscriber
     : public eprosima::fastrtps::SubscriberListener
@@ -62,7 +62,7 @@ public:
     void onParticipantAuthentication(
             eprosima::fastrtps::Participant* /*participant*/,
             eprosima::fastrtps::rtps::ParticipantAuthenticationInfo&& info) override;
-#endif
+#endif // if HAVE_SECURITY
 
     void onSubscriptionMatched(
             eprosima::fastrtps::Subscriber* /*subscriber*/,

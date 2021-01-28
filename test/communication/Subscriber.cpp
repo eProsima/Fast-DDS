@@ -137,27 +137,27 @@ bool Subscriber::run_for(
     {
         std::unique_lock<std::mutex> lock(mutex_);
         returned_value = cv_.wait_for(lock, timeout, [&]
-        {
-            if (publishers_ < number_samples_.size())
-            {
-                // Will fail later.
-                return true;
-            }
-            else if (publishers_ > number_samples_.size())
-            {
-                return false;
-            }
+                        {
+                            if (publishers_ < number_samples_.size())
+                            {
+                                // Will fail later.
+                                return true;
+                            }
+                            else if (publishers_ > number_samples_.size())
+                            {
+                                return false;
+                            }
 
-            for (auto& number_samples : number_samples_)
-            {
-                if (max_number_samples_ > number_samples.second)
-                {
-                    return false;
-                }
-            }
+                            for (auto& number_samples : number_samples_)
+                            {
+                                if (max_number_samples_ > number_samples.second)
+                                {
+                                    return false;
+                                }
+                            }
 
-            return true;
-        });
+                            return true;
+                        });
     }
     else
     {
@@ -217,4 +217,4 @@ void Subscriber::onParticipantAuthentication(
     }
 }
 
-#endif
+#endif // if HAVE_SECURITY

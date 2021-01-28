@@ -32,8 +32,8 @@ namespace eprosima {
 namespace fastrtps {
 class Participant;
 class Publisher;
-}
-}
+} // namespace fastrtps
+} // namespace eprosima
 
 class Publisher
     : public eprosima::fastrtps::PublisherListener
@@ -81,7 +81,7 @@ public:
     void onParticipantAuthentication(
             eprosima::fastrtps::Participant* participant,
             eprosima::fastrtps::rtps::ParticipantAuthenticationInfo&& info) override;
-#endif
+#endif // if HAVE_SECURITY
 
     bool init(
             uint32_t seed,

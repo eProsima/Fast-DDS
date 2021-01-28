@@ -112,7 +112,7 @@ bool SubscriberModule::init(
     }
 
     //CREATE THE DATAREADER
-    DataReaderQos rqos = subscriber_->get_default_datareader_qos();;
+    DataReaderQos rqos = subscriber_->get_default_datareader_qos();
     rqos.liveliness().lease_duration = 3;
     rqos.liveliness().announcement_period = 1;
     rqos.liveliness().kind = eprosima::fastdds::dds::AUTOMATIC_LIVELINESS_QOS;
@@ -124,7 +124,7 @@ bool SubscriberModule::init(
         return false;
     }
     std::cout << "Reader created correctly in topic " << topic_->get_name()
-            << " with type " << type_.get_type_name() << std::endl;
+              << " with type " << type_.get_type_name() << std::endl;
 
     std::cout << "Subscriber initialized correctly" << std::endl;
 
@@ -152,27 +152,27 @@ bool SubscriberModule::run_for(
     {
         std::unique_lock<std::mutex> lock(mutex_);
         returned_value = cv_.wait_for(lock, timeout, [&]
-        {
-            if (publishers_ < number_samples_.size())
-            {
-                // Will fail later.
-                return true;
-            }
-            else if (publishers_ > number_samples_.size())
-            {
-                return false;
-            }
+                        {
+                            if (publishers_ < number_samples_.size())
+                            {
+                                // Will fail later.
+                                return true;
+                            }
+                            else if (publishers_ > number_samples_.size())
+                            {
+                                return false;
+                            }
 
-            for (auto& number_samples : number_samples_)
-            {
-                if (max_number_samples_ > number_samples.second)
-                {
-                    return false;
-                }
-            }
+                            for (auto& number_samples : number_samples_)
+                            {
+                                if (max_number_samples_ > number_samples.second)
+                                {
+                                    return false;
+                                }
+                            }
 
-            return true;
-        });
+                            return true;
+                        });
     }
     else
     {
@@ -231,7 +231,8 @@ void SubscriberModule::onParticipantAuthentication(
             " unauthorized participant " << info.guid << std::endl;
     }
 }
-#endif
+
+#endif // if HAVE_SECURITY
 
 void SubscriberModule::on_subscription_matched(
         DataReader* /*reader*/,
@@ -248,7 +249,7 @@ void SubscriberModule::on_subscription_matched(
     else
     {
         std::cout << info.current_count_change
-                << " is not a valid value for SubscriptionMatchedStatus current count change" << std::endl;
+                  << " is not a valid value for SubscriptionMatchedStatus current count change" << std::endl;
     }
 }
 
@@ -262,7 +263,7 @@ void SubscriberModule::on_data_available(
         LoanableSequence<FixedSized> l_sample;
         LoanableSequence<SampleInfo> l_info;
 
-        if(ReturnCode_t::RETCODE_OK == reader->take_next_instance(l_sample, l_info))
+        if (ReturnCode_t::RETCODE_OK == reader->take_next_instance(l_sample, l_info))
         {
             SampleInfo info = l_info[0];
 
@@ -313,7 +314,7 @@ void SubscriberModule::on_data_available(
                     std::unique_lock<std::mutex> lock(mutex_);
                     std::cout << "Received sample (" << info.sample_identity.writer_guid() << " - " <<
                         info.sample_identity.sequence_number() << "): index(" << sample.index() << "), message("
-                                << sample.message() << ")" << std::endl;
+                              << sample.message() << ")" << std::endl;
                     if (max_number_samples_ <= ++number_samples_[info.sample_identity.writer_guid()])
                     {
                         cv_.notify_all();

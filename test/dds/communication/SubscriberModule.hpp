@@ -63,7 +63,7 @@ public:
     void onParticipantAuthentication(
             DomainParticipant* /*participant*/,
             fastrtps::rtps::ParticipantAuthenticationInfo&& info) override;
-#endif
+#endif // if HAVE_SECURITY
 
     void on_subscription_matched(
             DataReader* /*reader*/,

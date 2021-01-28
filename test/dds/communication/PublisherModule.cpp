@@ -116,7 +116,7 @@ bool PublisherModule::init(
         return false;
     }
     std::cout << "Writer created correctly in topic " << topic_->get_name()
-            << " with type " << type_.get_type_name() << std::endl;
+              << " with type " << type_.get_type_name() << std::endl;
 
     std::cout << "Publisher initialized correctly" << std::endl;
 
@@ -127,9 +127,10 @@ void PublisherModule::wait_discovery(
         uint32_t how_many)
 {
     std::unique_lock<std::mutex> lock(mutex_);
-    cv_.wait(lock, [&] {
-        return matched_ >= how_many;
-    });
+    cv_.wait(lock, [&]
+            {
+                return matched_ >= how_many;
+            });
 }
 
 void PublisherModule::run(
@@ -191,17 +192,17 @@ void PublisherModule::on_publication_matched(
     if (info.current_count_change == 1)
     {
         std::cout << "Publisher matched with subscriber " << info.last_subscription_handle
-                    << ": " << ++matched_ << std::endl;
+                  << ": " << ++matched_ << std::endl;
     }
     else if (info.current_count_change == -1)
     {
         std::cout << "Publisher unmatched with subscriber " << info.last_subscription_handle
-                    << ": " << --matched_ << std::endl;
+                  << ": " << --matched_ << std::endl;
     }
     else
     {
         std::cout << info.current_count_change
-                    << " is not a valid value for PublicationMatchedStatus current count change" << std::endl;
+                  << " is not a valid value for PublicationMatchedStatus current count change" << std::endl;
     }
     cv_.notify_all();
 }
@@ -252,4 +253,5 @@ void PublisherModule::onParticipantAuthentication(
             " unauthorized participant " << info.guid << std::endl;
     }
 }
+
 #endif // if HAVE_SECURITY
