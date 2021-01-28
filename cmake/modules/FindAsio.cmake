@@ -12,7 +12,7 @@ else()
         set(Asio_FOUND_PACKAGE ON)
     endif()
 
-    # Not found a local version of Asio
+    # Asio local version not found
     if(NOT Asio_INCLUDE_DIR)
         # If THIRDPARTY_Asio=ON the Asio version from thirdparty is used.
         if(THIRDPARTY_Asio STREQUAL "ON")
