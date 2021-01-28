@@ -210,7 +210,7 @@ public:
     RTPS_DllAPI ReturnCode_t resume_publications();
 
     /**
-     * @brief Signals the begining of a set of coherent cache changes using th Datawriters attached to the publisher
+     * @brief Signals the beginning of a set of coherent cache changes using the Datawriters attached to the publisher
      * @return RETCODE_OK if successful, an error code otherwise
      */
     RTPS_DllAPI ReturnCode_t begin_coherent_changes();

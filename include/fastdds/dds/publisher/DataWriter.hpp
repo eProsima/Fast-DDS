@@ -248,7 +248,7 @@ public:
      * The operation will only fill the fields that form the key inside the @ref key_holder instance.
      *
      * This operation may return BAD_PARAMETER if the InstanceHandle_t a_handle does not correspond to an existing
-     * dataobject known to the DataWriter. If the implementation is not able to check invalid handles then the result
+     * data-object known to the DataWriter. If the implementation is not able to check invalid handles then the result
      * in this situation is unspecified.
      *
      * @param[in,out] key
