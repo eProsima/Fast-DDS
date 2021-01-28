@@ -47,12 +47,22 @@ private:
 
 };
 
-class LatencyType
+/*
+ * Loanable DataTypes should be flat (only used basic types and arrays).
+ * Consequently the compiler cannot generate this type allocation code because the array member size is unknown at build
+ * time. The LatencyDataType must allocate a suitable buffer for these objects based on the array member size given at
+ * runtime. A beforehand knowledge of this type alignment in needed to calculate the right buffer size. The default
+ * alignment turn out to be 4 in both msvc and gcc for x86 and x64 architectures. The alignas specifier is used to match
+ * this default behaviour in other platforms.
+ * This type does not define a comparison operator because the actual data size referenced is unknown. Use the
+ * comparison method provided in LatencyDataType.
+ * */
+class alignas(4) LatencyType
 {
 public:
 
     uint32_t seqnum;
-    std::vector<uint8_t> data;
+    uint8_t data[1];
 
     LatencyType()
         : seqnum(0)
@@ -61,8 +71,7 @@ public:
 
     LatencyType(
             uint32_t number)
-        : seqnum(0)
-        , data(number, 0)
+        : seqnum(number)            // TODO(jlbueno) Ask Miguel Barro
     {
     }
 
@@ -72,36 +81,27 @@ public:
 
 };
 
-inline bool operator ==(
-        const LatencyType& lt1,
-        const LatencyType& lt2)
-{
-    if (lt1.seqnum != lt2.seqnum)
-    {
-        return false;
-    }
-    if (lt1.data.size() != lt2.data.size())
-    {
-        return false;
-    }
-    for (size_t i = 0; i < lt1.data.size(); ++i)
-    {
-        if (lt1.data.at(i) != lt2.data.at(i))
-        {
-            return false;
-        }
-    }
-    return true;
-}
-
 class LatencyDataType : public eprosima::fastdds::dds::TopicDataType
 {
+    // Buffer size for size management
+    const uint32_t buffer_size_;
 public:
 
+
     LatencyDataType()
+        : buffer_size_(MAX_TYPE_SIZE - 4)
     {
         setName("LatencyType");
         m_typeSize = MAX_TYPE_SIZE;
+        m_isGetKeyDefined = false;
+    }
+
+    LatencyDataType(
+            const uint32_t& size)
+        : buffer_size_(size)
+    {
+        setName("LatencyType");
+        m_typeSize = size + 4;
         m_isGetKeyDefined = false;
     }
 
@@ -129,6 +129,16 @@ public:
         return false;
     }
 
+    void set_size(
+            const uint32_t& size);
+
+    bool compare_data(
+            const LatencyType& lt1,
+            const LatencyType& lt2) const;
+
+    bool is_bounded() const override;
+
+    bool is_plain() const override;
 };
 
 enum TESTCOMMAND : uint32_t

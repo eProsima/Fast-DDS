@@ -24,27 +24,35 @@
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
 
+bool LatencyDataType::compare_data(
+        const LatencyType& lt1,
+        const LatencyType& lt2) const
+{
+    if (lt1.seqnum != lt2.seqnum)
+    {
+        return false;
+    }
+
+    return 0 == memcmp(lt1.data, lt2.data, buffer_size_);
+}
+
 bool LatencyDataType::serialize(void*data,SerializedPayload_t* payload)
 {
     LatencyType* lt = (LatencyType*)data;
 
     memcpy(payload->data, &lt->seqnum, sizeof(lt->seqnum));
-    const auto size = static_cast<uint32_t>(lt->data.size());
-    memcpy(payload->data + 4, &size, sizeof(size));
-
-    //std::copy(lt->data.begin(),lt->data.end(),payload->data+8);
-    memcpy(payload->data + 8, lt->data.data(), lt->data.size());
-    payload->length = (uint32_t)(8+lt->data.size());
+    memcpy(payload->data + 4, lt->data, buffer_size_);
+    payload->length = 4 + buffer_size_;
     return true;
 }
 
 bool LatencyDataType::deserialize(SerializedPayload_t* payload,void * data)
 {
+    // Payload members endianness matches local machine
     LatencyType* lt = (LatencyType*)data;
     memcpy(&lt->seqnum, payload->data, sizeof(lt->seqnum));
-    uint32_t size;
-    memcpy(&size, payload->data+4, sizeof(size));
-    std::copy(payload->data+8,payload->data+8+size,lt->data.begin());
+//    lt->seqnum = *static_cast<uint32_t*>(payload->data);       // TODO(jlbueno) Ask Miguel Barro
+    std::copy(payload->data+4,payload->data+4+buffer_size_,lt->data);
     return true;
 }
 
@@ -52,26 +60,33 @@ std::function<uint32_t()> LatencyDataType::getSerializedSizeProvider(void* data)
 {
     return [data]() -> uint32_t
     {
-        LatencyType *tdata = static_cast<LatencyType*>(data);
-        uint32_t size = 0;
+        LatencyDataType* tdata = static_cast<LatencyDataType*>(data);
 
-        size = (uint32_t)(sizeof(uint32_t) + sizeof(uint32_t) + tdata->data.size());
-
-        return size;
+        return tdata->m_typeSize;
     };
 }
 
 void* LatencyDataType::createData()
 {
-
-    return (void*)new LatencyType();
+    return (void*)new uint8_t[(4 + buffer_size_ + 3) / 4 * 4];
 }
+
 void LatencyDataType::deleteData(void* data)
 {
-
-    delete((LatencyType*)data);
+    delete[] (uint8_t*)(data);
 }
 
+bool LatencyDataType::is_bounded() const
+{
+    // All plain types are bounded
+    return true;
+}
+
+bool LatencyDataType::is_plain() const
+{
+    // It is plain because the type has a fixed size
+    return true;
+}
 
 bool TestCommandDataType::serialize(void*data,SerializedPayload_t* payload)
 {
