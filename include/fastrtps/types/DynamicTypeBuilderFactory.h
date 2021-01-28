@@ -42,11 +42,14 @@ constexpr uint32_t BOUND_UNLIMITED = -1;
 class DynamicTypeBuilderFactory
 {
 protected:
+
     DynamicTypeBuilderFactory();
 
-    inline void add_builder_to_list(DynamicTypeBuilder* pBuilder);
+    inline void add_builder_to_list(
+            DynamicTypeBuilder* pBuilder);
 
-    DynamicType_ptr build_type(DynamicType_ptr other);
+    DynamicType_ptr build_type(
+            DynamicType_ptr other);
 
     void build_alias_type_code(
             const TypeDescriptor* descriptor,
@@ -121,26 +124,31 @@ protected:
 #ifndef DISABLE_DYNAMIC_MEMORY_CHECK
     std::vector<DynamicTypeBuilder*> builders_list_;
     mutable std::recursive_mutex mutex_;
-#endif
+#endif // ifndef DISABLE_DYNAMIC_MEMORY_CHECK
 
 public:
+
     RTPS_DllAPI static DynamicTypeBuilderFactory* get_instance();
 
     RTPS_DllAPI static ReturnCode_t delete_instance();
 
     ~DynamicTypeBuilderFactory();
 
-    RTPS_DllAPI DynamicType_ptr get_primitive_type(TypeKind kind);
+    RTPS_DllAPI DynamicType_ptr get_primitive_type(
+            TypeKind kind);
 
-    RTPS_DllAPI ReturnCode_t delete_builder(DynamicTypeBuilder* builder);
+    RTPS_DllAPI ReturnCode_t delete_builder(
+            DynamicTypeBuilder* builder);
 
-    RTPS_DllAPI ReturnCode_t delete_type(DynamicType* type);
+    RTPS_DllAPI ReturnCode_t delete_type(
+            DynamicType* type);
 
     RTPS_DllAPI DynamicTypeBuilder* create_custom_builder(
             const TypeDescriptor* descriptor,
             const std::string& name = "");
 
-    RTPS_DllAPI DynamicTypeBuilder* create_builder_copy(const DynamicTypeBuilder* type);
+    RTPS_DllAPI DynamicTypeBuilder* create_builder_copy(
+            const DynamicTypeBuilder* type);
 
     RTPS_DllAPI DynamicTypeBuilder* create_int32_builder();
 
@@ -168,9 +176,11 @@ public:
 
     RTPS_DllAPI DynamicTypeBuilder* create_byte_builder();
 
-    RTPS_DllAPI DynamicTypeBuilder* create_string_builder(uint32_t bound = MAX_STRING_LENGTH);
+    RTPS_DllAPI DynamicTypeBuilder* create_string_builder(
+            uint32_t bound = MAX_STRING_LENGTH);
 
-    RTPS_DllAPI DynamicTypeBuilder* create_wstring_builder(uint32_t bound = MAX_STRING_LENGTH);
+    RTPS_DllAPI DynamicTypeBuilder* create_wstring_builder(
+            uint32_t bound = MAX_STRING_LENGTH);
 
     RTPS_DllAPI DynamicTypeBuilder* create_sequence_builder(
             const DynamicTypeBuilder* element_type,
@@ -198,7 +208,8 @@ public:
             DynamicType_ptr value_type,
             uint32_t bound = MAX_ELEMENTS_COUNT);
 
-    RTPS_DllAPI DynamicTypeBuilder* create_bitmask_builder(uint32_t bound);
+    RTPS_DllAPI DynamicTypeBuilder* create_bitmask_builder(
+            uint32_t bound);
 
     RTPS_DllAPI DynamicTypeBuilder* create_bitset_builder();
 
@@ -214,19 +225,24 @@ public:
 
     RTPS_DllAPI DynamicTypeBuilder* create_struct_builder();
 
-    RTPS_DllAPI DynamicTypeBuilder* create_child_struct_builder(DynamicTypeBuilder* parent_type);
+    RTPS_DllAPI DynamicTypeBuilder* create_child_struct_builder(
+            DynamicTypeBuilder* parent_type);
 
-    RTPS_DllAPI DynamicTypeBuilder* create_union_builder(DynamicTypeBuilder* discriminator_type);
+    RTPS_DllAPI DynamicTypeBuilder* create_union_builder(
+            DynamicTypeBuilder* discriminator_type);
 
-    RTPS_DllAPI DynamicTypeBuilder* create_union_builder(DynamicType_ptr discriminator_type);
+    RTPS_DllAPI DynamicTypeBuilder* create_union_builder(
+            DynamicType_ptr discriminator_type);
 
-    RTPS_DllAPI DynamicType_ptr create_annotation_primitive(const std::string& name);
+    RTPS_DllAPI DynamicType_ptr create_annotation_primitive(
+            const std::string& name);
 
     RTPS_DllAPI DynamicType_ptr create_type(
             const TypeDescriptor* descriptor,
             const std::string& name = "");
 
-    RTPS_DllAPI DynamicType_ptr create_type(const DynamicTypeBuilder* other);
+    RTPS_DllAPI DynamicType_ptr create_type(
+            const DynamicTypeBuilder* other);
 
     RTPS_DllAPI DynamicType_ptr create_alias_type(
             DynamicTypeBuilder* base_type,
@@ -262,11 +278,14 @@ public:
 
     RTPS_DllAPI DynamicType_ptr create_byte_type();
 
-    RTPS_DllAPI DynamicType_ptr create_string_type(uint32_t bound = MAX_STRING_LENGTH);
+    RTPS_DllAPI DynamicType_ptr create_string_type(
+            uint32_t bound = MAX_STRING_LENGTH);
 
-    RTPS_DllAPI DynamicType_ptr create_wstring_type(uint32_t bound = MAX_STRING_LENGTH);
+    RTPS_DllAPI DynamicType_ptr create_wstring_type(
+            uint32_t bound = MAX_STRING_LENGTH);
 
-    RTPS_DllAPI DynamicType_ptr create_bitset_type(uint32_t bound);
+    RTPS_DllAPI DynamicType_ptr create_bitset_type(
+            uint32_t bound);
 
     RTPS_DllAPI void build_type_identifier(
             const DynamicType_ptr type,
