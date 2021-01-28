@@ -94,7 +94,7 @@ bool LoanableHelloWorldPublisher::init()
     }
 
     // CREATE THE WRITER
-    DataWriterQos wqos = DATAWRITER_QOS_DEFAULT;
+    DataWriterQos wqos = publisher_->get_default_datawriter_qos();
     wqos.history().depth = 10;
     wqos.durability().kind = TRANSIENT_LOCAL_DURABILITY_QOS;
     wqos.data_sharing().automatic();

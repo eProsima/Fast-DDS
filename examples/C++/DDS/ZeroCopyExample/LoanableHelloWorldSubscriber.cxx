@@ -88,7 +88,7 @@ bool LoanableHelloWorldSubscriber::init()
     }
 
     //CREATE THE READER
-    DataReaderQos rqos = DATAREADER_QOS_DEFAULT;
+    DataReaderQos rqos = subscriber_->get_default_datareader_qos();
     rqos.history().depth = 10;
     rqos.reliability().kind = RELIABLE_RELIABILITY_QOS;
     rqos.durability().kind = TRANSIENT_LOCAL_DURABILITY_QOS;
