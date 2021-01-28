@@ -372,7 +372,7 @@ public:
      * This method is designed to be used when performing deserialization of a bitmap range.
      *
      * @param num_bits   Number of significant bits in the input bitmap.
-     * @param bitmap     Points to the begining of a uint32_t array holding the input bitmap.
+     * @param bitmap     Points to the beginning of a uint32_t array holding the input bitmap.
      */
     void bitmap_set(
             uint32_t num_bits,

@@ -731,7 +731,7 @@ public:
      * will only fill the fields that form the key inside the @ref key_holder instance.
      *
      * This operation may return BAD_PARAMETER if the InstanceHandle_t a_handle does not correspond to an existing
-     * dataobject known to the DataReader. If the implementation is not able to check invalid handles then the result
+     * data-object known to the DataReader. If the implementation is not able to check invalid handles then the result
      * in this situation is unspecified.
      *
      * @param[in,out] key
@@ -950,7 +950,7 @@ public:
      * @param view_states Vector of ViewStateKind
      * @param instance_states Vector of InstanceStateKind
      * @param query_expression string containing query
-     * @param query_parameters Vector of strings containing parameters of query expresion
+     * @param query_parameters Vector of strings containing parameters of query expression
      * @return QueryCondition pointer
      */
     RTPS_DllAPI QueryCondition* create_querycondition(

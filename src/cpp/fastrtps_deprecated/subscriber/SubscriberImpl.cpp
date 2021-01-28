@@ -341,7 +341,7 @@ bool SubscriberImpl::onNewCacheChangeAdded(
     {
         if (earliest_change == change)
         {
-            // The new change has been added at the begining of the the history
+            // The new change has been added at the beginning of the the history
             // As the history is sorted by timestamp, this means that the new change has the smallest timestamp
             // We have to stop the timer as this will be the next change to expire
             lifespan_timer_->cancel_timer();
