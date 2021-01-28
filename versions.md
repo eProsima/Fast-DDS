@@ -1,9 +1,13 @@
-Forthcoming
------------
+Version 2.2.0
+-------------
 
 * TopicDataType interface extended (ABI break)
 * Upgrade to Quality Level 1
-* New DataWriter API for loaning samples (DataWriter API extension)
+* New DataWriter API for loaning samples (extends DataWriter API, implies ABI break)
+* New template classes for loanable sequences
+* Added DataReader read and take APIs (implies ABI break)
+* Complete DDS traditional C++ API (implies ABI breaks)
+* Data sharing delivery (ABI breaks)
 
 Version 2.1.0
 -------------
