@@ -490,10 +490,22 @@ int main(
     if (test_agent == TestAgent::PUBLISHER)
     {
         std::cout << "Starting throughput test publisher agent" << std::endl;
-        ThroughputPublisher throughput_publisher(reliable, seed, hostname, export_csv, pub_part_property_policy,
-                pub_property_policy, xml_config_file, file_name, recoveries_file, dynamic_types, forced_domain);
 
-        if (throughput_publisher.ready())
+        ThroughputPublisher throughput_publisher;
+
+        if(throughput_publisher.init(
+                    reliable,
+                    seed,
+                    hostname,
+                    export_csv,
+                    pub_part_property_policy,
+                    pub_property_policy,
+                    xml_config_file,
+                    file_name,
+                    recoveries_file,
+                    dynamic_types,
+                    forced_domain)
+                && throughput_publisher.ready())
         {
             throughput_publisher.run(test_time_sec, recovery_time_ms, demand, msg_size, subscribers);
         }
@@ -501,7 +513,6 @@ int main(
         {
             return_code = 1;
         }
-
     }
     else if (test_agent == TestAgent::SUBSCRIBER)
     {
@@ -524,8 +535,24 @@ int main(
         std::cout << "Starting throughput test shared process mode" << std::endl;
 
         // Initialize publisher
-        ThroughputPublisher throughput_publisher(reliable, seed, hostname, export_csv, pub_part_property_policy,
-                pub_property_policy, xml_config_file, file_name, recoveries_file, dynamic_types, forced_domain);
+        ThroughputPublisher throughput_publisher;
+
+        if(!throughput_publisher.init(
+                    reliable,
+                    seed,
+                    hostname,
+                    export_csv,
+                    pub_part_property_policy,
+                    pub_property_policy,
+                    xml_config_file,
+                    file_name,
+                    recoveries_file,
+                    dynamic_types,
+                    forced_domain))
+        {
+            return_code = 1;
+            return return_code;
+        }
 
         // Initialize subscribers
         std::vector<std::shared_ptr<ThroughputSubscriber> > throughput_subscribers;
