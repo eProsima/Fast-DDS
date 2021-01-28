@@ -35,17 +35,6 @@ endif()
 
 if(NOT Asio_FOUND)
     find_package(Asio QUIET)
-
-    if(Asio_FOUND)
-        message(STATUS "Found Asio")
-    else()
-        find_path(ASIO_INCLUDE_DIR NAMES asio.hpp)
-        if(ASIO_INCLUDE_DIR)
-            message(STATUS "Found Asio in ${ASIO_INCLUDE_DIR}")
-        else()
-            message(FATAL_ERROR "Asio not found!")
-        endif()
-    endif()
 endif()
 
 #Check C++11
@@ -66,7 +55,7 @@ add_definitions(
   -DASIO_STANDALONE
 )
 
-include_directories(${ASIO_INCLUDE_DIR})
+include_directories(${Asio_INCLUDE_DIR})
 
 add_executable(DeadlineQoSExample ${DEADLINEQOS_EXAMPLE_SOURCES})
 target_compile_definitions(DeadlineQoSExample PRIVATE

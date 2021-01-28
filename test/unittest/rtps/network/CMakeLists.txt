@@ -17,11 +17,9 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
     check_gtest()
 
     if(GTEST_FOUND)
-        include_directories(${ASIO_INCLUDE_DIR})
-
         find_package(Threads REQUIRED)
 
-        include_directories(${ASIO_INCLUDE_DIR})
+        include_directories(${Asio_INCLUDE_DIR})
 
         set(NETWORKFACTORYTESTS_SOURCE
             NetworkFactoryTests.cpp

@@ -28,7 +28,7 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER) AND fastcdr_FOUND)
         -DASIO_STANDALONE
         )
 
-        include_directories(${ASIO_INCLUDE_DIR})
+        include_directories(${Asio_INCLUDE_DIR})
 
     option(VIDEO_TESTS "Activate the building and execution of performance tests" OFF)
     add_subdirectory(latency)

@@ -219,7 +219,7 @@ option(BUILD_SHARED_LIBS "Create shared libraries by default" ON)
 include(${PROJECT_SOURCE_DIR}/cmake/common/eprosima_libraries.cmake)
 
 eprosima_find_package(fastcdr REQUIRED)
-eprosima_find_thirdparty(Asio asio)
+eprosima_find_thirdparty(Asio asio VERSION 1.10.8)
 eprosima_find_thirdparty(TinyXML2 tinyxml2)
 
 find_package(foonathan_memory REQUIRED)

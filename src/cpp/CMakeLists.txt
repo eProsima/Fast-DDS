@@ -406,7 +406,7 @@ elseif(NOT EPROSIMA_INSTALLER)
         $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/src/cpp>
         $<INSTALL_INTERFACE:include>
         PRIVATE
-        ${ASIO_INCLUDE_DIR}
+        ${Asio_INCLUDE_DIR}
         ${TINYXML2_INCLUDE_DIR}
         $<$<BOOL:${ANDROID}>:${ANDROID_IFADDRS_INCLUDE_DIR}>
         ${THIRDPARTY_BOOST_INCLUDE_DIR}
@@ -495,7 +495,7 @@ if(UNIX AND EPROSIMA_INSTALLER)
         COMPONENT headers
         )
 
-    set_public_headers_directory(${ASIO_INCLUDE_DIR} ""
+    set_public_headers_directory(${Asio_INCLUDE_DIR} ""
         DESTINATION thirdparty/asio
         COMPONENT headers
         )
