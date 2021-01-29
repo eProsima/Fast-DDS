@@ -40,6 +40,14 @@ if extra_pub_arg:
     extra_pub_args = extra_pub_arg.split()
 else:
     extra_pub_args = []
+extra_pub_arg = os.environ.get("EXTRA_PUB_ARG")
+
+extra_sub_arg = os.environ.get("EXTRA_SUB_ARG")
+if extra_sub_arg:
+    extra_sub_args = extra_sub_arg.split()
+else:
+    extra_sub_args = []
+extra_sub_arg = os.environ.get("EXTRA_SUB_ARG")
 
 real_xml_file_pub = None
 real_xml_file_sub = None
@@ -55,13 +63,16 @@ else:
     if xml_file_sub:
         real_xml_file_sub = os.path.join(script_dir, xml_file_sub)
 
+
 subscriber1_proc = subprocess.Popen([subscriber_command, "--seed", str(os.getpid())]
-        + (["--xmlfile", real_xml_file_sub] if real_xml_file_sub else []))
+        + (["--xmlfile", real_xml_file_sub] if real_xml_file_sub else [])
+        + extra_sub_args)
 publisher_proc = subprocess.Popen([publisher_command, "--seed", str(os.getpid())]
         + (["--xmlfile", real_xml_file_pub] if real_xml_file_pub else [])
         + extra_pub_args)
 subscriber2_proc = subprocess.Popen([subscriber_command, "--seed", str(os.getpid())]
-        + (["--xmlfile", real_xml_file_sub] if real_xml_file_sub else []))
+        + (["--xmlfile", real_xml_file_sub] if real_xml_file_sub else [])
+        + extra_sub_args)
 
 subscriber1_proc.communicate()
 retvalue = subscriber1_proc.returncode

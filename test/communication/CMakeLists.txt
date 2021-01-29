@@ -27,6 +27,8 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER) AND fastcdr_FOUND)
     ###############################################################################
     set(COMMON_SOURCE ${PROJECT_SOURCE_DIR}/test/blackbox/types/HelloWorld.cpp
         ${PROJECT_SOURCE_DIR}/test/blackbox/types/HelloWorldType.cpp
+        ${PROJECT_SOURCE_DIR}/test/blackbox/types/FixedSized.cpp
+        ${PROJECT_SOURCE_DIR}/test/blackbox/types/FixedSizedType.cpp
         )
 
     set(PUBLISHER_SOURCE ${COMMON_SOURCE}
@@ -359,5 +361,30 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER) AND fastcdr_FOUND)
             set_property(TEST TwoPublishersCommunicationReliable APPEND PROPERTY ENVIRONMENT
                 "PATH=$<TARGET_FILE_DIR:${PROJECT_NAME}>\\;$<TARGET_FILE_DIR:fastcdr>\\;${WIN_PATH}")
         endif()
+
+
+
+        add_test(NAME SimpleCommunicationBestEffortFixed
+            COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/simple_communication.py)
+
+        # Set test with label NoMemoryCheck
+        set_property(TEST SimpleCommunicationBestEffortFixed PROPERTY LABELS "NoMemoryCheck")
+
+        set_property(TEST SimpleCommunicationBestEffortFixed PROPERTY ENVIRONMENT
+            "SIMPLE_COMMUNICATION_PUBLISHER_BIN=$<TARGET_FILE:SimpleCommunicationPublisher>")
+        set_property(TEST SimpleCommunicationBestEffortFixed APPEND PROPERTY ENVIRONMENT
+            "SIMPLE_COMMUNICATION_SUBSCRIBER_BIN=$<TARGET_FILE:SimpleCommunicationSubscriber>")
+        set_property(TEST SimpleCommunicationBestEffortFixed APPEND PROPERTY ENVIRONMENT
+            "XML_FILE=simple_besteffort.xml")
+        set_property(TEST SimpleCommunicationBestEffortFixed APPEND PROPERTY ENVIRONMENT
+            "EXTRA_PUB_ARG=--fixed_type")
+        set_property(TEST SimpleCommunicationBestEffortFixed APPEND PROPERTY ENVIRONMENT
+            "EXTRA_SUB_ARG=--fixed_type")
+        if(WIN32)
+            string(REPLACE ";" "\\;" WIN_PATH "$ENV{PATH}")
+            set_property(TEST SimpleCommunicationBestEffortFixed APPEND PROPERTY ENVIRONMENT
+                "PATH=$<TARGET_FILE_DIR:${PROJECT_NAME}>\\;$<TARGET_FILE_DIR:fastcdr>\\;${WIN_PATH}")
+        endif()
+
     endif()
 endif()

@@ -1,6 +1,37 @@
-#include "Subscriber.hpp"
+// Copyright 2021 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
 
+/**
+ * @file SubscriberMain.cpp
+ */
+#include "SubscriberModule.hpp"
+
+#include <fastdds/dds/domain/DomainParticipantFactory.hpp>
 #include <fastrtps/Domain.h>
+
+using namespace eprosima::fastdds::dds;
+
+/* ARGUMENTS
+ * --notexit
+ * --fixed_type
+ * --zero_copy
+ * --seed <int>
+ * --samples <int>
+ * --magic <str>
+ * --xmlfile <path>
+ * --publishers <int>
+ */
 
 int main(
         int argc,
@@ -9,6 +40,7 @@ int main(
     int arg_count = 1;
     bool notexit = false;
     bool fixed_type = false;
+    bool zero_copy = false;
     uint32_t seed = 7800;
     uint32_t samples = 4;
     uint32_t publishers = 1;
@@ -23,8 +55,11 @@ int main(
         }
         else if (strcmp(argv[arg_count], "--fixed_type") == 0)
         {
-            std::cout << "--fixed_type set: using FixedSizedType" << std::endl;
             fixed_type = true;
+        }
+        else if (strcmp(argv[arg_count], "--zero_copy") == 0)
+        {
+            zero_copy = true;
         }
         else if (strcmp(argv[arg_count], "--seed") == 0)
         {
@@ -87,12 +122,12 @@ int main(
 
     if (xml_file)
     {
-        eprosima::fastrtps::Domain::loadXMLProfilesFile(xml_file);
+        DomainParticipantFactory::get_instance()->load_XML_profiles_file(xml_file);
     }
 
-    Subscriber subscriber(publishers, samples);
+    SubscriberModule subscriber(publishers, samples, fixed_type, zero_copy);
 
-    if (subscriber.init(seed, magic, fixed_type))
+    if (subscriber.init(seed, magic))
     {
         return subscriber.run(notexit) ? 0 : -1;
     }

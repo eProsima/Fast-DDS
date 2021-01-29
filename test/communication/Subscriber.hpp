@@ -23,6 +23,7 @@
 #include <fastrtps/subscriber/SubscriberListener.h>
 #include <fastrtps/subscriber/SampleInfo.h>
 
+#include "types/FixedSizedType.h"
 #include "types/HelloWorldType.h"
 
 #include <mutex>
@@ -34,8 +35,8 @@ namespace eprosima {
 namespace fastrtps {
 class Participant;
 class Subscriber;
-}
-}
+} // namespace fastrtps
+} // namespace eprosima
 
 class Subscriber
     : public eprosima::fastrtps::SubscriberListener
@@ -61,7 +62,7 @@ public:
     void onParticipantAuthentication(
             eprosima::fastrtps::Participant* /*participant*/,
             eprosima::fastrtps::rtps::ParticipantAuthenticationInfo&& info) override;
-#endif
+#endif // if HAVE_SECURITY
 
     void onSubscriptionMatched(
             eprosima::fastrtps::Subscriber* /*subscriber*/,
@@ -98,7 +99,8 @@ public:
 
     bool init(
             uint32_t seed,
-            const std::string& magic);
+            const std::string& magic,
+            bool fixed_type = false);
 
     bool run(
             bool notexit);
@@ -116,7 +118,7 @@ private:
     std::map<eprosima::fastrtps::rtps::GUID_t, uint32_t> number_samples_;
     bool run_ = true;
     eprosima::fastrtps::Participant* participant_ = nullptr;
-    HelloWorldType type_;
+    eprosima::fastrtps::TopicDataType* type_ = nullptr;
     eprosima::fastrtps::Subscriber* subscriber_ = nullptr;
 };
 #endif // TEST_COMMUNICATION_SUBSCRIBER_HPP

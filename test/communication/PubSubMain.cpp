@@ -81,6 +81,11 @@ int main(
 
             publishers = strtol(argv[arg_count], nullptr, 10);
         }
+        else
+        {
+            std::cout << "Wrong argument " << argv[arg_count] << std::endl;
+            return -1;
+        }
 
         ++arg_count;
     }
