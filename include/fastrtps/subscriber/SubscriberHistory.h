@@ -110,6 +110,16 @@ public:
             rtps::CacheChange_t* change);
 
     /**
+     * This method is called to remove a change from the SubscriberHistory.
+     * @param [in]     change Pointer to the CacheChange_t.
+     * @param [in,out] it     Iterator pointing to change on input. Will point to next valid change on output.
+     * @return True if removed.
+     */
+    bool remove_change_sub(
+            rtps::CacheChange_t* change,
+            iterator& it);
+
+    /**
      * @brief A method to set the next deadline for the given instance
      * @param handle The handle to the instance
      * @param next_deadline_us The time point when the deadline will occur

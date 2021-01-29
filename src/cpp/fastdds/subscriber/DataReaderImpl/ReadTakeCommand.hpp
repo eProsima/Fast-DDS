@@ -115,7 +115,7 @@ struct ReadTakeCommand
                 if (!reader_->begin_sample_access_nts(change, wp))
                 {
                     // Remove from history
-                    history_.remove_change_sub(change);
+                    history_.remove_change_sub(change, it);
 
                     // Current iterator will point to change next to the one removed. Avoid incrementing.
                     continue;
@@ -127,7 +127,7 @@ struct ReadTakeCommand
                 if (added && take_samples)
                 {
                     // Remove from history
-                    history_.remove_change_sub(change);
+                    history_.remove_change_sub(change, it);
 
                     // Current iterator will point to change next to the one removed. Avoid incrementing.
                     continue;
