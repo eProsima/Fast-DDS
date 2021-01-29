@@ -10,7 +10,7 @@ repositories:
     fastrtps:
         type: git
         url: https://github.com/eProsima/Fast-DDS.git
-        version: v2.0.0
+        version: v2.2.0
     fastrtpsgen:
         type: git
         url: https://github.com/eProsima/Fast-DDS-Gen.git
