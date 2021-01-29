@@ -512,6 +512,58 @@ bool SubscriberHistory::remove_change_sub(
     return false;
 }
 
+bool SubscriberHistory::remove_change_sub(
+        CacheChange_t* change,
+        iterator& it)
+{
+    if (mp_reader == nullptr || mp_mutex == nullptr)
+    {
+        logError(SUBSCRIBER, "You need to create a Reader with this History before using it");
+        return false;
+    }
+
+    std::lock_guard<RecursiveTimedMutex> guard(*mp_mutex);
+    if (topic_att_.getTopicKind() == WITH_KEY)
+    {
+        bool found = false;
+        t_m_Inst_Caches::iterator vit;
+        if (find_key(change, &vit))
+        {
+            for (auto chit = vit->second.cache_changes.begin(); chit != vit->second.cache_changes.end(); ++chit)
+            {
+                if ((*chit)->sequenceNumber == change->sequenceNumber && (*chit)->writerGUID == change->writerGUID)
+                {
+                    assert(it == chit);
+                    it = vit->second.cache_changes.erase(chit);
+                    found = true;
+                    break;
+                }
+            }
+        }
+        if (!found)
+        {
+            logError(SUBSCRIBER, "Change not found on this key, something is wrong");
+        }
+    }
+
+    const_iterator chit = find_change_nts(change);
+    if (chit == changesEnd())
+    {
+        logInfo(RTPS_WRITER_HISTORY, "Trying to remove a change not in history");
+        return false;
+    }
+
+    m_isHistoryFull = false;
+    iterator ret_it = remove_change_nts(chit);
+
+    if (topic_att_.getTopicKind() != WITH_KEY)
+    {
+        it = ret_it;
+    }
+
+    return true;
+}
+
 bool SubscriberHistory::set_next_deadline(
         const InstanceHandle_t& handle,
         const std::chrono::steady_clock::time_point& next_deadline_us)
