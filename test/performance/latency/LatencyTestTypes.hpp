@@ -57,7 +57,7 @@ private:
  * This type does not define a comparison operator because the actual data size referenced is unknown. Use the
  * comparison method provided in LatencyDataType.
  * */
-class alignas(4) LatencyType
+class alignas (4) LatencyType
 {
 public:
 
@@ -69,8 +69,8 @@ class LatencyDataType : public eprosima::fastdds::dds::TopicDataType
 {
     // Buffer size for size management
     const uint32_t buffer_size_;
-public:
 
+public:
 
     LatencyDataType()
         : buffer_size_(MAX_TYPE_SIZE - 4)

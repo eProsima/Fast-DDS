@@ -72,7 +72,8 @@ private:
 
     bool init_dynamic_types();
 
-    bool init_static_types(uint32_t payload);
+    bool init_static_types(
+            uint32_t payload);
 
     bool create_data_endpoints();
 

@@ -38,7 +38,9 @@ bool LatencyDataType::compare_data(
     return 0 == memcmp(lt1.data, lt2.data, buffer_size_);
 }
 
-bool LatencyDataType::serialize(void*data,SerializedPayload_t* payload)
+bool LatencyDataType::serialize(
+        void* data,
+        SerializedPayload_t* payload)
 {
     LatencyType* lt = (LatencyType*)data;
 
@@ -48,22 +50,25 @@ bool LatencyDataType::serialize(void*data,SerializedPayload_t* payload)
     return true;
 }
 
-bool LatencyDataType::deserialize(SerializedPayload_t* payload,void * data)
+bool LatencyDataType::deserialize(
+        SerializedPayload_t* payload,
+        void* data)
 {
     // Payload members endianness matches local machine
     LatencyType* lt = (LatencyType*)data;
     lt->seqnum = *reinterpret_cast<uint32_t*>(payload->data);
-    std::copy(payload->data+4,payload->data+4+buffer_size_,lt->data);
+    std::copy(payload->data + 4, payload->data + 4 + buffer_size_, lt->data);
     return true;
 }
 
-std::function<uint32_t()> LatencyDataType::getSerializedSizeProvider(void*)
+std::function<uint32_t()> LatencyDataType::getSerializedSizeProvider(
+        void*)
 {
     uint32_t size = m_typeSize;
     return [size]() -> uint32_t
-    {
-        return size;
-    };
+           {
+               return size;
+           };
 }
 
 void* LatencyDataType::createData()
@@ -71,19 +76,25 @@ void* LatencyDataType::createData()
     return (void*)new uint8_t[m_typeSize];
 }
 
-void LatencyDataType::deleteData(void* data)
+void LatencyDataType::deleteData(
+        void* data)
 {
     delete[] (uint8_t*)(data);
 }
 
-bool TestCommandDataType::serialize(void*data,SerializedPayload_t* payload)
+bool TestCommandDataType::serialize(
+        void* data,
+        SerializedPayload_t* payload)
 {
     TestCommandType* t = (TestCommandType*)data;
     memcpy(payload->data, &t->m_command, sizeof(t->m_command));
     payload->length = 4;
     return true;
 }
-bool TestCommandDataType::deserialize(SerializedPayload_t* payload,void * data)
+
+bool TestCommandDataType::deserialize(
+        SerializedPayload_t* payload,
+        void* data)
 {
     TestCommandType* t = (TestCommandType*)data;
     //	cout << "PAYLOAD LENGTH: "<<payload->length << endl;
@@ -93,16 +104,17 @@ bool TestCommandDataType::deserialize(SerializedPayload_t* payload,void * data)
     return true;
 }
 
-std::function<uint32_t()> TestCommandDataType::getSerializedSizeProvider(void*)
+std::function<uint32_t()> TestCommandDataType::getSerializedSizeProvider(
+        void*)
 {
     return []() -> uint32_t
-    {
-        uint32_t size = 0;
+           {
+               uint32_t size = 0;
 
-        size = (uint32_t)sizeof(uint32_t);
+               size = (uint32_t)sizeof(uint32_t);
 
-        return size;
-    };
+               return size;
+           };
 }
 
 void* TestCommandDataType::createData()
@@ -110,7 +122,9 @@ void* TestCommandDataType::createData()
 
     return (void*)new TestCommandType();
 }
-void TestCommandDataType::deleteData(void* data)
+
+void TestCommandDataType::deleteData(
+        void* data)
 {
 
     delete((TestCommandType*)data);

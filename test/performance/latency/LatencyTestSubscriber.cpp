@@ -181,7 +181,7 @@ bool LatencyTestSubscriber::init(
         string sub_profile_name = "sub_subscriber_profile";
         string pub_profile_name = "sub_publisher_profile";
 
-        if( ReturnCode_t::RETCODE_OK != publisher_->get_datawriter_qos_from_profile(pub_profile_name, dw_qos_))
+        if ( ReturnCode_t::RETCODE_OK != publisher_->get_datawriter_qos_from_profile(pub_profile_name, dw_qos_))
         {
             logError(LatencyTest, "ERROR unable to retrieve the " << pub_profile_name);
             return false;
@@ -522,15 +522,15 @@ bool LatencyTestSubscriber::test(
 
         if (nullptr == dynamic_data_)
         {
-            logError(LatencyTest,"Iteration failed: Failed to create Dynamic Data");
+            logError(LatencyTest, "Iteration failed: Failed to create Dynamic Data");
             return false;
         }
 
         // Modify the data Sample
         DynamicData* member_data = dynamic_data_->loan_value(
-                dynamic_data_->get_member_id_at_index(1));
+            dynamic_data_->get_member_id_at_index(1));
 
-        for (uint32_t i = 0; i < datasize ; ++i)
+        for (uint32_t i = 0; i < datasize; ++i)
         {
             member_data->insert_sequence_data(id);
             member_data->set_byte_value(0, id);
@@ -600,7 +600,7 @@ bool LatencyTestSubscriber::test(
         latency_data_type_->deleteData(latency_data_);
 
         // Remove endpoints associated to the given payload size
-        if(!destroy_data_endpoints())
+        if (!destroy_data_endpoints())
         {
             logError(LatencyTest, "Static endpoints for payload size " << datasize << " could not been removed");
         }
@@ -640,7 +640,7 @@ bool LatencyTestSubscriber::init_dynamic_types()
         logError(LatencyTest, "ERROR DYNAMIC DATA type already initialized");
         return false;
     }
-    else if(participant_->find_type(LatencyDataType::type_name_))
+    else if (participant_->find_type(LatencyDataType::type_name_))
     {
         logError(LatencyTest, "ERROR DYNAMIC DATA type already registered");
         return false;
@@ -668,7 +668,8 @@ bool LatencyTestSubscriber::init_dynamic_types()
     return true;
 }
 
-bool LatencyTestSubscriber::init_static_types(uint32_t payload)
+bool LatencyTestSubscriber::init_static_types(
+        uint32_t payload)
 {
     assert(participant_ != nullptr);
 
@@ -678,7 +679,7 @@ bool LatencyTestSubscriber::init_static_types(uint32_t payload)
         logError(LatencyTest, "ERROR STATIC DATA type already initialized");
         return false;
     }
-    else if(participant_->find_type(LatencyDataType::type_name_))
+    else if (participant_->find_type(LatencyDataType::type_name_))
     {
         logError(LatencyTest, "ERROR STATIC DATA type already registered");
         return false;
@@ -727,9 +728,9 @@ bool LatencyTestSubscriber::create_data_endpoints()
     topic_name << pid_ << "_PUB2SUB";
 
     latency_data_sub_topic_ = participant_->create_topic(
-            topic_name.str(),
-            LatencyDataType::type_name_,
-            TOPIC_QOS_DEFAULT);
+        topic_name.str(),
+        LatencyDataType::type_name_,
+        TOPIC_QOS_DEFAULT);
 
     if (nullptr == latency_data_sub_topic_)
     {
