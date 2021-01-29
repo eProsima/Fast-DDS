@@ -6,7 +6,7 @@ repositories:
     fastcdr:
         type: git
         url: https://github.com/eProsima/Fast-CDR.git
-        version: v1.0.18
+        version: v1.0.19
     fastrtps:
         type: git
         url: https://github.com/eProsima/Fast-DDS.git
