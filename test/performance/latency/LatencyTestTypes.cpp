@@ -68,7 +68,7 @@ std::function<uint32_t()> LatencyDataType::getSerializedSizeProvider(void*)
 
 void* LatencyDataType::createData()
 {
-    return (void*)new uint8_t[(4 + buffer_size_ + 3) / 4 * 4];
+    return (void*)new uint8_t[m_typeSize];
 }
 
 void LatencyDataType::deleteData(void* data)

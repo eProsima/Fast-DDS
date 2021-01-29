@@ -85,7 +85,7 @@ public:
         : buffer_size_(size)
     {
         setName("LatencyType");
-        m_typeSize = size + 4;
+        m_typeSize = 4 + ((size + 3) & ~3);
         m_isGetKeyDefined = false;
     }
 
@@ -112,9 +112,6 @@ public:
         (void)force_md5;
         return false;
     }
-
-    void set_size(
-            const uint32_t& size);
 
     bool compare_data(
             const LatencyType& lt1,

@@ -141,8 +141,8 @@ private:
     eprosima::fastdds::dds::DataReader* command_reader_;
 
     /* QoS Profiles */
-    eprosima::fastdds::dds::DataReaderQos dr_qos;
-    eprosima::fastdds::dds::DataWriterQos dw_qos;
+    eprosima::fastdds::dds::DataReaderQos dr_qos_;
+    eprosima::fastdds::dds::DataWriterQos dw_qos_;
 
     /* Times */
     std::chrono::steady_clock::time_point start_time_;

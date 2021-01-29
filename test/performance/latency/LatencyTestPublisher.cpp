@@ -301,7 +301,7 @@ bool LatencyTestPublisher::init(
         {
             std::string profile_name = "pub_publisher_profile";
 
-            if (ReturnCode_t::RETCODE_OK != publisher_->get_datawriter_qos_from_profile(profile_name, dw_qos))
+            if (ReturnCode_t::RETCODE_OK != publisher_->get_datawriter_qos_from_profile(profile_name, dw_qos_))
             {
                 logWarning(LATENCYPUBLISHER, "WARNING pub_publisher_profile not loaded correctly from XML file")
             }
@@ -313,17 +313,17 @@ bool LatencyTestPublisher::init(
                 RTPSReliableWriterQos rw_qos;
                 rw_qos.times.heartbeatPeriod.seconds = 0;
                 rw_qos.times.heartbeatPeriod.nanosec = 100000000;
-                dw_qos.reliable_writer_qos(rw_qos);
+                dw_qos_.reliable_writer_qos(rw_qos);
             }
             else
             {
                 ReliabilityQosPolicy rp;
                 rp.kind = eprosima::fastrtps::BEST_EFFORT_RELIABILITY_QOS;
-                dw_qos.reliability(rp);
+                dw_qos_.reliability(rp);
             }
 
-            dw_qos.properties(property_policy);
-            dw_qos.endpoint().history_memory_policy = MemoryManagementPolicy::PREALLOCATED_WITH_REALLOC_MEMORY_MODE;
+            dw_qos_.properties(property_policy);
+            dw_qos_.endpoint().history_memory_policy = MemoryManagementPolicy::PREALLOCATED_WITH_REALLOC_MEMORY_MODE;
         }
     }
 
@@ -332,7 +332,7 @@ bool LatencyTestPublisher::init(
         if (xml_config_file_.length() > 0)
         {
             std::string profile_name = "pub_subscriber_profile";
-            if (ReturnCode_t::RETCODE_OK != subscriber_->get_datareader_qos_from_profile(profile_name, dr_qos))
+            if (ReturnCode_t::RETCODE_OK != subscriber_->get_datareader_qos_from_profile(profile_name, dr_qos_))
             {
                 logWarning(LATENCYPUBLISHER, "WARNING pub_subscriber_profile not loaded correctly from XML file")
             }
@@ -343,11 +343,11 @@ bool LatencyTestPublisher::init(
             {
                 ReliabilityQosPolicy rp;
                 rp.kind = eprosima::fastrtps::RELIABLE_RELIABILITY_QOS;
-                dr_qos.reliability(rp);
+                dr_qos_.reliability(rp);
             }
 
-            dr_qos.properties(property_policy);
-            dr_qos.endpoint().history_memory_policy = MemoryManagementPolicy::PREALLOCATED_WITH_REALLOC_MEMORY_MODE;
+            dr_qos_.properties(property_policy);
+            dr_qos_.endpoint().history_memory_policy = MemoryManagementPolicy::PREALLOCATED_WITH_REALLOC_MEMORY_MODE;
         }
     }
 
@@ -1005,7 +1005,7 @@ bool LatencyTestPublisher::create_data_endpoints()
     // Create DataWriter
     data_writer_ = publisher_->create_datawriter(
         latency_data_pub_topic_,
-        dw_qos,
+        dw_qos_,
         &data_writer_listener_);
 
     if (data_writer_ == nullptr)
@@ -1016,7 +1016,7 @@ bool LatencyTestPublisher::create_data_endpoints()
     // Create Echo DataReader
     data_reader_ = subscriber_->create_datareader(
         latency_data_sub_topic_,
-        dr_qos,
+        dr_qos_,
         &data_reader_listener_);
 
     if (data_reader_ == nullptr)
