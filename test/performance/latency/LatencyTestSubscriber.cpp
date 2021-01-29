@@ -73,7 +73,7 @@ LatencyTestSubscriber::~LatencyTestSubscriber()
             || nullptr != latency_data_sub_topic_
             || !latency_data_type_)
     {
-        logError(LatencyTest, "ERROR unregistering the DATA type");
+        logError(LATENCYSUBSCRIBER, "ERROR unregistering the DATA type and/or removing the endpoints");
         return;
     }
 
@@ -107,13 +107,16 @@ bool LatencyTestSubscriber::init(
         int forced_domain,
         LatencyDataSizes& latency_data_sizes)
 {
-    data_size_sub_ = latency_data_sizes.sample_sizes();
-
+    // Initialize state
     xml_config_file_ = xml_config_file;
     echo_ = echo;
     samples_ = samples;
     dynamic_types_ = dynamic_data;
     forced_domain_ = forced_domain;
+    pid_ = pid;
+    hostname_ = hostname;
+
+    data_size_sub_ = latency_data_sizes.sample_sizes();
 
     /* Create DomainParticipant*/
     std::string participant_profile_name = "sub_participant_profile";
@@ -159,12 +162,17 @@ bool LatencyTestSubscriber::init(
     }
 
     // Register the command type
-    latency_command_type_.register_type(participant_);
+    if (ReturnCode_t::RETCODE_OK != latency_command_type_.register_type(participant_))
+    {
+        logError(LATENCYSUBSCRIBER, "ERROR registering the COMMAND type");
+        return false;
+    }
 
     /* Create Publisher */
     publisher_ = participant_->create_publisher(PUBLISHER_QOS_DEFAULT, nullptr);
     if (publisher_ == nullptr)
     {
+        logError(LATENCYSUBSCRIBER, "ERROR creating PUBLISHER");
         return false;
     }
 
@@ -172,6 +180,7 @@ bool LatencyTestSubscriber::init(
     subscriber_ = participant_->create_subscriber(SUBSCRIBER_QOS_DEFAULT, nullptr);
     if (subscriber_ == nullptr)
     {
+        logError(LATENCYSUBSCRIBER, "ERROR creating SUBSCRIBER");
         return false;
     }
 
@@ -183,23 +192,24 @@ bool LatencyTestSubscriber::init(
 
         if ( ReturnCode_t::RETCODE_OK != publisher_->get_datawriter_qos_from_profile(pub_profile_name, dw_qos_))
         {
-            logError(LatencyTest, "ERROR unable to retrieve the " << pub_profile_name);
+            logError(LATENCYSUBSCRIBER, "ERROR unable to retrieve the " << pub_profile_name << "from XML file");
             return false;
         }
 
         if ( ReturnCode_t::RETCODE_OK != subscriber_->get_datareader_qos_from_profile(sub_profile_name, dr_qos_))
         {
-            logError(LatencyTest, "ERROR unable to retrieve the " << sub_profile_name);
+            logError(LATENCYSUBSCRIBER, "ERROR unable to retrieve the " << sub_profile_name);
             return false;
         }
     }
-
-    /* Create DataWriter QoS Profile */
+    // Create QoS Profiles
+    else
     {
         ReliabilityQosPolicy rp;
         if (reliable)
         {
             rp.kind = eprosima::fastrtps::RELIABLE_RELIABILITY_QOS;
+            dr_qos_.reliability(rp);
 
             RTPSReliableWriterQos rw_qos;
             rw_qos.times.heartbeatPeriod.seconds = 0;
@@ -214,6 +224,9 @@ bool LatencyTestSubscriber::init(
 
         dw_qos_.properties(property_policy);
         dw_qos_.endpoint().history_memory_policy = MemoryManagementPolicy::PREALLOCATED_WITH_REALLOC_MEMORY_MODE;
+
+        dr_qos_.properties(property_policy);
+        dr_qos_.endpoint().history_memory_policy = MemoryManagementPolicy::PREALLOCATED_WITH_REALLOC_MEMORY_MODE;
     }
 
     /* Create Data Reader QoS Profile*/
@@ -222,7 +235,6 @@ bool LatencyTestSubscriber::init(
         if (reliable)
         {
             rp.kind = eprosima::fastrtps::RELIABLE_RELIABILITY_QOS;
-            dr_qos_.reliability(rp);
         }
         else
         {
@@ -230,8 +242,6 @@ bool LatencyTestSubscriber::init(
             dr_qos_.reliability(rp);
         }
 
-        dr_qos_.properties(property_policy);
-        dr_qos_.endpoint().history_memory_policy = MemoryManagementPolicy::PREALLOCATED_WITH_REALLOC_MEMORY_MODE;
     }
 
     /* Create Topics */
@@ -637,12 +647,12 @@ bool LatencyTestSubscriber::init_dynamic_types()
     // Check if it has been initialized before
     if (dynamic_pub_sub_type_)
     {
-        logError(LatencyTest, "ERROR DYNAMIC DATA type already initialized");
+        logError(LATENCYSUBSCRIBER, "ERROR DYNAMIC DATA type already initialized");
         return false;
     }
     else if (participant_->find_type(LatencyDataType::type_name_))
     {
-        logError(LatencyTest, "ERROR DYNAMIC DATA type already registered");
+        logError(LATENCYSUBSCRIBER, "ERROR DYNAMIC DATA type already registered");
         return false;
     }
 
@@ -653,15 +663,14 @@ bool LatencyTestSubscriber::init_dynamic_types()
     // Add members to the struct.
     struct_type_builder->add_member(0, "seqnum", DynamicTypeBuilderFactory::get_instance()->create_uint32_type());
     struct_type_builder->add_member(1, "data", DynamicTypeBuilderFactory::get_instance()->create_sequence_builder(
-                DynamicTypeBuilderFactory::get_instance()->create_byte_type(), ::dds::core::LENGTH_UNLIMITED));
+                DynamicTypeBuilderFactory::get_instance()->create_byte_type(), BOUND_UNLIMITED));
     struct_type_builder->set_name(LatencyDataType::type_name_);
     dynamic_pub_sub_type_.reset(new DynamicPubSubType(struct_type_builder->build()));
 
     // Register the data type
-    if (ReturnCode_t::RETCODE_OK
-            != dynamic_pub_sub_type_.register_type(participant_))
+    if (ReturnCode_t::RETCODE_OK != dynamic_pub_sub_type_.register_type(participant_))
     {
-        logError(LatencyTest, "ERROR registering the DYNAMIC DATA topic");
+        logError(LATENCYSUBSCRIBER, "ERROR registering the DYNAMIC DATA type");
         return false;
     }
 
@@ -676,21 +685,21 @@ bool LatencyTestSubscriber::init_static_types(
     // Check if it has been initialized before
     if (latency_data_type_)
     {
-        logError(LatencyTest, "ERROR STATIC DATA type already initialized");
+        logError(LATENCYSUBSCRIBER, "ERROR STATIC DATA type already initialized");
         return false;
     }
     else if (participant_->find_type(LatencyDataType::type_name_))
     {
-        logError(LatencyTest, "ERROR STATIC DATA type already registered");
+        logError(LATENCYSUBSCRIBER, "ERROR STATIC DATA type already registered");
         return false;
     }
 
     // Create the static type
     latency_data_type_.reset(new LatencyDataType(payload));
     // Register the static type
-    if (ReturnCode_t::RETCODE_OK
-            != latency_data_type_.register_type(participant_))
+    if (ReturnCode_t::RETCODE_OK != latency_data_type_.register_type(participant_))
     {
+        logError(LATENCYSUBSCRIBER, "ERROR registering the STATIC DATA type");
         return false;
     }
 

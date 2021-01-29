@@ -104,6 +104,8 @@ public:
 
 private:
 
+    bool init_dynamic_types();
+
     bool init_static_types(
             uint32_t payload);
 
@@ -177,7 +179,7 @@ private:
     /* Test configuration and Flags */
     bool export_csv_;
     bool reliable_;
-    bool dynamic_data_ = false;
+    bool dynamic_types_ = false;
     int forced_domain_;
     int subscribers_;
     unsigned int samples_;

@@ -40,8 +40,6 @@
 #include <fastrtps/types/TypeDescriptor.h>
 #include "LatencyTestTypes.hpp"
 
-#include <dds/core/LengthUnlimited.hpp>
-
 class LatencyTestSubscriber
 {
 public:
@@ -113,7 +111,7 @@ private:
     bool dynamic_types_ = false;
     int forced_domain_;
     bool hostname_ = false;
-    uint32_t pid_ = false;
+    uint32_t pid_ = 0;
 
     /* Topics */
     eprosima::fastdds::dds::Topic* latency_data_sub_topic_;
