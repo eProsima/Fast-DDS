@@ -29,6 +29,7 @@
 #include <string>
 
 using namespace eprosima::fastdds::dds;
+using namespace eprosima::fastrtps::rtps;
 
 PublisherModule::~PublisherModule()
 {
@@ -103,7 +104,7 @@ bool PublisherModule::init(
     DataWriterQos wqos = publisher_->get_default_datawriter_qos();
     wqos.liveliness().lease_duration = 3;
     wqos.liveliness().announcement_period = 1;
-    wqos.liveliness().kind = eprosima::fastdds::dds::AUTOMATIC_LIVELINESS_QOS;
+    wqos.liveliness().kind = AUTOMATIC_LIVELINESS_QOS;
 
     writer_ = publisher_->create_datawriter(topic_, wqos, this);
     if (writer_ == nullptr)
@@ -205,24 +206,24 @@ void PublisherModule::on_publication_matched(
 
 void PublisherModule::on_participant_discovery(
         DomainParticipant* /*participant*/,
-        fastrtps::rtps::ParticipantDiscoveryInfo&& info)
+        ParticipantDiscoveryInfo&& info)
 {
-    if (info.status == fastrtps::rtps::ParticipantDiscoveryInfo::DISCOVERED_PARTICIPANT)
+    if (info.status == ParticipantDiscoveryInfo::DISCOVERED_PARTICIPANT)
     {
         std::cout << "Publisher participant " << //participant->getGuid() <<
             " discovered participant " << info.info.m_guid << std::endl;
     }
-    else if (info.status == fastrtps::rtps::ParticipantDiscoveryInfo::CHANGED_QOS_PARTICIPANT)
+    else if (info.status == ParticipantDiscoveryInfo::CHANGED_QOS_PARTICIPANT)
     {
         std::cout << "Publisher participant " << //participant->getGuid() <<
             " detected changes on participant " << info.info.m_guid << std::endl;
     }
-    else if (info.status == fastrtps::rtps::ParticipantDiscoveryInfo::REMOVED_PARTICIPANT)
+    else if (info.status == ParticipantDiscoveryInfo::REMOVED_PARTICIPANT)
     {
         std::cout << "Publisher participant " << // participant->getGuid() <<
             " removed participant " << info.info.m_guid << std::endl;
     }
-    else if (info.status == fastrtps::rtps::ParticipantDiscoveryInfo::DROPPED_PARTICIPANT)
+    else if (info.status == ParticipantDiscoveryInfo::DROPPED_PARTICIPANT)
     {
         std::cout << "Publisher participant " << //participant->getGuid() <<
             " dropped participant " << info.info.m_guid << std::endl;
@@ -236,9 +237,9 @@ void PublisherModule::on_participant_discovery(
 #if HAVE_SECURITY
 void PublisherModule::onParticipantAuthentication(
         DomainParticipant* participant,
-        fastrtps::rtps::ParticipantAuthenticationInfo&& info)
+        ParticipantAuthenticationInfo&& info)
 {
-    if (fastrtps::rtps::ParticipantAuthenticationInfo::AUTHORIZED_PARTICIPANT == info.status)
+    if (ParticipantAuthenticationInfo::AUTHORIZED_PARTICIPANT == info.status)
     {
         std::cout << "Publisher participant " << participant->guid() <<
             " authorized participant " << info.guid << std::endl;

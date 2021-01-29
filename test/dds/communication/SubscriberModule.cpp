@@ -31,6 +31,7 @@
 #include <string>
 
 using namespace eprosima::fastdds::dds;
+using namespace eprosima::fastrtps::rtps;
 
 SubscriberModule::~SubscriberModule()
 {
@@ -110,7 +111,7 @@ bool SubscriberModule::init(
     DataReaderQos rqos = subscriber_->get_default_datareader_qos();
     rqos.liveliness().lease_duration = 3;
     rqos.liveliness().announcement_period = 1;
-    rqos.liveliness().kind = eprosima::fastdds::dds::AUTOMATIC_LIVELINESS_QOS;
+    rqos.liveliness().kind = AUTOMATIC_LIVELINESS_QOS;
 
     reader_ = subscriber_->create_datareader(topic_, rqos);
     if (reader_ == nullptr)
@@ -186,24 +187,24 @@ bool SubscriberModule::run_for(
 
 void SubscriberModule::on_participant_discovery(
         DomainParticipant* /*participant*/,
-        fastrtps::rtps::ParticipantDiscoveryInfo&& info)
+        ParticipantDiscoveryInfo&& info)
 {
-    if (info.status == eprosima::fastrtps::rtps::ParticipantDiscoveryInfo::DISCOVERED_PARTICIPANT)
+    if (info.status == ParticipantDiscoveryInfo::DISCOVERED_PARTICIPANT)
     {
         std::cout << "Subscriber participant " <<         //participant->getGuid() <<
             " discovered participant " << info.info.m_guid << std::endl;
     }
-    else if (info.status == eprosima::fastrtps::rtps::ParticipantDiscoveryInfo::CHANGED_QOS_PARTICIPANT)
+    else if (info.status == ParticipantDiscoveryInfo::CHANGED_QOS_PARTICIPANT)
     {
         std::cout << "Subscriber participant " <<         //participant->getGuid() <<
             " detected changes on participant " << info.info.m_guid << std::endl;
     }
-    else if (info.status == eprosima::fastrtps::rtps::ParticipantDiscoveryInfo::REMOVED_PARTICIPANT)
+    else if (info.status == ParticipantDiscoveryInfo::REMOVED_PARTICIPANT)
     {
         std::cout << "Subscriber participant " <<         //participant->getGuid() <<
             " removed participant " << info.info.m_guid << std::endl;
     }
-    else if (info.status == eprosima::fastrtps::rtps::ParticipantDiscoveryInfo::DROPPED_PARTICIPANT)
+    else if (info.status == ParticipantDiscoveryInfo::DROPPED_PARTICIPANT)
     {
         std::cout << "Subscriber participant " <<         //participant->getGuid() <<
             " dropped participant " << info.info.m_guid << std::endl;
@@ -213,9 +214,9 @@ void SubscriberModule::on_participant_discovery(
 #if HAVE_SECURITY
 void SubscriberModule::onParticipantAuthentication(
         DomainParticipant* /*participant*/,
-        fastrtps::rtps::ParticipantAuthenticationInfo&& info)
+        ParticipantAuthenticationInfo&& info)
 {
-    if (eprosima::fastrtps::rtps::ParticipantAuthenticationInfo::AUTHORIZED_PARTICIPANT == info.status)
+    if (ParticipantAuthenticationInfo::AUTHORIZED_PARTICIPANT == info.status)
     {
         std::cout << "Subscriber participant " <<         //participant->getGuid() <<
             " authorized participant " << info.guid << std::endl;
@@ -322,7 +323,7 @@ void SubscriberModule::on_data_available(
 
 void SubscriberModule::on_liveliness_changed(
         DataReader* /*reader*/,
-        const eprosima::fastdds::dds::LivelinessChangedStatus& status)
+        const LivelinessChangedStatus& status)
 {
     if (status.alive_count_change == 1)
     {
