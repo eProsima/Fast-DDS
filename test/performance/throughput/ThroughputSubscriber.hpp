@@ -20,33 +20,29 @@
 #ifndef THROUGHPUTSUBSCRIBER_H_
 #define THROUGHPUTSUBSCRIBER_H_
 
-#include <asio.hpp>
-
-#include "ThroughputTypes.hpp"
-
-#include <fastrtps/fastrtps_fwd.h>
-#include <fastrtps/publisher/PublisherListener.h>
-#include <fastrtps/subscriber/SubscriberListener.h>
-#include <fastrtps/attributes/SubscriberAttributes.h>
-#include <fastrtps/subscriber/SampleInfo.h>
-#include <fastrtps/rtps/attributes/PropertyPolicy.h>
-#include <fastrtps/types/DynamicTypeBuilderFactory.h>
-#include <fastrtps/types/DynamicDataFactory.h>
-#include <fastrtps/types/DynamicTypeBuilder.h>
-#include <fastrtps/types/DynamicTypeBuilderPtr.h>
-#include <fastrtps/types/TypeDescriptor.h>
-#include <fastrtps/types/MemberDescriptor.h>
-#include <fastrtps/types/DynamicType.h>
-#include <fastrtps/types/DynamicData.h>
-#include <fastrtps/types/DynamicPubSubType.h>
-
-#include <condition_variable>
 #include <chrono>
-
+#include <condition_variable>
 #include <fstream>
 #include <iostream>
 
-
+#include <asio.hpp>
+#include <fastdds/dds/publisher/DataWriterListener.hpp>
+#include <fastdds/dds/publisher/Publisher.hpp>
+#include <fastdds/dds/subscriber/DataReaderListener.hpp>
+#include <fastdds/dds/subscriber/qos/DataReaderQos.hpp>
+#include <fastdds/dds/subscriber/SampleInfo.hpp>
+#include <fastdds/dds/subscriber/Subscriber.hpp>
+#include <fastrtps/rtps/attributes/PropertyPolicy.h>
+#include <fastrtps/types/DynamicData.h>
+#include <fastrtps/types/DynamicDataFactory.h>
+#include <fastrtps/types/DynamicPubSubType.h>
+#include <fastrtps/types/DynamicType.h>
+#include <fastrtps/types/DynamicTypeBuilder.h>
+#include <fastrtps/types/DynamicTypeBuilderFactory.h>
+#include <fastrtps/types/DynamicTypeBuilderPtr.h>
+#include <fastrtps/types/MemberDescriptor.h>
+#include <fastrtps/types/TypeDescriptor.h>
+#include "ThroughputTypes.hpp"
 
 class ThroughputSubscriber
 {
@@ -73,10 +69,12 @@ private:
     void process_message();
 
     // Entities
-    eprosima::fastrtps::Participant* participant_;
-    eprosima::fastrtps::Subscriber* data_subscriber_;
-    eprosima::fastrtps::Publisher* command_publisher_;
-    eprosima::fastrtps::Subscriber* command_subscriber_;
+    eprosima::fastdds::dds::DomainParticipant* participant_;
+    eprosima::fastdds::dds::Subscriber* subscriber_;
+    eprosima::fastdds::dds::DataReader* data_reader_;
+    eprosima::fastdds::dds::Publisher* publisher_;
+    eprosima::fastdds::dds::DataWriter* command_writer_;
+    eprosima::fastdds::dds::DataReader* command_reader_;
 
     // Time
     std::chrono::steady_clock::time_point t_start_;
@@ -101,7 +99,8 @@ private:
     eprosima::fastrtps::types::DynamicData* dynamic_data_type_;
     eprosima::fastrtps::types::DynamicPubSubType dynamic_pub_sub_type_;
     eprosima::fastrtps::types::DynamicType_ptr dynamic_type_;
-    eprosima::fastrtps::SubscriberAttributes sub_attrs_;
+    // QoS Profiles
+    eprosima::fastdds::dds::DataReaderQos dr_qos_;
 
     // Flags
     bool dynamic_data_ = false;
@@ -117,21 +116,21 @@ private:
     std::string xml_config_file_;
 
     // Data listener
-    class DataSubListener : public eprosima::fastrtps::SubscriberListener
+    class DataReaderListener : public eprosima::fastdds::dds::DataReaderListener
     {
     public:
 
-        DataSubListener(
+        DataReaderListener(
                 ThroughputSubscriber& throughput_subscriber);
 
-        virtual ~DataSubListener();
+        virtual ~DataReaderListener();
 
-        void onSubscriptionMatched(
-                eprosima::fastrtps::Subscriber* sub,
-                eprosima::fastrtps::rtps::MatchingInfo& info);
+        void on_subscription_matched(
+                eprosima::fastdds::dds::DataReader* reader,
+                const eprosima::fastdds::dds::SubscriptionMatchedStatus& info) override;
 
-        void onNewDataMessage(
-                eprosima::fastrtps::Subscriber* sub);
+        void on_data_available(
+                eprosima::fastdds::dds::DataReader* reader) override;
 
         void reset();
 
@@ -146,60 +145,60 @@ private:
         uint32_t last_seq_num_;
         uint32_t lost_samples_;
         bool first_;
-        eprosima::fastrtps::SampleInfo_t info_;
+        eprosima::fastdds::dds::SampleInfo info_;
     }
-    data_sub_listener_;
+    data_reader_listener_;
 
     // Command listeners
-    class CommandSubListener : public eprosima::fastrtps::SubscriberListener
+    class CommandReaderListener : public eprosima::fastdds::dds::DataReaderListener
     {
     public:
 
-        CommandSubListener(
+        CommandReaderListener(
                 ThroughputSubscriber& throughput_subscriber);
 
-        virtual ~CommandSubListener();
+        virtual ~CommandReaderListener();
 
         ThroughputSubscriber& throughput_subscriber_;
         ThroughputCommandType command_type_;
-        eprosima::fastrtps::SampleInfo_t info_;
+        eprosima::fastdds::dds::SampleInfo info_;
 
-        void onSubscriptionMatched(
-                eprosima::fastrtps::Subscriber* sub,
-                eprosima::fastrtps::rtps::MatchingInfo& info);
+        void on_subscription_matched(
+                eprosima::fastdds::dds::DataReader* reader,
+                const eprosima::fastdds::dds::SubscriptionMatchedStatus& info) override;
 
-        void onNewDataMessage(
-                eprosima::fastrtps::Subscriber* sub);
+        void on_data_available(
+                eprosima::fastdds::dds::DataReader* reader) override;
 
         void save_numbers();
 
     private:
 
-        CommandSubListener& operator =(
-                const CommandSubListener&);
+        CommandReaderListener& operator =(
+                const CommandReaderListener&);
     }
-    command_sub_listener_;
+    command_reader_listener_;
 
-    class CommandPubListener : public eprosima::fastrtps::PublisherListener
+    class CommandWriterListener : public eprosima::fastdds::dds::DataWriterListener
     {
     public:
 
-        CommandPubListener(
+        CommandWriterListener(
                 ThroughputSubscriber& throughput_subscriber);
 
-        virtual ~CommandPubListener();
+        virtual ~CommandWriterListener();
 
         ThroughputSubscriber& throughput_subscriber_;
 
-        void onPublicationMatched(
-                eprosima::fastrtps::Publisher* pub,
-                eprosima::fastrtps::rtps::MatchingInfo& info);
+        void on_publication_matched(
+                eprosima::fastdds::dds::DataWriter* writer,
+                const eprosima::fastdds::dds::PublicationMatchedStatus& info) override;
 
     private:
 
-        CommandPubListener& operator =(
-                const CommandPubListener&);
+        CommandWriterListener& operator =(
+                const CommandWriterListener&);
     }
-    command_pub_listener_;
+    command_writer_listener_;
 };
 #endif /* THROUGHPUTSUBSCRIBER_H_ */

@@ -19,28 +19,26 @@
 
 #include "ThroughputSubscriber.hpp"
 
-#include <fastrtps/utils/TimeConversion.h>
-#include <fastrtps/attributes/ParticipantAttributes.h>
-#include <fastrtps/attributes/PublisherAttributes.h>
-#include <fastrtps/xmlparser/XMLProfileManager.h>
-
-#include <fastrtps/publisher/Publisher.h>
-#include <fastrtps/subscriber/Subscriber.h>
-#include <fastrtps/subscriber/SampleInfo.h>
-
-#include <fastrtps/Domain.h>
-
 #include <vector>
 
-using namespace eprosima::fastrtps;
+#include <fastdds/dds/domain/DomainParticipant.hpp>
+#include <fastdds/dds/domain/DomainParticipantFactory.hpp>
+#include <fastdds/dds/domain/qos/DomainParticipantQos.hpp>
+#include <fastdds/dds/log/Colors.hpp>
+#include <fastdds/dds/log/Log.hpp>
+#include <fastdds/dds/publisher/DataWriter.hpp>
+#include <fastdds/dds/subscriber/DataReader.hpp>
+#include <fastrtps/utils/TimeConversion.h>
+#include <fastrtps/xmlparser/XMLProfileManager.h>
+
+using namespace eprosima::fastdds::dds;
 using namespace eprosima::fastrtps::rtps;
 using namespace eprosima::fastrtps::types;
-
 
 // *******************************************************************************************
 // ************************************ DATA SUB LISTENER ************************************
 // *******************************************************************************************
-ThroughputSubscriber::DataSubListener::DataSubListener(
+ThroughputSubscriber::DataReaderListener::DataReaderListener(
         ThroughputSubscriber& throughput_subscriber)
     : saved_last_seq_num_(0)
     , saved_lost_samples_(0)
@@ -51,21 +49,23 @@ ThroughputSubscriber::DataSubListener::DataSubListener(
 {
 }
 
-ThroughputSubscriber::DataSubListener::~DataSubListener()
+ThroughputSubscriber::DataReaderListener::~DataReaderListener()
 {
 }
 
-void ThroughputSubscriber::DataSubListener::reset()
+void ThroughputSubscriber::DataReaderListener::reset()
 {
     last_seq_num_ = 0;
     first_ = true;
     lost_samples_ = 0;
 }
 
-void ThroughputSubscriber::DataSubListener::onSubscriptionMatched(
-        Subscriber* /*sub*/,
-        MatchingInfo& match_info)
+void ThroughputSubscriber::DataReaderListener::on_subscription_matched(
+        DataReader* reader,
+        const SubscriptionMatchedStatus& match_info)
 {
+    (void)reader;
+
     std::unique_lock<std::mutex> lock(throughput_subscriber_.data_mutex_);
     if (match_info.status == MATCHED_MATCHING)
     {
