@@ -42,37 +42,12 @@ using namespace eprosima::fastrtps::rtps;
 using namespace eprosima::fastrtps::types;
 
 LatencyTestPublisher::LatencyTestPublisher()
-    : participant_(nullptr)
-    , publisher_(nullptr)
-    , data_writer_(nullptr)
-    , command_writer_(nullptr)
-    , subscriber_(nullptr)
-    , data_reader_(nullptr)
-    , command_reader_(nullptr)
-    , overhead_time_(0.0)
-    , command_msg_count_(0)
-    , data_msg_count_(0)
-    , received_count_(0)
-    , test_status_(0)
-    , subscribers_(0)
-    , samples_(0)
-    , latency_data_sub_topic_(nullptr)
-    , latency_data_pub_topic_(nullptr)
-    , latency_command_sub_topic_(nullptr)
-    , latency_command_pub_topic_(nullptr)
-    , latency_type_in_(nullptr)
-    , latency_type_out_(nullptr)
-    , latency_command_type_(new TestCommandDataType())
-    , dynamic_data_type_in_(nullptr)
-    , dynamic_data_type_out_(nullptr)
+    : latency_command_type_(new TestCommandDataType())
     , data_writer_listener_(this)
     , data_reader_listener_(this)
     , command_writer_listener_(this)
     , command_reader_listener_(this)
 {
-    forced_domain_ = -1;
-    export_prefix_ = "";
-    raw_data_file_ = "";
 }
 
 LatencyTestPublisher::~LatencyTestPublisher()
@@ -264,7 +239,6 @@ bool LatencyTestPublisher::init(
             if (reliable)
             {
                 rp.kind = eprosima::fastrtps::RELIABLE_RELIABILITY_QOS;
-                dr_qos_.reliability(rp);
 
                 RTPSReliableWriterQos rw_qos;
                 rw_qos.times.heartbeatPeriod.seconds = 0;
@@ -274,9 +248,10 @@ bool LatencyTestPublisher::init(
             else
             {
                 rp.kind = eprosima::fastrtps::BEST_EFFORT_RELIABILITY_QOS;
-                dw_qos_.reliability(rp);
-                dr_qos_.reliability(rp);
             }
+
+            dw_qos_.reliability(rp);
+            dr_qos_.reliability(rp);
 
             dw_qos_.properties(property_policy);
             dw_qos_.endpoint().history_memory_policy = MemoryManagementPolicy::PREALLOCATED_WITH_REALLOC_MEMORY_MODE;
@@ -366,10 +341,6 @@ bool LatencyTestPublisher::init(
         }
     }
 
-    // Endpoints using dynamic data endpoints span the whole test duration
-    // Static types and endpoints are created for each payload iteration
-    return dynamic_types_ ? init_dynamic_types() && create_data_endpoints() : true;
-
     /* Calculate Overhead */
     start_time_ = std::chrono::steady_clock::now();
     for (int i = 0; i < 1000; ++i)
@@ -388,7 +359,9 @@ bool LatencyTestPublisher::init(
         data_file << "Sample,Payload [Bytes],Latency [us]" << std::endl;
     }
 
-    return true;
+    // Endpoints using dynamic data endpoints span the whole test duration
+    // Static types and endpoints are created for each payload iteration
+    return dynamic_types_ ? init_dynamic_types() && create_data_endpoints() : true;
 }
 
 /*
@@ -484,7 +457,8 @@ void LatencyTestPublisher::CommandReaderListener::on_data_available(
                 &command, &info) == ReturnCode_t::RETCODE_OK
             && info.valid_data)
     {
-        if (command.m_command == BEGIN)
+        if (command.m_command == BEGIN
+                || command.m_command == END )
         {
             latency_publisher_->mutex_.lock();
             ++latency_publisher_->command_msg_count_;
@@ -503,8 +477,8 @@ void LatencyTestPublisher::LatencyDataReaderListener::on_data_available(
 {
     SampleInfo info;
     void* data = latency_publisher_->dynamic_types_ ?
-            (void*)latency_publisher_->dynamic_data_type_in_:
-            (void*)latency_publisher_->latency_type_in_;
+            (void*)latency_publisher_->dynamic_data_in_:
+            (void*)latency_publisher_->latency_data_in_;
 
     // Retrieved echoed data
     if (reader->take_next_sample(
@@ -519,10 +493,10 @@ void LatencyTestPublisher::LatencyDataReaderListener::on_data_available(
 
     // Check if is the expected echo message
     if ((latency_publisher_->dynamic_types_ &&
-            (latency_publisher_->dynamic_data_type_in_->get_uint32_value(0) !=
-            latency_publisher_->dynamic_data_type_out_->get_uint32_value(0)))
+            (latency_publisher_->dynamic_data_in_->get_uint32_value(0) !=
+            latency_publisher_->dynamic_data_out_->get_uint32_value(0)))
             || (!latency_publisher_->dynamic_types_ &&
-            (latency_publisher_->latency_type_in_->seqnum != latency_publisher_->latency_type_out_->seqnum)))
+            (latency_publisher_->latency_data_in_->seqnum != latency_publisher_->latency_data_out_->seqnum)))
     {
         return;
     }
@@ -538,11 +512,11 @@ void LatencyTestPublisher::LatencyDataReaderListener::on_data_available(
     // Reset seqnum from out data
     if (latency_publisher_->dynamic_types_)
     {
-        latency_publisher_->dynamic_data_type_out_->set_uint32_value(0, 0);
+        latency_publisher_->dynamic_data_out_->set_uint32_value(0, 0);
     }
     else
     {
-        latency_publisher_->latency_type_out_->seqnum = 0;
+        latency_publisher_->latency_data_out_->seqnum = 0;
     }
 
     ++latency_publisher_->data_msg_count_;
@@ -617,19 +591,19 @@ bool LatencyTestPublisher::test(
     test_status_ = 0;
     received_count_ = 0;
 
-    if (dynamic_types_ && create_data_endpoints())
+    if (dynamic_types_)
     {
         // TODO(jlbueno) Clarify with Miguel Barro
-        dynamic_data_type_in_ = static_cast<DynamicData*>(dynamic_pub_sub_type_->createData());
-        dynamic_data_type_out_ = static_cast<DynamicData*>(dynamic_pub_sub_type_->createData());
+        dynamic_data_in_ = static_cast<DynamicData*>(dynamic_pub_sub_type_->createData());
+        dynamic_data_out_ = static_cast<DynamicData*>(dynamic_pub_sub_type_->createData());
 
-        if (nullptr == dynamic_data_type_in_)
+        if (nullptr == dynamic_data_in_)
         {
             logError(LATENCYPUBLISHER, "Iteration failed: Failed to create Dynamic Data In");
             return false;
         }
 
-        if (nullptr == dynamic_data_type_out_)
+        if (nullptr == dynamic_data_out_)
         {
             logError(LATENCYPUBLISHER, "Iteration failed: Failed to create Dynamic Data Out");
             return false;
@@ -637,10 +611,10 @@ bool LatencyTestPublisher::test(
 
         MemberId id_in;
         MemberId id_out;
-        DynamicData* data_in = dynamic_data_type_in_->loan_value(
-            dynamic_data_type_in_->get_member_id_at_index(1));
-        DynamicData* data_out = dynamic_data_type_out_->loan_value(
-            dynamic_data_type_out_->get_member_id_at_index(1));
+        DynamicData* data_in = dynamic_data_in_->loan_value(
+            dynamic_data_in_->get_member_id_at_index(1));
+        DynamicData* data_out = dynamic_data_out_->loan_value(
+            dynamic_data_out_->get_member_id_at_index(1));
 
         for (uint32_t i = 0; i < datasize; ++i)
         {
@@ -650,14 +624,14 @@ bool LatencyTestPublisher::test(
             data_out->set_byte_value(0, id_out);
         }
 
-        dynamic_data_type_in_->return_loaned_value(data_in);
-        dynamic_data_type_out_->return_loaned_value(data_out);
+        dynamic_data_in_->return_loaned_value(data_in);
+        dynamic_data_out_->return_loaned_value(data_out);
     }
     else if (init_static_types(datasize) && create_data_endpoints())
     {
         // Create data sample
-        latency_type_in_ = static_cast<LatencyType*>(latency_data_type_->createData());
-        latency_type_out_ = static_cast<LatencyType*>(latency_data_type_->createData());
+        latency_data_in_ = static_cast<LatencyType*>(latency_data_type_->createData());
+        latency_data_out_ = static_cast<LatencyType*>(latency_data_type_->createData());
     }
     else
     {
@@ -704,15 +678,15 @@ bool LatencyTestPublisher::test(
 
         if (dynamic_types_)
         {
-            dynamic_data_type_in_->set_uint32_value(0, 0);
-            dynamic_data_type_out_->set_uint32_value(count, 0);
-            data = dynamic_data_type_out_;
+            dynamic_data_in_->set_uint32_value(0, 0);
+            dynamic_data_out_->set_uint32_value(count, 0);
+            data = dynamic_data_out_;
         }
         else
         {
-            latency_type_in_->seqnum = 0;
-            latency_type_out_->seqnum = count;
-            data = latency_type_out_;
+            latency_data_in_->seqnum = 0;
+            latency_data_out_->seqnum = count;
+            data = latency_data_out_;
         }
 
         start_time_ = std::chrono::steady_clock::now();
@@ -738,9 +712,43 @@ bool LatencyTestPublisher::test(
         return false;
     }
 
+    // Wait for Subscriber's END command
+    {
+        std::unique_lock<std::mutex> lock(mutex_);
+        command_msg_cv_.wait(lock, [&]()
+                {
+                    return command_msg_count_ >= subscribers_;
+                });
+        command_msg_count_ = 0;
+    }
+
     // TEST FINISHED:
-    size_t removed = 0;
-    data_writer_->clear_history(&removed);
+
+    // Delete Data Sample
+    if (dynamic_types_)
+    {
+        DynamicDataFactory::get_instance()->delete_data(dynamic_data_in_);
+        DynamicDataFactory::get_instance()->delete_data(dynamic_data_out_);
+    }
+    else
+    {
+        latency_data_type_.delete_data(latency_data_in_);
+        latency_data_type_.delete_data(latency_data_out_);
+    }
+
+    // Free resources
+
+    if (dynamic_types_)
+    {
+        size_t removed = 0;
+        data_writer_->clear_history(&removed);
+    }
+    // Remove endpoints associated with the given payload size
+    else if (!destroy_data_endpoints())
+    {
+        logError(LATENCYPUBLISHER, "Endpoints for payload size " << datasize << " could not been removed");
+        return false;
+    }
 
     // Drop the first measurement, as it's usually not representative
     times_.erase(times_.begin());
@@ -752,24 +760,6 @@ bool LatencyTestPublisher::test(
     }
 
     analyze_times(datasize);
-
-    // Delete Data Sample
-    if (dynamic_types_)
-    {
-        DynamicDataFactory::get_instance()->delete_data(dynamic_data_type_in_);
-        DynamicDataFactory::get_instance()->delete_data(dynamic_data_type_out_);
-    }
-    else
-    {
-        latency_data_type_.delete_data(latency_type_in_);
-        latency_data_type_.delete_data(latency_type_out_);
-    }
-
-    // Remove endpoints associated with the given payload size
-    if (!destroy_data_endpoints())
-    {
-        logError(LATENCYPUBLISHER, "Endpoints for payload size " << datasize << " could not been removed");
-    }
 
     return true;
 }
@@ -1097,6 +1087,8 @@ bool LatencyTestPublisher::destroy_data_endpoints()
     }
 
     latency_data_type_.reset();
+    dynamic_pub_sub_type_.reset();
+    DynamicTypeBuilderFactory::delete_instance();
 
     return true;
 }

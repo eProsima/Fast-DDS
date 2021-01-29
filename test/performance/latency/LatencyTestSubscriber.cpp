@@ -33,31 +33,12 @@ using namespace eprosima::fastrtps::types;
 using namespace eprosima::fastdds::dds;
 
 LatencyTestSubscriber::LatencyTestSubscriber()
-    : participant_(nullptr)
-    , publisher_(nullptr)
-    , data_writer_(nullptr)
-    , command_writer_(nullptr)
-    , subscriber_(nullptr)
-    , data_reader_(nullptr)
-    , command_reader_(nullptr)
-    , received_(0)
-    , command_msg_count_(0)
-    , test_status_(0)
-    , echo_(true)
-    , samples_(0)
-    , latency_data_sub_topic_(nullptr)
-    , latency_data_pub_topic_(nullptr)
-    , latency_command_sub_topic_(nullptr)
-    , latency_command_pub_topic_(nullptr)
-    , latency_data_(nullptr)
-    , latency_command_type_(new TestCommandDataType())
-    , dynamic_data_(nullptr)
+    : latency_command_type_(new TestCommandDataType())
     , data_writer_listener_(this)
     , data_reader_listener_(this)
     , command_writer_listener_(this)
     , command_reader_listener_(this)
 {
-    forced_domain_ = -1;
 }
 
 LatencyTestSubscriber::~LatencyTestSubscriber()
@@ -74,7 +55,6 @@ LatencyTestSubscriber::~LatencyTestSubscriber()
             || !latency_data_type_)
     {
         logError(LATENCYSUBSCRIBER, "ERROR unregistering the DATA type and/or removing the endpoints");
-        return;
     }
 
     subscriber_->delete_datareader(command_reader_);
@@ -209,7 +189,6 @@ bool LatencyTestSubscriber::init(
         if (reliable)
         {
             rp.kind = eprosima::fastrtps::RELIABLE_RELIABILITY_QOS;
-            dr_qos_.reliability(rp);
 
             RTPSReliableWriterQos rw_qos;
             rw_qos.times.heartbeatPeriod.seconds = 0;
@@ -219,29 +198,16 @@ bool LatencyTestSubscriber::init(
         else
         {
             rp.kind = eprosima::fastrtps::BEST_EFFORT_RELIABILITY_QOS;
-            dw_qos_.reliability(rp);
         }
+
+        dr_qos_.reliability(rp);
+        dw_qos_.reliability(rp);
 
         dw_qos_.properties(property_policy);
         dw_qos_.endpoint().history_memory_policy = MemoryManagementPolicy::PREALLOCATED_WITH_REALLOC_MEMORY_MODE;
 
         dr_qos_.properties(property_policy);
         dr_qos_.endpoint().history_memory_policy = MemoryManagementPolicy::PREALLOCATED_WITH_REALLOC_MEMORY_MODE;
-    }
-
-    /* Create Data Reader QoS Profile*/
-    {
-        ReliabilityQosPolicy rp;
-        if (reliable)
-        {
-            rp.kind = eprosima::fastrtps::RELIABLE_RELIABILITY_QOS;
-        }
-        else
-        {
-            rp.kind = eprosima::fastrtps::BEST_EFFORT_RELIABILITY_QOS;
-            dr_qos_.reliability(rp);
-        }
-
     }
 
     /* Create Topics */
@@ -497,14 +463,16 @@ void LatencyTestSubscriber::LatencyDataReaderListener::on_data_available(
 
 void LatencyTestSubscriber::run()
 {
-    // WAIT FOR THE DISCOVERY PROCESS FO FINISH:
-    // EACH SUBSCRIBER NEEDS 4 Matchings (2 publishers and 2 subscribers)
+    // WAIT FOR THE DISCOVERY PROCESS FO FINISH ONLY FOR DYNAMIC CASE:
+    // EACH SUBSCRIBER NEEDS:
+    // DYNAMIC TYPES: 4 Matchings (2 publishers and 2 subscribers)
+    // STATIC TYPES: 2 Matchings (1 command publisher and 1 command subscriber)
     std::unique_lock<std::mutex> disc_lock(mutex_);
     discovery_cv_.wait(
         disc_lock,
         [this]() -> bool
         {
-            return total_matches() == 4;
+            return total_matches() == (dynamic_types_ ? 4 : 2);
         });
     disc_lock.unlock();
 
@@ -552,6 +520,15 @@ bool LatencyTestSubscriber::test(
     {
         // Create the data sample
         latency_data_ = static_cast<LatencyType*>(latency_data_type_.create_data());
+
+        // Wait for new endponts discovery from the LatencyTestPublisher
+        std::unique_lock<std::mutex> disc_lock(mutex_);
+        discovery_cv_.wait(
+            disc_lock,
+            [this]() -> bool
+            {
+                return total_matches() == 4;
+            });
     }
     else
     {
@@ -567,7 +544,7 @@ bool LatencyTestSubscriber::test(
         {
             return command_msg_count_ != 0;
         });
-    --command_msg_count_;
+    command_msg_count_ = 0;
     lock.unlock();
 
     // Send to Publisher the BEGIN command
@@ -591,19 +568,20 @@ bool LatencyTestSubscriber::test(
         {
             return command_msg_count_ != 0;
         });
-    --command_msg_count_;
+    command_msg_count_ = 0;
     lock.unlock();
 
     logInfo(LatencyTest, "TEST OF SIZE: " << datasize + 4 << " ENDS");
     std::this_thread::sleep_for(std::chrono::milliseconds(50));
 
-    size_t removed;
-    data_writer_->clear_history(&removed);
-
     if (dynamic_types_)
     {
         dynamic_pub_sub_type_->deleteData(dynamic_data_);
         // DynamicDataFactory::get_instance()->delete_data(dynamic_data_);
+        //
+        // Reset history for the new test
+        size_t removed;
+        data_writer_->clear_history(&removed);
     }
     else
     {
@@ -620,8 +598,15 @@ bool LatencyTestSubscriber::test(
     {
         return false;
     }
-    return true;
 
+    command.m_command = END;
+    if (!command_writer_->write(&command))
+    {
+        logError(LatencyTest, "Subscriber fail to publish the END command")
+        return false;
+    }
+
+    return true;
 }
 
 int32_t LatencyTestSubscriber::total_matches() const
@@ -770,7 +755,7 @@ bool LatencyTestSubscriber::create_data_endpoints()
     }
 
     // Create the endpoints
-    if (nullptr !=
+    if (nullptr ==
             (data_writer_ = publisher_->create_datawriter(
                 latency_data_pub_topic_,
                 dw_qos_,
@@ -780,7 +765,7 @@ bool LatencyTestSubscriber::create_data_endpoints()
         return false;
     }
 
-    if (nullptr !=
+    if (nullptr ==
             (data_reader_ = subscriber_->create_datareader(
                 latency_data_sub_topic_,
                 dr_qos_,

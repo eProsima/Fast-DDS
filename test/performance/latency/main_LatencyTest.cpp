@@ -257,7 +257,7 @@ int main(
 {
 
     Log::SetVerbosity(Log::Kind::Info);
-    Log::SetCategoryFilter( std::regex("LatencyTest"));
+    Log::SetCategoryFilter(std::regex("LatencyTest"));
 
     int columns;
 

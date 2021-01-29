@@ -134,13 +134,13 @@ private:
     int32_t total_matches() const;
 
     /* Entities */
-    eprosima::fastdds::dds::DomainParticipant* participant_;
-    eprosima::fastdds::dds::Publisher* publisher_;
-    eprosima::fastdds::dds::DataWriter* data_writer_;
-    eprosima::fastdds::dds::DataWriter* command_writer_;
-    eprosima::fastdds::dds::Subscriber* subscriber_;
-    eprosima::fastdds::dds::DataReader* data_reader_;
-    eprosima::fastdds::dds::DataReader* command_reader_;
+    eprosima::fastdds::dds::DomainParticipant* participant_ = nullptr;
+    eprosima::fastdds::dds::Publisher* publisher_ = nullptr;
+    eprosima::fastdds::dds::DataWriter* data_writer_ = nullptr;
+    eprosima::fastdds::dds::DataWriter* command_writer_ = nullptr;
+    eprosima::fastdds::dds::Subscriber* subscriber_ = nullptr;
+    eprosima::fastdds::dds::DataReader* data_reader_ = nullptr;
+    eprosima::fastdds::dds::DataReader* command_reader_ = nullptr;
 
     /* QoS Profiles */
     eprosima::fastdds::dds::DataReaderQos dr_qos_;
@@ -155,17 +155,17 @@ private:
     /* Data */
     eprosima::fastrtps::SampleInfo_t sampleinfo_;
     std::vector<TimeStats> stats_;
-    uint64_t raw_sample_count_;
+    uint64_t raw_sample_count_ = 0;
 
     /* Test synchronization */
     std::mutex mutex_;
     std::condition_variable discovery_cv_;
     std::condition_variable command_msg_cv_;
     std::condition_variable data_msg_cv_;
-    int command_msg_count_;
-    int data_msg_count_;
-    unsigned int received_count_;
-    int test_status_;
+    int command_msg_count_ = 0;
+    int data_msg_count_ = 0;
+    unsigned int received_count_ = 0;
+    int test_status_ = 0;
 
     /* Files */
     constexpr static uint32_t MINIMUM_INDEX = 0;
@@ -177,30 +177,30 @@ private:
     std::string export_prefix_;
 
     /* Test configuration and Flags */
-    bool export_csv_;
-    bool reliable_;
+    bool export_csv_ = false;
+    bool reliable_ = false;
     bool dynamic_types_ = false;
-    int forced_domain_;
-    int subscribers_;
-    unsigned int samples_;
+    int forced_domain_ = -1;
+    int subscribers_ = 0;
+    unsigned int samples_ = 0;
     bool hostname_ = false;
     uint32_t pid_ = 0;
 
     /* Topics */
-    eprosima::fastdds::dds::Topic* latency_data_sub_topic_;
-    eprosima::fastdds::dds::Topic* latency_data_pub_topic_;
-    eprosima::fastdds::dds::Topic* latency_command_sub_topic_;
-    eprosima::fastdds::dds::Topic* latency_command_pub_topic_;
+    eprosima::fastdds::dds::Topic* latency_data_sub_topic_ = nullptr;
+    eprosima::fastdds::dds::Topic* latency_data_pub_topic_ = nullptr;
+    eprosima::fastdds::dds::Topic* latency_command_sub_topic_ = nullptr;
+    eprosima::fastdds::dds::Topic* latency_command_pub_topic_ = nullptr;
 
     /* Static Types */
-    LatencyType* latency_type_in_;
-    LatencyType* latency_type_out_;
+    LatencyType* latency_data_in_ = nullptr;
+    LatencyType* latency_data_out_ = nullptr;
     eprosima::fastdds::dds::TypeSupport latency_data_type_;
     eprosima::fastdds::dds::TypeSupport latency_command_type_;
 
     /* Dynamic Types */
-    eprosima::fastrtps::types::DynamicData* dynamic_data_type_in_;
-    eprosima::fastrtps::types::DynamicData* dynamic_data_type_out_;
+    eprosima::fastrtps::types::DynamicData* dynamic_data_in_ = nullptr;
+    eprosima::fastrtps::types::DynamicData* dynamic_data_out_ = nullptr;
     eprosima::fastdds::dds::TypeSupport dynamic_pub_sub_type_;
 
     std::vector<uint32_t> data_size_pub_;

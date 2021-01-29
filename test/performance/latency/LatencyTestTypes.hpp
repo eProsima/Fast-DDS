@@ -139,6 +139,7 @@ enum TESTCOMMAND : uint32_t
     READY,
     BEGIN,
     STOP,
+    END,
     STOP_ERROR
 };
 
