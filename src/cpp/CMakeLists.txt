@@ -620,7 +620,7 @@ elseif(NOT EPROSIMA_INSTALLER)
     endif()
 
     # Add fastrtps dependencies in its CMake config file.
-    if(LINK_SSL AND NOT EPROSIMA_INSTALLER_MINION)
+    if(LINK_SSL AND NOT INSTALLER_PLATFORM)
         set(FASTRTPS_PACKAGE_OPT_DEPS "find_package(OpenSSL REQUIRED)")
     endif()
 
