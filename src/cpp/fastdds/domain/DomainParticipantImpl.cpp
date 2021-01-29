@@ -171,22 +171,26 @@ void DomainParticipantImpl::disable()
     }
     rtps_listener_.participant_ = nullptr;
 
-    // The function to disable the DomainParticipantImpl is called exclusively from
-    // DomainParticipantFactory::delete_participant(), which returns RETCODE_PRECONDITION_NOT_MET in case the
-    // participant has lower entities. Therefore, at this point the DomainParticipantImpl should never have publishers
-    // or subscribers.
+    // The function to disable the DomainParticipantImpl is called from
+    // DomainParticipantFactory::delete_participant() and DomainParticipantFactory destructor.
     if (rtps_participant_ != nullptr)
     {
         rtps_participant_->set_listener(nullptr);
 
         {
             std::lock_guard<std::mutex> lock(mtx_pubs_);
-            assert(publishers_.empty());
+            for (auto pub_it = publishers_.begin(); pub_it != publishers_.end(); ++pub_it)
+            {
+                pub_it->second->disable();
+            }
         }
 
         {
             std::lock_guard<std::mutex> lock(mtx_subs_);
-            assert(subscribers_.empty());
+            for (auto sub_it = subscribers_.begin(); sub_it != subscribers_.end(); ++sub_it)
+            {
+                sub_it->second->disable();
+            }
         }
     }
 }
