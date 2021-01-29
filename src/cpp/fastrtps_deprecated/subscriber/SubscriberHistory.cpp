@@ -514,7 +514,7 @@ bool SubscriberHistory::remove_change_sub(
 
 bool SubscriberHistory::remove_change_sub(
         CacheChange_t* change,
-        History::iterator& it)
+        iterator& it)
 {
     if (mp_reader == nullptr || mp_mutex == nullptr)
     {
