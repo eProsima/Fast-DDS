@@ -16,9 +16,10 @@
  * @file LatencyTestSubscriber.cpp
  *
  */
+#include "LatencyTestSubscriber.hpp"
+
 #include <cassert>
 
-#include "LatencyTestSubscriber.hpp"
 #include <fastdds/dds/domain/DomainParticipant.hpp>
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
 #include <fastdds/dds/log/Colors.hpp>
@@ -30,7 +31,6 @@
 using namespace eprosima::fastrtps::rtps;
 using namespace eprosima::fastrtps::types;
 using namespace eprosima::fastdds::dds;
-using namespace std;
 
 LatencyTestSubscriber::LatencyTestSubscriber()
     : participant_(nullptr)
@@ -102,7 +102,7 @@ bool LatencyTestSubscriber::init(
         bool hostname,
         const PropertyPolicy& part_property_policy,
         const PropertyPolicy& property_policy,
-        const string& xml_config_file,
+        const std::string& xml_config_file,
         bool dynamic_data,
         int forced_domain,
         LatencyDataSizes& latency_data_sizes)
@@ -116,7 +116,7 @@ bool LatencyTestSubscriber::init(
     forced_domain_ = forced_domain;
 
     /* Create DomainParticipant*/
-    string participant_profile_name = "sub_participant_profile";
+    std::string participant_profile_name = "sub_participant_profile";
     DomainParticipantQos pqos;
 
     // Default domain
@@ -178,8 +178,8 @@ bool LatencyTestSubscriber::init(
     /* Update DataWriterQoS with xml profile data */
     if (xml_config_file_.length() > 0 )
     {
-        string sub_profile_name = "sub_subscriber_profile";
-        string pub_profile_name = "sub_publisher_profile";
+        std::string sub_profile_name = "sub_subscriber_profile";
+        std::string pub_profile_name = "sub_publisher_profile";
 
         if ( ReturnCode_t::RETCODE_OK != publisher_->get_datawriter_qos_from_profile(pub_profile_name, dw_qos_))
         {
@@ -236,7 +236,7 @@ bool LatencyTestSubscriber::init(
 
     /* Create Topics */
     {
-        ostringstream topic_name;
+        std::ostringstream topic_name;
         topic_name.str("");
         topic_name.clear();
         topic_name << "LatencyTest_Command_";
@@ -408,7 +408,7 @@ void LatencyTestSubscriber::CommandReaderListener::on_data_available(
 {
     TestCommandType command;
     SampleInfo info;
-    ostringstream log;
+    std::ostringstream log;
     bool notify = false;
 
     if (reader->take_next_sample(
@@ -489,7 +489,7 @@ void LatencyTestSubscriber::run()
 {
     // WAIT FOR THE DISCOVERY PROCESS FO FINISH:
     // EACH SUBSCRIBER NEEDS 4 Matchings (2 publishers and 2 subscribers)
-    unique_lock<mutex> disc_lock(mutex_);
+    std::unique_lock<std::mutex> disc_lock(mutex_);
     discovery_cv_.wait(
         disc_lock,
         [this]() -> bool
@@ -500,7 +500,7 @@ void LatencyTestSubscriber::run()
 
     logInfo(LatencyTest, C_B_MAGENTA << "Sub: DISCOVERY COMPLETE " << C_DEF);
 
-    for (vector<uint32_t>::iterator payload = data_size_sub_.begin(); payload != data_size_sub_.end(); ++payload)
+    for (std::vector<uint32_t>::iterator payload = data_size_sub_.begin(); payload != data_size_sub_.end(); ++payload)
     {
         if (!test(*payload))
         {
@@ -550,7 +550,7 @@ bool LatencyTestSubscriber::test(
     }
 
     // Wait for the Publisher READY command
-    unique_lock<mutex> lock(mutex_);
+    std::unique_lock<std::mutex> lock(mutex_);
     command_msg_cv_.wait(
         lock,
         [this]()
@@ -585,7 +585,7 @@ bool LatencyTestSubscriber::test(
     lock.unlock();
 
     logInfo(LatencyTest, "TEST OF SIZE: " << datasize + 4 << " ENDS");
-    this_thread::sleep_for(chrono::milliseconds(50));
+    std::this_thread::sleep_for(std::chrono::milliseconds(50));
 
     size_t removed;
     data_writer_->clear_history(&removed);
@@ -719,7 +719,7 @@ bool LatencyTestSubscriber::create_data_endpoints()
     }
 
     // Create the topic
-    ostringstream topic_name;
+    std::ostringstream topic_name;
     topic_name << "LatencyTest_";
     if (hostname_)
     {
