@@ -141,7 +141,7 @@ private:
     bool ready_ = true;
     bool reliable_ = false;
     bool hostname_ = false;
-    uint32_t pid_ = false;
+    uint32_t pid_ = 0;
 
     // Test configuration
     int forced_domain_ = 0;
