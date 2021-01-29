@@ -18,29 +18,25 @@
  */
 
 #include "ThroughputPublisher.hpp"
-#include <fastdds/dds/log/Log.hpp>
-#include <fastdds/dds/log/Colors.hpp>
-
-#include <fastrtps/utils/TimeConversion.h>
-#include <fastrtps/xmlparser/XMLProfileManager.h>
-
-#include <fastdds/dds/domain/DomainParticipantFactory.hpp>
-#include <fastdds/dds/domain/DomainParticipant.hpp>
-#include <fastdds/dds/publisher/DataWriterListener.hpp>
-#include <fastdds/dds/subscriber/qos/DataReaderQos.hpp>
-#include <fastdds/dds/subscriber/DataReader.hpp>
-#include <fastdds/dds/publisher/DataWriter.hpp>
-
-#include <dds/core/LengthUnlimited.hpp>
 
 #include <map>
 #include <fstream>
 #include <chrono>
 
+#include <fastdds/dds/domain/DomainParticipant.hpp>
+#include <fastdds/dds/domain/DomainParticipantFactory.hpp>
+#include <fastdds/dds/log/Colors.hpp>
+#include <fastdds/dds/log/Log.hpp>
+#include <fastdds/dds/publisher/DataWriter.hpp>
+#include <fastdds/dds/publisher/DataWriterListener.hpp>
+#include <fastdds/dds/subscriber/DataReader.hpp>
+#include <fastdds/dds/subscriber/qos/DataReaderQos.hpp>
+#include <fastrtps/utils/TimeConversion.h>
+#include <fastrtps/xmlparser/XMLProfileManager.h>
+
 using namespace eprosima::fastdds::dds;
 using namespace eprosima::fastrtps::rtps;
 using namespace eprosima::fastrtps::types;
-using namespace std;
 
 // *******************************************************************************************
 // ********************************* DATA READER LISTENER ************************************
@@ -151,7 +147,7 @@ bool ThroughputPublisher::init(
     recoveries_file_ = recoveries_file;
 
     /* Create DomainParticipant*/
-    string participant_profile_name = "pub_participant_profile";
+    std::string participant_profile_name = "pub_participant_profile";
     DomainParticipantQos pqos;
 
     // Default domain
@@ -238,7 +234,7 @@ bool ThroughputPublisher::init(
 
     // Create Command topic
     {
-        ostringstream topic_name;
+        std::ostringstream topic_name;
         topic_name << "ThroughputTest_Command_";
         if (hostname)
         {
@@ -922,7 +918,7 @@ bool ThroughputPublisher::init_dynamic_types()
     // Add members to the struct.
     struct_type_builder->add_member(0, "seqnum", DynamicTypeBuilderFactory::get_instance()->create_uint32_type());
     struct_type_builder->add_member(1, "data", DynamicTypeBuilderFactory::get_instance()->create_sequence_builder(
-                DynamicTypeBuilderFactory::get_instance()->create_byte_type(), ::dds::core::LENGTH_UNLIMITED));
+                DynamicTypeBuilderFactory::get_instance()->create_byte_type(), BOUND_UNLIMITED));
     struct_type_builder->set_name(ThroughputDataType::type_name_);
     dynamic_pub_sub_type_.reset(new DynamicPubSubType(struct_type_builder->build()));
 
@@ -980,7 +976,7 @@ bool ThroughputPublisher::create_data_endpoints()
     }
 
     // Create the topic
-    ostringstream topic_name;
+    std::ostringstream topic_name;
     topic_name << "ThroughputTest_";
     if (hostname_)
     {

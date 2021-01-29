@@ -164,13 +164,13 @@ public:
         const ThroughputType& lt1,
         const ThroughputType& lt2) const;
 
-    bool ThroughputDataType::is_bounded() const override
+    bool is_bounded() const override
     {
         // All plain types are bounded
         return is_plain();
     }
 
-    bool ThroughputDataType::is_plain() const override
+    bool is_plain() const override
     {
         // It is plain because the type has a fixed sized
         return true;

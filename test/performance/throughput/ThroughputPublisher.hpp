@@ -20,10 +20,20 @@
 #ifndef THROUGHPUTPUBLISHER_H_
 #define THROUGHPUTPUBLISHER_H_
 
+#include <chrono>
+#include <condition_variable>
+#include <map>
+#include <string>
+#include <vector>
+
 #include <asio.hpp>
-
-#include "ThroughputTypes.hpp"
-
+#include <fastdds/dds/publisher/DataWriter.hpp>
+#include <fastdds/dds/publisher/DataWriterListener.hpp>
+#include <fastdds/dds/publisher/Publisher.hpp>
+#include <fastdds/dds/subscriber/DataReader.hpp>
+#include <fastdds/dds/subscriber/DataReaderListener.hpp>
+#include <fastdds/dds/subscriber/Subscriber.hpp>
+#include <fastdds/dds/topic/TypeSupport.hpp>
 #include <fastrtps/fastrtps_fwd.h>
 #include <fastrtps/rtps/attributes/PropertyPolicy.h>
 #include <fastrtps/types/DynamicTypeBuilderFactory.h>
@@ -35,23 +45,7 @@
 #include <fastrtps/types/DynamicType.h>
 #include <fastrtps/types/DynamicData.h>
 #include <fastrtps/types/DynamicPubSubType.h>
-
-#include <fastdds/dds/topic/TypeSupport.hpp>
-
-#include <fastdds/dds/subscriber/Subscriber.hpp>
-#include <fastdds/dds/publisher/Publisher.hpp>
-
-#include <fastdds/dds/subscriber/DataReader.hpp>
-#include <fastdds/dds/publisher/DataWriter.hpp>
-
-#include <fastdds/dds/subscriber/DataReaderListener.hpp>
-#include <fastdds/dds/publisher/DataWriterListener.hpp>
-
-#include <condition_variable>
-#include <chrono>
-#include <map>
-#include <vector>
-#include <string>
+#include "ThroughputTypes.hpp"
 
 class ThroughputPublisher
 {
