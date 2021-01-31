@@ -641,14 +641,11 @@ bool LatencyTestPublisher::test(
 
     // WAIT FOR THE DISCOVERY PROCESS FO FINISH:
     // EACH SUBSCRIBER NEEDS 4 Matchings (2 publishers and 2 subscribers)
-    std::unique_lock<std::mutex> disc_lock(mutex_);
-    discovery_cv_.wait(
-        disc_lock,
-        [this]() -> bool
-        {
+    wait_for_discovery(
+            [this]() -> bool
+            {
             return total_matches() == 4 * subscribers_;
-        });
-    disc_lock.unlock();
+            });
 
     logInfo(LatencyTest, C_B_MAGENTA << "Pub: DISCOVERY COMPLETE " << C_DEF);
 
@@ -662,14 +659,11 @@ bool LatencyTestPublisher::test(
     }
 
     // Wait for Subscriber's BEGIN command
-    {
-        std::unique_lock<std::mutex> lock(mutex_);
-        command_msg_cv_.wait(lock, [&]()
-                {
-                    return command_msg_count_ >= subscribers_;
-                });
-        command_msg_count_ = 0;
-    }
+    wait_for_command(
+            [this]()
+            {
+            return command_msg_count_ >= subscribers_;
+            });
 
     // The first measurement it's usually not representative, so we take one more and then drop the first one.
     for (unsigned int count = 1; count <= samples_ + 1; ++count)
@@ -713,14 +707,11 @@ bool LatencyTestPublisher::test(
     }
 
     // Wait for Subscriber's END command
-    {
-        std::unique_lock<std::mutex> lock(mutex_);
-        command_msg_cv_.wait(lock, [&]()
-                {
-                    return command_msg_count_ >= subscribers_;
-                });
-        command_msg_count_ = 0;
-    }
+    wait_for_command(
+            [this]()
+            {
+            return command_msg_count_ >= subscribers_;
+            });
 
     // TEST FINISHED:
 
@@ -870,10 +861,10 @@ int32_t LatencyTestPublisher::total_matches() const
     // no need to lock because is used always within a
     // condition variable wait predicate
 
-    int32_t count = data_writer_listener_.matched_
-            + data_reader_listener_.matched_
-            + command_writer_listener_.matched_
-            + command_reader_listener_.matched_;
+    int32_t count = data_writer_listener_.get_matches()
+            + data_reader_listener_.get_matches()
+            + command_writer_listener_.get_matches()
+            + command_reader_listener_.get_matches();
 
     // Each endpoint has a mirror counterpart in the LatencyTestPublisher
     // thus, the maximun number of matches is 4 * total number of subscribers
@@ -1053,6 +1044,7 @@ bool LatencyTestPublisher::destroy_data_endpoints()
         return false;
     }
     data_writer_ = nullptr;
+    data_writer_listener_.reset();
 
     if (nullptr == data_reader_
             || ReturnCode_t::RETCODE_OK != subscriber_->delete_datareader(data_reader_))
@@ -1061,6 +1053,7 @@ bool LatencyTestPublisher::destroy_data_endpoints()
         return false;
     }
     data_reader_ = nullptr;
+    data_reader_listener_.reset();
 
     // Delete the Topics
     if (nullptr == latency_data_pub_topic_

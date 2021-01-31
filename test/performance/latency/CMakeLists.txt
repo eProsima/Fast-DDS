@@ -46,8 +46,8 @@ set(
     intraprocess_reliable
     interprocess_best_effort_udp
     interprocess_reliable_udp
-    interprocess_best_effort_tcp
-    interprocess_reliable_tcp
+#   interprocess_best_effort_tcp
+#   interprocess_reliable_tcp
     interprocess_best_effort_shm
     interprocess_reliable_shm
 )

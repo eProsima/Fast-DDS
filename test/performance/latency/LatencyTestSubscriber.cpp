@@ -27,6 +27,7 @@
 #include <fastdds/dds/publisher/DataWriter.hpp>
 #include <fastdds/dds/subscriber/DataReader.hpp>
 #include <fastrtps/xmlparser/XMLProfileManager.h>
+#include <fastdds/rtps/common/Time_t.h>
 
 using namespace eprosima::fastrtps::rtps;
 using namespace eprosima::fastrtps::types;
@@ -467,14 +468,11 @@ void LatencyTestSubscriber::run()
     // EACH SUBSCRIBER NEEDS:
     // DYNAMIC TYPES: 4 Matchings (2 publishers and 2 subscribers)
     // STATIC TYPES: 2 Matchings (1 command publisher and 1 command subscriber)
-    std::unique_lock<std::mutex> disc_lock(mutex_);
-    discovery_cv_.wait(
-        disc_lock,
-        [this]() -> bool
-        {
+    wait_for_discovery(
+            [this]() -> bool
+            {
             return total_matches() == (dynamic_types_ ? 4 : 2);
-        });
-    disc_lock.unlock();
+            });
 
     logInfo(LatencyTest, C_B_MAGENTA << "Sub: DISCOVERY COMPLETE " << C_DEF);
 
@@ -522,13 +520,11 @@ bool LatencyTestSubscriber::test(
         latency_data_ = static_cast<LatencyType*>(latency_data_type_.create_data());
 
         // Wait for new endponts discovery from the LatencyTestPublisher
-        std::unique_lock<std::mutex> disc_lock(mutex_);
-        discovery_cv_.wait(
-            disc_lock,
-            [this]() -> bool
-            {
+        wait_for_discovery(
+                [this]() -> bool
+                {
                 return total_matches() == 4;
-            });
+                });
     }
     else
     {
@@ -537,15 +533,11 @@ bool LatencyTestSubscriber::test(
     }
 
     // Wait for the Publisher READY command
-    std::unique_lock<std::mutex> lock(mutex_);
-    command_msg_cv_.wait(
-        lock,
-        [this]()
-        {
+    wait_for_command(
+            [this]()
+            {
             return command_msg_count_ != 0;
-        });
-    command_msg_count_ = 0;
-    lock.unlock();
+            });
 
     // Send to Publisher the BEGIN command
     test_status_ = 0;
@@ -561,15 +553,11 @@ bool LatencyTestSubscriber::test(
     logInfo(LatencyTest, "Testing with data size: " << datasize + 4);
 
     // Wait for the STOP or STOP_ERROR commands
-    lock.lock();
-    command_msg_cv_.wait(
-        lock,
-        [this]()
-        {
+    wait_for_command(
+            [this]()
+            {
             return command_msg_count_ != 0;
-        });
-    command_msg_count_ = 0;
-    lock.unlock();
+            });
 
     logInfo(LatencyTest, "TEST OF SIZE: " << datasize + 4 << " ENDS");
     std::this_thread::sleep_for(std::chrono::milliseconds(50));
@@ -606,6 +594,13 @@ bool LatencyTestSubscriber::test(
         return false;
     }
 
+    // prevent the LatencyTestSubscriber from been destroyed while LatencyTestPublisher is waitin for the END command.
+    if ( ReturnCode_t::RETCODE_OK != command_writer_->wait_for_acknowledgments(eprosima::fastrtps::c_TimeInfinite))
+    {
+        logError(LatencyTest, "Subscriber fail to acknowledge the END command")
+        return false;
+    }
+
     return true;
 }
 
@@ -614,10 +609,10 @@ int32_t LatencyTestSubscriber::total_matches() const
     // no need to lock because is used always within a
     // condition variable wait predicate
 
-    int32_t count = data_writer_listener_.matched_
-            + data_reader_listener_.matched_
-            + command_writer_listener_.matched_
-            + command_reader_listener_.matched_;
+    int32_t count = data_writer_listener_.get_matches()
+            + data_reader_listener_.get_matches()
+            + command_writer_listener_.get_matches()
+            + command_reader_listener_.get_matches();
 
     // Each endpoint has a mirror counterpart in the LatencyTestPublisher
     // thus, the maximun number of matches is 4
@@ -792,6 +787,7 @@ bool LatencyTestSubscriber::destroy_data_endpoints()
         return false;
     }
     data_writer_ = nullptr;
+    data_writer_listener_.reset();
 
     if (nullptr == data_reader_
             || ReturnCode_t::RETCODE_OK != subscriber_->delete_datareader(data_reader_))
@@ -800,6 +796,7 @@ bool LatencyTestSubscriber::destroy_data_endpoints()
         return false;
     }
     data_reader_ = nullptr;
+    data_reader_listener_.reset();
 
     // Delete the Topics
     if (nullptr == latency_data_pub_topic_

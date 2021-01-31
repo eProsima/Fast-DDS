@@ -133,6 +133,21 @@ private:
 
     int32_t total_matches() const;
 
+    template<class Predicate>
+    void wait_for_discovery(Predicate pred)
+    {
+        std::unique_lock<std::mutex> disc_lock(mutex_);
+        discovery_cv_.wait(disc_lock, pred);
+    }
+
+    template<class Predicate>
+    void wait_for_command(Predicate pred)
+    {
+        std::unique_lock<std::mutex> lock(mutex_);
+        command_msg_cv_.wait(lock, pred);
+        command_msg_count_ = 0;
+    }
+
     /* Entities */
     eprosima::fastdds::dds::DomainParticipant* participant_ = nullptr;
     eprosima::fastdds::dds::Publisher* publisher_ = nullptr;
@@ -208,6 +223,9 @@ private:
     /* Data Listeners */
     class LatencyDataWriterListener : public eprosima::fastdds::dds::DataWriterListener
     {
+        LatencyTestPublisher* latency_publisher_;
+        int matched_;
+
     public:
 
         LatencyDataWriterListener(
@@ -221,13 +239,24 @@ private:
                 eprosima::fastdds::dds::DataWriter* writer,
                 const eprosima::fastdds::dds::PublicationMatchedStatus& info) override;
 
-        LatencyTestPublisher* latency_publisher_;
-        int matched_;
+        int get_matches() const
+        {
+            return matched_;
+        }
+
+        void reset()
+        {
+            matched_ = 0;
+        }
+
     }
     data_writer_listener_;
 
     class LatencyDataReaderListener : public eprosima::fastdds::dds::DataReaderListener
     {
+        LatencyTestPublisher* latency_publisher_;
+        int matched_;
+
     public:
 
         LatencyDataReaderListener(
@@ -244,14 +273,24 @@ private:
                 eprosima::fastdds::dds::DataReader* reader,
                 const eprosima::fastdds::dds::SubscriptionMatchedStatus& info) override;
 
-        LatencyTestPublisher* latency_publisher_;
-        int matched_;
+        int get_matches() const
+        {
+            return matched_;
+        }
+
+        void reset()
+        {
+            matched_ = 0;
+        }
     }
     data_reader_listener_;
 
     /* Command Listeners */
     class ComandWriterListener : public eprosima::fastdds::dds::DataWriterListener
     {
+        LatencyTestPublisher* latency_publisher_;
+        int matched_;
+
     public:
 
         ComandWriterListener(
@@ -265,13 +304,23 @@ private:
                 eprosima::fastdds::dds::DataWriter* writer,
                 const eprosima::fastdds::dds::PublicationMatchedStatus& info) override;
 
-        LatencyTestPublisher* latency_publisher_;
-        int matched_;
+        int get_matches() const
+        {
+            return matched_;
+        }
+
+        void reset()
+        {
+            matched_ = 0;
+        }
     }
     command_writer_listener_;
 
     class CommandReaderListener : public eprosima::fastdds::dds::DataReaderListener
     {
+        LatencyTestPublisher* latency_publisher_;
+        int matched_;
+
     public:
 
         CommandReaderListener(
@@ -288,8 +337,15 @@ private:
                 eprosima::fastdds::dds::DataReader* reader,
                 const eprosima::fastdds::dds::SubscriptionMatchedStatus& info) override;
 
-        LatencyTestPublisher* latency_publisher_;
-        int matched_;
+        int get_matches() const
+        {
+            return matched_;
+        }
+
+        void reset()
+        {
+            matched_ = 0;
+        }
     }
     command_reader_listener_;
 };
