@@ -164,24 +164,42 @@ You can access the documentation online, which is hosted on [Read the Docs](http
 
 ## Quality Declaration
 
-*eprosima Fast DDS* claims to be in the **Quality Level 1** category based on the guidelines provided by [ROS 2](https://ros.org/reps/rep-2004.html). See the [Quality Declaration](https://github.com/eProsima/Fast-DDS/blob/master/QUALITY.md) for more details.
+*eprosima Fast DDS* claims to be in the **Quality Level 1** category based on the guidelines provided by
+[ROS 2](https://ros.org/reps/rep-2004.html).
+See the [Quality Declaration](https://github.com/eProsima/Fast-DDS/blob/master/QUALITY.md) for more details.
 
 ## Quick Demo
 
-For those who want to try a quick demonstration of Fast-DDS libraries on Ubuntu, here is a way to launch an example application.
+For those who want to try a quick demonstration of *Fast DDS* libraries on Ubuntu, here is a way to launch an example
+application.
 
-First, download and install **docker** application. Open a terminal and type the following command
+First, download and install **docker** application.
+Open a terminal and type the following command:
 
 	$ sudo apt-get install docker.io
 
-Then, download the docker image file from https://eprosima.com/index.php/downloads-all
+Then, download the docker image files from the
+[eProsima downloads website](https://eprosima.com/index.php/downloads-all).
 
-Load the image and run it:
+Load the docker images:
 
-	$ docker load -i ubuntu-fast-rtps.tar
-	$ docker run -it ubuntu-fast-rtps
+	$ docker load -i ubuntu-fast-dds:<FastDDS-Version>.tar
+	$ docker load -i ubuntu-fast-dds-helloworld:<FastDDS-Version>.tar
+	$ docker load -i ubuntu-fast-dds-shapesdemo:<ShapesDemo-Version>.tar
 
-You can run as many images as you want and check the communication between them.
+Run the Docker container with the *eProsima Shapes Demo* application. Please refer to
+[Shapes Demo documentation](https://eprosima-shapes-demo.readthedocs.io)
+for further details on how to use this application.
+
+    $ xhost local:root
+    $ docker run -it --privileged -e DISPLAY=$DISPLAY -v /tmp/.X11-unix:/tmp/.X11-unix \
+        ubuntu-fast-dds-shapesdemo:<ShapesDemo-Version>
+
+It is also possible to run the *Fast DDS* HelloWorld example by executing the following command:
+
+    $ docker run -it ubuntu-fast-dds-helloworld:<FastDDS-Version>
+
+Run as many images as wanted and check the communication between them.
 
 ## Getting Help
 
