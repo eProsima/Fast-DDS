@@ -1236,8 +1236,7 @@
                                                                               qeDYVtlzxb3CYN/TnYWBLU9ef9z46sOXlcIy5NS29W/fvP/yoirVzPdAfo6bFXJOXBERUavpRCPj
                                                                               CGRcsajh9IybKq7s67nTHSkv44qS64gFhxlraMgkRmGwF1fP7oZlNk4mEMJCT9pBsRZx+7BFDCZV IiIiotbiDBYRERERAxYRERERAxYRERHRkvIDO779xeTKXgYAAAAASUVORK5CYII=" name="logo" align="bottom" width="240" height="62" border="0"/>
             </p>
-			<p class="western" align="center"><font face="Arial, sans-serif"><font size="5" style="font-size: 20pt"><b>Fast RTPS v@PROJECT_VERSION@</b></font></p>
-		</td>
+			<p class="western" align="center"><font face="Arial, sans-serif"><font size="5" style="font-size: 20pt"><b>Fast DDS v@PROJECT_VERSION@</b></font></p> </td>
 		<td width="33%" style="background: transparent" style="border: none; padding: 0in">
 			<p class="western" align="right"><font face="Arial, sans-serif"><font size="1" style="font-size: 10pt">Email: <a class="western" href="mailto:support@eprosima.com">support@eprosima.com</a><br/>Phone: +34 91 804 34 48<br/><a class="western" href="http://www.eprosima.com/">www.eprosima.com</a></p>
 		</td>
@@ -1254,8 +1253,7 @@
 	<li/>
 <p class="western" style="margin-bottom: 0in"><a class="western" href="@README_LOCATION_PREFFIX@manual/index.html"><font face="Arial, sans-serif" size="3" style="font-size: 12pt">Installation, User Manual and Release notes</font></a></p>
 	<li/>
-<p class="western" style="margin-bottom: 0in"><font face="Arial, sans-serif" size="3" style="font-size: 12pt"><a class="western" href="@README_LOCATION_PREFFIX@api_reference/index.html"><i>eProsima Fast RTPS</i> C++ API html documentation</a></font></p>
-</ul>
+<p class="western" style="margin-bottom: 0in"><font face="Arial, sans-serif" size="3" style="font-size: 12pt"><a class="western" href="@README_LOCATION_PREFFIX@api_reference/index.html"><i>eProsima Fast DDS</i> C++ API html documentation</a></font></p> </ul>
 <p class="western" style="margin-bottom: 0in"><br/></p>
 <p class="western" style="margin-bottom: 0in"><font face="Arial, sans-serif" size="3" style="font-size: 12pt"><b>Online (updated frequently):</b></font></p>
 <p class="western" style="margin-bottom: 0in; font-variant: normal; letter-spacing: normal; font-style: normal; font-weight: normal"><br/></p>
@@ -1263,13 +1261,13 @@
 	<li/>
 <p class="western" style="margin-bottom: 0in"><font color="#000000" face="Arial, sans-serif" size="3" style="font-size: 12pt">Installation, User Manual and Release notes. (<a class="western" href="https://fast-dds.docs.eprosima.com">https://fast-dds.docs.eprosima.com</a>)</font></p>
 	<li/>
-<p class="western" style="margin-bottom: 0in"><font color="#000000" face="Arial, sans-serif" size="3" style="font-size: 12pt"><i>eProsima Fast RTPS</i> C++ API html documentation. (<a class="western" href="https://fast-dds.docs.eprosima.com/en/latest/fastdds/api_reference/api_reference.html">https://fast-dds.docs.eprosima.com/en/latest/fastdds/api_reference/api_reference.html</a>)</font></p>
+<p class="western" style="margin-bottom: 0in"><font color="#000000" face="Arial, sans-serif" size="3" style="font-size: 12pt"><i>eProsima Fast DDS</i> C++ API html documentation. (<a class="western" href="https://fast-dds.docs.eprosima.com/en/latest/fastdds/api_reference/api_reference.html">https://fast-dds.docs.eprosima.com/en/latest/fastdds/api_reference/api_reference.html</a>)</font></p>
 	<li/>
-<p class="western" style="margin-bottom: 0in"><font color="#000000" face="Arial, sans-serif" size="3" style="font-size: 12pt">Product Page: Video Tutorials, Whitepapers, benchmarkings (<a class="western" href="http://www.eprosima.com/index.php/products-all/eprosima-fast-rtps">http://www.eprosima.com/index.php/products-all/eprosima-fast-rtps</a>)</font></p>
+<p class="western" style="margin-bottom: 0in"><font color="#000000" face="Arial, sans-serif" size="3" style="font-size: 12pt">Product Page: Video Tutorials, Whitepapers, benchmarkings (<a class="western" href="http://www.eprosima.com/index.php/products-all/eprosima-fast-dds">http://www.eprosima.com/index.php/products-all/eprosima-fast-dds</a>)</font></p>
 </ul>
 <p class="western" style="margin-bottom: 0in"><br/></p>
 <p class="western" style="margin-bottom: 0in; border-top: none; border-bottom: 1px solid #000000; border-left: none; border-right: none; padding-top: 0in; padding-bottom: 0.03in; padding-left: 0in; padding-right: 0in"><br/></p>
 <p class="western" style="margin-bottom: 0in"><font face="Arial, sans-serif" size="2" style="font-size: 11pt"><b>Copyright&copy; 2019 eProsima. All rights reserved.</b></font></p>
-<p class="western" style="margin-bottom: 0in"><font face="Arial, sans-serif" size="2" style="font-size: 11pt">This copy of <i>eProsima Fast RTPS</i> is licensed to you under the terms described in the LICENSE file included in this distribution.</font></p>
+<p class="western" style="margin-bottom: 0in"><font face="Arial, sans-serif" size="2" style="font-size: 11pt">This copy of <i>eProsima Fast DDS</i> is licensed to you under the terms described in the LICENSE file included in this distribution.</font></p>
 </body>
 </html>

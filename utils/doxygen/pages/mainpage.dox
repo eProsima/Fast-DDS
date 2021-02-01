@@ -1,17 +1,17 @@
 /*!
- * @mainpage eProsima Fast RTPS library.
+ * @mainpage eProsima Fast DDS library.
  * <div id="mainpage" style="width:95%;text-align:justify;text-justify:inter-word">
  * <h1>Purpose</h1>
- * Real-Time Publish-Subscribe (RTPS) is the wire interoperability protocol defined for the Data-Distribution Service (DDS) standard by 
- *the Object Management Group (OMG) consortium. This protocol standard is also defined by the OMG in the specification document 
- *“The Real-Time Publish-Subscribe Wire Protocol. DDS Interoperability Wire Protocol Specification (DDS-RTPS)” that can 
- *be obtained from the OMG web-page. The main objective of this specification is that all RTPSParticipants in a DDS communication 
+ * Real-Time Publish-Subscribe (RTPS) is the wire interoperability protocol defined for the Data-Distribution Service (DDS) standard by
+ *the Object Management Group (OMG) consortium. This protocol standard is also defined by the OMG in the specification document
+ *“The Real-Time Publish-Subscribe Wire Protocol. DDS Interoperability Wire Protocol Specification (DDS-RTPS)” that can
+ *be obtained from the OMG web-page. The main objective of this specification is that all RTPSParticipants in a DDS communication
  *structure, even if they use different vendor's implementations, can interoperate.
  * <br/><br/>
  *<h1>Scope</h1>
- * The scope of this implementation is going to be limited by the RTPS protocol specification of the OMG. Since the main purpose 
- *of this design is to facilitate the implementation of a standalone RTPS wire protocol as close to the specification as possible, 
- *the included features will be the ones described in the OMG document. The OMG specification defines message formats, interpretation 
+ * The scope of this implementation is going to be limited by the RTPS protocol specification of the OMG. Since the main purpose
+ *of this design is to facilitate the implementation of a standalone RTPS wire protocol as close to the specification as possible,
+ *the included features will be the ones described in the OMG document. The OMG specification defines message formats, interpretation
  *and usage scenarios for any application willing to use RTPS protocol
 * The most important features are:
 *<ul>
@@ -23,7 +23,7 @@
  *<h1>System architecture</h1>
  * A general view of the system architecture can be found below:
  * <img src="general_architecture.png" width="400" align="left" style="padding:0px 20px 0px 0px">
- * The Fast RTPS library provides the user with two different layers to access its capabilities. The first is the RTPS layer, contained in the
+ * The Fast DDS library provides the user with two different layers to access its capabilities. The first is the RTPS layer, contained in the
  * RTPSDomain. Using this layer, the user can directly create RTPSWriter and RTPSReader type objects and access their
  * corresponding Histories. To facilitate the use of this layer an additional Publication-Subscription layer has
  * been developed. This second layer allows the user to create Publishers and Subscribers associated to certain topics and
@@ -34,22 +34,22 @@ The correct behavior of the RTPS protocol will be achieved by using an event-bas
 <br/>
  <h3>Thread Structure</h3>
 For each RTPSParticipant, various threads will be spawned to manage different aspects of the RTPS implementation. Each application using this implementation will at least have the following threads:
-<ul><li><b>Main thread:</b> This will be the thread managed by the application or the user. The user will interact with the objects through the defined public APIs. 
+<ul><li><b>Main thread:</b> This will be the thread managed by the application or the user. The user will interact with the objects through the defined public APIs.
 <li><b>Receive thread:</b> These threads will be in charge of listening to the different ports. Since these threads will be blocked until a RTPS message is received there will be a different thread for each different IP-port combination that the RTPSParticipant is listening from. Multiple endpoints can be assigned to the same listening thread.
 <li><b>Event thread(s):</b> This thread will be in charge of processing events triggered by some periodic condition, or by actions performed by the user in the main thread. In this version a single event thread will be created and used per RTPSParticipant.
 </ul>
 
  <h3>Resource Structure</h3>
 There are three main types of resources in the implementation, that directly correspond with three classes. All resources are managed by the RTPSParticipant.
-<ul><li><b>ResourceListen:</b> Each listen resource is assigned to a single IP:port combination. It receives and processes messages directed to that socket and performs the necessary actions in one or more of the associated Writers or Readers. In this version each ResourceListen runs a single thread listening to a single socket. Future versions may allow the association of multiple sockets (multiple ResourceListen objects) with a single listen thread. 
-<li><b>ResourceEvent: </b> This resource manages the time-delayed event triggered periodically or by some message-based event. A single resource is implemented per RTPSParticipant, with a single thread performing all the actions. Future versions may include multiple ResourceEvents running in multiple threads to improve performance. 
+<ul><li><b>ResourceListen:</b> Each listen resource is assigned to a single IP:port combination. It receives and processes messages directed to that socket and performs the necessary actions in one or more of the associated Writers or Readers. In this version each ResourceListen runs a single thread listening to a single socket. Future versions may allow the association of multiple sockets (multiple ResourceListen objects) with a single listen thread.
+<li><b>ResourceEvent: </b> This resource manages the time-delayed event triggered periodically or by some message-based event. A single resource is implemented per RTPSParticipant, with a single thread performing all the actions. Future versions may include multiple ResourceEvents running in multiple threads to improve performance.
 <li><b>Event thread(s):</b> This resource manages ALL send operations in the RTPSParticipant. This means that all endpoints included in an RTPSParticipant send their messages through the socket defined in this resource. All messages are send synchronously. Future versions will include multiple ResourceSend objects and the possibility to asynchronously send messages.
 </ul>
 
 
  <h3> Main events</h3>
 There are multiple events that are triggered wither directly by some action performed by the user, the reception of messages or even periodically. A list of the main events and the actions that need to be performed after them is included below, whereas a detailed description of all the events associated with each class of the design will be included in the detailed implementation chapter.
-<ul><li><b>User-triggered events:</b> These events are triggered directly after the user performs some action, either directly to the RTPS Writer or its associated HistoryCache. 
+<ul><li><b>User-triggered events:</b> These events are triggered directly after the user performs some action, either directly to the RTPS Writer or its associated HistoryCache.
 <li><b>Message-triggered events:</b> These events are triggered by the reception of an RTPS message. For example, the reception of an ACKNACK message would trigger a change in the status of some CacheChanges in the HistoryCache and, maybe, the re-send of some packets to a specific Reader.
 <li><b>Periodic events:</b> Some events must be triggered periodically according to DDS rules. For example, heartbeat packets must be send each heartbeatPeriod to all matching Readers.
 </ul>
