@@ -81,7 +81,7 @@ std::basic_string<ochar> string_convert(
 
 // Specialization for mac's STL lazy implementation sake :(
 // TODO (Barro): remove when mac STL gets updated
-#ifdef __clang__
+#ifndef __GLIBCXX__
 
 template<>
 std::string string_convert(
