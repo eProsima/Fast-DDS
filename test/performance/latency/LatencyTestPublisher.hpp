@@ -134,14 +134,16 @@ private:
     int32_t total_matches() const;
 
     template<class Predicate>
-    void wait_for_discovery(Predicate pred)
+    void wait_for_discovery(
+            Predicate pred)
     {
         std::unique_lock<std::mutex> disc_lock(mutex_);
         discovery_cv_.wait(disc_lock, pred);
     }
 
     template<class Predicate>
-    void wait_for_command(Predicate pred)
+    void wait_for_command(
+            Predicate pred)
     {
         std::unique_lock<std::mutex> lock(mutex_);
         command_msg_cv_.wait(lock, pred);
@@ -282,6 +284,7 @@ private:
         {
             matched_ = 0;
         }
+
     }
     data_reader_listener_;
 
@@ -313,6 +316,7 @@ private:
         {
             matched_ = 0;
         }
+
     }
     command_writer_listener_;
 
@@ -346,6 +350,7 @@ private:
         {
             matched_ = 0;
         }
+
     }
     command_reader_listener_;
 };

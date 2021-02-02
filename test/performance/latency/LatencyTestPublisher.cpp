@@ -642,10 +642,10 @@ bool LatencyTestPublisher::test(
     // WAIT FOR THE DISCOVERY PROCESS FO FINISH:
     // EACH SUBSCRIBER NEEDS 4 Matchings (2 publishers and 2 subscribers)
     wait_for_discovery(
-            [this]() -> bool
-            {
+        [this]() -> bool
+        {
             return total_matches() == 4 * subscribers_;
-            });
+        });
 
     logInfo(LatencyTest, C_B_MAGENTA << "Pub: DISCOVERY COMPLETE " << C_DEF);
 
@@ -660,10 +660,10 @@ bool LatencyTestPublisher::test(
 
     // Wait for Subscriber's BEGIN command
     wait_for_command(
-            [this]()
-            {
+        [this]()
+        {
             return command_msg_count_ >= subscribers_;
-            });
+        });
 
     // The first measurement it's usually not representative, so we take one more and then drop the first one.
     for (unsigned int count = 1; count <= samples_ + 1; ++count)
@@ -708,10 +708,10 @@ bool LatencyTestPublisher::test(
 
     // Wait for Subscriber's END command
     wait_for_command(
-            [this]()
-            {
+        [this]()
+        {
             return command_msg_count_ >= subscribers_;
-            });
+        });
 
     // TEST FINISHED:
 

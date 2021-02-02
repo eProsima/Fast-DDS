@@ -469,10 +469,10 @@ void LatencyTestSubscriber::run()
     // DYNAMIC TYPES: 4 Matchings (2 publishers and 2 subscribers)
     // STATIC TYPES: 2 Matchings (1 command publisher and 1 command subscriber)
     wait_for_discovery(
-            [this]() -> bool
-            {
+        [this]() -> bool
+        {
             return total_matches() == (dynamic_types_ ? 4 : 2);
-            });
+        });
 
     logInfo(LatencyTest, C_B_MAGENTA << "Sub: DISCOVERY COMPLETE " << C_DEF);
 
@@ -521,10 +521,10 @@ bool LatencyTestSubscriber::test(
 
         // Wait for new endponts discovery from the LatencyTestPublisher
         wait_for_discovery(
-                [this]() -> bool
-                {
+            [this]() -> bool
+            {
                 return total_matches() == 4;
-                });
+            });
     }
     else
     {
@@ -534,10 +534,10 @@ bool LatencyTestSubscriber::test(
 
     // Wait for the Publisher READY command
     wait_for_command(
-            [this]()
-            {
+        [this]()
+        {
             return command_msg_count_ != 0;
-            });
+        });
 
     // Send to Publisher the BEGIN command
     test_status_ = 0;
@@ -554,10 +554,10 @@ bool LatencyTestSubscriber::test(
 
     // Wait for the STOP or STOP_ERROR commands
     wait_for_command(
-            [this]()
-            {
+        [this]()
+        {
             return command_msg_count_ != 0;
-            });
+        });
 
     logInfo(LatencyTest, "TEST OF SIZE: " << datasize + 4 << " ENDS");
     std::this_thread::sleep_for(std::chrono::milliseconds(50));
