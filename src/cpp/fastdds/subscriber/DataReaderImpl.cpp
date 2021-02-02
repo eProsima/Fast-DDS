@@ -1376,8 +1376,6 @@ void DataReaderImpl::release_payload_pool()
 
     PoolConfig config = PoolConfig::from_history_attributes(history_.m_att);
     payload_pool_->release_history(config, true);
-
-    TopicPayloadPoolRegistry::release(payload_pool_);
 }
 
 ReturnCode_t DataReaderImpl::check_datasharing_compatible(

@@ -29,10 +29,10 @@ namespace detail {
 
 struct TopicPayloadPoolRegistryEntry
 {
-    std::shared_ptr<TopicPayloadPoolProxy> pool_for_preallocated;
-    std::shared_ptr<TopicPayloadPoolProxy> pool_for_preallocated_realloc;
-    std::shared_ptr<TopicPayloadPoolProxy> pool_for_dynamic;
-    std::shared_ptr<TopicPayloadPoolProxy> pool_for_dynamic_reusable;
+    std::weak_ptr<TopicPayloadPoolProxy> pool_for_preallocated;
+    std::weak_ptr<TopicPayloadPoolProxy> pool_for_preallocated_realloc;
+    std::weak_ptr<TopicPayloadPoolProxy> pool_for_dynamic;
+    std::weak_ptr<TopicPayloadPoolProxy> pool_for_dynamic_reusable;
 };
 
 }  // namespace detail

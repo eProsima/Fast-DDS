@@ -111,7 +111,6 @@ PublisherImpl::~PublisherImpl()
     std::string topic_name = m_att.topic.getTopicName().to_string();
     PoolConfig pool_cfg = PoolConfig::from_history_attributes(m_history.m_att);
     payload_pool_->release_history(pool_cfg, false);
-    TopicPayloadPoolRegistry::release(payload_pool_);
 }
 
 bool PublisherImpl::create_new_change(

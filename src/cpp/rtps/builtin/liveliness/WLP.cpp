@@ -153,8 +153,6 @@ WLP::~WLP()
             delete mp_builtinWriterSecureHistory;
             secure_payload_pool_->release_history(swriter_pool_cfg, false);
         }
-
-        TopicPayloadPoolRegistry::release(secure_payload_pool_);
     }
 #endif // if HAVE_SECURITY
 
@@ -179,8 +177,6 @@ WLP::~WLP()
 
     delete pub_liveliness_manager_;
     delete sub_liveliness_manager_;
-
-    TopicPayloadPoolRegistry::release(payload_pool_);
 }
 
 bool WLP::initWL(

@@ -35,18 +35,6 @@ std::shared_ptr<ITopicPayloadPool> TopicPayloadPoolRegistry::get(
     return detail::TopicPayloadPoolRegistry::instance().get(topic_name, config);
 }
 
-void TopicPayloadPoolRegistry::release(
-        std::shared_ptr<ITopicPayloadPool>& pool)
-{
-    auto topic_pool = std::static_pointer_cast<detail::TopicPayloadPoolProxy, IPayloadPool>(pool);
-    pool.reset();
-
-    if (topic_pool)
-    {
-        detail::TopicPayloadPoolRegistry::instance().release(topic_pool);
-    }
-}
-
 }  // namespace rtps
 }  // namespace fastrtps
 }  // namespace eprosima

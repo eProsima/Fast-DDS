@@ -68,7 +68,6 @@ public:
         {
             PoolConfig pool_cfg = PoolConfig::from_history_attributes(history_attr);
             pool->release_history(pool_cfg, is_reader);
-            TopicPayloadPoolRegistry::release(pool);
         }
     }
 

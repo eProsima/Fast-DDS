@@ -152,7 +152,6 @@ PDP::~PDP()
         if (writer_payload_pool_)
         {
             writer_payload_pool_->release_history(cfg, false);
-            TopicPayloadPoolRegistry::release(writer_payload_pool_);
         }
     }
 
@@ -163,7 +162,6 @@ PDP::~PDP()
         if (reader_payload_pool_)
         {
             reader_payload_pool_->release_history(cfg, true);
-            TopicPayloadPoolRegistry::release(reader_payload_pool_);
         }
     }
 
