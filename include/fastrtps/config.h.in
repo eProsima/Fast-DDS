@@ -112,7 +112,7 @@
     static_assert(FASTRTPS_VERSION_MAJOR < major, #entity_name " reached deprecation version " #major);             \
     FASTRTPS_DEPRECATED(#entity_name " has been deprecated and will be removed on major version " #major ". " msg)
 
-#define FASTDDS_TODO(major, minor, msg)                               \
+#define FASTDDS_TODO_BEFORE(major, minor, msg)                                          \
     static_assert((FASTRTPS_VERSION_MAJOR < major) ||                                   \
                   (FASTRTPS_VERSION_MAJOR == major && FASTRTPS_VERSION_MINOR < minor),  \
                   "TODO before version " #major "." #minor " : " #msg);
