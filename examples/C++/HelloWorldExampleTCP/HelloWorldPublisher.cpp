@@ -75,7 +75,6 @@ bool HelloWorldPublisher::init(
         descriptor->tls_config.add_option(TLSOptions::NO_SSLV2);
     }
 
-    descriptor->wait_for_tcp_negotiation = false;
     descriptor->sendBufferSize = 0;
     descriptor->receiveBufferSize = 0;
 

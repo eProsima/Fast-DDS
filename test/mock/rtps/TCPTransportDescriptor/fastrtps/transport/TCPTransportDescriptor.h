@@ -156,9 +156,7 @@ typedef struct TCPTransportDescriptor : public SocketTransportDescriptor
     uint16_t max_logical_port;
     uint16_t logical_port_range;
     uint16_t logical_port_increment;
-    uint32_t tcp_negotiation_timeout;
     bool enable_tcp_nodelay;
-    bool wait_for_tcp_negotiation;
     bool calculate_crc;
     bool check_crc;
     bool apply_security;

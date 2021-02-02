@@ -241,12 +241,16 @@ struct TCPTransportDescriptor : public SocketTransportDescriptor
     uint16_t logical_port_range;
     //! Increment between logical ports to try during RTCP negotiation
     uint16_t logical_port_increment;
-    // TODO(jlbueno): Remove v3.0
+
+    FASTDDS_TODO(3, 0, "Eliminate tcp_negotiation_timeout, variable not in use.")
     uint32_t tcp_negotiation_timeout;
+
     //! Enables the TCP_NODELAY socket option
     bool enable_tcp_nodelay;
-    // TODO(jlbueno): Remove v3.0
+
+    FASTDDS_TODO(3, 0, "Eliminate wait_for_tcp_negotiation, variable not in use.")
     bool wait_for_tcp_negotiation;
+
     //! Enables the calculation and sending of CRC on message headers
     bool calculate_crc;
     //! Enables checking the CRC of incoming message headers

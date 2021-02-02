@@ -55,6 +55,8 @@ using Log = fastdds::dds::Log;
 static const int s_default_keep_alive_frequency = 5000; // 5 SECONDS
 static const int s_default_keep_alive_timeout = 15000; // 15 SECONDS
 //static const int s_clean_deleted_sockets_pool_timeout = 100; // 100 MILLISECONDS
+
+FASTDDS_TODO(3, 0, "Eliminate s_default_tcp_negotitation_timeout, variable used to initialize deprecate attribute.")
 static const int s_default_tcp_negotitation_timeout = 5000; // 5 Seconds
 
 TCPTransportDescriptor::TCPTransportDescriptor()

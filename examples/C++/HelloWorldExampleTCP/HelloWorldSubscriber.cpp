@@ -84,7 +84,6 @@ bool HelloWorldSubscriber::init(
         descriptor->tls_config.add_option(TLSOptions::DEFAULT_WORKAROUNDS);
     }
 
-    descriptor->wait_for_tcp_negotiation = false;
     pparam.rtps.userTransports.push_back(descriptor);
 
     participant_ = Domain::createParticipant(pparam);

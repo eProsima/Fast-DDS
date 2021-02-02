@@ -359,10 +359,10 @@ TEST(SHM, SHM_UDPvsUDP)
     reader.wait_participant_undiscovery();
 }
 
-// Test == operator for UDPv4
+// Test == operator for SHM
 TEST(BlackBox, SHM_equal_operator)
 {
-    // UDPv4TransportDescriptor
+    // SharedMemTransportDescriptor
     SharedMemTransportDescriptor shm_transport_1;
     SharedMemTransportDescriptor shm_transport_2;
 
