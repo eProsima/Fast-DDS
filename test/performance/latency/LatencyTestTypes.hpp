@@ -57,10 +57,8 @@ private:
  * This type does not define a comparison operator because the actual data size referenced is unknown. Use the
  * comparison method provided in LatencyDataType.
  * */
-class alignas (4) LatencyType
+struct alignas (4) LatencyType
 {
-public:
-
     uint32_t seqnum = 0;
     uint8_t data[1];
 };
