@@ -1480,9 +1480,23 @@ bool DataWriterImpl::release_payload_pool()
     assert(payload_pool_);
 
     loans_.reset();
+
+    bool result = true;
+
+    if (is_data_sharing_compatible_)
+    {
+        // No-op
+    }
+    else
+    {
+        PoolConfig config = PoolConfig::from_history_attributes(history_.m_att);
+        auto topic_pool = std::static_pointer_cast<ITopicPayloadPool>(payload_pool_);
+        result = topic_pool->release_history(config, false);
+    }
+
     payload_pool_.reset();
 
-    return true;
+    return result;
 }
 
 bool DataWriterImpl::add_loan(
