@@ -415,7 +415,19 @@ ReturnCode_t DataReaderImpl::read_or_take(
         return code;
     }
 
-    std::lock_guard<RecursiveTimedMutex> lock(reader_->getMutex());
+    auto max_blocking_time = std::chrono::steady_clock::now() +
+#if HAVE_STRICT_REALTIME
+            std::chrono::microseconds(::TimeConv::Time_t2MicroSecondsInt64(qos_.reliability().max_blocking_time));
+#else
+            std::chrono::hours(24);
+#endif // if HAVE_STRICT_REALTIME
+
+    std::unique_lock<RecursiveTimedMutex> lock(reader_->getMutex(), std::defer_lock);
+
+    if (!lock.try_lock_until(max_blocking_time))
+    {
+        return ReturnCode_t::RETCODE_TIMEOUT;
+    }
 
     auto it = history_.lookup_instance(handle, exact_instance);
     if (!it.first)
