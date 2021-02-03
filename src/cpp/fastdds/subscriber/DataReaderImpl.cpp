@@ -579,38 +579,10 @@ ReturnCode_t DataReaderImpl::return_loan(
     return ReturnCode_t::RETCODE_OK;
 }
 
-ReturnCode_t DataReaderImpl::read_next_sample(
+ReturnCode_t DataReaderImpl::read_or_take_next_sample(
         void* data,
-        SampleInfo* info)
-{
-    if (reader_ == nullptr)
-    {
-        return ReturnCode_t::RETCODE_NOT_ENABLED;
-    }
-
-    if (history_.getHistorySize() == 0)
-    {
-        return ReturnCode_t::RETCODE_NO_DATA;
-    }
-
-    auto max_blocking_time = std::chrono::steady_clock::now() +
-#if HAVE_STRICT_REALTIME
-            std::chrono::microseconds(::TimeConv::Time_t2MicroSecondsInt64(qos_.reliability().max_blocking_time));
-#else
-            std::chrono::hours(24);
-#endif // if HAVE_STRICT_REALTIME
-    SampleInfo_t rtps_info;
-    if (history_.readNextData(data, &rtps_info, max_blocking_time))
-    {
-        sample_info_to_dds(rtps_info, info);
-        return ReturnCode_t::RETCODE_OK;
-    }
-    return ReturnCode_t::RETCODE_ERROR;
-}
-
-ReturnCode_t DataReaderImpl::take_next_sample(
-        void* data,
-        SampleInfo* info)
+        SampleInfo* info,
+        bool should_take)
 {
     if (reader_ == nullptr)
     {
@@ -650,15 +622,29 @@ ReturnCode_t DataReaderImpl::take_next_sample(
     detail::ReadTakeCommand cmd(*this, data_values, sample_infos, 1, states, it.second, false);
     while (!cmd.is_finished())
     {
-        cmd.add_instance(true);
+        cmd.add_instance(should_take);
     }
-    
+
     ReturnCode_t code = cmd.return_value();
     if (ReturnCode_t::RETCODE_OK == code)
     {
         *info = sample_infos[0];
     }
     return code;
+}
+
+ReturnCode_t DataReaderImpl::read_next_sample(
+        void* data,
+        SampleInfo* info)
+{
+    return read_or_take_next_sample(data, info, false);
+}
+
+ReturnCode_t DataReaderImpl::take_next_sample(
+        void* data,
+        SampleInfo* info)
+{
+    return read_or_take_next_sample(data, info, true);
 }
 
 ReturnCode_t DataReaderImpl::get_first_untaken_info(
