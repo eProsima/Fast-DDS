@@ -358,7 +358,6 @@ protected:
             DataType data;
             SampleInfo info;
 
-            EXPECT_EQ(code, data_reader->read_next_sample(&data, &info));
             EXPECT_EQ(code, data_reader->take_next_sample(&data, &info));
             if (ReturnCode_t::RETCODE_OK == code)
             {
@@ -366,6 +365,7 @@ protected:
                 data_writer_->write(&data);
                 data_reader->wait_for_unread_message(time_to_wait);
             }
+            EXPECT_EQ(code, data_reader->read_next_sample(&data, &info));
         }
 
         // Return code when requesting a bad instance
