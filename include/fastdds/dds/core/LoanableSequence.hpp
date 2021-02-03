@@ -62,6 +62,9 @@ class LoanableSequence : public LoanableTypedCollection<T>
 {
 public:
 
+    using size_type = LoanableCollection::size_type;
+    using element_type = LoanableCollection::element_type;
+
     /**
      * Default constructor.
      *
@@ -169,6 +172,13 @@ public:
 
         return *this;
     }
+
+protected:
+
+    using LoanableCollection::maximum_;
+    using LoanableCollection::length_;
+    using LoanableCollection::elements_;
+    using LoanableCollection::has_ownership_;
 
 private:
 

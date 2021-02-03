@@ -37,6 +37,9 @@ namespace dds {
 template<typename T, LoanableCollection::size_type num_items>
 struct StackAllocatedSequence : public LoanableTypedCollection<T>
 {
+    using size_type = LoanableCollection::size_type;
+    using element_type = LoanableCollection::element_type;
+
     StackAllocatedSequence()
     {
         has_ownership_ = true;
@@ -60,6 +63,11 @@ struct StackAllocatedSequence : public LoanableTypedCollection<T>
             StackAllocatedSequence&&) = delete;
 
 protected:
+
+    using LoanableCollection::maximum_;
+    using LoanableCollection::length_;
+    using LoanableCollection::elements_;
+    using LoanableCollection::has_ownership_;
 
     void resize(
             LoanableCollection::size_type new_length) override
