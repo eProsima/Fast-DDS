@@ -1276,6 +1276,49 @@ TEST_F(DataReaderTests, read_unread)
             EXPECT_EQ(ok_code, data_reader_->return_loan(data_seq[i], info_seq[i]));
         }
     }
+
+    // Check read_next_sample / take_next_sample
+    {
+        // Send a bunch of samples
+        for (char i = 0; i < num_samples; ++i)
+        {
+            data.message()[0] = i + '0';
+            EXPECT_EQ(ok_code, data_writer_->write(&data, handle_ok_));
+        }
+
+        // Reader should have 10 samples with the following states (R = read, N = not-read, / = removed from history)
+        // {N, N, N, N, N, N, N, N, N, N}
+
+        // Read a sample and take another
+        for (char i = 0; i < num_samples; i += 2)
+        {
+            FooType read_data;
+            FooType take_data;
+            SampleInfo read_info;
+            SampleInfo take_info;
+
+            EXPECT_EQ(ok_code, data_reader_->read_next_sample(&read_data, &read_info));
+            EXPECT_EQ(read_data.message()[0], i + '0');
+
+            EXPECT_EQ(ok_code, data_reader_->take_next_sample(&take_data, &take_info));
+            EXPECT_EQ(take_data.message()[0], i + '1');
+
+            EXPECT_FALSE(read_data == take_data);
+            EXPECT_NE(read_info.sample_identity, take_info.sample_identity);
+        }
+
+        // Reader sample states should be
+        // {R, /, R, /, R, /, R, /, R, /}
+
+        // As all samples are read, read_next_sample and take_next_sample should not return data
+        {
+            FooType read_data;
+            SampleInfo read_info;
+
+            EXPECT_EQ(no_data_code, data_reader_->read_next_sample(&read_data, &read_info));
+            EXPECT_EQ(no_data_code, data_reader_->take_next_sample(&read_data, &read_info));
+        }
+    }
 }
 
 TEST_F(DataReaderTests, TerminateWithoutDestroyingReader)
