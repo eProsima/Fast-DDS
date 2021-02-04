@@ -490,6 +490,15 @@ bool LatencyTestSubscriber::test(
 {
     logInfo(LatencyTest, "Preparing test with data size: " << datasize + 4);
 
+    // Wait for the Publisher READY command
+    // Assures that LatencyTestSubscriber|Publisher data endpoints creation and
+    // destruction is sequential
+    wait_for_command(
+        [this]()
+        {
+            return command_msg_count_ != 0;
+        });
+
     if (dynamic_types_)
     {
         // Create the data sample
@@ -531,13 +540,6 @@ bool LatencyTestSubscriber::test(
         logError(LatencyTest, "Error preparing static types and endpoints for testing");
         return false;
     }
-
-    // Wait for the Publisher READY command
-    wait_for_command(
-        [this]()
-        {
-            return command_msg_count_ != 0;
-        });
 
     // Send to Publisher the BEGIN command
     test_status_ = 0;

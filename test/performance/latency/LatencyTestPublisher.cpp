@@ -639,16 +639,7 @@ bool LatencyTestPublisher::test(
         return false;
     }
 
-    // WAIT FOR THE DISCOVERY PROCESS FO FINISH:
-    // EACH SUBSCRIBER NEEDS 4 Matchings (2 publishers and 2 subscribers)
-    wait_for_discovery(
-        [this]() -> bool
-        {
-            return total_matches() == 4 * subscribers_;
-        });
-
-    logInfo(LatencyTest, C_B_MAGENTA << "Pub: DISCOVERY COMPLETE " << C_DEF);
-
+    // Signal the subscribers the publisher is READY
     times_.clear();
     TestCommandType command;
     command.m_command = READY;
@@ -657,6 +648,16 @@ bool LatencyTestPublisher::test(
         logError(LatencyTest, "Publisher cannot publish READY command");
         return false;
     }
+
+    // WAIT FOR THE DISCOVERY PROCESS FO FINISH:
+    // EACH SUBSCRIBER NEEDS 4 Matchings (2 publishers and 2 subscribers)
+    wait_for_discovery(
+        [this]() -> bool
+        {
+            return total_matches() == 4 * subscribers_;
+        });
+
+    logInfo(LatencyTest, C_B_MAGENTA << "Pub: DISCOVERY COMPLETE " << C_DEF)
 
     // Wait for Subscriber's BEGIN command
     wait_for_command(
@@ -707,11 +708,13 @@ bool LatencyTestPublisher::test(
     }
 
     // Wait for Subscriber's END command
+    // Assures that LatencyTestSubscriber|Publisher data endpoints creation and
+    // destruction is sequential
     wait_for_command(
-        [this]()
-        {
+            [this]()
+            {
             return command_msg_count_ >= subscribers_;
-        });
+            });
 
     // TEST FINISHED:
 
