@@ -441,7 +441,7 @@ const ReturnCode_t SubscriberImpl::get_datareader_qos_from_profile(
         DataReaderQos& qos) const
 {
     SubscriberAttributes attr;
-    if (XMLP_ret::XML_OK == XMLProfileManager::fillSubscriberAttributes(profile_name, attr))
+    if (XMLP_ret::XML_OK == XMLProfileManager::fillSubscriberAttributes(profile_name, attr, false))
     {
         qos = default_datareader_qos_;
         set_qos_from_attributes(qos, attr);

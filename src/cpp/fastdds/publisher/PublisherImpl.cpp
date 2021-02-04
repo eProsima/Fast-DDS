@@ -464,7 +464,7 @@ const ReturnCode_t PublisherImpl::get_datawriter_qos_from_profile(
         DataWriterQos& qos) const
 {
     PublisherAttributes attr;
-    if (XMLP_ret::XML_OK == XMLProfileManager::fillPublisherAttributes(profile_name, attr))
+    if (XMLP_ret::XML_OK == XMLProfileManager::fillPublisherAttributes(profile_name, attr, false))
     {
         qos = default_datawriter_qos_;
         set_qos_from_attributes(qos, attr);
