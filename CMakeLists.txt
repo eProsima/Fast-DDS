@@ -253,6 +253,21 @@ else()
 endif()
 
 ###############################################################################
+# Log Info default setup
+###############################################################################
+if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+    option(LOG_NO_INFO "Do not compile Info Log level" OFF)
+else()
+    option(LOG_NO_INFO "Do not compile Info Log level" ON)
+endif()
+
+if(LOG_NO_INFO)
+    set(HAVE_LOG_NO_INFO 1)
+else()
+    set(HAVE_LOG_NO_INFO 0)
+endif()
+
+###############################################################################
 # Compile library.
 ###############################################################################
 add_subdirectory(src/cpp)
