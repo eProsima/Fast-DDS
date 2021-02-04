@@ -38,6 +38,15 @@ bool LatencyDataType::compare_data(
     return 0 == memcmp(lt1.data, lt2.data, buffer_size_);
 }
 
+void LatencyDataType::copy_data(
+        const LatencyType& src,
+        LatencyType& dst) const
+{
+
+    dst.seqnum = src.seqnum;
+    memcpy(dst.data, src.data, buffer_size_);
+}
+
 bool LatencyDataType::serialize(
         void* data,
         SerializedPayload_t* payload)

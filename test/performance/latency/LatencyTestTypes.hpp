@@ -115,6 +115,10 @@ public:
             const LatencyType& lt1,
             const LatencyType& lt2) const;
 
+    void copy_data(
+            const LatencyType& src,
+            LatencyType& dst) const;
+
     bool is_bounded() const override
     {
         // All plain types are bounded

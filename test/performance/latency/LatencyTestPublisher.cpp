@@ -263,6 +263,15 @@ bool LatencyTestPublisher::init(
             dr_qos_.properties(property_policy);
             dr_qos_.endpoint().history_memory_policy = MemoryManagementPolicy::PREALLOCATED_WITH_REALLOC_MEMORY_MODE;
         }
+
+        // Set data sharing according with cli. Is disabled by default in all xml profiles
+        if (data_sharing_)
+        {
+            DataSharingQosPolicy dsp;
+            dsp.on("");
+            dw_qos_.data_sharing(dsp);
+            dr_qos_.data_sharing(dsp);
+        }
     }
 
     /* Create Topics */
@@ -479,18 +488,42 @@ void LatencyTestPublisher::CommandReaderListener::on_data_available(
 void LatencyTestPublisher::LatencyDataReaderListener::on_data_available(
         DataReader* reader)
 {
-    SampleInfo info;
-    void* data = latency_publisher_->dynamic_types_ ?
+    SampleInfoSeq infos;
+    LoanableSequence<LatencyType> data_seq;
+
+    if (latency_publisher_->data_loans_)
+    {
+        if (ReturnCode_t::RETCODE_OK != reader->take(data_seq, infos, 1))
+        {
+            logError(LatencyTest, "Problem reading Subscriber echoed loaned test data");
+            return;
+        }
+
+        // we have requested a single sample
+        assert(infos.length() == 1 && data_seq.length() == 1);
+        // we have already released the former loan
+        assert(latency_publisher_->latency_data_in_ == nullptr);
+
+        if ( nullptr == latency_publisher_->latency_data_in_ )
+        {
+            latency_publisher_->latency_data_in_ = &data_seq[0];
+        }
+    }
+    else
+    {
+        SampleInfo info;
+        void* data = latency_publisher_->dynamic_types_ ?
             (void*)latency_publisher_->dynamic_data_in_:
             (void*)latency_publisher_->latency_data_in_;
 
-    // Retrieved echoed data
-    if (reader->take_next_sample(
-                data, &info) != ReturnCode_t::RETCODE_OK
-            || !info.valid_data)
-    {
-        logInfo(LatencyTest, "Problem reading Subscriber echoed test data");
-        return;
+        // Retrieved echoed data
+        if (reader->take_next_sample(
+                    data, &info) != ReturnCode_t::RETCODE_OK
+                || !info.valid_data)
+        {
+            logError(LatencyTest, "Problem reading Subscriber echoed test data");
+            return;
+        }
     }
 
     std::unique_lock<std::mutex> lock(latency_publisher_->mutex_);
@@ -529,6 +562,13 @@ void LatencyTestPublisher::LatencyDataReaderListener::on_data_available(
     if (notify)
     {
         latency_publisher_->data_msg_cv_.notify_one();
+    }
+
+    // release the loan if any
+    if (latency_publisher_->data_loans_
+            && ReturnCode_t::RETCODE_OK != reader->return_loan(data_seq, infos))
+    {
+        logError(LatencyTest, "Problem returning loaned test data");
     }
 }
 
@@ -597,7 +637,6 @@ bool LatencyTestPublisher::test(
 
     if (dynamic_types_)
     {
-        // TODO(jlbueno) Clarify with Miguel Barro
         dynamic_data_in_ = static_cast<DynamicData*>(dynamic_pub_sub_type_->createData());
         dynamic_data_out_ = static_cast<DynamicData*>(dynamic_pub_sub_type_->createData());
 
@@ -633,9 +672,12 @@ bool LatencyTestPublisher::test(
     }
     else if (init_static_types(datasize) && create_data_endpoints())
     {
-        // Create data sample
-        latency_data_in_ = static_cast<LatencyType*>(latency_data_type_->createData());
-        latency_data_out_ = static_cast<LatencyType*>(latency_data_type_->createData());
+        if (!data_loans_)
+        {
+            // Create data sample
+            latency_data_in_ = static_cast<LatencyType*>(latency_data_type_->createData());
+            latency_data_out_ = static_cast<LatencyType*>(latency_data_type_->createData());
+        }
     }
     else
     {
@@ -683,7 +725,25 @@ bool LatencyTestPublisher::test(
         }
         else
         {
-            latency_data_in_->seqnum = 0;
+            // loan each sample
+            if (data_loans_)
+            {
+                latency_data_in_ = nullptr;
+                if( ReturnCode_t::RETCODE_OK
+                        != data_writer_->loan_sample(
+                            (void*&)latency_data_out_,
+                            DataWriter::LoanInitializationKind::NO_LOAN_INITIALIZATION))
+                {
+                    logError(LatencyTest, "Error in publisher trying to loan a sample");
+                    return false;
+                }
+            }
+
+            // fill in the data
+            if (latency_data_in_)
+            {
+                latency_data_in_->seqnum = 0;
+            }
             latency_data_out_->seqnum = count;
             data = latency_data_out_;
         }
@@ -728,7 +788,7 @@ bool LatencyTestPublisher::test(
         DynamicDataFactory::get_instance()->delete_data(dynamic_data_in_);
         DynamicDataFactory::get_instance()->delete_data(dynamic_data_out_);
     }
-    else
+    else if (!data_loans_)
     {
         latency_data_type_.delete_data(latency_data_in_);
         latency_data_type_.delete_data(latency_data_out_);
