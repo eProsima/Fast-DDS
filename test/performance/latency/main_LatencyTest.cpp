@@ -470,6 +470,18 @@ int main(
         }
     }
 
+    // Check parameters validity
+    if (use_security && test_agent == TestAgent::BOTH)
+    {
+        logError(LatencyTest, "Intra-process delivery NOT supported with security");
+        return 1;
+    }
+    else if ((data_sharing || data_loans) && dynamic_types)
+    {
+        logError(LatencyTest, "Sharing sample APIs NOT supported with dynamic types");
+        return 1;
+    }
+
     PropertyPolicy pub_part_property_policy;
     PropertyPolicy sub_part_property_policy;
     PropertyPolicy pub_property_policy;
