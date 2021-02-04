@@ -27,6 +27,7 @@
 
 #include <rtps/builtin/discovery/participant/timedevent/DSClientEvent.h>
 #include <rtps/builtin/discovery/participant/PDPClient.h>
+#include <rtps/builtin/discovery/endpoint/EDPClient.h>
 
 namespace eprosima {
 namespace fastdds {
@@ -42,6 +43,7 @@ DSClientEvent::DSClientEvent(
                 return event();
             }, interval)
     , mp_PDP(p_PDP)
+    , mp_EDP(static_cast<EDPClient*>(mp_PDP->getEDP()))
 {
 }
 
@@ -52,29 +54,27 @@ DSClientEvent::~DSClientEvent()
 bool DSClientEvent::event()
 {
     // logInfo(CLIENT_PDP_THREAD, "Client " << mp_PDP->getRTPSParticipant()->getGuid() << " DSClientEvent Period");
-    bool restart = true;
+    bool restart = false;
 
-    // Check if all servers received my discovery data
-    if (mp_PDP->all_servers_acknowledge_PDP())
+    // Iterate over remote servers
+    for (auto server: mp_PDP->remote_server_attributes())
     {
-        // Wait until we have received all network discovery info currently available
-        if (mp_PDP->is_all_servers_PDPdata_updated())
+        // If the server is known, it means that this client has received the server's DATA(p),
+        // which in turn means that the server has received the client's DATA(p)
+        if (mp_PDP->is_known_participant(server.guidPrefix) &&
+            !mp_EDP->areRemoteEndpointsMatched(server.guidPrefix))
         {
-            restart = !mp_PDP->match_servers_EDP_endpoints();
-            // we must keep this TimedEvent alive to cope with servers' shutdown
-            // PDPClient::removeRemoteEndpoints would restart_timer if a server vanishes
-            // logInfo(CLIENT_PDP_THREAD,"Client " << mp_PDP->getRTPSParticipant()->getGuid() << " matching servers EDP endpoints")
+            // Match EDP endpoints with this server
+            mp_EDP->assignRemoteEndpoints(*(mp_PDP->get_participant_proxy_data(server.guidPrefix)));
         }
         else
         {
-            logInfo(CLIENT_PDP_THREAD,
-                    "Client " << mp_PDP->getRTPSParticipant()->getGuid() <<
-                    " not all servers acknowledge PDP info");
+            restart = true;
         }
     }
-    else
+
+    if (restart)
     {
-        // Not all servers have yet received our DATA(p) thus resend
         mp_PDP->_serverPing = true;
         mp_PDP->announceParticipantState(false);
         logInfo(CLIENT_PDP_THREAD, "Client " << mp_PDP->getRTPSParticipant()->getGuid() << " PDP announcement");

@@ -181,7 +181,7 @@ ParticipantProxyData* PDPServer::createParticipantProxyData(
     if (!do_lease)
     {
         // if not a client verify this participant is a server
-        for (auto& svr : mp_builtin->m_DiscoveryServers)
+        for (auto& svr : m_discovery.discovery_config.m_DiscoveryServers)
         {
             if (svr.guidPrefix == participant_data.m_guid.guidPrefix)
             {
@@ -225,8 +225,8 @@ bool PDPServer::createPDPEndpoints()
     ReaderAttributes ratt;
     ratt.expectsInlineQos = false;
     ratt.endpoint.endpointKind = READER;
-    ratt.endpoint.multicastLocatorList = mp_builtin->m_metatrafficMulticastLocatorList;
-    ratt.endpoint.unicastLocatorList = mp_builtin->m_metatrafficUnicastLocatorList;
+    ratt.endpoint.multicastLocatorList = mp_builtin->m_att.metatrafficMulticastLocatorList;
+    ratt.endpoint.unicastLocatorList = mp_builtin->m_att.metatrafficUnicastLocatorList;
     ratt.endpoint.topicKind = WITH_KEY;
     // change depending of backup mode
     ratt.endpoint.durabilityKind = durability_;
@@ -250,7 +250,7 @@ bool PDPServer::createPDPEndpoints()
         mp_PDPReader->enableMessagesFromUnkownWriters(true);
 
         // Initial peer list doesn't make sense in server scenario. Client should match its server list
-        for (const eprosima::fastdds::rtps::RemoteServerAttributes& it : mp_builtin->m_DiscoveryServers)
+        for (const eprosima::fastdds::rtps::RemoteServerAttributes& it : m_discovery.discovery_config.m_DiscoveryServers)
         {
             std::lock_guard<std::mutex> data_guard(temp_data_lock_);
             temp_writer_data_.clear();
@@ -302,8 +302,8 @@ bool PDPServer::createPDPEndpoints()
 
     watt.endpoint.reliabilityKind = RELIABLE;
     watt.endpoint.topicKind = WITH_KEY;
-    watt.endpoint.multicastLocatorList = mp_builtin->m_metatrafficMulticastLocatorList;
-    watt.endpoint.unicastLocatorList = mp_builtin->m_metatrafficUnicastLocatorList;
+    watt.endpoint.multicastLocatorList = mp_builtin->m_att.metatrafficMulticastLocatorList;
+    watt.endpoint.unicastLocatorList = mp_builtin->m_att.metatrafficUnicastLocatorList;
     watt.times.heartbeatPeriod = pdp_heartbeat_period;
     watt.times.nackResponseDelay = pdp_nack_response_delay;
     watt.times.nackSupressionDuration = pdp_nack_supression_duration;
@@ -319,7 +319,7 @@ bool PDPServer::createPDPEndpoints()
         // Enable separate sending so the filter can be called for each change and reader proxy
         mp_PDPWriter->set_separate_sending(true);
 
-        for (const eprosima::fastdds::rtps::RemoteServerAttributes& it : mp_builtin->m_DiscoveryServers)
+        for (const eprosima::fastdds::rtps::RemoteServerAttributes& it : m_discovery.discovery_config.m_DiscoveryServers)
         {
             std::lock_guard<std::mutex> data_guard(temp_data_lock_);
             temp_reader_data_.clear();
@@ -611,16 +611,16 @@ void PDPServer::announceParticipantState(
 
                 // Create a RemoteLocatorList for metatraffic_locators
                 fastrtps::rtps::RemoteLocatorList metatraffic_locators(
-                    mp_builtin->m_metatrafficUnicastLocatorList.size(),
-                    mp_builtin->m_metatrafficMulticastLocatorList.size());
+                    mp_builtin->m_att.metatrafficUnicastLocatorList.size(),
+                    mp_builtin->m_att.metatrafficMulticastLocatorList.size());
 
                 // Populate with server's unicast locators
-                for (auto locator : mp_builtin->m_metatrafficUnicastLocatorList)
+                for (auto locator : mp_builtin->m_att.metatrafficUnicastLocatorList)
                 {
                     metatraffic_locators.add_unicast_locator(locator);
                 }
                 // Populate with server's multicast locators
-                for (auto locator : mp_builtin->m_metatrafficMulticastLocatorList)
+                for (auto locator : mp_builtin->m_att.metatrafficMulticastLocatorList)
                 {
                     metatraffic_locators.add_multicast_locator(locator);
                 }
@@ -1202,7 +1202,7 @@ fastdds::rtps::ddb::DiscoveryDataBase& PDPServer::discovery_db()
 
 const RemoteServerList_t& PDPServer::servers()
 {
-    return mp_builtin->m_DiscoveryServers;
+    return m_discovery.discovery_config.m_DiscoveryServers;
 }
 
 bool PDPServer::process_to_send_lists()
@@ -1317,7 +1317,7 @@ bool PDPServer::pending_ack()
 std::vector<fastrtps::rtps::GuidPrefix_t> PDPServer::servers_prefixes()
 {
     std::vector<GuidPrefix_t> servers;
-    for (const eprosima::fastdds::rtps::RemoteServerAttributes& it : mp_builtin->m_DiscoveryServers)
+    for (const eprosima::fastdds::rtps::RemoteServerAttributes& it : m_discovery.discovery_config.m_DiscoveryServers)
     {
         servers.push_back(it.guidPrefix);
     }
@@ -1345,7 +1345,7 @@ void PDPServer::ping_remote_servers()
     LocatorList_t locators;
 
     // Iterate over the list of servers
-    for (auto& server : mp_builtin->m_DiscoveryServers)
+    for (auto& server : m_discovery.discovery_config.m_DiscoveryServers)
     {
 
         // If the server is the the ack_pending list, then add its GUID and locator to send the announcement

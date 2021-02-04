@@ -1111,6 +1111,16 @@ bool EDPSimple::areRemoteEndpointsMatched(
     return true;
 }
 
+bool EDPSimple::areRemoteEndpointsMatched(const GuidPrefix_t& guid_prefix)
+{
+    ParticipantProxyData* pdata = mp_PDP->get_participant_proxy_data(guid_prefix);
+    if (nullptr != pdata)
+    {
+        return areRemoteEndpointsMatched(pdata);
+    }
+    return false;
+}
+
 #if HAVE_SECURITY
 bool EDPSimple::pairing_remote_writer_with_local_builtin_reader_after_security(
         const GUID_t& local_reader,

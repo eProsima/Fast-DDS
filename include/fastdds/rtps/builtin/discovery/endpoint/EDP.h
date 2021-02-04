@@ -114,10 +114,18 @@ public:
         (void) pdata;
     }
 
-    //! Verify if the given participant EDP enpoints are matched with us
+    //! Verify whether the given participant EDP endpoints are matched with us
     virtual bool areRemoteEndpointsMatched(
-            const ParticipantProxyData* )
+            const ParticipantProxyData*)
     {
+        return false;
+    }
+
+    //! Verify whether the given participant EDP endpoints are matched with us
+    virtual bool areRemoteEndpointsMatched(
+            const GuidPrefix_t& guid_prefix)
+    {
+        static_cast<void>(guid_prefix);
         return false;
     }
 

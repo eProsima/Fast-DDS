@@ -151,7 +151,7 @@ ParticipantProxyData* PDPClient::createParticipantProxyData(
 
     // Verify if this participant is a server
     bool is_server = false;
-    for (auto& svr : mp_builtin->m_DiscoveryServers)
+    for (auto& svr : m_discovery.discovery_config.m_DiscoveryServers)
     {
         if (svr.guidPrefix == participant_data.m_guid.guidPrefix)
         {
@@ -192,8 +192,8 @@ bool PDPClient::createPDPEndpoints()
     ReaderAttributes ratt;
     ratt.expectsInlineQos = false;
     ratt.endpoint.endpointKind = READER;
-    ratt.endpoint.multicastLocatorList = mp_builtin->m_metatrafficMulticastLocatorList;
-    ratt.endpoint.unicastLocatorList = mp_builtin->m_metatrafficUnicastLocatorList;
+    ratt.endpoint.multicastLocatorList = mp_builtin->m_att.metatrafficMulticastLocatorList;
+    ratt.endpoint.unicastLocatorList = mp_builtin->m_att.metatrafficUnicastLocatorList;
     ratt.endpoint.topicKind = WITH_KEY;
     ratt.endpoint.durabilityKind = TRANSIENT_LOCAL;
     ratt.endpoint.reliabilityKind = RELIABLE;
@@ -208,7 +208,7 @@ bool PDPClient::createPDPEndpoints()
         //        mp_RTPSParticipant->set_endpoint_rtps_protection_supports(rout, false);
         //#endif
         // Initial peer list doesn't make sense in server scenario. Client should match its server list
-        for (const eprosima::fastdds::rtps::RemoteServerAttributes& it : mp_builtin->m_DiscoveryServers)
+        for (const eprosima::fastdds::rtps::RemoteServerAttributes& it : m_discovery.discovery_config.m_DiscoveryServers)
         {
             std::lock_guard<std::mutex> data_guard(temp_data_lock_);
             temp_writer_data_.clear();
@@ -242,8 +242,8 @@ bool PDPClient::createPDPEndpoints()
     watt.endpoint.durabilityKind = TRANSIENT_LOCAL;
     watt.endpoint.reliabilityKind = RELIABLE;
     watt.endpoint.topicKind = WITH_KEY;
-    watt.endpoint.multicastLocatorList = mp_builtin->m_metatrafficMulticastLocatorList;
-    watt.endpoint.unicastLocatorList = mp_builtin->m_metatrafficUnicastLocatorList;
+    watt.endpoint.multicastLocatorList = mp_builtin->m_att.metatrafficMulticastLocatorList;
+    watt.endpoint.unicastLocatorList = mp_builtin->m_att.metatrafficUnicastLocatorList;
     watt.times.heartbeatPeriod = pdp_heartbeat_period;
     watt.times.nackResponseDelay = pdp_nack_response_delay;
     watt.times.nackSupressionDuration = pdp_nack_supression_duration;
@@ -260,7 +260,7 @@ bool PDPClient::createPDPEndpoints()
         //#if HAVE_SECURITY
         //        mp_RTPSParticipant->set_endpoint_rtps_protection_supports(wout, false);
         //#endif
-        for (const eprosima::fastdds::rtps::RemoteServerAttributes& it : mp_builtin->m_DiscoveryServers)
+        for (const eprosima::fastdds::rtps::RemoteServerAttributes& it : m_discovery.discovery_config.m_DiscoveryServers)
         {
             std::lock_guard<std::mutex> data_guard(temp_data_lock_);
             temp_reader_data_.clear();
@@ -293,7 +293,7 @@ void PDPClient::assignRemoteEndpoints(
         std::unique_lock<std::recursive_mutex> lock(*getMutex());
 
         // Verify if this participant is a server
-        for (auto& svr : mp_builtin->m_DiscoveryServers)
+        for (auto& svr : m_discovery.discovery_config.m_DiscoveryServers)
         {
             if (svr.guidPrefix == pdata->m_guid.guidPrefix)
             {
@@ -326,7 +326,7 @@ void PDPClient::removeRemoteEndpoints(
         std::unique_lock<std::recursive_mutex> lock(*getMutex());
 
         // Verify if this participant is a server
-        for (auto& svr : mp_builtin->m_DiscoveryServers)
+        for (auto& svr : m_discovery.discovery_config.m_DiscoveryServers)
         {
             if (svr.guidPrefix == pdata->m_guid.guidPrefix)
             {
@@ -479,7 +479,7 @@ void PDPClient::announceParticipantState(
                 // temporary workaround
                 std::lock_guard<std::recursive_mutex> lock(*getMutex());
 
-                for (auto& svr : mp_builtin->m_DiscoveryServers)
+                for (auto& svr : m_discovery.discovery_config.m_DiscoveryServers)
                 {
                     // if we are matched to a server report demise
                     if (svr.proxy != nullptr)
@@ -517,7 +517,7 @@ void PDPClient::announceParticipantState(
                 std::vector<GUID_t> remote_readers;
                 LocatorList_t locators;
 
-                for (auto& svr : mp_builtin->m_DiscoveryServers)
+                for (auto& svr : m_discovery.discovery_config.m_DiscoveryServers)
                 {
                     // non-pinging announcements like lease duration ones must be
                     // broadcast to all servers
@@ -558,7 +558,7 @@ bool PDPClient::match_servers_EDP_endpoints()
     std::lock_guard<std::recursive_mutex> lock(*getMutex());
     bool all = true; // have all servers been discovered?
 
-    for (auto& svr : mp_builtin->m_DiscoveryServers)
+    for (auto& svr : m_discovery.discovery_config.m_DiscoveryServers)
     {
         all &= (svr.proxy != nullptr);
 

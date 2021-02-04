@@ -76,10 +76,6 @@ bool BuiltinProtocols::initBuiltinProtocols(
 {
     mp_participantImpl = p_part;
     m_att = attributes;
-    m_metatrafficUnicastLocatorList = m_att.metatrafficUnicastLocatorList;
-    m_metatrafficMulticastLocatorList = m_att.metatrafficMulticastLocatorList;
-    m_initialPeersList = m_att.initialPeersList;
-    m_DiscoveryServers = m_att.discovery_config.m_DiscoveryServers;
 
     transform_server_remote_locators(p_part->network_factory());
 
@@ -149,14 +145,14 @@ bool BuiltinProtocols::initBuiltinProtocols(
 bool BuiltinProtocols::updateMetatrafficLocators(
         LocatorList_t& loclist)
 {
-    m_metatrafficUnicastLocatorList = loclist;
+    m_att.metatrafficUnicastLocatorList = loclist;
     return true;
 }
 
 void BuiltinProtocols::transform_server_remote_locators(
         NetworkFactory& nf)
 {
-    for (eprosima::fastdds::rtps::RemoteServerAttributes& rs : m_DiscoveryServers)
+    for (eprosima::fastdds::rtps::RemoteServerAttributes& rs : m_att.discovery_config.m_DiscoveryServers)
     {
         for (Locator_t& loc : rs.metatrafficUnicastLocatorList)
         {

@@ -308,7 +308,7 @@ void PDP::initializeParticipantProxyData(
     }
 
     participant_data->metatraffic_locators.unicast.clear();
-    for (const Locator_t& loc : this->mp_builtin->m_metatrafficUnicastLocatorList)
+    for (const Locator_t& loc : this->mp_builtin->m_att.metatrafficUnicastLocatorList)
     {
         participant_data->metatraffic_locators.add_unicast_locator(loc);
     }
@@ -316,7 +316,7 @@ void PDP::initializeParticipantProxyData(
     participant_data->metatraffic_locators.multicast.clear();
     if (!m_discovery.avoid_builtin_multicast || participant_data->metatraffic_locators.unicast.empty())
     {
-        for (const Locator_t& loc: this->mp_builtin->m_metatrafficMulticastLocatorList)
+        for (const Locator_t& loc: this->mp_builtin->m_att.metatrafficMulticastLocatorList)
         {
             participant_data->metatraffic_locators.add_multicast_locator(loc);
         }
@@ -1057,6 +1057,36 @@ CDRMessage_t PDP::get_participant_proxy_data_serialized(
     }
 
     return cdr_msg;
+}
+
+ParticipantProxyData* PDP::get_participant_proxy_data(const GuidPrefix_t& guid_prefix)
+{
+    for (auto pit = ParticipantProxiesBegin(); pit != ParticipantProxiesEnd(); ++pit)
+    {
+        if (guid_prefix == (*pit)->m_guid.guidPrefix)
+        {
+            return *(pit);
+        }
+    }
+    return nullptr;
+}
+
+
+bool PDP::is_known_participant(const GuidPrefix_t& guid_prefix)
+{
+    for (auto pit = ParticipantProxiesBegin(); pit != ParticipantProxiesEnd(); ++pit)
+    {
+        if (guid_prefix == (*pit)->m_guid.guidPrefix)
+        {
+            return true;
+        }
+    }
+    return false;
+}
+
+std::list<eprosima::fastdds::rtps::RemoteServerAttributes>& PDP::remote_server_attributes()
+{
+    return m_discovery.discovery_config.m_DiscoveryServers;
 }
 
 void PDP::check_remote_participant_liveliness(

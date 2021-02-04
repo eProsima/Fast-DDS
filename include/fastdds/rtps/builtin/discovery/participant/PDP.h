@@ -349,6 +349,26 @@ public:
     CDRMessage_t get_participant_proxy_data_serialized(
             Endianness_t endian);
 
+    /**
+     * Retrive the ParticipantProxyData of a participant
+     * @param guid_prefix The GUID prefix of the participant of which the proxy data is retrieved
+     * @return A pointer to the ParticipantProxyData. nullptr if there is no such ParticipantProxyData
+     */
+    ParticipantProxyData* get_participant_proxy_data(const GuidPrefix_t& guid_prefix);
+
+    /**
+     * Check whether a server is known, i.e. whether the client has received the server's DATA(p)
+     * @param guid_prefix The GUID prefix of the server
+     * @return True is server is known, false otherwise
+     */
+    bool is_known_participant(const GuidPrefix_t& guid_prefix);
+
+    /**
+     * Get the list of remote servers to which the client should connect
+     * @return A reference to the list of RemoteServerAttributes
+     */
+    std::list<eprosima::fastdds::rtps::RemoteServerAttributes>& remote_server_attributes();
+
 protected:
 
     //!Pointer to the builtin protocols object.

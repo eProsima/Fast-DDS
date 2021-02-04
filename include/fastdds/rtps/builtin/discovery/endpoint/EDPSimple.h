@@ -112,9 +112,13 @@ public:
     void removeRemoteEndpoints(
             ParticipantProxyData* pdata) override;
 
-    //! Verify if the given participant EDP enpoints are matched with us
+    //! Verify whether the given participant EDP endpoints are matched with us
     bool areRemoteEndpointsMatched(
             const ParticipantProxyData* pdata) override;
+
+    //! Verify whether the given participant EDP endpoints are matched with us
+    bool areRemoteEndpointsMatched(
+            const GuidPrefix_t& guid_prefix) override;
 
     /**
      * This method generates the corresponding change in the subscription writer and send it to all known remote endpoints.

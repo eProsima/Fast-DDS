@@ -30,6 +30,7 @@ namespace rtps {
 using namespace fastrtps::rtps;
 
 class PDPClient;
+class EDPClient;
 
 /**
  * Class DSClientEvent, TimedEvent used to synchronize discover-server clients
@@ -58,6 +59,7 @@ public:
     bool event();
 
     PDPClient* mp_PDP;
+    EDPClient* mp_EDP;
 };
 } /* namespace rtps */
 } /* namespace fastdds */

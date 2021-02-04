@@ -334,9 +334,9 @@ bool TypeLookupManager::create_endpoints()
     hatt.payloadMaxSize = TYPELOOKUP_DATA_MAX_SIZE;
 
     WriterAttributes watt;
-    watt.endpoint.unicastLocatorList = builtin_protocols_->m_metatrafficUnicastLocatorList;
-    watt.endpoint.multicastLocatorList = builtin_protocols_->m_metatrafficMulticastLocatorList;
-    watt.endpoint.remoteLocatorList = builtin_protocols_->m_initialPeersList;
+    watt.endpoint.unicastLocatorList = builtin_protocols_->m_att.metatrafficUnicastLocatorList;
+    watt.endpoint.multicastLocatorList = builtin_protocols_->m_att.metatrafficMulticastLocatorList;
+    watt.endpoint.remoteLocatorList = builtin_protocols_->m_att.initialPeersList;
     watt.matched_readers_allocation = participant_->getRTPSParticipantAttributes().allocation.participants;
     watt.endpoint.topicKind = fastrtps::rtps::NO_KEY;
     watt.endpoint.reliabilityKind = fastrtps::rtps::RELIABLE;
@@ -395,9 +395,9 @@ bool TypeLookupManager::create_endpoints()
     }
 
     ReaderAttributes ratt;
-    ratt.endpoint.unicastLocatorList = builtin_protocols_->m_metatrafficUnicastLocatorList;
-    ratt.endpoint.multicastLocatorList = builtin_protocols_->m_metatrafficMulticastLocatorList;
-    ratt.endpoint.remoteLocatorList = builtin_protocols_->m_initialPeersList;
+    ratt.endpoint.unicastLocatorList = builtin_protocols_->m_att.metatrafficUnicastLocatorList;
+    ratt.endpoint.multicastLocatorList = builtin_protocols_->m_att.metatrafficMulticastLocatorList;
+    ratt.endpoint.remoteLocatorList = builtin_protocols_->m_att.initialPeersList;
     ratt.matched_writers_allocation = participant_->getRTPSParticipantAttributes().allocation.participants;
     ratt.expectsInlineQos = true;
     ratt.endpoint.topicKind = fastrtps::rtps::NO_KEY;
