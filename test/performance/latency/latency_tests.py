@@ -54,6 +54,21 @@ if __name__ == '__main__':
         help='Publisher and subscribers in separate processes. Defaults:False',
         required=False,
     )
+    parser.add_argument(
+        '-d',
+        '--data_sharing',
+        action='store_true',
+        help='Enable data sharing (Defaults: disable)',
+        required=False,
+    )
+    parser.add_argument(
+        '-l',
+        '--data_loans',
+        action='store_true',
+        help='Enable the use of the loan sample API (Defaults: disable)',
+        required=False,
+    )
+
     # Parse arguments
     args = parser.parse_args()
     xml_file = args.xml_file
@@ -100,6 +115,15 @@ if __name__ == '__main__':
             reliability = xml_file.split('/')[-1].split('\\')[-1]
             reliability = reliability.split('.')[-2].split('_')[1:]
             reliability = '_'.join(reliability)
+
+    # Data sharing and loans options
+    data_options = []
+
+    if args.data_sharing:
+        data_options += [ '--data_sharing' ]
+
+    if args.data_loans:
+        data_options += [ '--data_loans' ]
 
     # Environment variables
     executable = os.environ.get('LATENCY_TEST_BIN')
@@ -165,10 +189,12 @@ if __name__ == '__main__':
         pub_command += domain_options
         pub_command += xml_options
         pub_command += demands_options
+        pub_command += data_options
 
         sub_command += domain_options
         sub_command += xml_options
         sub_command += demands_options
+        sub_command += data_options
 
         print('Publisher command: {}'.format(
             ' '.join(element for element in pub_command)),
@@ -218,6 +244,7 @@ if __name__ == '__main__':
         command += domain_options
         command += xml_options
         command += demands_options
+        command += data_options
 
         print('Executable command: {}'.format(
             ' '.join(element for element in command)),
