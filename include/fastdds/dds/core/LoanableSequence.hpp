@@ -163,7 +163,7 @@ public:
             release();
         }
 
-        length(other.length());
+        LoanableCollection::length(other.length());
         const element_type* other_buf = other.buffer();
         for (size_type n = 0; n < length_; ++n)
         {
