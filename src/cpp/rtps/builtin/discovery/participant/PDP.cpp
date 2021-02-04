@@ -1059,7 +1059,8 @@ CDRMessage_t PDP::get_participant_proxy_data_serialized(
     return cdr_msg;
 }
 
-ParticipantProxyData* PDP::get_participant_proxy_data(const GuidPrefix_t& guid_prefix)
+ParticipantProxyData* PDP::get_participant_proxy_data(
+        const GuidPrefix_t& guid_prefix)
 {
     for (auto pit = ParticipantProxiesBegin(); pit != ParticipantProxiesEnd(); ++pit)
     {
@@ -1071,8 +1072,8 @@ ParticipantProxyData* PDP::get_participant_proxy_data(const GuidPrefix_t& guid_p
     return nullptr;
 }
 
-
-bool PDP::is_known_participant(const GuidPrefix_t& guid_prefix)
+bool PDP::is_known_participant(
+        const GuidPrefix_t& guid_prefix)
 {
     for (auto pit = ParticipantProxiesBegin(); pit != ParticipantProxiesEnd(); ++pit)
     {

@@ -208,7 +208,8 @@ bool PDPClient::createPDPEndpoints()
         //        mp_RTPSParticipant->set_endpoint_rtps_protection_supports(rout, false);
         //#endif
         // Initial peer list doesn't make sense in server scenario. Client should match its server list
-        for (const eprosima::fastdds::rtps::RemoteServerAttributes& it : m_discovery.discovery_config.m_DiscoveryServers)
+        for (const eprosima::fastdds::rtps::RemoteServerAttributes& it :
+                m_discovery.discovery_config.m_DiscoveryServers)
         {
             std::lock_guard<std::mutex> data_guard(temp_data_lock_);
             temp_writer_data_.clear();
@@ -260,7 +261,8 @@ bool PDPClient::createPDPEndpoints()
         //#if HAVE_SECURITY
         //        mp_RTPSParticipant->set_endpoint_rtps_protection_supports(wout, false);
         //#endif
-        for (const eprosima::fastdds::rtps::RemoteServerAttributes& it : m_discovery.discovery_config.m_DiscoveryServers)
+        for (const eprosima::fastdds::rtps::RemoteServerAttributes& it :
+                m_discovery.discovery_config.m_DiscoveryServers)
         {
             std::lock_guard<std::mutex> data_guard(temp_data_lock_);
             temp_reader_data_.clear();

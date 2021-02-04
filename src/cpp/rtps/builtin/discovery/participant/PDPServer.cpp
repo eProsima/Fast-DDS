@@ -250,7 +250,8 @@ bool PDPServer::createPDPEndpoints()
         mp_PDPReader->enableMessagesFromUnkownWriters(true);
 
         // Initial peer list doesn't make sense in server scenario. Client should match its server list
-        for (const eprosima::fastdds::rtps::RemoteServerAttributes& it : m_discovery.discovery_config.m_DiscoveryServers)
+        for (const eprosima::fastdds::rtps::RemoteServerAttributes& it :
+                m_discovery.discovery_config.m_DiscoveryServers)
         {
             std::lock_guard<std::mutex> data_guard(temp_data_lock_);
             temp_writer_data_.clear();
@@ -319,7 +320,8 @@ bool PDPServer::createPDPEndpoints()
         // Enable separate sending so the filter can be called for each change and reader proxy
         mp_PDPWriter->set_separate_sending(true);
 
-        for (const eprosima::fastdds::rtps::RemoteServerAttributes& it : m_discovery.discovery_config.m_DiscoveryServers)
+        for (const eprosima::fastdds::rtps::RemoteServerAttributes& it :
+                m_discovery.discovery_config.m_DiscoveryServers)
         {
             std::lock_guard<std::mutex> data_guard(temp_data_lock_);
             temp_reader_data_.clear();

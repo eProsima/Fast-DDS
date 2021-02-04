@@ -62,7 +62,7 @@ bool DSClientEvent::event()
         // If the server is known, it means that this client has received the server's DATA(p),
         // which in turn means that the server has received the client's DATA(p)
         if (mp_PDP->is_known_participant(server.guidPrefix) &&
-            !mp_EDP->areRemoteEndpointsMatched(server.guidPrefix))
+                !mp_EDP->areRemoteEndpointsMatched(server.guidPrefix))
         {
             // Match EDP endpoints with this server
             mp_EDP->assignRemoteEndpoints(*(mp_PDP->get_participant_proxy_data(server.guidPrefix)));

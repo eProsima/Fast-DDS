@@ -1111,7 +1111,8 @@ bool EDPSimple::areRemoteEndpointsMatched(
     return true;
 }
 
-bool EDPSimple::areRemoteEndpointsMatched(const GuidPrefix_t& guid_prefix)
+bool EDPSimple::areRemoteEndpointsMatched(
+        const GuidPrefix_t& guid_prefix)
 {
     ParticipantProxyData* pdata = mp_PDP->get_participant_proxy_data(guid_prefix);
     if (nullptr != pdata)
