@@ -56,25 +56,31 @@ bool DSClientEvent::event()
     // logInfo(CLIENT_PDP_THREAD, "Client " << mp_PDP->getRTPSParticipant()->getGuid() << " DSClientEvent Period");
     bool restart = false;
 
-    // Iterate over remote servers
+    // Iterate over remote servers to check for new unmatched servers
     for (auto server: mp_PDP->remote_server_attributes())
     {
         // If the server is known, it means that this client has received the server's DATA(p),
         // which in turn means that the server has received the client's DATA(p)
-        if (mp_PDP->is_known_participant(server.guidPrefix) &&
-                !mp_EDP->areRemoteEndpointsMatched(server.guidPrefix))
+        if (mp_PDP->is_known_participant(server.guidPrefix))
         {
-            // Match EDP endpoints with this server
-            mp_EDP->assignRemoteEndpoints(*(mp_PDP->get_participant_proxy_data(server.guidPrefix)));
+            // Match EDP endpoints with this server if necessary
+            if (!mp_EDP->areRemoteEndpointsMatched(server.guidPrefix))
+            {
+                mp_EDP->assignRemoteEndpoints(*(mp_PDP->get_participant_proxy_data(server.guidPrefix)));
+            }
         }
+        // If the server is not known, we need to run the event again
         else
         {
             restart = true;
         }
     }
 
+    // If we are still not connected to all servers, we need to keep pinging the unmatched ones
     if (restart)
     {
+        // This marks to announceParticipantState that the announcement is only meant for missing servers,
+        // so it is not a periodic announcement
         mp_PDP->_serverPing = true;
         mp_PDP->announceParticipantState(false);
         logInfo(CLIENT_PDP_THREAD, "Client " << mp_PDP->getRTPSParticipant()->getGuid() << " PDP announcement");
