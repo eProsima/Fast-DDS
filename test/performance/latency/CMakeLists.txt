@@ -53,6 +53,37 @@ set(
 )
 
 ###########################################################################
+# List of tests supporting specific features                              #
+# Each entry in this list means a specific test case added                #
+###########################################################################
+
+set(
+    DATA_SHARING_LIST
+    intraprocess_best_effort
+    intraprocess_reliable
+    interprocess_best_effort_shm
+    interprocess_reliable_shm
+)
+
+set(
+    ZERO_COPY_LIST
+    intraprocess_best_effort
+    intraprocess_reliable
+    interprocess_best_effort_shm
+    interprocess_reliable_shm
+    interprocess_best_effort_udp
+    interprocess_reliable_udp
+    interprocess_best_effort_tcp
+    interprocess_reliable_tcp
+)
+
+set(
+    DATA_SHARING_AND_ZERO_COPY_LIST
+    interprocess_best_effort_shm
+    interprocess_reliable_shm
+)
+
+###########################################################################
 # Configure XML files                                                     #
 ###########################################################################
 foreach(latency_test_name ${LATENCY_TEST_LIST})
@@ -70,6 +101,10 @@ find_package(PythonInterp 3 REQUIRED)
 if(PYTHONINTERP_FOUND)
     # Loop over the test names
     foreach(latency_test_name ${LATENCY_TEST_LIST})
+
+        # list of all the test cases generated in this iteration
+        set(test_cases_setup performance.latency.${latency_test_name})
+
         # Set the interprocess flag
         if(${latency_test_name} MATCHES "^interprocess")
             set(interproces_flag "--interprocess")
@@ -86,16 +121,6 @@ if(PYTHONINTERP_FOUND)
             --xml_file ${CMAKE_CURRENT_SOURCE_DIR}/xml/${latency_test_name}.xml
             --demands_file ${CMAKE_CURRENT_SOURCE_DIR}/payloads_demands.csv
             ${interproces_flag}
-        )
-
-        # Set test properties
-        set_property(
-            TEST performance.latency.${latency_test_name}
-            PROPERTY LABELS "NoMemoryCheck"
-        )
-        set_property(
-            TEST performance.latency.${latency_test_name}
-            APPEND PROPERTY ENVIRONMENT "LATENCY_TEST_BIN=$<TARGET_FILE:LatencyTest>"
         )
 
         # Add environment
@@ -116,14 +141,74 @@ if(PYTHONINTERP_FOUND)
                 endforeach()
             endif()
             string(REPLACE ";" "\\;" WIN_PATH "${WIN_PATH}")
-            set_property(TEST performance.latency.${latency_test_name}  APPEND PROPERTY ENVIRONMENT "PATH=${WIN_PATH}")
+        endif()
+
+        # Check if a data sharing test is required
+        if(latency_test_name IN_LIST DATA_SHARING_LIST)
+
+            # append to the list of cases
+            list(APPEND test_cases_setup performance.latency.${latency_test_name}.data_sharing)
+
+            add_test(
+                NAME performance.latency.${latency_test_name}.data_sharing
+                COMMAND ${PYTHON_EXECUTABLE}
+                ${CMAKE_CURRENT_SOURCE_DIR}/latency_tests.py
+                ${LATENCY_TEST_BIN}
+                --xml_file ${CMAKE_CURRENT_SOURCE_DIR}/xml/${latency_test_name}.xml
+                --demands_file ${CMAKE_CURRENT_SOURCE_DIR}/payloads_demands.csv
+                ${interproces_flag}
+                --data_sharing
+            )
+
+        endif()
+
+        # Check if a zero copy test is required
+        if(latency_test_name IN_LIST ZERO_COPY_LIST)
+
+            # append to the list of cases
+            list(APPEND test_cases_setup performance.latency.${latency_test_name}.data_loans)
+
+            add_test(
+                NAME performance.latency.${latency_test_name}.data_loans
+                COMMAND ${PYTHON_EXECUTABLE}
+                ${CMAKE_CURRENT_SOURCE_DIR}/latency_tests.py
+                ${LATENCY_TEST_BIN}
+                --xml_file ${CMAKE_CURRENT_SOURCE_DIR}/xml/${latency_test_name}.xml
+                --demands_file ${CMAKE_CURRENT_SOURCE_DIR}/payloads_demands.csv
+                ${interproces_flag}
+                --data_loans
+            )
+
+        endif()
+
+        # Check if a test using data sharing and zero copy is required
+        if(latency_test_name IN_LIST DATA_SHARING_AND_ZERO_COPY_LIST)
+
+            # append to the list of cases
+            list(APPEND test_cases_setup performance.latency.${latency_test_name}.data_loans_and_sharing)
+
+            add_test(
+                NAME performance.latency.${latency_test_name}.data_loans_and_sharing
+                COMMAND ${PYTHON_EXECUTABLE}
+                ${CMAKE_CURRENT_SOURCE_DIR}/latency_tests.py
+                ${LATENCY_TEST_BIN}
+                --xml_file ${CMAKE_CURRENT_SOURCE_DIR}/xml/${latency_test_name}.xml
+                --demands_file ${CMAKE_CURRENT_SOURCE_DIR}/payloads_demands.csv
+                ${interproces_flag}
+                --data_loans
+                --data_sharing
+            )
+
         endif()
 
         # If there is security, add a secure test as well
         if(SECURITY AND (${latency_test_name} MATCHES "^interprocess"))
+
             # Add the secure verison
+            list(APPEND test_cases_setup performance.latency.${latency_test_name}.security)
+
             add_test(
-                NAME performance.latency.${latency_test_name}_security
+                NAME performance.latency.${latency_test_name}.security
                 COMMAND ${PYTHON_EXECUTABLE}
                 ${CMAKE_CURRENT_SOURCE_DIR}/latency_tests.py
                 ${LATENCY_TEST_BIN}
@@ -133,22 +218,34 @@ if(PYTHONINTERP_FOUND)
                 ${interproces_flag}
             )
 
+            # Hint certificates location 
+            set_property(
+                TEST performance.latency.${latency_test_name}.security
+                APPEND PROPERTY ENVIRONMENT "CERTS_PATH=${PROJECT_SOURCE_DIR}/test/certs"
+            )
+
+        endif()
+
+        # populate the properties for each test
+        foreach(latency_test_case ${test_cases_setup})
+
             # Set test properties
             set_property(
-                TEST performance.latency.${latency_test_name}_security
+                TEST ${latency_test_case}
                 PROPERTY LABELS "NoMemoryCheck"
             )
             set_property(
-                TEST performance.latency.${latency_test_name}_security
+                TEST ${latency_test_case}
                 APPEND PROPERTY ENVIRONMENT "LATENCY_TEST_BIN=$<TARGET_FILE:LatencyTest>"
             )
-            set_property(
-                TEST performance.latency.${latency_test_name}_security
-                APPEND PROPERTY ENVIRONMENT "CERTS_PATH=${PROJECT_SOURCE_DIR}/test/certs"
-            )
+
             if(WIN32)
-                set_property(TEST performance.latency.${latency_test_name}_security APPEND PROPERTY ENVIRONMENT "PATH=${WIN_PATH}")
+                set_property(
+                    TEST ${latency_test_case}
+                    APPEND PROPERTY ENVIRONMENT "PATH=${WIN_PATH}")
             endif()
-        endif()
+
+        endforeach(latency_test_case)
+
     endforeach(latency_test_name)
 endif()
