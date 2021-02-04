@@ -96,6 +96,8 @@ bool LatencyTestPublisher::init(
         const PropertyPolicy& property_policy,
         const std::string& xml_config_file,
         bool dynamic_data,
+        bool data_sharing,
+        bool data_loans,
         int forced_domain,
         LatencyDataSizes& latency_data_sizes)
 {
@@ -107,6 +109,8 @@ bool LatencyTestPublisher::init(
     export_prefix_ = export_prefix;
     reliable_ = reliable;
     dynamic_types_ = dynamic_data;
+    data_sharing_ = data_sharing;
+    data_loans_ = data_loans;
     forced_domain_ = forced_domain;
     raw_data_file_ = raw_data_file;
     pid_ = pid;

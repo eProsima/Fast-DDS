@@ -85,6 +85,8 @@ bool LatencyTestSubscriber::init(
         const PropertyPolicy& property_policy,
         const std::string& xml_config_file,
         bool dynamic_data,
+        bool data_sharing,
+        bool data_loans,
         int forced_domain,
         LatencyDataSizes& latency_data_sizes)
 {
@@ -93,6 +95,8 @@ bool LatencyTestSubscriber::init(
     echo_ = echo;
     samples_ = samples;
     dynamic_types_ = dynamic_data;
+    data_sharing_ = data_sharing;
+    data_loans_ = data_loans;
     forced_domain_ = forced_domain;
     pid_ = pid;
     hostname_ = hostname;
