@@ -1674,7 +1674,7 @@ void SecurityManager::process_participant_volatile_message_secure(
         }
         else
         {
-            logError(SECURITY, "Received Reader Cryptography message but not found local writer " <<
+            logInfo(SECURITY, "Received Reader Cryptography message but not found local writer " <<
                     message.destination_endpoint_key());
         }
         mutex_.unlock();
@@ -1747,7 +1747,7 @@ void SecurityManager::process_participant_volatile_message_secure(
         }
         else
         {
-            logError(SECURITY, "Received Writer Cryptography message but not found local reader " <<
+            logInfo(SECURITY, "Received Writer Cryptography message but not found local reader " <<
                     message.destination_endpoint_key());
         }
         mutex_.unlock();
