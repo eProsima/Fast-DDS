@@ -378,7 +378,8 @@ public:
             bool write_encapsulation) const;
 
     /**
-     *  Read the information from a CDRMessage_t. The position of the message must be in the beggining on the parameter list.
+     * Read the information from a CDRMessage_t. The position of the message must be in the beginning on the
+     * parameter list.
      * @param msg Pointer to the message.
      * @param network Reference to network factory for locator validation and transformation
      * @param is_shm_transport_available Indicates wether the Reader is reachable by SHM.
