@@ -468,11 +468,8 @@ void LatencyTestSubscriber::LatencyDataReaderListener::on_data_available(
         assert(infos.length() == 1 && data_seq.length() == 1);
         // we have already released the former loan
         assert( latency_subscriber_->latency_data_ == nullptr);
-
-        if ( nullptr == latency_subscriber_->latency_data_ )
-        {
-            latency_subscriber_->latency_data_ = &data_seq[0];
-        }
+        // reference the loan
+        latency_subscriber_->latency_data_ = &data_seq[0];
 
         // echo the sample
         if (latency_subscriber_->echo_)
@@ -490,6 +487,7 @@ void LatencyTestSubscriber::LatencyDataReaderListener::on_data_available(
                 if (!latency_subscriber_->data_writer_->write(echoed_data))
                 {
                     logError(LatencyTest, "Problem echoing Publisher test data with loan");
+                    latency_subscriber_->data_writer_->discard_loan((void*&)echoed_data);
                 }
             }
             else
@@ -499,8 +497,7 @@ void LatencyTestSubscriber::LatencyDataReaderListener::on_data_available(
         }
 
         // release the loan
-        if (latency_subscriber_->data_loans_
-                && ReturnCode_t::RETCODE_OK != reader->return_loan(data_seq, infos))
+        if (ReturnCode_t::RETCODE_OK != reader->return_loan(data_seq, infos))
         {
             logError(LatencyTest, "Problem returning loaned test data");
         }

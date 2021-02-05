@@ -488,33 +488,25 @@ void LatencyTestPublisher::CommandReaderListener::on_data_available(
 void LatencyTestPublisher::LatencyDataReaderListener::on_data_available(
         DataReader* reader)
 {
+    auto pub = latency_publisher_;
+
     SampleInfoSeq infos;
     LoanableSequence<LatencyType> data_seq;
 
-    if (latency_publisher_->data_loans_)
+    if (pub->data_loans_)
     {
         if (ReturnCode_t::RETCODE_OK != reader->take(data_seq, infos, 1))
         {
             logError(LatencyTest, "Problem reading Subscriber echoed loaned test data");
             return;
         }
-
-        // we have requested a single sample
-        assert(infos.length() == 1 && data_seq.length() == 1);
-        // we have already released the former loan
-        assert(latency_publisher_->latency_data_in_ == nullptr);
-
-        if ( nullptr == latency_publisher_->latency_data_in_ )
-        {
-            latency_publisher_->latency_data_in_ = &data_seq[0];
-        }
     }
     else
     {
         SampleInfo info;
-        void* data = latency_publisher_->dynamic_types_ ?
-            (void*)latency_publisher_->dynamic_data_in_:
-            (void*)latency_publisher_->latency_data_in_;
+        void* data = pub->dynamic_types_ ?
+            (void*)pub->dynamic_data_in_:
+            (void*)pub->latency_data_in_;
 
         // Retrieved echoed data
         if (reader->take_next_sample(
@@ -526,46 +518,68 @@ void LatencyTestPublisher::LatencyDataReaderListener::on_data_available(
         }
     }
 
-    std::unique_lock<std::mutex> lock(latency_publisher_->mutex_);
-
-    // Check if is the expected echo message
-    if ((latency_publisher_->dynamic_types_ &&
-            (latency_publisher_->dynamic_data_in_->get_uint32_value(0) !=
-            latency_publisher_->dynamic_data_out_->get_uint32_value(0)))
-            || (!latency_publisher_->dynamic_types_ &&
-            (latency_publisher_->latency_data_in_->seqnum != latency_publisher_->latency_data_out_->seqnum)))
+    // Atomic managemente of the sample
+    bool notify = false;
     {
-        return;
+        std::lock_guard<std::mutex> lock(pub->mutex_);
+
+        if (pub->data_loans_)
+        {
+            // we have requested a single sample
+            assert(infos.length() == 1 && data_seq.length() == 1);
+            // we have already released the former loan
+            assert(pub->latency_data_in_ == nullptr);
+            // reference the loaned data
+            pub->latency_data_in_ = &data_seq[0];
+        }
+
+        // Check if is the expected echo message
+        if ((pub->dynamic_types_
+                && (pub->dynamic_data_in_->get_uint32_value(0)
+                    != pub->dynamic_data_out_->get_uint32_value(0)))
+            || (!pub->dynamic_types_
+                    && (pub->latency_data_in_->seqnum
+                        != pub->latency_data_out_->seqnum)))
+        {
+            logInfo(LatencyTest, "Echo message received is not the expected one");
+        }
+        else
+        {
+            // Factor of 2 below is to calculate the roundtrip divided by two. Note that the overhead does not
+            // need to be halved, as we access the clock twice per round trip
+            pub->end_time_ = std::chrono::steady_clock::now();
+            pub->times_.push_back(std::chrono::duration<double, std::micro>(
+                        pub->end_time_ - pub->start_time_) / 2. -
+                    pub->overhead_time_);
+            ++pub->received_count_;
+
+            // Reset seqnum from out data
+            if (pub->dynamic_types_)
+            {
+                pub->dynamic_data_out_->set_uint32_value(0, 0);
+            }
+            else
+            {
+                pub->latency_data_out_->seqnum = 0;
+            }
+        }
+
+        if (pub->data_loans_)
+        {
+            pub->latency_data_in_ = nullptr;
+        }
+
+        ++pub->data_msg_count_;
+        notify = pub->data_msg_count_ >= pub->subscribers_;
     }
 
-    // Factor of 2 below is to calculate the roundtrip divided by two. Note that the overhead does not
-    // need to be halved, as we access the clock twice per round trip
-    latency_publisher_->end_time_ = std::chrono::steady_clock::now();
-    latency_publisher_->times_.push_back(std::chrono::duration<double, std::micro>(
-                latency_publisher_->end_time_ - latency_publisher_->start_time_) / 2. -
-            latency_publisher_->overhead_time_);
-    ++latency_publisher_->received_count_;
-
-    // Reset seqnum from out data
-    if (latency_publisher_->dynamic_types_)
-    {
-        latency_publisher_->dynamic_data_out_->set_uint32_value(0, 0);
-    }
-    else
-    {
-        latency_publisher_->latency_data_out_->seqnum = 0;
-    }
-
-    ++latency_publisher_->data_msg_count_;
-    bool notify = latency_publisher_->data_msg_count_ >= latency_publisher_->subscribers_;
-    lock.unlock();
     if (notify)
     {
-        latency_publisher_->data_msg_cv_.notify_one();
+        pub->data_msg_cv_.notify_one();
     }
 
     // release the loan if any
-    if (latency_publisher_->data_loans_
+    if (pub->data_loans_
             && ReturnCode_t::RETCODE_OK != reader->return_loan(data_seq, infos))
     {
         logError(LatencyTest, "Problem returning loaned test data");
@@ -674,10 +688,12 @@ bool LatencyTestPublisher::test(
     {
         if (!data_loans_)
         {
-            // Create data sample
+            // Create the reception data sample
             latency_data_in_ = static_cast<LatencyType*>(latency_data_type_->createData());
-            latency_data_out_ = static_cast<LatencyType*>(latency_data_type_->createData());
         }
+        // On loans scenario this object will be kept only to check the echoed sample is correct
+        // On the ordinary case it keeps the object to send
+        latency_data_out_ = static_cast<LatencyType*>(latency_data_type_->createData());
     }
     else
     {
@@ -725,36 +741,72 @@ bool LatencyTestPublisher::test(
         }
         else
         {
+            // Initialize the sample to send
+            latency_data_out_->seqnum = count;
+
             // loan each sample
             if (data_loans_)
             {
                 latency_data_in_ = nullptr;
                 if( ReturnCode_t::RETCODE_OK
                         != data_writer_->loan_sample(
-                            (void*&)latency_data_out_,
+                            data,
                             DataWriter::LoanInitializationKind::NO_LOAN_INITIALIZATION))
                 {
                     logError(LatencyTest, "Error in publisher trying to loan a sample");
                     return false;
                 }
+
+                // copy the data to the loan
+                auto data_type = std::static_pointer_cast<LatencyDataType>(latency_data_type_);
+                data_type->copy_data(*latency_data_out_, *(LatencyType*)data);
+            }
+            else
+            {
+                data = latency_data_out_;
             }
 
-            // fill in the data
+            // reset the reception sample data
             if (latency_data_in_)
             {
                 latency_data_in_->seqnum = 0;
             }
-            latency_data_out_->seqnum = count;
-            data = latency_data_out_;
         }
 
         start_time_ = std::chrono::steady_clock::now();
-        data_writer_->write(data);
+
+        // Data publishing
+        if (!data_writer_->write(data))
+        {
+            // return the loan
+            if (data_loans_)
+            {
+                data_writer_->discard_loan(data);
+            }
+
+            logError(LatencyTest, "Publisher write operation failed");
+            return false;
+        }
+
+        // if we are loaning make sure the next iteration has an available payload
+        if (data_loans_)
+        {
+            void * test_data = nullptr;
+            while ( ReturnCode_t::RETCODE_OK
+                    != data_writer_->loan_sample(
+                        test_data,
+                        DataWriter::LoanInitializationKind::NO_LOAN_INITIALIZATION))
+            {
+                std::this_thread::sleep_for(std::chrono::milliseconds(10));
+            }
+
+            data_writer_->discard_loan(test_data);
+        }
 
         std::unique_lock<std::mutex> lock(mutex_);
         // the wait timeouts due possible message leaks
         data_msg_cv_.wait_for(lock,
-                std::chrono::milliseconds(4),
+                std::chrono::milliseconds(10),
                 [&]()
                 {
                     return data_msg_count_ >= subscribers_;
@@ -788,9 +840,12 @@ bool LatencyTestPublisher::test(
         DynamicDataFactory::get_instance()->delete_data(dynamic_data_in_);
         DynamicDataFactory::get_instance()->delete_data(dynamic_data_out_);
     }
-    else if (!data_loans_)
+    else
     {
-        latency_data_type_.delete_data(latency_data_in_);
+        if (!data_loans_)
+        {
+            latency_data_type_.delete_data(latency_data_in_);
+        }
         latency_data_type_.delete_data(latency_data_out_);
     }
 
