@@ -36,9 +36,7 @@ public:
             "seq_num INTEGER CHECK(seq_num > 0),"
             "instance BLOB CHECK(length(instance)=16),"
             "payload BLOB,"
-            "PRIMARY KEY(guid, seq_num DESC),"
-            "FOREIGN KEY (guid)"
-            "    REFERENCES writers_states(guid)";
+            "PRIMARY KEY(guid, seq_num DESC)";
 
     static constexpr const char* const readers_table =
             "guid text,"
