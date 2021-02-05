@@ -505,8 +505,8 @@ void LatencyTestPublisher::LatencyDataReaderListener::on_data_available(
     {
         SampleInfo info;
         void* data = pub->dynamic_types_ ?
-            (void*)pub->dynamic_data_in_:
-            (void*)pub->latency_data_in_;
+                (void*)pub->dynamic_data_in_:
+                (void*)pub->latency_data_in_;
 
         // Retrieved echoed data
         if (reader->take_next_sample(
@@ -536,10 +536,10 @@ void LatencyTestPublisher::LatencyDataReaderListener::on_data_available(
         // Check if is the expected echo message
         if ((pub->dynamic_types_
                 && (pub->dynamic_data_in_->get_uint32_value(0)
-                    != pub->dynamic_data_out_->get_uint32_value(0)))
-            || (!pub->dynamic_types_
-                    && (pub->latency_data_in_->seqnum
-                        != pub->latency_data_out_->seqnum)))
+                != pub->dynamic_data_out_->get_uint32_value(0)))
+                || (!pub->dynamic_types_
+                && (pub->latency_data_in_->seqnum
+                != pub->latency_data_out_->seqnum)))
         {
             logInfo(LatencyTest, "Echo message received is not the expected one");
         }
@@ -748,7 +748,7 @@ bool LatencyTestPublisher::test(
             if (data_loans_)
             {
                 latency_data_in_ = nullptr;
-                if( ReturnCode_t::RETCODE_OK
+                if ( ReturnCode_t::RETCODE_OK
                         != data_writer_->loan_sample(
                             data,
                             DataWriter::LoanInitializationKind::NO_LOAN_INITIALIZATION))
@@ -791,7 +791,7 @@ bool LatencyTestPublisher::test(
         // if we are loaning make sure the next iteration has an available payload
         if (data_loans_)
         {
-            void * test_data = nullptr;
+            void* test_data = nullptr;
             while ( ReturnCode_t::RETCODE_OK
                     != data_writer_->loan_sample(
                         test_data,

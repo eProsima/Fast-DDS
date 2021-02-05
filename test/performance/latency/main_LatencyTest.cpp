@@ -590,7 +590,8 @@ int main(
             latency_subscribers.push_back(std::make_shared<LatencyTestSubscriber>());
             sub_init &= latency_subscribers.back()->init(echo, samples, reliable, seed, hostname,
                             sub_part_property_policy,
-                            sub_property_policy, xml_config_file, dynamic_types, data_sharing, data_loans, forced_domain, data_sizes);
+                            sub_property_policy, xml_config_file, dynamic_types, data_sharing, data_loans,
+                            forced_domain, data_sizes);
         }
 
         // Spawn run threads

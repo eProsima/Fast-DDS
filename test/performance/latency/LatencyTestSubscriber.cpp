@@ -475,7 +475,7 @@ void LatencyTestSubscriber::LatencyDataReaderListener::on_data_available(
         if (latency_subscriber_->echo_)
         {
             LatencyType* echoed_data = nullptr;
-            if( ReturnCode_t::RETCODE_OK
+            if ( ReturnCode_t::RETCODE_OK
                     == latency_subscriber_->data_writer_->loan_sample(
                         (void*&)echoed_data,
                         DataWriter::LoanInitializationKind::NO_LOAN_INITIALIZATION))
@@ -508,8 +508,8 @@ void LatencyTestSubscriber::LatencyDataReaderListener::on_data_available(
     {
         SampleInfo info;
         void* data = latency_subscriber_->dynamic_types_ ?
-            (void*)latency_subscriber_->dynamic_data_ :
-            (void*)latency_subscriber_->latency_data_;
+                (void*)latency_subscriber_->dynamic_data_ :
+                (void*)latency_subscriber_->latency_data_;
 
         if (reader->take_next_sample(
                     data, &info) == ReturnCode_t::RETCODE_OK
