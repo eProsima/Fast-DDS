@@ -748,12 +748,21 @@ bool LatencyTestPublisher::test(
             if (data_loans_)
             {
                 latency_data_in_ = nullptr;
-                if ( ReturnCode_t::RETCODE_OK
-                        != data_writer_->loan_sample(
-                            data,
-                            DataWriter::LoanInitializationKind::NO_LOAN_INITIALIZATION))
+                int trials = 3;
+                bool loaned = false;
+
+                while (trials-- != 0 && !loaned)
                 {
-                    logError(LatencyTest, "Error in publisher trying to loan a sample");
+                    loaned = (ReturnCode_t::RETCODE_OK
+                            ==  data_writer_->loan_sample(
+                                data,
+                                DataWriter::LoanInitializationKind::NO_LOAN_INITIALIZATION));
+                    std::this_thread::sleep_for(std::chrono::milliseconds(2));
+                }
+
+                if (!loaned)
+                {
+                    logError(LatencyTest, "Problem on Publisher test data with loan");
                     return false;
                 }
 
@@ -788,30 +797,18 @@ bool LatencyTestPublisher::test(
             return false;
         }
 
-        // if we are loaning make sure the next iteration has an available payload
-        if (data_loans_)
-        {
-            void* test_data = nullptr;
-            while ( ReturnCode_t::RETCODE_OK
-                    != data_writer_->loan_sample(
-                        test_data,
-                        DataWriter::LoanInitializationKind::NO_LOAN_INITIALIZATION))
-            {
-                std::this_thread::sleep_for(std::chrono::milliseconds(10));
-            }
-
-            data_writer_->discard_loan(test_data);
-        }
-
         std::unique_lock<std::mutex> lock(mutex_);
         // the wait timeouts due possible message leaks
         data_msg_cv_.wait_for(lock,
-                std::chrono::milliseconds(10),
+                std::chrono::milliseconds(1),
                 [&]()
                 {
                     return data_msg_count_ >= subscribers_;
                 });
         data_msg_count_ = 0;
+
+        if (count % 100 == 0)
+            std::cout << "iteration " << count << std::endl;
     }
 
     command.m_command = STOP;

@@ -450,13 +450,19 @@ void LatencyTestSubscriber::CommandReaderListener::on_data_available(
 void LatencyTestSubscriber::LatencyDataReaderListener::on_data_available(
         DataReader* reader)
 {
+    auto sub = latency_subscriber_;
+
     // Bounce back the message from the Publisher as fast as possible
     // dynamic_data_ and latency_data_type do not require locks
     // because the command message exchange assures this calls atomicity
-    if (latency_subscriber_->data_loans_)
+    if (sub->data_loans_)
     {
         SampleInfoSeq infos;
         LoanableSequence<LatencyType> data_seq;
+        // reader loan buffer
+        LatencyType* echoed_data = nullptr;
+        // writer loan buffer
+        void* echoed_loan = nullptr;
 
         if (ReturnCode_t::RETCODE_OK != reader->take(data_seq, infos, 1))
         {
@@ -466,58 +472,77 @@ void LatencyTestSubscriber::LatencyDataReaderListener::on_data_available(
 
         // we have requested a single sample
         assert(infos.length() == 1 && data_seq.length() == 1);
-        // we have already released the former loan
-        assert( latency_subscriber_->latency_data_ == nullptr);
+        // the buffer must be there
+        assert(sub->latency_data_ != nullptr);
         // reference the loan
-        latency_subscriber_->latency_data_ = &data_seq[0];
+        echoed_data = &data_seq[0];
 
         // echo the sample
-        if (latency_subscriber_->echo_)
+        if (sub->echo_)
         {
-            LatencyType* echoed_data = nullptr;
-            if ( ReturnCode_t::RETCODE_OK
-                    == latency_subscriber_->data_writer_->loan_sample(
-                        (void*&)echoed_data,
-                        DataWriter::LoanInitializationKind::NO_LOAN_INITIALIZATION))
-            {
-                // Copy the data received into the loaned sample
-                auto data_type = std::static_pointer_cast<LatencyDataType>(latency_subscriber_->latency_data_type_);
-                data_type->copy_data(*latency_subscriber_->latency_data_, *echoed_data);
+            // Copy the data from reader loan to aux buffer
+            auto data_type = std::static_pointer_cast<LatencyDataType>(sub->latency_data_type_);
+            data_type->copy_data(*echoed_data, *sub->latency_data_);
 
-                if (!latency_subscriber_->data_writer_->write(echoed_data))
-                {
-                    logError(LatencyTest, "Problem echoing Publisher test data with loan");
-                    latency_subscriber_->data_writer_->discard_loan((void*&)echoed_data);
-                }
-            }
-            else
+            // release the reader loan
+            if (ReturnCode_t::RETCODE_OK != reader->return_loan(data_seq, infos))
             {
-                logError(LatencyTest, "Problem loaning the echoing data");
+                logError(LatencyTest, "Problem returning loaned test data");
+                return;
+            }
+
+            // writer loan
+            int trials = 2;
+            bool loaned = false;
+            while (trials-- != 0 && !loaned)
+            {
+                loaned = (ReturnCode_t::RETCODE_OK
+                        == sub->data_writer_->loan_sample(
+                            echoed_loan,
+                            DataWriter::LoanInitializationKind::NO_LOAN_INITIALIZATION));
+                std::this_thread::sleep_for(std::chrono::milliseconds(1));
+            }
+
+            if (!loaned)
+            {
+                 logError(LatencyTest, "Problem echoing Publisher test data with loan");
+                 // release the reader loan
+                 reader->return_loan(data_seq, infos);
+                 return;
+            }
+
+            // copy the data from aux buffer to writer loan
+            data_type->copy_data(*sub->latency_data_, *(LatencyType*)echoed_loan);
+
+            if (!sub->data_writer_->write(echoed_loan))
+            {
+                logError(LatencyTest, "Problem echoing Publisher test data with loan");
+                sub->data_writer_->discard_loan(echoed_loan);
             }
         }
-
-        // release the loan
-        if (ReturnCode_t::RETCODE_OK != reader->return_loan(data_seq, infos))
+        else
         {
-            logError(LatencyTest, "Problem returning loaned test data");
-        }
-
-        latency_subscriber_->latency_data_ = nullptr;
+            // release the loan
+            if (ReturnCode_t::RETCODE_OK != reader->return_loan(data_seq, infos))
+            {
+                logError(LatencyTest, "Problem returning loaned test data");
+            }
+       }
     }
     else
     {
         SampleInfo info;
-        void* data = latency_subscriber_->dynamic_types_ ?
-                (void*)latency_subscriber_->dynamic_data_ :
-                (void*)latency_subscriber_->latency_data_;
+        void* data = sub->dynamic_types_ ?
+                (void*)sub->dynamic_data_ :
+                (void*)sub->latency_data_;
 
         if (reader->take_next_sample(
                     data, &info) == ReturnCode_t::RETCODE_OK
                 && info.valid_data)
         {
-            if (latency_subscriber_->echo_)
+            if (sub->echo_)
             {
-                if (!latency_subscriber_->data_writer_->write(data))
+                if (!sub->data_writer_->write(data))
                 {
                     logInfo(LatencyTest, "Problem echoing Publisher test data");
                 }
@@ -593,15 +618,8 @@ bool LatencyTestSubscriber::test(
     // Create the static type for the given buffer size and the endpoints
     else if (init_static_types(datasize) && create_data_endpoints())
     {
-        // Create the data sample
-        if (data_loans_)
-        {
-            latency_data_ = nullptr;
-        }
-        else
-        {
-            latency_data_ = static_cast<LatencyType*>(latency_data_type_.create_data());
-        }
+        // Create the data sample as buffer
+        latency_data_ = static_cast<LatencyType*>(latency_data_type_.create_data());
 
         // Wait for new endponts discovery from the LatencyTestPublisher
         wait_for_discovery(
@@ -650,10 +668,8 @@ bool LatencyTestSubscriber::test(
     }
     else
     {
-        if (!data_loans_)
-        {
-            latency_data_type_->deleteData(latency_data_);
-        }
+        // release the buffer next iteration will require different size
+        latency_data_type_->deleteData(latency_data_);
 
         // Remove endpoints associated to the given payload size
         if (!destroy_data_endpoints())
