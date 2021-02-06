@@ -59,7 +59,11 @@ private:
  * */
 struct alignas (4) LatencyType
 {
+    // identifies the sample sent
     uint32_t seqnum = 0;
+    // extra time devoted on bouncing in nanoseconds
+    uint32_t bounce = 0;
+    // actual payload
     uint8_t data[1];
 };
 
@@ -71,7 +75,7 @@ class LatencyDataType : public eprosima::fastdds::dds::TopicDataType
 public:
 
     LatencyDataType()
-        : buffer_size_(MAX_TYPE_SIZE - 4)
+        : buffer_size_(MAX_TYPE_SIZE - 8)
     {
         setName("LatencyType");
         m_typeSize = MAX_TYPE_SIZE;
@@ -83,7 +87,7 @@ public:
         : buffer_size_(size)
     {
         setName("LatencyType");
-        m_typeSize = 4 + ((size + 3) & ~3);
+        m_typeSize = 8 + ((size + 3) & ~3);
         m_isGetKeyDefined = false;
     }
 

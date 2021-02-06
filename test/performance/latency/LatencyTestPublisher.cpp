@@ -492,6 +492,7 @@ void LatencyTestPublisher::LatencyDataReaderListener::on_data_available(
 
     SampleInfoSeq infos;
     LoanableSequence<LatencyType> data_seq;
+    std::chrono::duration<uint32_t, std::nano> bounce_time(0);
 
     if (pub->data_loans_)
     {
@@ -531,6 +532,8 @@ void LatencyTestPublisher::LatencyDataReaderListener::on_data_available(
             assert(pub->latency_data_in_ == nullptr);
             // reference the loaned data
             pub->latency_data_in_ = &data_seq[0];
+            // retrieve the bounce time
+            bounce_time = std::chrono::duration<uint32_t, std::nano>(pub->latency_data_in_->bounce);
         }
 
         // Check if is the expected echo message
@@ -545,13 +548,23 @@ void LatencyTestPublisher::LatencyDataReaderListener::on_data_available(
         }
         else
         {
-            // Factor of 2 below is to calculate the roundtrip divided by two. Note that the overhead does not
-            // need to be halved, as we access the clock twice per round trip
+            // Factor of 2 below is to calculate the roundtrip divided by two. Note that nor the overhead does not
+            // neither the echo bounce time need to be halved, as we access the clock twice per round trip
             pub->end_time_ = std::chrono::steady_clock::now();
-            pub->times_.push_back(std::chrono::duration<double, std::micro>(
-                        pub->end_time_ - pub->start_time_) / 2. -
-                    pub->overhead_time_);
-            ++pub->received_count_;
+            auto roundtrip = std::chrono::duration<double, std::micro>(pub->end_time_ - pub->start_time_) / 2.0;
+            roundtrip -= bounce_time;
+            roundtrip -= pub->overhead_time_;
+
+            if (roundtrip.count() > 0)
+            {
+                pub->times_.push_back(roundtrip);
+                ++pub->received_count_;
+            }
+            else
+            {
+                logInfo(LatencyTest, "Bad roundtrip measurement " << roundtrip.count() << " us"
+                        << " given bounce time " << (bounce_time.count()/1000) << " us");
+            }
 
             // Reset seqnum from out data
             if (pub->dynamic_types_)
@@ -757,7 +770,8 @@ bool LatencyTestPublisher::test(
                             ==  data_writer_->loan_sample(
                                 data,
                                 DataWriter::LoanInitializationKind::NO_LOAN_INITIALIZATION));
-                    std::this_thread::sleep_for(std::chrono::microseconds(500));
+
+                    std::this_thread::yield();
 
                     if (!loaned)
                     {
@@ -805,7 +819,7 @@ bool LatencyTestPublisher::test(
         std::unique_lock<std::mutex> lock(mutex_);
         // the wait timeouts due possible message leaks
         data_msg_cv_.wait_for(lock,
-                std::chrono::milliseconds(1),
+                std::chrono::milliseconds(100),
                 [&]()
                 {
                     return data_msg_count_ >= subscribers_;

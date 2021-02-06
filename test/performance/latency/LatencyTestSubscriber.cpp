@@ -480,6 +480,9 @@ void LatencyTestSubscriber::LatencyDataReaderListener::on_data_available(
         // echo the sample
         if (sub->echo_)
         {
+            // begin measuring overhead = loan->buffer copy + write loan + buffer->loan copy
+            auto start_time = std::chrono::steady_clock::now();
+
             // Copy the data from reader loan to aux buffer
             auto data_type = std::static_pointer_cast<LatencyDataType>(sub->latency_data_type_);
             data_type->copy_data(*echoed_data, *sub->latency_data_);
@@ -501,7 +504,7 @@ void LatencyTestSubscriber::LatencyDataReaderListener::on_data_available(
                             echoed_loan,
                             DataWriter::LoanInitializationKind::NO_LOAN_INITIALIZATION));
 
-                std::this_thread::sleep_for(std::chrono::microseconds(1500));
+                std::this_thread::yield();
 
                 if (!loaned)
                 {
@@ -519,6 +522,11 @@ void LatencyTestSubscriber::LatencyDataReaderListener::on_data_available(
 
             // copy the data from aux buffer to writer loan
             data_type->copy_data(*sub->latency_data_, *(LatencyType*)echoed_loan);
+
+            //end measuring overhead
+            auto end_time = std::chrono::steady_clock::now();
+            std::chrono::duration<uint32_t, std::nano> bounce_time(end_time-start_time);
+            reinterpret_cast<LatencyType*>(echoed_loan)->bounce = bounce_time.count();
 
             if (!sub->data_writer_->write(echoed_loan))
             {
@@ -548,6 +556,9 @@ void LatencyTestSubscriber::LatencyDataReaderListener::on_data_available(
         {
             if (sub->echo_)
             {
+                // no bounce overload recorded
+                reinterpret_cast<LatencyType*>(data)->bounce = 0;
+
                 if (!sub->data_writer_->write(data))
                 {
                     logInfo(LatencyTest, "Problem echoing Publisher test data");
