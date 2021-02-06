@@ -748,7 +748,7 @@ bool LatencyTestPublisher::test(
             if (data_loans_)
             {
                 latency_data_in_ = nullptr;
-                int trials = 3;
+                int trials = 6;
                 bool loaned = false;
 
                 while (trials-- != 0 && !loaned)
@@ -757,7 +757,12 @@ bool LatencyTestPublisher::test(
                             ==  data_writer_->loan_sample(
                                 data,
                                 DataWriter::LoanInitializationKind::NO_LOAN_INITIALIZATION));
-                    std::this_thread::sleep_for(std::chrono::milliseconds(2));
+                    std::this_thread::sleep_for(std::chrono::microseconds(500));
+
+                    if (!loaned)
+                    {
+                        logInfo(LatencyTest, "Publisher trying to loan: " << trials);
+                    }
                 }
 
                 if (!loaned)
@@ -806,9 +811,6 @@ bool LatencyTestPublisher::test(
                     return data_msg_count_ >= subscribers_;
                 });
         data_msg_count_ = 0;
-
-        if (count % 100 == 0)
-            std::cout << "iteration " << count << std::endl;
     }
 
     command.m_command = STOP;

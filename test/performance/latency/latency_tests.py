@@ -103,7 +103,7 @@ if __name__ == '__main__':
             ]
 
     # XML options
-    reliability = 'default'
+    filename_options = 'default'
     xml_options = []
     if xml_file:
         if not os.path.isfile(xml_file):
@@ -111,12 +111,21 @@ if __name__ == '__main__':
             exit(1)  # Exit with error
         else:
             xml_options = ['--xml', xml_file]
-            # Get reliability from XML
-            reliability = xml_file.split('/')[-1].split('\\')[-1]
-            reliability = reliability.split('.')[-2].split('_')[1:]
-            reliability = '_'.join(reliability)
+            # Get QoS from XML
+            filename_options = xml_file.split('/')[-1].split('\\')[-1]
+            filename_options = filename_options.split('.')[-2].split('_')[1:]
+            filename_options = '_'.join(filename_options)
 
     # Data sharing and loans options
+    # modify output file names
+    if args.data_sharing and args.data_loans:
+            filename_options += '_data_loans_and_sharing'
+    elif args.data_sharing:
+            filename_options += '_data_sharing'
+    elif args.data_loans:
+            filename_options += '_data_loans'
+
+    # add flags to the command line
     data_options = []
 
     if args.data_sharing:
@@ -174,7 +183,7 @@ if __name__ == '__main__':
         if security is True:
             pub_command.append(
                 './measurements_interprocess_{}_security.csv'.format(
-                    reliability
+                    filename_options
                 )
             )
             pub_command += security_options
@@ -182,7 +191,7 @@ if __name__ == '__main__':
         else:
             pub_command.append(
                 './measurements_interprocess_{}.csv'.format(
-                    reliability
+                    filename_options
                 )
             )
 
@@ -230,14 +239,14 @@ if __name__ == '__main__':
         if security is True:
             command.append(
                 './measurements_intraprocess_{}_security.csv'.format(
-                    reliability
+                    filename_options
                 )
             )
             command += security_options
         else:
             command.append(
                 './measurements_intraprocess_{}.csv'.format(
-                    reliability
+                    filename_options
                 )
             )
 

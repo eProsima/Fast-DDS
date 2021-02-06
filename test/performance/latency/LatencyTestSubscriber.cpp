@@ -492,7 +492,7 @@ void LatencyTestSubscriber::LatencyDataReaderListener::on_data_available(
             }
 
             // writer loan
-            int trials = 2;
+            int trials = 5;
             bool loaned = false;
             while (trials-- != 0 && !loaned)
             {
@@ -500,7 +500,13 @@ void LatencyTestSubscriber::LatencyDataReaderListener::on_data_available(
                         == sub->data_writer_->loan_sample(
                             echoed_loan,
                             DataWriter::LoanInitializationKind::NO_LOAN_INITIALIZATION));
-                std::this_thread::sleep_for(std::chrono::milliseconds(1));
+
+                std::this_thread::sleep_for(std::chrono::microseconds(1500));
+
+                if (!loaned)
+                {
+                    logInfo(LatencyTest, "Subscriber trying to loan: " << trials);
+                }
             }
 
             if (!loaned)
