@@ -466,7 +466,7 @@ void LatencyTestSubscriber::LatencyDataReaderListener::on_data_available(
 
         if (ReturnCode_t::RETCODE_OK != reader->take(data_seq, infos, 1))
         {
-            logError(LatencyTest, "Problem reading Subscriber echoed loaned test data");
+            logInfo(LatencyTest, "Problem reading Subscriber echoed loaned test data");
             return;
         }
 
@@ -490,12 +490,12 @@ void LatencyTestSubscriber::LatencyDataReaderListener::on_data_available(
             // release the reader loan
             if (ReturnCode_t::RETCODE_OK != reader->return_loan(data_seq, infos))
             {
-                logError(LatencyTest, "Problem returning loaned test data");
+                logInfo(LatencyTest, "Problem returning loaned test data");
                 return;
             }
 
             // writer loan
-            int trials = 5;
+            int trials = 10;
             bool loaned = false;
             while (trials-- != 0 && !loaned)
             {
@@ -514,7 +514,7 @@ void LatencyTestSubscriber::LatencyDataReaderListener::on_data_available(
 
             if (!loaned)
             {
-                 logError(LatencyTest, "Problem echoing Publisher test data with loan");
+                 logInfo(LatencyTest, "Problem echoing Publisher test data with loan");
                  // release the reader loan
                  reader->return_loan(data_seq, infos);
                  return;
