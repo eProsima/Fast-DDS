@@ -232,7 +232,7 @@ private:
 
     static XMLP_ret loadXMLFile(
             const std::string& filename,
-            const bool& is_default);
+            bool is_default);
 
     static XMLP_ret extractDynamicTypes(
             up_base_node_t properties,

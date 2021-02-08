@@ -41,7 +41,7 @@ public:
     static XMLP_ret loadXML(
             const std::string& filename,
             up_base_node_t& root,
-            const bool& is_default);
+            bool is_default);
 };
 
 } // namespace xmlparser

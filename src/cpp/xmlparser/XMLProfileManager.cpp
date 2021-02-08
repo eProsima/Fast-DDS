@@ -283,7 +283,7 @@ XMLP_ret XMLProfileManager::loadXMLFile(
 
 XMLP_ret XMLProfileManager::loadXMLFile(
         const std::string& filename,
-        const bool& is_default)
+        bool is_default)
 {
     if (filename.empty())
     {

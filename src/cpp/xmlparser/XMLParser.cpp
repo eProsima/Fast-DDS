@@ -3247,7 +3247,7 @@ XMLP_ret XMLParser::fillDataNode(
 XMLP_ret XMLParserImpl::loadXML(
         const std::string& filename,
         up_base_node_t& root,
-        const bool& is_default)
+        bool is_default)
 {
     if (filename.empty())
     {
