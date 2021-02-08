@@ -406,6 +406,4 @@ private:
 } // namespace fastrtps
 } // namespace eprosima
 
-#include <fastdds/rtps/writer/ChangeForReader.h>
-
 #endif /* _FASTDDS_RTPS_CACHECHANGE_H_ */
