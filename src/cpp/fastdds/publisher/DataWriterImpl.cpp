@@ -1462,7 +1462,10 @@ std::shared_ptr<IPayloadPool> DataWriterImpl::get_payload_pool()
         else
         {
             payload_pool_ = TopicPayloadPoolRegistry::get(topic_->get_name(), config);
-            std::static_pointer_cast<ITopicPayloadPool>(payload_pool_)->reserve_history(config, false);
+            if (!std::static_pointer_cast<ITopicPayloadPool>(payload_pool_)->reserve_history(config, false))
+            {
+                payload_pool_.reset();
+            }
         }
 
         // Prepare loans collection for plain types only

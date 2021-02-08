@@ -1018,6 +1018,8 @@ void SecurityManager::delete_participant_stateless_message_pool()
 
         PoolConfig reader_cfg = PoolConfig::from_history_attributes(participant_stateless_message_reader_hattr_);
         participant_stateless_message_pool_->release_history(reader_cfg, true);
+
+        participant_stateless_message_pool_.reset();
     }
 }
 
@@ -1165,6 +1167,7 @@ void SecurityManager::delete_participant_volatile_message_secure_pool()
         PoolConfig pool_cfg = PoolConfig::from_history_attributes(participant_volatile_message_secure_hattr_);
         participant_volatile_message_secure_pool_->release_history(pool_cfg, true);
         participant_volatile_message_secure_pool_->release_history(pool_cfg, false);
+        participant_volatile_message_secure_pool_.reset();
     }
 }
 
