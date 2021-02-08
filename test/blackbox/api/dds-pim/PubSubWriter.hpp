@@ -20,6 +20,18 @@
 #ifndef _TEST_BLACKBOX_PUBSUBWRITER_HPP_
 #define _TEST_BLACKBOX_PUBSUBWRITER_HPP_
 
+#include <string>
+#include <list>
+#include <map>
+#include <condition_variable>
+#include <asio.hpp>
+#include <gtest/gtest.h>
+#include <thread>
+
+#if _MSC_VER
+#include <Windows.h>
+#endif // _MSC_VER
+
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
 #include <fastdds/dds/domain/DomainParticipant.hpp>
 #include <fastdds/dds/domain/DomainParticipantListener.hpp>
@@ -34,13 +46,6 @@
 #include <fastrtps/xmlparser/XMLTree.h>
 #include <fastrtps/utils/IPLocator.h>
 #include <fastrtps/transport/UDPv4TransportDescriptor.h>
-#include <string>
-#include <list>
-#include <map>
-#include <condition_variable>
-#include <asio.hpp>
-#include <gtest/gtest.h>
-#include <thread>
 
 using DomainParticipantFactory = eprosima::fastdds::dds::DomainParticipantFactory;
 using eprosima::fastrtps::rtps::IPLocator;
