@@ -98,7 +98,7 @@ public:
     }
 
     /**
-     * @brief Method called when the livelivess of a writer is lost
+     * @brief Method called when the liveliness of a writer is lost
      * @param writer The writer
      * @param status The liveliness lost status
      */

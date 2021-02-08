@@ -66,7 +66,7 @@ public:
     }
 
     /**
-     * @brief Method called when the livelivess of a publisher is lost
+     * @brief Method called when the liveliness of a publisher is lost
      * @param pub The publisher
      * @param status The liveliness lost status
      */
