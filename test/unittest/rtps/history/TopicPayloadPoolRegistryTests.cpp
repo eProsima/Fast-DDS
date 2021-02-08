@@ -51,8 +51,9 @@ TEST(TopicPayloadPoolRegistryTests, basic_checks)
     std::weak_ptr<ITopicPayloadPool> pool_wa = pool_a1;
     pool_a1.reset();
     pool_a2.reset();
+    pool_a3.reset();
     EXPECT_TRUE(pool_wa.expired());
 
     // Destructor should have been called a certain number of times
-    EXPECT_EQ(detail::TopicPayloadPoolProxy::DestructorHelper::instance().get(), 3u);
+    EXPECT_EQ(detail::TopicPayloadPoolProxy::DestructorHelper::instance().get(), 2u);
 }
