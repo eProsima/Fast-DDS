@@ -272,6 +272,13 @@ bool LatencyTestPublisher::init(
             dw_qos_.data_sharing(dsp);
             dr_qos_.data_sharing(dsp);
         }
+
+        // Increase payload pool size to prevent loan failures due to outages
+        if (data_loans_)
+        {
+            dw_qos_.resource_limits().extra_samples = 30;
+            dr_qos_.resource_limits().extra_samples = 30;
+        }
     }
 
     /* Create Topics */
