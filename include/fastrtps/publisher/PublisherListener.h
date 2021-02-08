@@ -36,8 +36,14 @@ class Publisher;
 class RTPS_DllAPI PublisherListener
 {
 public:
-    PublisherListener(){}
-    virtual ~PublisherListener(){}
+
+    PublisherListener()
+    {
+    }
+
+    virtual ~PublisherListener()
+    {
+    }
 
     /**
      * This method is called when the Publisher is matched (or unmatched) against an endpoint.
@@ -77,6 +83,7 @@ public:
         (void)pub;
         (void)status;
     }
+
 };
 
 } /* namespace rtps */
