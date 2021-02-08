@@ -38,9 +38,6 @@ public:
     static std::shared_ptr<ITopicPayloadPool> get(
             const std::string& topic_name,
             const BasicPoolConfig& config);
-
-    static void release(
-            std::shared_ptr<ITopicPayloadPool>& pool);
 };
 
 }  // namespace rtps

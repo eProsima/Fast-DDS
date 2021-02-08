@@ -73,48 +73,21 @@ public:
         return nullptr;
     }
 
-    void release(
-            std::shared_ptr<TopicPayloadPoolProxy>& pool)
-    {
-        std::lock_guard<std::mutex> lock(mutex_);
-
-        // A reference count of 2 means the only ones referencing the pointer are the caller and the registry.
-        // This means we can release the pointer on the registry also.
-        if (pool.use_count() == 2)
-        {
-            auto it = pool_map_.find(pool->topic_name());
-            assert(it != pool_map_.end());
-            switch (pool->memory_policy())
-            {
-                case PREALLOCATED_MEMORY_MODE:
-                    it->second.pool_for_preallocated.reset();
-                    break;
-                case PREALLOCATED_WITH_REALLOC_MEMORY_MODE:
-                    it->second.pool_for_preallocated_realloc.reset();
-                    break;
-                case DYNAMIC_RESERVE_MEMORY_MODE:
-                    it->second.pool_for_dynamic.reset();
-                    break;
-                case DYNAMIC_REUSABLE_MEMORY_MODE:
-                    it->second.pool_for_dynamic_reusable.reset();
-                    break;
-            }
-        }
-    }
-
 private:
 
     std::shared_ptr<TopicPayloadPoolProxy> do_get(
-            std::shared_ptr<TopicPayloadPoolProxy>& ptr,
+            std::weak_ptr<TopicPayloadPoolProxy>& ptr,
             const std::string& topic_name,
             const BasicPoolConfig& config)
     {
-        if (!ptr)
+        if (ptr.expired())
         {
-            ptr = std::make_shared<TopicPayloadPoolProxy>(topic_name, config);
+            auto new_ptr = std::make_shared<TopicPayloadPoolProxy>(topic_name, config);
+            ptr = new_ptr;
+            return new_ptr;
         }
 
-        return ptr;
+        return ptr.lock();
     }
 
     std::mutex mutex_;

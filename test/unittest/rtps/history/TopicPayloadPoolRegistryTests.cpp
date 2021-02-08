@@ -47,30 +47,13 @@ TEST(TopicPayloadPoolRegistryTests, basic_checks)
     // And be different from the other topic.
     EXPECT_NE(pool_b1, pool_a3);
 
-    // Releasing pointers should reset them
-    TopicPayloadPoolRegistry::release(pool_a1);
-    EXPECT_FALSE(pool_a1);
-    TopicPayloadPoolRegistry::release(pool_a2);
-    EXPECT_FALSE(pool_a2);
-    TopicPayloadPoolRegistry::release(pool_a3);
-    EXPECT_FALSE(pool_a3);
-    TopicPayloadPoolRegistry::release(pool_b1);
-    EXPECT_FALSE(pool_b1);
-    TopicPayloadPoolRegistry::release(pool_b2);
-    EXPECT_FALSE(pool_b2);
-
-    // Releasing twice should not throw
-    EXPECT_NO_THROW(TopicPayloadPoolRegistry::release(pool_a1));
-    EXPECT_FALSE(pool_a1);
-    EXPECT_NO_THROW(TopicPayloadPoolRegistry::release(pool_a2));
-    EXPECT_FALSE(pool_a2);
-    EXPECT_NO_THROW(TopicPayloadPoolRegistry::release(pool_a3));
-    EXPECT_FALSE(pool_a3);
-    EXPECT_NO_THROW(TopicPayloadPoolRegistry::release(pool_b1));
-    EXPECT_FALSE(pool_b1);
-    EXPECT_NO_THROW(TopicPayloadPoolRegistry::release(pool_b2));
-    EXPECT_FALSE(pool_b2);
+    // Releasing all references to a topic pool should automatically release the entry
+    std::weak_ptr<ITopicPayloadPool> pool_wa = pool_a1;
+    pool_a1.reset();
+    pool_a2.reset();
+    pool_a3.reset();
+    EXPECT_TRUE(pool_wa.expired());
 
     // Destructor should have been called a certain number of times
-    EXPECT_EQ(detail::TopicPayloadPoolProxy::DestructorHelper::instance().get(), 3u);
+    EXPECT_EQ(detail::TopicPayloadPoolProxy::DestructorHelper::instance().get(), 2u);
 }

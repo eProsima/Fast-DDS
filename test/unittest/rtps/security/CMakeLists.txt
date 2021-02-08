@@ -57,6 +57,7 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
         if(WIN32)
             set_source_files_properties(${CMAKE_CURRENT_SOURCE_DIR}/SecurityHandshakeProcessTests.cpp PROPERTIES COMPILE_OPTIONS /bigobj)
             set_source_files_properties(${CMAKE_CURRENT_SOURCE_DIR}/SecurityValidationRemoteTests.cpp PROPERTIES COMPILE_OPTIONS /bigobj)
+            set_source_files_properties(${CMAKE_CURRENT_SOURCE_DIR}/SecurityInitializationTests.cpp PROPERTIES COMPILE_OPTIONS /bigobj)
         endif()
 
         target_compile_definitions(SecurityAuthentication PRIVATE FASTRTPS_NO_LIB
