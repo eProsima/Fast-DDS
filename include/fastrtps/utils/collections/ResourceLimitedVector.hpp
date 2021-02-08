@@ -258,7 +258,7 @@ public:
             InputIterator last)
     {
         size_type n = static_cast<size_type>(std::distance(first, last));
-        n = std::min(n, configuration_.maximum);
+        n = (std::min)(n, configuration_.maximum);
         InputIterator value = first;
         std::advance(value, n);
         collection_.assign(first, value);
@@ -278,7 +278,7 @@ public:
             size_type n,
             const value_type& val)
     {
-        n = std::min(n, configuration_.maximum);
+        n = (std::min)(n, configuration_.maximum);
         collection_.assign(n, val);
     }
 
@@ -296,7 +296,7 @@ public:
     void assign(
             std::initializer_list<value_type> il)
     {
-        size_type n = std::min(il.size(), configuration_.maximum);
+        size_type n = (std::min)(il.size(), configuration_.maximum);
         collection_.assign(il.begin(), il.begin() + n);
     }
 
@@ -426,7 +426,7 @@ public:
 
     size_type max_size() const noexcept
     {
-        return std::min(configuration_.maximum, collection_.max_size());
+        return (std::min)(configuration_.maximum, collection_.max_size());
     }
 
     void clear()
@@ -500,7 +500,7 @@ protected:
                 // increase collection capacity
                 assert(configuration_.increment > 0);
                 cap += configuration_.increment;
-                cap = std::min(cap, configuration_.maximum);
+                cap = (std::min)(cap, configuration_.maximum);
                 collection_.reserve(cap);
             }
             else
