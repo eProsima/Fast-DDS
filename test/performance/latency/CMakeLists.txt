@@ -66,7 +66,7 @@ set(
 )
 
 set(
-    ZERO_COPY_LIST
+    LOAN_SAMPLES_LIST
     intraprocess_best_effort
     intraprocess_reliable
     interprocess_best_effort_shm
@@ -78,7 +78,9 @@ set(
 )
 
 set(
-    DATA_SHARING_AND_ZERO_COPY_LIST
+    DATA_SHARING_AND_LOAN_SAMPLES_LIST
+    intraprocess_best_effort
+    intraprocess_reliable
     interprocess_best_effort_shm
     interprocess_reliable_shm
 )
@@ -101,6 +103,12 @@ find_package(PythonInterp 3 REQUIRED)
 if(PYTHONINTERP_FOUND)
     # Loop over the test names
     foreach(latency_test_name ${LATENCY_TEST_LIST})
+
+        # decide if add security testing
+        set(ADD_LATENCY_SECURITY OFF) 
+        if(SECURITY AND (${latency_test_name} MATCHES "^interprocess"))
+            set(ADD_LATENCY_SECURITY ON) 
+        endif()
 
         # list of all the test cases generated in this iteration
         set(test_cases_setup performance.latency.${latency_test_name})
@@ -143,68 +151,10 @@ if(PYTHONINTERP_FOUND)
             string(REPLACE ";" "\\;" WIN_PATH "${WIN_PATH}")
         endif()
 
-        # Check if a data sharing test is required
-        if(latency_test_name IN_LIST DATA_SHARING_LIST)
-
-            # append to the list of cases
-            list(APPEND test_cases_setup performance.latency.${latency_test_name}.data_sharing)
-
-            add_test(
-                NAME performance.latency.${latency_test_name}.data_sharing
-                COMMAND ${PYTHON_EXECUTABLE}
-                ${CMAKE_CURRENT_SOURCE_DIR}/latency_tests.py
-                ${LATENCY_TEST_BIN}
-                --xml_file ${CMAKE_CURRENT_SOURCE_DIR}/xml/${latency_test_name}.xml
-                --demands_file ${CMAKE_CURRENT_SOURCE_DIR}/payloads_demands.csv
-                ${interproces_flag}
-                --data_sharing
-            )
-
-        endif()
-
-        # Check if a zero copy test is required
-        if(latency_test_name IN_LIST ZERO_COPY_LIST)
-
-            # append to the list of cases
-            list(APPEND test_cases_setup performance.latency.${latency_test_name}.data_loans)
-
-            add_test(
-                NAME performance.latency.${latency_test_name}.data_loans
-                COMMAND ${PYTHON_EXECUTABLE}
-                ${CMAKE_CURRENT_SOURCE_DIR}/latency_tests.py
-                ${LATENCY_TEST_BIN}
-                --xml_file ${CMAKE_CURRENT_SOURCE_DIR}/xml/${latency_test_name}.xml
-                --demands_file ${CMAKE_CURRENT_SOURCE_DIR}/payloads_demands.csv
-                ${interproces_flag}
-                --data_loans
-            )
-
-        endif()
-
-        # Check if a test using data sharing and zero copy is required
-        if(latency_test_name IN_LIST DATA_SHARING_AND_ZERO_COPY_LIST)
-
-            # append to the list of cases
-            list(APPEND test_cases_setup performance.latency.${latency_test_name}.data_loans_and_sharing)
-
-            add_test(
-                NAME performance.latency.${latency_test_name}.data_loans_and_sharing
-                COMMAND ${PYTHON_EXECUTABLE}
-                ${CMAKE_CURRENT_SOURCE_DIR}/latency_tests.py
-                ${LATENCY_TEST_BIN}
-                --xml_file ${CMAKE_CURRENT_SOURCE_DIR}/xml/${latency_test_name}.xml
-                --demands_file ${CMAKE_CURRENT_SOURCE_DIR}/payloads_demands.csv
-                ${interproces_flag}
-                --data_loans
-                --data_sharing
-            )
-
-        endif()
-
         # If there is security, add a secure test as well
-        if(SECURITY AND (${latency_test_name} MATCHES "^interprocess"))
+        if(ADD_LATENCY_SECURITY)
 
-            # Add the secure verison
+            # Add the secure version
             list(APPEND test_cases_setup performance.latency.${latency_test_name}.security)
 
             add_test(
@@ -225,6 +175,91 @@ if(PYTHONINTERP_FOUND)
             )
 
         endif()
+
+        # Check if a data sharing test is required
+        if(latency_test_name IN_LIST DATA_SHARING_LIST)
+
+            # append to the list of cases
+            list(APPEND test_cases_setup performance.latency.${latency_test_name}.data_sharing)
+
+            add_test(
+                NAME performance.latency.${latency_test_name}.data_sharing
+                COMMAND ${PYTHON_EXECUTABLE}
+                ${CMAKE_CURRENT_SOURCE_DIR}/latency_tests.py
+                ${LATENCY_TEST_BIN}
+                --xml_file ${CMAKE_CURRENT_SOURCE_DIR}/xml/${latency_test_name}.xml
+                --demands_file ${CMAKE_CURRENT_SOURCE_DIR}/payloads_demands.csv
+                ${interproces_flag}
+                --data_sharing
+            )
+
+        endif()
+
+        # Check if a zero copy test is required
+        if(latency_test_name IN_LIST LOAN_SAMPLES_LIST)
+
+            # append to the list of cases
+            list(APPEND test_cases_setup performance.latency.${latency_test_name}.data_loans)
+
+            add_test(
+                NAME performance.latency.${latency_test_name}.data_loans
+                COMMAND ${PYTHON_EXECUTABLE}
+                ${CMAKE_CURRENT_SOURCE_DIR}/latency_tests.py
+                ${LATENCY_TEST_BIN}
+                --xml_file ${CMAKE_CURRENT_SOURCE_DIR}/xml/${latency_test_name}.xml
+                --demands_file ${CMAKE_CURRENT_SOURCE_DIR}/payloads_demands.csv
+                ${interproces_flag}
+                --data_loans
+            )
+
+            # If there is security, add a secure test as well with loans
+            if(ADD_LATENCY_SECURITY)
+
+                # Add the secure version
+                list(APPEND test_cases_setup performance.latency.${latency_test_name}.data_loans.security)
+
+                add_test(
+                    NAME performance.latency.${latency_test_name}.data_loans.security
+                    COMMAND ${PYTHON_EXECUTABLE}
+                    ${CMAKE_CURRENT_SOURCE_DIR}/latency_tests.py
+                    ${LATENCY_TEST_BIN}
+                    --xml_file ${CMAKE_CURRENT_SOURCE_DIR}/xml/${latency_test_name}.xml
+                    --demands_file ${CMAKE_CURRENT_SOURCE_DIR}/payloads_demands.csv
+                    --security
+                    ${interproces_flag}
+                    --data_loans
+                )
+
+                # Hint certificates location 
+                set_property(
+                    TEST performance.latency.${latency_test_name}.data_loans.security
+                    APPEND PROPERTY ENVIRONMENT "CERTS_PATH=${PROJECT_SOURCE_DIR}/test/certs"
+                )
+
+            endif()
+
+        endif()
+
+        # Check if a test using data sharing and zero copy is required
+        if(latency_test_name IN_LIST DATA_SHARING_AND_LOAN_SAMPLES_LIST)
+
+            # append to the list of cases
+            list(APPEND test_cases_setup performance.latency.${latency_test_name}.data_loans_and_sharing)
+
+            add_test(
+                NAME performance.latency.${latency_test_name}.data_loans_and_sharing
+                COMMAND ${PYTHON_EXECUTABLE}
+                ${CMAKE_CURRENT_SOURCE_DIR}/latency_tests.py
+                ${LATENCY_TEST_BIN}
+                --xml_file ${CMAKE_CURRENT_SOURCE_DIR}/xml/${latency_test_name}.xml
+                --demands_file ${CMAKE_CURRENT_SOURCE_DIR}/payloads_demands.csv
+                ${interproces_flag}
+                --data_loans
+                --data_sharing
+            )
+
+        endif()
+
 
         # populate the properties for each test
         foreach(latency_test_case ${test_cases_setup})
