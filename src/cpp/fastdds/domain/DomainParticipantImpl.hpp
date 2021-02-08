@@ -345,7 +345,7 @@ public:
     std::vector<std::string> get_participant_names() const;
 
     /**
-     * This method can be used when using a StaticEndpointDiscovery mechanism differnet that the one
+     * This method can be used when using a StaticEndpointDiscovery mechanism different that the one
      * included in FastRTPS, for example when communicating with other implementations.
      * It indicates the Participant that an Endpoint from the XML has been discovered and
      * should be activated.
