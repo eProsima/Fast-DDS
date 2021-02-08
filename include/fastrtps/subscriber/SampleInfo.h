@@ -21,11 +21,12 @@
 
 #include <cstdint>
 
-#include <fastrtps/fastrtps_dll.h>
-
-#include <fastdds/rtps/common/Time_t.h>
+#include <fastdds/rtps/common/ChangeKind_t.hpp>
 #include <fastdds/rtps/common/InstanceHandle.h>
-#include <fastdds/rtps/common/CacheChange.h>
+#include <fastdds/rtps/common/SampleIdentity.h>
+#include <fastdds/rtps/common/Time_t.h>
+
+#include <fastrtps/fastrtps_dll.h>
 
 namespace eprosima {
 namespace fastrtps {
