@@ -229,7 +229,7 @@ public:
         resources_.consumers.clear();
     }
 
-    //! Waits until no more log info is availabel
+    //! Waits until no more log info is available
     void Flush()
     {
         std::unique_lock<std::mutex> guard(resources_.cv_mutex);
