@@ -19,33 +19,21 @@
 #ifndef _FASTDDS_RTPS_CACHECHANGE_H_
 #define _FASTDDS_RTPS_CACHECHANGE_H_
 
-#include <fastdds/rtps/common/Types.h>
-#include <fastdds/rtps/common/WriteParams.h>
+#include <cassert>
+
+#include <fastdds/rtps/common/ChangeKind_t.hpp>
+#include <fastdds/rtps/common/FragmentNumber.h>
+#include <fastdds/rtps/common/InstanceHandle.h>
 #include <fastdds/rtps/common/SerializedPayload.h>
 #include <fastdds/rtps/common/Time_t.h>
-#include <fastdds/rtps/common/InstanceHandle.h>
-#include <fastdds/rtps/common/FragmentNumber.h>
-
-#include <cassert>
+#include <fastdds/rtps/common/Types.h>
+#include <fastdds/rtps/common/WriteParams.h>
 
 #include <fastdds/rtps/history/IPayloadPool.h>
 
 namespace eprosima {
 namespace fastrtps {
 namespace rtps {
-
-
-/**
- * @enum ChangeKind_t, different types of CacheChange_t.
- * @ingroup COMMON_MODULE
- */
-enum RTPS_DllAPI ChangeKind_t
-{
-    ALIVE,                            //!< ALIVE
-    NOT_ALIVE_DISPOSED,               //!< NOT_ALIVE_DISPOSED
-    NOT_ALIVE_UNREGISTERED,           //!< NOT_ALIVE_UNREGISTERED
-    NOT_ALIVE_DISPOSED_UNREGISTERED   //!< NOT_ALIVE_DISPOSED_UNREGISTERED
-};
 
 /**
  * Structure CacheChange_t, contains information on a specific CacheChange.
