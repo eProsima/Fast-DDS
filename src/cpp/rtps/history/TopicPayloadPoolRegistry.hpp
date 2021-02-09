@@ -31,8 +31,8 @@ namespace fastrtps {
 namespace rtps {
 
 namespace detail {
-    class TopicPayloadPoolRegistry;
-}
+class TopicPayloadPoolRegistry;
+} // namespace detail
 
 class TopicPayloadPoolRegistry
 {
