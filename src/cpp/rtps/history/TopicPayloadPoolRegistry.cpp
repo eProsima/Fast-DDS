@@ -28,11 +28,16 @@ namespace eprosima {
 namespace fastrtps {
 namespace rtps {
 
+const TopicPayloadPoolRegistry::reference& TopicPayloadPoolRegistry::instance()
+{
+    return detail::TopicPayloadPoolRegistry::instance();
+}
+
 std::shared_ptr<ITopicPayloadPool> TopicPayloadPoolRegistry::get(
         const std::string& topic_name,
         const BasicPoolConfig& config)
 {
-    return detail::TopicPayloadPoolRegistry::instance().get(topic_name, config);
+    return detail::TopicPayloadPoolRegistry::instance()->get(topic_name, config);
 }
 
 }  // namespace rtps

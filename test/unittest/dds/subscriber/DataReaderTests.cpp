@@ -77,6 +77,11 @@ public:
 
     void TearDown() override
     {
+        if (!destroy_entities_)
+        {
+            return;
+        }
+
         if (data_writer_)
         {
             ASSERT_EQ(publisher_->delete_datawriter(data_writer_), ReturnCode_t::RETCODE_OK);
@@ -528,6 +533,7 @@ protected:
     DataReader* data_reader_ = nullptr;
     DataWriter* data_writer_ = nullptr;
     TypeSupport type_;
+    bool destroy_entities_ = true;
 
     InstanceHandle_t handle_ok_ = HANDLE_NIL;
     InstanceHandle_t handle_wrong_ = HANDLE_NIL;
@@ -1270,6 +1276,27 @@ TEST_F(DataReaderTests, read_unread)
             EXPECT_EQ(ok_code, data_reader_->return_loan(data_seq[i], info_seq[i]));
         }
     }
+}
+
+TEST_F(DataReaderTests, TerminateWithoutDestroyingReader)
+{
+    destroy_entities_ = false;
+
+    DomainParticipant* participant =
+            DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
+    ASSERT_NE(participant, nullptr);
+
+    Subscriber* subscriber = participant->create_subscriber(SUBSCRIBER_QOS_DEFAULT);
+    ASSERT_NE(participant, nullptr);
+
+    TypeSupport type(new FooTypeSupport());
+    type.register_type(participant);
+
+    Topic* topic = participant->create_topic("footopic", type.get_type_name(), TOPIC_QOS_DEFAULT);
+    ASSERT_NE(topic, nullptr);
+
+    DataReader* datareader = subscriber->create_datareader(topic, DATAREADER_QOS_DEFAULT);
+    ASSERT_NE(datareader, nullptr);
 }
 
 void set_listener_test (

@@ -230,6 +230,7 @@ private:
             const std::string& domain_name)
         : segments_mem_(0)
         , global_segment_(domain_name)
+        , watch_task_(SegmentWrapper::WatchTask::get())
     {
         static_assert(std::alignment_of<BufferNode>::value % 8 == 0, "SharedMemManager::BufferNode bad alignment");
 
@@ -1000,10 +1001,10 @@ private:
         {
         public:
 
-            static WatchTask& get()
+            static std::shared_ptr<WatchTask>& get()
             {
-                static WatchTask watch_task;
-                return watch_task;
+                static auto watch_task_instance = std::shared_ptr<WatchTask>(new WatchTask());
+                return watch_task_instance;
             }
 
             void add_segment(
@@ -1024,6 +1025,11 @@ private:
                 to_remove_.push_back(segment);
             }
 
+            ~WatchTask()
+            {
+                shared_mem_watchdog_->remove_task(this);
+            }
+
         private:
 
             std::unordered_map<std::shared_ptr<SegmentWrapper>, uint32_t> watched_segments_;
@@ -1033,15 +1039,14 @@ private:
             std::vector<std::shared_ptr<SegmentWrapper>> to_add_;
             std::vector<std::shared_ptr<SegmentWrapper>> to_remove_;
 
+            // Keep a reference to the SharedMemWatchdog so that it is not destroyed until this instance is destroyed
+            std::shared_ptr<SharedMemWatchdog> shared_mem_watchdog_;
+
             WatchTask()
                 : watched_it_(watched_segments_.end())
+                , shared_mem_watchdog_(SharedMemWatchdog::get())
             {
-                SharedMemWatchdog::get().add_task(this);
-            }
-
-            ~WatchTask()
-            {
-                SharedMemWatchdog::get().remove_task(this);
+                shared_mem_watchdog_->add_task(this);
             }
 
             void update_watched_segments()
@@ -1192,6 +1197,9 @@ private:
 
     SharedMemGlobal global_segment_;
 
+    // Keep a reference to the WatchTask so that it is not destroyed until all Manger instances are destroyed
+    std::shared_ptr<SegmentWrapper::WatchTask> watch_task_;
+
     std::shared_ptr<SharedMemSegment> find_segment(
             SharedMemSegment::Id id)
     {
@@ -1213,7 +1221,7 @@ private:
             ids_segments_[id.get()] = segment_wrapper;
             segments_mem_ += segment->mem_size();
 
-            SegmentWrapper::WatchTask::get().add_segment(segment_wrapper);
+            SegmentWrapper::WatchTask::get()->add_segment(segment_wrapper);
         }
 
         return segment;
@@ -1244,7 +1252,7 @@ private:
 
         for (auto segment : ids_segments_)
         {
-            SegmentWrapper::WatchTask::get().remove_segment(segment.second);
+            SegmentWrapper::WatchTask::get()->remove_segment(segment.second);
         }
     }
 

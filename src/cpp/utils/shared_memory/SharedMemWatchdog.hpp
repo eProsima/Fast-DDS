@@ -40,10 +40,10 @@ public:
         virtual void run() = 0;
     };
 
-    static SharedMemWatchdog& get()
+    static std::shared_ptr<SharedMemWatchdog>& get()
     {
-        static SharedMemWatchdog watch_dog;
-        return watch_dog;
+        static auto watch_dog_instance = std::shared_ptr<SharedMemWatchdog>(new SharedMemWatchdog());
+        return watch_dog_instance;
     }
 
     /**
@@ -79,6 +79,13 @@ public:
         return std::chrono::milliseconds(1000);
     }
 
+    ~SharedMemWatchdog()
+    {
+        exit_thread_ = true;
+        wake_up();
+        thread_run_.join();
+    }
+
 private:
 
     std::unordered_set<Task*> tasks_;
@@ -96,13 +103,6 @@ private:
         , exit_thread_(false)
     {
         thread_run_ = std::thread(&SharedMemWatchdog::run, this);
-    }
-
-    ~SharedMemWatchdog()
-    {
-        exit_thread_ = true;
-        wake_up();
-        thread_run_.join();
     }
 
     /**

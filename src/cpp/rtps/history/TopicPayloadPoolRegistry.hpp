@@ -30,10 +30,18 @@ namespace eprosima {
 namespace fastrtps {
 namespace rtps {
 
+namespace detail {
+    class TopicPayloadPoolRegistry;
+}
+
 class TopicPayloadPoolRegistry
 {
 
 public:
+
+    using reference = std::shared_ptr<detail::TopicPayloadPoolRegistry>;
+
+    static const reference& instance();
 
     static std::shared_ptr<ITopicPayloadPool> get(
             const std::string& topic_name,

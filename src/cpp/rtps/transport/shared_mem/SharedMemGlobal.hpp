@@ -164,10 +164,10 @@ public:
                 MultiProducerConsumerRingBuffer<BufferDescriptor>* buffer;
             };
 
-            static WatchTask& get()
+            static const std::shared_ptr<WatchTask>& get()
             {
-                static WatchTask watch_task;
-                return watch_task;
+                static auto watch_task_instance = std::shared_ptr<WatchTask>(new WatchTask());
+                return watch_task_instance;
             }
 
             /**
@@ -203,19 +203,23 @@ public:
 
             }
 
+            ~WatchTask()
+            {
+                shared_mem_watchdog_->remove_task(this);
+            }
+
         private:
 
             std::vector<std::shared_ptr<PortContext>> watched_ports_;
             std::mutex watched_ports_mutex_;
 
-            WatchTask()
-            {
-                SharedMemWatchdog::get().add_task(this);
-            }
+            // Keep a reference to the SharedMemWatchdog so that it is not destroyed until this instance is destroyed
+            std::shared_ptr<SharedMemWatchdog> shared_mem_watchdog_;
 
-            ~WatchTask()
+            WatchTask()
+                : shared_mem_watchdog_(SharedMemWatchdog::get())
             {
-                SharedMemWatchdog::get().remove_task(this);
+                shared_mem_watchdog_->add_task(this);
             }
 
             bool update_status_all_listeners(
@@ -340,6 +344,9 @@ public:
             return (listeners_found == node_->num_listeners);
         }
 
+        // Keep a reference to the WatchTask so that it is not destroyed until the last Port instance is destroyed
+        std::shared_ptr<WatchTask> watch_task_;
+
     public:
 
         /**
@@ -379,6 +386,7 @@ public:
             , node_(node)
             , overflows_count_(0)
             , read_exclusive_lock_(std::move(read_exclusive_lock))
+            , watch_task_(WatchTask::get())
         {
             auto buffer_base = static_cast<MultiProducerConsumerRingBuffer<BufferDescriptor>::Cell*>(
                 port_segment_->get_address_from_offset(node_->buffer));
@@ -393,12 +401,12 @@ public:
 
             auto port_context = std::make_shared<Port::WatchTask::PortContext>();
             *port_context = {port_segment_, node_, buffer_.get()};
-            Port::WatchTask::get().add_port(std::move(port_context));
+            Port::WatchTask::get()->add_port(std::move(port_context));
         }
 
         ~Port()
         {
-            Port::WatchTask::get().remove_port(node_);
+            Port::WatchTask::get()->remove_port(node_);
 
             if (node_->ref_counter.fetch_sub(1) == 1)
             {
