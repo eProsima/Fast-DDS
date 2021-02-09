@@ -257,8 +257,8 @@ bool PDPSimple::createPDPEndpoints()
 
     mp_PDPReaderHistory = new ReaderHistory(hatt);
     ReaderAttributes ratt;
-    ratt.endpoint.multicastLocatorList = mp_builtin->m_att.metatrafficMulticastLocatorList;
-    ratt.endpoint.unicastLocatorList = mp_builtin->m_att.metatrafficUnicastLocatorList;
+    ratt.endpoint.multicastLocatorList = mp_builtin->m_metatrafficMulticastLocatorList;
+    ratt.endpoint.unicastLocatorList = mp_builtin->m_metatrafficUnicastLocatorList;
     ratt.endpoint.topicKind = WITH_KEY;
     ratt.endpoint.durabilityKind = TRANSIENT_LOCAL;
     ratt.endpoint.reliabilityKind = BEST_EFFORT;
@@ -321,7 +321,7 @@ bool PDPSimple::createPDPEndpoints()
             const NetworkFactory& network = mp_RTPSParticipant->network_factory();
             LocatorList_t fixed_locators;
             Locator_t local_locator;
-            for (const Locator_t& loc : mp_builtin->m_att.initialPeersList)
+            for (const Locator_t& loc : mp_builtin->m_initialPeersList)
             {
                 if (network.transform_remote_locator(loc, local_locator))
                 {

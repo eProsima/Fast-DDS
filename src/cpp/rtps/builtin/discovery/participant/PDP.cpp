@@ -308,7 +308,7 @@ void PDP::initializeParticipantProxyData(
     }
 
     participant_data->metatraffic_locators.unicast.clear();
-    for (const Locator_t& loc : this->mp_builtin->m_att.metatrafficUnicastLocatorList)
+    for (const Locator_t& loc : this->mp_builtin->m_metatrafficUnicastLocatorList)
     {
         participant_data->metatraffic_locators.add_unicast_locator(loc);
     }
@@ -316,7 +316,7 @@ void PDP::initializeParticipantProxyData(
     participant_data->metatraffic_locators.multicast.clear();
     if (!m_discovery.avoid_builtin_multicast || participant_data->metatraffic_locators.unicast.empty())
     {
-        for (const Locator_t& loc: this->mp_builtin->m_att.metatrafficMulticastLocatorList)
+        for (const Locator_t& loc: this->mp_builtin->m_metatrafficMulticastLocatorList)
         {
             participant_data->metatraffic_locators.add_multicast_locator(loc);
         }
@@ -1087,7 +1087,7 @@ bool PDP::is_known_participant(
 
 std::list<eprosima::fastdds::rtps::RemoteServerAttributes>& PDP::remote_server_attributes()
 {
-    return m_discovery.discovery_config.m_DiscoveryServers;
+    return mp_builtin->m_DiscoveryServers;
 }
 
 void PDP::check_remote_participant_liveliness(

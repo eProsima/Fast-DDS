@@ -105,6 +105,14 @@ public:
     WLP* mp_WLP;
     //!Pointer to the TypeLookupManager
     fastdds::dds::builtin::TypeLookupManager* tlm_;
+    //!Locator list for metatraffic
+    LocatorList_t m_metatrafficMulticastLocatorList;
+    //!Locator List for metatraffic unicast
+    LocatorList_t m_metatrafficUnicastLocatorList;
+    //! Initial peers
+    LocatorList_t m_initialPeersList;
+    //! Known discovery and backup server container
+    std::list<eprosima::fastdds::rtps::RemoteServerAttributes> m_DiscoveryServers;
 
     /**
      * Add a local Writer to the BuiltinProtocols.
