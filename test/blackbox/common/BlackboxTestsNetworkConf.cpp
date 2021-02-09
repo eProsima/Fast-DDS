@@ -196,3 +196,30 @@ TEST(BlackBox, PubSubInterfaceWhitelistUnicast)
     ASSERT_TRUE(data.empty());
     reader.block_for_all();
 }
+
+TEST(BlackBox, SubGetListeningLocators)
+{
+    PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
+
+    reader.init();
+
+    LocatorList_t locators;
+    reader.get_native_reader().get_listening_locators(locators);
+
+    std::vector<IPFinder::info_IP> interfaces;
+    GetIP4s(interfaces);
+
+    auto check_interface = [](const IPFinder::info_IP& address, const Locator_t& locator) -> bool
+    {
+        return IPLocator::compareAddress(address.locator, locator);
+    };
+
+    for (const Locator_t& locator : locators)
+    {
+        if (locator.kind == LOCATOR_KIND_UDPv4)
+        {
+            auto checker = std::bind(check_interface, std::placeholders::_1, locator);
+            EXPECT_NE(interfaces.cend(), std::find_if(interfaces.cbegin(), interfaces.cend(), checker));
+        }
+    }
+}

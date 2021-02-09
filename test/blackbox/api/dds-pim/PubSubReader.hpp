@@ -300,6 +300,11 @@ public:
         destroy();
     }
 
+    eprosima::fastdds::dds::DataReader& get_native_reader() const
+    {
+        return *datareader_;
+    }
+
     void init()
     {
         if (!xml_file_.empty())
