@@ -711,10 +711,10 @@ bool LatencyTestPublisher::test(
     // Assures that LatencyTestSubscriber|Publisher data endpoints creation and
     // destruction is sequential
     wait_for_command(
-            [this]()
-            {
+        [this]()
+        {
             return command_msg_count_ >= subscribers_;
-            });
+        });
 
     // TEST FINISHED:
 
