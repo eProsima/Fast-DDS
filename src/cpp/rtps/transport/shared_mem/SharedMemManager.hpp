@@ -1025,7 +1025,7 @@ private:
                 to_remove_.push_back(segment);
             }
 
-            ~WatchTask()
+            virtual ~WatchTask()
             {
                 shared_mem_watchdog_->remove_task(this);
             }

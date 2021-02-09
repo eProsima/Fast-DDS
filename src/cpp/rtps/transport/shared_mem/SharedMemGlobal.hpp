@@ -203,7 +203,7 @@ public:
 
             }
 
-            ~WatchTask()
+            virtual ~WatchTask()
             {
                 shared_mem_watchdog_->remove_task(this);
             }
