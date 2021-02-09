@@ -505,7 +505,7 @@ int main(
                     recoveries_file,
                     dynamic_types,
                     forced_domain)
-                && throughput_publisher.ready())
+                )
         {
             throughput_publisher.run(test_time_sec, recovery_time_ms, demand, msg_size, subscribers);
         }
@@ -517,10 +517,17 @@ int main(
     else if (test_agent == TestAgent::SUBSCRIBER)
     {
         std::cout << "Starting throughput test subscriber agent" << std::endl;
-        ThroughputSubscriber throughput_subscriber(reliable, seed, hostname, sub_part_property_policy,
-                sub_property_policy, xml_config_file, dynamic_types, forced_domain);
+        ThroughputSubscriber throughput_subscriber;
 
-        if (throughput_subscriber.ready())
+        if (throughput_subscriber.init(
+                reliable,
+                seed,
+                hostname,
+                sub_part_property_policy,
+                sub_property_policy,
+                xml_config_file,
+                dynamic_types,
+                forced_domain))
         {
             throughput_subscriber.run();
         }
@@ -560,15 +567,21 @@ int main(
         bool are_subscribers_ready = true;
         for (uint32_t i = 0; i < subscribers; i++)
         {
-            throughput_subscribers.push_back(std::make_shared<ThroughputSubscriber>(reliable,
-                    seed, hostname, sub_part_property_policy, sub_property_policy,
-                    xml_config_file, dynamic_types, forced_domain));
+            throughput_subscribers.emplace_back();
 
-            are_subscribers_ready &= throughput_subscribers.back()->ready();
+            are_subscribers_ready &= throughput_subscribers.back().init(
+                    reliable,
+                    seed,
+                    hostname,
+                    sub_part_property_policy,
+                    sub_property_policy,
+                    xml_config_file,
+                    dynamic_types,
+                    forced_domain);
         }
 
         // Spawn run threads
-        if (throughput_publisher.ready() && are_subscribers_ready)
+        if (are_subscribers_ready)
         {
             std::thread pub_thread(&ThroughputPublisher::run, &throughput_publisher, test_time_sec, recovery_time_ms,
                     demand, msg_size, subscribers);
@@ -593,7 +606,6 @@ int main(
         }
     }
 
-    Domain::stopAll();
     if (return_code == 0)
     {
         std::cout << C_GREEN << "EVERYTHING STOPPED FINE" << C_DEF << std::endl;

@@ -19,9 +19,11 @@
 
 #include "ThroughputTypes.hpp"
 
-const std::string ThroughputDataType::type_name_ = "ThroughputType";
-
 #include <cstring>
+#include <cstddef>
+
+const size_t ThroughputDataType::overhead = offsetof(ThroughputDataType, data);
+const std::string ThroughputDataType::type_name_ = "ThroughputType";
 
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
@@ -46,7 +48,7 @@ bool ThroughputDataType::serialize(
     ThroughputType* lt = (ThroughputType*)data;
     memcpy(payload->data, &lt->seqnum, sizeof(lt->seqnum));
     memcpy(payload->data + 4, lt->data, buffer_size_);
-    payload->length = 4 + buffer_size_;
+    payload->length = m_typeSize;
     return true;
 }
 
@@ -77,7 +79,7 @@ std::function<uint32_t()> ThroughputDataType::getSerializedSizeProvider(
 
 void* ThroughputDataType::createData()
 {
-    return (void*)new uint8_t[(4 + buffer_size_ + 3) / 4 * 4];
+    return (void*)new uint8_t[m_typeSize];
 }
 
 void ThroughputDataType::deleteData(
