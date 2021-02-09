@@ -104,7 +104,9 @@ inline void print_results(
  * */
 typedef struct alignas(4) ThroughputType
 {
+    // identifies the sample sent
     uint32_t seqnum;
+    // actual payload
     uint8_t data[1];
 
     ThroughputType(
@@ -112,6 +114,9 @@ typedef struct alignas(4) ThroughputType
         : seqnum(number)
     {
     }
+
+    // This struct overhead
+    static const size_t overhead;
 
 } ThroughputType;
 
@@ -127,7 +132,7 @@ public:
         : buffer_size_(size)
     {
         setName(type_name_.c_str());
-        m_typeSize = size + 4;
+        m_typeSize = 4 + ((size + 3) & ~3);
         m_isGetKeyDefined = false;
     }
 
@@ -194,30 +199,15 @@ enum e_Command : uint32_t
 typedef struct ThroughputCommandType
 {
     e_Command m_command;
-    uint32_t m_size;
-    uint32_t m_demand;
-    uint32_t m_lostsamples;
-    uint64_t m_lastrecsample;
-    uint64_t m_totaltime;
-
-    ThroughputCommandType()
-    {
-        m_command = DEFAULT;
-        m_size = 0;
-        m_demand = 0;
-        m_lostsamples = 0;
-        m_lastrecsample = 0;
-        m_totaltime = 0;
-    }
+    uint32_t m_size = 0;
+    uint32_t m_demand = 0;
+    uint32_t m_lostsamples = 0;
+    uint64_t m_lastrecsample = 0;
+    uint64_t m_totaltime = 0;
 
     ThroughputCommandType(
-            e_Command com)
+            e_Command com = DEFAULT)
         : m_command(com)
-        , m_size(0)
-        , m_demand(0)
-        , m_lostsamples(0)
-        , m_lastrecsample(0)
-        , m_totaltime(0)
     {
     }
 

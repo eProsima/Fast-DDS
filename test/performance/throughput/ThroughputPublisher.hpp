@@ -66,7 +66,7 @@ public:
             bool dynamic_types,
             int forced_domain);
 
-    virtual ~ThroughputPublisher();
+    ~ThroughputPublisher();
 
     bool ready();
 
@@ -97,6 +97,8 @@ private:
 
     bool load_recoveries();
 
+    int total_matches() const;
+
     // Entities
     eprosima::fastdds::dds::DomainParticipant* participant_ = nullptr;
     eprosima::fastdds::dds::Publisher* publisher_ = nullptr;
@@ -115,8 +117,6 @@ private:
     std::mutex data_mutex_;
     std::condition_variable command_discovery_cv_;
     std::condition_variable data_discovery_cv_;
-    int command_discovery_count_ = 0;
-    int data_discovery_count_ = 0;
 
     // Topics
     eprosima::fastdds::dds::Topic* data_pub_topic_ = nullptr;
@@ -131,6 +131,7 @@ private:
     // Dynamic Data
     eprosima::fastrtps::types::DynamicData* dynamic_data_ = nullptr;
     eprosima::fastdds::dds::TypeSupport dynamic_pub_sub_type_;
+    // QoS Profiles
     eprosima::fastdds::dds::DataWriterQos dw_qos_;
 
     // Results
@@ -161,6 +162,7 @@ private:
     class DataWriterListener : public eprosima::fastdds::dds::DataWriterListener
     {
         ThroughputPublisher& throughput_publisher_;
+        int matched_ = 0;
 
     public:
 
@@ -173,6 +175,11 @@ private:
         void on_publication_matched(
                 eprosima::fastdds::dds::DataWriter* writer,
                 const eprosima::fastdds::dds::PublicationMatchedStatus& info) override;
+
+        int get_matches() const
+        {
+            return matched_;
+        }
     }
     data_writer_listener_;
 
@@ -180,6 +187,7 @@ private:
     class CommandWriterListener : public eprosima::fastdds::dds::DataWriterListener
     {
         ThroughputPublisher& throughput_publisher_;
+        int matched_ = 0;
 
     public:
 
@@ -192,12 +200,23 @@ private:
         void on_publication_matched(
                 eprosima::fastdds::dds::DataWriter* writer,
                 const eprosima::fastdds::dds::PublicationMatchedStatus& info) override;
+
+        int get_matches() const
+        {
+            return matched_;
+        }
+
+        void reset()
+        {
+            matched_ = 0;
+        }
     }
     command_writer_listener_;
 
     class CommandReaderListener : public eprosima::fastdds::dds::DataReaderListener
     {
         ThroughputPublisher& throughput_publisher_;
+        int matched_ = 0;
 
     public:
 
@@ -210,6 +229,16 @@ private:
         void on_subscription_matched(
                 eprosima::fastdds::dds::DataReader* reader,
                 const eprosima::fastdds::dds::SubscriptionMatchedStatus& info) override;
+
+        int get_matches() const
+        {
+            return matched_;
+        }
+
+        void reset()
+        {
+            matched_ = 0;
+        }
     }
     command_reader_listener_;
 };
