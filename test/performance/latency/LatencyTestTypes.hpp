@@ -33,7 +33,7 @@ public:
 
     LatencyDataSizes()
     {
-        sample_sizes_ = {16 - 4, 1024 - 4, 64512 - 4, 1048576 - 4};
+        sample_sizes_ = {16, 1024, 64512, 1048576};
     }
 
     inline std::vector<uint32_t>& sample_sizes()
@@ -65,17 +65,19 @@ struct alignas (4) LatencyType
     uint32_t bounce = 0;
     // actual payload
     uint8_t data[1];
+    // this struct overhead
+    static const size_t overhead;
 };
 
 class LatencyDataType : public eprosima::fastdds::dds::TopicDataType
 {
     // Buffer size for size management
-    const uint32_t buffer_size_;
+    size_t buffer_size_;
 
 public:
 
     LatencyDataType()
-        : buffer_size_(MAX_TYPE_SIZE - 8)
+        : buffer_size_(MAX_TYPE_SIZE - LatencyType::overhead)
     {
         setName("LatencyType");
         m_typeSize = MAX_TYPE_SIZE;
@@ -83,7 +85,7 @@ public:
     }
 
     LatencyDataType(
-            const uint32_t& size)
+            const size_t& size)
         : buffer_size_(size)
     {
         setName("LatencyType");

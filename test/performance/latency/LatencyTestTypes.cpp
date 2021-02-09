@@ -20,10 +20,12 @@
 #include "LatencyTestTypes.hpp"
 
 #include <cstring>
+#include <cstddef>
 
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
 
+const size_t LatencyType::overhead = offsetof(LatencyType, data);
 const std::string LatencyDataType::type_name_ = "LatencyType";
 
 bool LatencyDataType::compare_data(
@@ -59,7 +61,7 @@ bool LatencyDataType::serialize(
     memcpy(payload->data, &lt->seqnum, sizeof(lt->seqnum));
     memcpy(payload->data + 4, &lt->bounce, sizeof(lt->bounce));
     memcpy(payload->data + 8, lt->data, buffer_size_);
-    payload->length = 8 + buffer_size_;
+    payload->length = m_typeSize;
     return true;
 }
 

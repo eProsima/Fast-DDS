@@ -691,7 +691,10 @@ bool LatencyTestPublisher::test(
         DynamicData* data_out = dynamic_data_out_->loan_value(
             dynamic_data_out_->get_member_id_at_index(1));
 
-        for (uint32_t i = 0; i < datasize; ++i)
+        // fill until complete the desired payload size
+        uint32_t padding = datasize - 4; // sequence number is a DWORD
+
+        for (uint32_t i = 0; i < padding; ++i)
         {
             data_in->insert_sequence_data(id_in);
             data_in->set_byte_value(0, id_in);
@@ -1066,8 +1069,11 @@ bool LatencyTestPublisher::init_static_types(
         return false;
     }
 
+    // calculate the padding for the desired demand
+    ::size_t padding = payload - LatencyType::overhead;
+    assert(padding > 0);
     // Create the static type
-    latency_data_type_.reset(new LatencyDataType(payload));
+    latency_data_type_.reset(new LatencyDataType(padding));
     // Register the static type
     if (ReturnCode_t::RETCODE_OK != latency_data_type_.register_type(participant_))
     {

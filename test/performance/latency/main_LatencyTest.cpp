@@ -231,13 +231,13 @@ bool load_demands_payload(
 
             uint32_t payload;
             iss >> payload;
-            if (payload < 12)
+            if (payload < 16)
             {
-                std::cout << "Minimum payload is 16 bytes" << std::endl;
+                std::cout << "Payload must be a positive number greater or equal to 16" << std::endl;
                 return false;
             }
 
-            demands.push_back(payload - 4);
+            demands.push_back(payload);
 
             start = end + DELIM.length();
             end = line.find(DELIM, start);
@@ -247,7 +247,7 @@ bool load_demands_payload(
                 std::istringstream n_iss(line.substr(start, end - start));
                 if (n_iss >> payload)
                 {
-                    demands.push_back(payload - 4);
+                    demands.push_back(payload);
                 }
             }
         }
@@ -623,7 +623,6 @@ int main(
         }
     }
 
-    Domain::stopAll();
     if (return_code == 0)
     {
         std::cout << C_GREEN << "EVERYTHING STOPPED FINE" << C_DEF << std::endl;
