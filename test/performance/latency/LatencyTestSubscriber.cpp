@@ -515,16 +515,16 @@ void LatencyTestSubscriber::LatencyDataReaderListener::on_data_available(
 
                 if (!loaned)
                 {
-                    logInfo(LatencyTest, "Subscriber trying to loan: " << trials);
+                    logError(LatencyTest, "Subscriber trying to loan: " << trials);
                 }
             }
 
             if (!loaned)
             {
-                 logInfo(LatencyTest, "Problem echoing Publisher test data with loan");
-                 // release the reader loan
-                 reader->return_loan(data_seq, infos);
-                 return;
+                logInfo(LatencyTest, "Problem echoing Publisher test data with loan");
+                // release the reader loan
+                reader->return_loan(data_seq, infos);
+                return;
             }
 
             // copy the data from aux buffer to writer loan
@@ -532,7 +532,7 @@ void LatencyTestSubscriber::LatencyDataReaderListener::on_data_available(
 
             //end measuring overhead
             auto end_time = std::chrono::steady_clock::now();
-            std::chrono::duration<uint32_t, std::nano> bounce_time(end_time-start_time);
+            std::chrono::duration<uint32_t, std::nano> bounce_time(end_time - start_time);
             reinterpret_cast<LatencyType*>(echoed_loan)->bounce = bounce_time.count();
 
             if (!sub->data_writer_->write(echoed_loan))
@@ -548,7 +548,7 @@ void LatencyTestSubscriber::LatencyDataReaderListener::on_data_available(
             {
                 logError(LatencyTest, "Problem returning loaned test data");
             }
-       }
+        }
     }
     else
     {

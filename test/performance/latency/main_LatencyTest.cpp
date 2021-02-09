@@ -481,6 +481,11 @@ int main(
         logError(LatencyTest, "Sharing sample APIs NOT supported with dynamic types");
         return 1;
     }
+    else if ( data_sharing && use_security )
+    {
+        logError(LatencyTest, "Sharing sample APIs NOT supported with RTPS encryption");
+        return 1;
+    }
 
     PropertyPolicy pub_part_property_policy;
     PropertyPolicy sub_part_property_policy;

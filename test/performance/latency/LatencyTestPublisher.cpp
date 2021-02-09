@@ -556,21 +556,19 @@ void LatencyTestPublisher::LatencyDataReaderListener::on_data_available(
         else
         {
             // Factor of 2 below is to calculate the roundtrip divided by two. Note that nor the overhead does not
-            // neither the echo bounce time need to be halved, as we access the clock twice per round trip
+            // need to be halved, as we access the clock twice per round trip
             pub->end_time_ = std::chrono::steady_clock::now();
+            pub->end_time_ -= bounce_time;
             auto roundtrip = std::chrono::duration<double, std::micro>(pub->end_time_ - pub->start_time_) / 2.0;
-            roundtrip -= bounce_time;
             roundtrip -= pub->overhead_time_;
 
-            if (roundtrip.count() > 0)
+            // Discard samples were loan failed due to payload outages
+            // in that case the roundtrip will match the os scheduler quantum slice
+            if (roundtrip.count() > 0
+                    && !(pub->data_loans_ && roundtrip.count() > 10000))
             {
                 pub->times_.push_back(roundtrip);
                 ++pub->received_count_;
-            }
-            else
-            {
-                logInfo(LatencyTest, "Bad roundtrip measurement " << roundtrip.count() << " us"
-                        << " given bounce time " << (bounce_time.count()/1000) << " us");
             }
 
             // Reset seqnum from out data
@@ -788,7 +786,7 @@ bool LatencyTestPublisher::test(
 
                 if (!loaned)
                 {
-                    logInfo(LatencyTest, "Problem on Publisher test data with loan");
+                    logError(LatencyTest, "Problem on Publisher test data with loan");
                     continue; // next iteration
                 }
 
