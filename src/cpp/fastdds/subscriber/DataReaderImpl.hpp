@@ -289,7 +289,7 @@ public:
      * @param info Pointer to the SampleInfo related to \c data
      * @return true if the sample is valid
      */
-    RTPS_DllAPI bool is_sample_valid(
+    bool is_sample_valid(
             const void* data,
             const SampleInfo* info) const;
 
