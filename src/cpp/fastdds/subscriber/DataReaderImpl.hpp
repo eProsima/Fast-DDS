@@ -293,6 +293,17 @@ public:
             const void* data,
             const SampleInfo* info) const;
 
+    /**
+     * Get the list of locators on which this DataReader is listening.
+     *
+     * @param [out] locators  LocatorList_t where the list of locators will be stored.
+     *
+     * @return NOT_ENABLED if the reader has not been enabled.
+     * @return OK if a list of locators is returned.
+     */
+    ReturnCode_t get_listening_locators(
+            eprosima::fastrtps::rtps::LocatorList_t& locators) const;
+
 protected:
 
     //!Subscriber

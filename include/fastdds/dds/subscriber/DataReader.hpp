@@ -35,6 +35,10 @@
 #include <fastdds/dds/core/status/SubscriptionMatchedStatus.hpp>
 #include <fastdds/dds/subscriber/SampleInfo.hpp>
 #include <fastdds/dds/topic/TypeSupport.hpp>
+
+#include <fastrtps/fastrtps_dll.h>
+
+#include <fastdds/rtps/common/Locator.h>
 #include <fastdds/rtps/common/Time_t.h>
 
 #include <fastrtps/types/TypesBase.h>
@@ -994,6 +998,17 @@ public:
     RTPS_DllAPI bool is_sample_valid(
             const void* data,
             const SampleInfo* info) const;
+
+    /**
+     * Get the list of locators on which this DataReader is listening.
+     *
+     * @param [out] locators  LocatorList_t where the list of locators will be stored.
+     *
+     * @return NOT_ENABLED if the reader has not been enabled.
+     * @return OK if a list of locators is returned.
+     */
+    RTPS_DllAPI ReturnCode_t get_listening_locators(
+            eprosima::fastrtps::rtps::LocatorList_t& locators) const;
 
 protected:
 
