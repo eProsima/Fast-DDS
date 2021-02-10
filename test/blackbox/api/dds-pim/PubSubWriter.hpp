@@ -292,6 +292,11 @@ public:
         destroy();
     }
 
+    eprosima::fastdds::dds::DataWriter& get_native_writer() const
+    {
+        return *datawriter_;
+    }
+
     void init()
     {
         if (!xml_file_.empty())

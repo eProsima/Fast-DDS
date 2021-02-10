@@ -77,14 +77,9 @@ TEST(BlackBox, PubSubOutLocatorSelection)
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
 
-    LocatorList_t WriterOutLocators;
-    Locator_t LocatorBuffer;
-
-    LocatorBuffer.kind = LOCATOR_KIND_UDPv4;
-    LocatorBuffer.port = 31337;
-
-    WriterOutLocators.push_back(LocatorBuffer);
-
+    Locator_t locator;
+    locator.kind = LOCATOR_KIND_UDPv4;
+    locator.port = 31337;
 
     reader.reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).
             history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS).
@@ -94,7 +89,7 @@ TEST(BlackBox, PubSubOutLocatorSelection)
     ASSERT_TRUE(reader.isInitialized());
 
     std::shared_ptr<UDPv4TransportDescriptor> descriptor = std::make_shared<UDPv4TransportDescriptor>();
-    descriptor->m_output_udp_socket = static_cast<uint16_t>(LocatorBuffer.port);
+    descriptor->m_output_udp_socket = static_cast<uint16_t>(locator.port);
 
     writer.reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).history_kind(
         eprosima::fastrtps::KEEP_ALL_HISTORY_QOS).
@@ -222,4 +217,28 @@ TEST(BlackBox, SubGetListeningLocators)
             EXPECT_NE(interfaces.cend(), std::find_if(interfaces.cbegin(), interfaces.cend(), checker));
         }
     }
+}
+
+TEST(BlackBox, PubGetSendingLocators)
+{
+    PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
+
+    constexpr uint32_t port = 31337u;
+
+    std::shared_ptr<UDPv4TransportDescriptor> descriptor = std::make_shared<UDPv4TransportDescriptor>();
+    descriptor->m_output_udp_socket = static_cast<uint16_t>(port);
+
+    writer.disable_builtin_transport().
+        add_user_transport_to_pparams(descriptor).
+        init();
+
+    ASSERT_TRUE(writer.isInitialized());
+
+    LocatorList_t locators;
+    writer.get_native_writer().get_sending_locators(locators);
+
+    EXPECT_FALSE(locators.empty());
+    Locator_t locator = *(locators.begin());
+    EXPECT_EQ(locator.port, port);
+    EXPECT_EQ(locator.kind, LOCATOR_KIND_UDPv4);
 }
