@@ -34,6 +34,8 @@ namespace rtps {
 
 class UDPTransportInterface : public TransportInterface
 {
+    friend class UDPSenderResource;
+
 public:
 
     virtual ~UDPTransportInterface() override;

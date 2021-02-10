@@ -38,6 +38,12 @@ inline eProsimaUDPSocket* getSocketPtr(
     return &socket;
 }
 
+inline const eProsimaUDPSocket* getSocketPtr(
+        const eProsimaUDPSocket& socket)
+{
+    return &socket;
+}
+
 inline eProsimaUDPSocket moveSocket(
         eProsimaUDPSocket& socket)
 {
@@ -64,6 +70,12 @@ typedef eProsimaUDPSocket eProsimaUDPSocketRef;
 // UDP
 inline eProsimaUDPSocket getSocketPtr(
         eProsimaUDPSocket socket)
+{
+    return socket;
+}
+
+inline const eProsimaUDPSocket& getSocketPtr(
+        const eProsimaUDPSocket& socket)
 {
     return socket;
 }
