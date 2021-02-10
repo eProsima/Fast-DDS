@@ -499,6 +499,37 @@ public:
         return current_processed_count_;
     }
 
+    void check_history_content(
+            std::list<type>& expected_messages)
+    {
+        FASTDDS_SEQUENCE(DataSeq, type);
+        DataSeq data_seq;
+        eprosima::fastdds::dds::SampleInfoSeq info_seq;
+
+        ReturnCode_t success =
+                datareader_->read(data_seq, info_seq,
+                eprosima::fastdds::dds::LENGTH_UNLIMITED,
+                eprosima::fastdds::dds::ANY_SAMPLE_STATE,
+                eprosima::fastdds::dds::ANY_VIEW_STATE,
+                eprosima::fastdds::dds::ANY_INSTANCE_STATE);
+
+        if (ReturnCode_t::RETCODE_OK == success)
+        {
+            for (eprosima::fastdds::dds::LoanableCollection::size_type n = 0; n < info_seq.length(); ++n)
+            {
+                if (info_seq[n].valid_data)
+                {
+                    auto it = std::find(expected_messages.begin(), expected_messages.end(), data_seq[n]);
+                    ASSERT_NE(it, expected_messages.end());
+                    expected_messages.erase(it);
+                }
+            }
+            ASSERT_TRUE(expected_messages.empty());
+         
+            datareader_->return_loan(data_seq, info_seq);
+        }
+    }
+
     void wait_discovery(
             std::chrono::seconds timeout = std::chrono::seconds::zero(),
             unsigned int min_writers = 1)
@@ -1352,8 +1383,6 @@ private:
     {
         return participant_guid_;
     }
-
-private:
 
     void receive_one(
             eprosima::fastdds::dds::DataReader* datareader,
