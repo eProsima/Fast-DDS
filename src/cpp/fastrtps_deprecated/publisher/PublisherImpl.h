@@ -194,6 +194,14 @@ public:
      */
     void assert_liveliness();
 
+    /**
+     * Get the list of locators from which this publisher may send data.
+     *
+     * @param [out] locators  LocatorList_t where the list of locators will be stored.
+     */
+    void get_sending_locators(
+            rtps::LocatorList_t& locators) const;
+
     std::shared_ptr<rtps::IPayloadPool> payload_pool();
 
 private:
