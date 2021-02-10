@@ -1281,22 +1281,7 @@ TEST_F(DataReaderTests, read_unread)
 TEST_F(DataReaderTests, TerminateWithoutDestroyingReader)
 {
     destroy_entities_ = false;
-
-    DomainParticipant* participant =
-            DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
-    ASSERT_NE(participant, nullptr);
-
-    Subscriber* subscriber = participant->create_subscriber(SUBSCRIBER_QOS_DEFAULT);
-    ASSERT_NE(participant, nullptr);
-
-    TypeSupport type(new FooTypeSupport());
-    type.register_type(participant);
-
-    Topic* topic = participant->create_topic("footopic", type.get_type_name(), TOPIC_QOS_DEFAULT);
-    ASSERT_NE(topic, nullptr);
-
-    DataReader* datareader = subscriber->create_datareader(topic, DATAREADER_QOS_DEFAULT);
-    ASSERT_NE(datareader, nullptr);
+    create_entities();
 }
 
 void set_listener_test (
