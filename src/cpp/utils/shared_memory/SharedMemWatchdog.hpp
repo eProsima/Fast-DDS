@@ -42,7 +42,7 @@ public:
 
     static std::shared_ptr<SharedMemWatchdog>& get()
     {
-        static auto watch_dog_instance = std::shared_ptr<SharedMemWatchdog>(new SharedMemWatchdog());
+        static std::shared_ptr<SharedMemWatchdog> watch_dog_instance(new SharedMemWatchdog());
         return watch_dog_instance;
     }
 

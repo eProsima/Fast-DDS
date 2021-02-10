@@ -1003,7 +1003,7 @@ private:
 
             static std::shared_ptr<WatchTask>& get()
             {
-                static auto watch_task_instance = std::shared_ptr<WatchTask>(new WatchTask());
+                static std::shared_ptr<WatchTask> watch_task_instance(new WatchTask());
                 return watch_task_instance;
             }
 
