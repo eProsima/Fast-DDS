@@ -19,13 +19,14 @@
 #include <vector>
 #include <chrono>
 
+#include <fastdds/rtps/common/Locator.h>
+
 namespace eprosima {
 namespace fastrtps {
 namespace rtps {
 
 class RTPSParticipantImpl;
 class MessageReceiver;
-class Locator_t;
 
 /**
  * RAII object that encapsulates the Send operation over one chanel in an unknown transport.
@@ -82,6 +83,17 @@ public:
     int32_t kind() const
     {
         return transport_kind_;
+    }
+
+    /**
+     * Add locators representing the local endpoints managed by this sender resource.
+     *
+     * @param [in,out] locators  List where locators will be added.
+     */
+    virtual void add_locators_to_list(
+            LocatorList_t& locators) const
+    {
+        (void)locators;
     }
 
 protected:

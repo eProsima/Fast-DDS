@@ -15,7 +15,9 @@
 #ifndef __TRANSPORT_TCPSENDERRESOURCE_HPP__
 #define __TRANSPORT_TCPSENDERRESOURCE_HPP__
 
+#include <fastdds/rtps/common/Locator.h>
 #include <fastdds/rtps/network/SenderResource.h>
+
 #include <rtps/transport/TCPTransportInterface.h>
 #include <rtps/transport/TCPChannelResource.h>
 
@@ -25,6 +27,8 @@ namespace rtps {
 
 class TCPSenderResource : public fastrtps::rtps::SenderResource
 {
+    using LocatorList_t = eprosima::fastrtps::rtps::LocatorList_t;
+
 public:
 
     TCPSenderResource(

@@ -15,7 +15,9 @@
 #ifndef __TRANSPORT_UDPSENDERRESOURCE_HPP__
 #define __TRANSPORT_UDPSENDERRESOURCE_HPP__
 
+#include <fastdds/rtps/common/Locator.h>
 #include <fastdds/rtps/network/SenderResource.h>
+
 #include <rtps/transport/UDPTransportInterface.h>
 
 namespace eprosima {
@@ -24,6 +26,8 @@ namespace rtps {
 
 class UDPSenderResource : public fastrtps::rtps::SenderResource
 {
+    using LocatorList_t = eprosima::fastrtps::rtps::LocatorList_t;
+
 public:
 
     UDPSenderResource(
@@ -58,6 +62,12 @@ public:
         {
             clean_up();
         }
+    }
+
+    void add_locators_to_list(
+            LocatorList_t& locators) const override
+    {
+        (void)locators;
     }
 
     static UDPSenderResource* cast(
