@@ -214,6 +214,7 @@ void UDPv4Transport::endpoint_to_locator(
         ip::udp::endpoint& endpoint,
         Locator_t& locator)
 {
+    locator.kind = kind();
     IPLocator::setPhysicalPort(locator, endpoint.port());
     auto ipBytes = endpoint.address().to_v4().to_bytes();
     IPLocator::setIPv4(locator, ipBytes.data());
