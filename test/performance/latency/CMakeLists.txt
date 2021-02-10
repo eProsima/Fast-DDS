@@ -31,6 +31,7 @@ target_compile_definitions(LatencyTest PRIVATE
 target_link_libraries(
     LatencyTest
     fastrtps
+    fastcdr
     foonathan_memory
     ${CMAKE_THREAD_LIBS_INIT}
     ${CMAKE_DL_LIBS}
@@ -45,8 +46,8 @@ set(
     intraprocess_reliable
     interprocess_best_effort_udp
     interprocess_reliable_udp
-    interprocess_best_effort_tcp
-    interprocess_reliable_tcp
+#   interprocess_best_effort_tcp
+#   interprocess_reliable_tcp
     interprocess_best_effort_shm
     interprocess_reliable_shm
 )
@@ -146,13 +147,7 @@ if(PYTHONINTERP_FOUND)
                 APPEND PROPERTY ENVIRONMENT "CERTS_PATH=${PROJECT_SOURCE_DIR}/test/certs"
             )
             if(WIN32)
-                set(WIN_PATH "$ENV{PATH}")
-                set(WIN_PATH "$<TARGET_FILE_DIR:${PROJECT_NAME}>;$ENV{PATH}")
-                string(REPLACE ";" "\\;" WIN_PATH "${WIN_PATH}")
-                set_property(
-                    TEST performance.latency.${latency_test_name}_security
-                    APPEND PROPERTY ENVIRONMENT "PATH=${WIN_PATH}"
-                )
+                set_property(TEST performance.latency.${latency_test_name}_security APPEND PROPERTY ENVIRONMENT "PATH=${WIN_PATH}")
             endif()
         endif()
     endforeach(latency_test_name)

@@ -16,45 +16,63 @@
  * @file LatencyTestSubscriber.cpp
  *
  */
-
 #include "LatencyTestSubscriber.hpp"
-#include <fastdds/dds/log/Log.hpp>
-#include <fastdds/dds/log/Colors.hpp>
-#include <fastrtps/xmlparser/XMLProfileManager.h>
 
-using namespace eprosima::fastrtps;
+#include <cassert>
+
+#include <fastdds/dds/domain/DomainParticipant.hpp>
+#include <fastdds/dds/domain/DomainParticipantFactory.hpp>
+#include <fastdds/dds/log/Colors.hpp>
+#include <fastdds/dds/log/Log.hpp>
+#include <fastdds/dds/publisher/DataWriter.hpp>
+#include <fastdds/dds/subscriber/DataReader.hpp>
+#include <fastrtps/xmlparser/XMLProfileManager.h>
+#include <fastdds/rtps/common/Time_t.h>
+
 using namespace eprosima::fastrtps::rtps;
 using namespace eprosima::fastrtps::types;
+using namespace eprosima::fastdds::dds;
 
 LatencyTestSubscriber::LatencyTestSubscriber()
-    : participant_(nullptr)
-    , data_publisher_(nullptr)
-    , command_publisher_(nullptr)
-    , data_subscriber_(nullptr)
-    , command_subscriber_(nullptr)
-    , received_(0)
-    , discovery_count_(0)
-    , command_msg_count_(0)
-    , test_status_(0)
-    , echo_(true)
-    , samples_(0)
-    , latency_type_(nullptr)
-    , dynamic_data_type_(nullptr)
-    , data_pub_listener_(nullptr)
-    , data_sub_listener_(nullptr)
-    , command_pub_listener_(nullptr)
-    , command_sub_listener_(nullptr)
+    : latency_command_type_(new TestCommandDataType())
+    , data_writer_listener_(this)
+    , data_reader_listener_(this)
+    , command_writer_listener_(this)
+    , command_reader_listener_(this)
 {
-    forced_domain_ = -1;
-    data_pub_listener_.latency_publisher_ = this;
-    data_sub_listener_.latency_publisher_ = this;
-    command_pub_listener_.latency_publisher_ = this;
-    command_sub_listener_.latency_publisher_ = this;
 }
 
 LatencyTestSubscriber::~LatencyTestSubscriber()
 {
-    Domain::removeParticipant(participant_);
+    // Static type endpoints should have been remove for each payload iteration
+    if (dynamic_types_)
+    {
+        destroy_data_endpoints();
+    }
+    else if (nullptr != data_writer_
+            || nullptr != data_reader_
+            || nullptr != latency_data_pub_topic_
+            || nullptr != latency_data_sub_topic_
+            || !latency_data_type_)
+    {
+        logError(LATENCYSUBSCRIBER, "ERROR unregistering the DATA type and/or removing the endpoints");
+    }
+
+    subscriber_->delete_datareader(command_reader_);
+    participant_->delete_subscriber(subscriber_);
+
+    publisher_->delete_datawriter(command_writer_);
+    participant_->delete_publisher(publisher_);
+
+    participant_->delete_topic(latency_command_sub_topic_);
+    participant_->delete_topic(latency_command_pub_topic_);
+
+    std::string TestCommandType("TestCommandType");
+    participant_->unregister_type(TestCommandType);
+
+    DomainParticipantFactory::get_instance()->delete_participant(participant_);
+
+    logInfo(LatencyTest, "Sub: Participant removed");
 }
 
 bool LatencyTestSubscriber::init(
@@ -70,50 +88,35 @@ bool LatencyTestSubscriber::init(
         int forced_domain,
         LatencyDataSizes& latency_data_sizes)
 {
-    data_size_sub_ = latency_data_sizes.sample_sizes();
-
+    // Initialize state
     xml_config_file_ = xml_config_file;
     echo_ = echo;
     samples_ = samples;
-    dynamic_data_ = dynamic_data;
+    dynamic_types_ = dynamic_data;
     forced_domain_ = forced_domain;
+    pid_ = pid;
+    hostname_ = hostname;
 
-    // Init dynamic data
-    if (dynamic_data_)
-    {
-        // Create basic builders
-        DynamicTypeBuilder_ptr struct_type_builder(DynamicTypeBuilderFactory::get_instance()->create_struct_builder());
+    data_size_sub_ = latency_data_sizes.sample_sizes();
 
-        // Add members to the struct.
-        struct_type_builder->add_member(0, "seqnum", DynamicTypeBuilderFactory::get_instance()->create_uint32_type());
-        struct_type_builder->add_member(1, "data",
-                DynamicTypeBuilderFactory::get_instance()->create_sequence_builder(
-                    DynamicTypeBuilderFactory::get_instance()->create_byte_type(), data_size_sub_.back()
-                    ));
-        struct_type_builder->set_name("LatencyType");
-
-        dynamic_type_ = struct_type_builder->build();
-        dynamic_data_pub_sub_type_.SetDynamicType(dynamic_type_);
-    }
-
-    /* Create RTPSParticipant */
+    /* Create DomainParticipant*/
     std::string participant_profile_name = "sub_participant_profile";
-    ParticipantAttributes participant_attributes;
+    DomainParticipantQos pqos;
 
     // Default domain
-    participant_attributes.domainId = pid % 230;
+    DomainId_t domainId = pid % 230;
 
     // Default participant name
-    participant_attributes.rtps.setName("latency_test_subscriber");
-
-    participant_attributes.rtps.properties = part_property_policy;
+    pqos.name("latency_test_subscriber");
 
     // Load XML configuration
     if (xml_config_file_.length() > 0)
     {
-        if (eprosima::fastrtps::xmlparser::XMLP_ret::XML_OK !=
-                eprosima::fastrtps::xmlparser::XMLProfileManager::fillParticipantAttributes(
-                    participant_profile_name, participant_attributes))
+        if ( ReturnCode_t::RETCODE_OK !=
+                DomainParticipantFactory::get_instance()->
+                        get_participant_qos_from_profile(
+                    participant_profile_name,
+                    pqos))
         {
             return false;
         }
@@ -122,320 +125,360 @@ bool LatencyTestSubscriber::init(
     // Apply user's force domain
     if (forced_domain_ >= 0)
     {
-        participant_attributes.domainId = forced_domain_;
+        domainId = forced_domain_;
     }
 
     // If the user has specified a participant property policy with command line arguments, it overrides whatever the
     // XML configures.
     if (PropertyPolicyHelper::length(part_property_policy) > 0)
     {
-        participant_attributes.rtps.properties = part_property_policy;
+        pqos.properties(part_property_policy);
     }
 
     // Create the participant
-    participant_ = Domain::createParticipant(participant_attributes);
+    participant_ = DomainParticipantFactory::get_instance()->create_participant(domainId, pqos);
     if (participant_ == nullptr)
     {
         return false;
     }
 
-    // Register the data type
-    if (dynamic_data_)
-    {
-        Domain::registerType(participant_, &dynamic_data_pub_sub_type_);
-    }
-    else
-    {
-        Domain::registerType(participant_, (TopicDataType*)&latency_data_type_);
-    }
-
     // Register the command type
-    Domain::registerType(participant_, (TopicDataType*)&latency_command_type_);
-
-    /* Create Data Echo Publisher */
-    std::string profile_name = "sub_publisher_profile";
-    PublisherAttributes publisher_data_attributes;
-    publisher_data_attributes.topic.topicDataType = "LatencyType";
-    publisher_data_attributes.topic.topicKind = NO_KEY;
-    std::ostringstream data_pub_topic_name;
-    data_pub_topic_name << "LatencyTest_";
-    if (hostname)
+    if (ReturnCode_t::RETCODE_OK != latency_command_type_.register_type(participant_))
     {
-        data_pub_topic_name << asio::ip::host_name() << "_";
-    }
-    data_pub_topic_name << pid << "_SUB2PUB";
-    publisher_data_attributes.topic.topicName = data_pub_topic_name.str();
-    publisher_data_attributes.times.heartbeatPeriod.seconds = 0;
-    publisher_data_attributes.times.heartbeatPeriod.nanosec = 100000000;
-
-    if (!reliable)
-    {
-        publisher_data_attributes.qos.m_reliability.kind = eprosima::fastrtps::BEST_EFFORT_RELIABILITY_QOS;
-    }
-    publisher_data_attributes.properties = property_policy;
-
-    publisher_data_attributes.historyMemoryPolicy = eprosima::fastrtps::rtps::PREALLOCATED_WITH_REALLOC_MEMORY_MODE;
-
-    if (xml_config_file_.length() > 0)
-    {
-        data_publisher_ = Domain::createPublisher(participant_, profile_name,
-                        (PublisherListener*)&this->data_pub_listener_);
-    }
-    else
-    {
-        data_publisher_ = Domain::createPublisher(participant_, publisher_data_attributes,
-                        (PublisherListener*)&this->data_pub_listener_);
-    }
-
-    if (data_publisher_ == nullptr)
-    {
+        logError(LATENCYSUBSCRIBER, "ERROR registering the COMMAND type");
         return false;
     }
 
-    /* Create Data Subscriber */
-    profile_name = "sub_subscriber_profile";
-    SubscriberAttributes subscriber_data_attributes;
-    subscriber_data_attributes.topic.topicDataType = "LatencyType";
-    subscriber_data_attributes.topic.topicKind = NO_KEY;
-    std::ostringstream data_sub_topic_name;
-    data_sub_topic_name << "LatencyTest_";
-    if (hostname)
+    /* Create Publisher */
+    publisher_ = participant_->create_publisher(PUBLISHER_QOS_DEFAULT, nullptr);
+    if (publisher_ == nullptr)
     {
-        data_sub_topic_name << asio::ip::host_name() << "_";
-    }
-    data_sub_topic_name << pid << "_PUB2SUB";
-    subscriber_data_attributes.topic.topicName = data_sub_topic_name.str();
-
-    if (reliable)
-    {
-        subscriber_data_attributes.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
-    }
-    subscriber_data_attributes.properties = property_policy;
-
-    subscriber_data_attributes.historyMemoryPolicy = eprosima::fastrtps::rtps::PREALLOCATED_WITH_REALLOC_MEMORY_MODE;
-
-    if (xml_config_file_.length() > 0)
-    {
-        data_subscriber_ = Domain::createSubscriber(participant_, profile_name, &this->data_sub_listener_);
-    }
-    else
-    {
-        data_subscriber_ = Domain::createSubscriber(participant_, subscriber_data_attributes,
-                        &this->data_sub_listener_);
-    }
-
-    if (data_subscriber_ == nullptr)
-    {
+        logError(LATENCYSUBSCRIBER, "ERROR creating PUBLISHER");
         return false;
     }
 
-    /* Create Command Publisher */
-    PublisherAttributes publisher_command_attributes;
-    publisher_command_attributes.topic.topicDataType = "TestCommandType";
-    publisher_command_attributes.topic.topicKind = NO_KEY;
-    std::ostringstream command_pub_topic_name;
-    command_pub_topic_name << "LatencyTest_Command_";
-    if (hostname)
+    /* Create Subscriber */
+    subscriber_ = participant_->create_subscriber(SUBSCRIBER_QOS_DEFAULT, nullptr);
+    if (subscriber_ == nullptr)
     {
-        command_pub_topic_name << asio::ip::host_name() << "_";
-    }
-    command_pub_topic_name << pid << "_SUB2PUB";
-    publisher_command_attributes.topic.topicName = command_pub_topic_name.str();
-    publisher_command_attributes.topic.historyQos.kind =  eprosima::fastrtps::KEEP_ALL_HISTORY_QOS;
-    publisher_command_attributes.qos.m_durability.kind =  eprosima::fastrtps::TRANSIENT_LOCAL_DURABILITY_QOS;
-    publisher_command_attributes.qos.m_reliability.kind =  eprosima::fastrtps::RELIABLE_RELIABILITY_QOS;
-    publisher_command_attributes.qos.m_publishMode.kind = eprosima::fastrtps::SYNCHRONOUS_PUBLISH_MODE;
-
-    command_publisher_ = Domain::createPublisher(participant_, publisher_command_attributes,
-                    &this->command_pub_listener_);
-
-    if (command_publisher_ == nullptr)
-    {
+        logError(LATENCYSUBSCRIBER, "ERROR creating SUBSCRIBER");
         return false;
     }
 
-    /* Create Command Subscriber */
-    SubscriberAttributes subscriber_command_attributes;
-    subscriber_command_attributes.topic.topicDataType = "TestCommandType";
-    subscriber_command_attributes.topic.topicKind = NO_KEY;
-    std::ostringstream command_sub_topic_name;
-    command_sub_topic_name << "LatencyTest_Command_";
-    if (hostname)
+    /* Update DataWriterQoS with xml profile data */
+    if (xml_config_file_.length() > 0 )
     {
-        command_sub_topic_name << asio::ip::host_name() << "_";
+        std::string sub_profile_name = "sub_subscriber_profile";
+        std::string pub_profile_name = "sub_publisher_profile";
+
+        if ( ReturnCode_t::RETCODE_OK != publisher_->get_datawriter_qos_from_profile(pub_profile_name, dw_qos_))
+        {
+            logError(LATENCYSUBSCRIBER, "ERROR unable to retrieve the " << pub_profile_name << "from XML file");
+            return false;
+        }
+
+        if ( ReturnCode_t::RETCODE_OK != subscriber_->get_datareader_qos_from_profile(sub_profile_name, dr_qos_))
+        {
+            logError(LATENCYSUBSCRIBER, "ERROR unable to retrieve the " << sub_profile_name);
+            return false;
+        }
     }
-    command_sub_topic_name << pid << "_PUB2SUB";
-    subscriber_command_attributes.topic.topicName = command_sub_topic_name.str();
-    subscriber_command_attributes.topic.historyQos.kind = eprosima::fastrtps::KEEP_ALL_HISTORY_QOS;
-    subscriber_command_attributes.qos.m_reliability.kind = eprosima::fastrtps::RELIABLE_RELIABILITY_QOS;
-    subscriber_command_attributes.qos.m_durability.kind = eprosima::fastrtps::TRANSIENT_LOCAL_DURABILITY_QOS;
-
-    command_subscriber_ = Domain::createSubscriber(participant_, subscriber_command_attributes,
-                    &this->command_sub_listener_);
-
-    if (command_subscriber_ == nullptr)
-    {
-        return false;
-    }
-    return true;
-}
-
-void LatencyTestSubscriber::DataPubListener::onPublicationMatched(
-        Publisher* /*pub*/,
-        MatchingInfo& info)
-{
-    std::unique_lock<std::mutex> lock(latency_publisher_->mutex_);
-
-    if (info.status == MATCHED_MATCHING)
-    {
-        logInfo(LatencyTest, "Data Pub Matched");
-        ++latency_publisher_->discovery_count_;
-    }
+    // Create QoS Profiles
     else
     {
-        --latency_publisher_->discovery_count_;
+        ReliabilityQosPolicy rp;
+        if (reliable)
+        {
+            rp.kind = eprosima::fastrtps::RELIABLE_RELIABILITY_QOS;
+
+            RTPSReliableWriterQos rw_qos;
+            rw_qos.times.heartbeatPeriod.seconds = 0;
+            rw_qos.times.heartbeatPeriod.nanosec = 100000000;
+            dw_qos_.reliable_writer_qos(rw_qos);
+        }
+        else
+        {
+            rp.kind = eprosima::fastrtps::BEST_EFFORT_RELIABILITY_QOS;
+        }
+
+        dr_qos_.reliability(rp);
+        dw_qos_.reliability(rp);
+
+        dw_qos_.properties(property_policy);
+        dw_qos_.endpoint().history_memory_policy = MemoryManagementPolicy::PREALLOCATED_WITH_REALLOC_MEMORY_MODE;
+
+        dr_qos_.properties(property_policy);
+        dr_qos_.endpoint().history_memory_policy = MemoryManagementPolicy::PREALLOCATED_WITH_REALLOC_MEMORY_MODE;
+    }
+
+    /* Create Topics */
+    {
+        std::ostringstream topic_name;
+        topic_name.str("");
+        topic_name.clear();
+        topic_name << "LatencyTest_Command_";
+
+        if (hostname)
+        {
+            topic_name << asio::ip::host_name() << "_";
+        }
+        topic_name << pid << "_PUB2SUB";
+
+        latency_command_sub_topic_ = participant_->create_topic(
+            topic_name.str(),
+            "TestCommandType",
+            TOPIC_QOS_DEFAULT);
+
+        if (latency_command_sub_topic_ == nullptr)
+        {
+            return false;
+        }
+
+        topic_name.str("");
+        topic_name.clear();
+        topic_name << "LatencyTest_Command_";
+
+        if (hostname)
+        {
+            topic_name << asio::ip::host_name() << "_";
+        }
+        topic_name << pid << "_SUB2PUB";
+
+        latency_command_pub_topic_ = participant_->create_topic(
+            topic_name.str(),
+            "TestCommandType",
+            TOPIC_QOS_DEFAULT);
+
+        if (latency_command_pub_topic_ == nullptr)
+        {
+            return false;
+        }
+    }
+
+    /* Create Command Writer */
+    {
+        DataWriterQos cw_qos;
+        cw_qos.history().kind = KEEP_ALL_HISTORY_QOS;
+        cw_qos.durability().durabilityKind(TRANSIENT_LOCAL);
+        cw_qos.reliability().kind = RELIABLE_RELIABILITY_QOS;
+        cw_qos.publish_mode().kind = SYNCHRONOUS_PUBLISH_MODE;
+
+        command_writer_ = publisher_->create_datawriter(
+            latency_command_pub_topic_,
+            cw_qos,
+            &command_writer_listener_);
+
+        if (command_writer_ == nullptr)
+        {
+            return false;
+        }
+    }
+
+    /* Create Command Reader */
+    {
+        DataReaderQos cr_qos;
+        cr_qos.history().kind = KEEP_ALL_HISTORY_QOS;
+        cr_qos.reliability().kind = RELIABLE_RELIABILITY_QOS;
+        cr_qos.durability().durabilityKind(TRANSIENT_LOCAL);
+
+        command_reader_ = subscriber_->create_datareader(
+            latency_command_sub_topic_,
+            cr_qos,
+            &command_reader_listener_);
+
+        if (command_reader_ == nullptr)
+        {
+            return false;
+        }
+    }
+
+    // Endpoints using dynamic data endpoints span the whole test duration
+    // Static types and endpoints are created for each payload iteration
+    return dynamic_types_ ? init_dynamic_types() && create_data_endpoints() : true;
+}
+
+/*
+ * Our current inplementation of MatchedStatus info:
+ * - total_count(_change) holds the actual number of matches
+ * - current_count(_change) is a flag to signal match or unmatch.
+ *   (TODO: review if fits standard definition)
+ * */
+
+void LatencyTestSubscriber::LatencyDataWriterListener::on_publication_matched(
+        DataWriter* writer,
+        const PublicationMatchedStatus& info)
+{
+    (void)writer;
+
+    std::unique_lock<std::mutex> lock(latency_subscriber_->mutex_);
+
+    matched_ = info.total_count;
+
+    if (info.current_count_change > 0)
+    {
+        logInfo(LatencyTest, C_MAGENTA << "Data Pub Matched" << C_DEF);
     }
 
     lock.unlock();
-    latency_publisher_->discovery_cv_.notify_one();
+    latency_subscriber_->discovery_cv_.notify_one();
 }
 
-void LatencyTestSubscriber::DataSubListener::onSubscriptionMatched(
-        Subscriber* /*sub*/,
-        MatchingInfo& info)
+void LatencyTestSubscriber::LatencyDataReaderListener::on_subscription_matched(
+        DataReader* reader,
+        const SubscriptionMatchedStatus& info)
 {
-    std::unique_lock<std::mutex> lock(latency_publisher_->mutex_);
+    (void)reader;
 
-    if (info.status == MATCHED_MATCHING)
+    std::unique_lock<std::mutex> lock(latency_subscriber_->mutex_);
+
+    matched_ = info.total_count;
+
+    if (info.current_count_change > 0)
     {
-        logInfo(LatencyTest, "Data Sub Matched");
-        ++latency_publisher_->discovery_count_;
-    }
-    else
-    {
-        --latency_publisher_->discovery_count_;
+        logInfo(LatencyTest, C_MAGENTA << "Data Sub Matched" << C_DEF);
     }
 
     lock.unlock();
-    latency_publisher_->discovery_cv_.notify_one();
+    latency_subscriber_->discovery_cv_.notify_one();
 }
 
-void LatencyTestSubscriber::CommandPubListener::onPublicationMatched(
-        Publisher* /*pub*/,
-        MatchingInfo& info)
+void LatencyTestSubscriber::ComandWriterListener::on_publication_matched(
+        DataWriter* writer,
+        const PublicationMatchedStatus& info)
 {
-    std::unique_lock<std::mutex> lock(latency_publisher_->mutex_);
+    (void)writer;
 
-    if (info.status == MATCHED_MATCHING)
+    std::unique_lock<std::mutex> lock(latency_subscriber_->mutex_);
+
+    matched_ = info.total_count;
+
+    if (info.current_count_change > 0)
     {
-        logInfo(LatencyTest, "Command Pub Matched");
-        ++latency_publisher_->discovery_count_;
-    }
-    else
-    {
-        --latency_publisher_->discovery_count_;
+        logInfo(LatencyTest, C_MAGENTA << "Command Pub Matched" << C_DEF);
     }
 
     lock.unlock();
-    latency_publisher_->discovery_cv_.notify_one();
+    latency_subscriber_->discovery_cv_.notify_one();
 }
 
-void LatencyTestSubscriber::CommandSubListener::onSubscriptionMatched(
-        Subscriber* /*sub*/,
-        MatchingInfo& info)
+void LatencyTestSubscriber::CommandReaderListener::on_subscription_matched(
+        DataReader* reader,
+        const SubscriptionMatchedStatus& info)
 {
-    std::unique_lock<std::mutex> lock(latency_publisher_->mutex_);
+    (void)reader;
 
-    if (info.status == MATCHED_MATCHING)
+    std::unique_lock<std::mutex> lock(latency_subscriber_->mutex_);
+
+    matched_ = info.total_count;
+
+    if (info.current_count_change > 0)
     {
-        logInfo(LatencyTest, "Command Sub Matched");
-        ++latency_publisher_->discovery_count_;
-    }
-    else
-    {
-        --latency_publisher_->discovery_count_;
+        logInfo(LatencyTest, C_MAGENTA << "Command Sub Matched" << C_DEF);
     }
 
     lock.unlock();
-    latency_publisher_->discovery_cv_.notify_one();
+    latency_subscriber_->discovery_cv_.notify_one();
 }
 
-void LatencyTestSubscriber::CommandSubListener::onNewDataMessage(
-        Subscriber* subscriber)
+void LatencyTestSubscriber::CommandReaderListener::on_data_available(
+        DataReader* reader)
 {
     TestCommandType command;
-    if (subscriber->takeNextData(&command, &latency_publisher_->sample_info_))
-    {
-        std::cout << "RCOMMAND: " << command.m_command << std::endl;
-        if (command.m_command == READY)
-        {
-            std::cout << "Publisher has new test ready..." << std::endl;
-            latency_publisher_->mutex_.lock();
-            ++latency_publisher_->command_msg_count_;
-            latency_publisher_->mutex_.unlock();
-            latency_publisher_->command_msg_cv_.notify_one();
-        }
-        else if (command.m_command == STOP)
-        {
-            std::cout << "Publisher has stopped the test" << std::endl;
-            latency_publisher_->mutex_.lock();
-            ++latency_publisher_->command_msg_count_;
-            latency_publisher_->mutex_.unlock();
-            latency_publisher_->command_msg_cv_.notify_one();
-        }
-        else if (command.m_command == STOP_ERROR)
-        {
-            std::cout << "Publisher has canceled the test" << std::endl;
-            latency_publisher_->test_status_ = -1;
-            latency_publisher_->mutex_.lock();
-            ++latency_publisher_->command_msg_count_;
-            latency_publisher_->mutex_.unlock();
-            latency_publisher_->command_msg_cv_.notify_one();
-        }
-        else if (command.m_command == DEFAULT)
-        {
-            std::cout << "Something is wrong" << std::endl;
-        }
-    }
-}
+    SampleInfo info;
+    std::ostringstream log;
+    bool notify = false;
 
-void LatencyTestSubscriber::DataSubListener::onNewDataMessage(
-        Subscriber* subscriber)
-{
-    if (latency_publisher_->dynamic_data_)
+    if (reader->take_next_sample(
+                &command, &info) == ReturnCode_t::RETCODE_OK
+            && info.valid_data)
     {
-        subscriber->takeNextData((void*)latency_publisher_->dynamic_data_type_, &latency_publisher_->sample_info_);
-        if (latency_publisher_->echo_)
+        std::unique_lock<std::mutex> lock(latency_subscriber_->mutex_);
+
+        log << "RCOMMAND: " << command.m_command;
+        switch ( command.m_command )
         {
-            latency_publisher_->data_publisher_->write((void*)latency_publisher_->dynamic_data_type_);
+            case READY:
+                log << "Publisher has new test ready...";
+                break;
+            case STOP:
+                log << "Publisher has stopped the test";
+                break;
+            case STOP_ERROR:
+                log << "Publisher has canceled the test";
+                latency_subscriber_->test_status_ = -1;
+                break;
+            default:
+                log << "Something is wrong";
+                break;
+        }
+
+        if (command.m_command != DEFAULT)
+        {
+            ++latency_subscriber_->command_msg_count_;
+            notify = true;
+        }
+
+        lock.unlock();
+        if (notify)
+        {
+            latency_subscriber_->command_msg_cv_.notify_one();
         }
     }
     else
     {
-        subscriber->takeNextData((void*)latency_publisher_->latency_type_, &latency_publisher_->sample_info_);
-        if (latency_publisher_->echo_)
+        log << "Problem reading command message";
+    }
+
+    logInfo(LatencyTest, log.str());
+}
+
+void LatencyTestSubscriber::LatencyDataReaderListener::on_data_available(
+        DataReader* reader)
+{
+    // Bounce back the message from the Publisher as fast as possible
+    // dynamic_data_ and latency_data_type do not require locks
+    // because the command message exchange assures this calls atomicity
+
+    SampleInfo info;
+    void* data = latency_subscriber_->dynamic_types_ ?
+            (void*)latency_subscriber_->dynamic_data_ :
+            (void*)latency_subscriber_->latency_data_;
+
+    if (reader->take_next_sample(
+                data, &info) == ReturnCode_t::RETCODE_OK
+            && info.valid_data)
+    {
+        if (latency_subscriber_->echo_)
         {
-            latency_publisher_->data_publisher_->write((void*)latency_publisher_->latency_type_);
+            if (!latency_subscriber_->data_writer_->write(data))
+            {
+                logInfo(LatencyTest, "Problem echoing Publisher test data");
+            }
         }
+    }
+    else
+    {
+        logInfo(LatencyTest, "Problem reading Publisher test data");
     }
 }
 
 void LatencyTestSubscriber::run()
 {
-    // WAIT FOR THE DISCOVERY PROCESS FO FINISH:
-    // EACH SUBSCRIBER NEEDS 4 Matchings (2 publishers and 2 subscribers)
-    std::unique_lock<std::mutex> disc_lock(mutex_);
-    while (discovery_count_ != 4)
-    {
-        discovery_cv_.wait(disc_lock);
-    }
-    disc_lock.unlock();
+    // WAIT FOR THE DISCOVERY PROCESS FO FINISH ONLY FOR DYNAMIC CASE:
+    // EACH SUBSCRIBER NEEDS:
+    // DYNAMIC TYPES: 4 Matchings (2 publishers and 2 subscribers)
+    // STATIC TYPES: 2 Matchings (1 command publisher and 1 command subscriber)
+    wait_for_discovery(
+        [this]() -> bool
+        {
+            return total_matches() == (dynamic_types_ ? 4 : 2);
+        });
 
-    std::cout << C_B_MAGENTA << "Sub: DISCOVERY COMPLETE " << C_DEF << std::endl;
+    logInfo(LatencyTest, C_B_MAGENTA << "Sub: DISCOVERY COMPLETE " << C_DEF);
 
     for (std::vector<uint32_t>::iterator payload = data_size_sub_.begin(); payload != data_size_sub_.end(); ++payload)
     {
-        if (!this->test(*payload))
+        if (!test(*payload))
         {
             break;
         }
@@ -445,66 +488,345 @@ void LatencyTestSubscriber::run()
 bool LatencyTestSubscriber::test(
         uint32_t datasize)
 {
-    std::cout << "Preparing test with data size: " << datasize + 4 << std::endl;
-    if (dynamic_data_)
-    {
-        dynamic_data_type_ = DynamicDataFactory::get_instance()->create_data(dynamic_type_);
+    logInfo(LatencyTest, "Preparing test with data size: " << datasize + 4);
 
+    // Wait for the Publisher READY command
+    // Assures that LatencyTestSubscriber|Publisher data endpoints creation and
+    // destruction is sequential
+    wait_for_command(
+        [this]()
+        {
+            return command_msg_count_ != 0;
+        });
+
+    if (dynamic_types_)
+    {
+        // Create the data sample
         MemberId id;
-        DynamicData* dyn_data = dynamic_data_type_->loan_value(dynamic_data_type_->get_member_id_at_index(1));
+        dynamic_data_ = static_cast<DynamicData*>(dynamic_pub_sub_type_->createData());
+
+        if (nullptr == dynamic_data_)
+        {
+            logError(LatencyTest, "Iteration failed: Failed to create Dynamic Data");
+            return false;
+        }
+
+        // Modify the data Sample
+        DynamicData* member_data = dynamic_data_->loan_value(
+            dynamic_data_->get_member_id_at_index(1));
+
         for (uint32_t i = 0; i < datasize; ++i)
         {
-            dyn_data->insert_sequence_data(id);
-            dyn_data->set_byte_value(0, id);
+            member_data->insert_sequence_data(id);
+            member_data->set_byte_value(0, id);
         }
-        dynamic_data_type_->return_loaned_value(dyn_data);
+        dynamic_data_->return_loaned_value(member_data);
+    }
+    // Create the static type for the given buffer size and the endpoints
+    else if (init_static_types(datasize) && create_data_endpoints())
+    {
+        // Create the data sample
+        latency_data_ = static_cast<LatencyType*>(latency_data_type_.create_data());
+
+        // Wait for new endponts discovery from the LatencyTestPublisher
+        wait_for_discovery(
+            [this]() -> bool
+            {
+                return total_matches() == 4;
+            });
     }
     else
     {
-        latency_type_ = new LatencyType(datasize);
+        logError(LatencyTest, "Error preparing static types and endpoints for testing");
+        return false;
     }
 
-    std::unique_lock<std::mutex> lock(mutex_);
-    if (command_msg_count_ == 0)
-    {
-        command_msg_cv_.wait(lock);
-    }
-    --command_msg_count_;
-    lock.unlock();
-
+    // Send to Publisher the BEGIN command
     test_status_ = 0;
     received_ = 0;
     TestCommandType command;
     command.m_command = BEGIN;
-    std::cout << "Testing with data size: " << datasize + 4 << std::endl;
-    command_publisher_->write(&command);
+    if (!command_writer_->write(&command))
+    {
+        logError(LatencyTest, "Subscriber fail to publish the BEGIN command")
+        return false;
+    }
 
-    lock.lock();
-    command_msg_cv_.wait(lock, [&]()
-            {
-                return command_msg_count_ > 0;
-            });
-    --command_msg_count_;
-    lock.unlock();
+    logInfo(LatencyTest, "Testing with data size: " << datasize + 4);
 
-    std::cout << "TEST OF SIZE: " << datasize + 4 << " ENDS" << std::endl;
+    // Wait for the STOP or STOP_ERROR commands
+    wait_for_command(
+        [this]()
+        {
+            return command_msg_count_ != 0;
+        });
+
+    logInfo(LatencyTest, "TEST OF SIZE: " << datasize + 4 << " ENDS");
     std::this_thread::sleep_for(std::chrono::milliseconds(50));
 
-    size_t removed;
-    this->data_publisher_->removeAllChange(&removed);
-
-    if (dynamic_data_)
+    if (dynamic_types_)
     {
-        DynamicDataFactory::get_instance()->delete_data(dynamic_data_type_);
+        dynamic_pub_sub_type_->deleteData(dynamic_data_);
+        // DynamicDataFactory::get_instance()->delete_data(dynamic_data_);
+        //
+        // Reset history for the new test
+        size_t removed;
+        data_writer_->clear_history(&removed);
     }
     else
     {
-        delete(latency_type_);
+        latency_data_type_->deleteData(latency_data_);
+
+        // Remove endpoints associated to the given payload size
+        if (!destroy_data_endpoints())
+        {
+            logError(LatencyTest, "Static endpoints for payload size " << datasize << " could not been removed");
+        }
     }
 
     if (test_status_ == -1)
     {
         return false;
     }
+
+    command.m_command = END;
+    if (!command_writer_->write(&command))
+    {
+        logError(LatencyTest, "Subscriber fail to publish the END command")
+        return false;
+    }
+
+    // prevent the LatencyTestSubscriber from been destroyed while LatencyTestPublisher is waitin for the END command.
+    if ( ReturnCode_t::RETCODE_OK != command_writer_->wait_for_acknowledgments(eprosima::fastrtps::c_TimeInfinite))
+    {
+        logError(LatencyTest, "Subscriber fail to acknowledge the END command")
+        return false;
+    }
+
+    return true;
+}
+
+int32_t LatencyTestSubscriber::total_matches() const
+{
+    // no need to lock because is used always within a
+    // condition variable wait predicate
+
+    int32_t count = data_writer_listener_.get_matches()
+            + data_reader_listener_.get_matches()
+            + command_writer_listener_.get_matches()
+            + command_reader_listener_.get_matches();
+
+    // Each endpoint has a mirror counterpart in the LatencyTestPublisher
+    // thus, the maximun number of matches is 4
+    assert(count >= 0 && count < 5);
+    return count;
+}
+
+bool LatencyTestSubscriber::init_dynamic_types()
+{
+    assert(participant_ != nullptr);
+
+    // Check if it has been initialized before
+    if (dynamic_pub_sub_type_)
+    {
+        logError(LATENCYSUBSCRIBER, "ERROR DYNAMIC DATA type already initialized");
+        return false;
+    }
+    else if (participant_->find_type(LatencyDataType::type_name_))
+    {
+        logError(LATENCYSUBSCRIBER, "ERROR DYNAMIC DATA type already registered");
+        return false;
+    }
+
+    // Dummy type registration
+    // Create basic builders
+    DynamicTypeBuilder_ptr struct_type_builder(DynamicTypeBuilderFactory::get_instance()->create_struct_builder());
+
+    // Add members to the struct.
+    struct_type_builder->add_member(0, "seqnum", DynamicTypeBuilderFactory::get_instance()->create_uint32_type());
+    struct_type_builder->add_member(1, "data", DynamicTypeBuilderFactory::get_instance()->create_sequence_builder(
+                DynamicTypeBuilderFactory::get_instance()->create_byte_type(), BOUND_UNLIMITED));
+    struct_type_builder->set_name(LatencyDataType::type_name_);
+    dynamic_pub_sub_type_.reset(new DynamicPubSubType(struct_type_builder->build()));
+
+    // Register the data type
+    if (ReturnCode_t::RETCODE_OK != dynamic_pub_sub_type_.register_type(participant_))
+    {
+        logError(LATENCYSUBSCRIBER, "ERROR registering the DYNAMIC DATA type");
+        return false;
+    }
+
+    return true;
+}
+
+bool LatencyTestSubscriber::init_static_types(
+        uint32_t payload)
+{
+    assert(participant_ != nullptr);
+
+    // Check if it has been initialized before
+    if (latency_data_type_)
+    {
+        logError(LATENCYSUBSCRIBER, "ERROR STATIC DATA type already initialized");
+        return false;
+    }
+    else if (participant_->find_type(LatencyDataType::type_name_))
+    {
+        logError(LATENCYSUBSCRIBER, "ERROR STATIC DATA type already registered");
+        return false;
+    }
+
+    // Create the static type
+    latency_data_type_.reset(new LatencyDataType(payload));
+    // Register the static type
+    if (ReturnCode_t::RETCODE_OK != latency_data_type_.register_type(participant_))
+    {
+        logError(LATENCYSUBSCRIBER, "ERROR registering the STATIC DATA type");
+        return false;
+    }
+
+    return true;
+}
+
+bool LatencyTestSubscriber::create_data_endpoints()
+{
+    if (nullptr != latency_data_sub_topic_
+            || nullptr != latency_data_pub_topic_)
+    {
+        logError(LatencyTest, "ERROR topics already initialized");
+        return false;
+    }
+
+    if (nullptr != data_writer_)
+    {
+        logError(LatencyTest, "ERROR data_writer_ already initialized");
+        return false;
+    }
+
+    if (nullptr != data_reader_)
+    {
+        logError(LatencyTest, "ERROR data_reader_ already initialized");
+        return false;
+    }
+
+    // Create the topic
+    std::ostringstream topic_name;
+    topic_name << "LatencyTest_";
+    if (hostname_)
+    {
+        topic_name << asio::ip::host_name() << "_";
+    }
+    topic_name << pid_ << "_PUB2SUB";
+
+    latency_data_sub_topic_ = participant_->create_topic(
+        topic_name.str(),
+        LatencyDataType::type_name_,
+        TOPIC_QOS_DEFAULT);
+
+    if (nullptr == latency_data_sub_topic_)
+    {
+        logError(LatencyTest, "ERROR creating the DATA TYPE for the subscriber data reader topic");
+        return false;
+    }
+
+    /* Create Topics */
+    topic_name.str("");
+    topic_name.clear();
+    topic_name << "LatencyTest_";
+
+    if (hostname_)
+    {
+        topic_name << asio::ip::host_name() << "_";
+    }
+    topic_name << pid_ << "_SUB2PUB";
+
+    latency_data_pub_topic_ = participant_->create_topic(
+        topic_name.str(),
+        LatencyDataType::type_name_,
+        TOPIC_QOS_DEFAULT);
+
+    if (latency_data_pub_topic_ == nullptr)
+    {
+        logError(LatencyTest, "ERROR creating the DATA TYPE for the subscriber data writer topic");
+        return false;
+    }
+
+    // Create the endpoints
+    if (nullptr ==
+            (data_writer_ = publisher_->create_datawriter(
+                latency_data_pub_topic_,
+                dw_qos_,
+                &data_writer_listener_)))
+    {
+        logError(LatencyTest, "ERROR creating the subscriber data writer");
+        return false;
+    }
+
+    if (nullptr ==
+            (data_reader_ = subscriber_->create_datareader(
+                latency_data_sub_topic_,
+                dr_qos_,
+                &data_reader_listener_)))
+    {
+        logError(LatencyTest, "ERROR creating the subscriber data reader");
+        return false;
+    }
+
+    return true;
+}
+
+bool LatencyTestSubscriber::destroy_data_endpoints()
+{
+    assert(nullptr != participant_);
+    assert(nullptr != publisher_);
+    assert(nullptr != subscriber_);
+
+    // Delete the endpoints
+    if (nullptr == data_writer_
+            || ReturnCode_t::RETCODE_OK != publisher_->delete_datawriter(data_writer_))
+    {
+        logError(LatencyTest, "ERROR destroying the DataWriter");
+        return false;
+    }
+    data_writer_ = nullptr;
+    data_writer_listener_.reset();
+
+    if (nullptr == data_reader_
+            || ReturnCode_t::RETCODE_OK != subscriber_->delete_datareader(data_reader_))
+    {
+        logError(LatencyTest, "ERROR destroying the DataReader");
+        return false;
+    }
+    data_reader_ = nullptr;
+    data_reader_listener_.reset();
+
+    // Delete the Topics
+    if (nullptr == latency_data_pub_topic_
+            || ReturnCode_t::RETCODE_OK != participant_->delete_topic(latency_data_pub_topic_))
+    {
+        logError(LatencyTest, "ERROR destroying the DATA pub topic");
+        return false;
+    }
+    latency_data_pub_topic_ = nullptr;
+    if (nullptr == latency_data_sub_topic_
+            || ReturnCode_t::RETCODE_OK != participant_->delete_topic(latency_data_sub_topic_))
+    {
+        logError(LatencyTest, "ERROR destroying the DATA sub topic");
+        return false;
+    }
+    latency_data_sub_topic_ = nullptr;
+
+    // Delete the Type
+    if (ReturnCode_t::RETCODE_OK
+            != participant_->unregister_type(LatencyDataType::type_name_))
+    {
+        logError(LatencyTest, "ERROR unregistering the DATA type");
+        return false;
+    }
+
+    latency_data_type_.reset();
+    dynamic_pub_sub_type_.reset();
+    DynamicTypeBuilderFactory::delete_instance();
+
     return true;
 }
