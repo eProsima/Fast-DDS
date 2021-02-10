@@ -296,6 +296,12 @@ ReturnCode_t DataWriter::clear_history(
     return impl_->clear_history(removed);
 }
 
+ReturnCode_t DataWriter::get_sending_locators(
+        eprosima::fastrtps::rtps::LocatorList_t& locators) const
+{
+    return impl_->get_sending_locators(locators);
+}
+
 } // namespace dds
 } // namespace fastdds
 } // namespace eprosima
