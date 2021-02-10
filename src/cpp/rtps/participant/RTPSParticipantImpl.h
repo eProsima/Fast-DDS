@@ -409,6 +409,14 @@ public:
         return m_network_Factory.get_min_send_buffer_size();
     }
 
+    /**
+     * Get the list of locators from which this participant may send data.
+     *
+     * @param [out] locators  LocatorList_t where the list of locators will be stored.
+     */
+    void get_sending_locators(
+            rtps::LocatorList_t& locators) const;
+
     AsyncWriterThread& async_thread()
     {
         return async_thread_;
