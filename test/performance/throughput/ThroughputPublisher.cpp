@@ -42,13 +42,13 @@ using namespace eprosima::fastrtps::types;
 // ********************************* DATA READER LISTENER ************************************
 // *******************************************************************************************
 void ThroughputPublisher::DataWriterListener::on_publication_matched(
-                eprosima::fastdds::dds::DataWriter*,
-                const eprosima::fastdds::dds::PublicationMatchedStatus& info)
+        eprosima::fastdds::dds::DataWriter*,
+        const eprosima::fastdds::dds::PublicationMatchedStatus& info)
 {
     if (1 == info.current_count)
     {
         logInfo(THROUGHPUTPUBLISHER, C_RED << "Pub: DATA Pub Matched "
-                  << info.total_count << "/" << throughput_publisher_.subscribers_ << C_DEF);
+                                           << info.total_count << "/" << throughput_publisher_.subscribers_ << C_DEF);
     }
 
     matched_ = info.total_count;
@@ -73,7 +73,8 @@ void ThroughputPublisher::CommandReaderListener::on_subscription_matched(
     if (1 == info.current_count)
     {
         logInfo(THROUGHPUTPUBLISHER, C_RED << "Pub: COMMAND Sub Matched "
-                  << info.total_count << "/" << throughput_publisher_.subscribers_ * 2 << C_DEF);
+                                           << info.total_count << "/" << throughput_publisher_.subscribers_ * 2 <<
+                C_DEF);
     }
 
     matched_ = info.total_count;
@@ -84,13 +85,14 @@ void ThroughputPublisher::CommandReaderListener::on_subscription_matched(
 // ****************************** COMMAND WRITER LISTENER ************************************
 // *******************************************************************************************
 void ThroughputPublisher::CommandWriterListener::on_publication_matched(
-                eprosima::fastdds::dds::DataWriter*,
-                const eprosima::fastdds::dds::PublicationMatchedStatus& info)
+        eprosima::fastdds::dds::DataWriter*,
+        const eprosima::fastdds::dds::PublicationMatchedStatus& info)
 {
     if (1 == info.current_count)
     {
         logInfo(THROUGHPUTPUBLISHER, C_RED << "Pub: COMMAND Pub Matched "
-                  << info.total_count << "/" << throughput_publisher_.subscribers_ * 2 << C_DEF);
+                                           << info.total_count << "/" << throughput_publisher_.subscribers_ * 2 <<
+                C_DEF);
     }
 
     matched_ = info.total_count;
@@ -208,7 +210,7 @@ bool ThroughputPublisher::init(
     std::string profile_name = "publisher_profile";
 
     if (xml_config_file_.length() > 0
-        && ReturnCode_t::RETCODE_OK != publisher_->get_datawriter_qos_from_profile(profile_name, dw_qos_))
+            && ReturnCode_t::RETCODE_OK != publisher_->get_datawriter_qos_from_profile(profile_name, dw_qos_))
     {
         logError(THROUGHPUTPUBLISHER, "ERROR unable to retrieve the " << profile_name);
         return false;
@@ -227,9 +229,9 @@ bool ThroughputPublisher::init(
         topic_name << pid << "_SUB2PUB";
 
         command_sub_topic_ = participant_->create_topic(
-                topic_name.str(),
-                "ThroughputCommand",
-                TOPIC_QOS_DEFAULT);
+            topic_name.str(),
+            "ThroughputCommand",
+            TOPIC_QOS_DEFAULT);
 
         if (nullptr == command_sub_topic_)
         {
@@ -247,9 +249,9 @@ bool ThroughputPublisher::init(
         topic_name << pid << "_PUB2SUB";
 
         command_pub_topic_ = participant_->create_topic(
-                topic_name.str(),
-                "ThroughputCommand",
-                TOPIC_QOS_DEFAULT);
+            topic_name.str(),
+            "ThroughputCommand",
+            TOPIC_QOS_DEFAULT);
 
         if (nullptr == command_pub_topic_)
         {
@@ -288,9 +290,9 @@ bool ThroughputPublisher::init(
         cw_qos.properties(property_policy);
 
         command_writer_ = publisher_->create_datawriter(
-                command_pub_topic_,
-                cw_qos,
-                &command_writer_listener_);
+            command_pub_topic_,
+            cw_qos,
+            &command_writer_listener_);
 
         if (command_writer_ == nullptr)
         {
@@ -471,14 +473,14 @@ void ThroughputPublisher::run(
 
             if (nullptr == dynamic_data_)
             {
-                logError(THROUGHPUTPUBLISHER,"Iteration failed: Failed to create Dynamic Data");
+                logError(THROUGHPUTPUBLISHER, "Iteration failed: Failed to create Dynamic Data");
                 return;
             }
 
             // Modify the data Sample
             dynamic_data_->set_uint32_value(0, 0);
             DynamicData* member_data = dynamic_data_->loan_value(
-                    dynamic_data_->get_member_id_at_index(1));
+                dynamic_data_->get_member_id_at_index(1));
 
             for (int i = 0; i < msg_size; ++i)
             {
@@ -498,8 +500,8 @@ void ThroughputPublisher::run(
                 std::unique_lock<std::mutex> data_disc_lock(mutex_);
                 data_discovery_cv_.wait(data_disc_lock, [&]()
                         {
-                        // all command and data endpoints must be discovered
-                        return total_matches() == static_cast<int>(subscribers_ * 3);
+                            // all command and data endpoints must be discovered
+                            return total_matches() == static_cast<int>(subscribers_ * 3);
                         });
             }
             else
@@ -569,8 +571,8 @@ void ThroughputPublisher::run(
                 std::unique_lock<std::mutex> data_disc_lock(mutex_);
                 data_discovery_cv_.wait(data_disc_lock, [&]()
                         {
-                        // only command endpoints must remain
-                        return total_matches() == static_cast<int>(subscribers_ * 2);
+                            // only command endpoints must remain
+                            return total_matches() == static_cast<int>(subscribers_ * 2);
                         });
             }
 
@@ -587,7 +589,7 @@ void ThroughputPublisher::run(
         }
 
         // Wait the subscribers dispose message reception
-        while (ReturnCode_t::RETCODE_OK != command_writer_->wait_for_acknowledgments({0,1000}))
+        while (ReturnCode_t::RETCODE_OK != command_writer_->wait_for_acknowledgments({0, 1000}))
         {
             std::this_thread::sleep_for(std::chrono::milliseconds(10));
         }
@@ -635,9 +637,10 @@ bool ThroughputPublisher::test(
 
     // If the subscriber does not acknowledge the TEST_STARTS in time, we consider something went wrong.
     std::chrono::steady_clock::time_point test_start_sent_tp = std::chrono::steady_clock::now();
-    if (ReturnCode_t::RETCODE_OK != command_writer_->wait_for_acknowledgments({20,0}))
+    if (ReturnCode_t::RETCODE_OK != command_writer_->wait_for_acknowledgments({20, 0}))
     {
-        logError(THROUGHPUTPUBLISHER, "Something went wrong: The subscriber has not acknowledged the TEST_STARTS command.");
+        logError(THROUGHPUTPUBLISHER,
+                "Something went wrong: The subscriber has not acknowledged the TEST_STARTS command.");
         return false;
     }
     // Calculate how low has it takes for the subscriber to acknowledge TEST_START
@@ -689,9 +692,10 @@ bool ThroughputPublisher::test(
 
     // If the subscriber does not acknowledge the TEST_ENDS in time, we consider something went wrong.
     if (ReturnCode_t::RETCODE_OK
-            != command_writer_->wait_for_acknowledgments({20,0}))
+            != command_writer_->wait_for_acknowledgments({20, 0}))
     {
-        logError(THROUGHPUTPUBLISHER, "Something went wrong: The subscriber has not acknowledged the TEST_ENDS command.");
+        logError(THROUGHPUTPUBLISHER,
+                "Something went wrong: The subscriber has not acknowledged the TEST_ENDS command.");
         return false;
     }
 
@@ -700,9 +704,9 @@ bool ThroughputPublisher::test(
     bool results_error = false;
     while ( !results_error && num_results_received < subscribers_ )
     {
-        if (command_reader_->wait_for_unread_message({20,0})
-            && ReturnCode_t::RETCODE_OK == command_reader_->take_next_sample(&command_sample, &info)
-            && info.valid_data)
+        if (command_reader_->wait_for_unread_message({20, 0})
+                && ReturnCode_t::RETCODE_OK == command_reader_->take_next_sample(&command_sample, &info)
+                && info.valid_data)
         {
             if (command_sample.m_command == TEST_RESULTS)
             {
@@ -922,7 +926,7 @@ bool ThroughputPublisher::init_dynamic_types()
         logError(THROUGHPUTPUBLISHER, "ERROR DYNAMIC DATA type already initialized");
         return false;
     }
-    else if(participant_->find_type(ThroughputDataType::type_name_))
+    else if (participant_->find_type(ThroughputDataType::type_name_))
     {
         logError(THROUGHPUTPUBLISHER, "ERROR DYNAMIC DATA type already registered");
         return false;
@@ -950,7 +954,8 @@ bool ThroughputPublisher::init_dynamic_types()
     return true;
 }
 
-bool ThroughputPublisher::init_static_types(uint32_t payload)
+bool ThroughputPublisher::init_static_types(
+        uint32_t payload)
 {
     assert(participant_ != nullptr);
 
@@ -960,7 +965,7 @@ bool ThroughputPublisher::init_static_types(uint32_t payload)
         logError(THROUGHPUTPUBLISHER, "ERROR STATIC DATA type already initialized");
         return false;
     }
-    else if(participant_->find_type(ThroughputDataType::type_name_))
+    else if (participant_->find_type(ThroughputDataType::type_name_))
     {
         logError(THROUGHPUTPUBLISHER, "ERROR STATIC DATA type already registered");
         return false;
@@ -1002,9 +1007,9 @@ bool ThroughputPublisher::create_data_endpoints()
     topic_name << pid_ << "_UP";
 
     data_pub_topic_ = participant_->create_topic(
-            topic_name.str(),
-            ThroughputDataType::type_name_,
-            TOPIC_QOS_DEFAULT);
+        topic_name.str(),
+        ThroughputDataType::type_name_,
+        TOPIC_QOS_DEFAULT);
 
     if (nullptr == data_pub_topic_)
     {
@@ -1023,8 +1028,8 @@ bool ThroughputPublisher::create_data_endpoints()
         RTPSReliableWriterQos rw_qos;
         rw_qos.times.heartbeatPeriod.seconds = 0;
         rw_qos.times.heartbeatPeriod.nanosec = 100000000;
-        rw_qos.times.nackSupressionDuration = {0,0};
-        rw_qos.times.nackResponseDelay = {0,0};
+        rw_qos.times.nackSupressionDuration = {0, 0};
+        rw_qos.times.nackResponseDelay = {0, 0};
 
         dw_qos_.reliable_writer_qos(rw_qos);
     }
@@ -1073,7 +1078,7 @@ bool ThroughputPublisher::destroy_data_endpoints()
 
     // Delete the Type
     if (ReturnCode_t::RETCODE_OK
-            !=participant_->unregister_type(ThroughputDataType::type_name_))
+            != participant_->unregister_type(ThroughputDataType::type_name_))
     {
         logError(THROUGHPUTPUBLISHER, "ERROR unregistering the DATA type");
         return false;

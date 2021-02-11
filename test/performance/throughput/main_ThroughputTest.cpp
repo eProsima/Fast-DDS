@@ -493,7 +493,7 @@ int main(
 
         ThroughputPublisher throughput_publisher;
 
-        if(throughput_publisher.init(
+        if (throughput_publisher.init(
                     reliable,
                     seed,
                     hostname,
@@ -520,14 +520,14 @@ int main(
         ThroughputSubscriber throughput_subscriber;
 
         if (throughput_subscriber.init(
-                reliable,
-                seed,
-                hostname,
-                sub_part_property_policy,
-                sub_property_policy,
-                xml_config_file,
-                dynamic_types,
-                forced_domain))
+                    reliable,
+                    seed,
+                    hostname,
+                    sub_part_property_policy,
+                    sub_property_policy,
+                    xml_config_file,
+                    dynamic_types,
+                    forced_domain))
         {
             throughput_subscriber.run();
         }
@@ -544,7 +544,7 @@ int main(
         // Initialize publisher
         ThroughputPublisher throughput_publisher;
 
-        if(!throughput_publisher.init(
+        if (!throughput_publisher.init(
                     reliable,
                     seed,
                     hostname,
@@ -562,7 +562,7 @@ int main(
         }
 
         // Initialize subscribers
-        std::vector<std::shared_ptr<ThroughputSubscriber> > throughput_subscribers;
+        std::vector<std::shared_ptr<ThroughputSubscriber>> throughput_subscribers;
 
         bool are_subscribers_ready = true;
         for (uint32_t i = 0; i < subscribers; i++)
@@ -570,14 +570,14 @@ int main(
             throughput_subscribers.emplace_back(std::make_shared<ThroughputSubscriber>());
 
             are_subscribers_ready &= throughput_subscribers.back()->init(
-                    reliable,
-                    seed,
-                    hostname,
-                    sub_part_property_policy,
-                    sub_property_policy,
-                    xml_config_file,
-                    dynamic_types,
-                    forced_domain);
+                reliable,
+                seed,
+                hostname,
+                sub_part_property_policy,
+                sub_property_policy,
+                xml_config_file,
+                dynamic_types,
+                forced_domain);
         }
 
         // Spawn run threads

@@ -81,7 +81,8 @@ private:
 
     bool init_dynamic_types();
 
-    bool init_static_types(uint32_t payload);
+    bool init_static_types(
+            uint32_t payload);
 
     bool create_data_endpoints();
 
@@ -146,7 +147,7 @@ private:
     // Test configuration
     int forced_domain_ = 0;
     uint32_t payload_ = 0;
-    std::map<uint32_t, std::vector<uint32_t> > demand_payload_;
+    std::map<uint32_t, std::vector<uint32_t>> demand_payload_;
     std::vector<uint32_t> recovery_times_;
 
     // Files
@@ -184,6 +185,7 @@ private:
         {
             matched_ = 0;
         }
+
     }
     data_writer_listener_;
 
@@ -214,6 +216,7 @@ private:
         {
             matched_ = 0;
         }
+
     }
     command_writer_listener_;
 
@@ -243,6 +246,7 @@ private:
         {
             matched_ = 0;
         }
+
     }
     command_reader_listener_;
 };
