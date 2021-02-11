@@ -1,0 +1,4 @@
+struct HelloWorld
+{
+	string data;
+};
