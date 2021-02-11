@@ -1072,19 +1072,6 @@ ParticipantProxyData* PDP::get_participant_proxy_data(
     return nullptr;
 }
 
-bool PDP::is_known_participant(
-        const GuidPrefix_t& guid_prefix)
-{
-    for (auto pit = ParticipantProxiesBegin(); pit != ParticipantProxiesEnd(); ++pit)
-    {
-        if (guid_prefix == (*pit)->m_guid.guidPrefix)
-        {
-            return true;
-        }
-    }
-    return false;
-}
-
 std::list<eprosima::fastdds::rtps::RemoteServerAttributes>& PDP::remote_server_attributes()
 {
     return mp_builtin->m_DiscoveryServers;

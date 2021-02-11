@@ -116,10 +116,6 @@ public:
     bool areRemoteEndpointsMatched(
             const ParticipantProxyData* pdata) override;
 
-    //! Verify whether the given participant EDP endpoints are matched with us
-    bool areRemoteEndpointsMatched(
-            const GuidPrefix_t& guid_prefix) override;
-
     /**
      * This method generates the corresponding change in the subscription writer and send it to all known remote endpoints.
      * @param reader Pointer to the Reader object.

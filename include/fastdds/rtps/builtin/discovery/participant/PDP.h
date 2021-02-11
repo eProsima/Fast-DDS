@@ -358,14 +358,6 @@ public:
             const GuidPrefix_t& guid_prefix);
 
     /**
-     * Check whether a server is known, i.e. whether the client has received the server's DATA(p)
-     * @param guid_prefix The GUID prefix of the server
-     * @return True is server is known, false otherwise
-     */
-    bool is_known_participant(
-            const GuidPrefix_t& guid_prefix);
-
-    /**
      * Get the list of remote servers to which the client should connect
      * @return A reference to the list of RemoteServerAttributes
      */

@@ -121,14 +121,6 @@ public:
         return false;
     }
 
-    //! Verify whether the given participant EDP endpoints are matched with us
-    virtual bool areRemoteEndpointsMatched(
-            const GuidPrefix_t& guid_prefix)
-    {
-        static_cast<void>(guid_prefix);
-        return false;
-    }
-
     /**
      * Abstract method that removes a local Reader from the discovery method
      * @param R Pointer to the Reader to remove.

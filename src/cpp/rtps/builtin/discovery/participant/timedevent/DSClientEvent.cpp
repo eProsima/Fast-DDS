@@ -57,16 +57,20 @@ bool DSClientEvent::event()
     bool restart = false;
 
     // Iterate over remote servers to check for new unmatched servers
+    ParticipantProxyData* part_proxy_data;
     for (auto server: mp_PDP->remote_server_attributes())
     {
-        // If the server is known, it means that this client has received the server's DATA(p),
-        // which in turn means that the server has received the client's DATA(p)
-        if (mp_PDP->is_known_participant(server.guidPrefix))
+        // Get the participant proxy data of the server
+        part_proxy_data = mp_PDP->get_participant_proxy_data(server.guidPrefix);
+
+        // If the server is known (meaning the client has a proxy for it), it means that this client has
+        // received the server's DATA(p), which in turn means that the server has received the client's DATA(p)
+        if (nullptr != part_proxy_data)
         {
             // Match EDP endpoints with this server if necessary
-            if (!mp_EDP->areRemoteEndpointsMatched(server.guidPrefix))
+            if (!mp_EDP->areRemoteEndpointsMatched(part_proxy_data))
             {
-                mp_EDP->assignRemoteEndpoints(*(mp_PDP->get_participant_proxy_data(server.guidPrefix)));
+                mp_EDP->assignRemoteEndpoints(*(part_proxy_data));
             }
         }
         // If the server is not known, we need to run the event again
