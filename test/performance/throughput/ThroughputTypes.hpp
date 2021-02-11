@@ -110,7 +110,7 @@ typedef struct alignas(4) ThroughputType
     uint8_t data[1];
 
     ThroughputType(
-            uint32_t number)
+        uint32_t number)
         : seqnum(number)
     {
     }
@@ -124,6 +124,7 @@ class ThroughputDataType : public eprosima::fastrtps::TopicDataType
 {
     // Buffer size for the manage type
     const uint32_t buffer_size_;
+
 public:
 
     // This size defines the expected ThroughputType buffer size
@@ -166,8 +167,8 @@ public:
     }
 
     bool compare_data(
-        const ThroughputType& lt1,
-        const ThroughputType& lt2) const;
+            const ThroughputType& lt1,
+            const ThroughputType& lt2) const;
 
     bool is_bounded() const override
     {

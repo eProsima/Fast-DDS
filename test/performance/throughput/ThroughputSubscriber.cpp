@@ -72,11 +72,12 @@ void ThroughputSubscriber::DataReaderListener::on_subscription_matched(
     throughput_subscriber_.data_discovery_cv_.notify_one();
 }
 
-void ThroughputSubscriber::DataReaderListener::on_data_available(DataReader* reader)
+void ThroughputSubscriber::DataReaderListener::on_data_available(
+        DataReader* reader)
 {
     // In case the TSubscriber is removing entities because a TEST_ENDS msg, it waits
     auto& sub = throughput_subscriber_;
-    void * data = sub.dynamic_types_ ? (void*)sub.dynamic_data_ : (void*)sub.throughput_data_;
+    void* data = sub.dynamic_types_ ? (void*)sub.dynamic_data_ : (void*)sub.throughput_data_;
 
     if (nullptr == data)
     {
@@ -116,8 +117,8 @@ void ThroughputSubscriber::DataReaderListener::save_numbers()
 // *******************************************************************************************
 
 void ThroughputSubscriber::CommandReaderListener::on_subscription_matched(
-                DataReader*,
-                const SubscriptionMatchedStatus& info)
+        DataReader*,
+        const SubscriptionMatchedStatus& info)
 {
     if (1 == info.current_count)
     {
@@ -132,15 +133,18 @@ void ThroughputSubscriber::CommandReaderListener::on_subscription_matched(
     throughput_subscriber_.command_discovery_cv_.notify_one();
 }
 
-void ThroughputSubscriber::CommandReaderListener::on_data_available(DataReader* ) {}
+void ThroughputSubscriber::CommandReaderListener::on_data_available(
+        DataReader* )
+{
+}
 
 // *******************************************************************************************
 // *********************************** COMMAND PUB LISTENER **********************************
 // *******************************************************************************************
 
 void ThroughputSubscriber::CommandWriterListener::on_publication_matched(
-                DataWriter*,
-                const eprosima::fastdds::dds::PublicationMatchedStatus& info)
+        DataWriter*,
+        const eprosima::fastdds::dds::PublicationMatchedStatus& info)
 {
     if ( 1 == info.current_count)
     {
@@ -289,7 +293,7 @@ bool ThroughputSubscriber::init(
     std::string profile_name = "subscriber_profile";
 
     if (xml_config_file_.length() > 0
-        && ReturnCode_t::RETCODE_OK != subscriber_->get_datareader_qos_from_profile(profile_name, dr_qos_))
+            && ReturnCode_t::RETCODE_OK != subscriber_->get_datareader_qos_from_profile(profile_name, dr_qos_))
     {
         logError(THROUGHPUTSUBSCRIBER, "ERROR unable to retrieve the " << profile_name);
         return false;
@@ -308,9 +312,9 @@ bool ThroughputSubscriber::init(
         topic_name << pid << "_PUB2SUB";
 
         command_sub_topic_ = participant_->create_topic(
-                topic_name.str(),
-                "ThroughputCommand",
-                TOPIC_QOS_DEFAULT);
+            topic_name.str(),
+            "ThroughputCommand",
+            TOPIC_QOS_DEFAULT);
 
         if (nullptr == command_sub_topic_)
         {
@@ -328,9 +332,9 @@ bool ThroughputSubscriber::init(
         topic_name << pid << "_SUB2PUB";
 
         command_pub_topic_ = participant_->create_topic(
-                topic_name.str(),
-                "ThroughputCommand",
-                TOPIC_QOS_DEFAULT);
+            topic_name.str(),
+            "ThroughputCommand",
+            TOPIC_QOS_DEFAULT);
 
         if (nullptr == command_pub_topic_)
         {
@@ -369,9 +373,9 @@ bool ThroughputSubscriber::init(
         cw_qos.properties(property_policy);
 
         command_writer_ = publisher_->create_datawriter(
-                command_pub_topic_,
-                cw_qos,
-                &command_writer_listener_);
+            command_pub_topic_,
+            cw_qos,
+            &command_writer_listener_);
 
         if (command_writer_ == nullptr)
         {
@@ -402,8 +406,8 @@ int ThroughputSubscriber::process_message()
     if (command_reader_->wait_for_unread_message({100, 0}))
     {
         if (ReturnCode_t::RETCODE_OK == command_reader_->take_next_sample(
-                (void*)&command,
-                &info))
+                    (void*)&command,
+                    &info))
         {
             switch (command.m_command)
             {
@@ -427,15 +431,15 @@ int ThroughputSubscriber::process_message()
 
                         if (nullptr == dynamic_data_)
                         {
-                            logError(THROUGHPUTSUBSCRIBER,"Iteration failed: Failed to create Dynamic Data");
+                            logError(THROUGHPUTSUBSCRIBER, "Iteration failed: Failed to create Dynamic Data");
                             return 2;
                         }
 
                         // Modify the data Sample
                         DynamicData* member_data = dynamic_data_->loan_value(
-                                dynamic_data_->get_member_id_at_index(1));
+                            dynamic_data_->get_member_id_at_index(1));
 
-                        for (uint32_t i = 0; i < command.m_size ; ++i)
+                        for (uint32_t i = 0; i < command.m_size; ++i)
                         {
                             member_data->insert_sequence_data(id);
                             member_data->set_byte_value(0, id);
@@ -464,7 +468,8 @@ int ThroughputSubscriber::process_message()
                             if (dr_qos_.resource_limits().max_samples < 0 ||
                                     static_cast<uint32_t>(dr_qos_.resource_limits().max_samples) < max_demand)
                             {
-                                logWarning(THROUGHPUTSUBSCRIBER, "Setting resource limit max samples to " << max_demand);
+                                logWarning(THROUGHPUTSUBSCRIBER,
+                                        "Setting resource limit max samples to " << max_demand);
                                 dr_qos_.resource_limits().max_samples = max_demand;
                             }
                         }
@@ -483,7 +488,7 @@ int ThroughputSubscriber::process_message()
                                 std::unique_lock<std::mutex> data_disc_lock(mutex_);
                                 data_discovery_cv_.wait(data_disc_lock, [&]()
                                         {
-                                        return total_matches() == 3;
+                                            return total_matches() == 3;
                                         });
                                 std::cout << "Discovery data complete" << std::endl;
                             }
@@ -541,7 +546,7 @@ int ThroughputSubscriber::process_message()
                         // remove the data endpoints on static case
                         if (!destroy_data_endpoints())
                         {
-                            logError(THROUGHPUTSUBSCRIBER,"Iteration failed: Failed to remove static data endpoints");
+                            logError(THROUGHPUTSUBSCRIBER, "Iteration failed: Failed to remove static data endpoints");
                             return 2;
                         }
 
@@ -597,7 +602,7 @@ void ThroughputSubscriber::run()
         if (stop_count == 1)
         {
             // Here the static data endpoints and type still exists
-            while (dynamic_types_ && data_reader_->wait_for_unread_message({0,1000}))
+            while (dynamic_types_ && data_reader_->wait_for_unread_message({0, 1000}))
             {
                 std::cout << "Waiting clean state" << std::endl;
                 std::this_thread::sleep_for(std::chrono::milliseconds(10));
@@ -612,7 +617,7 @@ void ThroughputSubscriber::run()
             command_sample.m_lostsamples = data_reader_listener_.saved_lost_samples_;
 
             double total_time_count =
-                (std::chrono::duration<double, std::micro>(t_end_ - t_start_) - t_overhead_).count();
+                    (std::chrono::duration<double, std::micro>(t_end_ - t_start_) - t_overhead_).count();
 
             if (total_time_count < std::numeric_limits<uint64_t>::min())
             {
@@ -630,9 +635,9 @@ void ThroughputSubscriber::run()
             std::cout << "Last Received Sample: " << command_sample.m_lastrecsample << std::endl;
             std::cout << "Lost Samples: " << command_sample.m_lostsamples << std::endl;
             std::cout << "Samples per second: "
-                << (double)(command_sample.m_lastrecsample - command_sample.m_lostsamples) * 1000000 /
+                      << (double)(command_sample.m_lastrecsample - command_sample.m_lostsamples) * 1000000 /
                 command_sample.m_totaltime
-                << std::endl;
+                      << std::endl;
             std::cout << "Test of size " << command_sample.m_size << " and demand " << command_sample.m_demand <<
                 " ends." << std::endl;
             command_writer_->write(&command_sample);
@@ -655,7 +660,7 @@ bool ThroughputSubscriber::init_dynamic_types()
         logError(THROUGHPUTSUBSCRIBER, "ERROR DYNAMIC DATA type already initialized");
         return false;
     }
-    else if(participant_->find_type(ThroughputDataType::type_name_))
+    else if (participant_->find_type(ThroughputDataType::type_name_))
     {
         logError(THROUGHPUTSUBSCRIBER, "ERROR DYNAMIC DATA type already registered");
         return false;
@@ -683,7 +688,8 @@ bool ThroughputSubscriber::init_dynamic_types()
     return true;
 }
 
-bool ThroughputSubscriber::init_static_types(uint32_t payload)
+bool ThroughputSubscriber::init_static_types(
+        uint32_t payload)
 {
     assert(participant_ != nullptr);
 
@@ -693,7 +699,7 @@ bool ThroughputSubscriber::init_static_types(uint32_t payload)
         logError(THROUGHPUTSUBSCRIBER, "ERROR STATIC DATA type already initialized");
         return false;
     }
-    else if(participant_->find_type(ThroughputDataType::type_name_))
+    else if (participant_->find_type(ThroughputDataType::type_name_))
     {
         logError(THROUGHPUTSUBSCRIBER, "ERROR STATIC DATA type already registered");
         return false;
@@ -735,9 +741,9 @@ bool ThroughputSubscriber::create_data_endpoints()
     topic_name << pid_ << "_UP";
 
     data_sub_topic_ = participant_->create_topic(
-            topic_name.str(),
-            ThroughputDataType::type_name_,
-            TOPIC_QOS_DEFAULT);
+        topic_name.str(),
+        ThroughputDataType::type_name_,
+        TOPIC_QOS_DEFAULT);
 
     if (nullptr == data_sub_topic_)
     {
@@ -790,7 +796,7 @@ bool ThroughputSubscriber::destroy_data_endpoints()
 
     // Delete the Type
     if (ReturnCode_t::RETCODE_OK
-            !=participant_->unregister_type(ThroughputDataType::type_name_))
+            != participant_->unregister_type(ThroughputDataType::type_name_))
     {
         logError(THROUGHPUTSUBSCRIBER, "ERROR unregistering the DATA type");
         return false;
@@ -811,7 +817,7 @@ int ThroughputSubscriber::total_matches() const
             + command_reader_listener_.get_matches();
 
     // Each endpoint has a mirror counterpart in the ThroughputPublisher
-    // thus, the maximun number of matches is 3 
+    // thus, the maximun number of matches is 3
     assert(count >= 0 && count <= 3 );
     return count;
 }

@@ -70,7 +70,8 @@ private:
 
     bool init_dynamic_types();
 
-    bool init_static_types(uint32_t payload);
+    bool init_static_types(
+            uint32_t payload);
 
     bool create_data_endpoints();
 
@@ -147,7 +148,8 @@ private:
         DataReaderListener(
                 ThroughputSubscriber& throughput_subscriber)
             : throughput_subscriber_(throughput_subscriber)
-        {}
+        {
+        }
 
         void on_subscription_matched(
                 eprosima::fastdds::dds::DataReader* reader,
@@ -181,7 +183,8 @@ private:
         CommandReaderListener(
                 ThroughputSubscriber& throughput_subscriber)
             : throughput_subscriber_(throughput_subscriber)
-        {}
+        {
+        }
 
         void on_subscription_matched(
                 eprosima::fastdds::dds::DataReader* reader,
@@ -196,6 +199,7 @@ private:
         {
             return matched_;
         }
+
     }
     command_reader_listener_;
 
@@ -208,7 +212,7 @@ private:
 
         CommandWriterListener(
                 ThroughputSubscriber& throughput_subscriber)
-                : throughput_subscriber_(throughput_subscriber)
+            : throughput_subscriber_(throughput_subscriber)
         {
         }
 
@@ -220,6 +224,7 @@ private:
         {
             return matched_;
         }
+
     }
     command_writer_listener_;
 };
