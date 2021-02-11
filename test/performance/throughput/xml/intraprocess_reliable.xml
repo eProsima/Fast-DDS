@@ -65,6 +65,9 @@
                 <durability>
                     <kind>VOLATILE</kind>
                 </durability>
+                <data_sharing>
+                    <kind>OFF</kind>
+                </data_sharing>
             </qos>
         </publisher>
 
@@ -82,6 +85,9 @@
                 <reliability>
                     <kind>RELIABLE</kind>
                 </reliability>
+                <data_sharing>
+                    <kind>OFF</kind>
+                </data_sharing>
             </qos>
         </subscriber>
     </profiles>
