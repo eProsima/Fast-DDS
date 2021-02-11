@@ -179,6 +179,11 @@ private:
         {
             return matched_;
         }
+
+        void reset()
+        {
+            matched_ = 0;
+        }
     }
     data_writer_listener_;
 

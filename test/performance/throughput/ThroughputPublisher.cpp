@@ -322,7 +322,7 @@ ThroughputPublisher::~ThroughputPublisher()
     }
     else if (nullptr != data_writer_
             || nullptr != data_pub_topic_
-            || !throughput_data_type_)
+            || throughput_data_type_)
     {
         logError(THROUGHPUTPUBLISHER, "ERROR unregistering the DATA type");
         return;
@@ -362,7 +362,7 @@ void ThroughputPublisher::run(
     else
     {
         payload_ = msg_size;
-        demand_payload_[msg_size - ThroughputType::overhead].push_back(demand);
+        demand_payload_[msg_size - (uint32_t)ThroughputType::overhead].push_back(demand);
     }
 
     /* Populate the recovery times vector */
@@ -403,7 +403,7 @@ void ThroughputPublisher::run(
         std::unique_lock<std::mutex> disc_lock(mutex_);
         command_discovery_cv_.wait(disc_lock, [&]()
                 {
-                    if (dynamic_types)
+                    if (dynamic_types_)
                     {
                         // full command and data endpoints discovery
                         return total_matches() == static_cast<int>(subscribers_ * 3);
@@ -426,9 +426,9 @@ void ThroughputPublisher::run(
     {
         // Check history resources depending on the history kind and demand
         uint32_t max_demand = 0;
-        for ( auto demand : sit->second )
+        for ( auto current_demand : sit->second )
         {
-            max_demand = std::max(demand, max_demand);
+            max_demand = std::max(current_demand, max_demand);
         }
 
         if (dw_qos_.history().kind == KEEP_LAST_HISTORY_QOS)
@@ -464,7 +464,7 @@ void ThroughputPublisher::run(
 
         if (dynamic_types_)
         {
-            assert(nullptr == dynamic_data_)
+            assert(nullptr == dynamic_data_);
             // Create the data sample
             MemberId id;
             dynamic_data_ = static_cast<DynamicData*>(dynamic_pub_sub_type_->createData());
@@ -472,14 +472,15 @@ void ThroughputPublisher::run(
             if (nullptr == dynamic_data_)
             {
                 logError(THROUGHPUTPUBLISHER,"Iteration failed: Failed to create Dynamic Data");
-                return false;
+                return;
             }
 
             // Modify the data Sample
+            dynamic_data_->set_uint32_value(0, 0);
             DynamicData* member_data = dynamic_data_->loan_value(
                     dynamic_data_->get_member_id_at_index(1));
 
-            for (uint32_t i = 0; i < msg_size; ++i)
+            for (int i = 0; i < msg_size; ++i)
             {
                 member_data->insert_sequence_data(id);
                 member_data->set_byte_value(0, id);
@@ -491,7 +492,7 @@ void ThroughputPublisher::run(
             assert(nullptr == throughput_data_);
 
             // Create the data endpoints if using static types (right after modifying the QoS)
-            if (init_static_types(msg_size) && create_data_endpoints())
+            if (init_static_types(command.m_size) && create_data_endpoints())
             {
                 // Wait for the data endpoints discovery
                 std::unique_lock<std::mutex> data_disc_lock(mutex_);
@@ -510,16 +511,12 @@ void ThroughputPublisher::run(
 
             // Create the data sample
             throughput_data_ = static_cast<ThroughputType*>(throughput_data_type_.create_data());
+            throughput_data_->seqnum = 0;
         }
 
         // Iterate over burst of messages to send
         for (auto dit = sit->second.begin(); dit != sit->second.end(); ++dit)
         {
-            // signal the ThrougputSubscriber to dispose type
-            auto nextit = dit;
-            destroy_data_endpoints = ++nextit == sit->second.end();
-
-            std::this_thread::sleep_for(std::chrono::milliseconds(100));
             command.m_size = sit->first;
             command.m_demand = *dit;
 
@@ -712,8 +709,8 @@ bool ThroughputPublisher::test(
     bool results_error = false;
     while ( !results_error && num_results_received < subscribers_ )
     {
-        if (ReturnCode_t::RETCODE_OK != command_reader_->wait_for_unread_message({20,0})
-            && ReturnCode_t::RETCODE_OK != command_reader_->take_next_sample(&command_sample, &info)
+        if (command_reader_->wait_for_unread_message({20,0})
+            && ReturnCode_t::RETCODE_OK == command_reader_->take_next_sample(&command_sample, &info)
             && info.valid_data)
         {
             if (command_sample.m_command == TEST_RESULTS)
@@ -721,7 +718,7 @@ bool ThroughputPublisher::test(
                 num_results_received++;
 
                 TroughputResults result;
-                result.payload_size = msg_size + ThroughputType::overhead;
+                result.payload_size = msg_size + (uint32_t)ThroughputType::overhead;
                 result.demand = demand;
                 result.recovery_time_ms = recovery_time_ms;
 
@@ -1047,7 +1044,7 @@ bool ThroughputPublisher::create_data_endpoints()
     }
 
     // Create the endpoint
-    if (nullptr !=
+    if (nullptr ==
             (data_writer_ = publisher_->create_datawriter(
                 data_pub_topic_,
                 dw_qos_,
@@ -1107,6 +1104,6 @@ int ThroughputPublisher::total_matches() const
 
     // Each endpoint has a mirror counterpart in the ThroughputSubscriber
     // thus, the maximun number of matches is 3 * total number of subscribers
-    assert(count >= 0 && count <= 3 * subscribers_);
+    assert(count >= 0 && count <= 3 * (int)subscribers_);
     return count;
 }

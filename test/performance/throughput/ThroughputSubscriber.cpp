@@ -56,7 +56,7 @@ void ThroughputSubscriber::DataReaderListener::reset()
 
 void ThroughputSubscriber::DataReaderListener::on_subscription_matched(
         DataReader*,
-        const SubscriptionMatchedStatus& match_info)
+        const SubscriptionMatchedStatus& info)
 {
 
     if (1 == info.current_count)
@@ -76,7 +76,7 @@ void ThroughputSubscriber::DataReaderListener::on_data_available(DataReader* rea
 {
     // In case the TSubscriber is removing entities because a TEST_ENDS msg, it waits
     auto& sub = throughput_subscriber_;
-    void * data = sub.dynamic_types_ ? sub.dynamic_data_ : sub.throughput_type_;
+    void * data = sub.dynamic_types_ ? (void*)sub.dynamic_data_ : (void*)sub.throughput_data_;
 
     if (nullptr == data)
     {
@@ -84,15 +84,13 @@ void ThroughputSubscriber::DataReaderListener::on_data_available(DataReader* rea
         return;
     }
 
-    while (reader_->take_next_sample(
-                (void*)throughput_subscriber_.dynamic_data_,
-                &info_))
+    while (ReturnCode_t::RETCODE_OK == reader->take_next_sample(data, &info_))
     {
-        if (info_.sampleKind == ALIVE)
+        if (info_.valid_data)
         {
             uint32_t seq_num = sub.dynamic_types_
-                ? sub.dynamic_data_type_->get_uint32_value(0)
-                : sub.throughput_type_->seqnum;
+                ? sub.dynamic_data_->get_uint32_value(0)
+                : sub.throughput_data_->seqnum;
 
             if ((last_seq_num_ + 1) < seq_num)
             {
@@ -102,7 +100,7 @@ void ThroughputSubscriber::DataReaderListener::on_data_available(DataReader* rea
         }
         else
         {
-            std::cout << "NOT ALIVE DATA RECEIVED" << std::endl;
+            std::cout << "invalid data received" << std::endl;
         }
     }
 }
@@ -134,7 +132,7 @@ void ThroughputSubscriber::CommandReaderListener::on_subscription_matched(
     throughput_subscriber_.command_discovery_cv_.notify_one();
 }
 
-void ThroughputSubscriber::CommandReaderListener::on_data_available(DataReader* reader) {}
+void ThroughputSubscriber::CommandReaderListener::on_data_available(DataReader* ) {}
 
 // *******************************************************************************************
 // *********************************** COMMAND PUB LISTENER **********************************
@@ -161,10 +159,10 @@ void ThroughputSubscriber::CommandWriterListener::on_publication_matched(
 // ********************************** THROUGHPUT SUBSCRIBER **********************************
 // *******************************************************************************************
 
-ThroughputSubscriber::ThroughputSubscriber(
-    : data_sub_listener_(*this)
-    , command_sub_listener_(*this)
-    , command_pub_listener_(*this)
+ThroughputSubscriber::ThroughputSubscriber()
+    : data_reader_listener_(*this)
+    , command_reader_listener_(*this)
+    , command_writer_listener_(*this)
 {
 }
 
@@ -175,8 +173,8 @@ ThroughputSubscriber::~ThroughputSubscriber()
         destroy_data_endpoints();
     }
     else if (nullptr != data_reader_
-            || nullptr != data_pub_topic_
-            || !throughput_data_type_)
+            || nullptr != data_sub_topic_
+            || throughput_data_type_)
     {
         logError(THROUGHPUTSUBSCRIBER, "ERROR unregistering the DATA type");
         return;
@@ -257,8 +255,7 @@ bool ThroughputSubscriber::init(
     if (participant_ == nullptr)
     {
         std::cout << "ERROR creating participant" << std::endl;
-        ready_ = false;
-        return;
+        return false;
     }
 
     // Create the command data type
@@ -397,15 +394,18 @@ bool ThroughputSubscriber::init(
     return dynamic_types_ ? init_dynamic_types() && create_data_endpoints() : true;
 }
 
-void ThroughputSubscriber::process_message()
+int ThroughputSubscriber::process_message()
 {
+    ThroughputCommandType command;
+    SampleInfo info;
+
     if (command_reader_->wait_for_unread_message({100, 0}))
     {
-        if (command_reader_->take_next_sample(
-                (void*)&command_reader_listener_.command_type_,
-                &command_reader_listener_.info_))
+        if (ReturnCode_t::RETCODE_OK == command_reader_->take_next_sample(
+                (void*)&command,
+                &info))
         {
-            switch (command_reader_listener_.command_type_.m_command)
+            switch (command.m_command)
             {
                 case (DEFAULT):
                 {
@@ -435,7 +435,7 @@ void ThroughputSubscriber::process_message()
                         DynamicData* member_data = dynamic_data_->loan_value(
                                 dynamic_data_->get_member_id_at_index(1));
 
-                        for (uint32_t i = 0; i < command_sub_listener_.command_type_.m_size ; ++i)
+                        for (uint32_t i = 0; i < command.m_size ; ++i)
                         {
                             member_data->insert_sequence_data(id);
                             member_data->set_byte_value(0, id);
@@ -445,7 +445,7 @@ void ThroughputSubscriber::process_message()
                     else
                     {
                         // Validate QoS settings
-                        uint32_t max_demmand = command_reader_listener_.command_type_.m_demand;
+                        uint32_t max_demand = command.m_demand;
                         if (dr_qos_.history().kind == KEEP_LAST_HISTORY_QOS)
                         {
                             // Ensure that the history depth is at least the demand
@@ -471,7 +471,7 @@ void ThroughputSubscriber::process_message()
                         // Set the allocated samples to the max_samples. This is because allocated_sample must be <= max_samples
                         dr_qos_.resource_limits().allocated_samples = dr_qos_.resource_limits().max_samples;
 
-                        if (init_static_types(data_size) && create_data_endpoints())
+                        if (init_static_types(command.m_size) && create_data_endpoints())
                         {
                             assert(nullptr == throughput_data_);
                             // Create the data sample
@@ -501,12 +501,12 @@ void ThroughputSubscriber::process_message()
                 {
                     std::cout << "-----------------------------------------------------------------------" << std::endl;
                     std::cout << "Command: READY_TO_START" << std::endl;
-                    data_size_ = command_sub_listener_.command_type_.m_size;
-                    demand_ = command_sub_listener_.command_type_.m_demand;
+                    data_size_ = command.m_size;
+                    demand_ = command.m_demand;
 
                     ThroughputCommandType command_sample(BEGIN);
                     data_reader_listener_.reset();
-                    command_publisher_->write(&command_sample);
+                    command_writer_->write(&command_sample);
                     break;
                 }
                 case (TEST_STARTS):
@@ -519,7 +519,7 @@ void ThroughputSubscriber::process_message()
                 {
                     t_end_ = std::chrono::steady_clock::now();
                     std::cout << "Command: TEST_ENDS" << std::endl;
-                    data_sub_listener_.save_numbers();
+                    data_reader_listener_.save_numbers();
                     {
                         return 1; // results processing is done outside
                     }
@@ -535,13 +535,11 @@ void ThroughputSubscriber::process_message()
                     }
                     else
                     {
+                        throughput_data_type_.delete_data(throughput_data_);
+                        throughput_data_ = nullptr;
+
                         // remove the data endpoints on static case
-                        if (destroy_data_endpoints())
-                        {
-                            throughput_data_type_.delete_data(throughput_data_);
-                            throughput_type_ = nullptr;
-                        }
-                        else
+                        if (!destroy_data_endpoints())
                         {
                             logError(THROUGHPUTSUBSCRIBER,"Iteration failed: Failed to remove static data endpoints");
                             return 2;
@@ -562,6 +560,8 @@ void ThroughputSubscriber::process_message()
             }
         }
     }
+
+    return 0;
 }
 
 void ThroughputSubscriber::run()
@@ -571,7 +571,7 @@ void ThroughputSubscriber::run()
         std::unique_lock<std::mutex> disc_lock(mutex_);
         command_discovery_cv_.wait(disc_lock, [&]()
                 {
-                    if (dynamic_types)
+                    if (dynamic_types_)
                     {
                         // full command and data endpoints discovery
                         return total_matches() == 3;
@@ -579,7 +579,7 @@ void ThroughputSubscriber::run()
                     else
                     {
                         // The only endpoints present should be command ones
-                        return total_matches() == 2);
+                        return total_matches() == 2;
                     }
                 });
     }
@@ -603,9 +603,9 @@ void ThroughputSubscriber::run()
             ThroughputCommandType command_sample;
             command_sample.m_command = TEST_RESULTS;
             command_sample.m_demand = demand_;
-            command_sample.m_size = data_size_ + ThroughputType::overhead;
-            command_sample.m_lastrecsample = data_sub_listener_.saved_last_seq_num_;
-            command_sample.m_lostsamples = data_sub_listener_.saved_lost_samples_;
+            command_sample.m_size = data_size_ + (uint32_t)ThroughputType::overhead;
+            command_sample.m_lastrecsample = data_reader_listener_.saved_last_seq_num_;
+            command_sample.m_lostsamples = data_reader_listener_.saved_lost_samples_;
 
             double total_time_count =
                 (std::chrono::duration<double, std::micro>(t_end_ - t_start_) - t_overhead_).count();
@@ -638,7 +638,7 @@ void ThroughputSubscriber::run()
 
     } while (stop_count != 2);
 
-    if (!dynamic_types)
+    if (!dynamic_types_)
     {
         std::cout << "Sub Waiting for command undiscovery" << std::endl;
 
@@ -646,7 +646,7 @@ void ThroughputSubscriber::run()
         command_discovery_cv_.wait(disc_lock, [&]()
                 {
                 // The only endpoints present should be command ones
-                return total_matches() == 2);
+                return total_matches() == 2;
                 });
         std::cout << "Sub un-Discovery command complete" << std::endl;
     }
@@ -722,7 +722,7 @@ bool ThroughputSubscriber::init_static_types(uint32_t payload)
 
 bool ThroughputSubscriber::create_data_endpoints()
 {
-    if (nullptr != data_pub_topic_)
+    if (nullptr != data_sub_topic_)
     {
         logError(THROUGHPUTSUBSCRIBER, "ERROR topic already initialized");
         return false;
@@ -761,10 +761,10 @@ bool ThroughputSubscriber::create_data_endpoints()
     dr_qos_.reliability(rp);
 
     // Create the endpoint
-    if (nullptr !=
-            (data_writer_ = publisher_->create_datareader(
+    if (nullptr ==
+            (data_reader_ = subscriber_->create_datareader(
                 data_sub_topic_,
-                dw_qos_,
+                dr_qos_,
                 &data_reader_listener_)))
     {
         return false;
