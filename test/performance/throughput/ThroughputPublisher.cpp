@@ -45,21 +45,14 @@ void ThroughputPublisher::DataWriterListener::on_publication_matched(
                 eprosima::fastdds::dds::DataWriter*,
                 const eprosima::fastdds::dds::PublicationMatchedStatus& info)
 {
-    std::unique_lock<std::mutex> lock(throughput_publisher_.data_mutex_);
-
-    if (1 == info.total_count_change)
+    if (1 == info.current_count)
     {
         logInfo(THROUGHPUTPUBLISHER, C_RED << "Pub: DATA Pub Matched "
                   << info.total_count << "/" << throughput_publisher_.subscribers_ << C_DEF);
     }
 
-    if ((throughput_publisher_.data_discovery_count_ = info.total_count)
-            == static_cast<int>(throughput_publisher_.subscribers_))
-    {
-        // In case it does not enter the if, the lock will be unlock in destruction
-        lock.unlock();
-        throughput_publisher_.data_discovery_cv_.notify_one();
-    }
+    matched_ = info.total_count;
+    throughput_publisher_.data_discovery_cv_.notify_one();
 }
 
 // *******************************************************************************************
@@ -77,8 +70,6 @@ void ThroughputPublisher::CommandReaderListener::on_subscription_matched(
         eprosima::fastdds::dds::DataReader*,
         const eprosima::fastdds::dds::SubscriptionMatchedStatus& info)
 {
-    std::unique_lock<std::mutex> lock(throughput_publisher_.command_mutex_);
-
     if (1 == info.current_count)
     {
         logInfo(THROUGHPUTPUBLISHER, C_RED << "Pub: COMMAND Sub Matched "
@@ -86,7 +77,6 @@ void ThroughputPublisher::CommandReaderListener::on_subscription_matched(
     }
 
     matched_ = info.total_count;
-    lock.unlock();
     throughput_publisher_.command_discovery_cv_.notify_one();
 }
 
@@ -97,22 +87,14 @@ void ThroughputPublisher::CommandWriterListener::on_publication_matched(
                 eprosima::fastdds::dds::DataWriter*,
                 const eprosima::fastdds::dds::PublicationMatchedStatus& info)
 {
-    std::unique_lock<std::mutex> lock(throughput_publisher_.command_mutex_);
-
     if (1 == info.current_count)
     {
         logInfo(THROUGHPUTPUBLISHER, C_RED << "Pub: COMMAND Pub Matched "
                   << info.total_count << "/" << throughput_publisher_.subscribers_ * 2 << C_DEF);
     }
 
-    if ((matched_ = info.total_count)
-            == static_cast<int>(throughput_publisher_.subscribers_ * 2))
-    {
-        // In case it does not enter the if, the lock will be unlock in destruction
-        lock.unlock();
-
-        throughput_publisher_.command_discovery_cv_.notify_one();
-    }
+    matched_ = info.total_count;
+    throughput_publisher_.command_discovery_cv_.notify_one();
 }
 
 // *******************************************************************************************
@@ -418,7 +400,7 @@ void ThroughputPublisher::run(
 
     std::cout << "Pub: Waiting for command discovery" << std::endl;
     {
-        std::unique_lock<std::mutex> disc_lock(command_mutex_);
+        std::unique_lock<std::mutex> disc_lock(mutex_);
         command_discovery_cv_.wait(disc_lock, [&]()
                 {
                     if (dynamic_types)
@@ -442,59 +424,104 @@ void ThroughputPublisher::run(
     // Iterate over message sizes
     for (auto sit = demand_payload_.begin(); sit != demand_payload_.end(); ++sit)
     {
+        // Check history resources depending on the history kind and demand
+        uint32_t max_demand = 0;
+        for ( auto demand : sit->second )
+        {
+            max_demand = std::max(demand, max_demand);
+        }
+
+        if (dw_qos_.history().kind == KEEP_LAST_HISTORY_QOS)
+        {
+            // Ensure that the history depth is at least the demand
+            if (dw_qos_.history().depth < 0 ||
+                    static_cast<uint32_t>(dw_qos_.history().depth) < max_demand)
+            {
+                logWarning(THROUGHPUTPUBLISHER, "Setting history depth to " << max_demand);
+                dw_qos_.resource_limits().max_samples = max_demand;
+                dw_qos_.history().depth = max_demand;
+            }
+        }
+        // KEEP_ALL case
+        else
+        {
+            // Ensure that the max samples is at least the demand
+            if (dw_qos_.resource_limits().max_samples < 0 ||
+                    static_cast<uint32_t>(dw_qos_.resource_limits().max_samples) < max_demand)
+            {
+                logWarning(THROUGHPUTPUBLISHER, "Setting resource limit max samples to " << max_demand);
+                dw_qos_.resource_limits().max_samples = max_demand;
+            }
+        }
+        // Set the allocated samples to the max_samples. This is because allocated_sample must be <= max_samples
+        dw_qos_.resource_limits().allocated_samples = dw_qos_.resource_limits().max_samples;
+
+        // Notify the new static type to the subscribers
+        command.m_command = TYPE_NEW;
+        command.m_size = sit->first;
+        command.m_demand = max_demand;
+        command_writer_->write(&command);
+
+        if (dynamic_types_)
+        {
+            assert(nullptr == dynamic_data_)
+            // Create the data sample
+            MemberId id;
+            dynamic_data_ = static_cast<DynamicData*>(dynamic_pub_sub_type_->createData());
+
+            if (nullptr == dynamic_data_)
+            {
+                logError(THROUGHPUTPUBLISHER,"Iteration failed: Failed to create Dynamic Data");
+                return false;
+            }
+
+            // Modify the data Sample
+            DynamicData* member_data = dynamic_data_->loan_value(
+                    dynamic_data_->get_member_id_at_index(1));
+
+            for (uint32_t i = 0; i < msg_size; ++i)
+            {
+                member_data->insert_sequence_data(id);
+                member_data->set_byte_value(0, id);
+            }
+            dynamic_data_->return_loaned_value(member_data);
+        }
+        else
+        {
+            assert(nullptr == throughput_data_);
+
+            // Create the data endpoints if using static types (right after modifying the QoS)
+            if (init_static_types(msg_size) && create_data_endpoints())
+            {
+                // Wait for the data endpoints discovery
+                std::unique_lock<std::mutex> data_disc_lock(mutex_);
+                data_discovery_cv_.wait(data_disc_lock, [&]()
+                        {
+                        // all command and data endpoints must be discovered
+                        return total_matches() == static_cast<int>(subscribers_ * 3);
+                        });
+            }
+            else
+            {
+                logError(THROUGHPUTPUBLISHER, "Error preparing static types and endpoints for testing");
+                test_failure = true;
+                break;
+            }
+
+            // Create the data sample
+            throughput_data_ = static_cast<ThroughputType*>(throughput_data_type_.create_data());
+        }
+
         // Iterate over burst of messages to send
         for (auto dit = sit->second.begin(); dit != sit->second.end(); ++dit)
         {
+            // signal the ThrougputSubscriber to dispose type
+            auto nextit = dit;
+            destroy_data_endpoints = ++nextit == sit->second.end();
+
             std::this_thread::sleep_for(std::chrono::milliseconds(100));
             command.m_size = sit->first;
             command.m_demand = *dit;
-
-            // Check history resources depending on the history kind and demand
-            if (dw_qos_.history().kind == KEEP_LAST_HISTORY_QOS)
-            {
-                // Ensure that the history depth is at least the demand
-                if (dw_qos_.history().depth < 0 ||
-                        static_cast<uint32_t>(dw_qos_.history().depth) < command.m_demand)
-                {
-                    logWarning(THROUGHPUTPUBLISHER, "Setting history depth to " << command.m_demand);
-                    dw_qos_.resource_limits().max_samples = command.m_demand;
-                    dw_qos_.history().depth = command.m_demand;
-                }
-            }
-            // KEEP_ALL case
-            else
-            {
-                // Ensure that the max samples is at least the demand
-                if (dw_qos_.resource_limits().max_samples < 0 ||
-                        static_cast<uint32_t>(dw_qos_.resource_limits().max_samples) < command.m_demand)
-                {
-                    logWarning(THROUGHPUTPUBLISHER, "Setting resource limit max samples to " << command.m_demand);
-                    dw_qos_.resource_limits().max_samples = command.m_demand;
-                }
-            }
-            // Set the allocated samples to the max_samples. This is because allocated_sample must be <= max_samples
-            dw_qos_.resource_limits().allocated_samples = dw_qos_.resource_limits().max_samples;
-
-            // Create the data endpoints if using static types (right after modifying the QoS)
-            if (!dynamic_types_)
-            {
-                if (init_static_types(msg_size) && create_data_endpoints())
-                {
-                    // Wait for the data endpoints discovery
-                    std::unique_lock<std::mutex> data_disc_lock(data_mutex_);
-                    data_discovery_cv_.wait(data_disc_lock, [&]()
-                            {
-                            // all command and data endpoints must be discovered
-                            return total_matches() == static_cast<int>(subscribers_ * 3);
-                            });
-                }
-                else
-                {
-                    logError(THROUGHPUTPUBLISHER, "Error preparing static types and endpoints for testing");
-                    test_failure = true;
-                    break;
-                }
-            }
 
             for (uint16_t i = 0; i < recovery_times_.size(); i++)
             {
@@ -516,17 +543,6 @@ void ThroughputPublisher::run(
                     }
                 }
 
-                if (!dynamic_types_)
-                {
-                    // Wait all subscribers data endpoint availability
-                    std::unique_lock<std::mutex> disc_lock(command_mutex_);
-                    command_discovery_cv_.wait(disc_lock,
-                            [&]()
-                            {
-                            return total_matches() == static_cast<int>(subscribers_ * 3);
-                            });
-                }
-
                 // run this test iteration test
                 if (!test(test_time, recovery_times_[i], *dit, sit->first))
                 {
@@ -534,27 +550,38 @@ void ThroughputPublisher::run(
                     break;
                 }
             }
+        }
+
+        // Notify the current type will no longer be used
+        command.m_command = TYPE_DISPOSE;
+        command.m_size = sit->first;
+        command.m_demand = max_demand;
+        command_writer_->write(&command);
+
+        // Delete the Data Sample
+        if (dynamic_types_)
+        {
+            DynamicDataFactory::get_instance()->delete_data(dynamic_data_);
+            dynamic_data_ = nullptr;
+        }
+        else
+        {
+            throughput_data_type_.delete_data(throughput_data_);
+            throughput_data_ = nullptr;
 
             // Destroy the data endpoints if using static types
-            if (!dynamic_types_)
+            if (!destroy_data_endpoints())
             {
-                if (destroy_data_endpoints())
-                {
-                    // Wait till all subscriber's endpoints are removed
-                    std::unique_lock<std::mutex> data_disc_lock(data_mutex_);
-                    data_discovery_cv_.wait(data_disc_lock, [&]()
-                            {
-                            // only command endpoints must be discovered
-                            return total_matches() == static_cast<int>(subscribers_ * 2);
-                            });
-                }
-                else
-                {
-                    logError(THROUGHPUTPUBLISHER, "Error removing static types and endpoints for testing");
-                    test_failure = true;
-                    break;
-                }
+                logError(THROUGHPUTPUBLISHER, "Error removing static types and endpoints for testing");
+                test_failure = true;
+                break;
             }
+        }
+
+        // Wait the subscribers dispose message reception
+        while (ReturnCode_t::RETCODE_OK != command_writer_->wait_for_acknowledgments({0,1000}))
+        {
+            std::this_thread::sleep_for(std::chrono::milliseconds(10));
         }
     }
 
@@ -579,7 +606,7 @@ void ThroughputPublisher::run(
         // Wait for the disposal of all ThroughputSubscriber publishers and subscribers. Wait for 5s, checking status
         // every 100 ms. If after 5 s the entities have not been disposed, shutdown ThroughputPublisher without
         // receiving them.
-        std::unique_lock<std::mutex> disc_lock(command_mutex_);
+        std::unique_lock<std::mutex> disc_lock(mutex_);
         for (uint16_t i = 0; i <= 50; i++)
         {
             if (command_discovery_cv_.wait_for(disc_lock, std::chrono::milliseconds(100),
@@ -604,35 +631,6 @@ bool ThroughputPublisher::test(
 {
     // This method expects all data and command endpoints matched
     assert(total_matches() == static_cast<int>(subscribers_ * 3));
-
-    if (dynamic_types_)
-    {
-        // Create the data sample
-        MemberId id;
-        dynamic_data_ = static_cast<DynamicData*>(dynamic_pub_sub_type_->createData());
-
-        if (nullptr == dynamic_data_)
-        {
-            logError(THROUGHPUTPUBLISHER,"Iteration failed: Failed to create Dynamic Data");
-            return false;
-        }
-
-        // Modify the data Sample
-        DynamicData* member_data = dynamic_data_->loan_value(
-                dynamic_data_->get_member_id_at_index(1));
-
-        for (uint32_t i = 0; i < msg_size; ++i)
-        {
-            member_data->insert_sequence_data(id);
-            member_data->set_byte_value(0, id);
-        }
-        dynamic_data_->return_loaned_value(member_data);
-    }
-    else
-    {
-        // Create the data sample
-        throughput_data_ = static_cast<ThroughputType*>(throughput_data_type_.create_data());
-    }
 
     // Declare test time variables
     std::chrono::duration<double, std::micro> clock_overhead(0);
@@ -707,17 +705,6 @@ bool ThroughputPublisher::test(
     {
         logError(THROUGHPUTPUBLISHER, "Something went wrong: The subscriber has not acknowledged the TEST_ENDS command.");
         return false;
-    }
-
-    // Delete the Data Sample
-    if (dynamic_types_)
-    {
-        DynamicDataFactory::get_instance()->delete_data(dynamic_data_);
-    }
-    else
-    {
-        throughput_data_type_.delete_data(throughput_data_);
-        // the data endpoints are not removed because they may be used in the next iteration
     }
 
     // Results processing

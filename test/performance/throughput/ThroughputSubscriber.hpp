@@ -76,7 +76,8 @@ private:
 
     bool destroy_data_endpoints();
 
-    void process_message();
+    // return value: 0 - Continuing test, 1 - End of a test, 2 - Finish application
+    int process_message();
 
     int total_matches() const;
 
@@ -94,9 +95,7 @@ private:
     std::chrono::duration<double, std::micro> t_overhead_;
 
     // Test synchronization
-    std::mutex command_mutex_;
-    // Block data input processing in Listeners
-    std::mutex data_mutex_;
+    std::mutex mutex_;
     std::condition_variable command_discovery_cv_;
     std::condition_variable data_discovery_cv_;
     uint32_t command_discovery_count_ = 0;
@@ -124,7 +123,6 @@ private:
     bool reliable_ = false;
     bool hostname _ = false;
     uint32_t pid_ = 0;
-    int stop_count_ = 0;  //! 0 - Continuing test, 1 - End of a test, 2 - Finish application
 
     // Test configuration
     uint32_t data_size_ = 0;
