@@ -37,12 +37,10 @@ private:
 
 public:
 
-    ~TopicPayloadPoolRegistry() = default;
-
     /// @return reference to singleton instance
-    static TopicPayloadPoolRegistry& instance()
+    static const std::shared_ptr<TopicPayloadPoolRegistry>& instance()
     {
-        static TopicPayloadPoolRegistry pool_registry_instance;
+        static std::shared_ptr<TopicPayloadPoolRegistry> pool_registry_instance(new TopicPayloadPoolRegistry());
         return pool_registry_instance;
     }
 
