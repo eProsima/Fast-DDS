@@ -113,8 +113,7 @@ private:
     std::chrono::duration<double, std::micro> t_overhead_;
 
     // Test synchronization
-    std::mutex command_mutex_;
-    std::mutex data_mutex_;
+    std::mutex mutex_;
     std::condition_variable command_discovery_cv_;
     std::condition_variable data_discovery_cv_;
 

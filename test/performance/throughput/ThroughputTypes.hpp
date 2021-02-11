@@ -192,6 +192,8 @@ enum e_Command : uint32_t
     BEGIN,
     TEST_STARTS,
     TEST_ENDS,
+    TYPE_NEW,
+    TYPE_DISPOSE,
     ALL_STOPS,
     TEST_RESULTS
 };
