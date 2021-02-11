@@ -107,13 +107,13 @@ private:
     eprosima::fastdds::dds::Topic* command_sub_topic_ = nullptr;
 
     // Data and commands
-    eprosima::fastdds::dds::TypeSupport throuput_command_type_;
+    eprosima::fastdds::dds::TypeSupport throughput_command_type_;
     // Static Data
     ThroughputType* throughput_data_ = nullptr;
     eprosima::fastdds::dds::TypeSupport throughput_data_type_;
     // Dynamic Data
     eprosima::fastrtps::types::DynamicData* dynamic_data_ = nullptr;
-    eprosima::fastrtps::types::DynamicPubSubType dynamic_pub_sub_type_;
+    eprosima::fastdds::dds::TypeSupport dynamic_pub_sub_type_;
     // QoS Profiles
     eprosima::fastdds::dds::DataReaderQos dr_qos_;
 
@@ -121,7 +121,7 @@ private:
     bool dynamic_types_ = false;
     bool ready_ = true;
     bool reliable_ = false;
-    bool hostname _ = false;
+    bool hostname_ = false;
     uint32_t pid_ = 0;
 
     // Test configuration
@@ -174,8 +174,6 @@ private:
     class CommandReaderListener : public eprosima::fastdds::dds::DataReaderListener
     {
         ThroughputSubscriber& throughput_subscriber_;
-        ThroughputCommandType command_type_;
-        eprosima::fastdds::dds::SampleInfo info_;
         int matched_ = 0;
 
     public:

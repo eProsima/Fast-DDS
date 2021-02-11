@@ -22,7 +22,7 @@
 #include <cstring>
 #include <cstddef>
 
-const size_t ThroughputDataType::overhead = offsetof(ThroughputDataType, data);
+const size_t ThroughputType::overhead = offsetof(ThroughputType, data);
 const std::string ThroughputDataType::type_name_ = "ThroughputType";
 
 using namespace eprosima::fastrtps;

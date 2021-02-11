@@ -567,9 +567,9 @@ int main(
         bool are_subscribers_ready = true;
         for (uint32_t i = 0; i < subscribers; i++)
         {
-            throughput_subscribers.emplace_back();
+            throughput_subscribers.emplace_back(std::make_shared<ThroughputSubscriber>());
 
-            are_subscribers_ready &= throughput_subscribers.back().init(
+            are_subscribers_ready &= throughput_subscribers.back()->init(
                     reliable,
                     seed,
                     hostname,
