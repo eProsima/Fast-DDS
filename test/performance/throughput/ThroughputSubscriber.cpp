@@ -535,8 +535,8 @@ int ThroughputSubscriber::process_message()
                     }
                     else
                     {
-                        throughput_data_type_.delete_data(throughput_data_);
-                        throughput_data_ = nullptr;
+                        // remove the data after destroy the endpoints to avoid callback issues
+                        auto data_type = throughput_data_type_;
 
                         // remove the data endpoints on static case
                         if (!destroy_data_endpoints())
@@ -544,6 +544,10 @@ int ThroughputSubscriber::process_message()
                             logError(THROUGHPUTSUBSCRIBER,"Iteration failed: Failed to remove static data endpoints");
                             return 2;
                         }
+
+                        // data removal
+                        data_type.delete_data(throughput_data_);
+                        throughput_data_ = nullptr;
                     }
                     break;
                 }
@@ -637,19 +641,6 @@ void ThroughputSubscriber::run()
         }
 
     } while (stop_count != 2);
-
-    if (!dynamic_types_)
-    {
-        std::cout << "Sub Waiting for command undiscovery" << std::endl;
-
-        std::unique_lock<std::mutex> disc_lock(mutex_);
-        command_discovery_cv_.wait(disc_lock, [&]()
-                {
-                // The only endpoints present should be command ones
-                return total_matches() == 2;
-                });
-        std::cout << "Sub un-Discovery command complete" << std::endl;
-    }
 
     return;
 }

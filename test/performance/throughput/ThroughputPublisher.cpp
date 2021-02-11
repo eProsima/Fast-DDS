@@ -598,26 +598,6 @@ void ThroughputPublisher::run(
     {
         std::cout << "ALL_STOPS Not acked! in 20(s)" << std::endl;
     }
-    else if (!dynamic_types_)
-    {
-        // Wait for the disposal of all ThroughputSubscriber publishers and subscribers. Wait for 5s, checking status
-        // every 100 ms. If after 5 s the entities have not been disposed, shutdown ThroughputPublisher without
-        // receiving them.
-        std::unique_lock<std::mutex> disc_lock(mutex_);
-        for (uint16_t i = 0; i <= 50; i++)
-        {
-            if (command_discovery_cv_.wait_for(disc_lock, std::chrono::milliseconds(100),
-                    [&]()
-                    {
-                        // only the command endpoints will remain in this case
-                        return total_matches() == static_cast<int>(subscribers_ * 2);
-                    }))
-            {
-                std::cout << "Pub: All ThroughputSubscriber data endpoints are unmatched" << std::endl;
-                break;
-            }
-        }
-    }
 }
 
 bool ThroughputPublisher::test(
