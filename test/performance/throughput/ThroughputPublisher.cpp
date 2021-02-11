@@ -563,6 +563,17 @@ void ThroughputPublisher::run(
         }
         else
         {
+            // await confirmation of subscriber endpoint removal before
+            // destroying the data endpoints
+            {
+                std::unique_lock<std::mutex> data_disc_lock(mutex_);
+                data_discovery_cv_.wait(data_disc_lock, [&]()
+                        {
+                        // only command endpoints must remain
+                        return total_matches() == static_cast<int>(subscribers_ * 2);
+                        });
+            }
+
             throughput_data_type_.delete_data(throughput_data_);
             throughput_data_ = nullptr;
 
