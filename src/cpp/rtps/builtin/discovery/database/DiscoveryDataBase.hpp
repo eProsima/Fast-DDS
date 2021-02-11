@@ -326,15 +326,20 @@ public:
         data_queues_mutex_.unlock();
     }
 
+    // Return string with virtual topic default name
     std::string virtual_topic() const
     {
         return virtual_topic_;
     }
 
+    // Return number of updated entities since last call to this same function
     int updates_since_last_checked()
     {
         return new_updates_.exchange(0);
     }
+
+    // Check if an participant is stored as local. If the participant does not exist, it returns false
+    bool is_participant_local(const eprosima::fastrtps::rtps::GuidPrefix_t& participant_prefix);
 
 protected:
 

@@ -2510,6 +2510,16 @@ void DiscoveryDataBase::persistence_enable(
     backup_file_.open(backup_file_name_, std::ios::app);
 }
 
+bool DiscoveryDataBase::is_participant_local(const eprosima::fastrtps::rtps::GuidPrefix_t& participant_prefix)
+{
+    auto pit = participants_.find(participant_prefix);
+    if (pit != participants_.end())
+    {
+        return pit->second.is_local();
+    }
+    return false; // In case it does not exist
+}
+
 } // namespace ddb
 } // namespace rtps
 } // namespace fastdds
