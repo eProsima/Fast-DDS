@@ -553,6 +553,13 @@ int ThroughputSubscriber::process_message()
                         // data removal
                         data_type.delete_data(throughput_data_);
                         throughput_data_ = nullptr;
+
+                        // announced the endpoints associated to the data type are removed
+                        ThroughputCommandType command_sample(TYPE_REMOVED);
+                        command_writer_->write(&command_sample);
+
+                        // we don't need to wait acknowledgement of the above message because ThroughputPublisher
+                        // will only send ALL_STOPS when it's received
                     }
                     break;
                 }

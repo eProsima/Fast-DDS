@@ -67,8 +67,8 @@ void ThroughputPublisher::DataWriterListener::on_publication_matched(
  * */
 
 void ThroughputPublisher::CommandReaderListener::on_subscription_matched(
-        eprosima::fastdds::dds::DataReader*,
-        const eprosima::fastdds::dds::SubscriptionMatchedStatus& info)
+        DataReader*,
+        const SubscriptionMatchedStatus& info)
 {
     if (1 == info.current_count)
     {
@@ -531,14 +531,14 @@ void ThroughputPublisher::run(
                 command_writer_->write(&command);
 
                 // wait till subscribers are rigged
-                uint32_t subscribers_ready_ = 0;
-                while (subscribers_ready_ < subscribers_)
+                uint32_t subscribers_ready = 0;
+                while (subscribers_ready < subscribers_)
                 {
                     command_reader_->wait_for_unread_message({20, 0});
                     command_reader_->take_next_sample(&command, &info);
                     if (info.valid_data && command.m_command == BEGIN)
                     {
-                        ++subscribers_ready_;
+                        ++subscribers_ready;
                     }
                 }
 
@@ -565,17 +565,6 @@ void ThroughputPublisher::run(
         }
         else
         {
-            // await confirmation of subscriber endpoint removal before
-            // destroying the data endpoints
-            {
-                std::unique_lock<std::mutex> data_disc_lock(mutex_);
-                data_discovery_cv_.wait(data_disc_lock, [&]()
-                        {
-                            // only command endpoints must remain
-                            return total_matches() == static_cast<int>(subscribers_ * 2);
-                        });
-            }
-
             throughput_data_type_.delete_data(throughput_data_);
             throughput_data_ = nullptr;
 
@@ -586,12 +575,18 @@ void ThroughputPublisher::run(
                 test_failure = true;
                 break;
             }
-        }
 
-        // Wait the subscribers dispose message reception
-        while (ReturnCode_t::RETCODE_OK != command_writer_->wait_for_acknowledgments({0, 1000}))
-        {
-            std::this_thread::sleep_for(std::chrono::milliseconds(10));
+            // wait till subscribers are rigged
+            uint32_t subscribers_ready = 0;
+            while (subscribers_ready < subscribers_)
+            {
+                command_reader_->wait_for_unread_message({20, 0});
+                command_reader_->take_next_sample(&command, &info);
+                if (info.valid_data && command.m_command == TYPE_REMOVED)
+                {
+                    ++subscribers_ready;
+                }
+            }
         }
     }
 
