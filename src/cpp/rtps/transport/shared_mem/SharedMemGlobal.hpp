@@ -127,7 +127,7 @@ public:
 
         PortNode* node_;
 
-        std::unique_ptr<MultiProducerConsumerRingBuffer<BufferDescriptor> > buffer_;
+        std::unique_ptr<MultiProducerConsumerRingBuffer<BufferDescriptor>> buffer_;
 
         uint64_t overflows_count_;
 
@@ -209,7 +209,7 @@ public:
 
         private:
 
-            std::vector<std::shared_ptr<PortContext> > watched_ports_;
+            std::vector<std::shared_ptr<PortContext>> watched_ports_;
             std::mutex watched_ports_mutex_;
 
             // Keep a reference to the SharedMemWatchdog so that it is not destroyed until this instance is destroyed
@@ -393,7 +393,7 @@ public:
             auto buffer_node = static_cast<MultiProducerConsumerRingBuffer<BufferDescriptor>::Node*>(
                 port_segment_->get_address_from_offset(node_->buffer_node));
 
-            buffer_ = std::unique_ptr<MultiProducerConsumerRingBuffer<BufferDescriptor> >(
+            buffer_ = std::unique_ptr<MultiProducerConsumerRingBuffer<BufferDescriptor>>(
                 new MultiProducerConsumerRingBuffer<BufferDescriptor>(buffer_base, buffer_node));
 
             node_->ref_counter.fetch_add(1);
