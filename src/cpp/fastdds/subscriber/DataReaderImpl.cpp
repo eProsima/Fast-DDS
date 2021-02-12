@@ -979,32 +979,6 @@ bool DataReaderImpl::lifespan_expired()
     return false;
 }
 
-/* TODO
-   bool DataReaderImpl::read(
-        std::vector<void *>& data_values,
-        std::vector<SampleInfo_t>& sample_infos,
-        uint32_t max_samples)
-   {
-    (void)data_values;
-    (void)sample_infos;
-    (void)max_samples;
-    // TODO Implement
-    return false;
-   }
-
-   bool DataReaderImpl::take(
-        std::vector<void *>& data_values,
-        std::vector<SampleInfo_t>& sample_infos,
-        uint32_t max_samples)
-   {
-    (void)data_values;
-    (void)sample_infos;
-    (void)max_samples;
-    // TODO Implement
-    return false;
-   }
- */
-
 ReturnCode_t DataReaderImpl::set_listener(
         DataReaderListener* listener)
 {
