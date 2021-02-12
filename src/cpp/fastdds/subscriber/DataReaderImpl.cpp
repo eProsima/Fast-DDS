@@ -96,6 +96,22 @@ static bool collections_have_same_properties(
            (data_values.length() == sample_infos.length()));
 }
 
+static bool qos_has_unique_network_request(
+        const DataReaderQos& qos)
+{
+    const std::string* value = PropertyPolicyHelper::find_property(qos.properties(), "fastdds.unique_network_flows");
+    return value && !value->empty();
+}
+
+static bool qos_has_specific_locators(
+        const DataReaderQos& qos)
+{
+    const RTPSEndpointQos& endpoint = qos.endpoint();
+    return !endpoint.unicast_locator_list.empty() ||
+           !endpoint.multicast_locator_list.empty() ||
+           !endpoint.remote_locator_list.empty();
+}
+
 DataReaderImpl::DataReaderImpl(
         SubscriberImpl* s,
         TypeSupport& type,
@@ -1143,6 +1159,11 @@ ReturnCode_t DataReaderImpl::check_qos (
         logError(DDS_QOS_CHECK, "max_samples_per_read should be strictly possitive");
         return ReturnCode_t::RETCODE_INCONSISTENT_POLICY;
     }
+    if (qos_has_unique_network_request(qos) && qos_has_specific_locators(qos))
+    {
+        logError(DDS_QOS_CHECK, "unique_network_request cannot be set along specific locators");
+        return ReturnCode_t::RETCODE_INCONSISTENT_POLICY;
+    }
     return ReturnCode_t::RETCODE_OK;
 }
 
@@ -1209,6 +1230,12 @@ bool DataReaderImpl::can_qos_be_updated(
     {
         updatable = false;
         logWarning(RTPS_QOS_CHECK, "Data sharing configuration cannot be changed after the creation of a DataReader.");
+    }
+    if (qos_has_unique_network_request(to) != qos_has_unique_network_request(from))
+    {
+        updatable = false;
+        logWarning(RTPS_QOS_CHECK,
+                "Unique network flows request cannot be changed after the creation of a DataReader.");
     }
     return updatable;
 }
