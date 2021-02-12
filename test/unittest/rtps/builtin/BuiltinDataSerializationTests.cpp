@@ -112,15 +112,11 @@ TEST(BuiltinDataSerializationTests, ignore_unsupported_type_info)
             0x01, 0x00, 0x00, 0x00
         };
 
-        SerializedPayload_t payload;
-        payload.length = sizeof(data_w_buffer);
-        payload.data = data_w_buffer;
-        CDRMessage_t msg(payload);
+        CDRMessage_t msg(0);
+        msg.init(data_w_buffer, static_cast<uint32_t>(sizeof(data_w_buffer)));
+
         WriterProxyData out(max_unicast_locators, max_multicast_locators);
-
         EXPECT_NO_THROW(EXPECT_TRUE(out.readFromCDRMessage(&msg, network, false)));
-
-        payload.data = nullptr;
     }
 
     // DATA(r)
@@ -167,15 +163,11 @@ TEST(BuiltinDataSerializationTests, ignore_unsupported_type_info)
             0x01, 0x00, 0x00, 0x00
         };
 
-        SerializedPayload_t payload;
-        payload.length = sizeof(data_r_buffer);
-        payload.data = data_r_buffer;
-        CDRMessage_t msg(payload);
+        CDRMessage_t msg(0);
+        msg.init(data_r_buffer, static_cast<uint32_t>(sizeof(data_r_buffer)));
+
         ReaderProxyData out(max_unicast_locators, max_multicast_locators);
-
         EXPECT_NO_THROW(EXPECT_TRUE(out.readFromCDRMessage(&msg, network, false)));
-
-        payload.data = nullptr;
     }
 }
 
