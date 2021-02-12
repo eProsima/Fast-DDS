@@ -983,14 +983,14 @@ public:
     }
 
     PubSubWriter& property_policy(
-            const eprosima::fastrtps::rtps::PropertyPolicy property_policy)
+            const eprosima::fastrtps::rtps::PropertyPolicy& property_policy)
     {
         participant_qos_.properties() = property_policy;
         return *this;
     }
 
     PubSubWriter& entity_property_policy(
-            const eprosima::fastrtps::rtps::PropertyPolicy property_policy)
+            const eprosima::fastrtps::rtps::PropertyPolicy& property_policy)
     {
         datawriter_qos_.properties() = property_policy;
         return *this;
