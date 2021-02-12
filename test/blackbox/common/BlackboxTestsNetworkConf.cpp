@@ -242,3 +242,47 @@ TEST(BlackBox, PubGetSendingLocators)
     EXPECT_EQ(locator.port, port);
     EXPECT_EQ(locator.kind, LOCATOR_KIND_UDPv4);
 }
+
+TEST(BlackBox, PubGetSendingLocatorsWhitelist)
+{
+    PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
+
+    std::vector<IPFinder::info_IP> interfaces;
+    GetIP4s(interfaces);
+
+    constexpr uint32_t port = 31337u;
+
+    std::shared_ptr<UDPv4TransportDescriptor> descriptor = std::make_shared<UDPv4TransportDescriptor>();
+    descriptor->m_output_udp_socket = static_cast<uint16_t>(port);
+    for (const auto& interface : interfaces)
+    {
+        descriptor->interfaceWhiteList.push_back(interface.name);
+    }
+
+    writer.disable_builtin_transport().
+        add_user_transport_to_pparams(descriptor).
+        init();
+
+    ASSERT_TRUE(writer.isInitialized());
+
+    LocatorList_t locators;
+    writer.get_native_writer().get_sending_locators(locators);
+
+    std::vector<bool> interfaces_found(interfaces.size(), false);
+
+    EXPECT_EQ(interfaces.size(), locators.size());
+    for (const Locator_t& locator : locators)
+    {
+        EXPECT_EQ(locator.port, port);
+        EXPECT_EQ(locator.kind, LOCATOR_KIND_UDPv4);
+        for (size_t idx = 0; idx < interfaces.size(); ++idx)
+        {
+            if (interfaces[idx].name.compare(IPLocator::ip_to_string(locator)))
+            {
+                interfaces_found[idx] = true;
+                break;
+            }
+        }
+    }
+    EXPECT_TRUE(std::all_of(interfaces_found.cbegin(), interfaces_found.cend(), [](const auto& v) {return v; }));
+}
