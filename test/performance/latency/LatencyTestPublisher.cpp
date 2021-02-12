@@ -130,8 +130,8 @@ bool LatencyTestPublisher::init(
         std::string str_reliable = reliable_ ? "reliable" : "besteffort";
 
         // Summary files
-        *output_files_[MINIMUM_INDEX] << "\"" << samples_ << " samples of " << *it + 4 << " bytes (us)\"";
-        *output_files_[AVERAGE_INDEX] << "\"" << samples_ << " samples of " << *it + 4 << " bytes (us)\"";
+        *output_files_[MINIMUM_INDEX] << "\"" << samples_ << " samples of " << *it << " bytes (us)\"";
+        *output_files_[AVERAGE_INDEX] << "\"" << samples_ << " samples of " << *it << " bytes (us)\"";
 
         if (it != data_size_pub_.end() - 1)
         {
@@ -890,7 +890,7 @@ bool LatencyTestPublisher::test(
     // Log all data to CSV file if specified
     if (raw_data_file_ != "")
     {
-        export_raw_data(datasize + 4);
+        export_raw_data(datasize);
     }
 
     analyze_times(datasize);
@@ -903,7 +903,7 @@ void LatencyTestPublisher::analyze_times(
 {
     // Collect statistics
     TimeStats stats;
-    stats.bytes_ = datasize + 4;
+    stats.bytes_ = datasize;
     stats.received_ = received_count_ - 1;  // Because we are not counting the first one.
     stats.minimum_ = *min_element(times_.begin(), times_.end());
     stats.maximum_ = *max_element(times_.begin(), times_.end());
