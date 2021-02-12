@@ -364,7 +364,7 @@ void ThroughputPublisher::run(
     else
     {
         payload_ = msg_size;
-        demand_payload_[msg_size - (uint32_t)ThroughputType::overhead].push_back(demand);
+        demand_payload_[msg_size - (uint32_t)(dynamic_types_ ? 8 : ThroughputType::overhead)].push_back(demand);
     }
 
     /* Populate the recovery times vector */
@@ -708,7 +708,7 @@ bool ThroughputPublisher::test(
                 num_results_received++;
 
                 TroughputResults result;
-                result.payload_size = msg_size + (uint32_t)ThroughputType::overhead;
+                result.payload_size = msg_size + (uint32_t)(dynamic_types_ ? 8 : ThroughputType::overhead);
                 result.demand = demand;
                 result.recovery_time_ms = recovery_time_ms;
 
@@ -794,6 +794,7 @@ bool ThroughputPublisher::load_demands_payload()
     size_t end;
     bool first = true;
     bool more = true;
+    auto overhead = uint32_t(dynamic_types_ ? 8 : ThroughputType::overhead);
     while (std::getline(fi, line))
     {
         start = 0;
@@ -807,12 +808,12 @@ bool ThroughputPublisher::load_demands_payload()
             if (first)
             {
                 iss >> payload_;
-                if (payload_ < 8)
+                if (payload_ < overhead)
                 {
                     std::cout << "Minimum payload is 16 bytes" << std::endl;
                     return false;
                 }
-                payload_ -= 8;
+                payload_ -= overhead;
                 first = false;
             }
             else
@@ -836,12 +837,12 @@ bool ThroughputPublisher::load_demands_payload()
     }
     fi.close();
 
-    payload_ += 8;
+    payload_ += overhead;
 
     std::cout << "Performing test with this payloads/demands:" << std::endl;
     for (auto sit = demand_payload_.begin(); sit != demand_payload_.end(); ++sit)
     {
-        printf("Payload: %6d; Demands: ", sit->first + 8);
+        printf("Payload: %6d; Demands: ", sit->first + overhead);
         for (auto dit = sit->second.begin(); dit != sit->second.end(); ++dit)
         {
             printf("%6d, ", *dit);
