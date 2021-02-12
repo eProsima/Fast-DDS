@@ -1314,6 +1314,11 @@ ReturnCode_t DataWriterImpl::check_qos(
         logError(RTPS_QOS_CHECK, "BY SOURCE TIMESTAMP DestinationOrder not supported");
         return ReturnCode_t::RETCODE_UNSUPPORTED;
     }
+    if (nullptr != PropertyPolicyHelper::find_property(qos.properties(), "fastdds.unique_network_flows"))
+    {
+        logError(RTPS_QOS_CHECK, "Unique network flows not supported on writers");
+        return ReturnCode_t::RETCODE_UNSUPPORTED;
+    }
     if (qos.reliability().kind == BEST_EFFORT_RELIABILITY_QOS && qos.ownership().kind == EXCLUSIVE_OWNERSHIP_QOS)
     {
         logError(RTPS_QOS_CHECK, "BEST_EFFORT incompatible with EXCLUSIVE ownership");
