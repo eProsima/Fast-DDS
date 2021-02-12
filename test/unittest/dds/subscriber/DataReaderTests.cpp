@@ -1435,14 +1435,19 @@ TEST_F(DataReaderTests, get_listening_locators)
 {
     namespace rtps = eprosima::fastrtps::rtps;
 
-    // Prepare specific listening locator
-    rtps::Locator_t locator;
-    rtps::IPLocator::setIPv4(locator, 127, 0, 0, 1);
-    rtps::IPLocator::setPortRTPS(locator, 7399);
+    // Prepare specific listening locators
+    rtps::Locator_t unicast_locator;
+    rtps::IPLocator::setIPv4(unicast_locator, 127, 0, 0, 1);
+    rtps::IPLocator::setPortRTPS(unicast_locator, 7399);
 
-    // Set specific locator on DataReader QoS
+    rtps::Locator_t multicast_locator;
+    rtps::IPLocator::setIPv4(unicast_locator, 239, 127, 0, 1);
+    rtps::IPLocator::setPortRTPS(unicast_locator, 7398);
+
+    // Set specific locators on DataReader QoS
     DataReaderQos reader_qos = DATAREADER_QOS_DEFAULT;
-    reader_qos.endpoint().unicast_locator_list.push_back(locator);
+    reader_qos.endpoint().unicast_locator_list.push_back(unicast_locator);
+    reader_qos.endpoint().multicast_locator_list.push_back(multicast_locator);
 
     // We will create a disabled DataReader, so we can check RETCODE_NOT_ENABLED
     SubscriberQos subscriber_qos = SUBSCRIBER_QOS_DEFAULT;
@@ -1459,8 +1464,16 @@ TEST_F(DataReaderTests, get_listening_locators)
     EXPECT_EQ(ReturnCode_t::RETCODE_OK, data_reader_->enable());
     EXPECT_EQ(ReturnCode_t::RETCODE_OK, data_reader_->get_listening_locators(locator_list));
 
-    EXPECT_EQ(locator_list.size(), 1u);
-    EXPECT_EQ(locator, *(locator_list.begin()));
+    EXPECT_EQ(locator_list.size(), 2u);
+    bool unicast_found = false;
+    bool multicast_found = false;
+    for (const rtps::Locator_t& locator : locator_list)
+    {
+        unicast_found |= (locator == unicast_locator);
+        multicast_found |= (locator == multicast_locator);
+    }
+    EXPECT_TRUE(unicast_found);
+    EXPECT_TRUE(multicast_found);
 }
 
 class DataReaderUnsupportedTests : public ::testing::Test
