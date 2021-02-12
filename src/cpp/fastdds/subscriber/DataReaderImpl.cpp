@@ -99,8 +99,7 @@ static bool collections_have_same_properties(
 static bool qos_has_unique_network_request(
         const DataReaderQos& qos)
 {
-    const std::string* value = PropertyPolicyHelper::find_property(qos.properties(), "fastdds.unique_network_flows");
-    return value && !value->empty();
+    return nullptr != PropertyPolicyHelper::find_property(qos.properties(), "fastdds.unique_network_flows");
 }
 
 static bool qos_has_specific_locators(
