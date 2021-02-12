@@ -55,11 +55,7 @@ class DataReader;
 
 namespace eprosima {
 namespace fastrtps {
-
-class TopicAttributes;
-
 namespace rtps {
-class ReaderAttributes;
 struct GUID_t;
 } // namespace rtps
 } // namespace fastrtps
