@@ -32,6 +32,8 @@
 #include <fastrtps/types/DynamicDataFactory.h>
 #include <fastrtps/types/TypeObjectFactory.h>
 
+#include <rtps/history/TopicPayloadPoolRegistry.hpp>
+
 using namespace eprosima::fastrtps::xmlparser;
 
 using eprosima::fastrtps::ParticipantAttributes;
@@ -97,6 +99,10 @@ DomainParticipantFactory::~DomainParticipantFactory()
 
 DomainParticipantFactory* DomainParticipantFactory::get_instance()
 {
+    // Keep a reference to the topic payload pool to avoid it to be destroyed before our own instance
+    using pool_registry_ref = eprosima::fastrtps::rtps::TopicPayloadPoolRegistry::reference;
+    static pool_registry_ref topic_pool_registry = eprosima::fastrtps::rtps::TopicPayloadPoolRegistry::instance();
+
     static DomainParticipantFactory instance;
     return &instance;
 }

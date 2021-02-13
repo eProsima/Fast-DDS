@@ -159,6 +159,27 @@ TEST(DataReaderTests, ReadData)
 
 
 
+TEST(DataReaderTests, TerminateWithoutDestroyingReader)
+{
+    DomainParticipant* participant =
+            DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
+    ASSERT_NE(participant, nullptr);
+
+    Subscriber* subscriber = participant->create_subscriber(SUBSCRIBER_QOS_DEFAULT);
+    ASSERT_NE(subscriber, nullptr);
+
+    TypeSupport type(new TopicDataTypeMock());
+    type.register_type(participant);
+
+    Topic* topic = participant->create_topic("footopic", type.get_type_name(), TOPIC_QOS_DEFAULT);
+    ASSERT_NE(topic, nullptr);
+
+    DataReader* data_reader = subscriber->create_datareader(topic, DATAREADER_QOS_DEFAULT);
+    ASSERT_NE(data_reader, nullptr);
+
+    // Do not destroy entities
+}
+
 void set_listener_test (
         DataReader* reader,
         DataReaderListener* listener,

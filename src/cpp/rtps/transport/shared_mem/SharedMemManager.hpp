@@ -229,6 +229,7 @@ private:
             const std::string& domain_name)
         : segments_mem_(0)
         , global_segment_(domain_name)
+        , watch_task_(SegmentWrapper::WatchTask::get())
     {
         static_assert(std::alignment_of<BufferNode>::value % 8 == 0, "SharedMemManager::BufferNode bad alignment");
 
@@ -671,7 +672,7 @@ public:
                     SharedMemGlobal::PortCell* head_cell = nullptr;
                     buffer_ref.reset();
 
-                    while ( !is_closed_.load() && nullptr == (head_cell = global_listener_->head()) )
+                    while ( !is_closed_.load() && nullptr == (head_cell = global_listener_->head()))
                     {
                         // Wait until there's data to pop
                         global_port_->wait_pop(*global_listener_, is_closed_, listener_index_);
@@ -692,7 +693,7 @@ public:
                     auto segment = shared_mem_manager_->find_segment(buffer_descriptor.source_segment_id);
                     auto buffer_node =
                             static_cast<BufferNode*>(segment->get_address_from_offset(buffer_descriptor.
-                            buffer_node_offset));
+                                    buffer_node_offset));
 
                     // TODO(Adolfo) : Dynamic allocation. Use foonathan to convert it to static allocation
                     buffer_ref = std::make_shared<SharedMemBuffer>(segment, buffer_descriptor.source_segment_id,
@@ -999,10 +1000,10 @@ private:
         {
         public:
 
-            static WatchTask& get()
+            static std::shared_ptr<WatchTask>& get()
             {
-                static WatchTask watch_task;
-                return watch_task;
+                static std::shared_ptr<WatchTask> watch_task_instance(new WatchTask());
+                return watch_task_instance;
             }
 
             void add_segment(
@@ -1023,24 +1024,28 @@ private:
                 to_remove_.push_back(segment);
             }
 
+            virtual ~WatchTask()
+            {
+                shared_mem_watchdog_->remove_task(this);
+            }
+
         private:
 
             std::unordered_map<std::shared_ptr<SegmentWrapper>, uint32_t> watched_segments_;
             std::unordered_map<std::shared_ptr<SegmentWrapper>, uint32_t>::iterator watched_it_;
 
             std::mutex to_add_remove_mutex_;
-            std::vector<std::shared_ptr<SegmentWrapper> > to_add_;
-            std::vector<std::shared_ptr<SegmentWrapper> > to_remove_;
+            std::vector<std::shared_ptr<SegmentWrapper>> to_add_;
+            std::vector<std::shared_ptr<SegmentWrapper>> to_remove_;
+
+            // Keep a reference to the SharedMemWatchdog so that it is not destroyed until this instance is destroyed
+            std::shared_ptr<SharedMemWatchdog> shared_mem_watchdog_;
 
             WatchTask()
                 : watched_it_(watched_segments_.end())
+                , shared_mem_watchdog_(SharedMemWatchdog::get())
             {
-                SharedMemWatchdog::get().add_task(this);
-            }
-
-            ~WatchTask()
-            {
-                SharedMemWatchdog::get().remove_task(this);
+                shared_mem_watchdog_->add_task(this);
             }
 
             void update_watched_segments()
@@ -1185,11 +1190,14 @@ private:
     uint32_t per_allocation_extra_size_;
 
     std::unordered_map<SharedMemSegment::Id::type, std::shared_ptr<SegmentWrapper>,
-            std::hash<SharedMemSegment::Id::type> > ids_segments_;
+            std::hash<SharedMemSegment::Id::type>> ids_segments_;
     std::mutex ids_segments_mutex_;
     uint64_t segments_mem_;
 
     SharedMemGlobal global_segment_;
+
+    // Keep a reference to the WatchTask so that it is not destroyed until all Manger instances are destroyed
+    std::shared_ptr<SegmentWrapper::WatchTask> watch_task_;
 
     std::shared_ptr<SharedMemSegment> find_segment(
             SharedMemSegment::Id id)
@@ -1212,7 +1220,7 @@ private:
             ids_segments_[id.get()] = segment_wrapper;
             segments_mem_ += segment->mem_size();
 
-            SegmentWrapper::WatchTask::get().add_segment(segment_wrapper);
+            SegmentWrapper::WatchTask::get()->add_segment(segment_wrapper);
         }
 
         return segment;
@@ -1243,7 +1251,7 @@ private:
 
         for (auto segment : ids_segments_)
         {
-            SegmentWrapper::WatchTask::get().remove_segment(segment.second);
+            SegmentWrapper::WatchTask::get()->remove_segment(segment.second);
         }
     }
 
