@@ -120,11 +120,15 @@ bool ThroughputPublisher::init(
         const std::string& demands_file,
         const std::string& recoveries_file,
         bool dynamic_types,
+        bool data_sharing,
+        bool data_loans,
         int forced_domain)
 {
     pid_ = pid;
     hostname_ = hostname;
     dynamic_types_ = dynamic_types;
+    data_sharing_ = data_sharing;
+    data_loans_ = data_loans;
     reliable_ = reliable;
     forced_domain_ = forced_domain;
     demands_file_ = demands_file;

@@ -140,7 +140,9 @@ enum  optionIndex
     XML_FILE,
     DYNAMIC_TYPES,
     FORCED_DOMAIN,
-    SUBSCRIBERS
+    SUBSCRIBERS,
+    DATA_SHARING,
+    DATA_LOAN
 };
 
 enum TestAgent
@@ -196,6 +198,10 @@ const option::Descriptor usage[] = {
       "             --export_csv             Flag to export a CVS file." },
     { UNKNOWN_OPT,   0, "",   "",               Arg::None,
       "\nNote:\nIf no demand or msg_size is provided the .csv file is used.\n"},
+    { DATA_SHARING,        0, "d", "data_sharing",            Arg::None,
+      "               --data_sharing        Enable data sharing feature." },
+    { DATA_LOAN,        0, "l", "data_loans",            Arg::None,
+      "               --data_loans          Use loan sample API." },
     { 0, 0, 0, 0, 0, 0 }
 };
 
@@ -241,6 +247,8 @@ int main(
     bool use_security = false;
     std::string certs_path;
 #endif // if HAVE_SECURITY
+    bool data_sharing = false;
+    bool data_loans = false;
 
     argc -= (argc > 0); argv += (argc > 0); // skip program name argv[0] if present
     if (argc)
@@ -397,12 +405,34 @@ int main(
                 certs_path = opt.arg;
                 break;
 #endif // if HAVE_SECURITY
-
+            case DATA_SHARING:
+                data_sharing = true;
+                break;
+            case DATA_LOAN:
+                data_loans = true;
+                break;
             case UNKNOWN_OPT:
                 option::printUsage(fwrite, stdout, usage, columns);
                 return 0;
                 break;
         }
+    }
+
+    // Check parameters validity
+    if (use_security && test_agent == TestAgent::BOTH)
+    {
+        logError(ThroughputTest, "Intra-process delivery NOT supported with security");
+        return 1;
+    }
+    else if ((data_sharing || data_loans) && dynamic_types)
+    {
+        logError(ThroughputTest, "Sharing sample APIs NOT supported with dynamic types");
+        return 1;
+    }
+    else if ( data_sharing && use_security )
+    {
+        logError(ThroughputTest, "Sharing sample APIs NOT supported with RTPS encryption");
+        return 1;
     }
 
     PropertyPolicy pub_part_property_policy;
@@ -504,6 +534,8 @@ int main(
                     file_name,
                     recoveries_file,
                     dynamic_types,
+                    data_sharing,
+                    data_loans,
                     forced_domain)
                 )
         {
@@ -527,6 +559,8 @@ int main(
                     sub_property_policy,
                     xml_config_file,
                     dynamic_types,
+                    data_sharing,
+                    data_loans,
                     forced_domain))
         {
             throughput_subscriber.run();
@@ -555,6 +589,8 @@ int main(
                     file_name,
                     recoveries_file,
                     dynamic_types,
+                    data_sharing,
+                    data_loans,
                     forced_domain))
         {
             return_code = 1;
@@ -577,6 +613,8 @@ int main(
                 sub_property_policy,
                 xml_config_file,
                 dynamic_types,
+                data_sharing,
+                data_loans,
                 forced_domain);
         }
 

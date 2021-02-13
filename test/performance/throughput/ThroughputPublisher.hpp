@@ -64,6 +64,8 @@ public:
             const std::string& demands_file,
             const std::string& recoveries_file,
             bool dynamic_types,
+            bool data_sharing,
+            bool data_loans,
             int forced_domain);
 
     ~ThroughputPublisher();
@@ -139,6 +141,8 @@ private:
 
     // Flags
     bool dynamic_types_ = false;
+    bool data_sharing_ = false;
+    bool data_loans_ = false;
     bool ready_ = true;
     bool reliable_ = false;
     bool hostname_ = false;
