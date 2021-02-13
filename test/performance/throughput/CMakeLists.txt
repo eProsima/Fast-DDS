@@ -54,6 +54,39 @@ set(
 )
 
 ###########################################################################
+# List of tests supporting specific features                              #
+# Each entry in this list means a specific test case added                #
+###########################################################################
+
+set(
+    DATA_SHARING_LIST
+    intraprocess_best_effort
+    intraprocess_reliable
+    interprocess_best_effort_shm
+    interprocess_reliable_shm
+)
+
+set(
+    LOAN_SAMPLES_LIST
+    intraprocess_best_effort
+    intraprocess_reliable
+    interprocess_best_effort_shm
+    interprocess_reliable_shm
+    interprocess_best_effort_udp
+    interprocess_reliable_udp
+    interprocess_best_effort_tcp
+    interprocess_reliable_tcp
+)
+
+set(
+    DATA_SHARING_AND_LOAN_SAMPLES_LIST
+    intraprocess_best_effort
+    intraprocess_reliable
+    interprocess_best_effort_shm
+    interprocess_reliable_shm
+)
+
+###########################################################################
 # Configure XML files                                                     #
 ###########################################################################
 foreach(throughput_test_name ${THROUGHPUT_TEST_LIST})
@@ -71,6 +104,16 @@ find_package(PythonInterp 3 REQUIRED)
 if(PYTHONINTERP_FOUND)
     # Loop over the test names
     foreach(throughput_test_name ${THROUGHPUT_TEST_LIST})
+
+        # decide if add security testing
+        set(ADD_THROUGHPUT_SECURITY OFF) 
+        if(SECURITY AND (${throughput_test_name} MATCHES "^interprocess"))
+            set(ADD_THROUGHPUT_SECURITY ON) 
+        endif()
+
+        # list of all the test cases generated in this iteration
+        set(test_cases_setup performance.throughput.${throughput_test_name})
+
         # Set the interprocess flag
         if(${throughput_test_name} MATCHES "^interprocess")
             set(interproces_flag "--interprocess")
@@ -87,20 +130,6 @@ if(PYTHONINTERP_FOUND)
             --recoveries_file ${CMAKE_CURRENT_SOURCE_DIR}/recoveries.csv
             --demands_file ${CMAKE_CURRENT_SOURCE_DIR}/payloads_demands.csv
             ${interproces_flag}
-        )
-
-        # Set test properties
-        set_property(
-            TEST performance.throughput.${throughput_test_name}
-            PROPERTY LABELS "NoMemoryCheck"
-        )
-        set_property(
-            TEST performance.throughput.${throughput_test_name}
-            APPEND PROPERTY ENVIRONMENT "THROUGHPUT_TEST_BIN=$<TARGET_FILE:ThroughputTest>"
-        )
-        set_property(
-            TEST performance.throughput.${throughput_test_name}
-            APPEND PROPERTY ENVIRONMENT "CMAKE_CURRENT_SOURCE_DIR=${CMAKE_CURRENT_SOURCE_DIR}"
         )
 
         # Add environment
@@ -121,13 +150,15 @@ if(PYTHONINTERP_FOUND)
                 endforeach()
             endif()
             string(REPLACE ";" "\\;" WIN_PATH "${WIN_PATH}")
-            set_property(TEST performance.throughput.${throughput_test_name}  APPEND PROPERTY ENVIRONMENT "PATH=${WIN_PATH}")
         endif()
 
-        if(SECURITY AND (${throughput_test_name} MATCHES "^interprocess"))
+        if(ADD_THROUGHPUT_SECURITY)
+
             # Add the secure version
+            list(APPEND test_cases_setup performance.throughput.${throughput_test_name}.security)
+
             add_test(
-                NAME performance.throughput.${throughput_test_name}_security
+                NAME performance.throughput.${throughput_test_name}.security
                 COMMAND ${PYTHON_EXECUTABLE}
                 ${CMAKE_CURRENT_SOURCE_DIR}/throughput_tests.py
                 --xml_file ${CMAKE_CURRENT_SOURCE_DIR}/xml/${throughput_test_name}.xml
@@ -137,28 +168,121 @@ if(PYTHONINTERP_FOUND)
                 ${interproces_flag}
             )
 
+            # Hint certificates location 
+            set_property(
+                TEST performance.throughput.${throughput_test_name}.security
+                APPEND PROPERTY ENVIRONMENT "CERTS_PATH=${PROJECT_SOURCE_DIR}/test/certs"
+            )
+
+        endif()
+
+        # Check if a data sharing test is required
+        if(throughput_test_name IN_LIST DATA_SHARING_LIST)
+
+            # append to the list of cases
+            list(APPEND test_cases_setup performance.throughput.${throughput_test_name}.data_sharing)
+
+            add_test(
+                NAME performance.throughput.${throughput_test_name}.data_sharing
+                COMMAND ${PYTHON_EXECUTABLE}
+                ${CMAKE_CURRENT_SOURCE_DIR}/throughput_tests.py
+                --xml_file ${CMAKE_CURRENT_SOURCE_DIR}/xml/${throughput_test_name}.xml
+                --recoveries_file ${CMAKE_CURRENT_SOURCE_DIR}/recoveries.csv
+                --demands_file ${CMAKE_CURRENT_SOURCE_DIR}/payloads_demands.csv
+                --data_sharing
+                ${interproces_flag}
+            )
+
+        endif()
+
+        # Check if a zero copy test is required
+        if(throughput_test_name IN_LIST LOAN_SAMPLES_LIST)
+
+            # append to the list of cases
+            list(APPEND test_cases_setup performance.throughput.${throughput_test_name}.data_loans)
+
+            add_test(
+                NAME performance.throughput.${throughput_test_name}.data_loans
+                COMMAND ${PYTHON_EXECUTABLE}
+                ${CMAKE_CURRENT_SOURCE_DIR}/throughput_tests.py
+                --xml_file ${CMAKE_CURRENT_SOURCE_DIR}/xml/${throughput_test_name}.xml
+                --recoveries_file ${CMAKE_CURRENT_SOURCE_DIR}/recoveries.csv
+                --demands_file ${CMAKE_CURRENT_SOURCE_DIR}/payloads_demands.csv
+                --data_loans
+                ${interproces_flag}
+            )
+
+            if(ADD_THROUGHPUT_SECURITY)
+
+                # Add the secure version
+                list(APPEND test_cases_setup performance.throughput.${throughput_test_name}.data_loans.security)
+
+                add_test(
+                    NAME performance.throughput.${throughput_test_name}.data_loans.security
+                    COMMAND ${PYTHON_EXECUTABLE}
+                    ${CMAKE_CURRENT_SOURCE_DIR}/throughput_tests.py
+                    --xml_file ${CMAKE_CURRENT_SOURCE_DIR}/xml/${throughput_test_name}.xml
+                    --recoveries_file ${CMAKE_CURRENT_SOURCE_DIR}/recoveries.csv
+                    --demands_file ${CMAKE_CURRENT_SOURCE_DIR}/payloads_demands.csv
+                    --security
+                    ${interproces_flag}
+                    --data_loans
+                )
+
+                # Hint certificates location 
+                set_property(
+                    TEST performance.throughput.${throughput_test_name}.data_loans.security
+                    APPEND PROPERTY ENVIRONMENT "CERTS_PATH=${PROJECT_SOURCE_DIR}/test/certs"
+                )
+
+            endif()
+
+        endif()
+
+        # Check if a test using data sharing and zero copy is required
+        if(throughput_test_name IN_LIST DATA_SHARING_AND_LOAN_SAMPLES_LIST)
+
+            # append to the list of cases
+            list(APPEND test_cases_setup performance.throughput.${throughput_test_name}.data_loans_and_sharing)
+
+            add_test(
+                NAME performance.throughput.${throughput_test_name}.data_loans_and_sharing
+                COMMAND ${PYTHON_EXECUTABLE}
+                ${CMAKE_CURRENT_SOURCE_DIR}/throughput_tests.py
+                --xml_file ${CMAKE_CURRENT_SOURCE_DIR}/xml/${throughput_test_name}.xml
+                --recoveries_file ${CMAKE_CURRENT_SOURCE_DIR}/recoveries.csv
+                --demands_file ${CMAKE_CURRENT_SOURCE_DIR}/payloads_demands.csv
+                --data_loans
+                --data_sharing
+                ${interproces_flag}
+            )
+
+        endif()
+
+        # populate the properties for each test
+        foreach(throughput_test_case ${test_cases_setup})
+
             # Set test properties
             set_property(
-                TEST performance.throughput.${throughput_test_name}_security
+                TEST ${throughput_test_case}
                 PROPERTY LABELS "NoMemoryCheck"
             )
             set_property(
-                TEST performance.throughput.${throughput_test_name}_security
+                TEST ${throughput_test_case}
                 APPEND PROPERTY ENVIRONMENT "THROUGHPUT_TEST_BIN=$<TARGET_FILE:ThroughputTest>"
             )
             set_property(
-                TEST performance.throughput.${throughput_test_name}_security
+                TEST ${throughput_test_case}
                 APPEND PROPERTY ENVIRONMENT "CMAKE_CURRENT_SOURCE_DIR=${CMAKE_CURRENT_SOURCE_DIR}"
             )
 
             if(WIN32)
-                set_property(TEST performance.throughput.${throughput_test_name}_security APPEND PROPERTY ENVIRONMENT "PATH=${WIN_PATH}")
+                set_property(
+                    TEST ${throughput_test_case}
+                    APPEND PROPERTY ENVIRONMENT "PATH=${WIN_PATH}")
             endif()
 
-            set_property(
-                TEST performance.throughput.${throughput_test_name}_security
-                APPEND PROPERTY ENVIRONMENT "CERTS_PATH=${PROJECT_SOURCE_DIR}/test/certs"
-            )
-        endif()
+        endforeach(throughput_test_case)
+
     endforeach(throughput_test_name)
 endif()
