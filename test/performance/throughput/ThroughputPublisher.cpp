@@ -545,9 +545,11 @@ void ThroughputPublisher::run(
                 break;
             }
 
-            // Create the data sample
-            throughput_data_ = static_cast<ThroughputType*>(throughput_data_type_.create_data());
-            throughput_data_->seqnum = 0;
+            if (!data_loans_)
+            {
+                // Create the data sample
+                throughput_data_ = static_cast<ThroughputType*>(throughput_data_type_.create_data());
+            }
         }
 
         // Iterate over burst of messages to send
@@ -599,7 +601,10 @@ void ThroughputPublisher::run(
         }
         else
         {
-            throughput_data_type_.delete_data(throughput_data_);
+            if (!data_loans_)
+            {
+                throughput_data_type_.delete_data(throughput_data_);
+            }
             throughput_data_ = nullptr;
 
             // Destroy the data endpoints if using static types
@@ -678,6 +683,7 @@ bool ThroughputPublisher::test(
 
     // Send batches until test_time_ns is reached
     t_start_ = std::chrono::steady_clock::now();
+    uint32_t seqnum = 0;
     while ((t_end_ - t_start_) < test_time_ns)
     {
         // Get start time
@@ -687,12 +693,37 @@ bool ThroughputPublisher::test(
         {
             if (dynamic_types_)
             {
-                dynamic_data_->set_uint32_value(dynamic_data_->get_uint32_value(0) + 1, 0);
+                dynamic_data_->set_uint32_value(++seqnum, 0);
                 data_writer_->write(dynamic_data_);
+            }
+            else if (data_loans_)
+            {
+                // Try loan a sample
+                void* data = nullptr;
+                if (ReturnCode_t::RETCODE_OK
+                        ==  data_writer_->loan_sample(
+                            data,
+                            DataWriter::LoanInitializationKind::NO_LOAN_INITIALIZATION))
+                {
+                    // initialize and send the sample
+                    static_cast<ThroughputType*>(data)->seqnum = ++seqnum;
+
+                    if (!data_writer_->write(data))
+                    {
+                        data_writer_->discard_loan(data);
+                    }
+                }
+                else
+                {
+                    std::this_thread::yield();
+                    // try again this sample
+                    --sample;
+                    continue;
+                }
             }
             else
             {
-                ++throughput_data_->seqnum;
+                throughput_data_->seqnum = ++seqnum;
                 data_writer_->write(throughput_data_);
             }
         }

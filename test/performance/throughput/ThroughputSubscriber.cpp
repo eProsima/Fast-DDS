@@ -77,31 +77,63 @@ void ThroughputSubscriber::DataReaderListener::on_data_available(
 {
     // In case the TSubscriber is removing entities because a TEST_ENDS msg, it waits
     auto& sub = throughput_subscriber_;
-    void* data = sub.dynamic_types_ ? (void*)sub.dynamic_data_ : (void*)sub.throughput_data_;
 
-    if (nullptr == data)
+    if (sub.data_loans_)
     {
-        std::cout << "DATA MESSAGE RECEIVED BEFORE COMMAND READY_TO_START" << std::endl;
-        return;
-    }
+        SampleInfoSeq infos;
+        LoanableSequence<ThroughputType> data_seq;
 
-    while (ReturnCode_t::RETCODE_OK == reader->take_next_sample(data, &info_))
-    {
-        if (info_.valid_data)
+        if (ReturnCode_t::RETCODE_OK != reader->take(data_seq, infos))
         {
-            uint32_t seq_num = sub.dynamic_types_
-                ? sub.dynamic_data_->get_uint32_value(0)
-                : sub.throughput_data_->seqnum;
-
-            if ((last_seq_num_ + 1) < seq_num)
-            {
-                lost_samples_ += seq_num - last_seq_num_ - 1;
-            }
-            last_seq_num_ = seq_num;
+            logInfo(ThroughputTest, "Problem reading Subscriber echoed loaned test data");
+            return;
         }
-        else
+
+        // Check for lost samples
+        auto size = data_seq.length();
+        uint32_t last_seq_num = 0;
+
+        for (int32_t i = 0; i < size ; ++i)
         {
-            std::cout << "invalid data received" << std::endl;
+            last_seq_num = std::max(data_seq[i].seqnum , last_seq_num);
+        }
+
+        if ((last_seq_num_ + size) < last_seq_num)
+        {
+            lost_samples_ += last_seq_num - last_seq_num_ - size;
+        }
+        last_seq_num_ = last_seq_num;
+
+        // release the reader loan
+        if (ReturnCode_t::RETCODE_OK != reader->return_loan(data_seq, infos))
+        {
+            logInfo(ThroughputTest, "Problem returning loaned test data");
+            return;
+        }
+    }
+    else
+    {
+        void* data = sub.dynamic_types_ ? (void*)sub.dynamic_data_ : (void*)sub.throughput_data_;
+        assert(nullptr != data);
+
+        while (ReturnCode_t::RETCODE_OK == reader->take_next_sample(data, &info_))
+        {
+            if (info_.valid_data)
+            {
+                uint32_t seq_num = sub.dynamic_types_
+                    ? sub.dynamic_data_->get_uint32_value(0)
+                    : sub.throughput_data_->seqnum;
+
+                if ((last_seq_num_ + 1) < seq_num)
+                {
+                    lost_samples_ += seq_num - last_seq_num_ - 1;
+                }
+                last_seq_num_ = seq_num;
+            }
+            else
+            {
+                std::cout << "invalid data received" << std::endl;
+            }
         }
     }
 }
@@ -497,8 +529,12 @@ int ThroughputSubscriber::process_message()
                         if (init_static_types(command.m_size) && create_data_endpoints())
                         {
                             assert(nullptr == throughput_data_);
-                            // Create the data sample
-                            throughput_data_ = static_cast<ThroughputType*>(throughput_data_type_.create_data());
+
+                            if (!data_loans_)
+                            {
+                                // Create the data sample
+                                throughput_data_ = static_cast<ThroughputType*>(throughput_data_type_.create_data());
+                            }
 
                             // wait for data endpoint discovery
                             {
@@ -568,8 +604,11 @@ int ThroughputSubscriber::process_message()
                             return 2;
                         }
 
-                        // data removal
-                        data_type.delete_data(throughput_data_);
+                        if (!data_loans_)
+                        {
+                            // data removal
+                            data_type.delete_data(throughput_data_);
+                        }
                         throughput_data_ = nullptr;
 
                         // announced the endpoints associated to the data type are removed

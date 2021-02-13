@@ -108,13 +108,6 @@ typedef struct alignas(4) ThroughputType
     uint32_t seqnum;
     // actual payload
     uint8_t data[1];
-
-    ThroughputType(
-        uint32_t number)
-        : seqnum(number)
-    {
-    }
-
     // This struct overhead
     static const size_t overhead;
 
