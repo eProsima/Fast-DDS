@@ -302,8 +302,22 @@ bool ThroughputSubscriber::init(
         logError(THROUGHPUTSUBSCRIBER, "ERROR unable to retrieve the " << profile_name);
         return false;
     }
+
     // Load the property policy specified
     dr_qos_.properties(property_policy);
+
+    // Reliability
+    ReliabilityQosPolicy rp;
+    rp.kind = reliable_ ? eprosima::fastrtps::RELIABLE_RELIABILITY_QOS: eprosima::fastrtps::BEST_EFFORT_RELIABILITY_QOS;
+    dr_qos_.reliability(rp);
+
+    // Set data sharing according with cli. Is disabled by default in all xml profiles
+    if (data_sharing_)
+    {
+        DataSharingQosPolicy dsp;
+        dsp.on("");
+        dr_qos_.data_sharing(dsp);
+    }
 
     // Create Command topic
     {
@@ -761,12 +775,6 @@ bool ThroughputSubscriber::create_data_endpoints()
         logError(THROUGHPUTSUBSCRIBER, "ERROR creating the DATA topic");
         return false;
     }
-
-    // Create the DataReader
-    // Reliability
-    ReliabilityQosPolicy rp;
-    rp.kind = reliable_ ? eprosima::fastrtps::RELIABLE_RELIABILITY_QOS: eprosima::fastrtps::BEST_EFFORT_RELIABILITY_QOS;
-    dr_qos_.reliability(rp);
 
     // Create the endpoint
     if (nullptr ==

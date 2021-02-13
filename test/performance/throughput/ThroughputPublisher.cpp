@@ -219,8 +219,38 @@ bool ThroughputPublisher::init(
         logError(THROUGHPUTPUBLISHER, "ERROR unable to retrieve the " << profile_name);
         return false;
     }
+
     // Load the property policy specified
     dw_qos_.properties(property_policy);
+
+    // Reliability
+    ReliabilityQosPolicy rp;
+    if (reliable_)
+    {
+        rp.kind = eprosima::fastrtps::RELIABLE_RELIABILITY_QOS;
+        dw_qos_.reliability(rp);
+
+        RTPSReliableWriterQos rw_qos;
+        rw_qos.times.heartbeatPeriod.seconds = 0;
+        rw_qos.times.heartbeatPeriod.nanosec = 100000000;
+        rw_qos.times.nackSupressionDuration = {0, 0};
+        rw_qos.times.nackResponseDelay = {0, 0};
+
+        dw_qos_.reliable_writer_qos(rw_qos);
+    }
+    else
+    {
+        rp.kind = eprosima::fastrtps::BEST_EFFORT_RELIABILITY_QOS;
+        dw_qos_.reliability(rp);
+    }
+
+    // Set data sharing according with cli. Is disabled by default in all xml profiles
+    if (data_sharing_)
+    {
+        DataSharingQosPolicy dsp;
+        dsp.on("");
+        dw_qos_.data_sharing(dsp);
+    }
 
     // Create Command topic
     {
@@ -1015,28 +1045,6 @@ bool ThroughputPublisher::create_data_endpoints()
     {
         logError(THROUGHPUTPUBLISHER, "ERROR creating the DATA topic");
         return false;
-    }
-
-    // Create the DataWriter
-    // Reliability
-    ReliabilityQosPolicy rp;
-    if (reliable_)
-    {
-        rp.kind = eprosima::fastrtps::RELIABLE_RELIABILITY_QOS;
-        dw_qos_.reliability(rp);
-
-        RTPSReliableWriterQos rw_qos;
-        rw_qos.times.heartbeatPeriod.seconds = 0;
-        rw_qos.times.heartbeatPeriod.nanosec = 100000000;
-        rw_qos.times.nackSupressionDuration = {0, 0};
-        rw_qos.times.nackResponseDelay = {0, 0};
-
-        dw_qos_.reliable_writer_qos(rw_qos);
-    }
-    else
-    {
-        rp.kind = eprosima::fastrtps::BEST_EFFORT_RELIABILITY_QOS;
-        dw_qos_.reliability(rp);
     }
 
     // Create the endpoint
