@@ -93,9 +93,9 @@ void ThroughputSubscriber::DataReaderListener::on_data_available(
         auto size = data_seq.length();
         uint32_t last_seq_num = 0;
 
-        for (int32_t i = 0; i < size ; ++i)
+        for (int32_t i = 0; i < size; ++i)
         {
-            last_seq_num = std::max(data_seq[i].seqnum , last_seq_num);
+            last_seq_num = std::max(data_seq[i].seqnum, last_seq_num);
         }
 
         if ((last_seq_num_ + size) < last_seq_num)
