@@ -283,7 +283,7 @@ TEST(BlackBox, PubGetSendingLocatorsWhitelist)
         std::cout << "Checking '" << locator_ip << "' (" << locator_ip.size() << ")" << std::endl;
         for (size_t idx = 0; idx < interfaces.size(); ++idx)
         {
-            if (interfaces[idx].name.compare(locator_ip.c_str()))
+            if (interfaces[idx].name == locator_ip)
             {
                 std::cout << "Found " << locator_ip << std::endl;
                 interfaces_found[idx] = true;
