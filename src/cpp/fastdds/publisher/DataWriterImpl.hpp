@@ -28,7 +28,7 @@
 #include <fastdds/dds/topic/TypeSupport.hpp>
 
 #include <fastdds/rtps/attributes/WriterAttributes.h>
-#include <fastdds/rtps/common/Locator.h>
+#include <fastdds/rtps/common/LocatorList.hpp>
 #include <fastdds/rtps/common/Guid.h>
 #include <fastdds/rtps/common/WriteParams.h>
 #include <fastdds/rtps/history/IPayloadPool.h>
@@ -253,13 +253,13 @@ public:
     /**
      * @brief Get the list of locators from which this DataWriter may send data.
      *
-     * @param [out] locators  LocatorList_t where the list of locators will be stored.
+     * @param [out] locators  LocatorList where the list of locators will be stored.
      *
      * @return NOT_ENABLED if the reader has not been enabled.
      * @return OK if a list of locators is returned.
      */
     ReturnCode_t get_sending_locators(
-            eprosima::fastrtps::rtps::LocatorList_t& locators) const;
+            rtps::LocatorList& locators) const;
 
 protected:
 

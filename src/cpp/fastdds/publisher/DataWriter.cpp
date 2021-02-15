@@ -297,7 +297,7 @@ ReturnCode_t DataWriter::clear_history(
 }
 
 ReturnCode_t DataWriter::get_sending_locators(
-        eprosima::fastrtps::rtps::LocatorList_t& locators) const
+        rtps::LocatorList& locators) const
 {
     return impl_->get_sending_locators(locators);
 }

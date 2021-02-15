@@ -27,7 +27,7 @@
 #include <fastdds/dds/core/status/StatusMask.hpp>
 #include <fastdds/dds/publisher/qos/DataWriterQos.hpp>
 
-#include <fastdds/rtps/common/Locator.h>
+#include <fastdds/rtps/common/LocatorList.hpp>
 #include <fastdds/rtps/common/Time_t.h>
 
 #include <fastrtps/fastrtps_dll.h>
@@ -39,17 +39,12 @@ using eprosima::fastrtps::types::ReturnCode_t;
 
 namespace eprosima {
 namespace fastrtps {
-
-class TopicAttributes;
-
 namespace rtps {
 
 class WriteParams;
-class WriterAttributes;
 struct GUID_t;
 
 } // namespace rtps
-
 } // namespace fastrtps
 
 namespace fastdds {
@@ -522,13 +517,13 @@ public:
     /**
      * @brief Get the list of locators from which this DataWriter may send data.
      *
-     * @param [out] locators  LocatorList_t where the list of locators will be stored.
+     * @param [out] locators  LocatorList where the list of locators will be stored.
      *
      * @return NOT_ENABLED if the reader has not been enabled.
      * @return OK if a list of locators is returned.
      */
     RTPS_DllAPI ReturnCode_t get_sending_locators(
-            eprosima::fastrtps::rtps::LocatorList_t& locators) const;
+            rtps::LocatorList& locators) const;
 
 protected:
 

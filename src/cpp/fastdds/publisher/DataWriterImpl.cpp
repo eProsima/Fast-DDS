@@ -802,7 +802,7 @@ ReturnCode_t DataWriterImpl::clear_history(
 }
 
 ReturnCode_t DataWriterImpl::get_sending_locators(
-        eprosima::fastrtps::rtps::LocatorList_t& locators) const
+        rtps::LocatorList& locators) const
 {
     if (nullptr == writer_)
     {
