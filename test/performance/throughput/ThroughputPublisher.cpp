@@ -302,6 +302,12 @@ bool ThroughputPublisher::init(
         cr_qos.durability().durabilityKind(TRANSIENT_LOCAL);
         cr_qos.properties(property_policy);
 
+        {
+            DataSharingQosPolicy dsp;
+            dsp.off();
+            cr_qos.data_sharing(dsp);
+        }
+
         command_reader_ = subscriber_->create_datareader(
             command_sub_topic_,
             cr_qos,
@@ -322,6 +328,12 @@ bool ThroughputPublisher::init(
         cw_qos.reliability().kind = RELIABLE_RELIABILITY_QOS;
         cw_qos.publish_mode().kind = SYNCHRONOUS_PUBLISH_MODE;
         cw_qos.properties(property_policy);
+
+        {
+            DataSharingQosPolicy dsp;
+            dsp.off();
+            cw_qos.data_sharing(dsp);
+        }
 
         command_writer_ = publisher_->create_datawriter(
             command_pub_topic_,

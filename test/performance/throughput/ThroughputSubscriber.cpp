@@ -42,9 +42,14 @@ using namespace eprosima::fastrtps::types;
 void ThroughputSubscriber::DataReaderListener::reset()
 {
     last_seq_num_ = 0;
-    first_ = true;
     lost_samples_ = 0;
     matched_ = 0;
+    enable_ = true;
+}
+
+void ThroughputSubscriber::DataReaderListener::disable()
+{
+    enable_ = false;
 }
 
 /*
@@ -75,6 +80,11 @@ void ThroughputSubscriber::DataReaderListener::on_subscription_matched(
 void ThroughputSubscriber::DataReaderListener::on_data_available(
         DataReader* reader)
 {
+    if (!enable_)
+    {
+        return;
+    }
+
     // In case the TSubscriber is removing entities because a TEST_ENDS msg, it waits
     auto& sub = throughput_subscriber_;
 
@@ -401,6 +411,12 @@ bool ThroughputSubscriber::init(
         cr_qos.durability().durabilityKind(TRANSIENT_LOCAL);
         cr_qos.properties(property_policy);
 
+        {
+            DataSharingQosPolicy dsp;
+            dsp.off();
+            cr_qos.data_sharing(dsp);
+        }
+
         command_reader_ = subscriber_->create_datareader(
             command_sub_topic_,
             cr_qos,
@@ -421,6 +437,12 @@ bool ThroughputSubscriber::init(
         cw_qos.reliability().kind = RELIABLE_RELIABILITY_QOS;
         cw_qos.publish_mode().kind = SYNCHRONOUS_PUBLISH_MODE;
         cw_qos.properties(property_policy);
+
+        {
+            DataSharingQosPolicy dsp;
+            dsp.off();
+            cw_qos.data_sharing(dsp);
+        }
 
         command_writer_ = publisher_->create_datawriter(
             command_pub_topic_,
@@ -579,10 +601,8 @@ int ThroughputSubscriber::process_message()
                     t_end_ = std::chrono::steady_clock::now();
                     std::cout << "Command: TEST_ENDS" << std::endl;
                     data_reader_listener_.save_numbers();
-                    {
-                        return 1; // results processing is done outside
-                    }
-                    break;
+                    data_reader_listener_.disable();
+                    return 1; // results processing is done outside
                 }
                 case TYPE_DISPOSE:
                 {
@@ -594,8 +614,12 @@ int ThroughputSubscriber::process_message()
                     }
                     else
                     {
-                        // remove the data after destroy the endpoints to avoid callback issues
-                        auto data_type = throughput_data_type_;
+                        if (!data_loans_)
+                        {
+                            // data removal
+                            throughput_data_type_.delete_data(throughput_data_);
+                        }
+                        throughput_data_ = nullptr;
 
                         // remove the data endpoints on static case
                         if (!destroy_data_endpoints())
@@ -603,13 +627,6 @@ int ThroughputSubscriber::process_message()
                             logError(THROUGHPUTSUBSCRIBER, "Iteration failed: Failed to remove static data endpoints");
                             return 2;
                         }
-
-                        if (!data_loans_)
-                        {
-                            // data removal
-                            data_type.delete_data(throughput_data_);
-                        }
-                        throughput_data_ = nullptr;
 
                         // announced the endpoints associated to the data type are removed
                         ThroughputCommandType command_sample(TYPE_REMOVED);

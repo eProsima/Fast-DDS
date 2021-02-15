@@ -143,9 +143,9 @@ private:
         ThroughputSubscriber& throughput_subscriber_;
         uint32_t last_seq_num_ = 0;
         uint32_t lost_samples_ = 0;
-        bool first_ = true;
         eprosima::fastdds::dds::SampleInfo info_;
         int matched_ = 0;
+        bool enable_ = false;
 
     public:
 
@@ -163,6 +163,8 @@ private:
                 eprosima::fastdds::dds::DataReader* reader) override;
 
         void reset();
+
+        void disable();
 
         void save_numbers();
 
