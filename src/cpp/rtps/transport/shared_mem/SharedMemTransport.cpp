@@ -188,7 +188,7 @@ bool SharedMemTransport::CloseInputChannel(
 
     for (auto it = input_channels_.begin(); it != input_channels_.end(); it++)
     {
-        if ( (*it)->locator() == locator)
+        if ((*it)->locator() == locator)
         {
             delete_input_channel((*it));
             input_channels_.erase(it);
@@ -267,7 +267,7 @@ bool SharedMemTransport::init()
             auto packets_file_consumer = std::unique_ptr<SHMPacketFileConsumer>(
                 new SHMPacketFileConsumer(configuration_.rtps_dump_file()));
 
-            packet_logger_ = std::make_shared<PacketsLog<SHMPacketFileConsumer> >();
+            packet_logger_ = std::make_shared<PacketsLog<SHMPacketFileConsumer>>();
             packet_logger_->RegisterConsumer(std::move(packets_file_consumer));
         }
     }
@@ -470,7 +470,7 @@ std::shared_ptr<SharedMemManager::Port> SharedMemTransport::find_port(
 
     // The port is not opened
     std::shared_ptr<SharedMemManager::Port> port = shared_mem_manager_->
-            open_port(port_id, configuration_.port_queue_capacity(), configuration_.healthy_check_timeout_ms(),
+                    open_port(port_id, configuration_.port_queue_capacity(), configuration_.healthy_check_timeout_ms(),
                     SharedMemGlobal::Port::OpenMode::Write);
 
     opened_ports_[port_id] = port;

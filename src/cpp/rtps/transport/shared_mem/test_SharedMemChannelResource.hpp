@@ -76,6 +76,7 @@ protected:
             return nullptr;
         }
     }
+
 };
 
 } // namespace rtps

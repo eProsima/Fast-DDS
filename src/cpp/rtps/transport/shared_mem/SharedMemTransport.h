@@ -59,8 +59,9 @@ public:
      * multicast range, it joins the specified multicast group,
      */
     bool OpenInputChannel(
-        const Locator&,
-        TransportReceiverInterface*, uint32_t) override;
+            const Locator&,
+            TransportReceiverInterface*,
+            uint32_t) override;
 
     //! Removes the listening socket for the specified port.
     bool CloseInputChannel(
@@ -113,7 +114,10 @@ public:
     bool is_local_locator(
             const Locator& locator) const override;
 
-    TransportDescriptorInterface* get_configuration() override { return &configuration_; }
+    TransportDescriptorInterface* get_configuration() override
+    {
+        return &configuration_;
+    }
 
     void AddDefaultOutputLocator(
             LocatorList& defaultList) override;
@@ -244,12 +248,13 @@ private:
 
     std::shared_ptr<SharedMemManager::Port> find_port(
             uint32_t port_id);
-    
+
     bool push_discard(
             const std::shared_ptr<SharedMemManager::Buffer>& buffer,
             const Locator& remote_locator);
 
-    void delete_input_channel(SharedMemChannelResource* channel);
+    void delete_input_channel(
+            SharedMemChannelResource* channel);
 };
 
 } // namespace rtps
