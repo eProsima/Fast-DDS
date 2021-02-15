@@ -1035,6 +1035,24 @@ CDRMessage_t PDP::get_participant_proxy_data_serialized(
     return cdr_msg;
 }
 
+ParticipantProxyData* PDP::get_participant_proxy_data(
+        const GuidPrefix_t& guid_prefix)
+{
+    for (auto pit = ParticipantProxiesBegin(); pit != ParticipantProxiesEnd(); ++pit)
+    {
+        if (guid_prefix == (*pit)->m_guid.guidPrefix)
+        {
+            return *(pit);
+        }
+    }
+    return nullptr;
+}
+
+std::list<eprosima::fastdds::rtps::RemoteServerAttributes>& PDP::remote_server_attributes()
+{
+    return mp_builtin->m_DiscoveryServers;
+}
+
 void PDP::check_remote_participant_liveliness(
         ParticipantProxyData* remote_participant)
 {
