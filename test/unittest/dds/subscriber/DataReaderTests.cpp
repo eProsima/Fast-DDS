@@ -1433,16 +1433,16 @@ TEST_F(DataReaderTests, SetListener)
 
 TEST_F(DataReaderTests, get_listening_locators)
 {
-    namespace rtps = eprosima::fastrtps::rtps;
+    using IPLocator = eprosima::fastrtps::rtps::IPLocator;
 
     // Prepare specific listening locators
-    rtps::Locator_t unicast_locator;
-    rtps::IPLocator::setIPv4(unicast_locator, 127, 0, 0, 1);
-    rtps::IPLocator::setPortRTPS(unicast_locator, 7399);
+    rtps::Locator unicast_locator;
+    IPLocator::setIPv4(unicast_locator, 127, 0, 0, 1);
+    IPLocator::setPortRTPS(unicast_locator, 7399);
 
-    rtps::Locator_t multicast_locator;
-    rtps::IPLocator::setIPv4(multicast_locator, 239, 127, 0, 1);
-    rtps::IPLocator::setPortRTPS(multicast_locator, 7398);
+    rtps::Locator multicast_locator;
+    IPLocator::setIPv4(multicast_locator, 239, 127, 0, 1);
+    IPLocator::setPortRTPS(multicast_locator, 7398);
 
     // Set specific locators on DataReader QoS
     DataReaderQos reader_qos = DATAREADER_QOS_DEFAULT;
@@ -1457,7 +1457,7 @@ TEST_F(DataReaderTests, get_listening_locators)
     EXPECT_FALSE(data_reader_->is_enabled());
 
     // Calling on disabled reader should return NOT_ENABLED
-    rtps::LocatorList_t locator_list;
+    rtps::LocatorList locator_list;
     EXPECT_EQ(ReturnCode_t::RETCODE_NOT_ENABLED, data_reader_->get_listening_locators(locator_list));
 
     // Enable and try again
@@ -1467,7 +1467,7 @@ TEST_F(DataReaderTests, get_listening_locators)
     EXPECT_EQ(locator_list.size(), 2u);
     bool unicast_found = false;
     bool multicast_found = false;
-    for (const rtps::Locator_t& locator : locator_list)
+    for (const rtps::Locator& locator : locator_list)
     {
         unicast_found |= (locator == unicast_locator);
         multicast_found |= (locator == multicast_locator);
