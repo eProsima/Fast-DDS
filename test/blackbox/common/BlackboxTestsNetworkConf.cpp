@@ -284,5 +284,5 @@ TEST(BlackBox, PubGetSendingLocatorsWhitelist)
             }
         }
     }
-    EXPECT_TRUE(std::all_of(interfaces_found.cbegin(), interfaces_found.cend(), [](const auto& v) {return v; }));
+    EXPECT_TRUE(std::all_of(interfaces_found.cbegin(), interfaces_found.cend(), [](const bool& v) {return v; }));
 }
