@@ -468,7 +468,7 @@ bool DataReader::is_sample_valid(
 }
 
 ReturnCode_t DataReader::get_listening_locators(
-        eprosima::fastrtps::rtps::LocatorList_t& locators) const
+        rtps::LocatorList& locators) const
 {
     return impl_->get_listening_locators(locators);
 }

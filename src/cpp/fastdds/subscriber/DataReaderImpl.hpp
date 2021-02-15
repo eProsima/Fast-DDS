@@ -30,7 +30,7 @@
 #include <fastdds/dds/topic/TypeSupport.hpp>
 
 #include <fastdds/rtps/attributes/ReaderAttributes.h>
-#include <fastdds/rtps/common/Locator.h>
+#include <fastdds/rtps/common/LocatorList.hpp>
 #include <fastdds/rtps/common/Guid.h>
 #include <fastdds/rtps/history/IPayloadPool.h>
 #include <fastdds/rtps/reader/ReaderListener.h>
@@ -296,13 +296,13 @@ public:
     /**
      * Get the list of locators on which this DataReader is listening.
      *
-     * @param [out] locators  LocatorList_t where the list of locators will be stored.
+     * @param [out] locators  LocatorList where the list of locators will be stored.
      *
      * @return NOT_ENABLED if the reader has not been enabled.
      * @return OK if a list of locators is returned.
      */
     ReturnCode_t get_listening_locators(
-            eprosima::fastrtps::rtps::LocatorList_t& locators) const;
+            rtps::LocatorList& locators) const;
 
 protected:
 

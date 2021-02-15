@@ -1459,7 +1459,7 @@ bool DataReaderImpl::is_sample_valid(
 }
 
 ReturnCode_t DataReaderImpl::get_listening_locators(
-        eprosima::fastrtps::rtps::LocatorList_t& locators) const
+        rtps::LocatorList& locators) const
 {
     if (nullptr == reader_)
     {
