@@ -310,6 +310,18 @@ public:
         return false;
     }
 
+    eprosima::fastdds::dds::DataWriter& get_native_writer(
+            unsigned int index)
+    {
+        return *(std::get<2>(publishers_[index]));
+    }
+
+    eprosima::fastdds::dds::DataReader& get_native_reader(
+            unsigned int index)
+    {
+        return *(std::get<2>(subscribers_[index]));
+    }
+
     bool send_sample(
             type& msg,
             unsigned int index = 0)
@@ -464,6 +476,20 @@ public:
             const eprosima::fastrtps::rtps::PropertyPolicy property_policy)
     {
         participant_qos_.properties() = property_policy;
+        return *this;
+    }
+
+    PubSubParticipant& pub_property_policy(
+            const eprosima::fastrtps::rtps::PropertyPolicy property_policy)
+    {
+        datawriter_qos_.properties() = property_policy;
+        return *this;
+    }
+
+    PubSubParticipant& sub_property_policy(
+            const eprosima::fastrtps::rtps::PropertyPolicy property_policy)
+    {
+        datareader_qos_.properties() = property_policy;
         return *this;
     }
 

@@ -15,6 +15,7 @@
 #include "BlackboxTests.hpp"
 #include "PubSubReader.hpp"
 #include "PubSubWriter.hpp"
+#include "PubSubParticipant.hpp"
 
 #include <fastrtps/rtps/common/Locator.h>
 #include <fastrtps/utils/IPFinder.h>
@@ -60,15 +61,46 @@ TEST(Blackbox, pub_unique_network_flows)
 
 TEST(Blackbox, sub_unique_network_flows)
 {
-    PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
+    // Two readers on the same participant requesting unique flows should give different listening locators
+    {
+        PubSubParticipant<HelloWorldType> participant(0, 2, 0, 0);
 
-    PropertyPolicy properties;
-    properties.properties().emplace_back("fastdds.unique_network_flows", "");
+        PropertyPolicy properties;
+        properties.properties().emplace_back("fastdds.unique_network_flows", "");
 
-    reader.entity_property_policy(properties).init();
+        participant.sub_topic_name(TEST_TOPIC_NAME).sub_property_policy(properties);
 
-    // Creation should fail as feature is not implemented for readers
-    EXPECT_FALSE(reader.isInitialized());
+        ASSERT_TRUE(participant.init_participant());
+        ASSERT_TRUE(participant.init_subscriber(0));
+        ASSERT_TRUE(participant.init_subscriber(1));
+
+        LocatorList_t locators;
+        LocatorList_t locators2;
+
+        participant.get_native_reader(0).get_listening_locators(locators);
+        participant.get_native_reader(1).get_listening_locators(locators2);
+
+        EXPECT_FALSE(locators == locators2);
+    }
+
+    // Two readers on the same participant not requesting unique flows should give the same listening locators
+    {
+        PubSubParticipant<HelloWorldType> participant(0, 2, 0, 0);
+
+        participant.sub_topic_name(TEST_TOPIC_NAME);
+
+        ASSERT_TRUE(participant.init_participant());
+        ASSERT_TRUE(participant.init_subscriber(0));
+        ASSERT_TRUE(participant.init_subscriber(1));
+
+        LocatorList_t locators;
+        LocatorList_t locators2;
+
+        participant.get_native_reader(0).get_listening_locators(locators);
+        participant.get_native_reader(1).get_listening_locators(locators2);
+
+        EXPECT_TRUE(locators == locators2);
+    }
 }
 
 //Verify that outLocatorList is used to select the desired output channel
