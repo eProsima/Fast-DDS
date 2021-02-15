@@ -59,38 +59,38 @@ public:
      * multicast range, it joins the specified multicast group,
      */
     bool OpenInputChannel(
-        const fastrtps::rtps::Locator_t&,
+        const Locator&,
         TransportReceiverInterface*, uint32_t) override;
 
     //! Removes the listening socket for the specified port.
     bool CloseInputChannel(
-            const fastrtps::rtps::Locator_t&) override;
+            const Locator&) override;
 
     //! Checks whether there are open and bound sockets for the given port.
     bool IsInputChannelOpen(
-            const fastrtps::rtps::Locator_t&) const override;
+            const Locator&) const override;
 
     //! Reports whether Locators correspond to the same port.
     bool DoInputLocatorsMatch(
-            const fastrtps::rtps::Locator_t&,
-            const fastrtps::rtps::Locator_t&) const override;
+            const Locator&,
+            const Locator&) const override;
 
     //! Checks for TCP kinds.
     bool IsLocatorSupported(
-            const fastrtps::rtps::Locator_t&) const override;
+            const Locator&) const override;
 
     //! Opens a socket on the given address and port (as long as they are white listed).
     bool OpenOutputChannel(
             SendResourceList& sender_resource_list,
-            const fastrtps::rtps::Locator_t&) override;
+            const Locator&) override;
 
     /**
      * Converts a given remote locator (that is, a locator referring to a remote
      * destination) to the main local locator whose channel can write to that
      * destination. In this case it will return a 0.0.0.0 address on that port.
      */
-    fastrtps::rtps::Locator_t RemoteToMainLocal(
-            const fastrtps::rtps::Locator_t&) const override;
+    Locator RemoteToMainLocal(
+            const Locator&) const override;
 
     /**
      * Transforms a remote locator into a locator optimized for local communications.
@@ -104,30 +104,30 @@ public:
      * @return false if the input locator is not supported/allowed by this transport, true otherwise.
      */
     bool transform_remote_locator(
-            const fastrtps::rtps::Locator_t& remote_locator,
-            fastrtps::rtps::Locator_t& result_locator) const override;
+            const Locator& remote_locator,
+            Locator& result_locator) const override;
 
-    fastrtps::rtps::LocatorList_t NormalizeLocator(
-            const fastrtps::rtps::Locator_t& locator) override;
+    LocatorList NormalizeLocator(
+            const Locator& locator) override;
 
     bool is_local_locator(
-            const fastrtps::rtps::Locator_t& locator) const override;
+            const Locator& locator) const override;
 
     TransportDescriptorInterface* get_configuration() override { return &configuration_; }
 
     void AddDefaultOutputLocator(
-            fastrtps::rtps::LocatorList_t& defaultList) override;
+            LocatorList& defaultList) override;
 
     bool getDefaultMetatrafficMulticastLocators(
-            fastrtps::rtps::LocatorList_t& locators,
+            LocatorList& locators,
             uint32_t metatraffic_multicast_port) const override;
 
     bool getDefaultMetatrafficUnicastLocators(
-            fastrtps::rtps::LocatorList_t& locators,
+            LocatorList& locators,
             uint32_t metatraffic_unicast_port) const override;
 
     bool getDefaultUnicastLocators(
-            fastrtps::rtps::LocatorList_t& locators,
+            LocatorList& locators,
             uint32_t unicast_port) const override;
 
     /**
@@ -165,21 +165,21 @@ public:
             fastrtps::rtps::LocatorSelector& selector) const override;
 
     bool fillMetatrafficMulticastLocator(
-            fastrtps::rtps::Locator_t& locator,
+            Locator& locator,
             uint32_t metatraffic_multicast_port) const override;
 
     bool fillMetatrafficUnicastLocator(
-            fastrtps::rtps::Locator_t& locator,
+            Locator& locator,
             uint32_t metatraffic_unicast_port) const override;
 
     bool configureInitialPeerLocator(
-            fastrtps::rtps::Locator_t& locator,
+            Locator& locator,
             const fastrtps::rtps::PortParameters& port_params,
             uint32_t domainId,
-            fastrtps::rtps::LocatorList_t& list) const override;
+            LocatorList& list) const override;
 
     bool fillUnicastLocator(
-            fastrtps::rtps::Locator_t& locator,
+            Locator& locator,
             uint32_t well_known_port) const override;
 
     uint32_t max_recv_buffer_size() const override
@@ -196,7 +196,7 @@ private:
 
     //! Checks for whether locator is allowed.
     bool is_locator_allowed(
-            const fastrtps::rtps::Locator_t&) const override;
+            const Locator&) const override;
 
 protected:
 
@@ -227,7 +227,7 @@ protected:
      * @throw std::exception& If the channel cannot be created
      */
     virtual SharedMemChannelResource* CreateInputChannelResource(
-            const fastrtps::rtps::Locator_t& locator,
+            const Locator& locator,
             uint32_t max_msg_size,
             TransportReceiverInterface* receiver);
 
@@ -240,14 +240,14 @@ private:
 
     bool send(
             const std::shared_ptr<SharedMemManager::Buffer>& buffer,
-            const fastrtps::rtps::Locator_t& remote_locator);
+            const Locator& remote_locator);
 
     std::shared_ptr<SharedMemManager::Port> find_port(
             uint32_t port_id);
     
     bool push_discard(
             const std::shared_ptr<SharedMemManager::Buffer>& buffer,
-            const fastrtps::rtps::Locator_t& remote_locator);
+            const Locator& remote_locator);
 
     void delete_input_channel(SharedMemChannelResource* channel);
 };

@@ -84,7 +84,7 @@ protected:
     mutable std::mutex sockets_map_mutex_;
     mutable std::mutex unbound_map_mutex_;
 
-    std::map<fastrtps::rtps::Locator_t, std::shared_ptr<TCPChannelResource>> channel_resources_; // The key is the "Physical locator"
+    std::map<Locator, std::shared_ptr<TCPChannelResource>> channel_resources_; // The key is the "Physical locator"
     std::vector<std::shared_ptr<TCPChannelResource>> unbound_channel_resources_;
     // The key is the logical port
     std::map<uint16_t, std::pair<TransportReceiverInterface*, ReceiverInUseCV*>> receiver_resources_;
@@ -93,21 +93,21 @@ protected:
 
     asio::steady_timer keep_alive_event_;
 
-    std::map<fastrtps::rtps::Locator_t, std::shared_ptr<TCPAcceptor>> acceptors_;
+    std::map<Locator, std::shared_ptr<TCPAcceptor>> acceptors_;
 
     TCPTransportInterface(
             int32_t transport_kind);
 
     virtual bool compare_locator_ip(
-            const fastrtps::rtps::Locator_t& lh,
-            const fastrtps::rtps::Locator_t& rh) const = 0;
+            const Locator& lh,
+            const Locator& rh) const = 0;
 
     virtual bool compare_locator_ip_and_port(
-            const fastrtps::rtps::Locator_t& lh,
-            const fastrtps::rtps::Locator_t& rh) const = 0;
+            const Locator& lh,
+            const Locator& rh) const = 0;
 
     virtual void fill_local_ip(
-            fastrtps::rtps::Locator_t& loc) const = 0;
+            Locator& loc) const = 0;
 
     //! Methods to manage the TCP headers and their CRC values.
     bool check_crc(
@@ -132,7 +132,7 @@ protected:
 
     //! Creates a TCP acceptor to wait for incomming connections by the given locator.
     bool create_acceptor_socket(
-            const fastrtps::rtps::Locator_t& locator);
+            const Locator& locator);
 
     virtual void get_ips(
             std::vector<fastrtps::rtps::IPFinder::info_IP>& loc_names,
@@ -162,7 +162,7 @@ protected:
 
     virtual void endpoint_to_locator(
             const asio::ip::tcp::endpoint& endpoint,
-            fastrtps::rtps::Locator_t& locator) const = 0;
+            Locator& locator) const = 0;
 
     /**
      * Shutdown method to close the connections of the transports.
@@ -186,7 +186,7 @@ protected:
             const fastrtps::rtps::octet* send_buffer,
             uint32_t send_buffer_size,
             std::shared_ptr<TCPChannelResource>& channel,
-            const fastrtps::rtps::Locator_t& remote_locator);
+            const Locator& remote_locator);
 
 public:
 
@@ -200,7 +200,7 @@ public:
 
     //! Removes the listening socket for the specified port.
     virtual bool CloseInputChannel(
-            const fastrtps::rtps::Locator_t&) override;
+            const Locator&) override;
 
     //! Removes all outbound sockets on the given port.
     void CloseOutputChannel(
@@ -208,18 +208,18 @@ public:
 
     //! Reports whether Locators correspond to the same port.
     virtual bool DoInputLocatorsMatch(
-            const fastrtps::rtps::Locator_t&,
-            const fastrtps::rtps::Locator_t&) const override;
+            const Locator&,
+            const Locator&) const override;
 
     virtual asio::ip::tcp::endpoint generate_endpoint(
             uint16_t port) const = 0;
 
     virtual asio::ip::tcp::endpoint generate_endpoint(
-            const fastrtps::rtps::Locator_t& loc,
+            const Locator& loc,
             uint16_t port) const = 0;
 
     virtual asio::ip::tcp::endpoint generate_local_endpoint(
-            fastrtps::rtps::Locator_t& loc,
+            Locator& loc,
             uint16_t port) const = 0;
 
     virtual asio::ip::tcp generate_protocol() const = 0;
@@ -236,7 +236,7 @@ public:
 
     //! Checks whether there are open and bound sockets for the given port.
     virtual bool IsInputChannelOpen(
-            const fastrtps::rtps::Locator_t&) const override;
+            const Locator&) const override;
 
     //! Checks if the interfaces white list is empty.
     virtual bool is_interface_whitelist_empty() const = 0;
@@ -247,39 +247,39 @@ public:
      * @return True if the locator passes the white list.
      */
     virtual bool is_interface_allowed(
-            const fastrtps::rtps::Locator_t& loc) const = 0;
+            const Locator& loc) const = 0;
 
     virtual bool is_interface_allowed(
             const std::string& interface) const = 0;
 
     //! Checks for TCP kinds.
     virtual bool IsLocatorSupported(
-            const fastrtps::rtps::Locator_t&) const override;
+            const Locator&) const override;
 
     //! Checks whether there are open and bound sockets for the given port.
     bool is_output_channel_open_for(
-            const fastrtps::rtps::Locator_t&) const;
+            const Locator&) const;
 
     /** Opens an input channel to receive incomming connections.
      *   If there is an existing channel it registers the receiver resource.
      */
     virtual bool OpenInputChannel(
-            const fastrtps::rtps::Locator_t&,
+            const Locator&,
             TransportReceiverInterface*,
             uint32_t) override;
 
     //! Opens a socket on the given address and port (as long as they are white listed).
     virtual bool OpenOutputChannel(
             SendResourceList& send_resource_list,
-            const fastrtps::rtps::Locator_t&) override;
+            const Locator&) override;
 
     /**
      * Converts a given remote locator (that is, a locator referring to a remote
      * destination) to the main local locator whose channel can write to that
      * destination. In this case it will return a 0.0.0.0 address on that port.
      */
-    virtual fastrtps::rtps::Locator_t RemoteToMainLocal(
-            const fastrtps::rtps::Locator_t&) const override;
+    virtual Locator RemoteToMainLocal(
+            const Locator&) const override;
 
     /**
      * Transforms a remote locator into a locator optimized for local communications.
@@ -293,8 +293,8 @@ public:
      * @return false if the input locator is not supported/allowed by this transport, true otherwise.
      */
     virtual bool transform_remote_locator(
-            const fastrtps::rtps::Locator_t& remote_locator,
-            fastrtps::rtps::Locator_t& result_locator) const override;
+            const Locator& remote_locator,
+            Locator& result_locator) const override;
 
     /**
      * Blocking Receive from the specified channel.
@@ -312,7 +312,7 @@ public:
             fastrtps::rtps::octet* receive_buffer,
             uint32_t receive_buffer_capacity,
             uint32_t& receive_buffer_size,
-            fastrtps::rtps::Locator_t& remote_locator);
+            Locator& remote_locator);
 
     /**
      * Blocking Send through the specified channel.
@@ -352,14 +352,14 @@ public:
     //! Callback called each time that an incomming connection is accepted.
     void SocketAccepted(
             std::shared_ptr<asio::ip::tcp::socket> socket,
-            const fastrtps::rtps::Locator_t& locator,
+            const Locator& locator,
             const asio::error_code& error);
 
 #if TLS_FOUND
     //! Callback called each time that an incomming connection is accepted (secure).
     void SecureSocketAccepted(
             std::shared_ptr<asio::ssl::stream<asio::ip::tcp::socket>> socket,
-            const fastrtps::rtps::Locator_t& locator,
+            const Locator& locator,
             const asio::error_code& error);
 #endif // if TLS_FOUND
 
@@ -375,33 +375,33 @@ public:
     virtual std::vector<std::string> get_binding_interfaces_list() = 0;
 
     virtual bool getDefaultMetatrafficMulticastLocators(
-            fastrtps::rtps::LocatorList_t& locators,
+            LocatorList& locators,
             uint32_t metatraffic_multicast_port) const override;
 
     virtual bool getDefaultMetatrafficUnicastLocators(
-            fastrtps::rtps::LocatorList_t& locators,
+            LocatorList& locators,
             uint32_t metatraffic_unicast_port) const override;
 
     bool getDefaultUnicastLocators(
-            fastrtps::rtps::LocatorList_t& locators,
+            LocatorList& locators,
             uint32_t unicast_port) const override;
 
     virtual bool fillMetatrafficMulticastLocator(
-            fastrtps::rtps::Locator_t& locator,
+            Locator& locator,
             uint32_t metatraffic_multicast_port) const override;
 
     virtual bool fillMetatrafficUnicastLocator(
-            fastrtps::rtps::Locator_t& locator,
+            Locator& locator,
             uint32_t metatraffic_unicast_port) const override;
 
     virtual bool configureInitialPeerLocator(
-            fastrtps::rtps::Locator_t& locator,
+            Locator& locator,
             const fastrtps::rtps::PortParameters& port_params,
             uint32_t domainId,
-            fastrtps::rtps::LocatorList_t& list) const override;
+            LocatorList& list) const override;
 
     virtual bool fillUnicastLocator(
-            fastrtps::rtps::Locator_t& locator,
+            Locator& locator,
             uint32_t well_known_port) const override;
 
     virtual uint32_t max_recv_buffer_size() const override

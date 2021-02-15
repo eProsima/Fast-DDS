@@ -42,8 +42,6 @@ namespace fastdds {
 namespace rtps {
 
 using octet = fastrtps::rtps::octet;
-using Locator_t = fastrtps::rtps::Locator_t;
-using LocatorList_t = fastrtps::rtps::LocatorList_t;
 using IPLocator = fastrtps::rtps::IPLocator;
 using SenderResource = fastrtps::rtps::SenderResource;
 using CDRMessage_t = fastrtps::rtps::CDRMessage_t;
@@ -254,7 +252,7 @@ void TCPTransportInterface::calculate_crc(
 }
 
 bool TCPTransportInterface::create_acceptor_socket(
-        const Locator_t& locator)
+        const Locator& locator)
 {
     try
     {
@@ -341,8 +339,8 @@ void TCPTransportInterface::fill_rtcp_header(
 }
 
 bool TCPTransportInterface::DoInputLocatorsMatch(
-        const Locator_t& left,
-        const Locator_t& right) const
+        const Locator& left,
+        const Locator& right) const
 {
     return IPLocator::getPhysicalPort(left) ==  IPLocator::getPhysicalPort(right);
 }
@@ -446,19 +444,19 @@ bool TCPTransportInterface::is_input_port_open(
 }
 
 bool TCPTransportInterface::IsInputChannelOpen(
-        const Locator_t& locator) const
+        const Locator& locator) const
 {
     return IsLocatorSupported(locator) && is_input_port_open(IPLocator::getLogicalPort(locator));
 }
 
 bool TCPTransportInterface::IsLocatorSupported(
-        const Locator_t& locator) const
+        const Locator& locator) const
 {
     return locator.kind == transport_kind_;
 }
 
 bool TCPTransportInterface::is_output_channel_open_for(
-        const Locator_t& locator) const
+        const Locator& locator) const
 {
     if (!IsLocatorSupported(locator))
     {
@@ -479,22 +477,22 @@ bool TCPTransportInterface::is_output_channel_open_for(
     return false;
 }
 
-Locator_t TCPTransportInterface::RemoteToMainLocal(
-        const Locator_t& remote) const
+Locator TCPTransportInterface::RemoteToMainLocal(
+        const Locator& remote) const
 {
     if (!IsLocatorSupported(remote))
     {
         return false;
     }
 
-    Locator_t mainLocal(remote);
+    Locator mainLocal(remote);
     mainLocal.set_Invalid_Address();
     return mainLocal;
 }
 
 bool TCPTransportInterface::transform_remote_locator(
-        const Locator_t& remote_locator,
-        Locator_t& result_locator) const
+        const Locator& remote_locator,
+        Locator& result_locator) const
 {
     if (!IsLocatorSupported(remote_locator))
     {
@@ -533,7 +531,7 @@ bool TCPTransportInterface::transform_remote_locator(
 void TCPTransportInterface::CloseOutputChannel(
         std::shared_ptr<TCPChannelResource>& channel)
 {
-    Locator_t physical_locator = channel->locator();
+    Locator physical_locator = channel->locator();
     channel.reset();
     std::unique_lock<std::mutex> scopedLock(sockets_map_mutex_);
     auto channel_resource = channel_resources_.find(physical_locator);
@@ -542,7 +540,7 @@ void TCPTransportInterface::CloseOutputChannel(
 }
 
 bool TCPTransportInterface::CloseInputChannel(
-        const Locator_t& locator)
+        const Locator& locator)
 {
     bool bClosed = false;
     {
@@ -585,7 +583,7 @@ void TCPTransportInterface::close_tcp_socket(
 
 bool TCPTransportInterface::OpenOutputChannel(
         SendResourceList& send_resource_list,
-        const Locator_t& locator)
+        const Locator& locator)
 {
     if (!IsLocatorSupported(locator))
     {
@@ -597,7 +595,7 @@ bool TCPTransportInterface::OpenOutputChannel(
 
     if (logical_port != 0)
     {
-        Locator_t physical_locator = IPLocator::toPhysicalLocator(locator);
+        Locator physical_locator = IPLocator::toPhysicalLocator(locator);
 
         // We try to find a SenderResource that can be reuse to this locator.
         // Note: This is done in this level because if we do in NetworkFactory level, we have to mantain what transport
@@ -631,7 +629,7 @@ bool TCPTransportInterface::OpenOutputChannel(
         // Maybe as WAN?
         if (channel_resource == channel_resources_.end() && IPLocator::hasWan(locator))
         {
-            Locator_t wan_locator;
+            Locator wan_locator;
             wan_locator.kind = locator.kind;
             wan_locator.port = locator.port; // Copy full port
             IPLocator::setIPv4(wan_locator, IPLocator::toWanstring(locator)); // WAN to IP
@@ -681,7 +679,7 @@ bool TCPTransportInterface::OpenOutputChannel(
 }
 
 bool TCPTransportInterface::OpenInputChannel(
-        const Locator_t& locator,
+        const Locator& locator,
         TransportReceiverInterface* receiver,
         uint32_t /*maxMsgSize*/)
 {
@@ -707,7 +705,7 @@ bool TCPTransportInterface::OpenInputChannel(
 
 void TCPTransportInterface::keep_alive()
 {
-    std::map<Locator_t, std::shared_ptr<TCPChannelResource>> tmp_vec;
+    std::map<Locator, std::shared_ptr<TCPChannelResource>> tmp_vec;
 
     {
         std::unique_lock<std::mutex> scopedLock(sockets_map_mutex_); // Why mutex here?
@@ -767,7 +765,7 @@ void TCPTransportInterface::perform_listen_operation(
         std::weak_ptr<TCPChannelResource> channel_weak,
         std::weak_ptr<RTCPMessageManager> rtcp_manager)
 {
-    Locator_t remote_locator;
+    Locator remote_locator;
     uint16_t logicalPort(0);
     std::shared_ptr<RTCPMessageManager> rtcp_message_manager;
     std::shared_ptr<TCPChannelResource> channel;
@@ -874,7 +872,7 @@ bool TCPTransportInterface::Receive(
         octet* receive_buffer,
         uint32_t receive_buffer_capacity,
         uint32_t& receive_buffer_size,
-        Locator_t& remote_locator)
+        Locator& remote_locator)
 {
     bool success = false;
 
@@ -1055,7 +1053,7 @@ bool TCPTransportInterface::send(
         const octet* send_buffer,
         uint32_t send_buffer_size,
         std::shared_ptr<TCPChannelResource>& channel,
-        const Locator_t& remote_locator)
+        const Locator& remote_locator)
 {
     bool locator_mismatch = false;
 
@@ -1067,7 +1065,7 @@ bool TCPTransportInterface::send(
     // Maybe is WAN?
     if (locator_mismatch && IPLocator::hasWan(remote_locator))
     {
-        Locator_t wan_locator;
+        Locator wan_locator;
         wan_locator.kind = remote_locator.kind;
         wan_locator.port = IPLocator::toPhysicalLocator(remote_locator).port;
         IPLocator::setIPv4(wan_locator, IPLocator::toWanstring(remote_locator)); // WAN to IP
@@ -1181,7 +1179,7 @@ void TCPTransportInterface::select_locators(
 
 void TCPTransportInterface::SocketAccepted(
         std::shared_ptr<asio::ip::tcp::socket> socket,
-        const Locator_t& locator,
+        const Locator& locator,
         const asio::error_code& error)
 {
     if (alive_.load())
@@ -1227,7 +1225,7 @@ void TCPTransportInterface::SocketAccepted(
 #if TLS_FOUND
 void TCPTransportInterface::SecureSocketAccepted(
         std::shared_ptr<asio::ssl::stream<asio::ip::tcp::socket>> socket,
-        const Locator_t& locator,
+        const Locator& locator,
         const asio::error_code& error)
 {
     if (alive_.load())
@@ -1304,7 +1302,7 @@ void TCPTransportInterface::SocketConnected(
 }
 
 bool TCPTransportInterface::getDefaultMetatrafficMulticastLocators(
-        LocatorList_t&,
+        LocatorList&,
         uint32_t ) const
 {
     // TCP doesn't have multicast support
@@ -1312,10 +1310,10 @@ bool TCPTransportInterface::getDefaultMetatrafficMulticastLocators(
 }
 
 bool TCPTransportInterface::getDefaultMetatrafficUnicastLocators(
-        LocatorList_t& locators,
+        LocatorList& locators,
         uint32_t metatraffic_unicast_port) const
 {
-    Locator_t locator;
+    Locator locator;
     locator.kind = transport_kind_;
     locator.set_Invalid_Address();
     fillMetatrafficUnicastLocator(locator, metatraffic_unicast_port);
@@ -1324,10 +1322,10 @@ bool TCPTransportInterface::getDefaultMetatrafficUnicastLocators(
 }
 
 bool TCPTransportInterface::getDefaultUnicastLocators(
-        LocatorList_t& locators,
+        LocatorList& locators,
         uint32_t unicast_port) const
 {
-    Locator_t locator;
+    Locator locator;
     locator.kind = transport_kind_;
     locator.set_Invalid_Address();
     fillUnicastLocator(locator, unicast_port);
@@ -1336,7 +1334,7 @@ bool TCPTransportInterface::getDefaultUnicastLocators(
 }
 
 bool TCPTransportInterface::fillMetatrafficMulticastLocator(
-        Locator_t&,
+        Locator&,
         uint32_t) const
 {
     // TCP doesn't have multicast support
@@ -1344,7 +1342,7 @@ bool TCPTransportInterface::fillMetatrafficMulticastLocator(
 }
 
 bool TCPTransportInterface::fillMetatrafficUnicastLocator(
-        Locator_t& locator,
+        Locator& locator,
         uint32_t metatraffic_unicast_port) const
 {
     if (IPLocator::getPhysicalPort(locator.port) == 0)
@@ -1372,16 +1370,16 @@ bool TCPTransportInterface::fillMetatrafficUnicastLocator(
 }
 
 bool TCPTransportInterface::configureInitialPeerLocator(
-        Locator_t& locator,
+        Locator& locator,
         const PortParameters& port_params,
         uint32_t domainId,
-        LocatorList_t& list) const
+        LocatorList& list) const
 {
     if (IPLocator::getPhysicalPort(locator) == 0)
     {
         for (uint32_t i = 0; i < configuration()->maxInitialPeersRange; ++i)
         {
-            Locator_t auxloc(locator);
+            Locator auxloc(locator);
             auxloc.port = static_cast<uint16_t>(port_params.getUnicastPort(domainId, i));
 
             if (IPLocator::getLogicalPort(locator) == 0)
@@ -1398,7 +1396,7 @@ bool TCPTransportInterface::configureInitialPeerLocator(
         {
             for (uint32_t i = 0; i < configuration()->maxInitialPeersRange; ++i)
             {
-                Locator_t auxloc(locator);
+                Locator auxloc(locator);
                 IPLocator::setLogicalPort(auxloc, static_cast<uint16_t>(port_params.getUnicastPort(domainId, i)));
                 list.push_back(auxloc);
             }
@@ -1413,7 +1411,7 @@ bool TCPTransportInterface::configureInitialPeerLocator(
 }
 
 bool TCPTransportInterface::fillUnicastLocator(
-        Locator_t& locator,
+        Locator& locator,
         uint32_t well_known_port) const
 {
     if (IPLocator::getPhysicalPort(locator.port) == 0)

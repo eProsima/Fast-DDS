@@ -26,9 +26,6 @@ namespace rtps {
 
 class UDPSenderResource : public fastrtps::rtps::SenderResource
 {
-    using LocatorList_t = eprosima::fastrtps::rtps::LocatorList_t;
-    using Locator_t = eprosima::fastrtps::rtps::Locator_t;
-
 public:
 
     UDPSenderResource(
@@ -67,9 +64,9 @@ public:
     }
 
     void add_locators_to_list(
-            LocatorList_t& locators) const override
+            LocatorList& locators) const override
     {
-        Locator_t locator;
+        Locator locator;
         auto local_endpoint = getSocketPtr(socket_)->local_endpoint();
         transport_.endpoint_to_locator(local_endpoint, locator);
         locators.push_back(locator);

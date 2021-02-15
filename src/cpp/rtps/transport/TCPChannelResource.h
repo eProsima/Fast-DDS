@@ -63,7 +63,7 @@ protected:
     };
 
     TCPTransportInterface* parent_;
-    fastrtps::rtps::Locator_t locator_;
+    Locator locator_;
     bool waiting_for_keep_alive_;
     // Must be accessed after lock pending_logical_mutex_
     std::map<TCPTransactionId, uint16_t> negotiating_logical_ports_;
@@ -104,13 +104,13 @@ public:
         return connection_status_;
     }
 
-    inline const fastrtps::rtps::Locator_t& locator() const
+    inline const Locator& locator() const
     {
         return locator_;
     }
 
     ResponseCode process_bind_request(
-            const fastrtps::rtps::Locator_t& locator);
+            const Locator& locator);
 
     // Socket related methods
     virtual void connect(
@@ -154,7 +154,7 @@ protected:
     // Constructor called when trying to connect to a remote server
     TCPChannelResource(
             TCPTransportInterface* parent,
-            const fastrtps::rtps::Locator_t& locator,
+            const Locator& locator,
             uint32_t maxMsgSize);
 
     // Constructor called when local server accepted connection
