@@ -184,8 +184,8 @@ if __name__ == '__main__':
             print('Cannot find CERTS_PATH environment variable')
             exit(1)  # Exit with error
 
-    # Domain
-    domain = str(os.getpid() % 230)
+    # Domain must be under 100 to prevent windows multicast issues
+    domain = str(os.getpid() % 100)
     domain_options = ['--domain', domain]
 
     if interprocess is True:
