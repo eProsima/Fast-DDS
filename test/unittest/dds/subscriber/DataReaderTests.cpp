@@ -1441,8 +1441,8 @@ TEST_F(DataReaderTests, get_listening_locators)
     rtps::IPLocator::setPortRTPS(unicast_locator, 7399);
 
     rtps::Locator_t multicast_locator;
-    rtps::IPLocator::setIPv4(unicast_locator, 239, 127, 0, 1);
-    rtps::IPLocator::setPortRTPS(unicast_locator, 7398);
+    rtps::IPLocator::setIPv4(multicast_locator, 239, 127, 0, 1);
+    rtps::IPLocator::setPortRTPS(multicast_locator, 7398);
 
     // Set specific locators on DataReader QoS
     DataReaderQos reader_qos = DATAREADER_QOS_DEFAULT;
