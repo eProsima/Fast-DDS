@@ -23,12 +23,12 @@
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
 #include <fastdds/rtps/messages/RTPSMessageSenderInterface.hpp>
+#include <fastdds/rtps/common/Locator.h>
 
 namespace eprosima {
 namespace fastrtps {
 namespace rtps {
 
-class LocatorList_t;
 class RTPSParticipantImpl;
 
 /**
