@@ -205,9 +205,9 @@ TEST(BlackBox, SubGetListeningLocators)
     GetIP4s(interfaces);
 
     auto check_interface = [](const IPFinder::info_IP& address, const Locator_t& locator) -> bool
-    {
-        return IPLocator::compareAddress(address.locator, locator);
-    };
+            {
+                return IPLocator::compareAddress(address.locator, locator);
+            };
 
     for (const Locator_t& locator : locators)
     {
@@ -229,8 +229,8 @@ TEST(BlackBox, PubGetSendingLocators)
     descriptor->m_output_udp_socket = static_cast<uint16_t>(port);
 
     writer.disable_builtin_transport().
-        add_user_transport_to_pparams(descriptor).
-        init();
+            add_user_transport_to_pparams(descriptor).
+            init();
 
     ASSERT_TRUE(writer.isInitialized());
 
@@ -260,8 +260,8 @@ TEST(BlackBox, PubGetSendingLocatorsWhitelist)
     }
 
     writer.disable_builtin_transport().
-        add_user_transport_to_pparams(descriptor).
-        init();
+            add_user_transport_to_pparams(descriptor).
+            init();
 
     ASSERT_TRUE(writer.isInitialized());
 
@@ -284,5 +284,9 @@ TEST(BlackBox, PubGetSendingLocatorsWhitelist)
             }
         }
     }
-    EXPECT_TRUE(std::all_of(interfaces_found.cbegin(), interfaces_found.cend(), [](const bool& v) {return v; }));
+    EXPECT_TRUE(std::all_of(interfaces_found.cbegin(), interfaces_found.cend(),
+            [](const bool& v)
+            {
+                return v;
+            }));
 }
