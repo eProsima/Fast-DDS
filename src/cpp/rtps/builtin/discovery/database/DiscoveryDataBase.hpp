@@ -270,7 +270,7 @@ public:
 
     const std::vector<fastrtps::rtps::GuidPrefix_t> direct_clients_and_servers();
 
-    fastrtps::rtps::LocatorList_t participant_metatraffic_locators(
+    LocatorList participant_metatraffic_locators(
             fastrtps::rtps::GuidPrefix_t participant_guid_prefix);
 
     // return a list of participants that are not the server one
