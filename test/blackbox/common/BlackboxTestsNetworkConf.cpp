@@ -256,6 +256,7 @@ TEST(BlackBox, PubGetSendingLocatorsWhitelist)
     descriptor->m_output_udp_socket = static_cast<uint16_t>(port);
     for (const auto& interface : interfaces)
     {
+        std::cout << "Adding interface '" << interface.name << "' (" << interface.name.size() << ")" << std::endl;
         descriptor->interfaceWhiteList.push_back(interface.name);
     }
 
@@ -273,12 +274,18 @@ TEST(BlackBox, PubGetSendingLocatorsWhitelist)
     EXPECT_EQ(interfaces.size(), locators.size());
     for (const Locator_t& locator : locators)
     {
+        std::cout << "Checking locator " << locator << std::endl;
+
         EXPECT_EQ(locator.port, port);
         EXPECT_EQ(locator.kind, LOCATOR_KIND_UDPv4);
+
+        auto locator_ip = IPLocator::ip_to_string(locator);
+        std::cout << "Checking '" << locator_ip << "' (" << locator_ip.size() << ")" << std::endl;
         for (size_t idx = 0; idx < interfaces.size(); ++idx)
         {
-            if (interfaces[idx].name.compare(IPLocator::ip_to_string(locator)))
+            if (interfaces[idx].name.compare(locator_ip.c_str()))
             {
+                std::cout << "Found " << locator_ip << std::endl;
                 interfaces_found[idx] = true;
                 break;
             }
@@ -289,4 +296,12 @@ TEST(BlackBox, PubGetSendingLocatorsWhitelist)
             {
                 return v;
             }));
+
+    for (size_t i = 0; i < interfaces.size(); ++i)
+    {
+        if (!interfaces_found[i])
+        {
+            std::cout << "Interface '" << interfaces[i].name << "' not found" << std::endl;
+        }
+    }
 }
