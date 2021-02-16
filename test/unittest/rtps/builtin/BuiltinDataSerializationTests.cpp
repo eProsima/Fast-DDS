@@ -114,6 +114,7 @@ TEST(BuiltinDataSerializationTests, ignore_unsupported_type_info)
 
         CDRMessage_t msg(0);
         msg.init(data_w_buffer, static_cast<uint32_t>(sizeof(data_w_buffer)));
+        msg.length = msg.max_size;
 
         WriterProxyData out(max_unicast_locators, max_multicast_locators);
         EXPECT_NO_THROW(EXPECT_TRUE(out.readFromCDRMessage(&msg, network, false)));
@@ -165,6 +166,7 @@ TEST(BuiltinDataSerializationTests, ignore_unsupported_type_info)
 
         CDRMessage_t msg(0);
         msg.init(data_r_buffer, static_cast<uint32_t>(sizeof(data_r_buffer)));
+        msg.length = msg.max_size;
 
         ReaderProxyData out(max_unicast_locators, max_multicast_locators);
         EXPECT_NO_THROW(EXPECT_TRUE(out.readFromCDRMessage(&msg, network, false)));
