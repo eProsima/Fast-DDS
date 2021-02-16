@@ -144,14 +144,15 @@ private:
         uint32_t last_seq_num_ = 0;
         uint32_t lost_samples_ = 0;
         eprosima::fastdds::dds::SampleInfo info_;
-        int matched_ = 0;
-        bool enable_ = false;
+        std::atomic_int matched_;
+        std::atomic_bool enable_;
 
     public:
 
         DataReaderListener(
                 ThroughputSubscriber& throughput_subscriber)
             : throughput_subscriber_(throughput_subscriber)
+            , matched_(0)
         {
         }
 
@@ -182,13 +183,14 @@ private:
     class CommandReaderListener : public eprosima::fastdds::dds::DataReaderListener
     {
         ThroughputSubscriber& throughput_subscriber_;
-        int matched_ = 0;
+        std::atomic_int matched_;
 
     public:
 
         CommandReaderListener(
                 ThroughputSubscriber& throughput_subscriber)
             : throughput_subscriber_(throughput_subscriber)
+            , matched_(0)
         {
         }
 
@@ -212,13 +214,14 @@ private:
     class CommandWriterListener : public eprosima::fastdds::dds::DataWriterListener
     {
         ThroughputSubscriber& throughput_subscriber_;
-        int matched_ = 0;
+        std::atomic_int matched_;
 
     public:
 
         CommandWriterListener(
                 ThroughputSubscriber& throughput_subscriber)
             : throughput_subscriber_(throughput_subscriber)
+            , matched_(0)
         {
         }
 

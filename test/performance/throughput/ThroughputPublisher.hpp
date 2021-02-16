@@ -166,13 +166,14 @@ private:
     class DataWriterListener : public eprosima::fastdds::dds::DataWriterListener
     {
         ThroughputPublisher& throughput_publisher_;
-        int matched_ = 0;
+        std::atomic_int matched_;
 
     public:
 
         DataWriterListener(
                 ThroughputPublisher& throughput_publisher)
             : throughput_publisher_(throughput_publisher)
+            , matched_(0)
         {
         }
 
@@ -197,13 +198,14 @@ private:
     class CommandWriterListener : public eprosima::fastdds::dds::DataWriterListener
     {
         ThroughputPublisher& throughput_publisher_;
-        int matched_ = 0;
+        std::atomic_int matched_;
 
     public:
 
         CommandWriterListener(
                 ThroughputPublisher& throughput_publisher)
             : throughput_publisher_(throughput_publisher)
+            , matched_(0)
         {
         }
 
@@ -227,13 +229,14 @@ private:
     class CommandReaderListener : public eprosima::fastdds::dds::DataReaderListener
     {
         ThroughputPublisher& throughput_publisher_;
-        int matched_ = 0;
+        std::atomic_int matched_;
 
     public:
 
         CommandReaderListener(
                 ThroughputPublisher& throughput_publisher)
             : throughput_publisher_(throughput_publisher)
+            , matched_(0)
         {
         }
 
