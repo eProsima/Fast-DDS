@@ -756,11 +756,18 @@ bool ThroughputPublisher::test(
 
         clock_overhead += t_overhead_ * 2; // We access the clock twice per batch.
     }
-    command_sample.m_command = TEST_ENDS;
 
-    command_writer_->write(&command_sample);
     size_t removed = 0;
     data_writer_->clear_history(&removed);
+
+    if (data_sharing_)
+    {
+        // give some room to the DataSharingListener to process all the data before destroying endpoints
+        std::this_thread::sleep_for(std::chrono::milliseconds(500));
+    }
+
+    command_sample.m_command = TEST_ENDS;
+    command_writer_->write(&command_sample);
 
     // If the subscriber does not acknowledge the TEST_ENDS in time, we consider something went wrong.
     if (ReturnCode_t::RETCODE_OK
