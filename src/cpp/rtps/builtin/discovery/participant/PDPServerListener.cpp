@@ -178,7 +178,8 @@ void PDPServerListener::onNewCacheChangeAdded(
             if (participant_type != properties.end())
             {
                 if (participant_type->second() == ParticipantType::SERVER ||
-                        participant_type->second() == ParticipantType::BACKUP)
+                        participant_type->second() == ParticipantType::BACKUP ||
+                        participant_type->second() == ParticipantType::SUPER_CLIENT)
                 {
                     is_client = false;
                 }

@@ -3249,6 +3249,13 @@ TEST_F(XMLParserTests, getXMLEnum_positive)
         titleElement = xml_doc.RootElement();
         EXPECT_EQ(XMLP_ret::XML_OK, XMLParserTest::getXMLEnum_wrapper(titleElement, &e, ident));
         EXPECT_EQ(DiscoveryProtocol_t::BACKUP, e);
+
+        // SUPER_CLIENT case
+        sprintf(xml, enum_p, "SUPER_CLIENT");
+        ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+        titleElement = xml_doc.RootElement();
+        EXPECT_EQ(XMLP_ret::XML_OK, XMLParserTest::getXMLEnum_wrapper(titleElement, &e, ident));
+        EXPECT_EQ(DiscoveryProtocol_t::SUPER_CLIENT, e);
     }
 
     // ParticipantFilteringFlags_t Enum

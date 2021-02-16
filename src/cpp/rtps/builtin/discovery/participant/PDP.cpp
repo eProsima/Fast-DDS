@@ -64,6 +64,19 @@
 #include <chrono>
 
 namespace eprosima {
+namespace fastdds {
+namespace rtps {
+
+// Values for participant type parameter property
+const char ParticipantType::SIMPLE[] = "SIMPLE";
+const char ParticipantType::SERVER[] = "SERVER";
+const char ParticipantType::CLIENT[] = "CLIENT";
+const char ParticipantType::BACKUP[] = "BACKUP";
+const char ParticipantType::SUPER_CLIENT[] = "SUPER_CLIENT";
+
+} // namespace rtps
+} // namespace fastdds
+
 namespace fastrtps {
 namespace rtps {
 
