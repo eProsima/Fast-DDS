@@ -37,14 +37,14 @@ namespace eprosima {
 
 namespace fastdds {
 
-namespace rtps
-{
+namespace rtps {
 
 /**
  * Struct to define participant types to set participant type parameter property
  *@ingroup DISCOVERY_MODULE
  */
-struct ParticipantType {
+struct ParticipantType
+{
     static constexpr const char* SIMPLE = "SIMPLE";
     static constexpr const char* SERVER = "SERVER";
     static constexpr const char* CLIENT = "CLIENT";
@@ -95,26 +95,26 @@ inline std::ostream& operator <<(
 {
     switch (discovery_protocol)
     {
-    case DiscoveryProtocol::NONE:
-        output << fastdds::rtps::ParticipantType::NONE;
-        break;
-    case DiscoveryProtocol::SIMPLE:
-        output << fastdds::rtps::ParticipantType::SIMPLE;
-        break;
-    case DiscoveryProtocol::EXTERNAL:
-        output << fastdds::rtps::ParticipantType::EXTERNAL;
-        break;
-    case DiscoveryProtocol::CLIENT:
-        output << fastdds::rtps::ParticipantType::CLIENT;
-        break;
-    case DiscoveryProtocol::SERVER:
-        output << fastdds::rtps::ParticipantType::SERVER;
-        break;
-    case DiscoveryProtocol::BACKUP:
-        output << fastdds::rtps::ParticipantType::BACKUP;
-        break;
-    default:
-        output << fastdds::rtps::ParticipantType::UNKNOWN;
+        case DiscoveryProtocol::NONE:
+            output << fastdds::rtps::ParticipantType::NONE;
+            break;
+        case DiscoveryProtocol::SIMPLE:
+            output << fastdds::rtps::ParticipantType::SIMPLE;
+            break;
+        case DiscoveryProtocol::EXTERNAL:
+            output << fastdds::rtps::ParticipantType::EXTERNAL;
+            break;
+        case DiscoveryProtocol::CLIENT:
+            output << fastdds::rtps::ParticipantType::CLIENT;
+            break;
+        case DiscoveryProtocol::SERVER:
+            output << fastdds::rtps::ParticipantType::SERVER;
+            break;
+        case DiscoveryProtocol::BACKUP:
+            output << fastdds::rtps::ParticipantType::BACKUP;
+            break;
+        default:
+            output << fastdds::rtps::ParticipantType::UNKNOWN;
     }
     return output;
 }
