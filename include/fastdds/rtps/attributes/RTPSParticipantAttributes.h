@@ -34,6 +34,29 @@
 #include <sstream>
 
 namespace eprosima {
+
+namespace fastdds {
+
+namespace rtps
+{
+
+/**
+ * Struct to define participant types to set participant type parameter property
+ *@ingroup DISCOVERY_MODULE
+ */
+struct ParticipantType {
+    static constexpr const char* SIMPLE = "SIMPLE";
+    static constexpr const char* SERVER = "SERVER";
+    static constexpr const char* CLIENT = "CLIENT";
+    static constexpr const char* BACKUP = "BACKUP";
+    static constexpr const char* NONE = "NONE";
+    static constexpr const char* EXTERNAL = "EXTERNAL";
+    static constexpr const char* UNKNOWN = "UNKNOWN";
+};
+
+} /* namespace rtps */
+} /* namespace fastdds */
+
 namespace fastrtps {
 namespace rtps {
 
@@ -65,6 +88,36 @@ typedef enum DiscoveryProtocol
                  Discovery operation persist on a file (discovery handshake wouldn't repeat if shutdown). */
 
 } DiscoveryProtocol_t;
+
+inline std::ostream& operator <<(
+        std::ostream& output,
+        const DiscoveryProtocol& discovery_protocol)
+{
+    switch (discovery_protocol)
+    {
+    case DiscoveryProtocol::NONE:
+        output << fastdds::rtps::ParticipantType::NONE;
+        break;
+    case DiscoveryProtocol::SIMPLE:
+        output << fastdds::rtps::ParticipantType::SIMPLE;
+        break;
+    case DiscoveryProtocol::EXTERNAL:
+        output << fastdds::rtps::ParticipantType::EXTERNAL;
+        break;
+    case DiscoveryProtocol::CLIENT:
+        output << fastdds::rtps::ParticipantType::CLIENT;
+        break;
+    case DiscoveryProtocol::SERVER:
+        output << fastdds::rtps::ParticipantType::SERVER;
+        break;
+    case DiscoveryProtocol::BACKUP:
+        output << fastdds::rtps::ParticipantType::BACKUP;
+        break;
+    default:
+        output << fastdds::rtps::ParticipantType::UNKNOWN;
+    }
+    return output;
+}
 
 //!Filtering flags when discovering participants
 typedef enum ParticipantFilteringFlags : uint32_t
