@@ -1446,6 +1446,23 @@ void RTPSParticipantImpl::assert_remote_participant_liveliness(
     }
 }
 
+/**
+ * Get the list of locators from which this publisher may send data.
+ *
+ * @param [out] locators  LocatorList_t where the list of locators will be stored.
+ */
+void RTPSParticipantImpl::get_sending_locators(
+        rtps::LocatorList_t& locators) const
+{
+    locators.clear();
+
+    // Traverse the sender list and query
+    for (const auto& send_resource : send_resource_list_)
+    {
+        send_resource->add_locators_to_list(locators);
+    }
+}
+
 uint32_t RTPSParticipantImpl::getMaxMessageSize() const
 {
 #if HAVE_SECURITY

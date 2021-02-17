@@ -849,7 +849,7 @@ TEST_F(SHMTransportTests, send_and_receive_between_ports)
             };
     msg_recv->setCallback(recCallback);
 
-    LocatorList_t locator_list;
+    LocatorList locator_list;
     locator_list.push_back(unicastLocator);
 
     auto sendThreadFunction = [&]()
@@ -904,7 +904,7 @@ TEST_F(SHMTransportTests, port_and_segment_overflow_discard)
     ASSERT_FALSE(send_resource_list.empty());
     octet message[4] = { 'H', 'e', 'l', 'l'};
 
-    LocatorList_t locator_list;
+    LocatorList locator_list;
     locator_list.push_back(unicastLocator);
 
     {
@@ -1818,7 +1818,7 @@ TEST_F(SHMTransportTests, remote_segments_free)
 
             int samples_to_receive = num_samples;
 
-            LocatorList_t send_locators_list;
+            LocatorList send_locators_list;
             send_locators_list.push_back(pub_locator);
 
             eprosima::fastrtps::rtps::SendResourceList send_resource_list;
@@ -1854,7 +1854,7 @@ TEST_F(SHMTransportTests, remote_segments_free)
 
             int samples_sent = 0;
 
-            LocatorList_t send_locators_list;
+            LocatorList send_locators_list;
             send_locators_list.push_back(sub_locator);
 
             eprosima::fastrtps::rtps::SendResourceList send_resource_list;
@@ -1957,7 +1957,7 @@ TEST_F(SHMTransportTests, remote_segments_free)
     SharedMemTransport pub_transport(my_descriptor);
     ASSERT_TRUE(pub_transport.init());
 
-    LocatorList_t send_locators_list;
+    LocatorList send_locators_list;
     send_locators_list.push_back(sub_locator);
 
     eprosima::fastrtps::rtps::SendResourceList send_resource_list;
@@ -2042,7 +2042,7 @@ TEST_F(SHMTransportTests, remote_segments_free)
         SharedMemTransport pub_transport(my_descriptor);
         ASSERT_TRUE(pub_transport.init());
 
-        LocatorList_t send_locators_list;
+        LocatorList send_locators_list;
         send_locators_list.push_back(sub_locator);
 
         SendResourceList send_resource_list;
@@ -2127,7 +2127,7 @@ TEST_F(SHMTransportTests, dump_file)
                 };
         msg_recv->setCallback(recCallback);
 
-        LocatorList_t locator_list;
+        LocatorList locator_list;
         locator_list.push_back(unicastLocator);
 
         auto sendThreadFunction = [&]()

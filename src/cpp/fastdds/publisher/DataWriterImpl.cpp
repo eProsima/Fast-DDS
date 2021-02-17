@@ -43,6 +43,7 @@
 
 #include <rtps/history/TopicPayloadPoolRegistry.hpp>
 #include <rtps/DataSharing/DataSharingPayloadPool.hpp>
+#include <rtps/participant/RTPSParticipantImpl.h>
 
 #include <functional>
 #include <iostream>
@@ -798,6 +799,18 @@ ReturnCode_t DataWriterImpl::clear_history(
         size_t* removed)
 {
     return (history_.removeAllChange(removed) ? ReturnCode_t::RETCODE_OK : ReturnCode_t::RETCODE_ERROR);
+}
+
+ReturnCode_t DataWriterImpl::get_sending_locators(
+        rtps::LocatorList& locators) const
+{
+    if (nullptr == writer_)
+    {
+        return ReturnCode_t::RETCODE_NOT_ENABLED;
+    }
+
+    writer_->getRTPSParticipant()->get_sending_locators(locators);
+    return ReturnCode_t::RETCODE_OK;
 }
 
 const GUID_t& DataWriterImpl::guid() const

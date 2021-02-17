@@ -43,7 +43,7 @@ public:
         f_ = _fsopen(filename.c_str(), "a", _SH_DENYNO);
 #else
         f_ = fopen(filename.c_str(), "a");
-#endif
+#endif // if defined( _MSC_VER )
 
         if (f_ != nullptr)
         {
@@ -63,7 +63,7 @@ public:
             catch (const std::exception& e)
             {
                 logError(RTPS_TRANSPORT_SHM, "Failed to open/create interprocess mutex for packet_file_log: "
-                        << filename << " named: " << mutex_name << " with err: "<< e.what());
+                        << filename << " named: " << mutex_name << " with err: " << e.what());
 
                 fclose(f_);
                 f_ = nullptr;
@@ -85,8 +85,8 @@ public:
 
     void dump_packet(
             const std::string timestamp,
-            const fastrtps::rtps::Locator_t& from,
-            const fastrtps::rtps::Locator_t& to,
+            const Locator& from,
+            const Locator& to,
             const fastrtps::rtps::octet* buf,
             const uint32_t len)
     {
@@ -156,6 +156,7 @@ public:
             return;
         }
     }
+
 };
 
 class SHMPacketFileConsumer
@@ -165,8 +166,8 @@ public:
     struct Pkt
     {
         std::string timestamp;
-        fastrtps::rtps::Locator_t from;
-        fastrtps::rtps::Locator_t to;
+        Locator from;
+        Locator to;
         std::shared_ptr<SharedMemManager::Buffer> buffer;
     };
 
@@ -222,9 +223,9 @@ public:
         std::unique_lock<std::mutex> working(resources_.cv_mutex);
         resources_.cv.wait(working,
                 [&]()
-                    {
-                        return resources_.logs.BothEmpty();
-                    });
+                {
+                    return resources_.logs.BothEmpty();
+                });
         std::unique_lock<std::mutex> guard(resources_.config_mutex);
         resources_.consumers.clear();
     }
@@ -254,15 +255,15 @@ public:
         {
             resources_.cv.wait(guard,
                     [&]()
-                        {
-                            /* I must avoid:
-                             + the two calls be processed without an intermediate Run() loop (by using last_loop sequence number)
-                             + deadlock by absence of Run() loop activity (by using BothEmpty() call)
-                             */
-                            return !resources_.logging ||
-                            ( resources_.logs.Empty() &&
-                            ( last_loop != resources_.current_loop || resources_.logs.BothEmpty()) );
-                        });
+                    {
+                        /* I must avoid:
+                         + the two calls be processed without an intermediate Run() loop (by using last_loop sequence number)
+                         + deadlock by absence of Run() loop activity (by using BothEmpty() call)
+                         */
+                        return !resources_.logging ||
+                        ( resources_.logs.Empty() &&
+                        ( last_loop != resources_.current_loop || resources_.logs.BothEmpty()));
+                    });
 
             last_loop = resources_.current_loop;
 
@@ -286,7 +287,7 @@ public:
             // Each VS version deals with post-main deallocation of threads in a very different way.
     #if !defined(_WIN32) || defined(FASTRTPS_STATIC_LINK) || _MSC_VER >= 1800
             resources_.logging_thread->join();
-    #endif
+    #endif // if !defined(_WIN32) || defined(FASTRTPS_STATIC_LINK) || _MSC_VER >= 1800
             resources_.logging_thread.reset();
         }
     }
@@ -332,7 +333,7 @@ public:
         //    (void)ms;
     #else
         stream << std::put_time(localtime(&now_c), "%T") << "." << std::setw(3) << std::setfill('0') << ms << " ";
-    #endif
+    #endif // if defined(_WIN32)
         return stream.str();
     }
 
@@ -341,7 +342,7 @@ private:
     struct Resources
     {
         eprosima::fastrtps::DBQueue<typename TPacketConsumer::Pkt> logs;
-        std::vector<std::unique_ptr<SHMPacketFileConsumer> > consumers;
+        std::vector<std::unique_ptr<SHMPacketFileConsumer>> consumers;
         std::unique_ptr<std::thread> logging_thread;
 
         // Condition variable segment.
@@ -356,10 +357,11 @@ private:
 
         Resources()
             : logging(false)
-            ,work(false)
-            ,current_loop(0)
+            , work(false)
+            , current_loop(0)
         {
         }
+
     };
 
     Resources resources_;
@@ -372,9 +374,9 @@ private:
         {
             resources_.cv.wait(guard,
                     [&]()
-                        {
-                            return !resources_.logging || resources_.work;
-                        });
+                    {
+                        return !resources_.logging || resources_.work;
+                    });
 
             resources_.work = false;
 
@@ -403,6 +405,7 @@ private:
             resources_.cv.notify_all();
         }
     }
+
 };
 
 } // eprosima

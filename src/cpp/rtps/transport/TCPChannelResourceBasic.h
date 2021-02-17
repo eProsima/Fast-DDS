@@ -33,7 +33,7 @@ public:
     TCPChannelResourceBasic(
             TCPTransportInterface* parent,
             asio::io_service& service,
-            const fastrtps::rtps::Locator_t& locator,
+            const Locator& locator,
             uint32_t maxMsgSize);
 
     // Constructor called when local server accepted connection

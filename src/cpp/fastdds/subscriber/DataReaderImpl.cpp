@@ -1458,6 +1458,19 @@ bool DataReaderImpl::is_sample_valid(
     return reader_->is_sample_valid(data, info->sample_identity.writer_guid(), info->sample_identity.sequence_number());
 }
 
+ReturnCode_t DataReaderImpl::get_listening_locators(
+        rtps::LocatorList& locators) const
+{
+    if (nullptr == reader_)
+    {
+        return ReturnCode_t::RETCODE_NOT_ENABLED;
+    }
+
+    locators.assign(reader_->getAttributes().unicastLocatorList);
+    locators.push_back(reader_->getAttributes().multicastLocatorList);
+    return ReturnCode_t::RETCODE_OK;
+}
+
 } /* namespace dds */
 } /* namespace fastdds */
 } /* namespace eprosima */

@@ -56,25 +56,25 @@ protected:
     TCPv6Transport();
 
     virtual bool compare_locator_ip(
-            const fastrtps::rtps::Locator_t& lh,
-            const fastrtps::rtps::Locator_t& rh) const override;
+            const Locator& lh,
+            const Locator& rh) const override;
 
     virtual bool compare_locator_ip_and_port(
-            const fastrtps::rtps::Locator_t& lh,
-            const fastrtps::rtps::Locator_t& rh) const override;
+            const Locator& lh,
+            const Locator& rh) const override;
 
     virtual void fill_local_ip(
-            fastrtps::rtps::Locator_t& loc) const override;
+            Locator& loc) const override;
 
     virtual asio::ip::tcp::endpoint generate_endpoint(
             uint16_t port) const override;
 
     virtual asio::ip::tcp::endpoint generate_endpoint(
-            const fastrtps::rtps::Locator_t& loc,
+            const Locator& loc,
             uint16_t port) const override;
 
     virtual asio::ip::tcp::endpoint generate_local_endpoint(
-            fastrtps::rtps::Locator_t& loc,
+            Locator& loc,
             uint16_t port) const override;
 
     virtual asio::ip::tcp generate_protocol() const override;
@@ -95,7 +95,7 @@ protected:
     virtual std::vector<std::string> get_binding_interfaces_list() override;
 
     bool is_locator_allowed(
-            const fastrtps::rtps::Locator_t& locator) const override;
+            const Locator& locator) const override;
 
     //! Checks if the interfaces white list is empty.
     virtual bool is_interface_whitelist_empty() const override;
@@ -109,7 +109,7 @@ protected:
             const asio::ip::address_v6& ip) const;
 
     virtual bool is_interface_allowed(
-            const fastrtps::rtps::Locator_t& loc) const override;
+            const Locator& loc) const override;
 
     virtual void set_receive_buffer_size(
             uint32_t size) override;
@@ -119,7 +119,7 @@ protected:
 
     virtual void endpoint_to_locator(
             const asio::ip::tcp::endpoint& endpoint,
-            fastrtps::rtps::Locator_t& locator) const override;
+            Locator& locator) const override;
 
 public:
 
@@ -128,11 +128,11 @@ public:
 
     virtual ~TCPv6Transport() override;
 
-    virtual fastrtps::rtps::LocatorList_t NormalizeLocator(
-            const fastrtps::rtps::Locator_t& locator) override;
+    virtual LocatorList NormalizeLocator(
+            const Locator& locator) override;
 
     virtual bool is_local_locator(
-            const fastrtps::rtps::Locator_t& locator) const override;
+            const Locator& locator) const override;
 
     TransportDescriptorInterface* get_configuration() override
     {
@@ -140,7 +140,7 @@ public:
     }
 
     virtual void AddDefaultOutputLocator(
-            fastrtps::rtps::LocatorList_t&) override;
+            LocatorList&) override;
 
     virtual uint16_t GetLogicalPortIncrement() const override;
 

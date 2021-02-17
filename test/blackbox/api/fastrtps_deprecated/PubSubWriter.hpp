@@ -275,6 +275,11 @@ public:
         }
     }
 
+    eprosima::fastrtps::Publisher& get_native_writer() const
+    {
+        return *publisher_;
+    }
+
     void init()
     {
         //Create participant

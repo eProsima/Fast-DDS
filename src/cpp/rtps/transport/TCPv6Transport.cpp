@@ -30,11 +30,9 @@ namespace eprosima {
 namespace fastdds {
 namespace rtps {
 
-using Locator_t = fastrtps::rtps::Locator_t;
 using IPFinder = fastrtps::rtps::IPFinder;
 using octet = fastrtps::rtps::octet;
 using IPLocator = fastrtps::rtps::IPLocator;
-using LocatorList_t = fastrtps::rtps::LocatorList_t;
 using octet = fastrtps::rtps::octet;
 using Log = fastdds::dds::Log;
 
@@ -57,7 +55,7 @@ static void get_ipv6s(
 }
 
 static asio::ip::address_v6::bytes_type locator_to_native(
-        Locator_t& locator)
+        Locator& locator)
 {
     return{ { IPLocator::getIPv6(locator)[0],
         IPLocator::getIPv6(locator)[1],
@@ -89,7 +87,7 @@ TCPv6Transport::TCPv6Transport(
 
     for (uint16_t port : configuration_.listening_ports)
     {
-        Locator_t locator(LOCATOR_KIND_TCPv6, port);
+        Locator locator(LOCATOR_KIND_TCPv6, port);
         create_acceptor_socket(locator);
     }
 
@@ -134,7 +132,7 @@ TransportInterface* TCPv6TransportDescriptor::create_transport() const
 }
 
 void TCPv6Transport::AddDefaultOutputLocator(
-        LocatorList_t& /*defaultList*/)
+        LocatorList& /*defaultList*/)
 {
 }
 
@@ -189,7 +187,7 @@ std::vector<std::string> TCPv6Transport::get_binding_interfaces_list()
 }
 
 bool TCPv6Transport::is_locator_allowed(
-        const Locator_t& locator) const
+        const Locator& locator) const
 {
     if (!IsLocatorSupported(locator))
     {
@@ -229,10 +227,10 @@ bool TCPv6Transport::is_interface_allowed(
     return find(interface_whitelist_.begin(), interface_whitelist_.end(), ip) != interface_whitelist_.end();
 }
 
-LocatorList_t TCPv6Transport::NormalizeLocator(
-        const Locator_t& locator)
+LocatorList TCPv6Transport::NormalizeLocator(
+        const Locator& locator)
 {
-    LocatorList_t list;
+    LocatorList list;
 
     if (IPLocator::isAny(locator))
     {
@@ -240,7 +238,7 @@ LocatorList_t TCPv6Transport::NormalizeLocator(
         get_ipv6s(locNames);
         for (const auto& infoIP : locNames)
         {
-            Locator_t newloc(locator);
+            Locator newloc(locator);
             IPLocator::setIPv6(newloc, infoIP.locator);
             list.push_back(newloc);
         }
@@ -254,7 +252,7 @@ LocatorList_t TCPv6Transport::NormalizeLocator(
 }
 
 bool TCPv6Transport::is_local_locator(
-        const Locator_t& locator) const
+        const Locator& locator) const
 {
     assert(locator.kind == LOCATOR_KIND_TCPv6);
 
@@ -275,28 +273,28 @@ bool TCPv6Transport::is_local_locator(
 }
 
 bool TCPv6Transport::compare_locator_ip(
-        const Locator_t& lh,
-        const Locator_t& rh) const
+        const Locator& lh,
+        const Locator& rh) const
 {
     return IPLocator::compareAddress(lh, rh);
 }
 
 bool TCPv6Transport::compare_locator_ip_and_port(
-        const Locator_t& lh,
-        const Locator_t& rh) const
+        const Locator& lh,
+        const Locator& rh) const
 {
     return IPLocator::compareAddressAndPhysicalPort(lh, rh);
 }
 
 void TCPv6Transport::fill_local_ip(
-        Locator_t& loc) const
+        Locator& loc) const
 {
     IPLocator::setIPv6(loc, "::1");
     loc.kind = LOCATOR_KIND_TCPv6;
 }
 
 ip::tcp::endpoint TCPv6Transport::generate_endpoint(
-        const Locator_t& loc,
+        const Locator& loc,
         uint16_t port) const
 {
     asio::ip::address_v6::bytes_type remoteAddress;
@@ -305,7 +303,7 @@ ip::tcp::endpoint TCPv6Transport::generate_endpoint(
 }
 
 ip::tcp::endpoint TCPv6Transport::generate_local_endpoint(
-        Locator_t& loc,
+        Locator& loc,
         uint16_t port) const
 {
     return ip::tcp::endpoint(asio::ip::address_v6(locator_to_native(loc)), port);
@@ -323,7 +321,7 @@ asio::ip::tcp TCPv6Transport::generate_protocol() const
 }
 
 bool TCPv6Transport::is_interface_allowed(
-        const Locator_t& loc) const
+        const Locator& loc) const
 {
     asio::ip::address_v6 ip = asio::ip::address_v6::from_string(IPLocator::toIPv6string(loc));
     return is_interface_allowed(ip);
@@ -343,7 +341,7 @@ void TCPv6Transport::set_send_buffer_size(
 
 void TCPv6Transport::endpoint_to_locator(
         const ip::tcp::endpoint& endpoint,
-        Locator_t& locator) const
+        Locator& locator) const
 {
     locator.kind = LOCATOR_KIND_TCPv6;
     IPLocator::setPhysicalPort(locator, endpoint.port());

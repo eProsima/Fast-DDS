@@ -39,6 +39,7 @@
 #include <fastdds/rtps/builtin/liveliness/WLP.h>
 
 #include <rtps/history/TopicPayloadPoolRegistry.hpp>
+#include <rtps/participant/RTPSParticipantImpl.h>
 
 using namespace eprosima::fastrtps;
 using namespace ::rtps;
@@ -660,6 +661,12 @@ void PublisherImpl::assert_liveliness()
             stateful_writer->send_periodic_heartbeat(true, true);
         }
     }
+}
+
+void PublisherImpl::get_sending_locators(
+        rtps::LocatorList_t& locators) const
+{
+    mp_writer->getRTPSParticipant()->get_sending_locators(locators);
 }
 
 std::shared_ptr<rtps::IPayloadPool> PublisherImpl::payload_pool()
