@@ -1199,12 +1199,13 @@ bool RTPSParticipantImpl::createSendResources(
     return true;
 }
 
-void RTPSParticipantImpl::createReceiverResources(
+bool RTPSParticipantImpl::createReceiverResources(
         LocatorList_t& Locator_list,
         bool ApplyMutation,
         bool RegisterReceiver)
 {
     std::vector<std::shared_ptr<ReceiverResource>> newItemsBuffer;
+    bool ret_val = Locator_list.empty();
 
 #if HAVE_SECURITY
     // An auxilary buffer is needed in the ReceiverResource to to decrypt the message,
@@ -1229,6 +1230,8 @@ void RTPSParticipantImpl::createReceiverResources(
             }
         }
 
+        ret_val |= !newItemsBuffer.empty();
+
         for (auto it_buffer = newItemsBuffer.begin(); it_buffer != newItemsBuffer.end(); ++it_buffer)
         {
             std::lock_guard<std::mutex> lock(m_receiverResourcelistMutex);
@@ -1245,6 +1248,8 @@ void RTPSParticipantImpl::createReceiverResources(
         }
         newItemsBuffer.clear();
     }
+
+    return ret_val;
 }
 
 void RTPSParticipantImpl::createSenderResources(

@@ -859,7 +859,7 @@ public:
      * @param ApplyMutation - True if we want to create a Resource with a "similar" locator if the one we provide is unavailable
      * @param RegisterReceiver - True if we want the receiver to be registered. Useful for receivers created after participant is enabled.
      */
-    void createReceiverResources(
+    bool createReceiverResources(
             LocatorList_t& Locator_list,
             bool ApplyMutation,
             bool RegisterReceiver);
