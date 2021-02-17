@@ -51,7 +51,7 @@ XMLP_ret XMLProfileManager::fillParticipantAttributes(
     {
         if (log_error)
         {
-            logError(XMLPARSER, "Profile '" << profile_name << "' not found '");
+            logError(XMLPARSER, "Profile '" << profile_name << "' not found");
         }
         return XMLP_ret::XML_ERROR;
     }
@@ -69,7 +69,7 @@ XMLP_ret XMLProfileManager::fillPublisherAttributes(
     {
         if (log_error)
         {
-            logError(XMLPARSER, "Profile '" << profile_name << "' not found '");
+            logError(XMLPARSER, "Profile '" << profile_name << "' not found");
         }
         return XMLP_ret::XML_ERROR;
     }
