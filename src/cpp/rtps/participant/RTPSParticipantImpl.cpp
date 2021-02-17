@@ -89,6 +89,26 @@ static bool should_be_intraprocess_only(
         (ParticipantFilteringFlags::FILTER_DIFFERENT_HOST | ParticipantFilteringFlags::FILTER_DIFFERENT_PROCESS);
 }
 
+static bool get_unique_flows_parameters(
+        const RTPSParticipantAttributes& part_att,
+        const EndpointAttributes& att,
+        bool& unique_flows,
+        uint16_t& initial_port,
+        uint16_t& final_port)
+{
+    const std::string* value = PropertyPolicyHelper::find_property(att.properties, "fastdds.unique_network_flows");
+
+    unique_flows = (nullptr != value);
+    if (unique_flows)
+    {
+        // TODO (Miguel C): parse value to get port range
+        final_port = part_att.port.portBase;
+        initial_port = part_att.port.portBase - 400;
+    }
+
+    return true;
+}
+
 Locator_t& RTPSParticipantImpl::applyLocatorAdaptRule(
         Locator_t& loc)
 {
@@ -675,13 +695,6 @@ bool RTPSParticipantImpl::create_reader(
         return false;
     }
 
-    // Check for unique_network_flows feature
-    if (nullptr != PropertyPolicyHelper::find_property(param.endpoint.properties, "fastdds.unique_network_flows"))
-    {
-        logError(RTPS_PARTICIPANT, "Unique network flows not supported on readers");
-        return false;
-    }
-
     // Special case for DiscoveryProtocol::BACKUP, which abuses persistence guid
     GUID_t former_persistence_guid = param.endpoint.persistence_guid;
     if (param.endpoint.persistence_guid == c_Guid_Unknown)
@@ -698,6 +711,15 @@ bool RTPSParticipantImpl::create_reader(
     // Get persistence service
     IPersistenceService* persistence = nullptr;
     if (!get_persistence_service(is_builtin, param.endpoint, persistence))
+    {
+        return false;
+    }
+
+    // Check for unique_network_flows feature
+    bool request_unique_flows = false;
+    uint16_t initial_port = 0;
+    uint16_t final_port = 0;
+    if (!get_unique_flows_parameters(m_att, param.endpoint, request_unique_flows, initial_port, final_port))
     {
         return false;
     }
