@@ -23,6 +23,7 @@
 #include <fastdds/dds/publisher/qos/DataWriterQos.hpp>
 #include <fastdds/dds/subscriber/qos/DataReaderQos.hpp>
 #include <fastdds/dds/subscriber/SampleInfo.hpp>
+#include <fastdds/rtps/common/Locator.h>
 #include <fastdds/rtps/transport/TCPv4TransportDescriptor.h>
 #include <fastdds/rtps/transport/TCPv6TransportDescriptor.h>
 
@@ -31,7 +32,6 @@
 using namespace eprosima::fastdds::dds;
 using namespace eprosima::fastdds::rtps;
 
-using Locator_t = eprosima::fastrtps::rtps::Locator_t;
 using IPLocator = eprosima::fastrtps::rtps::IPLocator;
 
 BenchMarkSubscriber::BenchMarkSubscriber()
@@ -74,7 +74,7 @@ bool BenchMarkSubscriber::init(
     {
         int32_t kind = LOCATOR_KIND_TCPv4;
 
-        Locator_t initial_peer_locator;
+        Locator initial_peer_locator;
         initial_peer_locator.kind = kind;
         IPLocator::setIPv4(initial_peer_locator, "127.0.0.1");
         initial_peer_locator.port = 5100;
@@ -95,7 +95,7 @@ bool BenchMarkSubscriber::init(
         uint32_t kind = LOCATOR_KIND_TCPv6;
         pqos.transport().use_builtin_transports = false;
 
-        Locator_t initial_peer_locator;
+        Locator initial_peer_locator;
         initial_peer_locator.kind = kind;
         IPLocator::setIPv6(initial_peer_locator, "::1");
         initial_peer_locator.port = 5100;

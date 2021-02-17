@@ -24,7 +24,6 @@ namespace eprosima {
 namespace fastdds {
 namespace rtps {
 
-using Locator_t = fastrtps::rtps::Locator_t;
 using IPLocator = fastrtps::rtps::IPLocator;
 using Log = fastdds::dds::Log;
 
@@ -48,7 +47,7 @@ static uint16_t GetBaseAutoPort(
 
 TCPChannelResource::TCPChannelResource(
         TCPTransportInterface* parent,
-        const Locator_t& locator,
+        const Locator& locator,
         uint32_t maxMsgSize)
     : ChannelResource(maxMsgSize)
     , parent_ (parent)
@@ -79,7 +78,7 @@ void TCPChannelResource::disable()
 }
 
 ResponseCode TCPChannelResource::process_bind_request(
-        const Locator_t& locator)
+        const Locator& locator)
 {
     eConnectionStatus expected = TCPChannelResource::eConnectionStatus::eWaitingForBind;
     if (connection_status_.compare_exchange_strong(expected, eConnectionStatus::eEstablished))

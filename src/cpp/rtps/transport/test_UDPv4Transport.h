@@ -111,7 +111,7 @@ private:
             const fastrtps::rtps::octet* send_buffer,
             uint32_t send_buffer_size,
             eProsimaUDPSocket& socket,
-            const fastrtps::rtps::Locator_t& remote_locator,
+            const Locator& remote_locator,
             bool only_multicast_purpose,
             const std::chrono::microseconds& timeout);
 };

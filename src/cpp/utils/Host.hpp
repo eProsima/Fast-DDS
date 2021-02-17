@@ -15,6 +15,8 @@
 #ifndef UTILS_HOST_HPP_
 #define UTILS_HOST_HPP_
 
+#include <fastdds/rtps/common/Locator.h>
+
 #include <fastrtps/utils/md5.h>
 #include <fastrtps/utils/IPFinder.h>
 
@@ -61,7 +63,7 @@ private:
     Host()
     {
         // Compute the host id
-        fastrtps::rtps::LocatorList_t loc;
+        fastdds::rtps::LocatorList loc;
         fastrtps::rtps::IPFinder::getIP4Address(&loc);
 
         {

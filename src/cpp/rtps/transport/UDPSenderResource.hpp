@@ -15,7 +15,9 @@
 #ifndef __TRANSPORT_UDPSENDERRESOURCE_HPP__
 #define __TRANSPORT_UDPSENDERRESOURCE_HPP__
 
+#include <fastdds/rtps/common/Locator.h>
 #include <fastdds/rtps/network/SenderResource.h>
+
 #include <rtps/transport/UDPTransportInterface.h>
 
 namespace eprosima {
@@ -33,6 +35,7 @@ public:
         : SenderResource(transport.kind())
         , socket_(moveSocket(socket))
         , only_multicast_purpose_(only_multicast_purpose)
+        , transport_(transport)
     {
         // Implementation functions are bound to the right transport parameters
         clean_up = [this, &transport]()
@@ -58,6 +61,15 @@ public:
         {
             clean_up();
         }
+    }
+
+    void add_locators_to_list(
+            LocatorList& locators) const override
+    {
+        Locator locator;
+        auto local_endpoint = getSocketPtr(socket_)->local_endpoint();
+        transport_.endpoint_to_locator(local_endpoint, locator);
+        locators.push_back(locator);
     }
 
     static UDPSenderResource* cast(
@@ -87,6 +99,8 @@ private:
     eProsimaUDPSocket socket_;
 
     bool only_multicast_purpose_;
+
+    UDPTransportInterface& transport_;
 };
 
 } // namespace rtps

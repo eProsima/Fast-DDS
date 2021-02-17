@@ -26,7 +26,6 @@ namespace fastdds {
 namespace rtps {
 
 using octet = fastrtps::rtps::octet;
-using Locator_t = fastrtps::rtps::Locator_t;
 using CDRMessage_t = fastrtps::rtps::CDRMessage_t;
 using SubmessageHeader_t = fastrtps::rtps::SubmessageHeader_t;
 using SequenceNumber_t = fastrtps::rtps::SequenceNumber_t;
@@ -196,7 +195,7 @@ bool test_UDPv4Transport::send(
         const octet* send_buffer,
         uint32_t send_buffer_size,
         eProsimaUDPSocket& socket,
-        const Locator_t& remote_locator,
+        const Locator& remote_locator,
         bool only_multicast_purpose,
         const std::chrono::microseconds& timeout)
 {

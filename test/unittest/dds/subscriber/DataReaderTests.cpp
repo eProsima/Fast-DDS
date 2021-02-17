@@ -47,6 +47,7 @@
 #include <fastdds/dds/subscriber/qos/SubscriberQos.hpp>
 
 #include <fastdds/rtps/common/Locator.h>
+#include <fastrtps/utils/IPLocator.h>
 
 #include "./FooBoundedType.hpp"
 #include "./FooBoundedTypeSupport.hpp"
@@ -1440,6 +1441,51 @@ TEST_F(DataReaderTests, SetListener)
                 std::get<1>(testing_case),
                 std::get<2>(testing_case));
     }
+}
+
+TEST_F(DataReaderTests, get_listening_locators)
+{
+    using IPLocator = eprosima::fastrtps::rtps::IPLocator;
+
+    // Prepare specific listening locators
+    rtps::Locator unicast_locator;
+    IPLocator::setIPv4(unicast_locator, 127, 0, 0, 1);
+    IPLocator::setPortRTPS(unicast_locator, 7399);
+
+    rtps::Locator multicast_locator;
+    IPLocator::setIPv4(multicast_locator, 239, 127, 0, 1);
+    IPLocator::setPortRTPS(multicast_locator, 7398);
+
+    // Set specific locators on DataReader QoS
+    DataReaderQos reader_qos = DATAREADER_QOS_DEFAULT;
+    reader_qos.endpoint().unicast_locator_list.push_back(unicast_locator);
+    reader_qos.endpoint().multicast_locator_list.push_back(multicast_locator);
+
+    // We will create a disabled DataReader, so we can check RETCODE_NOT_ENABLED
+    SubscriberQos subscriber_qos = SUBSCRIBER_QOS_DEFAULT;
+    subscriber_qos.entity_factory().autoenable_created_entities = false;
+
+    create_entities(nullptr, reader_qos, subscriber_qos);
+    EXPECT_FALSE(data_reader_->is_enabled());
+
+    // Calling on disabled reader should return NOT_ENABLED
+    rtps::LocatorList locator_list;
+    EXPECT_EQ(ReturnCode_t::RETCODE_NOT_ENABLED, data_reader_->get_listening_locators(locator_list));
+
+    // Enable and try again
+    EXPECT_EQ(ReturnCode_t::RETCODE_OK, data_reader_->enable());
+    EXPECT_EQ(ReturnCode_t::RETCODE_OK, data_reader_->get_listening_locators(locator_list));
+
+    EXPECT_EQ(locator_list.size(), 2u);
+    bool unicast_found = false;
+    bool multicast_found = false;
+    for (const rtps::Locator& locator : locator_list)
+    {
+        unicast_found |= (locator == unicast_locator);
+        multicast_found |= (locator == multicast_locator);
+    }
+    EXPECT_TRUE(unicast_found);
+    EXPECT_TRUE(multicast_found);
 }
 
 class DataReaderUnsupportedTests : public ::testing::Test

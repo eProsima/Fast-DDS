@@ -27,7 +27,6 @@ namespace eprosima {
 namespace fastdds {
 namespace rtps {
 
-using Locator_t = fastrtps::rtps::Locator_t;
 using octet = fastrtps::rtps::octet;
 using IPLocator = fastrtps::rtps::IPLocator;
 using Log = fastdds::dds::Log;
@@ -35,7 +34,7 @@ using Log = fastdds::dds::Log;
 TCPChannelResourceBasic::TCPChannelResourceBasic(
         TCPTransportInterface* parent,
         asio::io_service& service,
-        const Locator_t& locator,
+        const Locator& locator,
         uint32_t maxMsgSize)
     : TCPChannelResource(parent, locator, maxMsgSize)
     , service_(service)

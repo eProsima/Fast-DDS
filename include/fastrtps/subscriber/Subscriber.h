@@ -22,6 +22,7 @@
 
 #include <fastdds/rtps/common/Guid.h>
 #include <fastdds/rtps/common/Time_t.h>
+#include <fastdds/rtps/common/Locator.h>
 #include <fastrtps/attributes/SubscriberAttributes.h>
 #include <fastrtps/qos/DeadlineMissedStatus.h>
 #include <fastrtps/qos/LivelinessChangedStatus.h>
@@ -167,6 +168,14 @@ public:
      */
     void get_liveliness_changed_status(
             LivelinessChangedStatus& status);
+
+    /**
+     * Get the list of locators on which this subscriber is listening.
+     *
+     * @param [out] locators  LocatorList_t where the list of locators will be stored.
+     */
+    void get_listening_locators(
+            rtps::LocatorList_t& locators) const;
 
 private:
 

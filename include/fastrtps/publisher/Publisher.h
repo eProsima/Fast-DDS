@@ -34,7 +34,7 @@ namespace rtps {
 struct GUID_t;
 class WriteParams;
 class RTPSParticipant;
-}
+}  // namespace rtps
 
 class Participant;
 class PublisherImpl;
@@ -172,6 +172,14 @@ public:
      */
     void get_liveliness_lost_status(
             LivelinessLostStatus& status);
+
+    /**
+     * Get the list of locators from which this publisher may send data.
+     *
+     * @param [out] locators  LocatorList_t where the list of locators will be stored.
+     */
+    void get_sending_locators(
+            rtps::LocatorList_t& locators) const;
 
 private:
 

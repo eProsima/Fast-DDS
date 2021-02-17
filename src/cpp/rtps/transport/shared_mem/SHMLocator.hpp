@@ -41,7 +41,7 @@ public:
      * @param type Indicates whether the locator is unicast or multicast.
      * @return The created shared-memory locator.
      */
-    static fastrtps::rtps::Locator_t create_locator(
+    static Locator create_locator(
             uint32_t port,
             Type type)
     {
@@ -64,7 +64,7 @@ public:
      * @return boolean
      */
     static bool is_shm_and_from_this_host(
-            const fastrtps::rtps::Locator_t& locator)
+            const Locator& locator)
     {
         using namespace fastrtps::rtps;
 

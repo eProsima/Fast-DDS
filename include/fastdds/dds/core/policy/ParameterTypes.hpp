@@ -233,7 +233,7 @@ class ParameterLocator_t : public Parameter_t
 public:
 
     //!Locator
-    fastrtps::rtps::Locator_t locator;
+    rtps::Locator locator;
 
     /**
      * @brief Constructor without parameters
@@ -263,7 +263,7 @@ public:
     ParameterLocator_t(
             ParameterId_t pid,
             uint16_t in_length,
-            const fastrtps::rtps::Locator_t& loc)
+            const rtps::Locator& loc)
         : Parameter_t(pid, in_length)
         , locator(loc)
     {

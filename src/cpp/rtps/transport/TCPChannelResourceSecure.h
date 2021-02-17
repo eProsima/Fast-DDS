@@ -33,7 +33,7 @@ public:
             TCPTransportInterface* parent,
             asio::io_service& service,
             asio::ssl::context& ssl_context,
-            const fastrtps::rtps::Locator_t& locator,
+            const Locator& locator,
             uint32_t maxMsgSize);
 
     // Constructor called when local server accepted connection (secure version)

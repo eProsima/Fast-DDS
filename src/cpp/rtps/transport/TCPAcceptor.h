@@ -32,9 +32,9 @@ class TCPAcceptor
 protected:
 
     asio::ip::tcp::acceptor acceptor_;
-    fastrtps::rtps::Locator_t locator_;
+    Locator locator_;
     asio::ip::tcp::endpoint endpoint_;
-    std::vector<fastrtps::rtps::Locator_t> pending_out_locators_;
+    std::vector<Locator> pending_out_locators_;
     asio::io_service* io_service_;
 
 public:
@@ -42,19 +42,19 @@ public:
     TCPAcceptor(
             asio::io_service& io_service,
             TCPTransportInterface* parent,
-            const fastrtps::rtps::Locator_t& locator);
+            const Locator& locator);
 
     TCPAcceptor(
             asio::io_service& io_service,
             const std::string& interface,
-            const fastrtps::rtps::Locator_t& locator);
+            const Locator& locator);
 
-    const fastrtps::rtps::Locator_t& locator() const
+    const Locator& locator() const
     {
         return locator_;
     }
 
-    fastrtps::rtps::Locator_t& locator()
+    Locator& locator()
     {
         return locator_;
     }
