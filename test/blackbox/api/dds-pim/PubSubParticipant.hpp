@@ -117,6 +117,18 @@ class PubSubParticipant
 
         }
 
+        void on_data_available(
+                eprosima::fastdds::dds::DataReader* reader) override
+        {
+            TypeSupport::type data;
+            eprosima::fastdds::dds::SampleInfo info;
+
+            while (ReturnCode_t::RETCODE_OK == reader->take_next_sample(&data, &info))
+            {
+                participant_->data_received();
+            }
+        }
+
     private:
 
         SubListener& operator =(
@@ -611,6 +623,13 @@ public:
         sub_liveliness_cv_.notify_one();
     }
 
+    void data_received()
+    {
+        std::unique_lock<std::mutex> lock(sub_data_mutex_);
+        sub_times_data_received_++;
+        sub_data_cv_.notify_one();
+    }
+
     unsigned int pub_times_liveliness_lost()
     {
         std::unique_lock<std::mutex> lock(pub_liveliness_mutex_);
@@ -716,6 +735,13 @@ private:
     std::mutex pub_liveliness_mutex_;
     //! A condition variable for liveliness of publisher
     std::condition_variable pub_liveliness_cv_;
+
+    //! A mutex protecting received data
+    std::mutex sub_data_mutex_;
+    //! A condition variable for received data
+    std::condition_variable sub_data_cv_;
+    //! Number of times a subscriber received data
+    size_t sub_times_data_received_ = 0;
 
     eprosima::fastdds::dds::TypeSupport type_;
 };
