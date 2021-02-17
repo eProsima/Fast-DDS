@@ -1124,7 +1124,7 @@ bool RTPSParticipantImpl::createAndAssociateReceiverswithEndpoint(
         - Associated the endpoint to the new elements in the list
         - Launches the listener thread
      */
-    
+
     if (unique_flows)
     {
         pend->getAttributes().multicastLocatorList.clear();
@@ -1153,7 +1153,7 @@ bool RTPSParticipantImpl::createAndAssociateReceiverswithEndpoint(
         if (port >= final_unique_port)
         {
             logError(RTPS_PARTICIPANT, "Unique flows requested but exhausted. Port range: "
-                << initial_unique_port << "-" << final_unique_port);
+                    << initial_unique_port << "-" << final_unique_port);
             return false;
         }
     }
