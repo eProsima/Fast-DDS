@@ -46,6 +46,13 @@
 template<class TypeSupport>
 class PubSubParticipant
 {
+public:
+
+    typedef TypeSupport type_support;
+    typedef typename type_support::type type;
+
+private:
+
     class PubListener : public eprosima::fastdds::dds::DataWriterListener
     {
         friend class PubSubParticipant;
@@ -120,7 +127,7 @@ class PubSubParticipant
         void on_data_available(
                 eprosima::fastdds::dds::DataReader* reader) override
         {
-            TypeSupport::type data;
+            type data;
             eprosima::fastdds::dds::SampleInfo info;
 
             while (ReturnCode_t::RETCODE_OK == reader->take_next_sample(&data, &info))
@@ -138,9 +145,6 @@ class PubSubParticipant
     };
 
 public:
-
-    typedef TypeSupport type_support;
-    typedef typename type_support::type type;
 
     PubSubParticipant(
             unsigned int num_publishers,
