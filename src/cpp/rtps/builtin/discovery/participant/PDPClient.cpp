@@ -572,15 +572,38 @@ bool PDPClient::match_servers_EDP_endpoints()
     return all;
 }
 
+const std::string& ros_discovery_server_env()
+{
+    static std::string servers;
+    {
+#pragma warning(suppress:4996)
+        const char* data = std::getenv(DEFAULT_ROS2_MASTER_URI);
+        if (nullptr != data)
+        {
+            servers = data;
+        }
+    }
+    return servers;
+}
+
+bool load_environment_server_info(
+        RemoteServerList_t& attributes)
+{
+    return load_environment_server_info(ros_discovery_server_env(), attributes);
+}
+
 bool load_environment_server_info(
         std::string list,
         RemoteServerList_t& attributes)
 {
-    using namespace std;
+    if (list.empty())
+    {
+        return false;
+    }
 
     // parsing ancillary regex
-    const regex ROS2_IPV4_PATTERN(R"(^((?:[0-9]{1,3}\.){3}[0-9]{1,3})?:?(?:(\d+))?$)");
-    const regex ROS2_SERVER_LIST_PATTERN(R"(([^;]*);?)");
+    const std::regex ROS2_IPV4_PATTERN(R"(^((?:[0-9]{1,3}\.){3}[0-9]{1,3})?:?(?:(\d+))?$)");
+    const std::regex ROS2_SERVER_LIST_PATTERN(R"(([^;]*);?)");
 
     try
     {
@@ -590,30 +613,30 @@ bool load_environment_server_info(
         Locator_t server_locator(LOCATOR_KIND_UDPv4, DEFAULT_ROS2_SERVER_PORT);
         int server_id = 0;
 
-        sregex_iterator server_it(
+        std::sregex_iterator server_it(
             list.begin(),
             list.end(),
             ROS2_SERVER_LIST_PATTERN,
-            regex_constants::match_not_null);
+            std::regex_constants::match_not_null);
 
-        while (server_it != sregex_iterator())
+        while (server_it != std::sregex_iterator())
         {
-            const smatch::value_type sm = *++(server_it->cbegin());
+            const std::smatch::value_type sm = *++(server_it->cbegin());
 
             if (sm.matched)
             {
                 // now we must parse the inner expression
-                smatch mr;
-                string locator(sm);
-                if (regex_match(locator, mr, ROS2_IPV4_PATTERN, regex_constants::match_not_null))
+                std::smatch mr;
+                std::string locator(sm);
+                if (std::regex_match(locator, mr, ROS2_IPV4_PATTERN, std::regex_constants::match_not_null))
                 {
-                    smatch::iterator it = mr.cbegin();
+                    std::smatch::iterator it = mr.cbegin();
 
                     while (++it != mr.cend())
                     {
-                        if ( !IPLocator::setIPv4(server_locator, it->str()))
+                        if (!IPLocator::setIPv4(server_locator, it->str()))
                         {
-                            stringstream ss;
+                            std::stringstream ss;
                             ss << "Wrong ipv4 address passed into the server's list " << it->str();
                             throw std::invalid_argument(ss.str());
                         }
@@ -624,7 +647,7 @@ bool load_environment_server_info(
                             IPLocator::setIPv4(server_locator, "127.0.0.1");
                         }
 
-                        if ( ++it != mr.cend())
+                        if (++it != mr.cend())
                         {
                             // reset the locator to default
                             IPLocator::setPhysicalPort(server_locator, DEFAULT_ROS2_SERVER_PORT);
@@ -636,14 +659,14 @@ bool load_environment_server_info(
 
                                 if ( port > std::numeric_limits<uint16_t>::max())
                                 {
-                                    throw out_of_range("Too larget udp port passed into the server's list");
+                                    throw std::out_of_range("Too larget udp port passed into the server's list");
                                 }
 
                                 if ( !IPLocator::setPhysicalPort(server_locator, static_cast<uint16_t>(port)))
                                 {
-                                    stringstream ss;
+                                    std::stringstream ss;
                                     ss << "Wrong udp port passed into the server's list " << it->str();
-                                    throw invalid_argument(ss.str());
+                                    throw std::invalid_argument(ss.str());
                                 }
                             }
                         }
@@ -663,7 +686,7 @@ bool load_environment_server_info(
                 {
                     if (!locator.empty())
                     {
-                        stringstream ss;
+                        std::stringstream ss;
                         ss << "Wrong locator passed into the server's list " << locator;
                         throw std::invalid_argument(ss.str());
                     }

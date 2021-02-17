@@ -342,6 +342,10 @@ public:
     bool is_participant_local(
             const eprosima::fastrtps::rtps::GuidPrefix_t& participant_prefix);
 
+    //! Add a server to the list of remote servers
+    void add_server(
+            fastrtps::rtps::GuidPrefix_t server);
+
 protected:
 
     // change a cacheChange by update or new disposal
