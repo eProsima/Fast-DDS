@@ -558,6 +558,13 @@ bool RTPSParticipantImpl::create_writer(
         return false;
     }
 
+    // Check for unique_network_flows feature
+    if (nullptr != PropertyPolicyHelper::find_property(param.endpoint.properties, "fastdds.unique_network_flows"))
+    {
+        logError(RTPS_PARTICIPANT, "Unique network flows not supported on writers");
+        return false;
+    }
+
     // Special case for DiscoveryProtocol::BACKUP, which abuses persistence guid
     GUID_t former_persistence_guid = param.endpoint.persistence_guid;
     if (param.endpoint.persistence_guid == c_Guid_Unknown)
@@ -665,6 +672,13 @@ bool RTPSParticipantImpl::create_reader(
     EntityId_t entId;
     if (!preprocess_endpoint_attributes<READER, 0x04, 0x07>(entity_id, param.endpoint, entId))
     {
+        return false;
+    }
+
+    // Check for unique_network_flows feature
+    if (nullptr != PropertyPolicyHelper::find_property(param.endpoint.properties, "fastdds.unique_network_flows"))
+    {
+        logError(RTPS_PARTICIPANT, "Unique network flows not supported on readers");
         return false;
     }
 

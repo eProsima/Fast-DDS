@@ -358,6 +358,10 @@ TEST(DataWriterTests, InvalidQos)
     ASSERT_TRUE(datawriter->set_qos(qos) == ReturnCode_t::RETCODE_UNSUPPORTED);
 
     qos = DATAWRITER_QOS_DEFAULT;
+    qos.properties().properties().emplace_back("fastdds.unique_network_flows", "");
+    ASSERT_TRUE(datawriter->set_qos(qos) == ReturnCode_t::RETCODE_UNSUPPORTED);
+
+    qos = DATAWRITER_QOS_DEFAULT;
     qos.reliability().kind = BEST_EFFORT_RELIABILITY_QOS;
     qos.ownership().kind = EXCLUSIVE_OWNERSHIP_QOS;
     ASSERT_TRUE(datawriter->set_qos(qos) == ReturnCode_t::RETCODE_INCONSISTENT_POLICY);

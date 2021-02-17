@@ -45,6 +45,32 @@ static void GetIP4s(
             });
 }
 
+TEST(Blackbox, pub_unique_network_flows)
+{
+    PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
+
+    PropertyPolicy properties;
+    properties.properties().emplace_back("fastdds.unique_network_flows", "");
+
+    writer.entity_property_policy(properties).init();
+
+    // Creation should fail as feature is not implemented for writers
+    EXPECT_FALSE(writer.isInitialized());
+}
+
+TEST(Blackbox, sub_unique_network_flows)
+{
+    PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
+
+    PropertyPolicy properties;
+    properties.properties().emplace_back("fastdds.unique_network_flows", "");
+
+    reader.entity_property_policy(properties).init();
+
+    // Creation should fail as feature is not implemented for readers
+    EXPECT_FALSE(reader.isInitialized());
+}
+
 //Verify that outLocatorList is used to select the desired output channel
 TEST(BlackBox, PubSubOutLocatorSelection)
 {
