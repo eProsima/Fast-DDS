@@ -772,7 +772,7 @@ bool RTPSParticipantImpl::create_reader(
 
     if (enable)
     {
-        if (!createAndAssociateReceiverswithEndpoint(SReader))
+        if (!createAndAssociateReceiverswithEndpoint(SReader, request_unique_flows, initial_port, final_port))
         {
             delete(SReader);
             return false;
@@ -1113,7 +1113,10 @@ bool RTPSParticipantImpl::assignEndpointListenResources(
 }
 
 bool RTPSParticipantImpl::createAndAssociateReceiverswithEndpoint(
-        Endpoint* pend)
+        Endpoint* pend,
+        bool unique_flows,
+        uint16_t initial_unique_port,
+        uint16_t final_unique_port)
 {
     /*	This function...
         - Asks the network factory for new resources
@@ -1121,18 +1124,53 @@ bool RTPSParticipantImpl::createAndAssociateReceiverswithEndpoint(
         - Associated the endpoint to the new elements in the list
         - Launches the listener thread
      */
-    // 1 - Ask the network factory to generate the elements that do still not exist
-    std::vector<ReceiverResource> newItems;                         //Store the newly created elements
-    std::vector<ReceiverResource> newItemsBuffer;                   //Store intermediate results
-    //Iterate through the list of unicast and multicast locators the endpoint has... unless its empty
-    //In that case, just use the standard
-    if (pend->getAttributes().unicastLocatorList.empty() && pend->getAttributes().multicastLocatorList.empty())
+    
+    if (unique_flows)
     {
-        //Default unicast
+        pend->getAttributes().multicastLocatorList.clear();
         pend->getAttributes().unicastLocatorList = m_att.defaultUnicastLocatorList;
+
+        uint16_t port = initial_unique_port;
+        while (port < final_unique_port)
+        {
+            // Set port on unicast locators
+            for (Locator_t& loc : pend->getAttributes().unicastLocatorList)
+            {
+                loc.port = port;
+            }
+
+            // Try creating receiver resources
+            if (createReceiverResources(pend->getAttributes().unicastLocatorList, false, true))
+            {
+                break;
+            }
+
+            // Try with next port
+            ++port;
+        }
+
+        // Fail when unique ports are exhausted
+        if (port >= final_unique_port)
+        {
+            logError(RTPS_PARTICIPANT, "Unique flows requested but exhausted. Port range: "
+                << initial_unique_port << "-" << final_unique_port);
+            return false;
+        }
     }
-    createReceiverResources(pend->getAttributes().unicastLocatorList, false, true);
-    createReceiverResources(pend->getAttributes().multicastLocatorList, false, true);
+    else
+    {
+        // 1 - Ask the network factory to generate the elements that do still not exist
+        //Iterate through the list of unicast and multicast locators the endpoint has... unless its empty
+        //In that case, just use the standard
+        if (pend->getAttributes().unicastLocatorList.empty() && pend->getAttributes().multicastLocatorList.empty())
+        {
+            // Take default locators from the participant.
+            pend->getAttributes().unicastLocatorList = m_att.defaultUnicastLocatorList;
+            pend->getAttributes().multicastLocatorList = m_att.defaultMulticastLocatorList;
+        }
+        createReceiverResources(pend->getAttributes().unicastLocatorList, false, true);
+        createReceiverResources(pend->getAttributes().multicastLocatorList, false, true);
+    }
 
     // Associate the Endpoint with ReceiverControlBlock
     assignEndpointListenResources(pend);

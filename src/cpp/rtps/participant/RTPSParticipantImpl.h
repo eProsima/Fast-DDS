@@ -562,10 +562,16 @@ private:
 
     /** Create the new ReceiverResources needed for a new Locator, contains the calls to assignEndpointListenResources
         and consequently assignEndpoint2LocatorList
-        @param pend - Pointer to the endpoint which triggered the creation of the Receivers
+        @param pend - Pointer to the endpoint which triggered the creation of the Receivers.
+        @param unique_flows - Whether unique listening ports should be created for this endpoint.
+        @param initial_unique_port - First unique listening port to try.
+        @param final_unique_port - Unique listening port that will not be tried.
      */
     bool createAndAssociateReceiverswithEndpoint(
-            Endpoint* pend);
+            Endpoint* pend,
+            bool unique_flows = false,
+            uint16_t initial_unique_port = 0,
+            uint16_t final_unique_port = 0);
 
     /** Create non-existent SendResources based on the Locator list of the entity
         @param pend - Pointer to the endpoint whose SenderResources are to be created
