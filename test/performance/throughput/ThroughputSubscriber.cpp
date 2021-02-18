@@ -467,7 +467,7 @@ bool ThroughputSubscriber::init(
 
     // Endpoints using dynamic data endpoints span the whole test duration
     // Static types and endpoints are created for each payload iteration
-    return dynamic_types_ ? init_dynamic_types() && create_data_endpoints() : true;
+    return dynamic_types_ ? init_dynamic_types() && create_data_endpoints(dr_qos_) : true;
 }
 
 int ThroughputSubscriber::process_message()
@@ -493,6 +493,8 @@ int ThroughputSubscriber::process_message()
                 }
                 case TYPE_NEW:
                 {
+                    auto dr_qos = dr_qos_;
+
                     if (dynamic_types_)
                     {
                         assert(nullptr == dynamic_data_);
@@ -522,33 +524,33 @@ int ThroughputSubscriber::process_message()
                     {
                         // Validate QoS settings
                         uint32_t max_demand = command.m_demand;
-                        if (dr_qos_.history().kind == KEEP_LAST_HISTORY_QOS)
+                        if (dr_qos.history().kind == KEEP_LAST_HISTORY_QOS)
                         {
                             // Ensure that the history depth is at least the demand
-                            if (dr_qos_.history().depth < 0 ||
-                                    static_cast<uint32_t>(dr_qos_.history().depth) < max_demand)
+                            if (dr_qos.history().depth < 0 ||
+                                    static_cast<uint32_t>(dr_qos.history().depth) < max_demand)
                             {
                                 logWarning(THROUGHPUTSUBSCRIBER, "Setting history depth to " << max_demand);
-                                dr_qos_.resource_limits().max_samples = max_demand;
-                                dr_qos_.history().depth = max_demand;
+                                dr_qos.resource_limits().max_samples = max_demand;
+                                dr_qos.history().depth = max_demand;
                             }
                         }
                         // KEEP_ALL case
                         else
                         {
                             // Ensure that the max samples is at least the demand
-                            if (dr_qos_.resource_limits().max_samples < 0 ||
-                                    static_cast<uint32_t>(dr_qos_.resource_limits().max_samples) < max_demand)
+                            if (dr_qos.resource_limits().max_samples < 0 ||
+                                    static_cast<uint32_t>(dr_qos.resource_limits().max_samples) < max_demand)
                             {
                                 logWarning(THROUGHPUTSUBSCRIBER,
                                         "Setting resource limit max samples to " << max_demand);
-                                dr_qos_.resource_limits().max_samples = max_demand;
+                                dr_qos.resource_limits().max_samples = max_demand;
                             }
                         }
                         // Set the allocated samples to the max_samples. This is because allocated_sample must be <= max_samples
-                        dr_qos_.resource_limits().allocated_samples = dr_qos_.resource_limits().max_samples;
+                        dr_qos.resource_limits().allocated_samples = dr_qos.resource_limits().max_samples;
 
-                        if (init_static_types(command.m_size) && create_data_endpoints())
+                        if (init_static_types(command.m_size) && create_data_endpoints(dr_qos))
                         {
                             assert(nullptr == throughput_data_);
 
@@ -798,7 +800,8 @@ bool ThroughputSubscriber::init_static_types(
     return true;
 }
 
-bool ThroughputSubscriber::create_data_endpoints()
+bool ThroughputSubscriber::create_data_endpoints(
+        const DataReaderQos& dr_qos)
 {
     if (nullptr != data_sub_topic_)
     {
@@ -836,7 +839,7 @@ bool ThroughputSubscriber::create_data_endpoints()
     if (nullptr ==
             (data_reader_ = subscriber_->create_datareader(
                 data_sub_topic_,
-                dr_qos_,
+                dr_qos,
                 &data_reader_listener_)))
     {
         return false;

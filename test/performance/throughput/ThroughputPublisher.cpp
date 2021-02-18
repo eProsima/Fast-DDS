@@ -358,7 +358,7 @@ bool ThroughputPublisher::init(
 
     // Endpoints using dynamic data endpoints span the whole test duration
     // Static types and endpoints are created for each payload iteration
-    return dynamic_types_ ? init_dynamic_types() && create_data_endpoints() : true;
+    return dynamic_types_ ? init_dynamic_types() && create_data_endpoints(dw_qos_) : true;
 }
 
 ThroughputPublisher::~ThroughputPublisher()
@@ -472,6 +472,8 @@ void ThroughputPublisher::run(
     // Iterate over message sizes
     for (auto sit = demand_payload_.begin(); sit != demand_payload_.end(); ++sit)
     {
+        auto dw_qos = dw_qos_;
+
         // Check history resources depending on the history kind and demand
         uint32_t max_demand = 0;
         for ( auto current_demand : sit->second )
@@ -479,30 +481,30 @@ void ThroughputPublisher::run(
             max_demand = std::max(current_demand, max_demand);
         }
 
-        if (dw_qos_.history().kind == KEEP_LAST_HISTORY_QOS)
+        if (dw_qos.history().kind == KEEP_LAST_HISTORY_QOS)
         {
             // Ensure that the history depth is at least the demand
-            if (dw_qos_.history().depth < 0 ||
-                    static_cast<uint32_t>(dw_qos_.history().depth) < max_demand)
+            if (dw_qos.history().depth < 0 ||
+                    static_cast<uint32_t>(dw_qos.history().depth) < max_demand)
             {
                 logWarning(THROUGHPUTPUBLISHER, "Setting history depth to " << max_demand);
-                dw_qos_.resource_limits().max_samples = max_demand;
-                dw_qos_.history().depth = max_demand;
+                dw_qos.resource_limits().max_samples = max_demand;
+                dw_qos.history().depth = max_demand;
             }
         }
         // KEEP_ALL case
         else
         {
             // Ensure that the max samples is at least the demand
-            if (dw_qos_.resource_limits().max_samples < 0 ||
-                    static_cast<uint32_t>(dw_qos_.resource_limits().max_samples) < max_demand)
+            if (dw_qos.resource_limits().max_samples < 0 ||
+                    static_cast<uint32_t>(dw_qos.resource_limits().max_samples) < max_demand)
             {
                 logWarning(THROUGHPUTPUBLISHER, "Setting resource limit max samples to " << max_demand);
-                dw_qos_.resource_limits().max_samples = max_demand;
+                dw_qos.resource_limits().max_samples = max_demand;
             }
         }
         // Set the allocated samples to the max_samples. This is because allocated_sample must be <= max_samples
-        dw_qos_.resource_limits().allocated_samples = dw_qos_.resource_limits().max_samples;
+        dw_qos.resource_limits().allocated_samples = dw_qos.resource_limits().max_samples;
 
         // Notify the new static type to the subscribers
         command.m_command = TYPE_NEW;
@@ -540,7 +542,7 @@ void ThroughputPublisher::run(
             assert(nullptr == throughput_data_);
 
             // Create the data endpoints if using static types (right after modifying the QoS)
-            if (init_static_types(command.m_size) && create_data_endpoints())
+            if (init_static_types(command.m_size) && create_data_endpoints(dw_qos))
             {
                 // Wait for the data endpoints discovery
                 std::unique_lock<std::mutex> data_disc_lock(mutex_);
@@ -1063,7 +1065,8 @@ bool ThroughputPublisher::init_static_types(
     return true;
 }
 
-bool ThroughputPublisher::create_data_endpoints()
+bool ThroughputPublisher::create_data_endpoints(
+        const DataWriterQos& dw_qos)
 {
     if (nullptr != data_pub_topic_)
     {
@@ -1101,7 +1104,7 @@ bool ThroughputPublisher::create_data_endpoints()
     if (nullptr ==
             (data_writer_ = publisher_->create_datawriter(
                 data_pub_topic_,
-                dw_qos_,
+                dw_qos,
                 &data_writer_listener_)))
     {
         return false;

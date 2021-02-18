@@ -86,7 +86,8 @@ private:
     bool init_static_types(
             uint32_t payload);
 
-    bool create_data_endpoints();
+    bool create_data_endpoints(
+            const eprosima::fastdds::dds::DataWriterQos& dw_qos);
 
     bool destroy_data_endpoints();
 
