@@ -93,6 +93,7 @@ protected:
             throw std::bad_alloc();
         }
     }
+
 };
 
 } // namespace dds

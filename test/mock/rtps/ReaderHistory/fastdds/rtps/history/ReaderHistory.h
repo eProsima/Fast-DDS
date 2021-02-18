@@ -120,6 +120,7 @@ protected:
     {
         return m_changes.end();
     }
+
 };
 
 } // namespace rtps

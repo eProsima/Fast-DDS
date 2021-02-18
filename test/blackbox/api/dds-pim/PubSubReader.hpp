@@ -509,10 +509,10 @@ public:
 
         ReturnCode_t success =
                 datareader_->read(data_seq, info_seq,
-                eprosima::fastdds::dds::LENGTH_UNLIMITED,
-                eprosima::fastdds::dds::ANY_SAMPLE_STATE,
-                eprosima::fastdds::dds::ANY_VIEW_STATE,
-                eprosima::fastdds::dds::ANY_INSTANCE_STATE);
+                        eprosima::fastdds::dds::LENGTH_UNLIMITED,
+                        eprosima::fastdds::dds::ANY_SAMPLE_STATE,
+                        eprosima::fastdds::dds::ANY_VIEW_STATE,
+                        eprosima::fastdds::dds::ANY_INSTANCE_STATE);
 
         if (ReturnCode_t::RETCODE_OK == success)
         {
@@ -526,7 +526,6 @@ public:
                 }
             }
             ASSERT_TRUE(expected_messages.empty());
-         
             datareader_->return_loan(data_seq, info_seq);
         }
     }
@@ -696,9 +695,9 @@ public:
 
         using pair_type = decltype(last_seq)::value_type;
         auto seq_comp = [](const pair_type& v1, const pair_type& v2) -> bool
-        {
-            return v1.second < v2.second;
-        };
+                {
+                    return v1.second < v2.second;
+                };
         return std::max_element(last_seq.cbegin(), last_seq.cend(), seq_comp)->second;
     }
 
@@ -1286,7 +1285,7 @@ public:
         collection::element_type buf[1] = { data };
         collection data_seq(buf, 1);
         info_seq_type info_seq(1);
-        
+
         if (ReturnCode_t::RETCODE_OK == datareader_->take(data_seq, info_seq))
         {
             current_processed_count_++;
