@@ -990,20 +990,19 @@ inline bool QosPoliciesSerializer<xtypes::TypeInformation>::read_content_from_cd
     eprosima::fastcdr::Cdr deser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN,
             eprosima::fastcdr::Cdr::DDS_CDR); // Object that deserializes the data.
 
-    // Deserialize encapsulation.
-    deser.read_encapsulation();
-    payload.encapsulation = deser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
-
     try
     {
-        qos_policy.type_information.deserialize(deser);
-    }
-    catch (eprosima::fastcdr::exception::NotEnoughMemoryException& /*exception*/)
-    {
-        return false;
-    }
+        // Deserialize encapsulation.
+        deser.read_encapsulation();
+        payload.encapsulation = deser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
 
-    qos_policy.assigned(true);
+        qos_policy.type_information.deserialize(deser);
+        qos_policy.assigned(true);
+    }
+    catch (eprosima::fastcdr::exception::Exception& /*exception*/)
+    {
+        qos_policy.assigned(false);
+    }
 
     return true;
 }

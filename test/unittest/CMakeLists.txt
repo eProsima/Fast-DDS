@@ -18,6 +18,7 @@ add_definitions(
 )
 
 add_subdirectory(rtps/common)
+add_subdirectory(rtps/builtin)
 add_subdirectory(rtps/reader)
 add_subdirectory(rtps/writer)
 add_subdirectory(rtps/history)
