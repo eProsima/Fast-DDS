@@ -380,6 +380,27 @@ protected:
             eprosima::fastrtps::rtps::CacheChange_t* ch,
             const std::string& topic_name);
 
+    // Functions related with create_participant_from_change_
+
+    void match_new_server_(
+            eprosima::fastrtps::rtps::GuidPrefix_t& participant_prefix);
+
+    void create_virtual_endpoints_(
+            eprosima::fastrtps::rtps::GuidPrefix_t& participant_prefix);
+
+    static bool participant_data_has_changed_(
+            const DiscoveryParticipantInfo& participant_info,
+            const DiscoveryParticipantChangeData& new_change_data);
+
+    void create_new_participant_from_change_(
+            eprosima::fastrtps::rtps::CacheChange_t* ch,
+            const DiscoveryParticipantChangeData& change_data);
+
+    void update_participant_from_change_(
+            DiscoveryParticipantInfo& participant_info,
+            eprosima::fastrtps::rtps::CacheChange_t* ch,
+            const DiscoveryParticipantChangeData& change_data);
+
     // change ack relevants and matched between entities participants and endpoints
     void match_writer_reader_(
             const eprosima::fastrtps::rtps::GUID_t& writer_guid,
