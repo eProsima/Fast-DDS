@@ -41,6 +41,13 @@ using namespace eprosima::fastrtps::rtps;
 StatelessReader::~StatelessReader()
 {
     logInfo(RTPS_READER, "Removing reader " << m_guid);
+
+    // Datasharing listener must be stopped to avoid processing notifications
+    // while the reader is being destroyed
+    if (is_datasharing_compatible_)
+    {
+        datasharing_listener_->stop();
+    }
 }
 
 StatelessReader::StatelessReader(

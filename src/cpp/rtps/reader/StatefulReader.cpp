@@ -55,6 +55,13 @@ StatefulReader::~StatefulReader()
         is_alive_ = false;
     }
 
+    // Datasharing listener must be stopped to avoid processing notifications
+    // while the reader is being destroyed
+    if (is_datasharing_compatible_)
+    {
+        datasharing_listener_->stop();
+    }
+
     for (WriterProxy* writer : matched_writers_)
     {
         delete(writer);
