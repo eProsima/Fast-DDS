@@ -280,14 +280,17 @@ public:
 
     /**
      * Called just before a change is going to be deserialized.
-     * @param [in]  change Pointer to the change being accessed.
-     * @param [out] wp     Writer proxy the @c change belongs to.
+     * @param [in]  change            Pointer to the change being accessed.
+     * @param [out] wp                Writer proxy the @c change belongs to.
+     * @param [out] is_future_change  Wheter the change is in the future (i.e. there are
+     *                                earlier unreceived changes from the same writer).
      *
      * @return Whether the change is still valid or not.
      */
     virtual bool begin_sample_access_nts(
             CacheChange_t* change,
-            WriterProxy*& wp) = 0;
+            WriterProxy*& wp,
+            bool& is_future_change) = 0;
 
     /**
      * Called after the change has been deserialized.

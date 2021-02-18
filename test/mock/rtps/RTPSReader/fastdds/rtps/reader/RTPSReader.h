@@ -172,7 +172,8 @@ public:
 
     virtual bool begin_sample_access_nts(
             CacheChange_t* /*change*/,
-            WriterProxy*& /*wp*/)
+            WriterProxy*& /*wp*/,
+            bool& /*is_future_change*/)
     {
         return true;
     }

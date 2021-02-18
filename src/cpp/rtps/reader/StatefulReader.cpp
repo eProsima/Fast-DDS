@@ -1172,12 +1172,23 @@ bool StatefulReader::isInCleanState()
 
 bool StatefulReader::begin_sample_access_nts(
         CacheChange_t* change,
-        WriterProxy*& wp)
+        WriterProxy*& wp,
+        bool& is_future_change)
 {
     const GUID_t& writer_guid = change->writerGUID;
+    is_future_change = false;
+
     if (!matched_writer_lookup(writer_guid, &wp))
     {
         return false;
+    }
+
+    SequenceNumber_t seq;
+    seq = wp->available_changes_max();
+    if (seq < change->sequenceNumber)
+    {
+        is_future_change = true;
+        return true;
     }
 
     if (is_datasharing_compatible_ && datasharing_listener_->writer_is_matched(writer_guid))
@@ -1194,16 +1205,6 @@ bool StatefulReader::begin_sample_access_nts(
             logWarning(RTPS_READER,
                     "Removing change " << change->sequenceNumber << " from " << writer_guid <<
                     " because is overidden");
-            return false;
-        }
-    }
-    else
-    {
-        // TODO Revisar la comprobacion
-        SequenceNumber_t seq;
-        seq = wp->available_changes_max();
-        if (seq < change->sequenceNumber)
-        {
             return false;
         }
     }

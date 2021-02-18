@@ -112,13 +112,21 @@ struct ReadTakeCommand
             if ((check & states_.sample_states) != 0)
             {
                 WriterProxy* wp = nullptr;
-                if (!reader_->begin_sample_access_nts(change, wp))
+                bool is_future_change = false;
+                if (!reader_->begin_sample_access_nts(change, wp, is_future_change))
                 {
                     // Remove from history
                     history_.remove_change_sub(change, it);
 
                     // Current iterator will point to change next to the one removed. Avoid incrementing.
                     continue;
+                }
+
+                // If the change is in the future we can skip the remaining changes in the history, as they will be
+                // in the future also
+                if (is_future_change)
+                {
+                    break;
                 }
 
                 // Add sample and info to collections
