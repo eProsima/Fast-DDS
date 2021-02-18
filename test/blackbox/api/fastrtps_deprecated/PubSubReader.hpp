@@ -1104,6 +1104,12 @@ public:
         onEndpointDiscovery_ = f;
     }
 
+    bool take_first_data(
+            void* data)
+    {
+        return takeNextData(data);
+    }
+
     bool takeNextData(
             void* data)
     {

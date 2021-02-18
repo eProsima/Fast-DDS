@@ -31,18 +31,19 @@
 #include <Windows.h>
 #endif // _MSC_VER
 
-#include <fastdds/dds/domain/DomainParticipantFactory.hpp>
+#include <fastdds/dds/core/UserAllocatedSequence.hpp>
+#include <fastdds/dds/core/policy/QosPolicies.hpp>
 #include <fastdds/dds/domain/DomainParticipant.hpp>
+#include <fastdds/dds/domain/DomainParticipantFactory.hpp>
 #include <fastdds/dds/domain/DomainParticipantListener.hpp>
 #include <fastdds/dds/domain/qos/DomainParticipantQos.hpp>
-#include <fastdds/dds/topic/Topic.hpp>
-#include <fastdds/dds/subscriber/Subscriber.hpp>
 #include <fastdds/dds/subscriber/DataReader.hpp>
 #include <fastdds/dds/subscriber/DataReaderListener.hpp>
-#include <fastdds/dds/subscriber/qos/DataReaderQos.hpp>
-#include <fastdds/dds/core/policy/QosPolicies.hpp>
-#include <fastrtps/subscriber/SampleInfo.h>
 #include <fastdds/dds/subscriber/SampleInfo.hpp>
+#include <fastdds/dds/subscriber/Subscriber.hpp>
+#include <fastdds/dds/subscriber/qos/DataReaderQos.hpp>
+#include <fastdds/dds/topic/Topic.hpp>
+#include <fastrtps/subscriber/SampleInfo.h>
 #include <fastrtps/xmlparser/XMLParser.h>
 #include <fastrtps/xmlparser/XMLTree.h>
 #include <fastrtps/utils/IPLocator.h>
@@ -1274,6 +1275,24 @@ public:
             std::function<bool(const eprosima::fastrtps::rtps::WriterDiscoveryInfo&)> f)
     {
         onEndpointDiscovery_ = f;
+    }
+
+    bool take_first_data(
+            void* data)
+    {
+        using collection = eprosima::fastdds::dds::UserAllocatedSequence;
+        using info_seq_type = eprosima::fastdds::dds::SampleInfoSeq;
+
+        collection::element_type buf[1] = { data };
+        collection data_seq(buf, 1);
+        info_seq_type info_seq(1);
+        
+        if (ReturnCode_t::RETCODE_OK == datareader_->take(data_seq, info_seq))
+        {
+            current_processed_count_++;
+            return true;
+        }
+        return false;
     }
 
     bool takeNextData(
