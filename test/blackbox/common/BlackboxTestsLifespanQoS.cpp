@@ -124,9 +124,9 @@ TEST_P(LifespanQos, LongLifespan)
 
     // On the reader side we should be able to take the data
     HelloWorldType::type msg;
-    EXPECT_EQ(reader.takeNextData(&msg), true);
-    EXPECT_EQ(reader.takeNextData(&msg), true);
-    EXPECT_EQ(reader.takeNextData(&msg), true);
+    EXPECT_EQ(reader.take_first_data(&msg), true);
+    EXPECT_EQ(reader.take_first_data(&msg), true);
+    EXPECT_EQ(reader.take_first_data(&msg), true);
 }
 
 TEST_P(LifespanQos, ShortLifespan)
@@ -171,9 +171,9 @@ TEST_P(LifespanQos, ShortLifespan)
 
     // On the reader side we should not be able to take the data
     HelloWorldType::type msg;
-    EXPECT_EQ(reader.takeNextData(&msg), false);
-    EXPECT_EQ(reader.takeNextData(&msg), false);
-    EXPECT_EQ(reader.takeNextData(&msg), false);
+    EXPECT_EQ(reader.take_first_data(&msg), false);
+    EXPECT_EQ(reader.take_first_data(&msg), false);
+    EXPECT_EQ(reader.take_first_data(&msg), false);
 }
 
 #ifdef INSTANTIATE_TEST_SUITE_P
