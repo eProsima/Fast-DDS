@@ -693,7 +693,7 @@ public:
             return eprosima::fastrtps::rtps::SequenceNumber_t();
         }
 
-        using pair_type = decltype(last_seq)::value_type;
+        using pair_type = typename decltype(last_seq)::value_type;
         auto seq_comp = [](const pair_type& v1, const pair_type& v2) -> bool
                 {
                     return v1.second < v2.second;
