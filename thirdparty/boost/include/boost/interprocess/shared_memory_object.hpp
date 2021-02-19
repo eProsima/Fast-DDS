@@ -396,7 +396,7 @@ inline void shared_memory_object::truncate(offset_t length)
 {
    
    // QNX correctly checks available size on ftruncate, so the patch is not necessary
-#ifdef BOOST_FASTDDS_PATCHES && !defined(__QNXNTO__)
+#if defined(BOOST_FASTDDS_PATCHES) && !defined(__QNXNTO__)
 
    if (0 != posix_fallocate(m_handle, 0, length))
    {
