@@ -643,7 +643,7 @@ bool DiscoveryDataBase::participant_data_has_changed_(
         const DiscoveryParticipantChangeData& new_change_data)
 {
     return !(participant_info.is_local() == new_change_data.is_local() &&
-        participant_info.is_client() == new_change_data.is_client());
+           participant_info.is_client() == new_change_data.is_client());
 }
 
 void DiscoveryDataBase::create_new_participant_from_change_(
@@ -704,7 +704,7 @@ void DiscoveryDataBase::update_participant_from_change_(
     // The entity A changes to local
     // Must be local data, or else it is a remote endpoint and should not be changed
     if (change_guid.guidPrefix != server_guid_prefix_ && change_data.is_local() &&
-        DiscoveryDataBase::participant_data_has_changed_(participant_info, change_data))
+            DiscoveryDataBase::participant_data_has_changed_(participant_info, change_data))
     {
         // If the participant changes to server local, virtual endpoints must be added
         // If it is local and server the only possibility is it was a remote server and it must be converted to local
@@ -2584,7 +2584,8 @@ void DiscoveryDataBase::persistence_enable(
     backup_file_.open(backup_file_name_, std::ios::app);
 }
 
-bool DiscoveryDataBase::is_participant_local(const eprosima::fastrtps::rtps::GuidPrefix_t& participant_prefix)
+bool DiscoveryDataBase::is_participant_local(
+        const eprosima::fastrtps::rtps::GuidPrefix_t& participant_prefix)
 {
     auto pit = participants_.find(participant_prefix);
     if (pit != participants_.end())

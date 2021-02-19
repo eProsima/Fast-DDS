@@ -339,7 +339,8 @@ public:
     }
 
     // Check if an participant is stored as local. If the participant does not exist, it returns false
-    bool is_participant_local(const eprosima::fastrtps::rtps::GuidPrefix_t& participant_prefix);
+    bool is_participant_local(
+            const eprosima::fastrtps::rtps::GuidPrefix_t& participant_prefix);
 
 protected:
 
