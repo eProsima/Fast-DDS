@@ -127,7 +127,7 @@ void RTPSReader::init(
                     this));
 
         // We can start the listener here, as no writer can be matched already,
-        // so no notification will occur until the the non-virtual instance is constructed.
+        // so no notification will occur until the non-virtual instance is constructed.
         // But we need to stop the listener in the non-virtual instance destructor.
         datasharing_listener_->start();
     }
