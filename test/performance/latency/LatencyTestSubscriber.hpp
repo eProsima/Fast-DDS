@@ -58,6 +58,8 @@ public:
             const eprosima::fastrtps::rtps::PropertyPolicy& property_policy,
             const std::string& xml_config_file,
             bool dynamic_data,
+            bool data_sharing,
+            bool data_loans,
             int forced_domain,
             LatencyDataSizes& latency_data_sizes);
 
@@ -126,6 +128,8 @@ private:
     bool echo_ = true;
     int samples_ = 0;
     bool dynamic_types_ = false;
+    bool data_sharing_ = false;
+    bool data_loans_ = false;
     int forced_domain_ = -1;
     bool hostname_ = false;
     uint32_t pid_ = 0;

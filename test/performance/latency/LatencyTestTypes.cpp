@@ -20,10 +20,12 @@
 #include "LatencyTestTypes.hpp"
 
 #include <cstring>
+#include <cstddef>
 
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
 
+const size_t LatencyType::overhead = offsetof(LatencyType, data);
 const std::string LatencyDataType::type_name_ = "LatencyType";
 
 bool LatencyDataType::compare_data(
@@ -35,7 +37,19 @@ bool LatencyDataType::compare_data(
         return false;
     }
 
+    // bouncing time is ignored on comparisson
+
     return 0 == memcmp(lt1.data, lt2.data, buffer_size_);
+}
+
+void LatencyDataType::copy_data(
+        const LatencyType& src,
+        LatencyType& dst) const
+{
+
+    dst.seqnum = src.seqnum;
+    dst.bounce = src.bounce;
+    memcpy(dst.data, src.data, buffer_size_);
 }
 
 bool LatencyDataType::serialize(
@@ -45,8 +59,9 @@ bool LatencyDataType::serialize(
     LatencyType* lt = (LatencyType*)data;
 
     memcpy(payload->data, &lt->seqnum, sizeof(lt->seqnum));
-    memcpy(payload->data + 4, lt->data, buffer_size_);
-    payload->length = 4 + buffer_size_;
+    memcpy(payload->data + 4, &lt->bounce, sizeof(lt->bounce));
+    memcpy(payload->data + 8, lt->data, buffer_size_);
+    payload->length = m_typeSize;
     return true;
 }
 
@@ -57,7 +72,8 @@ bool LatencyDataType::deserialize(
     // Payload members endianness matches local machine
     LatencyType* lt = (LatencyType*)data;
     lt->seqnum = *reinterpret_cast<uint32_t*>(payload->data);
-    std::copy(payload->data + 4, payload->data + 4 + buffer_size_, lt->data);
+    lt->bounce = *reinterpret_cast<uint32_t*>(payload->data + 4);
+    std::copy(payload->data + 8, payload->data + 8 + buffer_size_, lt->data);
     return true;
 }
 

@@ -85,6 +85,8 @@ bool LatencyTestSubscriber::init(
         const PropertyPolicy& property_policy,
         const std::string& xml_config_file,
         bool dynamic_data,
+        bool data_sharing,
+        bool data_loans,
         int forced_domain,
         LatencyDataSizes& latency_data_sizes)
 {
@@ -93,6 +95,8 @@ bool LatencyTestSubscriber::init(
     echo_ = echo;
     samples_ = samples;
     dynamic_types_ = dynamic_data;
+    data_sharing_ = data_sharing;
+    data_loans_ = data_loans;
     forced_domain_ = forced_domain;
     pid_ = pid;
     hostname_ = hostname;
@@ -165,50 +169,68 @@ bool LatencyTestSubscriber::init(
         return false;
     }
 
-    /* Update DataWriterQoS with xml profile data */
-    if (xml_config_file_.length() > 0 )
     {
-        std::string sub_profile_name = "sub_subscriber_profile";
-        std::string pub_profile_name = "sub_publisher_profile";
-
-        if ( ReturnCode_t::RETCODE_OK != publisher_->get_datawriter_qos_from_profile(pub_profile_name, dw_qos_))
+        /* Update DataWriterQoS with xml profile data */
+        if (xml_config_file_.length() > 0 )
         {
-            logError(LATENCYSUBSCRIBER, "ERROR unable to retrieve the " << pub_profile_name << "from XML file");
-            return false;
-        }
+            std::string sub_profile_name = "sub_subscriber_profile";
+            std::string pub_profile_name = "sub_publisher_profile";
 
-        if ( ReturnCode_t::RETCODE_OK != subscriber_->get_datareader_qos_from_profile(sub_profile_name, dr_qos_))
-        {
-            logError(LATENCYSUBSCRIBER, "ERROR unable to retrieve the " << sub_profile_name);
-            return false;
-        }
-    }
-    // Create QoS Profiles
-    else
-    {
-        ReliabilityQosPolicy rp;
-        if (reliable)
-        {
-            rp.kind = eprosima::fastrtps::RELIABLE_RELIABILITY_QOS;
+            if ( ReturnCode_t::RETCODE_OK != publisher_->get_datawriter_qos_from_profile(pub_profile_name, dw_qos_))
+            {
+                logError(LATENCYSUBSCRIBER, "ERROR unable to retrieve the " << pub_profile_name << "from XML file");
+                return false;
+            }
 
-            RTPSReliableWriterQos rw_qos;
-            rw_qos.times.heartbeatPeriod.seconds = 0;
-            rw_qos.times.heartbeatPeriod.nanosec = 100000000;
-            dw_qos_.reliable_writer_qos(rw_qos);
+            if ( ReturnCode_t::RETCODE_OK != subscriber_->get_datareader_qos_from_profile(sub_profile_name, dr_qos_))
+            {
+                logError(LATENCYSUBSCRIBER, "ERROR unable to retrieve the " << sub_profile_name);
+                return false;
+            }
         }
+        // Create QoS Profiles
         else
         {
-            rp.kind = eprosima::fastrtps::BEST_EFFORT_RELIABILITY_QOS;
+            ReliabilityQosPolicy rp;
+            if (reliable)
+            {
+                rp.kind = eprosima::fastrtps::RELIABLE_RELIABILITY_QOS;
+
+                RTPSReliableWriterQos rw_qos;
+                rw_qos.times.heartbeatPeriod.seconds = 0;
+                rw_qos.times.heartbeatPeriod.nanosec = 100000000;
+                dw_qos_.reliable_writer_qos(rw_qos);
+            }
+            else
+            {
+                rp.kind = eprosima::fastrtps::BEST_EFFORT_RELIABILITY_QOS;
+            }
+
+            dr_qos_.reliability(rp);
+            dw_qos_.reliability(rp);
+
+            dw_qos_.properties(property_policy);
+            dw_qos_.endpoint().history_memory_policy = MemoryManagementPolicy::PREALLOCATED_WITH_REALLOC_MEMORY_MODE;
+
+            dr_qos_.properties(property_policy);
+            dr_qos_.endpoint().history_memory_policy = MemoryManagementPolicy::PREALLOCATED_WITH_REALLOC_MEMORY_MODE;
         }
 
-        dr_qos_.reliability(rp);
-        dw_qos_.reliability(rp);
+        // Set data sharing according with cli. Is disabled by default in all xml profiles
+        if (data_sharing_)
+        {
+            DataSharingQosPolicy dsp;
+            dsp.on("");
+            dw_qos_.data_sharing(dsp);
+            dr_qos_.data_sharing(dsp);
+        }
 
-        dw_qos_.properties(property_policy);
-        dw_qos_.endpoint().history_memory_policy = MemoryManagementPolicy::PREALLOCATED_WITH_REALLOC_MEMORY_MODE;
-
-        dr_qos_.properties(property_policy);
-        dr_qos_.endpoint().history_memory_policy = MemoryManagementPolicy::PREALLOCATED_WITH_REALLOC_MEMORY_MODE;
+        // Increase payload pool size to prevent loan failures due to outages
+        if (data_loans_)
+        {
+            dw_qos_.resource_limits().extra_samples = 30;
+            dr_qos_.resource_limits().extra_samples = 30;
+        }
     }
 
     /* Create Topics */
@@ -435,30 +457,125 @@ void LatencyTestSubscriber::CommandReaderListener::on_data_available(
 void LatencyTestSubscriber::LatencyDataReaderListener::on_data_available(
         DataReader* reader)
 {
+    auto sub = latency_subscriber_;
+
     // Bounce back the message from the Publisher as fast as possible
     // dynamic_data_ and latency_data_type do not require locks
     // because the command message exchange assures this calls atomicity
-
-    SampleInfo info;
-    void* data = latency_subscriber_->dynamic_types_ ?
-            (void*)latency_subscriber_->dynamic_data_ :
-            (void*)latency_subscriber_->latency_data_;
-
-    if (reader->take_next_sample(
-                data, &info) == ReturnCode_t::RETCODE_OK
-            && info.valid_data)
+    if (sub->data_loans_)
     {
-        if (latency_subscriber_->echo_)
+        SampleInfoSeq infos;
+        LoanableSequence<LatencyType> data_seq;
+        // reader loan buffer
+        LatencyType* echoed_data = nullptr;
+        // writer loan buffer
+        void* echoed_loan = nullptr;
+
+        if (ReturnCode_t::RETCODE_OK != reader->take(data_seq, infos, 1))
         {
-            if (!latency_subscriber_->data_writer_->write(data))
+            logInfo(LatencyTest, "Problem reading Subscriber echoed loaned test data");
+            return;
+        }
+
+        // we have requested a single sample
+        assert(infos.length() == 1 && data_seq.length() == 1);
+        // the buffer must be there
+        assert(sub->latency_data_ != nullptr);
+        // reference the loan
+        echoed_data = &data_seq[0];
+
+        // echo the sample
+        if (sub->echo_)
+        {
+            // begin measuring overhead = loan->buffer copy + write loan + buffer->loan copy
+            auto start_time = std::chrono::steady_clock::now();
+
+            // Copy the data from reader loan to aux buffer
+            auto data_type = std::static_pointer_cast<LatencyDataType>(sub->latency_data_type_);
+            data_type->copy_data(*echoed_data, *sub->latency_data_);
+
+            // release the reader loan
+            if (ReturnCode_t::RETCODE_OK != reader->return_loan(data_seq, infos))
             {
-                logInfo(LatencyTest, "Problem echoing Publisher test data");
+                logInfo(LatencyTest, "Problem returning loaned test data");
+                return;
+            }
+
+            // writer loan
+            int trials = 10;
+            bool loaned = false;
+            while (trials-- != 0 && !loaned)
+            {
+                loaned = (ReturnCode_t::RETCODE_OK
+                        == sub->data_writer_->loan_sample(
+                            echoed_loan,
+                            DataWriter::LoanInitializationKind::NO_LOAN_INITIALIZATION));
+
+                std::this_thread::yield();
+
+                if (!loaned)
+                {
+                    logError(LatencyTest, "Subscriber trying to loan: " << trials);
+                }
+            }
+
+            if (!loaned)
+            {
+                logInfo(LatencyTest, "Problem echoing Publisher test data with loan");
+                // release the reader loan
+                reader->return_loan(data_seq, infos);
+                return;
+            }
+
+            // copy the data from aux buffer to writer loan
+            data_type->copy_data(*sub->latency_data_, *(LatencyType*)echoed_loan);
+
+            //end measuring overhead
+            auto end_time = std::chrono::steady_clock::now();
+            std::chrono::duration<uint32_t, std::nano> bounce_time(end_time - start_time);
+            reinterpret_cast<LatencyType*>(echoed_loan)->bounce = bounce_time.count();
+
+            if (!sub->data_writer_->write(echoed_loan))
+            {
+                logError(LatencyTest, "Problem echoing Publisher test data with loan");
+                sub->data_writer_->discard_loan(echoed_loan);
+            }
+        }
+        else
+        {
+            // release the loan
+            if (ReturnCode_t::RETCODE_OK != reader->return_loan(data_seq, infos))
+            {
+                logError(LatencyTest, "Problem returning loaned test data");
             }
         }
     }
     else
     {
-        logInfo(LatencyTest, "Problem reading Publisher test data");
+        SampleInfo info;
+        void* data = sub->dynamic_types_ ?
+                (void*)sub->dynamic_data_ :
+                (void*)sub->latency_data_;
+
+        if (reader->take_next_sample(
+                    data, &info) == ReturnCode_t::RETCODE_OK
+                && info.valid_data)
+        {
+            if (sub->echo_)
+            {
+                // no bounce overload recorded
+                reinterpret_cast<LatencyType*>(data)->bounce = 0;
+
+                if (!sub->data_writer_->write(data))
+                {
+                    logInfo(LatencyTest, "Problem echoing Publisher test data");
+                }
+            }
+        }
+        else
+        {
+            logInfo(LatencyTest, "Problem reading Publisher test data");
+        }
     }
 }
 
@@ -515,7 +632,10 @@ bool LatencyTestSubscriber::test(
         DynamicData* member_data = dynamic_data_->loan_value(
             dynamic_data_->get_member_id_at_index(1));
 
-        for (uint32_t i = 0; i < datasize; ++i)
+        // fill until complete the desired payload size
+        uint32_t padding = datasize - 4; // sequence number is a DWORD
+
+        for (uint32_t i = 0; i < padding; ++i)
         {
             member_data->insert_sequence_data(id);
             member_data->set_byte_value(0, id);
@@ -525,7 +645,7 @@ bool LatencyTestSubscriber::test(
     // Create the static type for the given buffer size and the endpoints
     else if (init_static_types(datasize) && create_data_endpoints())
     {
-        // Create the data sample
+        // Create the data sample as buffer
         latency_data_ = static_cast<LatencyType*>(latency_data_type_.create_data());
 
         // Wait for new endponts discovery from the LatencyTestPublisher
@@ -575,6 +695,7 @@ bool LatencyTestSubscriber::test(
     }
     else
     {
+        // release the buffer next iteration will require different size
         latency_data_type_->deleteData(latency_data_);
 
         // Remove endpoints associated to the given payload size
@@ -676,8 +797,11 @@ bool LatencyTestSubscriber::init_static_types(
         return false;
     }
 
+    // calculate the padding for the desired demand
+    ::size_t padding = payload - LatencyType::overhead;
+    assert(padding > 0);
     // Create the static type
-    latency_data_type_.reset(new LatencyDataType(payload));
+    latency_data_type_.reset(new LatencyDataType(padding));
     // Register the static type
     if (ReturnCode_t::RETCODE_OK != latency_data_type_.register_type(participant_))
     {

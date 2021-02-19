@@ -139,7 +139,9 @@ enum  optionIndex
     XML_FILE,
     DYNAMIC_TYPES,
     FORCED_DOMAIN,
-    FILE_R
+    FILE_R,
+    DATA_SHARING,
+    DATA_LOAN
 };
 
 enum TestAgent
@@ -191,6 +193,10 @@ const option::Descriptor usage[] = {
       "  -e <arg>,    --echo=<arg>          Echo mode (\"true\"/\"false\")." },
     { FILE_R,        0, "f", "file",            Arg::Required,
       "  -f <arg>,  --file=<arg>             File to read the payload demands from." },
+    { DATA_SHARING,        0, "d", "data_sharing",            Arg::None,
+      "               --data_sharing        Enable data sharing feature." },
+    { DATA_LOAN,        0, "l", "data_loans",            Arg::None,
+      "               --data_loans          Use loan sample API." },
     { 0, 0, 0, 0, 0, 0 }
 };
 
@@ -225,13 +231,13 @@ bool load_demands_payload(
 
             uint32_t payload;
             iss >> payload;
-            if (payload < 12)
+            if (payload < 16)
             {
-                std::cout << "Minimum payload is 16 bytes" << std::endl;
+                std::cout << "Payload must be a positive number greater or equal to 16" << std::endl;
                 return false;
             }
 
-            demands.push_back(payload - 4);
+            demands.push_back(payload);
 
             start = end + DELIM.length();
             end = line.find(DELIM, start);
@@ -241,7 +247,7 @@ bool load_demands_payload(
                 std::istringstream n_iss(line.substr(start, end - start));
                 if (n_iss >> payload)
                 {
-                    demands.push_back(payload - 4);
+                    demands.push_back(payload);
                 }
             }
         }
@@ -295,6 +301,8 @@ int main(
     bool dynamic_types = false;
     int forced_domain = -1;
     std::string demands_file = "";
+    bool data_sharing = false;
+    bool data_loans = false;
 
     argc -= (argc > 0);
     argv += (argc > 0); // skip program name argv[0] if present
@@ -448,11 +456,35 @@ int main(
             case FILE_R:
                 demands_file = opt.arg;
                 break;
+            case DATA_SHARING:
+                data_sharing = true;
+                break;
+            case DATA_LOAN:
+                data_loans = true;
+                break;
             case UNKNOWN_OPT:
+            default:
                 option::printUsage(fwrite, stdout, usage, columns);
                 return 0;
                 break;
         }
+    }
+
+    // Check parameters validity
+    if (use_security && test_agent == TestAgent::BOTH)
+    {
+        logError(LatencyTest, "Intra-process delivery NOT supported with security");
+        return 1;
+    }
+    else if ((data_sharing || data_loans) && dynamic_types)
+    {
+        logError(LatencyTest, "Sharing sample APIs NOT supported with dynamic types");
+        return 1;
+    }
+    else if ( data_sharing && use_security )
+    {
+        logError(LatencyTest, "Sharing sample APIs NOT supported with RTPS encryption");
+        return 1;
     }
 
     PropertyPolicy pub_part_property_policy;
@@ -518,7 +550,7 @@ int main(
         LatencyTestPublisher latency_publisher;
         if (latency_publisher.init(subscribers, samples, reliable, seed, hostname, export_csv, export_prefix,
                 raw_data_file, pub_part_property_policy, pub_property_policy, xml_config_file,
-                dynamic_types, forced_domain, data_sizes))
+                dynamic_types, data_sharing, data_loans, forced_domain, data_sizes))
         {
             latency_publisher.run();
         }
@@ -533,7 +565,7 @@ int main(
         LatencyTestSubscriber latency_subscriber;
         if (latency_subscriber.init(echo, samples, reliable, seed, hostname, sub_part_property_policy,
                 sub_property_policy,
-                xml_config_file, dynamic_types, forced_domain, data_sizes))
+                xml_config_file, dynamic_types, data_sharing, data_loans, forced_domain, data_sizes))
         {
             latency_subscriber.run();
         }
@@ -552,7 +584,7 @@ int main(
         LatencyTestPublisher latency_publisher;
         bool pub_init = latency_publisher.init(subscribers, samples, reliable, seed, hostname, export_csv,
                         export_prefix, raw_data_file, pub_part_property_policy, pub_property_policy,
-                        xml_config_file, dynamic_types, forced_domain, data_sizes);
+                        xml_config_file, dynamic_types, data_sharing, data_loans, forced_domain, data_sizes);
 
         // Initialize subscribers
         std::vector<std::shared_ptr<LatencyTestSubscriber>> latency_subscribers;
@@ -563,7 +595,8 @@ int main(
             latency_subscribers.push_back(std::make_shared<LatencyTestSubscriber>());
             sub_init &= latency_subscribers.back()->init(echo, samples, reliable, seed, hostname,
                             sub_part_property_policy,
-                            sub_property_policy, xml_config_file, dynamic_types, forced_domain, data_sizes);
+                            sub_property_policy, xml_config_file, dynamic_types, data_sharing, data_loans,
+                            forced_domain, data_sizes);
         }
 
         // Spawn run threads
@@ -590,7 +623,6 @@ int main(
         }
     }
 
-    Domain::stopAll();
     if (return_code == 0)
     {
         std::cout << C_GREEN << "EVERYTHING STOPPED FINE" << C_DEF << std::endl;

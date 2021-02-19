@@ -33,7 +33,7 @@ public:
 
     LatencyDataSizes()
     {
-        sample_sizes_ = {16 - 4, 1024 - 4, 64512 - 4, 1048576 - 4};
+        sample_sizes_ = {16, 1024, 64512, 1048576};
     }
 
     inline std::vector<uint32_t>& sample_sizes()
@@ -59,19 +59,25 @@ private:
  * */
 struct alignas (4) LatencyType
 {
+    // identifies the sample sent
     uint32_t seqnum = 0;
+    // extra time devoted on bouncing in nanoseconds
+    uint32_t bounce = 0;
+    // actual payload
     uint8_t data[1];
+    // this struct overhead
+    static const size_t overhead;
 };
 
 class LatencyDataType : public eprosima::fastdds::dds::TopicDataType
 {
     // Buffer size for size management
-    const uint32_t buffer_size_;
+    size_t buffer_size_;
 
 public:
 
     LatencyDataType()
-        : buffer_size_(MAX_TYPE_SIZE - 4)
+        : buffer_size_(MAX_TYPE_SIZE - LatencyType::overhead)
     {
         setName("LatencyType");
         m_typeSize = MAX_TYPE_SIZE;
@@ -79,11 +85,11 @@ public:
     }
 
     LatencyDataType(
-            const uint32_t& size)
+            const size_t& size)
         : buffer_size_(size)
     {
         setName("LatencyType");
-        m_typeSize = 4 + ((size + 3) & ~3);
+        m_typeSize = 8 + ((size + 3) & ~3);
         m_isGetKeyDefined = false;
     }
 
@@ -114,6 +120,10 @@ public:
     bool compare_data(
             const LatencyType& lt1,
             const LatencyType& lt2) const;
+
+    void copy_data(
+            const LatencyType& src,
+            LatencyType& dst) const;
 
     bool is_bounded() const override
     {
