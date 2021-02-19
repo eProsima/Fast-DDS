@@ -12,15 +12,20 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 //
-#include <tinyxml2.h>
 #include <fastrtps/xmlparser/XMLProfileManager.h>
-#include <fastrtps/xmlparser/XMLTree.h>
-#include <fastrtps/log/Log.h>
 
 #include <cstdlib>
 #ifdef _WIN32
 #include <windows.h>
-#endif
+#else
+#include <unistd.h>
+#endif // ifdef _WIN32
+
+#include <tinyxml2.h>
+#include <fastrtps/log/Log.h>
+#include <fastrtps/xmlparser/XMLTree.h>
+#include "XMLParserImpl.hpp"
+
 
 using namespace eprosima::fastrtps;
 using namespace ::xmlparser;
@@ -136,20 +141,66 @@ void XMLProfileManager::loadDefaultXMLFile()
     // Try to load the default XML file set with an environment variable.
 #ifdef _WIN32
     char file_path[MAX_PATH];
+    char absolute_path[MAX_PATH];
+    char current_directory[MAX_PATH];
+    char** filename = {nullptr};
     size_t size = MAX_PATH;
     if (getenv_s(&size, file_path, size, DEFAULT_FASTRTPS_ENV_VARIABLE) == 0 && size > 0)
     {
-        loadXMLFile(file_path);
+        // Use absolute path to ensure the file is loaded only once
+        if (GetFullPathName(file_path, MAX_PATH, absolute_path, filename) == 0)
+        {
+            logError(XMLPARSER, "GetFullPathName failed " << GetLastError());
+        }
+        else
+        {
+            loadXMLFile(absolute_path);
+        }
     }
-#else
-    if (const char* file_path = std::getenv(DEFAULT_FASTRTPS_ENV_VARIABLE))
-    {
-        loadXMLFile(file_path);
-    }
-#endif
 
     // Try to load the default XML file.
-    loadXMLFile(DEFAULT_FASTRTPS_PROFILES);
+    if (GetCurrentDirectory(MAX_PATH, current_directory) == 0)
+    {
+        logError(XMLPARSER, "GetCurrentDirectory failed " << GetLastError());
+    }
+    else
+    {
+        strcat_s(current_directory, MAX_PATH, "\\");
+        strcat_s(current_directory, MAX_PATH, DEFAULT_FASTRTPS_PROFILES);
+        loadXMLFile(current_directory, true);
+    }
+#else
+    char* absolute_path;
+
+    if (const char* file_path = std::getenv(DEFAULT_FASTRTPS_ENV_VARIABLE))
+    {
+        absolute_path = realpath(file_path, nullptr);
+        if (absolute_path == nullptr)
+        {
+            logError(XMLPARSER, "realpath failed " << std::strerror(errno));
+        }
+        else
+        {
+            loadXMLFile(absolute_path);
+            free(absolute_path);
+        }
+    }
+
+    absolute_path = nullptr;
+
+    // Try to load the default XML file.
+    absolute_path = getcwd(absolute_path, PATH_MAX);
+    if (absolute_path == nullptr)
+    {
+        logError(XMLPARSER, "getcwd failed " << std::strerror(errno));
+    }
+    else
+    {
+        strcat(absolute_path, "/");
+        strcat(absolute_path, DEFAULT_FASTRTPS_PROFILES);
+        loadXMLFile(absolute_path, true);
+    }
+#endif // ifdef _WIN32
 }
 
 XMLP_ret XMLProfileManager::loadXMLProfiles(
@@ -227,6 +278,13 @@ XMLP_ret XMLProfileManager::loadXMLNode(
 XMLP_ret XMLProfileManager::loadXMLFile(
         const std::string& filename)
 {
+    return loadXMLFile(filename, false);
+}
+
+XMLP_ret XMLProfileManager::loadXMLFile(
+        const std::string& filename,
+        bool is_default)
+{
     if (filename.empty())
     {
         logError(XMLPARSER, "Error loading XML file, filename empty");
@@ -241,10 +299,10 @@ XMLP_ret XMLProfileManager::loadXMLFile(
     }
 
     up_base_node_t root_node;
-    XMLP_ret loaded_ret = XMLParser::loadXML(filename, root_node);
+    XMLP_ret loaded_ret = XMLParserImpl::loadXML(filename, root_node, true);
     if (!root_node || loaded_ret != XMLP_ret::XML_OK)
     {
-        if (filename != std::string(DEFAULT_FASTRTPS_PROFILES))
+        if (!is_default)
         {
             logError(XMLPARSER, "Error parsing '" << filename << "'");
         }
@@ -401,7 +459,7 @@ XMLP_ret XMLProfileManager::extractParticipantProfile(
     if (it != node_part->getAttributes().end() && it->second == "true") // Set as default profile
     {
         // +V+ TODO: LOG ERROR IN SECOND ATTEMPT
-        default_participant_attributes = *(emplace.first->second.get() );
+        default_participant_attributes = *(emplace.first->second.get());
     }
     return XMLP_ret::XML_OK;
 }
@@ -434,7 +492,7 @@ XMLP_ret XMLProfileManager::extractPublisherProfile(
     if (it != node_part->getAttributes().end() && it->second == "true") // Set as default profile
     {
         // +V+ TODO: LOG ERROR IN SECOND ATTEMPT
-        default_publisher_attributes = *(emplace.first->second.get() );
+        default_publisher_attributes = *(emplace.first->second.get());
     }
     return XMLP_ret::XML_OK;
 }
@@ -467,7 +525,7 @@ XMLP_ret XMLProfileManager::extractSubscriberProfile(
     if (it != node_part->getAttributes().end() && it->second == "true") // Set as default profile
     {
         // +V+ TODO: LOG ERROR IN SECOND ATTEMPT
-        default_subscriber_attributes = *(emplace.first->second.get() );
+        default_subscriber_attributes = *(emplace.first->second.get());
     }
     return XMLP_ret::XML_OK;
 }
