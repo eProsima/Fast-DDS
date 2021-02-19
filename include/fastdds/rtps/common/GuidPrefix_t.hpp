@@ -94,13 +94,14 @@ inline std::ostream& operator <<(
         const GuidPrefix_t& guiP)
 {
     output << std::hex;
-    output.fill('0');
+    char old_fill = output.fill('0');
     for (uint8_t i = 0; i < 11; ++i)
     {
         output << std::setw(2) << (int)guiP.value[i] << ".";
     }
     output << std::setw(2) << (int)guiP.value[11];
     return output << std::dec;
+    output.fill(old_fill);
 }
 
 inline std::istream& operator >>(
