@@ -89,6 +89,26 @@ static bool should_be_intraprocess_only(
         (ParticipantFilteringFlags::FILTER_DIFFERENT_HOST | ParticipantFilteringFlags::FILTER_DIFFERENT_PROCESS);
 }
 
+static bool get_unique_flows_parameters(
+        const RTPSParticipantAttributes& part_att,
+        const EndpointAttributes& att,
+        bool& unique_flows,
+        uint16_t& initial_port,
+        uint16_t& final_port)
+{
+    const std::string* value = PropertyPolicyHelper::find_property(att.properties, "fastdds.unique_network_flows");
+
+    unique_flows = (nullptr != value);
+    if (unique_flows)
+    {
+        // TODO (Miguel C): parse value to get port range
+        final_port = part_att.port.portBase;
+        initial_port = part_att.port.portBase - 400;
+    }
+
+    return true;
+}
+
 Locator_t& RTPSParticipantImpl::applyLocatorAdaptRule(
         Locator_t& loc)
 {
@@ -681,13 +701,6 @@ bool RTPSParticipantImpl::create_reader(
         return false;
     }
 
-    // Check for unique_network_flows feature
-    if (nullptr != PropertyPolicyHelper::find_property(param.endpoint.properties, "fastdds.unique_network_flows"))
-    {
-        logError(RTPS_PARTICIPANT, "Unique network flows not supported on readers");
-        return false;
-    }
-
     // Special case for DiscoveryProtocol::BACKUP, which abuses persistence guid
     GUID_t former_persistence_guid = param.endpoint.persistence_guid;
     if (param.endpoint.persistence_guid == c_Guid_Unknown)
@@ -704,6 +717,15 @@ bool RTPSParticipantImpl::create_reader(
     // Get persistence service
     IPersistenceService* persistence = nullptr;
     if (!get_persistence_service(is_builtin, param.endpoint, persistence))
+    {
+        return false;
+    }
+
+    // Check for unique_network_flows feature
+    bool request_unique_flows = false;
+    uint16_t initial_port = 0;
+    uint16_t final_port = 0;
+    if (!get_unique_flows_parameters(m_att, param.endpoint, request_unique_flows, initial_port, final_port))
     {
         return false;
     }
@@ -756,7 +778,7 @@ bool RTPSParticipantImpl::create_reader(
 
     if (enable)
     {
-        if (!createAndAssociateReceiverswithEndpoint(SReader))
+        if (!createAndAssociateReceiverswithEndpoint(SReader, request_unique_flows, initial_port, final_port))
         {
             delete(SReader);
             return false;
@@ -1097,7 +1119,10 @@ bool RTPSParticipantImpl::assignEndpointListenResources(
 }
 
 bool RTPSParticipantImpl::createAndAssociateReceiverswithEndpoint(
-        Endpoint* pend)
+        Endpoint* pend,
+        bool unique_flows,
+        uint16_t initial_unique_port,
+        uint16_t final_unique_port)
 {
     /*	This function...
         - Asks the network factory for new resources
@@ -1105,19 +1130,53 @@ bool RTPSParticipantImpl::createAndAssociateReceiverswithEndpoint(
         - Associated the endpoint to the new elements in the list
         - Launches the listener thread
      */
-    // 1 - Ask the network factory to generate the elements that do still not exist
-    std::vector<ReceiverResource> newItems;                         //Store the newly created elements
-    std::vector<ReceiverResource> newItemsBuffer;                   //Store intermediate results
-    //Iterate through the list of unicast and multicast locators the endpoint has... unless its empty
-    //In that case, just use the standard
-    if (pend->getAttributes().unicastLocatorList.empty() && pend->getAttributes().multicastLocatorList.empty())
+
+    if (unique_flows)
     {
-        // Take default locators from the participant.
+        pend->getAttributes().multicastLocatorList.clear();
         pend->getAttributes().unicastLocatorList = m_att.defaultUnicastLocatorList;
-        pend->getAttributes().multicastLocatorList = m_att.defaultMulticastLocatorList;
+
+        uint16_t port = initial_unique_port;
+        while (port < final_unique_port)
+        {
+            // Set port on unicast locators
+            for (Locator_t& loc : pend->getAttributes().unicastLocatorList)
+            {
+                loc.port = port;
+            }
+
+            // Try creating receiver resources
+            if (createReceiverResources(pend->getAttributes().unicastLocatorList, false, true))
+            {
+                break;
+            }
+
+            // Try with next port
+            ++port;
+        }
+
+        // Fail when unique ports are exhausted
+        if (port >= final_unique_port)
+        {
+            logError(RTPS_PARTICIPANT, "Unique flows requested but exhausted. Port range: "
+                    << initial_unique_port << "-" << final_unique_port);
+            return false;
+        }
     }
-    createReceiverResources(pend->getAttributes().unicastLocatorList, false, true);
-    createReceiverResources(pend->getAttributes().multicastLocatorList, false, true);
+    else
+    {
+        // 1 - Ask the network factory to generate the elements that do still not exist
+        //Iterate through the list of unicast and multicast locators the endpoint has... unless its empty
+        //In that case, just use the standard
+        if (pend->getAttributes().unicastLocatorList.empty() && pend->getAttributes().multicastLocatorList.empty())
+        {
+            // Take default locators from the participant.
+            pend->getAttributes().unicastLocatorList = m_att.defaultUnicastLocatorList;
+            pend->getAttributes().multicastLocatorList = m_att.defaultMulticastLocatorList;
+        }
+        createReceiverResources(pend->getAttributes().unicastLocatorList, false, true);
+        createReceiverResources(pend->getAttributes().multicastLocatorList, false, true);
+    }
 
     // Associate the Endpoint with ReceiverControlBlock
     assignEndpointListenResources(pend);
@@ -1184,12 +1243,13 @@ bool RTPSParticipantImpl::createSendResources(
     return true;
 }
 
-void RTPSParticipantImpl::createReceiverResources(
+bool RTPSParticipantImpl::createReceiverResources(
         LocatorList_t& Locator_list,
         bool ApplyMutation,
         bool RegisterReceiver)
 {
     std::vector<std::shared_ptr<ReceiverResource>> newItemsBuffer;
+    bool ret_val = Locator_list.empty();
 
 #if HAVE_SECURITY
     // An auxilary buffer is needed in the ReceiverResource to to decrypt the message,
@@ -1214,6 +1274,8 @@ void RTPSParticipantImpl::createReceiverResources(
             }
         }
 
+        ret_val |= !newItemsBuffer.empty();
+
         for (auto it_buffer = newItemsBuffer.begin(); it_buffer != newItemsBuffer.end(); ++it_buffer)
         {
             std::lock_guard<std::mutex> lock(m_receiverResourcelistMutex);
@@ -1230,6 +1292,8 @@ void RTPSParticipantImpl::createReceiverResources(
         }
         newItemsBuffer.clear();
     }
+
+    return ret_val;
 }
 
 void RTPSParticipantImpl::createSenderResources(
