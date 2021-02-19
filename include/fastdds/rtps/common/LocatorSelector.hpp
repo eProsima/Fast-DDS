@@ -351,7 +351,7 @@ public:
                 Position index_pos)
             : locator_selector_(locator_selector)
         {
-            current_ = {std::numeric_limits<size_t>::max(), 0, true, nullptr};
+            current_ = {(std::numeric_limits<size_t>::max)(), 0, true, nullptr};
 
             if (index_pos == Position::Begin)
             {

@@ -34,8 +34,8 @@ struct ResourceLimitedContainerConfig
 {
 
     ResourceLimitedContainerConfig(
-            size_t ini = 0, 
-            size_t max = std::numeric_limits<size_t>::max(),
+            size_t ini = 0,
+            size_t max = (std::numeric_limits<size_t>::max)(),
             size_t inc = 1u)
         : initial(ini)
         , maximum(max)
@@ -46,7 +46,7 @@ struct ResourceLimitedContainerConfig
     //! Number of elements to be preallocated in the collection.
     size_t initial = 0;
     //! Maximum number of elements allowed in the collection.
-    size_t maximum = std::numeric_limits<size_t>::max();
+    size_t maximum = (std::numeric_limits<size_t>::max)();
     //! Number of items to add when capacity limit is reached.
     size_t increment = 1u;
 
@@ -55,7 +55,8 @@ struct ResourceLimitedContainerConfig
      * @param size Number of elements to allocate.
      * @return Resource limits configuration.
      */
-    inline static ResourceLimitedContainerConfig fixed_size_configuration(size_t size)
+    inline static ResourceLimitedContainerConfig fixed_size_configuration(
+            size_t size)
     {
         return ResourceLimitedContainerConfig(size, size, 0u);
     }
@@ -65,14 +66,16 @@ struct ResourceLimitedContainerConfig
      * @param increment Number of new elements to allocate when increasing the capacity of the collection.
      * @return Resource limits configuration.
      */
-    inline static ResourceLimitedContainerConfig dynamic_allocation_configuration(size_t increment = 1u)
+    inline static ResourceLimitedContainerConfig dynamic_allocation_configuration(
+            size_t increment = 1u)
     {
-        return ResourceLimitedContainerConfig(0u, std::numeric_limits<size_t>::max(), increment ? increment : 1u);
+        return ResourceLimitedContainerConfig(0u, (std::numeric_limits<size_t>::max)(), increment ? increment : 1u);
     }
+
 };
 
 inline bool operator == (
-        const ResourceLimitedContainerConfig& lhs, 
+        const ResourceLimitedContainerConfig& lhs,
         const ResourceLimitedContainerConfig& rhs)
 {
     return

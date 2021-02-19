@@ -27,6 +27,19 @@
 
 #if _MSC_VER
 #include <intrin.h>
+
+#if defined(max)
+#pragma push_macro("max")
+#undef max
+#define FASTDDS_RESTORE_MAX
+#endif // defined(max)
+
+#if defined(min)
+#pragma push_macro("min")
+#undef min
+#define FASTDDS_RESTORE_MIN
+#endif // defined(min)
+
 #endif // if _MSC_VER
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
@@ -573,5 +586,19 @@ private:
 }   // namespace eprosima
 
 #endif   // DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
+
+#if _MSC_VER
+
+#if defined(FASTDDS_RESTORE_MIN)
+#pragma pop_macro("min")
+#undef FASTDDS_RESTORE_MIN
+#endif // defined(FASTDDS_RESTORE_MIN)
+
+#if defined(FASTDDS_RESTORE_MAX)
+#pragma pop_macro("max")
+#undef FASTDDS_RESTORE_MAX
+#endif // defined(FASTDDS_RESTORE_MAX)
+
+#endif // if _MSC_VER
 
 #endif   // FASTRTPS_UTILS_FIXED_SIZE_BITMAP_HPP_
