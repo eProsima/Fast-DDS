@@ -260,6 +260,8 @@ private:
     static constexpr uint32_t data_frag_header_size_ = 28;
     static constexpr uint32_t max_inline_qos_size_ = 32;
 
+    void append_pending_payload();
+
     void reset_to_header();
 
     void flush();
@@ -323,6 +325,12 @@ private:
     uint32_t sent_bytes_limitation_ = 0;
 
     uint32_t current_sent_bytes_ = 0;
+
+    octet* pending_data_ = nullptr;
+
+    uint32_t pending_data_size_ = 0;
+
+    uint32_t pending_padding_ = 0;
 };
 
 }        /* namespace rtps */

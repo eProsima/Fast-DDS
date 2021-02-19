@@ -262,6 +262,22 @@ RTPSMessageGroup::~RTPSMessageGroup() noexcept(false)
     }
 }
 
+void RTPSMessageGroup::append_pending_payload()
+{
+    if (nullptr != pending_data_)
+    {
+        CDRMessage::addData(full_msg_, pending_data_, pending_data_size_);
+        pending_data_ = nullptr;
+        pending_data_size_ = 0;
+
+        while (pending_padding_ > 0)
+        {
+            CDRMessage::addOctet(full_msg_, 0);
+            --pending_padding_;
+        }
+    }
+}
+
 void RTPSMessageGroup::reset_to_header()
 {
     CDRMessage::initCDRMsg(full_msg_);
@@ -287,6 +303,14 @@ void RTPSMessageGroup::send()
         {
             std::lock_guard<RTPSMessageSenderInterface> lock(*sender_);
 
+            append_pending_payload();
+
+            CDRMessage::initCDRMsg(encrypt_msg_);
+            full_msg_->pos = RTPSMESSAGE_HEADER_SIZE;
+            encrypt_msg_->pos = RTPSMESSAGE_HEADER_SIZE;
+            encrypt_msg_->length = RTPSMESSAGE_HEADER_SIZE;
+            memcpy(encrypt_msg_->buffer, full_msg_->buffer, RTPSMESSAGE_HEADER_SIZE);
+
 #if HAVE_SECURITY
             // TODO(Ricardo) Control message size if it will be encrypted.
             if (participant_->security_attributes().is_rtps_protected && endpoint_->supports_rtps_protection())
@@ -310,6 +334,9 @@ void RTPSMessageGroup::send()
 
             eprosima::fastdds::statistics::rtps::add_statistics_submessage(msgToSend);
 
+            // TODO(Miguel C): this may be removed when we have scatter/gather support on the sender interface
+            append_pending_payload();
+
             if (!sender_->send(msgToSend,
                     max_blocking_time_point_))
             {
@@ -332,6 +359,8 @@ void RTPSMessageGroup::check_and_maybe_flush(
         const GuidPrefix_t& destination_guid_prefix)
 {
     assert(nullptr != sender_);
+
+    append_pending_payload();
 
     CDRMessage::initCDRMsg(submessage_msg_);
 
