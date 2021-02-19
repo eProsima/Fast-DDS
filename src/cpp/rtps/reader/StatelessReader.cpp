@@ -402,9 +402,11 @@ bool StatelessReader::change_removed_by_history(
 
 bool StatelessReader::begin_sample_access_nts(
         CacheChange_t* change,
-        WriterProxy*& /*wp*/)
+        WriterProxy*& /*wp*/,
+        bool& is_future_change)
 {
     const GUID_t& writer_guid = change->writerGUID;
+    is_future_change = false;
 
     if (is_datasharing_compatible_ && datasharing_listener_->writer_is_matched(writer_guid))
     {
