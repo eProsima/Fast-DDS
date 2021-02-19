@@ -171,6 +171,22 @@ RTPSMessageGroup::~RTPSMessageGroup() noexcept(false)
     participant_->return_send_buffer(std::move(send_buffer_));
 }
 
+void RTPSMessageGroup::append_pending_payload()
+{
+    if (nullptr != pending_data_)
+    {
+        CDRMessage::addData(full_msg_, pending_data_, pending_data_size_);
+        pending_data_ = nullptr;
+        pending_data_size_ = 0;
+
+        while (pending_padding_ > 0)
+        {
+            CDRMessage::addOctet(full_msg_, 0);
+            --pending_padding_;
+        }
+    }
+}
+
 void RTPSMessageGroup::reset_to_header()
 {
     CDRMessage::initCDRMsg(full_msg_);
@@ -195,6 +211,8 @@ void RTPSMessageGroup::send()
         // TODO(Ricardo) Control message size if it will be encrypted.
         if (participant_->security_attributes().is_rtps_protected && endpoint_->supports_rtps_protection())
         {
+            append_pending_payload();
+
             CDRMessage::initCDRMsg(encrypt_msg_);
             full_msg_->pos = RTPSMESSAGE_HEADER_SIZE;
             encrypt_msg_->pos = RTPSMESSAGE_HEADER_SIZE;
@@ -211,6 +229,9 @@ void RTPSMessageGroup::send()
             msgToSend = encrypt_msg_;
         }
 #endif // if HAVE_SECURITY
+
+        // TODO(Miguel C): this may be removed when we have scatter/gather support on the sender interface
+        append_pending_payload();
 
         if (!sender_.send(msgToSend, max_blocking_time_point_))
         {
@@ -231,6 +252,8 @@ void RTPSMessageGroup::flush_and_reset()
 void RTPSMessageGroup::check_and_maybe_flush(
         const GuidPrefix_t& destination_guid_prefix)
 {
+    append_pending_payload();
+
     CDRMessage::initCDRMsg(submessage_msg_);
 
     if (sender_.destinations_have_changed())

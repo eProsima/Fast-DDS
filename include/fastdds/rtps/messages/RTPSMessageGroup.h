@@ -192,6 +192,8 @@ private:
     static constexpr uint32_t data_frag_header_size_ = 28;
     static constexpr uint32_t max_inline_qos_size_ = 32;
 
+    void append_pending_payload();
+
     void reset_to_header();
 
     void flush();
@@ -251,6 +253,10 @@ private:
     std::chrono::steady_clock::time_point max_blocking_time_point_;
 
     std::unique_ptr<RTPSMessageGroup_t> send_buffer_;
+
+    octet* pending_data_ = nullptr;
+    uint32_t pending_data_size_ = 0;
+    uint32_t pending_padding_ = 0;
 };
 
 } /* namespace rtps */
