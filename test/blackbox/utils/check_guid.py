@@ -15,13 +15,13 @@
 import sqlite3
 import sys
 
-""" 
+"""
 Return the number of apparitions of a guid, on a specific table and database.
 
-It takes three arguments: 
+It takes three arguments:
     * database_name: The filename of the database
     * table_name: The name of the table within the database
-    * check_guid: The guid of the entity that you want to look for in the 
+    * check_guid: The guid of the entity that you want to look for in the
       stated table and database.
 
 """
