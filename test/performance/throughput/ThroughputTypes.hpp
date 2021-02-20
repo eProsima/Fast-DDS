@@ -99,8 +99,8 @@ inline void print_results(
  * This structure default alignment turn out to be 4 in msvc and gcc for
  * x86 and x64 architecture. The alignas specifier is used to match this default
  * behaviour in other platforms.
- * This type does not define a comparisson operator because the actual data size refernced
- * is unknown. Use the comparisson method provided by its DataType.
+ * This type does not define a comparison operator because the actual data size referenced
+ * is unknown. Use the comparison method provided by its DataType.
  * */
 typedef struct alignas(4) ThroughputType
 {

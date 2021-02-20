@@ -39,7 +39,7 @@ using namespace eprosima::fastrtps::rtps;
 using namespace eprosima::fastrtps::types;
 
 // *******************************************************************************************
-// ********************************* DATA READER LISTENER ************************************
+// ********************************* DATA WRITER LISTENER ************************************
 // *******************************************************************************************
 void ThroughputPublisher::DataWriterListener::on_publication_matched(
         eprosima::fastdds::dds::DataWriter*,
@@ -56,7 +56,7 @@ void ThroughputPublisher::DataWriterListener::on_publication_matched(
 }
 
 // *******************************************************************************************
-// ********************************* DATA WRITER LISTENER ************************************
+// ********************************* COMMAND READER LISTENER *********************************
 // *******************************************************************************************
 
 /*
@@ -761,12 +761,6 @@ bool ThroughputPublisher::test(
 
     size_t removed = 0;
     data_writer_->clear_history(&removed);
-
-    if (data_sharing_)
-    {
-        // give some room to the DataSharingListener to process all the data before destroying endpoints
-        std::this_thread::sleep_for(std::chrono::milliseconds(500));
-    }
 
     command_sample.m_command = TEST_ENDS;
     command_writer_->write(&command_sample);

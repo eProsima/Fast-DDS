@@ -195,7 +195,7 @@ if(PYTHONINTERP_FOUND)
 
         endif()
 
-        # Check if a zero copy test is required
+        # Check if a loans test is required
         if(throughput_test_name IN_LIST LOAN_SAMPLES_LIST)
 
             # append to the list of cases
@@ -239,7 +239,7 @@ if(PYTHONINTERP_FOUND)
 
         endif()
 
-        # Check if a test using data sharing and zero copy is required
+        # Check if a test using data sharing and loans is required
         if(throughput_test_name IN_LIST DATA_SHARING_AND_LOAN_SAMPLES_LIST)
 
             # append to the list of cases
