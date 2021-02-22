@@ -282,18 +282,30 @@ endif()
 # Log Info default setup
 ###############################################################################
 
+include(CMakeDependentOption)
+
+set(LOG_NO_INFO_HELP "\
+Do not compile Info Log level. For the sake of efficiency non-debug \
+configs do not log info messages unless the option ENFORCE_LOG_INFO \
+is set to on.")
 if(CMAKE_BUILD_TYPE MATCHES "^([Dd][Ee][Bb][Uu][Gg])$"  # single config generator
    OR ("Debug" IN_LIST CMAKE_CONFIGURATION_TYPES))      # multi config generator
-    option(LOG_NO_INFO "Do not compile Info Log level" OFF)
+    option(LOG_NO_INFO ${LOG_NO_INFO_HELP} OFF)
 else()
-    option(LOG_NO_INFO "Do not compile Info Log level" ON)
+    option(LOG_NO_INFO ${LOG_NO_INFO_HELP} ON)
 endif()
-
-option(ENFORCE_LOG_INFO "The LOG_NO_INFO option must be followed regardless of configuration" OFF)
+unset(LOG_NO_INFO_HELP)
 
 option(LOG_NO_WARNING "Do not compile Warning Log level" OFF)
 
 option(LOG_NO_ERROR "Do not compile Error Log level" OFF)
+
+cmake_dependent_option(
+    ENFORCE_LOG_INFO
+    "The LOG_NO_INFO option must be enforced regardless of selected configuration"
+    OFF
+    "NOT LOG_NO_INFO"
+    OFF)
 
 if(LOG_NO_INFO)
     set(HAVE_LOG_NO_INFO 1)
