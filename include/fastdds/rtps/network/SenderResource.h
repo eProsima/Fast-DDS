@@ -20,6 +20,7 @@
 #include <chrono>
 
 #include <fastdds/rtps/common/Locator.h>
+#include <fastdds/rtps/network/NetworkBuffer.hpp>
 
 namespace eprosima {
 namespace fastrtps {
@@ -38,6 +39,8 @@ class MessageReceiver;
 class SenderResource
 {
 public:
+
+    using NetworkBuffer = eprosima::fastdds::rtps::NetworkBuffer;
 
     /**
      * Sends to a destination locator, through the channel managed by this resource.
@@ -58,10 +61,13 @@ public:
     {
         bool returned_value = false;
 
+        NetworkBuffer buf{ data, dataLength };
+
         if (send_lambda_)
         {
-            returned_value = send_lambda_(data, dataLength, destination_locators_begin, destination_locators_end,
-                            max_blocking_time_point);
+            returned_value =
+                    send_lambda_(&buf, 1, dataLength,
+                            destination_locators_begin, destination_locators_end, max_blocking_time_point);
         }
 
         return returned_value;
@@ -108,17 +114,18 @@ protected:
 
     std::function<void()> clean_up;
     std::function<bool(
-                const octet*,
-                uint32_t,
+                const NetworkBuffer* buffers,
+                size_t num_buffers,
+                uint32_t total_bytes,
                 LocatorsIterator* destination_locators_begin,
                 LocatorsIterator* destination_locators_end,
                 const std::chrono::steady_clock::time_point&)> send_lambda_;
 
 private:
 
-    SenderResource()                                 = delete;
+    SenderResource() = delete;
     SenderResource(
-            const SenderResource&)            = delete;
+            const SenderResource&) = delete;
     SenderResource& operator =(
             const SenderResource&) = delete;
 };
