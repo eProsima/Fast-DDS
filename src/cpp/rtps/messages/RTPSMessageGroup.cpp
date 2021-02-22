@@ -376,17 +376,22 @@ bool RTPSMessageGroup::insert_submessage(
         const GuidPrefix_t& destination_guid_prefix,
         bool is_big_submessage)
 {
-    if (!append_message(participant_, full_msg_, submessage_msg_))
+    uint32_t total_size = submessage_msg_->length + pending_data_size_ + pending_padding_;
+    if (full_msg_->pos + total_size > full_msg_->max_size)
     {
-        // Retry
-        flush_and_reset();
+        octet* backup = pending_data_;
+        pending_data_ = nullptr;
+
+        flush();
         add_info_dst_in_buffer(full_msg_, destination_guid_prefix);
 
-        if (!append_message(participant_, full_msg_, submessage_msg_))
-        {
-            EPROSIMA_LOG_ERROR(RTPS_WRITER, "Cannot add RTPS submesage to the CDRMessage. Buffer too small");
-            return false;
-        }
+        pending_data_ = backup;
+    }
+
+    if (!append_message(participant_, full_msg_, submessage_msg_))
+    {
+        EPROSIMA_LOG_ERROR(RTPS_WRITER, "Cannot add RTPS submesage to the CDRMessage. Buffer too small");
+        return false;
     }
 
     // Messages with a submessage bigger than 64KB cannot have more submessages and should be flushed
