@@ -22,6 +22,16 @@
 
 #define GEN_API_VER 1
 
+// C++20 support defines
+#ifndef HAVE_CXX20
+#define HAVE_CXX20 @HAVE_CXX20@
+#endif
+
+// C++17 support defines
+#ifndef HAVE_CXX17
+#define HAVE_CXX17 @HAVE_CXX17@
+#endif
+
 // C++14 support defines
 #ifndef HAVE_CXX14
 #define HAVE_CXX14 @HAVE_CXX14@
