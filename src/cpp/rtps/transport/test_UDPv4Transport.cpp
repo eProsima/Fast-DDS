@@ -191,7 +191,7 @@ LocatorList test_UDPv4Transport::NormalizeLocator(
 }
 
 bool test_UDPv4Transport::send(
-        const octet* send_buffer,
+        const std::array<asio::const_buffer, 3>& send_buffer,
         uint32_t send_buffer_size,
         eProsimaUDPSocket& socket,
         fastrtps::rtps::LocatorsIterator* destination_locators_begin,
@@ -237,8 +237,8 @@ bool test_UDPv4Transport::send(
 }
 
 bool test_UDPv4Transport::send(
-        const octet* send_buffer,
-        uint32_t send_buffer_size,
+        const std::array<asio::const_buffer, 3>& send_buffers,
+        uint32_t total_bytes,
         eProsimaUDPSocket& socket,
         const Locator& remote_locator,
         bool only_multicast_purpose,
@@ -248,15 +248,14 @@ bool test_UDPv4Transport::send(
     bool is_multicast_remote_address = fastrtps::rtps::IPLocator::IPLocator::isMulticast(remote_locator);
     if (is_multicast_remote_address == only_multicast_purpose || whitelisted)
     {
-        if (packet_should_drop(send_buffer, send_buffer_size) || should_drop_locator(remote_locator))
+        if (packet_should_drop(send_buffers, total_bytes))
         {
-            statistics_info_.set_statistics_message_data(remote_locator, send_buffer, send_buffer_size);
-            log_drop(send_buffer, send_buffer_size);
+            log_drop(static_cast<const octet*>(send_buffers[0].data()), total_bytes);
             return true;
         }
         else
         {
-            return UDPv4Transport::send(send_buffer, send_buffer_size, socket, remote_locator, only_multicast_purpose,
+            return UDPv4Transport::send(send_buffers, total_bytes, socket, remote_locator, only_multicast_purpose,
                            whitelisted, timeout);
         }
     }
@@ -310,7 +309,7 @@ bool test_UDPv4Transport::should_drop_locator(
 }
 
 bool test_UDPv4Transport::packet_should_drop(
-        const octet* send_buffer,
+        const std::array<asio::const_buffer, 3>& send_buffer,
         uint32_t send_buffer_size)
 {
     if (test_UDPv4Transport_ShutdownAllNetwork)
@@ -318,8 +317,11 @@ bool test_UDPv4Transport::packet_should_drop(
         return true;
     }
 
-    CDRMessage_t cdrMessage(0);
-    cdrMessage.init(const_cast<octet*>(send_buffer), send_buffer_size);
+    CDRMessage_t cdrMessage(send_buffer_size);
+    for (size_t i = 0; i < 3; ++i)
+    {
+        memcpy(cdrMessage.buffer, send_buffer[i].data(), send_buffer[i].size());
+    }
     cdrMessage.length = send_buffer_size;
 
     if (cdrMessage.length < RTPSMESSAGE_HEADER_SIZE)
