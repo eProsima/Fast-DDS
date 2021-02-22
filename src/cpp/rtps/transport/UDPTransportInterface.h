@@ -110,7 +110,7 @@ public:
      * @param max_blocking_time_point maximum blocking time.
      */
     virtual bool send(
-            const fastrtps::rtps::octet* send_buffer,
+            const std::array<asio::const_buffer, 3>& send_buffer,
             uint32_t send_buffer_size,
             eProsimaUDPSocket& socket,
             fastrtps::rtps::LocatorsIterator* destination_locators_begin,
@@ -250,8 +250,8 @@ protected:
      * Send a buffer to a destination
      */
     bool send(
-            const fastrtps::rtps::octet* send_buffer,
-            uint32_t send_buffer_size,
+            const std::array<asio::const_buffer, 3>& send_buffer,
+            size_t send_buffer_size,
             eProsimaUDPSocket& socket,
             const Locator& remote_locator,
             bool only_multicast_purpose,
