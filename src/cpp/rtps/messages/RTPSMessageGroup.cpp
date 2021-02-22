@@ -477,8 +477,12 @@ bool RTPSMessageGroup::add_data_frag(
         //inlineQos = W->getInlineQos();
     }
 
+    bool copy_data = false;
 #if HAVE_SECURITY
     uint32_t from_buffer_position = submessage_msg_->pos;
+    bool protect_payload = endpoint_->getAttributes().security_attributes().is_payload_protected;
+    bool protect_submessage = endpoint_->getAttributes().security_attributes().is_submessage_protected;
+    copy_data = protect_payload || protect_submessage;
 #endif // if HAVE_SECURITY
     const EntityId_t& readerId = get_entity_id(sender_.remote_guids());
 
@@ -495,7 +499,7 @@ bool RTPSMessageGroup::add_data_frag(
     change_to_add.serializedPayload.length = fragment_size;
 
 #if HAVE_SECURITY
-    if (endpoint_->getAttributes().security_attributes().is_payload_protected)
+    if (protect_payload)
     {
         SerializedPayload_t encrypt_payload;
         encrypt_payload.data = encrypt_msg_->buffer;
@@ -519,7 +523,7 @@ bool RTPSMessageGroup::add_data_frag(
 
     if (!RTPSMessageCreator::addSubmessageDataFrag(submessage_msg_, &change, fragment_number,
             change_to_add.serializedPayload, endpoint_->getAttributes().topicKind, readerId,
-            expectsInlineQos, inlineQos))
+            expectsInlineQos, inlineQos, copy_data, pending_data_, pending_data_size_, pending_padding_))
     {
         logError(RTPS_WRITER, "Cannot add DATA_FRAG submsg to the CDRMessage. Buffer too small");
         change_to_add.serializedPayload.data = nullptr;
@@ -528,7 +532,7 @@ bool RTPSMessageGroup::add_data_frag(
     change_to_add.serializedPayload.data = nullptr;
 
 #if HAVE_SECURITY
-    if (endpoint_->getAttributes().security_attributes().is_submessage_protected)
+    if (protect_submessage)
     {
         submessage_msg_->pos = from_buffer_position;
         CDRMessage::initCDRMsg(encrypt_msg_);
