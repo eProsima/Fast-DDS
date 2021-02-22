@@ -288,7 +288,9 @@ protected:
 #define logWarning_(cat, msg)
 #endif // ifndef LOG_NO_WARNING
 
-#if !HAVE_LOG_NO_INFO
+// Allow multiconfig platforms like windows to disable info queueing on Release and other non-debug configs
+#if !HAVE_LOG_NO_INFO &&  \
+    ( defined(ENFORCE_LOG_INFO) || (defined(__INTERNALDEBUG) || defined(_INTERNALDEBUG)) && (defined(_DEBUG) || defined(__DEBUG)))
 #define logInfo_(cat, msg)                                                                              \
     {                                                                                                   \
         using namespace eprosima::fastdds::dds;                                                         \

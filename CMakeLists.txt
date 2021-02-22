@@ -281,11 +281,15 @@ endif()
 ###############################################################################
 # Log Info default setup
 ###############################################################################
-if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+
+if(CMAKE_BUILD_TYPE MATCHES "^([Dd][Ee][Bb][Uu][Gg])$"  # single config generator
+   OR ("Debug" IN_LIST CMAKE_CONFIGURATION_TYPES))      # multi config generator
     option(LOG_NO_INFO "Do not compile Info Log level" OFF)
 else()
     option(LOG_NO_INFO "Do not compile Info Log level" ON)
 endif()
+
+option(ENFORCE_LOG_INFO "The LOG_NO_INFO option must be followed regardless of configuration" OFF)
 
 option(LOG_NO_WARNING "Do not compile Warning Log level" OFF)
 
