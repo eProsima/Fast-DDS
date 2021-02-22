@@ -362,8 +362,11 @@ bool RTPSMessageCreator::addMessageDataFrag(
     payload.data = change->serializedPayload.data + fragment_start;
     payload.length = fragment_size;
 
+    octet* pending_payload = nullptr;
+    uint32_t pending_size = 0;
+    uint32_t pending_padding = 0;
     RTPSMessageCreator::addSubmessageDataFrag(msg, change, fragment_number, payload,
-            topicKind, readerId, expectsInlineQos, inlineQos);
+            topicKind, readerId, expectsInlineQos, inlineQos, false, pending_payload, pending_size, pending_padding);
 
     payload.data = NULL;
 
@@ -379,10 +382,20 @@ bool RTPSMessageCreator::addSubmessageDataFrag(
         TopicKind_t topicKind,
         const EntityId_t& readerId,
         bool expectsInlineQos,
-        InlineQosWriter* inlineQos)
+        InlineQosWriter* inlineQos,
+        bool copy_data,
+        octet*& pending_payload,
+        uint32_t& pending_size,
+        uint32_t& pending_padding)
 {
     octet status = 0;
     octet flags = 0;
+
+    // Initialize output parameters
+    pending_payload = nullptr;
+    pending_size = 0;
+    pending_padding = 0;
+
     //Find out flags
     bool dataFlag = false;
     bool keyFlag = false;
@@ -425,7 +438,20 @@ bool RTPSMessageCreator::addSubmessageDataFrag(
     //Add Serialized Payload XXX TODO
     if (!keyFlag) // keyflag = 0 means that the serializedPayload SubmessageElement contains the serialized Data
     {
-        added_no_error &= CDRMessage::addData(msg, payload.data, payload.length);
+        if (copy_data)
+        {
+            added_no_error &= CDRMessage::addData(msg, payload.data, payload.length);
+        }
+        else if (msg->pos + payload.length > msg->max_size)
+        {
+            return false;
+        }
+        else
+        {
+            pending_payload = payload.data;
+            pending_size = payload.length;
+            msg->pos += pending_size;
+        }
     }
     else
     {
@@ -449,9 +475,21 @@ bool RTPSMessageCreator::addSubmessageDataFrag(
     // TODO(Ricardo) This should be on cachechange.
     // Align submessage to rtps alignment (4).
     submessage_size = uint16_t(msg->pos - position_size_count_size);
-    for (; submessage_size& 3; ++submessage_size)
+    for (; 0 != (submessage_size & 3); ++submessage_size)
     {
-        added_no_error &= CDRMessage::addOctet(msg, 0);
+        if (copy_data)
+        {
+            added_no_error &= CDRMessage::addOctet(msg, 0);
+        }
+        else
+        {
+            ++pending_padding;
+        }
+    }
+
+    if (!copy_data)
+    {
+        msg->pos -= pending_size;
     }
 
     //TODO(Ricardo) Improve.

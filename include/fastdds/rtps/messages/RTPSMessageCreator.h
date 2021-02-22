@@ -156,7 +156,11 @@ public:
             TopicKind_t topicKind,
             const EntityId_t& readerId,
             bool expectsInlineQos,
-            InlineQosWriter* inlineQos);
+            InlineQosWriter* inlineQos,
+            bool copy_data,
+            octet*& pending_payload,
+            uint32_t& pending_size,
+            uint32_t& pending_padding);
 
     static bool addMessageGap(
             CDRMessage_t* msg,
