@@ -167,7 +167,7 @@ public:
             bool write_encapsulation);
 
     /**
-     * Read the parameter list from a recevied CDRMessage_t
+     * Read the parameter list from a received CDRMessage_t
      * @return True on success
      */
     bool readFromCDRMessage(

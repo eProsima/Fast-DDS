@@ -132,7 +132,7 @@ class CryptoKeyFactory
          * Releases resources associated with a Participant. The Crypto Handle becomes unusable after this
          * @param participant_crypto_handle Belonging to the Participant that awaits termination
          * @param exception (out) Security exception
-         * @return TRUE is succesful
+         * @return TRUE is successful
          */
         virtual bool unregister_participant(
                 ParticipantCryptoHandle* participant_crypto_handle,
@@ -142,7 +142,7 @@ class CryptoKeyFactory
          * Releases resources associated with a DataWriter. The Crypto Handle becomes unusable after this
          * @param datawriter_crypto_handle Belonging to the DataWriter that awaits termination
          * @param exception (out) Security exception
-         * @return TRUE is succesful
+         * @return TRUE is successful
          */
         virtual bool unregister_datawriter(
                 DatawriterCryptoHandle *datawriter_crypto_handle,
@@ -152,7 +152,7 @@ class CryptoKeyFactory
          * Releases resources associated with a DataReader. The Crypto Handle becomes unusable after this
          * @param datareader_crypto_handle Belonging to the DataReader that awaits termination
          * @param exception (out) Security exception
-         * @return TRUE is succesful
+         * @return TRUE is successful
          */
         virtual bool unregister_datareader(
                 DatareaderCryptoHandle *datareader_crypto_handle,

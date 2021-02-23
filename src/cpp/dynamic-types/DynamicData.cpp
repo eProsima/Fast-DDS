@@ -3537,7 +3537,7 @@ ReturnCode_t DynamicData::set_bool_value(
         }
         else
         {
-            logError(DYN_TYPES, "Error setting bool value. The given index is greather than the limit.");
+            logError(DYN_TYPES, "Error setting bool value. The given index is greater than the limit.");
             return ReturnCode_t::RETCODE_BAD_PARAMETER;
         }
     }
@@ -3613,7 +3613,7 @@ ReturnCode_t DynamicData::set_bool_value(
             }
             else
             {
-                logError(DYN_TYPES, "Error setting bool value. The given index is greather than the limit.");
+                logError(DYN_TYPES, "Error setting bool value. The given index is greater than the limit.");
                 return ReturnCode_t::RETCODE_BAD_PARAMETER;
             }
         }
@@ -3706,7 +3706,7 @@ ReturnCode_t DynamicData::set_string_value(
         }
         else
         {
-            logError(DYN_TYPES, "Error setting string value. The given string is greather than the length limit.");
+            logError(DYN_TYPES, "Error setting string value. The given string is greater than the length limit.");
             return ReturnCode_t::RETCODE_BAD_PARAMETER;
         }
     }
@@ -3746,7 +3746,7 @@ ReturnCode_t DynamicData::set_string_value(
             }
             else
             {
-                logError(DYN_TYPES, "Error setting string value. The given string is greather than the length limit.");
+                logError(DYN_TYPES, "Error setting string value. The given string is greater than the length limit.");
                 return ReturnCode_t::RETCODE_BAD_PARAMETER;
             }
         }
@@ -3915,7 +3915,7 @@ ReturnCode_t DynamicData::set_wstring_value(
         }
         else
         {
-            logError(DYN_TYPES, "Error setting wstring value. The given string is greather than the length limit.");
+            logError(DYN_TYPES, "Error setting wstring value. The given string is greater than the length limit.");
             return ReturnCode_t::RETCODE_BAD_PARAMETER;
         }
     }
@@ -3955,7 +3955,7 @@ ReturnCode_t DynamicData::set_wstring_value(
             }
             else
             {
-                logError(DYN_TYPES, "Error setting wstring value. The given string is greather than the length limit.");
+                logError(DYN_TYPES, "Error setting wstring value. The given string is greater than the length limit.");
                 return ReturnCode_t::RETCODE_BAD_PARAMETER;
             }
         }

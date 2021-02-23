@@ -32,7 +32,7 @@ namespace rtps {
 /**
  * Class HistoryAttributes, to specify the attributes of a WriterHistory or a ReaderHistory.
  * This class is only intended to be used with the RTPS API.
- * The Publsiher-Subscriber API has other fields to define this values (HistoryQosPolicy and ResourceLimitsQosPolicy).
+ * The Publisher-Subscriber API has other fields to define this values (HistoryQosPolicy and ResourceLimitsQosPolicy).
  * @ingroup RTPS_ATTRIBUTES_MODULE
  */
 class RTPS_DllAPI HistoryAttributes
@@ -75,7 +75,7 @@ public:
 
     /** Constructor
      * @param memoryPolicy Set whether memory can be dynamically reallocated or not
-     * @param payload Maximum payload size. It is used when memory management polycy is
+     * @param payload Maximum payload size. It is used when memory management policy is
      * PREALLOCATED_MEMORY_MODE or PREALLOCATED_WITH_REALLOC_MEMORY_MODE.
      * @param initial Initial reserved caches. It is used when memory management policy is
      * PREALLOCATED_MEMORY_MODE or PREALLOCATED_WITH_REALLOC_MEMORY_MODE.
@@ -96,7 +96,7 @@ public:
 
     /** Constructor
      * @param memoryPolicy Set whether memory can be dynamically reallocated or not
-     * @param payload Maximum payload size. It is used when memory management polycy is
+     * @param payload Maximum payload size. It is used when memory management policy is
      * PREALLOCATED_MEMORY_MODE or PREALLOCATED_WITH_REALLOC_MEMORY_MODE.
      * @param initial Initial reserved caches. It is used when memory management policy is
      * PREALLOCATED_MEMORY_MODE or PREALLOCATED_WITH_REALLOC_MEMORY_MODE.

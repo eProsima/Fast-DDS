@@ -57,7 +57,7 @@ public:
 
     //!Initial AckNack delay. Default value 70ms.
     Duration_t initialAcknackDelay;
-    //!Delay to be applied when a hearbeat message is received, default value 5ms.
+    //!Delay to be applied when a HEARTBEAT message is received, default value 5ms.
     Duration_t heartbeatResponseDelay;
 };
 

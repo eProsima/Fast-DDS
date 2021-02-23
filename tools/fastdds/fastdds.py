@@ -94,7 +94,7 @@ class FastDDSParser:
                     ((v[0] == req_v[0]) and (v[1] >= req_v[1])) or
                     (v[0] > req_v[0])
                ):
-            print('fastdds: Invalid Python version. {}.{}.x or greather'
+            print('fastdds: Invalid Python version. {}.{}.x or greater'
                   ' is required'.format(req_v[0], req_v[1]))
             sys.exit(1)
 

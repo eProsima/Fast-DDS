@@ -79,7 +79,7 @@ public:
         return port;
     }
     /**
-     * Get a unicast port baes on the domain ID and the participant ID.
+     * Get a unicast port based on the domain ID and the participant ID.
      *
      * @param domainId Domain ID.
      * @param RTPSParticipantID Participant ID.

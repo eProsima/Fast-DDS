@@ -418,7 +418,7 @@ public:
 
     /**
      * Update the information (only certain fields will be updated).
-     * @param rdata Poitner to the object from which we are going to update.
+     * @param rdata Pointer to the object from which we are going to update.
      */
     void update(
             ReaderProxyData* rdata);

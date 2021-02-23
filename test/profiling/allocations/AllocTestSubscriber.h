@@ -40,7 +40,7 @@ public:
 	bool init(const char* profile, int domainId, const std::string& outputFile);
 	//!RUN the subscriber
 	void run(bool wait_unmatch=false);
-	//!Run the subscriber until number samples have been recevied.
+	//!Run the subscriber until number samples have been received.
 	void run(uint32_t number, bool wait_unmatch = false);
 private:
 	eprosima::fastrtps::Participant* mp_participant;
@@ -56,7 +56,7 @@ public:
 
 		void onSubscriptionMatched(eprosima::fastrtps::Subscriber* sub, eprosima::fastrtps::rtps::MatchingInfo& info);
 		void onNewDataMessage(eprosima::fastrtps::Subscriber* sub);
-        
+
         void wait_match();
         void wait_unmatch();
         void wait_until_total_received_at_least(uint32_t n);

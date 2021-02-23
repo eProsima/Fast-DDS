@@ -54,7 +54,7 @@ public:
 
     /**
      * Virtual method that is called when a new change is received.
-     * In this implementation this method just calls add_change. The suer can overload this method in case
+     * In this implementation this method just calls add_change. The user can overload this method in case
      * he needs to perform additional checks before adding the change.
      * @param change Pointer to the change
      * @return True if added.
@@ -98,7 +98,7 @@ public:
     /**
      * Remove all changes from the History that have a certain guid.
      * @param a_guid Pointer to the target guid to search for.
-     * @return True if succesful, even if no changes have been removed.
+     * @return True if successful, even if no changes have been removed.
      * */
     RTPS_DllAPI bool remove_changes_with_guid(
             const GUID_t& a_guid);
@@ -107,7 +107,7 @@ public:
      * Remove all fragmented changes from certain writer up to certain sequence number.
      * @param seq_num First SequenceNumber_t not to be removed.
      * @param writer_guid GUID of the writer for which changes should be looked for.
-     * @return True if succesful, even if no changes have been removed.
+     * @return True if successful, even if no changes have been removed.
      */
     bool remove_fragmented_changes_until(
             const SequenceNumber_t& seq_num,

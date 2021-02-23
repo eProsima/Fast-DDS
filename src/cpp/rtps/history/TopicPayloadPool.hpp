@@ -70,7 +70,7 @@ public:
      *
      * @param [in]  config              The new history's pool requirements.
      * @param [in]  is_reader_history   True if the new history is for a reader. False otherwise.
-     * @return Whether the operation was succesful or not.
+     * @return Whether the operation was successful or not.
      *
      * @pre
      *   - Current pool is configured for the same memory policy as @c config.memory_policy.
@@ -96,7 +96,7 @@ public:
      *
      * @param [in]  config              The old history's pool requirements, which are no longer active.
      * @param [in]  is_reader_history   True if the history was for a reader. False otherwise.
-     * @return Whether the operation was succesful or not.
+     * @return Whether the operation was successful or not.
      *
      * @pre
      *   - Current pool is configured for the same memory policy as @c config.memory_policy.

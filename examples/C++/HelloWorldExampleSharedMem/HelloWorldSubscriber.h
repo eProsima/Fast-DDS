@@ -39,7 +39,7 @@ public:
     bool init();
     //!RUN the subscriber
     void run();
-    //!Run the subscriber until number samples have been recevied.
+    //!Run the subscriber until number samples have been received.
     void run(
             uint32_t number);
 

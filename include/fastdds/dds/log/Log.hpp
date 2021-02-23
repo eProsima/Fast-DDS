@@ -23,7 +23,7 @@
 #include <regex>
 
 /**
- * eProsima log layer. Logging categories and verbosities can be specified dynamically at runtime.
+ * eProsima log layer. Logging categories and verbosity can be specified dynamically at runtime.
  * However, even on a category not covered by the current verbosity level,
  * there is some overhead on calling a log macro. For maximum performance, you can
  * opt out of logging any particular level by defining the following symbols:

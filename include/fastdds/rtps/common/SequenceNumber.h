@@ -228,8 +228,8 @@ inline bool operator <=(
 /**
  * Subtract one uint32_t from a SequenceNumber_t
  * @param seq Base SequenceNumber_t
- * @param inc uint32_t to substract
- * @return Result of the substraction
+ * @param inc uint32_t to subtract
+ * @return Result of the subtraction
  */
 inline SequenceNumber_t operator -(
         const SequenceNumber_t& seq,

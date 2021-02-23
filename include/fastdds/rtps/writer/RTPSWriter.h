@@ -295,7 +295,7 @@ public:
     }
 
     /**
-     * Inform if data is sent to readers separatedly
+     * Inform if data is sent to readers separately
      * @return true if separate sending is enabled
      */
     bool get_separate_sending () const

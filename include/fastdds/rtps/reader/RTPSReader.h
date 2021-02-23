@@ -176,7 +176,7 @@ public:
             WriterProxy* prox = nullptr) = 0;
 
     /**
-     * Get the associated listener, secondary attached Listener in case it is of coumpound type
+     * Get the associated listener, secondary attached Listener in case it is of compound type
      * @return Pointer to the associated reader listener.
      */
     RTPS_DllAPI ReaderListener* getListener() const;
