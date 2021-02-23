@@ -57,22 +57,22 @@ public:
         struct stat buf;
         // check directory status
         if (stat(defaultdir, &buf) != 0)
-	{
+        {
             // directory not found, create it
             if(errno == ENOENT)
-	    {
+            {
                 mkdir(defaultdir, 0777);
             }
             // if another error then throw exception
             else
-	    {
+            {
                 std::string err("get_file_path() ");
                 err = err + strerror(errno);
                 throw std::runtime_error(err);
             }
         }
         else
-	{
+        {
             // directory exists do nothing
         }
 #else
@@ -100,6 +100,7 @@ public:
         }
         return defaultdir + filepath;
     }
+
 #endif  // !defined(BOOST_INTERPROCESS_POSIX_SHARED_MEMORY_OBJECTS)
 
 };
