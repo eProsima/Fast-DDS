@@ -377,8 +377,7 @@ inline std::ostream& operator <<(
     std::string nano_st = std::to_string(t.nanosec());
     nano_st.insert(0, 9 - nano_st.length(), '0');
 
-    // Remove right-after-dot zeros
-    while(nano_st.length() > 1 && nano_st.at(nano_st.length() - 1) == '0')
+    while (nano_st.length() > 1 && nano_st.at(nano_st.length() - 1) == '0')
     {
         nano_st.pop_back();
     }

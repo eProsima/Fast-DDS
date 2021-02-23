@@ -62,7 +62,7 @@ TEST(TimeTest, serialize_operator)
     ss.clear();
 
     // sec & frac constructor
-    Time_t t6(4346,5);
+    Time_t t6(4346, 5);
     ss << t6;
     ASSERT_EQ(ss.str(), "4346.000000001");
     ss.str("");
@@ -112,7 +112,7 @@ TEST(TimeTest, deserialize_operator)
 
 int main(
         int argc,
-        char **argv)
+        char** argv)
 {
     testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();
