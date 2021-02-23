@@ -379,7 +379,7 @@ elseif(NOT EPROSIMA_INSTALLER)
         # C4555  expression has no effect; expected expression with side-effect
         # C4715: 'Test': not all control paths return a value
         # C5038 data member 'member1' will be initialized after data member 'member2'
-        target_compile_options(${PROJECT_NAME} PUBLIC /w34101 /w34555 /w34189 /w35038 /w34101)
+        target_compile_options(${PROJECT_NAME} PUBLIC /w34101 /w34555 /w34189 /w35038 /w34715)
     endif(MSVC)
 
     target_compile_definitions(${PROJECT_NAME} PRIVATE
