@@ -18,6 +18,12 @@
 #include <boostconfig.hpp>
 #include <boost/interprocess/detail/shared_dir_helpers.hpp>
 
+#ifdef __QNXNTO__
+#include <sys/stat.h>
+#include <sys/types.h>
+#include <errno.h>
+#endif
+
 namespace eprosima {
 namespace fastdds {
 namespace rtps {
@@ -41,12 +47,34 @@ public:
 
 #else
 
+
     static std::string get_file_path(
             const std::string& filename)
     {
+        
+#ifdef __QNXNTO__
+	static const char defaultdir[] = "/var/lock";
+        struct stat buf;
+        // check directory status
+        if (stat(defaultdir, &buf) != 0){
+            // directory not found, create it
+            if(errno == ENOENT){
+                mkdir(defaultdir, 0777);
+            }
+            // if another error then throw exception
+            else{
+                std::string err("get_file_path() ");
+                err = err + strerror(errno);
+                throw std::runtime_error(err);
+            }
+        }
+        else{
+            // directory exists do nothing
+        }
+#else
         // Default value from: glibc-2.29/sysdeps/unix/sysv/linux/shm-directory.c
         static const char defaultdir[] = "/dev/shm/";
-
+#endif
         std::string filepath;
         #if defined(BOOST_INTERPROCESS_FILESYSTEM_BASED_POSIX_SHARED_MEMORY)
         const bool add_leading_slash = false;
@@ -63,10 +91,8 @@ public:
         {
             boost::interprocess::ipcdetail::shared_filepath(filename.c_str(), filepath);
         }
-
         return defaultdir + filepath;
     }
-
 #endif
 };
 
