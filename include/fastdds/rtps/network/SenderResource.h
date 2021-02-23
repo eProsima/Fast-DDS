@@ -44,9 +44,8 @@ public:
 
     /**
      * Sends to a destination locator, through the channel managed by this resource.
-     * @param data Raw data slice to be sent.
-     * @param dataLength Length of the data to be sent. Will be used as a boundary for
-     * the previous parameter.
+     * @param data Pointer to the contiguous data buffer.
+     * @param data_size Number of bytes in @c data to send.
      * @param destination_locators_begin destination endpoint Locators iterator begin.
      * @param destination_locators_end destination endpoint Locators iterator end.
      * @param max_blocking_time_point If transport supports it then it will use it as maximum blocking time.
@@ -54,19 +53,41 @@ public:
      */
     bool send(
             const octet* data,
-            uint32_t dataLength,
+            uint32_t data_size,
+            LocatorsIterator* destination_locators_begin,
+            LocatorsIterator* destination_locators_end,
+            const std::chrono::steady_clock::time_point& max_blocking_time_point)
+    {
+        NetworkBuffer buf{ data, data_size };
+        return send(&buf, 1, data_size,
+            destination_locators_begin, destination_locators_end, max_blocking_time_point);
+    }
+
+    /**
+     * Sends to a destination locator, through the channel managed by this resource.
+     * @param buffers Array of buffers to gather.
+     * @param num_buffers Number of elements on @c buffers.
+     * @param total_bytes Total size of the raw data. Should be equal to the sum of the @c length field of all
+     * buffers.
+     * @param destination_locators_begin destination endpoint Locators iterator begin.
+     * @param destination_locators_end destination endpoint Locators iterator end.
+     * @param max_blocking_time_point If transport supports it then it will use it as maximum blocking time.
+     * @return Success of the send operation.
+     */
+    bool send(
+            const NetworkBuffer* buffers,
+            size_t num_buffers,
+            uint32_t total_bytes,
             LocatorsIterator* destination_locators_begin,
             LocatorsIterator* destination_locators_end,
             const std::chrono::steady_clock::time_point& max_blocking_time_point)
     {
         bool returned_value = false;
 
-        NetworkBuffer buf{ data, dataLength };
-
         if (send_lambda_)
         {
             returned_value =
-                    send_lambda_(&buf, 1, dataLength,
+                    send_lambda_(buffers, num_buffers, total_bytes,
                             destination_locators_begin, destination_locators_end, max_blocking_time_point);
         }
 

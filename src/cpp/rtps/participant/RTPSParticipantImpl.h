@@ -268,11 +268,12 @@ public:
         {
             ret_code = true;
 
+            SenderResource::NetworkBuffer buffer{ msg->buffer, msg->length };
             for (auto& send_resource : send_resource_list_)
             {
                 LocatorIteratorT locators_begin = destination_locators_begin;
                 LocatorIteratorT locators_end = destination_locators_end;
-                send_resource->send(msg->buffer, msg->length, &locators_begin, &locators_end,
+                send_resource->send(&buffer, 1, msg->length, &locators_begin, &locators_end,
                         max_blocking_time_point);
             }
         }
