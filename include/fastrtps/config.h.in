@@ -82,7 +82,7 @@
 /* Log Macros */
 
 // Log Info
-#cmakedefine ENFORCE_LOG_INFO
+#cmakedefine FASTDDS_ENFORCE_LOG_INFO
 #ifndef HAVE_LOG_NO_INFO
 #define HAVE_LOG_NO_INFO @HAVE_LOG_NO_INFO@
 #endif

@@ -290,7 +290,7 @@ protected:
 
 // Allow multiconfig platforms like windows to disable info queueing on Release and other non-debug configs
 #if !HAVE_LOG_NO_INFO &&  \
-    ( defined(ENFORCE_LOG_INFO) || \
+    (defined(FASTDDS_ENFORCE_LOG_INFO) || \
     ((defined(__INTERNALDEBUG) || defined(_INTERNALDEBUG)) && (defined(_DEBUG) || defined(__DEBUG))))
 #define logInfo_(cat, msg)                                                                              \
     {                                                                                                   \

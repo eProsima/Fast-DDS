@@ -286,7 +286,7 @@ include(CMakeDependentOption)
 
 set(LOG_NO_INFO_HELP "\
 Do not compile Info Log level. For the sake of efficiency non-debug \
-configs do not log info messages unless the option ENFORCE_LOG_INFO \
+configs do not log info messages unless the option FASTDDS_ENFORCE_LOG_INFO \
 is set to on.")
 if(CMAKE_BUILD_TYPE MATCHES "^([Dd][Ee][Bb][Uu][Gg])$"  # single config generator
    OR ("Debug" IN_LIST CMAKE_CONFIGURATION_TYPES))      # multi config generator
@@ -301,7 +301,7 @@ option(LOG_NO_WARNING "Do not compile Warning Log level" OFF)
 option(LOG_NO_ERROR "Do not compile Error Log level" OFF)
 
 cmake_dependent_option(
-    ENFORCE_LOG_INFO
+    FASTDDS_ENFORCE_LOG_INFO
     "The LOG_NO_INFO option must be enforced regardless of selected configuration"
     OFF
     "NOT LOG_NO_INFO"
