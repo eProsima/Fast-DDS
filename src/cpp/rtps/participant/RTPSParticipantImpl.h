@@ -284,26 +284,6 @@ public:
         return ret_code;
     }
 
-    /**
-     * Send a message to several locations
-     * @param msg Message to send.
-     * @param destination_locators_begin Iterator at the first destination locator.
-     * @param destination_locators_end Iterator at the end destination locator.
-     * @param max_blocking_time_point execution time limit timepoint.
-     * @return true if at least one locator has been sent.
-     */
-    template<class LocatorIteratorT>
-    bool sendSync(
-            CDRMessage_t* msg,
-            const LocatorIteratorT& destination_locators_begin,
-            const LocatorIteratorT& destination_locators_end,
-            std::chrono::steady_clock::time_point& max_blocking_time_point)
-    {
-        SenderResource::NetworkBuffer buffer{ msg->buffer, msg->length };
-        return sendSync(&buffer, 1, msg->length, destination_locators_begin, destination_locators_end,
-            max_blocking_time_point);
-    }
-
     //!Get the participant Mutex
     std::recursive_mutex* getParticipantMutex() const
     {

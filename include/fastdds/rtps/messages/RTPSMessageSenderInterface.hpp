@@ -77,7 +77,9 @@ class RTPSMessageSenderInterface
         /**
          * Send a message through this interface.
          *
-         * @param message Pointer to the buffer with the message already serialized.
+         * @param buffers Array of buffers to gather.
+         * @param num_buffers Number of elements on @c buffers.
+         * @param total_bytes Total size of the raw data. Should be equal to the sum of the @c length field of all buffers.
          * @param max_blocking_time_point Future timepoint where blocking send should end.
          */
         virtual bool send(
@@ -85,20 +87,6 @@ class RTPSMessageSenderInterface
                 size_t num_buffers,
                 uint32_t total_bytes,
                 std::chrono::steady_clock::time_point& max_blocking_time_point) const = 0;
-
-        /**
-         * Send a message through this interface.
-         *
-         * @param message Pointer to the buffer with the message already serialized.
-         * @param max_blocking_time_point Future timepoint where blocking send should end.
-         */
-        bool send(
-                CDRMessage_t* message,
-                std::chrono::steady_clock::time_point& max_blocking_time_point) const
-        {
-            NetworkBuffer buffer{ message->buffer, message->length };
-            return send(&buffer, 1, message->length, max_blocking_time_point);
-        }
 };
 
 } /* namespace rtps */
