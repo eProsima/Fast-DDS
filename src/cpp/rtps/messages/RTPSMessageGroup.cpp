@@ -201,6 +201,8 @@ void RTPSMessageGroup::flush()
     reset_to_header();
 }
 
+static const std::array<octet, 4> c_padding_buffer{};
+
 void RTPSMessageGroup::send()
 {
     CDRMessage_t* msgToSend = full_msg_;
@@ -230,10 +232,26 @@ void RTPSMessageGroup::send()
         }
 #endif // if HAVE_SECURITY
 
-        // TODO(Miguel C): this may be removed when we have scatter/gather support on the sender interface
-        append_pending_payload();
+        eprosima::fastdds::rtps::NetworkBuffer buffers[3] =
+        {
+            {msgToSend->buffer, msgToSend->length},
+            {pending_data_, pending_data_size_},
+            {c_padding_buffer.data(), pending_padding_}
+        };
 
-        if (!sender_.send(msgToSend, max_blocking_time_point_))
+        uint32_t total_bytes = msgToSend->length;
+        size_t num_buffers = 1;
+        if (nullptr != pending_data_)
+        {
+            total_bytes += pending_data_size_ + pending_padding_;
+            num_buffers = pending_padding_ ? 3 : 2;
+
+            pending_data_ = nullptr;
+            pending_data_size_ = 0;
+            pending_padding_ = 0;
+        }
+        
+        if (!sender_.send(buffers, num_buffers, total_bytes, max_blocking_time_point_))
         {
             throw timeout();
         }
