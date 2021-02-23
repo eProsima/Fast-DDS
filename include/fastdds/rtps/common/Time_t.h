@@ -22,7 +22,6 @@
 #include <cmath>
 #include <cstdint>
 #include <iostream>
-#include <iomanip>
 
 namespace eprosima {
 namespace fastrtps {
