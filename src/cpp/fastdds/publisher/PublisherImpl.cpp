@@ -521,13 +521,19 @@ const Publisher* PublisherImpl::get_publisher() const
     return user_publisher_;
 }
 
-/* TODO
-   bool PublisherImpl::delete_contained_entities()
-   {
-    logError(PUBLISHER, "Operation not implemented");
-    return false;
-   }
- */
+bool PublisherImpl::delete_contained_entities()
+{
+    std::vector<DataWriter*> dw_vector;
+    get_datawriters(dw_vector);
+    for(auto dw : dw_vector)
+    {
+        if (ReturnCode_t::RETCODE_OK != delete_datawriter(dw))
+        {
+            return false;
+        }
+    }
+    return true;
+}
 
 const InstanceHandle_t& PublisherImpl::get_instance_handle() const
 {

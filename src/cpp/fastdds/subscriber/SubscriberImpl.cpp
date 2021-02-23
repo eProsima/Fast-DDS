@@ -372,13 +372,19 @@ ReturnCode_t SubscriberImpl::notify_datareaders() const
     return ReturnCode_t::RETCODE_OK;
 }
 
-/* TODO
-   bool SubscriberImpl::delete_contained_entities()
-   {
-    logError(PUBLISHER, "Operation not implemented");
-    return false;
-   }
- */
+bool SubscriberImpl::delete_contained_entities()
+{
+    std::vector<DataReader*> dw_vector;
+    get_datareaders(dw_vector);
+    for(auto dw : dw_vector)
+    {
+        if (ReturnCode_t::RETCODE_OK != delete_datareader(dw))
+        {
+            return false;
+        }
+    }
+    return true;
+}
 
 ReturnCode_t SubscriberImpl::set_default_datareader_qos(
         const DataReaderQos& qos)

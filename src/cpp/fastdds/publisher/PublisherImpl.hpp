@@ -143,9 +143,7 @@ public:
 
     const DomainParticipant* get_participant() const;
 
-    /* TODO
-       bool delete_contained_entities();
-     */
+    bool delete_contained_entities();
 
     ReturnCode_t set_default_datawriter_qos(
             const DataWriterQos& qos);
