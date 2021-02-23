@@ -95,10 +95,12 @@ const std::vector<GUID_t>& DirectMessageSender::remote_guids() const
  * @param max_blocking_time_point Future timepoint where blocking send should end.
  */
 bool DirectMessageSender::send(
-        CDRMessage_t* message,
-        std::chrono::steady_clock::time_point max_blocking_time_point) const
+        const RTPSMessageSenderInterface::NetworkBuffer* buffers,
+        size_t num_buffers,
+        uint32_t total_bytes,
+        std::chrono::steady_clock::time_point& max_blocking_time_point) const
 {
-    return participant_->sendSync(message, participant_->getGuid(),
+    return participant_->sendSync(buffers, num_buffers, total_bytes,
                    Locators(locators_->begin()), Locators(locators_->end()), max_blocking_time_point);
 }
 

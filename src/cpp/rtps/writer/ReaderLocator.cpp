@@ -178,23 +178,23 @@ void ReaderLocator::stop()
 }
 
 bool ReaderLocator::send(
-        CDRMessage_t* message,
-        std::chrono::steady_clock::time_point max_blocking_time_point) const
+        const RTPSMessageSenderInterface::NetworkBuffer* buffers,
+        size_t num_buffers,
+        uint32_t total_bytes,
+        std::chrono::steady_clock::time_point& max_blocking_time_point) const
 {
     if (general_locator_info_.remote_guid != c_Guid_Unknown && !is_local_reader_)
     {
         if (general_locator_info_.unicast.size() > 0)
         {
-            return participant_owner_->sendSync(message, owner_->getGuid(),
-                           Locators(general_locator_info_.unicast.begin()), Locators(
-                               general_locator_info_.unicast.end()),
+            return participant_owner_->sendSync(buffers, num_buffers, total_bytes,
+                           Locators(general_locator_info_.unicast.begin()), Locators(general_locator_info_.unicast.end()),
                            max_blocking_time_point);
         }
         else
         {
-            return participant_owner_->sendSync(message, owner_->getGuid(),
-                           Locators(general_locator_info_.multicast.begin()),
-                           Locators(general_locator_info_.multicast.end()),
+            return participant_owner_->sendSync(buffers, num_buffers, total_bytes,
+                           Locators(general_locator_info_.multicast.begin()), Locators(general_locator_info_.multicast.end()),
                            max_blocking_time_point);
         }
     }

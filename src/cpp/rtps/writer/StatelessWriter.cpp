@@ -709,17 +709,19 @@ void StatelessWriter::unsent_changes_reset()
 }
 
 bool StatelessWriter::send_nts(
-        CDRMessage_t* message,
+        const RTPSMessageSenderInterface::NetworkBuffer* buffers,
+        size_t num_buffers,
+        uint32_t total_bytes,
         const LocatorSelectorSender& locator_selector,
         std::chrono::steady_clock::time_point& max_blocking_time_point) const
 {
-    if (!RTPSWriter::send_nts(message, locator_selector, max_blocking_time_point))
+    if (!RTPSWriter::send_nts(buffers, num_buffers, total_bytes, locator_selector, max_blocking_time_point))
     {
         return false;
     }
 
     return fixed_locators_.empty() ||
-           mp_RTPSParticipant->sendSync(message, m_guid,
+           mp_RTPSParticipant->sendSync(buffers, num_buffers, total_bytes, m_guid,
                    Locators(fixed_locators_.begin()), Locators(fixed_locators_.end()),
                    max_blocking_time_point);
 }

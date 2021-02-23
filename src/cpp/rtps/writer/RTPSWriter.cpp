@@ -431,15 +431,17 @@ bool RTPSWriter::is_pool_initialized() const
 }
 
 bool RTPSWriter::send_nts(
-        CDRMessage_t* message,
+        const RTPSMessageSenderInterface::NetworkBuffer* buffers,
+        size_t num_buffers,
+        uint32_t total_bytes,
         const LocatorSelectorSender& locator_selector,
         std::chrono::steady_clock::time_point& max_blocking_time_point) const
 {
     RTPSParticipantImpl* participant = getRTPSParticipant();
 
     return locator_selector.locator_selector.selected_size() == 0 ||
-           participant->sendSync(message, m_guid, locator_selector.locator_selector.begin(),
-                   locator_selector.locator_selector.end(), max_blocking_time_point);
+           participant->sendSync(buffers, num_buffers, total_bytes,
+                   locator_selector.locator_selector.begin(), locator_selector.locator_selector.end(), max_blocking_time_point);
 }
 
 #ifdef FASTDDS_STATISTICS

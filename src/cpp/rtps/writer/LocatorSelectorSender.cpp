@@ -6,10 +6,12 @@ namespace fastrtps {
 namespace rtps {
 
 bool LocatorSelectorSender::send(
-        CDRMessage_t* message,
-        std::chrono::steady_clock::time_point max_blocking_time_point) const
+        const NetworkBuffer* message,
+        size_t num_buffers,
+        uint32_t total_bytes,
+        std::chrono::steady_clock::time_point& max_blocking_time_point) const
 {
-    return writer_.send_nts(message, *this, max_blocking_time_point);
+    return writer_.send_nts(message, num_buffers, total_bytes, *this, max_blocking_time_point);
 }
 
 } // namespace rtps
