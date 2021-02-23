@@ -22,6 +22,7 @@
 #include <cmath>
 #include <cstdint>
 #include <iostream>
+#include <iomanip>
 
 namespace eprosima {
 namespace fastrtps {
@@ -373,7 +374,16 @@ inline std::ostream& operator <<(
         std::ostream& output,
         const Time_t& t)
 {
-    return output << t.seconds() << "." << t.nanosec();
+    std::string nano_st = std::to_string(t.nanosec());
+    nano_st.insert(0, 9 - nano_st.length(), '0');
+
+    // Remove right-after-dot zeros
+    while(nano_st.length() > 1 && nano_st.at(nano_st.length() - 1) == '0')
+    {
+        nano_st.pop_back();
+    }
+
+    return output << t.seconds() << "." << nano_st;
 }
 
 inline std::istream& operator >>(
@@ -384,8 +394,13 @@ inline std::istream& operator >>(
 
     if (s)
     {
+        // Variable to store point in number
         char point;
+        // Variable for seconds
         int32_t sec = 0;
+        // In this string the nano number will be stored. It is needed to store str to check it has 9 digits.
+        std::string nano_st;
+        // Variable for nanoseconds
         uint32_t nano = 0;
         std::ios_base::iostate excp_mask = input.exceptions();
 
@@ -393,19 +408,41 @@ inline std::istream& operator >>(
         {
             input.exceptions(excp_mask | std::ios_base::failbit | std::ios_base::badbit);
 
-            input >> sec;
-            input >> point >> nano;
-            // nano could not be bigger than 1 sec
-            if ( point != '.' || nano > 1000000000 )
+            input >> sec; // Get seconds value
+            input >> point >> nano_st; // Get point and nanoseconds string value
+            if (point != '.')
             {
-                input.setstate(std::ios_base::failbit);
+                // Only seconds
                 nano = 0;
+            }
+            else
+            {
+                nano = static_cast<uint32_t>(std::stoul(nano_st));
+
+                if (nano > 1000000000ULL)
+                {
+                    // Error case, nanos > 10^9
+                    input.setstate(std::ios_base::failbit);
+                    sec = 0;
+                    nano = 0;
+                }
+                else
+                {
+                    // In case there are less than 9 numbers at the right of the dot, nano should be powered to 10
+                    // till the value is correct.
+                    // Manual power operation done by loop.
+                    for (int i=nano_st.length(); i<9; i++)
+                    {
+                        nano *= 10;
+                    }
+                }
             }
         }
         catch (std::ios_base::failure& )
         {
         }
 
+        // Set time object values
         t.seconds(sec);
         t.nanosec(nano);
 
