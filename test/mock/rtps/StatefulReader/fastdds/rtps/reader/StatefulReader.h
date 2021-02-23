@@ -30,6 +30,8 @@ class RTPSMessageSenderInterface;
 class RTPSParticipantImpl;
 struct CDRMessage_t;
 
+using NetworkBuffer = eprosima::fastdds::rtps::NetworkBuffer;
+
 class StatefulReader : public RTPSReader
 {
 public:
@@ -96,7 +98,9 @@ public:
     MOCK_METHOD0(getEventResource, ResourceEvent & ());
 
     bool send_sync_nts(
-            CDRMessage_t* /*message*/,
+            const NetworkBuffer* /*buffers*/,
+            size_t /*num_buffers*/,
+            uint32_t /*total_bytes*/,
             const LocatorsIterator& /*destination_locators_begin*/,
             const LocatorsIterator& /*destination_locators_end*/,
             std::chrono::steady_clock::time_point& /*max_blocking_time_point*/)
