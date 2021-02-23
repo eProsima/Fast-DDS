@@ -374,11 +374,11 @@ ReturnCode_t SubscriberImpl::notify_datareaders() const
 
 bool SubscriberImpl::delete_contained_entities()
 {
-    std::vector<DataReader*> dw_vector;
-    get_datareaders(dw_vector);
-    for(auto dw : dw_vector)
+    std::vector<DataReader*> dr_vector;
+    get_datareaders(dr_vector);
+    for(auto dr : dr_vector)
     {
-        if (ReturnCode_t::RETCODE_OK != delete_datareader(dw))
+        if (ReturnCode_t::RETCODE_OK != delete_datareader(dr))
         {
             return false;
         }
