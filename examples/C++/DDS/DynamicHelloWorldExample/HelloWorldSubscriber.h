@@ -73,7 +73,7 @@ public:
     class SubListener
         :  public eprosima::fastdds::dds::DomainParticipantListener
     {
-public:
+    public:
 
         SubListener(
                 HelloWorldSubscriber* sub)
@@ -108,7 +108,8 @@ public:
 
         HelloWorldSubscriber* subscriber_;
 
-    } m_listener;
+    }
+    m_listener;
 
 };
 

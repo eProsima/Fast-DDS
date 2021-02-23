@@ -64,7 +64,7 @@ public:
 
     class SubListener : public eprosima::fastdds::dds::DataReaderListener
     {
-public:
+    public:
 
         SubListener()
             : matched_(0)
@@ -89,7 +89,8 @@ public:
 
         uint32_t samples_;
 
-    } listener_;
+    }
+    listener_;
 
 };
 

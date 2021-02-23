@@ -32,45 +32,73 @@
 #include <mutex>
 #include "AllocTestType.h"
 
-class AllocTestSubscriber {
+class AllocTestSubscriber
+{
 public:
-	AllocTestSubscriber();
-	virtual ~AllocTestSubscriber();
-	//!Initialize the subscriber
-	bool init(const char* profile, int domainId, const std::string& outputFile);
-	//!RUN the subscriber
-	void run(bool wait_unmatch=false);
-	//!Run the subscriber until number samples have been received.
-	void run(uint32_t number, bool wait_unmatch = false);
-private:
-	eprosima::fastrtps::Participant* mp_participant;
-	eprosima::fastrtps::Subscriber* mp_subscriber;
-	std::string m_profile;
-	std::string m_outputFile;
-public:
-	class SubListener:public eprosima::fastrtps::SubscriberListener
-	{
-	public:
-		SubListener():n_matched(0),n_samples(0){}
-		~SubListener(){}
 
-		void onSubscriptionMatched(eprosima::fastrtps::Subscriber* sub, eprosima::fastrtps::rtps::MatchingInfo& info);
-		void onNewDataMessage(eprosima::fastrtps::Subscriber* sub);
+    AllocTestSubscriber();
+    virtual ~AllocTestSubscriber();
+    //!Initialize the subscriber
+    bool init(
+            const char* profile,
+            int domainId,
+            const std::string& outputFile);
+    //!RUN the subscriber
+    void run(
+            bool wait_unmatch = false);
+    //!Run the subscriber until number samples have been received.
+    void run(
+            uint32_t number,
+            bool wait_unmatch = false);
+
+private:
+
+    eprosima::fastrtps::Participant* mp_participant;
+    eprosima::fastrtps::Subscriber* mp_subscriber;
+    std::string m_profile;
+    std::string m_outputFile;
+
+public:
+
+    class SubListener : public eprosima::fastrtps::SubscriberListener
+    {
+    public:
+
+        SubListener()
+            : n_matched(0)
+            , n_samples(0)
+        {
+        }
+
+        ~SubListener()
+        {
+        }
+
+        void onSubscriptionMatched(
+                eprosima::fastrtps::Subscriber* sub,
+                eprosima::fastrtps::rtps::MatchingInfo& info);
+        void onNewDataMessage(
+                eprosima::fastrtps::Subscriber* sub);
 
         void wait_match();
         void wait_unmatch();
-        void wait_until_total_received_at_least(uint32_t n);
+        void wait_until_total_received_at_least(
+                uint32_t n);
 
     private:
+
         AllocTestType m_Hello;
         eprosima::fastrtps::SampleInfo_t m_info;
         int n_matched;
         uint32_t n_samples;
         std::mutex mtx;
         std::condition_variable cv;
-    }m_listener;
+    }
+    m_listener;
+
 private:
-	AllocTestTypePubSubType m_type;
+
+    AllocTestTypePubSubType m_type;
 };
 
 #endif /* ALLOCTESTSUBSCRIBER_H_ */

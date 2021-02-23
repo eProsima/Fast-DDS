@@ -52,7 +52,7 @@ public:
     {
         using SHMLocator = eprosima::fastdds::rtps::SHMLocator;
 
-        if (is_shm_transport_available && !(*is_shm_transport_possible) )
+        if (is_shm_transport_available && !(*is_shm_transport_possible))
         {
             *is_shm_transport_possible = SHMLocator::is_shm_and_from_this_host(temp_locator);
         }
@@ -106,6 +106,7 @@ public:
             }
         }
     }
+
 };
 
 } /* namespace rtps */

@@ -73,7 +73,7 @@ public:
     class SubListener
         : public eprosima::fastdds::dds::DomainParticipantListener
     {
-public:
+    public:
 
         SubListener(
                 TypeLookupSubscriber* sub)
@@ -109,7 +109,8 @@ public:
         std::map<std::string, std::string> topic_type_map_;
 
         eprosima::fastrtps::types::TypeInformation type_info_;
-    } m_listener;
+    }
+    m_listener;
 
 private:
 

@@ -23,7 +23,7 @@
 #include <fastdds/dds/log/Log.hpp>
 
 namespace eprosima {
-namespace fastrtps{
+namespace fastrtps {
 namespace rtps {
 
 /**
@@ -33,19 +33,24 @@ namespace rtps {
 class PortParameters
 {
 public:
+
     PortParameters()
-        : portBase(7400),
-          domainIDGain(250),
-          participantIDGain(2),
-          offsetd0(0),
-          offsetd1(10),
-          offsetd2(1),
-          offsetd3(11)
-    {}
+        : portBase(7400)
+        , domainIDGain(250)
+        , participantIDGain(2)
+        , offsetd0(0)
+        , offsetd1(10)
+        , offsetd2(1)
+        , offsetd3(11)
+    {
+    }
 
-    virtual ~PortParameters(){}
+    virtual ~PortParameters()
+    {
+    }
 
-    bool operator==(const PortParameters& b) const
+    bool operator ==(
+            const PortParameters& b) const
     {
         return (this->portBase == b.portBase) &&
                (this->domainIDGain == b.domainIDGain) &&
@@ -62,22 +67,24 @@ public:
      * @param domainId Domain ID.
      * @return Multicast port
      */
-    inline uint32_t getMulticastPort(uint32_t domainId) const
+    inline uint32_t getMulticastPort(
+            uint32_t domainId) const
     {
         uint32_t port = portBase + domainIDGain * domainId + offsetd0;
 
         if (port > 65535)
         {
             logError(RTPS, "Calculated port number is too high. Probably the domainId is over 232 "
-                << "or portBase is too high.");
+                    << "or portBase is too high.");
             std::cout << "Calculated port number is too high. Probably the domainId is over 232 "
-                << "or portBase is too high." << std::endl;
+                      << "or portBase is too high." << std::endl;
             std::cout.flush();
             exit(EXIT_FAILURE);
         }
 
         return port;
     }
+
     /**
      * Get a unicast port based on the domain ID and the participant ID.
      *
@@ -85,16 +92,18 @@ public:
      * @param RTPSParticipantID Participant ID.
      * @return Unicast port
      */
-    inline uint32_t getUnicastPort(uint32_t domainId,uint32_t RTPSParticipantID) const
+    inline uint32_t getUnicastPort(
+            uint32_t domainId,
+            uint32_t RTPSParticipantID) const
     {
-        uint32_t port = portBase + domainIDGain * domainId + offsetd1	+ participantIDGain * RTPSParticipantID;
+        uint32_t port = portBase + domainIDGain * domainId + offsetd1   + participantIDGain * RTPSParticipantID;
 
         if (port > 65535)
         {
             logError(RTPS, "Calculated port number is too high. Probably the domainId is over 232, there are "
-                << "too much participants created or portBase is too high.");
+                    << "too much participants created or portBase is too high.");
             std::cout << "Calculated port number is too high. Probably the domainId is over 232, there are "
-                << "too much participants created or portBase is too high." << std::endl;
+                      << "too much participants created or portBase is too high." << std::endl;
             std::cout.flush();
             exit(EXIT_FAILURE);
         }
@@ -103,6 +112,7 @@ public:
     }
 
 public:
+
     //!PortBase, default value 7400.
     uint16_t portBase;
     //!DomainID gain, default value 250.
@@ -119,7 +129,7 @@ public:
     uint16_t offsetd3;
 };
 
-}
+} // namespace rtps
 } /* namespace rtps */
 } /* namespace eprosima */
 
