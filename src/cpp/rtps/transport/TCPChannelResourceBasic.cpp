@@ -147,8 +147,7 @@ uint32_t TCPChannelResourceBasic::read(
 size_t TCPChannelResourceBasic::send(
         const octet* header,
         size_t header_size,
-        const octet* data,
-        size_t size,
+        const std::array<asio::const_buffer, 3>& send_buffers,
         asio::error_code& ec)
 {
     size_t bytes_sent = 0;
@@ -157,14 +156,17 @@ size_t TCPChannelResourceBasic::send(
     {
         if (header_size > 0)
         {
-            std::array<asio::const_buffer, 2> buffers;
+            std::array<asio::const_buffer, 4> buffers;
             buffers[0] = asio::buffer(header, header_size);
-            buffers[1] = asio::buffer(data, size);
+            for (size_t i = 0; i < 3; ++i)
+            {
+                buffers[i + 1] = send_buffers[i];
+            }
             bytes_sent = asio::write(*socket_.get(), buffers, ec);
         }
         else
         {
-            bytes_sent = asio::write(*socket_.get(), asio::buffer(data, size), ec);
+            bytes_sent = asio::write(*socket_.get(), send_buffers, ec);
         }
     }
 

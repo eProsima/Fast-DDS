@@ -123,11 +123,22 @@ public:
             std::size_t size,
             asio::error_code& ec) = 0;
 
+    size_t send(
+            const fastrtps::rtps::octet* header,
+            size_t header_size,
+            const fastrtps::rtps::octet* data,
+            size_t data_size,
+            asio::error_code& ec)
+    {
+        std::array<asio::const_buffer, 3> buffers;
+        buffers[0] = { data, data_size };
+        return send(header, header_size, buffers, ec);
+    }
+
     virtual size_t send(
             const fastrtps::rtps::octet* header,
             size_t header_size,
-            const fastrtps::rtps::octet* buffer,
-            size_t size,
+            const std::array<asio::const_buffer, 3>& send_buffers,
             asio::error_code& ec) = 0;
 
     virtual asio::ip::tcp::endpoint remote_endpoint() const = 0;

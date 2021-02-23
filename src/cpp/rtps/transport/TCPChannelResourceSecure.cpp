@@ -199,8 +199,7 @@ uint32_t TCPChannelResourceSecure::read(
 size_t TCPChannelResourceSecure::send(
         const octet* header,
         size_t header_size,
-        const octet* data,
-        size_t size,
+        const std::array<asio::const_buffer, 3>& send_buffers,
         asio::error_code& ec)
 {
     size_t bytes_sent = 0;
@@ -212,7 +211,13 @@ size_t TCPChannelResourceSecure::send(
         {
             buffers.push_back(asio::buffer(header, header_size));
         }
-        buffers.push_back(asio::buffer(data, size));
+        for (size_t i = 0; i < 3; ++i)
+        {
+            if (send_buffers[i].size())
+            {
+                buffers.push_back(send_buffers[i]);
+            }
+        }
 
         // Work around meanwhile
         std::promise<size_t> write_bytes_promise;
