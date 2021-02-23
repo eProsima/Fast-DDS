@@ -19,121 +19,136 @@
 
 #include "ThroughputSubscriber.hpp"
 
-#include <fastrtps/utils/TimeConversion.h>
-#include <fastrtps/attributes/ParticipantAttributes.h>
-#include <fastrtps/attributes/PublisherAttributes.h>
-#include <fastrtps/xmlparser/XMLProfileManager.h>
-
-#include <fastrtps/publisher/Publisher.h>
-#include <fastrtps/subscriber/Subscriber.h>
-#include <fastrtps/subscriber/SampleInfo.h>
-
-#include <fastrtps/Domain.h>
-
-#include <dds/core/LengthUnlimited.hpp>
 #include <vector>
 
-using namespace eprosima::fastrtps;
+#include <fastdds/dds/domain/DomainParticipant.hpp>
+#include <fastdds/dds/domain/DomainParticipantFactory.hpp>
+#include <fastdds/dds/domain/qos/DomainParticipantQos.hpp>
+#include <fastdds/dds/log/Colors.hpp>
+#include <fastdds/dds/log/Log.hpp>
+#include <fastdds/dds/publisher/DataWriter.hpp>
+#include <fastdds/dds/subscriber/DataReader.hpp>
+#include <fastrtps/utils/TimeConversion.h>
+#include <fastrtps/xmlparser/XMLProfileManager.h>
+
+using namespace eprosima::fastdds::dds;
 using namespace eprosima::fastrtps::rtps;
 using namespace eprosima::fastrtps::types;
-
 
 // *******************************************************************************************
 // ************************************ DATA SUB LISTENER ************************************
 // *******************************************************************************************
-ThroughputSubscriber::DataSubListener::DataSubListener(
-        ThroughputSubscriber& throughput_subscriber)
-    : saved_last_seq_num_(0)
-    , saved_lost_samples_(0)
-    , throughput_subscriber_(throughput_subscriber)
-    , last_seq_num_(0)
-    , lost_samples_(0)
-    , first_(true)
-{
-}
 
-ThroughputSubscriber::DataSubListener::~DataSubListener()
-{
-}
-
-void ThroughputSubscriber::DataSubListener::reset()
+void ThroughputSubscriber::DataReaderListener::reset()
 {
     last_seq_num_ = 0;
-    first_ = true;
     lost_samples_ = 0;
+    matched_ = 0;
+    enable_ = true;
 }
 
-void ThroughputSubscriber::DataSubListener::onSubscriptionMatched(
-        Subscriber* /*sub*/,
-        MatchingInfo& match_info)
+void ThroughputSubscriber::DataReaderListener::disable()
 {
-    std::unique_lock<std::mutex> lock(throughput_subscriber_.data_mutex_);
-    if (match_info.status == MATCHED_MATCHING)
+    enable_ = false;
+}
+
+/*
+ * Our current inplementation of MatchedStatus info:
+ * - total_count(_change) holds the actual number of matches
+ * - current_count(_change) is a flag to signal match or unmatch.
+ *   (TODO: review if fits standard definition)
+ * */
+
+void ThroughputSubscriber::DataReaderListener::on_subscription_matched(
+        DataReader*,
+        const SubscriptionMatchedStatus& info)
+{
+
+    if (1 == info.current_count)
     {
         std::cout << C_RED << "Sub: DATA Sub Matched" << C_DEF << std::endl;
-        ++throughput_subscriber_.data_discovery_count_;
     }
     else
     {
         std::cout << C_RED << "DATA SUBSCRIBER MATCHING REMOVAL" << C_DEF << std::endl;
-        --throughput_subscriber_.data_discovery_count_;
     }
-    lock.unlock();
+
+    matched_ = info.total_count;
     throughput_subscriber_.data_discovery_cv_.notify_one();
 }
 
-void ThroughputSubscriber::DataSubListener::onNewDataMessage(
-        Subscriber* subscriber)
+void ThroughputSubscriber::DataReaderListener::on_data_available(
+        DataReader* reader)
 {
-    // In case the TSubscriber is removing entities because a TEST_ENDS msg, it waits
-    std::unique_lock<std::mutex> lecture_lock(throughput_subscriber_.data_mutex_);
-
-    if (throughput_subscriber_.dynamic_data_)
+    if (!enable_)
     {
-        while (subscriber->takeNextData((void*)throughput_subscriber_.dynamic_data_type_, &info_))
+        return;
+    }
+
+    // In case the TSubscriber is removing entities because a TEST_ENDS msg, it waits
+    auto& sub = throughput_subscriber_;
+
+    if (sub.data_loans_)
+    {
+        SampleInfoSeq infos;
+        LoanableSequence<ThroughputType> data_seq;
+
+        if (ReturnCode_t::RETCODE_OK != reader->take(data_seq, infos))
         {
-            if (info_.sampleKind == ALIVE)
-            {
-                if ((last_seq_num_ + 1) < throughput_subscriber_.dynamic_data_type_->get_uint32_value(0))
-                {
-                    lost_samples_ += throughput_subscriber_.dynamic_data_type_->get_uint32_value(0) - last_seq_num_ - 1;
-                }
-                last_seq_num_ = throughput_subscriber_.dynamic_data_type_->get_uint32_value(0);
-            }
-            else
-            {
-                std::cout << "NOT ALIVE DATA RECEIVED" << std::endl;
-            }
+            logInfo(ThroughputTest, "Problem reading Subscriber echoed loaned test data");
+            return;
+        }
+
+        // Check for lost samples
+        auto size = data_seq.length();
+        uint32_t last_seq_num = 0;
+
+        for (int32_t i = 0; i < size; ++i)
+        {
+            last_seq_num = std::max(data_seq[i].seqnum, last_seq_num);
+        }
+
+        if ((last_seq_num_ + size) < last_seq_num)
+        {
+            lost_samples_ += last_seq_num - last_seq_num_ - size;
+        }
+        last_seq_num_ = last_seq_num;
+
+        // release the reader loan
+        if (ReturnCode_t::RETCODE_OK != reader->return_loan(data_seq, infos))
+        {
+            logInfo(ThroughputTest, "Problem returning loaned test data");
+            return;
         }
     }
     else
     {
-        if (nullptr != throughput_subscriber_.throughput_type_)
+        void* data = sub.dynamic_types_ ? (void*)sub.dynamic_data_ : (void*)sub.throughput_data_;
+        assert(nullptr != data);
+
+        while (ReturnCode_t::RETCODE_OK == reader->take_next_sample(data, &info_))
         {
-            while (subscriber->takeNextData((void*)throughput_subscriber_.throughput_type_, &info_))
+            if (info_.valid_data)
             {
-                if (info_.sampleKind == ALIVE)
+                uint32_t seq_num = sub.dynamic_types_
+                    ? sub.dynamic_data_->get_uint32_value(0)
+                    : sub.throughput_data_->seqnum;
+
+                if ((last_seq_num_ + 1) < seq_num)
                 {
-                    if ((last_seq_num_ + 1) < throughput_subscriber_.throughput_type_->seqnum)
-                    {
-                        lost_samples_ += throughput_subscriber_.throughput_type_->seqnum - last_seq_num_ - 1;
-                    }
-                    last_seq_num_ = throughput_subscriber_.throughput_type_->seqnum;
+                    lost_samples_ += seq_num - last_seq_num_ - 1;
                 }
-                else
-                {
-                    std::cout << "NOT ALIVE DATA RECEIVED" << std::endl;
-                }
+                last_seq_num_ = seq_num;
             }
-        }
-        else
-        {
-            std::cout << "DATA MESSAGE RECEIVED BEFORE COMMAND READY_TO_START" << std::endl;
+            else
+            {
+                std::cout << "invalid data received" << std::endl;
+            }
         }
     }
 }
 
-void ThroughputSubscriber::DataSubListener::save_numbers()
+void ThroughputSubscriber::DataReaderListener::save_numbers()
 {
     saved_last_seq_num_ = last_seq_num_;
     saved_lost_samples_ = lost_samples_;
@@ -142,70 +157,47 @@ void ThroughputSubscriber::DataSubListener::save_numbers()
 // *******************************************************************************************
 // *********************************** COMMAND SUB LISTENER **********************************
 // *******************************************************************************************
-ThroughputSubscriber::CommandSubListener::CommandSubListener(
-        ThroughputSubscriber& throughput_subscriber)
-    : throughput_subscriber_(throughput_subscriber)
-{
-}
 
-ThroughputSubscriber::CommandSubListener::~CommandSubListener()
+void ThroughputSubscriber::CommandReaderListener::on_subscription_matched(
+        DataReader*,
+        const SubscriptionMatchedStatus& info)
 {
-}
-
-void ThroughputSubscriber::CommandSubListener::onSubscriptionMatched(
-        Subscriber* /*sub*/,
-        MatchingInfo& match_info)
-{
-    std::unique_lock<std::mutex> lock(throughput_subscriber_.command_mutex_);
-    if (match_info.status == MATCHED_MATCHING)
+    if (1 == info.current_count)
     {
         std::cout << C_RED << "Sub: COMMAND Sub Matched" << C_DEF << std::endl;
-        ++throughput_subscriber_.command_discovery_count_;
     }
     else
     {
         std::cout << C_RED << "Sub: COMMAND SUBSCRIBER MATCHING REMOVAL" << C_DEF << std::endl;
-        --throughput_subscriber_.command_discovery_count_;
     }
 
-    lock.unlock();
+    matched_ = info.total_count;
     throughput_subscriber_.command_discovery_cv_.notify_one();
 }
 
-void ThroughputSubscriber::CommandSubListener::onNewDataMessage(
-        Subscriber*)
+void ThroughputSubscriber::CommandReaderListener::on_data_available(
+        DataReader* )
 {
 }
 
 // *******************************************************************************************
 // *********************************** COMMAND PUB LISTENER **********************************
 // *******************************************************************************************
-ThroughputSubscriber::CommandPubListener::CommandPubListener(
-        ThroughputSubscriber& throughput_subscriber)
-    : throughput_subscriber_(throughput_subscriber)
-{
-}
 
-ThroughputSubscriber::CommandPubListener::~CommandPubListener()
+void ThroughputSubscriber::CommandWriterListener::on_publication_matched(
+        DataWriter*,
+        const eprosima::fastdds::dds::PublicationMatchedStatus& info)
 {
-}
-
-void ThroughputSubscriber::CommandPubListener::onPublicationMatched(
-        Publisher* /*pub*/,
-        MatchingInfo& info)
-{
-    std::unique_lock<std::mutex> lock(throughput_subscriber_.command_mutex_);
-    if (info.status == MATCHED_MATCHING)
+    if ( 1 == info.current_count)
     {
         std::cout << C_RED << "Sub: COMMAND Pub Matched" << C_DEF << std::endl;
-        ++throughput_subscriber_.command_discovery_count_;
     }
     else
     {
         std::cout << C_RED << "Sub: COMMAND PUBLISHER MATCHING REMOVAL" << C_DEF << std::endl;
-        --throughput_subscriber_.command_discovery_count_;
     }
-    lock.unlock();
+
+    matched_ = info.total_count;
     throughput_subscriber_.command_discovery_cv_.notify_one();
 }
 
@@ -213,13 +205,43 @@ void ThroughputSubscriber::CommandPubListener::onPublicationMatched(
 // ********************************** THROUGHPUT SUBSCRIBER **********************************
 // *******************************************************************************************
 
-ThroughputSubscriber::~ThroughputSubscriber()
+ThroughputSubscriber::ThroughputSubscriber()
+    : data_reader_listener_(*this)
+    , command_reader_listener_(*this)
+    , command_writer_listener_(*this)
 {
-    Domain::removeParticipant(participant_);
-    std::cout << "Sub: Participant removed" << std::endl;
 }
 
-ThroughputSubscriber::ThroughputSubscriber(
+ThroughputSubscriber::~ThroughputSubscriber()
+{
+    if (dynamic_types_)
+    {
+        destroy_data_endpoints();
+    }
+    else if (nullptr != data_reader_
+            || nullptr != data_sub_topic_
+            || throughput_data_type_)
+    {
+        logError(THROUGHPUTSUBSCRIBER, "ERROR unregistering the DATA type");
+        return;
+    }
+
+    // Remove command endpoints
+    subscriber_->delete_datareader(command_reader_);
+    participant_->delete_subscriber(subscriber_);
+
+    publisher_->delete_datawriter(command_writer_);
+    participant_->delete_publisher(publisher_);
+
+    participant_->delete_topic(command_sub_topic_);
+    participant_->delete_topic(command_pub_topic_);
+
+    // Remove the participant
+    DomainParticipantFactory::get_instance()->delete_participant(participant_);
+    logInfo(THROUGHPUTSUBSCRIBER, "Sub: Participant removed");
+}
+
+bool ThroughputSubscriber::init(
         bool reliable,
         uint32_t pid,
         bool hostname,
@@ -227,169 +249,212 @@ ThroughputSubscriber::ThroughputSubscriber(
         const eprosima::fastrtps::rtps::PropertyPolicy& property_policy,
         const std::string& xml_config_file,
         bool dynamic_types,
+        bool data_sharing,
+        bool data_loans,
         int forced_domain)
-    : command_discovery_count_(0)
-    , data_discovery_count_(0)
-    , throughput_type_(nullptr)
-    , dynamic_data_(dynamic_types)
-    , ready_(true)
-    , stop_count_(0)
-    , data_size_(0)
-    , demand_(0)
-    , forced_domain_(forced_domain)
-    , xml_config_file_(xml_config_file)
-#pragma warning(disable:4355)
-    , data_sub_listener_(*this)
-    , command_sub_listener_(*this)
-    , command_pub_listener_(*this)
 {
-    // Dummy type registration
-    if (dynamic_data_)
-    {
-        // Create basic builders
-        DynamicTypeBuilder_ptr struct_type_builder(DynamicTypeBuilderFactory::get_instance()->create_struct_builder());
+    pid_ = pid;
+    hostname_ = hostname;
+    dynamic_types_ = dynamic_types;
+    data_sharing_ = data_sharing;
+    data_loans_ = data_loans;
+    reliable_ = reliable;
+    forced_domain_ = forced_domain;
+    xml_config_file_ = xml_config_file;
 
-        // Add members to the struct.
-        struct_type_builder->add_member(0, "seqnum", DynamicTypeBuilderFactory::get_instance()->create_uint32_type());
-        struct_type_builder->add_member(1, "data", DynamicTypeBuilderFactory::get_instance()->create_sequence_builder(
-                    DynamicTypeBuilderFactory::get_instance()->create_byte_type(), ::dds::core::LENGTH_UNLIMITED));
-        struct_type_builder->set_name("ThroughputType");
-        dynamic_type_ = struct_type_builder->build();
-        dynamic_pub_sub_type_.SetDynamicType(dynamic_type_);
-    }
-
-    /* Create RTPSParticipant */
+    /* Create DomainParticipant*/
     std::string participant_profile_name = "sub_participant_profile";
-    ParticipantAttributes participant_attributes;
+    DomainParticipantQos pqos;
 
     // Default domain
-    participant_attributes.domainId = pid % 230;
+    DomainId_t domainId = pid % 230;
 
     // Default participant name
-    participant_attributes.rtps.setName("throughput_test_subscriber");
+    pqos.name("throughput_test_subscriber");
 
-    // Load XML file
+    // Load XML configuration
     if (xml_config_file_.length() > 0)
     {
-        if (eprosima::fastrtps::xmlparser::XMLP_ret::XML_OK !=
-                eprosima::fastrtps::xmlparser::XMLProfileManager::fillParticipantAttributes(participant_profile_name,
-                participant_attributes))
+        if ( ReturnCode_t::RETCODE_OK !=
+                DomainParticipantFactory::get_instance()->
+                        get_participant_qos_from_profile(
+                    participant_profile_name,
+                    pqos))
         {
-            ready_ = false;
-            return;
+            return false;
         }
     }
 
     // Apply user's force domain
     if (forced_domain_ >= 0)
     {
-        participant_attributes.domainId = forced_domain_;
+        domainId = forced_domain_;
     }
 
     // If the user has specified a participant property policy with command line arguments, it overrides whatever the
     // XML configures.
     if (PropertyPolicyHelper::length(part_property_policy) > 0)
     {
-        participant_attributes.rtps.properties = part_property_policy;
+        pqos.properties(part_property_policy);
     }
 
     // Create the participant
-    participant_ = Domain::createParticipant(participant_attributes);
+    participant_ =
+            DomainParticipantFactory::get_instance()->create_participant(domainId, pqos);
+
     if (participant_ == nullptr)
     {
         std::cout << "ERROR creating participant" << std::endl;
-        ready_ = false;
-        return;
+        return false;
     }
 
-    // Register the data type
-    throughput_data_type_ = nullptr;
-    Domain::registerType(participant_, (TopicDataType*)&throuput_command_type_);
+    // Create the command data type
+    throughput_command_type_.reset(new ThroughputCommandDataType());
 
-    /* Create Data Subscriber */
-    std::string profile_name = "subscriber_profile";
-    sub_attrs_.topic.topicDataType = "ThroughputType";
-    sub_attrs_.topic.topicKind = NO_KEY;
-
-    // Default topic
-    std::ostringstream data_topic;
-    data_topic << "ThroughputTest_";
-    if (hostname)
+    // Register the command data type
+    if (ReturnCode_t::RETCODE_OK
+            != throughput_command_type_.register_type(participant_))
     {
-        data_topic << asio::ip::host_name() << "_";
+        logError(THROUGHPUTSUBSCRIBER, "ERROR registering command type");
+        return false;
     }
-    data_topic << pid << "_UP";
-    sub_attrs_.topic.topicName = data_topic.str();
+
+    /* Create Publisher */
+    publisher_ = participant_->create_publisher(PUBLISHER_QOS_DEFAULT, nullptr);
+    if (publisher_ == nullptr)
+    {
+        logError(THROUGHPUTSUBSCRIBER, "ERROR creating the Publisher");
+        return false;
+    }
+
+    /* Create Subscriber */
+    subscriber_ = participant_->create_subscriber(SUBSCRIBER_QOS_DEFAULT, nullptr);
+    if (subscriber_ == nullptr)
+    {
+        logError(THROUGHPUTSUBSCRIBER, "ERROR creating the Subscriber");
+        return false;
+    }
+
+    /* Update DataReaderQoS from xml profile data */
+    std::string profile_name = "subscriber_profile";
+
+    if (xml_config_file_.length() > 0
+            && ReturnCode_t::RETCODE_OK != subscriber_->get_datareader_qos_from_profile(profile_name, dr_qos_))
+    {
+        logError(THROUGHPUTSUBSCRIBER, "ERROR unable to retrieve the " << profile_name);
+        return false;
+    }
+
+    // Load the property policy specified
+    dr_qos_.properties(property_policy);
 
     // Reliability
-    if (reliable)
+    ReliabilityQosPolicy rp;
+    rp.kind = reliable_ ? eprosima::fastrtps::RELIABLE_RELIABILITY_QOS: eprosima::fastrtps::BEST_EFFORT_RELIABILITY_QOS;
+    dr_qos_.reliability(rp);
+
+    // Set data sharing according with cli. Is disabled by default in all xml profiles
+    if (data_sharing_)
     {
-        sub_attrs_.times.heartbeatResponseDelay = TimeConv::MilliSeconds2Time_t(0).to_duration_t();
-        sub_attrs_.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
-    }
-    else
-    {
-        sub_attrs_.qos.m_reliability.kind = BEST_EFFORT_RELIABILITY_QOS;
+        DataSharingQosPolicy dsp;
+        dsp.on("");
+        dr_qos_.data_sharing(dsp);
     }
 
-    // Load XML file
-    if (xml_config_file_.length() > 0)
+    // Create Command topic
     {
-        if (xmlparser::XMLP_ret::XML_OK
-                != xmlparser::XMLProfileManager::fillSubscriberAttributes(profile_name, sub_attrs_))
+        std::ostringstream topic_name;
+        topic_name << "ThroughputTest_Command_";
+        if (hostname)
         {
-            std::cout << "Cannot read subscriber profile " << profile_name << std::endl;
+            topic_name << asio::ip::host_name() << "_";
+        }
+        topic_name << pid << "_PUB2SUB";
+
+        command_sub_topic_ = participant_->create_topic(
+            topic_name.str(),
+            "ThroughputCommand",
+            TOPIC_QOS_DEFAULT);
+
+        if (nullptr == command_sub_topic_)
+        {
+            logError(THROUGHPUTSUBSCRIBER, "ERROR creating the COMMAND Sub topic");
+            return false;
+        }
+
+        topic_name.str("");
+        topic_name.clear();
+        topic_name << "ThroughputTest_Command_";
+        if (hostname)
+        {
+            topic_name << asio::ip::host_name() << "_";
+        }
+        topic_name << pid << "_SUB2PUB";
+
+        command_pub_topic_ = participant_->create_topic(
+            topic_name.str(),
+            "ThroughputCommand",
+            TOPIC_QOS_DEFAULT);
+
+        if (nullptr == command_pub_topic_)
+        {
+            logError(THROUGHPUTSUBSCRIBER, "ERROR creating the COMMAND Pub topic");
+            return false;
         }
     }
 
-    // If the user has specified a publisher property policy with command line arguments, it overrides whatever the
-    // XML configures.
-    if (PropertyPolicyHelper::length(property_policy) > 0)
+    /* Create Command Reader */
     {
-        sub_attrs_.properties = property_policy;
-    }
-    data_subscriber_ = nullptr;
+        DataReaderQos cr_qos;
+        cr_qos.history().kind = KEEP_ALL_HISTORY_QOS;
+        cr_qos.reliability().kind = RELIABLE_RELIABILITY_QOS;
+        cr_qos.durability().durabilityKind(TRANSIENT_LOCAL);
+        cr_qos.properties(property_policy);
 
-    // COMMAND
-    PublisherAttributes command_publisher_attrs;
-    command_publisher_attrs.topic.historyQos.kind = KEEP_ALL_HISTORY_QOS;
-    command_publisher_attrs.topic.topicDataType = "ThroughputCommand";
-    command_publisher_attrs.topic.topicKind = NO_KEY;
-    std::ostringstream pub_command_topic;
-    pub_command_topic << "ThroughputTest_Command_";
-    if (hostname)
+        {
+            DataSharingQosPolicy dsp;
+            dsp.off();
+            cr_qos.data_sharing(dsp);
+        }
+
+        command_reader_ = subscriber_->create_datareader(
+            command_sub_topic_,
+            cr_qos,
+            &command_reader_listener_);
+
+        if (command_reader_ == nullptr)
+        {
+            logError(THROUGHPUTSUBSCRIBER, "ERROR creating the COMMAND DataWriter");
+            return false;
+        }
+    }
+
+    /* Create Command Writer */
     {
-        pub_command_topic << asio::ip::host_name() << "_";
+        DataWriterQos cw_qos;
+        cw_qos.history().kind = KEEP_ALL_HISTORY_QOS;
+        cw_qos.durability().durabilityKind(TRANSIENT_LOCAL);
+        cw_qos.reliability().kind = RELIABLE_RELIABILITY_QOS;
+        cw_qos.publish_mode().kind = SYNCHRONOUS_PUBLISH_MODE;
+        cw_qos.properties(property_policy);
+
+        {
+            DataSharingQosPolicy dsp;
+            dsp.off();
+            cw_qos.data_sharing(dsp);
+        }
+
+        command_writer_ = publisher_->create_datawriter(
+            command_pub_topic_,
+            cw_qos,
+            &command_writer_listener_);
+
+        if (command_writer_ == nullptr)
+        {
+            logError(THROUGHPUTSUBSCRIBER, "ERROR creating the COMMAND DataReader");
+            return false;
+        }
     }
-    pub_command_topic << pid << "_SUB2PUB";
-    command_publisher_attrs.topic.topicName = pub_command_topic.str();
-    command_publisher_attrs.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
-    command_publisher_attrs.qos.m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
-    command_publisher_attrs.qos.m_publishMode.kind = SYNCHRONOUS_PUBLISH_MODE;
-    command_publisher_attrs.properties = property_policy;
-
-    command_publisher_ = Domain::createPublisher(participant_, command_publisher_attrs,
-                    (PublisherListener*)&this->command_pub_listener_);
-
-    SubscriberAttributes command_subscriber_attrs;
-    command_subscriber_attrs.topic.topicDataType = "ThroughputCommand";
-    command_subscriber_attrs.topic.topicKind = NO_KEY;
-    command_subscriber_attrs.topic.topicName = "ThroughputCommandP2S";
-    std::ostringstream sub_command_topic;
-    sub_command_topic << "ThroughputTest_Command_";
-    if (hostname)
-    {
-        sub_command_topic << asio::ip::host_name() << "_";
-    }
-    sub_command_topic << pid << "_PUB2SUB";
-    command_subscriber_attrs.topic.topicName = sub_command_topic.str();
-    command_subscriber_attrs.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
-    command_subscriber_attrs.qos.m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
-    command_subscriber_attrs.topic.historyQos.kind = KEEP_ALL_HISTORY_QOS;
-    command_subscriber_attrs.properties = property_policy;
-
-    command_subscriber_ = Domain::createSubscriber(participant_, command_subscriber_attrs,
-                    (SubscriberListener*)&this->command_sub_listener_);
 
     // Calculate overhead
     t_start_ = std::chrono::steady_clock::now();
@@ -400,20 +465,23 @@ ThroughputSubscriber::ThroughputSubscriber(
     t_overhead_ = std::chrono::duration<double, std::micro>(t_end_ - t_start_) / 1001;
     std::cout << "Subscriber's clock access overhead: " << t_overhead_.count() << " us" << std::endl;
 
-    if (command_subscriber_ == nullptr || command_publisher_ == nullptr)
-    {
-        ready_ = false;
-    }
+    // Endpoints using dynamic data endpoints span the whole test duration
+    // Static types and endpoints are created for each payload iteration
+    return dynamic_types_ ? init_dynamic_types() && create_data_endpoints(dr_qos_) : true;
 }
 
-void ThroughputSubscriber::process_message()
+int ThroughputSubscriber::process_message()
 {
-    if (command_subscriber_->wait_for_unread_samples({100, 0}))
+    ThroughputCommandType command;
+    SampleInfo info;
+
+    if (command_reader_->wait_for_unread_message({100, 0}))
     {
-        if (command_subscriber_->takeNextData((void*)&command_sub_listener_.command_type_,
-                &command_sub_listener_.info_))
+        if (ReturnCode_t::RETCODE_OK == command_reader_->take_next_sample(
+                    (void*)&command,
+                    &info))
         {
-            switch (command_sub_listener_.command_type_.m_command)
+            switch (command.m_command)
             {
                 case (DEFAULT):
                 {
@@ -423,60 +491,105 @@ void ThroughputSubscriber::process_message()
                 {
                     break;
                 }
+                case TYPE_NEW:
+                {
+                    auto dr_qos = dr_qos_;
+
+                    if (dynamic_types_)
+                    {
+                        assert(nullptr == dynamic_data_);
+
+                        // Create the data sample
+                        MemberId id;
+                        dynamic_data_ = static_cast<DynamicData*>(dynamic_pub_sub_type_->createData());
+
+                        if (nullptr == dynamic_data_)
+                        {
+                            logError(THROUGHPUTSUBSCRIBER, "Iteration failed: Failed to create Dynamic Data");
+                            return 2;
+                        }
+
+                        // Modify the data Sample
+                        DynamicData* member_data = dynamic_data_->loan_value(
+                            dynamic_data_->get_member_id_at_index(1));
+
+                        for (uint32_t i = 0; i < command.m_size; ++i)
+                        {
+                            member_data->insert_sequence_data(id);
+                            member_data->set_byte_value(0, id);
+                        }
+                        dynamic_data_->return_loaned_value(member_data);
+                    }
+                    else
+                    {
+                        // Validate QoS settings
+                        uint32_t max_demand = command.m_demand;
+                        if (dr_qos.history().kind == KEEP_LAST_HISTORY_QOS)
+                        {
+                            // Ensure that the history depth is at least the demand
+                            if (dr_qos.history().depth < 0 ||
+                                    static_cast<uint32_t>(dr_qos.history().depth) < max_demand)
+                            {
+                                logWarning(THROUGHPUTSUBSCRIBER, "Setting history depth to " << max_demand);
+                                dr_qos.resource_limits().max_samples = max_demand;
+                                dr_qos.history().depth = max_demand;
+                            }
+                        }
+                        // KEEP_ALL case
+                        else
+                        {
+                            // Ensure that the max samples is at least the demand
+                            if (dr_qos.resource_limits().max_samples < 0 ||
+                                    static_cast<uint32_t>(dr_qos.resource_limits().max_samples) < max_demand)
+                            {
+                                logWarning(THROUGHPUTSUBSCRIBER,
+                                        "Setting resource limit max samples to " << max_demand);
+                                dr_qos.resource_limits().max_samples = max_demand;
+                            }
+                        }
+                        // Set the allocated samples to the max_samples. This is because allocated_sample must be <= max_samples
+                        dr_qos.resource_limits().allocated_samples = dr_qos.resource_limits().max_samples;
+
+                        if (init_static_types(command.m_size) && create_data_endpoints(dr_qos))
+                        {
+                            assert(nullptr == throughput_data_);
+
+                            if (!data_loans_)
+                            {
+                                // Create the data sample
+                                throughput_data_ = static_cast<ThroughputType*>(throughput_data_type_.create_data());
+                            }
+
+                            // wait for data endpoint discovery
+                            {
+                                std::cout << "Waiting for data discovery" << std::endl;
+                                std::unique_lock<std::mutex> data_disc_lock(mutex_);
+                                data_discovery_cv_.wait(data_disc_lock, [&]()
+                                        {
+                                            return total_matches() == 3;
+                                        });
+                                std::cout << "Discovery data complete" << std::endl;
+                            }
+                        }
+                        else
+                        {
+                            logError(THROUGHPUTSUBSCRIBER, "Error preparing static types and endpoints for testing");
+                            return 2;
+                        }
+                    }
+
+                    break;
+                }
                 case (READY_TO_START):
                 {
                     std::cout << "-----------------------------------------------------------------------" << std::endl;
                     std::cout << "Command: READY_TO_START" << std::endl;
-                    data_size_ = command_sub_listener_.command_type_.m_size;
-                    demand_ = command_sub_listener_.command_type_.m_demand;
-
-                    if (dynamic_data_)
-                    {
-                        // Create basic builders
-                        DynamicTypeBuilder_ptr struct_type_builder(
-                            DynamicTypeBuilderFactory::get_instance()->create_struct_builder());
-
-                        // Add members to the struct.
-                        struct_type_builder->add_member(0, "seqnum",
-                                DynamicTypeBuilderFactory::get_instance()->create_uint32_type());
-                        struct_type_builder->add_member(1, "data",
-                                DynamicTypeBuilderFactory::get_instance()->create_sequence_builder(
-                                    DynamicTypeBuilderFactory::get_instance()->create_byte_type(), data_size_));
-
-                        struct_type_builder->set_name("ThroughputType");
-                        dynamic_type_ = struct_type_builder->build();
-                        dynamic_pub_sub_type_.CleanDynamicType();
-                        dynamic_pub_sub_type_.SetDynamicType(dynamic_type_);
-
-                        Domain::registerType(participant_, &dynamic_pub_sub_type_);
-
-                        dynamic_data_type_ = DynamicDataFactory::get_instance()->create_data(dynamic_type_);
-                    }
-                    else
-                    {
-                        delete(throughput_data_type_);
-                        delete(throughput_type_);
-
-                        throughput_data_type_ = new ThroughputDataType(data_size_);
-                        Domain::registerType(participant_, throughput_data_type_);
-                        throughput_type_ = new ThroughputType(data_size_);
-                    }
-
-                    data_subscriber_ = Domain::createSubscriber(participant_, sub_attrs_, &data_sub_listener_);
+                    data_size_ = command.m_size;
+                    demand_ = command.m_demand;
 
                     ThroughputCommandType command_sample(BEGIN);
-                    std::this_thread::sleep_for(std::chrono::milliseconds(50));
-                    data_sub_listener_.reset();
-                    command_publisher_->write(&command_sample);
-
-                    std::cout << "Waiting for data discovery" << std::endl;
-                    std::unique_lock<std::mutex> data_disc_lock(data_mutex_);
-                    data_discovery_cv_.wait(data_disc_lock, [&]()
-                            {
-                                return data_discovery_count_ > 0;
-                            });
-                    data_disc_lock.unlock();
-                    std::cout << "Discovery data complete" << std::endl;
+                    data_reader_listener_.reset();
+                    command_writer_->write(&command_sample);
                     break;
                 }
                 case (TEST_STARTS):
@@ -489,38 +602,48 @@ void ThroughputSubscriber::process_message()
                 {
                     t_end_ = std::chrono::steady_clock::now();
                     std::cout << "Command: TEST_ENDS" << std::endl;
-                    data_sub_listener_.save_numbers();
-                    std::unique_lock<std::mutex> lock(command_mutex_);
-                    stop_count_ = 1;
-                    lock.unlock();
-
-                    // It stops the data listener to avoid seg faults with already removed entities
-                    // It waits if the data listener is in the middle of a reading
-                    std::unique_lock<std::mutex> lecture_lock(data_mutex_);
-
-                    if (dynamic_data_)
+                    data_reader_listener_.save_numbers();
+                    data_reader_listener_.disable();
+                    return 1; // results processing is done outside
+                }
+                case TYPE_DISPOSE:
+                {
+                    // Remove the dynamic_data_ object, protect form ongoing callbacks
+                    if (dynamic_types_)
                     {
-                        DynamicTypeBuilderFactory::delete_instance();
-                        DynamicDataFactory::get_instance()->delete_data(dynamic_data_type_);
+                        DynamicDataFactory::get_instance()->delete_data(dynamic_data_);
+                        dynamic_data_ = nullptr;
                     }
                     else
                     {
-                        delete(throughput_type_);
-                        throughput_type_ = nullptr;
-                    }
-                    lecture_lock.unlock();
+                        if (!data_loans_)
+                        {
+                            // data removal
+                            throughput_data_type_.delete_data(throughput_data_);
+                        }
+                        throughput_data_ = nullptr;
 
-                    sub_attrs_ = data_subscriber_->getAttributes();
+                        // remove the data endpoints on static case
+                        if (!destroy_data_endpoints())
+                        {
+                            logError(THROUGHPUTSUBSCRIBER, "Iteration failed: Failed to remove static data endpoints");
+                            return 2;
+                        }
+
+                        // announced the endpoints associated to the data type are removed
+                        ThroughputCommandType command_sample(TYPE_REMOVED);
+                        command_writer_->write(&command_sample);
+
+                        // we don't need to wait acknowledgement of the above message because ThroughputPublisher
+                        // will only send ALL_STOPS when it's received
+                    }
                     break;
                 }
                 case (ALL_STOPS):
                 {
                     std::cout << "-----------------------------------------------------------------------" << std::endl;
-                    std::unique_lock<std::mutex> lock(command_mutex_);
-                    stop_count_ = 2;
-                    lock.unlock();
                     std::cout << "Command: ALL_STOPS" << std::endl;
-                    break;
+                    return 2;
                 }
                 default:
                 {
@@ -529,60 +652,52 @@ void ThroughputSubscriber::process_message()
             }
         }
     }
-}
 
-bool ThroughputSubscriber::ready()
-{
-    return ready_;
+    return 0;
 }
 
 void ThroughputSubscriber::run()
 {
-    if (!ready_)
-    {
-        return;
-    }
     std::cout << "Sub Waiting for command discovery" << std::endl;
     {
-        std::unique_lock<std::mutex> lock(command_mutex_);
-        std::cout << "Sub: lock command_mutex_ and wait to " << command_discovery_count_ <<
-            " == 2" << std::endl;     // TODO remove if error disappear"
-        command_discovery_cv_.wait(lock, [&]()
+        std::unique_lock<std::mutex> disc_lock(mutex_);
+        command_discovery_cv_.wait(disc_lock, [&]()
                 {
-                    std::cout << "Sub: wait to " << command_discovery_count_ << " == 2" <<
-                        std::endl;     // TODO remove if error disappear"
-                    return command_discovery_count_ >= 2;
+                    if (dynamic_types_)
+                    {
+                        // full command and data endpoints discovery
+                        return total_matches() == 3;
+                    }
+                    else
+                    {
+                        // The only endpoints present should be command ones
+                        return total_matches() == 2;
+                    }
                 });
     }
     std::cout << "Sub Discovery command complete" << std::endl;
 
+    int stop_count;
     do
     {
-        process_message();
+        stop_count = process_message();
 
-        if (stop_count_ == 1)
+        if (stop_count == 1)
         {
-            std::cout << "Waiting for data matching removal" << std::endl;
-            std::unique_lock<std::mutex> data_disc_lock(data_mutex_);
-            data_discovery_cv_.wait(data_disc_lock, [&]()
-                    {
-                        return data_discovery_count_ == 0;
-                    });
-            data_disc_lock.unlock();
-
-            std::cout << "Waiting clean state" << std::endl;
-            while (!data_subscriber_->isInCleanState())
+            // Here the static data endpoints and type still exists
+            while (dynamic_types_ && data_reader_->wait_for_unread_message({0, 1000}))
             {
-                std::this_thread::sleep_for(std::chrono::milliseconds(50));
+                std::cout << "Waiting clean state" << std::endl;
+                std::this_thread::sleep_for(std::chrono::milliseconds(10));
             }
 
             std::cout << "Sending results" << std::endl;
             ThroughputCommandType command_sample;
             command_sample.m_command = TEST_RESULTS;
             command_sample.m_demand = demand_;
-            command_sample.m_size = data_size_ + 4 + 4;
-            command_sample.m_lastrecsample = data_sub_listener_.saved_last_seq_num_;
-            command_sample.m_lostsamples = data_sub_listener_.saved_lost_samples_;
+            command_sample.m_size = data_size_ + (uint32_t)ThroughputType::overhead;
+            command_sample.m_lastrecsample = data_reader_listener_.saved_last_seq_num_;
+            command_sample.m_lostsamples = data_reader_listener_.saved_lost_samples_;
 
             double total_time_count =
                     (std::chrono::duration<double, std::micro>(t_end_ - t_start_) - t_overhead_).count();
@@ -608,33 +723,179 @@ void ThroughputSubscriber::run()
                       << std::endl;
             std::cout << "Test of size " << command_sample.m_size << " and demand " << command_sample.m_demand <<
                 " ends." << std::endl;
-            command_publisher_->write(&command_sample);
+            command_writer_->write(&command_sample);
 
-            stop_count_ = 0;
-
-            Domain::removeSubscriber(data_subscriber_);
-            std::cout << "Sub: Data subscriber removed" << std::endl;
-            data_subscriber_ = nullptr;
-            Domain::unregisterType(participant_, "ThroughputType");
-            std::cout << "Sub: ThroughputType unregistered" << std::endl;
-
-            if (!dynamic_data_)
-            {
-                delete throughput_data_type_;
-                throughput_data_type_ = nullptr;
-            }
             std::cout << "-----------------------------------------------------------------------" << std::endl;
         }
-    } while (stop_count_ != 2);
 
-    // ThroughputPublisher is waiting for all ThroughputSubscriber publishers and subscribers to unmatch. Leaving the
-    // destruction of the entities to ~ThroughputSubscriber() is not enough for the intraprocess case, because
-    // main_ThroughputTests first joins the publisher run thread and only then it joins this thread. This means that
-    // ~ThroughputSubscriber() is only called when all the ThroughputSubscriber publishers and subscribers are disposed.
-    Domain::removePublisher(command_publisher_);
-    std::cout << "Sub: Command publisher removed" << std::endl;
-    Domain::removeSubscriber(command_subscriber_);
-    std::cout << "Sub: Command subscriber removed" << std::endl;
+    } while (stop_count != 2);
 
     return;
+}
+
+bool ThroughputSubscriber::init_dynamic_types()
+{
+    assert(participant_ != nullptr);
+
+    // Check if it has been initialized before
+    if (dynamic_pub_sub_type_)
+    {
+        logError(THROUGHPUTSUBSCRIBER, "ERROR DYNAMIC DATA type already initialized");
+        return false;
+    }
+    else if (participant_->find_type(ThroughputDataType::type_name_))
+    {
+        logError(THROUGHPUTSUBSCRIBER, "ERROR DYNAMIC DATA type already registered");
+        return false;
+    }
+
+    // Dummy type registration
+    // Create basic builders
+    DynamicTypeBuilder_ptr struct_type_builder(DynamicTypeBuilderFactory::get_instance()->create_struct_builder());
+
+    // Add members to the struct.
+    struct_type_builder->add_member(0, "seqnum", DynamicTypeBuilderFactory::get_instance()->create_uint32_type());
+    struct_type_builder->add_member(1, "data", DynamicTypeBuilderFactory::get_instance()->create_sequence_builder(
+                DynamicTypeBuilderFactory::get_instance()->create_byte_type(), BOUND_UNLIMITED));
+    struct_type_builder->set_name(ThroughputDataType::type_name_);
+    dynamic_pub_sub_type_.reset(new DynamicPubSubType(struct_type_builder->build()));
+
+    // Register the data type
+    if (ReturnCode_t::RETCODE_OK
+            != dynamic_pub_sub_type_.register_type(participant_))
+    {
+        logError(THROUGHPUTSUBSCRIBER, "ERROR registering the DYNAMIC DATA topic");
+        return false;
+    }
+
+    return true;
+}
+
+bool ThroughputSubscriber::init_static_types(
+        uint32_t payload)
+{
+    assert(participant_ != nullptr);
+
+    // Check if it has been initialized before
+    if (throughput_data_type_)
+    {
+        logError(THROUGHPUTSUBSCRIBER, "ERROR STATIC DATA type already initialized");
+        return false;
+    }
+    else if (participant_->find_type(ThroughputDataType::type_name_))
+    {
+        logError(THROUGHPUTSUBSCRIBER, "ERROR STATIC DATA type already registered");
+        return false;
+    }
+
+    // Create the static type
+    throughput_data_type_.reset(new ThroughputDataType(payload));
+    // Register the static type
+    if (ReturnCode_t::RETCODE_OK
+            != throughput_data_type_.register_type(participant_))
+    {
+        return false;
+    }
+
+    return true;
+}
+
+bool ThroughputSubscriber::create_data_endpoints(
+        const DataReaderQos& dr_qos)
+{
+    if (nullptr != data_sub_topic_)
+    {
+        logError(THROUGHPUTSUBSCRIBER, "ERROR topic already initialized");
+        return false;
+    }
+
+    if (nullptr != data_reader_)
+    {
+        logError(THROUGHPUTSUBSCRIBER, "ERROR data_writer_ already initialized");
+        return false;
+    }
+
+    // Create the topic
+    std::ostringstream topic_name;
+    topic_name << "ThroughputTest_";
+    if (hostname_)
+    {
+        topic_name << asio::ip::host_name() << "_";
+    }
+    topic_name << pid_ << "_UP";
+
+    data_sub_topic_ = participant_->create_topic(
+        topic_name.str(),
+        ThroughputDataType::type_name_,
+        TOPIC_QOS_DEFAULT);
+
+    if (nullptr == data_sub_topic_)
+    {
+        logError(THROUGHPUTSUBSCRIBER, "ERROR creating the DATA topic");
+        return false;
+    }
+
+    // Create the endpoint
+    if (nullptr ==
+            (data_reader_ = subscriber_->create_datareader(
+                data_sub_topic_,
+                dr_qos,
+                &data_reader_listener_)))
+    {
+        return false;
+    }
+
+    return true;
+}
+
+bool ThroughputSubscriber::destroy_data_endpoints()
+{
+    assert(nullptr != participant_);
+    assert(nullptr != subscriber_);
+
+    // Delete the endpoint
+    if (nullptr == data_reader_
+            || ReturnCode_t::RETCODE_OK != subscriber_->delete_datareader(data_reader_))
+    {
+        logError(THROUGHPUTSUBSCRIBER, "ERROR destroying the DataWriter");
+        return false;
+    }
+    data_reader_ = nullptr;
+    data_reader_listener_.reset();
+
+    // Delete the Topic
+    if (nullptr == data_sub_topic_
+            || ReturnCode_t::RETCODE_OK != participant_->delete_topic(data_sub_topic_))
+    {
+        logError(THROUGHPUTSUBSCRIBER, "ERROR destroying the DATA topic");
+        return false;
+    }
+    data_sub_topic_ = nullptr;
+
+    // Delete the Type
+    if (ReturnCode_t::RETCODE_OK
+            != participant_->unregister_type(ThroughputDataType::type_name_))
+    {
+        logError(THROUGHPUTSUBSCRIBER, "ERROR unregistering the DATA type");
+        return false;
+    }
+
+    throughput_data_type_.reset();
+
+    return true;
+}
+
+int ThroughputSubscriber::total_matches() const
+{
+    // no need to lock because is used always within a
+    // condition variable wait predicate
+
+    int count = data_reader_listener_.get_matches()
+            + command_writer_listener_.get_matches()
+            + command_reader_listener_.get_matches();
+
+    // Each endpoint has a mirror counterpart in the ThroughputPublisher
+    // thus, the maximun number of matches is 3
+    assert(count >= 0 && count <= 3 );
+    return count;
 }

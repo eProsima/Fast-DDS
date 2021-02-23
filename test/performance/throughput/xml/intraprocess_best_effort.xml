@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <dds xmlns="http://www.eprosima.com/XMLSchemas/fastRTPS_Profiles">
     <library_settings>
-        <intraprocess_delivery>FULL</intraprocess_delivery>
+        <intraprocess_delivery>USER_DATA_ONLY</intraprocess_delivery>
     </library_settings>
 
     <profiles>
@@ -49,7 +49,7 @@
         </participant>
 
         <!-- PUBLISHER -->
-        <publisher profile_name="publisher_profile">
+        <data_writer profile_name="publisher_profile">
             <topic>
                 <name>throughput_interprocess</name>
                 <dataType>ThroughputType</dataType>
@@ -57,6 +57,12 @@
                 <historyQos>
                     <kind>KEEP_ALL</kind>
                 </historyQos>
+                <resourceLimitsQos>
+                    <max_samples>1</max_samples>
+                    <max_instances>1</max_instances>
+                    <max_samples_per_instance>1</max_samples_per_instance>
+                    <allocated_samples>1</allocated_samples>
+                </resourceLimitsQos>
             </topic>
             <qos>
                 <reliability>
@@ -65,11 +71,14 @@
                 <durability>
                     <kind>VOLATILE</kind>
                 </durability>
+                <data_sharing>
+                    <kind>OFF</kind>
+                </data_sharing>
             </qos>
-        </publisher>
+        </data_writer>
 
         <!-- SUBSCRIBER -->
-        <subscriber profile_name="subscriber_profile">
+        <data_reader profile_name="subscriber_profile">
             <topic>
                 <name>throughput_interprocess</name>
                 <dataType>ThroughputType</dataType>
@@ -77,12 +86,21 @@
                 <historyQos>
                     <kind>KEEP_ALL</kind>
                 </historyQos>
+                <resourceLimitsQos>
+                    <max_samples>1</max_samples>
+                    <max_instances>1</max_instances>
+                    <max_samples_per_instance>1</max_samples_per_instance>
+                    <allocated_samples>1</allocated_samples>
+                </resourceLimitsQos>
             </topic>
             <qos>
                 <reliability>
                     <kind>BEST_EFFORT</kind>
                 </reliability>
+                <data_sharing>
+                    <kind>OFF</kind>
+                </data_sharing>
             </qos>
-        </subscriber>
+        </data_reader>
     </profiles>
 </dds>

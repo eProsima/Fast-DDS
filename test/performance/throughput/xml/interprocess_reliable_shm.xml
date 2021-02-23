@@ -1,12 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <dds xmlns="http://www.eprosima.com/XMLSchemas/fastRTPS_Profiles">
     <profiles>
+        <library_settings>
+            <intraprocess_delivery>OFF</intraprocess_delivery> <!-- OFF | USER_DATA_ONLY | FULL -->
+        </library_settings>
         <!-- TRANSPORT -->
         <transport_descriptors>
             <transport_descriptor>
                 <transport_id>shm_transport</transport_id>
                 <type>SHM</type>
-            </transport_descriptor>            
+            </transport_descriptor>
+            <transport_descriptor>
+              <transport_id>udp_transport</transport_id>
+              <type>UDPv4</type>
+              <interfaceWhiteList>
+                  <address>127.0.0.1</address>
+              </interfaceWhiteList>
+            </transport_descriptor>
         </transport_descriptors>
 
         <!-- PARTICIPANTS -->
@@ -15,6 +25,7 @@
             <rtps>
                 <userTransports>
                     <transport_id>shm_transport</transport_id>
+                    <transport_id>udp_transport</transport_id>
                 </userTransports>
                 <useBuiltinTransports>false</useBuiltinTransports>
                 <name>throughput_test_publisher</name>
@@ -26,6 +37,7 @@
             <rtps>
                 <userTransports>
                     <transport_id>shm_transport</transport_id>
+                    <transport_id>udp_transport</transport_id>
                 </userTransports>
                 <useBuiltinTransports>false</useBuiltinTransports>
                 <name>throughput_test_subscriber</name>
@@ -33,7 +45,7 @@
         </participant>
 
         <!-- PUBLISHER -->
-        <publisher profile_name="publisher_profile">
+        <data_writer profile_name="publisher_profile">
             <topic>
                 <name>throughput_interprocess</name>
                 <dataType>ThroughputType</dataType>
@@ -41,6 +53,12 @@
                 <historyQos>
                     <kind>KEEP_ALL</kind>
                 </historyQos>
+                <resourceLimitsQos>
+                    <max_samples>1</max_samples>
+                    <max_instances>1</max_instances>
+                    <max_samples_per_instance>1</max_samples_per_instance>
+                    <allocated_samples>1</allocated_samples>
+                </resourceLimitsQos>
             </topic>
             <qos>
                 <reliability>
@@ -49,11 +67,14 @@
                 <durability>
                     <kind>VOLATILE</kind>
                 </durability>
+                <data_sharing>
+                    <kind>OFF</kind>
+                </data_sharing>
             </qos>
-        </publisher>
+        </data_writer>
 
         <!-- SUBSCRIBER -->
-        <subscriber profile_name="subscriber_profile">
+        <data_reader profile_name="subscriber_profile">
             <topic>
                 <name>throughput_interprocess</name>
                 <dataType>ThroughputType</dataType>
@@ -61,12 +82,21 @@
                 <historyQos>
                     <kind>KEEP_ALL</kind>
                 </historyQos>
+                <resourceLimitsQos>
+                    <max_samples>1</max_samples>
+                    <max_instances>1</max_instances>
+                    <max_samples_per_instance>1</max_samples_per_instance>
+                    <allocated_samples>1</allocated_samples>
+                </resourceLimitsQos>
             </topic>
             <qos>
                 <reliability>
                     <kind>RELIABLE</kind>
                 </reliability>
+                <data_sharing>
+                    <kind>OFF</kind>
+                </data_sharing>
             </qos>
-        </subscriber>
+        </data_reader>
     </profiles>
 </dds>
