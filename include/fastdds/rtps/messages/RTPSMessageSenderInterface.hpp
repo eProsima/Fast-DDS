@@ -22,8 +22,9 @@
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
-#include <fastdds/rtps/messages/CDRMessage.h>
 #include <fastdds/rtps/common/Guid.h>
+#include <fastdds/rtps/messages/CDRMessage.h>
+#include <fastdds/rtps/network/NetworkBuffer.hpp>
 
 #include <vector>
 
@@ -38,6 +39,8 @@ namespace rtps {
 class RTPSMessageSenderInterface
 {
     public:
+
+        using NetworkBuffer = eprosima::fastdds::rtps::NetworkBuffer;
 
         virtual ~RTPSMessageSenderInterface() = default;
 
@@ -78,8 +81,24 @@ class RTPSMessageSenderInterface
          * @param max_blocking_time_point Future timepoint where blocking send should end.
          */
         virtual bool send(
-                CDRMessage_t* message,
+                const NetworkBuffer* message,
+                size_t num_buffers,
+                uint32_t total_bytes,
                 std::chrono::steady_clock::time_point& max_blocking_time_point) const = 0;
+
+        /**
+         * Send a message through this interface.
+         *
+         * @param message Pointer to the buffer with the message already serialized.
+         * @param max_blocking_time_point Future timepoint where blocking send should end.
+         */
+        bool send(
+                CDRMessage_t* message,
+                std::chrono::steady_clock::time_point& max_blocking_time_point) const
+        {
+            NetworkBuffer buffer{ message->buffer, message->length };
+            return send(&buffer, 1, message->length, max_blocking_time_point);
+        }
 };
 
 } /* namespace rtps */

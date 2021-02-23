@@ -36,54 +36,55 @@ class RTPSParticipantImpl;
  */
 class DirectMessageSender : public RTPSMessageSenderInterface
 {
-public:
+    public:
+        DirectMessageSender(
+                RTPSParticipantImpl* participant,
+                std::vector<GUID_t>* guids,
+                LocatorList_t* locators);
 
-    DirectMessageSender(
-            RTPSParticipantImpl* participant,
-            std::vector<GUID_t>* guids,
-            LocatorList_t* locators);
+        virtual ~DirectMessageSender() override = default;
 
-    virtual ~DirectMessageSender() override = default;
+        /**
+         * Check if the destinations managed by this sender interface have changed.
+         *
+         * @return true if destinations have changed, false otherwise.
+         */
+        virtual bool destinations_have_changed() const override;
 
-    /**
-     * Check if the destinations managed by this sender interface have changed.
-     *
-     * @return true if destinations have changed, false otherwise.
-     */
-    virtual bool destinations_have_changed() const override;
+        /**
+         * Get a GUID prefix representing all destinations.
+         *
+         * @return When all the destinations share the same prefix (i.e. belong to the same participant)
+         * that prefix is returned. When there are no destinations, or they belong to different
+         * participants, c_GuidPrefix_Unknown is returned.
+         */
+        virtual GuidPrefix_t destination_guid_prefix() const override;
 
-    /**
-     * Get a GUID prefix representing all destinations.
-     *
-     * @return When all the destinations share the same prefix (i.e. belong to the same participant)
-     * that prefix is returned. When there are no destinations, or they belong to different
-     * participants, c_GuidPrefix_Unknown is returned.
-     */
-    virtual GuidPrefix_t destination_guid_prefix() const override;
+        /**
+         * Get the GUID prefix of all the destination participants.
+         *
+         * @return a const reference to a vector with the GUID prefix of all destination participants.
+         */
+        virtual const std::vector<GuidPrefix_t>& remote_participants() const override;
 
-    /**
-     * Get the GUID prefix of all the destination participants.
-     *
-     * @return a const reference to a vector with the GUID prefix of all destination participants.
-     */
-    virtual const std::vector<GuidPrefix_t>& remote_participants() const override;
+        /**
+         * Get the GUID of all destinations.
+         *
+         * @return a const reference to a vector with the GUID of all destinations.
+         */
+        virtual const std::vector<GUID_t>& remote_guids() const override;
 
-    /**
-     * Get the GUID of all destinations.
-     *
-     * @return a const reference to a vector with the GUID of all destinations.
-     */
-    virtual const std::vector<GUID_t>& remote_guids() const override;
-
-    /**
-     * Send a message through this interface.
-     *
-     * @param message Pointer to the buffer with the message already serialized.
-     * @param max_blocking_time_point Future timepoint where blocking send should end.
-     */
-    virtual bool send(
-            CDRMessage_t* message,
-            std::chrono::steady_clock::time_point& max_blocking_time_point) const override;
+        /**
+         * Send a message through this interface.
+         *
+         * @param message Pointer to the buffer with the message already serialized.
+         * @param max_blocking_time_point Future timepoint where blocking send should end.
+         */
+        virtual bool send(
+                const RTPSMessageSenderInterface::NetworkBuffer* buffers,
+                size_t num_buffers,
+                uint32_t total_bytes,
+                std::chrono::steady_clock::time_point& max_blocking_time_point) const override;
 
 private:
 

@@ -268,7 +268,9 @@ public:
      * @param max_blocking_time_point Future time point where any blocking should end.
      */
     bool send_sync_nts(
-            CDRMessage_t* message,
+            const RTPSMessageSenderInterface::NetworkBuffer* buffers,
+            size_t num_buffers,
+            uint32_t total_bytes,
             const Locators& locators_begin,
             const Locators& locators_end,
             std::chrono::steady_clock::time_point& max_blocking_time_point);
