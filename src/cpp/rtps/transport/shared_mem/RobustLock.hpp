@@ -59,7 +59,7 @@ public:
         if (stat(defaultdir, &buf) != 0)
         {
             // directory not found, create it
-            if(errno == ENOENT)
+            if (errno == ENOENT)
             {
                 mkdir(defaultdir, 0777);
             }
