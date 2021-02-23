@@ -285,44 +285,6 @@ public:
             const SenderResource::NetworkBuffer* buffers,
             size_t num_buffers,
             uint32_t total_bytes,
-            const LocatorIteratorT& destination_locators_begin,
-            const LocatorIteratorT& destination_locators_end,
-            std::chrono::steady_clock::time_point& max_blocking_time_point)
-    {
-        bool ret_code = false;
-        std::unique_lock<std::timed_mutex> lock(m_send_resources_mutex_, std::defer_lock);
-
-        if (lock.try_lock_until(max_blocking_time_point))
-        {
-            ret_code = true;
-
-            for (auto& send_resource : send_resource_list_)
-            {
-                LocatorIteratorT locators_begin = destination_locators_begin;
-                LocatorIteratorT locators_end = destination_locators_end;
-                send_resource->send(buffers, num_buffers, total_bytes, &locators_begin, &locators_end,
-                        max_blocking_time_point);
-            }
-        }
-
-        return ret_code;
-    }
-
-    /**
-     * Send a message to several locations
-     * @param buffers Array of buffers to gather.
-     * @param num_buffers Number of elements on @c buffers.
-     * @param total_bytes Total size of the raw data. Should be equal to the sum of the @c length field of all buffers.
-     * @param destination_locators_begin Iterator at the first destination locator.
-     * @param destination_locators_end Iterator at the end destination locator.
-     * @param max_blocking_time_point execution time limit timepoint.
-     * @return true if at least one locator has been sent.
-     */
-    template<class LocatorIteratorT>
-    bool sendSync(
-            const SenderResource::NetworkBuffer* buffers,
-            size_t num_buffers,
-            uint32_t total_bytes,
             const GUID_t& sender_guid,
             const LocatorIteratorT& destination_locators_begin,
             const LocatorIteratorT& destination_locators_end,
@@ -345,19 +307,6 @@ public:
         }
 
         lock.unlock();
-
-        // notify statistics module
-        on_rtps_send(
-                sender_guid,
-                destination_locators_begin,
-                destination_locators_end,
-                msg->length);
-
-        // checkout if sender is a discovery endpoint
-        on_discovery_packet(
-                sender_guid,
-                destination_locators_begin,
-                destination_locators_end);
 
         return ret_code;
     }
