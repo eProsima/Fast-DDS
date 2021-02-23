@@ -31,10 +31,10 @@ public:
 
     /**
      * As locator are parsed, when a CDR encapsulated proxydata message is received,
-     * this function decides wether SHM communication is possible, in that case only
+     * this function decides whether SHM communication is possible, in that case only
      * SHM locators are stored in the target_locator_list. If SHM communication is
      * not possible SHM locators are not stored in the list.
-     * @param[in] is_shm_transport_available Indicates wether the participant has SHM transport enabled.
+     * @param[in] is_shm_transport_available Indicates whether the participant has SHM transport enabled.
      * @param[in/out] is_shm_transport_possible Is true when at least a SHM locator from the local host has
      * been parsed
      * @param[in/out] are_shm_locators_present True when SHM locators has been parsed

@@ -991,7 +991,7 @@ TEST_F(IPLocatorTests, setPortRTPS)
 }
 
 /*
- * Check wheter an address is localhost
+ * Check whether an address is localhost
  */
 TEST_F(IPLocatorTests, isLocal)
 {

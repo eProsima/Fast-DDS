@@ -74,7 +74,7 @@ public:
     }
 
     /** Constructor
-     * @param memoryPolicy Set wether memory can be dynamically reallocated or not
+     * @param memoryPolicy Set whether memory can be dynamically reallocated or not
      * @param payload Maximum payload size. It is used when memory management polycy is
      * PREALLOCATED_MEMORY_MODE or PREALLOCATED_WITH_REALLOC_MEMORY_MODE.
      * @param initial Initial reserved caches. It is used when memory management policy is
@@ -95,7 +95,7 @@ public:
     }
 
     /** Constructor
-     * @param memoryPolicy Set wether memory can be dynamically reallocated or not
+     * @param memoryPolicy Set whether memory can be dynamically reallocated or not
      * @param payload Maximum payload size. It is used when memory management polycy is
      * PREALLOCATED_MEMORY_MODE or PREALLOCATED_WITH_REALLOC_MEMORY_MODE.
      * @param initial Initial reserved caches. It is used when memory management policy is

@@ -115,7 +115,7 @@ class CryptoTransform
          * Determines whether the secure submessage comes from a datawriter or a data reader and extracts the required CryptoHandle to decode it.
          * @param datawriter_crypto (out) Crypto of the sending datawriter, if applicable
          * @param datareader_crypto (out) Crypto of the sending datareader, if applicable
-         * @param secure_submessage_category (out) Specifies wether the message comes from a datawriter or from a datareader
+         * @param secure_submessage_category (out) Specifies whether the message comes from a datawriter or from a datareader
          * @param encoded_rtps_submessage encoded input submessage
          * @param receiving_crypto Crypto of the Participant that receives the message
          * @param sending_crypto Crypto of the Participant that sent the message

@@ -52,7 +52,7 @@ public:
      * @param type TopicDataType.
      * @param qos ReaderQoS policy.
      * @param payloadMax Maximum payload size per change.
-     * @param mempolicy Set wether the payloads ccan dynamically resized or not.
+     * @param mempolicy Set whether the payloads ccan dynamically resized or not.
      */
     SubscriberHistory(
             const TopicAttributes& topic_att,

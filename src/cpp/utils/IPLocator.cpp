@@ -316,7 +316,7 @@ bool IPLocator::setIPv6(
     std::stringstream ss;
     ss << std::hex << ipv6;
     uint16_t i;
-    uint32_t input_aux; // It cannot be uint16_t or we could not find wether the input number is bigger than allowed
+    uint32_t input_aux; // It cannot be uint16_t or we could not find whether the input number is bigger than allowed
 
     // Build the bytes string knowing already if there is a zero block, where and which size
     if (initial_zeros != 0)
