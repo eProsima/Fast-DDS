@@ -101,11 +101,22 @@ void ThroughputSubscriber::DataReaderListener::on_data_available(
 
         // Check for lost samples
         auto size = data_seq.length();
-        uint32_t last_seq_num = 0;
+        uint32_t last_seq_num = last_seq_num_;
 
         for (int32_t i = 0; i < size; ++i)
         {
-            last_seq_num = std::max(data_seq[i].seqnum, last_seq_num);
+            uint32_t seq_num = std::max(data_seq[i].seqnum, last_seq_num);
+	    if (sub.data_sharing_ && seq_num > last_seq_num + 1)
+            {
+		if (!reader->is_sample_valid(&data_seq[i], &infos[i]))
+		{
+		    // This was overridden. Counts as a loss
+		    ++lost_samples_;
+		    ++last_seq_num;
+		    continue;
+		}
+	    }
+	    last_seq_num = seq_num;
         }
 
         if ((last_seq_num_ + size) < last_seq_num)
