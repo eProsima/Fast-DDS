@@ -27,13 +27,14 @@ namespace fastdds {
 namespace rtps {
 
 /**
- * Mimicks C struct iovec
+ * A slice of data to be sent to one or more transports.
+ * An RTPS datagram is made up of one or more NetworkBuffer instances.
  */
 struct NetworkBuffer final
 {
     //! Pointer to the buffer where the data is stored.
     const void* buffer = nullptr;
-    //! Number of bytes
+    //! Number of bytes to use starting at @c buffer.
     uint32_t length = 0;
 };
 
