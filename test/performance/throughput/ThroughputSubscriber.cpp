@@ -598,8 +598,23 @@ int ThroughputSubscriber::process_message()
                     data_size_ = command.m_size;
                     demand_ = command.m_demand;
 
-                    ThroughputCommandType command_sample(BEGIN);
+                    SampleInfoSeq infos;
+                    LoanableSequence<ThroughputType> data_seq;
+
+                    // Consume history
+                    while (data_reader_->wait_for_unread_message({0, 1000000}))
+                    {
+                        while (ReturnCode_t::RETCODE_OK == data_reader_->take(data_seq, infos))
+                        {
+                            if (ReturnCode_t::RETCODE_OK != data_reader_->return_loan(data_seq, infos))
+                            {
+                                logInfo(ThroughputTest, "Problem returning loan");
+		            }
+                        }
+                    }
                     data_reader_listener_.reset();
+
+                    ThroughputCommandType command_sample(BEGIN);
                     command_writer_->write(&command_sample);
                     break;
                 }
