@@ -605,7 +605,7 @@ void LatencyTestSubscriber::run()
 bool LatencyTestSubscriber::test(
         uint32_t datasize)
 {
-    logInfo(LatencyTest, "Preparing test with data size: " << datasize + 4);
+    logInfo(LatencyTest, "Preparing test with data size: " << datasize );
 
     // Wait for the Publisher READY command
     // Assures that LatencyTestSubscriber|Publisher data endpoints creation and
@@ -672,7 +672,7 @@ bool LatencyTestSubscriber::test(
         return false;
     }
 
-    logInfo(LatencyTest, "Testing with data size: " << datasize + 4);
+    logInfo(LatencyTest, "Testing with data size: " << datasize);
 
     // Wait for the STOP or STOP_ERROR commands
     wait_for_command(
@@ -681,7 +681,7 @@ bool LatencyTestSubscriber::test(
             return command_msg_count_ != 0;
         });
 
-    logInfo(LatencyTest, "TEST OF SIZE: " << datasize + 4 << " ENDS");
+    logInfo(LatencyTest, "TEST OF SIZE: " << datasize << " ENDS");
     std::this_thread::sleep_for(std::chrono::milliseconds(50));
 
     if (dynamic_types_)
