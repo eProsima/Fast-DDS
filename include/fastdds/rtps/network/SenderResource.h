@@ -16,7 +16,6 @@
 #define _FASTDDS_RTPS_SENDER_RESOURCE_H
 
 #include <functional>
-#include <vector>
 #include <chrono>
 
 #include <fastdds/rtps/common/Locator.h>
@@ -25,9 +24,6 @@
 namespace eprosima {
 namespace fastrtps {
 namespace rtps {
-
-class RTPSParticipantImpl;
-class MessageReceiver;
 
 /**
  * RAII object that encapsulates the Send operation over one chanel in an unknown transport.
