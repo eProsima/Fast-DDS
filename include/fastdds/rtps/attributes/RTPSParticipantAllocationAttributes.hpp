@@ -81,7 +81,7 @@ struct SendBuffersAllocationAttributes
      *
      * This attribute controls how the buffer manager behaves when a send buffer is not
      * available. When true, a new buffer will be created. When false, it will wait for a
-     * buffer to be returned. This is a tradeoff between latency and dynamic allocations.
+     * buffer to be returned. This is a trade-off between latency and dynamic allocations.
      */
     bool dynamic = false;
 };

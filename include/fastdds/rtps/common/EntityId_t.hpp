@@ -73,7 +73,7 @@ struct RTPS_DllAPI EntityId_t
 {
     static constexpr unsigned int size = 4;
     octet value[size];
-    //! Default constructor. Uknown entity.
+    //! Default constructor. Unknown entity.
     EntityId_t()
     {
         *this = ENTITYID_UNKNOWN;

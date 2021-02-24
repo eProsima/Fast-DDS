@@ -695,19 +695,20 @@ void PDPServer::announceParticipantState(
         // Generate the Data(Up)
         if (nullptr != change)
         {
-            // assign identity
+            // Assign identity
             change->sequenceNumber = sn;
             change->write_params = std::move(wp);
 
             // Update the database with our own data
             if (discovery_db().update(change, ddb::DiscoveryParticipantChangeData()))
             {
-                // distribute
+                // Distribute
                 awake_routine_thread();
             }
             else
             {
-                // already there, dispose. If participant is not removed fast enought may happen
+                // Dispose if already there
+                // It may happen if the participant is not removed fast enough
                 mp_PDPWriter->release_change(change);
                 return;
             }

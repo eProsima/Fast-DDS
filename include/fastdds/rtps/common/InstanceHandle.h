@@ -69,7 +69,7 @@ struct RTPS_DllAPI InstanceHandle_t
     }
 
     /**
-     * Assingment operator
+     * Assignment operator
      * @param ihandle Instance handle to copy the data from
      */
     InstanceHandle_t& operator =(
@@ -84,7 +84,7 @@ struct RTPS_DllAPI InstanceHandle_t
     }
 
     /**
-     * Assingment operator
+     * Assignment operator
      * @param guid GUID to copy the data from
      */
     InstanceHandle_t& operator =(

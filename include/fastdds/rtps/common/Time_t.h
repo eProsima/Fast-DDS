@@ -260,10 +260,10 @@ static inline bool operator <(
 }
 
 /**
- * Checks if a Time_t is greather than other.
+ * Checks if a Time_t is greater than other.
  * @param t1 First Time_t to compare
  * @param t2 Second Time_t to compare
- * @return True if the first Time_t is greather than the second
+ * @return True if the first Time_t is greater than the second
  */
 static inline bool operator >(
         const Time_t& t1,
@@ -322,10 +322,10 @@ static inline bool operator <=(
 }
 
 /**
- * Checks if a Time_t is greather or equal than other.
+ * Checks if a Time_t is greater or equal than other.
  * @param t1 First Time_t to compare
  * @param t2 Second Time_t to compare
- * @return True if the first Time_t is greather or equal than the second
+ * @return True if the first Time_t is greater or equal than the second
  */
 static inline bool operator >=(
         const Time_t& t1,
@@ -416,9 +416,9 @@ static inline Time_t operator +(
 }
 
 /**
- * Substracts two Time_t.
- * @param ta First Time_t to substract
- * @param tb Second Time_t to substract
+ * Subtracts two Time_t.
+ * @param ta First Time_t to subtract
+ * @param tb Second Time_t to subtract
  * @return A new Time_t with the result.
  */
 static inline Time_t operator -(
@@ -517,10 +517,10 @@ static inline bool operator <(
 }
 
 /**
- * Checks if a Time_t is greather than other.
+ * Checks if a Time_t is greater than other.
  * @param t1 First Time_t to compare
  * @param t2 Second Time_t to compare
- * @return True if the first Time_t is greather than the second
+ * @return True if the first Time_t is greater than the second
  */
 static inline bool operator >(
         const Time_t& t1,
@@ -579,10 +579,10 @@ static inline bool operator <=(
 }
 
 /**
- * Checks if a Time_t is greather or equal than other.
+ * Checks if a Time_t is greater or equal than other.
  * @param t1 First Time_t to compare
  * @param t2 Second Time_t to compare
- * @return True if the first Time_t is greather or equal than the second
+ * @return True if the first Time_t is greater or equal than the second
  */
 static inline bool operator >=(
         const Time_t& t1,
@@ -636,9 +636,9 @@ static inline Time_t operator +(
 }
 
 /**
- * Substracts two Time_t.
- * @param ta First Time_t to substract
- * @param tb Second Time_t to substract
+ * Subtracts two Time_t.
+ * @param ta First Time_t to subtract
+ * @param tb Second Time_t to subtract
  * @return A new Time_t with the result.
  */
 static inline Time_t operator -(

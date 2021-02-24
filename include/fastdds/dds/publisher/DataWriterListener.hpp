@@ -93,7 +93,7 @@ public:
     }
 
     /**
-     * @brief Method called when the livelivess of a publisher is lost
+     * @brief Method called when the liveliness of a publisher is lost
      * @param writer The publisher
      * @param status The liveliness lost status
      */

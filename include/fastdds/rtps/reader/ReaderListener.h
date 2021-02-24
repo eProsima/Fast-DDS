@@ -90,7 +90,7 @@ public:
     }
 
     /**
-     * @brief Method called when the livelivess of a reader changes
+     * @brief Method called when the liveliness of a reader changes
      * @param reader The reader
      * @param status The liveliness changed status
      */

@@ -44,7 +44,7 @@ public:
      * Constructor of the PublisherHistory.
      * @param topic_att TopicAttributed
      * @param payloadMax Maximum payload size.
-     * @param mempolicy Set wether the payloads ccan dynamically resized or not.
+     * @param mempolicy Set whether the payloads ccan dynamically resized or not.
      */
     PublisherHistory(
             const TopicAttributes& topic_att,

@@ -569,10 +569,10 @@ protected:
     // Whether it has been a new entity discovered or updated in this subroutine loop
     std::atomic<int> new_updates_;
 
-    // Wheter the database is restoring a backup
+    // Whether the database is restoring a backup
     std::atomic<bool> processing_backup_;
 
-    // Wheter the database is persistent, so it must store every cache it arrives
+    // Whether the database is persistent, so it must store every cache it arrives
     bool is_persistent_;
 
     // File to save every cacheChange that is updated to the ddb queues

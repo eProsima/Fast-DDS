@@ -31,7 +31,8 @@
 
 #include <vector>
 
-class HelloWorldSubscriber {
+class HelloWorldSubscriber
+{
     eprosima::fastrtps::Participant* participant_;
     eprosima::fastrtps::Subscriber* subscriber_;
     HelloWorldPubSubType type_;
@@ -41,24 +42,30 @@ public:
     class SubListener : public eprosima::fastrtps::SubscriberListener
     {
     public:
+
         SubListener()
             : n_matched(0)
             , n_samples(0)
-        {};
+        {
+        }
 
-        ~SubListener() {};
+        ~SubListener()
+        {
+        }
 
         void onSubscriptionMatched(
-            eprosima::fastrtps::Subscriber* sub,
-            eprosima::fastrtps::rtps::MatchingInfo& info);
+                eprosima::fastrtps::Subscriber* sub,
+                eprosima::fastrtps::rtps::MatchingInfo& info);
 
-        void onNewDataMessage(eprosima::fastrtps::Subscriber* sub);
+        void onNewDataMessage(
+                eprosima::fastrtps::Subscriber* sub);
 
         HelloWorld hello;
         eprosima::fastrtps::SampleInfo_t info;
         int n_matched;
         uint32_t n_samples;
-    } listener;
+    }
+    listener;
 
     HelloWorldSubscriber();
 
@@ -66,16 +73,17 @@ public:
 
     //!Initialize the subscriber
     bool init(
-        const std::string &wan_ip,
-        unsigned short port,
-        bool use_tls,
-        const std::vector<std::string>& whitelist);
+            const std::string& wan_ip,
+            unsigned short port,
+            bool use_tls,
+            const std::vector<std::string>& whitelist);
 
     //!RUN the subscriber
     void run();
 
-    //!Run the subscriber until number samples have been recevied.
-    void run(uint32_t number);
+    //!Run the subscriber until number samples have been received.
+    void run(
+            uint32_t number);
 };
 
 #endif /* HELLOWORLDSUBSCRIBER_H_ */
