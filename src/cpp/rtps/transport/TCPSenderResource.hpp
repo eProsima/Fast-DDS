@@ -41,7 +41,7 @@ public:
                     transport.CloseOutputChannel(channel_);
                 };
 
-        send_lambda_ = [this, &transport](
+        send_buffers_lambda_ = [this, &transport](
             const NetworkBuffer* buffers,
             size_t num_buffers,
             uint32_t total_bytes,

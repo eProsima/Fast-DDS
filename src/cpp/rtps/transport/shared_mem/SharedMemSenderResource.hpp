@@ -36,7 +36,7 @@ public:
                     // No cleanup is required
                 };
 
-        send_lambda_ = [&transport](
+        send_buffers_lambda_ = [&transport](
             const NetworkBuffer* buffers,
             size_t num_buffers,
             uint32_t total_bytes,

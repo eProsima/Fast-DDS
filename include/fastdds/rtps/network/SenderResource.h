@@ -58,6 +58,14 @@ public:
             LocatorsIterator* destination_locators_end,
             const std::chrono::steady_clock::time_point& max_blocking_time_point)
     {
+        if (send_lambda_ && !send_buffers_lambda_)
+        {
+            logWarning(RTPS, "The usage of send_lambda_ on SenderResource has been deprecated."
+                << std::endl << "Please implement send_buffers_lambda_ instead.");
+            return send_lambda_(data, data_size,
+                           destination_locators_begin, destination_locators_end, max_blocking_time_point);
+        }
+
         NetworkBuffer buf{ data, data_size };
         return send(&buf, 1, data_size,
             destination_locators_begin, destination_locators_end, max_blocking_time_point);
@@ -82,16 +90,20 @@ public:
             LocatorsIterator* destination_locators_end,
             const std::chrono::steady_clock::time_point& max_blocking_time_point)
     {
-        bool returned_value = false;
-
-        if (send_lambda_)
+        if (send_buffers_lambda_)
         {
-            returned_value =
-                    send_lambda_(buffers, num_buffers, total_bytes,
+            return send_buffers_lambda_(buffers, num_buffers, total_bytes,
                             destination_locators_begin, destination_locators_end, max_blocking_time_point);
         }
 
-        return returned_value;
+        if (send_lambda_)
+        {
+            send_lambda_ = nullptr;
+            logError(RTPS, "The usage of send_lambda_ on SenderResource has been deprecated."
+                << std::endl << "Please implement send_buffers_lambda_ instead.");
+        }
+
+        return false;
     }
 
     /**
@@ -100,9 +112,11 @@ public:
      */
     SenderResource(
             SenderResource&& rValueResource)
+        : transport_kind_(rValueResource.transport_kind_)
     {
         clean_up.swap(rValueResource.clean_up);
         send_lambda_.swap(rValueResource.send_lambda_);
+        send_buffers_lambda_.swap(rValueResource.send_buffers_lambda_);
     }
 
     virtual ~SenderResource() = default;
@@ -135,12 +149,18 @@ protected:
 
     std::function<void()> clean_up;
     std::function<bool(
+                const octet* data,
+                uint32_t data_size,
+                LocatorsIterator* destination_locators_begin,
+                LocatorsIterator* destination_locators_end,
+                const std::chrono::steady_clock::time_point&)> send_lambda_;
+    std::function<bool(
                 const NetworkBuffer* buffers,
                 size_t num_buffers,
                 uint32_t total_bytes,
                 LocatorsIterator* destination_locators_begin,
                 LocatorsIterator* destination_locators_end,
-                const std::chrono::steady_clock::time_point&)> send_lambda_;
+                const std::chrono::steady_clock::time_point&)> send_buffers_lambda_;
 
 private:
 
