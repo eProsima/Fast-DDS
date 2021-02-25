@@ -18,6 +18,12 @@
 #include <boostconfig.hpp>
 #include <boost/interprocess/detail/shared_dir_helpers.hpp>
 
+#ifdef __QNXNTO__
+#include <sys/stat.h>
+#include <sys/types.h>
+#include <errno.h>
+#endif  // __QNXNTO__
+
 namespace eprosima {
 namespace fastdds {
 namespace rtps {
@@ -65,6 +71,37 @@ public:
         std::string path;
         get_default_shared_dir(path);
         return path + "/" + filename;
+    }
+
+    static std::string get_lock_path(
+            const std::string& filename)
+    {
+#ifdef __QNXNTO__
+        static const char defaultdir[] = "/var/lock";
+        struct stat buf;
+        // check directory status
+        if (stat(defaultdir, &buf) != 0)
+        {
+            // directory not found, create it
+            if (errno == ENOENT)
+            {
+                mkdir(defaultdir, 0777);
+            }
+            // if another error then throw exception
+            else
+            {
+                std::string err("get_file_path() ");
+                err = err + strerror(errno);
+                throw std::runtime_error(err);
+            }
+        }
+        else
+        {
+            // directory exists do nothing
+        }
+#else
+        return SharedDir::get_file_path(filename);
+#endif  // __QNXNTO__
     }
 
 };
