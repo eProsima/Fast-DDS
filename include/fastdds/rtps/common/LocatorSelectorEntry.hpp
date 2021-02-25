@@ -33,7 +33,7 @@ namespace rtps {
  * An entry for the @ref LocatorSelector.
  *
  * This class holds the locators of a remote endpoint along with data required for the locator selection algorithm.
- * Can be easyly integrated inside other classes, such as @ref ReaderProxyData and @ref WriterProxyData.
+ * Can be easily integrated inside other classes, such as @ref ReaderProxyData and @ref WriterProxyData.
  */
 struct LocatorSelectorEntry
 {
@@ -85,7 +85,8 @@ struct LocatorSelectorEntry
      *
      * @param should_enable Whether this entry should be enabled.
      */
-    void enable(bool should_enable)
+    void enable(
+            bool should_enable)
     {
         enabled = should_enable && remote_guid != c_Guid_Unknown;
     }
