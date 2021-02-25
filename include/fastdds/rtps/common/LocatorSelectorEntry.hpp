@@ -85,7 +85,8 @@ struct LocatorSelectorEntry
      *
      * @param should_enable Whether this entry should be enabled.
      */
-    void enable(bool should_enable)
+    void enable(
+            bool should_enable)
     {
         enabled = should_enable && remote_guid != c_Guid_Unknown;
     }
