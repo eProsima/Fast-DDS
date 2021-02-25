@@ -22,6 +22,7 @@
 #include <fastdds/rtps/transport/UDPv4TransportDescriptor.h>
 #include <fastdds/rtps/transport/UDPv6TransportDescriptor.h>
 #include <fastrtps/utils/IPFinder.h>
+#include <fastrtps/log/Log.h>
 
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
