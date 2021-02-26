@@ -46,6 +46,9 @@
 #include <net/if_dl.h>
 #include <netinet/in.h>
 #endif // if defined(__APPLE__)
+#if defined(__QNXNTO__)
+#include <sys/types.h>
+#endif // if defined(__QNXNTO__)
 #endif // if defined(_WIN32)
 
 #if defined(__FreeBSD__)
@@ -360,6 +363,56 @@ bool IPFinder::getAllMACAddress(
             macs->push_back(mac);
         }
     }
+    return true;
+}
+
+#elif defined(__QNXNTO__)
+
+bool IPFinder::getAllMACAddress(
+        std::vector<info_MAC>* macs)
+{
+    struct ifaddrs *ifaphead;
+    struct ifaddrs *ifap;
+
+    if (getifaddrs(&ifaphead) != 0)
+    {
+        printf("getifaddrs() failed: %s\n", strerror(errno));
+        return false;
+    }
+
+    struct sockaddr_dl *sdl = NULL;
+
+    std::vector<IPFinder::info_IP> ips;
+    IPFinder::getIPs(&ips);
+
+    for (auto& ip : ips)
+    {
+        for (ifap = ifaphead; ifap; ifap = ifap->ifa_next)
+        {
+            if ((ifap->ifa_addr->sa_family == AF_LINK))
+            {
+                if (strcmp(ifap->ifa_name, ip.dev.c_str()) == 0)
+                {
+                    sdl = (struct sockaddr_dl *)ifap->ifa_addr;
+                    if (sdl)
+                    {
+                        info_MAC mac;
+                        memcpy(mac.address, LLADDR(sdl), sdl->sdl_alen);
+                        if (std::find(macs->begin(), macs->end(), mac) == macs->end())
+                        {
+                            macs->push_back(mac);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    if(ifaphead)
+    {
+        freeifaddrs(ifaphead);
+    }
+
     return true;
 }
 
