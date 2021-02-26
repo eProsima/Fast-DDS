@@ -12,25 +12,27 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include <fastrtps/transport/test_UDPv4Transport.h>
-#include <gtest/gtest.h>
 #include <thread>
+#include <memory>
+#include <string>
+
+#include <gtest/gtest.h>
+#include <fastdds/dds/log/Log.hpp>
+#include <fastrtps/transport/test_UDPv4TransportDescriptor.h>
 #include <fastrtps/rtps/common/CDRMessage_t.h>
 #include <fastrtps/rtps/messages/RTPSMessageCreator.h>
 #include <fastrtps/qos/ParameterTypes.h>
-#include <fastdds/dds/log/Log.hpp>
 #include <fastrtps/utils/IPLocator.h>
-
-#include <memory>
-#include <string>
+#include <rtps/transport/test_UDPv4Transport.h>
 
 #if defined(_WIN32)
 #define GET_PID _getpid
 #else
 #define GET_PID getpid
-#endif
+#endif // if defined(_WIN32)
 
-using eprosima::fastrtps::rtps::IPLocator;
+using IPLocator = eprosima::fastrtps::rtps::IPLocator;
+using test_UDPv4Transport = eprosima::fastdds::rtps::test_UDPv4Transport;
 
 static uint16_t g_default_port = 0;
 
@@ -38,7 +40,7 @@ uint16_t get_port()
 {
     uint16_t port = static_cast<uint16_t>(GET_PID());
 
-    if(4000 > port)
+    if (4000 > port)
     {
         port += 4000;
     }
@@ -49,9 +51,10 @@ uint16_t get_port()
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
 
-class test_UDPv4Tests: public ::testing::Test
+class test_UDPv4Tests : public ::testing::Test
 {
-    public:
+public:
+
     test_UDPv4Tests()
     {
         HELPER_SetDescriptorDefaults();
@@ -62,20 +65,25 @@ class test_UDPv4Tests: public ::testing::Test
         eprosima::fastdds::dds::Log::KillThread();
     }
 
-   void HELPER_SetDescriptorDefaults();
-   void HELPER_WarmUpOutput(test_UDPv4Transport& transport);
-   void HELPER_FillDataMessage(CDRMessage_t& message, SequenceNumber_t sequenceNumber);
-   void HELPER_FillAckNackMessage(CDRMessage_t& message);
-   void HELPER_FillHeartbeatMessage(CDRMessage_t& message);
+    void HELPER_SetDescriptorDefaults();
+    void HELPER_WarmUpOutput(
+            test_UDPv4Transport& transport);
+    void HELPER_FillDataMessage(
+            CDRMessage_t& message,
+            SequenceNumber_t sequenceNumber);
+    void HELPER_FillAckNackMessage(
+            CDRMessage_t& message);
+    void HELPER_FillHeartbeatMessage(
+            CDRMessage_t& message);
 
-   test_UDPv4TransportDescriptor descriptor;
-   std::unique_ptr<std::thread> senderThread;
-   std::unique_ptr<std::thread> receiverThread;
+    test_UDPv4TransportDescriptor descriptor;
+    std::unique_ptr<std::thread> senderThread;
+    std::unique_ptr<std::thread> receiverThread;
 };
 
 /*
-TEST_F(test_UDPv4Tests, DATA_messages_dropped)
-{
+   TEST_F(test_UDPv4Tests, DATA_messages_dropped)
+   {
    // Given
    descriptor.dropDataMessagesPercentage = 100;
    test_UDPv4Transport transportUnderTest(descriptor);
@@ -92,10 +100,10 @@ TEST_F(test_UDPv4Tests, DATA_messages_dropped)
    ASSERT_EQ(1u, test_UDPv4Transport::test_UDPv4Transport_DropLog.size());
 
    ASSERT_TRUE(transportUnderTest.CloseOutputChannel(locator));
-}
+   }
 
-TEST_F(test_UDPv4Tests, ACKNACK_messages_dropped)
-{
+   TEST_F(test_UDPv4Tests, ACKNACK_messages_dropped)
+   {
    // Given
    descriptor.dropAckNackMessagesPercentage = 100;
    test_UDPv4Transport transportUnderTest(descriptor);
@@ -111,10 +119,10 @@ TEST_F(test_UDPv4Tests, ACKNACK_messages_dropped)
    ASSERT_TRUE(transportUnderTest.send(testDataMessage.buffer, testDataMessage.length, locator, locator));
    ASSERT_EQ(1u, test_UDPv4Transport::test_UDPv4Transport_DropLog.size());
    ASSERT_TRUE(transportUnderTest.CloseOutputChannel(locator));
-}
+   }
 
-TEST_F(test_UDPv4Tests, HEARTBEAT_messages_dropped)
-{
+   TEST_F(test_UDPv4Tests, HEARTBEAT_messages_dropped)
+   {
    // Given
    descriptor.dropHeartbeatMessagesPercentage = 100;
    test_UDPv4Transport transportUnderTest(descriptor);
@@ -130,10 +138,10 @@ TEST_F(test_UDPv4Tests, HEARTBEAT_messages_dropped)
    ASSERT_TRUE(transportUnderTest.send(testDataMessage.buffer, testDataMessage.length, locator, locator));
    ASSERT_EQ(1u, test_UDPv4Transport::test_UDPv4Transport_DropLog.size());
    ASSERT_TRUE(transportUnderTest.CloseOutputChannel(locator));
-}
+   }
 
-TEST_F(test_UDPv4Tests, Dropping_by_random_chance)
-{
+   TEST_F(test_UDPv4Tests, Dropping_by_random_chance)
+   {
    // Given
    descriptor.percentageOfMessagesToDrop = 100; // To avoid a non-deterministic test
    test_UDPv4Transport transportUnderTest(descriptor);
@@ -151,10 +159,10 @@ TEST_F(test_UDPv4Tests, Dropping_by_random_chance)
    ASSERT_TRUE(transportUnderTest.send(testDataMessage.buffer, testDataMessage.length, locator, locator));
    ASSERT_EQ(3u, test_UDPv4Transport::test_UDPv4Transport_DropLog.size());
    ASSERT_TRUE(transportUnderTest.CloseOutputChannel(locator));
-}
+   }
 
-TEST_F(test_UDPv4Tests, dropping_by_sequence_number)
-{
+   TEST_F(test_UDPv4Tests, dropping_by_sequence_number)
+   {
    // Given
    std::vector<SequenceNumber_t> sequenceNumbersToDrop(1);
    sequenceNumbersToDrop.back().low = 1;
@@ -173,10 +181,10 @@ TEST_F(test_UDPv4Tests, dropping_by_sequence_number)
    ASSERT_TRUE(transportUnderTest.send(testDataMessage.buffer, testDataMessage.length, locator, locator));
    ASSERT_EQ(1u, test_UDPv4Transport::test_UDPv4Transport_DropLog.size());
    ASSERT_TRUE(transportUnderTest.CloseOutputChannel(locator));
-}
+   }
 
-TEST_F(test_UDPv4Tests, No_drops_when_unrequested)
-{
+   TEST_F(test_UDPv4Tests, No_drops_when_unrequested)
+   {
    // Given
    descriptor.dropHeartbeatMessagesPercentage = 100;
    descriptor.dropDataMessagesPercentage = 100;
@@ -196,10 +204,10 @@ TEST_F(test_UDPv4Tests, No_drops_when_unrequested)
    ASSERT_TRUE(transportUnderTest.send(testDataMessage.buffer, testDataMessage.length, locator, locator));
    ASSERT_EQ(0u, test_UDPv4Transport::test_UDPv4Transport_DropLog.size());
    ASSERT_TRUE(transportUnderTest.CloseOutputChannel(locator));
-}
+   }
 
-void test_UDPv4Tests::HELPER_SetDescriptorDefaults()
-{
+   void test_UDPv4Tests::HELPER_SetDescriptorDefaults()
+   {
    descriptor.sendBufferSize = 80;
    descriptor.receiveBufferSize = 80;
    descriptor.dropDataMessagesPercentage = 0;
@@ -209,45 +217,51 @@ void test_UDPv4Tests::HELPER_SetDescriptorDefaults()
    descriptor.percentageOfMessagesToDrop = 0;
    descriptor.dropLogLength = 10;
    descriptor.granularMode = false;
-}
+   }
 
-void test_UDPv4Tests::HELPER_WarmUpOutput(test_UDPv4Transport& transport)
-{
+   void test_UDPv4Tests::HELPER_WarmUpOutput(test_UDPv4Transport& transport)
+   {
    Locator_t outputChannelLocator;
    outputChannelLocator.port = g_default_port;
    outputChannelLocator.kind = LOCATOR_KIND_UDPv4;
    ASSERT_TRUE(transport.OpenOutputChannel(outputChannelLocator));
-}
-*/
+   }
+ */
 
-void test_UDPv4Tests::HELPER_FillDataMessage(CDRMessage_t& message, SequenceNumber_t sequenceNumber)
+void test_UDPv4Tests::HELPER_FillDataMessage(
+        CDRMessage_t& message,
+        SequenceNumber_t sequenceNumber)
 {
-   GuidPrefix_t prefix;
-   TopicKind_t topic = WITH_KEY;
-   EntityId_t entityID;
-   CacheChange_t change;
-   change.sequenceNumber = sequenceNumber; // Here is where the SN propagates from
-   RTPSMessageCreator::addMessageData(&message, prefix, &change, topic, entityID, false, nullptr);
+    GuidPrefix_t prefix;
+    TopicKind_t topic = WITH_KEY;
+    EntityId_t entityID;
+    CacheChange_t change;
+    change.sequenceNumber = sequenceNumber; // Here is where the SN propagates from
+    RTPSMessageCreator::addMessageData(&message, prefix, &change, topic, entityID, false, nullptr);
 }
 
-void test_UDPv4Tests::HELPER_FillAckNackMessage(CDRMessage_t& message)
+void test_UDPv4Tests::HELPER_FillAckNackMessage(
+        CDRMessage_t& message)
 {
-   GuidPrefix_t prefix;
-   EntityId_t entityID;
-   SequenceNumberSet_t set;
-	RTPSMessageCreator::addMessageAcknack(&message, prefix, prefix, entityID, entityID, set, 0, false);
+    GuidPrefix_t prefix;
+    EntityId_t entityID;
+    SequenceNumberSet_t set;
+    RTPSMessageCreator::addMessageAcknack(&message, prefix, prefix, entityID, entityID, set, 0, false);
 }
 
-void test_UDPv4Tests::HELPER_FillHeartbeatMessage(CDRMessage_t& message)
+void test_UDPv4Tests::HELPER_FillHeartbeatMessage(
+        CDRMessage_t& message)
 {
-   GuidPrefix_t prefix;
-   EntityId_t entityID;
-   SequenceNumber_t sn1;
-   SequenceNumber_t sn2;
-	RTPSMessageCreator::addMessageHeartbeat(&message, prefix, entityID, entityID, sn1, sn2, 0, false, false);
+    GuidPrefix_t prefix;
+    EntityId_t entityID;
+    SequenceNumber_t sn1;
+    SequenceNumber_t sn2;
+    RTPSMessageCreator::addMessageHeartbeat(&message, prefix, entityID, entityID, sn1, sn2, 0, false, false);
 }
 
-int main(int argc, char **argv)
+int main(
+        int argc,
+        char** argv)
 {
     g_default_port = get_port();
 

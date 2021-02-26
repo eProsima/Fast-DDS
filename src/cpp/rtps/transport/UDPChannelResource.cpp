@@ -12,10 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include <rtps/transport/UDPChannelResource.h>
+
 #include <asio.hpp>
-#include <fastdds/rtps/transport/UDPTransportInterface.h>
-#include <fastdds/rtps/transport/UDPChannelResource.h>
 #include <fastdds/rtps/messages/MessageReceiver.h>
+#include <rtps/transport/UDPTransportInterface.h>
 
 namespace eprosima {
 namespace fastdds {
@@ -47,7 +48,8 @@ UDPChannelResource::~UDPChannelResource()
     message_receiver_ = nullptr;
 }
 
-void UDPChannelResource::perform_listen_operation(Locator_t input_locator)
+void UDPChannelResource::perform_listen_operation(
+        Locator_t input_locator)
 {
     Locator_t remote_locator;
 
@@ -101,7 +103,7 @@ bool UDPChannelResource::Receive(
     {
         (void)error;
         logWarning(RTPS_MSG_OUT, "Error receiving data: " << error.what() << " - " << message_receiver()
-            << " (" << this << ")");
+                                                          << " (" << this << ")");
         return false;
     }
 }

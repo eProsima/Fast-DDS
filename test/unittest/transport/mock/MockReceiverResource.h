@@ -15,23 +15,29 @@
 #ifndef MOCK_RECEIVER_STUFF_H
 #define MOCK_RECEIVER_STUFF_H
 
-#include <fastrtps/rtps/network/ReceiverResource.h>
-#include <fastrtps/rtps/messages/MessageReceiver.h>
-#include <fastrtps/transport/ChannelResource.h>
 #include <functional>
 
-namespace eprosima{
-namespace fastrtps{
-namespace rtps{
+#include <fastrtps/rtps/network/ReceiverResource.h>
+#include <fastrtps/rtps/messages/MessageReceiver.h>
+
+namespace eprosima {
+namespace fastrtps {
+namespace rtps {
 
 class MockMessageReceiver;
 
 class MockReceiverResource : public ReceiverResource
 {
 public:
-    virtual void OnDataReceived(const octet*, const uint32_t,
-        const Locator_t&, const Locator_t&) override;
-    MockReceiverResource(TransportInterface& transport, const Locator_t& locator);
+
+    virtual void OnDataReceived(
+            const octet*,
+            const uint32_t,
+            const Locator_t&,
+            const Locator_t&) override;
+    MockReceiverResource(
+            TransportInterface& transport,
+            const Locator_t& locator);
     ~MockReceiverResource();
     MessageReceiver* CreateMessageReceiver() override;
     MockMessageReceiver* msg_receiver;
@@ -40,9 +46,17 @@ public:
 class MockMessageReceiver : public MessageReceiver
 {
 public:
-    MockMessageReceiver() : MessageReceiver(nullptr, nullptr) {}
-    void processCDRMsg(const Locator_t& loc, CDRMessage_t*msg) override;
-    void setCallback(std::function<void()> cb);
+
+    MockMessageReceiver()
+        : MessageReceiver(nullptr, nullptr)
+    {
+    }
+
+    void processCDRMsg(
+            const Locator_t& loc,
+            CDRMessage_t* msg) override;
+    void setCallback(
+            std::function<void()> cb);
     octet* data;
     std::function<void()> callback;
 };

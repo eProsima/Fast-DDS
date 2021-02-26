@@ -17,8 +17,8 @@
 #include "PubSubWriter.hpp"
 
 #include <fastrtps/rtps/common/Locator.h>
-#include <fastrtps/transport/UDPv4Transport.h>
 #include <fastrtps/utils/IPFinder.h>
+#include <rtps/transport/UDPv4Transport.h>
 
 #include <gtest/gtest.h>
 
@@ -26,6 +26,7 @@
 
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
+using UDPv4Transport = eprosima::fastdds::rtps::UDPv4Transport;
 
 static void GetIP4s(
         std::vector<IPFinder::info_IP>& interfaces)
@@ -60,9 +61,9 @@ TEST(BlackBox, PubSubOutLocatorSelection)
 
 
     reader.reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).
-    history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS).
-    resource_limits_allocated_samples(2).
-    resource_limits_max_samples(2).init();
+            history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS).
+            resource_limits_allocated_samples(2).
+            resource_limits_max_samples(2).init();
 
     ASSERT_TRUE(reader.isInitialized());
 
@@ -71,11 +72,11 @@ TEST(BlackBox, PubSubOutLocatorSelection)
 
     writer.reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).history_kind(
         eprosima::fastrtps::KEEP_ALL_HISTORY_QOS).
-    durability_kind(eprosima::fastrtps::TRANSIENT_LOCAL_DURABILITY_QOS).
-    resource_limits_allocated_samples(20).
-    disable_builtin_transport().
-    add_user_transport_to_pparams(descriptor).
-    resource_limits_max_samples(20).init();
+            durability_kind(eprosima::fastrtps::TRANSIENT_LOCAL_DURABILITY_QOS).
+            resource_limits_allocated_samples(20).
+            disable_builtin_transport().
+            add_user_transport_to_pparams(descriptor).
+            resource_limits_max_samples(20).init();
 
 
     ASSERT_TRUE(writer.isInitialized());
@@ -103,16 +104,16 @@ TEST(BlackBox, PubSubInterfaceWhitelistLocalhost)
     descriptor->interfaceWhiteList.push_back("127.0.0.1");
 
     reader.reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).history_depth(10).
-    disable_multicast(0).
-    disable_builtin_transport().
-    add_user_transport_to_pparams(descriptor).init();
+            disable_multicast(0).
+            disable_builtin_transport().
+            add_user_transport_to_pparams(descriptor).init();
 
     ASSERT_TRUE(reader.isInitialized());
 
     writer.reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).history_depth(10).
-    disable_multicast(1).
-    disable_builtin_transport().
-    add_user_transport_to_pparams(descriptor).init();
+            disable_multicast(1).
+            disable_builtin_transport().
+            add_user_transport_to_pparams(descriptor).init();
 
     ASSERT_TRUE(writer.isInitialized());
 
@@ -145,14 +146,14 @@ TEST(BlackBox, PubSubInterfaceWhitelistUnicast)
     }
 
     reader.reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).history_depth(10).
-    disable_builtin_transport().
-    add_user_transport_to_pparams(descriptor).init();
+            disable_builtin_transport().
+            add_user_transport_to_pparams(descriptor).init();
 
     ASSERT_TRUE(reader.isInitialized());
 
     writer.reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).history_depth(10).
-    disable_builtin_transport().
-    add_user_transport_to_pparams(descriptor).init();
+            disable_builtin_transport().
+            add_user_transport_to_pparams(descriptor).init();
 
     ASSERT_TRUE(writer.isInitialized());
 

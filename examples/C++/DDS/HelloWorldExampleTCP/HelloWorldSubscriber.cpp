@@ -89,7 +89,6 @@ bool HelloWorldSubscriber::init(
         descriptor->tls_config.add_option(TLSOptions::DEFAULT_WORKAROUNDS);
     }
 
-    descriptor->wait_for_tcp_negotiation = false;
     pqos.transport().user_transports.push_back(descriptor);
 
     participant_ = DomainParticipantFactory::get_instance()->create_participant(0, pqos);

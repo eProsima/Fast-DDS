@@ -19,7 +19,8 @@
 #include "RTPSWithRegistrationReader.hpp"
 #include "RTPSWithRegistrationWriter.hpp"
 #include <fastrtps/xmlparser/XMLProfileManager.h>
-#include <fastrtps/transport/test_UDPv4Transport.h>
+#include <fastrtps/transport/test_UDPv4TransportDescriptor.h>
+#include <rtps/transport/test_UDPv4Transport.h>
 
 #include <gtest/gtest.h>
 
@@ -27,6 +28,7 @@
 
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
+using test_UDPv4Transport = eprosima::fastdds::rtps::test_UDPv4Transport;
 
 enum communication_type
 {

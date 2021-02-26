@@ -16,44 +16,59 @@
 #define _FASTDDS_UDP_TRANSPORT_DESCRIPTOR_
 
 #include <fastdds/rtps/transport/SocketTransportDescriptor.h>
+#include <fastrtps/fastrtps_dll.h>
 
-namespace eprosima{
-namespace fastdds{
-namespace rtps{
+namespace eprosima {
+namespace fastdds {
+namespace rtps {
 
 /**
  * UDP Transport configuration
  *
- * - bufferSize:    length of the buffers used for transmission. Passing
- *                  a buffer of different size will cause transmission to
- *                  fail.
+ * - m_output_udp_socket: source port to use for outgoing datagrams.
  *
- * - interfaceWhiteList: Lists the allowed interfaces.
+ * - non_blocking_send: do not block on send operations. When it is set to true, send operations will return
+ * immediately if the buffer is full, but no error will be returned to the upper layer. This means that the
+ * application will behave as if the datagram is sent and lost.
+ *
  * @ingroup TRANSPORT_MODULE
  */
-typedef struct UDPTransportDescriptor: public SocketTransportDescriptor
+struct UDPTransportDescriptor : public SocketTransportDescriptor
 {
-   virtual ~UDPTransportDescriptor(){}
+    //! Destructor
+    virtual ~UDPTransportDescriptor() = default;
 
-   RTPS_DllAPI UDPTransportDescriptor();
+    //! Constructor
+    RTPS_DllAPI UDPTransportDescriptor();
 
-   RTPS_DllAPI UDPTransportDescriptor(const UDPTransportDescriptor& t);
+    //! Copy constructor
+    RTPS_DllAPI UDPTransportDescriptor(
+            const UDPTransportDescriptor& t) = default;
 
-   uint16_t m_output_udp_socket;
+    //! Copy assignment
+    RTPS_DllAPI UDPTransportDescriptor& operator =(
+            const UDPTransportDescriptor& t) = default;
 
-   /**
-    * Whether to use non-blocking calls to send_to().
-    *
-    * When set to true, calls to send_to() will return inmediately if the buffer is full, but
-    * no error will be returned to the upper layer. This means that the application will behave
-    * as if the datagram is sent but lost (i.e. throughput may be reduced). This value is
-    * specially useful on high-frequency best-effort writers.
-    *
-    * When set to false, calls to send_to() will block until the network buffer has space for the
-    * datagram. This may hinder performance on high-frequency writers.
-    */
-   bool non_blocking_send = false;
-} UDPTransportDescriptor;
+    //! Comparison operator
+    RTPS_DllAPI bool operator ==(
+            const UDPTransportDescriptor& t) const;
+
+    //! Source port to use for outgoing datagrams
+    uint16_t m_output_udp_socket;
+
+    /**
+     * Whether to use non-blocking calls to send_to().
+     *
+     * When set to true, calls to send_to() will return inmediately if the buffer is full, but
+     * no error will be returned to the upper layer. This means that the application will behave
+     * as if the datagram is sent but lost (i.e. throughput may be reduced). This value is
+     * specially useful on high-frequency best-effort writers.
+     *
+     * When set to false, calls to send_to() will block until the network buffer has space for the
+     * datagram. This may hinder performance on high-frequency writers.
+     */
+    bool non_blocking_send = false;
+};
 
 } // namespace rtps
 } // namespace fastdds

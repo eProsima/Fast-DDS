@@ -42,15 +42,14 @@ SharedMemTransportDescriptor::SharedMemTransportDescriptor()
     maxMessageSize = s_maximumMessageSize;
 }
 
-SharedMemTransportDescriptor::SharedMemTransportDescriptor(
-        const SharedMemTransportDescriptor& t)
-    : TransportDescriptorInterface(t.segment_size_, s_maximumInitialPeersRange)
-    , segment_size_(t.segment_size_)
-    , port_queue_capacity_(t.port_queue_capacity_)
-    , healthy_check_timeout_ms_(t.healthy_check_timeout_ms_)
-    , rtps_dump_file_(t.rtps_dump_file_)
+bool SharedMemTransportDescriptor::operator ==(
+        const SharedMemTransportDescriptor& t) const
 {
-    maxMessageSize = t.max_message_size();
+    return (this->segment_size_ == t.segment_size() &&
+           this->port_queue_capacity_ == t.port_queue_capacity() &&
+           this->healthy_check_timeout_ms_ == t.healthy_check_timeout_ms() &&
+           this->rtps_dump_file_ == t.rtps_dump_file() &&
+           TransportDescriptorInterface::operator ==(t));
 }
 
 #ifdef FASTDDS_SHM_TRANSPORT_DISABLED
@@ -58,4 +57,5 @@ TransportInterface* SharedMemTransportDescriptor::create_transport() const
 {
     return nullptr;
 }
-#endif
+
+#endif // ifdef FASTDDS_SHM_TRANSPORT_DISABLED

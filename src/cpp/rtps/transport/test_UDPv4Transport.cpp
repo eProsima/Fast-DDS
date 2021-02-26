@@ -12,10 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include <asio.hpp>
-#include <fastdds/rtps/transport/test_UDPv4Transport.h>
+#include <rtps/transport/test_UDPv4Transport.h>
+
 #include <cstdlib>
 #include <functional>
+
+#include <asio.hpp>
 
 using namespace std;
 
@@ -110,6 +112,23 @@ test_UDPv4TransportDescriptor::test_UDPv4TransportDescriptor()
 TransportInterface* test_UDPv4TransportDescriptor::create_transport() const
 {
     return new test_UDPv4Transport(*this);
+}
+
+bool test_UDPv4TransportDescriptor::operator ==(
+        const test_UDPv4TransportDescriptor& t) const
+{
+    return (this->dropDataMessagesPercentage == t.dropDataMessagesPercentage &&
+           this->dropParticipantBuiltinTopicData == t.dropParticipantBuiltinTopicData &&
+           this->dropPublicationBuiltinTopicData == t.dropPublicationBuiltinTopicData &&
+           this->dropSubscriptionBuiltinTopicData == t.dropSubscriptionBuiltinTopicData &&
+           this->dropDataFragMessagesPercentage == t.dropDataFragMessagesPercentage &&
+           this->dropHeartbeatMessagesPercentage == t.dropHeartbeatMessagesPercentage &&
+           this->dropAckNackMessagesPercentage == t.dropAckNackMessagesPercentage &&
+           this->dropGapMessagesPercentage == t.dropGapMessagesPercentage &&
+           this->percentageOfMessagesToDrop == t.percentageOfMessagesToDrop &&
+           this->sequenceNumberDataMessagesToDrop == t.sequenceNumberDataMessagesToDrop &&
+           this->dropLogLength == t.dropLogLength &&
+           SocketTransportDescriptor::operator ==(t));
 }
 
 void test_UDPv4Transport::get_ips(

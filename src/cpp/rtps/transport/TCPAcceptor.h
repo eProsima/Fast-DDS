@@ -18,9 +18,9 @@
 #include <asio.hpp>
 #include <fastdds/rtps/common/Locator.h>
 
-namespace eprosima{
-namespace fastdds{
-namespace rtps{
+namespace eprosima {
+namespace fastdds {
+namespace rtps {
 
 class TCPTransportInterface;
 
@@ -30,6 +30,7 @@ class TCPTransportInterface;
 class TCPAcceptor
 {
 protected:
+
     asio::ip::tcp::acceptor acceptor_;
     fastrtps::rtps::Locator_t locator_;
     asio::ip::tcp::endpoint endpoint_;
@@ -37,15 +38,16 @@ protected:
     asio::io_service* io_service_;
 
 public:
-    TCPAcceptor(
-        asio::io_service& io_service,
-        TCPTransportInterface* parent,
-        const fastrtps::rtps::Locator_t& locator);
 
     TCPAcceptor(
-        asio::io_service& io_service,
-        const std::string& interface,
-        const fastrtps::rtps::Locator_t& locator);
+            asio::io_service& io_service,
+            TCPTransportInterface* parent,
+            const fastrtps::rtps::Locator_t& locator);
+
+    TCPAcceptor(
+            asio::io_service& io_service,
+            const std::string& interface,
+            const fastrtps::rtps::Locator_t& locator);
 
     const fastrtps::rtps::Locator_t& locator() const
     {
@@ -57,7 +59,7 @@ public:
         return locator_;
     }
 
-	virtual ~TCPAcceptor() = default;
+    virtual ~TCPAcceptor() = default;
 };
 
 

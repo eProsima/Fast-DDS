@@ -12,39 +12,42 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include <fastrtps/utils/Semaphore.h>
-#include <fastrtps/transport/TCPv4Transport.h>
-#include "mock/MockTCPv4Transport.h"
-#include <fastrtps/utils/IPFinder.h>
-#include <fastrtps/utils/IPLocator.h>
-#include <fastdds/dds/log/Log.hpp>
-#include <MockReceiverResource.h>
-#include "../../../src/cpp/rtps/transport/TCPSenderResource.hpp"
-
 #include <memory>
+#include <thread>
+
 #include <asio.hpp>
 #include <gtest/gtest.h>
-#include <thread>
+#include <MockReceiverResource.h>
+#include "mock/MockTCPv4Transport.h"
+#include <fastdds/dds/log/Log.hpp>
+#include <fastrtps/transport/TCPv4TransportDescriptor.h>
+#include <fastrtps/utils/Semaphore.h>
+#include <fastrtps/utils/IPFinder.h>
+#include <fastrtps/utils/IPLocator.h>
+#include <rtps/transport/TCPv4Transport.h>
+//#include "../../../src/cpp/rtps/transport/TCPSenderResource.hpp"
 
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
+using TCPv4Transport = eprosima::fastdds::rtps::TCPv4Transport;
 
 #if defined(_WIN32)
 #define GET_PID _getpid
 #else
 #define GET_PID getpid
-#endif
+#endif // if defined(_WIN32)
 
 static uint16_t g_default_port = 0;
 static uint16_t g_output_port = 0;
 static uint16_t g_input_port = 0;
 static std::string g_test_wan_address = "88.88.88.88";
 
-uint16_t get_port(uint16_t offset)
+uint16_t get_port(
+        uint16_t offset)
 {
     uint16_t port = static_cast<uint16_t>(GET_PID());
 
-    if(offset > port)
+    if (offset > port)
     {
         port += offset;
     }
@@ -52,26 +55,27 @@ uint16_t get_port(uint16_t offset)
     return port;
 }
 
-class TCPv4Tests: public ::testing::Test
+class TCPv4Tests : public ::testing::Test
 {
-    public:
-        TCPv4Tests()
-        {
-            eprosima::fastdds::dds::Log::SetVerbosity(eprosima::fastdds::dds::Log::Kind::Info);
-            HELPER_SetDescriptorDefaults();
-        }
+public:
 
-        ~TCPv4Tests()
-        {
-            eprosima::fastdds::dds::Log::KillThread();
-        }
+    TCPv4Tests()
+    {
+        eprosima::fastdds::dds::Log::SetVerbosity(eprosima::fastdds::dds::Log::Kind::Info);
+        HELPER_SetDescriptorDefaults();
+    }
 
-        void HELPER_SetDescriptorDefaults();
+    ~TCPv4Tests()
+    {
+        eprosima::fastdds::dds::Log::KillThread();
+    }
 
-        TCPv4TransportDescriptor descriptor;
-        TCPv4TransportDescriptor descriptorOnlyOutput;
-        std::unique_ptr<std::thread> senderThread;
-        std::unique_ptr<std::thread> receiverThread;
+    void HELPER_SetDescriptorDefaults();
+
+    TCPv4TransportDescriptor descriptor;
+    TCPv4TransportDescriptor descriptorOnlyOutput;
+    std::unique_ptr<std::thread> senderThread;
+    std::unique_ptr<std::thread> receiverThread;
 };
 
 TEST_F(TCPv4Tests, locators_with_kind_1_supported)
@@ -166,12 +170,10 @@ TEST_F(TCPv4Tests, send_and_receive_between_ports)
     eprosima::fastdds::dds::Log::SetCategoryFilter(filter);
     TCPv4TransportDescriptor recvDescriptor;
     recvDescriptor.add_listener_port(g_default_port);
-    recvDescriptor.wait_for_tcp_negotiation = true;
     TCPv4Transport receiveTransportUnderTest(recvDescriptor);
     receiveTransportUnderTest.init();
 
     TCPv4TransportDescriptor sendDescriptor;
-    sendDescriptor.wait_for_tcp_negotiation = true;
     TCPv4Transport sendTransportUnderTest(sendDescriptor);
     sendTransportUnderTest.init();
 
@@ -191,43 +193,45 @@ TEST_F(TCPv4Tests, send_and_receive_between_ports)
     IPLocator::setLogicalPort(outputLocator, 7410);
 
     MockReceiverResource receiver(receiveTransportUnderTest, inputLocator);
-    MockMessageReceiver *msg_recv = dynamic_cast<MockMessageReceiver*>(receiver.CreateMessageReceiver());
+    MockMessageReceiver* msg_recv = dynamic_cast<MockMessageReceiver*>(receiver.CreateMessageReceiver());
     ASSERT_TRUE(receiveTransportUnderTest.IsInputChannelOpen(inputLocator));
 
     SendResourceList send_resource_list;
     ASSERT_TRUE(sendTransportUnderTest.OpenOutputChannel(send_resource_list, outputLocator));
     ASSERT_FALSE(send_resource_list.empty());
-    octet message[5] = { 'H','e','l','l','o' };
+    octet message[5] = { 'H', 'e', 'l', 'l', 'o' };
 
     Semaphore sem;
     std::function<void()> recCallback = [&]()
-    {
-        EXPECT_EQ(memcmp(message, msg_recv->data, 5), 0);
-        sem.post();
-    };
+            {
+                EXPECT_EQ(memcmp(message, msg_recv->data, 5), 0);
+                sem.post();
+            };
 
     msg_recv->setCallback(recCallback);
 
     auto sendThreadFunction = [&]()
-    {
-        bool sent = false;
-        while (!sent)
-        {
-            Locators input_begin(locator_list.begin());
-            Locators input_end(locator_list.end());
+            {
+                bool sent = false;
+                while (!sent)
+                {
+                    Locators input_begin(locator_list.begin());
+                    Locators input_end(locator_list.end());
 
-            sent = send_resource_list.at(0)->send(message, 5, &input_begin, &input_end, (std::chrono::steady_clock::now()+ std::chrono::microseconds(100)));
-            std::this_thread::sleep_for(std::chrono::milliseconds(100));
-        }
-        EXPECT_TRUE(sent);
-    };
+                    sent =
+                            send_resource_list.at(0)->send(message, 5, &input_begin, &input_end,
+                                    (std::chrono::steady_clock::now() + std::chrono::microseconds(100)));
+                    std::this_thread::sleep_for(std::chrono::milliseconds(100));
+                }
+                EXPECT_TRUE(sent);
+            };
 
     senderThread.reset(new std::thread(sendThreadFunction));
     std::this_thread::sleep_for(std::chrono::milliseconds(1));
     senderThread->join();
     sem.wait();
 }
-#endif
+#endif // ifndef __APPLE__
 
 TEST_F(TCPv4Tests, send_is_rejected_if_buffer_size_is_bigger_to_size_specified_in_descriptor)
 {
@@ -256,7 +260,7 @@ TEST_F(TCPv4Tests, send_is_rejected_if_buffer_size_is_bigger_to_size_specified_i
     // Then
     std::vector<octet> receiveBufferWrongSize(descriptor.sendBufferSize + 1);
     ASSERT_FALSE(send_resource_list.at(0)->send(receiveBufferWrongSize.data(), (uint32_t)receiveBufferWrongSize.size(),
-            &destination_begin, &destination_end, (std::chrono::steady_clock::now()+ std::chrono::microseconds(100))));
+            &destination_begin, &destination_end, (std::chrono::steady_clock::now() + std::chrono::microseconds(100))));
 }
 
 TEST_F(TCPv4Tests, RemoteToMainLocal_simply_strips_out_address_leaving_IP_ANY)
@@ -268,7 +272,7 @@ TEST_F(TCPv4Tests, RemoteToMainLocal_simply_strips_out_address_leaving_IP_ANY)
     Locator_t remote_locator;
     remote_locator.kind = LOCATOR_KIND_TCPv4;
     remote_locator.port = g_default_port;
-    IPLocator::setIPv4(remote_locator, 222,222,222,222);
+    IPLocator::setIPv4(remote_locator, 222, 222, 222, 222);
 
     // When
     Locator_t mainLocalLocator = transportUnderTest.RemoteToMainLocal(remote_locator);
@@ -306,23 +310,23 @@ TEST_F(TCPv4Tests, send_to_wrong_interface)
     outputChannelLocator.port = g_output_port;
     outputChannelLocator.kind = LOCATOR_KIND_TCPv4;
     IPLocator::setLogicalPort(outputChannelLocator, 7400);
-    IPLocator::setIPv4(outputChannelLocator, 127,0,0,1); // Loopback
+    IPLocator::setIPv4(outputChannelLocator, 127, 0, 0, 1); // Loopback
     SendResourceList send_resource_list;
     ASSERT_TRUE(transportUnderTest.OpenOutputChannel(send_resource_list, outputChannelLocator));
     ASSERT_FALSE(send_resource_list.empty());
 
     //Sending through a different IP will NOT work, except 0.0.0.0
     Locator_t wrongLocator(outputChannelLocator);
-    IPLocator::setIPv4(wrongLocator, 111,111,111,111);
+    IPLocator::setIPv4(wrongLocator, 111, 111, 111, 111);
 
     LocatorList_t locator_list;
     locator_list.push_back(wrongLocator);
     Locators wrong_begin(locator_list.begin());
     Locators wrong_end(locator_list.end());
 
-    std::vector<octet> message = { 'H','e','l','l','o' };
+    std::vector<octet> message = { 'H', 'e', 'l', 'l', 'o' };
     ASSERT_FALSE(send_resource_list.at(0)->send(message.data(), (uint32_t)message.size(), &wrong_begin, &wrong_end,
-                (std::chrono::steady_clock::now()+ std::chrono::microseconds(100))));
+            (std::chrono::steady_clock::now() + std::chrono::microseconds(100))));
 }
 
 TEST_F(TCPv4Tests, send_to_blocked_interface)
@@ -343,16 +347,16 @@ TEST_F(TCPv4Tests, send_to_blocked_interface)
     //Sending through a different IP will NOT work, except 0.0.0.0
     Locator_t wrongLocator(outputChannelLocator);
     IPLocator::setIPv4(wrongLocator, 111, 111
-    , 111, 111);
+            , 111, 111);
 
     LocatorList_t locator_list;
     locator_list.push_back(wrongLocator);
     Locators wrong_begin(locator_list.begin());
     Locators wrong_end(locator_list.end());
 
-    std::vector<octet> message = { 'H','e','l','l','o' };
+    std::vector<octet> message = { 'H', 'e', 'l', 'l', 'o' };
     ASSERT_FALSE(send_resource_list.at(0)->send(message.data(), (uint32_t)message.size(), &wrong_begin, &wrong_end,
-                (std::chrono::steady_clock::now()+ std::chrono::microseconds(100))));
+            (std::chrono::steady_clock::now() + std::chrono::microseconds(100))));
 }
 
 #ifndef __APPLE__
@@ -379,13 +383,11 @@ TEST_F(TCPv4Tests, send_and_receive_between_allowed_interfaces_ports)
             TCPv4TransportDescriptor recvDescriptor;
             recvDescriptor.interfaceWhiteList.emplace_back(IPLocator::toIPv4string(locator));
             recvDescriptor.add_listener_port(g_default_port);
-            recvDescriptor.wait_for_tcp_negotiation = true;
             TCPv4Transport receiveTransportUnderTest(recvDescriptor);
             receiveTransportUnderTest.init();
 
             TCPv4TransportDescriptor sendDescriptor;
             sendDescriptor.interfaceWhiteList.emplace_back(IPLocator::toIPv4string(locator));
-            sendDescriptor.wait_for_tcp_negotiation = true;
             TCPv4Transport sendTransportUnderTest(sendDescriptor);
             sendTransportUnderTest.init();
 
@@ -397,7 +399,7 @@ TEST_F(TCPv4Tests, send_and_receive_between_allowed_interfaces_ports)
 
             LocatorList_t locator_list;
             locator_list.push_back(inputLocator);
-            
+
             Locator_t outputLocator;
             outputLocator.kind = LOCATOR_KIND_TCPv4;
             outputLocator.set_address(locator);
@@ -406,40 +408,44 @@ TEST_F(TCPv4Tests, send_and_receive_between_allowed_interfaces_ports)
 
             {
                 MockReceiverResource receiver(receiveTransportUnderTest, inputLocator);
-                MockMessageReceiver *msg_recv = dynamic_cast<MockMessageReceiver*>(receiver.CreateMessageReceiver());
+                MockMessageReceiver* msg_recv = dynamic_cast<MockMessageReceiver*>(receiver.CreateMessageReceiver());
                 ASSERT_TRUE(receiveTransportUnderTest.IsInputChannelOpen(inputLocator));
 
                 SendResourceList send_resource_list;
                 ASSERT_TRUE(sendTransportUnderTest.OpenOutputChannel(send_resource_list, outputLocator));
                 ASSERT_FALSE(send_resource_list.empty());
-                octet message[5] = { 'H','e','l','l','o' };
+                octet message[5] = { 'H', 'e', 'l', 'l', 'o' };
                 bool bOk = false;
                 std::function<void()> recCallback = [&]()
-                {
-                    EXPECT_EQ(memcmp(message, msg_recv->data, 5), 0);
-                    bOk = true;
-                };
+                        {
+                            EXPECT_EQ(memcmp(message, msg_recv->data, 5), 0);
+                            bOk = true;
+                        };
 
                 msg_recv->setCallback(recCallback);
 
                 bool bFinish(false);
                 auto sendThreadFunction = [&]()
-                {
-                    Locators input_begin(locator_list.begin());
-                    Locators input_end(locator_list.end());
+                        {
+                            Locators input_begin(locator_list.begin());
+                            Locators input_end(locator_list.end());
 
-                    bool sent = send_resource_list.at(0)->send(message, 5, &input_begin, &input_end, (std::chrono::steady_clock::now()+ std::chrono::microseconds(100)));
-                    while (!bFinish && !sent)
-                    {
-                        Locators input_begin2(locator_list.begin());
-                        Locators input_end2(locator_list.end());
+                            bool sent =
+                                    send_resource_list.at(0)->send(message, 5, &input_begin, &input_end,
+                                            (std::chrono::steady_clock::now() + std::chrono::microseconds(100)));
+                            while (!bFinish && !sent)
+                            {
+                                Locators input_begin2(locator_list.begin());
+                                Locators input_end2(locator_list.end());
 
-                        sent = send_resource_list.at(0)->send(message, 5, &input_begin2, &input_end2, (std::chrono::steady_clock::now()+ std::chrono::microseconds(100)));
-                        std::this_thread::sleep_for(std::chrono::milliseconds(100));
-                    }
-                    EXPECT_TRUE(sent);
-                    //EXPECT_TRUE(transportUnderTest.send(message, 5, outputLocator, inputLocator));
-                };
+                                sent =
+                                        send_resource_list.at(0)->send(message, 5, &input_begin2, &input_end2,
+                                                (std::chrono::steady_clock::now() + std::chrono::microseconds(100)));
+                                std::this_thread::sleep_for(std::chrono::milliseconds(100));
+                            }
+                            EXPECT_TRUE(sent);
+                            //EXPECT_TRUE(transportUnderTest.send(message, 5, outputLocator, inputLocator));
+                        };
 
                 senderThread.reset(new std::thread(sendThreadFunction));
                 std::this_thread::sleep_for(std::chrono::seconds(10));
@@ -490,7 +496,7 @@ TEST_F(TCPv4Tests, send_and_receive_between_secure_ports_client_verifies)
 
     LocatorList_t locator_list;
     locator_list.push_back(inputLocator);
-    
+
     Locator_t outputLocator;
     outputLocator.kind = LOCATOR_KIND_TCPv4;
     IPLocator::setIPv4(outputLocator, 127, 0, 0, 1);
@@ -499,40 +505,44 @@ TEST_F(TCPv4Tests, send_and_receive_between_secure_ports_client_verifies)
 
     {
         MockReceiverResource receiver(receiveTransportUnderTest, inputLocator);
-        MockMessageReceiver *msg_recv = dynamic_cast<MockMessageReceiver*>(receiver.CreateMessageReceiver());
+        MockMessageReceiver* msg_recv = dynamic_cast<MockMessageReceiver*>(receiver.CreateMessageReceiver());
         ASSERT_TRUE(receiveTransportUnderTest.IsInputChannelOpen(inputLocator));
 
         SendResourceList send_resource_list;
         ASSERT_TRUE(sendTransportUnderTest.OpenOutputChannel(send_resource_list, outputLocator));
         ASSERT_FALSE(send_resource_list.empty());
-        octet message[5] = { 'H','e','l','l','o' };
+        octet message[5] = { 'H', 'e', 'l', 'l', 'o' };
 
         Semaphore sem;
         std::function<void()> recCallback = [&]()
-        {
-            EXPECT_EQ(memcmp(message, msg_recv->data, 5), 0);
-            sem.post();
-        };
+                {
+                    EXPECT_EQ(memcmp(message, msg_recv->data, 5), 0);
+                    sem.post();
+                };
 
         msg_recv->setCallback(recCallback);
 
         auto sendThreadFunction = [&]()
-        {
-            Locators input_begin(locator_list.begin());
-            Locators input_end(locator_list.end());
+                {
+                    Locators input_begin(locator_list.begin());
+                    Locators input_end(locator_list.end());
 
-            bool sent = send_resource_list.at(0)->send(message, 5, &input_begin, &input_end, (std::chrono::steady_clock::now()+ std::chrono::microseconds(100)));
-            while (!sent)
-            {
-                Locators input_begin(locator_list.begin());
-                Locators input_end(locator_list.end());
+                    bool sent =
+                            send_resource_list.at(0)->send(message, 5, &input_begin, &input_end,
+                                    (std::chrono::steady_clock::now() + std::chrono::microseconds(100)));
+                    while (!sent)
+                    {
+                        Locators input_begin(locator_list.begin());
+                        Locators input_end(locator_list.end());
 
-                sent = send_resource_list.at(0)->send(message, 5, &input_begin, &input_end, (std::chrono::steady_clock::now()+ std::chrono::microseconds(100)));
-                std::this_thread::sleep_for(std::chrono::milliseconds(100));
-            }
-            EXPECT_TRUE(sent);
-            //EXPECT_TRUE(transportUnderTest.send(message, 5, outputLocator, inputLocator));
-        };
+                        sent =
+                                send_resource_list.at(0)->send(message, 5, &input_begin, &input_end,
+                                        (std::chrono::steady_clock::now() + std::chrono::microseconds(100)));
+                        std::this_thread::sleep_for(std::chrono::milliseconds(100));
+                    }
+                    EXPECT_TRUE(sent);
+                    //EXPECT_TRUE(transportUnderTest.send(message, 5, outputLocator, inputLocator));
+                };
 
         senderThread.reset(new std::thread(sendThreadFunction));
         std::this_thread::sleep_for(std::chrono::milliseconds(1));
@@ -586,7 +596,7 @@ TEST_F(TCPv4Tests, send_and_receive_between_secure_ports_server_verifies)
 
     LocatorList_t locator_list;
     locator_list.push_back(inputLocator);
-    
+
     Locator_t outputLocator;
     outputLocator.kind = LOCATOR_KIND_TCPv4;
     IPLocator::setIPv4(outputLocator, 127, 0, 0, 1);
@@ -595,40 +605,44 @@ TEST_F(TCPv4Tests, send_and_receive_between_secure_ports_server_verifies)
 
     {
         MockReceiverResource receiver(receiveTransportUnderTest, inputLocator);
-        MockMessageReceiver *msg_recv = dynamic_cast<MockMessageReceiver*>(receiver.CreateMessageReceiver());
+        MockMessageReceiver* msg_recv = dynamic_cast<MockMessageReceiver*>(receiver.CreateMessageReceiver());
         ASSERT_TRUE(receiveTransportUnderTest.IsInputChannelOpen(inputLocator));
 
         SendResourceList send_resource_list;
         ASSERT_TRUE(sendTransportUnderTest.OpenOutputChannel(send_resource_list, outputLocator));
         ASSERT_FALSE(send_resource_list.empty());
-        octet message[5] = { 'H','e','l','l','o' };
+        octet message[5] = { 'H', 'e', 'l', 'l', 'o' };
 
         Semaphore sem;
         std::function<void()> recCallback = [&]()
-        {
-            EXPECT_EQ(memcmp(message, msg_recv->data, 5), 0);
-            sem.post();
-        };
+                {
+                    EXPECT_EQ(memcmp(message, msg_recv->data, 5), 0);
+                    sem.post();
+                };
 
         msg_recv->setCallback(recCallback);
 
         auto sendThreadFunction = [&]()
-        {
-            Locators input_begin(locator_list.begin());
-            Locators input_end(locator_list.end());
+                {
+                    Locators input_begin(locator_list.begin());
+                    Locators input_end(locator_list.end());
 
-            bool sent = send_resource_list.at(0)->send(message, 5, &input_begin, &input_end, (std::chrono::steady_clock::now()+ std::chrono::microseconds(100)));
-            while (!sent)
-            {
-                Locators input_begin(locator_list.begin());
-                Locators input_end(locator_list.end());
+                    bool sent =
+                            send_resource_list.at(0)->send(message, 5, &input_begin, &input_end,
+                                    (std::chrono::steady_clock::now() + std::chrono::microseconds(100)));
+                    while (!sent)
+                    {
+                        Locators input_begin(locator_list.begin());
+                        Locators input_end(locator_list.end());
 
-                sent = send_resource_list.at(0)->send(message, 5,  &input_begin, &input_end, (std::chrono::steady_clock::now()+ std::chrono::microseconds(100)));
-                std::this_thread::sleep_for(std::chrono::milliseconds(100));
-            }
-            EXPECT_TRUE(sent);
-            //EXPECT_TRUE(transportUnderTest.send(message, 5, outputLocator, inputLocator));
-        };
+                        sent =
+                                send_resource_list.at(0)->send(message, 5,  &input_begin, &input_end,
+                                        (std::chrono::steady_clock::now() + std::chrono::microseconds(100)));
+                        std::this_thread::sleep_for(std::chrono::milliseconds(100));
+                    }
+                    EXPECT_TRUE(sent);
+                    //EXPECT_TRUE(transportUnderTest.send(message, 5, outputLocator, inputLocator));
+                };
 
         senderThread.reset(new std::thread(sendThreadFunction));
         std::this_thread::sleep_for(std::chrono::milliseconds(1));
@@ -651,7 +665,7 @@ TEST_F(TCPv4Tests, send_and_receive_between_both_secure_ports)
     recvDescriptor.tls_config.cert_chain_file = "mainpubcert.pem";
     recvDescriptor.tls_config.private_key_file = "mainpubkey.pem";
     recvDescriptor.tls_config.verify_file = "maincacert.pem";
-     // Server doesn't accept clients without certs
+    // Server doesn't accept clients without certs
     recvDescriptor.tls_config.verify_mode = TLSVerifyMode::VERIFY_PEER | TLSVerifyMode::VERIFY_FAIL_IF_NO_PEER_CERT;
     recvDescriptor.tls_config.add_option(TLSOptions::DEFAULT_WORKAROUNDS);
     recvDescriptor.tls_config.add_option(TLSOptions::SINGLE_DH_USE);
@@ -693,40 +707,44 @@ TEST_F(TCPv4Tests, send_and_receive_between_both_secure_ports)
 
     {
         MockReceiverResource receiver(receiveTransportUnderTest, inputLocator);
-        MockMessageReceiver *msg_recv = dynamic_cast<MockMessageReceiver*>(receiver.CreateMessageReceiver());
+        MockMessageReceiver* msg_recv = dynamic_cast<MockMessageReceiver*>(receiver.CreateMessageReceiver());
         ASSERT_TRUE(receiveTransportUnderTest.IsInputChannelOpen(inputLocator));
 
         SendResourceList send_resource_list;
         ASSERT_TRUE(sendTransportUnderTest.OpenOutputChannel(send_resource_list, outputLocator));
         ASSERT_FALSE(send_resource_list.empty());
-        octet message[5] = { 'H','e','l','l','o' };
+        octet message[5] = { 'H', 'e', 'l', 'l', 'o' };
 
         Semaphore sem;
         std::function<void()> recCallback = [&]()
-        {
-            EXPECT_EQ(memcmp(message, msg_recv->data, 5), 0);
-            sem.post();
-        };
+                {
+                    EXPECT_EQ(memcmp(message, msg_recv->data, 5), 0);
+                    sem.post();
+                };
 
         msg_recv->setCallback(recCallback);
 
         auto sendThreadFunction = [&]()
-        {
-            Locators input_begin(locator_list.begin());
-            Locators input_end(locator_list.end());
+                {
+                    Locators input_begin(locator_list.begin());
+                    Locators input_end(locator_list.end());
 
-            bool sent = send_resource_list.at(0)->send(message, 5, &input_begin, &input_end, (std::chrono::steady_clock::now()+ std::chrono::microseconds(100)));
-            while (!sent)
-            {
-                Locators input_begin(locator_list.begin());
-                Locators input_end(locator_list.end());
+                    bool sent =
+                            send_resource_list.at(0)->send(message, 5, &input_begin, &input_end,
+                                    (std::chrono::steady_clock::now() + std::chrono::microseconds(100)));
+                    while (!sent)
+                    {
+                        Locators input_begin(locator_list.begin());
+                        Locators input_end(locator_list.end());
 
-                sent = send_resource_list.at(0)->send(message, 5, &input_begin, &input_end, (std::chrono::steady_clock::now()+ std::chrono::microseconds(100)));
-                std::this_thread::sleep_for(std::chrono::milliseconds(100));
-            }
-            EXPECT_TRUE(sent);
-            //EXPECT_TRUE(transportUnderTest.send(message, 5, outputLocator, inputLocator));
-        };
+                        sent =
+                                send_resource_list.at(0)->send(message, 5, &input_begin, &input_end,
+                                        (std::chrono::steady_clock::now() + std::chrono::microseconds(100)));
+                        std::this_thread::sleep_for(std::chrono::milliseconds(100));
+                    }
+                    EXPECT_TRUE(sent);
+                    //EXPECT_TRUE(transportUnderTest.send(message, 5, outputLocator, inputLocator));
+                };
 
         senderThread.reset(new std::thread(sendThreadFunction));
         std::this_thread::sleep_for(std::chrono::milliseconds(1));
@@ -749,7 +767,7 @@ TEST_F(TCPv4Tests, send_and_receive_between_both_secure_ports_untrusted)
     recvDescriptor.tls_config.cert_chain_file = "mainpubcert.pem";
     recvDescriptor.tls_config.private_key_file = "mainpubkey.pem";
     recvDescriptor.tls_config.verify_file = "ca.pem"; // This CA doesn't know about these certificates
-     // Server doesn't accept clients without certs
+    // Server doesn't accept clients without certs
     recvDescriptor.tls_config.verify_mode = TLSVerifyMode::VERIFY_FAIL_IF_NO_PEER_CERT;
     recvDescriptor.tls_config.add_option(TLSOptions::DEFAULT_WORKAROUNDS);
     recvDescriptor.tls_config.add_option(TLSOptions::SINGLE_DH_USE);
@@ -782,7 +800,7 @@ TEST_F(TCPv4Tests, send_and_receive_between_both_secure_ports_untrusted)
 
     LocatorList_t locator_list;
     locator_list.push_back(inputLocator);
-    
+
     Locator_t outputLocator;
     outputLocator.kind = LOCATOR_KIND_TCPv4;
     IPLocator::setIPv4(outputLocator, 127, 0, 0, 1);
@@ -791,44 +809,48 @@ TEST_F(TCPv4Tests, send_and_receive_between_both_secure_ports_untrusted)
 
     {
         MockReceiverResource receiver(receiveTransportUnderTest, inputLocator);
-        MockMessageReceiver *msg_recv = dynamic_cast<MockMessageReceiver*>(receiver.CreateMessageReceiver());
+        MockMessageReceiver* msg_recv = dynamic_cast<MockMessageReceiver*>(receiver.CreateMessageReceiver());
         ASSERT_TRUE(receiveTransportUnderTest.IsInputChannelOpen(inputLocator));
 
         SendResourceList send_resource_list;
         ASSERT_TRUE(sendTransportUnderTest.OpenOutputChannel(send_resource_list, outputLocator));
         ASSERT_FALSE(send_resource_list.empty());
-        octet message[5] = { 'H','e','l','l','o' };
+        octet message[5] = { 'H', 'e', 'l', 'l', 'o' };
 
         Semaphore sem;
         std::function<void()> recCallback = [&]()
-        {
-            ASSERT_TRUE(false);
-            EXPECT_EQ(memcmp(message, msg_recv->data, 5), 0);
-            sem.post();
-        };
+                {
+                    ASSERT_TRUE(false);
+                    EXPECT_EQ(memcmp(message, msg_recv->data, 5), 0);
+                    sem.post();
+                };
 
         msg_recv->setCallback(recCallback);
 
         auto sendThreadFunction = [&]()
-        {
-            Locators input_begin(locator_list.begin());
-            Locators input_end(locator_list.end());
+                {
+                    Locators input_begin(locator_list.begin());
+                    Locators input_end(locator_list.end());
 
-            bool sent = send_resource_list.at(0)->send(message, 5, &input_begin, &input_end, (std::chrono::steady_clock::now()+ std::chrono::microseconds(100)));
-            int count = 0;
-            while (!sent && count < 30)
-            {
-                Locators input_begin(locator_list.begin());
-                Locators input_end(locator_list.end());
+                    bool sent =
+                            send_resource_list.at(0)->send(message, 5, &input_begin, &input_end,
+                                    (std::chrono::steady_clock::now() + std::chrono::microseconds(100)));
+                    int count = 0;
+                    while (!sent && count < 30)
+                    {
+                        Locators input_begin(locator_list.begin());
+                        Locators input_end(locator_list.end());
 
-                sent = send_resource_list.at(0)->send(message, 5, &input_begin, &input_end, (std::chrono::steady_clock::now()+ std::chrono::microseconds(100)));
-                std::this_thread::sleep_for(std::chrono::milliseconds(100));
-                ++count;
-            }
-            EXPECT_FALSE(sent);
-            sem.post();
-            //EXPECT_TRUE(transportUnderTest.send(message, 5, outputLocator, inputLocator));
-        };
+                        sent =
+                                send_resource_list.at(0)->send(message, 5, &input_begin, &input_end,
+                                        (std::chrono::steady_clock::now() + std::chrono::microseconds(100)));
+                        std::this_thread::sleep_for(std::chrono::milliseconds(100));
+                        ++count;
+                    }
+                    EXPECT_FALSE(sent);
+                    sem.post();
+                    //EXPECT_TRUE(transportUnderTest.send(message, 5, outputLocator, inputLocator));
+                };
 
         senderThread.reset(new std::thread(sendThreadFunction));
         std::this_thread::sleep_for(std::chrono::milliseconds(1));
@@ -884,7 +906,7 @@ TEST_F(TCPv4Tests, send_and_receive_between_secure_clients_1)
 
     LocatorList_t locator_list;
     locator_list.push_back(inputLocator);
-    
+
     Locator_t outputLocator;
     outputLocator.kind = LOCATOR_KIND_TCPv4;
     IPLocator::setIPv4(outputLocator, 127, 0, 0, 1);
@@ -893,39 +915,43 @@ TEST_F(TCPv4Tests, send_and_receive_between_secure_clients_1)
 
     {
         MockReceiverResource receiver(receiveTransportUnderTest, inputLocator);
-        MockMessageReceiver *msg_recv = dynamic_cast<MockMessageReceiver*>(receiver.CreateMessageReceiver());
+        MockMessageReceiver* msg_recv = dynamic_cast<MockMessageReceiver*>(receiver.CreateMessageReceiver());
         ASSERT_TRUE(receiveTransportUnderTest.IsInputChannelOpen(inputLocator));
 
         SendResourceList send_resource_list;
         ASSERT_TRUE(sendTransportUnderTest.OpenOutputChannel(send_resource_list, outputLocator));
         ASSERT_FALSE(send_resource_list.empty());
-        octet message[5] = { 'H','e','l','l','o' };
+        octet message[5] = { 'H', 'e', 'l', 'l', 'o' };
 
         Semaphore sem;
         std::function<void()> recCallback = [&]()
-        {
-            EXPECT_EQ(memcmp(message, msg_recv->data, 5), 0);
-            sem.post();
-        };
+                {
+                    EXPECT_EQ(memcmp(message, msg_recv->data, 5), 0);
+                    sem.post();
+                };
 
         msg_recv->setCallback(recCallback);
 
         auto sendThreadFunction = [&]()
-        {
-            Locators input_begin(locator_list.begin());
-            Locators input_end(locator_list.end());
+                {
+                    Locators input_begin(locator_list.begin());
+                    Locators input_end(locator_list.end());
 
-            bool sent = send_resource_list.at(0)->send(message, 5, &input_begin, &input_end, (std::chrono::steady_clock::now()+ std::chrono::microseconds(100)));
-            while (!sent)
-            {
-                Locators input_begin(locator_list.begin());
-                Locators input_end(locator_list.end());
+                    bool sent =
+                            send_resource_list.at(0)->send(message, 5, &input_begin, &input_end,
+                                    (std::chrono::steady_clock::now() + std::chrono::microseconds(100)));
+                    while (!sent)
+                    {
+                        Locators input_begin(locator_list.begin());
+                        Locators input_end(locator_list.end());
 
-                sent = send_resource_list.at(0)->send(message, 5, &input_begin, &input_end, (std::chrono::steady_clock::now()+ std::chrono::microseconds(100)));
-                std::this_thread::sleep_for(std::chrono::milliseconds(100));
-            }
-            EXPECT_TRUE(sent);
-        };
+                        sent =
+                                send_resource_list.at(0)->send(message, 5, &input_begin, &input_end,
+                                        (std::chrono::steady_clock::now() + std::chrono::microseconds(100)));
+                        std::this_thread::sleep_for(std::chrono::milliseconds(100));
+                    }
+                    EXPECT_TRUE(sent);
+                };
 
         senderThread.reset(new std::thread(sendThreadFunction));
         std::this_thread::sleep_for(std::chrono::milliseconds(1));
@@ -934,8 +960,8 @@ TEST_F(TCPv4Tests, send_and_receive_between_secure_clients_1)
     }
 }
 /*
-TEST_F(TCPv4Tests, send_and_receive_between_secure_clients_2)
-{
+   TEST_F(TCPv4Tests, send_and_receive_between_secure_clients_2)
+   {
     eprosima::fastdds::dds::Log::SetVerbosity(eprosima::fastdds::dds::Log::Kind::Info);
 
     using TLSVerifyMode = TCPTransportDescriptor::TLSConfig::TLSVerifyMode;
@@ -1009,7 +1035,7 @@ TEST_F(TCPv4Tests, send_and_receive_between_secure_clients_2)
             {
                 sent = sendTransportUnderTest2.send(message, 5, outputLocator, inputLocator);
                 std::this_thread::sleep_for(std::chrono::milliseconds(100));
-                ++count;
+ ++count;
             }
             EXPECT_FALSE(sent);
             sem.post();
@@ -1021,8 +1047,8 @@ TEST_F(TCPv4Tests, send_and_receive_between_secure_clients_2)
         sem.wait();
     }
     ASSERT_TRUE(sendTransportUnderTest2.CloseOutputChannel(outputLocator));
-}
-*/
+   }
+ */
 
 TEST_F(TCPv4Tests, send_and_receive_between_secure_ports_untrusted_server)
 {
@@ -1037,7 +1063,7 @@ TEST_F(TCPv4Tests, send_and_receive_between_secure_ports_untrusted_server)
     recvDescriptor.tls_config.password = "testkey";
     recvDescriptor.tls_config.cert_chain_file = "mainpubcert.pem";
     recvDescriptor.tls_config.private_key_file = "mainpubkey.pem";
-     // Server doesn't accept clients without certs
+    // Server doesn't accept clients without certs
     recvDescriptor.tls_config.verify_mode = TLSVerifyMode::VERIFY_PEER;
     recvDescriptor.tls_config.add_option(TLSOptions::DEFAULT_WORKAROUNDS);
     recvDescriptor.tls_config.add_option(TLSOptions::SINGLE_DH_USE);
@@ -1067,7 +1093,7 @@ TEST_F(TCPv4Tests, send_and_receive_between_secure_ports_untrusted_server)
 
     LocatorList_t locator_list;
     locator_list.push_back(inputLocator);
-    
+
     Locator_t outputLocator;
     outputLocator.kind = LOCATOR_KIND_TCPv4;
     IPLocator::setIPv4(outputLocator, 127, 0, 0, 1);
@@ -1076,43 +1102,47 @@ TEST_F(TCPv4Tests, send_and_receive_between_secure_ports_untrusted_server)
 
     {
         MockReceiverResource receiver(receiveTransportUnderTest, inputLocator);
-        MockMessageReceiver *msg_recv = dynamic_cast<MockMessageReceiver*>(receiver.CreateMessageReceiver());
+        MockMessageReceiver* msg_recv = dynamic_cast<MockMessageReceiver*>(receiver.CreateMessageReceiver());
         ASSERT_TRUE(receiveTransportUnderTest.IsInputChannelOpen(inputLocator));
 
         SendResourceList send_resource_list;
         ASSERT_TRUE(sendTransportUnderTest.OpenOutputChannel(send_resource_list, outputLocator));
         ASSERT_FALSE(send_resource_list.empty());
-        octet message[5] = { 'H','e','l','l','o' };
+        octet message[5] = { 'H', 'e', 'l', 'l', 'o' };
 
         Semaphore sem;
         std::function<void()> recCallback = [&]()
-        {
-            ASSERT_TRUE(false);
-            EXPECT_EQ(memcmp(message, msg_recv->data, 5), 0);
-            sem.post();
-        };
+                {
+                    ASSERT_TRUE(false);
+                    EXPECT_EQ(memcmp(message, msg_recv->data, 5), 0);
+                    sem.post();
+                };
 
         msg_recv->setCallback(recCallback);
 
         auto sendThreadFunction = [&]()
-        {
-            Locators input_begin(locator_list.begin());
-            Locators input_end(locator_list.end());
+                {
+                    Locators input_begin(locator_list.begin());
+                    Locators input_end(locator_list.end());
 
-            bool sent = send_resource_list.at(0)->send(message, 5, &input_begin, &input_end, (std::chrono::steady_clock::now()+ std::chrono::microseconds(100)));
-            int count = 0;
-            while (!sent && count < 30)
-            {
-                Locators input_begin(locator_list.begin());
-                Locators input_end(locator_list.end());
-                sent = send_resource_list.at(0)->send(message, 5, &input_begin, &input_end, (std::chrono::steady_clock::now()+ std::chrono::microseconds(100)));
-                std::this_thread::sleep_for(std::chrono::milliseconds(100));
-                ++count;
-            }
-            EXPECT_FALSE(sent);
-            sem.post();
-            //EXPECT_TRUE(transportUnderTest.send(message, 5, outputLocator, inputLocator));
-        };
+                    bool sent =
+                            send_resource_list.at(0)->send(message, 5, &input_begin, &input_end,
+                                    (std::chrono::steady_clock::now() + std::chrono::microseconds(100)));
+                    int count = 0;
+                    while (!sent && count < 30)
+                    {
+                        Locators input_begin(locator_list.begin());
+                        Locators input_end(locator_list.end());
+                        sent =
+                                send_resource_list.at(0)->send(message, 5, &input_begin, &input_end,
+                                        (std::chrono::steady_clock::now() + std::chrono::microseconds(100)));
+                        std::this_thread::sleep_for(std::chrono::milliseconds(100));
+                        ++count;
+                    }
+                    EXPECT_FALSE(sent);
+                    sem.post();
+                    //EXPECT_TRUE(transportUnderTest.send(message, 5, outputLocator, inputLocator));
+                };
 
         senderThread.reset(new std::thread(sendThreadFunction));
         std::this_thread::sleep_for(std::chrono::milliseconds(1));
@@ -1130,13 +1160,11 @@ TEST_F(TCPv4Tests, send_and_receive_between_allowed_localhost_interfaces_ports)
     TCPv4TransportDescriptor recvDescriptor;
     recvDescriptor.interfaceWhiteList.emplace_back("127.0.0.1");
     recvDescriptor.add_listener_port(g_default_port);
-    recvDescriptor.wait_for_tcp_negotiation = true;
     TCPv4Transport receiveTransportUnderTest(recvDescriptor);
     receiveTransportUnderTest.init();
 
     TCPv4TransportDescriptor sendDescriptor;
     sendDescriptor.interfaceWhiteList.emplace_back("127.0.0.1");
-    sendDescriptor.wait_for_tcp_negotiation = true;
     TCPv4Transport sendTransportUnderTest(sendDescriptor);
     sendTransportUnderTest.init();
 
@@ -1148,7 +1176,7 @@ TEST_F(TCPv4Tests, send_and_receive_between_allowed_localhost_interfaces_ports)
 
     LocatorList_t locator_list;
     locator_list.push_back(inputLocator);
-    
+
     Locator_t outputLocator;
     outputLocator.kind = LOCATOR_KIND_TCPv4;
     IPLocator::setIPv4(outputLocator, 127, 0, 0, 1);
@@ -1157,40 +1185,44 @@ TEST_F(TCPv4Tests, send_and_receive_between_allowed_localhost_interfaces_ports)
 
     {
         MockReceiverResource receiver(receiveTransportUnderTest, inputLocator);
-        MockMessageReceiver *msg_recv = dynamic_cast<MockMessageReceiver*>(receiver.CreateMessageReceiver());
+        MockMessageReceiver* msg_recv = dynamic_cast<MockMessageReceiver*>(receiver.CreateMessageReceiver());
         ASSERT_TRUE(receiveTransportUnderTest.IsInputChannelOpen(inputLocator));
 
         SendResourceList send_resource_list;
         ASSERT_TRUE(sendTransportUnderTest.OpenOutputChannel(send_resource_list, outputLocator));
         ASSERT_FALSE(send_resource_list.empty());
-        octet message[5] = { 'H','e','l','l','o' };
+        octet message[5] = { 'H', 'e', 'l', 'l', 'o' };
         bool bOk = false;
         std::function<void()> recCallback = [&]()
-        {
-            EXPECT_EQ(memcmp(message, msg_recv->data, 5), 0);
-            bOk = true;
-        };
+                {
+                    EXPECT_EQ(memcmp(message, msg_recv->data, 5), 0);
+                    bOk = true;
+                };
 
         msg_recv->setCallback(recCallback);
 
         bool bFinish(false);
         auto sendThreadFunction = [&]()
-        {
-            Locators input_begin(locator_list.begin());
-            Locators input_end(locator_list.end());
+                {
+                    Locators input_begin(locator_list.begin());
+                    Locators input_end(locator_list.end());
 
-            bool sent = send_resource_list.at(0)->send(message, 5, &input_begin, &input_end, (std::chrono::steady_clock::now()+ std::chrono::microseconds(100)));
-            while (!bFinish && !sent)
-            {
-                Locators input_begin2(locator_list.begin());
-                Locators input_end2(locator_list.end());
+                    bool sent =
+                            send_resource_list.at(0)->send(message, 5, &input_begin, &input_end,
+                                    (std::chrono::steady_clock::now() + std::chrono::microseconds(100)));
+                    while (!bFinish && !sent)
+                    {
+                        Locators input_begin2(locator_list.begin());
+                        Locators input_end2(locator_list.end());
 
-                sent = send_resource_list.at(0)->send(message, 5, &input_begin2, &input_end2, (std::chrono::steady_clock::now()+ std::chrono::microseconds(100)));
-                std::this_thread::sleep_for(std::chrono::milliseconds(100));
-            }
-            EXPECT_TRUE(sent);
-            //EXPECT_TRUE(transportUnderTest.send(message, 5, outputLocator, inputLocator));
-        };
+                        sent =
+                                send_resource_list.at(0)->send(message, 5, &input_begin2, &input_end2,
+                                        (std::chrono::steady_clock::now() + std::chrono::microseconds(100)));
+                        std::this_thread::sleep_for(std::chrono::milliseconds(100));
+                    }
+                    EXPECT_TRUE(sent);
+                    //EXPECT_TRUE(transportUnderTest.send(message, 5, outputLocator, inputLocator));
+                };
 
         senderThread.reset(new std::thread(sendThreadFunction));
         std::this_thread::sleep_for(std::chrono::seconds(10));
@@ -1223,13 +1255,11 @@ TEST_F(TCPv4Tests, send_and_receive_between_blocked_interfaces_ports)
             TCPv4TransportDescriptor recvDescriptor;
             recvDescriptor.interfaceWhiteList.emplace_back(IPLocator::toIPv4string(locator));
             recvDescriptor.add_listener_port(g_default_port);
-            recvDescriptor.wait_for_tcp_negotiation = true;
             TCPv4Transport receiveTransportUnderTest(recvDescriptor);
             receiveTransportUnderTest.init();
 
             TCPv4TransportDescriptor sendDescriptor;
             sendDescriptor.interfaceWhiteList.emplace_back(IPLocator::toIPv4string(locator));
-            sendDescriptor.wait_for_tcp_negotiation = true;
             TCPv4Transport sendTransportUnderTest(sendDescriptor);
             sendTransportUnderTest.init();
 
@@ -1241,7 +1271,7 @@ TEST_F(TCPv4Tests, send_and_receive_between_blocked_interfaces_ports)
 
             LocatorList_t locator_list;
             locator_list.push_back(inputLocator);
-            
+
             Locator_t outputLocator;
             outputLocator.kind = LOCATOR_KIND_TCPv4;
             IPLocator::setIPv4(outputLocator, 127, 0, 0, 1);
@@ -1250,40 +1280,44 @@ TEST_F(TCPv4Tests, send_and_receive_between_blocked_interfaces_ports)
 
             {
                 MockReceiverResource receiver(receiveTransportUnderTest, inputLocator);
-                MockMessageReceiver *msg_recv = dynamic_cast<MockMessageReceiver*>(receiver.CreateMessageReceiver());
+                MockMessageReceiver* msg_recv = dynamic_cast<MockMessageReceiver*>(receiver.CreateMessageReceiver());
                 ASSERT_TRUE(receiveTransportUnderTest.IsInputChannelOpen(inputLocator));
 
                 SendResourceList send_resource_list;
                 ASSERT_TRUE(sendTransportUnderTest.OpenOutputChannel(send_resource_list, outputLocator));
                 ASSERT_FALSE(send_resource_list.empty());
-                octet message[5] = { 'H','e','l','l','o' };
+                octet message[5] = { 'H', 'e', 'l', 'l', 'o' };
                 bool bOk = false;
                 std::function<void()> recCallback = [&]()
-                {
-                    EXPECT_EQ(memcmp(message, msg_recv->data, 5), 0);
-                    bOk = true;
-                };
+                        {
+                            EXPECT_EQ(memcmp(message, msg_recv->data, 5), 0);
+                            bOk = true;
+                        };
 
                 msg_recv->setCallback(recCallback);
 
                 bool bFinished(false);
                 auto sendThreadFunction = [&]()
-                {
-                    Locators input_begin(locator_list.begin());
-                    Locators input_end(locator_list.end());
+                        {
+                            Locators input_begin(locator_list.begin());
+                            Locators input_end(locator_list.end());
 
-                    bool sent = send_resource_list.at(0)->send(message, 5, &input_begin, &input_end, (std::chrono::steady_clock::now()+ std::chrono::microseconds(100)));
-                    while (!bFinished && !sent)
-                    {
-                        Locators input_begin2(locator_list.begin());
-                        Locators input_end2(locator_list.end());
-                        
-                        sent = send_resource_list.at(0)->send(message, 5, &input_begin2, &input_end2, (std::chrono::steady_clock::now()+ std::chrono::microseconds(100)));
-                        std::this_thread::sleep_for(std::chrono::milliseconds(100));
-                    }
-                    EXPECT_FALSE(sent);
-                    //EXPECT_TRUE(transportUnderTest.send(message, 5, outputLocator, inputLocator));
-                };
+                            bool sent =
+                                    send_resource_list.at(0)->send(message, 5, &input_begin, &input_end,
+                                            (std::chrono::steady_clock::now() + std::chrono::microseconds(100)));
+                            while (!bFinished && !sent)
+                            {
+                                Locators input_begin2(locator_list.begin());
+                                Locators input_end2(locator_list.end());
+
+                                sent =
+                                        send_resource_list.at(0)->send(message, 5, &input_begin2, &input_end2,
+                                                (std::chrono::steady_clock::now() + std::chrono::microseconds(100)));
+                                std::this_thread::sleep_for(std::chrono::milliseconds(100));
+                            }
+                            EXPECT_FALSE(sent);
+                            //EXPECT_TRUE(transportUnderTest.send(message, 5, outputLocator, inputLocator));
+                        };
 
                 senderThread.reset(new std::thread(sendThreadFunction));
                 std::this_thread::sleep_for(std::chrono::seconds(10));
@@ -1295,7 +1329,7 @@ TEST_F(TCPv4Tests, send_and_receive_between_blocked_interfaces_ports)
     }
 }
 
-#endif
+#endif // ifndef __APPLE__
 
 void TCPv4Tests::HELPER_SetDescriptorDefaults()
 {
@@ -1303,7 +1337,9 @@ void TCPv4Tests::HELPER_SetDescriptorDefaults()
     descriptor.set_WAN_address(g_test_wan_address);
 }
 
-int main(int argc, char **argv)
+int main(
+        int argc,
+        char** argv)
 {
     eprosima::fastdds::dds::Log::SetVerbosity(eprosima::fastdds::dds::Log::Info);
     g_default_port = get_port(4000);

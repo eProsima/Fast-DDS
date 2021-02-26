@@ -12,27 +12,26 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include <fastdds/rtps/transport/TCPTransportInterface.h>
-#include <fastdds/rtps/transport/tcp/RTCPMessageManager.h>
-#include <rtps/transport/TCPSenderResource.hpp>
-//#include "TCPSenderResource.hpp"
-#include <fastdds/dds/log/Log.hpp>
-#include <fastrtps/utils/IPLocator.h>
-#include <fastdds/rtps/transport/TCPChannelResourceBasic.h>
-#include <fastdds/rtps/transport/TCPAcceptorBasic.h>
-#if TLS_FOUND
-#include <fastdds/rtps/transport/TCPChannelResourceSecure.h>
-#include <fastdds/rtps/transport/TCPAcceptorSecure.h>
-#endif // if TLS_FOUND
+#include <rtps/transport/TCPTransportInterface.h>
 
-#include <asio/steady_timer.hpp>
 #include <utility>
 #include <cstring>
 #include <algorithm>
-
 #include <chrono>
 #include <thread>
 
+#include <asio/steady_timer.hpp>
+#include <fastdds/dds/log/Log.hpp>
+#include <fastrtps/utils/IPLocator.h>
+#include <fastrtps/utils/System.h>
+#include <rtps/transport/tcp/RTCPMessageManager.h>
+#include <rtps/transport/TCPSenderResource.hpp>
+#include <rtps/transport/TCPChannelResourceBasic.h>
+#include <rtps/transport/TCPAcceptorBasic.h>
+#if TLS_FOUND
+#include <rtps/transport/TCPChannelResourceSecure.h>
+#include <rtps/transport/TCPAcceptorSecure.h>
+#endif // if TLS_FOUND
 #include <utils/SystemInfo.hpp>
 
 using namespace std;
@@ -56,6 +55,9 @@ using Log = fastdds::dds::Log;
 static const int s_default_keep_alive_frequency = 5000; // 5 SECONDS
 static const int s_default_keep_alive_timeout = 15000; // 15 SECONDS
 //static const int s_clean_deleted_sockets_pool_timeout = 100; // 100 MILLISECONDS
+
+FASTDDS_TODO_BEFORE(3, 0,
+        "Eliminate s_default_tcp_negotitation_timeout, variable used to initialize deprecate attribute.")
 static const int s_default_tcp_negotitation_timeout = 5000; // 5 Seconds
 
 TCPTransportDescriptor::TCPTransportDescriptor()
@@ -116,6 +118,25 @@ TCPTransportDescriptor& TCPTransportDescriptor::operator =(
     apply_security = t.apply_security;
     tls_config = t.tls_config;
     return *this;
+}
+
+bool TCPTransportDescriptor::operator ==(
+        const TCPTransportDescriptor& t) const
+{
+    return (this->listening_ports == t.listening_ports &&
+           this->keep_alive_frequency_ms == t.keep_alive_frequency_ms &&
+           this->keep_alive_timeout_ms == t.keep_alive_timeout_ms &&
+           this->max_logical_port == t.max_logical_port &&
+           this->logical_port_range == t.logical_port_range &&
+           this->logical_port_increment == t.logical_port_increment &&
+           this->tcp_negotiation_timeout == t.tcp_negotiation_timeout &&
+           this->enable_tcp_nodelay == t.enable_tcp_nodelay &&
+           this->wait_for_tcp_negotiation == t.wait_for_tcp_negotiation &&
+           this->calculate_crc == t.calculate_crc &&
+           this->check_crc == t.check_crc &&
+           this->apply_security == t.apply_security &&
+           this->tls_config == t.tls_config &&
+           SocketTransportDescriptor::operator ==(t));
 }
 
 TCPTransportInterface::TCPTransportInterface(

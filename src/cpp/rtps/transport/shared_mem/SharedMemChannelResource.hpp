@@ -16,11 +16,11 @@
 #define _FASTDDS_SHAREDMEM_CHANNEL_RESOURCE_
 
 #include <fastdds/rtps/messages/MessageReceiver.h>
-#include <fastrtps/transport/ChannelResource.h>
 #include <fastrtps/rtps/common/Locator.h>
 
 #include <rtps/transport/shared_mem/SharedMemManager.hpp>
 #include <rtps/transport/shared_mem/SharedMemTransport.h>
+#include <rtps/transport/ChannelResource.h>
 
 namespace eprosima {
 namespace fastdds {
@@ -49,7 +49,7 @@ public:
             auto packets_file_consumer = std::unique_ptr<SHMPacketFileConsumer>(
                 new SHMPacketFileConsumer(dump_file));
 
-            packet_logger_ = std::make_shared<PacketsLog<SHMPacketFileConsumer> >();
+            packet_logger_ = std::make_shared<PacketsLog<SHMPacketFileConsumer>>();
             packet_logger_->RegisterConsumer(std::move(packets_file_consumer));
         }
 
@@ -107,7 +107,7 @@ public:
         {
             listener_->close();
         }
-        catch(const std::exception& e)
+        catch (const std::exception& e)
         {
             logWarning(RTPS_MSG_IN, e.what());
         }
@@ -130,7 +130,7 @@ private:
             // Blocking receive.
             std::shared_ptr<SharedMemManager::Buffer> message;
 
-            if (!(message = Receive(remote_locator)) )
+            if (!(message = Receive(remote_locator)))
             {
                 continue;
             }
@@ -167,7 +167,6 @@ protected:
     {
         this->thread(std::thread(&SharedMemChannelResource::perform_listen_operation, this, locator));
     }
-
 
     /**
      * Blocking Receive from the specified channel.
@@ -208,7 +207,7 @@ private:
 
     SharedMemChannelResource(
             const SharedMemChannelResource&) = delete;
-    SharedMemChannelResource& operator=(
+    SharedMemChannelResource& operator =(
             const SharedMemChannelResource&) = delete;
 };
 

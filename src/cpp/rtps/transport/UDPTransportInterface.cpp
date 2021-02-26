@@ -12,18 +12,18 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include <fastdds/rtps/transport/TransportInterface.h>
-#include <fastdds/rtps/transport/UDPTransportInterface.h>
-#include <fastdds/rtps/messages/CDRMessage.h>
-#include <rtps/transport/UDPSenderResource.hpp>
-#include <fastdds/dds/log/Log.hpp>
-#include <fastrtps/utils/Semaphore.h>
-#include <fastrtps/utils/IPLocator.h>
+#include <rtps/transport/UDPTransportInterface.h>
 
 #include <utility>
 #include <cstring>
 #include <algorithm>
 #include <chrono>
+
+#include <fastdds/rtps/transport/TransportInterface.h>
+#include <fastdds/rtps/messages/CDRMessage.h>
+#include <fastdds/dds/log/Log.hpp>
+#include <fastrtps/utils/IPLocator.h>
+#include <rtps/transport/UDPSenderResource.hpp>
 
 using namespace std;
 using namespace asio;
@@ -63,11 +63,12 @@ UDPTransportDescriptor::UDPTransportDescriptor()
 {
 }
 
-UDPTransportDescriptor::UDPTransportDescriptor(
-        const UDPTransportDescriptor& t)
-    : SocketTransportDescriptor(t)
-    , m_output_udp_socket(t.m_output_udp_socket)
+bool UDPTransportDescriptor::operator ==(
+        const UDPTransportDescriptor& t) const
 {
+    return (this->m_output_udp_socket == t.m_output_udp_socket &&
+           this->non_blocking_send == t.non_blocking_send &&
+           SocketTransportDescriptor::operator ==(t));
 }
 
 UDPTransportInterface::UDPTransportInterface(

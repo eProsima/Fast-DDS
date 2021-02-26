@@ -79,7 +79,6 @@ void TCPReqRepHelloWorldReplier::init(
     pattr.rtps.useBuiltinTransports = false;
 
     std::shared_ptr<TCPv4TransportDescriptor> descriptor = std::make_shared<TCPv4TransportDescriptor>();
-    descriptor->wait_for_tcp_negotiation = false;
     descriptor->sendBufferSize = 0;
     descriptor->receiveBufferSize = 0;
     if (maxInitialPeer > 0)

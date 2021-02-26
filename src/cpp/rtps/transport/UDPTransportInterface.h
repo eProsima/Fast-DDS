@@ -19,9 +19,9 @@
 #include <thread>
 
 #include <fastdds/rtps/transport/TransportInterface.h>
-#include <fastdds/rtps/transport/UDPChannelResource.h>
 #include <fastdds/rtps/transport/UDPTransportDescriptor.h>
 #include <fastrtps/utils/IPFinder.h>
+#include <rtps/transport/UDPChannelResource.h>
 
 #include <vector>
 #include <memory>
