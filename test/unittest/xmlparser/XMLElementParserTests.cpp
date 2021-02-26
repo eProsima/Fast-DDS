@@ -3174,6 +3174,7 @@ TEST_F(XMLParserTests, getXMLOctetVector_NegativeClauses)
  *      2. CLIENT
  *      3. SERVER
  *      4. BACKUP
+ *      5. SUPER_CLIENT
  * 3. Check XMLEnum with arg ParticipantFilteringFlags_t
  *      1. FILTER_DIFFERENT_PROCESS
  */
