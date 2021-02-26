@@ -72,6 +72,13 @@ void EDPServerPUBListener2::onNewCacheChangeAdded(
     GUID_t auxGUID = iHandle2GUID(change->instanceHandle);
     ReaderHistory* reader_history = sedp_->publications_reader_.second;
 
+    // Related_sample_identity could be lost in message delivered, so we set as sample_identity
+    // An empty related_sample_identity could lead into an empty sample_identity when resending this msg
+    if (change->write_params.related_sample_identity() == SampleIdentity::unknown())
+    {
+        change->write_params.related_sample_identity(change->write_params.sample_identity());
+    }
+
     // String to store the topic of the writer
     std::string topic_name = "";
 

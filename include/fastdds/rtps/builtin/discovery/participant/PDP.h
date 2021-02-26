@@ -49,6 +49,7 @@ struct ParticipantType
     static const char SERVER[];
     static const char CLIENT[];
     static const char BACKUP[];
+    static const char SUPER_CLIENT[];
 };
 
 } // namespace rtps
