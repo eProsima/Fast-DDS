@@ -116,6 +116,9 @@ bool BuiltinProtocols::initBuiltinProtocols(
             break;
 #endif // if HAVE_SQLITE3
 
+        case DiscoveryProtocol_t::SUPER_CLIENT:
+            mp_PDP = new fastrtps::rtps::PDPClient(this, allocation, true);
+
         default:
             logError(RTPS_PDP, "Unknown DiscoveryProtocol_t specified.");
             return false;

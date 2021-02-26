@@ -261,6 +261,7 @@ extern const char* NONE;
 extern const char* CLIENT;
 extern const char* SERVER;
 extern const char* BACKUP;
+extern const char* SUPER_CLIENT;
 extern const char* IGNORE_PARTICIPANT_FLAGS;
 extern const char* FILTER_DIFFERENT_HOST;
 extern const char* FILTER_DIFFERENT_PROCESS;
