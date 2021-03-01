@@ -118,6 +118,7 @@ bool BuiltinProtocols::initBuiltinProtocols(
 
         case DiscoveryProtocol_t::SUPER_CLIENT:
             mp_PDP = new fastrtps::rtps::PDPClient(this, allocation, true);
+            break;
 
         default:
             logError(RTPS_PDP, "Unknown DiscoveryProtocol_t specified.");
