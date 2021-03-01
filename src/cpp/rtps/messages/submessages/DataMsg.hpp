@@ -196,7 +196,8 @@ bool RTPSMessageCreator::addSubmessageData(
     {
         if (copy_data)
         {
-            added_no_error &= CDRMessage::addData(msg, change->serializedPayload.data, change->serializedPayload.length);
+            added_no_error &=
+                    CDRMessage::addData(msg, change->serializedPayload.data, change->serializedPayload.length);
         }
         else if (msg->pos + change->serializedPayload.length > msg->max_size)
         {

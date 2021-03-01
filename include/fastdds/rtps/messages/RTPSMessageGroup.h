@@ -52,7 +52,9 @@ public:
     public:
 
         timeout()
-            : std::runtime_error("timeout") {}
+            : std::runtime_error("timeout")
+        {
+        }
 
         virtual ~timeout() = default;
     };
@@ -70,7 +72,7 @@ public:
             Endpoint* endpoint,
             const RTPSMessageSenderInterface& msg_sender,
             std::chrono::steady_clock::time_point max_blocking_time_point =
-                std::chrono::steady_clock::now() + std::chrono::hours(24));
+            std::chrono::steady_clock::now() + std::chrono::hours(24));
 
     ~RTPSMessageGroup() noexcept(false);
 
@@ -167,8 +169,8 @@ public:
             int32_t count);
 
     inline uint32_t get_current_bytes_processed() const
-    { 
-        return currentBytesSent_ + full_msg_->length; 
+    {
+        return currentBytesSent_ + full_msg_->length;
     }
 
     /**
@@ -245,10 +247,10 @@ private:
     RTPSParticipantImpl* participant_;
 
 #if HAVE_SECURITY
-    
+
     CDRMessage_t* encrypt_msg_;
-    
-#endif
+
+#endif // if HAVE_SECURITY
 
     std::chrono::steady_clock::time_point max_blocking_time_point_;
 
@@ -263,5 +265,5 @@ private:
 } /* namespace fastrtps */
 } /* namespace eprosima */
 
-#endif
+#endif // ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 #endif /* _FASTDDS_RTPS_RTPSMESSAGEGROUP_H_ */

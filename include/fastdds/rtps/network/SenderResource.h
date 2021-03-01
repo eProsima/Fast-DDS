@@ -57,14 +57,14 @@ public:
         if (send_lambda_ && !send_buffers_lambda_)
         {
             logWarning(RTPS, "The usage of send_lambda_ on SenderResource has been deprecated."
-                << std::endl << "Please implement send_buffers_lambda_ instead.");
+                    << std::endl << "Please implement send_buffers_lambda_ instead.");
             return send_lambda_(data, data_size,
                            destination_locators_begin, destination_locators_end, max_blocking_time_point);
         }
 
         NetworkBuffer buf{ data, data_size };
         return send(&buf, 1, data_size,
-            destination_locators_begin, destination_locators_end, max_blocking_time_point);
+                       destination_locators_begin, destination_locators_end, max_blocking_time_point);
     }
 
     /**
@@ -89,14 +89,14 @@ public:
         if (send_buffers_lambda_)
         {
             return send_buffers_lambda_(buffers, num_buffers, total_bytes,
-                            destination_locators_begin, destination_locators_end, max_blocking_time_point);
+                           destination_locators_begin, destination_locators_end, max_blocking_time_point);
         }
 
         if (send_lambda_)
         {
             send_lambda_ = nullptr;
             logError(RTPS, "The usage of send_lambda_ on SenderResource has been deprecated."
-                << std::endl << "Please implement send_buffers_lambda_ instead.");
+                    << std::endl << "Please implement send_buffers_lambda_ instead.");
         }
 
         return false;
