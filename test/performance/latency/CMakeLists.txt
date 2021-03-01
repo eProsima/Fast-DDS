@@ -121,7 +121,6 @@ if(PYTHONINTERP_FOUND)
         endif()
 
         # Set the reliability flag
-        message(${latency_test_name})
         if(${latency_test_name} MATCHES "reliable")
             set(reliability_flag "--reliability")
         else()

@@ -44,7 +44,7 @@ if __name__ == '__main__':
         '-s',
         '--security',
         action='store_true',
-        help='Enables security (Defaults: enable)',
+        help='Enables security (Defaults: disable)',
         required=False
     )
     parser.add_argument(
@@ -58,21 +58,21 @@ if __name__ == '__main__':
         '-d',
         '--data_sharing',
         action='store_true',
-        help='Enable data sharing (Defaults: enable)',
+        help='Enable data sharing (Defaults: disable)',
         required=False,
     )
     parser.add_argument(
         '-l',
         '--data_loans',
         action='store_true',
-        help='Enable the use of the loan sample API (Defaults: enable)',
+        help='Enable the use of the loan sample API (Defaults: disable)',
         required=False,
     )
     parser.add_argument(
         '-r',
         '--reliability',
         action='store_true',
-        help='Run with RELIABLE reliability (Defaults: enable)',
+        help='Run with RELIABLE reliability (Defaults: disable)',
         required=False,
     )
 

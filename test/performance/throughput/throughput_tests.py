@@ -79,7 +79,7 @@ if __name__ == '__main__':
         '-r',
         '--reliability',
         action='store_true',
-        help='Run with RELIABLE reliability (Defaults: enable)',
+        help='Run with RELIABLE reliability (Defaults: disable)',
         required=False,
     )
 
