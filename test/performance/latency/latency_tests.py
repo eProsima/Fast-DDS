@@ -44,7 +44,7 @@ if __name__ == '__main__':
         '-s',
         '--security',
         action='store_true',
-        help='Enables security (Defaults: disable)',
+        help='Enables security (Defaults: enable)',
         required=False
     )
     parser.add_argument(
@@ -58,14 +58,21 @@ if __name__ == '__main__':
         '-d',
         '--data_sharing',
         action='store_true',
-        help='Enable data sharing (Defaults: disable)',
+        help='Enable data sharing (Defaults: enable)',
         required=False,
     )
     parser.add_argument(
         '-l',
         '--data_loans',
         action='store_true',
-        help='Enable the use of the loan sample API (Defaults: disable)',
+        help='Enable the use of the loan sample API (Defaults: enable)',
+        required=False,
+    )
+    parser.add_argument(
+        '-r',
+        '--reliability',
+        action='store_true',
+        help='Run with RELIABLE reliability (Defaults: enable)',
         required=False,
     )
 
@@ -119,20 +126,26 @@ if __name__ == '__main__':
     # Data sharing and loans options
     # modify output file names
     if args.data_sharing and args.data_loans:
-            filename_options += '_data_loans_and_sharing'
+        filename_options += '_data_loans_and_sharing'
     elif args.data_sharing:
-            filename_options += '_data_sharing'
+        filename_options += '_data_sharing'
     elif args.data_loans:
-            filename_options += '_data_loans'
+        filename_options += '_data_loans'
 
     # add flags to the command line
     data_options = []
 
     if args.data_sharing:
-        data_options += [ '--data_sharing' ]
+        data_options += ['--data_sharing']
 
     if args.data_loans:
-        data_options += [ '--data_loans' ]
+        data_options += ['--data_loans']
+
+    reliability_options = []
+    if args.reliability:
+        reliability_options = ['--reliability=reliable']
+    else:
+        reliability_options = ['--reliability=besteffort']
 
     # Environment variables
     executable = os.environ.get('LATENCY_TEST_BIN')
@@ -199,11 +212,13 @@ if __name__ == '__main__':
         pub_command += xml_options
         pub_command += demands_options
         pub_command += data_options
+        pub_command += reliability_options
 
         sub_command += domain_options
         sub_command += xml_options
         sub_command += demands_options
         sub_command += data_options
+        sub_command += reliability_options
 
         print('Publisher command: {}'.format(
             ' '.join(element for element in pub_command)),
@@ -254,6 +269,7 @@ if __name__ == '__main__':
         command += xml_options
         command += demands_options
         command += data_options
+        command += reliability_options
 
         print('Executable command: {}'.format(
             ' '.join(element for element in command)),
