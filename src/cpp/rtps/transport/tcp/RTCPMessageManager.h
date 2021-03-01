@@ -104,7 +104,7 @@ public:
             std::shared_ptr<TCPChannelResource>& channel,
             const ConnectionRequest_t& request,
             const TCPTransactionId& transactionId,
-            fastrtps::rtps::Locator_t& localLocator);
+            Locator& localLocator);
 
     virtual ResponseCode processOpenLogicalPortRequest(
             std::shared_ptr<TCPChannelResource>& channel,

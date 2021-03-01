@@ -725,7 +725,7 @@ void PDPServer::announceParticipantState(
     // Create a list of receivers based on the remote participants known by the discovery database that are direct
     // clients or servers of this server. Add the locators of those remote participants.
     std::vector<GUID_t> remote_readers;
-    LocatorList_t locators;
+    LocatorList locators;
 
     std::vector<GuidPrefix_t> direct_clients_and_servers = discovery_db_.direct_clients_and_servers();
     for (GuidPrefix_t participant_prefix: direct_clients_and_servers)
@@ -1340,7 +1340,7 @@ void PDPServer::ping_remote_servers()
     // Get the servers that have not ACKed this server's DATA(p)
     std::vector<GuidPrefix_t> ack_pending_servers = discovery_db_.ack_pending_servers();
     std::vector<GUID_t> remote_readers;
-    LocatorList_t locators;
+    LocatorList locators;
 
     // Iterate over the list of servers
     for (auto& server : mp_builtin->m_DiscoveryServers)
@@ -1361,7 +1361,7 @@ void PDPServer::ping_remote_servers()
 void PDPServer::send_announcement(
         CacheChange_t* change,
         std::vector<GUID_t> remote_readers,
-        LocatorList_t locators,
+        LocatorList locators,
         bool dispose /* = false */)
 {
 

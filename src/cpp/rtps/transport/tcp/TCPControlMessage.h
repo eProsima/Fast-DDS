@@ -128,7 +128,7 @@ public:
      * @param _transportLocator New value for member transportLocator
      */
     inline void transportLocator(
-            const fastrtps::rtps::Locator_t& _transportLocator)
+            const Locator& _transportLocator)
     {
         m_transportLocator = _transportLocator;
     }
@@ -137,7 +137,7 @@ public:
      * @brief This function returns the value of member transportLocator
      * @return Value of member transportLocator
      */
-    inline fastrtps::rtps::Locator_t transportLocator() const
+    inline Locator transportLocator() const
     {
         return m_transportLocator;
     }
@@ -187,7 +187,7 @@ private:
 
     fastrtps::rtps::ProtocolVersion_t m_protocolVersion;
     fastrtps::rtps::VendorId_t m_vendorId;
-    fastrtps::rtps::Locator_t m_transportLocator;
+    Locator m_transportLocator;
 };
 /*!
  * @brief This class represents the structure OpenLogicalPortRequest_t defined by the user in the IDL file.
@@ -395,7 +395,7 @@ public:
      * @param _locator New value for member locator
      */
     inline void locator(
-            const fastrtps::rtps::Locator_t& _locator)
+            const Locator& _locator)
     {
         m_locator = _locator;
     }
@@ -404,7 +404,7 @@ public:
      * @brief This function returns the value of member locator
      * @return Value of member locator
      */
-    inline fastrtps::rtps::Locator_t locator() const
+    inline Locator locator() const
     {
         return m_locator;
     }
@@ -452,7 +452,7 @@ public:
 
 private:
 
-    fastrtps::rtps::Locator_t m_locator;
+    Locator m_locator;
 };
 
 /*!
@@ -576,7 +576,7 @@ public:
      * @param _locator New value for member locator
      */
     inline void locator(
-            const fastrtps::rtps::Locator_t& _locator)
+            const Locator& _locator)
     {
         m_locator = _locator;
     }
@@ -585,7 +585,7 @@ public:
      * @brief This function returns the value of member locator
      * @return Value of member locator
      */
-    inline fastrtps::rtps::Locator_t locator() const
+    inline Locator locator() const
     {
         return m_locator;
     }
@@ -633,7 +633,7 @@ public:
 
 private:
 
-    fastrtps::rtps::Locator_t m_locator;
+    Locator m_locator;
 };
 /*!
  * @brief This class represents the structure CheckLogicalPortsResponse_t defined by the user in the IDL file.

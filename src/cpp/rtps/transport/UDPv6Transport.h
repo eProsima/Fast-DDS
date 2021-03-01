@@ -55,15 +55,15 @@ public:
      * multicast range, it joins the specified multicast group,
      */
     virtual bool OpenInputChannel(
-            const fastrtps::rtps::Locator_t&,
+            const Locator&,
             TransportReceiverInterface*,
             uint32_t) override;
 
-    virtual fastrtps::rtps::LocatorList_t NormalizeLocator(
-            const fastrtps::rtps::Locator_t& locator) override;
+    virtual LocatorList NormalizeLocator(
+            const Locator& locator) override;
 
     virtual bool is_local_locator(
-            const fastrtps::rtps::Locator_t& locator) const override;
+            const Locator& locator) const override;
 
     TransportDescriptorInterface* get_configuration() override
     {
@@ -71,19 +71,19 @@ public:
     }
 
     virtual bool getDefaultMetatrafficMulticastLocators(
-            fastrtps::rtps::LocatorList_t& locators,
+            LocatorList& locators,
             uint32_t metatraffic_multicast_port) const override;
 
     virtual bool getDefaultMetatrafficUnicastLocators(
-            fastrtps::rtps::LocatorList_t& locators,
+            LocatorList& locators,
             uint32_t metatraffic_unicast_port) const override;
 
     bool getDefaultUnicastLocators(
-            fastrtps::rtps::LocatorList_t& locators,
+            LocatorList& locators,
             uint32_t unicast_port) const override;
 
     virtual void AddDefaultOutputLocator(
-            fastrtps::rtps::LocatorList_t& defaultList) override;
+            LocatorList& defaultList) override;
 
 protected:
 
@@ -92,17 +92,17 @@ protected:
     UDPv6TransportDescriptor configuration_;
 
     virtual bool compare_locator_ip(
-            const fastrtps::rtps::Locator_t& lh,
-            const fastrtps::rtps::Locator_t& rh) const override;
+            const Locator& lh,
+            const Locator& rh) const override;
     virtual bool compare_locator_ip_and_port(
-            const fastrtps::rtps::Locator_t& lh,
-            const fastrtps::rtps::Locator_t& rh) const override;
+            const Locator& lh,
+            const Locator& rh) const override;
 
     virtual void endpoint_to_locator(
             asio::ip::udp::endpoint& endpoint,
-            fastrtps::rtps::Locator_t& locator) override;
+            Locator& locator) override;
     virtual void fill_local_ip(
-            fastrtps::rtps::Locator_t& loc) const override;
+            Locator& loc) const override;
 
     virtual asio::ip::udp::endpoint GenerateAnyAddressEndpoint(
             uint16_t port) override;
@@ -112,10 +112,10 @@ protected:
             const std::string& sIp,
             uint16_t port) override;
     virtual asio::ip::udp::endpoint generate_endpoint(
-            const fastrtps::rtps::Locator_t& loc,
+            const Locator& loc,
             uint16_t port) override;
     virtual asio::ip::udp::endpoint generate_local_endpoint(
-            const fastrtps::rtps::Locator_t& loc,
+            const Locator& loc,
             uint16_t port) override;
     virtual asio::ip::udp generate_protocol() const override;
     virtual void get_ips(
@@ -129,7 +129,7 @@ protected:
 
     //! Checks for whether locator is allowed.
     virtual bool is_locator_allowed(
-            const fastrtps::rtps::Locator_t&) const override;
+            const Locator&) const override;
 
     /**
      * Method to get a list of interfaces to bind the socket associated to the given locator.

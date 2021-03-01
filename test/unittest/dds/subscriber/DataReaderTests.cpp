@@ -46,6 +46,9 @@
 #include <fastdds/dds/subscriber/qos/DataReaderQos.hpp>
 #include <fastdds/dds/subscriber/qos/SubscriberQos.hpp>
 
+#include <fastdds/rtps/common/Locator.h>
+#include <fastrtps/utils/IPLocator.h>
+
 #include "./FooBoundedType.hpp"
 #include "./FooBoundedTypeSupport.hpp"
 
@@ -539,6 +542,108 @@ protected:
     InstanceHandle_t handle_wrong_ = HANDLE_NIL;
 
 };
+
+TEST_F(DataReaderTests, InvalidQos)
+{
+    DataReaderQos qos;
+
+    create_entities();
+
+    ASSERT_TRUE(data_reader_->is_enabled());
+    ASSERT_EQ(ReturnCode_t::RETCODE_OK, data_reader_->get_qos(qos));
+    ASSERT_EQ(qos, DATAREADER_QOS_DEFAULT);
+
+    /* Unsupported QoS */
+    const ReturnCode_t unsupported_code = ReturnCode_t::RETCODE_UNSUPPORTED;
+
+    qos = DATAREADER_QOS_DEFAULT;
+    qos.durability().kind = PERSISTENT_DURABILITY_QOS;
+    EXPECT_EQ(unsupported_code, data_reader_->set_qos(qos));
+
+    qos = DATAREADER_QOS_DEFAULT;
+    qos.destination_order().kind = BY_SOURCE_TIMESTAMP_DESTINATIONORDER_QOS;
+    EXPECT_EQ(unsupported_code, data_reader_->set_qos(qos));
+
+    /* Inconsistent QoS */
+    const ReturnCode_t inconsistent_code = ReturnCode_t::RETCODE_INCONSISTENT_POLICY;
+
+    qos = DATAREADER_QOS_DEFAULT;
+    qos.reliability().kind = BEST_EFFORT_RELIABILITY_QOS;
+    qos.ownership().kind = EXCLUSIVE_OWNERSHIP_QOS;
+    EXPECT_EQ(inconsistent_code, data_reader_->set_qos(qos));
+
+    qos = DATAREADER_QOS_DEFAULT;
+    qos.reader_resource_limits().max_samples_per_read = -1;
+    EXPECT_EQ(inconsistent_code, data_reader_->set_qos(qos));
+
+    qos = DATAREADER_QOS_DEFAULT;
+    eprosima::fastrtps::rtps::Locator_t locator;
+    qos.endpoint().unicast_locator_list.push_back(locator);
+    qos.properties().properties().emplace_back("fastdds.unique_network_flows", "");
+    EXPECT_EQ(inconsistent_code, data_reader_->set_qos(qos));
+
+    qos = DATAREADER_QOS_DEFAULT;
+    qos.endpoint().multicast_locator_list.push_back(locator);
+    qos.properties().properties().emplace_back("fastdds.unique_network_flows", "");
+    EXPECT_EQ(inconsistent_code, data_reader_->set_qos(qos));
+
+    qos = DATAREADER_QOS_DEFAULT;
+    qos.endpoint().remote_locator_list.push_back(locator);
+    qos.properties().properties().emplace_back("fastdds.unique_network_flows", "");
+    EXPECT_EQ(inconsistent_code, data_reader_->set_qos(qos));
+
+    /* Inmutable QoS */
+    const ReturnCode_t inmutable_code = ReturnCode_t::RETCODE_IMMUTABLE_POLICY;
+
+    qos = DATAREADER_QOS_DEFAULT;
+    qos.resource_limits().max_samples++;
+    EXPECT_EQ(inmutable_code, data_reader_->set_qos(qos));
+
+    qos = DATAREADER_QOS_DEFAULT;
+    qos.history().kind = KEEP_ALL_HISTORY_QOS;
+    EXPECT_EQ(inmutable_code, data_reader_->set_qos(qos));
+
+    qos = DATAREADER_QOS_DEFAULT;
+    qos.history().depth++;
+    EXPECT_EQ(inmutable_code, data_reader_->set_qos(qos));
+
+    qos = DATAREADER_QOS_DEFAULT;
+    qos.durability().kind = TRANSIENT_LOCAL_DURABILITY_QOS;
+    EXPECT_EQ(inmutable_code, data_reader_->set_qos(qos));
+
+    qos = DATAREADER_QOS_DEFAULT;
+    qos.reliability().kind = RELIABLE_RELIABILITY_QOS;
+    EXPECT_EQ(inmutable_code, data_reader_->set_qos(qos));
+
+    qos = DATAREADER_QOS_DEFAULT;
+    qos.liveliness().kind = MANUAL_BY_PARTICIPANT_LIVELINESS_QOS;
+    EXPECT_EQ(inmutable_code, data_reader_->set_qos(qos));
+
+    qos = DATAREADER_QOS_DEFAULT;
+    qos.liveliness().lease_duration.seconds = -131;
+    EXPECT_EQ(inmutable_code, data_reader_->set_qos(qos));
+
+    qos = DATAREADER_QOS_DEFAULT;
+    qos.liveliness().announcement_period.seconds = -131;
+    EXPECT_EQ(inmutable_code, data_reader_->set_qos(qos));
+
+    qos = DATAREADER_QOS_DEFAULT;
+    qos.reader_resource_limits().matched_publisher_allocation.initial++;
+    EXPECT_EQ(inmutable_code, data_reader_->set_qos(qos));
+
+    qos = DATAREADER_QOS_DEFAULT;
+    qos.data_sharing().off();
+    EXPECT_EQ(inmutable_code, data_reader_->set_qos(qos));
+
+    qos = DATAREADER_QOS_DEFAULT;
+    uint16_t datasharing_domain = 131u;
+    qos.data_sharing().add_domain_id(datasharing_domain);
+    EXPECT_EQ(inmutable_code, data_reader_->set_qos(qos));
+
+    qos = DATAREADER_QOS_DEFAULT;
+    qos.properties().properties().emplace_back("fastdds.unique_network_flows", "");
+    EXPECT_EQ(inmutable_code, data_reader_->set_qos(qos));
+}
 
 /**
  * This test checks all variants of read / take in several situations for a keyed plain type.
@@ -1336,6 +1441,51 @@ TEST_F(DataReaderTests, SetListener)
                 std::get<1>(testing_case),
                 std::get<2>(testing_case));
     }
+}
+
+TEST_F(DataReaderTests, get_listening_locators)
+{
+    using IPLocator = eprosima::fastrtps::rtps::IPLocator;
+
+    // Prepare specific listening locators
+    rtps::Locator unicast_locator;
+    IPLocator::setIPv4(unicast_locator, 127, 0, 0, 1);
+    IPLocator::setPortRTPS(unicast_locator, 7399);
+
+    rtps::Locator multicast_locator;
+    IPLocator::setIPv4(multicast_locator, 239, 127, 0, 1);
+    IPLocator::setPortRTPS(multicast_locator, 7398);
+
+    // Set specific locators on DataReader QoS
+    DataReaderQos reader_qos = DATAREADER_QOS_DEFAULT;
+    reader_qos.endpoint().unicast_locator_list.push_back(unicast_locator);
+    reader_qos.endpoint().multicast_locator_list.push_back(multicast_locator);
+
+    // We will create a disabled DataReader, so we can check RETCODE_NOT_ENABLED
+    SubscriberQos subscriber_qos = SUBSCRIBER_QOS_DEFAULT;
+    subscriber_qos.entity_factory().autoenable_created_entities = false;
+
+    create_entities(nullptr, reader_qos, subscriber_qos);
+    EXPECT_FALSE(data_reader_->is_enabled());
+
+    // Calling on disabled reader should return NOT_ENABLED
+    rtps::LocatorList locator_list;
+    EXPECT_EQ(ReturnCode_t::RETCODE_NOT_ENABLED, data_reader_->get_listening_locators(locator_list));
+
+    // Enable and try again
+    EXPECT_EQ(ReturnCode_t::RETCODE_OK, data_reader_->enable());
+    EXPECT_EQ(ReturnCode_t::RETCODE_OK, data_reader_->get_listening_locators(locator_list));
+
+    EXPECT_EQ(locator_list.size(), 2u);
+    bool unicast_found = false;
+    bool multicast_found = false;
+    for (const rtps::Locator& locator : locator_list)
+    {
+        unicast_found |= (locator == unicast_locator);
+        multicast_found |= (locator == multicast_locator);
+    }
+    EXPECT_TRUE(unicast_found);
+    EXPECT_TRUE(multicast_found);
 }
 
 class DataReaderUnsupportedTests : public ::testing::Test

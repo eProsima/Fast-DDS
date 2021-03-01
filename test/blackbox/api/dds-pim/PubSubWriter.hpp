@@ -297,6 +297,11 @@ public:
         destroy();
     }
 
+    eprosima::fastdds::dds::DataWriter& get_native_writer() const
+    {
+        return *datawriter_;
+    }
+
     void init()
     {
         if (!xml_file_.empty())
@@ -896,7 +901,7 @@ public:
     }
 
     PubSubWriter& unicastLocatorList(
-            eprosima::fastrtps::rtps::LocatorList_t unicastLocators)
+            const eprosima::fastdds::rtps::LocatorList& unicastLocators)
     {
         datawriter_qos_.endpoint().unicast_locator_list = unicastLocators;
         return *this;
@@ -906,7 +911,7 @@ public:
             const std::string& ip,
             uint32_t port)
     {
-        eprosima::fastrtps::rtps::Locator_t loc;
+        eprosima::fastdds::rtps::Locator loc;
         if (!IPLocator::setIPv4(loc, ip))
         {
             loc.kind = LOCATOR_KIND_UDPv6;
@@ -923,7 +928,7 @@ public:
     }
 
     PubSubWriter& multicastLocatorList(
-            eprosima::fastrtps::rtps::LocatorList_t multicastLocators)
+            const eprosima::fastdds::rtps::LocatorList& multicastLocators)
     {
         datawriter_qos_.endpoint().multicast_locator_list = multicastLocators;
         return *this;
@@ -933,7 +938,7 @@ public:
             const std::string& ip,
             uint32_t port)
     {
-        eprosima::fastrtps::rtps::Locator_t loc;
+        eprosima::fastdds::rtps::Locator loc;
         if (!IPLocator::setIPv4(loc, ip))
         {
             loc.kind = LOCATOR_KIND_UDPv6;
@@ -950,7 +955,7 @@ public:
     }
 
     PubSubWriter& metatraffic_unicast_locator_list(
-            eprosima::fastrtps::rtps::LocatorList_t unicastLocators)
+            const eprosima::fastdds::rtps::LocatorList& unicastLocators)
     {
         participant_qos_.wire_protocol().builtin.metatrafficUnicastLocatorList = unicastLocators;
         return *this;
@@ -960,7 +965,7 @@ public:
             const std::string& ip,
             uint32_t port)
     {
-        eprosima::fastrtps::rtps::Locator_t loc;
+        eprosima::fastdds::rtps::Locator loc;
         if (!IPLocator::setIPv4(loc, ip))
         {
             loc.kind = LOCATOR_KIND_UDPv6;
@@ -977,7 +982,7 @@ public:
     }
 
     PubSubWriter& metatraffic_multicast_locator_list(
-            eprosima::fastrtps::rtps::LocatorList_t unicastLocators)
+            const eprosima::fastdds::rtps::LocatorList& unicastLocators)
     {
         participant_qos_.wire_protocol().builtin.metatrafficMulticastLocatorList = unicastLocators;
         return *this;
@@ -987,7 +992,7 @@ public:
             const std::string& ip,
             uint32_t port)
     {
-        eprosima::fastrtps::rtps::Locator_t loc;
+        eprosima::fastdds::rtps::Locator loc;
         if (!IPLocator::setIPv4(loc, ip))
         {
             loc.kind = LOCATOR_KIND_UDPv6;
@@ -1004,7 +1009,7 @@ public:
     }
 
     PubSubWriter& set_default_unicast_locators(
-            const eprosima::fastrtps::rtps::LocatorList_t& locators)
+            const eprosima::fastdds::rtps::LocatorList& locators)
     {
         participant_qos_.wire_protocol().default_unicast_locator_list = locators;
         return *this;
@@ -1014,7 +1019,7 @@ public:
             const std::string& ip,
             uint32_t port)
     {
-        eprosima::fastrtps::rtps::Locator_t loc;
+        eprosima::fastdds::rtps::Locator loc;
         if (!IPLocator::setIPv4(loc, ip))
         {
             loc.kind = LOCATOR_KIND_UDPv6;
@@ -1031,7 +1036,7 @@ public:
     }
 
     PubSubWriter& set_default_multicast_locators(
-            const eprosima::fastrtps::rtps::LocatorList_t& locators)
+            const eprosima::fastdds::rtps::LocatorList& locators)
     {
         participant_qos_.wire_protocol().default_multicast_locator_list = locators;
         return *this;
@@ -1041,7 +1046,7 @@ public:
             const std::string& ip,
             uint32_t port)
     {
-        eprosima::fastrtps::rtps::Locator_t loc;
+        eprosima::fastdds::rtps::Locator loc;
         if (!IPLocator::setIPv4(loc, ip))
         {
             loc.kind = LOCATOR_KIND_UDPv6;
@@ -1058,7 +1063,7 @@ public:
     }
 
     PubSubWriter& initial_peers(
-            eprosima::fastrtps::rtps::LocatorList_t initial_peers)
+            const eprosima::fastdds::rtps::LocatorList& initial_peers)
     {
         participant_qos_.wire_protocol().builtin.initialPeersList = initial_peers;
         return *this;
@@ -1074,14 +1079,14 @@ public:
     }
 
     PubSubWriter& property_policy(
-            const eprosima::fastrtps::rtps::PropertyPolicy property_policy)
+            const eprosima::fastrtps::rtps::PropertyPolicy& property_policy)
     {
         participant_qos_.properties() = property_policy;
         return *this;
     }
 
     PubSubWriter& entity_property_policy(
-            const eprosima::fastrtps::rtps::PropertyPolicy property_policy)
+            const eprosima::fastrtps::rtps::PropertyPolicy& property_policy)
     {
         datawriter_qos_.properties() = property_policy;
         return *this;
@@ -1108,13 +1113,13 @@ public:
     {
         participant_qos_.wire_protocol().participant_id = participantId;
 
-        eprosima::fastrtps::rtps::LocatorList_t default_unicast_locators;
-        eprosima::fastrtps::rtps::Locator_t default_unicast_locator;
+        eprosima::fastdds::rtps::LocatorList default_unicast_locators;
+        eprosima::fastdds::rtps::Locator default_unicast_locator;
 
         default_unicast_locators.push_back(default_unicast_locator);
         participant_qos_.wire_protocol().builtin.metatrafficUnicastLocatorList = default_unicast_locators;
 
-        eprosima::fastrtps::rtps::Locator_t loopback_locator;
+        eprosima::fastdds::rtps::Locator loopback_locator;
         IPLocator::setIPv4(loopback_locator, 127, 0, 0, 1);
         participant_qos_.wire_protocol().builtin.initialPeersList.push_back(loopback_locator);
         return *this;

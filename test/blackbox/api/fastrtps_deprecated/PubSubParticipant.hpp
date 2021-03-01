@@ -238,6 +238,18 @@ public:
         return false;
     }
 
+    eprosima::fastrtps::Publisher& get_native_writer(
+            unsigned int index)
+    {
+        return *(publishers_[index]);
+    }
+
+    eprosima::fastrtps::Subscriber& get_native_reader(
+            unsigned int index)
+    {
+        return *(subscribers_[index]);
+    }
+
     bool send_sample(
             type& msg,
             unsigned int index = 0)
@@ -392,6 +404,20 @@ public:
             const eprosima::fastrtps::rtps::PropertyPolicy property_policy)
     {
         participant_attr_.rtps.properties = property_policy;
+        return *this;
+    }
+
+    PubSubParticipant& pub_property_policy(
+            const eprosima::fastrtps::rtps::PropertyPolicy property_policy)
+    {
+        publisher_attr_.properties = property_policy;
+        return *this;
+    }
+
+    PubSubParticipant& sub_property_policy(
+            const eprosima::fastrtps::rtps::PropertyPolicy property_policy)
+    {
+        subscriber_attr_.properties = property_policy;
         return *this;
     }
 

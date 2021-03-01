@@ -85,8 +85,8 @@ public:
 
     void dump_packet(
             const std::string timestamp,
-            const fastrtps::rtps::Locator_t& from,
-            const fastrtps::rtps::Locator_t& to,
+            const Locator& from,
+            const Locator& to,
             const fastrtps::rtps::octet* buf,
             const uint32_t len)
     {
@@ -166,8 +166,8 @@ public:
     struct Pkt
     {
         std::string timestamp;
-        fastrtps::rtps::Locator_t from;
-        fastrtps::rtps::Locator_t to;
+        Locator from;
+        Locator to;
         std::shared_ptr<SharedMemManager::Buffer> buffer;
     };
 

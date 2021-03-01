@@ -38,7 +38,7 @@ public:
     TCPAcceptorBasic(
             asio::io_service& io_service,
             TCPTransportInterface* parent,
-            const fastrtps::rtps::Locator_t& locator);
+            const Locator& locator);
 
     /**
      * Constructor
@@ -49,7 +49,7 @@ public:
     TCPAcceptorBasic(
             asio::io_service& io_service,
             const std::string& interface,
-            const fastrtps::rtps::Locator_t& locator);
+            const Locator& locator);
 
     /**
      * Destructor

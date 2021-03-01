@@ -461,7 +461,7 @@ void PDPClient::announceParticipantState(
             change->write_params = wp;
 
             std::vector<GUID_t> remote_readers;
-            LocatorList_t locators;
+            LocatorList locators;
 
             //  TODO: modify announcement mechanism to allow direct message sending
             //for (auto it = pW->matchedReadersBegin(); it != pW->matchedReadersEnd(); ++it)
@@ -513,7 +513,7 @@ void PDPClient::announceParticipantState(
                 std::lock_guard<std::recursive_mutex> lock(*getMutex());
 
                 std::vector<GUID_t> remote_readers;
-                LocatorList_t locators;
+                LocatorList locators;
 
                 for (auto& svr : mp_builtin->m_DiscoveryServers)
                 {

@@ -42,8 +42,8 @@ public:
     virtual void OnDataReceived(
             const fastrtps::rtps::octet* data,
             const uint32_t size,
-            const fastrtps::rtps::Locator_t& local_locator,
-            const fastrtps::rtps::Locator_t& remote_locator) = 0;
+            const Locator& local_locator,
+            const Locator& remote_locator) = 0;
 };
 
 } // namespace rtps

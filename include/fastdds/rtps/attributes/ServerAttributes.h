@@ -90,9 +90,9 @@ public:
     }
 
     //!Metatraffic Unicast Locator List
-    fastrtps::rtps::LocatorList_t metatrafficUnicastLocatorList;
+    LocatorList metatrafficUnicastLocatorList;
     //!Metatraffic Multicast Locator List.
-    fastrtps::rtps::LocatorList_t metatrafficMulticastLocatorList;
+    LocatorList metatrafficMulticastLocatorList;
 
     //!Guid prefix
     fastrtps::rtps::GuidPrefix_t guidPrefix;

@@ -280,6 +280,11 @@ public:
         }
     }
 
+    eprosima::fastrtps::Subscriber& get_native_reader() const
+    {
+        return *subscriber_;
+    }
+
     void init()
     {
         participant_attr_.domainId = (uint32_t)GET_PID() % 230;

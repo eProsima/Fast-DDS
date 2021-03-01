@@ -1630,10 +1630,10 @@ std::vector<fastrtps::rtps::GuidPrefix_t> DiscoveryDataBase::ack_pending_servers
     return ack_pending_servers;
 }
 
-fastrtps::rtps::LocatorList_t DiscoveryDataBase::participant_metatraffic_locators(
+LocatorList DiscoveryDataBase::participant_metatraffic_locators(
         fastrtps::rtps::GuidPrefix_t participant_guid_prefix)
 {
-    fastrtps::rtps::LocatorList_t locators;
+    LocatorList locators;
     auto part_it = participants_.find(participant_guid_prefix);
     if (part_it != participants_.end())
     {

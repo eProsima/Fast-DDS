@@ -172,6 +172,14 @@ public:
 
     std::shared_ptr<rtps::IPayloadPool> payload_pool();
 
+    /**
+     * Get the list of locators on which this subscriber is listening.
+     *
+     * @param [out] locators  LocatorList_t where the list of locators will be stored.
+     */
+    void get_listening_locators(
+            rtps::LocatorList_t& locators) const;
+
 private:
 
     //!Participant

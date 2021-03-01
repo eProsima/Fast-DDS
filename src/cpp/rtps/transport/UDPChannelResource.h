@@ -38,6 +38,12 @@ inline eProsimaUDPSocket* getSocketPtr(
     return &socket;
 }
 
+inline const eProsimaUDPSocket* getSocketPtr(
+        const eProsimaUDPSocket& socket)
+{
+    return &socket;
+}
+
 inline eProsimaUDPSocket moveSocket(
         eProsimaUDPSocket& socket)
 {
@@ -64,6 +70,12 @@ typedef eProsimaUDPSocket eProsimaUDPSocketRef;
 // UDP
 inline eProsimaUDPSocket getSocketPtr(
         eProsimaUDPSocket socket)
+{
+    return socket;
+}
+
+inline const eProsimaUDPSocket& getSocketPtr(
+        const eProsimaUDPSocket& socket)
 {
     return socket;
 }
@@ -96,7 +108,7 @@ public:
             UDPTransportInterface* transport,
             eProsimaUDPSocket& socket,
             uint32_t maxMsgSize,
-            const fastrtps::rtps::Locator_t& locator,
+            const Locator& locator,
             const std::string& sInterface,
             TransportReceiverInterface* receiver);
 
@@ -171,7 +183,7 @@ protected:
      * @param input_locator - Locator that triggered the creation of the resource
      */
     void perform_listen_operation(
-            fastrtps::rtps::Locator_t input_locator);
+            Locator input_locator);
 
     /**
      * Blocking Receive from the specified channel.
@@ -185,7 +197,7 @@ protected:
             fastrtps::rtps::octet* receive_buffer,
             uint32_t receive_buffer_capacity,
             uint32_t& receive_buffer_size,
-            fastrtps::rtps::Locator_t& remote_locator);
+            Locator& remote_locator);
 
 private:
 

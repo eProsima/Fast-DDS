@@ -21,13 +21,12 @@ namespace eprosima {
 namespace fastdds {
 namespace rtps {
 
-using Locator_t = fastrtps::rtps::Locator_t;
 using IPLocator = fastrtps::rtps::IPLocator;
 
 TCPAcceptorBasic::TCPAcceptorBasic(
         asio::io_service& io_service,
         TCPTransportInterface* parent,
-        const Locator_t& locator)
+        const Locator& locator)
     : TCPAcceptor(io_service, parent, locator)
     , socket_(*io_service_)
 {
@@ -37,7 +36,7 @@ TCPAcceptorBasic::TCPAcceptorBasic(
 TCPAcceptorBasic::TCPAcceptorBasic(
         asio::io_service& io_service,
         const std::string& interface,
-        const Locator_t& locator)
+        const Locator& locator)
     : TCPAcceptor(io_service, interface, locator)
     , socket_(*io_service_)
 {
@@ -50,7 +49,7 @@ void TCPAcceptorBasic::accept(
 {
     using asio::ip::tcp;
 
-    const Locator_t locator = locator_;
+    const Locator locator = locator_;
 
     acceptor_.async_accept(socket_,
             [parent, locator, this](const std::error_code& error)

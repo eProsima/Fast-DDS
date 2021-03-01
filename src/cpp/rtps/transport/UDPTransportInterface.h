@@ -34,6 +34,8 @@ namespace rtps {
 
 class UDPTransportInterface : public TransportInterface
 {
+    friend class UDPSenderResource;
+
 public:
 
     virtual ~UDPTransportInterface() override;
@@ -42,7 +44,7 @@ public:
 
     //! Removes the listening socket for the specified port.
     virtual bool CloseInputChannel(
-            const fastrtps::rtps::Locator_t&) override;
+            const Locator&) override;
 
     //! Removes all outbound sockets on the given port.
     void CloseOutputChannel(
@@ -50,8 +52,8 @@ public:
 
     //! Reports whether Locators correspond to the same port.
     virtual bool DoInputLocatorsMatch(
-            const fastrtps::rtps::Locator_t&,
-            const fastrtps::rtps::Locator_t&) const override;
+            const Locator&,
+            const Locator&) const override;
 
     virtual const UDPTransportDescriptor* configuration() const = 0;
 
@@ -59,24 +61,24 @@ public:
 
     //! Checks whether there are open and bound sockets for the given port.
     virtual bool IsInputChannelOpen(
-            const fastrtps::rtps::Locator_t&) const override;
+            const Locator&) const override;
 
     //! Checks for TCP kinds.
     virtual bool IsLocatorSupported(
-            const fastrtps::rtps::Locator_t&) const override;
+            const Locator&) const override;
 
     //! Opens a socket on the given address and port (as long as they are white listed).
     virtual bool OpenOutputChannel(
             SendResourceList& sender_resource_list,
-            const fastrtps::rtps::Locator_t&) override;
+            const Locator&) override;
 
     /**
      * Converts a given remote locator (that is, a locator referring to a remote
      * destination) to the main local locator whose channel can write to that
      * destination. In this case it will return a 0.0.0.0 address on that port.
      */
-    virtual fastrtps::rtps::Locator_t RemoteToMainLocal(
-            const fastrtps::rtps::Locator_t&) const override;
+    virtual Locator RemoteToMainLocal(
+            const Locator&) const override;
 
     /**
      * Transforms a remote locator into a locator optimized for local communications.
@@ -90,8 +92,8 @@ public:
      * @return false if the input locator is not supported/allowed by this transport, true otherwise.
      */
     virtual bool transform_remote_locator(
-            const fastrtps::rtps::Locator_t& remote_locator,
-            fastrtps::rtps::Locator_t& result_locator) const override;
+            const Locator& remote_locator,
+            Locator& result_locator) const override;
 
     /**
      * Blocking Send through the specified channel. In both modes, using a localLocator of 0.0.0.0 will
@@ -133,21 +135,21 @@ public:
             fastrtps::rtps::LocatorSelector& selector) const override;
 
     virtual bool fillMetatrafficMulticastLocator(
-            fastrtps::rtps::Locator_t& locator,
+            Locator& locator,
             uint32_t metatraffic_multicast_port) const override;
 
     virtual bool fillMetatrafficUnicastLocator(
-            fastrtps::rtps::Locator_t& locator,
+            Locator& locator,
             uint32_t metatraffic_unicast_port) const override;
 
     virtual bool configureInitialPeerLocator(
-            fastrtps::rtps::Locator_t& locator,
+            Locator& locator,
             const fastrtps::rtps::PortParameters& port_params,
             uint32_t domainId,
-            fastrtps::rtps::LocatorList_t& list) const override;
+            LocatorList& list) const override;
 
     virtual bool fillUnicastLocator(
-            fastrtps::rtps::Locator_t& locator,
+            Locator& locator,
             uint32_t well_known_port) const override;
 
     virtual uint32_t max_recv_buffer_size() const override
@@ -173,17 +175,17 @@ protected:
             int32_t transport_kind);
 
     virtual bool compare_locator_ip(
-            const fastrtps::rtps::Locator_t& lh,
-            const fastrtps::rtps::Locator_t& rh) const = 0;
+            const Locator& lh,
+            const Locator& rh) const = 0;
     virtual bool compare_locator_ip_and_port(
-            const fastrtps::rtps::Locator_t& lh,
-            const fastrtps::rtps::Locator_t& rh) const = 0;
+            const Locator& lh,
+            const Locator& rh) const = 0;
 
     virtual void endpoint_to_locator(
             asio::ip::udp::endpoint& endpoint,
-            fastrtps::rtps::Locator_t& locator) = 0;
+            Locator& locator) = 0;
     virtual void fill_local_ip(
-            fastrtps::rtps::Locator_t& loc) const = 0;
+            Locator& loc) const = 0;
 
     virtual asio::ip::udp::endpoint GenerateAnyAddressEndpoint(
             uint16_t port) = 0;
@@ -193,10 +195,10 @@ protected:
             const std::string& sIp,
             uint16_t port) = 0;
     virtual asio::ip::udp::endpoint generate_endpoint(
-            const fastrtps::rtps::Locator_t& loc,
+            const Locator& loc,
             uint16_t port) = 0;
     virtual asio::ip::udp::endpoint generate_local_endpoint(
-            const fastrtps::rtps::Locator_t& loc,
+            const Locator& loc,
             uint16_t port) = 0;
     virtual asio::ip::udp generate_protocol() const = 0;
     virtual void get_ips(
@@ -218,13 +220,13 @@ protected:
     virtual std::vector<std::string> get_binding_interfaces_list() = 0;
 
     bool OpenAndBindInputSockets(
-            const fastrtps::rtps::Locator_t& locator,
+            const Locator& locator,
             TransportReceiverInterface* receiver,
             bool is_multicast,
             uint32_t maxMsgSize);
     UDPChannelResource* CreateInputChannelResource(
             const std::string& sInterface,
-            const fastrtps::rtps::Locator_t& locator,
+            const Locator& locator,
             bool is_multicast,
             uint32_t maxMsgSize,
             TransportReceiverInterface* receiver);
@@ -251,7 +253,7 @@ protected:
             const fastrtps::rtps::octet* send_buffer,
             uint32_t send_buffer_size,
             eProsimaUDPSocket& socket,
-            const fastrtps::rtps::Locator_t& remote_locator,
+            const Locator& remote_locator,
             bool only_multicast_purpose,
             const std::chrono::microseconds& timeout);
 };

@@ -467,6 +467,12 @@ bool DataReader::is_sample_valid(
     return impl_->is_sample_valid(data, info);
 }
 
+ReturnCode_t DataReader::get_listening_locators(
+        rtps::LocatorList& locators) const
+{
+    return impl_->get_listening_locators(locators);
+}
+
 } /* namespace dds */
 } /* namespace fastdds */
 } /* namespace eprosima */
