@@ -33,9 +33,9 @@ namespace rtps {
 struct NetworkBuffer final
 {
     //! Pointer to the buffer where the data is stored.
-    const void* buffer = nullptr;
+    const void* buffer;
     //! Number of bytes to use starting at @c buffer.
-    uint32_t length = 0;
+    uint32_t length;
 };
 
 }  // namespace rtps
