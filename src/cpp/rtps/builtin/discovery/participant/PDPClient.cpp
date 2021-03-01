@@ -106,7 +106,7 @@ void PDPClient::initializeParticipantProxyData(
     {
         participant_data->m_properties.push_back(std::pair<std::string,
                 std::string>({fastdds::dds::parameter_property_participant_type,
-                fastdds::rtps::ParticipantType::CLIENT}));
+                              fastdds::rtps::ParticipantType::CLIENT}));
     }
     participant_data->m_properties.push_back(std::pair<std::string,
             std::string>({fastdds::dds::parameter_property_ds_version,

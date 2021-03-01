@@ -100,7 +100,8 @@ public:
         return participant_change_data_.is_local();
     }
 
-    void participant_change_data(const DiscoveryParticipantChangeData& new_participant_change_data)
+    void participant_change_data(
+            const DiscoveryParticipantChangeData& new_participant_change_data)
     {
         participant_change_data_ = new_participant_change_data;
     }
@@ -125,7 +126,8 @@ public:
         return writers_;
     }
 
-    void to_json(nlohmann::json& j) const;
+    void to_json(
+            nlohmann::json& j) const;
 
 private:
 

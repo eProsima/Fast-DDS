@@ -113,7 +113,7 @@ RTPSParticipantImpl::RTPSParticipantImpl(
     , type_check_fn_(nullptr)
 #if HAVE_SECURITY
     , m_security_manager(this)
-#endif
+#endif // if HAVE_SECURITY
     , mp_participantListener(plisten)
     , mp_userParticipant(par)
     , mp_mutex(new std::recursive_mutex())
@@ -132,13 +132,13 @@ RTPSParticipantImpl::RTPSParticipantImpl(
         SharedMemTransportDescriptor shm_transport;
         // We assume (Linux) UDP doubles the user socket buffer size in kernel, so
         // the equivalent segment size in SHM would be socket buffer size x 2
-        auto segment_size_udp_equivalent = 
-            std::max(m_att.sendSocketBufferSize, m_att.listenSocketBufferSize) * 2;
+        auto segment_size_udp_equivalent =
+                std::max(m_att.sendSocketBufferSize, m_att.listenSocketBufferSize) * 2;
         shm_transport.segment_size(segment_size_udp_equivalent);
         // Use same default max_message_size on both UDP and SHM
         shm_transport.max_message_size(descriptor.max_message_size());
         has_shm_transport_ |= m_network_Factory.RegisterTransport(&shm_transport);
-#endif
+#endif // ifdef SHM_TRANSPORT_BUILTIN
     }
 
     // BACKUP servers guid is its persistence one
@@ -234,16 +234,16 @@ RTPSParticipantImpl::RTPSParticipantImpl(
     {
         std::for_each(m_att.builtin.metatrafficMulticastLocatorList.begin(),
                 m_att.builtin.metatrafficMulticastLocatorList.end(), [&](Locator_t& locator)
-                    {
-                        m_network_Factory.fillMetatrafficMulticastLocator(locator, metatraffic_multicast_port);
-                    });
+                {
+                    m_network_Factory.fillMetatrafficMulticastLocator(locator, metatraffic_multicast_port);
+                });
         m_network_Factory.NormalizeLocators(m_att.builtin.metatrafficMulticastLocatorList);
 
         std::for_each(m_att.builtin.metatrafficUnicastLocatorList.begin(),
                 m_att.builtin.metatrafficUnicastLocatorList.end(), [&](Locator_t& locator)
-                    {
-                        m_network_Factory.fillMetatrafficUnicastLocator(locator, metatraffic_unicast_port);
-                    });
+                {
+                    m_network_Factory.fillMetatrafficUnicastLocator(locator, metatraffic_unicast_port);
+                });
         m_network_Factory.NormalizeLocators(m_att.builtin.metatrafficUnicastLocatorList);
     }
 
@@ -259,9 +259,9 @@ RTPSParticipantImpl::RTPSParticipantImpl(
 
         std::for_each(initial_peers.begin(), initial_peers.end(),
                 [&](Locator_t& locator)
-                    {
-                        m_network_Factory.configureInitialPeerLocator(domain_id_, locator, m_att);
-                    });
+                {
+                    m_network_Factory.configureInitialPeerLocator(domain_id_, locator, m_att);
+                });
     }
 
     // Creation of user locator and receiver resources
@@ -286,9 +286,9 @@ RTPSParticipantImpl::RTPSParticipantImpl(
         // Locator with port 0, calculate port.
         std::for_each(m_att.defaultUnicastLocatorList.begin(), m_att.defaultUnicastLocatorList.end(),
                 [&](Locator_t& loc)
-                    {
-                        m_network_Factory.fillDefaultUnicastLocator(domain_id_, loc, m_att);
-                    });
+                {
+                    m_network_Factory.fillDefaultUnicastLocator(domain_id_, loc, m_att);
+                });
 
     }
 
@@ -311,7 +311,7 @@ RTPSParticipantImpl::RTPSParticipantImpl(
         // Participant will be deleted, no need to allocate buffers or create builtin endpoints
         return;
     }
-#endif
+#endif // if HAVE_SECURITY
 
     if (is_intraprocess_only())
     {
@@ -350,7 +350,7 @@ RTPSParticipantImpl::RTPSParticipantImpl(
             return;
         }
     }
-#endif
+#endif // if HAVE_SECURITY
 
     mp_builtinProtocols = new BuiltinProtocols();
 
@@ -430,7 +430,7 @@ RTPSParticipantImpl::~RTPSParticipantImpl()
 
 #if HAVE_SECURITY
     m_security_manager.destroy();
-#endif
+#endif // if HAVE_SECURITY
 
     // Destruct message receivers
     for (auto& block : m_receiverResourcelist)
@@ -587,7 +587,7 @@ bool RTPSParticipantImpl::createWriter(
             return false;
         }
     }
-#endif
+#endif // if HAVE_SECURITY
 
     createSendResources(SWriter);
     if (param.endpoint.reliabilityKind == RELIABLE)
@@ -734,7 +734,7 @@ bool RTPSParticipantImpl::createReader(
             return false;
         }
     }
-#endif
+#endif // if HAVE_SECURITY
 
     if (param.endpoint.reliabilityKind == RELIABLE)
     {
@@ -1005,7 +1005,7 @@ void RTPSParticipantImpl::createReceiverResources(
         bool ApplyMutation,
         bool RegisterReceiver)
 {
-    std::vector<std::shared_ptr<ReceiverResource> > newItemsBuffer;
+    std::vector<std::shared_ptr<ReceiverResource>> newItemsBuffer;
 
 #if HAVE_SECURITY
     // An auxilary buffer is needed in the ReceiverResource to to decrypt the message,
@@ -1014,7 +1014,7 @@ void RTPSParticipantImpl::createReceiverResources(
             is_secure() ? std::numeric_limits<uint16_t>::max() : std::numeric_limits<uint32_t>::max();
 #else
     uint32_t max_receiver_buffer_size = std::numeric_limits<uint32_t>::max();
-#endif
+#endif // if HAVE_SECURITY
 
     for (auto it_loc = Locator_list.begin(); it_loc != Locator_list.end(); ++it_loc)
     {
@@ -1142,7 +1142,7 @@ bool RTPSParticipantImpl::deleteUserEndpoint(
             {
                 m_security_manager.unregister_local_writer(p_endpoint->getGuid());
             }
-#endif
+#endif // if HAVE_SECURITY
         }
         else
         {
@@ -1157,7 +1157,7 @@ bool RTPSParticipantImpl::deleteUserEndpoint(
             {
                 m_security_manager.unregister_local_reader(p_endpoint->getGuid());
             }
-#endif
+#endif // if HAVE_SECURITY
         }
     }
     //	std::lock_guard<std::recursive_mutex> guardEndpoint(*p_endpoint->getMutex());
@@ -1279,7 +1279,7 @@ uint32_t RTPSParticipantImpl::getMaxMessageSize() const
             is_secure() ? std::numeric_limits<uint16_t>::max() : std::numeric_limits<uint32_t>::max();
 #else
     uint32_t max_receiver_buffer_size = std::numeric_limits<uint32_t>::max();
-#endif
+#endif // if HAVE_SECURITY
 
     return (std::min)(
         m_network_Factory.get_max_message_size_between_transports(),
@@ -1303,7 +1303,7 @@ uint32_t RTPSParticipantImpl::calculateMaxDataSize(
     {
         maxDataSize -= m_security_manager.calculate_extra_size_for_rtps_message();
     }
-#endif
+#endif // if HAVE_SECURITY
 
     // RTPS header
     maxDataSize -= RTPSMESSAGE_HEADER_SIZE;
@@ -1350,7 +1350,7 @@ bool RTPSParticipantImpl::pairing_remote_writer_with_local_reader_after_security
     return return_value;
 }
 
-#endif
+#endif // if HAVE_SECURITY
 
 PDPSimple* RTPSParticipantImpl::pdpsimple()
 {
@@ -1422,11 +1422,11 @@ uint32_t RTPSParticipantImpl::get_domain_id() const
 
 //!Compare metatraffic locators list searching for mutations
 bool RTPSParticipantImpl::did_mutation_took_place_on_meta(
-    const LocatorList_t& MulticastLocatorList,
-    const LocatorList_t& UnicastLocatorList) const
+        const LocatorList_t& MulticastLocatorList,
+        const LocatorList_t& UnicastLocatorList) const
 {
-    if(m_att.builtin.metatrafficMulticastLocatorList == MulticastLocatorList
-        && m_att.builtin.metatrafficUnicastLocatorList == UnicastLocatorList)
+    if (m_att.builtin.metatrafficMulticastLocatorList == MulticastLocatorList
+            && m_att.builtin.metatrafficUnicastLocatorList == UnicastLocatorList)
     {
         // no mutation
         return false;
@@ -1436,7 +1436,7 @@ bool RTPSParticipantImpl::did_mutation_took_place_on_meta(
     std::list<Locator_t> unicast_real_locators;
     LocatorListConstIterator it = UnicastLocatorList.begin(), old_it;
     LocatorList_t locals;
- 
+
     do
     {
         // copy ordinary locators till the first ANY
@@ -1447,51 +1447,52 @@ bool RTPSParticipantImpl::did_mutation_took_place_on_meta(
         std::copy(old_it, it, std::back_inserter(unicast_real_locators));
 
         // transform new ones if needed
-        if(it != UnicastLocatorList.end())
+        if (it != UnicastLocatorList.end())
         {
-            const Locator_t & an_any = *it;
+            const Locator_t& an_any = *it;
 
             // load interfaces if needed
-            if(locals.empty())
+            if (locals.empty())
             {
                 IPFinder::getIP4Address(&locals);
             }
 
             // add a locator for each local
             std::transform(locals.begin(),
-                locals.end(),
-                std::back_inserter(unicast_real_locators),
-                [&an_any](const Locator_t & loc) -> Locator_t
-                {
-                    Locator_t specific(loc);
-                    specific.port = an_any.port;
-                    specific.kind = an_any.kind;
-                    return specific;
-                });
+                    locals.end(),
+                    std::back_inserter(unicast_real_locators),
+                    [&an_any](const Locator_t& loc) -> Locator_t
+                    {
+                        Locator_t specific(loc);
+                        specific.port = an_any.port;
+                        specific.kind = an_any.kind;
+                        return specific;
+                    });
 
             // search for the next if any
             ++it;
         }
-    } while(it != UnicastLocatorList.end());
+    } while (it != UnicastLocatorList.end());
 
     // TCP is a special case because physical ports are taken from the TransportDescriptors
     struct ResetLogical : public std::unary_function<Locator_t, const Locator_t&>
     {
         typedef std::vector<std::shared_ptr<fastdds::rtps::TransportDescriptorInterface>> Transports;
 
-        ResetLogical(const Transports& tp) 
+        ResetLogical(
+                const Transports& tp)
             : Transports_(tp)
             , tcp4(nullptr)
             , tcp6(nullptr)
         {
-            for(auto desc : Transports_)
+            for (auto desc : Transports_)
             {
-                if(nullptr == tcp4)
+                if (nullptr == tcp4)
                 {
                     tcp4 = dynamic_cast<fastdds::rtps::TCPv4TransportDescriptor*>(desc.get());
                 }
 
-                if(nullptr == tcp6)
+                if (nullptr == tcp6)
                 {
                     tcp6 = dynamic_cast<fastdds::rtps::TCPv6TransportDescriptor*>(desc.get());
                 }
@@ -1508,51 +1509,53 @@ bool RTPSParticipantImpl::did_mutation_took_place_on_meta(
             return tcp6 ? ( tcp6->listening_ports.empty() ? 0 : tcp6->listening_ports[0]) : 0;
         }
 
-        Locator_t operator()(const Locator_t& loc) const
+        Locator_t operator ()(
+                const Locator_t& loc) const
         {
             Locator_t ret(loc);
-            switch(loc.kind)
+            switch (loc.kind)
             {
-            case LOCATOR_KIND_TCPv4:
-                IPLocator::setPhysicalPort(ret, Tcp4ListeningPort());
-                break;
-            case LOCATOR_KIND_TCPv6:
-                IPLocator::setPhysicalPort(ret, Tcp6ListeningPort());
-                break;
+                case LOCATOR_KIND_TCPv4:
+                    IPLocator::setPhysicalPort(ret, Tcp4ListeningPort());
+                    break;
+                case LOCATOR_KIND_TCPv6:
+                    IPLocator::setPhysicalPort(ret, Tcp6ListeningPort());
+                    break;
             }
             return ret;
         }
 
         // reference to the transports
         const Transports& Transports_;
-        TCPTransportDescriptor *tcp4, *tcp6;
+        TCPTransportDescriptor* tcp4, * tcp6;
 
-    } transform_functor(m_att.userTransports);
+    }
+    transform_functor(m_att.userTransports);
 
     // transform-copy
     std::set<Locator_t> update_attributes;
 
     std::transform(m_att.builtin.metatrafficMulticastLocatorList.begin(),
             m_att.builtin.metatrafficMulticastLocatorList.end(),
-            std::inserter(update_attributes,update_attributes.begin()),
+            std::inserter(update_attributes, update_attributes.begin()),
             transform_functor);
 
     std::transform(m_att.builtin.metatrafficUnicastLocatorList.begin(),
             m_att.builtin.metatrafficUnicastLocatorList.end(),
-            std::inserter(update_attributes,update_attributes.begin()),
+            std::inserter(update_attributes, update_attributes.begin()),
             transform_functor);
 
     std::set<Locator_t> original_ones;
 
     std::transform(MulticastLocatorList.begin(),
-        MulticastLocatorList.end(),
-        std::inserter(original_ones,original_ones.begin()),
-        transform_functor);
+            MulticastLocatorList.end(),
+            std::inserter(original_ones, original_ones.begin()),
+            transform_functor);
 
     std::transform(unicast_real_locators.begin(),
-        unicast_real_locators.end(),
-        std::inserter(original_ones, original_ones.begin()),
-        transform_functor);
+            unicast_real_locators.end(),
+            std::inserter(original_ones, original_ones.begin()),
+            transform_functor);
 
     // if equal then no mutation took place on physical ports
     return !(update_attributes == original_ones);
