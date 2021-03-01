@@ -357,6 +357,7 @@ void RTPSMessageGroup::send()
             {
                 throw timeout();
             }
+            currentBytesSent_ += msgToSend->length;
         }
     }
 }
