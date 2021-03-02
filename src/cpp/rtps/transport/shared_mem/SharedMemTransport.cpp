@@ -376,7 +376,7 @@ bool SharedMemTransport::transform_remote_locator(
         const Locator& remote_locator,
         Locator& result_locator) const
 {
-    if (IsLocatorSupported(remote_locator))
+    if (IsLocatorSupported(remote_locator) && can_write_to_port(remote_locator.port))
     {
         result_locator = remote_locator;
 
@@ -458,6 +458,12 @@ bool SharedMemTransport::send(
 
     return ret;
 
+}
+
+bool SharedMemTransport::can_write_to_port(
+        uint32_t port_id) const
+{
+    return true;
 }
 
 std::shared_ptr<SharedMemManager::Port> SharedMemTransport::find_port(
