@@ -376,7 +376,7 @@ bool SharedMemTransport::transform_remote_locator(
         const Locator& remote_locator,
         Locator& result_locator) const
 {
-    if (IsLocatorSupported(remote_locator) && can_write_to_port(remote_locator.port))
+    if (SHMLocator::is_shm_and_from_this_host(remote_locator) && can_write_to_port(remote_locator.port))
     {
         result_locator = remote_locator;
 
