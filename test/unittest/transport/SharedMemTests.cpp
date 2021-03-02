@@ -803,6 +803,33 @@ TEST_F(SHMTransportTests, transform_remote_locator_returns_input_locator)
     }
 }
 
+TEST_F(SHMTransportTests, transform_remote_locator_fails_on_non_open_channel)
+{
+    // Given
+    SharedMemTransport transportUnderTest(descriptor);
+    ASSERT_TRUE(transportUnderTest.init());
+
+    // Check with multicast
+    {
+        // Given
+        Locator_t remote_locator = SHMLocator::create_locator(g_default_port, SHMLocator::Type::MULTICAST);
+
+        // Then
+        Locator_t otherLocator;
+        ASSERT_FALSE(transportUnderTest.transform_remote_locator(remote_locator, otherLocator));
+    }
+
+    // Check with unicast
+    {
+        // Given
+        Locator_t remote_locator = SHMLocator::create_locator(g_default_port, SHMLocator::Type::UNICAST);
+
+        // Then
+        Locator_t otherLocator;
+        ASSERT_FALSE(transportUnderTest.transform_remote_locator(remote_locator, otherLocator));
+    }
+}
+
 TEST_F(SHMTransportTests, all_shared_mem_locators_are_local)
 {
     // Given
