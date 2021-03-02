@@ -20,6 +20,7 @@
 #include "../../../src/cpp/rtps/transport/shared_mem/SharedMemSenderResource.hpp"
 #include "../../../src/cpp/rtps/transport/shared_mem/SharedMemManager.hpp"
 #include "../../../src/cpp/rtps/transport/shared_mem/SharedMemGlobal.hpp"
+#include "../../../src/cpp/rtps/transport/shared_mem/SHMLocator.hpp"
 #include "../../../src/cpp/rtps/transport/shared_mem/MultiProducerConsumerRingBuffer.hpp"
 
 #include <string>
@@ -773,14 +774,33 @@ TEST_F(SHMTransportTests, transform_remote_locator_returns_input_locator)
     SharedMemTransport transportUnderTest(descriptor);
     ASSERT_TRUE(transportUnderTest.init());
 
-    Locator_t remote_locator;
-    remote_locator.kind = LOCATOR_KIND_SHM;
-    remote_locator.port = g_default_port;
+    // Check with multicast
+    {
+        // As transform_remote_locator checks if the locator is accessible, it should be previously open
+        Locator_t remote_locator = SHMLocator::create_locator(g_default_port, SHMLocator::Type::MULTICAST);
+        ASSERT_TRUE(transportUnderTest.OpenInputChannel(remote_locator, nullptr, 0xFF));
 
-    // Then
-    Locator_t otherLocator;
-    ASSERT_TRUE(transportUnderTest.transform_remote_locator(remote_locator, otherLocator));
-    ASSERT_EQ(otherLocator, remote_locator);
+        // Then
+        Locator_t otherLocator;
+        ASSERT_TRUE(transportUnderTest.transform_remote_locator(remote_locator, otherLocator));
+        ASSERT_EQ(otherLocator, remote_locator);
+
+        ASSERT_TRUE(transportUnderTest.CloseInputChannel(remote_locator));
+    }
+
+    // Check with unicast
+    {
+        // As transform_remote_locator checks if the locator is accessible, it should be previously open
+        Locator_t remote_locator = SHMLocator::create_locator(g_default_port, SHMLocator::Type::UNICAST);
+        ASSERT_TRUE(transportUnderTest.OpenInputChannel(remote_locator, nullptr, 0xFF));
+
+        // Then
+        Locator_t otherLocator;
+        ASSERT_TRUE(transportUnderTest.transform_remote_locator(remote_locator, otherLocator));
+        ASSERT_EQ(otherLocator, remote_locator);
+
+        ASSERT_TRUE(transportUnderTest.CloseInputChannel(remote_locator));
+    }
 }
 
 TEST_F(SHMTransportTests, all_shared_mem_locators_are_local)
