@@ -107,6 +107,11 @@
 #define HAVE_LOG_NO_ERROR @HAVE_LOG_NO_ERROR@
 #endif
 
+// Instrumentation
+#ifndef HAVE_FASTDDS_INSTRUMENTATION
+#define HAVE_FASTDDS_INSTRUMENTATION @HAVE_FASTDDS_INSTRUMENTATION@
+#endif
+
 // Deprecated macro
 #if __cplusplus >= 201402L
 #define FASTRTPS_DEPRECATED(msg) [[ deprecated(msg) ]]

@@ -335,6 +335,15 @@ if(EPROSIMA_BUILD AND IS_TOP_LEVEL)
 endif()
 
 ###############################################################################
+# Fast DDS instrumentation tool default setup
+###############################################################################
+option(FASTDDS_INSTRUMENTATION "Enable Fast DDS instrumentation" OFF)
+
+if (FASTDDS_INSTRUMENTATION)
+    set(HAVE_FASTDDS_INSTRUMENTATION 1)
+endif()
+
+###############################################################################
 # Compile library.
 ###############################################################################
 add_subdirectory(src/cpp)
