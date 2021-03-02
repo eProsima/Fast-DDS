@@ -961,10 +961,15 @@ public:
         return allocation_extra_size;
     }
 
+    /**
+     * Checks if a port can be open for writing.
+     * @param port_id The identifier of the port to check.
+     * @return whether the port can be written or not.
+     */
     bool can_write_to_port(
             uint32_t port_id) const
     {
-        return true;
+        return global_segment_.can_write_to_port(port_id);
     }
 
     std::shared_ptr<Port> open_port(

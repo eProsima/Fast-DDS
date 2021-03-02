@@ -884,6 +884,52 @@ public:
     }; // Port
 
     /**
+     * Checks if a port can be open for writing.
+     * @param port_id The identifier of the port to check.
+     * @return whether the port can be written or not.
+     */
+    bool can_write_to_port(
+            uint32_t port_id) const
+    {
+        try
+        {
+            auto port_segment_name = get_port_segment_name(port_id);
+
+            std::unique_ptr<SharedMemSegment::named_mutex> port_mutex =
+                SharedMemSegment::open_or_create_and_lock_named_mutex(port_segment_name + "_mutex");
+
+            std::unique_lock<SharedMemSegment::named_mutex> port_lock(*port_mutex, std::adopt_lock);
+
+            if (Port::is_zombie(port_id, domain_name_))
+            {
+                return false;
+            }
+
+            // Try to open
+            auto port_segment = std::shared_ptr<SharedMemSegment>(
+                new SharedMemSegment(boost::interprocess::open_only, port_segment_name.c_str()));
+
+            if (!port_segment->check_sanity())
+            {
+                return false;
+            }
+
+            auto port_node = port_segment->get().find<PortNode>(
+                    ("port_node_abi" + std::to_string(CURRENT_ABI_VERSION)).c_str()).first;
+
+            if (port_node)
+            {
+                return true;
+            }
+        }
+        catch (std::exception&)
+        {
+        }
+
+        return false;
+    }
+
+    /**
      * Open a shared-memory port. If the port doesn't exist in the system a port with port_id is created,
      * otherwise the existing port is opened.
      *
@@ -929,7 +975,7 @@ public:
     void remove_port(
             uint32_t port_id)
     {
-        auto port_segment_name = domain_name_ + "_port" + std::to_string(port_id);
+        auto port_segment_name = get_port_segment_name(port_id);
         SharedMemSegment::remove(port_segment_name.c_str());
     }
 
@@ -942,6 +988,12 @@ private:
 
     std::string domain_name_;
 
+    std::string get_port_segment_name(
+            uint32_t port_id) const
+    {
+        return domain_name_ + "_port" + std::to_string(port_id);
+    }
+
     std::shared_ptr<Port> open_port_internal(
             uint32_t port_id,
             uint32_t max_buffer_descriptors,
@@ -952,7 +1004,7 @@ private:
         std::string err_reason;
         std::shared_ptr<Port> port;
 
-        auto port_segment_name = domain_name_ + "_port" + std::to_string(port_id);
+        auto port_segment_name = get_port_segment_name(port_id);
 
         logInfo(RTPS_TRANSPORT_SHM, THREADID << "Opening "
                                              << port_segment_name);
