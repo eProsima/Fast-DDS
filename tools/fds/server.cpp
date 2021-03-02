@@ -212,7 +212,6 @@ int main (
     // Create the server
     int return_value = 0;
     Participant* pServer = Domain::createParticipant(*att, nullptr);
-    att.reset();
 
     if ( nullptr == pServer )
     {
@@ -228,10 +227,20 @@ int main (
 
         // Print running server attributes
         cout << "### Server is running ###" << endl;
+        cout << "  Participant Type:   " << rtps.builtin.discovery_config.discoveryProtocol << endl;
         cout << "  Server ID:          " << server_id << endl;
         cout << "  Server GUID prefix: " << pServer->getGuid().guidPrefix << endl;
-        cout << "  Server Address:     " << locator << endl;
-        cout << "  Participant Type    " << rtps.builtin.discovery_config.discoveryProtocol << endl;
+        cout << "  Server Addresses:   ";
+        for (auto locator_it = att->rtps.builtin.metatrafficUnicastLocatorList.begin();
+                locator_it != att->rtps.builtin.metatrafficUnicastLocatorList.end();)
+        {
+            cout << *locator_it;
+            if (++locator_it != att->rtps.builtin.metatrafficUnicastLocatorList.end())
+            {
+                cout << std::endl << "                      ";
+            }
+        }
+        cout << std::endl;
 
         g_signal_cv.wait(lock, []
                 {
@@ -241,6 +250,7 @@ int main (
         cout << endl << "### Server shut down ###" << endl;
     }
 
+    att.reset();
     fastdds::dds::Log::Flush();
     cout.flush();
     Domain::stopAll();
