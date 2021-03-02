@@ -67,6 +67,17 @@ PDPServer::PDPServer(
             servers_prefixes())
     , durability_ (durability_kind)
 {
+    // Add remote servers from environment variable
+    RemoteServerList_t env_servers;
+    if (load_environment_server_info(env_servers))
+    {
+        for (auto server : env_servers)
+        {
+            mp_builtin->m_DiscoveryServers.push_back(server);
+            m_discovery.discovery_config.m_DiscoveryServers.push_back(server);
+            discovery_db_.add_server(server.guidPrefix);
+        }
+    }
 }
 
 PDPServer::~PDPServer()

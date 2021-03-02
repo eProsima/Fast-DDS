@@ -108,20 +108,50 @@ constexpr uint16_t DEFAULT_ROS2_SERVER_PORT = 11811;
 // default server base guidPrefix
 const char* const DEFAULT_ROS2_SERVER_GUIDPREFIX = "44.53.00.5f.45.50.52.4f.53.49.4d.41";
 
+/* Environment variable to specify a semicolon-separated list of UDPv4 locators (ip:port) that define remote server
+ * locators.
+ * The position in the list is used as a "server id" to extrapolate the server's GUID prefix.
+ * For the variable to take any effect, the following pre-conditions must be met:
+ *    1. The server's GUID prefix must be compliant with the schema
+ *       "44.53.<server_id_in_hex>.5f.45.50.52.4f.53.49.4d.41", which is the schema followed by the prefixes generated
+ *        when creating server using fastdds cli, being DEFAULT_ROS2_SERVER_GUIDPREFIX the prefix for ID=0.
+ *    1. The discovery protocol must be either SIMPLE or SERVER.
+ *       1. In the case of SIMPLE, the participant is created as a CLIENT instead.
+ *       1. In the case of SERVER, the participant is created as a SERVER, using the DEFAULT_ROS2_MASTER_URI list to
+ *          expand the list of remote servers.
+ */
+const char* const DEFAULT_ROS2_MASTER_URI = "ROS_DISCOVERY_SERVER";
+
 /**
- * Retrieves a ; separated list of locators from an environment variable and
+ * Retrieves a semicolon-separated list of locators from a string, and
  * populates a RemoteServerList_t mapping list position to default guid.
- * @param list servers listening locator list provided.
- * @param attributes reference to a RemoteServerList_t to populate.
- * @return true if parsing succeeds
+ * @param[in] list servers listening locator list.
+ * @param[out] attributes reference to a RemoteServerList_t to populate.
+ * @return true if parsing succeeds, false otherwise (or if the list is empty)
  */
 RTPS_DllAPI bool load_environment_server_info(
         std::string list,
         RemoteServerList_t& attributes);
+
 /**
- * returns the guidPrefix associated to the default server id given
- * @param id of the default server whose guidPrefix we want to retrieve
- * @param guid reference to the guidPrefix to modify
+ * Retrieves a semicolon-separated list of locators from DEFAULT_ROS2_MASTER_URI environment variable, and
+ * populates a RemoteServerList_t mapping list position to default guid.
+ * @param[out] attributes reference to a RemoteServerList_t to populate.
+ * @return true if parsing succeeds, false otherwise
+ */
+RTPS_DllAPI bool load_environment_server_info(
+        RemoteServerList_t& attributes);
+
+/**
+ * Get the value of environment variable DEFAULT_ROS2_MASTER_URI
+ * @return The value of environment variable DEFAULT_ROS2_MASTER_URI. Empty string if the variable is not defined.
+ */
+RTPS_DllAPI const std::string& ros_discovery_server_env();
+
+/**
+ * Returns the guidPrefix associated to the given server id
+ * @param[in] id of the default server whose guidPrefix we want to retrieve
+ * @param[out] guid reference to the guidPrefix to modify
  * @return true if the server guid can be delivered
  */
 RTPS_DllAPI bool get_server_client_default_guidPrefix(
@@ -139,7 +169,9 @@ using fastdds::rtps::RemoteServerAttributes;
 using fastdds::rtps::RemoteServerList_t;
 using fastdds::rtps::DEFAULT_ROS2_SERVER_PORT;
 using fastdds::rtps::DEFAULT_ROS2_SERVER_GUIDPREFIX;
+using fastdds::rtps::DEFAULT_ROS2_MASTER_URI;
 using fastdds::rtps::load_environment_server_info;
+using fastdds::rtps::ros_discovery_server_env;
 using fastdds::rtps::get_server_client_default_guidPrefix;
 
 } // fastrtps

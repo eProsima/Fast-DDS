@@ -56,11 +56,6 @@ static void guid_prefix_create(
     eprosima::fastdds::rtps::GuidUtils::instance().guid_prefix_create(ID, guidP);
 }
 
-// environment variables that forces server-client discovery
-// it must contain a list of UDPv4 locators separated by ;
-// the position in the list defines the default server that listens on the locator
-const char* const DEFAULT_ROS2_MASTER_URI = "ROS_DISCOVERY_SERVER";
-
 std::mutex RTPSDomain::m_mutex;
 std::atomic<uint32_t> RTPSDomain::m_maxRTPSParticipantID(1);
 std::vector<RTPSDomain::t_p_RTPSParticipant> RTPSDomain::m_RTPSParticipants;
@@ -365,23 +360,6 @@ RTPSParticipant* RTPSDomain::clientServerEnvironmentCreationOverride(
         const RTPSParticipantAttributes& att,
         RTPSParticipantListener* listen /*= nullptr*/)
 {
-    // retrieve the environment variable value
-    std::string list;
-    {
-#pragma warning(suppress:4996)
-        const char* data = std::getenv(DEFAULT_ROS2_MASTER_URI);
-
-        if (nullptr != data)
-        {
-            list = data;
-        }
-        else
-        {
-            // if the variable is not set abort the server-client default setup
-            return nullptr;
-        }
-    }
-
     // Check the specified discovery protocol: if other than simple it has priority over ros environment variable
     if (att.builtin.discovery_config.discoveryProtocol != DiscoveryProtocol_t::SIMPLE)
     {
@@ -394,9 +372,7 @@ RTPSParticipant* RTPSDomain::clientServerEnvironmentCreationOverride(
     RTPSParticipantAttributes client_att(att);
 
     // Retrieve the info from the environment variable
-    if (!load_environment_server_info(
-                list,
-                client_att.builtin.discovery_config.m_DiscoveryServers))
+    if (!load_environment_server_info(client_att.builtin.discovery_config.m_DiscoveryServers))
     {
         // it's not an error, the environment variable may not be set. Any issue with environment
         // variable syntax is logError already

@@ -60,6 +60,13 @@ DiscoveryDataBase::~DiscoveryDataBase()
     }
 }
 
+void DiscoveryDataBase::add_server(
+        fastrtps::rtps::GuidPrefix_t server)
+{
+    logInfo(DISCOVERY_DATABASE, "Server " << server << " added");
+    servers_.push_back(server);
+}
+
 std::vector<fastrtps::rtps::CacheChange_t*> DiscoveryDataBase::clear()
 {
     // Cannot clear an enabled database, since there could be inconsistencies after the process
