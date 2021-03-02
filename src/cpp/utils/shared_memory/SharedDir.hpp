@@ -99,6 +99,7 @@ public:
         {
             // directory exists do nothing
         }
+        return (std::string(defaultdir) + "/" + filename);
 #else
         return SharedDir::get_file_path(filename);
 #endif  // __QNXNTO__
