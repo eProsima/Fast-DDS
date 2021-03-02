@@ -463,7 +463,15 @@ bool SharedMemTransport::send(
 bool SharedMemTransport::can_write_to_port(
         uint32_t port_id) const
 {
-    return true;
+    auto ports_it = opened_ports_.find(port_id);
+
+    // The port is already opened
+    if (ports_it != opened_ports_.end())
+    {
+        return true;
+    }
+
+    return shared_mem_manager_->can_write_to_port(port_id);
 }
 
 std::shared_ptr<SharedMemManager::Port> SharedMemTransport::find_port(

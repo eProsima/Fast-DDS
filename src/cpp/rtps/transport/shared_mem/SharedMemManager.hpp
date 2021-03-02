@@ -961,6 +961,12 @@ public:
         return allocation_extra_size;
     }
 
+    bool can_write_to_port(
+            uint32_t port_id) const
+    {
+        return true;
+    }
+
     std::shared_ptr<Port> open_port(
             uint32_t port_id,
             uint32_t max_descriptors,
