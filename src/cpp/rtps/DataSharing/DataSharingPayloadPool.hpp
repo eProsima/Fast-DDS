@@ -23,7 +23,7 @@
 #include <fastdds/rtps/history/IPayloadPool.h>
 #include <fastdds/dds/log/Log.hpp>
 #include <rtps/history/PoolConfig.h>
-#include <utils/shared_memory/RobustExclusiveLock.hpp>
+#include <utils/shared_memory/SharedDir.hpp>
 #include <utils/shared_memory/SharedMemSegment.hpp>
 
 #include <memory>
