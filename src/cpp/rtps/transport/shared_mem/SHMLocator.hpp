@@ -69,6 +69,15 @@ public:
         return locator;
     }
 
+    static uint32_t get_pid_from_address(
+            const Locator& locator)
+    {
+        return static_cast<uint32_t>(locator.get_address(4)) |
+            (static_cast<uint32_t>(locator.get_address(5)) << 8) |
+            (static_cast<uint32_t>(locator.get_address(6)) << 16) |
+            (static_cast<uint32_t>(locator.get_address(7)) << 24);
+    }
+
     /**
      * Check whether a given locator is shared-memory kind and belongs to this host
      * @param locator Locator to check
