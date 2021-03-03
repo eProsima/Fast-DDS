@@ -821,13 +821,13 @@ public:
 
         void lock_read_exclusive()
         {
-            std::string lock_name = std::string(node_->domain_name) + "_port" + std::to_string(node_->port_id) + "_el";
+            std::string lock_name = get_port_segment_name(node_->domain_name, address_id_, node_->port_id) + "_el";
             read_exclusive_lock_ = std::unique_ptr<RobustExclusiveLock>(new RobustExclusiveLock(lock_name));
         }
 
         void lock_read_shared()
         {
-            std::string lock_name = std::string(node_->domain_name) + "_port" + std::to_string(node_->port_id) + "_sl";
+            std::string lock_name = get_port_segment_name(node_->domain_name, address_id_, node_->port_id) + "_sl";
             read_shared_lock_ = std::unique_ptr<RobustSharedLock>(new RobustSharedLock(lock_name));
         }
 
@@ -838,14 +838,16 @@ public:
         }
 
         static std::unique_ptr<RobustExclusiveLock> lock_read_exclusive(
+                uint32_t address_id,
                 uint32_t port_id,
                 const std::string& domain_name)
         {
-            std::string lock_name = std::string(domain_name) + "_port" + std::to_string(port_id) + "_el";
+            std::string lock_name = get_port_segment_name(domain_name, address_id, port_id) + "_el";
             return std::unique_ptr<RobustExclusiveLock>(new RobustExclusiveLock(lock_name));
         }
 
         static bool is_zombie(
+                uint32_t address_id,
                 uint32_t port_id,
                 const std::string& domain_name)
         {
@@ -855,7 +857,7 @@ public:
             try
             {
                 // An exclusive port is zombie when it has a "_el" file & the file is not locked
-                lock_name = domain_name + "_port" + std::to_string(port_id) + "_el";
+                lock_name = get_port_segment_name(domain_name, address_id, port_id) + "_el";
                 RobustExclusiveLock zombie_test(lock_name, &was_lock_created);
                 // Lock acquired, did the file exist before the acquire?
                 if (!was_lock_created)
@@ -872,7 +874,7 @@ public:
             try
             {
                 // A shared port is zombie when it has a "_sl" file & the file is not locked
-                lock_name = domain_name + "_port" + std::to_string(port_id) + "_sl";
+                lock_name = get_port_segment_name(domain_name, address_id, port_id) + "_sl";
                 bool was_lock_released;
                 RobustSharedLock zombie_test(lock_name, &was_lock_created, &was_lock_released);
                 // Lock acquired, did the file exist and was release before the acquire?
@@ -898,18 +900,19 @@ public:
      * @return whether the port can be written or not.
      */
     bool can_write_to_port(
+            uint32_t address_id,
             uint32_t port_id) const
     {
         try
         {
-            auto port_segment_name = get_port_segment_name(port_id);
+            auto port_segment_name = get_port_segment_name(address_id, port_id);
 
             std::unique_ptr<SharedMemSegment::named_mutex> port_mutex =
-                SharedMemSegment::open_or_create_and_lock_named_mutex(port_segment_name + "_mutex");
+                    SharedMemSegment::open_or_create_and_lock_named_mutex(port_segment_name + "_mutex");
 
             std::unique_lock<SharedMemSegment::named_mutex> port_lock(*port_mutex, std::adopt_lock);
 
-            if (Port::is_zombie(port_id, domain_name_))
+            if (Port::is_zombie(address_id, port_id, domain_name_))
             {
                 return false;
             }
@@ -924,7 +927,7 @@ public:
             }
 
             auto port_node = port_segment->get().find<PortNode>(
-                    ("port_node_abi" + std::to_string(CURRENT_ABI_VERSION)).c_str()).first;
+                ("port_node_abi" + std::to_string(CURRENT_ABI_VERSION)).c_str()).first;
 
             if (port_node)
             {
@@ -952,12 +955,13 @@ public:
      * goes wrong the existing port is removed from shared-memory and a new port is created.
      */
     std::shared_ptr<Port> open_port(
+            uint32_t address_id,
             uint32_t port_id,
             uint32_t max_buffer_descriptors,
             uint32_t healthy_check_timeout_ms,
             Port::OpenMode open_mode = Port::OpenMode::ReadShared)
     {
-        return open_port_internal(port_id, max_buffer_descriptors, healthy_check_timeout_ms, open_mode, nullptr);
+        return open_port_internal(address_id, port_id, max_buffer_descriptors, healthy_check_timeout_ms, open_mode, nullptr);
     }
 
     /**
@@ -971,6 +975,7 @@ public:
             SharedMemGlobal::Port::OpenMode open_mode)
     {
         return open_port_internal(
+            port->address_id(),
             port->port_id(),
             port->max_buffer_descriptors(),
             port->healthy_check_timeout_ms(),
@@ -982,9 +987,10 @@ public:
      * Remove a port from the system.
      */
     void remove_port(
+            uint32_t address_id,
             uint32_t port_id)
     {
-        auto port_segment_name = get_port_segment_name(port_id);
+        auto port_segment_name = get_port_segment_name(address_id, port_id);
         SharedMemSegment::remove(port_segment_name.c_str());
     }
 
@@ -998,12 +1004,26 @@ private:
     std::string domain_name_;
 
     std::string get_port_segment_name(
+            uint32_t address_id,
             uint32_t port_id) const
     {
-        return domain_name_ + "_port" + std::to_string(port_id);
+        return address_id ?
+               domain_name_ + "_port_" + std::to_string(address_id) + "_" + std::to_string(port_id) :
+               domain_name_ + "_port" + std::to_string(port_id);
+    }
+
+    static std::string get_port_segment_name(
+            const std::string& domain_name,
+            uint32_t address_id,
+            uint32_t port_id)
+    {
+        return address_id ?
+               domain_name + "_port_" + std::to_string(address_id) + "_" + std::to_string(port_id) :
+               domain_name + "_port" + std::to_string(port_id);
     }
 
     std::shared_ptr<Port> open_port_internal(
+            uint32_t address_id,
             uint32_t port_id,
             uint32_t max_buffer_descriptors,
             uint32_t healthy_check_timeout_ms,
@@ -1013,7 +1033,7 @@ private:
         std::string err_reason;
         std::shared_ptr<Port> port;
 
-        auto port_segment_name = get_port_segment_name(port_id);
+        auto port_segment_name = get_port_segment_name(address_id, port_id);
 
         logInfo(RTPS_TRANSPORT_SHM, THREADID << "Opening "
                                              << port_segment_name);
@@ -1038,7 +1058,7 @@ private:
 
         try
         {
-            if (Port::is_zombie(port_id, domain_name_))
+            if (Port::is_zombie(address_id, port_id, domain_name_))
             {
                 logWarning(RTPS_TRANSPORT_SHM, THREADID << "Port "
                                                         << port_id << " Zombie. Reset the port");
@@ -1066,7 +1086,7 @@ private:
 
                 if (port_node)
                 {
-                    port = std::make_shared<Port>(std::move(port_segment), port_node);
+                    port = std::make_shared<Port>(std::move(port_segment), port_node, address_id);
                 }
                 else
                 {
@@ -1167,8 +1187,7 @@ private:
                     memset(payload, 0, segment_size);
                     port_segment->get().deallocate(payload);
 
-                    port =
-                            init_port(port_id, port_segment, max_buffer_descriptors, open_mode,
+                    port = init_port(address_id, port_id, port_segment, max_buffer_descriptors, open_mode,
                                     healthy_check_timeout_ms);
                 }
                 catch (std::exception& e)
@@ -1192,6 +1211,7 @@ private:
     }
 
     std::shared_ptr<Port> init_port(
+            uint32_t address_id,
             uint32_t port_id,
             std::unique_ptr<SharedMemSegment>& segment,
             uint32_t max_buffer_descriptors,
@@ -1205,7 +1225,7 @@ private:
         std::unique_ptr<RobustExclusiveLock> lock_read_exclusive;
         if (open_mode == Port::OpenMode::ReadExclusive)
         {
-            lock_read_exclusive = Port::lock_read_exclusive(port_id, domain_name_);
+            lock_read_exclusive = Port::lock_read_exclusive(address_id, port_id, domain_name_);
         }
 
         // Port node allocation
@@ -1248,7 +1268,7 @@ private:
         port_node->buffer_node = segment->get_offset_from_address(buffer_node);
 
         port_node->is_port_ok = true;
-        port = std::make_shared<Port>(std::move(segment), port_node, std::move(lock_read_exclusive));
+        port = std::make_shared<Port>(std::move(segment), port_node, address_id, std::move(lock_read_exclusive));
 
         if (open_mode == Port::OpenMode::ReadShared)
         {
