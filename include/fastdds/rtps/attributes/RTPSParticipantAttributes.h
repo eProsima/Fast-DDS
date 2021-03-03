@@ -48,6 +48,7 @@ struct ParticipantType
     static constexpr const char* SIMPLE = "SIMPLE";
     static constexpr const char* SERVER = "SERVER";
     static constexpr const char* CLIENT = "CLIENT";
+    static constexpr const char* SUPER_CLIENT = "SUPER_CLIENT";
     static constexpr const char* BACKUP = "BACKUP";
     static constexpr const char* NONE = "NONE";
     static constexpr const char* EXTERNAL = "EXTERNAL";
@@ -108,6 +109,9 @@ inline std::ostream& operator <<(
             break;
         case DiscoveryProtocol::CLIENT:
             output << fastdds::rtps::ParticipantType::CLIENT;
+            break;
+        case DiscoveryProtocol::SUPER_CLIENT:
+            output << fastdds::rtps::ParticipantType::SUPER_CLIENT;
             break;
         case DiscoveryProtocol::SERVER:
             output << fastdds::rtps::ParticipantType::SERVER;

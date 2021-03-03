@@ -24,6 +24,8 @@
 #include <fastdds/rtps/reader/StatefulReader.h>
 #include <fastdds/rtps/writer/StatefulWriter.h>
 
+#include <fastdds/rtps/attributes/RTPSParticipantAttributes.h>
+
 #include <fastdds/rtps/writer/ReaderProxy.h>
 
 #include <fastdds/rtps/history/WriterHistory.h>
@@ -97,19 +99,7 @@ void PDPClient::initializeParticipantProxyData(
         participant_data->m_availableBuiltinEndpoints |= DISC_BUILTIN_ENDPOINT_SUBSCRIPTION_ANNOUNCER;
     }
 
-    // Set participant type and discovery server version properties
-    if (_super_client)
-    {
-        participant_data->m_properties.push_back(
-            std::pair<std::string, std::string>(
-                {fastdds::dds::parameter_property_participant_type, fastdds::rtps::ParticipantType::SUPER_CLIENT}));
-    }
-    else
-    {
-        participant_data->m_properties.push_back(std::pair<std::string,
-                std::string>({fastdds::dds::parameter_property_participant_type,
-                              fastdds::rtps::ParticipantType::CLIENT}));
-    }
+    // Set discovery server version property
     participant_data->m_properties.push_back(std::pair<std::string,
             std::string>({fastdds::dds::parameter_property_ds_version,
                           fastdds::dds::parameter_property_current_ds_version}));
