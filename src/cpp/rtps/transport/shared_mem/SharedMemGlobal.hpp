@@ -146,6 +146,8 @@ public:
 
         PortNode* node_;
 
+        uint32_t address_id_;
+
         std::unique_ptr<MultiProducerConsumerRingBuffer<BufferDescriptor>> buffer_;
 
         uint64_t overflows_count_;
@@ -397,9 +399,11 @@ public:
         Port(
                 std::shared_ptr<SharedMemSegment>&& port_segment,
                 PortNode* node,
+                uint32_t address_id = 0,
                 std::unique_ptr<RobustExclusiveLock>&& read_exclusive_lock = std::unique_ptr<RobustExclusiveLock>())
             : port_segment_(std::move(port_segment))
             , node_(node)
+            , address_id_(address_id)
             , overflows_count_(0)
             , read_exclusive_lock_(std::move(read_exclusive_lock))
             , watch_task_(WatchTask::get())
@@ -579,6 +583,11 @@ public:
         inline bool is_port_ok() const
         {
             return node_->is_port_ok;
+        }
+
+        inline uint32_t address_id() const
+        {
+            return address_id_;
         }
 
         inline uint32_t port_id() const
