@@ -81,6 +81,17 @@ public:
             const SequenceNumber_t& initial_sequence);
 
     /**
+     * Activate this proxy associating it to a remote writer.
+     * @param attributes WriterProxyData of the writer for which to keep state.
+     * @param initial_sequence Sequence number of last acknowledged change.
+     * @param is_datasharing Whether the writer is datasharing with us or not.
+     */
+    void start(
+            const WriterProxyData& attributes,
+            const SequenceNumber_t& initial_sequence,
+            bool is_datasharing);
+
+    /**
      * Update information on the remote writer.
      * @param attributes WriterProxyData with updated information of the writer.
      */
@@ -321,6 +332,11 @@ public:
         return is_on_same_process_;
     }
 
+    bool is_datasharing_writer() const
+    {
+        return is_datasharing_writer_;
+    }
+
 private:
 
     /**
@@ -378,6 +394,8 @@ private:
     GUID_t persistence_guid_;
     //! Taken from proxy data
     LocatorSelectorEntry locators_entry_;
+    //! Is the writer datasharing
+    bool is_datasharing_writer_;
 
     using ChangeIterator = decltype(changes_received_)::iterator;
 

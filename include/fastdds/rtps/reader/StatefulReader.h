@@ -225,7 +225,7 @@ public:
      */
     inline size_t getMatchedWritersSize() const
     {
-        return matched_writers_.size() + matched_datasharing_writers_.size();
+        return matched_writers_.size();
     }
 
     /*!
@@ -356,8 +356,6 @@ private:
     bool disable_positive_acks_;
     //! False when being destroyed
     bool is_alive_;
-    //! Vector containing pointers to the active DataSharing WriterProxies.
-    ResourceLimitedVector<WriterProxy*> matched_datasharing_writers_;
 };
 
 } /* namespace rtps */

@@ -55,9 +55,6 @@ public:
             IPayloadPool*& data_owner,
             CacheChange_t& cache_change) override
     {
-        assert(data_owner == this || data_owner == nullptr);
-
-        assert(data_owner == this);
         if (data_owner == this)
         {
             cache_change.serializedPayload.data = data.data;
@@ -67,7 +64,10 @@ public:
             return true;
         }
 
-        return false;
+        //If owner is not this, then it must be an intraprocess datasharing writer 
+        PayloadNode* payload = PayloadNode::get_from_data(data.data);
+        read_from_shared_history(cache_change, payload);
+        return true;
     }
 
     bool release_payload(
@@ -158,29 +158,9 @@ public:
             // history_[next_payload_] contains the offset to the payload
             PayloadNode* payload = static_cast<PayloadNode*>(
                 segment_->get_address_from_offset(history_[static_cast<uint32_t>(next_payload_)]));
+            read_from_shared_history(cache_change, payload);
 
             // The SN is the first thing to be invalidated on the writer
-            cache_change.sequenceNumber = payload->sequence_number();
-            if (cache_change.sequenceNumber == c_SequenceNumber_Unknown)
-            {
-                // Reset by the writer. Discard and continue
-                advance(next_payload_);
-                logWarning(RTPS_READER, "Dirty data detected on datasharing writer " << writer());
-                continue;
-            }
-
-            cache_change.serializedPayload.data = payload->data();
-            cache_change.serializedPayload.max_size = payload->data_length();
-            cache_change.serializedPayload.length = payload->data_length();
-
-            cache_change.kind = static_cast<ChangeKind_t>(payload->status());
-            cache_change.writerGUID = payload->writer_GUID();
-            cache_change.instanceHandle = payload->instance_handle();
-            cache_change.sourceTimestamp = payload->source_timestamp();
-            cache_change.write_params.sample_identity(payload->related_sample_identity());
-
-            cache_change.payload_owner(this);
-
             if (payload->sequence_number() != cache_change.sequenceNumber)
             {
                 // Overriden while retrieving. Discard and continue
@@ -201,6 +181,25 @@ public:
         }
 
         cache_change.sequenceNumber = c_SequenceNumber_Unknown;
+    }
+
+    void read_from_shared_history(
+            CacheChange_t& cache_change,
+            PayloadNode* payload)
+    {
+        cache_change.sequenceNumber = payload->sequence_number();
+
+        cache_change.serializedPayload.data = payload->data();
+        cache_change.serializedPayload.max_size = payload->data_length();
+        cache_change.serializedPayload.length = payload->data_length();
+
+        cache_change.kind = static_cast<ChangeKind_t>(payload->status());
+        cache_change.writerGUID = payload->writer_GUID();
+        cache_change.instanceHandle = payload->instance_handle();
+        cache_change.sourceTimestamp = payload->source_timestamp();
+        cache_change.write_params.sample_identity(payload->related_sample_identity());
+
+        cache_change.payload_owner(this);
     }
 
     const SequenceNumber_t& get_last_read_sequence_number()

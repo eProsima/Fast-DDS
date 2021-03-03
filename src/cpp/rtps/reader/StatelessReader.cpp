@@ -29,6 +29,8 @@
 #include <rtps/DataSharing/DataSharingListener.hpp>
 #include <rtps/DataSharing/ReaderPool.hpp>
 
+#include "rtps/RTPSDomainImpl.hpp"
+
 #include <mutex>
 #include <thread>
 
@@ -99,7 +101,10 @@ bool StatelessReader::matched_writer_add(
         }
     }
 
-    if (is_datasharing_compatible_with(wdata))
+    bool is_datasharing = is_datasharing_compatible_with(wdata);
+    bool is_same_process = RTPSDomainImpl::should_intraprocess_between(m_guid, wdata.guid());
+
+    if (is_datasharing)
     {
         if (datasharing_listener_->add_datasharing_writer(wdata.guid(),
                 m_att.durabilityKind == VOLATILE))
@@ -115,13 +120,15 @@ bool StatelessReader::matched_writer_add(
             return false;
         }
 
-        if (m_att.durabilityKind != VOLATILE)
+        // Intraprocess manages durability itself
+        if (!is_same_process && m_att.durabilityKind != VOLATILE)
         {
             // simulate a notification to force reading of transient changes
             datasharing_listener_->notify(false);
         }
     }
-    else
+
+    if (!is_datasharing || is_same_process)
     {
         RemoteWriterInfo_t info;
         info.guid = wdata.guid();
@@ -185,30 +192,28 @@ bool StatelessReader::matched_writer_remove(
     }
 
     bool found = false;
+    ResourceLimitedVector<RemoteWriterInfo_t>::iterator it;
+    for (it = matched_writers_.begin(); it != matched_writers_.end(); ++it)
+    {
+        if (it->guid == writer_guid)
+        {
+            logInfo(RTPS_READER, "Writer " << writer_guid << " removed from " << m_guid);
+            found = true;
+
+            remove_persistence_guid(it->guid, it->persistence_guid, removed_by_lease);
+            matched_writers_.erase(it);
+            break;
+        }
+    }
+
     if (is_datasharing_compatible_)
     {
         if (datasharing_listener_->remove_datasharing_writer(writer_guid))
         {
-            found = true;
             logInfo(RTPS_READER, "Data sharing writer " << writer_guid << " removed from " << m_guid.entityId);
+            found = true;
+
             remove_changes_from(writer_guid, true);
-        }
-    }
-
-    if (!found)
-    {
-        ResourceLimitedVector<RemoteWriterInfo_t>::iterator it;
-        for (it = matched_writers_.begin(); it != matched_writers_.end(); ++it)
-        {
-            if (it->guid == writer_guid)
-            {
-                logInfo(RTPS_READER, "Writer " << writer_guid << " removed from " << m_guid);
-                found = true;
-
-                remove_persistence_guid(it->guid, it->persistence_guid, removed_by_lease);
-                matched_writers_.erase(it);
-                break;
-            }
         }
     }
 
@@ -518,9 +523,23 @@ bool StatelessReader::processDataMsg(
 
         // Ask payload pool to copy the payload
         IPayloadPool* payload_owner = change->payload_owner();
-        ReaderPool* datasharing_pool = dynamic_cast<ReaderPool*>(payload_owner);
-        if (datasharing_pool)
+
+        if (is_datasharing_compatible_ && datasharing_listener_->writer_is_matched(change->writerGUID))
         {
+            //We may receive the change from the listener (with owner a ReaderPool) or intraprocess (with owner a WriterPool)
+            ReaderPool* datasharing_pool = dynamic_cast<ReaderPool*>(payload_owner);
+            if (!datasharing_pool)
+            {
+                datasharing_pool = datasharing_listener_->get_pool_for_writer(change->writerGUID).get();
+            }
+            if (!datasharing_pool)
+            {
+                logWarning(RTPS_MSG_IN, IDSTRING "Problem copying DataSharing CacheChange from writer "
+                        << change->writerGUID);
+                change_pool_->release_cache(change_to_add);
+                return false;
+            }
+
             datasharing_pool->get_payload(change->serializedPayload, payload_owner, *change_to_add);
         }
         else if (payload_pool_->get_payload(change->serializedPayload, payload_owner, *change_to_add))
