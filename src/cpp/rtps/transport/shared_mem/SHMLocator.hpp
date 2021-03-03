@@ -82,7 +82,7 @@ private:
 
     static uint16_t address_id()
     {
-        return Host::instance().id();
+        return Host::instance().id() + Host::instance().user_id() + 1;
     }
 };
 

@@ -54,6 +54,11 @@ public:
         return mac_id_;
     }
 
+    inline uint16_t user_id() const
+    {
+        return 0;
+    }
+
     static Host& instance()
     {
         static Host singleton;
