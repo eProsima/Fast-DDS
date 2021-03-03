@@ -967,12 +967,14 @@ public:
      * @return whether the port can be written or not.
      */
     bool can_write_to_port(
+            uint32_t address_id,
             uint32_t port_id) const
     {
         return global_segment_.can_write_to_port(port_id);
     }
 
     std::shared_ptr<Port> open_port(
+            uint32_t address_id,
             uint32_t port_id,
             uint32_t max_descriptors,
             uint32_t healthy_check_timeout_ms,
