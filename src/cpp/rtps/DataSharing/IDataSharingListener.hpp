@@ -21,7 +21,7 @@
 
 #include <fastdds/dds/log/Log.hpp>
 #include <rtps/DataSharing/DataSharingNotification.hpp>
-#include <rtps/DataSharing/DataSharingPayloadPool.hpp>
+#include <rtps/DataSharing/ReaderPool.hpp>
 #include <fastrtps/utils/collections/ResourceLimitedVector.hpp>
 
 #include <memory>
@@ -113,6 +113,15 @@ public:
      */
     virtual void change_added_with_timestamp(
             int64_t timestamp) = 0;
+
+    /**
+     * Returns the local datasharing pool for the specified remote writer
+     *
+     * @param writer_guid The GUID of the remote writer
+     * @return the local pool for the given writer or null if the writer is not being listened
+     */
+    virtual std::shared_ptr<ReaderPool> get_pool_for_writer(
+            const GUID_t& writer_guid) = 0;
 
 };
 

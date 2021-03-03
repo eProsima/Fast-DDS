@@ -22,7 +22,6 @@
 #include <fastdds/dds/log/Log.hpp>
 #include <rtps/DataSharing/IDataSharingListener.hpp>
 #include <rtps/DataSharing/DataSharingNotification.hpp>
-#include <rtps/DataSharing/DataSharingPayloadPool.hpp>
 #include <rtps/DataSharing/ReaderPool.hpp>
 #include <fastrtps/utils/collections/ResourceLimitedVector.hpp>
 
@@ -82,6 +81,9 @@ public:
 
     void change_added_with_timestamp(
             int64_t timestamp) override;
+
+    std::shared_ptr<ReaderPool> get_pool_for_writer(
+            const GUID_t& writer_guid) override;
 
 protected:
 

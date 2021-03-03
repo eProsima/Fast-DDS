@@ -284,6 +284,24 @@ void DataSharingListener::change_added_with_timestamp(
     }
 }
 
+
+std::shared_ptr<ReaderPool> DataSharingListener::get_pool_for_writer(
+        const GUID_t& writer_guid)
+{
+    std::lock_guard<std::mutex> lock(mutex_);
+    auto it = std::find_if(writer_pools_.begin(), writer_pools_.end(),
+                    [&writer_guid](const WriterInfo& info)
+                    {
+                        return info.pool->writer() == writer_guid;
+                    }
+                    );
+    if (it != writer_pools_.end())
+    {
+        return it->pool;
+    }
+    return std::shared_ptr<ReaderPool>(nullptr);
+}
+
 }  // namespace rtps
 }  // namespace fastrtps
 }  // namespace eprosima
