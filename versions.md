@@ -1,6 +1,8 @@
 Forthcoming
 -----------
 
+* New Fast DDS Instrumentation module (implies ABI break)
+
 Version 2.2.0
 -------------
 
