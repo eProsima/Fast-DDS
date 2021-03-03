@@ -1552,19 +1552,19 @@ bool StatefulWriter::matched_reader_add(
     rp->start(rdata, is_datasharing_compatible_with(rdata));
     locator_selector_.add_entry(rp->locator_selector_entry());
 
-    if (rp->is_datasharing_reader())
+    if (rp->is_local_reader())
     {
-        matched_datasharing_readers_.push_back(rp);
+        matched_local_readers_.push_back(rp);
         logInfo(RTPS_WRITER, "Adding reader " << rdata.guid() << " to " << this->m_guid.entityId
-                                              << " as data sharing");
+                                                << " as local reader");
     }
     else
     {
-        if (rp->is_local_reader())
+        if (rp->is_datasharing_reader())
         {
-            matched_local_readers_.push_back(rp);
+            matched_datasharing_readers_.push_back(rp);
             logInfo(RTPS_WRITER, "Adding reader " << rdata.guid() << " to " << this->m_guid.entityId
-                                                  << " as local reader");
+                                                << " as data sharing");
         }
         else
         {

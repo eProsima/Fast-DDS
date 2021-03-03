@@ -920,7 +920,7 @@ bool StatelessWriter::matched_reader_add(
     locator_selector_.add_entry(new_reader->locator_selector_entry());
 
     // Datasharing readers handle transient history themselves
-    if (!new_reader->is_datasharing_reader() &&
+    if ((!new_reader->is_datasharing_reader() || new_reader->is_local_reader()) &&
             mp_history->getHistorySize() > 0 &&
             data.m_qos.m_durability.kind >= TRANSIENT_LOCAL_DURABILITY_QOS)
     {
@@ -934,17 +934,17 @@ bool StatelessWriter::matched_reader_add(
         mp_RTPSParticipant->async_thread().wake_up(this);
     }
 
-    if (new_reader->is_datasharing_reader())
-    {
-        matched_datasharing_readers_.push_back(std::move(new_reader));
-        logInfo(RTPS_WRITER, "Adding reader " << data.guid() << " to " << this->m_guid.entityId
-                                              << " as data sharing");
-    }
-    else if (new_reader->is_local_reader())
+    if (new_reader->is_local_reader())
     {
         matched_local_readers_.push_back(std::move(new_reader));
         logInfo(RTPS_WRITER, "Adding reader " << data.guid() << " to " << this->m_guid.entityId
                                               << " as local reader");
+    }
+    else if (new_reader->is_datasharing_reader())
+    {
+        matched_datasharing_readers_.push_back(std::move(new_reader));
+        logInfo(RTPS_WRITER, "Adding reader " << data.guid() << " to " << this->m_guid.entityId
+                                              << " as data sharing");
     }
     else
     {
