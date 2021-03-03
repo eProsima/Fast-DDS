@@ -51,7 +51,7 @@ public:
 
         locator.get_address()[0] = (type == Type::UNICAST) ? 'U' : 'M';
 
-        auto host_id = Host::instance().id();
+        auto host_id = address_id();
         locator.get_address()[1] = octet(host_id);
         locator.get_address()[2] = octet(host_id >> 8);
 
@@ -70,7 +70,7 @@ public:
 
         if (locator.kind == LOCATOR_KIND_SHM)
         {
-            auto host_id = Host::instance().id();
+            auto host_id = address_id();
 
             return locator.address[1] == octet(host_id) && locator.address[2] == octet(host_id >> 8);
         }
@@ -78,6 +78,12 @@ public:
         return false;
     }
 
+private:
+
+    static uint16_t address_id()
+    {
+        return Host::instance().id();
+    }
 };
 
 } // namespace rtps
