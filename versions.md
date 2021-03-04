@@ -1,6 +1,8 @@
 Forthcoming
 -----------
 
+* Added eprosima::fastdds::dds::DataReader::get_unread_count (ABI break)
+
 Version 2.2.0
 -------------
 
