@@ -182,7 +182,7 @@ TEST_P(PersistenceGuid, CheckPrevalenceBetweenManualAndPropertyConfiguration)
 
     // Check if there is one entry in the writers database table with the stated persistence guid
     result1 =
-            system("python check_guid.py \"persistence.db\" \"writers_histories\" \"0.0.0.0.0.0.0.0.0.0.0.1|0.0.0.1\"");
+            system("python check_guid.py \"persistence.db\" \"writers_histories\" \"00.00.00.00.00.00.00.00.00.00.00.01|0.0.0.1\"");
     ASSERT_EQ(result1, 1);
 
     // Check if that there is no entry in the readers database table with the stated persistence guid
@@ -191,7 +191,7 @@ TEST_P(PersistenceGuid, CheckPrevalenceBetweenManualAndPropertyConfiguration)
     ASSERT_EQ(result2, 0);
 
     // Check if there is one entry in the readers database table with the stated persistence guid
-    result2 = system("python check_guid.py \"persistence.db\" \"readers\" \"0.0.0.0.0.0.0.0.0.0.0.2|0.0.0.1\"");
+    result2 = system("python check_guid.py \"persistence.db\" \"readers\" \"00.00.00.00.00.00.00.00.00.00.00.02|0.0.0.1\"");
     ASSERT_EQ(result2, 1);
 #else
 
@@ -201,7 +201,7 @@ TEST_P(PersistenceGuid, CheckPrevalenceBetweenManualAndPropertyConfiguration)
     ASSERT_EQ((result1 >> 8), 0);
 
     // Check if there is one entry in the writers database table with the stated persistence guid
-    result1 = system("python3 check_guid.py 'persistence.db' 'writers_histories' '0.0.0.0.0.0.0.0.0.0.0.1|0.0.0.1'");
+    result1 = system("python3 check_guid.py 'persistence.db' 'writers_histories' '00.00.00.00.00.00.00.00.00.00.00.01|0.0.0.1'");
     ASSERT_EQ((result1 >> 8), 1);
 
     // Check if that there is no entry in the readers database table with the stated persistence guid
@@ -210,7 +210,7 @@ TEST_P(PersistenceGuid, CheckPrevalenceBetweenManualAndPropertyConfiguration)
     ASSERT_EQ((result2 >> 8), 0);
 
     // Check if there is one entry in the readers database table with the stated persistence guid
-    result2 = system("python3 check_guid.py 'persistence.db' 'readers' '0.0.0.0.0.0.0.0.0.0.0.2|0.0.0.1'");
+    result2 = system("python3 check_guid.py 'persistence.db' 'readers' '00.00.00.00.00.00.00.00.00.00.00.02|0.0.0.1'");
     ASSERT_EQ((result2 >> 8), 1);
 #endif // WIN32
 }
