@@ -88,7 +88,8 @@ public:
     {
         using namespace fastrtps::rtps;
 
-        if (locator.kind == LOCATOR_KIND_SHM)
+        if ((locator.kind == LOCATOR_KIND_SHM) &&
+            (('U' == locator.address[0]) || ('M' == locator.address[0])))
         {
             auto host_id = address_id();
 
