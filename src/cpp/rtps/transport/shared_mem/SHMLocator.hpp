@@ -76,16 +76,16 @@ public:
             const Locator& locator)
     {
         return static_cast<uint16_t>(locator.address[4]) |
-            (static_cast<uint16_t>(locator.address[5]) << 8);
+               (static_cast<uint16_t>(locator.address[5]) << 8);
     }
 
     static uint32_t get_pid_from_address(
             const Locator& locator)
     {
         return static_cast<uint32_t>(locator.address[8]) |
-            (static_cast<uint32_t>(locator.address[9]) << 8) |
-            (static_cast<uint32_t>(locator.address[10]) << 16) |
-            (static_cast<uint32_t>(locator.address[11]) << 24);
+               (static_cast<uint32_t>(locator.address[9]) << 8) |
+               (static_cast<uint32_t>(locator.address[10]) << 16) |
+               (static_cast<uint32_t>(locator.address[11]) << 24);
     }
 
     /**
@@ -99,7 +99,7 @@ public:
         using namespace fastrtps::rtps;
 
         if ((locator.kind == LOCATOR_KIND_SHM) &&
-            (('U' == locator.address[0]) || ('M' == locator.address[0])))
+                (('U' == locator.address[0]) || ('M' == locator.address[0])))
         {
             auto host_id = SystemInfo::instance().host_id();
 
@@ -108,6 +108,7 @@ public:
 
         return false;
     }
+
 };
 
 } // namespace rtps

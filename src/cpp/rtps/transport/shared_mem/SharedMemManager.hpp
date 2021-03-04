@@ -715,8 +715,7 @@ public:
 
                     // TODO(Adolfo) : Dynamic allocation. Use foonathan to convert it to static allocation
                     buffer_ref = std::make_shared<SharedMemBuffer>(segment, buffer_descriptor.source_segment_id,
-                                    buffer_node,
-                                    buffer_descriptor.validity_id);
+                                    buffer_node, buffer_descriptor.validity_id);
 
                     // If the cell has been read by all listeners
                     global_port_->pop(*global_listener_, was_cell_freed);
@@ -754,8 +753,8 @@ public:
                 }
                 else
                 {
-                    logWarning(RTPS_TRANSPORT_SHM, "SHM Listener on port " << global_port_->port_id() << " failure: "
-                                                                           << e.what());
+                    logWarning(RTPS_TRANSPORT_SHM,
+                            "SHM Listener on port " << global_port_->port_id() << " failure: " << e.what());
 
                     regenerate_port();
                 }
@@ -981,7 +980,8 @@ public:
             SharedMemGlobal::Port::OpenMode open_mode = SharedMemGlobal::Port::OpenMode::ReadShared)
     {
         return std::make_shared<Port>(this,
-                       global_segment_.open_port(address_id, port_id, max_descriptors, healthy_check_timeout_ms, open_mode),
+                       global_segment_.open_port(address_id, port_id, max_descriptors,
+                       healthy_check_timeout_ms, open_mode),
                        open_mode);
     }
 

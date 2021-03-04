@@ -370,9 +370,11 @@ public:
         /**
          * Defines open sharing mode of a shared-memory port:
          *
-         * ReadShared (multiple listeners / multiple writers): Once a port is opened ReadShared cannot be opened ReadExclusive.
+         * ReadShared (multiple listeners / multiple writers): Once a port is opened ReadShared
+         * it cannot be opened ReadExclusive.
          *
-         * ReadExclusive (one listener / multipler writers): Once a port is opened ReadExclusive cannot be opened ReadShared.
+         * ReadExclusive (one listener / multipler writers): Once a port is opened ReadExclusive
+         * it cannot be opened ReadShared.
          *
          * Write (multiple writers): A port can always be opened for writing.
          */
@@ -950,7 +952,8 @@ public:
      * @param [in] healthy_check_timeout_ms Timeout for healthy check test
      * @param [in] open_mode Can be ReadShared, ReadExclusive or Write (see Port::OpenMode enum).
      *
-     * @return A shared_ptr to the new port or nullptr if the open_mode is ReadExclusive and the port_id is already opened.
+     * @return A shared_ptr to the new port
+     * @return nullptr if the open_mode is ReadExclusive and the port_id is already opened.
      * @remarks This function performs a test to validate whether the existing port is OK, if the test
      * goes wrong the existing port is removed from shared-memory and a new port is created.
      */
@@ -961,7 +964,8 @@ public:
             uint32_t healthy_check_timeout_ms,
             Port::OpenMode open_mode = Port::OpenMode::ReadShared)
     {
-        return open_port_internal(address_id, port_id, max_buffer_descriptors, healthy_check_timeout_ms, open_mode, nullptr);
+        return open_port_internal(address_id, port_id, max_buffer_descriptors, healthy_check_timeout_ms,
+                       open_mode, nullptr);
     }
 
     /**
@@ -1133,8 +1137,8 @@ private:
                     port_node->is_opened_read_exclusive |= (open_mode == Port::OpenMode::ReadExclusive);
                     port_node->is_opened_for_reading |= (open_mode != Port::OpenMode::Write);
 
-                    logInfo(RTPS_TRANSPORT_SHM, THREADID << "Port "
-                                                         << port_node->port_id << " (" << port_node->uuid.to_string() <<
+                    logInfo(RTPS_TRANSPORT_SHM,
+                            THREADID << "Port " << port_node->port_id << " (" << port_node->uuid.to_string() <<
                             ") Opened" << Port::open_mode_to_string(open_mode));
                 }
             }
