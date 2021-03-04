@@ -18,6 +18,7 @@
 #if defined(_WIN32)
 #include <process.h>
 #else
+#include <sys/types.h>
 #include <unistd.h>
 #endif // if defined(_WIN32)
 
@@ -68,6 +69,11 @@ public:
     inline uint16_t host_id() const
     {
         return Host::instance().id();
+    }
+
+    inline uint16_t user_id() const
+    {
+        return user_id_;
     }
 
     /**
@@ -128,6 +134,16 @@ private:
     SystemInfo()
     {
         create_unique_process_id();
+        get_user_id();
+    }
+
+    void get_user_id()
+    {
+#if defined(_WIN32)
+        user_id_ = 0;
+#else  // ^^^ defined(_WIN32) / !defined(_WIN32) vvv
+        user_id_ = geteuid();
+#endif  // !defined(_WIN32)
     }
 
     void create_unique_process_id()
@@ -156,6 +172,7 @@ private:
     }
 
     uint32_t unique_process_id_;
+    uint16_t user_id_;
 
 };
 

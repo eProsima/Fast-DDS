@@ -377,15 +377,25 @@ bool SharedMemTransport::transform_remote_locator(
         const Locator& remote_locator,
         Locator& result_locator) const
 {
-    if (SHMLocator::is_shm_and_from_this_host(remote_locator) &&
-        can_write_to_port(remote_locator.port, SHMLocator::get_pid_from_address(remote_locator)))
+    if (!SHMLocator::is_shm_and_from_this_host(remote_locator))
     {
-        result_locator = remote_locator;
-
-        return true;
+        return false;
     }
 
-    return false;
+    if (SystemInfo::instance().user_id() != SHMLocator::get_user_from_address(remote_locator))
+    {
+        logWarning(RTPS_TRANSPORT_SHM, "Ignoring SHM locator from different user");
+        return false;
+    }
+
+    if (!can_write_to_port(remote_locator.port, SHMLocator::get_pid_from_address(remote_locator)))
+    {
+        logWarning(RTPS_TRANSPORT_SHM, "Cannot write to remote SHM locator, ignoring");
+        return false;
+    }
+
+    result_locator = remote_locator;
+    return true;
 }
 
 std::shared_ptr<SharedMemManager::Buffer> SharedMemTransport::copy_to_shared_buffer(
