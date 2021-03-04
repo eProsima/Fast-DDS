@@ -1,5 +1,6 @@
 Forthcoming
 -----------
+* Added reception_timestamp to `eprosima::fastdds::dds::SampleInfo` (ABI break)
 
 Version 2.2.0
 -------------

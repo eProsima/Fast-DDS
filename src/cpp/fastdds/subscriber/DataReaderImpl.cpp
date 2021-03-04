@@ -67,6 +67,7 @@ static void sample_info_to_dds (
     dds_info->generation_rank = 0;
     dds_info->absoulte_generation_rank = 0;
     dds_info->source_timestamp = rtps_info.sourceTimestamp;
+    dds_info->reception_timestamp = rtps_info.receptionTimestamp;
     dds_info->instance_handle = rtps_info.iHandle;
     dds_info->publication_handle = fastrtps::rtps::InstanceHandle_t(rtps_info.sample_identity.writer_guid());
     dds_info->sample_identity = rtps_info.sample_identity;
