@@ -201,7 +201,7 @@ int main (
         }
         cout << std::endl;
         cout.flush();
-        
+
         cin.ignore();
 
         cout << endl << "### Server shut down ###" << endl;
