@@ -852,7 +852,12 @@ TEST_F(SHMTransportTests, transform_remote_locator_failures)
 
         // Check wrong address
         remote_locator = correct_locator;
-        remote_locator.address[0]++;
+        LOCATOR_ADDRESS_INVALID(remote_locator.address);
+        EXPECT_FALSE(transportUnderTest.transform_remote_locator(remote_locator, other_locator));
+
+        // Check wrong host
+        remote_locator = correct_locator;
+        remote_locator.address[1]++;
         EXPECT_FALSE(transportUnderTest.transform_remote_locator(remote_locator, other_locator));
 
         // Check wrong port
@@ -879,7 +884,12 @@ TEST_F(SHMTransportTests, transform_remote_locator_failures)
 
         // Check wrong address
         remote_locator = correct_locator;
-        remote_locator.address[0]++;
+        LOCATOR_ADDRESS_INVALID(remote_locator.address);
+        EXPECT_FALSE(transportUnderTest.transform_remote_locator(remote_locator, other_locator));
+
+        // Check wrong host
+        remote_locator = correct_locator;
+        remote_locator.address[1]++;
         EXPECT_FALSE(transportUnderTest.transform_remote_locator(remote_locator, other_locator));
 
         // Check wrong port
