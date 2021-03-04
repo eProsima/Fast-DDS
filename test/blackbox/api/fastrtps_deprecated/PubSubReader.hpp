@@ -343,7 +343,7 @@ public:
         total_msgs_ = msgs;
         number_samples_expected_ = total_msgs_.size();
         current_processed_count_ = 0;
-        last_seq = eprosima::fastrtps::rtps::SequenceNumber_t();
+        last_seq.clear();
         mutex_.unlock();
 
         bool ret = false;
@@ -392,7 +392,7 @@ public:
     {
         block([this, seq]() -> bool
                 {
-                    return last_seq == seq;
+                    return get_last_sequence_received() == seq;
                 });
     }
 
@@ -565,7 +565,17 @@ public:
 
     eprosima::fastrtps::rtps::SequenceNumber_t get_last_sequence_received()
     {
-        return last_seq;
+        if (last_seq.empty())
+        {
+            return eprosima::fastrtps::rtps::SequenceNumber_t();
+        }
+
+        using pair_type = typename decltype(last_seq)::value_type;
+        auto seq_comp = [](const pair_type& v1, const pair_type& v2) -> bool
+                {
+                    return v1.second < v2.second;
+                };
+        return std::max_element(last_seq.cbegin(), last_seq.cend(), seq_comp)->second;
     }
 
     /*** Function to change QoS ***/
@@ -1099,6 +1109,12 @@ public:
         onEndpointDiscovery_ = f;
     }
 
+    bool take_first_data(
+            void* data)
+    {
+        return takeNextData(data);
+    }
+
     bool takeNextData(
             void* data)
     {
@@ -1191,8 +1207,8 @@ private:
             std::unique_lock<std::mutex> lock(mutex_);
 
             // Check order of changes.
-            ASSERT_LT(last_seq, info.sample_identity.sequence_number());
-            last_seq = info.sample_identity.sequence_number();
+            ASSERT_LT(last_seq[info.instance_handle], info.sample_identity.sequence_number());
+            last_seq[info.instance_handle] = info.sample_identity.sequence_number();
 
             if (info.sampleKind == eprosima::fastrtps::rtps::ALIVE)
             {
@@ -1272,7 +1288,7 @@ private:
     unsigned int participant_matched_;
     std::atomic<bool> receiving_;
     type_support type_;
-    eprosima::fastrtps::rtps::SequenceNumber_t last_seq;
+    std::map<eprosima::fastrtps::rtps::InstanceHandle_t, eprosima::fastrtps::rtps::SequenceNumber_t> last_seq;
     size_t current_processed_count_;
     size_t number_samples_expected_;
     bool discovery_result_;

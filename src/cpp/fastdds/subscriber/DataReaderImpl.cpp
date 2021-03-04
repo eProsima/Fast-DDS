@@ -21,8 +21,9 @@
 
 #include <fastdds/subscriber/DataReaderImpl.hpp>
 
-#include <fastdds/dds/log/Log.hpp>
+#include <fastdds/dds/core/StackAllocatedSequence.hpp>
 #include <fastdds/dds/domain/DomainParticipant.hpp>
+#include <fastdds/dds/log/Log.hpp>
 #include <fastdds/dds/subscriber/DataReader.hpp>
 #include <fastdds/dds/subscriber/SampleInfo.hpp>
 #include <fastdds/dds/subscriber/Subscriber.hpp>
@@ -430,7 +431,19 @@ ReturnCode_t DataReaderImpl::read_or_take(
         return code;
     }
 
-    std::lock_guard<RecursiveTimedMutex> lock(reader_->getMutex());
+    auto max_blocking_time = std::chrono::steady_clock::now() +
+#if HAVE_STRICT_REALTIME
+            std::chrono::microseconds(::TimeConv::Time_t2MicroSecondsInt64(qos_.reliability().max_blocking_time));
+#else
+            std::chrono::hours(24);
+#endif // if HAVE_STRICT_REALTIME
+
+    std::unique_lock<RecursiveTimedMutex> lock(reader_->getMutex(), std::defer_lock);
+
+    if (!lock.try_lock_until(max_blocking_time))
+    {
+        return ReturnCode_t::RETCODE_TIMEOUT;
+    }
 
     auto it = history_.lookup_instance(handle, exact_instance);
     if (!it.first)
@@ -581,9 +594,10 @@ ReturnCode_t DataReaderImpl::return_loan(
     return ReturnCode_t::RETCODE_OK;
 }
 
-ReturnCode_t DataReaderImpl::read_next_sample(
+ReturnCode_t DataReaderImpl::read_or_take_next_sample(
         void* data,
-        SampleInfo* info)
+        SampleInfo* info,
+        bool should_take)
 {
     if (reader_ == nullptr)
     {
@@ -601,43 +615,51 @@ ReturnCode_t DataReaderImpl::read_next_sample(
 #else
             std::chrono::hours(24);
 #endif // if HAVE_STRICT_REALTIME
-    SampleInfo_t rtps_info;
-    if (history_.readNextData(data, &rtps_info, max_blocking_time))
+
+    std::unique_lock<RecursiveTimedMutex> lock(reader_->getMutex(), std::defer_lock);
+
+    if (!lock.try_lock_until(max_blocking_time))
     {
-        sample_info_to_dds(rtps_info, info);
-        return ReturnCode_t::RETCODE_OK;
+        return ReturnCode_t::RETCODE_TIMEOUT;
     }
-    return ReturnCode_t::RETCODE_ERROR;
+
+    auto it = history_.lookup_instance(HANDLE_NIL, false);
+    if (!it.first)
+    {
+        return ReturnCode_t::RETCODE_NO_DATA;
+    }
+
+    StackAllocatedSequence<void*, 1> data_values;
+    const_cast<void**>(data_values.buffer())[0] = data;
+    StackAllocatedSequence<SampleInfo, 1> sample_infos;
+
+    detail::StateFilter states{ NOT_READ_SAMPLE_STATE, ANY_VIEW_STATE, ANY_INSTANCE_STATE };
+    detail::ReadTakeCommand cmd(*this, data_values, sample_infos, 1, states, it.second, false);
+    while (!cmd.is_finished())
+    {
+        cmd.add_instance(should_take);
+    }
+
+    ReturnCode_t code = cmd.return_value();
+    if (ReturnCode_t::RETCODE_OK == code)
+    {
+        *info = sample_infos[0];
+    }
+    return code;
+}
+
+ReturnCode_t DataReaderImpl::read_next_sample(
+        void* data,
+        SampleInfo* info)
+{
+    return read_or_take_next_sample(data, info, false);
 }
 
 ReturnCode_t DataReaderImpl::take_next_sample(
         void* data,
         SampleInfo* info)
 {
-    if (reader_ == nullptr)
-    {
-        return ReturnCode_t::RETCODE_NOT_ENABLED;
-    }
-
-    if (history_.getHistorySize() == 0)
-    {
-        return ReturnCode_t::RETCODE_NO_DATA;
-    }
-
-    auto max_blocking_time = std::chrono::steady_clock::now() +
-#if HAVE_STRICT_REALTIME
-            std::chrono::microseconds(::TimeConv::Time_t2MicroSecondsInt64(qos_.reliability().max_blocking_time));
-#else
-            std::chrono::hours(24);
-#endif // if HAVE_STRICT_REALTIME
-
-    SampleInfo_t rtps_info;
-    if (history_.takeNextData(data, &rtps_info, max_blocking_time))
-    {
-        sample_info_to_dds(rtps_info, info);
-        return ReturnCode_t::RETCODE_OK;
-    }
-    return ReturnCode_t::RETCODE_ERROR;
+    return read_or_take_next_sample(data, info, true);
 }
 
 ReturnCode_t DataReaderImpl::get_first_untaken_info(

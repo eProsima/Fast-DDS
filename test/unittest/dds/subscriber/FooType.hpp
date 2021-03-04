@@ -85,6 +85,12 @@ public:
         scdr << index_;
     }
 
+    inline bool operator ==(
+            const FooType& other) const
+    {
+        return (index_ == other.index_) && (message_ == other.message_);
+    }
+
 private:
 
     uint32_t index_ = 0;

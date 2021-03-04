@@ -23,7 +23,7 @@
 #include <cstdint>
 
 #include <fastdds/dds/core/LoanableCollection.hpp>
-#include <fastdds/dds/core/LoanableSequence.hpp>
+#include <fastdds/dds/core/LoanableTypedCollection.hpp>
 #include <fastdds/dds/topic/TypeSupport.hpp>
 #include <fastdds/dds/subscriber/SampleInfo.hpp>
 
@@ -51,7 +51,7 @@ struct ReadTakeCommand
     using CacheChange_t = eprosima::fastrtps::rtps::CacheChange_t;
     using RTPSReader = eprosima::fastrtps::rtps::RTPSReader;
     using WriterProxy = eprosima::fastrtps::rtps::WriterProxy;
-    using SampleInfoSeq = LoanableSequence<SampleInfo>;
+    using SampleInfoSeq = LoanableTypedCollection<SampleInfo>;
 
     ReadTakeCommand(
             DataReaderImpl& reader,

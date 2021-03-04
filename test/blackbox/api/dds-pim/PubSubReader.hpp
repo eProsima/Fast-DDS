@@ -31,18 +31,19 @@
 #include <Windows.h>
 #endif // _MSC_VER
 
-#include <fastdds/dds/domain/DomainParticipantFactory.hpp>
+#include <fastdds/dds/core/UserAllocatedSequence.hpp>
+#include <fastdds/dds/core/policy/QosPolicies.hpp>
 #include <fastdds/dds/domain/DomainParticipant.hpp>
+#include <fastdds/dds/domain/DomainParticipantFactory.hpp>
 #include <fastdds/dds/domain/DomainParticipantListener.hpp>
 #include <fastdds/dds/domain/qos/DomainParticipantQos.hpp>
-#include <fastdds/dds/topic/Topic.hpp>
-#include <fastdds/dds/subscriber/Subscriber.hpp>
 #include <fastdds/dds/subscriber/DataReader.hpp>
 #include <fastdds/dds/subscriber/DataReaderListener.hpp>
-#include <fastdds/dds/subscriber/qos/DataReaderQos.hpp>
-#include <fastdds/dds/core/policy/QosPolicies.hpp>
-#include <fastrtps/subscriber/SampleInfo.h>
 #include <fastdds/dds/subscriber/SampleInfo.hpp>
+#include <fastdds/dds/subscriber/Subscriber.hpp>
+#include <fastdds/dds/subscriber/qos/DataReaderQos.hpp>
+#include <fastdds/dds/topic/Topic.hpp>
+#include <fastrtps/subscriber/SampleInfo.h>
 #include <fastrtps/xmlparser/XMLParser.h>
 #include <fastrtps/xmlparser/XMLTree.h>
 #include <fastrtps/utils/IPLocator.h>
@@ -418,7 +419,7 @@ public:
         total_msgs_ = msgs;
         number_samples_expected_ = total_msgs_.size();
         current_processed_count_ = 0;
-        last_seq = eprosima::fastrtps::rtps::SequenceNumber_t();
+        last_seq.clear();
         mutex_.unlock();
 
         bool ret = false;
@@ -429,7 +430,7 @@ public:
         while (ret);
 
         receiving_.store(true);
-        return last_seq;
+        return get_last_sequence_received();
     }
 
     void stopReception()
@@ -468,7 +469,7 @@ public:
     {
         block([this, seq]() -> bool
                 {
-                    return last_seq == seq;
+                    return get_last_sequence_received() == seq;
                 });
     }
 
@@ -502,6 +503,36 @@ public:
                 });
 
         return current_processed_count_;
+    }
+
+    void check_history_content(
+            std::list<type>& expected_messages)
+    {
+        FASTDDS_SEQUENCE(DataSeq, type);
+        DataSeq data_seq;
+        eprosima::fastdds::dds::SampleInfoSeq info_seq;
+
+        ReturnCode_t success =
+                datareader_->read(data_seq, info_seq,
+                        eprosima::fastdds::dds::LENGTH_UNLIMITED,
+                        eprosima::fastdds::dds::ANY_SAMPLE_STATE,
+                        eprosima::fastdds::dds::ANY_VIEW_STATE,
+                        eprosima::fastdds::dds::ANY_INSTANCE_STATE);
+
+        if (ReturnCode_t::RETCODE_OK == success)
+        {
+            for (eprosima::fastdds::dds::LoanableCollection::size_type n = 0; n < info_seq.length(); ++n)
+            {
+                if (info_seq[n].valid_data)
+                {
+                    auto it = std::find(expected_messages.begin(), expected_messages.end(), data_seq[n]);
+                    ASSERT_NE(it, expected_messages.end());
+                    expected_messages.erase(it);
+                }
+            }
+            ASSERT_TRUE(expected_messages.empty());
+            datareader_->return_loan(data_seq, info_seq);
+        }
     }
 
     void wait_discovery(
@@ -662,7 +693,17 @@ public:
 
     eprosima::fastrtps::rtps::SequenceNumber_t get_last_sequence_received()
     {
-        return last_seq;
+        if (last_seq.empty())
+        {
+            return eprosima::fastrtps::rtps::SequenceNumber_t();
+        }
+
+        using pair_type = typename decltype(last_seq)::value_type;
+        auto seq_comp = [](const pair_type& v1, const pair_type& v2) -> bool
+                {
+                    return v1.second < v2.second;
+                };
+        return std::max_element(last_seq.cbegin(), last_seq.cend(), seq_comp)->second;
     }
 
     PubSubReader& deactivate_status_listener(
@@ -1240,6 +1281,24 @@ public:
         onEndpointDiscovery_ = f;
     }
 
+    bool take_first_data(
+            void* data)
+    {
+        using collection = eprosima::fastdds::dds::UserAllocatedSequence;
+        using info_seq_type = eprosima::fastdds::dds::SampleInfoSeq;
+
+        collection::element_type buf[1] = { data };
+        collection data_seq(buf, 1);
+        info_seq_type info_seq(1);
+
+        if (ReturnCode_t::RETCODE_OK == datareader_->take(data_seq, info_seq))
+        {
+            current_processed_count_++;
+            return true;
+        }
+        return false;
+    }
+
     bool takeNextData(
             void* data)
     {
@@ -1358,8 +1417,6 @@ private:
         return participant_guid_;
     }
 
-private:
-
     void receive_one(
             eprosima::fastdds::dds::DataReader* datareader,
             bool& returnedValue)
@@ -1378,8 +1435,8 @@ private:
             std::unique_lock<std::mutex> lock(mutex_);
 
             // Check order of changes.
-            ASSERT_LT(last_seq, info.sample_identity.sequence_number());
-            last_seq = info.sample_identity.sequence_number();
+            ASSERT_LT(last_seq[info.instance_handle], info.sample_identity.sequence_number());
+            last_seq[info.instance_handle] = info.sample_identity.sequence_number();
 
             if (info.instance_state == eprosima::fastdds::dds::ALIVE_INSTANCE_STATE)
             {
@@ -1463,7 +1520,7 @@ private:
     unsigned int participant_matched_;
     std::atomic<bool> receiving_;
     eprosima::fastdds::dds::TypeSupport type_;
-    eprosima::fastrtps::rtps::SequenceNumber_t last_seq;
+    std::map<eprosima::fastrtps::rtps::InstanceHandle_t, eprosima::fastrtps::rtps::SequenceNumber_t> last_seq;
     size_t current_processed_count_;
     size_t number_samples_expected_;
     bool discovery_result_;
