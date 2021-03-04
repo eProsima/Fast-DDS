@@ -830,6 +830,50 @@ TEST_F(SHMTransportTests, transform_remote_locator_fails_on_non_open_channel)
     }
 }
 
+void transform_remote_locator_failures(
+        SharedMemTransport& transportUnderTest,
+        SHMLocator::Type locator_type)
+{
+    // Given
+    Locator_t correct_locator = SHMLocator::create_locator(g_default_port, locator_type);
+    ASSERT_TRUE(transportUnderTest.OpenInputChannel(correct_locator, nullptr, 0xFF));
+
+    Locator_t other_locator;
+    Locator_t remote_locator;
+
+    // Check wrong kind
+    remote_locator = correct_locator;
+    remote_locator.kind = LOCATOR_KIND_INVALID;
+    EXPECT_FALSE(transportUnderTest.transform_remote_locator(remote_locator, other_locator));
+
+    // Check wrong address
+    remote_locator = correct_locator;
+    LOCATOR_ADDRESS_INVALID(remote_locator.address);
+    EXPECT_FALSE(transportUnderTest.transform_remote_locator(remote_locator, other_locator));
+
+    // Check wrong host
+    remote_locator = correct_locator;
+    remote_locator.address[1]++;
+    EXPECT_FALSE(transportUnderTest.transform_remote_locator(remote_locator, other_locator));
+
+    // Check wrong user
+    remote_locator = correct_locator;
+    remote_locator.address[4]++;
+    EXPECT_FALSE(transportUnderTest.transform_remote_locator(remote_locator, other_locator));
+
+    // Check wrong pid
+    remote_locator = correct_locator;
+    remote_locator.address[8]++;
+    EXPECT_FALSE(transportUnderTest.transform_remote_locator(remote_locator, other_locator));
+
+    // Check wrong port
+    remote_locator = correct_locator;
+    remote_locator.port += 1000;
+    EXPECT_FALSE(transportUnderTest.transform_remote_locator(remote_locator, other_locator));
+
+    ASSERT_TRUE(transportUnderTest.CloseInputChannel(correct_locator));
+}
+
 TEST_F(SHMTransportTests, transform_remote_locator_failures)
 {
     // Given
@@ -837,68 +881,10 @@ TEST_F(SHMTransportTests, transform_remote_locator_failures)
     ASSERT_TRUE(transportUnderTest.init());
 
     // Check with multicast
-    {
-        // Given
-        Locator_t correct_locator = SHMLocator::create_locator(g_default_port, SHMLocator::Type::MULTICAST);
-        ASSERT_TRUE(transportUnderTest.OpenInputChannel(correct_locator, nullptr, 0xFF));
-
-        Locator_t other_locator;
-        Locator_t remote_locator;
-
-        // Check wrong kind
-        remote_locator = correct_locator;
-        remote_locator.kind = LOCATOR_KIND_INVALID;
-        EXPECT_FALSE(transportUnderTest.transform_remote_locator(remote_locator, other_locator));
-
-        // Check wrong address
-        remote_locator = correct_locator;
-        LOCATOR_ADDRESS_INVALID(remote_locator.address);
-        EXPECT_FALSE(transportUnderTest.transform_remote_locator(remote_locator, other_locator));
-
-        // Check wrong host
-        remote_locator = correct_locator;
-        remote_locator.address[1]++;
-        EXPECT_FALSE(transportUnderTest.transform_remote_locator(remote_locator, other_locator));
-
-        // Check wrong port
-        remote_locator = correct_locator;
-        remote_locator.port += 1000;
-        EXPECT_FALSE(transportUnderTest.transform_remote_locator(remote_locator, other_locator));
-
-        ASSERT_TRUE(transportUnderTest.CloseInputChannel(correct_locator));
-    }
+    transform_remote_locator_failures(transportUnderTest, SHMLocator::Type::MULTICAST);
 
     // Check with unicast
-    {
-        // Given
-        Locator_t correct_locator = SHMLocator::create_locator(g_default_port, SHMLocator::Type::UNICAST);
-        ASSERT_TRUE(transportUnderTest.OpenInputChannel(correct_locator, nullptr, 0xFF));
-
-        Locator_t other_locator;
-        Locator_t remote_locator;
-
-        // Check wrong kind
-        remote_locator = correct_locator;
-        remote_locator.kind = LOCATOR_KIND_INVALID;
-        EXPECT_FALSE(transportUnderTest.transform_remote_locator(remote_locator, other_locator));
-
-        // Check wrong address
-        remote_locator = correct_locator;
-        LOCATOR_ADDRESS_INVALID(remote_locator.address);
-        EXPECT_FALSE(transportUnderTest.transform_remote_locator(remote_locator, other_locator));
-
-        // Check wrong host
-        remote_locator = correct_locator;
-        remote_locator.address[1]++;
-        EXPECT_FALSE(transportUnderTest.transform_remote_locator(remote_locator, other_locator));
-
-        // Check wrong port
-        remote_locator = correct_locator;
-        remote_locator.port += 1000;
-        EXPECT_FALSE(transportUnderTest.transform_remote_locator(remote_locator, other_locator));
-
-        ASSERT_TRUE(transportUnderTest.CloseInputChannel(correct_locator));
-    }
+    transform_remote_locator_failures(transportUnderTest, SHMLocator::Type::UNICAST);
 }
 
 TEST_F(SHMTransportTests, all_shared_mem_locators_are_local)
