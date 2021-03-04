@@ -23,6 +23,7 @@
 #include <vector>
 
 #include <fastrtps/Domain.h>
+#include <fastrtps/participant/Participant.h>
 #include <fastdds/dds/log/Log.hpp>
 
 using namespace eprosima;
@@ -80,6 +81,7 @@ int main (
     // Retrieve server Id: is mandatory and only specified once
     // Note there is a specific cast to pointer if the Option is valid
     option::Option* pOp = options[SERVERID];
+    int server_id;
 
     if ( nullptr == pOp )
     {
@@ -93,7 +95,6 @@ int main (
     }
     else
     {
-        int server_id;
         stringstream is;
         is << pOp->arg;
 
@@ -183,9 +184,27 @@ int main (
     else
     {
         // Wait for user command
-        cout << "\n### Server is running, press any key to quit ###" << std::endl;
+
+        // Print running server attributes
+        cout << "### Server is running ###" << endl;
+        cout << "  Server ID:          " << server_id << endl;
+        cout << "  Server GUID prefix: " << pServer->getGuid().guidPrefix << endl;
+        cout << "  Server Addresses:   ";
+        for (auto locator_it = att.rtps.builtin.metatrafficUnicastLocatorList.begin();
+                locator_it != att.rtps.builtin.metatrafficUnicastLocatorList.end();)
+        {
+            cout << *locator_it;
+            if (++locator_it != att.rtps.builtin.metatrafficUnicastLocatorList.end())
+            {
+                cout << std::endl << "                      ";
+            }
+        }
+        cout << std::endl;
         cout.flush();
+        
         cin.ignore();
+
+        cout << endl << "### Server shut down ###" << endl;
 
         // Remove the server
         Domain::removeParticipant(pServer);
