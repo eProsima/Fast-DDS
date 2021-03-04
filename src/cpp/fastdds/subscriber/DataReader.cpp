@@ -252,6 +252,11 @@ ReturnCode_t DataReader::get_first_untaken_info(
     return impl_->get_first_untaken_info(info);
 }
 
+uint64_t DataReader::get_unread_count() const
+{
+    return impl_->get_unread_count();
+}
+
 const GUID_t& DataReader::guid()
 {
     return impl_->guid();
