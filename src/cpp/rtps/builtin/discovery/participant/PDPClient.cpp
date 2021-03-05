@@ -24,6 +24,8 @@
 #include <fastdds/rtps/reader/StatefulReader.h>
 #include <fastdds/rtps/writer/StatefulWriter.h>
 
+#include <fastdds/rtps/attributes/RTPSParticipantAttributes.h>
+
 #include <fastdds/rtps/writer/ReaderProxy.h>
 
 #include <fastdds/rtps/history/WriterHistory.h>
@@ -51,10 +53,12 @@ using namespace fastrtps::rtps;
 
 PDPClient::PDPClient(
         BuiltinProtocols* builtin,
-        const RTPSParticipantAllocationAttributes& allocation)
+        const RTPSParticipantAllocationAttributes& allocation,
+        bool super_client)
     : PDP(builtin, allocation)
     , mp_sync(nullptr)
     , _serverPing(false)
+    , _super_client(super_client)
 {
 }
 
@@ -71,7 +75,12 @@ void PDPClient::initializeParticipantProxyData(
 {
     PDP::initializeParticipantProxyData(participant_data); // TODO: Remember that the PDP version USES security
 
-    if (getRTPSParticipant()->getAttributes().builtin.discovery_config.discoveryProtocol != DiscoveryProtocol_t::CLIENT)
+    if (
+        getRTPSParticipant()->getAttributes().builtin.discovery_config.discoveryProtocol
+        != DiscoveryProtocol_t::CLIENT
+        &&
+        getRTPSParticipant()->getAttributes().builtin.discovery_config.discoveryProtocol
+        != DiscoveryProtocol_t::SUPER_CLIENT    )
     {
         logError(RTPS_PDP, "Using a PDP client object with another user's settings");
     }

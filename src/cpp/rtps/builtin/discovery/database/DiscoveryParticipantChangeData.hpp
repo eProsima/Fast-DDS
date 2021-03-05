@@ -82,7 +82,9 @@ private:
 
     // The metatraffic locators of from the serialized payload
     fastrtps::rtps::RemoteLocatorList metatraffic_locators_;
-    // Whether this participant is a CLIENT or a SERVER
+    // Whether this participant is a CLIENT or a SERVER/BACKUP/SUPER_CLIENT
+    // This variable affects the discovery filter to applied to each entity:
+    // false => send all data ; true => send only data that is required to match endpoints
     bool is_client_ = false;
     // Whether this participant (CLIENT OR SERVER) is a client of this server
     bool is_local_ = false;

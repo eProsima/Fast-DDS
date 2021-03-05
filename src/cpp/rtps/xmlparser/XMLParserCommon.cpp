@@ -248,6 +248,7 @@ const char* NONE = "NONE";
 const char* CLIENT = "CLIENT";
 const char* SERVER = "SERVER";
 const char* BACKUP = "BACKUP";
+const char* SUPER_CLIENT = "SUPER_CLIENT";
 const char* IGNORE_PARTICIPANT_FLAGS = "ignoreParticipantFlags";
 const char* FILTER_DIFFERENT_HOST = "FILTER_DIFFERENT_HOST";
 const char* FILTER_DIFFERENT_PROCESS = "FILTER_DIFFERENT_PROCESS";

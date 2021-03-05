@@ -48,6 +48,7 @@ struct ParticipantType
     static constexpr const char* SIMPLE = "SIMPLE";
     static constexpr const char* SERVER = "SERVER";
     static constexpr const char* CLIENT = "CLIENT";
+    static constexpr const char* SUPER_CLIENT = "SUPER_CLIENT";
     static constexpr const char* BACKUP = "BACKUP";
     static constexpr const char* NONE = "NONE";
     static constexpr const char* EXTERNAL = "EXTERNAL";
@@ -84,8 +85,10 @@ typedef enum DiscoveryProtocol
                  Server locators should be specified as attributes. */
     SERVER, /*!< The participant will behave as a server concerning discovery operation.
                  Discovery operation is volatile (discovery handshake must take place if shutdown). */
-    BACKUP  /*!< The participant will behave as a server concerning discovery operation.
+    BACKUP,  /*!< The participant will behave as a server concerning discovery operation.
                  Discovery operation persist on a file (discovery handshake wouldn't repeat if shutdown). */
+    SUPER_CLIENT  /*!< The participant will behave as a client concerning all internal behaviour.
+                     Remote servers will treat it as a server and will share every discovery information. */
 
 } DiscoveryProtocol_t;
 
@@ -106,6 +109,9 @@ inline std::ostream& operator <<(
             break;
         case DiscoveryProtocol::CLIENT:
             output << fastdds::rtps::ParticipantType::CLIENT;
+            break;
+        case DiscoveryProtocol::SUPER_CLIENT:
+            output << fastdds::rtps::ParticipantType::SUPER_CLIENT;
             break;
         case DiscoveryProtocol::SERVER:
             output << fastdds::rtps::ParticipantType::SERVER;
