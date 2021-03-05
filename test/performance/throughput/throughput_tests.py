@@ -76,7 +76,7 @@ if __name__ == '__main__':
         required=False,
     )
     parser.add_argument(
-        '-r',
+        '-R',
         '--reliability',
         action='store_true',
         help='Run with RELIABLE reliability (Defaults: disable)',
