@@ -127,7 +127,7 @@ DataWriter* Publisher::create_datawriter_with_profile(
 }
 
 ReturnCode_t Publisher::delete_datawriter(
-        DataWriter* writer)
+        const DataWriter* writer)
 {
     return impl_->delete_datawriter(writer);
 }

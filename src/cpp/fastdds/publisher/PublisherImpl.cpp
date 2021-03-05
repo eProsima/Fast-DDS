@@ -304,7 +304,7 @@ DataWriter* PublisherImpl::create_datawriter_with_profile(
 }
 
 ReturnCode_t PublisherImpl::delete_datawriter(
-        DataWriter* writer)
+        const DataWriter* writer)
 {
     if (user_publisher_ != writer->get_publisher())
     {
