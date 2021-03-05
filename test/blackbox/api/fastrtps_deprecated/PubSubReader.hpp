@@ -1207,8 +1207,8 @@ private:
             std::unique_lock<std::mutex> lock(mutex_);
 
             // Check order of changes.
-            ASSERT_LT(last_seq[info.instance_handle], info.sample_identity.sequence_number());
-            last_seq[info.instance_handle] = info.sample_identity.sequence_number();
+            ASSERT_LT(last_seq[info.iHandle], info.sample_identity.sequence_number());
+            last_seq[info.iHandle] = info.sample_identity.sequence_number();
 
             if (info.sampleKind == eprosima::fastrtps::rtps::ALIVE)
             {
