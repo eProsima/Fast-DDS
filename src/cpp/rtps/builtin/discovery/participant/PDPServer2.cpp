@@ -351,8 +351,11 @@ void PDPServer2::initializeParticipantProxyData(
 {
     PDP::initializeParticipantProxyData(participant_data);
 
-    if (!(getRTPSParticipant()->getAttributes().builtin.discovery_config.discoveryProtocol !=
-            DiscoveryProtocol_t::CLIENT))
+    if (getRTPSParticipant()->getAttributes().builtin.discovery_config.discoveryProtocol !=
+            DiscoveryProtocol_t::SERVER
+            &&
+            getRTPSParticipant()->getAttributes().builtin.discovery_config.discoveryProtocol !=
+            DiscoveryProtocol_t::BACKUP)
     {
         logError(RTPS_PDP_SERVER, "Using a PDP Server object with another user's settings");
     }
@@ -1203,9 +1206,8 @@ const RemoteServerList_t& PDPServer2::servers()
 bool PDPServer2::process_to_send_lists()
 {
     logInfo(RTPS_PDP_SERVER, "process_to_send_lists start");
-    // Process pdp_to_send_
-    logInfo(RTPS_PDP_SERVER, "Processing pdp_to_send");
-    if (discovery_db_.get_etinties_updated_and_reset() > 0)
+
+    if (discovery_db_.updates_since_last_checked() > 0)
     {
         // Process pdp_to_send_
         logInfo(RTPS_PDP_SERVER, "Processing pdp_to_send");

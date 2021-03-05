@@ -41,8 +41,8 @@ DiscoveryDataBase::DiscoveryDataBase(
     , server_acked_by_all_(servers.size() == 0)
     , servers_(servers)
     , enabled_(true)
+    , new_updates_(0)
     , processing_backup_(false)
-    , entities_updated_(false)
     , is_persistent_(false)
 {
 }
@@ -562,140 +562,215 @@ void DiscoveryDataBase::create_participant_from_change_(
     // The participant was already known in the database
     if (participant_it != participants_.end())
     {
-        // Only update database if the change is newer than the one we already have
-        if (ch->write_params.sample_identity().sequence_number() >
-                participant_it->second.change()->write_params.sample_identity().sequence_number())
-        {
-            logInfo(DISCOVERY_DATABASE, "Participant already known with newer sequence number");
-            // The change could be newer and at the same time not being an update.
-            // This happens with DATAs coming from servers, since they take their own DATAs in and out frequently,
-            // so the sequence number in `write_params` changes.
-            // To account for that, we discard the DATA if the payload is exactly the same as what we have.
-            if (!(ch->serializedPayload == participant_it->second.change()->serializedPayload))
-            {
-                logInfo(DISCOVERY_DATABASE, "Participant updating. Marking old change to release");
-                // Update participant's change in the database, set all relevant participants ACK status to 0, and add
-                // old change to changes_to_release_.
-                update_change_and_unmatch_(ch, participant_it->second);
-
-                // If it is an update of our own server, is already in history
-                // Else, it needs to be sent in case it has unacked participants
-                if (change_guid.guidPrefix != server_guid_prefix_ &&
-                        !participant_it->second.is_acked_by_all())
-                {
-                    entities_updated_++;
-                    add_pdp_to_send_(ch);
-                }
-            }
-        }
-        // if the cache is not new we have to release it, because it is repeated or outdated
-        else
-        {
-            // if the change is the same that we already have, we update the ack list. This is because we have
-            //  received the data from two servers, so we have to set that both of them already know this data
-            if (ch->write_params.sample_identity().sequence_number() ==
-                    participant_it->second.change()->write_params.sample_identity().sequence_number())
-            {
-                participant_it->second.add_or_update_ack_participant(ch->writerGUID.guidPrefix, true);
-            }
-
-            // we release it if it's the same or if it is lower
-            changes_to_release_.push_back(ch);
-        }
+        update_participant_from_change_(participant_it->second, ch, change_data);
     }
 
     // New participant
     else
     {
-        DiscoveryParticipantInfo part(ch, server_guid_prefix_, change_data);
-        std::pair<std::map<eprosima::fastrtps::rtps::GuidPrefix_t, DiscoveryParticipantInfo>::iterator, bool> ret =
-                participants_.insert(std::make_pair(change_guid.guidPrefix, part));
-        // If insert was successful
-        if (ret.second)
+        create_new_participant_from_change_(ch, change_data);
+    }
+}
+
+void DiscoveryDataBase::match_new_server_(
+        eprosima::fastrtps::rtps::GuidPrefix_t& participant_prefix)
+{
+    // Send our DATA(p) to the new participant
+    // If this is not done, our data could be skip afterwards because a gap sent in newer DATA(p)s
+    // so the new participant could never receive out data
+    auto our_data_it = participants_.find(server_guid_prefix_);
+    assert(our_data_it != participants_.end());
+    add_pdp_to_send_(our_data_it->second.change());
+
+    // Create virtual endpoints
+    create_virtual_endpoints_(participant_prefix);
+}
+
+void DiscoveryDataBase::create_virtual_endpoints_(
+        eprosima::fastrtps::rtps::GuidPrefix_t& participant_prefix)
+{
+    logInfo(DISCOVERY_DATABASE, "Creating virtual entities for " << participant_prefix);
+    /* Create virtual writer */
+    // Create a GUID for the virtual writer from the local server GUID prefix and the virtual writer entity
+    // ID.
+    fastrtps::rtps::GUID_t virtual_writer_guid(participant_prefix,
+            fastrtps::rtps::ds_server_virtual_writer);
+    // Create a populate the Cache Change with the necessary information.
+    fastrtps::rtps::CacheChange_t* virtual_writer_change = new fastrtps::rtps::CacheChange_t();
+    virtual_writer_change->kind = fastrtps::rtps::ChangeKind_t::ALIVE;
+    virtual_writer_change->writerGUID.guidPrefix = participant_prefix;
+    virtual_writer_change->writerGUID.entityId = fastrtps::rtps::ds_server_virtual_writer;
+    virtual_writer_change->instanceHandle = fastrtps::rtps::InstanceHandle_t(virtual_writer_guid);
+    // Populate sample identity
+    fastrtps::rtps::SampleIdentity virtual_writer_sample_id;
+    virtual_writer_sample_id.writer_guid(virtual_writer_guid);
+    virtual_writer_sample_id.sequence_number(eprosima::fastrtps::rtps::SequenceNumber_t(0));
+    // Set write params
+    eprosima::fastrtps::rtps::WriteParams virtual_writer_writer_params;
+    virtual_writer_writer_params.sample_identity(virtual_writer_sample_id);
+    virtual_writer_writer_params.related_sample_identity(virtual_writer_sample_id);
+    virtual_writer_change->write_params = std::move(virtual_writer_writer_params);
+    // Create the virtual writer
+    create_writers_from_change_(virtual_writer_change, virtual_topic_);
+
+    /* Create virtual reader */
+    // Create a GUID for the virtual reader from the local server GUID prefix and the virtual reader entity
+    // ID.
+    fastrtps::rtps::GUID_t virtual_reader_guid(participant_prefix,
+            fastrtps::rtps::ds_server_virtual_reader);
+    // Create a populate the Cache Change with the necessary information.
+    fastrtps::rtps::CacheChange_t* virtual_reader_change = new fastrtps::rtps::CacheChange_t();
+    virtual_reader_change->kind = fastrtps::rtps::ChangeKind_t::ALIVE;
+    virtual_reader_change->writerGUID.guidPrefix = participant_prefix;
+    virtual_reader_change->writerGUID.entityId = fastrtps::rtps::ds_server_virtual_reader;
+    virtual_reader_change->instanceHandle = fastrtps::rtps::InstanceHandle_t(virtual_reader_guid);
+    // Populate sample identity
+    fastrtps::rtps::SampleIdentity virtual_reader_sample_id;
+    virtual_reader_sample_id.writer_guid(virtual_reader_guid);
+    virtual_reader_sample_id.sequence_number(eprosima::fastrtps::rtps::SequenceNumber_t(0));
+    // Set write params
+    eprosima::fastrtps::rtps::WriteParams virtual_reader_writer_params;
+    virtual_reader_writer_params.sample_identity(virtual_reader_sample_id);
+    virtual_reader_writer_params.related_sample_identity(virtual_reader_sample_id);
+    virtual_reader_change->write_params = std::move(virtual_reader_writer_params);
+    // Create the virtual reader
+    create_readers_from_change_(virtual_reader_change, virtual_topic_);
+}
+
+bool DiscoveryDataBase::participant_data_has_changed_(
+        const DiscoveryParticipantInfo& participant_info,
+        const DiscoveryParticipantChangeData& new_change_data)
+{
+    return !(participant_info.is_local() == new_change_data.is_local() &&
+           participant_info.is_client() == new_change_data.is_client());
+}
+
+void DiscoveryDataBase::create_new_participant_from_change_(
+        eprosima::fastrtps::rtps::CacheChange_t* ch,
+        const DiscoveryParticipantChangeData& change_data)
+{
+    fastrtps::rtps::GUID_t change_guid = guid_from_change(ch);
+
+    DiscoveryParticipantInfo part(ch, server_guid_prefix_, change_data);
+    std::pair<std::map<eprosima::fastrtps::rtps::GuidPrefix_t, DiscoveryParticipantInfo>::iterator, bool> ret =
+            participants_.insert(std::make_pair(change_guid.guidPrefix, part));
+    // If insert was successful
+    if (ret.second)
+    {
+        // New participant found
+        new_updates_++;
+
+        logInfo(DISCOVERY_DATABASE, "New participant added: " << change_guid.guidPrefix);
+
+        // Manually set to 1 the relevant participants ACK status of the participant that sent the change. This way,
+        // we avoid backprogation of the data.
+        ret.first->second.add_or_update_ack_participant(ch->writerGUID.guidPrefix, true);
+
+        // If the DATA(p) it's from this server, it is already in history and we do nothing here
+        if (change_guid.guidPrefix != server_guid_prefix_)
         {
-            // New participant found
-            entities_updated_++;
+            // If the participant is a new participant, mark that not everyone has ACKed this server's DATA(p)
+            // TODO if the new participant is a server it may be that our DATA(p) is already acked because he is
+            // our server and we have pinged it. But also if we are its server it could be the case that
+            // our DATA(p) is not acked even when it is our server. Solution: see in PDPServer how the change has
+            // arrived. if because our ping or because their DATA(p). MINOR PROBLEM
+            server_acked_by_all(false);
+        }
 
-            logInfo(DISCOVERY_DATABASE, "New participant added: " << change_guid.guidPrefix);
+        // If it is local and server we have to create virtual endpoints, except for our own server
+        if (change_guid.guidPrefix != server_guid_prefix_ &&
+                !ret.first->second.is_client() && ret.first->second.is_local())
+        {
+            // Match new server and create virtual endpoints
+            match_new_server_(change_guid.guidPrefix);
+        }
+    }
+    else
+    {
+        logError(DISCOVERY_DATABASE, "Failed adding new participant " << change_guid.guidPrefix);
+    }
+}
 
-            // Manually set to 1 the relevant participants ACK status of the participant that sent the change. This way,
-            // we avoid backprogation of the data.
-            ret.first->second.add_or_update_ack_participant(ch->writerGUID.guidPrefix, true);
+void DiscoveryDataBase::update_participant_from_change_(
+        DiscoveryParticipantInfo& participant_info,
+        eprosima::fastrtps::rtps::CacheChange_t* ch,
+        const DiscoveryParticipantChangeData& change_data)
+{
+    fastrtps::rtps::GUID_t change_guid = guid_from_change(ch);
 
-            // If the DATA(p) it's from this server, it is already in history and we do nothing here
-            if (change_guid.guidPrefix != server_guid_prefix_)
-            {
-                // If the participant is a new participant, mark that not everyone has ACKed this server's DATA(p)
-                // TODO if the new participant is a server it may be that our DATA(p) is already acked because he is
-                //  our server and we have pinged it. But also if we are its server it could be the case that
-                //  our DATA(p) is not acked even when he is our server. Solution: see in PDPServer2 how the change has
-                //  arrived, if because our ping or because their DATA(p). MINOR PROBLEM
-                server_acked_by_all(false);
-            }
+    // Specific case when a Data(P) from an entity A known as remote comes from the very entity A (we have
+    // the Data(P) because of other server B, but now it arrives from A itself)
+    // The entity A changes to local
+    // Must be local data, or else it is a remote endpoint and should not be changed
+    if (change_guid.guidPrefix != server_guid_prefix_ && change_data.is_local() &&
+            DiscoveryDataBase::participant_data_has_changed_(participant_info, change_data))
+    {
+        // If the participant changes to server local, virtual endpoints must be added
+        // If it is local and server the only possibility is it was a remote server and it must be converted to local
+        if (!change_data.is_client())
+        {
+            match_new_server_(change_guid.guidPrefix);
+        }
 
-            // If it is local and server we have to create virtual endpoints, except for our own server
+        // Update the change data
+        participant_info.participant_change_data(change_data);
+
+        // Update change
+        update_change_and_unmatch_(ch, participant_info);
+
+        // Treat as a new participant found
+        new_updates_++;
+        server_acked_by_all(false);
+
+        // It is possible that this Data(P) is in our history if it has not been acked by all
+        // In this case we have to resend it with the new update
+        if (!participant_info.is_acked_by_all())
+        {
+            add_pdp_to_send_(ch);
+        }
+    }
+
+    // Only update database if the change is newer than the one we already have
+    else if (ch->write_params.sample_identity().sequence_number() >
+            participant_info.change()->write_params.sample_identity().sequence_number())
+    {
+        logInfo(DISCOVERY_DATABASE, "Participant already known with newer sequence number");
+
+        // The change could be newer and at the same time not being an update.
+        // This happens with DATAs coming from servers, since they take their own DATAs in and out frequently,
+        // so the sequence number in `write_params` changes.
+        // To account for that, we discard the DATA if the payload is exactly the same as what we have.
+        if (!(ch->serializedPayload == participant_info.change()->serializedPayload))
+        {
+            logInfo(DISCOVERY_DATABASE, "Participant updating. Marking old change to release");
+            // Update participant's change in the database, set all relevant participants ACK status to 0, and add
+            // old change to changes_to_release_.
+            update_change_and_unmatch_(ch, participant_info);
+
+            // If it is an update of our own server, is already in history
+            // Else, it needs to be sent in case it has unacked participants
             if (change_guid.guidPrefix != server_guid_prefix_ &&
-                    !ret.first->second.is_client() && ret.first->second.is_local())
+                    !participant_info.is_acked_by_all())
             {
-                // Send Our DATA(p) to the new participant
-                // If this is not done, our data could be skip afterwards because a gap sent in newer DATA(p)s
-                //  so the new participant could never receive out data
-                auto our_data_it = participants_.find(server_guid_prefix_);
-                assert(our_data_it != participants_.end());
-                add_pdp_to_send_(our_data_it->second.change());
-
-                logInfo(DISCOVERY_DATABASE, "Creating virtual entities for " << change_guid.guidPrefix);
-                /* Create virtual writer */
-                // Create a GUID for the virtual writer from the local server GUID prefix and the virtual writer entity
-                // ID.
-                fastrtps::rtps::GUID_t virtual_writer_guid(change_guid.guidPrefix,
-                        fastrtps::rtps::ds_server_virtual_writer);
-                // Create a populate the Cache Change with the necessary information.
-                fastrtps::rtps::CacheChange_t* virtual_writer_change = new fastrtps::rtps::CacheChange_t();
-                virtual_writer_change->kind = fastrtps::rtps::ChangeKind_t::ALIVE;
-                virtual_writer_change->writerGUID.guidPrefix = ch->writerGUID.guidPrefix;
-                virtual_writer_change->writerGUID.entityId = fastrtps::rtps::ds_server_virtual_writer;
-                virtual_writer_change->instanceHandle = fastrtps::rtps::InstanceHandle_t(virtual_writer_guid);
-                // Populate sample identity
-                fastrtps::rtps::SampleIdentity virtual_writer_sample_id;
-                virtual_writer_sample_id.writer_guid(virtual_writer_guid);
-                virtual_writer_sample_id.sequence_number(eprosima::fastrtps::rtps::SequenceNumber_t(0));
-                // Set write params
-                eprosima::fastrtps::rtps::WriteParams virtual_writer_writer_params;
-                virtual_writer_writer_params.sample_identity(virtual_writer_sample_id);
-                virtual_writer_writer_params.related_sample_identity(virtual_writer_sample_id);
-                virtual_writer_change->write_params = std::move(virtual_writer_writer_params);
-                // Create the virtual writer
-                create_writers_from_change_(virtual_writer_change, virtual_topic_);
-
-                /* Create virtual reader */
-                // Create a GUID for the virtual reader from the local server GUID prefix and the virtual reader entity
-                // ID.
-                fastrtps::rtps::GUID_t virtual_reader_guid(change_guid.guidPrefix,
-                        fastrtps::rtps::ds_server_virtual_reader);
-                // Create a populate the Cache Change with the necessary information.
-                fastrtps::rtps::CacheChange_t* virtual_reader_change = new fastrtps::rtps::CacheChange_t();
-                virtual_reader_change->kind = fastrtps::rtps::ChangeKind_t::ALIVE;
-                virtual_reader_change->writerGUID.guidPrefix = ch->writerGUID.guidPrefix;
-                virtual_reader_change->writerGUID.entityId = fastrtps::rtps::ds_server_virtual_reader;
-                virtual_reader_change->instanceHandle = fastrtps::rtps::InstanceHandle_t(virtual_reader_guid);
-                // Populate sample identity
-                fastrtps::rtps::SampleIdentity virtual_reader_sample_id;
-                virtual_reader_sample_id.writer_guid(virtual_reader_guid);
-                virtual_reader_sample_id.sequence_number(eprosima::fastrtps::rtps::SequenceNumber_t(0));
-                // Set write params
-                eprosima::fastrtps::rtps::WriteParams virtual_reader_writer_params;
-                virtual_reader_writer_params.sample_identity(virtual_reader_sample_id);
-                virtual_reader_writer_params.related_sample_identity(virtual_reader_sample_id);
-                virtual_reader_change->write_params = std::move(virtual_reader_writer_params);
-                // Create the virtual reader
-                create_readers_from_change_(virtual_reader_change, virtual_topic_);
+                new_updates_++;
+                add_pdp_to_send_(ch);
             }
         }
-        else
+    }
+
+    // if the cache is not new we have to release it, because it is repeated or outdated
+    else
+    {
+        // if the change is the same that we already have, we update the ack list. This is because we have
+        //  received the data from two servers, so we have to set that both of them already know this data
+        if (ch->write_params.sample_identity().sequence_number() ==
+                participant_info.change()->write_params.sample_identity().sequence_number())
         {
-            logError(DISCOVERY_DATABASE, "Failed adding new participant " << change_guid.guidPrefix);
+            participant_info.add_or_update_ack_participant(ch->writerGUID.guidPrefix, true);
         }
+
+        // we release it if it's the same or if it is lower
+        changes_to_release_.push_back(ch);
     }
 }
 
@@ -716,7 +791,7 @@ void DiscoveryDataBase::create_writers_from_change_(
             // The change could be newer and at the same time not being an update.
             // This happens with DATAs coming from servers, since they take their own DATAs in and out frequently,
             // so the sequence number in `write_params` changes.
-            // To account for that, we discard the DATA if the payload is exactly the same as what wee have.
+            // To account for that, we discard the DATA if the payload is exactly the same as what we have.
             if (!(ch->serializedPayload == writer_it->second.change()->serializedPayload))
             {
                 // Update the change related to the writer and return the old change to the pool
@@ -728,7 +803,7 @@ void DiscoveryDataBase::create_writers_from_change_(
                 // It needs to be sent in case it has unacked participants
                 if (!writer_it->second.is_acked_by_all())
                 {
-                    entities_updated_++;
+                    new_updates_++;
                     add_edp_publications_to_send_(ch);
                 }
             }
@@ -768,7 +843,7 @@ void DiscoveryDataBase::create_writers_from_change_(
         writer_it = ret.first;
 
         // New writer found
-        entities_updated_++;
+        new_updates_++;
 
         // Add entry to participants_[guid_prefix]::writers
         std::map<eprosima::fastrtps::rtps::GuidPrefix_t, DiscoveryParticipantInfo>::iterator writer_part_it =
@@ -833,10 +908,9 @@ void DiscoveryDataBase::create_readers_from_change_(
             // The change could be newer and at the same time not being an update.
             // This happens with DATAs coming from servers, since they take their own DATAs in and out frequently,
             // so the sequence number in `write_params` changes.
-            // To account for that, we discard the DATA if the payload is exactly the same as what wee have.
+            // To account for that, we discard the DATA if the payload is exactly the same as what we have.
             if (!(ch->serializedPayload == reader_it->second.change()->serializedPayload))
             {
-
                 // Update the change related to the reader and return the old change to the pool
                 // TODO (Paris): when updating, be careful of not to do unmatch if the only endpoint in the other
                 // participant is NOT ALIVE. This means that you still have to send your Data(Ux) to him but not the
@@ -846,7 +920,7 @@ void DiscoveryDataBase::create_readers_from_change_(
                 // It needs to be sent in case it has unacked participants
                 if (!reader_it->second.is_acked_by_all())
                 {
-                    entities_updated_++;
+                    new_updates_++;
                     add_edp_subscriptions_to_send_(ch);
                 }
             }
@@ -886,7 +960,7 @@ void DiscoveryDataBase::create_readers_from_change_(
         reader_it = ret.first;
 
         // New reader found
-        entities_updated_++;
+        new_updates_++;
 
         // Add entry to participants_[guid_prefix]::readers
         std::map<eprosima::fastrtps::rtps::GuidPrefix_t, DiscoveryParticipantInfo>::iterator reader_part_it =
@@ -1145,7 +1219,7 @@ void DiscoveryDataBase::process_dispose_participant_(
         update_change_and_unmatch_(ch, pit->second);
 
         // Any change in the entities known must be reported as a change in the discovery
-        entities_updated_++;
+        new_updates_++;
     }
     else
     {
@@ -1217,7 +1291,7 @@ void DiscoveryDataBase::process_dispose_writer_(
         }
 
         // Any change in the entities known must be reported as a change in the discovery
-        entities_updated_++;
+        new_updates_++;
     }
 }
 
@@ -1247,7 +1321,7 @@ void DiscoveryDataBase::process_dispose_reader_(
         }
 
         // Any change in the entities known must be reported as a change in the discovery
-        entities_updated_++;
+        new_updates_++;
     }
 }
 
@@ -1643,6 +1717,7 @@ void DiscoveryDataBase::AckedFunctor::operator () (
                     }
                 }
             }
+
             // This change is relevant and has not been acked, and does not belongs to the reader proxy
             // of a server that has not been paired yet, so there are pending acknowledgements
             logInfo(DISCOVERY_DATABASE, "Change " << change_->instanceHandle << " not acked yet");
@@ -2506,6 +2581,17 @@ void DiscoveryDataBase::persistence_enable(
     backup_file_name_ = backup_file_name;
     // It opens the file in append mode because the info in it has not been yet
     backup_file_.open(backup_file_name_, std::ios::app);
+}
+
+bool DiscoveryDataBase::is_participant_local(
+        const eprosima::fastrtps::rtps::GuidPrefix_t& participant_prefix)
+{
+    auto pit = participants_.find(participant_prefix);
+    if (pit != participants_.end())
+    {
+        return pit->second.is_local();
+    }
+    return false; // In case it does not exist
 }
 
 } // namespace ddb

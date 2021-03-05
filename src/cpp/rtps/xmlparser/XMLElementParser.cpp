@@ -3149,6 +3149,10 @@ XMLP_ret XMLParser::getXMLEnum(
     {
         *e = DiscoveryProtocol_t::BACKUP;
     }
+    else if (strcmp(text, SUPER_CLIENT) == 0)
+    {
+        *e = DiscoveryProtocol_t::SUPER_CLIENT;
+    }
     else
     {
         logError(XMLPARSER, "Node '" << RTPS_PDP_TYPE << "' with bad content");

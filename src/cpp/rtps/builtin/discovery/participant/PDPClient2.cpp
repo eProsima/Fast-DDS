@@ -90,8 +90,8 @@ bool get_server_client_default_guidPrefix(
             && id < 256
             && std::istringstream(DEFAULT_ROS2_SERVER_GUIDPREFIX) >> guid)
     {
-        // Last octet denotes the default server id but to ease debugging it starts on char '0' = 48
-        guid.value[11] = static_cast<octet>((48 + id) % 256);
+        // Third octet denotes the server id
+        guid.value[2] = static_cast<octet>(id);
 
         return true;
     }

@@ -299,6 +299,7 @@
             <xs:enumeration value="CLIENT"/>
             <xs:enumeration value="SERVER"/>
             <xs:enumeration value="BACKUP"/>
+            <xs:enumeration value="SUPER_CLIENT"/>
         </xs:restriction>
     </xs:simpleType>
 
