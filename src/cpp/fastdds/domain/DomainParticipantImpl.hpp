@@ -132,7 +132,7 @@ public:
             const StatusMask& mask = StatusMask::all());
 
     ReturnCode_t delete_publisher(
-            Publisher* publisher);
+            const Publisher* publisher);
 
     /**
      * Create a Subscriber in this Participant.
@@ -159,7 +159,7 @@ public:
             const StatusMask& mask);
 
     ReturnCode_t delete_subscriber(
-            Subscriber* subscriber);
+            const Subscriber* subscriber);
 
     /**
      * Create a Topic in this Participant.
@@ -194,7 +194,7 @@ public:
             const StatusMask& mask = StatusMask::all());
 
     ReturnCode_t delete_topic(
-            Topic* topic);
+            const Topic* topic);
 
     /**
      * Looks up an existing, locally created @ref TopicDescription, based on its name.

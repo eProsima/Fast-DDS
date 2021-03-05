@@ -114,7 +114,7 @@ Publisher* DomainParticipant::create_publisher_with_profile(
 }
 
 ReturnCode_t DomainParticipant::delete_publisher(
-        Publisher* publisher)
+        const Publisher* publisher)
 {
     return impl_->delete_publisher(publisher);
 }
@@ -136,7 +136,7 @@ Subscriber* DomainParticipant::create_subscriber_with_profile(
 }
 
 ReturnCode_t DomainParticipant::delete_subscriber(
-        Subscriber* subscriber)
+        const Subscriber* subscriber)
 {
     return impl_->delete_subscriber(subscriber);
 }
@@ -162,7 +162,7 @@ Topic* DomainParticipant::create_topic_with_profile(
 }
 
 ReturnCode_t DomainParticipant::delete_topic(
-        Topic* topic)
+        const Topic* topic)
 {
     return impl_->delete_topic(topic);
 }
