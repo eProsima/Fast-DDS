@@ -105,9 +105,9 @@ if(PYTHONINTERP_FOUND)
     foreach(latency_test_name ${LATENCY_TEST_LIST})
 
         # decide if add security testing
-        set(ADD_LATENCY_SECURITY OFF) 
+        set(ADD_LATENCY_SECURITY OFF)
         if(SECURITY AND (${latency_test_name} MATCHES "^interprocess"))
-            set(ADD_LATENCY_SECURITY ON) 
+            set(ADD_LATENCY_SECURITY ON)
         endif()
 
         # list of all the test cases generated in this iteration
@@ -120,6 +120,13 @@ if(PYTHONINTERP_FOUND)
             set(interproces_flag "")
         endif()
 
+        # Set the reliability flag
+        if(${latency_test_name} MATCHES "reliable")
+            set(reliability_flag "--reliability")
+        else()
+            set(reliability_flag "")
+        endif()
+
         # Add the test
         add_test(
             NAME performance.latency.${latency_test_name}
@@ -129,6 +136,7 @@ if(PYTHONINTERP_FOUND)
             --xml_file ${CMAKE_CURRENT_SOURCE_DIR}/xml/${latency_test_name}.xml
             --demands_file ${CMAKE_CURRENT_SOURCE_DIR}/payloads_demands.csv
             ${interproces_flag}
+            ${reliability_flag}
         )
 
         # Add environment
@@ -166,9 +174,10 @@ if(PYTHONINTERP_FOUND)
                 --demands_file ${CMAKE_CURRENT_SOURCE_DIR}/payloads_demands.csv
                 --security
                 ${interproces_flag}
+                ${reliability_flag}
             )
 
-            # Hint certificates location 
+            # Hint certificates location
             set_property(
                 TEST performance.latency.${latency_test_name}.security
                 APPEND PROPERTY ENVIRONMENT "CERTS_PATH=${PROJECT_SOURCE_DIR}/test/certs"
@@ -191,6 +200,7 @@ if(PYTHONINTERP_FOUND)
                 --demands_file ${CMAKE_CURRENT_SOURCE_DIR}/payloads_demands.csv
                 ${interproces_flag}
                 --data_sharing
+                ${reliability_flag}
             )
 
         endif()
@@ -210,6 +220,7 @@ if(PYTHONINTERP_FOUND)
                 --demands_file ${CMAKE_CURRENT_SOURCE_DIR}/payloads_demands.csv
                 ${interproces_flag}
                 --data_loans
+                ${reliability_flag}
             )
 
             # If there is security, add a secure test as well with loans
@@ -228,9 +239,10 @@ if(PYTHONINTERP_FOUND)
                     --security
                     ${interproces_flag}
                     --data_loans
+                    ${reliability_flag}
                 )
 
-                # Hint certificates location 
+                # Hint certificates location
                 set_property(
                     TEST performance.latency.${latency_test_name}.data_loans.security
                     APPEND PROPERTY ENVIRONMENT "CERTS_PATH=${PROJECT_SOURCE_DIR}/test/certs"
@@ -256,6 +268,7 @@ if(PYTHONINTERP_FOUND)
                 ${interproces_flag}
                 --data_loans
                 --data_sharing
+                ${reliability_flag}
             )
 
         endif()

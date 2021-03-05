@@ -75,6 +75,13 @@ if __name__ == '__main__':
         help='Enable the use of the loan sample API (Defaults: disable)',
         required=False,
     )
+    parser.add_argument(
+        '-R',
+        '--reliability',
+        action='store_true',
+        help='Run with RELIABLE reliability (Defaults: disable)',
+        required=False,
+    )
 
     # Parse arguments
     args = parser.parse_args()
@@ -115,11 +122,11 @@ if __name__ == '__main__':
     # Data sharing and loans options
     # modify output file names
     if args.data_sharing and args.data_loans:
-            filename_options += '_data_loans_and_sharing'
+        filename_options += '_data_loans_and_sharing'
     elif args.data_sharing:
-            filename_options += '_data_sharing'
+        filename_options += '_data_sharing'
     elif args.data_loans:
-            filename_options += '_data_loans'
+        filename_options += '_data_loans'
 
     # Demands files options
     demands_options = []
@@ -137,10 +144,16 @@ if __name__ == '__main__':
     data_options = []
 
     if args.data_sharing:
-        data_options += [ '--data_sharing' ]
+        data_options += ['--data_sharing']
 
     if args.data_loans:
-        data_options += [ '--data_loans' ]
+        data_options += ['--data_loans']
+
+    reliability_options = []
+    if args.reliability:
+        reliability_options = ['--reliability=reliable']
+    else:
+        reliability_options = ['--reliability=besteffort']
 
     # Recoveries files options
     recoveries_options = []
@@ -224,10 +237,12 @@ if __name__ == '__main__':
         pub_command += domain_options
         pub_command += xml_options
         pub_command += data_options
+        pub_command += reliability_options
 
         sub_command += domain_options
         sub_command += xml_options
         sub_command += data_options
+        sub_command += reliability_options
 
         print('Publisher command: {}'.format(
             ' '.join(element for element in pub_command)),
@@ -279,6 +294,7 @@ if __name__ == '__main__':
         command += domain_options
         command += xml_options
         command += data_options
+        command += reliability_options
 
         print('Executable command: {}'.format(
             ' '.join(element for element in command)),
