@@ -497,6 +497,7 @@ protected:
 
         create_entities(nullptr, reader_qos, subscriber_qos);
         EXPECT_FALSE(data_reader_->is_enabled());
+        EXPECT_EQ(0ull, data_reader_->get_unread_count());
 
         // Read / take operations should all return NOT_ENABLED
         basic_read_apis_check<DataType, DataSeq>(ReturnCode_t::RETCODE_NOT_ENABLED, data_reader_);
@@ -1204,6 +1205,7 @@ TEST_F(DataReaderTests, read_unread)
 {
     static const Duration_t time_to_wait(0, 100 * 1000 * 1000);
     static constexpr int32_t num_samples = 10;
+    static constexpr uint64_t num_samples_check = static_cast<uint64_t>(num_samples);
 
     const ReturnCode_t& ok_code = ReturnCode_t::RETCODE_OK;
     const ReturnCode_t& no_data_code = ReturnCode_t::RETCODE_NO_DATA;
@@ -1240,6 +1242,7 @@ TEST_F(DataReaderTests, read_unread)
 
     // There are unread samples, so wait_for_unread should be ok
     EXPECT_TRUE(data_reader_->wait_for_unread_message(time_to_wait));
+    EXPECT_EQ(num_samples_check, data_reader_->get_unread_count());
 
     // Trying to get READ samples should return NO_DATA
     {
@@ -1268,36 +1271,49 @@ TEST_F(DataReaderTests, read_unread)
         FooSeq data_seq[6];
         SampleInfoSeq info_seq[6];
 
+        // Current state: {R, N, N, N, N, N, N, N, N, N}
+        EXPECT_EQ(num_samples_check, data_reader_->get_unread_count());
+
         // This should return the first sample
         EXPECT_EQ(ok_code, data_reader_->read(data_seq[0], info_seq[0], 1, NOT_READ_SAMPLE_STATE));
         check_collection(data_seq[0], false, 1, 1);
         check_sample_values(data_seq[0], "0");
 
         // Current state: {R, N, N, N, N, N, N, N, N, N}
+        EXPECT_EQ(num_samples_check - 1, data_reader_->get_unread_count());
+
         // This should return the first sample
         EXPECT_EQ(ok_code, data_reader_->read(data_seq[1], info_seq[1], 1, READ_SAMPLE_STATE));
         check_collection(data_seq[1], false, 1, 1);
         check_sample_values(data_seq[1], "0");
 
         // Current state: {R, N, N, N, N, N, N, N, N, N}
+        EXPECT_EQ(num_samples_check - 1, data_reader_->get_unread_count());
+
         // This should return the first sample
         EXPECT_EQ(ok_code, data_reader_->read(data_seq[2], info_seq[2], LENGTH_UNLIMITED, READ_SAMPLE_STATE));
         check_collection(data_seq[2], false, 1, 1);
         check_sample_values(data_seq[2], "0");
 
         // Current state: {R, N, N, N, N, N, N, N, N, N}
+        EXPECT_EQ(num_samples_check - 1, data_reader_->get_unread_count());
+
         // This should return the second sample
         EXPECT_EQ(ok_code, data_reader_->read(data_seq[3], info_seq[3], 1, NOT_READ_SAMPLE_STATE));
         check_collection(data_seq[3], false, 1, 1);
         check_sample_values(data_seq[3], "1");
 
         // Current state: {R, R, N, N, N, N, N, N, N, N}
+        EXPECT_EQ(num_samples_check - 2, data_reader_->get_unread_count());
+
         // This should return the first sample
         EXPECT_EQ(ok_code, data_reader_->read(data_seq[4], info_seq[4], 1, READ_SAMPLE_STATE));
         check_collection(data_seq[4], false, 1, 1);
         check_sample_values(data_seq[4], "0");
 
         // Current state: {R, R, N, N, N, N, N, N, N, N}
+        EXPECT_EQ(num_samples_check - 2, data_reader_->get_unread_count());
+
         // This should return the first and second samples
         EXPECT_EQ(ok_code, data_reader_->read(data_seq[5], info_seq[5], LENGTH_UNLIMITED, READ_SAMPLE_STATE));
         check_collection(data_seq[5], false, 2, 2);
@@ -1319,45 +1335,61 @@ TEST_F(DataReaderTests, read_unread)
         SampleInfoSeq info_seq[6];
 
         // Current state: {R, R, N, N, N, N, N, N, N, N}
+        EXPECT_EQ(num_samples_check - 2, data_reader_->get_unread_count());
+
         // This should return the third sample
         EXPECT_EQ(ok_code, data_reader_->take(data_seq[0], info_seq[0], 1, NOT_READ_SAMPLE_STATE));
         check_collection(data_seq[0], false, 1, 1);
         check_sample_values(data_seq[0], "2");
 
         // Current state: {R, R, /, N, N, N, N, N, N, N}
+        EXPECT_EQ(num_samples_check - 3, data_reader_->get_unread_count());
+
         // This should return the first sample
         EXPECT_EQ(ok_code, data_reader_->take(data_seq[1], info_seq[1], 1, READ_SAMPLE_STATE));
         check_collection(data_seq[1], false, 1, 1);
         check_sample_values(data_seq[1], "0");
 
         // Current state: {/, R, /, N, N, N, N, N, N, N}
+        EXPECT_EQ(num_samples_check - 3, data_reader_->get_unread_count());
+
         // This should return samples 2 and 4
         EXPECT_EQ(ok_code, data_reader_->take(data_seq[2], info_seq[2], 2));
         check_collection(data_seq[2], false, 2, 2);
         check_sample_values(data_seq[2], "13");
 
         // Current state: {/, /, /, /, N, N, N, N, N, N}
+        EXPECT_EQ(num_samples_check - 4, data_reader_->get_unread_count());
+
         // This should return no data
         EXPECT_EQ(no_data_code, data_reader_->take(data_seq[3], info_seq[3], LENGTH_UNLIMITED, READ_SAMPLE_STATE));
         check_collection(data_seq[3], true, 0, 0);
 
         // Current state: {/, /, /, /, N, N, N, N, N, N}
+        EXPECT_EQ(num_samples_check - 4, data_reader_->get_unread_count());
+
         // This should return samples 5 and 6
         EXPECT_EQ(ok_code, data_reader_->read(data_seq[3], info_seq[3], 2));
         check_collection(data_seq[3], false, 2, 2);
         check_sample_values(data_seq[3], "45");
 
         // Current state: {/, /, /, /, R, R, N, N, N, N}
+        EXPECT_EQ(num_samples_check - 6, data_reader_->get_unread_count());
+
         // This should return samples 7, ... num_samples
         EXPECT_EQ(ok_code, data_reader_->take(data_seq[4], info_seq[4], LENGTH_UNLIMITED, NOT_READ_SAMPLE_STATE));
         check_collection(data_seq[4], false, num_samples - 6, num_samples - 6);
         check_sample_values(data_seq[4], "6789");
 
         // Current state: {/, /, /, /, R, R, /, /, /, /}
+        EXPECT_EQ(num_samples_check - 10, data_reader_->get_unread_count());
+
         // There are not unread samples, so wait_for_unread should return false
         EXPECT_FALSE(data_reader_->wait_for_unread_message(time_to_wait));
 
         // Current state: {/, /, /, /, R, R, /, /, /, /}
+        EXPECT_EQ(num_samples_check - 10, data_reader_->get_unread_count());
+
         // Add a new sample to have a NOT_READ one
         data.message()[0] = 'A';
         EXPECT_EQ(ok_code, data_writer_->write(&data, handle_ok_));
@@ -1366,12 +1398,16 @@ TEST_F(DataReaderTests, read_unread)
         EXPECT_TRUE(data_reader_->wait_for_unread_message(time_to_wait));
 
         // Current state: {/, /, /, /, R, R, /, /, /, /, N}
+        EXPECT_EQ(num_samples_check - 10 + 1, data_reader_->get_unread_count());
+
         // This should return samples 5, 6 and new
         EXPECT_EQ(ok_code, data_reader_->take(data_seq[5], info_seq[5]));
         check_collection(data_seq[5], false, 3, 3);
         check_sample_values(data_seq[5], "45A");
 
         // Current state: {/, /, /, /, /, /, /, /, /, /, /}
+        EXPECT_EQ(num_samples_check - 10 + 1 - 1, data_reader_->get_unread_count());
+
         // There are not unread samples, so wait_for_unread should return false
         EXPECT_FALSE(data_reader_->wait_for_unread_message(time_to_wait));
 

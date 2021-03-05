@@ -2,6 +2,8 @@ Forthcoming
 -----------
 * Added reception_timestamp to `eprosima::fastdds::dds::SampleInfo` (ABI break)
 
+* Added eprosima::fastdds::dds::DataReader::get_unread_count (ABI break)
+
 Version 2.2.0
 -------------
 

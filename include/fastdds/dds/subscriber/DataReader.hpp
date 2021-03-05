@@ -766,6 +766,15 @@ public:
             SampleInfo* info);
 
     /**
+     * Get the number of samples pending to be read.
+     * The number includes samples that may not yet be available to be read or taken by the user, due to samples
+     * being received out of order.
+     *
+     * @return the number of samples on the reader history that have never been read.
+     */
+    RTPS_DllAPI uint64_t get_unread_count() const;
+
+    /**
      * Get associated GUID.
      *
      * @return Associated GUID

@@ -680,6 +680,11 @@ ReturnCode_t DataReaderImpl::get_first_untaken_info(
     return ReturnCode_t::RETCODE_NO_DATA;
 }
 
+uint64_t DataReaderImpl::get_unread_count() const
+{
+    return reader_ ? reader_->get_unread_count() : 0;
+}
+
 const GUID_t& DataReaderImpl::guid() const
 {
     return reader_ ? reader_->getGuid() : c_Guid_Unknown;
