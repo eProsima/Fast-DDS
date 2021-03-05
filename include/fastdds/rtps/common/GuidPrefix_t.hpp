@@ -102,7 +102,6 @@ inline std::ostream& operator <<(
     output << std::setw(2) << (int)guiP.value[11];
     return output << std::dec;
     output.fill(old_fill);
-
 }
 
 inline std::istream& operator >>(
