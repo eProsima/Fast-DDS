@@ -106,9 +106,9 @@ if(PYTHONINTERP_FOUND)
     foreach(throughput_test_name ${THROUGHPUT_TEST_LIST})
 
         # decide if add security testing
-        set(ADD_THROUGHPUT_SECURITY OFF) 
+        set(ADD_THROUGHPUT_SECURITY OFF)
         if(SECURITY AND (${throughput_test_name} MATCHES "^interprocess"))
-            set(ADD_THROUGHPUT_SECURITY ON) 
+            set(ADD_THROUGHPUT_SECURITY ON)
         endif()
 
         # list of all the test cases generated in this iteration
@@ -121,6 +121,13 @@ if(PYTHONINTERP_FOUND)
             set(interproces_flag "")
         endif()
 
+        # Set the reliability flag
+        if(${throughput_test_name} MATCHES "reliable")
+            set(reliability_flag "--reliability")
+        else()
+            set(reliability_flag "")
+        endif()
+
         # Add the test
         add_test(
             NAME performance.throughput.${throughput_test_name}
@@ -130,6 +137,7 @@ if(PYTHONINTERP_FOUND)
             --recoveries_file ${CMAKE_CURRENT_SOURCE_DIR}/recoveries.csv
             --demands_file ${CMAKE_CURRENT_SOURCE_DIR}/payloads_demands.csv
             ${interproces_flag}
+            ${reliability_flag}
         )
 
         # Add environment
@@ -166,9 +174,10 @@ if(PYTHONINTERP_FOUND)
                 --demands_file ${CMAKE_CURRENT_SOURCE_DIR}/payloads_demands.csv
                 --security
                 ${interproces_flag}
+                ${reliability_flag}
             )
 
-            # Hint certificates location 
+            # Hint certificates location
             set_property(
                 TEST performance.throughput.${throughput_test_name}.security
                 APPEND PROPERTY ENVIRONMENT "CERTS_PATH=${PROJECT_SOURCE_DIR}/test/certs"
@@ -191,6 +200,7 @@ if(PYTHONINTERP_FOUND)
                 --demands_file ${CMAKE_CURRENT_SOURCE_DIR}/payloads_demands.csv
                 --data_sharing
                 ${interproces_flag}
+                ${reliability_flag}
             )
 
         endif()
@@ -210,6 +220,7 @@ if(PYTHONINTERP_FOUND)
                 --demands_file ${CMAKE_CURRENT_SOURCE_DIR}/payloads_demands.csv
                 --data_loans
                 ${interproces_flag}
+                ${reliability_flag}
             )
 
             if(ADD_THROUGHPUT_SECURITY)
@@ -227,9 +238,10 @@ if(PYTHONINTERP_FOUND)
                     --security
                     ${interproces_flag}
                     --data_loans
+                    ${reliability_flag}
                 )
 
-                # Hint certificates location 
+                # Hint certificates location
                 set_property(
                     TEST performance.throughput.${throughput_test_name}.data_loans.security
                     APPEND PROPERTY ENVIRONMENT "CERTS_PATH=${PROJECT_SOURCE_DIR}/test/certs"
@@ -255,6 +267,7 @@ if(PYTHONINTERP_FOUND)
                 --data_loans
                 --data_sharing
                 ${interproces_flag}
+                ${reliability_flag}
             )
 
         endif()
