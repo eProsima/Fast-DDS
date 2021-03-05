@@ -1,7 +1,7 @@
 Forthcoming
 -----------
 
-* New Fast DDS Statistics module (implies ABI break)
+* New Fast DDS Statistics module
 
 Version 2.2.0
 -------------
