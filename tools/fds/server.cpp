@@ -27,6 +27,7 @@
 #include <csignal>
 
 #include <fastrtps/Domain.h>
+#include <fastrtps/participant/Participant.h>
 #include <fastdds/dds/log/Log.hpp>
 
 using namespace eprosima;
@@ -99,6 +100,7 @@ int main (
     // Retrieve server Id: is mandatory and only specified once
     // Note there is a specific cast to pointer if the Option is valid
     option::Option* pOp = options[SERVERID];
+    int server_id;
 
     if ( nullptr == pOp )
     {
@@ -112,7 +114,6 @@ int main (
     }
     else
     {
-        int server_id;
         stringstream is;
         is << pOp->arg;
 
@@ -211,7 +212,6 @@ int main (
     // Create the server
     int return_value = 0;
     Participant* pServer = Domain::createParticipant(*att, nullptr);
-    att.reset();
 
     if ( nullptr == pServer )
     {
@@ -224,7 +224,22 @@ int main (
 
         // handle signal SIGINT for every thread
         signal(SIGINT, sigint_handler);
-        cout << endl << "\n### Server is running ###" << endl;
+
+        // Print running server attributes
+        cout << "### Server is running ###" << endl;
+        cout << "  Server ID:          " << server_id << endl;
+        cout << "  Server GUID prefix: " << pServer->getGuid().guidPrefix << endl;
+        cout << "  Server Addresses:   ";
+        for (auto locator_it = att->rtps.builtin.metatrafficUnicastLocatorList.begin();
+                locator_it != att->rtps.builtin.metatrafficUnicastLocatorList.end();)
+        {
+            cout << *locator_it;
+            if (++locator_it != att->rtps.builtin.metatrafficUnicastLocatorList.end())
+            {
+                cout << std::endl << "                      ";
+            }
+        }
+        cout << std::endl;
 
         g_signal_cv.wait(lock, []
                 {
@@ -234,6 +249,7 @@ int main (
         cout << endl << "### Server shut down ###" << endl;
     }
 
+    att.reset();
     fastdds::dds::Log::Flush();
     cout.flush();
     Domain::stopAll();

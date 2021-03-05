@@ -19,8 +19,8 @@ namespace eprosima {
 namespace fastrtps {
 namespace xmlparser {
 
-#define draw(ident, text, ...) for (uint8_t i = ident + 1; i > 0; --i) (i == 1) ? printf(text, ## __VA_ARGS__) : printf( \
-            "\t")
+#define draw(ident, text, ...) for (uint8_t i = ident + 1; i > 0; --i)(i == 1) ? printf(text, ## __VA_ARGS__) : printf( \
+        "\t")
 
 /**
  * Enum class XMLP_ret, used to provide a strongly typed result from the operations within this module.
@@ -261,6 +261,7 @@ extern const char* NONE;
 extern const char* CLIENT;
 extern const char* SERVER;
 extern const char* BACKUP;
+extern const char* SUPER_CLIENT;
 extern const char* IGNORE_PARTICIPANT_FLAGS;
 extern const char* FILTER_DIFFERENT_HOST;
 extern const char* FILTER_DIFFERENT_PROCESS;
@@ -438,4 +439,4 @@ extern const char* REPLY_TOPIC_NAME;
 } /* namespace */
 } /* namespace eprosima */
 
-#endif
+#endif // ifndef XML_PARSER_COMMON_H_

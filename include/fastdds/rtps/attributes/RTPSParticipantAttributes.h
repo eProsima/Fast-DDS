@@ -61,8 +61,10 @@ typedef enum DiscoveryProtocol
                  Server locators should be specified as attributes. */
     SERVER, /*!< The participant will behave as a server concerning discovery operation.
                  Discovery operation is volatile (discovery handshake must take place if shutdown). */
-    BACKUP  /*!< The participant will behave as a server concerning discovery operation.
+    BACKUP,  /*!< The participant will behave as a server concerning discovery operation.
                  Discovery operation persist on a file (discovery handshake wouldn't repeat if shutdown). */
+    SUPER_CLIENT  /*!< The participant will behave as a client concerning all internal behaviour.
+                     Remote servers will treat it as a server and will share every discovery information. */
 
 } DiscoveryProtocol_t;
 
