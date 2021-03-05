@@ -335,6 +335,11 @@ if(EPROSIMA_BUILD AND IS_TOP_LEVEL)
 endif()
 
 ###############################################################################
+# Fast DDS statistics tool default setup
+###############################################################################
+option(FASTDDS_STATISTICS "Enable Fast DDS Statistics Module" OFF)
+
+###############################################################################
 # Compile library.
 ###############################################################################
 add_subdirectory(src/cpp)
