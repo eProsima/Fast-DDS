@@ -4,6 +4,8 @@ Forthcoming
 
 * Added eprosima::fastdds::dds::DataReader::get_unread_count (ABI break)
 
+* New Fast DDS Statistics module
+
 Version 2.2.0
 -------------
 
