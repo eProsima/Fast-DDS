@@ -99,22 +99,6 @@ public:
             bool same_thread) = 0;
 
     /**
-     * Updates the ACK'd timestamp of the notification due to a change read/removed from the history
-     *
-     * @param timestamp the source timestamp of the change
-     */
-    virtual void change_removed_with_timestamp(
-            int64_t timestamp) = 0;
-
-    /**
-     * Updates the ACK'd timestamp of the notification due to a new change added to the history
-     *
-     * @param timestamp the source timestamp of the added change
-     */
-    virtual void change_added_with_timestamp(
-            int64_t timestamp) = 0;
-
-    /**
      * Returns the local datasharing pool for the specified remote writer
      *
      * @param writer_guid The GUID of the remote writer

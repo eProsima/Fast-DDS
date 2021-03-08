@@ -101,9 +101,6 @@ protected:
 
         //! New data available
         std::atomic<bool> new_data;
-
-        //! Timestamp of the reader's first sample NOT ack'd
-        std::atomic<int64_t> ack_timestamp;
     };
 #pragma warning(pop)
 

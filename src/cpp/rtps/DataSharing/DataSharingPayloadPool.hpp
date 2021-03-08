@@ -126,33 +126,9 @@ public:
 
     uint32_t last_liveliness_sequence() const;
 
-    /**
-     * Notifies to the writer
-     */
-    void notify();
-
-    template<typename ConditionFunctor>
-    bool wait_until(
-            const std::chrono::time_point<std::chrono::steady_clock>& max_blocking_time,
-            const ConditionFunctor& condition)
-    {
-        std::unique_lock<Segment::mutex> lock(descriptor_->notification_mutex);
-        bool success = false;
-        descriptor_->notification_cv.timed_wait(lock, max_blocking_time,
-                [&success, &condition]()
-                {
-                    success = condition();
-                    return success;
-                });
-        return success;
-    }
-
     static bool check_sequence_number(
             const octet* data,
             const SequenceNumber_t& sn);
-
-    static sharable_mutex& shared_mutex(
-            octet*);
 
 protected:
 
@@ -330,11 +306,6 @@ protected:
             metadata_.related_sample_identity = identity;
         }
 
-        sharable_mutex& mutex()
-        {
-            return metadata_.mutex;
-        }
-
     private:
 
         PayloadNodeMetaData metadata_;
@@ -347,9 +318,6 @@ protected:
         uint64_t notified_begin;        //< The index of the oldest history entry already notified (ready to read)
         uint64_t notified_end;          //< The index of the history entry that will be notified next
         uint32_t liveliness_sequence;   //< The ID of the last liveliness assertion sent by the writer
-
-        Segment::condition_variable notification_cv;        //< CV to wait for notifications from the reader
-        Segment::mutex notification_mutex;                  //< synchronization mutex
     };
 #pragma warning(pop)
 

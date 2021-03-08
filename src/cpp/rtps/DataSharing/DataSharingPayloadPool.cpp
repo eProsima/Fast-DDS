@@ -81,12 +81,6 @@ bool DataSharingPayloadPool::check_sequence_number(
     return (PayloadNode::get_from_data(data)->sequence_number() == sn);
 }
 
-DataSharingPayloadPool::sharable_mutex& DataSharingPayloadPool::shared_mutex(
-        octet* data)
-{
-    return PayloadNode::get_from_data(data)->mutex();
-}
-
 std::shared_ptr<DataSharingPayloadPool> DataSharingPayloadPool::get_reader_pool(
         bool is_reader_volatile)
 {
@@ -102,15 +96,6 @@ std::shared_ptr<DataSharingPayloadPool> DataSharingPayloadPool::get_writer_pool(
     return std::make_shared<WriterPool>(
         config.maximum_size,
         config.payload_initial_size);
-}
-
-/**
- * Notifies to the writer
- */
-void DataSharingPayloadPool::notify()
-{
-    logInfo(RTPS_READER, "Notifying writer " << writer());
-    descriptor_->notification_cv.notify_all();
 }
 
 }  // namespace rtps

@@ -254,14 +254,6 @@ bool StatelessReader::change_received(
             update_last_notified(change->writerGUID, change->sequenceNumber);
             ++total_unread_;
 
-            ReaderPool* datasharing_pool = dynamic_cast<ReaderPool*>(change->payload_owner());
-            if (datasharing_pool)
-            {
-                // Change was added to the history. May need to update datasharing ACK timestamp
-                // because we can receive changes in a different order (due to processing of writers or late-joiners)
-                datasharing_listener_->change_added_with_timestamp(change->sourceTimestamp.to_ns());
-            }
-
             if (getListener() != nullptr)
             {
                 getListener()->onNewCacheChangeAdded(this, change);

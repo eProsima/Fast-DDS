@@ -76,12 +76,6 @@ public:
     void notify(
             bool same_thread) override;
 
-    void change_removed_with_timestamp(
-            int64_t timestamp) override;
-
-    void change_added_with_timestamp(
-            int64_t timestamp) override;
-
     std::shared_ptr<ReaderPool> get_pool_for_writer(
             const GUID_t& writer_guid) override;
 

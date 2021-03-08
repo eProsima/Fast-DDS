@@ -806,15 +806,6 @@ bool StatefulReader::change_received(
                         // initialized using this SequenceNumber_t. Note that on a SERVER the own DATA(p) may be in any
                         // position within the WriterHistory preventing effective data exchange.
                         update_last_notified(a_change->writerGUID, SequenceNumber_t(0, 1));
-
-                        ReaderPool* datasharing_pool = dynamic_cast<ReaderPool*>(a_change->payload_owner());
-                        if (datasharing_pool)
-                        {
-                            // Change was added to the history. May need to update datasharing ACK timestamp
-                            // because we can receive changes in a different order (due to processing of writers or late-joiners)
-                            datasharing_listener_->change_added_with_timestamp(a_change->sourceTimestamp.to_ns());
-                        }
-
                         if (getListener() != nullptr)
                         {
                             getListener()->onNewCacheChangeAdded((RTPSReader*)this, a_change);
@@ -851,14 +842,6 @@ bool StatefulReader::change_received(
         if (a_change->is_fully_assembled())
         {
             ret = prox->received_change_set(a_change->sequenceNumber);
-        }
-
-        ReaderPool* datasharing_pool = dynamic_cast<ReaderPool*>(a_change->payload_owner());
-        if (datasharing_pool && ret)
-        {
-            // Change was added to the history. May need to update datasharing ACK timestamp
-            // because we can receive changes in a different order (due to processing of writers or late-joiners)
-            datasharing_listener_->change_added_with_timestamp(a_change->sourceTimestamp.to_ns());
         }
 
         NotifyChanges(prox);
@@ -1156,7 +1139,7 @@ void StatefulReader::send_acknack(
         RTPSMessageGroup group(getRTPSParticipant(), this, sender);
         group.add_acknack(sns, acknack_count_, is_final);
     }
-    else if (!is_datasharing_compatible_ || !datasharing_listener_->writer_is_matched(writer->guid()))
+    else
     {
         GUID_t reader_guid = m_guid;
         uint32_t acknack_count = acknack_count_;

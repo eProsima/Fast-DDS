@@ -57,10 +57,6 @@ public:
      */
     virtual void notify() = 0;
 
-    /**
-     * @return the ACK'd timestamp
-     */
-    virtual int64_t ack_timestamp() const = 0;
 };
 
 
