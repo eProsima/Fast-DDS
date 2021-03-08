@@ -1462,6 +1462,145 @@ TEST_F(DataReaderTests, read_unread)
     }
 }
 
+/*
+ * This type fails deserialization on odd samples
+ */
+class FailingFooTypeSupport : public FooTypeSupport
+{
+
+public:
+
+    FailingFooTypeSupport()
+        : FooTypeSupport()
+    {
+    }
+
+    bool deserialize(
+            fastrtps::rtps::SerializedPayload_t* payload,
+            void* data) override
+    {
+        //Convert DATA to pointer of your type
+        FooType* p_type = static_cast<FooType*>(data);
+
+        bool ret_val = FooTypeSupport::deserialize(payload, p_type);
+        if (p_type->message()[0] % 2)
+        {
+            return false;
+        }
+        return ret_val;
+    }
+
+};
+
+/*
+ * This test checks that the behaviour of the read/take calls when deserialization fails.
+ */
+TEST_F(DataReaderTests, Deserialization_errors)
+{
+    type_.reset(new FailingFooTypeSupport());
+    
+    static const Duration_t time_to_wait(0, 100 * 1000 * 1000);
+    static constexpr int32_t num_samples = 10;
+
+    const ReturnCode_t& ok_code = ReturnCode_t::RETCODE_OK;
+    const ReturnCode_t& no_data_code = ReturnCode_t::RETCODE_NO_DATA;
+
+    DataWriterQos writer_qos = DATAWRITER_QOS_DEFAULT;
+    writer_qos.history().kind = KEEP_LAST_HISTORY_QOS;
+    writer_qos.history().depth = num_samples;
+    writer_qos.publish_mode().kind = SYNCHRONOUS_PUBLISH_MODE;
+    writer_qos.reliability().kind = RELIABLE_RELIABILITY_QOS;
+
+    DataReaderQos reader_qos = DATAREADER_QOS_DEFAULT;
+    reader_qos.reliability().kind = RELIABLE_RELIABILITY_QOS;
+    reader_qos.history().kind = KEEP_ALL_HISTORY_QOS;
+    reader_qos.resource_limits().max_instances = 1;
+    reader_qos.resource_limits().max_samples_per_instance = num_samples;
+    reader_qos.resource_limits().max_samples = 3 * num_samples;
+
+    create_instance_handles();
+    create_entities(nullptr, reader_qos, SUBSCRIBER_QOS_DEFAULT, writer_qos);
+
+    FooType data;
+    data.index(1);
+    data.message()[1] = '\0';
+
+    // Check deserialization errors without loans
+    {
+        // Send a bunch of samples
+        for (char i = 0; i < num_samples; ++i)
+        {
+            data.message()[0] = i + '0';
+            EXPECT_EQ(ok_code, data_writer_->write(&data, handle_ok_));
+        }
+
+        // There are unread samples, so wait_for_unread should be ok
+        EXPECT_TRUE(data_reader_->wait_for_unread_message(time_to_wait));
+
+        {
+            FooSeq data_seq(num_samples);
+            SampleInfoSeq info_seq(num_samples);
+
+            // Reader should have 10 samples with the following states (R = read, N = not-read, / = removed from history)
+            // {N, N, N, N, N, N, N, N, N, N}
+
+            // This should return samples 0, 2, 4, 6, and 8
+            EXPECT_EQ(ok_code, data_reader_->read(data_seq, info_seq, num_samples));
+            check_collection(data_seq, true, num_samples, 5);
+            check_sample_values(data_seq, "02468");
+        }
+
+        {
+            FooSeq data_seq(num_samples);
+            SampleInfoSeq info_seq(num_samples);
+
+            // Reader sample states should be
+            // {R, /, R, /, R, /, R, /, R, /}
+
+            // There are not unread samples in the history
+            EXPECT_EQ(no_data_code, data_reader_->take(data_seq, info_seq, num_samples, NOT_READ_SAMPLE_STATE));
+        }
+
+        {
+            FooSeq data_seq(num_samples);
+            SampleInfoSeq info_seq(num_samples);
+
+            // This should return samples 0, 2, 4, 6, and 8 (just for cleaning)
+            EXPECT_EQ(ok_code, data_reader_->take(data_seq, info_seq, num_samples, READ_SAMPLE_STATE));
+            check_collection(data_seq, true, num_samples, 5);
+            check_sample_values(data_seq, "02468");
+        }
+    }
+
+    // Check deserialization errors with loans (loaned samples are not deserialized)
+    {
+        // Send a bunch of samples
+        for (char i = 0; i < num_samples; ++i)
+        {
+            data.message()[0] = i + '0';
+            EXPECT_EQ(ok_code, data_writer_->write(&data, handle_ok_));
+        }
+
+        // There are unread samples, so wait_for_unread should be ok
+        EXPECT_TRUE(data_reader_->wait_for_unread_message(time_to_wait));
+
+        {
+            FooSeq data_seq;
+            SampleInfoSeq info_seq;
+
+            // Reader should have 10 samples with the following states (R = read, N = not-read, / = removed from history)
+            // {N, N, N, N, N, N, N, N, N, N}
+
+            // This should return samples 0 to 9
+            EXPECT_EQ(ok_code, data_reader_->read(data_seq, info_seq, num_samples));
+            check_collection(data_seq, false, num_samples, 10);
+            check_sample_values(data_seq, "0123456789");
+            EXPECT_EQ(ok_code, data_reader_->return_loan(data_seq, info_seq));
+        }
+    }
+
+}
+
 TEST_F(DataReaderTests, TerminateWithoutDestroyingReader)
 {
     destroy_entities_ = false;
