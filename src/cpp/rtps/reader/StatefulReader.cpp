@@ -950,34 +950,13 @@ bool StatefulReader::nextUntakenCache(
     {
         if (this->matched_writer_lookup((*it)->writerGUID, &wp))
         {
-            if (is_datasharing_compatible_ && datasharing_listener_->writer_is_matched((*it)->writerGUID))
+            // TODO Revisar la comprobacion
+            SequenceNumber_t seq;
+            seq = wp->available_changes_max();
+            if (seq < (*it)->sequenceNumber)
             {
-                // Lock the payload. The lock will NOT be freed for the returned change
-                DataSharingPayloadPool::shared_mutex((*it)->serializedPayload.data).lock_sharable();
-
-                //Check if the payload is dirty
-                if (!DataSharingPayloadPool::check_sequence_number(
-                            (*it)->serializedPayload.data, (*it)->sequenceNumber))
-                {
-                    // Unlock, remove and continue
-                    DataSharingPayloadPool::shared_mutex((*it)->serializedPayload.data).unlock_sharable();
-                    logWarning(RTPS_READER,
-                            "Removing change " << (*it)->sequenceNumber << " from " << (*it)->writerGUID <<
-                            " because is overidden");
-                    it = mp_history->remove_change(it);
-                    continue;
-                }
-            }
-            else
-            {
-                // TODO Revisar la comprobacion
-                SequenceNumber_t seq;
-                seq = wp->available_changes_max();
-                if (seq < (*it)->sequenceNumber)
-                {
-                    ++it;
-                    continue;
-                }
+                ++it;
+                continue;
             }
             takeok = true;
         }
@@ -1031,33 +1010,12 @@ bool StatefulReader::nextUnreadCache(
 
         if (matched_writer_lookup((*it)->writerGUID, &wp))
         {
-            if (is_datasharing_compatible_ && datasharing_listener_->writer_is_matched((*it)->writerGUID))
+            SequenceNumber_t seq;
+            seq = wp->available_changes_max();
+            if (seq < (*it)->sequenceNumber)
             {
-                // Lock the payload. The lock will NOT be freed for the returned change
-                DataSharingPayloadPool::shared_mutex((*it)->serializedPayload.data).lock_sharable();
-
-                //Check if the payload is dirty
-                if (!DataSharingPayloadPool::check_sequence_number(
-                            (*it)->serializedPayload.data, (*it)->sequenceNumber))
-                {
-                    // Unlock, remove and continue
-                    DataSharingPayloadPool::shared_mutex((*it)->serializedPayload.data).unlock_sharable();
-                    logWarning(RTPS_READER,
-                            "Removing change " << (*it)->sequenceNumber << " from " << (*it)->writerGUID <<
-                            " because is overidden");
-                    it = mp_history->remove_change(it);
-                    continue;
-                }
-            }
-            else
-            {
-                SequenceNumber_t seq;
-                seq = wp->available_changes_max();
-                if (seq < (*it)->sequenceNumber)
-                {
-                    ++it;
-                    continue;
-                }
+                ++it;
+                continue;
             }
             readok = true;
         }
@@ -1141,25 +1099,6 @@ bool StatefulReader::begin_sample_access_nts(
     if (seq < change->sequenceNumber)
     {
         is_future_change = true;
-        return true;
-    }
-
-    if (is_datasharing_compatible_ && datasharing_listener_->writer_is_matched(writer_guid))
-    {
-        // Lock the payload. Will remain locked until end_sample_access_nts is called
-        DataSharingPayloadPool::shared_mutex(change->serializedPayload.data).lock_sharable();
-
-        //Check if the payload is dirty
-        if (!DataSharingPayloadPool::check_sequence_number(
-                    change->serializedPayload.data, change->sequenceNumber))
-        {
-            // Unlock and return false
-            DataSharingPayloadPool::shared_mutex(change->serializedPayload.data).unlock_sharable();
-            logWarning(RTPS_READER,
-                    "Removing change " << change->sequenceNumber << " from " << writer_guid <<
-                    " because is overidden");
-            return false;
-        }
     }
 
     return true;
