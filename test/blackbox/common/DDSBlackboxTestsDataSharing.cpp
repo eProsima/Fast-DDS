@@ -117,7 +117,7 @@ TEST(DDSDataSharing, TransientReader)
 TEST(DDSDataSharing, BestEffortDirtyPayloads)
 {
     // The writer's pool is smaller than the reader history.
-    // The number of samples is larger than the pool size, so some payloads get rused
+    // The number of samples is larger than the pool size, so some payloads get reused
     // leaving dirty payloads in the reader
     PubSubReader<FixedSizedType> read_reader(TEST_TOPIC_NAME, false);
     PubSubWriter<FixedSizedType> writer(TEST_TOPIC_NAME);
@@ -148,21 +148,18 @@ TEST(DDSDataSharing, BestEffortDirtyPayloads)
     read_reader.wait_discovery();
 
     std::list<FixedSized> data = default_fixed_sized_data_generator(writer_sent_data);
-    std::list<FixedSized> data_in_history;
+    std::list<FixedSized> valid_data;
     auto data_it = data.begin();
     std::advance(data_it, writer_sent_data - writer_history_depth - 1);
-    std::copy(data_it, data.end(), std::back_inserter(data_in_history));
+    std::copy(data_it, data.end(), std::back_inserter(valid_data));
 
     // Send the data to fill the history and overwrite old changes
-    // The reader will receive and process all changes so that the writer can reuse them,
-    // but will keep them in the history.
-    read_reader.startReception(data);
     writer.send(data, 100);
     ASSERT_TRUE(data.empty());
-    read_reader.block_for_all();
 
-    // Doing a second read on the same history, the application will see only the last samples
-    read_reader.check_history_content(data_in_history);
+    // The reader has overridden payloads in the history. Only the valid ones are returned to the user
+    read_reader.startReception(valid_data);
+    read_reader.block_for_all();
 }
 
 TEST(DDSDataSharing, ReliableDirtyPayloads)
@@ -191,7 +188,7 @@ TEST(DDSDataSharing, ReliableDirtyPayloads)
     read_reader.history_depth(writer_sent_data)
             .add_user_transport_to_pparams(testTransport)
             .datasharing_on("Unused. change when ready")
-            .reliability(BEST_EFFORT_RELIABILITY_QOS).init();
+            .reliability(RELIABLE_RELIABILITY_QOS).init();
 
     ASSERT_TRUE(read_reader.isInitialized());
 
@@ -199,10 +196,10 @@ TEST(DDSDataSharing, ReliableDirtyPayloads)
     read_reader.wait_discovery();
 
     std::list<FixedSized> data = default_fixed_sized_data_generator(writer_sent_data);
-    std::list<FixedSized> data_in_history;
+    std::list<FixedSized> valid_data;
     auto data_it = data.begin();
     std::advance(data_it, writer_sent_data - writer_history_depth - 1);
-    std::copy(data_it, data.end(), std::back_inserter(data_in_history));
+    std::copy(data_it, data.end(), std::back_inserter(valid_data));
 
     // Send the data to fill the history and overwrite old changes
     // The reader will receive and process all changes so that the writer can reuse them,
@@ -213,7 +210,14 @@ TEST(DDSDataSharing, ReliableDirtyPayloads)
     read_reader.block_for_all();
 
     // Doing a second read on the same history, the application will see only the last samples
-    read_reader.check_history_content(data_in_history);
+    while (!valid_data.empty())
+    {
+        FixedSized data;
+        ASSERT_TRUE(read_reader.take_first_data(&data));
+        ASSERT_EQ(valid_data.front(), data);
+        valid_data.pop_front();
+    }
+        ASSERT_TRUE(valid_data.empty());
 }
 
 TEST(DDSDataSharing, DataSharingWriter_DifferentDomainReaders)
