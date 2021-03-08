@@ -65,22 +65,8 @@ public:
             return false;
         }
 
-        // Look for a free payload that is recyclable
-        PayloadNode* payload = nullptr;
-        for (auto it = free_payloads_.begin(); it != free_payloads_.end(); ++it)
-        {
-            if (writer_->is_datasharing_payload_reusable((*it)->source_timestamp()))
-            {
-                payload = *it;
-                free_payloads_.erase(it);
-                break;
-            }
-        }
-        if (payload == nullptr)
-        {
-            return false;
-        }
-
+        PayloadNode* payload = free_payloads_.front();
+        free_payloads_.pop_front();
         payload->mutex().lock();
         // Reset all the metadata to signal the reader that the payload is dirty
         payload->reset();

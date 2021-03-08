@@ -1088,19 +1088,6 @@ bool StatelessWriter::send(
                        fixed_locators_.end()), max_blocking_time_point);
 }
 
-bool StatelessWriter::is_datasharing_payload_reusable(
-        const Time_t& source_timestamp) const
-{
-    for (const std::unique_ptr<ReaderLocator>& reader : matched_datasharing_readers_)
-    {
-        if (reader->datasharing_notifier()->ack_timestamp() <= source_timestamp.to_ns())
-        {
-            return false;
-        }
-    }
-    return true;
-}
-
 } /* namespace rtps */
 } /* namespace fastrtps */
 } /* namespace eprosima */
