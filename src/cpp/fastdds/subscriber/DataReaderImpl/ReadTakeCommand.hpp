@@ -273,9 +273,11 @@ private:
     }
 
     bool add_sample(
-            CacheChange_t* change)
+            CacheChange_t* change,
+            bool& deserialization_error)
     {
         bool ret_val = false;
+        deserialization_error = false;
 
         if (remaining_samples_ > 0)
         {
@@ -288,7 +290,14 @@ private:
             generate_info(change);
             if (sample_infos_[current_slot_].valid_data)
             {
-                deserialize_sample(change);
+                if (!deserialize_sample(change))
+                {
+                    // Decrement length of collections
+                    data_values_.length(current_slot_);
+                    sample_infos_.length(current_slot_);
+                    deserialization_error = true;
+                    return false;
+                }
             }
 
             ++current_slot_;
@@ -301,14 +310,14 @@ private:
         return ret_val;
     }
 
-    void deserialize_sample(
+    bool deserialize_sample(
             CacheChange_t* change)
     {
         auto payload = &(change->serializedPayload);
         if (data_values_.has_ownership())
         {
             // perform deserialization
-            type_->deserialize(payload, data_values_.buffer()[current_slot_]);
+            return type_->deserialize(payload, data_values_.buffer()[current_slot_]);
         }
         else
         {
@@ -316,6 +325,7 @@ private:
             void* sample;
             sample_pool_->get_loan(change, sample);
             const_cast<void**>(data_values_.buffer())[current_slot_] = sample;
+            return true;
         }
     }
 
