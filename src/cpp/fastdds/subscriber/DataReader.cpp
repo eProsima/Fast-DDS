@@ -423,7 +423,7 @@ QueryCondition* DataReader::create_querycondition(
 }
 
 ReturnCode_t DataReader::delete_readcondition(
-        ReadCondition* a_condition)
+        const ReadCondition* a_condition)
 {
     static_cast<void> (a_condition);
     return ReturnCode_t::RETCODE_UNSUPPORTED;

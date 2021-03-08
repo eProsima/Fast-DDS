@@ -272,7 +272,7 @@ DataReader* SubscriberImpl::create_datareader_with_profile(
 }
 
 ReturnCode_t SubscriberImpl::delete_datareader(
-        DataReader* reader)
+        const DataReader* reader)
 {
     if (user_subscriber_ != reader->get_subscriber())
     {
