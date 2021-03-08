@@ -192,6 +192,9 @@ struct ReadTakeCommand
                 sample_infos_[slot].sample_rank = n;
                 ++n;
             }
+
+            // Mark that some data is available
+            return_value_ = ReturnCode_t::RETCODE_OK;
         }
 
         next_instance();
@@ -292,9 +295,6 @@ private:
             --remaining_samples_;
             ret_val = true;
         }
-
-        // Mark that some data is available
-        return_value_ = ReturnCode_t::RETCODE_OK;
 
         // Finish when there are no remaining samples
         finished_ = (remaining_samples_ == 0);

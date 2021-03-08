@@ -390,37 +390,6 @@ void StatelessReader::change_read_by_user(
         }
     }
 
-    std::unique_lock<RecursiveTimedMutex> lock(mp_mutex);
-
-    // If not datasharing, we are done
-    if (!is_datasharing_compatible_ || !datasharing_listener_->writer_is_matched(change->writerGUID))
-    {
-        return;
-    }
-
-    // Unlock the payload
-    DataSharingPayloadPool::shared_mutex(change->serializedPayload.data).unlock_sharable();
-
-    if (mark_as_read)
-    {
-        // This may not be the change read with highest SN,
-        // need to find largest SN to ACK
-        std::vector<CacheChange_t*>::iterator last_read_from_writer;
-        for (std::vector<CacheChange_t*>::iterator it = mp_history->changesBegin();
-                it != mp_history->changesEnd(); ++it)
-        {
-            if (!(*it)->isRead)
-            {
-                // Update the last ACK timestamp in the shared memory
-                datasharing_listener_->change_removed_with_timestamp((*it)->sourceTimestamp.to_ns());
-                return;
-            }
-        }
-
-        // Must ACK all in the writer
-        datasharing_listener_->change_removed_with_timestamp(
-            (*mp_history->changesRbegin())->sourceTimestamp.to_ns() + 1);
-    }
 }
 
 bool StatelessReader::processDataMsg(
