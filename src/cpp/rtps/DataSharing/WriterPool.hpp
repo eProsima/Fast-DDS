@@ -67,11 +67,8 @@ public:
 
         PayloadNode* payload = free_payloads_.front();
         free_payloads_.pop_front();
-        payload->mutex().lock();
         // Reset all the metadata to signal the reader that the payload is dirty
         payload->reset();
-        // Now we can unlock
-        payload->mutex().unlock();
 
         cache_change.serializedPayload.data = payload->data();
         cache_change.serializedPayload.max_size = max_data_size_;
