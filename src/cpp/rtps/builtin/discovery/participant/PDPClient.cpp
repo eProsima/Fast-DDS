@@ -74,10 +74,10 @@ void PDPClient::initializeParticipantProxyData(
     PDP::initializeParticipantProxyData(participant_data); // TODO: Remember that the PDP version USES security
 
     if (
-        getRTPSParticipant()->getAttributes().builtin.discovery_config.discoveryProtocol 
+        getRTPSParticipant()->getAttributes().builtin.discovery_config.discoveryProtocol
         != DiscoveryProtocol_t::CLIENT
         &&
-        getRTPSParticipant()->getAttributes().builtin.discovery_config.discoveryProtocol 
+        getRTPSParticipant()->getAttributes().builtin.discovery_config.discoveryProtocol
         != DiscoveryProtocol_t::SUPER_CLIENT    )
     {
         logError(RTPS_PDP, "Using a PDP client object with another user's settings");
@@ -101,14 +101,14 @@ void PDPClient::initializeParticipantProxyData(
     if (_super_client)
     {
         participant_data->m_properties.push_back(std::pair<std::string,
-            std::string>(
-                {fastdds::dds::parameter_property_participant_type, fastdds::rtps::ParticipantType::SUPER_CLIENT}));
+                std::string>(
+                    {fastdds::dds::parameter_property_participant_type, fastdds::rtps::ParticipantType::SUPER_CLIENT}));
     }
     else
     {
         participant_data->m_properties.push_back(std::pair<std::string,
-            std::string>({fastdds::dds::parameter_property_participant_type,
-                          fastdds::rtps::ParticipantType::CLIENT}));
+                std::string>({fastdds::dds::parameter_property_participant_type,
+                              fastdds::rtps::ParticipantType::CLIENT}));
     }
     participant_data->m_properties.push_back(std::pair<std::string,
             std::string>({fastdds::dds::parameter_property_ds_version,
