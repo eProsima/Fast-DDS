@@ -164,12 +164,12 @@ public:
 
     /** NOT YET IMPLEMENTED
      * @brief This operation performs the same function as write except that it also provides the value for the
-     * \ref eprosima::fastdds::dds::SampleInfo::source_timestamp "source_timestamp" that is made available to DataReader
-     * objects by means of the \ref eprosima::fastdds::dds::SampleInfo::source_timestamp attribute "source_timestamp"
+     * @ref eprosima::fastdds::dds::SampleInfo::source_timestamp "source_timestamp" that is made available to DataReader
+     * objects by means of the @ref eprosima::fastdds::dds::SampleInfo::source_timestamp attribute "source_timestamp"
      * inside the SampleInfo.
      * The constraints on the values of the @c handle parameter and the corresponding error behavior are the same
-     * specified for the \ref write operation. This operation may block and return RETCODE_TIMEOUT under the same
-     * circumstances described for the \ref write operation.
+     * specified for the @ref write operation. This operation may block and return RETCODE_TIMEOUT under the same
+     * circumstances described for the @ref write operation.
      * This operation may return RETCODE_OUT_OF_RESOURCES, RETCODE_PRECONDITION_NOT_MET or RETCODE_BAD_PARAMETER under
      * the same circumstances described for the write operation.
      *
