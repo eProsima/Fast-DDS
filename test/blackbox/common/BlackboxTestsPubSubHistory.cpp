@@ -454,6 +454,13 @@ TEST_P(PubSubHistory, PubSubAsReliableMultithreadKeepLast1)
 
     ASSERT_TRUE(reader.isInitialized());
 
+    if (enable_datasharing)
+    {
+        // on datasharing we need to give time to the reader to process the data
+        // before reusing it
+        writer.resource_limits_extra_samples(100);
+    }
+
     writer.history_depth(1).init();
 
     ASSERT_TRUE(writer.isInitialized());
