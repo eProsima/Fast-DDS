@@ -14,7 +14,6 @@
 
 /**
  * @file topic_names.hpp
- *
  */
 
 #include <string>
@@ -23,8 +22,6 @@ namespace eprosima {
 namespace fastdds {
 namespace dds {
 namespace statistics {
-
-//! Constants to handle Statistics Module topic names
 
 //! Statistic topic that reports the write-to-notification latency between any two pairs of matched 
 //! DataWriter-DataReader histories
