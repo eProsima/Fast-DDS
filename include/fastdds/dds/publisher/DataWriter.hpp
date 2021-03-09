@@ -201,10 +201,10 @@ public:
      * The @ref eprosima::fastdds::dds::SampleInfo::source_timestamp "source_timestamp" potentially affects the relative
      * order in which readers observe events from multiple writers. See the QoS policy
      * @ref eprosima::fastdds::dds::DataWriterQos::destination_order "DESTINATION_ORDER".
-     * 
+     *
      * This operation may block and return RETCODE_TIMEOUT under the same circumstances described for the @ref write
      * operation.
-     * 
+     *
      * This operation may return RETCODE_OUT_OF_RESOURCES under the same circumstances described for the
      * @ref write operation.
      *
@@ -237,10 +237,10 @@ public:
      * The @ref eprosima::fastdds::dds::SampleInfo::source_timestamp "source_timestamp" potentially affects the relative
      * order in which readers observe events from multiple writers. See the QoS policy
      * @ref eprosima::fastdds::dds::DataWriterQos::destination_order "DESTINATION_ORDER".
-     * 
+     *
      * The constraints on the values of the @c handle parameter and the corresponding error behavior are the same
      * specified for the @ref unregister_instance operation.
-     * 
+     *
      * This operation may block and return RETCODE_TIMEOUT under the same circumstances described for the write
      * operation
      *
@@ -416,13 +416,13 @@ public:
      * for the @ref eprosima::fastdds::dds::SampleInfo::source_timestamp "source_timestamp" that is made available to
      * DataReader objects by means of the @ref eprosima::fastdds::dds::SampleInfo::source_timestamp "source_timestamp"
      * attribute inside the SampleInfo.
-     * 
+     *
      * The constraints on the values of the @c handle parameter and the corresponding error behavior are the same
      * specified for the @ref dispose operation.
-     * 
+     *
      * This operation may return RETCODE_PRECONDITION_NOT_MET and RETCODE_BAD_PARAMETER under the same circumstances
      * described for the @ref dispose operation.
-     * 
+     *
      * This operation may return RETCODE_TIMEOUT and RETCODE_OUT_OF_RESOURCES under the same circumstances described
      * for the @ref write operation.
      *
@@ -517,11 +517,11 @@ public:
 
     /**
      * @brief Discards a loaned sample pointer.
-     * 
+     *
      * See the description on @ref loan_sample for how and when to call this method.
-     * 
+     *
      * @param [in,out] sample  Pointer to the previously loaned sample.
-     * 
+     *
      * @return ReturnCode_t::RETCODE_ILLEGAL_OPERATION when the data type does not support loans.
      * @return ReturnCode_t::RETCODE_NOT_ENABLED if the writer has not been enabled.
      * @return ReturnCode_t::RETCODE_BAD_PARAMETER if the pointer does not correspond to a loaned sample.
