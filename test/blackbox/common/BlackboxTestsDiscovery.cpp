@@ -223,6 +223,92 @@ TEST(Discovery, StaticDiscovery)
     reader.block_for_all();
 }
 
+TEST(Discovery, StaticDiscoveryFromString)
+{
+    char* value = std::getenv("TOPIC_RANDOM_NUMBER");
+    std::string TOPIC_RANDOM_NUMBER;
+    if (value != nullptr)
+    {
+        TOPIC_RANDOM_NUMBER = value;
+    }
+    else
+    {
+        TOPIC_RANDOM_NUMBER = "1";
+    }
+
+    PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
+
+    writer.reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).
+            history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS).
+            durability_kind(eprosima::fastrtps::TRANSIENT_LOCAL_DURABILITY_QOS);
+    std::string writer_xml = "data://<?xml version=\"1.0\" encoding=\"utf-8\"?>" \
+            "<staticdiscovery>" \
+            "<participant>" \
+            "<name>RTPSParticipant</name>" \
+            "<reader>" \
+            "<userId>3</userId>" \
+            "<entityID>4</entityID>" \
+            "<topicName>BlackBox_StaticDiscoveryFromString_" +
+            TOPIC_RANDOM_NUMBER +
+            std::string("</topicName>" \
+                    "<topicDataType>HelloWorldType</topicDataType>" \
+                    "<topicKind>NO_KEY</topicKind>" \
+                    "<reliabilityQos>RELIABLE_RELIABILITY_QOS</reliabilityQos>" \
+                    "<durabilityQos>TRANSIENT_LOCAL_DURABILITY_QOS</durabilityQos>" \
+                    "</reader>" \
+                    "</participant>" \
+                    "</staticdiscovery>");
+    writer.static_discovery(writer_xml.c_str()).setPublisherIDs(1, 2).
+            setManualTopicName(std::string("BlackBox_StaticDiscoveryFromString_") + TOPIC_RANDOM_NUMBER).
+            init();
+
+    ASSERT_TRUE(writer.isInitialized());
+
+    PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
+
+
+    reader.reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).
+            history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS).
+            durability_kind(eprosima::fastrtps::TRANSIENT_LOCAL_DURABILITY_QOS);
+    std::string reader_xml = "data://<?xml version=\"1.0\" encoding=\"utf-8\"?>" \
+            "<staticdiscovery>" \
+            "<participant>" \
+            "<name>RTPSParticipant</name>" \
+            "<writer>" \
+            "<userId>1</userId>" \
+            "<entityID>2</entityID>" \
+            "<topicName>BlackBox_StaticDiscoveryFromString_" +
+            TOPIC_RANDOM_NUMBER +
+            std::string(
+        "</topicName>" \
+        "<topicDataType>HelloWorldType</topicDataType>" \
+        "<topicKind>NO_KEY</topicKind>" \
+        "<reliabilityQos>RELIABLE_RELIABILITY_QOS</reliabilityQos>" \
+        "<durabilityQos>TRANSIENT_LOCAL_DURABILITY_QOS</durabilityQos>" \
+        "</writer>" \
+        "</participant>" \
+        "</staticdiscovery>");
+    reader.static_discovery(reader_xml.c_str()).setSubscriberIDs(3, 4).
+            setManualTopicName(std::string("BlackBox_StaticDiscoveryFromString_") + TOPIC_RANDOM_NUMBER).
+            init();
+
+    ASSERT_TRUE(reader.isInitialized());
+
+    // Because its volatile the durability
+    // Wait for discovery.
+    writer.wait_discovery();
+    reader.wait_discovery();
+
+    auto data = default_helloworld_data_generator();
+    auto expected_data(data);
+
+    writer.send(data);
+    ASSERT_TRUE(data.empty());
+
+    reader.startReception(expected_data);
+    reader.block_for_all();
+}
+
 TEST_P(Discovery, EDPSlaveReaderAttachment)
 {
     PubSubWriter<HelloWorldType> checker(TEST_TOPIC_NAME);
