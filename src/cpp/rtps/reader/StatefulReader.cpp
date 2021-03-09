@@ -1113,6 +1113,46 @@ void StatefulReader::change_read_by_user(
         }
     }
 
+    // If not datasharing, we are done
+    if (!writer->is_datasharing_writer())
+    {
+        return;
+    }
+
+    if (mark_as_read)
+    {
+        // This may not be the change read with highest SN,
+        // need to find largest SN to ACK
+        std::vector<CacheChange_t*>::iterator last_read_from_writer;
+        for (std::vector<CacheChange_t*>::iterator it = mp_history->changesBegin();
+                it != mp_history->changesEnd(); ++it)
+        {
+            if (!(*it)->isRead)
+            {
+                if ((*it)->writerGUID == writer->guid())
+                {
+                    if ((*it)->sequenceNumber < change->sequenceNumber)
+                    {
+                        //There are earlier changes not read yet. Do not send ACK.
+                        return;
+                    }
+                    acknack_count_++;
+                    RTPSMessageGroup group(getRTPSParticipant(), this, *writer);
+                    SequenceNumberSet_t sns((*it)->sequenceNumber);
+                    group.add_acknack(sns, acknack_count_, false);
+                    logInfo(RTPS_READER, "Sending datasharing ACK for SN " << (*it)->sequenceNumber - 1);
+                    return;
+                }
+            }
+        }
+
+        // Must ACK all in the writer
+        acknack_count_++;
+        RTPSMessageGroup group(getRTPSParticipant(), this, *writer);
+        SequenceNumberSet_t sns(writer->available_changes_max() + 1);
+        group.add_acknack(sns, acknack_count_, false);
+        logInfo(RTPS_READER, "Sending datasharing ACK for last SN " << writer->available_changes_max());
+    }
 }
 
 void StatefulReader::send_acknack(
@@ -1164,6 +1204,11 @@ void StatefulReader::send_acknack(
     std::lock_guard<RecursiveTimedMutex> guard(mp_mutex);
 
     if (!writer->is_alive())
+    {
+        return;
+    }
+
+    if (writer->is_datasharing_writer())
     {
         return;
     }
