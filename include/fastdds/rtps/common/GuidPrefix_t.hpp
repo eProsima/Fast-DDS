@@ -100,8 +100,8 @@ inline std::ostream& operator <<(
         output << std::setw(2) << (int)guiP.value[i] << ".";
     }
     output << std::setw(2) << (int)guiP.value[11];
-    return output << std::dec;
     output.fill(old_fill);
+    return output << std::dec;
 }
 
 inline std::istream& operator >>(
