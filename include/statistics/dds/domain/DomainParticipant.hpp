@@ -72,7 +72,7 @@ public:
     /**
      * @brief This operation narrows the DDS DomainParticipant to the Statistics DomainParticipant
      * @param domain_participant Reference to the DDS DomainParticipant
-     * @return Reference to the Statistics DomainParticipant if succesful.
+     * @return Reference to the Statistics DomainParticipant if successful.
      * nullptr otherwise.
      */
     RTPS_DllAPI static DomainParticipant* narrow(
@@ -81,7 +81,7 @@ public:
     /**
      * @brief This operation narrows the DDS DomainParticipant to the Statistics DomainParticipant
      * @param domain_participant Constant reference to the DDS DomainParticipant
-     * @return Constant reference to the Statistics DomainParticipant if succesful.
+     * @return Constant reference to the Statistics DomainParticipant if successful.
      * nullptr otherwise.
      */
     RTPS_DllAPI static const DomainParticipant* narrow(

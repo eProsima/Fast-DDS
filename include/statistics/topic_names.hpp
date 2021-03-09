@@ -45,7 +45,7 @@ constexpr char HEARTBEAT_COUNT_TOPIC[] = "_fastdds_statistics_heartbeat_count";
 constexpr char ACKNACK_COUNT_TOPIC[] = "_fastdds_statistics_acknack_count";
 //! Statistics topic that reports the number of NACKFRAGs that each non discovery DataReader sends
 constexpr char NACKFRAG_COUNT_TOPIC[] = "_fastdds_statistics_nackfrag_count";
-//! Statistics topic that reports the number of GAPs that each non dicovery DataWriter sends
+//! Statistics topic that reports the number of GAPs that each non discovery DataWriter sends
 constexpr char GAP_COUNT_TOPIC[] = "_fastdds_statistics_gap_count";
 //! Statistics topic that reports the number of DATA/DATAFRAG sub-messages that each non discovery DataWriter sends
 constexpr char DATA_COUNT_TOPIC[] = "_fastdds_statistics_data_count";
