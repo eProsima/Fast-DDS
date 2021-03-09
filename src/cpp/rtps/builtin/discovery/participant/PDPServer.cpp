@@ -352,8 +352,11 @@ void PDPServer::initializeParticipantProxyData(
 {
     PDP::initializeParticipantProxyData(participant_data);
 
-    if (!(getRTPSParticipant()->getAttributes().builtin.discovery_config.discoveryProtocol !=
-            DiscoveryProtocol_t::CLIENT))
+    if (getRTPSParticipant()->getAttributes().builtin.discovery_config.discoveryProtocol !=
+            DiscoveryProtocol_t::SERVER
+            &&
+            getRTPSParticipant()->getAttributes().builtin.discovery_config.discoveryProtocol !=
+            DiscoveryProtocol_t::BACKUP)
     {
         logError(RTPS_PDP_SERVER, "Using a PDP Server object with another user's settings");
     }

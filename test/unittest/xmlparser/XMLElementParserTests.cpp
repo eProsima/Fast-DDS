@@ -3174,6 +3174,7 @@ TEST_F(XMLParserTests, getXMLOctetVector_NegativeClauses)
  *      2. CLIENT
  *      3. SERVER
  *      4. BACKUP
+ *      5. SUPER_CLIENT
  * 3. Check XMLEnum with arg ParticipantFilteringFlags_t
  *      1. FILTER_DIFFERENT_PROCESS
  */
@@ -3249,6 +3250,13 @@ TEST_F(XMLParserTests, getXMLEnum_positive)
         titleElement = xml_doc.RootElement();
         EXPECT_EQ(XMLP_ret::XML_OK, XMLParserTest::getXMLEnum_wrapper(titleElement, &e, ident));
         EXPECT_EQ(DiscoveryProtocol_t::BACKUP, e);
+
+        // SUPER_CLIENT case
+        sprintf(xml, enum_p, "SUPER_CLIENT");
+        ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+        titleElement = xml_doc.RootElement();
+        EXPECT_EQ(XMLP_ret::XML_OK, XMLParserTest::getXMLEnum_wrapper(titleElement, &e, ident));
+        EXPECT_EQ(DiscoveryProtocol_t::SUPER_CLIENT, e);
     }
 
     // ParticipantFilteringFlags_t Enum
