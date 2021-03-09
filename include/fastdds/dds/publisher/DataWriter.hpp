@@ -520,7 +520,7 @@ public:
      * 
      * See the description on @ref loan_sample for how and when to call this method.
      * 
-     * @param [in][out] sample  Pointer to the previously loaned sample.
+     * @param [in,out] sample  Pointer to the previously loaned sample.
      * 
      * @return ReturnCode_t::RETCODE_ILLEGAL_OPERATION when the data type does not support loans.
      * @return ReturnCode_t::RETCODE_NOT_ENABLED if the writer has not been enabled.
