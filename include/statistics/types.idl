@@ -1,0 +1,88 @@
+module eprosima {
+module fastdds {
+module statistics {
+
+    module detail
+    {
+
+        struct EntityId_s
+        {
+            octet value[4];
+        };
+
+        struct GuidPrefix_s
+        {
+            octet value[12];
+        };
+
+        struct GUID_s
+        {
+            GuidPrefix_s guidPrefix;
+            EntityId_s entityId;
+        };
+
+        struct SequenceNumber_s
+        {
+            long high;
+            unsigned long low;
+        };
+
+        struct SampleIdentity_s
+        {
+            GUID_s writer_guid;
+            SequenceNumber_s sequence_number;
+        };
+
+        struct Locator_s
+        {
+            long kind;
+            unsigned long port;
+            octet address[16];
+        };
+
+    }; // namespace detail
+
+struct DiscoveryTime
+{
+    @Key detail::GUID_s local_participant_guid;
+    @Key detail::GUID_s remote_entity_guid;
+    unsigned long long time;
+};
+
+struct EntityCount
+{
+    @Key detail::GUID_s guid;
+    unsigned long long count;
+};
+
+struct SampleIdentityCount
+{
+    @Key detail::SampleIdentity_s sample_id;
+    unsigned long long count;
+};
+
+struct Entity2LocatorTraffic
+{
+    @Key detail::GUID_s src_guid;
+    @Key detail::Locator_s dst_locator;
+    unsigned long long packet_count;
+    unsigned long long byte_count;
+    short byte_magnitude_order;
+};
+
+struct WriterReaderData
+{
+    @Key detail::GUID_s writer_guid;
+    @Key detail::GUID_s reader_guid;
+    float data;
+};
+
+struct EntityData
+{
+    @Key detail::GUID_s guid;
+    float data;
+};
+
+}; // namespace statistics
+}; // namespace fastdds
+}; // namespace eprosima
