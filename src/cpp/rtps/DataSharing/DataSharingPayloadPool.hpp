@@ -130,6 +130,9 @@ public:
             const octet* data,
             const SequenceNumber_t& sn);
 
+    bool is_sample_valid(
+            const CacheChange_t& change) const;
+
 protected:
 
 #pragma warning(push)

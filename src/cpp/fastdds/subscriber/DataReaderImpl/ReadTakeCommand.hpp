@@ -380,19 +380,13 @@ private:
             WriterProxy* wp)
     {
         bool is_valid = true;
-        if (has_ownership)                          //< On loans the user must check the validity anyways
+        if (has_ownership)  //< On loans the user must check the validity anyways
         {
-            if (wp                                  //< On reliable we can use the wp (efficiency)
-                && wp->is_datasharing_writer())     //< This check only has sense on datasharing
+            DataSharingPayloadPool* pool = dynamic_cast<DataSharingPayloadPool*>(change->payload_owner());
+            if (pool)
             {
                 //Check if the payload is dirty
-                is_valid = DataSharingPayloadPool::check_sequence_number(
-                        change->serializedPayload.data, change->sequenceNumber);
-            }
-            else
-            {
-                //Check if the payload is dirty
-                is_valid = reader_->is_sample_valid(change->serializedPayload.data, change->writerGUID, change->sequenceNumber);
+                is_valid = pool->is_sample_valid(*change);
             }
         }
 

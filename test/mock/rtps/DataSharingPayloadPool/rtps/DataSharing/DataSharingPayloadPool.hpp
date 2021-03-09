@@ -153,8 +153,12 @@ public:
         return true;
     }
 
+    bool is_sample_valid(
+            const CacheChange_t& /*change*/) const
     {
+        return true;
     }
+
 
 protected:
 
