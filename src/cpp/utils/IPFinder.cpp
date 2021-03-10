@@ -20,6 +20,8 @@
 #include <fastrtps/utils/IPFinder.h>
 #include <fastrtps/utils/IPLocator.h>
 
+#include <fastdds/dds/log/Log.hpp>
+
 #if defined(_WIN32)
 #pragma comment(lib, "Iphlpapi.lib")
 #include <stdio.h>
@@ -94,7 +96,7 @@ bool IPFinder::getIPs(
 
     if (rv != ERROR_SUCCESS)
     {
-        fprintf(stderr, "GetAdaptersAddresses() failed...");
+        logWarning(UTILS, "GetAdaptersAddresses() failed");
         free(adapter_addresses);
         return false;
     }
@@ -181,7 +183,7 @@ bool IPFinder::getIPs(
                             host, NI_MAXHOST, NULL, 0, NI_NUMERICHOST);
             if (s != 0)
             {
-                fprintf(stderr, "getnameinfo() failed: %s\n", gai_strerror(s));
+                logWarning(UTILS, "getnameinfo() failed: " << gai_strerror(s));
                 continue;
             }
             info_IP info;
@@ -201,7 +203,7 @@ bool IPFinder::getIPs(
                             host, NI_MAXHOST, NULL, 0, NI_NUMERICHOST);
             if (s != 0)
             {
-                fprintf(stderr, "getnameinfo() failed: %s\n", gai_strerror(s));
+                logWarning(UTILS, "getnameinfo() failed: " << gai_strerror(s));
                 continue;
             }
             info_IP info;
@@ -215,7 +217,6 @@ bool IPFinder::getIPs(
                     vec_name->push_back(info);
                 }
             }
-            //printf("<Interface>: %s \t <Address> %s\n", ifa->ifa_name, host);
         }
     }
 
@@ -246,7 +247,7 @@ bool IPFinder::getAllMACAddress(
 
     if (rv != ERROR_SUCCESS)
     {
-        fprintf(stderr, "GetAdaptersAddresses() failed...");
+        logWarning(UTILS, "GetAdaptersAddresses() failed");
         free(adapter_addresses);
         return false;
     }
@@ -287,7 +288,7 @@ bool IPFinder::getAllMACAddress(
     {
         if ((mib[5] = if_nametoindex(ip.dev.c_str())) == 0)
         {
-            printf("Error on nametoindex: %s\n", strerror(errno));
+            logWarning(UTILS, "Error on nametoindex: " << strerror(errno));
             return false;
         }
 
@@ -295,19 +296,19 @@ bool IPFinder::getAllMACAddress(
         unsigned char* buf;
         if (sysctl(mib, 6, NULL, &len, NULL, 0) < 0)
         {
-            printf("Error on sysctl: %s\n", strerror(errno));
+            logWarning(UTILS, "Error on nametoindex: " << strerror(errno));
             return false;
         }
 
         if ((buf = (unsigned char*)malloc(len)) == NULL)
         {
-            printf("Falure allocating %ld octets", len);
+            logWarning(UTILS, "Falure allocating " << len << " octets");
             return false;
         }
 
         if (sysctl(mib, 6, buf, &len, NULL, 0) < 0)
         {
-            printf("Error on sysctl: %s\n", strerror(errno));
+            logWarning(UTILS, "Error on sysctl: " << strerror(errno));
             return false;
         }
 
@@ -339,13 +340,13 @@ bool IPFinder::getAllMACAddress(
         int fd = socket(PF_INET, SOCK_DGRAM, 0);
         if (fd == -1)
         {
-            printf("Error creating socket:  %s\n", strerror(errno));
+            logWarning(UTILS, "Error creating socket: " << strerror(errno));
             return false;
         }
 
         if (ioctl(fd, SIOCGIFHWADDR, &ifr) == -1)
         {
-            printf("Error on ioctl:  %s\n", strerror(errno));
+            logWarning(UTILS, "Error on ioctl: " << strerror(errno));
             close(fd);
             return false;
         }
@@ -376,7 +377,7 @@ bool IPFinder::getAllMACAddress(
 
     if (getifaddrs(&ifaphead) != 0)
     {
-        printf("getifaddrs() failed: %s\n", strerror(errno));
+        logWarning(UTILS, "getifaddrs() failed: " << strerror(errno));
         return false;
     }
 

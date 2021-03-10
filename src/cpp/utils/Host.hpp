@@ -20,6 +20,8 @@
 #include <fastrtps/utils/md5.h>
 #include <fastrtps/utils/IPFinder.h>
 
+#include <fastdds/dds/log/Log.hpp>
+
 namespace eprosima {
 
 /**
@@ -110,7 +112,7 @@ private:
         }
         else
         {
-            printf("Cannot get MAC addresses. Failing back to IP based ID\n");
+            logWarning(UTILS, "Cannot get MAC addresses. Failing back to IP based ID");
             for (size_t i = 0; i < mac_id_length; i += 2)
             {
                 mac_id_.value[i] = (id_ >> 8);
