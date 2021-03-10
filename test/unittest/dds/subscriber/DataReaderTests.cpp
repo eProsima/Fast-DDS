@@ -1498,7 +1498,7 @@ public:
 TEST_F(DataReaderTests, Deserialization_errors)
 {
     type_.reset(new FailingFooTypeSupport());
-    
+
     static const Duration_t time_to_wait(0, 100 * 1000 * 1000);
     static constexpr int32_t num_samples = 10;
 

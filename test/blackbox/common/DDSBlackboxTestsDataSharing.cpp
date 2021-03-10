@@ -217,7 +217,7 @@ TEST(DDSDataSharing, ReliableDirtyPayloads)
         ASSERT_EQ(valid_data.front(), data);
         valid_data.pop_front();
     }
-        ASSERT_TRUE(valid_data.empty());
+    ASSERT_TRUE(valid_data.empty());
 }
 
 TEST(DDSDataSharing, DataSharingWriter_DifferentDomainReaders)

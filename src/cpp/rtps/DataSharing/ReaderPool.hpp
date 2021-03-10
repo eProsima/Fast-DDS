@@ -64,7 +64,7 @@ public:
             return true;
         }
 
-        //If owner is not this, then it must be an intraprocess datasharing writer 
+        //If owner is not this, then it must be an intraprocess datasharing writer
         PayloadNode* payload = PayloadNode::get_from_data(data.data);
         read_from_shared_history(cache_change, payload);
         return true;

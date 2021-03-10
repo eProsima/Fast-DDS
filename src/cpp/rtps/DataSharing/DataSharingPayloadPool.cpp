@@ -87,7 +87,6 @@ bool DataSharingPayloadPool::is_sample_valid(
     return check_sequence_number(change.serializedPayload.data, change.sequenceNumber);
 }
 
-
 std::shared_ptr<DataSharingPayloadPool> DataSharingPayloadPool::get_reader_pool(
         bool is_reader_volatile)
 {

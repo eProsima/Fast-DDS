@@ -368,7 +368,7 @@ private:
     bool is_alive_;
 
     using pool_allocator_t =
-                    foonathan::memory::memory_pool<foonathan::memory::node_pool, foonathan::memory::heap_allocator>;
+            foonathan::memory::memory_pool<foonathan::memory::node_pool, foonathan::memory::heap_allocator>;
 
     //! Memory pool allocator for changes_received_
     pool_allocator_t changes_pool_;
@@ -403,12 +403,12 @@ private:
     int get_mutex_owner() const;
 
     int get_thread_id() const;
-#endif
+#endif // if !defined(NDEBUG) && defined(FASTRTPS_SOURCE) && defined(__linux__)
 };
 
 } /* namespace rtps */
 } /* namespace fastrtps */
 } /* namespace eprosima */
 
-#endif
+#endif // ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 #endif /* FASTRTPS_RTPS_READER_WRITERPROXY_H_ */

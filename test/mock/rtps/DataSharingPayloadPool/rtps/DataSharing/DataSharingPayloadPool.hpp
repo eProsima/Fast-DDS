@@ -159,7 +159,6 @@ public:
         return true;
     }
 
-
 protected:
 
     GUID_t writer_guid_;

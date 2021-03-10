@@ -1556,7 +1556,7 @@ bool StatefulWriter::matched_reader_add(
     {
         matched_local_readers_.push_back(rp);
         logInfo(RTPS_WRITER, "Adding reader " << rdata.guid() << " to " << this->m_guid.entityId
-                                                << " as local reader");
+                                              << " as local reader");
     }
     else
     {
@@ -1564,7 +1564,7 @@ bool StatefulWriter::matched_reader_add(
         {
             matched_datasharing_readers_.push_back(rp);
             logInfo(RTPS_WRITER, "Adding reader " << rdata.guid() << " to " << this->m_guid.entityId
-                                                << " as data sharing");
+                                                  << " as data sharing");
         }
         else
         {
