@@ -239,14 +239,14 @@ public:
 };
 
 template<class T>
-std::enable_if_t<std::is_arithmetic_v<T> || std::is_enum_v<T>, bool>
+typename std::enable_if<std::is_arithmetic<T>::value || std::is_enum<T>::value, bool>::type
 operator==(T a, const ReturnCode_t& b)
 {
     return b == a;
 }
 
 template<class T>
-std::enable_if_t<std::is_arithmetic_v<T> || std::is_enum_v<T>, bool>
+typename std::enable_if<std::is_arithmetic<T>::value || std::is_enum<T>::value, bool>::type
 operator!=(T a, const ReturnCode_t& b)
 {
     return b != a;
