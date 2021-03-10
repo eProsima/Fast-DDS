@@ -19,8 +19,6 @@
 #ifndef _STATISTICS_TOPIC_NAMES_HPP_
 #define _STATISTICS_TOPIC_NAMES_HPP_
 
-#include <string>
-
 namespace eprosima {
 namespace fastdds {
 namespace dds {
