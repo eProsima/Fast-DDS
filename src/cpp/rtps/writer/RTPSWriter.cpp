@@ -415,6 +415,20 @@ bool RTPSWriter::is_pool_initialized() const
     return true;
 }
 
+bool RTPSWriter::add_statistics_listener(
+            std::shared_ptr<fastdds::statistics::IListener> listener)
+{
+    (void)listener;
+    return false;
+}
+
+bool RTPSWriter::remove_statistics_listener(
+            std::shared_ptr<fastdds::statistics::IListener> listener)
+{
+     (void)listener;
+     return false;
+}
+
 }  // namespace rtps
 }  // namespace fastrtps
 }  // namespace eprosima

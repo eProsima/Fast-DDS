@@ -186,6 +186,30 @@ bool RTPSParticipant::is_security_enabled_for_reader(
 
 #endif // if HAVE_SECURITY
 
+#ifdef FASTDDS_STATISTICS
+
+bool RTPSParticipant::add_statistics_listener(
+        std::shared_ptr<fastdds::statistics::IListener> listener,
+        fastdds::statistics::EventKind kind)
+{
+    (void)listener;
+    (void)kind;
+
+    return false;
+}
+
+bool RTPSParticipant::remove_statistics_listener(
+        std::shared_ptr<fastdds::statistics::IListener> listener,
+        fastdds::statistics::EventKind kind)
+{
+    (void)listener;
+    (void)kind;
+
+    return false;
+}
+
+#endif // FASTDDS_STATISTICS
+
 } /* namespace rtps */
 } /* namespace fastrtps */
 } /* namespace eprosima */

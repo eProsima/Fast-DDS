@@ -376,6 +376,20 @@ bool RTPSReader::is_sample_valid(
     return true;
 }
 
+bool RTPSReader::add_statistics_listener(
+            std::shared_ptr<fastdds::statistics::IListener> listener)
+{
+    (void)listener;
+    return false;
+}
+
+bool RTPSReader::remove_statistics_listener(
+            std::shared_ptr<fastdds::statistics::IListener> listener)
+{
+     (void)listener;
+     return false;
+}
+
 } /* namespace rtps */
 } /* namespace fastrtps */
 } /* namespace eprosima */

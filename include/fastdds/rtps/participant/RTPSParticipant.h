@@ -26,6 +26,7 @@
 #include <fastdds/rtps/attributes/RTPSParticipantAttributes.h>
 #include <fastrtps/qos/ReaderQos.h>
 #include <fastrtps/qos/WriterQos.h>
+#include <fastdds/statistics/Listeners.hpp>
 
 namespace eprosima {
 
@@ -258,6 +259,28 @@ public:
             const ReaderAttributes& reader_attributes);
 
 #endif // if HAVE_SECURITY
+
+#ifdef FASTDDS_STATISTICS
+
+    /*
+     * Adds a listener to receive statistics backend callbacks
+     * @param listener
+     * @param kind mask that specifies which callbacks to receive
+     */
+    bool add_statistics_listener(
+            std::shared_ptr<fastdds::statistics::IListener> listener,
+            fastdds::statistics::EventKind kind);
+
+    /*
+     * Remove a listener to receive statistics backend callbacks
+     * @param listener
+     * @param kind mask that specifies which callbacks to ignore
+     */
+    bool remove_statistics_listener(
+            std::shared_ptr<fastdds::statistics::IListener> listener,
+            fastdds::statistics::EventKind kind);
+
+#endif // FASTDDS_STATISTICS
 
 private:
 
