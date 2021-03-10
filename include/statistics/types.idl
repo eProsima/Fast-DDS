@@ -77,10 +77,66 @@ struct WriterReaderData
     float data;
 };
 
+struct Locator2LocatorData
+{
+    @Key detail::Locator_s src_locator;
+    @Key detail::Locator_s dst_locator;
+    float data;
+};
+
 struct EntityData
 {
     @Key detail::GUID_s guid;
     float data;
+};
+
+@bit_bound(32)
+bitmask EventKind
+{
+    @position(0) NONE,
+    @position(1) HISTORY2HISTORY_LATENCY,
+    @position(2) NETWORK_LATENCY,
+    @position(3) PUBLICATION_THROUGHPUT,
+    @position(4) SUBSCRIPTION_THROUGHPUT,
+    @position(5) RTPS_SENT,
+    @position(6) RTPS_LOST,
+    @position(7) RESENT_DATAS,
+    @position(8) HEARTBEAT_COUNT,
+    @position(9) ACKNACK_COUNT,
+    @position(10) NACKFRAG_COUNT,
+    @position(11) GAP_COUNT,
+    @position(12) DATA_COUNT,
+    @position(13) PDP_PACKETS,
+    @position(14) EDP_PACKETS,
+    @position(15) DISCOVERED_ENTITY,
+    @position(16) SAMPLE_DATAS
+};
+
+union Data switch(EventKind)
+{
+    case HISTORY2HISTORY_LATENCY:
+        WriterReaderData writer_reader_data;
+    case NETWORK_LATENCY:
+        Locator2LocatorData locator2locator_data;
+    case PUBLICATION_THROUGHPUT:
+    case SUBSCRIPTION_THROUGHPUT:
+        EntityData entity_data;
+    case RTPS_SENT:
+    case RTPS_LOST:
+        Entity2LocatorTraffic entity2locator_traffic;
+    case RESENT_DATAS:
+    case HEARTBEAT_COUNT:
+    case ACKNACK_COUNT:
+    case NACKFRAG_COUNT:
+    case GAP_COUNT:
+    case DATA_COUNT:
+    case PDP_PACKETS:
+    case EDP_PACKETS:
+        EntityCount entity_count;
+    case DISCOVERED_ENTITY:
+        DiscoveryTime discovery_time;
+    case SAMPLE_DATAS:
+        SampleIdentityCount sample_identity_count;
 };
 
 }; // namespace statistics
