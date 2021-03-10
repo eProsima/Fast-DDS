@@ -371,8 +371,8 @@ bool IPFinder::getAllMACAddress(
 bool IPFinder::getAllMACAddress(
         std::vector<info_MAC>* macs)
 {
-    struct ifaddrs *ifaphead;
-    struct ifaddrs *ifap;
+    struct ifaddrs* ifaphead;
+    struct ifaddrs* ifap;
 
     if (getifaddrs(&ifaphead) != 0)
     {
@@ -380,7 +380,7 @@ bool IPFinder::getAllMACAddress(
         return false;
     }
 
-    struct sockaddr_dl *sdl = NULL;
+    struct sockaddr_dl* sdl = NULL;
 
     std::vector<IPFinder::info_IP> ips;
     IPFinder::getIPs(&ips);
@@ -393,7 +393,7 @@ bool IPFinder::getAllMACAddress(
             {
                 if (strcmp(ifap->ifa_name, ip.dev.c_str()) == 0)
                 {
-                    sdl = (struct sockaddr_dl *)ifap->ifa_addr;
+                    sdl = (struct sockaddr_dl*)ifap->ifa_addr;
                     if (sdl)
                     {
                         info_MAC mac;
@@ -408,7 +408,7 @@ bool IPFinder::getAllMACAddress(
         }
     }
 
-    if(ifaphead)
+    if (ifaphead)
     {
         freeifaddrs(ifaphead);
     }
