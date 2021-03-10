@@ -16,6 +16,9 @@
  * @file DataReaderQos.hpp
  */
 
+#ifndef _STATISTICS_DDS_SUBSCRIBER_QOS_DATAREADERQOS_HPP_
+#define _STATISTICS_DDS_SUBSCRIBER_QOS_DATAREADERQOS_HPP_
+
 #include <fastdds/dds/subscriber/qos/DataReaderQos.hpp>
 
 namespace eprosima {
@@ -30,3 +33,5 @@ const eprosima::fastdds::dds::DataReaderQos STATISTICS_DATAREADER_QOS;
 } // dds
 } // fastdds
 } // eprosima
+
+#endif /* _STATISTICS_DDS_SUBSCRIBER_QOS_DATAREADERQOS_HPP_ */

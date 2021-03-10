@@ -16,6 +16,9 @@
  * @file topic_names.hpp
  */
 
+#ifndef _STATISTICS_TOPIC_NAMES_HPP_
+#define _STATISTICS_TOPIC_NAMES_HPP_
+
 #include <string>
 
 namespace eprosima {
@@ -62,3 +65,5 @@ constexpr char SAMPLE_DATAS_TOPIC[] = "_fastdds_statistics_sample_datas";
 } // dds
 } // fastdds
 } // eprosima
+
+#endif /* _STATISTICS_TOPIC_NAMES_HPP_ */

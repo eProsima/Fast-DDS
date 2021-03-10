@@ -16,6 +16,9 @@
  * @file DataWriterQos.hpp
  */
 
+#ifndef _STATISTICS_DDS_PUBLISHER_QOS_DATAWRITERQOS_HPP_
+#define _STATISTICS_DDS_PUBLISHER_QOS_DATAWRITERQOS_HPP_
+
 #include <fastdds/dds/publisher/qos/DataWriterQos.hpp>
 
 namespace eprosima {
@@ -30,3 +33,5 @@ const eprosima::fastdds::dds::DataWriterQos STATISTICS_DATAWRITER_QOS;
 } // dds
 } // fastdds
 } // eprosima
+
+#endif /* _STATISTICS_DDS_PUBLISHER_QOS_DATAWRITERQOS_HPP_ */
