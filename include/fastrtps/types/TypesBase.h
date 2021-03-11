@@ -182,7 +182,7 @@ const uint16_t MemberFlagMinimalMask = 0x003f;
  * @brief This class represents the enumeration ReturnCode_t.
  */
 
-class ReturnCode_t
+class RTPS_DllAPI ReturnCode_t
 {
     uint32_t value_;
 
@@ -205,6 +205,11 @@ public:
         RETCODE_ILLEGAL_OPERATION = 12,
         RETCODE_NOT_ALLOWED_BY_SECURITY = 13
     };
+
+    ReturnCode_t()
+        : value_(RETCODE_OK)
+    {
+    }
 
     ReturnCode_t(
             uint32_t e)
