@@ -229,6 +229,20 @@ set(${PROJECT_NAME}_source_files
     dds/topic/Topic.cpp
     )
 
+# Statistics support
+if (FASTDDS_STATISTICS)
+
+    set(statistics_sources
+    statistics/types/typesPubSubTypes.cxx
+    statistics/types/types.cxx
+        )
+
+    list(APPEND ${PROJECT_NAME}_source_files
+        ${statistics_sources}
+        )
+
+endif()
+
 # SHM Transport
 if(IS_THIRDPARTY_BOOST_OK)
     list(APPEND ${PROJECT_NAME}_source_files
