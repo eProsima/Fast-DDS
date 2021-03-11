@@ -233,8 +233,8 @@ set(${PROJECT_NAME}_source_files
 if (FASTDDS_STATISTICS)
 
     set(statistics_sources
-    statistics/typesPubSubTypes.cxx
-    statistics/types.cxx
+    statistics/types/typesPubSubTypes.cxx
+    statistics/types/types.cxx
         )
 
     list(APPEND ${PROJECT_NAME}_source_files
