@@ -255,7 +255,9 @@ bool TypeDescriptor::is_type_name_consistent(
         // All characters must be letters, numbers or underscore.
         for (uint32_t i = 1; i < sName.length(); ++i)
         {
-            if (!std::isalnum(sName[i]) && sName[i] != 95)
+            // Type's fully qualified name is a concatenation of module names
+            // with the name of a type inside of those modules.
+            if (!std::isalnum(sName[i]) && sName[i] != 95 && sName[i] != 58)
             {
                 return false;
             }
