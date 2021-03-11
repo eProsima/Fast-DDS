@@ -26,7 +26,6 @@
 #include <fastdds/dds/publisher/qos/DataWriterQos.hpp>
 #include <fastrtps/fastrtps_dll.h>
 #include <fastrtps/types/TypesBase.h>
-#include <statistics/topic_names.hpp>
 
 using eprosima::fastrtps::types::ReturnCode_t;
 
