@@ -237,12 +237,6 @@ if (FASTDDS_STATISTICS)
     statistics/types.cxx
         )
 
-    set_property(SOURCE ${statistics_sources}
-        APPEND PROPERTY
-        INCLUDE_DIRECTORIES
-        $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include/statistics>
-        )
-
     list(APPEND ${PROJECT_NAME}_source_files
         ${statistics_sources}
         )
