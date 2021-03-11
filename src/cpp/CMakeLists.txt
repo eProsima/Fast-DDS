@@ -483,14 +483,7 @@ set_public_headers_directory(${PROJECT_SOURCE_DIR}/include fastdds
     INSTALL
     )
 
-# Install statistics headers
-set_public_headers_directory(${PROJECT_SOURCE_DIR}/include statistics
-    DESTINATION ${INCLUDE_INSTALL_DIR}
-    COMPONENT headers
-    INSTALL
-    )
-
-    # Install config.h header
+# Install config.h header
 set_public_header(${PROJECT_BINARY_DIR}/include ${PROJECT_NAME} config.h
     DESTINATION ${INCLUDE_INSTALL_DIR}/${PROJECT_NAME}
     COMPONENT headers

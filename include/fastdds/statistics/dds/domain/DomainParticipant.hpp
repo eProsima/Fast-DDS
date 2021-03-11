@@ -63,7 +63,7 @@ public:
      * @param topic_name Name of the topic associated to the Statistics DataWriter
      * @return RETCODE_UNSUPPORTED if the FASTDDS_STATISTICS CMake option has not been set,
      * RETCODE_BAD_PARAMETER if the topic name provided does not correspond to any Statistics DataWriter,
-     * RETCODE_OK if the DataWriter has been correctly deleted,
+     * RETCODE_OK if the DataWriter has been correctly deleted or does not exist,
      * and RETCODE_ERROR otherwise
      */
     RTPS_DllAPI ReturnCode_t disable_statistics_datawriter(
