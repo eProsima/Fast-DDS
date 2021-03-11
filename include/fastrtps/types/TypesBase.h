@@ -240,14 +240,18 @@ public:
 
 template<class T>
 typename std::enable_if<std::is_arithmetic<T>::value || std::is_enum<T>::value, bool>::type
-operator==(T a, const ReturnCode_t& b)
+operator ==(
+        T a,
+        const ReturnCode_t& b)
 {
     return b == a;
 }
 
 template<class T>
 typename std::enable_if<std::is_arithmetic<T>::value || std::is_enum<T>::value, bool>::type
-operator!=(T a, const ReturnCode_t& b)
+operator !=(
+        T a,
+        const ReturnCode_t& b)
 {
     return b != a;
 }
