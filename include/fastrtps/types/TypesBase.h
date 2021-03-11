@@ -226,12 +226,12 @@ public:
 
     explicit operator bool() = delete;
 
-    uint32_t operator ()()
+    uint32_t operator ()() const
     {
         return value_;
     }
 
-    bool operator !()
+    bool operator !() const
     {
         return value_ != 0;
     }
