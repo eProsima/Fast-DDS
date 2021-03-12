@@ -58,6 +58,8 @@ constexpr char EDP_PACKETS_TOPIC[] = "_fastdds_statistics_edp_packets";
 constexpr char DISCOVERY_TOPIC[] = "_fastdds_statistics_discovered_entity";
 //! Statistics topic that reports the number of DATA/DATAFRAG sub-messages needed to send a single sample
 constexpr char SAMPLE_DATAS_TOPIC[] = "_fastdds_statistics_sample_datas";
+//! Statistics topic that reports the host, user and process where the module is running
+constexpr char PHYSICAL_DATA_TOPIC[] = "_fastdds_statistics_physical_data";
 
 } // statistics
 } // dds
