@@ -15,6 +15,7 @@
   <url type="repository">https://github.com/eProsima/Fast-DDS</url>
 
   <build_depend>asio</build_depend>
+  <build_depend>libssl-dev</build_depend>
 
   <build_export_depend>libssl-dev</build_export_depend>
 
