@@ -24,7 +24,7 @@ namespace fastdds {
 namespace dds {
 namespace statistics {
 
-//! Statistic topic that reports the write-to-notification latency between any two pairs of matched 
+//! Statistic topic that reports the write-to-notification latency between any two pairs of matched
 //! DataWriter-DataReader histories
 constexpr char HISTORY_LATENCY_TOPIC[] = "_fastdds_statistics_history2history_latency";
 //! Statistics topic that reports the network latency (message group to message receiver) between any two communicating
