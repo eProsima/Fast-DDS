@@ -13,40 +13,22 @@
 // limitations under the License.
 
 /**
- * @file DataReaderQos.hpp
+ * @file DataWriterQos.hpp
  */
 
-#ifndef _STATISTICS_DDS_SUBSCRIBER_QOS_DATAREADERQOS_HPP_
-#define _STATISTICS_DDS_SUBSCRIBER_QOS_DATAREADERQOS_HPP_
-
-#include <fastdds/dds/subscriber/qos/DataReaderQos.hpp>
+#include <fastdds/statistics/dds/subscriber/qos/DataReaderQos.hpp>
 
 namespace eprosima {
 namespace fastdds {
 namespace dds {
 namespace statistics {
 
-/**
- * Class DataReaderQos: extends standard DDS DataReaderQos class to include specific default constructor for the
- * recommended DataReaderQos profile.
- * @ingroup STATISTICS_MODULE
- */
-class DataReaderQos : public eprosima::fastdds::dds::DataReaderQos
+DataReaderQos::DataReaderQos()
 {
-public:
-
-    /**
-     * @brief Constructor
-     */
-    RTPS_DllAPI DataReaderQos();
-};
-
-//! Constant to access default Statistics DataReader Qos
-const eprosima::fastdds::dds::statistics::DataReaderQos STATISTICS_DATAREADER_QOS;
+    // Specific implementation for recommended statistics DataReaderQos
+}
 
 } // statistics
 } // dds
 } // fastdds
 } // eprosima
-
-#endif /* _STATISTICS_DDS_SUBSCRIBER_QOS_DATAREADERQOS_HPP_ */

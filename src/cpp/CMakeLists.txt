@@ -229,6 +229,8 @@ set(${PROJECT_NAME}_source_files
     dds/topic/Topic.cpp
 
     statistics/fastdds/domain/DomainParticipant.cpp
+    statistics/fastdds/publisher/qos/DataWriterQos.cpp
+    statistics/fastdds/subscriber/qos/DataReaderQos.cpp
     )
 
 # SHM Transport

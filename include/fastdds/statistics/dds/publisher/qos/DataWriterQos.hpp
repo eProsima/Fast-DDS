@@ -20,14 +20,30 @@
 #define _STATISTICS_DDS_PUBLISHER_QOS_DATAWRITERQOS_HPP_
 
 #include <fastdds/dds/publisher/qos/DataWriterQos.hpp>
+#include <fastrtps/fastrtps_dll.h>
 
 namespace eprosima {
 namespace fastdds {
 namespace dds {
 namespace statistics {
 
+/**
+ * Class DataWriterQos: extends standard DDS DataWriterQos class to include specific default constructor for the
+ * recommended DataWriterQos profile.
+ * @ingroup STATISTICS_MODULE
+ */
+class DataWriterQos : public eprosima::fastdds::dds::DataWriterQos
+{
+public:
+
+    /**
+     * @brief Constructor
+     */
+    RTPS_DllAPI DataWriterQos();
+};
+
 //! Constant to access default Statistics DataWriter Qos
-const eprosima::fastdds::dds::DataWriterQos STATISTICS_DATAWRITER_QOS;
+const eprosima::fastdds::dds::statistics::DataWriterQos STATISTICS_DATAWRITER_QOS;
 
 } // statistics
 } // dds
