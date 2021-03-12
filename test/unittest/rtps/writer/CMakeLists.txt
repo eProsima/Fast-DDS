@@ -101,6 +101,12 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
 
         set(RTPSWRITERTESTS_SOURCE RTPSWriterTests.cpp)
 
+        # add_gtest will parse the sources using regex, thus, tests dependent
+        # on diffente CMake options cannot share the same sources
+        if(FASTDDS_STATISTICS)
+            list(APPEND RTPSWRITERTESTS_SOURCE RTPSStatisticsTests.cpp)
+        endif(FASTDDS_STATISTICS)
+
         add_executable(RTPSWriterTests ${RTPSWRITERTESTS_SOURCE})
         target_compile_definitions(RTPSWriterTests PRIVATE
             $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
