@@ -18,6 +18,11 @@
 
 #include <fastdds/statistics/dds/domain/DomainParticipant.hpp>
 
+#include <string>
+
+#include <fastdds/dds/publisher/qos/DataWriterQos.hpp>
+#include <fastrtps/types/TypesBase.h>
+
 namespace eprosima {
 namespace fastdds {
 namespace dds {
