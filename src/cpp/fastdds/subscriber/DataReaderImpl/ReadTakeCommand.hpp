@@ -84,7 +84,11 @@ struct ReadTakeCommand
         assert(0 <= remaining_samples_);
 
         current_slot_ = data_values_.length();
-        finished_ = nullptr == instance.second;
+        finished_ = nullptr == instance.second || remaining_samples_ == 0;
+        if (remaining_samples_ == 0)
+        {
+            return_value_ = ReturnCode_t::RETCODE_OK;
+        }
     }
 
     ~ReadTakeCommand()
@@ -100,6 +104,13 @@ struct ReadTakeCommand
     bool add_instance(
             bool take_samples)
     {
+        // Shortcut for null size requests
+        if (0 == remaining_samples_ && ReturnCode_t::RETCODE_NO_DATA == return_value_)
+        {
+            return_value_ = ReturnCode_t::RETCODE_OK;
+            return false;
+        }
+
         // Advance to the first instance with a valid state
         if (!go_to_first_valid_instance())
         {
