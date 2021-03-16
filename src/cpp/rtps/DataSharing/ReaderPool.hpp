@@ -64,7 +64,7 @@ public:
             return true;
         }
 
-        //If owner is not this, then it must be an intraprocess datasharing writer
+        // If owner is not this, then it must be an intraprocess datasharing writer
         PayloadNode* payload = PayloadNode::get_from_data(data.data);
         read_from_shared_history(cache_change, payload);
         return true;
@@ -85,7 +85,7 @@ public:
         segment_id_ = writer_guid;
         segment_name_ = generate_segment_name(shared_dir, writer_guid);
 
-        //Open the segment
+        // Open the segment
         try
         {
             segment_ = std::unique_ptr<fastdds::rtps::SharedMemSegment>(

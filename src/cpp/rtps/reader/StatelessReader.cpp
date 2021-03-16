@@ -128,21 +128,23 @@ bool StatelessReader::matched_writer_add(
         }
     }
 
+    RemoteWriterInfo_t info;
+    info.guid = wdata.guid();
+    info.persistence_guid = wdata.persistence_guid();
+    info.has_manual_topic_liveliness = (MANUAL_BY_TOPIC_LIVELINESS_QOS == wdata.m_qos.m_liveliness.kind);
+
+    // Remote data-sharing writers are always checked via datasharing_listener_
     if (!is_datasharing || is_same_process)
     {
-        RemoteWriterInfo_t info;
-        info.guid = wdata.guid();
-        info.persistence_guid = wdata.persistence_guid();
-        info.has_manual_topic_liveliness = (MANUAL_BY_TOPIC_LIVELINESS_QOS == wdata.m_qos.m_liveliness.kind);
         if (matched_writers_.emplace_back(info) == nullptr)
         {
             logWarning(RTPS_READER, "No space to add writer " << wdata.guid() << " to reader " << m_guid);
             return false;
         }
-
-        add_persistence_guid(info.guid, info.persistence_guid);
         logInfo(RTPS_READER, "Writer " << wdata.guid() << " added to reader " << m_guid);
     }
+
+    add_persistence_guid(info.guid, info.persistence_guid);
 
     m_acceptMessagesFromUnkownWriters = false;
 

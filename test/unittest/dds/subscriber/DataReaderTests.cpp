@@ -1546,7 +1546,7 @@ TEST_F(DataReaderTests, Deserialization_errors)
 
             // This should return samples 0, 2, 4, 6, and 8
             EXPECT_EQ(ok_code, data_reader_->read(data_seq, info_seq, num_samples));
-            check_collection(data_seq, true, num_samples, 5);
+            check_collection(data_seq, true, num_samples, num_samples / 2);
             check_sample_values(data_seq, "02468");
         }
 
@@ -1567,7 +1567,7 @@ TEST_F(DataReaderTests, Deserialization_errors)
 
             // This should return samples 0, 2, 4, 6, and 8 (just for cleaning)
             EXPECT_EQ(ok_code, data_reader_->take(data_seq, info_seq, num_samples, READ_SAMPLE_STATE));
-            check_collection(data_seq, true, num_samples, 5);
+            check_collection(data_seq, true, num_samples, num_samples / 2);
             check_sample_values(data_seq, "02468");
         }
     }
@@ -1593,7 +1593,7 @@ TEST_F(DataReaderTests, Deserialization_errors)
 
             // This should return samples 0 to 9
             EXPECT_EQ(ok_code, data_reader_->read(data_seq, info_seq, num_samples));
-            check_collection(data_seq, false, num_samples, 10);
+            check_collection(data_seq, false, num_samples, num_samples);
             check_sample_values(data_seq, "0123456789");
             EXPECT_EQ(ok_code, data_reader_->return_loan(data_seq, info_seq));
         }

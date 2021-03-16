@@ -87,6 +87,7 @@ WriterProxy::WriterProxy(
     , ownership_strength_(0)
     , liveliness_kind_(AUTOMATIC_LIVELINESS_QOS)
     , locators_entry_(loc_alloc.max_unicast_locators, loc_alloc.max_multicast_locators)
+    , is_datasharing_writer_(false)
 {
     //Create Events
     ResourceEvent& event_manager = reader_->getRTPSParticipant()->getEventResource();

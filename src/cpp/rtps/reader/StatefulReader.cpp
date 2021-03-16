@@ -1136,22 +1136,16 @@ void StatefulReader::change_read_by_user(
                         //There are earlier changes not read yet. Do not send ACK.
                         return;
                     }
-                    acknack_count_++;
-                    RTPSMessageGroup group(getRTPSParticipant(), this, *writer);
                     SequenceNumberSet_t sns((*it)->sequenceNumber);
-                    group.add_acknack(sns, acknack_count_, false);
-                    logInfo(RTPS_READER, "Sending datasharing ACK for SN " << (*it)->sequenceNumber - 1);
+                    send_acknack(writer, sns, *writer, false);
                     return;
                 }
             }
         }
 
         // Must ACK all in the writer
-        acknack_count_++;
-        RTPSMessageGroup group(getRTPSParticipant(), this, *writer);
         SequenceNumberSet_t sns(writer->available_changes_max() + 1);
-        group.add_acknack(sns, acknack_count_, false);
-        logInfo(RTPS_READER, "Sending datasharing ACK for last SN " << writer->available_changes_max());
+        send_acknack(writer, sns, *writer, false);
     }
 }
 
@@ -1208,6 +1202,8 @@ void StatefulReader::send_acknack(
         return;
     }
 
+    // ACKNACK for datasharing writers is done for changes with status READ, not on reception
+    // This is handled in change_read_by_user
     if (writer->is_datasharing_writer())
     {
         return;
