@@ -104,6 +104,12 @@ bool StatelessReader::matched_writer_add(
     bool is_datasharing = is_datasharing_compatible_with(wdata);
     bool is_same_process = RTPSDomainImpl::should_intraprocess_between(m_guid, wdata.guid());
 
+    RemoteWriterInfo_t info;
+    info.guid = wdata.guid();
+    info.persistence_guid = wdata.persistence_guid();
+    info.has_manual_topic_liveliness = (MANUAL_BY_TOPIC_LIVELINESS_QOS == wdata.m_qos.m_liveliness.kind);
+    info.is_datasharing = is_datasharing;
+
     if (is_datasharing)
     {
         if (datasharing_listener_->add_datasharing_writer(wdata.guid(),
@@ -120,29 +126,18 @@ bool StatelessReader::matched_writer_add(
             return false;
         }
 
-        // Intraprocess manages durability itself
-        if (!is_same_process && m_att.durabilityKind != VOLATILE)
-        {
-            // simulate a notification to force reading of transient changes
-            datasharing_listener_->notify(false);
-        }
     }
 
-    RemoteWriterInfo_t info;
-    info.guid = wdata.guid();
-    info.persistence_guid = wdata.persistence_guid();
-    info.has_manual_topic_liveliness = (MANUAL_BY_TOPIC_LIVELINESS_QOS == wdata.m_qos.m_liveliness.kind);
-
-    // Remote data-sharing writers are always checked via datasharing_listener_
-    if (!is_datasharing || is_same_process)
+    if (matched_writers_.emplace_back(info) == nullptr)
     {
-        if (matched_writers_.emplace_back(info) == nullptr)
+        logWarning(RTPS_READER, "No space to add writer " << wdata.guid() << " to reader " << m_guid);
+        if (is_datasharing)
         {
-            logWarning(RTPS_READER, "No space to add writer " << wdata.guid() << " to reader " << m_guid);
-            return false;
+            datasharing_listener_->remove_datasharing_writer(wdata.guid());
         }
-        logInfo(RTPS_READER, "Writer " << wdata.guid() << " added to reader " << m_guid);
+        return false;
     }
+    logInfo(RTPS_READER, "Writer " << wdata.guid() << " added to reader " << m_guid);
 
     add_persistence_guid(info.guid, info.persistence_guid);
 
@@ -162,6 +157,14 @@ bool StatelessReader::matched_writer_add(
         {
             logError(RTPS_LIVELINESS, "Finite liveliness lease duration but WLP not enabled");
         }
+    }
+
+    // Intraprocess manages durability itself
+    if (is_datasharing && !is_same_process && m_att.durabilityKind != VOLATILE)
+    {
+        // simulate a notification to force reading of transient changes
+        // this has to be done after the writer is added to the matched_writers or the processing may fail
+        datasharing_listener_->notify(false);
     }
 
     return true;
@@ -193,33 +196,26 @@ bool StatelessReader::matched_writer_remove(
         }
     }
 
-    bool found = false;
     ResourceLimitedVector<RemoteWriterInfo_t>::iterator it;
     for (it = matched_writers_.begin(); it != matched_writers_.end(); ++it)
     {
         if (it->guid == writer_guid)
         {
             logInfo(RTPS_READER, "Writer " << writer_guid << " removed from " << m_guid);
-            found = true;
+
+            if (it->is_datasharing && datasharing_listener_->remove_datasharing_writer(writer_guid))
+            {
+                logInfo(RTPS_READER, "Data sharing writer " << writer_guid << " removed from " << m_guid.entityId);
+                remove_changes_from(writer_guid, true);
+            }
 
             remove_persistence_guid(it->guid, it->persistence_guid, removed_by_lease);
             matched_writers_.erase(it);
-            break;
+            return true;
         }
     }
 
-    if (is_datasharing_compatible_)
-    {
-        if (datasharing_listener_->remove_datasharing_writer(writer_guid))
-        {
-            logInfo(RTPS_READER, "Data sharing writer " << writer_guid << " removed from " << m_guid.entityId);
-            found = true;
-
-            remove_changes_from(writer_guid, true);
-        }
-    }
-
-    return found;
+    return false;
 }
 
 bool StatelessReader::matched_writer_is_matched(
@@ -233,11 +229,6 @@ bool StatelessReader::matched_writer_is_matched(
             }))
     {
         return true;
-    }
-
-    if (is_datasharing_compatible_)
-    {
-        return datasharing_listener_->writer_is_matched(writer_guid);
     }
 
     return false;
@@ -413,7 +404,13 @@ bool StatelessReader::processDataMsg(
         // Ask payload pool to copy the payload
         IPayloadPool* payload_owner = change->payload_owner();
 
-        if (is_datasharing_compatible_ && datasharing_listener_->writer_is_matched(change->writerGUID))
+        bool is_datasharing = std::any_of(matched_writers_.begin(), matched_writers_.end(),
+                   [&change](const RemoteWriterInfo_t& writer)
+                   {
+                       return (writer.guid == change->writerGUID) && (writer.is_datasharing);
+                   });
+
+        if (is_datasharing)
         {
             //We may receive the change from the listener (with owner a ReaderPool) or intraprocess (with owner a WriterPool)
             ReaderPool* datasharing_pool = dynamic_cast<ReaderPool*>(payload_owner);
@@ -473,6 +470,8 @@ bool StatelessReader::processDataFragMsg(
     {
         if (writer.guid == writer_guid)
         {
+            // Datasharing communication will never send fragments
+            assert(!writer.is_datasharing);
             assert_writer_liveliness(writer_guid);
 
             // Check if CacheChange was received.
@@ -600,11 +599,6 @@ bool StatelessReader::acceptMsgFrom(
         {
             return true;
         }
-    }
-
-    if (is_datasharing_compatible_ &&  datasharing_listener_->writer_is_matched(writerId))
-    {
-        return true;
     }
 
     return std::any_of(matched_writers_.begin(), matched_writers_.end(),

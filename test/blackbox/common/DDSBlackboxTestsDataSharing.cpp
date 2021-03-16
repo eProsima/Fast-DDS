@@ -212,9 +212,9 @@ TEST(DDSDataSharing, ReliableDirtyPayloads)
     // Doing a second read on the same history, the application will see only the last samples
     while (!valid_data.empty())
     {
-        FixedSized data;
-        ASSERT_TRUE(read_reader.take_first_data(&data));
-        ASSERT_EQ(valid_data.front(), data);
+        FixedSized value;
+        ASSERT_TRUE(read_reader.take_first_data(&value));
+        ASSERT_EQ(valid_data.front(), value);
         valid_data.pop_front();
     }
     ASSERT_TRUE(valid_data.empty());
