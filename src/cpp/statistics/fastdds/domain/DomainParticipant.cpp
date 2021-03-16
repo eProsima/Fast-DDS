@@ -25,8 +25,8 @@
 
 namespace eprosima {
 namespace fastdds {
-namespace dds {
 namespace statistics {
+namespace dds {
 
 ReturnCode_t DomainParticipant::enable_statistics_datawriter(
         const std::string& topic_name,
@@ -60,7 +60,7 @@ const DomainParticipant* DomainParticipant::narrow(
     return nullptr;
 }
 
-} // statistics
 } // dds
+} // statistics
 } // fastdds
 } // eprosima

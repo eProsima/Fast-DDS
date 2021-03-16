@@ -20,15 +20,15 @@
 
 namespace eprosima {
 namespace fastdds {
-namespace dds {
 namespace statistics {
+namespace dds {
 
 DataReaderQos::DataReaderQos()
 {
     // Specific implementation for recommended statistics DataReaderQos
 }
 
-} // statistics
 } // dds
+} // statistics
 } // fastdds
 } // eprosima

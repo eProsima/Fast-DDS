@@ -31,8 +31,8 @@ using eprosima::fastrtps::types::ReturnCode_t;
 
 namespace eprosima {
 namespace fastdds {
-namespace dds {
 namespace statistics {
+namespace dds {
 
 /**
  * Class DomainParticipant: extends standard DDS DomainParticipant class to include specific methods for the Statistics
@@ -87,8 +87,8 @@ public:
             const eprosima::fastdds::dds::DomainParticipant* domain_participant);
 };
 
-} // namespace statistics
 } // namespace dds
+} // namespace statistics
 } // namespace fastdds
 } // namespace eprosima
 

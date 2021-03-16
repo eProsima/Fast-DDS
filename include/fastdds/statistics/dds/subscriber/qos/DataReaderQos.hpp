@@ -23,8 +23,8 @@
 
 namespace eprosima {
 namespace fastdds {
-namespace dds {
 namespace statistics {
+namespace dds {
 
 /**
  * Class DataReaderQos: extends standard DDS DataReaderQos class to include specific default constructor for the
@@ -42,10 +42,10 @@ public:
 };
 
 //! Constant to access default Statistics DataReader Qos
-const eprosima::fastdds::dds::statistics::DataReaderQos STATISTICS_DATAREADER_QOS;
+const eprosima::fastdds::statistics::dds::DataReaderQos STATISTICS_DATAREADER_QOS;
 
-} // statistics
 } // dds
+} // statistics
 } // fastdds
 } // eprosima
 

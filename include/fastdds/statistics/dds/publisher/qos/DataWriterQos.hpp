@@ -24,8 +24,8 @@
 
 namespace eprosima {
 namespace fastdds {
-namespace dds {
 namespace statistics {
+namespace dds {
 
 /**
  * Class DataWriterQos: extends standard DDS DataWriterQos class to include specific default constructor for the
@@ -43,10 +43,10 @@ public:
 };
 
 //! Constant to access default Statistics DataWriter Qos
-const eprosima::fastdds::dds::statistics::DataWriterQos STATISTICS_DATAWRITER_QOS;
+const eprosima::fastdds::statistics::dds::DataWriterQos STATISTICS_DATAWRITER_QOS;
 
-} // statistics
 } // dds
+} // statistics
 } // fastdds
 } // eprosima
 
