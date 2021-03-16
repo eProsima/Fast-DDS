@@ -17,8 +17,8 @@
  *
  */
 
-#ifndef _STATISTICS_DDS_DOMAIN_DOMAINPARTICIPANT_HPP_
-#define _STATISTICS_DDS_DOMAIN_DOMAINPARTICIPANT_HPP_
+#ifndef _FASTDDS_STATISTICS_DDS_DOMAIN_DOMAINPARTICIPANT_HPP_
+#define _FASTDDS_STATISTICS_DDS_DOMAIN_DOMAINPARTICIPANT_HPP_
 
 #include <string>
 
@@ -44,7 +44,7 @@ class DomainParticipant : public eprosima::fastdds::dds::DomainParticipant
 public:
 
     /**
-     * @brief This operation enables the Statistics DataWriter
+     * @brief This operation enables a Statistics DataWriter
      * @param topic_name Name of the topic associated to the Statistics DataWriter
      * @param dwqos DataWriterQos to be set
      * @return RETCODE_UNSUPPORTED if the FASTDDS_STATISTICS CMake option has not been set,
@@ -58,7 +58,7 @@ public:
             const eprosima::fastdds::dds::DataWriterQos& dwqos);
 
     /**
-     * @brief This operation disables the Statistics DataWriter
+     * @brief This operation disables a Statistics DataWriter
      * @param topic_name Name of the topic associated to the Statistics DataWriter
      * @return RETCODE_UNSUPPORTED if the FASTDDS_STATISTICS CMake option has not been set,
      * RETCODE_BAD_PARAMETER if the topic name provided does not correspond to any Statistics DataWriter,
@@ -92,4 +92,4 @@ public:
 } // namespace fastdds
 } // namespace eprosima
 
-#endif /* _STATISTICS_DDS_DOMAIN_DOMAINPARTICIPANT_HPP_ */
+#endif /* _FASTDDS_STATISTICS_DDS_DOMAIN_DOMAINPARTICIPANT_HPP_ */

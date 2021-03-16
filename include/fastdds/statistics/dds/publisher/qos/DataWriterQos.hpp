@@ -16,8 +16,8 @@
  * @file DataWriterQos.hpp
  */
 
-#ifndef _STATISTICS_DDS_PUBLISHER_QOS_DATAWRITERQOS_HPP_
-#define _STATISTICS_DDS_PUBLISHER_QOS_DATAWRITERQOS_HPP_
+#ifndef _FASTDDS_STATISTICS_DDS_PUBLISHER_QOS_DATAWRITERQOS_HPP_
+#define _FASTDDS_STATISTICS_DDS_PUBLISHER_QOS_DATAWRITERQOS_HPP_
 
 #include <fastdds/dds/publisher/qos/DataWriterQos.hpp>
 #include <fastrtps/fastrtps_dll.h>
@@ -50,4 +50,4 @@ const eprosima::fastdds::dds::statistics::DataWriterQos STATISTICS_DATAWRITER_QO
 } // fastdds
 } // eprosima
 
-#endif /* _STATISTICS_DDS_PUBLISHER_QOS_DATAWRITERQOS_HPP_ */
+#endif /* _FASTDDS_STATISTICS_DDS_PUBLISHER_QOS_DATAWRITERQOS_HPP_ */

@@ -16,8 +16,8 @@
  * @file DataReaderQos.hpp
  */
 
-#ifndef _STATISTICS_DDS_SUBSCRIBER_QOS_DATAREADERQOS_HPP_
-#define _STATISTICS_DDS_SUBSCRIBER_QOS_DATAREADERQOS_HPP_
+#ifndef _FASTDDS_STATISTICS_DDS_SUBSCRIBER_QOS_DATAREADERQOS_HPP_
+#define _FASTDDS_STATISTICS_DDS_SUBSCRIBER_QOS_DATAREADERQOS_HPP_
 
 #include <fastdds/dds/subscriber/qos/DataReaderQos.hpp>
 
@@ -49,4 +49,4 @@ const eprosima::fastdds::dds::statistics::DataReaderQos STATISTICS_DATAREADER_QO
 } // fastdds
 } // eprosima
 
-#endif /* _STATISTICS_DDS_SUBSCRIBER_QOS_DATAREADERQOS_HPP_ */
+#endif /* _FASTDDS_STATISTICS_DDS_SUBSCRIBER_QOS_DATAREADERQOS_HPP_ */
