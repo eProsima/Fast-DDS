@@ -19,6 +19,9 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
     if(GTEST_FOUND AND SQLITE3_SUPPORT)
         set(PERSISTENCETESTS_SOURCE
             PersistenceTests.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/utils/md5.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/utils/IPFinder.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/utils/IPLocator.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/rtps/persistence/PersistenceFactory.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/rtps/persistence/SQLite3PersistenceService.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/rtps/persistence/sqlite3.c
@@ -39,10 +42,14 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include
             ${PROJECT_SOURCE_DIR}/src/cpp
             )
-        target_link_libraries(PersistenceTests foonathan_memory ${GTEST_LIBRARIES} ${CMAKE_DL_LIBS})
+        target_link_libraries(PersistenceTests
+            foonathan_memory
+            ${GTEST_LIBRARIES}
+            ${CMAKE_DL_LIBS} 
+            )
         if(MSVC OR MSVC_IDE)
             target_link_libraries(PersistenceTests ${PRIVACY}
-                iphlpapi Shlwapi
+                iphlpapi Shlwapi Ws2_32.lib
                 )
         endif()
         add_gtest(PersistenceTests SOURCES ${PERSISTENCETESTS_SOURCE})
