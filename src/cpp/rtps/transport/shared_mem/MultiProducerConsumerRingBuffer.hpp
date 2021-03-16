@@ -88,7 +88,7 @@ public:
             auto pointer = buffer_.node_->pointer_.load(std::memory_order_relaxed);
 
             // If local read_pointer and write_pointer are equal => buffer is empty for this listener
-            if (read_p_ == pointer.write_p )
+            if (read_p_ == pointer.ptr.write_p )
             {
                 return nullptr;
             }
@@ -123,7 +123,7 @@ public:
                 // Increase the free cells => increase the global read pointer
                 auto pointer = buffer_.node_->pointer_.load(std::memory_order_relaxed);
                 while (!buffer_.node_->pointer_.compare_exchange_weak(pointer,
-                        { pointer.write_p, pointer.free_cells + 1 },
+                        { { pointer.ptr.write_p, pointer.ptr.free_cells + 1 } },
                         std::memory_order_release,
                         std::memory_order_relaxed))
                 {
@@ -142,15 +142,21 @@ public:
         uint32_t read_p_;
     };
 
-    struct Pointer
+    // std::atomic<> can only be used on lock-free primitive types with shared mem
+    union PtrType
     {
-        uint32_t write_p;
-        uint32_t free_cells;
+        struct Pointer
+        {
+            uint32_t write_p;
+            uint32_t free_cells;
+        }
+        ptr;
+        uint64_t u;
     };
 
     struct Node
     {
-        alignas(8) std::atomic<Pointer> pointer_;
+        alignas(8) std::atomic<PtrType> pointer_;
         uint32_t total_cells_;
 
         uint32_t registered_listeners_;
@@ -211,19 +217,20 @@ public:
         auto pointer = node_->pointer_.load(std::memory_order_relaxed);
 
         // if free cells, increase the write pointer and decrease the free cells
-        while (pointer.free_cells > 0 &&
-                !node_->pointer_.compare_exchange_weak(pointer, {inc_pointer(pointer.write_p), pointer.free_cells-1},
+        while (pointer.ptr.free_cells > 0 &&
+                !node_->pointer_.compare_exchange_weak(pointer,
+                { { inc_pointer(pointer.ptr.write_p), pointer.ptr.free_cells - 1 } },
                 std::memory_order_release,
                 std::memory_order_relaxed))
         {
         }
 
-        if (pointer.free_cells == 0)
+        if (pointer.ptr.free_cells == 0)
         {
             throw std::runtime_error("Buffer full");
         }
 
-        auto& cell = cells_[get_pointer_value(pointer.write_p)];
+        auto& cell = cells_[get_pointer_value(pointer.ptr.write_p)];
 
         cell.data(data);
         cell.ref_counter_.store(node_->registered_listeners_, std::memory_order_release);
@@ -233,12 +240,12 @@ public:
 
     bool is_buffer_full()
     {
-        return (node_->pointer_.load(std::memory_order_relaxed).free_cells == 0);
+        return (node_->pointer_.load(std::memory_order_relaxed).ptr.free_cells == 0);
     }
 
     bool is_buffer_empty()
     {
-        return (node_->pointer_.load(std::memory_order_relaxed).free_cells == node_->total_cells_);
+        return (node_->pointer_.load(std::memory_order_relaxed).ptr.free_cells == node_->total_cells_);
     }
 
     /**
@@ -254,7 +261,7 @@ public:
         // The new listener's read pointer is the current write pointer
         auto listener = std::unique_ptr<Listener>(
             new Listener(
-                *this, node_->pointer_.load(std::memory_order_relaxed).write_p));
+                *this, node_->pointer_.load(std::memory_order_relaxed).ptr.write_p));
 
         node_->registered_listeners_++;
 
@@ -272,7 +279,7 @@ public:
 
         node->total_cells_ = total_cells;
         node->registered_listeners_ = 0;
-        node->pointer_.store({0,total_cells}, std::memory_order_relaxed);
+        node->pointer_.store({ { 0, total_cells } }, std::memory_order_relaxed);
     }
 
     /**
@@ -290,7 +297,7 @@ public:
 
             uint32_t p = pointer_to_head(pointer);
 
-            while (p != pointer.write_p)
+            while (p != pointer.ptr.write_p)
             {
                 auto cell = &cells_[get_pointer_value(p)];
 
@@ -336,21 +343,21 @@ private:
     }
 
     uint32_t pointer_to_head(
-            const Pointer& pointer) const
+            const PtrType& pointer) const
     {
         // Init the head as write pointer in previous loop
-        uint32_t head = pointer.write_p ^ 0x80000000;
+        uint32_t head = pointer.ptr.write_p ^ 0x80000000;
 
         uint32_t value = head & 0x7FFFFFFF;
         uint32_t loop_flag = head >> 31;
 
-        if (value +  pointer.free_cells >= node_->total_cells_)
+        if (value +  pointer.ptr.free_cells >= node_->total_cells_)
         {
             loop_flag ^= 1;
         }
 
         // Skip the free cells
-        value = (value + pointer.free_cells) % node_->total_cells_;
+        value = (value + pointer.ptr.free_cells) % node_->total_cells_;
 
         // Bit 31 is loop_flag, 0-30 are value
         return (loop_flag << 31) | value;
@@ -380,6 +387,7 @@ private:
 
         node_->registered_listeners_--;
     }
+
 };
 
 } // namespace rtps
