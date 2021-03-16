@@ -2188,6 +2188,217 @@ namespace eprosima {
                 float m_data;
             };
             /*!
+             * @brief This class represents the structure PhysicalData defined by the user in the IDL file.
+             * @ingroup TYPES
+             */
+            class PhysicalData
+            {
+            public:
+
+                /*!
+                 * @brief Default constructor.
+                 */
+                eProsima_user_DllExport PhysicalData();
+
+                /*!
+                 * @brief Default destructor.
+                 */
+                eProsima_user_DllExport ~PhysicalData();
+
+                /*!
+                 * @brief Copy constructor.
+                 * @param x Reference to the object eprosima::fastdds::statistics::PhysicalData that will be copied.
+                 */
+                eProsima_user_DllExport PhysicalData(
+                        const PhysicalData& x);
+
+                /*!
+                 * @brief Move constructor.
+                 * @param x Reference to the object eprosima::fastdds::statistics::PhysicalData that will be copied.
+                 */
+                eProsima_user_DllExport PhysicalData(
+                        PhysicalData&& x);
+
+                /*!
+                 * @brief Copy assignment.
+                 * @param x Reference to the object eprosima::fastdds::statistics::PhysicalData that will be copied.
+                 */
+                eProsima_user_DllExport PhysicalData& operator =(
+                        const PhysicalData& x);
+
+                /*!
+                 * @brief Move assignment.
+                 * @param x Reference to the object eprosima::fastdds::statistics::PhysicalData that will be copied.
+                 */
+                eProsima_user_DllExport PhysicalData& operator =(
+                        PhysicalData&& x);
+
+                /*!
+                 * @brief This function copies the value in member participant_guid
+                 * @param _participant_guid New value to be copied in member participant_guid
+                 */
+                eProsima_user_DllExport void participant_guid(
+                        const eprosima::fastdds::statistics::detail::GUID_s& _participant_guid);
+
+                /*!
+                 * @brief This function moves the value in member participant_guid
+                 * @param _participant_guid New value to be moved in member participant_guid
+                 */
+                eProsima_user_DllExport void participant_guid(
+                        eprosima::fastdds::statistics::detail::GUID_s&& _participant_guid);
+
+                /*!
+                 * @brief This function returns a constant reference to member participant_guid
+                 * @return Constant reference to member participant_guid
+                 */
+                eProsima_user_DllExport const eprosima::fastdds::statistics::detail::GUID_s& participant_guid() const;
+
+                /*!
+                 * @brief This function returns a reference to member participant_guid
+                 * @return Reference to member participant_guid
+                 */
+                eProsima_user_DllExport eprosima::fastdds::statistics::detail::GUID_s& participant_guid();
+                /*!
+                 * @brief This function copies the value in member host
+                 * @param _host New value to be copied in member host
+                 */
+                eProsima_user_DllExport void host(
+                        const std::string& _host);
+
+                /*!
+                 * @brief This function moves the value in member host
+                 * @param _host New value to be moved in member host
+                 */
+                eProsima_user_DllExport void host(
+                        std::string&& _host);
+
+                /*!
+                 * @brief This function returns a constant reference to member host
+                 * @return Constant reference to member host
+                 */
+                eProsima_user_DllExport const std::string& host() const;
+
+                /*!
+                 * @brief This function returns a reference to member host
+                 * @return Reference to member host
+                 */
+                eProsima_user_DllExport std::string& host();
+                /*!
+                 * @brief This function copies the value in member user
+                 * @param _user New value to be copied in member user
+                 */
+                eProsima_user_DllExport void user(
+                        const std::string& _user);
+
+                /*!
+                 * @brief This function moves the value in member user
+                 * @param _user New value to be moved in member user
+                 */
+                eProsima_user_DllExport void user(
+                        std::string&& _user);
+
+                /*!
+                 * @brief This function returns a constant reference to member user
+                 * @return Constant reference to member user
+                 */
+                eProsima_user_DllExport const std::string& user() const;
+
+                /*!
+                 * @brief This function returns a reference to member user
+                 * @return Reference to member user
+                 */
+                eProsima_user_DllExport std::string& user();
+                /*!
+                 * @brief This function copies the value in member process
+                 * @param _process New value to be copied in member process
+                 */
+                eProsima_user_DllExport void process(
+                        const std::string& _process);
+
+                /*!
+                 * @brief This function moves the value in member process
+                 * @param _process New value to be moved in member process
+                 */
+                eProsima_user_DllExport void process(
+                        std::string&& _process);
+
+                /*!
+                 * @brief This function returns a constant reference to member process
+                 * @return Constant reference to member process
+                 */
+                eProsima_user_DllExport const std::string& process() const;
+
+                /*!
+                 * @brief This function returns a reference to member process
+                 * @return Reference to member process
+                 */
+                eProsima_user_DllExport std::string& process();
+
+                /*!
+                 * @brief This function returns the maximum serialized size of an object
+                 * depending on the buffer alignment.
+                 * @param current_alignment Buffer alignment.
+                 * @return Maximum serialized size.
+                 */
+                eProsima_user_DllExport static size_t getMaxCdrSerializedSize(
+                        size_t current_alignment = 0);
+
+                /*!
+                 * @brief This function returns the serialized size of a data depending on the buffer alignment.
+                 * @param data Data which is calculated its serialized size.
+                 * @param current_alignment Buffer alignment.
+                 * @return Serialized size.
+                 */
+                eProsima_user_DllExport static size_t getCdrSerializedSize(
+                        const eprosima::fastdds::statistics::PhysicalData& data,
+                        size_t current_alignment = 0);
+
+
+                /*!
+                 * @brief This function serializes an object using CDR serialization.
+                 * @param cdr CDR serialization object.
+                 */
+                eProsima_user_DllExport void serialize(
+                        eprosima::fastcdr::Cdr& cdr) const;
+
+                /*!
+                 * @brief This function deserializes an object using CDR serialization.
+                 * @param cdr CDR serialization object.
+                 */
+                eProsima_user_DllExport void deserialize(
+                        eprosima::fastcdr::Cdr& cdr);
+
+
+
+                /*!
+                 * @brief This function returns the maximum serialized size of the Key of an object
+                 * depending on the buffer alignment.
+                 * @param current_alignment Buffer alignment.
+                 * @return Maximum serialized size.
+                 */
+                eProsima_user_DllExport static size_t getKeyMaxCdrSerializedSize(
+                        size_t current_alignment = 0);
+
+                /*!
+                 * @brief This function tells you if the Key has been defined for this type
+                 */
+                eProsima_user_DllExport static bool isKeyDefined();
+
+                /*!
+                 * @brief This function serializes the key members of an object using CDR serialization.
+                 * @param cdr CDR serialization object.
+                 */
+                eProsima_user_DllExport void serializeKey(
+                        eprosima::fastcdr::Cdr& cdr) const;
+
+            private:
+
+                eprosima::fastdds::statistics::detail::GUID_s m_participant_guid;
+                std::string m_host;
+                std::string m_user;
+                std::string m_process;
+            };
+            /*!
              * @brief This class represents the bitmask EventKind defined by the user in the IDL file.
              * @ingroup TYPES
              */
@@ -2209,7 +2420,8 @@ namespace eprosima {
                 PDP_PACKETS = 0x01 << 13,
                 EDP_PACKETS = 0x01 << 14,
                 DISCOVERED_ENTITY = 0x01 << 15,
-                SAMPLE_DATAS = 0x01 << 16
+                SAMPLE_DATAS = 0x01 << 16,
+                PHYSICAL_DATA = 0x01 << 17
             };
             /*!
              * @brief This class represents the union Data defined by the user in the IDL file.
@@ -2277,33 +2489,6 @@ namespace eprosima {
                  */
                 eProsima_user_DllExport eprosima::fastdds::statistics::EventKind& _d();
 
-                /*!
-                 * @brief This function copies the value in member dummy_heap_type
-                 * @param _dummy_heap_type New value to be copied in member dummy_heap_type
-                 */
-                eProsima_user_DllExport void dummy_heap_type(
-                        const std::vector<double>& _dummy_heap_type);
-
-                /*!
-                 * @brief This function moves the value in member dummy_heap_type
-                 * @param _dummy_heap_type New value to be moved in member dummy_heap_type
-                 */
-                eProsima_user_DllExport void dummy_heap_type(
-                        std::vector<double>&& _dummy_heap_type);
-
-                /*!
-                 * @brief This function returns a constant reference to member dummy_heap_type
-                 * @return Constant reference to member dummy_heap_type
-                 * @exception eprosima::fastcdr::BadParamException This exception is thrown if the requested union member is not the current selection.
-                 */
-                eProsima_user_DllExport const std::vector<double>& dummy_heap_type() const;
-
-                /*!
-                 * @brief This function returns a reference to member dummy_heap_type
-                 * @return Reference to member dummy_heap_type
-                 * @exception eprosima::fastcdr::BadParamException This exception is thrown if the requested union member is not the current selection.
-                 */
-                eProsima_user_DllExport std::vector<double>& dummy_heap_type();
                 /*!
                  * @brief This function copies the value in member writer_reader_data
                  * @param _writer_reader_data New value to be copied in member writer_reader_data
@@ -2493,6 +2678,33 @@ namespace eprosima {
                  * @exception eprosima::fastcdr::BadParamException This exception is thrown if the requested union member is not the current selection.
                  */
                 eProsima_user_DllExport eprosima::fastdds::statistics::SampleIdentityCount& sample_identity_count();
+                /*!
+                 * @brief This function copies the value in member physical_data
+                 * @param _physical_data New value to be copied in member physical_data
+                 */
+                eProsima_user_DllExport void physical_data(
+                        const eprosima::fastdds::statistics::PhysicalData& _physical_data);
+
+                /*!
+                 * @brief This function moves the value in member physical_data
+                 * @param _physical_data New value to be moved in member physical_data
+                 */
+                eProsima_user_DllExport void physical_data(
+                        eprosima::fastdds::statistics::PhysicalData&& _physical_data);
+
+                /*!
+                 * @brief This function returns a constant reference to member physical_data
+                 * @return Constant reference to member physical_data
+                 * @exception eprosima::fastcdr::BadParamException This exception is thrown if the requested union member is not the current selection.
+                 */
+                eProsima_user_DllExport const eprosima::fastdds::statistics::PhysicalData& physical_data() const;
+
+                /*!
+                 * @brief This function returns a reference to member physical_data
+                 * @return Reference to member physical_data
+                 * @exception eprosima::fastcdr::BadParamException This exception is thrown if the requested union member is not the current selection.
+                 */
+                eProsima_user_DllExport eprosima::fastdds::statistics::PhysicalData& physical_data();
 
                 /*!
                  * @brief This function returns the maximum serialized size of an object
@@ -2535,7 +2747,6 @@ namespace eprosima {
 
                 eprosima::fastdds::statistics::EventKind m__d;
 
-                std::vector<double> m_dummy_heap_type;
                 eprosima::fastdds::statistics::WriterReaderData m_writer_reader_data;
                 eprosima::fastdds::statistics::Locator2LocatorData m_locator2locator_data;
                 eprosima::fastdds::statistics::EntityData m_entity_data;
@@ -2543,6 +2754,7 @@ namespace eprosima {
                 eprosima::fastdds::statistics::EntityCount m_entity_count;
                 eprosima::fastdds::statistics::DiscoveryTime m_discovery_time;
                 eprosima::fastdds::statistics::SampleIdentityCount m_sample_identity_count;
+                eprosima::fastdds::statistics::PhysicalData m_physical_data;
             };
         } // namespace statistics
     } // namespace fastdds

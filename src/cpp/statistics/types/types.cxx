@@ -1369,7 +1369,7 @@ eprosima::fastdds::statistics::EntityCount::EntityCount()
 {
     // m_guid com.eprosima.fastdds.idl.parser.typecode.StructTypeCode@b7f23d9
 
-    // m_count com.eprosima.idl.parser.typecode.PrimitiveTypeCode@409bf450
+    // m_count com.eprosima.idl.parser.typecode.PrimitiveTypeCode@3c19aaa5
     m_count = 0;
 
 }
@@ -1554,9 +1554,9 @@ void eprosima::fastdds::statistics::EntityCount::serializeKey(
 
 eprosima::fastdds::statistics::SampleIdentityCount::SampleIdentityCount()
 {
-    // m_sample_id com.eprosima.fastdds.idl.parser.typecode.StructTypeCode@55b699ef
+    // m_sample_id com.eprosima.fastdds.idl.parser.typecode.StructTypeCode@351d00c0
 
-    // m_count com.eprosima.idl.parser.typecode.PrimitiveTypeCode@35d019a3
+    // m_count com.eprosima.idl.parser.typecode.PrimitiveTypeCode@2a3b5b47
     m_count = 0;
 
 }
@@ -1743,13 +1743,13 @@ eprosima::fastdds::statistics::Entity2LocatorTraffic::Entity2LocatorTraffic()
 {
     // m_src_guid com.eprosima.fastdds.idl.parser.typecode.StructTypeCode@b7f23d9
 
-    // m_dst_locator com.eprosima.fastdds.idl.parser.typecode.StructTypeCode@6302bbb1
+    // m_dst_locator com.eprosima.fastdds.idl.parser.typecode.StructTypeCode@2a65fe7c
 
-    // m_packet_count com.eprosima.idl.parser.typecode.PrimitiveTypeCode@31304f14
+    // m_packet_count com.eprosima.idl.parser.typecode.PrimitiveTypeCode@4135c3b
     m_packet_count = 0;
-    // m_byte_count com.eprosima.idl.parser.typecode.PrimitiveTypeCode@34a3d150
+    // m_byte_count com.eprosima.idl.parser.typecode.PrimitiveTypeCode@6302bbb1
     m_byte_count = 0;
-    // m_byte_magnitude_order com.eprosima.idl.parser.typecode.PrimitiveTypeCode@2a4fb17b
+    // m_byte_magnitude_order com.eprosima.idl.parser.typecode.PrimitiveTypeCode@31304f14
     m_byte_magnitude_order = 0;
 
 }
@@ -2070,7 +2070,7 @@ eprosima::fastdds::statistics::WriterReaderData::WriterReaderData()
 
     // m_reader_guid com.eprosima.fastdds.idl.parser.typecode.StructTypeCode@b7f23d9
 
-    // m_data com.eprosima.idl.parser.typecode.PrimitiveTypeCode@128d2484
+    // m_data com.eprosima.idl.parser.typecode.PrimitiveTypeCode@6f1de4c7
     m_data = 0.0;
 
 }
@@ -2303,9 +2303,9 @@ void eprosima::fastdds::statistics::WriterReaderData::serializeKey(
 
 eprosima::fastdds::statistics::Locator2LocatorData::Locator2LocatorData()
 {
-    // m_src_locator com.eprosima.fastdds.idl.parser.typecode.StructTypeCode@6302bbb1
+    // m_src_locator com.eprosima.fastdds.idl.parser.typecode.StructTypeCode@2a65fe7c
 
-    // m_dst_locator com.eprosima.fastdds.idl.parser.typecode.StructTypeCode@6302bbb1
+    // m_dst_locator com.eprosima.fastdds.idl.parser.typecode.StructTypeCode@2a65fe7c
 
     // m_data com.eprosima.idl.parser.typecode.PrimitiveTypeCode@4c583ecf
     m_data = 0.0;
@@ -2725,25 +2725,321 @@ void eprosima::fastdds::statistics::EntityData::serializeKey(
        
 }
 
+eprosima::fastdds::statistics::PhysicalData::PhysicalData()
+{
+    // m_participant_guid com.eprosima.fastdds.idl.parser.typecode.StructTypeCode@b7f23d9
+
+    // m_host com.eprosima.idl.parser.typecode.StringTypeCode@73a1e9a9
+    m_host ="";
+    // m_user com.eprosima.idl.parser.typecode.StringTypeCode@71d44a3
+    m_user ="";
+    // m_process com.eprosima.idl.parser.typecode.StringTypeCode@7b98f307
+    m_process ="";
+
+}
+
+eprosima::fastdds::statistics::PhysicalData::~PhysicalData()
+{
+
+
+
+
+}
+
+eprosima::fastdds::statistics::PhysicalData::PhysicalData(
+        const PhysicalData& x)
+{
+    m_participant_guid = x.m_participant_guid;
+    m_host = x.m_host;
+    m_user = x.m_user;
+    m_process = x.m_process;
+}
+
+eprosima::fastdds::statistics::PhysicalData::PhysicalData(
+        PhysicalData&& x)
+{
+    m_participant_guid = std::move(x.m_participant_guid);
+    m_host = std::move(x.m_host);
+    m_user = std::move(x.m_user);
+    m_process = std::move(x.m_process);
+}
+
+eprosima::fastdds::statistics::PhysicalData& eprosima::fastdds::statistics::PhysicalData::operator =(
+        const PhysicalData& x)
+{
+
+    m_participant_guid = x.m_participant_guid;
+    m_host = x.m_host;
+    m_user = x.m_user;
+    m_process = x.m_process;
+
+    return *this;
+}
+
+eprosima::fastdds::statistics::PhysicalData& eprosima::fastdds::statistics::PhysicalData::operator =(
+        PhysicalData&& x)
+{
+
+    m_participant_guid = std::move(x.m_participant_guid);
+    m_host = std::move(x.m_host);
+    m_user = std::move(x.m_user);
+    m_process = std::move(x.m_process);
+
+    return *this;
+}
+
+size_t eprosima::fastdds::statistics::PhysicalData::getMaxCdrSerializedSize(
+        size_t current_alignment)
+{
+    size_t initial_alignment = current_alignment;
+
+
+    current_alignment += eprosima::fastdds::statistics::detail::GUID_s::getMaxCdrSerializedSize(current_alignment);
+    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4) + 255 + 1;
+
+    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4) + 255 + 1;
+
+    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4) + 255 + 1;
+
+
+    return current_alignment - initial_alignment;
+}
+
+size_t eprosima::fastdds::statistics::PhysicalData::getCdrSerializedSize(
+        const eprosima::fastdds::statistics::PhysicalData& data,
+        size_t current_alignment)
+{
+    (void)data;
+    size_t initial_alignment = current_alignment;
+
+
+    current_alignment += eprosima::fastdds::statistics::detail::GUID_s::getCdrSerializedSize(data.participant_guid(), current_alignment);
+    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4) + data.host().size() + 1;
+
+    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4) + data.user().size() + 1;
+
+    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4) + data.process().size() + 1;
+
+
+    return current_alignment - initial_alignment;
+}
+
+void eprosima::fastdds::statistics::PhysicalData::serialize(
+        eprosima::fastcdr::Cdr& scdr) const
+{
+
+    scdr << m_participant_guid;
+    scdr << m_host;
+    scdr << m_user;
+    scdr << m_process;
+
+}
+
+void eprosima::fastdds::statistics::PhysicalData::deserialize(
+        eprosima::fastcdr::Cdr& dcdr)
+{
+
+    dcdr >> m_participant_guid;
+    dcdr >> m_host;
+    dcdr >> m_user;
+    dcdr >> m_process;
+}
+
+/*!
+ * @brief This function copies the value in member participant_guid
+ * @param _participant_guid New value to be copied in member participant_guid
+ */
+void eprosima::fastdds::statistics::PhysicalData::participant_guid(
+        const eprosima::fastdds::statistics::detail::GUID_s& _participant_guid)
+{
+    m_participant_guid = _participant_guid;
+}
+
+/*!
+ * @brief This function moves the value in member participant_guid
+ * @param _participant_guid New value to be moved in member participant_guid
+ */
+void eprosima::fastdds::statistics::PhysicalData::participant_guid(
+        eprosima::fastdds::statistics::detail::GUID_s&& _participant_guid)
+{
+    m_participant_guid = std::move(_participant_guid);
+}
+
+/*!
+ * @brief This function returns a constant reference to member participant_guid
+ * @return Constant reference to member participant_guid
+ */
+const eprosima::fastdds::statistics::detail::GUID_s& eprosima::fastdds::statistics::PhysicalData::participant_guid() const
+{
+    return m_participant_guid;
+}
+
+/*!
+ * @brief This function returns a reference to member participant_guid
+ * @return Reference to member participant_guid
+ */
+eprosima::fastdds::statistics::detail::GUID_s& eprosima::fastdds::statistics::PhysicalData::participant_guid()
+{
+    return m_participant_guid;
+}
+/*!
+ * @brief This function copies the value in member host
+ * @param _host New value to be copied in member host
+ */
+void eprosima::fastdds::statistics::PhysicalData::host(
+        const std::string& _host)
+{
+    m_host = _host;
+}
+
+/*!
+ * @brief This function moves the value in member host
+ * @param _host New value to be moved in member host
+ */
+void eprosima::fastdds::statistics::PhysicalData::host(
+        std::string&& _host)
+{
+    m_host = std::move(_host);
+}
+
+/*!
+ * @brief This function returns a constant reference to member host
+ * @return Constant reference to member host
+ */
+const std::string& eprosima::fastdds::statistics::PhysicalData::host() const
+{
+    return m_host;
+}
+
+/*!
+ * @brief This function returns a reference to member host
+ * @return Reference to member host
+ */
+std::string& eprosima::fastdds::statistics::PhysicalData::host()
+{
+    return m_host;
+}
+/*!
+ * @brief This function copies the value in member user
+ * @param _user New value to be copied in member user
+ */
+void eprosima::fastdds::statistics::PhysicalData::user(
+        const std::string& _user)
+{
+    m_user = _user;
+}
+
+/*!
+ * @brief This function moves the value in member user
+ * @param _user New value to be moved in member user
+ */
+void eprosima::fastdds::statistics::PhysicalData::user(
+        std::string&& _user)
+{
+    m_user = std::move(_user);
+}
+
+/*!
+ * @brief This function returns a constant reference to member user
+ * @return Constant reference to member user
+ */
+const std::string& eprosima::fastdds::statistics::PhysicalData::user() const
+{
+    return m_user;
+}
+
+/*!
+ * @brief This function returns a reference to member user
+ * @return Reference to member user
+ */
+std::string& eprosima::fastdds::statistics::PhysicalData::user()
+{
+    return m_user;
+}
+/*!
+ * @brief This function copies the value in member process
+ * @param _process New value to be copied in member process
+ */
+void eprosima::fastdds::statistics::PhysicalData::process(
+        const std::string& _process)
+{
+    m_process = _process;
+}
+
+/*!
+ * @brief This function moves the value in member process
+ * @param _process New value to be moved in member process
+ */
+void eprosima::fastdds::statistics::PhysicalData::process(
+        std::string&& _process)
+{
+    m_process = std::move(_process);
+}
+
+/*!
+ * @brief This function returns a constant reference to member process
+ * @return Constant reference to member process
+ */
+const std::string& eprosima::fastdds::statistics::PhysicalData::process() const
+{
+    return m_process;
+}
+
+/*!
+ * @brief This function returns a reference to member process
+ * @return Reference to member process
+ */
+std::string& eprosima::fastdds::statistics::PhysicalData::process()
+{
+    return m_process;
+}
+
+size_t eprosima::fastdds::statistics::PhysicalData::getKeyMaxCdrSerializedSize(
+        size_t current_alignment)
+{
+    size_t current_align = current_alignment;
+
+
+     current_align += eprosima::fastdds::statistics::detail::GUID_s::getMaxCdrSerializedSize(current_align); 
+
+
+
+
+    return current_align;
+}
+
+bool eprosima::fastdds::statistics::PhysicalData::isKeyDefined()
+{
+    return true;
+}
+
+void eprosima::fastdds::statistics::PhysicalData::serializeKey(
+        eprosima::fastcdr::Cdr& scdr) const
+{
+    (void) scdr;
+     scdr << m_participant_guid;
+         
+}
+
 
 eprosima::fastdds::statistics::Data::Data()
 {
-    m__d = NONE;
-    // m_dummy_heap_type com.eprosima.idl.parser.typecode.SequenceTypeCode@477b4cdf
+    m__d = HISTORY2HISTORY_LATENCY;
+    // m_writer_reader_data com.eprosima.fastdds.idl.parser.typecode.StructTypeCode@22555ebf
 
-    // m_writer_reader_data com.eprosima.fastdds.idl.parser.typecode.StructTypeCode@77c2494c
+    // m_locator2locator_data com.eprosima.fastdds.idl.parser.typecode.StructTypeCode@36ebc363
 
-    // m_locator2locator_data com.eprosima.fastdds.idl.parser.typecode.StructTypeCode@f5958c9
+    // m_entity_data com.eprosima.fastdds.idl.parser.typecode.StructTypeCode@45752059
 
-    // m_entity_data com.eprosima.fastdds.idl.parser.typecode.StructTypeCode@233795b6
+    // m_entity2locator_traffic com.eprosima.fastdds.idl.parser.typecode.StructTypeCode@34e9fd99
 
-    // m_entity2locator_traffic com.eprosima.fastdds.idl.parser.typecode.StructTypeCode@3eb738bb
+    // m_entity_count com.eprosima.fastdds.idl.parser.typecode.StructTypeCode@3c41ed1d
 
-    // m_entity_count com.eprosima.fastdds.idl.parser.typecode.StructTypeCode@5bda8e08
+    // m_discovery_time com.eprosima.fastdds.idl.parser.typecode.StructTypeCode@54d9d12d
 
-    // m_discovery_time com.eprosima.fastdds.idl.parser.typecode.StructTypeCode@1e800aaa
+    // m_sample_identity_count com.eprosima.fastdds.idl.parser.typecode.StructTypeCode@38425407
 
-    // m_sample_identity_count com.eprosima.fastdds.idl.parser.typecode.StructTypeCode@185a6e9
+    // m_physical_data com.eprosima.fastdds.idl.parser.typecode.StructTypeCode@43bc63a3
 
 }
 
@@ -2758,9 +3054,6 @@ eprosima::fastdds::statistics::Data::Data(
 
     switch(m__d)
     {
-        case NONE:
-        m_dummy_heap_type = x.m_dummy_heap_type;
-        break;
         case HISTORY2HISTORY_LATENCY:
         m_writer_reader_data = x.m_writer_reader_data;
         break;
@@ -2791,6 +3084,9 @@ eprosima::fastdds::statistics::Data::Data(
         case SAMPLE_DATAS:
         m_sample_identity_count = x.m_sample_identity_count;
         break;
+        case PHYSICAL_DATA:
+        m_physical_data = x.m_physical_data;
+        break;
         default:
         break;
     }
@@ -2803,9 +3099,6 @@ eprosima::fastdds::statistics::Data::Data(
 
     switch(m__d)
     {
-        case NONE:
-        m_dummy_heap_type = std::move(x.m_dummy_heap_type);
-        break;
         case HISTORY2HISTORY_LATENCY:
         m_writer_reader_data = std::move(x.m_writer_reader_data);
         break;
@@ -2836,6 +3129,9 @@ eprosima::fastdds::statistics::Data::Data(
         case SAMPLE_DATAS:
         m_sample_identity_count = std::move(x.m_sample_identity_count);
         break;
+        case PHYSICAL_DATA:
+        m_physical_data = std::move(x.m_physical_data);
+        break;
         default:
         break;
     }
@@ -2848,9 +3144,6 @@ eprosima::fastdds::statistics::Data& eprosima::fastdds::statistics::Data::operat
 
     switch(m__d)
     {
-        case NONE:
-        m_dummy_heap_type = x.m_dummy_heap_type;
-        break;
         case HISTORY2HISTORY_LATENCY:
         m_writer_reader_data = x.m_writer_reader_data;
         break;
@@ -2880,6 +3173,9 @@ eprosima::fastdds::statistics::Data& eprosima::fastdds::statistics::Data::operat
         break;
         case SAMPLE_DATAS:
         m_sample_identity_count = x.m_sample_identity_count;
+        break;
+        case PHYSICAL_DATA:
+        m_physical_data = x.m_physical_data;
         break;
         default:
         break;
@@ -2895,9 +3191,6 @@ eprosima::fastdds::statistics::Data& eprosima::fastdds::statistics::Data::operat
 
     switch(m__d)
     {
-        case NONE:
-        m_dummy_heap_type = std::move(x.m_dummy_heap_type);
-        break;
         case HISTORY2HISTORY_LATENCY:
         m_writer_reader_data = std::move(x.m_writer_reader_data);
         break;
@@ -2927,6 +3220,9 @@ eprosima::fastdds::statistics::Data& eprosima::fastdds::statistics::Data::operat
         break;
         case SAMPLE_DATAS:
         m_sample_identity_count = std::move(x.m_sample_identity_count);
+        break;
+        case PHYSICAL_DATA:
+        m_physical_data = std::move(x.m_physical_data);
         break;
         default:
         break;
@@ -2942,16 +3238,6 @@ void eprosima::fastdds::statistics::Data::_d(
 
     switch(m__d)
     {
-        case NONE:
-        switch(__d)
-        {
-            case NONE:
-            b = true;
-            break;
-            default:
-            break;
-        }
-        break;
         case HISTORY2HISTORY_LATENCY:
         switch(__d)
         {
@@ -3040,6 +3326,16 @@ void eprosima::fastdds::statistics::Data::_d(
             break;
         }
         break;
+        case PHYSICAL_DATA:
+        switch(__d)
+        {
+            case PHYSICAL_DATA:
+            b = true;
+            break;
+            default:
+            break;
+        }
+        break;
     }
 
     if(!b)
@@ -3060,59 +3356,6 @@ eprosima::fastdds::statistics::EventKind& eprosima::fastdds::statistics::Data::_
     return m__d;
 }
 
-void eprosima::fastdds::statistics::Data::dummy_heap_type(
-        const std::vector<double>& _dummy_heap_type)
-{
-    m_dummy_heap_type = _dummy_heap_type;
-    m__d = NONE;
-}
-
-void eprosima::fastdds::statistics::Data::dummy_heap_type(
-        std::vector<double>&& _dummy_heap_type)
-{
-    m_dummy_heap_type = std::move(_dummy_heap_type);
-    m__d = NONE;
-}
-
-const std::vector<double>& eprosima::fastdds::statistics::Data::dummy_heap_type() const
-{
-    bool b = false;
-
-    switch(m__d)
-    {
-        case NONE:
-        b = true;
-        break;
-        default:
-        break;
-    }
-    if(!b)
-    {
-        throw BadParamException("This member is not been selected");
-    }
-
-    return m_dummy_heap_type;
-}
-
-std::vector<double>& eprosima::fastdds::statistics::Data::dummy_heap_type()
-{
-    bool b = false;
-
-    switch(m__d)
-    {
-        case NONE:
-        b = true;
-        break;
-        default:
-        break;
-    }
-    if(!b)
-    {
-        throw BadParamException("This member is not been selected");
-    }
-
-    return m_dummy_heap_type;
-}
 void eprosima::fastdds::statistics::Data::writer_reader_data(
         const eprosima::fastdds::statistics::WriterReaderData& _writer_reader_data)
 {
@@ -3502,6 +3745,59 @@ eprosima::fastdds::statistics::SampleIdentityCount& eprosima::fastdds::statistic
 
     return m_sample_identity_count;
 }
+void eprosima::fastdds::statistics::Data::physical_data(
+        const eprosima::fastdds::statistics::PhysicalData& _physical_data)
+{
+    m_physical_data = _physical_data;
+    m__d = PHYSICAL_DATA;
+}
+
+void eprosima::fastdds::statistics::Data::physical_data(
+        eprosima::fastdds::statistics::PhysicalData&& _physical_data)
+{
+    m_physical_data = std::move(_physical_data);
+    m__d = PHYSICAL_DATA;
+}
+
+const eprosima::fastdds::statistics::PhysicalData& eprosima::fastdds::statistics::Data::physical_data() const
+{
+    bool b = false;
+
+    switch(m__d)
+    {
+        case PHYSICAL_DATA:
+        b = true;
+        break;
+        default:
+        break;
+    }
+    if(!b)
+    {
+        throw BadParamException("This member is not been selected");
+    }
+
+    return m_physical_data;
+}
+
+eprosima::fastdds::statistics::PhysicalData& eprosima::fastdds::statistics::Data::physical_data()
+{
+    bool b = false;
+
+    switch(m__d)
+    {
+        case PHYSICAL_DATA:
+        b = true;
+        break;
+        default:
+        break;
+    }
+    if(!b)
+    {
+        throw BadParamException("This member is not been selected");
+    }
+
+    return m_physical_data;
+}
 
 size_t eprosima::fastdds::statistics::Data::getMaxCdrSerializedSize(
         size_t current_alignment)
@@ -3513,18 +3809,6 @@ size_t eprosima::fastdds::statistics::Data::getMaxCdrSerializedSize(
     current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
 
 
-        reset_alignment = current_alignment;
-
-        reset_alignment += 4 + eprosima::fastcdr::Cdr::alignment(reset_alignment, 4);
-
-        reset_alignment += (100 * 8) + eprosima::fastcdr::Cdr::alignment(reset_alignment, 8);
-
-
-
-        if(union_max_size_serialized < reset_alignment)
-            union_max_size_serialized = reset_alignment;
-
-        
         reset_alignment = current_alignment;
 
         reset_alignment += eprosima::fastdds::statistics::WriterReaderData::getMaxCdrSerializedSize(reset_alignment);
@@ -3581,6 +3865,14 @@ size_t eprosima::fastdds::statistics::Data::getMaxCdrSerializedSize(
             union_max_size_serialized = reset_alignment;
 
         
+        reset_alignment = current_alignment;
+
+        reset_alignment += eprosima::fastdds::statistics::PhysicalData::getMaxCdrSerializedSize(reset_alignment);
+
+        if(union_max_size_serialized < reset_alignment)
+            union_max_size_serialized = reset_alignment;
+
+        
 
     return union_max_size_serialized - initial_alignment;
 }
@@ -3597,16 +3889,6 @@ size_t eprosima::fastdds::statistics::Data::getCdrSerializedSize(
 
     switch(data.m__d)
     {
-        case NONE:
-        current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
-
-        if (data.dummy_heap_type().size() > 0)
-        {
-            current_alignment += (data.dummy_heap_type().size() * 8) + eprosima::fastcdr::Cdr::alignment(current_alignment, 8);
-        }
-
-
-        break;
         case HISTORY2HISTORY_LATENCY:
         current_alignment += eprosima::fastdds::statistics::WriterReaderData::getCdrSerializedSize(data.writer_reader_data(), current_alignment);
         break;
@@ -3637,6 +3919,9 @@ size_t eprosima::fastdds::statistics::Data::getCdrSerializedSize(
         case SAMPLE_DATAS:
         current_alignment += eprosima::fastdds::statistics::SampleIdentityCount::getCdrSerializedSize(data.sample_identity_count(), current_alignment);
         break;
+        case PHYSICAL_DATA:
+        current_alignment += eprosima::fastdds::statistics::PhysicalData::getCdrSerializedSize(data.physical_data(), current_alignment);
+        break;
         default:
         break;
     }
@@ -3651,9 +3936,6 @@ void eprosima::fastdds::statistics::Data::serialize(
 
     switch(m__d)
     {
-        case NONE:
-        scdr << m_dummy_heap_type;
-        break;
         case HISTORY2HISTORY_LATENCY:
         scdr << m_writer_reader_data;
 
@@ -3691,6 +3973,10 @@ void eprosima::fastdds::statistics::Data::serialize(
         scdr << m_sample_identity_count;
 
         break;
+        case PHYSICAL_DATA:
+        scdr << m_physical_data;
+
+        break;
         default:
         break;
     }
@@ -3708,8 +3994,6 @@ void eprosima::fastdds::statistics::Data::deserialize(
 
     switch(m__d)
     {
-        case NONE:
-        dcdr >> m_dummy_heap_type;break;
         case HISTORY2HISTORY_LATENCY:
         dcdr >> m_writer_reader_data;
         break;
@@ -3739,6 +4023,9 @@ void eprosima::fastdds::statistics::Data::deserialize(
         break;
         case SAMPLE_DATAS:
         dcdr >> m_sample_identity_count;
+        break;
+        case PHYSICAL_DATA:
+        dcdr >> m_physical_data;
         break;
         default:
         break;

@@ -108,6 +108,14 @@ struct EntityData
     float data;
 };
 
+struct PhysicalData
+{
+    @Key detail::GUID_s participant_guid;
+    string host;
+    string user;
+    string process;
+};
+
 @bit_bound(32)
 bitmask EventKind
 {
@@ -127,7 +135,8 @@ bitmask EventKind
     @position(13) PDP_PACKETS,
     @position(14) EDP_PACKETS,
     @position(15) DISCOVERED_ENTITY,
-    @position(16) SAMPLE_DATAS
+    @position(16) SAMPLE_DATAS,
+    @position(17) PHYSICAL_DATA
 };
 
 union Data switch(EventKind)
@@ -155,6 +164,8 @@ union Data switch(EventKind)
         DiscoveryTime discovery_time;
     case SAMPLE_DATAS:
         SampleIdentityCount sample_identity_count;
+    case PHYSICAL_DATA:
+        PhysicalData physical_data;
 };
 
 }; // namespace statistics
