@@ -444,3 +444,4 @@ compile_commands.json
 
 # Visual Studio Code
 .vscode
+docker-images/*
