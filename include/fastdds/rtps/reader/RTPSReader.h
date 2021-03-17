@@ -335,15 +335,17 @@ public:
 #ifdef FASTDDS_STATISTICS
 
     /*
-     * Adds a listener to receive statistics backend callbacks
+     * Add a listener to receive statistics backend callbacks
      * @param listener
+     * @return true if successfully added
      */
     RTPS_DllAPI bool add_statistics_listener(
             std::shared_ptr<fastdds::statistics::IListener> listener);
 
     /*
-     * Remove a listener to receive statistics backend callbacks
+     * Remove a listener from receiving statistics backend callbacks
      * @param listener
+     * @return true if successfully removed
      */
     RTPS_DllAPI bool remove_statistics_listener(
             std::shared_ptr<fastdds::statistics::IListener> listener);

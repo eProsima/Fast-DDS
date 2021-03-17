@@ -13,12 +13,12 @@
 // limitations under the License.
 
 /**
- * @file Listeners.hpp
+ * @file IListeners.hpp
  *
  */
 
-#ifndef _FASTDDS_STATISTICS_LISTENERS_HPP_
-#define _FASTDDS_STATISTICS_LISTENERS_HPP_
+#ifndef _FASTDDS_STATISTICS_ILISTENERS_HPP_
+#define _FASTDDS_STATISTICS_ILISTENERS_HPP_
 
 namespace eprosima {
 namespace fastdds {
@@ -29,9 +29,7 @@ enum EventKind : uint32_t;
 
 struct IListener
 {
-    virtual ~IListener()
-    {
-    }
+    virtual ~IListener() = default;
 
     virtual void on_statistics_data(
             const Data& statistics_data) = 0;
@@ -41,4 +39,4 @@ struct IListener
 } // fastdds
 } // eprosima
 
-#endif // _FASTDDS_STATISTICS_LISTENERS_HPP_
+#endif // _FASTDDS_STATISTICS_ILISTENERS_HPP_

@@ -269,7 +269,7 @@ public:
             std::unique_lock<RecursiveTimedMutex>& lock) = 0;
 
     /*
-     * Adds a flow controller that will apply to this writer exclusively.
+     * Add a flow controller that will apply to this writer exclusively.
      * @param controller
      */
     virtual void add_flow_controller(
@@ -280,13 +280,15 @@ public:
     /*
      * Adds a listener to receive statistics backend callbacks
      * @param listener
+     * @return true if successfully added
      */
     RTPS_DllAPI bool add_statistics_listener(
             std::shared_ptr<fastdds::statistics::IListener> listener);
 
     /*
-     * Remove a listener to receive statistics backend callbacks
+     * Remove a listener from receiving statistics backend callbacks
      * @param listener
+     * @return true if successfully removed
      */
     RTPS_DllAPI bool remove_statistics_listener(
             std::shared_ptr<fastdds::statistics::IListener> listener);
