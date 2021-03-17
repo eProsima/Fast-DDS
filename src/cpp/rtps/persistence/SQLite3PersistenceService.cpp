@@ -21,6 +21,7 @@
 #include <rtps/persistence/SQLite3PersistenceServiceStatements.h>
 #include <fastdds/dds/log/Log.hpp>
 #include <fastdds/rtps/history/WriterHistory.h>
+#include <fastrtps/utils/TimeConversion.h>
 
 #include <rtps/persistence/sqlite3.h>
 
@@ -71,6 +72,21 @@ static int upgrade(
     if (from == 1 && to == 2)
     {
         return sqlite3_exec(db, SQLite3PersistenceServiceSchemaV2::update_from_v1_statement().c_str(), 0, 0, 0);
+    }
+
+    if (from == 2 && to == 3
+            && SQLite3PersistenceServiceSchemaV3::database_create_temporary_defaults_table(db))
+    {
+        return sqlite3_exec(db, SQLite3PersistenceServiceSchemaV3::update_from_v2_statement().c_str(), 0, 0, 0);
+    }
+
+    // iterate if not direct upgrade
+    if (from < to)
+    {
+        if(SQLITE_ERROR != upgrade(db, from, to-1))
+        {
+            return upgrade(db, to-1, to);
+        }
     }
 
     // unsupported upgrade path
@@ -420,6 +436,98 @@ bool SQLite3PersistenceService::update_writer_seq_on_storage(
     }
 
     return false;
+}
+
+bool SQLite3PersistenceServiceSchemaV3::database_create_temporary_defaults_table(sqlite3* db)
+{
+    using namespace std;
+
+    sqlite3_stmt* insert_default_stmt;
+
+    // create temporary table
+    int rc = sqlite3_exec(
+            db,
+            "CREATE TEMP TABLE IF NOT EXISTS Defaults (Name TEST PRIMARY KEY, Value TEST);",
+            0, 0, 0);
+
+    if (rc != SQLITE_OK)
+    {
+        return false;
+    }
+
+    // Insert default values
+    sqlite3_prepare_v3(
+            db,
+            "INSERT OR REPLACE INTO TEMP.Defaults VALUES (?, ?);",
+            -1, SQLITE_PREPARE_PERSISTENT,
+            &insert_default_stmt, NULL);
+
+    // Default GUID_t value
+    sqlite3_reset(insert_default_stmt);
+    sqlite3_bind_text(insert_default_stmt, 1, "GUID_t", -1, SQLITE_STATIC);
+    sqlite3_bind_text(insert_default_stmt, 2, SQLite3PersistenceServiceSchemaV3::default_guid(), -1, SQLITE_STATIC);
+    rc = sqlite3_step(insert_default_stmt);
+
+    if (rc != SQLITE_DONE)
+    {
+        return false;
+    }
+
+    // Default SequenceNumber_t
+    sqlite3_reset(insert_default_stmt);
+    sqlite3_bind_text(insert_default_stmt, 1, "SequenceNumber_t", -1, SQLITE_STATIC);
+    sqlite3_bind_int64(insert_default_stmt, 2, SQLite3PersistenceServiceSchemaV3::default_seqnum());
+    rc = sqlite3_step(insert_default_stmt);
+
+    if (rc != SQLITE_DONE)
+    {
+        return false;
+    }
+
+    // Default rtps::Time_t
+    sqlite3_reset(insert_default_stmt);
+    sqlite3_bind_text(insert_default_stmt, 1, "rtps::Time_t", -1, SQLITE_STATIC);
+    sqlite3_bind_double(insert_default_stmt, 2, SQLite3PersistenceServiceSchemaV3::now());
+    rc = sqlite3_step(insert_default_stmt);
+
+    if (rc != SQLITE_DONE)
+    {
+        return false;
+    }
+
+    // free resources
+    finalize_statement(insert_default_stmt);
+
+    return true;
+};
+
+const char* SQLite3PersistenceServiceSchemaV3::default_guid()
+{
+    using namespace std;
+
+    static string def_guid;
+
+    if(def_guid.empty())
+    {
+        ostringstream ss;
+        auto def = GUID_t::unknown();
+        ss << def;
+        def_guid = ss.str();
+    }
+
+    return def_guid.c_str();
+}
+
+uint64_t SQLite3PersistenceServiceSchemaV3::default_seqnum()
+{
+    return SequenceNumber_t::unknown().to64long();
+}
+
+double SQLite3PersistenceServiceSchemaV3::now()
+{
+    Time_t ts;
+    Time_t::now(ts);
+    return TimeConv::Time_t2SecondsDouble(ts);
 }
 
 } /* namespace rtps */
