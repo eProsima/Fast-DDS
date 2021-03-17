@@ -21,8 +21,8 @@
 
 namespace eprosima {
 namespace fastdds {
-namespace dds {
 namespace statistics {
+namespace dds {
 
 /*
  * This test checks that STATISTICS_DATAWRITER_QOS correctly sets the expected QoS.
@@ -68,8 +68,8 @@ TEST(StatisticsQosTests, StatisticsDataReaderQosTest)
 #endif // FASTDDS_STATISTICS
 }
 
-} // namespace statistics
 } // namespace dds
+} // namespace statistics
 } // namespace fastdds
 } // namespace eprosima
 
