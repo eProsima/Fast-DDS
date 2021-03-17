@@ -26,7 +26,7 @@
 #include <fastdds/rtps/attributes/RTPSParticipantAttributes.h>
 #include <fastrtps/qos/ReaderQos.h>
 #include <fastrtps/qos/WriterQos.h>
-#include <fastdds/statistics/Listeners.hpp>
+#include <fastdds/statistics/IListeners.hpp>
 
 namespace eprosima {
 

@@ -27,7 +27,7 @@
 #include <fastdds/rtps/builtin/data/WriterProxyData.h>
 #include <fastrtps/utils/TimedConditionVariable.hpp>
 #include "../history/ReaderHistory.h"
-#include <fastdds/statistics/Listeners.hpp>
+#include <fastdds/statistics/IListeners.hpp>
 
 #include <functional>
 

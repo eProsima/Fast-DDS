@@ -27,7 +27,7 @@
 #include <fastrtps/utils/collections/ResourceLimitedVector.hpp>
 #include <fastdds/rtps/common/LocatorSelector.hpp>
 #include <fastdds/rtps/messages/RTPSMessageSenderInterface.hpp>
-#include <fastdds/statistics/Listeners.hpp>
+#include <fastdds/statistics/IListeners.hpp>
 
 #include <vector>
 #include <memory>

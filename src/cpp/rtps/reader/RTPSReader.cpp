@@ -376,6 +376,8 @@ bool RTPSReader::is_sample_valid(
     return true;
 }
 
+#ifdef FASTDDS_STATISTICS
+
 bool RTPSReader::add_statistics_listener(
             std::shared_ptr<fastdds::statistics::IListener> listener)
 {
@@ -389,6 +391,8 @@ bool RTPSReader::remove_statistics_listener(
      (void)listener;
      return false;
 }
+
+#endif // FASTDDS_STATISTICS
 
 } /* namespace rtps */
 } /* namespace fastrtps */
