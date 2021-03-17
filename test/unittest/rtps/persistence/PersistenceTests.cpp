@@ -334,7 +334,7 @@ TEST_P(PersistenceTest, SchemaVersionUpdate)
 {
     auto from = GetParam();
 
-    ASSERT_LT(from,3);
+    ASSERT_LT(from, 3);
 
     const char* persist_guid = "TEST_WRITER";
     sqlite3* db = nullptr;
@@ -447,4 +447,4 @@ int main(
 #define GTEST_INSTANTIATE_TEST_MACRO(x, y, z) INSTANTIATE_TEST_CASE_P(x, y, z, )
 #endif // ifdef INSTANTIATE_TEST_SUITE_P
 
-GTEST_INSTANTIATE_TEST_MACRO(PersistenceSchemaUpgrades, PersistenceTest, testing::Values(1,2));
+GTEST_INSTANTIATE_TEST_MACRO(PersistenceSchemaUpgrades, PersistenceTest, testing::Values(1, 2));

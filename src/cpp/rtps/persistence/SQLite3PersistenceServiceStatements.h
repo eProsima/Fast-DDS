@@ -154,14 +154,14 @@ class SQLite3PersistenceServiceSchemaV3
 public:
 
     static constexpr const char* const writer_histories_table =
-         "guid TEXT,"
-         "seq_num INTEGER CHECK(seq_num > 0),"
-         "instance BLOB CHECK(length(instance)=16),"
-         "payload BLOB,"
-         "related_sample_guid TEXT,"
-         "related_sample_seq_num,"
-         "source_timestamp REAL,"
-         "PRIMARY KEY(guid, seq_num DESC)";
+            "guid TEXT,"
+            "seq_num INTEGER CHECK(seq_num > 0),"
+            "instance BLOB CHECK(length(instance)=16),"
+            "payload BLOB,"
+            "related_sample_guid TEXT,"
+            "related_sample_seq_num,"
+            "source_timestamp REAL,"
+            "PRIMARY KEY(guid, seq_num DESC)";
 
     static constexpr const char* const writer_states_table =
             SQLite3PersistenceServiceSchemaV2::writer_states_table;
@@ -209,7 +209,8 @@ public:
 
     //! Generates a temporary table with the default values of the different
     // library types managed by the database
-    static bool database_create_temporary_defaults_table(sqlite3* db);
+    static bool database_create_temporary_defaults_table(
+            sqlite3* db);
 
     inline static std::string& update_from_v2_statement()
     {
@@ -221,7 +222,8 @@ public:
                 // substitute the old writers_histories table
                 + "ALTER TABLE writers_histories RENAME TO old_writers_histories;"
                 + writers_histories_table_create_statement()
-                + "INSERT INTO writers_histories \
+                +
+                "INSERT INTO writers_histories \
                      SELECT \
                          old.guid, \
                          old.seq_num, \

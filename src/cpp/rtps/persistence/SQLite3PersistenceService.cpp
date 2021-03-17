@@ -83,9 +83,9 @@ static int upgrade(
     // iterate if not direct upgrade
     if (from < to)
     {
-        if(SQLITE_ERROR != upgrade(db, from, to-1))
+        if (SQLITE_ERROR != upgrade(db, from, to - 1))
         {
-            return upgrade(db, to-1, to);
+            return upgrade(db, to - 1, to);
         }
     }
 
@@ -205,7 +205,8 @@ SQLite3PersistenceService::SQLite3PersistenceService(
     sqlite3_prepare_v3(db_, "SELECT seq_num, instance, payload, related_sample_guid, related_sample_seq_num, source_timestamp "
             "FROM writers_histories WHERE guid=?;", -1,
             SQLITE_PREPARE_PERSISTENT,
-            &load_writer_stmt_, NULL);
+            &load_writer_stmt_,
+            NULL);
     sqlite3_prepare_v3(db_, "INSERT INTO writers_histories VALUES(?,?,?,?,?,?,?);", -1, SQLITE_PREPARE_PERSISTENT,
             &add_writer_change_stmt_, NULL);
     sqlite3_prepare_v3(db_, "DELETE FROM writers_histories WHERE guid=? AND seq_num=?;", -1, SQLITE_PREPARE_PERSISTENT,
@@ -304,7 +305,7 @@ bool SQLite3PersistenceService::load_writer_from_storage(
                 using namespace std;
                 // GUID_t
                 istringstream is(string(reinterpret_cast<const char*>(sqlite3_column_text(load_writer_stmt_, 3))));
-                auto & si = change->write_params.related_sample_identity();
+                auto& si = change->write_params.related_sample_identity();
                 is >> si.writer_guid();
                 // Sequence Number
                 SequenceNumber_t rsn(sqlite3_column_int64(load_writer_stmt_, 4));
@@ -367,7 +368,7 @@ bool SQLite3PersistenceService::add_writer_change_to_storage(
             {
                 using namespace std;
                 ostringstream os;
-                auto & si = change.write_params.related_sample_identity();
+                auto& si = change.write_params.related_sample_identity();
                 os << si.writer_guid();
                 auto guids = os.str();
 
@@ -465,7 +466,8 @@ bool SQLite3PersistenceService::update_writer_seq_on_storage(
     return false;
 }
 
-bool SQLite3PersistenceServiceSchemaV3::database_create_temporary_defaults_table(sqlite3* db)
+bool SQLite3PersistenceServiceSchemaV3::database_create_temporary_defaults_table(
+        sqlite3* db)
 {
     using namespace std;
 
@@ -473,9 +475,9 @@ bool SQLite3PersistenceServiceSchemaV3::database_create_temporary_defaults_table
 
     // create temporary table
     int rc = sqlite3_exec(
-            db,
-            "CREATE TEMP TABLE IF NOT EXISTS Defaults (Name TEST PRIMARY KEY, Value TEST);",
-            0, 0, 0);
+        db,
+        "CREATE TEMP TABLE IF NOT EXISTS Defaults (Name TEST PRIMARY KEY, Value TEST);",
+        0, 0, 0);
 
     if (rc != SQLITE_OK)
     {
@@ -484,10 +486,10 @@ bool SQLite3PersistenceServiceSchemaV3::database_create_temporary_defaults_table
 
     // Insert default values
     sqlite3_prepare_v3(
-            db,
-            "INSERT OR REPLACE INTO TEMP.Defaults VALUES (?, ?);",
-            -1, SQLITE_PREPARE_PERSISTENT,
-            &insert_default_stmt, NULL);
+        db,
+        "INSERT OR REPLACE INTO TEMP.Defaults VALUES (?, ?);",
+        -1, SQLITE_PREPARE_PERSISTENT,
+        &insert_default_stmt, NULL);
 
     // Default GUID_t value
     sqlite3_reset(insert_default_stmt);
@@ -526,7 +528,7 @@ bool SQLite3PersistenceServiceSchemaV3::database_create_temporary_defaults_table
     finalize_statement(insert_default_stmt);
 
     return true;
-};
+}
 
 const char* SQLite3PersistenceServiceSchemaV3::default_guid()
 {
@@ -534,7 +536,7 @@ const char* SQLite3PersistenceServiceSchemaV3::default_guid()
 
     static string def_guid;
 
-    if(def_guid.empty())
+    if (def_guid.empty())
     {
         ostringstream ss;
         auto def = GUID_t::unknown();
