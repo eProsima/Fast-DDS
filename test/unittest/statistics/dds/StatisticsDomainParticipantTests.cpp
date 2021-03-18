@@ -47,13 +47,17 @@ TEST(StatisticsDomainParticipantTests, NarrowDomainParticipantTest)
             create_participant(0, eprosima::fastdds::dds::PARTICIPANT_QOS_DEFAULT);
     ASSERT_NE(participant, nullptr);
 
+    const eprosima::fastdds::dds::DomainParticipant * const_participant = participant;
+
 #ifndef FASTDDS_STATISTICS
     eprosima::fastdds::statistics::dds::DomainParticipant * statistics_participant =
             eprosima::fastdds::statistics::dds::DomainParticipant::narrow(participant);
     EXPECT_EQ(statistics_participant, nullptr);
 
-    ASSERT_TRUE(eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->delete_participant(participant) == 
-            eprosima::fastrtps::types::ReturnCode_t::RETCODE_OK);
+    const eprosima::fastdds::statistics::dds::DomainParticipant * const_statistics_participant =
+            eprosima::fastdds::statistics::dds::DomainParticipant::narrow(const_participant);
+    EXPECT_EQ(const_statistics_participant, nullptr);
+
 #else   
     logError(STATISTICS_DOMAINPARTICIPANT_TEST, "This test is going to fail because API is not yet implemented.")
 
@@ -61,22 +65,21 @@ TEST(StatisticsDomainParticipantTests, NarrowDomainParticipantTest)
             eprosima::fastdds::statistics::dds::DomainParticipant::narrow(participant);
     EXPECT_NE(statistics_participant, nullptr);
 
-    const eprosima::fastdds::dds::DomainParticipant * const_participant = participant;
     const eprosima::fastdds::statistics::dds::DomainParticipant * const_statistics_participant =
             eprosima::fastdds::statistics::dds::DomainParticipant::narrow(const_participant);
     EXPECT_NE(const_statistics_participant, nullptr);
 
-    participant = nullptr;
-    statistics_participant = eprosima::fastdds::statistics::dds::DomainParticipant::narrow(participant);
+    eprosima::fastdds::dds::DomainParticipant* null_participant = nullptr;
+    statistics_participant = eprosima::fastdds::statistics::dds::DomainParticipant::narrow(null_participant);
     EXPECT_EQ(statistics_participant, nullptr);
 
     const_participant = nullptr;
     const_statistics_participant = eprosima::fastdds::statistics::dds::DomainParticipant::narrow(const_participant);
     EXPECT_EQ(const_statistics_participant, nullptr);
 
-    ASSERT_TRUE(eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->delete_participant(statistics_participant) == 
-            eprosima::fastrtps::types::ReturnCode_t::RETCODE_ERROR);
 #endif // FASTDDS_STATISTICS
+    ASSERT_EQ(eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->delete_participant(participant), 
+            eprosima::fastrtps::types::ReturnCode_t::RETCODE_OK);
 }
 
 /*
