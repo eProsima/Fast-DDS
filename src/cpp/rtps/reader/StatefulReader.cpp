@@ -452,7 +452,7 @@ bool StatefulReader::processDataMsg(
 
             if (is_datasharing_compatible_ && datasharing_listener_->writer_is_matched(change->writerGUID))
             {
-                //We may receive the change from the listener (with owner a ReaderPool) or intraprocess (with owner a WriterPool)
+                // We may receive the change from the listener (with owner a ReaderPool) or intraprocess (with owner a WriterPool)
                 ReaderPool* datasharing_pool = dynamic_cast<ReaderPool*>(payload_owner);
                 if (!datasharing_pool)
                 {

@@ -405,10 +405,10 @@ bool StatelessReader::processDataMsg(
         IPayloadPool* payload_owner = change->payload_owner();
 
         bool is_datasharing = std::any_of(matched_writers_.begin(), matched_writers_.end(),
-                   [&change](const RemoteWriterInfo_t& writer)
-                   {
-                       return (writer.guid == change->writerGUID) && (writer.is_datasharing);
-                   });
+                        [&change](const RemoteWriterInfo_t& writer)
+                        {
+                            return (writer.guid == change->writerGUID) && (writer.is_datasharing);
+                        });
 
         if (is_datasharing)
         {

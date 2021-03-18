@@ -919,7 +919,7 @@ bool StatelessWriter::matched_reader_add(
 
     locator_selector_.add_entry(new_reader->locator_selector_entry());
 
-    // Local datasharing readers handle transient history themselves
+    // Remote datasharing readers handle transient history themselves
     if ((!new_reader->is_datasharing_reader() || new_reader->is_local_reader()) &&
             mp_history->getHistorySize() > 0 &&
             data.m_qos.m_durability.kind >= TRANSIENT_LOCAL_DURABILITY_QOS)

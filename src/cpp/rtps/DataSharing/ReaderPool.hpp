@@ -65,6 +65,7 @@ public:
         }
 
         // If owner is not this, then it must be an intraprocess datasharing writer
+        assert(nullptr != dynamic_cast<DataSharingPayloadPool*>(data_owner));
         PayloadNode* payload = PayloadNode::get_from_data(data.data);
         read_from_shared_history(cache_change, payload);
         return true;

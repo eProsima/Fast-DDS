@@ -40,7 +40,6 @@
 #include <fastdds/rtps/reader/RTPSReader.h>
 
 #include <rtps/reader/WriterProxy.h>
-#include <rtps/DataSharing/ReaderPool.hpp>
 #include <rtps/DataSharing/DataSharingPayloadPool.hpp>
 
 
@@ -84,11 +83,7 @@ struct ReadTakeCommand
         assert(0 <= remaining_samples_);
 
         current_slot_ = data_values_.length();
-        finished_ = nullptr == instance.second || remaining_samples_ == 0;
-        if (remaining_samples_ == 0)
-        {
-            return_value_ = ReturnCode_t::RETCODE_OK;
-        }
+        finished_ = nullptr == instance.second;
     }
 
     ~ReadTakeCommand()
@@ -104,13 +99,6 @@ struct ReadTakeCommand
     bool add_instance(
             bool take_samples)
     {
-        // Shortcut for null size requests
-        if (0 == remaining_samples_ && ReturnCode_t::RETCODE_NO_DATA == return_value_)
-        {
-            return_value_ = ReturnCode_t::RETCODE_OK;
-            return false;
-        }
-
         // Advance to the first instance with a valid state
         if (!go_to_first_valid_instance())
         {
@@ -158,6 +146,7 @@ struct ReadTakeCommand
                 }
 
                 // Add sample and info to collections
+                ReturnCode_t previous_return_value = return_value_;
                 bool added = add_sample(change, remove_change);
                 reader_->end_sample_access_nts(change, wp, added);
 
@@ -170,6 +159,7 @@ struct ReadTakeCommand
                     data_values_.length(current_slot_);
                     sample_infos_.length(current_slot_);
 
+                    return_value_ = previous_return_value;
                     finished_ = false;
 
                     remove_change = true;
@@ -203,9 +193,6 @@ struct ReadTakeCommand
                 sample_infos_[slot].sample_rank = n;
                 ++n;
             }
-
-            // Mark that some data is available
-            return_value_ = ReturnCode_t::RETCODE_OK;
         }
 
         next_instance();
@@ -287,6 +274,8 @@ private:
             CacheChange_t* change,
             bool& deserialization_error)
     {
+        // Mark that some data is available
+        return_value_ = ReturnCode_t::RETCODE_OK;
         bool ret_val = false;
         deserialization_error = false;
 

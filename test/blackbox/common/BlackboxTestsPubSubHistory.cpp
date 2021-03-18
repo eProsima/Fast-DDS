@@ -458,7 +458,7 @@ TEST_P(PubSubHistory, PubSubAsReliableMultithreadKeepLast1)
     {
         // on datasharing we need to give time to the reader to process the data
         // before reusing it
-        writer.resource_limits_extra_samples(100);
+        writer.resource_limits_extra_samples(200);
     }
 
     writer.history_depth(1).init();
