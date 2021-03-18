@@ -17,22 +17,22 @@
  *
  */
 
-#include <fastdds/dds/domain/DomainParticipantFactory.hpp>
-#include <fastdds/rtps/RTPSDomain.h>
-#include <fastdds/rtps/participant/RTPSParticipant.h>
+#include <string>
 
 #include <fastdds/dds/domain/DomainParticipant.hpp>
-#include <fastdds/domain/DomainParticipantImpl.hpp>
-
+#include <fastdds/dds/domain/DomainParticipantFactory.hpp>
 #include <fastdds/dds/log/Log.hpp>
-
+#include <fastdds/rtps/participant/RTPSParticipant.h>
+#include <fastdds/rtps/RTPSDomain.h>
+#include <fastdds/statistics/dds/domain/DomainParticipant.hpp>
+#include <fastrtps/types/DynamicDataFactory.h>
+#include <fastrtps/types/DynamicTypeBuilderFactory.h>
+#include <fastrtps/types/TypeObjectFactory.h>
 #include <fastrtps/xmlparser/XMLProfileManager.h>
 
-#include <fastrtps/types/DynamicTypeBuilderFactory.h>
-#include <fastrtps/types/DynamicDataFactory.h>
-#include <fastrtps/types/TypeObjectFactory.h>
-
+#include <fastdds/domain/DomainParticipantImpl.hpp>
 #include <rtps/history/TopicPayloadPoolRegistry.hpp>
+#include <utils/SystemInfo.hpp>
 
 using namespace eprosima::fastrtps::xmlparser;
 
@@ -424,6 +424,18 @@ void DomainParticipantFactory::participant_has_been_deleted(
             participants_.erase(it);
         }
     }
+}
+
+const std::string& DomainParticipantFactory::load_statistics_profiles_from_env()
+{
+    static std::string statistics_profiles;
+    const char* data;
+    if (ReturnCode_t::RETCODE_OK == SystemInfo::get_env(
+            eprosima::fastdds::statistics::dds::FASTDDS_STATISTICS_ENVIRONMENT_VARIABLE, &data))
+    {
+        statistics_profiles = data;
+    }
+    return statistics_profiles;
 }
 
 } /* namespace dds */
