@@ -22,7 +22,6 @@
 namespace eprosima {
 namespace fastdds {
 namespace statistics {
-namespace dds {
 
 //! Statistic topic that reports the write-to-notification latency between any two pairs of matched
 //! DataWriter-DataReader histories
@@ -61,7 +60,6 @@ constexpr const char* SAMPLE_DATAS_TOPIC = "_fastdds_statistics_sample_datas";
 //! Statistics topic that reports the host, user and process where the module is running
 constexpr const char* PHYSICAL_DATA_TOPIC = "_fastdds_statistics_physical_data";
 
-} // dds
 } // statistics
 } // fastdds
 } // eprosima
