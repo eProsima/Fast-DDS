@@ -119,24 +119,23 @@ struct PhysicalData
 @bit_bound(32)
 bitmask EventKind
 {
-    @position(0) NONE,
-    @position(1) HISTORY2HISTORY_LATENCY,
-    @position(2) NETWORK_LATENCY,
-    @position(3) PUBLICATION_THROUGHPUT,
-    @position(4) SUBSCRIPTION_THROUGHPUT,
-    @position(5) RTPS_SENT,
-    @position(6) RTPS_LOST,
-    @position(7) RESENT_DATAS,
-    @position(8) HEARTBEAT_COUNT,
-    @position(9) ACKNACK_COUNT,
-    @position(10) NACKFRAG_COUNT,
-    @position(11) GAP_COUNT,
-    @position(12) DATA_COUNT,
-    @position(13) PDP_PACKETS,
-    @position(14) EDP_PACKETS,
-    @position(15) DISCOVERED_ENTITY,
-    @position(16) SAMPLE_DATAS,
-    @position(17) PHYSICAL_DATA
+    @position(0) HISTORY2HISTORY_LATENCY,
+    @position(1) NETWORK_LATENCY,
+    @position(2) PUBLICATION_THROUGHPUT,
+    @position(3) SUBSCRIPTION_THROUGHPUT,
+    @position(4) RTPS_SENT,
+    @position(5) RTPS_LOST,
+    @position(6) RESENT_DATAS,
+    @position(7) HEARTBEAT_COUNT,
+    @position(8) ACKNACK_COUNT,
+    @position(9) NACKFRAG_COUNT,
+    @position(10) GAP_COUNT,
+    @position(11) DATA_COUNT,
+    @position(12) PDP_PACKETS,
+    @position(13) EDP_PACKETS,
+    @position(14) DISCOVERED_ENTITY,
+    @position(15) SAMPLE_DATAS,
+    @position(16) PHYSICAL_DATA
 };
 
 union Data switch(EventKind)
