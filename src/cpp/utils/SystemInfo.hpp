@@ -80,10 +80,10 @@ public:
      * is called, because it is a direct pointer to the static storage.
      * Modifying the string returned in env_value invokes undefined behavior.
      * If the environment variable is not set, a nullptr will be returned.
-     * 
+     *
      * This function is thread-safe as long as no other function modifies the host environment (in particular, POSIX
      * functions setenv, unsetenv and putenv would introduce a data race if called without synchronization.)
-     * 
+     *
      * \param [in] env_name the name of the environment variable
      * \param [out] env_value pointer to the value c-string
      * @return RETCODE_OK if the environment variable is set.
@@ -91,7 +91,8 @@ public:
      * RETCODE_BAD_PARAMETER if the provided parameters are not valid.
      */
     static ReturnCode_t get_env(
-            const char* env_name, const char** env_value)
+            const char* env_name,
+            const char** env_value)
     {
         if (env_name == nullptr || env_value == nullptr)
         {
