@@ -247,7 +247,6 @@ public:
 
         // Fill the payload metadata with the change info
         PayloadNode* node = PayloadNode::get_from_data(cache_change->serializedPayload.data);
-        node->sequence_number(cache_change->sequenceNumber);
         node->status(ALIVE);
         node->data_length(cache_change->serializedPayload.length);
         node->source_timestamp(cache_change->sourceTimestamp);
@@ -257,6 +256,9 @@ public:
         {
             node->related_sample_identity(cache_change->write_params.related_sample_identity());
         }
+
+        // Set the sequence number last, it signals the data is ready
+        node->sequence_number(cache_change->sequenceNumber);
 
         // Add it to the history
         history_[static_cast<uint32_t>(descriptor_->notified_end)] = segment_->get_offset_from_address(node);

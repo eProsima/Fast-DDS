@@ -67,6 +67,8 @@ public:
         // If owner is not this, then it must be an intraprocess datasharing writer
         assert(nullptr != dynamic_cast<DataSharingPayloadPool*>(data_owner));
         PayloadNode* payload = PayloadNode::get_from_data(data.data);
+
+        // No need to check validity, on intraprocess there is no override of payloads
         read_from_shared_history(cache_change, payload);
         return true;
     }
@@ -159,10 +161,7 @@ public:
             // history_[next_payload_] contains the offset to the payload
             PayloadNode* payload = static_cast<PayloadNode*>(
                 segment_->get_address_from_offset(history_[static_cast<uint32_t>(next_payload_)]));
-            read_from_shared_history(cache_change, payload);
-
-            // The SN is the first thing to be invalidated on the writer
-            if (payload->sequence_number() != cache_change.sequenceNumber)
+            if (!read_from_shared_history(cache_change, payload))
             {
                 // Overriden while retrieving. Discard and continue
                 advance(next_payload_);
@@ -181,13 +180,17 @@ public:
             return;
         }
 
+        // Reset the data (may cause errors later on)
         cache_change.sequenceNumber = c_SequenceNumber_Unknown;
+        cache_change.serializedPayload.data = nullptr;
+        cache_change.payload_owner(nullptr);
     }
 
-    void read_from_shared_history(
+    bool read_from_shared_history(
             CacheChange_t& cache_change,
             PayloadNode* payload)
     {
+        // The sequence number can be unknown already, but we defer the check to the end
         cache_change.sequenceNumber = payload->sequence_number();
 
         cache_change.serializedPayload.data = payload->data();
@@ -200,7 +203,15 @@ public:
         cache_change.sourceTimestamp = payload->source_timestamp();
         cache_change.write_params.sample_identity(payload->related_sample_identity());
 
+        SequenceNumber_t check = payload->sequence_number();
+        if (check == c_SequenceNumber_Unknown || check != cache_change.sequenceNumber)
+        {
+            // data override while processing
+            return false;
+        }
+
         cache_change.payload_owner(this);
+        return true;
     }
 
     const SequenceNumber_t& get_last_read_sequence_number()

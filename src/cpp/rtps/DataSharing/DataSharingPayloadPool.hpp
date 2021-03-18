@@ -168,7 +168,7 @@ protected:
             Time_t source_timestamp;
 
             // Sequence number of the payload inside the writer
-            SequenceNumber_t sequence_number;
+            std::atomic<SequenceNumber_t> sequence_number;
 
             // GUID of the writer that created the payload
             GUID_t writer_GUID;
@@ -196,7 +196,8 @@ protected:
 
         void reset()
         {
-            metadata_.sequence_number = c_SequenceNumber_Unknown;
+            // Reset the sequence number first, it signals the data is not valid anymore
+            metadata_.sequence_number.store(c_SequenceNumber_Unknown, std::memory_order_relaxed);
             metadata_.status = fastrtps::rtps::ChangeKind_t::ALIVE;
             metadata_.data_length = 0;
             metadata_.writer_GUID = c_Guid_Unknown;
@@ -256,13 +257,14 @@ protected:
 
         SequenceNumber_t sequence_number() const
         {
-            return metadata_.sequence_number;
+            SequenceNumber_t value = metadata_.sequence_number.load(std::memory_order_relaxed);
+            return value;
         }
 
         void sequence_number(
                 SequenceNumber_t sequence_number)
         {
-            metadata_.sequence_number = sequence_number;
+            metadata_.sequence_number.store(sequence_number, std::memory_order_relaxed);
         }
 
         Time_t source_timestamp() const
