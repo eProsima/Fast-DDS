@@ -2404,24 +2404,23 @@ namespace eprosima {
              */
             enum EventKind : uint32_t
             {
-                NONE = 0x01 << 0,
-                HISTORY2HISTORY_LATENCY = 0x01 << 1,
-                NETWORK_LATENCY = 0x01 << 2,
-                PUBLICATION_THROUGHPUT = 0x01 << 3,
-                SUBSCRIPTION_THROUGHPUT = 0x01 << 4,
-                RTPS_SENT = 0x01 << 5,
-                RTPS_LOST = 0x01 << 6,
-                RESENT_DATAS = 0x01 << 7,
-                HEARTBEAT_COUNT = 0x01 << 8,
-                ACKNACK_COUNT = 0x01 << 9,
-                NACKFRAG_COUNT = 0x01 << 10,
-                GAP_COUNT = 0x01 << 11,
-                DATA_COUNT = 0x01 << 12,
-                PDP_PACKETS = 0x01 << 13,
-                EDP_PACKETS = 0x01 << 14,
-                DISCOVERED_ENTITY = 0x01 << 15,
-                SAMPLE_DATAS = 0x01 << 16,
-                PHYSICAL_DATA = 0x01 << 17
+                HISTORY2HISTORY_LATENCY = 0x01 << 0,
+                NETWORK_LATENCY = 0x01 << 1,
+                PUBLICATION_THROUGHPUT = 0x01 << 2,
+                SUBSCRIPTION_THROUGHPUT = 0x01 << 3,
+                RTPS_SENT = 0x01 << 4,
+                RTPS_LOST = 0x01 << 5,
+                RESENT_DATAS = 0x01 << 6,
+                HEARTBEAT_COUNT = 0x01 << 7,
+                ACKNACK_COUNT = 0x01 << 8,
+                NACKFRAG_COUNT = 0x01 << 9,
+                GAP_COUNT = 0x01 << 10,
+                DATA_COUNT = 0x01 << 11,
+                PDP_PACKETS = 0x01 << 12,
+                EDP_PACKETS = 0x01 << 13,
+                DISCOVERED_ENTITY = 0x01 << 14,
+                SAMPLE_DATAS = 0x01 << 15,
+                PHYSICAL_DATA = 0x01 << 16
             };
             /*!
              * @brief This class represents the union Data defined by the user in the IDL file.
