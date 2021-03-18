@@ -23,6 +23,7 @@
 #include <cctype>
 #include <algorithm>
 #include <memory>
+#include <type_traits>
 
 namespace eprosima {
 namespace fastdds {
@@ -180,54 +181,40 @@ const uint16_t MemberFlagMinimalMask = 0x003f;
 /*!
  * @brief This class represents the enumeration ReturnCode_t.
  */
-/*
-   enum ReturnCode_t : uint32_t
-   {
-    RETCODE_OK = 0,
-    RETCODE_ERROR = 1,
-    RETCODE_UNSUPPORTED = 2,
-    RETCODE_BAD_PARAMETER = 3,
-    RETCODE_PRECONDITION_NOT_MET = 4,
-    RETCODE_OUT_OF_RESOURCES = 5,
-    RETCODE_NOT_ENABLED = 6,
-    RETCODE_IMMUTABLE_POLICY = 7,
-    RETCODE_INCONSISTENT_POLICY = 8,
-    RETCODE_ALREADY_DELETED = 9,
-    RETCODE_TIMEOUT = 10,
-    RETCODE_NO_DATA = 11,
-    RETCODE_ILLEGAL_OPERATION = 12
-   };
- */
-class ReturnCode_t;
 
 class RTPS_DllAPI ReturnCode_t
 {
+    uint32_t value_;
+
 public:
 
-    ReturnCode_t(
-            uint32_t value)
+    enum
     {
-        value_ = value;
+        RETCODE_OK = 0,
+        RETCODE_ERROR = 1,
+        RETCODE_UNSUPPORTED = 2,
+        RETCODE_BAD_PARAMETER = 3,
+        RETCODE_PRECONDITION_NOT_MET = 4,
+        RETCODE_OUT_OF_RESOURCES = 5,
+        RETCODE_NOT_ENABLED = 6,
+        RETCODE_IMMUTABLE_POLICY = 7,
+        RETCODE_INCONSISTENT_POLICY = 8,
+        RETCODE_ALREADY_DELETED = 9,
+        RETCODE_TIMEOUT = 10,
+        RETCODE_NO_DATA = 11,
+        RETCODE_ILLEGAL_OPERATION = 12,
+        RETCODE_NOT_ALLOWED_BY_SECURITY = 13
+    };
+
+    ReturnCode_t()
+        : value_(RETCODE_OK)
+    {
     }
 
     ReturnCode_t(
-            const ReturnCode_t& code)
+            uint32_t e)
     {
-        value_ = code.value_;
-    }
-
-    explicit operator bool() = delete;
-
-    bool operator !() const
-    {
-        return value_ != ReturnCode_t::RETCODE_OK.value_;
-    }
-
-    ReturnCode_t& operator =(
-            const ReturnCode_t& c)
-    {
-        value_ = c.value_;
-        return *this;
+        value_ = e;
     }
 
     bool operator ==(
@@ -242,32 +229,37 @@ public:
         return value_ != c.value_;
     }
 
+    explicit operator bool() = delete;
+
     uint32_t operator ()() const
     {
         return value_;
     }
 
-    static const ReturnCode_t RETCODE_OK;
-    static const ReturnCode_t RETCODE_ERROR;
-    static const ReturnCode_t RETCODE_UNSUPPORTED;
-    static const ReturnCode_t RETCODE_BAD_PARAMETER;
-    static const ReturnCode_t RETCODE_PRECONDITION_NOT_MET;
-    static const ReturnCode_t RETCODE_OUT_OF_RESOURCES;
-    static const ReturnCode_t RETCODE_NOT_ENABLED;
-    static const ReturnCode_t RETCODE_IMMUTABLE_POLICY;
-    static const ReturnCode_t RETCODE_INCONSISTENT_POLICY;
-    static const ReturnCode_t RETCODE_ALREADY_DELETED;
-    static const ReturnCode_t RETCODE_TIMEOUT;
-    static const ReturnCode_t RETCODE_NO_DATA;
-    static const ReturnCode_t RETCODE_ILLEGAL_OPERATION;
-#if HAVE_SECURITY
-    static const ReturnCode_t RETCODE_NOT_ALLOWED_BY_SECURITY;
-#endif // HAVE_SECURITY
+    bool operator !() const
+    {
+        return value_ != 0;
+    }
 
-private:
-
-    uint32_t value_ = ReturnCode_t::RETCODE_OK.value_;
 };
+
+template<class T>
+typename std::enable_if<std::is_arithmetic<T>::value || std::is_enum<T>::value, bool>::type
+operator ==(
+        T a,
+        const ReturnCode_t& b)
+{
+    return b == a;
+}
+
+template<class T>
+typename std::enable_if<std::is_arithmetic<T>::value || std::is_enum<T>::value, bool>::type
+operator !=(
+        T a,
+        const ReturnCode_t& b)
+{
+    return b != a;
+}
 
 // TODO Remove this alias when Fast-RTPS reaches version 2
 using ResponseCode = ReturnCode_t;
