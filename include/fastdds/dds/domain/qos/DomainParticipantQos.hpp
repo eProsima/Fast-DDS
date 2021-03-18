@@ -35,6 +35,8 @@ namespace dds {
  */
 class DomainParticipantQos
 {
+    using FlowControllerDescriptorList = std::vector<std::shared_ptr<fastdds::rtps::FlowControllerDescriptor>>;
+
 public:
 
     /**
@@ -260,12 +262,12 @@ public:
         name_ = value;
     }
 
-    std::vector<std::shared_ptr<fastdds::rtps::FlowControllerDescriptor>>& flow_controllers()
+    FlowControllerDescriptorList& flow_controllers()
     {
         return flow_controllers_;
     }
 
-    const std::vector<std::shared_ptr<fastdds::rtps::FlowControllerDescriptor>>& flow_controllers() const
+    const FlowControllerDescriptorList& flow_controllers() const
     {
         return flow_controllers_;
     }
@@ -294,7 +296,7 @@ private:
     fastrtps::string_255 name_ = "RTPSParticipant";
 
     //! User defined flow controller to use alongside.
-    std::vector<std::shared_ptr<fastdds::rtps::FlowControllerDescriptor>> flow_controllers_;
+    FlowControllerDescriptorList flow_controllers_;
 
 };
 

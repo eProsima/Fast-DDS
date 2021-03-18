@@ -13,7 +13,7 @@
 // limitations under the License.
 
 #include <rtps/flowcontrol/FlowController.h>
-#include <fastdds/rtps/flowcontrol/FlowControllerDefs.hpp>
+#include <fastdds/rtps/flowcontrol/FlowControllerConsts.hpp>
 #include <thread>
 
 
@@ -21,7 +21,7 @@ namespace eprosima {
 namespace fastdds {
 namespace rtps {
 
-const char* const DEFAULT_FLOW_CONTROLLER_NAME = "DefaultFastDDSFlowController";
+const char* const FASTDDS_FLOW_CONTROLLER_DEFAULT = "FastDDSFlowControllerDefault";
 
 } // namespace rtps
 } // namespace fastdds

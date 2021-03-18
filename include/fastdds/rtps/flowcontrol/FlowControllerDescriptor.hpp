@@ -15,7 +15,8 @@
 #ifndef FASTDDS_RTPS_FLOWCONTROL_FLOWCONTROLLERDESCRIPTOR_HPP
 #define FASTDDS_RTPS_FLOWCONTROL_FLOWCONTROLLERDESCRIPTOR_HPP
 
-#include "FlowControllerDefs.hpp"
+#include "FlowControllerConsts.hpp"
+#include "FlowControllerSchedulerPolicy.hpp"
 
 namespace eprosima {
 namespace fastdds {
@@ -31,10 +32,10 @@ struct FlowControllerDescriptor
     //! Name of the flow controller.
     const char* name = nullptr;
 
-    //! Scheduler plan used by the flow controller.
+    //! Scheduler policy used by the flow controller.
     //!
     //! Default value: FlowControllerScheduler::FIFO_SCHEDULER
-    FlowControllerScheduler scheduler = FlowControllerScheduler::FIFO_SCHEDULER;
+    FlowControllerSchedulerPolicy scheduler = FlowControllerSchedulerPolicy::FIFO;
 
     //! Maximum number of bytes to be sent to network per period.
     //!
@@ -45,6 +46,7 @@ struct FlowControllerDescriptor
 
     //! Period time in milliseconds.
     //!
+    //! Period of time on which the flow controller is allowed to send max_bytes_per_period.
     //! Default value: 100ms.
     uint64_t period_ms = 100;
 };

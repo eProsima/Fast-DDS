@@ -31,7 +31,7 @@
 #include <fastdds/rtps/common/Types.h>
 #include <fastdds/rtps/common/Time_t.h>
 #include <fastdds/rtps/resources/ResourceManagement.h>
-#include <fastdds/rtps/flowcontrol/FlowControllerDefs.hpp>
+#include <fastdds/rtps/flowcontrol/FlowControllerConsts.hpp>
 
 #include <fastrtps/types/TypeObject.h>
 #include <fastrtps/utils/collections/ResourceLimitedVector.hpp>
@@ -1982,7 +1982,7 @@ public:
     PublishModeQosPolicyKind kind = SYNCHRONOUS_PUBLISH_MODE;
 
     //! Name of the flow controller used when publish mode kind is ASYNCHRONOUS_PUBLISH_MODE.
-    const char* flow_controller_name = fastdds::rtps::DEFAULT_FLOW_CONTROLLER_NAME;
+    const char* flow_controller_name = fastdds::rtps::FASTDDS_FLOW_CONTROLLER_DEFAULT;
 
     inline void clear() override
     {
