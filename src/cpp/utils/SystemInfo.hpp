@@ -94,7 +94,7 @@ public:
             const char* env_name,
             const char** env_value)
     {
-        if (env_name == nullptr || env_value == nullptr)
+        if (env_name == nullptr || env_value == nullptr || *env_name == '\0')
         {
             return ReturnCode_t::RETCODE_BAD_PARAMETER;
         }
