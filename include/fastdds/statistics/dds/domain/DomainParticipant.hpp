@@ -89,6 +89,13 @@ public:
             const eprosima::fastdds::dds::DomainParticipant* domain_participant);
 };
 
+/* Environment variable to specify a semicolon-separated list of topic names that define the statistics DataWriters that
+ * the DomainParticipant will enable when created.
+ * The topic names must conform to the topic names aliases defined in @ref topic_names.hpp.
+ * For the variable to take any effect the CMake option FASTDDS_STATISTICS must be enabled.
+ */
+const char* const FASTDDS_STATISTICS_ENVIRONMENT_VARIABLE = "FASTDDS_STATISTICS";
+
 } // namespace dds
 } // namespace statistics
 } // namespace fastdds
