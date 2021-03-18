@@ -789,6 +789,15 @@ public:
             uint32_t bytesPerPeriod,
             uint32_t periodInMs)
     {
+        static const std::string flow_controller_name("MyFlowController");
+        auto new_flow_controller = std::make_shared<eprosima::fastdds::rtps::FlowControllerDescriptor>();
+        new_flow_controller->name = flow_controller_name.c_str();
+        new_flow_controller->max_bytes_per_period = bytesPerPeriod;
+        new_flow_controller->period_ms = static_cast<uint64_t>(periodInMs);
+        participant_qos_.flow_controllers().push_back(new_flow_controller);
+        datawriter_qos_.publish_mode().flow_controller_name = flow_controller_name.c_str();
+
+
         eprosima::fastrtps::rtps::ThroughputControllerDescriptor descriptor {bytesPerPeriod, periodInMs};
         datawriter_qos_.throughput_controller() = descriptor;
 
