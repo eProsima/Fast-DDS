@@ -15,7 +15,6 @@
 #ifndef FASTDDS_RTPS_FLOWCONTROL_FLOWCONTROLLERSCHEDULERPOLICY_HPP
 #define FASTDDS_RTPS_FLOWCONTROL_FLOWCONTROLLERSCHEDULERPOLICY_HPP
 
-#include <fastrtps/fastrtps_dll.h>
 #include <cstdint>
 
 namespace eprosima {

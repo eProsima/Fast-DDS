@@ -16,14 +16,13 @@
 #define FASTDDS_RTPS_FLOWCONTROL_FLOWCONTROLLERCONSTS_HPP
 
 #include <fastrtps/fastrtps_dll.h>
-#include <cstdint>
 
 namespace eprosima {
 namespace fastdds {
 namespace rtps {
 
 //! Name of the default flow controller.
-extern const char* const FASTDDS_FLOW_CONTROLLER_DEFAULT;
+extern RTPS_DllAPI const char* const FASTDDS_FLOW_CONTROLLER_DEFAULT;
 
 } // namespace rtps
 } // namespace fastdds
