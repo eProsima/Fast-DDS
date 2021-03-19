@@ -1982,6 +1982,7 @@ public:
     PublishModeQosPolicyKind kind = SYNCHRONOUS_PUBLISH_MODE;
 
     //! Name of the flow controller used when publish mode kind is ASYNCHRONOUS_PUBLISH_MODE.
+    //! @since Functionality not implemented yet. Coming soon.
     const char* flow_controller_name = fastdds::rtps::FASTDDS_FLOW_CONTROLLER_DEFAULT;
 
     inline void clear() override

@@ -26,6 +26,7 @@ namespace rtps {
  * Configuration values for creating flow controllers.
  *
  * This descriptor is used to define the configuration applied in the creation of a flow controller.
+ * @since Functionality not implemented yet. Coming soon.
  */
 struct FlowControllerDescriptor
 {
