@@ -22,6 +22,7 @@ namespace eprosima {
 namespace fastdds {
 namespace rtps {
 
+//! Name of the default flow controller.
 extern const char* const FASTDDS_FLOW_CONTROLLER_DEFAULT;
 
 } // namespace rtps
