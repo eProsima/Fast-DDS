@@ -41,7 +41,7 @@ namespace dds {
  */
 class DomainParticipant : public eprosima::fastdds::dds::DomainParticipant
 {
-        DomainParticipant() = delete;
+    DomainParticipant() = delete;
 
 public:
 
