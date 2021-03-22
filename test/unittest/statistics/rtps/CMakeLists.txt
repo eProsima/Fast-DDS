@@ -30,7 +30,7 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             )
         target_include_directories(RTPSStatisticsTests PRIVATE ${GTEST_INCLUDE_DIRS}
             ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include ${PROJECT_SOURCE_DIR}/src/cpp)
-        target_link_libraries(RTPSStatisticsTests fastrtps fastcdr ${GTEST_LIBRARIES})
+        target_link_libraries(RTPSStatisticsTests fastrtps fastcdr ${GTEST_LIBRARIES} ${GMOCK_LIBRARIES})
         add_gtest(RTPSStatisticsTests SOURCES ${STATISTICS_RTPS_TESTS_SOURCE})
 
     endif()

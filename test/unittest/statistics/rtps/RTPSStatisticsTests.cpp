@@ -13,6 +13,7 @@
 // limitations under the License.
 
 #include <gtest/gtest.h>
+#include <gmock/gmock.h>
 
 #include <fastdds/rtps/RTPSDomain.h>
 #include <fastdds/rtps/attributes/HistoryAttributes.h>
@@ -32,21 +33,16 @@ namespace fastrtps {
 namespace rtps {
 namespace statistics {
 
-class TestListener : public fastdds::statistics::IListener
+struct MockListener : fastdds::statistics::IListener
 {
-public:
-
-    void on_statistics_data(
-            const fastdds::statistics::Data& ) override
-    {
-    }
-
+    MOCK_METHOD(void, on_statistics_data, (const fastdds::statistics::Data& ), (override));
 };
 
 /*
  * This test checks RTPSParticipant, RTPSWriter and RTPSReader statistics module related APIs.
- * Creates dummy listener objects and associates them to RTPS entities of each kind covering
- * the different possible cases: already registered, non-registered, already unregistered.
+ *  1. Creates dummy listener objects and associates them to RTPS entities of each kind covering
+ *     the different possible cases: already registered, non-registered, already unregistered.
+ *  2. Verify the different kinds of rtps layer callbacks are performed as expected.
  */
 TEST(RTPSStatisticsTests, statistics_rpts_listener_management)
 {
@@ -63,20 +59,21 @@ TEST(RTPSStatisticsTests, statistics_rpts_listener_management)
 
     HistoryAttributes h_attr;
     h_attr.payloadMaxSize = 255;
-    WriterHistory* w_history = new WriterHistory(h_attr);
-    ReaderHistory* r_history = new ReaderHistory(h_attr);
+    unique_ptr<WriterHistory> w_history(new WriterHistory(h_attr));
+    unique_ptr<ReaderHistory> r_history(new ReaderHistory(h_attr));
 
     WriterAttributes w_attr;
-    RTPSWriter* writer = RTPSDomain::createRTPSWriter(participant, w_attr, w_history);
+    RTPSWriter* writer = RTPSDomain::createRTPSWriter(participant, w_attr, w_history.get());
     ASSERT_NE(nullptr, writer);
 
     ReaderAttributes r_att;
-    RTPSReader* reader = RTPSDomain::createRTPSReader(participant, r_att, r_history);
+    RTPSReader* reader = RTPSDomain::createRTPSReader(participant, r_att, r_history.get());
     ASSERT_NE(nullptr, reader);
 
+    // Check API add and remove interfaces
     {
-        auto listener1 = make_shared<TestListener>();
-        auto listener2 = make_shared<TestListener>();
+        auto listener1 = make_shared<MockListener>();
+        auto listener2 = make_shared<MockListener>();
         auto nolistener = listener1;
         nolistener.reset();
 
@@ -138,6 +135,69 @@ TEST(RTPSStatisticsTests, statistics_rpts_listener_management)
         EXPECT_TRUE(reader->remove_statistics_listener(listener1));
         // + fails if a listener is already removed
         EXPECT_FALSE(reader->remove_statistics_listener(listener1));
+    }
+
+    // Check PUBLICATION_THROUGHPUT and SUBSCRIPTION_THROUGHPUT callbacks are performed
+    {
+        using namespace ::testing;
+
+        auto participant_listener = make_shared<MockListener>();
+        auto writer_listener = make_shared<MockListener>();
+        auto reader_listener = make_shared<MockListener>();
+        ASSERT_TRUE(participant->add_statistics_listener(participant_listener,
+                fastdds::statistics::EventKind::DISCOVERED_ENTITY));
+        ASSERT_TRUE(writer->add_statistics_listener(writer_listener));
+        ASSERT_TRUE(reader->add_statistics_listener(reader_listener));
+
+        // We must received the discovery time of each endpoint
+        EXPECT_CALL(*writer_listener, on_statistics_data)
+                .Times(2);
+
+        // match writer and reader on a dummy topic
+        TopicAttributes Tatt;
+        Tatt.topicKind = NO_KEY;
+        Tatt.topicDataType = "string";
+        Tatt.topicName = "statisticsTopic";
+        WriterQos Wqos;
+        ReaderQos Rqos;
+        participant->registerWriter(writer, Tatt, Wqos);
+        participant->registerReader(reader, Tatt, Rqos);
+
+        // Check callbacks on data exchange, at least, we must received:
+        // + RTPSWriter: PUBLICATION_THROUGHPUT, RTPS_SENT, RESENT_DATAS,
+        //               GAP_COUNT, DATA_COUNT, SAMPLE_DATAS & PHYSICAL_DATA
+        //   optionally: ACKNACK_COUNT & NACKFRAG_COUNT
+        EXPECT_CALL(*writer_listener, on_statistics_data)
+                .Times(AtMost(7));
+
+        // + RTPSReader: SUBSCRIPTION_THROUGHPUT, RTPS_LOST, DATA_COUNT,
+        //               SAMPLE_DATAS & PHYSICAL_DATA
+        //   optionally: HEARTBEAT_COUNT
+        EXPECT_CALL(*reader_listener, on_statistics_data)
+                .Times(AtMost(5));
+
+        // exchange data
+        uint32_t payloadMaxSize = h_attr.payloadMaxSize;
+        auto writer_change = writer->new_change(
+            [payloadMaxSize]() -> uint32_t
+            {
+                return payloadMaxSize;
+            },
+            ALIVE);
+        ASSERT_NE(nullptr, writer_change);
+        ASSERT_TRUE(w_history->add_change(writer_change));
+
+        // wait for reception
+        EXPECT_TRUE(reader->wait_for_unread_cache(Duration_t(5, 0)));
+
+        // receive the sample
+        CacheChange_t* reader_change = nullptr;
+        ASSERT_TRUE(reader->nextUntakenCache(&reader_change, nullptr));
+
+        EXPECT_TRUE(writer->release_change(writer_change));
+        reader->releaseCache(reader_change);
+        EXPECT_TRUE(writer->remove_statistics_listener(writer_listener));
+        EXPECT_TRUE(reader->remove_statistics_listener(reader_listener));
     }
 
     // Remove the entities
