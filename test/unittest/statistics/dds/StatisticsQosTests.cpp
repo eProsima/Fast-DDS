@@ -35,7 +35,7 @@ namespace dds {
  */
 TEST(StatisticsQosTests, StatisticsDataWriterQosTest)
 {
-// TODO(jlbueno) Remove this guards after implementation. Here to prevent failures in current CI.
+    // TODO(jlbueno) Remove this guards after implementation. Here to prevent failures in current CI.
 #ifdef FASTDDS_STATISTICS
     logError(STATISTICS_QOS_TEST, "This test is going to fail because API is not yet implemented.")
 
@@ -57,7 +57,7 @@ TEST(StatisticsQosTests, StatisticsDataWriterQosTest)
  */
 TEST(StatisticsQosTests, StatisticsDataReaderQosTest)
 {
-// TODO(jlbueno) Remove this guards after implementation. Here to prevent failures in current CI.
+    // TODO(jlbueno) Remove this guards after implementation. Here to prevent failures in current CI.
 #ifdef FASTDDS_STATISTICS
     logError(STATISTICS_QOS_TEST, "This test is going to fail because API is not yet implemented.")
 

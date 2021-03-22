@@ -42,30 +42,30 @@ namespace dds {
  */
 TEST(StatisticsDomainParticipantTests, NarrowDomainParticipantTest)
 {
-    eprosima::fastdds::dds::DomainParticipant * participant =
+    eprosima::fastdds::dds::DomainParticipant* participant =
             eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->
-            create_participant(0, eprosima::fastdds::dds::PARTICIPANT_QOS_DEFAULT);
+                    create_participant(0, eprosima::fastdds::dds::PARTICIPANT_QOS_DEFAULT);
     ASSERT_NE(participant, nullptr);
 
-    const eprosima::fastdds::dds::DomainParticipant * const_participant = participant;
+    const eprosima::fastdds::dds::DomainParticipant* const_participant = participant;
 
 #ifndef FASTDDS_STATISTICS
-    eprosima::fastdds::statistics::dds::DomainParticipant * statistics_participant =
+    eprosima::fastdds::statistics::dds::DomainParticipant* statistics_participant =
             eprosima::fastdds::statistics::dds::DomainParticipant::narrow(participant);
     EXPECT_EQ(statistics_participant, nullptr);
 
-    const eprosima::fastdds::statistics::dds::DomainParticipant * const_statistics_participant =
+    const eprosima::fastdds::statistics::dds::DomainParticipant* const_statistics_participant =
             eprosima::fastdds::statistics::dds::DomainParticipant::narrow(const_participant);
     EXPECT_EQ(const_statistics_participant, nullptr);
 
-#else   
+#else
     logError(STATISTICS_DOMAINPARTICIPANT_TEST, "This test is going to fail because API is not yet implemented.")
 
-    eprosima::fastdds::statistics::dds::DomainParticipant * statistics_participant =
+    eprosima::fastdds::statistics::dds::DomainParticipant* statistics_participant =
             eprosima::fastdds::statistics::dds::DomainParticipant::narrow(participant);
     EXPECT_NE(statistics_participant, nullptr);
 
-    const eprosima::fastdds::statistics::dds::DomainParticipant * const_statistics_participant =
+    const eprosima::fastdds::statistics::dds::DomainParticipant* const_statistics_participant =
             eprosima::fastdds::statistics::dds::DomainParticipant::narrow(const_participant);
     EXPECT_NE(const_statistics_participant, nullptr);
 
@@ -78,7 +78,7 @@ TEST(StatisticsDomainParticipantTests, NarrowDomainParticipantTest)
     EXPECT_EQ(const_statistics_participant, nullptr);
 
 #endif // FASTDDS_STATISTICS
-    ASSERT_EQ(eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->delete_participant(participant), 
+    ASSERT_EQ(eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->delete_participant(participant),
             eprosima::fastrtps::types::ReturnCode_t::RETCODE_OK);
 }
 
@@ -107,9 +107,9 @@ TEST(StatisticsDomainParticipantTests, NarrowDomainParticipantTest)
  */
 TEST(StatisticsDomainParticipantTests, EnableDisableStatisticsDataWriterTest)
 {
-    eprosima::fastdds::dds::DomainParticipant * participant =
+    eprosima::fastdds::dds::DomainParticipant* participant =
             eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->
-            create_participant(0, eprosima::fastdds::dds::PARTICIPANT_QOS_DEFAULT);
+                    create_participant(0, eprosima::fastdds::dds::PARTICIPANT_QOS_DEFAULT);
     ASSERT_NE(participant, nullptr);
 
     eprosima::fastdds::dds::DataWriterQos inconsistent_qos = eprosima::fastdds::dds::DATAWRITER_QOS_DEFAULT;
@@ -123,7 +123,7 @@ TEST(StatisticsDomainParticipantTests, EnableDisableStatisticsDataWriterTest)
     ASSERT_NE(statistics_participant, nullptr);
 
     eprosima::fastrtps::types::ReturnCode_t ret = statistics_participant->enable_statistics_datawriter(
-            HISTORY_LATENCY_TOPIC, STATISTICS_DATAWRITER_QOS);
+        HISTORY_LATENCY_TOPIC, STATISTICS_DATAWRITER_QOS);
     EXPECT_EQ(ret, eprosima::fastrtps::types::ReturnCode_t::RETCODE_UNSUPPORTED);
 
     ret = statistics_participant->enable_statistics_datawriter("INVALID_TOPIC", inconsistent_qos);
@@ -138,7 +138,7 @@ TEST(StatisticsDomainParticipantTests, EnableDisableStatisticsDataWriterTest)
     logError(STATISTICS_DOMAINPARTICIPANT_TEST, "This test is going to fail because API is not yet implemented.")
 
     // 2. Create DomainParticipant and narrow to eprosima::fastdds::statistics::dds::DomainParticipant
-    eprosima::fastdds::statistics::dds::DomainParticipant * statistics_participant =
+    eprosima::fastdds::statistics::dds::DomainParticipant* statistics_participant =
             eprosima::fastdds::statistics::dds::DomainParticipant::narrow(participant);
     ASSERT_NE(statistics_participant, nullptr);
 
@@ -147,21 +147,21 @@ TEST(StatisticsDomainParticipantTests, EnableDisableStatisticsDataWriterTest)
 
     // Create TypeSupports for the different DataTypes
     eprosima::fastdds::dds::TypeSupport history_latency_type(
-            new eprosima::fastdds::statistics::WriterReaderDataPubSubType);
+        new eprosima::fastdds::statistics::WriterReaderDataPubSubType);
     eprosima::fastdds::dds::TypeSupport network_latency_type(
-            new eprosima::fastdds::statistics::Locator2LocatorDataPubSubType);
+        new eprosima::fastdds::statistics::Locator2LocatorDataPubSubType);
     eprosima::fastdds::dds::TypeSupport throughput_type(
-            new eprosima::fastdds::statistics::EntityDataPubSubType);
+        new eprosima::fastdds::statistics::EntityDataPubSubType);
     eprosima::fastdds::dds::TypeSupport rtps_traffic_type(
-            new eprosima::fastdds::statistics::Entity2LocatorTrafficPubSubType);
+        new eprosima::fastdds::statistics::Entity2LocatorTrafficPubSubType);
     eprosima::fastdds::dds::TypeSupport count_type(
-            new eprosima::fastdds::statistics::EntityCountPubSubType);
+        new eprosima::fastdds::statistics::EntityCountPubSubType);
     eprosima::fastdds::dds::TypeSupport discovery_type(
-            new eprosima::fastdds::statistics::DiscoveryTimePubSubType);
+        new eprosima::fastdds::statistics::DiscoveryTimePubSubType);
     eprosima::fastdds::dds::TypeSupport sample_identity_count_type(
-            new eprosima::fastdds::statistics::SampleIdentityCountPubSubType);
+        new eprosima::fastdds::statistics::SampleIdentityCountPubSubType);
     eprosima::fastdds::dds::TypeSupport physical_data_type(
-            new eprosima::fastdds::statistics::PhysicalDataPubSubType);
+        new eprosima::fastdds::statistics::PhysicalDataPubSubType);
     eprosima::fastdds::dds::TypeSupport null_type(nullptr);
 
     // Check that the types are not registered yet
@@ -172,7 +172,7 @@ TEST(StatisticsDomainParticipantTests, EnableDisableStatisticsDataWriterTest)
     EXPECT_NE(count_type, statistics_participant->find_type(count_type.get_type_name()));
     EXPECT_NE(discovery_type, statistics_participant->find_type(discovery_type.get_type_name()));
     EXPECT_NE(sample_identity_count_type, statistics_participant->find_type(
-            sample_identity_count_type.get_type_name()));
+                sample_identity_count_type.get_type_name()));
     EXPECT_NE(physical_data_type, statistics_participant->find_type(physical_data_type.get_type_name()));
 
     // Check that the topics do not exist
@@ -195,7 +195,7 @@ TEST(StatisticsDomainParticipantTests, EnableDisableStatisticsDataWriterTest)
     EXPECT_EQ(nullptr, statistics_participant->lookup_topicdescription(PHYSICAL_DATA_TOPIC));
 
     eprosima::fastrtps::types::ReturnCode_t ret = statistics_participant->enable_statistics_datawriter(
-            HISTORY_LATENCY_TOPIC, STATISTICS_DATAWRITER_QOS);
+        HISTORY_LATENCY_TOPIC, STATISTICS_DATAWRITER_QOS);
     EXPECT_EQ(ret, eprosima::fastrtps::types::ReturnCode_t::RETCODE_OK);
     EXPECT_NE(nullptr, statistics_participant->lookup_topicdescription(HISTORY_LATENCY_TOPIC));
     EXPECT_EQ(history_latency_type, statistics_participant->find_type(history_latency_type.get_type_name()));
@@ -211,7 +211,7 @@ TEST(StatisticsDomainParticipantTests, EnableDisableStatisticsDataWriterTest)
     EXPECT_EQ(throughput_type, statistics_participant->find_type(throughput_type.get_type_name()));
 
     ret = statistics_participant->enable_statistics_datawriter(
-            SUBSCRIPTION_THROUGHPUT_TOPIC, STATISTICS_DATAWRITER_QOS);
+        SUBSCRIPTION_THROUGHPUT_TOPIC, STATISTICS_DATAWRITER_QOS);
     EXPECT_EQ(ret, eprosima::fastrtps::types::ReturnCode_t::RETCODE_OK);
     EXPECT_NE(nullptr, statistics_participant->lookup_topicdescription(SUBSCRIPTION_THROUGHPUT_TOPIC));
     EXPECT_EQ(throughput_type, statistics_participant->find_type(throughput_type.get_type_name()));
@@ -275,7 +275,7 @@ TEST(StatisticsDomainParticipantTests, EnableDisableStatisticsDataWriterTest)
     EXPECT_EQ(ret, eprosima::fastrtps::types::ReturnCode_t::RETCODE_OK);
     EXPECT_NE(nullptr, statistics_participant->lookup_topicdescription(SAMPLE_DATAS_TOPIC));
     EXPECT_EQ(sample_identity_count_type, statistics_participant->find_type(
-            sample_identity_count_type.get_type_name()));
+                sample_identity_count_type.get_type_name()));
 
     ret = statistics_participant->enable_statistics_datawriter(PHYSICAL_DATA_TOPIC, STATISTICS_DATAWRITER_QOS);
     EXPECT_EQ(ret, eprosima::fastrtps::types::ReturnCode_t::RETCODE_OK);
@@ -310,7 +310,7 @@ TEST(StatisticsDomainParticipantTests, EnableDisableStatisticsDataWriterTest)
 
     // 9. Try to delete DomainParticipant and check that it fails because statistics DataWriters are still enabled
     EXPECT_EQ(eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->
-            delete_participant(statistics_participant), 
+                    delete_participant(statistics_participant),
             eprosima::fastrtps::types::ReturnCode_t::RETCODE_PRECONDITION_NOT_MET);
 
     // 10. Disable already disabled DataWriter
@@ -413,7 +413,7 @@ TEST(StatisticsDomainParticipantTests, EnableDisableStatisticsDataWriterTest)
 #endif // FASTDDS_STATISTICS
 
     EXPECT_EQ(eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->
-            delete_participant(statistics_participant),
+                    delete_participant(statistics_participant),
             eprosima::fastrtps::types::ReturnCode_t::RETCODE_OK);
 }
 
