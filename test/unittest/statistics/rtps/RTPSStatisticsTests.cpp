@@ -34,12 +34,13 @@ namespace statistics {
 
 class TestListener : public fastdds::statistics::IListener
 {
-    public:
+public:
 
     void on_statistics_data(
             const fastdds::statistics::Data& ) override
     {
     }
+
 };
 
 /*
@@ -51,7 +52,7 @@ TEST(RTPSStatisticsTests, statistics_rpts_listener_management)
 {
     using namespace std;
 
-    logError(RTPS_STATISTICS , "Test fails because statistics api implementation is missing.");
+    logError(RTPS_STATISTICS, "Test fails because statistics api implementation is missing.");
 
     // create the entities
     uint32_t domain_id = 0;
@@ -80,11 +81,11 @@ TEST(RTPSStatisticsTests, statistics_rpts_listener_management)
         nolistener.reset();
 
         fastdds::statistics::EventKind kind =
-            fastdds::statistics::EventKind::PUBLICATION_THROUGHPUT;
+                fastdds::statistics::EventKind::PUBLICATION_THROUGHPUT;
         fastdds::statistics::EventKind another_kind =
-            fastdds::statistics::EventKind::SUBSCRIPTION_THROUGHPUT;
+                fastdds::statistics::EventKind::SUBSCRIPTION_THROUGHPUT;
         fastdds::statistics::EventKind yet_another_kind =
-            fastdds::statistics::EventKind::NETWORK_LATENCY;
+                fastdds::statistics::EventKind::NETWORK_LATENCY;
 
         // test the participant apis
         // + fails if no listener has been yet added
