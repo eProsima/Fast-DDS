@@ -34,14 +34,15 @@ namespace dds {
 /*
  * This test checks eprosima::fastdds::statistics::dds::DomainParticipant narrow methods.
  * 1. Create a eprosima::fastdds::dds::DomainParticipant
- * 2. Check if the -DFASTDDS_STATISTICS flag has been set and if not check that nullptr is returned even with a valid
- * DomainParticipant.
- * 3. Use both narrow methods to obtain the pointer to the children class
- * 4. Call both narrow methods with an invalid pointer and check that it returns nullptr
- * 5. Delete DDS entities
+ * 2. Use both narrow methods to obtain the pointer to the children class.
+ * If FASTDDS_STATISTICS option is not set, nullptr is expected.
+ * Otherwise, a valid pointer is expected.
+ * 3. Call both narrow methods with an invalid pointer and check that it returns nullptr
+ * 4. Delete DDS entities
  */
 TEST(StatisticsDomainParticipantTests, NarrowDomainParticipantTest)
 {
+    // 1. Create DomainParticipant
     eprosima::fastdds::dds::DomainParticipant* participant =
             eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->
                     create_participant(0, eprosima::fastdds::dds::PARTICIPANT_QOS_DEFAULT);
@@ -49,26 +50,22 @@ TEST(StatisticsDomainParticipantTests, NarrowDomainParticipantTest)
 
     const eprosima::fastdds::dds::DomainParticipant* const_participant = participant;
 
-#ifndef FASTDDS_STATISTICS
+    // 2. Call to both narrow methods
     eprosima::fastdds::statistics::dds::DomainParticipant* statistics_participant =
             eprosima::fastdds::statistics::dds::DomainParticipant::narrow(participant);
-    EXPECT_EQ(statistics_participant, nullptr);
-
     const eprosima::fastdds::statistics::dds::DomainParticipant* const_statistics_participant =
             eprosima::fastdds::statistics::dds::DomainParticipant::narrow(const_participant);
+#ifndef FASTDDS_STATISTICS
+    EXPECT_EQ(statistics_participant, nullptr);
     EXPECT_EQ(const_statistics_participant, nullptr);
-
 #else
     logError(STATISTICS_DOMAINPARTICIPANT_TEST, "This test is going to fail because API is not yet implemented.")
 
-    eprosima::fastdds::statistics::dds::DomainParticipant* statistics_participant =
-            eprosima::fastdds::statistics::dds::DomainParticipant::narrow(participant);
     EXPECT_NE(statistics_participant, nullptr);
-
-    const eprosima::fastdds::statistics::dds::DomainParticipant* const_statistics_participant =
-            eprosima::fastdds::statistics::dds::DomainParticipant::narrow(const_participant);
     EXPECT_NE(const_statistics_participant, nullptr);
+#endif // FASTDDS_STATISTICS
 
+    // 3. Call narrow methods with invalid parameter
     eprosima::fastdds::dds::DomainParticipant* null_participant = nullptr;
     statistics_participant = eprosima::fastdds::statistics::dds::DomainParticipant::narrow(null_participant);
     EXPECT_EQ(statistics_participant, nullptr);
@@ -77,7 +74,7 @@ TEST(StatisticsDomainParticipantTests, NarrowDomainParticipantTest)
     const_statistics_participant = eprosima::fastdds::statistics::dds::DomainParticipant::narrow(const_participant);
     EXPECT_EQ(const_statistics_participant, nullptr);
 
-#endif // FASTDDS_STATISTICS
+    // 4. Delete DDS entities
     ASSERT_EQ(eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->delete_participant(participant),
             eprosima::fastrtps::types::ReturnCode_t::RETCODE_OK);
 }
@@ -85,25 +82,29 @@ TEST(StatisticsDomainParticipantTests, NarrowDomainParticipantTest)
 /*
  * This test checks both eprosima::fastdds::statistics::dds::DomainParticipant enable_statistics_datawriter() and
  * disable_statistics_datawriter() methods.
- * 1. If the FASTDDS_STATISTICS compilation flag is not set, check that they return RETCODE_UNSUPPORTED.
- * 2. Create a eprosima::fastdds::dds::DomainParticipant and narrow to the children class.
- * 3. Enable every single statistics datawriter successfully returning RETCODE_OK.
- * 4. Check that the corresponding topic has been created and the type has been registered.
- * 5. Enable an already enabled statistics DataWriter and check that it returns RETCODE_OK.
- * 6. Call the method with an invalid topic name and check that returns RETCODE_BAD_PARAMETER.
- * 7. Disable one statistics DataWriter and check that it is successful.
- * 8. Enable the previous statistics DataWriter with an inconsistent QoS and check that it returns
+ * 1. If the FASTDDS_STATISTICS compilation flag is not set, check that the methods return RETCODE_UNSUPPORTED.
+ * Check that this error takes precedence over other possible errors.
+ * 2. Narrow DomainParticipant to the children class.
+ * 3. Create TypeSupports.
+ * 4. Check that the types are not registered yet.
+ * 5. Check that the topics do not exist yet.
+ * 6. Enable each statistics DataWriter checking that topics are created and types are registered.
+ * 7. Enable an already enabled statistics DataWriter and check that it returns RETCODE_OK.
+ * 8. Call enable_statistics_datawriter method with an invalid topic name and check that returns RETCODE_BAD_PARAMETER.
+ * 9. Disable one statistics DataWriter and check that it is successful.
+ * 10. Enable the previous statistics DataWriter with an inconsistent QoS and check that it returns
  * RETCODE_INCONSISTENT_POLICY.
+ * 11. Check error code precedence: RETCODE_BAD_PARAMETER takes precedence over RETCODE_INCONSISTENT_POLICY.
  * The case where the create_datawriter fails returning RETCODE_ERROR is not checked because it only passes the error
  * upstream.
- * 9. Try to delete the DomainParticipant and check that fails with RETCODE_PRECONDITION_NOT_MET because there are still
- * statistics DataWriters enabled.
- * 10. Try to disable an already disabled statistics DataWriter and check that returns RETCODE_ERROR.
- * 11. Check that if an invalid topic name is provided to the disable_statistics_datawriter method, it returns
+ * 12. Try to delete the DomainParticipant and check that fails with RETCODE_PRECONDITION_NOT_MET because there are
+ * still statistics DataWriters enabled.
+ * 13. Try to disable an already disabled statistics DataWriter and check that returns RETCODE_ERROR.
+ * 14. Check that if an invalid topic name is provided to the disable_statistics_datawriter method, it returns
  * RETCODE_BAD_PARAMETER.
- * 12. Delete DDS entities.
  * The case where the delete_datawriter fails returning RETCODE_ERROR is not checked because it only passes the error
  * upstream.
+ * 15. Delete DDS entities.
  */
 TEST(StatisticsDomainParticipantTests, EnableDisableStatisticsDataWriterTest)
 {
@@ -119,7 +120,7 @@ TEST(StatisticsDomainParticipantTests, EnableDisableStatisticsDataWriterTest)
 #ifndef FASTDDS_STATISTICS
     // 1. Compilation flag not set
     eprosima::fastdds::statistics::dds::DomainParticipant* statistics_participant =
-            dynamic_cast<eprosima::fastdds::statistics::dds::DomainParticipant*>participant;
+            static_cast<eprosima::fastdds::statistics::dds::DomainParticipant*>(participant);
     ASSERT_NE(statistics_participant, nullptr);
 
     eprosima::fastrtps::types::ReturnCode_t ret = statistics_participant->enable_statistics_datawriter(
@@ -137,15 +138,12 @@ TEST(StatisticsDomainParticipantTests, EnableDisableStatisticsDataWriterTest)
 #else
     logError(STATISTICS_DOMAINPARTICIPANT_TEST, "This test is going to fail because API is not yet implemented.")
 
-    // 2. Create DomainParticipant and narrow to eprosima::fastdds::statistics::dds::DomainParticipant
+    // 2. Narrow DomainParticipant to eprosima::fastdds::statistics::dds::DomainParticipant
     eprosima::fastdds::statistics::dds::DomainParticipant* statistics_participant =
             eprosima::fastdds::statistics::dds::DomainParticipant::narrow(participant);
     ASSERT_NE(statistics_participant, nullptr);
 
-    // 3 & 4 Enable statistics DataWriters and check that the corresponding topic has been created successfully.
-    // Check also that the type has been correctly registered.
-
-    // Create TypeSupports for the different DataTypes
+    // 3. Create TypeSupports for the different DataTypes
     eprosima::fastdds::dds::TypeSupport history_latency_type(
         new eprosima::fastdds::statistics::WriterReaderDataPubSubType);
     eprosima::fastdds::dds::TypeSupport network_latency_type(
@@ -164,18 +162,17 @@ TEST(StatisticsDomainParticipantTests, EnableDisableStatisticsDataWriterTest)
         new eprosima::fastdds::statistics::PhysicalDataPubSubType);
     eprosima::fastdds::dds::TypeSupport null_type(nullptr);
 
-    // Check that the types are not registered yet
-    EXPECT_NE(history_latency_type, statistics_participant->find_type(history_latency_type.get_type_name()));
-    EXPECT_NE(network_latency_type, statistics_participant->find_type(network_latency_type.get_type_name()));
-    EXPECT_NE(throughput_type, statistics_participant->find_type(throughput_type.get_type_name()));
-    EXPECT_NE(rtps_traffic_type, statistics_participant->find_type(rtps_traffic_type.get_type_name()));
-    EXPECT_NE(count_type, statistics_participant->find_type(count_type.get_type_name()));
-    EXPECT_NE(discovery_type, statistics_participant->find_type(discovery_type.get_type_name()));
-    EXPECT_NE(sample_identity_count_type, statistics_participant->find_type(
-                sample_identity_count_type.get_type_name()));
-    EXPECT_NE(physical_data_type, statistics_participant->find_type(physical_data_type.get_type_name()));
+    // 4. Check that the types are not registered yet
+    EXPECT_EQ(null_type, statistics_participant->find_type(history_latency_type.get_type_name()));
+    EXPECT_EQ(null_type, statistics_participant->find_type(network_latency_type.get_type_name()));
+    EXPECT_EQ(null_type, statistics_participant->find_type(throughput_type.get_type_name()));
+    EXPECT_EQ(null_type, statistics_participant->find_type(rtps_traffic_type.get_type_name()));
+    EXPECT_EQ(null_type, statistics_participant->find_type(count_type.get_type_name()));
+    EXPECT_EQ(null_type, statistics_participant->find_type(discovery_type.get_type_name()));
+    EXPECT_EQ(null_type, statistics_participant->find_type(sample_identity_count_type.get_type_name()));
+    EXPECT_EQ(null_type, statistics_participant->find_type(physical_data_type.get_type_name()));
 
-    // Check that the topics do not exist
+    // 5. Check that the topics do not exist
     EXPECT_EQ(nullptr, statistics_participant->lookup_topicdescription(HISTORY_LATENCY_TOPIC));
     EXPECT_EQ(nullptr, statistics_participant->lookup_topicdescription(NETWORK_LATENCY_TOPIC));
     EXPECT_EQ(nullptr, statistics_participant->lookup_topicdescription(PUBLICATION_THROUGHPUT_TOPIC));
@@ -194,6 +191,7 @@ TEST(StatisticsDomainParticipantTests, EnableDisableStatisticsDataWriterTest)
     EXPECT_EQ(nullptr, statistics_participant->lookup_topicdescription(SAMPLE_DATAS_TOPIC));
     EXPECT_EQ(nullptr, statistics_participant->lookup_topicdescription(PHYSICAL_DATA_TOPIC));
 
+    // 6. Enable each statistics DataWriter checking that topics are created and types are registered.
     eprosima::fastrtps::types::ReturnCode_t ret = statistics_participant->enable_statistics_datawriter(
         HISTORY_LATENCY_TOPIC, STATISTICS_DATAWRITER_QOS);
     EXPECT_EQ(ret, eprosima::fastrtps::types::ReturnCode_t::RETCODE_OK);
@@ -282,46 +280,46 @@ TEST(StatisticsDomainParticipantTests, EnableDisableStatisticsDataWriterTest)
     EXPECT_NE(nullptr, statistics_participant->lookup_topicdescription(PHYSICAL_DATA_TOPIC));
     EXPECT_EQ(physical_data_type, statistics_participant->find_type(physical_data_type.get_type_name()));
 
-    // 5. Enable an already enabled statistics DataWriter
+    // 7. Enable an already enabled statistics DataWriter
     ret = statistics_participant->enable_statistics_datawriter(SAMPLE_DATAS_TOPIC, STATISTICS_DATAWRITER_QOS);
     EXPECT_EQ(ret, eprosima::fastrtps::types::ReturnCode_t::RETCODE_OK);
 
-    // 6. Invalid topic name
+    // 8. Invalid topic name
     ret = statistics_participant->enable_statistics_datawriter("INVALID_TOPIC", STATISTICS_DATAWRITER_QOS);
     EXPECT_EQ(ret, eprosima::fastrtps::types::ReturnCode_t::RETCODE_BAD_PARAMETER);
     EXPECT_EQ(nullptr, statistics_participant->lookup_topicdescription("INVALID_TOPIC"));
 
-    // 7. Disable statistics DataWriter
+    // 9. Disable statistics DataWriter
     ret = statistics_participant->disable_statistics_datawriter(HISTORY_LATENCY_TOPIC);
     EXPECT_EQ(ret, eprosima::fastrtps::types::ReturnCode_t::RETCODE_OK);
     EXPECT_EQ(nullptr, statistics_participant->lookup_topicdescription(HISTORY_LATENCY_TOPIC));
     EXPECT_NE(nullptr, statistics_participant->lookup_topicdescription(PDP_PACKETS_TOPIC));
     EXPECT_EQ(null_type, statistics_participant->find_type(history_latency_type.get_type_name()));
 
-    // 8. Enable previous statistics DataWriter with an inconsistent QoS
+    // 10. Enable previous statistics DataWriter with an inconsistent QoS
     ret = statistics_participant->enable_statistics_datawriter(HISTORY_LATENCY_TOPIC, inconsistent_qos);
     EXPECT_EQ(ret, eprosima::fastrtps::types::ReturnCode_t::RETCODE_INCONSISTENT_POLICY);
     EXPECT_EQ(nullptr, statistics_participant->lookup_topicdescription(HISTORY_LATENCY_TOPIC));
     EXPECT_EQ(null_type, statistics_participant->find_type(history_latency_type.get_type_name()));
 
-    // RETCODE_BAD_PARAMETER error has precedence over RETCODE_INCONSISTENT_POLICY
+    // 11. RETCODE_BAD_PARAMETER error has precedence over RETCODE_INCONSISTENT_POLICY
     ret = statistics_participant->enable_statistics_datawriter("INVALID_TOPIC", inconsistent_qos);
     EXPECT_EQ(ret, eprosima::fastrtps::types::ReturnCode_t::RETCODE_BAD_PARAMETER);
 
-    // 9. Try to delete DomainParticipant and check that it fails because statistics DataWriters are still enabled
+    // 12. Try to delete DomainParticipant and check that it fails because statistics DataWriters are still enabled
     EXPECT_EQ(eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->
                     delete_participant(statistics_participant),
             eprosima::fastrtps::types::ReturnCode_t::RETCODE_PRECONDITION_NOT_MET);
 
-    // 10. Disable already disabled DataWriter
+    // 13. Disable already disabled DataWriter
     ret = statistics_participant->disable_statistics_datawriter(HISTORY_LATENCY_TOPIC);
     EXPECT_EQ(ret, eprosima::fastrtps::types::ReturnCode_t::RETCODE_OK);
 
-    // 11. Disable invalid topic name
+    // 14. Disable invalid topic name
     ret = statistics_participant->disable_statistics_datawriter("INVALID_TOPIC");
     EXPECT_EQ(ret, eprosima::fastrtps::types::ReturnCode_t::RETCODE_BAD_PARAMETER);
 
-    // 12. Remove DDS entities
+    // 15. Remove DDS entities
     ret = statistics_participant->disable_statistics_datawriter(NETWORK_LATENCY_TOPIC);
     EXPECT_EQ(ret, eprosima::fastrtps::types::ReturnCode_t::RETCODE_OK);
     EXPECT_EQ(nullptr, statistics_participant->lookup_topicdescription(NETWORK_LATENCY_TOPIC));
