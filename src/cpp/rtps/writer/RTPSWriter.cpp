@@ -418,17 +418,17 @@ bool RTPSWriter::is_pool_initialized() const
 #ifdef FASTDDS_STATISTICS
 
 bool RTPSWriter::add_statistics_listener(
-            std::shared_ptr<fastdds::statistics::IListener> listener)
+        std::shared_ptr<fastdds::statistics::IListener> listener)
 {
     (void)listener;
     return false;
 }
 
 bool RTPSWriter::remove_statistics_listener(
-            std::shared_ptr<fastdds::statistics::IListener> listener)
+        std::shared_ptr<fastdds::statistics::IListener> listener)
 {
-     (void)listener;
-     return false;
+    (void)listener;
+    return false;
 }
 
 #endif // FASTDDS_STATISTICS

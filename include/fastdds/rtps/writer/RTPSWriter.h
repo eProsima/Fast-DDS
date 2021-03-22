@@ -278,7 +278,7 @@ public:
 #ifdef FASTDDS_STATISTICS
 
     /*
-     * Adds a listener to receive statistics backend callbacks
+     * Add a listener to receive statistics backend callbacks
      * @param listener
      * @return true if successfully added
      */

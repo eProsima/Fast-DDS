@@ -379,17 +379,17 @@ bool RTPSReader::is_sample_valid(
 #ifdef FASTDDS_STATISTICS
 
 bool RTPSReader::add_statistics_listener(
-            std::shared_ptr<fastdds::statistics::IListener> listener)
+        std::shared_ptr<fastdds::statistics::IListener> listener)
 {
     (void)listener;
     return false;
 }
 
 bool RTPSReader::remove_statistics_listener(
-            std::shared_ptr<fastdds::statistics::IListener> listener)
+        std::shared_ptr<fastdds::statistics::IListener> listener)
 {
-     (void)listener;
-     return false;
+    (void)listener;
+    return false;
 }
 
 #endif // FASTDDS_STATISTICS
