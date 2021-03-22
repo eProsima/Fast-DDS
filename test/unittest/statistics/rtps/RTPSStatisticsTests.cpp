@@ -1,4 +1,4 @@
-// Copyright 2020 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+// Copyright 2021 Proyectos y Sistemas de Mantenimiento SL (eProsima).
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,21 +12,25 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include <gmock/gmock.h>
 #include <gtest/gtest.h>
 
 #include <fastdds/rtps/RTPSDomain.h>
-#include <fastdds/rtps/participant/RTPSParticipant.h>
-#include <fastdds/rtps/writer/RTPSWriter.h>
-#include <fastdds/rtps/reader/RTPSReader.h>
+#include <fastdds/rtps/attributes/HistoryAttributes.h>
+#include <fastdds/rtps/attributes/RTPSParticipantAttributes.h>
+#include <fastdds/rtps/attributes/ReaderAttributes.h>
+#include <fastdds/rtps/attributes/WriterAttributes.h>
 #include <fastdds/rtps/history/WriterHistory.h>
 #include <fastdds/rtps/history/ReaderHistory.h>
+#include <fastdds/rtps/participant/RTPSParticipant.h>
+#include <fastdds/rtps/reader/RTPSReader.h>
+#include <fastdds/rtps/writer/RTPSWriter.h>
 
 #include <statistics/types/types.h>
 
 namespace eprosima {
 namespace fastrtps {
 namespace rtps {
+namespace statistics {
 
 class TestListener : public fastdds::statistics::IListener
 {
@@ -38,11 +42,16 @@ class TestListener : public fastdds::statistics::IListener
     }
 };
 
-TEST(RTPSWriterTests, statistics_rpts_listener_management)
+/*
+ * This test checks RTPSParticipant, RTPSWriter and RTPSReader statistics module related APIs.
+ * Creates dummy listener objects and associates them to RTPS entities of each kind covering
+ * the different possible cases: already registered, non-registered, already unregistered.
+ */
+TEST(RTPSStatisticsTests, statistics_rpts_listener_management)
 {
     using namespace std;
 
-    logError(RTPS_WRITER, "Test fails because statistics api implementation is missing.");
+    logError(RTPS_STATISTICS , "Test fails because statistics api implementation is missing.");
 
     // create the entities
     uint32_t domain_id = 0;
@@ -72,54 +81,62 @@ TEST(RTPSWriterTests, statistics_rpts_listener_management)
 
         fastdds::statistics::EventKind kind =
             fastdds::statistics::EventKind::PUBLICATION_THROUGHPUT;
+        fastdds::statistics::EventKind another_kind =
+            fastdds::statistics::EventKind::SUBSCRIPTION_THROUGHPUT;
+        fastdds::statistics::EventKind yet_another_kind =
+            fastdds::statistics::EventKind::NETWORK_LATENCY;
 
         // test the participant apis
         // + fails if no listener has been yet added
-        ASSERT_FALSE(participant->remove_statistics_listener(listener1, kind));
+        EXPECT_FALSE(participant->remove_statistics_listener(listener1, kind));
         // + fails to add an empty listener
-        ASSERT_FALSE(participant->add_statistics_listener(nolistener, kind));
+        EXPECT_FALSE(participant->add_statistics_listener(nolistener, kind));
         // + succeeds to add a new listener
         ASSERT_TRUE(participant->add_statistics_listener(listener1, kind));
-        // + fails to add multiple times the same listener
-        ASSERT_FALSE(participant->add_statistics_listener(listener1, kind));
+        // + fails to add multiple times the same listener...
+        EXPECT_FALSE(participant->add_statistics_listener(listener1, kind));
+        //   ... unless it's associated to other entity
+        EXPECT_TRUE(participant->add_statistics_listener(listener1, another_kind));
         // + fails if an unknown listener is removed
-        ASSERT_FALSE(participant->remove_statistics_listener(listener2, kind));
+        EXPECT_FALSE(participant->remove_statistics_listener(listener2, kind));
+        // + fails if a known listener is removed with a non registered entity
+        EXPECT_FALSE(participant->remove_statistics_listener(listener1, yet_another_kind));
         // + succeeds to remove a known listener
-        ASSERT_TRUE(participant->remove_statistics_listener(listener1, kind));
+        EXPECT_TRUE(participant->remove_statistics_listener(listener1, kind));
         // + fails if a listener is already removed
-        ASSERT_FALSE(participant->remove_statistics_listener(listener1, kind));
+        EXPECT_FALSE(participant->remove_statistics_listener(listener1, kind));
 
         // test the writer apis
         // + fails if no listener has been yet added
-        ASSERT_FALSE(writer->remove_statistics_listener(listener1));
+        EXPECT_FALSE(writer->remove_statistics_listener(listener1));
         // + fails to add an empty listener
-        ASSERT_FALSE(writer->add_statistics_listener(nolistener));
+        EXPECT_FALSE(writer->add_statistics_listener(nolistener));
         // + succeeds to add a new listener
         ASSERT_TRUE(writer->add_statistics_listener(listener1));
         // + fails to add multiple times the same listener
-        ASSERT_FALSE(writer->add_statistics_listener(listener1));
+        EXPECT_FALSE(writer->add_statistics_listener(listener1));
         // + fails if an unknown listener is removed
-        ASSERT_FALSE(writer->remove_statistics_listener(listener2));
+        EXPECT_FALSE(writer->remove_statistics_listener(listener2));
         // + succeeds to remove a known listener
-        ASSERT_TRUE(writer->remove_statistics_listener(listener1));
+        EXPECT_TRUE(writer->remove_statistics_listener(listener1));
         // + fails if a listener is already removed
-        ASSERT_FALSE(writer->remove_statistics_listener(listener1));
+        EXPECT_FALSE(writer->remove_statistics_listener(listener1));
 
         // test the reader apis
         // + fails if no listener has been yet added
-        ASSERT_FALSE(reader->remove_statistics_listener(listener1));
+        EXPECT_FALSE(reader->remove_statistics_listener(listener1));
         // + fails to add an empty listener
-        ASSERT_FALSE(reader->add_statistics_listener(nolistener));
+        EXPECT_FALSE(reader->add_statistics_listener(nolistener));
         // + succeeds to add a new listener
         ASSERT_TRUE(reader->add_statistics_listener(listener1));
         // + fails to add multiple times the same listener
-        ASSERT_FALSE(reader->add_statistics_listener(listener1));
+        EXPECT_FALSE(reader->add_statistics_listener(listener1));
         // + fails if an unknown listener is removed
-        ASSERT_FALSE(reader->remove_statistics_listener(listener2));
+        EXPECT_FALSE(reader->remove_statistics_listener(listener2));
         // + succeeds to remove a known listener
-        ASSERT_TRUE(reader->remove_statistics_listener(listener1));
+        EXPECT_TRUE(reader->remove_statistics_listener(listener1));
         // + fails if a listener is already removed
-        ASSERT_FALSE(reader->remove_statistics_listener(listener1));
+        EXPECT_FALSE(reader->remove_statistics_listener(listener1));
     }
 
     // Remove the entities
@@ -128,6 +145,20 @@ TEST(RTPSWriterTests, statistics_rpts_listener_management)
     RTPSDomain::removeRTPSParticipant(participant);
 }
 
+} // namespace statistics
 } // namespace rtps
 } // namespace fastrtps
 } // namespace eprosima
+
+int main(
+        int argc,
+        char** argv)
+{
+    eprosima::fastdds::dds::Log::SetVerbosity(eprosima::fastdds::dds::Log::Error);
+
+    testing::InitGoogleTest(&argc, argv);
+    int ret = RUN_ALL_TESTS();
+
+    eprosima::fastdds::dds::Log::Flush();
+    return ret;
+}
