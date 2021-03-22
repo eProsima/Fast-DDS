@@ -228,6 +228,10 @@ set(${PROJECT_NAME}_source_files
     dds/sub/Subscriber.cpp
     dds/sub/DataReader.cpp
     dds/topic/Topic.cpp
+
+    statistics/fastdds/domain/DomainParticipant.cpp
+    statistics/fastdds/publisher/qos/DataWriterQos.cpp
+    statistics/fastdds/subscriber/qos/DataReaderQos.cpp
     )
 
 # Statistics support
