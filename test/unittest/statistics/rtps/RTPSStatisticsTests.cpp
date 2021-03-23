@@ -15,27 +15,33 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
 
+#include <fastdds/dds/log/Log.hpp>
+#include <fastdds/dds/publisher/qos/WriterQos.hpp>
+#include <fastdds/dds/subscriber/qos/ReaderQos.hpp>
 #include <fastdds/rtps/RTPSDomain.h>
 #include <fastdds/rtps/attributes/HistoryAttributes.h>
 #include <fastdds/rtps/attributes/RTPSParticipantAttributes.h>
 #include <fastdds/rtps/attributes/ReaderAttributes.h>
 #include <fastdds/rtps/attributes/WriterAttributes.h>
-#include <fastdds/rtps/history/WriterHistory.h>
+#include <fastdds/rtps/common/Time_t.h>
 #include <fastdds/rtps/history/ReaderHistory.h>
+#include <fastdds/rtps/history/WriterHistory.h>
 #include <fastdds/rtps/participant/RTPSParticipant.h>
 #include <fastdds/rtps/reader/RTPSReader.h>
 #include <fastdds/rtps/writer/RTPSWriter.h>
+#include <fastdds/statistics/IListeners.hpp>
+#include <fastrtps/attributes/TopicAttributes.h>
 
 #include <statistics/types/types.h>
 
 namespace eprosima {
-namespace fastrtps {
-namespace rtps {
+namespace fastdds {
 namespace statistics {
+namespace rtps {
 
-struct MockListener : fastdds::statistics::IListener
+struct MockListener : IListener
 {
-    MOCK_METHOD(void, on_statistics_data, (const fastdds::statistics::Data& ), (override));
+    MOCK_METHOD(void, on_statistics_data, (const Data& ), (override));
 };
 
 /*
@@ -47,6 +53,7 @@ struct MockListener : fastdds::statistics::IListener
 TEST(RTPSStatisticsTests, statistics_rpts_listener_management)
 {
     using namespace std;
+    using namespace fastrtps::rtps;
 
     logError(RTPS_STATISTICS, "Test fails because statistics api implementation is missing.");
 
@@ -77,12 +84,9 @@ TEST(RTPSStatisticsTests, statistics_rpts_listener_management)
         auto nolistener = listener1;
         nolistener.reset();
 
-        fastdds::statistics::EventKind kind =
-                fastdds::statistics::EventKind::PUBLICATION_THROUGHPUT;
-        fastdds::statistics::EventKind another_kind =
-                fastdds::statistics::EventKind::SUBSCRIPTION_THROUGHPUT;
-        fastdds::statistics::EventKind yet_another_kind =
-                fastdds::statistics::EventKind::NETWORK_LATENCY;
+        EventKind kind = EventKind::PUBLICATION_THROUGHPUT;
+        EventKind another_kind = EventKind::SUBSCRIPTION_THROUGHPUT;
+        EventKind yet_another_kind = EventKind::NETWORK_LATENCY;
 
         // test the participant apis
         // + fails if no listener has been yet added
@@ -101,8 +105,16 @@ TEST(RTPSStatisticsTests, statistics_rpts_listener_management)
         EXPECT_FALSE(participant->remove_statistics_listener(listener1, yet_another_kind));
         // + succeeds to remove a known listener
         EXPECT_TRUE(participant->remove_statistics_listener(listener1, kind));
+        EXPECT_TRUE(participant->remove_statistics_listener(listener1, another_kind));
         // + fails if a listener is already removed
         EXPECT_FALSE(participant->remove_statistics_listener(listener1, kind));
+        // + The EventKind is an actual mask that allow register multiple entities simultaneously
+        EXPECT_TRUE(participant->add_statistics_listener(listener1, static_cast<EventKind>(kind | another_kind)));
+        // + When using a mask of multiple entities the return value succeeds only if all
+        //   entity driven operations succeeds. The following operation must fail because one
+        //   of the entities has not that registered listener
+        EXPECT_FALSE(participant->remove_statistics_listener(listener1,
+                static_cast<EventKind>(kind | another_kind | yet_another_kind)));
 
         // test the writer apis
         // + fails if no listener has been yet added
@@ -140,12 +152,12 @@ TEST(RTPSStatisticsTests, statistics_rpts_listener_management)
     // Check PUBLICATION_THROUGHPUT and SUBSCRIPTION_THROUGHPUT callbacks are performed
     {
         using namespace ::testing;
+        using namespace fastrtps;
 
         auto participant_listener = make_shared<MockListener>();
         auto writer_listener = make_shared<MockListener>();
         auto reader_listener = make_shared<MockListener>();
-        ASSERT_TRUE(participant->add_statistics_listener(participant_listener,
-                fastdds::statistics::EventKind::DISCOVERED_ENTITY));
+        ASSERT_TRUE(participant->add_statistics_listener(participant_listener, EventKind::DISCOVERED_ENTITY));
         ASSERT_TRUE(writer->add_statistics_listener(writer_listener));
         ASSERT_TRUE(reader->add_statistics_listener(reader_listener));
 
@@ -206,9 +218,9 @@ TEST(RTPSStatisticsTests, statistics_rpts_listener_management)
     RTPSDomain::removeRTPSParticipant(participant);
 }
 
-} // namespace statistics
 } // namespace rtps
-} // namespace fastrtps
+} // namespace statistics
+} // namespace fastdds
 } // namespace eprosima
 
 int main(
