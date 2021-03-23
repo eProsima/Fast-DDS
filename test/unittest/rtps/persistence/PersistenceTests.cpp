@@ -188,7 +188,7 @@ protected:
         sqlite3_bind_zeroblob(add_data_statement, 4, 128);
         sqlite3_bind_text(add_data_statement, 5, SQLite3PersistenceServiceSchemaV3::default_guid(), -1, SQLITE_STATIC);
         sqlite3_bind_int64(add_data_statement, 6, SQLite3PersistenceServiceSchemaV3::default_seqnum());
-        sqlite3_bind_double(add_data_statement, 7, SQLite3PersistenceServiceSchemaV3::now());
+        sqlite3_bind_int64(add_data_statement, 7, SQLite3PersistenceServiceSchemaV3::now());
 
         if (sqlite3_step(add_data_statement) != SQLITE_DONE)
         {

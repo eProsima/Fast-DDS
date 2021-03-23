@@ -116,6 +116,12 @@ public:
     int64_t to_ns() const;
 
     /**
+     *  @param Stores given time as nanoseconds (including seconds)
+     */
+    void from_ns(
+            int64_t nanosecs);
+
+    /**
      * Retrieve the seconds field.
      */
     int32_t seconds() const;

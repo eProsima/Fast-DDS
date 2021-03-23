@@ -313,7 +313,7 @@ bool SQLite3PersistenceService::load_writer_from_storage(
             }
 
             // timestamp
-            change->sourceTimestamp = Time_t(sqlite3_column_double(load_writer_stmt_, 5));
+            change->sourceTimestamp.from_ns(sqlite3_column_int64(load_writer_stmt_, 5));
 
             changes.insert(changes.begin(), change);
         }
@@ -377,7 +377,7 @@ bool SQLite3PersistenceService::add_writer_change_to_storage(
             }
 
             // source time stamp
-            sqlite3_bind_double(add_writer_change_stmt_, 7, TimeConv::Time_t2SecondsDouble(change.sourceTimestamp));
+            sqlite3_bind_int64(add_writer_change_stmt_, 7, change.sourceTimestamp.to_ns());
 
             return sqlite3_step(add_writer_change_stmt_) == SQLITE_DONE;
         }
@@ -516,7 +516,8 @@ bool SQLite3PersistenceServiceSchemaV3::database_create_temporary_defaults_table
     // Default rtps::Time_t
     sqlite3_reset(insert_default_stmt);
     sqlite3_bind_text(insert_default_stmt, 1, "rtps::Time_t", -1, SQLITE_STATIC);
-    sqlite3_bind_double(insert_default_stmt, 2, SQLite3PersistenceServiceSchemaV3::now());
+
+    sqlite3_bind_int64(insert_default_stmt, 2, SQLite3PersistenceServiceSchemaV3::now());
     rc = sqlite3_step(insert_default_stmt);
 
     if (rc != SQLITE_DONE)
@@ -552,11 +553,11 @@ uint64_t SQLite3PersistenceServiceSchemaV3::default_seqnum()
     return SequenceNumber_t::unknown().to64long();
 }
 
-double SQLite3PersistenceServiceSchemaV3::now()
+int64_t SQLite3PersistenceServiceSchemaV3::now()
 {
     Time_t ts;
     Time_t::now(ts);
-    return TimeConv::Time_t2SecondsDouble(ts);
+    return ts.to_ns();
 }
 
 } /* namespace rtps */

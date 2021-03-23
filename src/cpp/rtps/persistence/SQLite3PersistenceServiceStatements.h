@@ -160,7 +160,7 @@ public:
             "payload BLOB,"
             "related_sample_guid TEXT,"
             "related_sample_seq_num,"
-            "source_timestamp REAL,"
+            "source_timestamp INTEGER,"
             "PRIMARY KEY(guid, seq_num DESC)";
 
     static constexpr const char* const writer_states_table =
@@ -244,7 +244,7 @@ public:
 
     static uint64_t default_seqnum();
 
-    static double now();
+    static int64_t now();
 };
 
 } /* namespace rtps */
