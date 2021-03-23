@@ -53,7 +53,9 @@ public:
      */
     inline void notify()
     {
+        std::unique_lock<Segment::mutex> lock(notification_->notification_mutex);
         notification_->new_data.store(true);
+        lock.unlock();
         notification_->notification_cv.notify_all();
     }
 
