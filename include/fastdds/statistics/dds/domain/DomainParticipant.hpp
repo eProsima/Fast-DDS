@@ -90,7 +90,7 @@ public:
 };
 
 /* Environment variable to specify a semicolon-separated list of topic names that define the statistics DataWriters that
- * the DomainParticipant will enable when created.
+ * the DomainParticipant will enable when enabled itself.
  * The topic names must conform to the topic names aliases defined in @ref topic_names.hpp.
  * For the variable to take any effect the CMake option FASTDDS_STATISTICS must be enabled.
  */

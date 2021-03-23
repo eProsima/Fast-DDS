@@ -426,16 +426,19 @@ void DomainParticipantFactory::participant_has_been_deleted(
     }
 }
 
-const std::string& DomainParticipantFactory::load_statistics_profiles_from_env()
+/**
+ * Load statistics profiles from environment variable
+ * @param[out] topics string with the semicolon-separated list of statistics topic names to be enabled
+ */
+static void load_statistics_profiles_from_env(
+        std::string& topics)
 {
-    static std::string statistics_profiles;
     const char* data;
     if (ReturnCode_t::RETCODE_OK == SystemInfo::get_env(
                 eprosima::fastdds::statistics::dds::FASTDDS_STATISTICS_ENVIRONMENT_VARIABLE, &data))
     {
-        statistics_profiles = data;
+        topics = data;
     }
-    return statistics_profiles;
 }
 
 } /* namespace dds */

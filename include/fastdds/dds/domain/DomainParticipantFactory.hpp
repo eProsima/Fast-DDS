@@ -242,12 +242,6 @@ protected:
     void participant_has_been_deleted(
             DomainParticipantImpl* part);
 
-    /**
-     * Load statistics profiles from environment variable
-     * @return string with the semicolon-separated list of statistics topic names to be enabled
-     */
-    const std::string& load_statistics_profiles_from_env();
-
     mutable std::mutex mtx_participants_;
 
     mutable bool default_xml_profiles_loaded;
