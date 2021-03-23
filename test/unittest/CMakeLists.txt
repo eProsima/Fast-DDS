@@ -48,3 +48,7 @@ if(SECURITY)
     add_subdirectory(security/logging)
     add_subdirectory(rtps/security)
 endif()
+
+if(FASTDDS_STATISTICS)
+    add_subdirectory(statistics/rtps)
+endif(FASTDDS_STATISTICS)
