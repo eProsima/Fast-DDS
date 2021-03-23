@@ -49,7 +49,7 @@
 #include <netinet/in.h>
 #endif // if defined(__APPLE__)
 #if defined(__QNXNTO__)
-#include <sys/types.h>
+#include <net/if_dl.h>
 #endif // if defined(__QNXNTO__)
 #endif // if defined(_WIN32)
 
