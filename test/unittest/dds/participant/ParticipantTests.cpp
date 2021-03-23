@@ -2040,7 +2040,7 @@ TEST(ParticipantTests, RegisterRemoteTypePreconditionNotMet)
  *  get_builtin_subscriber
  *  ignore_participant
  *  ignore_topic
- *  ignore_publictaion
+ *  ignore_publication
  *  ignore_subscription
  *  delete_contained_entities
  *  get_discovered_participants
@@ -2091,7 +2091,7 @@ TEST(ParticipantTests, UnsupportedMethods)
 
     ASSERT_EQ(participant->ignore_participant(InstanceHandle_t()), ReturnCode_t::RETCODE_UNSUPPORTED);
     ASSERT_EQ(participant->ignore_topic(InstanceHandle_t()), ReturnCode_t::RETCODE_UNSUPPORTED);
-    ASSERT_EQ(participant->ignore_publictaion(InstanceHandle_t()), ReturnCode_t::RETCODE_UNSUPPORTED);
+    ASSERT_EQ(participant->ignore_publication(InstanceHandle_t()), ReturnCode_t::RETCODE_UNSUPPORTED);
     ASSERT_EQ(participant->ignore_subscription(InstanceHandle_t()), ReturnCode_t::RETCODE_UNSUPPORTED);
 
     ASSERT_EQ(participant->delete_contained_entities(), ReturnCode_t::RETCODE_UNSUPPORTED);

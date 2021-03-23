@@ -353,7 +353,7 @@ public:
      * @param handle Identifier of the datawriter to ignore
      * @return RETURN_OK code if everything correct, error code otherwise
      */
-    RTPS_DllAPI ReturnCode_t ignore_publictaion(
+    RTPS_DllAPI ReturnCode_t ignore_publication(
             const InstanceHandle_t& handle);
 
     /**
