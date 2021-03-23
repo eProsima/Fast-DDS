@@ -57,6 +57,7 @@
 #include <mutex>
 #include <functional>
 #include <algorithm>
+#include <memory>
 
 #include <fastdds/dds/log/Log.hpp>
 #include <fastrtps/xmlparser/XMLProfileManager.h>
@@ -1820,30 +1821,31 @@ bool RTPSParticipantImpl::did_mutation_took_place_on_meta(
     } while (it != UnicastLocatorList.end());
 
     // TCP is a special case because physical ports are taken from the TransportDescriptors
+    // besides WAN address may be added by the transport
     struct ResetLogical
     {
         // use of std::unary_function to introduce the following aliases is deprecated
         // using argument_type = Locator_t;
         // using result_type   = Locator_t&;
 
-        typedef std::vector<std::shared_ptr<fastdds::rtps::TransportDescriptorInterface>> Transports;
+        using Transports = std::vector<std::shared_ptr<eprosima::fastdds::rtps::TransportDescriptorInterface>>;
 
         ResetLogical(
                 const Transports& tp)
             : Transports_(tp)
-            , tcp4(nullptr)
-            , tcp6(nullptr)
         {
+            using namespace eprosima::fastdds::rtps;
+
             for (auto desc : Transports_)
             {
                 if (nullptr == tcp4)
                 {
-                    tcp4 = dynamic_cast<fastdds::rtps::TCPv4TransportDescriptor*>(desc.get());
+                    tcp4 = std::dynamic_pointer_cast<TCPv4TransportDescriptor>(desc);
                 }
 
                 if (nullptr == tcp6)
                 {
-                    tcp6 = dynamic_cast<fastdds::rtps::TCPv6TransportDescriptor*>(desc.get());
+                    tcp6 = std::dynamic_pointer_cast<TCPv6TransportDescriptor>(desc);
                 }
             }
         }
@@ -1858,6 +1860,17 @@ bool RTPSParticipantImpl::did_mutation_took_place_on_meta(
             return tcp6 ? ( tcp6->listening_ports.empty() ? 0 : tcp6->listening_ports[0]) : 0;
         }
 
+        void set_wan_address(
+                Locator_t& loc) const
+        {
+            if (tcp4)
+            {
+                assert(LOCATOR_KIND_TCPv4 == loc.kind);
+                auto& ip = tcp4->wan_addr;
+                IPLocator::setWan(loc, ip[0], ip[1], ip[2], ip[3]);
+            }
+        }
+
         Locator_t operator ()(
                 const Locator_t& loc) const
         {
@@ -1865,6 +1878,7 @@ bool RTPSParticipantImpl::did_mutation_took_place_on_meta(
             switch (loc.kind)
             {
                 case LOCATOR_KIND_TCPv4:
+                    set_wan_address(ret);
                     IPLocator::setPhysicalPort(ret, Tcp4ListeningPort());
                     break;
                 case LOCATOR_KIND_TCPv6:
@@ -1876,7 +1890,8 @@ bool RTPSParticipantImpl::did_mutation_took_place_on_meta(
 
         // reference to the transports
         const Transports& Transports_;
-        TCPTransportDescriptor* tcp4, * tcp6;
+        std::shared_ptr<eprosima::fastdds::rtps::TCPv4TransportDescriptor> tcp4;
+        std::shared_ptr<eprosima::fastdds::rtps::TCPv6TransportDescriptor> tcp6;
 
     }
     transform_functor(m_att.userTransports);
