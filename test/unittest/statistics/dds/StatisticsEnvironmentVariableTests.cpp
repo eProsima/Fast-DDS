@@ -14,25 +14,17 @@
 
 #include <stdlib.h>
 
+#include <string>
+
 #include <gtest/gtest.h>
-#include <fastdds/dds/domain/DomainParticipantFactory.hpp>
 #include <fastdds/statistics/dds/domain/DomainParticipant.hpp>
+
+#include <fastdds/domain/DomainParticipantFactory.cpp>
 
 namespace eprosima {
 namespace fastdds {
 namespace statistics {
 namespace dds {
-
-class StatisticsEnvironmentVariableTests : public eprosima::fastdds::dds::DomainParticipantFactory
-{
-public:
-
-    const std::string& load_statistics_profiles_from_env()
-    {
-        return eprosima::fastdds::dds::DomainParticipantFactory::load_statistics_profiles_from_env();
-    }
-
-};
 
 /*
  * This test checks eprosima::fastdds::dds::DomainParticipantFactory::load_statistics_profiles_from_env
@@ -42,22 +34,23 @@ public:
  */
 TEST(StatisticsEnvironmentVariableTests, LoadStatisticsProfilesTests)
 {
-    StatisticsEnvironmentVariableTests domain_participant_factory;
-
     const char* value = "HISTORY_LATENCY_TOPIC;NETWORK_LATENCY_TOPIC;RTPS_LOST_TOPIC";
+    std::string topics;
 
     // 1. Environment variable yet unset
-    EXPECT_EQ(0, strcmp("", domain_participant_factory.load_statistics_profiles_from_env().c_str()));
+    eprosima::fastdds::dds::load_statistics_profiles_from_env(topics);
+    EXPECT_EQ(0, strcmp("", topics.c_str()));
 
     // 2. Set FASTDDS_STATISTICS environment variable
 #ifdef _WIN32
-    ASSERT_EQ(0, _put_env_s(FASTDDS_STATISTICS_ENVIRONMENT_VARIABLE, value));
+    ASSERT_EQ(0, _putenv_s(FASTDDS_STATISTICS_ENVIRONMENT_VARIABLE, value));
 #else
     ASSERT_EQ(0, setenv(FASTDDS_STATISTICS_ENVIRONMENT_VARIABLE, value, 1));
 #endif // ifdef _WIN32
 
     // 3. Read environment variable
-    EXPECT_EQ(0, strcmp(value, domain_participant_factory.load_statistics_profiles_from_env().c_str()));
+    eprosima::fastdds::dds::load_statistics_profiles_from_env(topics);
+    EXPECT_EQ(0, strcmp(value, topics.c_str()));
 }
 
 } // namespace dds
