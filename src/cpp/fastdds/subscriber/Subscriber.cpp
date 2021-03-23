@@ -121,7 +121,7 @@ DataReader* Subscriber::create_datareader_with_profile(
 }
 
 ReturnCode_t Subscriber::delete_datareader(
-        DataReader* reader)
+        const DataReader* reader)
 {
     return impl_->delete_datareader(reader);
 }

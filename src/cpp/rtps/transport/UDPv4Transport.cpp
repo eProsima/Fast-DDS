@@ -12,18 +12,19 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include <fastdds/rtps/transport/TransportInterface.h>
-#include <fastdds/rtps/transport/UDPv4Transport.h>
-#include <fastdds/rtps/messages/CDRMessage.h>
+#include <rtps/transport/UDPv4Transport.h>
+
 #include <utility>
 #include <cstring>
 #include <algorithm>
-#include <fastdds/dds/log/Log.hpp>
-#include <fastrtps/utils/Semaphore.h>
-#include <fastrtps/utils/IPLocator.h>
+
+#include <fastdds/rtps/transport/TransportInterface.h>
 #include <fastdds/rtps/network/ReceiverResource.h>
 #include <fastdds/rtps/network/SenderResource.h>
+#include <fastdds/rtps/messages/CDRMessage.h>
 #include <fastdds/rtps/messages/MessageReceiver.h>
+#include <fastdds/dds/log/Log.hpp>
+#include <fastrtps/utils/IPLocator.h>
 
 using namespace std;
 using namespace asio;
@@ -34,8 +35,6 @@ namespace rtps {
 
 using IPFinder = fastrtps::rtps::IPFinder;
 using IPLocator = fastrtps::rtps::IPLocator;
-using Locator_t = fastrtps::rtps::Locator_t;
-using LocatorList_t = fastrtps::rtps::LocatorList_t;
 using Log = fastdds::dds::Log;
 
 static void get_ipv4s(
@@ -75,7 +74,7 @@ static void get_ipv4s_unique_interfaces(
 }
 
 static asio::ip::address_v4::bytes_type locator_to_native(
-        const Locator_t& locator)
+        const Locator& locator)
 {
     if (IPLocator::hasWan(locator))
     {
@@ -138,22 +137,22 @@ UDPv4TransportDescriptor::UDPv4TransportDescriptor()
 {
 }
 
-UDPv4TransportDescriptor::UDPv4TransportDescriptor(
-        const UDPv4TransportDescriptor& t)
-    : UDPTransportDescriptor(t)
-{
-}
-
 TransportInterface* UDPv4TransportDescriptor::create_transport() const
 {
     return new UDPv4Transport(*this);
 }
 
+bool UDPv4TransportDescriptor::operator ==(
+        const UDPv4TransportDescriptor& t) const
+{
+    return (UDPTransportDescriptor::operator ==(t));
+}
+
 bool UDPv4Transport::getDefaultMetatrafficMulticastLocators(
-        LocatorList_t& locators,
+        LocatorList& locators,
         uint32_t metatraffic_multicast_port) const
 {
-    Locator_t locator;
+    Locator locator;
     locator.kind = LOCATOR_KIND_UDPv4;
     locator.port = static_cast<uint16_t>(metatraffic_multicast_port);
     IPLocator::setIPv4(locator, 239, 255, 0, 1);
@@ -162,10 +161,10 @@ bool UDPv4Transport::getDefaultMetatrafficMulticastLocators(
 }
 
 bool UDPv4Transport::getDefaultMetatrafficUnicastLocators(
-        LocatorList_t& locators,
+        LocatorList& locators,
         uint32_t metatraffic_unicast_port) const
 {
-    Locator_t locator;
+    Locator locator;
     locator.kind = LOCATOR_KIND_UDPv4;
     locator.port = static_cast<uint16_t>(metatraffic_unicast_port);
     locator.set_Invalid_Address();
@@ -175,10 +174,10 @@ bool UDPv4Transport::getDefaultMetatrafficUnicastLocators(
 }
 
 bool UDPv4Transport::getDefaultUnicastLocators(
-        LocatorList_t& locators,
+        LocatorList& locators,
         uint32_t unicast_port) const
 {
-    Locator_t locator;
+    Locator locator;
     locator.kind = LOCATOR_KIND_UDPv4;
     locator.set_Invalid_Address();
     fillUnicastLocator(locator, unicast_port);
@@ -188,38 +187,39 @@ bool UDPv4Transport::getDefaultUnicastLocators(
 }
 
 void UDPv4Transport::AddDefaultOutputLocator(
-        LocatorList_t& defaultList)
+        LocatorList& defaultList)
 {
-    Locator_t locator;
+    Locator locator;
     IPLocator::createLocator(LOCATOR_KIND_UDPv4, "239.255.0.1", configuration_.m_output_udp_socket, locator);
     defaultList.push_back(locator);
 }
 
 bool UDPv4Transport::compare_locator_ip(
-        const Locator_t& lh,
-        const Locator_t& rh) const
+        const Locator& lh,
+        const Locator& rh) const
 {
     return IPLocator::compareAddress(lh, rh);
 }
 
 bool UDPv4Transport::compare_locator_ip_and_port(
-        const Locator_t& lh,
-        const Locator_t& rh) const
+        const Locator& lh,
+        const Locator& rh) const
 {
     return IPLocator::compareAddressAndPhysicalPort(lh, rh);
 }
 
 void UDPv4Transport::endpoint_to_locator(
         ip::udp::endpoint& endpoint,
-        Locator_t& locator)
+        Locator& locator)
 {
+    locator.kind = kind();
     IPLocator::setPhysicalPort(locator, endpoint.port());
     auto ipBytes = endpoint.address().to_v4().to_bytes();
     IPLocator::setIPv4(locator, ipBytes.data());
 }
 
 void UDPv4Transport::fill_local_ip(
-        Locator_t& loc) const
+        Locator& loc) const
 {
     IPLocator::setIPv4(loc, "127.0.0.1");
     loc.kind = LOCATOR_KIND_UDPv4;
@@ -237,7 +237,7 @@ asio::ip::udp::endpoint UDPv4Transport::GenerateAnyAddressEndpoint(
 }
 
 ip::udp::endpoint UDPv4Transport::generate_endpoint(
-        const Locator_t& loc,
+        const Locator& loc,
         uint16_t port)
 {
     asio::ip::address_v4::bytes_type remoteAddress;
@@ -259,7 +259,7 @@ ip::udp::endpoint UDPv4Transport::generate_endpoint(
 }
 
 ip::udp::endpoint UDPv4Transport::generate_local_endpoint(
-        const Locator_t& loc,
+        const Locator& loc,
         uint16_t port)
 {
     return ip::udp::endpoint(asio::ip::address_v4(locator_to_native(loc)), port);
@@ -309,7 +309,7 @@ eProsimaUDPSocket UDPv4Transport::OpenAndBindInputSocket(
 }
 
 bool UDPv4Transport::OpenInputChannel(
-        const Locator_t& locator,
+        const Locator& locator,
         TransportReceiverInterface* receiver,
         uint32_t maxMsgSize)
 {
@@ -466,7 +466,7 @@ bool UDPv4Transport::is_interface_whitelist_empty() const
 }
 
 bool UDPv4Transport::is_locator_allowed(
-        const Locator_t& locator) const
+        const Locator& locator) const
 {
     if (!IsLocatorSupported(locator))
     {
@@ -479,10 +479,10 @@ bool UDPv4Transport::is_locator_allowed(
     return is_interface_allowed(IPLocator::toIPv4string(locator));
 }
 
-LocatorList_t UDPv4Transport::NormalizeLocator(
-        const Locator_t& locator)
+LocatorList UDPv4Transport::NormalizeLocator(
+        const Locator& locator)
 {
-    LocatorList_t list;
+    LocatorList list;
 
     if (IPLocator::isAny(locator))
     {
@@ -493,14 +493,14 @@ LocatorList_t UDPv4Transport::NormalizeLocator(
             auto ip = asio::ip::address_v4::from_string(infoIP.name);
             if (is_interface_allowed(ip))
             {
-                Locator_t newloc(locator);
+                Locator newloc(locator);
                 IPLocator::setIPv4(newloc, infoIP.locator);
                 list.push_back(newloc);
             }
         }
         if (list.empty())
         {
-            Locator_t newloc(locator);
+            Locator newloc(locator);
             IPLocator::setIPv4(newloc, "127.0.0.1");
             list.push_back(newloc);
         }
@@ -514,7 +514,7 @@ LocatorList_t UDPv4Transport::NormalizeLocator(
 }
 
 bool UDPv4Transport::is_local_locator(
-        const Locator_t& locator) const
+        const Locator& locator) const
 {
     assert(locator.kind == LOCATOR_KIND_UDPv4);
 

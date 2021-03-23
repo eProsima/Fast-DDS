@@ -21,8 +21,8 @@
 
 #include <gtest/gtest.h>
 
-#include <fastrtps/transport/UDPv4Transport.h>
-#include "../cpp/rtps/transport/shared_mem/test_SharedMemTransportDescriptor.h"
+#include <rtps/transport/shared_mem/test_SharedMemTransportDescriptor.h>
+#include <fastdds/rtps/transport/UDPv4TransportDescriptor.h>
 
 using namespace eprosima::fastrtps;
 
@@ -41,11 +41,11 @@ TEST(SHM, TransportPubSub)
 
     writer.reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS);
     writer.disable_builtin_transport().
-    add_user_transport_to_pparams(testTransport).init();
+            add_user_transport_to_pparams(testTransport).init();
 
     reader.reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS);
     reader.disable_builtin_transport().
-    add_user_transport_to_pparams(testTransport).init();
+            add_user_transport_to_pparams(testTransport).init();
 
     ASSERT_TRUE(reader.isInitialized());
     ASSERT_TRUE(writer.isInitialized());
@@ -90,17 +90,17 @@ TEST(SHM, Test300KFragmentation)
     shm_transport->big_buffer_size_recv_count_ = &big_buffers_recv_count;
 
     writer
-    .asynchronously(eprosima::fastrtps::SYNCHRONOUS_PUBLISH_MODE)
-    .reliability(eprosima::fastrtps::BEST_EFFORT_RELIABILITY_QOS)
-    .disable_builtin_transport()
-    .add_user_transport_to_pparams(shm_transport)
-    .init();
+            .asynchronously(eprosima::fastrtps::SYNCHRONOUS_PUBLISH_MODE)
+            .reliability(eprosima::fastrtps::BEST_EFFORT_RELIABILITY_QOS)
+            .disable_builtin_transport()
+            .add_user_transport_to_pparams(shm_transport)
+            .init();
 
     reader
-    .reliability(eprosima::fastrtps::BEST_EFFORT_RELIABILITY_QOS)
-    .disable_builtin_transport()
-    .add_user_transport_to_pparams(shm_transport)
-    .init();
+            .reliability(eprosima::fastrtps::BEST_EFFORT_RELIABILITY_QOS)
+            .disable_builtin_transport()
+            .add_user_transport_to_pparams(shm_transport)
+            .init();
 
     ASSERT_TRUE(reader.isInitialized());
     ASSERT_TRUE(writer.isInitialized());
@@ -142,17 +142,17 @@ TEST(SHM, Test300KNoFragmentation)
     shm_transport->big_buffer_size_recv_count_ = &big_buffers_recv_count;
 
     writer
-    .asynchronously(eprosima::fastrtps::SYNCHRONOUS_PUBLISH_MODE)
-    .reliability(eprosima::fastrtps::BEST_EFFORT_RELIABILITY_QOS)
-    .disable_builtin_transport()
-    .add_user_transport_to_pparams(shm_transport)
-    .init();
+            .asynchronously(eprosima::fastrtps::SYNCHRONOUS_PUBLISH_MODE)
+            .reliability(eprosima::fastrtps::BEST_EFFORT_RELIABILITY_QOS)
+            .disable_builtin_transport()
+            .add_user_transport_to_pparams(shm_transport)
+            .init();
 
     reader
-    .reliability(eprosima::fastrtps::BEST_EFFORT_RELIABILITY_QOS)
-    .disable_builtin_transport()
-    .add_user_transport_to_pparams(shm_transport)
-    .init();
+            .reliability(eprosima::fastrtps::BEST_EFFORT_RELIABILITY_QOS)
+            .disable_builtin_transport()
+            .add_user_transport_to_pparams(shm_transport)
+            .init();
 
     ASSERT_TRUE(reader.isInitialized());
     ASSERT_TRUE(writer.isInitialized());
@@ -204,17 +204,17 @@ TEST(SHM, SHM_UDP_300KFragmentation)
     writer.asynchronously(eprosima::fastrtps::ASYNCHRONOUS_PUBLISH_MODE);
     writer.reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS);
     writer
-    .disable_builtin_transport()
-    .add_user_transport_to_pparams(shm_transport)
-    .add_user_transport_to_pparams(udp_transport)
-    .init();
+            .disable_builtin_transport()
+            .add_user_transport_to_pparams(shm_transport)
+            .add_user_transport_to_pparams(udp_transport)
+            .init();
 
     reader.reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS);
     reader
-    .disable_builtin_transport()
-    .add_user_transport_to_pparams(shm_transport)
-    .add_user_transport_to_pparams(udp_transport)
-    .init();
+            .disable_builtin_transport()
+            .add_user_transport_to_pparams(shm_transport)
+            .add_user_transport_to_pparams(udp_transport)
+            .init();
 
     ASSERT_TRUE(reader.isInitialized());
     ASSERT_TRUE(writer.isInitialized());
@@ -268,16 +268,16 @@ TEST(SHM, UDPvsSHM_UDP)
     writer.asynchronously(eprosima::fastrtps::ASYNCHRONOUS_PUBLISH_MODE);
     writer.reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS);
     writer
-    .disable_builtin_transport()
-    .add_user_transport_to_pparams(udp_transport)
-    .init();
+            .disable_builtin_transport()
+            .add_user_transport_to_pparams(udp_transport)
+            .init();
 
     reader.reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS);
     reader
-    .disable_builtin_transport()
-    .add_user_transport_to_pparams(shm_transport)
-    .add_user_transport_to_pparams(udp_transport)
-    .init();
+            .disable_builtin_transport()
+            .add_user_transport_to_pparams(shm_transport)
+            .add_user_transport_to_pparams(udp_transport)
+            .init();
 
     ASSERT_TRUE(reader.isInitialized());
     ASSERT_TRUE(writer.isInitialized());
@@ -324,16 +324,16 @@ TEST(SHM, SHM_UDPvsUDP)
     writer.asynchronously(eprosima::fastrtps::ASYNCHRONOUS_PUBLISH_MODE);
     writer.reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS);
     writer
-    .disable_builtin_transport()
-    .add_user_transport_to_pparams(shm_transport)
-    .add_user_transport_to_pparams(udp_transport)
-    .init();
+            .disable_builtin_transport()
+            .add_user_transport_to_pparams(shm_transport)
+            .add_user_transport_to_pparams(udp_transport)
+            .init();
 
     reader.reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS);
     reader
-    .disable_builtin_transport()
-    .add_user_transport_to_pparams(udp_transport)
-    .init();
+            .disable_builtin_transport()
+            .add_user_transport_to_pparams(udp_transport)
+            .init();
 
     ASSERT_TRUE(reader.isInitialized());
     ASSERT_TRUE(writer.isInitialized());
@@ -357,6 +357,51 @@ TEST(SHM, SHM_UDPvsUDP)
 
     // Check that reader receives the unmatched.
     reader.wait_participant_undiscovery();
+}
+
+// Test == operator for SHM
+TEST(BlackBox, SHM_equal_operator)
+{
+    // SharedMemTransportDescriptor
+    SharedMemTransportDescriptor shm_transport_1;
+    SharedMemTransportDescriptor shm_transport_2;
+
+    // Compare equal in defult values
+    ASSERT_EQ(shm_transport_1, shm_transport_2);
+
+    // Modify some default values in 1
+    shm_transport_1.segment_size(shm_transport_1.segment_size() * 10u); // change default value
+    shm_transport_1.max_message_size(shm_transport_1.max_message_size() + 20u); // change default value
+    shm_transport_1.healthy_check_timeout_ms(shm_transport_1.healthy_check_timeout_ms() - 30u); // change default value
+    shm_transport_1.rtps_dump_file("test"); // change default value
+
+    ASSERT_FALSE(shm_transport_1 == shm_transport_2); // operator== != operator!=, using operator== == false instead
+
+    // Modify default values in 2
+    shm_transport_2.segment_size(shm_transport_2.segment_size() * 10u); // change default value
+    shm_transport_2.max_message_size(shm_transport_2.max_message_size() + 20u); // change default value
+    shm_transport_2.healthy_check_timeout_ms(shm_transport_2.healthy_check_timeout_ms() - 30u); // change default value
+    shm_transport_2.rtps_dump_file("test"); // change default value
+
+    ASSERT_EQ(shm_transport_1, shm_transport_2);
+}
+
+// Test copy constructor and copy assignment
+TEST(SHM, SHM_copy)
+{
+    SharedMemTransportDescriptor shm_transport;
+    shm_transport.segment_size(shm_transport.segment_size() * 10u); // change default value
+    shm_transport.max_message_size(shm_transport.max_message_size() + 20u); // change default value
+    shm_transport.healthy_check_timeout_ms(shm_transport.healthy_check_timeout_ms() - 30u); // change default value
+    shm_transport.rtps_dump_file("test"); // change default value
+
+    // Copy constructor
+    SharedMemTransportDescriptor shm_transport_copy_constructor(shm_transport);
+    EXPECT_EQ(shm_transport_copy_constructor, shm_transport);
+
+    // Copy assignment
+    SharedMemTransportDescriptor shm_transport_copy = shm_transport;
+    EXPECT_EQ(shm_transport_copy, shm_transport);
 }
 
 #endif // EPROSIMA_SHM_TRANSPORT_DISABLED

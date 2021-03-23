@@ -183,7 +183,7 @@ public:
      * RETCODE_ERROR otherwise.
      */
     RTPS_DllAPI ReturnCode_t delete_datawriter(
-            DataWriter* writer);
+            const DataWriter* writer);
 
     /**
      * This operation retrieves a previously created DataWriter belonging to the Publisher that is attached to a

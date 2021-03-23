@@ -12,16 +12,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include <rtps/transport/UDPChannelResource.h>
+
 #include <asio.hpp>
-#include <fastdds/rtps/transport/UDPTransportInterface.h>
-#include <fastdds/rtps/transport/UDPChannelResource.h>
 #include <fastdds/rtps/messages/MessageReceiver.h>
+#include <rtps/transport/UDPTransportInterface.h>
 
 namespace eprosima {
 namespace fastdds {
 namespace rtps {
 
-using Locator_t = fastrtps::rtps::Locator_t;
 using octet = fastrtps::rtps::octet;
 using Log = fastdds::dds::Log;
 
@@ -29,7 +29,7 @@ UDPChannelResource::UDPChannelResource(
         UDPTransportInterface* transport,
         eProsimaUDPSocket& socket,
         uint32_t maxMsgSize,
-        const Locator_t& locator,
+        const Locator& locator,
         const std::string& sInterface,
         TransportReceiverInterface* receiver)
     : ChannelResource(maxMsgSize)
@@ -47,9 +47,10 @@ UDPChannelResource::~UDPChannelResource()
     message_receiver_ = nullptr;
 }
 
-void UDPChannelResource::perform_listen_operation(Locator_t input_locator)
+void UDPChannelResource::perform_listen_operation(
+        Locator input_locator)
 {
-    Locator_t remote_locator;
+    Locator remote_locator;
 
     while (alive())
     {
@@ -78,7 +79,7 @@ bool UDPChannelResource::Receive(
         octet* receive_buffer,
         uint32_t receive_buffer_capacity,
         uint32_t& receive_buffer_size,
-        Locator_t& remote_locator)
+        Locator& remote_locator)
 {
     try
     {
@@ -101,7 +102,7 @@ bool UDPChannelResource::Receive(
     {
         (void)error;
         logWarning(RTPS_MSG_OUT, "Error receiving data: " << error.what() << " - " << message_receiver()
-            << " (" << this << ")");
+                                                          << " (" << this << ")");
         return false;
     }
 }

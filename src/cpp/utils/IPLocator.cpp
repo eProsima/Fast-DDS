@@ -276,7 +276,7 @@ bool IPLocator::setIPv6(
         else
         {
             // Calculate number of 0 blocks by the number of ':'
-            // 2 ':' at the beggining => - 2
+            // 2 ':' at the beginning => - 2
             // 7 std : => 7 - count
             // 2 bytes per string => * 2
             initial_zeros = (7 - (count - 2)) * 2;
@@ -316,7 +316,7 @@ bool IPLocator::setIPv6(
     std::stringstream ss;
     ss << std::hex << ipv6;
     uint16_t i;
-    uint32_t input_aux; // It cannot be uint16_t or we could not find wether the input number is bigger than allowed
+    uint32_t input_aux; // It cannot be uint16_t or we could not find whether the input number is bigger than allowed
 
     // Build the bytes string knowing already if there is a zero block, where and which size
     if (initial_zeros != 0)
@@ -984,7 +984,7 @@ bool IPLocator::IPv6isCorrect(
         return false;
     }
 
-    // only case of 8 : is with a :: at the beggining or end
+    // only case of 8 : is with a :: at the beginning or end
     if (count == 8 && (ipv6.front() != ':' && ipv6.back() != ':'))
     {
         return false;

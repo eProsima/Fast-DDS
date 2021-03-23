@@ -61,6 +61,28 @@ if __name__ == '__main__':
         help='Publisher and subscribers in separate processes. Defaults:False',
         required=False,
     )
+    parser.add_argument(
+        '-d',
+        '--data_sharing',
+        action='store_true',
+        help='Enable data sharing (Defaults: disable)',
+        required=False,
+    )
+    parser.add_argument(
+        '-l',
+        '--data_loans',
+        action='store_true',
+        help='Enable the use of the loan sample API (Defaults: disable)',
+        required=False,
+    )
+    parser.add_argument(
+        '-R',
+        '--reliability',
+        action='store_true',
+        help='Run with RELIABLE reliability (Defaults: disable)',
+        required=False,
+    )
+
     # Parse arguments
     args = parser.parse_args()
     xml_file = args.xml_file
@@ -84,7 +106,7 @@ if __name__ == '__main__':
         exit(1)  # Exit with error
 
     # XML options
-    reliability = 'default'
+    filename_options = 'default'
     xml_options = []
     if xml_file:
         if not os.path.isfile(xml_file):
@@ -93,9 +115,18 @@ if __name__ == '__main__':
         else:
             xml_options = ['--xml', xml_file]
             # Get reliability from XML
-            reliability = xml_file.split('/')[-1].split('\\')[-1]
-            reliability = reliability.split('.')[-2].split('_')[1:]
-            reliability = '_'.join(reliability)
+            filename_options = xml_file.split('/')[-1].split('\\')[-1]
+            filename_options = filename_options.split('.')[-2].split('_')[1:]
+            filename_options = '_'.join(filename_options)
+
+    # Data sharing and loans options
+    # modify output file names
+    if args.data_sharing and args.data_loans:
+        filename_options += '_data_loans_and_sharing'
+    elif args.data_sharing:
+        filename_options += '_data_sharing'
+    elif args.data_loans:
+        filename_options += '_data_loans'
 
     # Demands files options
     demands_options = []
@@ -108,6 +139,21 @@ if __name__ == '__main__':
                 '--file',
                 args.demands_file,
             ]
+
+    # add flags to the command line
+    data_options = []
+
+    if args.data_sharing:
+        data_options += ['--data_sharing']
+
+    if args.data_loans:
+        data_options += ['--data_loans']
+
+    reliability_options = []
+    if args.reliability:
+        reliability_options = ['--reliability=reliable']
+    else:
+        reliability_options = ['--reliability=besteffort']
 
     # Recoveries files options
     recoveries_options = []
@@ -151,8 +197,8 @@ if __name__ == '__main__':
             print('Cannot find CERTS_PATH environment variable')
             exit(1)  # Exit with error
 
-    # Domain
-    domain = str(os.getpid() % 230)
+    # Domain must be under 100 to prevent windows multicast issues
+    domain = str(os.getpid() % 100)
     domain_options = ['--domain', domain]
 
     if interprocess is True:
@@ -174,7 +220,7 @@ if __name__ == '__main__':
         if security is True:
             pub_command.append(
                 './measurements_interprocess_{}_security.csv'.format(
-                    reliability
+                    filename_options
                 )
             )
             pub_command += security_options
@@ -182,7 +228,7 @@ if __name__ == '__main__':
         else:
             pub_command.append(
                 './measurements_interprocess_{}.csv'.format(
-                    reliability
+                    filename_options
                 )
             )
 
@@ -190,8 +236,13 @@ if __name__ == '__main__':
         pub_command += recoveries_options
         pub_command += domain_options
         pub_command += xml_options
+        pub_command += data_options
+        pub_command += reliability_options
+
         sub_command += domain_options
         sub_command += xml_options
+        sub_command += data_options
+        sub_command += reliability_options
 
         print('Publisher command: {}'.format(
             ' '.join(element for element in pub_command)),
@@ -227,14 +278,14 @@ if __name__ == '__main__':
         if security is True:
             command.append(
                 './measurements_intraprocess_{}_security.csv'.format(
-                    reliability,
+                    filename_options,
                 )
             )
             command += security_options
         else:
             command.append(
                 './measurements_intraprocess_{}.csv'.format(
-                    reliability,
+                    filename_options,
                 )
             )
 
@@ -242,6 +293,8 @@ if __name__ == '__main__':
         command += recoveries_options
         command += domain_options
         command += xml_options
+        command += data_options
+        command += reliability_options
 
         print('Executable command: {}'.format(
             ' '.join(element for element in command)),

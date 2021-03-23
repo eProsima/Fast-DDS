@@ -121,3 +121,9 @@ void Publisher::assert_liveliness()
 {
     mp_impl->assert_liveliness();
 }
+
+void Publisher::get_sending_locators(
+        rtps::LocatorList_t& locators) const
+{
+    mp_impl->get_sending_locators(locators);
+}

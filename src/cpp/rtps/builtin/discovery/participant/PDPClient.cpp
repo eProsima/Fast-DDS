@@ -24,6 +24,8 @@
 #include <fastdds/rtps/reader/StatefulReader.h>
 #include <fastdds/rtps/writer/StatefulWriter.h>
 
+#include <fastdds/rtps/attributes/RTPSParticipantAttributes.h>
+
 #include <fastdds/rtps/writer/ReaderProxy.h>
 
 #include <fastdds/rtps/history/WriterHistory.h>
@@ -51,10 +53,12 @@ using namespace fastrtps::rtps;
 
 PDPClient::PDPClient(
         BuiltinProtocols* builtin,
-        const RTPSParticipantAllocationAttributes& allocation)
+        const RTPSParticipantAllocationAttributes& allocation,
+        bool super_client)
     : PDP(builtin, allocation)
     , mp_sync(nullptr)
     , _serverPing(false)
+    , _super_client(super_client)
 {
 }
 
@@ -71,7 +75,12 @@ void PDPClient::initializeParticipantProxyData(
 {
     PDP::initializeParticipantProxyData(participant_data); // TODO: Remember that the PDP version USES security
 
-    if (getRTPSParticipant()->getAttributes().builtin.discovery_config.discoveryProtocol != DiscoveryProtocol_t::CLIENT)
+    if (
+        getRTPSParticipant()->getAttributes().builtin.discovery_config.discoveryProtocol
+        != DiscoveryProtocol_t::CLIENT
+        &&
+        getRTPSParticipant()->getAttributes().builtin.discovery_config.discoveryProtocol
+        != DiscoveryProtocol_t::SUPER_CLIENT    )
     {
         logError(RTPS_PDP, "Using a PDP client object with another user's settings");
     }
@@ -90,9 +99,7 @@ void PDPClient::initializeParticipantProxyData(
         participant_data->m_availableBuiltinEndpoints |= DISC_BUILTIN_ENDPOINT_SUBSCRIPTION_ANNOUNCER;
     }
 
-    // Set participant type and discovery server version properties
-    participant_data->m_properties.push_back(std::pair<std::string,
-            std::string>({fastdds::dds::parameter_property_participant_type, fastdds::rtps::ParticipantType::CLIENT}));
+    // Set discovery server version property
     participant_data->m_properties.push_back(std::pair<std::string,
             std::string>({fastdds::dds::parameter_property_ds_version,
                           fastdds::dds::parameter_property_current_ds_version}));
@@ -463,7 +470,7 @@ void PDPClient::announceParticipantState(
             change->write_params = wp;
 
             std::vector<GUID_t> remote_readers;
-            LocatorList_t locators;
+            LocatorList locators;
 
             //  TODO: modify announcement mechanism to allow direct message sending
             //for (auto it = pW->matchedReadersBegin(); it != pW->matchedReadersEnd(); ++it)
@@ -515,7 +522,7 @@ void PDPClient::announceParticipantState(
                 std::lock_guard<std::recursive_mutex> lock(*getMutex());
 
                 std::vector<GUID_t> remote_readers;
-                LocatorList_t locators;
+                LocatorList locators;
 
                 for (auto& svr : mp_builtin->m_DiscoveryServers)
                 {
@@ -574,15 +581,38 @@ bool PDPClient::match_servers_EDP_endpoints()
     return all;
 }
 
+const std::string& ros_discovery_server_env()
+{
+    static std::string servers;
+    {
+#pragma warning(suppress:4996)
+        const char* data = std::getenv(DEFAULT_ROS2_MASTER_URI);
+        if (nullptr != data)
+        {
+            servers = data;
+        }
+    }
+    return servers;
+}
+
+bool load_environment_server_info(
+        RemoteServerList_t& attributes)
+{
+    return load_environment_server_info(ros_discovery_server_env(), attributes);
+}
+
 bool load_environment_server_info(
         std::string list,
         RemoteServerList_t& attributes)
 {
-    using namespace std;
+    if (list.empty())
+    {
+        return false;
+    }
 
     // parsing ancillary regex
-    const regex ROS2_IPV4_PATTERN(R"(^((?:[0-9]{1,3}\.){3}[0-9]{1,3})?:?(?:(\d+))?$)");
-    const regex ROS2_SERVER_LIST_PATTERN(R"(([^;]*);?)");
+    const std::regex ROS2_IPV4_PATTERN(R"(^((?:[0-9]{1,3}\.){3}[0-9]{1,3})?:?(?:(\d+))?$)");
+    const std::regex ROS2_SERVER_LIST_PATTERN(R"(([^;]*);?)");
 
     try
     {
@@ -592,30 +622,30 @@ bool load_environment_server_info(
         Locator_t server_locator(LOCATOR_KIND_UDPv4, DEFAULT_ROS2_SERVER_PORT);
         int server_id = 0;
 
-        sregex_iterator server_it(
+        std::sregex_iterator server_it(
             list.begin(),
             list.end(),
             ROS2_SERVER_LIST_PATTERN,
-            regex_constants::match_not_null);
+            std::regex_constants::match_not_null);
 
-        while (server_it != sregex_iterator())
+        while (server_it != std::sregex_iterator())
         {
-            const smatch::value_type sm = *++(server_it->cbegin());
+            const std::smatch::value_type sm = *++(server_it->cbegin());
 
             if (sm.matched)
             {
                 // now we must parse the inner expression
-                smatch mr;
-                string locator(sm);
-                if (regex_match(locator, mr, ROS2_IPV4_PATTERN, regex_constants::match_not_null))
+                std::smatch mr;
+                std::string locator(sm);
+                if (std::regex_match(locator, mr, ROS2_IPV4_PATTERN, std::regex_constants::match_not_null))
                 {
-                    smatch::iterator it = mr.cbegin();
+                    std::smatch::iterator it = mr.cbegin();
 
                     while (++it != mr.cend())
                     {
-                        if ( !IPLocator::setIPv4(server_locator, it->str()))
+                        if (!IPLocator::setIPv4(server_locator, it->str()))
                         {
-                            stringstream ss;
+                            std::stringstream ss;
                             ss << "Wrong ipv4 address passed into the server's list " << it->str();
                             throw std::invalid_argument(ss.str());
                         }
@@ -626,7 +656,7 @@ bool load_environment_server_info(
                             IPLocator::setIPv4(server_locator, "127.0.0.1");
                         }
 
-                        if ( ++it != mr.cend())
+                        if (++it != mr.cend())
                         {
                             // reset the locator to default
                             IPLocator::setPhysicalPort(server_locator, DEFAULT_ROS2_SERVER_PORT);
@@ -638,14 +668,14 @@ bool load_environment_server_info(
 
                                 if ( port > std::numeric_limits<uint16_t>::max())
                                 {
-                                    throw out_of_range("Too larget udp port passed into the server's list");
+                                    throw std::out_of_range("Too larget udp port passed into the server's list");
                                 }
 
                                 if ( !IPLocator::setPhysicalPort(server_locator, static_cast<uint16_t>(port)))
                                 {
-                                    stringstream ss;
+                                    std::stringstream ss;
                                     ss << "Wrong udp port passed into the server's list " << it->str();
-                                    throw invalid_argument(ss.str());
+                                    throw std::invalid_argument(ss.str());
                                 }
                             }
                         }
@@ -665,7 +695,7 @@ bool load_environment_server_info(
                 {
                     if (!locator.empty())
                     {
-                        stringstream ss;
+                        std::stringstream ss;
                         ss << "Wrong locator passed into the server's list " << locator;
                         throw std::invalid_argument(ss.str());
                     }
@@ -716,8 +746,8 @@ bool get_server_client_default_guidPrefix(
             && id < 256
             && std::istringstream(DEFAULT_ROS2_SERVER_GUIDPREFIX) >> guid)
     {
-        // Last octet denotes the default server id but to ease debugging it starts on char '0' = 48
-        guid.value[11] = static_cast<octet>((48 + id) % 256);
+        // Third octet denotes the server id
+        guid.value[2] = static_cast<octet>(id);
 
         return true;
     }

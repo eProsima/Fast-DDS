@@ -42,13 +42,15 @@ public:
 
     ReaderTimes()
     {
-        initialAcknackDelay.nanosec = 70*1000*1000;
-        heartbeatResponseDelay.nanosec = 5*1000*1000;
+        initialAcknackDelay.nanosec = 70 * 1000 * 1000;
+        heartbeatResponseDelay.nanosec = 5 * 1000 * 1000;
     }
 
-    virtual ~ReaderTimes() {}
+    virtual ~ReaderTimes()
+    {
+    }
 
-    bool operator==(
+    bool operator ==(
             const ReaderTimes& b) const
     {
         return (this->initialAcknackDelay == b.initialAcknackDelay)  &&
@@ -57,7 +59,7 @@ public:
 
     //!Initial AckNack delay. Default value 70ms.
     Duration_t initialAcknackDelay;
-    //!Delay to be applied when a hearbeat message is received, default value 5ms.
+    //!Delay to be applied when a HEARTBEAT message is received, default value 5ms.
     Duration_t heartbeatResponseDelay;
 };
 
@@ -78,9 +80,11 @@ public:
         endpoint.endpointKind = READER;
         endpoint.durabilityKind = VOLATILE;
         endpoint.reliabilityKind = BEST_EFFORT;
-    };
+    }
 
-    virtual ~ReaderAttributes() {};
+    virtual ~ReaderAttributes()
+    {
+    }
 
     //!Attributes of the associated endpoint.
     EndpointAttributes endpoint;

@@ -252,6 +252,11 @@ ReturnCode_t DataReader::get_first_untaken_info(
     return impl_->get_first_untaken_info(info);
 }
 
+uint64_t DataReader::get_unread_count() const
+{
+    return impl_->get_unread_count();
+}
+
 const GUID_t& DataReader::guid()
 {
     return impl_->guid();
@@ -418,7 +423,7 @@ QueryCondition* DataReader::create_querycondition(
 }
 
 ReturnCode_t DataReader::delete_readcondition(
-        ReadCondition* a_condition)
+        const ReadCondition* a_condition)
 {
     static_cast<void> (a_condition);
     return ReturnCode_t::RETCODE_UNSUPPORTED;
@@ -465,6 +470,12 @@ bool DataReader::is_sample_valid(
         const SampleInfo* info) const
 {
     return impl_->is_sample_valid(data, info);
+}
+
+ReturnCode_t DataReader::get_listening_locators(
+        rtps::LocatorList& locators) const
+{
+    return impl_->get_listening_locators(locators);
 }
 
 } /* namespace dds */

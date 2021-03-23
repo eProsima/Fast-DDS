@@ -1,3 +1,11 @@
+Forthcoming
+-----------
+* Added reception_timestamp to `eprosima::fastdds::dds::SampleInfo` (ABI break)
+
+* Added eprosima::fastdds::dds::DataReader::get_unread_count (ABI break)
+
+* Refactor eprosima::fastrtps::type::ReturnCode_t. Now the constant global objects are no longer available (ABI break)
+
 Version 2.2.0
 -------------
 

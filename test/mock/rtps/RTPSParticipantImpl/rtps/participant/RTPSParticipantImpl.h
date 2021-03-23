@@ -253,6 +253,11 @@ public:
         return attr_;
     }
 
+    void get_sending_locators(
+            rtps::LocatorList_t& /*locators*/) const
+    {
+    }
+
 private:
 
     MockParticipantListener listener_;

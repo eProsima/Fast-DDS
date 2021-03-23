@@ -295,7 +295,7 @@ public:
     }
 
     /**
-     * Inform if data is sent to readers separatedly
+     * Inform if data is sent to readers separately
      * @return true if separate sending is enabled
      */
     bool get_separate_sending () const
@@ -361,7 +361,7 @@ public:
 
     /**
      * @brief A method to retrieve the liveliness lease duration
-     * @return Lease durtation
+     * @return Lease duration
      */
     const Duration_t& get_liveliness_lease_duration() const;
 

@@ -49,7 +49,10 @@ set(OLD_CMAKE_REQUIRED_LIBRARIES ${CMAKE_REQUIRED_LIBRARIES})
 # must locally change CMAKE_C_COMPILER_LOADED value to force the use of C++ compiler. Note that future changes in
 # CheckLibraryExists module may alter this workaround.
 set(CMAKE_REQUIRED_FLAGS ${CMAKE_REQUIRED_FLAGS} ${FASTDDS_REQUIRED_FLAGS})
-set(CMAKE_C_COMPILER_LOADED 0)
+
+if(MSVC OR MSVC_IDE OR (CMAKE_CXX_COMPILER_ID MATCHES "Clang"))
+    set(CMAKE_C_COMPILER_LOADED 0)
+endif()
 
 # Test linking without atomic
 check_cxx_source_compiles(

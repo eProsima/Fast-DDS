@@ -23,7 +23,7 @@
 #include <regex>
 
 /**
- * eProsima log layer. Logging categories and verbosities can be specified dynamically at runtime.
+ * eProsima log layer. Logging categories and verbosity can be specified dynamically at runtime.
  * However, even on a category not covered by the current verbosity level,
  * there is some overhead on calling a log macro. For maximum performance, you can
  * opt out of logging any particular level by defining the following symbols:
@@ -116,7 +116,7 @@ public:
     //! Returns the logging engine to configuration defaults.
     RTPS_DllAPI static void Reset();
 
-    //! Waits until no more log info is availabel
+    //! Waits until no more log info is available
     RTPS_DllAPI static void Flush();
 
     //! Stops the logging thread. It will re-launch on the next call to a successful log macro.
@@ -288,7 +288,10 @@ protected:
 #define logWarning_(cat, msg)
 #endif // ifndef LOG_NO_WARNING
 
-#if !HAVE_LOG_NO_INFO
+// Allow multiconfig platforms like windows to disable info queueing on Release and other non-debug configs
+#if !HAVE_LOG_NO_INFO &&  \
+    (defined(FASTDDS_ENFORCE_LOG_INFO) || \
+    ((defined(__INTERNALDEBUG) || defined(_INTERNALDEBUG)) && (defined(_DEBUG) || defined(__DEBUG))))
 #define logInfo_(cat, msg)                                                                              \
     {                                                                                                   \
         using namespace eprosima::fastdds::dds;                                                         \

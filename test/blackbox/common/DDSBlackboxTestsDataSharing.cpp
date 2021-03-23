@@ -18,7 +18,7 @@
 
 #include "PubSubReader.hpp"
 #include "PubSubWriter.hpp"
-#include <fastrtps/transport/test_UDPv4Transport.h>
+#include <fastrtps/transport/test_UDPv4TransportDescriptor.h>
 #include <fastrtps/xmlparser/XMLProfileManager.h>
 
 #include <gtest/gtest.h>
@@ -116,6 +116,9 @@ TEST(DDSDataSharing, TransientReader)
 
 TEST(DDSDataSharing, BestEffortDirtyPayloads)
 {
+    // The writer's pool is smaller than the reader history.
+    // The number of samples is larger than the pool size, so some payloads get rused
+    // leaving dirty payloads in the reader
     PubSubReader<FixedSizedType> read_reader(TEST_TOPIC_NAME, false);
     PubSubWriter<FixedSizedType> writer(TEST_TOPIC_NAME);
 
@@ -144,13 +147,11 @@ TEST(DDSDataSharing, BestEffortDirtyPayloads)
     writer.wait_discovery();
     read_reader.wait_discovery();
 
-    // Send the data to fill the history and overwrite old changes
-    // The reader will receive all changes but the application will see only the last ones
     std::list<FixedSized> data = default_fixed_sized_data_generator(writer_sent_data);
-    std::list<FixedSized> received_data;
+    std::list<FixedSized> data_in_history;
     auto data_it = data.begin();
     std::advance(data_it, writer_sent_data - writer_history_depth - 1);
-    std::copy(data_it, data.end(), std::back_inserter(received_data));
+    std::copy(data_it, data.end(), std::back_inserter(data_in_history));
 
     // Send the data to fill the history and overwrite old changes
     // The reader will receive and process all changes so that the writer can reuse them,
@@ -161,17 +162,14 @@ TEST(DDSDataSharing, BestEffortDirtyPayloads)
     read_reader.block_for_all();
 
     // Doing a second read on the same history, the application will see only the last samples
-    read_reader.startReception(received_data);
-    FixedSizedType::type value;
-    while (read_reader.takeNextData ((void*)&value))
-    {
-        default_receive_print<FixedSizedType::type>(value);
-    }
-    read_reader.block_for_all();
+    read_reader.check_history_content(data_in_history);
 }
 
 TEST(DDSDataSharing, ReliableDirtyPayloads)
 {
+    // The writer's pool is smaller than the reader history.
+    // The number of samples is larger than the pool size, so some payloads get rused
+    // leaving dirty payloads in the reader
     PubSubReader<FixedSizedType> read_reader(TEST_TOPIC_NAME, false);
     PubSubWriter<FixedSizedType> writer(TEST_TOPIC_NAME);
 
@@ -200,13 +198,11 @@ TEST(DDSDataSharing, ReliableDirtyPayloads)
     writer.wait_discovery();
     read_reader.wait_discovery();
 
-    // Send the data to fill the history and overwrite old changes
-    // The reader will receive all changes but the application will see only the last ones
     std::list<FixedSized> data = default_fixed_sized_data_generator(writer_sent_data);
-    std::list<FixedSized> received_data;
+    std::list<FixedSized> data_in_history;
     auto data_it = data.begin();
     std::advance(data_it, writer_sent_data - writer_history_depth - 1);
-    std::copy(data_it, data.end(), std::back_inserter(received_data));
+    std::copy(data_it, data.end(), std::back_inserter(data_in_history));
 
     // Send the data to fill the history and overwrite old changes
     // The reader will receive and process all changes so that the writer can reuse them,
@@ -217,13 +213,7 @@ TEST(DDSDataSharing, ReliableDirtyPayloads)
     read_reader.block_for_all();
 
     // Doing a second read on the same history, the application will see only the last samples
-    read_reader.startReception(received_data);
-    FixedSizedType::type value;
-    while (read_reader.takeNextData ((void*)&value))
-    {
-        default_receive_print<FixedSizedType::type>(value);
-    }
-    read_reader.block_for_all();
+    read_reader.check_history_content(data_in_history);
 }
 
 TEST(DDSDataSharing, DataSharingWriter_DifferentDomainReaders)

@@ -16,11 +16,9 @@
 #include <rtps/transport/shared_mem/test_SharedMemChannelResource.hpp>
 #include <rtps/transport/shared_mem/SharedMemManager.hpp>
 
-using namespace eprosima;
-using namespace eprosima::fastdds;
-using namespace eprosima::fastdds::rtps;
-
-using Locator_t = fastrtps::rtps::Locator_t;
+namespace eprosima {
+namespace fastdds {
+namespace rtps {
 
 test_SharedMemTransportDescriptor::test_SharedMemTransportDescriptor()
     : SharedMemTransportDescriptor()
@@ -67,7 +65,7 @@ bool test_SharedMemTransport::send(
 }
 
 SharedMemChannelResource* test_SharedMemTransport::CreateInputChannelResource(
-        const Locator_t& locator,
+        const Locator& locator,
         uint32_t maxMsgSize,
         TransportReceiverInterface* receiver)
 {
@@ -88,3 +86,7 @@ SharedMemChannelResource* test_SharedMemTransport::CreateInputChannelResource(
         big_buffer_size_,
         big_buffer_size_recv_count_);
 }
+
+}  // namespace rtps
+}  // namespace fastdds
+}  // namespace eprosima

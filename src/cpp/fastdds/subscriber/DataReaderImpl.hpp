@@ -30,7 +30,7 @@
 #include <fastdds/dds/topic/TypeSupport.hpp>
 
 #include <fastdds/rtps/attributes/ReaderAttributes.h>
-#include <fastdds/rtps/common/Locator.h>
+#include <fastdds/rtps/common/LocatorList.hpp>
 #include <fastdds/rtps/common/Guid.h>
 #include <fastdds/rtps/history/IPayloadPool.h>
 #include <fastdds/rtps/reader/ReaderListener.h>
@@ -194,6 +194,11 @@ public:
             SampleInfo* info);
 
     /**
+     * @return the number of samples pending to be read.
+     */
+    uint64_t get_unread_count() const;
+
+    /**
      * Get associated GUID
      * @return Associated GUID
      */
@@ -289,9 +294,20 @@ public:
      * @param info Pointer to the SampleInfo related to \c data
      * @return true if the sample is valid
      */
-    RTPS_DllAPI bool is_sample_valid(
+    bool is_sample_valid(
             const void* data,
             const SampleInfo* info) const;
+
+    /**
+     * Get the list of locators on which this DataReader is listening.
+     *
+     * @param [out] locators  LocatorList where the list of locators will be stored.
+     *
+     * @return NOT_ENABLED if the reader has not been enabled.
+     * @return OK if a list of locators is returned.
+     */
+    ReturnCode_t get_listening_locators(
+            rtps::LocatorList& locators) const;
 
 protected:
 
@@ -400,6 +416,11 @@ protected:
             InstanceStateMask instance_states,
             bool exact_instance,
             bool single_instance,
+            bool should_take);
+
+    ReturnCode_t read_or_take_next_sample(
+            void* data,
+            SampleInfo* info,
             bool should_take);
 
     /**

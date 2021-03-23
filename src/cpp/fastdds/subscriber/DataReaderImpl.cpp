@@ -21,8 +21,9 @@
 
 #include <fastdds/subscriber/DataReaderImpl.hpp>
 
-#include <fastdds/dds/log/Log.hpp>
+#include <fastdds/dds/core/StackAllocatedSequence.hpp>
 #include <fastdds/dds/domain/DomainParticipant.hpp>
+#include <fastdds/dds/log/Log.hpp>
 #include <fastdds/dds/subscriber/DataReader.hpp>
 #include <fastdds/dds/subscriber/SampleInfo.hpp>
 #include <fastdds/dds/subscriber/Subscriber.hpp>
@@ -66,6 +67,7 @@ static void sample_info_to_dds (
     dds_info->generation_rank = 0;
     dds_info->absoulte_generation_rank = 0;
     dds_info->source_timestamp = rtps_info.sourceTimestamp;
+    dds_info->reception_timestamp = rtps_info.receptionTimestamp;
     dds_info->instance_handle = rtps_info.iHandle;
     dds_info->publication_handle = fastrtps::rtps::InstanceHandle_t(rtps_info.sample_identity.writer_guid());
     dds_info->sample_identity = rtps_info.sample_identity;
@@ -94,6 +96,21 @@ static bool collections_have_same_properties(
     return ((data_values.has_ownership() == sample_infos.has_ownership()) &&
            (data_values.maximum() == sample_infos.maximum()) &&
            (data_values.length() == sample_infos.length()));
+}
+
+static bool qos_has_unique_network_request(
+        const DataReaderQos& qos)
+{
+    return nullptr != PropertyPolicyHelper::find_property(qos.properties(), "fastdds.unique_network_flows");
+}
+
+static bool qos_has_specific_locators(
+        const DataReaderQos& qos)
+{
+    const RTPSEndpointQos& endpoint = qos.endpoint();
+    return !endpoint.unicast_locator_list.empty() ||
+           !endpoint.multicast_locator_list.empty() ||
+           !endpoint.remote_locator_list.empty();
 }
 
 DataReaderImpl::DataReaderImpl(
@@ -415,7 +432,19 @@ ReturnCode_t DataReaderImpl::read_or_take(
         return code;
     }
 
-    std::lock_guard<RecursiveTimedMutex> lock(reader_->getMutex());
+    auto max_blocking_time = std::chrono::steady_clock::now() +
+#if HAVE_STRICT_REALTIME
+            std::chrono::microseconds(::TimeConv::Time_t2MicroSecondsInt64(qos_.reliability().max_blocking_time));
+#else
+            std::chrono::hours(24);
+#endif // if HAVE_STRICT_REALTIME
+
+    std::unique_lock<RecursiveTimedMutex> lock(reader_->getMutex(), std::defer_lock);
+
+    if (!lock.try_lock_until(max_blocking_time))
+    {
+        return ReturnCode_t::RETCODE_TIMEOUT;
+    }
 
     auto it = history_.lookup_instance(handle, exact_instance);
     if (!it.first)
@@ -566,9 +595,10 @@ ReturnCode_t DataReaderImpl::return_loan(
     return ReturnCode_t::RETCODE_OK;
 }
 
-ReturnCode_t DataReaderImpl::read_next_sample(
+ReturnCode_t DataReaderImpl::read_or_take_next_sample(
         void* data,
-        SampleInfo* info)
+        SampleInfo* info,
+        bool should_take)
 {
     if (reader_ == nullptr)
     {
@@ -586,43 +616,51 @@ ReturnCode_t DataReaderImpl::read_next_sample(
 #else
             std::chrono::hours(24);
 #endif // if HAVE_STRICT_REALTIME
-    SampleInfo_t rtps_info;
-    if (history_.readNextData(data, &rtps_info, max_blocking_time))
+
+    std::unique_lock<RecursiveTimedMutex> lock(reader_->getMutex(), std::defer_lock);
+
+    if (!lock.try_lock_until(max_blocking_time))
     {
-        sample_info_to_dds(rtps_info, info);
-        return ReturnCode_t::RETCODE_OK;
+        return ReturnCode_t::RETCODE_TIMEOUT;
     }
-    return ReturnCode_t::RETCODE_ERROR;
+
+    auto it = history_.lookup_instance(HANDLE_NIL, false);
+    if (!it.first)
+    {
+        return ReturnCode_t::RETCODE_NO_DATA;
+    }
+
+    StackAllocatedSequence<void*, 1> data_values;
+    const_cast<void**>(data_values.buffer())[0] = data;
+    StackAllocatedSequence<SampleInfo, 1> sample_infos;
+
+    detail::StateFilter states{ NOT_READ_SAMPLE_STATE, ANY_VIEW_STATE, ANY_INSTANCE_STATE };
+    detail::ReadTakeCommand cmd(*this, data_values, sample_infos, 1, states, it.second, false);
+    while (!cmd.is_finished())
+    {
+        cmd.add_instance(should_take);
+    }
+
+    ReturnCode_t code = cmd.return_value();
+    if (ReturnCode_t::RETCODE_OK == code)
+    {
+        *info = sample_infos[0];
+    }
+    return code;
+}
+
+ReturnCode_t DataReaderImpl::read_next_sample(
+        void* data,
+        SampleInfo* info)
+{
+    return read_or_take_next_sample(data, info, false);
 }
 
 ReturnCode_t DataReaderImpl::take_next_sample(
         void* data,
         SampleInfo* info)
 {
-    if (reader_ == nullptr)
-    {
-        return ReturnCode_t::RETCODE_NOT_ENABLED;
-    }
-
-    if (history_.getHistorySize() == 0)
-    {
-        return ReturnCode_t::RETCODE_NO_DATA;
-    }
-
-    auto max_blocking_time = std::chrono::steady_clock::now() +
-#if HAVE_STRICT_REALTIME
-            std::chrono::microseconds(::TimeConv::Time_t2MicroSecondsInt64(qos_.reliability().max_blocking_time));
-#else
-            std::chrono::hours(24);
-#endif // if HAVE_STRICT_REALTIME
-
-    SampleInfo_t rtps_info;
-    if (history_.takeNextData(data, &rtps_info, max_blocking_time))
-    {
-        sample_info_to_dds(rtps_info, info);
-        return ReturnCode_t::RETCODE_OK;
-    }
-    return ReturnCode_t::RETCODE_ERROR;
+    return read_or_take_next_sample(data, info, true);
 }
 
 ReturnCode_t DataReaderImpl::get_first_untaken_info(
@@ -640,6 +678,11 @@ ReturnCode_t DataReaderImpl::get_first_untaken_info(
         return ReturnCode_t::RETCODE_OK;
     }
     return ReturnCode_t::RETCODE_NO_DATA;
+}
+
+uint64_t DataReaderImpl::get_unread_count() const
+{
+    return reader_ ? reader_->get_unread_count() : 0;
 }
 
 const GUID_t& DataReaderImpl::guid() const
@@ -963,32 +1006,6 @@ bool DataReaderImpl::lifespan_expired()
     return false;
 }
 
-/* TODO
-   bool DataReaderImpl::read(
-        std::vector<void *>& data_values,
-        std::vector<SampleInfo_t>& sample_infos,
-        uint32_t max_samples)
-   {
-    (void)data_values;
-    (void)sample_infos;
-    (void)max_samples;
-    // TODO Implement
-    return false;
-   }
-
-   bool DataReaderImpl::take(
-        std::vector<void *>& data_values,
-        std::vector<SampleInfo_t>& sample_infos,
-        uint32_t max_samples)
-   {
-    (void)data_values;
-    (void)sample_infos;
-    (void)max_samples;
-    // TODO Implement
-    return false;
-   }
- */
-
 ReturnCode_t DataReaderImpl::set_listener(
         DataReaderListener* listener)
 {
@@ -1143,6 +1160,11 @@ ReturnCode_t DataReaderImpl::check_qos (
         logError(DDS_QOS_CHECK, "max_samples_per_read should be strictly possitive");
         return ReturnCode_t::RETCODE_INCONSISTENT_POLICY;
     }
+    if (qos_has_unique_network_request(qos) && qos_has_specific_locators(qos))
+    {
+        logError(DDS_QOS_CHECK, "unique_network_request cannot be set along specific locators");
+        return ReturnCode_t::RETCODE_INCONSISTENT_POLICY;
+    }
     return ReturnCode_t::RETCODE_OK;
 }
 
@@ -1209,6 +1231,12 @@ bool DataReaderImpl::can_qos_be_updated(
     {
         updatable = false;
         logWarning(RTPS_QOS_CHECK, "Data sharing configuration cannot be changed after the creation of a DataReader.");
+    }
+    if (qos_has_unique_network_request(to) != qos_has_unique_network_request(from))
+    {
+        updatable = false;
+        logWarning(RTPS_QOS_CHECK,
+                "Unique network flows request cannot be changed after the creation of a DataReader.");
     }
     return updatable;
 }
@@ -1455,6 +1483,19 @@ bool DataReaderImpl::is_sample_valid(
         const SampleInfo* info) const
 {
     return reader_->is_sample_valid(data, info->sample_identity.writer_guid(), info->sample_identity.sequence_number());
+}
+
+ReturnCode_t DataReaderImpl::get_listening_locators(
+        rtps::LocatorList& locators) const
+{
+    if (nullptr == reader_)
+    {
+        return ReturnCode_t::RETCODE_NOT_ENABLED;
+    }
+
+    locators.assign(reader_->getAttributes().unicastLocatorList);
+    locators.push_back(reader_->getAttributes().multicastLocatorList);
+    return ReturnCode_t::RETCODE_OK;
 }
 
 } /* namespace dds */

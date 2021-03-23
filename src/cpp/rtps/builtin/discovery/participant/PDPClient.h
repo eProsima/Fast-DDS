@@ -52,7 +52,8 @@ public:
      */
     PDPClient(
             BuiltinProtocols* builtin,
-            const RTPSParticipantAllocationAttributes& allocation);
+            const RTPSParticipantAllocationAttributes& allocation,
+            bool super_client = false);
     ~PDPClient();
 
     void initializeParticipantProxyData(
@@ -139,6 +140,9 @@ private:
 
     //! flag to hightlight we need a server ping announcement
     bool _serverPing;
+
+    //! flag to know this client must use super client participant type
+    bool _super_client;
 };
 
 } /* namespace rtps */

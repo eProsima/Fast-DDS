@@ -50,6 +50,9 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
         set(FIXEDSIZEQUEUETESTS_SOURCE
             FixedSizeQueueTests.cpp)
 
+        set(SYSTEMINFOTESTS_SOURCE
+            SystemInfoTests.cpp)
+
         include_directories(mock/)
 
         add_executable(StringMatchingTests ${STRINGMATCHINGTESTS_SOURCE})
@@ -116,6 +119,13 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             ${PROJECT_SOURCE_DIR}/include ${PROJECT_SOURCE_DIR}/src/cpp ${PROJECT_BINARY_DIR}/include)
         target_link_libraries(FixedSizeQueueTests ${GTEST_LIBRARIES} ${MOCKS})
         add_gtest(FixedSizeQueueTests SOURCES ${FIXEDSIZEQUEUETESTS_SOURCE})
+
+        add_executable(SystemInfoTests ${SYSTEMINFOTESTS_SOURCE})
+        target_compile_definitions(SystemInfoTests PRIVATE FASTRTPS_NO_LIB)
+        target_include_directories(SystemInfoTests PRIVATE ${GTEST_INCLUDE_DIRS}
+            ${PROJECT_SOURCE_DIR}/include ${PROJECT_SOURCE_DIR}/src/cpp ${PROJECT_BINARY_DIR}/include)
+        target_link_libraries(SystemInfoTests ${GTEST_LIBRARIES})
+        add_gtest(SystemInfoTests SOURCES ${SYSTEMINFOTESTS_SOURCE})
 
     endif()
 endif()

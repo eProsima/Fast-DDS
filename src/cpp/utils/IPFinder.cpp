@@ -20,6 +20,8 @@
 #include <fastrtps/utils/IPFinder.h>
 #include <fastrtps/utils/IPLocator.h>
 
+#include <fastdds/dds/log/Log.hpp>
+
 #if defined(_WIN32)
 #pragma comment(lib, "Iphlpapi.lib")
 #include <stdio.h>
@@ -46,6 +48,9 @@
 #include <net/if_dl.h>
 #include <netinet/in.h>
 #endif // if defined(__APPLE__)
+#if defined(__QNXNTO__)
+#include <sys/types.h>
+#endif // if defined(__QNXNTO__)
 #endif // if defined(_WIN32)
 
 #if defined(__FreeBSD__)
@@ -91,7 +96,7 @@ bool IPFinder::getIPs(
 
     if (rv != ERROR_SUCCESS)
     {
-        fprintf(stderr, "GetAdaptersAddresses() failed...");
+        logWarning(UTILS, "GetAdaptersAddresses() failed");
         free(adapter_addresses);
         return false;
     }
@@ -178,7 +183,7 @@ bool IPFinder::getIPs(
                             host, NI_MAXHOST, NULL, 0, NI_NUMERICHOST);
             if (s != 0)
             {
-                fprintf(stderr, "getnameinfo() failed: %s\n", gai_strerror(s));
+                logWarning(UTILS, "getnameinfo() failed: " << gai_strerror(s));
                 continue;
             }
             info_IP info;
@@ -198,7 +203,7 @@ bool IPFinder::getIPs(
                             host, NI_MAXHOST, NULL, 0, NI_NUMERICHOST);
             if (s != 0)
             {
-                fprintf(stderr, "getnameinfo() failed: %s\n", gai_strerror(s));
+                logWarning(UTILS, "getnameinfo() failed: " << gai_strerror(s));
                 continue;
             }
             info_IP info;
@@ -212,7 +217,6 @@ bool IPFinder::getIPs(
                     vec_name->push_back(info);
                 }
             }
-            //printf("<Interface>: %s \t <Address> %s\n", ifa->ifa_name, host);
         }
     }
 
@@ -243,7 +247,7 @@ bool IPFinder::getAllMACAddress(
 
     if (rv != ERROR_SUCCESS)
     {
-        fprintf(stderr, "GetAdaptersAddresses() failed...");
+        logWarning(UTILS, "GetAdaptersAddresses() failed");
         free(adapter_addresses);
         return false;
     }
@@ -284,7 +288,7 @@ bool IPFinder::getAllMACAddress(
     {
         if ((mib[5] = if_nametoindex(ip.dev.c_str())) == 0)
         {
-            printf("Error on nametoindex: %s\n", strerror(errno));
+            logWarning(UTILS, "Error on nametoindex: " << strerror(errno));
             return false;
         }
 
@@ -292,19 +296,19 @@ bool IPFinder::getAllMACAddress(
         unsigned char* buf;
         if (sysctl(mib, 6, NULL, &len, NULL, 0) < 0)
         {
-            printf("Error on sysctl: %s\n", strerror(errno));
+            logWarning(UTILS, "Error on nametoindex: " << strerror(errno));
             return false;
         }
 
         if ((buf = (unsigned char*)malloc(len)) == NULL)
         {
-            printf("Falure allocating %ld octets", len);
+            logWarning(UTILS, "Falure allocating " << len << " octets");
             return false;
         }
 
         if (sysctl(mib, 6, buf, &len, NULL, 0) < 0)
         {
-            printf("Error on sysctl: %s\n", strerror(errno));
+            logWarning(UTILS, "Error on sysctl: " << strerror(errno));
             return false;
         }
 
@@ -336,13 +340,13 @@ bool IPFinder::getAllMACAddress(
         int fd = socket(PF_INET, SOCK_DGRAM, 0);
         if (fd == -1)
         {
-            printf("Error creating socket:  %s\n", strerror(errno));
+            logWarning(UTILS, "Error creating socket: " << strerror(errno));
             return false;
         }
 
         if (ioctl(fd, SIOCGIFHWADDR, &ifr) == -1)
         {
-            printf("Error on ioctl:  %s\n", strerror(errno));
+            logWarning(UTILS, "Error on ioctl: " << strerror(errno));
             close(fd);
             return false;
         }
@@ -360,6 +364,56 @@ bool IPFinder::getAllMACAddress(
             macs->push_back(mac);
         }
     }
+    return true;
+}
+
+#elif defined(__QNXNTO__)
+
+bool IPFinder::getAllMACAddress(
+        std::vector<info_MAC>* macs)
+{
+    struct ifaddrs* ifaphead;
+    struct ifaddrs* ifap;
+
+    if (getifaddrs(&ifaphead) != 0)
+    {
+        logWarning(UTILS, "getifaddrs() failed: " << strerror(errno));
+        return false;
+    }
+
+    struct sockaddr_dl* sdl = NULL;
+
+    std::vector<IPFinder::info_IP> ips;
+    IPFinder::getIPs(&ips);
+
+    for (auto& ip : ips)
+    {
+        for (ifap = ifaphead; ifap; ifap = ifap->ifa_next)
+        {
+            if ((ifap->ifa_addr->sa_family == AF_LINK))
+            {
+                if (strcmp(ifap->ifa_name, ip.dev.c_str()) == 0)
+                {
+                    sdl = (struct sockaddr_dl*)ifap->ifa_addr;
+                    if (sdl)
+                    {
+                        info_MAC mac;
+                        memcpy(mac.address, LLADDR(sdl), sdl->sdl_alen);
+                        if (std::find(macs->begin(), macs->end(), mac) == macs->end())
+                        {
+                            macs->push_back(mac);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    if (ifaphead)
+    {
+        freeifaddrs(ifaphead);
+    }
+
     return true;
 }
 

@@ -186,7 +186,7 @@ public:
      * deleted and RETCODE_ERROR otherwise.
      */
     RTPS_DllAPI ReturnCode_t delete_datareader(
-            DataReader* reader);
+            const DataReader* reader);
 
     /**
      * This operation retrieves a previously-created DataReader belonging to the Subscriber that is attached to a

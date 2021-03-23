@@ -178,7 +178,8 @@ void PDPServerListener::onNewCacheChangeAdded(
             if (participant_type != properties.end())
             {
                 if (participant_type->second() == ParticipantType::SERVER ||
-                        participant_type->second() == ParticipantType::BACKUP)
+                        participant_type->second() == ParticipantType::BACKUP ||
+                        participant_type->second() == ParticipantType::SUPER_CLIENT)
                 {
                     is_client = false;
                 }
@@ -221,10 +222,20 @@ void PDPServerListener::onNewCacheChangeAdded(
             //  another entity (server).
             // is_local means that the server is connected (or will be) with this entity directly
             bool is_local = true;
+
+            // In case a new changes arrives from a local entity, but the ParticipantProxyData already exists
+            //  because we know it from other server
+            bool was_local = true;
+
             // If the instance handle is different from the writer GUID, then the change has been relayed
             if (iHandle2GUID(change->instanceHandle).guidPrefix != change->writerGUID.guidPrefix)
             {
                 is_local = false;
+            }
+            else
+            {
+                // We already know that the writer and the entity are the same, so we can use writerGUID
+                was_local = pdp_server()->discovery_db().is_participant_local(change->writerGUID.guidPrefix);
             }
 
             if (!pdp_server()->discovery_db().backup_in_progress())
@@ -262,7 +273,6 @@ void PDPServerListener::onNewCacheChangeAdded(
                 // Release the unique pointer, not the change in the pool
                 change.release();
             }
-
 
             // At this point we can release reader lock.
             reader->getMutex().unlock();
@@ -303,6 +313,14 @@ void PDPServerListener::onNewCacheChangeAdded(
                 {
                     pdp_server()->assignRemoteEndpoints(pdata);
                 }
+            }
+            // Case ParticipantProxyData already exists but was known remotly and now must be local
+            else if (is_local && !was_local)
+            {
+                // Realease PDP mutex
+                lock.unlock();
+
+                pdp_server()->assignRemoteEndpoints(pdata);
             }
             // Updated participant information case
             else

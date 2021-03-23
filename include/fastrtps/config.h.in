@@ -22,6 +22,16 @@
 
 #define GEN_API_VER 1
 
+// C++20 support defines
+#ifndef HAVE_CXX20
+#define HAVE_CXX20 @HAVE_CXX20@
+#endif
+
+// C++17 support defines
+#ifndef HAVE_CXX17
+#define HAVE_CXX17 @HAVE_CXX17@
+#endif
+
 // C++14 support defines
 #ifndef HAVE_CXX14
 #define HAVE_CXX14 @HAVE_CXX14@
@@ -82,6 +92,7 @@
 /* Log Macros */
 
 // Log Info
+#cmakedefine FASTDDS_ENFORCE_LOG_INFO
 #ifndef HAVE_LOG_NO_INFO
 #define HAVE_LOG_NO_INFO @HAVE_LOG_NO_INFO@
 #endif
@@ -108,8 +119,13 @@
 #endif
 
 // Deprecation with version
-#define FASTDDS_DEPRECATED_UNTIL(major, entity_name, msg) \
-    static_assert(FASTRTPS_VERSION_MAJOR < major, #entity_name " reached deprecation version " #major); \
+#define FASTDDS_DEPRECATED_UNTIL(major, entity_name, msg)                                                           \
+    static_assert(FASTRTPS_VERSION_MAJOR < major, #entity_name " reached deprecation version " #major);             \
     FASTRTPS_DEPRECATED(#entity_name " has been deprecated and will be removed on major version " #major ". " msg)
+
+#define FASTDDS_TODO_BEFORE(major, minor, msg)                                          \
+    static_assert((FASTRTPS_VERSION_MAJOR < major) ||                                   \
+                  (FASTRTPS_VERSION_MAJOR == major && FASTRTPS_VERSION_MINOR < minor),  \
+                  "TODO before version " #major "." #minor " : " #msg);
 
 #endif // _FASTRTPS_CONFIG_H_

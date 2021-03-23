@@ -12,20 +12,22 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include <fastrtps/utils/Semaphore.h>
-#include <fastrtps/utils/IPLocator.h>
-#include <fastrtps/rtps/network/NetworkFactory.h>
-#include <fastrtps/transport/TCPv6Transport.h>
-#include <gtest/gtest.h>
 #include <thread>
 #include <memory>
-#include <fastdds/dds/log/Log.hpp>
-#include <asio.hpp>
-#include <MockReceiverResource.h>
 
+#include <asio.hpp>
+#include <gtest/gtest.h>
+#include <MockReceiverResource.h>
+#include <fastdds/dds/log/Log.hpp>
+#include <fastrtps/transport/TCPv6TransportDescriptor.h>
+#include <fastrtps/rtps/network/NetworkFactory.h>
+#include <fastrtps/utils/Semaphore.h>
+#include <fastrtps/utils/IPLocator.h>
+#include <rtps/transport/TCPv6Transport.h>
 
 using namespace eprosima::fastrtps::rtps;
 using namespace eprosima::fastrtps;
+using TCPv6Transport = eprosima::fastdds::rtps::TCPv6Transport;
 
 #if defined(_WIN32)
 #define GET_PID _getpid

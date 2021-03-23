@@ -45,7 +45,7 @@ struct RTPS_DllAPI CacheChange_t
     ChangeKind_t kind = ALIVE;
     //!GUID_t of the writer that generated this change.
     GUID_t writerGUID;
-    //!Handle of the data associated wiht this change.
+    //!Handle of the data associated with this change.
     InstanceHandle_t instanceHandle;
     //!SequenceNumber of the change
     SequenceNumber_t sequenceNumber;

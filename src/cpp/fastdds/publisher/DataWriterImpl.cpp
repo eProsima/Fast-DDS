@@ -43,6 +43,7 @@
 
 #include <rtps/history/TopicPayloadPoolRegistry.hpp>
 #include <rtps/DataSharing/DataSharingPayloadPool.hpp>
+#include <rtps/participant/RTPSParticipantImpl.h>
 
 #include <functional>
 #include <iostream>
@@ -800,6 +801,18 @@ ReturnCode_t DataWriterImpl::clear_history(
     return (history_.removeAllChange(removed) ? ReturnCode_t::RETCODE_OK : ReturnCode_t::RETCODE_ERROR);
 }
 
+ReturnCode_t DataWriterImpl::get_sending_locators(
+        rtps::LocatorList& locators) const
+{
+    if (nullptr == writer_)
+    {
+        return ReturnCode_t::RETCODE_NOT_ENABLED;
+    }
+
+    writer_->getRTPSParticipant()->get_sending_locators(locators);
+    return ReturnCode_t::RETCODE_OK;
+}
+
 const GUID_t& DataWriterImpl::guid() const
 {
     return writer_ ? writer_->getGuid() : c_Guid_Unknown;
@@ -1312,6 +1325,11 @@ ReturnCode_t DataWriterImpl::check_qos(
     if (qos.destination_order().kind == BY_SOURCE_TIMESTAMP_DESTINATIONORDER_QOS)
     {
         logError(RTPS_QOS_CHECK, "BY SOURCE TIMESTAMP DestinationOrder not supported");
+        return ReturnCode_t::RETCODE_UNSUPPORTED;
+    }
+    if (nullptr != PropertyPolicyHelper::find_property(qos.properties(), "fastdds.unique_network_flows"))
+    {
+        logError(RTPS_QOS_CHECK, "Unique network flows not supported on writers");
         return ReturnCode_t::RETCODE_UNSUPPORTED;
     }
     if (qos.reliability().kind == BEST_EFFORT_RELIABILITY_QOS && qos.ownership().kind == EXCLUSIVE_OWNERSHIP_QOS)

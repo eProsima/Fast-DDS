@@ -106,7 +106,7 @@ public:
             const StatusMask& mask = StatusMask::all());
 
     ReturnCode_t delete_datareader(
-            DataReader* reader);
+            const DataReader* reader);
 
     DataReader* lookup_datareader(
             const std::string& topic_name) const;

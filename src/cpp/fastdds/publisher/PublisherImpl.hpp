@@ -109,7 +109,7 @@ public:
             const StatusMask& mask = StatusMask::all());
 
     ReturnCode_t delete_datawriter(
-            DataWriter* writer);
+            const DataWriter* writer);
 
     DataWriter* lookup_datawriter(
             const std::string& topic_name) const;

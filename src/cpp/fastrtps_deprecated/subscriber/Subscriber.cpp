@@ -88,3 +88,10 @@ void Subscriber::get_liveliness_changed_status(
 {
     mp_impl->get_liveliness_changed_status(status);
 }
+
+void Subscriber::get_listening_locators(
+        rtps::LocatorList_t& locators) const
+{
+    assert(mp_impl != nullptr);
+    mp_impl->get_listening_locators(locators);
+}

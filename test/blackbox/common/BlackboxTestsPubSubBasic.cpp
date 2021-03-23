@@ -14,6 +14,7 @@
 
 #include "BlackboxTests.hpp"
 
+#include "PubSubParticipant.hpp"
 #include "PubSubReader.hpp"
 #include "PubSubWriter.hpp"
 #include "ReqRepAsReliableHelloWorldRequester.hpp"
@@ -506,8 +507,8 @@ TEST_P(PubSubBasic, ReceivedPropertiesDataWithinSizeLimit)
     LocatorBuffer.port = static_cast<uint16_t>(MULTICAST_PORT_RANDOM_NUMBER);
     ReaderMulticastLocators.push_back(LocatorBuffer);
 
-    //Expected properties have exactly size 52
-    reader.properties_max_size(52).
+    //Expected properties have exactly size 92
+    reader.properties_max_size(92).
             static_discovery("PubSubReader.xml").
             unicastLocatorList(ReaderUnicastLocators).multicastLocatorList(ReaderMulticastLocators).
             setSubscriberIDs(3,
@@ -603,7 +604,7 @@ TEST_P(PubSubBasic, ReceivedPropertiesDataExceedsSizeLimit)
     LocatorBuffer.port = static_cast<uint16_t>(MULTICAST_PORT_RANDOM_NUMBER);
     ReaderMulticastLocators.push_back(LocatorBuffer);
 
-    //Expected properties have size 52
+    //Expected properties have size 92
     reader.properties_max_size(50)
             .static_discovery("PubSubReader.xml")
             .unicastLocatorList(ReaderUnicastLocators).multicastLocatorList(ReaderMulticastLocators)
@@ -620,6 +621,36 @@ TEST_P(PubSubBasic, ReceivedPropertiesDataExceedsSizeLimit)
     ASSERT_FALSE(reader.is_matched());
 }
 
+TEST_P(PubSubBasic, unique_flows_one_writer_two_readers)
+{
+    PubSubParticipant<HelloWorldType> readers(0, 2, 0, 2);
+    PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
+
+    PropertyPolicy properties;
+    properties.properties().emplace_back("fastdds.unique_network_flows", "");
+
+    readers.sub_topic_name(TEST_TOPIC_NAME).sub_property_policy(properties).reliability(RELIABLE_RELIABILITY_QOS);
+
+    ASSERT_TRUE(readers.init_participant());
+    ASSERT_TRUE(readers.init_subscriber(0));
+    ASSERT_TRUE(readers.init_subscriber(1));
+
+    writer.history_depth(100).init();
+
+    ASSERT_TRUE(writer.isInitialized());
+
+    // Wait for discovery.
+    writer.wait_discovery();
+    readers.sub_wait_discovery();
+
+    // Send data
+    auto data = default_helloworld_data_generator();
+    writer.send(data);
+    // In this test all data should be sent.
+    ASSERT_TRUE(data.empty());
+    // Block until readers have acknowledged all samples.
+    EXPECT_TRUE(writer.waitForAllAcked(std::chrono::seconds(30)));
+}
 
 #ifdef INSTANTIATE_TEST_SUITE_P
 #define GTEST_INSTANTIATE_TEST_MACRO(x, y, z, w) INSTANTIATE_TEST_SUITE_P(x, y, z, w)

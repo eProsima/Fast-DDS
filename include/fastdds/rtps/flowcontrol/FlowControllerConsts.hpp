@@ -1,4 +1,4 @@
-// Copyright 2018 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+// Copyright 2021 Proyectos y Sistemas de Mantenimiento SL (eProsima).
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,22 +12,20 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef _TCP_ACCEPTOR_BASIC_
-#define _TCP_ACCEPTOR_BASIC_
+#ifndef FASTDDS_RTPS_FLOWCONTROL_FLOWCONTROLLERCONSTS_HPP
+#define FASTDDS_RTPS_FLOWCONTROL_FLOWCONTROLLERCONSTS_HPP
 
-#include <fastrtps/transport/TCPAcceptor.h>
-#include <fastrtps/transport/TCPChannelResourceBasic.h>
+#include <fastrtps/fastrtps_dll.h>
 
-#include <fastdds/rtps/transport/TCPAcceptorBasic.h>
+namespace eprosima {
+namespace fastdds {
+namespace rtps {
 
-namespace eprosima{
-namespace fastrtps{
-namespace rtps{
-
-using TCPAcceptorBasic = fastdds::rtps::TCPAcceptorBasic;
+//! Name of the default flow controller.
+extern RTPS_DllAPI const char* const FASTDDS_FLOW_CONTROLLER_DEFAULT;
 
 } // namespace rtps
-} // namespace fastrtps
+} // namespace fastdds
 } // namespace eprosima
 
-#endif // _TCP_ACCEPTOR_BASIC_
+#endif // FASTDDS_RTPS_FLOWCONTROL_FLOWCONTROLLERCONSTS_HPP

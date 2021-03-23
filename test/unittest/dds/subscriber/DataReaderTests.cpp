@@ -46,6 +46,9 @@
 #include <fastdds/dds/subscriber/qos/DataReaderQos.hpp>
 #include <fastdds/dds/subscriber/qos/SubscriberQos.hpp>
 
+#include <fastdds/rtps/common/Locator.h>
+#include <fastrtps/utils/IPLocator.h>
+
 #include "./FooBoundedType.hpp"
 #include "./FooBoundedTypeSupport.hpp"
 
@@ -358,7 +361,6 @@ protected:
             DataType data;
             SampleInfo info;
 
-            EXPECT_EQ(code, data_reader->read_next_sample(&data, &info));
             EXPECT_EQ(code, data_reader->take_next_sample(&data, &info));
             if (ReturnCode_t::RETCODE_OK == code)
             {
@@ -366,6 +368,7 @@ protected:
                 data_writer_->write(&data);
                 data_reader->wait_for_unread_message(time_to_wait);
             }
+            EXPECT_EQ(code, data_reader->read_next_sample(&data, &info));
         }
 
         // Return code when requesting a bad instance
@@ -494,6 +497,7 @@ protected:
 
         create_entities(nullptr, reader_qos, subscriber_qos);
         EXPECT_FALSE(data_reader_->is_enabled());
+        EXPECT_EQ(0ull, data_reader_->get_unread_count());
 
         // Read / take operations should all return NOT_ENABLED
         basic_read_apis_check<DataType, DataSeq>(ReturnCode_t::RETCODE_NOT_ENABLED, data_reader_);
@@ -539,6 +543,108 @@ protected:
     InstanceHandle_t handle_wrong_ = HANDLE_NIL;
 
 };
+
+TEST_F(DataReaderTests, InvalidQos)
+{
+    DataReaderQos qos;
+
+    create_entities();
+
+    ASSERT_TRUE(data_reader_->is_enabled());
+    ASSERT_EQ(ReturnCode_t::RETCODE_OK, data_reader_->get_qos(qos));
+    ASSERT_EQ(qos, DATAREADER_QOS_DEFAULT);
+
+    /* Unsupported QoS */
+    const ReturnCode_t unsupported_code = ReturnCode_t::RETCODE_UNSUPPORTED;
+
+    qos = DATAREADER_QOS_DEFAULT;
+    qos.durability().kind = PERSISTENT_DURABILITY_QOS;
+    EXPECT_EQ(unsupported_code, data_reader_->set_qos(qos));
+
+    qos = DATAREADER_QOS_DEFAULT;
+    qos.destination_order().kind = BY_SOURCE_TIMESTAMP_DESTINATIONORDER_QOS;
+    EXPECT_EQ(unsupported_code, data_reader_->set_qos(qos));
+
+    /* Inconsistent QoS */
+    const ReturnCode_t inconsistent_code = ReturnCode_t::RETCODE_INCONSISTENT_POLICY;
+
+    qos = DATAREADER_QOS_DEFAULT;
+    qos.reliability().kind = BEST_EFFORT_RELIABILITY_QOS;
+    qos.ownership().kind = EXCLUSIVE_OWNERSHIP_QOS;
+    EXPECT_EQ(inconsistent_code, data_reader_->set_qos(qos));
+
+    qos = DATAREADER_QOS_DEFAULT;
+    qos.reader_resource_limits().max_samples_per_read = -1;
+    EXPECT_EQ(inconsistent_code, data_reader_->set_qos(qos));
+
+    qos = DATAREADER_QOS_DEFAULT;
+    eprosima::fastrtps::rtps::Locator_t locator;
+    qos.endpoint().unicast_locator_list.push_back(locator);
+    qos.properties().properties().emplace_back("fastdds.unique_network_flows", "");
+    EXPECT_EQ(inconsistent_code, data_reader_->set_qos(qos));
+
+    qos = DATAREADER_QOS_DEFAULT;
+    qos.endpoint().multicast_locator_list.push_back(locator);
+    qos.properties().properties().emplace_back("fastdds.unique_network_flows", "");
+    EXPECT_EQ(inconsistent_code, data_reader_->set_qos(qos));
+
+    qos = DATAREADER_QOS_DEFAULT;
+    qos.endpoint().remote_locator_list.push_back(locator);
+    qos.properties().properties().emplace_back("fastdds.unique_network_flows", "");
+    EXPECT_EQ(inconsistent_code, data_reader_->set_qos(qos));
+
+    /* Inmutable QoS */
+    const ReturnCode_t inmutable_code = ReturnCode_t::RETCODE_IMMUTABLE_POLICY;
+
+    qos = DATAREADER_QOS_DEFAULT;
+    qos.resource_limits().max_samples++;
+    EXPECT_EQ(inmutable_code, data_reader_->set_qos(qos));
+
+    qos = DATAREADER_QOS_DEFAULT;
+    qos.history().kind = KEEP_ALL_HISTORY_QOS;
+    EXPECT_EQ(inmutable_code, data_reader_->set_qos(qos));
+
+    qos = DATAREADER_QOS_DEFAULT;
+    qos.history().depth++;
+    EXPECT_EQ(inmutable_code, data_reader_->set_qos(qos));
+
+    qos = DATAREADER_QOS_DEFAULT;
+    qos.durability().kind = TRANSIENT_LOCAL_DURABILITY_QOS;
+    EXPECT_EQ(inmutable_code, data_reader_->set_qos(qos));
+
+    qos = DATAREADER_QOS_DEFAULT;
+    qos.reliability().kind = RELIABLE_RELIABILITY_QOS;
+    EXPECT_EQ(inmutable_code, data_reader_->set_qos(qos));
+
+    qos = DATAREADER_QOS_DEFAULT;
+    qos.liveliness().kind = MANUAL_BY_PARTICIPANT_LIVELINESS_QOS;
+    EXPECT_EQ(inmutable_code, data_reader_->set_qos(qos));
+
+    qos = DATAREADER_QOS_DEFAULT;
+    qos.liveliness().lease_duration.seconds = -131;
+    EXPECT_EQ(inmutable_code, data_reader_->set_qos(qos));
+
+    qos = DATAREADER_QOS_DEFAULT;
+    qos.liveliness().announcement_period.seconds = -131;
+    EXPECT_EQ(inmutable_code, data_reader_->set_qos(qos));
+
+    qos = DATAREADER_QOS_DEFAULT;
+    qos.reader_resource_limits().matched_publisher_allocation.initial++;
+    EXPECT_EQ(inmutable_code, data_reader_->set_qos(qos));
+
+    qos = DATAREADER_QOS_DEFAULT;
+    qos.data_sharing().off();
+    EXPECT_EQ(inmutable_code, data_reader_->set_qos(qos));
+
+    qos = DATAREADER_QOS_DEFAULT;
+    uint16_t datasharing_domain = 131u;
+    qos.data_sharing().add_domain_id(datasharing_domain);
+    EXPECT_EQ(inmutable_code, data_reader_->set_qos(qos));
+
+    qos = DATAREADER_QOS_DEFAULT;
+    qos.properties().properties().emplace_back("fastdds.unique_network_flows", "");
+    EXPECT_EQ(inmutable_code, data_reader_->set_qos(qos));
+}
 
 /**
  * This test checks all variants of read / take in several situations for a keyed plain type.
@@ -1099,6 +1205,7 @@ TEST_F(DataReaderTests, read_unread)
 {
     static const Duration_t time_to_wait(0, 100 * 1000 * 1000);
     static constexpr int32_t num_samples = 10;
+    static constexpr uint64_t num_samples_check = static_cast<uint64_t>(num_samples);
 
     const ReturnCode_t& ok_code = ReturnCode_t::RETCODE_OK;
     const ReturnCode_t& no_data_code = ReturnCode_t::RETCODE_NO_DATA;
@@ -1135,6 +1242,7 @@ TEST_F(DataReaderTests, read_unread)
 
     // There are unread samples, so wait_for_unread should be ok
     EXPECT_TRUE(data_reader_->wait_for_unread_message(time_to_wait));
+    EXPECT_EQ(num_samples_check, data_reader_->get_unread_count());
 
     // Trying to get READ samples should return NO_DATA
     {
@@ -1163,36 +1271,49 @@ TEST_F(DataReaderTests, read_unread)
         FooSeq data_seq[6];
         SampleInfoSeq info_seq[6];
 
+        // Current state: {R, N, N, N, N, N, N, N, N, N}
+        EXPECT_EQ(num_samples_check, data_reader_->get_unread_count());
+
         // This should return the first sample
         EXPECT_EQ(ok_code, data_reader_->read(data_seq[0], info_seq[0], 1, NOT_READ_SAMPLE_STATE));
         check_collection(data_seq[0], false, 1, 1);
         check_sample_values(data_seq[0], "0");
 
         // Current state: {R, N, N, N, N, N, N, N, N, N}
+        EXPECT_EQ(num_samples_check - 1, data_reader_->get_unread_count());
+
         // This should return the first sample
         EXPECT_EQ(ok_code, data_reader_->read(data_seq[1], info_seq[1], 1, READ_SAMPLE_STATE));
         check_collection(data_seq[1], false, 1, 1);
         check_sample_values(data_seq[1], "0");
 
         // Current state: {R, N, N, N, N, N, N, N, N, N}
+        EXPECT_EQ(num_samples_check - 1, data_reader_->get_unread_count());
+
         // This should return the first sample
         EXPECT_EQ(ok_code, data_reader_->read(data_seq[2], info_seq[2], LENGTH_UNLIMITED, READ_SAMPLE_STATE));
         check_collection(data_seq[2], false, 1, 1);
         check_sample_values(data_seq[2], "0");
 
         // Current state: {R, N, N, N, N, N, N, N, N, N}
+        EXPECT_EQ(num_samples_check - 1, data_reader_->get_unread_count());
+
         // This should return the second sample
         EXPECT_EQ(ok_code, data_reader_->read(data_seq[3], info_seq[3], 1, NOT_READ_SAMPLE_STATE));
         check_collection(data_seq[3], false, 1, 1);
         check_sample_values(data_seq[3], "1");
 
         // Current state: {R, R, N, N, N, N, N, N, N, N}
+        EXPECT_EQ(num_samples_check - 2, data_reader_->get_unread_count());
+
         // This should return the first sample
         EXPECT_EQ(ok_code, data_reader_->read(data_seq[4], info_seq[4], 1, READ_SAMPLE_STATE));
         check_collection(data_seq[4], false, 1, 1);
         check_sample_values(data_seq[4], "0");
 
         // Current state: {R, R, N, N, N, N, N, N, N, N}
+        EXPECT_EQ(num_samples_check - 2, data_reader_->get_unread_count());
+
         // This should return the first and second samples
         EXPECT_EQ(ok_code, data_reader_->read(data_seq[5], info_seq[5], LENGTH_UNLIMITED, READ_SAMPLE_STATE));
         check_collection(data_seq[5], false, 2, 2);
@@ -1214,45 +1335,61 @@ TEST_F(DataReaderTests, read_unread)
         SampleInfoSeq info_seq[6];
 
         // Current state: {R, R, N, N, N, N, N, N, N, N}
+        EXPECT_EQ(num_samples_check - 2, data_reader_->get_unread_count());
+
         // This should return the third sample
         EXPECT_EQ(ok_code, data_reader_->take(data_seq[0], info_seq[0], 1, NOT_READ_SAMPLE_STATE));
         check_collection(data_seq[0], false, 1, 1);
         check_sample_values(data_seq[0], "2");
 
         // Current state: {R, R, /, N, N, N, N, N, N, N}
+        EXPECT_EQ(num_samples_check - 3, data_reader_->get_unread_count());
+
         // This should return the first sample
         EXPECT_EQ(ok_code, data_reader_->take(data_seq[1], info_seq[1], 1, READ_SAMPLE_STATE));
         check_collection(data_seq[1], false, 1, 1);
         check_sample_values(data_seq[1], "0");
 
         // Current state: {/, R, /, N, N, N, N, N, N, N}
+        EXPECT_EQ(num_samples_check - 3, data_reader_->get_unread_count());
+
         // This should return samples 2 and 4
         EXPECT_EQ(ok_code, data_reader_->take(data_seq[2], info_seq[2], 2));
         check_collection(data_seq[2], false, 2, 2);
         check_sample_values(data_seq[2], "13");
 
         // Current state: {/, /, /, /, N, N, N, N, N, N}
+        EXPECT_EQ(num_samples_check - 4, data_reader_->get_unread_count());
+
         // This should return no data
         EXPECT_EQ(no_data_code, data_reader_->take(data_seq[3], info_seq[3], LENGTH_UNLIMITED, READ_SAMPLE_STATE));
         check_collection(data_seq[3], true, 0, 0);
 
         // Current state: {/, /, /, /, N, N, N, N, N, N}
+        EXPECT_EQ(num_samples_check - 4, data_reader_->get_unread_count());
+
         // This should return samples 5 and 6
         EXPECT_EQ(ok_code, data_reader_->read(data_seq[3], info_seq[3], 2));
         check_collection(data_seq[3], false, 2, 2);
         check_sample_values(data_seq[3], "45");
 
         // Current state: {/, /, /, /, R, R, N, N, N, N}
+        EXPECT_EQ(num_samples_check - 6, data_reader_->get_unread_count());
+
         // This should return samples 7, ... num_samples
         EXPECT_EQ(ok_code, data_reader_->take(data_seq[4], info_seq[4], LENGTH_UNLIMITED, NOT_READ_SAMPLE_STATE));
         check_collection(data_seq[4], false, num_samples - 6, num_samples - 6);
         check_sample_values(data_seq[4], "6789");
 
         // Current state: {/, /, /, /, R, R, /, /, /, /}
+        EXPECT_EQ(num_samples_check - 10, data_reader_->get_unread_count());
+
         // There are not unread samples, so wait_for_unread should return false
         EXPECT_FALSE(data_reader_->wait_for_unread_message(time_to_wait));
 
         // Current state: {/, /, /, /, R, R, /, /, /, /}
+        EXPECT_EQ(num_samples_check - 10, data_reader_->get_unread_count());
+
         // Add a new sample to have a NOT_READ one
         data.message()[0] = 'A';
         EXPECT_EQ(ok_code, data_writer_->write(&data, handle_ok_));
@@ -1261,12 +1398,16 @@ TEST_F(DataReaderTests, read_unread)
         EXPECT_TRUE(data_reader_->wait_for_unread_message(time_to_wait));
 
         // Current state: {/, /, /, /, R, R, /, /, /, /, N}
+        EXPECT_EQ(num_samples_check - 10 + 1, data_reader_->get_unread_count());
+
         // This should return samples 5, 6 and new
         EXPECT_EQ(ok_code, data_reader_->take(data_seq[5], info_seq[5]));
         check_collection(data_seq[5], false, 3, 3);
         check_sample_values(data_seq[5], "45A");
 
         // Current state: {/, /, /, /, /, /, /, /, /, /, /}
+        EXPECT_EQ(num_samples_check - 10 + 1 - 1, data_reader_->get_unread_count());
+
         // There are not unread samples, so wait_for_unread should return false
         EXPECT_FALSE(data_reader_->wait_for_unread_message(time_to_wait));
 
@@ -1274,6 +1415,49 @@ TEST_F(DataReaderTests, read_unread)
         for (size_t i = 0; i < 6; ++i)
         {
             EXPECT_EQ(ok_code, data_reader_->return_loan(data_seq[i], info_seq[i]));
+        }
+    }
+
+    // Check read_next_sample / take_next_sample
+    {
+        // Send a bunch of samples
+        for (char i = 0; i < num_samples; ++i)
+        {
+            data.message()[0] = i + '0';
+            EXPECT_EQ(ok_code, data_writer_->write(&data, handle_ok_));
+        }
+
+        // Reader should have 10 samples with the following states (R = read, N = not-read, / = removed from history)
+        // {N, N, N, N, N, N, N, N, N, N}
+
+        // Read a sample and take another
+        for (char i = 0; i < num_samples; i += 2)
+        {
+            FooType read_data;
+            FooType take_data;
+            SampleInfo read_info;
+            SampleInfo take_info;
+
+            EXPECT_EQ(ok_code, data_reader_->read_next_sample(&read_data, &read_info));
+            EXPECT_EQ(read_data.message()[0], i + '0');
+
+            EXPECT_EQ(ok_code, data_reader_->take_next_sample(&take_data, &take_info));
+            EXPECT_EQ(take_data.message()[0], i + '1');
+
+            EXPECT_FALSE(read_data == take_data);
+            EXPECT_NE(read_info.sample_identity, take_info.sample_identity);
+        }
+
+        // Reader sample states should be
+        // {R, /, R, /, R, /, R, /, R, /}
+
+        // As all samples are read, read_next_sample and take_next_sample should not return data
+        {
+            FooType read_data;
+            SampleInfo read_info;
+
+            EXPECT_EQ(no_data_code, data_reader_->read_next_sample(&read_data, &read_info));
+            EXPECT_EQ(no_data_code, data_reader_->take_next_sample(&read_data, &read_info));
         }
     }
 }
@@ -1336,6 +1520,51 @@ TEST_F(DataReaderTests, SetListener)
                 std::get<1>(testing_case),
                 std::get<2>(testing_case));
     }
+}
+
+TEST_F(DataReaderTests, get_listening_locators)
+{
+    using IPLocator = eprosima::fastrtps::rtps::IPLocator;
+
+    // Prepare specific listening locators
+    rtps::Locator unicast_locator;
+    IPLocator::setIPv4(unicast_locator, 127, 0, 0, 1);
+    IPLocator::setPortRTPS(unicast_locator, 7399);
+
+    rtps::Locator multicast_locator;
+    IPLocator::setIPv4(multicast_locator, 239, 127, 0, 1);
+    IPLocator::setPortRTPS(multicast_locator, 7398);
+
+    // Set specific locators on DataReader QoS
+    DataReaderQos reader_qos = DATAREADER_QOS_DEFAULT;
+    reader_qos.endpoint().unicast_locator_list.push_back(unicast_locator);
+    reader_qos.endpoint().multicast_locator_list.push_back(multicast_locator);
+
+    // We will create a disabled DataReader, so we can check RETCODE_NOT_ENABLED
+    SubscriberQos subscriber_qos = SUBSCRIBER_QOS_DEFAULT;
+    subscriber_qos.entity_factory().autoenable_created_entities = false;
+
+    create_entities(nullptr, reader_qos, subscriber_qos);
+    EXPECT_FALSE(data_reader_->is_enabled());
+
+    // Calling on disabled reader should return NOT_ENABLED
+    rtps::LocatorList locator_list;
+    EXPECT_EQ(ReturnCode_t::RETCODE_NOT_ENABLED, data_reader_->get_listening_locators(locator_list));
+
+    // Enable and try again
+    EXPECT_EQ(ReturnCode_t::RETCODE_OK, data_reader_->enable());
+    EXPECT_EQ(ReturnCode_t::RETCODE_OK, data_reader_->get_listening_locators(locator_list));
+
+    EXPECT_EQ(locator_list.size(), 2u);
+    bool unicast_found = false;
+    bool multicast_found = false;
+    for (const rtps::Locator& locator : locator_list)
+    {
+        unicast_found |= (locator == unicast_locator);
+        multicast_found |= (locator == multicast_locator);
+    }
+    EXPECT_TRUE(unicast_found);
+    EXPECT_TRUE(multicast_found);
 }
 
 class DataReaderUnsupportedTests : public ::testing::Test

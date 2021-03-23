@@ -90,14 +90,20 @@ public:
     void remove_writer(
             const eprosima::fastrtps::rtps::GUID_t& guid);
 
-    bool is_client()
+    bool is_client() const
     {
         return participant_change_data_.is_client();
     }
 
-    bool is_local()
+    bool is_local() const
     {
         return participant_change_data_.is_local();
+    }
+
+    void participant_change_data(
+            const DiscoveryParticipantChangeData& new_participant_change_data)
+    {
+        participant_change_data_ = new_participant_change_data;
     }
 
     bool is_external()

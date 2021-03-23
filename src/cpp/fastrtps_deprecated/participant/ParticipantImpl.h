@@ -26,15 +26,15 @@
 #include <fastdds/rtps/reader/StatefulReader.h>
 #include <fastdds/dds/topic/TopicDataType.hpp>
 
-namespace eprosima{
+namespace eprosima {
 
-namespace fastrtps{
+namespace fastrtps {
 
-namespace rtps{
+namespace rtps {
 class RTPSParticipant;
 class WriterProxyData;
 class ReaderProxyData;
-}
+} // namespace rtps
 
 
 
@@ -58,33 +58,36 @@ class SubscriberListener;
 class ParticipantImpl
 {
     friend class Domain;
-    typedef std::pair<Publisher*,PublisherImpl*> t_p_PublisherPair;
-    typedef std::pair<Subscriber*,SubscriberImpl*> t_p_SubscriberPair;
+    typedef std::pair<Publisher*, PublisherImpl*> t_p_PublisherPair;
+    typedef std::pair<Subscriber*, SubscriberImpl*> t_p_SubscriberPair;
     typedef std::vector<t_p_PublisherPair> t_v_PublisherPairs;
     typedef std::vector<t_p_SubscriberPair> t_v_SubscriberPairs;
 
-    private:
+private:
+
     ParticipantImpl(
-        const ParticipantAttributes& patt,
-        Participant* pspart,
-        ParticipantListener* listen = nullptr);
+            const ParticipantAttributes& patt,
+            Participant* pspart,
+            ParticipantListener* listen = nullptr);
     virtual ~ParticipantImpl();
 
-    public:
+public:
 
     /**
      * Register a type in this participant.
      * @param type Pointer to the TopicDatType.
      * @return True if registered.
      */
-    bool registerType(fastdds::dds::TopicDataType* type);
+    bool registerType(
+            fastdds::dds::TopicDataType* type);
 
     /**
      * Unregister a type in this participant.
      * @param typeName Name of the type
      * @return True if unregistered.
      */
-    bool unregisterType(const char* typeName);
+    bool unregisterType(
+            const char* typeName);
 
     /**
      * Create a Publisher in this Participant.
@@ -93,8 +96,8 @@ class ParticipantImpl
      * @return Pointer to the created Publisher.
      */
     Publisher* createPublisher(
-        const PublisherAttributes& att,
-        PublisherListener* listen=nullptr);
+            const PublisherAttributes& att,
+            PublisherListener* listen = nullptr);
 
     /**
      * Create a Subscriber in this Participant.
@@ -103,22 +106,24 @@ class ParticipantImpl
      * @return Pointer to the created Subscriber.
      */
     Subscriber* createSubscriber(
-        const SubscriberAttributes& att,
-        SubscriberListener* listen=nullptr);
+            const SubscriberAttributes& att,
+            SubscriberListener* listen = nullptr);
 
     /**
      * Remove a Publisher from this participant.
      * @param pub Pointer to the Publisher.
      * @return True if correctly removed.
      */
-    bool removePublisher(Publisher* pub);
+    bool removePublisher(
+            Publisher* pub);
 
     /**
      * Remove a Subscriber from this participant.
      * @param sub Pointer to the Subscriber.
      * @return True if correctly removed.
      */
-    bool removeSubscriber(Subscriber* sub);
+    bool removeSubscriber(
+            Subscriber* sub);
 
     /**
      * Get the GUID_t of the associated RTPSParticipant.
@@ -130,14 +135,17 @@ class ParticipantImpl
      * Get the participant attributes
      * @return Participant attributes
      */
-    inline const ParticipantAttributes& getAttributes() const {return m_att;};
+    inline const ParticipantAttributes& getAttributes() const
+    {
+        return m_att;
+    }
 
-    std::pair<rtps::StatefulReader*,rtps::StatefulReader*> getEDPReaders();
+    std::pair<rtps::StatefulReader*, rtps::StatefulReader*> getEDPReaders();
 
     std::vector<std::string> getParticipantNames() const;
 
     /**
-     * This method can be used when using a StaticEndpointDiscovery mechanism differnet that the one
+     * This method can be used when using a StaticEndpointDiscovery mechanism different that the one
      * included in FastRTPS, for example when communicating with other implementations.
      * It indicates the Participant that an Endpoint from the XML has been discovered and
      * should be activated.
@@ -147,9 +155,9 @@ class ParticipantImpl
      * @return True if correctly found and activated.
      */
     bool newRemoteEndpointDiscovered(
-        const rtps::GUID_t& partguid,
-        uint16_t userId,
-        rtps::EndpointKind_t kind);
+            const rtps::GUID_t& partguid,
+            uint16_t userId,
+            rtps::EndpointKind_t kind);
 
     rtps::ResourceEvent& get_resource_event() const;
 
@@ -170,7 +178,8 @@ class ParticipantImpl
         return mp_rtpsParticipant;
     }
 
-    private:
+private:
+
     //!Participant Attributes
     ParticipantAttributes m_att;
     //!RTPSParticipant
@@ -186,33 +195,50 @@ class ParticipantImpl
     //!TOpicDatType vector
     std::vector<fastdds::dds::TopicDataType*> m_types;
 
-    bool getRegisteredType(const char* typeName, fastdds::dds::TopicDataType** type);
+    bool getRegisteredType(
+            const char* typeName,
+            fastdds::dds::TopicDataType** type);
 
     class MyRTPSParticipantListener : public rtps::RTPSParticipantListener
     {
-        public:
+    public:
 
-            MyRTPSParticipantListener(ParticipantImpl* impl): mp_participantimpl(impl) {}
+        MyRTPSParticipantListener(
+                ParticipantImpl* impl)
+            : mp_participantimpl(impl)
+        {
+        }
 
-            virtual ~MyRTPSParticipantListener() {}
+        virtual ~MyRTPSParticipantListener()
+        {
+        }
 
-            void onParticipantDiscovery(rtps::RTPSParticipant* participant, rtps::ParticipantDiscoveryInfo&& info) override;
+        void onParticipantDiscovery(
+                rtps::RTPSParticipant* participant,
+                rtps::ParticipantDiscoveryInfo&& info) override;
 
 #if HAVE_SECURITY
-            void onParticipantAuthentication(rtps::RTPSParticipant* participant, rtps::ParticipantAuthenticationInfo&& info) override;
-#endif
+        void onParticipantAuthentication(
+                rtps::RTPSParticipant* participant,
+                rtps::ParticipantAuthenticationInfo&& info) override;
+#endif // if HAVE_SECURITY
 
-            void onReaderDiscovery(rtps::RTPSParticipant* participant, rtps::ReaderDiscoveryInfo&& info) override;
+        void onReaderDiscovery(
+                rtps::RTPSParticipant* participant,
+                rtps::ReaderDiscoveryInfo&& info) override;
 
-            void onWriterDiscovery(rtps::RTPSParticipant* participant, rtps::WriterDiscoveryInfo&& info) override;
+        void onWriterDiscovery(
+                rtps::RTPSParticipant* participant,
+                rtps::WriterDiscoveryInfo&& info) override;
 
-            ParticipantImpl* mp_participantimpl;
+        ParticipantImpl* mp_participantimpl;
 
-    } m_rtps_listener;
+    }
+    m_rtps_listener;
 
 };
 
 } /* namespace  */
 } /* namespace eprosima */
-#endif
+#endif // ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 #endif /* PARTICIPANTIMPL_H_ */

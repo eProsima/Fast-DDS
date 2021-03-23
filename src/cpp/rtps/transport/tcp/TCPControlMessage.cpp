@@ -26,8 +26,8 @@ char dummy;
 } // namespace
 #endif // ifdef _WIN32
 
-#include <fastdds/rtps/transport/tcp/TCPControlMessage.h>
 #include <fastdds/rtps/common/Types.h>
+#include <rtps/transport/tcp/TCPControlMessage.h>
 
 #include <fastcdr/FastCdr.h>
 #include <fastcdr/Cdr.h>
@@ -43,7 +43,6 @@ namespace rtps {
 
 using ProtocolVersion_t = fastrtps::rtps::ProtocolVersion_t;
 using VendorId_t = fastrtps::rtps::VendorId_t;
-using Locator_t = fastrtps::rtps::Locator_t;
 using SerializedPayload_t = fastrtps::rtps::SerializedPayload_t;
 
 static void operator <<(
@@ -64,7 +63,7 @@ static void operator <<(
 
 static void operator <<(
         eprosima::fastcdr::Cdr& scdr,
-        const Locator_t& locator)
+        const Locator& locator)
 {
     scdr << locator.kind;
     scdr << locator.port;
@@ -92,7 +91,7 @@ static void operator >>(
 
 static void operator >>(
         eprosima::fastcdr::Cdr& scdr,
-        Locator_t& locator)
+        Locator& locator)
 {
     scdr >> locator.kind;
     scdr >> locator.port;

@@ -67,6 +67,17 @@ PDPServer::PDPServer(
             servers_prefixes())
     , durability_ (durability_kind)
 {
+    // Add remote servers from environment variable
+    RemoteServerList_t env_servers;
+    if (load_environment_server_info(env_servers))
+    {
+        for (auto server : env_servers)
+        {
+            mp_builtin->m_DiscoveryServers.push_back(server);
+            m_discovery.discovery_config.m_DiscoveryServers.push_back(server);
+            discovery_db_.add_server(server.guidPrefix);
+        }
+    }
 }
 
 PDPServer::~PDPServer()
@@ -352,8 +363,11 @@ void PDPServer::initializeParticipantProxyData(
 {
     PDP::initializeParticipantProxyData(participant_data);
 
-    if (!(getRTPSParticipant()->getAttributes().builtin.discovery_config.discoveryProtocol !=
-            DiscoveryProtocol_t::CLIENT))
+    if (getRTPSParticipant()->getAttributes().builtin.discovery_config.discoveryProtocol !=
+            DiscoveryProtocol_t::SERVER
+            &&
+            getRTPSParticipant()->getAttributes().builtin.discovery_config.discoveryProtocol !=
+            DiscoveryProtocol_t::BACKUP)
     {
         logError(RTPS_PDP_SERVER, "Using a PDP Server object with another user's settings");
     }
@@ -373,10 +387,7 @@ void PDPServer::initializeParticipantProxyData(
         logWarning(RTPS_PDP_SERVER, "SERVER or BACKUP PDP requires always all EDP endpoints creation.");
     }
 
-    // Set participant type and discovery server version properties
-    participant_data->m_properties.push_back(
-        std::pair<std::string, std::string>(
-            {dds::parameter_property_participant_type, ParticipantType::SERVER}));
+    // Set discovery server version property
     participant_data->m_properties.push_back(
         std::pair<std::string,
         std::string>({dds::parameter_property_ds_version, dds::parameter_property_current_ds_version}));
@@ -695,19 +706,20 @@ void PDPServer::announceParticipantState(
         // Generate the Data(Up)
         if (nullptr != change)
         {
-            // assign identity
+            // Assign identity
             change->sequenceNumber = sn;
             change->write_params = std::move(wp);
 
             // Update the database with our own data
             if (discovery_db().update(change, ddb::DiscoveryParticipantChangeData()))
             {
-                // distribute
+                // Distribute
                 awake_routine_thread();
             }
             else
             {
-                // already there, dispose. If participant is not removed fast enought may happen
+                // Dispose if already there
+                // It may happen if the participant is not removed fast enough
                 mp_PDPWriter->release_change(change);
                 return;
             }
@@ -727,7 +739,7 @@ void PDPServer::announceParticipantState(
     // Create a list of receivers based on the remote participants known by the discovery database that are direct
     // clients or servers of this server. Add the locators of those remote participants.
     std::vector<GUID_t> remote_readers;
-    LocatorList_t locators;
+    LocatorList locators;
 
     std::vector<GuidPrefix_t> direct_clients_and_servers = discovery_db_.direct_clients_and_servers();
     for (GuidPrefix_t participant_prefix: direct_clients_and_servers)
@@ -1342,7 +1354,7 @@ void PDPServer::ping_remote_servers()
     // Get the servers that have not ACKed this server's DATA(p)
     std::vector<GuidPrefix_t> ack_pending_servers = discovery_db_.ack_pending_servers();
     std::vector<GUID_t> remote_readers;
-    LocatorList_t locators;
+    LocatorList locators;
 
     // Iterate over the list of servers
     for (auto& server : mp_builtin->m_DiscoveryServers)
@@ -1363,7 +1375,7 @@ void PDPServer::ping_remote_servers()
 void PDPServer::send_announcement(
         CacheChange_t* change,
         std::vector<GUID_t> remote_readers,
-        LocatorList_t locators,
+        LocatorList locators,
         bool dispose /* = false */)
 {
 

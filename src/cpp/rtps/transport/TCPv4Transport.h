@@ -15,21 +15,20 @@
 #ifndef _FASTDDS_TCPV4_TRANSPORT_H_
 #define _FASTDDS_TCPV4_TRANSPORT_H_
 
-#include <fastdds/rtps/transport/TCPTransportInterface.h>
-#include <fastdds/rtps/transport/TCPv4TransportDescriptor.h>
-#include <fastrtps/utils/IPFinder.h>
-#include <fastdds/rtps/transport/tcp/RTCPHeader.h>
-
-
-#include <asio.hpp>
 #include <thread>
 #include <vector>
 #include <map>
 #include <mutex>
 
-namespace eprosima{
-namespace fastdds{
-namespace rtps{
+#include <asio.hpp>
+#include <fastdds/rtps/transport/TCPv4TransportDescriptor.h>
+#include <fastrtps/utils/IPFinder.h>
+#include <rtps/transport/TCPTransportInterface.h>
+#include <rtps/transport/tcp/RTCPHeader.h>
+
+namespace eprosima {
+namespace fastdds {
+namespace rtps {
 
 /**
  * This is a default TCPv4 implementation.
@@ -48,6 +47,7 @@ namespace rtps{
 class TCPv4Transport : public TCPTransportInterface
 {
 protected:
+
     TCPv4TransportDescriptor configuration_;
     std::vector<asio::ip::address_v4> interface_whitelist_;
 
@@ -55,62 +55,75 @@ protected:
     TCPv4Transport();
 
     virtual bool compare_locator_ip(
-        const fastrtps::rtps::Locator_t& lh,
-        const fastrtps::rtps::Locator_t& rh) const override;
+            const Locator& lh,
+            const Locator& rh) const override;
 
     virtual bool compare_locator_ip_and_port(
-        const fastrtps::rtps::Locator_t& lh,
-        const fastrtps::rtps::Locator_t& rh) const override;
+            const Locator& lh,
+            const Locator& rh) const override;
 
-    virtual void fill_local_ip(fastrtps::rtps::Locator_t& loc) const override;
-
-    virtual asio::ip::tcp::endpoint generate_endpoint(uint16_t port) const override;
+    virtual void fill_local_ip(
+            Locator& loc) const override;
 
     virtual asio::ip::tcp::endpoint generate_endpoint(
-        const fastrtps::rtps::Locator_t& loc,
-        uint16_t port) const override;
+            uint16_t port) const override;
+
+    virtual asio::ip::tcp::endpoint generate_endpoint(
+            const Locator& loc,
+            uint16_t port) const override;
 
     virtual asio::ip::tcp::endpoint generate_local_endpoint(
-        fastrtps::rtps::Locator_t& loc,
-        uint16_t port) const override;
+            Locator& loc,
+            uint16_t port) const override;
 
     virtual asio::ip::tcp generate_protocol() const override;
 
-    virtual asio::ip::tcp get_protocol_type() const override { return asio::ip::tcp::v4(); }
+    virtual asio::ip::tcp get_protocol_type() const override
+    {
+        return asio::ip::tcp::v4();
+    }
 
     virtual void get_ips(
-        std::vector<fastrtps::rtps::IPFinder::info_IP>& locNames,
-        bool return_loopback = false) const override;
+            std::vector<fastrtps::rtps::IPFinder::info_IP>& locNames,
+            bool return_loopback = false) const override;
 
     /**
-    * Method to get a list of interfaces to bind the socket associated to the given locator.
-    * @return Vector of interfaces in string format.
-    */
+     * Method to get a list of interfaces to bind the socket associated to the given locator.
+     * @return Vector of interfaces in string format.
+     */
     virtual std::vector<std::string> get_binding_interfaces_list() override;
 
-    bool is_locator_allowed(const fastrtps::rtps::Locator_t& locator) const override;
+    bool is_locator_allowed(
+            const Locator& locator) const override;
 
     //! Checks if the given ip has been included in the white list to use it.
-    virtual bool is_interface_allowed(const std::string& interface) const override;
+    virtual bool is_interface_allowed(
+            const std::string& interface) const override;
 
     //! Checks if the given interface is allowed by the white list.
-    bool is_interface_allowed(const asio::ip::address_v4& ip) const;
+    bool is_interface_allowed(
+            const asio::ip::address_v4& ip) const;
 
     //! Checks if the given interface is allowed by the white list.
-    virtual bool is_interface_allowed(const fastrtps::rtps::Locator_t& loc) const override;
+    virtual bool is_interface_allowed(
+            const Locator& loc) const override;
 
     //! Checks if the interfaces white list is empty.
     virtual bool is_interface_whitelist_empty() const override;
 
-    virtual void set_receive_buffer_size(uint32_t size) override;
-    virtual void set_send_buffer_size(uint32_t size) override;
+    virtual void set_receive_buffer_size(
+            uint32_t size) override;
+    virtual void set_send_buffer_size(
+            uint32_t size) override;
 
     virtual void endpoint_to_locator(
-        const asio::ip::tcp::endpoint& endpoint,
-        fastrtps::rtps::Locator_t& locator) const override;
+            const asio::ip::tcp::endpoint& endpoint,
+            Locator& locator) const override;
 
 public:
-    RTPS_DllAPI TCPv4Transport(const TCPv4TransportDescriptor&);
+
+    RTPS_DllAPI TCPv4Transport(
+            const TCPv4TransportDescriptor&);
 
     virtual ~TCPv4Transport() override;
 
@@ -118,13 +131,19 @@ public:
 
     virtual TCPTransportDescriptor* configuration() override;
 
-    virtual fastrtps::rtps::LocatorList_t NormalizeLocator(const fastrtps::rtps::Locator_t& locator) override;
+    virtual LocatorList NormalizeLocator(
+            const Locator& locator) override;
 
-    virtual bool is_local_locator(const fastrtps::rtps::Locator_t& locator) const override;
+    virtual bool is_local_locator(
+            const Locator& locator) const override;
 
-    TransportDescriptorInterface* get_configuration() override { return &configuration_; }
+    TransportDescriptorInterface* get_configuration() override
+    {
+        return &configuration_;
+    }
 
-    virtual void AddDefaultOutputLocator(fastrtps::rtps::LocatorList_t&) override;
+    virtual void AddDefaultOutputLocator(
+            LocatorList&) override;
 
     virtual uint16_t GetLogicalPortIncrement() const override;
 
@@ -133,12 +152,12 @@ public:
     virtual uint16_t GetMaxLogicalPort() const override;
 
     virtual bool fillMetatrafficUnicastLocator(
-        fastrtps::rtps::Locator_t &locator,
-        uint32_t metatraffic_unicast_port) const override;
+            Locator& locator,
+            uint32_t metatraffic_unicast_port) const override;
 
     virtual bool fillUnicastLocator(
-        fastrtps::rtps::Locator_t &locator,
-        uint32_t well_known_port) const override;
+            Locator& locator,
+            uint32_t well_known_port) const override;
 };
 
 } // namespace rtps

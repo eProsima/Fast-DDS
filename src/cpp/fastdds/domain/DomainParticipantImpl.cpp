@@ -359,14 +359,14 @@ const DomainParticipantQos& DomainParticipantImpl::get_qos() const
 }
 
 ReturnCode_t DomainParticipantImpl::delete_publisher(
-        Publisher* pub)
+        const Publisher* pub)
 {
     if (participant_ != pub->get_participant())
     {
         return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
     }
     std::lock_guard<std::mutex> lock(mtx_pubs_);
-    auto pit = publishers_.find(pub);
+    auto pit = publishers_.find(const_cast<Publisher*>(pub));
 
     if (pit != publishers_.end())
     {
@@ -387,14 +387,14 @@ ReturnCode_t DomainParticipantImpl::delete_publisher(
 }
 
 ReturnCode_t DomainParticipantImpl::delete_subscriber(
-        Subscriber* sub)
+        const Subscriber* sub)
 {
     if (participant_ != sub->get_participant())
     {
         return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
     }
     std::lock_guard<std::mutex> lock(mtx_subs_);
-    auto sit = subscribers_.find(sub);
+    auto sit = subscribers_.find(const_cast<Subscriber*>(sub));
 
     if (sit != subscribers_.end())
     {
@@ -415,7 +415,7 @@ ReturnCode_t DomainParticipantImpl::delete_subscriber(
 }
 
 ReturnCode_t DomainParticipantImpl::delete_topic(
-        Topic* topic)
+        const Topic* topic)
 {
     if (topic == nullptr)
     {

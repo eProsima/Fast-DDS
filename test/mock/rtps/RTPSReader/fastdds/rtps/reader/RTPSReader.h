@@ -93,6 +93,8 @@ public:
 
     MOCK_METHOD1(wait_for_unread_cache, bool (const eprosima::fastrtps::Duration_t& timeout));
 
+    MOCK_METHOD0(get_unread_count, uint64_t());
+
     // *INDENT-ON*
 
 

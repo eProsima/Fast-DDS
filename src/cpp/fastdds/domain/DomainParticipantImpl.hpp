@@ -132,7 +132,7 @@ public:
             const StatusMask& mask = StatusMask::all());
 
     ReturnCode_t delete_publisher(
-            Publisher* publisher);
+            const Publisher* publisher);
 
     /**
      * Create a Subscriber in this Participant.
@@ -159,7 +159,7 @@ public:
             const StatusMask& mask);
 
     ReturnCode_t delete_subscriber(
-            Subscriber* subscriber);
+            const Subscriber* subscriber);
 
     /**
      * Create a Topic in this Participant.
@@ -194,7 +194,7 @@ public:
             const StatusMask& mask = StatusMask::all());
 
     ReturnCode_t delete_topic(
-            Topic* topic);
+            const Topic* topic);
 
     /**
      * Looks up an existing, locally created @ref TopicDescription, based on its name.
@@ -345,7 +345,7 @@ public:
     std::vector<std::string> get_participant_names() const;
 
     /**
-     * This method can be used when using a StaticEndpointDiscovery mechanism differnet that the one
+     * This method can be used when using a StaticEndpointDiscovery mechanism different that the one
      * included in FastRTPS, for example when communicating with other implementations.
      * It indicates the Participant that an Endpoint from the XML has been discovered and
      * should be activated.

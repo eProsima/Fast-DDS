@@ -12,27 +12,27 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include <fastdds/rtps/transport/TCPv6Transport.h>
+#include <rtps/transport/TCPv6Transport.h>
+
 #include <utility>
 #include <cstring>
 #include <algorithm>
-#include <fastdds/dds/log/Log.hpp>
+
 #include <asio.hpp>
-#include <fastrtps/utils/IPLocator.h>
+#include <fastdds/dds/log/Log.hpp>
 #include <fastdds/rtps/transport/TCPv6TransportDescriptor.h>
+#include <fastrtps/utils/IPLocator.h>
 
 using namespace std;
 using namespace asio;
 
-namespace eprosima{
-namespace fastdds{
+namespace eprosima {
+namespace fastdds {
 namespace rtps {
 
-using Locator_t = fastrtps::rtps::Locator_t;
 using IPFinder = fastrtps::rtps::IPFinder;
 using octet = fastrtps::rtps::octet;
 using IPLocator = fastrtps::rtps::IPLocator;
-using LocatorList_t = fastrtps::rtps::LocatorList_t;
 using octet = fastrtps::rtps::octet;
 using Log = fastdds::dds::Log;
 
@@ -42,36 +42,41 @@ static void get_ipv6s(
 {
     IPFinder::getIPs(&locNames, return_loopback);
     auto new_end = remove_if(locNames.begin(),
-        locNames.end(),
-        [](IPFinder::info_IP ip) {return ip.type != IPFinder::IP6 && ip.type != IPFinder::IP6_LOCAL; });
+                    locNames.end(),
+                    [](IPFinder::info_IP ip)
+                    {
+                        return ip.type != IPFinder::IP6 && ip.type != IPFinder::IP6_LOCAL;
+                    });
     locNames.erase(new_end, locNames.end());
     std::for_each(locNames.begin(), locNames.end(), [](IPFinder::info_IP& loc)
-    {
-        loc.locator.kind = LOCATOR_KIND_TCPv6;
-    });
+            {
+                loc.locator.kind = LOCATOR_KIND_TCPv6;
+            });
 }
 
-static asio::ip::address_v6::bytes_type locator_to_native(Locator_t& locator)
+static asio::ip::address_v6::bytes_type locator_to_native(
+        Locator& locator)
 {
     return{ { IPLocator::getIPv6(locator)[0],
         IPLocator::getIPv6(locator)[1],
         IPLocator::getIPv6(locator)[2],
-        IPLocator::getIPv6(locator)[3] ,
-        IPLocator::getIPv6(locator)[4] ,
+        IPLocator::getIPv6(locator)[3],
+        IPLocator::getIPv6(locator)[4],
         IPLocator::getIPv6(locator)[5],
-        IPLocator::getIPv6(locator)[6] ,
-        IPLocator::getIPv6(locator)[7] ,
+        IPLocator::getIPv6(locator)[6],
+        IPLocator::getIPv6(locator)[7],
         IPLocator::getIPv6(locator)[8],
-        IPLocator::getIPv6(locator)[9] ,
-        IPLocator::getIPv6(locator)[10] ,
+        IPLocator::getIPv6(locator)[9],
+        IPLocator::getIPv6(locator)[10],
         IPLocator::getIPv6(locator)[11],
-        IPLocator::getIPv6(locator)[12] ,
-        IPLocator::getIPv6(locator)[13] ,
+        IPLocator::getIPv6(locator)[12],
+        IPLocator::getIPv6(locator)[13],
         IPLocator::getIPv6(locator)[14],
         IPLocator::getIPv6(locator)[15] } };
 }
 
-TCPv6Transport::TCPv6Transport(const TCPv6TransportDescriptor& descriptor)
+TCPv6Transport::TCPv6Transport(
+        const TCPv6TransportDescriptor& descriptor)
     : TCPTransportInterface(LOCATOR_KIND_TCPv6)
     , configuration_(descriptor)
 {
@@ -82,7 +87,7 @@ TCPv6Transport::TCPv6Transport(const TCPv6TransportDescriptor& descriptor)
 
     for (uint16_t port : configuration_.listening_ports)
     {
-        Locator_t locator(LOCATOR_KIND_TCPv6, port);
+        Locator locator(LOCATOR_KIND_TCPv6, port);
         create_acceptor_socket(locator);
     }
 
@@ -91,7 +96,7 @@ TCPv6Transport::TCPv6Transport(const TCPv6TransportDescriptor& descriptor)
     {
         logError(RTCP_TLS, "Trying to use TCP Transport with TLS but TLS was not found.");
     }
-#endif
+#endif // if !TLS_FOUND
 }
 
 TCPv6Transport::TCPv6Transport()
@@ -109,9 +114,16 @@ TCPv6TransportDescriptor::TCPv6TransportDescriptor()
 {
 }
 
-TCPv6TransportDescriptor::TCPv6TransportDescriptor(const TCPv6TransportDescriptor& t)
+TCPv6TransportDescriptor::TCPv6TransportDescriptor(
+        const TCPv6TransportDescriptor& t)
     : TCPTransportDescriptor(t)
 {
+}
+
+bool TCPv6TransportDescriptor::operator ==(
+        const TCPv6TransportDescriptor& t) const
+{
+    return TCPTransportDescriptor::operator ==(t);
 }
 
 TransportInterface* TCPv6TransportDescriptor::create_transport() const
@@ -119,7 +131,8 @@ TransportInterface* TCPv6TransportDescriptor::create_transport() const
     return new TCPv6Transport(*this);
 }
 
-void TCPv6Transport::AddDefaultOutputLocator(LocatorList_t& /*defaultList*/)
+void TCPv6Transport::AddDefaultOutputLocator(
+        LocatorList& /*defaultList*/)
 {
 }
 
@@ -173,7 +186,8 @@ std::vector<std::string> TCPv6Transport::get_binding_interfaces_list()
     return vOutputInterfaces;
 }
 
-bool TCPv6Transport::is_locator_allowed(const Locator_t& locator) const
+bool TCPv6Transport::is_locator_allowed(
+        const Locator& locator) const
 {
     if (!IsLocatorSupported(locator))
     {
@@ -191,25 +205,32 @@ bool TCPv6Transport::is_interface_whitelist_empty() const
     return interface_whitelist_.empty();
 }
 
-bool TCPv6Transport::is_interface_allowed(const std::string& interface) const
+bool TCPv6Transport::is_interface_allowed(
+        const std::string& interface) const
 {
     return is_interface_allowed(asio::ip::address_v6::from_string(interface));
 }
 
-bool TCPv6Transport::is_interface_allowed(const ip::address_v6& ip) const
+bool TCPv6Transport::is_interface_allowed(
+        const ip::address_v6& ip) const
 {
     if (interface_whitelist_.empty())
+    {
         return true;
+    }
 
     if (ip == ip::address_v6::any())
+    {
         return true;
+    }
 
     return find(interface_whitelist_.begin(), interface_whitelist_.end(), ip) != interface_whitelist_.end();
 }
 
-LocatorList_t TCPv6Transport::NormalizeLocator(const Locator_t& locator)
+LocatorList TCPv6Transport::NormalizeLocator(
+        const Locator& locator)
 {
-    LocatorList_t list;
+    LocatorList list;
 
     if (IPLocator::isAny(locator))
     {
@@ -217,18 +238,21 @@ LocatorList_t TCPv6Transport::NormalizeLocator(const Locator_t& locator)
         get_ipv6s(locNames);
         for (const auto& infoIP : locNames)
         {
-            Locator_t newloc(locator);
+            Locator newloc(locator);
             IPLocator::setIPv6(newloc, infoIP.locator);
             list.push_back(newloc);
         }
     }
     else
+    {
         list.push_back(locator);
+    }
 
     return list;
 }
 
-bool TCPv6Transport::is_local_locator(const Locator_t& locator) const
+bool TCPv6Transport::is_local_locator(
+        const Locator& locator) const
 {
     assert(locator.kind == LOCATOR_KIND_TCPv6);
 
@@ -249,27 +273,28 @@ bool TCPv6Transport::is_local_locator(const Locator_t& locator) const
 }
 
 bool TCPv6Transport::compare_locator_ip(
-        const Locator_t& lh,
-        const Locator_t& rh) const
+        const Locator& lh,
+        const Locator& rh) const
 {
     return IPLocator::compareAddress(lh, rh);
 }
 
 bool TCPv6Transport::compare_locator_ip_and_port(
-        const Locator_t& lh,
-        const Locator_t& rh) const
+        const Locator& lh,
+        const Locator& rh) const
 {
     return IPLocator::compareAddressAndPhysicalPort(lh, rh);
 }
 
-void TCPv6Transport::fill_local_ip(Locator_t& loc) const
+void TCPv6Transport::fill_local_ip(
+        Locator& loc) const
 {
     IPLocator::setIPv6(loc, "::1");
     loc.kind = LOCATOR_KIND_TCPv6;
 }
 
 ip::tcp::endpoint TCPv6Transport::generate_endpoint(
-        const Locator_t& loc,
+        const Locator& loc,
         uint16_t port) const
 {
     asio::ip::address_v6::bytes_type remoteAddress;
@@ -278,13 +303,14 @@ ip::tcp::endpoint TCPv6Transport::generate_endpoint(
 }
 
 ip::tcp::endpoint TCPv6Transport::generate_local_endpoint(
-        Locator_t& loc,
+        Locator& loc,
         uint16_t port) const
 {
     return ip::tcp::endpoint(asio::ip::address_v6(locator_to_native(loc)), port);
 }
 
-ip::tcp::endpoint TCPv6Transport::generate_endpoint(uint16_t port) const
+ip::tcp::endpoint TCPv6Transport::generate_endpoint(
+        uint16_t port) const
 {
     return asio::ip::tcp::endpoint(asio::ip::tcp::v6(), port);
 }
@@ -294,25 +320,28 @@ asio::ip::tcp TCPv6Transport::generate_protocol() const
     return asio::ip::tcp::v6();
 }
 
-bool TCPv6Transport::is_interface_allowed(const Locator_t& loc) const
+bool TCPv6Transport::is_interface_allowed(
+        const Locator& loc) const
 {
     asio::ip::address_v6 ip = asio::ip::address_v6::from_string(IPLocator::toIPv6string(loc));
     return is_interface_allowed(ip);
 }
 
-void TCPv6Transport::set_receive_buffer_size(uint32_t size)
+void TCPv6Transport::set_receive_buffer_size(
+        uint32_t size)
 {
     configuration_.receiveBufferSize = size;
 }
 
-void TCPv6Transport::set_send_buffer_size(uint32_t size)
+void TCPv6Transport::set_send_buffer_size(
+        uint32_t size)
 {
     configuration_.sendBufferSize = size;
 }
 
 void TCPv6Transport::endpoint_to_locator(
         const ip::tcp::endpoint& endpoint,
-        Locator_t& locator) const
+        Locator& locator) const
 {
     locator.kind = LOCATOR_KIND_TCPv6;
     IPLocator::setPhysicalPort(locator, endpoint.port());

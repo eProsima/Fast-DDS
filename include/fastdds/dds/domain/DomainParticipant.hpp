@@ -180,7 +180,7 @@ public:
      * RETCODE_OK if it is correctly deleted and RETCODE_ERROR otherwise.
      */
     RTPS_DllAPI ReturnCode_t delete_publisher(
-            Publisher* publisher);
+            const Publisher* publisher);
 
     /**
      * Create a Subscriber in this Participant.
@@ -213,7 +213,7 @@ public:
      * RETCODE_OK if it is correctly deleted and RETCODE_ERROR otherwise.
      */
     RTPS_DllAPI ReturnCode_t delete_subscriber(
-            Subscriber* subscriber);
+            const Subscriber* subscriber);
 
     /**
      * Create a Topic in this Participant.
@@ -254,7 +254,7 @@ public:
      * this participant or if it is referenced by any entity and RETCODE_OK if the Topic was deleted.
      */
     RTPS_DllAPI ReturnCode_t delete_topic(
-            Topic* topic);
+            const Topic* topic);
 
     /**
      * Create a ContentFilteredTopic in this Participant.

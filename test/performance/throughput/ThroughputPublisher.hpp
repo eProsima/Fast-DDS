@@ -20,14 +20,21 @@
 #ifndef THROUGHPUTPUBLISHER_H_
 #define THROUGHPUTPUBLISHER_H_
 
+#include <chrono>
+#include <condition_variable>
+#include <map>
+#include <string>
+#include <vector>
+
 #include <asio.hpp>
-
-#include "ThroughputTypes.hpp"
-
+#include <fastdds/dds/publisher/DataWriter.hpp>
+#include <fastdds/dds/publisher/DataWriterListener.hpp>
+#include <fastdds/dds/publisher/Publisher.hpp>
+#include <fastdds/dds/subscriber/DataReader.hpp>
+#include <fastdds/dds/subscriber/DataReaderListener.hpp>
+#include <fastdds/dds/subscriber/Subscriber.hpp>
+#include <fastdds/dds/topic/TypeSupport.hpp>
 #include <fastrtps/fastrtps_fwd.h>
-#include <fastrtps/publisher/PublisherListener.h>
-#include <fastrtps/subscriber/SubscriberListener.h>
-#include <fastrtps/attributes/PublisherAttributes.h>
 #include <fastrtps/rtps/attributes/PropertyPolicy.h>
 #include <fastrtps/types/DynamicTypeBuilderFactory.h>
 #include <fastrtps/types/DynamicDataFactory.h>
@@ -38,18 +45,15 @@
 #include <fastrtps/types/DynamicType.h>
 #include <fastrtps/types/DynamicData.h>
 #include <fastrtps/types/DynamicPubSubType.h>
-
-#include <condition_variable>
-#include <chrono>
-#include <map>
-#include <vector>
-#include <string>
+#include "ThroughputTypes.hpp"
 
 class ThroughputPublisher
 {
 public:
 
-    ThroughputPublisher(
+    ThroughputPublisher();
+
+    bool init(
             bool reliable,
             uint32_t pid,
             bool hostname,
@@ -60,9 +64,11 @@ public:
             const std::string& demands_file,
             const std::string& recoveries_file,
             bool dynamic_types,
+            bool data_sharing,
+            bool data_loans,
             int forced_domain);
 
-    virtual ~ThroughputPublisher();
+    ~ThroughputPublisher();
 
     bool ready();
 
@@ -75,6 +81,16 @@ public:
 
 private:
 
+    bool init_dynamic_types();
+
+    bool init_static_types(
+            uint32_t payload);
+
+    bool create_data_endpoints(
+            const eprosima::fastdds::dds::DataWriterQos& dw_qos);
+
+    bool destroy_data_endpoints();
+
     bool test(
             uint32_t test_time,
             uint32_t recovery_time_ms,
@@ -85,11 +101,15 @@ private:
 
     bool load_recoveries();
 
+    int total_matches() const;
+
     // Entities
-    eprosima::fastrtps::Participant* participant_;
-    eprosima::fastrtps::Publisher* data_publisher_;
-    eprosima::fastrtps::Publisher* command_publisher_;
-    eprosima::fastrtps::Subscriber* command_subscriber_;
+    eprosima::fastdds::dds::DomainParticipant* participant_ = nullptr;
+    eprosima::fastdds::dds::Publisher* publisher_ = nullptr;
+    eprosima::fastdds::dds::Subscriber* subscriber_ = nullptr;
+    eprosima::fastdds::dds::DataWriter* data_writer_ = nullptr;
+    eprosima::fastdds::dds::DataWriter* command_writer_ = nullptr;
+    eprosima::fastdds::dds::DataReader* command_reader_ = nullptr;
 
     // Time
     std::chrono::steady_clock::time_point t_start_;
@@ -97,36 +117,42 @@ private:
     std::chrono::duration<double, std::micro> t_overhead_;
 
     // Test synchronization
-    std::mutex command_mutex_;
-    std::mutex data_mutex_;
+    std::mutex mutex_;
     std::condition_variable command_discovery_cv_;
     std::condition_variable data_discovery_cv_;
-    int command_discovery_count_;
-    int data_discovery_count_;
+
+    // Topics
+    eprosima::fastdds::dds::Topic* data_pub_topic_ = nullptr;
+    eprosima::fastdds::dds::Topic* command_pub_topic_ = nullptr;
+    eprosima::fastdds::dds::Topic* command_sub_topic_ = nullptr;
 
     // Data and Commands
-    ThroughputCommandDataType throuput_command_type_;
+    eprosima::fastdds::dds::TypeSupport throughput_command_type_;
     // Static Data
-    ThroughputDataType* throughput_data_type_;
-    ThroughputType* throughput_type_;
+    ThroughputType* throughput_data_ = nullptr;
+    eprosima::fastdds::dds::TypeSupport throughput_data_type_;
     // Dynamic Data
-    eprosima::fastrtps::types::DynamicData* dynamic_data_type_;
-    eprosima::fastrtps::types::DynamicPubSubType dynamic_pub_sub_type_;
-    eprosima::fastrtps::types::DynamicType_ptr dynamic_type_;
-    eprosima::fastrtps::PublisherAttributes pub_attrs_;
+    eprosima::fastrtps::types::DynamicData* dynamic_data_ = nullptr;
+    eprosima::fastdds::dds::TypeSupport dynamic_pub_sub_type_;
+    // QoS Profiles
+    eprosima::fastdds::dds::DataWriterQos dw_qos_;
 
     // Results
     std::vector<TroughputResults> results_;
 
     // Flags
-    bool dynamic_data_ = false;
-    bool ready_;
-    bool reliable_;
+    bool dynamic_types_ = false;
+    bool data_sharing_ = false;
+    bool data_loans_ = false;
+    bool ready_ = true;
+    bool reliable_ = false;
+    bool hostname_ = false;
+    uint32_t pid_ = 0;
 
     // Test configuration
-    int forced_domain_;
-    uint32_t payload_;
-    std::map<uint32_t, std::vector<uint32_t> > demand_payload_;
+    int forced_domain_ = 0;
+    uint32_t payload_ = 0;
+    std::map<uint32_t, std::vector<uint32_t>> demand_payload_;
     std::vector<uint32_t> recovery_times_;
 
     // Files
@@ -135,74 +161,101 @@ private:
     std::string xml_config_file_;
     std::string recoveries_file_;
 
-    uint32_t subscribers_;
+    uint32_t subscribers_ = 1;
 
     // Data listener
-    class DataPubListener : public eprosima::fastrtps::PublisherListener
+    class DataWriterListener : public eprosima::fastdds::dds::DataWriterListener
     {
+        ThroughputPublisher& throughput_publisher_;
+        std::atomic_int matched_;
+
     public:
 
-        DataPubListener(
-                ThroughputPublisher& throughput_publisher);
+        DataWriterListener(
+                ThroughputPublisher& throughput_publisher)
+            : throughput_publisher_(throughput_publisher)
+            , matched_(0)
+        {
+        }
 
-        virtual ~DataPubListener();
+        void on_publication_matched(
+                eprosima::fastdds::dds::DataWriter* writer,
+                const eprosima::fastdds::dds::PublicationMatchedStatus& info) override;
 
-        void onPublicationMatched(
-                eprosima::fastrtps::Publisher* pub,
-                eprosima::fastrtps::rtps::MatchingInfo& info);
+        int get_matches() const
+        {
+            return matched_;
+        }
 
-        ThroughputPublisher& throughput_publisher_;
+        void reset()
+        {
+            matched_ = 0;
+        }
 
-    private:
-
-        DataPubListener& operator =(
-                const DataPubListener&);
     }
-    data_pub_listener_;
+    data_writer_listener_;
 
     // Command listeners
-    class CommandPubListener : public eprosima::fastrtps::PublisherListener
+    class CommandWriterListener : public eprosima::fastdds::dds::DataWriterListener
     {
+        ThroughputPublisher& throughput_publisher_;
+        std::atomic_int matched_;
+
     public:
 
-        CommandPubListener(
-                ThroughputPublisher& throughput_publisher);
+        CommandWriterListener(
+                ThroughputPublisher& throughput_publisher)
+            : throughput_publisher_(throughput_publisher)
+            , matched_(0)
+        {
+        }
 
-        virtual ~CommandPubListener();
+        void on_publication_matched(
+                eprosima::fastdds::dds::DataWriter* writer,
+                const eprosima::fastdds::dds::PublicationMatchedStatus& info) override;
 
-        void onPublicationMatched(
-                eprosima::fastrtps::Publisher* pub,
-                eprosima::fastrtps::rtps::MatchingInfo& info);
+        int get_matches() const
+        {
+            return matched_;
+        }
 
-        ThroughputPublisher& throughput_publisher_;
+        void reset()
+        {
+            matched_ = 0;
+        }
 
-    private:
-
-        CommandPubListener& operator =(
-                const CommandPubListener&);
     }
-    command_pub_listener_;
+    command_writer_listener_;
 
-    class CommandSubListener : public eprosima::fastrtps::SubscriberListener
+    class CommandReaderListener : public eprosima::fastdds::dds::DataReaderListener
     {
+        ThroughputPublisher& throughput_publisher_;
+        std::atomic_int matched_;
+
     public:
 
-        CommandSubListener(
-                ThroughputPublisher& throughput_publisher);
+        CommandReaderListener(
+                ThroughputPublisher& throughput_publisher)
+            : throughput_publisher_(throughput_publisher)
+            , matched_(0)
+        {
+        }
 
-        virtual ~CommandSubListener();
+        void on_subscription_matched(
+                eprosima::fastdds::dds::DataReader* reader,
+                const eprosima::fastdds::dds::SubscriptionMatchedStatus& info) override;
 
-        void onSubscriptionMatched(
-                eprosima::fastrtps::Subscriber* sub,
-                eprosima::fastrtps::rtps::MatchingInfo& info);
+        int get_matches() const
+        {
+            return matched_;
+        }
 
-        ThroughputPublisher& throughput_publisher_;
+        void reset()
+        {
+            matched_ = 0;
+        }
 
-    private:
-
-        CommandSubListener& operator =(
-                const CommandSubListener&);
     }
-    command_sub_listener_;
+    command_reader_listener_;
 };
 #endif /* THROUGHPUTPUBLISHER_H_ */

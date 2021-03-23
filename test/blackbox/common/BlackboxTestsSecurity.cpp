@@ -23,12 +23,14 @@
 
 #include <gtest/gtest.h>
 
-#include <fastrtps/transport/test_UDPv4Transport.h>
 #include <fastrtps/xmlparser/XMLProfileManager.h>
 #include <fastdds/rtps/transport/shared_mem/SharedMemTransportDescriptor.h>
+#include <rtps/transport/test_UDPv4Transport.h>
 
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
+using test_UDPv4Transport = eprosima::fastdds::rtps::test_UDPv4Transport;
+using test_UDPv4TransportDescriptor = eprosima::fastdds::rtps::test_UDPv4TransportDescriptor;
 
 static const char* certs_path = nullptr;
 

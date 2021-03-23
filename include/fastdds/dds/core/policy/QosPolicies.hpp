@@ -21,14 +21,18 @@
 #define _FASTDDS_DDS_QOS_QOSPOLICIES_HPP_
 
 #include <vector>
-#include <fastdds/rtps/common/Types.h>
-#include <fastdds/rtps/common/Time_t.h>
+
 #include <fastdds/dds/core/policy/ParameterTypes.hpp>
+
 #include <fastdds/rtps/attributes/PropertyPolicy.h>
 #include <fastdds/rtps/attributes/RTPSParticipantAllocationAttributes.hpp>
 #include <fastdds/rtps/attributes/RTPSParticipantAttributes.h>
+#include <fastdds/rtps/common/LocatorList.hpp>
+#include <fastdds/rtps/common/Types.h>
+#include <fastdds/rtps/common/Time_t.h>
 #include <fastdds/rtps/resources/ResourceManagement.h>
-#include <fastdds/rtps/attributes/PropertyPolicy.h>
+#include <fastdds/rtps/flowcontrol/FlowControllerConsts.hpp>
+
 #include <fastrtps/types/TypeObject.h>
 #include <fastrtps/utils/collections/ResourceLimitedVector.hpp>
 
@@ -1975,20 +1979,11 @@ class PublishModeQosPolicy : public QosPolicy
 public:
 
     //!PublishModeQosPolicyKind <br> By default, SYNCHRONOUS_PUBLISH_MODE.
-    PublishModeQosPolicyKind kind;
+    PublishModeQosPolicyKind kind = SYNCHRONOUS_PUBLISH_MODE;
 
-    /**
-     * @brief Constructor
-     */
-    RTPS_DllAPI PublishModeQosPolicy()
-        : kind(SYNCHRONOUS_PUBLISH_MODE)
-    {
-    }
-
-    /**
-     * @brief Destructor
-     */
-    virtual RTPS_DllAPI ~PublishModeQosPolicy() = default;
+    //! Name of the flow controller used when publish mode kind is ASYNCHRONOUS_PUBLISH_MODE.
+    //! @since Functionality not implemented yet. Coming soon.
+    const char* flow_controller_name = fastdds::rtps::FASTDDS_FLOW_CONTROLLER_DEFAULT;
 
     inline void clear() override
     {
@@ -2621,13 +2616,13 @@ public:
      * Default list of Unicast Locators to be used for any Endpoint defined inside this RTPSParticipant in the case
      * that it was defined with NO UnicastLocators. At least ONE locator should be included in this list.
      */
-    fastrtps::rtps::LocatorList_t default_unicast_locator_list;
+    rtps::LocatorList default_unicast_locator_list;
 
     /**
      * Default list of Multicast Locators to be used for any Endpoint defined inside this RTPSParticipant in the
      * case that it was defined with NO UnicastLocators. This is usually left empty.
      */
-    fastrtps::rtps::LocatorList_t default_multicast_locator_list;
+    rtps::LocatorList default_multicast_locator_list;
 };
 
 //! Qos Policy to configure the transport layer
@@ -2711,13 +2706,13 @@ public:
     }
 
     //!Unicast locator list
-    fastrtps::rtps::LocatorList_t unicast_locator_list;
+    rtps::LocatorList unicast_locator_list;
 
     //!Multicast locator list
-    fastrtps::rtps::LocatorList_t multicast_locator_list;
+    rtps::LocatorList multicast_locator_list;
 
     //!Remote locator list
-    fastrtps::rtps::LocatorList_t remote_locator_list;
+    rtps::LocatorList remote_locator_list;
 
     //!User Defined ID, used for StaticEndpointDiscovery. <br> By default, -1.
     int16_t user_defined_id;
