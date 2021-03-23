@@ -865,17 +865,17 @@ inline bool QosPoliciesSerializer<TypeIdV1>::read_content_from_cdr_message(
     eprosima::fastcdr::Cdr deser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN,
             eprosima::fastcdr::Cdr::DDS_CDR); // Object that deserializes the data.
 
-    // Deserialize encapsulation.
-    deser.read_encapsulation();
-    payload.encapsulation = deser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
-
     try
     {
+        // Deserialize encapsulation.
+        deser.read_encapsulation();
+        payload.encapsulation = deser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
+
         qos_policy.m_type_identifier.deserialize(deser);
     }
-    catch (eprosima::fastcdr::exception::NotEnoughMemoryException& /*exception*/)
+    catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
-        return false;
+        qos_policy.clear();
     }
 
     return true;
@@ -927,17 +927,17 @@ inline bool QosPoliciesSerializer<TypeObjectV1>::read_content_from_cdr_message(
     eprosima::fastcdr::Cdr deser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN,
             eprosima::fastcdr::Cdr::DDS_CDR); // Object that deserializes the data.
 
-    // Deserialize encapsulation.
-    deser.read_encapsulation();
-    payload.encapsulation = deser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
-
     try
     {
+        // Deserialize encapsulation.
+        deser.read_encapsulation();
+        payload.encapsulation = deser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
+
         qos_policy.m_type_object.deserialize(deser);
     }
-    catch (eprosima::fastcdr::exception::NotEnoughMemoryException& /*exception*/)
+    catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
-        return false;
+        qos_policy.clear();
     }
 
     return true;
@@ -1047,8 +1047,8 @@ inline bool QosPoliciesSerializer<GenericDataQosPolicy>::read_content_from_cdr_m
         return false;
     }
 
-    if ( (len + sizeof(uint32_t) > parameter_length)  // Exceeds parameter length
-            || (len > qos_policy.max_size()) )         // Exceeds size limit
+    if ((len + sizeof(uint32_t) > parameter_length)   // Exceeds parameter length
+            || (len > qos_policy.max_size()))          // Exceeds size limit
     {
         return false;
     }
@@ -1062,7 +1062,7 @@ inline bool QosPoliciesSerializer<GenericDataQosPolicy>::read_content_from_cdr_m
     }
 
     // Skip padding
-    cdr_message->pos += ( (len + 3u) & ~3u) - len;
+    cdr_message->pos += ((len + 3u) & ~3u) - len;
 
     // Should have consumed whole size
 
