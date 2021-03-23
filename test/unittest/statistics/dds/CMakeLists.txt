@@ -23,8 +23,12 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
 
         set(STATISTICS_DOMAINPARTICIPANT_TESTS_SOURCE
             StatisticsDomainParticipantTests.cpp)
+
         set(STATISTICS_QOS_TESTS_SOURCE
             StatisticsQosTests.cpp)
+        
+        set(STATISTICS_ENVIRONMENT_VARIABLE_TESTS_SOURCE
+            StatisticsEnvironmentVariableTests.cpp)
 
         add_executable(StatisticsDomainParticipantTests ${STATISTICS_DOMAINPARTICIPANT_TESTS_SOURCE})
         target_compile_definitions(StatisticsDomainParticipantTests PRIVATE FASTRTPS_NO_LIB
@@ -45,5 +49,15 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include ${PROJECT_SOURCE_DIR}/src/cpp)
         target_link_libraries(StatisticsQosTests fastrtps ${GTEST_LIBRARIES})
         add_gtest(StatisticsQosTests SOURCES ${STATISTICS_QOS_TESTS_SOURCE})
+
+        add_executable(StatisticsEnvironmentVariableTests ${STATISTICS_ENVIRONMENT_VARIABLE_TESTS_SOURCE})
+        target_compile_definitions(StatisticsEnvironmentVariableTests PRIVATE FASTRTPS_NO_LIB
+            $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
+            $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNAL_DEBUG> # Internal debug activated.
+            )
+        target_include_directories(StatisticsEnvironmentVariableTests PRIVATE ${GTEST_INCLUDE_DIRS}
+            ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include ${PROJECT_SOURCE_DIR}/src/cpp)
+        target_link_libraries(StatisticsEnvironmentVariableTests fastrtps ${GTEST_LIBRARIES})
+        add_gtest(StatisticsEnvironmentVariableTests SOURCES ${STATISTICS_ENVIRONMENT_VARIABLE_TESTS_SOURCE})
     endif()
 endif()
