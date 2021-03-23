@@ -431,7 +431,7 @@ const std::string& DomainParticipantFactory::load_statistics_profiles_from_env()
     static std::string statistics_profiles;
     const char* data;
     if (ReturnCode_t::RETCODE_OK == SystemInfo::get_env(
-            eprosima::fastdds::statistics::dds::FASTDDS_STATISTICS_ENVIRONMENT_VARIABLE, &data))
+                eprosima::fastdds::statistics::dds::FASTDDS_STATISTICS_ENVIRONMENT_VARIABLE, &data))
     {
         statistics_profiles = data;
     }

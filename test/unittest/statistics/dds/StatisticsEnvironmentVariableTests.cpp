@@ -31,6 +31,7 @@ public:
     {
         return eprosima::fastdds::dds::DomainParticipantFactory::load_statistics_profiles_from_env();
     }
+
 };
 
 /*
@@ -53,7 +54,7 @@ TEST(StatisticsEnvironmentVariableTests, LoadStatisticsProfilesTests)
     ASSERT_EQ(0, _put_env_s(FASTDDS_STATISTICS_ENVIRONMENT_VARIABLE, value));
 #else
     ASSERT_EQ(0, setenv(FASTDDS_STATISTICS_ENVIRONMENT_VARIABLE, value, 1));
-#endif
+#endif // ifdef _WIN32
 
     // 3. Read environment variable
     EXPECT_EQ(0, strcmp(value, domain_participant_factory.load_statistics_profiles_from_env().c_str()));
@@ -71,4 +72,3 @@ int main(
     testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();
 }
-
