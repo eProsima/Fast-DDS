@@ -124,6 +124,10 @@ struct RTPS_DllAPI SerializedPayload_t
             }
         }
         encapsulation = serData->encapsulation;
+        if (length == 0)
+        {
+            return true;
+        }
         memcpy(data, serData->data, length);
         return true;
     }

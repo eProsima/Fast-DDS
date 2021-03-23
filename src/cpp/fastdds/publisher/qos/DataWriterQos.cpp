@@ -62,7 +62,7 @@ WriterQos DataWriterQos::get_writerqos(
         Host::uint48 mac_id = Host::instance().mac_id();
         for (size_t i = 0; i < Host::mac_id_length; ++i)
         {
-            id |= mac_id.value[i] << (64 - i);
+            id |= static_cast<uint64_t>(mac_id.value[i]) << (56 - (i * 8));
         }
         qos.data_sharing.add_domain_id(id);
     }
