@@ -155,6 +155,7 @@ private:
 
             // Forces message release before waiting for the next
             message.reset();
+            listener_->stop_processing_buffer();
         }
 
         message_receiver(nullptr);

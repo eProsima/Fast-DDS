@@ -73,7 +73,7 @@ public:
     typedef MultiProducerConsumerRingBuffer<BufferDescriptor>::Listener Listener;
     typedef MultiProducerConsumerRingBuffer<BufferDescriptor>::Cell PortCell;
 
-    static const uint32_t CURRENT_ABI_VERSION = 4;
+    static const uint32_t CURRENT_ABI_VERSION = 5;
 
     struct PortNode
     {
@@ -103,10 +103,13 @@ public:
         static constexpr size_t LISTENERS_STATUS_SIZE = 1024;
         struct ListenerStatus
         {
-            uint8_t is_waiting              : 1;
-            uint8_t counter                 : 3;
-            uint8_t last_verified_counter   : 3;
             uint8_t is_in_use               : 1;
+            uint8_t is_waiting              : 1;
+            uint8_t is_processing           : 1;
+            uint8_t                         : 0; // break packing
+            uint8_t counter                 : 4;
+            uint8_t last_verified_counter   : 4;
+            BufferDescriptor descriptor;
         };
         ListenerStatus listeners_status[LISTENERS_STATUS_SIZE];
 
@@ -283,8 +286,6 @@ public:
                     // Most probably has not, so the check is done without locking empty_cv_mutex.
                     if (timeout_elapsed(now, *(*port_it)))
                     {
-                        std::vector<const BufferDescriptor*> descriptors_enqueued;
-
                         try
                         {
                             std::unique_lock<SharedMemSegment::mutex> lock_port((*port_it)->node->empty_cv_mutex);
@@ -652,6 +653,7 @@ public:
             {
                 *listener_index = i;
                 node_->listeners_status[i].is_in_use = true;
+                node_->listeners_status[i].is_processing = false;
                 node_->num_listeners++;
                 listener = buffer_->register_listener();
             }
@@ -678,6 +680,7 @@ public:
                 (*listener).reset();
                 node_->num_listeners--;
                 node_->listeners_status[listener_index].is_in_use = false;
+                node_->listeners_status[listener_index].is_processing = false;
             }
             catch (const std::exception&)
             {
@@ -687,6 +690,46 @@ public:
 
                 throw;
             }
+        }
+
+        bool get_and_remove_blocked_processing(
+                BufferDescriptor& buffer_descriptor)
+        {
+            std::lock_guard<SharedMemSegment::mutex> lock(node_->empty_cv_mutex);
+            for (uint32_t i = 0; i < PortNode::LISTENERS_STATUS_SIZE; i++)
+            {
+                if (node_->listeners_status[i].is_in_use &&
+                        node_->listeners_status[i].is_processing)
+                {
+                    buffer_descriptor = node_->listeners_status[i].descriptor;
+                    listener_processing_stop(i);
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        /**
+         * Marks the listener as processing a buffer
+         * @param listener_index The index of the listener as returned by create_listener.
+         * @param buffer_descriptor The descriptor of the buffer that the listener is processing
+         */
+        void listener_processing_start(
+                uint32_t listener_index,
+                const BufferDescriptor& buffer_descriptor)
+        {
+            node_->listeners_status[listener_index].descriptor = buffer_descriptor;
+            node_->listeners_status[listener_index].is_processing = true;
+        }
+
+        /**
+         * Marks the listener as finished processing a buffer
+         * @param listener_index The index of the listener as returned by create_listener.
+         */
+        void listener_processing_stop(
+                uint32_t listener_index)
+        {
+            node_->listeners_status[listener_index].is_processing = false;
         }
 
         /**
