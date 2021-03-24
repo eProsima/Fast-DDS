@@ -1771,6 +1771,9 @@ bool RTPSParticipantImpl::did_mutation_took_place_on_meta(
         const LocatorList_t& MulticastLocatorList,
         const LocatorList_t& UnicastLocatorList) const
 {
+    using namespace std;
+    using namespace eprosima::fastdds::rtps;
+
     if (m_att.builtin.metatrafficMulticastLocatorList == MulticastLocatorList
             && m_att.builtin.metatrafficUnicastLocatorList == UnicastLocatorList)
     {
@@ -1779,7 +1782,7 @@ bool RTPSParticipantImpl::did_mutation_took_place_on_meta(
     }
 
     // If one of the locators is 0.0.0.0 we must replace it by all local interfaces like the framework does
-    std::list<Locator_t> unicast_real_locators;
+    list<Locator_t> unicast_real_locators;
     LocatorListConstIterator it = UnicastLocatorList.begin(), old_it;
     LocatorList_t locals;
 
@@ -1787,10 +1790,10 @@ bool RTPSParticipantImpl::did_mutation_took_place_on_meta(
     {
         // copy ordinary locators till the first ANY
         old_it = it;
-        it = std::find_if(it, UnicastLocatorList.end(), IPLocator::isAny);
+        it = find_if(it, UnicastLocatorList.end(), IPLocator::isAny);
 
         // copy ordinary locators
-        std::copy(old_it, it, std::back_inserter(unicast_real_locators));
+        copy(old_it, it, back_inserter(unicast_real_locators));
 
         // transform new ones if needed
         if (it != UnicastLocatorList.end())
@@ -1804,9 +1807,9 @@ bool RTPSParticipantImpl::did_mutation_took_place_on_meta(
             }
 
             // add a locator for each local
-            std::transform(locals.begin(),
+            transform(locals.begin(),
                     locals.end(),
-                    std::back_inserter(unicast_real_locators),
+                    back_inserter(unicast_real_locators),
                     [&an_any](const Locator_t& loc) -> Locator_t
                     {
                         Locator_t specific(loc);
@@ -1824,28 +1827,26 @@ bool RTPSParticipantImpl::did_mutation_took_place_on_meta(
     // besides WAN address may be added by the transport
     struct ResetLogical
     {
-        // use of std::unary_function to introduce the following aliases is deprecated
+        // use of unary_function to introduce the following aliases is deprecated
         // using argument_type = Locator_t;
         // using result_type   = Locator_t&;
 
-        using Transports = std::vector<std::shared_ptr<eprosima::fastdds::rtps::TransportDescriptorInterface>>;
+        using Transports = vector<shared_ptr<TransportDescriptorInterface>>;
 
         ResetLogical(
                 const Transports& tp)
             : Transports_(tp)
         {
-            using namespace eprosima::fastdds::rtps;
-
             for (auto desc : Transports_)
             {
                 if (nullptr == tcp4)
                 {
-                    tcp4 = std::dynamic_pointer_cast<TCPv4TransportDescriptor>(desc);
+                    tcp4 = dynamic_pointer_cast<TCPv4TransportDescriptor>(desc);
                 }
 
                 if (nullptr == tcp6)
                 {
-                    tcp6 = std::dynamic_pointer_cast<TCPv6TransportDescriptor>(desc);
+                    tcp6 = dynamic_pointer_cast<TCPv6TransportDescriptor>(desc);
                 }
             }
         }
@@ -1890,35 +1891,35 @@ bool RTPSParticipantImpl::did_mutation_took_place_on_meta(
 
         // reference to the transports
         const Transports& Transports_;
-        std::shared_ptr<eprosima::fastdds::rtps::TCPv4TransportDescriptor> tcp4;
-        std::shared_ptr<eprosima::fastdds::rtps::TCPv6TransportDescriptor> tcp6;
+        shared_ptr<TCPv4TransportDescriptor> tcp4;
+        shared_ptr<TCPv6TransportDescriptor> tcp6;
 
     }
     transform_functor(m_att.userTransports);
 
     // transform-copy
-    std::set<Locator_t> update_attributes;
+    set<Locator_t> update_attributes;
 
-    std::transform(m_att.builtin.metatrafficMulticastLocatorList.begin(),
+    transform(m_att.builtin.metatrafficMulticastLocatorList.begin(),
             m_att.builtin.metatrafficMulticastLocatorList.end(),
-            std::inserter(update_attributes, update_attributes.begin()),
+            inserter(update_attributes, update_attributes.begin()),
             transform_functor);
 
-    std::transform(m_att.builtin.metatrafficUnicastLocatorList.begin(),
+    transform(m_att.builtin.metatrafficUnicastLocatorList.begin(),
             m_att.builtin.metatrafficUnicastLocatorList.end(),
-            std::inserter(update_attributes, update_attributes.begin()),
+            inserter(update_attributes, update_attributes.begin()),
             transform_functor);
 
-    std::set<Locator_t> original_ones;
+    set<Locator_t> original_ones;
 
-    std::transform(MulticastLocatorList.begin(),
+    transform(MulticastLocatorList.begin(),
             MulticastLocatorList.end(),
-            std::inserter(original_ones, original_ones.begin()),
+            inserter(original_ones, original_ones.begin()),
             transform_functor);
 
-    std::transform(unicast_real_locators.begin(),
+    transform(unicast_real_locators.begin(),
             unicast_real_locators.end(),
-            std::inserter(original_ones, original_ones.begin()),
+            inserter(original_ones, original_ones.begin()),
             transform_functor);
 
     // if equal then no mutation took place on physical ports
