@@ -170,7 +170,7 @@ public:
      *    is able to read samples belonging to different DataReader objects in a specific order.
      *
      * In any case, the relative order between the samples of one instance is consistent with the
-     * @ref DestinationOrderQosPolicy:
+     * @ref eprosima::fastdds::dds::DestinationOrderQosPolicy "DestinationOrderQosPolicy":
      *
      * - If @ref DestinationOrderQosPolicy::kind is @ref BY_RECEPTION_TIMESTAMP_DESTINATIONORDER_QOS, samples
      *   belonging to the same instances will appear in the relative order in which there were received (FIFO,
@@ -180,7 +180,8 @@ public:
      *   smaller values of source_timestamp ahead of the larger values).
      *
      * The actual number of samples returned depends on the information that has been received by the middleware
-     * as well as the @ref HistoryQosPolicy, @ref ResourceLimitsQosPolicy, and @ref ReaderResourceLimitsQos:
+     * as well as the @ref HistoryQosPolicy, @ref ResourceLimitsQosPolicy, and
+     * @ref eprosima::fastdds::dds::ReaderResourceLimitsQos "ReaderResourceLimitsQos":
      *
      * - In the case where the @ref HistoryQosPolicy::kind is KEEP_LAST_HISTORY_QOS, the call will return at most
      *   @ref HistoryQosPolicy::depth samples per instance.
@@ -290,14 +291,14 @@ public:
             InstanceStateMask instance_states = ANY_INSTANCE_STATE);
 
     /** NOT YET IMPLEMENTED
-     * This operation accesses via ‘read’ the samples that match the criteria specified in the @ref ReadCondition.
-     * This operation is especially useful in combination with @ref QueryCondition to filter data samples based on the
+     * This operation accesses via ‘read’ the samples that match the criteria specified in the ReadCondition.
+     * This operation is especially useful in combination with QueryCondition to filter data samples based on the
      * content.
      *
-     * The specified @ref ReadCondition must be attached to the DataReader; otherwise the operation will fail and return
+     * The specified ReadCondition must be attached to the DataReader; otherwise the operation will fail and return
      * RETCODE_PRECONDITION_NOT_MET.
      *
-     * In case the @ref ReadCondition is a ‘plain’ @ref ReadCondition and not the specialized @ref QueryCondition, the
+     * In case the ReadCondition is a ‘plain’ ReadCondition and not the specialized QueryCondition, the
      * operation is equivalent to calling read and passing as @c sample_states, @c view_states and @c instance_states
      * the value of the corresponding attributes in @c a_condition. Using this operation the application can avoid
      * repeating the same parameters specified when creating the ReadCondition.
@@ -332,7 +333,7 @@ public:
      * The DataReader will check that the sample belongs to the specified instance and otherwise it will not place
      * the sample in the returned collection.
      *
-     * The behavior of this operation follows the same rules as the @read operation regarding the pre-conditions and
+     * The behavior of this operation follows the same rules as the @ref read operation regarding the pre-conditions and
      * post-conditions for the @c data_values and @c sample_infos. Similar to @ref read, this operation may 'loan'
      * elements to the output collections, which must then be returned by means of @ref return_loan.
      *
@@ -398,7 +399,7 @@ public:
      * @ref NOT_ALIVE_NO_WRITERS_INSTANCE_STATE instance, returns the loan (at which point the instance information
      * may be removed, and thus the handle becomes invalid), and tries to read the next instance.
      *
-     * The behavior of this operation follows the same rules as the @read operation regarding the pre-conditions and
+     * The behavior of this operation follows the same rules as the @ref read operation regarding the pre-conditions and
      * post-conditions for the @c data_values and @c sample_infos. Similar to @ref read, this operation may 'loan'
      * elements to the output collections, which must then be returned by means of @ref return_loan.
      *
@@ -599,7 +600,7 @@ public:
      * Similar to the operation @ref read_next_instance, it is possible to call this operation with a
      * @c previous_handle that does not correspond to an instance currently managed by the DataReader.
      *
-     * The behavior of this operation follows the same rules as the @read operation regarding the pre-conditions and
+     * The behavior of this operation follows the same rules as the @ref read operation regarding the pre-conditions and
      * post-conditions for the @c data_values and @c sample_infos. Similar to @ref read, this operation may 'loan'
      * elements to the output collections, which must then be returned by means of @ref return_loan.
      *
@@ -631,7 +632,7 @@ public:
      * This operation accesses a collection of Data values from the DataReader. The behavior is identical to
      *  @ref read_next_instance except that all samples returned satisfy the specified condition. In other words, on
      * success all returned samples belong to the same instance, and the instance is the instance with ‘smallest’
-     *  @ref instance_handle among the ones that verify (a) @ref instance_handle >= @c previous_handle and (b) have
+     *  @c instance_handle among the ones that verify (a) @c instance_handle >= @c previous_handle and (b) have
      * samples for which the specified ReadCondition evaluates to TRUE.
      *
      * Similar to the operation @ref read_next_instance it is possible to call @ref read_next_instance_w_condition with
@@ -727,14 +728,14 @@ public:
             SampleInfoSeq& sample_infos);
 
     /** NOT YET IMPLEMENTED
-     * This operation can be used to retrieve the instance key that corresponds to an @ref instance_handle. The operation
-     * will only fill the fields that form the key inside the @ref key_holder instance.
+     * This operation can be used to retrieve the instance key that corresponds to an @c instance_handle. The operation
+     * will only fill the fields that form the key inside the key_holder instance.
      *
      * This operation may return BAD_PARAMETER if the InstanceHandle_t a_handle does not correspond to an existing
      * data-object known to the DataReader. If the implementation is not able to check invalid handles then the result
      * in this situation is unspecified.
      *
-     * @param[in,out] key
+     * @param[in,out] key_holder
      * @param[in] handle
      *
      * @return Any of the standard return codes.

@@ -251,8 +251,8 @@ public:
             const WriterAttributes& writer_attributes);
 
     /**
-     * @brief Checks whether the writer has security attributes enabled
-     * @param writer_attributes Attributes of the writer as given to the RTPSParticipantImpl::create_writer
+     * @brief Checks whether the reader has security attributes enabled
+     * @param reader_attributes Attributes of the reader as given to the RTPSParticipantImpl::create_reader
      */
 
     bool is_security_enabled_for_reader(

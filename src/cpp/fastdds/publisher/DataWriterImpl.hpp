@@ -116,7 +116,7 @@ public:
     /**
      * Discards a loaned sample pointer.
      *
-     * @param [in][out] sample  Pointer to the previously loaned sample.
+     * @param [in,out] sample  Pointer to the previously loaned sample.
      *
      * @return ReturnCode_t::RETCODE_ILLEGAL_OPERATION when the type does not support loans.
      * @return ReturnCode_t::RETCODE_BAD_PARAMETER if the pointer does not correspond to a loaned sample.
