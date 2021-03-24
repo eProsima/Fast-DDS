@@ -597,6 +597,24 @@ public:
                 }
             }
 
+            // We may have enough memory but no free buffers
+            it = allocated_buffers_.begin();
+            while (free_buffers_.empty() && it != allocated_buffers_.end())
+            {
+                // Buffer is not beign processed by any listener
+                if ((*it)->invalidate_if_not_processing())
+                {
+                    release_buffer(*it);
+
+                    free_buffers_.push_back(*it);
+                    it = allocated_buffers_.erase(it);
+                }
+                else
+                {
+                    it++;
+                }
+            }
+
             return free_bytes_ >= required_data_size;
         }
 
