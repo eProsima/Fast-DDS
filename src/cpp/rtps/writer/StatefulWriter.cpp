@@ -446,7 +446,7 @@ void StatefulWriter::async_delivery(
             {
                 ChangeForReader_t changeForReader(change);
 
-                if (m_pushMode || !reader->is_reliable())
+                if (m_pushMode || !reader->is_reliable() || reader->is_local_reader())
                 {
                     changeForReader.setStatus(UNSENT);
                     should_wake_up = true;
@@ -495,7 +495,7 @@ void StatefulWriter::sync_delivery(
                 }
                 else
                 {
-                    if (m_pushMode)
+                    if (m_pushMode || reader->is_local_reader())
                     {
                         changeForReader.setStatus(UNDERWAY);
                         should_be_sent = true;
