@@ -38,7 +38,7 @@ typedef struct SharedMemTransportDescriptor : public TransportDescriptorInterfac
     virtual TransportInterface* create_transport() const override;
     uint32_t min_send_buffer_size() const override
     {
-        return 0;
+        return segment_size_;
     }
     
     RTPS_DllAPI SharedMemTransportDescriptor();
