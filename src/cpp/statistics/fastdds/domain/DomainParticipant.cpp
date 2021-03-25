@@ -23,6 +23,8 @@
 #include <fastdds/dds/publisher/qos/DataWriterQos.hpp>
 #include <fastrtps/types/TypesBase.h>
 
+#include <utils/SystemInfo.hpp>
+
 namespace eprosima {
 namespace fastdds {
 namespace statistics {
@@ -58,6 +60,21 @@ const DomainParticipant* DomainParticipant::narrow(
 {
     (void) domain_participant;
     return nullptr;
+}
+
+/**
+ * Load statistics profiles from environment variable
+ * @param[out] topics string with the semicolon-separated list of statistics topic names to be enabled
+ */
+static void load_statistics_profiles_from_env(
+        std::string& topics)
+{
+    const char* data;
+    if (ReturnCode_t::RETCODE_OK == eprosima::SystemInfo::get_env(
+                FASTDDS_STATISTICS_ENVIRONMENT_VARIABLE, &data))
+    {
+        topics = data;
+    }
 }
 
 } // dds

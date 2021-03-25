@@ -19,7 +19,7 @@
 #include <gtest/gtest.h>
 #include <fastdds/statistics/dds/domain/DomainParticipant.hpp>
 
-#include <fastdds/domain/DomainParticipantFactory.cpp>
+#include <statistics/fastdds/domain/DomainParticipant.cpp>
 
 namespace eprosima {
 namespace fastdds {
@@ -38,7 +38,7 @@ TEST(StatisticsEnvironmentVariableTests, LoadStatisticsProfilesTests)
     std::string topics;
 
     // 1. Environment variable yet unset
-    eprosima::fastdds::dds::load_statistics_profiles_from_env(topics);
+    load_statistics_profiles_from_env(topics);
     EXPECT_EQ(0, strcmp("", topics.c_str()));
 
     // 2. Set FASTDDS_STATISTICS environment variable
@@ -49,7 +49,7 @@ TEST(StatisticsEnvironmentVariableTests, LoadStatisticsProfilesTests)
 #endif // ifdef _WIN32
 
     // 3. Read environment variable
-    eprosima::fastdds::dds::load_statistics_profiles_from_env(topics);
+    load_statistics_profiles_from_env(topics);
     EXPECT_EQ(0, strcmp(value, topics.c_str()));
 }
 
