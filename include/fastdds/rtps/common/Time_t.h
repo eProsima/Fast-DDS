@@ -116,7 +116,7 @@ public:
     int64_t to_ns() const;
 
     /**
-     *  @param Stores given time as nanoseconds (including seconds)
+     *  @param nanosecs Stores given time as nanoseconds (including seconds)
      */
     void from_ns(
             int64_t nanosecs);
