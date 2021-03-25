@@ -18,6 +18,8 @@
 
 #include <fastdds/statistics/dds/subscriber/qos/DataReaderQos.hpp>
 
+#include <fastdds/dds/core/policy/QosPolicies.hpp>
+
 namespace eprosima {
 namespace fastdds {
 namespace statistics {
@@ -26,6 +28,10 @@ namespace dds {
 DataReaderQos::DataReaderQos()
 {
     // Specific implementation for recommended statistics DataReaderQos
+    reliability().kind = eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS;
+    durability().kind = eprosima::fastdds::dds::TRANSIENT_LOCAL_DURABILITY_QOS;
+    history().kind = eprosima::fastdds::dds::KEEP_LAST_HISTORY_QOS;
+    history().depth = 100;
 }
 
 } // dds
