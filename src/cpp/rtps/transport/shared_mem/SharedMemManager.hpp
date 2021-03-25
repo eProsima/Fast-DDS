@@ -878,9 +878,14 @@ public:
             return ret;
         }
 
-        bool recover_blocked_processing()
+        /**
+         * @brief Unlock buffers being processed by the port if the port is frozen.
+         * 
+         * If the port is zombie, finds all the buffers that were being processed by a listener
+         * and decrements their processing count, so that they are not kept locked forever
+         */
+        void recover_blocked_processing()
         {
-            bool recovered = false;
             SharedMemGlobal::BufferDescriptor buffer_descriptor;
             if (SharedMemGlobal::Port::is_zombie(global_port_->port_id(),
                     shared_mem_manager_->global_segment()->domain_name()))
@@ -888,14 +893,17 @@ public:
                 while (global_port_->get_and_remove_blocked_processing(buffer_descriptor))
                 {
                     auto segment = shared_mem_manager_->find_segment(buffer_descriptor.source_segment_id);
+                    if (!segment)
+                    {
+                        // If the segment is gone, nothing to do 
+                        continue;
+                    }
                     auto buffer_node =
                             static_cast<BufferNode*>(segment->get_address_from_offset(buffer_descriptor.
                                     buffer_node_offset));
                     buffer_node->dec_processing_count(buffer_descriptor.validity_id);
-                    recovered = true;
                 }
             }
-            return recovered;
         }
 
         std::shared_ptr<Listener> create_listener()

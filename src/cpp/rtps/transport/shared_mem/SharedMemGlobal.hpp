@@ -100,15 +100,30 @@ public:
         SharedMemSegment::condition_variable empty_cv;
         SharedMemSegment::mutex empty_cv_mutex;
 
+        // Number of listeners this port supports
         static constexpr size_t LISTENERS_STATUS_SIZE = 1024;
+
+        // Status of each listener
         struct ListenerStatus
         {
+            // True if this slot is taken by an active listener 
             uint8_t is_in_use               : 1;
+
+            // True if the listener is waiting for a notification of new message
             uint8_t is_waiting              : 1;
+
+            // True if the listener has taken a new message and is still processing it
             uint8_t is_processing           : 1;
-            uint8_t                         : 0; // break packing
+
+            // Break bit packing, next field will start in a new byte
+            uint8_t                         : 0;
+
+            // These are used to detect listeners frozen while waiting for a notification
             uint8_t counter                 : 4;
             uint8_t last_verified_counter   : 4;
+
+            // Descriptor of the message the listener is processing
+            // Valid only if is_processing is true.
             BufferDescriptor descriptor;
         };
         ListenerStatus listeners_status[LISTENERS_STATUS_SIZE];
@@ -692,6 +707,23 @@ public:
             }
         }
 
+        /**
+         * @brief Look for a listener processing a buffer and return the buffer descriptor being processing
+         * 
+         * Iterates over all the listeners, and upon founding the first one that is marked as \c is_processing:
+         *  - Marks it as not processing
+         *  - Copies the buffer descriptor that was being processed in the provided buffer
+         *  - Finishes iterating
+         * 
+         * The intention of this method is to locate all buffer descriptors that are being processed
+         * and apply necessary operations on these buffers when the port is found to be zombie.
+         * This method should be called itearatively until the return value is false
+         * (there is no processing listener remaining).
+         * The calling method has the chance to apply necessary actions on the buffer descriptor.
+         * 
+         * @param[OUT] buffer_descriptor Descriptor of the buffer that was being processed by the first processing listener
+         * @return True if there was at least one processing listener. False if not.
+         */
         bool get_and_remove_blocked_processing(
                 BufferDescriptor& buffer_descriptor)
         {
