@@ -41,7 +41,7 @@ TEST(StatisticsQosTests, StatisticsDataWriterQosTest)
     EXPECT_TRUE(STATISTICS_DATAWRITER_QOS.reliability().kind == eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS);
     EXPECT_TRUE(STATISTICS_DATAWRITER_QOS.durability().kind == eprosima::fastdds::dds::TRANSIENT_LOCAL_DURABILITY_QOS);
     const std::string* pushMode_property = eprosima::fastrtps::rtps::PropertyPolicyHelper::find_property(
-            STATISTICS_DATAWRITER_QOS.properties(), "pushMode");
+        STATISTICS_DATAWRITER_QOS.properties(), "pushMode");
     EXPECT_NE(pushMode_property, nullptr);
     EXPECT_EQ(pushMode_property->compare("false"), 0);
     EXPECT_TRUE(STATISTICS_DATAWRITER_QOS.publish_mode().kind == eprosima::fastdds::dds::ASYNCHRONOUS_PUBLISH_MODE);

@@ -33,7 +33,7 @@ DataWriterQos::DataWriterQos()
     publish_mode().kind = eprosima::fastdds::dds::ASYNCHRONOUS_PUBLISH_MODE;
     history().kind = eprosima::fastdds::dds::KEEP_LAST_HISTORY_QOS;
     history().depth = 100;
-    properties().properties().emplace_back("pushMode","false");
+    properties().properties().emplace_back("pushMode", "false");
 }
 
 } // dds
