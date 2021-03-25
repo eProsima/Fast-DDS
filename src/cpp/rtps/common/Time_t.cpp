@@ -17,9 +17,11 @@
  */
 #include <fastdds/rtps/common/Time_t.h>
 
+#include <cstdlib>
 #include <chrono>
 
-namespace { // unnamed namespace for inline functions in compilation unit. Better practice than static inline.
+namespace {
+// unnamed namespace for inline functions in compilation unit. Better practice than static inline.
 
 constexpr uint64_t C_FRACTIONS_PER_SEC = 4294967296ULL;
 constexpr uint64_t C_NANOSECONDS_PER_SEC = 1000000000ULL;
@@ -152,9 +154,42 @@ Time_t::Time_t(
 
 int64_t Time_t::to_ns() const
 {
+    // handle special cases
+    // - infinite
+    if ( *this == c_RTPSTimeInfinite )
+    {
+        return -1;
+    }
+    // - invalid value
+    else if ( *this == c_RTPSTimeInvalid )
+    {
+        return -2;
+    }
+
     int64_t nano = seconds_ * static_cast<int64_t>(C_NANOSECONDS_PER_SEC);
     nano += nanosec_;
     return nano;
+}
+
+void Time_t::from_ns(
+        int64_t nanosecs)
+{
+    // handle special cases
+    // - infinite
+    if ( nanosecs == -1 )
+    {
+        *this = c_RTPSTimeInfinite;
+    }
+    else if ( nanosecs == -2 )
+    {
+        *this = c_RTPSTimeInvalid;
+    }
+    else
+    {
+        auto res = std::lldiv(nanosecs, 1000000000ull);
+        seconds(static_cast<int32_t>(res.quot));
+        nanosec(static_cast<uint32_t>(res.rem));
+    }
 }
 
 int32_t Time_t::seconds() const
