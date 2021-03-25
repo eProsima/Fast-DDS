@@ -775,7 +775,7 @@ void StatefulWriter::send_any_unsent_changes()
     bool activateHeartbeatPeriod = false;
     SequenceNumber_t max_sequence = mp_history->next_sequence_number();
 
-    if (!m_pushMode || mp_history->getHistorySize() == 0 || getMatchedReadersSize() == 0)
+    if (mp_history->getHistorySize() == 0 || getMatchedReadersSize() == 0)
     {
         send_heartbeat_to_all_readers();
     }
@@ -810,9 +810,8 @@ void StatefulWriter::send_any_unsent_changes()
 void StatefulWriter::send_heartbeat_to_all_readers()
 {
     // This version is called when any of the following conditions is satisfied:
-    // a) push mode is false
-    // b) history is empty
-    // c) there are no matched readers
+    // a) history is empty
+    // b) there are no matched readers
 
     for (ReaderProxy* reader : matched_local_readers_)
     {
@@ -846,10 +845,9 @@ void StatefulWriter::send_changes_separatedly(
         bool& activateHeartbeatPeriod)
 {
     // This version is called when all of the following conditions are satisfied:
-    // a) push mode is true
-    // b) history is not empty
-    // c) there is at least one matched reader
-    // d) separate sending is enabled
+    // a) history is not empty
+    // b) there is at least one matched reader
+    // c) separate sending is enabled
 
     // Process datasharing then
     if (there_are_datasharing_readers_)
@@ -1061,11 +1059,10 @@ void StatefulWriter::send_all_unsent_changes(
         bool& activateHeartbeatPeriod)
 {
     // This version is called when all of the following conditions are satisfied:
-    // a) push mode is true
-    // b) history is not empty
-    // c) there is at least one matched reader
-    // d) separate sending is disabled
-    // e) either all matched readers are local or no flow controllers are configured
+    // a) history is not empty
+    // b) there is at least one matched reader
+    // c) separate sending is disabled
+    // d) either all matched readers are local or no flow controllers are configured
 
     // Process intraprocess first
     if (there_are_local_readers_)
@@ -1194,11 +1191,10 @@ void StatefulWriter::send_unsent_changes_with_flow_control(
         bool& activateHeartbeatPeriod)
 {
     // This version is called when all of the following conditions are satisfied:
-    // a) push mode is true
-    // b) history is not empty
-    // c) there is at least one matched reader
-    // d) separate sending is disabled
-    // e) there is at least one remote matched reader and flow controllers are configured
+    // a) history is not empty
+    // b) there is at least one matched reader
+    // c) separate sending is disabled
+    // d) there is at least one remote matched reader and flow controllers are configured
 
     // Process intraprocess first
     if (there_are_local_readers_)
