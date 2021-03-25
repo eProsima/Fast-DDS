@@ -13,32 +13,27 @@
 // limitations under the License.
 
 /**
- * @file IListeners.hpp
- *
+ * @file StatisticsBase.hpp
  */
 
-#ifndef _FASTDDS_STATISTICS_ILISTENERS_HPP_
-#define _FASTDDS_STATISTICS_ILISTENERS_HPP_
+#ifndef _STATISTICS_RTPS_STATISTICSBASE_HPP_
+#define _STATISTICS_RTPS_STATISTICSBASE_HPP_
 
-#include <cstdint>
+#include <fastdds/statistics/rtps/StatisticsCommon.hpp>
+
+#include <set>
 
 namespace eprosima {
 namespace fastdds {
 namespace statistics {
 
-class Data;
-enum EventKind : uint32_t;
-
-struct IListener
+struct StatisticsAncillary
 {
-    virtual ~IListener() = default;
-
-    virtual void on_statistics_data(
-            const Data& statistics_data) = 0;
+    std::set<std::shared_ptr<IListener>> listeners;
 };
 
-} // statistics
-} // fastdds
-} // eprosima
+} // namespace statistics
+} // namespace fastdds
+} // namespace eprosima
 
-#endif // _FASTDDS_STATISTICS_ILISTENERS_HPP_
+#endif // _STATISTICS_RTPS_STATISTICSBASE_HPP_

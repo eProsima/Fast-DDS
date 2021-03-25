@@ -31,6 +31,8 @@
 #include <rtps/flowcontrol/FlowController.h>
 #include <rtps/participant/RTPSParticipantImpl.h>
 
+#include <statistics/rtps/StatisticsBase.hpp>
+
 #include <mutex>
 
 namespace eprosima {
@@ -420,15 +422,13 @@ bool RTPSWriter::is_pool_initialized() const
 bool RTPSWriter::add_statistics_listener(
         std::shared_ptr<fastdds::statistics::IListener> listener)
 {
-    (void)listener;
-    return false;
+    return add_statistics_listener_impl(listener);
 }
 
 bool RTPSWriter::remove_statistics_listener(
         std::shared_ptr<fastdds::statistics::IListener> listener)
 {
-    (void)listener;
-    return false;
+    return remove_statistics_listener_impl(listener);
 }
 
 #endif // FASTDDS_STATISTICS

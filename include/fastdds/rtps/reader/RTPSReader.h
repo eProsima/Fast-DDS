@@ -27,7 +27,12 @@
 #include <fastdds/rtps/builtin/data/WriterProxyData.h>
 #include <fastrtps/utils/TimedConditionVariable.hpp>
 #include "../history/ReaderHistory.h"
-#include <fastdds/statistics/IListeners.hpp>
+
+#ifdef FASTDDS_STATISTICS
+#include <fastdds/statistics/rtps/StatisticsCommon.hpp>
+#else
+#include <fastdds/statistics/rtps/StatisticsCommonEmpty.hpp>
+#endif // FASTDDS_STATISTICS
 
 #include <functional>
 
@@ -48,7 +53,9 @@ class IDataSharingListener;
  * Class RTPSReader, manages the reception of data from its matched writers.
  * @ingroup READER_MODULE
  */
-class RTPSReader : public Endpoint
+class RTPSReader
+    : public Endpoint
+    , public fastdds::statistics::StatisticsReaderImpl
 {
     friend class ReaderHistory;
     friend class RTPSParticipantImpl;

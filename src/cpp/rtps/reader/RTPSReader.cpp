@@ -33,6 +33,8 @@
 
 #include <foonathan/memory/namespace_alias.hpp>
 
+#include <statistics/rtps/StatisticsBase.hpp>
+
 #include <typeinfo>
 #include <algorithm>
 #include <chrono>
@@ -381,15 +383,13 @@ bool RTPSReader::is_sample_valid(
 bool RTPSReader::add_statistics_listener(
         std::shared_ptr<fastdds::statistics::IListener> listener)
 {
-    (void)listener;
-    return false;
+    return add_statistics_listener_impl(listener);
 }
 
 bool RTPSReader::remove_statistics_listener(
         std::shared_ptr<fastdds::statistics::IListener> listener)
 {
-    (void)listener;
-    return false;
+    return remove_statistics_listener_impl(listener);
 }
 
 #endif // FASTDDS_STATISTICS

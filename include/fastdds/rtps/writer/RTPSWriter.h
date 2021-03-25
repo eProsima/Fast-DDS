@@ -27,7 +27,12 @@
 #include <fastrtps/utils/collections/ResourceLimitedVector.hpp>
 #include <fastdds/rtps/common/LocatorSelector.hpp>
 #include <fastdds/rtps/messages/RTPSMessageSenderInterface.hpp>
-#include <fastdds/statistics/IListeners.hpp>
+
+#ifdef FASTDDS_STATISTICS
+#include <fastdds/statistics/rtps/StatisticsCommon.hpp>
+#else
+#include <fastdds/statistics/rtps/StatisticsCommonEmpty.hpp>
+#endif // FASTDDS_STATISTICS
 
 #include <vector>
 #include <memory>
@@ -49,7 +54,10 @@ struct CacheChange_t;
  * Class RTPSWriter, manages the sending of data to the readers. Is always associated with a HistoryCache.
  * @ingroup WRITER_MODULE
  */
-class RTPSWriter : public Endpoint, public RTPSMessageSenderInterface
+class RTPSWriter
+    : public Endpoint
+    , public RTPSMessageSenderInterface
+    , public fastdds::statistics::StatisticsWriterImpl
 {
     friend class WriterHistory;
     friend class RTPSParticipantImpl;
