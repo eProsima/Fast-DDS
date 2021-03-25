@@ -310,6 +310,15 @@ ReturnCode_t DataWriterImpl::enable()
                     },
                     qos_.lifespan().duration.to_ns() * 1e-6);
 
+    // In case it has been loaded from the persistence DB, expire old samples.
+    if (qos_.lifespan().duration != c_TimeInfinite)
+    {
+        if (lifespan_expired())
+        {
+            lifespan_timer_->restart_timer();
+        }
+    }
+
     // REGISTER THE WRITER
     WriterQos wqos = qos_.get_writerqos(get_publisher()->get_qos(), topic_->get_qos());
     if (!is_data_sharing_compatible_)
