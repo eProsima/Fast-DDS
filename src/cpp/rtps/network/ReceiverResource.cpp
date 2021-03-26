@@ -43,7 +43,9 @@ ReceiverResource::ReceiverResource(TransportInterface& transport, const Locator_
     // Implementation functions are bound to the right transport parameters
     Cleanup = [&transport, locator]() { transport.CloseInputChannel(locator); };
     LocatorMapsToManagedChannel = [&transport, locator](const Locator_t& locatorToCheck) -> bool
-    { return transport.DoInputLocatorsMatch(locator, locatorToCheck); };
+            {
+                return locator.kind == locatorToCheck.kind && transport.DoInputLocatorsMatch(locator, locatorToCheck);
+            };
 }
 
 ReceiverResource::ReceiverResource(ReceiverResource&& rValueResource)
