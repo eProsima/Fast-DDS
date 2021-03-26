@@ -249,7 +249,7 @@ operator ==(
         T a,
         const ReturnCode_t& b)
 {
-    return b == a;
+    return b.operator ==(a);
 }
 
 template<class T>
@@ -258,7 +258,7 @@ operator !=(
         T a,
         const ReturnCode_t& b)
 {
-    return b != a;
+    return b.operator !=(a);
 }
 
 // TODO Remove this alias when Fast-RTPS reaches version 2
