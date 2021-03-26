@@ -479,26 +479,29 @@ void StatefulWriter::sync_delivery(
     //TODO(Ricardo) Temporal.
     bool expectsInlineQos = false;
 
+    bool should_be_sent = false;
+    locator_selector_.reset(false);
+
     // First step is to add the new CacheChange_t to all reader proxies.
     // It has to be done before sending, because if a timeout is caught, we will not include the
     // CacheChange_t in some reader proxies.
-    bool should_be_sent = false;
     for_matched_readers(matched_local_readers_, matched_datasharing_readers_, matched_remote_readers_,
             [this, &change, &max_blocking_time, &expectsInlineQos, &should_be_sent](ReaderProxy* reader)
             {
                 ChangeForReader_t changeForReader(change);
+                bool send_to_this_reader = false;
 
                 if (!reader->is_reliable())
                 {
                     changeForReader.setStatus(ACKNOWLEDGED);
-                    should_be_sent = true;
+                    send_to_this_reader = true;
                 }
                 else
                 {
                     if (m_pushMode || reader->is_local_reader())
                     {
                         changeForReader.setStatus(UNDERWAY);
-                        should_be_sent = true;
+                        send_to_this_reader = true;
                     }
                     else
                     {
@@ -510,10 +513,34 @@ void StatefulWriter::sync_delivery(
                 reader->add_change(changeForReader, true, max_blocking_time);
                 expectsInlineQos |= reader->expects_inline_qos();
 
+                if (send_to_this_reader)
+                {
+                    if (reader->is_local_reader())
+                    {
+                        intraprocess_heartbeat(reader, false);
+                        bool delivered = !changeForReader.isRelevant() || intraprocess_delivery(change, reader);
+                        reader->set_change_to_status(
+                            change->sequenceNumber,
+                            delivered ? ACKNOWLEDGED : UNDERWAY,
+                            false);
+                    }
+                    else if (reader->is_datasharing_reader())
+                    {
+                        reader->datasharing_notify();
+                        reader->set_change_to_status(change->sequenceNumber, UNDERWAY, false);
+                    }
+                    else
+                    {
+                        should_be_sent = true;
+                        locator_selector_.enable(reader->guid());
+                    }
+                }
+
                 return false;
             }
             );
 
+    //At this point we are sure all information was stored. We now can send data.
     if (!should_be_sent)
     {
         if (getMatchedReadersSize() > 0)
@@ -523,101 +550,80 @@ void StatefulWriter::sync_delivery(
     }
     else
     {
-        // Notify the datasharing readers
-        for (ReaderProxy* reader : matched_datasharing_readers_)
+        try
         {
-            reader->datasharing_notify();
-            reader->set_change_to_status(change->sequenceNumber, UNDERWAY, false);
-        }
-
-        if (!matched_remote_readers_.empty() || !matched_local_readers_.empty())
-        {
-            try
+            if (!m_separateSendingEnabled)
             {
-                //At this point we are sure all information was stored. We now can send data.
-                if (!m_separateSendingEnabled)
+                if (locator_selector_.selected_size() > 0)
                 {
-                    if (locator_selector_.selected_size() > 0)
-                    {
-                        RTPSMessageGroup group(mp_RTPSParticipant, this, *this, max_blocking_time);
+                    NetworkFactory& network = mp_RTPSParticipant->network_factory();
+                    network.select_locators(locator_selector_);
+                    compute_selected_guids();
 
-                        auto sent_fun = [this, change](
-                            FragmentNumber_t frag)
+                    RTPSMessageGroup group(mp_RTPSParticipant, this, *this, max_blocking_time);
+
+                    auto sent_fun = [this, change](
+                        FragmentNumber_t frag)
+                    {
+                        if (frag > 0)
                         {
-                            if (frag > 0)
+                            for (ReaderProxy* it : matched_remote_readers_)
                             {
-                                for (ReaderProxy* it : matched_remote_readers_)
-                                {
-                                    bool allFragmentsSent = false;
-                                    it->mark_fragment_as_sent_for_change(
-                                        change->sequenceNumber,
-                                        frag,
-                                        allFragmentsSent);
-                                }
-                            }
-                        };
-
-                        send_data_or_fragments(group, change, expectsInlineQos, sent_fun);
-                        send_heartbeat_nts_(all_remote_readers_.size(), group, disable_positive_acks_);
-                    }
-
-                    for (ReaderProxy* it : matched_local_readers_)
-                    {
-                        intraprocess_heartbeat(it, false);
-                        bool delivered = intraprocess_delivery(change, it);
-                        it->set_change_to_status(
-                            change->sequenceNumber,
-                            delivered ? ACKNOWLEDGED : UNDERWAY,
-                            false);
-                    }
-                }
-                else
-                {
-                    for (ReaderProxy* it : matched_local_readers_)
-                    {
-                        intraprocess_heartbeat(it, false);
-                        bool delivered = intraprocess_delivery(change, it);
-                        it->set_change_to_status(
-                            change->sequenceNumber,
-                            delivered ? ACKNOWLEDGED : UNDERWAY,
-                            false);
-                    }
-                    for (ReaderProxy* it : matched_remote_readers_)
-                    {
-                        RTPSMessageGroup group(mp_RTPSParticipant, this, it->message_sender(),
-                            max_blocking_time);
-
-                        if (change->getFragmentCount() > 0)
-                        {
-                            logError(RTPS_WRITER, "Cannot send large messages on separate sending mode");
-                        }
-                        else
-                        {
-                            if (!group.add_data(*change, it->expects_inline_qos()))
-                            {
-                                logError(RTPS_WRITER, "Error sending change " << change->sequenceNumber);
+                                bool allFragmentsSent = false;
+                                it->mark_fragment_as_sent_for_change(
+                                    change->sequenceNumber,
+                                    frag,
+                                    allFragmentsSent);
                             }
                         }
-                        uint32_t last_processed = 0;
-                        send_heartbeat_piggyback_nts_(it, group, last_processed);
-                    }
-                }
+                    };
 
-                if (there_are_remote_readers_)
-                {
-                    periodic_hb_event_->restart_timer(max_blocking_time);
-                }
-
-                if (disable_positive_acks_ && last_sequence_number_ == SequenceNumber_t())
-                {
-                    last_sequence_number_ = change->sequenceNumber;
+                    send_data_or_fragments(group, change, expectsInlineQos, sent_fun);
+                    send_heartbeat_nts_(all_remote_readers_.size(), group, disable_positive_acks_);
                 }
             }
-            catch (const RTPSMessageGroup::timeout&)
+            else
             {
-                logError(RTPS_WRITER, "Max blocking time reached");
+                for (ReaderProxy* it : matched_remote_readers_)
+                {
+                    RTPSMessageGroup group(mp_RTPSParticipant, this, it->message_sender(),
+                        max_blocking_time);
+
+                    if (change->getFragmentCount() > 0)
+                    {
+                        logError(RTPS_WRITER, "Cannot send large messages on separate sending mode");
+                    }
+                    else
+                    {
+                        if (!group.add_data(*change, it->expects_inline_qos()))
+                        {
+                            logError(RTPS_WRITER, "Error sending change " << change->sequenceNumber);
+                        }
+                    }
+                    uint32_t last_processed = 0;
+                    send_heartbeat_piggyback_nts_(it, group, last_processed);
+                }
+            }
+
+            periodic_hb_event_->restart_timer(max_blocking_time);
+
+            if (disable_positive_acks_ && last_sequence_number_ == SequenceNumber_t())
+            {
+                last_sequence_number_ = change->sequenceNumber;
             }
         }
+        catch (const RTPSMessageGroup::timeout&)
+        {
+            logError(RTPS_WRITER, "Max blocking time reached");
+        }
+    }
+
+    if (!m_pushMode)
+    {
+        NetworkFactory& network = mp_RTPSParticipant->network_factory();
+        locator_selector_.reset(true);
+        network.select_locators(locator_selector_);
+        compute_selected_guids();
     }
 
     check_acked_status();
