@@ -223,6 +223,7 @@ TEST(BlackBox, PubSubMoreThan256Unacknowledged)
 
     reader.startReception(expected_data);
     reader.block_for_all();
+    EXPECT_TRUE(writer.waitForAllAcked(std::chrono::seconds(10)));
 }
 
 TEST(BlackBox, PubSubAsReliableHelloworldMulticastDisabled)
@@ -256,5 +257,6 @@ TEST(BlackBox, PubSubAsReliableHelloworldMulticastDisabled)
     ASSERT_TRUE(data.empty());
     // Block reader until reception finished or timeout.
     reader.block_for_all();
+    EXPECT_TRUE(writer.waitForAllAcked(std::chrono::seconds(10)));
 }
 
