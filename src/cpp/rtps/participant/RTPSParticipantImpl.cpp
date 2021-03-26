@@ -725,8 +725,7 @@ bool RTPSParticipantImpl::assignEndpoint2LocatorList(Endpoint* endp, LocatorList
        This has been removed becuase it is considered redundant. For ReceiveResources that listen on multiple interfaces, only
        one of the supported Locators is needed to make the match, and the case of new ListenResources being created has been removed
        since its the NetworkFactory the one that takes care of Resource creation.
-       */
-    LocatorList_t finalList;
+     */
     for (auto lit = list.begin(); lit != list.end(); ++lit)
     {
         //Iteration of all Locators within the Locator list passed down as argument
