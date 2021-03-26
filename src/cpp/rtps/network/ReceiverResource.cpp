@@ -51,7 +51,7 @@ ReceiverResource::ReceiverResource(
             };
     LocatorMapsToManagedChannel = [&transport, locator](const Locator_t& locatorToCheck) -> bool
             {
-                return transport.DoInputLocatorsMatch(locator, locatorToCheck);
+                return locator.kind == locatorToCheck.kind && transport.DoInputLocatorsMatch(locator, locatorToCheck);
             };
 }
 
