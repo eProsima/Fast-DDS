@@ -276,6 +276,7 @@ TEST_P(PubSubBasic, PubSubMoreThan256Unacknowledged)
 
     reader.startReception(expected_data);
     reader.block_for_all();
+    EXPECT_TRUE(writer.waitForAllAcked(std::chrono::seconds(10)));
 }
 
 TEST_P(PubSubBasic, PubSubAsReliableHelloworldMulticastDisabled)
@@ -309,6 +310,7 @@ TEST_P(PubSubBasic, PubSubAsReliableHelloworldMulticastDisabled)
     ASSERT_TRUE(data.empty());
     // Block reader until reception finished or timeout.
     reader.block_for_all();
+    EXPECT_TRUE(writer.waitForAllAcked(std::chrono::seconds(10)));
 }
 
 TEST_P(PubSubBasic, ReceivedDynamicDataWithNoSizeLimit)
