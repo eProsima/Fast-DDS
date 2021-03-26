@@ -490,7 +490,7 @@ TEST_P(PubSubBasic, ReceivedPropertiesDataWithinSizeLimit)
     LocatorBuffer.port = static_cast<uint16_t>(MULTICAST_PORT_RANDOM_NUMBER);
     WriterMulticastLocators.push_back(LocatorBuffer);
 
-    writer.static_discovery("PubSubWriter.xml").
+    writer.static_discovery("file://PubSubWriter.xml").
             unicastLocatorList(WriterUnicastLocators).multicastLocatorList(WriterMulticastLocators).
             setPublisherIDs(1,
             2).setManualTopicName(std::string("BlackBox_StaticDiscovery_") + TOPIC_RANDOM_NUMBER).init();
@@ -509,7 +509,7 @@ TEST_P(PubSubBasic, ReceivedPropertiesDataWithinSizeLimit)
 
     //Expected properties have exactly size 92
     reader.properties_max_size(92).
-            static_discovery("PubSubReader.xml").
+            static_discovery("file://PubSubReader.xml").
             unicastLocatorList(ReaderUnicastLocators).multicastLocatorList(ReaderMulticastLocators).
             setSubscriberIDs(3,
             4).setManualTopicName(std::string("BlackBox_StaticDiscovery_") + TOPIC_RANDOM_NUMBER).init();
@@ -587,7 +587,7 @@ TEST_P(PubSubBasic, ReceivedPropertiesDataExceedsSizeLimit)
     LocatorBuffer.port = static_cast<uint16_t>(MULTICAST_PORT_RANDOM_NUMBER);
     WriterMulticastLocators.push_back(LocatorBuffer);
 
-    writer.static_discovery("PubSubWriter.xml").
+    writer.static_discovery("file://PubSubWriter.xml").
             unicastLocatorList(WriterUnicastLocators).multicastLocatorList(WriterMulticastLocators).
             setPublisherIDs(1,
             2).setManualTopicName(std::string("BlackBox_StaticDiscovery_") + TOPIC_RANDOM_NUMBER).init();
@@ -606,7 +606,7 @@ TEST_P(PubSubBasic, ReceivedPropertiesDataExceedsSizeLimit)
 
     //Expected properties have size 92
     reader.properties_max_size(50)
-            .static_discovery("PubSubReader.xml")
+            .static_discovery("file://PubSubReader.xml")
             .unicastLocatorList(ReaderUnicastLocators).multicastLocatorList(ReaderMulticastLocators)
             .setSubscriberIDs(3,
             4).setManualTopicName(std::string("BlackBox_StaticDiscovery_") + TOPIC_RANDOM_NUMBER).init();
@@ -677,4 +677,3 @@ GTEST_INSTANTIATE_TEST_MACRO(PubSubBasic,
             }
 
         });
-

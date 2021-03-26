@@ -242,6 +242,7 @@ XMLP_ret XMLParser::getXMLDiscoverySettings(
             <xs:element name="clientAnnouncementPeriod" type="durationType" minOccurs="0"/>
             <xs:element name="discoveryServersList" type="DiscoveryServerList" minOccurs="0"/>
             <xs:element name="staticEndpointXMLFilename" type="stringType" minOccurs="0"/>
+            <xs:element name="static_edp_xml_content" type="stringType" minOccurs="0"/>
         </xs:all>
        </xs:complexType>
      */
@@ -381,7 +382,18 @@ XMLP_ret XMLParser::getXMLDiscoverySettings(
             {
                 return XMLP_ret::XML_ERROR;
             }
-            settings.setStaticEndpointXMLFilename(s.c_str());
+            std::string file_name = "file://" + s;
+            settings.static_edp_xml_content(file_name.c_str());
+        }
+        else if (strcmp(name, STATIC_ENDPOINT_XML_URI) == 0)
+        {
+            // staticEndpointXMLFilename - stringType
+            std::string s = "";
+            if (XMLP_ret::XML_OK != getXMLString(p_aux0, &s, ident))
+            {
+                return XMLP_ret::XML_ERROR;
+            }
+            settings.static_edp_xml_content(s.c_str());
         }
         else
         {

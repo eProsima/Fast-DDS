@@ -1065,7 +1065,7 @@ public:
     {
         participant_qos_.wire_protocol().builtin.discovery_config.use_SIMPLE_EndpointDiscoveryProtocol = false;
         participant_qos_.wire_protocol().builtin.discovery_config.use_STATIC_EndpointDiscoveryProtocol = true;
-        participant_qos_.wire_protocol().builtin.discovery_config.setStaticEndpointXMLFilename(filename);
+        participant_qos_.wire_protocol().builtin.discovery_config.static_edp_xml_content(filename);
         return *this;
     }
 

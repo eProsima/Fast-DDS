@@ -65,8 +65,8 @@ bool EDPStatic::initEDP(
     bool returned_value = false;
     m_attributes = attributes;
     mp_edpXML = new xmlparser::XMLEndpointParser();
-    std::string content(m_attributes.discovery_config.getStaticEndpointXMLFilename());
-    if (content.rfind("data://", 0) == 0)
+    std::string content(m_attributes.discovery_config.static_edp_xml_content());
+    if (0 == content.rfind("data://", 0))
     {
         tinyxml2::XMLDocument xml_document;
         if (tinyxml2::XMLError::XML_SUCCESS == xml_document.Parse(content.c_str() + 7, content.size() - 7))
@@ -74,9 +74,10 @@ bool EDPStatic::initEDP(
             returned_value = (this->mp_edpXML->loadXMLNode(xml_document) == xmlparser::XMLP_ret::XML_OK);
         }
     }
-    else
+    else if (0 == content.rfind("file://", 0))
     {
-        returned_value =  (this->mp_edpXML->loadXMLFile(content) == xmlparser::XMLP_ret::XML_OK);
+        std::string file_name = content.substr(7);
+        returned_value =  (this->mp_edpXML->loadXMLFile(file_name) == xmlparser::XMLP_ret::XML_OK);
     }
 
     return returned_value;
