@@ -112,7 +112,7 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER) AND fastcdr_FOUND)
         ${CMAKE_CURRENT_BINARY_DIR}/secure_msg_submsg_crypto_besteffort_sub.xml COPYONLY)
     configure_file(${CMAKE_CURRENT_SOURCE_DIR}/secure_submsg_crypto_besteffort_pub.xml
         ${CMAKE_CURRENT_BINARY_DIR}/secure_submsg_crypto_besteffort_pub.xml COPYONLY)
-        configure_file(${CMAKE_CURRENT_SOURCE_DIR}/secure_submsg_crypto_besteffort_sub.xml
+    configure_file(${CMAKE_CURRENT_SOURCE_DIR}/secure_submsg_crypto_besteffort_sub.xml
         ${CMAKE_CURRENT_BINARY_DIR}/secure_submsg_crypto_besteffort_sub.xml COPYONLY)
     configure_file(${CMAKE_CURRENT_SOURCE_DIR}/shm_communication_subscriber_dies_while_processing_message.xml
         ${CMAKE_CURRENT_BINARY_DIR}/shm_communication_subscriber_dies_while_processing_message.xml COPYONLY)
@@ -367,7 +367,7 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER) AND fastcdr_FOUND)
         endif()
 
         add_test(NAME SimpleCommunicationBestEffortFixed
-        COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/simple_communication.py)
+            COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/simple_communication.py)
 
         # Set test with label NoMemoryCheck
         set_property(TEST SimpleCommunicationBestEffortFixed PROPERTY LABELS "NoMemoryCheck")
