@@ -106,7 +106,7 @@ public:
         // Status of each listener
         struct ListenerStatus
         {
-            // True if this slot is taken by an active listener 
+            // True if this slot is taken by an active listener
             uint8_t is_in_use               : 1;
 
             // True if the listener is waiting for a notification of new message
@@ -709,20 +709,20 @@ public:
 
         /**
          * @brief Look for a listener processing a buffer and return the buffer descriptor being processed
-         * 
+         *
          * Iterates over all the listeners, and upon finding the first one that is marked as \c is_processing:
          *  - Marks it as not processing
          *  - Copies the buffer descriptor that was being processed in the provided buffer
          *  - Finishes iterating
-         * 
+         *
          * The intention of this method is to locate all buffer descriptors that are being processed
          * and apply necessary operations on these buffers when the port is found to be zombie.
          * This method should be called iteratively until the return value is false
          * (there is no processing listener remaining).
          * The calling method has the chance to apply necessary actions on the buffer descriptor.
-         * 
+         *
          * \pre Current port is zombie, as reported by is_zombie()
-         * 
+         *
          * @param[OUT] buffer_descriptor Descriptor of the buffer that was being processed by the first processing listener
          * @return True if there was at least one processing listener. False if not.
          */

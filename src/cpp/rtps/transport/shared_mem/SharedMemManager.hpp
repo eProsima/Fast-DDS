@@ -880,7 +880,7 @@ public:
 
         /**
          * @brief Unlock buffers being processed by the port if the port is frozen.
-         * 
+         *
          * If the port is zombie, finds all the buffers that were being processed by a listener
          * and decrements their processing count, so that they are not kept locked forever
          */
@@ -895,7 +895,7 @@ public:
                     auto segment = shared_mem_manager_->find_segment(buffer_descriptor.source_segment_id);
                     if (!segment)
                     {
-                        // If the segment is gone, nothing to do 
+                        // If the segment is gone, nothing to do
                         continue;
                     }
                     auto buffer_node =
