@@ -25,31 +25,7 @@ namespace eprosima {
 namespace fastdds {
 namespace statistics {
 
-class StatisticsListenersImpl
-{
-    inline bool add_statistics_listener_impl(
-            std::shared_ptr<fastdds::statistics::IListener> listener)
-    {
-        return true;
-    }
-
-    inline bool remove_statistics_listener_impl(
-            std::shared_ptr<fastdds::statistics::IListener> listener)
-    {
-        return true;
-    }
-
-    // lambda function to traverse the listener collection
-    template<class Function>
-    inline Function for_each_listener(
-            Function f)
-    {
-        return f;
-    }
-};
-
 class StatisticsWriterImpl
-    : protected StatisticsListenersImpl
 {
 protected:
 
@@ -57,7 +33,6 @@ protected:
 };
 
 class StatisticsReaderImpl
-    : protected StatisticsListenersImpl
 {
 protected:
 

@@ -46,6 +46,7 @@
 #include <fastdds/rtps/messages/MessageReceiver.h>
 #include <fastdds/rtps/resources/ResourceEvent.h>
 #include <fastdds/rtps/resources/AsyncWriterThread.h>
+#include <statistics/rtps/StatisticsBase.hpp>
 
 #include "../messages/RTPSMessageGroup_t.hpp"
 #include "../messages/SendBuffersManager.hpp"
@@ -100,6 +101,7 @@ class WLP;
  * @ingroup RTPS_MODULE
  */
 class RTPSParticipantImpl
+    : public fastdds::statistics::StatisticsParticipantImpl
 {
     /*
        Receiver Control block is a struct we use to encapsulate the resources that take part in message reception.
@@ -887,6 +889,47 @@ public:
     }
 
 #endif // if HAVE_SECURITY
+
+#ifdef FASTDDS_STATISTICS
+
+    /** Register a listener in participant DataWriter entities.
+     * @param listener, smart pointer to the listener interface to register
+     * @param guid, DataWriter identifier. If unknown the listener is registered in all enable ones
+     * @return true on success
+     */
+    bool register_in_datawriter(
+            std::shared_ptr<fastdds::statistics::IListener> listener,
+            GUID_t guid = GUID_t::unknown()) override;
+
+    /** Register a listener in participant DataReader entities.
+     * @param listener, smart pointer to the listener interface to register
+     * @param guid, DataReader identifier. If unknown the listener is registered in all enable ones
+     * @return true on success
+     */
+    bool register_in_datareader(
+            std::shared_ptr<fastdds::statistics::IListener> listener,
+            GUID_t guid = GUID_t::unknown()) override;
+
+    /** Unregister a listener in participant DataWriter entities.
+     * @param listener, smart pointer to the listener interface to unregister
+     * @param guid, DataWriter identifier. If unknown the listener is unregistered in all enable ones
+     * @return true on success
+     */
+    bool unregister_in_datawriter(
+            std::shared_ptr<fastdds::statistics::IListener> listener,
+            GUID_t guid = GUID_t::unknown()) override;
+
+    /** Unregister a listener in participant DataReader entities.
+     * @param listener, smart pointer to the listener interface to unregister
+     * @param guid, DataReader identifier. If unknown the listener is unregistered in all enable ones
+     * @return true on success
+     */
+    bool unregister_in_datareader(
+            std::shared_ptr<fastdds::statistics::IListener> listener,
+            GUID_t guid = GUID_t::unknown()) override;
+
+#endif // FASTDDS_STATISTICS
+
 };
 } // namespace rtps
 } /* namespace rtps */

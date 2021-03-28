@@ -192,20 +192,14 @@ bool RTPSParticipant::add_statistics_listener(
         std::shared_ptr<fastdds::statistics::IListener> listener,
         fastdds::statistics::EventKind kind)
 {
-    (void)listener;
-    (void)kind;
-
-    return false;
+    return mp_impl->add_statistics_listener(listener, kind);
 }
 
 bool RTPSParticipant::remove_statistics_listener(
         std::shared_ptr<fastdds::statistics::IListener> listener,
         fastdds::statistics::EventKind kind)
 {
-    (void)listener;
-    (void)kind;
-
-    return false;
+    return mp_impl->remove_statistics_listener(listener, kind);
 }
 
 #endif // FASTDDS_STATISTICS

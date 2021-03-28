@@ -301,6 +301,15 @@ public:
     RTPS_DllAPI bool remove_statistics_listener(
             std::shared_ptr<fastdds::statistics::IListener> listener);
 
+    /*
+     * Return the mutex used to protect statistics module members
+     * @return defaults to the endpoint mutex
+     */
+    RecursiveTimedMutex& get_statistics_mutex() override
+    {
+        return getMutex();
+    }
+
 #endif // FASTDDS_STATISTICS
 
     /**
