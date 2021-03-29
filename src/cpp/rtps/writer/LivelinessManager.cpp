@@ -23,9 +23,9 @@ LivelinessManager::LivelinessManager(
     , timer_(
         service,
         [this]() -> bool
-            {
-                return timer_expired();
-            },
+        {
+            return timer_expired();
+        },
         0)
 {
 }
@@ -222,7 +222,7 @@ bool LivelinessManager::calculate_next()
 
     bool any_alive = false;
 
-    for (LivelinessDataIterator it=writers_.begin(); it!=writers_.end(); ++it)
+    for (LivelinessDataIterator it = writers_.begin(); it != writers_.end(); ++it)
     {
         if (it->status == LivelinessData::WriterStatus::ALIVE)
         {
@@ -275,7 +275,7 @@ bool LivelinessManager::find_writer(
         const Duration_t& lease_duration,
         ResourceLimitedVector<LivelinessData>::iterator* wit_out)
 {
-    for (LivelinessDataIterator it=writers_.begin(); it!=writers_.end(); ++it)
+    for (LivelinessDataIterator it = writers_.begin(); it != writers_.end(); ++it)
     {
         if (it->guid == guid &&
                 it->kind == kind &&
@@ -335,6 +335,6 @@ const ResourceLimitedVector<LivelinessData>& LivelinessManager::get_liveliness_d
     return writers_;
 }
 
-}
-}
-}
+} // namespace rtps
+} // namespace fastrtps
+} // namespace eprosima
