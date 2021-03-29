@@ -56,8 +56,6 @@ TEST(RTPSStatisticsTests, statistics_rpts_listener_management)
     using namespace std;
     using namespace fastrtps::rtps;
 
-    logError(RTPS_STATISTICS, "Test fails because statistics api implementation is missing.");
-
     // create the entities
     uint32_t domain_id = 0;
     RTPSParticipantAttributes p_attr;
@@ -149,6 +147,8 @@ TEST(RTPSStatisticsTests, statistics_rpts_listener_management)
         // + fails if a listener is already removed
         EXPECT_FALSE(reader->remove_statistics_listener(listener1));
     }
+
+    logError(RTPS_STATISTICS, "Test fails because statistics api callback implementation is missing.");
 
     // Check PUBLICATION_THROUGHPUT and SUBSCRIPTION_THROUGHPUT callbacks are performed
     {

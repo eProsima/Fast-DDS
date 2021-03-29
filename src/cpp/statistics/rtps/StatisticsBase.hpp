@@ -72,7 +72,7 @@ protected:
 
         ListenerProxy(std::shared_ptr<IListener> listener, uint32_t mask)
             : mask_(mask)
-            , external_()
+            , external_(listener)
         {
         }
 

@@ -115,27 +115,33 @@ bool StatisticsParticipantImpl::add_statistics_listener(
 {
     std::lock_guard<std::recursive_mutex> lock(*getParticipantMutex());
 
-    uint32_t new_mask = kind, old_mask, new_flags;
+    uint32_t mask = kind, new_mask, old_mask;
 
-    if(!listener || 0 == new_mask)
+    if(!listener || 0 == mask)
     {
         // avoid nullptr
         return false;
     }
 
     // add the new listener, and identify selection changes
-    auto res = listeners_.emplace(std::make_shared<ListenerProxy>(listener, new_mask));
+    auto res = listeners_.emplace(std::make_shared<ListenerProxy>(listener, mask));
     const ListenerProxy& proxy = **res.first;
 
     if (res.second)
     {
-        new_flags = new_mask;
+        new_mask = mask;
         old_mask = 0;
     }
     else
     {
         old_mask = proxy.mask();
-        new_flags = new_mask & (old_mask ^ new_mask);
+        new_mask = old_mask | mask;
+
+        if( old_mask == new_mask )
+        {
+            // nop
+            return false;
+        }
 
         proxy.mask(new_mask);
     }
@@ -144,7 +150,7 @@ bool StatisticsParticipantImpl::add_statistics_listener(
     bool writers_res = true;
     if (are_datawriters_involved(new_mask)
             && !are_datawriters_involved(old_mask)
-            && ((writers_res = register_in_datawriter(proxy.get_shared_ptr())) != 0))
+            && ((writers_res = register_in_datawriter(proxy.get_shared_ptr())) == false))
     {
         logError(RTPS_STATISTICS, "Fail to register statistical listener in all writers");
     }
@@ -153,7 +159,7 @@ bool StatisticsParticipantImpl::add_statistics_listener(
     bool readers_res = true;
     if (are_datareaders_involved(new_mask)
             && !are_datareaders_involved(old_mask)
-            && ((readers_res = register_in_datareader(proxy.get_shared_ptr())) != 0))
+            && ((readers_res = register_in_datareader(proxy.get_shared_ptr())) == false))
     {
         logError(RTPS_STATISTICS, "Fail to register statistical listener in all readers");
     }
@@ -193,12 +199,28 @@ bool StatisticsParticipantImpl::remove_statistics_listener(
     proxy = *it;
     old_mask = proxy->mask();
     new_mask = old_mask & ~mask;
-    proxy->mask(new_mask);
+
+    if (old_mask == new_mask )
+    {
+        // nop
+        return false;
+    }
+
+    if ( new_mask )
+    {
+        // update
+        proxy->mask(new_mask);
+    }
+    else
+    {
+        // remove
+        listeners_.erase(it);
+    }
 
     bool writers_res = true;
     if (!are_datawriters_involved(new_mask)
             && are_datawriters_involved(old_mask)
-            && ((writers_res = unregister_in_datawriter(proxy->get_shared_ptr())) != 0))
+            && ((writers_res = unregister_in_datawriter(proxy->get_shared_ptr())) == false))
     {
         logError(RTPS_STATISTICS, "Fail to revoke registration of statistical listener in all writers");
     }
@@ -206,12 +228,13 @@ bool StatisticsParticipantImpl::remove_statistics_listener(
     bool readers_res = true;
     if (!are_datareaders_involved(new_mask)
             && are_datareaders_involved(old_mask)
-            && ((readers_res = unregister_in_datawriter(proxy->get_shared_ptr())) != 0))
+            && ((readers_res = unregister_in_datareader(proxy->get_shared_ptr())) == false))
     {
         logError(RTPS_STATISTICS, "Fail to revoke registration of statistical listener in all readers");
     }
 
     // TODO Barro: check and unregister discovery listeners
 
-    return writers_res && readers_res;
+    return writers_res && readers_res
+        && ((old_mask & mask) == mask); // return false if there were unregistered entities
 }
