@@ -36,6 +36,8 @@ struct StatisticsAncillary
     std::set<std::shared_ptr<IListener>> listeners;
 };
 
+#ifdef FASTDDS_STATISTICS
+
 // lambda function to traverse the listener collection
 template<class Function>
 Function StatisticsListenersImpl::for_each_listener(
@@ -53,8 +55,6 @@ Function StatisticsListenersImpl::for_each_listener(
 
     return f;
 }
-
-#ifdef FASTDDS_STATISTICS
 
 class StatisticsParticipantImpl
 {
