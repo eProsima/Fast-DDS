@@ -227,7 +227,7 @@ TEST(Discovery, StaticDiscovery)
  * Test Static EDP discovery configured via a XML content in a raw string.
  *
  * Currently Fast DDS API supports configure Static EDP discovery in two ways: setting the file containing the XML
- * configuration or passing directly the XML content. This tests tests the second way.
+ * configuration or passing directly the XML content. This test tests the second way.
  *
  * Steps:
  *
@@ -242,7 +242,7 @@ TEST(Discovery, StaticDiscovery)
  * 4. Initialize writer.
  *
  * 5. Wait both entities discover between them. If the Static EDP Discovery was configured correctly, they should
- * discovery.
+ * discover each other.
  *
  * 6. Writer send a batch of samples.
  *
