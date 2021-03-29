@@ -54,7 +54,7 @@ DomainParticipant* DomainParticipant::narrow(
 #else
     (void)domain_participant;
     return nullptr;
-#endif
+#endif // FASTDDS_STATISTICS
 }
 
 const DomainParticipant* DomainParticipant::narrow(
