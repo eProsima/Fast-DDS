@@ -189,6 +189,12 @@ bool StatefulReader::matched_writer_add(
         matched_writers_pool_.pop_back();
     }
 
+    SequenceNumber_t initial_sequence;
+    add_persistence_guid(wdata.guid(), wdata.persistence_guid());
+    initial_sequence = get_last_notified(wdata.guid());
+
+    wp->start(wdata, initial_sequence);
+
     if (!is_same_process)
     {
         for (const Locator_t& locator : wp->remote_locators_shrinked())
@@ -196,12 +202,6 @@ bool StatefulReader::matched_writer_add(
             getRTPSParticipant()->createSenderResources(locator);
         }
     }
-
-    SequenceNumber_t initial_sequence;
-    add_persistence_guid(wdata.guid(), wdata.persistence_guid());
-    initial_sequence = get_last_notified(wdata.guid());
-
-    wp->start(wdata, initial_sequence);
 
     matched_writers_.push_back(wp);
 

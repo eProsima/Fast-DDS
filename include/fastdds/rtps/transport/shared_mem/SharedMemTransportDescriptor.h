@@ -30,17 +30,17 @@ class TransportInterface;
  */
 typedef struct SharedMemTransportDescriptor : public TransportDescriptorInterface
 {
-    virtual ~SharedMemTransportDescriptor() 
+    virtual ~SharedMemTransportDescriptor()
     {
-        
+
     }
 
     virtual TransportInterface* create_transport() const override;
     uint32_t min_send_buffer_size() const override
     {
-        return 0;
+        return segment_size_;
     }
-    
+
     RTPS_DllAPI SharedMemTransportDescriptor();
 
     RTPS_DllAPI SharedMemTransportDescriptor(
@@ -50,7 +50,7 @@ typedef struct SharedMemTransportDescriptor : public TransportDescriptorInterfac
     {
         return segment_size_;
     }
-    
+
     RTPS_DllAPI void segment_size(
             uint32_t segment_size)
     {
@@ -58,8 +58,8 @@ typedef struct SharedMemTransportDescriptor : public TransportDescriptorInterfac
     }
 
     virtual uint32_t max_message_size() const override
-    { 
-        return maxMessageSize; 
+    {
+        return maxMessageSize;
     }
 
     RTPS_DllAPI void max_message_size(
