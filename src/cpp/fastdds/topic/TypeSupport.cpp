@@ -72,7 +72,7 @@ bool TypeSupport::deserialize(
     {
         result = false;
     }
-    
+
     return result;
 }
 
