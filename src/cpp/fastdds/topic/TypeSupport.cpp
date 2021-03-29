@@ -46,28 +46,34 @@ bool TypeSupport::serialize(
         void* data,
         fastrtps::rtps::SerializedPayload_t* payload)
 {
+    bool result = false;
     try
     {
-        return get()->serialize(data, payload);
+        result = get()->serialize(data, payload);
     }
     catch (eprosima::fastcdr::exception::Exception& e)
     {
-        return false;
+        result = false;
     }
+
+    return result;
 }
 
 bool TypeSupport::deserialize(
         fastrtps::rtps::SerializedPayload_t* payload,
         void* data)
 {
+    bool result = false;
     try
     {
-        return get()->deserialize(payload, data);
+        result = get()->deserialize(payload, data);
     }
     catch (eprosima::fastcdr::exception::Exception& e)
     {
-        return false;
+        result = false;
     }
+    
+    return result;
 }
 
 }  // namespace dds
