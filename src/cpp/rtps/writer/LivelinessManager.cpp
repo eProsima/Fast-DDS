@@ -79,25 +79,19 @@ bool LivelinessManager::remove_writer(
         {
             if (--writer.count == 0)
             {
+                LivelinessData::WriterStatus status = writer.status;
+
                 writers_.remove(writer);
 
                 if (callback_ != nullptr)
                 {
-                    if (writer.status == LivelinessData::WriterStatus::ALIVE)
+                    if (status == LivelinessData::WriterStatus::ALIVE)
                     {
-                        callback_(writer.guid,
-                                writer.kind,
-                                writer.lease_duration,
-                                -1,
-                                0);
+                        callback_(guid, kind, lease_duration, -1, 0);
                     }
-                    else if (writer.status == LivelinessData::WriterStatus::NOT_ALIVE)
+                    else if (status == LivelinessData::WriterStatus::NOT_ALIVE)
                     {
-                        callback_(writer.guid,
-                                writer.kind,
-                                writer.lease_duration,
-                                0,
-                                -1);
+                        callback_(guid, kind, lease_duration, 0, -1);
                     }
                 }
 
