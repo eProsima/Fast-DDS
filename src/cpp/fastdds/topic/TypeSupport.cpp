@@ -51,7 +51,7 @@ bool TypeSupport::serialize(
     {
         result = get()->serialize(data, payload);
     }
-    catch (eprosima::fastcdr::exception::Exception& e)
+    catch (eprosima::fastcdr::exception::Exception&)
     {
         result = false;
     }
@@ -68,7 +68,7 @@ bool TypeSupport::deserialize(
     {
         result = get()->deserialize(payload, data);
     }
-    catch (eprosima::fastcdr::exception::Exception& e)
+    catch (eprosima::fastcdr::exception::Exception&)
     {
         result = false;
     }
