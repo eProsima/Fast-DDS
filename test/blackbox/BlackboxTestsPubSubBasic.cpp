@@ -60,8 +60,8 @@ TEST(BlackBox, AsyncPubSubAsNonReliableHelloworld)
     ASSERT_TRUE(reader.isInitialized());
 
     writer.history_depth(100).
-        reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).
-        asynchronously(eprosima::fastrtps::ASYNCHRONOUS_PUBLISH_MODE).init();
+            reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).
+            asynchronously(eprosima::fastrtps::ASYNCHRONOUS_PUBLISH_MODE).init();
 
     ASSERT_TRUE(writer.isInitialized());
 
@@ -86,7 +86,7 @@ TEST(BlackBox, PubSubAsReliableHelloworld)
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
 
     reader.history_depth(100).
-        reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).init();
+            reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).init();
 
     ASSERT_TRUE(reader.isInitialized());
 
@@ -117,12 +117,12 @@ TEST(BlackBox, AsyncPubSubAsReliableHelloworld)
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
 
     reader.history_depth(100).
-        reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).init();
+            reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).init();
 
     ASSERT_TRUE(reader.isInitialized());
 
     writer.history_depth(100).
-        asynchronously(eprosima::fastrtps::ASYNCHRONOUS_PUBLISH_MODE).init();
+            asynchronously(eprosima::fastrtps::ASYNCHRONOUS_PUBLISH_MODE).init();
 
     ASSERT_TRUE(writer.isInitialized());
 
@@ -173,7 +173,7 @@ TEST(BlackBox, PubSubAsReliableData64kb)
     PubSubWriter<Data64kbType> writer(TEST_TOPIC_NAME);
 
     reader.history_depth(10).
-        reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).init();
+            reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).init();
 
     ASSERT_TRUE(reader.isInitialized());
 
@@ -203,7 +203,7 @@ TEST(BlackBox, PubSubMoreThan256Unacknowledged)
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
 
     writer.history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS).
-        durability_kind(eprosima::fastrtps::TRANSIENT_LOCAL_DURABILITY_QOS).init();
+            durability_kind(eprosima::fastrtps::TRANSIENT_LOCAL_DURABILITY_QOS).init();
 
     ASSERT_TRUE(writer.isInitialized());
 
@@ -216,8 +216,8 @@ TEST(BlackBox, PubSubMoreThan256Unacknowledged)
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
 
     reader.reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).
-        history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS).
-        durability_kind(eprosima::fastrtps::TRANSIENT_LOCAL_DURABILITY_QOS).init();
+            history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS).
+            durability_kind(eprosima::fastrtps::TRANSIENT_LOCAL_DURABILITY_QOS).init();
 
     ASSERT_TRUE(reader.isInitialized());
 
@@ -232,13 +232,13 @@ TEST(BlackBox, PubSubAsReliableHelloworldMulticastDisabled)
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
 
     reader.history_depth(100).
-        reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).
-        disable_multicast(0).init();
+            reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).
+            disable_multicast(0).init();
 
     ASSERT_TRUE(reader.isInitialized());
 
     writer.history_depth(100).
-        disable_multicast(1).init();
+            disable_multicast(1).init();
 
     ASSERT_TRUE(writer.isInitialized());
 
