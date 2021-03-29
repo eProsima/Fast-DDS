@@ -172,18 +172,11 @@ TEST_P(PersistenceLargeData, PubSubAsReliablePubPersistentWithLifespanBefore)
     PubSubWriter<Data1mbType> writer(TEST_TOPIC_NAME);
     PubSubReader<Data1mbType> reader(TEST_TOPIC_NAME);
 
-    auto testTransport = std::make_shared<UDPv4TransportDescriptor>();
-    testTransport->sendBufferSize = 32768;
-    testTransport->maxMessageSize = 32768;
-    testTransport->receiveBufferSize = 32768;
-
     writer
             .history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS)
             .resource_limits_max_samples(100)
             .reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS)
             .make_persistent(db_file_name(), "77.72.69.74.65.72.5f.70.65.72.73.5f|67.75.69.64")
-            .disable_builtin_transport()
-            .add_user_transport_to_pparams(testTransport)
             .lifespan_period({1, 0})
             .init();
 
