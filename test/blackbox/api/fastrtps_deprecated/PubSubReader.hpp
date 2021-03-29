@@ -918,7 +918,7 @@ public:
     {
         participant_attr_.rtps.builtin.discovery_config.use_SIMPLE_EndpointDiscoveryProtocol = false;
         participant_attr_.rtps.builtin.discovery_config.use_STATIC_EndpointDiscoveryProtocol = true;
-        participant_attr_.rtps.builtin.discovery_config.static_edp_xml_content(filename);
+        participant_attr_.rtps.builtin.discovery_config.static_edp_xml_config(filename);
         return *this;
     }
 

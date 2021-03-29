@@ -223,6 +223,9 @@ TEST(Discovery, StaticDiscovery)
     reader.block_for_all();
 }
 
+/*!
+ * Test Static EDP discovery configured via a XML content in a raw string.
+ */
 TEST(Discovery, StaticDiscoveryFromString)
 {
     char* value = std::getenv("TOPIC_RANDOM_NUMBER");

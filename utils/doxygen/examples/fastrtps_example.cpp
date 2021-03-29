@@ -269,7 +269,7 @@ public:
 //PParam.discovery.use_SIMPLE_RTPSParticipantDiscoveryProtocol = true;
 //PParam.discovery.resendSPDPDataPeriod_sec = 30;
 //PParam.discovery.use_STATIC_EndpointDiscoveryProtocol = true;
-//PParam.discovery.static_edp_xml_content("file://StaticEndpointDefinition.xml");
+//PParam.discovery.static_edp_xml_config("file://StaticEndpointDefinition.xml");
 //Locator_t loc;
 //loc.kind = 1; loc.port = 10046; loc.set_IP4_address(192,168,1,16);
 //PParam.defaultUnicastLocatorList.push_back(loc);

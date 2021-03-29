@@ -65,7 +65,7 @@ bool EDPStatic::initEDP(
     bool returned_value = false;
     m_attributes = attributes;
     mp_edpXML = new xmlparser::XMLEndpointParser();
-    std::string content(m_attributes.discovery_config.static_edp_xml_content());
+    std::string content(m_attributes.discovery_config.static_edp_xml_config());
     if (0 == content.rfind("data://", 0))
     {
         tinyxml2::XMLDocument xml_document;

@@ -43,7 +43,7 @@ bool HelloWorldPublisher::init()
     PParam.rtps.setName("HelloWorldPublisher");
     PParam.rtps.builtin.discovery_config.use_SIMPLE_EndpointDiscoveryProtocol = false;
     PParam.rtps.builtin.discovery_config.use_STATIC_EndpointDiscoveryProtocol = true;
-    PParam.rtps.builtin.discovery_config.static_edp_xml_content("file://HelloWorldSubscriber.xml");
+    PParam.rtps.builtin.discovery_config.static_edp_xml_config("file://HelloWorldSubscriber.xml");
     mp_participant = Domain::createParticipant(PParam);
 
     if (mp_participant == nullptr)
