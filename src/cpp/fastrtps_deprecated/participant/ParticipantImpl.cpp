@@ -27,6 +27,7 @@
 #include <fastdds/rtps/participant/RTPSParticipant.h>
 #include <fastdds/rtps/reader/ReaderDiscoveryInfo.h>
 #include <fastdds/rtps/writer/WriterDiscoveryInfo.h>
+#include <fastdds/rtps/resources/TimedEvent.h>
 #include <fastrtps/attributes/PublisherAttributes.h>
 #include <fastrtps/attributes/SubscriberAttributes.h>
 #include <fastrtps/participant/ParticipantListener.h>
@@ -233,6 +234,13 @@ Publisher* ParticipantImpl::createPublisher(
 
     // In case it has been loaded from the persistence DB, rebuild instances on history
     pubimpl->m_history.rebuild_instances();
+    if (att.qos.m_lifespan.duration != c_TimeInfinite)
+    {
+        if (pubimpl->lifespan_expired())
+        {
+            pubimpl->lifespan_timer_->restart_timer();
+        }
+    }
 
     //SAVE THE PUBLISHER PAIR
     t_p_PublisherPair pubpair;
