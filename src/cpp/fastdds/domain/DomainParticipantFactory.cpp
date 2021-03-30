@@ -17,22 +17,23 @@
  *
  */
 
-#include <fastdds/dds/domain/DomainParticipantFactory.hpp>
-#include <fastdds/rtps/RTPSDomain.h>
-#include <fastdds/rtps/participant/RTPSParticipant.h>
-
 #include <fastdds/dds/domain/DomainParticipant.hpp>
-#include <fastdds/domain/DomainParticipantImpl.hpp>
-
+#include <fastdds/dds/domain/DomainParticipantFactory.hpp>
 #include <fastdds/dds/log/Log.hpp>
-
+#include <fastdds/rtps/participant/RTPSParticipant.h>
+#include <fastdds/rtps/RTPSDomain.h>
+#include <fastdds/statistics/dds/domain/DomainParticipant.hpp>
+#include <fastrtps/types/DynamicDataFactory.h>
+#include <fastrtps/types/DynamicTypeBuilderFactory.h>
+#include <fastrtps/types/TypeObjectFactory.h>
 #include <fastrtps/xmlparser/XMLProfileManager.h>
 
-#include <fastrtps/types/DynamicTypeBuilderFactory.h>
-#include <fastrtps/types/DynamicDataFactory.h>
-#include <fastrtps/types/TypeObjectFactory.h>
-
+#include <fastdds/domain/DomainParticipantImpl.hpp>
 #include <rtps/history/TopicPayloadPoolRegistry.hpp>
+
+
+
+
 
 using namespace eprosima::fastrtps::xmlparser;
 
@@ -161,7 +162,12 @@ DomainParticipant* DomainParticipantFactory::create_participant(
 
     const DomainParticipantQos& pqos = (&qos == &PARTICIPANT_QOS_DEFAULT) ? default_participant_qos_ : qos;
 
+#ifndef FASTDDS_STATISTICS
     DomainParticipant* dom_part = new DomainParticipant(mask);
+#else
+    eprosima::fastdds::statistics::dds::DomainParticipant* dom_part =
+            new eprosima::fastdds::statistics::dds::DomainParticipant(mask);
+#endif // FASTDDS_STATISTICS
     DomainParticipantImpl* dom_part_impl = new DomainParticipantImpl(dom_part, did, pqos, listen);
 
     {
