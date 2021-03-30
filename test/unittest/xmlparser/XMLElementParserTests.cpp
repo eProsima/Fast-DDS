@@ -1536,7 +1536,7 @@ TEST_F(XMLParserTests, getXMLDiscoverySettingsStaticEDP)
             "\
             <discovery_config>\
                 <EDP>STATIC</EDP>\
-                <staticEndpointXMLFilename>my_static_edp.xml</staticEndpointXMLFilename>\
+                <static_edp_xml_config>file://my_static_edp.xml</static_edp_xml_config>\
             </discovery_config>\
             ";
 
@@ -1550,7 +1550,7 @@ TEST_F(XMLParserTests, getXMLDiscoverySettingsStaticEDP)
     // Check that the STATIC discovery protocol is set to true.
     EXPECT_TRUE(settings.use_STATIC_EndpointDiscoveryProtocol);
     // Check that the static endpoint XML filename is set correctly.
-    EXPECT_STREQ(settings.getStaticEndpointXMLFilename(), "my_static_edp.xml");
+    EXPECT_STREQ(settings.static_edp_xml_config(), "file://my_static_edp.xml");
 }
 
 /*
@@ -2831,7 +2831,7 @@ TEST_F(XMLParserTests, getXMLParticipantAllocationAttributes_NegativeClauses)
  *      <simpleEDP>
  *      <clientAnnouncementPeriod>
  *      <discoveryServersList>
- *      <staticEndpointXMLFilename>
+ *      <static_edp_xml_config>
  * 2. Check invalid <EDP> element
  * 3. Check invalid <SimpleEDP <PUBWRITER_SUBREADER>> element
  * 4. Check invalid <SimpleEDP <PUBREADER_SUBWRITER>> element
@@ -2872,7 +2872,7 @@ TEST_F(XMLParserTests, getXMLDiscoverySettings_NegativeClauses)
         "simpleEDP",
         "clientAnnouncementPeriod",
         "discoveryServersList",
-        "staticEndpointXMLFilename"
+        "static_edp_xml_config"
     };
 
     for (std::string tag : field_vec)

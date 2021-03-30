@@ -292,7 +292,7 @@ public:
                (this->leaseDuration_announcementperiod == b.leaseDuration_announcementperiod) &&
                (this->initial_announcements == b.initial_announcements) &&
                (this->m_simpleEDP == b.m_simpleEDP) &&
-               (this->m_staticEndpointXMLFilename == b.m_staticEndpointXMLFilename) &&
+               (this->static_edp_xml_config_ == b.static_edp_xml_config_) &&
                (this->m_DiscoveryServers == b.m_DiscoveryServers) &&
                (this->ignoreParticipantFlags == b.ignoreParticipantFlags);
     }
@@ -301,25 +301,50 @@ public:
      * Get the static endpoint XML filename
      * @return Static endpoint XML filename
      */
+    FASTRTPS_DEPRECATED("Use static_edp_xml_config()")
     const char* getStaticEndpointXMLFilename() const
     {
-        return m_staticEndpointXMLFilename.c_str();
+        return static_edp_xml_config();
     }
 
     /**
      * Set the static endpoint XML filename
      * @param str Static endpoint XML filename
+     * @deprecated
      */
+    FASTRTPS_DEPRECATED("Use static_edp_xml_config()")
     void setStaticEndpointXMLFilename(
             const char* str)
     {
-        m_staticEndpointXMLFilename = std::string(str);
+        static_edp_xml_config_ = "file://" + std::string(str);
+    }
+
+    /**
+     * Set the static endpoint XML configuration.
+     * @param str URI specifying the static endpoint XML configuration.
+     * The string could contain a filename (file://) or the XML content directly (data://).
+     */
+    void static_edp_xml_config(
+            const char* str)
+    {
+        static_edp_xml_config_ = str;
+    }
+
+    /**
+     * Get the static endpoint XML configuration.
+     * @return URI specifying the static endpoint XML configuration.
+     * The string could contain a filename (file://) or the XML content directly (data://).
+     */
+    const char* static_edp_xml_config() const
+    {
+        return static_edp_xml_config_.c_str();
     }
 
 private:
 
-    //! StaticEDP XML filename, only necessary if use_STATIC_EndpointDiscoveryProtocol=true
-    std::string m_staticEndpointXMLFilename = "";
+    //! URI specifying the static EDP XML configuration, only necessary if use_STATIC_EndpointDiscoveryProtocol=true
+    //! This string could contain a filename or the XML content directly.
+    std::string static_edp_xml_config_ = "";
 };
 
 /**
