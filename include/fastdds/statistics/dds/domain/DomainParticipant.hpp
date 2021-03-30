@@ -22,7 +22,10 @@
 
 #include <string>
 
+#include <fastdds/dds/core/status/StatusMask.hpp>
 #include <fastdds/dds/domain/DomainParticipant.hpp>
+#include <fastdds/dds/domain/DomainParticipantFactory.hpp>
+#include <fastdds/dds/publisher/Publisher.hpp>
 #include <fastdds/dds/publisher/qos/DataWriterQos.hpp>
 #include <fastrtps/fastrtps_dll.h>
 #include <fastrtps/types/TypesBase.h>
@@ -87,6 +90,42 @@ public:
      */
     RTPS_DllAPI static const DomainParticipant* narrow(
             const eprosima::fastdds::dds::DomainParticipant* domain_participant);
+
+    /**
+     * @brief This operation enables the statistics DomainParticipant
+     * @return RETCODE_OK
+     */
+    RTPS_DllAPI ReturnCode_t enable() override;
+
+
+protected:
+
+    /**
+     * Constructor
+     */
+    DomainParticipant(
+            const eprosima::fastdds::dds::StatusMask& mask)
+        : eprosima::fastdds::dds::DomainParticipant(mask)
+    {
+    }
+
+    /**
+     * Auxiliary function to create the statistics builtin entities.
+     * @return true if succesfully created statistics DDS entities,
+     * false otherwise.
+     */
+    void create_statistics_builtin_entities();
+
+    /**
+     * Auxiliary function to enable statistics builtin datawriters.
+     * @param topic_list string with the semicolon separated list of statistics topics.
+     */
+    void enable_statistics_builtin_datawriters(
+            const std::string& topic_list);
+
+   eprosima::fastdds::dds::Publisher* builtin_publisher_;
+    
+    friend class eprosima::fastdds::dds::DomainParticipantFactory;
 };
 
 /* Environment variable to specify a semicolon-separated list of topic names that define the statistics DataWriters that

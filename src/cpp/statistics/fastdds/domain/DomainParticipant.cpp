@@ -19,9 +19,17 @@
 #include <fastdds/statistics/dds/domain/DomainParticipant.hpp>
 
 #include <string>
+#include <sstream>
 
+#include <fastdds/dds/domain/DomainParticipant.hpp>
+#include <fastdds/dds/log/Log.hpp>
 #include <fastdds/dds/publisher/qos/DataWriterQos.hpp>
+#include <fastdds/dds/publisher/qos/PublisherQos.hpp>
+#include <fastdds/statistics/dds/publisher/qos/DataWriterQos.hpp>
 #include <fastrtps/types/TypesBase.h>
+
+#include <fastdds/domain/DomainParticipantImpl.hpp>
+#include <utils/SystemInfo.hpp>
 
 namespace eprosima {
 namespace fastdds {
@@ -66,6 +74,69 @@ const DomainParticipant* DomainParticipant::narrow(
     (void)domain_participant;
     return nullptr;
 #endif // FASTDDS_STATISTICS
+}
+
+ReturnCode_t DomainParticipant::enable()
+{
+    ReturnCode_t ret = eprosima::fastdds::dds::DomainParticipant::enable();
+
+    if(enable_)
+    {
+        create_statistics_builtin_entities();
+    }
+
+    return ret;
+}
+
+void DomainParticipant::create_statistics_builtin_entities()
+{
+    // Builtin publisher
+    builtin_publisher_ = impl_->create_publisher(eprosima::fastdds::dds::PUBLISHER_QOS_DEFAULT);
+
+    // Enable statistics datawriters
+    // 1. Find fastdds_statistics PropertyPolicyQos
+    const std::string* property_topic_list = eprosima::fastrtps::rtps::PropertyPolicyHelper::find_property(
+            impl_->get_qos().properties(), "fastdds.statistics");
+
+    if (nullptr != property_topic_list)
+    {
+        enable_statistics_builtin_datawriters(*property_topic_list);
+    }
+
+    // 2. FASTDDS_STATISTICS environment variable
+    std::string env_topic_list;
+    const char* data;
+    if (ReturnCode_t::RETCODE_OK == SystemInfo::get_env(FASTDDS_STATISTICS_ENVIRONMENT_VARIABLE, &data))
+    {
+        env_topic_list = data;
+    }
+
+    if (!env_topic_list.empty())
+    {
+        enable_statistics_builtin_datawriters(env_topic_list);
+    }
+}
+
+void DomainParticipant::enable_statistics_builtin_datawriters(
+        const std::string& topic_list)
+{
+    // Parse list and call enable_statistics_datawriter
+    std::stringstream topics(topic_list);
+    std::string topic;
+    while (std::getline(topics, topic, ';'))
+    {
+        ReturnCode_t ret = enable_statistics_datawriter(topic, STATISTICS_DATAWRITER_QOS);
+        // case RETCODE_ERROR is checked and logged in enable_statistics_datawriter.
+        // case RETCODE_INCONSISTENT_POLICY cannot happen. STATISTICS_DATAWRITER_QOS is consitent.
+        // case RETCODE_UNSUPPORTED cannot happen because this method is only called if FASTDDS_STATISTICS
+        // CMake option is enabled
+        assert(ret != RETCODE_INCONSISTENT_POLICY);
+        assert(ret != RETCODE_UNSUPPORTED);
+        if (ret == ReturnCode_t::RETCODE_BAD_PARAMETER)
+        {
+            logError(STATISTICS_DOMAIN_PARTICIPANT, "Topic " << topic << "is not a valid statistics topic name/alias");
+        }
+    }
 }
 
 } // dds
