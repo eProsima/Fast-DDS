@@ -1,10 +1,17 @@
 Forthcoming
 -----------
 
-* Added reception_timestamp to `eprosima::fastdds::dds::SampleInfo` (ABI break)
-* Added eprosima::fastdds::dds::DataReader::get_unread_count (ABI break)
-* Refactor eprosima::fastrtps::type::ReturnCode_t. Now the constant global objects are no longer available (ABI break)
+Version 2.3.0
+-------------
+
 * New Fast DDS Statistics module
+* New discovery "super-client" kind
+* Added methods to get sending locators for writers and listening locators for readers (ABI break)
+* Added support for unique network flows
+* Added reception_timestamp to `eprosima::fastdds::dds::SampleInfo` (ABI break)
+* Added `eprosima::fastdds::dds::DataReader::get_unread_count` (ABI break)
+* Refactor `eprosima::fastrtps::type::ReturnCode_t`. Now the constant global objects are no longer available (ABI break)
+* Performance tests refactored to use DDS-PIM high-level API
 
 Version 2.2.0
 -------------
