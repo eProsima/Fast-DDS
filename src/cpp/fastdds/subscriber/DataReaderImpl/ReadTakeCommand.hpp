@@ -39,6 +39,10 @@
 #include <fastdds/rtps/common/CacheChange.h>
 #include <fastdds/rtps/reader/RTPSReader.h>
 
+#include <rtps/reader/WriterProxy.h>
+#include <rtps/DataSharing/DataSharingPayloadPool.hpp>
+
+
 namespace eprosima {
 namespace fastdds {
 namespace dds {
@@ -52,6 +56,7 @@ struct ReadTakeCommand
     using RTPSReader = eprosima::fastrtps::rtps::RTPSReader;
     using WriterProxy = eprosima::fastrtps::rtps::WriterProxy;
     using SampleInfoSeq = LoanableTypedCollection<SampleInfo>;
+    using DataSharingPayloadPool = eprosima::fastrtps::rtps::DataSharingPayloadPool;
 
     ReadTakeCommand(
             DataReaderImpl& reader,
@@ -113,7 +118,18 @@ struct ReadTakeCommand
             {
                 WriterProxy* wp = nullptr;
                 bool is_future_change = false;
-                if (!reader_->begin_sample_access_nts(change, wp, is_future_change))
+                bool remove_change = false;
+                if (reader_->begin_sample_access_nts(change, wp, is_future_change))
+                {
+                    //Check if the payload is dirty
+                    remove_change = !check_datasharing_validity(change, data_values_.has_ownership(), wp);
+                }
+                else
+                {
+                    remove_change = true;
+                }
+
+                if (remove_change)
                 {
                     // Remove from history
                     history_.remove_change_sub(change, it);
@@ -130,9 +146,27 @@ struct ReadTakeCommand
                 }
 
                 // Add sample and info to collections
-                bool added = add_sample(*it);
+                ReturnCode_t previous_return_value = return_value_;
+                bool added = add_sample(change, remove_change);
                 reader_->end_sample_access_nts(change, wp, added);
-                if (added && take_samples)
+
+                // Check if the payload is dirty
+                if (added && !check_datasharing_validity(change, data_values_.has_ownership(), wp))
+                {
+                    // Decrement length of collections
+                    --current_slot_;
+                    ++remaining_samples_;
+                    data_values_.length(current_slot_);
+                    sample_infos_.length(current_slot_);
+
+                    return_value_ = previous_return_value;
+                    finished_ = false;
+
+                    remove_change = true;
+                    added = false;
+                }
+
+                if (remove_change || (added && take_samples))
                 {
                     // Remove from history
                     history_.remove_change_sub(change, it);
@@ -237,11 +271,13 @@ private:
     }
 
     bool add_sample(
-            CacheChange_t* change)
+            CacheChange_t* change,
+            bool& deserialization_error)
     {
         // Mark that some data is available
         return_value_ = ReturnCode_t::RETCODE_OK;
         bool ret_val = false;
+        deserialization_error = false;
 
         if (remaining_samples_ > 0)
         {
@@ -254,7 +290,14 @@ private:
             generate_info(change);
             if (sample_infos_[current_slot_].valid_data)
             {
-                deserialize_sample(change);
+                if (!deserialize_sample(change))
+                {
+                    // Decrement length of collections
+                    data_values_.length(current_slot_);
+                    sample_infos_.length(current_slot_);
+                    deserialization_error = true;
+                    return false;
+                }
             }
 
             ++current_slot_;
@@ -267,14 +310,14 @@ private:
         return ret_val;
     }
 
-    void deserialize_sample(
+    bool deserialize_sample(
             CacheChange_t* change)
     {
         auto payload = &(change->serializedPayload);
         if (data_values_.has_ownership())
         {
             // perform deserialization
-            type_->deserialize(payload, data_values_.buffer()[current_slot_]);
+            return type_->deserialize(payload, data_values_.buffer()[current_slot_]);
         }
         else
         {
@@ -282,6 +325,7 @@ private:
             void* sample;
             sample_pool_->get_loan(change, sample);
             const_cast<void**>(data_values_.buffer())[current_slot_] = sample;
+            return true;
         }
     }
 
@@ -328,6 +372,33 @@ private:
                 info.instance_state = ALIVE_INSTANCE_STATE;
                 break;
         }
+    }
+
+    bool check_datasharing_validity(
+            CacheChange_t* change,
+            bool has_ownership,
+            WriterProxy* wp)
+    {
+        bool is_valid = true;
+        if (has_ownership)  //< On loans the user must check the validity anyways
+        {
+            DataSharingPayloadPool* pool = dynamic_cast<DataSharingPayloadPool*>(change->payload_owner());
+            if (pool)
+            {
+                //Check if the payload is dirty
+                is_valid = pool->is_sample_valid(*change);
+            }
+        }
+
+        if (!is_valid)
+        {
+            logWarning(RTPS_READER,
+                    "Change " << change->sequenceNumber << " from " << wp->guid() <<
+                    " is overidden");
+            return false;
+        }
+
+        return true;
     }
 
 };
