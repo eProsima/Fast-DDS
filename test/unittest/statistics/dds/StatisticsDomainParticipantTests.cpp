@@ -59,8 +59,6 @@ TEST(StatisticsDomainParticipantTests, NarrowDomainParticipantTest)
     EXPECT_EQ(statistics_participant, nullptr);
     EXPECT_EQ(const_statistics_participant, nullptr);
 #else
-    logError(STATISTICS_DOMAINPARTICIPANT_TEST, "This test is going to fail because API is not yet implemented.")
-
     EXPECT_NE(statistics_participant, nullptr);
     EXPECT_NE(const_statistics_participant, nullptr);
 #endif // FASTDDS_STATISTICS
