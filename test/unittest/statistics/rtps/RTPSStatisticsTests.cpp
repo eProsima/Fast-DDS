@@ -42,7 +42,7 @@ namespace rtps {
 struct MockListener : IListener
 {
     MOCK_METHOD1(on_statistics_data, void(
-	        const Data&));
+                const Data&));
 };
 
 /*
