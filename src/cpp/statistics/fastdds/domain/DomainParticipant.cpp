@@ -63,7 +63,7 @@ const DomainParticipant* DomainParticipant::narrow(
 #ifdef FASTDDS_STATISTICS
     return static_cast<const DomainParticipant*>(domain_participant);
 #else
-    (void) domain_participant;
+    (void)domain_participant;
     return nullptr;
 #endif // FASTDDS_STATISTICS
 }
