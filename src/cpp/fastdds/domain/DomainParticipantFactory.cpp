@@ -116,6 +116,12 @@ ReturnCode_t DomainParticipantFactory::delete_participant(
 
     if (part != nullptr)
     {
+#ifdef FASTDDS_STATISTICS
+        // Delete builtin statistics entities
+        eprosima::fastdds::statistics::dds::DomainParticipant* stat_part =
+            eprosima::fastdds::statistics::dds::DomainParticipant::narrow(part);
+        stat_part->delete_statistics_builtin_entities();
+#endif
         if (part->has_active_entities())
         {
             return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
