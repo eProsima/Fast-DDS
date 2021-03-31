@@ -49,15 +49,23 @@ ReturnCode_t DomainParticipant::disable_statistics_datawriter(
 DomainParticipant* DomainParticipant::narrow(
         eprosima::fastdds::dds::DomainParticipant* domain_participant)
 {
-    (void) domain_participant;
+#ifdef FASTDDS_STATISTICS
+    return static_cast<DomainParticipant*>(domain_participant);
+#else
+    (void)domain_participant;
     return nullptr;
+#endif // FASTDDS_STATISTICS
 }
 
 const DomainParticipant* DomainParticipant::narrow(
         const eprosima::fastdds::dds::DomainParticipant* domain_participant)
 {
-    (void) domain_participant;
+#ifdef FASTDDS_STATISTICS
+    return static_cast<const DomainParticipant*>(domain_participant);
+#else
+    (void)domain_participant;
     return nullptr;
+#endif // FASTDDS_STATISTICS
 }
 
 } // dds
