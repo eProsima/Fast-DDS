@@ -22,7 +22,9 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
         endif()
 
         set(STATISTICS_DOMAINPARTICIPANT_TESTS_SOURCE
-            StatisticsDomainParticipantTests.cpp)
+            StatisticsDomainParticipantTests.cpp
+			${PROJECT_SOURCE_DIR}/src/cpp/statistics/types/typesPubSubTypes.cxx
+			${PROJECT_SOURCE_DIR}/src/cpp/statistics/types/types.cxx)
         set(STATISTICS_QOS_TESTS_SOURCE
             StatisticsQosTests.cpp)
 
@@ -33,7 +35,7 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             )
         target_include_directories(StatisticsDomainParticipantTests PRIVATE ${GTEST_INCLUDE_DIRS}
             ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include ${PROJECT_SOURCE_DIR}/src/cpp)
-        target_link_libraries(StatisticsDomainParticipantTests fastrtps ${GTEST_LIBRARIES})
+        target_link_libraries(StatisticsDomainParticipantTests fastrtps fastcdr ${GTEST_LIBRARIES})
         add_gtest(StatisticsDomainParticipantTests SOURCES ${STATISTICS_DOMAINPARTICIPANT_TESTS_SOURCE})
 
         add_executable(StatisticsQosTests ${STATISTICS_QOS_TESTS_SOURCE})
