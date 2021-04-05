@@ -56,11 +56,11 @@ protected:
     std::vector<AnnotationDescriptor*> annotation_; // Annotations to apply
 
     const int stateTable[4][6] = {
-            /* Input:     letter,  number,  underscore, colon,       other */
-            {INVALID,     VALID,   INVALID, INVALID,    INVALID,     INVALID},
-            {SINGLECOLON, INVALID, INVALID, INVALID,    DOUBLECOLON, INVALID},
-            {DOUBLECOLON, VALID,   INVALID, INVALID,    INVALID,     INVALID},
-            {VALID,       VALID,   VALID,   VALID,      SINGLECOLON, INVALID}};
+        /* Input:     letter,  number,  underscore, colon,       other */
+        {INVALID,     VALID,   INVALID, INVALID,    INVALID,     INVALID},
+        {SINGLECOLON, INVALID, INVALID, INVALID,    DOUBLECOLON, INVALID},
+        {DOUBLECOLON, VALID,   INVALID, INVALID,    INVALID,     INVALID},
+        {VALID,       VALID,   VALID,   VALID,      SINGLECOLON, INVALID}};
 
     void clean();
 

@@ -24,23 +24,25 @@
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::types;
 
-class XTypesTests: public ::testing::Test
+class XTypesTests : public ::testing::Test
 {
-    public:
-        XTypesTests()
-        {
-            //registerTypesTypes();
-        }
+public:
 
-        ~XTypesTests()
-        {
-            TypeObjectFactory::delete_instance();
-            eprosima::fastdds::dds::Log::KillThread();
-        }
+    XTypesTests()
+    {
+        //registerTypesTypes();
+    }
 
-        virtual void TearDown()
-        {
-        }
+    ~XTypesTests()
+    {
+        TypeObjectFactory::delete_instance();
+        eprosima::fastdds::dds::Log::KillThread();
+    }
+
+    virtual void TearDown()
+    {
+    }
+
 };
 
 TEST_F(XTypesTests, EnumMinimalCoercion)
@@ -782,7 +784,9 @@ TEST_F(XTypesTests, TypeDescriptorFullyQualifiedName)
     ASSERT_FALSE(my_descriptor->is_consistent());
 }
 
-int main(int argc, char **argv)
+int main(
+        int argc,
+        char** argv)
 {
     eprosima::fastdds::dds::Log::SetVerbosity(eprosima::fastdds::dds::Log::Info);
 
