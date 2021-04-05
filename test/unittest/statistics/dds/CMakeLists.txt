@@ -23,8 +23,8 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
 
         set(STATISTICS_DOMAINPARTICIPANT_TESTS_SOURCE
             StatisticsDomainParticipantTests.cpp
-			${PROJECT_SOURCE_DIR}/src/cpp/statistics/types/typesPubSubTypes.cxx
-			${PROJECT_SOURCE_DIR}/src/cpp/statistics/types/types.cxx)
+            ${PROJECT_SOURCE_DIR}/src/cpp/statistics/types/typesPubSubTypes.cxx
+            ${PROJECT_SOURCE_DIR}/src/cpp/statistics/types/types.cxx)
         set(STATISTICS_QOS_TESTS_SOURCE
             StatisticsQosTests.cpp)
 
