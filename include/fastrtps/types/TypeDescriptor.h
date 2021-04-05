@@ -55,11 +55,12 @@ protected:
     DynamicType_ptr key_element_type_;      // Key Type for maps.
     std::vector<AnnotationDescriptor*> annotation_; // Annotations to apply
 
-    /* INPUT CHAR:                        letter,  number,  underscore, colon,       other */
-    int stateTable[4][6] = {{INVALID,     VALID,   INVALID, INVALID,    INVALID,     INVALID},
-    /* STATE 1 */           {SINGLECOLON, INVALID, INVALID, INVALID,    DOUBLECOLON, INVALID},
-    /* STATE 2 */           {DOUBLECOLON, VALID,   INVALID, INVALID,    INVALID,     INVALID},
-    /* STATE 3 */           {VALID,       VALID,   VALID,   VALID,      SINGLECOLON, INVALID}};
+    const int stateTable[4][6] = {
+            /* Input:     letter,  number,  underscore, colon,       other */
+            {INVALID,     VALID,   INVALID, INVALID,    INVALID,     INVALID},
+            {SINGLECOLON, INVALID, INVALID, INVALID,    DOUBLECOLON, INVALID},
+            {DOUBLECOLON, VALID,   INVALID, INVALID,    INVALID,     INVALID},
+            {VALID,       VALID,   VALID,   VALID,      SINGLECOLON, INVALID}};
 
     void clean();
 
