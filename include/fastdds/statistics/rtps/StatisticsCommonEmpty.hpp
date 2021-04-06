@@ -19,6 +19,7 @@
 #ifndef _FASTDDS_STATISTICS_RTPS_STATISTICSCOMMON_HPP_
 #define _FASTDDS_STATISTICS_RTPS_STATISTICSCOMMON_HPP_
 
+#include <fastdds/rtps/common/Locator.h>
 #include <fastdds/statistics/IListeners.hpp>
 
 namespace eprosima {

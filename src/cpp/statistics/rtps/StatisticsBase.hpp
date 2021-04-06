@@ -20,8 +20,10 @@
 #define _STATISTICS_RTPS_STATISTICSBASE_HPP_
 
 #include <fastdds/rtps/common/Guid.h>
+#include <fastdds/rtps/common/Locator.h>
 #include <fastdds/statistics/rtps/StatisticsCommon.hpp>
 #include <fastrtps/config.h>
+#include <statistics/types/types.h>
 
 #include <mutex>
 #include <set>
@@ -30,13 +32,23 @@ namespace eprosima {
 namespace fastdds {
 namespace statistics {
 
+#ifdef FASTDDS_STATISTICS
+
 // RTPSWriter and RTPSReader statistics members
 struct StatisticsAncillary
 {
     std::set<std::shared_ptr<IListener>> listeners;
 };
 
-#ifdef FASTDDS_STATISTICS
+struct StatisticsWriterAncillary
+    : public StatisticsAncillary
+{
+};
+
+struct StatisticsReaderAncillary
+    : public StatisticsAncillary
+{
+};
 
 // lambda function to traverse the listener collection
 template<class Function>
@@ -58,6 +70,15 @@ Function StatisticsListenersImpl::for_each_listener(
 
 class StatisticsParticipantImpl
 {
+    // RTPS_SENT ancillary
+    struct rtps_sent_data
+    {
+        unsigned long long packet_count = {};
+        unsigned long long byte_count = {};
+    };
+
+    std::map<fastrtps::rtps::Locator_t, rtps_sent_data> traffic;
+
 protected:
 
     class ListenerProxy
@@ -103,6 +124,9 @@ protected:
 
     using ProxyCollection = std::set<Key, CompareProxies>;
     ProxyCollection listeners_;
+
+    // retrieve the participant guid
+    virtual const GUID_t& getGuid() const = 0;
 
     // retrieve the participant mutex
     virtual std::recursive_mutex* getParticipantMutex() const = 0;
@@ -165,7 +189,16 @@ protected:
     constexpr bool are_datareaders_involved(const uint32_t mask) const;
 
     // TODO: methods for listeners callbacks
-    //
+
+    /*
+     * Report a message is send by the participant
+     * @param loc, destination
+     * @param payload_size, size of the current message
+     */
+    void on_rtps_sent(
+            const fastrtps::rtps::Locator_t & loc,
+            unsigned long payload_size);
+
 public:
 
     bool add_statistics_listener(
@@ -177,7 +210,13 @@ public:
             fastdds::statistics::EventKind kind);
 };
 
+// auxiliary conversion functions
+detail::Locator_s to_statistics_type(fastrtps::rtps::Locator_t);
+detail::GUID_s to_statistics_type(fastrtps::rtps::GUID_t);
+
 #else // dummy implementation
+
+struct StatisticsAncillary {};
 
 class StatisticsParticipantImpl
 {

@@ -18,9 +18,61 @@
 
 #include "StatisticsBase.hpp"
 #include <fastdds/dds/log/Log.hpp>
-#include <statistics/types/types.h>
+
+#include <cmath>
 
 using namespace eprosima::fastdds::statistics;
+
+namespace eprosima {
+namespace fastdds {
+namespace statistics {
+
+detail::Locator_s to_statistics_type(eprosima::fastrtps::rtps::Locator_t l)
+{
+    return *reinterpret_cast<detail::Locator_s*>(&l);
+}
+
+detail::GUID_s to_statistics_type(eprosima::fastrtps::rtps::GUID_t g)
+{
+    return *reinterpret_cast<detail::GUID_s*>(&g);
+}
+
+} // statistics
+} // fastdds
+} // eprosima
+
+StatisticsWriterImpl::StatisticsWriterImpl()
+{
+    init_statistics<StatisticsWriterAncillary>();
+}
+
+StatisticsReaderImpl::StatisticsReaderImpl()
+{
+    init_statistics<StatisticsReaderAncillary>();
+}
+
+StatisticsAncillary* StatisticsListenersImpl::get_aux_members() const
+{
+    return members_.get();
+}
+
+StatisticsWriterAncillary* StatisticsWriterImpl::get_members() const
+{
+    static_assert(
+            std::is_base_of<StatisticsAncillary,StatisticsWriterAncillary>::value,
+            "Auxiliary structure must derive from StatisticsAncillary");
+
+    return static_cast<StatisticsWriterAncillary*>(get_aux_members());
+}
+
+StatisticsReaderAncillary* StatisticsReaderImpl::get_members() const
+{
+    static_assert(
+            std::is_base_of<StatisticsAncillary,StatisticsReaderAncillary>::value,
+            "Auxiliary structure must derive from StatisticsAncillary");
+
+    return static_cast<StatisticsReaderAncillary*>(get_aux_members());
+}
 
 bool StatisticsListenersImpl::add_statistics_listener_impl(
         std::shared_ptr<fastdds::statistics::IListener> listener)
@@ -36,7 +88,8 @@ bool StatisticsListenersImpl::add_statistics_listener_impl(
     // if the collection is not initialized do it
     if (!members_)
     {
-        members_.reset(new StatisticsAncillary());
+        // missing auxiliary data
+        return false;
     }
 
     // add the new listener
@@ -87,7 +140,6 @@ constexpr bool StatisticsParticipantImpl::are_datawriters_involved(const uint32_
 
     constexpr uint32_t writers_maks = HISTORY2HISTORY_LATENCY \
         | PUBLICATION_THROUGHPUT \
-        | RTPS_SENT \
         | RESENT_DATAS \
         | HEARTBEAT_COUNT \
         | DATA_COUNT;
@@ -101,7 +153,6 @@ constexpr bool StatisticsParticipantImpl::are_datareaders_involved(const uint32_
 
     constexpr uint32_t readers_maks = HISTORY2HISTORY_LATENCY \
         | SUBSCRIPTION_THROUGHPUT \
-        | RTPS_LOST \
         | ACKNACK_COUNT \
         | NACKFRAG_COUNT \
         | GAP_COUNT;
@@ -237,4 +288,35 @@ bool StatisticsParticipantImpl::remove_statistics_listener(
 
     return writers_res && readers_res
         && ((old_mask & mask) == mask); // return false if there were unregistered entities
+}
+
+void StatisticsParticipantImpl::on_rtps_sent(
+        const fastrtps::rtps::Locator_t & loc,
+        unsigned long payload_size)
+{
+    using namespace std;
+
+    // Compose callback and update the inner state
+    Entity2LocatorTraffic notification;
+    notification.src_guid(to_statistics_type(getGuid()));
+    notification.dst_locator(to_statistics_type(loc));
+
+    {
+        lock_guard<recursive_mutex> lock(*getParticipantMutex());
+
+        auto & val = traffic[loc];
+        notification.packet_count(++val.packet_count);
+        notification.byte_count(val.byte_count += payload_size);
+        notification.byte_magnitude_order((int16_t)floor(log10(float(val.byte_count))));
+    }
+
+    // Callback
+    Data d;
+    // note that the setter sets RTPS_SENT by default
+    d.entity2locator_traffic(notification);
+
+    for_each_listener([&d](const Key& l)
+            {
+                l->on_statistics_data(d);
+            });
 }

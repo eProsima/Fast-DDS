@@ -23,6 +23,7 @@
 #include <fastrtps/utils/TimedMutex.hpp>
 
 #include <memory>
+#include <type_traits>
 
 namespace eprosima {
 namespace fastdds {
@@ -36,6 +37,32 @@ class StatisticsListenersImpl
     std::unique_ptr<StatisticsAncillary> members_;
 
 protected:
+
+    /*
+     * Create a class A auxiliary structure
+     * @return true if successfully created
+     */
+    template<class A>
+    bool init_statistics()
+    {
+        static_assert(
+                std::is_base_of<StatisticsAncillary,A>::value,
+                "Auxiliary structure must derive from StatisticsAncillary");
+
+        if(!members_)
+        {
+            members_.reset(new A);
+            return true;
+        }
+
+        return false;
+    }
+
+    /*
+     * Returns the auxiliary members
+     * @return The specialized auxiliary structure for each class
+     */
+    StatisticsAncillary* get_aux_members() const;
 
     /*
      * Add a listener to receive statistics backend callbacks
@@ -66,21 +93,49 @@ protected:
      * Retrieve endpoint mutexes from derived class
      * @return defaults to the endpoint mutex
      */
-    virtual fastrtps::RecursiveTimedMutex& get_statistics_mutex() = 0;
+    virtual fastrtps::RecursiveTimedMutex& get_statistics_mutex() const = 0;
 
 };
+
+// Members are private details
+struct StatisticsWriterAncillary;
 
 class StatisticsWriterImpl
     : protected StatisticsListenersImpl
 {
 protected:
+    /*
+     * Constructor. Mandatory member initialization.
+     */
+    StatisticsWriterImpl();
+
+    /*
+     * Create the auxiliary structure
+     * @return true if successfully created
+     */
+    StatisticsWriterAncillary* get_members() const;
+
     // TODO: methods for listeners callbacks
 };
+
+// Members are private details
+struct StatisticsReaderAncillary;
 
 class StatisticsReaderImpl
     : protected StatisticsListenersImpl
 {
 protected:
+
+    /*
+     * Constructor. Mandatory member initialization.
+     */
+    StatisticsReaderImpl();
+
+    /*
+     * Create the auxiliary structure
+     * @return true if successfully created
+     */
+    StatisticsReaderAncillary* get_members() const;
 
     // TODO: methods for listeners callbacks
 };

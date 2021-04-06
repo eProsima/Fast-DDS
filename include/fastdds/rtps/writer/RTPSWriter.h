@@ -305,9 +305,9 @@ public:
      * Return the mutex used to protect statistics module members
      * @return defaults to the endpoint mutex
      */
-    RecursiveTimedMutex& get_statistics_mutex() override
+    RecursiveTimedMutex& get_statistics_mutex() const override
     {
-        return getMutex();
+        return const_cast<Endpoint*>(static_cast<const Endpoint*>(this))->getMutex();
     }
 
 #endif // FASTDDS_STATISTICS
