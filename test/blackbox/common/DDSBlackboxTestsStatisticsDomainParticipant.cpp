@@ -33,7 +33,8 @@ class WriterReaderDataTest : public eprosima::fastdds::statistics::WriterReaderD
 {
 public:
 
-    bool operator==(const WriterReaderDataTest &x) const
+    bool operator ==(
+            const WriterReaderDataTest& x) const
     {
         if (this->writer_guid().guidPrefix().value() == x.writer_guid().guidPrefix().value() &&
                 this->writer_guid().entityId().value() == x.writer_guid().entityId().value() &&
@@ -45,13 +46,15 @@ public:
         }
         return false;
     }
+
 };
 
 class Locator2LocatorDataTest : public eprosima::fastdds::statistics::Locator2LocatorData
 {
 public:
 
-    bool operator==(const Locator2LocatorDataTest &x) const
+    bool operator ==(
+            const Locator2LocatorDataTest& x) const
     {
         if (this->src_locator().kind() == x.src_locator().kind() &&
                 this->src_locator().port() == x.src_locator().port() &&
@@ -65,13 +68,15 @@ public:
         }
         return false;
     }
+
 };
 
 class Entity2LocatorTrafficTest : public eprosima::fastdds::statistics::Entity2LocatorTraffic
 {
 public:
 
-    bool operator==(const Entity2LocatorTrafficTest &x) const
+    bool operator ==(
+            const Entity2LocatorTrafficTest& x) const
     {
         if (this->src_guid().guidPrefix().value() == x.src_guid().guidPrefix().value() &&
                 this->src_guid().entityId().value() == x.src_guid().entityId().value() &&
@@ -86,13 +91,15 @@ public:
         }
         return false;
     }
+
 };
 
 class DiscoveryTimeTest : public eprosima::fastdds::statistics::DiscoveryTime
 {
 public:
 
-    bool operator==(const DiscoveryTimeTest &x) const
+    bool operator ==(
+            const DiscoveryTimeTest& x) const
     {
         if (this->local_participant_guid().guidPrefix().value() == x.local_participant_guid().guidPrefix().value() &&
                 this->local_participant_guid().entityId().value() == x.local_participant_guid().entityId().value() &&
@@ -104,13 +111,15 @@ public:
         }
         return false;
     }
+
 };
 
 class PhysicalDataTest : public eprosima::fastdds::statistics::PhysicalData
 {
 public:
 
-    bool operator==(const PhysicalDataTest &x) const
+    bool operator ==(
+            const PhysicalDataTest& x) const
     {
         if (this->participant_guid().guidPrefix().value() == x.participant_guid().guidPrefix().value() &&
                 this->participant_guid().entityId().value() == x.participant_guid().entityId().value() &&
@@ -122,13 +131,15 @@ public:
         }
         return false;
     }
+
 };
 
 class EntityDataTest : public eprosima::fastdds::statistics::EntityData
 {
 public:
 
-    bool operator==(const EntityDataTest &x) const
+    bool operator ==(
+            const EntityDataTest& x) const
     {
         if (this->guid().guidPrefix().value() == x.guid().guidPrefix().value() &&
                 this->guid().entityId().value() == x.guid().entityId().value() &&
@@ -138,13 +149,15 @@ public:
         }
         return false;
     }
+
 };
 
 class EntityCountTest : public eprosima::fastdds::statistics::EntityCount
 {
 public:
 
-    bool operator==(const EntityCountTest &x) const
+    bool operator ==(
+            const EntityCountTest& x) const
     {
         if (this->guid().guidPrefix().value() == x.guid().guidPrefix().value() &&
                 this->guid().entityId().value() == x.guid().entityId().value() &&
@@ -154,13 +167,15 @@ public:
         }
         return false;
     }
+
 };
 
 class SampleIdentityCountTest : public eprosima::fastdds::statistics::SampleIdentityCount
 {
 public:
 
-    bool operator==(const SampleIdentityCountTest &x) const
+    bool operator ==(
+            const SampleIdentityCountTest& x) const
     {
         if (this->sample_id().writer_guid().guidPrefix().value() == x.sample_id().writer_guid().guidPrefix().value() &&
                 this->sample_id().writer_guid().entityId().value() == x.sample_id().writer_guid().entityId().value() &&
@@ -172,6 +187,7 @@ public:
         }
         return false;
     }
+
 };
 
 class WriterReaderDataPubSubTypeTest : public eprosima::fastdds::statistics::WriterReaderDataPubSubType
@@ -264,15 +280,15 @@ TEST(StatisticsDomainParticipant, CreateParticipant)
 
     // Create statistics DataReaders
     PubSubReader<WriterReaderDataPubSubTypeTest> history_latency_reader(
-            eprosima::fastdds::statistics::HISTORY_LATENCY_TOPIC, true, true);
+        eprosima::fastdds::statistics::HISTORY_LATENCY_TOPIC, true, true);
     PubSubReader<Locator2LocatorDataPubSubTypeTest> network_latency_reader(
-            eprosima::fastdds::statistics::NETWORK_LATENCY_TOPIC, true, true);
+        eprosima::fastdds::statistics::NETWORK_LATENCY_TOPIC, true, true);
     PubSubReader<Entity2LocatorTrafficPubSubTypeTest> rtps_lost_reader(
-            eprosima::fastdds::statistics::RTPS_LOST_TOPIC, true, true);
+        eprosima::fastdds::statistics::RTPS_LOST_TOPIC, true, true);
     PubSubReader<DiscoveryTimePubSubTypeTest> discovery_reader(
-            eprosima::fastdds::statistics::DISCOVERY_TOPIC, true, true);
+        eprosima::fastdds::statistics::DISCOVERY_TOPIC, true, true);
     PubSubReader<PhysicalDataPubSubTypeTest> physical_data_reader(
-            eprosima::fastdds::statistics::PHYSICAL_DATA_TOPIC, true, true);
+        eprosima::fastdds::statistics::PHYSICAL_DATA_TOPIC, true, true);
 
     // 1. Set environment variable and create participant using Qos set by code
     const char* value = "HISTORY_LATENCY_TOPIC;NETWORK_LATENCY_TOPIC;RTPS_LOST_TOPIC";
@@ -346,9 +362,9 @@ TEST(StatisticsDomainParticipant, CreateParticipant)
     EXPECT_EQ(null_type, participant->find_type(sample_identity_count_type.get_type_name()));
 
     EXPECT_EQ(nullptr, participant->lookup_topicdescription(
-            eprosima::fastdds::statistics::PUBLICATION_THROUGHPUT_TOPIC));
+                eprosima::fastdds::statistics::PUBLICATION_THROUGHPUT_TOPIC));
     EXPECT_EQ(nullptr, participant->lookup_topicdescription(
-            eprosima::fastdds::statistics::SUBSCRIPTION_THROUGHPUT_TOPIC));
+                eprosima::fastdds::statistics::SUBSCRIPTION_THROUGHPUT_TOPIC));
     EXPECT_EQ(nullptr, participant->lookup_topicdescription(eprosima::fastdds::statistics::RTPS_SENT_TOPIC));
     EXPECT_EQ(nullptr, participant->lookup_topicdescription(eprosima::fastdds::statistics::RESENT_DATAS_TOPIC));
     EXPECT_EQ(nullptr, participant->lookup_topicdescription(eprosima::fastdds::statistics::HEARTBEAT_COUNT_TOPIC));
@@ -409,15 +425,15 @@ TEST(StatisticsDomainParticipant, CreateParticipantUsingXML)
 
     // Create statistics DataReaders
     PubSubReader<EntityDataPubSubTypeTest> publication_throughput_reader(
-            eprosima::fastdds::statistics::PUBLICATION_THROUGHPUT_TOPIC, true, true);
+        eprosima::fastdds::statistics::PUBLICATION_THROUGHPUT_TOPIC, true, true);
     PubSubReader<EntityDataPubSubTypeTest> subscription_throughput_reader(
-            eprosima::fastdds::statistics::SUBSCRIPTION_THROUGHPUT_TOPIC, true, true);
+        eprosima::fastdds::statistics::SUBSCRIPTION_THROUGHPUT_TOPIC, true, true);
     PubSubReader<EntityCountPubSubTypeTest> heartbeat_count_reader(
-            eprosima::fastdds::statistics::HEARTBEAT_COUNT_TOPIC, true, true);
+        eprosima::fastdds::statistics::HEARTBEAT_COUNT_TOPIC, true, true);
     PubSubReader<EntityCountPubSubTypeTest> nackfrag_count_reader(
-            eprosima::fastdds::statistics::NACKFRAG_COUNT_TOPIC, true, true);
+        eprosima::fastdds::statistics::NACKFRAG_COUNT_TOPIC, true, true);
     PubSubReader<SampleIdentityCountPubSubTypeTest> sample_datas_reader(
-            eprosima::fastdds::statistics::SAMPLE_DATAS_TOPIC, true, true);
+        eprosima::fastdds::statistics::SAMPLE_DATAS_TOPIC, true, true);
 
     // 1. Set environment variable and create participant using Qos set by code
     const char* value = "PUBLICATION_THROUGHPUT_TOPIC;HEARTBEAT_COUNT_TOPIC";
@@ -438,7 +454,7 @@ TEST(StatisticsDomainParticipant, CreateParticipantUsingXML)
     // 2. Check that the statistics topics and types related to the statistics DataWriters enabled using the
     // environment variable exist.
     EXPECT_NE(nullptr, participant->lookup_topicdescription(
-            eprosima::fastdds::statistics::PUBLICATION_THROUGHPUT_TOPIC));
+                eprosima::fastdds::statistics::PUBLICATION_THROUGHPUT_TOPIC));
     EXPECT_EQ(throughput_type, participant->find_type(throughput_type.get_type_name()));
 
     EXPECT_NE(nullptr, participant->lookup_topicdescription(eprosima::fastdds::statistics::HEARTBEAT_COUNT_TOPIC));
@@ -447,7 +463,7 @@ TEST(StatisticsDomainParticipant, CreateParticipantUsingXML)
     // Check that the statistics topics and types related to the statistics DataWriters set with the PropertyPolicyQos
     // have been created correctly.
     EXPECT_NE(nullptr, participant->lookup_topicdescription(
-            eprosima::fastdds::statistics::SUBSCRIPTION_THROUGHPUT_TOPIC));
+                eprosima::fastdds::statistics::SUBSCRIPTION_THROUGHPUT_TOPIC));
     EXPECT_EQ(throughput_type, participant->find_type(throughput_type.get_type_name()));
 
     EXPECT_NE(nullptr, participant->lookup_topicdescription(eprosima::fastdds::statistics::NACKFRAG_COUNT_TOPIC));

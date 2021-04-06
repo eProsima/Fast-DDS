@@ -66,6 +66,7 @@ protected:
         delete mutex_;
         mutex_ = nullptr;
     }
+
 };
 
 /*
@@ -510,8 +511,10 @@ TEST_F(StatisticsDomainParticipantTests, CreateParticipantWithInvalidTopicName)
 
     EXPECT_EQ(nullptr, participant->lookup_topicdescription(eprosima::fastdds::statistics::HISTORY_LATENCY_TOPIC));
     EXPECT_EQ(nullptr, participant->lookup_topicdescription(eprosima::fastdds::statistics::NETWORK_LATENCY_TOPIC));
-    EXPECT_EQ(nullptr, participant->lookup_topicdescription(eprosima::fastdds::statistics::PUBLICATION_THROUGHPUT_TOPIC));
-    EXPECT_EQ(nullptr, participant->lookup_topicdescription(eprosima::fastdds::statistics::SUBSCRIPTION_THROUGHPUT_TOPIC));
+    EXPECT_EQ(nullptr,
+            participant->lookup_topicdescription(eprosima::fastdds::statistics::PUBLICATION_THROUGHPUT_TOPIC));
+    EXPECT_EQ(nullptr, participant->lookup_topicdescription(
+                eprosima::fastdds::statistics::SUBSCRIPTION_THROUGHPUT_TOPIC));
     EXPECT_EQ(nullptr, participant->lookup_topicdescription(eprosima::fastdds::statistics::RTPS_SENT_TOPIC));
     EXPECT_EQ(nullptr, participant->lookup_topicdescription(eprosima::fastdds::statistics::RTPS_LOST_TOPIC));
     EXPECT_EQ(nullptr, participant->lookup_topicdescription(eprosima::fastdds::statistics::RESENT_DATAS_TOPIC));

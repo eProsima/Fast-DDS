@@ -97,7 +97,6 @@ public:
      */
     RTPS_DllAPI ReturnCode_t enable() override;
 
-
 protected:
 
     /**
@@ -128,8 +127,8 @@ protected:
      */
     void delete_statistics_builtin_entities();
 
-   eprosima::fastdds::dds::Publisher* builtin_publisher_;
-    
+    eprosima::fastdds::dds::Publisher* builtin_publisher_;
+
     friend class eprosima::fastdds::dds::DomainParticipantFactory;
 };
 

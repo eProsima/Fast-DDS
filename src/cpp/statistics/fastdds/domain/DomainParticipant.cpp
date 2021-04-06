@@ -82,7 +82,7 @@ ReturnCode_t DomainParticipant::enable()
 {
     ReturnCode_t ret = eprosima::fastdds::dds::DomainParticipant::enable();
 
-    if(enable_)
+    if (enable_)
     {
         create_statistics_builtin_entities();
     }
@@ -98,7 +98,7 @@ void DomainParticipant::create_statistics_builtin_entities()
     // Enable statistics datawriters
     // 1. Find fastdds_statistics PropertyPolicyQos
     const std::string* property_topic_list = eprosima::fastrtps::rtps::PropertyPolicyHelper::find_property(
-            impl_->get_qos().properties(), "fastdds.statistics");
+        impl_->get_qos().properties(), "fastdds.statistics");
 
     if (nullptr != property_topic_list)
     {
