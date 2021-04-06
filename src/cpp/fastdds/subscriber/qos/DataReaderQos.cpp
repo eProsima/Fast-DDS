@@ -18,8 +18,7 @@
  */
 
 #include <fastdds/dds/subscriber/qos/DataReaderQos.hpp>
-#include <utils/Host.hpp>
-#include <fastdds/dds/log/Log.hpp>
+#include <fastdds/core/policy/QosPolicyUtils.hpp>
 
 namespace eprosima {
 namespace fastdds {
@@ -54,13 +53,7 @@ ReaderQos DataReaderQos::get_readerqos(
     if (qos.data_sharing.kind() != OFF &&
             qos.data_sharing.domain_ids().empty())
     {
-        uint64_t id = 0;
-        Host::uint48 mac_id = Host::instance().mac_id();
-        for (size_t i = 0; i < Host::mac_id_length; ++i)
-        {
-            id |= static_cast<uint64_t>(mac_id.value[i]) << (56 - (i * 8));
-        }
-        qos.data_sharing.add_domain_id(id);
+        qos.data_sharing.add_domain_id(utils::default_domain_id());
     }
 
     return qos;
