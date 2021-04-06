@@ -12,6 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include <mutex>
+#include <vector>
+
 #include <gtest/gtest.h>
 
 #include <fastdds/dds/core/policy/QosPolicies.hpp>
@@ -26,10 +29,44 @@
 #include <fastrtps/types/TypesBase.h>
 #include <statistics/types/typesPubSubTypes.h>
 
+#include "../../logging/mock/MockConsumer.h"
+
 namespace eprosima {
 namespace fastdds {
 namespace statistics {
 namespace dds {
+
+class StatisticsDomainParticipantTests : public ::testing::Test
+{
+public:
+
+    void helper_block_for_at_least_entries(
+            uint32_t amount)
+    {
+        std::unique_lock<std::mutex> lck(*mutex_);
+        mock_consumer_->cv().wait(lck, [this, amount]
+                {
+                    return mock_consumer_->ConsumedEntriesSize_nts() >= amount;
+                });
+    }
+
+    eprosima::fastdds::dds::MockConsumer* mock_consumer_;
+
+    mutable std::mutex* mutex_;
+
+protected:
+
+    void SetUp() override
+    {
+        mutex_ = new std::mutex();
+    }
+
+    void TearDown() override
+    {
+        delete mutex_;
+        mutex_ = nullptr;
+    }
+};
 
 /*
  * This test checks eprosima::fastdds::statistics::dds::DomainParticipant narrow methods.
@@ -40,7 +77,7 @@ namespace dds {
  * 3. Call both narrow methods with an invalid pointer and check that it returns nullptr
  * 4. Delete DDS entities
  */
-TEST(StatisticsDomainParticipantTests, NarrowDomainParticipantTest)
+TEST_F(StatisticsDomainParticipantTests, NarrowDomainParticipantTest)
 {
     // 1. Create DomainParticipant
     eprosima::fastdds::dds::DomainParticipant* participant =
@@ -104,7 +141,7 @@ TEST(StatisticsDomainParticipantTests, NarrowDomainParticipantTest)
  * upstream.
  * 15. Delete DDS entities.
  */
-TEST(StatisticsDomainParticipantTests, EnableDisableStatisticsDataWriterTest)
+TEST_F(StatisticsDomainParticipantTests, EnableDisableStatisticsDataWriterTest)
 {
     eprosima::fastdds::dds::DomainParticipant* participant =
             eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->
@@ -411,6 +448,89 @@ TEST(StatisticsDomainParticipantTests, EnableDisableStatisticsDataWriterTest)
     EXPECT_EQ(eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->
                     delete_participant(statistics_participant),
             eprosima::fastrtps::types::ReturnCode_t::RETCODE_OK);
+}
+
+/**
+ * This test checks that when the topic name provided is not valid, a log error is printed.
+ * 1. Create a participant with the property fastdds.statistics set to an invalid topic name
+ * 2. Check that there is no topic/type registered in the participant
+ * 3. Wait for the logError entry to be consumed
+ */
+TEST_F(StatisticsDomainParticipantTests, CreateParticipantWithInvalidTopicName)
+{
+#ifdef FASTDDS_STATISTICS
+    logError(STATISTICS_DOMAINPARTICIPANT_TEST, "This test is going to fail because API is not yet implemented.")
+    eprosima::fastdds::dds::Log::Flush();
+
+    mock_consumer_ = new eprosima::fastdds::dds::MockConsumer();
+
+    eprosima::fastdds::dds::Log::RegisterConsumer(std::unique_ptr<eprosima::fastdds::dds::LogConsumer>(mock_consumer_));
+    eprosima::fastdds::dds::Log::SetVerbosity(eprosima::fastdds::dds::Log::Error);
+    eprosima::fastdds::dds::Log::SetCategoryFilter(std::regex("(STATISTICS_DOMAIN_PARTICIPANT)"));
+    eprosima::fastdds::dds::Log::SetErrorStringFilter(std::regex("(not a valid statistics topic name/alias)"));
+
+    // 1. Create DomainParticipant
+    eprosima::fastdds::dds::DomainParticipantQos pqos;
+    pqos.properties().properties().emplace_back("fastdds.statistics",
+            "INVALID_TOPIC_NAME1; INVALID_TOPIC_NAME2");
+
+    eprosima::fastdds::dds::DomainParticipant* participant =
+            eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->
+                    create_participant(0, pqos);
+    ASSERT_NE(participant, nullptr);
+
+    // 2. Check topics/types
+    // Create TypeSupports
+    eprosima::fastdds::dds::TypeSupport history_latency_type(
+        new eprosima::fastdds::statistics::WriterReaderDataPubSubType);
+    eprosima::fastdds::dds::TypeSupport network_latency_type(
+        new eprosima::fastdds::statistics::Locator2LocatorDataPubSubType);
+    eprosima::fastdds::dds::TypeSupport throughput_type(
+        new eprosima::fastdds::statistics::EntityDataPubSubType);
+    eprosima::fastdds::dds::TypeSupport rtps_traffic_type(
+        new eprosima::fastdds::statistics::Entity2LocatorTrafficPubSubType);
+    eprosima::fastdds::dds::TypeSupport count_type(
+        new eprosima::fastdds::statistics::EntityCountPubSubType);
+    eprosima::fastdds::dds::TypeSupport discovery_type(
+        new eprosima::fastdds::statistics::DiscoveryTimePubSubType);
+    eprosima::fastdds::dds::TypeSupport sample_identity_count_type(
+        new eprosima::fastdds::statistics::SampleIdentityCountPubSubType);
+    eprosima::fastdds::dds::TypeSupport physical_data_type(
+        new eprosima::fastdds::statistics::PhysicalDataPubSubType);
+    eprosima::fastdds::dds::TypeSupport null_type(nullptr);
+
+    EXPECT_EQ(null_type, participant->find_type(history_latency_type.get_type_name()));
+    EXPECT_EQ(null_type, participant->find_type(network_latency_type.get_type_name()));
+    EXPECT_EQ(null_type, participant->find_type(throughput_type.get_type_name()));
+    EXPECT_EQ(null_type, participant->find_type(rtps_traffic_type.get_type_name()));
+    EXPECT_EQ(null_type, participant->find_type(count_type.get_type_name()));
+    EXPECT_EQ(null_type, participant->find_type(discovery_type.get_type_name()));
+    EXPECT_EQ(null_type, participant->find_type(sample_identity_count_type.get_type_name()));
+    EXPECT_EQ(null_type, participant->find_type(physical_data_type.get_type_name()));
+
+    EXPECT_EQ(nullptr, participant->lookup_topicdescription(eprosima::fastdds::statistics::HISTORY_LATENCY_TOPIC));
+    EXPECT_EQ(nullptr, participant->lookup_topicdescription(eprosima::fastdds::statistics::NETWORK_LATENCY_TOPIC));
+    EXPECT_EQ(nullptr, participant->lookup_topicdescription(eprosima::fastdds::statistics::PUBLICATION_THROUGHPUT_TOPIC));
+    EXPECT_EQ(nullptr, participant->lookup_topicdescription(eprosima::fastdds::statistics::SUBSCRIPTION_THROUGHPUT_TOPIC));
+    EXPECT_EQ(nullptr, participant->lookup_topicdescription(eprosima::fastdds::statistics::RTPS_SENT_TOPIC));
+    EXPECT_EQ(nullptr, participant->lookup_topicdescription(eprosima::fastdds::statistics::RTPS_LOST_TOPIC));
+    EXPECT_EQ(nullptr, participant->lookup_topicdescription(eprosima::fastdds::statistics::RESENT_DATAS_TOPIC));
+    EXPECT_EQ(nullptr, participant->lookup_topicdescription(eprosima::fastdds::statistics::HEARTBEAT_COUNT_TOPIC));
+    EXPECT_EQ(nullptr, participant->lookup_topicdescription(eprosima::fastdds::statistics::ACKNACK_COUNT_TOPIC));
+    EXPECT_EQ(nullptr, participant->lookup_topicdescription(eprosima::fastdds::statistics::NACKFRAG_COUNT_TOPIC));
+    EXPECT_EQ(nullptr, participant->lookup_topicdescription(eprosima::fastdds::statistics::GAP_COUNT_TOPIC));
+    EXPECT_EQ(nullptr, participant->lookup_topicdescription(eprosima::fastdds::statistics::DATA_COUNT_TOPIC));
+    EXPECT_EQ(nullptr, participant->lookup_topicdescription(eprosima::fastdds::statistics::PDP_PACKETS_TOPIC));
+    EXPECT_EQ(nullptr, participant->lookup_topicdescription(eprosima::fastdds::statistics::EDP_PACKETS_TOPIC));
+    EXPECT_EQ(nullptr, participant->lookup_topicdescription(eprosima::fastdds::statistics::DISCOVERY_TOPIC));
+    EXPECT_EQ(nullptr, participant->lookup_topicdescription(eprosima::fastdds::statistics::SAMPLE_DATAS_TOPIC));
+    EXPECT_EQ(nullptr, participant->lookup_topicdescription(eprosima::fastdds::statistics::PHYSICAL_DATA_TOPIC));
+
+    // 3. Wait until logError entries are captured
+    helper_block_for_at_least_entries(2);
+    auto consumed_entries = mock_consumer_->ConsumedEntries();
+    EXPECT_EQ(consumed_entries.size(), 2u);
+#endif // FASTDDS_STATISTICS
 }
 
 } // namespace dds
