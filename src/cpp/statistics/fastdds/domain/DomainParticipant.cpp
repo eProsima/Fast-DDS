@@ -20,11 +20,13 @@
 
 #include <string>
 #include <sstream>
+#include <vector>
 
 #include <fastdds/dds/domain/DomainParticipant.hpp>
 #include <fastdds/dds/log/Log.hpp>
 #include <fastdds/dds/publisher/qos/DataWriterQos.hpp>
 #include <fastdds/dds/publisher/qos/PublisherQos.hpp>
+#include <fastdds/dds/publisher/DataWriter.hpp>
 #include <fastdds/statistics/dds/publisher/qos/DataWriterQos.hpp>
 #include <fastrtps/types/TypesBase.h>
 
@@ -137,6 +139,20 @@ void DomainParticipant::enable_statistics_builtin_datawriters(
             logError(STATISTICS_DOMAIN_PARTICIPANT, "Topic " << topic << "is not a valid statistics topic name/alias");
         }
     }
+}
+
+void DomainParticipant::delete_statistics_builtin_entities()
+{
+    std::vector<eprosima::fastdds::dds::DataWriter*> builtin_writers;
+    builtin_publisher_->get_datawriters(builtin_writers);
+    for (auto writer : builtin_writers)
+    {
+        std::string topic_name = writer->get_topic()->get_name();
+        disable_statistics_datawriter(topic_name);
+    }
+
+    // Delete builtin_publisher
+    impl_->delete_publisher(builtin_publisher_);
 }
 
 } // dds

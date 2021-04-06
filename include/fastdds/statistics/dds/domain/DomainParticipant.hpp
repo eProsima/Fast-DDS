@@ -123,6 +123,11 @@ protected:
     void enable_statistics_builtin_datawriters(
             const std::string& topic_list);
 
+    /**
+     * Auxiliary function to delete the statistics builtin entities.
+     */
+    void delete_statistics_builtin_entities();
+
    eprosima::fastdds::dds::Publisher* builtin_publisher_;
     
     friend class eprosima::fastdds::dds::DomainParticipantFactory;
