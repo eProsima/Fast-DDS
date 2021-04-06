@@ -460,6 +460,7 @@ TEST(Discovery, EndpointRediscoveryWithTransientLocalData)
 
     writer
             .lease_duration({ 2, 0 }, { 1, 0 })
+            .history_depth(10)
             .reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS)
             .durability_kind(eprosima::fastrtps::TRANSIENT_LOCAL_DURABILITY_QOS)
             .init();
@@ -610,7 +611,7 @@ TEST(Discovery, LocalInitialPeers)
     writer_default_unicast_locator.push_back(loc_default_unicast);
 
     writer.metatraffic_unicast_locator_list(writer_default_unicast_locator).
-            initial_peers(writer_initial_peers).init();
+            initial_peers(writer_initial_peers).history_depth(10).init();
 
     ASSERT_TRUE(writer.isInitialized());
 
