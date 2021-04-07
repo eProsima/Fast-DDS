@@ -32,6 +32,7 @@
 #include <fastrtps/types/TypesBase.h>
 
 #include <fastdds/domain/DomainParticipantImpl.hpp>
+#include <fastdds/publisher/DataWriterImpl.hpp>
 #include <utils/SystemInfo.hpp>
 
 namespace eprosima {
@@ -70,6 +71,11 @@ ReturnCode_t DomainParticipant::enable_statistics_datawriter(
     if(!check_statistics_topic_name(topic_name))
     {
         return ReturnCode_t::RETCODE_BAD_PARAMETER;
+    }
+
+    if (!eprosima::fastdds::dds::DataWriterImpl::check_qos(dwqos))
+    {
+        return ReturnCode_t::RETCODE_INCONSISTENT_POLICY;
     }
     return ReturnCode_t::RETCODE_OK;
 #endif // FASTDDS_STATISTICS
