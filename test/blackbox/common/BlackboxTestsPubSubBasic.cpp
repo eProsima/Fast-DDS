@@ -23,6 +23,8 @@
 
 #include <gtest/gtest.h>
 
+#include <tuple>
+
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
 
@@ -33,14 +35,14 @@ enum communication_type
     DATASHARING
 };
 
-class PubSubBasic : public testing::TestWithParam<communication_type>
+class PubSubBasic : public testing::TestWithParam<std::tuple<communication_type, bool>>
 {
 public:
 
     void SetUp() override
     {
         LibrarySettingsAttributes library_settings;
-        switch (GetParam())
+        switch (std::get<0>(GetParam()))
         {
             case INTRAPROCESS:
                 library_settings.intraprocess_delivery = IntraprocessDeliveryType::INTRAPROCESS_FULL;
@@ -53,12 +55,14 @@ public:
             default:
                 break;
         }
+
+        use_pull_mode = std::get<1>(GetParam());
     }
 
     void TearDown() override
     {
         LibrarySettingsAttributes library_settings;
-        switch (GetParam())
+        switch (std::get<0>(GetParam()))
         {
             case INTRAPROCESS:
                 library_settings.intraprocess_delivery = IntraprocessDeliveryType::INTRAPROCESS_OFF;
@@ -71,6 +75,8 @@ public:
             default:
                 break;
         }
+
+        use_pull_mode = false;
     }
 
 };
@@ -662,20 +668,22 @@ TEST_P(PubSubBasic, unique_flows_one_writer_two_readers)
 
 GTEST_INSTANTIATE_TEST_MACRO(PubSubBasic,
         PubSubBasic,
-        testing::Values(TRANSPORT, INTRAPROCESS, DATASHARING),
+        testing::Combine(testing::Values(TRANSPORT, INTRAPROCESS, DATASHARING), testing::Values(false, true)),
         [](const testing::TestParamInfo<PubSubBasic::ParamType>& info)
         {
-            switch (info.param)
+            bool pull_mode = std::get<1>(info.param);
+            std::string suffix = pull_mode ? "_pull_mode" : "";
+            switch (std::get<0>(info.param))
             {
                 case INTRAPROCESS:
-                    return "Intraprocess";
+                    return "Intraprocess" + suffix;
                     break;
                 case DATASHARING:
-                    return "Datasharing";
+                    return "Datasharing" + suffix;
                     break;
                 case TRANSPORT:
                 default:
-                    return "Transport";
+                    return "Transport" + suffix;
             }
 
         });
