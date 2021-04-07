@@ -35,11 +35,11 @@
 
 #include <fastdds/dds/log/Log.hpp>
 #include <fastrtps/utils/TimeConversion.h>
-#include <utils/Host.hpp>
 #include <fastdds/rtps/resources/ResourceEvent.h>
 #include <fastdds/rtps/resources/TimedEvent.h>
 #include <fastdds/rtps/builtin/liveliness/WLP.h>
 #include <fastdds/core/policy/ParameterSerializer.hpp>
+#include <fastdds/core/policy/QosPolicyUtils.hpp>
 
 #include <rtps/history/TopicPayloadPoolRegistry.hpp>
 #include <rtps/DataSharing/DataSharingPayloadPool.hpp>
@@ -204,13 +204,7 @@ ReturnCode_t DataWriterImpl::enable()
         DataSharingQosPolicy datasharing(qos_.data_sharing());
         if (datasharing.domain_ids().empty())
         {
-            uint64_t id = 0;
-            Host::uint48 mac_id = Host::instance().mac_id();
-            for (size_t i = 0; i < Host::mac_id_length; ++i)
-            {
-                id |= mac_id.value[i] << (64 - i);
-            }
-            datasharing.add_domain_id(id);
+            datasharing.add_domain_id(utils::default_domain_id());
         }
         w_att.endpoint.set_data_sharing_configuration(datasharing);
     }
