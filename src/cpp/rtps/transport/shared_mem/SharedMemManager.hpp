@@ -561,7 +561,6 @@ public:
                 uint32_t required_data_size)
         {
             auto it = allocated_buffers_.begin();
-
             while (it != allocated_buffers_.end())
             {
                 // There is enough space to allocate the buffer
@@ -595,6 +594,24 @@ public:
                     {
                         it++;
                     }
+                }
+            }
+
+            // We may have enough memory but no free buffers
+            it = allocated_buffers_.begin();
+            while (free_buffers_.empty() && it != allocated_buffers_.end())
+            {
+                // Buffer is not beign processed by any listener
+                if ((*it)->invalidate_if_not_processing())
+                {
+                    release_buffer(*it);
+
+                    free_buffers_.push_back(*it);
+                    it = allocated_buffers_.erase(it);
+                }
+                else
+                {
+                    it++;
                 }
             }
 
@@ -706,6 +723,7 @@ public:
 
                     if (buffer_ref)
                     {
+                        global_port_->listener_processing_start(listener_index_, buffer_descriptor);
                         if (was_cell_freed)
                         {
                             // Atomically increase processing & decrease enqueued
@@ -744,6 +762,11 @@ public:
             }
 
             return buffer_ref;
+        }
+
+        void stop_processing_buffer()
+        {
+            global_port_->listener_processing_stop(listener_index_);
         }
 
         void regenerate_port()
@@ -855,6 +878,34 @@ public:
             return ret;
         }
 
+        /**
+         * @brief Unlock buffers being processed by the port if the port is frozen.
+         *
+         * If the port is zombie, finds all the buffers that were being processed by a listener
+         * and decrements their processing count, so that they are not kept locked forever
+         */
+        void recover_blocked_processing()
+        {
+            SharedMemGlobal::BufferDescriptor buffer_descriptor;
+            if (SharedMemGlobal::Port::is_zombie(global_port_->port_id(),
+                    shared_mem_manager_->global_segment()->domain_name()))
+            {
+                while (global_port_->get_and_remove_blocked_processing(buffer_descriptor))
+                {
+                    auto segment = shared_mem_manager_->find_segment(buffer_descriptor.source_segment_id);
+                    if (!segment)
+                    {
+                        // If the segment is gone, nothing to do
+                        continue;
+                    }
+                    auto buffer_node =
+                            static_cast<BufferNode*>(segment->get_address_from_offset(buffer_descriptor.
+                                    buffer_node_offset));
+                    buffer_node->dec_processing_count(buffer_descriptor.validity_id);
+                }
+            }
+        }
+
         std::shared_ptr<Listener> create_listener()
         {
             return std::make_shared<Listener>(shared_mem_manager_, global_port_);
@@ -864,6 +915,7 @@ public:
 
         void regenerate_port()
         {
+            recover_blocked_processing();
             auto new_port = shared_mem_manager_->regenerate_port(global_port_, open_mode_);
 
             *this = std::move(*new_port);
