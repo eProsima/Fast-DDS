@@ -30,7 +30,9 @@
 #include <fastdds/rtps/reader/RTPSReader.h>
 #include <fastdds/rtps/writer/RTPSWriter.h>
 #include <fastdds/statistics/IListeners.hpp>
+#include <fastrtps/attributes/LibrarySettingsAttributes.h>
 #include <fastrtps/attributes/TopicAttributes.h>
+#include <fastrtps/xmlparser/XMLProfileManager.h>
 
 #include <statistics/types/types.h>
 
@@ -45,13 +47,28 @@ struct MockListener : IListener
                 const Data&));
 };
 
+class RTPSStatisticsTests
+    : public ::testing::Test
+{
+    public:
+    static void SetUpTestSuite()
+    {
+        using namespace fastrtps;
+
+        // Intraprocess must be disable in order to receive DATA callbacks
+        LibrarySettingsAttributes att;
+        att.intraprocess_delivery = INTRAPROCESS_OFF;
+        xmlparser::XMLProfileManager::library_settings(att);
+    }
+};
+
 /*
  * This test checks RTPSParticipant, RTPSWriter and RTPSReader statistics module related APIs.
  *  1. Creates dummy listener objects and associates them to RTPS entities of each kind covering
  *     the different possible cases: already registered, non-registered, already unregistered.
  *  2. Verify the different kinds of rtps layer callbacks are performed as expected.
  */
-TEST(RTPSStatisticsTests, statistics_rpts_listener_management)
+TEST_F(RTPSStatisticsTests, statistics_rpts_listener_management)
 {
     using namespace std;
     using namespace fastrtps::rtps;
@@ -157,7 +174,7 @@ TEST(RTPSStatisticsTests, statistics_rpts_listener_management)
         auto writer_listener = make_shared<MockListener>();
         auto reader_listener = make_shared<MockListener>();
         ASSERT_TRUE(participant->add_statistics_listener(participant_listener, EventKind::RTPS_SENT));
-        //ASSERT_TRUE(writer->add_statistics_listener(wri0ter_listener));
+        ASSERT_TRUE(writer->add_statistics_listener(writer_listener));
         //ASSERT_TRUE(reader->add_statistics_listener(reader_listener));
 
         // We must received the sent data notifications
@@ -171,6 +188,7 @@ TEST(RTPSStatisticsTests, statistics_rpts_listener_management)
         Tatt.topicName = "statisticsTopic";
         WriterQos Wqos;
         ReaderQos Rqos;
+        Rqos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
         participant->registerWriter(writer, Tatt, Wqos);
         participant->registerReader(reader, Tatt, Rqos);
 
@@ -178,8 +196,8 @@ TEST(RTPSStatisticsTests, statistics_rpts_listener_management)
         // + RTPSWriter: PUBLICATION_THROUGHPU, RESENT_DATAS,
         //               GAP_COUNT, DATA_COUNT, SAMPLE_DATAS & PHYSICAL_DATA
         //   optionally: ACKNACK_COUNT & NACKFRAG_COUNT
-        //EXPECT_CALL(*writer_listener, on_statistics_data)
-        //        .Times(AtLeast(7));
+        EXPECT_CALL(*writer_listener, on_statistics_data)
+                .Times(AtLeast(1));
 
         // + RTPSReader: SUBSCRIPTION_THROUGHPUT, DATA_COUNT,
         //               SAMPLE_DATAS & PHYSICAL_DATA
@@ -195,7 +213,15 @@ TEST(RTPSStatisticsTests, statistics_rpts_listener_management)
                 return payloadMaxSize;
             },
             ALIVE);
+
         ASSERT_NE(nullptr, writer_change);
+
+        {
+            string str("https://github.com/eProsima/Fast-DDS.git");
+            memcpy(writer_change->serializedPayload.data, str.c_str(), str.length());
+            writer_change->serializedPayload.length = (uint32_t)str.length();
+        }
+
         ASSERT_TRUE(w_history->add_change(writer_change));
 
         // wait for reception
@@ -206,7 +232,7 @@ TEST(RTPSStatisticsTests, statistics_rpts_listener_management)
         ASSERT_TRUE(reader->nextUntakenCache(&reader_change, nullptr));
 
         reader->releaseCache(reader_change);
- //     EXPECT_TRUE(writer->remove_statistics_listener(writer_listener));
+        EXPECT_TRUE(writer->remove_statistics_listener(writer_listener));
  //     EXPECT_TRUE(reader->remove_statistics_listener(reader_listener));
     }
 
