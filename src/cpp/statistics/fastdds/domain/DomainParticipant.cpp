@@ -33,6 +33,7 @@
 
 #include <fastdds/domain/DomainParticipantImpl.hpp>
 #include <fastdds/publisher/DataWriterImpl.hpp>
+#include <statistics/types/typesPubSubTypes.h>
 #include <utils/SystemInfo.hpp>
 
 namespace eprosima {
@@ -77,7 +78,11 @@ ReturnCode_t DomainParticipant::enable_statistics_datawriter(
     {
         return ReturnCode_t::RETCODE_INCONSISTENT_POLICY;
     }
-    return ReturnCode_t::RETCODE_OK;
+
+    // Register type
+    ReturnCode_t ret = register_statistics_type(topic_name);
+
+    return ret; // ReturnCode_t::RETCODE_OK;
 #endif // FASTDDS_STATISTICS
 }
 
@@ -237,6 +242,66 @@ bool DomainParticipant::check_statistics_topic_name(
         return false;
     }
     return true;
+}
+
+ReturnCode_t DomainParticipant::register_statistics_type(
+        const std::string& topic)
+{
+    ReturnCode_t ret;
+    if (HISTORY_LATENCY_TOPIC == topic || HISTORY_LATENCY_TOPIC_ALIAS == topic)
+    {
+        eprosima::fastdds::dds::TypeSupport history_latency_type(new WriterReaderDataPubSubType);
+        ret = register_type(history_latency_type);
+    }
+    else if (NETWORK_LATENCY_TOPIC == topic || NETWORK_LATENCY_TOPIC_ALIAS == topic)
+    {
+        eprosima::fastdds::dds::TypeSupport network_latency_type(
+            new eprosima::fastdds::statistics::Locator2LocatorDataPubSubType);
+        ret = register_type(network_latency_type);
+    }
+    else if (PUBLICATION_THROUGHPUT_TOPIC == topic || PUBLICATION_THROUGHPUT_TOPIC_ALIAS == topic ||
+            SUBSCRIPTION_THROUGHPUT_TOPIC == topic || SUBSCRIPTION_THROUGHPUT_TOPIC_ALIAS == topic)
+    {
+        eprosima::fastdds::dds::TypeSupport throughput_type(new eprosima::fastdds::statistics::EntityDataPubSubType);
+        ret = register_type(throughput_type);
+    }
+    else if (RTPS_SENT_TOPIC == topic || RTPS_SENT_TOPIC_ALIAS == topic ||
+            RTPS_LOST_TOPIC == topic || RTPS_LOST_TOPIC_ALIAS == topic)
+    {
+        eprosima::fastdds::dds::TypeSupport rtps_traffic_type(
+            new eprosima::fastdds::statistics::Entity2LocatorTrafficPubSubType);
+        ret = register_type(rtps_traffic_type);
+    }
+    else if (RESENT_DATAS_TOPIC == topic || RESENT_DATAS_TOPIC_ALIAS == topic ||
+            HEARTBEAT_COUNT_TOPIC == topic || HEARTBEAT_COUNT_TOPIC_ALIAS == topic ||
+            ACKNACK_COUNT_TOPIC == topic || ACKNACK_COUNT_TOPIC_ALIAS == topic ||
+            NACKFRAG_COUNT_TOPIC == topic || NACKFRAG_COUNT_TOPIC_ALIAS == topic ||
+            GAP_COUNT_TOPIC == topic || GAP_COUNT_TOPIC_ALIAS == topic ||
+            DATA_COUNT_TOPIC == topic || DATA_COUNT_TOPIC_ALIAS == topic ||
+            PDP_PACKETS_TOPIC == topic || PDP_PACKETS_TOPIC_ALIAS == topic ||
+            EDP_PACKETS_TOPIC == topic || EDP_PACKETS_TOPIC_ALIAS == topic)
+    {
+        eprosima::fastdds::dds::TypeSupport count_type(new eprosima::fastdds::statistics::EntityCountPubSubType);
+        ret = register_type(count_type);
+    }
+    else if (DISCOVERY_TOPIC == topic || DISCOVERY_TOPIC_ALIAS == topic)
+    {
+        eprosima::fastdds::dds::TypeSupport discovery_type(new eprosima::fastdds::statistics::DiscoveryTimePubSubType);
+        ret = register_type(discovery_type);
+    }
+    else if (SAMPLE_DATAS_TOPIC == topic || SAMPLE_DATAS_TOPIC_ALIAS == topic)
+    {
+        eprosima::fastdds::dds::TypeSupport sample_identity_count_type(
+            new eprosima::fastdds::statistics::SampleIdentityCountPubSubType);
+        ret = register_type(sample_identity_count_type);
+    }
+    else if (PHYSICAL_DATA_TOPIC == topic || PHYSICAL_DATA_TOPIC_ALIAS == topic)
+    {
+        eprosima::fastdds::dds::TypeSupport physical_data_type(
+            new eprosima::fastdds::statistics::PhysicalDataPubSubType);
+        ret = register_type(physical_data_type);
+    }
+    return ret;
 }
 
 } // dds
