@@ -70,7 +70,7 @@ public:
         bool operator == (
                 const info_MAC& other)
         {
-            return memcmp(address, other.address, 6);
+            return memcmp(address, other.address, 6) == 0;
         }
 
     }info_MAC;
