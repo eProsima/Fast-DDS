@@ -18,6 +18,7 @@
  */
 
 #include "ReqRepHelloWorldRequester.hpp"
+#include "../../common/BlackboxTests.hpp"
 
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
 #include <fastdds/dds/domain/DomainParticipant.hpp>
@@ -115,6 +116,17 @@ void ReqRepHelloWorldRequester::init()
                     type_->getName(), eprosima::fastdds::dds::TOPIC_QOS_DEFAULT);
     ASSERT_NE(request_topic_, nullptr);
     ASSERT_TRUE(request_topic_->is_enabled());
+
+    if (enable_datasharing)
+    {
+        datareader_qos_.data_sharing().automatic();
+        datawriter_qos_.data_sharing().automatic();
+    }
+    else
+    {
+        datareader_qos_.data_sharing().off();
+        datawriter_qos_.data_sharing().off();
+    }
 
     //Create DataReader
     reply_datareader_ = reply_subscriber_->create_datareader(reply_topic_, datareader_qos_, &reply_listener_);

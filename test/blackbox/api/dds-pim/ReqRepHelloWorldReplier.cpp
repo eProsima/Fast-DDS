@@ -18,6 +18,7 @@
  */
 
 #include "ReqRepHelloWorldReplier.hpp"
+#include "../../common/BlackboxTests.hpp"
 
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
 #include <fastdds/dds/domain/DomainParticipant.hpp>
@@ -117,6 +118,17 @@ void ReqRepHelloWorldReplier::init()
     reply_publisher_ = participant_->create_publisher(eprosima::fastdds::dds::PUBLISHER_QOS_DEFAULT);
     ASSERT_NE(reply_publisher_, nullptr);
     ASSERT_TRUE(reply_publisher_->is_enabled());
+
+    if (enable_datasharing)
+    {
+        datareader_qos_.data_sharing().automatic();
+        datawriter_qos_.data_sharing().automatic();
+    }
+    else
+    {
+        datareader_qos_.data_sharing().off();
+        datawriter_qos_.data_sharing().off();
+    }
 
     //Create datareader
     request_datareader_ = request_subscriber_->create_datareader(request_topic_, datareader_qos_,
