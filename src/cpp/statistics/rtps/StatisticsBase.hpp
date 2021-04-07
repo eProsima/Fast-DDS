@@ -43,6 +43,7 @@ struct StatisticsAncillary
 struct StatisticsWriterAncillary
     : public StatisticsAncillary
 {
+    unsigned long long data_counter = {};
 };
 
 struct StatisticsReaderAncillary
@@ -55,7 +56,7 @@ template<class Function>
 Function StatisticsListenersImpl::for_each_listener(
         Function f)
 {
-    std::lock_guard<RecursiveTimedMutex> lock(get_statistics_mutex());
+    std::lock_guard<fastrtps::RecursiveTimedMutex> lock(get_statistics_mutex());
 
     if (members_)
     {
@@ -125,11 +126,8 @@ protected:
     using ProxyCollection = std::set<Key, CompareProxies>;
     ProxyCollection listeners_;
 
-    // retrieve the participant guid
-    virtual const GUID_t& getGuid() const = 0;
-
     // retrieve the participant mutex
-    virtual std::recursive_mutex* getParticipantMutex() const = 0;
+    std::recursive_mutex& get_statistics_mutex();
 
     /** Register a listener in participant DataWriter entities.
      * @param listener, smart pointer to the listener interface to register
@@ -172,7 +170,7 @@ protected:
     Function for_each_listener(
             Function f)
     {
-        std::lock_guard<std::recursive_mutex> lock(*getParticipantMutex());
+        std::lock_guard<std::recursive_mutex> lock(get_statistics_mutex());
 
         for(auto& listener : listeners_)
         {
@@ -252,11 +250,12 @@ protected:
      */
     template<class LocatorIteratorT>
     inline void on_rtps_send(
-                const LocatorIteratorT& destination_locators_begin,
-                const LocatorIteratorT& destination_locators_end,
-                unsigned long payload_size)
+                const LocatorIteratorT&,
+                const LocatorIteratorT&,
+                unsigned long)
     {
     }
+
 };
 
 #endif // FASTDDS_STATISTICS

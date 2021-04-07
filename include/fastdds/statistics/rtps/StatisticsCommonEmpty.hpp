@@ -31,6 +31,17 @@ class StatisticsWriterImpl
 protected:
 
     // TODO: methods for listeners callbacks
+
+    //! Report a DATA message is send
+    inline void on_data()
+    {
+    }
+
+    //! Report a DATA_FRAG message is send
+    inline void on_data_frag()
+    {
+    }
+
 };
 
 class StatisticsReaderImpl

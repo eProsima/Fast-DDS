@@ -93,7 +93,7 @@ protected:
      * Retrieve endpoint mutexes from derived class
      * @return defaults to the endpoint mutex
      */
-    virtual fastrtps::RecursiveTimedMutex& get_statistics_mutex() const = 0;
+    virtual fastrtps::RecursiveTimedMutex& get_statistics_mutex() = 0;
 
 };
 
@@ -115,7 +115,20 @@ protected:
      */
     StatisticsWriterAncillary* get_members() const;
 
+    /*
+     * Retrieve endpoint mutexes from derived class
+     * @return defaults to the endpoint mutex
+     */
+    fastrtps::RecursiveTimedMutex& get_statistics_mutex() final;
+
     // TODO: methods for listeners callbacks
+
+    //! Report a DATA message is send
+    void on_data();
+
+    //! Report a DATA_FRAG message is send
+    void on_data_frag();
+
 };
 
 // Members are private details
@@ -136,6 +149,12 @@ protected:
      * @return true if successfully created
      */
     StatisticsReaderAncillary* get_members() const;
+
+    /*
+     * Retrieve endpoint mutexes from derived class
+     * @return defaults to the endpoint mutex
+     */
+    fastrtps::RecursiveTimedMutex& get_statistics_mutex() final;
 
     // TODO: methods for listeners callbacks
 };

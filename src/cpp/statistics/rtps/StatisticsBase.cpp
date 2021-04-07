@@ -17,11 +17,18 @@
  */
 
 #include "StatisticsBase.hpp"
+#include <rtps/participant/RTPSParticipantImpl.h>
 #include <fastdds/dds/log/Log.hpp>
+#include <fastdds/rtps/writer/RTPSWriter.h>
+#include <fastdds/rtps/reader/RTPSReader.h>
 
 #include <cmath>
 
 using namespace eprosima::fastdds::statistics;
+using eprosima::fastrtps::RecursiveTimedMutex;
+using eprosima::fastrtps::rtps::RTPSParticipantImpl;
+using eprosima::fastrtps::rtps::RTPSWriter;
+using eprosima::fastrtps::rtps::RTPSReader;
 
 namespace eprosima {
 namespace fastdds {
@@ -74,6 +81,24 @@ StatisticsReaderAncillary* StatisticsReaderImpl::get_members() const
     return static_cast<StatisticsReaderAncillary*>(get_aux_members());
 }
 
+RecursiveTimedMutex& StatisticsWriterImpl::get_statistics_mutex()
+{
+    static_assert(
+            std::is_base_of<StatisticsWriterImpl, RTPSWriter>::value,
+            "Must be call from a writer.");
+
+    return static_cast<RTPSWriter*>(this)->getMutex();
+}
+
+RecursiveTimedMutex& StatisticsReaderImpl::get_statistics_mutex()
+{
+    static_assert(
+            std::is_base_of<StatisticsReaderImpl, RTPSReader>::value,
+            "Must be call from a writer.");
+
+    return static_cast<RTPSReader*>(this)->getMutex();
+}
+
 bool StatisticsListenersImpl::add_statistics_listener_impl(
         std::shared_ptr<fastdds::statistics::IListener> listener)
 {
@@ -108,6 +133,15 @@ bool StatisticsListenersImpl::remove_statistics_listener_impl(
     }
 
     return 1 == members_->listeners.erase(listener);
+}
+
+std::recursive_mutex& StatisticsParticipantImpl::get_statistics_mutex()
+{
+    static_assert(
+            std::is_base_of<StatisticsParticipantImpl, RTPSParticipantImpl>::value,
+            "This must be called from RTPSParticipantImpl");
+
+    return *static_cast<RTPSParticipantImpl*>(this)->getParticipantMutex();
 }
 
 void StatisticsParticipantImpl::ListenerProxy::on_statistics_data(const Data& data)
@@ -164,7 +198,7 @@ bool StatisticsParticipantImpl::add_statistics_listener(
         std::shared_ptr<fastdds::statistics::IListener> listener,
         fastdds::statistics::EventKind kind)
 {
-    std::lock_guard<std::recursive_mutex> lock(*getParticipantMutex());
+    std::lock_guard<std::recursive_mutex> lock(get_statistics_mutex());
 
     uint32_t mask = kind, new_mask, old_mask;
 
@@ -226,7 +260,7 @@ bool StatisticsParticipantImpl::remove_statistics_listener(
 {
     using namespace std;
 
-    std::lock_guard<std::recursive_mutex> lock(*getParticipantMutex());
+    std::lock_guard<std::recursive_mutex> lock(get_statistics_mutex());
 
     uint32_t mask = kind, new_mask, old_mask;
 
@@ -295,14 +329,19 @@ void StatisticsParticipantImpl::on_rtps_sent(
         unsigned long payload_size)
 {
     using namespace std;
+    using eprosima::fastrtps::rtps::RTPSParticipantImpl;
+
+    static_assert(
+            std::is_base_of<StatisticsParticipantImpl, RTPSParticipantImpl>::value,
+            "This must be called from RTPSParticipantImpl");
 
     // Compose callback and update the inner state
     Entity2LocatorTraffic notification;
-    notification.src_guid(to_statistics_type(getGuid()));
+    notification.src_guid(to_statistics_type(static_cast<RTPSParticipantImpl*>(this)->getGuid()));
     notification.dst_locator(to_statistics_type(loc));
 
     {
-        lock_guard<recursive_mutex> lock(*getParticipantMutex());
+        std::lock_guard<std::recursive_mutex> lock(get_statistics_mutex());
 
         auto & val = traffic[loc];
         notification.packet_count(++val.packet_count);
@@ -319,4 +358,38 @@ void StatisticsParticipantImpl::on_rtps_sent(
             {
                 l->on_statistics_data(d);
             });
+}
+
+void StatisticsWriterImpl::on_data()
+{
+    using eprosima::fastrtps::rtps::RTPSWriter;
+
+    static_assert(
+            std::is_base_of<StatisticsWriterImpl,RTPSWriter>::value,
+            "This method should be called from an actual RTPSWriter");
+
+    EntityCount notification;
+    notification.guid(to_statistics_type(static_cast<RTPSWriter*>(this)->getGuid()));
+
+    {
+        std::lock_guard<fastrtps::RecursiveTimedMutex> lock(get_statistics_mutex());
+        notification.count(++get_members()->data_counter);
+    }
+
+    // Callback
+    Data d;
+    // note that the setter sets RESENT_DATAS by default
+    d.entity_count(notification);
+    d._d(EventKind::DATA_COUNT);
+
+    for_each_listener([&d](const auto & l)
+            {
+                l->on_statistics_data(d);
+            });
+}
+
+void StatisticsWriterImpl::on_data_frag()
+{
+    // there is no specific EventKind thus it will be redirected to DATA_COUNT
+    on_data();
 }
