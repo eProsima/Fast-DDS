@@ -81,6 +81,11 @@ bool Subscriber::init(
 void Subscriber::onNewDataMessage(
         eprosima::fastrtps::Subscriber* subscriber)
 {
+    if (die_on_data_received_)
+    {
+        std::abort();
+    }
+
     HelloWorld sample;
     eprosima::fastrtps::SampleInfo_t info;
 

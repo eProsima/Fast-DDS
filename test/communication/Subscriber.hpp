@@ -45,9 +45,11 @@ public:
 
     Subscriber(
             const uint32_t publishers,
-            const uint32_t max_number_samples)
+            const uint32_t max_number_samples,
+            bool die_on_data_received)
         : publishers_(publishers)
         , max_number_samples_(max_number_samples)
+        , die_on_data_received_(die_on_data_received)
     {
     }
 
@@ -118,5 +120,6 @@ private:
     eprosima::fastrtps::Participant* participant_ = nullptr;
     HelloWorldType type_;
     eprosima::fastrtps::Subscriber* subscriber_ = nullptr;
+    bool die_on_data_received_ = false;
 };
 #endif // TEST_COMMUNICATION_SUBSCRIBER_HPP
