@@ -312,6 +312,9 @@ void StatefulWriter::init(
 {
     const RTPSParticipantAttributes& part_att = pimpl->getRTPSParticipantAttributes();
 
+    auto push_mode = PropertyPolicyHelper::find_property(att.endpoint.properties, "fastdds.push_mode");
+    m_pushMode = !((nullptr != push_mode) && ("false" == *push_mode));
+
     periodic_hb_event_ = new TimedEvent(pimpl->getEventResource(), [&]() -> bool
                     {
                         return send_periodic_heartbeat();
