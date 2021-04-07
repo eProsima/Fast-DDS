@@ -39,7 +39,6 @@ jobs:
 
       - name: Run tests
         run: |
-          source install/setup.bash && \
           colcon test \
             --packages-select fastrtps \
             --event-handlers=console_direct+
