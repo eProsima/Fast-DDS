@@ -199,6 +199,26 @@ protected:
             const fastrtps::rtps::Locator_t & loc,
             unsigned long payload_size);
 
+    /*
+     * Report a message is send by the participant
+     * @param destination_locators_begin, begin of locators range
+     * @param destination_locators_end, send of locators range
+     * @param payload_size, size of the current message
+     */
+    template<class LocatorIteratorT>
+    void on_rtps_send(
+        const LocatorIteratorT& destination_locators_begin,
+        const LocatorIteratorT& destination_locators_end,
+        unsigned long payload_size)
+    {
+        auto it = destination_locators_begin;
+        while(it != destination_locators_end)
+        {
+            on_rtps_sent(*it, payload_size);
+            ++it;
+        }
+    }
+
 public:
 
     bool add_statistics_listener(
@@ -223,6 +243,20 @@ class StatisticsParticipantImpl
 protected:
 
     // inline methods for listeners callbacks
+
+    /*
+     * Report a message is send by the participant
+     * @param destination_locators_begin, begin of locators range
+     * @param destination_locators_end, send of locators range
+     * @param payload_size, size of the current message
+     */
+    template<class LocatorIteratorT>
+    inline void on_rtps_send(
+                const LocatorIteratorT& destination_locators_begin,
+                const LocatorIteratorT& destination_locators_end,
+                unsigned long payload_size)
+    {
+    }
 };
 
 #endif // FASTDDS_STATISTICS
