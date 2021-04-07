@@ -130,6 +130,11 @@ void ReqRepHelloWorldReplier::init()
         datawriter_qos_.data_sharing().off();
     }
 
+    if (use_pull_mode)
+    {
+        datawriter_qos_.properties().properties().emplace_back("fastdds.push_mode", "false");
+    }
+
     //Create datareader
     request_datareader_ = request_subscriber_->create_datareader(request_topic_, datareader_qos_,
                     &request_listener_);

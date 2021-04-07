@@ -128,6 +128,11 @@ void ReqRepHelloWorldRequester::init()
         datawriter_qos_.data_sharing().off();
     }
 
+    if (use_pull_mode)
+    {
+        datawriter_qos_.properties().properties().emplace_back("fastdds.push_mode", "false");
+    }
+
     //Create DataReader
     reply_datareader_ = reply_subscriber_->create_datareader(reply_topic_, datareader_qos_, &reply_listener_);
     ASSERT_NE(reply_datareader_, nullptr);

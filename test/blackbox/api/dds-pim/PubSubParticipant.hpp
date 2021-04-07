@@ -166,7 +166,6 @@ public:
         , sub_times_liveliness_lost_(0)
         , sub_times_liveliness_recovered_(0)
     {
-
         if (enable_datasharing)
         {
             datareader_qos_.data_sharing().automatic();
@@ -176,6 +175,11 @@ public:
         {
             datareader_qos_.data_sharing().off();
             datawriter_qos_.data_sharing().off();
+        }
+
+        if (use_pull_mode)
+        {
+            datawriter_qos_.properties().properties().emplace_back("fastdds.push_mode", "false");
         }
 
 #if defined(PREALLOCATED_WITH_REALLOC_MEMORY_MODE_TEST)

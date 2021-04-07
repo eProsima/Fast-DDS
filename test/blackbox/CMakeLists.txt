@@ -75,7 +75,7 @@ macro(add_blackbox_gtest)
                 list(GET GTEST_TEST_NAME 3 GTEST_TEST_NAME)
 
                 add_test(NAME ${test}.${GTEST_GROUP_NAME}.${GTEST_TEST_NAME}.Transport
-                    COMMAND ${command} --gtest_filter=*/${GTEST_GROUP_NAME}.${GTEST_TEST_NAME}/Transport)
+                    COMMAND ${command} --gtest_filter=*/${GTEST_GROUP_NAME}.${GTEST_TEST_NAME}/Transport*)
 
                 # Add environment
                 if(WIN32)
@@ -90,7 +90,7 @@ macro(add_blackbox_gtest)
                 set_property(TEST ${test}.${GTEST_GROUP_NAME}.${GTEST_TEST_NAME}.Transport PROPERTY LABELS "${GTEST_LABELS}")
 
                 add_test(NAME ${test}.${GTEST_GROUP_NAME}.${GTEST_TEST_NAME}.Intraprocess
-                    COMMAND ${command} --gtest_filter=*/${GTEST_GROUP_NAME}.${GTEST_TEST_NAME}/Intraprocess)
+                    COMMAND ${command} --gtest_filter=*/${GTEST_GROUP_NAME}.${GTEST_TEST_NAME}/Intraprocess*)
 
                 # Add environment
                 if(WIN32)
@@ -106,7 +106,7 @@ macro(add_blackbox_gtest)
 
                 if(${test} MATCHES ".*_DDS_PIM$")
                     add_test(NAME ${test}.${GTEST_GROUP_NAME}.${GTEST_TEST_NAME}.Datasharing
-                        COMMAND ${command} --gtest_filter=*/${GTEST_GROUP_NAME}.${GTEST_TEST_NAME}/Datasharing)
+                        COMMAND ${command} --gtest_filter=*/${GTEST_GROUP_NAME}.${GTEST_TEST_NAME}/Datasharing*)
 
                     # Add environment
                     if(WIN32)
