@@ -366,6 +366,14 @@ TEST(DataWriterTests, InvalidQos)
     /* Inconsistent QoS */
     const ReturnCode_t inconsistent_code = ReturnCode_t::RETCODE_INCONSISTENT_POLICY;
 
+    qos = DATAWRITER_QOS_DEFAULT;
+    qos.properties().properties().emplace_back("fastdds.push_mode", "false");
+    qos.reliability().kind = BEST_EFFORT_RELIABILITY_QOS;
+    EXPECT_EQ(inconsistent_code, datawriter->set_qos(qos));
+
+    qos.reliability().kind = RELIABLE_RELIABILITY_QOS;
+    qos.reliable_writer_qos().times.heartbeatPeriod = eprosima::fastrtps::c_TimeInfinite;
+    EXPECT_EQ(inconsistent_code, datawriter->set_qos(qos));
 
     qos = DATAWRITER_QOS_DEFAULT;
     qos.reliability().kind = BEST_EFFORT_RELIABILITY_QOS;
