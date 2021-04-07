@@ -142,7 +142,7 @@ protected:
      * @return RETCODE_BAD_PARAMETER if the size of the name is 0, RETCODE_PRECONDITION_NOT_MET if there is another
      * TypeSupport with the same name and RETCODE_OK if it is correctly registered.
      */
-    ReturnCode_t register_statistics_type(
+    ReturnCode_t register_statistics_type_and_topic(
             const std::string& topic);
 
     eprosima::fastdds::dds::Publisher* builtin_publisher_;
