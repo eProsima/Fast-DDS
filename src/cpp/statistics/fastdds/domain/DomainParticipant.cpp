@@ -132,8 +132,8 @@ void DomainParticipant::enable_statistics_builtin_datawriters(
         // case RETCODE_INCONSISTENT_POLICY cannot happen. STATISTICS_DATAWRITER_QOS is consitent.
         // case RETCODE_UNSUPPORTED cannot happen because this method is only called if FASTDDS_STATISTICS
         // CMake option is enabled
-        assert(ret != RETCODE_INCONSISTENT_POLICY);
-        assert(ret != RETCODE_UNSUPPORTED);
+        assert(ret != ReturnCode_t::RETCODE_INCONSISTENT_POLICY);
+        assert(ret != ReturnCode_t::RETCODE_UNSUPPORTED);
         if (ret == ReturnCode_t::RETCODE_BAD_PARAMETER)
         {
             logError(STATISTICS_DOMAIN_PARTICIPANT, "Topic " << topic << "is not a valid statistics topic name/alias");
