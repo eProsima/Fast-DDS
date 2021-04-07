@@ -127,6 +127,15 @@ protected:
      */
     void delete_statistics_builtin_entities();
 
+    /**
+     * Auxiliary function to check if the topic name provided is a valid one
+     * @param topic string with the statistic topic name
+     * @return true if the topic name provided is valid.
+     * false otherwise
+     */
+    bool check_statistics_topic_name(
+            const std::string& topic);
+
     eprosima::fastdds::dds::Publisher* builtin_publisher_;
 
     friend class eprosima::fastdds::dds::DomainParticipantFactory;

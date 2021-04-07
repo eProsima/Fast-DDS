@@ -460,9 +460,6 @@ TEST_F(StatisticsDomainParticipantTests, EnableDisableStatisticsDataWriterTest)
 TEST_F(StatisticsDomainParticipantTests, CreateParticipantWithInvalidTopicName)
 {
 #ifdef FASTDDS_STATISTICS
-    logError(STATISTICS_DOMAINPARTICIPANT_TEST, "This test is going to fail because API is not yet implemented.")
-    eprosima::fastdds::dds::Log::Flush();
-
     mock_consumer_ = new eprosima::fastdds::dds::MockConsumer();
 
     eprosima::fastdds::dds::Log::RegisterConsumer(std::unique_ptr<eprosima::fastdds::dds::LogConsumer>(mock_consumer_));
