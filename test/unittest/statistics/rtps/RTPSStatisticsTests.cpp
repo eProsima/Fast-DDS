@@ -171,10 +171,15 @@ TEST_F(RTPSStatisticsTests, statistics_rpts_listener_management)
         using namespace fastrtps;
 
         auto participant_listener = make_shared<MockListener>();
-        auto writer_listener = make_shared<MockListener>();
-        auto reader_listener = make_shared<MockListener>();
         ASSERT_TRUE(participant->add_statistics_listener(participant_listener, EventKind::RTPS_SENT));
+
+        auto participant_writer_listener = make_shared<MockListener>();
+        ASSERT_TRUE(participant->add_statistics_listener(participant_writer_listener, EventKind::DATA_COUNT));
+
+        auto writer_listener = make_shared<MockListener>();
         ASSERT_TRUE(writer->add_statistics_listener(writer_listener));
+
+        auto reader_listener = make_shared<MockListener>();
         //ASSERT_TRUE(reader->add_statistics_listener(reader_listener));
 
         // We must received the sent data notifications
@@ -197,6 +202,8 @@ TEST_F(RTPSStatisticsTests, statistics_rpts_listener_management)
         //               GAP_COUNT, DATA_COUNT, SAMPLE_DATAS & PHYSICAL_DATA
         //   optionally: ACKNACK_COUNT & NACKFRAG_COUNT
         EXPECT_CALL(*writer_listener, on_statistics_data)
+                .Times(AtLeast(1));
+        EXPECT_CALL(*participant_writer_listener, on_statistics_data)
                 .Times(AtLeast(1));
 
         // + RTPSReader: SUBSCRIPTION_THROUGHPUT, DATA_COUNT,
@@ -234,6 +241,8 @@ TEST_F(RTPSStatisticsTests, statistics_rpts_listener_management)
         reader->releaseCache(reader_change);
         EXPECT_TRUE(writer->remove_statistics_listener(writer_listener));
  //     EXPECT_TRUE(reader->remove_statistics_listener(reader_listener));
+        EXPECT_TRUE(participant->remove_statistics_listener(participant_listener, EventKind::RTPS_SENT));
+        EXPECT_TRUE(participant->remove_statistics_listener(participant_writer_listener, EventKind::DATA_COUNT));
     }
 
     // Remove the entities

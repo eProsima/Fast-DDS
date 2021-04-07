@@ -17,13 +17,14 @@
  *
  */
 
-#include <fastdds/rtps/messages/RTPSMessageGroup.h>
-#include <fastdds/rtps/messages/RTPSMessageCreator.h>
-#include <fastdds/rtps/writer/RTPSWriter.h>
-#include <rtps/participant/RTPSParticipantImpl.h>
-#include <rtps/flowcontrol/FlowController.h>
 #include "RTPSGapBuilder.hpp"
 #include "RTPSMessageGroup_t.hpp"
+#include <fastdds/rtps/messages/RTPSMessageCreator.h>
+#include <fastdds/rtps/messages/RTPSMessageGroup.h>
+#include <fastdds/rtps/reader/RTPSReader.h>
+#include <fastdds/rtps/writer/RTPSWriter.h>
+#include <rtps/flowcontrol/FlowController.h>
+#include <rtps/participant/RTPSParticipantImpl.h>
 
 #include <fastdds/dds/log/Log.hpp>
 
@@ -734,6 +735,10 @@ bool RTPSMessageGroup::add_acknack(
         }
     }
 #endif // if HAVE_SECURITY
+
+    // Notify the statistics module, note only readers add acknacks
+    assert(nullptr != dynamic_cast<RTPSReader*>(endpoint_));
+    static_cast<RTPSReader*>(endpoint_)->on_acknack(count);
 
     return insert_submessage(false);
 }

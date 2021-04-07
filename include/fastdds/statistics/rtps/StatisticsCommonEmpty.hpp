@@ -49,6 +49,9 @@ class StatisticsReaderImpl
 protected:
 
     // TODO: methods for listeners callbacks
+
+    //! Report a DATA message is send
+    void on_acknack(int32_t count);
 };
 
 } // namespace statistics

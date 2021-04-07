@@ -393,3 +393,27 @@ void StatisticsWriterImpl::on_data_frag()
     // there is no specific EventKind thus it will be redirected to DATA_COUNT
     on_data();
 }
+
+void StatisticsReaderImpl::on_acknack(int32_t count)
+{
+    using eprosima::fastrtps::rtps::RTPSReader;
+
+    static_assert(
+            std::is_base_of<StatisticsReaderImpl,RTPSReader>::value,
+            "This method should be called from an actual RTPSReader");
+
+    EntityCount notification;
+    notification.guid(to_statistics_type(static_cast<RTPSReader*>(this)->getGuid()));
+    notification.count(count);
+
+    // Callback
+    Data d;
+    // note that the setter sets RESENT_DATAS by default
+    d.entity_count(notification);
+    d._d(EventKind::ACKNACK_COUNT);
+
+    for_each_listener([&d](const auto & l)
+            {
+                l->on_statistics_data(d);
+            });
+}
