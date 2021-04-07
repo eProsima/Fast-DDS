@@ -83,6 +83,12 @@ public:
 
 TEST_P(PubSubBasic, PubSubAsNonReliableHelloworld)
 {
+    // Best effort incompatible with best effort
+    if (use_pull_mode)
+    {
+        return;
+    }
+
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
 
