@@ -8,6 +8,7 @@ int main(
 {
     int arg_count = 1;
     bool notexit = false;
+    bool die_on_data_received = false;
     uint32_t seed = 7800;
     uint32_t samples = 4;
     uint32_t publishers = 1;
@@ -70,6 +71,15 @@ int main(
 
             publishers = strtol(argv[arg_count], nullptr, 10);
         }
+        else if (strcmp(argv[arg_count], "--die_on_data_received") == 0)
+        {
+            die_on_data_received = true;
+        }
+        else
+        {
+            std::cout << "Wrong argument " << argv[arg_count] << std::endl;
+            return -1;
+        }
 
         ++arg_count;
     }
@@ -79,7 +89,7 @@ int main(
         eprosima::fastrtps::Domain::loadXMLProfilesFile(xml_file);
     }
 
-    Subscriber subscriber(publishers, samples);
+    Subscriber subscriber(publishers, samples, die_on_data_received);
 
     if (subscriber.init(seed, magic))
     {
