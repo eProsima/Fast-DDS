@@ -315,26 +315,32 @@ void StatefulWriter::init(
     auto push_mode = PropertyPolicyHelper::find_property(att.endpoint.properties, "fastdds.push_mode");
     m_pushMode = !((nullptr != push_mode) && ("false" == *push_mode));
 
-    periodic_hb_event_ = new TimedEvent(pimpl->getEventResource(), [&]() -> bool
-                    {
-                        return send_periodic_heartbeat();
-                    },
-                    TimeConv::Time_t2MilliSecondsDouble(m_times.heartbeatPeriod));
+    periodic_hb_event_ = new TimedEvent(
+        pimpl->getEventResource(),
+        [&]() -> bool
+        {
+            return send_periodic_heartbeat();
+        },
+        TimeConv::Time_t2MilliSecondsDouble(m_times.heartbeatPeriod));
 
-    nack_response_event_ = new TimedEvent(pimpl->getEventResource(), [&]() -> bool
-                    {
-                        perform_nack_response();
-                        return false;
-                    },
-                    TimeConv::Time_t2MilliSecondsDouble(m_times.nackResponseDelay));
+    nack_response_event_ = new TimedEvent(
+        pimpl->getEventResource(),
+        [&]() -> bool
+        {
+            perform_nack_response();
+            return false;
+        },
+        TimeConv::Time_t2MilliSecondsDouble(m_times.nackResponseDelay));
 
     if (disable_positive_acks_)
     {
-        ack_event_ = new TimedEvent(pimpl->getEventResource(), [&]() -> bool
-                        {
-                            return ack_timer_expired();
-                        },
-                        att.keep_duration.to_ns() * 1e-6); // in milliseconds
+        ack_event_ = new TimedEvent(
+            pimpl->getEventResource(),
+            [&]() -> bool
+            {
+                return ack_timer_expired();
+            },
+            att.keep_duration.to_ns() * 1e-6);             // in milliseconds
     }
 
     for (size_t n = 0; n < att.matched_readers_allocation.initial; ++n)
@@ -567,19 +573,19 @@ void StatefulWriter::sync_delivery(
 
                     auto sent_fun = [this, change](
                         FragmentNumber_t frag)
-                    {
-                        if (frag > 0)
-                        {
-                            for (ReaderProxy* it : matched_remote_readers_)
                             {
-                                bool allFragmentsSent = false;
-                                it->mark_fragment_as_sent_for_change(
-                                    change->sequenceNumber,
-                                    frag,
-                                    allFragmentsSent);
-                            }
-                        }
-                    };
+                                if (frag > 0)
+                                {
+                                    for (ReaderProxy* it : matched_remote_readers_)
+                                    {
+                                        bool allFragmentsSent = false;
+                                        it->mark_fragment_as_sent_for_change(
+                                            change->sequenceNumber,
+                                            frag,
+                                            allFragmentsSent);
+                                    }
+                                }
+                            };
 
                     send_data_or_fragments(group, change, expectsInlineQos, sent_fun);
                     send_heartbeat_nts_(all_remote_readers_.size(), group, disable_positive_acks_);
@@ -590,7 +596,7 @@ void StatefulWriter::sync_delivery(
                 for (ReaderProxy* it : matched_remote_readers_)
                 {
                     RTPSMessageGroup group(mp_RTPSParticipant, this, it->message_sender(),
-                        max_blocking_time);
+                            max_blocking_time);
 
                     if (change->getFragmentCount() > 0)
                     {
@@ -2186,12 +2192,12 @@ bool StatefulWriter::send_periodic_heartbeat(
             assert(firstSeq <= lastSeq);
 
             unacked_changes = for_matched_readers(matched_local_readers_, matched_datasharing_readers_,
-                matched_remote_readers_,
-                [](ReaderProxy* reader)
-                {
-                    return reader->has_unacknowledged();
-                }
-            );
+                            matched_remote_readers_,
+                            [](ReaderProxy* reader)
+                            {
+                                return reader->has_unacknowledged();
+                            }
+                            );
 
             if (unacked_changes)
             {
