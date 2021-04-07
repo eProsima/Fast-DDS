@@ -1,0 +1,17 @@
+name: 'install-apt-packages'
+description: 'Install necessary apt packages'
+runs:
+  using: "composite"
+  steps:
+    - id: install-apt-packages
+      run: |
+        sudo apt -y install \
+          python3 \
+          python3-pip \
+          software-properties-common \
+          wget \
+          libasio-dev \
+          libtinyxml2-dev \
+          curl \
+          grep
+      shell: bash
