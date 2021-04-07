@@ -81,9 +81,9 @@ ReturnCode_t DomainParticipant::enable_statistics_datawriter(
     }
 
     // Register type and topic
-    ReturnCode_t ret = register_statistics_type_and_topic(topic_name);
+    register_statistics_type_and_topic(topic_name);
 
-    return ret; // ReturnCode_t::RETCODE_OK;
+    return ReturnCode_t::RETCODE_OK;
 #endif // FASTDDS_STATISTICS
 }
 
@@ -245,14 +245,15 @@ bool DomainParticipant::check_statistics_topic_name(
     return true;
 }
 
-ReturnCode_t DomainParticipant::register_statistics_type_and_topic(
+void DomainParticipant::register_statistics_type_and_topic(
         const std::string& topic)
 {
-    ReturnCode_t ret;
     if (HISTORY_LATENCY_TOPIC == topic || HISTORY_LATENCY_TOPIC_ALIAS == topic)
     {
         eprosima::fastdds::dds::TypeSupport history_latency_type(new WriterReaderDataPubSubType);
-        ret = register_type(history_latency_type);
+        // No need to check ReturnCode. It fails when the type does not have a name or when the type is already
+        // registered.
+        register_type(history_latency_type);
         // No need to check returned pointer. It fails if the topic already exists, if the QoS is inconsistent and if
         // the type is not registered.
         create_topic(topic, history_latency_type->getName(), eprosima::fastdds::dds::TOPIC_QOS_DEFAULT);
@@ -261,14 +262,14 @@ ReturnCode_t DomainParticipant::register_statistics_type_and_topic(
     {
         eprosima::fastdds::dds::TypeSupport network_latency_type(
             new eprosima::fastdds::statistics::Locator2LocatorDataPubSubType);
-        ret = register_type(network_latency_type);
+        register_type(network_latency_type);
         create_topic(topic, network_latency_type->getName(), eprosima::fastdds::dds::TOPIC_QOS_DEFAULT);
     }
     else if (PUBLICATION_THROUGHPUT_TOPIC == topic || PUBLICATION_THROUGHPUT_TOPIC_ALIAS == topic ||
             SUBSCRIPTION_THROUGHPUT_TOPIC == topic || SUBSCRIPTION_THROUGHPUT_TOPIC_ALIAS == topic)
     {
         eprosima::fastdds::dds::TypeSupport throughput_type(new eprosima::fastdds::statistics::EntityDataPubSubType);
-        ret = register_type(throughput_type);
+        register_type(throughput_type);
         create_topic(topic, throughput_type->getName(), eprosima::fastdds::dds::TOPIC_QOS_DEFAULT);
     }
     else if (RTPS_SENT_TOPIC == topic || RTPS_SENT_TOPIC_ALIAS == topic ||
@@ -276,7 +277,7 @@ ReturnCode_t DomainParticipant::register_statistics_type_and_topic(
     {
         eprosima::fastdds::dds::TypeSupport rtps_traffic_type(
             new eprosima::fastdds::statistics::Entity2LocatorTrafficPubSubType);
-        ret = register_type(rtps_traffic_type);
+        register_type(rtps_traffic_type);
         create_topic(topic, rtps_traffic_type->getName(), eprosima::fastdds::dds::TOPIC_QOS_DEFAULT);
     }
     else if (RESENT_DATAS_TOPIC == topic || RESENT_DATAS_TOPIC_ALIAS == topic ||
@@ -289,30 +290,29 @@ ReturnCode_t DomainParticipant::register_statistics_type_and_topic(
             EDP_PACKETS_TOPIC == topic || EDP_PACKETS_TOPIC_ALIAS == topic)
     {
         eprosima::fastdds::dds::TypeSupport count_type(new eprosima::fastdds::statistics::EntityCountPubSubType);
-        ret = register_type(count_type);
+        register_type(count_type);
         create_topic(topic, count_type->getName(), eprosima::fastdds::dds::TOPIC_QOS_DEFAULT);
     }
     else if (DISCOVERY_TOPIC == topic || DISCOVERY_TOPIC_ALIAS == topic)
     {
         eprosima::fastdds::dds::TypeSupport discovery_type(new eprosima::fastdds::statistics::DiscoveryTimePubSubType);
-        ret = register_type(discovery_type);
+        register_type(discovery_type);
         create_topic(topic, discovery_type->getName(), eprosima::fastdds::dds::TOPIC_QOS_DEFAULT);
     }
     else if (SAMPLE_DATAS_TOPIC == topic || SAMPLE_DATAS_TOPIC_ALIAS == topic)
     {
         eprosima::fastdds::dds::TypeSupport sample_identity_count_type(
             new eprosima::fastdds::statistics::SampleIdentityCountPubSubType);
-        ret = register_type(sample_identity_count_type);
+        register_type(sample_identity_count_type);
         create_topic(topic, sample_identity_count_type->getName(), eprosima::fastdds::dds::TOPIC_QOS_DEFAULT);
     }
     else if (PHYSICAL_DATA_TOPIC == topic || PHYSICAL_DATA_TOPIC_ALIAS == topic)
     {
         eprosima::fastdds::dds::TypeSupport physical_data_type(
             new eprosima::fastdds::statistics::PhysicalDataPubSubType);
-        ret = register_type(physical_data_type);
+        register_type(physical_data_type);
         create_topic(topic, physical_data_type->getName(), eprosima::fastdds::dds::TOPIC_QOS_DEFAULT);
     }
-    return ret;
 }
 
 } // dds
