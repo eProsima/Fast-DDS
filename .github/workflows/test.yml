@@ -31,12 +31,6 @@ jobs:
 
       - name: Build workspace
         run: |
-          pwd
-          ls -l
-          ls -l src
-          ls -l src/Fast-DDS/
-          ls -l src/Fast-DDS/.github/
-          ls -l src/Fast-DDS/.github/workflows
           cat src/Fast-DDS/.github/workflows/colcon.meta
           colcon build \
             --event-handlers=console_direct+ \
