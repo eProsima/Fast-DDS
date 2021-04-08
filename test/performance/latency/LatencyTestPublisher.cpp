@@ -264,14 +264,18 @@ bool LatencyTestPublisher::init(
             dr_qos_.endpoint().history_memory_policy = MemoryManagementPolicy::PREALLOCATED_WITH_REALLOC_MEMORY_MODE;
         }
 
-        // Set data sharing according with cli. Is disabled by default in all xml profiles
+        // Set data sharing according with cli.
+        DataSharingQosPolicy dsp;
         if (data_sharing_)
         {
-            DataSharingQosPolicy dsp;
             dsp.on("");
-            dw_qos_.data_sharing(dsp);
-            dr_qos_.data_sharing(dsp);
         }
+        else
+        {
+            dsp.off();
+        }
+        dw_qos_.data_sharing(dsp);
+        dr_qos_.data_sharing(dsp);
 
         // Increase payload pool size to prevent loan failures due to outages
         if (data_loans_)
