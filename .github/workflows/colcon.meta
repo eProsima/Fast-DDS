@@ -7,7 +7,8 @@
                 "-DCMAKE_BUILD_TYPE=Debug",
                 "-DINTERNAL_DEBUG=ON",
                 "-DEPROSIMA_BUILD=ON",
-                "-DSECURITY=OFF",
+                "-DLOG_NO_INFO=ON",
+                "-DSECURITY=ON",
                 "-DTHIRDPARTY=ON",
                 "-DGTEST_INDIVIDUAL=ON",
                 "-DEPROSIMA_GTEST=ON",
@@ -16,6 +17,7 @@
                 "-DPERFORMANCE_TESTS=ON",
                 "-DPROFILING_TESTS=ON",
                 "-DVIDEO_TESTS=ON",
+                "-DFASTDDS_STATISTICS=ON",
             ]
         }
     }
