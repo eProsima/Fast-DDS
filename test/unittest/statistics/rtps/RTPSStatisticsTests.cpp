@@ -90,6 +90,7 @@ TEST_F(RTPSStatisticsTests, statistics_rpts_listener_management)
     ASSERT_NE(nullptr, writer);
 
     ReaderAttributes r_att;
+    r_att.endpoint.reliabilityKind = ReliabilityKind_t::RELIABLE;
     RTPSReader* reader = RTPSDomain::createRTPSReader(participant, r_att, r_history.get());
     ASSERT_NE(nullptr, reader);
 
@@ -165,23 +166,33 @@ TEST_F(RTPSStatisticsTests, statistics_rpts_listener_management)
         EXPECT_FALSE(reader->remove_statistics_listener(listener1));
     }
 
-    // Check RTPS_SENT callbacks are performed
+    // Check:
+    // - RTPS_SENT callbacks are performed
+    // - DATA_COUNT callbacks are performed
+    // - ACKNACK_COUNT callbacks are performed
     {
         using namespace ::testing;
         using namespace fastrtps;
 
+        // participant specific callbacks
         auto participant_listener = make_shared<MockListener>();
         ASSERT_TRUE(participant->add_statistics_listener(participant_listener, EventKind::RTPS_SENT));
 
+        // writer callbacks through participant listener
         auto participant_writer_listener = make_shared<MockListener>();
         ASSERT_TRUE(participant->add_statistics_listener(participant_writer_listener, EventKind::DATA_COUNT));
 
+        // writer specific callbacks
         auto writer_listener = make_shared<MockListener>();
         ASSERT_TRUE(writer->add_statistics_listener(writer_listener));
 
-        auto reader_listener = make_shared<MockListener>();
-        //ASSERT_TRUE(reader->add_statistics_listener(reader_listener));
+        // writer callbacks through participant listener
+        auto participant_reader_listener = make_shared<MockListener>();
+        ASSERT_TRUE(participant->add_statistics_listener(participant_reader_listener, EventKind::ACKNACK_COUNT));
 
+        // reader specific callbacks
+        auto reader_listener = make_shared<MockListener>();
+        ASSERT_TRUE(reader->add_statistics_listener(reader_listener));
         // We must received the sent data notifications
         EXPECT_CALL(*participant_listener, on_statistics_data)
                 .Times(AtLeast(1));
@@ -209,8 +220,10 @@ TEST_F(RTPSStatisticsTests, statistics_rpts_listener_management)
         // + RTPSReader: SUBSCRIPTION_THROUGHPUT, DATA_COUNT,
         //               SAMPLE_DATAS & PHYSICAL_DATA
         //   optionally: HEARTBEAT_COUNT
-        //EXPECT_CALL(*reader_listener, on_statistics_data)
-        //        .Times(AtLeast(5));
+        EXPECT_CALL(*reader_listener, on_statistics_data)
+                .Times(AtLeast(1));
+        EXPECT_CALL(*participant_reader_listener, on_statistics_data)
+                .Times(AtLeast(1));
 
         // exchange data
         uint32_t payloadMaxSize = h_attr.payloadMaxSize;
@@ -238,11 +251,15 @@ TEST_F(RTPSStatisticsTests, statistics_rpts_listener_management)
         CacheChange_t* reader_change = nullptr;
         ASSERT_TRUE(reader->nextUntakenCache(&reader_change, nullptr));
 
+        // wait for acknowledgement
+        EXPECT_TRUE(writer->wait_for_all_acked(Duration_t(5, 0)));
+
         reader->releaseCache(reader_change);
         EXPECT_TRUE(writer->remove_statistics_listener(writer_listener));
- //     EXPECT_TRUE(reader->remove_statistics_listener(reader_listener));
+        EXPECT_TRUE(reader->remove_statistics_listener(reader_listener));
         EXPECT_TRUE(participant->remove_statistics_listener(participant_listener, EventKind::RTPS_SENT));
         EXPECT_TRUE(participant->remove_statistics_listener(participant_writer_listener, EventKind::DATA_COUNT));
+        EXPECT_TRUE(participant->remove_statistics_listener(participant_reader_listener, EventKind::ACKNACK_COUNT));
     }
 
     // Remove the entities
