@@ -258,6 +258,7 @@ private:
         GUID_t persistence_guid;
         bool has_manual_topic_liveliness = false;
         CacheChange_t* fragmented_change = nullptr;
+        bool is_datasharing = false;
     };
 
     bool acceptMsgFrom(

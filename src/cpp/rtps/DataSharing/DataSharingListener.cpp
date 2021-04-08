@@ -257,31 +257,21 @@ void DataSharingListener::notify(
     }
 }
 
-void DataSharingListener::change_removed_with_timestamp(
-        int64_t timestamp)
+std::shared_ptr<ReaderPool> DataSharingListener::get_pool_for_writer(
+        const GUID_t& writer_guid)
 {
-    // This method should be called from the RTPSReader,
-    // then, the reader's lock is protecting the concurrency on the value updates.
-    if (timestamp > notification_->notification_->ack_timestamp.load())
+    std::lock_guard<std::mutex> lock(mutex_);
+    auto it = std::find_if(writer_pools_.begin(), writer_pools_.end(),
+                    [&writer_guid](const WriterInfo& info)
+                    {
+                        return info.pool->writer() == writer_guid;
+                    }
+                    );
+    if (it != writer_pools_.end())
     {
-        notification_->notification_->ack_timestamp.store(timestamp);
-        for (auto it = writer_pools_.begin(); it != writer_pools_.end(); ++it)
-        {
-            // Notify all writers in case any is waiting for a recyclable payload
-            it->pool->notify();
-        }
+        return it->pool;
     }
-}
-
-void DataSharingListener::change_added_with_timestamp(
-        int64_t timestamp)
-{
-    // This method should be called from the RTPSReader,
-    // then, the reader's lock is protecting the concurrency on the value updates.
-    if (timestamp < notification_->notification_->ack_timestamp.load())
-    {
-        notification_->notification_->ack_timestamp.store(timestamp);
-    }
+    return std::shared_ptr<ReaderPool>(nullptr);
 }
 
 }  // namespace rtps

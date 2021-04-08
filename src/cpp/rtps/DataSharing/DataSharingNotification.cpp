@@ -98,9 +98,6 @@ bool DataSharingNotification::create_and_init_notification(
         // Alloc and initialize the Node
         notification_ = segment_->get().construct<Notification>("notification_node")();
         notification_->new_data.store(false);
-        Time_t now;
-        Time_t::now(now);
-        notification_->ack_timestamp.store(now.to_ns());
     }
     catch (std::exception& e)
     {

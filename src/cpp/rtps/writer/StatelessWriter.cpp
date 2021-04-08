@@ -919,8 +919,8 @@ bool StatelessWriter::matched_reader_add(
 
     locator_selector_.add_entry(new_reader->locator_selector_entry());
 
-    // Datasharing readers handle transient history themselves
-    if (!new_reader->is_datasharing_reader() &&
+    // Remote datasharing readers handle transient history themselves
+    if ((!new_reader->is_datasharing_reader() || new_reader->is_local_reader()) &&
             mp_history->getHistorySize() > 0 &&
             data.m_qos.m_durability.kind >= TRANSIENT_LOCAL_DURABILITY_QOS)
     {
@@ -934,17 +934,17 @@ bool StatelessWriter::matched_reader_add(
         mp_RTPSParticipant->async_thread().wake_up(this);
     }
 
-    if (new_reader->is_datasharing_reader())
-    {
-        matched_datasharing_readers_.push_back(std::move(new_reader));
-        logInfo(RTPS_WRITER, "Adding reader " << data.guid() << " to " << this->m_guid.entityId
-                                              << " as data sharing");
-    }
-    else if (new_reader->is_local_reader())
+    if (new_reader->is_local_reader())
     {
         matched_local_readers_.push_back(std::move(new_reader));
         logInfo(RTPS_WRITER, "Adding reader " << data.guid() << " to " << this->m_guid.entityId
                                               << " as local reader");
+    }
+    else if (new_reader->is_datasharing_reader())
+    {
+        matched_datasharing_readers_.push_back(std::move(new_reader));
+        logInfo(RTPS_WRITER, "Adding reader " << data.guid() << " to " << this->m_guid.entityId
+                                              << " as data sharing");
     }
     else
     {
@@ -1086,19 +1086,6 @@ bool StatelessWriter::send(
            fixed_locators_.empty() ||
            mp_RTPSParticipant->sendSync(message, Locators(fixed_locators_.begin()), Locators(
                        fixed_locators_.end()), max_blocking_time_point);
-}
-
-bool StatelessWriter::is_datasharing_payload_reusable(
-        const Time_t& source_timestamp) const
-{
-    for (const std::unique_ptr<ReaderLocator>& reader : matched_datasharing_readers_)
-    {
-        if (reader->datasharing_notifier()->ack_timestamp() <= source_timestamp.to_ns())
-        {
-            return false;
-        }
-    }
-    return true;
 }
 
 } /* namespace rtps */
