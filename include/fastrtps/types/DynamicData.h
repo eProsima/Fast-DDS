@@ -76,6 +76,8 @@ protected:
 
     void set_type_name(const std::string& name);
 
+    MemberId get_union_id() const;
+
     ReturnCode_t set_union_id(MemberId id);
 
     void update_union_discriminator();

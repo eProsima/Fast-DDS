@@ -3819,6 +3819,11 @@ void DynamicData::set_union_discriminator(
     }
 }
 
+MemberId DynamicData::get_union_id() const
+{
+    return union_id_;
+}
+
 ReturnCode_t DynamicData::set_union_id(
         MemberId id)
 {
