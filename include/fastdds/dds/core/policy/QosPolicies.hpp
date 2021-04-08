@@ -32,7 +32,6 @@
 #include <fastrtps/types/TypeObject.h>
 #include <fastrtps/utils/collections/ResourceLimitedVector.hpp>
 
-
 namespace eprosima {
 namespace fastdds {
 namespace dds {
