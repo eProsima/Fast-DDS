@@ -402,6 +402,11 @@ protected:
             bool single_instance,
             bool should_take);
 
+    ReturnCode_t read_or_take_next_sample(
+            void* data,
+            SampleInfo* info,
+            bool should_take);
+
     /**
      * @brief A method called when a new cache change is added
      * @param change The cache change that has been added
