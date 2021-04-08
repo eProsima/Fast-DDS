@@ -286,6 +286,7 @@ TEST(DataWriterTests, ForcedDataSharing)
         ASSERT_TRUE(false);
     }
 
+#ifdef HAS_SECURITY
     fastrtps::rtps::PropertyPolicy security_property;
     security_property.properties().emplace_back(fastrtps::rtps::Property("dds.sec.auth.plugin",
             "builtin.PKI-DH"));
@@ -326,6 +327,7 @@ TEST(DataWriterTests, ForcedDataSharing)
     ASSERT_EQ(participant->delete_topic(bounded_topic), ReturnCode_t::RETCODE_OK);
     ASSERT_EQ(participant->delete_publisher(publisher), ReturnCode_t::RETCODE_OK);
     ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), ReturnCode_t::RETCODE_OK);
+#endif // HAS_SECURITY
 }
 
 TEST(DataWriterTests, InvalidQos)
