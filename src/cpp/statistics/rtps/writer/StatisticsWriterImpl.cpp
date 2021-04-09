@@ -16,6 +16,67 @@
  * @file StatisticsWriterImpl.hpp
  */
 
+#include <fastdds/rtps/writer/RTPSWriter.h>
 #include <statistics/rtps/StatisticsBase.hpp>
 
 using namespace eprosima::fastdds::statistics;
+
+using eprosima::fastrtps::RecursiveTimedMutex;
+using eprosima::fastrtps::rtps::RTPSWriter;
+
+StatisticsWriterImpl::StatisticsWriterImpl()
+{
+    init_statistics<StatisticsWriterAncillary>();
+}
+
+StatisticsWriterAncillary* StatisticsWriterImpl::get_members() const
+{
+    static_assert(
+            std::is_base_of<StatisticsAncillary,StatisticsWriterAncillary>::value,
+            "Auxiliary structure must derive from StatisticsAncillary");
+
+    return static_cast<StatisticsWriterAncillary*>(get_aux_members());
+}
+
+RecursiveTimedMutex& StatisticsWriterImpl::get_statistics_mutex()
+{
+    static_assert(
+            std::is_base_of<StatisticsWriterImpl, RTPSWriter>::value,
+            "Must be call from a writer.");
+
+    return static_cast<RTPSWriter*>(this)->getMutex();
+}
+
+void StatisticsWriterImpl::on_data()
+{
+    using eprosima::fastrtps::rtps::RTPSWriter;
+
+    static_assert(
+            std::is_base_of<StatisticsWriterImpl,RTPSWriter>::value,
+            "This method should be called from an actual RTPSWriter");
+
+    EntityCount notification;
+    notification.guid(to_statistics_type(static_cast<RTPSWriter*>(this)->getGuid()));
+
+    {
+        std::lock_guard<fastrtps::RecursiveTimedMutex> lock(get_statistics_mutex());
+        notification.count(++get_members()->data_counter);
+    }
+
+    // Callback
+    Data d;
+    // note that the setter sets RESENT_DATAS by default
+    d.entity_count(notification);
+    d._d(EventKind::DATA_COUNT);
+
+    for_each_listener([&d](const std::shared_ptr<IListener>& l)
+            {
+                l->on_statistics_data(d);
+            });
+}
+
+void StatisticsWriterImpl::on_data_frag()
+{
+    // there is no specific EventKind thus it will be redirected to DATA_COUNT
+    on_data();
+}

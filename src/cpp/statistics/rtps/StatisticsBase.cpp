@@ -19,16 +19,11 @@
 #include "StatisticsBase.hpp"
 #include <rtps/participant/RTPSParticipantImpl.h>
 #include <fastdds/dds/log/Log.hpp>
-#include <fastdds/rtps/writer/RTPSWriter.h>
-#include <fastdds/rtps/reader/RTPSReader.h>
 
 #include <cmath>
 
 using namespace eprosima::fastdds::statistics;
-using eprosima::fastrtps::RecursiveTimedMutex;
 using eprosima::fastrtps::rtps::RTPSParticipantImpl;
-using eprosima::fastrtps::rtps::RTPSWriter;
-using eprosima::fastrtps::rtps::RTPSReader;
 
 namespace eprosima {
 namespace fastdds {
@@ -48,55 +43,9 @@ detail::GUID_s to_statistics_type(eprosima::fastrtps::rtps::GUID_t g)
 } // fastdds
 } // eprosima
 
-StatisticsWriterImpl::StatisticsWriterImpl()
-{
-    init_statistics<StatisticsWriterAncillary>();
-}
-
-StatisticsReaderImpl::StatisticsReaderImpl()
-{
-    init_statistics<StatisticsReaderAncillary>();
-}
-
 StatisticsAncillary* StatisticsListenersImpl::get_aux_members() const
 {
     return members_.get();
-}
-
-StatisticsWriterAncillary* StatisticsWriterImpl::get_members() const
-{
-    static_assert(
-            std::is_base_of<StatisticsAncillary,StatisticsWriterAncillary>::value,
-            "Auxiliary structure must derive from StatisticsAncillary");
-
-    return static_cast<StatisticsWriterAncillary*>(get_aux_members());
-}
-
-StatisticsReaderAncillary* StatisticsReaderImpl::get_members() const
-{
-    static_assert(
-            std::is_base_of<StatisticsAncillary,StatisticsReaderAncillary>::value,
-            "Auxiliary structure must derive from StatisticsAncillary");
-
-    return static_cast<StatisticsReaderAncillary*>(get_aux_members());
-}
-
-RecursiveTimedMutex& StatisticsWriterImpl::get_statistics_mutex()
-{
-    static_assert(
-            std::is_base_of<StatisticsWriterImpl, RTPSWriter>::value,
-            "Must be call from a writer.");
-
-    return static_cast<RTPSWriter*>(this)->getMutex();
-}
-
-RecursiveTimedMutex& StatisticsReaderImpl::get_statistics_mutex()
-{
-    static_assert(
-            std::is_base_of<StatisticsReaderImpl, RTPSReader>::value,
-            "Must be call from a writer.");
-
-    return static_cast<RTPSReader*>(this)->getMutex();
 }
 
 bool StatisticsListenersImpl::add_statistics_listener_impl(
@@ -110,13 +59,6 @@ bool StatisticsListenersImpl::add_statistics_listener_impl(
 
     std::lock_guard<fastrtps::RecursiveTimedMutex> lock(get_statistics_mutex());
 
-    // if the collection is not initialized do it
-    if (!members_)
-    {
-        // missing auxiliary data
-        return false;
-    }
-
     // add the new listener
     return members_->listeners.insert(listener).second;
 }
@@ -126,7 +68,7 @@ bool StatisticsListenersImpl::remove_statistics_listener_impl(
 {
     std::lock_guard<fastrtps::RecursiveTimedMutex> lock(get_statistics_mutex());
 
-    if(!members_ || !listener)
+    if(!listener)
     {
         // avoid nullptr
         return false;
@@ -234,22 +176,18 @@ bool StatisticsParticipantImpl::add_statistics_listener(
     // Check if the listener should be register in the writers
     bool writers_res = true;
     if (are_datawriters_involved(new_mask)
-            && !are_datawriters_involved(old_mask)
-            && ((writers_res = register_in_datawriter(proxy.get_shared_ptr())) == false))
+            && !are_datawriters_involved(old_mask))
     {
-        logError(RTPS_STATISTICS, "Fail to register statistical listener in all writers");
+        writers_res = register_in_datawriter(proxy.get_shared_ptr());
     }
 
     // Check if the listener should be register in the writers
     bool readers_res = true;
     if (are_datareaders_involved(new_mask)
-            && !are_datareaders_involved(old_mask)
-            && ((readers_res = register_in_datareader(proxy.get_shared_ptr())) == false))
+            && !are_datareaders_involved(old_mask))
     {
-        logError(RTPS_STATISTICS, "Fail to register statistical listener in all readers");
+        readers_res = register_in_datareader(proxy.get_shared_ptr());
     }
-
-    // TODO Barro: check and register discovery listeners
 
     return writers_res && readers_res;
 }
@@ -304,21 +242,17 @@ bool StatisticsParticipantImpl::remove_statistics_listener(
 
     bool writers_res = true;
     if (!are_datawriters_involved(new_mask)
-            && are_datawriters_involved(old_mask)
-            && ((writers_res = unregister_in_datawriter(proxy->get_shared_ptr())) == false))
+            && are_datawriters_involved(old_mask))
     {
-        logError(RTPS_STATISTICS, "Fail to revoke registration of statistical listener in all writers");
+        writers_res = unregister_in_datawriter(proxy->get_shared_ptr());
     }
 
     bool readers_res = true;
     if (!are_datareaders_involved(new_mask)
-            && are_datareaders_involved(old_mask)
-            && ((readers_res = unregister_in_datareader(proxy->get_shared_ptr())) == false))
+            && are_datareaders_involved(old_mask))
     {
-        logError(RTPS_STATISTICS, "Fail to revoke registration of statistical listener in all readers");
+        readers_res = unregister_in_datareader(proxy->get_shared_ptr());
     }
-
-    // TODO Barro: check and unregister discovery listeners
 
     return writers_res && readers_res
         && ((old_mask & mask) == mask); // return false if there were unregistered entities
@@ -355,64 +289,6 @@ void StatisticsParticipantImpl::on_rtps_sent(
     d.entity2locator_traffic(notification);
 
     for_each_listener([&d](const Key& l)
-            {
-                l->on_statistics_data(d);
-            });
-}
-
-void StatisticsWriterImpl::on_data()
-{
-    using eprosima::fastrtps::rtps::RTPSWriter;
-
-    static_assert(
-            std::is_base_of<StatisticsWriterImpl,RTPSWriter>::value,
-            "This method should be called from an actual RTPSWriter");
-
-    EntityCount notification;
-    notification.guid(to_statistics_type(static_cast<RTPSWriter*>(this)->getGuid()));
-
-    {
-        std::lock_guard<fastrtps::RecursiveTimedMutex> lock(get_statistics_mutex());
-        notification.count(++get_members()->data_counter);
-    }
-
-    // Callback
-    Data d;
-    // note that the setter sets RESENT_DATAS by default
-    d.entity_count(notification);
-    d._d(EventKind::DATA_COUNT);
-
-    for_each_listener([&d](const std::shared_ptr<IListener>& l)
-            {
-                l->on_statistics_data(d);
-            });
-}
-
-void StatisticsWriterImpl::on_data_frag()
-{
-    // there is no specific EventKind thus it will be redirected to DATA_COUNT
-    on_data();
-}
-
-void StatisticsReaderImpl::on_acknack(int32_t count)
-{
-    using eprosima::fastrtps::rtps::RTPSReader;
-
-    static_assert(
-            std::is_base_of<StatisticsReaderImpl,RTPSReader>::value,
-            "This method should be called from an actual RTPSReader");
-
-    EntityCount notification;
-    notification.guid(to_statistics_type(static_cast<RTPSReader*>(this)->getGuid()));
-    notification.count(count);
-
-    // Callback
-    Data d;
-    // note that the setter sets RESENT_DATAS by default
-    d.entity_count(notification);
-    d._d(EventKind::ACKNACK_COUNT);
-
-    for_each_listener([&d](const std::shared_ptr<IListener>& l)
             {
                 l->on_statistics_data(d);
             });

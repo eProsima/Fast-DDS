@@ -50,7 +50,83 @@ struct MockListener : IListener
 class RTPSStatisticsTests
     : public ::testing::Test
 {
+    protected:
+
+    fastrtps::rtps::WriterHistory* writer_history_ = nullptr;
+    fastrtps::rtps::ReaderHistory* reader_history_ = nullptr;
+
+    fastrtps::rtps::RTPSParticipant* participant_ = nullptr;
+    fastrtps::rtps::RTPSWriter* writer_ = nullptr;
+    fastrtps::rtps::RTPSReader* reader_ = nullptr;
+
+    void create_endpoints(
+            uint32_t payloadMaxSize,
+            fastrtps::rtps::ReliabilityKind_t reliability_qos = fastrtps::rtps::ReliabilityKind_t::RELIABLE)
+    {
+        using namespace fastrtps::rtps;
+
+        HistoryAttributes history_attributes;
+        history_attributes.payloadMaxSize = payloadMaxSize;
+        writer_history_ = new WriterHistory(history_attributes);
+        reader_history_ = new ReaderHistory(history_attributes);
+
+        WriterAttributes w_att;
+        w_att.endpoint.reliabilityKind = reliability_qos;
+        writer_ = RTPSDomain::createRTPSWriter(participant_, w_att, writer_history_);
+
+        ReaderAttributes r_att;
+        r_att.endpoint.reliabilityKind = reliability_qos;
+        reader_ = RTPSDomain::createRTPSReader(participant_, r_att, reader_history_);
+    }
+
+    void match_endpoints(
+        bool key,
+        fastrtps::string_255 data_type,
+        fastrtps::string_255 topic_name)
+    {
+        using namespace fastrtps;
+        using namespace fastrtps::rtps;
+
+        TopicAttributes Tatt;
+        Tatt.topicKind = key ? TopicKind_t::WITH_KEY : TopicKind_t::NO_KEY;
+        Tatt.topicDataType = data_type;
+        Tatt.topicName = topic_name;
+
+        WriterQos Wqos;
+        Wqos.m_reliability.kind =
+            RELIABLE == writer_->getAttributes().reliabilityKind ? RELIABLE_RELIABILITY_QOS : BEST_EFFORT_RELIABILITY_QOS;
+
+        ReaderQos Rqos;
+        Rqos.m_reliability.kind =
+            RELIABLE == reader_->getAttributes().reliabilityKind ? RELIABLE_RELIABILITY_QOS : BEST_EFFORT_RELIABILITY_QOS;
+
+        participant_->registerWriter(writer_, Tatt, Wqos);
+        participant_->registerReader(reader_, Tatt, Rqos);
+    }
+
+    void destroy_endpoints()
+    {
+        using namespace fastrtps::rtps;
+
+        if (nullptr != writer_ )
+        {
+            RTPSDomain::removeRTPSWriter(writer_);
+            delete writer_history_;
+            writer_ = nullptr;
+            writer_history_ = nullptr;
+        }
+
+        if (nullptr != reader_)
+        {
+            RTPSDomain::removeRTPSReader(reader_);
+            delete reader_history_;
+            reader_ = nullptr;
+            reader_history_ = nullptr;
+        }
+    }
+
     public:
+
     static void SetUpTestSuite()
     {
         using namespace fastrtps;
@@ -60,212 +136,277 @@ class RTPSStatisticsTests
         att.intraprocess_delivery = INTRAPROCESS_OFF;
         xmlparser::XMLProfileManager::library_settings(att);
     }
+
+    // Sets up the test fixture.
+    void SetUp() override
+    {
+        using namespace fastrtps::rtps;
+
+        // create the participant
+        uint32_t domain_id = 0;
+        RTPSParticipantAttributes p_attr;
+        participant_ = RTPSDomain::createParticipant(
+                domain_id, true, p_attr);
+    }
+
+    // Tears down the test fixture.
+    void TearDown() override
+    {
+        using namespace fastrtps::rtps;
+
+        // Remove the endpoints
+        destroy_endpoints();
+
+        // Remove the participant
+        RTPSDomain::removeRTPSParticipant(participant_);
+    }
+
 };
 
 /*
  * This test checks RTPSParticipant, RTPSWriter and RTPSReader statistics module related APIs.
- *  1. Creates dummy listener objects and associates them to RTPS entities of each kind covering
- *     the different possible cases: already registered, non-registered, already unregistered.
- *  2. Verify the different kinds of rtps layer callbacks are performed as expected.
+ * Creates dummy listener objects and associates them to RTPS entities of each kind covering
+ * the different possible cases: already registered, non-registered, already unregistered.
  */
 TEST_F(RTPSStatisticsTests, statistics_rpts_listener_management)
 {
+    // Check API add and remove interfaces
     using namespace std;
     using namespace fastrtps::rtps;
 
-    // create the entities
-    uint32_t domain_id = 0;
-    RTPSParticipantAttributes p_attr;
-    RTPSParticipant* participant = RTPSDomain::createParticipant(
-        domain_id, true, p_attr);
-    ASSERT_NE(participant, nullptr);
+    // Create the testing endpoints
+    create_endpoints(255);
 
-    HistoryAttributes h_attr;
-    h_attr.payloadMaxSize = 255;
-    unique_ptr<WriterHistory> w_history(new WriterHistory(h_attr));
-    unique_ptr<ReaderHistory> r_history(new ReaderHistory(h_attr));
+    auto listener1 = make_shared<MockListener>();
+    auto listener2 = make_shared<MockListener>();
+    auto nolistener = listener1;
+    nolistener.reset();
 
-    WriterAttributes w_attr;
-    RTPSWriter* writer = RTPSDomain::createRTPSWriter(participant, w_attr, w_history.get());
-    ASSERT_NE(nullptr, writer);
+    EventKind kind = EventKind::PUBLICATION_THROUGHPUT;
+    EventKind another_kind = EventKind::SUBSCRIPTION_THROUGHPUT;
+    EventKind yet_another_kind = EventKind::NETWORK_LATENCY;
 
-    ReaderAttributes r_att;
-    r_att.endpoint.reliabilityKind = ReliabilityKind_t::RELIABLE;
-    RTPSReader* reader = RTPSDomain::createRTPSReader(participant, r_att, r_history.get());
-    ASSERT_NE(nullptr, reader);
-
-    // Check API add and remove interfaces
-    {
-        auto listener1 = make_shared<MockListener>();
-        auto listener2 = make_shared<MockListener>();
-        auto nolistener = listener1;
-        nolistener.reset();
-
-        EventKind kind = EventKind::PUBLICATION_THROUGHPUT;
-        EventKind another_kind = EventKind::SUBSCRIPTION_THROUGHPUT;
-        EventKind yet_another_kind = EventKind::NETWORK_LATENCY;
-
-        // test the participant apis
-        // + fails if no listener has been yet added
-        EXPECT_FALSE(participant->remove_statistics_listener(listener1, kind));
-        // + fails to add an empty listener
-        EXPECT_FALSE(participant->add_statistics_listener(nolistener, kind));
-        // + succeeds to add a new listener
-        ASSERT_TRUE(participant->add_statistics_listener(listener1, kind));
-        // + fails to add multiple times the same listener...
-        EXPECT_FALSE(participant->add_statistics_listener(listener1, kind));
-        //   ... unless it's associated to other entity
-        EXPECT_TRUE(participant->add_statistics_listener(listener1, another_kind));
-        // + fails if an unknown listener is removed
-        EXPECT_FALSE(participant->remove_statistics_listener(listener2, kind));
-        // + fails if a known listener is removed with a non registered entity
-        EXPECT_FALSE(participant->remove_statistics_listener(listener1, yet_another_kind));
-        // + succeeds to remove a known listener
-        EXPECT_TRUE(participant->remove_statistics_listener(listener1, kind));
-        EXPECT_TRUE(participant->remove_statistics_listener(listener1, another_kind));
-        // + fails if a listener is already removed
-        EXPECT_FALSE(participant->remove_statistics_listener(listener1, kind));
-        // + The EventKind is an actual mask that allow register multiple entities simultaneously
-        EXPECT_TRUE(participant->add_statistics_listener(listener1, static_cast<EventKind>(kind | another_kind)));
-        // + When using a mask of multiple entities the return value succeeds only if all
-        //   entity driven operations succeeds. The following operation must fail because one
-        //   of the entities has not that registered listener
-        EXPECT_FALSE(participant->remove_statistics_listener(listener1,
+    // test the participant apis
+    // + fails to remove an empty listener
+    EXPECT_FALSE(participant_->remove_statistics_listener(nolistener, kind));
+    // + fails if no listener has been yet added
+    EXPECT_FALSE(participant_->remove_statistics_listener(listener1, kind));
+    // + fails to add an empty listener
+    EXPECT_FALSE(participant_->add_statistics_listener(nolistener, kind));
+    // + succeeds to add a new listener
+    ASSERT_TRUE(participant_->add_statistics_listener(listener1, kind));
+    // + fails to add multiple times the same listener...
+    EXPECT_FALSE(participant_->add_statistics_listener(listener1, kind));
+    //   ... unless it's associated to other entity
+    EXPECT_TRUE(participant_->add_statistics_listener(listener1, another_kind));
+    // + fails if an unknown listener is removed
+    EXPECT_FALSE(participant_->remove_statistics_listener(listener2, kind));
+    // + fails if a known listener is removed with a non registered entity
+    EXPECT_FALSE(participant_->remove_statistics_listener(listener1, yet_another_kind));
+    // + succeeds to remove a known listener
+    EXPECT_TRUE(participant_->remove_statistics_listener(listener1, kind));
+    EXPECT_TRUE(participant_->remove_statistics_listener(listener1, another_kind));
+    // + fails if a listener is already removed
+    EXPECT_FALSE(participant_->remove_statistics_listener(listener1, kind));
+    // + The EventKind is an actual mask that allow register multiple entities simultaneously
+    EXPECT_TRUE(participant_->add_statistics_listener(listener1, static_cast<EventKind>(kind | another_kind)));
+    // + When using a mask of multiple entities the return value succeeds only if all
+    //   entity driven operations succeeds. The following operation must fail because one
+    //   of the entities has not that registered listener
+    EXPECT_FALSE(participant_->remove_statistics_listener(listener1,
                 static_cast<EventKind>(kind | another_kind | yet_another_kind)));
 
-        // test the writer apis
-        // + fails if no listener has been yet added
-        EXPECT_FALSE(writer->remove_statistics_listener(listener1));
-        // + fails to add an empty listener
-        EXPECT_FALSE(writer->add_statistics_listener(nolistener));
-        // + succeeds to add a new listener
-        ASSERT_TRUE(writer->add_statistics_listener(listener1));
-        // + fails to add multiple times the same listener
-        EXPECT_FALSE(writer->add_statistics_listener(listener1));
-        // + fails if an unknown listener is removed
-        EXPECT_FALSE(writer->remove_statistics_listener(listener2));
-        // + succeeds to remove a known listener
-        EXPECT_TRUE(writer->remove_statistics_listener(listener1));
-        // + fails if a listener is already removed
-        EXPECT_FALSE(writer->remove_statistics_listener(listener1));
+    // test the writer apis
+    // + fails to remove an empty listener
+    EXPECT_FALSE(writer_->remove_statistics_listener(nolistener));
+    // + fails if no listener has been yet added
+    EXPECT_FALSE(writer_->remove_statistics_listener(listener1));
+    // + fails to add an empty listener
+    EXPECT_FALSE(writer_->add_statistics_listener(nolistener));
+    // + succeeds to add a new listener
+    ASSERT_TRUE(writer_->add_statistics_listener(listener1));
+    // + fails to add multiple times the same listener
+    EXPECT_FALSE(writer_->add_statistics_listener(listener1));
+    // + fails if an unknown listener is removed
+    EXPECT_FALSE(writer_->remove_statistics_listener(listener2));
+    // + succeeds to remove a known listener
+    EXPECT_TRUE(writer_->remove_statistics_listener(listener1));
+    // + fails if a listener is already removed
+    EXPECT_FALSE(writer_->remove_statistics_listener(listener1));
 
-        // test the reader apis
-        // + fails if no listener has been yet added
-        EXPECT_FALSE(reader->remove_statistics_listener(listener1));
-        // + fails to add an empty listener
-        EXPECT_FALSE(reader->add_statistics_listener(nolistener));
-        // + succeeds to add a new listener
-        ASSERT_TRUE(reader->add_statistics_listener(listener1));
-        // + fails to add multiple times the same listener
-        EXPECT_FALSE(reader->add_statistics_listener(listener1));
-        // + fails if an unknown listener is removed
-        EXPECT_FALSE(reader->remove_statistics_listener(listener2));
-        // + succeeds to remove a known listener
-        EXPECT_TRUE(reader->remove_statistics_listener(listener1));
-        // + fails if a listener is already removed
-        EXPECT_FALSE(reader->remove_statistics_listener(listener1));
-    }
+    // test the reader apis
+    // + fails to remove an empty listener
+    EXPECT_FALSE(reader_->remove_statistics_listener(nolistener));
+    // + fails if no listener has been yet added
+    EXPECT_FALSE(reader_->remove_statistics_listener(listener1));
+    // + fails to add an empty listener
+    EXPECT_FALSE(reader_->add_statistics_listener(nolistener));
+    // + succeeds to add a new listener
+    ASSERT_TRUE(reader_->add_statistics_listener(listener1));
+    // + fails to add multiple times the same listener
+    EXPECT_FALSE(reader_->add_statistics_listener(listener1));
+    // + fails if an unknown listener is removed
+    EXPECT_FALSE(reader_->remove_statistics_listener(listener2));
+    // + succeeds to remove a known listener
+    EXPECT_TRUE(reader_->remove_statistics_listener(listener1));
+    // + fails if a listener is already removed
+    EXPECT_FALSE(reader_->remove_statistics_listener(listener1));
+}
 
-    // Check:
-    // - RTPS_SENT callbacks are performed
-    // - DATA_COUNT callbacks are performed
-    // - ACKNACK_COUNT callbacks are performed
-    {
-        using namespace ::testing;
-        using namespace fastrtps;
+/*
+ * This test checks RTPSParticipant, RTPSWriter and RTPSReader statistics module related APIs.
+ * - RTPS_SENT callbacks are performed
+ * - DATA_COUNT callbacks are performed for DATA submessages
+ * - ACKNACK_COUNT callbacks are performed
+ */
+TEST_F(RTPSStatisticsTests, statistics_rpts_listener_callbacks)
+{
+    using namespace ::testing;
+    using namespace fastrtps;
+    using namespace fastrtps::rtps;
+    using namespace std;
 
-        // participant specific callbacks
-        auto participant_listener = make_shared<MockListener>();
-        ASSERT_TRUE(participant->add_statistics_listener(participant_listener, EventKind::RTPS_SENT));
+    // Create the testing endpoints
+    uint16_t length = 255;
+    create_endpoints(length);
 
-        // writer callbacks through participant listener
-        auto participant_writer_listener = make_shared<MockListener>();
-        ASSERT_TRUE(participant->add_statistics_listener(participant_writer_listener, EventKind::DATA_COUNT));
+    // participant specific callbacks
+    auto participant_listener = make_shared<MockListener>();
+    ASSERT_TRUE(participant_->add_statistics_listener(participant_listener, EventKind::RTPS_SENT));
 
-        // writer specific callbacks
-        auto writer_listener = make_shared<MockListener>();
-        ASSERT_TRUE(writer->add_statistics_listener(writer_listener));
+    // writer callbacks through participant listener
+    auto participant_writer_listener = make_shared<MockListener>();
+    ASSERT_TRUE(participant_->add_statistics_listener(participant_writer_listener, EventKind::DATA_COUNT));
 
-        // writer callbacks through participant listener
-        auto participant_reader_listener = make_shared<MockListener>();
-        ASSERT_TRUE(participant->add_statistics_listener(participant_reader_listener, EventKind::ACKNACK_COUNT));
+    // writer specific callbacks
+    auto writer_listener = make_shared<MockListener>();
+    ASSERT_TRUE(writer_->add_statistics_listener(writer_listener));
 
-        // reader specific callbacks
-        auto reader_listener = make_shared<MockListener>();
-        ASSERT_TRUE(reader->add_statistics_listener(reader_listener));
-        // We must received the sent data notifications
-        EXPECT_CALL(*participant_listener, on_statistics_data)
-                .Times(AtLeast(1));
+    // writer callbacks through participant listener
+    auto participant_reader_listener = make_shared<MockListener>();
+    ASSERT_TRUE(participant_->add_statistics_listener(participant_reader_listener, EventKind::ACKNACK_COUNT));
 
-        // match writer and reader on a dummy topic
-        TopicAttributes Tatt;
-        Tatt.topicKind = NO_KEY;
-        Tatt.topicDataType = "string";
-        Tatt.topicName = "statisticsTopic";
-        WriterQos Wqos;
-        ReaderQos Rqos;
-        Rqos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
-        participant->registerWriter(writer, Tatt, Wqos);
-        participant->registerReader(reader, Tatt, Rqos);
+    // reader specific callbacks
+    auto reader_listener = make_shared<MockListener>();
+    ASSERT_TRUE(reader_->add_statistics_listener(reader_listener));
+    // We must received the sent data notifications
+    EXPECT_CALL(*participant_listener, on_statistics_data)
+        .Times(AtLeast(1));
 
-        // Check callbacks on data exchange, at least, we must received:
-        // + RTPSWriter: PUBLICATION_THROUGHPU, RESENT_DATAS,
-        //               GAP_COUNT, DATA_COUNT, SAMPLE_DATAS & PHYSICAL_DATA
-        //   optionally: ACKNACK_COUNT & NACKFRAG_COUNT
-        EXPECT_CALL(*writer_listener, on_statistics_data)
-                .Times(AtLeast(1));
-        EXPECT_CALL(*participant_writer_listener, on_statistics_data)
-                .Times(AtLeast(1));
+    // match writer and reader on a dummy topic
+    match_endpoints(false, "string", "statisticsSmallTopic");
 
-        // + RTPSReader: SUBSCRIPTION_THROUGHPUT, DATA_COUNT,
-        //               SAMPLE_DATAS & PHYSICAL_DATA
-        //   optionally: HEARTBEAT_COUNT
-        EXPECT_CALL(*reader_listener, on_statistics_data)
-                .Times(AtLeast(1));
-        EXPECT_CALL(*participant_reader_listener, on_statistics_data)
-                .Times(AtLeast(1));
+    // Check callbacks on data exchange, at least, we must received:
+    // + RTPSWriter: PUBLICATION_THROUGHPU, RESENT_DATAS,
+    //               GAP_COUNT, DATA_COUNT, SAMPLE_DATAS & PHYSICAL_DATA
+    //   optionally: ACKNACK_COUNT & NACKFRAG_COUNT
+    EXPECT_CALL(*writer_listener, on_statistics_data)
+        .Times(AtLeast(1));
+    EXPECT_CALL(*participant_writer_listener, on_statistics_data)
+        .Times(AtLeast(1));
 
-        // exchange data
-        uint32_t payloadMaxSize = h_attr.payloadMaxSize;
-        auto writer_change = writer->new_change(
-            [payloadMaxSize]() -> uint32_t
+    // + RTPSReader: SUBSCRIPTION_THROUGHPUT, DATA_COUNT,
+    //               SAMPLE_DATAS & PHYSICAL_DATA
+    //   optionally: HEARTBEAT_COUNT
+    EXPECT_CALL(*reader_listener, on_statistics_data)
+        .Times(AtLeast(1));
+    EXPECT_CALL(*participant_reader_listener, on_statistics_data)
+        .Times(AtLeast(1));
+
+    // exchange data
+    auto writer_change = writer_->new_change(
+            [length]() -> uint32_t
             {
-                return payloadMaxSize;
+            return length;
             },
             ALIVE);
 
-        ASSERT_NE(nullptr, writer_change);
+    ASSERT_NE(nullptr, writer_change);
 
-        {
-            string str("https://github.com/eProsima/Fast-DDS.git");
-            memcpy(writer_change->serializedPayload.data, str.c_str(), str.length());
-            writer_change->serializedPayload.length = (uint32_t)str.length();
-        }
-
-        ASSERT_TRUE(w_history->add_change(writer_change));
-
-        // wait for reception
-        EXPECT_TRUE(reader->wait_for_unread_cache(Duration_t(5, 0)));
-
-        // receive the sample
-        CacheChange_t* reader_change = nullptr;
-        ASSERT_TRUE(reader->nextUntakenCache(&reader_change, nullptr));
-
-        // wait for acknowledgement
-        EXPECT_TRUE(writer->wait_for_all_acked(Duration_t(5, 0)));
-
-        reader->releaseCache(reader_change);
-        EXPECT_TRUE(writer->remove_statistics_listener(writer_listener));
-        EXPECT_TRUE(reader->remove_statistics_listener(reader_listener));
-        EXPECT_TRUE(participant->remove_statistics_listener(participant_listener, EventKind::RTPS_SENT));
-        EXPECT_TRUE(participant->remove_statistics_listener(participant_writer_listener, EventKind::DATA_COUNT));
-        EXPECT_TRUE(participant->remove_statistics_listener(participant_reader_listener, EventKind::ACKNACK_COUNT));
+    {
+        string str("https://github.com/eProsima/Fast-DDS.git");
+        memcpy(writer_change->serializedPayload.data, str.c_str(), str.length());
+        writer_change->serializedPayload.length = (uint32_t)str.length();
     }
 
-    // Remove the entities
-    RTPSDomain::removeRTPSWriter(writer);
-    RTPSDomain::removeRTPSReader(reader);
-    RTPSDomain::removeRTPSParticipant(participant);
+    ASSERT_TRUE(writer_history_->add_change(writer_change));
+
+    // wait for reception
+    EXPECT_TRUE(reader_->wait_for_unread_cache(Duration_t(5, 0)));
+
+    // receive the sample
+    CacheChange_t* reader_change = nullptr;
+    ASSERT_TRUE(reader_->nextUntakenCache(&reader_change, nullptr));
+
+    // wait for acknowledgement
+    EXPECT_TRUE(writer_->wait_for_all_acked(Duration_t(5, 0)));
+
+    reader_->releaseCache(reader_change);
+
+    EXPECT_TRUE(writer_->remove_statistics_listener(writer_listener));
+    EXPECT_TRUE(reader_->remove_statistics_listener(reader_listener));
+
+    EXPECT_TRUE(participant_->remove_statistics_listener(participant_listener, EventKind::RTPS_SENT));
+    EXPECT_TRUE(participant_->remove_statistics_listener(participant_writer_listener, EventKind::DATA_COUNT));
+    EXPECT_TRUE(participant_->remove_statistics_listener(participant_reader_listener, EventKind::ACKNACK_COUNT));
+
+}
+
+/*
+ * This test checks RTPSParticipant, RTPSWriter and RTPSReader statistics module related APIs.
+ * - participant listeners management with late joiners
+ * - DATA_COUNT callbacks with DATA_FRAGS are performed
+ */
+TEST_F(RTPSStatisticsTests, statistics_rpts_listener_callbacks_fragmented)
+{
+    using namespace ::testing;
+    using namespace fastrtps;
+    using namespace fastrtps::rtps;
+    using namespace std;
+
+    // writer callbacks through participant listener
+    auto participant_listener = make_shared<MockListener>();
+    EventKind mask = static_cast<EventKind>(EventKind::DATA_COUNT | EventKind::ACKNACK_COUNT);
+    ASSERT_TRUE(participant_->add_statistics_listener(participant_listener, mask));
+
+    EXPECT_CALL(*participant_listener, on_statistics_data)
+        .Times(AtLeast(1));
+
+    // Create the testing endpoints
+    uint16_t length = 65000;
+    create_endpoints(length);
+
+    // match writer and reader on a dummy topic
+    match_endpoints(false, "chunk", "statisticsLargeTopic");
+
+    // exchange data
+    auto writer_change = writer_->new_change(
+            [length]() -> uint32_t
+            {
+            return length;
+            },
+            ALIVE);
+
+    ASSERT_NE(nullptr, writer_change);
+
+    {
+        memset(writer_change->serializedPayload.data, 'e', length);
+        writer_change->serializedPayload.length = length;
+        writer_change->setFragmentSize(length);
+    }
+
+    ASSERT_TRUE(writer_history_->add_change(writer_change));
+
+    // wait for reception
+    EXPECT_TRUE(reader_->wait_for_unread_cache(Duration_t(5, 0)));
+
+    // receive the sample
+    CacheChange_t* reader_change = nullptr;
+    ASSERT_TRUE(reader_->nextUntakenCache(&reader_change, nullptr));
+
+    reader_->releaseCache(reader_change);
+
+    EXPECT_TRUE(participant_->remove_statistics_listener(participant_listener, mask));
 }
 
 } // namespace rtps

@@ -43,7 +43,7 @@ protected:
      * @return true if successfully created
      */
     template<class A>
-    bool init_statistics()
+    void init_statistics()
     {
         static_assert(
                 std::is_base_of<StatisticsAncillary,A>::value,
@@ -52,10 +52,7 @@ protected:
         if(!members_)
         {
             members_.reset(new A);
-            return true;
         }
-
-        return false;
     }
 
     /*
@@ -148,9 +145,13 @@ protected:
 
     /*
      * Create the auxiliary structure
+     * TODO: enable when a member is added to StatisticsReaderAncillary
      * @return true if successfully created
      */
-    StatisticsReaderAncillary* get_members() const;
+    StatisticsReaderAncillary* get_members() const
+    {
+        return nullptr;
+    }
 
     /*
      * Retrieve endpoint mutexes from derived class

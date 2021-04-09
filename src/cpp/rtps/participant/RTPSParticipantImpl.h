@@ -918,21 +918,17 @@ public:
 
     /** Unregister a listener in participant DataWriter entities.
      * @param listener, smart pointer to the listener interface to unregister
-     * @param guid, DataWriter identifier. If unknown the listener is unregistered in all enable ones
      * @return true on success
      */
     bool unregister_in_datawriter(
-            std::shared_ptr<fastdds::statistics::IListener> listener,
-            GUID_t guid = GUID_t::unknown()) override;
+            std::shared_ptr<fastdds::statistics::IListener> listener) override;
 
     /** Unregister a listener in participant DataReader entities.
      * @param listener, smart pointer to the listener interface to unregister
-     * @param guid, DataReader identifier. If unknown the listener is unregistered in all enable ones
      * @return true on success
      */
     bool unregister_in_datareader(
-            std::shared_ptr<fastdds::statistics::IListener> listener,
-            GUID_t guid = GUID_t::unknown()) override;
+            std::shared_ptr<fastdds::statistics::IListener> listener) override;
 
 #endif // FASTDDS_STATISTICS
 

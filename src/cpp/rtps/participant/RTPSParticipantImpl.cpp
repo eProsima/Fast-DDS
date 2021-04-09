@@ -2026,48 +2026,28 @@ bool RTPSParticipantImpl::register_in_datareader(
 }
 
 bool RTPSParticipantImpl::unregister_in_datawriter(
-        std::shared_ptr<fastdds::statistics::IListener> listener,
-        GUID_t writer_guid)
+        std::shared_ptr<fastdds::statistics::IListener> listener)
 {
     std::lock_guard<std::recursive_mutex> lock(*getParticipantMutex());
-    bool res = false;
+    bool res = true;
 
-    if ( GUID_t::unknown() == writer_guid )
+    for( auto writer : m_userWriterList)
     {
-        res = true;
-        for( auto writer : m_userWriterList)
-        {
-            res &= writer->remove_statistics_listener(listener);
-        }
-    }
-    else
-    {
-        RTPSWriter* writer = find_local_writer(writer_guid);
-        res = writer->remove_statistics_listener(listener);
+        res &= writer->remove_statistics_listener(listener);
     }
 
     return res;
 }
 
 bool RTPSParticipantImpl::unregister_in_datareader(
-        std::shared_ptr<fastdds::statistics::IListener> listener,
-        GUID_t reader_guid)
+        std::shared_ptr<fastdds::statistics::IListener> listener)
 {
     std::lock_guard<std::recursive_mutex> lock(*getParticipantMutex());
-    bool res = false;
+    bool res = true;
 
-    if ( GUID_t::unknown() == reader_guid )
+    for( auto reader : m_userReaderList)
     {
-        res = true;
-        for( auto reader : m_userReaderList)
-        {
-            res &= reader->remove_statistics_listener(listener);
-        }
-    }
-    else
-    {
-        RTPSReader* reader = find_local_reader(reader_guid);
-        res = reader->remove_statistics_listener(listener);
+        res &= reader->remove_statistics_listener(listener);
     }
 
     return res;

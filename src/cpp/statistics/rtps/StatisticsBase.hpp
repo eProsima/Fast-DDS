@@ -149,21 +149,17 @@ protected:
 
     /** Unregister a listener in participant DataWriter entities.
      * @param listener, smart pointer to the listener interface to unregister
-     * @param guid, DataWriter identifier. If unknown the listener is unregistered in all enable ones
      * @return true on success
      */
     virtual bool unregister_in_datawriter(
-            std::shared_ptr<fastdds::statistics::IListener> listener,
-            GUID_t guid = GUID_t::unknown()) = 0;
+            std::shared_ptr<fastdds::statistics::IListener> listener) = 0;
 
     /** Unregister a listener in participant DataReader entities.
      * @param listener, smart pointer to the listener interface to unregister
-     * @param guid, DataReader identifier. If unknown the listener is unregistered in all enable ones
      * @return true on success
      */
     virtual bool unregister_in_datareader(
-            std::shared_ptr<fastdds::statistics::IListener> listener,
-            GUID_t guid = GUID_t::unknown()) = 0;
+            std::shared_ptr<fastdds::statistics::IListener> listener) = 0;
 
     // lambda function to traverse the listener collection
     template<class Function>
