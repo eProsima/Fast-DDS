@@ -168,7 +168,7 @@ void StatisticsParticipantImpl::ListenerProxy::mask(uint32_t update) const
     mask_ = update;
 }
 
-constexpr bool StatisticsParticipantImpl::are_datawriters_involved(const uint32_t mask) const
+bool StatisticsParticipantImpl::are_datawriters_involved(const uint32_t mask) const
 {
     using namespace fastdds::statistics;
 
@@ -181,7 +181,7 @@ constexpr bool StatisticsParticipantImpl::are_datawriters_involved(const uint32_
     return writers_maks & mask;
 }
 
-constexpr bool StatisticsParticipantImpl::are_datareaders_involved(const uint32_t mask) const
+bool StatisticsParticipantImpl::are_datareaders_involved(const uint32_t mask) const
 {
     using namespace fastdds::statistics;
 
@@ -382,7 +382,7 @@ void StatisticsWriterImpl::on_data()
     d.entity_count(notification);
     d._d(EventKind::DATA_COUNT);
 
-    for_each_listener([&d](const auto & l)
+    for_each_listener([&d](const std::shared_ptr<IListener>& l)
             {
                 l->on_statistics_data(d);
             });
@@ -412,7 +412,7 @@ void StatisticsReaderImpl::on_acknack(int32_t count)
     d.entity_count(notification);
     d._d(EventKind::ACKNACK_COUNT);
 
-    for_each_listener([&d](const auto & l)
+    for_each_listener([&d](const std::shared_ptr<IListener>& l)
             {
                 l->on_statistics_data(d);
             });

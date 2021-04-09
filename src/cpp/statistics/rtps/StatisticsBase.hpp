@@ -181,10 +181,10 @@ protected:
     }
 
     // returns if a mask statistics::EventKind may require participant writers update
-    constexpr bool are_datawriters_involved(const uint32_t mask) const;
+    bool are_datawriters_involved(const uint32_t mask) const;
 
     // returns if a mask statistics::EventKind may require participant readers update
-    constexpr bool are_datareaders_involved(const uint32_t mask) const;
+    bool are_datareaders_involved(const uint32_t mask) const;
 
     // TODO: methods for listeners callbacks
 
