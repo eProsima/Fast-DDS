@@ -32,12 +32,12 @@ protected:
 
     // TODO: methods for listeners callbacks
 
-    //! Report a DATA message is send
+    //! Report a DATA message is sent
     inline void on_data()
     {
     }
 
-    //! Report a DATA_FRAG message is send
+    //! Report a DATA_FRAG message is sent
     inline void on_data_frag()
     {
     }
@@ -50,7 +50,7 @@ protected:
 
     // TODO: methods for listeners callbacks
 
-    //! Report a DATA message is send
+    //! Report a DATA message is sent
     inline void on_acknack(
             int32_t )
     {

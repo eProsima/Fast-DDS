@@ -23,6 +23,7 @@ using namespace eprosima::fastdds::statistics;
 
 using eprosima::fastrtps::RecursiveTimedMutex;
 using eprosima::fastrtps::rtps::RTPSReader;
+using eprosima::fastrtps::rtps::GUID_t;
 
 StatisticsReaderImpl::StatisticsReaderImpl()
 {
@@ -49,17 +50,20 @@ RecursiveTimedMutex& StatisticsReaderImpl::get_statistics_mutex()
     return static_cast<RTPSReader*>(this)->getMutex();
 }
 
-void StatisticsReaderImpl::on_acknack(
-        int32_t count)
+const GUID_t& StatisticsReaderImpl::get_guid()
 {
-    using eprosima::fastrtps::rtps::RTPSReader;
-
     static_assert(
         std::is_base_of<StatisticsReaderImpl, RTPSReader>::value,
         "This method should be called from an actual RTPSReader");
 
+    return static_cast<RTPSReader*>(this)->getGuid();
+}
+
+void StatisticsReaderImpl::on_acknack(
+        int32_t count)
+{
     EntityCount notification;
-    notification.guid(to_statistics_type(static_cast<RTPSReader*>(this)->getGuid()));
+    notification.guid(to_statistics_type(get_guid()));
     notification.count(count);
 
     // Callback

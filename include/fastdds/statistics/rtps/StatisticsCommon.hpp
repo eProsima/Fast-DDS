@@ -19,6 +19,7 @@
 #ifndef _FASTDDS_STATISTICS_RTPS_STATISTICSCOMMON_HPP_
 #define _FASTDDS_STATISTICS_RTPS_STATISTICSCOMMON_HPP_
 
+#include <fastdds/rtps/common/Guid.h>
 #include <fastdds/statistics/IListeners.hpp>
 #include <fastrtps/utils/TimedMutex.hpp>
 
@@ -92,6 +93,11 @@ protected:
      */
     virtual fastrtps::RecursiveTimedMutex& get_statistics_mutex() = 0;
 
+    /*
+     * Retrieve the GUID_t from derived class
+     * @return endpoint GUID_t
+     */
+    virtual const fastrtps::rtps::GUID_t& get_guid() = 0;
 };
 
 // Members are private details
@@ -100,12 +106,6 @@ struct StatisticsWriterAncillary;
 class StatisticsWriterImpl
     : protected StatisticsListenersImpl
 {
-protected:
-
-    /*
-     * Constructor. Mandatory member initialization.
-     */
-    StatisticsWriterImpl();
 
     /*
      * Create the auxiliary structure
@@ -119,12 +119,25 @@ protected:
      */
     fastrtps::RecursiveTimedMutex& get_statistics_mutex() final;
 
+    /*
+     * Retrieve the GUID_t from derived class
+     * @return endpoint GUID_t
+     */
+    const fastrtps::rtps::GUID_t& get_guid() final;
+
+protected:
+
+    /*
+     * Constructor. Mandatory member initialization.
+     */
+    StatisticsWriterImpl();
+
     // TODO: methods for listeners callbacks
 
-    //! Report a DATA message is send
+    //! Report a DATA message is sent
     void on_data();
 
-    //! Report a DATA_FRAG message is send
+    //! Report a DATA_FRAG message is sent
     void on_data_frag();
 
 };
@@ -136,13 +149,6 @@ class StatisticsReaderImpl
     : protected StatisticsListenersImpl
 {
     friend class RTPSMessageGroup;
-
-protected:
-
-    /*
-     * Constructor. Mandatory member initialization.
-     */
-    StatisticsReaderImpl();
 
     /*
      * Create the auxiliary structure
@@ -160,9 +166,22 @@ protected:
      */
     fastrtps::RecursiveTimedMutex& get_statistics_mutex() final;
 
+    /*
+     * Retrieve the GUID_t from derived class
+     * @return endpoint GUID_t
+     */
+    const fastrtps::rtps::GUID_t& get_guid() final;
+
+protected:
+
+    /*
+     * Constructor. Mandatory member initialization.
+     */
+    StatisticsReaderImpl();
+
     // TODO: methods for listeners callbacks
 
-    //! Report a DATA message is send
+    //! Report a DATA message is sent
     void on_acknack(
             int32_t count);
 };

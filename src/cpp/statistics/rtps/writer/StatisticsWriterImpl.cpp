@@ -23,6 +23,7 @@ using namespace eprosima::fastdds::statistics;
 
 using eprosima::fastrtps::RecursiveTimedMutex;
 using eprosima::fastrtps::rtps::RTPSWriter;
+using eprosima::fastrtps::rtps::GUID_t;
 
 StatisticsWriterImpl::StatisticsWriterImpl()
 {
@@ -47,7 +48,7 @@ RecursiveTimedMutex& StatisticsWriterImpl::get_statistics_mutex()
     return static_cast<RTPSWriter*>(this)->getMutex();
 }
 
-void StatisticsWriterImpl::on_data()
+const GUID_t& StatisticsWriterImpl::get_guid()
 {
     using eprosima::fastrtps::rtps::RTPSWriter;
 
@@ -55,8 +56,13 @@ void StatisticsWriterImpl::on_data()
         std::is_base_of<StatisticsWriterImpl, RTPSWriter>::value,
         "This method should be called from an actual RTPSWriter");
 
+    return static_cast<RTPSWriter*>(this)->getGuid();
+}
+
+void StatisticsWriterImpl::on_data()
+{
     EntityCount notification;
-    notification.guid(to_statistics_type(static_cast<RTPSWriter*>(this)->getGuid()));
+    notification.guid(to_statistics_type(get_guid()));
 
     {
         std::lock_guard<fastrtps::RecursiveTimedMutex> lock(get_statistics_mutex());
