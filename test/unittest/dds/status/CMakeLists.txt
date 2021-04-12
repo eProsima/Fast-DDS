@@ -91,6 +91,8 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             ${PROJECT_SOURCE_DIR}/src/cpp/utils/string_convert.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps_deprecated/publisher/PublisherHistory.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps_deprecated/subscriber/SubscriberHistory.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/statistics/fastdds/domain/DomainParticipant.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/statistics/fastdds/publisher/qos/DataWriterQos.cpp
             )
 
         # External sources

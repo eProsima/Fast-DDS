@@ -45,7 +45,7 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             )
         target_include_directories(StatisticsQosTests PRIVATE ${GTEST_INCLUDE_DIRS}
             ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include ${PROJECT_SOURCE_DIR}/src/cpp)
-        target_link_libraries(StatisticsQosTests fastrtps ${GTEST_LIBRARIES})
+        target_link_libraries(StatisticsQosTests fastrtps fastcdr ${GTEST_LIBRARIES})
         add_gtest(StatisticsQosTests SOURCES ${STATISTICS_QOS_TESTS_SOURCE})
     endif()
 endif()

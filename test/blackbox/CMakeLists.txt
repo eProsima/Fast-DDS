@@ -254,6 +254,8 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER) AND fastcdr_FOUND)
             ${CMAKE_CURRENT_BINARY_DIR}/PubSubReader.xml)
         configure_file(${CMAKE_CURRENT_SOURCE_DIR}/persistence.xml
             ${CMAKE_CURRENT_BINARY_DIR}/persistence.xml)
+        configure_file(${CMAKE_CURRENT_SOURCE_DIR}/StatisticsDomainParticipant.xml
+            ${CMAKE_CURRENT_BINARY_DIR}/StatisticsDomainParticipant.xml)
         configure_file(${CMAKE_CURRENT_SOURCE_DIR}/utils/check_guid.py
             ${CMAKE_CURRENT_BINARY_DIR}/check_guid.py)
 
@@ -288,6 +290,8 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER) AND fastcdr_FOUND)
                 ${DDS_BLACKBOXTESTS_SOURCE}
                 api/dds-pim/ReqRepHelloWorldRequester.cpp
                 api/dds-pim/ReqRepHelloWorldReplier.cpp
+                ${PROJECT_SOURCE_DIR}/src/cpp/statistics/types/types.cxx
+                ${PROJECT_SOURCE_DIR}/src/cpp/statistics/types/typesPubSubTypes.cxx
                 )
             add_executable(BlackboxTests_DDS_PIM ${BLACKBOXTESTS_FASTDDS_PIM_SOURCE})
             target_compile_definitions(BlackboxTests_DDS_PIM PRIVATE
