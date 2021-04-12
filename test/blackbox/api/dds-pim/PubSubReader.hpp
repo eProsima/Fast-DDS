@@ -247,7 +247,8 @@ public:
 
     PubSubReader(
             const std::string& topic_name,
-            bool take = true)
+            bool take = true,
+            bool statistics = false)
         : participant_listener_(*this)
         , listener_(*this)
         , participant_(nullptr)
@@ -279,9 +280,12 @@ public:
         , message_receive_count_(0)
     {
         // Generate topic name
-        std::ostringstream t;
-        t << topic_name_ << "_" << asio::ip::host_name() << "_" << GET_PID();
-        topic_name_ = t.str();
+        if (!statistics)
+        {
+            std::ostringstream t;
+            t << topic_name_ << "_" << asio::ip::host_name() << "_" << GET_PID();
+            topic_name_ = t.str();
+        }
 
         if (enable_datasharing)
         {
