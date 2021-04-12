@@ -87,3 +87,22 @@ void StatisticsWriterImpl::on_data_frag()
     // there is no specific EventKind thus it will be redirected to DATA_COUNT
     on_data();
 }
+
+void StatisticsWriterImpl::on_heartbeat(
+        uint32_t count)
+{
+    EntityCount notification;
+    notification.guid(to_statistics_type(get_guid()));
+    notification.count(count);
+
+    // Callback
+    Data d;
+    // note that the setter sets RESENT_DATAS by default
+    d.entity_count(notification);
+    d._d(EventKind::HEARTBEAT_COUNT);
+
+    for_each_listener([&d](const std::shared_ptr<IListener>& l)
+            {
+                l->on_statistics_data(d);
+            });
+}

@@ -170,7 +170,7 @@ public:
     //!Increment the HB count.
     inline void incrementHBCount()
     {
-        ++m_heartbeatCount;
+        on_heartbeat(++m_heartbeatCount);
     }
 
     /**

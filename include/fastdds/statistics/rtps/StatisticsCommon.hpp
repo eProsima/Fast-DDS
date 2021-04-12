@@ -144,6 +144,13 @@ protected:
 
     // TODO: methods for listeners callbacks
 
+    /*
+     * @brief Report a HEARTBEAT message is sent
+     * @param current count of heartbeats
+     */
+    void on_heartbeat(
+            uint32_t count);
+
     //! Report a DATA message is sent
     void on_data();
 
