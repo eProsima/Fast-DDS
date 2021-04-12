@@ -281,9 +281,9 @@ public:
 
         // notify statistics module
         on_rtps_send(
-                destination_locators_begin,
-                destination_locators_end,
-                msg->length);
+            destination_locators_begin,
+            destination_locators_end,
+            msg->length);
 
         return ret_code;
     }

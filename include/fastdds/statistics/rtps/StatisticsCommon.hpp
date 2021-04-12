@@ -46,10 +46,10 @@ protected:
     void init_statistics()
     {
         static_assert(
-                std::is_base_of<StatisticsAncillary,A>::value,
-                "Auxiliary structure must derive from StatisticsAncillary");
+            std::is_base_of<StatisticsAncillary, A>::value,
+            "Auxiliary structure must derive from StatisticsAncillary");
 
-        if(!members_)
+        if (!members_)
         {
             members_.reset(new A);
         }
@@ -101,6 +101,7 @@ class StatisticsWriterImpl
     : protected StatisticsListenersImpl
 {
 protected:
+
     /*
      * Constructor. Mandatory member initialization.
      */
@@ -162,7 +163,8 @@ protected:
     // TODO: methods for listeners callbacks
 
     //! Report a DATA message is send
-    void on_acknack(int32_t count);
+    void on_acknack(
+            int32_t count);
 };
 
 } // namespace statistics

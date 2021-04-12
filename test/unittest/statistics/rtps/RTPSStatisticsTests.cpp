@@ -50,7 +50,7 @@ struct MockListener : IListener
 class RTPSStatisticsTests
     : public ::testing::Test
 {
-    protected:
+protected:
 
     fastrtps::rtps::WriterHistory* writer_history_ = nullptr;
     fastrtps::rtps::ReaderHistory* reader_history_ = nullptr;
@@ -80,9 +80,9 @@ class RTPSStatisticsTests
     }
 
     void match_endpoints(
-        bool key,
-        fastrtps::string_255 data_type,
-        fastrtps::string_255 topic_name)
+            bool key,
+            fastrtps::string_255 data_type,
+            fastrtps::string_255 topic_name)
     {
         using namespace fastrtps;
         using namespace fastrtps::rtps;
@@ -94,11 +94,13 @@ class RTPSStatisticsTests
 
         WriterQos Wqos;
         Wqos.m_reliability.kind =
-            RELIABLE == writer_->getAttributes().reliabilityKind ? RELIABLE_RELIABILITY_QOS : BEST_EFFORT_RELIABILITY_QOS;
+                RELIABLE ==
+                writer_->getAttributes().reliabilityKind ? RELIABLE_RELIABILITY_QOS : BEST_EFFORT_RELIABILITY_QOS;
 
         ReaderQos Rqos;
         Rqos.m_reliability.kind =
-            RELIABLE == reader_->getAttributes().reliabilityKind ? RELIABLE_RELIABILITY_QOS : BEST_EFFORT_RELIABILITY_QOS;
+                RELIABLE ==
+                reader_->getAttributes().reliabilityKind ? RELIABLE_RELIABILITY_QOS : BEST_EFFORT_RELIABILITY_QOS;
 
         participant_->registerWriter(writer_, Tatt, Wqos);
         participant_->registerReader(reader_, Tatt, Rqos);
@@ -125,7 +127,7 @@ class RTPSStatisticsTests
         }
     }
 
-    public:
+public:
 
     static void SetUpTestSuite()
     {
@@ -146,7 +148,7 @@ class RTPSStatisticsTests
         uint32_t domain_id = 0;
         RTPSParticipantAttributes p_attr;
         participant_ = RTPSDomain::createParticipant(
-                domain_id, true, p_attr);
+            domain_id, true, p_attr);
     }
 
     // Tears down the test fixture.
@@ -214,7 +216,7 @@ TEST_F(RTPSStatisticsTests, statistics_rpts_listener_management)
     //   entity driven operations succeeds. The following operation must fail because one
     //   of the entities has not that registered listener
     EXPECT_FALSE(participant_->remove_statistics_listener(listener1,
-                static_cast<EventKind>(kind | another_kind | yet_another_kind)));
+            static_cast<EventKind>(kind | another_kind | yet_another_kind)));
 
     // test the writer apis
     // + fails to remove an empty listener
@@ -291,7 +293,7 @@ TEST_F(RTPSStatisticsTests, statistics_rpts_listener_callbacks)
     ASSERT_TRUE(reader_->add_statistics_listener(reader_listener));
     // We must received the sent data notifications
     EXPECT_CALL(*participant_listener, on_statistics_data)
-        .Times(AtLeast(1));
+            .Times(AtLeast(1));
 
     // match writer and reader on a dummy topic
     match_endpoints(false, "string", "statisticsSmallTopic");
@@ -301,25 +303,25 @@ TEST_F(RTPSStatisticsTests, statistics_rpts_listener_callbacks)
     //               GAP_COUNT, DATA_COUNT, SAMPLE_DATAS & PHYSICAL_DATA
     //   optionally: ACKNACK_COUNT & NACKFRAG_COUNT
     EXPECT_CALL(*writer_listener, on_statistics_data)
-        .Times(AtLeast(1));
+            .Times(AtLeast(1));
     EXPECT_CALL(*participant_writer_listener, on_statistics_data)
-        .Times(AtLeast(1));
+            .Times(AtLeast(1));
 
     // + RTPSReader: SUBSCRIPTION_THROUGHPUT, DATA_COUNT,
     //               SAMPLE_DATAS & PHYSICAL_DATA
     //   optionally: HEARTBEAT_COUNT
     EXPECT_CALL(*reader_listener, on_statistics_data)
-        .Times(AtLeast(1));
+            .Times(AtLeast(1));
     EXPECT_CALL(*participant_reader_listener, on_statistics_data)
-        .Times(AtLeast(1));
+            .Times(AtLeast(1));
 
     // exchange data
     auto writer_change = writer_->new_change(
-            [length]() -> uint32_t
-            {
+        [length]() -> uint32_t
+        {
             return length;
-            },
-            ALIVE);
+        },
+        ALIVE);
 
     ASSERT_NE(nullptr, writer_change);
 
@@ -370,7 +372,7 @@ TEST_F(RTPSStatisticsTests, statistics_rpts_listener_callbacks_fragmented)
     ASSERT_TRUE(participant_->add_statistics_listener(participant_listener, mask));
 
     EXPECT_CALL(*participant_listener, on_statistics_data)
-        .Times(AtLeast(1));
+            .Times(AtLeast(1));
 
     // Create the testing endpoints
     uint16_t length = 65000;
@@ -381,11 +383,11 @@ TEST_F(RTPSStatisticsTests, statistics_rpts_listener_callbacks_fragmented)
 
     // exchange data
     auto writer_change = writer_->new_change(
-            [length]() -> uint32_t
-            {
+        [length]() -> uint32_t
+        {
             return length;
-            },
-            ALIVE);
+        },
+        ALIVE);
 
     ASSERT_NE(nullptr, writer_change);
 

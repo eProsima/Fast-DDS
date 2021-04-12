@@ -60,7 +60,7 @@ Function StatisticsListenersImpl::for_each_listener(
 
     if (members_)
     {
-        for(auto& listener : members_->listeners)
+        for (auto& listener : members_->listeners)
         {
             f(listener);
         }
@@ -90,25 +90,31 @@ protected:
         mutable uint32_t mask_;
         std::shared_ptr<IListener> external_;
 
-        public:
+    public:
 
-        ListenerProxy(std::shared_ptr<IListener> listener, uint32_t mask)
+        ListenerProxy(
+                std::shared_ptr<IListener> listener,
+                uint32_t mask)
             : mask_(mask)
             , external_(listener)
         {
         }
 
-        void on_statistics_data(const Data& data) override;
+        void on_statistics_data(
+                const Data& data) override;
 
         uint32_t mask() const;
-        void mask(uint32_t update) const;
+        void mask(
+                uint32_t update) const;
 
-        bool operator<(const ListenerProxy& right) const;
+        bool operator <(
+                const ListenerProxy& right) const;
 
         std::shared_ptr<IListener> get_shared_ptr() const
         {
             return std::static_pointer_cast<IListener>(const_cast<ListenerProxy*>(this)->shared_from_this());
         }
+
     };
 
     using GUID_t = fastrtps::rtps::GUID_t;
@@ -117,10 +123,13 @@ protected:
     // specialized comparison operator, the actual key is the external listener address
     struct CompareProxies
     {
-        bool operator()(const Key& left, const Key& right) const
+        bool operator ()(
+                const Key& left,
+                const Key& right) const
         {
             return *left < *right;
         }
+
     };
 
     using ProxyCollection = std::set<Key, CompareProxies>;
@@ -168,7 +177,7 @@ protected:
     {
         std::lock_guard<std::recursive_mutex> lock(get_statistics_mutex());
 
-        for(auto& listener : listeners_)
+        for (auto& listener : listeners_)
         {
             f(listener);
         }
@@ -177,10 +186,12 @@ protected:
     }
 
     // returns if a mask statistics::EventKind may require participant writers update
-    bool are_datawriters_involved(const uint32_t mask) const;
+    bool are_datawriters_involved(
+            const uint32_t mask) const;
 
     // returns if a mask statistics::EventKind may require participant readers update
-    bool are_datareaders_involved(const uint32_t mask) const;
+    bool are_datareaders_involved(
+            const uint32_t mask) const;
 
     // TODO: methods for listeners callbacks
 
@@ -190,7 +201,7 @@ protected:
      * @param payload_size, size of the current message
      */
     void on_rtps_sent(
-            const fastrtps::rtps::Locator_t & loc,
+            const fastrtps::rtps::Locator_t& loc,
             unsigned long payload_size);
 
     /*
@@ -201,12 +212,12 @@ protected:
      */
     template<class LocatorIteratorT>
     void on_rtps_send(
-        const LocatorIteratorT& destination_locators_begin,
-        const LocatorIteratorT& destination_locators_end,
-        unsigned long payload_size)
+            const LocatorIteratorT& destination_locators_begin,
+            const LocatorIteratorT& destination_locators_end,
+            unsigned long payload_size)
     {
         auto it = destination_locators_begin;
-        while(it != destination_locators_end)
+        while (it != destination_locators_end)
         {
             on_rtps_sent(*it, payload_size);
             ++it;
@@ -246,9 +257,9 @@ protected:
      */
     template<class LocatorIteratorT>
     inline void on_rtps_send(
-                const LocatorIteratorT&,
-                const LocatorIteratorT&,
-                unsigned long)
+            const LocatorIteratorT&,
+            const LocatorIteratorT&,
+            unsigned long)
     {
     }
 

@@ -29,12 +29,14 @@ namespace eprosima {
 namespace fastdds {
 namespace statistics {
 
-detail::Locator_s to_statistics_type(eprosima::fastrtps::rtps::Locator_t l)
+detail::Locator_s to_statistics_type(
+        eprosima::fastrtps::rtps::Locator_t l)
 {
     return *reinterpret_cast<detail::Locator_s*>(&l);
 }
 
-detail::GUID_s to_statistics_type(eprosima::fastrtps::rtps::GUID_t g)
+detail::GUID_s to_statistics_type(
+        eprosima::fastrtps::rtps::GUID_t g)
 {
     return *reinterpret_cast<detail::GUID_s*>(&g);
 }
@@ -51,7 +53,7 @@ StatisticsAncillary* StatisticsListenersImpl::get_aux_members() const
 bool StatisticsListenersImpl::add_statistics_listener_impl(
         std::shared_ptr<fastdds::statistics::IListener> listener)
 {
-    if(!listener)
+    if (!listener)
     {
         // avoid nullptr
         return false;
@@ -68,7 +70,7 @@ bool StatisticsListenersImpl::remove_statistics_listener_impl(
 {
     std::lock_guard<fastrtps::RecursiveTimedMutex> lock(get_statistics_mutex());
 
-    if(!listener)
+    if (!listener)
     {
         // avoid nullptr
         return false;
@@ -80,22 +82,24 @@ bool StatisticsListenersImpl::remove_statistics_listener_impl(
 std::recursive_mutex& StatisticsParticipantImpl::get_statistics_mutex()
 {
     static_assert(
-            std::is_base_of<StatisticsParticipantImpl, RTPSParticipantImpl>::value,
-            "This must be called from RTPSParticipantImpl");
+        std::is_base_of<StatisticsParticipantImpl, RTPSParticipantImpl>::value,
+        "This must be called from RTPSParticipantImpl");
 
     return *static_cast<RTPSParticipantImpl*>(this)->getParticipantMutex();
 }
 
-void StatisticsParticipantImpl::ListenerProxy::on_statistics_data(const Data& data)
+void StatisticsParticipantImpl::ListenerProxy::on_statistics_data(
+        const Data& data)
 {
     // only delegate if the mask matches
-    if ( mask_ & data._d() )
+    if ( mask_ & data._d())
     {
         external_->on_statistics_data(data);
     }
 }
 
-bool StatisticsParticipantImpl::ListenerProxy::operator<(const ListenerProxy& right) const
+bool StatisticsParticipantImpl::ListenerProxy::operator <(
+        const ListenerProxy& right) const
 {
     return external_ < right.external_;
 }
@@ -105,33 +109,36 @@ uint32_t StatisticsParticipantImpl::ListenerProxy::mask() const
     return mask_;
 }
 
-void StatisticsParticipantImpl::ListenerProxy::mask(uint32_t update) const
+void StatisticsParticipantImpl::ListenerProxy::mask(
+        uint32_t update) const
 {
     mask_ = update;
 }
 
-bool StatisticsParticipantImpl::are_datawriters_involved(const uint32_t mask) const
+bool StatisticsParticipantImpl::are_datawriters_involved(
+        const uint32_t mask) const
 {
     using namespace fastdds::statistics;
 
     constexpr uint32_t writers_maks = HISTORY2HISTORY_LATENCY \
-        | PUBLICATION_THROUGHPUT \
-        | RESENT_DATAS \
-        | HEARTBEAT_COUNT \
-        | DATA_COUNT;
+            | PUBLICATION_THROUGHPUT \
+            | RESENT_DATAS \
+            | HEARTBEAT_COUNT \
+            | DATA_COUNT;
 
     return writers_maks & mask;
 }
 
-bool StatisticsParticipantImpl::are_datareaders_involved(const uint32_t mask) const
+bool StatisticsParticipantImpl::are_datareaders_involved(
+        const uint32_t mask) const
 {
     using namespace fastdds::statistics;
 
     constexpr uint32_t readers_maks = HISTORY2HISTORY_LATENCY \
-        | SUBSCRIPTION_THROUGHPUT \
-        | ACKNACK_COUNT \
-        | NACKFRAG_COUNT \
-        | GAP_COUNT;
+            | SUBSCRIPTION_THROUGHPUT \
+            | ACKNACK_COUNT \
+            | NACKFRAG_COUNT \
+            | GAP_COUNT;
 
     return readers_maks & mask;
 }
@@ -144,7 +151,7 @@ bool StatisticsParticipantImpl::add_statistics_listener(
 
     uint32_t mask = kind, new_mask, old_mask;
 
-    if(!listener || 0 == mask)
+    if (!listener || 0 == mask)
     {
         // avoid nullptr
         return false;
@@ -164,7 +171,7 @@ bool StatisticsParticipantImpl::add_statistics_listener(
         old_mask = proxy.mask();
         new_mask = old_mask | mask;
 
-        if( old_mask == new_mask )
+        if ( old_mask == new_mask )
         {
             // nop
             return false;
@@ -202,7 +209,7 @@ bool StatisticsParticipantImpl::remove_statistics_listener(
 
     uint32_t mask = kind, new_mask, old_mask;
 
-    if(!listener || 0 == mask)
+    if (!listener || 0 == mask)
     {
         // avoid nullptr
         return false;
@@ -255,19 +262,19 @@ bool StatisticsParticipantImpl::remove_statistics_listener(
     }
 
     return writers_res && readers_res
-        && ((old_mask & mask) == mask); // return false if there were unregistered entities
+           && ((old_mask & mask) == mask); // return false if there were unregistered entities
 }
 
 void StatisticsParticipantImpl::on_rtps_sent(
-        const fastrtps::rtps::Locator_t & loc,
+        const fastrtps::rtps::Locator_t& loc,
         unsigned long payload_size)
 {
     using namespace std;
     using eprosima::fastrtps::rtps::RTPSParticipantImpl;
 
     static_assert(
-            std::is_base_of<StatisticsParticipantImpl, RTPSParticipantImpl>::value,
-            "This must be called from RTPSParticipantImpl");
+        std::is_base_of<StatisticsParticipantImpl, RTPSParticipantImpl>::value,
+        "This must be called from RTPSParticipantImpl");
 
     // Compose callback and update the inner state
     Entity2LocatorTraffic notification;
@@ -277,7 +284,7 @@ void StatisticsParticipantImpl::on_rtps_sent(
     {
         std::lock_guard<std::recursive_mutex> lock(get_statistics_mutex());
 
-        auto & val = traffic[loc];
+        auto& val = traffic[loc];
         notification.packet_count(++val.packet_count);
         notification.byte_count(val.byte_count += payload_size);
         notification.byte_magnitude_order((int16_t)floor(log10(float(val.byte_count))));

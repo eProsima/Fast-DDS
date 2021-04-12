@@ -281,7 +281,7 @@ bool RTPSMessageGroup::add_info_dst_in_buffer(
 {
 #if HAVE_SECURITY
     // Add INFO_SRC when we are at the beginning of the message and RTPS protection is enabled
-    if ( (full_msg_->length == RTPSMESSAGE_HEADER_SIZE) &&
+    if ((full_msg_->length == RTPSMESSAGE_HEADER_SIZE) &&
             participant_->security_attributes().is_rtps_protected && endpoint_->supports_rtps_protection())
     {
         RTPSMessageCreator::addSubmessageInfoSRC(buffer, c_ProtocolVersion, c_VendorId_eProsima,

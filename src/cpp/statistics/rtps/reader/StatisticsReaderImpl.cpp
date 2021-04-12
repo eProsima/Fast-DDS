@@ -30,32 +30,33 @@ StatisticsReaderImpl::StatisticsReaderImpl()
 }
 
 /* Uncomment when a member is added to the StatisticsReaderAncillary
-StatisticsReaderAncillary* StatisticsReaderImpl::get_members() const
-{
+   StatisticsReaderAncillary* StatisticsReaderImpl::get_members() const
+   {
     static_assert(
             std::is_base_of<StatisticsAncillary,StatisticsReaderAncillary>::value,
             "Auxiliary structure must derive from StatisticsAncillary");
 
     return static_cast<StatisticsReaderAncillary*>(get_aux_members());
-}
-*/
+   }
+ */
 
 RecursiveTimedMutex& StatisticsReaderImpl::get_statistics_mutex()
 {
     static_assert(
-            std::is_base_of<StatisticsReaderImpl, RTPSReader>::value,
-            "Must be call from a writer.");
+        std::is_base_of<StatisticsReaderImpl, RTPSReader>::value,
+        "Must be call from a writer.");
 
     return static_cast<RTPSReader*>(this)->getMutex();
 }
 
-void StatisticsReaderImpl::on_acknack(int32_t count)
+void StatisticsReaderImpl::on_acknack(
+        int32_t count)
 {
     using eprosima::fastrtps::rtps::RTPSReader;
 
     static_assert(
-            std::is_base_of<StatisticsReaderImpl,RTPSReader>::value,
-            "This method should be called from an actual RTPSReader");
+        std::is_base_of<StatisticsReaderImpl, RTPSReader>::value,
+        "This method should be called from an actual RTPSReader");
 
     EntityCount notification;
     notification.guid(to_statistics_type(static_cast<RTPSReader*>(this)->getGuid()));

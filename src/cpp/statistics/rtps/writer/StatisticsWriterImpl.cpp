@@ -32,8 +32,8 @@ StatisticsWriterImpl::StatisticsWriterImpl()
 StatisticsWriterAncillary* StatisticsWriterImpl::get_members() const
 {
     static_assert(
-            std::is_base_of<StatisticsAncillary,StatisticsWriterAncillary>::value,
-            "Auxiliary structure must derive from StatisticsAncillary");
+        std::is_base_of<StatisticsAncillary, StatisticsWriterAncillary>::value,
+        "Auxiliary structure must derive from StatisticsAncillary");
 
     return static_cast<StatisticsWriterAncillary*>(get_aux_members());
 }
@@ -41,8 +41,8 @@ StatisticsWriterAncillary* StatisticsWriterImpl::get_members() const
 RecursiveTimedMutex& StatisticsWriterImpl::get_statistics_mutex()
 {
     static_assert(
-            std::is_base_of<StatisticsWriterImpl, RTPSWriter>::value,
-            "Must be call from a writer.");
+        std::is_base_of<StatisticsWriterImpl, RTPSWriter>::value,
+        "Must be call from a writer.");
 
     return static_cast<RTPSWriter*>(this)->getMutex();
 }
@@ -52,8 +52,8 @@ void StatisticsWriterImpl::on_data()
     using eprosima::fastrtps::rtps::RTPSWriter;
 
     static_assert(
-            std::is_base_of<StatisticsWriterImpl,RTPSWriter>::value,
-            "This method should be called from an actual RTPSWriter");
+        std::is_base_of<StatisticsWriterImpl, RTPSWriter>::value,
+        "This method should be called from an actual RTPSWriter");
 
     EntityCount notification;
     notification.guid(to_statistics_type(static_cast<RTPSWriter*>(this)->getGuid()));

@@ -1987,7 +1987,7 @@ bool RTPSParticipantImpl::register_in_datawriter(
     if ( GUID_t::unknown() == writer_guid )
     {
         res = true;
-        for( auto writer : m_userWriterList)
+        for ( auto writer : m_userWriterList)
         {
             res &= writer->add_statistics_listener(listener);
         }
@@ -2011,7 +2011,7 @@ bool RTPSParticipantImpl::register_in_datareader(
     if ( GUID_t::unknown() == reader_guid )
     {
         res = true;
-        for( auto reader : m_userReaderList)
+        for ( auto reader : m_userReaderList)
         {
             res &= reader->add_statistics_listener(listener);
         }
@@ -2031,7 +2031,7 @@ bool RTPSParticipantImpl::unregister_in_datawriter(
     std::lock_guard<std::recursive_mutex> lock(*getParticipantMutex());
     bool res = true;
 
-    for( auto writer : m_userWriterList)
+    for ( auto writer : m_userWriterList)
     {
         res &= writer->remove_statistics_listener(listener);
     }
@@ -2045,7 +2045,7 @@ bool RTPSParticipantImpl::unregister_in_datareader(
     std::lock_guard<std::recursive_mutex> lock(*getParticipantMutex());
     bool res = true;
 
-    for( auto reader : m_userReaderList)
+    for ( auto reader : m_userReaderList)
     {
         res &= reader->remove_statistics_listener(listener);
     }
