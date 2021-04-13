@@ -246,12 +246,6 @@ bool RTPSMessageCreator::addSubmessageData(
         msg->pos += align;
     }
 
-    //if(align > 0)
-    {
-        //submsgElem.pos += align;
-        //submsgElem.length += align;
-    }
-
     uint32_t size32 = msg->pos - position_size_count_size;
     if (size32 <= std::numeric_limits<uint16_t>::max())
     {
