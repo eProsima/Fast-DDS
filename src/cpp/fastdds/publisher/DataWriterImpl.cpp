@@ -56,6 +56,13 @@ namespace eprosima {
 namespace fastdds {
 namespace dds {
 
+static bool qos_has_pull_mode_request(
+        const DataWriterQos& qos)
+{
+    auto push_mode = PropertyPolicyHelper::find_property(qos.properties(), "fastdds.push_mode");
+    return (nullptr != push_mode) && ("false" == *push_mode);
+}
+
 class DataWriterImpl::LoanCollection
 {
 public:
@@ -1334,6 +1341,20 @@ ReturnCode_t DataWriterImpl::check_qos(
     {
         logError(RTPS_QOS_CHECK, "Unique network flows not supported on writers");
         return ReturnCode_t::RETCODE_UNSUPPORTED;
+    }
+    bool is_pull_mode = qos_has_pull_mode_request(qos);
+    if (is_pull_mode)
+    {
+        if (BEST_EFFORT_RELIABILITY_QOS == qos.reliability().kind)
+        {
+            logError(RTPS_QOS_CHECK, "BEST_EFFORT incompatible with pull mode");
+            return ReturnCode_t::RETCODE_INCONSISTENT_POLICY;
+        }
+        if (c_TimeInfinite == qos.reliable_writer_qos().times.heartbeatPeriod)
+        {
+            logError(RTPS_QOS_CHECK, "Infinite heartbeat period incompatible with pull mode");
+            return ReturnCode_t::RETCODE_INCONSISTENT_POLICY;
+        }
     }
     if (qos.reliability().kind == BEST_EFFORT_RELIABILITY_QOS && qos.ownership().kind == EXCLUSIVE_OWNERSHIP_QOS)
     {
