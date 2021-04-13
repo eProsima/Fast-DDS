@@ -49,8 +49,7 @@ namespace rtps {
 
 struct MockListener : IListener
 {
-    MOCK_METHOD1(on_statistics_data, void(
-                const Data&));
+    MOCK_METHOD(void, on_statistics_data, (const Data&), (override));
 };
 
 class RTPSStatisticsTests
