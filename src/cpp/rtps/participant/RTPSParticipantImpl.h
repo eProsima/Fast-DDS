@@ -268,6 +268,12 @@ public:
             const LocatorIteratorT& destination_locators_end,
             std::chrono::steady_clock::time_point& max_blocking_time_point)
     {
+        // notify statistics module
+        on_rtps_send(
+            destination_locators_begin,
+            destination_locators_end,
+            msg->length);
+
         bool ret_code = false;
         std::unique_lock<std::timed_mutex> lock(m_send_resources_mutex_, std::defer_lock);
 
@@ -282,12 +288,6 @@ public:
                 send_resource->send(msg->buffer, msg->length, &locators_begin, &locators_end,
                         max_blocking_time_point);
             }
-
-            // notify statistics module
-            on_rtps_send(
-                destination_locators_begin,
-                destination_locators_end,
-                msg->length);
         }
 
         return ret_code;
