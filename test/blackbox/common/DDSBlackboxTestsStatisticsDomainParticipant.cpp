@@ -311,21 +311,21 @@ TEST(StatisticsDomainParticipant, CreateParticipant)
     // 2. Check that the statistics topics and types related to the statistics DataWriters enabled using the
     // environment variable exist.
     EXPECT_NE(nullptr, participant->lookup_topicdescription(eprosima::fastdds::statistics::HISTORY_LATENCY_TOPIC));
-    EXPECT_EQ(history_latency_type, participant->find_type(history_latency_type.get_type_name()));
+    EXPECT_TRUE(history_latency_type == participant->find_type(history_latency_type.get_type_name()));
 
     EXPECT_NE(nullptr, participant->lookup_topicdescription(eprosima::fastdds::statistics::NETWORK_LATENCY_TOPIC));
-    EXPECT_EQ(network_latency_type, participant->find_type(network_latency_type.get_type_name()));
+    EXPECT_TRUE(network_latency_type == participant->find_type(network_latency_type.get_type_name()));
 
     EXPECT_NE(nullptr, participant->lookup_topicdescription(eprosima::fastdds::statistics::RTPS_LOST_TOPIC));
-    EXPECT_EQ(rtps_traffic_type, participant->find_type(rtps_traffic_type.get_type_name()));
+    EXPECT_TRUE(rtps_traffic_type == participant->find_type(rtps_traffic_type.get_type_name()));
 
     // Check that the statistics topics and types related to the statistics DataWriters set with the PropertyPolicyQos
     // have been created correctly.
     EXPECT_NE(nullptr, participant->lookup_topicdescription(eprosima::fastdds::statistics::DISCOVERY_TOPIC));
-    EXPECT_EQ(discovery_type, participant->find_type(discovery_type.get_type_name()));
+    EXPECT_TRUE(discovery_type == participant->find_type(discovery_type.get_type_name()));
 
     EXPECT_NE(nullptr, participant->lookup_topicdescription(eprosima::fastdds::statistics::PHYSICAL_DATA_TOPIC));
-    EXPECT_EQ(physical_data_type, participant->find_type(physical_data_type.get_type_name()));
+    EXPECT_TRUE(physical_data_type == participant->find_type(physical_data_type.get_type_name()));
 
     // Before initializing the DataReaders the environment variable should be unset.
     // Otherwise each domainParticipant (each DataReader is launched in its own domainParticipant) will also enable
@@ -455,22 +455,22 @@ TEST(StatisticsDomainParticipant, CreateParticipantUsingXML)
     // environment variable exist.
     EXPECT_NE(nullptr, participant->lookup_topicdescription(
                 eprosima::fastdds::statistics::PUBLICATION_THROUGHPUT_TOPIC));
-    EXPECT_EQ(throughput_type, participant->find_type(throughput_type.get_type_name()));
+    EXPECT_TRUE(throughput_type == participant->find_type(throughput_type.get_type_name()));
 
     EXPECT_NE(nullptr, participant->lookup_topicdescription(eprosima::fastdds::statistics::HEARTBEAT_COUNT_TOPIC));
-    EXPECT_EQ(count_type, participant->find_type(count_type.get_type_name()));
+    EXPECT_TRUE(count_type == participant->find_type(count_type.get_type_name()));
 
     // Check that the statistics topics and types related to the statistics DataWriters set with the PropertyPolicyQos
     // have been created correctly.
     EXPECT_NE(nullptr, participant->lookup_topicdescription(
                 eprosima::fastdds::statistics::SUBSCRIPTION_THROUGHPUT_TOPIC));
-    EXPECT_EQ(throughput_type, participant->find_type(throughput_type.get_type_name()));
+    EXPECT_TRUE(throughput_type == participant->find_type(throughput_type.get_type_name()));
 
     EXPECT_NE(nullptr, participant->lookup_topicdescription(eprosima::fastdds::statistics::NACKFRAG_COUNT_TOPIC));
-    EXPECT_EQ(count_type, participant->find_type(count_type.get_type_name()));
+    EXPECT_TRUE(count_type == participant->find_type(count_type.get_type_name()));
 
     EXPECT_NE(nullptr, participant->lookup_topicdescription(eprosima::fastdds::statistics::SAMPLE_DATAS_TOPIC));
-    EXPECT_EQ(sample_identity_count_type, participant->find_type(sample_identity_count_type.get_type_name()));
+    EXPECT_TRUE(sample_identity_count_type == participant->find_type(sample_identity_count_type.get_type_name()));
 
     // Before initializing the DataReaders the environment variable should be unset.
     // Otherwise each domainParticipant (each DataReader is launched in its own domainParticipant) will also enable
