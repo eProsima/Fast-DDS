@@ -521,17 +521,8 @@ TEST_F(RTPSStatisticsTests, statistics_rpts_listener_callbacks_fragmented)
         DATA_FRAG,
         [](fastrtps::rtps::CDRMessage_t&)-> bool
         {
-            using namespace std;
-
             static int counter = 0;
-            bool drop = ++counter % 2 == 0 && counter < 30;
-
-            if (drop)
-            {
-                cout << "transport drops DATA_FRAG message:" << counter << endl;
-            }
-
-            return drop;
+            return ++counter % 8 == 0 && counter < 60;
         });
 
     // writer callbacks through participant listener
@@ -571,8 +562,6 @@ TEST_F(RTPSStatisticsTests, statistics_rpts_listener_callbacks_fragmented)
         writer_change->serializedPayload.length = length;
         writer_change->setFragmentSize((uint16_t)length / 10, true);
     }
-
-    // std::this_thread::sleep_for(std::chrono::seconds(3));
 
     ASSERT_TRUE(writer_history_->add_change(writer_change));
 
