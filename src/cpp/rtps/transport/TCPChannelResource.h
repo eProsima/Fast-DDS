@@ -16,9 +16,12 @@
 #define _FASTDDS_TCP_CHANNEL_RESOURCE_BASE_
 
 #include <asio.hpp>
+
+#include <fastdds/rtps/common/Locator.h>
+#include <fastdds/rtps/network/SenderResource.h>
 #include <fastdds/rtps/transport/TCPTransportDescriptor.h>
 #include <fastdds/rtps/transport/TransportReceiverInterface.h>
-#include <fastdds/rtps/common/Locator.h>
+
 #include <rtps/transport/ChannelResource.h>
 #include <rtps/transport/tcp/RTCPMessageManager.h>
 
@@ -44,6 +47,9 @@ class TCPChannelResource : public ChannelResource
 {
 
 protected:
+
+    using SenderResource = eprosima::fastrtps::rtps::SenderResource;
+    static constexpr size_t max_required_buffers = SenderResource::max_required_buffers;
 
     enum TCPConnectionType
     {
@@ -130,7 +136,7 @@ public:
             size_t data_size,
             asio::error_code& ec)
     {
-        std::array<asio::const_buffer, 3> buffers;
+        std::array<asio::const_buffer, max_required_buffers> buffers;
         buffers[0] = { data, data_size };
         return send(header, header_size, buffers, ec);
     }
@@ -138,7 +144,7 @@ public:
     virtual size_t send(
             const fastrtps::rtps::octet* header,
             size_t header_size,
-            const std::array<asio::const_buffer, 3>& send_buffers,
+            const std::array<asio::const_buffer, max_required_buffers>& send_buffers,
             asio::error_code& ec) = 0;
 
     virtual asio::ip::tcp::endpoint remote_endpoint() const = 0;

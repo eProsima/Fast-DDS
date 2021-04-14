@@ -54,6 +54,9 @@ class RTPS_DllAPI TransportInterface
 {
 public:
 
+    using SenderResource = eprosima::fastrtps::rtps::SenderResource;
+    static constexpr size_t max_required_buffers = SenderResource::max_required_buffers;
+
     /**
      * Aside from the API defined here, an user-defined Transport must define a descriptor data type and a constructor that
      * expects a constant reference to such descriptor. e.g:

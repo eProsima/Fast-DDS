@@ -128,11 +128,11 @@ protected:
 
     void calculate_crc(
             TCPHeader& header,
-            const std::array<asio::const_buffer, 3>& send_buffers) const;
+            const std::array<asio::const_buffer, max_required_buffers>& send_buffers) const;
 
     void fill_rtcp_header(
             TCPHeader& header,
-            const std::array<asio::const_buffer, 3>& send_buffers,
+            const std::array<asio::const_buffer, max_required_buffers>& send_buffers,
             uint32_t total_bytes,
             uint16_t logical_port) const;
 
@@ -195,7 +195,7 @@ protected:
      * Send a buffer to a destination
      */
     bool send(
-            const std::array<asio::const_buffer, 3>& send_buffers,
+            const std::array<asio::const_buffer, max_required_buffers>& send_buffers,
             uint32_t total_bytes,
             std::shared_ptr<TCPChannelResource>& channel,
             const Locator& remote_locator);
@@ -347,7 +347,7 @@ public:
      * so should not be reuse.
      */
     bool send(
-            const std::array<asio::const_buffer, 3>& send_buffers,
+            const std::array<asio::const_buffer, max_required_buffers>& send_buffers,
             uint32_t total_bytes,
             std::shared_ptr<TCPChannelResource>& channel,
             fastrtps::rtps::LocatorsIterator* destination_locators_begin,
