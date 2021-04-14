@@ -128,8 +128,17 @@ protected:
     void delete_statistics_builtin_entities();
 
     /**
-     * Auxiliary function to check if the topic name provided is a valid one.
+     * Auxiliary function that transforms the topic alias to the topic name.
      * @param topic string with the statistic topic name or alias.
+     * @return string with the corresponding topic name if an alias has been used.
+     * Otherwise, the same string passed as parameter is returned.
+     */
+    const std::string transform_topic_name_alias(
+            const std::string& topic);
+
+    /**
+     * Auxiliary function to check if the topic name provided is a valid one.
+     * @param topic string with the statistic topic name.
      * @return true if the topic name provided is valid.
      * false otherwise.
      */
@@ -139,7 +148,7 @@ protected:
     /**
      * Auxiliary function to register the statistics type depending on the statistics topic name.
      * @param[out] topic pointer to the registered topic. If the method returns false the parameter is not modified.
-     * @param[in] topic_name string with the statistics topic name or alias.
+     * @param[in] topic_name string with the statistics topic name.
      * @return true if successful.
      * false in case there is incompatibility between the type associated to the Topic and the expected type.
      */
@@ -151,7 +160,7 @@ protected:
      * Auxiliary function that checks if the topic is already created within the domain participant.
      * If it is not, it creates the topic. Else, it returns the pointer to the found topic.
      * @param[out] topic pointer to the topic found or created.
-     * @param[in] topic_name string with the topic name or alias to check.
+     * @param[in] topic_name string with the topic name to check.
      * @param[in] type_name string with the type name to check that the topic is associated with the expected type.
      * @return false if the topic is found but uses another type different from the expected one.
      * true otherwise.
@@ -159,7 +168,7 @@ protected:
     bool check_or_create_topic(
             eprosima::fastdds::dds::Topic** topic,
             const std::string& topic_name,
-            const std::string& type_name); 
+            const std::string& type_name);
 
     eprosima::fastdds::dds::Publisher* builtin_publisher_;
 
