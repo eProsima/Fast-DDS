@@ -52,14 +52,14 @@ public:
                     assert(num_buffers <= max_required_buffers);
 
                     std::array<asio::const_buffer, max_required_buffers> asio_buffers;
-                    uint32_t total_size = 0;
+                    uint32_t total_num_bytes = 0;
                     for (size_t i = 0; i < num_buffers; ++i)
                     {
                         asio_buffers[i] = { buffers[i].buffer, buffers[i].length };
-                        total_size += buffers[i].length;
+                        total_num_bytes += buffers[i].length;
                     }
 
-                    assert(total_size == total_bytes);
+                    assert(total_num_bytes == total_bytes);
                     return transport.send(asio_buffers, total_bytes, channel_, destination_locators_begin,
                                    destination_locators_end);
                 };
