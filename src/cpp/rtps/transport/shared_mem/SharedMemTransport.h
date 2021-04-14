@@ -138,8 +138,8 @@ public:
      * Blocking Send to a list of destinations.
      * @param buffers Array of buffers to gather.
      * @param num_buffers Number of elements on @c buffers.
-     * @param total_bytes Total size of the raw data. Should be equal to the sum of the @c length field of all
-     * buffers. It must not exceed the send_buffer_size fed to this class during construction.
+     * @param total_bytes Total size of the raw data. Should be equal to the sum of the @c length field of all buffers.
+     *                    It must not exceed the value returned by configuration()->segment_size().
      * @param destination_locators_begin Beginning iterator for the list of destinations.
      * @param destination_locators_end Ending iterator for the list of destinations.
      * @param timeout Maximum time this function will block.
