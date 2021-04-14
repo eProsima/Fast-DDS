@@ -81,7 +81,17 @@ ReturnCode_t DomainParticipant::enable_statistics_datawriter(
     }
 
     // Register type and topic
-    register_statistics_type_and_topic(topic_name);
+    eprosima::fastdds::dds::Topic* topic = nullptr;
+    if (register_statistics_type_and_topic(&topic, topic_name))
+    {
+        // Create statistics DataWriter
+        if (nullptr == builtin_publisher_->create_datawriter(topic, dwqos))
+        {
+            logError(STATISTICS_DOMAIN_PARTICIPANT, topic_name << " DataWriter creation has failed");
+            return ReturnCode_t::RETCODE_ERROR;
+        }
+    }
+
 
     return ReturnCode_t::RETCODE_OK;
 #endif // FASTDDS_STATISTICS
@@ -205,114 +215,206 @@ void DomainParticipant::delete_statistics_builtin_entities()
 bool DomainParticipant::check_statistics_topic_name(
         const std::string& topic)
 {
-    if (HISTORY_LATENCY_TOPIC != topic &&
-            NETWORK_LATENCY_TOPIC != topic &&
-            PUBLICATION_THROUGHPUT_TOPIC != topic &&
-            SUBSCRIPTION_THROUGHPUT_TOPIC != topic &&
-            RTPS_SENT_TOPIC != topic &&
-            RTPS_LOST_TOPIC != topic &&
-            RESENT_DATAS_TOPIC != topic &&
-            HEARTBEAT_COUNT_TOPIC != topic &&
-            ACKNACK_COUNT_TOPIC != topic &&
-            NACKFRAG_COUNT_TOPIC != topic &&
-            GAP_COUNT_TOPIC != topic &&
-            DATA_COUNT_TOPIC != topic &&
-            PDP_PACKETS_TOPIC != topic &&
-            EDP_PACKETS_TOPIC != topic &&
-            DISCOVERY_TOPIC != topic &&
-            SAMPLE_DATAS_TOPIC != topic &&
-            PHYSICAL_DATA_TOPIC != topic &&
-            HISTORY_LATENCY_TOPIC_ALIAS != topic &&
-            NETWORK_LATENCY_TOPIC_ALIAS != topic &&
-            PUBLICATION_THROUGHPUT_TOPIC_ALIAS != topic &&
-            SUBSCRIPTION_THROUGHPUT_TOPIC_ALIAS != topic &&
-            RTPS_SENT_TOPIC_ALIAS != topic &&
-            RTPS_LOST_TOPIC_ALIAS != topic &&
-            RESENT_DATAS_TOPIC_ALIAS != topic &&
-            HEARTBEAT_COUNT_TOPIC_ALIAS != topic &&
-            ACKNACK_COUNT_TOPIC_ALIAS != topic &&
-            NACKFRAG_COUNT_TOPIC_ALIAS != topic &&
-            GAP_COUNT_TOPIC_ALIAS != topic &&
-            DATA_COUNT_TOPIC_ALIAS != topic &&
-            PDP_PACKETS_TOPIC_ALIAS != topic &&
-            EDP_PACKETS_TOPIC_ALIAS != topic &&
-            DISCOVERY_TOPIC_ALIAS != topic &&
-            SAMPLE_DATAS_TOPIC_ALIAS != topic &&
-            PHYSICAL_DATA_TOPIC_ALIAS != topic)
+    if (HISTORY_LATENCY_TOPIC != topic && HISTORY_LATENCY_TOPIC_ALIAS != topic &&
+            NETWORK_LATENCY_TOPIC != topic && NETWORK_LATENCY_TOPIC_ALIAS != topic &&
+            PUBLICATION_THROUGHPUT_TOPIC != topic && PUBLICATION_THROUGHPUT_TOPIC_ALIAS != topic &&
+            SUBSCRIPTION_THROUGHPUT_TOPIC != topic && SUBSCRIPTION_THROUGHPUT_TOPIC_ALIAS != topic &&
+            RTPS_SENT_TOPIC != topic && RTPS_SENT_TOPIC_ALIAS != topic &&
+            RTPS_LOST_TOPIC != topic && RTPS_LOST_TOPIC_ALIAS != topic &&
+            RESENT_DATAS_TOPIC != topic && RESENT_DATAS_TOPIC_ALIAS != topic &&
+            HEARTBEAT_COUNT_TOPIC != topic && HEARTBEAT_COUNT_TOPIC_ALIAS != topic &&
+            ACKNACK_COUNT_TOPIC != topic && ACKNACK_COUNT_TOPIC_ALIAS != topic &&
+            NACKFRAG_COUNT_TOPIC != topic && NACKFRAG_COUNT_TOPIC_ALIAS != topic &&
+            GAP_COUNT_TOPIC != topic && GAP_COUNT_TOPIC_ALIAS != topic &&
+            DATA_COUNT_TOPIC != topic && DATA_COUNT_TOPIC_ALIAS != topic &&
+            PDP_PACKETS_TOPIC != topic && PDP_PACKETS_TOPIC_ALIAS != topic &&
+            EDP_PACKETS_TOPIC != topic && EDP_PACKETS_TOPIC_ALIAS != topic &&
+            DISCOVERY_TOPIC != topic && DISCOVERY_TOPIC_ALIAS != topic &&
+            SAMPLE_DATAS_TOPIC != topic && SAMPLE_DATAS_TOPIC_ALIAS != topic &&
+            PHYSICAL_DATA_TOPIC != topic && PHYSICAL_DATA_TOPIC_ALIAS != topic)
     {
         return false;
     }
     return true;
 }
 
-void DomainParticipant::register_statistics_type_and_topic(
-        const std::string& topic)
+bool DomainParticipant::register_statistics_type_and_topic(
+        eprosima::fastdds::dds::Topic** topic,
+        const std::string& topic_name)
 {
-    if (HISTORY_LATENCY_TOPIC == topic || HISTORY_LATENCY_TOPIC_ALIAS == topic)
+    bool return_code = false;
+    std::string use_topic_name;
+    if (HISTORY_LATENCY_TOPIC == topic_name || HISTORY_LATENCY_TOPIC_ALIAS == topic_name)
     {
+        // Transform alias
+        use_topic_name = HISTORY_LATENCY_TOPIC;
+
         eprosima::fastdds::dds::TypeSupport history_latency_type(new WriterReaderDataPubSubType);
-        // No need to check ReturnCode. It fails when the type does not have a name or when the type is already
-        // registered.
+
+        // Register type. No need to check ReturnCode. It fails when the type does not have a name or when the type is
+        // already registered.
         register_type(history_latency_type);
-        // No need to check returned pointer. It fails if the topic already exists, if the QoS is inconsistent and if
-        // the type is not registered.
-        create_topic(topic, history_latency_type->getName(), eprosima::fastdds::dds::TOPIC_QOS_DEFAULT);
+
+        return_code = check_or_create_topic(topic, use_topic_name, history_latency_type->getName());
     }
-    else if (NETWORK_LATENCY_TOPIC == topic || NETWORK_LATENCY_TOPIC_ALIAS == topic)
+    else if (NETWORK_LATENCY_TOPIC == topic_name || NETWORK_LATENCY_TOPIC_ALIAS == topic_name)
     {
+        // Transform alias
+        use_topic_name = NETWORK_LATENCY_TOPIC;
+
         eprosima::fastdds::dds::TypeSupport network_latency_type(
             new eprosima::fastdds::statistics::Locator2LocatorDataPubSubType);
         register_type(network_latency_type);
-        create_topic(topic, network_latency_type->getName(), eprosima::fastdds::dds::TOPIC_QOS_DEFAULT);
+
+        return_code =  check_or_create_topic(topic, use_topic_name, network_latency_type->getName());
     }
-    else if (PUBLICATION_THROUGHPUT_TOPIC == topic || PUBLICATION_THROUGHPUT_TOPIC_ALIAS == topic ||
-            SUBSCRIPTION_THROUGHPUT_TOPIC == topic || SUBSCRIPTION_THROUGHPUT_TOPIC_ALIAS == topic)
+    else if (PUBLICATION_THROUGHPUT_TOPIC == topic_name || PUBLICATION_THROUGHPUT_TOPIC_ALIAS == topic_name ||
+            SUBSCRIPTION_THROUGHPUT_TOPIC == topic_name || SUBSCRIPTION_THROUGHPUT_TOPIC_ALIAS == topic_name)
     {
+        // Transform alias
+        if (PUBLICATION_THROUGHPUT_TOPIC == topic_name || PUBLICATION_THROUGHPUT_TOPIC_ALIAS == topic_name)
+        {
+            use_topic_name = PUBLICATION_THROUGHPUT_TOPIC;
+        }
+        else
+        {
+            use_topic_name = SUBSCRIPTION_THROUGHPUT_TOPIC;
+        }
+
         eprosima::fastdds::dds::TypeSupport throughput_type(new eprosima::fastdds::statistics::EntityDataPubSubType);
         register_type(throughput_type);
-        create_topic(topic, throughput_type->getName(), eprosima::fastdds::dds::TOPIC_QOS_DEFAULT);
+
+        return_code =  check_or_create_topic(topic, use_topic_name, throughput_type->getName());
     }
-    else if (RTPS_SENT_TOPIC == topic || RTPS_SENT_TOPIC_ALIAS == topic ||
-            RTPS_LOST_TOPIC == topic || RTPS_LOST_TOPIC_ALIAS == topic)
+    else if (RTPS_SENT_TOPIC == topic_name || RTPS_SENT_TOPIC_ALIAS == topic_name ||
+            RTPS_LOST_TOPIC == topic_name || RTPS_LOST_TOPIC_ALIAS == topic_name)
     {
+        // Transform alias
+        if (RTPS_SENT_TOPIC == topic_name || RTPS_SENT_TOPIC_ALIAS == topic_name)
+        {
+            use_topic_name = RTPS_SENT_TOPIC;
+        }
+        else
+        {
+            use_topic_name = RTPS_LOST_TOPIC;
+        }
+
         eprosima::fastdds::dds::TypeSupport rtps_traffic_type(
             new eprosima::fastdds::statistics::Entity2LocatorTrafficPubSubType);
         register_type(rtps_traffic_type);
-        create_topic(topic, rtps_traffic_type->getName(), eprosima::fastdds::dds::TOPIC_QOS_DEFAULT);
+
+        return_code =  check_or_create_topic(topic, use_topic_name, rtps_traffic_type->getName());
     }
-    else if (RESENT_DATAS_TOPIC == topic || RESENT_DATAS_TOPIC_ALIAS == topic ||
-            HEARTBEAT_COUNT_TOPIC == topic || HEARTBEAT_COUNT_TOPIC_ALIAS == topic ||
-            ACKNACK_COUNT_TOPIC == topic || ACKNACK_COUNT_TOPIC_ALIAS == topic ||
-            NACKFRAG_COUNT_TOPIC == topic || NACKFRAG_COUNT_TOPIC_ALIAS == topic ||
-            GAP_COUNT_TOPIC == topic || GAP_COUNT_TOPIC_ALIAS == topic ||
-            DATA_COUNT_TOPIC == topic || DATA_COUNT_TOPIC_ALIAS == topic ||
-            PDP_PACKETS_TOPIC == topic || PDP_PACKETS_TOPIC_ALIAS == topic ||
-            EDP_PACKETS_TOPIC == topic || EDP_PACKETS_TOPIC_ALIAS == topic)
+    else if (RESENT_DATAS_TOPIC == topic_name || RESENT_DATAS_TOPIC_ALIAS == topic_name ||
+            HEARTBEAT_COUNT_TOPIC == topic_name || HEARTBEAT_COUNT_TOPIC_ALIAS == topic_name ||
+            ACKNACK_COUNT_TOPIC == topic_name || ACKNACK_COUNT_TOPIC_ALIAS == topic_name ||
+            NACKFRAG_COUNT_TOPIC == topic_name || NACKFRAG_COUNT_TOPIC_ALIAS == topic_name ||
+            GAP_COUNT_TOPIC == topic_name || GAP_COUNT_TOPIC_ALIAS == topic_name ||
+            DATA_COUNT_TOPIC == topic_name || DATA_COUNT_TOPIC_ALIAS == topic_name ||
+            PDP_PACKETS_TOPIC == topic_name || PDP_PACKETS_TOPIC_ALIAS == topic_name ||
+            EDP_PACKETS_TOPIC == topic_name || EDP_PACKETS_TOPIC_ALIAS == topic_name)
     {
+        // Transform alias
+        if (RESENT_DATAS_TOPIC == topic_name || RESENT_DATAS_TOPIC_ALIAS == topic_name)
+        {
+            use_topic_name = RESENT_DATAS_TOPIC;
+        }
+        else if (HEARTBEAT_COUNT_TOPIC == topic_name || HEARTBEAT_COUNT_TOPIC_ALIAS == topic_name)
+        {
+            use_topic_name = HEARTBEAT_COUNT_TOPIC;
+        }
+        else if (ACKNACK_COUNT_TOPIC == topic_name || ACKNACK_COUNT_TOPIC_ALIAS == topic_name)
+        {
+            use_topic_name = ACKNACK_COUNT_TOPIC;
+        }
+        else if (NACKFRAG_COUNT_TOPIC == topic_name || NACKFRAG_COUNT_TOPIC_ALIAS == topic_name)
+        {
+            use_topic_name = NACKFRAG_COUNT_TOPIC;
+        }
+        else if (GAP_COUNT_TOPIC == topic_name || GAP_COUNT_TOPIC_ALIAS == topic_name)
+        {
+            use_topic_name = GAP_COUNT_TOPIC;
+        }
+        else if (DATA_COUNT_TOPIC == topic_name || DATA_COUNT_TOPIC_ALIAS == topic_name)
+        {
+            use_topic_name = DATA_COUNT_TOPIC;
+        }
+        else if (PDP_PACKETS_TOPIC == topic_name || PDP_PACKETS_TOPIC_ALIAS == topic_name)
+        {
+            use_topic_name = PDP_PACKETS_TOPIC;
+        }
+        else
+        {
+            use_topic_name = EDP_PACKETS_TOPIC;
+        }
+
         eprosima::fastdds::dds::TypeSupport count_type(new eprosima::fastdds::statistics::EntityCountPubSubType);
         register_type(count_type);
-        create_topic(topic, count_type->getName(), eprosima::fastdds::dds::TOPIC_QOS_DEFAULT);
+
+        return_code =  check_or_create_topic(topic, use_topic_name, count_type->getName());
     }
-    else if (DISCOVERY_TOPIC == topic || DISCOVERY_TOPIC_ALIAS == topic)
+    else if (DISCOVERY_TOPIC == topic_name || DISCOVERY_TOPIC_ALIAS == topic_name)
     {
+        // Transform alias
+        use_topic_name = DISCOVERY_TOPIC;
+
         eprosima::fastdds::dds::TypeSupport discovery_type(new eprosima::fastdds::statistics::DiscoveryTimePubSubType);
         register_type(discovery_type);
-        create_topic(topic, discovery_type->getName(), eprosima::fastdds::dds::TOPIC_QOS_DEFAULT);
+
+        return_code =  check_or_create_topic(topic, use_topic_name, discovery_type->getName());
     }
-    else if (SAMPLE_DATAS_TOPIC == topic || SAMPLE_DATAS_TOPIC_ALIAS == topic)
+    else if (SAMPLE_DATAS_TOPIC == topic_name || SAMPLE_DATAS_TOPIC_ALIAS == topic_name)
     {
+        // Transform alias
+        use_topic_name = SAMPLE_DATAS_TOPIC;
+
         eprosima::fastdds::dds::TypeSupport sample_identity_count_type(
             new eprosima::fastdds::statistics::SampleIdentityCountPubSubType);
         register_type(sample_identity_count_type);
-        create_topic(topic, sample_identity_count_type->getName(), eprosima::fastdds::dds::TOPIC_QOS_DEFAULT);
+
+        return_code =  check_or_create_topic(topic, use_topic_name, sample_identity_count_type->getName());
     }
-    else if (PHYSICAL_DATA_TOPIC == topic || PHYSICAL_DATA_TOPIC_ALIAS == topic)
+    else if (PHYSICAL_DATA_TOPIC == topic_name || PHYSICAL_DATA_TOPIC_ALIAS == topic_name)
     {
+        // Transform alias
+        use_topic_name = PHYSICAL_DATA_TOPIC;
+
         eprosima::fastdds::dds::TypeSupport physical_data_type(
             new eprosima::fastdds::statistics::PhysicalDataPubSubType);
         register_type(physical_data_type);
-        create_topic(topic, physical_data_type->getName(), eprosima::fastdds::dds::TOPIC_QOS_DEFAULT);
+
+        return_code =  check_or_create_topic(topic, use_topic_name, physical_data_type->getName());
     }
+    return return_code;
+}
+
+bool DomainParticipant::check_or_create_topic(
+        eprosima::fastdds::dds::Topic** topic,
+        const std::string& topic_name,
+        const std::string& type_name)
+{
+        // Find if the topic has been already created and if the associated type is correct
+        eprosima::fastdds::dds::TopicDescription* topic_desc = lookup_topicdescription(topic_name);
+        if (nullptr != topic_desc)
+        {
+            if (topic_desc->get_type_name() != type_name)
+            {
+                logError(STATISTICS_DOMAIN_PARTICIPANT, topic_name << " is already created with type " <<
+                    topic_desc->get_type_name() << " when type " << type_name << "is expected");
+                return false;
+            }
+            std::cout << "FOUND TOPIC: " << topic_name << std::endl;
+            *topic = dynamic_cast<eprosima::fastdds::dds::Topic*>(topic_desc);
+        }
+        else
+        {
+            // Create topic. No need to check return pointer. It fails if the topic already exists, if the QoS is
+            // inconsistent or if the type is not registered.
+            std::cout << "CREATE TOPIC: " << topic_name << std::endl;
+            *topic = create_topic(topic_name, type_name, eprosima::fastdds::dds::TOPIC_QOS_DEFAULT);
+        }
+        assert(nullptr != *topic);
+        return true;
 }
 
 } // dds

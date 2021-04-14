@@ -128,22 +128,38 @@ protected:
     void delete_statistics_builtin_entities();
 
     /**
-     * Auxiliary function to check if the topic name provided is a valid one
-     * @param topic string with the statistic topic name
+     * Auxiliary function to check if the topic name provided is a valid one.
+     * @param topic string with the statistic topic name or alias.
      * @return true if the topic name provided is valid.
-     * false otherwise
+     * false otherwise.
      */
     bool check_statistics_topic_name(
             const std::string& topic);
 
     /**
      * Auxiliary function to register the statistics type depending on the statistics topic name.
-     * @param topic string with the statistics topic name
-     * @return RETCODE_BAD_PARAMETER if the size of the name is 0, RETCODE_PRECONDITION_NOT_MET if there is another
-     * TypeSupport with the same name and RETCODE_OK if it is correctly registered.
+     * @param[out] topic pointer to the registered topic. If the method returns false the parameter is not modified.
+     * @param[in] topic_name string with the statistics topic name or alias.
+     * @return true if successful.
+     * false in case there is incompatibility between the type associated to the Topic and the expected type.
      */
-    void register_statistics_type_and_topic(
-            const std::string& topic);
+    bool register_statistics_type_and_topic(
+            eprosima::fastdds::dds::Topic** topic,
+            const std::string& topic_name);
+
+    /**
+     * Auxiliary function that checks if the topic is already created within the domain participant.
+     * If it is not, it creates the topic. Else, it returns the pointer to the found topic.
+     * @param[out] topic pointer to the topic found or created.
+     * @param[in] topic_name string with the topic name or alias to check.
+     * @param[in] type_name string with the type name to check that the topic is associated with the expected type.
+     * @return false if the topic is found but uses another type different from the expected one.
+     * true otherwise.
+     */
+    bool check_or_create_topic(
+            eprosima::fastdds::dds::Topic** topic,
+            const std::string& topic_name,
+            const std::string& type_name); 
 
     eprosima::fastdds::dds::Publisher* builtin_publisher_;
 
