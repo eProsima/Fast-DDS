@@ -240,7 +240,7 @@ bool TCPTransportInterface::check_crc(
 
 void TCPTransportInterface::calculate_crc(
         TCPHeader& header,
-        const std::array<asio::const_buffer, 3>& send_buffers) const
+        const std::array<asio::const_buffer, max_required_buffers>& send_buffers) const
 {
     uint32_t crc(0);
     for (const asio::const_buffer& buf : send_buffers)
@@ -330,7 +330,7 @@ bool TCPTransportInterface::create_acceptor_socket(
 
 void TCPTransportInterface::fill_rtcp_header(
         TCPHeader& header,
-        const std::array<asio::const_buffer, 3>& send_buffers,
+        const std::array<asio::const_buffer, max_required_buffers>& send_buffers,
         uint32_t total_bytes,
         uint16_t logical_port) const
 {
@@ -1030,7 +1030,7 @@ bool TCPTransportInterface::Receive(
 }
 
 bool TCPTransportInterface::send(
-        const std::array<asio::const_buffer, 3>& send_buffers,
+        const std::array<asio::const_buffer, max_required_buffers>& send_buffers,
         uint32_t total_bytes,
         std::shared_ptr<TCPChannelResource>& channel,
         fastrtps::rtps::LocatorsIterator* destination_locators_begin,
@@ -1054,7 +1054,7 @@ bool TCPTransportInterface::send(
 }
 
 bool TCPTransportInterface::send(
-        const std::array<asio::const_buffer, 3>& send_buffers,
+        const std::array<asio::const_buffer, max_required_buffers>& send_buffers,
         uint32_t total_bytes,
         std::shared_ptr<TCPChannelResource>& channel,
         const Locator& remote_locator)

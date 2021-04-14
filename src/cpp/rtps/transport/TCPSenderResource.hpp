@@ -49,9 +49,9 @@ public:
             fastrtps::rtps::LocatorsIterator* destination_locators_end,
             const std::chrono::steady_clock::time_point&) -> bool
                 {
-                    assert(num_buffers < 4);
+                    assert(num_buffers <= max_required_buffers);
 
-                    std::array<asio::const_buffer, 3> asio_buffers;
+                    std::array<asio::const_buffer, max_required_buffers> asio_buffers;
                     uint32_t total_size = 0;
                     for (size_t i = 0; i < num_buffers; ++i)
                     {

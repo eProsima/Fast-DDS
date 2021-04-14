@@ -38,6 +38,15 @@ public:
 
     using NetworkBuffer = eprosima::fastdds::rtps::NetworkBuffer;
 
+    /* The maximum number of buffers that will be sent on a single send call.
+     * We are currently supporting 3 buffers, due to the way RTPSMessageGroup works.
+     * Only the last DATA / DATA_FRAG on the datagram may be back-referenced, so there will be at most 3 buffers used:
+     * - Buffer with RTPS header + other submessages + DATA / DATA_FRAG header
+     * - Buffer pointing to history cache payload
+     * - Buffer with padding of up to 3 bytes
+     */
+    static constexpr size_t max_required_buffers = 3;
+
     /**
      * Sends to a destination locator, through the channel managed by this resource.
      * @param data Pointer to the contiguous data buffer.

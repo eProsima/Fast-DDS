@@ -154,7 +154,7 @@ void test_UDPv4Transport::get_ips(
 }
 
 bool test_UDPv4Transport::send(
-        const std::array<asio::const_buffer, 3>& send_buffer,
+        const std::array<asio::const_buffer, max_required_buffers>& send_buffer,
         uint32_t send_buffer_size,
         eProsimaUDPSocket& socket,
         fastrtps::rtps::LocatorsIterator* destination_locators_begin,
@@ -192,7 +192,7 @@ bool test_UDPv4Transport::send(
 }
 
 bool test_UDPv4Transport::send(
-        const std::array<asio::const_buffer, 3>& send_buffers,
+        const std::array<asio::const_buffer, max_required_buffers>& send_buffers,
         uint32_t total_bytes,
         eProsimaUDPSocket& socket,
         const Locator& remote_locator,
@@ -246,7 +246,7 @@ static bool ReadSubmessageHeader(
 }
 
 bool test_UDPv4Transport::packet_should_drop(
-        const std::array<asio::const_buffer, 3>& send_buffer,
+        const std::array<asio::const_buffer, max_required_buffers>& send_buffer,
         uint32_t send_buffer_size)
 {
     if (test_UDPv4Transport_ShutdownAllNetwork)
@@ -255,7 +255,7 @@ bool test_UDPv4Transport::packet_should_drop(
     }
 
     CDRMessage_t cdrMessage(send_buffer_size);
-    for (size_t i = 0; i < 3; ++i)
+    for (size_t i = 0; i < max_required_buffers; ++i)
     {
         memcpy(cdrMessage.buffer, send_buffer[i].data(), send_buffer[i].size());
     }
