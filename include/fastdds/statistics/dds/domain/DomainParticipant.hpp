@@ -147,7 +147,9 @@ protected:
 
     /**
      * Auxiliary function to register the statistics type depending on the statistics topic name.
-     * @param[out] topic pointer to the registered topic. If the method returns false the parameter is not modified.
+     * It also creates the topic (or finds it if already created) and returns the pointer.
+     * @param[out] topic pointer to the created topic pointer.
+     * If the method returns false the parameter is not modified.
      * @param[in] topic_name string with the statistics topic name.
      * @return true if successful.
      * false in case there is incompatibility between the type associated to the Topic and the expected type.
@@ -159,14 +161,44 @@ protected:
     /**
      * Auxiliary function that checks if the topic is already created within the domain participant.
      * If it is not, it creates the topic. Else, it returns the pointer to the found topic.
-     * @param[out] topic pointer to the topic found or created.
-     * @param[in] topic_name string with the topic name to check.
+     * @param[out] topic pointer to the topic found or created pointer.
+     * @param[in] topic_name string with the topic name to find or create.
      * @param[in] type_name string with the type name to check that the topic is associated with the expected type.
      * @return false if the topic is found but uses another type different from the expected one.
      * true otherwise.
      */
-    bool check_or_create_topic(
+    bool find_or_create_topic(
             eprosima::fastdds::dds::Topic** topic,
+            const std::string& topic_name,
+            const std::string& type_name);
+
+    /**
+     * Auxiliary function to deregister statistic type and topic.
+     * @param topic_name string with the statistics topic name.
+     * @return true if successful. False otherwise.
+     */
+    bool deregister_statistics_type_and_topic(
+            const std::string& topic_name);
+
+    /**
+     * Auxiliary method to delete a topic and deregister a type after checking that they are consistent.
+     * @param topic_name string with the topic name.
+     * @param type_name string with the type name.
+     * @return false if the type and topic do not match or if delete_topic fails. Otherwise true.
+     */
+    bool delete_topic_and_type(
+            const std::string& topic_name,
+            const std::string& type_name);
+
+    /**
+     * Auxiliary function to check that the topic has been registered with the expected type.
+     * @param topic_desc pointer to the TopicDescription found in the participant.
+     * @param topic_name string with the statistics topic name.
+     * @param type_name string with the type name to check that the topic is associated with the expected type.
+     * @return true if the topic and type are consistent. False otherwise.
+     */
+    bool check_statistics_topic_and_type(
+            const eprosima::fastdds::dds::TopicDescription* topic_desc,
             const std::string& topic_name,
             const std::string& type_name);
 

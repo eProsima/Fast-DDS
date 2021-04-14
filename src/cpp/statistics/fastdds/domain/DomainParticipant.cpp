@@ -24,12 +24,17 @@
 
 #include <fastdds/dds/domain/DomainParticipant.hpp>
 #include <fastdds/dds/log/Log.hpp>
+#include <fastdds/dds/publisher/DataWriter.hpp>
 #include <fastdds/dds/publisher/qos/DataWriterQos.hpp>
 #include <fastdds/dds/publisher/qos/PublisherQos.hpp>
 #include <fastdds/dds/publisher/DataWriter.hpp>
+#include <fastdds/dds/topic/Topic.hpp>
+#include <fastdds/dds/topic/TopicDescription.hpp>
+#include <fastdds/dds/topic/TypeSupport.hpp>
+#include <fastdds/dds/topic/qos/TopicQos.hpp>
+#include <fastdds/rtps/attributes/PropertyPolicy.h>
 #include <fastdds/statistics/dds/publisher/qos/DataWriterQos.hpp>
 #include <fastdds/statistics/topic_names.hpp>
-#include <fastdds/dds/topic/qos/TopicQos.hpp>
 #include <fastrtps/types/TypesBase.h>
 
 #include <fastdds/domain/DomainParticipantImpl.hpp>
@@ -85,11 +90,14 @@ ReturnCode_t DomainParticipant::enable_statistics_datawriter(
     eprosima::fastdds::dds::Topic* topic = nullptr;
     if (register_statistics_type_and_topic(&topic, use_topic_name))
     {
-        // Create statistics DataWriter
-        if (nullptr == builtin_publisher_->create_datawriter(topic, dwqos))
+        // Check if the statistics DataWriter already exists and create statistics DataWriter if it does not.
+        if (nullptr == builtin_publisher_->lookup_datawriter(use_topic_name))
         {
-            logError(STATISTICS_DOMAIN_PARTICIPANT, topic_name << " DataWriter creation has failed");
-            return ReturnCode_t::RETCODE_ERROR;
+            if (nullptr == builtin_publisher_->create_datawriter(topic, dwqos))
+            {
+                logError(STATISTICS_DOMAIN_PARTICIPANT, topic_name << " DataWriter creation has failed");
+                return ReturnCode_t::RETCODE_ERROR;
+            }
         }
     }
     return ReturnCode_t::RETCODE_OK;
@@ -104,12 +112,29 @@ ReturnCode_t DomainParticipant::disable_statistics_datawriter(
 
     return ReturnCode_t::RETCODE_UNSUPPORTED;
 #else
+    ReturnCode_t ret = ReturnCode_t::RETCODE_OK;
     const std::string use_topic_name = transform_topic_name_alias(topic_name);
     if(!check_statistics_topic_name(use_topic_name))
     {
         return ReturnCode_t::RETCODE_BAD_PARAMETER;
     }
-    return ReturnCode_t::RETCODE_OK;
+
+    // Delete statistics DataWriter
+    // delete_datawriter does not check that the provided argument is not nullptr (safety check)
+    eprosima::fastdds::dds::DataWriter* writer = builtin_publisher_->lookup_datawriter(use_topic_name);
+    if (nullptr != writer)
+    {
+        if (ReturnCode_t::RETCODE_OK != builtin_publisher_->delete_datawriter(writer))
+        {
+            ret = ReturnCode_t::RETCODE_ERROR;
+        }
+        // Deregister type and delete topic
+        if(!deregister_statistics_type_and_topic(use_topic_name))
+        {
+            ret = ReturnCode_t::RETCODE_ERROR;
+        }
+    }
+    return ret;
 #endif // FASTDDS_STATISTICS
 }
 
@@ -315,71 +340,67 @@ bool DomainParticipant::register_statistics_type_and_topic(
     {
         eprosima::fastdds::dds::TypeSupport history_latency_type(new WriterReaderDataPubSubType);
 
-        // Register type. No need to check ReturnCode. It fails when the type does not have a name or when the type is
-        // already registered.
+        // Register type. No need to check ReturnCode. It fails when the type does not have a name or when the type name
+        // is already being used by another type already registered.
         register_type(history_latency_type);
 
-        return_code = check_or_create_topic(topic, topic_name, history_latency_type->getName());
+        return_code = find_or_create_topic(topic, topic_name, history_latency_type->getName());
     }
     else if (NETWORK_LATENCY_TOPIC == topic_name)
     {
-        eprosima::fastdds::dds::TypeSupport network_latency_type(
-            new eprosima::fastdds::statistics::Locator2LocatorDataPubSubType);
+        eprosima::fastdds::dds::TypeSupport network_latency_type(new Locator2LocatorDataPubSubType);
         register_type(network_latency_type);
 
-        return_code =  check_or_create_topic(topic, topic_name, network_latency_type->getName());
+        return_code =  find_or_create_topic(topic, topic_name, network_latency_type->getName());
     }
     else if (PUBLICATION_THROUGHPUT_TOPIC == topic_name || SUBSCRIPTION_THROUGHPUT_TOPIC == topic_name)
     {
-        eprosima::fastdds::dds::TypeSupport throughput_type(new eprosima::fastdds::statistics::EntityDataPubSubType);
+        eprosima::fastdds::dds::TypeSupport throughput_type(new EntityDataPubSubType);
         register_type(throughput_type);
 
-        return_code =  check_or_create_topic(topic, topic_name, throughput_type->getName());
+        return_code =  find_or_create_topic(topic, topic_name, throughput_type->getName());
     }
     else if (RTPS_SENT_TOPIC == topic_name || RTPS_LOST_TOPIC == topic_name)
     {
-        eprosima::fastdds::dds::TypeSupport rtps_traffic_type(
-            new eprosima::fastdds::statistics::Entity2LocatorTrafficPubSubType);
+        eprosima::fastdds::dds::TypeSupport rtps_traffic_type(new Entity2LocatorTrafficPubSubType);
         register_type(rtps_traffic_type);
 
-        return_code =  check_or_create_topic(topic, topic_name, rtps_traffic_type->getName());
+        return_code =  find_or_create_topic(topic, topic_name, rtps_traffic_type->getName());
     }
     else if (RESENT_DATAS_TOPIC == topic_name || HEARTBEAT_COUNT_TOPIC == topic_name || 
             ACKNACK_COUNT_TOPIC == topic_name || NACKFRAG_COUNT_TOPIC == topic_name || GAP_COUNT_TOPIC == topic_name ||
             DATA_COUNT_TOPIC == topic_name || PDP_PACKETS_TOPIC == topic_name || EDP_PACKETS_TOPIC == topic_name)
     {
-        eprosima::fastdds::dds::TypeSupport count_type(new eprosima::fastdds::statistics::EntityCountPubSubType);
+        eprosima::fastdds::dds::TypeSupport count_type(new EntityCountPubSubType);
         register_type(count_type);
 
-        return_code =  check_or_create_topic(topic, topic_name, count_type->getName());
+        return_code =  find_or_create_topic(topic, topic_name, count_type->getName());
     }
     else if (DISCOVERY_TOPIC == topic_name)
     {
-        eprosima::fastdds::dds::TypeSupport discovery_type(new eprosima::fastdds::statistics::DiscoveryTimePubSubType);
+        eprosima::fastdds::dds::TypeSupport discovery_type(new DiscoveryTimePubSubType);
         register_type(discovery_type);
 
-        return_code =  check_or_create_topic(topic, topic_name, discovery_type->getName());
+        return_code =  find_or_create_topic(topic, topic_name, discovery_type->getName());
     }
     else if (SAMPLE_DATAS_TOPIC == topic_name)
     {
-        eprosima::fastdds::dds::TypeSupport sample_identity_count_type(
-            new eprosima::fastdds::statistics::SampleIdentityCountPubSubType);
+        eprosima::fastdds::dds::TypeSupport sample_identity_count_type(new SampleIdentityCountPubSubType);
         register_type(sample_identity_count_type);
 
-        return_code =  check_or_create_topic(topic, topic_name, sample_identity_count_type->getName());
+        return_code =  find_or_create_topic(topic, topic_name, sample_identity_count_type->getName());
     }
     else if (PHYSICAL_DATA_TOPIC == topic_name)
     {
-        eprosima::fastdds::dds::TypeSupport physical_data_type(
-            new eprosima::fastdds::statistics::PhysicalDataPubSubType);
+        eprosima::fastdds::dds::TypeSupport physical_data_type(new PhysicalDataPubSubType);
         register_type(physical_data_type);
 
-        return_code =  check_or_create_topic(topic, topic_name, physical_data_type->getName());
+        return_code =  find_or_create_topic(topic, topic_name, physical_data_type->getName());
     }
     return return_code;
 }
 
-bool DomainParticipant::check_or_create_topic(
+bool DomainParticipant::find_or_create_topic(
         eprosima::fastdds::dds::Topic** topic,
         const std::string& topic_name,
         const std::string& type_name)
@@ -388,24 +409,111 @@ bool DomainParticipant::check_or_create_topic(
         eprosima::fastdds::dds::TopicDescription* topic_desc = lookup_topicdescription(topic_name);
         if (nullptr != topic_desc)
         {
-            if (topic_desc->get_type_name() != type_name)
+            if(check_statistics_topic_and_type(topic_desc, topic_name, type_name))
             {
-                logError(STATISTICS_DOMAIN_PARTICIPANT, topic_name << " is already created with type " <<
-                    topic_desc->get_type_name() << " when type " << type_name << "is expected");
+                *topic = dynamic_cast<eprosima::fastdds::dds::Topic*>(topic_desc);
+            }
+            else
+            {
                 return false;
             }
-            std::cout << "FOUND TOPIC: " << topic_name << std::endl;
-            *topic = dynamic_cast<eprosima::fastdds::dds::Topic*>(topic_desc);
         }
         else
         {
             // Create topic. No need to check return pointer. It fails if the topic already exists, if the QoS is
             // inconsistent or if the type is not registered.
-            std::cout << "CREATE TOPIC: " << topic_name << std::endl;
             *topic = create_topic(topic_name, type_name, eprosima::fastdds::dds::TOPIC_QOS_DEFAULT);
         }
         assert(nullptr != *topic);
         return true;
+}
+
+bool DomainParticipant::deregister_statistics_type_and_topic(
+        const std::string& topic_name)
+{
+    bool return_code = false;
+    if (HISTORY_LATENCY_TOPIC == topic_name)
+    {
+        eprosima::fastdds::dds::TypeSupport history_latency_type(new WriterReaderDataPubSubType);
+        return_code = delete_topic_and_type(topic_name, history_latency_type->getName());
+    }
+    else if (NETWORK_LATENCY_TOPIC == topic_name)
+    {
+        eprosima::fastdds::dds::TypeSupport network_latency_type(new Locator2LocatorDataPubSubType);
+        return_code = delete_topic_and_type(topic_name, network_latency_type->getName());
+    }
+    else if (PUBLICATION_THROUGHPUT_TOPIC == topic_name || SUBSCRIPTION_THROUGHPUT_TOPIC == topic_name)
+    {
+        eprosima::fastdds::dds::TypeSupport throughput_type(new EntityDataPubSubType);
+        return_code =  delete_topic_and_type(topic_name, throughput_type->getName());
+    }
+    else if (RTPS_SENT_TOPIC == topic_name || RTPS_LOST_TOPIC == topic_name)
+    {
+        eprosima::fastdds::dds::TypeSupport rtps_traffic_type(new Entity2LocatorTrafficPubSubType);
+        return_code =  delete_topic_and_type(topic_name, rtps_traffic_type->getName());
+    }
+    else if (RESENT_DATAS_TOPIC == topic_name || HEARTBEAT_COUNT_TOPIC == topic_name || 
+            ACKNACK_COUNT_TOPIC == topic_name || NACKFRAG_COUNT_TOPIC == topic_name || GAP_COUNT_TOPIC == topic_name ||
+            DATA_COUNT_TOPIC == topic_name || PDP_PACKETS_TOPIC == topic_name || EDP_PACKETS_TOPIC == topic_name)
+    {
+        eprosima::fastdds::dds::TypeSupport count_type(new EntityCountPubSubType);
+        return_code =  delete_topic_and_type(topic_name, count_type->getName());
+    }
+    else if (DISCOVERY_TOPIC == topic_name)
+    {
+        eprosima::fastdds::dds::TypeSupport discovery_type(new DiscoveryTimePubSubType);
+        return_code =  delete_topic_and_type(topic_name, discovery_type->getName());
+    }
+    else if (SAMPLE_DATAS_TOPIC == topic_name)
+    {
+        eprosima::fastdds::dds::TypeSupport sample_identity_count_type(new SampleIdentityCountPubSubType);
+        return_code =  delete_topic_and_type(topic_name, sample_identity_count_type->getName());
+    }
+    else if (PHYSICAL_DATA_TOPIC == topic_name)
+    {
+        eprosima::fastdds::dds::TypeSupport physical_data_type(new PhysicalDataPubSubType);
+        return_code =  delete_topic_and_type(topic_name, physical_data_type->getName());
+    }
+    return return_code;
+}
+
+bool DomainParticipant::delete_topic_and_type(
+        const std::string& topic_name,
+        const std::string& type_name)
+{
+    eprosima::fastdds::dds::TopicDescription* topic_desc = lookup_topicdescription(topic_name);
+    if (nullptr != topic_desc)
+    {
+        if (check_statistics_topic_and_type(topic_desc, topic_name, type_name))
+        {
+            eprosima::fastdds::dds::Topic* topic = dynamic_cast<eprosima::fastdds::dds::Topic*>(topic_desc);
+            // unregister_type failures are of no concern here. It will fail if the type is still in use (something
+            // expected) and if the type_name is empty (which is not going to happen).
+            unregister_type(type_name);
+            // delete_topic can fail if the topic is referenced by any other entity. This case could happen even if
+            // it should not. It also fails if topic is a nullptr (dynamic_cast failure).
+            if (ReturnCode_t::RETCODE_OK != delete_topic(topic))
+            {
+                return false;
+            }
+            return true;
+        }
+    }
+    return false;
+}
+
+bool DomainParticipant::check_statistics_topic_and_type(
+        const eprosima::fastdds::dds::TopicDescription* topic_desc,
+        const std::string& topic_name,
+        const std::string& type_name)
+{
+    if (topic_desc->get_type_name() != type_name)
+    {
+        logError(STATISTICS_DOMAIN_PARTICIPANT, topic_name << "is not using expected type " << type_name <<
+            " and is using instead type " << topic_desc->get_type_name());
+        return false;
+    }
+    return true;
 }
 
 } // dds
