@@ -133,14 +133,12 @@ TEST_F(StatisticsDomainParticipantTests, NarrowDomainParticipantTest)
  * 11. Check error code precedence: RETCODE_BAD_PARAMETER takes precedence over RETCODE_INCONSISTENT_POLICY.
  * The case where the create_datawriter fails returning RETCODE_ERROR is not checked because it only passes the error
  * upstream.
- * 12. Try to delete the DomainParticipant and check that fails with RETCODE_PRECONDITION_NOT_MET because there are
- * still statistics DataWriters enabled.
- * 13. Try to disable an already disabled statistics DataWriter and check that returns RETCODE_ERROR.
- * 14. Check that if an invalid topic name is provided to the disable_statistics_datawriter method, it returns
+ * 12. Try to disable an already disabled statistics DataWriter and check that returns RETCODE_ERROR.
+ * 13. Check that if an invalid topic name is provided to the disable_statistics_datawriter method, it returns
  * RETCODE_BAD_PARAMETER.
  * The case where the delete_datawriter fails returning RETCODE_ERROR is not checked because it only passes the error
  * upstream.
- * 15. Delete DDS entities.
+ * 14. Delete DDS entities.
  */
 TEST_F(StatisticsDomainParticipantTests, EnableDisableStatisticsDataWriterTest)
 {
@@ -342,20 +340,15 @@ TEST_F(StatisticsDomainParticipantTests, EnableDisableStatisticsDataWriterTest)
     ret = statistics_participant->enable_statistics_datawriter("INVALID_TOPIC", inconsistent_qos);
     EXPECT_EQ(ret, eprosima::fastrtps::types::ReturnCode_t::RETCODE_BAD_PARAMETER);
 
-    // 12. Try to delete DomainParticipant and check that it fails because statistics DataWriters are still enabled
-    EXPECT_EQ(eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->
-                    delete_participant(statistics_participant),
-            eprosima::fastrtps::types::ReturnCode_t::RETCODE_PRECONDITION_NOT_MET);
-
-    // 13. Disable already disabled DataWriter
+    // 12. Disable already disabled DataWriter
     ret = statistics_participant->disable_statistics_datawriter(HISTORY_LATENCY_TOPIC);
     EXPECT_EQ(ret, eprosima::fastrtps::types::ReturnCode_t::RETCODE_OK);
 
-    // 14. Disable invalid topic name
+    // 13. Disable invalid topic name
     ret = statistics_participant->disable_statistics_datawriter("INVALID_TOPIC");
     EXPECT_EQ(ret, eprosima::fastrtps::types::ReturnCode_t::RETCODE_BAD_PARAMETER);
 
-    // 15. Remove DDS entities
+    // 14. Remove DDS entities
     ret = statistics_participant->disable_statistics_datawriter(NETWORK_LATENCY_TOPIC);
     EXPECT_EQ(ret, eprosima::fastrtps::types::ReturnCode_t::RETCODE_OK);
     EXPECT_EQ(nullptr, statistics_participant->lookup_topicdescription(NETWORK_LATENCY_TOPIC));
