@@ -27,6 +27,9 @@
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
 #include <fastdds/dds/publisher/Publisher.hpp>
 #include <fastdds/dds/publisher/qos/DataWriterQos.hpp>
+#include <fastdds/dds/topic/Topic.hpp>
+#include <fastdds/dds/topic/TopicDescription.hpp>
+#include <fastdds/dds/topic/TypeSupport.hpp>
 #include <fastrtps/fastrtps_dll.h>
 #include <fastrtps/types/TypesBase.h>
 
@@ -189,6 +192,15 @@ protected:
     bool delete_topic_and_type(
             const std::string& topic_name,
             const std::string& type_name);
+
+    /**
+     * Auxiliary method to check if there is not another TypeSupport registered using the reserved name for the
+     * Statistics module.
+     * @param type Statistics TypeSupport to be registered.
+     * @return false if there is another TypeSupport already registered using the same name. True otherwise.
+     */
+    bool check_register_type(
+            eprosima::fastdds::dds::TypeSupport type);
 
     /**
      * Auxiliary function to check that the topic has been registered with the expected type.
