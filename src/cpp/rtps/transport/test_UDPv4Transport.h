@@ -106,8 +106,8 @@ private:
             const Locator& remote_locator);
 
     bool log_drop(
-            const fastrtps::rtps::octet* buffer,
-            uint32_t size);
+            const std::array<asio::const_buffer, max_required_buffers>& send_buffers,
+            uint32_t total_bytes);
     bool packet_should_drop(
             const std::array<asio::const_buffer, max_required_buffers>& send_buffers,
             uint32_t total_bytes);
