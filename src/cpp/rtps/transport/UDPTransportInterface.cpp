@@ -435,8 +435,8 @@ bool UDPTransportInterface::transform_remote_locator(
 }
 
 bool UDPTransportInterface::send(
-        const std::array<asio::const_buffer, max_required_buffers>& send_buffer,
-        uint32_t send_buffer_size,
+        const std::array<asio::const_buffer, max_required_buffers>& send_buffers,
+        uint32_t total_bytes,
         eProsimaUDPSocket& socket,
         fastrtps::rtps::LocatorsIterator* destination_locators_begin,
         fastrtps::rtps::LocatorsIterator* destination_locators_end,
@@ -455,8 +455,8 @@ bool UDPTransportInterface::send(
     {
         if (IsLocatorSupported(*it))
         {
-            ret &= send(send_buffer,
-                            send_buffer_size,
+            ret &= send(send_buffers,
+                            total_bytes,
                             socket,
                             *it,
                             only_multicast_purpose,
@@ -471,8 +471,8 @@ bool UDPTransportInterface::send(
 }
 
 bool UDPTransportInterface::send(
-        const std::array<asio::const_buffer, max_required_buffers>& send_buffer,
-        size_t send_buffer_size,
+        const std::array<asio::const_buffer, max_required_buffers>& send_buffers,
+        uint32_t total_bytes,
         eProsimaUDPSocket& socket,
         const Locator& remote_locator,
         bool only_multicast_purpose,
@@ -481,7 +481,7 @@ bool UDPTransportInterface::send(
 {
     using namespace eprosima::fastdds::statistics::rtps;
 
-    if (send_buffer_size > configuration()->sendBufferSize)
+    if (total_bytes > configuration()->sendBufferSize)
     {
         return false;
     }
@@ -507,7 +507,7 @@ bool UDPTransportInterface::send(
 #endif // ifndef _WIN32
 
             asio::error_code ec;
-            bytesSent = getSocketPtr(socket)->send_to(send_buffer, destinationEndpoint, 0, ec);
+            bytesSent = getSocketPtr(socket)->send_to(send_buffers, destinationEndpoint, 0, ec);
             if (!!ec)
             {
                 if ((ec.value() == asio::error::would_block) ||

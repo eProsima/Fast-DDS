@@ -41,8 +41,8 @@ public:
             const test_UDPv4TransportDescriptor& descriptor);
 
     virtual bool send(
-            const std::array<asio::const_buffer, max_required_buffers>& send_buffer,
-            uint32_t send_buffer_size,
+            const std::array<asio::const_buffer, max_required_buffers>& send_buffers,
+            uint32_t total_bytes,
             eProsimaUDPSocket& socket,
             fastrtps::rtps::LocatorsIterator* destination_locators_begin,
             fastrtps::rtps::LocatorsIterator* destination_locators_end,
