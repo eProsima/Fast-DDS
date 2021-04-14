@@ -80,6 +80,8 @@ struct MockListener : IListener
             case NACKFRAG_COUNT:
                 on_nackfrag_count(d.entity_count());
                 break;
+            default:
+                break;
         }
     }
 
