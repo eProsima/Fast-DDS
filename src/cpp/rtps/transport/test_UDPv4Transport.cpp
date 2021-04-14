@@ -201,7 +201,7 @@ bool test_UDPv4Transport::send(
 {
     if (packet_should_drop(send_buffers, total_bytes))
     {
-        log_drop(static_cast<const octet*>(send_buffers[0].data()), total_bytes);
+        log_drop(send_buffers, total_bytes);
         return true;
     }
     else
@@ -413,13 +413,20 @@ bool test_UDPv4Transport::packet_should_drop(
 }
 
 bool test_UDPv4Transport::log_drop(
-        const octet* buffer,
-        uint32_t size)
+        const std::array<asio::const_buffer, max_required_buffers>& send_buffers,
+        uint32_t total_bytes)
 {
     if (test_UDPv4Transport_DropLog.size() < test_UDPv4Transport_DropLogLength)
     {
         vector<octet> message;
-        message.assign(buffer, buffer + size);
+        for (const auto& buf : send_buffers)
+        {
+            if (buf.size())
+            {
+                auto byte_data = static_cast<const octet*>(buf.data());
+                message.insert(message.end(), byte_data, byte_data + buf.size());
+            }
+        }
         test_UDPv4Transport_DropLog.push_back(message);
         return true;
     }
