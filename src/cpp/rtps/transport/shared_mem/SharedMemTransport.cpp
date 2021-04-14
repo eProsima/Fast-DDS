@@ -386,21 +386,6 @@ bool SharedMemTransport::transform_remote_locator(
     return false;
 }
 
-std::shared_ptr<SharedMemManager::Buffer> SharedMemTransport::copy_to_shared_buffer(
-        const octet* send_buffer,
-        uint32_t send_buffer_size,
-        const std::chrono::steady_clock::time_point& max_blocking_time_point)
-{
-    assert(shared_mem_segment_);
-
-    std::shared_ptr<SharedMemManager::Buffer> shared_buffer =
-            shared_mem_segment_->alloc_buffer(send_buffer_size, max_blocking_time_point);
-
-    memcpy(shared_buffer->data(), send_buffer, send_buffer_size);
-
-    return shared_buffer;
-}
-
 bool SharedMemTransport::send(
         const NetworkBuffer* buffers,
         size_t num_buffers,
