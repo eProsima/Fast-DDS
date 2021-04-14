@@ -315,8 +315,8 @@ public:
 
     /**
      * Blocking Send through the specified channel.
-     * @param send_buffer Slice into the raw data to send.
-     * @param send_buffer_size Size of the raw data. It will be used as a bounds check for the previous argument.
+     * @param send_buffers Slices of raw data to send.
+     * @param total_bytes Total number of bytes to send. It will be used as a bounds check for the previous argument.
      * It must not exceed the send_buffer_size fed to this class during construction.
      * @param channel channel we're sending from.
      * @param destination_locators_begin pointer to destination locators iterator begin, the iterator can be advanced inside this fuction
