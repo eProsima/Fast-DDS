@@ -340,68 +340,66 @@ bool DomainParticipant::register_statistics_type_and_topic(
     if (HISTORY_LATENCY_TOPIC == topic_name)
     {
         eprosima::fastdds::dds::TypeSupport history_latency_type(new WriterReaderDataPubSubType);
-        return_code = check_register_type(history_latency_type);
-        return_code = return_code && find_or_create_topic(topic, topic_name, history_latency_type->getName());
+        return_code = find_or_create_topic_and_type(topic, topic_name, history_latency_type);
     }
     else if (NETWORK_LATENCY_TOPIC == topic_name)
     {
         eprosima::fastdds::dds::TypeSupport network_latency_type(new Locator2LocatorDataPubSubType);
-        return_code = check_register_type(network_latency_type);
-        return_code = return_code && find_or_create_topic(topic, topic_name, network_latency_type->getName());
+        return_code = find_or_create_topic_and_type(topic, topic_name, network_latency_type);
     }
     else if (PUBLICATION_THROUGHPUT_TOPIC == topic_name || SUBSCRIPTION_THROUGHPUT_TOPIC == topic_name)
     {
         eprosima::fastdds::dds::TypeSupport throughput_type(new EntityDataPubSubType);
-        return_code = check_register_type(throughput_type);
-        return_code = return_code && find_or_create_topic(topic, topic_name, throughput_type->getName());
+        return_code = find_or_create_topic_and_type(topic, topic_name, throughput_type);
     }
     else if (RTPS_SENT_TOPIC == topic_name || RTPS_LOST_TOPIC == topic_name)
     {
         eprosima::fastdds::dds::TypeSupport rtps_traffic_type(new Entity2LocatorTrafficPubSubType);
-        return_code = check_register_type(rtps_traffic_type);
-        return_code = return_code && find_or_create_topic(topic, topic_name, rtps_traffic_type->getName());
+        return_code = find_or_create_topic_and_type(topic, topic_name, rtps_traffic_type);
     }
     else if (RESENT_DATAS_TOPIC == topic_name || HEARTBEAT_COUNT_TOPIC == topic_name || 
             ACKNACK_COUNT_TOPIC == topic_name || NACKFRAG_COUNT_TOPIC == topic_name || GAP_COUNT_TOPIC == topic_name ||
             DATA_COUNT_TOPIC == topic_name || PDP_PACKETS_TOPIC == topic_name || EDP_PACKETS_TOPIC == topic_name)
     {
         eprosima::fastdds::dds::TypeSupport count_type(new EntityCountPubSubType);
-        return_code = check_register_type(count_type);
-        return_code = return_code && find_or_create_topic(topic, topic_name, count_type->getName());
+        return_code = find_or_create_topic_and_type(topic, topic_name, count_type);
     }
     else if (DISCOVERY_TOPIC == topic_name)
     {
         eprosima::fastdds::dds::TypeSupport discovery_type(new DiscoveryTimePubSubType);
-        return_code = check_register_type(discovery_type);
-        return_code = return_code && find_or_create_topic(topic, topic_name, discovery_type->getName());
+        return_code = find_or_create_topic_and_type(topic, topic_name, discovery_type);
     }
     else if (SAMPLE_DATAS_TOPIC == topic_name)
     {
         eprosima::fastdds::dds::TypeSupport sample_identity_count_type(new SampleIdentityCountPubSubType);
-        return_code = check_register_type(sample_identity_count_type);
-        return_code = return_code && find_or_create_topic(topic, topic_name, sample_identity_count_type->getName());
+        return_code = find_or_create_topic_and_type(topic, topic_name, sample_identity_count_type);
     }
     else if (PHYSICAL_DATA_TOPIC == topic_name)
     {
         eprosima::fastdds::dds::TypeSupport physical_data_type(new PhysicalDataPubSubType);
-        return_code = check_register_type(physical_data_type);
-        return_code = return_code && find_or_create_topic(topic, topic_name, physical_data_type->getName());
+        return_code = find_or_create_topic_and_type(topic, topic_name, physical_data_type);
     }
     return return_code;
 }
 
-bool DomainParticipant::find_or_create_topic(
+bool DomainParticipant::find_or_create_topic_and_type(
         eprosima::fastdds::dds::Topic** topic,
         const std::string& topic_name,
-        const std::string& type_name)
+        const eprosima::fastdds::dds::TypeSupport& type)
 {
         // Find if the topic has been already created and if the associated type is correct
         eprosima::fastdds::dds::TopicDescription* topic_desc = lookup_topicdescription(topic_name);
         if (nullptr != topic_desc)
         {
-            if(check_statistics_topic_and_type(topic_desc, topic_name, type_name))
+            if(check_statistics_topic_and_type(topic_desc, topic_name, type->getName()))
             {
                 *topic = dynamic_cast<eprosima::fastdds::dds::Topic*>(topic_desc);
+                if (*topic == nullptr)
+                {
+                    logError(STATISTICS_DOMAIN_PARTICIPANT, topic_name <<
+                        " is already created but not as an instance of class Topic");
+                    return false;
+                }
             }
             else
             {
@@ -410,9 +408,14 @@ bool DomainParticipant::find_or_create_topic(
         }
         else
         {
+            if (ReturnCode_t::RETCODE_PRECONDITION_NOT_MET == register_type(type))
+            {
+                // No log because it is already logged within register_type
+                return false;
+            }
             // Create topic. No need to check return pointer. It fails if the topic already exists, if the QoS is
             // inconsistent or if the type is not registered.
-            *topic = create_topic(topic_name, type_name, eprosima::fastdds::dds::TOPIC_QOS_DEFAULT);
+            *topic = create_topic(topic_name, type->getName(), eprosima::fastdds::dds::TOPIC_QOS_DEFAULT);
         }
         assert(nullptr != *topic);
         return true;
@@ -490,17 +493,6 @@ bool DomainParticipant::delete_topic_and_type(
     return false;
 }
 
-bool DomainParticipant::check_register_type(
-        eprosima::fastdds::dds::TypeSupport type)
-{
-    if (ReturnCode_t::RETCODE_PRECONDITION_NOT_MET == register_type(type))
-    {
-        // No log because it is already logged within register_type
-        return false;
-    }
-    return true;
-}
-
 bool DomainParticipant::check_statistics_topic_and_type(
         const eprosima::fastdds::dds::TopicDescription* topic_desc,
         const std::string& topic_name,
@@ -508,7 +500,7 @@ bool DomainParticipant::check_statistics_topic_and_type(
 {
     if (topic_desc->get_type_name() != type_name)
     {
-        logError(STATISTICS_DOMAIN_PARTICIPANT, topic_name << "is not using expected type " << type_name <<
+        logError(STATISTICS_DOMAIN_PARTICIPANT, topic_name << " is not using expected type " << type_name <<
             " and is using instead type " << topic_desc->get_type_name());
         return false;
     }

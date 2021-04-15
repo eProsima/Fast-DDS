@@ -163,17 +163,18 @@ protected:
 
     /**
      * Auxiliary function that checks if the topic is already created within the domain participant.
-     * If it is not, it creates the topic. Else, it returns the pointer to the found topic.
-     * @param[out] topic pointer to the topic found or created pointer.
+     * If it is not, it creates the topic and registers the type. It also checks if the type can be registered.
+     * If succesfull, it returns the pointer to the found or created topic.
+     * @param[out] topic pointer to the found or created topic pointer.
      * @param[in] topic_name string with the topic name to find or create.
-     * @param[in] type_name string with the type name to check that the topic is associated with the expected type.
-     * @return false if the topic is found but uses another type different from the expected one.
-     * true otherwise.
+     * @param[in] type TypeSupport to register.
+     * @return false if the topic is found but uses another type different from the expected one or if register_type
+     * fails because there is another TypeSupport using the same name. true otherwise.
      */
-    bool find_or_create_topic(
+    bool find_or_create_topic_and_type(
             eprosima::fastdds::dds::Topic** topic,
             const std::string& topic_name,
-            const std::string& type_name);
+            const eprosima::fastdds::dds::TypeSupport& type);
 
     /**
      * Auxiliary function to deregister statistic type and topic.
@@ -192,15 +193,6 @@ protected:
     bool delete_topic_and_type(
             const std::string& topic_name,
             const std::string& type_name);
-
-    /**
-     * Auxiliary method to check if there is not another TypeSupport registered using the reserved name for the
-     * Statistics module.
-     * @param type Statistics TypeSupport to be registered.
-     * @return false if there is another TypeSupport already registered using the same name. True otherwise.
-     */
-    bool check_register_type(
-            eprosima::fastdds::dds::TypeSupport type);
 
     /**
      * Auxiliary function to check that the topic has been registered with the expected type.
