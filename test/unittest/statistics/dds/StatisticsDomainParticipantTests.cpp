@@ -671,6 +671,62 @@ TEST_F(StatisticsDomainParticipantTests, CreateParticipantFailureIncompatibleTyp
 #endif // FASTDDS_STATISTICS
 }
 
+/**
+ * This test checks that enable_statistics_datawriter fails returning RETCODE_ERROR when there is already a statistics
+ * Topic created with another type different from the one expected.
+ * 1. Create a participant and register a Topic using one of the statistics reserved topic names and with another type
+ * different from the one expected.
+ * 2. Call enable_statistics_datawriter and check that it fails.
+ * 3. Check that the type has not been registered.
+ * 4. Check log error entry generated in DomainParticipant::check_statistics_topic_and_type
+ */
+TEST_F(StatisticsDomainParticipantTests, CreateParticipantFailureIncompatibleTopic)
+{
+#ifdef FASTDDS_STATISTICS
+    mock_consumer_ = new eprosima::fastdds::dds::MockConsumer();
+
+    eprosima::fastdds::dds::Log::RegisterConsumer(std::unique_ptr<eprosima::fastdds::dds::LogConsumer>(mock_consumer_));
+    eprosima::fastdds::dds::Log::SetVerbosity(eprosima::fastdds::dds::Log::Error);
+    eprosima::fastdds::dds::Log::SetCategoryFilter(std::regex("(STATISTICS_DOMAIN_PARTICIPANT)"));
+    eprosima::fastdds::dds::Log::SetErrorStringFilter(std::regex("(not using expected type)"));
+
+    eprosima::fastdds::dds::TypeSupport null_type(nullptr);
+    eprosima::fastdds::dds::TypeSupport history_latency_type(
+        new eprosima::fastdds::statistics::WriterReaderDataPubSubType);
+    eprosima::fastdds::dds::TypeSupport count_type(
+        new eprosima::fastdds::statistics::EntityCountPubSubType);
+
+   // 1. Create DomainParticipant
+    eprosima::fastdds::dds::DomainParticipant* participant =
+            eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->
+                    create_participant(0, eprosima::fastdds::dds::PARTICIPANT_QOS_DEFAULT);
+    ASSERT_NE(participant, nullptr);
+
+    // Register type
+    participant->register_type(count_type);
+
+    // Create topic
+    participant->create_topic(HISTORY_LATENCY_TOPIC, count_type->getName(), eprosima::fastdds::dds::TOPIC_QOS_DEFAULT);
+
+    // 2. Check call to enable_statistics_datawriter
+    eprosima::fastdds::statistics::dds::DomainParticipant* statistics_participant =
+            eprosima::fastdds::statistics::dds::DomainParticipant::narrow(participant);
+    ASSERT_NE(statistics_participant, nullptr);
+
+    ReturnCode_t ret = statistics_participant->enable_statistics_datawriter(HISTORY_LATENCY_TOPIC,
+        STATISTICS_DATAWRITER_QOS);
+    EXPECT_EQ(ReturnCode_t::RETCODE_ERROR, ret);
+
+    // 3. Check type registration
+    EXPECT_EQ(null_type, participant->find_type(history_latency_type.get_type_name()));
+
+    // 4. Check log error entry
+    helper_block_for_at_least_entries(1);
+    auto consumed_entries = mock_consumer_->ConsumedEntries();
+    EXPECT_EQ(consumed_entries.size(), 1u);
+#endif // FASTDDS_STATISTICS
+}
+
 } // namespace dds
 } // namespace statistics
 } // namespace fastdds
