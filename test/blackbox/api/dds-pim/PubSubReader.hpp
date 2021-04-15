@@ -322,44 +322,22 @@ public:
             DomainParticipantFactory::get_instance()->load_XML_profiles_file(xml_file_);
             if (!participant_profile_.empty())
             {
-                if (!statistics_)
-                {
-                    participant_ = DomainParticipantFactory::get_instance()->create_participant_with_profile(
-                        (uint32_t)GET_PID() % 230,
-                        participant_profile_,
-                        &participant_listener_,
-                        eprosima::fastdds::dds::StatusMask::none());
-                }
-                else
-                {
-                    participant_ = DomainParticipantFactory::get_instance()->create_participant_with_profile(
-                        0,
-                        participant_profile_,
-                        &participant_listener_,
-                        eprosima::fastdds::dds::StatusMask::none());
-                }
+                participant_ = DomainParticipantFactory::get_instance()->create_participant_with_profile(
+                    (uint32_t)GET_PID() % 230,
+                    participant_profile_,
+                    &participant_listener_,
+                    eprosima::fastdds::dds::StatusMask::none());
                 ASSERT_NE(participant_, nullptr);
                 ASSERT_TRUE(participant_->is_enabled());
             }
         }
         if (participant_ == nullptr)
         {
-            if (!statistics_)
-            {
-                participant_ = DomainParticipantFactory::get_instance()->create_participant(
-                    (uint32_t)GET_PID() % 230,
-                    participant_qos_,
-                    &participant_listener_,
-                    eprosima::fastdds::dds::StatusMask::none());
-            }
-            else
-            {
-                participant_ = DomainParticipantFactory::get_instance()->create_participant(
-                    0,
-                    participant_qos_,
-                    &participant_listener_,
-                    eprosima::fastdds::dds::StatusMask::none());
-            }
+            participant_ = DomainParticipantFactory::get_instance()->create_participant(
+                (uint32_t)GET_PID() % 230,
+                participant_qos_,
+                &participant_listener_,
+                eprosima::fastdds::dds::StatusMask::none());
             ASSERT_NE(participant_, nullptr);
             ASSERT_TRUE(participant_->is_enabled());
         }

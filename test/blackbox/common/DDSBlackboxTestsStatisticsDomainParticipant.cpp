@@ -313,7 +313,7 @@ TEST(StatisticsDomainParticipant, CreateParticipant)
 
     eprosima::fastdds::dds::DomainParticipant* participant =
             eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->
-                    create_participant(0, pqos);
+                    create_participant((uint32_t)GET_PID() % 230, pqos);
     ASSERT_NE(participant, nullptr);
 
     // 2. Check that the statistics topics and types related to the statistics DataWriters enabled using the
@@ -485,7 +485,7 @@ TEST(StatisticsDomainParticipant, CreateParticipantUsingXML)
 
     eprosima::fastdds::dds::DomainParticipant* participant =
             eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->
-                    create_participant_with_profile(0, participant_profile_name);
+                    create_participant_with_profile((uint32_t)GET_PID() % 230, participant_profile_name);
     ASSERT_NE(participant, nullptr);
 
     // 2. Check that the statistics topics and types related to the statistics DataWriters enabled using the
