@@ -99,8 +99,9 @@ ReturnCode_t DomainParticipant::enable_statistics_datawriter(
                 return ReturnCode_t::RETCODE_ERROR;
             }
         }
+        return ReturnCode_t::RETCODE_OK;
     }
-    return ReturnCode_t::RETCODE_OK;
+    return ReturnCode_t::RETCODE_ERROR;
 #endif // FASTDDS_STATISTICS
 }
 
