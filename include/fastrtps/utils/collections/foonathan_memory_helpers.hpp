@@ -44,11 +44,8 @@ std::size_t memory_pool_block_size(
         std::size_t node_size,
         const ResourceLimitedContainerConfig& limits)
 {
-#ifdef FOONATHAN_MEMORY_MEMORY_POOL_HAS_MIN_BLOCK_SIZE
+    namespace fm = foonathan::memory;
 
-    return MemoryPool::min_block_size(node_size, limits.initial ? limits.initial : 1);
-
-#else
     size_t num_elems = limits.increment > 0 ? limits.initial : limits.maximum;
     if (num_elems < 1u)
     {
@@ -57,8 +54,15 @@ std::size_t memory_pool_block_size(
 
     return num_elems
            * ((node_size > MemoryPool::min_node_size ? node_size : MemoryPool::min_node_size) // Room for elements
-           * (foonathan::memory::detail::debug_fence_size ? 3 : 1))                           // Room for debug info
-           + foonathan::memory::detail::memory_block_stack::implementation_offset;            // Room for padding
+#if FOONATHAN_MEMORY_DEBUG_DOUBLE_DEALLOC_CHECK
+           * (fm::detail::debug_fence_size ? 3 : 1))                                          // Room for debug info
+#else
+           + (fm::detail::debug_fence_size ? 2 * fm::detail::max_alignment : 0))              // Room for debug info
+#endif // if FOONATHAN_MEMORY_DEBUG_DOUBLE_DEALLOC_CHECK
+#ifdef FOONATHAN_MEMORY_MEMORY_POOL_HAS_MIN_BLOCK_SIZE
+           + fm::detail::memory_block_stack::implementation_offset();                         // Room for padding
+#else
+           + fm::detail::memory_block_stack::implementation_offset;                           // Room for padding
 #endif  // FOONATHAN_MEMORY_MEMORY_POOL_HAS_MIN_BLOCK_SIZE
 }
 
