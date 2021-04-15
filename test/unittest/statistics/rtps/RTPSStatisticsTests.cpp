@@ -516,13 +516,32 @@ TEST_F(RTPSStatisticsTests, statistics_rpts_listener_callbacks_fragmented)
     using namespace fastrtps::rtps;
     using namespace std;
 
+    // payload size
+    uint32_t length = 1048576;
+    uint16_t fragment_size = 64000; // should fit in transport message size
+
     // make sure some messages are lost to assure the NACKFRAG callback
     set_transport_filter(
         DATA_FRAG,
-        [](fastrtps::rtps::CDRMessage_t&)-> bool
+        [](fastrtps::rtps::CDRMessage_t& msg)-> bool
         {
-            static int counter = 0;
-            return ++counter % 8 == 0 && counter < 60;
+            static uint32_t max_fragment = 0;
+            static bool keep_filtering = true;
+
+            uint32_t fragmentNum, old_pos = msg.pos;
+            msg.pos += 20;
+            fastrtps::rtps::CDRMessage::readUInt32(&msg, &fragmentNum);
+            msg.pos = old_pos;
+
+            // generate losses only on the first burst
+            if( keep_filtering )
+            {
+                keep_filtering = max_fragment <= fragmentNum;
+                max_fragment = fragmentNum;
+                return fragmentNum % 2 == 0;
+            }
+
+            return false;
         });
 
     // writer callbacks through participant listener
@@ -541,7 +560,6 @@ TEST_F(RTPSStatisticsTests, statistics_rpts_listener_callbacks_fragmented)
             .Times(AtLeast(1));
 
     // Create the testing endpoints
-    uint32_t length = 65000; // 1048576;
     create_endpoints(length);
 
     // match writer and reader on a dummy topic
@@ -560,7 +578,7 @@ TEST_F(RTPSStatisticsTests, statistics_rpts_listener_callbacks_fragmented)
     {
         memset(writer_change->serializedPayload.data, 'e', length);
         writer_change->serializedPayload.length = length;
-        writer_change->setFragmentSize((uint16_t)length / 10, true);
+        writer_change->setFragmentSize(fragment_size, true);
     }
 
     ASSERT_TRUE(writer_history_->add_change(writer_change));
