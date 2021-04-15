@@ -170,8 +170,6 @@ TEST_F(StatisticsDomainParticipantTests, EnableDisableStatisticsDataWriterTest)
     ret = statistics_participant->disable_statistics_datawriter("INVALID_TOPIC");
     EXPECT_EQ(ret, eprosima::fastrtps::types::ReturnCode_t::RETCODE_UNSUPPORTED);
 #else
-    logError(STATISTICS_DOMAINPARTICIPANT_TEST, "This test is going to fail because API is not yet implemented.")
-
     // 2. Narrow DomainParticipant to eprosima::fastdds::statistics::dds::DomainParticipant
     eprosima::fastdds::statistics::dds::DomainParticipant* statistics_participant =
             eprosima::fastdds::statistics::dds::DomainParticipant::narrow(participant);
