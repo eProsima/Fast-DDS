@@ -7,7 +7,7 @@
                     <properties>
                         <property>
                             <name>fastdds.statistics</name>
-                            <value>SUBSCRIPTION_THROUGHPUT_TOPIC;NACKFRAG_COUNT_TOPIC;SAMPLE_DATAS_TOPIC</value>
+                            <value>SUBSCRIPTION_THROUGHPUT_TOPIC;NACKFRAG_COUNT_TOPIC;SAMPLE_DATAS_TOPIC;DATA_COUNT_TOPIC</value>
                         </property>
                     </properties>
                 </propertiesPolicy>
