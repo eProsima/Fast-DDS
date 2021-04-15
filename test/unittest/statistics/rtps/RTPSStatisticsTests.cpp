@@ -534,7 +534,7 @@ TEST_F(RTPSStatisticsTests, statistics_rpts_listener_callbacks_fragmented)
             msg.pos = old_pos;
 
             // generate losses only on the first burst
-            if( keep_filtering )
+            if ( keep_filtering )
             {
                 keep_filtering = max_fragment <= fragmentNum;
                 max_fragment = fragmentNum;
