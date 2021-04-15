@@ -98,8 +98,7 @@ private:
 
 
     bool log_drop(
-            const std::array<asio::const_buffer, max_required_buffers>& send_buffers,
-            uint32_t total_bytes);
+            const std::array<asio::const_buffer, max_required_buffers>& send_buffers);
     bool packet_should_drop(
             const std::array<asio::const_buffer, max_required_buffers>& send_buffers,
             uint32_t total_bytes);

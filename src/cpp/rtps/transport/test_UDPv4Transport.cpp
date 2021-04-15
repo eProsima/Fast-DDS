@@ -201,7 +201,7 @@ bool test_UDPv4Transport::send(
 {
     if (packet_should_drop(send_buffers, total_bytes))
     {
-        log_drop(send_buffers, total_bytes);
+        log_drop(send_buffers);
         return true;
     }
     else
@@ -413,8 +413,7 @@ bool test_UDPv4Transport::packet_should_drop(
 }
 
 bool test_UDPv4Transport::log_drop(
-        const std::array<asio::const_buffer, max_required_buffers>& send_buffers,
-        uint32_t total_bytes)
+        const std::array<asio::const_buffer, max_required_buffers>& send_buffers)
 {
     if (test_UDPv4Transport_DropLog.size() < test_UDPv4Transport_DropLogLength)
     {
