@@ -126,6 +126,7 @@ bool StatisticsParticipantImpl::are_writers_involved(
             | PUBLICATION_THROUGHPUT \
             | RESENT_DATAS \
             | HEARTBEAT_COUNT \
+            | GAP_COUNT \
             | DATA_COUNT;
 
     return writers_maks & mask;
@@ -139,8 +140,7 @@ bool StatisticsParticipantImpl::are_readers_involved(
     constexpr uint32_t readers_maks = HISTORY2HISTORY_LATENCY \
             | SUBSCRIPTION_THROUGHPUT \
             | ACKNACK_COUNT \
-            | NACKFRAG_COUNT \
-            | GAP_COUNT;
+            | NACKFRAG_COUNT;
 
     return readers_maks & mask;
 }

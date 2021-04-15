@@ -106,3 +106,25 @@ void StatisticsWriterImpl::on_heartbeat(
                 listener->on_statistics_data(data);
             });
 }
+
+void StatisticsWriterImpl::on_gap()
+{
+    EntityCount notification;
+    notification.guid(to_statistics_type(get_guid()));
+
+    {
+        std::lock_guard<fastrtps::RecursiveTimedMutex> lock(get_statistics_mutex());
+        notification.count(++get_members()->gap_counter);
+    }
+
+    // Callback
+    Data d;
+    // note that the setter sets RESENT_DATAS by default
+    d.entity_count(notification);
+    d._d(EventKind::GAP_COUNT);
+
+    for_each_listener([&d](const std::shared_ptr<IListener>& l)
+            {
+                l->on_statistics_data(d);
+            });
+}
