@@ -12,7 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include <functional>
 #include <mutex>
+#include <string>
 #include <vector>
 
 #include <gtest/gtest.h>
@@ -22,7 +24,10 @@
 #include <fastdds/dds/domain/DomainParticipant.hpp>
 #include <fastdds/dds/log/Log.hpp>
 #include <fastdds/dds/publisher/qos/DataWriterQos.hpp>
+#include <fastdds/dds/topic/TopicDataType.hpp>
 #include <fastdds/dds/topic/TypeSupport.hpp>
+#include <fastdds/rtps/common/InstanceHandle.h>
+#include <fastdds/rtps/common/SerializedPayload.h>
 #include <fastdds/statistics/dds/domain/DomainParticipant.hpp>
 #include <fastdds/statistics/dds/publisher/qos/DataWriterQos.hpp>
 #include <fastdds/statistics/topic_names.hpp>
@@ -35,6 +40,92 @@ namespace eprosima {
 namespace fastdds {
 namespace statistics {
 namespace dds {
+
+class FooType
+{
+public:
+
+    FooType()
+    {
+    }
+
+    ~FooType()
+    {
+    }
+
+    inline std::string& message()
+    {
+        return message_;
+    }
+
+    inline void message(
+            const std::string& message)
+    {
+        message_ = message;
+    }
+
+    bool isKeyDefined()
+    {
+        return false;
+    }
+
+private:
+
+    std::string message_;
+};
+
+class TopicDataTypeMock : public eprosima::fastdds::dds::TopicDataType
+{
+public:
+
+    typedef FooType type;
+
+    TopicDataTypeMock()
+        : eprosima::fastdds::dds::TopicDataType()
+    {
+        m_typeSize = 4u;
+        setName("footype");
+    }
+
+    bool serialize(
+            void* /*data*/,
+            fastrtps::rtps::SerializedPayload_t* /*payload*/) override
+    {
+        return true;
+    }
+
+    bool deserialize(
+            fastrtps::rtps::SerializedPayload_t* /*payload*/,
+            void* /*data*/) override
+    {
+        return true;
+    }
+
+    std::function<uint32_t()> getSerializedSizeProvider(
+            void* /*data*/) override
+    {
+        return std::function<uint32_t()>();
+    }
+
+    void* createData() override
+    {
+        return nullptr;
+    }
+
+    void deleteData(
+            void* /*data*/) override
+    {
+    }
+
+    bool getKey(
+            void* /*data*/,
+            fastrtps::rtps::InstanceHandle_t* /*ihandle*/,
+            bool /*force_md5*/) override
+    {
+        return true;
+    }
+
+};
 
 class StatisticsDomainParticipantTests : public ::testing::Test
 {
@@ -521,6 +612,62 @@ TEST_F(StatisticsDomainParticipantTests, CreateParticipantWithInvalidTopicName)
     helper_block_for_at_least_entries(2);
     auto consumed_entries = mock_consumer_->ConsumedEntries();
     EXPECT_EQ(consumed_entries.size(), 2u);
+#endif // FASTDDS_STATISTICS
+}
+
+/**
+ * This test checks that enable_statistics_datawriter fails returning RETCODE_ERROR when there is already a TypeSupport
+ * using a statistics reserved name registered in the participant.
+ * 1. Create a participant and register a TypeSupport using one of the statistics reserved type names.
+ * 2. Call enable_statistics_datawriter and check that it fails.
+ * 3. Check that the topic has not been created.
+ * 4. Check log error entry generated in DomainParticipantImpl::register_type
+ */
+TEST_F(StatisticsDomainParticipantTests, CreateParticipantFailureIncompatibleType)
+{
+#ifdef FASTDDS_STATISTICS
+    mock_consumer_ = new eprosima::fastdds::dds::MockConsumer();
+
+    eprosima::fastdds::dds::Log::RegisterConsumer(std::unique_ptr<eprosima::fastdds::dds::LogConsumer>(mock_consumer_));
+    eprosima::fastdds::dds::Log::SetVerbosity(eprosima::fastdds::dds::Log::Error);
+    eprosima::fastdds::dds::Log::SetCategoryFilter(std::regex("(PARTICIPANT)"));
+    eprosima::fastdds::dds::Log::SetErrorStringFilter(std::regex("(already registered)"));
+
+    const char* reserved_statistics_type_name = "eprosima::fastdds::statistics::EntityCount";
+
+   // 1. Create DomainParticipant
+    eprosima::fastdds::dds::DomainParticipant* participant =
+            eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->
+                    create_participant(0, eprosima::fastdds::dds::PARTICIPANT_QOS_DEFAULT);
+    ASSERT_NE(participant, nullptr);
+
+    // Register TypeSupport
+    eprosima::fastdds::dds::TypeSupport count_type(
+        new eprosima::fastdds::statistics::EntityCountPubSubType);
+    eprosima::fastdds::dds::TypeSupport null_type(nullptr);
+    eprosima::fastdds::dds::TypeSupport invalid_type(new TopicDataTypeMock);
+    invalid_type->setName(reserved_statistics_type_name);
+    participant->register_type(invalid_type);
+
+    // 2. Check call to enable_statistics_datawriter
+    eprosima::fastdds::statistics::dds::DomainParticipant* statistics_participant =
+            eprosima::fastdds::statistics::dds::DomainParticipant::narrow(participant);
+    ASSERT_NE(statistics_participant, nullptr);
+
+    ReturnCode_t ret = statistics_participant->enable_statistics_datawriter(HEARTBEAT_COUNT_TOPIC,
+        STATISTICS_DATAWRITER_QOS);
+    EXPECT_EQ(ReturnCode_t::RETCODE_ERROR, ret);
+    eprosima::fastdds::dds::TypeSupport type = participant->find_type(count_type.get_type_name());
+    EXPECT_FALSE(count_type == type);
+    EXPECT_TRUE(invalid_type == type);
+
+    // 3. Check topic creation
+    EXPECT_EQ(nullptr, participant->lookup_topicdescription(eprosima::fastdds::statistics::HEARTBEAT_COUNT_TOPIC));
+
+    // 4. Check log error entry
+    helper_block_for_at_least_entries(1);
+    auto consumed_entries = mock_consumer_->ConsumedEntries();
+    EXPECT_EQ(consumed_entries.size(), 1u);
 #endif // FASTDDS_STATISTICS
 }
 
