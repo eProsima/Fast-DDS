@@ -24,6 +24,7 @@
 #include <foonathan/memory/detail/debug_helpers.hpp>
 
 #include "ResourceLimitedContainerConfig.hpp"
+#include "fastrtps/config.h"
 
 namespace eprosima {
 namespace fastrtps {
@@ -44,6 +45,7 @@ std::size_t memory_pool_block_size(
         std::size_t node_size,
         const ResourceLimitedContainerConfig& limits)
 {
+    FASTDDS_DEPRECATED_UNTIL(3, "eprosima::fastrtps::memory_pool_block_size", "You should not use this method")
     namespace fm = foonathan::memory;
 
     size_t num_elems = limits.increment > 0 ? limits.initial : limits.maximum;
