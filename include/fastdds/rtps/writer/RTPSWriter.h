@@ -428,7 +428,9 @@ public:
     /**
      * Send a message through this interface.
      *
-     * @param message Pointer to the buffer with the message already serialized.
+     * @param buffers Array of buffers to gather.
+     * @param num_buffers Number of elements on @c buffers.
+     * @param total_bytes Total size of the raw data. Should be equal to the sum of the @c length field of all buffers.
      * @param max_blocking_time_point Future timepoint where blocking send should end.
      */
     bool send(
