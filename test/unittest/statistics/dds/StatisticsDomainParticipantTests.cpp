@@ -696,7 +696,9 @@ TEST_F(StatisticsDomainParticipantTests, EnableStatisticsDataWriterFailureIncomp
  * 2. Call enable_statistics_datawriter and check that it fails.
  * 3. Check that the type has not been registered.
  * 4. Call enable_statistics_datawriter with correct Topic and check it works correctly.
- * 5. Check log error entry generated in DomainParticipant::check_statistics_topic_and_type
+ * 5. Call enable_statistics_datawriter with Topic and Type previously created in the participant. Check it is
+ * successful.
+ * 6. Check log error entry generated in DomainParticipant::check_statistics_topic_and_type
  */
 TEST_F(StatisticsDomainParticipantTests, EnableStatisticsDataWriterFailureIncompatibleTopic)
 {
@@ -709,6 +711,8 @@ TEST_F(StatisticsDomainParticipantTests, EnableStatisticsDataWriterFailureIncomp
     eprosima::fastdds::dds::Log::SetErrorStringFilter(std::regex("(not using expected type)"));
 
     eprosima::fastdds::dds::TypeSupport null_type(nullptr);
+    eprosima::fastdds::dds::TypeSupport physical_data_type(
+        new eprosima::fastdds::statistics::PhysicalDataPubSubType);
     eprosima::fastdds::dds::TypeSupport history_latency_type(
         new eprosima::fastdds::statistics::WriterReaderDataPubSubType);
     eprosima::fastdds::dds::TypeSupport count_type(
@@ -720,13 +724,16 @@ TEST_F(StatisticsDomainParticipantTests, EnableStatisticsDataWriterFailureIncomp
                     create_participant(0, eprosima::fastdds::dds::PARTICIPANT_QOS_DEFAULT);
     ASSERT_NE(participant, nullptr);
 
-    // Register type
+    // Register types
     participant->register_type(count_type);
+    participant->register_type(physical_data_type);
 
     // Create topic
     eprosima::fastdds::dds::Topic * invalid_topic = participant->create_topic(HISTORY_LATENCY_TOPIC,
         count_type->getName(), eprosima::fastdds::dds::TOPIC_QOS_DEFAULT);
     participant->create_topic(HEARTBEAT_COUNT_TOPIC, count_type->getName(), eprosima::fastdds::dds::TOPIC_QOS_DEFAULT);
+    participant->create_topic(PHYSICAL_DATA_TOPIC, physical_data_type->getName(),
+        eprosima::fastdds::dds::TOPIC_QOS_DEFAULT);
 
     // 2. Check call to enable_statistics_datawriter
     eprosima::fastdds::statistics::dds::DomainParticipant* statistics_participant =
@@ -744,7 +751,11 @@ TEST_F(StatisticsDomainParticipantTests, EnableStatisticsDataWriterFailureIncomp
         STATISTICS_DATAWRITER_QOS));
     EXPECT_TRUE(count_type == participant->find_type(count_type.get_type_name()));
 
-    // 5. Check log error entry
+    // 5. Call enable_statistics_datawriter and check it is successful
+    EXPECT_EQ(ReturnCode_t::RETCODE_OK, statistics_participant->enable_statistics_datawriter(PHYSICAL_DATA_TOPIC,
+        STATISTICS_DATAWRITER_QOS));
+
+    // 6. Check log error entry
     helper_block_for_at_least_entries(1);
     auto consumed_entries = mock_consumer_->ConsumedEntries();
     EXPECT_EQ(consumed_entries.size(), 1u);
