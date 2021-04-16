@@ -158,7 +158,7 @@ size_t TCPChannelResourceBasic::send(
         {
             std::array<asio::const_buffer, max_required_buffers + 1> buffers;
             buffers[0] = asio::buffer(header, header_size);
-            for (size_t i = 0; i < 3; ++i)
+            for (size_t i = 0; i < max_required_buffers; ++i)
             {
                 buffers[i + 1] = send_buffers[i];
             }
