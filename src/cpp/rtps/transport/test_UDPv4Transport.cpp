@@ -259,7 +259,7 @@ bool test_UDPv4Transport::packet_should_drop(
     for (size_t i = 0; i < max_required_buffers; ++i)
     {
         memcpy(&cdrMessage.buffer[n_bytes], send_buffers[i].data(), send_buffers[i].size());
-        n_bytes += send_buffers.size();
+        n_bytes += send_buffers[i].size();
     }
     assert(total_bytes == n_bytes);
     cdrMessage.length = total_bytes;
