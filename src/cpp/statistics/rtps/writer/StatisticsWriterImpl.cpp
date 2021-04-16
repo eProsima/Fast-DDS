@@ -49,7 +49,7 @@ RecursiveTimedMutex& StatisticsWriterImpl::get_statistics_mutex()
     return static_cast<RTPSWriter*>(this)->getMutex();
 }
 
-const GUID_t& StatisticsWriterImpl::get_guid()
+const GUID_t& StatisticsWriterImpl::get_guid() const
 {
     using eprosima::fastrtps::rtps::RTPSWriter;
 
@@ -57,7 +57,7 @@ const GUID_t& StatisticsWriterImpl::get_guid()
         std::is_base_of<StatisticsWriterImpl, RTPSWriter>::value,
         "This method should be called from an actual RTPSWriter");
 
-    return static_cast<RTPSWriter*>(this)->getGuid();
+    return static_cast<const RTPSWriter*>(this)->getGuid();
 }
 
 void StatisticsWriterImpl::on_data()

@@ -32,13 +32,13 @@ namespace fastdds {
 namespace statistics {
 
 detail::Locator_s to_statistics_type(
-        eprosima::fastrtps::rtps::Locator_t l)
+        fastrtps::rtps::Locator_t l)
 {
     return *reinterpret_cast<detail::Locator_s*>(&l);
 }
 
 detail::GUID_s to_statistics_type(
-        eprosima::fastrtps::rtps::GUID_t g)
+        fastrtps::rtps::GUID_t g)
 {
     return *reinterpret_cast<detail::GUID_s*>(&g);
 }
@@ -79,6 +79,17 @@ bool StatisticsListenersImpl::remove_statistics_listener_impl(
     }
 
     return 1 == members_->listeners.erase(listener);
+}
+
+const eprosima::fastrtps::rtps::GUID_t& StatisticsParticipantImpl::get_guid() const
+{
+    using eprosima::fastrtps::rtps::RTPSParticipantImpl;
+
+    static_assert(
+        std::is_base_of<StatisticsParticipantImpl, RTPSParticipantImpl>::value,
+        "This method should be called from an actual RTPSParticipantImpl");
+
+    return static_cast<const RTPSParticipantImpl*>(this)->getGuid();
 }
 
 std::recursive_mutex& StatisticsParticipantImpl::get_statistics_mutex()
@@ -276,13 +287,9 @@ void StatisticsParticipantImpl::on_rtps_sent(
     using namespace std;
     using eprosima::fastrtps::rtps::RTPSParticipantImpl;
 
-    static_assert(
-        std::is_base_of<StatisticsParticipantImpl, RTPSParticipantImpl>::value,
-        "This must be called from RTPSParticipantImpl");
-
     // Compose callback and update the inner state
     Entity2LocatorTraffic notification;
-    notification.src_guid(to_statistics_type(static_cast<RTPSParticipantImpl*>(this)->getGuid()));
+    notification.src_guid(to_statistics_type(get_guid()));
     notification.dst_locator(to_statistics_type(loc));
 
     {
@@ -302,5 +309,33 @@ void StatisticsParticipantImpl::on_rtps_sent(
     for_each_listener([&data](const Key& listener)
             {
                 listener->on_statistics_data(data);
+            });
+}
+
+void StatisticsParticipantImpl::on_entity_discovery(
+        const GUID_t& id)
+{
+    using namespace std;
+    using namespace fastrtps;
+
+    // Compose callback and update the inner state
+    DiscoveryTime notification;
+    notification.local_participant_guid(to_statistics_type(get_guid()));
+    notification.remote_entity_guid(to_statistics_type(id));
+
+    {
+        // generate callback timestamp
+        Time_t t;
+        Time_t::now(t);
+        notification.time(t.to_ns());
+    }
+
+    // Callback
+    Data d;
+    d.discovery_time(notification);
+
+    for_each_listener([&d](const Key& l)
+            {
+                l->on_statistics_data(d);
             });
 }

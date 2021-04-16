@@ -107,7 +107,7 @@ protected:
      * Retrieve the GUID_t from derived class
      * @return endpoint GUID_t
      */
-    virtual const fastrtps::rtps::GUID_t& get_guid() = 0;
+    virtual const fastrtps::rtps::GUID_t& get_guid() const = 0;
 };
 
 // Members are private details
@@ -133,7 +133,7 @@ class StatisticsWriterImpl
      * Retrieve the GUID_t from derived class
      * @return endpoint GUID_t
      */
-    const fastrtps::rtps::GUID_t& get_guid() final;
+    const fastrtps::rtps::GUID_t& get_guid() const final;
 
 protected:
 
@@ -189,7 +189,7 @@ class StatisticsReaderImpl
      * Retrieve the GUID_t from derived class
      * @return endpoint GUID_t
      */
-    const fastrtps::rtps::GUID_t& get_guid() final;
+    const fastrtps::rtps::GUID_t& get_guid() const final;
 
 protected:
 

@@ -32,6 +32,14 @@
 #include <fastdds/statistics/rtps/StatisticsCommon.hpp>
 
 namespace eprosima {
+namespace fastrtps {
+namespace rtps {
+
+class PDP;
+
+} // rtps
+} // fastrtps
+
 namespace fastdds {
 namespace statistics {
 
@@ -75,6 +83,14 @@ Function StatisticsListenersImpl::for_each_listener(
 
 class StatisticsParticipantImpl
 {
+    friend class fastrtps::rtps::PDP;
+
+public:
+
+    using GUID_t = fastrtps::rtps::GUID_t;
+
+private:
+
     // RTPS_SENT ancillary
     struct rtps_sent_data
     {
@@ -83,6 +99,12 @@ class StatisticsParticipantImpl
     };
 
     std::map<fastrtps::rtps::Locator_t, rtps_sent_data> traffic;
+
+    /*
+     * Retrieve the GUID_t from derived class
+     * @return endpoint GUID_t
+     */
+    const fastrtps::rtps::GUID_t& get_guid() const;
 
 protected:
 
@@ -121,7 +143,6 @@ protected:
 
     };
 
-    using GUID_t = fastrtps::rtps::GUID_t;
     using Key = std::shared_ptr<ListenerProxy>;
 
     // specialized comparison operator, the actual key is the external listener address
@@ -228,6 +249,13 @@ protected:
         }
     }
 
+    /*
+     * Report a new entity is discovered
+     * @param id, discovered entity GUID_t
+     */
+    void on_entity_discovery(
+            const GUID_t& id);
+
 public:
 
     /*
@@ -259,6 +287,8 @@ struct StatisticsAncillary {};
 
 class StatisticsParticipantImpl
 {
+    friend class fastrtps::rtps::PDP;
+
 protected:
 
     // inline methods for listeners callbacks
@@ -274,6 +304,15 @@ protected:
             const LocatorIteratorT&,
             const LocatorIteratorT&,
             unsigned long)
+    {
+    }
+
+    /*
+     * Report a new entity is discovered
+     * @param id, discovered entity GUID_t
+     */
+    inline void on_entity_discovery(
+            const GUID_t&)
     {
     }
 
