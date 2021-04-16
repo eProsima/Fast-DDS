@@ -163,7 +163,7 @@ protected:
 
         reader.startReception(data);
         // Send data
-        writer.send(data, reliable ? 0u : 10u);
+        writer.send(data, reliable ? 0u : 30u);
         ASSERT_TRUE(data.empty());
 
         // Block reader until reception finished or timeout.
