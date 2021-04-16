@@ -721,7 +721,7 @@ TEST_F(RTPSStatisticsTests, statistics_rpts_listener_discovery_callbacks)
     ASSERT_TRUE(participant_->add_statistics_listener(participant_listener, EventKind::DISCOVERED_ENTITY));
 
     // check callbacks on data exchange
-    atomic_int callbacks = 0;
+    atomic_int callbacks(0);
     ON_CALL(*participant_listener, on_entity_discovery)
             .WillByDefault([&callbacks](const eprosima::fastdds::statistics::DiscoveryTime&)
             {
