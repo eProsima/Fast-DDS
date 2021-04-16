@@ -158,15 +158,19 @@ size_t TCPChannelResourceBasic::send(
         {
             std::array<asio::const_buffer, max_required_buffers + 1> buffers;
             buffers[0] = asio::buffer(header, header_size);
+            size_t n = 1;
             for (size_t i = 0; i < max_required_buffers; ++i)
             {
-                buffers[i + 1] = send_buffers[i];
+                if (send_buffers[i].size())
+                {
+                    buffers[n++] = send_buffers[i];
+                }
             }
-            bytes_sent = asio::write(*socket_.get(), buffers, ec);
+            bytes_sent = socket_->send(buffers, 0, ec);
         }
         else
         {
-            bytes_sent = asio::write(*socket_.get(), send_buffers, ec);
+            bytes_sent = socket_->send(send_buffers, 0, ec);
         }
     }
 
