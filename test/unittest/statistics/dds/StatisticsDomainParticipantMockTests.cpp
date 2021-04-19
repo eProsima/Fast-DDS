@@ -22,6 +22,7 @@
 #include <fastdds/statistics/dds/publisher/qos/DataWriterQos.hpp>
 #include <fastdds/statistics/topic_names.hpp>
 #include <fastrtps/types/TypesBase.h>
+#include <statistics/types/typesPubSubTypes.h>
 
 #include "../../logging/mock/MockConsumer.h"
 
@@ -93,6 +94,10 @@ TEST_F(StatisticsDomainParticipantMockTests, EnableStatisticsDataWriterFailureCr
     eprosima::fastdds::dds::Log::SetCategoryFilter(std::regex("(STATISTICS_DOMAIN_PARTICIPANT)"));
     eprosima::fastdds::dds::Log::SetErrorStringFilter(std::regex("(DataWriter creation has failed)"));
 
+    eprosima::fastdds::dds::TypeSupport null_type(nullptr);
+    eprosima::fastdds::dds::TypeSupport count_type(
+        new eprosima::fastdds::statistics::EntityCountPubSubType);
+
     // 1. Create DomainParticipant
     eprosima::fastdds::dds::DomainParticipant* participant =
             eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->
@@ -111,11 +116,17 @@ TEST_F(StatisticsDomainParticipantMockTests, EnableStatisticsDataWriterFailureCr
     // 3. enable_statistics_datawriter
     EXPECT_EQ(ReturnCode_t::RETCODE_ERROR, statistics_participant->enable_statistics_datawriter(HEARTBEAT_COUNT_TOPIC,
         STATISTICS_DATAWRITER_QOS));
+    EXPECT_EQ(nullptr, statistics_participant->lookup_topicdescription(HEARTBEAT_COUNT_TOPIC));
+    EXPECT_EQ(null_type, statistics_participant->find_type(count_type.get_type_name()));
 
     // 4. Check log error entry
     helper_block_for_at_least_entries(1);
     auto consumed_entries = mock_consumer_->ConsumedEntries();
     EXPECT_EQ(consumed_entries.size(), 1u);
+
+    EXPECT_EQ(eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->
+                    delete_participant(statistics_participant_test),
+            eprosima::fastrtps::types::ReturnCode_t::RETCODE_OK);
 #endif // FASTDDS_STATISTICS
 }
 

@@ -21,6 +21,7 @@
 #include <gmock/gmock.h>
 #include <fastdds/dds/core/Entity.hpp>
 #include <fastdds/dds/core/status/StatusMask.hpp>
+#include <fastdds/dds/domain/DomainParticipant.hpp>
 #include <fastdds/dds/publisher/qos/DataWriterQos.hpp>
 #include <fastdds/dds/publisher/qos/PublisherQos.hpp>
 #include <fastdds/rtps/common/InstanceHandle.h>
@@ -48,16 +49,18 @@ protected:
     friend class DomainParticipantImpl;
 
     Publisher(
-            PublisherImpl* /*p*/,
+            PublisherImpl* p,
             const StatusMask& /*mask*/)
+        : impl_(p)
     {
     }
 
     Publisher(
-            DomainParticipant* /*dp*/,
-            const PublisherQos& /*qos*/,
-            PublisherListener* /*listener*/,
-            const StatusMask& /*mask*/)
+            DomainParticipant* dp,
+            const PublisherQos& qos,
+            PublisherListener* listener,
+            const StatusMask& mask)
+        : impl_(dp->create_publisher(qos, listener, mask)->impl_)
     {
     }
 
@@ -110,7 +113,7 @@ public:
 
     const DomainParticipant* get_participant() const
     {
-        return nullptr;
+        return impl_->get_participant();
     }
 
     const InstanceHandle_t& get_instance_handle() const

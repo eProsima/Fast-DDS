@@ -95,6 +95,8 @@ ReturnCode_t DomainParticipant::enable_statistics_datawriter(
         {
             if (nullptr == builtin_publisher_->create_datawriter(topic, dwqos))
             {
+                // Remove topic and type
+                deregister_statistics_type_and_topic(use_topic_name);
                 logError(STATISTICS_DOMAIN_PARTICIPANT, topic_name << " DataWriter creation has failed");
                 return ReturnCode_t::RETCODE_ERROR;
             }
