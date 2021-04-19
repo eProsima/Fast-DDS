@@ -91,10 +91,10 @@ public:
     }
 
     DataWriter* create_datawriter(
-        Topic* topic,
-        const DataWriterQos& qos,
-        DataWriterListener* listener = nullptr,
-        const StatusMask& mask = StatusMask::all())
+            Topic* topic,
+            const DataWriterQos& qos,
+            DataWriterListener* listener = nullptr,
+            const StatusMask& mask = StatusMask::all())
     {
         if (create_datawriter_mock())
         {

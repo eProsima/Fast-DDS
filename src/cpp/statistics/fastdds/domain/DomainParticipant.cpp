@@ -76,7 +76,7 @@ ReturnCode_t DomainParticipant::enable_statistics_datawriter(
     return ReturnCode_t::RETCODE_UNSUPPORTED;
 #else
     const std::string use_topic_name = transform_topic_name_alias(topic_name);
-    if(!check_statistics_topic_name(use_topic_name))
+    if (!check_statistics_topic_name(use_topic_name))
     {
         return ReturnCode_t::RETCODE_BAD_PARAMETER;
     }
@@ -117,7 +117,7 @@ ReturnCode_t DomainParticipant::disable_statistics_datawriter(
 #else
     ReturnCode_t ret = ReturnCode_t::RETCODE_OK;
     const std::string use_topic_name = transform_topic_name_alias(topic_name);
-    if(!check_statistics_topic_name(use_topic_name))
+    if (!check_statistics_topic_name(use_topic_name))
     {
         return ReturnCode_t::RETCODE_BAD_PARAMETER;
     }
@@ -132,7 +132,7 @@ ReturnCode_t DomainParticipant::disable_statistics_datawriter(
             ret = ReturnCode_t::RETCODE_ERROR;
         }
         // Deregister type and delete topic
-        if(!deregister_statistics_type_and_topic(use_topic_name))
+        if (!deregister_statistics_type_and_topic(use_topic_name))
         {
             ret = ReturnCode_t::RETCODE_ERROR;
         }
@@ -359,7 +359,7 @@ bool DomainParticipant::register_statistics_type_and_topic(
         eprosima::fastdds::dds::TypeSupport rtps_traffic_type(new Entity2LocatorTrafficPubSubType);
         return_code = find_or_create_topic_and_type(topic, topic_name, rtps_traffic_type);
     }
-    else if (RESENT_DATAS_TOPIC == topic_name || HEARTBEAT_COUNT_TOPIC == topic_name || 
+    else if (RESENT_DATAS_TOPIC == topic_name || HEARTBEAT_COUNT_TOPIC == topic_name ||
             ACKNACK_COUNT_TOPIC == topic_name || NACKFRAG_COUNT_TOPIC == topic_name || GAP_COUNT_TOPIC == topic_name ||
             DATA_COUNT_TOPIC == topic_name || PDP_PACKETS_TOPIC == topic_name || EDP_PACKETS_TOPIC == topic_name)
     {
@@ -389,34 +389,34 @@ bool DomainParticipant::find_or_create_topic_and_type(
         const std::string& topic_name,
         const eprosima::fastdds::dds::TypeSupport& type)
 {
-        // Find if the topic has been already created and if the associated type is correct
-        eprosima::fastdds::dds::TopicDescription* topic_desc = lookup_topicdescription(topic_name);
-        if (nullptr != topic_desc)
+    // Find if the topic has been already created and if the associated type is correct
+    eprosima::fastdds::dds::TopicDescription* topic_desc = lookup_topicdescription(topic_name);
+    if (nullptr != topic_desc)
+    {
+        if (check_statistics_topic_and_type(topic_desc, topic_name, type->getName()))
         {
-            if(check_statistics_topic_and_type(topic_desc, topic_name, type->getName()))
-            {
-                // TODO(jlbueno) This casting should be checked after other TopicDescription implementations are
-                // included: ContentFilteredTopic, MultiTopic.
-                *topic = dynamic_cast<eprosima::fastdds::dds::Topic*>(topic_desc);
-            }
-            else
-            {
-                return false;
-            }
+            // TODO(jlbueno) This casting should be checked after other TopicDescription implementations are
+            // included: ContentFilteredTopic, MultiTopic.
+            *topic = dynamic_cast<eprosima::fastdds::dds::Topic*>(topic_desc);
         }
         else
         {
-            if (ReturnCode_t::RETCODE_PRECONDITION_NOT_MET == register_type(type))
-            {
-                // No log because it is already logged within register_type
-                return false;
-            }
-            // Create topic. No need to check return pointer. It fails if the topic already exists, if the QoS is
-            // inconsistent or if the type is not registered.
-            *topic = create_topic(topic_name, type->getName(), eprosima::fastdds::dds::TOPIC_QOS_DEFAULT);
+            return false;
         }
-        assert(nullptr != *topic);
-        return true;
+    }
+    else
+    {
+        if (ReturnCode_t::RETCODE_PRECONDITION_NOT_MET == register_type(type))
+        {
+            // No log because it is already logged within register_type
+            return false;
+        }
+        // Create topic. No need to check return pointer. It fails if the topic already exists, if the QoS is
+        // inconsistent or if the type is not registered.
+        *topic = create_topic(topic_name, type->getName(), eprosima::fastdds::dds::TOPIC_QOS_DEFAULT);
+    }
+    assert(nullptr != *topic);
+    return true;
 }
 
 bool DomainParticipant::deregister_statistics_type_and_topic(
@@ -443,7 +443,7 @@ bool DomainParticipant::deregister_statistics_type_and_topic(
         eprosima::fastdds::dds::TypeSupport rtps_traffic_type(new Entity2LocatorTrafficPubSubType);
         return_code =  delete_topic_and_type(topic_name, rtps_traffic_type->getName());
     }
-    else if (RESENT_DATAS_TOPIC == topic_name || HEARTBEAT_COUNT_TOPIC == topic_name || 
+    else if (RESENT_DATAS_TOPIC == topic_name || HEARTBEAT_COUNT_TOPIC == topic_name ||
             ACKNACK_COUNT_TOPIC == topic_name || NACKFRAG_COUNT_TOPIC == topic_name || GAP_COUNT_TOPIC == topic_name ||
             DATA_COUNT_TOPIC == topic_name || PDP_PACKETS_TOPIC == topic_name || EDP_PACKETS_TOPIC == topic_name)
     {
@@ -499,7 +499,7 @@ bool DomainParticipant::check_statistics_topic_and_type(
     if (topic_desc->get_type_name() != type_name)
     {
         logError(STATISTICS_DOMAIN_PARTICIPANT, topic_name << " is not using expected type " << type_name <<
-            " and is using instead type " << topic_desc->get_type_name());
+                " and is using instead type " << topic_desc->get_type_name());
         return false;
     }
     return true;
