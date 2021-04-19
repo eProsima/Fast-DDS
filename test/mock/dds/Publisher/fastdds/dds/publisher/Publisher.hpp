@@ -68,8 +68,7 @@ public:
 
     MOCK_METHOD0(create_datawriter_mock, bool());
 
-    MOCK_METHOD1(delete_datawriter, ReturnCode_t(
-            const DataWriter* writer));
+    MOCK_METHOD0(delete_datawriter_mock, bool());
 
     virtual ~Publisher()
     {
@@ -97,12 +96,21 @@ public:
         DataWriterListener* listener = nullptr,
         const StatusMask& mask = StatusMask::all())
     {
-        bool ret = create_datawriter_mock();
-        if (ret)
+        if (create_datawriter_mock())
         {
             return nullptr;
         }
         return impl_->create_datawriter(topic, qos, listener, mask);
+    }
+
+    ReturnCode_t delete_datawriter(
+            const DataWriter* writer)
+    {
+        if (delete_datawriter_mock())
+        {
+            return ReturnCode_t::RETCODE_ERROR;
+        }
+        return impl_->delete_datawriter(writer);
     }
 
     DataWriter* lookup_datawriter(
