@@ -106,7 +106,7 @@ TEST_F(StatisticsDomainParticipantMockTests, EnableStatisticsDataWriterFailureCr
     // 2. Mock create_datawriter
     DomainParticipantTest* statistics_participant_test = static_cast<DomainParticipantTest*>(statistics_participant);
     eprosima::fastdds::dds::Publisher* builtin_pub = statistics_participant_test->get_builtin_publisher();
-    EXPECT_CALL(*builtin_pub, create_datawriter(testing::_, testing::_)).WillOnce(testing::Return(nullptr));
+    EXPECT_CALL(*builtin_pub, create_datawriter_mock()).WillOnce(testing::Return(true));
 
     // 3. enable_statistics_datawriter
     EXPECT_EQ(ReturnCode_t::RETCODE_ERROR, statistics_participant->enable_statistics_datawriter(HEARTBEAT_COUNT_TOPIC,

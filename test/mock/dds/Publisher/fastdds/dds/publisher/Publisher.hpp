@@ -63,15 +63,7 @@ protected:
 
 public:
 
-    MOCK_METHOD2(create_datawriter, DataWriter*(
-            Topic* topic,
-            const DataWriterQos& qos));
-
-    MOCK_METHOD4(create_datawriter, DataWriter*(
-            Topic* topic,
-            const DataWriterQos& qos,
-            DataWriterListener* listener,
-            const StatusMask& mask));
+    MOCK_METHOD0(create_datawriter_mock, bool());
 
     MOCK_METHOD1(delete_datawriter, ReturnCode_t(
             const DataWriter* writer));
@@ -96,13 +88,27 @@ public:
         return ReturnCode_t::RETCODE_OK;
     }
 
-    DataWriter* lookup_datawriter(
-            const std::string& /*topic_name*/) const
+    DataWriter* create_datawriter(
+        Topic* topic,
+        const DataWriterQos& qos,
+        DataWriterListener* listener = nullptr,
+        const StatusMask& mask = StatusMask::all())
     {
-        return nullptr;
+        bool ret = create_datawriter_mock();
+        if (ret)
+        {
+            return nullptr;
+        }
+        return impl_->create_datawriter(topic, qos, listener, mask);
     }
-            
-    DomainParticipant* get_participant() const
+
+    DataWriter* lookup_datawriter(
+            const std::string& topic_name) const
+    {
+        return impl_->lookup_datawriter(topic_name);
+    }
+
+    const DomainParticipant* get_participant() const
     {
         return nullptr;
     }
