@@ -80,7 +80,6 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
                 ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/builtin/typelookup/TypeLookupRequestListener.cpp
                 ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/builtin/typelookup/common/TypeLookupTypes.cpp
                 ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/core/policy/ParameterList.cpp
-                ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/domain/DomainParticipant.cpp
                 ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/domain/DomainParticipantFactory.cpp
                 ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/domain/DomainParticipantImpl.cpp
                 ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/domain/qos/DomainParticipantQos.cpp
@@ -289,6 +288,7 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
                 ${GMOCK_INCLUDE_DIRS}
                 ${OPENSSL_INCLUDE_DIR}
                 ${PROJECT_SOURCE_DIR}/test/mock/dds/Publisher/
+                ${PROJECT_SOURCE_DIR}/test/mock/dds/DomainParticipant/
                 ${PROJECT_SOURCE_DIR}/include
                 ${PROJECT_BINARY_DIR}/include
                 ${Asio_INCLUDE_DIR}
