@@ -19,6 +19,7 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
     if (GTEST_FOUND)
         if(WIN32)
             add_definitions(-D_WIN32_WINNT=0x0601)
+            add_definitions(-DNOMINMAX)
         endif()
 
         set(STATISTICS_DOMAINPARTICIPANT_TESTS_SOURCE
@@ -174,14 +175,10 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
                 ${PROJECT_SOURCE_DIR}/src/cpp/rtps/resources/TimedEventImpl.cpp
                 ${PROJECT_SOURCE_DIR}/src/cpp/rtps/RTPSDomain.cpp
                 ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/ChannelResource.cpp
-                ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/shared_mem/SharedMemTransport.cpp
-                ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/shared_mem/SharedMemTransportDescriptor.cpp
                 ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/TCPAcceptor.cpp
                 ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/TCPAcceptorBasic.cpp
-                ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/TCPAcceptorSecure.cpp
                 ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/TCPChannelResource.cpp
                 ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/TCPChannelResourceBasic.cpp
-                ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/TCPChannelResourceSecure.cpp
                 ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/tcp/TCPControlMessage.cpp
                 ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/tcp/RTCPMessageManager.cpp
                 ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/TCPTransportInterface.cpp
@@ -191,6 +188,7 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
                 ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/UDPTransportInterface.cpp
                 ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/UDPv4Transport.cpp
                 ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/UDPv6Transport.cpp
+                ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/shared_mem/SharedMemTransportDescriptor.cpp
                 ${PROJECT_SOURCE_DIR}/src/cpp/rtps/writer/LivelinessManager.cpp
                 ${PROJECT_SOURCE_DIR}/src/cpp/rtps/writer/PersistentWriter.cpp
                 ${PROJECT_SOURCE_DIR}/src/cpp/rtps/writer/ReaderLocator.cpp
@@ -214,7 +212,52 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
                 ${PROJECT_SOURCE_DIR}/src/cpp/utils/IPLocator.cpp
                 ${PROJECT_SOURCE_DIR}/src/cpp/utils/md5.cpp
                 ${PROJECT_SOURCE_DIR}/src/cpp/utils/StringMatching.cpp
-                ${PROJECT_SOURCE_DIR}/src/cpp/utils/string_convert.cpp)
+                ${PROJECT_SOURCE_DIR}/src/cpp/utils/string_convert.cpp
+                ${PROJECT_SOURCE_DIR}/src/cpp/utils/TimedConditionVariable.cpp
+                )
+
+            # SHM Transport
+            if(IS_THIRDPARTY_BOOST_OK)
+                list(APPEND STATISTICS_DOMAINPARTICIPANT_MOCK_TESTS_SOURCE
+                    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/shared_mem/test_SharedMemTransport.cpp
+                    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/shared_mem/SharedMemTransport.cpp
+                    )
+            endif()
+
+            # TLS Support
+            if(TLS_FOUND)
+                list(APPEND STATISTICS_DOMAINPARTICIPANT_MOCK_TESTS_SOURCE
+                    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/TCPChannelResourceSecure.cpp
+                    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/TCPAcceptorSecure.cpp
+                    )
+            endif()
+
+            # Security Support
+            if(SECURITY)
+                list(APPEND STATISTICS_DOMAINPARTICIPANT_MOCK_TESTS_SOURCE
+                    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/exceptions/Exception.cpp
+                    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/Token.cpp
+                    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/security/exceptions/SecurityException.cpp
+                    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/security/common/SharedSecretHandle.cpp
+                    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/security/logging/Logging.cpp
+                    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/security/SecurityManager.cpp
+                    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/security/SecurityPluginFactory.cpp
+                    ${PROJECT_SOURCE_DIR}/src/cpp/security/authentication/PKIDH.cpp
+                    ${PROJECT_SOURCE_DIR}/src/cpp/security/accesscontrol/Permissions.cpp
+                    ${PROJECT_SOURCE_DIR}/src/cpp/security/cryptography/AESGCMGMAC.cpp
+                    ${PROJECT_SOURCE_DIR}/src/cpp/security/cryptography/AESGCMGMAC_KeyExchange.cpp
+                    ${PROJECT_SOURCE_DIR}/src/cpp/security/cryptography/AESGCMGMAC_KeyFactory.cpp
+                    ${PROJECT_SOURCE_DIR}/src/cpp/security/cryptography/AESGCMGMAC_Transform.cpp
+                    ${PROJECT_SOURCE_DIR}/src/cpp/security/cryptography/AESGCMGMAC_Types.cpp
+                    ${PROJECT_SOURCE_DIR}/src/cpp/security/authentication/PKIIdentityHandle.cpp
+                    ${PROJECT_SOURCE_DIR}/src/cpp/security/authentication/PKIHandshakeHandle.cpp
+                    ${PROJECT_SOURCE_DIR}/src/cpp/security/accesscontrol/AccessPermissionsHandle.cpp
+                    ${PROJECT_SOURCE_DIR}/src/cpp/security/accesscontrol/CommonParser.cpp
+                    ${PROJECT_SOURCE_DIR}/src/cpp/security/accesscontrol/GovernanceParser.cpp
+                    ${PROJECT_SOURCE_DIR}/src/cpp/security/accesscontrol/PermissionsParser.cpp
+                    ${PROJECT_SOURCE_DIR}/src/cpp/security/logging/LogTopic.cpp
+                    )
+            endif()
 
             # External sources
             if(TINYXML2_SOURCE_DIR)
@@ -227,8 +270,19 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
 
             add_executable(StatisticsDomainParticipantMockTests ${STATISTICS_DOMAINPARTICIPANT_MOCK_TESTS_SOURCE})
             target_compile_definitions(StatisticsDomainParticipantMockTests PRIVATE FASTRTPS_NO_LIB
+                BOOST_ASIO_STANDALONE
+                ASIO_STANDALONE
+                SQLITE_WIN32_GETVERSIONEX=0
                 $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
-                $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNAL_DEBUG> # Internal debug activated.
+                $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
+                $<$<AND:$<BOOL:${WIN32}>,$<STREQUAL:"${CMAKE_SYSTEM_NAME}","WindowsStore">>:_WIN32_WINNT=0x0603>
+                $<$<AND:$<BOOL:${WIN32}>,$<NOT:$<STREQUAL:"${CMAKE_SYSTEM_NAME}","WindowsStore">>>:_WIN32_WINNT=0x0601>
+                $<$<AND:$<BOOL:${WIN32}>,$<STREQUAL:"${CMAKE_SYSTEM_NAME}","WindowsStore">>:SQLITE_OS_WINRT>
+                $<$<AND:$<BOOL:${ANDROID}>,$<NOT:$<BOOL:${HAVE_CXX14}>>,$<NOT:$<BOOL:${HAVE_CXX1Y}>>>:ASIO_DISABLE_STD_STRING_VIEW>
+                $<$<BOOL:${WIN32}>:_ENABLE_ATOMIC_ALIGNMENT_FIX>
+                $<$<NOT:$<BOOL:${IS_THIRDPARTY_BOOST_SUPPORTED}>>:FASTDDS_SHM_TRANSPORT_DISABLED> # Do not compile SHM Transport
+                $<$<BOOL:${SHM_TRANSPORT_DEFAULT}>:SHM_TRANSPORT_BUILTIN> # Enable SHM as built-in transport
+                $<$<BOOL:${STDOUTERR_LOG_CONSUMER}>:STDOUTERR_LOG_CONSUMER> # Enable StdoutErrConsumer as default LogConsumer
                 )
             target_include_directories(StatisticsDomainParticipantMockTests PRIVATE
                 ${GTEST_INCLUDE_DIRS}
@@ -237,18 +291,23 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
                 ${PROJECT_SOURCE_DIR}/test/mock/dds/Publisher/
                 ${PROJECT_SOURCE_DIR}/include
                 ${PROJECT_BINARY_DIR}/include
+                ${Asio_INCLUDE_DIR}
                 ${PROJECT_SOURCE_DIR}/src/cpp
                 ${THIRDPARTY_BOOST_INCLUDE_DIR})
-            target_link_libraries(StatisticsDomainParticipantMockTests 
+            target_link_libraries(StatisticsDomainParticipantMockTests ${PRIVACY}
                 fastcdr
                 foonathan_memory 
                 ${GTEST_LIBRARIES}
                 ${GMOCK_LIBRARIES}
-                ${CMAKE_DL_LIBS}
-                ${OPENSSL_LIBRARIES}
-                ${THIRDPARTY_BOOST_LINK_LIBS})
+                ${CMAKE_THREAD_LIBS_INIT} ${CMAKE_DL_LIBS}
+                ${TINYXML2_LIBRARY}
+                $<$<BOOL:${LINK_SSL}>:OpenSSL::SSL$<SEMICOLON>OpenSSL::Crypto>
+                $<$<BOOL:${WIN32}>:iphlpapi$<SEMICOLON>Shlwapi>
+                ${THIRDPARTY_BOOST_LINK_LIBS}
+                eProsima_atomic
+                )
             if(MSVC OR MSVC_IDE)
-                target_link_libraries(PersistenceTests ${PRIVACY}
+                target_link_libraries(StatisticsDomainParticipantMockTests ${PRIVACY}
                     iphlpapi Shlwapi
                     )
             endif()
