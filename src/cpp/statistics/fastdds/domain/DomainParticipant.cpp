@@ -393,13 +393,9 @@ bool DomainParticipant::find_or_create_topic_and_type(
         {
             if(check_statistics_topic_and_type(topic_desc, topic_name, type->getName()))
             {
+                // TODO(jlbueno) This casting should be checked after other TopicDescription implementations are
+                // included: ContentFilteredTopic, MultiTopic.
                 *topic = dynamic_cast<eprosima::fastdds::dds::Topic*>(topic_desc);
-                if (*topic == nullptr)
-                {
-                    logError(STATISTICS_DOMAIN_PARTICIPANT, topic_name <<
-                        " is already created but not as an instance of class Topic");
-                    return false;
-                }
             }
             else
             {
