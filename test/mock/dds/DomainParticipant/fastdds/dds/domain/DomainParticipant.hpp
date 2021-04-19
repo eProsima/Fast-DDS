@@ -187,6 +187,8 @@ protected:
 
     DomainParticipantImpl* impl_;
 
+    friend class DomainParticipantFactory;
+
     friend class DomainParticipantImpl;
 };
 
