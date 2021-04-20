@@ -22,13 +22,11 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             add_definitions(-DNOMINMAX)
         endif()
 
+        ## StatisticsDomainParticipantTests
         set(STATISTICS_DOMAINPARTICIPANT_TESTS_SOURCE
             StatisticsDomainParticipantTests.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/statistics/types/typesPubSubTypes.cxx
             ${PROJECT_SOURCE_DIR}/src/cpp/statistics/types/types.cxx)
-
-        set(STATISTICS_QOS_TESTS_SOURCE
-            StatisticsQosTests.cpp)
 
         add_executable(StatisticsDomainParticipantTests ${STATISTICS_DOMAINPARTICIPANT_TESTS_SOURCE})
         target_compile_definitions(StatisticsDomainParticipantTests PRIVATE FASTRTPS_NO_LIB
@@ -40,6 +38,10 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
         target_link_libraries(StatisticsDomainParticipantTests fastrtps fastcdr ${GTEST_LIBRARIES})
         add_gtest(StatisticsDomainParticipantTests SOURCES ${STATISTICS_DOMAINPARTICIPANT_TESTS_SOURCE})
 
+        ## StatisticsQosTests
+        set(STATISTICS_QOS_TESTS_SOURCE
+            StatisticsQosTests.cpp)
+
         add_executable(StatisticsQosTests ${STATISTICS_QOS_TESTS_SOURCE})
         target_compile_definitions(StatisticsQosTests PRIVATE FASTRTPS_NO_LIB
             $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
@@ -50,6 +52,35 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
         target_link_libraries(StatisticsQosTests fastrtps fastcdr ${GTEST_LIBRARIES})
         add_gtest(StatisticsQosTests SOURCES ${STATISTICS_QOS_TESTS_SOURCE})
 
+        ## StatisticsDomainParticipantListenerTests
+        if (GMOCK_FOUND AND FASTDDS_STATISTICS)
+            set(DOMAINPARTICIPANTSTATISTICSLISTENER_TESTS_SOURCE
+                DomainParticipantStatisticsListenerTests.cpp)
+
+            add_executable(DomainParticipantStatisticsListenerTests
+                ${PROJECT_SOURCE_DIR}/src/cpp/statistics/fastdds/domain/DomainParticipantStatisticsListener.cpp
+                ${PROJECT_SOURCE_DIR}/src/cpp/statistics/types/typesPubSubTypes.cxx
+                ${PROJECT_SOURCE_DIR}/src/cpp/statistics/types/types.cxx
+                ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/Time_t.cpp
+                ${PROJECT_SOURCE_DIR}/src/cpp/utils/md5.cpp
+                ${DOMAINPARTICIPANTSTATISTICSLISTENER_TESTS_SOURCE})
+            target_compile_definitions(DomainParticipantStatisticsListenerTests PRIVATE FASTRTPS_NO_LIB
+                $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
+                $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNAL_DEBUG> # Internal debug activated.
+                )
+            target_include_directories(DomainParticipantStatisticsListenerTests PRIVATE
+                ${GTEST_INCLUDE_DIRS}
+                DomainParticipantStatisticsListenerTests/mock
+                ${PROJECT_SOURCE_DIR}/include
+                ${PROJECT_BINARY_DIR}/include
+                ${PROJECT_SOURCE_DIR}/src/cpp)
+            target_link_libraries(DomainParticipantStatisticsListenerTests
+                fastcdr ${GTEST_LIBRARIES} ${GMOCK_LIBRARIES} )
+            add_gtest(DomainParticipantStatisticsListenerTests
+                SOURCES ${DOMAINPARTICIPANTSTATISTICSLISTENER_TESTS_SOURCE})
+        endif()
+
+        ## StatisticsDomainParticipantMockTests
         if (GMOCK_FOUND AND SQLITE3_SUPPORT AND FASTDDS_STATISTICS)
             set(STATISTICS_DOMAINPARTICIPANT_MOCK_TESTS_SOURCE
                 StatisticsDomainParticipantMockTests.cpp
