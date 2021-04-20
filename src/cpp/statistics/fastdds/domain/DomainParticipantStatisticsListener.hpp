@@ -24,6 +24,7 @@
 #ifdef FASTDDS_STATISTICS
 
 #include <map>
+#include <mutex>
 
 #include <fastdds/dds/publisher/DataWriter.hpp>
 #include <fastdds/statistics/IListeners.hpp>
@@ -48,6 +49,7 @@ struct DomainParticipantStatisticsListener : public IListener
 
 private:
 
+    std::mutex mtx_;
     std::map<EventKind, DataWriter*> writers_;
 };
 
