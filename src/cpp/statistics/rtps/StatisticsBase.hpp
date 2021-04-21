@@ -141,36 +141,36 @@ protected:
     // retrieve the participant mutex
     std::recursive_mutex& get_statistics_mutex();
 
-    /** Register a listener in participant DataWriter entities.
+    /** Register a listener in participant RTPSWriter entities.
      * @param listener, smart pointer to the listener interface to register
-     * @param guid, DataWriter identifier. If unknown the listener is registered in all enable ones
+     * @param guid, RTPSWriter identifier. If unknown the listener is registered in all enable ones
      * @return true on success
      */
-    virtual bool register_in_datawriter(
+    virtual bool register_in_writer(
             std::shared_ptr<fastdds::statistics::IListener> listener,
             GUID_t guid = GUID_t::unknown()) = 0;
 
-    /** Register a listener in participant DataReader entities.
+    /** Register a listener in participant RTPSReader entities.
      * @param listener, smart pointer to the listener interface to register
-     * @param guid, DataReader identifier. If unknown the listener is registered in all enable ones
+     * @param guid, RTPSReader identifier. If unknown the listener is registered in all enable ones
      * @return true on success
      */
-    virtual bool register_in_datareader(
+    virtual bool register_in_reader(
             std::shared_ptr<fastdds::statistics::IListener> listener,
             GUID_t guid = GUID_t::unknown()) = 0;
 
-    /** Unregister a listener in participant DataWriter entities.
+    /** Unregister a listener in participant RTPSWriter entities.
      * @param listener, smart pointer to the listener interface to unregister
      * @return true on success
      */
-    virtual bool unregister_in_datawriter(
+    virtual bool unregister_in_writer(
             std::shared_ptr<fastdds::statistics::IListener> listener) = 0;
 
-    /** Unregister a listener in participant DataReader entities.
+    /** Unregister a listener in participant RTPSReader entities.
      * @param listener, smart pointer to the listener interface to unregister
      * @return true on success
      */
-    virtual bool unregister_in_datareader(
+    virtual bool unregister_in_reader(
             std::shared_ptr<fastdds::statistics::IListener> listener) = 0;
 
     // lambda function to traverse the listener collection

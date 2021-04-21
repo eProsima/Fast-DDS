@@ -187,7 +187,7 @@ bool StatisticsParticipantImpl::add_statistics_listener(
     if (are_datawriters_involved(new_mask)
             && !are_datawriters_involved(old_mask))
     {
-        writers_res = register_in_datawriter(proxy.get_shared_ptr());
+        writers_res = register_in_writer(proxy.get_shared_ptr());
     }
 
     // Check if the listener should be register in the writers
@@ -195,7 +195,7 @@ bool StatisticsParticipantImpl::add_statistics_listener(
     if (are_datareaders_involved(new_mask)
             && !are_datareaders_involved(old_mask))
     {
-        readers_res = register_in_datareader(proxy.get_shared_ptr());
+        readers_res = register_in_reader(proxy.get_shared_ptr());
     }
 
     return writers_res && readers_res;
@@ -253,14 +253,14 @@ bool StatisticsParticipantImpl::remove_statistics_listener(
     if (!are_datawriters_involved(new_mask)
             && are_datawriters_involved(old_mask))
     {
-        writers_res = unregister_in_datawriter(proxy->get_shared_ptr());
+        writers_res = unregister_in_writer(proxy->get_shared_ptr());
     }
 
     bool readers_res = true;
     if (!are_datareaders_involved(new_mask)
             && are_datareaders_involved(old_mask))
     {
-        readers_res = unregister_in_datareader(proxy->get_shared_ptr());
+        readers_res = unregister_in_reader(proxy->get_shared_ptr());
     }
 
     return writers_res && readers_res

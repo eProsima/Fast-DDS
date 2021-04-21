@@ -903,36 +903,36 @@ public:
 
 #ifdef FASTDDS_STATISTICS
 
-    /** Register a listener in participant DataWriter entities.
+    /** Register a listener in participant RTPSWriter entities.
      * @param listener, smart pointer to the listener interface to register
-     * @param guid, DataWriter identifier. If unknown the listener is registered in all enable ones
+     * @param guid, RTPSWriter identifier. If unknown the listener is registered in all enable ones
      * @return true on success
      */
-    bool register_in_datawriter(
+    bool register_in_writer(
             std::shared_ptr<fastdds::statistics::IListener> listener,
             GUID_t guid = GUID_t::unknown()) override;
 
-    /** Register a listener in participant DataReader entities.
+    /** Register a listener in participant RTPSReader entities.
      * @param listener, smart pointer to the listener interface to register
-     * @param guid, DataReader identifier. If unknown the listener is registered in all enable ones
+     * @param guid, RTPSReader identifier. If unknown the listener is registered in all enable ones
      * @return true on success
      */
-    bool register_in_datareader(
+    bool register_in_reader(
             std::shared_ptr<fastdds::statistics::IListener> listener,
             GUID_t guid = GUID_t::unknown()) override;
 
-    /** Unregister a listener in participant DataWriter entities.
+    /** Unregister a listener in participant RTPSWriter entities.
      * @param listener, smart pointer to the listener interface to unregister
      * @return true on success
      */
-    bool unregister_in_datawriter(
+    bool unregister_in_writer(
             std::shared_ptr<fastdds::statistics::IListener> listener) override;
 
-    /** Unregister a listener in participant DataReader entities.
+    /** Unregister a listener in participant RTPSReader entities.
      * @param listener, smart pointer to the listener interface to unregister
      * @return true on success
      */
-    bool unregister_in_datareader(
+    bool unregister_in_reader(
             std::shared_ptr<fastdds::statistics::IListener> listener) override;
 
 #endif // FASTDDS_STATISTICS

@@ -81,7 +81,7 @@ protected:
     /*
      * Lambda function to traverse the listener collection
      * @param f function object to apply to each listener
-     * @return function object after been applied to each listener
+     * @return function object after being applied to each listener
      */
     template<class Function>
     Function for_each_listener(
