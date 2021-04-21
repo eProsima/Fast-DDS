@@ -70,7 +70,7 @@ void StatisticsWriterImpl::on_data()
         notification.count(++get_members()->data_counter);
     }
 
-    // Callback
+    // Perform the callbacks
     Data data;
     // note that the setter sets RESENT_DATAS by default
     data.entity_count(notification);
@@ -95,14 +95,14 @@ void StatisticsWriterImpl::on_heartbeat(
     notification.guid(to_statistics_type(get_guid()));
     notification.count(count);
 
-    // Callback
-    Data d;
+    // Perform the callbacks
+    Data data;
     // note that the setter sets RESENT_DATAS by default
-    d.entity_count(notification);
-    d._d(EventKind::HEARTBEAT_COUNT);
+    data.entity_count(notification);
+    data._d(EventKind::HEARTBEAT_COUNT);
 
-    for_each_listener([&d](const std::shared_ptr<IListener>& l)
+    for_each_listener([&data](const std::shared_ptr<IListener>& listener)
             {
-                l->on_statistics_data(d);
+                listener->on_statistics_data(data);
             });
 }

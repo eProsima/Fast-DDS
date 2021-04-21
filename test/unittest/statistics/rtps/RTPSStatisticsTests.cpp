@@ -50,21 +50,23 @@ namespace rtps {
 struct MockListener : IListener
 {
     void on_statistics_data(
-            const Data& d) override
+            const Data& data) override
     {
-        switch (d._d())
+        switch (data._d())
         {
             case RTPS_SENT:
-                on_rtps_sent(d.entity2locator_traffic());
+                on_rtps_sent(data.entity2locator_traffic());
                 break;
             case HEARTBEAT_COUNT:
-                on_heartbeat_count(d.entity_count());
+                on_heartbeat_count(data.entity_count());
                 break;
             case ACKNACK_COUNT:
-                on_acknack_count(d.entity_count());
+                on_acknack_count(data.entity_count());
                 break;
             case DATA_COUNT:
-                on_data_count(d.entity_count());
+                on_data_count(data.entity_count());
+                break;
+            default:
                 break;
         }
     }
