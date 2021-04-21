@@ -76,7 +76,7 @@ struct MockListener : IListener
                 on_nackfrag_count(data.entity_count());
                 break;
             case DISCOVERED_ENTITY:
-                on_entity_discovery(d.discovery_time());
+                on_entity_discovery(data.discovery_time());
                 break;
             default:
                 break;
