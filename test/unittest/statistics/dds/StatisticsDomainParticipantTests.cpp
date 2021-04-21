@@ -260,13 +260,13 @@ TEST_F(StatisticsDomainParticipantTests, EnableDisableStatisticsDataWriterTest)
     ASSERT_NE(statistics_participant, nullptr);
 
     EXPECT_EQ(ReturnCode_t::RETCODE_UNSUPPORTED, statistics_participant->enable_statistics_datawriter(
-        HISTORY_LATENCY_TOPIC, STATISTICS_DATAWRITER_QOS);
+                HISTORY_LATENCY_TOPIC, STATISTICS_DATAWRITER_QOS));
     EXPECT_EQ(ReturnCode_t::RETCODE_UNSUPPORTED, statistics_participant->enable_statistics_datawriter("INVALID_TOPIC",
-        inconsistent_qos));
+            inconsistent_qos));
     EXPECT_EQ(ReturnCode_t::RETCODE_UNSUPPORTED, statistics_participant->disable_statistics_datawriter(
-        HISTORY_LATENCY_TOPIC));
+                HISTORY_LATENCY_TOPIC));
     EXPECT_EQ(ReturnCode_t::RETCODE_UNSUPPORTED, statistics_participant->disable_statistics_datawriter(
-        "INVALID_TOPIC"));
+                "INVALID_TOPIC"));
 #else
     // 2. Narrow DomainParticipant to eprosima::fastdds::statistics::dds::DomainParticipant
     DomainParticipant* statistics_participant = DomainParticipant::narrow(participant);
@@ -314,98 +314,98 @@ TEST_F(StatisticsDomainParticipantTests, EnableDisableStatisticsDataWriterTest)
 
     // 6. Enable each statistics DataWriter checking that topics are created and types are registered.
     EXPECT_EQ(ReturnCode_t::RETCODE_OK, statistics_participant->enable_statistics_datawriter(HISTORY_LATENCY_TOPIC,
-        STATISTICS_DATAWRITER_QOS));
+            STATISTICS_DATAWRITER_QOS));
     EXPECT_NE(nullptr, statistics_participant->lookup_topicdescription(HISTORY_LATENCY_TOPIC));
     EXPECT_TRUE(history_latency_type == statistics_participant->find_type(history_latency_type.get_type_name()));
 
     EXPECT_EQ(ReturnCode_t::RETCODE_OK, statistics_participant->enable_statistics_datawriter(NETWORK_LATENCY_TOPIC,
-        STATISTICS_DATAWRITER_QOS));
+            STATISTICS_DATAWRITER_QOS));
     EXPECT_NE(nullptr, statistics_participant->lookup_topicdescription(NETWORK_LATENCY_TOPIC));
     EXPECT_TRUE(network_latency_type == statistics_participant->find_type(network_latency_type.get_type_name()));
 
     EXPECT_EQ(ReturnCode_t::RETCODE_OK, statistics_participant->enable_statistics_datawriter(
-        PUBLICATION_THROUGHPUT_TOPIC, STATISTICS_DATAWRITER_QOS));
+                PUBLICATION_THROUGHPUT_TOPIC, STATISTICS_DATAWRITER_QOS));
     EXPECT_NE(nullptr, statistics_participant->lookup_topicdescription(PUBLICATION_THROUGHPUT_TOPIC));
     EXPECT_TRUE(throughput_type == statistics_participant->find_type(throughput_type.get_type_name()));
 
     EXPECT_EQ(ReturnCode_t::RETCODE_OK, statistics_participant->enable_statistics_datawriter(
-        SUBSCRIPTION_THROUGHPUT_TOPIC, STATISTICS_DATAWRITER_QOS));
+                SUBSCRIPTION_THROUGHPUT_TOPIC, STATISTICS_DATAWRITER_QOS));
     EXPECT_NE(nullptr, statistics_participant->lookup_topicdescription(SUBSCRIPTION_THROUGHPUT_TOPIC));
     EXPECT_TRUE(throughput_type == statistics_participant->find_type(throughput_type.get_type_name()));
 
     EXPECT_EQ(ReturnCode_t::RETCODE_OK, statistics_participant->enable_statistics_datawriter(RTPS_SENT_TOPIC,
-        STATISTICS_DATAWRITER_QOS));
+            STATISTICS_DATAWRITER_QOS));
     EXPECT_NE(nullptr, statistics_participant->lookup_topicdescription(RTPS_SENT_TOPIC));
     EXPECT_TRUE(rtps_traffic_type == statistics_participant->find_type(rtps_traffic_type.get_type_name()));
 
     EXPECT_EQ(ReturnCode_t::RETCODE_OK, statistics_participant->enable_statistics_datawriter(RTPS_LOST_TOPIC,
-        STATISTICS_DATAWRITER_QOS));
+            STATISTICS_DATAWRITER_QOS));
     EXPECT_NE(nullptr, statistics_participant->lookup_topicdescription(RTPS_LOST_TOPIC));
     EXPECT_TRUE(rtps_traffic_type == statistics_participant->find_type(rtps_traffic_type.get_type_name()));
 
     EXPECT_EQ(ReturnCode_t::RETCODE_OK, statistics_participant->enable_statistics_datawriter(RESENT_DATAS_TOPIC,
-        STATISTICS_DATAWRITER_QOS));
+            STATISTICS_DATAWRITER_QOS));
     EXPECT_NE(nullptr, statistics_participant->lookup_topicdescription(RESENT_DATAS_TOPIC));
     EXPECT_TRUE(count_type == statistics_participant->find_type(count_type.get_type_name()));
 
     EXPECT_EQ(ReturnCode_t::RETCODE_OK, statistics_participant->enable_statistics_datawriter(HEARTBEAT_COUNT_TOPIC,
-        STATISTICS_DATAWRITER_QOS));
+            STATISTICS_DATAWRITER_QOS));
     EXPECT_NE(nullptr, statistics_participant->lookup_topicdescription(HEARTBEAT_COUNT_TOPIC));
     EXPECT_TRUE(count_type == statistics_participant->find_type(count_type.get_type_name()));
 
     EXPECT_EQ(ReturnCode_t::RETCODE_OK, statistics_participant->enable_statistics_datawriter(ACKNACK_COUNT_TOPIC,
-        STATISTICS_DATAWRITER_QOS));
+            STATISTICS_DATAWRITER_QOS));
     EXPECT_NE(nullptr, statistics_participant->lookup_topicdescription(ACKNACK_COUNT_TOPIC));
     EXPECT_TRUE(count_type == statistics_participant->find_type(count_type.get_type_name()));
 
     EXPECT_EQ(ReturnCode_t::RETCODE_OK, statistics_participant->enable_statistics_datawriter(NACKFRAG_COUNT_TOPIC,
-        STATISTICS_DATAWRITER_QOS));
+            STATISTICS_DATAWRITER_QOS));
     EXPECT_NE(nullptr, statistics_participant->lookup_topicdescription(NACKFRAG_COUNT_TOPIC));
     EXPECT_TRUE(count_type == statistics_participant->find_type(count_type.get_type_name()));
 
     EXPECT_EQ(ReturnCode_t::RETCODE_OK, statistics_participant->enable_statistics_datawriter(GAP_COUNT_TOPIC,
-        STATISTICS_DATAWRITER_QOS));
+            STATISTICS_DATAWRITER_QOS));
     EXPECT_NE(nullptr, statistics_participant->lookup_topicdescription(GAP_COUNT_TOPIC));
     EXPECT_TRUE(count_type == statistics_participant->find_type(count_type.get_type_name()));
 
     EXPECT_EQ(ReturnCode_t::RETCODE_OK, statistics_participant->enable_statistics_datawriter(DATA_COUNT_TOPIC,
-        STATISTICS_DATAWRITER_QOS));
+            STATISTICS_DATAWRITER_QOS));
     EXPECT_NE(nullptr, statistics_participant->lookup_topicdescription(DATA_COUNT_TOPIC));
     EXPECT_TRUE(count_type == statistics_participant->find_type(count_type.get_type_name()));
 
     EXPECT_EQ(ReturnCode_t::RETCODE_OK, statistics_participant->enable_statistics_datawriter(PDP_PACKETS_TOPIC,
-        STATISTICS_DATAWRITER_QOS));
+            STATISTICS_DATAWRITER_QOS));
     EXPECT_NE(nullptr, statistics_participant->lookup_topicdescription(PDP_PACKETS_TOPIC));
     EXPECT_TRUE(count_type == statistics_participant->find_type(count_type.get_type_name()));
 
     EXPECT_EQ(ReturnCode_t::RETCODE_OK, statistics_participant->enable_statistics_datawriter(EDP_PACKETS_TOPIC,
-        STATISTICS_DATAWRITER_QOS));
+            STATISTICS_DATAWRITER_QOS));
     EXPECT_NE(nullptr, statistics_participant->lookup_topicdescription(EDP_PACKETS_TOPIC));
     EXPECT_TRUE(count_type == statistics_participant->find_type(count_type.get_type_name()));
 
     EXPECT_EQ(ReturnCode_t::RETCODE_OK, statistics_participant->enable_statistics_datawriter(DISCOVERY_TOPIC,
-        STATISTICS_DATAWRITER_QOS));
+            STATISTICS_DATAWRITER_QOS));
     EXPECT_NE(nullptr, statistics_participant->lookup_topicdescription(DISCOVERY_TOPIC));
     EXPECT_TRUE(discovery_type == statistics_participant->find_type(discovery_type.get_type_name()));
 
     EXPECT_EQ(ReturnCode_t::RETCODE_OK, statistics_participant->enable_statistics_datawriter(SAMPLE_DATAS_TOPIC,
-        STATISTICS_DATAWRITER_QOS));
+            STATISTICS_DATAWRITER_QOS));
     EXPECT_NE(nullptr, statistics_participant->lookup_topicdescription(SAMPLE_DATAS_TOPIC));
     EXPECT_TRUE(sample_identity_count_type == statistics_participant->find_type(
                 sample_identity_count_type.get_type_name()));
 
     EXPECT_EQ(ReturnCode_t::RETCODE_OK, statistics_participant->enable_statistics_datawriter(PHYSICAL_DATA_TOPIC,
-        STATISTICS_DATAWRITER_QOS));
+            STATISTICS_DATAWRITER_QOS));
     EXPECT_NE(nullptr, statistics_participant->lookup_topicdescription(PHYSICAL_DATA_TOPIC));
     EXPECT_TRUE(physical_data_type == statistics_participant->find_type(physical_data_type.get_type_name()));
 
     // 7. Enable an already enabled statistics DataWriter
     EXPECT_EQ(ReturnCode_t::RETCODE_OK, statistics_participant->enable_statistics_datawriter(SAMPLE_DATAS_TOPIC,
-        STATISTICS_DATAWRITER_QOS));
+            STATISTICS_DATAWRITER_QOS));
 
     // 8. Invalid topic name
     EXPECT_EQ(ReturnCode_t::RETCODE_BAD_PARAMETER, statistics_participant->enable_statistics_datawriter("INVALID_TOPIC",
-        STATISTICS_DATAWRITER_QOS));
+            STATISTICS_DATAWRITER_QOS));
     EXPECT_EQ(nullptr, statistics_participant->lookup_topicdescription("INVALID_TOPIC"));
 
     // 9. Disable statistics DataWriter
@@ -416,20 +416,20 @@ TEST_F(StatisticsDomainParticipantTests, EnableDisableStatisticsDataWriterTest)
 
     // 10. Enable previous statistics DataWriter with an inconsistent QoS
     EXPECT_EQ(ReturnCode_t::RETCODE_INCONSISTENT_POLICY, statistics_participant->enable_statistics_datawriter(
-        HISTORY_LATENCY_TOPIC, inconsistent_qos));
+                HISTORY_LATENCY_TOPIC, inconsistent_qos));
     EXPECT_EQ(nullptr, statistics_participant->lookup_topicdescription(HISTORY_LATENCY_TOPIC));
     EXPECT_EQ(null_type, statistics_participant->find_type(history_latency_type.get_type_name()));
 
     // 11. RETCODE_BAD_PARAMETER error has precedence over RETCODE_INCONSISTENT_POLICY
     EXPECT_EQ(ReturnCode_t::RETCODE_BAD_PARAMETER, statistics_participant->enable_statistics_datawriter("INVALID_TOPIC",
-        inconsistent_qos));
+            inconsistent_qos));
 
     // 12. Disable already disabled DataWriter
     EXPECT_EQ(ReturnCode_t::RETCODE_OK, statistics_participant->disable_statistics_datawriter(HISTORY_LATENCY_TOPIC));
 
     // 13. Disable invalid topic name
     EXPECT_EQ(ReturnCode_t::RETCODE_BAD_PARAMETER, statistics_participant->disable_statistics_datawriter(
-        "INVALID_TOPIC"));
+                "INVALID_TOPIC"));
 
     // 14. Remove DDS entities
     EXPECT_EQ(ReturnCode_t::RETCODE_OK, statistics_participant->disable_statistics_datawriter(NETWORK_LATENCY_TOPIC));
@@ -437,13 +437,13 @@ TEST_F(StatisticsDomainParticipantTests, EnableDisableStatisticsDataWriterTest)
     EXPECT_EQ(null_type, statistics_participant->find_type(network_latency_type.get_type_name()));
 
     EXPECT_EQ(ReturnCode_t::RETCODE_OK, statistics_participant->disable_statistics_datawriter(
-        PUBLICATION_THROUGHPUT_TOPIC));
+                PUBLICATION_THROUGHPUT_TOPIC));
     EXPECT_EQ(nullptr, statistics_participant->lookup_topicdescription(PUBLICATION_THROUGHPUT_TOPIC));
     // The type is being used by another topic yet
     EXPECT_TRUE(throughput_type == statistics_participant->find_type(throughput_type.get_type_name()));
 
     EXPECT_EQ(ReturnCode_t::RETCODE_OK, statistics_participant->disable_statistics_datawriter(
-        SUBSCRIPTION_THROUGHPUT_TOPIC));
+                SUBSCRIPTION_THROUGHPUT_TOPIC));
     EXPECT_EQ(nullptr, statistics_participant->lookup_topicdescription(SUBSCRIPTION_THROUGHPUT_TOPIC));
     EXPECT_EQ(null_type, statistics_participant->find_type(throughput_type.get_type_name()));
 
