@@ -117,14 +117,14 @@ void StatisticsWriterImpl::on_gap()
         notification.count(++get_members()->gap_counter);
     }
 
-    // Callback
-    Data d;
+    // Perform the callbacks
+    Data data;
     // note that the setter sets RESENT_DATAS by default
-    d.entity_count(notification);
-    d._d(EventKind::GAP_COUNT);
+    data.entity_count(notification);
+    data._d(EventKind::GAP_COUNT);
 
-    for_each_listener([&d](const std::shared_ptr<IListener>& l)
+    for_each_listener([&data](const std::shared_ptr<IListener>& listener)
             {
-                l->on_statistics_data(d);
+                listener->on_statistics_data(data);
             });
 }

@@ -60,7 +60,7 @@ protected:
     {
     }
 
-    //! Report a DATA_FRAG message is sent
+    //! Report that a GAP message is sent
     inline void on_gap()
     {
     }
