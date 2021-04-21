@@ -502,6 +502,66 @@ TEST_P(Volatile, VolatileLateJoinerSubGapLost)
     reader2.block_for_all();
 }
 
+// Regression test for redmine bug #11306
+TEST_P(Volatile, VolatileWithLostAcks)
+{
+    PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
+
+    writer.history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS).
+        reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).
+        durability_kind(eprosima::fastrtps::VOLATILE_DURABILITY_QOS).
+        resource_limits_allocated_samples(10).
+        resource_limits_max_samples(10).
+        init();
+
+    ASSERT_TRUE(writer.isInitialized());
+
+    // To simulate lossy conditions
+    size_t acks_to_drop = 0;
+    auto testTransport = std::make_shared<test_UDPv4TransportDescriptor>();
+    testTransport->drop_ack_nack_messages_filter_ = [&acks_to_drop](rtps::CDRMessage_t&)
+    {
+        if (acks_to_drop > 0)
+        {
+            --acks_to_drop;
+            return true;
+        }
+        return false;
+    };
+
+    reader.history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS).
+        reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).
+        durability_kind(eprosima::fastrtps::VOLATILE_DURABILITY_QOS).
+        resource_limits_allocated_samples(10).
+        resource_limits_max_samples(10).
+        disable_builtin_transport().
+        add_user_transport_to_pparams(testTransport).
+        init();
+
+    ASSERT_TRUE(reader.isInitialized());
+
+    // Volatile durability. Endpoints should know each other before communicating.
+    reader.wait_discovery();
+    writer.wait_discovery();
+
+    // Drop half the acks and perform communication
+    acks_to_drop = 5;
+    auto data = default_helloworld_data_generator();
+    reader.startReception(data);
+    writer.send(data);
+    ASSERT_TRUE(data.empty());
+    reader.block_for_all();
+
+    // Wait for history to be completely acknowledged
+    EXPECT_TRUE(writer.waitForAllAcked(std::chrono::minutes(10)));
+    
+    // History should be empty, so remove_all_changes should do nothing
+    size_t number_of_changes_removed = 0;
+    EXPECT_FALSE(writer.remove_all_changes(&number_of_changes_removed));
+    EXPECT_EQ(0u, number_of_changes_removed);
+}
+
 #ifdef INSTANTIATE_TEST_SUITE_P
 #define GTEST_INSTANTIATE_TEST_MACRO(x, y, z, w) INSTANTIATE_TEST_SUITE_P(x, y, z, w)
 #else
