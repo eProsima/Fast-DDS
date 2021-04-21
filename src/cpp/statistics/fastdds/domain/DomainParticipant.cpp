@@ -241,7 +241,7 @@ void DomainParticipant::delete_statistics_builtin_entities()
 }
 
 const std::string DomainParticipant::transform_topic_name_alias(
-        const std::string& topic)
+        const std::string& topic) noexcept
 {
     std::string topic_name;
     if (HISTORY_LATENCY_TOPIC_ALIAS == topic)
@@ -320,7 +320,7 @@ const std::string DomainParticipant::transform_topic_name_alias(
 }
 
 bool DomainParticipant::check_statistics_topic_name(
-        const std::string& topic)
+        const std::string& topic) noexcept
 {
     if (HISTORY_LATENCY_TOPIC != topic && NETWORK_LATENCY_TOPIC != topic && PUBLICATION_THROUGHPUT_TOPIC != topic &&
             SUBSCRIPTION_THROUGHPUT_TOPIC != topic && RTPS_SENT_TOPIC != topic && RTPS_LOST_TOPIC != topic &&
@@ -336,7 +336,7 @@ bool DomainParticipant::check_statistics_topic_name(
 
 bool DomainParticipant::register_statistics_type_and_topic(
         eprosima::fastdds::dds::Topic** topic,
-        const std::string& topic_name)
+        const std::string& topic_name) noexcept
 {
     bool return_code = false;
     if (HISTORY_LATENCY_TOPIC == topic_name)
@@ -387,7 +387,7 @@ bool DomainParticipant::register_statistics_type_and_topic(
 bool DomainParticipant::find_or_create_topic_and_type(
         eprosima::fastdds::dds::Topic** topic,
         const std::string& topic_name,
-        const eprosima::fastdds::dds::TypeSupport& type)
+        const eprosima::fastdds::dds::TypeSupport& type) noexcept
 {
     // Find if the topic has been already created and if the associated type is correct
     eprosima::fastdds::dds::TopicDescription* topic_desc = lookup_topicdescription(topic_name);
@@ -420,7 +420,7 @@ bool DomainParticipant::find_or_create_topic_and_type(
 }
 
 bool DomainParticipant::deregister_statistics_type_and_topic(
-        const std::string& topic_name)
+        const std::string& topic_name) noexcept
 {
     bool return_code = false;
     if (HISTORY_LATENCY_TOPIC == topic_name)
@@ -470,7 +470,7 @@ bool DomainParticipant::deregister_statistics_type_and_topic(
 
 bool DomainParticipant::delete_topic_and_type(
         const std::string& topic_name,
-        const std::string& type_name)
+        const std::string& type_name) noexcept
 {
     eprosima::fastdds::dds::TopicDescription* topic_desc = lookup_topicdescription(topic_name);
     assert(nullptr != topic_desc);
@@ -494,7 +494,7 @@ bool DomainParticipant::delete_topic_and_type(
 bool DomainParticipant::check_statistics_topic_and_type(
         const eprosima::fastdds::dds::TopicDescription* topic_desc,
         const std::string& topic_name,
-        const std::string& type_name)
+        const std::string& type_name) noexcept
 {
     if (topic_desc->get_type_name() != type_name)
     {

@@ -137,7 +137,7 @@ protected:
      * Otherwise, the same string passed as parameter is returned.
      */
     const std::string transform_topic_name_alias(
-            const std::string& topic);
+            const std::string& topic) noexcept;
 
     /**
      * Auxiliary function to check if the topic name provided is a valid one.
@@ -146,7 +146,7 @@ protected:
      * false otherwise.
      */
     bool check_statistics_topic_name(
-            const std::string& topic);
+            const std::string& topic) noexcept;
 
     /**
      * Auxiliary function to register the statistics type depending on the statistics topic name.
@@ -159,7 +159,7 @@ protected:
      */
     bool register_statistics_type_and_topic(
             eprosima::fastdds::dds::Topic** topic,
-            const std::string& topic_name);
+            const std::string& topic_name) noexcept;
 
     /**
      * Auxiliary function that checks if the topic is already created within the domain participant.
@@ -174,7 +174,7 @@ protected:
     bool find_or_create_topic_and_type(
             eprosima::fastdds::dds::Topic** topic,
             const std::string& topic_name,
-            const eprosima::fastdds::dds::TypeSupport& type);
+            const eprosima::fastdds::dds::TypeSupport& type) noexcept;
 
     /**
      * Auxiliary function to deregister statistic type and topic.
@@ -182,7 +182,7 @@ protected:
      * @return true if successful. False otherwise.
      */
     bool deregister_statistics_type_and_topic(
-            const std::string& topic_name);
+            const std::string& topic_name) noexcept;
 
     /**
      * Auxiliary method to delete a topic and deregister a type after checking that they are consistent.
@@ -192,7 +192,7 @@ protected:
      */
     bool delete_topic_and_type(
             const std::string& topic_name,
-            const std::string& type_name);
+            const std::string& type_name) noexcept;
 
     /**
      * Auxiliary function to check that the topic has been registered with the expected type.
@@ -204,7 +204,7 @@ protected:
     bool check_statistics_topic_and_type(
             const eprosima::fastdds::dds::TopicDescription* topic_desc,
             const std::string& topic_name,
-            const std::string& type_name);
+            const std::string& type_name) noexcept;
 
     eprosima::fastdds::dds::Publisher* builtin_publisher_;
 
