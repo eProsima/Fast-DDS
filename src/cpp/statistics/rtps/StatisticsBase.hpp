@@ -19,14 +19,17 @@
 #ifndef _STATISTICS_RTPS_STATISTICSBASE_HPP_
 #define _STATISTICS_RTPS_STATISTICSBASE_HPP_
 
-#include <fastdds/rtps/common/Guid.h>
-#include <fastdds/rtps/common/Locator.h>
-#include <fastdds/statistics/rtps/StatisticsCommon.hpp>
-#include <fastrtps/config.h>
-#include <statistics/types/types.h>
-
 #include <mutex>
 #include <set>
+
+#include <fastrtps/config.h>
+
+#include <fastdds/rtps/common/Guid.h>
+#include <fastdds/rtps/common/Locator.h>
+
+#include <statistics/types/types.h>
+
+#include <fastdds/statistics/rtps/StatisticsCommon.hpp>
 
 namespace eprosima {
 namespace fastdds {

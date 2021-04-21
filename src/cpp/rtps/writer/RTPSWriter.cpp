@@ -17,23 +17,27 @@
  *
  */
 
-#include <fastdds/rtps/writer/RTPSWriter.h>
-
-#include <fastdds/dds/log/Log.hpp>
-
-#include <fastdds/rtps/history/WriterHistory.h>
-#include <fastdds/rtps/messages/RTPSMessageCreator.h>
+#include <mutex>
 
 #include <rtps/history/BasicPayloadPool.hpp>
 #include <rtps/history/CacheChangePool.h>
+
 #include <rtps/DataSharing/DataSharingNotifier.hpp>
 #include <rtps/DataSharing/WriterPool.hpp>
+
 #include <rtps/flowcontrol/FlowController.h>
+
 #include <rtps/participant/RTPSParticipantImpl.h>
 
-#include <statistics/rtps/StatisticsBase.hpp>
+#include <fastdds/dds/log/Log.hpp>
 
-#include <mutex>
+#include <fastdds/rtps/writer/RTPSWriter.h>
+
+#include <fastdds/rtps/history/WriterHistory.h>
+
+#include <fastdds/rtps/messages/RTPSMessageCreator.h>
+
+#include <statistics/rtps/StatisticsBase.hpp>
 
 namespace eprosima {
 namespace fastrtps {

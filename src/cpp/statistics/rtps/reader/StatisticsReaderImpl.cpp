@@ -16,8 +16,9 @@
  * @file StatisticsReaderImpl.hpp
  */
 
-#include <fastdds/rtps/reader/RTPSReader.h>
 #include <statistics/rtps/StatisticsBase.hpp>
+
+#include <fastdds/rtps/reader/RTPSReader.h>
 
 using namespace eprosima::fastdds::statistics;
 

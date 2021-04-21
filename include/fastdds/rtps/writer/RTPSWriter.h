@@ -19,26 +19,26 @@
 #ifndef _FASTDDS_RTPS_RTPSWRITER_H_
 #define _FASTDDS_RTPS_RTPSWRITER_H_
 
+#include <vector>
+#include <memory>
+#include <functional>
+#include <chrono>
+#include <mutex>
+
 #include <fastdds/rtps/Endpoint.h>
-#include <fastdds/rtps/messages/RTPSMessageGroup.h>
 #include <fastdds/rtps/attributes/HistoryAttributes.h>
 #include <fastdds/rtps/attributes/WriterAttributes.h>
+#include <fastdds/rtps/common/LocatorSelector.hpp>
+#include <fastdds/rtps/messages/RTPSMessageGroup.h>
+#include <fastdds/rtps/messages/RTPSMessageSenderInterface.hpp>
 #include <fastrtps/qos/LivelinessLostStatus.h>
 #include <fastrtps/utils/collections/ResourceLimitedVector.hpp>
-#include <fastdds/rtps/common/LocatorSelector.hpp>
-#include <fastdds/rtps/messages/RTPSMessageSenderInterface.hpp>
 
 #ifdef FASTDDS_STATISTICS
 #include <fastdds/statistics/rtps/StatisticsCommon.hpp>
 #else
 #include <fastdds/statistics/rtps/StatisticsCommonEmpty.hpp>
 #endif // FASTDDS_STATISTICS
-
-#include <vector>
-#include <memory>
-#include <functional>
-#include <chrono>
-#include <mutex>
 
 namespace eprosima {
 namespace fastrtps {

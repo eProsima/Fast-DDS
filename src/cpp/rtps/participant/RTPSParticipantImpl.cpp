@@ -19,13 +19,29 @@
 
 #include <rtps/participant/RTPSParticipantImpl.h>
 
+#include <algorithm>
+#include <functional>
+#include <memory>
+#include <mutex>
+
 #include <rtps/flowcontrol/ThroughputController.h>
 #include <rtps/persistence/PersistenceService.h>
 #include <rtps/history/BasicPayloadPool.hpp>
 
+#include <fastrtps/utils/IPFinder.h>
+#include <fastrtps/utils/Semaphore.h>
+
+#include <fastrtps/xmlparser/XMLProfileManager.h>
+
+#include <fastdds/dds/log/Log.hpp>
+
+#include <fastdds/rtps/RTPSDomain.h>
+
 #include <fastdds/rtps/messages/MessageReceiver.h>
 
 #include <fastdds/rtps/history/WriterHistory.h>
+
+#include <fastdds/rtps/participant/RTPSParticipant.h>
 
 #include <fastdds/rtps/writer/StatelessWriter.h>
 #include <fastdds/rtps/writer/StatefulWriter.h>
@@ -37,30 +53,15 @@
 #include <fastdds/rtps/reader/StatelessPersistentReader.h>
 #include <fastdds/rtps/reader/StatefulPersistentReader.h>
 
-#include <fastdds/rtps/participant/RTPSParticipant.h>
 #include <fastdds/rtps/transport/UDPv4TransportDescriptor.h>
 #include <fastdds/rtps/transport/TCPv4TransportDescriptor.h>
 #include <fastdds/rtps/transport/TCPv6TransportDescriptor.h>
 #include <fastdds/rtps/transport/shared_mem/SharedMemTransportDescriptor.h>
 
-#include <fastdds/rtps/RTPSDomain.h>
-
 #include <fastdds/rtps/builtin/BuiltinProtocols.h>
 #include <fastdds/rtps/builtin/discovery/participant/PDPSimple.h>
 #include <fastdds/rtps/builtin/data/ParticipantProxyData.h>
 #include <fastdds/rtps/builtin/liveliness/WLP.h>
-
-#include <fastrtps/utils/IPFinder.h>
-
-#include <fastrtps/utils/Semaphore.h>
-
-#include <mutex>
-#include <functional>
-#include <algorithm>
-#include <memory>
-
-#include <fastdds/dds/log/Log.hpp>
-#include <fastrtps/xmlparser/XMLProfileManager.h>
 
 namespace eprosima {
 namespace fastrtps {

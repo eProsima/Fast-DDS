@@ -34,8 +34,13 @@
 #include <unistd.h>
 #endif // if defined(_WIN32)
 
-#include <fastdds/rtps/attributes/RTPSParticipantAttributes.h>
+#include <rtps/messages/RTPSMessageGroup_t.hpp>
+#include <rtps/messages/SendBuffersManager.hpp>
+
 #include <fastdds/rtps/common/Guid.h>
+
+#include <fastdds/rtps/attributes/RTPSParticipantAttributes.h>
+
 #include <fastdds/rtps/builtin/discovery/endpoint/EDPSimple.h>
 #include <fastdds/rtps/builtin/data/ReaderProxyData.h>
 #include <fastdds/rtps/builtin/data/WriterProxyData.h>
@@ -43,13 +48,13 @@
 #include <fastdds/rtps/network/NetworkFactory.h>
 #include <fastdds/rtps/network/ReceiverResource.h>
 #include <fastdds/rtps/network/SenderResource.h>
+
 #include <fastdds/rtps/messages/MessageReceiver.h>
+
 #include <fastdds/rtps/resources/ResourceEvent.h>
 #include <fastdds/rtps/resources/AsyncWriterThread.h>
-#include <statistics/rtps/StatisticsBase.hpp>
 
-#include "../messages/RTPSMessageGroup_t.hpp"
-#include "../messages/SendBuffersManager.hpp"
+#include <statistics/rtps/StatisticsBase.hpp>
 
 #if HAVE_SECURITY
 #include <fastdds/rtps/Endpoint.h>

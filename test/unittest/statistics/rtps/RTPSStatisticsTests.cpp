@@ -15,9 +15,17 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
 
+#include <fastrtps/attributes/LibrarySettingsAttributes.h>
+#include <fastrtps/attributes/TopicAttributes.h>
+
+#include <fastrtps/xmlparser/XMLProfileManager.h>
+
+#include <statistics/types/types.h>
+
 #include <fastdds/dds/log/Log.hpp>
 #include <fastdds/dds/publisher/qos/WriterQos.hpp>
 #include <fastdds/dds/subscriber/qos/ReaderQos.hpp>
+
 #include <fastdds/rtps/RTPSDomain.h>
 #include <fastdds/rtps/attributes/HistoryAttributes.h>
 #include <fastdds/rtps/attributes/RTPSParticipantAttributes.h>
@@ -29,12 +37,8 @@
 #include <fastdds/rtps/participant/RTPSParticipant.h>
 #include <fastdds/rtps/reader/RTPSReader.h>
 #include <fastdds/rtps/writer/RTPSWriter.h>
-#include <fastdds/statistics/IListeners.hpp>
-#include <fastrtps/attributes/LibrarySettingsAttributes.h>
-#include <fastrtps/attributes/TopicAttributes.h>
-#include <fastrtps/xmlparser/XMLProfileManager.h>
 
-#include <statistics/types/types.h>
+#include <fastdds/statistics/IListeners.hpp>
 
 namespace eprosima {
 namespace fastdds {

@@ -16,11 +16,13 @@
  * @file StatisticsBase.cpp
  */
 
-#include "StatisticsBase.hpp"
-#include <rtps/participant/RTPSParticipantImpl.h>
-#include <fastdds/dds/log/Log.hpp>
+#include <statistics/rtps/StatisticsBase.hpp>
 
 #include <cmath>
+
+#include <rtps/participant/RTPSParticipantImpl.h>
+
+#include <fastdds/dds/log/Log.hpp>
 
 using namespace eprosima::fastdds::statistics;
 using eprosima::fastrtps::rtps::RTPSParticipantImpl;

@@ -16,8 +16,9 @@
  * @file StatisticsWriterImpl.hpp
  */
 
-#include <fastdds/rtps/writer/RTPSWriter.h>
 #include <statistics/rtps/StatisticsBase.hpp>
+
+#include <fastdds/rtps/writer/RTPSWriter.h>
 
 using namespace eprosima::fastdds::statistics;
 

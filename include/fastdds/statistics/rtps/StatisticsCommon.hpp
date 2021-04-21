@@ -19,12 +19,12 @@
 #ifndef _FASTDDS_STATISTICS_RTPS_STATISTICSCOMMON_HPP_
 #define _FASTDDS_STATISTICS_RTPS_STATISTICSCOMMON_HPP_
 
+#include <memory>
+#include <type_traits>
+
 #include <fastdds/rtps/common/Guid.h>
 #include <fastdds/statistics/IListeners.hpp>
 #include <fastrtps/utils/TimedMutex.hpp>
-
-#include <memory>
-#include <type_traits>
 
 namespace eprosima {
 namespace fastdds {

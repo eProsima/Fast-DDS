@@ -19,22 +19,22 @@
 #ifndef _FASTDDS_RTPS_READER_RTPSREADER_H_
 #define _FASTDDS_RTPS_READER_RTPSREADER_H_
 
+#include <functional>
+
 #include <fastdds/rtps/Endpoint.h>
 #include <fastdds/rtps/attributes/ReaderAttributes.h>
-#include <fastdds/rtps/common/SequenceNumber.h>
-#include <fastrtps/qos/LivelinessChangedStatus.h>
-#include <fastdds/rtps/common/Time_t.h>
 #include <fastdds/rtps/builtin/data/WriterProxyData.h>
+#include <fastdds/rtps/common/SequenceNumber.h>
+#include <fastdds/rtps/common/Time_t.h>
+#include <fastdds/rtps/history/ReaderHistory.h>
+#include <fastrtps/qos/LivelinessChangedStatus.h>
 #include <fastrtps/utils/TimedConditionVariable.hpp>
-#include "../history/ReaderHistory.h"
 
 #ifdef FASTDDS_STATISTICS
 #include <fastdds/statistics/rtps/StatisticsCommon.hpp>
 #else
 #include <fastdds/statistics/rtps/StatisticsCommonEmpty.hpp>
 #endif // FASTDDS_STATISTICS
-
-#include <functional>
 
 namespace eprosima {
 namespace fastrtps {
