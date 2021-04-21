@@ -136,7 +136,6 @@ ReturnCode_t DomainParticipantImpl::enable()
     return ret;
 }
 
-
 void DomainParticipantImpl::create_statistics_builtin_entities()
 {
     // Builtin publisher

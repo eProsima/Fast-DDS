@@ -182,6 +182,7 @@ public:
     {
         return impl_;
     }
+
 };
 
 /*
@@ -782,7 +783,7 @@ TEST_F(StatisticsDomainParticipantTests, DisableStatisticsDataWriterWithIncompat
     DomainParticipantTest* participant_test = static_cast<DomainParticipantTest*>(participant);
     ASSERT_NE(nullptr, participant_test);
     DomainParticipantImplTest* statistics_participant_impl_test = static_cast<DomainParticipantImplTest*>(
-            participant_test->get_impl());
+        participant_test->get_impl());
     ASSERT_NE(nullptr, statistics_participant_impl_test);
     eprosima::fastdds::dds::Publisher* builtin_pub = statistics_participant_impl_test->get_builtin_publisher();
     ASSERT_NE(nullptr, builtin_pub);

@@ -86,7 +86,7 @@ protected:
         : eprosima::fastdds::dds::DomainParticipantImpl(dp, did, qos, listen)
         , builtin_publisher_(nullptr)
     {
-    }    
+    }
 
     /**
      * Auxiliary function to create the statistics builtin entities.
