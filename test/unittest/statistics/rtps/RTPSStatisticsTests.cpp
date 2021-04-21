@@ -15,6 +15,8 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
 
+#include <utils/SystemInfo.hpp>
+
 #include <fastrtps/attributes/LibrarySettingsAttributes.h>
 #include <fastrtps/attributes/TopicAttributes.h>
 
@@ -149,7 +151,7 @@ public:
         using namespace fastrtps::rtps;
 
         // create the participant
-        uint32_t domain_id = 0;
+        uint32_t domain_id = SystemInfo::instance().process_id() % 100;
         RTPSParticipantAttributes p_attr;
         participant_ = RTPSDomain::createParticipant(
             domain_id, true, p_attr);
@@ -303,7 +305,7 @@ TEST_F(RTPSStatisticsTests, statistics_rpts_listener_callbacks)
     match_endpoints(false, "string", "statisticsSmallTopic");
 
     // Check callbacks on data exchange, at least, we must received:
-    // + RTPSWriter: PUBLICATION_THROUGHPU, RESENT_DATAS,
+    // + RTPSWriter: PUBLICATION_THROUGHPUT, RESENT_DATAS,
     //               GAP_COUNT, DATA_COUNT, SAMPLE_DATAS & PHYSICAL_DATA
     //   optionally: ACKNACK_COUNT & NACKFRAG_COUNT
     EXPECT_CALL(*writer_listener, on_statistics_data)
