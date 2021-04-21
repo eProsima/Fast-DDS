@@ -509,11 +509,11 @@ TEST_P(Volatile, VolatileWithLostAcks)
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
 
     writer.history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS).
-        reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).
-        durability_kind(eprosima::fastrtps::VOLATILE_DURABILITY_QOS).
-        resource_limits_allocated_samples(10).
-        resource_limits_max_samples(10).
-        init();
+            reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).
+            durability_kind(eprosima::fastrtps::VOLATILE_DURABILITY_QOS).
+            resource_limits_allocated_samples(10).
+            resource_limits_max_samples(10).
+            init();
 
     ASSERT_TRUE(writer.isInitialized());
 
@@ -521,23 +521,23 @@ TEST_P(Volatile, VolatileWithLostAcks)
     size_t acks_to_drop = 0;
     auto testTransport = std::make_shared<test_UDPv4TransportDescriptor>();
     testTransport->drop_ack_nack_messages_filter_ = [&acks_to_drop](rtps::CDRMessage_t&)
-    {
-        if (acks_to_drop > 0)
-        {
-            --acks_to_drop;
-            return true;
-        }
-        return false;
-    };
+            {
+                if (acks_to_drop > 0)
+                {
+                    --acks_to_drop;
+                    return true;
+                }
+                return false;
+            };
 
     reader.history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS).
-        reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).
-        durability_kind(eprosima::fastrtps::VOLATILE_DURABILITY_QOS).
-        resource_limits_allocated_samples(10).
-        resource_limits_max_samples(10).
-        disable_builtin_transport().
-        add_user_transport_to_pparams(testTransport).
-        init();
+            reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).
+            durability_kind(eprosima::fastrtps::VOLATILE_DURABILITY_QOS).
+            resource_limits_allocated_samples(10).
+            resource_limits_max_samples(10).
+            disable_builtin_transport().
+            add_user_transport_to_pparams(testTransport).
+            init();
 
     ASSERT_TRUE(reader.isInitialized());
 
@@ -555,7 +555,7 @@ TEST_P(Volatile, VolatileWithLostAcks)
 
     // Wait for history to be completely acknowledged
     EXPECT_TRUE(writer.waitForAllAcked(std::chrono::minutes(10)));
-    
+
     // History should be empty, so remove_all_changes should do nothing
     size_t number_of_changes_removed = 0;
     EXPECT_FALSE(writer.remove_all_changes(&number_of_changes_removed));

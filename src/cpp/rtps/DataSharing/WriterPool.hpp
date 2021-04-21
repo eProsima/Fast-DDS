@@ -279,7 +279,7 @@ public:
      * Removes the payload's offset from the shared history
      *
      * Payloads don't need to be removed from the history in the same order
-     * they where added, but a payload will not be available through @ref get_payload until all 
+     * they where added, but a payload will not be available through @ref get_payload until all
      * payloads preceding it have been removed from the shared history.
      */
     void remove_from_shared_history(
@@ -292,7 +292,7 @@ public:
         assert(free_history_size_ < descriptor_->history_size);
 
         logInfo(DATASHARING_PAYLOADPOOL, "Change removed from shared history"
-            << " with SN " << cache_change->sequenceNumber);
+                << " with SN " << cache_change->sequenceNumber);
 
         PayloadNode* payload = PayloadNode::get_from_data(cache_change->serializedPayload.data);
         payload->has_been_removed(true);
