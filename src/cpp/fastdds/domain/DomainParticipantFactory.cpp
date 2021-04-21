@@ -22,7 +22,6 @@
 #include <fastdds/dds/log/Log.hpp>
 #include <fastdds/rtps/participant/RTPSParticipant.h>
 #include <fastdds/rtps/RTPSDomain.h>
-#include <fastdds/statistics/dds/domain/DomainParticipant.hpp>
 #include <fastrtps/types/DynamicDataFactory.h>
 #include <fastrtps/types/DynamicTypeBuilderFactory.h>
 #include <fastrtps/types/TypeObjectFactory.h>
@@ -30,6 +29,7 @@
 
 #include <fastdds/domain/DomainParticipantImpl.hpp>
 #include <rtps/history/TopicPayloadPoolRegistry.hpp>
+#include <statistics/fastdds/domain/DomainParticipantImpl.hpp>
 
 
 
@@ -118,9 +118,9 @@ ReturnCode_t DomainParticipantFactory::delete_participant(
     {
 #ifdef FASTDDS_STATISTICS
         // Delete builtin statistics entities
-        eprosima::fastdds::statistics::dds::DomainParticipant* stat_part =
-                eprosima::fastdds::statistics::dds::DomainParticipant::narrow(part);
-        stat_part->delete_statistics_builtin_entities();
+        eprosima::fastdds::statistics::dds::DomainParticipantImpl* stat_part_impl =
+                static_cast<eprosima::fastdds::statistics::dds::DomainParticipantImpl*>(part->impl_);
+        stat_part_impl->delete_statistics_builtin_entities();
 #endif // ifdef FASTDDS_STATISTICS
         if (part->has_active_entities())
         {
@@ -168,13 +168,13 @@ DomainParticipant* DomainParticipantFactory::create_participant(
 
     const DomainParticipantQos& pqos = (&qos == &PARTICIPANT_QOS_DEFAULT) ? default_participant_qos_ : qos;
 
-#ifndef FASTDDS_STATISTICS
     DomainParticipant* dom_part = new DomainParticipant(mask);
-#else
-    eprosima::fastdds::statistics::dds::DomainParticipant* dom_part =
-            new eprosima::fastdds::statistics::dds::DomainParticipant(mask);
-#endif // FASTDDS_STATISTICS
+#ifndef FASTDDS_STATISTICS
     DomainParticipantImpl* dom_part_impl = new DomainParticipantImpl(dom_part, did, pqos, listen);
+#else
+    eprosima::fastdds::statistics::dds::DomainParticipantImpl* dom_part_impl =
+            new eprosima::fastdds::statistics::dds::DomainParticipantImpl(dom_part, did, pqos, listen);
+#endif // FASTDDS_STATISTICS
 
     {
         std::lock_guard<std::mutex> guard(mtx_participants_);

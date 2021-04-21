@@ -85,7 +85,7 @@ protected:
 
 public:
 
-    ReturnCode_t enable();
+    virtual ReturnCode_t enable();
 
     ReturnCode_t get_qos(
             DomainParticipantQos& qos) const;

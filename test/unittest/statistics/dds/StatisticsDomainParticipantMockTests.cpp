@@ -22,6 +22,7 @@
 #include <fastdds/statistics/dds/publisher/qos/DataWriterQos.hpp>
 #include <fastdds/statistics/topic_names.hpp>
 #include <fastrtps/types/TypesBase.h>
+#include <statistics/fastdds/domain/DomainParticipantImpl.hpp>
 #include <statistics/types/typesPubSubTypes.h>
 
 #include "../../logging/mock/MockConsumer.h"
@@ -66,7 +67,7 @@ protected:
 
 };
 
-class DomainParticipantTest : public DomainParticipant
+class DomainParticipantImplTest : public DomainParticipantImpl
 {
 public:
 
@@ -75,6 +76,16 @@ public:
         return builtin_publisher_;
     }
 
+};
+
+class DomainParticipantTest : public eprosima::fastdds::dds::DomainParticipant
+{
+public:
+
+    eprosima::fastdds::dds::DomainParticipantImpl* get_impl() const
+    {
+        return impl_;
+    }
 };
 
 /**
@@ -108,9 +119,12 @@ TEST_F(StatisticsDomainParticipantMockTests, EnableStatisticsDataWriterFailureCr
     ASSERT_NE(statistics_participant, nullptr);
 
     // 2. Mock create_datawriter
-    DomainParticipantTest* statistics_participant_test = static_cast<DomainParticipantTest*>(statistics_participant);
-    ASSERT_NE(nullptr, statistics_participant_test);
-    eprosima::fastdds::dds::Publisher* builtin_pub = statistics_participant_test->get_builtin_publisher();
+    DomainParticipantTest* participant_test = static_cast<DomainParticipantTest*>(participant);
+    ASSERT_NE(nullptr, participant_test);
+    DomainParticipantImplTest* statistics_participant_impl_test = static_cast<DomainParticipantImplTest*>(
+        participant_test->get_impl());
+    ASSERT_NE(nullptr, statistics_participant_impl_test);
+    eprosima::fastdds::dds::Publisher* builtin_pub = statistics_participant_impl_test->get_builtin_publisher();
     EXPECT_CALL(*builtin_pub, create_datawriter_mock()).WillOnce(testing::Return(true));
 
     // 3. enable_statistics_datawriter
@@ -125,7 +139,7 @@ TEST_F(StatisticsDomainParticipantMockTests, EnableStatisticsDataWriterFailureCr
     EXPECT_EQ(consumed_entries.size(), 1u);
 
     EXPECT_EQ(eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->
-                    delete_participant(statistics_participant_test), ReturnCode_t::RETCODE_OK);
+                    delete_participant(participant), ReturnCode_t::RETCODE_OK);
 #endif // FASTDDS_STATISTICS
 }
 
@@ -152,9 +166,12 @@ TEST_F(StatisticsDomainParticipantMockTests, DisableStatisticsDataWriterFailureD
     ASSERT_NE(statistics_participant, nullptr);
 
     // 2. Mock delete_datawriter
-    DomainParticipantTest* statistics_participant_test = static_cast<DomainParticipantTest*>(statistics_participant);
-    ASSERT_NE(nullptr, statistics_participant_test);
-    eprosima::fastdds::dds::Publisher* builtin_pub = statistics_participant_test->get_builtin_publisher();
+    DomainParticipantTest* participant_test = static_cast<DomainParticipantTest*>(participant);
+    ASSERT_NE(nullptr, participant_test);
+    DomainParticipantImplTest* statistics_participant_impl_test = static_cast<DomainParticipantImplTest*>(
+        participant_test->get_impl());
+    ASSERT_NE(nullptr, statistics_participant_impl_test);
+    eprosima::fastdds::dds::Publisher* builtin_pub = statistics_participant_impl_test->get_builtin_publisher();
     EXPECT_CALL(*builtin_pub, delete_datawriter_mock()).WillOnce(testing::Return(true));
     EXPECT_CALL(*participant, delete_topic_mock()).WillOnce(testing::Return(false));
 
@@ -177,7 +194,7 @@ TEST_F(StatisticsDomainParticipantMockTests, DisableStatisticsDataWriterFailureD
     EXPECT_EQ(null_type, statistics_participant->find_type(count_type.get_type_name()));
 
     EXPECT_EQ(eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->
-                    delete_participant(statistics_participant_test), ReturnCode_t::RETCODE_OK);
+                    delete_participant(statistics_participant), ReturnCode_t::RETCODE_OK);
 #endif // FASTDDS_STATISTICS
 }
 
@@ -201,8 +218,12 @@ TEST_F(StatisticsDomainParticipantMockTests, DisableStatisticsDataWriterFailureD
     ASSERT_NE(statistics_participant, nullptr);
 
     // 2. Mock delete_topic
-    DomainParticipantTest* statistics_participant_test = static_cast<DomainParticipantTest*>(statistics_participant);
-    eprosima::fastdds::dds::Publisher* builtin_pub = statistics_participant_test->get_builtin_publisher();
+    DomainParticipantTest* participant_test = static_cast<DomainParticipantTest*>(participant);
+    ASSERT_NE(nullptr, participant_test);
+    DomainParticipantImplTest* statistics_participant_impl_test = static_cast<DomainParticipantImplTest*>(
+        participant_test->get_impl());
+    ASSERT_NE(nullptr, statistics_participant_impl_test);
+    eprosima::fastdds::dds::Publisher* builtin_pub = statistics_participant_impl_test->get_builtin_publisher();
     EXPECT_CALL(*participant, delete_topic_mock()).WillOnce(testing::Return(true));
     EXPECT_CALL(*builtin_pub, delete_datawriter_mock()).WillOnce(testing::Return(false));
 
@@ -225,7 +246,7 @@ TEST_F(StatisticsDomainParticipantMockTests, DisableStatisticsDataWriterFailureD
     EXPECT_EQ(nullptr, statistics_participant->lookup_topicdescription(HEARTBEAT_COUNT_TOPIC));
 
     EXPECT_EQ(eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->
-                    delete_participant(statistics_participant_test), ReturnCode_t::RETCODE_OK);
+                    delete_participant(statistics_participant), ReturnCode_t::RETCODE_OK);
 #endif // FASTDDS_STATISTICS
 }
 

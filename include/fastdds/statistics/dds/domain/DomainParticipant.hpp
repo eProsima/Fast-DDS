@@ -22,14 +22,8 @@
 
 #include <string>
 
-#include <fastdds/dds/core/status/StatusMask.hpp>
 #include <fastdds/dds/domain/DomainParticipant.hpp>
-#include <fastdds/dds/domain/DomainParticipantFactory.hpp>
-#include <fastdds/dds/publisher/Publisher.hpp>
 #include <fastdds/dds/publisher/qos/DataWriterQos.hpp>
-#include <fastdds/dds/topic/Topic.hpp>
-#include <fastdds/dds/topic/TopicDescription.hpp>
-#include <fastdds/dds/topic/TypeSupport.hpp>
 #include <fastrtps/fastrtps_dll.h>
 #include <fastrtps/types/TypesBase.h>
 
@@ -94,129 +88,7 @@ public:
     RTPS_DllAPI static const DomainParticipant* narrow(
             const eprosima::fastdds::dds::DomainParticipant* domain_participant);
 
-    /**
-     * @brief This operation enables the statistics DomainParticipant
-     * @return RETCODE_OK
-     */
-    RTPS_DllAPI ReturnCode_t enable() override;
-
-protected:
-
-    /**
-     * Constructor
-     */
-    DomainParticipant(
-            const eprosima::fastdds::dds::StatusMask& mask)
-        : eprosima::fastdds::dds::DomainParticipant(mask)
-    {
-    }
-
-    /**
-     * Auxiliary function to create the statistics builtin entities.
-     * @return true if succesfully created statistics DDS entities,
-     * false otherwise.
-     */
-    void create_statistics_builtin_entities();
-
-    /**
-     * Auxiliary function to enable statistics builtin datawriters.
-     * @param topic_list string with the semicolon separated list of statistics topics.
-     */
-    void enable_statistics_builtin_datawriters(
-            const std::string& topic_list);
-
-    /**
-     * Auxiliary function to delete the statistics builtin entities.
-     */
-    void delete_statistics_builtin_entities();
-
-    /**
-     * Auxiliary function that transforms the topic alias to the topic name.
-     * @param topic string with the statistic topic name or alias.
-     * @return string with the corresponding topic name if an alias has been used.
-     * Otherwise, the same string passed as parameter is returned.
-     */
-    const std::string transform_topic_name_alias(
-            const std::string& topic) noexcept;
-
-    /**
-     * Auxiliary function to check if the topic name provided is a valid one.
-     * @param topic string with the statistic topic name.
-     * @return true if the topic name provided is valid.
-     * false otherwise.
-     */
-    bool check_statistics_topic_name(
-            const std::string& topic) noexcept;
-
-    /**
-     * Auxiliary function to register the statistics type depending on the statistics topic name.
-     * It also creates the topic (or finds it if already created) and returns the pointer.
-     * @param[out] topic pointer to the created topic pointer.
-     * If the method returns false the parameter is not modified.
-     * @param[in] topic_name string with the statistics topic name.
-     * @return true if successful.
-     * false in case there is incompatibility between the type associated to the Topic and the expected type.
-     */
-    bool register_statistics_type_and_topic(
-            eprosima::fastdds::dds::Topic** topic,
-            const std::string& topic_name) noexcept;
-
-    /**
-     * Auxiliary function that checks if the topic is already created within the domain participant.
-     * If it is not, it creates the topic and registers the type. It also checks if the type can be registered.
-     * If succesfull, it returns the pointer to the found or created topic.
-     * @param[out] topic pointer to the found or created topic pointer.
-     * @param[in] topic_name string with the topic name to find or create.
-     * @param[in] type TypeSupport to register.
-     * @return false if the topic is found but uses another type different from the expected one or if register_type
-     * fails because there is another TypeSupport using the same name. true otherwise.
-     */
-    bool find_or_create_topic_and_type(
-            eprosima::fastdds::dds::Topic** topic,
-            const std::string& topic_name,
-            const eprosima::fastdds::dds::TypeSupport& type) noexcept;
-
-    /**
-     * Auxiliary function to deregister statistic type and topic.
-     * @param topic_name string with the statistics topic name.
-     * @return true if successful. False otherwise.
-     */
-    bool deregister_statistics_type_and_topic(
-            const std::string& topic_name) noexcept;
-
-    /**
-     * Auxiliary method to delete a topic and deregister a type after checking that they are consistent.
-     * @param topic_name string with the topic name.
-     * @param type_name string with the type name.
-     * @return false if the type and topic do not match or if delete_topic fails. Otherwise true.
-     */
-    bool delete_topic_and_type(
-            const std::string& topic_name,
-            const std::string& type_name) noexcept;
-
-    /**
-     * Auxiliary function to check that the topic has been registered with the expected type.
-     * @param topic_desc pointer to the TopicDescription found in the participant.
-     * @param topic_name string with the statistics topic name.
-     * @param type_name string with the type name to check that the topic is associated with the expected type.
-     * @return true if the topic and type are consistent. False otherwise.
-     */
-    bool check_statistics_topic_and_type(
-            const eprosima::fastdds::dds::TopicDescription* topic_desc,
-            const std::string& topic_name,
-            const std::string& type_name) noexcept;
-
-    eprosima::fastdds::dds::Publisher* builtin_publisher_;
-
-    friend class eprosima::fastdds::dds::DomainParticipantFactory;
 };
-
-/* Environment variable to specify a semicolon-separated list of topic names that define the statistics DataWriters that
- * the DomainParticipant will enable when enabled itself.
- * The topic names must conform to the topic names aliases defined in @ref topic_names.hpp.
- * For the variable to take any effect the CMake option FASTDDS_STATISTICS must be enabled.
- */
-const char* const FASTDDS_STATISTICS_ENVIRONMENT_VARIABLE = "FASTDDS_STATISTICS";
 
 } // namespace dds
 } // namespace statistics

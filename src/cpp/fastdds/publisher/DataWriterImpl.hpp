@@ -61,7 +61,7 @@ class TimedEvent;
 namespace fastdds {
 namespace statistics {
 namespace dds {
-class DomainParticipant;
+class DomainParticipantImpl;
 } // namespace dds
 } // namespace statistics
 namespace dds {
@@ -84,7 +84,7 @@ class DataWriterImpl
 protected:
 
     friend class PublisherImpl;
-    friend class eprosima::fastdds::statistics::dds::DomainParticipant;
+    friend class eprosima::fastdds::statistics::dds::DomainParticipantImpl;
 
     /**
      * Create a data writer, assigning its pointer to the associated writer.

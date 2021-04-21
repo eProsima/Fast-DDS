@@ -32,6 +32,7 @@
 #include <fastdds/statistics/dds/publisher/qos/DataWriterQos.hpp>
 #include <fastdds/statistics/topic_names.hpp>
 #include <fastrtps/types/TypesBase.h>
+#include <statistics/fastdds/domain/DomainParticipantImpl.hpp>
 #include <statistics/types/typesPubSubTypes.h>
 
 #include "../../logging/mock/MockConsumer.h"
@@ -162,7 +163,7 @@ protected:
 
 };
 
-class DomainParticipantTest : public DomainParticipant
+class DomainParticipantImplTest : public DomainParticipantImpl
 {
 public:
 
@@ -173,6 +174,15 @@ public:
 
 };
 
+class DomainParticipantTest : public eprosima::fastdds::dds::DomainParticipant
+{
+public:
+
+    eprosima::fastdds::dds::DomainParticipantImpl* get_impl() const
+    {
+        return impl_;
+    }
+};
 
 /*
  * This test checks eprosima::fastdds::statistics::dds::DomainParticipant narrow methods.
@@ -769,9 +779,12 @@ TEST_F(StatisticsDomainParticipantTests, DisableStatisticsDataWriterWithIncompat
     // Manually create datawriter with incorrect topic
     DomainParticipant* statistics_participant = DomainParticipant::narrow(participant);
     ASSERT_NE(statistics_participant, nullptr);
-    DomainParticipantTest* statistics_participant_test = static_cast<DomainParticipantTest*>(statistics_participant);
-    ASSERT_NE(nullptr, statistics_participant_test);
-    eprosima::fastdds::dds::Publisher* builtin_pub = statistics_participant_test->get_builtin_publisher();
+    DomainParticipantTest* participant_test = static_cast<DomainParticipantTest*>(participant);
+    ASSERT_NE(nullptr, participant_test);
+    DomainParticipantImplTest* statistics_participant_impl_test = static_cast<DomainParticipantImplTest*>(
+            participant_test->get_impl());
+    ASSERT_NE(nullptr, statistics_participant_impl_test);
+    eprosima::fastdds::dds::Publisher* builtin_pub = statistics_participant_impl_test->get_builtin_publisher();
     ASSERT_NE(nullptr, builtin_pub);
     eprosima::fastdds::dds::DataWriter* datawriter = builtin_pub->create_datawriter(topic, STATISTICS_DATAWRITER_QOS);
     ASSERT_NE(nullptr, datawriter);

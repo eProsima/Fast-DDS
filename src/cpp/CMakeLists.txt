@@ -233,12 +233,25 @@ set(${PROJECT_NAME}_source_files
     statistics/fastdds/domain/DomainParticipant.cpp
     statistics/fastdds/publisher/qos/DataWriterQos.cpp
     statistics/fastdds/subscriber/qos/DataReaderQos.cpp
-    statistics/types/typesPubSubTypes.cxx
-    statistics/types/types.cxx
-    statistics/rtps/StatisticsBase.cpp
-    statistics/rtps/writer/StatisticsWriterImpl.cpp
-    statistics/rtps/reader/StatisticsReaderImpl.cpp
     )
+
+# Statistics support
+if (FASTDDS_STATISTICS)
+
+    set(statistics_sources
+        statistics/fastdds/domain/DomainParticipantImpl.cpp
+        statistics/types/typesPubSubTypes.cxx
+        statistics/types/types.cxx
+        statistics/rtps/StatisticsBase.cpp
+        statistics/rtps/writer/StatisticsWriterImpl.cpp
+        statistics/rtps/reader/StatisticsReaderImpl.cpp
+        )
+
+    list(APPEND ${PROJECT_NAME}_source_files
+        ${statistics_sources}
+        )
+
+endif()
 
 # SHM Transport
 if(IS_THIRDPARTY_BOOST_OK)
