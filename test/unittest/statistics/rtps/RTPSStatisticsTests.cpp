@@ -748,7 +748,7 @@ TEST_F(RTPSStatisticsTests, statistics_rpts_listener_discovery_callbacks)
         while ( callbacks < 5 )
         {
             this_thread::sleep_for(chrono::milliseconds(100));
-            if ( ++loop > 10 )
+            if ( ++loop > 30 )
             {
                 break;
             }

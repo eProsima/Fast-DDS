@@ -32,15 +32,15 @@ namespace fastdds {
 namespace statistics {
 
 detail::Locator_s to_statistics_type(
-        fastrtps::rtps::Locator_t l)
+        fastrtps::rtps::Locator_t locator)
 {
-    return *reinterpret_cast<detail::Locator_s*>(&l);
+    return *reinterpret_cast<detail::Locator_s*>(&locator);
 }
 
 detail::GUID_s to_statistics_type(
-        fastrtps::rtps::GUID_t g)
+        fastrtps::rtps::GUID_t guid)
 {
-    return *reinterpret_cast<detail::GUID_s*>(&g);
+    return *reinterpret_cast<detail::GUID_s*>(&guid);
 }
 
 } // statistics
@@ -330,12 +330,12 @@ void StatisticsParticipantImpl::on_entity_discovery(
         notification.time(t.to_ns());
     }
 
-    // Callback
-    Data d;
-    d.discovery_time(notification);
+    // Perform the callbacks
+    Data data;
+    data.discovery_time(notification);
 
-    for_each_listener([&d](const Key& l)
+    for_each_listener([&data](const Key& listener)
             {
-                l->on_statistics_data(d);
+                listener->on_statistics_data(data);
             });
 }

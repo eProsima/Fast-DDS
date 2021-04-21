@@ -104,7 +104,7 @@ private:
      * Retrieve the GUID_t from derived class
      * @return endpoint GUID_t
      */
-    const fastrtps::rtps::GUID_t& get_guid() const;
+    const GUID_t& get_guid() const;
 
 protected:
 
@@ -250,7 +250,7 @@ protected:
     }
 
     /*
-     * Report a new entity is discovered
+     * Report that a new entity is discovered
      * @param id, discovered entity GUID_t
      */
     void on_entity_discovery(
@@ -308,7 +308,7 @@ protected:
     }
 
     /*
-     * Report a new entity is discovered
+     * Report that a new entity is discovered
      * @param id, discovered entity GUID_t
      */
     inline void on_entity_discovery(
