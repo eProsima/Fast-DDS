@@ -278,9 +278,9 @@ public:
     /**
      * Removes the payload's offset from the shared history
      *
-     * Payloads must be removed from the history in the same order
-     * they where added, i.e., payload for sequence number 7
-     * cannot be removed before payload for sequence number 5.
+     * Payloads don't need to be removed from the history in the same order
+     * they where added, but a payload will not be available through @ref get_payload until all 
+     * payloads preceding it have been removed from the shared history.
      */
     void remove_from_shared_history(
             const CacheChange_t* cache_change)
