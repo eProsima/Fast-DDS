@@ -146,6 +146,7 @@ protected:
 
             PayloadNodeMetaData()
                 : status(fastrtps::rtps::ChangeKind_t::ALIVE)
+                , has_been_removed(0)
                 , data_length(0)
                 , sequence_number(c_SequenceNumber_Unknown)
                 , writer_GUID(c_Guid_Unknown)
@@ -156,7 +157,10 @@ protected:
             ~PayloadNodeMetaData() = default;
 
             // writer/instance status
-            alignas(2) uint8_t status;
+            uint8_t status;
+
+            // Has this payload been removed from the shared history?
+            uint8_t has_been_removed;
 
             // Encapsulation of the data
             uint16_t encapsulation;
@@ -199,6 +203,7 @@ protected:
             // Reset the sequence number first, it signals the data is not valid anymore
             metadata_.sequence_number.store(c_SequenceNumber_Unknown, std::memory_order_relaxed);
             metadata_.status = fastrtps::rtps::ChangeKind_t::ALIVE;
+            metadata_.has_been_removed = 0;
             metadata_.data_length = 0;
             metadata_.writer_GUID = c_Guid_Unknown;
             metadata_.instance_handle = c_InstanceHandle_Unknown;
@@ -298,6 +303,17 @@ protected:
                 uint8_t status)
         {
             metadata_.status = status;
+        }
+
+        bool has_been_removed() const
+        {
+            return metadata_.has_been_removed == 1;
+        }
+
+        void has_been_removed(
+                bool removed)
+        {
+            metadata_.has_been_removed = removed ? 1 : 0;
         }
 
         fastrtps::rtps::SampleIdentity related_sample_identity() const
