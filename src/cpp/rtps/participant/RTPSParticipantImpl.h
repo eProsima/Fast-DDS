@@ -282,13 +282,13 @@ public:
                 send_resource->send(msg->buffer, msg->length, &locators_begin, &locators_end,
                         max_blocking_time_point);
             }
-        }
 
-        // notify statistics module
-        on_rtps_send(
-            destination_locators_begin,
-            destination_locators_end,
-            msg->length);
+            // notify statistics module
+            on_rtps_send(
+                destination_locators_begin,
+                destination_locators_end,
+                msg->length);
+        }
 
         return ret_code;
     }

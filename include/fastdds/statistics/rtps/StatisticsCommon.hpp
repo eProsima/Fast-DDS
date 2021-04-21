@@ -109,7 +109,7 @@ class StatisticsWriterImpl
 
     /*
      * Create the auxiliary structure
-     * @return true if successfully created
+     * @return nullptr on failure
      */
     StatisticsWriterAncillary* get_members() const;
 
@@ -153,7 +153,7 @@ class StatisticsReaderImpl
     /*
      * Create the auxiliary structure
      * TODO: enable when a member is added to StatisticsReaderAncillary
-     * @return true if successfully created
+     * @return nullptr on failure
      */
     StatisticsReaderAncillary* get_members() const
     {

@@ -117,7 +117,7 @@ void StatisticsParticipantImpl::ListenerProxy::mask(
     mask_ = update;
 }
 
-bool StatisticsParticipantImpl::are_datawriters_involved(
+bool StatisticsParticipantImpl::are_writers_involved(
         const uint32_t mask) const
 {
     using namespace fastdds::statistics;
@@ -131,7 +131,7 @@ bool StatisticsParticipantImpl::are_datawriters_involved(
     return writers_maks & mask;
 }
 
-bool StatisticsParticipantImpl::are_datareaders_involved(
+bool StatisticsParticipantImpl::are_readers_involved(
         const uint32_t mask) const
 {
     using namespace fastdds::statistics;
@@ -151,7 +151,9 @@ bool StatisticsParticipantImpl::add_statistics_listener(
 {
     std::lock_guard<std::recursive_mutex> lock(get_statistics_mutex());
 
-    uint32_t mask = kind, new_mask, old_mask;
+    uint32_t mask = kind;
+    uint32_t new_mask;
+    uint32_t old_mask;
 
     if (!listener || 0 == mask)
     {
@@ -182,18 +184,18 @@ bool StatisticsParticipantImpl::add_statistics_listener(
         proxy.mask(new_mask);
     }
 
-    // Check if the listener should be register in the writers
+    // Check if the listener should be registered in writers
     bool writers_res = true;
-    if (are_datawriters_involved(new_mask)
-            && !are_datawriters_involved(old_mask))
+    if (are_writers_involved(new_mask)
+            && !are_writers_involved(old_mask))
     {
         writers_res = register_in_writer(proxy.get_shared_ptr());
     }
 
-    // Check if the listener should be register in the writers
+    // Check if the listener should be registered in readers
     bool readers_res = true;
-    if (are_datareaders_involved(new_mask)
-            && !are_datareaders_involved(old_mask))
+    if (are_readers_involved(new_mask)
+            && !are_readers_involved(old_mask))
     {
         readers_res = register_in_reader(proxy.get_shared_ptr());
     }
@@ -209,7 +211,9 @@ bool StatisticsParticipantImpl::remove_statistics_listener(
 
     std::lock_guard<std::recursive_mutex> lock(get_statistics_mutex());
 
-    uint32_t mask = kind, new_mask, old_mask;
+    uint32_t mask = kind;
+    uint32_t new_mask;
+    uint32_t old_mask;
 
     if (!listener || 0 == mask)
     {
@@ -250,15 +254,15 @@ bool StatisticsParticipantImpl::remove_statistics_listener(
     }
 
     bool writers_res = true;
-    if (!are_datawriters_involved(new_mask)
-            && are_datawriters_involved(old_mask))
+    if (!are_writers_involved(new_mask)
+            && are_writers_involved(old_mask))
     {
         writers_res = unregister_in_writer(proxy->get_shared_ptr());
     }
 
     bool readers_res = true;
-    if (!are_datareaders_involved(new_mask)
-            && are_datareaders_involved(old_mask))
+    if (!are_readers_involved(new_mask)
+            && are_readers_involved(old_mask))
     {
         readers_res = unregister_in_reader(proxy->get_shared_ptr());
     }
@@ -293,12 +297,12 @@ void StatisticsParticipantImpl::on_rtps_sent(
     }
 
     // Callback
-    Data d;
+    Data data;
     // note that the setter sets RTPS_SENT by default
-    d.entity2locator_traffic(notification);
+    data.entity2locator_traffic(notification);
 
-    for_each_listener([&d](const Key& l)
+    for_each_listener([&data](const Key& listener)
             {
-                l->on_statistics_data(d);
+                listener->on_statistics_data(data);
             });
 }

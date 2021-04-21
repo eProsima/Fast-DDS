@@ -189,17 +189,17 @@ protected:
     }
 
     // returns if a mask statistics::EventKind may require participant writers update
-    bool are_datawriters_involved(
+    bool are_writers_involved(
             const uint32_t mask) const;
 
     // returns if a mask statistics::EventKind may require participant readers update
-    bool are_datareaders_involved(
+    bool are_readers_involved(
             const uint32_t mask) const;
 
     // TODO: methods for listeners callbacks
 
     /*
-     * Report a message is send by the participant
+     * Report a message that is sent by the participant
      * @param loc, destination
      * @param payload_size, size of the current message
      */
@@ -208,9 +208,9 @@ protected:
             unsigned long payload_size);
 
     /*
-     * Report a message is send by the participant
-     * @param destination_locators_begin, begin of locators range
-     * @param destination_locators_end, send of locators range
+     * Report a message that is sent by the participant
+     * @param destination_locators_begin, start of locators range
+     * @param destination_locators_end, end of locators range
      * @param payload_size, size of the current message
      */
     template<class LocatorIteratorT>
@@ -229,10 +229,20 @@ protected:
 
 public:
 
+    /*
+     * Registers a listener in participant's statistics callback queue
+     * @param listener smart pointer to the listener being registered
+     * @return successfully registered
+     */
     bool add_statistics_listener(
             std::shared_ptr<fastdds::statistics::IListener> listener,
             fastdds::statistics::EventKind kind);
 
+    /*
+     * Unregisters a listener in participant's statistics callback queue
+     * @param listener smart pointer to the listener being unregistered
+     * @return successfully unregistered
+     */
     bool remove_statistics_listener(
             std::shared_ptr<fastdds::statistics::IListener> listener,
             fastdds::statistics::EventKind kind);
@@ -253,9 +263,9 @@ protected:
     // inline methods for listeners callbacks
 
     /*
-     * Report a message is send by the participant
-     * @param destination_locators_begin, begin of locators range
-     * @param destination_locators_end, send of locators range
+     * Report a message that is sent by the participant
+     * @param destination_locators_begin, start of locators range
+     * @param destination_locators_end, end of locators range
      * @param payload_size, size of the current message
      */
     template<class LocatorIteratorT>

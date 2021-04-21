@@ -691,7 +691,7 @@ bool RTPSParticipantImpl::create_writer(
         // Register all compatible statistical listeners
         for_each_listener([this, &guid](Key listener)
                 {
-                    if (are_datawriters_involved(listener->mask()))
+                    if (are_writers_involved(listener->mask()))
                     {
                         register_in_writer(listener->get_shared_ptr(), guid);
                     }
@@ -819,7 +819,7 @@ bool RTPSParticipantImpl::create_reader(
         // Register all compatible statistical listeners
         for_each_listener([this, &guid](Key listener)
                 {
-                    if (are_datareaders_involved(listener->mask()))
+                    if (are_readers_involved(listener->mask()))
                     {
                         register_in_reader(listener->get_shared_ptr(), guid);
                     }
