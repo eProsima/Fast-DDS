@@ -46,9 +46,8 @@ protected:
      * @param current count of heartbeats
      */
     void on_heartbeat(
-            uint32_t count)
+            uint32_t)
     {
-        (void)count;
     }
 
     //! Report that a DATA message is sent
@@ -71,9 +70,21 @@ protected:
 
     // TODO: methods for listeners callbacks
 
-    //! Report that an ACKNACK message is sent
+    /*
+     * @brief Report that an ACKNACK message is sent
+     * @param current count of ACKNACKs
+     */
     inline void on_acknack(
-            int32_t )
+            int32_t)
+    {
+    }
+
+    /*
+     * @brief Report that a NACKFRAG message is sent
+     * @param current count of NACKFRAGs
+     */
+    inline void on_nackfrag(
+            int32_t)
     {
     }
 

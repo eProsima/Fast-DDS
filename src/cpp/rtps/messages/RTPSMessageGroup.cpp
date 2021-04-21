@@ -790,7 +790,7 @@ bool RTPSMessageGroup::add_nackfrag(
     }
 #endif // if HAVE_SECURITY
 
-    // Notify the statistics module, note only readers add NACKFRAGs
+    // Notify the statistics module, note that only readers add NACKFRAGs
     assert(nullptr != dynamic_cast<RTPSReader*>(endpoint_));
     static_cast<RTPSReader*>(endpoint_)->on_nackfrag(count);
 

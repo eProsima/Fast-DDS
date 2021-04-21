@@ -14,29 +14,12 @@
 
 #include <map>
 
-#include <gtest/gtest.h>
 #include <gmock/gmock.h>
-
-#include <utils/SystemInfo.hpp>
-
-#include <rtps/transport/test_UDPv4Transport.h>
-
-#include <fastrtps/attributes/LibrarySettingsAttributes.h>
-#include <fastrtps/attributes/TopicAttributes.h>
-#include <fastrtps/attributes/LibrarySettingsAttributes.h>
-#include <fastrtps/attributes/TopicAttributes.h>
-
-#include <fastrtps/transport/test_UDPv4TransportDescriptor.h>
-
-#include <fastrtps/xmlparser/XMLProfileManager.h>
-#include <fastrtps/xmlparser/XMLProfileManager.h>
-
-#include <statistics/types/types.h>
+#include <gtest/gtest.h>
 
 #include <fastdds/dds/log/Log.hpp>
 #include <fastdds/dds/publisher/qos/WriterQos.hpp>
 #include <fastdds/dds/subscriber/qos/ReaderQos.hpp>
-
 #include <fastdds/rtps/RTPSDomain.h>
 #include <fastdds/rtps/attributes/HistoryAttributes.h>
 #include <fastdds/rtps/attributes/RTPSParticipantAttributes.h>
@@ -48,8 +31,19 @@
 #include <fastdds/rtps/participant/RTPSParticipant.h>
 #include <fastdds/rtps/reader/RTPSReader.h>
 #include <fastdds/rtps/writer/RTPSWriter.h>
-
 #include <fastdds/statistics/IListeners.hpp>
+#include <fastrtps/attributes/LibrarySettingsAttributes.h>
+#include <fastrtps/attributes/LibrarySettingsAttributes.h>
+#include <fastrtps/attributes/TopicAttributes.h>
+#include <fastrtps/attributes/TopicAttributes.h>
+#include <fastrtps/transport/test_UDPv4TransportDescriptor.h>
+#include <fastrtps/xmlparser/XMLProfileManager.h>
+#include <fastrtps/xmlparser/XMLProfileManager.h>
+
+#include <statistics/types/types.h>
+
+#include <rtps/transport/test_UDPv4Transport.h>
+#include <utils/SystemInfo.hpp>
 
 namespace eprosima {
 namespace fastdds {
@@ -75,10 +69,8 @@ struct MockListener : IListener
             case DATA_COUNT:
                 on_data_count(data.entity_count());
                 break;
-            default:
-                break;
             case NACKFRAG_COUNT:
-                on_nackfrag_count(d.entity_count());
+                on_nackfrag_count(data.entity_count());
                 break;
             default:
                 break;
@@ -98,7 +90,7 @@ class RTPSStatisticsTests
     using test_Descriptor = fastdds::rtps::test_UDPv4TransportDescriptor;
 
     // transport filter, that would delegate into a custom one if provided
-    // There are specific gee
+    // Filters have specific getters and setters methods.
     class TransportFilter
     {
         friend class RTPSStatisticsTests;
@@ -528,7 +520,8 @@ TEST_F(RTPSStatisticsTests, statistics_rpts_listener_callbacks_fragmented)
             static uint32_t max_fragment = 0;
             static bool keep_filtering = true;
 
-            uint32_t fragmentNum, old_pos = msg.pos;
+            uint32_t fragmentNum;
+            uint32_t old_pos = msg.pos;
             msg.pos += 20;
             fastrtps::rtps::CDRMessage::readUInt32(&msg, &fragmentNum);
             msg.pos = old_pos;

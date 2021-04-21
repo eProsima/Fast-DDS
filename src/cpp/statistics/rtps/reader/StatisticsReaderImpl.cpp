@@ -86,14 +86,14 @@ void StatisticsReaderImpl::on_nackfrag(
     notification.guid(to_statistics_type(get_guid()));
     notification.count(count);
 
-    // Callback
-    Data d;
+    // Perform the callback
+    Data data;
     // note that the setter sets RESENT_DATAS by default
-    d.entity_count(notification);
-    d._d(EventKind::NACKFRAG_COUNT);
+    data.entity_count(notification);
+    data._d(EventKind::NACKFRAG_COUNT);
 
-    for_each_listener([&d](const std::shared_ptr<IListener>& l)
+    for_each_listener([&data](const std::shared_ptr<IListener>& listener)
             {
-                l->on_statistics_data(d);
+                listener->on_statistics_data(data);
             });
 }
