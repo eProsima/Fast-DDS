@@ -32,7 +32,6 @@
 #include <fastdds/statistics/dds/publisher/qos/DataWriterQos.hpp>
 #include <fastdds/statistics/topic_names.hpp>
 #include <fastrtps/types/TypesBase.h>
-#include <statistics/fastdds/domain/DomainParticipantImpl.hpp>
 #include <statistics/types/typesPubSubTypes.h>
 
 #include "../../logging/mock/MockConsumer.h"
@@ -159,28 +158,6 @@ protected:
     {
         delete mutex_;
         mutex_ = nullptr;
-    }
-
-};
-
-class DomainParticipantImplTest : public DomainParticipantImpl
-{
-public:
-
-    eprosima::fastdds::dds::Publisher* get_builtin_publisher() const
-    {
-        return builtin_publisher_;
-    }
-
-};
-
-class DomainParticipantTest : public eprosima::fastdds::dds::DomainParticipant
-{
-public:
-
-    eprosima::fastdds::dds::DomainParticipantImpl* get_impl() const
-    {
-        return impl_;
     }
 
 };
@@ -735,77 +712,6 @@ TEST_F(StatisticsDomainParticipantTests, EnableStatisticsDataWriterFailureIncomp
 
     // delete_participant removes all builtin statistics entities but not others
     EXPECT_EQ(ReturnCode_t::RETCODE_OK, participant->delete_topic(invalid_topic));
-    EXPECT_EQ(eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->
-                    delete_participant(statistics_participant), ReturnCode_t::RETCODE_OK);
-#endif // FASTDDS_STATISTICS
-}
-
-/**
- * This test checks that disable_statistics_datawriter fails when it tries to remove a statistics DataWriter that does
- * not fulfill the expected Type.
- * 1. Create a participant and manually register Topic, invalid Type and DataWriter
- * 2. Call disable_statistics_datawriter and check it fails
- * 3. Check that the method has not removed any entity
- * 4. Capture log error entry
- * 5. Manually remove entities
- */
-TEST_F(StatisticsDomainParticipantTests, DisableStatisticsDataWriterWithIncompatibleTopicAndType)
-{
-#ifdef FASTDDS_STATISTICS
-    mock_consumer_ = new eprosima::fastdds::dds::MockConsumer();
-
-    eprosima::fastdds::dds::Log::RegisterConsumer(std::unique_ptr<eprosima::fastdds::dds::LogConsumer>(mock_consumer_));
-    eprosima::fastdds::dds::Log::SetVerbosity(eprosima::fastdds::dds::Log::Error);
-    eprosima::fastdds::dds::Log::SetCategoryFilter(std::regex("(STATISTICS_DOMAIN_PARTICIPANT)"));
-    eprosima::fastdds::dds::Log::SetErrorStringFilter(std::regex("(not using expected type)"));
-
-    eprosima::fastdds::dds::TypeSupport null_type(nullptr);
-    eprosima::fastdds::dds::TypeSupport count_type(new EntityCountPubSubType);
-
-    // 1. Create DomainParticipant
-    eprosima::fastdds::dds::DomainParticipant* participant =
-            eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->
-                    create_participant(0, eprosima::fastdds::dds::PARTICIPANT_QOS_DEFAULT);
-    ASSERT_NE(participant, nullptr);
-
-    // Register type
-    participant->register_type(count_type);
-    ASSERT_TRUE(count_type == participant->find_type(count_type.get_type_name()));
-
-    // Create topic with an invalid type
-    eprosima::fastdds::dds::Topic* topic = participant->create_topic(PHYSICAL_DATA_TOPIC,
-                    count_type->getName(), eprosima::fastdds::dds::TOPIC_QOS_DEFAULT);
-    ASSERT_NE(nullptr, topic);
-
-    // Manually create datawriter with incorrect topic
-    DomainParticipant* statistics_participant = DomainParticipant::narrow(participant);
-    ASSERT_NE(statistics_participant, nullptr);
-    DomainParticipantTest* participant_test = static_cast<DomainParticipantTest*>(participant);
-    ASSERT_NE(nullptr, participant_test);
-    DomainParticipantImplTest* statistics_participant_impl_test = static_cast<DomainParticipantImplTest*>(
-        participant_test->get_impl());
-    ASSERT_NE(nullptr, statistics_participant_impl_test);
-    eprosima::fastdds::dds::Publisher* builtin_pub = statistics_participant_impl_test->get_builtin_publisher();
-    ASSERT_NE(nullptr, builtin_pub);
-    eprosima::fastdds::dds::DataWriter* datawriter = builtin_pub->create_datawriter(topic, STATISTICS_DATAWRITER_QOS);
-    ASSERT_NE(nullptr, datawriter);
-
-    // 2. Check call to disable_statistics_datawriter
-    EXPECT_EQ(ReturnCode_t::RETCODE_ERROR, statistics_participant->disable_statistics_datawriter(PHYSICAL_DATA_TOPIC));
-
-    // 3. Check entities has not been removed
-    EXPECT_NE(nullptr, builtin_pub->lookup_datawriter(PHYSICAL_DATA_TOPIC));
-    EXPECT_TRUE(count_type == participant->find_type(count_type.get_type_name()));
-    EXPECT_NE(nullptr, participant->lookup_topicdescription(PHYSICAL_DATA_TOPIC));
-
-    // 4. Check log error entry
-    helper_block_for_at_least_entries(1);
-    auto consumed_entries = mock_consumer_->ConsumedEntries();
-    EXPECT_EQ(consumed_entries.size(), 1u);
-
-    // 5. Manually remove the invalid entities
-    EXPECT_EQ(ReturnCode_t::RETCODE_OK, builtin_pub->delete_datawriter(datawriter));
-    EXPECT_EQ(ReturnCode_t::RETCODE_OK, participant->delete_topic(topic));
     EXPECT_EQ(eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->
                     delete_participant(statistics_participant), ReturnCode_t::RETCODE_OK);
 #endif // FASTDDS_STATISTICS
