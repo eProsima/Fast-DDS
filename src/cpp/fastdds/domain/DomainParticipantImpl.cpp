@@ -472,7 +472,7 @@ Publisher* DomainParticipantImpl::create_publisher(
     }
 
     //TODO CONSTRUIR LA IMPLEMENTACION DENTRO DEL OBJETO DEL USUARIO.
-    PublisherImpl* pubimpl = new PublisherImpl(this, qos, listener);
+    PublisherImpl* pubimpl = create_publisher_impl(qos, listener);
     Publisher* pub = new Publisher(pubimpl, mask);
     pubimpl->user_publisher_ = pub;
     pubimpl->rtps_participant_ = rtps_participant_;
@@ -515,6 +515,13 @@ Publisher* DomainParticipantImpl::create_publisher_with_profile(
     }
 
     return nullptr;
+}
+
+PublisherImpl* DomainParticipantImpl::create_publisher_impl(
+        const PublisherQos& qos,
+        PublisherListener* listener)
+{
+    return new PublisherImpl(this, qos, listener);
 }
 
 /* TODO
@@ -872,7 +879,7 @@ Subscriber* DomainParticipantImpl::create_subscriber(
     }
 
     //TODO CONSTRUIR LA IMPLEMENTACION DENTRO DEL OBJETO DEL USUARIO.
-    SubscriberImpl* subimpl = new SubscriberImpl(this, qos, listener);
+    SubscriberImpl* subimpl = create_subscriber_impl(qos, listener);
     Subscriber* sub = new Subscriber(subimpl, mask);
     subimpl->user_subscriber_ = sub;
     subimpl->rtps_participant_ = this->rtps_participant_;
@@ -916,6 +923,13 @@ Subscriber* DomainParticipantImpl::create_subscriber_with_profile(
     }
 
     return nullptr;
+}
+
+SubscriberImpl* DomainParticipantImpl::create_subscriber_impl(
+        const SubscriberQos& qos,
+        SubscriberListener* listener)
+{
+    return new SubscriberImpl(this, qos, listener);
 }
 
 Topic* DomainParticipantImpl::create_topic(

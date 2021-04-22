@@ -531,6 +531,14 @@ protected:
             const fastrtps::rtps::SampleIdentity& requestId,
             const fastrtps::types::TypeIdentifierWithSizeSeq& dependencies);
 
+    virtual PublisherImpl* create_publisher_impl(
+            const PublisherQos& qos,
+            PublisherListener* listener);
+
+    virtual SubscriberImpl* create_subscriber_impl(
+            const SubscriberQos& qos,
+            SubscriberListener* listener);
+
     // Always call it with the mutex already taken
     void remove_parent_request(
             const fastrtps::rtps::SampleIdentity& request);
