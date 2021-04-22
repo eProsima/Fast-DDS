@@ -357,7 +357,7 @@ bool DomainParticipantImpl::find_or_create_topic_and_type(
         if (topic_desc->get_type_name() != type->getName())
         {
             logError(STATISTICS_DOMAIN_PARTICIPANT, topic_name << " is not using expected type " << type->getName() <<
-                " and is using instead type " << topic_desc->get_type_name());
+                    " and is using instead type " << topic_desc->get_type_name());
             return false;
         }
         else

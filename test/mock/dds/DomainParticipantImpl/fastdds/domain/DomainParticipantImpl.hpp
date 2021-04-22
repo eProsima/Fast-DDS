@@ -209,7 +209,7 @@ public:
             subscribers_.erase(sit);
             return ReturnCode_t::RETCODE_OK;
         }
-        return ReturnCode_t::RETCODE_ERROR;        
+        return ReturnCode_t::RETCODE_ERROR;
     }
 
     Topic* create_topic(
@@ -296,7 +296,7 @@ public:
             TypeSupport type,
             const std::string& type_name)
     {
-        if(type_name.size() <= 0)
+        if (type_name.size() <= 0)
         {
             return ReturnCode_t::RETCODE_BAD_PARAMETER;
         }
@@ -419,7 +419,7 @@ public:
             const InstanceHandle_t& /*handle*/,
             bool /*recursive*/) const
     {
-        return true;        
+        return true;
     }
 
     ReturnCode_t get_current_time(
