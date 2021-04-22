@@ -43,6 +43,9 @@ using ReturnCode_t = eprosima::fastrtps::types::ReturnCode_t;
 namespace eprosima {
 namespace fastdds {
 namespace statistics {
+
+enum EventKind : uint32_t;
+
 namespace dds {
 
 class DomainParticipantImpl : public eprosima::fastdds::dds::DomainParticipantImpl
@@ -114,21 +117,15 @@ protected:
 
     /**
      * Auxiliary function that transforms the topic alias to the topic name.
-     * @param topic string with the statistic topic name or alias.
-     * @return string with the corresponding topic name if an alias has been used.
-     * Otherwise, the same string passed as parameter is returned.
+     * @param [in]   topic_name_or_alias string with the statistic topic name or alias.
+     * @param [out]  topic_name          string with the corresponding topic name to used.
+     * @param [out]  event_kind          statistics event kind corresponding to the topic name.
+     * @return whether the input string corresponds to a valid topic name or alias.
      */
-    const std::string transform_topic_name_alias(
-            const std::string& topic) noexcept;
-
-    /**
-     * Auxiliary function to check if the topic name provided is a valid one.
-     * @param topic string with the statistic topic name.
-     * @return true if the topic name provided is valid.
-     * false otherwise.
-     */
-    bool check_statistics_topic_name(
-            const std::string& topic) noexcept;
+    bool transform_and_check_topic_name(
+            const std::string& topic_name_or_alias,
+            std::string& topic_name,
+            EventKind& event_kind) noexcept;
 
     /**
      * Auxiliary function to register the statistics type depending on the statistics topic name.

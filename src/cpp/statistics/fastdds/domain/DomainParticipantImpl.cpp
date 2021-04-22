@@ -65,8 +65,9 @@ ReturnCode_t DomainParticipantImpl::enable_statistics_datawriter(
         const std::string& topic_name,
         const eprosima::fastdds::dds::DataWriterQos& dwqos)
 {
-    const std::string use_topic_name = transform_topic_name_alias(topic_name);
-    if (!check_statistics_topic_name(use_topic_name))
+    std::string use_topic_name;
+    EventKind event_kind;
+    if (!transform_and_check_topic_name(topic_name, use_topic_name, event_kind))
     {
         return ReturnCode_t::RETCODE_BAD_PARAMETER;
     }
@@ -100,8 +101,9 @@ ReturnCode_t DomainParticipantImpl::disable_statistics_datawriter(
         const std::string& topic_name)
 {
     ReturnCode_t ret = ReturnCode_t::RETCODE_OK;
-    const std::string use_topic_name = transform_topic_name_alias(topic_name);
-    if (!check_statistics_topic_name(use_topic_name))
+    std::string use_topic_name;
+    EventKind event_kind;
+    if (!transform_and_check_topic_name(topic_name, use_topic_name, event_kind))
     {
         return ReturnCode_t::RETCODE_BAD_PARAMETER;
     }
@@ -201,98 +203,50 @@ void DomainParticipantImpl::delete_statistics_builtin_entities()
     delete_publisher(builtin_publisher_);
 }
 
-const std::string DomainParticipantImpl::transform_topic_name_alias(
-        const std::string& topic) noexcept
+bool DomainParticipantImpl::transform_and_check_topic_name(
+        const std::string& topic_name_or_alias,
+        std::string& topic_name,
+        EventKind& event_kind) noexcept
 {
-    std::string topic_name;
-    if (HISTORY_LATENCY_TOPIC_ALIAS == topic)
+    struct ValidEntry
     {
-        topic_name = HISTORY_LATENCY_TOPIC;
-    }
-    else if (NETWORK_LATENCY_TOPIC_ALIAS == topic)
-    {
-        topic_name = NETWORK_LATENCY_TOPIC;
-    }
-    else if (PUBLICATION_THROUGHPUT_TOPIC_ALIAS == topic)
-    {
-        topic_name = PUBLICATION_THROUGHPUT_TOPIC;
-    }
-    else if (SUBSCRIPTION_THROUGHPUT_TOPIC_ALIAS == topic)
-    {
-        topic_name = SUBSCRIPTION_THROUGHPUT_TOPIC;
-    }
-    else if (RTPS_SENT_TOPIC_ALIAS == topic)
-    {
-        topic_name = RTPS_SENT_TOPIC;
-    }
-    else if (RTPS_LOST_TOPIC_ALIAS == topic)
-    {
-        topic_name = RTPS_LOST_TOPIC;
-    }
-    else if (RESENT_DATAS_TOPIC_ALIAS == topic)
-    {
-        topic_name = RESENT_DATAS_TOPIC;
-    }
-    else if (HEARTBEAT_COUNT_TOPIC_ALIAS == topic)
-    {
-        topic_name = HEARTBEAT_COUNT_TOPIC;
-    }
-    else if (ACKNACK_COUNT_TOPIC_ALIAS == topic)
-    {
-        topic_name = ACKNACK_COUNT_TOPIC;
-    }
-    else if (NACKFRAG_COUNT_TOPIC_ALIAS == topic)
-    {
-        topic_name = NACKFRAG_COUNT_TOPIC;
-    }
-    else if (GAP_COUNT_TOPIC_ALIAS == topic)
-    {
-        topic_name = GAP_COUNT_TOPIC;
-    }
-    else if (DATA_COUNT_TOPIC_ALIAS == topic)
-    {
-        topic_name = DATA_COUNT_TOPIC;
-    }
-    else if (PDP_PACKETS_TOPIC_ALIAS == topic)
-    {
-        topic_name = PDP_PACKETS_TOPIC;
-    }
-    else if (EDP_PACKETS_TOPIC_ALIAS == topic)
-    {
-        topic_name = EDP_PACKETS_TOPIC;
-    }
-    else if (DISCOVERY_TOPIC_ALIAS == topic)
-    {
-        topic_name = DISCOVERY_TOPIC;
-    }
-    else if (SAMPLE_DATAS_TOPIC_ALIAS == topic)
-    {
-        topic_name = SAMPLE_DATAS_TOPIC;
-    }
-    else if (PHYSICAL_DATA_TOPIC_ALIAS == topic)
-    {
-        topic_name = PHYSICAL_DATA_TOPIC;
-    }
-    else
-    {
-        topic_name = topic;
-    }
-    return topic_name;
-}
+        const char* alias;
+        const char* name;
+        EventKind event_kind;
+    };
 
-bool DomainParticipantImpl::check_statistics_topic_name(
-        const std::string& topic) noexcept
-{
-    if (HISTORY_LATENCY_TOPIC != topic && NETWORK_LATENCY_TOPIC != topic && PUBLICATION_THROUGHPUT_TOPIC != topic &&
-            SUBSCRIPTION_THROUGHPUT_TOPIC != topic && RTPS_SENT_TOPIC != topic && RTPS_LOST_TOPIC != topic &&
-            RESENT_DATAS_TOPIC != topic && HEARTBEAT_COUNT_TOPIC != topic && ACKNACK_COUNT_TOPIC != topic &&
-            NACKFRAG_COUNT_TOPIC != topic && GAP_COUNT_TOPIC != topic && DATA_COUNT_TOPIC != topic &&
-            PDP_PACKETS_TOPIC != topic && EDP_PACKETS_TOPIC != topic && DISCOVERY_TOPIC != topic &&
-            SAMPLE_DATAS_TOPIC != topic && PHYSICAL_DATA_TOPIC != topic)
+    static const ValidEntry valid_entries[] =
     {
-        return false;
+        {HISTORY_LATENCY_TOPIC_ALIAS,         HISTORY_LATENCY_TOPIC,         HISTORY2HISTORY_LATENCY},
+        {NETWORK_LATENCY_TOPIC_ALIAS,         NETWORK_LATENCY_TOPIC,         NETWORK_LATENCY},
+        {PUBLICATION_THROUGHPUT_TOPIC_ALIAS,  PUBLICATION_THROUGHPUT_TOPIC,  PUBLICATION_THROUGHPUT},
+        {SUBSCRIPTION_THROUGHPUT_TOPIC_ALIAS, SUBSCRIPTION_THROUGHPUT_TOPIC, SUBSCRIPTION_THROUGHPUT},
+        {RTPS_SENT_TOPIC_ALIAS,               RTPS_SENT_TOPIC,               RTPS_SENT},
+        {RTPS_LOST_TOPIC_ALIAS,               RTPS_LOST_TOPIC,               RTPS_LOST},
+        {RESENT_DATAS_TOPIC_ALIAS,            RESENT_DATAS_TOPIC,            RESENT_DATAS},
+        {HEARTBEAT_COUNT_TOPIC_ALIAS,         HEARTBEAT_COUNT_TOPIC,         HEARTBEAT_COUNT},
+        {ACKNACK_COUNT_TOPIC_ALIAS,           ACKNACK_COUNT_TOPIC,           ACKNACK_COUNT},
+        {NACKFRAG_COUNT_TOPIC_ALIAS,          NACKFRAG_COUNT_TOPIC,          NACKFRAG_COUNT},
+        {GAP_COUNT_TOPIC_ALIAS,               GAP_COUNT_TOPIC,               GAP_COUNT},
+        {DATA_COUNT_TOPIC_ALIAS,              DATA_COUNT_TOPIC,              DATA_COUNT},
+        {PDP_PACKETS_TOPIC_ALIAS,             PDP_PACKETS_TOPIC,             PDP_PACKETS},
+        {EDP_PACKETS_TOPIC_ALIAS,             EDP_PACKETS_TOPIC,             EDP_PACKETS},
+        {DISCOVERY_TOPIC_ALIAS,               DISCOVERY_TOPIC,               DISCOVERED_ENTITY},
+        {SAMPLE_DATAS_TOPIC_ALIAS,            SAMPLE_DATAS_TOPIC,            SAMPLE_DATAS},
+        {PHYSICAL_DATA_TOPIC_ALIAS,           PHYSICAL_DATA_TOPIC,           PHYSICAL_DATA}
+    };
+
+    for (const ValidEntry& entry : valid_entries)
+    {
+        if ((entry.alias == topic_name_or_alias) || (entry.name == topic_name_or_alias))
+        {
+            topic_name = entry.name;
+            event_kind = entry.event_kind;
+            return true;
+        }
     }
-    return true;
+
+    return false;
 }
 
 bool DomainParticipantImpl::register_statistics_type_and_topic(
