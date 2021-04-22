@@ -174,7 +174,7 @@ TEST_F(StatisticsDomainParticipantMockTests, DisableStatisticsDataWriterFailureD
     ASSERT_NE(nullptr, statistics_participant_impl_test);
     eprosima::fastdds::dds::Publisher* builtin_pub = statistics_participant_impl_test->get_builtin_publisher();
     EXPECT_CALL(*builtin_pub, delete_datawriter_mock()).WillOnce(testing::Return(true));
-    EXPECT_CALL(*participant, delete_topic_mock()).WillOnce(testing::Return(false));
+    EXPECT_CALL(*statistics_participant_impl_test, delete_topic_mock()).WillOnce(testing::Return(false));
 
     // 3. enable_statistics_datawriter
     EXPECT_CALL(*builtin_pub, create_datawriter_mock()).WillOnce(testing::Return(false));
@@ -188,7 +188,7 @@ TEST_F(StatisticsDomainParticipantMockTests, DisableStatisticsDataWriterFailureD
     EXPECT_TRUE(count_type == statistics_participant->find_type(count_type.get_type_name()));
 
     EXPECT_CALL(*builtin_pub, delete_datawriter_mock()).WillOnce(testing::Return(false));
-    EXPECT_CALL(*participant, delete_topic_mock()).WillOnce(testing::Return(false));
+    EXPECT_CALL(*statistics_participant_impl_test, delete_topic_mock()).WillOnce(testing::Return(false));
     EXPECT_EQ(ReturnCode_t::RETCODE_OK, statistics_participant->disable_statistics_datawriter(
                 HEARTBEAT_COUNT_TOPIC));
     EXPECT_EQ(nullptr, statistics_participant->lookup_topicdescription(HEARTBEAT_COUNT_TOPIC));
@@ -225,7 +225,8 @@ TEST_F(StatisticsDomainParticipantMockTests, DisableStatisticsDataWriterFailureD
         participant_test->get_impl());
     ASSERT_NE(nullptr, statistics_participant_impl_test);
     eprosima::fastdds::dds::Publisher* builtin_pub = statistics_participant_impl_test->get_builtin_publisher();
-    EXPECT_CALL(*participant, delete_topic_mock()).WillOnce(testing::Return(true));
+    ASSERT_NE(nullptr, builtin_pub);
+    EXPECT_CALL(*statistics_participant_impl_test, delete_topic_mock()).WillOnce(testing::Return(true));
     EXPECT_CALL(*builtin_pub, delete_datawriter_mock()).WillOnce(testing::Return(false));
 
     // 3. enable_statistics_datawriter
@@ -240,7 +241,7 @@ TEST_F(StatisticsDomainParticipantMockTests, DisableStatisticsDataWriterFailureD
     EXPECT_NE(nullptr, statistics_participant->lookup_topicdescription(HEARTBEAT_COUNT_TOPIC));
 
     // As the DataWriter has been deleted, the topic has to be removed manually
-    EXPECT_CALL(*participant, delete_topic_mock()).WillOnce(testing::Return(false));
+    EXPECT_CALL(*statistics_participant_impl_test, delete_topic_mock()).WillOnce(testing::Return(false));
     EXPECT_EQ(ReturnCode_t::RETCODE_OK, statistics_participant->delete_topic(
                 dynamic_cast<eprosima::fastdds::dds::Topic*>(statistics_participant->lookup_topicdescription(
                     HEARTBEAT_COUNT_TOPIC))));
