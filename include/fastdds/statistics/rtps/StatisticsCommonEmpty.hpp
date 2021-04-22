@@ -23,6 +23,15 @@
 #include <fastdds/statistics/IListeners.hpp>
 
 namespace eprosima {
+
+namespace fastrtps {
+namespace rtps {
+
+class RTPSMessageGroup;
+
+} // rtps
+} // fastrtps
+
 namespace fastdds {
 namespace statistics {
 
@@ -46,6 +55,8 @@ protected:
 
 class StatisticsReaderImpl
 {
+    friend class fastrtps::rtps::RTPSMessageGroup;
+
 protected:
 
     // TODO: methods for listeners callbacks
