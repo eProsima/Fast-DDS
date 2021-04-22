@@ -86,7 +86,7 @@ ReturnCode_t DomainParticipantImpl::enable_statistics_datawriter(
             if (nullptr == builtin_publisher_->create_datawriter(topic, dwqos))
             {
                 // Remove topic and type
-                deregister_statistics_type_and_topic(use_topic_name);
+                delete_topic_and_type(use_topic_name);
                 logError(STATISTICS_DOMAIN_PARTICIPANT, topic_name << " DataWriter creation has failed");
                 return ReturnCode_t::RETCODE_ERROR;
             }
@@ -116,7 +116,7 @@ ReturnCode_t DomainParticipantImpl::disable_statistics_datawriter(
             ret = ReturnCode_t::RETCODE_ERROR;
         }
         // Deregister type and delete topic
-        if (!deregister_statistics_type_and_topic(use_topic_name))
+        if (!delete_topic_and_type(use_topic_name))
         {
             ret = ReturnCode_t::RETCODE_ERROR;
         }
@@ -354,15 +354,17 @@ bool DomainParticipantImpl::find_or_create_topic_and_type(
     eprosima::fastdds::dds::TopicDescription* topic_desc = lookup_topicdescription(topic_name);
     if (nullptr != topic_desc)
     {
-        if (check_statistics_topic_and_type(topic_desc, topic_name, type->getName()))
+        if (topic_desc->get_type_name() != type->getName())
+        {
+            logError(STATISTICS_DOMAIN_PARTICIPANT, topic_name << " is not using expected type " << type->getName() <<
+                " and is using instead type " << topic_desc->get_type_name());
+            return false;
+        }
+        else
         {
             // TODO(jlbueno) This casting should be checked after other TopicDescription implementations are
             // included: ContentFilteredTopic, MultiTopic.
             *topic = dynamic_cast<eprosima::fastdds::dds::Topic*>(topic_desc);
-        }
-        else
-        {
-            return false;
         }
     }
     else
@@ -380,89 +382,22 @@ bool DomainParticipantImpl::find_or_create_topic_and_type(
     return true;
 }
 
-bool DomainParticipantImpl::deregister_statistics_type_and_topic(
-        const std::string& topic_name) noexcept
-{
-    bool return_code = false;
-    if (HISTORY_LATENCY_TOPIC == topic_name)
-    {
-        eprosima::fastdds::dds::TypeSupport history_latency_type(new WriterReaderDataPubSubType);
-        return_code = delete_topic_and_type(topic_name, history_latency_type->getName());
-    }
-    else if (NETWORK_LATENCY_TOPIC == topic_name)
-    {
-        eprosima::fastdds::dds::TypeSupport network_latency_type(new Locator2LocatorDataPubSubType);
-        return_code = delete_topic_and_type(topic_name, network_latency_type->getName());
-    }
-    else if (PUBLICATION_THROUGHPUT_TOPIC == topic_name || SUBSCRIPTION_THROUGHPUT_TOPIC == topic_name)
-    {
-        eprosima::fastdds::dds::TypeSupport throughput_type(new EntityDataPubSubType);
-        return_code =  delete_topic_and_type(topic_name, throughput_type->getName());
-    }
-    else if (RTPS_SENT_TOPIC == topic_name || RTPS_LOST_TOPIC == topic_name)
-    {
-        eprosima::fastdds::dds::TypeSupport rtps_traffic_type(new Entity2LocatorTrafficPubSubType);
-        return_code =  delete_topic_and_type(topic_name, rtps_traffic_type->getName());
-    }
-    else if (RESENT_DATAS_TOPIC == topic_name || HEARTBEAT_COUNT_TOPIC == topic_name ||
-            ACKNACK_COUNT_TOPIC == topic_name || NACKFRAG_COUNT_TOPIC == topic_name || GAP_COUNT_TOPIC == topic_name ||
-            DATA_COUNT_TOPIC == topic_name || PDP_PACKETS_TOPIC == topic_name || EDP_PACKETS_TOPIC == topic_name)
-    {
-        eprosima::fastdds::dds::TypeSupport count_type(new EntityCountPubSubType);
-        return_code =  delete_topic_and_type(topic_name, count_type->getName());
-    }
-    else if (DISCOVERY_TOPIC == topic_name)
-    {
-        eprosima::fastdds::dds::TypeSupport discovery_type(new DiscoveryTimePubSubType);
-        return_code =  delete_topic_and_type(topic_name, discovery_type->getName());
-    }
-    else if (SAMPLE_DATAS_TOPIC == topic_name)
-    {
-        eprosima::fastdds::dds::TypeSupport sample_identity_count_type(new SampleIdentityCountPubSubType);
-        return_code =  delete_topic_and_type(topic_name, sample_identity_count_type->getName());
-    }
-    else if (PHYSICAL_DATA_TOPIC == topic_name)
-    {
-        eprosima::fastdds::dds::TypeSupport physical_data_type(new PhysicalDataPubSubType);
-        return_code =  delete_topic_and_type(topic_name, physical_data_type->getName());
-    }
-    return return_code;
-}
-
 bool DomainParticipantImpl::delete_topic_and_type(
-        const std::string& topic_name,
-        const std::string& type_name) noexcept
+        const std::string& topic_name) noexcept
 {
     eprosima::fastdds::dds::TopicDescription* topic_desc = lookup_topicdescription(topic_name);
     assert(nullptr != topic_desc);
-    if (check_statistics_topic_and_type(topic_desc, topic_name, type_name))
+    eprosima::fastdds::dds::Topic* topic = dynamic_cast<eprosima::fastdds::dds::Topic*>(topic_desc);
+    std::string type_name = topic->get_type_name();
+    // delete_topic can fail if the topic is referenced by any other entity. This case could happen even if
+    // it should not. It also fails if topic is a nullptr (dynamic_cast failure).
+    if (ReturnCode_t::RETCODE_OK != delete_topic(topic))
     {
-        eprosima::fastdds::dds::Topic* topic = dynamic_cast<eprosima::fastdds::dds::Topic*>(topic_desc);
-        // unregister_type failures are of no concern here. It will fail if the type is still in use (something
-        // expected) and if the type_name is empty (which is not going to happen).
-        unregister_type(type_name);
-        // delete_topic can fail if the topic is referenced by any other entity. This case could happen even if
-        // it should not. It also fails if topic is a nullptr (dynamic_cast failure).
-        if (ReturnCode_t::RETCODE_OK != delete_topic(topic))
-        {
-            return false;
-        }
-        return true;
-    }
-    return false;
-}
-
-bool DomainParticipantImpl::check_statistics_topic_and_type(
-        const eprosima::fastdds::dds::TopicDescription* topic_desc,
-        const std::string& topic_name,
-        const std::string& type_name) noexcept
-{
-    if (topic_desc->get_type_name() != type_name)
-    {
-        logError(STATISTICS_DOMAIN_PARTICIPANT, topic_name << " is not using expected type " << type_name <<
-                " and is using instead type " << topic_desc->get_type_name());
         return false;
     }
+    // unregister_type failures are of no concern here. It will fail if the type is still in use (something
+    // expected) and if the type_name is empty (which is not going to happen).
+    unregister_type(type_name);
     return true;
 }
 

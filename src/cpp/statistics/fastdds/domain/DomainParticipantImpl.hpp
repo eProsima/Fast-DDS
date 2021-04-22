@@ -154,34 +154,13 @@ protected:
             const eprosima::fastdds::dds::TypeSupport& type) noexcept;
 
     /**
-     * Auxiliary function to deregister statistic type and topic.
-     * @param topic_name string with the statistics topic name.
-     * @return true if successful. False otherwise.
-     */
-    bool deregister_statistics_type_and_topic(
-            const std::string& topic_name) noexcept;
-
-    /**
      * Auxiliary method to delete a topic and deregister a type after checking that they are consistent.
      * @param topic_name string with the topic name.
      * @param type_name string with the type name.
      * @return false if the type and topic do not match or if delete_topic fails. Otherwise true.
      */
     bool delete_topic_and_type(
-            const std::string& topic_name,
-            const std::string& type_name) noexcept;
-
-    /**
-     * Auxiliary function to check that the topic has been registered with the expected type.
-     * @param topic_desc pointer to the TopicDescription found in the participant.
-     * @param topic_name string with the statistics topic name.
-     * @param type_name string with the type name to check that the topic is associated with the expected type.
-     * @return true if the topic and type are consistent. False otherwise.
-     */
-    bool check_statistics_topic_and_type(
-            const eprosima::fastdds::dds::TopicDescription* topic_desc,
-            const std::string& topic_name,
-            const std::string& type_name) noexcept;
+            const std::string& topic_name) noexcept;
 
     eprosima::fastdds::dds::Publisher* builtin_publisher_;
 
