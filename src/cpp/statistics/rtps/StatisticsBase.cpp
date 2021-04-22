@@ -94,11 +94,7 @@ const eprosima::fastrtps::rtps::GUID_t& StatisticsParticipantImpl::get_guid() co
 
 std::recursive_mutex& StatisticsParticipantImpl::get_statistics_mutex()
 {
-    static_assert(
-        std::is_base_of<StatisticsParticipantImpl, RTPSParticipantImpl>::value,
-        "This must be called from RTPSParticipantImpl");
-
-    return *static_cast<RTPSParticipantImpl*>(this)->getParticipantMutex();
+    return statistics_mutex_;
 }
 
 void StatisticsParticipantImpl::ListenerProxy::on_statistics_data(
@@ -195,7 +191,10 @@ bool StatisticsParticipantImpl::add_statistics_listener(
         proxy.mask(new_mask);
     }
 
-    // Check if the listener should be registered in writers
+    // no other mutex should be taken in order to prevent ABBA deadlocks
+    lock.unlock();
+
+    // Check if the listener should be register in the writers
     bool writers_res = true;
     if (are_writers_involved(new_mask)
             && !are_writers_involved(old_mask))
@@ -218,7 +217,7 @@ bool StatisticsParticipantImpl::remove_statistics_listener(
         std::shared_ptr<fastdds::statistics::IListener> listener,
         fastdds::statistics::EventKind kind)
 {
-    std::lock_guard<std::recursive_mutex> lock(get_statistics_mutex());
+    std::unique_lock<std::recursive_mutex> lock(get_statistics_mutex());
 
     uint32_t mask = kind;
     uint32_t new_mask;
@@ -261,6 +260,9 @@ bool StatisticsParticipantImpl::remove_statistics_listener(
         // remove
         listeners_.erase(it);
     }
+
+    // no other mutex should be taken in order to prevent ABBA deadlocks
+    lock.unlock();
 
     bool writers_res = true;
     if (!are_writers_involved(new_mask)

@@ -85,6 +85,9 @@ class StatisticsParticipantImpl
 {
     friend class fastrtps::rtps::PDP;
 
+    // statistics members protection only
+    std::recursive_mutex statistics_mutex_;
+
 public:
 
     using GUID_t = fastrtps::rtps::GUID_t;
