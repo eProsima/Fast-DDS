@@ -40,6 +40,8 @@
 
 #include "DomainParticipantStatisticsListener.hpp"
 
+namespace efd = eprosima::fastdds::dds;
+
 using ReturnCode_t = eprosima::fastrtps::types::ReturnCode_t;
 
 namespace eprosima {
@@ -50,7 +52,7 @@ enum EventKind : uint32_t;
 
 namespace dds {
 
-class DomainParticipantImpl : public eprosima::fastdds::dds::DomainParticipantImpl
+class DomainParticipantImpl : public efd::DomainParticipantImpl
 {
 public:
 
@@ -66,7 +68,7 @@ public:
      */
     ReturnCode_t enable_statistics_datawriter(
             const std::string& topic_name,
-            const eprosima::fastdds::dds::DataWriterQos& dwqos);
+            const efd::DataWriterQos& dwqos);
 
     /**
      * @brief This operation disables a Statistics DataWriter
@@ -91,12 +93,13 @@ protected:
      * Constructor
      */
     DomainParticipantImpl(
-            eprosima::fastdds::dds::DomainParticipant* dp,
-            eprosima::fastdds::dds::DomainId_t did,
-            const eprosima::fastdds::dds::DomainParticipantQos& qos,
-            eprosima::fastdds::dds::DomainParticipantListener* listen = nullptr)
-        : eprosima::fastdds::dds::DomainParticipantImpl(dp, did, qos, listen)
+            efd::DomainParticipant* dp,
+            efd::DomainId_t did,
+            const efd::DomainParticipantQos& qos,
+            efd::DomainParticipantListener* listen = nullptr)
+        : efd::DomainParticipantImpl(dp, did, qos, listen)
         , builtin_publisher_(nullptr)
+        , statistics_listener_(std::make_shared<DomainParticipantStatisticsListener>())
     {
     }
 
@@ -139,7 +142,7 @@ protected:
      * false in case there is incompatibility between the type associated to the Topic and the expected type.
      */
     bool register_statistics_type_and_topic(
-            eprosima::fastdds::dds::Topic** topic,
+            efd::Topic** topic,
             const std::string& topic_name) noexcept;
 
     /**
@@ -153,9 +156,9 @@ protected:
      * fails because there is another TypeSupport using the same name. true otherwise.
      */
     bool find_or_create_topic_and_type(
-            eprosima::fastdds::dds::Topic** topic,
+            efd::Topic** topic,
             const std::string& topic_name,
-            const eprosima::fastdds::dds::TypeSupport& type) noexcept;
+            const efd::TypeSupport& type) noexcept;
 
     /**
      * Auxiliary method to delete a topic and deregister a type after checking that they are consistent.
@@ -166,10 +169,10 @@ protected:
     bool delete_topic_and_type(
             const std::string& topic_name) noexcept;
 
-    eprosima::fastdds::dds::Publisher* builtin_publisher_;
+    efd::Publisher* builtin_publisher_;
     std::shared_ptr<DomainParticipantStatisticsListener> statistics_listener_;
 
-    friend class eprosima::fastdds::dds::DomainParticipantFactory;
+    friend class efd::DomainParticipantFactory;
 };
 
 /* Environment variable to specify a semicolon-separated list of topic names that define the statistics DataWriters that
