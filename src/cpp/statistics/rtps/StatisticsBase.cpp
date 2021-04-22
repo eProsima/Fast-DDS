@@ -313,7 +313,7 @@ void StatisticsParticipantImpl::on_rtps_sent(
 }
 
 void StatisticsParticipantImpl::on_entity_discovery(
-        const GUID_t& id)
+        const fastrtps::rtps::GUID_t& id)
 {
     using namespace std;
     using namespace fastrtps;

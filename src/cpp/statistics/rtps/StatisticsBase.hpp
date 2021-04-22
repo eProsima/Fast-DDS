@@ -312,7 +312,7 @@ protected:
      * @param id, discovered entity GUID_t
      */
     inline void on_entity_discovery(
-            const GUID_t&)
+            const fastrtps::rtps::GUID_t&)
     {
     }
 
