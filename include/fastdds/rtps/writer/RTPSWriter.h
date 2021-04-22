@@ -19,11 +19,11 @@
 #ifndef _FASTDDS_RTPS_RTPSWRITER_H_
 #define _FASTDDS_RTPS_RTPSWRITER_H_
 
-#include <vector>
-#include <memory>
-#include <functional>
 #include <chrono>
+#include <functional>
+#include <memory>
 #include <mutex>
+#include <vector>
 
 #include <fastdds/rtps/Endpoint.h>
 #include <fastdds/rtps/attributes/HistoryAttributes.h>

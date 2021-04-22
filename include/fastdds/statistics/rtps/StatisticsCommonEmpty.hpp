@@ -50,7 +50,7 @@ protected:
 
     // TODO: methods for listeners callbacks
 
-    //! Report a DATA message is sent
+    //! Report that an ACKNACK message is sent
     inline void on_acknack(
             int32_t )
     {

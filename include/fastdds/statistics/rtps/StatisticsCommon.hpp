@@ -26,7 +26,17 @@
 #include <fastdds/statistics/IListeners.hpp>
 #include <fastrtps/utils/TimedMutex.hpp>
 
+
 namespace eprosima {
+
+namespace fastrtps {
+namespace rtps {
+
+class RTPSMessageGroup;
+
+} // rtps
+} // fastrtps
+
 namespace fastdds {
 namespace statistics {
 
@@ -148,7 +158,7 @@ struct StatisticsReaderAncillary;
 class StatisticsReaderImpl
     : protected StatisticsListenersImpl
 {
-    friend class RTPSMessageGroup;
+    friend class fastrtps::rtps::RTPSMessageGroup;
 
     /*
      * Create the auxiliary structure
@@ -181,7 +191,7 @@ protected:
 
     // TODO: methods for listeners callbacks
 
-    //! Report a DATA message is sent
+    //! Report that an ACKNACK message is sent
     void on_acknack(
             int32_t count);
 };

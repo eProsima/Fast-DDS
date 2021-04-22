@@ -19,19 +19,16 @@
 
 #include <algorithm>
 
-#include <rtps/flowcontrol/FlowController.h>
-
-#include <rtps/participant/RTPSParticipantImpl.h>
-
-#include <rtps/messages/RTPSGapBuilder.hpp>
-#include <rtps/messages/RTPSMessageGroup_t.hpp>
-
+#include <fastdds/dds/log/Log.hpp>
 #include <fastdds/rtps/messages/RTPSMessageCreator.h>
 #include <fastdds/rtps/messages/RTPSMessageGroup.h>
 #include <fastdds/rtps/reader/RTPSReader.h>
 #include <fastdds/rtps/writer/RTPSWriter.h>
 
-#include <fastdds/dds/log/Log.hpp>
+#include <rtps/flowcontrol/FlowController.h>
+#include <rtps/messages/RTPSGapBuilder.hpp>
+#include <rtps/messages/RTPSMessageGroup_t.hpp>
+#include <rtps/participant/RTPSParticipantImpl.h>
 
 namespace eprosima {
 namespace fastrtps {
@@ -432,7 +429,7 @@ bool RTPSMessageGroup::add_data(
     }
 #endif // if HAVE_SECURITY
 
-    // Notify the statistics module, note only writers add DATAs
+    // Notify the statistics module, note that only writers add DATAs
     assert(nullptr != dynamic_cast<RTPSWriter*>(endpoint_));
     static_cast<RTPSWriter*>(endpoint_)->on_data();
 
@@ -533,7 +530,7 @@ bool RTPSMessageGroup::add_data_frag(
     }
 #endif // if HAVE_SECURITY
 
-    // Notify the statistics module, note only writers add DATAs
+    // Notify the statistics module, note that only writers add DATAs
     assert(nullptr != dynamic_cast<RTPSWriter*>(endpoint_));
     static_cast<RTPSWriter*>(endpoint_)->on_data_frag();
 
@@ -739,9 +736,9 @@ bool RTPSMessageGroup::add_acknack(
     }
 #endif // if HAVE_SECURITY
 
-    // Notify the statistics module, note only readers add acknacks
+    // Notify the statistics module, note that only readers add acknacks
     assert(nullptr != dynamic_cast<RTPSReader*>(endpoint_));
-    static_cast<RTPSReader*>(endpoint_)->on_acknack(count);
+    static_cast<fastdds::statistics::StatisticsReaderImpl*>(static_cast<RTPSReader*>(endpoint_))->on_acknack(count);
 
     return insert_submessage(false);
 }

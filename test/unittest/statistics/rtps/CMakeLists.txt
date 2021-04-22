@@ -23,7 +23,7 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
 
         set(STATISTICS_RTPS_TESTS_SOURCE
             RTPSStatisticsTests.cpp
-            ../../../../src/cpp/statistics/types/types.cxx
+            ${PROJECT_SOURCE_DIR}/src/cpp/statistics/types/types.cxx
             )
 
         add_executable(RTPSStatisticsTests ${STATISTICS_RTPS_TESTS_SOURCE})

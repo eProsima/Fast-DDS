@@ -63,7 +63,6 @@ class RTPSReader
     friend class MessageReceiver;
     friend class EDP;
     friend class WLP;
-    friend class RTPSMessageGroup;
 
 protected:
 

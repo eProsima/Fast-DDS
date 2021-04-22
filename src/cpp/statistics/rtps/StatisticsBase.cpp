@@ -207,8 +207,6 @@ bool StatisticsParticipantImpl::remove_statistics_listener(
         std::shared_ptr<fastdds::statistics::IListener> listener,
         fastdds::statistics::EventKind kind)
 {
-    using namespace std;
-
     std::lock_guard<std::recursive_mutex> lock(get_statistics_mutex());
 
     uint32_t mask = kind;
@@ -222,7 +220,7 @@ bool StatisticsParticipantImpl::remove_statistics_listener(
     }
 
     ProxyCollection::iterator it;
-    auto proxy = make_shared<ListenerProxy>(listener, mask);
+    auto proxy = std::make_shared<ListenerProxy>(listener, mask);
     it = listeners_.find(proxy);
 
     if ( listeners_.end() == it )
