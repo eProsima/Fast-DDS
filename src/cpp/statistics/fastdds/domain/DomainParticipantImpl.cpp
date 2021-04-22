@@ -84,13 +84,16 @@ ReturnCode_t DomainParticipantImpl::enable_statistics_datawriter(
         // Check if the statistics DataWriter already exists and create statistics DataWriter if it does not.
         if (nullptr == builtin_publisher_->lookup_datawriter(use_topic_name))
         {
-            if (nullptr == builtin_publisher_->create_datawriter(topic, dwqos))
+            auto data_writer = builtin_publisher_->create_datawriter(topic, dwqos);
+            if (nullptr == data_writer)
             {
                 // Remove topic and type
                 delete_topic_and_type(use_topic_name);
                 logError(STATISTICS_DOMAIN_PARTICIPANT, topic_name << " DataWriter creation has failed");
                 return ReturnCode_t::RETCODE_ERROR;
             }
+
+            statistics_listener_->set_datawriter(event_kind, data_writer);
         }
         return ReturnCode_t::RETCODE_OK;
     }
@@ -113,10 +116,17 @@ ReturnCode_t DomainParticipantImpl::disable_statistics_datawriter(
     eprosima::fastdds::dds::DataWriter* writer = builtin_publisher_->lookup_datawriter(use_topic_name);
     if (nullptr != writer)
     {
+        // Avoid calling DataWriter from listener callback
+        statistics_listener_->set_datawriter(event_kind, nullptr);
+
+        // Delete the DataWriter
         if (ReturnCode_t::RETCODE_OK != builtin_publisher_->delete_datawriter(writer))
         {
+            // Restore writer on listener before returning the error
+            statistics_listener_->set_datawriter(event_kind, writer);
             ret = ReturnCode_t::RETCODE_ERROR;
         }
+
         // Deregister type and delete topic
         if (!delete_topic_and_type(use_topic_name))
         {

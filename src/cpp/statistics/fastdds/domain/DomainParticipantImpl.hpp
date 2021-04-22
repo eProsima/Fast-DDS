@@ -167,7 +167,7 @@ protected:
             const std::string& topic_name) noexcept;
 
     eprosima::fastdds::dds::Publisher* builtin_publisher_;
-    DomainParticipantStatisticsListener statistics_listener_;
+    std::shared_ptr<DomainParticipantStatisticsListener> statistics_listener_;
 
     friend class eprosima::fastdds::dds::DomainParticipantFactory;
 };
