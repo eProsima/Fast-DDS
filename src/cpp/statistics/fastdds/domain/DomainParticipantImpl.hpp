@@ -38,6 +38,8 @@
 
 #include <fastdds/domain/DomainParticipantImpl.hpp>
 
+#include "DomainParticipantStatisticsListener.hpp"
+
 using ReturnCode_t = eprosima::fastrtps::types::ReturnCode_t;
 
 namespace eprosima {
@@ -165,6 +167,7 @@ protected:
             const std::string& topic_name) noexcept;
 
     eprosima::fastdds::dds::Publisher* builtin_publisher_;
+    DomainParticipantStatisticsListener statistics_listener_;
 
     friend class eprosima::fastdds::dds::DomainParticipantFactory;
 };
