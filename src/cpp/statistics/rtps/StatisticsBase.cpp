@@ -149,7 +149,7 @@ bool StatisticsParticipantImpl::add_statistics_listener(
         std::shared_ptr<fastdds::statistics::IListener> listener,
         fastdds::statistics::EventKind kind)
 {
-    std::lock_guard<std::recursive_mutex> lock(get_statistics_mutex());
+    std::unique_lock<std::recursive_mutex> lock(get_statistics_mutex());
 
     uint32_t mask = kind;
     uint32_t new_mask;
