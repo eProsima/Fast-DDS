@@ -545,6 +545,20 @@ protected:
     mutable std::mutex mtx_types_;
     TopicQos default_topic_qos_;
 
+    virtual PublisherImpl* create_publisher_impl(
+            const PublisherQos& /*qos*/,
+            PublisherListener* /*listener*/)
+    {
+        return nullptr;
+    }
+
+    virtual SubscriberImpl* create_subscriber_impl(
+            const SubscriberQos& /*qos*/,
+            SubscriberListener* /*listener*/)
+    {
+        return nullptr;
+    }
+
     static void set_qos(
             DomainParticipantQos& /*to*/,
             const DomainParticipantQos& /*from*/,

@@ -103,6 +103,14 @@ protected:
     {
     }
 
+    efd::PublisherImpl* create_publisher_impl(
+            const efd::PublisherQos& qos,
+            efd::PublisherListener* listener) override;
+
+    efd::SubscriberImpl* create_subscriber_impl(
+            const efd::SubscriberQos& qos,
+            efd::SubscriberListener* listener) override;
+
     /**
      * Auxiliary function to create the statistics builtin entities.
      */

@@ -35,6 +35,8 @@
 #include <fastdds/statistics/topic_names.hpp>
 
 #include <fastdds/publisher/DataWriterImpl.hpp>
+#include <statistics/fastdds/publisher/PublisherImpl.hpp>
+#include <statistics/fastdds/subscriber/SubscriberImpl.hpp>
 #include <statistics/types/typesPubSubTypes.h>
 #include <utils/SystemInfo.hpp>
 
@@ -146,6 +148,20 @@ ReturnCode_t DomainParticipantImpl::enable()
     }
 
     return ret;
+}
+
+efd::PublisherImpl* DomainParticipantImpl::create_publisher_impl(
+        const efd::PublisherQos& qos,
+        efd::PublisherListener* listener)
+{
+    return new PublisherImpl(this, qos, listener);
+}
+
+efd::SubscriberImpl* DomainParticipantImpl::create_subscriber_impl(
+        const efd::SubscriberQos& qos,
+        efd::SubscriberListener* listener)
+{
+    return new SubscriberImpl(this, qos, listener);
 }
 
 void DomainParticipantImpl::create_statistics_builtin_entities()
