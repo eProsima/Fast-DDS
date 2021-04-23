@@ -17,21 +17,27 @@
  *
  */
 
-#include <fastdds/rtps/writer/RTPSWriter.h>
-
-#include <fastdds/dds/log/Log.hpp>
-
-#include <fastdds/rtps/history/WriterHistory.h>
-#include <fastdds/rtps/messages/RTPSMessageCreator.h>
+#include <mutex>
 
 #include <rtps/history/BasicPayloadPool.hpp>
 #include <rtps/history/CacheChangePool.h>
+
 #include <rtps/DataSharing/DataSharingNotifier.hpp>
 #include <rtps/DataSharing/WriterPool.hpp>
+
 #include <rtps/flowcontrol/FlowController.h>
+
 #include <rtps/participant/RTPSParticipantImpl.h>
 
-#include <mutex>
+#include <fastdds/dds/log/Log.hpp>
+
+#include <fastdds/rtps/writer/RTPSWriter.h>
+
+#include <fastdds/rtps/history/WriterHistory.h>
+
+#include <fastdds/rtps/messages/RTPSMessageCreator.h>
+
+#include <statistics/rtps/StatisticsBase.hpp>
 
 namespace eprosima {
 namespace fastrtps {
@@ -420,15 +426,13 @@ bool RTPSWriter::is_pool_initialized() const
 bool RTPSWriter::add_statistics_listener(
         std::shared_ptr<fastdds::statistics::IListener> listener)
 {
-    (void)listener;
-    return false;
+    return add_statistics_listener_impl(listener);
 }
 
 bool RTPSWriter::remove_statistics_listener(
         std::shared_ptr<fastdds::statistics::IListener> listener)
 {
-    (void)listener;
-    return false;
+    return remove_statistics_listener_impl(listener);
 }
 
 #endif // FASTDDS_STATISTICS

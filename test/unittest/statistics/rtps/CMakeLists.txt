@@ -21,7 +21,10 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             add_definitions(-D_WIN32_WINNT=0x0601)
         endif()
 
-        set(STATISTICS_RTPS_TESTS_SOURCE RTPSStatisticsTests.cpp)
+        set(STATISTICS_RTPS_TESTS_SOURCE
+            RTPSStatisticsTests.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/statistics/types/types.cxx
+            )
 
         add_executable(RTPSStatisticsTests ${STATISTICS_RTPS_TESTS_SOURCE})
         target_compile_definitions(RTPSStatisticsTests PRIVATE FASTRTPS_NO_LIB

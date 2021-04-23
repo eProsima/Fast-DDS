@@ -19,21 +19,26 @@
 #ifndef _FASTDDS_RTPS_RTPSWRITER_H_
 #define _FASTDDS_RTPS_RTPSWRITER_H_
 
+#include <chrono>
+#include <functional>
+#include <memory>
+#include <mutex>
+#include <vector>
+
 #include <fastdds/rtps/Endpoint.h>
-#include <fastdds/rtps/messages/RTPSMessageGroup.h>
 #include <fastdds/rtps/attributes/HistoryAttributes.h>
 #include <fastdds/rtps/attributes/WriterAttributes.h>
+#include <fastdds/rtps/common/LocatorSelector.hpp>
+#include <fastdds/rtps/messages/RTPSMessageGroup.h>
+#include <fastdds/rtps/messages/RTPSMessageSenderInterface.hpp>
 #include <fastrtps/qos/LivelinessLostStatus.h>
 #include <fastrtps/utils/collections/ResourceLimitedVector.hpp>
-#include <fastdds/rtps/common/LocatorSelector.hpp>
-#include <fastdds/rtps/messages/RTPSMessageSenderInterface.hpp>
-#include <fastdds/statistics/IListeners.hpp>
 
-#include <vector>
-#include <memory>
-#include <functional>
-#include <chrono>
-#include <mutex>
+#ifdef FASTDDS_STATISTICS
+#include <fastdds/statistics/rtps/StatisticsCommon.hpp>
+#else
+#include <fastdds/statistics/rtps/StatisticsCommonEmpty.hpp>
+#endif // FASTDDS_STATISTICS
 
 namespace eprosima {
 namespace fastrtps {
@@ -49,7 +54,10 @@ struct CacheChange_t;
  * Class RTPSWriter, manages the sending of data to the readers. Is always associated with a HistoryCache.
  * @ingroup WRITER_MODULE
  */
-class RTPSWriter : public Endpoint, public RTPSMessageSenderInterface
+class RTPSWriter
+    : public Endpoint
+    , public RTPSMessageSenderInterface
+    , public fastdds::statistics::StatisticsWriterImpl
 {
     friend class WriterHistory;
     friend class RTPSParticipantImpl;
