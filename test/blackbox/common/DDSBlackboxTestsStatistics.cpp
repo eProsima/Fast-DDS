@@ -78,11 +78,24 @@ TEST(DDSStatistics, simple_statistics_datareader)
     EXPECT_TRUE(data.empty());
     EXPECT_TRUE(data_writer.waitForAllAcked(std::chrono::seconds(10)));
 
-    LoanableSequence<GenericType> data_seq;
-    SampleInfoSeq info_seq;
+    std::cout << "Waiting for " << num_samples << " samples on DATA_COUNT_TOPIC" << std::endl;
 
-    EXPECT_EQ(ReturnCode_t::RETCODE_OK, stats_reader->take(data_seq, info_seq));
-    EXPECT_EQ(info_seq.length(), num_samples);
+    uint32_t total_samples = 0;
+    do
+    {
+        std::this_thread::sleep_for(std::chrono::seconds(1));
+
+        LoanableSequence<GenericType> data_seq;
+        SampleInfoSeq info_seq;
+
+        if (ReturnCode_t::RETCODE_OK == stats_reader->take(data_seq, info_seq))
+        {
+            total_samples += info_seq.length();
+            stats_reader->return_loan(data_seq, info_seq);
+        }
+    } while (total_samples < num_samples);
+
+    std::cout << "Received " << total_samples << " samples on DATA_COUNT_TOPIC" << std::endl;
 
     subscriber->delete_datareader(stats_reader);
     participant->delete_subscriber(subscriber);
