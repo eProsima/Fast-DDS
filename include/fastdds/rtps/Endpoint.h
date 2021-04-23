@@ -51,6 +51,8 @@ class Endpoint
 
 protected:
 
+    Endpoint() = default;
+
     Endpoint(
             RTPSParticipantImpl* pimpl,
             const GUID_t& guid,

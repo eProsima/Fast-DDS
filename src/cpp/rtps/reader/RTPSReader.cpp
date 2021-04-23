@@ -17,25 +17,30 @@
  *
  */
 
-#include <fastdds/rtps/reader/RTPSReader.h>
+#include <typeinfo>
+#include <algorithm>
+#include <chrono>
+
+#include <rtps/history/BasicPayloadPool.hpp>
+#include <rtps/history/CacheChangePool.h>
+
+#include <rtps/DataSharing/DataSharingListener.hpp>
+
+#include <rtps/participant/RTPSParticipantImpl.h>
+
+#include <rtps/reader/ReaderHistoryState.hpp>
 
 #include <fastdds/dds/log/Log.hpp>
 
+#include <fastdds/rtps/reader/RTPSReader.h>
 #include <fastdds/rtps/history/ReaderHistory.h>
 #include <fastdds/rtps/reader/ReaderListener.h>
 #include <fastdds/rtps/resources/ResourceEvent.h>
 
-#include <rtps/history/BasicPayloadPool.hpp>
-#include <rtps/history/CacheChangePool.h>
-#include <rtps/DataSharing/DataSharingListener.hpp>
-#include <rtps/participant/RTPSParticipantImpl.h>
-#include <rtps/reader/ReaderHistoryState.hpp>
-
 #include <foonathan/memory/namespace_alias.hpp>
 
-#include <typeinfo>
-#include <algorithm>
-#include <chrono>
+#include <statistics/rtps/StatisticsBase.hpp>
+
 
 namespace eprosima {
 namespace fastrtps {
@@ -381,15 +386,13 @@ bool RTPSReader::is_sample_valid(
 bool RTPSReader::add_statistics_listener(
         std::shared_ptr<fastdds::statistics::IListener> listener)
 {
-    (void)listener;
-    return false;
+    return add_statistics_listener_impl(listener);
 }
 
 bool RTPSReader::remove_statistics_listener(
         std::shared_ptr<fastdds::statistics::IListener> listener)
 {
-    (void)listener;
-    return false;
+    return remove_statistics_listener_impl(listener);
 }
 
 #endif // FASTDDS_STATISTICS
