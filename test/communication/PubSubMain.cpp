@@ -96,7 +96,7 @@ int main(
     }
 
     Publisher publisher(false);
-    Subscriber subscriber(publishers, samples);
+    Subscriber subscriber(publishers, samples, false);
 
     if (publisher.init(seed, magic))
     {
