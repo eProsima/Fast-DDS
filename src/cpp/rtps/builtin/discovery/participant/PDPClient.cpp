@@ -51,10 +51,12 @@ using namespace fastrtps::rtps;
 
 PDPClient::PDPClient(
         BuiltinProtocols* builtin,
-        const RTPSParticipantAllocationAttributes& allocation)
+        const RTPSParticipantAllocationAttributes& allocation,
+        bool super_client)
     : PDP(builtin, allocation)
     , mp_sync(nullptr)
     , _serverPing(false)
+    , _super_client(super_client)
 {
 }
 
@@ -71,7 +73,12 @@ void PDPClient::initializeParticipantProxyData(
 {
     PDP::initializeParticipantProxyData(participant_data); // TODO: Remember that the PDP version USES security
 
-    if (getRTPSParticipant()->getAttributes().builtin.discovery_config.discoveryProtocol != DiscoveryProtocol_t::CLIENT)
+    if (
+        getRTPSParticipant()->getAttributes().builtin.discovery_config.discoveryProtocol
+        != DiscoveryProtocol_t::CLIENT
+        &&
+        getRTPSParticipant()->getAttributes().builtin.discovery_config.discoveryProtocol
+        != DiscoveryProtocol_t::SUPER_CLIENT    )
     {
         logError(RTPS_PDP, "Using a PDP client object with another user's settings");
     }
@@ -91,8 +98,18 @@ void PDPClient::initializeParticipantProxyData(
     }
 
     // Set participant type and discovery server version properties
-    participant_data->m_properties.push_back(std::pair<std::string,
-            std::string>({fastdds::dds::parameter_property_participant_type, fastdds::rtps::ParticipantType::CLIENT}));
+    if (_super_client)
+    {
+        participant_data->m_properties.push_back(std::pair<std::string,
+                std::string>(
+                    {fastdds::dds::parameter_property_participant_type, fastdds::rtps::ParticipantType::SUPER_CLIENT}));
+    }
+    else
+    {
+        participant_data->m_properties.push_back(std::pair<std::string,
+                std::string>({fastdds::dds::parameter_property_participant_type,
+                              fastdds::rtps::ParticipantType::CLIENT}));
+    }
     participant_data->m_properties.push_back(std::pair<std::string,
             std::string>({fastdds::dds::parameter_property_ds_version,
                           fastdds::dds::parameter_property_current_ds_version}));
@@ -716,8 +733,8 @@ bool get_server_client_default_guidPrefix(
             && id < 256
             && std::istringstream(DEFAULT_ROS2_SERVER_GUIDPREFIX) >> guid)
     {
-        // Last octet denotes the default server id but to ease debugging it starts on char '0' = 48
-        guid.value[11] = static_cast<octet>((48 + id) % 256);
+        // Third octet denotes the server id
+        guid.value[2] = static_cast<octet>(id);
 
         return true;
     }

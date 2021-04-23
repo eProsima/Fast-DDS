@@ -106,13 +106,13 @@ typedef std::list<RemoteServerAttributes> RemoteServerList_t;
 // port use if the ros environment variable doesn't specified one
 constexpr uint16_t DEFAULT_ROS2_SERVER_PORT = 11811;
 // default server base guidPrefix
-const char* const DEFAULT_ROS2_SERVER_GUIDPREFIX = "44.49.53.43.53.45.52.56.45.52.5F.30";
+const char* const DEFAULT_ROS2_SERVER_GUIDPREFIX = "44.53.00.5f.45.50.52.4f.53.49.4d.41";
 
 /**
  * Retrieves a ; separated list of locators from an environment variable and
  * populates a RemoteServerList_t mapping list position to default guid.
  * @param list servers listening locator list provided.
- * @param attributes referenct to a RemoteServerList_t to populate.
+ * @param attributes reference to a RemoteServerList_t to populate.
  * @return true if parsing succeeds
  */
 RTPS_DllAPI bool load_environment_server_info(

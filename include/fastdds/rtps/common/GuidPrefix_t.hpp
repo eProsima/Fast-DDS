@@ -25,6 +25,7 @@
 #include <cstdint>
 #include <cstring>
 #include <sstream>
+#include <iomanip>
 
 namespace eprosima {
 namespace fastrtps {
@@ -93,11 +94,13 @@ inline std::ostream& operator <<(
         const GuidPrefix_t& guiP)
 {
     output << std::hex;
+    char old_fill = output.fill('0');
     for (uint8_t i = 0; i < 11; ++i)
     {
-        output << (int)guiP.value[i] << ".";
+        output << std::setw(2) << (int)guiP.value[i] << ".";
     }
-    output << (int)guiP.value[11];
+    output << std::setw(2) << (int)guiP.value[11];
+    output.fill(old_fill);
     return output << std::dec;
 }
 
