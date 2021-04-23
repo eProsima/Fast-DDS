@@ -131,7 +131,7 @@ protected:
     /**
      * Auxiliary function that transforms the topic alias to the topic name.
      * @param [in]   topic_name_or_alias string with the statistic topic name or alias.
-     * @param [out]  topic_name          string with the corresponding topic name to used.
+     * @param [out]  topic_name          string with the corresponding topic name to use.
      * @param [out]  event_kind          statistics event kind corresponding to the topic name.
      * @return whether the input string corresponds to a valid topic name or alias.
      */

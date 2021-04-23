@@ -21,8 +21,6 @@
 
 #include <gmock/gmock.h>
 
-#include <fastrtps/types/TypesBase.h>
-
 namespace eprosima {
 namespace fastdds {
 namespace dds {

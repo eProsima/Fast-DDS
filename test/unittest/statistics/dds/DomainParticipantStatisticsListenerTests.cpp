@@ -184,7 +184,7 @@ TEST_F(DomainParticipantStatisticsListenerTests, no_writers)
     write_all_data();
 }
 
-// Check that every writer receive one call when all of them have been set
+// Check that every writer receives one call when all of them have been set
 TEST_F(DomainParticipantStatisticsListenerTests, all_writers)
 {
     expect_all_writers(1);
