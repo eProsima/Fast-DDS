@@ -240,6 +240,12 @@ protected:
 
     fastrtps::rtps::InstanceHandle_t handle_;
 
+    virtual DataWriterImpl* create_datawriter_impl(
+            const TypeSupport& type,
+            Topic* topic,
+            const DataWriterQos& qos,
+            DataWriterListener* listener);
+
     static void set_qos(
             PublisherQos& to,
             const PublisherQos& from,

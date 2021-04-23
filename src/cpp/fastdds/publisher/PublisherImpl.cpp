@@ -233,6 +233,15 @@ void PublisherImpl::PublisherWriterListener::on_offered_deadline_missed(
     }
 }
 
+DataWriterImpl* PublisherImpl::create_datawriter_impl(
+        const TypeSupport& type,
+        Topic* topic,
+        const DataWriterQos& qos,
+        DataWriterListener* listener)
+{
+    return new DataWriterImpl(this, type, topic, qos, listener);
+}
+
 DataWriter* PublisherImpl::create_datawriter(
         Topic* topic,
         const DataWriterQos& qos,
@@ -258,13 +267,7 @@ DataWriter* PublisherImpl::create_datawriter(
 
     topic->get_impl()->reference();
 
-    DataWriterImpl* impl = new DataWriterImpl(
-        this,
-        type_support,
-        topic,
-        qos,
-        listener);
-
+    DataWriterImpl* impl = create_datawriter_impl(type_support, topic, qos, listener);
     DataWriter* writer = new DataWriter(impl, mask);
     impl->user_datawriter_ = writer;
 
