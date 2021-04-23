@@ -1383,7 +1383,7 @@ std::shared_ptr<IPayloadPool> DataReaderImpl::get_payload_pool()
     // When the user requested PREALLOCATED_WITH_REALLOC, but we know the type cannot
     // grow, we translate the policy into bare PREALLOCATED
     if (PREALLOCATED_WITH_REALLOC_MEMORY_MODE == history_.m_att.memoryPolicy &&
-        (type_->is_bounded() || type_->is_plain()))
+            (type_->is_bounded() || type_->is_plain()))
     {
         history_.m_att.memoryPolicy = PREALLOCATED_MEMORY_MODE;
     }

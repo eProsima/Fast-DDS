@@ -77,6 +77,7 @@ public:
     }
 
 protected:
+
     rtps::MemoryManagementPolicy mem_policy_;
 };
 
