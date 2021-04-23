@@ -1483,15 +1483,15 @@ std::shared_ptr<IPayloadPool> DataWriterImpl::get_payload_pool()
 {
     if (!payload_pool_)
     {
-        PoolConfig config = PoolConfig::from_history_attributes(history_.m_att);
-
         // When the user requested PREALLOCATED_WITH_REALLOC, but we know the type cannot
         // grow, we translate the policy into bare PREALLOCATED
-        if (PREALLOCATED_WITH_REALLOC_MEMORY_MODE == config.memory_policy &&
+        if (PREALLOCATED_WITH_REALLOC_MEMORY_MODE == history_.m_att.memoryPolicy &&
                 (type_->is_bounded() || type_->is_plain()))
         {
-            config.memory_policy = PREALLOCATED_MEMORY_MODE;
+            history_.m_att.memoryPolicy = PREALLOCATED_MEMORY_MODE;
         }
+
+        PoolConfig config = PoolConfig::from_history_attributes(history_.m_att);
 
         // Avoid calling the serialization size functors on PREALLOCATED mode
         fixed_payload_size_ = config.memory_policy == PREALLOCATED_MEMORY_MODE ? config.payload_initial_size : 0u;

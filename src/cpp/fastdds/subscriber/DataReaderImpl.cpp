@@ -1380,7 +1380,15 @@ DataReaderListener* DataReaderImpl::get_listener_for(
 
 std::shared_ptr<IPayloadPool> DataReaderImpl::get_payload_pool()
 {
-    PoolConfig config = PoolConfig::from_history_attributes(history_.m_att );
+    // When the user requested PREALLOCATED_WITH_REALLOC, but we know the type cannot
+    // grow, we translate the policy into bare PREALLOCATED
+    if (PREALLOCATED_WITH_REALLOC_MEMORY_MODE == history_.m_att.memoryPolicy &&
+            (type_->is_bounded() || type_->is_plain()))
+    {
+        history_.m_att.memoryPolicy = PREALLOCATED_MEMORY_MODE;
+    }
+
+    PoolConfig config = PoolConfig::from_history_attributes(history_.m_att);
 
     if (!payload_pool_)
     {

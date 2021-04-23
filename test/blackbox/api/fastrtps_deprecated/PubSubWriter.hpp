@@ -610,6 +610,13 @@ public:
         return *this;
     }
 
+    PubSubWriter& mem_policy(
+            const eprosima::fastrtps::rtps::MemoryManagementPolicy mem_policy)
+    {
+        publisher_attr_.historyMemoryPolicy = mem_policy;
+        return *this;
+    }
+
     PubSubWriter& deadline_period(
             const eprosima::fastrtps::Duration_t deadline_period)
     {
