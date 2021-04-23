@@ -154,7 +154,7 @@ efd::PublisherImpl* DomainParticipantImpl::create_publisher_impl(
         const efd::PublisherQos& qos,
         efd::PublisherListener* listener)
 {
-    return new PublisherImpl(this, qos, listener);
+    return new PublisherImpl(this, qos, listener, statistics_listener_);
 }
 
 efd::SubscriberImpl* DomainParticipantImpl::create_subscriber_impl(

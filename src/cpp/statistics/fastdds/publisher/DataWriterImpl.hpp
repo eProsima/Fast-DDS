@@ -13,16 +13,15 @@
 // limitations under the License.
 
 /**
- * @file PublisherImpl.hpp
+ * @file DataWriterImpl.hpp
  */
 
-#ifndef _STATISTICS_FASTDDS_PUBLISHER_PUBLISHERIMPL_HPP_
-#define _STATISTICS_FASTDDS_PUBLISHER_PUBLISHERIMPL_HPP_
+#ifndef _STATISTICS_FASTDDS_PUBLISHER_DATAWRITERIMPL_HPP_
+#define _STATISTICS_FASTDDS_PUBLISHER_DATAWRITERIMPL_HPP_
 
 #include <fastdds/statistics/IListeners.hpp>
 
-#include <fastdds/publisher/PublisherImpl.hpp>
-#include <statistics/fastdds/publisher/DataWriterImpl.hpp>
+#include <fastdds/publisher/DataWriterImpl.hpp>
 
 namespace eprosima {
 namespace fastdds {
@@ -31,31 +30,24 @@ namespace dds {
 
 namespace efd = eprosima::fastdds::dds;
 
-class PublisherImpl : public eprosima::fastdds::dds::PublisherImpl
+class DataWriterImpl : public eprosima::fastdds::dds::DataWriterImpl
 {
-    using BaseType = eprosima::fastdds::dds::PublisherImpl;
+    using BaseType = eprosima::fastdds::dds::DataWriterImpl;
 
 public:
 
-    virtual ~PublisherImpl() = default;
+    virtual ~DataWriterImpl() = default;
 
-    PublisherImpl(
-            efd::DomainParticipantImpl* p,
-            const efd::PublisherQos& qos,
-            efd::PublisherListener* p_listen,
-            const std::shared_ptr<IListener>& stat_listener)
-        : BaseType(p, qos, p_listen)
-        , statistics_listener_(stat_listener)
-    {
-    }
-
-    efd::DataWriterImpl* create_datawriter_impl(
-            const efd::TypeSupport& type,
+    DataWriterImpl(
+            efd::PublisherImpl* p,
+            efd::TypeSupport type,
             efd::Topic* topic,
             const efd::DataWriterQos& qos,
-            efd::DataWriterListener* listener) override
+            efd::DataWriterListener* listener,
+            std::shared_ptr<IListener> stat_listener)
+        : BaseType(p, type, topic, qos, listener)
+        , statistics_listener_(stat_listener)
     {
-        return new DataWriterImpl(this, type, topic, qos, listener, statistics_listener_);
     }
 
 private:
@@ -68,4 +60,4 @@ private:
 } // fastdds
 } // eprosima
 
-#endif  // _STATISTICS_FASTDDS_PUBLISHER_PUBLISHERIMPL_HPP_
+#endif  // _STATISTICS_FASTDDS_PUBLISHER_DATAWRITERIMPL_HPP_
