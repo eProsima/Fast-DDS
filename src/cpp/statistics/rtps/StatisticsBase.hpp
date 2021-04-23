@@ -199,7 +199,7 @@ protected:
     // TODO: methods for listeners callbacks
 
     /*
-     * Report that a message that is sent by the participant
+     * Report a message that is sent by the participant
      * @param loc, destination
      * @param payload_size, size of the current message
      */
@@ -208,7 +208,7 @@ protected:
             unsigned long payload_size);
 
     /*
-     * Report that a message that is sent by the participant
+     * Report a message that is sent by the participant
      * @param destination_locators_begin, start of locators range
      * @param destination_locators_end, end of locators range
      * @param payload_size, size of the current message
@@ -263,7 +263,7 @@ protected:
     // inline methods for listeners callbacks
 
     /*
-     * Report that a message that is sent by the participant
+     * Report a message that is sent by the participant
      * @param destination_locators_begin, start of locators range
      * @param destination_locators_end, end of locators range
      * @param payload_size, size of the current message
