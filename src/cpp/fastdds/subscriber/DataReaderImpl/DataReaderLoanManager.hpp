@@ -23,7 +23,7 @@
 #include <cassert>
 
 #include <fastdds/dds/core/LoanableCollection.hpp>
-#include <fastdds/dds/core/LoanableSequence.hpp>
+#include <fastdds/dds/core/LoanableTypedCollection.hpp>
 #include <fastdds/dds/subscriber/SampleInfo.hpp>
 #include <fastdds/dds/subscriber/qos/DataReaderQos.hpp>
 
@@ -38,7 +38,7 @@ namespace detail {
 
 struct DataReaderLoanManager
 {
-    using SampleInfoSeq = LoanableSequence<SampleInfo>;
+    using SampleInfoSeq = LoanableTypedCollection<SampleInfo>;
     using ReturnCode_t = eprosima::fastrtps::types::ReturnCode_t;
 
     explicit DataReaderLoanManager(
