@@ -22,6 +22,7 @@
 #include <fastdds/statistics/IListeners.hpp>
 
 #include <fastdds/publisher/DataWriterImpl.hpp>
+#include <fastdds/rtps/writer/RTPSWriter.h>
 
 namespace eprosima {
 namespace fastdds {
@@ -30,9 +31,9 @@ namespace dds {
 
 namespace efd = eprosima::fastdds::dds;
 
-class DataWriterImpl : public eprosima::fastdds::dds::DataWriterImpl
+class DataWriterImpl : public efd::DataWriterImpl
 {
-    using BaseType = eprosima::fastdds::dds::DataWriterImpl;
+    using BaseType = efd::DataWriterImpl;
 
 public:
 
@@ -48,6 +49,28 @@ public:
         : BaseType(p, type, topic, qos, listener)
         , statistics_listener_(stat_listener)
     {
+    }
+
+    ReturnCode_t enable() override
+    {
+        ReturnCode_t ret = BaseType::enable();
+
+        if (ReturnCode_t::RETCODE_OK == ret)
+        {
+            writer_->add_statistics_listener(statistics_listener_);
+        }
+
+        return ret;
+    }
+
+    void disable() override
+    {
+        if (nullptr != writer_)
+        {
+            writer_->remove_statistics_listener(statistics_listener_);
+        }
+
+        BaseType::disable();
     }
 
 private:

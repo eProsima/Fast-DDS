@@ -31,9 +31,9 @@ namespace dds {
 
 namespace efd = eprosima::fastdds::dds;
 
-class PublisherImpl : public eprosima::fastdds::dds::PublisherImpl
+class PublisherImpl : public efd::PublisherImpl
 {
-    using BaseType = eprosima::fastdds::dds::PublisherImpl;
+    using BaseType = efd::PublisherImpl;
 
 public:
 

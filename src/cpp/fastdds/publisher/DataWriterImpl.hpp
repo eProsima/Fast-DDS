@@ -108,7 +108,7 @@ public:
 
     virtual ~DataWriterImpl();
 
-    ReturnCode_t enable();
+    virtual ReturnCode_t enable();
 
     ReturnCode_t check_delete_preconditions();
 
@@ -253,7 +253,7 @@ public:
     ReturnCode_t assert_liveliness();
 
     //! Remove all listeners in the hierarchy to allow a quiet destruction
-    void disable();
+    virtual void disable();
 
     /**
      * Removes all changes from the History.
