@@ -24,6 +24,8 @@
 #include <fastdds/publisher/DataWriterImpl.hpp>
 #include <fastdds/rtps/writer/RTPSWriter.h>
 
+#include <statistics/fastdds/domain/DomainParticipantImpl.hpp>
+
 namespace eprosima {
 namespace fastdds {
 namespace statistics {
@@ -55,7 +57,8 @@ public:
     {
         ReturnCode_t ret = BaseType::enable();
 
-        if (ReturnCode_t::RETCODE_OK == ret)
+        if (ReturnCode_t::RETCODE_OK == ret &&
+                !DomainParticipantImpl::is_statistics_topic_name(topic_->get_name()))
         {
             writer_->add_statistics_listener(statistics_listener_);
         }
@@ -65,7 +68,8 @@ public:
 
     void disable() override
     {
-        if (nullptr != writer_)
+        if (nullptr != writer_ &&
+                !DomainParticipantImpl::is_statistics_topic_name(topic_->get_name()))
         {
             writer_->remove_statistics_listener(statistics_listener_);
         }

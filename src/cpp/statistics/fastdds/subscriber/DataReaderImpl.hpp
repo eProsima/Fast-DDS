@@ -19,10 +19,13 @@
 #ifndef _STATISTICS_FASTDDS_SUBSCRIBER_DATAREADERIMPL_HPP_
 #define _STATISTICS_FASTDDS_SUBSCRIBER_DATAREADERIMPL_HPP_
 
+#include <fastdds/dds/topic/TopicDescription.hpp>
 #include <fastdds/statistics/IListeners.hpp>
 
 #include <fastdds/subscriber/DataReaderImpl.hpp>
 #include <fastdds/rtps/reader/RTPSReader.h>
+
+#include <statistics/fastdds/domain/DomainParticipantImpl.hpp>
 
 namespace eprosima {
 namespace fastdds {
@@ -55,7 +58,8 @@ public:
     {
         ReturnCode_t ret = BaseType::enable();
 
-        if (ReturnCode_t::RETCODE_OK == ret)
+        if (ReturnCode_t::RETCODE_OK == ret &&
+                !DomainParticipantImpl::is_statistics_topic_name(topic_->get_name()))
         {
             reader_->add_statistics_listener(statistics_listener_);
         }
@@ -65,7 +69,8 @@ public:
 
     void disable() override
     {
-        if (nullptr != reader_)
+        if (nullptr != reader_ &&
+                !DomainParticipantImpl::is_statistics_topic_name(topic_->get_name()))
         {
             reader_->remove_statistics_listener(statistics_listener_);
         }
