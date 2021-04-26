@@ -87,6 +87,14 @@ public:
      */
     ReturnCode_t enable() override;
 
+    /**
+     * Auxiliary function that checks if a topic name corresponds to a statistics builtin topic name.
+     * @param [in]   topic_name string with the topic name to check.
+     * @return whether the input string corresponds to a builtin statistics topic name.
+     */
+    static bool is_statistics_topic_name(
+            const std::string& topic_name) noexcept;
+
 protected:
 
     /**

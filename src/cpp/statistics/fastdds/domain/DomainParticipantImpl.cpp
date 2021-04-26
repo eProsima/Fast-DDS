@@ -63,6 +63,34 @@ constexpr const char* DISCOVERY_TOPIC_ALIAS = "DISCOVERY_TOPIC";
 constexpr const char* SAMPLE_DATAS_TOPIC_ALIAS = "SAMPLE_DATAS_TOPIC";
 constexpr const char* PHYSICAL_DATA_TOPIC_ALIAS = "PHYSICAL_DATA_TOPIC";
 
+struct ValidEntry
+{
+    const char* alias;
+    const char* name;
+    EventKind event_kind;
+};
+
+static const ValidEntry valid_entries[] =
+{
+    {HISTORY_LATENCY_TOPIC_ALIAS,         HISTORY_LATENCY_TOPIC,         HISTORY2HISTORY_LATENCY},
+    {NETWORK_LATENCY_TOPIC_ALIAS,         NETWORK_LATENCY_TOPIC,         NETWORK_LATENCY},
+    {PUBLICATION_THROUGHPUT_TOPIC_ALIAS,  PUBLICATION_THROUGHPUT_TOPIC,  PUBLICATION_THROUGHPUT},
+    {SUBSCRIPTION_THROUGHPUT_TOPIC_ALIAS, SUBSCRIPTION_THROUGHPUT_TOPIC, SUBSCRIPTION_THROUGHPUT},
+    {RTPS_SENT_TOPIC_ALIAS,               RTPS_SENT_TOPIC,               RTPS_SENT},
+    {RTPS_LOST_TOPIC_ALIAS,               RTPS_LOST_TOPIC,               RTPS_LOST},
+    {RESENT_DATAS_TOPIC_ALIAS,            RESENT_DATAS_TOPIC,            RESENT_DATAS},
+    {HEARTBEAT_COUNT_TOPIC_ALIAS,         HEARTBEAT_COUNT_TOPIC,         HEARTBEAT_COUNT},
+    {ACKNACK_COUNT_TOPIC_ALIAS,           ACKNACK_COUNT_TOPIC,           ACKNACK_COUNT},
+    {NACKFRAG_COUNT_TOPIC_ALIAS,          NACKFRAG_COUNT_TOPIC,          NACKFRAG_COUNT},
+    {GAP_COUNT_TOPIC_ALIAS,               GAP_COUNT_TOPIC,               GAP_COUNT},
+    {DATA_COUNT_TOPIC_ALIAS,              DATA_COUNT_TOPIC,              DATA_COUNT},
+    {PDP_PACKETS_TOPIC_ALIAS,             PDP_PACKETS_TOPIC,             PDP_PACKETS},
+    {EDP_PACKETS_TOPIC_ALIAS,             EDP_PACKETS_TOPIC,             EDP_PACKETS},
+    {DISCOVERY_TOPIC_ALIAS,               DISCOVERY_TOPIC,               DISCOVERED_ENTITY},
+    {SAMPLE_DATAS_TOPIC_ALIAS,            SAMPLE_DATAS_TOPIC,            SAMPLE_DATAS},
+    {PHYSICAL_DATA_TOPIC_ALIAS,           PHYSICAL_DATA_TOPIC,           PHYSICAL_DATA}
+};
+
 ReturnCode_t DomainParticipantImpl::enable_statistics_datawriter(
         const std::string& topic_name,
         const eprosima::fastdds::dds::DataWriterQos& dwqos)
@@ -229,39 +257,25 @@ void DomainParticipantImpl::delete_statistics_builtin_entities()
     delete_publisher(builtin_publisher_);
 }
 
+bool DomainParticipantImpl::is_statistics_topic_name(
+        const std::string& topic_name) noexcept
+{
+    for (const ValidEntry& entry : valid_entries)
+    {
+        if (entry.name == topic_name)
+        {
+            return true;
+        }
+    }
+
+    return false;
+}
+
 bool DomainParticipantImpl::transform_and_check_topic_name(
         const std::string& topic_name_or_alias,
         std::string& topic_name,
         EventKind& event_kind) noexcept
 {
-    struct ValidEntry
-    {
-        const char* alias;
-        const char* name;
-        EventKind event_kind;
-    };
-
-    static const ValidEntry valid_entries[] =
-    {
-        {HISTORY_LATENCY_TOPIC_ALIAS,         HISTORY_LATENCY_TOPIC,         HISTORY2HISTORY_LATENCY},
-        {NETWORK_LATENCY_TOPIC_ALIAS,         NETWORK_LATENCY_TOPIC,         NETWORK_LATENCY},
-        {PUBLICATION_THROUGHPUT_TOPIC_ALIAS,  PUBLICATION_THROUGHPUT_TOPIC,  PUBLICATION_THROUGHPUT},
-        {SUBSCRIPTION_THROUGHPUT_TOPIC_ALIAS, SUBSCRIPTION_THROUGHPUT_TOPIC, SUBSCRIPTION_THROUGHPUT},
-        {RTPS_SENT_TOPIC_ALIAS,               RTPS_SENT_TOPIC,               RTPS_SENT},
-        {RTPS_LOST_TOPIC_ALIAS,               RTPS_LOST_TOPIC,               RTPS_LOST},
-        {RESENT_DATAS_TOPIC_ALIAS,            RESENT_DATAS_TOPIC,            RESENT_DATAS},
-        {HEARTBEAT_COUNT_TOPIC_ALIAS,         HEARTBEAT_COUNT_TOPIC,         HEARTBEAT_COUNT},
-        {ACKNACK_COUNT_TOPIC_ALIAS,           ACKNACK_COUNT_TOPIC,           ACKNACK_COUNT},
-        {NACKFRAG_COUNT_TOPIC_ALIAS,          NACKFRAG_COUNT_TOPIC,          NACKFRAG_COUNT},
-        {GAP_COUNT_TOPIC_ALIAS,               GAP_COUNT_TOPIC,               GAP_COUNT},
-        {DATA_COUNT_TOPIC_ALIAS,              DATA_COUNT_TOPIC,              DATA_COUNT},
-        {PDP_PACKETS_TOPIC_ALIAS,             PDP_PACKETS_TOPIC,             PDP_PACKETS},
-        {EDP_PACKETS_TOPIC_ALIAS,             EDP_PACKETS_TOPIC,             EDP_PACKETS},
-        {DISCOVERY_TOPIC_ALIAS,               DISCOVERY_TOPIC,               DISCOVERED_ENTITY},
-        {SAMPLE_DATAS_TOPIC_ALIAS,            SAMPLE_DATAS_TOPIC,            SAMPLE_DATAS},
-        {PHYSICAL_DATA_TOPIC_ALIAS,           PHYSICAL_DATA_TOPIC,           PHYSICAL_DATA}
-    };
-
     for (const ValidEntry& entry : valid_entries)
     {
         if ((entry.alias == topic_name_or_alias) || (entry.name == topic_name_or_alias))
