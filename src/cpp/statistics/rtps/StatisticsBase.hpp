@@ -32,6 +32,14 @@
 #include <fastdds/statistics/rtps/StatisticsCommon.hpp>
 
 namespace eprosima {
+namespace fastrtps {
+namespace rtps {
+
+class PDP;
+
+} // rtps
+} // fastrtps
+
 namespace fastdds {
 namespace statistics {
 
@@ -75,6 +83,17 @@ Function StatisticsListenersImpl::for_each_listener(
 
 class StatisticsParticipantImpl
 {
+    friend class fastrtps::rtps::PDP;
+
+    // statistics members protection only
+    std::recursive_mutex statistics_mutex_;
+
+public:
+
+    using GUID_t = fastrtps::rtps::GUID_t;
+
+private:
+
     // RTPS_SENT ancillary
     struct rtps_sent_data
     {
@@ -83,6 +102,12 @@ class StatisticsParticipantImpl
     };
 
     std::map<fastrtps::rtps::Locator_t, rtps_sent_data> traffic;
+
+    /*
+     * Retrieve the GUID_t from derived class
+     * @return endpoint GUID_t
+     */
+    const GUID_t& get_guid() const;
 
 protected:
 
@@ -121,7 +146,6 @@ protected:
 
     };
 
-    using GUID_t = fastrtps::rtps::GUID_t;
     using Key = std::shared_ptr<ListenerProxy>;
 
     // specialized comparison operator, the actual key is the external listener address
@@ -228,25 +252,34 @@ protected:
         }
     }
 
+    /*
+     * Report that a new entity is discovered
+     * @param id, discovered entity GUID_t
+     */
+    void on_entity_discovery(
+            const GUID_t& id);
+
 public:
 
     /*
      * Registers a listener in participant's statistics callback queue
      * @param listener smart pointer to the listener being registered
+     * @param kind combination of fastdds::statistics::EventKind flags used as a mask
      * @return successfully registered
      */
     bool add_statistics_listener(
             std::shared_ptr<fastdds::statistics::IListener> listener,
-            fastdds::statistics::EventKind kind);
+            uint32_t kind);
 
     /*
      * Unregisters a listener in participant's statistics callback queue
      * @param listener smart pointer to the listener being unregistered
+     * @param kind combination of fastdds::statistics::EventKind flags used as a mask
      * @return successfully unregistered
      */
     bool remove_statistics_listener(
             std::shared_ptr<fastdds::statistics::IListener> listener,
-            fastdds::statistics::EventKind kind);
+            uint32_t kind);
 };
 
 // auxiliary conversion functions
@@ -259,6 +292,8 @@ struct StatisticsAncillary {};
 
 class StatisticsParticipantImpl
 {
+    friend class fastrtps::rtps::PDP;
+
 protected:
 
     // inline methods for listeners callbacks
@@ -274,6 +309,15 @@ protected:
             const LocatorIteratorT&,
             const LocatorIteratorT&,
             unsigned long)
+    {
+    }
+
+    /*
+     * Report that a new entity is discovered
+     * @param id, discovered entity GUID_t
+     */
+    inline void on_entity_discovery(
+            const fastrtps::rtps::GUID_t&)
     {
     }
 

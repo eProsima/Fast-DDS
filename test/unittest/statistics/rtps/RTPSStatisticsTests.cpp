@@ -75,6 +75,9 @@ struct MockListener : IListener
             case NACKFRAG_COUNT:
                 on_nackfrag_count(data.entity_count());
                 break;
+            case DISCOVERED_ENTITY:
+                on_entity_discovery(data.discovery_time());
+                break;
             default:
                 break;
         }
@@ -86,10 +89,10 @@ struct MockListener : IListener
     MOCK_METHOD(void, on_data_count, (const eprosima::fastdds::statistics::EntityCount&));
     MOCK_METHOD(void, on_gap_count, (const eprosima::fastdds::statistics::EntityCount&));
     MOCK_METHOD(void, on_nackfrag_count, (const eprosima::fastdds::statistics::EntityCount&));
+    MOCK_METHOD(void, on_entity_discovery, (const eprosima::fastdds::statistics::DiscoveryTime&));
 };
 
-class RTPSStatisticsTests
-    : public ::testing::Test
+class RTPSStatisticsTestsImpl
 {
     using test_Descriptor = fastdds::rtps::test_UDPv4TransportDescriptor;
 
@@ -97,7 +100,7 @@ class RTPSStatisticsTests
     // Filters have specific getters and setters methods.
     class TransportFilter
     {
-        friend class RTPSStatisticsTests;
+        friend class RTPSStatisticsTestsImpl;
 
         test_Descriptor::filter external_filter_;
 
@@ -158,6 +161,47 @@ protected:
             fastrtps::rtps::SubmessageId id) noexcept
     {
         return filters_[id].external_filter_;
+    }
+
+public:
+
+    void create_participant()
+    {
+        using namespace fastrtps::rtps;
+
+        // create the participant
+        RTPSParticipantAttributes p_attr;
+
+        // use leaky transport
+        // as filter use a fixture provided functor
+        auto descriptor = std::make_shared<test_Descriptor>();
+
+        // initialize filters
+        descriptor->drop_data_messages_filter_  = std::ref(filters_[DATA]);
+        descriptor->drop_heartbeat_messages_filter_ = std::ref(filters_[HEARTBEAT]);
+        descriptor->drop_ack_nack_messages_filter_ = std::ref(filters_[ACKNACK]);
+        descriptor->drop_gap_messages_filter_ = std::ref(filters_[GAP]);
+        descriptor->drop_data_frag_messages_filter_ = std::ref(filters_[DATA_FRAG]);
+
+        p_attr.useBuiltinTransports = false;
+        p_attr.userTransports.push_back(descriptor);
+
+        // random domain_id
+        uint32_t domain_id = SystemInfo::instance().process_id() % 100;
+
+        participant_ = RTPSDomain::createParticipant(
+            domain_id, true, p_attr);
+    }
+
+    void remove_participant()
+    {
+        using namespace fastrtps::rtps;
+
+        // Remove the endpoints
+        destroy_endpoints();
+
+        // Remove the participant
+        RTPSDomain::removeRTPSParticipant(participant_);
     }
 
     void create_reader(
@@ -305,6 +349,12 @@ protected:
         ASSERT_TRUE(writer_history_->add_change(writer_change));
     }
 
+};
+
+class RTPSStatisticsTests
+    : public ::testing::Test
+    , public RTPSStatisticsTestsImpl
+{
 public:
 
     static void SetUpTestSuite()
@@ -320,42 +370,13 @@ public:
     // Sets up the test fixture.
     void SetUp() override
     {
-        using namespace fastrtps::rtps;
-
-        // create the participant
-        RTPSParticipantAttributes p_attr;
-
-        // use leaky transport
-        // as filter use a fixture provided functor
-        auto descriptor = std::make_shared<test_Descriptor>();
-
-        // initialize filters
-        descriptor->drop_data_messages_filter_  = std::ref(filters_[DATA]);
-        descriptor->drop_heartbeat_messages_filter_ = std::ref(filters_[HEARTBEAT]);
-        descriptor->drop_ack_nack_messages_filter_ = std::ref(filters_[ACKNACK]);
-        descriptor->drop_gap_messages_filter_ = std::ref(filters_[GAP]);
-        descriptor->drop_data_frag_messages_filter_ = std::ref(filters_[DATA_FRAG]);
-
-        p_attr.useBuiltinTransports = false;
-        p_attr.userTransports.push_back(descriptor);
-
-        // random domain_id
-        uint32_t domain_id = SystemInfo::instance().process_id() % 100;
-
-        participant_ = RTPSDomain::createParticipant(
-            domain_id, true, p_attr);
+        create_participant();
     }
 
     // Tears down the test fixture.
     void TearDown() override
     {
-        using namespace fastrtps::rtps;
-
-        // Remove the endpoints
-        destroy_endpoints();
-
-        // Remove the participant
-        RTPSDomain::removeRTPSParticipant(participant_);
+        remove_participant();
     }
 
 };
@@ -406,12 +427,12 @@ TEST_F(RTPSStatisticsTests, statistics_rpts_listener_management)
     // + fails if a listener is already removed
     EXPECT_FALSE(participant_->remove_statistics_listener(listener1, kind));
     // + The EventKind is an actual mask that allow register multiple entities simultaneously
-    EXPECT_TRUE(participant_->add_statistics_listener(listener1, static_cast<EventKind>(kind | another_kind)));
+    EXPECT_TRUE(participant_->add_statistics_listener(listener1, kind | another_kind));
     // + When using a mask of multiple entities the return value succeeds only if all
     //   entity driven operations succeeds. The following operation must fail because one
     //   of the entities has not that registered listener
     EXPECT_FALSE(participant_->remove_statistics_listener(listener1,
-            static_cast<EventKind>(kind | another_kind | yet_another_kind)));
+            kind | another_kind | yet_another_kind));
 
     // test the writer apis
     // + fails to remove an empty listener
@@ -582,8 +603,8 @@ TEST_F(RTPSStatisticsTests, statistics_rpts_listener_callbacks_fragmented)
 
     // writer callbacks through participant listener
     auto participant_listener = make_shared<MockListener>();
-    EventKind mask = static_cast<EventKind>(EventKind::DATA_COUNT | EventKind::HEARTBEAT_COUNT
-            | EventKind::ACKNACK_COUNT | EventKind::NACKFRAG_COUNT);
+    uint32_t mask = EventKind::DATA_COUNT | EventKind::HEARTBEAT_COUNT
+            | EventKind::ACKNACK_COUNT | EventKind::NACKFRAG_COUNT;
     ASSERT_TRUE(participant_->add_statistics_listener(participant_listener, mask));
 
     EXPECT_CALL(*participant_listener, on_data_count)
@@ -683,6 +704,61 @@ TEST_F(RTPSStatisticsTests, statistics_rpts_listener_gap_callback)
     // release the listeners
     EXPECT_TRUE(writer_->remove_statistics_listener(writer_listener));
     EXPECT_TRUE(participant_->remove_statistics_listener(participant_writer_listener, EventKind::GAP_COUNT));
+}
+
+/*
+ * This test checks the participant discovery callbacks
+ */
+TEST_F(RTPSStatisticsTests, statistics_rpts_listener_discovery_callbacks)
+{
+    using namespace ::testing;
+    using namespace fastrtps;
+    using namespace fastrtps::rtps;
+    using namespace std;
+
+    // create the listener and set expectations
+    auto participant_listener = make_shared<MockListener>();
+    ASSERT_TRUE(participant_->add_statistics_listener(participant_listener, EventKind::DISCOVERED_ENTITY));
+
+    // check callbacks on data exchange
+    atomic_int callbacks(0);
+    ON_CALL(*participant_listener, on_entity_discovery)
+            .WillByDefault([&callbacks](const eprosima::fastdds::statistics::DiscoveryTime&)
+            {
+                ++callbacks;
+            });
+    EXPECT_CALL(*participant_listener, on_entity_discovery)
+            .Times(AtLeast(5));
+
+    // create local endpoints
+    uint16_t length = 255;
+    create_endpoints(length);
+
+    // register local endpoints
+    match_endpoints(false, "string", "statisticsSmallTopic");
+
+    // create remote endpoints and register them
+    {
+        RTPSStatisticsTestsImpl remote;
+        remote.create_participant();
+        remote.create_endpoints(length);
+        remote.match_endpoints(false, "string", "statisticsSmallTopic");
+
+        int loop = 0;
+        while ( callbacks < 5 )
+        {
+            this_thread::sleep_for(chrono::milliseconds(100));
+            if ( ++loop > 30 )
+            {
+                break;
+            }
+        }
+
+        remote.remove_participant();
+    }
+
+    // release the listener
+    EXPECT_TRUE(participant_->remove_statistics_listener(participant_listener, EventKind::DISCOVERED_ENTITY));
 }
 
 } // namespace rtps

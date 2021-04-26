@@ -51,13 +51,13 @@ RecursiveTimedMutex& StatisticsReaderImpl::get_statistics_mutex()
     return static_cast<RTPSReader*>(this)->getMutex();
 }
 
-const GUID_t& StatisticsReaderImpl::get_guid()
+const GUID_t& StatisticsReaderImpl::get_guid() const
 {
     static_assert(
         std::is_base_of<StatisticsReaderImpl, RTPSReader>::value,
         "This method should be called from an actual RTPSReader");
 
-    return static_cast<RTPSReader*>(this)->getGuid();
+    return static_cast<const RTPSReader*>(this)->getGuid();
 }
 
 void StatisticsReaderImpl::on_acknack(
