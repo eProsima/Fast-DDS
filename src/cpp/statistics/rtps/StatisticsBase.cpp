@@ -32,15 +32,15 @@ namespace fastdds {
 namespace statistics {
 
 detail::Locator_s to_statistics_type(
-        eprosima::fastrtps::rtps::Locator_t l)
+        fastrtps::rtps::Locator_t locator)
 {
-    return *reinterpret_cast<detail::Locator_s*>(&l);
+    return *reinterpret_cast<detail::Locator_s*>(&locator);
 }
 
 detail::GUID_s to_statistics_type(
-        eprosima::fastrtps::rtps::GUID_t g)
+        fastrtps::rtps::GUID_t guid)
 {
-    return *reinterpret_cast<detail::GUID_s*>(&g);
+    return *reinterpret_cast<detail::GUID_s*>(&guid);
 }
 
 } // statistics
@@ -81,13 +81,20 @@ bool StatisticsListenersImpl::remove_statistics_listener_impl(
     return 1 == members_->listeners.erase(listener);
 }
 
-std::recursive_mutex& StatisticsParticipantImpl::get_statistics_mutex()
+const eprosima::fastrtps::rtps::GUID_t& StatisticsParticipantImpl::get_guid() const
 {
+    using eprosima::fastrtps::rtps::RTPSParticipantImpl;
+
     static_assert(
         std::is_base_of<StatisticsParticipantImpl, RTPSParticipantImpl>::value,
-        "This must be called from RTPSParticipantImpl");
+        "This method should be called from an actual RTPSParticipantImpl");
 
-    return *static_cast<RTPSParticipantImpl*>(this)->getParticipantMutex();
+    return static_cast<const RTPSParticipantImpl*>(this)->getGuid();
+}
+
+std::recursive_mutex& StatisticsParticipantImpl::get_statistics_mutex()
+{
+    return statistics_mutex_;
 }
 
 void StatisticsParticipantImpl::ListenerProxy::on_statistics_data(
@@ -147,7 +154,7 @@ bool StatisticsParticipantImpl::are_readers_involved(
 
 bool StatisticsParticipantImpl::add_statistics_listener(
         std::shared_ptr<fastdds::statistics::IListener> listener,
-        fastdds::statistics::EventKind kind)
+        uint32_t kind)
 {
     std::unique_lock<std::recursive_mutex> lock(get_statistics_mutex());
 
@@ -184,7 +191,10 @@ bool StatisticsParticipantImpl::add_statistics_listener(
         proxy.mask(new_mask);
     }
 
-    // Check if the listener should be registered in writers
+    // no other mutex should be taken in order to prevent ABBA deadlocks
+    lock.unlock();
+
+    // Check if the listener should be register in the writers
     bool writers_res = true;
     if (are_writers_involved(new_mask)
             && !are_writers_involved(old_mask))
@@ -205,9 +215,9 @@ bool StatisticsParticipantImpl::add_statistics_listener(
 
 bool StatisticsParticipantImpl::remove_statistics_listener(
         std::shared_ptr<fastdds::statistics::IListener> listener,
-        fastdds::statistics::EventKind kind)
+        uint32_t kind)
 {
-    std::lock_guard<std::recursive_mutex> lock(get_statistics_mutex());
+    std::unique_lock<std::recursive_mutex> lock(get_statistics_mutex());
 
     uint32_t mask = kind;
     uint32_t new_mask;
@@ -251,6 +261,9 @@ bool StatisticsParticipantImpl::remove_statistics_listener(
         listeners_.erase(it);
     }
 
+    // no other mutex should be taken in order to prevent ABBA deadlocks
+    lock.unlock();
+
     bool writers_res = true;
     if (!are_writers_involved(new_mask)
             && are_writers_involved(old_mask))
@@ -276,13 +289,9 @@ void StatisticsParticipantImpl::on_rtps_sent(
     using namespace std;
     using eprosima::fastrtps::rtps::RTPSParticipantImpl;
 
-    static_assert(
-        std::is_base_of<StatisticsParticipantImpl, RTPSParticipantImpl>::value,
-        "This must be called from RTPSParticipantImpl");
-
     // Compose callback and update the inner state
     Entity2LocatorTraffic notification;
-    notification.src_guid(to_statistics_type(static_cast<RTPSParticipantImpl*>(this)->getGuid()));
+    notification.src_guid(to_statistics_type(get_guid()));
     notification.dst_locator(to_statistics_type(loc));
 
     {
@@ -298,6 +307,34 @@ void StatisticsParticipantImpl::on_rtps_sent(
     Data data;
     // note that the setter sets RTPS_SENT by default
     data.entity2locator_traffic(notification);
+
+    for_each_listener([&data](const Key& listener)
+            {
+                listener->on_statistics_data(data);
+            });
+}
+
+void StatisticsParticipantImpl::on_entity_discovery(
+        const fastrtps::rtps::GUID_t& id)
+{
+    using namespace std;
+    using namespace fastrtps;
+
+    // Compose callback and update the inner state
+    DiscoveryTime notification;
+    notification.local_participant_guid(to_statistics_type(get_guid()));
+    notification.remote_entity_guid(to_statistics_type(id));
+
+    {
+        // generate callback timestamp
+        Time_t t;
+        Time_t::now(t);
+        notification.time(t.to_ns());
+    }
+
+    // Perform the callbacks
+    Data data;
+    data.discovery_time(notification);
 
     for_each_listener([&data](const Key& listener)
             {

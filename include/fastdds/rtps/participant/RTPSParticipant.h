@@ -265,22 +265,22 @@ public:
     /*
      * Add a listener to receive statistics backend callbacks
      * @param listener
-     * @param kind mask that specifies which callbacks to receive
+     * @param kind combination of fastdds::statistics::EventKind flags used as a mask. Events to notify.
      * @return true if successfully added
      */
     bool add_statistics_listener(
             std::shared_ptr<fastdds::statistics::IListener> listener,
-            fastdds::statistics::EventKind kind);
+            uint32_t kind);
 
     /*
      * Remove a listener from receiving statistics backend callbacks
      * @param listener
-     * @param kind mask that specifies which callbacks to ignore
+     * @param kind combination of fastdds::statistics::EventKind flags used as a mask. Events to ignore.
      * @return true if successfully removed
      */
     bool remove_statistics_listener(
             std::shared_ptr<fastdds::statistics::IListener> listener,
-            fastdds::statistics::EventKind kind);
+            uint32_t kind);
 
 #endif // FASTDDS_STATISTICS
 

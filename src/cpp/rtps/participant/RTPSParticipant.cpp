@@ -190,14 +190,14 @@ bool RTPSParticipant::is_security_enabled_for_reader(
 
 bool RTPSParticipant::add_statistics_listener(
         std::shared_ptr<fastdds::statistics::IListener> listener,
-        fastdds::statistics::EventKind kind)
+        uint32_t kind)
 {
     return mp_impl->add_statistics_listener(listener, kind);
 }
 
 bool RTPSParticipant::remove_statistics_listener(
         std::shared_ptr<fastdds::statistics::IListener> listener,
-        fastdds::statistics::EventKind kind)
+        uint32_t kind)
 {
     return mp_impl->remove_statistics_listener(listener, kind);
 }
