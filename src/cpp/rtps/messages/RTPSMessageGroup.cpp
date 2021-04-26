@@ -681,6 +681,10 @@ bool RTPSMessageGroup::create_gap_submessage(
     }
 #endif // if HAVE_SECURITY
 
+    // Notify the statistics module, note that only writers add gaps
+    assert(nullptr != dynamic_cast<RTPSWriter*>(endpoint_));
+    static_cast<RTPSWriter*>(endpoint_)->on_gap();
+
     return true;
 }
 

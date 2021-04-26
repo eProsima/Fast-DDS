@@ -126,6 +126,7 @@ bool StatisticsParticipantImpl::are_writers_involved(
             | PUBLICATION_THROUGHPUT \
             | RESENT_DATAS \
             | HEARTBEAT_COUNT \
+            | GAP_COUNT \
             | DATA_COUNT;
 
     return writers_maks & mask;
@@ -139,8 +140,7 @@ bool StatisticsParticipantImpl::are_readers_involved(
     constexpr uint32_t readers_maks = HISTORY2HISTORY_LATENCY \
             | SUBSCRIPTION_THROUGHPUT \
             | ACKNACK_COUNT \
-            | NACKFRAG_COUNT \
-            | GAP_COUNT;
+            | NACKFRAG_COUNT;
 
     return readers_maks & mask;
 }
@@ -149,7 +149,7 @@ bool StatisticsParticipantImpl::add_statistics_listener(
         std::shared_ptr<fastdds::statistics::IListener> listener,
         fastdds::statistics::EventKind kind)
 {
-    std::lock_guard<std::recursive_mutex> lock(get_statistics_mutex());
+    std::unique_lock<std::recursive_mutex> lock(get_statistics_mutex());
 
     uint32_t mask = kind;
     uint32_t new_mask;

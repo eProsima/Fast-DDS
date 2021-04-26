@@ -157,6 +157,8 @@ protected:
     //! Report that a DATA_FRAG message is sent
     void on_data_frag();
 
+    //! Report that a GAP message is sent
+    void on_gap();
 };
 
 // Members are private details

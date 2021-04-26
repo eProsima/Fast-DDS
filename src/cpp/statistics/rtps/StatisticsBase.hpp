@@ -47,6 +47,7 @@ struct StatisticsWriterAncillary
     : public StatisticsAncillary
 {
     unsigned long long data_counter = {};
+    unsigned long long gap_counter = {};
 };
 
 struct StatisticsReaderAncillary
