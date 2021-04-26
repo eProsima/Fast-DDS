@@ -92,11 +92,20 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps_deprecated/publisher/PublisherHistory.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps_deprecated/subscriber/SubscriberHistory.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/statistics/fastdds/domain/DomainParticipant.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/statistics/fastdds/domain/DomainParticipantImpl.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/statistics/fastdds/publisher/qos/DataWriterQos.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/statistics/types/types.cxx
-            ${PROJECT_SOURCE_DIR}/src/cpp/statistics/types/typesPubSubTypes.cxx
             )
+
+        if (FASTDDS_STATISTICS)
+
+            set(statistics_sources
+                ${PROJECT_SOURCE_DIR}/src/cpp/statistics/fastdds/domain/DomainParticipantImpl.cpp
+                ${PROJECT_SOURCE_DIR}/src/cpp/statistics/types/types.cxx
+                ${PROJECT_SOURCE_DIR}/src/cpp/statistics/types/typesPubSubTypes.cxx
+                )
+
+            list(APPEND LISTENERTESTS_SOURCE ${statistics_sources})
+
+        endif()
 
         # External sources
         if(TINYXML2_SOURCE_DIR)

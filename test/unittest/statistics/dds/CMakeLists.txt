@@ -50,7 +50,7 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
         target_link_libraries(StatisticsQosTests fastrtps fastcdr ${GTEST_LIBRARIES})
         add_gtest(StatisticsQosTests SOURCES ${STATISTICS_QOS_TESTS_SOURCE})
 
-        if (GMOCK_FOUND AND SQLITE3_SUPPORT)
+        if (GMOCK_FOUND AND SQLITE3_SUPPORT AND FASTDDS_STATISTICS)
             set(STATISTICS_DOMAINPARTICIPANT_MOCK_TESTS_SOURCE
                 StatisticsDomainParticipantMockTests.cpp
                 ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/AnnotationDescriptor.cpp
