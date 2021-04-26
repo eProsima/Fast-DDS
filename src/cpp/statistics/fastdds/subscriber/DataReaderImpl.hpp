@@ -13,16 +13,16 @@
 // limitations under the License.
 
 /**
- * @file SubscriberImpl.hpp
+ * @file DataReaderImpl.hpp
  */
 
-#ifndef _STATISTICS_FASTDDS_SUBSCRIBER_SUBSCRIBER_IMPL_HPP_
-#define _STATISTICS_FASTDDS_SUBSCRIBER_SUBSCRIBER_IMPL_HPP_
+#ifndef _STATISTICS_FASTDDS_SUBSCRIBER_DATAREADERIMPL_HPP_
+#define _STATISTICS_FASTDDS_SUBSCRIBER_DATAREADERIMPL_HPP_
 
 #include <fastdds/statistics/IListeners.hpp>
 
-#include <fastdds/subscriber/SubscriberImpl.hpp>
-#include <statistics/fastdds/subscriber/DataReaderImpl.hpp>
+#include <fastdds/subscriber/DataReaderImpl.hpp>
+#include <fastdds/rtps/reader/RTPSReader.h>
 
 namespace eprosima {
 namespace fastdds {
@@ -31,31 +31,24 @@ namespace dds {
 
 namespace efd = eprosima::fastdds::dds;
 
-class SubscriberImpl : public efd::SubscriberImpl
+class DataReaderImpl : public efd::DataReaderImpl
 {
-    using BaseType = efd::SubscriberImpl;
+    using BaseType = efd::DataReaderImpl;
 
 public:
 
-    virtual ~SubscriberImpl() = default;
+    virtual ~DataReaderImpl() = default;
 
-    SubscriberImpl(
-            efd::DomainParticipantImpl* p,
-            const efd::SubscriberQos& qos,
-            efd::SubscriberListener* p_listen,
-            const std::shared_ptr<IListener>& stat_listener)
-        : BaseType(p, qos, p_listen)
-        , statistics_listener_(stat_listener)
-    {
-    }
-
-    efd::DataReaderImpl* create_datareader_impl(
+    DataReaderImpl(
+            efd::SubscriberImpl* s,
             const efd::TypeSupport& type,
             efd::TopicDescription* topic,
             const efd::DataReaderQos& qos,
-            efd::DataReaderListener* listener) override
+            efd::DataReaderListener* listener,
+            std::shared_ptr<IListener> stat_listener)
+        : BaseType(s, type, topic, qos, listener)
+        , statistics_listener_(stat_listener)
     {
-        return new DataReaderImpl(this, type, topic, qos, listener, statistics_listener_);
     }
 
 private:
@@ -68,4 +61,4 @@ private:
 } // fastdds
 } // eprosima
 
-#endif  // _STATISTICS_FASTDDS_SUBSCRIBER_SUBSCRIBER_IMPL_HPP_
+#endif  // _STATISTICS_FASTDDS_SUBSCRIBER_DATAREADERIMPL_HPP_

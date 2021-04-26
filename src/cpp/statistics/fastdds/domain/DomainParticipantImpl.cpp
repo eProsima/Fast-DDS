@@ -161,7 +161,7 @@ efd::SubscriberImpl* DomainParticipantImpl::create_subscriber_impl(
         const efd::SubscriberQos& qos,
         efd::SubscriberListener* listener)
 {
-    return new SubscriberImpl(this, qos, listener);
+    return new SubscriberImpl(this, qos, listener, statistics_listener_);
 }
 
 void DomainParticipantImpl::create_statistics_builtin_entities()
