@@ -78,3 +78,22 @@ void StatisticsReaderImpl::on_acknack(
                 listener->on_statistics_data(data);
             });
 }
+
+void StatisticsReaderImpl::on_nackfrag(
+        int32_t count)
+{
+    EntityCount notification;
+    notification.guid(to_statistics_type(get_guid()));
+    notification.count(count);
+
+    // Perform the callback
+    Data data;
+    // note that the setter sets RESENT_DATAS by default
+    data.entity_count(notification);
+    data._d(EventKind::NACKFRAG_COUNT);
+
+    for_each_listener([&data](const std::shared_ptr<IListener>& listener)
+            {
+                listener->on_statistics_data(data);
+            });
+}

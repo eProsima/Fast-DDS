@@ -283,6 +283,8 @@ public:
                         max_blocking_time_point);
             }
 
+            lock.unlock();
+
             // notify statistics module
             on_rtps_send(
                 destination_locators_begin,
