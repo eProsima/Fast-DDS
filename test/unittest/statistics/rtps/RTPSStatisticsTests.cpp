@@ -83,13 +83,13 @@ struct MockListener : IListener
         }
     }
 
-    MOCK_METHOD(void, on_rtps_sent, (const eprosima::fastdds::statistics::Entity2LocatorTraffic&));
-    MOCK_METHOD(void, on_heartbeat_count, (const eprosima::fastdds::statistics::EntityCount&));
-    MOCK_METHOD(void, on_acknack_count, (const eprosima::fastdds::statistics::EntityCount&));
-    MOCK_METHOD(void, on_data_count, (const eprosima::fastdds::statistics::EntityCount&));
-    MOCK_METHOD(void, on_gap_count, (const eprosima::fastdds::statistics::EntityCount&));
-    MOCK_METHOD(void, on_nackfrag_count, (const eprosima::fastdds::statistics::EntityCount&));
-    MOCK_METHOD(void, on_entity_discovery, (const eprosima::fastdds::statistics::DiscoveryTime&));
+    MOCK_METHOD1(on_rtps_sent, void(const eprosima::fastdds::statistics::Entity2LocatorTraffic&));
+    MOCK_METHOD1(on_heartbeat_count, void(const eprosima::fastdds::statistics::EntityCount&));
+    MOCK_METHOD1(on_acknack_count, void(const eprosima::fastdds::statistics::EntityCount&));
+    MOCK_METHOD1(on_data_count, void(const eprosima::fastdds::statistics::EntityCount&));
+    MOCK_METHOD1(on_gap_count, void(const eprosima::fastdds::statistics::EntityCount&));
+    MOCK_METHOD1(on_nackfrag_count, void(const eprosima::fastdds::statistics::EntityCount&));
+    MOCK_METHOD1(on_entity_discovery, void(const eprosima::fastdds::statistics::DiscoveryTime&));
 };
 
 class RTPSStatisticsTestsImpl
