@@ -12,22 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include <gtest/gtest.h>
+#include <map>
+
 #include <gmock/gmock.h>
-
-#include <utils/SystemInfo.hpp>
-
-#include <fastrtps/attributes/LibrarySettingsAttributes.h>
-#include <fastrtps/attributes/TopicAttributes.h>
-
-#include <fastrtps/xmlparser/XMLProfileManager.h>
-
-#include <statistics/types/types.h>
+#include <gtest/gtest.h>
 
 #include <fastdds/dds/log/Log.hpp>
 #include <fastdds/dds/publisher/qos/WriterQos.hpp>
 #include <fastdds/dds/subscriber/qos/ReaderQos.hpp>
-
 #include <fastdds/rtps/RTPSDomain.h>
 #include <fastdds/rtps/attributes/HistoryAttributes.h>
 #include <fastdds/rtps/attributes/RTPSParticipantAttributes.h>
@@ -39,8 +31,19 @@
 #include <fastdds/rtps/participant/RTPSParticipant.h>
 #include <fastdds/rtps/reader/RTPSReader.h>
 #include <fastdds/rtps/writer/RTPSWriter.h>
-
 #include <fastdds/statistics/IListeners.hpp>
+#include <fastrtps/attributes/LibrarySettingsAttributes.h>
+#include <fastrtps/attributes/LibrarySettingsAttributes.h>
+#include <fastrtps/attributes/TopicAttributes.h>
+#include <fastrtps/attributes/TopicAttributes.h>
+#include <fastrtps/transport/test_UDPv4TransportDescriptor.h>
+#include <fastrtps/xmlparser/XMLProfileManager.h>
+#include <fastrtps/xmlparser/XMLProfileManager.h>
+
+#include <statistics/types/types.h>
+
+#include <rtps/transport/test_UDPv4Transport.h>
+#include <utils/SystemInfo.hpp>
 
 namespace eprosima {
 namespace fastdds {
@@ -66,6 +69,9 @@ struct MockListener : IListener
             case DATA_COUNT:
                 on_data_count(data.entity_count());
                 break;
+            case NACKFRAG_COUNT:
+                on_nackfrag_count(data.entity_count());
+                break;
             default:
                 break;
         }
@@ -75,11 +81,48 @@ struct MockListener : IListener
     MOCK_METHOD(void, on_heartbeat_count, (const eprosima::fastdds::statistics::EntityCount&));
     MOCK_METHOD(void, on_acknack_count, (const eprosima::fastdds::statistics::EntityCount&));
     MOCK_METHOD(void, on_data_count, (const eprosima::fastdds::statistics::EntityCount&));
+    MOCK_METHOD(void, on_nackfrag_count, (const eprosima::fastdds::statistics::EntityCount&));
 };
 
 class RTPSStatisticsTests
     : public ::testing::Test
 {
+    using test_Descriptor = fastdds::rtps::test_UDPv4TransportDescriptor;
+
+    // transport filter, that would delegate into a custom one if provided
+    // Filters have specific getters and setters methods.
+    class TransportFilter
+    {
+        friend class RTPSStatisticsTests;
+
+        test_Descriptor::filter external_filter_;
+
+    public:
+
+        TransportFilter() = default;
+        TransportFilter(
+                const TransportFilter&) = delete;
+        TransportFilter(
+                TransportFilter&&) = delete;
+
+        bool operator ()(
+                fastrtps::rtps::CDRMessage_t& msg) const noexcept
+        {
+            try
+            {
+                // filter through the external functor
+                return external_filter_(msg);
+            }
+            catch ( std::bad_function_call&)
+            {
+                return false; // don't filter
+            }
+        }
+
+    };
+
+    std::map<fastrtps::rtps::SubmessageId, TransportFilter> filters_;
+
 protected:
 
     fastrtps::rtps::WriterHistory* writer_history_ = nullptr;
@@ -89,7 +132,47 @@ protected:
     fastrtps::rtps::RTPSWriter* writer_ = nullptr;
     fastrtps::rtps::RTPSReader* reader_ = nullptr;
 
-    void create_endpoints(
+    // Getters and setters for the transport filter
+    using filter = fastdds::rtps::test_UDPv4TransportDescriptor::filter;
+
+    template<class F>
+    void set_transport_filter(
+            fastrtps::rtps::SubmessageId id,
+            F f) noexcept
+    {
+        filters_[id].external_filter_ = f;
+    }
+
+    void set_transport_filter(
+            fastrtps::rtps::SubmessageId id,
+            std::nullptr_t) noexcept
+    {
+        filters_[id].external_filter_ = nullptr;
+    }
+
+    test_Descriptor::filter get_transport_filter(
+            fastrtps::rtps::SubmessageId id) noexcept
+    {
+        return filters_[id].external_filter_;
+    }
+
+    void create_reader(
+            uint32_t payloadMaxSize,
+            fastrtps::rtps::ReliabilityKind_t reliability_qos = fastrtps::rtps::ReliabilityKind_t::RELIABLE)
+    {
+        using namespace fastrtps::rtps;
+
+        HistoryAttributes history_attributes;
+        history_attributes.payloadMaxSize = payloadMaxSize;
+        reader_history_ = new ReaderHistory(history_attributes);
+
+        ReaderAttributes r_att;
+        r_att.endpoint.reliabilityKind = reliability_qos;
+
+        reader_ = RTPSDomain::createRTPSReader(participant_, r_att, reader_history_);
+    }
+
+    void create_writer(
             uint32_t payloadMaxSize,
             fastrtps::rtps::ReliabilityKind_t reliability_qos = fastrtps::rtps::ReliabilityKind_t::RELIABLE)
     {
@@ -98,15 +181,19 @@ protected:
         HistoryAttributes history_attributes;
         history_attributes.payloadMaxSize = payloadMaxSize;
         writer_history_ = new WriterHistory(history_attributes);
-        reader_history_ = new ReaderHistory(history_attributes);
 
         WriterAttributes w_att;
         w_att.endpoint.reliabilityKind = reliability_qos;
-        writer_ = RTPSDomain::createRTPSWriter(participant_, w_att, writer_history_);
 
-        ReaderAttributes r_att;
-        r_att.endpoint.reliabilityKind = reliability_qos;
-        reader_ = RTPSDomain::createRTPSReader(participant_, r_att, reader_history_);
+        writer_ = RTPSDomain::createRTPSWriter(participant_, w_att, writer_history_);
+    }
+
+    void create_endpoints(
+            uint32_t payloadMaxSize,
+            fastrtps::rtps::ReliabilityKind_t reliability_qos = fastrtps::rtps::ReliabilityKind_t::RELIABLE)
+    {
+        create_reader(payloadMaxSize, reliability_qos);
+        create_writer(payloadMaxSize, reliability_qos);
     }
 
     void match_endpoints(
@@ -123,14 +210,18 @@ protected:
         Tatt.topicName = topic_name;
 
         WriterQos Wqos;
+        auto& watt = writer_->getAttributes();
+        Wqos.m_durability.durabilityKind(watt.durabilityKind);
         Wqos.m_reliability.kind =
                 RELIABLE ==
-                writer_->getAttributes().reliabilityKind ? RELIABLE_RELIABILITY_QOS : BEST_EFFORT_RELIABILITY_QOS;
+                watt.reliabilityKind ? RELIABLE_RELIABILITY_QOS : BEST_EFFORT_RELIABILITY_QOS;
 
         ReaderQos Rqos;
+        auto& ratt = writer_->getAttributes();
+        Rqos.m_durability.durabilityKind(ratt.durabilityKind);
         Rqos.m_reliability.kind =
                 RELIABLE ==
-                reader_->getAttributes().reliabilityKind ? RELIABLE_RELIABILITY_QOS : BEST_EFFORT_RELIABILITY_QOS;
+                ratt.reliabilityKind ? RELIABLE_RELIABILITY_QOS : BEST_EFFORT_RELIABILITY_QOS;
 
         participant_->registerWriter(writer_, Tatt, Wqos);
         participant_->registerReader(reader_, Tatt, Rqos);
@@ -175,8 +266,25 @@ public:
         using namespace fastrtps::rtps;
 
         // create the participant
-        uint32_t domain_id = SystemInfo::instance().process_id() % 100;
         RTPSParticipantAttributes p_attr;
+
+        // use leaky transport
+        // as filter use a fixture provided functor
+        auto descriptor = std::make_shared<test_Descriptor>();
+
+        // initialize filters
+        descriptor->drop_data_messages_filter_  = std::ref(filters_[DATA]);
+        descriptor->drop_heartbeat_messages_filter_ = std::ref(filters_[HEARTBEAT]);
+        descriptor->drop_ack_nack_messages_filter_ = std::ref(filters_[ACKNACK]);
+        descriptor->drop_gap_messages_filter_ = std::ref(filters_[GAP]);
+        descriptor->drop_data_frag_messages_filter_ = std::ref(filters_[DATA_FRAG]);
+
+        p_attr.useBuiltinTransports = false;
+        p_attr.userTransports.push_back(descriptor);
+
+        // random domain_id
+        uint32_t domain_id = SystemInfo::instance().process_id() % 100;
+
         participant_ = RTPSDomain::createParticipant(
             domain_id, true, p_attr);
     }
@@ -400,10 +508,39 @@ TEST_F(RTPSStatisticsTests, statistics_rpts_listener_callbacks_fragmented)
     using namespace fastrtps::rtps;
     using namespace std;
 
+    // payload size
+    uint32_t length = 1048576;
+    uint16_t fragment_size = 64000; // should fit in transport message size
+
+    // make sure some messages are lost to assure the NACKFRAG callback
+    set_transport_filter(
+        DATA_FRAG,
+        [](fastrtps::rtps::CDRMessage_t& msg)-> bool
+        {
+            static uint32_t max_fragment = 0;
+            static bool keep_filtering = true;
+
+            uint32_t fragmentNum;
+            uint32_t old_pos = msg.pos;
+            msg.pos += 20;
+            fastrtps::rtps::CDRMessage::readUInt32(&msg, &fragmentNum);
+            msg.pos = old_pos;
+
+            // generate losses only on the first burst
+            if ( keep_filtering )
+            {
+                keep_filtering = max_fragment <= fragmentNum;
+                max_fragment = fragmentNum;
+                return fragmentNum % 2 == 0;
+            }
+
+            return false;
+        });
+
     // writer callbacks through participant listener
     auto participant_listener = make_shared<MockListener>();
-    EventKind mask = static_cast<EventKind>(EventKind::DATA_COUNT |
-            EventKind::HEARTBEAT_COUNT | EventKind::ACKNACK_COUNT);
+    EventKind mask = static_cast<EventKind>(EventKind::DATA_COUNT | EventKind::HEARTBEAT_COUNT
+            | EventKind::ACKNACK_COUNT | EventKind::NACKFRAG_COUNT);
     ASSERT_TRUE(participant_->add_statistics_listener(participant_listener, mask));
 
     EXPECT_CALL(*participant_listener, on_data_count)
@@ -412,9 +549,10 @@ TEST_F(RTPSStatisticsTests, statistics_rpts_listener_callbacks_fragmented)
             .Times(AtLeast(1));
     EXPECT_CALL(*participant_listener, on_acknack_count)
             .Times(AtLeast(1));
+    EXPECT_CALL(*participant_listener, on_nackfrag_count)
+            .Times(AtLeast(1));
 
     // Create the testing endpoints
-    uint16_t length = 65000;
     create_endpoints(length);
 
     // match writer and reader on a dummy topic
@@ -433,20 +571,20 @@ TEST_F(RTPSStatisticsTests, statistics_rpts_listener_callbacks_fragmented)
     {
         memset(writer_change->serializedPayload.data, 'e', length);
         writer_change->serializedPayload.length = length;
-        writer_change->setFragmentSize(length);
+        writer_change->setFragmentSize(fragment_size, true);
     }
 
     ASSERT_TRUE(writer_history_->add_change(writer_change));
 
     // wait for reception
-    EXPECT_TRUE(reader_->wait_for_unread_cache(Duration_t(5, 0)));
+    EXPECT_TRUE(reader_->wait_for_unread_cache(Duration_t(10, 0)));
 
     // receive the sample
     CacheChange_t* reader_change = nullptr;
     ASSERT_TRUE(reader_->nextUntakenCache(&reader_change, nullptr));
 
     // wait for acknowledgement
-    EXPECT_TRUE(writer_->wait_for_all_acked(Duration_t(5, 0)));
+    EXPECT_TRUE(writer_->wait_for_all_acked(Duration_t(1, 0)));
 
     reader_->releaseCache(reader_change);
 

@@ -48,7 +48,6 @@ struct CacheChange_t;
 struct ReaderHistoryState;
 class WriterProxyData;
 class IDataSharingListener;
-class RTPSMessageGroup;
 
 /**
  * Class RTPSReader, manages the reception of data from its matched writers.

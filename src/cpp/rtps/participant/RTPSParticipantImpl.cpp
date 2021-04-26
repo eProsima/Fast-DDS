@@ -1982,7 +1982,6 @@ bool RTPSParticipantImpl::register_in_writer(
         std::shared_ptr<fastdds::statistics::IListener> listener,
         GUID_t writer_guid)
 {
-    std::lock_guard<std::recursive_mutex> lock(*getParticipantMutex());
     bool res = false;
 
     if ( GUID_t::unknown() == writer_guid )
@@ -2006,7 +2005,6 @@ bool RTPSParticipantImpl::register_in_reader(
         std::shared_ptr<fastdds::statistics::IListener> listener,
         GUID_t reader_guid)
 {
-    std::lock_guard<std::recursive_mutex> lock(*getParticipantMutex());
     bool res = false;
 
     if ( GUID_t::unknown() == reader_guid )
@@ -2029,7 +2027,6 @@ bool RTPSParticipantImpl::register_in_reader(
 bool RTPSParticipantImpl::unregister_in_writer(
         std::shared_ptr<fastdds::statistics::IListener> listener)
 {
-    std::lock_guard<std::recursive_mutex> lock(*getParticipantMutex());
     bool res = true;
 
     for ( auto writer : m_userWriterList)
@@ -2043,7 +2040,6 @@ bool RTPSParticipantImpl::unregister_in_writer(
 bool RTPSParticipantImpl::unregister_in_reader(
         std::shared_ptr<fastdds::statistics::IListener> listener)
 {
-    std::lock_guard<std::recursive_mutex> lock(*getParticipantMutex());
     bool res = true;
 
     for ( auto reader : m_userReaderList)
