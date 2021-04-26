@@ -264,20 +264,22 @@ public:
     /*
      * Registers a listener in participant's statistics callback queue
      * @param listener smart pointer to the listener being registered
+     * @param kind combination of fastdds::statistics::EventKind flags used as a mask
      * @return successfully registered
      */
     bool add_statistics_listener(
             std::shared_ptr<fastdds::statistics::IListener> listener,
-            fastdds::statistics::EventKind kind);
+            uint32_t kind);
 
     /*
      * Unregisters a listener in participant's statistics callback queue
      * @param listener smart pointer to the listener being unregistered
+     * @param kind combination of fastdds::statistics::EventKind flags used as a mask
      * @return successfully unregistered
      */
     bool remove_statistics_listener(
             std::shared_ptr<fastdds::statistics::IListener> listener,
-            fastdds::statistics::EventKind kind);
+            uint32_t kind);
 };
 
 // auxiliary conversion functions

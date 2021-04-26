@@ -427,12 +427,12 @@ TEST_F(RTPSStatisticsTests, statistics_rpts_listener_management)
     // + fails if a listener is already removed
     EXPECT_FALSE(participant_->remove_statistics_listener(listener1, kind));
     // + The EventKind is an actual mask that allow register multiple entities simultaneously
-    EXPECT_TRUE(participant_->add_statistics_listener(listener1, static_cast<EventKind>(kind | another_kind)));
+    EXPECT_TRUE(participant_->add_statistics_listener(listener1, kind | another_kind));
     // + When using a mask of multiple entities the return value succeeds only if all
     //   entity driven operations succeeds. The following operation must fail because one
     //   of the entities has not that registered listener
     EXPECT_FALSE(participant_->remove_statistics_listener(listener1,
-            static_cast<EventKind>(kind | another_kind | yet_another_kind)));
+            kind | another_kind | yet_another_kind));
 
     // test the writer apis
     // + fails to remove an empty listener
@@ -603,8 +603,8 @@ TEST_F(RTPSStatisticsTests, statistics_rpts_listener_callbacks_fragmented)
 
     // writer callbacks through participant listener
     auto participant_listener = make_shared<MockListener>();
-    EventKind mask = static_cast<EventKind>(EventKind::DATA_COUNT | EventKind::HEARTBEAT_COUNT
-            | EventKind::ACKNACK_COUNT | EventKind::NACKFRAG_COUNT);
+    uint32_t mask = EventKind::DATA_COUNT | EventKind::HEARTBEAT_COUNT
+            | EventKind::ACKNACK_COUNT | EventKind::NACKFRAG_COUNT;
     ASSERT_TRUE(participant_->add_statistics_listener(participant_listener, mask));
 
     EXPECT_CALL(*participant_listener, on_data_count)

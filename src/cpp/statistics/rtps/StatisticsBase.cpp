@@ -154,7 +154,7 @@ bool StatisticsParticipantImpl::are_readers_involved(
 
 bool StatisticsParticipantImpl::add_statistics_listener(
         std::shared_ptr<fastdds::statistics::IListener> listener,
-        fastdds::statistics::EventKind kind)
+        uint32_t kind)
 {
     std::unique_lock<std::recursive_mutex> lock(get_statistics_mutex());
 
@@ -215,7 +215,7 @@ bool StatisticsParticipantImpl::add_statistics_listener(
 
 bool StatisticsParticipantImpl::remove_statistics_listener(
         std::shared_ptr<fastdds::statistics::IListener> listener,
-        fastdds::statistics::EventKind kind)
+        uint32_t kind)
 {
     std::unique_lock<std::recursive_mutex> lock(get_statistics_mutex());
 
