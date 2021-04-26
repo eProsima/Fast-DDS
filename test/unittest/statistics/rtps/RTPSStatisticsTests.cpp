@@ -49,8 +49,32 @@ namespace rtps {
 
 struct MockListener : IListener
 {
-    MOCK_METHOD1(on_statistics_data, void(
-                const Data&));
+    void on_statistics_data(
+            const Data& data) override
+    {
+        switch (data._d())
+        {
+            case RTPS_SENT:
+                on_rtps_sent(data.entity2locator_traffic());
+                break;
+            case HEARTBEAT_COUNT:
+                on_heartbeat_count(data.entity_count());
+                break;
+            case ACKNACK_COUNT:
+                on_acknack_count(data.entity_count());
+                break;
+            case DATA_COUNT:
+                on_data_count(data.entity_count());
+                break;
+            default:
+                break;
+        }
+    }
+
+    MOCK_METHOD(void, on_rtps_sent, (const eprosima::fastdds::statistics::Entity2LocatorTraffic&));
+    MOCK_METHOD(void, on_heartbeat_count, (const eprosima::fastdds::statistics::EntityCount&));
+    MOCK_METHOD(void, on_acknack_count, (const eprosima::fastdds::statistics::EntityCount&));
+    MOCK_METHOD(void, on_data_count, (const eprosima::fastdds::statistics::EntityCount&));
 };
 
 class RTPSStatisticsTests
@@ -297,29 +321,33 @@ TEST_F(RTPSStatisticsTests, statistics_rpts_listener_callbacks)
     // reader specific callbacks
     auto reader_listener = make_shared<MockListener>();
     ASSERT_TRUE(reader_->add_statistics_listener(reader_listener));
-    // We must received the sent data notifications
-    EXPECT_CALL(*participant_listener, on_statistics_data)
-            .Times(AtLeast(1));
 
-    // match writer and reader on a dummy topic
-    match_endpoints(false, "string", "statisticsSmallTopic");
+    // We must received the RTPS_SENT notifications
+    EXPECT_CALL(*participant_listener, on_rtps_sent)
+            .Times(AtLeast(1));
 
     // Check callbacks on data exchange, at least, we must received:
     // + RTPSWriter: PUBLICATION_THROUGHPUT, RESENT_DATAS,
     //               GAP_COUNT, DATA_COUNT, SAMPLE_DATAS & PHYSICAL_DATA
-    //   optionally: ACKNACK_COUNT & NACKFRAG_COUNT
-    EXPECT_CALL(*writer_listener, on_statistics_data)
+    //   optionally: NACKFRAG_COUNT
+    EXPECT_CALL(*writer_listener, on_heartbeat_count)
             .Times(AtLeast(1));
-    EXPECT_CALL(*participant_writer_listener, on_statistics_data)
+    EXPECT_CALL(*writer_listener, on_data_count)
             .Times(AtLeast(1));
 
-    // + RTPSReader: SUBSCRIPTION_THROUGHPUT, DATA_COUNT,
+    EXPECT_CALL(*participant_writer_listener, on_data_count)
+            .Times(AtLeast(1));
+
+    // + RTPSReader: SUBSCRIPTION_THROUGHPUT,
     //               SAMPLE_DATAS & PHYSICAL_DATA
-    //   optionally: HEARTBEAT_COUNT
-    EXPECT_CALL(*reader_listener, on_statistics_data)
+    //   optionally: ACKNACK_COUNT
+    EXPECT_CALL(*reader_listener, on_acknack_count)
             .Times(AtLeast(1));
-    EXPECT_CALL(*participant_reader_listener, on_statistics_data)
+    EXPECT_CALL(*participant_reader_listener, on_acknack_count)
             .Times(AtLeast(1));
+
+    // match writer and reader on a dummy topic
+    match_endpoints(false, "string", "statisticsSmallTopic");
 
     // exchange data
     auto writer_change = writer_->new_change(
@@ -374,10 +402,15 @@ TEST_F(RTPSStatisticsTests, statistics_rpts_listener_callbacks_fragmented)
 
     // writer callbacks through participant listener
     auto participant_listener = make_shared<MockListener>();
-    EventKind mask = static_cast<EventKind>(EventKind::DATA_COUNT | EventKind::ACKNACK_COUNT);
+    EventKind mask = static_cast<EventKind>(EventKind::DATA_COUNT |
+            EventKind::HEARTBEAT_COUNT | EventKind::ACKNACK_COUNT);
     ASSERT_TRUE(participant_->add_statistics_listener(participant_listener, mask));
 
-    EXPECT_CALL(*participant_listener, on_statistics_data)
+    EXPECT_CALL(*participant_listener, on_data_count)
+            .Times(AtLeast(1));
+    EXPECT_CALL(*participant_listener, on_heartbeat_count)
+            .Times(AtLeast(1));
+    EXPECT_CALL(*participant_listener, on_acknack_count)
             .Times(AtLeast(1));
 
     // Create the testing endpoints
@@ -411,6 +444,9 @@ TEST_F(RTPSStatisticsTests, statistics_rpts_listener_callbacks_fragmented)
     // receive the sample
     CacheChange_t* reader_change = nullptr;
     ASSERT_TRUE(reader_->nextUntakenCache(&reader_change, nullptr));
+
+    // wait for acknowledgement
+    EXPECT_TRUE(writer_->wait_for_all_acked(Duration_t(5, 0)));
 
     reader_->releaseCache(reader_change);
 

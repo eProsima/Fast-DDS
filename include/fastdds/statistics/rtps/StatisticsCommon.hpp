@@ -144,10 +144,17 @@ protected:
 
     // TODO: methods for listeners callbacks
 
-    //! Report a DATA message is sent
+    /*
+     * @brief Report that a HEARTBEAT message is sent
+     * @param current count of heartbeats
+     */
+    void on_heartbeat(
+            uint32_t count);
+
+    //! Report that a DATA message is sent
     void on_data();
 
-    //! Report a DATA_FRAG message is sent
+    //! Report that a DATA_FRAG message is sent
     void on_data_frag();
 
 };

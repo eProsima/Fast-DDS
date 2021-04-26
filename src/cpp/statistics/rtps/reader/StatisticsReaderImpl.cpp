@@ -67,7 +67,7 @@ void StatisticsReaderImpl::on_acknack(
     notification.guid(to_statistics_type(get_guid()));
     notification.count(count);
 
-    // Callback
+    // Perform the callback
     Data data;
     // note that the setter sets RESENT_DATAS by default
     data.entity_count(notification);
