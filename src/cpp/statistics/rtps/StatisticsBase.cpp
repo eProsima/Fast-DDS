@@ -294,7 +294,7 @@ void StatisticsParticipantImpl::on_rtps_sent(
         notification.byte_magnitude_order((int16_t)floor(log10(float(val.byte_count))));
     }
 
-    // Callback
+    // Perform the callbacks
     Data data;
     // note that the setter sets RTPS_SENT by default
     data.entity2locator_traffic(notification);
