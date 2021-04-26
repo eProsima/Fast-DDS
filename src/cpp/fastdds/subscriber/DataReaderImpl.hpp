@@ -102,7 +102,7 @@ public:
 
     virtual ~DataReaderImpl();
 
-    ReturnCode_t enable();
+    virtual ReturnCode_t enable();
 
     bool can_be_deleted() const;
 
@@ -261,7 +261,7 @@ public:
      */
 
     //! Remove all listeners in the hierarchy to allow a quiet destruction
-    void disable();
+    virtual void disable();
 
     /* Check whether values in the DataReaderQos are compatible among them or not
      * @return True if correct.

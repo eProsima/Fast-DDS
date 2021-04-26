@@ -51,6 +51,28 @@ public:
     {
     }
 
+    ReturnCode_t enable() override
+    {
+        ReturnCode_t ret = BaseType::enable();
+
+        if (ReturnCode_t::RETCODE_OK == ret)
+        {
+            reader_->add_statistics_listener(statistics_listener_);
+        }
+
+        return ret;
+    }
+
+    void disable() override
+    {
+        if (nullptr != reader_)
+        {
+            reader_->remove_statistics_listener(statistics_listener_);
+        }
+
+        BaseType::disable();
+    }
+
 private:
 
     std::shared_ptr<IListener> statistics_listener_;
