@@ -93,7 +93,7 @@ protected:
      */
     DataReaderImpl(
             SubscriberImpl* s,
-            TypeSupport& type,
+            const TypeSupport& type,
             TopicDescription* topic,
             const DataReaderQos& qos,
             DataReaderListener* listener = nullptr);

@@ -115,7 +115,7 @@ static bool qos_has_specific_locators(
 
 DataReaderImpl::DataReaderImpl(
         SubscriberImpl* s,
-        TypeSupport& type,
+        const TypeSupport& type,
         TopicDescription* topic,
         const DataReaderQos& qos,
         DataReaderListener* listener)
