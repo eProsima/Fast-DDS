@@ -203,9 +203,11 @@ protected:
     Function for_each_listener(
             Function f)
     {
-        std::lock_guard<std::recursive_mutex> lock(get_statistics_mutex());
+        std::unique_lock<std::recursive_mutex> lock(get_statistics_mutex());
+        auto temp_listeners = listeners_;
+        lock.unlock();
 
-        for (auto& listener : listeners_)
+        for (auto& listener : temp_listeners)
         {
             f(listener);
         }
