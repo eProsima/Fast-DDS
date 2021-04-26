@@ -24,7 +24,7 @@
 namespace eprosima {
 namespace fastdds {
 namespace dds {
-    
+
 class DataWriter
 {
 public:

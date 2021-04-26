@@ -131,7 +131,7 @@ protected:
     }
 
     void write_all_data_except(
-        EventKind kind)
+            EventKind kind)
     {
         for (const Data& data : data_)
         {

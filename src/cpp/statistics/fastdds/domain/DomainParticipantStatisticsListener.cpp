@@ -35,7 +35,7 @@ void DomainParticipantStatisticsListener::on_statistics_data(
         const Data& statistics_data)
 {
     std::lock_guard<std::mutex> guard(mtx_);
-    
+
     DataWriter* writer = nullptr;
     EventKind data_kind = statistics_data._d();
     auto writer_it = writers_.find(data_kind);
