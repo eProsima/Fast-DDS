@@ -116,6 +116,7 @@ ReturnCode_t DomainParticipantFactory::delete_participant(
 
     if (part != nullptr)
     {
+        std::lock_guard<std::mutex> guard(mtx_participants_);
 #ifdef FASTDDS_STATISTICS
         // Delete builtin statistics entities
         eprosima::fastdds::statistics::dds::DomainParticipantImpl* stat_part_impl =
@@ -126,7 +127,6 @@ ReturnCode_t DomainParticipantFactory::delete_participant(
         {
             return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
         }
-        std::lock_guard<std::mutex> guard(mtx_participants_);
 
         VectorIt vit = participants_.find(part->get_domain_id());
 

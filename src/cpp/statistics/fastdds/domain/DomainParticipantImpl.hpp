@@ -74,7 +74,11 @@ public:
     ReturnCode_t disable_statistics_datawriter(
             const std::string& topic_name);
 
-    virtual ReturnCode_t enable() override;
+    /**
+     * @brief This operation enables the DomainParticipantImpl
+     * @return RETCODE_OK if successful
+     */
+    ReturnCode_t enable() override;
 
 protected:
 
@@ -93,8 +97,6 @@ protected:
 
     /**
      * Auxiliary function to create the statistics builtin entities.
-     * @return true if succesfully created statistics DDS entities,
-     * false otherwise.
      */
     void create_statistics_builtin_entities();
 
@@ -175,7 +177,7 @@ protected:
  * The topic names must conform to the topic names aliases defined in @ref topic_names.hpp.
  * For the variable to take any effect the CMake option FASTDDS_STATISTICS must be enabled.
  */
-const char* const FASTDDS_STATISTICS_ENVIRONMENT_VARIABLE = "FASTDDS_STATISTICS";
+constexpr const char* FASTDDS_STATISTICS_ENVIRONMENT_VARIABLE = "FASTDDS_STATISTICS";
 
 } // dds
 } // statistics
