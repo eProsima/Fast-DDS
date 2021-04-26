@@ -87,6 +87,8 @@ public:
      */
     ReturnCode_t enable() override;
 
+    void disable() override;
+
     /**
      * Auxiliary function that checks if a topic name corresponds to a statistics builtin topic name.
      * @param [in]   topic_name string with the topic name to check.

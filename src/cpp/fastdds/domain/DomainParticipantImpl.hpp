@@ -373,7 +373,7 @@ public:
             std::function<void(const std::string& name, const fastrtps::types::DynamicType_ptr type)>& callback);
 
     //! Remove all listeners in the hierarchy to allow a quiet destruction
-    void disable();
+    virtual void disable();
 
     /**
      * This method checks if the DomainParticipant has created an entity that has not been

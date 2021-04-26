@@ -31,6 +31,7 @@
 #include <fastdds/dds/topic/TypeSupport.hpp>
 #include <fastdds/dds/topic/qos/TopicQos.hpp>
 #include <fastdds/rtps/attributes/PropertyPolicy.h>
+#include <fastdds/rtps/participant/RTPSParticipant.h>
 #include <fastdds/statistics/dds/publisher/qos/DataWriterQos.hpp>
 #include <fastdds/statistics/topic_names.hpp>
 
@@ -63,6 +64,11 @@ constexpr const char* DISCOVERY_TOPIC_ALIAS = "DISCOVERY_TOPIC";
 constexpr const char* SAMPLE_DATAS_TOPIC_ALIAS = "SAMPLE_DATAS_TOPIC";
 constexpr const char* PHYSICAL_DATA_TOPIC_ALIAS = "PHYSICAL_DATA_TOPIC";
 
+static constexpr uint32_t participant_statistics_mask =
+        EventKind::RTPS_SENT | EventKind::RTPS_LOST | EventKind::NETWORK_LATENCY |
+        EventKind::EDP_PACKETS | EventKind::PDP_PACKETS |
+        EventKind::PHYSICAL_DATA | EventKind::DISCOVERED_ENTITY;
+
 struct ValidEntry
 {
     const char* alias;
@@ -93,7 +99,7 @@ static const ValidEntry valid_entries[] =
 
 ReturnCode_t DomainParticipantImpl::enable_statistics_datawriter(
         const std::string& topic_name,
-        const eprosima::fastdds::dds::DataWriterQos& dwqos)
+        const efd::DataWriterQos& dwqos)
 {
     std::string use_topic_name;
     EventKind event_kind;
@@ -102,13 +108,13 @@ ReturnCode_t DomainParticipantImpl::enable_statistics_datawriter(
         return ReturnCode_t::RETCODE_BAD_PARAMETER;
     }
 
-    if (!eprosima::fastdds::dds::DataWriterImpl::check_qos(dwqos))
+    if (!efd::DataWriterImpl::check_qos(dwqos))
     {
         return ReturnCode_t::RETCODE_INCONSISTENT_POLICY;
     }
 
     // Register type and topic
-    eprosima::fastdds::dds::Topic* topic = nullptr;
+    efd::Topic* topic = nullptr;
     if (register_statistics_type_and_topic(&topic, use_topic_name))
     {
         // Check if the statistics DataWriter already exists and create statistics DataWriter if it does not.
@@ -143,7 +149,7 @@ ReturnCode_t DomainParticipantImpl::disable_statistics_datawriter(
 
     // Delete statistics DataWriter
     // delete_datawriter does not check that the provided argument is not nullptr (safety check)
-    eprosima::fastdds::dds::DataWriter* writer = builtin_publisher_->lookup_datawriter(use_topic_name);
+    efd::DataWriter* writer = builtin_publisher_->lookup_datawriter(use_topic_name);
     if (nullptr != writer)
     {
         // Avoid calling DataWriter from listener callback
@@ -168,14 +174,24 @@ ReturnCode_t DomainParticipantImpl::disable_statistics_datawriter(
 
 ReturnCode_t DomainParticipantImpl::enable()
 {
-    ReturnCode_t ret = eprosima::fastdds::dds::DomainParticipantImpl::enable();
+    ReturnCode_t ret = efd::DomainParticipantImpl::enable();
 
     if (ReturnCode_t::RETCODE_OK == ret)
     {
+        rtps_participant_->add_statistics_listener(statistics_listener_, participant_statistics_mask);
         create_statistics_builtin_entities();
     }
 
     return ret;
+}
+
+void DomainParticipantImpl::disable()
+{
+    if (nullptr != rtps_participant_)
+    {
+        rtps_participant_->remove_statistics_listener(statistics_listener_, participant_statistics_mask);
+    }
+    efd::DomainParticipantImpl::disable();
 }
 
 efd::PublisherImpl* DomainParticipantImpl::create_publisher_impl(
@@ -195,7 +211,7 @@ efd::SubscriberImpl* DomainParticipantImpl::create_subscriber_impl(
 void DomainParticipantImpl::create_statistics_builtin_entities()
 {
     // Builtin publisher
-    builtin_publisher_ = create_publisher(eprosima::fastdds::dds::PUBLISHER_QOS_DEFAULT);
+    builtin_publisher_ = create_publisher(efd::PUBLISHER_QOS_DEFAULT);
 
     // Enable statistics datawriters
     // 1. Find fastdds_statistics PropertyPolicyQos
@@ -245,7 +261,7 @@ void DomainParticipantImpl::enable_statistics_builtin_datawriters(
 
 void DomainParticipantImpl::delete_statistics_builtin_entities()
 {
-    std::vector<eprosima::fastdds::dds::DataWriter*> builtin_writers;
+    std::vector<efd::DataWriter*> builtin_writers;
     builtin_publisher_->get_datawriters(builtin_writers);
     for (auto writer : builtin_writers)
     {
@@ -290,62 +306,62 @@ bool DomainParticipantImpl::transform_and_check_topic_name(
 }
 
 bool DomainParticipantImpl::register_statistics_type_and_topic(
-        eprosima::fastdds::dds::Topic** topic,
+        efd::Topic** topic,
         const std::string& topic_name) noexcept
 {
     bool return_code = false;
     if (HISTORY_LATENCY_TOPIC == topic_name)
     {
-        eprosima::fastdds::dds::TypeSupport history_latency_type(new WriterReaderDataPubSubType);
+        efd::TypeSupport history_latency_type(new WriterReaderDataPubSubType);
         return_code = find_or_create_topic_and_type(topic, topic_name, history_latency_type);
     }
     else if (NETWORK_LATENCY_TOPIC == topic_name)
     {
-        eprosima::fastdds::dds::TypeSupport network_latency_type(new Locator2LocatorDataPubSubType);
+        efd::TypeSupport network_latency_type(new Locator2LocatorDataPubSubType);
         return_code = find_or_create_topic_and_type(topic, topic_name, network_latency_type);
     }
     else if (PUBLICATION_THROUGHPUT_TOPIC == topic_name || SUBSCRIPTION_THROUGHPUT_TOPIC == topic_name)
     {
-        eprosima::fastdds::dds::TypeSupport throughput_type(new EntityDataPubSubType);
+        efd::TypeSupport throughput_type(new EntityDataPubSubType);
         return_code = find_or_create_topic_and_type(topic, topic_name, throughput_type);
     }
     else if (RTPS_SENT_TOPIC == topic_name || RTPS_LOST_TOPIC == topic_name)
     {
-        eprosima::fastdds::dds::TypeSupport rtps_traffic_type(new Entity2LocatorTrafficPubSubType);
+        efd::TypeSupport rtps_traffic_type(new Entity2LocatorTrafficPubSubType);
         return_code = find_or_create_topic_and_type(topic, topic_name, rtps_traffic_type);
     }
     else if (RESENT_DATAS_TOPIC == topic_name || HEARTBEAT_COUNT_TOPIC == topic_name ||
             ACKNACK_COUNT_TOPIC == topic_name || NACKFRAG_COUNT_TOPIC == topic_name || GAP_COUNT_TOPIC == topic_name ||
             DATA_COUNT_TOPIC == topic_name || PDP_PACKETS_TOPIC == topic_name || EDP_PACKETS_TOPIC == topic_name)
     {
-        eprosima::fastdds::dds::TypeSupport count_type(new EntityCountPubSubType);
+        efd::TypeSupport count_type(new EntityCountPubSubType);
         return_code = find_or_create_topic_and_type(topic, topic_name, count_type);
     }
     else if (DISCOVERY_TOPIC == topic_name)
     {
-        eprosima::fastdds::dds::TypeSupport discovery_type(new DiscoveryTimePubSubType);
+        efd::TypeSupport discovery_type(new DiscoveryTimePubSubType);
         return_code = find_or_create_topic_and_type(topic, topic_name, discovery_type);
     }
     else if (SAMPLE_DATAS_TOPIC == topic_name)
     {
-        eprosima::fastdds::dds::TypeSupport sample_identity_count_type(new SampleIdentityCountPubSubType);
+        efd::TypeSupport sample_identity_count_type(new SampleIdentityCountPubSubType);
         return_code = find_or_create_topic_and_type(topic, topic_name, sample_identity_count_type);
     }
     else if (PHYSICAL_DATA_TOPIC == topic_name)
     {
-        eprosima::fastdds::dds::TypeSupport physical_data_type(new PhysicalDataPubSubType);
+        efd::TypeSupport physical_data_type(new PhysicalDataPubSubType);
         return_code = find_or_create_topic_and_type(topic, topic_name, physical_data_type);
     }
     return return_code;
 }
 
 bool DomainParticipantImpl::find_or_create_topic_and_type(
-        eprosima::fastdds::dds::Topic** topic,
+        efd::Topic** topic,
         const std::string& topic_name,
-        const eprosima::fastdds::dds::TypeSupport& type) noexcept
+        const efd::TypeSupport& type) noexcept
 {
     // Find if the topic has been already created and if the associated type is correct
-    eprosima::fastdds::dds::TopicDescription* topic_desc = lookup_topicdescription(topic_name);
+    efd::TopicDescription* topic_desc = lookup_topicdescription(topic_name);
     if (nullptr != topic_desc)
     {
         if (topic_desc->get_type_name() != type->getName())
@@ -358,7 +374,7 @@ bool DomainParticipantImpl::find_or_create_topic_and_type(
         {
             // TODO(jlbueno) This casting should be checked after other TopicDescription implementations are
             // included: ContentFilteredTopic, MultiTopic.
-            *topic = dynamic_cast<eprosima::fastdds::dds::Topic*>(topic_desc);
+            *topic = dynamic_cast<efd::Topic*>(topic_desc);
         }
     }
     else
@@ -370,7 +386,7 @@ bool DomainParticipantImpl::find_or_create_topic_and_type(
         }
         // Create topic. No need to check return pointer. It fails if the topic already exists, if the QoS is
         // inconsistent or if the type is not registered.
-        *topic = create_topic(topic_name, type->getName(), eprosima::fastdds::dds::TOPIC_QOS_DEFAULT);
+        *topic = create_topic(topic_name, type->getName(), efd::TOPIC_QOS_DEFAULT);
     }
     assert(nullptr != *topic);
     return true;
@@ -379,9 +395,9 @@ bool DomainParticipantImpl::find_or_create_topic_and_type(
 bool DomainParticipantImpl::delete_topic_and_type(
         const std::string& topic_name) noexcept
 {
-    eprosima::fastdds::dds::TopicDescription* topic_desc = lookup_topicdescription(topic_name);
+    efd::TopicDescription* topic_desc = lookup_topicdescription(topic_name);
     assert(nullptr != topic_desc);
-    eprosima::fastdds::dds::Topic* topic = dynamic_cast<eprosima::fastdds::dds::Topic*>(topic_desc);
+    efd::Topic* topic = dynamic_cast<efd::Topic*>(topic_desc);
     std::string type_name = topic->get_type_name();
     // delete_topic can fail if the topic is referenced by any other entity. This case could happen even if
     // it should not. It also fails if topic is a nullptr (dynamic_cast failure).

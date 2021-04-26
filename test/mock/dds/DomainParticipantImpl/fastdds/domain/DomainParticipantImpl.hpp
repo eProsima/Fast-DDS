@@ -498,7 +498,7 @@ public:
         return ReturnCode_t::RETCODE_OK;
     }
 
-    void disable()
+    virtual void disable()
     {
     }
 
