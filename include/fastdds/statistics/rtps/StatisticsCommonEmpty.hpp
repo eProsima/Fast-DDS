@@ -60,6 +60,11 @@ protected:
     {
     }
 
+    //! Report that a GAP message is sent
+    inline void on_gap()
+    {
+    }
+
 };
 
 class StatisticsReaderImpl

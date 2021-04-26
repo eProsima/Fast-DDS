@@ -12,11 +12,6 @@
                 "-DTHIRDPARTY=ON",
                 "-DGTEST_INDIVIDUAL=ON",
                 "-DEPROSIMA_GTEST=ON",
-                "-DFASTRTPS_API_TESTS=ON",
-                "-DFASTDDS_PIM_API_TESTS=ON",
-                "-DPERFORMANCE_TESTS=ON",
-                "-DPROFILING_TESTS=ON",
-                "-DVIDEO_TESTS=ON",
                 "-DFASTDDS_STATISTICS=ON",
             ]
         }

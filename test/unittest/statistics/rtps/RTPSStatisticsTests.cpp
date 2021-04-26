@@ -69,6 +69,9 @@ struct MockListener : IListener
             case DATA_COUNT:
                 on_data_count(data.entity_count());
                 break;
+            case GAP_COUNT:
+                on_gap_count(data.entity_count());
+                break;
             case NACKFRAG_COUNT:
                 on_nackfrag_count(data.entity_count());
                 break;
@@ -81,6 +84,7 @@ struct MockListener : IListener
     MOCK_METHOD(void, on_heartbeat_count, (const eprosima::fastdds::statistics::EntityCount&));
     MOCK_METHOD(void, on_acknack_count, (const eprosima::fastdds::statistics::EntityCount&));
     MOCK_METHOD(void, on_data_count, (const eprosima::fastdds::statistics::EntityCount&));
+    MOCK_METHOD(void, on_gap_count, (const eprosima::fastdds::statistics::EntityCount&));
     MOCK_METHOD(void, on_nackfrag_count, (const eprosima::fastdds::statistics::EntityCount&));
 };
 
@@ -158,7 +162,8 @@ protected:
 
     void create_reader(
             uint32_t payloadMaxSize,
-            fastrtps::rtps::ReliabilityKind_t reliability_qos = fastrtps::rtps::ReliabilityKind_t::RELIABLE)
+            fastrtps::rtps::ReliabilityKind_t reliability_qos = fastrtps::rtps::ReliabilityKind_t::RELIABLE,
+            fastrtps::rtps::DurabilityKind_t durability_qos = fastrtps::rtps::DurabilityKind_t::VOLATILE)
     {
         using namespace fastrtps::rtps;
 
@@ -168,13 +173,15 @@ protected:
 
         ReaderAttributes r_att;
         r_att.endpoint.reliabilityKind = reliability_qos;
+        r_att.endpoint.durabilityKind = durability_qos;
 
         reader_ = RTPSDomain::createRTPSReader(participant_, r_att, reader_history_);
     }
 
     void create_writer(
             uint32_t payloadMaxSize,
-            fastrtps::rtps::ReliabilityKind_t reliability_qos = fastrtps::rtps::ReliabilityKind_t::RELIABLE)
+            fastrtps::rtps::ReliabilityKind_t reliability_qos = fastrtps::rtps::ReliabilityKind_t::RELIABLE,
+            fastrtps::rtps::DurabilityKind_t durability_qos = fastrtps::rtps::DurabilityKind_t::TRANSIENT_LOCAL)
     {
         using namespace fastrtps::rtps;
 
@@ -184,6 +191,7 @@ protected:
 
         WriterAttributes w_att;
         w_att.endpoint.reliabilityKind = reliability_qos;
+        w_att.endpoint.durabilityKind = durability_qos;
 
         writer_ = RTPSDomain::createRTPSWriter(participant_, w_att, writer_history_);
     }
@@ -246,6 +254,55 @@ protected:
             reader_ = nullptr;
             reader_history_ = nullptr;
         }
+    }
+
+    void write_small_sample(
+            uint32_t length)
+    {
+        using namespace fastrtps::rtps;
+
+        ASSERT_NE(nullptr, writer_);
+
+        auto writer_change = writer_->new_change(
+            [length]() -> uint32_t
+            {
+                return length;
+            },
+            ALIVE);
+
+        ASSERT_NE(nullptr, writer_change);
+
+        std::string str("https://github.com/eProsima/Fast-DDS.git");
+        memcpy(writer_change->serializedPayload.data, str.c_str(), str.length());
+        writer_change->serializedPayload.length = (uint32_t)str.length();
+
+        ASSERT_TRUE(writer_history_->add_change(writer_change));
+    }
+
+    void write_large_sample(
+            uint32_t length,
+            uint16_t fragment_size)
+    {
+        using namespace fastrtps::rtps;
+
+        ASSERT_NE(nullptr, writer_);
+
+        auto writer_change = writer_->new_change(
+            [length]() -> uint32_t
+            {
+                return length;
+            },
+            ALIVE);
+
+        ASSERT_NE(nullptr, writer_change);
+
+        {
+            memset(writer_change->serializedPayload.data, 'e', length);
+            writer_change->serializedPayload.length = length;
+            writer_change->setFragmentSize(fragment_size, true);
+        }
+
+        ASSERT_TRUE(writer_history_->add_change(writer_change));
     }
 
 public:
@@ -398,6 +455,7 @@ TEST_F(RTPSStatisticsTests, statistics_rpts_listener_management)
  * - RTPS_SENT callbacks are performed
  * - DATA_COUNT callbacks are performed for DATA submessages
  * - ACKNACK_COUNT callbacks are performed
+ * - HEARBEAT_COUNT callbacks are performed
  */
 TEST_F(RTPSStatisticsTests, statistics_rpts_listener_callbacks)
 {
@@ -406,9 +464,9 @@ TEST_F(RTPSStatisticsTests, statistics_rpts_listener_callbacks)
     using namespace fastrtps::rtps;
     using namespace std;
 
-    // Create the testing endpoints
+    // create the testing endpoints
     uint16_t length = 255;
-    create_endpoints(length);
+    create_endpoints(length, RELIABLE);
 
     // participant specific callbacks
     auto participant_listener = make_shared<MockListener>();
@@ -422,7 +480,7 @@ TEST_F(RTPSStatisticsTests, statistics_rpts_listener_callbacks)
     auto writer_listener = make_shared<MockListener>();
     ASSERT_TRUE(writer_->add_statistics_listener(writer_listener));
 
-    // writer callbacks through participant listener
+    // reader callbacks through participant listener
     auto participant_reader_listener = make_shared<MockListener>();
     ASSERT_TRUE(participant_->add_statistics_listener(participant_reader_listener, EventKind::ACKNACK_COUNT));
 
@@ -430,7 +488,7 @@ TEST_F(RTPSStatisticsTests, statistics_rpts_listener_callbacks)
     auto reader_listener = make_shared<MockListener>();
     ASSERT_TRUE(reader_->add_statistics_listener(reader_listener));
 
-    // We must received the RTPS_SENT notifications
+    // we must received the RTPS_SENT notifications
     EXPECT_CALL(*participant_listener, on_rtps_sent)
             .Times(AtLeast(1));
 
@@ -458,22 +516,7 @@ TEST_F(RTPSStatisticsTests, statistics_rpts_listener_callbacks)
     match_endpoints(false, "string", "statisticsSmallTopic");
 
     // exchange data
-    auto writer_change = writer_->new_change(
-        [length]() -> uint32_t
-        {
-            return length;
-        },
-        ALIVE);
-
-    ASSERT_NE(nullptr, writer_change);
-
-    {
-        string str("https://github.com/eProsima/Fast-DDS.git");
-        memcpy(writer_change->serializedPayload.data, str.c_str(), str.length());
-        writer_change->serializedPayload.length = (uint32_t)str.length();
-    }
-
-    ASSERT_TRUE(writer_history_->add_change(writer_change));
+    write_small_sample(length);
 
     // wait for reception
     EXPECT_TRUE(reader_->wait_for_unread_cache(Duration_t(5, 0)));
@@ -493,13 +536,13 @@ TEST_F(RTPSStatisticsTests, statistics_rpts_listener_callbacks)
     EXPECT_TRUE(participant_->remove_statistics_listener(participant_listener, EventKind::RTPS_SENT));
     EXPECT_TRUE(participant_->remove_statistics_listener(participant_writer_listener, EventKind::DATA_COUNT));
     EXPECT_TRUE(participant_->remove_statistics_listener(participant_reader_listener, EventKind::ACKNACK_COUNT));
-
 }
 
 /*
  * This test checks RTPSParticipant, RTPSWriter and RTPSReader statistics module related APIs.
  * - participant listeners management with late joiners
  * - DATA_COUNT callbacks with DATA_FRAGS are performed
+ * - NACK_FRAG callbacks assessment
  */
 TEST_F(RTPSStatisticsTests, statistics_rpts_listener_callbacks_fragmented)
 {
@@ -553,28 +596,13 @@ TEST_F(RTPSStatisticsTests, statistics_rpts_listener_callbacks_fragmented)
             .Times(AtLeast(1));
 
     // Create the testing endpoints
-    create_endpoints(length);
+    create_endpoints(length, RELIABLE);
 
     // match writer and reader on a dummy topic
     match_endpoints(false, "chunk", "statisticsLargeTopic");
 
     // exchange data
-    auto writer_change = writer_->new_change(
-        [length]() -> uint32_t
-        {
-            return length;
-        },
-        ALIVE);
-
-    ASSERT_NE(nullptr, writer_change);
-
-    {
-        memset(writer_change->serializedPayload.data, 'e', length);
-        writer_change->serializedPayload.length = length;
-        writer_change->setFragmentSize(fragment_size, true);
-    }
-
-    ASSERT_TRUE(writer_history_->add_change(writer_change));
+    write_large_sample(length, fragment_size);
 
     // wait for reception
     EXPECT_TRUE(reader_->wait_for_unread_cache(Duration_t(10, 0)));
@@ -589,6 +617,72 @@ TEST_F(RTPSStatisticsTests, statistics_rpts_listener_callbacks_fragmented)
     reader_->releaseCache(reader_change);
 
     EXPECT_TRUE(participant_->remove_statistics_listener(participant_listener, mask));
+}
+
+/*
+ * This test checks RTPSWriter GAP_COUNT statistics callback
+ */
+TEST_F(RTPSStatisticsTests, statistics_rpts_listener_gap_callback)
+{
+    using namespace ::testing;
+    using namespace fastrtps;
+    using namespace fastrtps::rtps;
+    using namespace std;
+
+    // create the listeners and set expectations
+    auto participant_writer_listener = make_shared<MockListener>();
+    auto writer_listener = make_shared<MockListener>();
+
+    // check callbacks on data exchange
+    EXPECT_CALL(*writer_listener, on_gap_count)
+            .Times(AtLeast(1));
+    EXPECT_CALL(*writer_listener, on_heartbeat_count)
+            .Times(AtLeast(1));
+    EXPECT_CALL(*writer_listener, on_data_count)
+            .Times(AtLeast(1));
+
+    EXPECT_CALL(*participant_writer_listener, on_gap_count)
+            .Times(AtLeast(1));
+
+    // create the writer, reader is a late joiner
+    uint16_t length = 255;
+    create_writer(length, RELIABLE, TRANSIENT_LOCAL);
+
+    // writer callback through participant listener
+    ASSERT_TRUE(participant_->add_statistics_listener(participant_writer_listener, EventKind::GAP_COUNT));
+
+    // writer specific callbacks
+    ASSERT_TRUE(writer_->add_statistics_listener(writer_listener));
+
+    // add a sample to the writer history that will be delivered
+    write_small_sample(length);
+    // add a second sample and remove it to generate the gap
+    write_small_sample(length);
+    ASSERT_TRUE(writer_history_->remove_change(SequenceNumber_t{0, 2}));
+
+    // create the late joiner as VOLATILE
+    create_reader(length, RELIABLE, VOLATILE);
+
+    // match writer and reader on a dummy topic
+    match_endpoints(false, "string", "statisticsSmallTopic");
+
+    // std::this_thread::sleep_for(std::chrono::seconds(10));
+
+
+    // wait for reception
+    EXPECT_TRUE(reader_->wait_for_unread_cache(Duration_t(5, 0)));
+
+    // receive the second sample
+    CacheChange_t* reader_change = nullptr;
+    ASSERT_TRUE(reader_->nextUntakenCache(&reader_change, nullptr));
+
+    // wait for acknowledgement
+    EXPECT_TRUE(writer_->wait_for_all_acked(Duration_t(1, 0)));
+    reader_->releaseCache(reader_change);
+
+    // release the listeners
+    EXPECT_TRUE(writer_->remove_statistics_listener(writer_listener));
+    EXPECT_TRUE(participant_->remove_statistics_listener(participant_writer_listener, EventKind::GAP_COUNT));
 }
 
 } // namespace rtps
