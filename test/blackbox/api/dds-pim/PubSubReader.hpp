@@ -267,6 +267,7 @@ public:
         , onDiscovery_(nullptr)
         , onEndpointDiscovery_(nullptr)
         , take_(take)
+        , statistics_(statistics)
 #if HAVE_SECURITY
         , authorized_(0)
         , unauthorized_(0)
@@ -1538,6 +1539,9 @@ private:
 
     //! True to take data from history. False to read
     bool take_;
+
+    //! True if the class is called from the statistics blackbox (specific topic name and domain id).
+    bool statistics_;
 
 #if HAVE_SECURITY
     std::mutex mutexAuthentication_;

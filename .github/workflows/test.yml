@@ -33,12 +33,6 @@ jobs:
         run: |
           cat src/Fast-DDS/.github/workflows/colcon.meta
           colcon build \
-            --packages-up-to fastrtps --packages-skip fastrtps \
-            --event-handlers=console_direct+ \
-            --metas src/Fast-DDS/.github/workflows/colcon.meta \
-            --mixin coverage-gcc
-          colcon build \
-            --packages-select fastrtps --cmake-target RTPSStatisticsTests --cmake-target-skip-unavailable \
             --event-handlers=console_direct+ \
             --metas src/Fast-DDS/.github/workflows/colcon.meta \
             --mixin coverage-gcc
@@ -48,7 +42,7 @@ jobs:
           colcon test \
             --packages-select fastrtps \
             --event-handlers=console_direct+ \
-            --ctest-args -R RTPSStatisticsTests
+            --ctest-args -R Statistics
 
       - name: Generate coverage report
         run: |
