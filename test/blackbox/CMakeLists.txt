@@ -290,9 +290,19 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER) AND fastcdr_FOUND)
                 ${DDS_BLACKBOXTESTS_SOURCE}
                 api/dds-pim/ReqRepHelloWorldRequester.cpp
                 api/dds-pim/ReqRepHelloWorldReplier.cpp
-                ${PROJECT_SOURCE_DIR}/src/cpp/statistics/types/types.cxx
-                ${PROJECT_SOURCE_DIR}/src/cpp/statistics/types/typesPubSubTypes.cxx
                 )
+
+            if (FASTDDS_STATISTICS)
+
+                set(statistics_sources
+                    ${PROJECT_SOURCE_DIR}/src/cpp/statistics/types/types.cxx
+                    ${PROJECT_SOURCE_DIR}/src/cpp/statistics/types/typesPubSubTypes.cxx
+                    )
+
+                list(APPEND BLACKBOXTESTS_FASTDDS_PIM_SOURCE ${statistics_sources})
+
+            endif()
+
             add_executable(BlackboxTests_DDS_PIM ${BLACKBOXTESTS_FASTDDS_PIM_SOURCE})
             target_compile_definitions(BlackboxTests_DDS_PIM PRIVATE
                 $<$<NOT:$<BOOL:${IS_THIRDPARTY_BOOST_SUPPORTED}>>:FASTDDS_SHM_TRANSPORT_DISABLED> # Do not compile SHM Transport
