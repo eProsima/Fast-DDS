@@ -357,7 +357,8 @@ class RTPSStatisticsTests
 {
 public:
 
-    static void SetUpTestSuite()
+    // Sets up the test fixture.
+    void SetUp() override
     {
         using namespace fastrtps;
 
@@ -365,11 +366,7 @@ public:
         LibrarySettingsAttributes att;
         att.intraprocess_delivery = INTRAPROCESS_OFF;
         xmlparser::XMLProfileManager::library_settings(att);
-    }
 
-    // Sets up the test fixture.
-    void SetUp() override
-    {
         create_participant();
     }
 
