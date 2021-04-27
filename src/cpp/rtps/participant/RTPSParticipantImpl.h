@@ -256,6 +256,7 @@ public:
     /**
      * Send a message to several locations
      * @param msg Message to send.
+     * @param sender_guid GUID of the producer of the message.
      * @param destination_locators_begin Iterator at the first destination locator.
      * @param destination_locators_end Iterator at the end destination locator.
      * @param max_blocking_time_point execution time limit timepoint.
@@ -264,6 +265,7 @@ public:
     template<class LocatorIteratorT>
     bool sendSync(
             CDRMessage_t* msg,
+            const GUID_t& sender_guid,
             const LocatorIteratorT& destination_locators_begin,
             const LocatorIteratorT& destination_locators_end,
             std::chrono::steady_clock::time_point& max_blocking_time_point)
@@ -287,6 +289,7 @@ public:
 
             // notify statistics module
             on_rtps_send(
+                sender_guid,
                 destination_locators_begin,
                 destination_locators_end,
                 msg->length);

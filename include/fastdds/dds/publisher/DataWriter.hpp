@@ -16,8 +16,8 @@
  * @file DataWriter.hpp
  */
 
-#ifndef _FASTRTPS_DATAWRITER_HPP_
-#define _FASTRTPS_DATAWRITER_HPP_
+#ifndef _FASTDDS_DDS_PUBLISHER_DATAWRITER_HPP_
+#define _FASTDDS_DDS_PUBLISHER_DATAWRITER_HPP_
 
 #include <fastdds/dds/builtin/topic/SubscriptionBuiltinTopicData.hpp>
 #include <fastdds/dds/core/Entity.hpp>
@@ -550,4 +550,4 @@ protected:
 } /* namespace fastdds */
 } /* namespace eprosima */
 
-#endif //_FASTRTPS_DATAWRITER_HPP_
+#endif // _FASTDDS_DDS_PUBLISHER_DATAWRITER_HPP_

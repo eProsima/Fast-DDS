@@ -80,6 +80,24 @@ public:
         return true;
     }
 
+#ifdef FASTDDS_STATISTICS
+
+    template<typename T>
+    bool add_statistics_listener(
+            T /*listener*/)
+    {
+        return true;
+    }
+
+    template<typename T>
+    bool remove_statistics_listener(
+            T /*listener*/)
+    {
+        return true;
+    }
+
+#endif // FASTDDS_STATISTICS
+
     // *INDENT-OFF* Uncrustify makes a mess with MOCK_METHOD macros
     MOCK_METHOD1(change_removed_by_history, bool(CacheChange_t* change));
 

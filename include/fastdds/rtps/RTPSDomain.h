@@ -121,6 +121,24 @@ public:
             WriterListener* listen = nullptr);
 
     /**
+     * Create a RTPSWriter in a participant.
+     * @param p Pointer to the RTPSParticipant.
+     * @param entity_id Specific entity id to use for the created writer.
+     * @param watt Writer Attributes.
+     * @param payload_pool Shared pointer to the IPayloadPool
+     * @param hist Pointer to the WriterHistory.
+     * @param listen Pointer to the WriterListener.
+     * @return Pointer to the created RTPSWriter.
+     */
+    RTPS_DllAPI static RTPSWriter* createRTPSWriter(
+            RTPSParticipant* p,
+            const EntityId_t& entity_id,
+            WriterAttributes& watt,
+            const std::shared_ptr<IPayloadPool>& payload_pool,
+            WriterHistory* hist,
+            WriterListener* listen = nullptr);
+
+    /**
      * Remove a RTPSWriter.
      * @param writer Pointer to the writer you want to remove.
      * @return  True if correctly removed.

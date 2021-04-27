@@ -38,14 +38,23 @@
 
 #include <fastdds/domain/DomainParticipantImpl.hpp>
 
+#include "DomainParticipantStatisticsListener.hpp"
+
+namespace efd = eprosima::fastdds::dds;
+
 using ReturnCode_t = eprosima::fastrtps::types::ReturnCode_t;
 
 namespace eprosima {
 namespace fastdds {
 namespace statistics {
+
+enum EventKind : uint32_t;
+
 namespace dds {
 
-class DomainParticipantImpl : public eprosima::fastdds::dds::DomainParticipantImpl
+class PublisherImpl;
+
+class DomainParticipantImpl : public efd::DomainParticipantImpl
 {
 public:
 
@@ -61,7 +70,7 @@ public:
      */
     ReturnCode_t enable_statistics_datawriter(
             const std::string& topic_name,
-            const eprosima::fastdds::dds::DataWriterQos& dwqos);
+            const efd::DataWriterQos& dwqos);
 
     /**
      * @brief This operation disables a Statistics DataWriter
@@ -80,20 +89,39 @@ public:
      */
     ReturnCode_t enable() override;
 
+    void disable() override;
+
+    /**
+     * Auxiliary function that checks if a topic name corresponds to a statistics builtin topic name.
+     * @param [in]   topic_name string with the topic name to check.
+     * @return whether the input string corresponds to a builtin statistics topic name.
+     */
+    static bool is_statistics_topic_name(
+            const std::string& topic_name) noexcept;
+
 protected:
 
     /**
      * Constructor
      */
     DomainParticipantImpl(
-            eprosima::fastdds::dds::DomainParticipant* dp,
-            eprosima::fastdds::dds::DomainId_t did,
-            const eprosima::fastdds::dds::DomainParticipantQos& qos,
-            eprosima::fastdds::dds::DomainParticipantListener* listen = nullptr)
-        : eprosima::fastdds::dds::DomainParticipantImpl(dp, did, qos, listen)
+            efd::DomainParticipant* dp,
+            efd::DomainId_t did,
+            const efd::DomainParticipantQos& qos,
+            efd::DomainParticipantListener* listen = nullptr)
+        : efd::DomainParticipantImpl(dp, did, qos, listen)
         , builtin_publisher_(nullptr)
+        , statistics_listener_(std::make_shared<DomainParticipantStatisticsListener>())
     {
     }
+
+    efd::PublisherImpl* create_publisher_impl(
+            const efd::PublisherQos& qos,
+            efd::PublisherListener* listener) override;
+
+    efd::SubscriberImpl* create_subscriber_impl(
+            const efd::SubscriberQos& qos,
+            efd::SubscriberListener* listener) override;
 
     /**
      * Auxiliary function to create the statistics builtin entities.
@@ -114,21 +142,15 @@ protected:
 
     /**
      * Auxiliary function that transforms the topic alias to the topic name.
-     * @param topic string with the statistic topic name or alias.
-     * @return string with the corresponding topic name if an alias has been used.
-     * Otherwise, the same string passed as parameter is returned.
+     * @param [in]   topic_name_or_alias string with the statistic topic name or alias.
+     * @param [out]  topic_name          string with the corresponding topic name to use.
+     * @param [out]  event_kind          statistics event kind corresponding to the topic name.
+     * @return whether the input string corresponds to a valid topic name or alias.
      */
-    const std::string transform_topic_name_alias(
-            const std::string& topic) noexcept;
-
-    /**
-     * Auxiliary function to check if the topic name provided is a valid one.
-     * @param topic string with the statistic topic name.
-     * @return true if the topic name provided is valid.
-     * false otherwise.
-     */
-    bool check_statistics_topic_name(
-            const std::string& topic) noexcept;
+    bool transform_and_check_topic_name(
+            const std::string& topic_name_or_alias,
+            std::string& topic_name,
+            EventKind& event_kind) noexcept;
 
     /**
      * Auxiliary function to register the statistics type depending on the statistics topic name.
@@ -140,7 +162,7 @@ protected:
      * false in case there is incompatibility between the type associated to the Topic and the expected type.
      */
     bool register_statistics_type_and_topic(
-            eprosima::fastdds::dds::Topic** topic,
+            efd::Topic** topic,
             const std::string& topic_name) noexcept;
 
     /**
@@ -154,9 +176,9 @@ protected:
      * fails because there is another TypeSupport using the same name. true otherwise.
      */
     bool find_or_create_topic_and_type(
-            eprosima::fastdds::dds::Topic** topic,
+            efd::Topic** topic,
             const std::string& topic_name,
-            const eprosima::fastdds::dds::TypeSupport& type) noexcept;
+            const efd::TypeSupport& type) noexcept;
 
     /**
      * Auxiliary method to delete a topic and deregister a type after checking that they are consistent.
@@ -167,9 +189,11 @@ protected:
     bool delete_topic_and_type(
             const std::string& topic_name) noexcept;
 
-    eprosima::fastdds::dds::Publisher* builtin_publisher_;
+    efd::Publisher* builtin_publisher_ = nullptr;
+    PublisherImpl* builtin_publisher_impl_ = nullptr;
+    std::shared_ptr<DomainParticipantStatisticsListener> statistics_listener_;
 
-    friend class eprosima::fastdds::dds::DomainParticipantFactory;
+    friend class efd::DomainParticipantFactory;
 };
 
 /* Environment variable to specify a semicolon-separated list of topic names that define the statistics DataWriters that

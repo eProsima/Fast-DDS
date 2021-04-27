@@ -98,6 +98,11 @@ public:
 
     DataWriter* create_datawriter(
             Topic* topic,
+            DataWriterImpl* impl,
+            const StatusMask& mask);
+
+    DataWriter* create_datawriter(
+            Topic* topic,
             const DataWriterQos& qos,
             DataWriterListener* listener,
             const StatusMask& mask = StatusMask::all());
@@ -239,6 +244,12 @@ protected:
     DataWriterQos default_datawriter_qos_;
 
     fastrtps::rtps::InstanceHandle_t handle_;
+
+    virtual DataWriterImpl* create_datawriter_impl(
+            const TypeSupport& type,
+            Topic* topic,
+            const DataWriterQos& qos,
+            DataWriterListener* listener);
 
     static void set_qos(
             PublisherQos& to,

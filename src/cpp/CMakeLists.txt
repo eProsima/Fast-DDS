@@ -240,6 +240,7 @@ if (FASTDDS_STATISTICS)
 
     set(statistics_sources
         statistics/fastdds/domain/DomainParticipantImpl.cpp
+        statistics/fastdds/domain/DomainParticipantStatisticsListener.cpp
         statistics/rtps/StatisticsBase.cpp
         statistics/rtps/reader/StatisticsReaderImpl.cpp
         statistics/rtps/writer/StatisticsWriterImpl.cpp

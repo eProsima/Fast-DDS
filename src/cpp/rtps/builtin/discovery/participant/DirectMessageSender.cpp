@@ -39,7 +39,7 @@ DirectMessageSender::DirectMessageSender(
     for (const GUID_t& guid : *guids)
     {
         if (std::find(participant_guids_.begin(), participant_guids_.end(), guid.guidPrefix) ==
-            participant_guids_.end())
+                participant_guids_.end())
         {
             participant_guids_.push_back(guid.guidPrefix);
         }
@@ -98,7 +98,8 @@ bool DirectMessageSender::send(
         CDRMessage_t* message,
         std::chrono::steady_clock::time_point& max_blocking_time_point) const
 {
-    return participant_->sendSync(message, Locators(locators_->begin()), Locators(locators_->end()), max_blocking_time_point);
+    return participant_->sendSync(message, participant_->getGuid(),
+                   Locators(locators_->begin()), Locators(locators_->end()), max_blocking_time_point);
 }
 
 } /* namespace rtps */

@@ -33,7 +33,9 @@
 #include <fastdds/dds/topic/TypeSupport.hpp>
 #include <fastdds/rtps/common/Guid.h>
 #include <fastdds/rtps/common/Types.h>
+#include <fastdds/rtps/RTPSDomain.h>
 #include <fastdds/rtps/participant/RTPSParticipant.h>
+#include <fastdds/rtps/participant/RTPSParticipantListener.h>
 #include <fastdds/rtps/resources/ResourceEvent.h>
 #include <fastrtps/attributes/TopicAttributes.h>
 #include <fastrtps/types/TypesBase.h>
@@ -74,6 +76,8 @@ protected:
         , default_pub_qos_(PUBLISHER_QOS_DEFAULT)
         , default_sub_qos_(SUBSCRIBER_QOS_DEFAULT)
         , default_topic_qos_(TOPIC_QOS_DEFAULT)
+#pragma warning (disable : 4355)
+        , rtps_listener_(this)
     {
         participant_->impl_ = this;
 
@@ -83,7 +87,13 @@ protected:
         default_topic_qos_.resource_limits() = top_attr.resourceLimitsQos;
     }
 
-    virtual ~DomainParticipantImpl() = default;
+    virtual ~DomainParticipantImpl()
+    {
+        if (rtps_participant_ != nullptr)
+        {
+            eprosima::fastrtps::rtps::RTPSDomain::removeRTPSParticipant(rtps_participant_);
+        }
+    }
 
 public:
 
@@ -91,6 +101,11 @@ public:
 
     virtual ReturnCode_t enable()
     {
+        fastrtps::rtps::RTPSParticipantAttributes rtps_attr;
+
+        rtps_participant_ = eprosima::fastrtps::rtps::RTPSDomain::createParticipant(
+            domain_id_, false, rtps_attr, &rtps_listener_);
+
         return ReturnCode_t::RETCODE_OK;
     }
 
@@ -127,7 +142,7 @@ public:
             PublisherListener* listener = nullptr,
             const StatusMask& mask = StatusMask::all())
     {
-        PublisherImpl* pubimpl = new PublisherImpl(this, qos, listener);
+        PublisherImpl* pubimpl = create_publisher_impl(qos, listener);
         Publisher* pub = new Publisher(pubimpl, mask);
         pubimpl->user_publisher_ = pub;
 
@@ -172,7 +187,7 @@ public:
             SubscriberListener* listener = nullptr,
             const StatusMask& mask = StatusMask::all())
     {
-        SubscriberImpl* subimpl = new SubscriberImpl(this, qos, listener);
+        SubscriberImpl* subimpl = create_subscriber_impl(qos, listener);
         Subscriber* sub = new Subscriber(subimpl, mask);
         subimpl->user_subscriber_ = sub;
 
@@ -498,8 +513,9 @@ public:
         return ReturnCode_t::RETCODE_OK;
     }
 
-    void disable()
+    virtual void disable()
     {
+        rtps_listener_.participant_ = nullptr;
     }
 
     bool has_active_entities()
@@ -544,6 +560,37 @@ protected:
     std::map<std::string, TypeSupport> types_;
     mutable std::mutex mtx_types_;
     TopicQos default_topic_qos_;
+
+    class MyRTPSParticipantListener : public fastrtps::rtps::RTPSParticipantListener
+    {
+    public:
+
+        MyRTPSParticipantListener(
+                DomainParticipantImpl* impl)
+            : participant_(impl)
+        {
+        }
+
+        virtual ~MyRTPSParticipantListener() = default;
+
+        DomainParticipantImpl* participant_;
+
+    }
+    rtps_listener_;
+
+    virtual PublisherImpl* create_publisher_impl(
+            const PublisherQos& qos,
+            PublisherListener* listener)
+    {
+        return new PublisherImpl(this, qos, listener);
+    }
+
+    virtual SubscriberImpl* create_subscriber_impl(
+            const SubscriberQos& qos,
+            SubscriberListener* listener)
+    {
+        return new SubscriberImpl(this, qos, listener);
+    }
 
     static void set_qos(
             DomainParticipantQos& /*to*/,
