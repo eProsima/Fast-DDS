@@ -49,7 +49,7 @@ inline void set_statistics_entity_id(
         EventKind kind,
         fastrtps::rtps::EntityId_t& entity_id)
 {
-    entity_id.value[3] = 0x60;
+    entity_id.value[3] = 0x62;
     entity_id.value[2] = kind & 0xFF;
     entity_id.value[1] = (kind >> 8) & 0xFF;
     entity_id.value[0] = (kind >> 16) & 0xFF;
