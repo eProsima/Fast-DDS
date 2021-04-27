@@ -237,6 +237,8 @@ public:
         writer_history_ = new WriterHistory(history_attributes);
 
         WriterAttributes w_att;
+        w_att.times.heartbeatPeriod.seconds = 0;
+        w_att.times.heartbeatPeriod.nanosec = 250 * 1000 * 1000; // reduce acknowledgement wait
         w_att.endpoint.reliabilityKind = reliability_qos;
         w_att.endpoint.durabilityKind = durability_qos;
 
