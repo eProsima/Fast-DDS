@@ -98,6 +98,11 @@ public:
 
     DataWriter* create_datawriter(
             Topic* topic,
+            DataWriterImpl* impl,
+            const StatusMask& mask);
+
+    DataWriter* create_datawriter(
+            Topic* topic,
             const DataWriterQos& qos,
             DataWriterListener* listener,
             const StatusMask& mask = StatusMask::all());

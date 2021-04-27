@@ -265,9 +265,17 @@ DataWriter* PublisherImpl::create_datawriter(
         return nullptr;
     }
 
+    DataWriterImpl* impl = create_datawriter_impl(type_support, topic, qos, listener);
+    return create_datawriter(topic, impl, mask);
+}
+
+DataWriter* PublisherImpl::create_datawriter(
+        Topic* topic,
+        DataWriterImpl* impl,
+        const StatusMask& mask)
+{
     topic->get_impl()->reference();
 
-    DataWriterImpl* impl = create_datawriter_impl(type_support, topic, qos, listener);
     DataWriter* writer = new DataWriter(impl, mask);
     impl->user_datawriter_ = writer;
 
