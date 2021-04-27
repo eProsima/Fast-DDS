@@ -139,10 +139,8 @@ TEST(DDSStatistics, simple_statistics_datareaders)
     ASSERT_NE(nullptr, data_stats_reader);
 
     // Enable DomainParticipant related statistics
-    /*
     auto rtps_stats_reader = enable_statistics(w_statistics_participant, w_subscriber, statistics::RTPS_SENT_TOPIC);
     ASSERT_NE(nullptr, rtps_stats_reader);
-    //*/
 
     auto r_subscriber = const_cast<Subscriber*>(data_reader.get_native_reader().get_subscriber());
     ASSERT_NE(nullptr, r_subscriber);
@@ -170,10 +168,8 @@ TEST(DDSStatistics, simple_statistics_datareaders)
     wait_statistics(ack_stats_reader, 1, "ACKNACK_COUNT_TOPIC", 10u);
     disable_statistics(r_statistics_participant, r_subscriber, ack_stats_reader, statistics::ACKNACK_COUNT_TOPIC);
 
-    /*
     wait_statistics(rtps_stats_reader, num_samples, "RTPS_SENT_TOPIC", 10u);
     disable_statistics(w_statistics_participant, w_subscriber, rtps_stats_reader, statistics::RTPS_SENT_TOPIC);
-    //*/
 
     w_participant->delete_subscriber(w_subscriber);
 
