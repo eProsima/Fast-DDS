@@ -141,6 +141,16 @@ DataWriterImpl::DataWriterImpl(
 {
 }
 
+fastrtps::rtps::RTPSWriter* DataWriterImpl::create_rtps_writer(
+        fastrtps::rtps::RTPSParticipant* p,
+        fastrtps::rtps::WriterAttributes& watt,
+        const std::shared_ptr<IPayloadPool>& payload_pool,
+        fastrtps::rtps::WriterHistory* hist,
+        fastrtps::rtps::WriterListener* listen)
+{
+    return RTPSDomain::createRTPSWriter(p, watt, payload_pool, hist, listen);
+}
+
 ReturnCode_t DataWriterImpl::enable()
 {
     assert(writer_ == nullptr);
@@ -230,7 +240,7 @@ ReturnCode_t DataWriterImpl::enable()
         return ReturnCode_t::RETCODE_ERROR;
     }
 
-    RTPSWriter* writer = RTPSDomain::createRTPSWriter(
+    RTPSWriter* writer = create_rtps_writer(
         publisher_->rtps_participant(),
         w_att, pool,
         static_cast<WriterHistory*>(&history_),
