@@ -84,14 +84,14 @@ public:
 
     template<typename T>
     bool add_statistics_listener(
-            T listener)
+            T /*listener*/)
     {
         return true;
     }
 
     template<typename T>
     bool remove_statistics_listener(
-            T listener)
+            T /*listener*/)
     {
         return true;
     }
