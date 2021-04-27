@@ -28,7 +28,7 @@
 namespace eprosima {
 namespace fastdds {
 namespace statistics {
-    
+
 /**
  * Checks whether an entity id corresponds to a builtin statistics writer.
  * @param [in] entity_id The entity id to check.
