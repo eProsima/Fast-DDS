@@ -198,7 +198,12 @@ efd::PublisherImpl* DomainParticipantImpl::create_publisher_impl(
         const efd::PublisherQos& qos,
         efd::PublisherListener* listener)
 {
-    return new PublisherImpl(this, qos, listener, statistics_listener_);
+    auto impl = new PublisherImpl(this, qos, listener, statistics_listener_);
+    if (nullptr == builtin_publisher_impl_)
+    {
+        builtin_publisher_impl_ = impl;
+    }
+    return impl;
 }
 
 efd::SubscriberImpl* DomainParticipantImpl::create_subscriber_impl(

@@ -52,6 +52,8 @@ enum EventKind : uint32_t;
 
 namespace dds {
 
+class PublisherImpl;
+
 class DomainParticipantImpl : public efd::DomainParticipantImpl
 {
 public:
@@ -187,7 +189,8 @@ protected:
     bool delete_topic_and_type(
             const std::string& topic_name) noexcept;
 
-    efd::Publisher* builtin_publisher_;
+    efd::Publisher* builtin_publisher_ = nullptr;
+    PublisherImpl* builtin_publisher_impl_ = nullptr;
     std::shared_ptr<DomainParticipantStatisticsListener> statistics_listener_;
 
     friend class efd::DomainParticipantFactory;
