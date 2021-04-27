@@ -46,6 +46,17 @@ public:
             efd::TypeSupport type,
             efd::Topic* topic,
             const efd::DataWriterQos& qos,
+            const eprosima::fastrtps::rtps::EntityId_t& entity_id)
+        : BaseType(p, type, topic, qos, nullptr)
+        , entity_id_(entity_id)
+    {
+    }
+
+    DataWriterImpl(
+            efd::PublisherImpl* p,
+            efd::TypeSupport type,
+            efd::Topic* topic,
+            const efd::DataWriterQos& qos,
             efd::DataWriterListener* listener,
             std::shared_ptr<IListener> stat_listener)
         : BaseType(p, type, topic, qos, listener)
@@ -57,8 +68,7 @@ public:
     {
         ReturnCode_t ret = BaseType::enable();
 
-        if (ReturnCode_t::RETCODE_OK == ret &&
-                !DomainParticipantImpl::is_statistics_topic_name(topic_->get_name()))
+        if (ReturnCode_t::RETCODE_OK == ret && statistics_listener_)
         {
             writer_->add_statistics_listener(statistics_listener_);
         }
@@ -68,8 +78,7 @@ public:
 
     void disable() override
     {
-        if (nullptr != writer_ &&
-                !DomainParticipantImpl::is_statistics_topic_name(topic_->get_name()))
+        if (nullptr != writer_ && statistics_listener_)
         {
             writer_->remove_statistics_listener(statistics_listener_);
         }
@@ -80,6 +89,7 @@ public:
 private:
 
     std::shared_ptr<IListener> statistics_listener_;
+    eprosima::fastrtps::rtps::EntityId_t entity_id_;
 };
 
 } // dds

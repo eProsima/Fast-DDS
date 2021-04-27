@@ -53,6 +53,15 @@ public:
             const efd::TypeSupport& type,
             efd::Topic* topic,
             const efd::DataWriterQos& qos,
+            const eprosima::fastrtps::rtps::EntityId_t& entity_id)
+    {
+        return new DataWriterImpl(this, type, topic, qos, entity_id);
+    }
+
+    efd::DataWriterImpl* create_datawriter_impl(
+            const efd::TypeSupport& type,
+            efd::Topic* topic,
+            const efd::DataWriterQos& qos,
             efd::DataWriterListener* listener) override
     {
         return new DataWriterImpl(this, type, topic, qos, listener, statistics_listener_);

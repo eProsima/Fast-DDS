@@ -38,6 +38,7 @@
 #include <fastdds/publisher/DataWriterImpl.hpp>
 #include <statistics/fastdds/publisher/PublisherImpl.hpp>
 #include <statistics/fastdds/subscriber/SubscriberImpl.hpp>
+#include <statistics/rtps/GuidUtils.hpp>
 #include <statistics/types/typesPubSubTypes.h>
 #include <utils/SystemInfo.hpp>
 
@@ -120,7 +121,11 @@ ReturnCode_t DomainParticipantImpl::enable_statistics_datawriter(
         // Check if the statistics DataWriter already exists and create statistics DataWriter if it does not.
         if (nullptr == builtin_publisher_->lookup_datawriter(use_topic_name))
         {
-            auto data_writer = builtin_publisher_->create_datawriter(topic, dwqos);
+            fastrtps::rtps::EntityId_t entity_id;
+            set_statistics_entity_id(event_kind, entity_id);
+            efd::TypeSupport type = participant_->find_type(topic->get_type_name());
+            auto writer_impl = builtin_publisher_impl_->create_datawriter_impl(type, topic, dwqos, entity_id);
+            auto data_writer = builtin_publisher_impl_->create_datawriter(topic, writer_impl, efd::StatusMask::all());
             if (nullptr == data_writer)
             {
                 // Remove topic and type
