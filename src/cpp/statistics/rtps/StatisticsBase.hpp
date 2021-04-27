@@ -314,7 +314,7 @@ protected:
      */
     template<class LocatorIteratorT>
     inline void on_rtps_send(
-            const GUID_t&,
+            const fastrtps::rtps::GUID_t&,
             const LocatorIteratorT&,
             const LocatorIteratorT&,
             unsigned long)
