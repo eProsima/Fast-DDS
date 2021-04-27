@@ -104,7 +104,7 @@ public:
         fastrtps::rtps::RTPSParticipantAttributes rtps_attr;
 
         rtps_participant_ = eprosima::fastrtps::rtps::RTPSDomain::createParticipant(
-                domain_id_, false, rtps_attr, &rtps_listener_);
+            domain_id_, false, rtps_attr, &rtps_listener_);
 
         return ReturnCode_t::RETCODE_OK;
     }

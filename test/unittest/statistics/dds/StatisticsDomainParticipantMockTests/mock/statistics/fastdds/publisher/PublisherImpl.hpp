@@ -81,9 +81,9 @@ public:
     }
 
     efd::DataWriter* create_datawriter(
-        efd::Topic* topic,
-        efd::DataWriterImpl* impl,
-        const efd::StatusMask& mask)
+            efd::Topic* topic,
+            efd::DataWriterImpl* impl,
+            const efd::StatusMask& mask)
     {
         if (create_datawriter_mock())
         {
