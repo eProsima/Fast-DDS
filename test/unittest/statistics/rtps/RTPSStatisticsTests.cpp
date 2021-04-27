@@ -69,6 +69,9 @@ struct MockListener : IListener
             case DATA_COUNT:
                 on_data_count(data.entity_count());
                 break;
+            case RESENT_DATAS:
+                on_resent_count(data.entity_count());
+                break;
             case GAP_COUNT:
                 on_gap_count(data.entity_count());
                 break;
@@ -472,6 +475,7 @@ TEST_F(RTPSStatisticsTests, statistics_rpts_listener_management)
  * This test checks RTPSParticipant, RTPSWriter and RTPSReader statistics module related APIs.
  * - RTPS_SENT callbacks are performed
  * - DATA_COUNT callbacks are performed for DATA submessages
+ * - RESENT_DATAS callbacks are performed for DATA submessages demanded by the readers
  * - ACKNACK_COUNT callbacks are performed
  * - HEARBEAT_COUNT callbacks are performed
  */
@@ -481,6 +485,39 @@ TEST_F(RTPSStatisticsTests, statistics_rpts_listener_callbacks)
     using namespace fastrtps;
     using namespace fastrtps::rtps;
     using namespace std;
+
+    // make sure some messages are lost to assure the RESENT_DATAS callback
+    set_transport_filter(
+        DATA,
+        [](fastrtps::rtps::CDRMessage_t& msg)-> bool
+        {
+            static unsigned int samples_filtered = 0;
+            uint32_t old_pos = msg.pos;
+
+            // see RTPS DDS 9.4.5.3 Data Submessage
+            EntityId_t readerID, writerID;
+            SequenceNumber_t sn;
+
+            msg.pos += 2; // flags
+            msg.pos += 2; // octets to inline quos
+            CDRMessage::readEntityId(&msg, &readerID);
+            CDRMessage::readEntityId(&msg, &writerID);
+            CDRMessage::readSequenceNumber(&msg, &sn);
+
+            // restore buffer pos
+            msg.pos = old_pos;
+
+            // generate losses
+            if ( samples_filtered < 10 // only a few times (mind the interfaces)
+            && (writerID.value[3] & 0xC0) == 0      // only user endpoints
+            && (sn == SequenceNumber_t{0, 1}))     // only first sample
+            {
+                ++samples_filtered;
+                return true;
+            }
+
+            return false;
+        });
 
     // create the testing endpoints
     uint16_t length = 255;
@@ -492,7 +529,8 @@ TEST_F(RTPSStatisticsTests, statistics_rpts_listener_callbacks)
 
     // writer callbacks through participant listener
     auto participant_writer_listener = make_shared<MockListener>();
-    ASSERT_TRUE(participant_->add_statistics_listener(participant_writer_listener, EventKind::DATA_COUNT));
+    ASSERT_TRUE(participant_->add_statistics_listener(participant_writer_listener,
+            EventKind::DATA_COUNT | EventKind::RESENT_DATAS));
 
     // writer specific callbacks
     auto writer_listener = make_shared<MockListener>();
@@ -518,8 +556,12 @@ TEST_F(RTPSStatisticsTests, statistics_rpts_listener_callbacks)
             .Times(AtLeast(1));
     EXPECT_CALL(*writer_listener, on_data_count)
             .Times(AtLeast(1));
+    EXPECT_CALL(*writer_listener, on_resent_count)
+            .Times(AtLeast(1));
 
     EXPECT_CALL(*participant_writer_listener, on_data_count)
+            .Times(AtLeast(1));
+    EXPECT_CALL(*participant_writer_listener, on_resent_count)
             .Times(AtLeast(1));
 
     // + RTPSReader: SUBSCRIPTION_THROUGHPUT,
@@ -552,7 +594,8 @@ TEST_F(RTPSStatisticsTests, statistics_rpts_listener_callbacks)
     EXPECT_TRUE(reader_->remove_statistics_listener(reader_listener));
 
     EXPECT_TRUE(participant_->remove_statistics_listener(participant_listener, EventKind::RTPS_SENT));
-    EXPECT_TRUE(participant_->remove_statistics_listener(participant_writer_listener, EventKind::DATA_COUNT));
+    EXPECT_TRUE(participant_->remove_statistics_listener(participant_writer_listener,
+            EventKind::DATA_COUNT | EventKind::RESENT_DATAS));
     EXPECT_TRUE(participant_->remove_statistics_listener(participant_reader_listener, EventKind::ACKNACK_COUNT));
 }
 
@@ -658,6 +701,8 @@ TEST_F(RTPSStatisticsTests, statistics_rpts_listener_gap_callback)
             .Times(AtLeast(1));
     EXPECT_CALL(*writer_listener, on_data_count)
             .Times(AtLeast(1));
+    EXPECT_CALL(*writer_listener, on_resent_count)
+            .Times(AtLeast(1));
 
     EXPECT_CALL(*participant_writer_listener, on_gap_count)
             .Times(AtLeast(1));
@@ -683,9 +728,6 @@ TEST_F(RTPSStatisticsTests, statistics_rpts_listener_gap_callback)
 
     // match writer and reader on a dummy topic
     match_endpoints(false, "string", "statisticsSmallTopic");
-
-    // std::this_thread::sleep_for(std::chrono::seconds(10));
-
 
     // wait for reception
     EXPECT_TRUE(reader_->wait_for_unread_cache(Duration_t(5, 0)));
