@@ -67,6 +67,11 @@ public:
 
     ReturnCode_t enable() override
     {
+        if (nullptr != writer_)
+        {
+            return ReturnCode_t::RETCODE_OK;
+        }
+
         ReturnCode_t ret = BaseType::enable();
 
         if (ReturnCode_t::RETCODE_OK == ret && statistics_listener_)
