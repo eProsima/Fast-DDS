@@ -271,16 +271,21 @@ void DomainParticipantImpl::enable_statistics_builtin_datawriters(
 
 void DomainParticipantImpl::delete_statistics_builtin_entities()
 {
-    std::vector<efd::DataWriter*> builtin_writers;
-    builtin_publisher_->get_datawriters(builtin_writers);
-    for (auto writer : builtin_writers)
+    if (nullptr != builtin_publisher_)
     {
-        std::string topic_name = writer->get_topic()->get_name();
-        disable_statistics_datawriter(topic_name);
-    }
+        std::vector<efd::DataWriter*> builtin_writers;
+        builtin_publisher_->get_datawriters(builtin_writers);
+        for (auto writer : builtin_writers)
+        {
+            std::string topic_name = writer->get_topic()->get_name();
+            disable_statistics_datawriter(topic_name);
+        }
 
-    // Delete builtin_publisher
-    delete_publisher(builtin_publisher_);
+        // Delete builtin_publisher
+        delete_publisher(builtin_publisher_);
+        builtin_publisher_ = nullptr;
+        builtin_publisher_impl_ = nullptr;
+    }
 }
 
 bool DomainParticipantImpl::is_statistics_topic_name(
