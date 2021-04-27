@@ -324,6 +324,7 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
                 ${GTEST_INCLUDE_DIRS}
                 ${GMOCK_INCLUDE_DIRS}
                 ${OPENSSL_INCLUDE_DIR}
+                StatisticsDomainParticipantMockTests/mock/
                 ${PROJECT_SOURCE_DIR}/test/mock/dds/Publisher/
                 ${PROJECT_SOURCE_DIR}/test/mock/dds/DomainParticipantImpl/
                 ${PROJECT_SOURCE_DIR}/include
