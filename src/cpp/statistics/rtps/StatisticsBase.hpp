@@ -28,6 +28,7 @@
 #include <fastdds/rtps/common/Locator.h>
 
 #include <statistics/types/types.h>
+#include <statistics/rtps/GuidUtils.hpp>
 
 #include <fastdds/statistics/rtps/StatisticsCommon.hpp>
 
@@ -236,21 +237,26 @@ protected:
 
     /*
      * Report a message that is sent by the participant
+     * @param sender_guid GUID of the entity producing the message
      * @param destination_locators_begin, start of locators range
      * @param destination_locators_end, end of locators range
      * @param payload_size, size of the current message
      */
     template<class LocatorIteratorT>
     void on_rtps_send(
+            const GUID_t& sender_guid,
             const LocatorIteratorT& destination_locators_begin,
             const LocatorIteratorT& destination_locators_end,
             unsigned long payload_size)
     {
-        auto it = destination_locators_begin;
-        while (it != destination_locators_end)
+        if (false == is_statistics_builtin(sender_guid.entityId))
         {
-            on_rtps_sent(*it, payload_size);
-            ++it;
+            auto it = destination_locators_begin;
+            while (it != destination_locators_end)
+            {
+                on_rtps_sent(*it, payload_size);
+                ++it;
+            }
         }
     }
 
@@ -308,6 +314,7 @@ protected:
      */
     template<class LocatorIteratorT>
     inline void on_rtps_send(
+            const GUID_t&,
             const LocatorIteratorT&,
             const LocatorIteratorT&,
             unsigned long)
