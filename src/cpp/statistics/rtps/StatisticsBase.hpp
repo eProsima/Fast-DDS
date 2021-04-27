@@ -57,6 +57,7 @@ struct StatisticsWriterAncillary
 {
     unsigned long long data_counter = {};
     unsigned long long gap_counter = {};
+    unsigned long long resent_counter = {};
 };
 
 struct StatisticsReaderAncillary
@@ -69,11 +70,14 @@ template<class Function>
 Function StatisticsListenersImpl::for_each_listener(
         Function f)
 {
-    std::lock_guard<fastrtps::RecursiveTimedMutex> lock(get_statistics_mutex());
+    // Use a collection copy to prevent locking on traversal
+    std::unique_lock<fastrtps::RecursiveTimedMutex> lock(get_statistics_mutex());
+    auto listeners = members_->listeners;
+    lock.unlock();
 
     if (members_)
     {
-        for (auto& listener : members_->listeners)
+        for (auto& listener : listeners)
         {
             f(listener);
         }

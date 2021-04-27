@@ -65,6 +65,15 @@ protected:
     {
     }
 
+    /*
+     * @brief Report that several changes are marked for redelivery
+     * @param number of changes to redeliver
+     */
+    inline void on_resent_data(
+            uint32_t)
+    {
+    }
+
 };
 
 class StatisticsReaderImpl

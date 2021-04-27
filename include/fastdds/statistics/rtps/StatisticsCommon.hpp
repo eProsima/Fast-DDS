@@ -159,6 +159,13 @@ protected:
 
     //! Report that a GAP message is sent
     void on_gap();
+
+    /*
+     * @brief Report that several changes are marked for redelivery
+     * @param number of changes to redeliver
+     */
+    void on_resent_data(
+            uint32_t to_send);
 };
 
 // Members are private details
