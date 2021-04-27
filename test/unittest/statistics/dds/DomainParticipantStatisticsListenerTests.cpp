@@ -17,7 +17,10 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
 
+#include <fastdds/dds/publisher/DataWriter.hpp>
+
 #include <statistics/fastdds/domain/DomainParticipantStatisticsListener.hpp>
+#include <statistics/types/types.h>
 
 namespace eprosima {
 namespace fastdds {

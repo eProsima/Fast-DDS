@@ -18,6 +18,11 @@
 
 #include "DomainParticipantStatisticsListener.hpp"
 
+#include <mutex>
+
+#include <fastdds/dds/publisher/DataWriter.hpp>
+
+#include <statistics/types/types.h>
 namespace eprosima {
 namespace fastdds {
 namespace statistics {

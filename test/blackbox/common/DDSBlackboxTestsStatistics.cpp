@@ -12,24 +12,35 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include <chrono>
+#include <list>
+#include <string>
+#include <thread>
+
 #include <gtest/gtest.h>
 
 #include "BlackboxTests.hpp"
 
+#include "../types/HelloWorld.h"
+#include "../types/HelloWorldType.h"
 #include "PubSubReader.hpp"
 #include "PubSubWriter.hpp"
 
-#include <fastdds/dds/core/LoanableCollection.hpp>
+#include <fastdds/dds/core/LoanableSequence.hpp>
 
 #include <fastdds/dds/domain/DomainParticipant.hpp>
 #include <fastdds/dds/subscriber/DataReader.hpp>
 #include <fastdds/dds/subscriber/Subscriber.hpp>
 #include <fastdds/dds/topic/TopicDescription.hpp>
 
+#include <fastdds/rtps/transport/UDPv4TransportDescriptor.h>
+
 #include <fastdds/statistics/topic_names.hpp>
 #include <fastdds/statistics/dds/domain/DomainParticipant.hpp>
 #include <fastdds/statistics/dds/publisher/qos/DataWriterQos.hpp>
 #include <fastdds/statistics/dds/subscriber/qos/DataReaderQos.hpp>
+
+#include <fastrtps/types/TypesBase.h>
 
 #ifdef FASTDDS_STATISTICS
 
