@@ -41,7 +41,7 @@ jobs:
                 --cmake-target $target \
                 --cmake-target-skip-unavailable \
                 --event-handlers=console_direct+ \
-                --metas src/Fast-DDS/.github/workflows/colcon.meta \
+                --metas src/Fast-DDS/.github/workflows/statistics_module.meta \
                 --mixin coverage-gcc
           done
 
