@@ -132,6 +132,11 @@ void StatisticsWriterImpl::on_gap()
 void StatisticsWriterImpl::on_resent_data(
         uint32_t to_send)
 {
+    if ( 0 == to_send )
+    {
+        return;
+    }
+
     EntityCount notification;
     notification.guid(to_statistics_type(get_guid()));
 

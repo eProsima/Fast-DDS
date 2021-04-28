@@ -401,7 +401,7 @@ bool ReaderProxy::process_initial_acknack()
 {
     if (is_local_reader())
     {
-        return convert_status_on_all_changes(UNACKNOWLEDGED, UNSENT);
+        return 0 != convert_status_on_all_changes(UNACKNOWLEDGED, UNSENT);
     }
 
     return true;
@@ -498,7 +498,7 @@ bool ReaderProxy::mark_fragment_as_sent_for_change(
 
 bool ReaderProxy::perform_nack_supression()
 {
-    return convert_status_on_all_changes(UNDERWAY, UNACKNOWLEDGED);
+    return 0 != convert_status_on_all_changes(UNDERWAY, UNACKNOWLEDGED);
 }
 
 uint32_t ReaderProxy::perform_acknack_response()
