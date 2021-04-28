@@ -12,10 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include <string>
+
 #include <gtest/gtest.h>
 
 #include <fastdds/dds/core/policy/QosPolicies.hpp>
 #include <fastdds/dds/log/Log.hpp>
+#include <fastdds/rtps/attributes/PropertyPolicy.h>
 #include <fastdds/statistics/dds/publisher/qos/DataWriterQos.hpp>
 #include <fastdds/statistics/dds/subscriber/qos/DataReaderQos.hpp>
 
@@ -35,17 +38,15 @@ namespace dds {
  */
 TEST(StatisticsQosTests, StatisticsDataWriterQosTest)
 {
-    // TODO(jlbueno) Remove this guards after implementation. Here to prevent failures in current CI.
-#ifdef FASTDDS_STATISTICS
-    logError(STATISTICS_QOS_TEST, "This test is going to fail because API is not yet implemented.")
-
     EXPECT_TRUE(STATISTICS_DATAWRITER_QOS.reliability().kind == eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS);
     EXPECT_TRUE(STATISTICS_DATAWRITER_QOS.durability().kind == eprosima::fastdds::dds::TRANSIENT_LOCAL_DURABILITY_QOS);
-    // TODO(jlbueno) Pull mode is not yet exposed in DDS API
+    const std::string* pushMode_property = eprosima::fastrtps::rtps::PropertyPolicyHelper::find_property(
+        STATISTICS_DATAWRITER_QOS.properties(), "fastdds.push_mode");
+    ASSERT_NE(pushMode_property, nullptr);
+    EXPECT_EQ(pushMode_property->compare("false"), 0);
     EXPECT_TRUE(STATISTICS_DATAWRITER_QOS.publish_mode().kind == eprosima::fastdds::dds::ASYNCHRONOUS_PUBLISH_MODE);
     EXPECT_TRUE(STATISTICS_DATAWRITER_QOS.history().kind == eprosima::fastdds::dds::KEEP_LAST_HISTORY_QOS);
     EXPECT_TRUE(STATISTICS_DATAWRITER_QOS.history().depth == 100);
-#endif // FASTDDS_STATISTICS
 }
 
 /*
@@ -57,15 +58,10 @@ TEST(StatisticsQosTests, StatisticsDataWriterQosTest)
  */
 TEST(StatisticsQosTests, StatisticsDataReaderQosTest)
 {
-    // TODO(jlbueno) Remove this guards after implementation. Here to prevent failures in current CI.
-#ifdef FASTDDS_STATISTICS
-    logError(STATISTICS_QOS_TEST, "This test is going to fail because API is not yet implemented.")
-
     EXPECT_TRUE(STATISTICS_DATAREADER_QOS.reliability().kind == eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS);
     EXPECT_TRUE(STATISTICS_DATAREADER_QOS.durability().kind == eprosima::fastdds::dds::TRANSIENT_LOCAL_DURABILITY_QOS);
     EXPECT_TRUE(STATISTICS_DATAREADER_QOS.history().kind == eprosima::fastdds::dds::KEEP_LAST_HISTORY_QOS);
     EXPECT_TRUE(STATISTICS_DATAREADER_QOS.history().depth == 100);
-#endif // FASTDDS_STATISTICS
 }
 
 } // namespace dds

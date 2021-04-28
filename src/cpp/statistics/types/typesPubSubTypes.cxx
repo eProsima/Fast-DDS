@@ -1279,7 +1279,9 @@ namespace eprosima {
             Entity2LocatorTrafficPubSubType::Entity2LocatorTrafficPubSubType()
             {
                 setName("eprosima::fastdds::statistics::Entity2LocatorTraffic");
-                m_typeSize = static_cast<uint32_t>(Entity2LocatorTraffic::getMaxCdrSerializedSize()) + 4 /*encapsulation*/;
+                auto type_size = Entity2LocatorTraffic::getMaxCdrSerializedSize();
+                type_size += eprosima::fastcdr::Cdr::alignment(type_size, 4); /* possible submessage alignment */
+                m_typeSize = static_cast<uint32_t>(type_size) + 4 /*encapsulation*/;
                 m_isGetKeyDefined = Entity2LocatorTraffic::isKeyDefined();
                 size_t keyLength = Entity2LocatorTraffic::getKeyMaxCdrSerializedSize() > 16 ?
                         Entity2LocatorTraffic::getKeyMaxCdrSerializedSize() : 16;

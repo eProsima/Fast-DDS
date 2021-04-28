@@ -19,13 +19,29 @@
 
 #include <rtps/participant/RTPSParticipantImpl.h>
 
+#include <algorithm>
+#include <functional>
+#include <memory>
+#include <mutex>
+
 #include <rtps/flowcontrol/ThroughputController.h>
 #include <rtps/persistence/PersistenceService.h>
 #include <rtps/history/BasicPayloadPool.hpp>
 
+#include <fastrtps/utils/IPFinder.h>
+#include <fastrtps/utils/Semaphore.h>
+
+#include <fastrtps/xmlparser/XMLProfileManager.h>
+
+#include <fastdds/dds/log/Log.hpp>
+
+#include <fastdds/rtps/RTPSDomain.h>
+
 #include <fastdds/rtps/messages/MessageReceiver.h>
 
 #include <fastdds/rtps/history/WriterHistory.h>
+
+#include <fastdds/rtps/participant/RTPSParticipant.h>
 
 #include <fastdds/rtps/writer/StatelessWriter.h>
 #include <fastdds/rtps/writer/StatefulWriter.h>
@@ -37,30 +53,15 @@
 #include <fastdds/rtps/reader/StatelessPersistentReader.h>
 #include <fastdds/rtps/reader/StatefulPersistentReader.h>
 
-#include <fastdds/rtps/participant/RTPSParticipant.h>
 #include <fastdds/rtps/transport/UDPv4TransportDescriptor.h>
 #include <fastdds/rtps/transport/TCPv4TransportDescriptor.h>
 #include <fastdds/rtps/transport/TCPv6TransportDescriptor.h>
 #include <fastdds/rtps/transport/shared_mem/SharedMemTransportDescriptor.h>
 
-#include <fastdds/rtps/RTPSDomain.h>
-
 #include <fastdds/rtps/builtin/BuiltinProtocols.h>
 #include <fastdds/rtps/builtin/discovery/participant/PDPSimple.h>
 #include <fastdds/rtps/builtin/data/ParticipantProxyData.h>
 #include <fastdds/rtps/builtin/liveliness/WLP.h>
-
-#include <fastrtps/utils/IPFinder.h>
-
-#include <fastrtps/utils/Semaphore.h>
-
-#include <mutex>
-#include <functional>
-#include <algorithm>
-#include <memory>
-
-#include <fastdds/dds/log/Log.hpp>
-#include <fastrtps/xmlparser/XMLProfileManager.h>
 
 namespace eprosima {
 namespace fastrtps {
@@ -683,6 +684,22 @@ bool RTPSParticipantImpl::create_writer(
         SWriter->add_flow_controller(std::move(controller));
     }
 
+#ifdef FASTDDS_STATISTICS
+
+    if (!is_builtin)
+    {
+        // Register all compatible statistical listeners
+        for_each_listener([this, &guid](Key listener)
+                {
+                    if (are_writers_involved(listener->mask()))
+                    {
+                        register_in_writer(listener->get_shared_ptr(), guid);
+                    }
+                });
+    }
+
+#endif // FASTDDS_STATISTICS
+
     return true;
 }
 
@@ -794,6 +811,22 @@ bool RTPSParticipantImpl::create_reader(
         m_userReaderList.push_back(SReader);
     }
     *reader_out = SReader;
+
+#ifdef FASTDDS_STATISTICS
+
+    if (!is_builtin)
+    {
+        // Register all compatible statistical listeners
+        for_each_listener([this, &guid](Key listener)
+                {
+                    if (are_readers_involved(listener->mask()))
+                    {
+                        register_in_reader(listener->get_shared_ptr(), guid);
+                    }
+                });
+    }
+
+#endif // FASTDDS_STATISTICS
 
     return true;
 }
@@ -1942,6 +1975,84 @@ DurabilityKind_t RTPSParticipantImpl::get_persistence_durability_red_line(
 
     return durability_red_line;
 }
+
+#ifdef FASTDDS_STATISTICS
+
+bool RTPSParticipantImpl::register_in_writer(
+        std::shared_ptr<fastdds::statistics::IListener> listener,
+        GUID_t writer_guid)
+{
+    bool res = false;
+
+    if ( GUID_t::unknown() == writer_guid )
+    {
+        res = true;
+        for ( auto writer : m_userWriterList)
+        {
+            res &= writer->add_statistics_listener(listener);
+        }
+    }
+    else
+    {
+        RTPSWriter* writer = find_local_writer(writer_guid);
+        res = writer->add_statistics_listener(listener);
+    }
+
+    return res;
+}
+
+bool RTPSParticipantImpl::register_in_reader(
+        std::shared_ptr<fastdds::statistics::IListener> listener,
+        GUID_t reader_guid)
+{
+    bool res = false;
+
+    if ( GUID_t::unknown() == reader_guid )
+    {
+        res = true;
+        for ( auto reader : m_userReaderList)
+        {
+            res &= reader->add_statistics_listener(listener);
+        }
+    }
+    else
+    {
+        RTPSReader* reader = find_local_reader(reader_guid);
+        res = reader->add_statistics_listener(listener);
+    }
+
+    return res;
+}
+
+bool RTPSParticipantImpl::unregister_in_writer(
+        std::shared_ptr<fastdds::statistics::IListener> listener)
+{
+    std::lock_guard<std::recursive_mutex> guard(*getParticipantMutex());
+    bool res = true;
+
+    for ( auto writer : m_userWriterList)
+    {
+        res &= writer->remove_statistics_listener(listener);
+    }
+
+    return res;
+}
+
+bool RTPSParticipantImpl::unregister_in_reader(
+        std::shared_ptr<fastdds::statistics::IListener> listener)
+{
+    std::lock_guard<std::recursive_mutex> guard(*getParticipantMutex());
+    bool res = true;
+
+    for ( auto reader : m_userReaderList)
+    {
+        res &= reader->remove_statistics_listener(listener);
+    }
+
+    return res;
+}
+
+#endif // FASTDDS_STATISTICS
 
 } /* namespace rtps */
 } /* namespace fastrtps */

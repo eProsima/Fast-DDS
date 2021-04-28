@@ -87,6 +87,7 @@ public:
      */
     RTPS_DllAPI static const DomainParticipant* narrow(
             const eprosima::fastdds::dds::DomainParticipant* domain_participant);
+
 };
 
 } // namespace dds

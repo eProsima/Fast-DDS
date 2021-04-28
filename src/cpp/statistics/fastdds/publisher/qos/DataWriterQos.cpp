@@ -18,6 +18,8 @@
 
 #include <fastdds/statistics/dds/publisher/qos/DataWriterQos.hpp>
 
+#include <fastdds/dds/core/policy/QosPolicies.hpp>
+
 namespace eprosima {
 namespace fastdds {
 namespace statistics {
@@ -26,6 +28,12 @@ namespace dds {
 DataWriterQos::DataWriterQos()
 {
     // Specific implementation for recommended statistics DataWriterQos
+    reliability().kind = eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS;
+    durability().kind = eprosima::fastdds::dds::TRANSIENT_LOCAL_DURABILITY_QOS;
+    publish_mode().kind = eprosima::fastdds::dds::ASYNCHRONOUS_PUBLISH_MODE;
+    history().kind = eprosima::fastdds::dds::KEEP_LAST_HISTORY_QOS;
+    history().depth = 100;
+    properties().properties().emplace_back("fastdds.push_mode", "false");
 }
 
 } // dds

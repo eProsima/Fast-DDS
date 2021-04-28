@@ -17,22 +17,23 @@
  *
  */
 
-#include <fastdds/dds/domain/DomainParticipantFactory.hpp>
-#include <fastdds/rtps/RTPSDomain.h>
-#include <fastdds/rtps/participant/RTPSParticipant.h>
-
 #include <fastdds/dds/domain/DomainParticipant.hpp>
-#include <fastdds/domain/DomainParticipantImpl.hpp>
-
+#include <fastdds/dds/domain/DomainParticipantFactory.hpp>
 #include <fastdds/dds/log/Log.hpp>
-
+#include <fastdds/rtps/participant/RTPSParticipant.h>
+#include <fastdds/rtps/RTPSDomain.h>
+#include <fastrtps/types/DynamicDataFactory.h>
+#include <fastrtps/types/DynamicTypeBuilderFactory.h>
+#include <fastrtps/types/TypeObjectFactory.h>
 #include <fastrtps/xmlparser/XMLProfileManager.h>
 
-#include <fastrtps/types/DynamicTypeBuilderFactory.h>
-#include <fastrtps/types/DynamicDataFactory.h>
-#include <fastrtps/types/TypeObjectFactory.h>
-
+#include <fastdds/domain/DomainParticipantImpl.hpp>
 #include <rtps/history/TopicPayloadPoolRegistry.hpp>
+#include <statistics/fastdds/domain/DomainParticipantImpl.hpp>
+
+
+
+
 
 using namespace eprosima::fastrtps::xmlparser;
 
@@ -115,11 +116,17 @@ ReturnCode_t DomainParticipantFactory::delete_participant(
 
     if (part != nullptr)
     {
+        std::lock_guard<std::mutex> guard(mtx_participants_);
+#ifdef FASTDDS_STATISTICS
+        // Delete builtin statistics entities
+        eprosima::fastdds::statistics::dds::DomainParticipantImpl* stat_part_impl =
+                static_cast<eprosima::fastdds::statistics::dds::DomainParticipantImpl*>(part->impl_);
+        stat_part_impl->delete_statistics_builtin_entities();
+#endif // ifdef FASTDDS_STATISTICS
         if (part->has_active_entities())
         {
             return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
         }
-        std::lock_guard<std::mutex> guard(mtx_participants_);
 
         VectorIt vit = participants_.find(part->get_domain_id());
 
@@ -162,7 +169,12 @@ DomainParticipant* DomainParticipantFactory::create_participant(
     const DomainParticipantQos& pqos = (&qos == &PARTICIPANT_QOS_DEFAULT) ? default_participant_qos_ : qos;
 
     DomainParticipant* dom_part = new DomainParticipant(mask);
+#ifndef FASTDDS_STATISTICS
     DomainParticipantImpl* dom_part_impl = new DomainParticipantImpl(dom_part, did, pqos, listen);
+#else
+    eprosima::fastdds::statistics::dds::DomainParticipantImpl* dom_part_impl =
+            new eprosima::fastdds::statistics::dds::DomainParticipantImpl(dom_part, did, pqos, listen);
+#endif // FASTDDS_STATISTICS
 
     {
         std::lock_guard<std::mutex> guard(mtx_participants_);

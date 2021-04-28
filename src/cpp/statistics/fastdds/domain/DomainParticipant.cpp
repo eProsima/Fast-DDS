@@ -20,8 +20,11 @@
 
 #include <string>
 
+#include <fastdds/dds/domain/DomainParticipant.hpp>
 #include <fastdds/dds/publisher/qos/DataWriterQos.hpp>
 #include <fastrtps/types/TypesBase.h>
+
+#include <statistics/fastdds/domain/DomainParticipantImpl.hpp>
 
 namespace eprosima {
 namespace fastdds {
@@ -32,32 +35,48 @@ ReturnCode_t DomainParticipant::enable_statistics_datawriter(
         const std::string& topic_name,
         const eprosima::fastdds::dds::DataWriterQos& dwqos)
 {
+#ifndef FASTDDS_STATISTICS
     (void) topic_name;
     (void) dwqos;
 
     return ReturnCode_t::RETCODE_UNSUPPORTED;
+#else
+    return static_cast<DomainParticipantImpl*>(impl_)->enable_statistics_datawriter(topic_name, dwqos);
+#endif // FASTDDS_STATISTICS
 }
 
 ReturnCode_t DomainParticipant::disable_statistics_datawriter(
         const std::string& topic_name)
 {
+#ifndef FASTDDS_STATISTICS
     (void) topic_name;
 
     return ReturnCode_t::RETCODE_UNSUPPORTED;
+#else
+    return static_cast<DomainParticipantImpl*>(impl_)->disable_statistics_datawriter(topic_name);
+#endif // FASTDDS_STATISTICS
 }
 
 DomainParticipant* DomainParticipant::narrow(
         eprosima::fastdds::dds::DomainParticipant* domain_participant)
 {
-    (void) domain_participant;
+#ifdef FASTDDS_STATISTICS
+    return static_cast<DomainParticipant*>(domain_participant);
+#else
+    (void)domain_participant;
     return nullptr;
+#endif // FASTDDS_STATISTICS
 }
 
 const DomainParticipant* DomainParticipant::narrow(
         const eprosima::fastdds::dds::DomainParticipant* domain_participant)
 {
-    (void) domain_participant;
+#ifdef FASTDDS_STATISTICS
+    return static_cast<const DomainParticipant*>(domain_participant);
+#else
+    (void)domain_participant;
     return nullptr;
+#endif // FASTDDS_STATISTICS
 }
 
 } // dds

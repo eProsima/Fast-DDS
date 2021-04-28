@@ -95,7 +95,7 @@ size_t eprosima::fastdds::statistics::detail::EntityId_s::getCdrSerializedSize(
     size_t initial_alignment = current_alignment;
 
 
-    if ((4) > 0)
+    // if ((4) > 0)
     {
         current_alignment += ((4) * 1) + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
     }
@@ -241,7 +241,7 @@ size_t eprosima::fastdds::statistics::detail::GuidPrefix_s::getCdrSerializedSize
     size_t initial_alignment = current_alignment;
 
 
-    if ((12) > 0)
+    // if ((12) > 0)
     {
         current_alignment += ((12) * 1) + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
     }
@@ -978,7 +978,7 @@ size_t eprosima::fastdds::statistics::detail::Locator_s::getCdrSerializedSize(
     current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
 
 
-    if ((16) > 0)
+    // if ((16) > 0)
     {
         current_alignment += ((16) * 1) + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
     }

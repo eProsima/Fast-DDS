@@ -239,8 +239,13 @@ set(${PROJECT_NAME}_source_files
 if (FASTDDS_STATISTICS)
 
     set(statistics_sources
-    statistics/types/typesPubSubTypes.cxx
-    statistics/types/types.cxx
+        statistics/fastdds/domain/DomainParticipantImpl.cpp
+        statistics/fastdds/domain/DomainParticipantStatisticsListener.cpp
+        statistics/rtps/StatisticsBase.cpp
+        statistics/rtps/reader/StatisticsReaderImpl.cpp
+        statistics/rtps/writer/StatisticsWriterImpl.cpp
+        statistics/types/typesPubSubTypes.cxx
+        statistics/types/types.cxx
         )
 
     list(APPEND ${PROJECT_NAME}_source_files

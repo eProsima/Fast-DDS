@@ -34,8 +34,13 @@
 #include <unistd.h>
 #endif // if defined(_WIN32)
 
-#include <fastdds/rtps/attributes/RTPSParticipantAttributes.h>
+#include <rtps/messages/RTPSMessageGroup_t.hpp>
+#include <rtps/messages/SendBuffersManager.hpp>
+
 #include <fastdds/rtps/common/Guid.h>
+
+#include <fastdds/rtps/attributes/RTPSParticipantAttributes.h>
+
 #include <fastdds/rtps/builtin/discovery/endpoint/EDPSimple.h>
 #include <fastdds/rtps/builtin/data/ReaderProxyData.h>
 #include <fastdds/rtps/builtin/data/WriterProxyData.h>
@@ -43,12 +48,13 @@
 #include <fastdds/rtps/network/NetworkFactory.h>
 #include <fastdds/rtps/network/ReceiverResource.h>
 #include <fastdds/rtps/network/SenderResource.h>
+
 #include <fastdds/rtps/messages/MessageReceiver.h>
+
 #include <fastdds/rtps/resources/ResourceEvent.h>
 #include <fastdds/rtps/resources/AsyncWriterThread.h>
 
-#include "../messages/RTPSMessageGroup_t.hpp"
-#include "../messages/SendBuffersManager.hpp"
+#include <statistics/rtps/StatisticsBase.hpp>
 
 #if HAVE_SECURITY
 #include <fastdds/rtps/Endpoint.h>
@@ -100,6 +106,7 @@ class WLP;
  * @ingroup RTPS_MODULE
  */
 class RTPSParticipantImpl
+    : public fastdds::statistics::StatisticsParticipantImpl
 {
     /*
        Receiver Control block is a struct we use to encapsulate the resources that take part in message reception.
@@ -249,6 +256,7 @@ public:
     /**
      * Send a message to several locations
      * @param msg Message to send.
+     * @param sender_guid GUID of the producer of the message.
      * @param destination_locators_begin Iterator at the first destination locator.
      * @param destination_locators_end Iterator at the end destination locator.
      * @param max_blocking_time_point execution time limit timepoint.
@@ -257,6 +265,7 @@ public:
     template<class LocatorIteratorT>
     bool sendSync(
             CDRMessage_t* msg,
+            const GUID_t& sender_guid,
             const LocatorIteratorT& destination_locators_begin,
             const LocatorIteratorT& destination_locators_end,
             std::chrono::steady_clock::time_point& max_blocking_time_point)
@@ -275,6 +284,15 @@ public:
                 send_resource->send(msg->buffer, msg->length, &locators_begin, &locators_end,
                         max_blocking_time_point);
             }
+
+            lock.unlock();
+
+            // notify statistics module
+            on_rtps_send(
+                sender_guid,
+                destination_locators_begin,
+                destination_locators_end,
+                msg->length);
         }
 
         return ret_code;
@@ -887,6 +905,43 @@ public:
     }
 
 #endif // if HAVE_SECURITY
+
+#ifdef FASTDDS_STATISTICS
+
+    /** Register a listener in participant RTPSWriter entities.
+     * @param listener, smart pointer to the listener interface to register
+     * @param guid, RTPSWriter identifier. If unknown the listener is registered in all enable ones
+     * @return true on success
+     */
+    bool register_in_writer(
+            std::shared_ptr<fastdds::statistics::IListener> listener,
+            GUID_t guid = GUID_t::unknown()) override;
+
+    /** Register a listener in participant RTPSReader entities.
+     * @param listener, smart pointer to the listener interface to register
+     * @param guid, RTPSReader identifier. If unknown the listener is registered in all enable ones
+     * @return true on success
+     */
+    bool register_in_reader(
+            std::shared_ptr<fastdds::statistics::IListener> listener,
+            GUID_t guid = GUID_t::unknown()) override;
+
+    /** Unregister a listener in participant RTPSWriter entities.
+     * @param listener, smart pointer to the listener interface to unregister
+     * @return true on success
+     */
+    bool unregister_in_writer(
+            std::shared_ptr<fastdds::statistics::IListener> listener) override;
+
+    /** Unregister a listener in participant RTPSReader entities.
+     * @param listener, smart pointer to the listener interface to unregister
+     * @return true on success
+     */
+    bool unregister_in_reader(
+            std::shared_ptr<fastdds::statistics::IListener> listener) override;
+
+#endif // FASTDDS_STATISTICS
+
 };
 } // namespace rtps
 } /* namespace rtps */

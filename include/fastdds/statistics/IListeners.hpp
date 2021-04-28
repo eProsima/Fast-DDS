@@ -20,6 +20,8 @@
 #ifndef _FASTDDS_STATISTICS_ILISTENERS_HPP_
 #define _FASTDDS_STATISTICS_ILISTENERS_HPP_
 
+#include <cstdint>
+
 namespace eprosima {
 namespace fastdds {
 namespace statistics {

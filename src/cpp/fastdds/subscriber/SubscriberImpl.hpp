@@ -289,6 +289,11 @@ protected:
 
     fastrtps::rtps::InstanceHandle_t handle_;
 
+    virtual DataReaderImpl* create_datareader_impl(
+            const TypeSupport& type,
+            TopicDescription* topic,
+            const DataReaderQos& qos,
+            DataReaderListener* listener);
 };
 
 } /* namespace dds */

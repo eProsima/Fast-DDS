@@ -201,6 +201,15 @@ ReturnCode_t SubscriberImpl::set_listener(
     return ReturnCode_t::RETCODE_OK;
 }
 
+DataReaderImpl* SubscriberImpl::create_datareader_impl(
+        const TypeSupport& type,
+        TopicDescription* topic,
+        const DataReaderQos& qos,
+        DataReaderListener* listener)
+{
+    return new DataReaderImpl(this, type, topic, qos, listener);
+}
+
 DataReader* SubscriberImpl::create_datareader(
         TopicDescription* topic,
         const DataReaderQos& qos,
@@ -226,13 +235,7 @@ DataReader* SubscriberImpl::create_datareader(
 
     topic->get_impl()->reference();
 
-    DataReaderImpl* impl = new DataReaderImpl(
-        this,
-        type_support,
-        topic,
-        qos,
-        listener);
-
+    DataReaderImpl* impl = create_datareader_impl(type_support, topic, qos, listener);
     DataReader* reader = new DataReader(impl, mask);
     impl->user_datareader_ = reader;
 

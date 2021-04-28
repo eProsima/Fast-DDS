@@ -1,0 +1,14 @@
+name: 'install-python-packages'
+description: 'Install necessary python packages'
+runs:
+  using: "composite"
+  steps:
+    - id: install-python-packages
+      run: |
+        sudo pip3 install -U \
+          colcon-common-extensions \
+          colcon-mixin \
+          vcstool \
+          setuptools \
+          gcovr
+      shell: bash
