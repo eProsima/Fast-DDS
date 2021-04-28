@@ -50,7 +50,7 @@ jobs:
           colcon test \
             --packages-select fastrtps \
             --event-handlers=console_direct+ \
-            --ctest-args -R RTPSStatisticsTests -R Statistics -E CreateParticipant
+            --ctest-args -R RTPSStatisticsTests -R Statistics
 
       - name: Generate coverage report
         run: |

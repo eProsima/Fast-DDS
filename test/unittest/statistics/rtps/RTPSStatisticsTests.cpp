@@ -90,6 +90,7 @@ struct MockListener : IListener
     MOCK_METHOD1(on_heartbeat_count, void(const eprosima::fastdds::statistics::EntityCount&));
     MOCK_METHOD1(on_acknack_count, void(const eprosima::fastdds::statistics::EntityCount&));
     MOCK_METHOD1(on_data_count, void(const eprosima::fastdds::statistics::EntityCount&));
+    MOCK_METHOD1(on_resent_count, void(const eprosima::fastdds::statistics::EntityCount&));
     MOCK_METHOD1(on_gap_count, void(const eprosima::fastdds::statistics::EntityCount&));
     MOCK_METHOD1(on_nackfrag_count, void(const eprosima::fastdds::statistics::EntityCount&));
     MOCK_METHOD1(on_entity_discovery, void(const eprosima::fastdds::statistics::DiscoveryTime&));
