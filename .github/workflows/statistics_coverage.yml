@@ -1,10 +1,7 @@
-name: test
+name: statistics_coverage
 
 on:
   workflow_dispatch:
-  pull_request:
-    branches:
-      - feature/statistics/impl
 
 jobs:
   ubuntu-build-test:
@@ -31,10 +28,10 @@ jobs:
 
       - name: Build workspace
         run: |
-          cat src/Fast-DDS/.github/workflows/colcon.meta
+          cat src/Fast-DDS/.github/workflows/statistics_module.meta
           colcon build \
             --event-handlers=console_direct+ \
-            --metas src/Fast-DDS/.github/workflows/colcon.meta \
+            --metas src/Fast-DDS/.github/workflows/statistics_module.meta \
             --mixin coverage-gcc
 
       - name: Run tests
