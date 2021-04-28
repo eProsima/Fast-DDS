@@ -34,7 +34,7 @@ jobs:
             --event-handlers=console_direct+ \
             --metas src/Fast-DDS/.github/workflows/statistics_module.meta \
             --mixin coverage-gcc
-          for target in RTPSStatisticsTests StatisticsDomainParticipantTests StatisticsQosTests StatisticsDomainParticipantMockTests BlackboxTests_DDS_PIM
+          for target in RTPSStatisticsTests StatisticsDomainParticipantTests StatisticsQosTests DomainParticipantStatisticsListenerTests StatisticsDomainParticipantMockTests BlackboxTests_DDS_PIM
           do
               colcon build \
                 --packages-select fastrtps \
