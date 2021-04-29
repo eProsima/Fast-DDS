@@ -19,8 +19,10 @@
 #ifndef _FASTDDS_STATISTICS_RTPS_STATISTICSCOMMON_HPP_
 #define _FASTDDS_STATISTICS_RTPS_STATISTICSCOMMON_HPP_
 
+#include <fastdds/rtps/common/Guid.h>
 #include <fastdds/rtps/common/Locator.h>
 #include <fastdds/rtps/common/SampleIdentity.h>
+#include <fastdds/rtps/common/Time_t.h>
 #include <fastdds/statistics/IListeners.hpp>
 
 namespace eprosima {
@@ -95,6 +97,17 @@ class StatisticsReaderImpl
 protected:
 
     // TODO: methods for listeners callbacks
+
+    /**
+     * @brief Report that a sample has been notified to the user.
+     * @param GUID of the writer from where the sample was received.
+     * @param Source timestamp received from the writer for the sample being notified.
+     */
+    inline void on_data_notify(
+            const fastrtps::rtps::GUID_t&,
+            const fastrtps::rtps::Time_t&)
+    {
+    }
 
     /**
      * @brief Report that an ACKNACK message is sent
