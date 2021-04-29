@@ -18,6 +18,7 @@
 #if defined(_WIN32)
 #include <process.h>
 #else
+#include <pwd.h>
 #include <unistd.h>
 #endif // if defined(_WIN32)
 
@@ -107,6 +108,41 @@ public:
         }
 
         return ReturnCode_t::RETCODE_OK;
+    }
+
+    /**
+     * Get the effective username of the person that launched the application
+     * This implementation follows the whoami implementation
+     * (https://github.com/coreutils/coreutils/blob/master/src/whoami.c)
+     * 
+     * geteuid is always successful.
+     * 
+     * getpwuid returns a pointer to a struct passwd if a matching entry is found and nullptr otherwise.
+     * This pointer is only valid until the next time getpwuid function is called, because it is a direct
+     * pointer to the static storage.
+     * Modifying the pointer invokes undefined behavior.
+     * 
+     * This function is thread-safe as long as no other function modifies the storage areas pointed within the structure
+     * (in particular, POSIX functions getpwent or getpwnam might overwrite some of the storage areas.)
+     * 
+     * \param [out] username string with the effective username.
+     * @return RETCODE_OK if successful.
+     * RETCODE_ERROR if the username information cannot be determined.
+     */
+    static ReturnCode_t get_username(
+            std::string& username)
+    {
+        uid_t user_id = geteuid();
+        struct passwd* pwd = getpwuid(user_id);
+        if (pwd != nullptr)
+        {
+            username = pwd->pw_name;
+            if (!username.empty())
+            {
+                return ReturnCode_t::RETCODE_OK;
+            }
+        }
+        return ReturnCode_t::RETCODE_ERROR;
     }
 
 private:
