@@ -82,9 +82,9 @@ void StatisticsReaderImpl::on_data_notify(
     data.writer_reader_data(notification);
 
     for_each_listener([&data](const std::shared_ptr<IListener>& listener)
-        {
-            listener->on_statistics_data(data);
-        });
+            {
+                listener->on_statistics_data(data);
+            });
 }
 
 void StatisticsReaderImpl::on_acknack(

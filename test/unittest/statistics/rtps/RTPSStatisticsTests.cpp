@@ -589,7 +589,7 @@ TEST_F(RTPSStatisticsTests, statistics_rpts_listener_callbacks)
     // reader callbacks through participant listener
     auto participant_reader_listener = make_shared<MockListener>();
     ASSERT_TRUE(participant_->add_statistics_listener(participant_reader_listener,
-        EventKind::ACKNACK_COUNT | EventKind::HISTORY2HISTORY_LATENCY));
+            EventKind::ACKNACK_COUNT | EventKind::HISTORY2HISTORY_LATENCY));
 
     // reader specific callbacks
     auto reader_listener = make_shared<MockListener>();
@@ -656,7 +656,7 @@ TEST_F(RTPSStatisticsTests, statistics_rpts_listener_callbacks)
     EXPECT_TRUE(participant_->remove_statistics_listener(participant_writer_listener,
             EventKind::DATA_COUNT | EventKind::RESENT_DATAS | EventKind::SAMPLE_DATAS));
     EXPECT_TRUE(participant_->remove_statistics_listener(participant_reader_listener,
-        EventKind::ACKNACK_COUNT | EventKind::HISTORY2HISTORY_LATENCY));
+            EventKind::ACKNACK_COUNT | EventKind::HISTORY2HISTORY_LATENCY));
 }
 
 /*
