@@ -126,33 +126,12 @@ public:
 
     uint32_t last_liveliness_sequence() const;
 
-    /**
-     * Notifies to the writer
-     */
-    void notify();
-
-    template<typename ConditionFunctor>
-    bool wait_until(
-            const std::chrono::time_point<std::chrono::steady_clock>& max_blocking_time,
-            const ConditionFunctor& condition)
-    {
-        std::unique_lock<Segment::mutex> lock(descriptor_->notification_mutex);
-        bool success = false;
-        descriptor_->notification_cv.timed_wait(lock, max_blocking_time,
-                [&success, &condition]()
-                {
-                    success = condition();
-                    return success;
-                });
-        return success;
-    }
-
     static bool check_sequence_number(
             const octet* data,
             const SequenceNumber_t& sn);
 
-    static sharable_mutex& shared_mutex(
-            octet*);
+    bool is_sample_valid(
+            const CacheChange_t& change) const;
 
 protected:
 
@@ -189,7 +168,7 @@ protected:
             Time_t source_timestamp;
 
             // Sequence number of the payload inside the writer
-            SequenceNumber_t sequence_number;
+            std::atomic<SequenceNumber_t> sequence_number;
 
             // GUID of the writer that created the payload
             GUID_t writer_GUID;
@@ -217,7 +196,8 @@ protected:
 
         void reset()
         {
-            metadata_.sequence_number = c_SequenceNumber_Unknown;
+            // Reset the sequence number first, it signals the data is not valid anymore
+            metadata_.sequence_number.store(c_SequenceNumber_Unknown, std::memory_order_relaxed);
             metadata_.status = fastrtps::rtps::ChangeKind_t::ALIVE;
             metadata_.data_length = 0;
             metadata_.writer_GUID = c_Guid_Unknown;
@@ -277,13 +257,14 @@ protected:
 
         SequenceNumber_t sequence_number() const
         {
-            return metadata_.sequence_number;
+            SequenceNumber_t value = metadata_.sequence_number.load(std::memory_order_relaxed);
+            return value;
         }
 
         void sequence_number(
                 SequenceNumber_t sequence_number)
         {
-            metadata_.sequence_number = sequence_number;
+            metadata_.sequence_number.store(sequence_number, std::memory_order_relaxed);
         }
 
         Time_t source_timestamp() const
@@ -330,11 +311,6 @@ protected:
             metadata_.related_sample_identity = identity;
         }
 
-        sharable_mutex& mutex()
-        {
-            return metadata_.mutex;
-        }
-
     private:
 
         PayloadNodeMetaData metadata_;
@@ -347,9 +323,6 @@ protected:
         uint64_t notified_begin;        //< The index of the oldest history entry already notified (ready to read)
         uint64_t notified_end;          //< The index of the history entry that will be notified next
         uint32_t liveliness_sequence;   //< The ID of the last liveliness assertion sent by the writer
-
-        Segment::condition_variable notification_cv;        //< CV to wait for notifications from the reader
-        Segment::mutex notification_mutex;                  //< synchronization mutex
     };
 #pragma warning(pop)
 

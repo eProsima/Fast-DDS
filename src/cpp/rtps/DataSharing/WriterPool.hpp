@@ -65,27 +65,10 @@ public:
             return false;
         }
 
-        // Look for a free payload that is recyclable
-        PayloadNode* payload = nullptr;
-        for (auto it = free_payloads_.begin(); it != free_payloads_.end(); ++it)
-        {
-            if (writer_->is_datasharing_payload_reusable((*it)->source_timestamp()))
-            {
-                payload = *it;
-                free_payloads_.erase(it);
-                break;
-            }
-        }
-        if (payload == nullptr)
-        {
-            return false;
-        }
-
-        payload->mutex().lock();
+        PayloadNode* payload = free_payloads_.front();
+        free_payloads_.pop_front();
         // Reset all the metadata to signal the reader that the payload is dirty
         payload->reset();
-        // Now we can unlock
-        payload->mutex().unlock();
 
         cache_change.serializedPayload.data = payload->data();
         cache_change.serializedPayload.max_size = max_data_size_;
@@ -264,7 +247,6 @@ public:
 
         // Fill the payload metadata with the change info
         PayloadNode* node = PayloadNode::get_from_data(cache_change->serializedPayload.data);
-        node->sequence_number(cache_change->sequenceNumber);
         node->status(ALIVE);
         node->data_length(cache_change->serializedPayload.length);
         node->source_timestamp(cache_change->sourceTimestamp);
@@ -274,6 +256,9 @@ public:
         {
             node->related_sample_identity(cache_change->write_params.related_sample_identity());
         }
+
+        // Set the sequence number last, it signals the data is ready
+        node->sequence_number(cache_change->sequenceNumber);
 
         // Add it to the history
         history_[static_cast<uint32_t>(descriptor_->notified_end)] = segment_->get_offset_from_address(node);

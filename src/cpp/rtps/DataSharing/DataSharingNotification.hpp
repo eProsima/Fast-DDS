@@ -53,7 +53,9 @@ public:
      */
     inline void notify()
     {
+        std::unique_lock<Segment::mutex> lock(notification_->notification_mutex);
         notification_->new_data.store(true);
+        lock.unlock();
         notification_->notification_cv.notify_all();
     }
 
@@ -101,9 +103,6 @@ protected:
 
         //! New data available
         std::atomic<bool> new_data;
-
-        //! Timestamp of the reader's first sample NOT ack'd
-        std::atomic<int64_t> ack_timestamp;
     };
 #pragma warning(pop)
 

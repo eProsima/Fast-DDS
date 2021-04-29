@@ -138,10 +138,7 @@ public:
      */
     RTPS_DllAPI virtual bool serialize(
             void* data,
-            fastrtps::rtps::SerializedPayload_t* payload)
-    {
-        return get()->serialize(data, payload);
-    }
+            fastrtps::rtps::SerializedPayload_t* payload);
 
     /**
      * @brief Deserializes the data
@@ -151,10 +148,7 @@ public:
      */
     RTPS_DllAPI virtual bool deserialize(
             fastrtps::rtps::SerializedPayload_t* payload,
-            void* data)
-    {
-        return get()->deserialize(payload, data);
-    }
+            void* data);
 
     /**
      * @brief Getter for the SerializedSizeProvider
