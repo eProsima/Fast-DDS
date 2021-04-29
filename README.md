@@ -184,6 +184,7 @@ Then, download the docker image files from the
 Load the docker images:
 
 	$ docker load -i ubuntu-fast-dds:<FastDDS-Version>.tar
+	$ docker tag ubuntu-fast-rtps:<version> ubuntu-fast-rtps:latest
 	$ docker load -i ubuntu-fast-dds-helloworld:<FastDDS-Version>.tar
 	$ docker load -i ubuntu-fast-dds-shapesdemo:<ShapesDemo-Version>.tar
 
@@ -200,6 +201,11 @@ It is also possible to run the *Fast DDS* HelloWorld example by executing the fo
     $ docker run -it ubuntu-fast-dds-helloworld:<FastDDS-Version>
 
 Run as many images as wanted and check the communication between them.
+
+For instance, to run `Benchmark` example, run the following commands in the separate terminal sessions:
+
+	$ docker run -i ubuntu-fast-rtps /usr/local/examples/C++/Benchmark/bin/Benchmark subscriber udp
+	$ docker run -i ubuntu-fast-rtps /usr/local/examples/C++/Benchmark/bin/Benchmark publisher udp
 
 ## Getting Help
 
