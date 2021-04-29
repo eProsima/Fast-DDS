@@ -63,6 +63,9 @@ struct MockListener : IListener
         auto kind = data._d();
         switch (kind)
         {
+            case HISTORY2HISTORY_LATENCY:
+                on_history_latency(data.writer_reader_data());
+                break;
             case RTPS_SENT:
                 on_rtps_sent(data.entity2locator_traffic());
                 break;
@@ -102,6 +105,7 @@ struct MockListener : IListener
         }
     }
 
+    MOCK_METHOD1(on_history_latency, void(const eprosima::fastdds::statistics::WriterReaderData&));
     MOCK_METHOD1(on_rtps_sent, void(const eprosima::fastdds::statistics::Entity2LocatorTraffic&));
     MOCK_METHOD1(on_heartbeat_count, void(const eprosima::fastdds::statistics::EntityCount&));
     MOCK_METHOD1(on_acknack_count, void(const eprosima::fastdds::statistics::EntityCount&));
@@ -584,7 +588,8 @@ TEST_F(RTPSStatisticsTests, statistics_rpts_listener_callbacks)
 
     // reader callbacks through participant listener
     auto participant_reader_listener = make_shared<MockListener>();
-    ASSERT_TRUE(participant_->add_statistics_listener(participant_reader_listener, EventKind::ACKNACK_COUNT));
+    ASSERT_TRUE(participant_->add_statistics_listener(participant_reader_listener,
+        EventKind::ACKNACK_COUNT | EventKind::HISTORY2HISTORY_LATENCY));
 
     // reader specific callbacks
     auto reader_listener = make_shared<MockListener>();
@@ -619,7 +624,11 @@ TEST_F(RTPSStatisticsTests, statistics_rpts_listener_callbacks)
     //   optionally: ACKNACK_COUNT
     EXPECT_CALL(*reader_listener, on_acknack_count)
             .Times(AtLeast(1));
+    EXPECT_CALL(*reader_listener, on_history_latency)
+            .Times(AtLeast(1));
     EXPECT_CALL(*participant_reader_listener, on_acknack_count)
+            .Times(AtLeast(1));
+    EXPECT_CALL(*participant_reader_listener, on_history_latency)
             .Times(AtLeast(1));
 
     // match writer and reader on a dummy topic
@@ -646,7 +655,8 @@ TEST_F(RTPSStatisticsTests, statistics_rpts_listener_callbacks)
     EXPECT_TRUE(participant_->remove_statistics_listener(participant_listener, EventKind::RTPS_SENT));
     EXPECT_TRUE(participant_->remove_statistics_listener(participant_writer_listener,
             EventKind::DATA_COUNT | EventKind::RESENT_DATAS | EventKind::SAMPLE_DATAS));
-    EXPECT_TRUE(participant_->remove_statistics_listener(participant_reader_listener, EventKind::ACKNACK_COUNT));
+    EXPECT_TRUE(participant_->remove_statistics_listener(participant_reader_listener,
+        EventKind::ACKNACK_COUNT | EventKind::HISTORY2HISTORY_LATENCY));
 }
 
 /*
@@ -694,7 +704,7 @@ TEST_F(RTPSStatisticsTests, statistics_rpts_listener_callbacks_fragmented)
     // writer callbacks through participant listener
     auto participant_listener = make_shared<MockListener>();
     uint32_t mask = EventKind::DATA_COUNT | EventKind::HEARTBEAT_COUNT
-            | EventKind::ACKNACK_COUNT | EventKind::NACKFRAG_COUNT;
+            | EventKind::ACKNACK_COUNT | EventKind::NACKFRAG_COUNT | EventKind::HISTORY2HISTORY_LATENCY;
     ASSERT_TRUE(participant_->add_statistics_listener(participant_listener, mask));
 
     EXPECT_CALL(*participant_listener, on_data_count)
@@ -702,6 +712,8 @@ TEST_F(RTPSStatisticsTests, statistics_rpts_listener_callbacks_fragmented)
     EXPECT_CALL(*participant_listener, on_heartbeat_count)
             .Times(AtLeast(1));
     EXPECT_CALL(*participant_listener, on_acknack_count)
+            .Times(AtLeast(1));
+    EXPECT_CALL(*participant_listener, on_history_latency)
             .Times(AtLeast(1));
     EXPECT_CALL(*participant_listener, on_nackfrag_count)
             .Times(AtLeast(1));
