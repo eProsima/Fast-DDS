@@ -246,6 +246,28 @@ public:
         writer_ = RTPSDomain::createRTPSWriter(participant_, w_att, writer_history_);
     }
 
+    void create_lazy_writer(
+            uint32_t payloadMaxSize,
+            fastrtps::rtps::ReliabilityKind_t reliability_qos = fastrtps::rtps::ReliabilityKind_t::RELIABLE,
+            fastrtps::rtps::DurabilityKind_t durability_qos = fastrtps::rtps::DurabilityKind_t::TRANSIENT_LOCAL)
+    {
+        using namespace fastrtps::rtps;
+
+        HistoryAttributes history_attributes;
+        history_attributes.payloadMaxSize = payloadMaxSize;
+        writer_history_ = new WriterHistory(history_attributes);
+
+        WriterAttributes w_att;
+        w_att.times.heartbeatPeriod.seconds = 3;
+        w_att.times.heartbeatPeriod.nanosec = 0;
+        w_att.times.nackResponseDelay.seconds = 0;
+        w_att.times.nackResponseDelay.nanosec = 300 * 1000 * 1000; // increase ACKNACK response delay
+        w_att.endpoint.reliabilityKind = reliability_qos;
+        w_att.endpoint.durabilityKind = durability_qos;
+
+        writer_ = RTPSDomain::createRTPSWriter(participant_, w_att, writer_history_);
+    }
+
     void create_endpoints(
             uint32_t payloadMaxSize,
             fastrtps::rtps::ReliabilityKind_t reliability_qos = fastrtps::rtps::ReliabilityKind_t::RELIABLE)
@@ -801,6 +823,112 @@ TEST_F(RTPSStatisticsTests, statistics_rpts_listener_discovery_callbacks)
 
     // release the listener
     EXPECT_TRUE(participant_->remove_statistics_listener(participant_listener, EventKind::DISCOVERED_ENTITY));
+}
+
+/*
+ * This test checks improves coverity by asserting that every RESENT_DATAS callback is associated with a message
+ */
+TEST_F(RTPSStatisticsTests, statistics_rpts_avoid_empty_resent_callbacks)
+{
+    using namespace ::testing;
+    using namespace fastrtps;
+    using namespace fastrtps::rtps;
+    using namespace std;
+
+    // The history must be cleared after the acknack is received
+    // but before the response is processed
+    atomic_bool acknack_sent(false);
+
+    // filter out all user DATAs
+    set_transport_filter(
+        DATA,
+        [](fastrtps::rtps::CDRMessage_t& msg)-> bool
+        {
+            uint32_t old_pos = msg.pos;
+
+            // see RTPS DDS 9.4.5.3 Data Submessage
+            EntityId_t readerID, writerID;
+            SequenceNumber_t sn;
+
+            msg.pos += 2; // flags
+            msg.pos += 2; // octets to inline quos
+            CDRMessage::readEntityId(&msg, &readerID);
+            CDRMessage::readEntityId(&msg, &writerID);
+            CDRMessage::readSequenceNumber(&msg, &sn);
+
+            // restore buffer pos
+            msg.pos = old_pos;
+
+            // filter user traffic
+            return ((writerID.value[3] & 0xC0) == 0);
+        });
+
+    set_transport_filter(
+        ACKNACK,
+        [&acknack_sent](fastrtps::rtps::CDRMessage_t& msg)-> bool
+        {
+            uint32_t old_pos = msg.pos;
+
+            // see RTPS DDS 9.4.5.2 Acknack Submessage
+            EntityId_t readerID, writerID;
+            SequenceNumberSet_t snSet;
+
+            CDRMessage::readEntityId(&msg, &readerID);
+            CDRMessage::readEntityId(&msg, &writerID);
+            snSet = CDRMessage::readSequenceNumberSet(&msg);
+
+            // restore buffer pos
+            msg.pos = old_pos;
+
+            // The acknack has been sent
+            acknack_sent = !snSet.empty();
+
+            // we are not filtering
+            return false;
+        });
+
+    // create the listeners and set expectations
+    auto writer_listener = make_shared<MockListener>();
+
+    // check callbacks on data exchange
+    EXPECT_CALL(*writer_listener, on_heartbeat_count)
+            .Times(AtLeast(1));
+    EXPECT_CALL(*writer_listener, on_data_count)
+            .Times(AtLeast(1));
+    EXPECT_CALL(*writer_listener, on_resent_count)
+            .Times(0); // never called
+
+    // create the writer, reader is a late joiner
+    uint16_t length = 255;
+    create_lazy_writer(length, RELIABLE, TRANSIENT_LOCAL);
+
+    // writer specific callbacks
+    ASSERT_TRUE(writer_->add_statistics_listener(writer_listener));
+
+    // create the late joiner as VOLATILE
+    create_reader(length, RELIABLE, VOLATILE);
+
+    // match writer and reader on a dummy topic
+    match_endpoints(false, "string", "statisticsSmallTopic");
+
+    // add a sample to the writer history that cannot be delivered
+    // due to the filter
+    write_small_sample(length);
+
+    // wait for the acknack to be sent before clearing the history
+    while(!acknack_sent)
+    {
+        this_thread::sleep_for(chrono::milliseconds(100));
+    }
+
+    // remove the sample from the writer
+    ASSERT_TRUE(writer_history_->remove_change(SequenceNumber_t{ 0, 1 }));
+
+    // give room to process the ACKNACK
+    this_thread::sleep_for(chrono::milliseconds(400));
+
+    // release the listeners
+    EXPECT_TRUE(writer_->remove_statistics_listener(writer_listener));
 }
 
 } // namespace rtps
