@@ -46,6 +46,15 @@ namespace fastrtps {
 namespace rtps {
 
 
+static void add_statistics_sent_submessage(
+        CacheChange_t* change,
+        size_t num_locators)
+{
+#ifdef FASTDDS_STATISTICS
+    change->num_sent_submessages += num_locators;
+#endif
+}
+
 /**
  * Loops over all the readers in the vector, applying the given routine.
  * The loop continues until the result of the routine is true for any reader
@@ -145,7 +154,8 @@ bool for_matched_readers(
 static bool add_change_to_rtps_group(
         RTPSMessageGroup& group,
         CacheChange_t* change,
-        bool inline_qos)
+        bool inline_qos,
+        size_t num_locators)
 {
     try
     {
@@ -159,6 +169,10 @@ static bool add_change_to_rtps_group(
                     logError(RTPS_WRITER, "Error sending fragment (" << change->sequenceNumber << ", " << frag << ")");
                     break;
                 }
+                else
+                {
+                    add_statistics_sent_submessage(change, num_locators);
+                }
             }
         }
         else
@@ -166,6 +180,10 @@ static bool add_change_to_rtps_group(
             if (!group.add_data(*change, inline_qos))
             {
                 logError(RTPS_WRITER, "Error sending change " << change->sequenceNumber);
+            }
+            else
+            {
+                add_statistics_sent_submessage(change, num_locators);
             }
         }
     }
@@ -402,7 +420,8 @@ void StatelessWriter::unsent_change_added_to_history(
                     for (std::unique_ptr<ReaderLocator>& it : matched_remote_readers_)
                     {
                         RTPSMessageGroup group(mp_RTPSParticipant, this, *it, max_blocking_time);
-                        if (!add_change_to_rtps_group(group, change, is_inline_qos_expected_))
+                        if (!add_change_to_rtps_group(group, change, is_inline_qos_expected_,
+                                it->locators_size()))
                         {
                             break;
                         }
@@ -418,7 +437,8 @@ void StatelessWriter::unsent_change_added_to_history(
                     if (there_are_remote_readers_ || !fixed_locators_.empty())
                     {
                         RTPSMessageGroup group(mp_RTPSParticipant, this, *this, max_blocking_time);
-                        add_change_to_rtps_group(group, change, is_inline_qos_expected_);
+                        add_change_to_rtps_group(group, change, is_inline_qos_expected_
+                                locator_selector_.selected_size() + fixed_locators_.size());
                     }
                 }
 
@@ -601,7 +621,7 @@ void StatelessWriter::send_all_unsent_changes()
 
     NetworkFactory& network = mp_RTPSParticipant->network_factory();
     RTPSMessageGroup group(mp_RTPSParticipant, this, *this);
-    bool remote_destinations = locator_selector_.selected_size() > 0 || !fixed_locators_.empty();
+    size_t num_locators = locator_selector_.selected_size() + fixed_locators_.size();
     bool bHasListener = mp_listener != nullptr;
 
     uint32_t total_sent_size = 0;
@@ -616,7 +636,7 @@ void StatelessWriter::send_all_unsent_changes()
             locator_selector_.enable(guid);
         }
         network.select_locators(locator_selector_);
-        remote_destinations = locator_selector_.selected_size() > 0 || !fixed_locators_.empty();
+        num_locators = locator_selector_.selected_size();
         if (!has_builtin_guid())
         {
             compute_selected_guids();
@@ -638,7 +658,7 @@ void StatelessWriter::send_all_unsent_changes()
             late_joiner_guids_.clear();
             locator_selector_.reset(true);
             network.select_locators(locator_selector_);
-            remote_destinations = locator_selector_.selected_size() > 0 || !fixed_locators_.empty();
+            num_locators = locator_selector_.selected_size() + fixed_locators_.size();
             if (!has_builtin_guid())
             {
                 compute_selected_guids();
@@ -656,9 +676,9 @@ void StatelessWriter::send_all_unsent_changes()
             }
         }
 
-        if (remote_destinations)
+        if (num_locators > 0)
         {
-            if (!add_change_to_rtps_group(group, unsentChange.getChange(), is_inline_qos_expected_))
+            if (!add_change_to_rtps_group(group, unsentChange.getChange(), is_inline_qos_expected_, num_locators))
             {
                 break;
             }
@@ -737,6 +757,9 @@ void StatelessWriter::send_unsent_changes_with_flow_control()
         {
             RTPSMessageGroup group(mp_RTPSParticipant, this, *this);
 
+            size_t num_locators = locator_selector_.selected_size();
+            num_locators += fixed_locators_.size();
+
             // Select late-joiners only
             if (!late_joiner_guids_.empty())
             {
@@ -747,6 +770,7 @@ void StatelessWriter::send_unsent_changes_with_flow_control()
                     locator_selector_.enable(guid);
                 }
                 network.select_locators(locator_selector_);
+                num_locators = locator_selector_.selected_size();
                 if (!has_builtin_guid())
                 {
                     compute_selected_guids();
@@ -765,6 +789,8 @@ void StatelessWriter::send_unsent_changes_with_flow_control()
                     late_joiner_guids_.clear();
                     locator_selector_.reset(true);
                     network.select_locators(locator_selector_);
+                    num_locators = locator_selector_.selected_size();
+                    num_locators += fixed_locators_.size();
                     if (!has_builtin_guid())
                     {
                         compute_selected_guids();
@@ -786,12 +812,20 @@ void StatelessWriter::send_unsent_changes_with_flow_control()
                         logError(RTPS_WRITER, "Error sending fragment (" << changeToSend.sequenceNumber <<
                                 ", " << changeToSend.fragmentNumber << ")");
                     }
+                    else
+                    {
+                        add_statistics_sent_submessage(changeToSend.cacheChange, num_locators);
+                    }
                 }
                 else
                 {
                     if (!group.add_data(*changeToSend.cacheChange, is_inline_qos_expected_))
                     {
                         logError(RTPS_WRITER, "Error sending change " << changeToSend.sequenceNumber);
+                    }
+                    else
+                    {
+                        add_statistics_sent_submessage(changeToSend.cacheChange, num_locators);
                     }
                 }
 
