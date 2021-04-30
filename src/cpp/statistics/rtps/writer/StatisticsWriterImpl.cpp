@@ -60,6 +60,25 @@ const GUID_t& StatisticsWriterImpl::get_guid() const
     return static_cast<const RTPSWriter*>(this)->getGuid();
 }
 
+void StatisticsWriterImpl::on_sample_datas(
+        const fastrtps::rtps::SampleIdentity& sample_identity,
+        size_t num_sent_submessages)
+{
+    SampleIdentityCount notification;
+    notification.sample_id(to_statistics_type(sample_identity));
+    notification.count(static_cast<uint64_t>(num_sent_submessages));
+
+    // Perform the callbacks
+    Data data;
+    // note that the setter sets SAMPLE_DATAS by default
+    data.sample_identity_count(notification);
+
+    for_each_listener([&data](const std::shared_ptr<IListener>& listener)
+        {
+            listener->on_statistics_data(data);
+        });
+}
+
 void StatisticsWriterImpl::on_data()
 {
     EntityCount notification;

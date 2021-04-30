@@ -43,6 +43,12 @@ detail::GUID_s to_statistics_type(
     return *reinterpret_cast<detail::GUID_s*>(&guid);
 }
 
+detail::SampleIdentity_s to_statistics_type(
+        fastrtps::rtps::SampleIdentity sample_id)
+{
+    return *reinterpret_cast<detail::SampleIdentity_s*>(&sample_id);
+}
+
 } // statistics
 } // fastdds
 } // eprosima
