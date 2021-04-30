@@ -157,6 +157,8 @@ static bool add_change_to_rtps_group(
         bool inline_qos,
         size_t num_locators)
 {
+    bool ret_val = true;
+
     try
     {
         uint32_t n_fragments = change->getFragmentCount();
@@ -190,10 +192,10 @@ static bool add_change_to_rtps_group(
     catch (const RTPSMessageGroup::timeout&)
     {
         logError(RTPS_WRITER, "Max blocking time reached");
-        return false;
+        ret_val = false;
     }
 
-    return true;
+    return ret_val;
 }
 
 StatelessWriter::StatelessWriter(
@@ -442,6 +444,7 @@ void StatelessWriter::unsent_change_added_to_history(
                     }
                 }
 
+                on_sample_datas(change->write_params.sample_identity(), change->num_sent_submessages);
                 if (mp_listener != nullptr)
                 {
                     mp_listener->onWriterChangeReceivedByAll(this, change);
@@ -678,7 +681,10 @@ void StatelessWriter::send_all_unsent_changes()
 
         if (num_locators > 0)
         {
-            if (!add_change_to_rtps_group(group, unsentChange.getChange(), is_inline_qos_expected_, num_locators))
+            auto change = unsentChange.getChange();
+            bool sent = add_change_to_rtps_group(group, change, is_inline_qos_expected_, num_locators);
+            on_sample_datas(change->write_params.sample_identity(), change->num_sent_submessages);
+            if (!sent)
             {
                 break;
             }
@@ -800,13 +806,14 @@ void StatelessWriter::send_unsent_changes_with_flow_control()
                 // Remove the messages selected for sending from the original list,
                 // and update those that were fragmented with the new sent index
                 update_unsent_changes(changeToSend.sequenceNumber, changeToSend.fragmentNumber);
+                auto change = changeToSend.cacheChange;
 
                 // Notify the controllers
-                FlowController::NotifyControllersChangeSent(changeToSend.cacheChange);
+                FlowController::NotifyControllersChangeSent(change);
 
                 if (changeToSend.fragmentNumber != 0)
                 {
-                    if (!group.add_data_frag(*changeToSend.cacheChange, changeToSend.fragmentNumber,
+                    if (!group.add_data_frag(*change, changeToSend.fragmentNumber,
                             is_inline_qos_expected_))
                     {
                         logError(RTPS_WRITER, "Error sending fragment (" << changeToSend.sequenceNumber <<
@@ -814,24 +821,25 @@ void StatelessWriter::send_unsent_changes_with_flow_control()
                     }
                     else
                     {
-                        add_statistics_sent_submessage(changeToSend.cacheChange, num_locators);
+                        add_statistics_sent_submessage(change, num_locators);
                     }
                 }
                 else
                 {
-                    if (!group.add_data(*changeToSend.cacheChange, is_inline_qos_expected_))
+                    if (!group.add_data(*change, is_inline_qos_expected_))
                     {
                         logError(RTPS_WRITER, "Error sending change " << changeToSend.sequenceNumber);
                     }
                     else
                     {
-                        add_statistics_sent_submessage(changeToSend.cacheChange, num_locators);
+                        add_statistics_sent_submessage(change, num_locators);
                     }
                 }
 
+                on_sample_datas(change->write_params.sample_identity(), change->num_sent_submessages);
                 if (bHasListener && is_acked_by_all(changeToSend.cacheChange))
                 {
-                    mp_listener->onWriterChangeReceivedByAll(this, changeToSend.cacheChange);
+                    mp_listener->onWriterChangeReceivedByAll(this, change);
                 }
             }
         }
