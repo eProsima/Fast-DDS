@@ -916,7 +916,7 @@ TEST_F(RTPSStatisticsTests, statistics_rpts_avoid_empty_resent_callbacks)
     write_small_sample(length);
 
     // wait for the acknack to be sent before clearing the history
-    while(!acknack_sent)
+    while (!acknack_sent)
     {
         this_thread::sleep_for(chrono::milliseconds(100));
     }
