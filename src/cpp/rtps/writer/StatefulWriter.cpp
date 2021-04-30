@@ -67,7 +67,7 @@ static void add_statistics_sent_submessage(
 {
 #ifdef FASTDDS_STATISTICS
     change->num_sent_submessages += num_locators;
-#endif
+#endif // ifdef FASTDDS_STATISTICS
 }
 
 /**
@@ -1009,9 +1009,9 @@ void StatefulWriter::send_changes_separatedly(
             auto sent_fun = [num_locators](
                 CacheChange_t* change,
                 FragmentNumber_t /*frag*/)
-            {
-                add_statistics_sent_submessage(change, num_locators);
-            };
+                    {
+                        add_statistics_sent_submessage(change, num_locators);
+                    };
             auto unsent_change_process =
                     [&](const SequenceNumber_t& seqNum, const ChangeForReader_t* unsentChange)
                     {

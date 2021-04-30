@@ -74,9 +74,9 @@ void StatisticsWriterImpl::on_sample_datas(
     data.sample_identity_count(notification);
 
     for_each_listener([&data](const std::shared_ptr<IListener>& listener)
-        {
-            listener->on_statistics_data(data);
-        });
+            {
+                listener->on_statistics_data(data);
+            });
 }
 
 void StatisticsWriterImpl::on_data()

@@ -52,7 +52,7 @@ static void add_statistics_sent_submessage(
 {
 #ifdef FASTDDS_STATISTICS
     change->num_sent_submessages += num_locators;
-#endif
+#endif // ifdef FASTDDS_STATISTICS
 }
 
 /**
@@ -439,7 +439,7 @@ void StatelessWriter::unsent_change_added_to_history(
                     if (there_are_remote_readers_ || !fixed_locators_.empty())
                     {
                         RTPSMessageGroup group(mp_RTPSParticipant, this, *this, max_blocking_time);
-                        add_change_to_rtps_group(group, change, is_inline_qos_expected_
+                        add_change_to_rtps_group(group, change, is_inline_qos_expected_,
                                 locator_selector_.selected_size() + fixed_locators_.size());
                     }
                 }
