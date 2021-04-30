@@ -52,10 +52,16 @@ namespace rtps {
 
 struct MockListener : IListener
 {
+    MockListener()
+    {
+        EXPECT_CALL(*this, on_unexpected_kind).Times(0);
+    }
+
     void on_statistics_data(
             const Data& data) override
     {
-        switch (data._d())
+        auto kind = data._d();
+        switch (kind)
         {
             case RTPS_SENT:
                 on_rtps_sent(data.entity2locator_traffic());
@@ -85,6 +91,7 @@ struct MockListener : IListener
                 on_pdp_packets(data.entity_count());
                 break;
             default:
+                on_unexpected_kind(kind);
                 break;
         }
     }
@@ -98,6 +105,7 @@ struct MockListener : IListener
     MOCK_METHOD1(on_nackfrag_count, void(const eprosima::fastdds::statistics::EntityCount&));
     MOCK_METHOD1(on_entity_discovery, void(const eprosima::fastdds::statistics::DiscoveryTime&));
     MOCK_METHOD1(on_pdp_packets, void(const eprosima::fastdds::statistics::EntityCount&));
+    MOCK_METHOD1(on_unexpected_kind, void(eprosima::fastdds::statistics::EventKind));
 };
 
 class RTPSStatisticsTestsImpl
