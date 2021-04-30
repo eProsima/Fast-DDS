@@ -90,6 +90,9 @@ struct MockListener : IListener
             case PDP_PACKETS:
                 on_pdp_packets(data.entity_count());
                 break;
+            case SAMPLE_DATAS:
+                on_sample_datas(data.sample_identity_count());
+                break;
             default:
                 on_unexpected_kind(kind);
                 break;
@@ -105,6 +108,7 @@ struct MockListener : IListener
     MOCK_METHOD1(on_nackfrag_count, void(const eprosima::fastdds::statistics::EntityCount&));
     MOCK_METHOD1(on_entity_discovery, void(const eprosima::fastdds::statistics::DiscoveryTime&));
     MOCK_METHOD1(on_pdp_packets, void(const eprosima::fastdds::statistics::EntityCount&));
+    MOCK_METHOD1(on_sample_datas, void(const eprosima::fastdds::statistics::SampleIdentityCount&));
     MOCK_METHOD1(on_unexpected_kind, void(eprosima::fastdds::statistics::EventKind));
 };
 
@@ -595,6 +599,8 @@ TEST_F(RTPSStatisticsTests, statistics_rpts_listener_callbacks)
             .Times(AtLeast(1));
     EXPECT_CALL(*writer_listener, on_resent_count)
             .Times(AtLeast(1));
+    EXPECT_CALL(*writer_listener, on_sample_datas)
+            .Times(AtLeast(1));
 
     EXPECT_CALL(*participant_writer_listener, on_data_count)
             .Times(AtLeast(1));
@@ -739,6 +745,8 @@ TEST_F(RTPSStatisticsTests, statistics_rpts_listener_gap_callback)
     EXPECT_CALL(*writer_listener, on_data_count)
             .Times(AtLeast(1));
     EXPECT_CALL(*writer_listener, on_resent_count)
+            .Times(AtLeast(1));
+    EXPECT_CALL(*writer_listener, on_sample_datas)
             .Times(AtLeast(1));
 
     EXPECT_CALL(*participant_writer_listener, on_gap_count)
