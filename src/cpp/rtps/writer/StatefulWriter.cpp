@@ -61,6 +61,14 @@ namespace fastrtps {
 namespace rtps {
 
 
+static void add_statistics_sent_submessage(
+        CacheChange_t* change,
+        size_t num_locators)
+{
+#ifdef FASTDDS_STATISTICS
+    change->num_sent_submessages += num_locators;
+#endif
+}
 
 /**
  * Loops over all the readers in the vector, applying the given routine.
@@ -158,12 +166,12 @@ bool for_matched_readers(
     return for_matched_readers(reader_vector_3, fun);
 }
 
-template<typename UnaryFun>
+template<typename Functor>
 bool send_data_or_fragments(
         RTPSMessageGroup& group,
         CacheChange_t* change,
         bool inline_qos,
-        UnaryFun sent_fun)
+        Functor sent_fun)
 {
     bool sent_ok = true;
 
@@ -174,7 +182,7 @@ bool send_data_or_fragments(
             sent_ok &= group.add_data_frag(*change, frag, inline_qos);
             if (sent_ok)
             {
-                sent_fun(frag);
+                sent_fun(change, frag);
             }
             else
             {
@@ -189,7 +197,7 @@ bool send_data_or_fragments(
         sent_ok = group.add_data(*change, inline_qos);
         if (sent_ok)
         {
-            sent_fun(0);
+            sent_fun(change, 0);
         }
         else
         {
@@ -198,11 +206,6 @@ bool send_data_or_fragments(
     }
 
     return sent_ok;
-}
-
-static void null_sent_fun(
-        FragmentNumber_t /*frag*/)
-{
 }
 
 using namespace std::chrono;
@@ -563,7 +566,8 @@ void StatefulWriter::sync_delivery(
         {
             if (!m_separateSendingEnabled)
             {
-                if (locator_selector_.selected_size() > 0)
+                size_t num_locators = locator_selector_.selected_size();
+                if (num_locators > 0)
                 {
                     NetworkFactory& network = mp_RTPSParticipant->network_factory();
                     network.select_locators(locator_selector_);
@@ -571,9 +575,11 @@ void StatefulWriter::sync_delivery(
 
                     RTPSMessageGroup group(mp_RTPSParticipant, this, *this, max_blocking_time);
 
-                    auto sent_fun = [this, change](
+                    auto sent_fun = [this, num_locators](
+                        CacheChange_t* change,
                         FragmentNumber_t frag)
                             {
+                                add_statistics_sent_submessage(change, num_locators);
                                 if (frag > 0)
                                 {
                                     for (ReaderProxy* it : matched_remote_readers_)
@@ -607,6 +613,10 @@ void StatefulWriter::sync_delivery(
                         if (!group.add_data(*change, it->expects_inline_qos()))
                         {
                             logError(RTPS_WRITER, "Error sending change " << change->sequenceNumber);
+                        }
+                        else
+                        {
+                            add_statistics_sent_submessage(change, it->locators_size());
                         }
                     }
                     uint32_t last_processed = 0;
@@ -944,6 +954,7 @@ void StatefulWriter::send_changes_separatedly(
         // Specific destination message group
         RTPSMessageGroup group(mp_RTPSParticipant, this, remoteReader->message_sender());
         SequenceNumber_t min_history_seq = get_seq_num_min();
+        size_t num_locators = remoteReader->locators_size();
         if (remoteReader->is_reliable())
         {
             // Add a HEARTBEAT to the datagram with final flag set to false. This way, the reader must send an
@@ -953,9 +964,11 @@ void StatefulWriter::send_changes_separatedly(
             RTPSGapBuilder gaps(group, remoteReader->guid());
 
             uint32_t lastBytesProcessed = 0;
-            auto sent_fun = [this, remoteReader, &lastBytesProcessed, &group](
+            auto sent_fun = [this, num_locators, remoteReader, &lastBytesProcessed, &group](
+                CacheChange_t* change,
                 FragmentNumber_t /*frag*/)
                     {
+                        add_statistics_sent_submessage(change, num_locators);
                         // Heartbeat piggyback.
                         send_heartbeat_piggyback_nts_(remoteReader, group, lastBytesProcessed);
                     };
@@ -990,6 +1003,12 @@ void StatefulWriter::send_changes_separatedly(
         else
         {
             SequenceNumber_t max_ack_seq = SequenceNumber_t::unknown();
+            auto sent_fun = [num_locators](
+                CacheChange_t* change,
+                FragmentNumber_t /*frag*/)
+            {
+                add_statistics_sent_submessage(change, num_locators);
+            };
             auto unsent_change_process =
                     [&](const SequenceNumber_t& seqNum, const ChangeForReader_t* unsentChange)
                     {
@@ -999,7 +1018,7 @@ void StatefulWriter::send_changes_separatedly(
                                 group,
                                 unsentChange->getChange(),
                                 remoteReader->expects_inline_qos(),
-                                null_sent_fun);
+                                sent_fun);
                             if (sent_ok)
                             {
                                 max_ack_seq = seqNum;
@@ -1120,6 +1139,7 @@ void StatefulWriter::send_all_unsent_changes(
         locator_selector_.reset(true);
         network.select_locators(locator_selector_);
         compute_selected_guids();
+        size_t num_locators = locator_selector_.selected_size();
 
         bool acknack_required = next_all_acked_notify_sequence_ < get_seq_num_min();
 
@@ -1128,9 +1148,11 @@ void StatefulWriter::send_all_unsent_changes(
         acknack_required |= send_hole_gaps_to_group(group);
 
         uint32_t lastBytesProcessed = 0;
-        auto sent_fun = [this, &lastBytesProcessed, &group](
+        auto sent_fun = [this, &num_locators, &lastBytesProcessed, &group](
+            CacheChange_t* change,
             FragmentNumber_t /*frag*/)
                 {
+                    add_statistics_sent_submessage(change, num_locators);
                     // Heartbeat piggyback.
                     send_heartbeat_piggyback_nts_(nullptr, group, lastBytesProcessed);
                 };
@@ -1172,6 +1194,7 @@ void StatefulWriter::send_all_unsent_changes(
                 group.flush_and_reset();
                 network.select_locators(locator_selector_);
                 compute_selected_guids();
+                num_locators = locator_selector_.selected_size();
             }
 
             if (should_be_sent)
@@ -1214,6 +1237,7 @@ void StatefulWriter::send_all_unsent_changes(
         locator_selector_.reset(true);
         network.select_locators(locator_selector_);
         compute_selected_guids();
+        num_locators = locator_selector_.selected_size();
 
         if (cit != mp_history->changesEnd())
         {
@@ -1264,6 +1288,7 @@ void StatefulWriter::send_unsent_changes_with_flow_control(
     locator_selector_.reset(true);
     network.select_locators(locator_selector_);
     compute_selected_guids();
+    size_t num_locators = locator_selector_.selected_size();
 
     for (ReaderProxy* remoteReader : matched_remote_readers_)
     {
@@ -1329,6 +1354,7 @@ void StatefulWriter::send_unsent_changes_with_flow_control(
                 group.flush_and_reset();
                 network.select_locators(locator_selector_);
                 compute_selected_guids();
+                num_locators = locator_selector_.selected_size();
             }
 
             // TODO(Ricardo) Flowcontroller has to be used in RTPSMessageGroup. Study.
@@ -1340,6 +1366,7 @@ void StatefulWriter::send_unsent_changes_with_flow_control(
                 if (group.add_data_frag(*changeToSend.cacheChange, changeToSend.fragmentNumber,
                         expectsInlineQos))
                 {
+                    add_statistics_sent_submessage(changeToSend.cacheChange, num_locators);
                     bool must_wake_up_async_thread = false;
                     for (ReaderProxy* remoteReader : changeToSend.remoteReaders)
                     {
@@ -1386,6 +1413,7 @@ void StatefulWriter::send_unsent_changes_with_flow_control(
             {
                 if (group.add_data(*changeToSend.cacheChange, expectsInlineQos))
                 {
+                    add_statistics_sent_submessage(changeToSend.cacheChange, num_locators);
                     for (ReaderProxy* remoteReader : changeToSend.remoteReaders)
                     {
                         remoteReader->set_change_to_status(changeToSend.sequenceNumber, UNDERWAY, true);
