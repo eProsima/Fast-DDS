@@ -70,7 +70,9 @@ struct RTPS_DllAPI CacheChange_t
      * @brief Default constructor.
      * Creates an empty CacheChange_t.
      */
-    CacheChange_t() = default;
+    CacheChange_t()
+    {
+    }
 
     CacheChange_t(
             const CacheChange_t&) = delete;
