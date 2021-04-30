@@ -341,3 +341,32 @@ void StatisticsParticipantImpl::on_entity_discovery(
                 listener->on_statistics_data(data);
             });
 }
+
+void StatisticsParticipantImpl::on_pdp_packet(
+        const fastrtps::rtps::GUID_t& sender)
+{
+    // check it's a pdp endpoint
+    if ( sender.entityId != fastrtps::rtps::c_EntityId_SPDPWriter )
+    {
+        return; // ignore
+    }
+
+    EntityCount notification;
+    notification.guid(to_statistics_type(get_guid()));
+
+    {
+        std::lock_guard<std::recursive_mutex> lock(get_statistics_mutex());
+        notification.count(++pdp_counter_);
+    }
+
+    // Perform the callbacks
+    Data data;
+    // note that the setter sets RESENT_DATAS by default
+    data.entity_count(notification);
+    data._d(EventKind::PDP_PACKETS);
+
+    for_each_listener([&data](const std::shared_ptr<IListener>& listener)
+            {
+                listener->on_statistics_data(data);
+            });
+}

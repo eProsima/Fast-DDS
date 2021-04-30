@@ -104,6 +104,9 @@ private:
 
     std::map<fastrtps::rtps::Locator_t, rtps_sent_data> traffic;
 
+    // PDP_PACKETS ancillary
+    unsigned long long pdp_counter_ = {};
+
     /*
      * Retrieve the GUID_t from derived class
      * @return endpoint GUID_t
@@ -267,6 +270,14 @@ protected:
     void on_entity_discovery(
             const GUID_t& id);
 
+    /*
+     * Report PDP message exchange.
+     * We filtered the non-pdp traffic here to minimize presence of statistics code in endpoints implementation.
+     * @param sender, sender GUID_t to filter
+     */
+    void on_pdp_packet(
+            const fastrtps::rtps::GUID_t& sender);
+
 public:
 
     /*
@@ -327,6 +338,16 @@ protected:
      */
     inline void on_entity_discovery(
             const fastrtps::rtps::GUID_t&)
+    {
+    }
+
+    /*
+     * Report PDP message exchange.
+     * We filtered the non-pdp traffic here to minimize presence of statistics code in endpoints implementation.
+     * @param sender, sender GUID_t to filter
+     */
+    inline void on_pdp_packet(
+            const fastrtps::rtps::GUID_t& )
     {
     }
 
