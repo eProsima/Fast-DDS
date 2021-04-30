@@ -58,9 +58,9 @@ struct RTPS_DllAPI CacheChange_t
     union
     {
         //!Reception TimeStamp (only used in Readers)
-        Time_t receptionTimestamp{};
+        Time_t receptionTimestamp;
         //!Number of DATA / DATA_FRAG submessages sent to the transport (only used in Writers)
-        size_t num_sent_submessages;
+        size_t num_sent_submessages = 0;
     };
 
     WriteParams write_params{};

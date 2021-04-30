@@ -50,6 +50,9 @@ static void add_statistics_sent_submessage(
         CacheChange_t* change,
         size_t num_locators)
 {
+    static_cast<void>(change);
+    static_cast<void>(num_locators);
+
 #ifdef FASTDDS_STATISTICS
     change->num_sent_submessages += num_locators;
 #endif // ifdef FASTDDS_STATISTICS
