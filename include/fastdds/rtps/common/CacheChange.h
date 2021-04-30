@@ -44,21 +44,26 @@ struct RTPS_DllAPI CacheChange_t
     //!Kind of change, default value ALIVE.
     ChangeKind_t kind = ALIVE;
     //!GUID_t of the writer that generated this change.
-    GUID_t writerGUID;
+    GUID_t writerGUID{};
     //!Handle of the data associated with this change.
-    InstanceHandle_t instanceHandle;
+    InstanceHandle_t instanceHandle{};
     //!SequenceNumber of the change
-    SequenceNumber_t sequenceNumber;
+    SequenceNumber_t sequenceNumber{};
     //!Serialized Payload associated with the change.
-    SerializedPayload_t serializedPayload;
+    SerializedPayload_t serializedPayload{};
     //!Indicates if the cache has been read (only used in READERS)
     bool isRead = false;
-    //!Source TimeStamp (only used in Readers)
-    Time_t sourceTimestamp;
-    //!Reception TimeStamp (only used in Readers)
-    Time_t receptionTimestamp;
+    //!Source TimeStamp
+    Time_t sourceTimestamp{};
+    union
+    {
+        //!Reception TimeStamp (only used in Readers)
+        Time_t receptionTimestamp{};
+        //!Number of DATA / DATA_FRAG submessages sent to the transport (only used in Writers)
+        size_t num_sent_submessages;
+    };
 
-    WriteParams write_params;
+    WriteParams write_params{};
     bool is_untyped_ = true;
 
     /*!
@@ -98,6 +103,7 @@ struct RTPS_DllAPI CacheChange_t
         instanceHandle = ch_ptr->instanceHandle;
         sequenceNumber = ch_ptr->sequenceNumber;
         sourceTimestamp = ch_ptr->sourceTimestamp;
+        receptionTimestamp = ch_ptr->receptionTimestamp;
         write_params = ch_ptr->write_params;
         isRead = ch_ptr->isRead;
         fragment_size_ = ch_ptr->fragment_size_;
@@ -120,6 +126,7 @@ struct RTPS_DllAPI CacheChange_t
         instanceHandle = ch_ptr->instanceHandle;
         sequenceNumber = ch_ptr->sequenceNumber;
         sourceTimestamp = ch_ptr->sourceTimestamp;
+        receptionTimestamp = ch_ptr->receptionTimestamp;
         write_params = ch_ptr->write_params;
         isRead = ch_ptr->isRead;
 
