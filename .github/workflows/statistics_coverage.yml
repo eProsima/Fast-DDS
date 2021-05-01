@@ -30,16 +30,27 @@ jobs:
         run: |
           cat src/Fast-DDS/.github/workflows/statistics_module.meta
           colcon build \
+            --packages-up-to fastrtps --packages-skip fastrtps \
             --event-handlers=console_direct+ \
             --metas src/Fast-DDS/.github/workflows/statistics_module.meta \
             --mixin coverage-gcc
+          for target in RTPSStatisticsTests StatisticsDomainParticipantTests StatisticsQosTests DomainParticipantStatisticsListenerTests StatisticsDomainParticipantMockTests BlackboxTests_DDS_PIM
+          do
+              colcon build \
+                --packages-select fastrtps \
+                --cmake-target $target \
+                --cmake-target-skip-unavailable \
+                --event-handlers=console_direct+ \
+                --metas src/Fast-DDS/.github/workflows/statistics_module.meta \
+                --mixin coverage-gcc
+          done
 
       - name: Run tests
         run: |
           colcon test \
             --packages-select fastrtps \
             --event-handlers=console_direct+ \
-            --ctest-args -R Statistics
+            --ctest-args -R RTPSStatisticsTests -R Statistics
 
       - name: Generate coverage report
         run: |

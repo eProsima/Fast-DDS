@@ -235,9 +235,9 @@ public:
 
     /**
      * Turns all REQUESTED changes into UNSENT.
-     * @return true if at least one change changed its status, false otherwise.
+     * @return the number of changes that changed its status.
      */
-    bool perform_acknack_response();
+    uint32_t perform_acknack_response();
 
     /**
      * Call this to inform a change was removed from history.
@@ -466,9 +466,9 @@ private:
      * Converts all changes with a given status to a different status.
      * @param previous Status to change.
      * @param next Status to adopt.
-     * @return true when at least one change has been modified, false otherwise.
+     * @return the number of changes that have been modified.
      */
-    bool convert_status_on_all_changes(
+    uint32_t convert_status_on_all_changes(
             ChangeForReaderStatus_t previous,
             ChangeForReaderStatus_t next);
 

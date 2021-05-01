@@ -401,7 +401,7 @@ bool ReaderProxy::process_initial_acknack()
 {
     if (is_local_reader())
     {
-        return convert_status_on_all_changes(UNACKNOWLEDGED, UNSENT);
+        return 0 != convert_status_on_all_changes(UNACKNOWLEDGED, UNSENT);
     }
 
     return true;
@@ -498,15 +498,15 @@ bool ReaderProxy::mark_fragment_as_sent_for_change(
 
 bool ReaderProxy::perform_nack_supression()
 {
-    return convert_status_on_all_changes(UNDERWAY, UNACKNOWLEDGED);
+    return 0 != convert_status_on_all_changes(UNDERWAY, UNACKNOWLEDGED);
 }
 
-bool ReaderProxy::perform_acknack_response()
+uint32_t ReaderProxy::perform_acknack_response()
 {
     return convert_status_on_all_changes(REQUESTED, UNSENT);
 }
 
-bool ReaderProxy::convert_status_on_all_changes(
+uint32_t ReaderProxy::convert_status_on_all_changes(
         ChangeForReaderStatus_t previous,
         ChangeForReaderStatus_t next)
 {
@@ -515,17 +515,17 @@ bool ReaderProxy::convert_status_on_all_changes(
     // NOTE: This is only called for REQUESTED=>UNSENT (acknack response) or
     //       UNDERWAY=>UNACKNOWLEDGED (nack supression)
 
-    bool at_least_one_modified = false;
+    uint32_t changed = 0;
     for (ChangeForReader_t& change : changes_for_reader_)
     {
         if (change.getStatus() == previous)
         {
-            at_least_one_modified = true;
+            ++changed;
             change.setStatus(next);
         }
     }
 
-    return at_least_one_modified;
+    return changed;
 }
 
 void ReaderProxy::change_has_been_removed(
