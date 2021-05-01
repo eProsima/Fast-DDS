@@ -2379,14 +2379,20 @@ void StatefulWriter::perform_nack_response()
 {
     std::unique_lock<RecursiveTimedMutex> lock(mp_mutex);
     bool must_wake_up_async_thread = false;
+    uint32_t changes_to_resend = 0;
+
     for_matched_readers(matched_local_readers_, matched_datasharing_readers_, matched_remote_readers_,
-            [&must_wake_up_async_thread](ReaderProxy* reader)
+            [&must_wake_up_async_thread, &changes_to_resend](ReaderProxy* reader)
             {
-                if (reader->perform_acknack_response() || reader->are_there_gaps())
+                uint32_t pending = reader->perform_acknack_response();
+                changes_to_resend += pending;
+
+                if ( pending > 0 || reader->are_there_gaps())
                 {
                     must_wake_up_async_thread = true;
                     // Do not exit the loop, perform_acknack_response must be executed for all readers
                 }
+
                 return false;
             }
             );
@@ -2395,6 +2401,11 @@ void StatefulWriter::perform_nack_response()
     {
         mp_RTPSParticipant->async_thread().wake_up(this);
     }
+
+    lock.unlock();
+
+    // Notify the statistics module
+    on_resent_data(changes_to_resend);
 }
 
 void StatefulWriter::perform_nack_supression(
