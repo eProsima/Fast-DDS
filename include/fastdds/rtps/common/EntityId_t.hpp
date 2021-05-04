@@ -164,9 +164,9 @@ struct RTPS_DllAPI EntityId_t
 
 #if !FASTDDS_IS_BIG_ENDIAN_TARGET
         res = ( res >> 24 ) |
-              (0x0000ff00 & ( res >> 8)) |
-              (0x00ff0000 & ( res << 8) ) |
-              ( res << 24 );
+                (0x0000ff00 & ( res >> 8)) |
+                (0x00ff0000 & ( res << 8)) |
+                ( res << 24 );
 #endif // if !FASTDDS_IS_BIG_ENDIAN_TARGET
 
         return res;

@@ -377,7 +377,7 @@ void StatisticsParticipantImpl::on_edp_packet(
         const fastrtps::rtps::GUID_t& sender)
 {
     // check it's a pdp endpoint
-    switch(sender.entityId.to_uint32())
+    switch (sender.entityId.to_uint32())
     {
         case ENTITYID_SEDP_BUILTIN_PUBLICATIONS_WRITER:
         case ENTITYID_SEDP_BUILTIN_PUBLICATIONS_READER:
