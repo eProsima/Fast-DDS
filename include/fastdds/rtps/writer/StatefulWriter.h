@@ -106,8 +106,6 @@ private:
     //!WriterTimes
     WriterTimes m_times;
 
-    //! Vector containing all the active ReaderProxies.
-    ResourceLimitedVector<ReaderProxy*> matched_readers_;
     //! Vector containing all the remote ReaderProxies.
     ResourceLimitedVector<ReaderProxy*> matched_remote_readers_;
     //! Vector containing all the inactive, ready for reuse, ReaderProxies.
