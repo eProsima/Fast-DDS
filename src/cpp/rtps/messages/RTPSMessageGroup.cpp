@@ -429,10 +429,6 @@ bool RTPSMessageGroup::add_data(
     }
 #endif // if HAVE_SECURITY
 
-    // Notify the statistics module, note that only writers add DATAs
-    assert(nullptr != dynamic_cast<RTPSWriter*>(endpoint_));
-    static_cast<RTPSWriter*>(endpoint_)->on_data();
-
     return insert_submessage(is_big_submessage);
 }
 
@@ -529,10 +525,6 @@ bool RTPSMessageGroup::add_data_frag(
         }
     }
 #endif // if HAVE_SECURITY
-
-    // Notify the statistics module, note that only writers add DATAs
-    assert(nullptr != dynamic_cast<RTPSWriter*>(endpoint_));
-    static_cast<RTPSWriter*>(endpoint_)->on_data_frag();
 
     return insert_submessage(false);
 }

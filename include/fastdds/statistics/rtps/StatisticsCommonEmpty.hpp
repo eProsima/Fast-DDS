@@ -62,13 +62,12 @@ protected:
     {
     }
 
-    /// Report that a DATA message is sent
-    inline void on_data()
-    {
-    }
-
-    /// Report that a DATA_FRAG message is sent
-    inline void on_data_frag()
+    /**
+     * @brief Report that a DATA / DATA_FRAG message is sent
+     * @param number of locators to which the message is sent
+     */
+    inline void on_data(
+            size_t)
     {
     }
 
