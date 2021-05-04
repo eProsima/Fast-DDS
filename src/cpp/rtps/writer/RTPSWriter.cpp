@@ -447,6 +447,7 @@ void RTPSWriter::add_statistics_sent_submessage(
 
 #ifdef FASTDDS_STATISTICS
     change->num_sent_submessages += num_locators;
+    on_data(num_locators);
 #endif // ifdef FASTDDS_STATISTICS
 }
 
