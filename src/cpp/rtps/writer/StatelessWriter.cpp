@@ -332,95 +332,105 @@ void StatelessWriter::unsent_change_added_to_history(
         CacheChange_t* change,
         const std::chrono::time_point<std::chrono::steady_clock>& max_blocking_time)
 {
-    std::lock_guard<RecursiveTimedMutex> guard(mp_mutex);
+    bool should_notify_data_sent = false;
 
-    if (liveliness_lease_duration_ < c_TimeInfinite)
     {
-        mp_RTPSParticipant->wlp()->assert_liveliness(
-            getGuid(),
-            liveliness_kind_,
-            liveliness_lease_duration_);
-    }
+        std::lock_guard<RecursiveTimedMutex> guard(mp_mutex);
 
-    // Notify the datasharing readers
-    // This also prepares the metadata for late-joiners
-    if (is_datasharing_compatible())
-    {
-        datasharing_delivery(change);
-    }
-
-    // Now for the rest of readers
-    if (!fixed_locators_.empty() || getMatchedReadersSize() > 0)
-    {
-        if (!isAsync())
+        if (liveliness_lease_duration_ < c_TimeInfinite)
         {
-            try
+            mp_RTPSParticipant->wlp()->assert_liveliness(
+                getGuid(),
+                liveliness_kind_,
+                liveliness_lease_duration_);
+        }
+
+        // Notify the datasharing readers
+        // This also prepares the metadata for late-joiners
+        if (is_datasharing_compatible())
+        {
+            datasharing_delivery(change);
+        }
+
+        // Now for the rest of readers
+        if (!fixed_locators_.empty() || getMatchedReadersSize() > 0)
+        {
+            if (!isAsync())
             {
-                if (m_separateSendingEnabled)
+                try
                 {
-                    std::vector<GUID_t> guids(1);
-                    for (std::unique_ptr<ReaderLocator>& it : matched_local_readers_)
+                    if (m_separateSendingEnabled)
                     {
-                        intraprocess_delivery(change, *it);
+                        std::vector<GUID_t> guids(1);
+                        for (std::unique_ptr<ReaderLocator>& it : matched_local_readers_)
+                        {
+                            intraprocess_delivery(change, *it);
+                        }
+                        for (std::unique_ptr<ReaderLocator>& it : matched_remote_readers_)
+                        {
+                            RTPSMessageGroup group(mp_RTPSParticipant, this, *it, max_blocking_time);
+                            size_t num_locators = it->locators_size();
+                            send_data_or_fragments(group, change, is_inline_qos_expected_,
+                                    [num_locators](
+                                        CacheChange_t* change,
+                                        FragmentNumber_t /*frag*/)
+                                    {
+                                        add_statistics_sent_submessage(change, num_locators);
+                                    });
+                        }
                     }
-                    for (std::unique_ptr<ReaderLocator>& it : matched_remote_readers_)
+                    else
                     {
-                        RTPSMessageGroup group(mp_RTPSParticipant, this, *it, max_blocking_time);
-                        size_t num_locators = it->locators_size();
-                        send_data_or_fragments(group, change, is_inline_qos_expected_,
-                                [num_locators](
-                                    CacheChange_t* change,
-                                    FragmentNumber_t /*frag*/)
-                                {
-                                    add_statistics_sent_submessage(change, num_locators);
-                                });
-                    }
-                }
-                else
-                {
-                    for (std::unique_ptr<ReaderLocator>& it : matched_local_readers_)
-                    {
-                        intraprocess_delivery(change, *it);
+                        for (std::unique_ptr<ReaderLocator>& it : matched_local_readers_)
+                        {
+                            intraprocess_delivery(change, *it);
+                        }
+
+                        if (there_are_remote_readers_ || !fixed_locators_.empty())
+                        {
+                            RTPSMessageGroup group(mp_RTPSParticipant, this, *this, max_blocking_time);
+                            size_t num_locators = locator_selector_.selected_size() + fixed_locators_.size();
+                            send_data_or_fragments(group, change, is_inline_qos_expected_,
+                                    [num_locators](
+                                        CacheChange_t* change,
+                                        FragmentNumber_t /*frag*/)
+                                    {
+                                        add_statistics_sent_submessage(change, num_locators);
+                                    });
+                        }
                     }
 
-                    if (there_are_remote_readers_ || !fixed_locators_.empty())
+                    on_sample_datas(change->write_params.sample_identity(), change->num_sent_submessages);
+                    should_notify_data_sent = true;
+                    if (mp_listener != nullptr)
                     {
-                        RTPSMessageGroup group(mp_RTPSParticipant, this, *this, max_blocking_time);
-                        size_t num_locators = locator_selector_.selected_size() + fixed_locators_.size();
-                        send_data_or_fragments(group, change, is_inline_qos_expected_,
-                                [num_locators](
-                                    CacheChange_t* change,
-                                    FragmentNumber_t /*frag*/)
-                                {
-                                    add_statistics_sent_submessage(change, num_locators);
-                                });
+                        mp_listener->onWriterChangeReceivedByAll(this, change);
                     }
                 }
-
-                on_sample_datas(change->write_params.sample_identity(), change->num_sent_submessages);
-                if (mp_listener != nullptr)
+                catch (const RTPSMessageGroup::timeout&)
                 {
-                    mp_listener->onWriterChangeReceivedByAll(this, change);
+                    logError(RTPS_WRITER, "Max blocking time reached");
                 }
             }
-            catch (const RTPSMessageGroup::timeout&)
+            else
             {
-                logError(RTPS_WRITER, "Max blocking time reached");
+                unsent_changes_.push_back(ChangeForReader_t(change));
+                mp_RTPSParticipant->async_thread().wake_up(this, max_blocking_time);
             }
         }
         else
         {
-            unsent_changes_.push_back(ChangeForReader_t(change));
-            mp_RTPSParticipant->async_thread().wake_up(this, max_blocking_time);
+            logInfo(RTPS_WRITER, "No reader to add change.");
+            if (mp_listener != nullptr)
+            {
+                mp_listener->onWriterChangeReceivedByAll(this, change);
+            }
         }
     }
-    else
+
+    if (should_notify_data_sent)
     {
-        logInfo(RTPS_WRITER, "No reader to add change.");
-        if (mp_listener != nullptr)
-        {
-            mp_listener->onWriterChangeReceivedByAll(this, change);
-        }
+        on_data_sent();
     }
 }
 
@@ -550,19 +560,22 @@ void StatelessWriter::update_unsent_changes(
 
 void StatelessWriter::send_any_unsent_changes()
 {
-    std::lock_guard<RecursiveTimedMutex> guard(mp_mutex);
-
-    bool remote_destinations = there_are_remote_readers_ || !fixed_locators_.empty();
-    bool no_flow_controllers = flow_controllers_.empty() && mp_RTPSParticipant->getFlowControllers().empty();
-    if (!remote_destinations || no_flow_controllers)
     {
-        send_all_unsent_changes();
-    }
-    else
-    {
-        send_unsent_changes_with_flow_control();
+        std::lock_guard<RecursiveTimedMutex> guard(mp_mutex);
+
+        bool remote_destinations = there_are_remote_readers_ || !fixed_locators_.empty();
+        bool no_flow_controllers = flow_controllers_.empty() && mp_RTPSParticipant->getFlowControllers().empty();
+        if (!remote_destinations || no_flow_controllers)
+        {
+            send_all_unsent_changes();
+        }
+        else
+        {
+            send_unsent_changes_with_flow_control();
+        }
     }
 
+    on_data_sent();
     logInfo(RTPS_WRITER, "Finish sending unsent changes");
 
     // In case someone is waiting for changes to be sent

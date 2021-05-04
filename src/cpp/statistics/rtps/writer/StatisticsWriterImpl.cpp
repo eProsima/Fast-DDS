@@ -79,8 +79,15 @@ void StatisticsWriterImpl::on_sample_datas(
             });
 }
 
-void StatisticsWriterImpl::on_data(
+void StatisticsWriterImpl::on_data_generated(
         size_t num_destinations)
+{
+    std::lock_guard<fastrtps::RecursiveTimedMutex> lock(get_statistics_mutex());
+    auto members = get_members();
+    members->data_counter += static_cast<uint64_t>(num_destinations);
+}
+
+void StatisticsWriterImpl::on_data_sent()
 {
     EntityCount notification;
     notification.guid(to_statistics_type(get_guid()));
@@ -88,7 +95,6 @@ void StatisticsWriterImpl::on_data(
     {
         std::lock_guard<fastrtps::RecursiveTimedMutex> lock(get_statistics_mutex());
         auto members = get_members();
-        members->data_counter += static_cast<uint64_t>(num_destinations);
         notification.count(members->data_counter);
     }
 

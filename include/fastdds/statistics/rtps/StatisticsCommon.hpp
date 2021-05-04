@@ -162,11 +162,14 @@ protected:
             uint32_t count);
 
     /**
-     * @brief Report that a DATA / DATA_FRAG message is sent
-     * @param num_destinations number of locators to which the message is sent
+     * @brief Report that a DATA / DATA_FRAG message is generated
+     * @param num_destinations number of locators to which the message will be sent
      */
-    void on_data(
+    void on_data_generated(
             size_t num_destinations);
+
+    /// Notify listeners of DATA / DATA_FRAG counts
+    void on_data_sent();
 
     /// Report that a GAP message is sent
     void on_gap();

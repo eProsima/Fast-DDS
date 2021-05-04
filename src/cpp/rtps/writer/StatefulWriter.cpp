@@ -602,49 +602,60 @@ void StatefulWriter::unsent_change_added_to_history(
         CacheChange_t* change,
         const std::chrono::time_point<std::chrono::steady_clock>& max_blocking_time)
 {
-    std::lock_guard<RecursiveTimedMutex> guard(mp_mutex);
+    bool should_notify_data_sent = false;
 
-    if (liveliness_lease_duration_ < c_TimeInfinite)
     {
-        mp_RTPSParticipant->wlp()->assert_liveliness(
-            getGuid(),
-            liveliness_kind_,
-            liveliness_lease_duration_);
-    }
+        std::lock_guard<RecursiveTimedMutex> guard(mp_mutex);
 
-    // Prepare the metadata for datasharing
-    if (is_datasharing_compatible())
-    {
-        prepare_datasharing_delivery(change);
-    }
-
-    // Now for the rest of readers
-    if (!matched_remote_readers_.empty() || !matched_datasharing_readers_.empty() || !matched_local_readers_.empty())
-    {
-        if (!isAsync())
+        if (liveliness_lease_duration_ < c_TimeInfinite)
         {
-            sync_delivery(change, max_blocking_time);
+            mp_RTPSParticipant->wlp()->assert_liveliness(
+                getGuid(),
+                liveliness_kind_,
+                liveliness_lease_duration_);
+        }
+
+        // Prepare the metadata for datasharing
+        if (is_datasharing_compatible())
+        {
+            prepare_datasharing_delivery(change);
+        }
+
+        // Now for the rest of readers
+        if (!matched_remote_readers_.empty() || !matched_datasharing_readers_.empty() ||
+                !matched_local_readers_.empty())
+        {
+            if (!isAsync())
+            {
+                sync_delivery(change, max_blocking_time);
+                should_notify_data_sent = true;
+            }
+            else
+            {
+                async_delivery(change, max_blocking_time);
+            }
+
+            if (disable_positive_acks_)
+            {
+                auto source_timestamp = system_clock::time_point() + nanoseconds(change->sourceTimestamp.to_ns());
+                auto now = system_clock::now();
+                auto interval = source_timestamp - now + keep_duration_us_;
+                assert(interval.count() >= 0);
+
+                ack_event_->update_interval_millisec((double)duration_cast<milliseconds>(interval).count());
+                ack_event_->restart_timer(max_blocking_time);
+            }
         }
         else
         {
-            async_delivery(change, max_blocking_time);
-        }
-
-        if (disable_positive_acks_)
-        {
-            auto source_timestamp = system_clock::time_point() + nanoseconds(change->sourceTimestamp.to_ns());
-            auto now = system_clock::now();
-            auto interval = source_timestamp - now + keep_duration_us_;
-            assert(interval.count() >= 0);
-
-            ack_event_->update_interval_millisec((double)duration_cast<milliseconds>(interval).count());
-            ack_event_->restart_timer(max_blocking_time);
+            logInfo(RTPS_WRITER, "No reader proxy to add change.");
+            check_acked_status();
         }
     }
-    else
+
+    if (should_notify_data_sent)
     {
-        logInfo(RTPS_WRITER, "No reader proxy to add change.");
-        check_acked_status();
+        on_data_sent();
     }
 }
 
@@ -764,39 +775,43 @@ bool StatefulWriter::change_removed_by_history(
 
 void StatefulWriter::send_any_unsent_changes()
 {
-    std::lock_guard<RecursiveTimedMutex> guard(mp_mutex);
+    {
+        std::lock_guard<RecursiveTimedMutex> guard(mp_mutex);
 
-    bool activateHeartbeatPeriod = false;
-    SequenceNumber_t max_sequence = mp_history->next_sequence_number();
+        bool activateHeartbeatPeriod = false;
+        SequenceNumber_t max_sequence = mp_history->next_sequence_number();
 
-    if (mp_history->getHistorySize() == 0 || getMatchedReadersSize() == 0)
-    {
-        send_heartbeat_to_all_readers();
-    }
-    else if (m_separateSendingEnabled)
-    {
-        send_changes_separatedly(max_sequence, activateHeartbeatPeriod);
-    }
-    else
-    {
-        bool no_flow_controllers = m_controllers.empty() && mp_RTPSParticipant->getFlowControllers().empty();
-        if (no_flow_controllers || !there_are_remote_readers_)
+        if (mp_history->getHistorySize() == 0 || getMatchedReadersSize() == 0)
         {
-            send_all_unsent_changes(max_sequence, activateHeartbeatPeriod);
+            send_heartbeat_to_all_readers();
+        }
+        else if (m_separateSendingEnabled)
+        {
+            send_changes_separatedly(max_sequence, activateHeartbeatPeriod);
         }
         else
         {
-            send_unsent_changes_with_flow_control(max_sequence, activateHeartbeatPeriod);
+            bool no_flow_controllers = m_controllers.empty() && mp_RTPSParticipant->getFlowControllers().empty();
+            if (no_flow_controllers || !there_are_remote_readers_)
+            {
+                send_all_unsent_changes(max_sequence, activateHeartbeatPeriod);
+            }
+            else
+            {
+                send_unsent_changes_with_flow_control(max_sequence, activateHeartbeatPeriod);
+            }
         }
+
+        if (activateHeartbeatPeriod)
+        {
+            periodic_hb_event_->restart_timer();
+        }
+
+        // On VOLATILE writers, remove auto-acked (best effort readers) changes
+        check_acked_status();
     }
 
-    if (activateHeartbeatPeriod)
-    {
-        periodic_hb_event_->restart_timer();
-    }
-
-    // On VOLATILE writers, remove auto-acked (best effort readers) changes
-    check_acked_status();
+    on_data_sent();
 
     logInfo(RTPS_WRITER, "Finish sending unsent changes");
 }
