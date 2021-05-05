@@ -295,7 +295,10 @@ public:
                 msg->length);
 
             // checkout if sender is a pdp endpoint
-            on_pdp_packet(sender_guid);
+            on_pdp_packet(
+                sender_guid,
+                destination_locators_begin,
+                destination_locators_end);
         }
 
         return ret_code;
