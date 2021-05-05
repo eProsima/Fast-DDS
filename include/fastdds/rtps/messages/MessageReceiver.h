@@ -243,6 +243,18 @@ private:
             uint32_t fragment_starting_num,
             uint16_t fragments_in_submessage);
     ///@}
+
+    /**
+     * Looks for the statistics specific submessage and notifies statistics related to the received message.
+     * @param [in] source_locator Locator indicating the source address.
+     * @param [in] msg Pointer to the received message.
+     * 
+     * @pre The message header has already been read and validated.
+     */
+    void notify_network_statistics(
+            const Locator_t& source_locator,
+            CDRMessage_t* msg);
+
 };
 
 } /* namespace rtps */
