@@ -519,6 +519,7 @@ TEST_F(RTPSStatisticsTests, statistics_rpts_listener_management)
  * - RESENT_DATAS callbacks are performed for DATA submessages demanded by the readers
  * - ACKNACK_COUNT callbacks are performed
  * - HEARBEAT_COUNT callbacks are performed
+ * - SAMPLE_DATAS callbacks are performed
  */
 TEST_F(RTPSStatisticsTests, statistics_rpts_listener_callbacks)
 {
@@ -571,7 +572,7 @@ TEST_F(RTPSStatisticsTests, statistics_rpts_listener_callbacks)
     // writer callbacks through participant listener
     auto participant_writer_listener = make_shared<MockListener>();
     ASSERT_TRUE(participant_->add_statistics_listener(participant_writer_listener,
-            EventKind::DATA_COUNT | EventKind::RESENT_DATAS));
+            EventKind::DATA_COUNT | EventKind::RESENT_DATAS | EventKind::SAMPLE_DATAS));
 
     // writer specific callbacks
     auto writer_listener = make_shared<MockListener>();
@@ -606,6 +607,8 @@ TEST_F(RTPSStatisticsTests, statistics_rpts_listener_callbacks)
             .Times(AtLeast(1));
     EXPECT_CALL(*participant_writer_listener, on_resent_count)
             .Times(AtLeast(1));
+    EXPECT_CALL(*participant_writer_listener, on_sample_datas)
+            .Times(AtLeast(1));
 
     // + RTPSReader: SUBSCRIPTION_THROUGHPUT,
     //               SAMPLE_DATAS & PHYSICAL_DATA
@@ -638,7 +641,7 @@ TEST_F(RTPSStatisticsTests, statistics_rpts_listener_callbacks)
 
     EXPECT_TRUE(participant_->remove_statistics_listener(participant_listener, EventKind::RTPS_SENT));
     EXPECT_TRUE(participant_->remove_statistics_listener(participant_writer_listener,
-            EventKind::DATA_COUNT | EventKind::RESENT_DATAS));
+            EventKind::DATA_COUNT | EventKind::RESENT_DATAS | EventKind::SAMPLE_DATAS));
     EXPECT_TRUE(participant_->remove_statistics_listener(participant_reader_listener, EventKind::ACKNACK_COUNT));
 }
 

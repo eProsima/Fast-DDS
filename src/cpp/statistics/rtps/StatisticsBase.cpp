@@ -140,7 +140,8 @@ bool StatisticsParticipantImpl::are_writers_involved(
             | RESENT_DATAS \
             | HEARTBEAT_COUNT \
             | GAP_COUNT \
-            | DATA_COUNT;
+            | DATA_COUNT \
+            | SAMPLE_DATAS;
 
     return writers_maks & mask;
 }
