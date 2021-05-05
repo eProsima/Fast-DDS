@@ -30,6 +30,8 @@
 #include <rtps/messages/RTPSMessageGroup_t.hpp>
 #include <rtps/participant/RTPSParticipantImpl.h>
 
+#include <statistics/rtps/messages/RTPSStatisticsMessages.hpp>
+
 namespace eprosima {
 namespace fastrtps {
 namespace rtps {
@@ -212,6 +214,8 @@ void RTPSMessageGroup::send()
             msgToSend = encrypt_msg_;
         }
 #endif // if HAVE_SECURITY
+
+        eprosima::fastdds::statistics::rtps::add_statistics_submessage(msgToSend);
 
         if (!sender_.send(msgToSend, max_blocking_time_point_))
         {
