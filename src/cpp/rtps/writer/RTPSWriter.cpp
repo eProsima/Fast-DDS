@@ -38,6 +38,7 @@
 #include <fastdds/rtps/messages/RTPSMessageCreator.h>
 
 #include <statistics/rtps/StatisticsBase.hpp>
+#include <statistics/rtps/messages/RTPSStatisticsMessages.hpp>
 
 namespace eprosima {
 namespace fastrtps {
@@ -303,6 +304,10 @@ uint32_t RTPSWriter::calculateMaxDataSize(
         maxDataSize -= mp_RTPSParticipant->security_manager().calculate_extra_size_for_encoded_payload(m_guid);
     }
 #endif // if HAVE_SECURITY
+
+#ifdef FASTDDS_STATISTICS
+    maxDataSize -= eprosima::fastdds::statistics::rtps::statistics_submessage_length;
+#endif // FASTDDS_STATISTICS
 
     return maxDataSize;
 }
