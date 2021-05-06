@@ -22,6 +22,8 @@
 #include <cstdint>
 
 #include <fastdds/rtps/common/CDRMessage_t.h>
+#include <fastdds/rtps/common/Types.h>
+#include <fastdds/rtps/messages/RTPSMessageCreator.h>
 
 #define FASTDDS_STATISTICS_NETWORK_SUBMESSAGE 0x80
 
@@ -38,15 +40,50 @@ constexpr uint16_t statistics_submessage_length =
 inline void add_statistics_submessage(
         eprosima::fastrtps::rtps::CDRMessage_t* msg)
 {
+    static_cast<void>(msg);
+
 #ifdef FASTDDS_STATISTICS
     using namespace eprosima::fastrtps::rtps;
     RTPSMessageCreator::addSubmessageHeader(
         msg, FASTDDS_STATISTICS_NETWORK_SUBMESSAGE, 0x00, statistics_submessage_data_length);
+    CDRMessage::addInt32(msg, 0);
+    CDRMessage::addUInt32(msg, 0);
+    CDRMessage::addUInt64(msg, 0);
+#endif // FASTDDS_STATISTICS
+}
+
+inline void set_statistics_submessage_from_transport(
+        const eprosima::fastrtps::rtps::octet* send_buffer,
+        uint32_t send_buffer_size,
+        const uint64_t& sequence)
+{
+    static_cast<void>(send_buffer);
+    static_cast<void>(send_buffer_size);
+    static_cast<void>(sequence);
+
+#ifdef FASTDDS_STATISTICS
+    using namespace eprosima::fastrtps::rtps;
+
+    // Message should contain RTPS header and statistic submessage
+    assert(statistics_submessage_length + RTPSMESSAGE_HEADER_SIZE <= send_buffer_size);
+
+    // The last submessage should be the statistics submessage
+    send_buffer_size -= statistics_submessage_length;
+    assert(FASTDDS_STATISTICS_NETWORK_SUBMESSAGE == send_buffer[send_buffer_size]);
+
+    // Skip the submessage header
+    send_buffer_size += RTPSMESSAGE_SUBMESSAGEHEADER_SIZE;
+
+    // Set current timestamp and sequence
+    auto pos = const_cast<eprosima::fastrtps::rtps::octet*>(&send_buffer[send_buffer_size]);
     Time_t ts;
     Time_t::now(ts);
-    CDRMessage::addInt32(msg, ts.seconds());
-    CDRMessage::addUInt32(msg, ts.fraction());
-    CDRMessage::addUInt64(msg, 0);
+
+    *((int32_t*)pos) = ts.seconds();
+    pos += sizeof(int32_t);
+    *((uint32_t*)pos) = ts.fraction();
+    pos += sizeof(uint32_t);
+    *((uint64_t*)pos) = sequence;
 #endif // FASTDDS_STATISTICS
 }
 

@@ -32,6 +32,7 @@
 #include <rtps/transport/TCPChannelResourceSecure.h>
 #include <rtps/transport/TCPAcceptorSecure.h>
 #endif // if TLS_FOUND
+#include <statistics/rtps/messages/RTPSStatisticsMessages.hpp>
 #include <utils/SystemInfo.hpp>
 
 using namespace std;
@@ -1055,6 +1056,8 @@ bool TCPTransportInterface::send(
         std::shared_ptr<TCPChannelResource>& channel,
         const Locator& remote_locator)
 {
+    using namespace eprosima::fastdds::statistics::rtps;
+
     bool locator_mismatch = false;
 
     if (channel->locator() != IPLocator::toPhysicalLocator(remote_locator))
@@ -1109,6 +1112,7 @@ bool TCPTransportInterface::send(
             if (channel->is_logical_port_opened(logical_port))
             {
                 TCPHeader tcp_header;
+                set_statistics_submessage_from_transport(send_buffer, send_buffer_size, 0);
                 fill_rtcp_header(tcp_header, send_buffer, send_buffer_size, logical_port);
 
                 {
