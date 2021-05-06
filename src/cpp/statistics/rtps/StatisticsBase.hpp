@@ -377,7 +377,7 @@ protected:
      */
     template<class LocatorIteratorT>
     inline void on_pdp_packet(
-            const GUID_t& sender_guid,
+            const fastrtps::rtps::GUID_t& sender_guid,
             const LocatorIteratorT& destination_locators_begin,
             const LocatorIteratorT& destination_locators_end)
     {
