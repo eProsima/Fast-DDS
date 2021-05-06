@@ -374,26 +374,15 @@ void StatisticsParticipantImpl::on_pdp_packet(
 }
 
 void StatisticsParticipantImpl::on_edp_packet(
-        const fastrtps::rtps::GUID_t& sender)
+        const uint32_t packages)
 {
-    // check it's a pdp endpoint
-    switch (sender.entityId.to_uint32())
-    {
-        case ENTITYID_SEDP_BUILTIN_PUBLICATIONS_WRITER:
-        case ENTITYID_SEDP_BUILTIN_PUBLICATIONS_READER:
-        case ENTITYID_SEDP_BUILTIN_SUBSCRIPTIONS_WRITER:
-        case ENTITYID_SEDP_BUILTIN_SUBSCRIPTIONS_READER:
-            break;
-        default:
-            return; // ignore
-    }
-
     EntityCount notification;
     notification.guid(to_statistics_type(get_guid()));
 
     {
         std::lock_guard<std::recursive_mutex> lock(get_statistics_mutex());
-        notification.count(++edp_counter_);
+        edp_counter_ += packages;
+        notification.count(edp_counter_);
     }
 
     // Perform the callbacks

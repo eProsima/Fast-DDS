@@ -285,21 +285,49 @@ protected:
             const uint32_t packages);
 
     /*
-     * Report PDP message exchange.
-     * We filtered the non-pdp traffic here to minimize presence of statistics code in endpoints implementation.
+     * Auxiliary method to report EDP message exchange.
+     * @param packages number of edp packages sent
+     */
+    void on_edp_packet(
+            const uint32_t packages);
+
+    /*
+     * Report discovery protocols message exchange.
+     * We filtered the non discovery traffic here to minimize presence of statistics code in endpoints implementation.
      * @param sender_guid GUID_t to filter
      * @param destination_locators_begin, start of locators range
      * @param destination_locators_end, end of locators range
      */
     template<class LocatorIteratorT>
-    void on_pdp_packet(
+    void on_dp_packet(
             const GUID_t& sender_guid,
             const LocatorIteratorT& destination_locators_begin,
             const LocatorIteratorT& destination_locators_end)
     {
-        if (sender_guid.entityId == fastrtps::rtps::c_EntityId_SPDPWriter
-                && destination_locators_begin != destination_locators_end)
+        if ( destination_locators_begin != destination_locators_end )
         {
+            enum
+            {
+                PDP, EDP
+            }
+            discovery_type;
+
+            switch (sender_guid.entityId.to_uint32())
+            {
+                case ENTITYID_SPDP_BUILTIN_RTPSParticipant_WRITER:
+                case ENTITYID_SPDP_BUILTIN_RTPSParticipant_READER:
+                    discovery_type = PDP;
+                    break;
+                case ENTITYID_SEDP_BUILTIN_PUBLICATIONS_WRITER:
+                case ENTITYID_SEDP_BUILTIN_PUBLICATIONS_READER:
+                case ENTITYID_SEDP_BUILTIN_SUBSCRIPTIONS_WRITER:
+                case ENTITYID_SEDP_BUILTIN_SUBSCRIPTIONS_READER:
+                    discovery_type = EDP;
+                    break;
+                default:
+                    return; // ignore
+            }
+
             uint32_t packages = 0;
             auto it = destination_locators_begin;
             while (it != destination_locators_end)
@@ -308,17 +336,16 @@ protected:
                 ++packages;
             }
 
-            on_pdp_packet(packages);
+            if ( PDP == discovery_type )
+            {
+                on_pdp_packet(packages);
+            }
+            else
+            {
+                on_edp_packet(packages);
+            }
         }
     }
-
-    /*
-     * Report EDP message exchange.
-     * We filtered the non-edp traffic here to minimize presence of statistics code in endpoints implementation.
-     * @param sender, sender GUID_t to filter
-     */
-    void on_edp_packet(
-            const fastrtps::rtps::GUID_t& sender);
 
 public:
 
