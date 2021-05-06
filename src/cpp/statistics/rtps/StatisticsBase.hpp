@@ -108,6 +108,9 @@ private:
 
     std::map<fastrtps::rtps::Locator_t, rtps_sent_data> traffic;
 
+    // PDP_PACKETS ancillary
+    unsigned long long pdp_counter_ = {};
+
     /*
      * Retrieve the GUID_t from derived class
      * @return endpoint GUID_t
@@ -271,6 +274,41 @@ protected:
     void on_entity_discovery(
             const GUID_t& id);
 
+    /*
+     * Auxiliary method to report PDP message exchange.
+     * @param packages number of pdp packages sent
+     */
+    void on_pdp_packet(
+            const uint32_t packages);
+
+    /*
+     * Report PDP message exchange.
+     * We filtered the non-pdp traffic here to minimize presence of statistics code in endpoints implementation.
+     * @param sender_guid GUID_t to filter
+     * @param destination_locators_begin, start of locators range
+     * @param destination_locators_end, end of locators range
+     */
+    template<class LocatorIteratorT>
+    void on_pdp_packet(
+            const GUID_t& sender_guid,
+            const LocatorIteratorT& destination_locators_begin,
+            const LocatorIteratorT& destination_locators_end)
+    {
+        if (sender_guid.entityId == fastrtps::rtps::c_EntityId_SPDPWriter
+                && destination_locators_begin != destination_locators_end)
+        {
+            uint32_t packages = 0;
+            auto it = destination_locators_begin;
+            while (it != destination_locators_end)
+            {
+                ++it;
+                ++packages;
+            }
+
+            on_pdp_packet(packages);
+        }
+    }
+
 public:
 
     /*
@@ -331,6 +369,21 @@ protected:
      */
     inline void on_entity_discovery(
             const fastrtps::rtps::GUID_t&)
+    {
+    }
+
+    /*
+     * Report PDP message exchange.
+     * We filtered the non-pdp traffic here to minimize presence of statistics code in endpoints implementation.
+     * @param sender_guid GUID_t to filter
+     * @param destination_locators_begin, start of locators range
+     * @param destination_locators_end, end of locators range
+     */
+    template<class LocatorIteratorT>
+    inline void on_pdp_packet(
+            const fastrtps::rtps::GUID_t& sender_guid,
+            const LocatorIteratorT& destination_locators_begin,
+            const LocatorIteratorT& destination_locators_end)
     {
     }
 
