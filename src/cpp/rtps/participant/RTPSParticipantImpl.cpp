@@ -63,6 +63,8 @@
 #include <fastdds/rtps/builtin/data/ParticipantProxyData.h>
 #include <fastdds/rtps/builtin/liveliness/WLP.h>
 
+#include <statistics/rtps/GuidUtils.hpp>
+
 namespace eprosima {
 namespace fastrtps {
 namespace rtps {
@@ -1989,10 +1991,13 @@ bool RTPSParticipantImpl::register_in_writer(
         res = true;
         for ( auto writer : m_userWriterList)
         {
-            res &= writer->add_statistics_listener(listener);
+            if (!fastdds::statistics::is_statistics_builtin(writer->getGuid().entityId))
+            {
+                res &= writer->add_statistics_listener(listener);
+            }
         }
     }
-    else
+    else if (!fastdds::statistics::is_statistics_builtin(writer_guid.entityId))
     {
         RTPSWriter* writer = find_local_writer(writer_guid);
         res = writer->add_statistics_listener(listener);
@@ -2012,10 +2017,13 @@ bool RTPSParticipantImpl::register_in_reader(
         res = true;
         for ( auto reader : m_userReaderList)
         {
-            res &= reader->add_statistics_listener(listener);
+            if (!fastdds::statistics::is_statistics_builtin(reader->getGuid().entityId))
+            {
+                res &= reader->add_statistics_listener(listener);
+            }
         }
     }
-    else
+    else if (!fastdds::statistics::is_statistics_builtin(reader_guid.entityId))
     {
         RTPSReader* reader = find_local_reader(reader_guid);
         res = reader->add_statistics_listener(listener);
@@ -2032,7 +2040,10 @@ bool RTPSParticipantImpl::unregister_in_writer(
 
     for ( auto writer : m_userWriterList)
     {
-        res &= writer->remove_statistics_listener(listener);
+        if (!fastdds::statistics::is_statistics_builtin(writer->getGuid().entityId))
+        {
+            res &= writer->remove_statistics_listener(listener);
+        }
     }
 
     return res;
@@ -2046,7 +2057,10 @@ bool RTPSParticipantImpl::unregister_in_reader(
 
     for ( auto reader : m_userReaderList)
     {
-        res &= reader->remove_statistics_listener(listener);
+        if (!fastdds::statistics::is_statistics_builtin(reader->getGuid().entityId))
+        {
+            res &= reader->remove_statistics_listener(listener);
+        }
     }
 
     return res;
