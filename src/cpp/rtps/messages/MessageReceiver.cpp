@@ -1321,7 +1321,8 @@ void MessageReceiver::notify_network_statistics(
 #ifdef FASTDDS_STATISTICS
     using namespace eprosima::fastdds::statistics::rtps;
 
-    if (c_VendorId_eProsima != source_vendor_id_)
+    if ( (c_VendorId_eProsima != source_vendor_id_) ||
+        (LOCATOR_KIND_SHM == source_locator.kind) )
     {
         return;
     }
