@@ -306,23 +306,20 @@ protected:
     {
         if ( destination_locators_begin != destination_locators_end )
         {
-            enum
-            {
-                PDP, EDP
-            }
-            discovery_type;
+            void (StatisticsParticipantImpl::* discovery_callback)(
+                    const uint32_t) = nullptr;
 
             switch (sender_guid.entityId.to_uint32())
             {
                 case ENTITYID_SPDP_BUILTIN_RTPSParticipant_WRITER:
                 case ENTITYID_SPDP_BUILTIN_RTPSParticipant_READER:
-                    discovery_type = PDP;
+                    discovery_callback = &StatisticsParticipantImpl::on_pdp_packet;
                     break;
                 case ENTITYID_SEDP_BUILTIN_PUBLICATIONS_WRITER:
                 case ENTITYID_SEDP_BUILTIN_PUBLICATIONS_READER:
                 case ENTITYID_SEDP_BUILTIN_SUBSCRIPTIONS_WRITER:
                 case ENTITYID_SEDP_BUILTIN_SUBSCRIPTIONS_READER:
-                    discovery_type = EDP;
+                    discovery_callback = &StatisticsParticipantImpl::on_edp_packet;
                     break;
                 default:
                     return; // ignore
@@ -336,14 +333,7 @@ protected:
                 ++packages;
             }
 
-            if ( PDP == discovery_type )
-            {
-                on_pdp_packet(packages);
-            }
-            else
-            {
-                on_edp_packet(packages);
-            }
+            (this->*discovery_callback)(packages);
         }
     }
 
