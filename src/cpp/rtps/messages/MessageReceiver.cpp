@@ -312,11 +312,10 @@ void MessageReceiver::reset()
 }
 
 void MessageReceiver::processCDRMsg(
-        const Locator_t& loc,
+        const Locator_t& source_locator,
+        const Locator_t& reception_locator,
         CDRMessage_t* msg)
 {
-    (void)loc;
-
     if (msg->length < RTPSMESSAGE_HEADER_SIZE)
     {
         logWarning(RTPS_MSG_IN, IDSTRING "Received message too short, ignoring");
@@ -336,7 +335,7 @@ void MessageReceiver::processCDRMsg(
         return;
     }
 
-    notify_network_statistics(loc, msg);
+    notify_network_statistics(source_locator, reception_locator, msg);
 
 #if HAVE_SECURITY
     security::SecurityManager& security = participant_->security_manager();
@@ -1313,9 +1312,11 @@ bool MessageReceiver::proc_Submsg_HeartbeatFrag(
 
 void MessageReceiver::notify_network_statistics(
         const Locator_t& source_locator,
+        const Locator_t& reception_locator,
         CDRMessage_t* msg)
 {
     static_cast<void>(source_locator);
+    static_cast<void>(reception_locator);
     static_cast<void>(msg);
 
 #ifdef FASTDDS_STATISTICS
@@ -1354,7 +1355,8 @@ void MessageReceiver::notify_network_statistics(
             Time_t current_ts;
             Time_t::now(current_ts);
             auto latency = (current_ts - ts).to_ns();
-            std::cout << "Network latency from " << source_locator << " is " << latency << std::endl;
+            std::cout << "Network latency from " << source_locator << " to " << reception_locator << " is " <<
+                                latency << std::endl;
             break;
         }
 
