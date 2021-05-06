@@ -375,15 +375,15 @@ protected:
     /*
      * Report PDP message exchange.
      * We filtered the non-pdp traffic here to minimize presence of statistics code in endpoints implementation.
-     * @param sender_guid GUID_t to filter
-     * @param destination_locators_begin, start of locators range
-     * @param destination_locators_end, end of locators range
+     * @param GUID_t to filter
+     * @param start of locators range
+     * @param end of locators range
      */
     template<class LocatorIteratorT>
     inline void on_pdp_packet(
-            const fastrtps::rtps::GUID_t& sender_guid,
-            const LocatorIteratorT& destination_locators_begin,
-            const LocatorIteratorT& destination_locators_end)
+            const fastrtps::rtps::GUID_t&,
+            const LocatorIteratorT&,
+            const LocatorIteratorT&)
     {
     }
 
