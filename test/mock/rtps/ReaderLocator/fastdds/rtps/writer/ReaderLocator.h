@@ -228,6 +228,11 @@ public:
     {
     }
 
+    size_t locators_size() const
+    {
+        return 0;
+    }
+
 private:
 
     GUID_t remote_guid_;

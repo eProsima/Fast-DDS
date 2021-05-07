@@ -23,6 +23,7 @@
 #include <type_traits>
 
 #include <fastdds/rtps/common/Guid.h>
+#include <fastdds/rtps/common/SampleIdentity.h>
 #include <fastdds/statistics/IListeners.hpp>
 #include <fastrtps/utils/TimedMutex.hpp>
 
@@ -49,7 +50,7 @@ class StatisticsListenersImpl
 
 protected:
 
-    /*
+    /**
      * Create a class A auxiliary structure
      * @return true if successfully created
      */
@@ -66,13 +67,13 @@ protected:
         }
     }
 
-    /*
+    /**
      * Returns the auxiliary members
      * @return The specialized auxiliary structure for each class
      */
     StatisticsAncillary* get_aux_members() const;
 
-    /*
+    /**
      * Add a listener to receive statistics backend callbacks
      * @param listener
      * @return true if successfully added
@@ -80,7 +81,7 @@ protected:
     bool add_statistics_listener_impl(
             std::shared_ptr<fastdds::statistics::IListener> listener);
 
-    /*
+    /**
      * Remove a listener from receiving statistics backend callbacks
      * @param listener
      * @return true if successfully removed
@@ -88,7 +89,7 @@ protected:
     bool remove_statistics_listener_impl(
             std::shared_ptr<fastdds::statistics::IListener> listener);
 
-    /*
+    /**
      * Lambda function to traverse the listener collection
      * @param f function object to apply to each listener
      * @return function object after being applied to each listener
@@ -97,13 +98,13 @@ protected:
     Function for_each_listener(
             Function f);
 
-    /*
+    /**
      * Retrieve endpoint mutexes from derived class
      * @return defaults to the endpoint mutex
      */
     virtual fastrtps::RecursiveTimedMutex& get_statistics_mutex() = 0;
 
-    /*
+    /**
      * Retrieve the GUID_t from derived class
      * @return endpoint GUID_t
      */
@@ -117,19 +118,19 @@ class StatisticsWriterImpl
     : protected StatisticsListenersImpl
 {
 
-    /*
+    /**
      * Create the auxiliary structure
      * @return nullptr on failure
      */
     StatisticsWriterAncillary* get_members() const;
 
-    /*
+    /**
      * Retrieve endpoint mutexes from derived class
      * @return defaults to the endpoint mutex
      */
     fastrtps::RecursiveTimedMutex& get_statistics_mutex() final;
 
-    /*
+    /**
      * Retrieve the GUID_t from derived class
      * @return endpoint GUID_t
      */
@@ -137,27 +138,36 @@ class StatisticsWriterImpl
 
 protected:
 
-    /*
+    /**
      * Constructor. Mandatory member initialization.
      */
     StatisticsWriterImpl();
 
     // TODO: methods for listeners callbacks
 
-    /*
+    /**
+     * @brief Report a change on the number of DATA / DATAFRAG submessages sent for a specific sample.
+     * @param sample_identity SampleIdentity of the affected sample.
+     * @param num_sent_submessages Current total number of submessages sent for the affected sample.
+     */
+    void on_sample_datas(
+            const fastrtps::rtps::SampleIdentity& sample_identity,
+            size_t num_sent_submessages);
+
+    /**
      * @brief Report that a HEARTBEAT message is sent
      * @param current count of heartbeats
      */
     void on_heartbeat(
             uint32_t count);
 
-    //! Report that a DATA message is sent
+    /// Report that a DATA message is sent
     void on_data();
 
-    //! Report that a DATA_FRAG message is sent
+    /// Report that a DATA_FRAG message is sent
     void on_data_frag();
 
-    //! Report that a GAP message is sent
+    /// Report that a GAP message is sent
     void on_gap();
 
     /*
@@ -176,7 +186,7 @@ class StatisticsReaderImpl
 {
     friend class fastrtps::rtps::RTPSMessageGroup;
 
-    /*
+    /**
      * Create the auxiliary structure
      * TODO: enable when a member is added to StatisticsReaderAncillary
      * @return nullptr on failure
@@ -186,13 +196,13 @@ class StatisticsReaderImpl
         return nullptr;
     }
 
-    /*
+    /**
      * Retrieve endpoint mutexes from derived class
      * @return defaults to the endpoint mutex
      */
     fastrtps::RecursiveTimedMutex& get_statistics_mutex() final;
 
-    /*
+    /**
      * Retrieve the GUID_t from derived class
      * @return endpoint GUID_t
      */
@@ -200,21 +210,21 @@ class StatisticsReaderImpl
 
 protected:
 
-    /*
+    /**
      * Constructor. Mandatory member initialization.
      */
     StatisticsReaderImpl();
 
     // TODO: methods for listeners callbacks
 
-    /*
+    /**
      * @brief Report that an ACKNACK message is sent
      * @param count current count of ACKNACKs
      */
     void on_acknack(
             int32_t count);
 
-    /*
+    /**
      * @brief Report that a NACKFRAG message is sent
      * @param count current count of NACKFRAGs
      */

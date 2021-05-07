@@ -123,13 +123,6 @@ void Time_t::now(
 
 namespace rtps {
 
-Time_t::Time_t()
-{
-    seconds_ = 0;
-    fraction_ = 0;
-    nanosec_ = 0;
-}
-
 Time_t::Time_t(
         int32_t sec,
         uint32_t frac)

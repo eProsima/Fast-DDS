@@ -26,6 +26,7 @@
 
 #include <fastdds/rtps/common/Guid.h>
 #include <fastdds/rtps/common/Locator.h>
+#include <fastdds/rtps/common/SampleIdentity.h>
 
 #include <statistics/types/types.h>
 #include <statistics/rtps/GuidUtils.hpp>
@@ -335,6 +336,7 @@ public:
 // auxiliary conversion functions
 detail::Locator_s to_statistics_type(fastrtps::rtps::Locator_t);
 detail::GUID_s to_statistics_type(fastrtps::rtps::GUID_t);
+detail::SampleIdentity_s to_statistics_type(fastrtps::rtps::SampleIdentity);
 
 #else // dummy implementation
 

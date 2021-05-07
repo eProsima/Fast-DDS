@@ -213,6 +213,24 @@ public:
      */
     void datasharing_notify();
 
+    size_t locators_size() const
+    {
+        if (locator_info_.remote_guid != c_Guid_Unknown && !is_local_reader_)
+        {
+            if (locator_info_.unicast.size() > 0)
+            {
+                return locator_info_.unicast.size();
+            }
+            else
+            {
+                return locator_info_.multicast.size();
+            }
+        }
+
+        return 0;
+
+    }
+
 private:
 
     RTPSWriter* owner_;
