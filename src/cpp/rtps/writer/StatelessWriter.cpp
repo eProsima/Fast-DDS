@@ -371,7 +371,7 @@ void StatelessWriter::unsent_change_added_to_history(
                             RTPSMessageGroup group(mp_RTPSParticipant, this, *it, max_blocking_time);
                             size_t num_locators = it->locators_size();
                             send_data_or_fragments(group, change, is_inline_qos_expected_,
-                                    [num_locators](
+                                    [this, num_locators](
                                         CacheChange_t* change,
                                         FragmentNumber_t /*frag*/)
                                     {
@@ -391,7 +391,7 @@ void StatelessWriter::unsent_change_added_to_history(
                             RTPSMessageGroup group(mp_RTPSParticipant, this, *this, max_blocking_time);
                             size_t num_locators = locator_selector_.selected_size() + fixed_locators_.size();
                             send_data_or_fragments(group, change, is_inline_qos_expected_,
-                                    [num_locators](
+                                    [this, num_locators](
                                         CacheChange_t* change,
                                         FragmentNumber_t /*frag*/)
                                     {
@@ -649,7 +649,7 @@ void StatelessWriter::send_all_unsent_changes()
         {
             auto change = unsentChange.getChange();
             bool sent = send_data_or_fragments(group, change, is_inline_qos_expected_,
-                            [num_locators](
+                            [this, num_locators](
                                 CacheChange_t* change,
                                 FragmentNumber_t /*frag*/)
                             {

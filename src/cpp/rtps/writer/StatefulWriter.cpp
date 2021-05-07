@@ -970,7 +970,7 @@ void StatefulWriter::send_changes_separatedly(
         else
         {
             SequenceNumber_t max_ack_seq = SequenceNumber_t::unknown();
-            auto sent_fun = [num_locators](
+            auto sent_fun = [this, num_locators](
                 CacheChange_t* change,
                 FragmentNumber_t /*frag*/)
                     {
