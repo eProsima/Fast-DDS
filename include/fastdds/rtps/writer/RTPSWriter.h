@@ -502,6 +502,48 @@ protected:
 
     bool is_pool_initialized() const;
 
+    template<typename Functor>
+    bool send_data_or_fragments(
+            RTPSMessageGroup& group,
+            CacheChange_t* change,
+            bool inline_qos,
+            Functor sent_fun)
+    {
+        bool sent_ok = true;
+
+        uint32_t n_fragments = change->getFragmentCount();
+        if (n_fragments > 0)
+        {
+            for (FragmentNumber_t frag = 1; frag <= n_fragments; frag++)
+            {
+                sent_ok &= group.add_data_frag(*change, frag, inline_qos);
+                if (sent_ok)
+                {
+                    sent_fun(change, frag);
+                }
+                else
+                {
+                    logError(RTPS_WRITER, "Error sending fragment (" << change->sequenceNumber << ", " << frag << ")");
+                    break;
+                }
+            }
+        }
+        else
+        {
+            sent_ok = group.add_data(*change, inline_qos);
+            if (sent_ok)
+            {
+                sent_fun(change, 0);
+            }
+            else
+            {
+                logError(RTPS_WRITER, "Error sending change " << change->sequenceNumber);
+            }
+        }
+
+        return sent_ok;
+    }
+
 private:
 
     RTPSWriter& operator =(

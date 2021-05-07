@@ -169,48 +169,6 @@ bool for_matched_readers(
     return for_matched_readers(reader_vector_3, fun);
 }
 
-template<typename Functor>
-bool send_data_or_fragments(
-        RTPSMessageGroup& group,
-        CacheChange_t* change,
-        bool inline_qos,
-        Functor sent_fun)
-{
-    bool sent_ok = true;
-
-    if (change->getFragmentSize() > 0)
-    {
-        for (FragmentNumber_t frag = 1; frag <= change->getFragmentCount(); frag++)
-        {
-            sent_ok &= group.add_data_frag(*change, frag, inline_qos);
-            if (sent_ok)
-            {
-                sent_fun(change, frag);
-            }
-            else
-            {
-                logError(RTPS_WRITER, "Error sending fragment ("
-                        << change->sequenceNumber << ", " << frag << ")");
-                break;
-            }
-        }
-    }
-    else
-    {
-        sent_ok = group.add_data(*change, inline_qos);
-        if (sent_ok)
-        {
-            sent_fun(change, 0);
-        }
-        else
-        {
-            logError(RTPS_WRITER, "Error sending change " << change->sequenceNumber);
-        }
-    }
-
-    return sent_ok;
-}
-
 using namespace std::chrono;
 
 StatefulWriter::StatefulWriter(
