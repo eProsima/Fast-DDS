@@ -1347,11 +1347,9 @@ void MessageReceiver::notify_network_statistics(
                 break;
             }
 
-            Time_t ts;
-            if (!CDRMessage::readTimestamp(msg, &ts))
-            {
-                break;
-            }
+            StatisticsSubmessageData data;
+            read_statistics_submessage(msg, data);
+            Time_t ts(data.ts.seconds, data.ts.fraction);
             Time_t current_ts;
             Time_t::now(current_ts);
             auto latency = (current_ts - ts).to_ns();

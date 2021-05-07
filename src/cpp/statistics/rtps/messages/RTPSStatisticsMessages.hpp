@@ -23,6 +23,7 @@
 
 #include <fastdds/rtps/common/CDRMessage_t.h>
 #include <fastdds/rtps/common/Types.h>
+#include <fastdds/rtps/messages/CDRMessage.h>
 #include <fastdds/rtps/messages/RTPSMessageCreator.h>
 
 #define FASTDDS_STATISTICS_NETWORK_SUBMESSAGE 0x80
@@ -87,6 +88,39 @@ inline void add_statistics_submessage(
     memset(msg->buffer + msg->pos, 0, statistics_submessage_data_length);
     msg->length += statistics_submessage_data_length;
     msg->pos += statistics_submessage_data_length;
+#endif // FASTDDS_STATISTICS
+}
+
+/**
+ * @brief Read a statistics submessage from a message.
+ * @param [in,out] msg Message from where to extract the submessage.
+ * @param [out] data Data read from the statistics submessage.
+ * @pre msg->pos should point to the beginning of the statistics submessage payload
+ * @post msg->length will be decremented by @c statistics_submessage_length (i.e. the
+ *       submessage will be consumed, and it won't be available anymore)
+ */
+inline void read_statistics_submessage(
+        eprosima::fastrtps::rtps::CDRMessage_t* msg,
+        StatisticsSubmessageData& data)
+{
+    static_cast<void>(msg);
+    static_cast<void>(data);
+
+#ifdef FASTDDS_STATISTICS
+    // Should be exactly at the end
+    assert(msg->pos + statistics_submessage_data_length == msg->length);
+
+    // Read all fields
+    using namespace eprosima::fastrtps::rtps;
+    CDRMessage::readInt32(msg, &data.ts.seconds);
+    CDRMessage::readUInt32(msg, &data.ts.fraction);
+    CDRMessage::readUInt64(msg, &data.seq.sequence);
+    CDRMessage::readUInt64(msg, &data.seq.bytes);
+    CDRMessage::readUInt16(msg, &data.seq.bytes_high);
+
+    // Consume submessage
+    msg->length -= statistics_submessage_length;
+    msg->pos = msg->length;
 #endif // FASTDDS_STATISTICS
 }
 
