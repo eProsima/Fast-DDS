@@ -544,6 +544,10 @@ protected:
         return sent_ok;
     }
 
+    static void add_statistics_sent_submessage(
+            CacheChange_t* change,
+            size_t num_locators);
+
 private:
 
     RTPSWriter& operator =(
