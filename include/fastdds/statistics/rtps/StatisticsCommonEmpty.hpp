@@ -20,6 +20,7 @@
 #define _FASTDDS_STATISTICS_RTPS_STATISTICSCOMMON_HPP_
 
 #include <fastdds/rtps/common/Locator.h>
+#include <fastdds/rtps/common/SampleIdentity.h>
 #include <fastdds/statistics/IListeners.hpp>
 
 namespace eprosima {
@@ -41,26 +42,37 @@ protected:
 
     // TODO: methods for listeners callbacks
 
-    /*
+    /**
+     * @brief Report a change on the number of DATA / DATAFRAG submessages sent for a specific sample.
+     * @param SampleIdentity of the affected sample.
+     * @param Current total number of submessages sent for the affected sample.
+     */
+    inline void on_sample_datas(
+            const fastrtps::rtps::SampleIdentity&,
+            size_t)
+    {
+    }
+
+    /**
      * @brief Report that a HEARTBEAT message is sent
      * @param current count of heartbeats
      */
-    void on_heartbeat(
+    inline void on_heartbeat(
             uint32_t)
     {
     }
 
-    //! Report that a DATA message is sent
+    /// Report that a DATA message is sent
     inline void on_data()
     {
     }
 
-    //! Report that a DATA_FRAG message is sent
+    /// Report that a DATA_FRAG message is sent
     inline void on_data_frag()
     {
     }
 
-    //! Report that a GAP message is sent
+    /// Report that a GAP message is sent
     inline void on_gap()
     {
     }
@@ -84,7 +96,7 @@ protected:
 
     // TODO: methods for listeners callbacks
 
-    /*
+    /**
      * @brief Report that an ACKNACK message is sent
      * @param current count of ACKNACKs
      */
@@ -93,7 +105,7 @@ protected:
     {
     }
 
-    /*
+    /**
      * @brief Report that a NACKFRAG message is sent
      * @param current count of NACKFRAGs
      */

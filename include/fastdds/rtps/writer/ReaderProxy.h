@@ -427,6 +427,11 @@ public:
         locator_info_.datasharing_notify();
     }
 
+    size_t locators_size() const
+    {
+        return locator_info_.locators_size();
+    }
+
 private:
 
     //!Is this proxy active? I.e. does it have a remote reader associated?

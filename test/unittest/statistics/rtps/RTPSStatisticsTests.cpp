@@ -52,10 +52,16 @@ namespace rtps {
 
 struct MockListener : IListener
 {
+    MockListener()
+    {
+        EXPECT_CALL(*this, on_unexpected_kind).Times(0);
+    }
+
     void on_statistics_data(
             const Data& data) override
     {
-        switch (data._d())
+        auto kind = data._d();
+        switch (kind)
         {
             case RTPS_SENT:
                 on_rtps_sent(data.entity2locator_traffic());
@@ -84,7 +90,11 @@ struct MockListener : IListener
             case PDP_PACKETS:
                 on_pdp_packets(data.entity_count());
                 break;
+            case SAMPLE_DATAS:
+                on_sample_datas(data.sample_identity_count());
+                break;
             default:
+                on_unexpected_kind(kind);
                 break;
         }
     }
@@ -98,6 +108,8 @@ struct MockListener : IListener
     MOCK_METHOD1(on_nackfrag_count, void(const eprosima::fastdds::statistics::EntityCount&));
     MOCK_METHOD1(on_entity_discovery, void(const eprosima::fastdds::statistics::DiscoveryTime&));
     MOCK_METHOD1(on_pdp_packets, void(const eprosima::fastdds::statistics::EntityCount&));
+    MOCK_METHOD1(on_sample_datas, void(const eprosima::fastdds::statistics::SampleIdentityCount&));
+    MOCK_METHOD1(on_unexpected_kind, void(eprosima::fastdds::statistics::EventKind));
 };
 
 class RTPSStatisticsTestsImpl
@@ -507,6 +519,7 @@ TEST_F(RTPSStatisticsTests, statistics_rpts_listener_management)
  * - RESENT_DATAS callbacks are performed for DATA submessages demanded by the readers
  * - ACKNACK_COUNT callbacks are performed
  * - HEARBEAT_COUNT callbacks are performed
+ * - SAMPLE_DATAS callbacks are performed
  */
 TEST_F(RTPSStatisticsTests, statistics_rpts_listener_callbacks)
 {
@@ -559,7 +572,7 @@ TEST_F(RTPSStatisticsTests, statistics_rpts_listener_callbacks)
     // writer callbacks through participant listener
     auto participant_writer_listener = make_shared<MockListener>();
     ASSERT_TRUE(participant_->add_statistics_listener(participant_writer_listener,
-            EventKind::DATA_COUNT | EventKind::RESENT_DATAS));
+            EventKind::DATA_COUNT | EventKind::RESENT_DATAS | EventKind::SAMPLE_DATAS));
 
     // writer specific callbacks
     auto writer_listener = make_shared<MockListener>();
@@ -587,10 +600,14 @@ TEST_F(RTPSStatisticsTests, statistics_rpts_listener_callbacks)
             .Times(AtLeast(1));
     EXPECT_CALL(*writer_listener, on_resent_count)
             .Times(AtLeast(1));
+    EXPECT_CALL(*writer_listener, on_sample_datas)
+            .Times(AtLeast(1));
 
     EXPECT_CALL(*participant_writer_listener, on_data_count)
             .Times(AtLeast(1));
     EXPECT_CALL(*participant_writer_listener, on_resent_count)
+            .Times(AtLeast(1));
+    EXPECT_CALL(*participant_writer_listener, on_sample_datas)
             .Times(AtLeast(1));
 
     // + RTPSReader: SUBSCRIPTION_THROUGHPUT,
@@ -624,7 +641,7 @@ TEST_F(RTPSStatisticsTests, statistics_rpts_listener_callbacks)
 
     EXPECT_TRUE(participant_->remove_statistics_listener(participant_listener, EventKind::RTPS_SENT));
     EXPECT_TRUE(participant_->remove_statistics_listener(participant_writer_listener,
-            EventKind::DATA_COUNT | EventKind::RESENT_DATAS));
+            EventKind::DATA_COUNT | EventKind::RESENT_DATAS | EventKind::SAMPLE_DATAS));
     EXPECT_TRUE(participant_->remove_statistics_listener(participant_reader_listener, EventKind::ACKNACK_COUNT));
 }
 
@@ -731,6 +748,8 @@ TEST_F(RTPSStatisticsTests, statistics_rpts_listener_gap_callback)
     EXPECT_CALL(*writer_listener, on_data_count)
             .Times(AtLeast(1));
     EXPECT_CALL(*writer_listener, on_resent_count)
+            .Times(AtLeast(1));
+    EXPECT_CALL(*writer_listener, on_sample_datas)
             .Times(AtLeast(1));
 
     EXPECT_CALL(*participant_writer_listener, on_gap_count)
