@@ -90,6 +90,22 @@ inline void add_statistics_submessage(
 #endif // FASTDDS_STATISTICS
 }
 
+#ifdef FASTDDS_STATISTICS
+inline uint32_t get_statistics_message_pos(
+        const eprosima::fastrtps::rtps::octet* send_buffer,
+        uint32_t send_buffer_size)
+{
+    // Message should contain RTPS header and statistic submessage
+    assert(statistics_submessage_length + RTPSMESSAGE_HEADER_SIZE <= send_buffer_size);
+
+    // The last submessage should be the statistics submessage
+    uint32_t statistics_pos = send_buffer_size - statistics_submessage_length;
+    assert(FASTDDS_STATISTICS_NETWORK_SUBMESSAGE == send_buffer[statistics_pos]);
+
+    return statistics_pos;
+}
+#endif // FASTDDS_STATISTICS
+
 inline void set_statistics_submessage_from_transport(
         const eprosima::fastrtps::rtps::octet* send_buffer,
         uint32_t send_buffer_size,
@@ -102,12 +118,7 @@ inline void set_statistics_submessage_from_transport(
 #ifdef FASTDDS_STATISTICS
     using namespace eprosima::fastrtps::rtps;
 
-    // Message should contain RTPS header and statistic submessage
-    assert(statistics_submessage_length + RTPSMESSAGE_HEADER_SIZE <= send_buffer_size);
-
-    // The last submessage should be the statistics submessage
-    auto statistics_pos = send_buffer_size - statistics_submessage_length;
-    assert(FASTDDS_STATISTICS_NETWORK_SUBMESSAGE == send_buffer[statistics_pos]);
+    uint32_t statistics_pos = get_statistics_message_pos(send_buffer, send_buffer_size);
 
     // Accumulate bytes on sequence
     sequence.add_message(send_buffer_size);
@@ -125,6 +136,18 @@ inline void set_statistics_submessage_from_transport(
     submessage->seq.sequence = sequence.sequence;
     submessage->seq.bytes = sequence.bytes;
     submessage->seq.bytes_high = sequence.bytes_high;
+#endif // FASTDDS_STATISTICS
+}
+
+inline void remove_statistics_submessage(
+        const eprosima::fastrtps::rtps::octet* send_buffer,
+        uint32_t& send_buffer_size)
+{
+    static_cast<void>(send_buffer);
+    static_cast<void>(send_buffer_size);
+
+#ifdef FASTDDS_STATISTICS
+    send_buffer_size = get_statistics_message_pos(send_buffer, send_buffer_size);
 #endif // FASTDDS_STATISTICS
 }
 
