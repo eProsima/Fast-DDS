@@ -594,22 +594,12 @@ elseif(NOT EPROSIMA_INSTALLER)
         )
 
     if(MSVC OR MSVC_IDE)
-        if(TARGET_TYPE STREQUAL "SHARED_LIBRARY")
-            # Install pdb files
-            install(DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/Debug/
-                DESTINATION ${LIB_INSTALL_DIR}${MSVCARCH_DIR_EXTENSION}
-                COMPONENT libraries${MSVCARCH_EXTENSION}
-                CONFIGURATIONS Debug
-                FILES_MATCHING
-                PATTERN "*.pdb"
-                )
-        else()
-            install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}.dir/Debug/${PROJECT_NAME}.pdb
-                DESTINATION ${LIB_INSTALL_DIR}${MSVCARCH_DIR_EXTENSION}
-                COMPONENT libraries${MSVCARCH_EXTENSION}
-                CONFIGURATIONS Debug
-                )
-        endif()
+
+        install(CODE
+            "file(GLOB_RECURSE STATIC_PDB_FILE \"${CMAKE_CURRENT_BINARY_DIR}/*${PROJECT_NAME}*.pdb\") \n if(STATIC_PDB_FILE) \n file(INSTALL \n DESTINATION \"\${CMAKE_INSTALL_PREFIX}/${LIB_INSTALL_DIR}${MSVCARCH_DIR_EXTENSION}\" \n TYPE FILE FILES \${STATIC_PDB_FILE}) \n endif()"
+            COMPONENT libraries${MSVCARCH_EXTENSION}
+            CONFIGURATIONS Debug
+            )
 
         if(EPROSIMA_INSTALLER_MINION AND LINK_SSL)
             # Libraries from https://www.npcglib.org/~stathis/blog/precompiled-openssl/
