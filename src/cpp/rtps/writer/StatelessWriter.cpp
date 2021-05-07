@@ -142,53 +142,6 @@ bool for_matched_readers(
     return for_matched_readers(reader_vector_3, fun);
 }
 
-static bool add_change_to_rtps_group(
-        RTPSMessageGroup& group,
-        CacheChange_t* change,
-        bool inline_qos,
-        size_t num_locators)
-{
-    bool ret_val = true;
-
-    try
-    {
-        uint32_t n_fragments = change->getFragmentCount();
-        if (n_fragments > 0)
-        {
-            for (uint32_t frag = 1; frag <= n_fragments; frag++)
-            {
-                if (!group.add_data_frag(*change, frag, inline_qos))
-                {
-                    logError(RTPS_WRITER, "Error sending fragment (" << change->sequenceNumber << ", " << frag << ")");
-                    break;
-                }
-                else
-                {
-                    add_statistics_sent_submessage(change, num_locators);
-                }
-            }
-        }
-        else
-        {
-            if (!group.add_data(*change, inline_qos))
-            {
-                logError(RTPS_WRITER, "Error sending change " << change->sequenceNumber);
-            }
-            else
-            {
-                add_statistics_sent_submessage(change, num_locators);
-            }
-        }
-    }
-    catch (const RTPSMessageGroup::timeout&)
-    {
-        logError(RTPS_WRITER, "Max blocking time reached");
-        ret_val = false;
-    }
-
-    return ret_val;
-}
-
 StatelessWriter::StatelessWriter(
         RTPSParticipantImpl* impl,
         const GUID_t& guid,
@@ -413,11 +366,14 @@ void StatelessWriter::unsent_change_added_to_history(
                     for (std::unique_ptr<ReaderLocator>& it : matched_remote_readers_)
                     {
                         RTPSMessageGroup group(mp_RTPSParticipant, this, *it, max_blocking_time);
-                        if (!add_change_to_rtps_group(group, change, is_inline_qos_expected_,
-                                it->locators_size()))
-                        {
-                            break;
-                        }
+                        size_t num_locators = it->locators_size();
+                        send_data_or_fragments(group, change, is_inline_qos_expected_,
+                                [num_locators](
+                                    CacheChange_t* change,
+                                    FragmentNumber_t /*frag*/)
+                                {
+                                    add_statistics_sent_submessage(change, num_locators);
+                                });
                     }
                 }
                 else
@@ -430,8 +386,14 @@ void StatelessWriter::unsent_change_added_to_history(
                     if (there_are_remote_readers_ || !fixed_locators_.empty())
                     {
                         RTPSMessageGroup group(mp_RTPSParticipant, this, *this, max_blocking_time);
-                        add_change_to_rtps_group(group, change, is_inline_qos_expected_,
-                                locator_selector_.selected_size() + fixed_locators_.size());
+                        size_t num_locators = locator_selector_.selected_size() + fixed_locators_.size();
+                        send_data_or_fragments(group, change, is_inline_qos_expected_,
+                                [num_locators](
+                                    CacheChange_t* change,
+                                    FragmentNumber_t /*frag*/)
+                                {
+                                    add_statistics_sent_submessage(change, num_locators);
+                                });
                     }
                 }
 
@@ -673,7 +635,13 @@ void StatelessWriter::send_all_unsent_changes()
         if (num_locators > 0)
         {
             auto change = unsentChange.getChange();
-            bool sent = add_change_to_rtps_group(group, change, is_inline_qos_expected_, num_locators);
+            bool sent = send_data_or_fragments(group, change, is_inline_qos_expected_,
+                            [num_locators](
+                                CacheChange_t* change,
+                                FragmentNumber_t /*frag*/)
+                            {
+                                add_statistics_sent_submessage(change, num_locators);
+                            });
             on_sample_datas(change->write_params.sample_identity(), change->num_sent_submessages);
             if (!sent)
             {
