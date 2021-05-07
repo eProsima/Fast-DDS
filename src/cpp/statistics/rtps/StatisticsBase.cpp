@@ -288,6 +288,24 @@ bool StatisticsParticipantImpl::remove_statistics_listener(
            && ((old_mask & mask) == mask); // return false if there were unregistered entities
 }
 
+void StatisticsParticipantImpl::on_network_statistics(
+        const fastrtps::rtps::GuidPrefix_t& source_participant,
+        const fastrtps::rtps::Locator_t& source_locator,
+        const fastrtps::rtps::Locator_t& reception_locator,
+        const rtps::StatisticsSubmessageData& data)
+{
+    static_cast<void>(source_participant);
+
+    using namespace eprosima::fastrtps::rtps;
+
+    Time_t ts(data.ts.seconds, data.ts.fraction);
+    Time_t current_ts;
+    Time_t::now(current_ts);
+    auto latency = (current_ts - ts).to_ns();
+    std::cout << "Network latency from " << source_locator << " to " << reception_locator << " is " <<
+        latency << std::endl;
+}
+
 void StatisticsParticipantImpl::on_rtps_sent(
         const fastrtps::rtps::Locator_t& loc,
         unsigned long payload_size)

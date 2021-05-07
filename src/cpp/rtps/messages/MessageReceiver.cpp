@@ -23,13 +23,14 @@
 #include <limits>
 #include <mutex>
 
+#include <fastdds/core/policy/ParameterList.hpp>
 #include <fastdds/dds/log/Log.hpp>
 
 #include <fastdds/rtps/reader/RTPSReader.h>
 #include <fastdds/rtps/writer/RTPSWriter.h>
 
-#include <fastdds/core/policy/ParameterList.hpp>
 #include <rtps/participant/RTPSParticipantImpl.h>
+#include <statistics/rtps/StatisticsBase.hpp>
 #include <statistics/rtps/messages/RTPSStatisticsMessages.hpp>
 
 #define INFO_SRC_SUBMSG_LENGTH 20
@@ -1320,6 +1321,7 @@ void MessageReceiver::notify_network_statistics(
     static_cast<void>(msg);
 
 #ifdef FASTDDS_STATISTICS
+    using namespace eprosima::fastdds::statistics;
     using namespace eprosima::fastdds::statistics::rtps;
 
     if ( (c_VendorId_eProsima != source_vendor_id_) ||
@@ -1349,12 +1351,8 @@ void MessageReceiver::notify_network_statistics(
 
             StatisticsSubmessageData data;
             read_statistics_submessage(msg, data);
-            Time_t ts(data.ts.seconds, data.ts.fraction);
-            Time_t current_ts;
-            Time_t::now(current_ts);
-            auto latency = (current_ts - ts).to_ns();
-            std::cout << "Network latency from " << source_locator << " to " << reception_locator << " is " <<
-                                latency << std::endl;
+            auto stats_participant = static_cast<StatisticsParticipantImpl*>(participant_);
+            stats_participant->on_network_statistics(source_guid_prefix_, source_locator, reception_locator, data);
             break;
         }
 
