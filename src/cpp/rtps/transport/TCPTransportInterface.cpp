@@ -1112,7 +1112,8 @@ bool TCPTransportInterface::send(
             if (channel->is_logical_port_opened(logical_port))
             {
                 TCPHeader tcp_header;
-                set_statistics_submessage_from_transport(send_buffer, send_buffer_size, 0);
+                StatisticsSubmessageData::Sequence seq;
+                set_statistics_submessage_from_transport(send_buffer, send_buffer_size, seq);
                 fill_rtcp_header(tcp_header, send_buffer, send_buffer_size, logical_port);
 
                 {

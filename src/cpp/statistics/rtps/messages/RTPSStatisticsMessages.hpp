@@ -32,30 +32,68 @@ namespace fastdds {
 namespace statistics {
 namespace rtps {
 
-constexpr uint16_t statistics_submessage_data_length = 8 /* timestamp */ + 8 /* sequence number */;
+struct StatisticsSubmessageData
+{
+    struct TimeStamp
+    {
+        int32_t seconds = 0;
+        uint32_t fraction = 0;
+    };
+
+    struct Sequence
+    {
+        uint64_t sequence = 0;
+        uint64_t bytes = 0;
+        uint16_t bytes_high = 0;
+
+        void add_message(
+                uint32_t message_size)
+        {
+            sequence++;
+            auto new_bytes = bytes + message_size;
+            if (new_bytes < bytes)
+            {
+                bytes_high++;
+            }
+            bytes = new_bytes;
+        }
+    };
+
+    TimeStamp ts{};
+    Sequence seq{};
+};
+
+constexpr uint16_t statistics_submessage_data_length = sizeof(StatisticsSubmessageData);
 constexpr uint16_t statistics_submessage_length =
         RTPSMESSAGE_SUBMESSAGEHEADER_SIZE + // submessage header
         statistics_submessage_data_length;  // submessage data
 
+/**
+ * @brief Adds an empty statistics submessage to a message.
+ * @param msg Message where the statistics submessage will be added.
+ * @pre There should be room in the message for the statistics submessage.
+ */
 inline void add_statistics_submessage(
         eprosima::fastrtps::rtps::CDRMessage_t* msg)
 {
     static_cast<void>(msg);
 
 #ifdef FASTDDS_STATISTICS
+    assert(msg->max_size >= msg->length + statistics_submessage_length);
+
     using namespace eprosima::fastrtps::rtps;
     RTPSMessageCreator::addSubmessageHeader(
         msg, FASTDDS_STATISTICS_NETWORK_SUBMESSAGE, 0x00, statistics_submessage_data_length);
-    CDRMessage::addInt32(msg, 0);
-    CDRMessage::addUInt32(msg, 0);
-    CDRMessage::addUInt64(msg, 0);
+    memset(msg->buffer + msg->pos, 0, statistics_submessage_data_length);
+    msg->length += statistics_submessage_data_length;
+    msg->pos += statistics_submessage_data_length;
 #endif // FASTDDS_STATISTICS
 }
 
 inline void set_statistics_submessage_from_transport(
         const eprosima::fastrtps::rtps::octet* send_buffer,
         uint32_t send_buffer_size,
-        const uint64_t& sequence)
+        StatisticsSubmessageData::Sequence& sequence)
 {
     static_cast<void>(send_buffer);
     static_cast<void>(send_buffer_size);
@@ -68,22 +106,25 @@ inline void set_statistics_submessage_from_transport(
     assert(statistics_submessage_length + RTPSMESSAGE_HEADER_SIZE <= send_buffer_size);
 
     // The last submessage should be the statistics submessage
-    send_buffer_size -= statistics_submessage_length;
-    assert(FASTDDS_STATISTICS_NETWORK_SUBMESSAGE == send_buffer[send_buffer_size]);
+    auto statistics_pos = send_buffer_size - statistics_submessage_length;
+    assert(FASTDDS_STATISTICS_NETWORK_SUBMESSAGE == send_buffer[statistics_pos]);
+
+    // Accumulate bytes on sequence
+    sequence.add_message(send_buffer_size);
 
     // Skip the submessage header
-    send_buffer_size += RTPSMESSAGE_SUBMESSAGEHEADER_SIZE;
+    statistics_pos += RTPSMESSAGE_SUBMESSAGEHEADER_SIZE;
 
     // Set current timestamp and sequence
-    auto pos = const_cast<eprosima::fastrtps::rtps::octet*>(&send_buffer[send_buffer_size]);
+    auto submessage = (StatisticsSubmessageData*)(&send_buffer[statistics_pos]);
     Time_t ts;
     Time_t::now(ts);
 
-    *((int32_t*)pos) = ts.seconds();
-    pos += sizeof(int32_t);
-    *((uint32_t*)pos) = ts.fraction();
-    pos += sizeof(uint32_t);
-    *((uint64_t*)pos) = sequence;
+    submessage->ts.seconds = ts.seconds();
+    submessage->ts.fraction = ts.fraction();
+    submessage->seq.sequence = sequence.sequence;
+    submessage->seq.bytes = sequence.bytes;
+    submessage->seq.bytes_high = sequence.bytes_high;
 #endif // FASTDDS_STATISTICS
 }
 

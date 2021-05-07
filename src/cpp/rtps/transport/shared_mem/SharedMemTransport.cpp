@@ -425,7 +425,8 @@ bool SharedMemTransport::send(
                 // Only copy the first time
                 if (shared_buffer == nullptr)
                 {
-                    set_statistics_submessage_from_transport(send_buffer, send_buffer_size, 0);
+                    StatisticsSubmessageData::Sequence seq;
+                    set_statistics_submessage_from_transport(send_buffer, send_buffer_size, seq);
                     shared_buffer = copy_to_shared_buffer(send_buffer, send_buffer_size, max_blocking_time_point);
                 }
 

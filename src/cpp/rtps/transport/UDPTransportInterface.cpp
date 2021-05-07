@@ -530,7 +530,8 @@ bool UDPTransportInterface::send(
 #endif // ifndef _WIN32
 
             asio::error_code ec;
-            set_statistics_submessage_from_transport(send_buffer, send_buffer_size, 0);
+            StatisticsSubmessageData::Sequence seq;
+            set_statistics_submessage_from_transport(send_buffer, send_buffer_size, seq);
             bytesSent = getSocketPtr(socket)->send_to(asio::buffer(send_buffer,
                             send_buffer_size), destinationEndpoint, 0, ec);
             if (!!ec)
