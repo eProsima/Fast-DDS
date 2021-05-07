@@ -308,7 +308,7 @@ protected:
      * @param destination_locators_end end of locators range
      */
     template<class LocatorIteratorT>
-    void on_dp_packet(
+    void on_discovery_packet(
             const GUID_t& sender_guid,
             const LocatorIteratorT& destination_locators_begin,
             const LocatorIteratorT& destination_locators_end)
@@ -328,6 +328,10 @@ protected:
                 case ENTITYID_SEDP_BUILTIN_PUBLICATIONS_READER:
                 case ENTITYID_SEDP_BUILTIN_SUBSCRIPTIONS_WRITER:
                 case ENTITYID_SEDP_BUILTIN_SUBSCRIPTIONS_READER:
+                case ENTITYID_SEDP_BUILTIN_PUBLICATIONS_SECURE_WRITER:
+                case ENTITYID_SEDP_BUILTIN_PUBLICATIONS_SECURE_READER:
+                case ENTITYID_SEDP_BUILTIN_SUBSCRIPTIONS_SECURE_WRITER:
+                case ENTITYID_SEDP_BUILTIN_SUBSCRIPTIONS_SECURE_READER:
                     discovery_callback = &StatisticsParticipantImpl::on_edp_packet;
                     break;
                 default:
@@ -419,12 +423,13 @@ protected:
      * @param end of locators range
      */
     template<class LocatorIteratorT>
-    inline void on_dp_packet(
+    inline void on_discovery_packet(
             const fastrtps::rtps::GUID_t&,
             const LocatorIteratorT&,
             const LocatorIteratorT&)
     {
     }
+
 };
 
 #endif // FASTDDS_STATISTICS
