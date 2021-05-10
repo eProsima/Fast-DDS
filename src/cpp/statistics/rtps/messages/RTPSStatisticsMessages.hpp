@@ -58,6 +58,7 @@ struct StatisticsSubmessageData
             }
             bytes = new_bytes;
         }
+
     };
 
     TimeStamp ts{};
@@ -138,6 +139,7 @@ inline uint32_t get_statistics_message_pos(
 
     return statistics_pos;
 }
+
 #endif // FASTDDS_STATISTICS
 
 inline void set_statistics_submessage_from_transport(

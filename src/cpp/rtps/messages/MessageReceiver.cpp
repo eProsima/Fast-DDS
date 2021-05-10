@@ -1324,8 +1324,8 @@ void MessageReceiver::notify_network_statistics(
     using namespace eprosima::fastdds::statistics;
     using namespace eprosima::fastdds::statistics::rtps;
 
-    if ( (c_VendorId_eProsima != source_vendor_id_) ||
-        (LOCATOR_KIND_SHM == source_locator.kind) )
+    if ((c_VendorId_eProsima != source_vendor_id_) ||
+            (LOCATOR_KIND_SHM == source_locator.kind))
     {
         return;
     }
@@ -1343,8 +1343,8 @@ void MessageReceiver::notify_network_statistics(
         if (FASTDDS_STATISTICS_NETWORK_SUBMESSAGE == header.submessageId)
         {
             // Check submessage validity
-            if ( (statistics_submessage_data_length != header.submessageLength) ||
-                 ( (msg->pos + header.submessageLength) > msg->length) )
+            if ((statistics_submessage_data_length != header.submessageLength) ||
+                    ((msg->pos + header.submessageLength) > msg->length))
             {
                 break;
             }
