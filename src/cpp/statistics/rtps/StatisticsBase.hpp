@@ -328,10 +328,12 @@ protected:
                 case ENTITYID_SEDP_BUILTIN_PUBLICATIONS_READER:
                 case ENTITYID_SEDP_BUILTIN_SUBSCRIPTIONS_WRITER:
                 case ENTITYID_SEDP_BUILTIN_SUBSCRIPTIONS_READER:
+#if HAVE_SECURITY
                 case ENTITYID_SEDP_BUILTIN_PUBLICATIONS_SECURE_WRITER:
                 case ENTITYID_SEDP_BUILTIN_PUBLICATIONS_SECURE_READER:
                 case ENTITYID_SEDP_BUILTIN_SUBSCRIPTIONS_SECURE_WRITER:
                 case ENTITYID_SEDP_BUILTIN_SUBSCRIPTIONS_SECURE_READER:
+#endif  // HAVE_SECURITY
                     discovery_callback = &StatisticsParticipantImpl::on_edp_packet;
                     break;
                 default:
