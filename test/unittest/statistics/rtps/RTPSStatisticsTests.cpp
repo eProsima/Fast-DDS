@@ -69,6 +69,9 @@ struct MockListener : IListener
             case RTPS_SENT:
                 on_rtps_sent(data.entity2locator_traffic());
                 break;
+            case NETWORK_LATENCY:
+                on_network_latency(data.locator2locator_data());
+                break;
             case HEARTBEAT_COUNT:
                 on_heartbeat_count(data.entity_count());
                 break;
@@ -107,6 +110,7 @@ struct MockListener : IListener
 
     MOCK_METHOD1(on_history_latency, void(const eprosima::fastdds::statistics::WriterReaderData&));
     MOCK_METHOD1(on_rtps_sent, void(const eprosima::fastdds::statistics::Entity2LocatorTraffic&));
+    MOCK_METHOD1(on_network_latency, void(const eprosima::fastdds::statistics::Locator2LocatorData&));
     MOCK_METHOD1(on_heartbeat_count, void(const eprosima::fastdds::statistics::EntityCount&));
     MOCK_METHOD1(on_acknack_count, void(const eprosima::fastdds::statistics::EntityCount&));
     MOCK_METHOD1(on_data_count, void(const eprosima::fastdds::statistics::EntityCount&));
@@ -576,7 +580,8 @@ TEST_F(RTPSStatisticsTests, statistics_rpts_listener_callbacks)
 
     // participant specific callbacks
     auto participant_listener = make_shared<MockListener>();
-    ASSERT_TRUE(participant_->add_statistics_listener(participant_listener, EventKind::RTPS_SENT));
+    ASSERT_TRUE(participant_->add_statistics_listener(participant_listener,
+            EventKind::RTPS_SENT | EventKind::NETWORK_LATENCY));
 
     // writer callbacks through participant listener
     auto participant_writer_listener = make_shared<MockListener>();
@@ -596,8 +601,10 @@ TEST_F(RTPSStatisticsTests, statistics_rpts_listener_callbacks)
     auto reader_listener = make_shared<MockListener>();
     ASSERT_TRUE(reader_->add_statistics_listener(reader_listener));
 
-    // we must received the RTPS_SENT notifications
+    // we must received the RTPS_SENT and NETWORK_LATENCY notifications
     EXPECT_CALL(*participant_listener, on_rtps_sent)
+            .Times(AtLeast(1));
+    EXPECT_CALL(*participant_listener, on_network_latency)
             .Times(AtLeast(1));
 
     // Check callbacks on data exchange, at least, we must received:
