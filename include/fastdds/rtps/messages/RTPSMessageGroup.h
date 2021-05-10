@@ -52,9 +52,23 @@ public:
     public:
 
         timeout()
-            : std::runtime_error("timeout") {}
+            : std::runtime_error("timeout")
+        {
+        }
 
         virtual ~timeout() = default;
+    };
+
+    class limit_exceeded : public std::runtime_error
+    {
+    public:
+
+        limit_exceeded()
+            : std::runtime_error("limit_exceeded")
+        {
+        }
+
+        virtual ~limit_exceeded() = default;
     };
 
     /**
@@ -62,15 +76,26 @@ public:
      * Constructs a RTPSMessageGroup allowing the destination endpoints to change.
      * @param participant Pointer to the participant sending data.
      * @param endpoint Pointer to the endpoint sending data.
-     * @param msg_sender Reference to message sender interface.
+     * @param max_blocking_time_point Future time point where blocking send should end.
+     */
+    RTPSMessageGroup(
+            RTPSParticipantImpl* participant,
+            bool internal_buffer = false);
+
+    /**
+     * Basic constructor.
+     * Constructs a RTPSMessageGroup allowing the destination endpoints to change.
+     * @param participant Pointer to the participant sending data.
+     * @param endpoint Pointer to the endpoint sending data.
+     * @param msg_sender Pointer to message sender interface.
      * @param max_blocking_time_point Future time point where blocking send should end.
      */
     RTPSMessageGroup(
             RTPSParticipantImpl* participant,
             Endpoint* endpoint,
-            const RTPSMessageSenderInterface& msg_sender,
+            const RTPSMessageSenderInterface* msg_sender,
             std::chrono::steady_clock::time_point max_blocking_time_point =
-                std::chrono::steady_clock::now() + std::chrono::hours(24));
+            std::chrono::steady_clock::now() + std::chrono::hours(24));
 
     ~RTPSMessageGroup() noexcept(false);
 
@@ -166,11 +191,6 @@ public:
             FragmentNumberSet_t fn_state,
             int32_t count);
 
-    inline uint32_t get_current_bytes_processed() const
-    { 
-        return currentBytesSent_ + full_msg_->length; 
-    }
-
     /**
      * To be used whenever destination locators/guids change between two add_xxx calls.
      * Automatically called inside add_xxx calls if destinations_have_changed() method of
@@ -180,11 +200,40 @@ public:
      */
     void flush_and_reset();
 
+    void change_transmitter(
+            Endpoint* endpoint,
+            const RTPSMessageSenderInterface* msg_sender)
+    {
+        if (endpoint != endpoint_ || msg_sender != sender_)
+        {
+            flush_and_reset();
+        }
+
+        endpoint_ = endpoint;
+        sender_ = msg_sender;
+    }
+
     //! Maximum fragment size minus the headers
     static inline constexpr uint32_t get_max_fragment_payload_size()
     {
         // Max fragment is 64KBytes_max - header - inlineqos - 3(for better alignment)
         return std::numeric_limits<uint16_t>::max() - data_frag_header_size_ - max_inline_qos_size_ - 3;
+    }
+
+    void set_sent_bytes_limitation(
+            uint32_t limit)
+    {
+        sent_bytes_limitation_ = limit;
+    }
+
+    void reset_current_bytes_processed()
+    {
+        current_sent_bytes_ = 0;
+    }
+
+    inline uint32_t get_current_bytes_processed() const
+    {
+        return current_sent_bytes_ + full_msg_->length;
     }
 
 private:
@@ -200,7 +249,7 @@ private:
 
     void check_and_maybe_flush()
     {
-        check_and_maybe_flush(sender_.destination_guid_prefix());
+        check_and_maybe_flush(sender_->destination_guid_prefix());
     }
 
     void check_and_maybe_flush(
@@ -209,7 +258,7 @@ private:
     bool insert_submessage(
             bool is_big_submessage)
     {
-        return insert_submessage(sender_.destination_guid_prefix(), is_big_submessage);
+        return insert_submessage(sender_->destination_guid_prefix(), is_big_submessage);
     }
 
     bool insert_submessage(
@@ -228,34 +277,40 @@ private:
             const SequenceNumberSet_t& gap_bitmap,
             const EntityId_t& reader_id);
 
-    const RTPSMessageSenderInterface& sender_;
+    const RTPSMessageSenderInterface* sender_ = nullptr;
 
-    Endpoint* endpoint_;
+    Endpoint* endpoint_ = nullptr;
 
-    CDRMessage_t* full_msg_;
+    CDRMessage_t* full_msg_ = nullptr;
 
-    CDRMessage_t* submessage_msg_;
-
-    uint32_t currentBytesSent_;
+    CDRMessage_t* submessage_msg_ = nullptr;
 
     GuidPrefix_t current_dst_;
 
-    RTPSParticipantImpl* participant_;
+    RTPSParticipantImpl* participant_ = nullptr;
 
 #if HAVE_SECURITY
-    
-    CDRMessage_t* encrypt_msg_;
-    
-#endif
+
+    CDRMessage_t* encrypt_msg_ = nullptr;
+
+#endif // if HAVE_SECURITY
 
     std::chrono::steady_clock::time_point max_blocking_time_point_;
 
+    bool max_blocking_time_is_set = false;
+
     std::unique_ptr<RTPSMessageGroup_t> send_buffer_;
+
+    bool internal_buffer_ = false;
+
+    uint32_t sent_bytes_limitation_ = 0;
+
+    uint32_t current_sent_bytes_ = 0;
 };
 
 } /* namespace rtps */
 } /* namespace fastrtps */
 } /* namespace eprosima */
 
-#endif
+#endif // ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 #endif /* _FASTDDS_RTPS_RTPSMESSAGEGROUP_H_ */

@@ -31,6 +31,7 @@
 #include <fastdds/rtps/common/LocatorSelector.hpp>
 #include <fastdds/rtps/messages/RTPSMessageGroup.h>
 #include <fastdds/rtps/messages/RTPSMessageSenderInterface.hpp>
+#include <fastdds/rtps/flowcontrol/FlowController.hpp>
 #include <fastrtps/qos/LivelinessLostStatus.h>
 #include <fastrtps/utils/collections/ResourceLimitedVector.hpp>
 
@@ -52,7 +53,6 @@ struct CacheChange_t;
  */
 class RTPSWriter
     : public Endpoint
-    , public RTPSMessageSenderInterface
     , public fastdds::statistics::StatisticsWriterImpl
 {
     friend class WriterHistory;
@@ -60,12 +60,73 @@ class RTPSWriter
     friend class RTPSMessageGroup;
     friend class AsyncInterestTree;
 
+public:
+
+    enum class DeliveryRetCode : uint32_t
+    {
+        DELIVERED,
+        NOT_DELIVERED,
+        EXCEEDED_LIMIT
+    };
+
+    class LocatorSelector : public RTPSMessageSenderInterface
+    {
+    public:
+
+        LocatorSelector(
+                RTPSWriter& writer,
+                ResourceLimitedContainerConfig matched_readers_allocation
+                )
+            : writer(writer)
+            , locator_selector(matched_readers_allocation)
+            , all_remote_readers(matched_readers_allocation)
+            , all_remote_participants(matched_readers_allocation)
+        {
+        }
+
+        bool destinations_have_changed() const override
+        {
+            return false;
+        }
+
+        GuidPrefix_t destination_guid_prefix() const override
+        {
+            return all_remote_participants.size() == 1 ? all_remote_participants.at(0) : c_GuidPrefix_Unknown;
+        }
+
+        const std::vector<GuidPrefix_t>& remote_participants() const override
+        {
+            return all_remote_participants;
+        }
+
+        const std::vector<GUID_t>& remote_guids() const override
+        {
+            return all_remote_readers;
+        }
+
+        bool send(
+                CDRMessage_t* message,
+                std::chrono::steady_clock::time_point max_blocking_time_point) const override
+        {
+            return writer.send(message, *this, max_blocking_time_point);
+        }
+
+        RTPSWriter& writer;
+
+        fastrtps::rtps::LocatorSelector locator_selector;
+
+        ResourceLimitedVector<GUID_t> all_remote_readers;
+
+        ResourceLimitedVector<GuidPrefix_t> all_remote_participants;
+    };
+
 protected:
 
     RTPSWriter(
             RTPSParticipantImpl* impl,
             const GUID_t& guid,
             const WriterAttributes& att,
+            fastdds::rtps::FlowController* flow_controller,
             WriterHistory* hist,
             WriterListener* listen = nullptr);
 
@@ -74,6 +135,7 @@ protected:
             const GUID_t& guid,
             const WriterAttributes& att,
             const std::shared_ptr<IPayloadPool>& payload_pool,
+            fastdds::rtps::FlowController* flow_controller,
             WriterHistory* hist,
             WriterListener* listen = nullptr);
 
@@ -83,6 +145,7 @@ protected:
             const WriterAttributes& att,
             const std::shared_ptr<IPayloadPool>& payload_pool,
             const std::shared_ptr<IChangePool>& change_pool,
+            fastdds::rtps::FlowController* flow_controller,
             WriterHistory* hist,
             WriterListener* listen = nullptr);
 
@@ -187,12 +250,6 @@ public:
             const WriterAttributes& att) = 0;
 
     /**
-     * This method triggers the send operation for unsent changes.
-     * @return number of messages sent
-     */
-    RTPS_DllAPI virtual void send_any_unsent_changes() = 0;
-
-    /**
      * Get Min Seq Num in History.
      * @return Minimum sequence number in history
      */
@@ -271,13 +328,6 @@ public:
             const SequenceNumber_t& seq,
             const std::chrono::steady_clock::time_point& max_blocking_time_point,
             std::unique_lock<RecursiveTimedMutex>& lock) = 0;
-
-    /*
-     * Add a flow controller that will apply to this writer exclusively.
-     * @param controller
-     */
-    virtual void add_flow_controller(
-            std::unique_ptr<FlowController> controller) = 0;
 
 #ifdef FASTDDS_STATISTICS
 
@@ -400,34 +450,27 @@ public:
     LivelinessLostStatus liveliness_lost_status_;
 
     /**
-     * Check if the destinations managed by this sender interface have changed.
-     *
-     * @return true if destinations have changed, false otherwise.
+     * @return Whether the writer is data sharing compatible or not
      */
-    bool destinations_have_changed() const override;
+    bool is_datasharing_compatible() const;
 
-    /**
-     * Get a GUID prefix representing all destinations.
+    /*!
+     * Tells writer the sample can be sent to the network.
+     * This function should be used by a fastdds::rtps::FlowController.
      *
-     * @return When all the destinations share the same prefix (i.e. belong to the same participant)
-     * that prefix is returned. When there are no destinations, or they belong to different
-     * participants, c_GuidPrefix_Unknown is returned.
+     * @param cache_change Pointer to the CacheChange_t that represents the sample which can be sent.
+     * @return Return code.
+     * @note Must be non-thread safe.
      */
-    GuidPrefix_t destination_guid_prefix() const override;
+    virtual DeliveryRetCode deliver_sample_nts(
+            CacheChange_t* cache_change,
+            RTPSMessageGroup& group,
+            RTPSWriter::LocatorSelector& locator_selector,
+            const std::chrono::time_point<std::chrono::steady_clock>& max_blocking_time) = 0;
 
-    /**
-     * Get the GUID prefix of all the destination participants.
-     *
-     * @return a const reference to a vector with the GUID prefix of all destination participants.
-     */
-    const std::vector<GuidPrefix_t>& remote_participants() const override;
+    virtual RTPSWriter::LocatorSelector& get_general_locator_selector() = 0;
 
-    /**
-     * Get the GUID of all destinations.
-     *
-     * @return a const reference to a vector with the GUID of all destinations.
-     */
-    const std::vector<GUID_t>& remote_guids() const override;
+    virtual RTPSWriter::LocatorSelector& get_async_locator_selector() = 0;
 
     /**
      * Send a message through this interface.
@@ -435,19 +478,19 @@ public:
      * @param message Pointer to the buffer with the message already serialized.
      * @param max_blocking_time_point Future timepoint where blocking send should end.
      */
-    bool send(
+    virtual bool send(
             CDRMessage_t* message,
-            std::chrono::steady_clock::time_point& max_blocking_time_point) const override;
-
-    /**
-     * @return Whether the writer is data sharing compatible or not
-     */
-    bool is_datasharing_compatible() const;
+            const RTPSWriter::LocatorSelector& locator_selector,
+            std::chrono::steady_clock::time_point& max_blocking_time_point) const;
 
 protected:
 
     //!Is the data sent directly or announced by HB and THEN sent to the ones who ask for it?.
     bool m_pushMode = true;
+
+    //! Flow controller.
+    fastdds::rtps::FlowController* flow_controller_;
+
     //!WriterHistory
     WriterHistory* mp_history = nullptr;
     //!Listener
@@ -457,11 +500,6 @@ protected:
     //!Separate sending activated
     bool m_separateSendingEnabled = false;
 
-    LocatorSelector locator_selector_;
-
-    ResourceLimitedVector<GUID_t> all_remote_readers_;
-    ResourceLimitedVector<GuidPrefix_t> all_remote_participants_;
-
     //! The liveliness kind of this writer
     LivelinessQosPolicyKind liveliness_kind_;
     //! The liveliness lease duration of this writer
@@ -470,11 +508,14 @@ protected:
     Duration_t liveliness_announcement_period_;
 
     void add_guid(
+            RTPSWriter::LocatorSelector& locator_selector,
             const GUID_t& remote_guid);
 
-    void compute_selected_guids();
+    void compute_selected_guids(
+            RTPSWriter::LocatorSelector& locator_selector);
 
-    void update_cached_info_nts();
+    void update_cached_info_nts(
+            RTPSWriter::LocatorSelector& locator_selector);
 
     /**
      * Add a change to the unsent list.
@@ -557,6 +598,11 @@ private:
 
     RTPSWriter* next_[2] = { nullptr, nullptr };
 
+    friend bool fastdds::rtps::FlowController::try_lock(
+            RTPSWriter* writer);
+
+    friend void fastdds::rtps::FlowController::unlock(
+            RTPSWriter* writer);
 };
 
 } /* namespace rtps */

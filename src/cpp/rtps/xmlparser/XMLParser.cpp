@@ -1848,15 +1848,17 @@ XMLP_ret XMLParser::fillDataNode(
                 return XMLP_ret::XML_ERROR;
             }
         }
-        else if (strcmp(name, THROUGHPUT_CONT) == 0)
-        {
+        /* TODO Update to new flow controllers.
+           else if (strcmp(name, THROUGHPUT_CONT) == 0)
+           {
             // throughputController
             if (XMLP_ret::XML_OK !=
                     getXMLThroughputController(p_aux0, participant_node.get()->rtps.throughputController, ident))
             {
                 return XMLP_ret::XML_ERROR;
             }
-        }
+           }
+         */
         else if (strcmp(name, USER_TRANS) == 0)
         {
             // userTransports

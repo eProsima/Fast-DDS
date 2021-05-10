@@ -133,6 +133,8 @@ protected:
     SequenceNumber_t m_lastCacheChangeSeqNum;
     //!Pointer to the associated RTPSWriter;
     RTPSWriter* mp_writer;
+
+    uint32_t high_mark_for_frag_ = 0;
 };
 
 } // namespace rtps

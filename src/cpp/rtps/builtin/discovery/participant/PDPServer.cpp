@@ -1390,7 +1390,7 @@ void PDPServer::send_announcement(
     }
 
     DirectMessageSender sender(getRTPSParticipant(), &remote_readers, &locators);
-    RTPSMessageGroup group(getRTPSParticipant(), mp_PDPWriter, sender);
+    RTPSMessageGroup group(getRTPSParticipant(), mp_PDPWriter, &sender);
 
     if (dispose)
     {

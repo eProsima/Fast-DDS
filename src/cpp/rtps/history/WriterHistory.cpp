@@ -21,6 +21,7 @@
 #include <fastdds/dds/log/Log.hpp>
 #include <fastdds/rtps/writer/RTPSWriter.h>
 #include <fastdds/rtps/common/WriteParams.h>
+#include <fastdds/core/policy//ParameterSerializer.hpp>
 
 #include <mutex>
 
@@ -94,13 +95,38 @@ bool WriterHistory::add_change_(
     ++m_lastCacheChangeSeqNum;
     a_change->sequenceNumber = m_lastCacheChangeSeqNum;
     Time_t::now(a_change->sourceTimestamp);
-    a_change->num_sent_submessages = 0;
+    a_change->writer_info.num_sent_submessages = 0;
 
     a_change->write_params = wparams;
     // Updated sample and related sample identities on the user's write params
     wparams.sample_identity().writer_guid(a_change->writerGUID);
     wparams.sample_identity().sequence_number(a_change->sequenceNumber);
     wparams.related_sample_identity(wparams.sample_identity());
+
+    // Fragment if necessary
+    if (high_mark_for_frag_ == 0)
+    {
+        high_mark_for_frag_ = mp_writer->getMaxDataSize();
+    }
+
+    uint32_t final_high_mark_for_frag = high_mark_for_frag_;
+
+    // If needed inlineqos for related_sample_identity, then remove the inlinqos size from final fragment size.
+    if (wparams.related_sample_identity() != SampleIdentity::unknown())
+    {
+        final_high_mark_for_frag -= (
+            fastdds::dds::ParameterSerializer<Parameter_t>::PARAMETER_SENTINEL_SIZE +
+            fastdds::dds::ParameterSerializer<Parameter_t>::PARAMETER_SAMPLE_IDENTITY_SIZE);
+    }
+
+    // If it is big data, fragment it.
+    if (a_change->serializedPayload.length > final_high_mark_for_frag)
+    {
+        // Fragment the data.
+        // Set the fragment size to the cachechange.
+        a_change->setFragmentSize(static_cast<uint16_t>(
+                    (std::min)(final_high_mark_for_frag, RTPSMessageGroup::get_max_fragment_payload_size())));
+    }
 
     m_changes.push_back(a_change);
 

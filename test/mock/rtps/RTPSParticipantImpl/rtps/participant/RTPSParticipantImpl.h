@@ -31,7 +31,6 @@
 #include <fastrtps/rtps/participant/RTPSParticipantListener.h>
 #include <fastrtps/rtps/resources/ResourceEvent.h>
 #include <fastrtps/rtps/network/NetworkFactory.h>
-#include <fastrtps/rtps/resources/AsyncWriterThread.h>
 
 #if HAVE_SECURITY
 #include <fastrtps/rtps/security/accesscontrol/ParticipantSecurityAttributes.h>
@@ -126,8 +125,6 @@ public:
 
     MOCK_METHOD0(userReadersListBegin, std::vector<RTPSReader*>::iterator ());
     MOCK_METHOD0(userReadersListEnd, std::vector<RTPSReader*>::iterator ());
-
-    MOCK_METHOD0(async_thread, AsyncWriterThread & ());
 
     MOCK_CONST_METHOD0(getParticipantMutex, std::recursive_mutex* ());
 

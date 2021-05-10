@@ -806,7 +806,7 @@ bool StatefulReader::change_received(
                 {
                     if (mp_history->received_change(a_change, 0))
                     {
-                        Time_t::now(a_change->receptionTimestamp);
+                        Time_t::now(a_change->reader_info.receptionTimestamp);
 
                         // If we use the real a_change->sequenceNumber no DATA(p) with a lower one will ever be received.
                         // That happens because the WriterProxy created when the listener matches the PDP endpoints is
@@ -836,7 +836,7 @@ bool StatefulReader::change_received(
     {
         auto payload_length = a_change->serializedPayload.length;
 
-        Time_t::now(a_change->receptionTimestamp);
+        Time_t::now(a_change->reader_info.receptionTimestamp);
         GUID_t proxGUID = prox->guid();
 
         // If KEEP_LAST and history full, make older changes as lost.
@@ -1151,7 +1151,7 @@ void StatefulReader::change_read_by_user(
                         return;
                     }
                     SequenceNumberSet_t sns((*it)->sequenceNumber);
-                    send_acknack(writer, sns, *writer, false);
+                    send_acknack(writer, sns, writer, false);
                     return;
                 }
             }
@@ -1159,14 +1159,14 @@ void StatefulReader::change_read_by_user(
 
         // Must ACK all in the writer
         SequenceNumberSet_t sns(writer->available_changes_max() + 1);
-        send_acknack(writer, sns, *writer, false);
+        send_acknack(writer, sns, writer, false);
     }
 }
 
 void StatefulReader::send_acknack(
         const WriterProxy* writer,
         const SequenceNumberSet_t& sns,
-        const RTPSMessageSenderInterface& sender,
+        const RTPSMessageSenderInterface* sender,
         bool is_final)
 {
 
@@ -1205,7 +1205,7 @@ void StatefulReader::send_acknack(
 
 void StatefulReader::send_acknack(
         const WriterProxy* writer,
-        const RTPSMessageSenderInterface& sender,
+        const RTPSMessageSenderInterface* sender,
         bool heartbeat_was_final)
 {
     // Protect reader
@@ -1230,7 +1230,7 @@ void StatefulReader::send_acknack(
         RTPSMessageGroup group(getRTPSParticipant(), this, sender);
         if (!missing_changes.empty() || !heartbeat_was_final)
         {
-            GUID_t guid = sender.remote_guids().at(0);
+            GUID_t guid = sender->remote_guids().at(0);
             SequenceNumberSet_t sns(writer->available_changes_max() + 1);
             History::const_iterator history_iterator = mp_history->changesBegin();
 

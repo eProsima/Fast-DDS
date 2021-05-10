@@ -25,8 +25,6 @@
 #include <rtps/DataSharing/DataSharingNotifier.hpp>
 #include <rtps/DataSharing/WriterPool.hpp>
 
-#include <rtps/flowcontrol/FlowController.h>
-
 #include <rtps/participant/RTPSParticipantImpl.h>
 
 #include <fastdds/dds/log/Log.hpp>
@@ -48,15 +46,14 @@ RTPSWriter::RTPSWriter(
         RTPSParticipantImpl* impl,
         const GUID_t& guid,
         const WriterAttributes& att,
+        fastdds::rtps::FlowController* flow_controller,
         WriterHistory* hist,
         WriterListener* listen)
     : Endpoint(impl, guid, att.endpoint)
+    , flow_controller_(flow_controller)
     , mp_history(hist)
     , mp_listener(listen)
     , is_async_(att.mode == SYNCHRONOUS_WRITER ? false : true)
-    , locator_selector_(att.matched_readers_allocation)
-    , all_remote_readers_(att.matched_readers_allocation)
-    , all_remote_participants_(att.matched_readers_allocation)
     , liveliness_kind_(att.liveliness_kind)
     , liveliness_lease_duration_(att.liveliness_lease_duration)
     , liveliness_announcement_period_(att.liveliness_announcement_period)
@@ -67,6 +64,8 @@ RTPSWriter::RTPSWriter(
     payload_pool = BasicPayloadPool::get(cfg, change_pool);
 
     init(payload_pool, change_pool, att);
+
+    flow_controller_->register_writer(this);
 }
 
 RTPSWriter::RTPSWriter(
@@ -74,12 +73,13 @@ RTPSWriter::RTPSWriter(
         const GUID_t& guid,
         const WriterAttributes& att,
         const std::shared_ptr<IPayloadPool>& payload_pool,
+        fastdds::rtps::FlowController* flow_controller,
         WriterHistory* hist,
         WriterListener* listen)
     : RTPSWriter(
         impl, guid, att, payload_pool,
         std::make_shared<CacheChangePool>(PoolConfig::from_history_attributes(hist->m_att)),
-        hist, listen)
+        flow_controller, hist, listen)
 {
 }
 
@@ -89,20 +89,21 @@ RTPSWriter::RTPSWriter(
         const WriterAttributes& att,
         const std::shared_ptr<IPayloadPool>& payload_pool,
         const std::shared_ptr<IChangePool>& change_pool,
+        fastdds::rtps::FlowController* flow_controller,
         WriterHistory* hist,
         WriterListener* listen)
     : Endpoint(impl, guid, att.endpoint)
+    , flow_controller_(flow_controller)
     , mp_history(hist)
     , mp_listener(listen)
     , is_async_(att.mode == SYNCHRONOUS_WRITER ? false : true)
-    , locator_selector_(att.matched_readers_allocation)
-    , all_remote_readers_(att.matched_readers_allocation)
-    , all_remote_participants_(att.matched_readers_allocation)
     , liveliness_kind_(att.liveliness_kind)
     , liveliness_lease_duration_(att.liveliness_lease_duration)
     , liveliness_announcement_period_(att.liveliness_announcement_period)
 {
     init(payload_pool, change_pool, att);
+
+    flow_controller_->register_writer(this);
 }
 
 void RTPSWriter::init(
@@ -141,6 +142,7 @@ RTPSWriter::~RTPSWriter()
 
     for (auto it = mp_history->changesBegin(); it != mp_history->changesEnd(); ++it)
     {
+        flow_controller_->remove_change(*it);
         release_change(*it);
     }
 
@@ -178,6 +180,9 @@ CacheChange_t* RTPSWriter::new_change(
     }
     reserved_change->instanceHandle = handle;
     reserved_change->writerGUID = m_guid;
+    reserved_change->writer_info.previous = nullptr;
+    reserved_change->writer_info.next = nullptr;
+    reserved_change->writer_info.num_sent_submessages = 0;
     return reserved_change;
 }
 
@@ -202,6 +207,9 @@ CacheChange_t* RTPSWriter::new_change(
     }
     reserved_change->instanceHandle = handle;
     reserved_change->writerGUID = m_guid;
+    reserved_change->writer_info.previous = nullptr;
+    reserved_change->writer_info.next = nullptr;
+    reserved_change->writer_info.num_sent_submessages = 0;
     return reserved_change;
 }
 
@@ -276,10 +284,16 @@ bool RTPSWriter::remove_older_changes(
 CONSTEXPR uint32_t info_dst_message_length = 16;
 CONSTEXPR uint32_t info_ts_message_length = 12;
 CONSTEXPR uint32_t data_frag_submessage_header_length = 36;
+CONSTEXPR uint32_t heartbeat_message_length = 32;
 
 uint32_t RTPSWriter::getMaxDataSize()
 {
-    return calculateMaxDataSize(mp_RTPSParticipant->getMaxMessageSize());
+    uint32_t flow_max = flow_controller_->get_max_payload();
+    uint32_t part_max = mp_RTPSParticipant->getMaxMessageSize();
+    uint32_t max_size = flow_max > part_max ? part_max : flow_max;
+
+    max_size =  calculateMaxDataSize(max_size);
+    return max_size &= ~3;
 }
 
 uint32_t RTPSWriter::calculateMaxDataSize(
@@ -289,7 +303,8 @@ uint32_t RTPSWriter::calculateMaxDataSize(
 
     maxDataSize -= info_dst_message_length +
             info_ts_message_length +
-            data_frag_submessage_header_length;
+            data_frag_submessage_header_length +
+            heartbeat_message_length;
 
     //TODO(Ricardo) inlineqos in future.
 
@@ -313,66 +328,39 @@ uint32_t RTPSWriter::calculateMaxDataSize(
 }
 
 void RTPSWriter::add_guid(
+        RTPSWriter::LocatorSelector& locator_selector,
         const GUID_t& remote_guid)
 {
     const GuidPrefix_t& prefix = remote_guid.guidPrefix;
-    all_remote_readers_.push_back(remote_guid);
-    if (std::find(all_remote_participants_.begin(), all_remote_participants_.end(), prefix) ==
-            all_remote_participants_.end())
+    locator_selector.all_remote_readers.push_back(remote_guid);
+    if (std::find(locator_selector.all_remote_participants.begin(),
+            locator_selector.all_remote_participants.end(), prefix) ==
+            locator_selector.all_remote_participants.end())
     {
-        all_remote_participants_.push_back(prefix);
+        locator_selector.all_remote_participants.push_back(prefix);
     }
 }
 
-void RTPSWriter::compute_selected_guids()
+void RTPSWriter::compute_selected_guids(
+        RTPSWriter::LocatorSelector& locator_selector)
 {
-    all_remote_readers_.clear();
-    all_remote_participants_.clear();
+    locator_selector.all_remote_readers.clear();
+    locator_selector.all_remote_participants.clear();
 
-    for (LocatorSelectorEntry* entry : locator_selector_.transport_starts())
+    for (LocatorSelectorEntry* entry : locator_selector.locator_selector.transport_starts())
     {
         if (entry->enabled)
         {
-            add_guid(entry->remote_guid);
+            add_guid(locator_selector, entry->remote_guid);
         }
     }
 }
 
-void RTPSWriter::update_cached_info_nts()
+void RTPSWriter::update_cached_info_nts(
+        RTPSWriter::LocatorSelector& locator_selector)
 {
-    locator_selector_.reset(true);
-    mp_RTPSParticipant->network_factory().select_locators(locator_selector_);
-}
-
-bool RTPSWriter::destinations_have_changed() const
-{
-    return false;
-}
-
-GuidPrefix_t RTPSWriter::destination_guid_prefix() const
-{
-    return all_remote_participants_.size() == 1 ? all_remote_participants_.at(0) : c_GuidPrefix_Unknown;
-}
-
-const std::vector<GuidPrefix_t>& RTPSWriter::remote_participants() const
-{
-    return all_remote_participants_;
-}
-
-const std::vector<GUID_t>& RTPSWriter::remote_guids() const
-{
-    return all_remote_readers_;
-}
-
-bool RTPSWriter::send(
-        CDRMessage_t* message,
-        std::chrono::steady_clock::time_point& max_blocking_time_point) const
-{
-    RTPSParticipantImpl* participant = getRTPSParticipant();
-
-    return locator_selector_.selected_size() == 0 ||
-           participant->sendSync(message, m_guid, locator_selector_.begin(),
-                   locator_selector_.end(), max_blocking_time_point);
+    locator_selector.locator_selector.reset(true);
+    mp_RTPSParticipant->network_factory().select_locators(locator_selector.locator_selector);
 }
 
 const LivelinessQosPolicyKind& RTPSWriter::get_liveliness_kind() const
@@ -427,6 +415,18 @@ bool RTPSWriter::is_pool_initialized() const
     return true;
 }
 
+bool RTPSWriter::send(
+        CDRMessage_t* message,
+        const RTPSWriter::LocatorSelector& locator_selector,
+        std::chrono::steady_clock::time_point& max_blocking_time_point) const
+{
+    RTPSParticipantImpl* participant = getRTPSParticipant();
+
+    return locator_selector.locator_selector.selected_size() == 0 ||
+           participant->sendSync(message, m_guid, locator_selector.locator_selector.begin(),
+                   locator_selector.locator_selector.end(), max_blocking_time_point);
+}
+
 #ifdef FASTDDS_STATISTICS
 
 bool RTPSWriter::add_statistics_listener(
@@ -458,4 +458,17 @@ void RTPSWriter::add_statistics_sent_submessage(
 
 }  // namespace rtps
 }  // namespace fastrtps
+
+bool fastdds::rtps::FlowController::try_lock(
+        fastrtps::rtps::RTPSWriter* writer)
+{
+    return writer->mp_mutex.try_lock();
+}
+
+void fastdds::rtps::FlowController::unlock(
+        fastrtps::rtps::RTPSWriter* writer)
+{
+    writer->mp_mutex.unlock();
+}
+
 }  // namespace eprosima

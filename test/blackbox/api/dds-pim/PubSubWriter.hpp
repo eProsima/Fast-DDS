@@ -817,10 +817,6 @@ public:
         participant_qos_.flow_controllers().push_back(new_flow_controller);
         datawriter_qos_.publish_mode().flow_controller_name = flow_controller_name.c_str();
 
-
-        eprosima::fastrtps::rtps::ThroughputControllerDescriptor descriptor {bytesPerPeriod, periodInMs};
-        datawriter_qos_.throughput_controller() = descriptor;
-
         return *this;
     }
 
