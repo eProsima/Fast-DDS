@@ -927,6 +927,8 @@ TEST_F(RTPSStatisticsTests, statistics_rpts_avoid_empty_resent_callbacks)
             .Times(AtLeast(1));
     EXPECT_CALL(*writer_listener, on_data_count)
             .Times(AtLeast(1));
+    EXPECT_CALL(*writer_listener, on_sample_datas)
+            .Times(AtLeast(1));
     EXPECT_CALL(*writer_listener, on_resent_count)
             .Times(0); // never called
 
