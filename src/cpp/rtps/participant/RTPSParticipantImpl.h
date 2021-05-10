@@ -294,8 +294,8 @@ public:
                 destination_locators_end,
                 msg->length);
 
-            // checkout if sender is a pdp endpoint
-            on_pdp_packet(
+            // checkout if sender is a discovery endpoint
+            on_discovery_packet(
                 sender_guid,
                 destination_locators_begin,
                 destination_locators_end);
