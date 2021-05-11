@@ -42,20 +42,6 @@ using PortParameters = fastrtps::rtps::PortParameters;
 using SenderResource = fastrtps::rtps::SenderResource;
 using Log = fastdds::dds::Log;
 
-struct MultiUniLocatorsLinkage
-{
-    MultiUniLocatorsLinkage(
-            LocatorList&& m,
-            LocatorList&& u)
-        : multicast(std::move(m))
-        , unicast(std::move(u))
-    {
-    }
-
-    LocatorList multicast;
-    LocatorList unicast;
-};
-
 UDPTransportDescriptor::UDPTransportDescriptor()
     : SocketTransportDescriptor(s_maximumMessageSize, s_maximumInitialPeersRange)
     , m_output_udp_socket(0)
@@ -286,6 +272,7 @@ bool UDPTransportInterface::OpenOutputChannel(
 
         if (udp_sender_resource)
         {
+            statistics_info_.add_entry(locator);
             return true;
         }
     }
@@ -409,6 +396,7 @@ bool UDPTransportInterface::OpenOutputChannel(
         return false;
     }
 
+    statistics_info_.add_entry(locator);
     return true;
 }
 
@@ -530,8 +518,7 @@ bool UDPTransportInterface::send(
 #endif // ifndef _WIN32
 
             asio::error_code ec;
-            StatisticsSubmessageData::Sequence seq;
-            set_statistics_submessage_from_transport(send_buffer, send_buffer_size, seq);
+            statistics_info_.set_statistics_message_data(remote_locator, send_buffer, send_buffer_size);
             bytesSent = getSocketPtr(socket)->send_to(asio::buffer(send_buffer,
                             send_buffer_size), destinationEndpoint, 0, ec);
             if (!!ec)
