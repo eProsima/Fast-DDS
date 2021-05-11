@@ -17,6 +17,7 @@
 
 #if defined(_WIN32)
 #include <process.h>
+#include <windows.h>
 #else
 #include <pwd.h>
 #include <unistd.h>
@@ -112,7 +113,7 @@ public:
 
     /**
      * Get the effective username of the person that launched the application
-     * This implementation follows the whoami implementation
+     * This implementation follows the whoami implementation for POSIX
      * (https://github.com/coreutils/coreutils/blob/master/src/whoami.c)
      * 
      * geteuid is always successful.
@@ -132,6 +133,17 @@ public:
     static ReturnCode_t get_username(
             std::string& username)
     {
+#ifdef _WIN32
+#define INFO_BUFFER_SIZE 32767
+        char user[INFO_BUFFER_SIZE];
+		DWORD bufCharCount = INFO_BUFFER_SIZE;
+        if (!GetUserName(user, &bufCharCount))
+        {
+            return ReturnCode_t::RETCODE_ERROR;
+        }
+		username = user;
+        return ReturnCode_t::RETCODE_OK;
+#else
         uid_t user_id = geteuid();
         struct passwd* pwd = getpwuid(user_id);
         if (pwd != nullptr)
@@ -143,6 +155,7 @@ public:
             }
         }
         return ReturnCode_t::RETCODE_ERROR;
+#endif // _WIN32
     }
 
 private:

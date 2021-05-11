@@ -15,6 +15,11 @@
 if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
     include(${PROJECT_SOURCE_DIR}/cmake/common/gtest.cmake)
     check_gtest()
+	
+	if(WIN32)
+		add_definitions(-DNOMINMAX)
+	endif(WIN32)
+	
 
     if(GTEST_FOUND AND SQLITE3_SUPPORT)
         set(PERSISTENCETESTS_SOURCE
