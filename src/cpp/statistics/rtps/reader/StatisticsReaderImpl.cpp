@@ -74,7 +74,7 @@ void StatisticsReaderImpl::on_data_notify(
     WriterReaderData notification;
     notification.reader_guid(to_statistics_type(get_guid()));
     notification.writer_guid(to_statistics_type(writer_guid));
-    notification.data(ns * 1.0f);
+    notification.data(static_cast<float>(ns));
 
     // Perform the callback
     Data data;

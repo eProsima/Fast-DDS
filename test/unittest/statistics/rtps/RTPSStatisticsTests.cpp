@@ -523,6 +523,7 @@ TEST_F(RTPSStatisticsTests, statistics_rpts_listener_management)
 /*
  * This test checks RTPSParticipant, RTPSWriter and RTPSReader statistics module related APIs.
  * - RTPS_SENT callbacks are performed
+ * - HISTORY2HISTORY_LATENCY callbacks are performed
  * - DATA_COUNT callbacks are performed for DATA submessages
  * - RESENT_DATAS callbacks are performed for DATA submessages demanded by the readers
  * - ACKNACK_COUNT callbacks are performed
@@ -662,6 +663,7 @@ TEST_F(RTPSStatisticsTests, statistics_rpts_listener_callbacks)
 /*
  * This test checks RTPSParticipant, RTPSWriter and RTPSReader statistics module related APIs.
  * - participant listeners management with late joiners
+ * - HISTORY2HISTORY_LATENCY callbacks are performed
  * - DATA_COUNT callbacks with DATA_FRAGS are performed
  * - NACK_FRAG callbacks assessment
  */
