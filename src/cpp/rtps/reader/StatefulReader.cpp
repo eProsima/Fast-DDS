@@ -868,6 +868,8 @@ void StatefulReader::NotifyChanges(
             {
                 ++total_unread_;
 
+                on_data_notify(ch_to_give->writerGUID, ch_to_give->sourceTimestamp);
+
                 if (getListener() != nullptr)
                 {
                     getListener()->onNewCacheChangeAdded((RTPSReader*)this, ch_to_give);

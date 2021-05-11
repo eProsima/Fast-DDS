@@ -247,6 +247,8 @@ bool StatelessReader::change_received(
             update_last_notified(change->writerGUID, change->sequenceNumber);
             ++total_unread_;
 
+            on_data_notify(change->writerGUID, change->sourceTimestamp);
+
             if (getListener() != nullptr)
             {
                 getListener()->onNewCacheChangeAdded(this, change);

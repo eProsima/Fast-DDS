@@ -24,6 +24,7 @@
 
 #include <fastdds/rtps/common/Guid.h>
 #include <fastdds/rtps/common/SampleIdentity.h>
+#include <fastdds/rtps/common/Time_t.h>
 #include <fastdds/statistics/IListeners.hpp>
 #include <fastrtps/utils/TimedMutex.hpp>
 
@@ -216,6 +217,15 @@ protected:
     StatisticsReaderImpl();
 
     // TODO: methods for listeners callbacks
+
+    /**
+     * @brief Report that a sample has been notified to the user.
+     * @param writer_guid GUID of the writer from where the sample was received.
+     * @param source_timestamp Source timestamp received from the writer for the sample being notified.
+     */
+    void on_data_notify(
+            const fastrtps::rtps::GUID_t& writer_guid,
+            const fastrtps::rtps::Time_t& source_timestamp);
 
     /**
      * @brief Report that an ACKNACK message is sent

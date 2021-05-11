@@ -60,6 +60,33 @@ const GUID_t& StatisticsReaderImpl::get_guid() const
     return static_cast<const RTPSReader*>(this)->getGuid();
 }
 
+void StatisticsReaderImpl::on_data_notify(
+        const fastrtps::rtps::GUID_t& writer_guid,
+        const fastrtps::rtps::Time_t& source_timestamp)
+{
+    // Get current timestamp
+    fastrtps::rtps::Time_t current_time;
+    fastrtps::rtps::Time_t::now(current_time);
+
+    // Calc latency
+    auto ns = (current_time - source_timestamp).to_ns();
+
+    WriterReaderData notification;
+    notification.reader_guid(to_statistics_type(get_guid()));
+    notification.writer_guid(to_statistics_type(writer_guid));
+    notification.data(static_cast<float>(ns));
+
+    // Perform the callback
+    Data data;
+    // note that the setter sets HISTORY2HISTORY_LATENCY by default
+    data.writer_reader_data(notification);
+
+    for_each_listener([&data](const std::shared_ptr<IListener>& listener)
+            {
+                listener->on_statistics_data(data);
+            });
+}
+
 void StatisticsReaderImpl::on_acknack(
         int32_t count)
 {
