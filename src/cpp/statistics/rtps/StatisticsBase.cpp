@@ -135,8 +135,7 @@ bool StatisticsParticipantImpl::are_writers_involved(
 {
     using namespace fastdds::statistics;
 
-    constexpr uint32_t writers_maks = HISTORY2HISTORY_LATENCY \
-            | PUBLICATION_THROUGHPUT \
+    constexpr uint32_t writers_maks = PUBLICATION_THROUGHPUT \
             | RESENT_DATAS \
             | HEARTBEAT_COUNT \
             | GAP_COUNT \
