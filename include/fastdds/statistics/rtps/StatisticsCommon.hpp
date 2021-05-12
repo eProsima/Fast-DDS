@@ -162,11 +162,15 @@ protected:
     void on_heartbeat(
             uint32_t count);
 
-    /// Report that a DATA message is sent
-    void on_data();
+    /**
+     * @brief Report that a DATA / DATA_FRAG message is generated
+     * @param num_destinations number of locators to which the message will be sent
+     */
+    void on_data_generated(
+            size_t num_destinations);
 
-    /// Report that a DATA_FRAG message is sent
-    void on_data_frag();
+    /// Notify listeners of DATA / DATA_FRAG counts
+    void on_data_sent();
 
     /// Report that a GAP message is sent
     void on_gap();
