@@ -188,7 +188,7 @@ void StatisticsWriterImpl::on_publish_throughput(
     {
         // update state
         time_point<steady_clock> former_timepoint;
-        auto & current_timepoint = get_members()->last_history_change_;
+        auto& current_timepoint = get_members()->last_history_change_;
         {
             lock_guard<fastrtps::RecursiveTimedMutex> lock(get_statistics_mutex());
             former_timepoint = current_timepoint;

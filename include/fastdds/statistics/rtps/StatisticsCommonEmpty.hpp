@@ -84,7 +84,7 @@ protected:
      */
     inline void on_publish_throughput(
             uint32_t)
-    {
+    {
     }
 
     /// Report that a GAP message is sent
