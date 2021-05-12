@@ -74,5 +74,4 @@ ReturnCode_t SystemInfo::get_username(
 #endif // _WIN32
 }
 
-
 } // eprosima

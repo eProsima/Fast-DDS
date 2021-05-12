@@ -154,7 +154,7 @@ TEST(DDSStatistics, simple_statistics_datareaders)
     ASSERT_NE(nullptr, rtps_stats_reader);
 
     auto physical_data_reader = enable_statistics(w_statistics_participant, w_subscriber,
-            statistics::PHYSICAL_DATA_TOPIC);
+                    statistics::PHYSICAL_DATA_TOPIC);
     ASSERT_NE(nullptr, physical_data_reader);
 
     auto r_subscriber = const_cast<Subscriber*>(data_reader.get_native_reader().get_subscriber());
