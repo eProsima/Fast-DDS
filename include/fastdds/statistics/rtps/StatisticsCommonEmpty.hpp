@@ -78,6 +78,15 @@ protected:
     {
     }
 
+    /**
+     * @brief Reports throughtput based on last added sample to history
+     * @param size of the message sent
+     */
+    inline void on_publish_throughput(
+            uint32_t)
+    {
+    }
+
     /// Report that a GAP message is sent
     inline void on_gap()
     {
