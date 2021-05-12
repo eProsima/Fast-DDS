@@ -85,7 +85,7 @@ public:
         };
         auto it = std::find_if(collection_.begin(), collection_.end(), search);
         assert(it != collection_.end());
-        set_statistics_submessage_from_transport(send_buffer, send_buffer_size, it->second);
+        set_statistics_submessage_from_transport(locator, send_buffer, send_buffer_size, it->second);
 #endif // FASTDDS_STATISTICS
     }
 

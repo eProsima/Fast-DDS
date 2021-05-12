@@ -339,8 +339,9 @@ void StatisticsParticipantImpl::on_network_statistics(
         const rtps::StatisticsSubmessageData& data,
         uint64_t datagram_size)
 {
-    process_network_timestamp(source_locator, reception_locator, data.ts);
-    process_network_sequence(source_participant, reception_locator, data.seq, datagram_size);
+    static_cast<void>(reception_locator);
+    process_network_timestamp(source_locator, data.destination, data.ts);
+    process_network_sequence(source_participant, data.destination, data.seq, datagram_size);
 }
 
 void StatisticsParticipantImpl::process_network_timestamp(
