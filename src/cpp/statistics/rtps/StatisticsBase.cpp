@@ -301,7 +301,7 @@ void StatisticsParticipantImpl::on_network_statistics(
     Time_t ts(data.ts.seconds, data.ts.fraction);
     Time_t current_ts;
     Time_t::now(current_ts);
-    auto latency = static_cast<double>((current_ts - ts).to_ns());
+    auto latency = static_cast<float>((current_ts - ts).to_ns());
 
     Locator2LocatorData notification;
     notification.src_locator(to_statistics_type(source_locator));

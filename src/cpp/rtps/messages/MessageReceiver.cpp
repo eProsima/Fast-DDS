@@ -1351,8 +1351,7 @@ void MessageReceiver::notify_network_statistics(
 
             StatisticsSubmessageData data;
             read_statistics_submessage(msg, data);
-            auto stats_participant = static_cast<StatisticsParticipantImpl*>(participant_);
-            stats_participant->on_network_statistics(source_guid_prefix_, source_locator, reception_locator, data);
+            participant_->on_network_statistics(source_guid_prefix_, source_locator, reception_locator, data);
             break;
         }
 
