@@ -36,6 +36,21 @@ namespace eprosima {
 namespace fastrtps {
 namespace rtps {
 
+static bool append_message(
+        CDRMessage_t* full_msg,
+        CDRMessage_t* submsg)
+{
+#ifndef FASTDDS_STATISTICS
+    return CDRMessage::appendMsg(full_msg, submsg);
+#else
+    // Keep room for the statistics submessage by reducing max_size while appending submessage
+    full_msg->max_size -= eprosima::fastdds::statistics::rtps::statistics_submessage_length;
+    bool ret_val = CDRMessage::appendMsg(full_msg, submsg);
+    full_msg->max_size += eprosima::fastdds::statistics::rtps::statistics_submessage_length;
+    return ret_val;
+#endif // FASTDDS_STATISTICS
+}
+
 bool sort_changes_group (
         CacheChange_t* c1,
         CacheChange_t* c2)
@@ -250,20 +265,13 @@ bool RTPSMessageGroup::insert_submessage(
         const GuidPrefix_t& destination_guid_prefix,
         bool is_big_submessage)
 {
-    if (!CDRMessage::appendMsg(full_msg_, submessage_msg_))
+    if (!append_message(full_msg_, submessage_msg_))
     {
         // Retry
-        flush();
+        flush_and_reset();
+        add_info_dst_in_buffer(full_msg_, destination_guid_prefix);
 
-        current_dst_ = c_GuidPrefix_Unknown;
-
-        if (!add_info_dst_in_buffer(full_msg_, destination_guid_prefix))
-        {
-            logError(RTPS_WRITER, "Cannot add INFO_DST submessage to the CDRMessage. Buffer too small");
-            return false;
-        }
-
-        if (!CDRMessage::appendMsg(full_msg_, submessage_msg_))
+        if (!append_message(full_msg_, submessage_msg_))
         {
             logError(RTPS_WRITER, "Cannot add RTPS submesage to the CDRMessage. Buffer too small");
             return false;
