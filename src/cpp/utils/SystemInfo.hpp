@@ -17,9 +17,7 @@
 
 #if defined(_WIN32)
 #include <process.h>
-#include <windows.h>
 #else
-#include <pwd.h>
 #include <unistd.h>
 #endif // if defined(_WIN32)
 
@@ -94,22 +92,7 @@ public:
      */
     static ReturnCode_t get_env(
             const char* env_name,
-            const char** env_value)
-    {
-        if (env_name == nullptr || env_value == nullptr || *env_name == '\0')
-        {
-            return ReturnCode_t::RETCODE_BAD_PARAMETER;
-        }
-
-#pragma warning(suppress:4996)
-        *env_value = getenv(env_name);
-        if (*env_value == nullptr)
-        {
-            return ReturnCode_t::RETCODE_NO_DATA;
-        }
-
-        return ReturnCode_t::RETCODE_OK;
-    }
+            const char** env_value);
 
     /**
      * Get the effective username of the person that launched the application
@@ -131,32 +114,7 @@ public:
      * RETCODE_ERROR if the username information cannot be determined.
      */
     static ReturnCode_t get_username(
-            std::string& username)
-    {
-#ifdef _WIN32
-#define INFO_BUFFER_SIZE 32767
-        char user[INFO_BUFFER_SIZE];
-		DWORD bufCharCount = INFO_BUFFER_SIZE;
-        if (!GetUserName(user, &bufCharCount))
-        {
-            return ReturnCode_t::RETCODE_ERROR;
-        }
-		username = user;
-        return ReturnCode_t::RETCODE_OK;
-#else
-        uid_t user_id = geteuid();
-        struct passwd* pwd = getpwuid(user_id);
-        if (pwd != nullptr)
-        {
-            username = pwd->pw_name;
-            if (!username.empty())
-            {
-                return ReturnCode_t::RETCODE_OK;
-            }
-        }
-        return ReturnCode_t::RETCODE_ERROR;
-#endif // _WIN32
-    }
+            std::string& username);
 
 private:
 
