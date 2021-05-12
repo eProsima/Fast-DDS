@@ -79,14 +79,23 @@ void StatisticsWriterImpl::on_sample_datas(
             });
 }
 
-void StatisticsWriterImpl::on_data()
+void StatisticsWriterImpl::on_data_generated(
+        size_t num_destinations)
+{
+    std::lock_guard<fastrtps::RecursiveTimedMutex> lock(get_statistics_mutex());
+    auto members = get_members();
+    members->data_counter += static_cast<uint64_t>(num_destinations);
+}
+
+void StatisticsWriterImpl::on_data_sent()
 {
     EntityCount notification;
     notification.guid(to_statistics_type(get_guid()));
 
     {
         std::lock_guard<fastrtps::RecursiveTimedMutex> lock(get_statistics_mutex());
-        notification.count(++get_members()->data_counter);
+        auto members = get_members();
+        notification.count(members->data_counter);
     }
 
     // Perform the callbacks
@@ -99,12 +108,6 @@ void StatisticsWriterImpl::on_data()
             {
                 listener->on_statistics_data(data);
             });
-}
-
-void StatisticsWriterImpl::on_data_frag()
-{
-    // there is no specific EventKind thus it will be redirected to DATA_COUNT
-    on_data();
 }
 
 void StatisticsWriterImpl::on_heartbeat(
