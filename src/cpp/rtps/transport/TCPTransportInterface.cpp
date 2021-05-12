@@ -613,6 +613,7 @@ bool TCPTransportInterface::OpenOutputChannel(
                     tcp_sender_resource->channel()->add_logical_port(logical_port, rtcp_message_manager_.get());
                 }
 
+                statistics_info_.add_entry(locator);
                 return true;
             }
         }
@@ -670,6 +671,7 @@ bool TCPTransportInterface::OpenOutputChannel(
             channel->connect(channel_resources_[physical_locator]);
         }
 
+        statistics_info_.add_entry(locator);
         success = true;
         channel->add_logical_port(logical_port, rtcp_message_manager_.get());
         send_resource_list.emplace_back(
@@ -1156,8 +1158,7 @@ bool TCPTransportInterface::send(
             if (channel->is_logical_port_opened(logical_port))
             {
                 TCPHeader tcp_header;
-                StatisticsSubmessageData::Sequence seq;
-                set_statistics_submessage_from_transport(send_buffer, send_buffer_size, seq);
+                statistics_info_.set_statistics_message_data(remote_locator, send_buffer, send_buffer_size);
                 fill_rtcp_header(tcp_header, send_buffer, send_buffer_size, logical_port);
 
                 {
