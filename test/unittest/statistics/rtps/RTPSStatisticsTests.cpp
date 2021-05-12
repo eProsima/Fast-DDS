@@ -99,6 +99,9 @@ struct MockListener : IListener
             case SAMPLE_DATAS:
                 on_sample_datas(data.sample_identity_count());
                 break;
+            case PUBLICATION_THROUGHPUT:
+                on_publisher_throughput(data.entity_data());
+                break;
             default:
                 on_unexpected_kind(kind);
                 break;
@@ -117,6 +120,7 @@ struct MockListener : IListener
     MOCK_METHOD1(on_pdp_packets, void(const eprosima::fastdds::statistics::EntityCount&));
     MOCK_METHOD1(on_edp_packets, void(const eprosima::fastdds::statistics::EntityCount&));
     MOCK_METHOD1(on_sample_datas, void(const eprosima::fastdds::statistics::SampleIdentityCount&));
+    MOCK_METHOD1(on_publisher_throughput, void(const eprosima::fastdds::statistics::EntityData&));
     MOCK_METHOD1(on_unexpected_kind, void(eprosima::fastdds::statistics::EventKind));
 };
 
@@ -529,6 +533,7 @@ TEST_F(RTPSStatisticsTests, statistics_rpts_listener_management)
  * - ACKNACK_COUNT callbacks are performed
  * - HEARBEAT_COUNT callbacks are performed
  * - SAMPLE_DATAS callbacks are performed
+ * - PUBLICATION_THROUGHPUT callbacks are performed
  */
 TEST_F(RTPSStatisticsTests, statistics_rpts_listener_callbacks)
 {
@@ -581,7 +586,8 @@ TEST_F(RTPSStatisticsTests, statistics_rpts_listener_callbacks)
     // writer callbacks through participant listener
     auto participant_writer_listener = make_shared<MockListener>();
     ASSERT_TRUE(participant_->add_statistics_listener(participant_writer_listener,
-            EventKind::DATA_COUNT | EventKind::RESENT_DATAS | EventKind::SAMPLE_DATAS));
+            EventKind::DATA_COUNT | EventKind::RESENT_DATAS |
+            EventKind::PUBLICATION_THROUGHPUT | EventKind::SAMPLE_DATAS));
 
     // writer specific callbacks
     auto writer_listener = make_shared<MockListener>();
@@ -612,12 +618,16 @@ TEST_F(RTPSStatisticsTests, statistics_rpts_listener_callbacks)
             .Times(AtLeast(1));
     EXPECT_CALL(*writer_listener, on_sample_datas)
             .Times(AtLeast(1));
+    EXPECT_CALL(*writer_listener, on_publisher_throughput)
+            .Times(AtLeast(1));
 
     EXPECT_CALL(*participant_writer_listener, on_data_count)
             .Times(AtLeast(1));
     EXPECT_CALL(*participant_writer_listener, on_resent_count)
             .Times(AtLeast(1));
     EXPECT_CALL(*participant_writer_listener, on_sample_datas)
+            .Times(AtLeast(1));
+    EXPECT_CALL(*participant_writer_listener, on_publisher_throughput)
             .Times(AtLeast(1));
 
     // + RTPSReader: SUBSCRIPTION_THROUGHPUT,
@@ -655,7 +665,8 @@ TEST_F(RTPSStatisticsTests, statistics_rpts_listener_callbacks)
 
     EXPECT_TRUE(participant_->remove_statistics_listener(participant_listener, EventKind::RTPS_SENT));
     EXPECT_TRUE(participant_->remove_statistics_listener(participant_writer_listener,
-            EventKind::DATA_COUNT | EventKind::RESENT_DATAS | EventKind::SAMPLE_DATAS));
+            EventKind::DATA_COUNT | EventKind::RESENT_DATAS |
+            EventKind::PUBLICATION_THROUGHPUT | EventKind::SAMPLE_DATAS));
     EXPECT_TRUE(participant_->remove_statistics_listener(participant_reader_listener,
             EventKind::ACKNACK_COUNT | EventKind::HISTORY2HISTORY_LATENCY));
 }
@@ -768,6 +779,8 @@ TEST_F(RTPSStatisticsTests, statistics_rpts_listener_gap_callback)
     EXPECT_CALL(*writer_listener, on_resent_count)
             .Times(AtLeast(1));
     EXPECT_CALL(*writer_listener, on_sample_datas)
+            .Times(AtLeast(1));
+    EXPECT_CALL(*writer_listener, on_publisher_throughput)
             .Times(AtLeast(1));
 
     EXPECT_CALL(*participant_writer_listener, on_gap_count)
@@ -942,6 +955,8 @@ TEST_F(RTPSStatisticsTests, statistics_rpts_avoid_empty_resent_callbacks)
     EXPECT_CALL(*writer_listener, on_data_count)
             .Times(AtLeast(1));
     EXPECT_CALL(*writer_listener, on_sample_datas)
+            .Times(AtLeast(1));
+    EXPECT_CALL(*writer_listener, on_publisher_throughput)
             .Times(AtLeast(1));
     EXPECT_CALL(*writer_listener, on_resent_count)
             .Times(0); // never called
