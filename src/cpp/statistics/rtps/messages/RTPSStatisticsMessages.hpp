@@ -59,6 +59,27 @@ struct StatisticsSubmessageData
             bytes = new_bytes;
         }
 
+        static Sequence distance(
+                const Sequence& from,
+                const Sequence& to)
+        {
+            // Check to >= from
+            assert(to.sequence >= from.sequence);
+            assert(to.bytes_high >= from.bytes_high);
+            assert((to.bytes_high > from.bytes_high) || (to.bytes >= from.bytes));
+
+            Sequence ret;
+            ret.sequence = to.sequence - from.sequence;
+            ret.bytes_high = to.bytes_high - from.bytes_high;
+            ret.bytes = to.bytes - from.bytes;
+            if (ret.bytes > to.bytes)
+            {
+                ret.bytes_high--;
+            }
+
+            return ret;
+        }
+
     };
 
     TimeStamp ts{};

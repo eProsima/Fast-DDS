@@ -1357,7 +1357,8 @@ void MessageReceiver::notify_network_statistics(
 
             StatisticsSubmessageData data;
             read_statistics_submessage(msg, data);
-            participant_->on_network_statistics(source_guid_prefix_, source_locator, reception_locator, data);
+            participant_->on_network_statistics(
+                source_guid_prefix_, source_locator, reception_locator, data, msg->length);
             break;
         }
 

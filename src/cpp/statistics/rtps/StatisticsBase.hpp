@@ -115,6 +115,11 @@ private:
 
     std::map<fastrtps::rtps::Locator_t, rtps_sent_data> traffic;
 
+    // RTPS_LOST ancillary
+    using lost_traffic_key = std::pair<fastrtps::rtps::GuidPrefix_t, fastrtps::rtps::Locator_t>;
+    using lost_traffic_value = std::pair<Entity2LocatorTraffic, rtps::StatisticsSubmessageData::Sequence>;
+    std::map<lost_traffic_key, lost_traffic_value> lost_traffic;
+
     // PDP_PACKETS ancillary
     unsigned long long pdp_counter_ = {};
     // EDP_PACKETS ancillary
@@ -255,12 +260,14 @@ protected:
      * @param [in] source_locator Locator indicating the sending address.
      * @param [in] reception_locator Locator indicating the listening address.
      * @param [in] data Statistics submessage received.
+     * @param [in] datagram_size The size in bytes of the received datagram.
      */
     void on_network_statistics(
             const fastrtps::rtps::GuidPrefix_t& source_participant,
             const fastrtps::rtps::Locator_t& source_locator,
             const fastrtps::rtps::Locator_t& reception_locator,
-            const rtps::StatisticsSubmessageData& data);
+            const rtps::StatisticsSubmessageData& data,
+            uint64_t datagram_size);
 
     /*
      * Process a received statistics submessage timestamp, informing of network latency.
@@ -277,12 +284,14 @@ protected:
      * Process a received statistics submessage sequence, informing of network loss.
      * @param [in] source_participant GUID prefix of the participant sending the message.
      * @param [in] reception_locator Locator indicating the listening address.
-     * @param [in] data Statistics submessage received.
+     * @param [in] seq The sequencing info ot the statistics submessage received.
+     * @param [in] datagram_size The size in bytes of the received datagram.
      */
     void process_network_sequence(
             const fastrtps::rtps::GuidPrefix_t& source_participant,
             const fastrtps::rtps::Locator_t& reception_locator,
-            const rtps::StatisticsSubmessageData::Sequence& seq);
+            const rtps::StatisticsSubmessageData::Sequence& seq,
+            uint64_t datagram_size);
 
     /*
      * Report a message that is sent by the participant
@@ -437,12 +446,14 @@ protected:
      * @param [in] Locator indicating the sending address.
      * @param [in] Locator indicating the listening address.
      * @param [in] Statistics submessage received.
+     * @param [in] The size in bytes of the received datagram.
      */
     inline void on_network_statistics(
             const fastrtps::rtps::GuidPrefix_t&,
             const fastrtps::rtps::Locator_t&,
             const fastrtps::rtps::Locator_t&,
-            const rtps::StatisticsSubmessageData&)
+            const rtps::StatisticsSubmessageData&,
+            uint64_t)
     {
     }
 
