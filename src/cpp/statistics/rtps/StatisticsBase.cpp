@@ -294,14 +294,21 @@ void StatisticsParticipantImpl::on_network_statistics(
         const fastrtps::rtps::Locator_t& reception_locator,
         const rtps::StatisticsSubmessageData& data)
 {
-    static_cast<void>(source_participant);
+    process_network_timestamp(source_locator, reception_locator, data.ts);
+    process_network_sequence(source_participant, reception_locator, data.seq);
+}
 
+void StatisticsParticipantImpl::process_network_timestamp(
+        const fastrtps::rtps::Locator_t& source_locator,
+        const fastrtps::rtps::Locator_t& reception_locator,
+        const rtps::StatisticsSubmessageData::TimeStamp& ts)
+{
     using namespace eprosima::fastrtps::rtps;
 
-    Time_t ts(data.ts.seconds, data.ts.fraction);
+    Time_t source_ts(ts.seconds, ts.fraction);
     Time_t current_ts;
     Time_t::now(current_ts);
-    auto latency = static_cast<float>((current_ts - ts).to_ns());
+    auto latency = static_cast<float>((current_ts - source_ts).to_ns());
 
     Locator2LocatorData notification;
     notification.src_locator(to_statistics_type(source_locator));
@@ -317,6 +324,13 @@ void StatisticsParticipantImpl::on_network_statistics(
             {
                 listener->on_statistics_data(callback_data);
             });
+}
+
+void StatisticsParticipantImpl::process_network_sequence(
+        const fastrtps::rtps::GuidPrefix_t& source_participant,
+        const fastrtps::rtps::Locator_t& reception_locator,
+        const rtps::StatisticsSubmessageData::Sequence& seq)
+{
 }
 
 void StatisticsParticipantImpl::on_rtps_sent(

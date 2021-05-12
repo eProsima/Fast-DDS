@@ -263,6 +263,28 @@ protected:
             const rtps::StatisticsSubmessageData& data);
 
     /*
+     * Process a received statistics submessage timestamp, informing of network latency.
+     * @param [in] source_locator Locator indicating the sending address.
+     * @param [in] reception_locator Locator indicating the listening address.
+     * @param [in] ts The timestamp of the statistics submessage received.
+     */
+    void process_network_timestamp(
+            const fastrtps::rtps::Locator_t& source_locator,
+            const fastrtps::rtps::Locator_t& reception_locator,
+            const rtps::StatisticsSubmessageData::TimeStamp& ts);
+
+    /*
+     * Process a received statistics submessage sequence, informing of network loss.
+     * @param [in] source_participant GUID prefix of the participant sending the message.
+     * @param [in] reception_locator Locator indicating the listening address.
+     * @param [in] data Statistics submessage received.
+     */
+    void process_network_sequence(
+            const fastrtps::rtps::GuidPrefix_t& source_participant,
+            const fastrtps::rtps::Locator_t& reception_locator,
+            const rtps::StatisticsSubmessageData::Sequence& seq);
+
+    /*
      * Report a message that is sent by the participant
      * @param loc destination
      * @param payload_size size of the current message
