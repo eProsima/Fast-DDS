@@ -470,9 +470,17 @@ elseif(NOT EPROSIMA_INSTALLER)
         if(TARGET_TYPE STREQUAL "SHARED_LIBRARY")
             # Export symbols in DLL library
             target_compile_definitions(${PROJECT_NAME} PUBLIC ${PROJECT_NAME_UPPER}_DYN_LINK)
+            set_target_properties(${PROJECT_NAME} PROPERTIES
+                PDB_NAME_DEBUG "${PROJECT_NAME}d-${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}"
+                PDB_OUTPUT_DIRECTORY_DEBUG "${CMAKE_CURRENT_BINARY_DIR}/symbols"
+            )
         else()
             # Rename the library to have a "lib" before.
             set_target_properties(${PROJECT_NAME} PROPERTIES OUTPUT_NAME lib${PROJECT_NAME})
+            set_target_properties(${PROJECT_NAME} PROPERTIES
+                COMPILE_PDB_NAME_DEBUG "lib${PROJECT_NAME}d-${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}"
+                COMPILE_PDB_OUTPUT_DIRECTORY_DEBUG "${CMAKE_CURRENT_BINARY_DIR}/symbols"
+            )
         endif()
 
         if("${CMAKE_SYSTEM_NAME}" STREQUAL "WindowsStore")
@@ -594,19 +602,26 @@ elseif(NOT EPROSIMA_INSTALLER)
         )
 
     if(MSVC OR MSVC_IDE)
-        if(TARGET_TYPE STREQUAL "SHARED_LIBRARY")
-            # Install pdb files
-            install(DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/Debug/
-                DESTINATION ${LIB_INSTALL_DIR}${MSVCARCH_DIR_EXTENSION}
-                COMPONENT libraries${MSVCARCH_EXTENSION}
-                CONFIGURATIONS Debug
-                FILES_MATCHING
-                PATTERN "*.pdb"
-                )
+
+        # first try dll symbols
+        get_target_property(PDB_FILE ${PROJECT_NAME} PDB_NAME_DEBUG)
+        if(PDB_FILE)
+            get_target_property(PDB_DIR ${PROJECT_NAME} PDB_OUTPUT_DIRECTORY_DEBUG)
+            set(PDB_FILE "${PDB_DIR}/${PDB_FILE}.pdb")
         else()
-            install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}.dir/Debug/${PROJECT_NAME}.pdb
+            # fallback to static lib symbols
+            get_target_property(PDB_FILE ${PROJECT_NAME} COMPILE_PDB_NAME_DEBUG)
+            if(PDB_FILE)
+                get_target_property(PDB_DIR ${PROJECT_NAME} COMPILE_PDB_OUTPUT_DIRECTORY_DEBUG)
+                set(PDB_FILE "${PDB_DIR}/${PDB_FILE}.pdb")
+            endif()
+        endif()
+
+        # install symbols if any
+        if(PDB_FILE)
+            install(FILES ${PDB_FILE}
                 DESTINATION ${LIB_INSTALL_DIR}${MSVCARCH_DIR_EXTENSION}
-                COMPONENT libraries${MSVCARCH_EXTENSION}
+                COMPONENT symbols
                 CONFIGURATIONS Debug
                 )
         endif()
