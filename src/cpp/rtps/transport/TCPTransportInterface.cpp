@@ -868,12 +868,11 @@ bool receive_header(
 {
     // Cleanup header
     octet* ptr = tcp_header.address();
-    char* begin = (char*)ptr;
     memset(ptr, 0, sizeof(TCPHeader));
 
     // Prepare read position
     octet* read_pos = ptr;
-    size_t bytes_needed = 4; // TCPHeader::size();
+    size_t bytes_needed = 4;
 
     // Wait for sync
     while (bytes_needed > 0)
