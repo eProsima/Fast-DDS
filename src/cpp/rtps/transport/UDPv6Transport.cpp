@@ -77,21 +77,22 @@ static asio::ip::address_v6::bytes_type locator_to_native(
         const Locator& locator)
 {
     return { { IPLocator::getIPv6(locator)[0],
-        IPLocator::getIPv6(locator)[1],
-        IPLocator::getIPv6(locator)[2],
-        IPLocator::getIPv6(locator)[3],
-        IPLocator::getIPv6(locator)[4],
-        IPLocator::getIPv6(locator)[5],
-        IPLocator::getIPv6(locator)[6],
-        IPLocator::getIPv6(locator)[7],
-        IPLocator::getIPv6(locator)[8],
-        IPLocator::getIPv6(locator)[9],
-        IPLocator::getIPv6(locator)[10],
-        IPLocator::getIPv6(locator)[11],
-        IPLocator::getIPv6(locator)[12],
-        IPLocator::getIPv6(locator)[13],
-        IPLocator::getIPv6(locator)[14],
-        IPLocator::getIPv6(locator)[15] } };
+               IPLocator::getIPv6(locator)[1],
+               IPLocator::getIPv6(locator)[2],
+               IPLocator::getIPv6(locator)[3],
+               IPLocator::getIPv6(locator)[4],
+               IPLocator::getIPv6(locator)[5],
+               IPLocator::getIPv6(locator)[6],
+               IPLocator::getIPv6(locator)[7],
+               IPLocator::getIPv6(locator)[8],
+               IPLocator::getIPv6(locator)[9],
+               IPLocator::getIPv6(locator)[10],
+               IPLocator::getIPv6(locator)[11],
+               IPLocator::getIPv6(locator)[12],
+               IPLocator::getIPv6(locator)[13],
+               IPLocator::getIPv6(locator)[14],
+               IPLocator::getIPv6(locator)[15] }
+    };
 }
 
 UDPv6Transport::UDPv6Transport(
@@ -140,7 +141,7 @@ bool UDPv6Transport::getDefaultMetatrafficMulticastLocators(
     Locator locator;
     locator.kind = LOCATOR_KIND_UDPv6;
     locator.port = static_cast<uint16_t>(metatraffic_multicast_port);
-    IPLocator::setIPv6(locator, "ff31::8000:1234");
+    IPLocator::setIPv6(locator, "ff1e::ffff:efff:1");
     locators.push_back(locator);
     return true;
 }
@@ -202,7 +203,7 @@ void UDPv6Transport::AddDefaultOutputLocator(
 {
     // TODO What is the default IPv6 address?
     Locator temp;
-    IPLocator::createLocator(LOCATOR_KIND_UDPv6, "239.255.0.1", 0, temp);
+    IPLocator::createLocator(LOCATOR_KIND_UDPv6, "ff1e::ffff:efff:1", 0, temp);
     defaultList.push_back(temp);
 }
 
