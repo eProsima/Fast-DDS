@@ -56,11 +56,13 @@ public:
 
     /**
      * Process a new CDR message.
-     * @param[in] loc Locator indicating the sending address.
-     * @param[in] msg Pointer to the message
+     * @param [in] source_locator Locator indicating the sending address.
+     * @param [in] reception_locator Locator indicating the listening address.
+     * @param [in] msg Pointer to the message
      */
     void processCDRMsg(
-            const Locator_t& loc,
+            const Locator_t& source_locator,
+            const Locator_t& reception_locator,
             CDRMessage_t* msg);
 
     // Functions to associate/remove associatedendpoints
@@ -243,6 +245,21 @@ private:
             uint32_t fragment_starting_num,
             uint16_t fragments_in_submessage);
     ///@}
+
+    /**
+     * Looks for the statistics specific submessage and notifies statistics related to the received message.
+     *
+     * @param [in] source_locator Locator indicating the sending address.
+     * @param [in] reception_locator Locator indicating the listening address.
+     * @param [in] msg Pointer to the message
+     *
+     * @pre The message header has already been read and validated.
+     */
+    void notify_network_statistics(
+            const Locator_t& source_locator,
+            const Locator_t& reception_locator,
+            CDRMessage_t* msg);
+
 };
 
 } /* namespace rtps */

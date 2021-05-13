@@ -175,7 +175,7 @@ protected:
     virtual std::shared_ptr<SharedMemManager::Buffer> Receive(
             Locator& remote_locator)
     {
-        (void)remote_locator;
+        remote_locator.kind = LOCATOR_KIND_SHM;
 
         try
         {

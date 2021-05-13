@@ -28,15 +28,18 @@
 #include <fastdds/rtps/common/Locator.h>
 #include <fastdds/rtps/common/SampleIdentity.h>
 
-#include <statistics/types/types.h>
-#include <statistics/rtps/GuidUtils.hpp>
-
 #include <fastdds/statistics/rtps/StatisticsCommon.hpp>
+
+#include <statistics/rtps/GuidUtils.hpp>
+#include <statistics/rtps/messages/RTPSStatisticsMessages.hpp>
+#include <statistics/types/types.h>
+
 
 namespace eprosima {
 namespace fastrtps {
 namespace rtps {
 
+class MessageReceiver;
 class PDP;
 
 } // rtps
@@ -90,6 +93,7 @@ Function StatisticsListenersImpl::for_each_listener(
 class StatisticsParticipantImpl
 {
     friend class fastrtps::rtps::PDP;
+    friend class fastrtps::rtps::MessageReceiver;
 
     // statistics members protection only
     std::recursive_mutex statistics_mutex_;
@@ -243,7 +247,18 @@ protected:
     bool are_readers_involved(
             const uint32_t mask) const;
 
-    // TODO: methods for listeners callbacks
+    /*
+     * Process a received statistics submessage.
+     * @param [in] source_participant GUID prefix of the participant sending the message.
+     * @param [in] source_locator Locator indicating the sending address.
+     * @param [in] reception_locator Locator indicating the listening address.
+     * @param [in] data Statistics submessage received.
+     */
+    void on_network_statistics(
+            const fastrtps::rtps::GuidPrefix_t& source_participant,
+            const fastrtps::rtps::Locator_t& source_locator,
+            const fastrtps::rtps::Locator_t& reception_locator,
+            const rtps::StatisticsSubmessageData& data);
 
     /*
      * Report a message that is sent by the participant
@@ -391,6 +406,21 @@ class StatisticsParticipantImpl
 protected:
 
     // inline methods for listeners callbacks
+
+    /*
+     * Process a received statistics submessage
+     * @param [in] GUID prefix of the participant sending the message.
+     * @param [in] Locator indicating the sending address.
+     * @param [in] Locator indicating the listening address.
+     * @param [in] Statistics submessage received.
+     */
+    inline void on_network_statistics(
+            const fastrtps::rtps::GuidPrefix_t&,
+            const fastrtps::rtps::Locator_t&,
+            const fastrtps::rtps::Locator_t&,
+            const rtps::StatisticsSubmessageData&)
+    {
+    }
 
     /*
      * Report a message that is sent by the participant

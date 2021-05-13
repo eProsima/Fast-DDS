@@ -29,8 +29,8 @@
 #include <rtps/transport/shared_mem/SharedMemTransport.h>
 #include <rtps/transport/shared_mem/SharedMemSenderResource.hpp>
 #include <rtps/transport/shared_mem/SharedMemChannelResource.hpp>
-
 #include <rtps/transport/shared_mem/SharedMemManager.hpp>
+#include <statistics/rtps/messages/RTPSStatisticsMessages.hpp>
 
 #define SHM_MANAGER_DOMAIN ("fastrtps")
 
@@ -408,6 +408,8 @@ bool SharedMemTransport::send(
         fastrtps::rtps::LocatorsIterator* destination_locators_end,
         const std::chrono::steady_clock::time_point& max_blocking_time_point)
 {
+    using namespace eprosima::fastdds::statistics::rtps;
+
     fastrtps::rtps::LocatorsIterator& it = *destination_locators_begin;
 
     bool ret = true;
@@ -423,6 +425,7 @@ bool SharedMemTransport::send(
                 // Only copy the first time
                 if (shared_buffer == nullptr)
                 {
+                    remove_statistics_submessage(send_buffer, send_buffer_size);
                     shared_buffer = copy_to_shared_buffer(send_buffer, send_buffer_size, max_blocking_time_point);
                 }
 
