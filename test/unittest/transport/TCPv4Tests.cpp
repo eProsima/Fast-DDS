@@ -1337,6 +1337,13 @@ TEST_F(TCPv4Tests, receive_unordered_data)
     constexpr uint16_t logical_port = 7410;
     constexpr uint32_t num_bytes_1 = 3;
     constexpr uint32_t num_bytes_2 = 13;
+    const char* bad_headers[] =
+    {
+        "-RTC", "-RT", "-R",
+        "-RRTC", "-RRT", "-RR",
+        "-RTRTC", "-RTRT", "-RTR",
+        "-RTCRTC", "-RTCRT", "-RTCR"
+    };
 
     struct Receiver : public TransportReceiverInterface
     {
@@ -1352,7 +1359,7 @@ TEST_F(TCPv4Tests, receive_unordered_data)
             static_cast<void>(local_locator);
             static_cast<void>(remote_locator);
 
-            std::cout << "Received " << size << " bytes" << std::endl;
+            std::cout << "Received " << size << " bytes: " << std::hex << uint32_t(data[0]) << std::dec << std::endl;
 
             switch (size)
             {
@@ -1368,8 +1375,9 @@ TEST_F(TCPv4Tests, receive_unordered_data)
             }
         }
 
-    }
-    receiver;
+    };
+
+    Receiver receiver;
 
     TCPv4TransportDescriptor test_descriptor = descriptor;
     test_descriptor.check_crc = false;
@@ -1397,29 +1405,53 @@ TEST_F(TCPv4Tests, receive_unordered_data)
     sender.connect(destination, ec);
     ASSERT_TRUE(!ec) << ec;
 
-    std::array<octet, num_bytes_1> bytes_1;
-    std::array<octet, num_bytes_2> bytes_2;
+    std::array<octet, num_bytes_1> bytes_1{ 0 };
+    std::array<octet, num_bytes_2> bytes_2{ 0 };
 
     TCPHeader h1;
     h1.logical_port = logical_port;
-    h1.length = num_bytes_1 + TCPHeader::size();
+    h1.length += num_bytes_1;
 
     TCPHeader h2;
     h2.logical_port = logical_port;
-    h2.length = num_bytes_2 + TCPHeader::size();
+    h2.length += num_bytes_2;
 
-    // Send first without interleaving
-    EXPECT_EQ(sizeof(TCPHeader), asio::write(sender, asio::buffer(&h1, sizeof(TCPHeader)), ec));
-    EXPECT_EQ(num_bytes_1, asio::write(sender, asio::buffer(bytes_1.data(), bytes_1.size()), ec));
+    std::array<std::size_t, 3> expected_number{ 0, 0, 0 };
 
-    // Interleave headers and data
-    EXPECT_EQ(sizeof(TCPHeader), asio::write(sender, asio::buffer(&h1, sizeof(TCPHeader)), ec));
-    EXPECT_EQ(sizeof(TCPHeader), asio::write(sender, asio::buffer(&h2, sizeof(TCPHeader)), ec));
+    auto send_first = [&]()
+    {
+        expected_number[0]++;
+        bytes_1[0]++;
+        EXPECT_EQ(TCPHeader::size(), asio::write(sender, asio::buffer(&h1, TCPHeader::size()), ec));
+        EXPECT_EQ(num_bytes_1, asio::write(sender, asio::buffer(bytes_1.data(), bytes_1.size()), ec));
+    };
+
+    // Send first synchronized
+    send_first();
+
+    // Send non-matching RTCP headers
+    for (const char* header : bad_headers)
+    {
+        asio::write(sender, asio::buffer(header, strlen(header) - 1), ec);
+    }
+
+    // Send first prepended with bad headers
+    for (const char* header : bad_headers)
+    {
+        asio::write(sender, asio::buffer(header, strlen(header) - 1), ec);
+        send_first();
+    }
+
+    // Interleave headers and data (only first will arrive)
+    expected_number[0]++;
+    EXPECT_EQ(TCPHeader::size(), asio::write(sender, asio::buffer(&h1, TCPHeader::size()), ec));
+    EXPECT_EQ(TCPHeader::size(), asio::write(sender, asio::buffer(&h2, TCPHeader::size()), ec));
     EXPECT_EQ(num_bytes_1, asio::write(sender, asio::buffer(bytes_1.data(), bytes_1.size()), ec));
     EXPECT_EQ(num_bytes_2, asio::write(sender, asio::buffer(bytes_2.data(), bytes_2.size()), ec));
 
     // Send second without interleaving
-    EXPECT_EQ(sizeof(TCPHeader), asio::write(sender, asio::buffer(&h2, sizeof(TCPHeader)), ec));
+    expected_number[1]++;
+    EXPECT_EQ(TCPHeader::size(), asio::write(sender, asio::buffer(&h2, TCPHeader::size()), ec));
     EXPECT_EQ(num_bytes_2, asio::write(sender, asio::buffer(bytes_2.data(), bytes_2.size()), ec));
 
     // Wait for data to be received
@@ -1427,9 +1459,7 @@ TEST_F(TCPv4Tests, receive_unordered_data)
 
     EXPECT_TRUE(!sender.close(ec));
 
-    EXPECT_EQ(2, receiver.num_received[0]);
-    EXPECT_EQ(1, receiver.num_received[1]);
-    EXPECT_EQ(0, receiver.num_received[2]);
+    EXPECT_EQ(expected_number, receiver.num_received);
 
     EXPECT_TRUE(uut.CloseInputChannel(input_locator));
 }
