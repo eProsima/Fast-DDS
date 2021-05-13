@@ -90,27 +90,6 @@ TEST_F(UDPv4Tests, locators_with_kind_1_supported)
     ASSERT_FALSE(transportUnderTest.IsLocatorSupported(unsupportedLocator));
 }
 
-TEST_F(UDPv4Tests, opening_and_closing_output_channel)
-{
-    // Given
-    UDPv4Transport transportUnderTest(descriptor);
-    transportUnderTest.init();
-
-    Locator_t genericOutputChannelLocator;
-    genericOutputChannelLocator.kind = LOCATOR_KIND_UDPv4;
-    genericOutputChannelLocator.port = g_default_port; // arbitrary
-
-    // Then
-    /*
-       ASSERT_FALSE (transportUnderTest.IsOutputChannelOpen(genericOutputChannelLocator));
-       ASSERT_TRUE  (transportUnderTest.OpenOutputChannel(genericOutputChannelLocator));
-       ASSERT_TRUE  (transportUnderTest.IsOutputChannelOpen(genericOutputChannelLocator));
-       ASSERT_TRUE  (transportUnderTest.CloseOutputChannel(genericOutputChannelLocator));
-       ASSERT_FALSE (transportUnderTest.IsOutputChannelOpen(genericOutputChannelLocator));
-       ASSERT_FALSE (transportUnderTest.CloseOutputChannel(genericOutputChannelLocator));
-     */
-}
-
 TEST_F(UDPv4Tests, opening_and_closing_input_channel)
 {
     // Given
