@@ -1425,7 +1425,7 @@ TEST_F(TCPv4Tests, receive_unordered_data)
 
     EXPECT_TRUE(!sender.close(ec));
 
-    EXPECT_EQ(1, receiver.num_received[0]);
+    EXPECT_EQ(2, receiver.num_received[0]);
     EXPECT_EQ(1, receiver.num_received[1]);
     EXPECT_EQ(0, receiver.num_received[2]);
 
