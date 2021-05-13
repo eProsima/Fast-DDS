@@ -55,9 +55,9 @@ public:
 
 #ifdef FASTDDS_STATISTICS
         auto search = [locator](const entry_type& entry) -> bool
-        {
-            return locator == entry.first;
-        };
+                {
+                    return locator == entry.first;
+                };
         auto it = std::find_if(collection_.cbegin(), collection_.cend(), search);
         if (it == collection_.cend())
         {
@@ -67,7 +67,7 @@ public:
     }
 
     /**
-     * 
+     *
      */
     inline void set_statistics_message_data(
             const eprosima::fastrtps::rtps::Locator_t& locator,
@@ -80,9 +80,9 @@ public:
 
 #ifdef FASTDDS_STATISTICS
         auto search = [locator](const entry_type& entry) -> bool
-        {
-            return locator == entry.first;
-        };
+                {
+                    return locator == entry.first;
+                };
         auto it = std::find_if(collection_.begin(), collection_.end(), search);
         assert(it != collection_.end());
         set_statistics_submessage_from_transport(locator, send_buffer, send_buffer_size, it->second);
