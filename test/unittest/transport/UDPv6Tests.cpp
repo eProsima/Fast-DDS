@@ -118,27 +118,6 @@ TEST_F(UDPv6Tests, locators_with_kind_2_supported)
     ASSERT_FALSE(transportUnderTest.IsLocatorSupported(unsupportedLocator));
 }
 
-TEST_F(UDPv6Tests, opening_and_closing_output_channel)
-{
-    // Given
-    UDPv6Transport transportUnderTest(descriptor);
-    transportUnderTest.init();
-
-    Locator_t genericOutputChannelLocator;
-    genericOutputChannelLocator.kind = LOCATOR_KIND_UDPv6;
-    genericOutputChannelLocator.port = g_default_port; // arbitrary
-
-    // Then
-    /*
-       ASSERT_FALSE (transportUnderTest.IsOutputChannelOpen(genericOutputChannelLocator));
-       ASSERT_TRUE  (transportUnderTest.OpenOutputChannel(genericOutputChannelLocator));
-       ASSERT_TRUE  (transportUnderTest.IsOutputChannelOpen(genericOutputChannelLocator));
-       ASSERT_TRUE  (transportUnderTest.CloseOutputChannel(genericOutputChannelLocator));
-       ASSERT_FALSE (transportUnderTest.IsOutputChannelOpen(genericOutputChannelLocator));
-       ASSERT_FALSE (transportUnderTest.CloseOutputChannel(genericOutputChannelLocator));
-     */
-}
-
 #ifndef __APPLE__
 TEST_F(UDPv6Tests, opening_and_closing_input_channel)
 {
@@ -159,9 +138,9 @@ TEST_F(UDPv6Tests, opening_and_closing_input_channel)
     ASSERT_FALSE (transportUnderTest.IsInputChannelOpen(multicastFilterLocator));
     ASSERT_FALSE (transportUnderTest.CloseInputChannel(multicastFilterLocator));
 }
-/*
-   TEST_F(UDPv6Tests, send_and_receive_between_ports)
-   {
+
+TEST_F(UDPv6Tests, send_and_receive_between_ports)
+{
     UDPv6Transport transportUnderTest(descriptor);
     transportUnderTest.init();
 
@@ -178,7 +157,9 @@ TEST_F(UDPv6Tests, opening_and_closing_input_channel)
     MockReceiverResource receiver(transportUnderTest, multicastLocator);
     MockMessageReceiver *msg_recv = dynamic_cast<MockMessageReceiver*>(receiver.CreateMessageReceiver());
 
-    ASSERT_TRUE(transportUnderTest.OpenOutputChannel(outputChannelLocator)); // Includes loopback
+    SendResourceList send_resource_list;
+    ASSERT_TRUE(transportUnderTest.OpenOutputChannel(send_resource_list, outputChannelLocator)); // Includes loopback
+    ASSERT_FALSE(send_resource_list.empty());
     ASSERT_TRUE(transportUnderTest.IsInputChannelOpen(multicastLocator));
     octet message[5] = { 'H','e','l','l','o' };
 
@@ -193,18 +174,24 @@ TEST_F(UDPv6Tests, opening_and_closing_input_channel)
 
     auto sendThreadFunction = [&]()
     {
-        EXPECT_TRUE(transportUnderTest.send(message, 5, outputChannelLocator, multicastLocator));
+        LocatorList_t locator_list;
+        locator_list.push_back(multicastLocator);
+
+        Locators locators_begin(locator_list.begin());
+        Locators locators_end(locator_list.end());
+
+        EXPECT_TRUE(send_resource_list.at(0)->send(message, 5, &locators_begin, &locators_end,
+                (std::chrono::steady_clock::now() + std::chrono::microseconds(100))));
     };
 
     senderThread.reset(new std::thread(sendThreadFunction));
     std::this_thread::sleep_for(std::chrono::milliseconds(1));
     senderThread->join();
     sem.wait();
-    ASSERT_TRUE(transportUnderTest.CloseOutputChannel(outputChannelLocator));
-   }
+}
 
-   TEST_F(UDPv6Tests, send_to_loopback)
-   {
+TEST_F(UDPv6Tests, send_to_loopback)
+{
     UDPv6Transport transportUnderTest(descriptor);
     transportUnderTest.init();
 
@@ -221,7 +208,9 @@ TEST_F(UDPv6Tests, opening_and_closing_input_channel)
     MockReceiverResource receiver(transportUnderTest, multicastLocator);
     MockMessageReceiver *msg_recv = dynamic_cast<MockMessageReceiver*>(receiver.CreateMessageReceiver());
 
-    ASSERT_TRUE(transportUnderTest.OpenOutputChannel(outputChannelLocator));
+    SendResourceList send_resource_list;
+    ASSERT_TRUE(transportUnderTest.OpenOutputChannel(send_resource_list, outputChannelLocator));
+    ASSERT_FALSE(send_resource_list.empty());
     ASSERT_TRUE(transportUnderTest.IsInputChannelOpen(multicastLocator));
     octet message[5] = { 'H','e','l','l','o' };
 
@@ -236,16 +225,21 @@ TEST_F(UDPv6Tests, opening_and_closing_input_channel)
 
     auto sendThreadFunction = [&]()
     {
-        EXPECT_TRUE(transportUnderTest.send(message, 5, outputChannelLocator, multicastLocator));
+        LocatorList_t locator_list;
+        locator_list.push_back(multicastLocator);
+
+        Locators locators_begin(locator_list.begin());
+        Locators locators_end(locator_list.end());
+
+        EXPECT_TRUE(send_resource_list.at(0)->send(message, 5, &locators_begin, &locators_end,
+                (std::chrono::steady_clock::now() + std::chrono::microseconds(100))));
     };
 
     senderThread.reset(new std::thread(sendThreadFunction));
     std::this_thread::sleep_for(std::chrono::milliseconds(1));
     senderThread->join();
     sem.wait();
-    ASSERT_TRUE(transportUnderTest.CloseOutputChannel(outputChannelLocator));
-   }
- */
+}
 #endif // ifndef __APPLE__
 
 void UDPv6Tests::HELPER_SetDescriptorDefaults()
