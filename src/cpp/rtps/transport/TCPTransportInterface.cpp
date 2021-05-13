@@ -901,7 +901,7 @@ bool receive_header(
         }
         else if (ec)
         {
-            return 0;
+            return false;
         }
     }
 
@@ -916,11 +916,11 @@ bool receive_header(
         }
         else if (ec)
         {
-            return 0;
+            return false;
         }
     }
 
-    return TCPHeader::size();
+    return true;
 }
 
 /**
@@ -957,7 +957,10 @@ bool TCPTransportInterface::Receive(
 
         if (ec)
         {
-            logWarning(DEBUG, "Error reading TCP header: " << ec.message());
+            if (ec != asio::error::eof)
+            {
+                logWarning(DEBUG, "Error reading TCP header: " << ec.message());
+            }
             close_tcp_socket(channel);
             success = false;
         }
