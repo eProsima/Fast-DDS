@@ -566,7 +566,17 @@ if(UNIX AND EPROSIMA_INSTALLER)
         COMPONENT sources
         )
 endif()
+
 # Install libraries
+
+# Generate different target names depending on linking
+get_target_property(TARGET_TYPE ${PROJECT_NAME} TYPE)
+if(TARGET_TYPE STREQUAL "SHARED_LIBRARY")
+    set(FASTDDS_LINKING dynamic)
+else()
+    set(FASTDDS_LINKING static)
+endif()
+
 if((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER)
     if(IS_TOP_LEVEL)
         install_msvc_libraries(i86Win32VS2015)
@@ -581,14 +591,14 @@ if((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER)
         )
 elseif(NOT EPROSIMA_INSTALLER)
     install(TARGETS ${PROJECT_NAME} eProsima_atomic
-        EXPORT ${PROJECT_NAME}-targets
+        EXPORT ${PROJECT_NAME}-${FASTDDS_LINKING}-targets
         RUNTIME DESTINATION ${BIN_INSTALL_DIR}${MSVCARCH_DIR_EXTENSION}
         LIBRARY DESTINATION ${LIB_INSTALL_DIR}${MSVCARCH_DIR_EXTENSION}
         ARCHIVE DESTINATION ${LIB_INSTALL_DIR}${MSVCARCH_DIR_EXTENSION}
         COMPONENT libraries${MSVCARCH_EXTENSION}
         )
 
-    export(TARGETS ${PROJECT_NAME} eProsima_atomic FILE ${PROJECT_BINARY_DIR}/cmake/config/${PROJECT_NAME}-targets.cmake)
+    export(TARGETS ${PROJECT_NAME} eProsima_atomic FILE ${PROJECT_BINARY_DIR}/cmake/config/${PROJECT_NAME}-${FASTDDS_LINKING}-targets.cmake)
 
     if(INSTALLER_PLATFORM)
         set(INSTALL_DESTINATION_PATH ${DATA_INSTALL_DIR}/${PROJECT_NAME}-${INSTALLER_PLATFORM}/cmake)
@@ -596,7 +606,7 @@ elseif(NOT EPROSIMA_INSTALLER)
         set(INSTALL_DESTINATION_PATH ${DATA_INSTALL_DIR}/${PROJECT_NAME}/cmake${MSVCARCH_DIR_EXTENSION_EXT})
     endif()
 
-    install(EXPORT ${PROJECT_NAME}-targets
+    install(EXPORT ${PROJECT_NAME}-${FASTDDS_LINKING}-targets
         DESTINATION ${INSTALL_DESTINATION_PATH}
         COMPONENT cmake
         )
