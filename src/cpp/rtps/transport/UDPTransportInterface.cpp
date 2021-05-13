@@ -24,6 +24,7 @@
 #include <fastdds/dds/log/Log.hpp>
 #include <fastrtps/utils/IPLocator.h>
 #include <rtps/transport/UDPSenderResource.hpp>
+#include <statistics/rtps/messages/RTPSStatisticsMessages.hpp>
 
 using namespace std;
 using namespace asio;
@@ -501,6 +502,8 @@ bool UDPTransportInterface::send(
         bool only_multicast_purpose,
         const std::chrono::microseconds& timeout)
 {
+    using namespace eprosima::fastdds::statistics::rtps;
+
     if (send_buffer_size > configuration()->sendBufferSize)
     {
         return false;
@@ -527,6 +530,8 @@ bool UDPTransportInterface::send(
 #endif // ifndef _WIN32
 
             asio::error_code ec;
+            StatisticsSubmessageData::Sequence seq;
+            set_statistics_submessage_from_transport(send_buffer, send_buffer_size, seq);
             bytesSent = getSocketPtr(socket)->send_to(asio::buffer(send_buffer,
                             send_buffer_size), destinationEndpoint, 0, ec);
             if (!!ec)

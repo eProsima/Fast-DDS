@@ -19,17 +19,19 @@
 
 #include <fastdds/rtps/messages/MessageReceiver.h>
 
+#include <cassert>
+#include <limits>
+#include <mutex>
+
+#include <fastdds/core/policy/ParameterList.hpp>
 #include <fastdds/dds/log/Log.hpp>
 
 #include <fastdds/rtps/reader/RTPSReader.h>
 #include <fastdds/rtps/writer/RTPSWriter.h>
 
-#include <fastdds/core/policy/ParameterList.hpp>
 #include <rtps/participant/RTPSParticipantImpl.h>
-
-#include <cassert>
-#include <limits>
-#include <mutex>
+#include <statistics/rtps/StatisticsBase.hpp>
+#include <statistics/rtps/messages/RTPSStatisticsMessages.hpp>
 
 #define INFO_SRC_SUBMSG_LENGTH 20
 
@@ -311,11 +313,10 @@ void MessageReceiver::reset()
 }
 
 void MessageReceiver::processCDRMsg(
-        const Locator_t& loc,
+        const Locator_t& source_locator,
+        const Locator_t& reception_locator,
         CDRMessage_t* msg)
 {
-    (void)loc;
-
     if (msg->length < RTPSMESSAGE_HEADER_SIZE)
     {
         logWarning(RTPS_MSG_IN, IDSTRING "Received message too short, ignoring");
@@ -334,6 +335,8 @@ void MessageReceiver::processCDRMsg(
     {
         return;
     }
+
+    notify_network_statistics(source_locator, reception_locator, msg);
 
 #if HAVE_SECURITY
     security::SecurityManager& security = participant_->security_manager();
@@ -358,7 +361,6 @@ void MessageReceiver::processCDRMsg(
 
     // Loop until there are no more submessages
     bool valid;
-    int count = 0;
     SubmessageHeader_t submsgh; //Current submessage header
 
     while (msg->pos < msg->length)// end of the message
@@ -386,7 +388,6 @@ void MessageReceiver::processCDRMsg(
         }
 
         valid = true;
-        count++;
         uint32_t next_msg_pos = submessage->pos;
         next_msg_pos += (submsgh.submessageLength + 3u) & ~3u;
         switch (submsgh.submessageId)
@@ -1308,6 +1309,61 @@ bool MessageReceiver::proc_Submsg_HeartbeatFrag(
        }
      */
     return true;
+}
+
+void MessageReceiver::notify_network_statistics(
+        const Locator_t& source_locator,
+        const Locator_t& reception_locator,
+        CDRMessage_t* msg)
+{
+    static_cast<void>(source_locator);
+    static_cast<void>(reception_locator);
+    static_cast<void>(msg);
+
+#ifdef FASTDDS_STATISTICS
+    using namespace eprosima::fastdds::statistics;
+    using namespace eprosima::fastdds::statistics::rtps;
+
+    if ((c_VendorId_eProsima != source_vendor_id_) ||
+            (LOCATOR_KIND_SHM == source_locator.kind))
+    {
+        return;
+    }
+
+    // Keep track of current position, so we can restore it later.
+    auto initial_pos = msg->pos;
+    while (msg->pos < msg->length)
+    {
+        SubmessageHeader_t header;
+        if (!readSubmessageHeader(msg, &header))
+        {
+            break;
+        }
+
+        if (FASTDDS_STATISTICS_NETWORK_SUBMESSAGE == header.submessageId)
+        {
+            // Check submessage validity
+            if ((statistics_submessage_data_length != header.submessageLength) ||
+                    ((msg->pos + header.submessageLength) > msg->length))
+            {
+                break;
+            }
+
+            StatisticsSubmessageData data;
+            read_statistics_submessage(msg, data);
+            participant_->on_network_statistics(source_guid_prefix_, source_locator, reception_locator, data);
+            break;
+        }
+
+        if (header.is_last)
+        {
+            break;
+        }
+        msg->pos += (header.submessageLength + 3u) & ~3u;
+    }
+
+    msg->pos = initial_pos;
+#endif // FASTDDS_STATISTICS
 }
 
 } /* namespace rtps */
