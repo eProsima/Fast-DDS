@@ -53,10 +53,7 @@ struct StatisticsSubmessageData
         {
             sequence++;
             auto new_bytes = bytes + message_size;
-            if (new_bytes < bytes)
-            {
-                bytes_high++;
-            }
+            bytes_high += (new_bytes < bytes);
             bytes = new_bytes;
         }
 
@@ -73,10 +70,7 @@ struct StatisticsSubmessageData
             ret.sequence = to.sequence - from.sequence;
             ret.bytes_high = to.bytes_high - from.bytes_high;
             ret.bytes = to.bytes - from.bytes;
-            if (ret.bytes > to.bytes)
-            {
-                ret.bytes_high--;
-            }
+            ret.bytes_high -= (ret.bytes > to.bytes);
 
             return ret;
         }

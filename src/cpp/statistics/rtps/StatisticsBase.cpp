@@ -42,10 +42,7 @@ static void add_bytes(
     count += distance.sequence;
     high += distance.bytes_high;
     low += distance.bytes;
-    if (low < traffic.byte_count())
-    {
-        high++;
-    }
+    high += (low < traffic.byte_count());
 
     traffic.packet_count(count);
     traffic.byte_magnitude_order(high);
@@ -64,10 +61,7 @@ static void sub_bytes(
     {
         count--;
         low -= bytes;
-        if (low > traffic.byte_count())
-        {
-            high--;
-        }
+        high -= (low > traffic.byte_count());
 
         traffic.packet_count(count);
         traffic.byte_magnitude_order(high);
