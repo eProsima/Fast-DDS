@@ -886,10 +886,10 @@ bool receive_header(
             if (0 == bytes_needed)
             {
                 size_t skip =
-                    (tcp_header.rtcp[0] != 'R') ? 1 :
-                    (tcp_header.rtcp[1] != 'T') ? 2 :
-                    (tcp_header.rtcp[2] != 'C') ? 3 :
-                    (tcp_header.rtcp[3] != 'P') ? 4 : 0;
+                        (tcp_header.rtcp[0] != 'R') ? 1 :
+                        (tcp_header.rtcp[1] != 'T') ? 2 :
+                        (tcp_header.rtcp[2] != 'C') ? 3 :
+                        (tcp_header.rtcp[3] != 'P') ? 4 : 0;
 
                 if (skip && (skip < 4))
                 {
@@ -950,7 +950,7 @@ bool TCPTransportInterface::Receive(
         asio::error_code ec;
 
         bool header_found = false;
-        
+
         do
         {
             header_found = receive_header(channel, tcp_header, ec);

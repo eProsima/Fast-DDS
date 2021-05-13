@@ -1343,10 +1343,10 @@ TEST_F(TCPv4Tests, receive_unordered_data)
         std::array<std::size_t, 3> num_received{ 0, 0, 0 };
 
         void OnDataReceived(
-            const octet* data,
-            const uint32_t size,
-            const Locator_t& local_locator,
-            const Locator_t& remote_locator) override
+                const octet* data,
+                const uint32_t size,
+                const Locator_t& local_locator,
+                const Locator_t& remote_locator) override
         {
             static_cast<void>(data);
             static_cast<void>(local_locator);
@@ -1367,7 +1367,9 @@ TEST_F(TCPv4Tests, receive_unordered_data)
                     break;
             }
         }
-    } receiver;
+
+    }
+    receiver;
 
     TCPv4TransportDescriptor test_descriptor = descriptor;
     test_descriptor.check_crc = false;
