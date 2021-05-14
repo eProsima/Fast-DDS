@@ -92,7 +92,8 @@ static asio::ip::address_v6::bytes_type locator_to_native(
         IPLocator::getIPv6(locator)[12],
         IPLocator::getIPv6(locator)[13],
         IPLocator::getIPv6(locator)[14],
-        IPLocator::getIPv6(locator)[15] } };
+        IPLocator::getIPv6(locator)[15] }
+    };
 }
 
 UDPv6Transport::UDPv6Transport(
@@ -141,7 +142,7 @@ bool UDPv6Transport::getDefaultMetatrafficMulticastLocators(
     Locator_t locator;
     locator.kind = LOCATOR_KIND_UDPv6;
     locator.port = static_cast<uint16_t>(metatraffic_multicast_port);
-    IPLocator::setIPv6(locator, "ff31::8000:1234");
+    IPLocator::setIPv6(locator, "ff1e::ffff:efff:1");
     locators.push_back(locator);
     return true;
 }
@@ -202,8 +203,13 @@ void UDPv6Transport::AddDefaultOutputLocator(
         LocatorList_t& defaultList)
 {
     // TODO What is the default IPv6 address?
+<<<<<<< HEAD
     Locator_t temp;
     IPLocator::createLocator(LOCATOR_KIND_UDPv6, "239.255.0.1", 0, temp);
+=======
+    Locator temp;
+    IPLocator::createLocator(LOCATOR_KIND_UDPv6, "ff1e::ffff:efff:1", 0, temp);
+>>>>>>> 6afc1e422... Set a default ipv6 address for multicast (#1959)
     defaultList.push_back(temp);
 }
 
