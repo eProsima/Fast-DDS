@@ -77,21 +77,21 @@ static asio::ip::address_v6::bytes_type locator_to_native(
         const Locator& locator)
 {
     return { { IPLocator::getIPv6(locator)[0],
-               IPLocator::getIPv6(locator)[1],
-               IPLocator::getIPv6(locator)[2],
-               IPLocator::getIPv6(locator)[3],
-               IPLocator::getIPv6(locator)[4],
-               IPLocator::getIPv6(locator)[5],
-               IPLocator::getIPv6(locator)[6],
-               IPLocator::getIPv6(locator)[7],
-               IPLocator::getIPv6(locator)[8],
-               IPLocator::getIPv6(locator)[9],
-               IPLocator::getIPv6(locator)[10],
-               IPLocator::getIPv6(locator)[11],
-               IPLocator::getIPv6(locator)[12],
-               IPLocator::getIPv6(locator)[13],
-               IPLocator::getIPv6(locator)[14],
-               IPLocator::getIPv6(locator)[15] }
+        IPLocator::getIPv6(locator)[1],
+        IPLocator::getIPv6(locator)[2],
+        IPLocator::getIPv6(locator)[3],
+        IPLocator::getIPv6(locator)[4],
+        IPLocator::getIPv6(locator)[5],
+        IPLocator::getIPv6(locator)[6],
+        IPLocator::getIPv6(locator)[7],
+        IPLocator::getIPv6(locator)[8],
+        IPLocator::getIPv6(locator)[9],
+        IPLocator::getIPv6(locator)[10],
+        IPLocator::getIPv6(locator)[11],
+        IPLocator::getIPv6(locator)[12],
+        IPLocator::getIPv6(locator)[13],
+        IPLocator::getIPv6(locator)[14],
+        IPLocator::getIPv6(locator)[15] }
     };
 }
 
