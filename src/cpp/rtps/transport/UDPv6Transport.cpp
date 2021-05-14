@@ -203,13 +203,8 @@ void UDPv6Transport::AddDefaultOutputLocator(
         LocatorList_t& defaultList)
 {
     // TODO What is the default IPv6 address?
-<<<<<<< HEAD
     Locator_t temp;
-    IPLocator::createLocator(LOCATOR_KIND_UDPv6, "239.255.0.1", 0, temp);
-=======
-    Locator temp;
     IPLocator::createLocator(LOCATOR_KIND_UDPv6, "ff1e::ffff:efff:1", 0, temp);
->>>>>>> 6afc1e422... Set a default ipv6 address for multicast (#1959)
     defaultList.push_back(temp);
 }
 
