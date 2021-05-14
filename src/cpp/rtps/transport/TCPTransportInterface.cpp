@@ -884,13 +884,13 @@ bool receive_header(
             bytes_needed -= bytes_read;
             if (0 == bytes_needed)
             {
-                size_t skip =
-                        (tcp_header.rtcp[0] != 'R') ? 1 :
-                        (tcp_header.rtcp[1] != 'T') ? 2 :
-                        (tcp_header.rtcp[2] != 'C') ? 3 :
-                        (tcp_header.rtcp[3] != 'P') ? 4 : 0;
+                size_t skip =                                 // Text   Next possible match   Skip to next match
+                        (tcp_header.rtcp[0] != 'R') ? 1 :     // X---   XRTCP                 1
+                        (tcp_header.rtcp[1] != 'T') ? 1 :     // RX--   RRTCP                 1
+                        (tcp_header.rtcp[2] != 'C') ? 2 :     // RTX-   RTRTCP                2
+                        (tcp_header.rtcp[3] != 'P') ? 3 : 0;  // RTCX   RTCRTCP               3
 
-                if (skip && (skip < 4))
+                if (skip)
                 {
                     memmove(ptr, &ptr[skip], 4 - skip);
                 }
