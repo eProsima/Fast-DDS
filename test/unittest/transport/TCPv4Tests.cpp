@@ -1419,12 +1419,12 @@ TEST_F(TCPv4Tests, receive_unordered_data)
     std::array<std::size_t, 3> expected_number{ 0, 0, 0 };
 
     auto send_first = [&]()
-    {
-        expected_number[0]++;
-        bytes_1[0]++;
-        EXPECT_EQ(TCPHeader::size(), asio::write(sender, asio::buffer(&h1, TCPHeader::size()), ec));
-        EXPECT_EQ(num_bytes_1, asio::write(sender, asio::buffer(bytes_1.data(), bytes_1.size()), ec));
-    };
+            {
+                expected_number[0]++;
+                bytes_1[0]++;
+                EXPECT_EQ(TCPHeader::size(), asio::write(sender, asio::buffer(&h1, TCPHeader::size()), ec));
+                EXPECT_EQ(num_bytes_1, asio::write(sender, asio::buffer(bytes_1.data(), bytes_1.size()), ec));
+            };
 
     // Send first synchronized
     send_first();
