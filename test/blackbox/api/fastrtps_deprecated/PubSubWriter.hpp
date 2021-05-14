@@ -1019,6 +1019,25 @@ public:
         return *this;
     }
 
+    PubSubWriter& disable_multicast_ipv6(
+            int32_t participantId)
+    {
+        participant_attr_.rtps.participantID = participantId;
+
+        eprosima::fastrtps::rtps::LocatorList_t default_unicast_locators;
+        eprosima::fastrtps::rtps::Locator_t default_unicast_locator;
+        default_unicast_locator.kind = LOCATOR_KIND_UDPv6;
+
+        default_unicast_locators.push_back(default_unicast_locator);
+        participant_attr_.rtps.builtin.metatrafficUnicastLocatorList = default_unicast_locators;
+
+        eprosima::fastrtps::rtps::Locator_t loopback_locator;
+        loopback_locator.kind = LOCATOR_KIND_UDPv6;
+        IPLocator::setIPv6(loopback_locator, "::1");
+        participant_attr_.rtps.builtin.initialPeersList.push_back(loopback_locator);
+        return *this;
+    }
+
     PubSubWriter& partition(
             const std::string& partition)
     {

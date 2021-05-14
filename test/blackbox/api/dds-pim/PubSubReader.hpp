@@ -1108,6 +1108,25 @@ public:
         return *this;
     }
 
+    PubSubReader& disable_multicast_ipv6(
+            int32_t participantId)
+    {
+        participant_qos_.wire_protocol().participant_id = participantId;
+
+        eprosima::fastdds::rtps::LocatorList default_unicast_locators;
+        eprosima::fastdds::rtps::Locator default_unicast_locator;
+        default_unicast_locator.kind = LOCATOR_KIND_UDPv6;
+
+        default_unicast_locators.push_back(default_unicast_locator);
+        participant_qos_.wire_protocol().builtin.metatrafficUnicastLocatorList = default_unicast_locators;
+
+        eprosima::fastdds::rtps::Locator loopback_locator;
+        loopback_locator.kind = LOCATOR_KIND_UDPv6;
+        IPLocator::setIPv6(loopback_locator, "::1");
+        participant_qos_.wire_protocol().builtin.initialPeersList.push_back(loopback_locator);
+        return *this;
+    }
+
     PubSubReader& property_policy(
             const eprosima::fastrtps::rtps::PropertyPolicy& property_policy)
     {
