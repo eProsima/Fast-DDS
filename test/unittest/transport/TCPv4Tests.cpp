@@ -17,6 +17,7 @@
 #include "mock/MockTCPv4Transport.h"
 #include <fastrtps/utils/IPFinder.h>
 #include <fastrtps/utils/IPLocator.h>
+<<<<<<< HEAD
 #include <fastdds/dds/log/Log.hpp>
 #include <MockReceiverResource.h>
 #include "../../../src/cpp/rtps/transport/TCPSenderResource.hpp"
@@ -28,6 +29,15 @@
 
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
+=======
+#include <rtps/transport/TCPv4Transport.h>
+#include <rtps/transport/tcp/RTCPHeader.h>
+
+using namespace eprosima::fastrtps;
+using namespace eprosima::fastrtps::rtps;
+using TCPv4Transport = eprosima::fastdds::rtps::TCPv4Transport;
+using TCPHeader = eprosima::fastdds::rtps::TCPHeader;
+>>>>>>> 5a23fc4ba... Synchronize TCP reception to wait for RTCP header (#1957)
 
 #if defined(_WIN32)
 #define GET_PID _getpid
@@ -1296,6 +1306,138 @@ TEST_F(TCPv4Tests, send_and_receive_between_blocked_interfaces_ports)
 }
 
 #endif
+
+TEST_F(TCPv4Tests, receive_unordered_data)
+{
+    constexpr uint16_t logical_port = 7410;
+    constexpr uint32_t num_bytes_1 = 3;
+    constexpr uint32_t num_bytes_2 = 13;
+    const char* bad_headers[] =
+    {
+        "-RTC", "-RT", "-R",
+        "-RRTC", "-RRT", "-RR",
+        "-RTRTC", "-RTRT", "-RTR",
+        "-RTCRTC", "-RTCRT", "-RTCR"
+    };
+
+    struct Receiver : public TransportReceiverInterface
+    {
+        std::array<std::size_t, 3> num_received{ 0, 0, 0 };
+
+        void OnDataReceived(
+                const octet* data,
+                const uint32_t size,
+                const Locator_t& local_locator,
+                const Locator_t& remote_locator) override
+        {
+            static_cast<void>(data);
+            static_cast<void>(local_locator);
+            static_cast<void>(remote_locator);
+
+            std::cout << "Received " << size << " bytes: " << std::hex << uint32_t(data[0]) << std::dec << std::endl;
+
+            switch (size)
+            {
+                case num_bytes_1:
+                    num_received[0]++;
+                    break;
+                case num_bytes_2:
+                    num_received[1]++;
+                    break;
+                default:
+                    num_received[2]++;
+                    break;
+            }
+        }
+
+    };
+
+    Receiver receiver;
+
+    TCPv4TransportDescriptor test_descriptor = descriptor;
+    test_descriptor.check_crc = false;
+    TCPv4Transport uut(test_descriptor);
+    ASSERT_TRUE(uut.init()) << "Failed to initialize transport. Port " << g_default_port << " may be in use";
+
+    Locator_t input_locator;
+    input_locator.kind = LOCATOR_KIND_TCPv4;
+    input_locator.port = g_default_port;
+    IPLocator::setIPv4(input_locator, 127, 0, 0, 1);
+    IPLocator::setLogicalPort(input_locator, logical_port);
+
+    EXPECT_TRUE(uut.OpenInputChannel(input_locator, &receiver, 0xFFFF));
+
+    // Let acceptor to be open
+    std::this_thread::sleep_for(std::chrono::seconds(1));
+
+    asio::error_code ec;
+    asio::io_context ctx;
+
+    asio::ip::tcp::socket sender(ctx);
+    asio::ip::tcp::endpoint destination;
+    destination.port(g_default_port);
+    destination.address(asio::ip::address::from_string("127.0.0.1"));
+    sender.connect(destination, ec);
+    ASSERT_TRUE(!ec) << ec;
+
+    std::array<octet, num_bytes_1> bytes_1{ 0 };
+    std::array<octet, num_bytes_2> bytes_2{ 0 };
+
+    TCPHeader h1;
+    h1.logical_port = logical_port;
+    h1.length += num_bytes_1;
+
+    TCPHeader h2;
+    h2.logical_port = logical_port;
+    h2.length += num_bytes_2;
+
+    std::array<std::size_t, 3> expected_number{ 0, 0, 0 };
+
+    auto send_first = [&]()
+            {
+                expected_number[0]++;
+                bytes_1[0]++;
+                EXPECT_EQ(TCPHeader::size(), asio::write(sender, asio::buffer(&h1, TCPHeader::size()), ec));
+                EXPECT_EQ(num_bytes_1, asio::write(sender, asio::buffer(bytes_1.data(), bytes_1.size()), ec));
+            };
+
+    // Send first synchronized
+    send_first();
+
+    // Send non-matching RTCP headers
+    for (const char* header : bad_headers)
+    {
+        asio::write(sender, asio::buffer(header, strlen(header) - 1), ec);
+    }
+
+    // Send first prepended with bad headers
+    for (const char* header : bad_headers)
+    {
+        asio::write(sender, asio::buffer(header, strlen(header) - 1), ec);
+        send_first();
+    }
+
+    // Interleave headers and data (only first will arrive)
+    expected_number[0]++;
+    EXPECT_EQ(TCPHeader::size(), asio::write(sender, asio::buffer(&h1, TCPHeader::size()), ec));
+    EXPECT_EQ(TCPHeader::size(), asio::write(sender, asio::buffer(&h2, TCPHeader::size()), ec));
+    EXPECT_EQ(num_bytes_1, asio::write(sender, asio::buffer(bytes_1.data(), bytes_1.size()), ec));
+    EXPECT_EQ(num_bytes_2, asio::write(sender, asio::buffer(bytes_2.data(), bytes_2.size()), ec));
+
+    // Send second without interleaving
+    expected_number[1]++;
+    EXPECT_EQ(TCPHeader::size(), asio::write(sender, asio::buffer(&h2, TCPHeader::size()), ec));
+    EXPECT_EQ(num_bytes_2, asio::write(sender, asio::buffer(bytes_2.data(), bytes_2.size()), ec));
+
+    // Wait for data to be received
+    std::this_thread::sleep_for(std::chrono::seconds(1));
+
+    EXPECT_TRUE(!sender.close(ec));
+
+    EXPECT_EQ(expected_number, receiver.num_received);
+
+    EXPECT_TRUE(uut.CloseInputChannel(input_locator));
+}
 
 void TCPv4Tests::HELPER_SetDescriptorDefaults()
 {

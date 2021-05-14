@@ -37,7 +37,7 @@ struct TCPHeader
     uint16_t logical_port;
 
     TCPHeader()
-        : length(sizeof(TCPHeader))
+        : length(TCPHEADER_SIZE)
         , crc(0)
         , logical_port(0)
     {

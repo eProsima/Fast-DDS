@@ -15,6 +15,7 @@
 #ifndef _FASTDDS_TCP_CHANNEL_RESOURCE_BASIC_
 #define _FASTDDS_TCP_CHANNEL_RESOURCE_BASIC_
 
+#include <mutex>
 #include <asio.hpp>
 #include <fastdds/rtps/transport/TCPChannelResource.h>
 
@@ -25,6 +26,8 @@ namespace rtps{
 class TCPChannelResourceBasic : public TCPChannelResource
 {
     asio::io_service& service_;
+
+    std::mutex send_mutex_;
     std::shared_ptr<asio::ip::tcp::socket> socket_;
 public:
     // Constructor called when trying to connect to a remote server
