@@ -342,22 +342,85 @@ bool UDPv6Transport::OpenInputChannel(
 
     if (IPLocator::isMulticast(locator) && IsInputChannelOpen(locator))
     {
-        // The multicast group will be joined silently, because we do not
-        // want to return another resource.
-        auto pChannelResources = mInputSockets.at(IPLocator::getPhysicalPort(locator));
-        for (auto& channelResource : pChannelResources)
+        std::string locatorAddressStr = IPLocator::toIPv6string(locator);
+        ip::address_v6 locatorAddress = ip::address_v6::from_string(locatorAddressStr);
+
+#ifndef _WIN32
+        if (!is_interface_whitelist_empty())
         {
-            if (channelResource->interface() == s_IPv4AddressAny)
+            //Either wildcard address or the multicast address needs to be bound on non-windows systems
+            bool found = false;
+
+            // First check if the multicast address is already bound
+            auto& channelResources = mInputSockets.at(IPLocator::getPhysicalPort(locator));
+            for (UDPChannelResource* channelResource : channelResources)
             {
-                std::vector<IPFinder::info_IP> locNames;
-                get_ipv6s_unique_interfaces(locNames, true);
-                for (const auto& infoIP : locNames)
+                if (locatorAddressStr == channelResource->interface())
                 {
-                    auto ip = asio::ip::address_v6::from_string(infoIP.name);
+                    found = true;
+                    break;
+                }
+            }
+
+            // Create a new resource if no one is found
+            if (!found)
+            {
+                try
+                {
+                    // Bind to multicast address
+                    UDPChannelResource* p_channel_resource;
+                    p_channel_resource = CreateInputChannelResource(locatorAddressStr, locator, true, maxMsgSize,
+                            receiver);
+                    mInputSockets[IPLocator::getPhysicalPort(locator)].push_back(p_channel_resource);
+
+                    // Join group on all whitelisted interfaces
+                    for (auto& ip : interface_whitelist_)
+                    {
+                        p_channel_resource->socket()->set_option(ip::multicast::join_group(locatorAddress,
+                            ip.scope_id()));
+                    }
+                }
+                catch(asio::system_error const& e)
+                {
+                    logWarning(RTPS_MSG_OUT, "UDPTransport Error binding " << locatorAddressStr << " at port: (" <<
+                            IPLocator::getPhysicalPort(locator) << ") with msg: " << e.what());
+                    (void)e;
+                }
+            }
+        }
+        else
+#endif // _WIN32
+        {
+            // The multicast group will be joined silently, because we do not
+            // want to return another resource.
+            auto pChannelResources = mInputSockets.at(IPLocator::getPhysicalPort(locator));
+            for (auto& channelResource : pChannelResources)
+            {
+                if (channelResource->interface() == s_IPv6AddressAny)
+                {
+                    std::vector<IPFinder::info_IP> locNames;
+                    get_ipv6s_unique_interfaces(locNames, true);
+                    for (const auto& infoIP : locNames)
+                    {
+                        auto ip = asio::ip::address_v6::from_string(infoIP.name);
+                        try
+                        {
+                            channelResource->socket()->set_option(ip::multicast::join_group(locatorAddress,
+                                ip.scope_id()));
+                        }
+                        catch (std::system_error& ex)
+                        {
+                            (void)ex;
+                            logWarning(RTPS_MSG_OUT, "Error joining multicast group on " << ip << ": " << ex.what());
+                        }
+                    }
+                }
+                else
+                {
+                    auto ip = asio::ip::address_v6::from_string(channelResource->interface());
                     try
                     {
-                        channelResource->socket()->set_option(ip::multicast::join_group(
-                                    ip::address_v6::from_string(IPLocator::toIPv6string(locator)), ip.scope_id()));
+                        channelResource->socket()->set_option(ip::multicast::join_group(locatorAddress, ip.scope_id()));
                     }
                     catch (std::system_error& ex)
                     {
@@ -366,23 +429,8 @@ bool UDPv6Transport::OpenInputChannel(
                     }
                 }
             }
-            else
-            {
-                auto ip = asio::ip::address_v6::from_string(channelResource->interface());
-                try
-                {
-                    channelResource->socket()->set_option(ip::multicast::join_group(
-                                ip::address_v6::from_string(IPLocator::toIPv6string(locator)), ip.scope_id()));
-                }
-                catch (std::system_error& ex)
-                {
-                    (void)ex;
-                    logWarning(RTPS_MSG_OUT, "Error joining multicast group on " << ip << ": " << ex.what());
-                }
-            }
         }
     }
-
     return success;
 }
 
