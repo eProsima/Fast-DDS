@@ -200,13 +200,9 @@ class StatisticsReaderImpl
 
     /**
      * Create the auxiliary structure
-     * TODO: enable when a member is added to StatisticsReaderAncillary
      * @return nullptr on failure
      */
-    StatisticsReaderAncillary* get_members() const
-    {
-        return nullptr;
-    }
+    StatisticsReaderAncillary* get_members() const;
 
     /**
      * Retrieve endpoint mutexes from derived class
@@ -251,6 +247,13 @@ protected:
      */
     void on_nackfrag(
             int32_t count);
+
+    /**
+     * @brief Reports throughtput based on last added sample to history
+     * @param payload size of the message received
+     */
+    void on_subscribe_throughput(
+            uint32_t payload);
 };
 
 } // namespace statistics

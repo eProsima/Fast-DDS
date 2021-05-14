@@ -31,16 +31,14 @@ StatisticsReaderImpl::StatisticsReaderImpl()
     init_statistics<StatisticsReaderAncillary>();
 }
 
-/* Uncomment when a member is added to the StatisticsReaderAncillary
-   StatisticsReaderAncillary* StatisticsReaderImpl::get_members() const
-   {
+StatisticsReaderAncillary* StatisticsReaderImpl::get_members() const
+{
     static_assert(
-            std::is_base_of<StatisticsAncillary,StatisticsReaderAncillary>::value,
-            "Auxiliary structure must derive from StatisticsAncillary");
+        std::is_base_of<StatisticsAncillary, StatisticsReaderAncillary>::value,
+        "Auxiliary structure must derive from StatisticsAncillary");
 
     return static_cast<StatisticsReaderAncillary*>(get_aux_members());
-   }
- */
+}
 
 RecursiveTimedMutex& StatisticsReaderImpl::get_statistics_mutex()
 {
@@ -123,4 +121,38 @@ void StatisticsReaderImpl::on_nackfrag(
             {
                 listener->on_statistics_data(data);
             });
+}
+
+void StatisticsReaderImpl::on_subscribe_throughput(
+        uint32_t payload)
+{
+    using namespace std;
+    using namespace chrono;
+
+    if (payload > 0 )
+    {
+        // update state
+        time_point<steady_clock> former_timepoint;
+        auto& current_timepoint = get_members()->last_history_change_;
+        {
+            lock_guard<fastrtps::RecursiveTimedMutex> lock(get_statistics_mutex());
+            former_timepoint = current_timepoint;
+            current_timepoint = steady_clock::now();
+        }
+
+        EntityData notification;
+        notification.guid(to_statistics_type(get_guid()));
+        notification.data(payload / duration_cast<duration<float>>(current_timepoint - former_timepoint).count());
+
+        // Perform the callbacks
+        Data data;
+        // note that the setter sets PUBLICATION_THROUGHPUT by default
+        data.entity_data(std::move(notification));
+        data._d(EventKind::SUBSCRIPTION_THROUGHPUT);
+
+        for_each_listener([&data](const std::shared_ptr<IListener>& listener)
+                {
+                    listener->on_statistics_data(data);
+                });
+    }
 }

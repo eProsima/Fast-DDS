@@ -140,6 +140,15 @@ protected:
     {
     }
 
+    /**
+     * @brief Reports throughtput based on last added sample to history
+     * @param size of the message received
+     */
+    inline void on_subscribe_throughput(
+            uint32_t)
+    {
+    }
+
 };
 
 } // namespace statistics
