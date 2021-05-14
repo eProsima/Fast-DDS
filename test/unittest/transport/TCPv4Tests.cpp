@@ -17,10 +17,10 @@
 #include "mock/MockTCPv4Transport.h"
 #include <fastrtps/utils/IPFinder.h>
 #include <fastrtps/utils/IPLocator.h>
-<<<<<<< HEAD
 #include <fastdds/dds/log/Log.hpp>
 #include <MockReceiverResource.h>
 #include "../../../src/cpp/rtps/transport/TCPSenderResource.hpp"
+#include <fastdds/rtps/transport/tcp/RTCPHeader.h>
 
 #include <memory>
 #include <asio.hpp>
@@ -29,15 +29,7 @@
 
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
-=======
-#include <rtps/transport/TCPv4Transport.h>
-#include <rtps/transport/tcp/RTCPHeader.h>
-
-using namespace eprosima::fastrtps;
-using namespace eprosima::fastrtps::rtps;
-using TCPv4Transport = eprosima::fastdds::rtps::TCPv4Transport;
 using TCPHeader = eprosima::fastdds::rtps::TCPHeader;
->>>>>>> 5a23fc4ba... Synchronize TCP reception to wait for RTCP header (#1957)
 
 #if defined(_WIN32)
 #define GET_PID _getpid
