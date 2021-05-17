@@ -249,7 +249,7 @@ protected:
             int32_t count);
 
     /**
-     * @brief Reports throughtput based on last added sample to history
+     * @brief Reports subscription throughtput based on last added sample to reader's history
      * @param payload size of the message received
      */
     void on_subscribe_throughput(
