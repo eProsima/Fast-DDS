@@ -117,7 +117,12 @@ private:
 
     // RTPS_LOST ancillary
     using lost_traffic_key = std::pair<fastrtps::rtps::GuidPrefix_t, fastrtps::rtps::Locator_t>;
-    using lost_traffic_value = std::pair<Entity2LocatorTraffic, rtps::StatisticsSubmessageData::Sequence>;
+    struct lost_traffic_value
+    {
+        uint64_t first_sequence = 0;
+        Entity2LocatorTraffic data{};
+        rtps::StatisticsSubmessageData::Sequence seq_data{};
+    };
     std::map<lost_traffic_key, lost_traffic_value> lost_traffic;
 
     // PDP_PACKETS ancillary

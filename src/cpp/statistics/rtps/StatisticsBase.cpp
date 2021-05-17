@@ -379,36 +379,46 @@ void StatisticsParticipantImpl::process_network_sequence(
     {
         std::lock_guard<std::recursive_mutex> lock(get_statistics_mutex());
         lost_traffic_value& value = lost_traffic[key];
-        if (value.second.sequence == 0)
+
+        if (value.first_sequence > seq.sequence)
+        {
+            // Datagrams before the first received one are ignored
+            return;
+        }
+
+        if (value.first_sequence == 0)
         {
             // This is the first time we receive a statistics sequence from source_participant on reception_locator
             GUID_t guid(source_participant, ENTITYID_RTPSParticipant);
-            value.first.src_guid(to_statistics_type(guid));
-            value.first.dst_locator(to_statistics_type(reception_locator));
+            value.data.src_guid(to_statistics_type(guid));
+            value.data.dst_locator(to_statistics_type(reception_locator));
+            value.first_sequence = seq.sequence;
         }
         else
         {
             // We shouldn't receive the same sequence twice
-            assert(seq.sequence != value.second.sequence);
+            assert(seq.sequence != value.seq_data.sequence);
             // Detect discontinuity. We will only notify in that case
-            should_notify = seq.sequence != (value.second.sequence + 1);
+            should_notify = seq.sequence != (value.seq_data.sequence + 1);
             if (should_notify)
             {
-                if (seq.sequence > value.second.sequence)
+                if (seq.sequence > value.seq_data.sequence)
                 {
                     // Received sequence is higher, data has been lost
-                    add_bytes(value.first, rtps::StatisticsSubmessageData::Sequence::distance(value.second, seq));
-                }
-                else
-                {
-                    // Received sequence is lower, data has been recovered
-                    sub_bytes(value.first, datagram_size);
+                    add_bytes(value.data, rtps::StatisticsSubmessageData::Sequence::distance(value.seq_data, seq));
                 }
 
-                notification = value.first;
+                // We should never count the current received datagram
+                sub_bytes(value.data, datagram_size);
+
+                notification = value.data;
             }
         }
-        value.second = seq;
+
+        if (seq.sequence > value.seq_data.sequence)
+        {
+            value.seq_data = seq;
+        }
     }
 
     if (should_notify)
