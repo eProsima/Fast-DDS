@@ -13,7 +13,7 @@
 # limitations under the License.
 
 if(MSVC_VERSION LESS_EQUAL 1900)
-    message(FATAL_ERROR "Not supported version of Visual Studio")
+    message(FATAL_ERROR "Visual Studio version ${MSVC_VERSION} is no longer supported")
 else()
     if(CMAKE_CL_64)
         include("${CMAKE_CURRENT_LIST_DIR}/../share/fastrtps-x64Win64VS2019/cmake/fastrtps-config.cmake")

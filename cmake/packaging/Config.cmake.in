@@ -29,10 +29,14 @@ find_package(TinyXML2 QUIET)
 
 if(FASTDDS_STATIC)
     # OpenSSL static libraries are not distributed with the installer
-    find_package(OpenSSL REQUIRED)
+    @FASTRTPS_PACKAGE_OPT_DEPS@
     include(${CMAKE_CURRENT_LIST_DIR}/@PROJECT_NAME@-static-targets.cmake)
 else()
-    include(${CMAKE_CURRENT_LIST_DIR}/@PROJECT_NAME@-dynamic-targets.cmake)
+    include(${CMAKE_CURRENT_LIST_DIR}/@PROJECT_NAME@-dynamic-targets.cmake OPTIONAL RESULT_VARIABLE DYNAMIC_TARGET_FILE)
+    # fallback to static linking if dynamic target is missing
+    if( NOT DYNAMIC_TARGET_FILE )
+        include(${CMAKE_CURRENT_LIST_DIR}/@PROJECT_NAME@-static-targets.cmake)
+    endif()
 endif()
 
 @INCLUDE_FASTDS_TARGETS@
