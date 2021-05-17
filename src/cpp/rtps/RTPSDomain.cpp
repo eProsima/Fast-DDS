@@ -212,22 +212,22 @@ RTPSParticipant* RTPSDomain::createParticipant(
 bool RTPSDomain::removeRTPSParticipant(
         RTPSParticipant* p)
 {
-    if (p != nullptr)
+    for (auto it = m_RTPSParticipants.begin(); it != m_RTPSParticipants.end(); ++it)
     {
-        p->mp_impl->disable();
-
-        std::unique_lock<std::mutex> lock(m_mutex);
-        for (auto it = m_RTPSParticipants.begin(); it != m_RTPSParticipants.end(); ++it)
+        if (it->first == p)
         {
-            if (it->second->getGuid().guidPrefix == p->getGuid().guidPrefix)
+            if (p->mp_impl != nullptr)
             {
-                RTPSDomain::t_p_RTPSParticipant participant = *it;
-                m_RTPSParticipants.erase(it);
-                m_RTPSParticipantIDs.erase(m_RTPSParticipantIDs.find(participant.second->getRTPSParticipantID()));
-                lock.unlock();
-                removeRTPSParticipant_nts(participant);
-                return true;
+                p->mp_impl->disable();
             }
+
+            std::unique_lock<std::mutex> lock(m_mutex);
+            RTPSDomain::t_p_RTPSParticipant participant = *it;
+            m_RTPSParticipants.erase(it);
+            m_RTPSParticipantIDs.erase(m_RTPSParticipantIDs.find(participant.second->getRTPSParticipantID()));
+            lock.unlock();
+            removeRTPSParticipant_nts(participant);
+            return true;
         }
     }
     logError(RTPS_PARTICIPANT, "RTPSParticipant not valid or not recognized");
@@ -237,6 +237,11 @@ bool RTPSDomain::removeRTPSParticipant(
 void RTPSDomain::removeRTPSParticipant_nts(
         RTPSDomain::t_p_RTPSParticipant& participant)
 {
+    // Set in the RTPSParticipant the pointer to the impl to nullptr as a way to mark that this
+    // RTPSParticipant instance has become invalid.
+    participant.first->mp_impl = nullptr;
+    // The destructor of RTPSParticipantImpl already deletes the associated RTPSParticipant, so
+    // there is no need to do it here manually.
     delete(participant.second);
 }
 
