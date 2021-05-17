@@ -240,6 +240,52 @@ TEST_F(UDPv6Tests, send_to_loopback)
     senderThread->join();
     sem.wait();
 }
+
+static void GetIP6s(
+        std::vector<IPFinder::info_IP>& interfaces)
+{
+    IPFinder::getIPs(&interfaces, false);
+    auto new_end = remove_if(interfaces.begin(),
+                    interfaces.end(),
+                    [](IPFinder::info_IP ip)
+                    {
+                        return ip.type != IPFinder::IP6 && ip.type != IPFinder::IP6_LOCAL;
+                    });
+    interfaces.erase(new_end, interfaces.end());
+    std::for_each(interfaces.begin(), interfaces.end(), [](IPFinder::info_IP& loc)
+            {
+                loc.locator.kind = LOCATOR_KIND_UDPv6;
+            });
+}
+
+TEST_F(UDPv6Tests, open_and_close_two_multicast_transports_with_whitelist)
+{
+    std::vector<IPFinder::info_IP> interfaces;
+    GetIP6s(interfaces);
+
+    if (interfaces.size() > 0)
+    {
+        descriptor.interfaceWhiteList.push_back(interfaces.at(0).name);
+
+        UDPv6Transport transport1(descriptor);
+        UDPv6Transport transport2(descriptor);
+        transport1.init();
+        transport2.init();
+
+        Locator_t multicastLocator;
+        multicastLocator.port = g_default_port;
+        multicastLocator.kind = LOCATOR_KIND_UDPv6;
+        IPLocator::setIPv6(multicastLocator, "ff00::efff:0104");
+
+        std::cout << "Opening input channels" << std::endl;
+        ASSERT_TRUE(transport1.OpenInputChannel(multicastLocator, nullptr, 65500));
+        ASSERT_TRUE(transport2.OpenInputChannel(multicastLocator, nullptr, 65500));
+        std::cout << "Closing input channel on transport 1" << std::endl;
+        ASSERT_TRUE(transport1.CloseInputChannel(multicastLocator));
+        std::cout << "Closing input channel on transport 2" << std::endl;
+        ASSERT_TRUE(transport2.CloseInputChannel(multicastLocator));
+    }
+}
 #endif // ifndef __APPLE__
 
 void UDPv6Tests::HELPER_SetDescriptorDefaults()
