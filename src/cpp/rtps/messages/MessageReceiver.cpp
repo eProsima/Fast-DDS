@@ -1359,6 +1359,8 @@ void MessageReceiver::notify_network_statistics(
             read_statistics_submessage(msg, data);
             participant_->on_network_statistics(
                 source_guid_prefix_, source_locator, reception_locator, data, msg->length);
+            msg->length -= statistics_submessage_length;
+            msg->pos = msg->length;
             break;
         }
 
