@@ -79,7 +79,7 @@ protected:
     }
 
     /**
-     * @brief Reports throughtput based on last added sample to history
+     * @brief Reports publication throughtput based on last added sample to writer's history
      * @param size of the message sent
      */
     inline void on_publish_throughput(
