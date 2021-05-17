@@ -1123,7 +1123,6 @@ void StatefulReader::change_read_by_user(
     {
         // This may not be the change read with highest SN,
         // need to find largest SN to ACK
-        std::vector<CacheChange_t*>::iterator last_read_from_writer;
         for (std::vector<CacheChange_t*>::iterator it = mp_history->changesBegin();
                 it != mp_history->changesEnd(); ++it)
         {
