@@ -36,13 +36,13 @@
 #include <fastdds/statistics/dds/publisher/qos/DataWriterQos.hpp>
 #include <fastdds/statistics/topic_names.hpp>
 
+#include <fastdds/core/policy/QosPolicyUtils.hpp>
 #include <fastdds/publisher/DataWriterImpl.hpp>
 #include <statistics/fastdds/publisher/PublisherImpl.hpp>
 #include <statistics/fastdds/subscriber/SubscriberImpl.hpp>
 #include <statistics/rtps/GuidUtils.hpp>
 #include <statistics/types/types.h>
 #include <statistics/types/typesPubSubTypes.h>
-#include <utils/Host.hpp>
 #include <utils/SystemInfo.hpp>
 
 namespace eprosima {
@@ -141,8 +141,7 @@ ReturnCode_t DomainParticipantImpl::enable_statistics_datawriter(
             {
                 PhysicalData notification;
                 notification.participant_guid(*reinterpret_cast<const detail::GUID_s*>(&guid()));
-                std::string unique_id(reinterpret_cast<char*>(Host::instance().mac_id().value));
-                notification.host(asio::ip::host_name() + ":" + unique_id);
+                notification.host(asio::ip::host_name() + ":" + std::to_string(efd::utils::default_domain_id()));
                 std::string username;
                 if (ReturnCode_t::RETCODE_OK == SystemInfo::get_username(username))
                 {
