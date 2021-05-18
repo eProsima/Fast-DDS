@@ -378,7 +378,7 @@ void StatisticsParticipantImpl::process_network_sequence(
 
     {
         std::lock_guard<std::recursive_mutex> lock(get_statistics_mutex());
-        lost_traffic_value& value = lost_traffic[key];
+        lost_traffic_value& value = lost_traffic_[key];
 
         if (value.first_sequence > seq.sequence)
         {
@@ -451,7 +451,7 @@ void StatisticsParticipantImpl::on_rtps_sent(
     {
         std::lock_guard<std::recursive_mutex> lock(get_statistics_mutex());
 
-        auto& val = traffic[loc];
+        auto& val = traffic_[loc];
         notification.packet_count(++val.packet_count);
         notification.byte_count(val.byte_count += payload_size);
         notification.byte_magnitude_order((int16_t)floor(log10(float(val.byte_count))));

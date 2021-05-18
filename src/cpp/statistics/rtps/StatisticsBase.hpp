@@ -113,7 +113,7 @@ private:
         unsigned long long byte_count = {};
     };
 
-    std::map<fastrtps::rtps::Locator_t, rtps_sent_data> traffic;
+    std::map<fastrtps::rtps::Locator_t, rtps_sent_data> traffic_;
 
     // RTPS_LOST ancillary
     using lost_traffic_key = std::pair<fastrtps::rtps::GuidPrefix_t, fastrtps::rtps::Locator_t>;
@@ -123,7 +123,7 @@ private:
         Entity2LocatorTraffic data{};
         rtps::StatisticsSubmessageData::Sequence seq_data{};
     };
-    std::map<lost_traffic_key, lost_traffic_value> lost_traffic;
+    std::map<lost_traffic_key, lost_traffic_value> lost_traffic_;
 
     // PDP_PACKETS ancillary
     unsigned long long pdp_counter_ = {};
