@@ -262,7 +262,7 @@ public:
         ReaderAttributes r_att;
         r_att.endpoint.reliabilityKind = reliability_qos;
         r_att.endpoint.durabilityKind = durability_qos;
-        
+
         // Setting localhost as the only locator ensures that DATA submessages will be sent only once.
         Locator_t local_locator;
         IPLocator::setIPv4(local_locator, 127, 0, 0, 1);
@@ -1103,14 +1103,14 @@ TEST_F(RTPSStatisticsTests, statistics_rpts_unordered_datagrams)
 
     std::vector<Entity2LocatorTraffic> lost_callback_data;
     auto callback_action = [&lost_callback_data](const Entity2LocatorTraffic& data) -> void
-    {
-        const Locator_t& loc = *(reinterpret_cast<const Locator_t*>(&data.dst_locator()));
-        if (IPLocator::isLocal(loc))
-        {
-            std::cout << "RTPS_LOST " << data.packet_count() << std::endl;
-            lost_callback_data.push_back(data);
-        }
-    };
+            {
+                const Locator_t& loc = *(reinterpret_cast<const Locator_t*>(&data.dst_locator()));
+                if (IPLocator::isLocal(loc))
+                {
+                    std::cout << "RTPS_LOST " << data.packet_count() << std::endl;
+                    lost_callback_data.push_back(data);
+                }
+            };
     EXPECT_CALL(*participant_listener, on_rtps_lost).Times(AtLeast(1)).WillRepeatedly(callback_action);
 
     // Calculate destination where datagrams should be sent to
