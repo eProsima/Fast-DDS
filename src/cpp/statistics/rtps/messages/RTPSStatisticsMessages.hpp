@@ -114,6 +114,8 @@ inline void add_statistics_submessage(
  * @param [in,out] msg Message from where to extract the submessage.
  * @param [out] data Data read from the statistics submessage.
  * @pre msg->pos should point to the beginning of the statistics submessage payload
+ * @post msg->length will be decremented by @c statistics_submessage_length (i.e. the
+ *       submessage will be consumed, and it won't be available anymore)
  */
 inline void read_statistics_submessage(
         eprosima::fastrtps::rtps::CDRMessage_t* msg,
@@ -134,6 +136,10 @@ inline void read_statistics_submessage(
     CDRMessage::readUInt64(msg, &data.seq.sequence);
     CDRMessage::readUInt64(msg, &data.seq.bytes);
     CDRMessage::readUInt16(msg, &data.seq.bytes_high);
+
+    // Consume submessage
+    msg->length -= statistics_submessage_length;
+    msg->pos = msg->length;
 #endif // FASTDDS_STATISTICS
 }
 
