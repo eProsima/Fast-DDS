@@ -325,7 +325,11 @@ void MessageReceiver::processCDRMsg(
 
     reset();
 
+#ifdef FUZZING_BUILD_MODE_UNSAFE_FOR_PRODUCTION
+    GuidPrefix_t participantGuidPrefix;
+#else
     GuidPrefix_t participantGuidPrefix = participant_->getGuid().guidPrefix;
+#endif // ifdef FUZZING_BUILD_MODE_UNSAFE_FOR_PRODUCTION
     dest_guid_prefix_ = participantGuidPrefix;
 
     msg->pos = 0; //Start reading at 0
@@ -514,7 +518,9 @@ void MessageReceiver::processCDRMsg(
         submessage->pos = next_msg_pos;
     }
 
+#ifndef FUZZING_BUILD_MODE_UNSAFE_FOR_PRODUCTION
     participant_->assert_remote_participant_liveliness(source_guid_prefix_);
+#endif // ifndef FUZZING_BUILD_MODE_UNSAFE_FOR_PRODUCTION
 }
 
 bool MessageReceiver::checkRTPSHeader(
