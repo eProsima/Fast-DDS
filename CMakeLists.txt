@@ -219,6 +219,11 @@ option(BUILD_SHARED_LIBS "Create shared libraries by default" ON)
 ###############################################################################
 include(${PROJECT_SOURCE_DIR}/cmake/common/eprosima_libraries.cmake)
 
+# if we are building Fast-DDS as a static library we must load Fast-CDR as one
+if(NOT BUILD_SHARED_LIBS)
+    set(FASTDDS_STATIC ON)
+endif()
+
 eprosima_find_package(fastcdr REQUIRED)
 eprosima_find_thirdparty(Asio asio VERSION 1.10.8)
 eprosima_find_thirdparty(TinyXML2 tinyxml2)
