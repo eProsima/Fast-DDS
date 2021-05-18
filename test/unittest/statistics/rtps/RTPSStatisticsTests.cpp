@@ -105,6 +105,9 @@ struct MockListener : IListener
             case PUBLICATION_THROUGHPUT:
                 on_publisher_throughput(data.entity_data());
                 break;
+            case SUBSCRIPTION_THROUGHPUT:
+                on_subscriber_throughput(data.entity_data());
+                break;
             default:
                 on_unexpected_kind(kind);
                 break;
@@ -125,6 +128,7 @@ struct MockListener : IListener
     MOCK_METHOD1(on_edp_packets, void(const eprosima::fastdds::statistics::EntityCount&));
     MOCK_METHOD1(on_sample_datas, void(const eprosima::fastdds::statistics::SampleIdentityCount&));
     MOCK_METHOD1(on_publisher_throughput, void(const eprosima::fastdds::statistics::EntityData&));
+    MOCK_METHOD1(on_subscriber_throughput, void(const eprosima::fastdds::statistics::EntityData&));
     MOCK_METHOD1(on_unexpected_kind, void(eprosima::fastdds::statistics::EventKind));
 };
 
@@ -538,6 +542,7 @@ TEST_F(RTPSStatisticsTests, statistics_rpts_listener_management)
  * - HEARBEAT_COUNT callbacks are performed
  * - SAMPLE_DATAS callbacks are performed
  * - PUBLICATION_THROUGHPUT callbacks are performed
+ * - SUBSCRIPTION_THROUGHPUT callbacks are performed
  */
 TEST_F(RTPSStatisticsTests, statistics_rpts_listener_callbacks)
 {
@@ -601,7 +606,8 @@ TEST_F(RTPSStatisticsTests, statistics_rpts_listener_callbacks)
     // reader callbacks through participant listener
     auto participant_reader_listener = make_shared<MockListener>();
     ASSERT_TRUE(participant_->add_statistics_listener(participant_reader_listener,
-            EventKind::ACKNACK_COUNT | EventKind::HISTORY2HISTORY_LATENCY));
+            EventKind::ACKNACK_COUNT | EventKind::HISTORY2HISTORY_LATENCY |
+            EventKind::SUBSCRIPTION_THROUGHPUT));
 
     // reader specific callbacks
     auto reader_listener = make_shared<MockListener>();
@@ -644,9 +650,14 @@ TEST_F(RTPSStatisticsTests, statistics_rpts_listener_callbacks)
             .Times(AtLeast(1));
     EXPECT_CALL(*reader_listener, on_history_latency)
             .Times(AtLeast(1));
+    EXPECT_CALL(*reader_listener, on_subscriber_throughput)
+            .Times(AtLeast(1));
+
     EXPECT_CALL(*participant_reader_listener, on_acknack_count)
             .Times(AtLeast(1));
     EXPECT_CALL(*participant_reader_listener, on_history_latency)
+            .Times(AtLeast(1));
+    EXPECT_CALL(*participant_reader_listener, on_subscriber_throughput)
             .Times(AtLeast(1));
 
     // match writer and reader on a dummy topic
@@ -675,7 +686,8 @@ TEST_F(RTPSStatisticsTests, statistics_rpts_listener_callbacks)
             EventKind::DATA_COUNT | EventKind::RESENT_DATAS |
             EventKind::PUBLICATION_THROUGHPUT | EventKind::SAMPLE_DATAS));
     EXPECT_TRUE(participant_->remove_statistics_listener(participant_reader_listener,
-            EventKind::ACKNACK_COUNT | EventKind::HISTORY2HISTORY_LATENCY));
+            EventKind::ACKNACK_COUNT | EventKind::HISTORY2HISTORY_LATENCY |
+            EventKind::SUBSCRIPTION_THROUGHPUT));
 }
 
 /*

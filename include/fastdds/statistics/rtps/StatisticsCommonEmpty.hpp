@@ -140,6 +140,15 @@ protected:
     {
     }
 
+    /**
+     * @brief Reports subscription throughtput based on last added sample to reader's history
+     * @param size of the message received
+     */
+    inline void on_subscribe_throughput(
+            uint32_t)
+    {
+    }
+
 };
 
 } // namespace statistics

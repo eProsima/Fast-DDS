@@ -846,6 +846,9 @@ bool StatefulReader::change_received(
 
         NotifyChanges(prox);
 
+        // statistics callback
+        on_subscribe_throughput(a_change->serializedPayload.length);
+
         return ret;
     }
 
