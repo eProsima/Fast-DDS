@@ -432,6 +432,9 @@ void StatelessWriter::unsent_change_added_to_history(
     {
         on_data_sent();
     }
+
+    // Throughput should be notified even if no matches are available
+    on_publish_throughput(change->serializedPayload.length);
 }
 
 bool StatelessWriter::intraprocess_delivery(

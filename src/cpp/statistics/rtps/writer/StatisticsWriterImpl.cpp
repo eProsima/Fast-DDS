@@ -71,7 +71,7 @@ void StatisticsWriterImpl::on_sample_datas(
     // Perform the callbacks
     Data data;
     // note that the setter sets SAMPLE_DATAS by default
-    data.sample_identity_count(notification);
+    data.sample_identity_count(std::move(notification));
 
     for_each_listener([&data](const std::shared_ptr<IListener>& listener)
             {
@@ -101,7 +101,7 @@ void StatisticsWriterImpl::on_data_sent()
     // Perform the callbacks
     Data data;
     // note that the setter sets RESENT_DATAS by default
-    data.entity_count(notification);
+    data.entity_count(std::move(notification));
     data._d(EventKind::DATA_COUNT);
 
     for_each_listener([&data](const std::shared_ptr<IListener>& listener)
@@ -120,7 +120,7 @@ void StatisticsWriterImpl::on_heartbeat(
     // Perform the callbacks
     Data data;
     // note that the setter sets RESENT_DATAS by default
-    data.entity_count(notification);
+    data.entity_count(std::move(notification));
     data._d(EventKind::HEARTBEAT_COUNT);
 
     for_each_listener([&data](const std::shared_ptr<IListener>& listener)
@@ -142,7 +142,7 @@ void StatisticsWriterImpl::on_gap()
     // Perform the callbacks
     Data data;
     // note that the setter sets RESENT_DATAS by default
-    data.entity_count(notification);
+    data.entity_count(std::move(notification));
     data._d(EventKind::GAP_COUNT);
 
     for_each_listener([&data](const std::shared_ptr<IListener>& listener)
@@ -170,10 +170,43 @@ void StatisticsWriterImpl::on_resent_data(
     // Perform the callbacks
     Data data;
     // note that the setter sets RESENT_DATAS by default
-    data.entity_count(notification);
+    data.entity_count(std::move(notification));
 
     for_each_listener([&data](const std::shared_ptr<IListener>& listener)
             {
                 listener->on_statistics_data(data);
             });
+}
+
+void StatisticsWriterImpl::on_publish_throughput(
+        uint32_t payload)
+{
+    using namespace std;
+    using namespace chrono;
+
+    if (payload > 0 )
+    {
+        // update state
+        time_point<steady_clock> former_timepoint;
+        auto& current_timepoint = get_members()->last_history_change_;
+        {
+            lock_guard<fastrtps::RecursiveTimedMutex> lock(get_statistics_mutex());
+            former_timepoint = current_timepoint;
+            current_timepoint = steady_clock::now();
+        }
+
+        EntityData notification;
+        notification.guid(to_statistics_type(get_guid()));
+        notification.data(payload / duration_cast<duration<float>>(current_timepoint - former_timepoint).count());
+
+        // Perform the callbacks
+        Data data;
+        // note that the setter sets PUBLICATION_THROUGHPUT by default
+        data.entity_data(std::move(notification));
+
+        for_each_listener([&data](const std::shared_ptr<IListener>& listener)
+                {
+                    listener->on_statistics_data(data);
+                });
+    }
 }
