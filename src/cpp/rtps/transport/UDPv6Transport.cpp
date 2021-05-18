@@ -362,17 +362,17 @@ bool UDPv6Transport::OpenInputChannel(
                     // Bind to multicast address
                     UDPChannelResource* p_channel_resource;
                     p_channel_resource = CreateInputChannelResource(locatorAddressStr, locator, true, maxMsgSize,
-                            receiver);
+                                    receiver);
                     mInputSockets[IPLocator::getPhysicalPort(locator)].push_back(p_channel_resource);
 
                     // Join group on all whitelisted interfaces
                     for (auto& ip : interface_whitelist_)
                     {
                         p_channel_resource->socket()->set_option(ip::multicast::join_group(locatorAddress,
-                            ip.scope_id()));
+                                ip.scope_id()));
                     }
                 }
-                catch(asio::system_error const& e)
+                catch (asio::system_error const& e)
                 {
                     logWarning(RTPS_MSG_OUT, "UDPTransport Error binding " << locatorAddressStr << " at port: (" <<
                             IPLocator::getPhysicalPort(locator) << ") with msg: " << e.what());
@@ -398,7 +398,7 @@ bool UDPv6Transport::OpenInputChannel(
                         try
                         {
                             channelResource->socket()->set_option(ip::multicast::join_group(locatorAddress,
-                                ip.scope_id()));
+                                    ip.scope_id()));
                         }
                         catch (std::system_error& ex)
                         {

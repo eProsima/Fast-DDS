@@ -155,34 +155,34 @@ TEST_F(UDPv6Tests, send_and_receive_between_ports)
     IPLocator::setIPv6(outputChannelLocator, "ff31::8000:1234");
 
     MockReceiverResource receiver(transportUnderTest, multicastLocator);
-    MockMessageReceiver *msg_recv = dynamic_cast<MockMessageReceiver*>(receiver.CreateMessageReceiver());
+    MockMessageReceiver* msg_recv = dynamic_cast<MockMessageReceiver*>(receiver.CreateMessageReceiver());
 
     SendResourceList send_resource_list;
     ASSERT_TRUE(transportUnderTest.OpenOutputChannel(send_resource_list, outputChannelLocator)); // Includes loopback
     ASSERT_FALSE(send_resource_list.empty());
     ASSERT_TRUE(transportUnderTest.IsInputChannelOpen(multicastLocator));
-    octet message[5] = { 'H','e','l','l','o' };
+    octet message[5] = { 'H', 'e', 'l', 'l', 'o' };
 
     Semaphore sem;
     std::function<void()> recCallback = [&]()
-    {
-        EXPECT_EQ(memcmp(message,msg_recv->data,5), 0);
-        sem.post();
-    };
+            {
+                EXPECT_EQ(memcmp(message, msg_recv->data, 5), 0);
+                sem.post();
+            };
 
     msg_recv->setCallback(recCallback);
 
     auto sendThreadFunction = [&]()
-    {
-        LocatorList_t locator_list;
-        locator_list.push_back(multicastLocator);
+            {
+                LocatorList_t locator_list;
+                locator_list.push_back(multicastLocator);
 
-        Locators locators_begin(locator_list.begin());
-        Locators locators_end(locator_list.end());
+                Locators locators_begin(locator_list.begin());
+                Locators locators_end(locator_list.end());
 
-        EXPECT_TRUE(send_resource_list.at(0)->send(message, 5, &locators_begin, &locators_end,
-                (std::chrono::steady_clock::now() + std::chrono::microseconds(100))));
-    };
+                EXPECT_TRUE(send_resource_list.at(0)->send(message, 5, &locators_begin, &locators_end,
+                        (std::chrono::steady_clock::now() + std::chrono::microseconds(100))));
+            };
 
     senderThread.reset(new std::thread(sendThreadFunction));
     std::this_thread::sleep_for(std::chrono::milliseconds(1));
@@ -203,37 +203,37 @@ TEST_F(UDPv6Tests, send_to_loopback)
     Locator_t outputChannelLocator;
     outputChannelLocator.port = g_default_port + 1;
     outputChannelLocator.kind = LOCATOR_KIND_UDPv6;
-    IPLocator::setIPv6(outputChannelLocator,0,0,0,0,0,0,0,1); // Loopback
+    IPLocator::setIPv6(outputChannelLocator, 0, 0, 0, 0, 0, 0, 0, 1); // Loopback
 
     MockReceiverResource receiver(transportUnderTest, multicastLocator);
-    MockMessageReceiver *msg_recv = dynamic_cast<MockMessageReceiver*>(receiver.CreateMessageReceiver());
+    MockMessageReceiver* msg_recv = dynamic_cast<MockMessageReceiver*>(receiver.CreateMessageReceiver());
 
     SendResourceList send_resource_list;
     ASSERT_TRUE(transportUnderTest.OpenOutputChannel(send_resource_list, outputChannelLocator));
     ASSERT_FALSE(send_resource_list.empty());
     ASSERT_TRUE(transportUnderTest.IsInputChannelOpen(multicastLocator));
-    octet message[5] = { 'H','e','l','l','o' };
+    octet message[5] = { 'H', 'e', 'l', 'l', 'o' };
 
     Semaphore sem;
     std::function<void()> recCallback = [&]()
-    {
-        EXPECT_EQ(memcmp(message,msg_recv->data,5), 0);
-        sem.post();
-    };
+            {
+                EXPECT_EQ(memcmp(message, msg_recv->data, 5), 0);
+                sem.post();
+            };
 
     msg_recv->setCallback(recCallback);
 
     auto sendThreadFunction = [&]()
-    {
-        LocatorList_t locator_list;
-        locator_list.push_back(multicastLocator);
+            {
+                LocatorList_t locator_list;
+                locator_list.push_back(multicastLocator);
 
-        Locators locators_begin(locator_list.begin());
-        Locators locators_end(locator_list.end());
+                Locators locators_begin(locator_list.begin());
+                Locators locators_end(locator_list.end());
 
-        EXPECT_TRUE(send_resource_list.at(0)->send(message, 5, &locators_begin, &locators_end,
-                (std::chrono::steady_clock::now() + std::chrono::microseconds(100))));
-    };
+                EXPECT_TRUE(send_resource_list.at(0)->send(message, 5, &locators_begin, &locators_end,
+                        (std::chrono::steady_clock::now() + std::chrono::microseconds(100))));
+            };
 
     senderThread.reset(new std::thread(sendThreadFunction));
     std::this_thread::sleep_for(std::chrono::milliseconds(1));
