@@ -153,6 +153,10 @@ TEST(DDSStatistics, simple_statistics_datareaders)
     auto rtps_stats_reader = enable_statistics(w_statistics_participant, w_subscriber, statistics::RTPS_SENT_TOPIC);
     ASSERT_NE(nullptr, rtps_stats_reader);
 
+    auto physical_data_reader = enable_statistics(w_statistics_participant, w_subscriber,
+                    statistics::PHYSICAL_DATA_TOPIC);
+    ASSERT_NE(nullptr, physical_data_reader);
+
     auto r_subscriber = const_cast<Subscriber*>(data_reader.get_native_reader().get_subscriber());
     ASSERT_NE(nullptr, r_subscriber);
 
@@ -181,6 +185,9 @@ TEST(DDSStatistics, simple_statistics_datareaders)
 
     wait_statistics(rtps_stats_reader, num_samples, "RTPS_SENT_TOPIC", 10u);
     disable_statistics(w_statistics_participant, w_subscriber, rtps_stats_reader, statistics::RTPS_SENT_TOPIC);
+
+    wait_statistics(physical_data_reader, 1, "PHYSICAL_DATA_TOPIC", 10u);
+    disable_statistics(w_statistics_participant, w_subscriber, physical_data_reader, statistics::PHYSICAL_DATA_TOPIC);
 
     w_participant->delete_subscriber(w_subscriber);
 
