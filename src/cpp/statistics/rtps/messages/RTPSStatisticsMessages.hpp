@@ -22,6 +22,7 @@
 #include <cstdint>
 
 #include <fastdds/rtps/common/CDRMessage_t.h>
+#include <fastdds/rtps/common/Locator.h>
 #include <fastdds/rtps/common/Types.h>
 #include <fastdds/rtps/messages/CDRMessage.h>
 #include <fastdds/rtps/messages/RTPSMessageCreator.h>
@@ -52,15 +53,31 @@ struct StatisticsSubmessageData
         {
             sequence++;
             auto new_bytes = bytes + message_size;
-            if (new_bytes < bytes)
-            {
-                bytes_high++;
-            }
+            bytes_high += (new_bytes < bytes);
             bytes = new_bytes;
+        }
+
+        static Sequence distance(
+                const Sequence& from,
+                const Sequence& to)
+        {
+            // Check to >= from
+            assert(to.sequence >= from.sequence);
+            assert(to.bytes_high >= from.bytes_high);
+            assert((to.bytes_high > from.bytes_high) || (to.bytes >= from.bytes));
+
+            Sequence ret;
+            ret.sequence = to.sequence - from.sequence;
+            ret.bytes_high = to.bytes_high - from.bytes_high;
+            ret.bytes = to.bytes - from.bytes;
+            ret.bytes_high -= (ret.bytes > to.bytes);
+
+            return ret;
         }
 
     };
 
+    eprosima::fastrtps::rtps::Locator_t destination;
     TimeStamp ts{};
     Sequence seq{};
 };
@@ -113,6 +130,7 @@ inline void read_statistics_submessage(
 
     // Read all fields
     using namespace eprosima::fastrtps::rtps;
+    CDRMessage::readLocator(msg, &data.destination);
     CDRMessage::readInt32(msg, &data.ts.seconds);
     CDRMessage::readUInt32(msg, &data.ts.fraction);
     CDRMessage::readUInt64(msg, &data.seq.sequence);
@@ -130,6 +148,9 @@ inline uint32_t get_statistics_message_pos(
         const eprosima::fastrtps::rtps::octet* send_buffer,
         uint32_t send_buffer_size)
 {
+    // Only used on an assert
+    static_cast<void>(send_buffer);
+
     // Message should contain RTPS header and statistic submessage
     assert(statistics_submessage_length + RTPSMESSAGE_HEADER_SIZE <= send_buffer_size);
 
@@ -143,10 +164,12 @@ inline uint32_t get_statistics_message_pos(
 #endif // FASTDDS_STATISTICS
 
 inline void set_statistics_submessage_from_transport(
+        const eprosima::fastrtps::rtps::Locator_t& destination,
         const eprosima::fastrtps::rtps::octet* send_buffer,
         uint32_t send_buffer_size,
         StatisticsSubmessageData::Sequence& sequence)
 {
+    static_cast<void>(destination);
     static_cast<void>(send_buffer);
     static_cast<void>(send_buffer_size);
     static_cast<void>(sequence);
@@ -167,6 +190,7 @@ inline void set_statistics_submessage_from_transport(
     Time_t ts;
     Time_t::now(ts);
 
+    submessage->destination = destination;
     submessage->ts.seconds = ts.seconds();
     submessage->ts.fraction = ts.fraction();
     submessage->seq.sequence = sequence.sequence;

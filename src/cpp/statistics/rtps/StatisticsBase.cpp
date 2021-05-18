@@ -31,6 +31,44 @@ namespace eprosima {
 namespace fastdds {
 namespace statistics {
 
+static void add_bytes(
+        Entity2LocatorTraffic& traffic,
+        const rtps::StatisticsSubmessageData::Sequence& distance)
+{
+    uint64_t count = traffic.packet_count();
+    int16_t high = traffic.byte_magnitude_order();
+    uint64_t low = traffic.byte_count();
+
+    count += distance.sequence;
+    high += distance.bytes_high;
+    low += distance.bytes;
+    high += (low < traffic.byte_count());
+
+    traffic.packet_count(count);
+    traffic.byte_magnitude_order(high);
+    traffic.byte_count(low);
+}
+
+static void sub_bytes(
+        Entity2LocatorTraffic& traffic,
+        uint64_t bytes)
+{
+    uint64_t count = traffic.packet_count();
+    int16_t high = traffic.byte_magnitude_order();
+    uint64_t low = traffic.byte_count();
+
+    if (count > 0)
+    {
+        count--;
+        low -= bytes;
+        high -= (low > traffic.byte_count());
+
+        traffic.packet_count(count);
+        traffic.byte_magnitude_order(high);
+        traffic.byte_count(low);
+    }
+}
+
 detail::Locator_s to_statistics_type(
         fastrtps::rtps::Locator_t locator)
 {
@@ -292,16 +330,25 @@ void StatisticsParticipantImpl::on_network_statistics(
         const fastrtps::rtps::GuidPrefix_t& source_participant,
         const fastrtps::rtps::Locator_t& source_locator,
         const fastrtps::rtps::Locator_t& reception_locator,
-        const rtps::StatisticsSubmessageData& data)
+        const rtps::StatisticsSubmessageData& data,
+        uint64_t datagram_size)
 {
-    static_cast<void>(source_participant);
+    static_cast<void>(reception_locator);
+    process_network_timestamp(source_locator, data.destination, data.ts);
+    process_network_sequence(source_participant, data.destination, data.seq, datagram_size);
+}
 
+void StatisticsParticipantImpl::process_network_timestamp(
+        const fastrtps::rtps::Locator_t& source_locator,
+        const fastrtps::rtps::Locator_t& reception_locator,
+        const rtps::StatisticsSubmessageData::TimeStamp& ts)
+{
     using namespace eprosima::fastrtps::rtps;
 
-    Time_t ts(data.ts.seconds, data.ts.fraction);
+    Time_t source_ts(ts.seconds, ts.fraction);
     Time_t current_ts;
     Time_t::now(current_ts);
-    auto latency = static_cast<float>((current_ts - ts).to_ns());
+    auto latency = static_cast<float>((current_ts - source_ts).to_ns());
 
     Locator2LocatorData notification;
     notification.src_locator(to_statistics_type(source_locator));
@@ -319,6 +366,76 @@ void StatisticsParticipantImpl::on_network_statistics(
             });
 }
 
+void StatisticsParticipantImpl::process_network_sequence(
+        const fastrtps::rtps::GuidPrefix_t& source_participant,
+        const fastrtps::rtps::Locator_t& reception_locator,
+        const rtps::StatisticsSubmessageData::Sequence& seq,
+        uint64_t datagram_size)
+{
+    lost_traffic_key key(source_participant, reception_locator);
+    bool should_notify = false;
+    Entity2LocatorTraffic notification;
+
+    {
+        std::lock_guard<std::recursive_mutex> lock(get_statistics_mutex());
+        lost_traffic_value& value = lost_traffic_[key];
+
+        if (value.first_sequence > seq.sequence)
+        {
+            // Datagrams before the first received one are ignored
+            return;
+        }
+
+        if (value.first_sequence == 0)
+        {
+            // This is the first time we receive a statistics sequence from source_participant on reception_locator
+            GUID_t guid(source_participant, ENTITYID_RTPSParticipant);
+            value.data.src_guid(to_statistics_type(guid));
+            value.data.dst_locator(to_statistics_type(reception_locator));
+            value.first_sequence = seq.sequence;
+        }
+        else
+        {
+            // We shouldn't receive the same sequence twice
+            assert(seq.sequence != value.seq_data.sequence);
+            // Detect discontinuity. We will only notify in that case
+            should_notify = seq.sequence != (value.seq_data.sequence + 1);
+            if (should_notify)
+            {
+                if (seq.sequence > value.seq_data.sequence)
+                {
+                    // Received sequence is higher, data has been lost
+                    add_bytes(value.data, rtps::StatisticsSubmessageData::Sequence::distance(value.seq_data, seq));
+                }
+
+                // We should never count the current received datagram
+                sub_bytes(value.data, datagram_size);
+
+                notification = value.data;
+            }
+        }
+
+        if (seq.sequence > value.seq_data.sequence)
+        {
+            value.seq_data = seq;
+        }
+    }
+
+    if (should_notify)
+    {
+        // Perform the callbacks
+        Data data;
+        // note that the setter sets RTPS_SENT by default
+        data.entity2locator_traffic(notification);
+        data._d(EventKind::RTPS_LOST);
+
+        for_each_listener([&data](const Key& listener)
+                {
+                    listener->on_statistics_data(data);
+                });
+    }
+}
+
 void StatisticsParticipantImpl::on_rtps_sent(
         const fastrtps::rtps::Locator_t& loc,
         unsigned long payload_size)
@@ -334,7 +451,7 @@ void StatisticsParticipantImpl::on_rtps_sent(
     {
         std::lock_guard<std::recursive_mutex> lock(get_statistics_mutex());
 
-        auto& val = traffic[loc];
+        auto& val = traffic_[loc];
         notification.packet_count(++val.packet_count);
         notification.byte_count(val.byte_count += payload_size);
         notification.byte_magnitude_order((int16_t)floor(log10(float(val.byte_count))));

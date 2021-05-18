@@ -69,6 +69,9 @@ struct MockListener : IListener
             case RTPS_SENT:
                 on_rtps_sent(data.entity2locator_traffic());
                 break;
+            case RTPS_LOST:
+                on_rtps_lost(data.entity2locator_traffic());
+                break;
             case NETWORK_LATENCY:
                 on_network_latency(data.locator2locator_data());
                 break;
@@ -116,6 +119,7 @@ struct MockListener : IListener
 
     MOCK_METHOD1(on_history_latency, void(const eprosima::fastdds::statistics::WriterReaderData&));
     MOCK_METHOD1(on_rtps_sent, void(const eprosima::fastdds::statistics::Entity2LocatorTraffic&));
+    MOCK_METHOD1(on_rtps_lost, void(const eprosima::fastdds::statistics::Entity2LocatorTraffic&));
     MOCK_METHOD1(on_network_latency, void(const eprosima::fastdds::statistics::Locator2LocatorData&));
     MOCK_METHOD1(on_heartbeat_count, void(const eprosima::fastdds::statistics::EntityCount&));
     MOCK_METHOD1(on_acknack_count, void(const eprosima::fastdds::statistics::EntityCount&));
@@ -259,6 +263,12 @@ public:
         r_att.endpoint.reliabilityKind = reliability_qos;
         r_att.endpoint.durabilityKind = durability_qos;
 
+        // Setting localhost as the only locator ensures that DATA submessages will be sent only once.
+        Locator_t local_locator;
+        IPLocator::setIPv4(local_locator, 127, 0, 0, 1);
+        r_att.endpoint.unicastLocatorList.clear();
+        r_att.endpoint.unicastLocatorList.push_back(local_locator);
+
         reader_ = RTPSDomain::createRTPSReader(participant_, r_att, reader_history_);
     }
 
@@ -381,8 +391,9 @@ public:
         ASSERT_NE(nullptr, writer_change);
 
         std::string str("https://github.com/eProsima/Fast-DDS.git");
-        memcpy(writer_change->serializedPayload.data, str.c_str(), str.length());
-        writer_change->serializedPayload.length = (uint32_t)str.length();
+        uint32_t change_length = std::min(length, static_cast<uint32_t>(str.length()));
+        memcpy(writer_change->serializedPayload.data, str.c_str(), change_length);
+        writer_change->serializedPayload.length = change_length;
 
         ASSERT_TRUE(writer_history_->add_change(writer_change));
     }
@@ -535,6 +546,8 @@ TEST_F(RTPSStatisticsTests, statistics_rpts_listener_management)
 /*
  * This test checks RTPSParticipant, RTPSWriter and RTPSReader statistics module related APIs.
  * - RTPS_SENT callbacks are performed
+ * - RTPS_LOST callbacks are performed
+ * - NETWORK_LATENCY callbacks are performed
  * - HISTORY2HISTORY_LATENCY callbacks are performed
  * - DATA_COUNT callbacks are performed for DATA submessages
  * - RESENT_DATAS callbacks are performed for DATA submessages demanded by the readers
@@ -591,7 +604,7 @@ TEST_F(RTPSStatisticsTests, statistics_rpts_listener_callbacks)
     // participant specific callbacks
     auto participant_listener = make_shared<MockListener>();
     ASSERT_TRUE(participant_->add_statistics_listener(participant_listener,
-            EventKind::RTPS_SENT | EventKind::NETWORK_LATENCY));
+            EventKind::RTPS_SENT | EventKind::NETWORK_LATENCY | EventKind::RTPS_LOST));
 
     // writer callbacks through participant listener
     auto participant_writer_listener = make_shared<MockListener>();
@@ -613,8 +626,10 @@ TEST_F(RTPSStatisticsTests, statistics_rpts_listener_callbacks)
     auto reader_listener = make_shared<MockListener>();
     ASSERT_TRUE(reader_->add_statistics_listener(reader_listener));
 
-    // we must received the RTPS_SENT and NETWORK_LATENCY notifications
+    // we must received the RTPS_SENT, RTPS_LOST and NETWORK_LATENCY notifications
     EXPECT_CALL(*participant_listener, on_rtps_sent)
+            .Times(AtLeast(1));
+    EXPECT_CALL(*participant_listener, on_rtps_lost)
             .Times(AtLeast(1));
     EXPECT_CALL(*participant_listener, on_network_latency)
             .Times(AtLeast(1));
@@ -681,7 +696,8 @@ TEST_F(RTPSStatisticsTests, statistics_rpts_listener_callbacks)
     EXPECT_TRUE(writer_->remove_statistics_listener(writer_listener));
     EXPECT_TRUE(reader_->remove_statistics_listener(reader_listener));
 
-    EXPECT_TRUE(participant_->remove_statistics_listener(participant_listener, EventKind::RTPS_SENT));
+    EXPECT_TRUE(participant_->remove_statistics_listener(participant_listener,
+            EventKind::RTPS_SENT | EventKind::NETWORK_LATENCY | EventKind::RTPS_LOST));
     EXPECT_TRUE(participant_->remove_statistics_listener(participant_writer_listener,
             EventKind::DATA_COUNT | EventKind::RESENT_DATAS |
             EventKind::PUBLICATION_THROUGHPUT | EventKind::SAMPLE_DATAS));
@@ -1011,6 +1027,130 @@ TEST_F(RTPSStatisticsTests, statistics_rpts_avoid_empty_resent_callbacks)
 
     // release the listeners
     EXPECT_TRUE(writer_->remove_statistics_listener(writer_listener));
+}
+
+/*
+ * This test checks additional cases for RTPS_LOST when RTPS datagrams are received unordered
+ */
+TEST_F(RTPSStatisticsTests, statistics_rpts_unordered_datagrams)
+{
+    using namespace ::testing;
+    using namespace fastrtps;
+    using namespace fastrtps::rtps;
+    using namespace std;
+
+    using test_UDPv4Transport = eprosima::fastdds::rtps::test_UDPv4Transport;
+
+    constexpr uint16_t num_messages = 10;
+    constexpr std::array<size_t, num_messages> message_order {
+        2, 5, 1, 3, 4, 7, 8, 6, 9, 0
+    };
+    uint64_t lost_count_notified[] =
+    {
+        // seq received    description     notify
+        // 2               first sequence  NO
+        // 5               3 & 4 lost      2
+        2,
+        // 1               before first    NO
+        // 3               3 recovered     1
+        1,
+        // 4               4 recovered     0
+        0,
+        // 7               6 lost          1
+        1,
+        // 8               in sequence     NO
+        // 6               6 recovered     0
+        0
+        // 9               in sequence     NO
+        // 0               before first    NO
+    };
+
+    // A filter to add the first `num_messages` user DATA_FRAG into `user_data`
+    test_UDPv4Transport::test_UDPv4Transport_DropLogLength = num_messages;
+    set_transport_filter(
+        DATA_FRAG,
+        [](fastrtps::rtps::CDRMessage_t& msg)-> bool
+        {
+            uint32_t old_pos = msg.pos;
+
+            // see RTPS DDS 9.4.5.3 Data Submessage
+            EntityId_t readerID, writerID;
+
+            msg.pos += 2; // flags
+            msg.pos += 2; // octets to inline quos
+            CDRMessage::readEntityId(&msg, &readerID);
+            CDRMessage::readEntityId(&msg, &writerID);
+
+            // restore buffer pos
+            msg.pos = old_pos;
+
+            // Let non-user traffic pass
+            return (writerID.value[3] & 0xC0) == 0;
+        });
+
+    uint16_t length = 100;
+    create_endpoints(num_messages * length, BEST_EFFORT);
+    match_endpoints(false, "string", "statisticsSmallTopic");
+
+    // This will send `num_messages` DATA_FRAG nessages, which will be backed up on `user_data`
+    for (uint16_t i = 0; i < num_messages; ++i)
+    {
+        write_large_sample(num_messages * length, length);
+    }
+
+    // create the listener and set expectations
+    auto participant_listener = make_shared<MockListener>();
+    ASSERT_TRUE(participant_->add_statistics_listener(participant_listener, EventKind::RTPS_LOST));
+
+    std::vector<Entity2LocatorTraffic> lost_callback_data;
+    auto callback_action = [&lost_callback_data](const Entity2LocatorTraffic& data) -> void
+            {
+                const Locator_t& loc = *(reinterpret_cast<const Locator_t*>(&data.dst_locator()));
+                if (IPLocator::isLocal(loc))
+                {
+                    std::cout << "RTPS_LOST " << data.packet_count() << std::endl;
+                    lost_callback_data.push_back(data);
+                }
+            };
+    EXPECT_CALL(*participant_listener, on_rtps_lost).Times(AtLeast(1)).WillRepeatedly(callback_action);
+
+    // Calculate destination where datagrams should be sent to
+    const Locator_t& locator = *(reader_->getAttributes().unicastLocatorList.begin());
+    auto locator_ip = IPLocator::getIPv4(locator);
+    auto locator_port = IPLocator::getPhysicalPort(locator);
+    asio::ip::address_v4::bytes_type asio_ip{ { locator_ip[0], locator_ip[1], locator_ip[2], locator_ip[3] } };
+    asio::ip::udp::endpoint destination(asio::ip::address_v4(asio_ip), locator_port);
+
+    // Prepare sending socket
+    asio::error_code ec;
+    asio::io_context ctx;
+    asio::ip::udp::socket sender(ctx);
+    sender.open(asio::ip::udp::v4());
+
+    // Send messages in different order
+    for (size_t idx : message_order)
+    {
+        const std::vector<octet>& msg = test_UDPv4Transport::test_UDPv4Transport_DropLog[idx];
+        EXPECT_EQ(msg.size(), sender.send_to(asio::buffer(msg.data(), msg.size()), destination, 0, ec)) << ec;
+    }
+
+    std::this_thread::sleep_for(std::chrono::seconds(1));
+
+    // release the listener
+    EXPECT_TRUE(participant_->remove_statistics_listener(participant_listener, EventKind::RTPS_LOST));
+
+    // Check reported callbacks
+    EXPECT_EQ(sizeof(lost_count_notified) / sizeof(lost_count_notified[0]), lost_callback_data.size());
+    for (size_t i = 0; i < lost_callback_data.size(); ++i)
+    {
+        EXPECT_EQ(lost_count_notified[i], lost_callback_data[i].packet_count());
+    }
+
+    // Last reported callback should be 0, as all packets have been sent
+    const Entity2LocatorTraffic& last_lost_data = lost_callback_data.back();
+    EXPECT_EQ(0u, last_lost_data.packet_count());
+    EXPECT_EQ(0u, last_lost_data.byte_count());
+    EXPECT_EQ(0, last_lost_data.byte_magnitude_order());
 }
 
 } // namespace rtps
