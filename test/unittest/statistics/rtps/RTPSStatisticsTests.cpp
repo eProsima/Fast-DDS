@@ -391,8 +391,9 @@ public:
         ASSERT_NE(nullptr, writer_change);
 
         std::string str("https://github.com/eProsima/Fast-DDS.git");
-        memcpy(writer_change->serializedPayload.data, str.c_str(), str.length());
-        writer_change->serializedPayload.length = (uint32_t)str.length();
+        uint32_t change_length = std::min(length, static_cast<uint32_t>(str.length()));
+        memcpy(writer_change->serializedPayload.data, str.c_str(), change_length);
+        writer_change->serializedPayload.length = change_length;
 
         ASSERT_TRUE(writer_history_->add_change(writer_change));
     }
