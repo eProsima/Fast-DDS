@@ -473,6 +473,7 @@ RTPSParticipantImpl::~RTPSParticipantImpl()
 
     delete mp_ResourceSemaphore;
     delete mp_userParticipant;
+    mp_userParticipant = nullptr;
     send_resource_list_.clear();
 
     delete mp_mutex;

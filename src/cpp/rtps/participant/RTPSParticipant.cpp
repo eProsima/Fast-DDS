@@ -33,7 +33,7 @@ RTPSParticipant::RTPSParticipant(
 
 RTPSParticipant::~RTPSParticipant()
 {
-
+    mp_impl = nullptr;
 }
 
 const GUID_t& RTPSParticipant::getGuid() const
