@@ -163,6 +163,7 @@ inline void set_statistics_submessage_from_transport(
         uint32_t send_buffer_size,
         StatisticsSubmessageData::Sequence& sequence)
 {
+    static_cast<void>(destination);
     static_cast<void>(send_buffer);
     static_cast<void>(send_buffer_size);
     static_cast<void>(sequence);
