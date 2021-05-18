@@ -68,6 +68,7 @@ struct StatisticsWriterAncillary
 struct StatisticsReaderAncillary
     : public StatisticsAncillary
 {
+    std::chrono::time_point<std::chrono::steady_clock> last_history_change_ = std::chrono::steady_clock::now();
 };
 
 // lambda function to traverse the listener collection

@@ -255,6 +255,10 @@ bool StatelessReader::change_received(
             }
 
             new_notification_cv_.notify_all();
+
+            // statistics callback
+            on_subscribe_throughput(change->serializedPayload.length);
+
             return true;
         }
     }
