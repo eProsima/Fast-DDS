@@ -142,6 +142,9 @@ inline uint32_t get_statistics_message_pos(
         const eprosima::fastrtps::rtps::octet* send_buffer,
         uint32_t send_buffer_size)
 {
+    // Only used on an assert
+    static_cast<void>(send_buffer);
+
     // Message should contain RTPS header and statistic submessage
     assert(statistics_submessage_length + RTPSMESSAGE_HEADER_SIZE <= send_buffer_size);
 
