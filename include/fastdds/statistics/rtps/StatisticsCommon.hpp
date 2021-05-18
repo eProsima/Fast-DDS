@@ -172,6 +172,13 @@ protected:
     /// Notify listeners of DATA / DATA_FRAG counts
     void on_data_sent();
 
+    /**
+     * @brief Reports publication throughtput based on last added sample to writer's history
+     * @param payload size of the message sent
+     */
+    void on_publish_throughput(
+            uint32_t payload);
+
     /// Report that a GAP message is sent
     void on_gap();
 

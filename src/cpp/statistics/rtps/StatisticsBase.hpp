@@ -62,6 +62,7 @@ struct StatisticsWriterAncillary
     unsigned long long data_counter = {};
     unsigned long long gap_counter = {};
     unsigned long long resent_counter = {};
+    std::chrono::time_point<std::chrono::steady_clock> last_history_change_ = std::chrono::steady_clock::now();
 };
 
 struct StatisticsReaderAncillary
