@@ -56,6 +56,17 @@ TEST(SystemInfoTests, GetEnvTest)
     EXPECT_EQ(eprosima::SystemInfo::get_env("INVALID_NAME", &env_value), ReturnCode_t::RETCODE_NO_DATA);
 }
 
+/*
+ * This test checks the get_username static method of the SystemInfo class
+ * The test only checks that the method returns RETCODE_OK and that the username is not an empty string
+ */
+TEST(SystemInfoTests, GetUsernameTest)
+{
+    std::string username;
+    EXPECT_EQ(ReturnCode_t::RETCODE_OK, eprosima::SystemInfo::get_username(username));
+    EXPECT_FALSE(username.empty());
+}
+
 int main(
         int argc,
         char** argv)
