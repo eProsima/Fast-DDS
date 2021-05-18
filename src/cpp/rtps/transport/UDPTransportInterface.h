@@ -21,7 +21,9 @@
 #include <fastdds/rtps/transport/TransportInterface.h>
 #include <fastdds/rtps/transport/UDPTransportDescriptor.h>
 #include <fastrtps/utils/IPFinder.h>
+
 #include <rtps/transport/UDPChannelResource.h>
+#include <statistics/rtps/messages/OutputTrafficManager.hpp>
 
 #include <vector>
 #include <memory>
@@ -170,6 +172,7 @@ protected:
 
     uint32_t mSendBufferSize;
     uint32_t mReceiveBufferSize;
+    eprosima::fastdds::statistics::rtps::OutputTrafficManager statistics_info_;
 
     UDPTransportInterface(
             int32_t transport_kind);

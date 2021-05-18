@@ -1338,7 +1338,8 @@ void MessageReceiver::notify_network_statistics(
 
     // Keep track of current position, so we can restore it later.
     auto initial_pos = msg->pos;
-    while (msg->pos < msg->length)
+    auto msg_length = msg->length;
+    while (msg->pos < msg_length)
     {
         SubmessageHeader_t header;
         if (!readSubmessageHeader(msg, &header))
@@ -1350,14 +1351,15 @@ void MessageReceiver::notify_network_statistics(
         {
             // Check submessage validity
             if ((statistics_submessage_data_length != header.submessageLength) ||
-                    ((msg->pos + header.submessageLength) > msg->length))
+                    ((msg->pos + header.submessageLength) > msg_length))
             {
                 break;
             }
 
             StatisticsSubmessageData data;
             read_statistics_submessage(msg, data);
-            participant_->on_network_statistics(source_guid_prefix_, source_locator, reception_locator, data);
+            participant_->on_network_statistics(
+                source_guid_prefix_, source_locator, reception_locator, data, msg_length);
             break;
         }
 

@@ -201,6 +201,7 @@ bool test_UDPv4Transport::send(
 {
     if (packet_should_drop(send_buffer, send_buffer_size))
     {
+        statistics_info_.set_statistics_message_data(remote_locator, send_buffer, send_buffer_size);
         log_drop(send_buffer, send_buffer_size);
         return true;
     }
