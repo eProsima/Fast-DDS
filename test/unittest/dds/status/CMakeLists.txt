@@ -124,11 +124,15 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
 
         add_executable(ListenerTests ${LISTENERTESTS_SOURCE})
         target_compile_definitions(ListenerTests PRIVATE FASTRTPS_NO_LIB
+            BOOST_ASIO_STANDALONE
+            ASIO_STANDALONE
+            $<$<AND:$<BOOL:${ANDROID}>,$<NOT:$<BOOL:${HAVE_CXX14}>>,$<NOT:$<BOOL:${HAVE_CXX1Y}>>>:ASIO_DISABLE_STD_STRING_VIEW>
             $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
             $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
             )
         target_include_directories(ListenerTests PRIVATE
             ${GTEST_INCLUDE_DIRS} ${GMOCK_INCLUDE_DIRS}
+            ${Asio_INCLUDE_DIR}
             ${PROJECT_SOURCE_DIR}/test/mock/rtps/DataSharingPayloadPool
             ${PROJECT_SOURCE_DIR}/test/mock/rtps/RTPSReader
             ${PROJECT_SOURCE_DIR}/test/mock/rtps/RTPSWriter
