@@ -31,7 +31,7 @@ extern int clock_gettime(
 #include <mutex>
 #else
 #include <pthread.h>
-#endif
+#endif // if defined(_WIN32)
 
 namespace eprosima {
 namespace fastrtps {
@@ -81,7 +81,9 @@ public:
 
         if (0 < nsecs.count())
         {
-            struct timespec max_wait = { 0, 0 };
+            struct timespec max_wait = {
+                0, 0
+            };
             clock_gettime(1, &max_wait);
             nsecs = nsecs + std::chrono::nanoseconds(max_wait.tv_nsec);
             auto secs = std::chrono::duration_cast<std::chrono::seconds>(nsecs);
@@ -149,7 +151,9 @@ public:
         std::chrono::nanoseconds nsecs = abs_time - std::chrono::steady_clock::now();
         if (0 < nsecs.count())
         {
-            struct timespec max_wait = { 0, 0 };
+            struct timespec max_wait = {
+                0, 0
+            };
             clock_gettime(1, &max_wait);
             nsecs = nsecs + std::chrono::nanoseconds(max_wait.tv_nsec);
             auto secs = std::chrono::duration_cast<std::chrono::seconds>(nsecs);
@@ -218,7 +222,9 @@ public:
             const std::chrono::time_point<Clock, Duration>& abs_time)
     {
         std::chrono::nanoseconds nsecs = abs_time - std::chrono::steady_clock::now();
-        struct timespec max_wait = { 0, 0 };
+        struct timespec max_wait = {
+            0, 0
+        };
         clock_gettime(CLOCK_REALTIME, &max_wait);
         nsecs = nsecs + std::chrono::nanoseconds(max_wait.tv_nsec);
         auto secs = std::chrono::duration_cast<std::chrono::seconds>(nsecs);
@@ -282,7 +288,9 @@ public:
             const std::chrono::time_point<Clock, Duration>& abs_time)
     {
         std::chrono::nanoseconds nsecs = abs_time - std::chrono::steady_clock::now();
-        struct timespec max_wait = { 0, 0 };
+        struct timespec max_wait = {
+            0, 0
+        };
         clock_gettime(CLOCK_REALTIME, &max_wait);
         nsecs = nsecs + std::chrono::nanoseconds(max_wait.tv_nsec);
         auto secs = std::chrono::duration_cast<std::chrono::seconds>(nsecs);
