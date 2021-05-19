@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<assembly xmlns="urn:schemas-microsoft-com:asm.v1" manifestVersion="1.0"> 
+<assemblyIdentity 
+    name="Fast-DDS" 
+    type="win32" 
+    version="2.3.1.0" 
+/> 
+<description>eProsima Fast DDS is the most complete open source dds middleware for real time embedded architectures and operating systems.</description> 
+<dependency> 
+    <dependentAssembly> 
+        <assemblyIdentity
+          name="OpenSSL.Fast-DDS"  
+          type="win32"
+          version="1.1.1.11" 
+          />
+    </dependentAssembly> 
+</dependency> 
+</assembly>

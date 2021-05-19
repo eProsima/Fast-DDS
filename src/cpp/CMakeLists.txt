@@ -391,6 +391,7 @@ if((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER AND IS_TOP_LEVEL)
     generate_msvc_libraries(i86Win32VS2017)
     generate_msvc_libraries(x64Win64VS2017)
 elseif(NOT EPROSIMA_INSTALLER)
+
     #Create library
     add_library(${PROJECT_NAME} ${${PROJECT_NAME}_source_files})
     set_target_properties(${PROJECT_NAME} PROPERTIES VERSION ${PROJECT_VERSION})
@@ -463,6 +464,14 @@ elseif(NOT EPROSIMA_INSTALLER)
         )
 
     if(MSVC OR MSVC_IDE)
+
+        # On installed binaries use manifest to specify dependencies
+        if(INSTALLER_PLATFORM)
+            file(TO_NATIVE_PATH "${CMAKE_SOURCE_DIR}" WINDOWS_SOURCE_DIR)
+            target_link_options(${PROJECT_NAME} PRIVATE "/MANIFEST:EMBED" "/MANIFESTINPUT:${WINDOWS_SOURCE_DIR}\\cmake\\packaging\\windows\\fastrtps.manifest")
+            unset(WINDOWS_SOURCE_DIR)
+        endif()
+
         set_target_properties(${PROJECT_NAME} PROPERTIES RELEASE_POSTFIX -${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR})
         set_target_properties(${PROJECT_NAME} PROPERTIES RELWITHDEBINFO_POSTFIX -${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR})
         set_target_properties(${PROJECT_NAME} PROPERTIES DEBUG_POSTFIX d-${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR})
