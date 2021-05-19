@@ -22,9 +22,9 @@
 
 #include <fastcdr/exceptions/BadParamException.h>
 
-namespace eprosima{
-namespace fastdds{
-namespace rtps{
+namespace eprosima {
+namespace fastdds {
+namespace rtps {
 
 #define TCPHEADER_SIZE 14
 
@@ -67,6 +67,7 @@ struct TCPHeader
     {
         return TCPHEADER_SIZE;
     }
+
 };
 
 union TCPTransactionId
@@ -84,7 +85,7 @@ union TCPTransactionId
         memcpy(ints, t.ints, 3 * sizeof(uint32_t));
     }
 
-    TCPTransactionId& operator++()
+    TCPTransactionId& operator ++()
     {
         if (ints[0] == 0xffffffff)
         {
@@ -111,39 +112,44 @@ union TCPTransactionId
         return *this;
     }
 
-    TCPTransactionId operator++(int)
+    TCPTransactionId operator ++(
+            int)
     {
         TCPTransactionId prev = *this;
         ++(*this);
         return prev;
     }
 
-
-    TCPTransactionId& operator=(const TCPTransactionId& t)
+    TCPTransactionId& operator =(
+            const TCPTransactionId& t)
     {
         memcpy(ints, t.ints, 3 * sizeof(uint32_t));
         return *this;
     }
 
-    TCPTransactionId& operator=(const fastrtps::rtps::octet* id)
+    TCPTransactionId& operator =(
+            const fastrtps::rtps::octet* id)
     {
         memcpy(octets, id, 12 * sizeof(fastrtps::rtps::octet));
         return *this;
     }
 
-    TCPTransactionId& operator=(const char* id)
+    TCPTransactionId& operator =(
+            const char* id)
     {
         memcpy(octets, id, 12 * sizeof(fastrtps::rtps::octet));
         return *this;
     }
 
-    TCPTransactionId& operator=(const uint32_t* id)
+    TCPTransactionId& operator =(
+            const uint32_t* id)
     {
         memcpy(ints, id, 3 * sizeof(uint32_t));
         return *this;
     }
 
-    TCPTransactionId& operator=(uint32_t id)
+    TCPTransactionId& operator =(
+            uint32_t id)
     {
         ints[0] = id;
         ints[1] = 0;
@@ -151,25 +157,31 @@ union TCPTransactionId
         return *this;
     }
 
-    TCPTransactionId& operator=(uint64_t id)
+    TCPTransactionId& operator =(
+            uint64_t id)
     {
         memset(ints, 0, sizeof(uint32_t) * 3);
         memcpy(ints, &id, sizeof(uint64_t));
         return *this;
     }
 
-    bool operator==(const TCPTransactionId& t) const
+    bool operator ==(
+            const TCPTransactionId& t) const
     {
         return memcmp(ints, t.ints, 3 * sizeof(uint32_t)) == 0;
     }
 
-    bool operator<(const TCPTransactionId& t) const
+    bool operator <(
+            const TCPTransactionId& t) const
     {
         return memcmp(ints, t.ints, 3 * sizeof(uint32_t)) < 0;
     }
+
 };
 
-inline std::ostream& operator<<(std::ostream& output,const TCPTransactionId& t)
+inline std::ostream& operator <<(
+        std::ostream& output,
+        const TCPTransactionId& t)
 {
     bool printed = false; // Don't skip cases like 99 0 34
     for (int i = 2; i >= 0; --i)
@@ -205,6 +217,7 @@ class TCPControlMsgHeader
     TCPTransactionId transaction_id_; // 12 bytes
 
 public:
+
     TCPControlMsgHeader()
     {
         kind_ = static_cast<TCPCPMKind>(0x00);
@@ -212,7 +225,8 @@ public:
         length_ = 0;
     }
 
-    void kind(TCPCPMKind kind)
+    void kind(
+            TCPCPMKind kind)
     {
         kind_ = kind;
     }
@@ -227,7 +241,8 @@ public:
         return kind_;
     }
 
-    void length(uint16_t length)
+    void length(
+            uint16_t length)
     {
         length_ = length;
     }
@@ -242,7 +257,8 @@ public:
         return length_;
     }
 
-    void transaction_id(TCPTransactionId transaction_id)
+    void transaction_id(
+            TCPTransactionId transaction_id)
     {
         transaction_id_ = transaction_id;
     }
@@ -269,7 +285,8 @@ public:
         flags_ = e | p | r;
     }
 
-    void endianess(fastrtps::rtps::Endianness_t endianess)
+    void endianess(
+            fastrtps::rtps::Endianness_t endianess)
     {
         // Endianess flag has inverse logic than Endianness_t :-/
         if (endianess == fastrtps::rtps::Endianness_t::BIGEND)
@@ -282,7 +299,8 @@ public:
         }
     }
 
-    void payload(bool payload)
+    void payload(
+            bool payload)
     {
         if (payload)
         {
@@ -294,7 +312,8 @@ public:
         }
     }
 
-    void requires_response(bool requires_response)
+    void requires_response(
+            bool requires_response)
     {
         if (requires_response)
         {
@@ -325,6 +344,7 @@ public:
     {
         return 16;
     }
+
 };
 
 
