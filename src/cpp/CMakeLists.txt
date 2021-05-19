@@ -679,7 +679,24 @@ elseif(NOT EPROSIMA_INSTALLER)
 
     # Add fastrtps dependencies in its CMake config file.
     if(LINK_SSL)
-        set(FASTRTPS_PACKAGE_OPT_DEPS "find_package(OpenSSL REQUIRED)")
+        if(INSTALLER_PLATFORM)
+            # OpenSSL dependency is only propagated on static linking
+            # We must use the deployed OpenSSL binaries to prevent compatibility issues
+            set(FASTRTPS_INSTALLER_DEPS_ANCILLARY "\
+function(find_fastdds_deployed_openssl)\n\
+    if(OPENSSL_FOUND AND NOT(OPENSSL_VERSION STREQUAL \"${OPENSSL_VERSION}\") )\n\
+        message(WARNING \"OpenSSL already loaded. Version \${OPENSSL_VERSION} differs from version ${OPENSSL_VERSION}, used in Fast-DDS binaries building, ABI issues may arise\")\n\
+    endif()\n\
+    set(OPENSSL_USE_STATIC_LIBS TRUE)\n\
+    set(OPENSSL_ROOT_DIR  \"\${PACKAGE_PREFIX_DIR}/lib/${INSTALLER_PLATFORM}\")\n\
+    find_package(OpenSSL REQUIRED)\n\
+endfunction()"
+            )
+            set(FASTRTPS_INSTALLER_OPT_DEPS "find_fastdds_deployed_openssl()")
+        else()
+            # colcon like installation uses framework provided OpenSSL
+            set(FASTRTPS_PACKAGE_OPT_DEPS "find_package(OpenSSL REQUIRED)")
+        endif()
     endif()
 
     configure_package_config_file(${PROJECT_SOURCE_DIR}/cmake/packaging/Config.cmake.in
