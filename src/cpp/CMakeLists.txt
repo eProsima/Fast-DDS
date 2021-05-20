@@ -466,10 +466,41 @@ elseif(NOT EPROSIMA_INSTALLER)
     if(MSVC OR MSVC_IDE)
 
         # On installed binaries use manifest to specify dependencies
-        if(INSTALLER_PLATFORM)
-            file(TO_NATIVE_PATH "${CMAKE_SOURCE_DIR}" WINDOWS_SOURCE_DIR)
-            target_link_options(${PROJECT_NAME} PRIVATE "/MANIFEST:EMBED" "/MANIFESTINPUT:${WINDOWS_SOURCE_DIR}\\cmake\\packaging\\windows\\fastrtps.manifest")
+        if(INSTALLER_PLATFORM AND OPENSSL_FOUND)
+
+            # Get Fast-DDS version suitable manifest format
+            set(FASTDDS_CANONICAL_VERSION ${fastrtps_VERSION})
+
+            if(NOT fastrtps_VERSION_MINOR)
+                set(FASTDDS_CANONICAL_VERSION "${FASTDDS_CANONICAL_VERSION}.0")
+            elseif( NOT fastrtps_VERSION_PATCH)
+                set(FASTDDS_CANONICAL_VERSION "${FASTDDS_CANONICAL_VERSION}.0")
+            elseif( NOT fastrtps_VERSION_TWEAK)
+                set(FASTDDS_CANONICAL_VERSION "${FASTDDS_CANONICAL_VERSION}.0")
+            endif()
+
+            # Get OpenSSL version suitable manifest format
+            execute_process( COMMAND PowerShell -NoLogo -Command "&{ param([string]$original) 
+                $original.Substring(0,$original.length-1) + '.' +
+                ([int]$original[$original.length-1]-[int][char]'a'+1) }" -original ${OPENSSL_VERSION}
+                OUTPUT_VARIABLE OPENSSL_CANONICAL_VERSION
+                )
+            string(STRIP ${OPENSSL_CANONICAL_VERSION} OPENSSL_CANONICAL_VERSION)
+
+            # replace the values in the manifest template
+            configure_file(
+                "${CMAKE_SOURCE_DIR}/cmake/packaging/windows/fastrtps.manifest.in"
+                "${CMAKE_CURRENT_BINARY_DIR}/fastrtps.manifest"
+                @ONLY
+                )
+
+            file(TO_NATIVE_PATH "${CMAKE_CURRENT_BINARY_DIR}/fastrtps.manifest" MANIFEST_FILE_PATH)
+            target_link_options(${PROJECT_NAME} PRIVATE "/MANIFEST:EMBED" "/MANIFESTINPUT:${MANIFEST_FILE_PATH}")
+
             unset(WINDOWS_SOURCE_DIR)
+            unset(FASTDDS_CANONICAL_VERSION)
+            unset(OPENSSL_CANONICAL_VERSION)
+            unset(MANIFEST_FILE_PATH)
         endif()
 
         set_target_properties(${PROJECT_NAME} PROPERTIES RELEASE_POSTFIX -${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR})
