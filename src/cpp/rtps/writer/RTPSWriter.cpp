@@ -17,21 +17,28 @@
  *
  */
 
-#include <fastdds/rtps/writer/RTPSWriter.h>
-
-#include <fastdds/dds/log/Log.hpp>
-
-#include <fastdds/rtps/history/WriterHistory.h>
-#include <fastdds/rtps/messages/RTPSMessageCreator.h>
+#include <mutex>
 
 #include <rtps/history/BasicPayloadPool.hpp>
 #include <rtps/history/CacheChangePool.h>
+
 #include <rtps/DataSharing/DataSharingNotifier.hpp>
 #include <rtps/DataSharing/WriterPool.hpp>
+
 #include <rtps/flowcontrol/FlowController.h>
+
 #include <rtps/participant/RTPSParticipantImpl.h>
 
-#include <mutex>
+#include <fastdds/dds/log/Log.hpp>
+
+#include <fastdds/rtps/writer/RTPSWriter.h>
+
+#include <fastdds/rtps/history/WriterHistory.h>
+
+#include <fastdds/rtps/messages/RTPSMessageCreator.h>
+
+#include <statistics/rtps/StatisticsBase.hpp>
+#include <statistics/rtps/messages/RTPSStatisticsMessages.hpp>
 
 namespace eprosima {
 namespace fastrtps {
@@ -298,6 +305,10 @@ uint32_t RTPSWriter::calculateMaxDataSize(
     }
 #endif // if HAVE_SECURITY
 
+#ifdef FASTDDS_STATISTICS
+    maxDataSize -= eprosima::fastdds::statistics::rtps::statistics_submessage_length;
+#endif // FASTDDS_STATISTICS
+
     return maxDataSize;
 }
 
@@ -360,7 +371,8 @@ bool RTPSWriter::send(
     RTPSParticipantImpl* participant = getRTPSParticipant();
 
     return locator_selector_.selected_size() == 0 ||
-           participant->sendSync(message, locator_selector_.begin(), locator_selector_.end(), max_blocking_time_point);
+           participant->sendSync(message, m_guid, locator_selector_.begin(),
+                   locator_selector_.end(), max_blocking_time_point);
 }
 
 const LivelinessQosPolicyKind& RTPSWriter::get_liveliness_kind() const
@@ -413,6 +425,35 @@ bool RTPSWriter::is_pool_initialized() const
         return pool->is_initialized();
     }
     return true;
+}
+
+#ifdef FASTDDS_STATISTICS
+
+bool RTPSWriter::add_statistics_listener(
+        std::shared_ptr<fastdds::statistics::IListener> listener)
+{
+    return add_statistics_listener_impl(listener);
+}
+
+bool RTPSWriter::remove_statistics_listener(
+        std::shared_ptr<fastdds::statistics::IListener> listener)
+{
+    return remove_statistics_listener_impl(listener);
+}
+
+#endif // FASTDDS_STATISTICS
+
+void RTPSWriter::add_statistics_sent_submessage(
+        CacheChange_t* change,
+        size_t num_locators)
+{
+    static_cast<void>(change);
+    static_cast<void>(num_locators);
+
+#ifdef FASTDDS_STATISTICS
+    change->num_sent_submessages += num_locators;
+    on_data_generated(num_locators);
+#endif // ifdef FASTDDS_STATISTICS
 }
 
 }  // namespace rtps

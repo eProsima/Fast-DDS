@@ -65,27 +65,10 @@ public:
             return false;
         }
 
-        // Look for a free payload that is recyclable
-        PayloadNode* payload = nullptr;
-        for (auto it = free_payloads_.begin(); it != free_payloads_.end(); ++it)
-        {
-            if (writer_->is_datasharing_payload_reusable((*it)->source_timestamp()))
-            {
-                payload = *it;
-                free_payloads_.erase(it);
-                break;
-            }
-        }
-        if (payload == nullptr)
-        {
-            return false;
-        }
-
-        payload->mutex().lock();
+        PayloadNode* payload = free_payloads_.front();
+        free_payloads_.pop_front();
         // Reset all the metadata to signal the reader that the payload is dirty
         payload->reset();
-        // Now we can unlock
-        payload->mutex().unlock();
 
         cache_change.serializedPayload.data = payload->data();
         cache_change.serializedPayload.max_size = max_data_size_;
@@ -140,7 +123,14 @@ public:
 
         // Payloads are reset on the `get` operation, the `release` leaves the data to give more chances to the reader
         PayloadNode* payload = PayloadNode::get_from_data(cache_change.serializedPayload.data);
-        free_payloads_.push_back(payload);
+        if (payload->has_been_removed())
+        {
+            advance_till_first_non_removed();
+        }
+        else
+        {
+            free_payloads_.push_back(payload);
+        }
         logInfo(DATASHARING_PAYLOADPOOL, "Change released with SN " << cache_change.sequenceNumber);
 
         return DataSharingPayloadPool::release_payload(cache_change);
@@ -264,7 +254,6 @@ public:
 
         // Fill the payload metadata with the change info
         PayloadNode* node = PayloadNode::get_from_data(cache_change->serializedPayload.data);
-        node->sequence_number(cache_change->sequenceNumber);
         node->status(ALIVE);
         node->data_length(cache_change->serializedPayload.length);
         node->source_timestamp(cache_change->sourceTimestamp);
@@ -274,6 +263,9 @@ public:
         {
             node->related_sample_identity(cache_change->write_params.related_sample_identity());
         }
+
+        // Set the sequence number last, it signals the data is ready
+        node->sequence_number(cache_change->sequenceNumber);
 
         // Add it to the history
         history_[static_cast<uint32_t>(descriptor_->notified_end)] = segment_->get_offset_from_address(node);
@@ -286,9 +278,9 @@ public:
     /**
      * Removes the payload's offset from the shared history
      *
-     * Payloads must be removed from the history in the same order
-     * they where added, i.e., payload for sequence number 7
-     * cannot be removed before payload for sequence number 5.
+     * Payloads don't need to be removed from the history in the same order
+     * they where added, but a payload will not be available through @ref get_payload until all
+     * payloads preceding it have been removed from the shared history.
      */
     void remove_from_shared_history(
             const CacheChange_t* cache_change)
@@ -299,14 +291,29 @@ public:
         assert(descriptor_->notified_end != descriptor_->notified_begin);
         assert(free_history_size_ < descriptor_->history_size);
 
-        PayloadNode* payload = PayloadNode::get_from_data(cache_change->serializedPayload.data);
-        assert(segment_->get_offset_from_address(
-                    payload) == history_[static_cast<uint32_t>(descriptor_->notified_begin)]);
-        (void)payload;
         logInfo(DATASHARING_PAYLOADPOOL, "Change removed from shared history"
                 << " with SN " << cache_change->sequenceNumber);
-        advance(descriptor_->notified_begin);
-        ++free_history_size_;
+
+        PayloadNode* payload = PayloadNode::get_from_data(cache_change->serializedPayload.data);
+        payload->has_been_removed(true);
+    }
+
+    void advance_till_first_non_removed()
+    {
+        while (descriptor_->notified_begin != descriptor_->notified_end)
+        {
+            auto offset = history_[static_cast<uint32_t>(descriptor_->notified_begin)];
+            auto payload = static_cast<PayloadNode*>(segment_->get_address_from_offset(offset));
+            if (!payload->has_been_removed())
+            {
+                break;
+            }
+
+            payload->has_been_removed(false);
+            free_payloads_.push_back(payload);
+            advance(descriptor_->notified_begin);
+            ++free_history_size_;
+        }
     }
 
     void assert_liveliness()

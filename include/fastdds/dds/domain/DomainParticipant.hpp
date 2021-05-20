@@ -353,7 +353,7 @@ public:
      * @param handle Identifier of the datawriter to ignore
      * @return RETURN_OK code if everything correct, error code otherwise
      */
-    RTPS_DllAPI ReturnCode_t ignore_publictaion(
+    RTPS_DllAPI ReturnCode_t ignore_publication(
             const InstanceHandle_t& handle);
 
     /**
@@ -583,7 +583,7 @@ public:
     /**
      * This operation checks whether or not the given handle represents an Entity that was created from the
      * DomainParticipant.
-     * @param handle InstanceHandle of the entity to look for.
+     * @param a_handle InstanceHandle of the entity to look for.
      * @param recursive The containment applies recursively. That is, it applies both to entities
      * (TopicDescription, Publisher, or Subscriber) created directly using the DomainParticipant as well as
      * entities created using a contained Publisher, or Subscriber as the factory, and so forth. (default: true)

@@ -85,7 +85,7 @@ protected:
 
 public:
 
-    ReturnCode_t enable();
+    virtual ReturnCode_t enable();
 
     ReturnCode_t get_qos(
             DomainParticipantQos& qos) const;
@@ -373,7 +373,7 @@ public:
             std::function<void(const std::string& name, const fastrtps::types::DynamicType_ptr type)>& callback);
 
     //! Remove all listeners in the hierarchy to allow a quiet destruction
-    void disable();
+    virtual void disable();
 
     /**
      * This method checks if the DomainParticipant has created an entity that has not been
@@ -530,6 +530,14 @@ protected:
     bool check_get_dependencies_request(
             const fastrtps::rtps::SampleIdentity& requestId,
             const fastrtps::types::TypeIdentifierWithSizeSeq& dependencies);
+
+    virtual PublisherImpl* create_publisher_impl(
+            const PublisherQos& qos,
+            PublisherListener* listener);
+
+    virtual SubscriberImpl* create_subscriber_impl(
+            const SubscriberQos& qos,
+            SubscriberListener* listener);
 
     // Always call it with the mutex already taken
     void remove_parent_request(

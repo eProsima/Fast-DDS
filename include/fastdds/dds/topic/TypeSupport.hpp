@@ -57,25 +57,39 @@ public:
     using Base::operator ->;
     using Base::operator *;
     using Base::operator bool;
-    using Base::operator =;
 
     /**
      * @brief Constructor
      */
-    RTPS_DllAPI TypeSupport()
-        : std::shared_ptr<fastdds::dds::TopicDataType>(nullptr)
-    {
-    }
+    RTPS_DllAPI TypeSupport() noexcept = default;
 
     /**
      * @brief Copy Constructor
      * @param type Another instance of TypeSupport
      */
     RTPS_DllAPI TypeSupport(
-            const TypeSupport& type)
-        : std::shared_ptr<fastdds::dds::TopicDataType>(type)
-    {
-    }
+            const TypeSupport& type) noexcept = default;
+
+    /**
+     * @brief Move Constructor
+     * @param type Another instance of TypeSupport
+     */
+    RTPS_DllAPI TypeSupport(
+            TypeSupport&& type) noexcept = default;
+
+    /**
+     * @brief Copy Assignment
+     * @param type Another instance of TypeSupport
+     */
+    RTPS_DllAPI TypeSupport& operator = (
+            const TypeSupport& type) noexcept = default;
+
+    /**
+     * @brief Move Assignment
+     * @param type Another instance of TypeSupport
+     */
+    RTPS_DllAPI TypeSupport& operator = (
+            TypeSupport&& type) noexcept = default;
 
     /*!
      * \brief TypeSupport constructor that receives a TopicDataType pointer.
@@ -138,10 +152,7 @@ public:
      */
     RTPS_DllAPI virtual bool serialize(
             void* data,
-            fastrtps::rtps::SerializedPayload_t* payload)
-    {
-        return get()->serialize(data, payload);
-    }
+            fastrtps::rtps::SerializedPayload_t* payload);
 
     /**
      * @brief Deserializes the data
@@ -151,10 +162,7 @@ public:
      */
     RTPS_DllAPI virtual bool deserialize(
             fastrtps::rtps::SerializedPayload_t* payload,
-            void* data)
-    {
-        return get()->deserialize(payload, data);
-    }
+            void* data);
 
     /**
      * @brief Getter for the SerializedSizeProvider

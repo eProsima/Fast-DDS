@@ -36,13 +36,13 @@
 #include <fastdds/rtps/reader/RTPSReader.h>
 #include <fastdds/rtps/resources/ResourceEvent.h>
 #include <fastdds/rtps/resources/TimedEvent.h>
+#include <fastdds/core/policy/QosPolicyUtils.hpp>
 
 #include <fastdds/subscriber/SubscriberImpl.hpp>
 #include <fastdds/subscriber/DataReaderImpl/ReadTakeCommand.hpp>
 #include <fastdds/subscriber/DataReaderImpl/StateFilter.hpp>
 
 #include <fastrtps/utils/TimeConversion.h>
-#include <utils/Host.hpp>
 #include <fastrtps/subscriber/SampleInfo.h>
 
 #include <rtps/history/TopicPayloadPoolRegistry.hpp>
@@ -115,7 +115,7 @@ static bool qos_has_specific_locators(
 
 DataReaderImpl::DataReaderImpl(
         SubscriberImpl* s,
-        TypeSupport& type,
+        const TypeSupport& type,
         TopicDescription* topic,
         const DataReaderQos& qos,
         DataReaderListener* listener)
@@ -202,13 +202,7 @@ ReturnCode_t DataReaderImpl::enable()
         DataSharingQosPolicy datasharing(qos_.data_sharing());
         if (datasharing.domain_ids().empty())
         {
-            uint64_t id = 0;
-            Host::uint48 mac_id = Host::instance().mac_id();
-            for (size_t i = 0; i < Host::mac_id_length; ++i)
-            {
-                id |= mac_id.value[i] << (64 - i);
-            }
-            datasharing.add_domain_id(id);
+            datasharing.add_domain_id(utils::default_domain_id());
         }
         att.endpoint.set_data_sharing_configuration(datasharing);
     }
@@ -1386,7 +1380,15 @@ DataReaderListener* DataReaderImpl::get_listener_for(
 
 std::shared_ptr<IPayloadPool> DataReaderImpl::get_payload_pool()
 {
-    PoolConfig config = PoolConfig::from_history_attributes(history_.m_att );
+    // When the user requested PREALLOCATED_WITH_REALLOC, but we know the type cannot
+    // grow, we translate the policy into bare PREALLOCATED
+    if (PREALLOCATED_WITH_REALLOC_MEMORY_MODE == history_.m_att.memoryPolicy &&
+            (type_->is_bounded() || type_->is_plain()))
+    {
+        history_.m_att.memoryPolicy = PREALLOCATED_MEMORY_MODE;
+    }
+
+    PoolConfig config = PoolConfig::from_history_attributes(history_.m_att);
 
     if (!payload_pool_)
     {

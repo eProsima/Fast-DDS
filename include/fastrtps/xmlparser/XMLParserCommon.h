@@ -289,6 +289,7 @@ extern const char* STATIC;
 extern const char* PUBWRITER_SUBREADER;
 extern const char* PUBREADER_SUBWRITER;
 extern const char* STATIC_ENDPOINT_XML;
+extern const char* STATIC_ENDPOINT_XML_URI;
 extern const char* READER_HIST_MEM_POLICY;
 extern const char* WRITER_HIST_MEM_POLICY;
 extern const char* READER_PAYLOAD_SIZE;

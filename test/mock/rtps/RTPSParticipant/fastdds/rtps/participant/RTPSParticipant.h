@@ -86,6 +86,27 @@ public:
         return true;
     }
 
+#ifdef FASTDDS_STATISTICS
+
+    template<typename T>
+    bool add_statistics_listener(
+            T /*listener*/,
+            uint32_t /*kind*/)
+    {
+        return true;
+    }
+
+    template<typename T>
+    bool remove_statistics_listener(
+            T /*listener*/,
+            uint32_t /*kind*/)
+    {
+        return true;
+    }
+
+#endif // FASTDDS_STATISTICS
+
+
     const GUID_t& getGuid() const
     {
         return m_guid;

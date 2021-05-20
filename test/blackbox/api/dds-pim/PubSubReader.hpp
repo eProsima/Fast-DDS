@@ -247,7 +247,8 @@ public:
 
     PubSubReader(
             const std::string& topic_name,
-            bool take = true)
+            bool take = true,
+            bool statistics = false)
         : participant_listener_(*this)
         , listener_(*this)
         , participant_(nullptr)
@@ -266,6 +267,7 @@ public:
         , onDiscovery_(nullptr)
         , onEndpointDiscovery_(nullptr)
         , take_(take)
+        , statistics_(statistics)
 #if HAVE_SECURITY
         , authorized_(0)
         , unauthorized_(0)
@@ -279,9 +281,12 @@ public:
         , message_receive_count_(0)
     {
         // Generate topic name
-        std::ostringstream t;
-        t << topic_name_ << "_" << asio::ip::host_name() << "_" << GET_PID();
-        topic_name_ = t.str();
+        if (!statistics)
+        {
+            std::ostringstream t;
+            t << topic_name_ << "_" << asio::ip::host_name() << "_" << GET_PID();
+            topic_name_ = t.str();
+        }
 
         if (enable_datasharing)
         {
@@ -1065,7 +1070,7 @@ public:
     {
         participant_qos_.wire_protocol().builtin.discovery_config.use_SIMPLE_EndpointDiscoveryProtocol = false;
         participant_qos_.wire_protocol().builtin.discovery_config.use_STATIC_EndpointDiscoveryProtocol = true;
-        participant_qos_.wire_protocol().builtin.discovery_config.setStaticEndpointXMLFilename(filename);
+        participant_qos_.wire_protocol().builtin.discovery_config.static_edp_xml_config(filename);
         return *this;
     }
 
@@ -1534,6 +1539,9 @@ private:
 
     //! True to take data from history. False to read
     bool take_;
+
+    //! True if the class is called from the statistics blackbox (specific topic name and domain id).
+    bool statistics_;
 
 #if HAVE_SECURITY
     std::mutex mutexAuthentication_;

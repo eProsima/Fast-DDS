@@ -273,6 +273,7 @@ const char* STATIC = "STATIC";
 const char* PUBWRITER_SUBREADER = "PUBWRITER_SUBREADER";
 const char* PUBREADER_SUBWRITER = "PUBREADER_SUBWRITER";
 const char* STATIC_ENDPOINT_XML = "staticEndpointXMLFilename";
+const char* STATIC_ENDPOINT_XML_URI = "static_edp_xml_config";
 const char* READER_HIST_MEM_POLICY = "readerHistoryMemoryPolicy";
 const char* WRITER_HIST_MEM_POLICY = "writerHistoryMemoryPolicy";
 const char* READER_PAYLOAD_SIZE = "readerPayloadSize";

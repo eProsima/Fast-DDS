@@ -35,11 +35,11 @@
 
 #include <fastdds/dds/log/Log.hpp>
 #include <fastrtps/utils/TimeConversion.h>
-#include <utils/Host.hpp>
 #include <fastdds/rtps/resources/ResourceEvent.h>
 #include <fastdds/rtps/resources/TimedEvent.h>
 #include <fastdds/rtps/builtin/liveliness/WLP.h>
 #include <fastdds/core/policy/ParameterSerializer.hpp>
+#include <fastdds/core/policy/QosPolicyUtils.hpp>
 
 #include <rtps/history/TopicPayloadPoolRegistry.hpp>
 #include <rtps/DataSharing/DataSharingPayloadPool.hpp>
@@ -55,6 +55,13 @@ using namespace std::chrono;
 namespace eprosima {
 namespace fastdds {
 namespace dds {
+
+static bool qos_has_pull_mode_request(
+        const DataWriterQos& qos)
+{
+    auto push_mode = PropertyPolicyHelper::find_property(qos.properties(), "fastdds.push_mode");
+    return (nullptr != push_mode) && ("false" == *push_mode);
+}
 
 class DataWriterImpl::LoanCollection
 {
@@ -134,6 +141,16 @@ DataWriterImpl::DataWriterImpl(
 {
 }
 
+fastrtps::rtps::RTPSWriter* DataWriterImpl::create_rtps_writer(
+        fastrtps::rtps::RTPSParticipant* p,
+        fastrtps::rtps::WriterAttributes& watt,
+        const std::shared_ptr<IPayloadPool>& payload_pool,
+        fastrtps::rtps::WriterHistory* hist,
+        fastrtps::rtps::WriterListener* listen)
+{
+    return RTPSDomain::createRTPSWriter(p, watt, payload_pool, hist, listen);
+}
+
 ReturnCode_t DataWriterImpl::enable()
 {
     assert(writer_ == nullptr);
@@ -205,13 +222,7 @@ ReturnCode_t DataWriterImpl::enable()
         DataSharingQosPolicy datasharing(qos_.data_sharing());
         if (datasharing.domain_ids().empty())
         {
-            uint64_t id = 0;
-            Host::uint48 mac_id = Host::instance().mac_id();
-            for (size_t i = 0; i < Host::mac_id_length; ++i)
-            {
-                id |= mac_id.value[i] << (64 - i);
-            }
-            datasharing.add_domain_id(id);
+            datasharing.add_domain_id(utils::default_domain_id());
         }
         w_att.endpoint.set_data_sharing_configuration(datasharing);
     }
@@ -229,7 +240,7 @@ ReturnCode_t DataWriterImpl::enable()
         return ReturnCode_t::RETCODE_ERROR;
     }
 
-    RTPSWriter* writer = RTPSDomain::createRTPSWriter(
+    RTPSWriter* writer = create_rtps_writer(
         publisher_->rtps_participant(),
         w_att, pool,
         static_cast<WriterHistory*>(&history_),
@@ -309,6 +320,15 @@ ReturnCode_t DataWriterImpl::enable()
                         return lifespan_expired();
                     },
                     qos_.lifespan().duration.to_ns() * 1e-6);
+
+    // In case it has been loaded from the persistence DB, expire old samples.
+    if (qos_.lifespan().duration != c_TimeInfinite)
+    {
+        if (lifespan_expired())
+        {
+            lifespan_timer_->restart_timer();
+        }
+    }
 
     // REGISTER THE WRITER
     WriterQos wqos = qos_.get_writerqos(get_publisher()->get_qos(), topic_->get_qos());
@@ -686,7 +706,7 @@ ReturnCode_t DataWriterImpl::perform_create_new_change(
     bool was_loaned = check_and_remove_loan(data, payload);
     if (!was_loaned)
     {
-        if (!get_free_payload_from_pool(type_->getSerializedSizeProvider(data), payload, max_blocking_time))
+        if (!get_free_payload_from_pool(type_->getSerializedSizeProvider(data), payload))
         {
             return ReturnCode_t::RETCODE_OUT_OF_RESOURCES;
         }
@@ -1332,6 +1352,20 @@ ReturnCode_t DataWriterImpl::check_qos(
         logError(RTPS_QOS_CHECK, "Unique network flows not supported on writers");
         return ReturnCode_t::RETCODE_UNSUPPORTED;
     }
+    bool is_pull_mode = qos_has_pull_mode_request(qos);
+    if (is_pull_mode)
+    {
+        if (BEST_EFFORT_RELIABILITY_QOS == qos.reliability().kind)
+        {
+            logError(RTPS_QOS_CHECK, "BEST_EFFORT incompatible with pull mode");
+            return ReturnCode_t::RETCODE_INCONSISTENT_POLICY;
+        }
+        if (c_TimeInfinite == qos.reliable_writer_qos().times.heartbeatPeriod)
+        {
+            logError(RTPS_QOS_CHECK, "Infinite heartbeat period incompatible with pull mode");
+            return ReturnCode_t::RETCODE_INCONSISTENT_POLICY;
+        }
+    }
     if (qos.reliability().kind == BEST_EFFORT_RELIABILITY_QOS && qos.ownership().kind == EXCLUSIVE_OWNERSHIP_QOS)
     {
         logError(RTPS_QOS_CHECK, "BEST_EFFORT incompatible with EXCLUSIVE ownership");
@@ -1459,15 +1493,15 @@ std::shared_ptr<IPayloadPool> DataWriterImpl::get_payload_pool()
 {
     if (!payload_pool_)
     {
-        PoolConfig config = PoolConfig::from_history_attributes(history_.m_att);
-
         // When the user requested PREALLOCATED_WITH_REALLOC, but we know the type cannot
         // grow, we translate the policy into bare PREALLOCATED
-        if (PREALLOCATED_WITH_REALLOC_MEMORY_MODE == config.memory_policy &&
+        if (PREALLOCATED_WITH_REALLOC_MEMORY_MODE == history_.m_att.memoryPolicy &&
                 (type_->is_bounded() || type_->is_plain()))
         {
-            config.memory_policy = PREALLOCATED_MEMORY_MODE;
+            history_.m_att.memoryPolicy = PREALLOCATED_MEMORY_MODE;
         }
+
+        PoolConfig config = PoolConfig::from_history_attributes(history_.m_att);
 
         // Avoid calling the serialization size functors on PREALLOCATED mode
         fixed_payload_size_ = config.memory_policy == PREALLOCATED_MEMORY_MODE ? config.payload_initial_size : 0u;

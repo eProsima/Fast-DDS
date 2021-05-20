@@ -62,21 +62,6 @@ struct pool_size_helper
      */
     static constexpr size_t node_size = node_size_value;
 
-#ifdef FOONATHAN_MEMORY_MEMORY_POOL_HAS_MIN_BLOCK_SIZE
-
-    /**
-     * Pool size required to store a certain number of nodes.
-     * This is the value to be used as first parameter on the memory_pool constructor.
-     */
-    template<typename Pool>
-    static CONSTEXPR_FUNC size_t min_pool_size(
-            size_t num_nodes)
-    {
-        return Pool::min_block_size(node_size, num_nodes ? num_nodes : 1);
-    }
-
-#else
-
     /**
      * Pool size required to store a certain number of nodes.
      * This is the value to be used as first parameter on the memory_pool constructor.
@@ -87,7 +72,7 @@ struct pool_size_helper
     {
         return
             // Book-keeping area for a block in the memory arena
-            fm::detail::memory_block_stack::implementation_offset +
+            additional_size_per_pool() +
             // At least one node
             (num_nodes ? num_nodes : 1) * min_size_per_node<Pool>();
     }
@@ -99,14 +84,22 @@ private:
     {
         // Node size with minimum, plus debug space
         return
-            additional_size_per_node +
-            ((node_size > Pool::min_node_size) ? node_size : Pool::min_node_size);
+            (((node_size > Pool::min_node_size) ? node_size : Pool::min_node_size)
+#if FOONATHAN_MEMORY_DEBUG_DOUBLE_DEALLOC_CHECK
+            * (fm::detail::debug_fence_size ? 3 : 1));
+#else
+            + (fm::detail::debug_fence_size ? 2 * fm::detail::max_alignment : 0));
+#endif // if FOONATHAN_MEMORY_DEBUG_DOUBLE_DEALLOC_CHECK
     }
 
-    static constexpr size_t additional_size_per_node =
-            fm::detail::debug_fence_size ? 2 * fm::detail::max_alignment : 0;
-
+    static CONSTEXPR_FUNC size_t additional_size_per_pool()
+    {
+#ifdef FOONATHAN_MEMORY_MEMORY_POOL_HAS_MIN_BLOCK_SIZE
+        return fm::detail::memory_block_stack::implementation_offset();
+#else
+        return fm::detail::memory_block_stack::implementation_offset;
 #endif  // FOONATHAN_MEMORY_MEMORY_POOL_HAS_MIN_BLOCK_SIZE
+    }
 
 };
 

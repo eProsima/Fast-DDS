@@ -277,6 +277,11 @@ public:
             datawriter_qos_.data_sharing().off();
         }
 
+        if (use_pull_mode)
+        {
+            datawriter_qos_.properties().properties().emplace_back("fastdds.push_mode", "false");
+        }
+
         // By default, memory mode is preallocated (the most restritive)
         datawriter_qos_.endpoint().history_memory_policy = eprosima::fastrtps::rtps::PREALLOCATED_MEMORY_MODE;
 
@@ -723,6 +728,13 @@ public:
         return *this;
     }
 
+    PubSubWriter& mem_policy(
+            const eprosima::fastrtps::rtps::MemoryManagementPolicy mem_policy)
+    {
+        datawriter_qos_.endpoint().history_memory_policy = mem_policy;
+        return *this;
+    }
+
     PubSubWriter& deadline_period(
             const eprosima::fastrtps::Duration_t deadline_period)
     {
@@ -1083,7 +1095,7 @@ public:
     {
         participant_qos_.wire_protocol().builtin.discovery_config.use_SIMPLE_EndpointDiscoveryProtocol = false;
         participant_qos_.wire_protocol().builtin.discovery_config.use_STATIC_EndpointDiscoveryProtocol = true;
-        participant_qos_.wire_protocol().builtin.discovery_config.setStaticEndpointXMLFilename(filename);
+        participant_qos_.wire_protocol().builtin.discovery_config.static_edp_xml_config(filename);
         return *this;
     }
 

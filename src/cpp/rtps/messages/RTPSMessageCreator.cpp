@@ -78,6 +78,13 @@ bool RTPSMessageCreator::addSubmessageHeader(
         octet flags,
         uint16_t size)
 {
+#if FASTDDS_IS_BIG_ENDIAN_TARGET
+    msg->msg_endian = BIGEND;
+#else
+    flags = flags | BIT(0);
+    msg->msg_endian = LITTLEEND;
+#endif // if FASTDDS_IS_BIG_ENDIAN_TARGET
+
     CDRMessage::addOctet(msg, id);
     CDRMessage::addOctet(msg, flags);
     CDRMessage::addUInt16(msg, size);

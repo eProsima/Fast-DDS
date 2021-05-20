@@ -610,6 +610,13 @@ public:
         return *this;
     }
 
+    PubSubWriter& mem_policy(
+            const eprosima::fastrtps::rtps::MemoryManagementPolicy mem_policy)
+    {
+        publisher_attr_.historyMemoryPolicy = mem_policy;
+        return *this;
+    }
+
     PubSubWriter& deadline_period(
             const eprosima::fastrtps::Duration_t deadline_period)
     {
@@ -961,7 +968,7 @@ public:
     {
         participant_attr_.rtps.builtin.discovery_config.use_SIMPLE_EndpointDiscoveryProtocol = false;
         participant_attr_.rtps.builtin.discovery_config.use_STATIC_EndpointDiscoveryProtocol = true;
-        participant_attr_.rtps.builtin.discovery_config.setStaticEndpointXMLFilename(filename);
+        participant_attr_.rtps.builtin.discovery_config.static_edp_xml_config(filename);
         return *this;
     }
 

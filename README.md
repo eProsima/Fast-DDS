@@ -93,7 +93,7 @@ choco install -y -s <PATH\TO\DOWNLOADS\> asio tinyxml2
 Please replace `<PATH\TO\DOWNLOADS>` with the folder you downloaded the packages to.
 
 #### Colcon installation
-*******************
+
 [colcon](https://colcon.readthedocs.io) is a command line tool to build sets of software packages.
 This section explains to use it to compile easily Fast-RTPS and its dependencies.
 First install ROS2 development tools (colcon and vcstool):
@@ -119,7 +119,7 @@ $ colcon build
 ```
 
 #### Manual installation
-*******************
+
 Before compiling manually Fast DDS you need to clone the following dependencies and compile them using
 [CMake](https://cmake.org).
 

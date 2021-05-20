@@ -13,7 +13,7 @@
 # limitations under the License.
 
 ###############################################################################
-# CMake build rules for FastRTPS
+# CMake build rules for Fast DDS
 ###############################################################################
 cmake_minimum_required(VERSION 3.5)
 cmake_policy(VERSION 3.5...3.13)
@@ -219,6 +219,11 @@ option(BUILD_SHARED_LIBS "Create shared libraries by default" ON)
 ###############################################################################
 include(${PROJECT_SOURCE_DIR}/cmake/common/eprosima_libraries.cmake)
 
+# if we are building Fast-DDS as a static library we must load Fast-CDR as one
+if(NOT BUILD_SHARED_LIBS)
+    set(FASTDDS_STATIC ON)
+endif()
+
 eprosima_find_package(fastcdr REQUIRED)
 eprosima_find_thirdparty(Asio asio VERSION 1.10.8)
 eprosima_find_thirdparty(TinyXML2 tinyxml2)
@@ -333,6 +338,11 @@ option(COMPILE_TOOLS "Build tools" ON)
 if(EPROSIMA_BUILD AND IS_TOP_LEVEL)
     set(COMPILE_TOOLS ON)
 endif()
+
+###############################################################################
+# Fast DDS statistics tool default setup
+###############################################################################
+option(FASTDDS_STATISTICS "Enable Fast DDS Statistics Module" OFF)
 
 ###############################################################################
 # Compile library.

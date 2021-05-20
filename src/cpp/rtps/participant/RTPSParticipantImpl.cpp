@@ -19,13 +19,29 @@
 
 #include <rtps/participant/RTPSParticipantImpl.h>
 
+#include <algorithm>
+#include <functional>
+#include <memory>
+#include <mutex>
+
 #include <rtps/flowcontrol/ThroughputController.h>
 #include <rtps/persistence/PersistenceService.h>
 #include <rtps/history/BasicPayloadPool.hpp>
 
+#include <fastrtps/utils/IPFinder.h>
+#include <fastrtps/utils/Semaphore.h>
+
+#include <fastrtps/xmlparser/XMLProfileManager.h>
+
+#include <fastdds/dds/log/Log.hpp>
+
+#include <fastdds/rtps/RTPSDomain.h>
+
 #include <fastdds/rtps/messages/MessageReceiver.h>
 
 #include <fastdds/rtps/history/WriterHistory.h>
+
+#include <fastdds/rtps/participant/RTPSParticipant.h>
 
 #include <fastdds/rtps/writer/StatelessWriter.h>
 #include <fastdds/rtps/writer/StatefulWriter.h>
@@ -37,29 +53,17 @@
 #include <fastdds/rtps/reader/StatelessPersistentReader.h>
 #include <fastdds/rtps/reader/StatefulPersistentReader.h>
 
-#include <fastdds/rtps/participant/RTPSParticipant.h>
 #include <fastdds/rtps/transport/UDPv4TransportDescriptor.h>
 #include <fastdds/rtps/transport/TCPv4TransportDescriptor.h>
 #include <fastdds/rtps/transport/TCPv6TransportDescriptor.h>
 #include <fastdds/rtps/transport/shared_mem/SharedMemTransportDescriptor.h>
-
-#include <fastdds/rtps/RTPSDomain.h>
 
 #include <fastdds/rtps/builtin/BuiltinProtocols.h>
 #include <fastdds/rtps/builtin/discovery/participant/PDPSimple.h>
 #include <fastdds/rtps/builtin/data/ParticipantProxyData.h>
 #include <fastdds/rtps/builtin/liveliness/WLP.h>
 
-#include <fastrtps/utils/IPFinder.h>
-
-#include <fastrtps/utils/Semaphore.h>
-
-#include <mutex>
-#include <functional>
-#include <algorithm>
-
-#include <fastdds/dds/log/Log.hpp>
-#include <fastrtps/xmlparser/XMLProfileManager.h>
+#include <statistics/rtps/GuidUtils.hpp>
 
 namespace eprosima {
 namespace fastrtps {
@@ -469,6 +473,7 @@ RTPSParticipantImpl::~RTPSParticipantImpl()
 
     delete mp_ResourceSemaphore;
     delete mp_userParticipant;
+    mp_userParticipant = nullptr;
     send_resource_list_.clear();
 
     delete mp_mutex;
@@ -682,6 +687,22 @@ bool RTPSParticipantImpl::create_writer(
         SWriter->add_flow_controller(std::move(controller));
     }
 
+#ifdef FASTDDS_STATISTICS
+
+    if (!is_builtin)
+    {
+        // Register all compatible statistical listeners
+        for_each_listener([this, &guid](Key listener)
+                {
+                    if (are_writers_involved(listener->mask()))
+                    {
+                        register_in_writer(listener->get_shared_ptr(), guid);
+                    }
+                });
+    }
+
+#endif // FASTDDS_STATISTICS
+
     return true;
 }
 
@@ -793,6 +814,22 @@ bool RTPSParticipantImpl::create_reader(
         m_userReaderList.push_back(SReader);
     }
     *reader_out = SReader;
+
+#ifdef FASTDDS_STATISTICS
+
+    if (!is_builtin)
+    {
+        // Register all compatible statistical listeners
+        for_each_listener([this, &guid](Key listener)
+                {
+                    if (are_readers_involved(listener->mask()))
+                    {
+                        register_in_reader(listener->get_shared_ptr(), guid);
+                    }
+                });
+    }
+
+#endif // FASTDDS_STATISTICS
 
     return true;
 }
@@ -1196,7 +1233,6 @@ bool RTPSParticipantImpl::assignEndpoint2LocatorList(
        one of the supported Locators is needed to make the match, and the case of new ListenResources being created has been removed
        since its the NetworkFactory the one that takes care of Resource creation.
      */
-    LocatorList_t finalList;
     for (auto lit = list.begin(); lit != list.end(); ++lit)
     {
         //Iteration of all Locators within the Locator list passed down as argument
@@ -1770,6 +1806,9 @@ bool RTPSParticipantImpl::did_mutation_took_place_on_meta(
         const LocatorList_t& MulticastLocatorList,
         const LocatorList_t& UnicastLocatorList) const
 {
+    using namespace std;
+    using namespace eprosima::fastdds::rtps;
+
     if (m_att.builtin.metatrafficMulticastLocatorList == MulticastLocatorList
             && m_att.builtin.metatrafficUnicastLocatorList == UnicastLocatorList)
     {
@@ -1778,7 +1817,7 @@ bool RTPSParticipantImpl::did_mutation_took_place_on_meta(
     }
 
     // If one of the locators is 0.0.0.0 we must replace it by all local interfaces like the framework does
-    std::list<Locator_t> unicast_real_locators;
+    list<Locator_t> unicast_real_locators;
     LocatorListConstIterator it = UnicastLocatorList.begin(), old_it;
     LocatorList_t locals;
 
@@ -1786,10 +1825,10 @@ bool RTPSParticipantImpl::did_mutation_took_place_on_meta(
     {
         // copy ordinary locators till the first ANY
         old_it = it;
-        it = std::find_if(it, UnicastLocatorList.end(), IPLocator::isAny);
+        it = find_if(it, UnicastLocatorList.end(), IPLocator::isAny);
 
         // copy ordinary locators
-        std::copy(old_it, it, std::back_inserter(unicast_real_locators));
+        copy(old_it, it, back_inserter(unicast_real_locators));
 
         // transform new ones if needed
         if (it != UnicastLocatorList.end())
@@ -1803,9 +1842,9 @@ bool RTPSParticipantImpl::did_mutation_took_place_on_meta(
             }
 
             // add a locator for each local
-            std::transform(locals.begin(),
+            transform(locals.begin(),
                     locals.end(),
-                    std::back_inserter(unicast_real_locators),
+                    back_inserter(unicast_real_locators),
                     [&an_any](const Locator_t& loc) -> Locator_t
                     {
                         Locator_t specific(loc);
@@ -1820,30 +1859,29 @@ bool RTPSParticipantImpl::did_mutation_took_place_on_meta(
     } while (it != UnicastLocatorList.end());
 
     // TCP is a special case because physical ports are taken from the TransportDescriptors
+    // besides WAN address may be added by the transport
     struct ResetLogical
     {
-        // use of std::unary_function to introduce the following aliases is deprecated
+        // use of unary_function to introduce the following aliases is deprecated
         // using argument_type = Locator_t;
         // using result_type   = Locator_t&;
 
-        typedef std::vector<std::shared_ptr<fastdds::rtps::TransportDescriptorInterface>> Transports;
+        using Transports = vector<shared_ptr<TransportDescriptorInterface>>;
 
         ResetLogical(
                 const Transports& tp)
             : Transports_(tp)
-            , tcp4(nullptr)
-            , tcp6(nullptr)
         {
             for (auto desc : Transports_)
             {
                 if (nullptr == tcp4)
                 {
-                    tcp4 = dynamic_cast<fastdds::rtps::TCPv4TransportDescriptor*>(desc.get());
+                    tcp4 = dynamic_pointer_cast<TCPv4TransportDescriptor>(desc);
                 }
 
                 if (nullptr == tcp6)
                 {
-                    tcp6 = dynamic_cast<fastdds::rtps::TCPv6TransportDescriptor*>(desc.get());
+                    tcp6 = dynamic_pointer_cast<TCPv6TransportDescriptor>(desc);
                 }
             }
         }
@@ -1858,6 +1896,17 @@ bool RTPSParticipantImpl::did_mutation_took_place_on_meta(
             return tcp6 ? ( tcp6->listening_ports.empty() ? 0 : tcp6->listening_ports[0]) : 0;
         }
 
+        void set_wan_address(
+                Locator_t& loc) const
+        {
+            if (tcp4)
+            {
+                assert(LOCATOR_KIND_TCPv4 == loc.kind);
+                auto& ip = tcp4->wan_addr;
+                IPLocator::setWan(loc, ip[0], ip[1], ip[2], ip[3]);
+            }
+        }
+
         Locator_t operator ()(
                 const Locator_t& loc) const
         {
@@ -1865,6 +1914,7 @@ bool RTPSParticipantImpl::did_mutation_took_place_on_meta(
             switch (loc.kind)
             {
                 case LOCATOR_KIND_TCPv4:
+                    set_wan_address(ret);
                     IPLocator::setPhysicalPort(ret, Tcp4ListeningPort());
                     break;
                 case LOCATOR_KIND_TCPv6:
@@ -1876,34 +1926,35 @@ bool RTPSParticipantImpl::did_mutation_took_place_on_meta(
 
         // reference to the transports
         const Transports& Transports_;
-        TCPTransportDescriptor* tcp4, * tcp6;
+        shared_ptr<TCPv4TransportDescriptor> tcp4;
+        shared_ptr<TCPv6TransportDescriptor> tcp6;
 
     }
     transform_functor(m_att.userTransports);
 
     // transform-copy
-    std::set<Locator_t> update_attributes;
+    set<Locator_t> update_attributes;
 
-    std::transform(m_att.builtin.metatrafficMulticastLocatorList.begin(),
+    transform(m_att.builtin.metatrafficMulticastLocatorList.begin(),
             m_att.builtin.metatrafficMulticastLocatorList.end(),
-            std::inserter(update_attributes, update_attributes.begin()),
+            inserter(update_attributes, update_attributes.begin()),
             transform_functor);
 
-    std::transform(m_att.builtin.metatrafficUnicastLocatorList.begin(),
+    transform(m_att.builtin.metatrafficUnicastLocatorList.begin(),
             m_att.builtin.metatrafficUnicastLocatorList.end(),
-            std::inserter(update_attributes, update_attributes.begin()),
+            inserter(update_attributes, update_attributes.begin()),
             transform_functor);
 
-    std::set<Locator_t> original_ones;
+    set<Locator_t> original_ones;
 
-    std::transform(MulticastLocatorList.begin(),
+    transform(MulticastLocatorList.begin(),
             MulticastLocatorList.end(),
-            std::inserter(original_ones, original_ones.begin()),
+            inserter(original_ones, original_ones.begin()),
             transform_functor);
 
-    std::transform(unicast_real_locators.begin(),
+    transform(unicast_real_locators.begin(),
             unicast_real_locators.end(),
-            std::inserter(original_ones, original_ones.begin()),
+            inserter(original_ones, original_ones.begin()),
             transform_functor);
 
     // if equal then no mutation took place on physical ports
@@ -1927,6 +1978,96 @@ DurabilityKind_t RTPSParticipantImpl::get_persistence_durability_red_line(
 
     return durability_red_line;
 }
+
+#ifdef FASTDDS_STATISTICS
+
+bool RTPSParticipantImpl::register_in_writer(
+        std::shared_ptr<fastdds::statistics::IListener> listener,
+        GUID_t writer_guid)
+{
+    bool res = false;
+
+    if ( GUID_t::unknown() == writer_guid )
+    {
+        res = true;
+        for ( auto writer : m_userWriterList)
+        {
+            if (!fastdds::statistics::is_statistics_builtin(writer->getGuid().entityId))
+            {
+                res &= writer->add_statistics_listener(listener);
+            }
+        }
+    }
+    else if (!fastdds::statistics::is_statistics_builtin(writer_guid.entityId))
+    {
+        RTPSWriter* writer = find_local_writer(writer_guid);
+        res = writer->add_statistics_listener(listener);
+    }
+
+    return res;
+}
+
+bool RTPSParticipantImpl::register_in_reader(
+        std::shared_ptr<fastdds::statistics::IListener> listener,
+        GUID_t reader_guid)
+{
+    bool res = false;
+
+    if ( GUID_t::unknown() == reader_guid )
+    {
+        res = true;
+        for ( auto reader : m_userReaderList)
+        {
+            if (!fastdds::statistics::is_statistics_builtin(reader->getGuid().entityId))
+            {
+                res &= reader->add_statistics_listener(listener);
+            }
+        }
+    }
+    else if (!fastdds::statistics::is_statistics_builtin(reader_guid.entityId))
+    {
+        RTPSReader* reader = find_local_reader(reader_guid);
+        res = reader->add_statistics_listener(listener);
+    }
+
+    return res;
+}
+
+bool RTPSParticipantImpl::unregister_in_writer(
+        std::shared_ptr<fastdds::statistics::IListener> listener)
+{
+    std::lock_guard<std::recursive_mutex> guard(*getParticipantMutex());
+    bool res = true;
+
+    for ( auto writer : m_userWriterList)
+    {
+        if (!fastdds::statistics::is_statistics_builtin(writer->getGuid().entityId))
+        {
+            res &= writer->remove_statistics_listener(listener);
+        }
+    }
+
+    return res;
+}
+
+bool RTPSParticipantImpl::unregister_in_reader(
+        std::shared_ptr<fastdds::statistics::IListener> listener)
+{
+    std::lock_guard<std::recursive_mutex> guard(*getParticipantMutex());
+    bool res = true;
+
+    for ( auto reader : m_userReaderList)
+    {
+        if (!fastdds::statistics::is_statistics_builtin(reader->getGuid().entityId))
+        {
+            res &= reader->remove_statistics_listener(listener);
+        }
+    }
+
+    return res;
+}
+
+#endif // FASTDDS_STATISTICS
 
 } /* namespace rtps */
 } /* namespace fastrtps */

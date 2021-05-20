@@ -59,6 +59,15 @@ class TimedEvent;
 } // namespace fastrtps
 
 namespace fastdds {
+
+#ifdef FASTDDS_STATISTICS
+namespace statistics {
+namespace dds {
+class DomainParticipantImpl;
+} // namespace dds
+} // namespace statistics
+#endif // FASTDDS_STATISTICS
+
 namespace dds {
 
 class PublisherListener;
@@ -80,6 +89,10 @@ protected:
 
     friend class PublisherImpl;
 
+#ifdef FASTDDS_STATISTICS
+    friend class eprosima::fastdds::statistics::dds::DomainParticipantImpl;
+#endif // FASTDDS_STATISTICS
+
     /**
      * Create a data writer, assigning its pointer to the associated writer.
      * Don't use directly, create Publisher using DomainRTPSParticipant static function.
@@ -95,7 +108,7 @@ public:
 
     virtual ~DataWriterImpl();
 
-    ReturnCode_t enable();
+    virtual ReturnCode_t enable();
 
     ReturnCode_t check_delete_preconditions();
 
@@ -116,7 +129,7 @@ public:
     /**
      * Discards a loaned sample pointer.
      *
-     * @param [in][out] sample  Pointer to the previously loaned sample.
+     * @param [in,out] sample  Pointer to the previously loaned sample.
      *
      * @return ReturnCode_t::RETCODE_ILLEGAL_OPERATION when the type does not support loans.
      * @return ReturnCode_t::RETCODE_BAD_PARAMETER if the pointer does not correspond to a loaned sample.
@@ -240,7 +253,7 @@ public:
     ReturnCode_t assert_liveliness();
 
     //! Remove all listeners in the hierarchy to allow a quiet destruction
-    void disable();
+    virtual void disable();
 
     /**
      * Removes all changes from the History.
@@ -352,6 +365,13 @@ protected:
 
     std::unique_ptr<LoanCollection> loans_;
 
+    virtual fastrtps::rtps::RTPSWriter* create_rtps_writer(
+            fastrtps::rtps::RTPSParticipant* p,
+            fastrtps::rtps::WriterAttributes& watt,
+            const std::shared_ptr<IPayloadPool>& payload_pool,
+            fastrtps::rtps::WriterHistory* hist,
+            fastrtps::rtps::WriterListener* listen);
+
     /**
      *
      * @param kind
@@ -460,46 +480,6 @@ protected:
     ReturnCode_t check_datasharing_compatible(
             const fastrtps::rtps::WriterAttributes& writer_attributes,
             bool& is_datasharing_compatible) const;
-
-    template<typename SizeFunctor>
-    bool get_free_payload_from_pool(
-            const SizeFunctor& size_getter,
-            PayloadInfo_t& payload,
-            const std::chrono::time_point<std::chrono::steady_clock>& max_blocking_time)
-    {
-        CacheChange_t change;
-        if (!payload_pool_)
-        {
-            return false;
-        }
-
-        uint32_t size = fixed_payload_size_ ? fixed_payload_size_ : size_getter();
-        if (is_data_sharing_compatible_)
-        {
-            auto pool = std::dynamic_pointer_cast<eprosima::fastrtps::rtps::DataSharingPayloadPool>(payload_pool_);
-            assert (pool != nullptr);
-
-            bool payload_reserved = pool->wait_until(max_blocking_time,
-                            [&]()
-                            {
-                                return pool->get_payload(size, change);
-                            });
-            if (!payload_reserved)
-            {
-                return false;
-            }
-        }
-        else
-        {
-            if (!payload_pool_->get_payload(size, change))
-            {
-                return false;
-            }
-        }
-
-        payload.move_from_change(change);
-        return true;
-    }
 
     template<typename SizeFunctor>
     bool get_free_payload_from_pool(

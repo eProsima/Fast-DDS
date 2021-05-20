@@ -88,7 +88,7 @@ class RTPS_DllAPI Time_t
 public:
 
     //! Default constructor. Sets values to zero.
-    Time_t();
+    Time_t() = default;
 
     /**
      * @param sec Seconds
@@ -114,6 +114,12 @@ public:
      *  Returns stored time as nanoseconds (including seconds)
      */
     int64_t to_ns() const;
+
+    /**
+     *  @param nanosecs Stores given time as nanoseconds (including seconds)
+     */
+    void from_ns(
+            int64_t nanosecs);
 
     /**
      * Retrieve the seconds field.
@@ -169,13 +175,13 @@ public:
 private:
 
     //!Seconds
-    int32_t seconds_;
+    int32_t seconds_ = 0;
 
     //!Fraction of second (1 fraction = 1/(2^32) seconds)
-    uint32_t fraction_;
+    uint32_t fraction_ = 0;
 
     //!Nanoseconds
-    uint32_t nanosec_;
+    uint32_t nanosec_ = 0;
 
     void set_fraction(
             uint32_t frac);

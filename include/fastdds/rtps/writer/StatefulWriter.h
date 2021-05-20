@@ -106,8 +106,6 @@ private:
     //!WriterTimes
     WriterTimes m_times;
 
-    //! Vector containing all the active ReaderProxies.
-    ResourceLimitedVector<ReaderProxy*> matched_readers_;
     //! Vector containing all the remote ReaderProxies.
     ResourceLimitedVector<ReaderProxy*> matched_remote_readers_;
     //! Vector containing all the inactive, ready for reuse, ReaderProxies.
@@ -170,7 +168,7 @@ public:
     //!Increment the HB count.
     inline void incrementHBCount()
     {
-        ++m_heartbeatCount;
+        on_heartbeat(++m_heartbeatCount);
     }
 
     /**
@@ -380,13 +378,6 @@ public:
      * @brief Get the reader data filter used to filter data in ReaderProxies
      */
     const fastdds::rtps::IReaderDataFilter* reader_data_filter() const;
-
-    /**
-     * @param source_timestamp the timestamp of the payload we want to recycle
-     * @return whether a payload with the given source timestamp can be reused for a new change
-     */
-    bool is_datasharing_payload_reusable(
-            const Time_t& source_timestamp) const override;
 
 private:
 

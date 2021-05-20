@@ -51,7 +51,8 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             FixedSizeQueueTests.cpp)
 
         set(SYSTEMINFOTESTS_SOURCE
-            SystemInfoTests.cpp)
+            SystemInfoTests.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/utils/SystemInfo.cpp)
 
         include_directories(mock/)
 

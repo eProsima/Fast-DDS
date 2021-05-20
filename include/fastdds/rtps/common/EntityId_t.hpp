@@ -154,6 +154,24 @@ struct RTPS_DllAPI EntityId_t
 
 #endif // if !FASTDDS_IS_BIG_ENDIAN_TARGET
 
+    /*!
+     * @brief conversion to uint32_t
+     * @return uint32_t representation
+     */
+    uint32_t to_uint32() const
+    {
+        uint32_t res = *reinterpret_cast<const uint32_t*>(value);
+
+#if !FASTDDS_IS_BIG_ENDIAN_TARGET
+        res = ( res >> 24 ) |
+                (0x0000ff00 & ( res >> 8)) |
+                (0x00ff0000 & ( res << 8)) |
+                ( res << 24 );
+#endif // if !FASTDDS_IS_BIG_ENDIAN_TARGET
+
+        return res;
+    }
+
     static EntityId_t unknown()
     {
         return EntityId_t();

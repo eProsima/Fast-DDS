@@ -33,8 +33,10 @@ using namespace eprosima::rtps;
 std::vector<(void*)(TypeStructure*)> vec; //TypeStructure is your own define structure for the topic
 readAllUnreadCache(&vec);
 for (elements in vec)
-	TypeStructure tp = *(TypeStructure*)vec[i];
-	//Do something with tp.
+{
+    TypeStructure tp = *(TypeStructure*)vec[i];
+}
+//Do something with tp.
 //! [ex_readAllUnreadCache]
 
 //! [ex_readMinSeqUnread]
@@ -53,55 +55,73 @@ write((void*)&tp);
 //! [ex_TopicDataType]
 using namespace eprosima::pubsub;
 using namespace eprosima::rtps;
-typedef struct TestType{
-	char name[6]; //KEY
-	int32_t value;
-	double price;
-	TestType()
-	{
-		value = -1;
-		price = 0;
-		strcpy(name,"UNDEF");
-	}
-	void print()
-	{
-		cout << "Name: ";
-		printf("%s",name);
-		cout << " |Value: "<< value;
-		cout << " |Price: "<< price;
-		cout << endl;
-	}
+typedef struct TestType
+{
+    char name[6]; //KEY
+    int32_t value;
+    double price;
+    TestType()
+    {
+        value = -1;
+        price = 0;
+        strcpy(name, "UNDEF");
+    }
+
+    void print()
+    {
+        cout << "Name: ";
+        printf("%s", name);
+        cout << " |Value: " << value;
+        cout << " |Price: " << price;
+        cout << endl;
+    }
+
 }TestType;
 
-class TestTypeDataType:public TopicDataType
+class TestTypeDataType : public TopicDataType
 {
 public:
-	TestTypeDataType()
-{
-		setName("TestType");
-		m_typeSize = 6+4+sizeof(double); //This is the maximum size of this type.
-		m_isGetKeyDefined = true;
-};
-	~TestTypeDataType(){};
-	bool serialize(void*data,SerializedPayload_t* payload);
-	bool deserialize(SerializedPayload_t* payload,void * data);
-	bool getKey(void*data,InstanceHandle_t* ihandle);
+
+    TestTypeDataType()
+    {
+        setName("TestType");
+        m_typeSize = 6 + 4 + sizeof(double); //This is the maximum size of this type.
+        m_isGetKeyDefined = true;
+    }
+
+    ~TestTypeDataType()
+    {
+    }
+
+    bool serialize(
+            void* data,
+            SerializedPayload_t* payload);
+    bool deserialize(
+            SerializedPayload_t* payload,
+            void* data);
+    bool getKey(
+            void* data,
+            InstanceHandle_t* ihandle);
 };
 
 //Example Serialization method. The user should ensure that the serialization
 //and deserialization methods work always
-bool TestTypeDataType::serialize(void*data,SerializedPayload_t* payload)
+bool TestTypeDataType::serialize(
+        void* data,
+        SerializedPayload_t* payload)
 {
-	payload->length = sizeof(TestType);
-	payload->encapsulation = CDR_LE;
-	memcpy(payload->data,data,payload->length);
-	return true;
+    payload->length = sizeof(TestType);
+    payload->encapsulation = CDR_LE;
+    memcpy(payload->data, data, payload->length);
+    return true;
 }
 
-bool TestTypeDataType::deserialize(SerializedPayload_t* payload,void * data)
+bool TestTypeDataType::deserialize(
+        SerializedPayload_t* payload,
+        void* data)
 {
-	memcpy(data,payload->data,payload->length);
-	return true;
+    memcpy(data, payload->data, payload->length);
+    return true;
 }
 
 //Before using it an object of this type must be defined and registered in the domain RTPSParticipant.
@@ -109,7 +129,7 @@ bool TestTypeDataType::deserialize(SerializedPayload_t* payload,void * data)
 //Thread safety would be considered for future releases.
 TestTypeDataType TestTypeData;
 Participant* part; //CREATED SOMEWHERE ELSE
-Domain::registerType(part,(TopicDataType*)&TestTypeData);
+Domain::registerType(part, (TopicDataType*)&TestTypeData);
 //! [ex_TopicDataType]
 
 //! [ex_Publisher]
@@ -120,13 +140,13 @@ PParam.historyMaxSize = 20;
 PParam.topic.topicKind = WITH_KEY;
 PParam.topic.topicDataType = "TestType";
 PParam.topic.topicName = "Test_topic";
-Publisher* pub1 = DomainRTPSParticipant::createPublisher(p,PParam);
+Publisher* pub1 = DomainRTPSParticipant::createPublisher(p, PParam);
 
 Locator_t loc;
 loc.kind = 1;
 loc.port = 10469;
-loc.set_IP4_address(192,168,1,16);
-pub1->addReaderLocator(loc,true);
+loc.set_IP4_address(192, 168, 1, 16);
+pub1->addReaderLocator(loc, true);
 TestType tp1;
 pub1->write((void*)&tp1);
 //! [ex_Publisher]
@@ -142,33 +162,49 @@ Rparam.reliability.reliabilityKind = RELIABLE;
 Locator_t loc;
 loc.port = 10046;
 Rparam.unicastLocatorList.push_back(loc); //Listen in the same port
-Subscriber* sub = DomainRTPSParticipant::createSubscriber(p,Rparam);
+Subscriber* sub = DomainRTPSParticipant::createSubscriber(p, Rparam);
 //! [ex_Subscriber]
 
 //! [ex_SubscriberListener]
 using namespace eprosima::pubsub;
 using namespace eprosima::rtps;
 //Create a class that inherits from SubscriberListener and implement the methods you need.
-class TestTypeListener: public SubscriberListener{
+class TestTypeListener : public SubscriberListener
+{
 public:
-	TestTypeListener(){};
-	~TestTypeListener(){};
-	void onNewDataMessage()
-	{
-		cout <<"New Message"<<endl;
-	}
-	void onSubscriptionMatched(Subscriber* sub,MatchingInfo& info)
-	{
-		if(info.status == MATCHED_MATCHING)
-			cout << "Discovery"<<endl;
-		else if(info.status == REMOVED_MATCHING)
-			cout << "Publisher removed"<<endl;
-	}
+
+    TestTypeListener()
+    {
+    }
+
+    ~TestTypeListener()
+    {
+    }
+
+    void onNewDataMessage()
+    {
+        cout << "New Message" << endl;
+    }
+
+    void onSubscriptionMatched(
+            Subscriber* sub,
+            MatchingInfo& info)
+    {
+        if (info.status == MATCHED_MATCHING)
+        {
+            cout << "Discovery" << endl;
+        }
+        else if (info.status == REMOVED_MATCHING)
+        {
+            cout << "Publisher removed" << endl;
+        }
+    }
+
 };
 
 //Somewhere in the code, create an object an register assign it to the subscriber.
 TestTypeListener listener;
-Subscriber* sub = DomainRTPSParticipant::createSubscriber(p,Rparam,(SubscriberListener*)&listener);
+Subscriber* sub = DomainRTPSParticipant::createSubscriber(p, Rparam, (SubscriberListener*)&listener);
 //...
 
 //You can also create it and assign it later, although this is not recommended since the onSubscriptionMatched may not be called
@@ -181,36 +217,44 @@ sub->assignListener((SubscriberListener*)&listener2);
 using namespace eprosima::pubsub;
 using namespace eprosima::rtps;
 //Create a class that inherits from PublisherListener and implement the methods you need.
-class TestTypeListener: public PublisherListener
+class TestTypeListener : public PublisherListener
 {
 public:
-	RTPSParticipant* p;
-	RTPSParticipantAttributes Pparam;
-	eprosima::dds::Publisher* pub;
-	PublisherAttributes Pubparam;
-	TestTypeListener()
-	{
-		//The RTPSParticipant should have been created and accessible to this method.
-		p = DomainRTPSParticipant::createRTPSParticipant(Pparam);
-		//PublisherAttributes must be set to the user preferences.
-		pub = DomainRTPSParticipant::createPublisher(p,Pubparam,(PublisherListener*)this);
-	};
-	~TestTypeListener(){};
-	void onHistoryFull()
-	{
-		pub->removeMinSeqCache();
-	}
-	void onPublicationMatched(Publisher* pub,MatchingInfo& info)
-	{
-		if(info.status == MATCHED_MATCHING)
-		{
-			cout << "Discovery!"<<endl;
-		}
-		else if(info.status == REMOVED_MATCHING)
-		{
-			cout << "Subscription removed"<<endl;
-		}
-	}
+
+    RTPSParticipant* p;
+    RTPSParticipantAttributes Pparam;
+    eprosima::dds::Publisher* pub;
+    PublisherAttributes Pubparam;
+    TestTypeListener()
+    {
+        //The RTPSParticipant should have been created and accessible to this method.
+        p = DomainRTPSParticipant::createRTPSParticipant(Pparam);
+        //PublisherAttributes must be set to the user preferences.
+        pub = DomainRTPSParticipant::createPublisher(p, Pubparam, (PublisherListener*)this);
+    }
+
+    ~TestTypeListener()
+    {
+    }
+
+    void onHistoryFull()
+    {
+        pub->removeMinSeqCache();
+    }
+
+    void onPublicationMatched(
+            Publisher* pub,
+            MatchingInfo& info)
+    {
+        if (info.status == MATCHED_MATCHING)
+        {
+            cout << "Discovery!" << endl;
+        }
+        else if (info.status == REMOVED_MATCHING)
+        {
+            cout << "Subscription removed" << endl;
+        }
+    }
 
 };
 //! [ex_PublisherListener]
@@ -225,7 +269,7 @@ public:
 //PParam.discovery.use_SIMPLE_RTPSParticipantDiscoveryProtocol = true;
 //PParam.discovery.resendSPDPDataPeriod_sec = 30;
 //PParam.discovery.use_STATIC_EndpointDiscoveryProtocol = true;
-//PParam.discovery.m_staticEndpointXMLFilename = "StaticEndpointDefinition.xml";
+//PParam.discovery.static_edp_xml_config("file://StaticEndpointDefinition.xml");
 //Locator_t loc;
 //loc.kind = 1; loc.port = 10046; loc.set_IP4_address(192,168,1,16);
 //PParam.defaultUnicastLocatorList.push_back(loc);
@@ -238,8 +282,11 @@ public:
 
 
 //! [ex_RTPSParticipantCreation]
-class MyListener : public RTPSParticipantListener { ... };
+class MyListener : public RTPSParticipantListener
+{
+    ...
+};
 MyListener listen;
 ParticipantAttributes patt;
-RTPSParticipant* p = RTPSDomain::createRTPSParticipant(patt,(RTPSParticipantListener*)&listen);
+RTPSParticipant* p = RTPSDomain::createRTPSParticipant(patt, (RTPSParticipantListener*)&listen);
 //! [ex_RTPSParticipantCreation]

@@ -24,6 +24,7 @@
 #include <fastdds/dds/log/Log.hpp>
 #include <fastrtps/utils/IPLocator.h>
 #include <rtps/transport/UDPSenderResource.hpp>
+#include <statistics/rtps/messages/RTPSStatisticsMessages.hpp>
 
 using namespace std;
 using namespace asio;
@@ -40,20 +41,6 @@ using octet = fastrtps::rtps::octet;
 using PortParameters = fastrtps::rtps::PortParameters;
 using SenderResource = fastrtps::rtps::SenderResource;
 using Log = fastdds::dds::Log;
-
-struct MultiUniLocatorsLinkage
-{
-    MultiUniLocatorsLinkage(
-            LocatorList&& m,
-            LocatorList&& u)
-        : multicast(std::move(m))
-        , unicast(std::move(u))
-    {
-    }
-
-    LocatorList multicast;
-    LocatorList unicast;
-};
 
 UDPTransportDescriptor::UDPTransportDescriptor()
     : SocketTransportDescriptor(s_maximumMessageSize, s_maximumInitialPeersRange)
@@ -285,6 +272,7 @@ bool UDPTransportInterface::OpenOutputChannel(
 
         if (udp_sender_resource)
         {
+            statistics_info_.add_entry(locator);
             return true;
         }
     }
@@ -408,6 +396,7 @@ bool UDPTransportInterface::OpenOutputChannel(
         return false;
     }
 
+    statistics_info_.add_entry(locator);
     return true;
 }
 
@@ -501,6 +490,8 @@ bool UDPTransportInterface::send(
         bool only_multicast_purpose,
         const std::chrono::microseconds& timeout)
 {
+    using namespace eprosima::fastdds::statistics::rtps;
+
     if (send_buffer_size > configuration()->sendBufferSize)
     {
         return false;
@@ -527,6 +518,7 @@ bool UDPTransportInterface::send(
 #endif // ifndef _WIN32
 
             asio::error_code ec;
+            statistics_info_.set_statistics_message_data(remote_locator, send_buffer, send_buffer_size);
             bytesSent = getSocketPtr(socket)->send_to(asio::buffer(send_buffer,
                             send_buffer_size), destinationEndpoint, 0, ec);
             if (!!ec)

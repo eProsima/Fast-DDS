@@ -286,6 +286,7 @@ TEST(DataWriterTests, ForcedDataSharing)
         ASSERT_TRUE(false);
     }
 
+#ifdef HAS_SECURITY
     fastrtps::rtps::PropertyPolicy security_property;
     security_property.properties().emplace_back(fastrtps::rtps::Property("dds.sec.auth.plugin",
             "builtin.PKI-DH"));
@@ -326,14 +327,14 @@ TEST(DataWriterTests, ForcedDataSharing)
     ASSERT_EQ(participant->delete_topic(bounded_topic), ReturnCode_t::RETCODE_OK);
     ASSERT_EQ(participant->delete_publisher(publisher), ReturnCode_t::RETCODE_OK);
     ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), ReturnCode_t::RETCODE_OK);
+#endif // HAS_SECURITY
 }
 
 TEST(DataWriterTests, InvalidQos)
 {
     DomainParticipantQos pqos = PARTICIPANT_QOS_DEFAULT;
     pqos.entity_factory().autoenable_created_entities = false;
-    DomainParticipant* participant =
-            DomainParticipantFactory::get_instance()->create_participant(0, pqos);
+    DomainParticipant* participant = DomainParticipantFactory::get_instance()->create_participant(0, pqos);
     ASSERT_NE(participant, nullptr);
 
     Publisher* publisher = participant->create_publisher(PUBLISHER_QOS_DEFAULT);
@@ -348,46 +349,61 @@ TEST(DataWriterTests, InvalidQos)
     DataWriter* datawriter = publisher->create_datawriter(topic, DATAWRITER_QOS_DEFAULT);
     ASSERT_NE(datawriter, nullptr);
 
+    /* Unsupported QoS */
+    const ReturnCode_t unsupported_code = ReturnCode_t::RETCODE_UNSUPPORTED;
+
     DataWriterQos qos;
     qos = DATAWRITER_QOS_DEFAULT;
     qos.durability().kind = PERSISTENT_DURABILITY_QOS;
-    ASSERT_TRUE(datawriter->set_qos(qos) == ReturnCode_t::RETCODE_UNSUPPORTED);
+    EXPECT_EQ(unsupported_code, datawriter->set_qos(qos));
 
     qos = DATAWRITER_QOS_DEFAULT;
     qos.destination_order().kind = BY_SOURCE_TIMESTAMP_DESTINATIONORDER_QOS;
-    ASSERT_TRUE(datawriter->set_qos(qos) == ReturnCode_t::RETCODE_UNSUPPORTED);
+    EXPECT_EQ(unsupported_code, datawriter->set_qos(qos));
 
     qos = DATAWRITER_QOS_DEFAULT;
     qos.properties().properties().emplace_back("fastdds.unique_network_flows", "");
-    ASSERT_TRUE(datawriter->set_qos(qos) == ReturnCode_t::RETCODE_UNSUPPORTED);
+    EXPECT_EQ(unsupported_code, datawriter->set_qos(qos));
+
+    /* Inconsistent QoS */
+    const ReturnCode_t inconsistent_code = ReturnCode_t::RETCODE_INCONSISTENT_POLICY;
+
+    qos = DATAWRITER_QOS_DEFAULT;
+    qos.properties().properties().emplace_back("fastdds.push_mode", "false");
+    qos.reliability().kind = BEST_EFFORT_RELIABILITY_QOS;
+    EXPECT_EQ(inconsistent_code, datawriter->set_qos(qos));
+
+    qos.reliability().kind = RELIABLE_RELIABILITY_QOS;
+    qos.reliable_writer_qos().times.heartbeatPeriod = eprosima::fastrtps::c_TimeInfinite;
+    EXPECT_EQ(inconsistent_code, datawriter->set_qos(qos));
 
     qos = DATAWRITER_QOS_DEFAULT;
     qos.reliability().kind = BEST_EFFORT_RELIABILITY_QOS;
     qos.ownership().kind = EXCLUSIVE_OWNERSHIP_QOS;
-    ASSERT_TRUE(datawriter->set_qos(qos) == ReturnCode_t::RETCODE_INCONSISTENT_POLICY);
+    EXPECT_EQ(inconsistent_code, datawriter->set_qos(qos));
 
     qos = DATAWRITER_QOS_DEFAULT;
     qos.liveliness().kind = AUTOMATIC_LIVELINESS_QOS;
     qos.liveliness().announcement_period = 20;
     qos.liveliness().lease_duration = 10;
-    ASSERT_TRUE(datawriter->set_qos(qos) == ReturnCode_t::RETCODE_INCONSISTENT_POLICY);
+    EXPECT_EQ(inconsistent_code, datawriter->set_qos(qos));
 
     qos.liveliness().kind = MANUAL_BY_PARTICIPANT_LIVELINESS_QOS;
-    ASSERT_TRUE(datawriter->set_qos(qos) == ReturnCode_t::RETCODE_INCONSISTENT_POLICY);
+    EXPECT_EQ(inconsistent_code, datawriter->set_qos(qos));
 
     qos = DATAWRITER_QOS_DEFAULT;
     qos.data_sharing().on("/tmp");
     qos.endpoint().history_memory_policy = eprosima::fastrtps::rtps::DYNAMIC_RESERVE_MEMORY_MODE;
-    ASSERT_TRUE(datawriter->set_qos(qos) == ReturnCode_t::RETCODE_INCONSISTENT_POLICY);
+    EXPECT_EQ(inconsistent_code, datawriter->set_qos(qos));
 
     qos.endpoint().history_memory_policy = eprosima::fastrtps::rtps::DYNAMIC_REUSABLE_MEMORY_MODE;
-    ASSERT_TRUE(datawriter->set_qos(qos) == ReturnCode_t::RETCODE_INCONSISTENT_POLICY);
+    EXPECT_EQ(inconsistent_code, datawriter->set_qos(qos));
 
     qos.endpoint().history_memory_policy = eprosima::fastrtps::rtps::PREALLOCATED_MEMORY_MODE;
-    ASSERT_TRUE(datawriter->set_qos(qos) == ReturnCode_t::RETCODE_OK);
+    EXPECT_EQ(ReturnCode_t::RETCODE_OK, datawriter->set_qos(qos));
 
     qos.endpoint().history_memory_policy = eprosima::fastrtps::rtps::PREALLOCATED_WITH_REALLOC_MEMORY_MODE;
-    ASSERT_TRUE(datawriter->set_qos(qos) == ReturnCode_t::RETCODE_OK);
+    EXPECT_EQ(ReturnCode_t::RETCODE_OK, datawriter->set_qos(qos));
 
     ASSERT_TRUE(publisher->delete_datawriter(datawriter) == ReturnCode_t::RETCODE_OK);
     ASSERT_TRUE(participant->delete_topic(topic) == ReturnCode_t::RETCODE_OK);

@@ -47,7 +47,7 @@ struct SharedMemTransportDescriptor : public TransportDescriptorInterface
     //! Minimum size of the send buffer
     uint32_t min_send_buffer_size() const override
     {
-        return 0;
+        return segment_size_;
     }
 
     //! Constructor

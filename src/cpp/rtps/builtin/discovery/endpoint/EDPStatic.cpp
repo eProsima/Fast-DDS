@@ -33,8 +33,8 @@
 #include <rtps/participant/RTPSParticipantImpl.h>
 
 #include <mutex>
-
 #include <sstream>
+#include <tinyxml2.h>
 
 namespace eprosima {
 namespace fastrtps {
@@ -61,10 +61,26 @@ bool EDPStatic::initEDP(
         BuiltinAttributes& attributes)
 {
     logInfo(RTPS_EDP, "Beginning STATIC EndpointDiscoveryProtocol");
+
+    bool returned_value = false;
     m_attributes = attributes;
     mp_edpXML = new xmlparser::XMLEndpointParser();
-    std::string filename(m_attributes.discovery_config.getStaticEndpointXMLFilename());
-    return (this->mp_edpXML->loadXMLFile(filename) == xmlparser::XMLP_ret::XML_OK);
+    std::string content(m_attributes.discovery_config.static_edp_xml_config());
+    if (0 == content.rfind("data://", 0))
+    {
+        tinyxml2::XMLDocument xml_document;
+        if (tinyxml2::XMLError::XML_SUCCESS == xml_document.Parse(content.c_str() + 7, content.size() - 7))
+        {
+            returned_value = (this->mp_edpXML->loadXMLNode(xml_document) == xmlparser::XMLP_ret::XML_OK);
+        }
+    }
+    else if (0 == content.rfind("file://", 0))
+    {
+        std::string file_name = content.substr(7);
+        returned_value =  (this->mp_edpXML->loadXMLFile(file_name) == xmlparser::XMLP_ret::XML_OK);
+    }
+
+    return returned_value;
 }
 
 std::pair<std::string, std::string> EDPStaticProperty::toProperty(
@@ -237,7 +253,7 @@ void EDPStatic::assignRemoteEndpoints(
             {
                 logWarning(RTPS_EDP, "Property with type: " << staticproperty.m_endpointType
                                                             << " and status " << staticproperty.m_status <<
-                                    " not recognized");
+                        " not recognized");
             }
         }
         else
@@ -263,29 +279,29 @@ bool EDPStatic::newRemoteReader(
             ReaderProxyData* newRPD,
             bool updating,
             const ParticipantProxyData& participant_data)
-        {
-            // Should be a new reader
-            (void)updating;
-            assert(!updating);
+                {
+                    // Should be a new reader
+                    (void)updating;
+                    assert(!updating);
 
-            *newRPD = *rpd;
-            newRPD->guid(reader_guid);
-            if (!checkEntityId(newRPD))
-            {
-                logError(RTPS_EDP, "The provided entityId for Reader with ID: "
-                        << newRPD->userDefinedId() << " does not match the topic Kind");
-                return false;
-            }
-            newRPD->key() = newRPD->guid();
-            newRPD->RTPSParticipantKey() = participant_guid;
-            if (!newRPD->has_locators())
-            {
-                const NetworkFactory& network = mp_RTPSParticipant->network_factory();
-                newRPD->set_remote_locators(participant_data.default_locators, network, true);
-            }
+                    *newRPD = *rpd;
+                    newRPD->guid(reader_guid);
+                    if (!checkEntityId(newRPD))
+                    {
+                        logError(RTPS_EDP, "The provided entityId for Reader with ID: "
+                                << newRPD->userDefinedId() << " does not match the topic Kind");
+                        return false;
+                    }
+                    newRPD->key() = newRPD->guid();
+                    newRPD->RTPSParticipantKey() = participant_guid;
+                    if (!newRPD->has_locators())
+                    {
+                        const NetworkFactory& network = mp_RTPSParticipant->network_factory();
+                        newRPD->set_remote_locators(participant_data.default_locators, network, true);
+                    }
 
-            return true;
-        };
+                    return true;
+                };
 
         GUID_t temp_participant_guid;
         ReaderProxyData* reader_data = this->mp_PDP->addReaderProxyData(reader_guid, temp_participant_guid, init_fun);
@@ -314,29 +330,29 @@ bool EDPStatic::newRemoteWriter(
             WriterProxyData* newWPD,
             bool updating,
             const ParticipantProxyData& participant_data)
-        {
-            // Should be a new reader
-            (void)updating;
-            assert(!updating);
+                {
+                    // Should be a new reader
+                    (void)updating;
+                    assert(!updating);
 
-            *newWPD = *wpd;
-            newWPD->guid(writer_guid);
-            if (!checkEntityId(newWPD))
-            {
-                logError(RTPS_EDP, "The provided entityId for Writer with User ID: "
-                        << newWPD->userDefinedId() << " does not match the topic Kind");
-                return false;
-            }
-            newWPD->key() = newWPD->guid();
-            newWPD->RTPSParticipantKey() = participant_guid;
-            if (!newWPD->has_locators())
-            {
-                const NetworkFactory& network = mp_RTPSParticipant->network_factory();
-                newWPD->set_remote_locators(participant_data.default_locators, network, true);
-            }
+                    *newWPD = *wpd;
+                    newWPD->guid(writer_guid);
+                    if (!checkEntityId(newWPD))
+                    {
+                        logError(RTPS_EDP, "The provided entityId for Writer with User ID: "
+                                << newWPD->userDefinedId() << " does not match the topic Kind");
+                        return false;
+                    }
+                    newWPD->key() = newWPD->guid();
+                    newWPD->RTPSParticipantKey() = participant_guid;
+                    if (!newWPD->has_locators())
+                    {
+                        const NetworkFactory& network = mp_RTPSParticipant->network_factory();
+                        newWPD->set_remote_locators(participant_data.default_locators, network, true);
+                    }
 
-            return true;
-        };
+                    return true;
+                };
         GUID_t temp_participant_guid;
         WriterProxyData* writer_data = this->mp_PDP->addWriterProxyData(writer_guid, temp_participant_guid, init_fun);
         if (writer_data != nullptr)

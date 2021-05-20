@@ -18,6 +18,7 @@
  */
 
 #include "ReqRepHelloWorldReplier.hpp"
+#include "../../common/BlackboxTests.hpp"
 
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
 #include <fastdds/dds/domain/DomainParticipant.hpp>
@@ -49,6 +50,9 @@ ReqRepHelloWorldReplier::ReqRepHelloWorldReplier()
     // By default, memory mode is preallocated (the most restritive)
     datareader_qos_.endpoint().history_memory_policy = eprosima::fastrtps::rtps::PREALLOCATED_MEMORY_MODE;
     datawriter_qos_.endpoint().history_memory_policy = eprosima::fastrtps::rtps::PREALLOCATED_MEMORY_MODE;
+
+    datawriter_qos_.reliable_writer_qos().times.heartbeatPeriod.seconds = 1;
+    datawriter_qos_.reliable_writer_qos().times.heartbeatPeriod.nanosec = 0;
 }
 
 ReqRepHelloWorldReplier::~ReqRepHelloWorldReplier()
@@ -114,6 +118,22 @@ void ReqRepHelloWorldReplier::init()
     reply_publisher_ = participant_->create_publisher(eprosima::fastdds::dds::PUBLISHER_QOS_DEFAULT);
     ASSERT_NE(reply_publisher_, nullptr);
     ASSERT_TRUE(reply_publisher_->is_enabled());
+
+    if (enable_datasharing)
+    {
+        datareader_qos_.data_sharing().automatic();
+        datawriter_qos_.data_sharing().automatic();
+    }
+    else
+    {
+        datareader_qos_.data_sharing().off();
+        datawriter_qos_.data_sharing().off();
+    }
+
+    if (use_pull_mode)
+    {
+        datawriter_qos_.properties().properties().emplace_back("fastdds.push_mode", "false");
+    }
 
     //Create datareader
     request_datareader_ = request_subscriber_->create_datareader(request_topic_, datareader_qos_,

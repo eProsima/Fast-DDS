@@ -92,22 +92,29 @@ public:
      */
     static ReturnCode_t get_env(
             const char* env_name,
-            const char** env_value)
-    {
-        if (env_name == nullptr || env_value == nullptr || *env_name == '\0')
-        {
-            return ReturnCode_t::RETCODE_BAD_PARAMETER;
-        }
+            const char** env_value);
 
-#pragma warning(suppress:4996)
-        *env_value = getenv(env_name);
-        if (*env_value == nullptr)
-        {
-            return ReturnCode_t::RETCODE_NO_DATA;
-        }
-
-        return ReturnCode_t::RETCODE_OK;
-    }
+    /**
+     * Get the effective username of the person that launched the application
+     * This implementation follows the whoami implementation for POSIX
+     * (https://github.com/coreutils/coreutils/blob/master/src/whoami.c)
+     *
+     * geteuid is always successful.
+     *
+     * getpwuid returns a pointer to a struct passwd if a matching entry is found and nullptr otherwise.
+     * This pointer is only valid until the next time getpwuid function is called, because it is a direct
+     * pointer to the static storage.
+     * Modifying the pointer invokes undefined behavior.
+     *
+     * This function is thread-safe as long as no other function modifies the storage areas pointed within the structure
+     * (in particular, POSIX functions getpwent or getpwnam might overwrite some of the storage areas.)
+     *
+     * \param [out] username string with the effective username.
+     * @return RETCODE_OK if successful.
+     * RETCODE_ERROR if the username information cannot be determined.
+     */
+    static ReturnCode_t get_username(
+            std::string& username);
 
 private:
 

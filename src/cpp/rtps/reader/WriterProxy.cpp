@@ -87,6 +87,7 @@ WriterProxy::WriterProxy(
     , ownership_strength_(0)
     , liveliness_kind_(AUTOMATIC_LIVELINESS_QOS)
     , locators_entry_(loc_alloc.max_unicast_locators, loc_alloc.max_multicast_locators)
+    , is_datasharing_writer_(false)
 {
     //Create Events
     ResourceEvent& event_manager = reader_->getRTPSParticipant()->getEventResource();
@@ -112,6 +113,14 @@ void WriterProxy::start(
         const WriterProxyData& attributes,
         const SequenceNumber_t& initial_sequence)
 {
+    start(attributes, initial_sequence, false);
+}
+
+void WriterProxy::start(
+        const WriterProxyData& attributes,
+        const SequenceNumber_t& initial_sequence,
+        bool is_datasharing)
+{
 #ifdef SHOULD_DEBUG_LINUX
     assert(get_mutex_owner() == get_thread_id());
 #endif // SHOULD_DEBUG_LINUX
@@ -129,7 +138,7 @@ void WriterProxy::start(
     liveliness_kind_ = attributes.m_qos.m_liveliness.kind;
     locators_entry_.unicast = attributes.remote_locators().unicast;
     locators_entry_.multicast = attributes.remote_locators().multicast;
-
+    is_datasharing_writer_ = is_datasharing;
     initial_acknack_->restart_timer();
     loaded_from_storage(initial_sequence);
 }

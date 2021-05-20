@@ -26,6 +26,7 @@
 #include <fastdds/rtps/attributes/RTPSParticipantAttributes.h>
 #include <fastrtps/qos/ReaderQos.h>
 #include <fastrtps/qos/WriterQos.h>
+#include <fastdds/statistics/IListeners.hpp>
 
 namespace eprosima {
 
@@ -250,14 +251,38 @@ public:
             const WriterAttributes& writer_attributes);
 
     /**
-     * @brief Checks whether the writer has security attributes enabled
-     * @param writer_attributes Attributes of the writer as given to the RTPSParticipantImpl::create_writer
+     * @brief Checks whether the reader has security attributes enabled
+     * @param reader_attributes Attributes of the reader as given to the RTPSParticipantImpl::create_reader
      */
 
     bool is_security_enabled_for_reader(
             const ReaderAttributes& reader_attributes);
 
 #endif // if HAVE_SECURITY
+
+#ifdef FASTDDS_STATISTICS
+
+    /*
+     * Add a listener to receive statistics backend callbacks
+     * @param listener
+     * @param kind combination of fastdds::statistics::EventKind flags used as a mask. Events to notify.
+     * @return true if successfully added
+     */
+    bool add_statistics_listener(
+            std::shared_ptr<fastdds::statistics::IListener> listener,
+            uint32_t kind);
+
+    /*
+     * Remove a listener from receiving statistics backend callbacks
+     * @param listener
+     * @param kind combination of fastdds::statistics::EventKind flags used as a mask. Events to ignore.
+     * @return true if successfully removed
+     */
+    bool remove_statistics_listener(
+            std::shared_ptr<fastdds::statistics::IListener> listener,
+            uint32_t kind);
+
+#endif // FASTDDS_STATISTICS
 
 private:
 

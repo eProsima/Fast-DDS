@@ -245,7 +245,7 @@ ReturnCode_t DomainParticipant::ignore_topic(
     return ReturnCode_t::RETCODE_UNSUPPORTED;
 }
 
-ReturnCode_t DomainParticipant::ignore_publictaion(
+ReturnCode_t DomainParticipant::ignore_publication(
         const InstanceHandle_t& handle)
 {
     static_cast<void> (handle);

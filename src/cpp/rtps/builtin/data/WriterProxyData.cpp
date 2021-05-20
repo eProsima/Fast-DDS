@@ -992,11 +992,11 @@ bool WriterProxyData::readFromCDRMessage(
     {
         if (ParameterList::readParameterListfromCDRMsg(*msg, param_process, true, qos_size))
         {
-            if (m_guid.entityId.value[3] == 0x03)
+            if (0x03 == (m_guid.entityId.value[3] & 0x0F))
             {
                 m_topicKind = NO_KEY;
             }
-            else if (m_guid.entityId.value[3] == 0x02)
+            else if (0x02 == (m_guid.entityId.value[3] & 0x0F))
             {
                 m_topicKind = WITH_KEY;
             }

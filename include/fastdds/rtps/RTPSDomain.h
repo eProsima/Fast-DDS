@@ -61,6 +61,9 @@ public:
      * Method to shut down all RTPSParticipants, readers, writers, etc.
      * It must be called at the end of the process to avoid memory leaks.
      * It also shut downs the DomainRTPSParticipant.
+     *
+     * \post After this call, all the pointers to RTPS entities are invalidated and their use may
+     *       result in undefined behaviour.
      */
     RTPS_DllAPI static void stopAll();
 
@@ -70,6 +73,9 @@ public:
      * @param attrs RTPSParticipant Attributes.
      * @param plisten Pointer to the ParticipantListener.
      * @return Pointer to the RTPSParticipant.
+     *
+     * \warning The returned pointer is invalidated after a call to removeRTPSParticipant() or stopAll(),
+     *          so its use may result in undefined behaviour.
      */
     RTPS_DllAPI static RTPSParticipant* createParticipant(
             uint32_t domain_id,
@@ -83,6 +89,9 @@ public:
      * @param attrs RTPSParticipant Attributes.
      * @param plisten Pointer to the ParticipantListener.
      * @return Pointer to the RTPSParticipant.
+     *
+     * \warning The returned pointer is invalidated after a call to removeRTPSParticipant() or stopAll(),
+     *          so its use may result in undefined behaviour.
      */
     RTPS_DllAPI static RTPSParticipant* createParticipant(
             uint32_t domain_id,
@@ -97,6 +106,9 @@ public:
      * @param hist Pointer to the WriterHistory.
      * @param listen Pointer to the WriterListener.
      * @return Pointer to the created RTPSWriter.
+     *
+     * \warning The returned pointer is invalidated after a call to removeRTPSWriter() or stopAll(),
+     *          so its use may result in undefined behaviour.
      */
     RTPS_DllAPI static RTPSWriter* createRTPSWriter(
             RTPSParticipant* p,
@@ -112,9 +124,33 @@ public:
      * @param hist Pointer to the WriterHistory.
      * @param listen Pointer to the WriterListener.
      * @return Pointer to the created RTPSWriter.
+     *
+     * \warning The returned pointer is invalidated after a call to removeRTPSWriter() or stopAll(),
+     *          so its use may result in undefined behaviour.
      */
     RTPS_DllAPI static RTPSWriter* createRTPSWriter(
             RTPSParticipant* p,
+            WriterAttributes& watt,
+            const std::shared_ptr<IPayloadPool>& payload_pool,
+            WriterHistory* hist,
+            WriterListener* listen = nullptr);
+
+    /**
+     * Create a RTPSWriter in a participant.
+     * @param p Pointer to the RTPSParticipant.
+     * @param entity_id Specific entity id to use for the created writer.
+     * @param watt Writer Attributes.
+     * @param payload_pool Shared pointer to the IPayloadPool
+     * @param hist Pointer to the WriterHistory.
+     * @param listen Pointer to the WriterListener.
+     * @return Pointer to the created RTPSWriter.
+     *
+     * \warning The returned pointer is invalidated after a call to removeRTPSWriter() or stopAll(),
+     *          so its use may result in undefined behaviour.
+     */
+    RTPS_DllAPI static RTPSWriter* createRTPSWriter(
+            RTPSParticipant* p,
+            const EntityId_t& entity_id,
             WriterAttributes& watt,
             const std::shared_ptr<IPayloadPool>& payload_pool,
             WriterHistory* hist,
@@ -135,6 +171,9 @@ public:
      * @param hist Pointer to the ReaderHistory.
      * @param listen Pointer to the ReaderListener.
      * @return Pointer to the created RTPSReader.
+     *
+     * \warning The returned pointer is invalidated after a call to removeRTPSReader() or stopAll(),
+     *          so its use may result in undefined behaviour.
      */
     RTPS_DllAPI static RTPSReader* createRTPSReader(
             RTPSParticipant* p,
@@ -150,6 +189,9 @@ public:
      * @param hist Pointer to the ReaderHistory.
      * @param listen Pointer to the ReaderListener.
      * @return Pointer to the created RTPSReader.
+     *
+     * \warning The returned pointer is invalidated after a call to removeRTPSReader() or stopAll(),
+     *          so its use may result in undefined behaviour.
      */
     RTPS_DllAPI static RTPSReader* createRTPSReader(
             RTPSParticipant* p,
@@ -191,6 +233,9 @@ public:
      * @param attrs RTPSParticipant Attributes.
      * @param listen Pointer to the ParticipantListener.
      * @return Pointer to the RTPSParticipant.
+     *
+     * \warning The returned pointer is invalidated after a call to removeRTPSParticipant() or stopAll(),
+     *          so its use may result in undefined behaviour.
      */
     static RTPSParticipant* clientServerEnvironmentCreationOverride(
             uint32_t domain_id,

@@ -21,10 +21,11 @@
 #include <rtps/persistence/SQLite3PersistenceServiceStatements.h>
 #include <fastdds/dds/log/Log.hpp>
 #include <fastdds/rtps/history/WriterHistory.h>
+#include <fastrtps/utils/TimeConversion.h>
 
 #include <rtps/persistence/sqlite3.h>
 
-#include <string.h>
+#include <sstream>
 
 namespace eprosima {
 namespace fastrtps {
@@ -73,6 +74,21 @@ static int upgrade(
         return sqlite3_exec(db, SQLite3PersistenceServiceSchemaV2::update_from_v1_statement().c_str(), 0, 0, 0);
     }
 
+    if (from == 2 && to == 3
+            && SQLite3PersistenceServiceSchemaV3::database_create_temporary_defaults_table(db))
+    {
+        return sqlite3_exec(db, SQLite3PersistenceServiceSchemaV3::update_from_v2_statement().c_str(), 0, 0, 0);
+    }
+
+    // iterate if not direct upgrade
+    if (from < to)
+    {
+        if (SQLITE_ERROR != upgrade(db, from, to - 1))
+        {
+            return upgrade(db, to - 1, to);
+        }
+    }
+
     // unsupported upgrade path
     logError(RTPS_PERSISTENCE, "Unsupported database upgrade from version " << from << " to version " << to);
     return SQLITE_ERROR;
@@ -84,7 +100,7 @@ static sqlite3* open_or_create_database(
 {
     sqlite3* db = NULL;
     int rc;
-    int version = 2;
+    int version = 3;
 
     // Open database
     int flags = SQLITE_OPEN_READWRITE |
@@ -142,7 +158,7 @@ static sqlite3* open_or_create_database(
     }
 
     // Create tables if they don't exist
-    rc = sqlite3_exec(db, SQLite3PersistenceServiceSchemaV2::database_create_statement().c_str(), 0, 0, 0);
+    rc = sqlite3_exec(db, SQLite3PersistenceServiceSchemaV3::database_create_statement().c_str(), 0, 0, 0);
     if (rc != SQLITE_OK)
     {
         sqlite3_close(db);
@@ -186,10 +202,12 @@ SQLite3PersistenceService::SQLite3PersistenceService(
     , update_reader_stmt_(NULL)
 {
     // Prepare writer statements
-    sqlite3_prepare_v3(db_, "SELECT seq_num,instance,payload FROM writers_histories WHERE guid=?;", -1,
+    sqlite3_prepare_v3(db_, "SELECT seq_num, instance, payload, related_sample_guid, related_sample_seq_num, source_timestamp "
+            "FROM writers_histories WHERE guid=?;", -1,
             SQLITE_PREPARE_PERSISTENT,
-            &load_writer_stmt_, NULL);
-    sqlite3_prepare_v3(db_, "INSERT INTO writers_histories VALUES(?,?,?,?);", -1, SQLITE_PREPARE_PERSISTENT,
+            &load_writer_stmt_,
+            NULL);
+    sqlite3_prepare_v3(db_, "INSERT INTO writers_histories VALUES(?,?,?,?,?,?,?);", -1, SQLITE_PREPARE_PERSISTENT,
             &add_writer_change_stmt_, NULL);
     sqlite3_prepare_v3(db_, "DELETE FROM writers_histories WHERE guid=? AND seq_num=?;", -1, SQLITE_PREPARE_PERSISTENT,
             &remove_writer_change_stmt_, NULL);
@@ -253,10 +271,9 @@ bool SQLite3PersistenceService::load_writer_from_storage(
         sqlite3_reset(load_writer_stmt_);
         sqlite3_bind_text(load_writer_stmt_, 1, persistence_guid.c_str(), -1, SQLITE_STATIC);
 
-
         while (SQLITE_ROW == sqlite3_step(load_writer_stmt_))
         {
-            sqlite3_int64 sn = sqlite3_column_int64(load_writer_stmt_, 0);
+            SequenceNumber_t sn(sqlite3_column_int64(load_writer_stmt_, 0));
             CacheChange_t* change = nullptr;
             int size = sqlite3_column_bytes(load_writer_stmt_, 2);
 
@@ -267,8 +284,7 @@ bool SQLite3PersistenceService::load_writer_from_storage(
 
             SampleIdentity identity;
             identity.writer_guid(writer_guid);
-            identity.sequence_number().high = static_cast<int32_t>((sn >> 32) & 0xFFFFFFFF);
-            identity.sequence_number().low = static_cast<uint32_t>(sn & 0xFFFFFFFF);
+            identity.sequence_number(sn);
             if (!payload_pool->get_payload(size, *change))
             {
                 change_pool->release_cache(change);
@@ -284,6 +300,21 @@ bool SQLite3PersistenceService::load_writer_from_storage(
             change->serializedPayload.length = size;
             memcpy(change->serializedPayload.data, sqlite3_column_blob(load_writer_stmt_, 2), size);
 
+            // related sample identity
+            {
+                using namespace std;
+                // GUID_t
+                istringstream is(string(reinterpret_cast<const char*>(sqlite3_column_text(load_writer_stmt_, 3))));
+                auto& si = change->write_params.related_sample_identity();
+                is >> si.writer_guid();
+                // Sequence Number
+                SequenceNumber_t rsn(sqlite3_column_int64(load_writer_stmt_, 4));
+                si.sequence_number(rsn);
+            }
+
+            // timestamp
+            change->sourceTimestamp.from_ns(sqlite3_column_int64(load_writer_stmt_, 5));
+
             changes.insert(changes.begin(), change);
         }
 
@@ -292,9 +323,7 @@ bool SQLite3PersistenceService::load_writer_from_storage(
 
         while (SQLITE_ROW == sqlite3_step(load_writer_last_seq_num_stmt_))
         {
-            sqlite3_int64 sn = sqlite3_column_int64(load_writer_last_seq_num_stmt_, 0);
-            next_sequence.high = (int32_t)((sn >> 32) & 0xFFFFFFFF);
-            next_sequence.low = (int32_t)(sn & 0xFFFFFFFF);
+            next_sequence = SequenceNumber_t(sqlite3_column_int64(load_writer_last_seq_num_stmt_, 0));
         }
     }
 
@@ -334,6 +363,21 @@ bool SQLite3PersistenceService::add_writer_change_to_storage(
             }
             sqlite3_bind_blob(add_writer_change_stmt_, 4, change.serializedPayload.data,
                     change.serializedPayload.length, SQLITE_STATIC);
+
+            // related sample identity
+            {
+                using namespace std;
+                ostringstream os;
+                auto& si = change.write_params.related_sample_identity();
+                os << si.writer_guid();
+                auto guids = os.str();
+
+                sqlite3_bind_text(add_writer_change_stmt_, 5, guids.c_str(), -1, SQLITE_STATIC);
+                sqlite3_bind_int64(add_writer_change_stmt_, 6, si.sequence_number().to64long());
+            }
+
+            // source time stamp
+            sqlite3_bind_int64(add_writer_change_stmt_, 7, change.sourceTimestamp.to_ns());
 
             return sqlite3_step(add_writer_change_stmt_) == SQLITE_DONE;
         }
@@ -420,6 +464,100 @@ bool SQLite3PersistenceService::update_writer_seq_on_storage(
     }
 
     return false;
+}
+
+bool SQLite3PersistenceServiceSchemaV3::database_create_temporary_defaults_table(
+        sqlite3* db)
+{
+    using namespace std;
+
+    sqlite3_stmt* insert_default_stmt;
+
+    // create temporary table
+    int rc = sqlite3_exec(
+        db,
+        "CREATE TEMP TABLE IF NOT EXISTS Defaults (Name TEST PRIMARY KEY, Value TEST);",
+        0, 0, 0);
+
+    if (rc != SQLITE_OK)
+    {
+        return false;
+    }
+
+    // Insert default values
+    sqlite3_prepare_v3(
+        db,
+        "INSERT OR REPLACE INTO TEMP.Defaults VALUES (?, ?);",
+        -1, SQLITE_PREPARE_PERSISTENT,
+        &insert_default_stmt, NULL);
+
+    // Default GUID_t value
+    sqlite3_reset(insert_default_stmt);
+    sqlite3_bind_text(insert_default_stmt, 1, "GUID_t", -1, SQLITE_STATIC);
+    sqlite3_bind_text(insert_default_stmt, 2, SQLite3PersistenceServiceSchemaV3::default_guid(), -1, SQLITE_STATIC);
+    rc = sqlite3_step(insert_default_stmt);
+
+    if (rc != SQLITE_DONE)
+    {
+        return false;
+    }
+
+    // Default SequenceNumber_t
+    sqlite3_reset(insert_default_stmt);
+    sqlite3_bind_text(insert_default_stmt, 1, "SequenceNumber_t", -1, SQLITE_STATIC);
+    sqlite3_bind_int64(insert_default_stmt, 2, SQLite3PersistenceServiceSchemaV3::default_seqnum());
+    rc = sqlite3_step(insert_default_stmt);
+
+    if (rc != SQLITE_DONE)
+    {
+        return false;
+    }
+
+    // Default rtps::Time_t
+    sqlite3_reset(insert_default_stmt);
+    sqlite3_bind_text(insert_default_stmt, 1, "rtps::Time_t", -1, SQLITE_STATIC);
+
+    sqlite3_bind_int64(insert_default_stmt, 2, SQLite3PersistenceServiceSchemaV3::now());
+    rc = sqlite3_step(insert_default_stmt);
+
+    if (rc != SQLITE_DONE)
+    {
+        return false;
+    }
+
+    // free resources
+    finalize_statement(insert_default_stmt);
+
+    return true;
+}
+
+const char* SQLite3PersistenceServiceSchemaV3::default_guid()
+{
+    using namespace std;
+
+    static string def_guid;
+
+    if (def_guid.empty())
+    {
+        ostringstream ss;
+        auto def = GUID_t::unknown();
+        ss << def;
+        def_guid = ss.str();
+    }
+
+    return def_guid.c_str();
+}
+
+uint64_t SQLite3PersistenceServiceSchemaV3::default_seqnum()
+{
+    return SequenceNumber_t::unknown().to64long();
+}
+
+int64_t SQLite3PersistenceServiceSchemaV3::now()
+{
+    Time_t ts;
+    Time_t::now(ts);
+    return ts.to_ns();
 }
 
 } /* namespace rtps */

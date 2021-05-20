@@ -16,8 +16,8 @@
  * @file DataWriter.hpp
  */
 
-#ifndef _FASTRTPS_DATAWRITER_HPP_
-#define _FASTRTPS_DATAWRITER_HPP_
+#ifndef _FASTDDS_DDS_PUBLISHER_DATAWRITER_HPP_
+#define _FASTDDS_DDS_PUBLISHER_DATAWRITER_HPP_
 
 #include <fastdds/dds/builtin/topic/SubscriptionBuiltinTopicData.hpp>
 #include <fastdds/dds/core/Entity.hpp>
@@ -164,8 +164,9 @@ public:
 
     /** NOT YET IMPLEMENTED
      * @brief This operation performs the same function as write except that it also provides the value for the
-     * @ref source_timestamp that is made available to DataReader objects by means of the @ref source_timestamp
-     * attribute inside the SampleInfo.
+     * @ref eprosima::fastdds::dds::SampleInfo::source_timestamp "source_timestamp" that is made available to DataReader
+     * objects by means of the @ref eprosima::fastdds::dds::SampleInfo::source_timestamp attribute "source_timestamp"
+     * inside the SampleInfo.
      * The constraints on the values of the @c handle parameter and the corresponding error behavior are the same
      * specified for the @ref write operation. This operation may block and return RETCODE_TIMEOUT under the same
      * circumstances described for the @ref write operation.
@@ -196,10 +197,16 @@ public:
     /** NOT YET IMPLEMENTED
      * @brief This operation performs the same function as register_instance and can be used instead of
      * @ref register_instance in the cases where the application desires to specify the value for the
-     * @ref source_timestamp. The @ref source_timestamp potentially affects the relative order in which readers observe
-     * events from multiple writers. See the QoS policy @ref DESTINATION_ORDER. This operation may block and return
-     * RETCODE_TIMEOUT under the same circumstances described for the @ref write operation. This operation may return
-     * RETCODE_OUT_OF_RESOURCES under the same circumstances described for the @ref write operation.
+     * @ref eprosima::fastdds::dds::SampleInfo::source_timestamp "source_timestamp".
+     * The @ref eprosima::fastdds::dds::SampleInfo::source_timestamp "source_timestamp" potentially affects the relative
+     * order in which readers observe events from multiple writers. See the QoS policy
+     * @ref eprosima::fastdds::dds::DataWriterQos::destination_order "DESTINATION_ORDER".
+     *
+     * This operation may block and return RETCODE_TIMEOUT under the same circumstances described for the @ref write
+     * operation.
+     *
+     * This operation may return RETCODE_OUT_OF_RESOURCES under the same circumstances described for the
+     * @ref write operation.
      *
      * @param instance  Sample used to get the instance's key.
      * @param timestamp Time_t used to set the source_timestamp.
@@ -226,10 +233,14 @@ public:
     /** NOT YET IMPLEMENTED
      * @brief This operation performs the same function as @ref unregister_instance and can be used instead of
      * @ref unregister_instance in the cases where the application desires to specify the value for the
-     * @ref source_timestamp. The @ref source_timestamp potentially affects the relative order in which readers observe
-     * events from multiple writers. RETCODE_DESTINATION_ORDER).
+     * @ref eprosima::fastdds::dds::SampleInfo::source_timestamp "source_timestamp".
+     * The @ref eprosima::fastdds::dds::SampleInfo::source_timestamp "source_timestamp" potentially affects the relative
+     * order in which readers observe events from multiple writers. See the QoS policy
+     * @ref eprosima::fastdds::dds::DataWriterQos::destination_order "DESTINATION_ORDER".
+     *
      * The constraints on the values of the @c handle parameter and the corresponding error behavior are the same
      * specified for the @ref unregister_instance operation.
+     *
      * This operation may block and return RETCODE_TIMEOUT under the same circumstances described for the write
      * operation
      *
@@ -244,14 +255,15 @@ public:
             const fastrtps::rtps::Time_t& timestamp);
 
     /** NOT YET IMPLEMENTED
-     * This operation can be used to retrieve the instance key that corresponds to an @ref instance_handle.
-     * The operation will only fill the fields that form the key inside the @ref key_holder instance.
+     * This operation can be used to retrieve the instance key that corresponds to an
+     * @ref eprosima::fastdds::dds::Entity::instance_handle_ "instance_handle".
+     * The operation will only fill the fields that form the key inside the key_holder instance.
      *
-     * This operation may return BAD_PARAMETER if the InstanceHandle_t a_handle does not correspond to an existing
+     * This operation may return BAD_PARAMETER if the InstanceHandle_t handle does not correspond to an existing
      * data-object known to the DataWriter. If the implementation is not able to check invalid handles then the result
      * in this situation is unspecified.
      *
-     * @param[in,out] key
+     * @param[in,out] key_holder
      * @param[in] handle
      *
      * @return Any of the standard return codes.
@@ -401,12 +413,16 @@ public:
 
     /**
      * @brief This operation performs the same functions as @ref dispose except that the application provides the value
-     * for the @ref source_timestamp that is made available to DataReader objects by means of the @ref source_timestamp
+     * for the @ref eprosima::fastdds::dds::SampleInfo::source_timestamp "source_timestamp" that is made available to
+     * DataReader objects by means of the @ref eprosima::fastdds::dds::SampleInfo::source_timestamp "source_timestamp"
      * attribute inside the SampleInfo.
+     *
      * The constraints on the values of the @c handle parameter and the corresponding error behavior are the same
      * specified for the @ref dispose operation.
+     *
      * This operation may return RETCODE_PRECONDITION_NOT_MET and RETCODE_BAD_PARAMETER under the same circumstances
      * described for the @ref dispose operation.
+     *
      * This operation may return RETCODE_TIMEOUT and RETCODE_OUT_OF_RESOURCES under the same circumstances described
      * for the @ref write operation.
      *
@@ -504,7 +520,7 @@ public:
      *
      * See the description on @ref loan_sample for how and when to call this method.
      *
-     * @param [in][out] sample  Pointer to the previously loaned sample.
+     * @param [in,out] sample  Pointer to the previously loaned sample.
      *
      * @return ReturnCode_t::RETCODE_ILLEGAL_OPERATION when the data type does not support loans.
      * @return ReturnCode_t::RETCODE_NOT_ENABLED if the writer has not been enabled.
@@ -534,4 +550,4 @@ protected:
 } /* namespace fastdds */
 } /* namespace eprosima */
 
-#endif //_FASTRTPS_DATAWRITER_HPP_
+#endif // _FASTDDS_DDS_PUBLISHER_DATAWRITER_HPP_

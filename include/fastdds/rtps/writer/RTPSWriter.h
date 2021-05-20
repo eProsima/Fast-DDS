@@ -19,20 +19,26 @@
 #ifndef _FASTDDS_RTPS_RTPSWRITER_H_
 #define _FASTDDS_RTPS_RTPSWRITER_H_
 
+#include <chrono>
+#include <functional>
+#include <memory>
+#include <mutex>
+#include <vector>
+
 #include <fastdds/rtps/Endpoint.h>
-#include <fastdds/rtps/messages/RTPSMessageGroup.h>
 #include <fastdds/rtps/attributes/HistoryAttributes.h>
 #include <fastdds/rtps/attributes/WriterAttributes.h>
+#include <fastdds/rtps/common/LocatorSelector.hpp>
+#include <fastdds/rtps/messages/RTPSMessageGroup.h>
+#include <fastdds/rtps/messages/RTPSMessageSenderInterface.hpp>
 #include <fastrtps/qos/LivelinessLostStatus.h>
 #include <fastrtps/utils/collections/ResourceLimitedVector.hpp>
-#include <fastdds/rtps/common/LocatorSelector.hpp>
-#include <fastdds/rtps/messages/RTPSMessageSenderInterface.hpp>
 
-#include <vector>
-#include <memory>
-#include <functional>
-#include <chrono>
-#include <mutex>
+#ifdef FASTDDS_STATISTICS
+#include <fastdds/statistics/rtps/StatisticsCommon.hpp>
+#else
+#include <fastdds/statistics/rtps/StatisticsCommonEmpty.hpp>
+#endif // FASTDDS_STATISTICS
 
 namespace eprosima {
 namespace fastrtps {
@@ -48,7 +54,10 @@ struct CacheChange_t;
  * Class RTPSWriter, manages the sending of data to the readers. Is always associated with a HistoryCache.
  * @ingroup WRITER_MODULE
  */
-class RTPSWriter : public Endpoint, public RTPSMessageSenderInterface
+class RTPSWriter
+    : public Endpoint
+    , public RTPSMessageSenderInterface
+    , public fastdds::statistics::StatisticsWriterImpl
 {
     friend class WriterHistory;
     friend class RTPSParticipantImpl;
@@ -268,11 +277,31 @@ public:
             std::unique_lock<RecursiveTimedMutex>& lock) = 0;
 
     /*
-     * Adds a flow controller that will apply to this writer exclusively.
+     * Add a flow controller that will apply to this writer exclusively.
      * @param controller
      */
     virtual void add_flow_controller(
             std::unique_ptr<FlowController> controller) = 0;
+
+#ifdef FASTDDS_STATISTICS
+
+    /*
+     * Add a listener to receive statistics backend callbacks
+     * @param listener
+     * @return true if successfully added
+     */
+    RTPS_DllAPI bool add_statistics_listener(
+            std::shared_ptr<fastdds::statistics::IListener> listener);
+
+    /*
+     * Remove a listener from receiving statistics backend callbacks
+     * @param listener
+     * @return true if successfully removed
+     */
+    RTPS_DllAPI bool remove_statistics_listener(
+            std::shared_ptr<fastdds::statistics::IListener> listener);
+
+#endif // FASTDDS_STATISTICS
 
     /**
      * Get RTPS participant
@@ -419,13 +448,6 @@ public:
      */
     bool is_datasharing_compatible() const;
 
-    /**
-     * @param source_timestamp the timestamp of the payload we want to recycle
-     * @return whether a payload with the given source timestamp can be reused for a new change
-     */
-    virtual bool is_datasharing_payload_reusable(
-            const Time_t& source_timestamp) const = 0;
-
 protected:
 
     //!Is the data sent directly or announced by HB and THEN sent to the ones who ask for it?.
@@ -479,6 +501,52 @@ protected:
             const ReaderProxyData& rdata) const;
 
     bool is_pool_initialized() const;
+
+    template<typename Functor>
+    bool send_data_or_fragments(
+            RTPSMessageGroup& group,
+            CacheChange_t* change,
+            bool inline_qos,
+            Functor sent_fun)
+    {
+        bool sent_ok = true;
+
+        uint32_t n_fragments = change->getFragmentCount();
+        if (n_fragments > 0)
+        {
+            for (FragmentNumber_t frag = 1; frag <= n_fragments; frag++)
+            {
+                sent_ok &= group.add_data_frag(*change, frag, inline_qos);
+                if (sent_ok)
+                {
+                    sent_fun(change, frag);
+                }
+                else
+                {
+                    logError(RTPS_WRITER, "Error sending fragment (" << change->sequenceNumber << ", " << frag << ")");
+                    break;
+                }
+            }
+        }
+        else
+        {
+            sent_ok = group.add_data(*change, inline_qos);
+            if (sent_ok)
+            {
+                sent_fun(change, 0);
+            }
+            else
+            {
+                logError(RTPS_WRITER, "Error sending change " << change->sequenceNumber);
+            }
+        }
+
+        return sent_ok;
+    }
+
+    void add_statistics_sent_submessage(
+            CacheChange_t* change,
+            size_t num_locators);
 
 private:
 

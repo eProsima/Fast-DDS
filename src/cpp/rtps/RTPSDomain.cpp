@@ -214,6 +214,7 @@ bool RTPSDomain::removeRTPSParticipant(
 {
     if (p != nullptr)
     {
+        assert((p->mp_impl != nullptr) && "This participant has been previously invalidated");
         p->mp_impl->disable();
 
         std::unique_lock<std::mutex> lock(m_mutex);
@@ -237,6 +238,8 @@ bool RTPSDomain::removeRTPSParticipant(
 void RTPSDomain::removeRTPSParticipant_nts(
         RTPSDomain::t_p_RTPSParticipant& participant)
 {
+    // The destructor of RTPSParticipantImpl already deletes the associated RTPSParticipant and sets
+    // its pointer to the RTPSParticipant to nullptr, so there is no need to do it here manually.
     delete(participant.second);
 }
 
@@ -271,6 +274,27 @@ RTPSWriter* RTPSDomain::createRTPSWriter(
     {
         RTPSWriter* ret_val = nullptr;
         if (impl->createWriter(&ret_val, watt, payload_pool, hist, listen))
+        {
+            return ret_val;
+        }
+    }
+
+    return nullptr;
+}
+
+RTPSWriter* RTPSDomain::createRTPSWriter(
+        RTPSParticipant* p,
+        const EntityId_t& entity_id,
+        WriterAttributes& watt,
+        const std::shared_ptr<IPayloadPool>& payload_pool,
+        WriterHistory* hist,
+        WriterListener* listen)
+{
+    RTPSParticipantImpl* impl = RTPSDomainImpl::find_local_participant(p->getGuid());
+    if (impl)
+    {
+        RTPSWriter* ret_val = nullptr;
+        if (impl->createWriter(&ret_val, watt, payload_pool, hist, listen, entity_id))
         {
             return ret_val;
         }

@@ -75,7 +75,7 @@ macro(add_blackbox_gtest)
                 list(GET GTEST_TEST_NAME 3 GTEST_TEST_NAME)
 
                 add_test(NAME ${test}.${GTEST_GROUP_NAME}.${GTEST_TEST_NAME}.Transport
-                    COMMAND ${command} --gtest_filter=*/${GTEST_GROUP_NAME}.${GTEST_TEST_NAME}/Transport)
+                    COMMAND ${command} --gtest_filter=*/${GTEST_GROUP_NAME}.${GTEST_TEST_NAME}/Transport*)
 
                 # Add environment
                 if(WIN32)
@@ -90,7 +90,7 @@ macro(add_blackbox_gtest)
                 set_property(TEST ${test}.${GTEST_GROUP_NAME}.${GTEST_TEST_NAME}.Transport PROPERTY LABELS "${GTEST_LABELS}")
 
                 add_test(NAME ${test}.${GTEST_GROUP_NAME}.${GTEST_TEST_NAME}.Intraprocess
-                    COMMAND ${command} --gtest_filter=*/${GTEST_GROUP_NAME}.${GTEST_TEST_NAME}/Intraprocess)
+                    COMMAND ${command} --gtest_filter=*/${GTEST_GROUP_NAME}.${GTEST_TEST_NAME}/Intraprocess*)
 
                 # Add environment
                 if(WIN32)
@@ -106,7 +106,7 @@ macro(add_blackbox_gtest)
 
                 if(${test} MATCHES ".*_DDS_PIM$")
                     add_test(NAME ${test}.${GTEST_GROUP_NAME}.${GTEST_TEST_NAME}.Datasharing
-                        COMMAND ${command} --gtest_filter=*/${GTEST_GROUP_NAME}.${GTEST_TEST_NAME}/Datasharing)
+                        COMMAND ${command} --gtest_filter=*/${GTEST_GROUP_NAME}.${GTEST_TEST_NAME}/Datasharing*)
 
                     # Add environment
                     if(WIN32)
@@ -254,6 +254,8 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER) AND fastcdr_FOUND)
             ${CMAKE_CURRENT_BINARY_DIR}/PubSubReader.xml)
         configure_file(${CMAKE_CURRENT_SOURCE_DIR}/persistence.xml
             ${CMAKE_CURRENT_BINARY_DIR}/persistence.xml)
+        configure_file(${CMAKE_CURRENT_SOURCE_DIR}/StatisticsDomainParticipant.xml
+            ${CMAKE_CURRENT_BINARY_DIR}/StatisticsDomainParticipant.xml)
         configure_file(${CMAKE_CURRENT_SOURCE_DIR}/utils/check_guid.py
             ${CMAKE_CURRENT_BINARY_DIR}/check_guid.py)
 
@@ -289,6 +291,18 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER) AND fastcdr_FOUND)
                 api/dds-pim/ReqRepHelloWorldRequester.cpp
                 api/dds-pim/ReqRepHelloWorldReplier.cpp
                 )
+
+            if (FASTDDS_STATISTICS)
+
+                set(statistics_sources
+                    ${PROJECT_SOURCE_DIR}/src/cpp/statistics/types/types.cxx
+                    ${PROJECT_SOURCE_DIR}/src/cpp/statistics/types/typesPubSubTypes.cxx
+                    )
+
+                list(APPEND BLACKBOXTESTS_FASTDDS_PIM_SOURCE ${statistics_sources})
+
+            endif()
+
             add_executable(BlackboxTests_DDS_PIM ${BLACKBOXTESTS_FASTDDS_PIM_SOURCE})
             target_compile_definitions(BlackboxTests_DDS_PIM PRIVATE
                 $<$<NOT:$<BOOL:${IS_THIRDPARTY_BOOST_SUPPORTED}>>:FASTDDS_SHM_TRANSPORT_DISABLED> # Do not compile SHM Transport

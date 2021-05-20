@@ -19,16 +19,22 @@
 #ifndef _FASTDDS_RTPS_READER_RTPSREADER_H_
 #define _FASTDDS_RTPS_READER_RTPSREADER_H_
 
+#include <functional>
+
 #include <fastdds/rtps/Endpoint.h>
 #include <fastdds/rtps/attributes/ReaderAttributes.h>
-#include <fastdds/rtps/common/SequenceNumber.h>
-#include <fastrtps/qos/LivelinessChangedStatus.h>
-#include <fastdds/rtps/common/Time_t.h>
 #include <fastdds/rtps/builtin/data/WriterProxyData.h>
+#include <fastdds/rtps/common/SequenceNumber.h>
+#include <fastdds/rtps/common/Time_t.h>
+#include <fastdds/rtps/history/ReaderHistory.h>
+#include <fastrtps/qos/LivelinessChangedStatus.h>
 #include <fastrtps/utils/TimedConditionVariable.hpp>
-#include "../history/ReaderHistory.h"
 
-#include <functional>
+#ifdef FASTDDS_STATISTICS
+#include <fastdds/statistics/rtps/StatisticsCommon.hpp>
+#else
+#include <fastdds/statistics/rtps/StatisticsCommonEmpty.hpp>
+#endif // FASTDDS_STATISTICS
 
 namespace eprosima {
 namespace fastrtps {
@@ -47,7 +53,9 @@ class IDataSharingListener;
  * Class RTPSReader, manages the reception of data from its matched writers.
  * @ingroup READER_MODULE
  */
-class RTPSReader : public Endpoint
+class RTPSReader
+    : public Endpoint
+    , public fastdds::statistics::StatisticsReaderImpl
 {
     friend class ReaderHistory;
     friend class RTPSParticipantImpl;
@@ -330,6 +338,26 @@ public:
     {
         return datasharing_listener_;
     }
+
+#ifdef FASTDDS_STATISTICS
+
+    /*
+     * Add a listener to receive statistics backend callbacks
+     * @param listener
+     * @return true if successfully added
+     */
+    RTPS_DllAPI bool add_statistics_listener(
+            std::shared_ptr<fastdds::statistics::IListener> listener);
+
+    /*
+     * Remove a listener from receiving statistics backend callbacks
+     * @param listener
+     * @return true if successfully removed
+     */
+    RTPS_DllAPI bool remove_statistics_listener(
+            std::shared_ptr<fastdds::statistics::IListener> listener);
+
+#endif // FASTDDS_STATISTICS
 
 protected:
 

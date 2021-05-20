@@ -107,6 +107,9 @@
 #define HAVE_LOG_NO_ERROR @HAVE_LOG_NO_ERROR@
 #endif
 
+// Statistics
+#cmakedefine FASTDDS_STATISTICS
+
 // Deprecated macro
 #if __cplusplus >= 201402L
 #define FASTRTPS_DEPRECATED(msg) [[ deprecated(msg) ]]

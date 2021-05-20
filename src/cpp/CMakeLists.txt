@@ -161,6 +161,7 @@ set(${PROJECT_NAME}_source_files
     fastdds/core/condition/StatusCondition.cpp
     fastdds/core/condition/WaitSet.cpp
     fastdds/core/policy/ParameterList.cpp
+    fastdds/core/policy/QosPolicyUtils.cpp
     fastdds/publisher/qos/WriterQos.cpp
     fastdds/subscriber/qos/ReaderQos.cpp
     rtps/builtin/BuiltinProtocols.cpp
@@ -216,6 +217,7 @@ set(${PROJECT_NAME}_source_files
     utils/StringMatching.cpp
     utils/IPLocator.cpp
     utils/System.cpp
+    utils/SystemInfo.cpp
     utils/TimedConditionVariable.cpp
     utils/string_convert.cpp
 
@@ -228,7 +230,30 @@ set(${PROJECT_NAME}_source_files
     dds/sub/Subscriber.cpp
     dds/sub/DataReader.cpp
     dds/topic/Topic.cpp
+
+    statistics/fastdds/domain/DomainParticipant.cpp
+    statistics/fastdds/publisher/qos/DataWriterQos.cpp
+    statistics/fastdds/subscriber/qos/DataReaderQos.cpp
     )
+
+# Statistics support
+if (FASTDDS_STATISTICS)
+
+    set(statistics_sources
+        statistics/fastdds/domain/DomainParticipantImpl.cpp
+        statistics/fastdds/domain/DomainParticipantStatisticsListener.cpp
+        statistics/rtps/StatisticsBase.cpp
+        statistics/rtps/reader/StatisticsReaderImpl.cpp
+        statistics/rtps/writer/StatisticsWriterImpl.cpp
+        statistics/types/typesPubSubTypes.cxx
+        statistics/types/types.cxx
+        )
+
+    list(APPEND ${PROJECT_NAME}_source_files
+        ${statistics_sources}
+        )
+
+endif()
 
 # SHM Transport
 if(IS_THIRDPARTY_BOOST_OK)
@@ -387,6 +412,7 @@ elseif(NOT EPROSIMA_INSTALLER)
         ${PROJECT_NAME_UPPER}_SOURCE
         BOOST_ASIO_STANDALONE
         ASIO_STANDALONE
+        ASIO_DISABLE_VISIBILITY
         SQLITE_WIN32_GETVERSIONEX=0
         $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
         $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
@@ -445,9 +471,17 @@ elseif(NOT EPROSIMA_INSTALLER)
         if(TARGET_TYPE STREQUAL "SHARED_LIBRARY")
             # Export symbols in DLL library
             target_compile_definitions(${PROJECT_NAME} PUBLIC ${PROJECT_NAME_UPPER}_DYN_LINK)
+            set_target_properties(${PROJECT_NAME} PROPERTIES
+                PDB_NAME_DEBUG "${PROJECT_NAME}d-${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}"
+                PDB_OUTPUT_DIRECTORY_DEBUG "${CMAKE_CURRENT_BINARY_DIR}/symbols"
+            )
         else()
             # Rename the library to have a "lib" before.
             set_target_properties(${PROJECT_NAME} PROPERTIES OUTPUT_NAME lib${PROJECT_NAME})
+            set_target_properties(${PROJECT_NAME} PROPERTIES
+                COMPILE_PDB_NAME_DEBUG "lib${PROJECT_NAME}d-${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}"
+                COMPILE_PDB_OUTPUT_DIRECTORY_DEBUG "${CMAKE_CURRENT_BINARY_DIR}/symbols"
+            )
         endif()
 
         if("${CMAKE_SYSTEM_NAME}" STREQUAL "WindowsStore")
@@ -464,6 +498,11 @@ elseif(NOT EPROSIMA_INSTALLER)
             endif()
         endif()
     endif()
+endif()
+
+if(DEFINED ENV{LIB_FUZZING_ENGINE})
+  add_executable(fuzz_processCDRMsg rtps/messages/fuzz_processCDRMsg.cpp)
+  target_link_libraries(fuzz_processCDRMsg ${PROJECT_NAME} $ENV{LIB_FUZZING_ENGINE})
 endif()
 
 ###############################################################################
@@ -533,7 +572,17 @@ if(UNIX AND EPROSIMA_INSTALLER)
         COMPONENT sources
         )
 endif()
+
 # Install libraries
+
+# Generate different target names depending on linking
+get_target_property(TARGET_TYPE ${PROJECT_NAME} TYPE)
+if(TARGET_TYPE STREQUAL "SHARED_LIBRARY")
+    set(FASTDDS_LINKING dynamic)
+else()
+    set(FASTDDS_LINKING static)
+endif()
+
 if((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER)
     if(IS_TOP_LEVEL)
         install_msvc_libraries(i86Win32VS2015)
@@ -548,14 +597,14 @@ if((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER)
         )
 elseif(NOT EPROSIMA_INSTALLER)
     install(TARGETS ${PROJECT_NAME} eProsima_atomic
-        EXPORT ${PROJECT_NAME}-targets
+        EXPORT ${PROJECT_NAME}-${FASTDDS_LINKING}-targets
         RUNTIME DESTINATION ${BIN_INSTALL_DIR}${MSVCARCH_DIR_EXTENSION}
         LIBRARY DESTINATION ${LIB_INSTALL_DIR}${MSVCARCH_DIR_EXTENSION}
         ARCHIVE DESTINATION ${LIB_INSTALL_DIR}${MSVCARCH_DIR_EXTENSION}
         COMPONENT libraries${MSVCARCH_EXTENSION}
         )
 
-    export(TARGETS ${PROJECT_NAME} eProsima_atomic FILE ${PROJECT_BINARY_DIR}/cmake/config/${PROJECT_NAME}-targets.cmake)
+    export(TARGETS ${PROJECT_NAME} eProsima_atomic FILE ${PROJECT_BINARY_DIR}/cmake/config/${PROJECT_NAME}-${FASTDDS_LINKING}-targets.cmake)
 
     if(INSTALLER_PLATFORM)
         set(INSTALL_DESTINATION_PATH ${DATA_INSTALL_DIR}/${PROJECT_NAME}-${INSTALLER_PLATFORM}/cmake)
@@ -563,25 +612,32 @@ elseif(NOT EPROSIMA_INSTALLER)
         set(INSTALL_DESTINATION_PATH ${DATA_INSTALL_DIR}/${PROJECT_NAME}/cmake${MSVCARCH_DIR_EXTENSION_EXT})
     endif()
 
-    install(EXPORT ${PROJECT_NAME}-targets
+    install(EXPORT ${PROJECT_NAME}-${FASTDDS_LINKING}-targets
         DESTINATION ${INSTALL_DESTINATION_PATH}
         COMPONENT cmake
         )
 
     if(MSVC OR MSVC_IDE)
-        if(TARGET_TYPE STREQUAL "SHARED_LIBRARY")
-            # Install pdb files
-            install(DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/Debug/
-                DESTINATION ${LIB_INSTALL_DIR}${MSVCARCH_DIR_EXTENSION}
-                COMPONENT libraries${MSVCARCH_EXTENSION}
-                CONFIGURATIONS Debug
-                FILES_MATCHING
-                PATTERN "*.pdb"
-                )
+
+        # first try dll symbols
+        get_target_property(PDB_FILE ${PROJECT_NAME} PDB_NAME_DEBUG)
+        if(PDB_FILE)
+            get_target_property(PDB_DIR ${PROJECT_NAME} PDB_OUTPUT_DIRECTORY_DEBUG)
+            set(PDB_FILE "${PDB_DIR}/${PDB_FILE}.pdb")
         else()
-            install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}.dir/Debug/${PROJECT_NAME}.pdb
+            # fallback to static lib symbols
+            get_target_property(PDB_FILE ${PROJECT_NAME} COMPILE_PDB_NAME_DEBUG)
+            if(PDB_FILE)
+                get_target_property(PDB_DIR ${PROJECT_NAME} COMPILE_PDB_OUTPUT_DIRECTORY_DEBUG)
+                set(PDB_FILE "${PDB_DIR}/${PDB_FILE}.pdb")
+            endif()
+        endif()
+
+        # install symbols if any
+        if(PDB_FILE)
+            install(FILES ${PDB_FILE}
                 DESTINATION ${LIB_INSTALL_DIR}${MSVCARCH_DIR_EXTENSION}
-                COMPONENT libraries${MSVCARCH_EXTENSION}
+                COMPONENT symbols
                 CONFIGURATIONS Debug
                 )
         endif()

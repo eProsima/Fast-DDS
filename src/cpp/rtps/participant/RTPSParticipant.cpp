@@ -17,9 +17,9 @@
  *
  */
 
+#include <fastdds/rtps/Endpoint.h>
 #include <fastdds/rtps/participant/RTPSParticipant.h>
 #include <rtps/participant/RTPSParticipantImpl.h>
-#include <fastdds/rtps/Endpoint.h>
 
 namespace eprosima {
 namespace fastrtps {
@@ -33,7 +33,7 @@ RTPSParticipant::RTPSParticipant(
 
 RTPSParticipant::~RTPSParticipant()
 {
-
+    mp_impl = nullptr;
 }
 
 const GUID_t& RTPSParticipant::getGuid() const
@@ -185,6 +185,24 @@ bool RTPSParticipant::is_security_enabled_for_reader(
 }
 
 #endif // if HAVE_SECURITY
+
+#ifdef FASTDDS_STATISTICS
+
+bool RTPSParticipant::add_statistics_listener(
+        std::shared_ptr<fastdds::statistics::IListener> listener,
+        uint32_t kind)
+{
+    return mp_impl->add_statistics_listener(listener, kind);
+}
+
+bool RTPSParticipant::remove_statistics_listener(
+        std::shared_ptr<fastdds::statistics::IListener> listener,
+        uint32_t kind)
+{
+    return mp_impl->remove_statistics_listener(listener, kind);
+}
+
+#endif // FASTDDS_STATISTICS
 
 } /* namespace rtps */
 } /* namespace fastrtps */
