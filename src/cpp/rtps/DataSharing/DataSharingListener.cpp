@@ -79,6 +79,8 @@ void DataSharingListener::run()
 
 void DataSharingListener::start()
 {
+    std::lock_guard<std::mutex> guard(mutex_);
+
     // Check the thread
     bool was_running = is_running_.exchange(true);
     if (was_running)
@@ -92,17 +94,26 @@ void DataSharingListener::start()
 
 void DataSharingListener::stop()
 {
-    // Notify the listening thread that is no longer running
-    bool was_running = is_running_.exchange(false);
-    if (!was_running)
+    std::thread* thr = nullptr;
+
     {
-        return;
+        std::lock_guard<std::mutex> guard(mutex_);
+
+        // Notify the listening thread that is no longer running
+        bool was_running = is_running_.exchange(false);
+        if (!was_running)
+        {
+            return;
+        }
+
+        thr = listening_thread_;
+        listening_thread_ = nullptr;
     }
 
     // Notify the thread and wait for it to finish
     notification_->notify();
-    listening_thread_->join();
-    delete listening_thread_;
+    thr->join();
+    delete thr;
 }
 
 void DataSharingListener::process_new_data ()
