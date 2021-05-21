@@ -47,7 +47,7 @@ public:
         else
         {
             descriptor_ = std::make_shared<UDPv6TransportDescriptor>();
-        }    
+        }
     }
 
     void TearDown() override

@@ -1024,7 +1024,7 @@ public:
         default_unicast_locators.push_back(default_unicast_locator);
         participant_attr_.rtps.builtin.metatrafficUnicastLocatorList = default_unicast_locators;
 
-        if(!IPLocator::setIPv4(loopback_locator, 127, 0, 0, 1))
+        if (!IPLocator::setIPv4(loopback_locator, 127, 0, 0, 1))
         {
             IPLocator::setIPv6(loopback_locator, "::1");
         }

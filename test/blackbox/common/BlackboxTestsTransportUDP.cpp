@@ -47,7 +47,7 @@ public:
         else
         {
             test_transport_ = std::make_shared<UDPv6TransportDescriptor>();
-        }    
+        }
     }
 
     void TearDown() override
@@ -55,7 +55,8 @@ public:
         use_udpv4 = true;
     }
 
-    void get_ip_address(LocatorList_t* loc)
+    void get_ip_address(
+            LocatorList_t* loc)
     {
         if (use_udpv4)
         {
