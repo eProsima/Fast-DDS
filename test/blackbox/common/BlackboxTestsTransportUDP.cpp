@@ -27,54 +27,103 @@
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
 
-TEST(BlackBox, UDPv4TransportWrongConfig)
+enum communication_type
 {
+    TRANSPORT
+};
+
+class TransportUDP : public testing::TestWithParam<std::tuple<communication_type, bool>>
+{
+public:
+
+    void SetUp() override
     {
-        PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
-
-        auto testTransport = std::make_shared<UDPv4TransportDescriptor>();
-        testTransport->maxMessageSize = 100000;
-
-        writer.disable_builtin_transport().
-                add_user_transport_to_pparams(testTransport).init();
-
-        ASSERT_FALSE(writer.isInitialized());
+        test_transport_.reset();
+        use_udpv4 = std::get<1>(GetParam());
+        if (use_udpv4)
+        {
+            test_transport_ = std::make_shared<UDPv4TransportDescriptor>();
+        }
+        else
+        {
+            test_transport_ = std::make_shared<UDPv6TransportDescriptor>();
+        }    
     }
 
+    void TearDown() override
     {
-        PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
-
-        auto testTransport = std::make_shared<UDPv4TransportDescriptor>();
-        testTransport->sendBufferSize = 64000;
-
-        writer.disable_builtin_transport().
-                add_user_transport_to_pparams(testTransport).init();
-
-        ASSERT_FALSE(writer.isInitialized());
+        use_udpv4 = true;
     }
 
+    void get_ip_address(LocatorList_t* loc)
     {
-        PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
-
-        auto testTransport = std::make_shared<UDPv4TransportDescriptor>();
-        testTransport->receiveBufferSize = 64000;
-
-        writer.disable_builtin_transport().
-                add_user_transport_to_pparams(testTransport).init();
-
-        ASSERT_FALSE(writer.isInitialized());
+        if (use_udpv4)
+        {
+            eprosima::fastrtps::rtps::IPFinder::getIP4Address(loc);
+        }
+        else
+        {
+            eprosima::fastrtps::rtps::IPFinder::getIP6Address(loc);
+        }
     }
+
+    std::shared_ptr<UDPTransportDescriptor> test_transport_;
+    std::string ip0;
+    std::string ip1;
+    std::string ip2;
+};
+
+TEST_P(TransportUDP, UDPTransportWrongConfigMaxMessageSize)
+{
+    PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
+
+    test_transport_->maxMessageSize = 100000;
+
+    writer.disable_builtin_transport().
+            add_user_transport_to_pparams(test_transport_).init();
+
+    ASSERT_FALSE(writer.isInitialized());
+}
+
+TEST_P(TransportUDP, UDPTransportWrongConfigSendBufferSize)
+{
+    PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
+
+    test_transport_->sendBufferSize = 64000;
+
+    writer.disable_builtin_transport().
+            add_user_transport_to_pparams(test_transport_).init();
+
+    ASSERT_FALSE(writer.isInitialized());
+}
+
+TEST_P(TransportUDP, UDPTransportWrongConfigReceiveBufferSize)
+{
+    PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
+
+    test_transport_->receiveBufferSize = 64000;
+
+    writer.disable_builtin_transport().
+            add_user_transport_to_pparams(test_transport_).init();
+
+    ASSERT_FALSE(writer.isInitialized());
 }
 
 // TODO - GASCO: UDPMaxInitialPeer tests should use static discovery through initial peers.
-TEST(BlackBox, UDPMaxInitialPeer_P0_4_P3)
+TEST_P(TransportUDP, UDPMaxInitialPeer_P0_4_P3)
 {
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
 
     // Disallow multicast discovery
     eprosima::fastrtps::rtps::LocatorList_t loc;
-    eprosima::fastrtps::rtps::IPFinder::getIP4Address(&loc);
+    get_ip_address(&loc);
+
+    if (!use_udpv4)
+    {
+        reader.disable_builtin_transport().add_user_transport_to_pparams(test_transport_);
+        writer.disable_builtin_transport().add_user_transport_to_pparams(test_transport_);
+    }
 
     reader.participant_id(0).max_initial_peers_range(4).metatraffic_unicast_locator_list(loc).initial_peers(loc).init();
 
@@ -92,14 +141,20 @@ TEST(BlackBox, UDPMaxInitialPeer_P0_4_P3)
     ASSERT_TRUE(reader.is_matched());
 }
 
-TEST(BlackBox, UDPMaxInitialPeer_P0_4_P4)
+TEST_P(TransportUDP, UDPMaxInitialPeer_P0_4_P4)
 {
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
 
     // Disallow multicast discovery
     eprosima::fastrtps::rtps::LocatorList_t loc;
-    eprosima::fastrtps::rtps::IPFinder::getIP4Address(&loc);
+    get_ip_address(&loc);
+
+    if (!use_udpv4)
+    {
+        reader.disable_builtin_transport().add_user_transport_to_pparams(test_transport_);
+        writer.disable_builtin_transport().add_user_transport_to_pparams(test_transport_);
+    }
 
     reader.participant_id(0).max_initial_peers_range(4).metatraffic_unicast_locator_list(loc).initial_peers(loc).init();
 
@@ -117,14 +172,20 @@ TEST(BlackBox, UDPMaxInitialPeer_P0_4_P4)
     ASSERT_TRUE(reader.is_matched());
 }
 
-TEST(BlackBox, UDPMaxInitialPeer_P5_4_P4)
+TEST_P(TransportUDP, UDPMaxInitialPeer_P5_4_P4)
 {
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
 
     // Disallow multicast discovery
     eprosima::fastrtps::rtps::LocatorList_t loc;
-    eprosima::fastrtps::rtps::IPFinder::getIP4Address(&loc);
+    get_ip_address(&loc);
+
+    if (!use_udpv4)
+    {
+        reader.disable_builtin_transport().add_user_transport_to_pparams(test_transport_);
+        writer.disable_builtin_transport().add_user_transport_to_pparams(test_transport_);
+    }
 
     reader.participant_id(5).metatraffic_unicast_locator_list(loc).initial_peers(loc).init();
 
@@ -141,14 +202,20 @@ TEST(BlackBox, UDPMaxInitialPeer_P5_4_P4)
     ASSERT_FALSE(reader.is_matched());
 }
 
-TEST(BlackBox, UDPMaxInitialPeer_P5_6_P4)
+TEST_P(TransportUDP, UDPMaxInitialPeer_P5_6_P4)
 {
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
 
     // Disallow multicast discovery
     eprosima::fastrtps::rtps::LocatorList_t loc;
-    eprosima::fastrtps::rtps::IPFinder::getIP4Address(&loc);
+    get_ip_address(&loc);
+
+    if (!use_udpv4)
+    {
+        reader.disable_builtin_transport().add_user_transport_to_pparams(test_transport_);
+        writer.disable_builtin_transport().add_user_transport_to_pparams(test_transport_);
+    }
 
     reader.participant_id(5).metatraffic_unicast_locator_list(loc).initial_peers(loc).init();
 
@@ -167,25 +234,24 @@ TEST(BlackBox, UDPMaxInitialPeer_P5_6_P4)
 }
 
 // Used to reproduce VPN environment issue with multicast.
-TEST(BlackBox, MulticastCommunicationBadReader)
+TEST_P(TransportUDP, MulticastCommunicationBadReader)
 {
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
 
-    auto transport = std::make_shared<UDPv4TransportDescriptor>();
-    std::string ip0("127.0.0.1");
-    std::string ip1("239.255.1.4");
-    std::string ip2("239.255.1.5");
+    ip0 = use_udpv4 ? "127.0.0.1" : "::1";
+    ip1 = use_udpv4 ? "239.255.1.4" : "ff1e::ffff:efff:104";
+    ip2 = use_udpv4 ? "239.255.1.5" : "ff1e::ffff:efff:105";
 
-    transport->interfaceWhiteList.push_back(ip0);
+    test_transport_->interfaceWhiteList.push_back(ip0);
 
-    writer.disable_builtin_transport().add_user_transport_to_pparams(transport);
+    writer.disable_builtin_transport().add_user_transport_to_pparams(test_transport_);
     writer.add_to_metatraffic_multicast_locator_list(ip2, global_port);
     writer.init();
 
     ASSERT_TRUE(writer.isInitialized());
 
     PubSubReader<HelloWorldType> readerMultiBad(TEST_TOPIC_NAME);
-    readerMultiBad.disable_builtin_transport().add_user_transport_to_pparams(transport);
+    readerMultiBad.disable_builtin_transport().add_user_transport_to_pparams(test_transport_);
     readerMultiBad.add_to_metatraffic_multicast_locator_list(ip1, global_port);
     readerMultiBad.init();
 
@@ -199,54 +265,30 @@ TEST(BlackBox, MulticastCommunicationBadReader)
 }
 
 // Used to reproduce VPN environment issue with multicast.
-TEST(BlackBox, MulticastCommunicationOkReader)
+TEST_P(TransportUDP, MulticastCommunicationOkReader)
 {
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
 
-    auto transport = std::make_shared<UDPv4TransportDescriptor>();
-    std::string ip0("127.0.0.1");
-    std::string ip2("239.255.1.5");
+    ip0 = use_udpv4 ? "127.0.0.1" : "::1";
+    ip2 = use_udpv4 ? "239.255.1.5" : "ff1e::ffff:efff:105";
 
-    transport->interfaceWhiteList.push_back(ip0);
-
-    writer.disable_builtin_transport().add_user_transport_to_pparams(transport);
-    writer.add_to_metatraffic_multicast_locator_list(ip2, global_port);
-    writer.init();
-
-    ASSERT_TRUE(writer.isInitialized());
-
-    PubSubReader<HelloWorldType> readerMultiOk(TEST_TOPIC_NAME);
-    readerMultiOk.disable_builtin_transport().add_user_transport_to_pparams(transport);
-    readerMultiOk.add_to_metatraffic_multicast_locator_list(ip2, global_port);
-    readerMultiOk.init();
-
-    ASSERT_TRUE(readerMultiOk.isInitialized());
-
-    writer.wait_discovery();
-    readerMultiOk.wait_discovery();
-    ASSERT_TRUE(writer.is_matched());
-    ASSERT_TRUE(readerMultiOk.is_matched());
-}
-
-// #4420 Using whitelists in localhost sometimes UDP doesn't receive the release input channel message.
-TEST(BlackBox, whitelisting_udp_localhost_multi)
-{
-    PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
-
-    auto transport = std::make_shared<UDPv4TransportDescriptor>();
-    std::string ip0("127.0.0.1");
-
-    transport->interfaceWhiteList.push_back(ip0);
-
-    writer.disable_builtin_transport().add_user_transport_to_pparams(transport);
-    writer.init();
-
-    ASSERT_TRUE(writer.isInitialized());
-
-    for (int i = 0; i < 200; ++i)
+    // TODO(jlbueno) When announcing from localhost to multicast the RTPS packets are being sent (wireshark captures
+    // them) but the packets are not received in the remote participant.
+    // Using any other interface different from localhost, the test passes.
+    // Disabling multicast and setting initial peers, the test also passes.
+    if (use_udpv4)
     {
+        test_transport_->interfaceWhiteList.push_back(ip0);
+
+        writer.disable_builtin_transport().add_user_transport_to_pparams(test_transport_);
+        writer.add_to_metatraffic_multicast_locator_list(ip2, global_port);
+        writer.init();
+
+        ASSERT_TRUE(writer.isInitialized());
+
         PubSubReader<HelloWorldType> readerMultiOk(TEST_TOPIC_NAME);
-        readerMultiOk.disable_builtin_transport().add_user_transport_to_pparams(transport);
+        readerMultiOk.disable_builtin_transport().add_user_transport_to_pparams(test_transport_);
+        readerMultiOk.add_to_metatraffic_multicast_locator_list(ip2, global_port);
         readerMultiOk.init();
 
         ASSERT_TRUE(readerMultiOk.isInitialized());
@@ -258,18 +300,61 @@ TEST(BlackBox, whitelisting_udp_localhost_multi)
     }
 }
 
-// Checking correct copying of participant user data locators to the writers/readers
-TEST(BlackBox, DefaultMulticastLocatorsParticipant)
+// #4420 Using whitelists in localhost sometimes UDP doesn't receive the release input channel message.
+TEST_P(TransportUDP, whitelisting_udp_localhost_multi)
 {
+    PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
+
+    ip0 = use_udpv4 ? "127.0.0.1" : "::1";
+
+    // TODO(jlbueno) When announcing from localhost to multicast the RTPS packets are being sent (wireshark captures
+    // them) but the packets are not received in the remote participant.
+    // Using any other interface different from localhost, the test passes.
+    // Disabling multicast and setting initial peers, the test also passes.
+    if (use_udpv4)
+    {
+        test_transport_->interfaceWhiteList.push_back(ip0);
+
+        writer.disable_builtin_transport().add_user_transport_to_pparams(test_transport_);
+        writer.init();
+
+        ASSERT_TRUE(writer.isInitialized());
+
+        for (int i = 0; i < 200; ++i)
+        {
+            PubSubReader<HelloWorldType> readerMultiOk(TEST_TOPIC_NAME);
+            readerMultiOk.disable_builtin_transport().add_user_transport_to_pparams(test_transport_);
+            readerMultiOk.init();
+
+            ASSERT_TRUE(readerMultiOk.isInitialized());
+
+            writer.wait_discovery();
+            readerMultiOk.wait_discovery();
+            ASSERT_TRUE(writer.is_matched());
+            ASSERT_TRUE(readerMultiOk.is_matched());
+        }
+    }
+}
+
+// Checking correct copying of participant user data locators to the writers/readers
+TEST_P(TransportUDP, DefaultMulticastLocatorsParticipant)
+{
+    PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
+    PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     size_t writer_samples = 5;
 
-    PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
-    writer.add_to_default_multicast_locator_list("239.255.0.1", 22222);
+    ip1 = use_udpv4 ? "239.255.0.1" : "ff1e::ffff:efff:1";
+    if (!use_udpv4)
+    {
+        writer.disable_builtin_transport().add_user_transport_to_pparams(test_transport_);
+        reader.disable_builtin_transport().add_user_transport_to_pparams(test_transport_);
+    }
+
+    writer.add_to_default_multicast_locator_list(ip1, 22222);
     writer.init();
     ASSERT_TRUE(writer.isInitialized());
 
-    PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
-    reader.add_to_default_multicast_locator_list("239.255.0.1", 22222);
+    reader.add_to_default_multicast_locator_list(ip1, 22222);
     reader.init();
     ASSERT_TRUE(reader.isInitialized());
 
@@ -291,23 +376,23 @@ TEST(BlackBox, DefaultMulticastLocatorsParticipant)
 }
 
 // Checking correct copying of participant metatraffic locators to the datawriters/datatreaders
-TEST(BlackBox, MetatraficMulticastLocatorsParticipant)
+TEST_P(TransportUDP, MetatrafficMulticastLocatorsParticipant)
 {
     Log::SetVerbosity(Log::Kind::Warning);
 
     size_t writer_samples = 5;
 
-    auto transport = std::make_shared<UDPv4TransportDescriptor>();
+    ip1 = use_udpv4 ? "239.255.1.1" : "ff1e::ffff:efff:101";
 
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
-    writer.disable_builtin_transport().add_user_transport_to_pparams(transport);
-    writer.add_to_metatraffic_multicast_locator_list("239.255.1.1", 22222);
+    writer.disable_builtin_transport().add_user_transport_to_pparams(test_transport_);
+    writer.add_to_metatraffic_multicast_locator_list(ip1, 22222);
     writer.init();
     ASSERT_TRUE(writer.isInitialized());
 
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
-    reader.disable_builtin_transport().add_user_transport_to_pparams(transport);
-    reader.add_to_metatraffic_multicast_locator_list("239.255.1.1", 22222);
+    reader.disable_builtin_transport().add_user_transport_to_pparams(test_transport_);
+    reader.add_to_metatraffic_multicast_locator_list(ip1, 22222);
     reader.init();
     ASSERT_TRUE(reader.isInitialized());
 
@@ -329,17 +414,24 @@ TEST(BlackBox, MetatraficMulticastLocatorsParticipant)
 }
 
 // Checking correct copying of participant user data locators to the writers/readers
-TEST(BlackBox, DefaultMulticastLocatorsParticipantZeroPort)
+TEST_P(TransportUDP, DefaultMulticastLocatorsParticipantZeroPort)
 {
+    PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
+    PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     size_t writer_samples = 5;
 
-    PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
-    writer.add_to_default_multicast_locator_list("239.255.0.1", 0);
+    ip1 = use_udpv4 ? "239.255.0.1" : "ff1e::ffff:efff:1";
+    if (!use_udpv4)
+    {
+        writer.disable_builtin_transport().add_user_transport_to_pparams(test_transport_);
+        reader.disable_builtin_transport().add_user_transport_to_pparams(test_transport_);
+    }
+
+    writer.add_to_default_multicast_locator_list(ip1, 0);
     writer.init();
     ASSERT_TRUE(writer.isInitialized());
 
-    PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
-    reader.add_to_default_multicast_locator_list("239.255.0.1", 0);
+    reader.add_to_default_multicast_locator_list(ip1, 0);
     reader.init();
     ASSERT_TRUE(reader.isInitialized());
 
@@ -361,23 +453,23 @@ TEST(BlackBox, DefaultMulticastLocatorsParticipantZeroPort)
 }
 
 // Checking correct copying of participant metatraffic locators to the datawriters/datatreaders
-TEST(BlackBox, MetatraficMulticastLocatorsParticipantZeroPort)
+TEST_P(TransportUDP, MetatrafficMulticastLocatorsParticipantZeroPort)
 {
     Log::SetVerbosity(Log::Kind::Warning);
 
     size_t writer_samples = 5;
 
-    auto transport = std::make_shared<UDPv4TransportDescriptor>();
+    ip1 = use_udpv4 ? "239.255.1.1" : "ff1e::ffff:efff:101";
 
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
-    writer.disable_builtin_transport().add_user_transport_to_pparams(transport);
-    writer.add_to_metatraffic_multicast_locator_list("239.255.1.1", 0);
+    writer.disable_builtin_transport().add_user_transport_to_pparams(test_transport_);
+    writer.add_to_metatraffic_multicast_locator_list(ip1, 0);
     writer.init();
     ASSERT_TRUE(writer.isInitialized());
 
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
-    reader.disable_builtin_transport().add_user_transport_to_pparams(transport);
-    reader.add_to_metatraffic_multicast_locator_list("239.255.1.1", 0);
+    reader.disable_builtin_transport().add_user_transport_to_pparams(test_transport_);
+    reader.add_to_metatraffic_multicast_locator_list(ip1, 0);
     reader.init();
     ASSERT_TRUE(reader.isInitialized());
 
@@ -399,17 +491,16 @@ TEST(BlackBox, MetatraficMulticastLocatorsParticipantZeroPort)
 }
 
 // #4420 Using whitelists in localhost sometimes UDP doesn't receive the release input channel message.
-TEST(BlackBox, whitelisting_udp_localhost_alone)
+TEST_P(TransportUDP, whitelisting_udp_localhost_alone)
 {
-    auto transport = std::make_shared<UDPv4TransportDescriptor>();
-    std::string ip0("127.0.0.1");
+    ip0 = use_udpv4 ? "127.0.0.1" : "::1";
 
-    transport->interfaceWhiteList.push_back(ip0);
+    test_transport_->interfaceWhiteList.push_back(ip0);
 
     for (int i = 0; i < 200; ++i)
     {
         PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
-        writer.disable_builtin_transport().add_user_transport_to_pparams(transport);
+        writer.disable_builtin_transport().add_user_transport_to_pparams(test_transport_);
         writer.init();
         ASSERT_TRUE(writer.isInitialized());
     }
@@ -497,3 +588,26 @@ TEST(BlackBox, UDPv6_copy)
     eprosima::fastdds::rtps::UDPv6TransportDescriptor udpv6_transport_copy = udpv6_transport;
     EXPECT_EQ(udpv6_transport_copy, udpv6_transport);
 }
+
+#ifdef INSTANTIATE_TEST_SUITE_P
+#define GTEST_INSTANTIATE_TEST_MACRO(x, y, z, w) INSTANTIATE_TEST_SUITE_P(x, y, z, w)
+#else
+#define GTEST_INSTANTIATE_TEST_MACRO(x, y, z, w) INSTANTIATE_TEST_CASE_P(x, y, z, w)
+#endif // ifdef INSTANTIATE_TEST_SUITE_P
+
+GTEST_INSTANTIATE_TEST_MACRO(TransportUDP,
+        TransportUDP,
+        testing::Combine(testing::Values(TRANSPORT), testing::Values(false, true)),
+        [](const testing::TestParamInfo<TransportUDP::ParamType>& info)
+        {
+            bool udpv4 = std::get<1>(info.param);
+            std::string suffix = udpv4 ? "UDPv4" : "UDPv6";
+            switch (std::get<0>(info.param))
+            {
+                case TRANSPORT:
+                default:
+                    return "Transport" + suffix;
+            }
+
+        });
+
