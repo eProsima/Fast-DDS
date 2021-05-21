@@ -481,8 +481,11 @@ elseif(NOT EPROSIMA_INSTALLER)
 
             # Get OpenSSL version suitable manifest format
             execute_process( COMMAND PowerShell -NoLogo -Command "&{ param([string]$original) 
-                $original.Substring(0,$original.length-1) + '.' +
-                ([int]$original[$original.length-1]-[int][char]'a'+1) }" -original ${OPENSSL_VERSION}
+                    if ($original -notmatch '\\d+$')
+                    { $res = $original.Substring(0,$original.length-1) + '.' +
+                            ([int]$original[$original.length-1]-[int][char]'a'+1); }
+                    else { while(($original -split '\\.').count -le 3)
+                        { $original += '.0'; } $res = $original; } $res }" -original ${OPENSSL_VERSION}
                 OUTPUT_VARIABLE OPENSSL_CANONICAL_VERSION
                 )
             string(STRIP ${OPENSSL_CANONICAL_VERSION} OPENSSL_CANONICAL_VERSION)
