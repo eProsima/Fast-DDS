@@ -137,7 +137,7 @@ protected:
 
 #pragma warning(push)
 #pragma warning(disable:4324)
-    class alignas (void*) PayloadNode
+    class alignas (uint64_t) PayloadNode
     {
 
         struct PayloadNodeMetaData
@@ -317,7 +317,7 @@ protected:
 
     };
 
-    struct alignas (void*) PoolDescriptor
+    struct alignas (uint64_t) PoolDescriptor
     {
         uint32_t history_size;          //< Number of payloads in the history
         uint64_t notified_begin;        //< The index of the oldest history entry already notified (ready to read)

@@ -353,6 +353,15 @@ void PDP::initializeParticipantProxyData(
         participant_data->plugin_security_attributes_ = 0UL;
     }
 #endif // if HAVE_SECURITY
+<<<<<<< HEAD
+=======
+
+    // Set participant type property
+    std::stringstream participant_type;
+    participant_type << mp_RTPSParticipant->getAttributes().builtin.discovery_config.discoveryProtocol;
+    auto ptype = participant_type.str();
+    participant_data->m_properties.push_back(fastdds::dds::parameter_property_participant_type, ptype);
+>>>>>>> d5f3559fb (Fix warnings and segfaults on Win32 builds (#1982))
 }
 
 bool PDP::initPDP(
