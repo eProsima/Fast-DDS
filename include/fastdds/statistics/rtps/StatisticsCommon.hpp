@@ -258,7 +258,7 @@ protected:
             uint32_t payload);
 };
 
-#else
+#else // when FASTDDS_STATISTICS is not defined a dummy implementation is used
 
 class StatisticsWriterImpl
 {
