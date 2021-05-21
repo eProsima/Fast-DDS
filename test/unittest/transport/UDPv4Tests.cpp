@@ -353,7 +353,7 @@ TEST_F(UDPv4Tests, send_to_allowed_interface)
             Locator_t remoteMulticastLocator;
             remoteMulticastLocator.port = g_default_port;
             remoteMulticastLocator.kind = LOCATOR_KIND_UDPv4;
-            IPLocator::setIPv4(remoteMulticastLocator, 239, 255, 1, 4); // Loopback
+            IPLocator::setIPv4(remoteMulticastLocator, 239, 255, 1, 4);
 
             LocatorList_t locator_list;
             locator_list.push_back(remoteMulticastLocator);
