@@ -40,7 +40,8 @@ system input/output channel combination for each deployment.
 
 *eProsima Fast DDS* has been adopted by multiple organizations in many sectors including these important cases:
 
-* Robotics: ROS (Robotic Operating System) as their default middleware for ROS2.
+* Robotics: ROS (Robotic Operating System) as their default middleware for ROS2 until and including the 
+  latest long term release Foxy Fitzroy.
 * EU R&D: FIWARE Incubated GE.
 
 This project is part of [FIWARE](https://www.fiware.org/). For more information check the FIWARE Catalogue entry for
