@@ -34,11 +34,7 @@
 #include <fastrtps/qos/LivelinessLostStatus.h>
 #include <fastrtps/utils/collections/ResourceLimitedVector.hpp>
 
-#ifdef FASTDDS_STATISTICS
 #include <fastdds/statistics/rtps/StatisticsCommon.hpp>
-#else
-#include <fastdds/statistics/rtps/StatisticsCommonEmpty.hpp>
-#endif // FASTDDS_STATISTICS
 
 namespace eprosima {
 namespace fastrtps {
