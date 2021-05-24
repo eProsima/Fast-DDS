@@ -30,11 +30,7 @@
 #include <fastrtps/qos/LivelinessChangedStatus.h>
 #include <fastrtps/utils/TimedConditionVariable.hpp>
 
-#ifdef FASTDDS_STATISTICS
 #include <fastdds/statistics/rtps/StatisticsCommon.hpp>
-#else
-#include <fastdds/statistics/rtps/StatisticsCommonEmpty.hpp>
-#endif // FASTDDS_STATISTICS
 
 namespace eprosima {
 namespace fastrtps {
