@@ -25,12 +25,11 @@
 #include <list>
 #include <string>
 
+#include <asio.hpp>
+#include <gtest/gtest.h>
 #if _MSC_VER
 #include <Windows.h>
 #endif // _MSC_VER
-
-#include <asio.hpp>
-#include <gtest/gtest.h>
 #include <fastdds/dds/core/UserAllocatedSequence.hpp>
 #include <fastdds/dds/core/policy/QosPolicies.hpp>
 #include <fastdds/dds/domain/DomainParticipant.hpp>
