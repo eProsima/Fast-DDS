@@ -14,7 +14,7 @@
 
 #include "LatencyTestPublisher.hpp"
 #include "LatencyTestSubscriber.hpp"
-#include "../optionparser.h"
+#include "../optionarg.hpp"
 
 #include <stdio.h>
 #include <string>
@@ -43,83 +43,6 @@ using namespace eprosima::fastrtps::rtps;
 #else
 #define COPYSTR strcpy
 #endif // if defined(_WIN32)
-
-
-struct Arg : public option::Arg
-{
-    static void printError(
-            const char* msg1,
-            const option::Option& opt,
-            const char* msg2)
-    {
-        fprintf(stderr, "%s", msg1);
-        fwrite(opt.name, opt.namelen, 1, stderr);
-        fprintf(stderr, "%s", msg2);
-    }
-
-    static option::ArgStatus Unknown(
-            const option::Option& option,
-            bool msg)
-    {
-        if (msg)
-        {
-            printError("Unknown option '", option, "'\n");
-        }
-        return option::ARG_ILLEGAL;
-    }
-
-    static option::ArgStatus Required(
-            const option::Option& option,
-            bool msg)
-    {
-        if (option.arg != 0 && option.arg[0] != 0)
-        {
-            return option::ARG_OK;
-        }
-
-        if (msg)
-        {
-            printError("Option '", option, "' requires an argument\n");
-        }
-        return option::ARG_ILLEGAL;
-    }
-
-    static option::ArgStatus Numeric(
-            const option::Option& option,
-            bool msg)
-    {
-        char* endptr = 0;
-        if (option.arg != 0 && strtol(option.arg, &endptr, 10))
-        {
-        }
-        if (endptr != option.arg && *endptr == 0)
-        {
-            return option::ARG_OK;
-        }
-
-        if (msg)
-        {
-            printError("Option '", option, "' requires a numeric argument\n");
-        }
-        return option::ARG_ILLEGAL;
-    }
-
-    static option::ArgStatus String(
-            const option::Option& option,
-            bool msg)
-    {
-        if (option.arg != 0)
-        {
-            return option::ARG_OK;
-        }
-        if (msg)
-        {
-            printError("Option '", option, "' requires a numeric argument\n");
-        }
-        return option::ARG_ILLEGAL;
-    }
-
-};
 
 enum  optionIndex
 {
@@ -193,8 +116,8 @@ const option::Descriptor usage[] = {
       "  -e <arg>,    --echo=<arg>          Echo mode (\"true\"/\"false\")." },
     { FILE_R,        0, "f", "file",            Arg::Required,
       "  -f <arg>,  --file=<arg>             File to read the payload demands from." },
-    { DATA_SHARING,        0, "d", "data_sharing",            Arg::None,
-      "               --data_sharing        Enable data sharing feature." },
+    { DATA_SHARING,  0, "d", "data_sharing",    Arg::Enabler,
+      "               --data_sharing=[on|off]             Explicitly enable/disable data sharing feature." },
     { DATA_LOAN,        0, "l", "data_loans",            Arg::None,
       "               --data_loans          Use loan sample API." },
     { 0, 0, 0, 0, 0, 0 }
@@ -301,7 +224,7 @@ int main(
     bool dynamic_types = false;
     int forced_domain = -1;
     std::string demands_file = "";
-    bool data_sharing = false;
+    Arg::EnablerValue data_sharing = false;
     bool data_loans = false;
 
     argc -= (argc > 0);
@@ -457,7 +380,15 @@ int main(
                 demands_file = opt.arg;
                 break;
             case DATA_SHARING:
-                data_sharing = true;
+                if (0 == strncasecmp(opt.arg, "on", 2))
+                {
+                    data_sharing = Arg::EnablerValue::ON;
+                }
+                else
+                {
+                    data_sharing = Arg::EnablerValue::OFF;
+                }
+                break;
                 break;
             case DATA_LOAN:
                 data_loans = true;
@@ -479,7 +410,7 @@ int main(
             logError(LatencyTest, "Intra-process delivery NOT supported with security");
             return 1;
         }
-        else if (data_sharing)
+        else if (Arg::EnablerValue::ON == data_sharing)
         {
             logError(LatencyTest, "Sharing sample APIs NOT supported with RTPS encryption");
             return 1;
@@ -487,7 +418,7 @@ int main(
     }
 #endif // if HAVE_SECURITY
 
-    if ((data_sharing || data_loans) && dynamic_types)
+    if ((Arg::EnablerValue::ON == data_sharing || data_loans) && dynamic_types)
     {
         logError(LatencyTest, "Sharing sample APIs NOT supported with dynamic types");
         return 1;

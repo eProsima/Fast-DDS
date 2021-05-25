@@ -47,6 +47,8 @@
 #include <fastrtps/types/DynamicPubSubType.h>
 #include "ThroughputTypes.hpp"
 
+#include "../optionarg.hpp"
+
 class ThroughputPublisher
 {
 public:
@@ -64,7 +66,7 @@ public:
             const std::string& demands_file,
             const std::string& recoveries_file,
             bool dynamic_types,
-            bool data_sharing,
+            Arg::EnablerValue data_sharing,
             bool data_loans,
             int forced_domain);
 
@@ -142,7 +144,7 @@ private:
 
     // Flags
     bool dynamic_types_ = false;
-    bool data_sharing_ = false;
+    Arg::EnablerValue data_sharing_ = Arg::EnablerValue::NO_SET;
     bool data_loans_ = false;
     bool ready_ = true;
     bool reliable_ = false;

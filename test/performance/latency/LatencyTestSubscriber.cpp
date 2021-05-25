@@ -85,7 +85,7 @@ bool LatencyTestSubscriber::init(
         const PropertyPolicy& property_policy,
         const std::string& xml_config_file,
         bool dynamic_data,
-        bool data_sharing,
+        Arg::EnablerValue data_sharing,
         bool data_loans,
         int forced_domain,
         LatencyDataSizes& latency_data_sizes)
@@ -217,17 +217,20 @@ bool LatencyTestSubscriber::init(
         }
 
         // Set data sharing according with cli.
-        DataSharingQosPolicy dsp;
-        if (data_sharing_)
+        if (Arg::EnablerValue::ON == data_sharing_)
         {
+            DataSharingQosPolicy dsp;
             dsp.on("");
+            dw_qos_.data_sharing(dsp);
+            dr_qos_.data_sharing(dsp);
         }
-        else
+        else if (Arg::EnablerValue::OFF == data_sharing_)
         {
+            DataSharingQosPolicy dsp;
             dsp.off();
+            dw_qos_.data_sharing(dsp);
+            dr_qos_.data_sharing(dsp);
         }
-        dw_qos_.data_sharing(dsp);
-        dr_qos_.data_sharing(dsp);
 
         // Increase payload pool size to prevent loan failures due to outages
         if (data_loans_)

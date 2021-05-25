@@ -16,6 +16,7 @@ import argparse
 import os
 import subprocess
 
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(
         formatter_class=argparse.ArgumentDefaultsHelpFormatter
@@ -64,8 +65,8 @@ if __name__ == '__main__':
     parser.add_argument(
         '-d',
         '--data_sharing',
-        action='store_true',
-        help='Enable data sharing (Defaults: disable)',
+        choices=['on', 'off'],
+        help='Explicitly enable/disable data sharing (Defaults: Fast-DDS default setting)',
         required=False,
     )
     parser.add_argument(
@@ -121,9 +122,9 @@ if __name__ == '__main__':
 
     # Data sharing and loans options
     # modify output file names
-    if args.data_sharing and args.data_loans:
+    if args.data_sharing and 'on' == args.data_sharing and args.data_loans:
         filename_options += '_data_loans_and_sharing'
-    elif args.data_sharing:
+    elif args.data_sharing and 'on' == args.data_sharing:
         filename_options += '_data_sharing'
     elif args.data_loans:
         filename_options += '_data_loans'
@@ -144,7 +145,10 @@ if __name__ == '__main__':
     data_options = []
 
     if args.data_sharing:
-        data_options += ['--data_sharing']
+        if 'on' == args.data_sharing:
+            data_options += ['--data_sharing=on']
+        else:
+            data_options += ['--data_sharing=off']
 
     if args.data_loans:
         data_options += ['--data_loans']

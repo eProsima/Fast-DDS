@@ -120,7 +120,7 @@ bool ThroughputPublisher::init(
         const std::string& demands_file,
         const std::string& recoveries_file,
         bool dynamic_types,
-        bool data_sharing,
+        Arg::EnablerValue data_sharing,
         bool data_loans,
         int forced_domain)
 {
@@ -245,10 +245,16 @@ bool ThroughputPublisher::init(
     }
 
     // Set data sharing according with cli. Is disabled by default in all xml profiles
-    if (data_sharing_)
+    if (Arg::EnablerValue::ON == data_sharing_)
     {
         DataSharingQosPolicy dsp;
         dsp.on("");
+        dw_qos_.data_sharing(dsp);
+    }
+    else if (Arg::EnablerValue::OFF == data_sharing_)
+    {
+        DataSharingQosPolicy dsp;
+        dsp.off();
         dw_qos_.data_sharing(dsp);
     }
 

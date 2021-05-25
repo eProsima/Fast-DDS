@@ -44,6 +44,8 @@
 #include <fastrtps/types/TypeDescriptor.h>
 #include "ThroughputTypes.hpp"
 
+#include "../optionarg.hpp"
+
 class ThroughputSubscriber
 {
 public:
@@ -58,7 +60,7 @@ public:
             const eprosima::fastrtps::rtps::PropertyPolicy& property_policy,
             const std::string& xml_config_file,
             bool dynamic_types,
-            bool data_sharing,
+            Arg::EnablerValue data_sharing,
             bool data_loans,
             int forced_domain);
 
@@ -123,7 +125,7 @@ private:
 
     // Flags
     bool dynamic_types_ = false;
-    bool data_sharing_ = false;
+    Arg::EnablerValue data_sharing_ = Arg::EnablerValue::NO_SET;
     bool data_loans_ = false;
     bool ready_ = true;
     bool reliable_ = false;

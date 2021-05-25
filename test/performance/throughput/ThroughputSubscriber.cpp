@@ -106,7 +106,7 @@ void ThroughputSubscriber::DataReaderListener::on_data_available(
         for (int32_t i = 0; i < size; ++i)
         {
             uint32_t seq_num = std::max(data_seq[i].seqnum, last_seq_num);
-            if (sub.data_sharing_ && seq_num > last_seq_num + 1)
+            if (seq_num > last_seq_num + 1)
             {
                 if (!reader->is_sample_valid(&data_seq[i], &infos[i]))
                 {
@@ -260,7 +260,7 @@ bool ThroughputSubscriber::init(
         const eprosima::fastrtps::rtps::PropertyPolicy& property_policy,
         const std::string& xml_config_file,
         bool dynamic_types,
-        bool data_sharing,
+        Arg::EnablerValue data_sharing,
         bool data_loans,
         int forced_domain)
 {
@@ -365,10 +365,16 @@ bool ThroughputSubscriber::init(
     dr_qos_.reliability(rp);
 
     // Set data sharing according with cli. Is disabled by default in all xml profiles
-    if (data_sharing_)
+    if (Arg::EnablerValue::ON == data_sharing_)
     {
         DataSharingQosPolicy dsp;
         dsp.on("");
+        dr_qos_.data_sharing(dsp);
+    }
+    else if (Arg::EnablerValue::OFF == data_sharing_)
+    {
+        DataSharingQosPolicy dsp;
+        dsp.off();
         dr_qos_.data_sharing(dsp);
     }
 
