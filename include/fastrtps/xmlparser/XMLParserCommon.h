@@ -316,6 +316,8 @@ extern const char* MULTICAST_LOCATOR;
 extern const char* _RELIABLE_RELIABILITY_QOS;
 extern const char* _BEST_EFFORT_RELIABILITY_QOS;
 extern const char* DURABILITY_QOS;
+extern const char* _PERSISTENT_DURABILITY_QOS;
+extern const char* _TRANSIENT_DURABILITY_QOS;
 extern const char* _TRANSIENT_LOCAL_DURABILITY_QOS;
 extern const char* _VOLATILE_DURABILITY_QOS;
 extern const char* OWNERSHIP_QOS;
