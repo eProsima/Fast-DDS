@@ -224,7 +224,7 @@ int main(
     bool dynamic_types = false;
     int forced_domain = -1;
     std::string demands_file = "";
-    Arg::EnablerValue data_sharing = false;
+    Arg::EnablerValue data_sharing = Arg::EnablerValue::NO_SET;
     bool data_loans = false;
 
     argc -= (argc > 0);
