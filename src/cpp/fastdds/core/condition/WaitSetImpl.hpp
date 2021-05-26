@@ -19,6 +19,7 @@
 #ifndef _FASTDDS_CORE_CONDITION_WAITSETIMPL_HPP_
 #define _FASTDDS_CORE_CONDITION_WAITSETIMPL_HPP_
 
+#include <condition_variable>
 #include <mutex>
 
 #include <fastdds/dds/core/condition/Condition.hpp>
@@ -87,7 +88,9 @@ struct WaitSetImpl
 private:
 
     mutable std::mutex mutex_;
+    std::condition_variable cond_;
     eprosima::utilities::collections::unordered_vector<const Condition*> entries_;
+    bool is_waiting_ = false;
 };
 
 }  // namespace detail
