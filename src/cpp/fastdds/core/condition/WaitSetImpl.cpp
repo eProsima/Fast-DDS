@@ -32,15 +32,18 @@ namespace detail {
 ReturnCode_t WaitSetImpl::attach_condition(
         const Condition& condition)
 {
-    static_cast<void>(condition);
-    return ReturnCode_t::RETCODE_UNSUPPORTED;
+    std::lock_guard<std::mutex> guard(mutex_);
+    entries_.remove(&condition);
+    entries_.emplace_back(&condition);
+    return ReturnCode_t::RETCODE_OK;
 }
 
 ReturnCode_t WaitSetImpl::detach_condition(
         const Condition& condition)
 {
-    static_cast<void>(condition);
-    return ReturnCode_t::RETCODE_UNSUPPORTED;
+    std::lock_guard<std::mutex> guard(mutex_);
+    bool was_there = entries_.remove(&condition);
+    return was_there ? ReturnCode_t::RETCODE_OK : ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
 }
 
 ReturnCode_t WaitSetImpl::wait(
@@ -55,8 +58,14 @@ ReturnCode_t WaitSetImpl::wait(
 ReturnCode_t WaitSetImpl::get_conditions(
         ConditionSeq& attached_conditions) const
 {
-    static_cast<void>(attached_conditions);
-    return ReturnCode_t::RETCODE_UNSUPPORTED;
+    std::lock_guard<std::mutex> guard(mutex_);
+    attached_conditions.reserve(entries_.size());
+    attached_conditions.clear();
+    for (const Condition* c : entries_)
+    {
+        attached_conditions.push_back(const_cast<Condition*>(c));
+    }
+    return ReturnCode_t::RETCODE_OK;
 }
 
 void WaitSetImpl::wake_up()
@@ -66,7 +75,8 @@ void WaitSetImpl::wake_up()
 void WaitSetImpl::will_be_deleted (
         const Condition& condition)
 {
-    static_cast<void>(condition);
+    std::lock_guard<std::mutex> guard(mutex_);
+    entries_.remove(&condition);
 }
 
 }  // namespace detail

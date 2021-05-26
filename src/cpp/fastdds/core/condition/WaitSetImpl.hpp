@@ -19,9 +19,12 @@
 #ifndef _FASTDDS_CORE_CONDITION_WAITSETIMPL_HPP_
 #define _FASTDDS_CORE_CONDITION_WAITSETIMPL_HPP_
 
+#include <mutex>
+
 #include <fastdds/dds/core/condition/Condition.hpp>
 #include <fastdds/rtps/common/Time_t.h>
 #include <fastrtps/types/TypesBase.h>
+#include <utils/collections/unordered_vector.hpp>
 
 using eprosima::fastrtps::types::ReturnCode_t;
 
@@ -80,6 +83,11 @@ struct WaitSetImpl
      */
     void will_be_deleted (
             const Condition& condition);
+
+private:
+
+    mutable std::mutex mutex_;
+    eprosima::utilities::collections::unordered_vector<const Condition*> entries_;
 };
 
 }  // namespace detail
