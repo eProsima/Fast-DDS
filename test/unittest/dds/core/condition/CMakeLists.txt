@@ -15,6 +15,14 @@
 if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
     include(${PROJECT_SOURCE_DIR}/cmake/common/gtest.cmake)
     check_gtest()
+    check_gmock()
+
+    set(LOG_SOURCES
+        ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/Log.cpp
+        ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/OStreamConsumer.cpp
+        ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/StdoutConsumer.cpp
+        ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/StdoutErrConsumer.cpp
+    )
 
     if(GTEST_FOUND)
         if(WIN32)
@@ -25,11 +33,8 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/TypesBase.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/core/condition/StatusCondition.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/core/condition/WaitSet.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/Log.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/OStreamConsumer.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/StdoutConsumer.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/StdoutErrConsumer.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/Time_t.cpp
+            ${LOG_SOURCES}
             ConditionTests.cpp)
 
         add_executable(ConditionTests ${CONDITION_TESTS_SOURCE})
@@ -41,5 +46,27 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include)
         target_link_libraries(ConditionTests ${GTEST_LIBRARIES} fastcdr)
         add_gtest(ConditionTests SOURCES ${CONDITION_TESTS_SOURCE})
+    endif()
+
+    if(GMOCK_FOUND)
+        set(CONDITION_NOTIFIER_TESTS_SOURCE
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/core/condition/ConditionNotifier.cpp
+            ${LOG_SOURCES}
+            ConditionNotifierTests.cpp)
+
+        add_executable(ConditionNotifierTests ${CONDITION_NOTIFIER_TESTS_SOURCE})
+        target_compile_definitions(ConditionNotifierTests PRIVATE FASTRTPS_NO_LIB
+            $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
+            $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
+            )
+        target_include_directories(ConditionNotifierTests PRIVATE
+            ConditionNotifierTests
+            ${GTEST_INCLUDE_DIRS}
+            ${PROJECT_SOURCE_DIR}/include
+            ${PROJECT_BINARY_DIR}/include
+            ${PROJECT_SOURCE_DIR}/src/cpp
+            )
+        target_link_libraries(ConditionNotifierTests ${GMOCK_LIBRARIES})
+        add_gtest(ConditionNotifierTests SOURCES ${CONDITION_NOTIFIER_TESTS_SOURCE})
     endif()
 endif()
