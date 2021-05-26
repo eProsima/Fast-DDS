@@ -41,7 +41,7 @@ public:
      * @brief Retrieves the trigger_value of the Condition
      * @return true if trigger_value is set to 'true', 'false' otherwise
      */
-    RTPS_DllAPI bool get_trigger_value() const
+    RTPS_DllAPI virtual bool get_trigger_value() const
     {
         logWarning(CONDITION, "get_trigger_value public member function not implemented");
         return false; // TODO return trigger value
@@ -49,7 +49,7 @@ public:
 
 };
 
-typedef std::vector<Condition> ConditionSeq;
+using ConditionSeq = std::vector<Condition*>;
 
 } // namespace dds
 } // namespace fastdds
