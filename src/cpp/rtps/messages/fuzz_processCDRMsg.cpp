@@ -144,6 +144,9 @@ extern "C" bool Init()
 #endif
 }
 
+#define MIN_SIZE 256
+#define MAX_SIZE 64000
+
 extern "C" int LLVMFuzzerTestOneInput(
     const uint8_t *data,
     size_t size)
