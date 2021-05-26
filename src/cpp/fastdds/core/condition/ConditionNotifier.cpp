@@ -17,7 +17,12 @@
  */
 
 #include "ConditionNotifier.hpp"
+
+#include <mutex>
+
 #include <fastdds/dds/core/condition/Condition.hpp>
+
+#include <fastdds/core/condition/WaitSetImpl.hpp>
 
 namespace eprosima {
 namespace fastdds {
@@ -27,23 +32,41 @@ namespace detail {
 void ConditionNotifier::attach_to (
         WaitSetImpl* wait_set)
 {
-    static_cast<void>(wait_set);
+    if (nullptr != wait_set)
+    {
+        std::lock_guard<std::mutex> guard(mutex_);
+        entries_.remove(wait_set);
+        entries_.emplace_back(wait_set);
+    }
 }
 
 void ConditionNotifier::detach_from (
         WaitSetImpl* wait_set)
 {
-    static_cast<void>(wait_set);
+    if (nullptr != wait_set)
+    {
+        std::lock_guard<std::mutex> guard(mutex_);
+        entries_.remove(wait_set);
+    }
 }
 
 void ConditionNotifier::notify ()
 {
+    std::lock_guard<std::mutex> guard(mutex_);
+    for (WaitSetImpl* wait_set : entries_)
+    {
+        wait_set->wake_up();
+    }
 }
 
 void ConditionNotifier::will_be_deleted (
         const Condition& condition)
 {
-    static_cast<void>(condition);
+    std::lock_guard<std::mutex> guard(mutex_);
+    for (WaitSetImpl* wait_set : entries_)
+    {
+        wait_set->will_be_deleted(condition);
+    }
 }
 
 }  // namespace detail

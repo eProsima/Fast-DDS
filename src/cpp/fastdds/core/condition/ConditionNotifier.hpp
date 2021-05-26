@@ -19,7 +19,11 @@
 #ifndef _FASTDDS_CORE_CONDITION_CONDITIONNOTIFIER_HPP_
 #define _FASTDDS_CORE_CONDITION_CONDITIONNOTIFIER_HPP_
 
+#include <mutex>
+
 #include <fastdds/dds/core/condition/Condition.hpp>
+
+#include <utils/collections/unordered_vector.hpp>
 
 namespace eprosima {
 namespace fastdds {
@@ -59,6 +63,11 @@ struct ConditionNotifier
      */
     void will_be_deleted (
             const Condition& condition);
+
+private:
+
+    std::mutex mutex_;
+    eprosima::utilities::collections::unordered_vector<WaitSetImpl*> entries_;
 };
 
 }  // namespace detail
