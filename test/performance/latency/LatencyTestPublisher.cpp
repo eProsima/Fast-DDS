@@ -33,6 +33,8 @@
 #include <fastdds/dds/publisher/DataWriterListener.hpp>
 #include <fastdds/dds/subscriber/DataReader.hpp>
 #include <fastrtps/xmlparser/XMLProfileManager.h>
+#include <fastdds/rtps/transport/UDPv4TransportDescriptor.h>
+#include <fastdds/rtps/transport/shared_mem/SharedMemTransportDescriptor.h>
 
 
 #define TIME_LIMIT_US 10000
@@ -98,6 +100,7 @@ bool LatencyTestPublisher::init(
         bool dynamic_data,
         Arg::EnablerValue data_sharing,
         bool data_loans,
+        Arg::EnablerValue shared_memory,
         int forced_domain,
         LatencyDataSizes& latency_data_sizes)
 {
@@ -183,6 +186,25 @@ bool LatencyTestPublisher::init(
     if (PropertyPolicyHelper::length(part_property_policy) > 0)
     {
         pqos.properties(part_property_policy);
+    }
+
+    // Set shared memory transport if it was enable/disable explicitly.
+    if (Arg::EnablerValue::ON == shared_memory_)
+    {
+        std::shared_ptr<eprosima::fastdds::rtps::SharedMemTransportDescriptor> shm_transport =
+                std::make_shared<eprosima::fastdds::rtps::SharedMemTransportDescriptor>();
+        std::shared_ptr<eprosima::fastdds::rtps::UDPv4TransportDescriptor> udp_transport =
+                std::make_shared<eprosima::fastdds::rtps::UDPv4TransportDescriptor>();
+        pqos.transport().user_transports.push_back(shm_transport);
+        pqos.transport().user_transports.push_back(udp_transport);
+        pqos.transport().use_builtin_transports = false;
+    }
+    else if (Arg::EnablerValue::OFF == shared_memory_)
+    {
+        std::shared_ptr<eprosima::fastdds::rtps::UDPv4TransportDescriptor> udp_transport =
+                std::make_shared<eprosima::fastdds::rtps::UDPv4TransportDescriptor>();
+        pqos.transport().user_transports.push_back(udp_transport);
+        pqos.transport().use_builtin_transports = false;
     }
 
     // Create the participant

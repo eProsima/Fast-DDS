@@ -64,7 +64,8 @@ enum  optionIndex
     FORCED_DOMAIN,
     FILE_R,
     DATA_SHARING,
-    DATA_LOAN
+    DATA_LOAN,
+    SHARED_MEMORY
 };
 
 enum TestAgent
@@ -120,6 +121,8 @@ const option::Descriptor usage[] = {
       "               --data_sharing=[on|off]             Explicitly enable/disable data sharing feature." },
     { DATA_LOAN,        0, "l", "data_loans",            Arg::None,
       "               --data_loans          Use loan sample API." },
+    { SHARED_MEMORY,    0, "", "sharedmemory", Arg::Enabler,
+      "               --sharedmemory=[on|off]             Explicitly enable/disable shared memory transport." },
     { 0, 0, 0, 0, 0, 0 }
 };
 
@@ -226,6 +229,7 @@ int main(
     std::string demands_file = "";
     Arg::EnablerValue data_sharing = Arg::EnablerValue::NO_SET;
     bool data_loans = false;
+    Arg::EnablerValue shared_memory = Arg::EnablerValue::NO_SET;
 
     argc -= (argc > 0);
     argv += (argc > 0); // skip program name argv[0] if present
@@ -393,6 +397,16 @@ int main(
             case DATA_LOAN:
                 data_loans = true;
                 break;
+            case SHARED_MEMORY:
+                if (0 == strncasecmp(opt.arg, "on", 2))
+                {
+                    shared_memory = Arg::EnablerValue::ON;
+                }
+                else
+                {
+                    shared_memory = Arg::EnablerValue::OFF;
+                }
+                break;
             case UNKNOWN_OPT:
             default:
                 option::printUsage(fwrite, stdout, usage, columns);
@@ -487,7 +501,7 @@ int main(
         LatencyTestPublisher latency_publisher;
         if (latency_publisher.init(subscribers, samples, reliable, seed, hostname, export_csv, export_prefix,
                 raw_data_file, pub_part_property_policy, pub_property_policy, xml_config_file,
-                dynamic_types, data_sharing, data_loans, forced_domain, data_sizes))
+                dynamic_types, data_sharing, data_loans, shared_memory, forced_domain, data_sizes))
         {
             latency_publisher.run();
         }
@@ -502,7 +516,7 @@ int main(
         LatencyTestSubscriber latency_subscriber;
         if (latency_subscriber.init(echo, samples, reliable, seed, hostname, sub_part_property_policy,
                 sub_property_policy,
-                xml_config_file, dynamic_types, data_sharing, data_loans, forced_domain, data_sizes))
+                xml_config_file, dynamic_types, data_sharing, data_loans, shared_memory, forced_domain, data_sizes))
         {
             latency_subscriber.run();
         }
@@ -521,7 +535,8 @@ int main(
         LatencyTestPublisher latency_publisher;
         bool pub_init = latency_publisher.init(subscribers, samples, reliable, seed, hostname, export_csv,
                         export_prefix, raw_data_file, pub_part_property_policy, pub_property_policy,
-                        xml_config_file, dynamic_types, data_sharing, data_loans, forced_domain, data_sizes);
+                        xml_config_file, dynamic_types, data_sharing, data_loans, shared_memory, forced_domain,
+                        data_sizes);
 
         // Initialize subscribers
         std::vector<std::shared_ptr<LatencyTestSubscriber>> latency_subscribers;
@@ -533,6 +548,7 @@ int main(
             sub_init &= latency_subscribers.back()->init(echo, samples, reliable, seed, hostname,
                             sub_part_property_policy,
                             sub_property_policy, xml_config_file, dynamic_types, data_sharing, data_loans,
+                            shared_memory,
                             forced_domain, data_sizes);
         }
 

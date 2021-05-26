@@ -101,6 +101,7 @@ public:
             bool dynamic_data,
             Arg::EnablerValue data_sharing,
             bool data_loans,
+            Arg::EnablerValue shared_memory,
             int forced_domain,
             LatencyDataSizes& latency_data_sizes);
 
@@ -203,6 +204,7 @@ private:
     bool dynamic_types_ = false;
     Arg::EnablerValue data_sharing_ = Arg::EnablerValue::NO_SET;
     bool data_loans_ = false;
+    Arg::EnablerValue shared_memory_ = Arg::EnablerValue::NO_SET;
     int forced_domain_ = -1;
     int subscribers_ = 0;
     unsigned int samples_ = 0;

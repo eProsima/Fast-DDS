@@ -60,29 +60,35 @@ if __name__ == '__main__':
         '--interprocess',
         action='store_true',
         help='Publisher and subscribers in separate processes. Defaults:False',
-        required=False,
+        required=False
     )
     parser.add_argument(
         '-d',
         '--data_sharing',
         choices=['on', 'off'],
-        help='Explicitly enable/disable data sharing (Defaults: Fast-DDS default setting)',
-        required=False,
+        help='Explicitly enable/disable data sharing. (Defaults: Fast-DDS default settings)',
+        required=False
     )
     parser.add_argument(
         '-l',
         '--data_loans',
         action='store_true',
         help='Enable the use of the loan sample API (Defaults: disable)',
-        required=False,
+        required=False
     )
     parser.add_argument(
         '-R',
         '--reliability',
         action='store_true',
         help='Run with RELIABLE reliability (Defaults: disable)',
-        required=False,
+        required=False
     )
+    parser.add_argument(
+        '--sharedmemory',
+        choices=['on', 'off'],
+        help='Explicitly enable/disable shared memory transport. (Defaults: Fast-DDS default settings)',
+        required=False
+        )
 
     # Parse arguments
     args = parser.parse_args()
@@ -158,6 +164,12 @@ if __name__ == '__main__':
         reliability_options = ['--reliability=reliable']
     else:
         reliability_options = ['--reliability=besteffort']
+
+    if args.sharedmemory:
+        if 'on' == args.sharedmemory:
+            data_options += ['--sharedmemory=on']
+        else:
+            data_options += ['--sharedmemory=off']
 
     # Recoveries files options
     recoveries_options = []

@@ -63,7 +63,8 @@ enum  optionIndex
     FORCED_DOMAIN,
     SUBSCRIBERS,
     DATA_SHARING,
-    DATA_LOAN
+    DATA_LOAN,
+    SHARED_MEMORY
 };
 
 enum TestAgent
@@ -123,6 +124,8 @@ const option::Descriptor usage[] = {
       "               --data_sharing=[on|off]             Explicitly enable/disable data sharing feature." },
     { DATA_LOAN,        0, "l", "data_loans",            Arg::None,
       "               --data_loans          Use loan sample API." },
+    { SHARED_MEMORY,    0, "", "sharedmemory", Arg::Enabler,
+      "               --sharedmemory=[on|off]             Explicitly enable/disable shared memory transport." },
     { 0, 0, 0, 0, 0, 0 }
 };
 
@@ -170,6 +173,7 @@ int main(
 #endif // if HAVE_SECURITY
     Arg::EnablerValue data_sharing = Arg::EnablerValue::NO_SET;
     bool data_loans = false;
+    Arg::EnablerValue shared_memory = Arg::EnablerValue::NO_SET;
 
     argc -= (argc > 0); argv += (argc > 0); // skip program name argv[0] if present
     if (argc)
@@ -339,6 +343,16 @@ int main(
             case DATA_LOAN:
                 data_loans = true;
                 break;
+            case SHARED_MEMORY:
+                if (0 == strncasecmp(opt.arg, "on", 2))
+                {
+                    shared_memory = Arg::EnablerValue::ON;
+                }
+                else
+                {
+                    shared_memory = Arg::EnablerValue::OFF;
+                }
+                break;
             case UNKNOWN_OPT:
                 option::printUsage(fwrite, stdout, usage, columns);
                 return 0;
@@ -467,6 +481,7 @@ int main(
                     dynamic_types,
                     data_sharing,
                     data_loans,
+                    shared_memory,
                     forced_domain)
                 )
         {
@@ -492,6 +507,7 @@ int main(
                     dynamic_types,
                     data_sharing,
                     data_loans,
+                    shared_memory,
                     forced_domain))
         {
             throughput_subscriber.run();
@@ -522,6 +538,7 @@ int main(
                     dynamic_types,
                     data_sharing,
                     data_loans,
+                    shared_memory,
                     forced_domain))
         {
             return_code = 1;
@@ -546,6 +563,7 @@ int main(
                 dynamic_types,
                 data_sharing,
                 data_loans,
+                shared_memory,
                 forced_domain);
         }
 

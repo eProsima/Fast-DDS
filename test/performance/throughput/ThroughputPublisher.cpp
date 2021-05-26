@@ -33,6 +33,8 @@
 #include <fastdds/dds/subscriber/qos/DataReaderQos.hpp>
 #include <fastrtps/utils/TimeConversion.h>
 #include <fastrtps/xmlparser/XMLProfileManager.h>
+#include <fastdds/rtps/transport/UDPv4TransportDescriptor.h>
+#include <fastdds/rtps/transport/shared_mem/SharedMemTransportDescriptor.h>
 
 using namespace eprosima::fastdds::dds;
 using namespace eprosima::fastrtps::rtps;
@@ -122,6 +124,7 @@ bool ThroughputPublisher::init(
         bool dynamic_types,
         Arg::EnablerValue data_sharing,
         bool data_loans,
+        Arg::EnablerValue shared_memory,
         int forced_domain)
 {
     pid_ = pid;
@@ -129,6 +132,7 @@ bool ThroughputPublisher::init(
     dynamic_types_ = dynamic_types;
     data_sharing_ = data_sharing;
     data_loans_ = data_loans;
+    shared_memory_ = shared_memory;
     reliable_ = reliable;
     forced_domain_ = forced_domain;
     demands_file_ = demands_file;
@@ -170,6 +174,25 @@ bool ThroughputPublisher::init(
     if (PropertyPolicyHelper::length(part_property_policy) > 0)
     {
         pqos.properties(part_property_policy);
+    }
+
+    // Set shared memory transport if it was enable/disable explicitly.
+    if (Arg::EnablerValue::ON == shared_memory_)
+    {
+        std::shared_ptr<eprosima::fastdds::rtps::SharedMemTransportDescriptor> shm_transport =
+                std::make_shared<eprosima::fastdds::rtps::SharedMemTransportDescriptor>();
+        std::shared_ptr<eprosima::fastdds::rtps::UDPv4TransportDescriptor> udp_transport =
+                std::make_shared<eprosima::fastdds::rtps::UDPv4TransportDescriptor>();
+        pqos.transport().user_transports.push_back(shm_transport);
+        pqos.transport().user_transports.push_back(udp_transport);
+        pqos.transport().use_builtin_transports = false;
+    }
+    else if (Arg::EnablerValue::OFF == shared_memory_)
+    {
+        std::shared_ptr<eprosima::fastdds::rtps::UDPv4TransportDescriptor> udp_transport =
+                std::make_shared<eprosima::fastdds::rtps::UDPv4TransportDescriptor>();
+        pqos.transport().user_transports.push_back(udp_transport);
+        pqos.transport().use_builtin_transports = false;
     }
 
     // Create the participant
