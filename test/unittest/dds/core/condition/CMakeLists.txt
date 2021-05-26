@@ -66,7 +66,7 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             ${PROJECT_BINARY_DIR}/include
             ${PROJECT_SOURCE_DIR}/src/cpp
             )
-        target_link_libraries(ConditionNotifierTests ${GMOCK_LIBRARIES})
+        target_link_libraries(ConditionNotifierTests ${GTEST_LIBRARIES} ${GMOCK_LIBRARIES})
         add_gtest(ConditionNotifierTests SOURCES ${CONDITION_NOTIFIER_TESTS_SOURCE})
 
         set(WAITSET_IMPL_TESTS_SOURCE
@@ -87,7 +87,7 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             ${PROJECT_BINARY_DIR}/include
             ${PROJECT_SOURCE_DIR}/src/cpp
             )
-        target_link_libraries(WaitSetImplTests ${GMOCK_LIBRARIES})
+        target_link_libraries(WaitSetImplTests ${GTEST_LIBRARIES} ${GMOCK_LIBRARIES})
         add_gtest(WaitSetImplTests SOURCES ${WAITSET_IMPL_TESTS_SOURCE})
     endif()
 endif()
