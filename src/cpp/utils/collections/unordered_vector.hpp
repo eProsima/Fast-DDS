@@ -28,9 +28,8 @@ namespace collections {
 template <
     typename _Ty,
     typename _Alloc = std::allocator<_Ty>>
-using unordered_vector =
-    eprosima::fastrtps::ResourceLimitedVector<
-        _Ty, std::false_type, eprosima::fastrtps::ResourceLimitedContainerConfig, _Alloc>;
+using unordered_vector = eprosima::fastrtps::ResourceLimitedVector<
+    _Ty, std::false_type, eprosima::fastrtps::ResourceLimitedContainerConfig, _Alloc>;
 
 } // namespace collections
 } // namespace utilities

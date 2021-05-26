@@ -46,7 +46,7 @@ struct WaitSetImpl
 
     /**
      * @brief Detaches a Condition from the WaitSet implementation
-     * @param condition The Condition to detach from this 
+     * @param condition The Condition to detach from this WaitSet implementation
      * @return RETCODE_OK if detached correctly, PRECONDITION_NOT_MET if condition was not attached
      */
     ReturnCode_t detach_condition(

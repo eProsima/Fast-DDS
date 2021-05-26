@@ -56,7 +56,7 @@ struct ConditionNotifier
      * a condition is going to be deleted.
      * @param condition The Condition being deleted.
      */
-    MOCK_METHOD1(will_be_deleted, void(const Condition & condition));
+    MOCK_METHOD1(will_be_deleted, void(const Condition& condition));
 };
 
 }  // namespace detail
