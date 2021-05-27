@@ -20,6 +20,8 @@
 #ifndef _FASTDDS_WAIT_SET_HPP_
 #define _FASTDDS_WAIT_SET_HPP_
 
+#include <memory>
+
 #include <fastdds/dds/core/condition/Condition.hpp>
 #include <fastdds/rtps/common/Time_t.h>
 #include <fastrtps/fastrtps_dll.h>
@@ -31,6 +33,11 @@ namespace eprosima {
 namespace fastdds {
 namespace dds {
 
+// Forward declaration of implementation details
+namespace detail {
+struct WaitSetImpl;
+} // namespace detail
+
 /**
  * @brief The WaitSet class allows an application to wait until one or more of the attached Condition objects
  * has a trigger_value of TRUE or until timeout expires.
@@ -40,7 +47,14 @@ class WaitSet
 {
 public:
 
-    // WaitSet class not implemented.
+    RTPS_DllAPI WaitSet();
+
+    RTPS_DllAPI ~WaitSet();
+
+    WaitSet(const WaitSet&) = delete;
+    WaitSet(WaitSet&&) = delete;
+    WaitSet& operator = (const WaitSet&) = delete;
+    WaitSet& operator = (WaitSet&&) = delete;
 
     /**
      * @brief Attaches a Condition to the Wait Set.
@@ -79,6 +93,10 @@ public:
      */
     RTPS_DllAPI ReturnCode_t get_conditions(
             ConditionSeq& attached_conditions) const;
+
+private:
+
+    std::unique_ptr<detail::WaitSetImpl> impl_;
 };
 
 } // namespace dds
