@@ -23,7 +23,10 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
 
         set(ENTITY_TESTS_SOURCE
             ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/TypesBase.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/core/condition/Condition.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/core/condition/ConditionNotifier.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/core/condition/StatusCondition.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/core/condition/WaitSetImpl.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/Log.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/OStreamConsumer.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/StdoutConsumer.cpp
@@ -36,8 +39,12 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
             $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
             )
-        target_include_directories(EntityTests PRIVATE ${GTEST_INCLUDE_DIRS}
-            ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include)
+        target_include_directories(EntityTests PRIVATE
+            ${GTEST_INCLUDE_DIRS}
+            ${PROJECT_SOURCE_DIR}/include
+            ${PROJECT_BINARY_DIR}/include
+            ${PROJECT_SOURCE_DIR}/src/cpp
+        )
         target_link_libraries(EntityTests ${GTEST_LIBRARIES} fastcdr)
         add_gtest(EntityTests SOURCES ${ENTITY_TESTS_SOURCE})
     endif()

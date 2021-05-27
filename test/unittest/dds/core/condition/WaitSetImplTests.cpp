@@ -28,9 +28,22 @@
 using namespace eprosima::fastdds::dds;
 using namespace eprosima::fastdds::dds::detail;
 
+class TestCondition : public Condition
+{
+public:
+
+    bool trigger_value = false;
+
+    bool get_trigger_value() const override
+    {
+        return trigger_value;
+    }
+
+};
+
 TEST(WaitSetImplTests, condition_management)
 {
-    Condition condition;
+    TestCondition condition;
     ConditionSeq conditions;
     WaitSetImpl wait_set;
 
@@ -74,19 +87,6 @@ TEST(WaitSetImplTests, condition_management)
 
 TEST(WaitSetImplTests, wait)
 {
-    class TestCondition : public Condition
-    {
-    public:
-
-        bool trigger_value = false;
-
-        bool get_trigger_value() const override
-        {
-            return trigger_value;
-        }
-
-    };
-
     TestCondition condition;
     ConditionSeq conditions;
     WaitSetImpl wait_set;

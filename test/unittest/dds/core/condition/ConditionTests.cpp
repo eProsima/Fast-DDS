@@ -28,6 +28,10 @@ using eprosima::fastrtps::types::ReturnCode_t;
 using namespace eprosima::fastdds::dds;
 using namespace std;
 
+class TestCondition : public Condition
+{
+};
+
 class ConditionTests : public ::testing::Test
 {
 public:
@@ -77,7 +81,7 @@ public:
 
 TEST_F(ConditionTests, unsupported_condition_methods)
 {
-    Condition cond;
+    TestCondition cond;
 
     ASSERT_FALSE(cond.get_trigger_value());
 
@@ -87,7 +91,7 @@ TEST_F(ConditionTests, unsupported_condition_methods)
 TEST_F(ConditionTests, unsupported_wait_set_methods)
 {
     WaitSet ws;
-    Condition aux_cond;
+    TestCondition aux_cond;
     ConditionSeq aux_cond_seq;
     eprosima::fastrtps::Duration_t timeout(1, 0u);
 
