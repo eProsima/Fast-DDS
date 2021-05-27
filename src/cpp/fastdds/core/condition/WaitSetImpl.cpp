@@ -25,6 +25,8 @@
 #include <fastdds/rtps/common/Time_t.h>
 #include <fastrtps/types/TypesBase.h>
 
+#include <fastdds/core/condition/ConditionNotifier.hpp>
+
 using eprosima::fastrtps::types::ReturnCode_t;
 
 namespace eprosima {
@@ -39,10 +41,16 @@ ReturnCode_t WaitSetImpl::attach_condition(
     bool was_there = entries_.remove(&condition);
     entries_.emplace_back(&condition);
 
-    // Should wake_up when adding a new triggered condition
-    if (is_waiting_ && !was_there && condition.get_trigger_value())
+    if (!was_there)
     {
-        wake_up();
+        // This is a new condition. Inform the notifier of our interest.
+        condition.get_notifier()->attach_to(this);
+
+        // Should wake_up when adding a new triggered condition
+        if (is_waiting_ && condition.get_trigger_value())
+        {
+            wake_up();
+        }
     }
 
     return ReturnCode_t::RETCODE_OK;
