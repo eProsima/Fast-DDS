@@ -47,6 +47,13 @@ TEST(WaitSetImplTests, condition_management)
     ConditionSeq conditions;
     WaitSetImpl wait_set;
 
+    // The condition is attached, detached, attached again and then deleted.
+    // The following calls to the notifier are expected
+    auto notifier = condition.get_notifier();
+    EXPECT_CALL(*notifier, attach_to).Times(2);
+    EXPECT_CALL(*notifier, detach_from).Times(1);
+    EXPECT_CALL(*notifier, will_be_deleted).Times(1);
+
     // WaitSetImpl should be created without conditions
     EXPECT_EQ(ReturnCode_t::RETCODE_OK, wait_set.get_conditions(conditions));
     EXPECT_TRUE(conditions.empty());
@@ -91,6 +98,11 @@ TEST(WaitSetImplTests, wait)
     ConditionSeq conditions;
     WaitSetImpl wait_set;
     const eprosima::fastrtps::Duration_t timeout{ 1, 0 };
+
+    // Expecting calls on the notifier of triggered_condition
+    auto notifier = condition.get_notifier();
+    EXPECT_CALL(*notifier, attach_to).Times(1);
+    EXPECT_CALL(*notifier, will_be_deleted).Times(1);
 
     // Waiting on empty wait set should inmediately return OK
     EXPECT_EQ(ReturnCode_t::RETCODE_OK, wait_set.wait(conditions, timeout));
@@ -146,6 +158,12 @@ TEST(WaitSetImplTests, wait)
     // Waiting forever and adding a triggered condition should wake and only return the added condition
     TestCondition triggered_condition;
     triggered_condition.trigger_value = true;
+
+    // Expecting calls on the notifier of triggered_condition
+    notifier = triggered_condition.get_notifier();
+    EXPECT_CALL(*notifier, attach_to).Times(1);
+    EXPECT_CALL(*notifier, will_be_deleted).Times(1);
+
 
     std::thread add_triggered_condition([&]()
             {
