@@ -46,7 +46,7 @@ TEST(WaitSetImplTests, condition_management)
     {
         EXPECT_EQ(ReturnCode_t::RETCODE_OK, wait_set.attach_condition(condition));
         EXPECT_EQ(ReturnCode_t::RETCODE_OK, wait_set.get_conditions(conditions));
-        EXPECT_FALSE(conditions.empty());
+        EXPECT_EQ(1u, conditions.size());
         EXPECT_NE(conditions.cend(), std::find(conditions.cbegin(), conditions.cend(), &condition));
     }
 
@@ -63,7 +63,7 @@ TEST(WaitSetImplTests, condition_management)
     // Attach the condition again
     EXPECT_EQ(ReturnCode_t::RETCODE_OK, wait_set.attach_condition(condition));
     EXPECT_EQ(ReturnCode_t::RETCODE_OK, wait_set.get_conditions(conditions));
-    EXPECT_FALSE(conditions.empty());
+    EXPECT_EQ(1u, conditions.size());
     EXPECT_NE(conditions.cend(), std::find(conditions.cbegin(), conditions.cend(), &condition));
 
     // Calling will_be_deleted should detach the condition
@@ -106,7 +106,7 @@ TEST(WaitSetImplTests, wait)
     // Waiting on already triggered condition should inmediately return condition
     condition.trigger_value = true;
     EXPECT_EQ(ReturnCode_t::RETCODE_OK, wait_set.wait(conditions, timeout));
-    EXPECT_FALSE(conditions.empty());
+    EXPECT_EQ(1u, conditions.size());
     EXPECT_NE(conditions.cend(), std::find(conditions.cbegin(), conditions.cend(), &condition));
 
     // A wake_up without a trigger should timeout
@@ -127,7 +127,7 @@ TEST(WaitSetImplTests, wait)
                 wait_set.wake_up();
             });
     EXPECT_EQ(ReturnCode_t::RETCODE_OK, wait_set.wait(conditions, timeout));
-    EXPECT_FALSE(conditions.empty());
+    EXPECT_EQ(1u, conditions.size());
     EXPECT_NE(conditions.cend(), std::find(conditions.cbegin(), conditions.cend(), &condition));
 
     // Two threads are not allowed to wait at the same time
@@ -154,7 +154,7 @@ TEST(WaitSetImplTests, wait)
             });
 
     EXPECT_EQ(ReturnCode_t::RETCODE_OK, wait_set.wait(conditions, eprosima::fastrtps::c_TimeInfinite));
-    EXPECT_FALSE(conditions.empty());
+    EXPECT_EQ(1u, conditions.size());
     EXPECT_EQ(conditions.cend(), std::find(conditions.cbegin(), conditions.cend(), &condition));
     EXPECT_NE(conditions.cend(), std::find(conditions.cbegin(), conditions.cend(), &triggered_condition));
 
