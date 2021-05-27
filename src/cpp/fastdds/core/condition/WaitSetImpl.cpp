@@ -61,7 +61,16 @@ ReturnCode_t WaitSetImpl::detach_condition(
 {
     std::lock_guard<std::mutex> guard(mutex_);
     bool was_there = entries_.remove(&condition);
-    return was_there ? ReturnCode_t::RETCODE_OK : ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
+
+    if (was_there)
+    {
+        // Inform the notifier we are not interested anymore.
+        condition.get_notifier()->detach_from(this);
+        return ReturnCode_t::RETCODE_OK;
+    }
+
+    // Condition not found
+    return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
 }
 
 ReturnCode_t WaitSetImpl::wait(
