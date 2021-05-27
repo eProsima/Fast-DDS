@@ -59,8 +59,6 @@ public:
 
 };
 
-typedef std::vector<Condition> ConditionSeq;
-
 } // namespace dds
 } // namespace fastdds
 } // namespace eprosima
