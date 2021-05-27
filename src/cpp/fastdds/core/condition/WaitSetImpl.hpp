@@ -37,38 +37,44 @@ namespace detail {
 struct WaitSetImpl
 {
     /**
-     * @brief Attaches a Condition to this WaitSet implementation
+     * @brief Attach a Condition to this WaitSet implementation
      * @param condition The Condition to attach to this WaitSet implementation
-     * @return RETCODE_OK if attached correctly, error code otherwise
+     * @return RETCODE_OK
      */
     ReturnCode_t attach_condition(
             const Condition& condition);
 
     /**
-     * @brief Detaches a Condition from the WaitSet implementation
+     * @brief Detach a Condition from this WaitSet implementation
      * @param condition The Condition to detach from this WaitSet implementation
-     * @return RETCODE_OK if detached correctly, PRECONDITION_NOT_MET if condition was not attached
+     * @return RETCODE_OK if detached correctly
+     * @return PRECONDITION_NOT_MET if condition was not attached
      */
     ReturnCode_t detach_condition(
             const Condition& condition);
 
     /**
-     * @brief Allows an application thread to wait for the occurrence of certain conditions.
-     * If none of the conditions attached to the WaitSet have a trigger_value of true,
-     * the wait operation will block suspending the calling thread
-     * @param active_conditions Reference to the collection of conditions which trigger_value are true
+     * @brief Wait for any of the attached conditions to be triggered.
+     * If none of the conditions attached to this WaitSet implementation have a trigger_value of true,
+     * this operation will block, suspending the calling thread.
+     * The list of conditions with a trigger_value of true will be returned on active_conditions.
+     * It is not possible to call this operation from two different threads at the same time (PRECONDITION_NOT_MET
+     * will be returned in that case)
+     *
+     * @param active_conditions Reference to the collection of conditions that have a trigger_value of true
      * @param timeout Maximum time of the wait
-     * @return RETCODE_OK if everything correct, PRECONDITION_NOT_MET if WaitSet already waiting, TIMEOUT if maximum
-     * time expired, error code otherwise
+     * @return RETCODE_OK if everything correct
+     * @return PRECONDITION_NOT_MET if WaitSet already waiting
+     * @return TIMEOUT if maximum time expired
      */
     ReturnCode_t wait(
             ConditionSeq& active_conditions,
             const fastrtps::Duration_t& timeout);
 
     /**
-     * @brief Retrieves the list of attached conditions
+     * @brief Retrieve the list of attached conditions
      * @param attached_conditions Reference to the collection of attached conditions
-     * @return RETCODE_OK if everything correct, error code otherwise
+     * @return RETCODE_OK
      */
     ReturnCode_t get_conditions(
             ConditionSeq& attached_conditions) const;

@@ -36,7 +36,7 @@ struct ConditionNotifier
 {
     /**
      * Add a WaitSet implementation to the list of attached entries.
-     * Does nothing wait_set was already attached to this notifier.
+     * Does nothing if wait_set was already attached to this notifier.
      * @param wait_set WaitSet implementation to add to the list.
      */
     void attach_to (
