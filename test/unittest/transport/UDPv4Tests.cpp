@@ -24,6 +24,7 @@
 #include <fastrtps/utils/IPFinder.h>
 #include <fastrtps/utils/IPLocator.h>
 #include <rtps/transport/UDPv4Transport.h>
+#include <statistics/rtps/messages/RTPSStatisticsMessages.hpp>
 
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
@@ -64,15 +65,76 @@ public:
 
     ~UDPv4Tests()
     {
-        //Log::KillThread();
     }
 
     void HELPER_SetDescriptorDefaults();
+
+    // With FASTDDS_STATISTICS=ON the test buffers
+    // must fulfill expectations
+    static std::string HELPER_statistics_format_if_needed(
+            const std::string& message);
+
+    template<class T>
+    static std::vector<T> HELPER_statistics_format_if_needed(
+            const std::vector<T>& message);
 
     UDPv4TransportDescriptor descriptor;
     std::unique_ptr<std::thread> senderThread;
     std::unique_ptr<std::thread> receiverThread;
 };
+
+#ifdef FASTDDS_STATISTICS
+
+std::string UDPv4Tests::HELPER_statistics_format_if_needed(
+        const std::string& message)
+{
+    std::string message_buffer(
+        message.length() + RTPSMESSAGE_HEADER_SIZE + eprosima::fastdds::statistics::rtps::statistics_submessage_length,
+        0);
+
+    message_buffer.replace(0, message.length(), message);
+
+    message_buffer[message.length() +
+            RTPSMESSAGE_HEADER_SIZE] = static_cast<char>(FASTDDS_STATISTICS_NETWORK_SUBMESSAGE);
+
+    return message_buffer;
+}
+
+template<class T>
+std::vector<T> UDPv4Tests::HELPER_statistics_format_if_needed(
+        const std::vector<T>& message)
+{
+    std::vector<T> message_buffer(
+        message.size() + RTPSMESSAGE_HEADER_SIZE + eprosima::fastdds::statistics::rtps::statistics_submessage_length,
+        0);
+
+    std::copy(
+            message.begin(),
+            message.end(),
+            message_buffer.begin());
+
+    message_buffer[message.size() + RTPSMESSAGE_HEADER_SIZE]
+        = static_cast<T>(FASTDDS_STATISTICS_NETWORK_SUBMESSAGE);
+
+    return message_buffer;
+}
+
+#elif // FASTDDS_STATISTICS
+
+std::string UDPv4Tests::HELPER_statistics_format_if_needed(
+        const std::string& message)
+{
+    return message;
+}
+
+template<class T>
+std::vector<T> UDPv4Tests::HELPER_statistics_format_if_needed(
+        const std::vector<T>& message)
+{
+    return message;
+}
+
+#endif // FASTDDS_STATISTICS
 
 TEST_F(UDPv4Tests, locators_with_kind_1_supported)
 {
@@ -132,12 +194,15 @@ TEST_F(UDPv4Tests, send_and_receive_between_ports)
     ASSERT_TRUE(transportUnderTest.OpenOutputChannel(send_resource_list, outputChannelLocator)); // Includes loopback
     ASSERT_FALSE(send_resource_list.empty());
     ASSERT_TRUE(transportUnderTest.IsInputChannelOpen(multicastLocator));
-    octet message[5] = { 'H', 'e', 'l', 'l', 'o' };
+
+    std::string message = "Hello";
+    auto message_buffer = HELPER_statistics_format_if_needed(message);
 
     Semaphore sem;
     std::function<void()> recCallback = [&]()
             {
-                EXPECT_EQ(memcmp(message, msg_recv->data, 5), 0);
+                EXPECT_EQ(message.compare(
+                            reinterpret_cast<const char*>(msg_recv->data)), 0);
                 sem.post();
             };
 
@@ -151,8 +216,12 @@ TEST_F(UDPv4Tests, send_and_receive_between_ports)
                 Locators locators_begin(locator_list.begin());
                 Locators locators_end(locator_list.end());
 
-                EXPECT_TRUE(send_resource_list.at(0)->send(message, 5, &locators_begin, &locators_end,
-                        (std::chrono::steady_clock::now() + std::chrono::microseconds(100))));
+                EXPECT_TRUE(send_resource_list.at(0)->send(
+                            reinterpret_cast<const octet*>(message_buffer.data()),
+                            static_cast<uint32_t>(message_buffer.length()),
+                            &locators_begin,
+                            &locators_end,
+                            (std::chrono::steady_clock::now() + std::chrono::microseconds(100))));
             };
 
     senderThread.reset(new std::thread(sendThreadFunction));
@@ -624,8 +693,8 @@ TEST_F(UDPv4Tests, simple_throughput)
 
     Semaphore sem_end_subscriber;
 
-    octet sample_data[sample_size];
-    memset(sample_data, 0, sizeof(sample_data));
+    std::vector<octet> message(sample_size,'?');
+    auto sample_data = HELPER_statistics_format_if_needed(message);
 
     Locator_t sub_locator;
     sub_locator.kind = LOCATOR_KIND_UDPv4;
@@ -662,12 +731,15 @@ TEST_F(UDPv4Tests, simple_throughput)
 
     auto t0 = std::chrono::high_resolution_clock::now();
 
-    for (int i = 0; i < num_samples_per_batch; i++)
+    for (int i = 0; i < num_samples_per_batch; ++i)
     {
         Locators locators_begin(send_locators_list.begin());
         Locators locators_end(send_locators_list.end());
 
-        EXPECT_TRUE(send_resource_list.at(0)->send(sample_data, sizeof(sample_data), &locators_begin, &locators_end,
+        EXPECT_TRUE(send_resource_list.at(0)->send(
+                sample_data.data(),
+                static_cast<uint32_t>(sample_data.size()),
+                &locators_begin, &locators_end,
                 (std::chrono::steady_clock::now() + std::chrono::milliseconds(100))));
     }
 
@@ -686,6 +758,16 @@ void UDPv4Tests::HELPER_SetDescriptorDefaults()
     descriptor.sendBufferSize = 5;
     descriptor.receiveBufferSize = 5;
     descriptor.interfaceWhiteList.clear();
+
+#ifdef FASTDDS_STATISTICS
+    {
+        uint32_t statistics_overhead = RTPSMESSAGE_HEADER_SIZE
+                + eprosima::fastdds::statistics::rtps::statistics_submessage_length;
+        descriptor.maxMessageSize += statistics_overhead;
+        descriptor.sendBufferSize +=  statistics_overhead;
+        descriptor.receiveBufferSize +=  statistics_overhead;
+    }
+#endif // FASTDDS_STATISTICS
 }
 
 int main(
