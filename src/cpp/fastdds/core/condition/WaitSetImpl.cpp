@@ -34,6 +34,15 @@ namespace fastdds {
 namespace dds {
 namespace detail {
 
+WaitSetImpl::~WaitSetImpl()
+{
+    std::lock_guard<std::mutex> guard(mutex_);
+    for (const Condition* c : entries_)
+    {
+        c->get_notifier()->detach_from(this);
+    }
+}
+
 ReturnCode_t WaitSetImpl::attach_condition(
         const Condition& condition)
 {

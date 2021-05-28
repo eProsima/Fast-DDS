@@ -36,6 +36,22 @@ namespace detail {
 
 struct WaitSetImpl
 {
+    ~WaitSetImpl();
+
+    WaitSetImpl() = default;
+
+    // Non-copyable
+    WaitSetImpl(
+            const WaitSetImpl&) = delete;
+    WaitSetImpl& operator =(
+            const WaitSetImpl&) = delete;
+
+    // Non-movable
+    WaitSetImpl(
+            WaitSetImpl&&) = delete;
+    WaitSetImpl& operator =(
+            WaitSetImpl&&) = delete;
+
     /**
      * @brief Attach a Condition to this WaitSet implementation
      * @param condition The Condition to attach to this WaitSet implementation
