@@ -34,13 +34,13 @@ GuardCondition::~GuardCondition()
 
 bool GuardCondition::get_trigger_value() const
 {
-    return trigger_value_;
+    return trigger_value_.load(std::memory_order_acquire);
 }
 
 ReturnCode_t GuardCondition::set_trigger_value(
         bool value)
 {
-    bool old_value = trigger_value_.exchange(value);
+    bool old_value = trigger_value_.exchange(value, std::memory_order_release);
     if (!old_value && value)
     {
         notifier_->notify();
