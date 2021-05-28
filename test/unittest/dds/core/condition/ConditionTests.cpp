@@ -79,7 +79,8 @@ TEST_F(ConditionTests, unsupported_condition_methods)
 {
     class TestCondition : public Condition
     {
-    } cond;
+    }
+    cond;
 
     ASSERT_FALSE(cond.get_trigger_value());
 
@@ -162,11 +163,11 @@ TEST_F(ConditionTests, waitset_wait)
     {
         GuardCondition non_triggered_condition;
         std::thread thr_add_non_triggered([&]()
-            {
-                std::this_thread::sleep_for(std::chrono::milliseconds(200));
-                EXPECT_EQ(ReturnCode_t::RETCODE_OK, wait_set.attach_condition(non_triggered_condition));
-            });
-    
+                {
+                    std::this_thread::sleep_for(std::chrono::milliseconds(200));
+                    EXPECT_EQ(ReturnCode_t::RETCODE_OK, wait_set.attach_condition(non_triggered_condition));
+                });
+
         EXPECT_EQ(ReturnCode_t::RETCODE_TIMEOUT, wait_set.wait(conditions, timeout));
         EXPECT_TRUE(conditions.empty());
         thr_add_non_triggered.join();
@@ -175,10 +176,10 @@ TEST_F(ConditionTests, waitset_wait)
     // Setting the trigger while waiting should return the condition
     {
         std::thread thr_set_trigger([&]()
-            {
-                std::this_thread::sleep_for(std::chrono::milliseconds(200));
-                EXPECT_EQ(ReturnCode_t::RETCODE_OK, condition.set_trigger_value(true));
-            });
+                {
+                    std::this_thread::sleep_for(std::chrono::milliseconds(200));
+                    EXPECT_EQ(ReturnCode_t::RETCODE_OK, condition.set_trigger_value(true));
+                });
 
         EXPECT_EQ(ReturnCode_t::RETCODE_OK, wait_set.wait(conditions, timeout));
         EXPECT_EQ(1u, conditions.size());
@@ -190,12 +191,12 @@ TEST_F(ConditionTests, waitset_wait)
     EXPECT_EQ(ReturnCode_t::RETCODE_OK, condition.set_trigger_value(false));
     {
         std::thread thr_second_wait([&wait_set, &timeout]()
-            {
-                std::this_thread::sleep_for(std::chrono::milliseconds(200));
-                ConditionSeq conds;
-                EXPECT_EQ(ReturnCode_t::RETCODE_PRECONDITION_NOT_MET, wait_set.wait(conds, timeout));
-                EXPECT_TRUE(conds.empty());
-            });
+                {
+                    std::this_thread::sleep_for(std::chrono::milliseconds(200));
+                    ConditionSeq conds;
+                    EXPECT_EQ(ReturnCode_t::RETCODE_PRECONDITION_NOT_MET, wait_set.wait(conds, timeout));
+                    EXPECT_TRUE(conds.empty());
+                });
 
         EXPECT_EQ(ReturnCode_t::RETCODE_TIMEOUT, wait_set.wait(conditions, timeout));
         EXPECT_TRUE(conditions.empty());
@@ -208,10 +209,10 @@ TEST_F(ConditionTests, waitset_wait)
         EXPECT_EQ(ReturnCode_t::RETCODE_OK, triggered_condition.set_trigger_value(true));
 
         std::thread thr_add_triggered([&]()
-            {
-                std::this_thread::sleep_for(std::chrono::milliseconds(200));
-                wait_set.attach_condition(triggered_condition);
-            });
+                {
+                    std::this_thread::sleep_for(std::chrono::milliseconds(200));
+                    wait_set.attach_condition(triggered_condition);
+                });
 
         EXPECT_EQ(ReturnCode_t::RETCODE_OK, wait_set.wait(conditions, eprosima::fastrtps::c_TimeInfinite));
         EXPECT_EQ(1u, conditions.size());

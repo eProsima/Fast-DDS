@@ -25,13 +25,13 @@ namespace fastdds {
 namespace dds {
 
 Condition::Condition()
-	: notifier_ (new detail::ConditionNotifier())
+    : notifier_ (new detail::ConditionNotifier())
 {
 }
 
 Condition::~Condition()
 {
-	notifier_->will_be_deleted(*this);
+    notifier_->will_be_deleted(*this);
 }
 
 }  // namespace dds

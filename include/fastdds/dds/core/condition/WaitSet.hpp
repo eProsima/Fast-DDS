@@ -51,10 +51,14 @@ public:
 
     RTPS_DllAPI ~WaitSet();
 
-    WaitSet(const WaitSet&) = delete;
-    WaitSet(WaitSet&&) = delete;
-    WaitSet& operator = (const WaitSet&) = delete;
-    WaitSet& operator = (WaitSet&&) = delete;
+    WaitSet(
+            const WaitSet&) = delete;
+    WaitSet(
+            WaitSet&&) = delete;
+    WaitSet& operator = (
+            const WaitSet&) = delete;
+    WaitSet& operator = (
+            WaitSet&&) = delete;
 
     /**
      * @brief Attaches a Condition to the Wait Set.
