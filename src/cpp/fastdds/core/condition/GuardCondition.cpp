@@ -25,6 +25,7 @@ namespace fastdds {
 namespace dds {
 
 GuardCondition::GuardCondition()
+    : trigger_value_(false)
 {
 }
 
@@ -34,13 +35,13 @@ GuardCondition::~GuardCondition()
 
 bool GuardCondition::get_trigger_value() const
 {
-    return trigger_value_.load(std::memory_order_acquire);
+    return trigger_value_.load();
 }
 
 ReturnCode_t GuardCondition::set_trigger_value(
         bool value)
 {
-    bool old_value = trigger_value_.exchange(value, std::memory_order_release);
+    bool old_value = trigger_value_.exchange(value);
     if (!old_value && value)
     {
         notifier_->notify();
