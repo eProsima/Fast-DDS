@@ -104,8 +104,8 @@ TEST(WaitSetImplTests, wait)
     EXPECT_CALL(*notifier, attach_to).Times(1);
     EXPECT_CALL(*notifier, will_be_deleted).Times(1);
 
-    // Waiting on empty wait set should inmediately return OK
-    EXPECT_EQ(ReturnCode_t::RETCODE_OK, wait_set.wait(conditions, timeout));
+    // Waiting on empty wait set should timeout
+    EXPECT_EQ(ReturnCode_t::RETCODE_TIMEOUT, wait_set.wait(conditions, timeout));
     EXPECT_TRUE(conditions.empty());
 
     // Attach condition

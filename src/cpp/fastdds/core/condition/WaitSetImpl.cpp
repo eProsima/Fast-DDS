@@ -86,7 +86,7 @@ ReturnCode_t WaitSetImpl::wait(
 
     auto fill_active_conditions = [&]()
             {
-                bool ret_val = entries_.empty();
+                bool ret_val = false;
                 active_conditions.clear();
                 for (const Condition* c : entries_)
                 {
