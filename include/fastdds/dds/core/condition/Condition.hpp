@@ -23,8 +23,8 @@
 #include <memory>
 #include <vector>
 
-#include <fastrtps/fastrtps_dll.h>
 #include <fastdds/dds/log/Log.hpp>
+#include <fastrtps/fastrtps_dll.h>
 
 namespace eprosima {
 namespace fastdds {
