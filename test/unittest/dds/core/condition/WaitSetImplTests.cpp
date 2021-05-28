@@ -128,10 +128,10 @@ TEST(WaitSetImplTests, wait)
         {
             condition.trigger_value = false;
             std::thread notify_without_trigger([&]()
-                {
-                    std::this_thread::sleep_for(std::chrono::milliseconds(200));
-                    wait_set.wake_up();
-                });
+                    {
+                        std::this_thread::sleep_for(std::chrono::milliseconds(200));
+                        wait_set.wake_up();
+                    });
             EXPECT_EQ(ReturnCode_t::RETCODE_TIMEOUT, wait_set.wait(conditions, timeout));
             EXPECT_TRUE(conditions.empty());
             notify_without_trigger.join();
@@ -140,11 +140,11 @@ TEST(WaitSetImplTests, wait)
         // A wake_up with a trigger should return the condition
         {
             std::thread trigger_and_notify([&]()
-                {
-                    std::this_thread::sleep_for(std::chrono::milliseconds(200));
-                    condition.trigger_value = true;
-                    wait_set.wake_up();
-                });
+                    {
+                        std::this_thread::sleep_for(std::chrono::milliseconds(200));
+                        condition.trigger_value = true;
+                        wait_set.wake_up();
+                    });
             EXPECT_EQ(ReturnCode_t::RETCODE_OK, wait_set.wait(conditions, timeout));
             EXPECT_EQ(1u, conditions.size());
             EXPECT_NE(conditions.cend(), std::find(conditions.cbegin(), conditions.cend(), &condition));
@@ -154,12 +154,12 @@ TEST(WaitSetImplTests, wait)
         // Two threads are not allowed to wait at the same time
         {
             std::thread second_wait_thread([&wait_set, &timeout]()
-                {
-                    std::this_thread::sleep_for(std::chrono::milliseconds(200));
-                    ConditionSeq conds;
-                    EXPECT_EQ(ReturnCode_t::RETCODE_PRECONDITION_NOT_MET, wait_set.wait(conds, timeout));
-                    EXPECT_TRUE(conds.empty());
-                });
+                    {
+                        std::this_thread::sleep_for(std::chrono::milliseconds(200));
+                        ConditionSeq conds;
+                        EXPECT_EQ(ReturnCode_t::RETCODE_PRECONDITION_NOT_MET, wait_set.wait(conds, timeout));
+                        EXPECT_TRUE(conds.empty());
+                    });
 
             condition.trigger_value = false;
             EXPECT_EQ(ReturnCode_t::RETCODE_TIMEOUT, wait_set.wait(conditions, timeout));
@@ -178,10 +178,10 @@ TEST(WaitSetImplTests, wait)
             EXPECT_CALL(*notifier, will_be_deleted).Times(1);
 
             std::thread add_triggered_condition([&]()
-                {
-                    std::this_thread::sleep_for(std::chrono::milliseconds(200));
-                    wait_set.attach_condition(triggered_condition);
-                });
+                    {
+                        std::this_thread::sleep_for(std::chrono::milliseconds(200));
+                        wait_set.attach_condition(triggered_condition);
+                    });
 
             EXPECT_EQ(ReturnCode_t::RETCODE_OK, wait_set.wait(conditions, eprosima::fastrtps::c_TimeInfinite));
             EXPECT_EQ(1u, conditions.size());
