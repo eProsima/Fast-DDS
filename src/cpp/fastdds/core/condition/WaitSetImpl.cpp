@@ -25,12 +25,23 @@
 #include <fastdds/rtps/common/Time_t.h>
 #include <fastrtps/types/TypesBase.h>
 
+#include <fastdds/core/condition/ConditionNotifier.hpp>
+
 using eprosima::fastrtps::types::ReturnCode_t;
 
 namespace eprosima {
 namespace fastdds {
 namespace dds {
 namespace detail {
+
+WaitSetImpl::~WaitSetImpl()
+{
+    std::lock_guard<std::mutex> guard(mutex_);
+    for (const Condition* c : entries_)
+    {
+        c->get_notifier()->detach_from(this);
+    }
+}
 
 ReturnCode_t WaitSetImpl::attach_condition(
         const Condition& condition)
@@ -39,10 +50,16 @@ ReturnCode_t WaitSetImpl::attach_condition(
     bool was_there = entries_.remove(&condition);
     entries_.emplace_back(&condition);
 
-    // Should wake_up when adding a new triggered condition
-    if (is_waiting_ && !was_there && condition.get_trigger_value())
+    if (!was_there)
     {
-        wake_up();
+        // This is a new condition. Inform the notifier of our interest.
+        condition.get_notifier()->attach_to(this);
+
+        // Should wake_up when adding a new triggered condition
+        if (is_waiting_ && condition.get_trigger_value())
+        {
+            wake_up();
+        }
     }
 
     return ReturnCode_t::RETCODE_OK;
@@ -53,7 +70,16 @@ ReturnCode_t WaitSetImpl::detach_condition(
 {
     std::lock_guard<std::mutex> guard(mutex_);
     bool was_there = entries_.remove(&condition);
-    return was_there ? ReturnCode_t::RETCODE_OK : ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
+
+    if (was_there)
+    {
+        // Inform the notifier we are not interested anymore.
+        condition.get_notifier()->detach_from(this);
+        return ReturnCode_t::RETCODE_OK;
+    }
+
+    // Condition not found
+    return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
 }
 
 ReturnCode_t WaitSetImpl::wait(
@@ -69,7 +95,7 @@ ReturnCode_t WaitSetImpl::wait(
 
     auto fill_active_conditions = [&]()
             {
-                bool ret_val = entries_.empty();
+                bool ret_val = false;
                 active_conditions.clear();
                 for (const Condition* c : entries_)
                 {

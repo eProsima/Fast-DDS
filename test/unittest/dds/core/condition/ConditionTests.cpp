@@ -77,31 +77,160 @@ public:
 
 TEST_F(ConditionTests, unsupported_condition_methods)
 {
-    Condition cond;
+    class TestCondition : public Condition
+    {
+    }
+    cond;
 
     ASSERT_FALSE(cond.get_trigger_value());
 
     HELPER_WaitForEntries(1);
 }
 
-TEST_F(ConditionTests, unsupported_wait_set_methods)
+TEST_F(ConditionTests, waitset_condition_management)
 {
-    WaitSet ws;
-    Condition aux_cond;
-    ConditionSeq aux_cond_seq;
-    eprosima::fastrtps::Duration_t timeout(1, 0u);
+    ConditionSeq conditions;
+    WaitSet wait_set;
 
-    ASSERT_EQ(ws.attach_condition(aux_cond), ReturnCode_t::RETCODE_UNSUPPORTED);
-    ASSERT_EQ(ws.detach_condition(aux_cond), ReturnCode_t::RETCODE_UNSUPPORTED);
-    ASSERT_EQ(ws.get_conditions(aux_cond_seq), ReturnCode_t::RETCODE_UNSUPPORTED);
-    ASSERT_EQ(ws.wait(aux_cond_seq, timeout), ReturnCode_t::RETCODE_UNSUPPORTED);
+    // WaitSet should be created without conditions
+    EXPECT_EQ(ReturnCode_t::RETCODE_OK, wait_set.get_conditions(conditions));
+    EXPECT_TRUE(conditions.empty());
+
+    // This scope allows checking the wait_set behavior when the condition is destroyed
+    {
+        GuardCondition condition;
+
+        // Trying to detach without having attached
+        EXPECT_EQ(ReturnCode_t::RETCODE_PRECONDITION_NOT_MET, wait_set.detach_condition(condition));
+
+        // Adding the same condition several times should always succeed and keep the list with a single condition
+        for (int i = 0; i < 2; ++i)
+        {
+            EXPECT_EQ(ReturnCode_t::RETCODE_OK, wait_set.attach_condition(condition));
+            EXPECT_EQ(ReturnCode_t::RETCODE_OK, wait_set.get_conditions(conditions));
+            EXPECT_EQ(1u, conditions.size());
+            EXPECT_NE(conditions.cend(), std::find(conditions.cbegin(), conditions.cend(), &condition));
+        }
+
+        // Detaching the condition once should succeed
+        EXPECT_EQ(ReturnCode_t::RETCODE_OK, wait_set.detach_condition(condition));
+        EXPECT_EQ(ReturnCode_t::RETCODE_OK, wait_set.get_conditions(conditions));
+        EXPECT_TRUE(conditions.empty());
+
+        // Detaching a second time should fail
+        EXPECT_EQ(ReturnCode_t::RETCODE_PRECONDITION_NOT_MET, wait_set.detach_condition(condition));
+        EXPECT_EQ(ReturnCode_t::RETCODE_OK, wait_set.get_conditions(conditions));
+        EXPECT_TRUE(conditions.empty());
+
+        // Attach the condition again
+        EXPECT_EQ(ReturnCode_t::RETCODE_OK, wait_set.attach_condition(condition));
+        EXPECT_EQ(ReturnCode_t::RETCODE_OK, wait_set.get_conditions(conditions));
+        EXPECT_EQ(1u, conditions.size());
+        EXPECT_NE(conditions.cend(), std::find(conditions.cbegin(), conditions.cend(), &condition));
+    }
+
+    // After the condition is destroyed, the wait_set should be empty
+    EXPECT_EQ(ReturnCode_t::RETCODE_OK, wait_set.get_conditions(conditions));
+    EXPECT_TRUE(conditions.empty());
 }
 
-TEST_F(ConditionTests, unsupported_guard_condition_methods)
+TEST_F(ConditionTests, waitset_wait)
+{
+    GuardCondition condition;
+    ConditionSeq conditions;
+    WaitSet wait_set;
+    const eprosima::fastrtps::Duration_t timeout{ 1, 0 };
+
+    // Waiting on empty wait set should timeout
+    EXPECT_EQ(ReturnCode_t::RETCODE_TIMEOUT, wait_set.wait(conditions, timeout));
+    EXPECT_TRUE(conditions.empty());
+
+    // Attach condition
+    EXPECT_EQ(ReturnCode_t::RETCODE_OK, wait_set.attach_condition(condition));
+
+    // Waiting on untriggered condition should timeout
+    EXPECT_EQ(ReturnCode_t::RETCODE_TIMEOUT, wait_set.wait(conditions, timeout));
+    EXPECT_TRUE(conditions.empty());
+
+    // Waiting on already triggered condition should inmediately return condition
+    EXPECT_EQ(ReturnCode_t::RETCODE_OK, condition.set_trigger_value(true));
+    EXPECT_EQ(ReturnCode_t::RETCODE_OK, wait_set.wait(conditions, timeout));
+    EXPECT_EQ(1u, conditions.size());
+    EXPECT_NE(conditions.cend(), std::find(conditions.cbegin(), conditions.cend(), &condition));
+
+    // Adding a non-triggered condition while waiting should timeout
+    EXPECT_EQ(ReturnCode_t::RETCODE_OK, condition.set_trigger_value(false));
+    {
+        GuardCondition non_triggered_condition;
+        std::thread thr_add_non_triggered([&]()
+                {
+                    std::this_thread::sleep_for(std::chrono::milliseconds(200));
+                    EXPECT_EQ(ReturnCode_t::RETCODE_OK, wait_set.attach_condition(non_triggered_condition));
+                });
+
+        EXPECT_EQ(ReturnCode_t::RETCODE_TIMEOUT, wait_set.wait(conditions, timeout));
+        EXPECT_TRUE(conditions.empty());
+        thr_add_non_triggered.join();
+    }
+
+    // Setting the trigger while waiting should return the condition
+    {
+        std::thread thr_set_trigger([&]()
+                {
+                    std::this_thread::sleep_for(std::chrono::milliseconds(200));
+                    EXPECT_EQ(ReturnCode_t::RETCODE_OK, condition.set_trigger_value(true));
+                });
+
+        EXPECT_EQ(ReturnCode_t::RETCODE_OK, wait_set.wait(conditions, timeout));
+        EXPECT_EQ(1u, conditions.size());
+        EXPECT_NE(conditions.cend(), std::find(conditions.cbegin(), conditions.cend(), &condition));
+        thr_set_trigger.join();
+    }
+
+    // Two threads are not allowed to wait at the same time
+    EXPECT_EQ(ReturnCode_t::RETCODE_OK, condition.set_trigger_value(false));
+    {
+        std::thread thr_second_wait([&wait_set, &timeout]()
+                {
+                    std::this_thread::sleep_for(std::chrono::milliseconds(200));
+                    ConditionSeq conds;
+                    EXPECT_EQ(ReturnCode_t::RETCODE_PRECONDITION_NOT_MET, wait_set.wait(conds, timeout));
+                    EXPECT_TRUE(conds.empty());
+                });
+
+        EXPECT_EQ(ReturnCode_t::RETCODE_TIMEOUT, wait_set.wait(conditions, timeout));
+        EXPECT_TRUE(conditions.empty());
+        thr_second_wait.join();
+    }
+
+    // Waiting forever and adding a triggered condition should wake and only return the added condition
+    {
+        GuardCondition triggered_condition;
+        EXPECT_EQ(ReturnCode_t::RETCODE_OK, triggered_condition.set_trigger_value(true));
+
+        std::thread thr_add_triggered([&]()
+                {
+                    std::this_thread::sleep_for(std::chrono::milliseconds(200));
+                    wait_set.attach_condition(triggered_condition);
+                });
+
+        EXPECT_EQ(ReturnCode_t::RETCODE_OK, wait_set.wait(conditions, eprosima::fastrtps::c_TimeInfinite));
+        EXPECT_EQ(1u, conditions.size());
+        EXPECT_EQ(conditions.cend(), std::find(conditions.cbegin(), conditions.cend(), &condition));
+        EXPECT_NE(conditions.cend(), std::find(conditions.cbegin(), conditions.cend(), &triggered_condition));
+        thr_add_triggered.join();
+    }
+}
+
+TEST_F(ConditionTests, guard_condition_methods)
 {
     GuardCondition cond;
 
-    ASSERT_EQ(cond.set_trigger_value(true), ReturnCode_t::RETCODE_UNSUPPORTED);
+    EXPECT_FALSE(cond.get_trigger_value());
+    EXPECT_EQ(ReturnCode_t::RETCODE_OK, cond.set_trigger_value(true));
+    EXPECT_TRUE(cond.get_trigger_value());
+    EXPECT_EQ(ReturnCode_t::RETCODE_OK, cond.set_trigger_value(false));
+    EXPECT_FALSE(cond.get_trigger_value());
 }
 
 TEST_F(ConditionTests, unsupported_status_condition_methods)
