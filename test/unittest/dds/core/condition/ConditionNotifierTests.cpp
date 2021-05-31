@@ -26,11 +26,15 @@
 using namespace eprosima::fastdds::dds;
 using namespace eprosima::fastdds::dds::detail;
 
+class TestCondition : public Condition
+{
+};
+
 TEST(ConditionNotifierTests, basic_test)
 {
     WaitSetImpl wait_set;
     ConditionNotifier notifier;
-    Condition condition;
+    TestCondition condition;
 
     auto test_steps = [&]()
             {

@@ -154,7 +154,9 @@ set(${PROJECT_NAME}_source_files
     dynamic-types/DynamicDataHelper.cpp
 
     fastrtps_deprecated/attributes/TopicAttributes.cpp
+    fastdds/core/condition/Condition.cpp
     fastdds/core/condition/ConditionNotifier.cpp
+    fastdds/core/condition/GuardCondition.cpp
     fastdds/core/condition/StatusCondition.cpp
     fastdds/core/condition/WaitSet.cpp
     fastdds/core/condition/WaitSetImpl.cpp

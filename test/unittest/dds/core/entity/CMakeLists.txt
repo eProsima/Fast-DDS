@@ -18,7 +18,10 @@ endif()
 
 set(ENTITY_TESTS_SOURCE
     ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/TypesBase.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/core/condition/Condition.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/core/condition/ConditionNotifier.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/core/condition/StatusCondition.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/core/condition/WaitSetImpl.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/Log.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/OStreamConsumer.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/StdoutConsumer.cpp
@@ -32,6 +35,9 @@ target_compile_definitions(EntityTests PRIVATE FASTRTPS_NO_LIB
     $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
     )
 target_include_directories(EntityTests PRIVATE
-    ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include)
+    ${PROJECT_SOURCE_DIR}/include
+    ${PROJECT_BINARY_DIR}/include
+    ${PROJECT_SOURCE_DIR}/src/cpp
+)
 target_link_libraries(EntityTests GTest::gtest fastcdr)
 add_gtest(EntityTests SOURCES ${ENTITY_TESTS_SOURCE})
