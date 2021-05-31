@@ -184,7 +184,7 @@ Then, download the docker image files from the
 Load the docker images:
 
 	$ docker load -i ubuntu-fast-dds:<FastDDS-Version>.tar
-	$ docker tag ubuntu-fast-rtps:<version> ubuntu-fast-rtps:latest
+	$ docker tag ubuntu-fast-rtps:<FastDDS-Version> ubuntu-fast-rtps:latest
 	$ docker load -i ubuntu-fast-dds-helloworld:<FastDDS-Version>.tar
 	$ docker load -i ubuntu-fast-dds-shapesdemo:<ShapesDemo-Version>.tar
 
