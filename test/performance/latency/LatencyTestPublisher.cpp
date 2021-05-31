@@ -114,6 +114,7 @@ bool LatencyTestPublisher::init(
     dynamic_types_ = dynamic_data;
     data_sharing_ = data_sharing;
     data_loans_ = data_loans;
+    shared_memory_ = shared_memory;
     forced_domain_ = forced_domain;
     raw_data_file_ = raw_data_file;
     pid_ = pid;
