@@ -29,6 +29,7 @@
 #include <statistics/rtps/messages/OutputTrafficManager.hpp>
 
 #include <asio.hpp>
+#include <asio/steady_timer.hpp>
 #include <thread>
 #include <vector>
 #include <map>
