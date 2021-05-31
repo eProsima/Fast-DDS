@@ -84,7 +84,7 @@ if __name__ == '__main__':
         required=False
     )
     parser.add_argument(
-        '--sharedmemory',
+        '--shared_memory',
         choices=['on', 'off'],
         help='Explicitly enable/disable shared memory transport. (Defaults: Fast-DDS default settings)',
         required=False
@@ -165,11 +165,11 @@ if __name__ == '__main__':
     else:
         reliability_options = ['--reliability=besteffort']
 
-    if args.sharedmemory:
-        if 'on' == args.sharedmemory:
-            data_options += ['--sharedmemory=on']
+    if args.shared_memory:
+        if 'on' == args.shared_memory:
+            data_options += ['--shared_memory=on']
         else:
-            data_options += ['--sharedmemory=off']
+            data_options += ['--shared_memory=off']
 
     # Recoveries files options
     recoveries_options = []

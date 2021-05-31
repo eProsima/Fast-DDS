@@ -142,13 +142,6 @@ bool LatencyTestSubscriber::init(
         pqos.properties(part_property_policy);
     }
 
-    // If the user has specified a participant property policy with command line arguments, it overrides whatever the
-    // XML configures.
-    if (PropertyPolicyHelper::length(part_property_policy) > 0)
-    {
-        pqos.properties(part_property_policy);
-    }
-
     // Set shared memory transport if it was enable/disable explicitly.
     if (Arg::EnablerValue::ON == shared_memory_)
     {

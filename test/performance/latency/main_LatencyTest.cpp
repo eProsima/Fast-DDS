@@ -121,8 +121,8 @@ const option::Descriptor usage[] = {
       "               --data_sharing=[on|off]             Explicitly enable/disable data sharing feature." },
     { DATA_LOAN,        0, "l", "data_loans",            Arg::None,
       "               --data_loans          Use loan sample API." },
-    { SHARED_MEMORY,    0, "", "sharedmemory", Arg::Enabler,
-      "               --sharedmemory=[on|off]             Explicitly enable/disable shared memory transport." },
+    { SHARED_MEMORY,    0, "", "shared_memory", Arg::Enabler,
+      "               --shared_memory=[on|off]             Explicitly enable/disable shared memory transport." },
     { 0, 0, 0, 0, 0, 0 }
 };
 
