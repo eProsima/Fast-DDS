@@ -138,8 +138,12 @@ inline uint32_t get_statistics_message_pos(
     if (statistics_submessage_length + RTPSMESSAGE_HEADER_SIZE <= send_buffer_size)
     {
         // The last submessage should be the statistics submessage
-        statistics_pos = send_buffer_size - statistics_submessage_length;
-        assert(FASTDDS_STATISTICS_NETWORK_SUBMESSAGE == send_buffer[statistics_pos]);
+        uint32_t pos = send_buffer_size - statistics_submessage_length;
+        if (FASTDDS_STATISTICS_NETWORK_SUBMESSAGE == send_buffer[pos])
+        {
+            // only succeed if the message is properly formatted
+            statistics_pos = pos;
+        }
     }
 
     return statistics_pos;
