@@ -118,7 +118,6 @@ TEST_F(UDPv6Tests, locators_with_kind_2_supported)
     ASSERT_FALSE(transportUnderTest.IsLocatorSupported(unsupportedLocator));
 }
 
-#ifndef __APPLE__
 TEST_F(UDPv6Tests, opening_and_closing_input_channel)
 {
     // Given
@@ -139,20 +138,22 @@ TEST_F(UDPv6Tests, opening_and_closing_input_channel)
     ASSERT_FALSE (transportUnderTest.CloseInputChannel(multicastFilterLocator));
 }
 
+#ifndef __APPLE__
 TEST_F(UDPv6Tests, send_and_receive_between_ports)
 {
     UDPv6Transport transportUnderTest(descriptor);
     transportUnderTest.init();
 
     Locator_t multicastLocator;
+    std::string address("ff31::8000:1234");
     multicastLocator.port = g_default_port;
     multicastLocator.kind = LOCATOR_KIND_UDPv6;
-    IPLocator::setIPv6(multicastLocator, "ff31::8000:1234");
+    IPLocator::setIPv6(multicastLocator, address);
 
     Locator_t outputChannelLocator;
     outputChannelLocator.port = g_default_port + 1;
     outputChannelLocator.kind = LOCATOR_KIND_UDPv6;
-    IPLocator::setIPv6(outputChannelLocator, "ff31::8000:1234");
+    IPLocator::setIPv6(outputChannelLocator, address);
 
     MockReceiverResource receiver(transportUnderTest, multicastLocator);
     MockMessageReceiver* msg_recv = dynamic_cast<MockMessageReceiver*>(receiver.CreateMessageReceiver());
@@ -198,7 +199,7 @@ TEST_F(UDPv6Tests, send_to_loopback)
     Locator_t multicastLocator;
     multicastLocator.port = g_default_port;
     multicastLocator.kind = LOCATOR_KIND_UDPv6;
-    IPLocator::setIPv6(multicastLocator, "ff31::8000:1234");
+    IPLocator::setIPv6(multicastLocator, std::string("ff31::8000:1234"));
 
     Locator_t outputChannelLocator;
     outputChannelLocator.port = g_default_port + 1;
@@ -279,7 +280,7 @@ TEST_F(UDPv6Tests, RemoteToMainLocal_simply_strips_out_address_leaving_IP_ANY)
     Locator_t remote_locator;
     remote_locator.kind = LOCATOR_KIND_UDPv6;
     remote_locator.port = g_default_port;
-    IPLocator::setIPv6(remote_locator, "fe80::ffff:dede:dede");
+    IPLocator::setIPv6(remote_locator, std::string("fe80::ffff:dede:dede"));
 
     // When
     Locator_t mainLocalLocator = transportUnderTest.RemoteToMainLocal(remote_locator);
@@ -299,13 +300,13 @@ TEST_F(UDPv6Tests, match_if_port_AND_address_matches)
     Locator_t locatorAlpha;
     locatorAlpha.kind = LOCATOR_KIND_UDPv6;
     locatorAlpha.port = g_default_port;
-    IPLocator::setIPv6(locatorAlpha, "ff1e::ffff:efff:1");
+    IPLocator::setIPv6(locatorAlpha, std::string("ff1e::ffff:efff:1"));
     Locator_t locatorBeta = locatorAlpha;
 
     // Then
     ASSERT_TRUE(transportUnderTest.DoInputLocatorsMatch(locatorAlpha, locatorBeta));
 
-    IPLocator::setIPv6(locatorBeta, "fe80::ffff:6464:6464");
+    IPLocator::setIPv6(locatorBeta, std::string("fe80::ffff:6464:6464"));
     // Then
     ASSERT_TRUE(transportUnderTest.DoInputLocatorsMatch(locatorAlpha, locatorBeta));
 }
@@ -319,7 +320,7 @@ TEST_F(UDPv6Tests, send_to_wrong_interface)
     Locator_t outputChannelLocator;
     outputChannelLocator.port = g_default_port;
     outputChannelLocator.kind = LOCATOR_KIND_UDPv6;
-    IPLocator::setIPv6(outputChannelLocator, "::1"); // Loopback
+    IPLocator::setIPv6(outputChannelLocator, std::string("::1")); // Loopback
     ASSERT_TRUE(transportUnderTest.OpenOutputChannel(send_resource_list, outputChannelLocator));
     ASSERT_FALSE(send_resource_list.empty());
 
@@ -331,7 +332,7 @@ TEST_F(UDPv6Tests, send_to_wrong_interface)
     Locators locators_end(locator_list.end());
 
     //Sending through a different IP will NOT work, except 0.0.0.0
-    IPLocator::setIPv6(outputChannelLocator, "fe80::ffff:6f6f:6f6f");
+    IPLocator::setIPv6(outputChannelLocator, std::string("fe80::ffff:6f6f:6f6f"));
     std::vector<octet> message = { 'H', 'e', 'l', 'l', 'o' };
     ASSERT_FALSE(send_resource_list.at(0)->send(message.data(), (uint32_t)message.size(), &locators_begin,
             &locators_end,
@@ -348,7 +349,7 @@ TEST_F(UDPv6Tests, send_to_blocked_interface)
     Locator_t outputChannelLocator;
     outputChannelLocator.port = g_default_port;
     outputChannelLocator.kind = LOCATOR_KIND_UDPv6;
-    IPLocator::setIPv6(outputChannelLocator, "::1"); // Loopback
+    IPLocator::setIPv6(outputChannelLocator, std::string("::1")); // Loopback
     ASSERT_TRUE(transportUnderTest.OpenOutputChannel(send_resource_list, outputChannelLocator));
     ASSERT_TRUE(send_resource_list.empty());
 }
@@ -385,7 +386,7 @@ TEST_F(UDPv6Tests, send_to_allowed_interface)
             Locator_t remoteMulticastLocator;
             remoteMulticastLocator.port = g_default_port;
             remoteMulticastLocator.kind = LOCATOR_KIND_UDPv6;
-            IPLocator::setIPv6(remoteMulticastLocator, "ff1e::ffff:efff:104");
+            IPLocator::setIPv6(remoteMulticastLocator, std::string("ff1e::ffff:efff:104"));
 
             LocatorList_t locator_list;
             locator_list.push_back(remoteMulticastLocator);
@@ -428,7 +429,7 @@ TEST_F(UDPv6Tests, send_and_receive_between_allowed_sockets_using_localhost)
     Locator_t unicastLocator;
     unicastLocator.port = g_default_port;
     unicastLocator.kind = LOCATOR_KIND_UDPv6;
-    IPLocator::setIPv6(unicastLocator, "::1");
+    IPLocator::setIPv6(unicastLocator, std::string("::1"));
 
     LocatorList_t locator_list;
     locator_list.push_back(unicastLocator);
@@ -436,7 +437,7 @@ TEST_F(UDPv6Tests, send_and_receive_between_allowed_sockets_using_localhost)
     Locator_t outputChannelLocator;
     outputChannelLocator.port = g_default_port + 1;
     outputChannelLocator.kind = LOCATOR_KIND_UDPv6;
-    IPLocator::setIPv6(outputChannelLocator, "::1");
+    IPLocator::setIPv6(outputChannelLocator, std::string("::1"));
 
     MockReceiverResource receiver(transportUnderTest, unicastLocator);
     MockMessageReceiver* msg_recv = dynamic_cast<MockMessageReceiver*>(receiver.CreateMessageReceiver());
@@ -549,7 +550,7 @@ TEST_F(UDPv6Tests, send_and_receive_between_allowed_sockets_using_unicast_to_mul
         Locator_t unicastLocator;
         unicastLocator.port = g_default_port;
         unicastLocator.kind = LOCATOR_KIND_UDPv6;
-        IPLocator::setIPv6(unicastLocator, "ff1e::ffff:efff:104");
+        IPLocator::setIPv6(unicastLocator, std::string("ff1e::ffff:efff:104"));
 
         LocatorList_t locator_list;
         locator_list.push_back(unicastLocator);
@@ -610,7 +611,7 @@ TEST_F(UDPv6Tests, open_and_close_two_multicast_transports_with_whitelist)
         Locator_t multicastLocator;
         multicastLocator.port = g_default_port;
         multicastLocator.kind = LOCATOR_KIND_UDPv6;
-        IPLocator::setIPv6(multicastLocator, "ff00::efff:0104");
+        IPLocator::setIPv6(multicastLocator, std::string("ff00::efff:0104"));
 
         std::cout << "Opening input channels" << std::endl;
         ASSERT_TRUE(transport1.OpenInputChannel(multicastLocator, nullptr, 65500));
@@ -663,7 +664,7 @@ TEST_F(UDPv6Tests, simple_throughput)
     Locator_t sub_locator;
     sub_locator.kind = LOCATOR_KIND_UDPv6;
     sub_locator.port = 50000;
-    IPLocator::setIPv4(sub_locator, "::1");
+    IPLocator::setIPv6(sub_locator, std::string("::1"));
 
     UDPv6TransportDescriptor my_descriptor;
 
@@ -724,7 +725,6 @@ int main(
         int argc,
         char** argv)
 {
-    eprosima::fastdds::dds::Log::SetVerbosity(eprosima::fastdds::dds::Log::Info);
     g_default_port = get_port();
 
     testing::InitGoogleTest(&argc, argv);
