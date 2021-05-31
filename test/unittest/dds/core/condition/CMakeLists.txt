@@ -28,8 +28,12 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
 
         set(CONDITION_TESTS_SOURCE
             ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/TypesBase.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/core/condition/Condition.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/core/condition/ConditionNotifier.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/core/condition/GuardCondition.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/core/condition/StatusCondition.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/core/condition/WaitSet.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/core/condition/WaitSetImpl.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/Time_t.cpp
             ${LOG_SOURCES}
             ConditionTests.cpp)
@@ -40,13 +44,17 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
             )
         target_include_directories(ConditionTests PRIVATE
-            ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include)
+            ${PROJECT_SOURCE_DIR}/include
+            ${PROJECT_BINARY_DIR}/include
+            ${PROJECT_SOURCE_DIR}/src/cpp
+            )
         target_link_libraries(ConditionTests GTest::gtest fastcdr)
         add_gtest(ConditionTests SOURCES ${CONDITION_TESTS_SOURCE})
     endif()
 
     if(GMOCK_FOUND)
         set(CONDITION_NOTIFIER_TESTS_SOURCE
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/core/condition/Condition.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/core/condition/ConditionNotifier.cpp
             ${LOG_SOURCES}
             ConditionNotifierTests.cpp)
@@ -67,6 +75,7 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
         add_gtest(ConditionNotifierTests SOURCES ${CONDITION_NOTIFIER_TESTS_SOURCE})
 
         set(WAITSET_IMPL_TESTS_SOURCE
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/core/condition/Condition.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/core/condition/WaitSetImpl.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/Time_t.cpp
             ${LOG_SOURCES}
