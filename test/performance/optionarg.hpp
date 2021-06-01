@@ -8,6 +8,10 @@
 #include <iostream>
 #include <string.h>
 
+#ifdef WIN32
+#define strncasecmp _strnicmp
+#endif // ifdef WIN32
+
 struct Arg : public option::Arg
 {
     enum class EnablerValue : int32_t

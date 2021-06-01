@@ -198,7 +198,7 @@ if(PYTHONINTERP_FOUND)
                 --xml_file ${CMAKE_CURRENT_SOURCE_DIR}/xml/${throughput_test_name}.xml
                 --recoveries_file ${CMAKE_CURRENT_SOURCE_DIR}/recoveries.csv
                 --demands_file ${CMAKE_CURRENT_SOURCE_DIR}/payloads_demands.csv
-                --data_sharing
+                --data_sharing=on
                 ${interproces_flag}
                 ${reliability_flag}
             )
@@ -265,7 +265,7 @@ if(PYTHONINTERP_FOUND)
                 --recoveries_file ${CMAKE_CURRENT_SOURCE_DIR}/recoveries.csv
                 --demands_file ${CMAKE_CURRENT_SOURCE_DIR}/payloads_demands.csv
                 --data_loans
-                --data_sharing
+                --data_sharing=on
                 ${interproces_flag}
                 ${reliability_flag}
             )
