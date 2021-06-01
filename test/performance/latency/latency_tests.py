@@ -52,29 +52,35 @@ if __name__ == '__main__':
         '--interprocess',
         action='store_true',
         help='Publisher and subscribers in separate processes. Defaults:False',
-        required=False,
+        required=False
     )
     parser.add_argument(
         '-d',
         '--data_sharing',
-        action='store_true',
-        help='Enable data sharing (Defaults: disable)',
-        required=False,
+        choices=['on', 'off'],
+        help='Explicitly enable/disable data sharing. (Defaults: Fast-DDS default settings)',
+        required=False
     )
     parser.add_argument(
         '-l',
         '--data_loans',
         action='store_true',
         help='Enable the use of the loan sample API (Defaults: disable)',
-        required=False,
+        required=False
     )
     parser.add_argument(
         '-r',
         '--reliability',
         action='store_true',
         help='Run with RELIABLE reliability (Defaults: disable)',
-        required=False,
+        required=False
     )
+    parser.add_argument(
+        '--shared_memory',
+        choices=['on', 'off'],
+        help='Explicitly enable/disable shared memory transport. (Defaults: Fast-DDS default settings)',
+        required=False
+        )
 
     # Parse arguments
     args = parser.parse_args()
@@ -125,9 +131,9 @@ if __name__ == '__main__':
 
     # Data sharing and loans options
     # modify output file names
-    if args.data_sharing and args.data_loans:
+    if args.data_sharing and 'on' == args.data_sharing and args.data_loans:
         filename_options += '_data_loans_and_sharing'
-    elif args.data_sharing:
+    elif args.data_sharing and 'on' == args.data_sharing:
         filename_options += '_data_sharing'
     elif args.data_loans:
         filename_options += '_data_loans'
@@ -136,7 +142,10 @@ if __name__ == '__main__':
     data_options = []
 
     if args.data_sharing:
-        data_options += ['--data_sharing']
+        if 'on' == args.data_sharing:
+            data_options += ['--data_sharing=on']
+        else:
+            data_options += ['--data_sharing=off']
 
     if args.data_loans:
         data_options += ['--data_loans']
@@ -146,6 +155,12 @@ if __name__ == '__main__':
         reliability_options = ['--reliability=reliable']
     else:
         reliability_options = ['--reliability=besteffort']
+
+    if args.shared_memory:
+        if 'on' == args.shared_memory:
+            data_options += ['--shared_memory=on']
+        else:
+            data_options += ['--shared_memory=off']
 
     # Environment variables
     executable = os.environ.get('LATENCY_TEST_BIN')

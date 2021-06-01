@@ -199,7 +199,7 @@ if(PYTHONINTERP_FOUND)
                 --xml_file ${CMAKE_CURRENT_SOURCE_DIR}/xml/${latency_test_name}.xml
                 --demands_file ${CMAKE_CURRENT_SOURCE_DIR}/payloads_demands.csv
                 ${interproces_flag}
-                --data_sharing
+                --data_sharing=on
                 ${reliability_flag}
             )
 
@@ -267,7 +267,7 @@ if(PYTHONINTERP_FOUND)
                 --demands_file ${CMAKE_CURRENT_SOURCE_DIR}/payloads_demands.csv
                 ${interproces_flag}
                 --data_loans
-                --data_sharing
+                --data_sharing=on
                 ${reliability_flag}
             )
 

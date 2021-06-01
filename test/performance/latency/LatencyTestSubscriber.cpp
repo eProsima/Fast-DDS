@@ -28,6 +28,8 @@
 #include <fastdds/dds/subscriber/DataReader.hpp>
 #include <fastrtps/xmlparser/XMLProfileManager.h>
 #include <fastdds/rtps/common/Time_t.h>
+#include <fastdds/rtps/transport/UDPv4TransportDescriptor.h>
+#include <fastdds/rtps/transport/shared_mem/SharedMemTransportDescriptor.h>
 
 using namespace eprosima::fastrtps::rtps;
 using namespace eprosima::fastrtps::types;
@@ -85,8 +87,9 @@ bool LatencyTestSubscriber::init(
         const PropertyPolicy& property_policy,
         const std::string& xml_config_file,
         bool dynamic_data,
-        bool data_sharing,
+        Arg::EnablerValue data_sharing,
         bool data_loans,
+        Arg::EnablerValue shared_memory,
         int forced_domain,
         LatencyDataSizes& latency_data_sizes)
 {
@@ -97,6 +100,7 @@ bool LatencyTestSubscriber::init(
     dynamic_types_ = dynamic_data;
     data_sharing_ = data_sharing;
     data_loans_ = data_loans;
+    shared_memory_ = shared_memory;
     forced_domain_ = forced_domain;
     pid_ = pid;
     hostname_ = hostname;
@@ -137,6 +141,25 @@ bool LatencyTestSubscriber::init(
     if (PropertyPolicyHelper::length(part_property_policy) > 0)
     {
         pqos.properties(part_property_policy);
+    }
+
+    // Set shared memory transport if it was enable/disable explicitly.
+    if (Arg::EnablerValue::ON == shared_memory_)
+    {
+        std::shared_ptr<eprosima::fastdds::rtps::SharedMemTransportDescriptor> shm_transport =
+                std::make_shared<eprosima::fastdds::rtps::SharedMemTransportDescriptor>();
+        std::shared_ptr<eprosima::fastdds::rtps::UDPv4TransportDescriptor> udp_transport =
+                std::make_shared<eprosima::fastdds::rtps::UDPv4TransportDescriptor>();
+        pqos.transport().user_transports.push_back(shm_transport);
+        pqos.transport().user_transports.push_back(udp_transport);
+        pqos.transport().use_builtin_transports = false;
+    }
+    else if (Arg::EnablerValue::OFF == shared_memory_)
+    {
+        std::shared_ptr<eprosima::fastdds::rtps::UDPv4TransportDescriptor> udp_transport =
+                std::make_shared<eprosima::fastdds::rtps::UDPv4TransportDescriptor>();
+        pqos.transport().user_transports.push_back(udp_transport);
+        pqos.transport().use_builtin_transports = false;
     }
 
     // Create the participant
@@ -217,17 +240,20 @@ bool LatencyTestSubscriber::init(
         }
 
         // Set data sharing according with cli.
-        DataSharingQosPolicy dsp;
-        if (data_sharing_)
+        if (Arg::EnablerValue::ON == data_sharing_)
         {
+            DataSharingQosPolicy dsp;
             dsp.on("");
+            dw_qos_.data_sharing(dsp);
+            dr_qos_.data_sharing(dsp);
         }
-        else
+        else if (Arg::EnablerValue::OFF == data_sharing_)
         {
+            DataSharingQosPolicy dsp;
             dsp.off();
+            dw_qos_.data_sharing(dsp);
+            dr_qos_.data_sharing(dsp);
         }
-        dw_qos_.data_sharing(dsp);
-        dr_qos_.data_sharing(dsp);
 
         // Increase payload pool size to prevent loan failures due to outages
         if (data_loans_)
