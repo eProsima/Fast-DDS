@@ -470,12 +470,12 @@ elseif(NOT EPROSIMA_INSTALLER)
 
             # Get Fast-DDS version suitable manifest format
             set(FASTDDS_CANONICAL_VERSION ${fastrtps_VERSION})
+            
+            if( NOT FASTDDS_CANONICAL_VERSION MATCHES "^[0-9]+\\.[0-9]+\\.[0-9]+$")
+                message(FATAL_ERROR "Fast-DDS version number ${fastrtps_VERSION} must include major, minor and patch.")
+            endif()
 
-            if(NOT fastrtps_VERSION_MINOR)
-                set(FASTDDS_CANONICAL_VERSION "${FASTDDS_CANONICAL_VERSION}.0")
-            elseif( NOT fastrtps_VERSION_PATCH)
-                set(FASTDDS_CANONICAL_VERSION "${FASTDDS_CANONICAL_VERSION}.0")
-            elseif( NOT fastrtps_VERSION_TWEAK)
+            if( NOT fastrtps_VERSION_TWEAK)
                 set(FASTDDS_CANONICAL_VERSION "${FASTDDS_CANONICAL_VERSION}.0")
             endif()
 
@@ -736,9 +736,12 @@ function(find_fastdds_deployed_openssl)\n\
 endfunction()"
             )
             set(FASTRTPS_INSTALLER_OPT_DEPS "find_fastdds_deployed_openssl()")
+        elseif(WIN32)
+            # windows from sources only requires OpenSSL on static libraries
+            set(FASTRTPS_PACKAGE_WIN32_OPT_DEPS "find_package(OpenSSL REQUIRED)")
         else()
-            # colcon like installation uses framework provided OpenSSL
-            set(FASTRTPS_PACKAGE_OPT_DEPS "find_package(OpenSSL REQUIRED)")
+            # linux from sources requires OpenSSL always
+            set(FASTRTPS_PACKAGE_UNIX_OPT_DEPS "find_package(OpenSSL REQUIRED)")
         endif()
     endif()
 
