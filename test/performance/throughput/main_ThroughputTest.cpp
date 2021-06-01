@@ -16,9 +16,8 @@
 #include "ThroughputPublisher.hpp"
 #include "ThroughputSubscriber.hpp"
 
-#include "../optionparser.h"
+#include "../optionarg.hpp"
 
-#include <stdio.h>
 #include <string>
 #include <iostream>
 #include <iomanip>
@@ -43,84 +42,6 @@ using namespace eprosima::fastrtps::rtps;
 #define COPYSTR strcpy
 #endif // if defined(_WIN32)
 
-
-struct Arg : public option::Arg
-{
-
-    static void print_error(
-            const char* msg1,
-            const option::Option& opt,
-            const char* msg2)
-    {
-        fprintf(stderr, "%s", msg1);
-        fwrite(opt.name, opt.namelen, 1, stderr);
-        fprintf(stderr, "%s", msg2);
-    }
-
-    static option::ArgStatus Unknown(
-            const option::Option& option,
-            bool msg)
-    {
-        if (msg)
-        {
-            print_error("Unknown option '", option, "'\n");
-        }
-        return option::ARG_ILLEGAL;
-    }
-
-    static option::ArgStatus Required(
-            const option::Option& option,
-            bool msg)
-    {
-        if (option.arg != 0 && option.arg[0] != 0)
-        {
-            return option::ARG_OK;
-        }
-
-        if (msg)
-        {
-            print_error("Option '", option, "' requires an argument\n");
-        }
-        return option::ARG_ILLEGAL;
-    }
-
-    static option::ArgStatus Numeric(
-            const option::Option& option,
-            bool msg)
-    {
-        char* endptr = 0;
-        if (option.arg != 0 && strtol(option.arg, &endptr, 10))
-        {
-        }
-        if (endptr != option.arg && *endptr == 0)
-        {
-            return option::ARG_OK;
-        }
-
-        if (msg)
-        {
-            print_error("Option '", option, "' requires a numeric argument\n");
-        }
-        return option::ARG_ILLEGAL;
-    }
-
-    static option::ArgStatus String(
-            const option::Option& option,
-            bool msg)
-    {
-        if (option.arg != 0)
-        {
-            return option::ARG_OK;
-        }
-        if (msg)
-        {
-            print_error("Option '", option, "' requires a numeric argument\n");
-        }
-        return option::ARG_ILLEGAL;
-    }
-
-};
-
 enum  optionIndex
 {
     UNKNOWN_OPT,
@@ -142,7 +63,8 @@ enum  optionIndex
     FORCED_DOMAIN,
     SUBSCRIBERS,
     DATA_SHARING,
-    DATA_LOAN
+    DATA_LOAN,
+    SHARED_MEMORY
 };
 
 enum TestAgent
@@ -198,10 +120,12 @@ const option::Descriptor usage[] = {
       "             --export_csv             Flag to export a CVS file." },
     { UNKNOWN_OPT,   0, "",   "",               Arg::None,
       "\nNote:\nIf no demand or msg_size is provided the .csv file is used.\n"},
-    { DATA_SHARING,        0, "d", "data_sharing",            Arg::None,
-      "               --data_sharing        Enable data sharing feature." },
+    { DATA_SHARING,  0, "d", "data_sharing", Arg::Enabler,
+      "               --data_sharing=[on|off]             Explicitly enable/disable data sharing feature." },
     { DATA_LOAN,        0, "l", "data_loans",            Arg::None,
       "               --data_loans          Use loan sample API." },
+    { SHARED_MEMORY,    0, "", "shared_memory", Arg::Enabler,
+      "               --shared_memory=[on|off]             Explicitly enable/disable shared memory transport." },
     { 0, 0, 0, 0, 0, 0 }
 };
 
@@ -247,8 +171,9 @@ int main(
     bool use_security = false;
     std::string certs_path;
 #endif // if HAVE_SECURITY
-    bool data_sharing = false;
+    Arg::EnablerValue data_sharing = Arg::EnablerValue::NO_SET;
     bool data_loans = false;
+    Arg::EnablerValue shared_memory = Arg::EnablerValue::NO_SET;
 
     argc -= (argc > 0); argv += (argc > 0); // skip program name argv[0] if present
     if (argc)
@@ -406,10 +331,27 @@ int main(
                 break;
 #endif // if HAVE_SECURITY
             case DATA_SHARING:
-                data_sharing = true;
+                if (0 == strncasecmp(opt.arg, "on", 2))
+                {
+                    data_sharing = Arg::EnablerValue::ON;
+                }
+                else
+                {
+                    data_sharing = Arg::EnablerValue::OFF;
+                }
                 break;
             case DATA_LOAN:
                 data_loans = true;
+                break;
+            case SHARED_MEMORY:
+                if (0 == strncasecmp(opt.arg, "on", 2))
+                {
+                    shared_memory = Arg::EnablerValue::ON;
+                }
+                else
+                {
+                    shared_memory = Arg::EnablerValue::OFF;
+                }
                 break;
             case UNKNOWN_OPT:
                 option::printUsage(fwrite, stdout, usage, columns);
@@ -425,14 +367,14 @@ int main(
         logError(ThroughputTest, "Intra-process delivery NOT supported with security");
         return 1;
     }
-    else if ( data_sharing && use_security )
+    else if ( Arg::EnablerValue::ON == data_sharing && use_security )
     {
         logError(ThroughputTest, "Sharing sample APIs NOT supported with RTPS encryption");
         return 1;
     }
 #endif // if HAVE_SECURITY
 
-    if ((data_sharing || data_loans) && dynamic_types)
+    if ((Arg::EnablerValue::ON == data_sharing || data_loans) && dynamic_types)
     {
         logError(ThroughputTest, "Sharing sample APIs NOT supported with dynamic types");
         return 1;
@@ -539,6 +481,7 @@ int main(
                     dynamic_types,
                     data_sharing,
                     data_loans,
+                    shared_memory,
                     forced_domain)
                 )
         {
@@ -564,6 +507,7 @@ int main(
                     dynamic_types,
                     data_sharing,
                     data_loans,
+                    shared_memory,
                     forced_domain))
         {
             throughput_subscriber.run();
@@ -594,6 +538,7 @@ int main(
                     dynamic_types,
                     data_sharing,
                     data_loans,
+                    shared_memory,
                     forced_domain))
         {
             return_code = 1;
@@ -618,6 +563,7 @@ int main(
                 dynamic_types,
                 data_sharing,
                 data_loans,
+                shared_memory,
                 forced_domain);
         }
 

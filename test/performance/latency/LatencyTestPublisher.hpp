@@ -41,6 +41,8 @@
 #include <fastrtps/types/TypeDescriptor.h>
 #include "LatencyTestTypes.hpp"
 
+#include "../optionarg.hpp"
+
 class TimeStats
 {
 public:
@@ -97,8 +99,9 @@ public:
             const eprosima::fastrtps::rtps::PropertyPolicy& property_policy,
             const std::string& xml_config_file,
             bool dynamic_data,
-            bool data_sharing,
+            Arg::EnablerValue data_sharing,
             bool data_loans,
+            Arg::EnablerValue shared_memory,
             int forced_domain,
             LatencyDataSizes& latency_data_sizes);
 
@@ -199,8 +202,9 @@ private:
     bool export_csv_ = false;
     bool reliable_ = false;
     bool dynamic_types_ = false;
-    bool data_sharing_ = false;
+    Arg::EnablerValue data_sharing_ = Arg::EnablerValue::NO_SET;
     bool data_loans_ = false;
+    Arg::EnablerValue shared_memory_ = Arg::EnablerValue::NO_SET;
     int forced_domain_ = -1;
     int subscribers_ = 0;
     unsigned int samples_ = 0;
