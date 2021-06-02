@@ -20,29 +20,33 @@
 #ifndef _TEST_BLACKBOX_PUBSUBREADER_HPP_
 #define _TEST_BLACKBOX_PUBSUBREADER_HPP_
 
-#include <fastrtps/fastrtps_fwd.h>
-#include <fastrtps/Domain.h>
-#include <fastrtps/participant/Participant.h>
-#include <fastrtps/participant/ParticipantListener.h>
-#include <fastrtps/attributes/ParticipantAttributes.h>
-#include <fastrtps/subscriber/Subscriber.h>
-#include <fastrtps/subscriber/SubscriberListener.h>
-#include <fastrtps/attributes/SubscriberAttributes.h>
-#include <fastrtps/subscriber/SampleInfo.h>
-#include <fastrtps/xmlparser/XMLParser.h>
-#include <fastrtps/xmlparser/XMLTree.h>
-#include <fastrtps/utils/IPLocator.h>
-#include <fastrtps/transport/UDPv4TransportDescriptor.h>
-
-#include <string>
-#include <list>
 #include <atomic>
 #include <condition_variable>
+#include <list>
+#include <string>
+
 #include <asio.hpp>
 #include <gtest/gtest.h>
+#include <fastrtps/attributes/ParticipantAttributes.h>
+#include <fastrtps/attributes/SubscriberAttributes.h>
+#include <fastrtps/Domain.h>
+#include <fastrtps/fastrtps_fwd.h>
+#include <fastrtps/participant/Participant.h>
+#include <fastrtps/participant/ParticipantListener.h>
+#include <fastrtps/subscriber/SampleInfo.h>
+#include <fastrtps/subscriber/Subscriber.h>
+#include <fastrtps/subscriber/SubscriberListener.h>
+#include <fastrtps/transport/UDPTransportDescriptor.h>
+#include <fastrtps/transport/UDPv4TransportDescriptor.h>
+#include <fastrtps/transport/UDPv6TransportDescriptor.h>
+#include <fastrtps/utils/IPLocator.h>
+#include <fastrtps/xmlparser/XMLParser.h>
+#include <fastrtps/xmlparser/XMLTree.h>
 
 using eprosima::fastrtps::rtps::IPLocator;
+using eprosima::fastrtps::rtps::UDPTransportDescriptor;
 using eprosima::fastrtps::rtps::UDPv4TransportDescriptor;
+using eprosima::fastrtps::rtps::UDPv6TransportDescriptor;
 
 template<class TypeSupport>
 class PubSubReader
@@ -946,12 +950,20 @@ public:
 
         eprosima::fastrtps::rtps::LocatorList_t default_unicast_locators;
         eprosima::fastrtps::rtps::Locator_t default_unicast_locator;
+        eprosima::fastrtps::rtps::Locator_t loopback_locator;
+        if (!use_udpv4)
+        {
+            default_unicast_locator.kind = LOCATOR_KIND_UDPv6;
+            loopback_locator.kind = LOCATOR_KIND_UDPv6;
+        }
 
         default_unicast_locators.push_back(default_unicast_locator);
         participant_attr_.rtps.builtin.metatrafficUnicastLocatorList = default_unicast_locators;
 
-        eprosima::fastrtps::rtps::Locator_t loopback_locator;
-        IPLocator::setIPv4(loopback_locator, 127, 0, 0, 1);
+        if (!IPLocator::setIPv4(loopback_locator, 127, 0, 0, 1))
+        {
+            IPLocator::setIPv6(loopback_locator, "::1");
+        }
         participant_attr_.rtps.builtin.initialPeersList.push_back(loopback_locator);
         return *this;
     }
@@ -1039,7 +1051,15 @@ public:
             uint32_t maxInitialPeerRange)
     {
         participant_attr_.rtps.useBuiltinTransports = false;
-        std::shared_ptr<UDPv4TransportDescriptor> descriptor = std::make_shared<UDPv4TransportDescriptor>();
+        std::shared_ptr<UDPTransportDescriptor> descriptor;
+        if (use_udpv4)
+        {
+            descriptor = std::make_shared<UDPv4TransportDescriptor>();
+        }
+        else
+        {
+            descriptor = std::make_shared<UDPv6TransportDescriptor>();
+        }
         descriptor->maxInitialPeersRange = maxInitialPeerRange;
         participant_attr_.rtps.userTransports.push_back(descriptor);
         return *this;

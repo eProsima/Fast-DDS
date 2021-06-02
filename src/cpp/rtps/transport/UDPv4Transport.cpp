@@ -116,7 +116,7 @@ UDPv4Transport::UDPv4Transport(
 
         if (interface_whitelist_.empty())
         {
-            logError(TRANSPORT, "All whitelist interfaces where filtered out");
+            logError(TRANSPORT, "All whitelist interfaces were filtered out");
             interface_whitelist_.emplace_back(ip::address_v4::from_string("192.0.2.0"));
         }
     }
