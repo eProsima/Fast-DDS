@@ -454,9 +454,6 @@ private:
     void prepare_datasharing_delivery(
             CacheChange_t* change);
 
-    bool restart_periodic_heartbeat(
-            const std::chrono::time_point<std::chrono::steady_clock>& max_blocking_time);
-
     //! True to disable piggyback heartbeats
     bool disable_heartbeat_piggyback_;
     //! True to disable positive ACKs

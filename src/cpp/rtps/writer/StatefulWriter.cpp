@@ -441,7 +441,7 @@ void StatefulWriter::unsent_change_added_to_history(
         }
         else
         {
-            restart_periodic_heartbeat(max_blocking_time);
+            periodic_hb_event_->restart_timer(max_blocking_time);
         }
 
         if (disable_positive_acks_)
@@ -960,7 +960,7 @@ RTPSWriter::DeliveryRetCode StatefulWriter::deliver_sample_to_network(
 
     if (need_reactivate_periodic_heartbeat)
     {
-        restart_periodic_heartbeat(max_blocking_time);
+        periodic_hb_event_->restart_timer(max_blocking_time);
     }
 
     return ret_code;
@@ -1089,6 +1089,7 @@ bool StatefulWriter::matched_reader_add(
         // History not empty
         if (min_seq != SequenceNumber_t::unknown())
         {
+            (void)last_seq;
             assert(last_seq != SequenceNumber_t::unknown());
             assert(min_seq <= last_seq);
 
@@ -1120,7 +1121,7 @@ bool StatefulWriter::matched_reader_add(
 
                 // Always activate heartbeat period. We need a confirmation of the reader.
                 // The state has to be updated.
-                restart_periodic_heartbeat(std::chrono::steady_clock::now() + std::chrono::hours(24));
+                periodic_hb_event_->restart_timer(std::chrono::steady_clock::now() + std::chrono::hours(24));
             }
             else
             {
@@ -2032,12 +2033,6 @@ RTPSWriter::DeliveryRetCode StatefulWriter::deliver_sample_nts(
     check_acked_status();
 
     return ret_code;
-}
-
-bool StatefulWriter::restart_periodic_heartbeat(
-        const std::chrono::time_point<std::chrono::steady_clock>& max_blocking_time)
-{
-    return periodic_hb_event_->restart_timer(max_blocking_time);
 }
 
 }  // namespace rtps

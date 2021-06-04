@@ -229,7 +229,7 @@ void RTPSMessageGroup::flush()
 
 void RTPSMessageGroup::send()
 {
-    if (endpoint_ and sender_)
+    if (endpoint_ && sender_)
     {
 
         CDRMessage_t* msgToSend = full_msg_;
