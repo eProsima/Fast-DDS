@@ -1,4 +1,4 @@
 CODEABI_1.0 {
-	global: *eprosima*;
+	global: *eprosima*;*MD5*;
 	local: *;
 };
