@@ -502,6 +502,8 @@ if(MSVC OR MSVC_IDE)
     if("${CMAKE_SYSTEM_NAME}" STREQUAL "WindowsStore")
         set_target_properties(${PROJECT_NAME} PROPERTIES VS_WINRT_COMPONENT "true")
     endif()
+elseif(BUILD_SHARED_LIBS)
+    target_link_options(${PROJECT_NAME} ${PRIVACY} -Wl,--version-script=${CMAKE_CURRENT_SOURCE_DIR}/libfastrtps.version)
 endif()
 
 if(DEFINED ENV{LIB_FUZZING_ENGINE})
