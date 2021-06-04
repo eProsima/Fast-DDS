@@ -7,9 +7,9 @@ namespace eprosima {
 namespace fastdds {
 namespace rtps {
 
-constexpr char* const pure_sync_flow_controller_name = "PureSyncFlowController";
-constexpr char* const sync_flow_controller_name = "SyncFlowController";
-constexpr char* const async_flow_controller_name = "AsyncFlowController";
+const char* const pure_sync_flow_controller_name = "PureSyncFlowController";
+const char* const sync_flow_controller_name = "SyncFlowController";
+const char* const async_flow_controller_name = "AsyncFlowController";
 
 FlowControllerFactory::~FlowControllerFactory()
 {

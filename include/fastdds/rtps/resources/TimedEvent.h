@@ -122,14 +122,14 @@ public:
     /*!
      * @brief Schedules the event if there is not a previous scheduling.
      */
-    bool restart_timer();
+    void restart_timer();
 
     /*!
      * @brief Schedules the event if there is not a previous scheduling.
      * @note Non-blocking call version.
      * @param timeout Time point in the future until the method can be blocked.
      */
-    bool restart_timer(
+    void restart_timer(
             const std::chrono::steady_clock::time_point& timeout);
 
     /**

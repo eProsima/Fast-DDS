@@ -53,27 +53,21 @@ void TimedEvent::cancel_timer()
     }
 }
 
-bool TimedEvent::restart_timer()
+void TimedEvent::restart_timer()
 {
-    bool is_restarted = false;
-    if ((is_restarted = impl_->go_ready()))
+    if (impl_->go_ready())
     {
         service_.notify(impl_);
     }
-
-    return is_restarted;
 }
 
-bool TimedEvent::restart_timer(
+void TimedEvent::restart_timer(
         const std::chrono::steady_clock::time_point& timeout)
 {
-    bool is_restarted = false;
-    if ((is_restarted = impl_->go_ready()))
+    if (impl_->go_ready())
     {
         service_.notify(impl_, timeout);
     }
-
-    return is_restarted;
 }
 
 bool TimedEvent::update_interval(

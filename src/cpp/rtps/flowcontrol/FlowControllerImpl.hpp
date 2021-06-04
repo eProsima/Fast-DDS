@@ -52,7 +52,7 @@ struct FlowControllerAsyncPublishMode
         }
     }
 
-    constexpr bool fast_check_is_there_slot_for_change(
+    bool fast_check_is_there_slot_for_change(
             fastrtps::rtps::CacheChange_t*) const
     {
         return true;
@@ -64,7 +64,7 @@ struct FlowControllerAsyncPublishMode
         cv.wait(lock);
     }
 
-    constexpr bool force_wait() const
+    bool force_wait() const
     {
         return false;
     }
@@ -101,7 +101,7 @@ struct FlowControllerSyncPublishMode : public FlowControllerPureSyncPublishMode,
     {
     }
 
-    constexpr bool fast_check_is_there_slot_for_change(
+    bool fast_check_is_there_slot_for_change(
             fastrtps::rtps::CacheChange_t*) const
     {
         return true;
@@ -767,7 +767,7 @@ private:
                 }
 
                 // Add interested changes into the queue.
-                std::unique_lock<std::mutex> lock(async_mode.changes_interested_mutex);
+                std::unique_lock<std::mutex> in_lock(async_mode.changes_interested_mutex);
                 add_interested_changes_to_queue_nts();
             }
 

@@ -634,7 +634,7 @@ RTPSWriter::DeliveryRetCode StatelessWriter::deliver_sample_nts(
         CacheChange_t* cache_change,
         RTPSMessageGroup& group,
         RTPSWriter::LocatorSelector& locator_selector,
-        const std::chrono::time_point<std::chrono::steady_clock>& max_blocking_time)
+        const std::chrono::time_point<std::chrono::steady_clock>& /*TODO max_blocking_time*/)
 {
     size_t num_locators = locator_selector.locator_selector.selected_size() + fixed_locators_.size();
     uint64_t change_sequence_number = cache_change->sequenceNumber.to64long();
@@ -668,7 +668,7 @@ RTPSWriter::DeliveryRetCode StatelessWriter::deliver_sample_nts(
                     for (std::unique_ptr<ReaderLocator>& it : matched_remote_readers_)
                     {
                         group.change_transmitter(this, &*it);
-                        size_t num_locators = it->locators_size();
+                        num_locators = it->locators_size();
 
                         if (group.add_data_frag(*cache_change, frag, is_inline_qos_expected_))
                         {
@@ -694,7 +694,7 @@ RTPSWriter::DeliveryRetCode StatelessWriter::deliver_sample_nts(
                 for (std::unique_ptr<ReaderLocator>& it : matched_remote_readers_)
                 {
                     group.change_transmitter(this, &*it);
-                    size_t num_locators = it->locators_size();
+                    num_locators = it->locators_size();
 
                     if (group.add_data(*cache_change, is_inline_qos_expected_))
                     {
