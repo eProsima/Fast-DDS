@@ -100,7 +100,7 @@ const option::Descriptor usage[] = {
 #if HAVE_SECURITY
     {
         USE_SECURITY,  0, "",  "security",        Arg::Required,
-        "             --security <arg>         Echo mode (\"true\"/\"false\")."
+        "             --security <arg>         Enable/disable DDS security (\"true\"/\"false\")."
     },
     { CERTS_PATH,    0, "",  "certs",           Arg::Required,
       "             --certs <arg>            Path where located certificates." },
