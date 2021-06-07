@@ -5,7 +5,7 @@ This directory provides everything needed for [measuring the network throughput]
 Throughput measure implies having at least two nodes: one with the publication role and the other one with the subscription role.
 The publication node, besides publishing fixed-size data in a custom rate, is in charge of controlling the synchronization
 with the subscription nodes and gathering the results.
-Both roles are provided by the same [utility](#usage) which can be [compiled](#compilation) with Fast-DDS.
+Both roles are provided by the same [utility](#usage) which can be [compiled](#compilation) with Fast DDS.
 
 Also this directory provides a [Python script](#python-launcher) which helps launching both nodes in the same system.
 
@@ -13,7 +13,7 @@ Also this directory provides a [Python script](#python-launcher) which helps lau
 
 The test consists on sending during a period of time as much as possible bursts of samples separated by a fix *recovery*
 time.
-While the test doesn't exceed the test time, the publication node will try in a loop to send a burst of nth samples and
+While the test does not exceed the test time, the publication node will try in a loop to send a burst of `n` samples and
 sleep for the *recovery* time.
 After the test exceeds the test time, the publication node will gather all information from the subscription nodes to
 show you at the end.

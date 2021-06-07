@@ -1,13 +1,13 @@
 # Latency testing
 
-This directory provides all you need for [measuring the network latency](latency-measure) of Fast-DDS in your environment.
+This directory provides everything needed for [measuring the network latency](latency-measure) of Fast DDS.
 
 Latency measure implies having at least two nodes: one with the publication role and the other one with the subscription role.
 The publication node, besides publishing fixed-size data and wait for the reply, is in charge of controlling the synchronization
 with the subscription nodes and gathering the results.
-Both roles are provided by the same [utility](#usage) which can be [compiled](#compilation) with Fast-DDS.
+Both roles are provided by the same [utility](#usage) which can be [compiled](#compilation) with Fast DDS.
 
-Also this directory provides a [python script](#python-launcher) which helps launching both nodes in the same system.
+Also this directory provides a [Python script](#python-launcher) which helps launching both nodes in the same system.
 
 ## Latency measure
 
@@ -15,13 +15,14 @@ The test consists on sending samples and wait for their replies.
 The publication node will try in a loop to send a sample, wait for the reply and calculate the time used in this process.
 After sending the specified number of samples, the publication node will gather the information to show you at the end.
 
-Our utility is able to execute at the same time several tests with different setups.
-These are the elements you can configure:
+The latency test application is able to execute at the same time several tests with different setups.
+The elements that can be configured are the following:
 
 - Size of the samples.
 - Number of samples to send.
 
-At the end of the [testing](testing) the utility will show a table with the test results.
+At the end of the execution the utility will show a table with the test results.
+Below is an example of these test results.
 
 ```
    Bytes, Samples,   stdev,    mean,     min,     50%,     90%,     99%,  99.99%,     max
@@ -33,7 +34,7 @@ At the end of the [testing](testing) the utility will show a table with the test
 ```
 
 Each line of the table is an execution with a specific setup.
-Columns shows next information:
+The columns show the next information:
 
 * Bytes -- Size the samples used in the test.
 * Demand -- Number of samples sent in the test.
@@ -49,15 +50,16 @@ Columns shows next information:
 
 ## Compilation
 
-You can enable the compilation of the utility using the CMake option `PERFORMANCE_TESTS`.
-Following our [*Installation from sources* guide](https://fast-dds.docs.eprosima.com/en/latest/installation/sources/sources_linux.html)
- you may compile Fast-DDS and this utility using next command.
+This utility can be enabled by using the CMake option `PERFORMANCE_TESTS`.
+Following the Fast DDS [*Installation from sources*
+guide](https://fast-dds.docs.eprosima.com/en/latest/installation/sources/sources_linux.html),
+Fast DDS and this utility can be compiled executing the next command.
 
 ```
 colcon build --cmake-args -DPERFORMANCE_TESTS=ON
 ```
 
-You can find this utility executable in the building directory.
+The latency test executable can be found in the `build` directory.
 
 ```
 build/fastrtps/test/performance/latency
@@ -72,7 +74,7 @@ build/fastrtps/test/performance/latency
 ## Usage
 
 The utility is able to have the publication role or the subscription role.
-Also it is able to have both roles, useful for testing special Fast-DDS mechanisms such as *intraprocess communication*
+Also it is able to have both roles, useful for testing special Fast DDS mechanisms such as *intraprocess communication*
 
 ```bash
 # Run a publication node
@@ -147,7 +149,7 @@ $ LatenchTest subscriber --reliability=besteffort --domain 0 --shared_memory=off
 
 ## Python launcher
 
-The directory also comes with a python script which automates the execution of the test nodes.
+The directory also comes with a Python script which automates the execution of the test nodes.
 
 ```batch
 # Indicate where is the utility executable
