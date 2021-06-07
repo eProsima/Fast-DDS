@@ -249,20 +249,41 @@ bool TypeDescriptor::is_consistent() const
 bool TypeDescriptor::is_type_name_consistent(
         const std::string& sName) const
 {
-    // The first letter must start with a letter ( uppercase or lowercase )
-    if (sName.length() > 0 && std::isalpha(sName[0]))
+    // Implement an FSM string parser to deal with both a plain type name
+    // and a fully qualified name. According to the DDS xtypes standard,
+    // type's fully qualified name is a concatenation of module names with
+    // the name of a type inside of those modules.
+    int currState = INVALID;
+    for (uint32_t i = 0; i < sName.length(); ++i)
     {
-        // All characters must be letters, numbers or underscore.
-        for (uint32_t i = 1; i < sName.length(); ++i)
+        int col = 0;
+        if (std::isalpha(sName[i]))
         {
-            if (!std::isalnum(sName[i]) && sName[i] != 95)
-            {
-                return false;
-            }
+            col = LETTER;
         }
-        return true;
+        else if (std::isdigit(sName[i]))
+        {
+            col = NUMBER;
+        }
+        else if (sName[i] == '_')
+        {
+            col = UNDERSCORE;
+        }
+        else if (sName[i] == ':')
+        {
+            col = COLON;
+        }
+        else
+        {
+            col = OTHER;
+        }
+        currState = stateTable[currState][col];
+        if (currState == INVALID)
+        {
+            return false;
+        }
     }
-    return false;
+    return true;
 }
 
 void TypeDescriptor::set_kind(
