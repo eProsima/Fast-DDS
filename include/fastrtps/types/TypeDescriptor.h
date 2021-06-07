@@ -25,6 +25,23 @@ namespace eprosima {
 namespace fastrtps {
 namespace types {
 
+enum FSM_INPUTS
+{
+    LETTER = 1,
+    NUMBER,
+    UNDERSCORE,
+    COLON,
+    OTHER
+};
+
+enum FSM_STATES
+{
+    INVALID = 0,
+    SINGLECOLON,
+    DOUBLECOLON,
+    VALID
+};
+
 class TypeDescriptor
 {
 protected:
@@ -36,6 +53,13 @@ protected:
     DynamicType_ptr element_type_;          // Value Type for arrays, sequences, maps, bitmasks.
     DynamicType_ptr key_element_type_;      // Key Type for maps.
     std::vector<AnnotationDescriptor*> annotation_; // Annotations to apply
+
+    const int stateTable[4][6] = {
+        /* Input:     letter,  number,  underscore, colon,       other */
+        {INVALID,     VALID,   INVALID, INVALID,    INVALID,     INVALID},
+        {SINGLECOLON, INVALID, INVALID, INVALID,    DOUBLECOLON, INVALID},
+        {DOUBLECOLON, VALID,   INVALID, INVALID,    INVALID,     INVALID},
+        {VALID,       VALID,   VALID,   VALID,      SINGLECOLON, INVALID}};
 
     void clean();
 
