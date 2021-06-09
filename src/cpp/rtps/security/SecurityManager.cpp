@@ -1049,12 +1049,6 @@ bool SecurityManager::create_participant_stateless_message_writer()
     watt.endpoint.topicKind = NO_KEY;
     watt.matched_readers_allocation = participant_->getRTPSParticipantAttributes().allocation.participants;
 
-    if (participant_->getRTPSParticipantAttributes().throughputController.bytesPerPeriod != UINT32_MAX &&
-            participant_->getRTPSParticipantAttributes().throughputController.periodMillisecs != 0)
-    {
-        watt.mode = ASYNCHRONOUS_WRITER;
-    }
-
     RTPSWriter* wout = nullptr;
     if (participant_->createWriter(&wout, watt, participant_stateless_message_pool_,
             participant_stateless_message_writer_history_, nullptr,
@@ -1204,13 +1198,6 @@ bool SecurityManager::create_participant_volatile_message_secure_writer()
     watt.endpoint.security_attributes().plugin_endpoint_attributes =
             PLUGIN_ENDPOINT_SECURITY_ATTRIBUTES_FLAG_IS_SUBMESSAGE_ENCRYPTED;
     watt.matched_readers_allocation = participant_->getRTPSParticipantAttributes().allocation.participants;
-    // TODO(Ricardo) Study keep_all
-
-    if (participant_->getRTPSParticipantAttributes().throughputController.bytesPerPeriod != UINT32_MAX &&
-            participant_->getRTPSParticipantAttributes().throughputController.periodMillisecs != 0)
-    {
-        watt.mode = ASYNCHRONOUS_WRITER;
-    }
 
     RTPSWriter* wout = nullptr;
     if (participant_->createWriter(&wout, watt, participant_volatile_message_secure_pool_,

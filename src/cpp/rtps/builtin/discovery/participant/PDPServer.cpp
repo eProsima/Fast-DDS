@@ -636,9 +636,6 @@ void PDPServer::announceParticipantState(
                     metatraffic_locators.add_multicast_locator(locator);
                 }
 
-                // If the DATA is already in the writer's history, then remove it, but do not release the change.
-                remove_change_from_history_nts(mp_PDPWriterHistory, change, false);
-
                 // Add our change to PDPWriterHistory
                 mp_PDPWriterHistory->add_change(change, wp);
                 change->write_params = wp;
@@ -805,7 +802,7 @@ bool PDPServer::remove_remote_participant(
             else
             {
                 // if the database doesn't take the ownership remove
-                mp_PDPWriter->release_change(pC);
+                mp_PDPReader->releaseCache(pC);
             }
         }
     }

@@ -925,7 +925,7 @@ RTPSWriter::DeliveryRetCode StatefulWriter::deliver_sample_to_network(
                                 }
                             }
 
-                            send_heartbeat_piggyback_nts_((*remote_reader), group, locator_selector, last_processed);
+                            send_heartbeat_nts_(1u, group, false);
                         }
                     }
                 }
