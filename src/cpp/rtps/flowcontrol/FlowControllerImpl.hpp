@@ -771,7 +771,6 @@ private:
                 add_interested_changes_to_queue_nts();
             }
 
-            async_mode.group.flush_and_reset();
             async_mode.group.change_transmitter(nullptr, nullptr);
         }
     }
