@@ -796,7 +796,8 @@ TEST_F(XTypesTests, SetComplexValueOfNonContainerType)
     robot_builder->add_member(0, "name", DynamicTypeBuilderFactory::get_instance()->create_string_type());
     robot_builder->add_member(1, "position", pos_builder.get());
     robot_builder->set_name("Robot");
-    DynamicTypeBuilder_ptr positions_builder(DynamicTypeBuilderFactory::get_instance()->create_array_builder(pos_builder.get(), {2}));
+    DynamicTypeBuilder_ptr positions_builder(
+        DynamicTypeBuilderFactory::get_instance()->create_array_builder(pos_builder.get(), {2}));
 
     DynamicType_ptr pos_dyn_type = pos_builder->build();
     DynamicData* pos_data1 = DynamicDataFactory::get_instance()->create_data(pos_dyn_type);
