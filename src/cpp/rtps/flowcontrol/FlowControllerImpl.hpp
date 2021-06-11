@@ -44,10 +44,11 @@ struct FlowControllerAsyncPublishMode
     {
         if (running)
         {
-            std::unique_lock<std::mutex> lock(changes_interested_mutex);
-            running = false;
-            cv.notify_one();
-            changes_interested_mutex.unlock();
+            {
+                std::unique_lock<std::mutex> lock(changes_interested_mutex);
+                running = false;
+                cv.notify_one();
+            }
             thread.join();
         }
     }
