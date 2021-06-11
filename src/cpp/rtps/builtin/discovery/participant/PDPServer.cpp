@@ -781,6 +781,10 @@ bool PDPServer::remove_remote_participant(
             pC->instanceHandle = partGUID;
             pC->kind = NOT_ALIVE_DISPOSED_UNREGISTERED;
             pC->writerGUID = mp_PDPWriter->getGuid();
+            // Reset the internal CacheChange_t union.
+            pC->writer_info.next = nullptr;
+            pC->writer_info.previous = nullptr;
+            pC->writer_info.num_sent_submessages = 0;
 
             // Use this server identity in order to hint clients it's a lease duration demise
             WriteParams& wp = pC->write_params;

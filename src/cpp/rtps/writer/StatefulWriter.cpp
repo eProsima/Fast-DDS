@@ -1093,58 +1093,61 @@ bool StatefulWriter::matched_reader_add(
             assert(last_seq != SequenceNumber_t::unknown());
             assert(min_seq <= last_seq);
 
-            // Late-joiner
-            if (TRANSIENT_LOCAL <= rp->durability_kind() &&
-                    TRANSIENT_LOCAL <= m_att.durabilityKind)
+            try
             {
-                for (History::iterator cit = mp_history->changesBegin(); cit != mp_history->changesEnd(); ++cit)
+                RTPSMessageGroup group(mp_RTPSParticipant, this, rp->message_sender());
+
+                // Late-joiner
+                if (TRANSIENT_LOCAL <= rp->durability_kind() &&
+                        TRANSIENT_LOCAL <= m_att.durabilityKind)
                 {
-                    // Holes are managed when deliver_sample(), sending GAP messages.
-                    if (rp->rtps_is_relevant(*cit))
+                    for (History::iterator cit = mp_history->changesBegin(); cit != mp_history->changesEnd(); ++cit)
                     {
-                        ChangeForReader_t changeForReader(*cit);
-
-                        // If it is local, maintain in UNSENT status and add to flow controller.
-                        if (rp->is_local_reader())
+                        // Holes are managed when deliver_sample(), sending GAP messages.
+                        if (rp->rtps_is_relevant(*cit))
                         {
-                            flow_controller_->add_old_sample(this, *cit);
-                        }
-                        // In other case, set as UNACKNOWLEDGED and expects the reader request them.
-                        else
-                        {
-                            changeForReader.setStatus(UNACKNOWLEDGED);
-                        }
+                            ChangeForReader_t changeForReader(*cit);
 
-                        rp->add_change(changeForReader, true, false);
+                            // If it is local, maintain in UNSENT status and add to flow controller.
+                            if (rp->is_local_reader())
+                            {
+                                flow_controller_->add_old_sample(this, *cit);
+                            }
+                            // In other case, set as UNACKNOWLEDGED and expects the reader request them.
+                            else
+                            {
+                                changeForReader.setStatus(UNACKNOWLEDGED);
+                            }
+
+                            rp->add_change(changeForReader, true, false);
+                        }
                     }
-                }
-
-                // Always activate heartbeat period. We need a confirmation of the reader.
-                // The state has to be updated.
-                periodic_hb_event_->restart_timer(std::chrono::steady_clock::now() + std::chrono::hours(24));
-            }
-            else
-            {
-                if (rp->is_local_reader())
-                {
-                    intraprocess_heartbeat(rp);
                 }
                 else
                 {
-                    try
+                    if (rp->is_local_reader())
                     {
-                        RTPSMessageGroup group(mp_RTPSParticipant, this, rp->message_sender());
+                        intraprocess_heartbeat(rp);
+                    }
+                    else
+                    {
                         // Send a GAP of the whole history.
                         group.add_gap(min_seq, SequenceNumberSet_t(mp_history->next_sequence_number()), rp->guid());
-                        send_heartbeat_nts_(1u, group, disable_positive_acks_);
-                        group.flush_and_reset();
-                    }
-                    catch (const RTPSMessageGroup::timeout&)
-                    {
-                        logError(RTPS_WRITER, "Max blocking time reached");
                     }
                 }
+
+                send_heartbeat_nts_(1u, group, disable_positive_acks_);
+                group.flush_and_reset();
             }
+            catch (const RTPSMessageGroup::timeout&)
+            {
+                logError(RTPS_WRITER, "Max blocking time reached");
+            }
+
+
+            // Always activate heartbeat period. We need a confirmation of the reader.
+            // The state has to be updated.
+            periodic_hb_event_->restart_timer(std::chrono::steady_clock::now() + std::chrono::hours(24));
         }
     }
     else
