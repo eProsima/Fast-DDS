@@ -668,7 +668,12 @@ void PDPServer::announceParticipantState(
             change = discovery_db().cache_change_own_participant();
             if (nullptr == change)
             {
-                logError(RTPS_PDP_SERVER, "DiscoveryDatabase uninitialized with local DATA(p) on announcement");
+                // This case is when the local Server DATA(P) has been included already in database by update method
+                // but the routine thread has not consumed it yet.
+                // This would happen when the routine thread is busy in initializing, i.e. it already has other
+                // DATA(P) to parse before the own one is inserted by update.
+                logWarning(RTPS_PDP_SERVER, "Local Server DATA(p) uninitialized before local on announcement. "
+                        << "It will be sent in next announce iteration.");
                 return;
             }
         }
