@@ -207,7 +207,7 @@ public:
 
         if (reset_seq)
         {
-            last_seq_ = SequenceNumber_t();
+            last_seq_ = eprosima::fastrtps::rtps::SequenceNumber_t();
         }
     }
 
