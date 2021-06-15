@@ -463,6 +463,112 @@ TEST_P(RTPS, RTPSAsReliableWithRegistrationAndHolesInHistory)
 }
 
 
+TEST_P(RTPS, RTPSAsReliableVolatileTwoWritersConsecutives)
+{
+    RTPSWithRegistrationReader<HelloWorldType> reader(TEST_TOPIC_NAME);
+    RTPSWithRegistrationWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
+
+    reader.reliability(ReliabilityKind_t::RELIABLE).init();
+    EXPECT_TRUE(reader.isInitialized());
+
+    writer.reliability(ReliabilityKind_t::RELIABLE).init();
+
+    EXPECT_TRUE(writer.isInitialized());
+
+    // Wait for discovery.
+    writer.wait_discovery();
+    reader.wait_discovery();
+
+    auto complete_data = default_helloworld_data_generator();
+
+    reader.expected_data(complete_data);
+    reader.startReception();
+
+    // Send data
+    writer.send(complete_data);
+    EXPECT_TRUE(complete_data.empty());
+
+    reader.block_for_all();
+    reader.stopReception();
+
+    writer.destroy();
+
+    // Wait for undiscovery
+    reader.wait_undiscovery();
+
+    writer.reliability(ReliabilityKind_t::RELIABLE).init();
+
+    // Wait for discovery
+    writer.wait_discovery();
+    reader.wait_discovery();
+
+    complete_data = default_helloworld_data_generator();
+
+    reader.expected_data(complete_data, true);
+    reader.startReception();
+
+    writer.send(complete_data);
+    EXPECT_TRUE(complete_data.empty());
+
+    reader.block_for_all();
+
+    reader.destroy();
+    writer.destroy();
+}
+
+TEST_P(RTPS, RTPSAsReliableTransientLocalTwoWritersConsecutives)
+{
+    RTPSWithRegistrationReader<HelloWorldType> reader(TEST_TOPIC_NAME);
+    RTPSWithRegistrationWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
+
+    reader.reliability(ReliabilityKind_t::RELIABLE).durability(DurabilityKind_t::TRANSIENT_LOCAL).init();
+    EXPECT_TRUE(reader.isInitialized());
+
+    writer.reliability(ReliabilityKind_t::RELIABLE).init();
+
+    EXPECT_TRUE(writer.isInitialized());
+
+    // Wait for discovery.
+    writer.wait_discovery();
+    reader.wait_discovery();
+
+    auto complete_data = default_helloworld_data_generator();
+
+    reader.expected_data(complete_data);
+    reader.startReception();
+
+    // Send data
+    writer.send(complete_data);
+    EXPECT_TRUE(complete_data.empty());
+
+    reader.block_for_all();
+    reader.stopReception();
+
+    writer.destroy();
+
+    // Wait for undiscovery
+    reader.wait_undiscovery();
+
+    writer.reliability(ReliabilityKind_t::RELIABLE).init();
+
+    // Wait for discovery
+    writer.wait_discovery();
+    reader.wait_discovery();
+
+    complete_data = default_helloworld_data_generator();
+
+    reader.expected_data(complete_data, true);
+    reader.startReception();
+
+    writer.send(complete_data);
+    EXPECT_TRUE(complete_data.empty());
+
+    reader.block_for_all();
+
+    reader.destroy();
+    writer.destroy();
+}
+
 #ifdef INSTANTIATE_TEST_SUITE_P
 #define GTEST_INSTANTIATE_TEST_MACRO(x, y, z, w) INSTANTIATE_TEST_SUITE_P(x, y, z, w)
 #else

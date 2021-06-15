@@ -666,6 +666,96 @@ TEST_P(PubSubBasic, unique_flows_one_writer_two_readers)
     EXPECT_TRUE(writer.waitForAllAcked(std::chrono::seconds(30)));
 }
 
+template<typename T>
+static void two_consecutive_writers(
+        PubSubReader<T>& reader,
+        PubSubWriter<T>& writer,
+        bool block_for_all)
+{
+    writer.init();
+    EXPECT_TRUE(writer.isInitialized());
+
+    // Wait for discovery.
+    writer.wait_discovery();
+    reader.wait_discovery();
+
+    auto complete_data = default_helloworld_data_generator();
+
+    reader.startReception(complete_data);
+
+    // Send data
+    writer.send(complete_data);
+    EXPECT_TRUE(complete_data.empty());
+
+    if (block_for_all)
+    {
+        reader.block_for_all();
+    }
+    else
+    {
+        reader.block_for_at_least(2);
+    }
+    reader.stopReception();
+
+    writer.destroy();
+
+    // Wait for undiscovery
+    reader.wait_writer_undiscovery();
+}
+
+TEST_P(PubSubBasic, BestEffortTwoWritersConsecutives)
+{
+    // Best effort incompatible with best effort
+    if (use_pull_mode)
+    {
+        return;
+    }
+
+    PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
+
+    reader.history_depth(10).init();
+    EXPECT_TRUE(reader.isInitialized());
+
+    for (int i = 0; i < 2; ++i)
+    {
+        PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
+        writer.history_depth(10).reliability(BEST_EFFORT_RELIABILITY_QOS);
+        two_consecutive_writers(reader, writer, false);
+    }
+}
+
+
+TEST_P(PubSubBasic, ReliableVolatileTwoWritersConsecutives)
+{
+    PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
+
+    reader.history_depth(10).reliability(RELIABLE_RELIABILITY_QOS).init();
+    EXPECT_TRUE(reader.isInitialized());
+
+    for (int i = 0; i < 2; ++i)
+    {
+        PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
+        writer.history_depth(10).durability_kind(VOLATILE_DURABILITY_QOS);
+        two_consecutive_writers(reader, writer, true);
+    }
+}
+
+TEST_P(PubSubBasic, ReliableTransientLocalTwoWritersConsecutives)
+{
+    PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
+
+    reader.history_depth(10).reliability(RELIABLE_RELIABILITY_QOS).durability_kind(TRANSIENT_LOCAL_DURABILITY_QOS);
+    reader.init();
+    EXPECT_TRUE(reader.isInitialized());
+
+    for (int i = 0; i < 2; ++i)
+    {
+        PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
+        writer.history_depth(10).reliability(RELIABLE_RELIABILITY_QOS);
+        two_consecutive_writers(reader, writer, true);
+    }
+}
+
 #ifdef INSTANTIATE_TEST_SUITE_P
 #define GTEST_INSTANTIATE_TEST_MACRO(x, y, z, w) INSTANTIATE_TEST_SUITE_P(x, y, z, w)
 #else

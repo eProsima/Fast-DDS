@@ -199,10 +199,16 @@ public:
     }
 
     void expected_data(
-            const std::list<type>& msgs)
+            const std::list<type>& msgs,
+        bool reset_seq = false)
     {
         std::unique_lock<std::mutex> lock(mutex_);
         total_msgs_ = msgs;
+
+        if (reset_seq)
+        {
+            last_seq_ = SequenceNumber_t();
+        }
     }
 
     void expected_data(
