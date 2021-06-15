@@ -200,7 +200,7 @@ public:
 
     void expected_data(
             const std::list<type>& msgs,
-        bool reset_seq = false)
+            bool reset_seq = false)
     {
         std::unique_lock<std::mutex> lock(mutex_);
         total_msgs_ = msgs;
