@@ -193,3 +193,56 @@ TEST(DDSStatistics, simple_statistics_datareaders)
 
 #endif // FASTDDS_STATISTICS
 }
+
+TEST(DDSStatistics, simple_statistics_second_writer)
+{
+#ifdef FASTDDS_STATISTICS
+
+    auto transport = std::make_shared<UDPv4TransportDescriptor>();
+    auto domain_id = GET_PID() % 230;
+
+    DomainParticipantQos p_qos = PARTICIPANT_QOS_DEFAULT;
+    p_qos.transport().use_builtin_transports = false;
+    p_qos.transport().user_transports.push_back(transport);
+
+    auto participant_factory = DomainParticipantFactory::get_instance();
+    DomainParticipant* p1 = participant_factory->create_participant(domain_id, p_qos);
+    DomainParticipant* p2 = participant_factory->create_participant(domain_id, p_qos);
+
+    ASSERT_NE(nullptr, p1);
+    ASSERT_NE(nullptr, p2);
+
+    auto statistics_p1 = statistics::dds::DomainParticipant::narrow(p1);
+    auto statistics_p2 = statistics::dds::DomainParticipant::narrow(p2);
+    ASSERT_NE(nullptr, statistics_p2);
+
+    auto subscriber_p1 = p1->create_subscriber(SUBSCRIBER_QOS_DEFAULT);
+    auto subscriber_p2 = p2->create_subscriber(SUBSCRIBER_QOS_DEFAULT);
+    ASSERT_NE(nullptr, subscriber_p1);
+    ASSERT_NE(nullptr, subscriber_p2);
+
+    auto physical_data_reader_1 = enable_statistics(statistics_p1, subscriber_p1, statistics::PHYSICAL_DATA_TOPIC);
+    auto physical_data_reader_2 = enable_statistics(statistics_p2, subscriber_p2, statistics::PHYSICAL_DATA_TOPIC);
+    ASSERT_NE(nullptr, physical_data_reader_1);
+    ASSERT_NE(nullptr, physical_data_reader_2);
+
+    wait_statistics(physical_data_reader_1, 2, "PHYSICAL_DATA_TOPIC", 10u);
+    wait_statistics(physical_data_reader_2, 2, "PHYSICAL_DATA_TOPIC", 10u);
+
+    disable_statistics(statistics_p1, subscriber_p1, physical_data_reader_1, statistics::PHYSICAL_DATA_TOPIC);
+    physical_data_reader_1 = enable_statistics(statistics_p1, subscriber_p1, statistics::PHYSICAL_DATA_TOPIC);
+
+    wait_statistics(physical_data_reader_1, 2, "PHYSICAL_DATA_TOPIC", 10u);
+    wait_statistics(physical_data_reader_2, 1, "PHYSICAL_DATA_TOPIC", 10u);
+
+    disable_statistics(statistics_p1, subscriber_p1, physical_data_reader_1, statistics::PHYSICAL_DATA_TOPIC);
+    disable_statistics(statistics_p2, subscriber_p2, physical_data_reader_2, statistics::PHYSICAL_DATA_TOPIC);
+
+    p2->delete_subscriber(subscriber_p2);
+    p1->delete_subscriber(subscriber_p1);
+
+    participant_factory->delete_participant(p2);
+    participant_factory->delete_participant(p1);
+
+#endif // FASTDDS_STATISTICS
+}
