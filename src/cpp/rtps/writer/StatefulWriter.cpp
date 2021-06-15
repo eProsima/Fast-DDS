@@ -1085,6 +1085,7 @@ bool StatefulWriter::matched_reader_add(
     {
         SequenceNumber_t min_seq = get_seq_num_min();
         SequenceNumber_t last_seq = get_seq_num_max();
+        RTPSMessageGroup group(mp_RTPSParticipant, this, rp->message_sender());
 
         // History not empty
         if (min_seq != SequenceNumber_t::unknown())
@@ -1095,8 +1096,6 @@ bool StatefulWriter::matched_reader_add(
 
             try
             {
-                RTPSMessageGroup group(mp_RTPSParticipant, this, rp->message_sender());
-
                 // Late-joiner
                 if (TRANSIENT_LOCAL <= rp->durability_kind() &&
                         TRANSIENT_LOCAL <= m_att.durabilityKind)
@@ -1136,19 +1135,18 @@ bool StatefulWriter::matched_reader_add(
                     }
                 }
 
-                send_heartbeat_nts_(1u, group, disable_positive_acks_);
-                group.flush_and_reset();
+                // Always activate heartbeat period. We need a confirmation of the reader.
+                // The state has to be updated.
+                periodic_hb_event_->restart_timer(std::chrono::steady_clock::now() + std::chrono::hours(24));
             }
             catch (const RTPSMessageGroup::timeout&)
             {
                 logError(RTPS_WRITER, "Max blocking time reached");
             }
-
-
-            // Always activate heartbeat period. We need a confirmation of the reader.
-            // The state has to be updated.
-            periodic_hb_event_->restart_timer(std::chrono::steady_clock::now() + std::chrono::hours(24));
         }
+
+        send_heartbeat_nts_(1u, group, disable_positive_acks_);
+        group.flush_and_reset();
     }
     else
     {
