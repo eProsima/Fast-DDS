@@ -705,7 +705,7 @@ static void two_consecutive_writers(
 
 TEST_P(PubSubBasic, BestEffortTwoWritersConsecutives)
 {
-    // Best effort incompatible with best effort
+    // Pull mode incompatible with best effort
     if (use_pull_mode)
     {
         return;

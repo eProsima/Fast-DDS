@@ -199,7 +199,7 @@ TEST(DDSStatistics, simple_statistics_second_writer)
 #ifdef FASTDDS_STATISTICS
 
     auto transport = std::make_shared<UDPv4TransportDescriptor>();
-    auto domain_id = GET_PID() % 230;
+    auto domain_id = GET_PID() % 100;
 
     DomainParticipantQos p_qos = PARTICIPANT_QOS_DEFAULT;
     p_qos.transport().use_builtin_transports = false;
@@ -214,6 +214,7 @@ TEST(DDSStatistics, simple_statistics_second_writer)
 
     auto statistics_p1 = statistics::dds::DomainParticipant::narrow(p1);
     auto statistics_p2 = statistics::dds::DomainParticipant::narrow(p2);
+    ASSERT_NE(nullptr, statistics_p1);
     ASSERT_NE(nullptr, statistics_p2);
 
     auto subscriber_p1 = p1->create_subscriber(SUBSCRIBER_QOS_DEFAULT);

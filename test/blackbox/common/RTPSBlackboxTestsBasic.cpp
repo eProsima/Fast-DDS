@@ -472,7 +472,6 @@ TEST_P(RTPS, RTPSAsReliableVolatileTwoWritersConsecutives)
     EXPECT_TRUE(reader.isInitialized());
 
     writer.reliability(ReliabilityKind_t::RELIABLE).init();
-
     EXPECT_TRUE(writer.isInitialized());
 
     // Wait for discovery.
