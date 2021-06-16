@@ -132,7 +132,6 @@ RTPSParticipantImpl::RTPSParticipantImpl(
     : domain_id_(domain_id)
     , m_att(PParam)
     , m_guid(guidP, c_EntityId_RTPSParticipant)
-    , m_persistence_guid(persistence_guid, c_EntityId_RTPSParticipant)
     , mp_builtinProtocols(nullptr)
     , mp_ResourceSemaphore(new Semaphore(0))
     , IdCounter(0)
@@ -146,6 +145,10 @@ RTPSParticipantImpl::RTPSParticipantImpl(
     , is_intraprocess_only_(should_be_intraprocess_only(PParam))
     , has_shm_transport_(false)
 {
+    if (c_GuidPrefix_Unknown != persistence_guid)
+    {
+        m_persistence_guid = GUID_t(persistence_guid, c_EntityId_RTPSParticipant);
+    }
     // Builtin transports by default
     if (PParam.useBuiltinTransports)
     {
