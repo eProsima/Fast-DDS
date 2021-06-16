@@ -801,13 +801,13 @@ TEST_F(XTypesTests, SetComplexValueOfNonContainerType)
 
     DynamicType_ptr pos_dyn_type = pos_builder->build();
     DynamicData* pos_data1 = DynamicDataFactory::get_instance()->create_data(pos_dyn_type);
-    pos_data1->set_float32_value(1.1, 0);
-    pos_data1->set_float32_value(1.2, 1);
-    pos_data1->set_float32_value(1.3, 2);
+    pos_data1->set_float32_value(1.1F, 0);
+    pos_data1->set_float32_value(1.2F, 1);
+    pos_data1->set_float32_value(1.3F, 2);
     DynamicData* pos_data2 = DynamicDataFactory::get_instance()->create_data(pos_dyn_type);
-    pos_data2->set_float32_value(2.1, 0);
-    pos_data2->set_float32_value(2.2, 1);
-    pos_data2->set_float32_value(2.3, 2);
+    pos_data2->set_float32_value(2.1F, 0);
+    pos_data2->set_float32_value(2.2F, 1);
+    pos_data2->set_float32_value(2.3F, 2);
 
     // Set complex value of non-container (struct) type
     DynamicType_ptr robot_dyn_type = robot_builder->build();
@@ -823,7 +823,7 @@ TEST_F(XTypesTests, SetComplexValueOfNonContainerType)
 
     // Set complex value of container (array) type
     DynamicType_ptr positions_dyn_type = positions_builder->build();
-    DynamicData* positions_data = DynamicDataFactory::get_instance()->create_data(robot_dyn_type);
+    DynamicData* positions_data = DynamicDataFactory::get_instance()->create_data(positions_dyn_type);
     ret = positions_data->set_complex_value(pos_data1, 0);
     ASSERT_TRUE(ret == ReturnCode_t::RETCODE_OK);
     ret = positions_data->set_complex_value(pos_data2, 1);
@@ -833,6 +833,11 @@ TEST_F(XTypesTests, SetComplexValueOfNonContainerType)
     float position2_y = 0;
     data2->get_float32_value(position2_y, 1);
     EXPECT_NEAR(2.2, position2_y, 0.1);
+
+    DynamicDataFactory::get_instance()->delete_data(pos_data1);
+    DynamicDataFactory::get_instance()->delete_data(pos_data2);
+    DynamicDataFactory::get_instance()->delete_data(data1);
+    DynamicDataFactory::get_instance()->delete_data(data2);
 }
 
 int main(
