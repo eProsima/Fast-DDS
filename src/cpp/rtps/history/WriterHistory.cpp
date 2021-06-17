@@ -102,7 +102,7 @@ bool WriterHistory::add_change_(
     wparams.sample_identity().writer_guid(a_change->writerGUID);
     wparams.sample_identity().sequence_number(a_change->sequenceNumber);
     wparams.related_sample_identity(wparams.sample_identity());
-    //set_fragments(a_change);
+    set_fragments(a_change);
 
     m_changes.push_back(a_change);
 
