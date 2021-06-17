@@ -182,7 +182,7 @@ void ResourceEvent::event_service()
         auto current_time = std::chrono::steady_clock::now();
         if (current_time > next_trigger)
         {
-            next_trigger = current_time += std::chrono::microseconds(1);
+            next_trigger = current_time += std::chrono::microseconds(10);
         }
 
         cv_.wait_until(lock, next_trigger);
