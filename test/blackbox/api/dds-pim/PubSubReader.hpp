@@ -319,6 +319,8 @@ public:
 
     void init()
     {
+        matched_ = 0;
+
         if (!xml_file_.empty())
         {
             DomainParticipantFactory::get_instance()->load_XML_profiles_file(xml_file_);

@@ -131,6 +131,8 @@ public:
 
     void init()
     {
+        matched_ = 0;
+
         //Create participant
         participant_ = eprosima::fastrtps::rtps::RTPSDomain::createParticipant(
             (uint32_t)GET_PID() % 230, participant_attr_);

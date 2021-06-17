@@ -370,6 +370,9 @@ public:
             bool avoid_multicast = true,
             uint32_t initial_pdp_count = 5)
     {
+        matched_readers_.clear();
+        matched_writers_.clear();
+
         //Create participant
         participant_qos_.wire_protocol().builtin.avoid_builtin_multicast = avoid_multicast;
         participant_qos_.wire_protocol().builtin.discovery_config.initial_announcements.count = initial_pdp_count;
