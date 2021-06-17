@@ -420,6 +420,7 @@ bool RTPSWriter::send(
         const RTPSWriter::LocatorSelector& locator_selector,
         std::chrono::steady_clock::time_point& max_blocking_time_point) const
 {
+    std::unique_lock<RecursiveTimedMutex> lock(mp_mutex);
     RTPSParticipantImpl* participant = getRTPSParticipant();
 
     return locator_selector.locator_selector.selected_size() == 0 ||
