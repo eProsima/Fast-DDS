@@ -179,6 +179,12 @@ void ResourceEvent::event_service()
                 current_time_ + std::chrono::seconds(1) :
                 active_timers_[0]->next_trigger_time();
 
+        auto current_time = std::chrono::steady_clock::now();
+        if (current_time > next_trigger)
+        {
+            next_trigger = current_time += std::chrono::microseconds(1);
+        }
+
         cv_.wait_until(lock, next_trigger);
 
         // Don't allow other threads to manipulate the timer collections
