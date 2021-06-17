@@ -247,6 +247,7 @@ RTPSParticipantImpl::RTPSParticipantImpl(
     uint32_t metatraffic_multicast_port = m_att.port.getMulticastPort(domain_id_);
     uint32_t metatraffic_unicast_port = m_att.port.getUnicastPort(domain_id_,
                     static_cast<uint32_t>(m_att.participantID));
+    uint32_t meta_multicast_port_for_check = metatraffic_multicast_port;
 
     /* INSERT DEFAULT MANDATORY MULTICAST LOCATORS HERE */
     if (m_att.builtin.metatrafficMulticastLocatorList.empty() && m_att.builtin.metatrafficUnicastLocatorList.empty())
@@ -261,6 +262,10 @@ RTPSParticipantImpl::RTPSParticipantImpl(
     }
     else
     {
+        if (0 < m_att.builtin.metatrafficMulticastLocatorList.size())
+        {
+            meta_multicast_port_for_check = m_att.builtin.metatrafficMulticastLocatorList.begin()->port;
+        }
         std::for_each(m_att.builtin.metatrafficMulticastLocatorList.begin(),
                 m_att.builtin.metatrafficMulticastLocatorList.end(), [&](Locator_t& locator)
                 {
@@ -359,6 +364,14 @@ RTPSParticipantImpl::RTPSParticipantImpl(
     createReceiverResources(m_att.builtin.metatrafficUnicastLocatorList, true, false);
     createReceiverResources(m_att.defaultUnicastLocatorList, true, false);
     createReceiverResources(m_att.defaultMulticastLocatorList, true, false);
+
+    // Check metatraffic multicast port
+    if (m_att.builtin.metatrafficMulticastLocatorList.begin()->port != meta_multicast_port_for_check)
+    {
+        logWarning(RTPS_PARTICIPANT,
+                "Metatraffic multicast port " << meta_multicast_port_for_check << " cannot be opened."
+                " It may is opened by another application. Discovery may fail.");
+    }
 
     bool allow_growing_buffers = m_att.allocation.send_buffers.dynamic;
     size_t num_send_buffers = m_att.allocation.send_buffers.preallocated_number;
