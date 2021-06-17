@@ -1915,4 +1915,3 @@ GTEST_INSTANTIATE_TEST_MACRO(LivelinessQos,
                     return "Transport";
             }
         });
-

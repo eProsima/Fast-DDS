@@ -262,7 +262,8 @@ RTPSParticipantImpl::RTPSParticipantImpl(
     }
     else
     {
-        if (0 < m_att.builtin.metatrafficMulticastLocatorList.size())
+        if (0 < m_att.builtin.metatrafficMulticastLocatorList.size() &&
+                0 !=  m_att.builtin.metatrafficMulticastLocatorList.begin()->port)
         {
             meta_multicast_port_for_check = m_att.builtin.metatrafficMulticastLocatorList.begin()->port;
         }
@@ -366,7 +367,8 @@ RTPSParticipantImpl::RTPSParticipantImpl(
     createReceiverResources(m_att.defaultMulticastLocatorList, true, false);
 
     // Check metatraffic multicast port
-    if (m_att.builtin.metatrafficMulticastLocatorList.begin()->port != meta_multicast_port_for_check)
+    if (0 < m_att.builtin.metatrafficMulticastLocatorList.size() &&
+            m_att.builtin.metatrafficMulticastLocatorList.begin()->port != meta_multicast_port_for_check)
     {
         logWarning(RTPS_PARTICIPANT,
                 "Metatraffic multicast port " << meta_multicast_port_for_check << " cannot be opened."
