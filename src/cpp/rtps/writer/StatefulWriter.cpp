@@ -672,6 +672,7 @@ void StatefulWriter::deliver_sample_to_intraprocesses(
             }
             else
             {
+                intraprocess_heartbeat(remoteReader, false);
                 remoteReader->from_unsent_to_status(
                     change->sequenceNumber,
                     delivered ? ACKNOWLEDGED : UNACKNOWLEDGED,
@@ -679,7 +680,6 @@ void StatefulWriter::deliver_sample_to_intraprocesses(
                     delivered);
             }
         }
-        intraprocess_heartbeat(remoteReader, false);
     }
 }
 
@@ -1126,7 +1126,7 @@ bool StatefulWriter::matched_reader_add(
                 {
                     if (rp->is_local_reader())
                     {
-                        intraprocess_heartbeat(rp);
+                        intraprocess_gap(rp, min_seq, mp_history->next_sequence_number());
                     }
                     else
                     {
@@ -1145,8 +1145,15 @@ bool StatefulWriter::matched_reader_add(
             }
         }
 
-        send_heartbeat_nts_(1u, group, disable_positive_acks_);
-        group.flush_and_reset();
+        if (rp->is_local_reader())
+        {
+            intraprocess_heartbeat(rp);
+        }
+        else
+        {
+            send_heartbeat_nts_(1u, group, disable_positive_acks_);
+            group.flush_and_reset();
+        }
     }
     else
     {
