@@ -510,19 +510,8 @@ bool StatefulWriter::intraprocess_heartbeat(
                 (liveliness || reader_proxy->has_changes()))
         {
             incrementHBCount();
-            if (true == (returned_value =
-                    reader->processHeartbeatMsg(m_guid, m_heartbeatCount, first_seq, last_seq, true, liveliness)))
-            {
-                if (reader_proxy->durability_kind() < TRANSIENT_LOCAL ||
-                        this->getAttributes().durabilityKind < TRANSIENT_LOCAL)
-                {
-                    SequenceNumber_t first_relevant = reader_proxy->first_relevant_sequence_number();
-                    if (first_seq < first_relevant)
-                    {
-                        reader->processGapMsg(m_guid, first_seq, SequenceNumberSet_t(first_relevant));
-                    }
-                }
-            }
+            returned_value =
+                    reader->processHeartbeatMsg(m_guid, m_heartbeatCount, first_seq, last_seq, true, liveliness);
         }
     }
 
@@ -652,6 +641,7 @@ void StatefulWriter::deliver_sample_to_intraprocesses(
             if (SequenceNumber_t::unknown() != gap_seq)
             {
                 intraprocess_gap(remoteReader, gap_seq, change->sequenceNumber);
+                remoteReader->acked_changes_set(change->sequenceNumber);
             }
             bool delivered = intraprocess_delivery(change, remoteReader);
             if (!remoteReader->is_reliable())
