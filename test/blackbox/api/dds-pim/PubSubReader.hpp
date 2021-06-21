@@ -159,7 +159,10 @@ private:
                 eprosima::fastdds::dds::DataReader* datareader) override
         {
             ASSERT_NE(datareader, nullptr);
-            reader_.message_receive_count_.fetch_add(1);
+            {
+                std::unique_lock<std::mutex> lock(reader_.message_receive_mutex_);
+                reader_.message_receive_count_.fetch_add(1);
+            }
             reader_.message_receive_cv_.notify_one();
 
             if (reader_.receiving_.load())
