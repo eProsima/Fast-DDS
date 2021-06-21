@@ -214,21 +214,7 @@ void StatelessWriter::init(
 StatelessWriter::~StatelessWriter()
 {
     logInfo(RTPS_WRITER, "StatelessWriter destructor"; );
-
-    // TOODO [ILG] Shold we force this on all cases?
-    if (is_datasharing_compatible())
-    {
-        //Release payloads orderly
-        for (std::vector<CacheChange_t*>::iterator chit = mp_history->changesBegin();
-                chit != mp_history->changesEnd(); ++chit)
-        {
-            IPayloadPool* pool = (*chit)->payload_owner();
-            if (pool)
-            {
-                pool->release_payload(**chit);
-            }
-        }
-    }
+    deinit();
 }
 
 void StatelessWriter::get_builtin_guid()

@@ -309,6 +309,9 @@ StatefulWriter::~StatefulWriter()
 {
     logInfo(RTPS_WRITER, "StatefulWriter destructor");
 
+    // This must be the first action, because free CacheChange_t from async thread.
+    deinit();
+
     if (disable_positive_acks_)
     {
         delete(ack_event_);
@@ -358,21 +361,6 @@ StatefulWriter::~StatefulWriter()
     for (ReaderProxy* remote_reader : matched_readers_pool_)
     {
         delete(remote_reader);
-    }
-
-    // TODO [ILG] Should we force this on all cases?
-    if (is_datasharing_compatible())
-    {
-        //Release payloads orderly
-        for (std::vector<CacheChange_t*>::iterator chit = mp_history->changesBegin();
-                chit != mp_history->changesEnd(); ++chit)
-        {
-            IPayloadPool* pool = (*chit)->payload_owner();
-            if (pool)
-            {
-                pool->release_payload(**chit);
-            }
-        }
     }
 }
 
