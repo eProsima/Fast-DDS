@@ -933,7 +933,7 @@ static void discoverParticipantsSeveralEndpointsTest(
         std::cout << "\rParticipant " << idx++ << " of " << n_participants << std::flush;
         ps->init(avoid_multicast);
         ASSERT_EQ(ps->isInitialized(), true);
-        ASSERT_TRUE(ps->create_additional_topics(n_topics - 1));
+        ASSERT_TRUE(ps->create_additional_topics(n_topics - 1, "/"));
     }
 
     bool all_discovered = false;
@@ -1063,7 +1063,7 @@ TEST_P(Discovery, EndpointCreationMultithreaded)
                 while (!stop)
                 {
                     std::this_thread::sleep_for(creation_sleep);
-                    EXPECT_NO_THROW(participant_1.create_additional_topics(1));
+                    EXPECT_NO_THROW(participant_1.create_additional_topics(1, "/"));
                 }
             };
 
@@ -1086,7 +1086,7 @@ TEST_P(Discovery, EndpointCreationMultithreaded)
                 // Additional endpoints created just after the second participant.
                 // This gives the first participant very few time to receive the undiscovery,
                 // and makes the intraprocess delivery on a deleted builtin reader.
-                participant_1.create_additional_topics(1);
+                participant_1.create_additional_topics(1, "_");
             };
 
     EXPECT_NO_THROW(second_participant_process());
