@@ -123,22 +123,23 @@ void PDPServerListener::onNewCacheChangeAdded(
         // Deserialize the payload to access the discovery info
         CDRMessage_t msg(change->serializedPayload);
         temp_participant_data_.clear();
+        auto participant_data = temp_participant_data_;
 
-        if (temp_participant_data_.readFromCDRMessage(
+        if (participant_data.readFromCDRMessage(
                     &msg,
                     true,
                     pdp_server()->getRTPSParticipant()->network_factory(),
                     pdp_server()->getRTPSParticipant()->has_shm_transport()))
         {
             /* Check PID_VENDOR_ID */
-            if (temp_participant_data_.m_VendorId != fastrtps::rtps::c_VendorId_eProsima)
+            if (participant_data.m_VendorId != fastrtps::rtps::c_VendorId_eProsima)
             {
                 logInfo(RTPS_PDP_LISTENER,
                         "DATA(p|Up) from different vendor is not supported for Discover-Server operation");
                 return;
             }
 
-            fastrtps::ParameterPropertyList_t properties = temp_participant_data_.m_properties;
+            fastrtps::ParameterPropertyList_t properties = participant_data.m_properties;
 
             /* Check DS_VERSION */
             auto ds_version = std::find_if(
@@ -244,7 +245,7 @@ void PDPServerListener::onNewCacheChangeAdded(
                 if (pdp_server()->discovery_db().update(
                             change.get(),
                             ddb::DiscoveryParticipantChangeData(
-                                temp_participant_data_.metatraffic_locators,
+                                participant_data.metatraffic_locators,
                                 is_client,
                                 is_local)))
                 {
@@ -303,7 +304,7 @@ void PDPServerListener::onNewCacheChangeAdded(
                 logInfo(RTPS_PDP_LISTENER, "Registering a new participant: " << guid);
 
                 // Create a new participant proxy entry
-                pdata = pdp_server()->createParticipantProxyData(temp_participant_data_, writer_guid);
+                pdata = pdp_server()->createParticipantProxyData(participant_data, writer_guid);
                 // Realease PDP mutex
                 lock.unlock();
 
@@ -326,7 +327,7 @@ void PDPServerListener::onNewCacheChangeAdded(
             else
             {
                 // Update proxy
-                pdata->updateData(temp_participant_data_);
+                pdata->updateData(participant_data);
                 pdata->isAlive = true;
                 // Realease PDP mutex
                 lock.unlock();
