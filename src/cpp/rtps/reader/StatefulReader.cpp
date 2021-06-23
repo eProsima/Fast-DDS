@@ -1177,30 +1177,18 @@ void StatefulReader::send_acknack(
         return;
     }
 
+    if (writer->is_on_same_process())
+    {
+        return;
+    }
+
     acknack_count_++;
 
 
     logInfo(RTPS_READER, "Sending ACKNACK: " << sns);
 
-    if (!writer->is_on_same_process())
-    {
-        RTPSMessageGroup group(getRTPSParticipant(), this, sender);
-        group.add_acknack(sns, acknack_count_, is_final);
-    }
-    else
-    {
-        GUID_t reader_guid = m_guid;
-        uint32_t acknack_count = acknack_count_;
-        lock.unlock(); //For local writers only call when initial ack, and we have to avoid deadlock with common
-                       //calls writer -> reader
-        RTPSWriter* writer_ptr = RTPSDomainImpl::find_local_writer(writer->guid());
-
-        if (writer_ptr)
-        {
-            bool result;
-            writer_ptr->process_acknack(writer->guid(), reader_guid, acknack_count, sns, is_final, result);
-        }
-    }
+    RTPSMessageGroup group(getRTPSParticipant(), this, sender);
+    group.add_acknack(sns, acknack_count_, is_final);
 }
 
 void StatefulReader::send_acknack(
