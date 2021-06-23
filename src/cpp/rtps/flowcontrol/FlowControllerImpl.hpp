@@ -575,12 +575,16 @@ private:
                     nullptr != change->writer_info.next) ||
                     (nullptr == change->writer_info.previous &&
                     nullptr == change->writer_info.next));
+            if (nullptr != change->writer_info.previous &&
+                    nullptr != change->writer_info.next)
+            {
 
-            // Try to join previous node and next node.
-            change->writer_info.previous->writer_info.next = change->writer_info.next;
-            change->writer_info.next->writer_info.previous = change->writer_info.previous;
-            change->writer_info.previous = nullptr;
-            change->writer_info.next = nullptr;
+                // Try to join previous node and next node.
+                change->writer_info.previous->writer_info.next = change->writer_info.next;
+                change->writer_info.next->writer_info.previous = change->writer_info.previous;
+                change->writer_info.previous = nullptr;
+                change->writer_info.next = nullptr;
+            }
             --async_mode.writers_interested_in_remove;
         }
     }
