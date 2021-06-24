@@ -441,9 +441,9 @@ static inline Time_t operator -(
 
 #endif // ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
-const Time_t c_RTPSTimeInfinite(0x7fffffff, 0xffffffff);
-const Time_t c_RTPSTimeZero(0, 0);
-const Time_t c_RTPSTimeInvalid(-1, 0xffffffff);
+const Time_t c_RTPSTimeInfinite{0x7fffffff, 0xffffffff};
+const Time_t c_RTPSTimeZero{0, 0};
+const Time_t c_RTPSTimeInvalid{-1, 0xffffffff};
 
 } // namespace rtps
 
@@ -662,11 +662,11 @@ static inline Time_t operator -(
 #endif // ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
 //! Time_t (Duration_t) representing an infinite time. DONT USE IT IN CONSTRUCTORS
-const Time_t c_TimeInfinite(TIME_T_INFINITE_SECONDS, TIME_T_INFINITE_NANOSECONDS);
+const Time_t c_TimeInfinite{TIME_T_INFINITE_SECONDS, TIME_T_INFINITE_NANOSECONDS};
 //! Time_t (Duration_t) representing a zero time. DONT USE IT IN CONSTRUCTORS
-const Time_t c_TimeZero(0, 0);
+const Time_t c_TimeZero{0, 0};
 //! Time_t (Duration_t) representing an invalid time. DONT USE IT IN CONSTRUCTORS
-const Time_t c_TimeInvalid(-1, TIME_T_INFINITE_NANOSECONDS);
+const Time_t c_TimeInvalid{-1, TIME_T_INFINITE_NANOSECONDS};
 
 } // namespace fastrtps
 } // namespace eprosima

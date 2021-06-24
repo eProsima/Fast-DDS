@@ -290,7 +290,7 @@ inline SequenceNumber_t operator -(
 
 #endif // ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
-const SequenceNumber_t c_SequenceNumber_Unknown(-1, 0);
+const SequenceNumber_t c_SequenceNumber_Unknown{-1, 0};
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
