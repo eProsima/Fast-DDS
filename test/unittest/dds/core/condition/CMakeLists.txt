@@ -56,6 +56,7 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
     endif()
 
     if(GMOCK_FOUND)
+        ### ConditionNotifier ###
         set(CONDITION_NOTIFIER_TESTS_SOURCE
             ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/core/condition/Condition.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/core/condition/ConditionNotifier.cpp
@@ -68,7 +69,7 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
             )
         target_include_directories(ConditionNotifierTests PRIVATE
-            ConditionNotifierTests
+            mock/WaitSetImpl
             ${GTEST_INCLUDE_DIRS}
             ${PROJECT_SOURCE_DIR}/include
             ${PROJECT_BINARY_DIR}/include
@@ -77,6 +78,31 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
         target_link_libraries(ConditionNotifierTests ${GTEST_LIBRARIES} ${GMOCK_LIBRARIES})
         add_gtest(ConditionNotifierTests SOURCES ${CONDITION_NOTIFIER_TESTS_SOURCE})
 
+        ### StatusConditionImpl ###
+        set(STATUS_CONDITION_IMPL_TESTS_SOURCE
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/core/condition/Condition.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/core/condition/StatusCondition.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/core/condition/StatusConditionImpl.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/Time_t.cpp
+            ${LOG_SOURCES}
+            StatusConditionImplTests.cpp)
+
+        add_executable(StatusConditionImplTests ${STATUS_CONDITION_IMPL_TESTS_SOURCE})
+        target_compile_definitions(StatusConditionImplTests PRIVATE FASTRTPS_NO_LIB
+            $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
+            $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
+            )
+        target_include_directories(StatusConditionImplTests PRIVATE
+            mock/ConditionNotifier
+            ${GTEST_INCLUDE_DIRS}
+            ${PROJECT_SOURCE_DIR}/include
+            ${PROJECT_BINARY_DIR}/include
+            ${PROJECT_SOURCE_DIR}/src/cpp
+            )
+        target_link_libraries(StatusConditionImplTests ${GTEST_LIBRARIES} ${GMOCK_LIBRARIES})
+        add_gtest(StatusConditionImplTests SOURCES ${STATUS_CONDITION_IMPL_TESTS_SOURCE})
+
+        ### WaitSetImpl ###
         set(WAITSET_IMPL_TESTS_SOURCE
             ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/core/condition/Condition.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/core/condition/WaitSetImpl.cpp
@@ -90,7 +116,7 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
             )
         target_include_directories(WaitSetImplTests PRIVATE
-            WaitSetImplTests
+            mock/ConditionNotifier
             ${GTEST_INCLUDE_DIRS}
             ${PROJECT_SOURCE_DIR}/include
             ${PROJECT_BINARY_DIR}/include
