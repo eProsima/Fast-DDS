@@ -100,7 +100,6 @@ void PDPServerListener::onNewCacheChangeAdded(
         {
             change->instanceHandle = local_data.m_key;
             guid = local_data.m_guid;
-
             // At this point we can release reader lock.
             reader->getMutex().unlock();
 
@@ -152,7 +151,7 @@ void PDPServerListener::onNewCacheChangeAdded(
                 // Included for symmetry with PDPListener to profit from a future updateInfoMatchesEDP override
                 // right now servers update matching on clients that were previously relayed by a server
                 if ( previous_lease_check_status != pdata->should_check_lease_duration
-                        || parent_pdp_->updateInfoMatchesEDP() )
+                        || parent_pdp_->updateInfoMatchesEDP())
                 {
                     parent_pdp_->assignRemoteEndpoints(pdata);
                     parent_server_pdp_->queueParticipantForEDPMatch(pdata);
