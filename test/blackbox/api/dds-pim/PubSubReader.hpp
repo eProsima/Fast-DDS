@@ -434,13 +434,52 @@ public:
         std::cout << "Reader discovery finished..." << std::endl;
     }
 
+    bool wait_participant_discovery(
+            unsigned int min_participants = 1,
+            std::chrono::seconds timeout = std::chrono::seconds::zero())
+    {
+        bool ret_value = true;
+        std::unique_lock<std::mutex> lock(mutexDiscovery_);
+
+        std::cout << "Reader is waiting discovery of at least " << min_participants << " participants..." << std::endl;
+
+        if (timeout == std::chrono::seconds::zero())
+        {
+            cvDiscovery_.wait(lock, [&]()
+                    {
+                        return participant_matched_ >= min_participants;
+                    });
+        }
+        else
+        {
+            if (!cvDiscovery_.wait_for(lock, timeout, [&]()
+                    {
+                        return participant_matched_ >= min_participants;
+                    }))
+            {
+                ret_value = false;
+            }
+        }
+
+        if (ret_value)
+        {
+            std::cout << "Reader participant discovery finished successfully..." << std::endl;
+        }
+        else
+        {
+            std::cout << "Reader participant discovery finished unsuccessfully..." << std::endl;
+        }
+
+        return ret_value;
+    }
+
     bool wait_participant_undiscovery(
             std::chrono::seconds timeout = std::chrono::seconds::zero())
     {
         bool ret_value = true;
         std::unique_lock<std::mutex> lock(mutexDiscovery_);
 
-        std::cout << "Reader is waiting undiscovery..." << std::endl;
+        std::cout << "Reader is waiting participant undiscovery..." << std::endl;
 
         if (timeout == std::chrono::seconds::zero())
         {
@@ -462,11 +501,11 @@ public:
 
         if (ret_value)
         {
-            std::cout << "Reader undiscovery finished successfully..." << std::endl;
+            std::cout << "Reader participant undiscovery finished successfully..." << std::endl;
         }
         else
         {
-            std::cout << "Reader undiscovery finished unsuccessfully..." << std::endl;
+            std::cout << "Reader participant undiscovery finished unsuccessfully..." << std::endl;
         }
 
         return ret_value;
@@ -781,6 +820,13 @@ public:
             eprosima::fastrtps::rtps::LocatorList_t initial_peers)
     {
         participant_qos_.wire_protocol().builtin.initialPeersList = initial_peers;
+        return *this;
+    }
+
+    PubSubReader& ignore_participant_flags(
+            eprosima::fastrtps::rtps::ParticipantFilteringFlags_t flags)
+    {
+        participant_qos_.wire_protocol().builtin.discovery_config.ignoreParticipantFlags = flags;
         return *this;
     }
 
