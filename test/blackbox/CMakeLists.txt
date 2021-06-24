@@ -228,17 +228,8 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER) AND fastcdr_FOUND)
             ${CMAKE_CURRENT_BINARY_DIR}/PubSubWriter.xml)
         configure_file(${CMAKE_CURRENT_SOURCE_DIR}/PubSubReader.xml.in
             ${CMAKE_CURRENT_BINARY_DIR}/PubSubReader.xml)
-<<<<<<< HEAD
-=======
         configure_file(${CMAKE_CURRENT_SOURCE_DIR}/discovery_participant_flags.xml
             ${CMAKE_CURRENT_BINARY_DIR}/discovery_participant_flags.xml)
-        configure_file(${CMAKE_CURRENT_SOURCE_DIR}/persistence.xml
-            ${CMAKE_CURRENT_BINARY_DIR}/persistence.xml)
-        configure_file(${CMAKE_CURRENT_SOURCE_DIR}/StatisticsDomainParticipant.xml
-            ${CMAKE_CURRENT_BINARY_DIR}/StatisticsDomainParticipant.xml)
-        configure_file(${CMAKE_CURRENT_SOURCE_DIR}/utils/check_guid.py
-            ${CMAKE_CURRENT_BINARY_DIR}/check_guid.py)
->>>>>>> 392defcc0 (Fix mutex lock count on PDPListener (#2020))
 
         if(FASTRTPS_API_TESTS)
             set(BLACKBOXTESTS_FASTRTPS_SOURCE
