@@ -16,6 +16,7 @@
 #include <fastdds/dds/log/Log.hpp>
 #include <gtest/gtest.h>
 
+#include <fastdds/dds/core/Entity.hpp>
 #include <fastdds/dds/core/condition/Condition.hpp>
 #include <fastdds/dds/core/condition/GuardCondition.hpp>
 #include <fastdds/dds/core/condition/StatusCondition.hpp>
@@ -233,15 +234,26 @@ TEST_F(ConditionTests, guard_condition_methods)
     EXPECT_FALSE(cond.get_trigger_value());
 }
 
-TEST_F(ConditionTests, unsupported_status_condition_methods)
+TEST_F(ConditionTests, status_condition_methods)
 {
-    StatusCondition cond;
+    Entity entity;
+    StatusCondition& cond = entity.get_statuscondition();
 
-    ASSERT_EQ(cond.set_enabled_statuses(StatusMask()), ReturnCode_t::RETCODE_UNSUPPORTED);
-    ASSERT_EQ(cond.get_enabled_statuses().to_string(), StatusMask().to_string());
-    ASSERT_EQ(cond.get_entity(), nullptr);
+    EXPECT_EQ(&entity, cond.get_entity());
+    EXPECT_FALSE(cond.get_trigger_value());
 
-    HELPER_WaitForEntries(2);
+    StatusMask mask_none = StatusMask::none();
+    StatusMask mask_all = StatusMask::all();
+    StatusMask mask_single = StatusMask::inconsistent_topic();
+
+    // According to the DDS standard, StatusCondition should start with all statuses enabled
+    EXPECT_EQ(mask_all.to_string(), cond.get_enabled_statuses().to_string());
+    EXPECT_EQ(ReturnCode_t::RETCODE_OK, cond.set_enabled_statuses(mask_single));
+    EXPECT_EQ(mask_single.to_string(), cond.get_enabled_statuses().to_string());
+    EXPECT_EQ(ReturnCode_t::RETCODE_OK, cond.set_enabled_statuses(mask_none));
+    EXPECT_EQ(mask_none.to_string(), cond.get_enabled_statuses().to_string());
+    EXPECT_EQ(ReturnCode_t::RETCODE_OK, cond.set_enabled_statuses(mask_all));
+    EXPECT_EQ(mask_all.to_string(), cond.get_enabled_statuses().to_string());
 }
 
 int main(
