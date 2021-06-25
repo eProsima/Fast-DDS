@@ -267,7 +267,6 @@ TEST_F(ConditionTests, status_condition_trigger)
     Entity entity;
     StatusCondition& cond = entity.get_statuscondition();
 
-    StatusMask mask_none = StatusMask::none();
     StatusMask mask_all = StatusMask::all();
     StatusMask one_mask = StatusMask::inconsistent_topic();
     StatusMask other_mask = StatusMask::data_on_readers();

@@ -52,7 +52,6 @@ TEST(StatusConditionImplTests, notify_trigger)
     ConditionNotifier notifier;
     StatusConditionImpl uut(&notifier);
 
-    StatusMask mask_none = StatusMask::none();
     StatusMask mask_all = StatusMask::all();
     StatusMask one_mask = StatusMask::inconsistent_topic();
     StatusMask other_mask = StatusMask::data_on_readers();
