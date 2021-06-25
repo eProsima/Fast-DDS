@@ -272,19 +272,19 @@ TEST_F(ConditionTests, status_condition_trigger)
     StatusMask other_mask = StatusMask::data_on_readers();
 
     auto wait_for_trigger = [&]()
-    {
-        EXPECT_EQ(ReturnCode_t::RETCODE_OK, wait_set.wait(conditions, eprosima::fastrtps::c_TimeInfinite));
-        EXPECT_EQ(1u, conditions.size());
-        EXPECT_EQ(&cond, conditions[0]);
-        EXPECT_TRUE(cond.get_trigger_value());
-    };
+            {
+                EXPECT_EQ(ReturnCode_t::RETCODE_OK, wait_set.wait(conditions, eprosima::fastrtps::c_TimeInfinite));
+                EXPECT_EQ(1u, conditions.size());
+                EXPECT_EQ(&cond, conditions[0]);
+                EXPECT_TRUE(cond.get_trigger_value());
+            };
 
     auto expect_no_trigger = [&]()
-    {
-        EXPECT_FALSE(cond.get_trigger_value());
-        EXPECT_EQ(ReturnCode_t::RETCODE_TIMEOUT, wait_set.wait(conditions, timeout));
-        EXPECT_TRUE(conditions.empty());
-    };
+            {
+                EXPECT_FALSE(cond.get_trigger_value());
+                EXPECT_EQ(ReturnCode_t::RETCODE_TIMEOUT, wait_set.wait(conditions, timeout));
+                EXPECT_TRUE(conditions.empty());
+            };
 
     ASSERT_NE(nullptr, cond.get_impl());
 
