@@ -30,11 +30,11 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
         endif()
 
         set(CONDITION_TESTS_SOURCE
-            ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/TypesBase.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/core/condition/Condition.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/core/condition/ConditionNotifier.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/core/condition/GuardCondition.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/core/condition/StatusCondition.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/core/condition/StatusConditionImpl.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/core/condition/WaitSet.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/core/condition/WaitSetImpl.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/Time_t.cpp
@@ -51,7 +51,7 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             ${PROJECT_BINARY_DIR}/include
             ${PROJECT_SOURCE_DIR}/src/cpp
             )
-        target_link_libraries(ConditionTests ${GTEST_LIBRARIES} fastcdr)
+        target_link_libraries(ConditionTests ${GTEST_LIBRARIES})
         add_gtest(ConditionTests SOURCES ${CONDITION_TESTS_SOURCE})
     endif()
 

@@ -24,6 +24,8 @@
 #include <fastdds/rtps/common/Time_t.h>
 #include <fastrtps/types/TypesBase.h>
 
+#include <fastdds/core/condition/StatusConditionImpl.hpp>
+
 using eprosima::fastrtps::types::ReturnCode_t;
 
 using namespace eprosima::fastdds::dds;
@@ -254,6 +256,121 @@ TEST_F(ConditionTests, status_condition_methods)
     EXPECT_EQ(mask_none.to_string(), cond.get_enabled_statuses().to_string());
     EXPECT_EQ(ReturnCode_t::RETCODE_OK, cond.set_enabled_statuses(mask_all));
     EXPECT_EQ(mask_all.to_string(), cond.get_enabled_statuses().to_string());
+}
+
+TEST_F(ConditionTests, status_condition_trigger)
+{
+    WaitSet wait_set;
+    ConditionSeq conditions;
+    const eprosima::fastrtps::Duration_t timeout{ 1, 0 };
+
+    Entity entity;
+    StatusCondition& cond = entity.get_statuscondition();
+
+    StatusMask mask_none = StatusMask::none();
+    StatusMask mask_all = StatusMask::all();
+    StatusMask one_mask = StatusMask::inconsistent_topic();
+    StatusMask other_mask = StatusMask::data_on_readers();
+
+    auto wait_for_trigger = [&]()
+    {
+        EXPECT_EQ(ReturnCode_t::RETCODE_OK, wait_set.wait(conditions, eprosima::fastrtps::c_TimeInfinite));
+        EXPECT_EQ(1u, conditions.size());
+        EXPECT_EQ(&cond, conditions[0]);
+        EXPECT_TRUE(cond.get_trigger_value());
+    };
+
+    auto expect_no_trigger = [&]()
+    {
+        EXPECT_FALSE(cond.get_trigger_value());
+        EXPECT_EQ(ReturnCode_t::RETCODE_TIMEOUT, wait_set.wait(conditions, timeout));
+        EXPECT_TRUE(conditions.empty());
+    };
+
+    ASSERT_NE(nullptr, cond.get_impl());
+
+    EXPECT_EQ(ReturnCode_t::RETCODE_OK, wait_set.attach_condition(cond));
+
+    // Condition should be untriggered upon creation
+    EXPECT_EQ(mask_all.to_string(), cond.get_enabled_statuses().to_string());
+    expect_no_trigger();
+
+    // Triggering other_mask should trigger
+    {
+        std::thread wait_thr(wait_for_trigger);
+        cond.get_impl()->set_status(other_mask, true);
+        EXPECT_TRUE(cond.get_trigger_value());
+        wait_thr.join();
+    }
+
+    // Setting mask to one_mask should untrigger
+    EXPECT_EQ(ReturnCode_t::RETCODE_OK, cond.set_enabled_statuses(one_mask));
+    EXPECT_EQ(one_mask.to_string(), cond.get_enabled_statuses().to_string());
+    expect_no_trigger();
+
+    // Triggering one_mask should trigger
+    {
+        std::thread wait_thr(wait_for_trigger);
+        cond.get_impl()->set_status(one_mask, true);
+        EXPECT_TRUE(cond.get_trigger_value());
+        wait_thr.join();
+    }
+
+    // Triggering twice should not affect trigger
+    cond.get_impl()->set_status(one_mask, true);
+    wait_for_trigger();
+
+    // Untriggering other_mask should not affect trigger
+    cond.get_impl()->set_status(other_mask, false);
+    wait_for_trigger();
+
+    // Triggering other_mask should not affect trigger
+    cond.get_impl()->set_status(other_mask, true);
+    wait_for_trigger();
+
+    // Untriggering one_mask should untrigger
+    cond.get_impl()->set_status(one_mask, false);
+    expect_no_trigger();
+
+    // Untriggering other_mask should not trigger
+    cond.get_impl()->set_status(other_mask, false);
+    expect_no_trigger();
+
+    // Triggering other_mask should not trigger
+    cond.get_impl()->set_status(other_mask, true);
+    expect_no_trigger();
+
+    // Setting mask to other_mask should trigger
+    {
+        std::thread wait_thr(wait_for_trigger);
+        EXPECT_EQ(ReturnCode_t::RETCODE_OK, cond.set_enabled_statuses(other_mask));
+        EXPECT_EQ(other_mask.to_string(), cond.get_enabled_statuses().to_string());
+        wait_thr.join();
+    }
+
+    // Triggering one_mask should not affect trigger
+    cond.get_impl()->set_status(one_mask, true);
+    wait_for_trigger();
+
+    // Setting mask to one_mask should not affect trigger
+    EXPECT_EQ(ReturnCode_t::RETCODE_OK, cond.set_enabled_statuses(one_mask));
+    EXPECT_EQ(one_mask.to_string(), cond.get_enabled_statuses().to_string());
+    wait_for_trigger();
+
+    // Untriggering other_mask should not affect trigger
+    cond.get_impl()->set_status(other_mask, false);
+    wait_for_trigger();
+
+    // Setting mask to other_mask should untrigger
+    EXPECT_EQ(ReturnCode_t::RETCODE_OK, cond.set_enabled_statuses(other_mask));
+    EXPECT_EQ(other_mask.to_string(), cond.get_enabled_statuses().to_string());
+    expect_no_trigger();
+
+    // Setting mask to one_mask should trigger
+    EXPECT_EQ(ReturnCode_t::RETCODE_OK, cond.set_enabled_statuses(one_mask));
+    EXPECT_EQ(one_mask.to_string(), cond.get_enabled_statuses().to_string());
+    EXPECT_TRUE(cond.get_trigger_value());
+    wait_for_trigger();
 }
 
 int main(
