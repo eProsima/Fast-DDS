@@ -124,10 +124,10 @@ public:
      * @brief Allows access to the StatusCondition associated with the Entity
      * @return Reference to StatusCondition object
      */
-    RTPS_DllAPI const StatusCondition& get_statuscondition() const
+    RTPS_DllAPI StatusCondition& get_statuscondition() const
     {
         logWarning(CONDITION, "get_statuscondition method not implemented");
-        return status_condition_;
+        return const_cast<StatusCondition&>(status_condition_);
     }
 
 protected:
