@@ -46,6 +46,7 @@ public:
             const StatusMask& mask = StatusMask::all())
         : status_mask_(mask)
         , status_changes_(StatusMask::none())
+        , status_condition_(this)
         , enable_(false)
     {
     }

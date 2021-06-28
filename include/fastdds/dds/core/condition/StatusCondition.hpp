@@ -47,7 +47,22 @@ class StatusCondition : public Condition
 {
 public:
 
-    // StatusCondition not implemented.
+    StatusCondition(
+            Entity* parent);
+
+    ~StatusCondition() final;
+
+    // Non-copyable
+    StatusCondition(
+            const StatusCondition&) = delete;
+    StatusCondition& operator =(
+            const StatusCondition&) = delete;
+
+    // Non-movable
+    StatusCondition(
+            StatusCondition&&) = delete;
+    StatusCondition& operator =(
+            StatusCondition&&) = delete;
 
     /**
      * @brief Defines the list of communication statuses that are taken into account to determine the trigger_value
@@ -71,13 +86,16 @@ public:
 
     detail::StatusConditionImpl* get_impl()
     {
-        return nullptr;
+        return impl_.get();
     }
 
 protected:
 
-    //! StatusMask with relevant statuses set to 1
-    StatusMask status_mask;
+    //! DDS Entity for which this condition is monitoring the status
+    Entity* entity_ = nullptr;
+
+    //! Class implementation
+    std::unique_ptr<detail::StatusConditionImpl> impl_;
 
 };
 
