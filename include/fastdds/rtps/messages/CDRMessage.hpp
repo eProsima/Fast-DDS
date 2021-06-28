@@ -265,7 +265,6 @@ inline SequenceNumberSet_t CDRMessage::readSequenceNumberSet(
     if (valid)
     {
         SequenceNumberSet_t sns(seqNum, numBits);
-        sns.base(seqNum);
         sns.bitmap_set(numBits, bitmap);
         return sns;
     }
