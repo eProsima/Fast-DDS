@@ -394,10 +394,8 @@ void StatisticsParticipantImpl::process_network_sequence(
             value.data.dst_locator(to_statistics_type(reception_locator));
             value.first_sequence = seq.sequence;
         }
-        else
+        else if (seq.sequence != value.seq_data.sequence)
         {
-            // We shouldn't receive the same sequence twice
-            assert(seq.sequence != value.seq_data.sequence);
             // Detect discontinuity. We will only notify in that case
             should_notify = seq.sequence != (value.seq_data.sequence + 1);
             if (should_notify)
