@@ -84,6 +84,7 @@ struct StatusConditionImpl
     void set_status(
             const StatusMask& status,
             bool trigger_value);
+
 private:
 
     mutable std::mutex mutex_;
