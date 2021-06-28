@@ -59,6 +59,12 @@ void FlowControllerFactory::register_flow_controller (
                                       new FlowControllerImpl<FlowControllerLimitedAsyncPublishMode,
                                       FlowControllerFifoSchedule>(participant_, &flow_controller_descr)});
         }
+        if (FlowControllerSchedulerPolicy::ROUND_ROBIN == flow_controller_descr.scheduler)
+        {
+            flow_controllers_.insert({flow_controller_descr.name,
+                                      new FlowControllerImpl<FlowControllerLimitedAsyncPublishMode,
+                                      FlowControllerRoundRobinSchedule>(participant_, &flow_controller_descr)});
+        }
     }
     else
     {
@@ -67,6 +73,12 @@ void FlowControllerFactory::register_flow_controller (
             flow_controllers_.insert({flow_controller_descr.name,
                                       new FlowControllerImpl<FlowControllerAsyncPublishMode,
                                       FlowControllerFifoSchedule>(participant_, &flow_controller_descr)});
+        }
+        else if (FlowControllerSchedulerPolicy::ROUND_ROBIN == flow_controller_descr.scheduler)
+        {
+            flow_controllers_.insert({flow_controller_descr.name,
+                                      new FlowControllerImpl<FlowControllerAsyncPublishMode,
+                                      FlowControllerRoundRobinSchedule>(participant_, &flow_controller_descr)});
         }
     }
 }

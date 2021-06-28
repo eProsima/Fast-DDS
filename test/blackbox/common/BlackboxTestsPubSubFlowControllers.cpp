@@ -23,53 +23,22 @@
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
 
-enum communication_type
-{
-    TRANSPORT,
-    INTRAPROCESS,
-    DATASHARING
-};
-
-class PubSubFlowControllers : public testing::TestWithParam<communication_type>
+class PubSubFlowControllers : public testing::TestWithParam<eprosima::fastdds::rtps::FlowControllerSchedulerPolicy>
 {
 public:
 
     void SetUp() override
     {
-        LibrarySettingsAttributes library_settings;
-        switch (GetParam())
-        {
-            case INTRAPROCESS:
-                library_settings.intraprocess_delivery = IntraprocessDeliveryType::INTRAPROCESS_FULL;
-                xmlparser::XMLProfileManager::library_settings(library_settings);
-                break;
-            case DATASHARING:
-                enable_datasharing = true;
-                break;
-            case TRANSPORT:
-            default:
-                break;
-        }
+        scheduler_policy_ = GetParam();
     }
 
     void TearDown() override
     {
-        LibrarySettingsAttributes library_settings;
-        switch (GetParam())
-        {
-            case INTRAPROCESS:
-                library_settings.intraprocess_delivery = IntraprocessDeliveryType::INTRAPROCESS_OFF;
-                xmlparser::XMLProfileManager::library_settings(library_settings);
-                break;
-            case DATASHARING:
-                enable_datasharing = false;
-                break;
-            case TRANSPORT:
-            default:
-                break;
-        }
     }
 
+protected:
+
+    eprosima::fastdds::rtps::FlowControllerSchedulerPolicy scheduler_policy_;
 };
 
 TEST_P(PubSubFlowControllers, AsyncPubSubAsReliableData64kbWithParticipantFlowControl)
@@ -84,7 +53,7 @@ TEST_P(PubSubFlowControllers, AsyncPubSubAsReliableData64kbWithParticipantFlowCo
 
     uint32_t bytesPerPeriod = 68000;
     uint32_t periodInMs = 500;
-    writer.add_throughput_controller_descriptor_to_pparams(bytesPerPeriod, periodInMs);
+    writer.add_throughput_controller_descriptor_to_pparams(scheduler_policy_, bytesPerPeriod, periodInMs);
 
     writer.history_depth(3).
             asynchronously(eprosima::fastrtps::ASYNCHRONOUS_PUBLISH_MODE).init();
@@ -120,7 +89,7 @@ TEST_P(PubSubFlowControllers, AsyncPubSubAsReliableData64kbWithParticipantFlowCo
 
     uint32_t bytesPerPeriod = 65000;
     uint32_t periodInMs = 500;
-    writer.add_throughput_controller_descriptor_to_pparams(bytesPerPeriod, periodInMs);
+    writer.add_throughput_controller_descriptor_to_pparams(scheduler_policy_, bytesPerPeriod, periodInMs);
 
     auto testTransport = std::make_shared<UDPv4TransportDescriptor>();
     writer.disable_builtin_transport();
@@ -148,7 +117,7 @@ TEST_P(PubSubFlowControllers, AsyncPubSubAsReliableData64kbWithParticipantFlowCo
     reader.block_for_all();
 }
 
-TEST(PubSubFlowControllers, AsyncPubSubWithFlowController64kb)
+TEST_P(PubSubFlowControllers, AsyncPubSubWithFlowController64kb)
 {
     PubSubReader<Data64kbType> reader(TEST_TOPIC_NAME);
     PubSubWriter<Data64kbType> slowWriter(TEST_TOPIC_NAME);
@@ -162,7 +131,7 @@ TEST(PubSubFlowControllers, AsyncPubSubWithFlowController64kb)
 
     slowWriter.history_depth(2).
             asynchronously(eprosima::fastrtps::ASYNCHRONOUS_PUBLISH_MODE).
-            add_throughput_controller_descriptor_to_pparams(sizeToClear, periodInMs).init();
+            add_throughput_controller_descriptor_to_pparams(scheduler_policy_, sizeToClear, periodInMs).init();
     ASSERT_TRUE(slowWriter.isInitialized());
 
     slowWriter.wait_discovery();
@@ -183,7 +152,7 @@ TEST_P(PubSubFlowControllers, FlowControllerIfNotAsync)
 
     uint32_t size = 10000;
     uint32_t periodInMs = 1000;
-    writer.add_throughput_controller_descriptor_to_pparams(size, periodInMs).init();
+    writer.add_throughput_controller_descriptor_to_pparams(scheduler_policy_, size, periodInMs).init();
     ASSERT_FALSE(writer.isInitialized());
 }
 
@@ -195,20 +164,22 @@ TEST_P(PubSubFlowControllers, FlowControllerIfNotAsync)
 
 GTEST_INSTANTIATE_TEST_MACRO(PubSubFlowControllers,
         PubSubFlowControllers,
-        testing::Values(TRANSPORT, INTRAPROCESS, DATASHARING),
+        testing::Values(
+            eprosima::fastdds::rtps::FlowControllerSchedulerPolicy::FIFO,
+            eprosima::fastdds::rtps::FlowControllerSchedulerPolicy::ROUND_ROBIN
+            ),
         [](const testing::TestParamInfo<PubSubFlowControllers::ParamType>& info)
         {
+            std::string suffix;
             switch (info.param)
             {
-                case INTRAPROCESS:
-                    return "Intraprocess";
+                case eprosima::fastdds::rtps::FlowControllerSchedulerPolicy::ROUND_ROBIN:
+                    suffix = "_SCHED_ROBIN";
                     break;
-                case DATASHARING:
-                    return "Datasharing";
-                    break;
-                case TRANSPORT:
+                case eprosima::fastdds::rtps::FlowControllerSchedulerPolicy::FIFO:
                 default:
-                    return "Transport";
+                    suffix = "_SCHED_FIFO";
             }
 
+            return "Transport" + suffix;
         });

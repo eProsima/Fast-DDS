@@ -64,8 +64,6 @@ RTPSWriter::RTPSWriter(
     payload_pool = BasicPayloadPool::get(cfg, change_pool);
 
     init(payload_pool, change_pool, att);
-
-    flow_controller_->register_writer(this);
 }
 
 RTPSWriter::RTPSWriter(
@@ -102,8 +100,6 @@ RTPSWriter::RTPSWriter(
     , liveliness_announcement_period_(att.liveliness_announcement_period)
 {
     init(payload_pool, change_pool, att);
-
-    flow_controller_->register_writer(this);
 }
 
 void RTPSWriter::init(
@@ -131,6 +127,8 @@ void RTPSWriter::init(
     mp_history->mp_writer = this;
     mp_history->mp_mutex = &mp_mutex;
 
+    flow_controller_->register_writer(this);
+
     logInfo(RTPS_WRITER, "RTPSWriter created");
 }
 
@@ -147,13 +145,21 @@ RTPSWriter::~RTPSWriter()
 
 void RTPSWriter::deinit()
 {
+    // First, unregister changes from FlowController. This action must be protected.
+    {
+        std::lock_guard<RecursiveTimedMutex> guard(mp_mutex);
+        for (auto it = mp_history->changesBegin(); it != mp_history->changesEnd(); ++it)
+        {
+            flow_controller_->remove_change(*it);
+        }
+    }
     for (auto it = mp_history->changesBegin(); it != mp_history->changesEnd(); ++it)
     {
-        flow_controller_->remove_change(*it);
         release_change(*it);
     }
 
     mp_history->m_changes.clear();
+    flow_controller_->unregister_writer(this);
 }
 
 CacheChange_t* RTPSWriter::new_change(

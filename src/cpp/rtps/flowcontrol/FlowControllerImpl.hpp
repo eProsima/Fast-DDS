@@ -16,6 +16,224 @@ namespace eprosima {
 namespace fastdds {
 namespace rtps {
 
+/** Auxiliary classes **/
+
+struct FlowQueue
+{
+    FlowQueue()
+    {
+        head_new_interested.writer_info.next = &tail_new_interested;
+        tail_new_interested.writer_info.previous = &head_new_interested;
+        head_old_interested.writer_info.next = &tail_old_interested;
+        tail_old_interested.writer_info.previous = &head_old_interested;
+        head_new_ones.writer_info.next = &tail_new_ones;
+        tail_new_ones.writer_info.previous = &head_new_ones;
+        head_old_ones.writer_info.next = &tail_old_ones;
+        tail_old_ones.writer_info.previous = &head_old_ones;
+    }
+
+    FlowQueue(
+            FlowQueue&& old)
+    {
+        if (old.head_new_interested.writer_info.next == &old.tail_new_interested)
+        {
+            assert(old.tail_new_interested.writer_info.previous == &old.head_new_interested);
+            head_new_interested.writer_info.next = &tail_new_interested;
+            tail_new_interested.writer_info.previous = &head_new_interested;
+        }
+        else
+        {
+            assert(old.tail_new_interested.writer_info.previous != &old.head_new_interested);
+            head_new_interested.writer_info.next = old.head_new_interested.writer_info.next;
+            tail_new_interested.writer_info.previous = old.tail_new_interested.writer_info.previous;
+            old.head_new_interested.writer_info.next = &old.tail_new_interested;
+            old.tail_new_interested.writer_info.previous = &old.head_new_interested;
+            head_new_interested.writer_info.next->writer_info.previous = &head_new_interested;
+            tail_new_interested.writer_info.previous->writer_info.next = &tail_new_interested;
+        }
+
+        if (old.head_old_interested.writer_info.next == &old.tail_old_interested)
+        {
+            assert(old.tail_old_interested.writer_info.previous == &old.head_old_interested);
+            head_old_interested.writer_info.next = &tail_old_interested;
+            tail_old_interested.writer_info.previous = &head_old_interested;
+        }
+        else
+        {
+            assert(old.tail_old_interested.writer_info.previous != &old.head_old_interested);
+            head_old_interested.writer_info.next = old.head_old_interested.writer_info.next;
+            tail_old_interested.writer_info.previous = old.tail_old_interested.writer_info.previous;
+            old.head_old_interested.writer_info.next = &old.tail_old_interested;
+            old.tail_old_interested.writer_info.previous = &old.head_old_interested;
+            head_old_interested.writer_info.next->writer_info.previous = &head_old_interested;
+            tail_old_interested.writer_info.previous->writer_info.next = &tail_old_interested;
+        }
+
+
+        if (old.head_new_ones.writer_info.next == &old.tail_new_ones)
+        {
+            assert(old.tail_new_ones.writer_info.previous == &old.head_new_ones);
+            head_new_ones.writer_info.next = &tail_new_ones;
+            tail_new_ones.writer_info.previous = &head_new_ones;
+        }
+        else
+        {
+            assert(old.tail_new_ones.writer_info.previous != &old.head_new_ones);
+            head_new_ones.writer_info.next = old.head_new_ones.writer_info.next;
+            tail_new_ones.writer_info.previous = old.tail_new_ones.writer_info.previous;
+            old.head_new_ones.writer_info.next = &old.tail_new_ones;
+            old.tail_new_ones.writer_info.previous = &old.head_new_ones;
+            head_new_ones.writer_info.next->writer_info.previous = &head_new_ones;
+            tail_new_ones.writer_info.previous->writer_info.next = &tail_new_ones;
+        }
+
+
+        if (old.head_old_ones.writer_info.next == &old.tail_old_ones)
+        {
+            assert(old.tail_old_ones.writer_info.previous == &old.head_old_ones);
+            head_old_ones.writer_info.next = &tail_old_ones;
+            tail_old_ones.writer_info.previous = &head_old_ones;
+        }
+        else
+        {
+            assert(old.tail_old_ones.writer_info.previous != &old.head_old_ones);
+            head_old_ones.writer_info.next = old.head_old_ones.writer_info.next;
+            tail_old_ones.writer_info.previous = old.tail_old_ones.writer_info.previous;
+            old.head_old_ones.writer_info.next = &old.tail_old_ones;
+            old.tail_old_ones.writer_info.previous = &old.head_old_ones;
+            head_old_ones.writer_info.next->writer_info.previous = &head_old_ones;
+            tail_old_ones.writer_info.previous->writer_info.next = &tail_old_ones;
+        }
+    }
+
+    ~FlowQueue()
+    {
+        assert(&tail_new_interested == head_new_interested.writer_info.next);
+        assert(&tail_old_interested == head_old_interested.writer_info.next);
+    }
+
+    bool is_empty() const
+    {
+        assert(((&tail_new_ones == head_new_ones.writer_info.next &&
+                &head_new_ones == tail_new_ones.writer_info.previous) ||
+                (&tail_new_ones != head_new_ones.writer_info.next &&
+                &head_new_ones != tail_new_ones.writer_info.previous)) &&
+                ((&tail_old_ones == head_old_ones.writer_info.next &&
+                &head_old_ones == tail_old_ones.writer_info.previous) ||
+                (&tail_old_ones != head_old_ones.writer_info.next &&
+                &head_old_ones != tail_old_ones.writer_info.previous)));
+
+        return &tail_new_ones == head_new_ones.writer_info.next &&
+               &tail_old_ones == head_old_ones.writer_info.next;
+    }
+
+    void add_new_sample(
+            fastrtps::rtps::CacheChange_t* change)
+    {
+        change->writer_info.previous = tail_new_interested.writer_info.previous;
+        change->writer_info.previous->writer_info.next = change;
+        tail_new_interested.writer_info.previous = change;
+        change->writer_info.next = &tail_new_interested;
+
+    }
+
+    void add_old_sample(
+            fastrtps::rtps::CacheChange_t* change)
+    {
+        change->writer_info.previous = tail_old_interested.writer_info.previous;
+        change->writer_info.previous->writer_info.next = change;
+        tail_old_interested.writer_info.previous = change;
+        change->writer_info.next = &tail_old_interested;
+    }
+
+    fastrtps::rtps::CacheChange_t* get_next_change()
+    {
+        if (!is_empty())
+        {
+            return &tail_new_ones !=
+                   head_new_ones.writer_info.next ?
+                   head_new_ones.writer_info.next : head_old_ones.writer_info.next;
+        }
+
+        return nullptr;
+    }
+
+    void add_interested_changes_to_queue()
+    {
+        // This function should be called with mutex_  and interested_lock locked, because the queue is changed.
+        assert(((&tail_new_interested == head_new_interested.writer_info.next &&
+                &head_new_interested == tail_new_interested.writer_info.previous) ||
+                (&tail_new_interested != head_new_interested.writer_info.next &&
+                &head_new_interested != tail_new_interested.writer_info.previous)) &&
+                ((&tail_old_interested == head_old_interested.writer_info.next &&
+                &head_old_interested == tail_old_interested.writer_info.previous) ||
+                (&tail_old_interested != head_old_interested.writer_info.next &&
+                &head_old_interested != tail_old_interested.writer_info.previous)));
+
+        fastrtps::rtps::CacheChange_t* interested_it = head_new_interested.writer_info.next;
+        fastrtps::rtps::CacheChange_t* next_it = nullptr;
+        while (&tail_new_interested != interested_it)
+        {
+            next_it = interested_it->writer_info.next;
+            interested_it->writer_info.previous->writer_info.next = interested_it->writer_info.next;
+            interested_it->writer_info.next->writer_info.previous = interested_it->writer_info.previous;
+            interested_it->writer_info.previous = tail_new_ones.writer_info.previous;
+            interested_it->writer_info.previous->writer_info.next = interested_it;
+            tail_new_ones.writer_info.previous = interested_it;
+            interested_it->writer_info.next = &tail_new_ones;
+
+            interested_it = next_it;
+        }
+
+        interested_it = head_old_interested.writer_info.next;
+        next_it = nullptr;
+        while (&tail_old_interested != interested_it)
+        {
+            next_it = interested_it->writer_info.next;
+            interested_it->writer_info.previous->writer_info.next = interested_it->writer_info.next;
+            interested_it->writer_info.next->writer_info.previous = interested_it->writer_info.previous;
+            interested_it->writer_info.previous = tail_old_ones.writer_info.previous;
+            interested_it->writer_info.previous->writer_info.next = interested_it;
+            tail_old_ones.writer_info.previous = interested_it;
+            interested_it->writer_info.next = &tail_old_ones;
+
+            interested_it = next_it;
+        }
+    }
+
+    //! Head element of interested new changes list to be included.
+    //! Should be protected with changes_interested_mutex.
+    fastrtps::rtps::CacheChange_t head_new_interested;
+
+    //! Tail element of interested new changes list to be included.
+    //! Should be protected with changes_interested_mutex.
+    fastrtps::rtps::CacheChange_t tail_new_interested;
+
+    //! Head element of interested old changes list to be included.
+    //! Should be protected with changes_interested_mutex.
+    fastrtps::rtps::CacheChange_t head_old_interested;
+
+    //! Tail element of interested changes list to be included.
+    //! Should be protected with old changes_interested_mutex.
+    fastrtps::rtps::CacheChange_t tail_old_interested;
+
+    //! Head element on the queue.
+    //! Should be protected with mutex_.
+    fastrtps::rtps::CacheChange_t head_new_ones;
+
+    //! Tail element on the queue.
+    //! Should be protected with mutex_.
+    fastrtps::rtps::CacheChange_t tail_new_ones;
+
+    //! Head element on the queue.
+    //! Should be protected with mutex_.
+    fastrtps::rtps::CacheChange_t head_old_ones;
+
+    //! Tail element on the queue.
+    //! Should be protected with mutex_.
+    fastrtps::rtps::CacheChange_t tail_old_ones;
+};
+
 /** Classes used to specify FlowController's publication model **/
 
 //! Only sends new samples synchronously. There is no mechanism to send old ones.
@@ -208,86 +426,199 @@ private:
 //! Fifo scheduling
 struct FlowControllerFifoSchedule
 {
-    FlowControllerFifoSchedule()
+    void register_writer(
+            fastrtps::rtps::RTPSWriter*)
     {
-        head_new_interested.writer_info.next = &tail_new_interested;
-        tail_new_interested.writer_info.previous = &head_new_interested;
-        head_old_interested.writer_info.next = &tail_old_interested;
-        tail_old_interested.writer_info.previous = &head_old_interested;
-        head_new_ones.writer_info.next = &tail_new_ones;
-        tail_new_ones.writer_info.previous = &head_new_ones;
-        head_old_ones.writer_info.next = &tail_old_ones;
-        tail_old_ones.writer_info.previous = &head_old_ones;
     }
 
-    virtual ~FlowControllerFifoSchedule()
+    void unregister_writer(
+            fastrtps::rtps::RTPSWriter*)
     {
-        assert(&tail_new_interested == head_new_interested.writer_info.next);
-        assert(&tail_old_interested == head_old_interested.writer_info.next);
     }
 
     bool is_empty() const
     {
-        return &tail_new_ones == head_new_ones.writer_info.next &&
-               &tail_old_ones == head_old_ones.writer_info.next;
+        return queue_.is_empty();
     }
 
     void add_new_sample(
             fastrtps::rtps::RTPSWriter*,
             fastrtps::rtps::CacheChange_t* change)
     {
-        change->writer_info.previous = tail_new_interested.writer_info.previous;
-        change->writer_info.previous->writer_info.next = change;
-        tail_new_interested.writer_info.previous = change;
-        change->writer_info.next = &tail_new_interested;
-
+        queue_.add_new_sample(change);
     }
 
     void add_old_sample(
             fastrtps::rtps::RTPSWriter*,
             fastrtps::rtps::CacheChange_t* change)
     {
-        change->writer_info.previous = tail_old_interested.writer_info.previous;
-        change->writer_info.previous->writer_info.next = change;
-        tail_old_interested.writer_info.previous = change;
-        change->writer_info.next = &tail_old_interested;
+        queue_.add_old_sample(change);
     }
 
-    //! Head element of interested new changes list to be included.
-    //! Should be protected with changes_interested_mutex.
-    fastrtps::rtps::CacheChange_t head_new_interested;
+    /*!
+     * Returns the first sample in the queue.
+     * Default behaviour.
+     * Expects the queue is ordered.
+     *
+     * @return Pointer to next change to be sent. nullptr implies there is no sample to be sent or is forbidden due to
+     * bandwidth exceeded.
+     */
+    fastrtps::rtps::CacheChange_t* get_next_change_nts()
+    {
+        return queue_.get_next_change();
+    }
 
-    //! Tail element of interested new changes list to be included.
-    //! Should be protected with changes_interested_mutex.
-    fastrtps::rtps::CacheChange_t tail_new_interested;
+    /*!
+     * Store the sample at the end of the list.
+     *
+     * @return true if there is added changes.
+     */
+    void add_interested_changes_to_queue_nts()
+    {
+        // This function should be called with mutex_  and interested_lock locked, because the queue is changed.
+        queue_.add_interested_changes_to_queue();
+    }
 
-    //! Head element of interested old changes list to be included.
-    //! Should be protected with changes_interested_mutex.
-    fastrtps::rtps::CacheChange_t head_old_interested;
+private:
 
-    //! Tail element of interested changes list to be included.
-    //! Should be protected with old changes_interested_mutex.
-    fastrtps::rtps::CacheChange_t tail_old_interested;
-
-    //! Head element on the queue.
-    //! Should be protected with mutex_.
-    fastrtps::rtps::CacheChange_t head_new_ones;
-
-    //! Tail element on the queue.
-    //! Should be protected with mutex_.
-    fastrtps::rtps::CacheChange_t tail_new_ones;
-
-    //! Head element on the queue.
-    //! Should be protected with mutex_.
-    fastrtps::rtps::CacheChange_t head_old_ones;
-
-    //! Tail element on the queue.
-    //! Should be protected with mutex_.
-    fastrtps::rtps::CacheChange_t tail_old_ones;
+    //! Scheduler queue. FIFO scheduler only has one queue.
+    FlowQueue queue_;
 };
 
 //! Round Robin scheduling
-struct FlowControllerRoundRobinSchedule {};
+struct FlowControllerRoundRobinSchedule
+{
+    FlowControllerRoundRobinSchedule()
+    {
+        next_writer_ = writers_queue_.begin();
+    }
+
+    void register_writer(
+            fastrtps::rtps::RTPSWriter* writer)
+    {
+        fastrtps::rtps::GUID_t current_guid = fastrtps::rtps::GUID_t::unknown();
+
+        if (writers_queue_.end() != next_writer_)
+        {
+            current_guid = next_writer_->first;
+        }
+
+        assert(writers_queue_.end() == writers_queue_.find(writer->getGuid()));
+        writers_queue_.emplace( writer->getGuid(), FlowQueue());
+
+        if (fastrtps::rtps::GUID_t::unknown() == current_guid)
+        {
+            next_writer_ = writers_queue_.begin();
+        }
+        else
+        {
+            next_writer_ = writers_queue_.find(current_guid);
+        }
+    }
+
+    void unregister_writer(
+            fastrtps::rtps::RTPSWriter* writer)
+    {
+        fastrtps::rtps::GUID_t current_guid = fastrtps::rtps::GUID_t::unknown();
+
+        if (writers_queue_.end() != next_writer_)
+        {
+            current_guid = next_writer_->first;
+        }
+
+        auto it = writers_queue_.find(writer->getGuid());
+        assert(it != writers_queue_.end());
+        assert(it->second.is_empty());
+        writers_queue_.erase(it);
+
+        if (fastrtps::rtps::GUID_t::unknown() == current_guid ||
+                writer->getGuid() == current_guid)
+        {
+            next_writer_ = writers_queue_.begin();
+        }
+        else
+        {
+            next_writer_ = writers_queue_.find(current_guid);
+        }
+    }
+
+    bool is_empty() const
+    {
+        bool ret_value = true;
+
+        for (auto& queue : writers_queue_)
+        {
+            if (!(ret_value &= queue.second.is_empty()))
+            {
+                break;
+            }
+        }
+
+        return ret_value;
+    }
+
+    void add_new_sample(
+            fastrtps::rtps::RTPSWriter* writer,
+            fastrtps::rtps::CacheChange_t* change)
+    {
+        auto it = writers_queue_.find(writer->getGuid());
+        assert(it != writers_queue_.end());
+        it->second.add_new_sample(change);
+    }
+
+    void add_old_sample(
+            fastrtps::rtps::RTPSWriter* writer,
+            fastrtps::rtps::CacheChange_t* change)
+    {
+        auto it = writers_queue_.find(writer->getGuid());
+        assert(it != writers_queue_.end());
+        it->second.add_old_sample(change);
+    }
+
+    fastrtps::rtps::CacheChange_t* get_next_change_nts()
+    {
+        fastrtps::rtps::CacheChange_t* ret_change = nullptr;
+
+        if (0 < writers_queue_.size())
+        {
+            auto starting_it = next_writer_; // For avoid loops.
+
+            while (nullptr == ret_change)
+            {
+                if (writers_queue_.end() == next_writer_)
+                {
+                    next_writer_ = writers_queue_.begin();
+                    continue;
+                }
+
+                ret_change = next_writer_->second.get_next_change();
+                ++next_writer_;
+
+                if (starting_it == next_writer_)
+                {
+                    break;
+                }
+            }
+        }
+
+        return ret_change;
+    }
+
+    void add_interested_changes_to_queue_nts()
+    {
+        // This function should be called with mutex_  and interested_lock locked, because the queue is changed.
+        for (auto& queue : writers_queue_)
+        {
+            queue.second.add_interested_changes_to_queue();
+        }
+    }
+
+private:
+
+    std::map<fastrtps::rtps::GUID_t, FlowQueue> writers_queue_;
+    std::map<fastrtps::rtps::GUID_t, FlowQueue>::iterator next_writer_;
+
+};
 
 //! High priority scheduling
 struct FlowControllerHighPrioritySchedule {};
@@ -334,7 +665,10 @@ public:
             fastrtps::rtps::RTPSWriter* writer) override
     {
         std::unique_lock<std::mutex> lock(mutex_);
-        writers_.insert({ writer->getGuid(), writer});
+        auto ret = writers_.insert({ writer->getGuid(), writer});
+        (void)ret;
+        assert(ret.second);
+        register_writer_impl(writer);
     }
 
     /*!
@@ -347,6 +681,7 @@ public:
     {
         std::unique_lock<std::mutex> lock(mutex_);
         writers_.erase(writer->getGuid());
+        unregister_writer_impl(writer);
     }
 
     /*
@@ -427,6 +762,40 @@ private:
     initialize_async_thread()
     {
         // Do nothing.
+    }
+
+    template<typename PubMode = PublishMode>
+    typename std::enable_if<!std::is_same<FlowControllerPureSyncPublishMode, PubMode>::value, void>::type
+    register_writer_impl(
+            fastrtps::rtps::RTPSWriter* writer)
+    {
+        std::unique_lock<std::mutex> in_lock(async_mode.changes_interested_mutex);
+        sched.register_writer(writer);
+    }
+
+    template<typename PubMode = PublishMode>
+    typename std::enable_if<std::is_same<FlowControllerPureSyncPublishMode, PubMode>::value, void>::type
+    register_writer_impl(
+            fastrtps::rtps::RTPSWriter*)
+    {
+        // Do nothing. Fail.
+    }
+
+    template<typename PubMode = PublishMode>
+    typename std::enable_if<!std::is_same<FlowControllerPureSyncPublishMode, PubMode>::value, void>::type
+    unregister_writer_impl(
+            fastrtps::rtps::RTPSWriter* writer)
+    {
+        std::unique_lock<std::mutex> in_lock(async_mode.changes_interested_mutex);
+        sched.unregister_writer(writer);
+    }
+
+    template<typename PubMode = PublishMode>
+    typename std::enable_if<std::is_same<FlowControllerPureSyncPublishMode, PubMode>::value, void>::type
+    unregister_writer_impl(
+            fastrtps::rtps::RTPSWriter*)
+    {
+        // Do nothing. Fail.
     }
 
     /*!
@@ -601,77 +970,6 @@ private:
     }
 
     /*!
-     * Returns the first sample in the queue.
-     * Default behaviour.
-     * Expects the queue is ordered.
-     *
-     * @return Pointer to next change to be sent. nullptr implies there is no sample to be sent or is forbidden due to
-     * bandwidth exceeded.
-     */
-    template<typename Scheculing = SampleScheduling>
-    typename std::enable_if<std::is_same<FlowControllerFifoSchedule, Scheculing>::value,
-            fastrtps::rtps::CacheChange_t*>::type
-    get_next_change_nts()
-    {
-        if (!sched.is_empty())
-        {
-            return &sched.tail_new_ones !=
-                   sched.head_new_ones.writer_info.next ?
-                   sched.head_new_ones.writer_info.next : sched.head_old_ones.writer_info.next;
-        }
-
-        return nullptr;
-    }
-
-    /*!
-     * Store the sample at the end of the list
-     * when SampleScheduling == FlowControllerFifoSchedule.
-     *
-     * @return true if there is added changes.
-     */
-    template<typename Scheculing = SampleScheduling>
-    typename std::enable_if<std::is_same<FlowControllerFifoSchedule, Scheculing>::value, bool>::type
-    add_interested_changes_to_queue_nts()
-    {
-        // This function should be called with mutex_  and interested_lock locked, because the queue is changed.
-        bool returned_value = false;
-
-        fastrtps::rtps::CacheChange_t* interested_it = sched.head_new_interested.writer_info.next;
-        fastrtps::rtps::CacheChange_t* next_it = nullptr;
-        while (&sched.tail_new_interested != interested_it)
-        {
-            next_it = interested_it->writer_info.next;
-            interested_it->writer_info.previous->writer_info.next = interested_it->writer_info.next;
-            interested_it->writer_info.next->writer_info.previous = interested_it->writer_info.previous;
-            interested_it->writer_info.previous = sched.tail_new_ones.writer_info.previous;
-            interested_it->writer_info.previous->writer_info.next = interested_it;
-            sched.tail_new_ones.writer_info.previous = interested_it;
-            interested_it->writer_info.next = &sched.tail_new_ones;
-
-            interested_it = next_it;
-            returned_value = true;
-        }
-
-        interested_it = sched.head_old_interested.writer_info.next;
-        next_it = nullptr;
-        while (&sched.tail_old_interested != interested_it)
-        {
-            next_it = interested_it->writer_info.next;
-            interested_it->writer_info.previous->writer_info.next = interested_it->writer_info.next;
-            interested_it->writer_info.next->writer_info.previous = interested_it->writer_info.previous;
-            interested_it->writer_info.previous = sched.tail_old_ones.writer_info.previous;
-            interested_it->writer_info.previous->writer_info.next = interested_it;
-            sched.tail_old_ones.writer_info.previous = interested_it;
-            interested_it->writer_info.next = &sched.tail_old_ones;
-
-            interested_it = next_it;
-            returned_value = true;
-        }
-
-        return returned_value;
-    }
-
-    /*!
      * Function ran by asynchronous thread.
      */
     void run()
@@ -688,13 +986,12 @@ private:
 
             //Check if we have to sleep.
             {
-                bool queue_empty =  sched.is_empty();
                 std::unique_lock<std::mutex> in_lock(async_mode.changes_interested_mutex);
                 // Add interested changes into the queue.
-                bool new_interested = add_interested_changes_to_queue_nts();
+                sched.add_interested_changes_to_queue_nts();
 
                 while (async_mode.running &&
-                        ((queue_empty && !new_interested) || async_mode.force_wait()))
+                        (sched.is_empty() || async_mode.force_wait()))
                 {
                     lock.unlock();
                     async_mode.wait(in_lock);
@@ -703,14 +1000,14 @@ private:
                     lock.lock();
                     in_lock.lock();
 
-                    queue_empty =  sched.is_empty();
-                    new_interested = add_interested_changes_to_queue_nts();
+                    sched.add_interested_changes_to_queue_nts();
                 }
+
             }
 
             fastrtps::rtps::RTPSWriter* current_writer = nullptr;
             fastrtps::rtps::CacheChange_t* change_to_process = nullptr;
-            while (nullptr != (change_to_process = get_next_change_nts()))
+            while (nullptr != (change_to_process = sched.get_next_change_nts()))
             {
                 // Fast check if next change will enter.
                 if (!async_mode.fast_check_is_there_slot_for_change(change_to_process))
@@ -773,7 +1070,7 @@ private:
 
                 // Add interested changes into the queue.
                 std::unique_lock<std::mutex> in_lock(async_mode.changes_interested_mutex);
-                add_interested_changes_to_queue_nts();
+                sched.add_interested_changes_to_queue_nts();
             }
 
             async_mode.group.change_transmitter(nullptr, nullptr);
@@ -800,9 +1097,9 @@ private:
 
     std::map<fastrtps::rtps::GUID_t, fastrtps::rtps::RTPSWriter*> writers_;
 
-    publish_mode async_mode;
-
     scheduler sched;
+
+    publish_mode async_mode;
 };
 
 } // namespace rtps

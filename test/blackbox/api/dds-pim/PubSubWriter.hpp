@@ -48,6 +48,7 @@
 #include <fastrtps/xmlparser/XMLParser.h>
 #include <fastrtps/xmlparser/XMLTree.h>
 #include <fastrtps/utils/IPLocator.h>
+#include <fastdds/rtps/flowcontrol/FlowControllerSchedulerPolicy.hpp>
 
 
 using DomainParticipantFactory = eprosima::fastdds::dds::DomainParticipantFactory;
@@ -806,12 +807,14 @@ public:
     }
 
     PubSubWriter& add_throughput_controller_descriptor_to_pparams(
+            eprosima::fastdds::rtps::FlowControllerSchedulerPolicy scheduler_policy,
             uint32_t bytesPerPeriod,
             uint32_t periodInMs)
     {
         static const std::string flow_controller_name("MyFlowController");
         auto new_flow_controller = std::make_shared<eprosima::fastdds::rtps::FlowControllerDescriptor>();
         new_flow_controller->name = flow_controller_name.c_str();
+        new_flow_controller->scheduler = scheduler_policy;
         new_flow_controller->max_bytes_per_period = bytesPerPeriod;
         new_flow_controller->period_ms = static_cast<uint64_t>(periodInMs);
         participant_qos_.flow_controllers().push_back(new_flow_controller);
