@@ -65,6 +65,12 @@ public:
             StatusCondition&&) = delete;
 
     /**
+     * @brief Retrieves the trigger_value of the Condition
+     * @return true if trigger_value is set to 'true', 'false' otherwise
+     */
+    RTPS_DllAPI bool get_trigger_value() const override;
+
+    /**
      * @brief Defines the list of communication statuses that are taken into account to determine the trigger_value
      * @param mask defines the mask for the status
      * @return RETCODE_OK with everything ok, error code otherwise

@@ -40,6 +40,11 @@ StatusCondition::~StatusCondition()
 {
 }
 
+bool StatusCondition::get_trigger_value() const
+{
+    return impl_->get_trigger_value();
+}
+
 ReturnCode_t StatusCondition::set_enabled_statuses(
         const StatusMask& mask)
 {
