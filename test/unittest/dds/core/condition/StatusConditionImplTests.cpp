@@ -49,7 +49,7 @@ TEST(StatusConditionImplTests, enabled_status_management)
 
 TEST(StatusConditionImplTests, notify_trigger)
 {
-    ConditionNotifier notifier;
+    ::testing::StrictMock<ConditionNotifier> notifier;
     StatusConditionImpl uut(&notifier);
 
     StatusMask mask_all = StatusMask::all();
