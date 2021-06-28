@@ -31,6 +31,12 @@ namespace eprosima {
 namespace fastdds {
 namespace dds {
 
+namespace detail {
+
+struct StatusConditionImpl;
+
+} // namespace detail
+
 class Entity;
 
 /**
@@ -62,6 +68,11 @@ public:
      * @return Entity
      */
     RTPS_DllAPI Entity* get_entity() const;
+
+    detail::StatusConditionImpl* get_impl()
+    {
+        return nullptr;
+    }
 
 protected:
 
