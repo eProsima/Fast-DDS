@@ -35,7 +35,7 @@ struct StatusConditionImpl
 {
     /**
      * Construct a StatusConditionImpl object.
-     * @param parent @ref StatusCondition creating this object.
+     * @param notifier @ref ConditionNotifier attatched to this object.
      */
     StatusConditionImpl(
             ConditionNotifier* notifier);
@@ -77,7 +77,7 @@ struct StatusConditionImpl
     /**
      * @brief Set the trigger value of a specific status
      * @param status The status for which to change the trigger value
-     * @param trigger_value
+     * @param trigger_value Whether the specified status should be set as triggered or non-triggered
      */
     void set_status(
             const StatusMask& status,
