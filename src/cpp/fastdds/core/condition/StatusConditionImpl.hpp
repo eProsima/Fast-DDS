@@ -19,6 +19,8 @@
 #ifndef _FASTDDS_CORE_CONDITION_STATUSCONDITIONIMPL_HPP_
 #define _FASTDDS_CORE_CONDITION_STATUSCONDITIONIMPL_HPP_
 
+#include <mutex>
+
 #include <fastdds/dds/core/status/StatusMask.hpp>
 #include <fastrtps/types/TypesBase.h>
 
@@ -82,6 +84,13 @@ struct StatusConditionImpl
     void set_status(
             const StatusMask& status,
             bool trigger_value);
+
+private:
+
+    mutable std::mutex mutex_;
+    StatusMask mask_{};
+    StatusMask status_{};
+    ConditionNotifier* notifier_;
 };
 
 }  // namespace detail
