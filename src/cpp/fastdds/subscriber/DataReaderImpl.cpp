@@ -929,9 +929,12 @@ bool DataReaderImpl::deadline_missed()
     deadline_missed_status_.total_count++;
     deadline_missed_status_.total_count_change++;
     deadline_missed_status_.last_instance_handle = timer_owner_;
-    listener_->on_requested_deadline_missed(user_datareader_, deadline_missed_status_);
-    subscriber_->subscriber_listener_.on_requested_deadline_missed(user_datareader_, deadline_missed_status_);
-    deadline_missed_status_.total_count_change = 0;
+    auto listener = get_listener_for(StatusMask::requested_deadline_missed());
+    if (nullptr != listener)
+    {
+        listener->on_requested_deadline_missed(user_datareader_, deadline_missed_status_);
+        deadline_missed_status_.total_count_change = 0;
+    }
 
     if (!history_.set_next_deadline(
                 timer_owner_,
