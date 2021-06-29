@@ -426,7 +426,7 @@ private:
     void cancel_init();
 
     void remove_discovered_participant_info(
-            DiscoveredParticipantInfo::AuthUniquePtr&& auth_ptr);
+            const DiscoveredParticipantInfo::AuthUniquePtr& auth_ptr);
 
     bool restore_discovered_participant_info(
             const GUID_t& remote_participant_key,
