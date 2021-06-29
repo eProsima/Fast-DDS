@@ -36,6 +36,8 @@
 #include <fastdds/rtps/reader/RTPSReader.h>
 #include <fastdds/rtps/resources/ResourceEvent.h>
 #include <fastdds/rtps/resources/TimedEvent.h>
+
+#include <fastdds/core/condition/StatusConditionImpl.hpp>
 #include <fastdds/core/policy/QosPolicyUtils.hpp>
 
 #include <fastdds/subscriber/SubscriberImpl.hpp>
@@ -295,6 +297,16 @@ bool DataReaderImpl::wait_for_unread_message(
     return reader_ ? reader_->wait_for_unread_cache(timeout) : false;
 }
 
+void DataReaderImpl::set_read_communication_status(
+        bool trigger_value)
+{
+    StatusMask notify_status = StatusMask::data_on_readers();
+    subscriber_->user_subscriber_->get_statuscondition().get_impl()->set_status(notify_status, trigger_value);
+
+    notify_status = StatusMask::data_available();
+    user_datareader_->get_statuscondition().get_impl()->set_status(notify_status, trigger_value);
+}
+
 ReturnCode_t DataReaderImpl::check_collection_preconditions_and_calc_max_samples(
         LoanableCollection& data_values,
         SampleInfoSeq& sample_infos,
@@ -439,6 +451,8 @@ ReturnCode_t DataReaderImpl::read_or_take(
     {
         return ReturnCode_t::RETCODE_TIMEOUT;
     }
+
+    set_read_communication_status(false);
 
     auto it = history_.lookup_instance(handle, exact_instance);
     if (!it.first)
@@ -618,6 +632,8 @@ ReturnCode_t DataReaderImpl::read_or_take_next_sample(
         return ReturnCode_t::RETCODE_TIMEOUT;
     }
 
+    set_read_communication_status(false);
+
     auto it = history_.lookup_instance(HANDLE_NIL, false);
     if (!it.first)
     {
@@ -774,6 +790,8 @@ void DataReaderImpl::InnerDataReaderListener::onNewCacheChangeAdded(
 {
     if (data_reader_->on_new_cache_change_added(change_in))
     {
+        auto user_reader = data_reader_->user_datareader_;
+
         //First check if we can handle with on_data_on_readers
         SubscriberListener* subscriber_listener =
                 data_reader_->subscriber_->get_listener_for(StatusMask::data_on_readers());
@@ -787,9 +805,11 @@ void DataReaderImpl::InnerDataReaderListener::onNewCacheChangeAdded(
             DataReaderListener* listener = data_reader_->get_listener_for(StatusMask::data_available());
             if (listener != nullptr)
             {
-                listener->on_data_available(data_reader_->user_datareader_);
+                listener->on_data_available(user_reader);
             }
         }
+
+        data_reader_->set_read_communication_status(true);
     }
 }
 
@@ -809,7 +829,8 @@ void DataReaderImpl::InnerDataReaderListener::on_liveliness_changed(
         const fastrtps::LivelinessChangedStatus& status)
 {
     data_reader_->update_liveliness_status(status);
-    DataReaderListener* listener = data_reader_->get_listener_for(StatusMask::liveliness_changed());
+    StatusMask notify_status = StatusMask::liveliness_changed();
+    DataReaderListener* listener = data_reader_->get_listener_for(notify_status);
     if (listener != nullptr)
     {
         LivelinessChangedStatus callback_status;
@@ -818,6 +839,7 @@ void DataReaderImpl::InnerDataReaderListener::on_liveliness_changed(
             listener->on_liveliness_changed(data_reader_->user_datareader_, callback_status);
         }
     }
+    data_reader_->user_datareader_->get_statuscondition().get_impl()->set_status(notify_status, true);
 }
 
 void DataReaderImpl::InnerDataReaderListener::on_requested_incompatible_qos(
@@ -825,7 +847,8 @@ void DataReaderImpl::InnerDataReaderListener::on_requested_incompatible_qos(
         fastdds::dds::PolicyMask qos)
 {
     data_reader_->update_requested_incompatible_qos(qos);
-    DataReaderListener* listener = data_reader_->get_listener_for(StatusMask::requested_incompatible_qos());
+    StatusMask notify_status = StatusMask::requested_incompatible_qos();
+    DataReaderListener* listener = data_reader_->get_listener_for(notify_status);
     if (listener != nullptr)
     {
         RequestedIncompatibleQosStatus callback_status;
@@ -834,6 +857,7 @@ void DataReaderImpl::InnerDataReaderListener::on_requested_incompatible_qos(
             listener->on_requested_incompatible_qos(data_reader_->user_datareader_, callback_status);
         }
     }
+    data_reader_->user_datareader_->get_statuscondition().get_impl()->set_status(notify_status, true);
 }
 
 bool DataReaderImpl::on_new_cache_change_added(
@@ -929,12 +953,14 @@ bool DataReaderImpl::deadline_missed()
     deadline_missed_status_.total_count++;
     deadline_missed_status_.total_count_change++;
     deadline_missed_status_.last_instance_handle = timer_owner_;
-    auto listener = get_listener_for(StatusMask::requested_deadline_missed());
+    StatusMask notify_status = StatusMask::requested_deadline_missed();
+    auto listener = get_listener_for(notify_status);
     if (nullptr != listener)
     {
         listener->on_requested_deadline_missed(user_datareader_, deadline_missed_status_);
         deadline_missed_status_.total_count_change = 0;
     }
+    user_datareader_->get_statuscondition().get_impl()->set_status(notify_status, true);
 
     if (!history_.set_next_deadline(
                 timer_owner_,
@@ -954,10 +980,14 @@ ReturnCode_t DataReaderImpl::get_requested_deadline_missed_status(
         return ReturnCode_t::RETCODE_NOT_ENABLED;
     }
 
-    std::unique_lock<RecursiveTimedMutex> lock(reader_->getMutex());
+    {
+        std::unique_lock<RecursiveTimedMutex> lock(reader_->getMutex());
 
-    status = deadline_missed_status_;
-    deadline_missed_status_.total_count_change = 0;
+        status = deadline_missed_status_;
+        deadline_missed_status_.total_count_change = 0;
+    }
+
+    user_datareader_->get_statuscondition().get_impl()->set_status(StatusMask::requested_deadline_missed(), false);
     return ReturnCode_t::RETCODE_OK;
 }
 
@@ -1035,12 +1065,15 @@ ReturnCode_t DataReaderImpl::get_liveliness_changed_status(
         return ReturnCode_t::RETCODE_NOT_ENABLED;
     }
 
-    std::lock_guard<RecursiveTimedMutex> lock(reader_->getMutex());
+    {
+        std::lock_guard<RecursiveTimedMutex> lock(reader_->getMutex());
 
-    status = liveliness_changed_status_;
-    liveliness_changed_status_.alive_count_change = 0u;
-    liveliness_changed_status_.not_alive_count_change = 0u;
+        status = liveliness_changed_status_;
+        liveliness_changed_status_.alive_count_change = 0u;
+        liveliness_changed_status_.not_alive_count_change = 0u;
+    }
 
+    user_datareader_->get_statuscondition().get_impl()->set_status(StatusMask::liveliness_changed(), false);
     return ReturnCode_t::RETCODE_OK;
 }
 
@@ -1052,10 +1085,14 @@ ReturnCode_t DataReaderImpl::get_requested_incompatible_qos_status(
         return ReturnCode_t::RETCODE_NOT_ENABLED;
     }
 
-    std::unique_lock<RecursiveTimedMutex> lock(reader_->getMutex());
+    {
+        std::unique_lock<RecursiveTimedMutex> lock(reader_->getMutex());
 
-    status = requested_incompatible_qos_status_;
-    requested_incompatible_qos_status_.total_count_change = 0u;
+        status = requested_incompatible_qos_status_;
+        requested_incompatible_qos_status_.total_count_change = 0u;
+    }
+
+    user_datareader_->get_statuscondition().get_impl()->set_status(StatusMask::requested_incompatible_qos(), false);
     return ReturnCode_t::RETCODE_OK;
 }
 

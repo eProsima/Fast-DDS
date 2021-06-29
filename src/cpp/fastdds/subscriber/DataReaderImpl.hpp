@@ -423,6 +423,9 @@ protected:
             SampleInfo* info,
             bool should_take);
 
+    void set_read_communication_status(
+            bool trigger_value);
+
     /**
      * @brief A method called when a new cache change is added
      * @param change The cache change that has been added
