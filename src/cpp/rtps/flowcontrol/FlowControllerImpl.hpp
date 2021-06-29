@@ -436,9 +436,9 @@ struct FlowControllerFifoSchedule
     {
     }
 
-    bool is_empty() const
+    void work_done() const
     {
-        return queue_.is_empty();
+        // Do nothing
     }
 
     void add_new_sample(
@@ -496,72 +496,65 @@ struct FlowControllerRoundRobinSchedule
     void register_writer(
             fastrtps::rtps::RTPSWriter* writer)
     {
-        fastrtps::rtps::GUID_t current_guid = fastrtps::rtps::GUID_t::unknown();
+        fastrtps::rtps::RTPSWriter* current_writer = nullptr;
 
         if (writers_queue_.end() != next_writer_)
         {
-            current_guid = next_writer_->first;
+            current_writer = next_writer_->first;
         }
 
-        assert(writers_queue_.end() == writers_queue_.find(writer->getGuid()));
-        writers_queue_.emplace( writer->getGuid(), FlowQueue());
+        assert(writers_queue_.end() == writers_queue_.find(writer));
+        writers_queue_.emplace(writer, FlowQueue());
 
-        if (fastrtps::rtps::GUID_t::unknown() == current_guid)
+        if (nullptr == current_writer)
         {
             next_writer_ = writers_queue_.begin();
         }
         else
         {
-            next_writer_ = writers_queue_.find(current_guid);
+            next_writer_ = writers_queue_.find(current_writer);
         }
     }
 
     void unregister_writer(
             fastrtps::rtps::RTPSWriter* writer)
     {
-        fastrtps::rtps::GUID_t current_guid = fastrtps::rtps::GUID_t::unknown();
+        fastrtps::rtps::RTPSWriter* current_writer = nullptr;
 
         if (writers_queue_.end() != next_writer_)
         {
-            current_guid = next_writer_->first;
+            current_writer = next_writer_->first;
         }
 
-        auto it = writers_queue_.find(writer->getGuid());
+        auto it = writers_queue_.find(writer);
         assert(it != writers_queue_.end());
         assert(it->second.is_empty());
         writers_queue_.erase(it);
 
-        if (fastrtps::rtps::GUID_t::unknown() == current_guid ||
-                writer->getGuid() == current_guid)
+        if (nullptr == current_writer ||
+                writer == current_writer)
         {
             next_writer_ = writers_queue_.begin();
         }
         else
         {
-            next_writer_ = writers_queue_.find(current_guid);
+            next_writer_ = writers_queue_.find(current_writer);
         }
     }
 
-    bool is_empty() const
+    void work_done()
     {
-        bool ret_value = true;
-
-        for (auto& queue : writers_queue_)
-        {
-            if (!(ret_value &= queue.second.is_empty()))
-            {
-                break;
-            }
-        }
-
-        return ret_value;
+        assert(0 < writers_queue_.size());
+        assert(writers_queue_.end()  != next_writer_);
+        next_writer_ = writers_queue_.end() ==
+                std::next(next_writer_) ? writers_queue_.begin() :std::next(next_writer_);
     }
 
     void add_new_sample(
             fastrtps::rtps::RTPSWriter* writer,
             fastrtps::rtps::CacheChange_t* change)
     {
-        auto it = writers_queue_.find(writer->getGuid());
+        auto it = writers_queue_.find(writer);
         assert(it != writers_queue_.end());
         it->second.add_new_sample(change);
     }
@@ -570,7 +563,7 @@ struct FlowControllerRoundRobinSchedule
             fastrtps::rtps::RTPSWriter* writer,
             fastrtps::rtps::CacheChange_t* change)
     {
-        auto it = writers_queue_.find(writer->getGuid());
+        auto it = writers_queue_.find(writer);
         assert(it != writers_queue_.end());
         it->second.add_old_sample(change);
     }
@@ -583,21 +576,122 @@ struct FlowControllerRoundRobinSchedule
         {
             auto starting_it = next_writer_; // For avoid loops.
 
-            while (nullptr == ret_change)
+            do
             {
-                if (writers_queue_.end() == next_writer_)
-                {
-                    next_writer_ = writers_queue_.begin();
-                    continue;
-                }
-
                 ret_change = next_writer_->second.get_next_change();
-                ++next_writer_;
+            } while (nullptr == ret_change && starting_it != (next_writer_ =
+            writers_queue_.end() == std::next(next_writer_) ? writers_queue_.begin() :std::next(next_writer_)));
+        }
 
-                if (starting_it == next_writer_)
+        return ret_change;
+    }
+
+    void add_interested_changes_to_queue_nts()
+    {
+        // This function should be called with mutex_  and interested_lock locked, because the queue is changed.
+        for (auto& queue : writers_queue_)
+        {
+            queue.second.add_interested_changes_to_queue();
+        }
+    }
+
+private:
+
+    std::map<fastrtps::rtps::RTPSWriter*, FlowQueue> writers_queue_;
+    std::map<fastrtps::rtps::RTPSWriter*, FlowQueue>::iterator next_writer_;
+
+};
+
+//! High priority scheduling
+struct FlowControllerHighPrioritySchedule
+{
+    void register_writer(
+            fastrtps::rtps::RTPSWriter* writer)
+    {
+        assert(nullptr != writer);
+        int32_t priority = 10;
+        auto push_mode = fastrtps::rtps::PropertyPolicyHelper::find_property(
+            writer->getAttributes().properties, "fastdds.sfc.priority");
+
+        if (nullptr != push_mode)
+        {
+            char* ptr = nullptr;
+            priority = strtol(push_mode->c_str(), &ptr, 10);
+
+            if (push_mode->c_str() != ptr) // A valid integer was read.
+            {
+                if (-10 > priority || 10 < priority)
                 {
-                    break;
+                    logError(RTPS_WRITER,
+                            "Wrong value for fastdds.sfc.priority property. Range is [-10, 10]. Priority set to lowest (10)");
                 }
+            }
+            else
+            {
+                logError(RTPS_WRITER,
+                        "Not numerical value for fastdds.sfc.priority property. Priority set to lowest (10)");
+            }
+        }
+
+        auto ret = priorities_.insert({writer, priority});
+        (void)ret;
+        assert(ret.second);
+
+        // Check the priority was created.
+        auto priority_it = writers_queue_.find(priority);
+
+        if (priority_it == writers_queue_.end())
+        {
+            writers_queue_.emplace(priority, FlowQueue());
+        }
+    }
+
+    void unregister_writer(
+            fastrtps::rtps::RTPSWriter* writer)
+    {
+        auto it = priorities_.find(writer);
+        assert(it != priorities_.end());
+        priorities_.erase(it);
+    }
+
+    void work_done() const
+    {
+        // Do nothing
+    }
+
+    void add_new_sample(
+            fastrtps::rtps::RTPSWriter* writer,
+            fastrtps::rtps::CacheChange_t* change)
+    {
+        // Find priority.
+        auto priority_it = priorities_.find(writer);
+        assert(priority_it != priorities_.end());
+        auto queue_it = writers_queue_.find(priority_it->second);
+        assert(queue_it != writers_queue_.end());
+        queue_it->second.add_new_sample(change);
+    }
+
+    void add_old_sample(
+            fastrtps::rtps::RTPSWriter* writer,
+            fastrtps::rtps::CacheChange_t* change)
+    {
+        // Find priority.
+        auto priority_it = priorities_.find(writer);
+        assert(priority_it != priorities_.end());
+        auto queue_it = writers_queue_.find(priority_it->second);
+        assert(queue_it != writers_queue_.end());
+        queue_it->second.add_old_sample(change);
+    }
+
+    fastrtps::rtps::CacheChange_t* get_next_change_nts()
+    {
+        fastrtps::rtps::CacheChange_t* ret_change = nullptr;
+
+        if (0 < writers_queue_.size())
+        {
+            for (auto it = writers_queue_.begin(); nullptr == ret_change && it != writers_queue_.end(); ++it)
+            {
+                ret_change = it->second.get_next_change();
             }
         }
 
@@ -615,13 +709,10 @@ struct FlowControllerRoundRobinSchedule
 
 private:
 
-    std::map<fastrtps::rtps::GUID_t, FlowQueue> writers_queue_;
-    std::map<fastrtps::rtps::GUID_t, FlowQueue>::iterator next_writer_;
+    std::map<int32_t, FlowQueue> writers_queue_;
 
+    std::map<fastrtps::rtps::RTPSWriter*, int32_t> priorities_;
 };
-
-//! High priority scheduling
-struct FlowControllerHighPrioritySchedule {};
 
 //! Priority with reservation scheduling
 struct FlowControllerPriorityWithReservation {};
@@ -983,6 +1074,7 @@ private:
             }
 
             std::unique_lock<std::mutex> lock(mutex_);
+            fastrtps::rtps::CacheChange_t* change_to_process = nullptr;
 
             //Check if we have to sleep.
             {
@@ -991,7 +1083,7 @@ private:
                 sched.add_interested_changes_to_queue_nts();
 
                 while (async_mode.running &&
-                        (sched.is_empty() || async_mode.force_wait()))
+                        (async_mode.force_wait() || nullptr == (change_to_process = sched.get_next_change_nts())))
                 {
                     lock.unlock();
                     async_mode.wait(in_lock);
@@ -1002,12 +1094,10 @@ private:
 
                     sched.add_interested_changes_to_queue_nts();
                 }
-
             }
 
             fastrtps::rtps::RTPSWriter* current_writer = nullptr;
-            fastrtps::rtps::CacheChange_t* change_to_process = nullptr;
-            while (nullptr != (change_to_process = sched.get_next_change_nts()))
+            while (nullptr != change_to_process)
             {
                 // Fast check if next change will enter.
                 if (!async_mode.fast_check_is_there_slot_for_change(change_to_process))
@@ -1062,6 +1152,8 @@ private:
 
                 unlock(current_writer);
 
+                sched.work_done();
+
                 if (0 != async_mode.writers_interested_in_remove)
                 {
                     // There are writers that want to remove samples.
@@ -1069,8 +1161,13 @@ private:
                 }
 
                 // Add interested changes into the queue.
-                std::unique_lock<std::mutex> in_lock(async_mode.changes_interested_mutex);
-                sched.add_interested_changes_to_queue_nts();
+                {
+                    // TODO estudy
+                    std::unique_lock<std::mutex> in_lock(async_mode.changes_interested_mutex);
+                    sched.add_interested_changes_to_queue_nts();
+                }
+
+                change_to_process = sched.get_next_change_nts();
             }
 
             async_mode.group.change_transmitter(nullptr, nullptr);
