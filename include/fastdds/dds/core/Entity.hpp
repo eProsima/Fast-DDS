@@ -46,6 +46,7 @@ public:
             const StatusMask& mask = StatusMask::all())
         : status_mask_(mask)
         , status_changes_(StatusMask::none())
+        , status_condition_(this)
         , enable_(false)
     {
     }
@@ -124,10 +125,9 @@ public:
      * @brief Allows access to the StatusCondition associated with the Entity
      * @return Reference to StatusCondition object
      */
-    RTPS_DllAPI StatusCondition& get_statuscondition() const
+    RTPS_DllAPI StatusCondition& get_statuscondition()
     {
-        logWarning(CONDITION, "get_statuscondition method not implemented");
-        return const_cast<StatusCondition&>(status_condition_);
+        return status_condition_;
     }
 
 protected:

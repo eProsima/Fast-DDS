@@ -18,6 +18,10 @@
 
 #include "StatusConditionImpl.hpp"
 
+#include <mutex>
+
+#include <fastdds/core/condition/ConditionNotifier.hpp>
+
 namespace eprosima {
 namespace fastdds {
 namespace dds {
@@ -25,8 +29,10 @@ namespace detail {
 
 StatusConditionImpl::StatusConditionImpl(
         ConditionNotifier* notifier)
+    : mask_(StatusMask::all())
+    , status_(StatusMask::none())
+    , notifier_(notifier)
 {
-    static_cast<void>(notifier);
 }
 
 StatusConditionImpl::~StatusConditionImpl()
@@ -35,28 +41,60 @@ StatusConditionImpl::~StatusConditionImpl()
 
 bool StatusConditionImpl::get_trigger_value() const
 {
-    return false;
+    std::lock_guard<std::mutex> guard(mutex_);
+    return (mask_ & status_).any();
 }
 
 ReturnCode_t StatusConditionImpl::set_enabled_statuses(
         const StatusMask& mask)
 {
-    static_cast<void>(mask);
-    return ReturnCode_t::RETCODE_UNSUPPORTED;
+    bool notify = false;
+    {
+        std::lock_guard<std::mutex> guard(mutex_);
+        bool old_trigger = (mask_ & status_).any();
+        mask_ = mask;
+        bool new_trigger = (mask_ & status_).any();
+        notify = !old_trigger && new_trigger;
+    }
+
+    if (notify)
+    {
+        notifier_->notify();
+    }
+    return ReturnCode_t::RETCODE_OK;
 }
 
 const StatusMask& StatusConditionImpl::get_enabled_statuses() const
 {
-    static const StatusMask none = StatusMask::none();
-    return none;
+    std::lock_guard<std::mutex> guard(mutex_);
+    return mask_;
 }
 
 void StatusConditionImpl::set_status(
         const StatusMask& status,
         bool trigger_value)
 {
-    static_cast<void>(status);
-    static_cast<void>(trigger_value);
+    if (trigger_value)
+    {
+        bool notify = false;
+        {
+            std::lock_guard<std::mutex> guard(mutex_);
+            bool old_trigger = (mask_ & status_).any();
+            status_ |= status;
+            bool new_trigger = (mask_ & status_).any();
+            notify = !old_trigger && new_trigger;
+        }
+
+        if (notify)
+        {
+            notifier_->notify();
+        }
+    }
+    else
+    {
+        std::lock_guard<std::mutex> guard(mutex_);
+        status_ &= ~status;
+    }
 }
 
 }  // namespace detail
