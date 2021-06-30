@@ -448,6 +448,8 @@ public:
             DomainParticipantFactory::get_instance()->delete_participant(participant_);
             participant_ = nullptr;
         }
+
+        initialized_ = false;
     }
 
     void send(
