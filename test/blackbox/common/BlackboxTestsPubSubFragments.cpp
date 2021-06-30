@@ -723,13 +723,21 @@ GTEST_INSTANTIATE_TEST_MACRO(PubSubFragments,
             testing::Values(TRANSPORT, INTRAPROCESS, DATASHARING),
             testing::Values(
                 eprosima::fastdds::rtps::FlowControllerSchedulerPolicy::FIFO,
-                eprosima::fastdds::rtps::FlowControllerSchedulerPolicy::ROUND_ROBIN
+                eprosima::fastdds::rtps::FlowControllerSchedulerPolicy::ROUND_ROBIN,
+                eprosima::fastdds::rtps::FlowControllerSchedulerPolicy::HIGH_PRIORITY,
+                eprosima::fastdds::rtps::FlowControllerSchedulerPolicy::PRIORITY_WITH_RESERVATION
                 )),
         [](const testing::TestParamInfo<PubSubFragments::ParamType>& info)
         {
             std::string suffix;
             switch (std::get<1>(info.param))
             {
+                case eprosima::fastdds::rtps::FlowControllerSchedulerPolicy::PRIORITY_WITH_RESERVATION:
+                    suffix = "_SCHED_RESERV";
+                    break;
+                case eprosima::fastdds::rtps::FlowControllerSchedulerPolicy::HIGH_PRIORITY:
+                    suffix = "_SCHED_HIGH";
+                    break;
                 case eprosima::fastdds::rtps::FlowControllerSchedulerPolicy::ROUND_ROBIN:
                     suffix = "_SCHED_ROBIN";
                     break;
@@ -755,13 +763,17 @@ GTEST_INSTANTIATE_TEST_MACRO(PubSubFragmentsLimited,
         testing::Values(
             eprosima::fastdds::rtps::FlowControllerSchedulerPolicy::FIFO,
             eprosima::fastdds::rtps::FlowControllerSchedulerPolicy::ROUND_ROBIN,
-            eprosima::fastdds::rtps::FlowControllerSchedulerPolicy::HIGH_PRIORITY
+            eprosima::fastdds::rtps::FlowControllerSchedulerPolicy::HIGH_PRIORITY,
+            eprosima::fastdds::rtps::FlowControllerSchedulerPolicy::PRIORITY_WITH_RESERVATION
             ),
         [](const testing::TestParamInfo<PubSubFragmentsLimited::ParamType>& info)
         {
             std::string suffix;
             switch (info.param)
             {
+                case eprosima::fastdds::rtps::FlowControllerSchedulerPolicy::PRIORITY_WITH_RESERVATION:
+                    suffix = "_SCHED_RESERV";
+                    break;
                 case eprosima::fastdds::rtps::FlowControllerSchedulerPolicy::HIGH_PRIORITY:
                     suffix = "_SCHED_HIGH";
                     break;

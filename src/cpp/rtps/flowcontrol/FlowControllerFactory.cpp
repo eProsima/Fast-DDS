@@ -71,6 +71,13 @@ void FlowControllerFactory::register_flow_controller (
                                       new FlowControllerImpl<FlowControllerLimitedAsyncPublishMode,
                                       FlowControllerHighPrioritySchedule>(participant_, &flow_controller_descr)});
         }
+        else if (FlowControllerSchedulerPolicy::PRIORITY_WITH_RESERVATION == flow_controller_descr.scheduler)
+        {
+            flow_controllers_.insert({flow_controller_descr.name,
+                                      new FlowControllerImpl<FlowControllerLimitedAsyncPublishMode,
+                                      FlowControllerPriorityWithReservationSchedule>(participant_,
+                                      &flow_controller_descr)});
+        }
     }
     else
     {
@@ -91,6 +98,13 @@ void FlowControllerFactory::register_flow_controller (
             flow_controllers_.insert({flow_controller_descr.name,
                                       new FlowControllerImpl<FlowControllerAsyncPublishMode,
                                       FlowControllerHighPrioritySchedule>(participant_, &flow_controller_descr)});
+        }
+        else if (FlowControllerSchedulerPolicy::PRIORITY_WITH_RESERVATION == flow_controller_descr.scheduler)
+        {
+            flow_controllers_.insert({flow_controller_descr.name,
+                                      new FlowControllerImpl<FlowControllerAsyncPublishMode,
+                                      FlowControllerPriorityWithReservationSchedule>(participant_,
+                                      &flow_controller_descr)});
         }
     }
 }

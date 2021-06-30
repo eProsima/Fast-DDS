@@ -167,13 +167,17 @@ GTEST_INSTANTIATE_TEST_MACRO(PubSubFlowControllers,
         testing::Values(
             eprosima::fastdds::rtps::FlowControllerSchedulerPolicy::FIFO,
             eprosima::fastdds::rtps::FlowControllerSchedulerPolicy::ROUND_ROBIN,
-            eprosima::fastdds::rtps::FlowControllerSchedulerPolicy::HIGH_PRIORITY
+            eprosima::fastdds::rtps::FlowControllerSchedulerPolicy::HIGH_PRIORITY,
+            eprosima::fastdds::rtps::FlowControllerSchedulerPolicy::PRIORITY_WITH_RESERVATION
             ),
         [](const testing::TestParamInfo<PubSubFlowControllers::ParamType>& info)
         {
             std::string suffix;
             switch (info.param)
             {
+                case eprosima::fastdds::rtps::FlowControllerSchedulerPolicy::PRIORITY_WITH_RESERVATION:
+                    suffix = "_SCHED_RESERV";
+                    break;
                 case eprosima::fastdds::rtps::FlowControllerSchedulerPolicy::HIGH_PRIORITY:
                     suffix = "_SCHED_HIGH";
                     break;

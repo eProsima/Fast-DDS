@@ -277,10 +277,11 @@ struct FlowControllerAsyncPublishMode
         return true;
     }
 
-    void wait(
+    bool wait(
             std::unique_lock<std::mutex>& lock)
     {
         cv.wait(lock);
+        return false;
     }
 
     bool force_wait() const
@@ -373,7 +374,13 @@ struct FlowControllerLimitedAsyncPublishMode : public FlowControllerAsyncPublish
         return ret;
     }
 
-    void wait(
+    /*!
+     * Wait until there is a new change added (notified by other thread) or there is a timeout (period was excedded and
+     * the bandwidth limitation has to be reset.
+     *
+     * @return false if the condition_variable was awaken because a new change was added. true if the condition_variable was awaken because the bandwidth limitation has to be reset.
+     */
+    bool wait(
             std::unique_lock<std::mutex>& lock)
     {
         auto lapse = std::chrono::steady_clock::now() - last_period_;
@@ -393,6 +400,8 @@ struct FlowControllerLimitedAsyncPublishMode : public FlowControllerAsyncPublish
             force_wait_ = false;
             group.reset_current_bytes_processed();
         }
+
+        return reset_limit;
     }
 
     bool force_wait() const
@@ -427,12 +436,12 @@ private:
 struct FlowControllerFifoSchedule
 {
     void register_writer(
-            fastrtps::rtps::RTPSWriter*)
+            fastrtps::rtps::RTPSWriter*) const
     {
     }
 
     void unregister_writer(
-            fastrtps::rtps::RTPSWriter*)
+            fastrtps::rtps::RTPSWriter*) const
     {
     }
 
@@ -477,6 +486,15 @@ struct FlowControllerFifoSchedule
     {
         // This function should be called with mutex_  and interested_lock locked, because the queue is changed.
         queue_.add_interested_changes_to_queue();
+    }
+
+    void set_bandwith_limitation(
+            uint32_t) const
+    {
+    }
+
+    void trigger_bandwidth_limit_reset() const
+    {
     }
 
 private:
@@ -574,7 +592,7 @@ struct FlowControllerRoundRobinSchedule
 
         if (0 < writers_queue_.size())
         {
-            auto starting_it = next_writer_; // For avoid loops.
+            auto starting_it = next_writer_;     // For avoid loops.
 
             do
             {
@@ -595,6 +613,15 @@ struct FlowControllerRoundRobinSchedule
         }
     }
 
+    void set_bandwith_limitation(
+            uint32_t) const
+    {
+    }
+
+    void trigger_bandwidth_limit_reset() const
+    {
+    }
+
 private:
 
     std::map<fastrtps::rtps::RTPSWriter*, FlowQueue> writers_queue_;
@@ -610,15 +637,15 @@ struct FlowControllerHighPrioritySchedule
     {
         assert(nullptr != writer);
         int32_t priority = 10;
-        auto push_mode = fastrtps::rtps::PropertyPolicyHelper::find_property(
+        auto property = fastrtps::rtps::PropertyPolicyHelper::find_property(
             writer->getAttributes().properties, "fastdds.sfc.priority");
 
-        if (nullptr != push_mode)
+        if (nullptr != property)
         {
             char* ptr = nullptr;
-            priority = strtol(push_mode->c_str(), &ptr, 10);
+            priority = strtol(property->c_str(), &ptr, 10);
 
-            if (push_mode->c_str() != ptr) // A valid integer was read.
+            if (property->c_str() != ptr)     // A valid integer was read.
             {
                 if (-10 > priority || 10 < priority)
                 {
@@ -707,6 +734,15 @@ struct FlowControllerHighPrioritySchedule
         }
     }
 
+    void set_bandwith_limitation(
+            uint32_t) const
+    {
+    }
+
+    void trigger_bandwidth_limit_reset() const
+    {
+    }
+
 private:
 
     std::map<int32_t, FlowQueue> writers_queue_;
@@ -715,7 +751,217 @@ private:
 };
 
 //! Priority with reservation scheduling
-struct FlowControllerPriorityWithReservation {};
+struct FlowControllerPriorityWithReservationSchedule
+{
+    void register_writer(
+            fastrtps::rtps::RTPSWriter* writer)
+    {
+        assert(nullptr != writer);
+        int32_t priority = 10;
+        auto property = fastrtps::rtps::PropertyPolicyHelper::find_property(
+            writer->getAttributes().properties, "fastdds.sfc.priority");
+
+        if (nullptr != property)
+        {
+            char* ptr = nullptr;
+            priority = strtol(property->c_str(), &ptr, 10);
+
+            if (property->c_str() != ptr)     // A valid integer was read.
+            {
+                if (-10 > priority || 10 < priority)
+                {
+                    logError(RTPS_WRITER,
+                            "Wrong value for fastdds.sfc.priority property. Range is [-10, 10]. Priority set to lowest (10)");
+                }
+            }
+            else
+            {
+                logError(RTPS_WRITER,
+                        "Not numerical value for fastdds.sfc.priority property. Priority set to lowest (10)");
+            }
+        }
+
+        uint32_t reservation = 0;
+        property = fastrtps::rtps::PropertyPolicyHelper::find_property(
+            writer->getAttributes().properties, "fastdds.sfc.bandwidth_reservation");
+
+        if (nullptr != property)
+        {
+            char* ptr = nullptr;
+            reservation = strtoul(property->c_str(), &ptr, 10);
+
+            if (property->c_str() != ptr)     // A valid integer was read.
+            {
+                if (100 < reservation)
+                {
+                    logError(RTPS_WRITER,
+                            "Wrong value for fastdds.sfc.bandwidth_reservation property. Range is [0, 100]. Reservation set to lowest (0)");
+                }
+            }
+            else
+            {
+                logError(RTPS_WRITER,
+                        "Not numerical value for fastdds.sfc.bandwidth_reservation property. Reservation set to lowest (0)");
+            }
+        }
+
+        // Calculate reservation in bytes.
+        uint32_t reservation_bytes = (0 == bandwidth_limit_? 0 :
+                ((bandwidth_limit_ * reservation) / 100));
+
+        std::cout << "Reservation =  " << reservation << std::endl;
+        std::cout << "Reserve bytes = " << reservation_bytes << std::endl;
+
+        auto ret = writers_queue_.emplace(writer, std::make_tuple(FlowQueue(), priority, reservation_bytes, 0u));
+        (void)ret;
+        assert(ret.second);
+
+        auto priority_it = priorities_.find(priority);
+
+        if (priority_it == priorities_.end())
+        {
+            priorities_.insert({priority, {writer}});
+        }
+        else
+        {
+            priority_it->second.push_back(writer);
+        }
+    }
+
+    void unregister_writer(
+            fastrtps::rtps::RTPSWriter* writer)
+    {
+        auto it = writers_queue_.find(writer);
+        assert(it != writers_queue_.end());
+        int32_t priority = std::get<1>(it->second);
+        writers_queue_.erase(it);
+        auto priority_it = priorities_.find(priority);
+        assert(priority_it != priorities_.end());
+        auto writer_it = std::find(priority_it->second.begin(), priority_it->second.end(), writer);
+        assert(writer_it != priority_it->second.end());
+        priority_it->second.erase(writer_it);
+    }
+
+    void work_done()
+    {
+        if (nullptr != writer_being_processed_)
+        {
+            assert(0 != size_being_processed_);
+            auto writer = writers_queue_.find(writer_being_processed_);
+            std::get<3>(writer->second) += size_being_processed_;
+            writer_being_processed_ = nullptr;
+            size_being_processed_ = 0;
+        }
+    }
+
+    void add_new_sample(
+            fastrtps::rtps::RTPSWriter* writer,
+            fastrtps::rtps::CacheChange_t* change)
+    {
+        // Find writer queue..
+        auto it = writers_queue_.find(writer);
+        assert(it != writers_queue_.end());
+        std::get<0>(it->second).add_new_sample(change);
+    }
+
+    void add_old_sample(
+            fastrtps::rtps::RTPSWriter* writer,
+            fastrtps::rtps::CacheChange_t* change)
+    {
+        // Find writer queue..
+        auto it = writers_queue_.find(writer);
+        assert(it != writers_queue_.end());
+        std::get<0>(it->second).add_old_sample(change);
+    }
+
+    fastrtps::rtps::CacheChange_t* get_next_change_nts()
+    {
+        fastrtps::rtps::CacheChange_t* highest_priority = nullptr;
+        fastrtps::rtps::CacheChange_t* ret_change = nullptr;
+
+        if (0 < writers_queue_.size())
+        {
+            for (auto& priority : priorities_)
+            {
+                for (auto writer_it : priority.second)
+                {
+                    auto writer = writers_queue_.find(writer_it);
+                    fastrtps::rtps::CacheChange_t* change = std::get<0>(writer->second).get_next_change();
+
+                    if (nullptr == highest_priority)
+                    {
+                        highest_priority = change;
+                    }
+
+                    if (nullptr != change)
+                    {
+                        // Check if writer's next change can be processed because the writer's bandwidth reservation is
+                        // enough.
+                        uint32_t size_to_check = change->serializedPayload.length;
+                        if (0 != change->getFragmentCount())
+                        {
+                            size_to_check = change->getFragmentSize();
+                        }
+
+                        if (std::get<2>(writer->second) > std::get<3>(writer->second))
+                        {
+                            ret_change = change;
+                            writer_being_processed_ = writer_it;
+                            size_being_processed_ = size_to_check;
+                            break;
+                        }
+                    }
+                }
+
+                if (nullptr != ret_change)
+                {
+                    break;
+                }
+            }
+        }
+
+        return (nullptr != ret_change ? ret_change : highest_priority);
+    }
+
+    void add_interested_changes_to_queue_nts()
+    {
+        // This function should be called with mutex_  and interested_lock locked, because the queue is changed.
+        for (auto& queue : writers_queue_)
+        {
+            std::get<0>(queue.second).add_interested_changes_to_queue();
+        }
+    }
+
+    void set_bandwith_limitation(
+            uint32_t limit)
+    {
+        bandwidth_limit_ = limit;
+    }
+
+    void trigger_bandwidth_limit_reset()
+    {
+        for (auto& writer : writers_queue_)
+        {
+            std::get<3>(writer.second) = 0;
+        }
+    }
+
+private:
+
+    using map_writers = std::map<fastrtps::rtps::RTPSWriter*, std::tuple<FlowQueue, int32_t, uint32_t, uint32_t>>;
+
+    using map_priorities = std::map<int32_t, std::vector<fastrtps::rtps::RTPSWriter*>>;
+
+    map_writers writers_queue_;
+
+    map_priorities priorities_;
+
+    uint32_t bandwidth_limit_ = 0;
+
+    fastrtps::rtps::RTPSWriter* writer_being_processed_ = nullptr;
+
+    uint32_t size_being_processed_ = 0;
+};
 
 template<typename PublishMode, typename SampleScheduling>
 class FlowControllerImpl : public FlowController
@@ -732,6 +978,12 @@ public:
         : participant_(participant)
         , async_mode(participant, descriptor)
     {
+        uint32_t limitation = get_max_payload();
+
+        if (std::numeric_limits<uint32_t>::max() != limitation)
+        {
+            sched.set_bandwith_limitation(limitation);
+        }
     }
 
     virtual ~FlowControllerImpl() noexcept
@@ -1086,12 +1338,16 @@ private:
                         (async_mode.force_wait() || nullptr == (change_to_process = sched.get_next_change_nts())))
                 {
                     lock.unlock();
-                    async_mode.wait(in_lock);
+                    bool ret = async_mode.wait(in_lock);
 
                     in_lock.unlock();
                     lock.lock();
                     in_lock.lock();
 
+                    if (ret)
+                    {
+                        sched.trigger_bandwidth_limit_reset();
+                    }
                     sched.add_interested_changes_to_queue_nts();
                 }
             }
@@ -1196,6 +1452,7 @@ private:
 
     scheduler sched;
 
+    // async_mode must be destroyed before sched.
     publish_mode async_mode;
 };
 
