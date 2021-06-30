@@ -157,7 +157,7 @@ public:
      */
     bool send(
             CDRMessage_t* message,
-            const RTPSWriter::LocatorSelector& locator_selector,
+            const LocatorSelectorSender& locator_selector,
             std::chrono::steady_clock::time_point& max_blocking_time_point) const override;
 
     /**
@@ -180,18 +180,18 @@ public:
      * @return Return code.
      * @note Non-thread safe.
      */
-    RTPSWriter::DeliveryRetCode deliver_sample_nts(
+    DeliveryRetCode deliver_sample_nts(
             CacheChange_t* cache_change,
             RTPSMessageGroup& group,
-            RTPSWriter::LocatorSelector& locator_selector,
+            LocatorSelectorSender& locator_selector,
             const std::chrono::time_point<std::chrono::steady_clock>& max_blocking_time) override;
 
-    RTPSWriter::LocatorSelector& get_general_locator_selector() override
+    LocatorSelectorSender& get_general_locator_selector() override
     {
         return locator_selector_;
     }
 
-    RTPSWriter::LocatorSelector& get_async_locator_selector() override
+    LocatorSelectorSender& get_async_locator_selector() override
     {
         return locator_selector_;
     }
@@ -232,7 +232,7 @@ private:
     ResourceLimitedVector<std::unique_ptr<ReaderLocator>> matched_datasharing_readers_;
     ResourceLimitedVector<std::unique_ptr<ReaderLocator>> matched_readers_pool_;
 
-    RTPSWriter::LocatorSelector locator_selector_;
+    LocatorSelectorSender locator_selector_;
 };
 
 }        /* namespace rtps */

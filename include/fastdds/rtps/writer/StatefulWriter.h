@@ -391,18 +391,18 @@ public:
      * @return Return code.
      * @note Must be non-thread safe.
      */
-    RTPSWriter::DeliveryRetCode deliver_sample_nts(
+    DeliveryRetCode deliver_sample_nts(
             CacheChange_t* cache_change,
             RTPSMessageGroup& group,
-            RTPSWriter::LocatorSelector& locator_selector,
+            LocatorSelectorSender& locator_selector,
             const std::chrono::time_point<std::chrono::steady_clock>& max_blocking_time) override;
 
-    RTPSWriter::LocatorSelector& get_general_locator_selector() override
+    LocatorSelectorSender& get_general_locator_selector() override
     {
         return locator_selector_general_;
     }
 
-    RTPSWriter::LocatorSelector& get_async_locator_selector() override
+    LocatorSelectorSender& get_async_locator_selector() override
     {
         return locator_selector_async_;
     }
@@ -413,13 +413,13 @@ private:
             const SequenceNumber_t seq) const;
 
     void update_reader_info(
-            RTPSWriter::LocatorSelector& locator_selector,
+            LocatorSelectorSender& locator_selector,
             bool create_sender_resources);
 
     void send_heartbeat_piggyback_nts_(
             ReaderProxy* reader,
             RTPSMessageGroup& message_group,
-            RTPSWriter::LocatorSelector& locator_selector,
+            LocatorSelectorSender& locator_selector,
             uint32_t& last_bytes_processed);
 
     void send_heartbeat_nts_(
@@ -448,7 +448,7 @@ private:
     DeliveryRetCode deliver_sample_to_network(
             CacheChange_t* change,
             RTPSMessageGroup& group,
-            RTPSWriter::LocatorSelector& locator_selector,
+            LocatorSelectorSender& locator_selector,
             const std::chrono::time_point<std::chrono::steady_clock>& max_blocking_time);
 
     void prepare_datasharing_delivery(
@@ -483,9 +483,9 @@ private:
     ResourceLimitedVector<ReaderProxy*> matched_datasharing_readers_;
     bool there_are_datasharing_readers_ = false;
 
-    RTPSWriter::LocatorSelector locator_selector_general_;
+    LocatorSelectorSender locator_selector_general_;
 
-    RTPSWriter::LocatorSelector locator_selector_async_;
+    LocatorSelectorSender locator_selector_async_;
 };
 
 } /* namespace rtps */

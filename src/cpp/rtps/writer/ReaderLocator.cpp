@@ -22,7 +22,6 @@
 #include <fastdds/rtps/common/CacheChange.h>
 #include <fastdds/rtps/common/LocatorListComparisons.hpp>
 #include <fastdds/rtps/reader/RTPSReader.h>
-#include <fastdds/rtps/resources/AsyncWriterThread.h>
 
 #include <rtps/participant/RTPSParticipantImpl.h>
 #include <rtps/DataSharing/DataSharingListener.hpp>

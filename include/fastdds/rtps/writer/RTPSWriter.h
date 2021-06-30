@@ -28,12 +28,11 @@
 #include <fastdds/rtps/Endpoint.h>
 #include <fastdds/rtps/attributes/HistoryAttributes.h>
 #include <fastdds/rtps/attributes/WriterAttributes.h>
-#include <fastdds/rtps/common/LocatorSelector.hpp>
 #include <fastdds/rtps/messages/RTPSMessageGroup.h>
-#include <fastdds/rtps/messages/RTPSMessageSenderInterface.hpp>
 #include <fastdds/rtps/flowcontrol/FlowController.hpp>
+#include "DeliveryRetCode.hpp"
+#include "LocatorSelectorSender.hpp"
 #include <fastrtps/qos/LivelinessLostStatus.h>
-#include <fastrtps/utils/collections/ResourceLimitedVector.hpp>
 
 #include <fastdds/statistics/rtps/StatisticsCommon.hpp>
 
@@ -58,67 +57,6 @@ class RTPSWriter
     friend class WriterHistory;
     friend class RTPSParticipantImpl;
     friend class RTPSMessageGroup;
-    friend class AsyncInterestTree;
-
-public:
-
-    enum class DeliveryRetCode : uint32_t
-    {
-        DELIVERED,
-        NOT_DELIVERED,
-        EXCEEDED_LIMIT
-    };
-
-    class LocatorSelector : public RTPSMessageSenderInterface
-    {
-    public:
-
-        LocatorSelector(
-                RTPSWriter& writer,
-                ResourceLimitedContainerConfig matched_readers_allocation
-                )
-            : writer(writer)
-            , locator_selector(matched_readers_allocation)
-            , all_remote_readers(matched_readers_allocation)
-            , all_remote_participants(matched_readers_allocation)
-        {
-        }
-
-        bool destinations_have_changed() const override
-        {
-            return false;
-        }
-
-        GuidPrefix_t destination_guid_prefix() const override
-        {
-            return all_remote_participants.size() == 1 ? all_remote_participants.at(0) : c_GuidPrefix_Unknown;
-        }
-
-        const std::vector<GuidPrefix_t>& remote_participants() const override
-        {
-            return all_remote_participants;
-        }
-
-        const std::vector<GUID_t>& remote_guids() const override
-        {
-            return all_remote_readers;
-        }
-
-        bool send(
-                CDRMessage_t* message,
-                std::chrono::steady_clock::time_point max_blocking_time_point) const override
-        {
-            return writer.send(message, *this, max_blocking_time_point);
-        }
-
-        RTPSWriter& writer;
-
-        fastrtps::rtps::LocatorSelector locator_selector;
-
-        ResourceLimitedVector<GUID_t> all_remote_readers;
-
-        ResourceLimitedVector<GuidPrefix_t> all_remote_participants;
-    };
 
 protected:
 
@@ -465,12 +403,12 @@ public:
     virtual DeliveryRetCode deliver_sample_nts(
             CacheChange_t* cache_change,
             RTPSMessageGroup& group,
-            RTPSWriter::LocatorSelector& locator_selector,
+            LocatorSelectorSender& locator_selector,
             const std::chrono::time_point<std::chrono::steady_clock>& max_blocking_time) = 0;
 
-    virtual RTPSWriter::LocatorSelector& get_general_locator_selector() = 0;
+    virtual LocatorSelectorSender& get_general_locator_selector() = 0;
 
-    virtual RTPSWriter::LocatorSelector& get_async_locator_selector() = 0;
+    virtual LocatorSelectorSender& get_async_locator_selector() = 0;
 
     /**
      * Send a message through this interface.
@@ -480,7 +418,7 @@ public:
      */
     virtual bool send(
             CDRMessage_t* message,
-            const RTPSWriter::LocatorSelector& locator_selector,
+            const LocatorSelectorSender& locator_selector,
             std::chrono::steady_clock::time_point& max_blocking_time_point) const;
 
 protected:
@@ -508,14 +446,14 @@ protected:
     Duration_t liveliness_announcement_period_;
 
     void add_guid(
-            RTPSWriter::LocatorSelector& locator_selector,
+            LocatorSelectorSender& locator_selector,
             const GUID_t& remote_guid);
 
     void compute_selected_guids(
-            RTPSWriter::LocatorSelector& locator_selector);
+            LocatorSelectorSender& locator_selector);
 
     void update_cached_info_nts(
-            RTPSWriter::LocatorSelector& locator_selector);
+            LocatorSelectorSender& locator_selector);
 
     /**
      * Add a change to the unsent list.

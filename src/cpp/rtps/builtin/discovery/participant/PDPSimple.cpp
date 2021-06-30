@@ -30,7 +30,6 @@
 
 #include <fastdds/rtps/participant/RTPSParticipantListener.h>
 #include <fastdds/rtps/writer/StatelessWriter.h>
-#include <fastdds/rtps/resources/AsyncWriterThread.h>
 
 #include <fastdds/rtps/reader/StatelessReader.h>
 #include <fastdds/rtps/reader/StatefulReader.h>

@@ -49,6 +49,7 @@ set(${PROJECT_NAME}_source_files
     rtps/writer/ReaderProxy.cpp
     rtps/writer/StatelessWriter.cpp
     rtps/writer/ReaderLocator.cpp
+    rtps/writer/LocatorSelectorSender.cpp
     rtps/history/CacheChangePool.cpp
     rtps/history/History.cpp
     rtps/history/WriterHistory.cpp

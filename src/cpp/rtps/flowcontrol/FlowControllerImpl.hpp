@@ -290,7 +290,7 @@ struct FlowControllerAsyncPublishMode
     }
 
     void process_deliver_retcode(
-            const fastrtps::rtps::RTPSWriter::DeliveryRetCode&)
+            const fastrtps::rtps::DeliveryRetCode&)
     {
     }
 
@@ -410,9 +410,9 @@ struct FlowControllerLimitedAsyncPublishMode : public FlowControllerAsyncPublish
     }
 
     void process_deliver_retcode(
-            const fastrtps::rtps::RTPSWriter::DeliveryRetCode& ret_value)
+            const fastrtps::rtps::DeliveryRetCode& ret_value)
     {
-        if (fastrtps::rtps::RTPSWriter::DeliveryRetCode::EXCEEDED_LIMIT == ret_value)
+        if (fastrtps::rtps::DeliveryRetCode::EXCEEDED_LIMIT == ret_value)
         {
             force_wait_ = true;
         }
@@ -1189,9 +1189,9 @@ private:
             const std::chrono::time_point<std::chrono::steady_clock>& max_blocking_time)
     {
         // This call should be made with writer's mutex locked.
-        fastrtps::rtps::RTPSWriter::LocatorSelector& locator_selector = writer->get_general_locator_selector();
+        fastrtps::rtps::LocatorSelectorSender& locator_selector = writer->get_general_locator_selector();
         fastrtps::rtps::RTPSMessageGroup group(participant_, writer, &locator_selector);
-        if (fastrtps::rtps::RTPSWriter::DeliveryRetCode::DELIVERED !=
+        if (fastrtps::rtps::DeliveryRetCode::DELIVERED !=
                 writer->deliver_sample_nts(change, group, locator_selector, max_blocking_time))
         {
             return enqueue_new_sample_impl(writer, change, max_blocking_time);
@@ -1371,7 +1371,7 @@ private:
                     break;
                 }
 
-                fastrtps::rtps::RTPSWriter::LocatorSelector& locator_selector =
+                fastrtps::rtps::LocatorSelectorSender& locator_selector =
                         current_writer->get_async_locator_selector();
                 async_mode.group.change_transmitter(current_writer, &locator_selector);
 
@@ -1384,11 +1384,11 @@ private:
                 change_to_process->writer_info.previous = nullptr;
                 change_to_process->writer_info.next = nullptr;
 
-                fastrtps::rtps::RTPSWriter::DeliveryRetCode ret_delivery = current_writer->deliver_sample_nts(
+                fastrtps::rtps::DeliveryRetCode ret_delivery = current_writer->deliver_sample_nts(
                     change_to_process, async_mode.group, locator_selector,
                     std::chrono::steady_clock::now() + std::chrono::hours(24));
 
-                if (fastrtps::rtps::RTPSWriter::DeliveryRetCode::DELIVERED != ret_delivery)
+                if (fastrtps::rtps::DeliveryRetCode::DELIVERED != ret_delivery)
                 {
                     // If delivery fails, put the change again in the queue.
                     previous->writer_info.next = change_to_process;

@@ -340,7 +340,7 @@ uint32_t RTPSWriter::calculateMaxDataSize(
 }
 
 void RTPSWriter::add_guid(
-        RTPSWriter::LocatorSelector& locator_selector,
+        LocatorSelectorSender& locator_selector,
         const GUID_t& remote_guid)
 {
     const GuidPrefix_t& prefix = remote_guid.guidPrefix;
@@ -354,7 +354,7 @@ void RTPSWriter::add_guid(
 }
 
 void RTPSWriter::compute_selected_guids(
-        RTPSWriter::LocatorSelector& locator_selector)
+        LocatorSelectorSender& locator_selector)
 {
     locator_selector.all_remote_readers.clear();
     locator_selector.all_remote_participants.clear();
@@ -369,7 +369,7 @@ void RTPSWriter::compute_selected_guids(
 }
 
 void RTPSWriter::update_cached_info_nts(
-        RTPSWriter::LocatorSelector& locator_selector)
+        LocatorSelectorSender& locator_selector)
 {
     locator_selector.locator_selector.reset(true);
     mp_RTPSParticipant->network_factory().select_locators(locator_selector.locator_selector);
@@ -429,7 +429,7 @@ bool RTPSWriter::is_pool_initialized() const
 
 bool RTPSWriter::send(
         CDRMessage_t* message,
-        const RTPSWriter::LocatorSelector& locator_selector,
+        const LocatorSelectorSender& locator_selector,
         std::chrono::steady_clock::time_point& max_blocking_time_point) const
 {
     std::unique_lock<RecursiveTimedMutex> lock(mp_mutex);

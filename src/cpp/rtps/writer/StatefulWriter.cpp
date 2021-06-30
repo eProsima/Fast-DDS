@@ -687,19 +687,19 @@ void StatefulWriter::deliver_sample_to_datasharing(
     }
 }
 
-RTPSWriter::DeliveryRetCode StatefulWriter::deliver_sample_to_network(
+DeliveryRetCode StatefulWriter::deliver_sample_to_network(
         CacheChange_t* change,
         RTPSMessageGroup& group,
-        RTPSWriter::LocatorSelector& locator_selector,
+        LocatorSelectorSender& locator_selector,
         const std::chrono::time_point<std::chrono::steady_clock>& max_blocking_time)
 {
     NetworkFactory& network = mp_RTPSParticipant->network_factory();
-    RTPSWriter::DeliveryRetCode ret_code = RTPSWriter::DeliveryRetCode::DELIVERED;
+    DeliveryRetCode ret_code = DeliveryRetCode::DELIVERED;
     uint32_t n_fragments = change->getFragmentCount();
     FragmentNumber_t min_unsent_fragment = 0;
     bool need_reactivate_periodic_heartbeat = false;
 
-    while (RTPSWriter::DeliveryRetCode::DELIVERED == ret_code &&
+    while (DeliveryRetCode::DELIVERED == ret_code &&
             min_unsent_fragment != n_fragments + 1)
     {
         locator_selector.locator_selector.reset(false);
@@ -797,7 +797,7 @@ RTPSWriter::DeliveryRetCode StatefulWriter::deliver_sample_to_network(
                                 }
                                 else
                                 {
-                                    ret_code = RTPSWriter::DeliveryRetCode::NOT_DELIVERED;
+                                    ret_code = DeliveryRetCode::NOT_DELIVERED;
                                 }
                             }
                         }
@@ -828,7 +828,7 @@ RTPSWriter::DeliveryRetCode StatefulWriter::deliver_sample_to_network(
                             }
                             else
                             {
-                                ret_code = RTPSWriter::DeliveryRetCode::NOT_DELIVERED;
+                                ret_code = DeliveryRetCode::NOT_DELIVERED;
                             }
                         }
 
@@ -875,7 +875,7 @@ RTPSWriter::DeliveryRetCode StatefulWriter::deliver_sample_to_network(
                                     }
                                     else
                                     {
-                                        ret_code = RTPSWriter::DeliveryRetCode::NOT_DELIVERED;
+                                        ret_code = DeliveryRetCode::NOT_DELIVERED;
                                     }
                                 }
                             }
@@ -899,7 +899,7 @@ RTPSWriter::DeliveryRetCode StatefulWriter::deliver_sample_to_network(
                                 else
                                 {
                                     logError(RTPS_WRITER, "Error sending change " << change->sequenceNumber);
-                                    ret_code = RTPSWriter::DeliveryRetCode::NOT_DELIVERED;
+                                    ret_code = DeliveryRetCode::NOT_DELIVERED;
                                 }
                             }
 
@@ -915,11 +915,11 @@ RTPSWriter::DeliveryRetCode StatefulWriter::deliver_sample_to_network(
         catch (const RTPSMessageGroup::timeout&)
         {
             logError(RTPS_WRITER, "Max blocking time reached");
-            ret_code = RTPSWriter::DeliveryRetCode::NOT_DELIVERED;
+            ret_code = DeliveryRetCode::NOT_DELIVERED;
         }
         catch (const RTPSMessageGroup::limit_exceeded&)
         {
-            ret_code = RTPSWriter::DeliveryRetCode::EXCEEDED_LIMIT;
+            ret_code = DeliveryRetCode::EXCEEDED_LIMIT;
         }
 
         if (disable_positive_acks_ && last_sequence_number_ == SequenceNumber_t())
@@ -948,7 +948,7 @@ RTPSWriter::DeliveryRetCode StatefulWriter::deliver_sample_to_network(
  * MATCHED_READER-RELATED METHODS
  */
 void StatefulWriter::update_reader_info(
-        RTPSWriter::LocatorSelector& locator_selector,
+        LocatorSelectorSender& locator_selector,
         bool create_sender_resources)
 {
     update_cached_info_nts(locator_selector);
@@ -1722,7 +1722,7 @@ void StatefulWriter::send_heartbeat_nts_(
 void StatefulWriter::send_heartbeat_piggyback_nts_(
         ReaderProxy* reader,
         RTPSMessageGroup& message_group,
-        RTPSWriter::LocatorSelector& locator_selector,
+        LocatorSelectorSender& locator_selector,
         uint32_t& last_bytes_processed)
 {
     if (!disable_heartbeat_piggyback_)
@@ -1992,13 +1992,13 @@ const fastdds::rtps::IReaderDataFilter* StatefulWriter::reader_data_filter() con
     return reader_data_filter_;
 }
 
-RTPSWriter::DeliveryRetCode StatefulWriter::deliver_sample_nts(
+DeliveryRetCode StatefulWriter::deliver_sample_nts(
         CacheChange_t* cache_change,
         RTPSMessageGroup& group,
-        RTPSWriter::LocatorSelector& locator_selector,
+        LocatorSelectorSender& locator_selector,
         const std::chrono::time_point<std::chrono::steady_clock>& max_blocking_time)
 {
-    RTPSWriter::DeliveryRetCode ret_code = RTPSWriter::DeliveryRetCode::DELIVERED;
+    DeliveryRetCode ret_code = DeliveryRetCode::DELIVERED;
 
     if (there_are_local_readers_)
     {
