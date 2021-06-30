@@ -315,6 +315,7 @@ public:
 
     void init()
     {
+        ASSERT_FALSE(initialized_);
         matched_ = 0;
 
         if (!xml_file_.empty())
@@ -358,6 +359,7 @@ public:
             // Create publisher
             createPublisher();
         }
+
         return;
     }
 

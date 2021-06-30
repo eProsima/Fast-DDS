@@ -809,9 +809,6 @@ struct FlowControllerPriorityWithReservationSchedule
         uint32_t reservation_bytes = (0 == bandwidth_limit_? 0 :
                 ((bandwidth_limit_ * reservation) / 100));
 
-        std::cout << "Reservation =  " << reservation << std::endl;
-        std::cout << "Reserve bytes = " << reservation_bytes << std::endl;
-
         auto ret = writers_queue_.emplace(writer, std::make_tuple(FlowQueue(), priority, reservation_bytes, 0u));
         (void)ret;
         assert(ret.second);

@@ -16,6 +16,7 @@
 
 #include "PubSubReader.hpp"
 #include "PubSubWriter.hpp"
+#include "PubSubWriterReader.hpp"
 #include <fastrtps/xmlparser/XMLProfileManager.h>
 
 #include <gtest/gtest.h>
@@ -154,6 +155,77 @@ TEST_P(PubSubFlowControllers, FlowControllerIfNotAsync)
     uint32_t periodInMs = 1000;
     writer.add_throughput_controller_descriptor_to_pparams(scheduler_policy_, size, periodInMs).init();
     ASSERT_FALSE(writer.isInitialized());
+}
+
+TEST_P(PubSubFlowControllers, AsyncMultipleWritersFlowController64kb)
+{
+    PubSubWriterReader<Data64kbType> entities(TEST_TOPIC_NAME);
+
+    // Readers configuration
+    entities.sub_history_depth(3).
+            sub_durability_kind(eprosima::fastrtps::TRANSIENT_LOCAL_DURABILITY_QOS).
+            sub_reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS);
+
+    // Writers configuration.
+    uint32_t bytesPerPeriod = 68000;
+    uint32_t periodInMs = 500;
+    entities.add_throughput_controller_descriptor_to_pparams(scheduler_policy_, bytesPerPeriod, periodInMs).
+            pub_history_depth(3).
+            pub_durability_kind(eprosima::fastrtps::TRANSIENT_LOCAL_DURABILITY_QOS).
+            pub_reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).
+            asynchronously(eprosima::fastrtps::ASYNCHRONOUS_PUBLISH_MODE);
+
+    // Creation.
+    entities.init();
+
+    ASSERT_TRUE(entities.isInitialized());
+
+    // Create second writer.
+    eprosima::fastrtps::rtps::PropertySeq writers2_properties;
+    eprosima::fastrtps::rtps::Property priority;
+    priority.name("fastdds.sfc.priority");
+    priority.value("-1");
+    writers2_properties.push_back(priority);
+    eprosima::fastrtps::rtps::Property bandwidth_limit;
+    bandwidth_limit.name("fastdds.sfc.bandwidth_reservation");
+    bandwidth_limit.value("10");
+    writers2_properties.push_back(bandwidth_limit);
+    ASSERT_TRUE(entities.create_additional_topics(1, "/", writers2_properties));
+
+    eprosima::fastrtps::rtps::PropertySeq writers3_properties;
+    priority.name("fastdds.sfc.priority");
+    priority.value("1");
+    writers3_properties.push_back(priority);
+    bandwidth_limit.name("fastdds.sfc.bandwidth_reservation");
+    bandwidth_limit.value("15");
+    writers3_properties.push_back(bandwidth_limit);
+    ASSERT_TRUE(entities.create_additional_topics(1, "/", writers3_properties));
+
+    eprosima::fastrtps::rtps::PropertySeq writers4_properties;
+    priority.name("fastdds.sfc.priority");
+    priority.value("4");
+    writers4_properties.push_back(priority);
+    bandwidth_limit.name("fastdds.sfc.bandwidth_reservation");
+    bandwidth_limit.value("20");
+    writers4_properties.push_back(bandwidth_limit);
+    ASSERT_TRUE(entities.create_additional_topics(1, "/", writers4_properties));
+
+    // Because its volatile the durability
+    // Wait for discovery.
+    entities.wait_discovery();
+
+    auto data = default_data64kb_data_generator(3);
+
+    entities.startReception(data);
+
+    // Send data
+    entities.send(data);
+
+    // In this test all data should be sent.
+    ASSERT_TRUE(data.empty());
+
+    // Block reader until reception finished or timeout.
+    entities.block_for_all();
 }
 
 #ifdef INSTANTIATE_TEST_SUITE_P
