@@ -1132,7 +1132,7 @@ TEST_P(PubSubHistory, WriterUnmatchClearsHistory)
     // Create another writer and send more data
     // Reader should be able to get the new data
     writer2.history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS).mem_policy(mem_policy_).init();
-    ASSERT_TRUE(writer.isInitialized());
+    ASSERT_TRUE(writer2.isInitialized());
     writer2.wait_discovery();
     reader.wait_discovery();
 
