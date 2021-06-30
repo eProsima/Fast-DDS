@@ -158,6 +158,7 @@ set(${PROJECT_NAME}_source_files
     dynamic-types/DynamicDataHelper.cpp
 
     fastrtps_deprecated/attributes/TopicAttributes.cpp
+    fastdds/core/Entity.cpp
     fastdds/core/condition/Condition.cpp
     fastdds/core/condition/ConditionNotifier.cpp
     fastdds/core/condition/GuardCondition.cpp
