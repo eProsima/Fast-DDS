@@ -250,11 +250,7 @@ ReturnCode_t DataWriter::get_offered_incompatible_qos_status(
 ReturnCode_t DataWriter::get_publication_matched_status(
         PublicationMatchedStatus& status) const
 {
-    static_cast<void> (status);
-    return ReturnCode_t::RETCODE_UNSUPPORTED;
-    /*
-       return impl_->get_publication_matched_status(status);
-     */
+    return impl_->get_publication_matched_status(status);
 }
 
 ReturnCode_t DataWriter::get_liveliness_lost_status(

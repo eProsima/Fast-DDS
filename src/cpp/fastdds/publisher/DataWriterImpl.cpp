@@ -951,11 +951,7 @@ void DataWriterImpl::InnerDataWriterListener::onWriterMatched(
         RTPSWriter* /*writer*/,
         const PublicationMatchedStatus& info)
 {
-    DataWriterListener* listener = data_writer_->get_listener_for(StatusMask::publication_matched());
-    if (listener != nullptr)
-    {
-        listener->on_publication_matched(data_writer_->user_datawriter_, info);
-    }
+    data_writer_->update_publication_matched_status(info);
 }
 
 void DataWriterImpl::InnerDataWriterListener::on_offered_incompatible_qos(
@@ -1019,6 +1015,50 @@ ReturnCode_t DataWriterImpl::wait_for_acknowledgments(
         return ReturnCode_t::RETCODE_OK;
     }
     return ReturnCode_t::RETCODE_ERROR;
+}
+
+void DataWriterImpl::update_publication_matched_status(
+        const PublicationMatchedStatus& status)
+{
+    auto count_change = status.current_count_change;
+    publication_matched_status_.current_count += count_change;
+    publication_matched_status_.current_count_change += count_change;
+    if (count_change > 0)
+    {
+        publication_matched_status_.total_count += count_change;
+        publication_matched_status_.total_count_change += count_change;
+        publication_matched_status_.last_subscription_handle = status.last_subscription_handle;
+    }
+
+    StatusMask notify_status = StatusMask::publication_matched();
+    DataWriterListener* listener = get_listener_for(notify_status);
+    if (listener != nullptr)
+    {
+        listener->on_publication_matched(user_datawriter_, publication_matched_status_);
+        publication_matched_status_.current_count_change = 0;
+        publication_matched_status_.total_count_change = 0;
+    }
+    user_datawriter_->get_statuscondition().get_impl()->set_status(notify_status, true);
+}
+
+ReturnCode_t DataWriterImpl::get_publication_matched_status(
+        PublicationMatchedStatus& status)
+{
+    if (writer_ == nullptr)
+    {
+        return ReturnCode_t::RETCODE_NOT_ENABLED;
+    }
+
+    {
+        std::unique_lock<RecursiveTimedMutex> lock(writer_->getMutex());
+
+        status = publication_matched_status_;
+        publication_matched_status_.current_count_change = 0;
+        publication_matched_status_.total_count_change = 0;
+    }
+
+    user_datawriter_->get_statuscondition().get_impl()->set_status(StatusMask::publication_matched(), false);
+    return ReturnCode_t::RETCODE_OK;
 }
 
 bool DataWriterImpl::deadline_timer_reschedule()
