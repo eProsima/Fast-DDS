@@ -218,6 +218,9 @@ public:
      */
     const TopicDescription* get_topicdescription() const;
 
+    ReturnCode_t get_subscription_matched_status(
+            SubscriptionMatchedStatus& status);
+
     ReturnCode_t get_requested_deadline_missed_status(
             fastrtps::RequestedDeadlineMissedStatus& status);
 
@@ -373,6 +376,9 @@ protected:
     //! The current timer owner, i.e. the instance which started the deadline timer
     fastrtps::rtps::InstanceHandle_t timer_owner_;
 
+    //! Subscription matched status
+    SubscriptionMatchedStatus subscription_matched_status_;
+
     //! Liveliness changed status
     LivelinessChangedStatus liveliness_changed_status_;
 
@@ -425,6 +431,9 @@ protected:
 
     void set_read_communication_status(
             bool trigger_value);
+
+    void update_subscription_matched_status(
+            const SubscriptionMatchedStatus& status);
 
     /**
      * @brief A method called when a new cache change is added

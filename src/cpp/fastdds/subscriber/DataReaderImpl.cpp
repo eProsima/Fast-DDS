@@ -817,11 +817,7 @@ void DataReaderImpl::InnerDataReaderListener::onReaderMatched(
         RTPSReader* /*reader*/,
         const SubscriptionMatchedStatus& info)
 {
-    DataReaderListener* listener = data_reader_->get_listener_for(StatusMask::subscription_matched());
-    if (listener != nullptr)
-    {
-        listener->on_subscription_matched(data_reader_->user_datareader_, info);
-    }
+    data_reader_->update_subscription_matched_status(info);
 }
 
 void DataReaderImpl::InnerDataReaderListener::on_liveliness_changed(
@@ -924,6 +920,50 @@ bool DataReaderImpl::on_new_cache_change_added(
     lifespan_timer_->update_interval_millisec(interval.count() * 1e-6);
     lifespan_timer_->restart_timer();
     return true;
+}
+
+void DataReaderImpl::update_subscription_matched_status(
+        const SubscriptionMatchedStatus& status)
+{
+    auto count_change = status.current_count_change;
+    subscription_matched_status_.current_count += count_change;
+    subscription_matched_status_.current_count_change += count_change;
+    if (count_change > 0)
+    {
+        subscription_matched_status_.total_count += count_change;
+        subscription_matched_status_.total_count_change += count_change;
+        subscription_matched_status_.last_publication_handle = status.last_publication_handle;
+    }
+
+    StatusMask notify_status = StatusMask::subscription_matched();
+    DataReaderListener* listener = get_listener_for(notify_status);
+    if (listener != nullptr)
+    {
+        listener->on_subscription_matched(user_datareader_, subscription_matched_status_);
+        subscription_matched_status_.current_count_change = 0;
+        subscription_matched_status_.total_count_change = 0;
+    }
+    user_datareader_->get_statuscondition().get_impl()->set_status(notify_status, true);
+}
+
+ReturnCode_t DataReaderImpl::get_subscription_matched_status(
+        SubscriptionMatchedStatus& status)
+{
+    if (reader_ == nullptr)
+    {
+        return ReturnCode_t::RETCODE_NOT_ENABLED;
+    }
+
+    {
+        std::unique_lock<RecursiveTimedMutex> lock(reader_->getMutex());
+
+        status = subscription_matched_status_;
+        subscription_matched_status_.current_count_change = 0;
+        subscription_matched_status_.total_count_change = 0;
+    }
+
+    user_datareader_->get_statuscondition().get_impl()->set_status(StatusMask::subscription_matched(), false);
+    return ReturnCode_t::RETCODE_OK;
 }
 
 bool DataReaderImpl::deadline_timer_reschedule()
