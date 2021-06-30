@@ -506,7 +506,7 @@ void SecurityManager::destroy()
 
         mutex_.unlock();
 
-        auths_to_remove.clear();
+        auths_to_remove.clear(); // AuthUniquePtr must be destroyed without SecurityManager's mutex locked.
 
         delete_entities();
 
@@ -574,7 +574,7 @@ bool SecurityManager::restore_discovered_participant_info(
         // This is to avoid a deadlock with TimedEvents.
         DiscoveredParticipantInfo::AuthUniquePtr remote_participant_info = std::move(auth_ptr);
         remove_discovered_participant_info(remote_participant_info);
-        lock.unlock();
+        lock.unlock(); // AuthUniquePtr must be destroyed without SecurityManager's mutex locked.
     }
 
     return returned_value;
@@ -754,7 +754,7 @@ void SecurityManager::remove_participant(
         remove_discovered_participant_info(remote_participant_info);
 
         discovered_participants_.erase(dp_it);
-        lock.unlock();
+        lock.unlock(); // AuthUniquePtr must be destroyed without SecurityManager's mutex locked.
     }
 }
 
