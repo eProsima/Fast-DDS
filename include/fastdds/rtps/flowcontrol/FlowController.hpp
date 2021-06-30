@@ -86,12 +86,6 @@ public:
             fastrtps::rtps::CacheChange_t* change) = 0;
 
     virtual uint32_t get_max_payload() = 0;
-
-    bool try_lock(
-            fastrtps::rtps::RTPSWriter* writer);
-
-    void unlock(
-            fastrtps::rtps::RTPSWriter* writer);
 };
 
 } // namespace rtps

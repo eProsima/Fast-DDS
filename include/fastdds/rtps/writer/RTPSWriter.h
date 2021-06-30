@@ -527,6 +527,11 @@ protected:
 
 private:
 
+    RecursiveTimedMutex& get_mutex()
+    {
+        return mp_mutex;
+    }
+
     RTPSWriter& operator =(
             const RTPSWriter&) = delete;
 
@@ -537,12 +542,6 @@ private:
 
 
     RTPSWriter* next_[2] = { nullptr, nullptr };
-
-    friend bool fastdds::rtps::FlowController::try_lock(
-            RTPSWriter* writer);
-
-    friend void fastdds::rtps::FlowController::unlock(
-            RTPSWriter* writer);
 };
 
 } /* namespace rtps */

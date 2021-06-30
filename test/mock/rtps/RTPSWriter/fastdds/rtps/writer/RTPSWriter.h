@@ -24,6 +24,8 @@
 #include <fastrtps/rtps/Endpoint.h>
 #include <fastrtps/rtps/common/CacheChange.h>
 #include <fastdds/rtps/messages/RTPSMessageGroup.h>
+#include <fastdds/rtps/writer/DeliveryRetCode.hpp>
+#include <fastdds/rtps/writer/LocatorSelectorSender.hpp>
 
 #include <condition_variable>
 #include <gmock/gmock.h>
@@ -111,6 +113,18 @@ public:
     MOCK_CONST_METHOD0(get_liveliness_kind, const LivelinessQosPolicyKind& ());
 
     MOCK_CONST_METHOD0(get_liveliness_lease_duration, const Duration_t& ());
+
+    MOCK_METHOD4(deliver_sample_nts, DeliveryRetCode(
+            CacheChange_t*,
+            RTPSMessageGroup&,
+            LocatorSelectorSender&,
+            const std::chrono::time_point<std::chrono::steady_clock>&));
+
+    MOCK_METHOD3(send, bool(
+            CDRMessage_t*,
+            const LocatorSelectorSender&,
+            std::chrono::steady_clock::time_point&));
+
     // *INDENT-ON*
 
     virtual void updateAttributes(
@@ -189,6 +203,16 @@ public:
         return writer_guid == m_guid;
     }
 
+    LocatorSelectorSender& get_general_locator_selector()
+    {
+        return general_locator_selector_;
+    }
+
+    LocatorSelectorSender& get_async_locator_selector()
+    {
+        return async_locator_selector_;
+    }
+
     WriterHistory* history_;
 
     WriterListener* listener_;
@@ -196,6 +220,10 @@ public:
     const GUID_t m_guid;
 
     LivelinessLostStatus liveliness_lost_status_;
+
+    LocatorSelectorSender general_locator_selector_ = LocatorSelectorSender(*this, ResourceLimitedContainerConfig());
+
+    LocatorSelectorSender async_locator_selector_ = LocatorSelectorSender(*this, ResourceLimitedContainerConfig());
 
 };
 

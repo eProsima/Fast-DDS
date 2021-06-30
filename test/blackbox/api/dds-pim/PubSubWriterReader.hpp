@@ -526,6 +526,8 @@ public:
                         participant_), ReturnCode_t::RETCODE_OK);
             participant_ = nullptr;
         }
+
+        initialized_ = false;
     }
 
     void send(

@@ -20,20 +20,14 @@
 #define _RTPS_PARTICIPANT_RTPSPARTICIPANTIMPL_H_
 
 // Include first possible mocks (depending on include on CMakeLists.txt)
-#include <fastrtps/rtps/builtin/data/ParticipantProxyData.h>
-#include <fastrtps/rtps/builtin/data/WriterProxyData.h>
-#include <fastrtps/rtps/builtin/data/ReaderProxyData.h>
-
 #include <fastrtps/rtps/attributes/RTPSParticipantAttributes.h>
-#include <fastrtps/rtps/attributes/ReaderAttributes.h>
+#include <fastrtps/rtps/participant/RTPSParticipantListener.h>
 #include <fastrtps/rtps/writer/RTPSWriter.h>
 #include <fastrtps/rtps/reader/RTPSReader.h>
-#include <fastrtps/rtps/participant/RTPSParticipantListener.h>
 #include <fastrtps/rtps/resources/ResourceEvent.h>
 #include <fastrtps/rtps/network/NetworkFactory.h>
 
 #if HAVE_SECURITY
-#include <fastrtps/rtps/security/accesscontrol/ParticipantSecurityAttributes.h>
 #include <rtps/security/SecurityManager.h>
 #endif // if HAVE_SECURITY
 
@@ -51,6 +45,17 @@ class WriterListener;
 class ReaderListener;
 class PDPSimple;
 struct EntityId_t;
+class ReaderProxyData;
+class WriterProxyData;
+class ReaderAttributes;
+class NetworkFactory;
+
+#if HAVE_SECURITY
+namespace security {
+class SecurityManager;
+struct ParticipantSecurityAttributes;
+} // namespace security
+#endif // if HAVE_SECURITY
 
 class MockParticipantListener : public RTPSParticipantListener
 {

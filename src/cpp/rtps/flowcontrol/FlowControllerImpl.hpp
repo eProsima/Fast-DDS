@@ -1366,7 +1366,7 @@ private:
                     current_writer = writer_it->second;
                 }
 
-                if (!try_lock(current_writer))
+                if (!current_writer->getMutex().try_lock())
                 {
                     break;
                 }
@@ -1398,12 +1398,12 @@ private:
 
                     async_mode.process_deliver_retcode(ret_delivery);
 
-                    unlock(current_writer);
+                    current_writer->getMutex().unlock();
                     // Unlock mutex_ and try again.
                     break;
                 }
 
-                unlock(current_writer);
+                current_writer->getMutex().unlock();
 
                 sched.work_done();
 

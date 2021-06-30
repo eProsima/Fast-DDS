@@ -147,7 +147,7 @@ public:
         return m_changes.rend();
     }
 
-    inline RecursiveTimedMutex* getMutex()
+    RecursiveTimedMutex* getMutex()
     {
         return mp_mutex;
     }
