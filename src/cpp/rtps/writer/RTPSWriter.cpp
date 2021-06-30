@@ -472,16 +472,4 @@ void RTPSWriter::add_statistics_sent_submessage(
 }  // namespace rtps
 }  // namespace fastrtps
 
-bool fastdds::rtps::FlowController::try_lock(
-        fastrtps::rtps::RTPSWriter* writer)
-{
-    return writer->mp_mutex.try_lock();
-}
-
-void fastdds::rtps::FlowController::unlock(
-        fastrtps::rtps::RTPSWriter* writer)
-{
-    writer->mp_mutex.unlock();
-}
-
 }  // namespace eprosima
