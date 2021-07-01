@@ -48,8 +48,6 @@ public:
 
     MOCK_METHOD0(flush_and_reset, void());
 
-    MOCK_METHOD0(reset_current_bytes_processed, void());
-
     MOCK_METHOD0(get_current_bytes_processed, uint32_t());
 
     void change_transmitter(
@@ -60,6 +58,10 @@ public:
 
     void set_sent_bytes_limitation(
             uint32_t) const
+    {
+    }
+
+    void reset_current_bytes_processed()
     {
     }
 

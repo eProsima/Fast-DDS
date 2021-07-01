@@ -41,16 +41,32 @@ class RTPSWriter : public Endpoint
 {
 public:
 
+    RTPSWriter()
+    {
+        static uint8_t entity_id = 0;
+        // Generate a guid.
+        m_guid.entityId.value[3] = ++entity_id;
+    }
+
     virtual ~RTPSWriter() = default;
 
     virtual bool matched_reader_add(
-            const ReaderProxyData& ratt) = 0;
+            const ReaderProxyData&)
+    {
+        return false;
+    }
 
     virtual bool matched_reader_remove(
-            const GUID_t& ratt) = 0;
+            const GUID_t&)
+    {
+        return false;
+    }
 
     virtual bool matched_reader_is_matched(
-            const GUID_t& rguid) = 0;
+            const GUID_t&)
+    {
+        return false;
+    }
 
     WriterListener* getListener() const
     {
@@ -83,8 +99,6 @@ public:
 #endif // FASTDDS_STATISTICS
 
     // *INDENT-OFF* Uncrustify makes a mess with MOCK_METHOD macros
-    MOCK_CONST_METHOD0(getGuid, const GUID_t& ());
-
     MOCK_METHOD3(new_change, CacheChange_t* (
             const std::function<uint32_t()>&,
             ChangeKind_t,
@@ -126,6 +140,11 @@ public:
             std::chrono::steady_clock::time_point&));
 
     // *INDENT-ON*
+
+    const GUID_t& getGuid()
+    {
+        return m_guid;
+    }
 
     virtual void updateAttributes(
             const WriterAttributes&)
@@ -217,14 +236,13 @@ public:
 
     WriterListener* listener_;
 
-    const GUID_t m_guid;
+    GUID_t m_guid;
 
     LivelinessLostStatus liveliness_lost_status_;
 
     LocatorSelectorSender general_locator_selector_ = LocatorSelectorSender(*this, ResourceLimitedContainerConfig());
 
     LocatorSelectorSender async_locator_selector_ = LocatorSelectorSender(*this, ResourceLimitedContainerConfig());
-
 };
 
 } // namespace rtps
