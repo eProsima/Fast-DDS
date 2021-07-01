@@ -248,7 +248,6 @@ inline SequenceNumberSet_t CDRMessage::readSequenceNumberSet(
         CDRMessage_t* msg)
 {
     bool valid = true;
-    SequenceNumberSet_t sns(c_SequenceNumber_Unknown);
 
     SequenceNumber_t seqNum;
     valid &= CDRMessage::readSequenceNumber(msg, &seqNum);
@@ -265,11 +264,12 @@ inline SequenceNumberSet_t CDRMessage::readSequenceNumberSet(
 
     if (valid)
     {
-        sns.base(seqNum);
+        SequenceNumberSet_t sns(seqNum, numBits);
         sns.bitmap_set(numBits, bitmap);
+        return sns;
     }
 
-    return sns;
+    return SequenceNumberSet_t (c_SequenceNumber_Unknown);
 }
 
 inline bool CDRMessage::readFragmentNumberSet(

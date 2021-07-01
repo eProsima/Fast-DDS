@@ -537,7 +537,7 @@ bool MessageReceiver::checkRTPSHeader(
     msg->pos += 4;
 
     //CHECK AND SET protocol version
-    if (msg->buffer[msg->pos] <= c_ProtocolVersion.m_major)
+    if (msg->buffer[msg->pos] == c_ProtocolVersion.m_major)
     {
         source_version_.m_major = msg->buffer[msg->pos];
         msg->pos++;
