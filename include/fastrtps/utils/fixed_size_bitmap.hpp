@@ -101,8 +101,22 @@ public:
      */
     explicit BitmapRange(
             T base) noexcept
+        : BitmapRange(base, NBITS - 1)
+    {
+    }
+
+    /**
+     * Range specific constructor.
+     * Constructs an empty range with specified base and maximum bits.
+     *
+     * @param base      Specific base value for the created range.
+     * @param max_bits  Specific maximum number of bits.
+     */
+    BitmapRange(
+            T base,
+            uint32_t max_bits) noexcept
         : base_(base)
-        , range_max_(base + (NBITS - 1))
+        , range_max_(base_ + (std::min)(max_bits, NBITS - 1))
         , bitmap_()
         , num_bits_(0u)
     {
@@ -130,6 +144,23 @@ public:
     {
         base_ = base;
         range_max_ = base_ + (NBITS - 1);
+        num_bits_ = 0;
+        bitmap_.fill(0u);
+    }
+
+    /**
+     * Set a new base and maximum bits for the range.
+     * This method resets the range and sets a new value for its base, as long as a maximum number of bits.
+     *
+     * @param base      New base value to set.
+     * @param max_bits  New maximum number of bits.
+     */
+    void base(
+            T base,
+            uint32_t max_bits) noexcept
+    {
+        base_ = base;
+        range_max_ = base_ + (std::min)(max_bits, NBITS - 1);
         num_bits_ = 0;
         bitmap_.fill(0u);
     }
