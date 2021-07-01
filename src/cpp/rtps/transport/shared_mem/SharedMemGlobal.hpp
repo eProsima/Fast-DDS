@@ -401,7 +401,7 @@ public:
         Port(
                 std::shared_ptr<SharedMemSegment>&& port_segment,
                 PortNode* node,
-                uint32_t address_id = 0,
+                uint32_t address_id,
                 std::unique_ptr<RobustExclusiveLock>&& read_exclusive_lock = std::unique_ptr<RobustExclusiveLock>())
             : port_segment_(std::move(port_segment))
             , node_(node)
