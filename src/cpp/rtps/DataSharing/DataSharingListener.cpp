@@ -224,8 +224,9 @@ bool DataSharingListener::add_datasharing_writer(
                 reader_history_max_samples > static_cast<int32_t>(pool->history_size() - 1))
         {
             logWarning(RTPS_READER,
-                    "Reader " << reader_->getGuid() << " was configured to have a large history (" << reader_history_max_samples << " max samples), but the history size used with writer " << writer_guid << " will be " << pool->history_size() <<
-                    " max samples.");
+                    "Reader " << reader_->getGuid() << " was configured to have a large history (" <<
+                    reader_history_max_samples << " max samples), but the history size used with writer " <<
+                    writer_guid << " will be " << pool->history_size() << " max samples.");
         }
         writer_pools_.emplace_back(pool, pool->last_liveliness_sequence());
         writer_pools_changed_.store(true);
