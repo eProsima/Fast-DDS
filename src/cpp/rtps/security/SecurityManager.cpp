@@ -570,9 +570,9 @@ bool SecurityManager::restore_discovered_participant_info(
     }
     else
     {
-                // AuthUniquePtr must be removed after unlock SecurityManager's mutex.
-                // This is to avoid a deadlock with TimedEvents.
-                DiscoveredParticipantInfo::AuthUniquePtr remote_participant_info = std::move(auth_ptr);
+        // AuthUniquePtr must be removed after unlock SecurityManager's mutex.
+        // This is to avoid a deadlock with TimedEvents.
+        DiscoveredParticipantInfo::AuthUniquePtr remote_participant_info = std::move(auth_ptr);
         remove_discovered_participant_info(remote_participant_info);
         lock.unlock();
     }
