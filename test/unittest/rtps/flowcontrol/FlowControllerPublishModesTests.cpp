@@ -4,8 +4,16 @@
 using namespace eprosima::fastdds::rtps;
 using namespace testing;
 
-struct WriterDeliveryCallInfo
+template<typename T>
+class FlowControllerPublishModes :  public testing::Test
 {
+protected:
+
+    void TearDown() override
+    {
+        changes_delivered.clear();
+    }
+
     void wait_changes_was_delivered(
             size_t number_of_changes)
     {
@@ -25,28 +33,34 @@ struct WriterDeliveryCallInfo
     std::condition_variable number_changes_delivered_cv;
 };
 
+using Schedulers = Types<FlowControllerFifoSchedule,
+                FlowControllerRoundRobinSchedule,
+                FlowControllerHighPrioritySchedule,
+                FlowControllerPriorityWithReservationSchedule>;
+
+TYPED_TEST_SUITE(FlowControllerPublishModes, Schedulers);
+
 #define INIT_CACHE_CHANGE(change, writer) \
     change.writerGUID = writer.getGuid(); \
     change.writer_info.previous = nullptr; \
     change.writer_info.next = nullptr; \
     change.serializedPayload.length = 10000;
 
-TEST(FlowControllerPublishModes, pure_sync_publish_mode)
+TYPED_TEST(FlowControllerPublishModes, pure_sync_publish_mode)
 {
     FlowControllerDescriptor flow_controller_descr;
-    FlowControllerImpl<FlowControllerPureSyncPublishMode, FlowControllerFifoSchedule> pure_sync(nullptr,
+    FlowControllerImpl<FlowControllerPureSyncPublishMode, TypeParam> pure_sync(nullptr,
             &flow_controller_descr);
     pure_sync.init();
 
     // Initialize callback to get info.
-    WriterDeliveryCallInfo send_call_info;
-    auto send_functor = [&send_call_info](
+    auto send_functor = [&](
         eprosima::fastrtps::rtps::CacheChange_t*,
         eprosima::fastrtps::rtps::RTPSMessageGroup&,
         eprosima::fastrtps::rtps::LocatorSelectorSender&,
         const std::chrono::time_point<std::chrono::steady_clock>&)
             {
-                send_call_info.last_thread_delivering_sample = std::this_thread::get_id();
+                this->last_thread_delivering_sample = std::this_thread::get_id();
             };
 
 
@@ -69,14 +83,14 @@ TEST(FlowControllerPublishModes, pure_sync_publish_mode)
             WillOnce(DoAll(send_functor, Return(eprosima::fastrtps::rtps::DeliveryRetCode::DELIVERED)));
     ASSERT_TRUE(pure_sync.add_new_sample(&writer1, &change_writer1,
             std::chrono::steady_clock::now() + std::chrono::hours(24)));
-    EXPECT_EQ(std::this_thread::get_id(), send_call_info.last_thread_delivering_sample);
+    EXPECT_EQ(std::this_thread::get_id(), this->last_thread_delivering_sample);
 
     EXPECT_CALL(writer2,
             deliver_sample_nts(&change_writer2, _, Ref(writer2.general_locator_selector_), _)).
             WillOnce(DoAll(send_functor, Return(eprosima::fastrtps::rtps::DeliveryRetCode::DELIVERED)));
     ASSERT_TRUE(pure_sync.add_new_sample(&writer2, &change_writer2,
             std::chrono::steady_clock::now() + std::chrono::hours(24)));
-    EXPECT_EQ(std::this_thread::get_id(), send_call_info.last_thread_delivering_sample);
+    EXPECT_EQ(std::this_thread::get_id(), this->last_thread_delivering_sample);
 
     // Testing add_new_sample. Writer will not be able to deliver it.
     EXPECT_CALL(writer1,
@@ -84,14 +98,14 @@ TEST(FlowControllerPublishModes, pure_sync_publish_mode)
             WillOnce(DoAll(send_functor, Return(eprosima::fastrtps::rtps::DeliveryRetCode::NOT_DELIVERED)));
     ASSERT_FALSE(pure_sync.add_new_sample(&writer1, &change_writer1,
             std::chrono::steady_clock::now() + std::chrono::hours(24)));
-    EXPECT_EQ(std::this_thread::get_id(), send_call_info.last_thread_delivering_sample);
+    EXPECT_EQ(std::this_thread::get_id(), this->last_thread_delivering_sample);
 
     EXPECT_CALL(writer2,
             deliver_sample_nts(&change_writer2, _, Ref(writer2.general_locator_selector_), _)).
             WillOnce(DoAll(send_functor, Return(eprosima::fastrtps::rtps::DeliveryRetCode::NOT_DELIVERED)));
     ASSERT_FALSE(pure_sync.add_new_sample(&writer2, &change_writer2,
             std::chrono::steady_clock::now() + std::chrono::hours(24)));
-    EXPECT_EQ(std::this_thread::get_id(), send_call_info.last_thread_delivering_sample);
+    EXPECT_EQ(std::this_thread::get_id(), this->last_thread_delivering_sample);
 
     // Testing add_old_sample. Writers never be called.
     ASSERT_FALSE(pure_sync.add_old_sample(&writer1, &change_writer1));
@@ -100,10 +114,10 @@ TEST(FlowControllerPublishModes, pure_sync_publish_mode)
     pure_sync.unregister_writer(&writer1);
 }
 
-TEST(FlowControllerPublishModes, sync_publish_mode)
+TYPED_TEST(FlowControllerPublishModes, sync_publish_mode)
 {
     FlowControllerDescriptor flow_controller_descr;
-    FlowControllerImpl<FlowControllerSyncPublishMode, FlowControllerFifoSchedule> sync(nullptr,
+    FlowControllerImpl<FlowControllerSyncPublishMode, TypeParam> sync(nullptr,
             &flow_controller_descr);
     sync.init();
 
@@ -112,27 +126,26 @@ TEST(FlowControllerPublishModes, sync_publish_mode)
     eprosima::fastrtps::rtps::RTPSWriter writer2;
 
     // Initialize callback to get info.
-    WriterDeliveryCallInfo send_call_info;
-    auto send_functor_adding = [&send_call_info](
+    auto send_functor_adding = [&](
         eprosima::fastrtps::rtps::CacheChange_t* change,
         eprosima::fastrtps::rtps::RTPSMessageGroup&,
         eprosima::fastrtps::rtps::LocatorSelectorSender&,
         const std::chrono::time_point<std::chrono::steady_clock>&)
             {
-                send_call_info.last_thread_delivering_sample = std::this_thread::get_id();
+                this->last_thread_delivering_sample = std::this_thread::get_id();
                 {
-                    std::unique_lock<std::mutex> lock(send_call_info.changes_delivered_mutex);
-                    send_call_info.changes_delivered.push_back(change);
+                    std::unique_lock<std::mutex> lock(this->changes_delivered_mutex);
+                    this->changes_delivered.push_back(change);
                 }
-                send_call_info.number_changes_delivered_cv.notify_one();
+                this->number_changes_delivered_cv.notify_one();
             };
-    auto send_functor_not_adding = [&send_call_info](
+    auto send_functor_not_adding = [&](
         eprosima::fastrtps::rtps::CacheChange_t*,
         eprosima::fastrtps::rtps::RTPSMessageGroup&,
         eprosima::fastrtps::rtps::LocatorSelectorSender&,
         const std::chrono::time_point<std::chrono::steady_clock>&)
             {
-                send_call_info.last_thread_delivering_sample = std::this_thread::get_id();
+                this->last_thread_delivering_sample = std::this_thread::get_id();
             };
 
     // Register writers.
@@ -150,14 +163,14 @@ TEST(FlowControllerPublishModes, sync_publish_mode)
             WillOnce(DoAll(send_functor_not_adding, Return(eprosima::fastrtps::rtps::DeliveryRetCode::DELIVERED)));
     ASSERT_TRUE(sync.add_new_sample(&writer1, &change_writer1,
             std::chrono::steady_clock::now() + std::chrono::hours(24)));
-    EXPECT_EQ(std::this_thread::get_id(), send_call_info.last_thread_delivering_sample);
+    EXPECT_EQ(std::this_thread::get_id(), this->last_thread_delivering_sample);
 
     EXPECT_CALL(writer2,
             deliver_sample_nts(&change_writer2, _, Ref(writer2.general_locator_selector_), _)).
             WillOnce(DoAll(send_functor_not_adding, Return(eprosima::fastrtps::rtps::DeliveryRetCode::DELIVERED)));
     ASSERT_TRUE(sync.add_new_sample(&writer2, &change_writer2,
             std::chrono::steady_clock::now() + std::chrono::hours(24)));
-    EXPECT_EQ(std::this_thread::get_id(), send_call_info.last_thread_delivering_sample);
+    EXPECT_EQ(std::this_thread::get_id(), this->last_thread_delivering_sample);
 
     // Testing add_new_sample. Writer will not be able to deliver it.
     auto& fail_call = EXPECT_CALL(writer1,
@@ -168,18 +181,18 @@ TEST(FlowControllerPublishModes, sync_publish_mode)
             WillOnce(DoAll(send_functor_adding, Return(eprosima::fastrtps::rtps::DeliveryRetCode::DELIVERED)));
     ASSERT_TRUE(sync.add_new_sample(&writer1, &change_writer1,
             std::chrono::steady_clock::now() + std::chrono::hours(24)));
-    send_call_info.wait_changes_was_delivered(1);
-    EXPECT_NE(std::this_thread::get_id(), send_call_info.last_thread_delivering_sample);
-    send_call_info.changes_delivered.clear();
+    this->wait_changes_was_delivered(1);
+    EXPECT_NE(std::this_thread::get_id(), this->last_thread_delivering_sample);
+    this->changes_delivered.clear();
 
     // Testing add_old_sample. Writer will be able to deliver it.
     EXPECT_CALL(writer1,
             deliver_sample_nts(&change_writer1, _, Ref(writer1.async_locator_selector_), _)).
             WillOnce(DoAll(send_functor_adding, Return(eprosima::fastrtps::rtps::DeliveryRetCode::DELIVERED)));
     ASSERT_TRUE(sync.add_old_sample(&writer1, &change_writer1));
-    send_call_info.wait_changes_was_delivered(1);
-    EXPECT_NE(std::this_thread::get_id(), send_call_info.last_thread_delivering_sample);
-    send_call_info.changes_delivered.clear();
+    this->wait_changes_was_delivered(1);
+    EXPECT_NE(std::this_thread::get_id(), this->last_thread_delivering_sample);
+    this->changes_delivered.clear();
 
     // Testing add_old_sample. Writer will not be able to deliver it.
     EXPECT_CALL(writer1,
@@ -187,9 +200,9 @@ TEST(FlowControllerPublishModes, sync_publish_mode)
             WillOnce(Return(eprosima::fastrtps::rtps::DeliveryRetCode::NOT_DELIVERED)).
             WillOnce(DoAll(send_functor_adding, Return(eprosima::fastrtps::rtps::DeliveryRetCode::DELIVERED)));
     ASSERT_TRUE(sync.add_old_sample(&writer1, &change_writer1));
-    send_call_info.wait_changes_was_delivered(1);
-    EXPECT_NE(std::this_thread::get_id(), send_call_info.last_thread_delivering_sample);
-    send_call_info.changes_delivered.clear();
+    this->wait_changes_was_delivered(1);
+    EXPECT_NE(std::this_thread::get_id(), this->last_thread_delivering_sample);
+    this->changes_delivered.clear();
 
     // Testing add_old_sample with a change already enqueued.
     change_writer1.writer_info.previous = (eprosima::fastrtps::rtps::CacheChange_t*)1;
@@ -255,9 +268,9 @@ TEST(FlowControllerPublishModes, sync_publish_mode)
     ASSERT_TRUE(sync.add_old_sample(&writer1, &change_writer8));
     ASSERT_TRUE(sync.add_old_sample(&writer1, &change_writer9));
     ASSERT_TRUE(sync.add_old_sample(&writer1, &change_writer10));
-    send_call_info.wait_changes_was_delivered(10);
-    EXPECT_NE(std::this_thread::get_id(), send_call_info.last_thread_delivering_sample);
-    send_call_info.changes_delivered.clear();
+    this->wait_changes_was_delivered(10);
+    EXPECT_NE(std::this_thread::get_id(), this->last_thread_delivering_sample);
+    this->changes_delivered.clear();
 
     // Remove changes
     EXPECT_CALL(writer1,
@@ -274,9 +287,9 @@ TEST(FlowControllerPublishModes, sync_publish_mode)
     ASSERT_TRUE(sync.add_old_sample(&writer1, &change_writer8));
     ASSERT_TRUE(sync.add_old_sample(&writer1, &change_writer9));
     ASSERT_TRUE(sync.add_old_sample(&writer1, &change_writer10));
-    send_call_info.wait_changes_was_delivered(1);
-    EXPECT_NE(std::this_thread::get_id(), send_call_info.last_thread_delivering_sample);
-    send_call_info.changes_delivered.clear();
+    this->wait_changes_was_delivered(1);
+    EXPECT_NE(std::this_thread::get_id(), this->last_thread_delivering_sample);
+    this->changes_delivered.clear();
     writer1.getMutex().lock();
     ASSERT_TRUE(nullptr == change_writer1.writer_info.next &&
             nullptr == change_writer1.writer_info.previous);
@@ -348,10 +361,10 @@ TEST(FlowControllerPublishModes, sync_publish_mode)
     sync.unregister_writer(&writer1);
 }
 
-TEST(FlowControllerPublishModes, async_publish_mode)
+TYPED_TEST(FlowControllerPublishModes, async_publish_mode)
 {
     FlowControllerDescriptor flow_controller_descr;
-    FlowControllerImpl<FlowControllerAsyncPublishMode, FlowControllerFifoSchedule> async(nullptr,
+    FlowControllerImpl<FlowControllerAsyncPublishMode, TypeParam> async(nullptr,
             &flow_controller_descr);
     async.init();
 
@@ -360,19 +373,18 @@ TEST(FlowControllerPublishModes, async_publish_mode)
     eprosima::fastrtps::rtps::RTPSWriter writer2;
 
     // Initialize callback to get info.
-    WriterDeliveryCallInfo send_call_info;
-    auto send_functor = [&send_call_info](
+    auto send_functor = [&](
         eprosima::fastrtps::rtps::CacheChange_t* change,
         eprosima::fastrtps::rtps::RTPSMessageGroup&,
         eprosima::fastrtps::rtps::LocatorSelectorSender&,
         const std::chrono::time_point<std::chrono::steady_clock>&)
             {
-                send_call_info.last_thread_delivering_sample = std::this_thread::get_id();
+                this->last_thread_delivering_sample = std::this_thread::get_id();
                 {
-                    std::unique_lock<std::mutex> lock(send_call_info.changes_delivered_mutex);
-                    send_call_info.changes_delivered.push_back(change);
+                    std::unique_lock<std::mutex> lock(this->changes_delivered_mutex);
+                    this->changes_delivered.push_back(change);
                 }
-                send_call_info.number_changes_delivered_cv.notify_one();
+                this->number_changes_delivered_cv.notify_one();
             };
 
     // Register writers.
@@ -390,9 +402,9 @@ TEST(FlowControllerPublishModes, async_publish_mode)
             WillOnce(DoAll(send_functor, Return(eprosima::fastrtps::rtps::DeliveryRetCode::DELIVERED)));
     ASSERT_TRUE(async.add_new_sample(&writer1, &change_writer1,
             std::chrono::steady_clock::now() + std::chrono::hours(24)));
-    send_call_info.wait_changes_was_delivered(1);
-    EXPECT_NE(std::this_thread::get_id(), send_call_info.last_thread_delivering_sample);
-    send_call_info.changes_delivered.clear();
+    this->wait_changes_was_delivered(1);
+    EXPECT_NE(std::this_thread::get_id(), this->last_thread_delivering_sample);
+    this->changes_delivered.clear();
 
     // Testing add_new_sample. Writer will not be able to deliver it.
     auto& fail_call = EXPECT_CALL(writer1,
@@ -403,18 +415,18 @@ TEST(FlowControllerPublishModes, async_publish_mode)
             WillOnce(DoAll(send_functor, Return(eprosima::fastrtps::rtps::DeliveryRetCode::DELIVERED)));
     ASSERT_TRUE(async.add_new_sample(&writer1, &change_writer1,
             std::chrono::steady_clock::now() + std::chrono::hours(24)));
-    send_call_info.wait_changes_was_delivered(1);
-    EXPECT_NE(std::this_thread::get_id(), send_call_info.last_thread_delivering_sample);
-    send_call_info.changes_delivered.clear();
+    this->wait_changes_was_delivered(1);
+    EXPECT_NE(std::this_thread::get_id(), this->last_thread_delivering_sample);
+    this->changes_delivered.clear();
 
     // Testing add_old_sample. Writer will be able to deliver it.
     EXPECT_CALL(writer1,
             deliver_sample_nts(&change_writer1, _, Ref(writer1.async_locator_selector_), _)).
             WillOnce(DoAll(send_functor, Return(eprosima::fastrtps::rtps::DeliveryRetCode::DELIVERED)));
     ASSERT_TRUE(async.add_old_sample(&writer1, &change_writer1));
-    send_call_info.wait_changes_was_delivered(1);
-    EXPECT_NE(std::this_thread::get_id(), send_call_info.last_thread_delivering_sample);
-    send_call_info.changes_delivered.clear();
+    this->wait_changes_was_delivered(1);
+    EXPECT_NE(std::this_thread::get_id(), this->last_thread_delivering_sample);
+    this->changes_delivered.clear();
 
     // Testing add_old_sample. Writer will not be able to deliver it.
     EXPECT_CALL(writer1,
@@ -422,9 +434,9 @@ TEST(FlowControllerPublishModes, async_publish_mode)
             WillOnce(Return(eprosima::fastrtps::rtps::DeliveryRetCode::NOT_DELIVERED)).
             WillOnce(DoAll(send_functor, Return(eprosima::fastrtps::rtps::DeliveryRetCode::DELIVERED)));
     ASSERT_TRUE(async.add_old_sample(&writer1, &change_writer1));
-    send_call_info.wait_changes_was_delivered(1);
-    EXPECT_NE(std::this_thread::get_id(), send_call_info.last_thread_delivering_sample);
-    send_call_info.changes_delivered.clear();
+    this->wait_changes_was_delivered(1);
+    EXPECT_NE(std::this_thread::get_id(), this->last_thread_delivering_sample);
+    this->changes_delivered.clear();
 
     // Testing add_old_sample with a change already enqueued.
     change_writer1.writer_info.previous = (eprosima::fastrtps::rtps::CacheChange_t*)1;
@@ -500,9 +512,9 @@ TEST(FlowControllerPublishModes, async_publish_mode)
             std::chrono::steady_clock::now() + std::chrono::hours(24)));
     ASSERT_TRUE(async.add_new_sample(&writer1, &change_writer10,
             std::chrono::steady_clock::now() + std::chrono::hours(24)));
-    send_call_info.wait_changes_was_delivered(10);
-    EXPECT_NE(std::this_thread::get_id(), send_call_info.last_thread_delivering_sample);
-    send_call_info.changes_delivered.clear();
+    this->wait_changes_was_delivered(10);
+    EXPECT_NE(std::this_thread::get_id(), this->last_thread_delivering_sample);
+    this->changes_delivered.clear();
 
     // Send 10 samples using add_old_sample.
     EXPECT_CALL(writer1,
@@ -545,9 +557,9 @@ TEST(FlowControllerPublishModes, async_publish_mode)
     ASSERT_TRUE(async.add_old_sample(&writer1, &change_writer8));
     ASSERT_TRUE(async.add_old_sample(&writer1, &change_writer9));
     ASSERT_TRUE(async.add_old_sample(&writer1, &change_writer10));
-    send_call_info.wait_changes_was_delivered(10);
-    EXPECT_NE(std::this_thread::get_id(), send_call_info.last_thread_delivering_sample);
-    send_call_info.changes_delivered.clear();
+    this->wait_changes_was_delivered(10);
+    EXPECT_NE(std::this_thread::get_id(), this->last_thread_delivering_sample);
+    this->changes_delivered.clear();
 
     // Remove changes after add_new_sample.
     EXPECT_CALL(writer1,
@@ -574,9 +586,9 @@ TEST(FlowControllerPublishModes, async_publish_mode)
             std::chrono::steady_clock::now() + std::chrono::hours(24)));
     ASSERT_TRUE(async.add_new_sample(&writer1, &change_writer10,
             std::chrono::steady_clock::now() + std::chrono::hours(24)));
-    send_call_info.wait_changes_was_delivered(1);
-    EXPECT_NE(std::this_thread::get_id(), send_call_info.last_thread_delivering_sample);
-    send_call_info.changes_delivered.clear();
+    this->wait_changes_was_delivered(1);
+    EXPECT_NE(std::this_thread::get_id(), this->last_thread_delivering_sample);
+    this->changes_delivered.clear();
     writer1.getMutex().lock();
     ASSERT_TRUE(nullptr == change_writer1.writer_info.next &&
             nullptr == change_writer1.writer_info.previous);
@@ -660,9 +672,9 @@ TEST(FlowControllerPublishModes, async_publish_mode)
     ASSERT_TRUE(async.add_old_sample(&writer1, &change_writer8));
     ASSERT_TRUE(async.add_old_sample(&writer1, &change_writer9));
     ASSERT_TRUE(async.add_old_sample(&writer1, &change_writer10));
-    send_call_info.wait_changes_was_delivered(1);
-    EXPECT_NE(std::this_thread::get_id(), send_call_info.last_thread_delivering_sample);
-    send_call_info.changes_delivered.clear();
+    this->wait_changes_was_delivered(1);
+    EXPECT_NE(std::this_thread::get_id(), this->last_thread_delivering_sample);
+    this->changes_delivered.clear();
     writer1.getMutex().lock();
     ASSERT_TRUE(nullptr == change_writer1.writer_info.next &&
             nullptr == change_writer1.writer_info.previous);
@@ -753,12 +765,12 @@ struct FlowControllerLimitedAsyncPublishModeMock : FlowControllerLimitedAsyncPub
 };
 eprosima::fastrtps::rtps::RTPSMessageGroup* FlowControllerLimitedAsyncPublishModeMock::group_mock = nullptr;
 
-TEST(FlowControllerPublishModes, limited_async_publish_mode)
+TYPED_TEST(FlowControllerPublishModes, limited_async_publish_mode)
 {
     FlowControllerDescriptor flow_controller_descr;
     flow_controller_descr.max_bytes_per_period = 10200;
     flow_controller_descr.period_ms = 10;
-    FlowControllerImpl<FlowControllerLimitedAsyncPublishModeMock, FlowControllerFifoSchedule> async(nullptr,
+    FlowControllerImpl<FlowControllerLimitedAsyncPublishModeMock, TypeParam> async(nullptr,
             &flow_controller_descr);
     async.init();
 
@@ -767,19 +779,18 @@ TEST(FlowControllerPublishModes, limited_async_publish_mode)
     eprosima::fastrtps::rtps::RTPSWriter writer2;
 
     // Initialize callback to get info.
-    WriterDeliveryCallInfo send_call_info;
-    auto send_functor = [&send_call_info](
+    auto send_functor = [&](
         eprosima::fastrtps::rtps::CacheChange_t* change,
         eprosima::fastrtps::rtps::RTPSMessageGroup&,
         eprosima::fastrtps::rtps::LocatorSelectorSender&,
         const std::chrono::time_point<std::chrono::steady_clock>&)
             {
-                send_call_info.last_thread_delivering_sample = std::this_thread::get_id();
+                this->last_thread_delivering_sample = std::this_thread::get_id();
                 {
-                    std::unique_lock<std::mutex> lock(send_call_info.changes_delivered_mutex);
-                    send_call_info.changes_delivered.push_back(change);
+                    std::unique_lock<std::mutex> lock(this->changes_delivered_mutex);
+                    this->changes_delivered.push_back(change);
                 }
-                send_call_info.number_changes_delivered_cv.notify_one();
+                this->number_changes_delivered_cv.notify_one();
             };
 
     // Register writers.
@@ -799,9 +810,9 @@ TEST(FlowControllerPublishModes, limited_async_publish_mode)
             WillOnce(DoAll(send_functor, Return(eprosima::fastrtps::rtps::DeliveryRetCode::DELIVERED)));
     ASSERT_TRUE(async.add_new_sample(&writer1, &change_writer1,
             std::chrono::steady_clock::now() + std::chrono::hours(24)));
-    send_call_info.wait_changes_was_delivered(1);
-    EXPECT_NE(std::this_thread::get_id(), send_call_info.last_thread_delivering_sample);
-    send_call_info.changes_delivered.clear();
+    this->wait_changes_was_delivered(1);
+    EXPECT_NE(std::this_thread::get_id(), this->last_thread_delivering_sample);
+    this->changes_delivered.clear();
 
     // Testing add_new_sample. Writer will not be able to deliver it.
     EXPECT_CALL(*FlowControllerLimitedAsyncPublishModeMock::get_group(),
@@ -815,9 +826,9 @@ TEST(FlowControllerPublishModes, limited_async_publish_mode)
             WillOnce(DoAll(send_functor, Return(eprosima::fastrtps::rtps::DeliveryRetCode::DELIVERED)));
     ASSERT_TRUE(async.add_new_sample(&writer1, &change_writer1,
             std::chrono::steady_clock::now() + std::chrono::hours(24)));
-    send_call_info.wait_changes_was_delivered(1);
-    EXPECT_NE(std::this_thread::get_id(), send_call_info.last_thread_delivering_sample);
-    send_call_info.changes_delivered.clear();
+    this->wait_changes_was_delivered(1);
+    EXPECT_NE(std::this_thread::get_id(), this->last_thread_delivering_sample);
+    this->changes_delivered.clear();
 
     // Testing add_old_sample. Writer will be able to deliver it.
     EXPECT_CALL(*FlowControllerLimitedAsyncPublishModeMock::get_group(), get_current_bytes_processed()).WillOnce(Return(
@@ -826,9 +837,9 @@ TEST(FlowControllerPublishModes, limited_async_publish_mode)
             deliver_sample_nts(&change_writer1, _, Ref(writer1.async_locator_selector_), _)).
             WillOnce(DoAll(send_functor, Return(eprosima::fastrtps::rtps::DeliveryRetCode::DELIVERED)));
     ASSERT_TRUE(async.add_old_sample(&writer1, &change_writer1));
-    send_call_info.wait_changes_was_delivered(1);
-    EXPECT_NE(std::this_thread::get_id(), send_call_info.last_thread_delivering_sample);
-    send_call_info.changes_delivered.clear();
+    this->wait_changes_was_delivered(1);
+    EXPECT_NE(std::this_thread::get_id(), this->last_thread_delivering_sample);
+    this->changes_delivered.clear();
 
     // Testing add_old_sample. Writer will not be able to deliver it.
     EXPECT_CALL(*FlowControllerLimitedAsyncPublishModeMock::get_group(),
@@ -839,9 +850,9 @@ TEST(FlowControllerPublishModes, limited_async_publish_mode)
             WillOnce(Return(eprosima::fastrtps::rtps::DeliveryRetCode::NOT_DELIVERED)).
             WillOnce(DoAll(send_functor, Return(eprosima::fastrtps::rtps::DeliveryRetCode::DELIVERED)));
     ASSERT_TRUE(async.add_old_sample(&writer1, &change_writer1));
-    send_call_info.wait_changes_was_delivered(1);
-    EXPECT_NE(std::this_thread::get_id(), send_call_info.last_thread_delivering_sample);
-    send_call_info.changes_delivered.clear();
+    this->wait_changes_was_delivered(1);
+    EXPECT_NE(std::this_thread::get_id(), this->last_thread_delivering_sample);
+    this->changes_delivered.clear();
 
     // Testing add_old_sample with a change already enqueued.
     change_writer1.writer_info.previous = (eprosima::fastrtps::rtps::CacheChange_t*)1;
@@ -920,9 +931,9 @@ TEST(FlowControllerPublishModes, limited_async_publish_mode)
             std::chrono::steady_clock::now() + std::chrono::hours(24)));
     ASSERT_TRUE(async.add_new_sample(&writer1, &change_writer10,
             std::chrono::steady_clock::now() + std::chrono::hours(24)));
-    send_call_info.wait_changes_was_delivered(10);
-    EXPECT_NE(std::this_thread::get_id(), send_call_info.last_thread_delivering_sample);
-    send_call_info.changes_delivered.clear();
+    this->wait_changes_was_delivered(10);
+    EXPECT_NE(std::this_thread::get_id(), this->last_thread_delivering_sample);
+    this->changes_delivered.clear();
 
     // Send 10 samples using add_old_sample.
     EXPECT_CALL(*FlowControllerLimitedAsyncPublishModeMock::get_group(),
@@ -968,9 +979,9 @@ TEST(FlowControllerPublishModes, limited_async_publish_mode)
     ASSERT_TRUE(async.add_old_sample(&writer1, &change_writer8));
     ASSERT_TRUE(async.add_old_sample(&writer1, &change_writer9));
     ASSERT_TRUE(async.add_old_sample(&writer1, &change_writer10));
-    send_call_info.wait_changes_was_delivered(10);
-    EXPECT_NE(std::this_thread::get_id(), send_call_info.last_thread_delivering_sample);
-    send_call_info.changes_delivered.clear();
+    this->wait_changes_was_delivered(10);
+    EXPECT_NE(std::this_thread::get_id(), this->last_thread_delivering_sample);
+    this->changes_delivered.clear();
 
     // Remove changes after add_new_sample.
     EXPECT_CALL(*FlowControllerLimitedAsyncPublishModeMock::get_group(),
@@ -1000,9 +1011,9 @@ TEST(FlowControllerPublishModes, limited_async_publish_mode)
             std::chrono::steady_clock::now() + std::chrono::hours(24)));
     ASSERT_TRUE(async.add_new_sample(&writer1, &change_writer10,
             std::chrono::steady_clock::now() + std::chrono::hours(24)));
-    send_call_info.wait_changes_was_delivered(1);
-    EXPECT_NE(std::this_thread::get_id(), send_call_info.last_thread_delivering_sample);
-    send_call_info.changes_delivered.clear();
+    this->wait_changes_was_delivered(1);
+    EXPECT_NE(std::this_thread::get_id(), this->last_thread_delivering_sample);
+    this->changes_delivered.clear();
     writer1.getMutex().lock();
     ASSERT_TRUE(nullptr == change_writer1.writer_info.next &&
             nullptr == change_writer1.writer_info.previous);
@@ -1089,9 +1100,9 @@ TEST(FlowControllerPublishModes, limited_async_publish_mode)
     ASSERT_TRUE(async.add_old_sample(&writer1, &change_writer8));
     ASSERT_TRUE(async.add_old_sample(&writer1, &change_writer9));
     ASSERT_TRUE(async.add_old_sample(&writer1, &change_writer10));
-    send_call_info.wait_changes_was_delivered(1);
-    EXPECT_NE(std::this_thread::get_id(), send_call_info.last_thread_delivering_sample);
-    send_call_info.changes_delivered.clear();
+    this->wait_changes_was_delivered(1);
+    EXPECT_NE(std::this_thread::get_id(), this->last_thread_delivering_sample);
+    this->changes_delivered.clear();
     writer1.getMutex().lock();
     ASSERT_TRUE(nullptr == change_writer1.writer_info.next &&
             nullptr == change_writer1.writer_info.previous);
@@ -1209,8 +1220,8 @@ TEST(FlowControllerPublishModes, limited_async_publish_mode)
             WillRepeatedly(Return(0));
     ASSERT_TRUE(async.add_new_sample(&writer1, &change_writer1,
             std::chrono::steady_clock::now() + std::chrono::hours(24)));
-    send_call_info.wait_changes_was_delivered(1);
-    EXPECT_NE(std::this_thread::get_id(), send_call_info.last_thread_delivering_sample);
+    this->wait_changes_was_delivered(1);
+    EXPECT_NE(std::this_thread::get_id(), this->last_thread_delivering_sample);
     auto& prev2 = EXPECT_CALL(*FlowControllerLimitedAsyncPublishModeMock::get_group(),
                     get_current_bytes_processed()).
                     Times(10).WillRepeatedly(Return(10100));
@@ -1219,8 +1230,8 @@ TEST(FlowControllerPublishModes, limited_async_publish_mode)
             WillRepeatedly(Return(0));
     ASSERT_TRUE(async.add_new_sample(&writer1, &change_writer2,
             std::chrono::steady_clock::now() + std::chrono::hours(24)));
-    send_call_info.wait_changes_was_delivered(2);
-    EXPECT_NE(std::this_thread::get_id(), send_call_info.last_thread_delivering_sample);
+    this->wait_changes_was_delivered(2);
+    EXPECT_NE(std::this_thread::get_id(), this->last_thread_delivering_sample);
     auto& prev3 = EXPECT_CALL(*FlowControllerLimitedAsyncPublishModeMock::get_group(),
                     get_current_bytes_processed()).
                     Times(10).WillRepeatedly(Return(10100));
@@ -1229,8 +1240,8 @@ TEST(FlowControllerPublishModes, limited_async_publish_mode)
             WillRepeatedly(Return(0));
     ASSERT_TRUE(async.add_new_sample(&writer1, &change_writer3,
             std::chrono::steady_clock::now() + std::chrono::hours(24)));
-    send_call_info.wait_changes_was_delivered(3);
-    EXPECT_NE(std::this_thread::get_id(), send_call_info.last_thread_delivering_sample);
+    this->wait_changes_was_delivered(3);
+    EXPECT_NE(std::this_thread::get_id(), this->last_thread_delivering_sample);
     auto& prev4 = EXPECT_CALL(*FlowControllerLimitedAsyncPublishModeMock::get_group(),
                     get_current_bytes_processed()).
                     Times(10).WillRepeatedly(Return(10100));
@@ -1239,8 +1250,8 @@ TEST(FlowControllerPublishModes, limited_async_publish_mode)
             WillRepeatedly(Return(0));
     ASSERT_TRUE(async.add_new_sample(&writer1, &change_writer4,
             std::chrono::steady_clock::now() + std::chrono::hours(24)));
-    send_call_info.wait_changes_was_delivered(4);
-    EXPECT_NE(std::this_thread::get_id(), send_call_info.last_thread_delivering_sample);
+    this->wait_changes_was_delivered(4);
+    EXPECT_NE(std::this_thread::get_id(), this->last_thread_delivering_sample);
     ASSERT_TRUE(async.add_new_sample(&writer1, &change_writer5,
             std::chrono::steady_clock::now() + std::chrono::hours(24)));
     ASSERT_TRUE(async.add_new_sample(&writer1, &change_writer6,
@@ -1253,9 +1264,9 @@ TEST(FlowControllerPublishModes, limited_async_publish_mode)
             std::chrono::steady_clock::now() + std::chrono::hours(24)));
     ASSERT_TRUE(async.add_new_sample(&writer1, &change_writer10,
             std::chrono::steady_clock::now() + std::chrono::hours(24)));
-    send_call_info.wait_changes_was_delivered(10);
-    EXPECT_NE(std::this_thread::get_id(), send_call_info.last_thread_delivering_sample);
-    send_call_info.changes_delivered.clear();
+    this->wait_changes_was_delivered(10);
+    EXPECT_NE(std::this_thread::get_id(), this->last_thread_delivering_sample);
+    this->changes_delivered.clear();
 
     // Sending 10 samples applying limitations with add_old_sample.
     EXPECT_CALL(writer1,
@@ -1305,8 +1316,8 @@ TEST(FlowControllerPublishModes, limited_async_publish_mode)
             get_current_bytes_processed()).After(old_prev).
             WillRepeatedly(Return(0));
     ASSERT_TRUE(async.add_old_sample(&writer1, &change_writer1));
-    send_call_info.wait_changes_was_delivered(1);
-    EXPECT_NE(std::this_thread::get_id(), send_call_info.last_thread_delivering_sample);
+    this->wait_changes_was_delivered(1);
+    EXPECT_NE(std::this_thread::get_id(), this->last_thread_delivering_sample);
     auto& old_prev2 = EXPECT_CALL(*FlowControllerLimitedAsyncPublishModeMock::get_group(),
                     get_current_bytes_processed()).
                     Times(10).WillRepeatedly(Return(10100));
@@ -1314,8 +1325,8 @@ TEST(FlowControllerPublishModes, limited_async_publish_mode)
             get_current_bytes_processed()).After(old_prev2).
             WillRepeatedly(Return(0));
     ASSERT_TRUE(async.add_old_sample(&writer1, &change_writer2));
-    send_call_info.wait_changes_was_delivered(2);
-    EXPECT_NE(std::this_thread::get_id(), send_call_info.last_thread_delivering_sample);
+    this->wait_changes_was_delivered(2);
+    EXPECT_NE(std::this_thread::get_id(), this->last_thread_delivering_sample);
     auto& old_prev3 = EXPECT_CALL(*FlowControllerLimitedAsyncPublishModeMock::get_group(),
                     get_current_bytes_processed()).
                     Times(10).WillRepeatedly(Return(10100));
@@ -1323,8 +1334,8 @@ TEST(FlowControllerPublishModes, limited_async_publish_mode)
             get_current_bytes_processed()).After(old_prev3).
             WillRepeatedly(Return(0));
     ASSERT_TRUE(async.add_old_sample(&writer1, &change_writer3));
-    send_call_info.wait_changes_was_delivered(3);
-    EXPECT_NE(std::this_thread::get_id(), send_call_info.last_thread_delivering_sample);
+    this->wait_changes_was_delivered(3);
+    EXPECT_NE(std::this_thread::get_id(), this->last_thread_delivering_sample);
     auto& old_prev4 = EXPECT_CALL(*FlowControllerLimitedAsyncPublishModeMock::get_group(),
                     get_current_bytes_processed()).
                     Times(10).WillRepeatedly(Return(10100));
@@ -1332,17 +1343,17 @@ TEST(FlowControllerPublishModes, limited_async_publish_mode)
             get_current_bytes_processed()).After(old_prev4).
             WillRepeatedly(Return(0));
     ASSERT_TRUE(async.add_old_sample(&writer1, &change_writer4));
-    send_call_info.wait_changes_was_delivered(4);
-    EXPECT_NE(std::this_thread::get_id(), send_call_info.last_thread_delivering_sample);
+    this->wait_changes_was_delivered(4);
+    EXPECT_NE(std::this_thread::get_id(), this->last_thread_delivering_sample);
     ASSERT_TRUE(async.add_old_sample(&writer1, &change_writer5));
     ASSERT_TRUE(async.add_old_sample(&writer1, &change_writer6));
     ASSERT_TRUE(async.add_old_sample(&writer1, &change_writer7));
     ASSERT_TRUE(async.add_old_sample(&writer1, &change_writer8));
     ASSERT_TRUE(async.add_old_sample(&writer1, &change_writer9));
     ASSERT_TRUE(async.add_old_sample(&writer1, &change_writer10));
-    send_call_info.wait_changes_was_delivered(10);
-    EXPECT_NE(std::this_thread::get_id(), send_call_info.last_thread_delivering_sample);
-    send_call_info.changes_delivered.clear();
+    this->wait_changes_was_delivered(10);
+    EXPECT_NE(std::this_thread::get_id(), this->last_thread_delivering_sample);
+    this->changes_delivered.clear();
 
     async.unregister_writer(&writer1);
 }

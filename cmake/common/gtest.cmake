@@ -56,6 +56,7 @@ macro(add_gtest)
         endif()
 
         foreach(GTEST_SOURCE_FILE ${GTEST_SOURCES})
+            # Normal tests
             file(STRINGS ${GTEST_SOURCE_FILE} GTEST_TEST_NAMES REGEX ^TEST)
             foreach(GTEST_TEST_NAME ${GTEST_TEST_NAMES})
                 string(REGEX REPLACE ["\) \(,"] ";" GTEST_TEST_NAME ${GTEST_TEST_NAME})
@@ -63,6 +64,36 @@ macro(add_gtest)
                 list(GET GTEST_TEST_NAME 3 GTEST_TEST_NAME)
                 add_test(NAME ${GTEST_GROUP_NAME}.${GTEST_TEST_NAME}
                     COMMAND ${command} --gtest_filter=${GTEST_GROUP_NAME}.${GTEST_TEST_NAME}:*/${GTEST_GROUP_NAME}.${GTEST_TEST_NAME}/*)
+
+                # Add environment
+                set(GTEST_ENVIRONMENT "")
+                if(WIN32)
+                    set(GTEST_ENVIRONMENT "PATH=${WIN_PATH}")
+                endif()
+
+                foreach(property ${GTEST_ENVIRONMENTS})
+                    list(APPEND GTEST_ENVIRONMENT "${property}")
+                endforeach()
+
+                if(GTEST_ENVIRONMENT)
+                    set_tests_properties(${GTEST_GROUP_NAME}.${GTEST_TEST_NAME}
+                        PROPERTIES ENVIRONMENT "${GTEST_ENVIRONMENT}")
+                endif()
+                unset(GTEST_ENVIRONMENT)
+
+                # Add labels
+                set_property(TEST ${GTEST_GROUP_NAME}.${GTEST_TEST_NAME} PROPERTY LABELS "${GTEST_LABELS}")
+
+            endforeach()
+
+            # Typed tests
+            file(STRINGS ${GTEST_SOURCE_FILE} GTEST_TEST_NAMES REGEX ^TYPED_TEST)
+            foreach(GTEST_TEST_NAME ${GTEST_TEST_NAMES})
+                string(REGEX REPLACE ["\) \(,"] ";" GTEST_TEST_NAME ${GTEST_TEST_NAME})
+                list(GET GTEST_TEST_NAME 1 GTEST_GROUP_NAME)
+                list(GET GTEST_TEST_NAME 3 GTEST_TEST_NAME)
+                add_test(NAME ${GTEST_GROUP_NAME}.${GTEST_TEST_NAME}
+                    COMMAND ${command} --gtest_filter=${GTEST_GROUP_NAME}*/*.${GTEST_TEST_NAME})
 
                 # Add environment
                 set(GTEST_ENVIRONMENT "")
