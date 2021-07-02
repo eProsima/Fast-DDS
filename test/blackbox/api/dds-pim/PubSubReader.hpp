@@ -160,7 +160,7 @@ private:
         {
             ASSERT_NE(datareader, nullptr);
             {
-                std::unique_lock<std::mutex> lock(reader_.message_receive_mutex_);
+                std::lock_guard<std::mutex> guard(reader_.message_receive_mutex_);
                 reader_.message_receive_count_.fetch_add(1);
             }
             reader_.message_receive_cv_.notify_one();
