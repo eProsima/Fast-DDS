@@ -205,7 +205,8 @@ void DataSharingListener::process_new_data ()
 
 bool DataSharingListener::add_datasharing_writer(
         const GUID_t& writer_guid,
-        bool is_volatile)
+        bool is_volatile,
+        int32_t reader_history_max_samples)
 {
     std::lock_guard<std::mutex> lock(mutex_);
 
@@ -217,11 +218,22 @@ bool DataSharingListener::add_datasharing_writer(
 
     std::shared_ptr<ReaderPool> pool =
             std::static_pointer_cast<ReaderPool>(DataSharingPayloadPool::get_reader_pool(is_volatile));
-    pool->init_shared_memory(writer_guid, datasharing_pools_directory_);
-    writer_pools_.emplace_back(pool, pool->last_liveliness_sequence());
-    writer_pools_changed_.store(true);
+    if (pool->init_shared_memory(writer_guid, datasharing_pools_directory_))
+    {
+        if (0 >= reader_history_max_samples ||
+                reader_history_max_samples >= static_cast<int32_t>(pool->history_size()))
+        {
+            logWarning(RTPS_READER,
+                    "Reader " << reader_->getGuid() << " was configured to have a large history (" <<
+                    reader_history_max_samples << " max samples), but the history size used with writer " <<
+                    writer_guid << " will be " << pool->history_size() << " max samples.");
+        }
+        writer_pools_.emplace_back(pool, pool->last_liveliness_sequence());
+        writer_pools_changed_.store(true);
+        return true;
+    }
 
-    return true;
+    return false;
 }
 
 bool DataSharingListener::remove_datasharing_writer(

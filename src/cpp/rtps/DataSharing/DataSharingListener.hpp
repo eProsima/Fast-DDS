@@ -65,7 +65,8 @@ public:
 
     bool add_datasharing_writer(
             const GUID_t& writer_guid,
-            bool is_volatile) override;
+            bool is_volatile,
+            int32_t reader_history_max_samples) override;
 
     bool remove_datasharing_writer(
             const GUID_t& writer_guid) override;
