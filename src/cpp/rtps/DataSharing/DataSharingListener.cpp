@@ -220,8 +220,8 @@ bool DataSharingListener::add_datasharing_writer(
             std::static_pointer_cast<ReaderPool>(DataSharingPayloadPool::get_reader_pool(is_volatile));
     if (pool->init_shared_memory(writer_guid, datasharing_pools_directory_))
     {
-        if (0 == reader_history_max_samples ||
-                reader_history_max_samples > static_cast<int32_t>(pool->history_size() - 1))
+        if (0 >= reader_history_max_samples ||
+                reader_history_max_samples >= static_cast<int32_t>(pool->history_size()))
         {
             logWarning(RTPS_READER,
                     "Reader " << reader_->getGuid() << " was configured to have a large history (" <<
