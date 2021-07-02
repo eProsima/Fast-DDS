@@ -479,7 +479,6 @@ void SecurityManager::destroy()
                 authentication_plugin_->return_sharedsecret_handle(shared_secret_handle, exception);
             }
 
-            //auths_to_remove.push_back(dp_it.second.get_auth());
             DiscoveredParticipantInfo::AuthUniquePtr remote_participant_info = dp_it.second.get_auth();
             remove_discovered_participant_info(remote_participant_info);
             auths_to_remove.push_back(std::move(remote_participant_info));
@@ -571,7 +570,9 @@ bool SecurityManager::restore_discovered_participant_info(
     }
     else
     {
-        DiscoveredParticipantInfo::AuthUniquePtr remote_participant_info = std::move(auth_ptr);
+                // AuthUniquePtr must be removed after unlock SecurityManager's mutex.
+                // This is to avoid a deadlock with TimedEvents.
+                DiscoveredParticipantInfo::AuthUniquePtr remote_participant_info = std::move(auth_ptr);
         remove_discovered_participant_info(remote_participant_info);
         lock.unlock();
     }
@@ -747,6 +748,8 @@ void SecurityManager::remove_participant(
             authentication_plugin_->return_sharedsecret_handle(shared_secret_handle, exception);
         }
 
+        // AuthUniquePtr must be removed after unlock SecurityManager's mutex.
+        // This is to avoid a deadlock with TimedEvents.
         DiscoveredParticipantInfo::AuthUniquePtr remote_participant_info = dp_it->second.get_auth();
         remove_discovered_participant_info(remote_participant_info);
 
