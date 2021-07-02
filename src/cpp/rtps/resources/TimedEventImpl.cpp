@@ -92,19 +92,21 @@ void TimedEventImpl::trigger(
     if (callback_)
     {
         StateCode expected = StateCode::WAITING;
-        state_.compare_exchange_strong(expected, StateCode::INACTIVE);
-
-        //Exec
-        bool restart = callback_();
-
-        if (restart)
+        if (state_.compare_exchange_strong(expected, StateCode::INACTIVE))
         {
-            expected = StateCode::INACTIVE;
-            if (state_.compare_exchange_strong(expected, StateCode::WAITING))
+
+            //Exec
+            bool restart = callback_();
+
+            if (restart)
             {
-                std::lock_guard<std::mutex> lock(mutex_);
-                next_trigger_time_ = current_time + interval_microsec_;
-                return;
+                expected = StateCode::INACTIVE;
+                if (state_.compare_exchange_strong(expected, StateCode::WAITING))
+                {
+                    std::lock_guard<std::mutex> lock(mutex_);
+                    next_trigger_time_ = current_time + interval_microsec_;
+                    return;
+                }
             }
         }
 
