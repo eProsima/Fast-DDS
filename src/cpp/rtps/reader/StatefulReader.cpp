@@ -619,10 +619,10 @@ bool StatefulReader::processHeartbeatMsg(
                     if (liveliness_kind_ == MANUAL_BY_TOPIC_LIVELINESS_QOS ||
                             writer->liveliness_kind() == MANUAL_BY_TOPIC_LIVELINESS_QOS)
                     {
-                        lock.unlock(); // Avoid deadlock with LivelinessManager.
                         auto wlp = this->mp_RTPSParticipant->wlp();
                         if ( wlp != nullptr)
                         {
+                            lock.unlock(); // Avoid deadlock with LivelinessManager.
                             wlp->sub_liveliness_manager_->assert_liveliness(
                                 writerGUID,
                                 liveliness_kind_,
