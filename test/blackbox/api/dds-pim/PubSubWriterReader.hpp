@@ -412,7 +412,8 @@ public:
     }
 
     bool create_additional_topics(
-            size_t num_topics)
+            size_t num_topics,
+            const char* suffix)
     {
         bool ret_val = initialized_;
         if (ret_val)
@@ -422,12 +423,12 @@ public:
 
             for (size_t i = 0; i < vector_size; i++)
             {
-                topic_name += "/";
+                topic_name += suffix;
             }
 
             for (size_t i = 0; ret_val && (i < num_topics); i++)
             {
-                topic_name += "/";
+                topic_name += suffix;
                 eprosima::fastdds::dds::Topic* topic = participant_->create_topic(topic_name,
                                 type_->getName(), eprosima::fastdds::dds::TOPIC_QOS_DEFAULT);
                 ret_val &= (nullptr != topic);

@@ -69,7 +69,8 @@ public:
      */
     virtual bool add_datasharing_writer(
             const GUID_t& writer_guid,
-            bool is_reader_volatile) = 0;
+            bool is_reader_volatile,
+            int32_t reader_history_max_samples) = 0;
 
     /**
      * Removes a writer from the listening. The changes in the writer's history will not be

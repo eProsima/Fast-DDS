@@ -101,6 +101,11 @@ public:
         return "history";
     }
 
+    uint32_t history_size() const
+    {
+        return descriptor_->history_size;
+    }
+
     /**
      * Advances an index to the history to the next position
      */

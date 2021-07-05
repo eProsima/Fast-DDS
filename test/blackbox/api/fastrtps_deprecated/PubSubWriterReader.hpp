@@ -389,7 +389,8 @@ public:
     }
 
     bool create_additional_topics(
-            size_t num_topics)
+            size_t num_topics,
+            const char* suffix)
     {
         bool ret_val = initialized_;
         if (ret_val)
@@ -398,7 +399,7 @@ public:
 
             for (size_t i = 0; ret_val && (i < num_topics); i++)
             {
-                topic_name += "/";
+                topic_name += suffix;
                 publisher_attr_.topic.topicName = topic_name;
                 ret_val &=
                         nullptr != eprosima::fastrtps::Domain::createPublisher(participant_, publisher_attr_,
@@ -409,7 +410,7 @@ public:
 
             for (size_t i = 0; ret_val && (i < num_topics); i++)
             {
-                topic_name += "/";
+                topic_name += suffix;
                 subscriber_attr_.topic.topicName = topic_name;
                 ret_val &=
                         nullptr != eprosima::fastrtps::Domain::createSubscriber(participant_, subscriber_attr_,
