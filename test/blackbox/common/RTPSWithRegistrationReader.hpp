@@ -140,6 +140,8 @@ public:
 
     void init()
     {
+        matched_ = 0;
+
         eprosima::fastrtps::rtps::RTPSParticipantAttributes pattr;
         pattr.builtin.discovery_config.discoveryProtocol = eprosima::fastrtps::rtps::DiscoveryProtocol::SIMPLE;
         pattr.builtin.use_WriterLivelinessProtocol = true;
