@@ -418,8 +418,9 @@ public:
         if (ret_val)
         {
             std::string topic_name = topic_name_;
+            size_t vector_size = entities_extra_.size();
 
-            for (size_t i = 0; i < entities_extra_.size(); i++)
+            for (size_t i = 0; i < vector_size; i++)
             {
                 topic_name += "/";
             }
@@ -451,7 +452,9 @@ public:
                     break;
                 }
 
+                mutex_.lock();
                 entities_extra_.push_back({topic, datawriter, datareader});
+                mutex_.unlock();
             }
         }
 
