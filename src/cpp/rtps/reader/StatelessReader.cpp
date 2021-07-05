@@ -113,7 +113,8 @@ bool StatelessReader::matched_writer_add(
     if (is_datasharing)
     {
         if (datasharing_listener_->add_datasharing_writer(wdata.guid(),
-                m_att.durabilityKind == VOLATILE))
+                m_att.durabilityKind == VOLATILE,
+                mp_history->m_att.maximumReservedCaches))
         {
             logInfo(RTPS_READER, "Writer Proxy " << wdata.guid() << " added to " << this->m_guid.entityId
                                                  << " with data sharing");
