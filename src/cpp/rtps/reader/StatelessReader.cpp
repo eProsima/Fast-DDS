@@ -394,8 +394,6 @@ bool StatelessReader::processDataMsg(
     {
         logInfo(RTPS_MSG_IN, IDSTRING "Trying to add change " << change->sequenceNumber << " TO reader: " << m_guid);
 
-        assert_writer_liveliness(change->writerGUID);
-
         // Ask the pool for a cache change
         CacheChange_t* change_to_add = nullptr;
         if (!change_pool_->reserve_cache(change_to_add))
@@ -456,6 +454,9 @@ bool StatelessReader::processDataMsg(
             change_pool_->release_cache(change_to_add);
             return false;
         }
+
+        lock.unlock(); // Avoid deadlock with LivelinessManager.
+        assert_writer_liveliness(change->writerGUID);
     }
 
     return true;
@@ -478,7 +479,6 @@ bool StatelessReader::processDataFragMsg(
         {
             // Datasharing communication will never send fragments
             assert(!writer.is_datasharing);
-            assert_writer_liveliness(writer_guid);
 
             // Check if CacheChange was received.
             if (!thereIsUpperRecordOf(writer_guid, incomingChange->sequenceNumber))
@@ -564,6 +564,10 @@ bool StatelessReader::processDataFragMsg(
                     }
                 }
             }
+
+            lock.unlock(); // Avoid deadlock with LivelinessManager.
+            assert_writer_liveliness(writer_guid);
+
             return true;
         }
     }
