@@ -19,34 +19,36 @@
 #include <fastrtps/config.h>
 
 #include <fastdds/publisher/DataWriterImpl.hpp>
+
+#include <functional>
+#include <iostream>
+
+#include <fastdds/dds/domain/DomainParticipant.hpp>
+#include <fastdds/dds/log/Log.hpp>
 #include <fastdds/dds/topic/TypeSupport.hpp>
 #include <fastdds/dds/publisher/DataWriter.hpp>
-#include <fastrtps/attributes/TopicAttributes.h>
-#include <fastdds/publisher/PublisherImpl.hpp>
 #include <fastdds/dds/publisher/Publisher.hpp>
 #include <fastdds/dds/publisher/PublisherListener.hpp>
 
+#include <fastdds/rtps/RTPSDomain.h>
+#include <fastdds/rtps/builtin/liveliness/WLP.h>
+#include <fastdds/rtps/participant/RTPSParticipant.h>
+#include <fastdds/rtps/resources/ResourceEvent.h>
+#include <fastdds/rtps/resources/TimedEvent.h>
 #include <fastdds/rtps/writer/RTPSWriter.h>
 #include <fastdds/rtps/writer/StatefulWriter.h>
 
-#include <fastdds/dds/domain/DomainParticipant.hpp>
-#include <fastdds/rtps/participant/RTPSParticipant.h>
-#include <fastdds/rtps/RTPSDomain.h>
-
-#include <fastdds/dds/log/Log.hpp>
+#include <fastdds/publisher/PublisherImpl.hpp>
+#include <fastrtps/attributes/TopicAttributes.h>
 #include <fastrtps/utils/TimeConversion.h>
-#include <fastdds/rtps/resources/ResourceEvent.h>
-#include <fastdds/rtps/resources/TimedEvent.h>
-#include <fastdds/rtps/builtin/liveliness/WLP.h>
+
+#include <fastdds/core/condition/StatusConditionImpl.hpp>
 #include <fastdds/core/policy/ParameterSerializer.hpp>
 #include <fastdds/core/policy/QosPolicyUtils.hpp>
 
 #include <rtps/history/TopicPayloadPoolRegistry.hpp>
 #include <rtps/DataSharing/DataSharingPayloadPool.hpp>
 #include <rtps/participant/RTPSParticipantImpl.h>
-
-#include <functional>
-#include <iostream>
 
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
@@ -949,11 +951,7 @@ void DataWriterImpl::InnerDataWriterListener::onWriterMatched(
         RTPSWriter* /*writer*/,
         const PublicationMatchedStatus& info)
 {
-    DataWriterListener* listener = data_writer_->get_listener_for(StatusMask::publication_matched());
-    if (listener != nullptr)
-    {
-        listener->on_publication_matched(data_writer_->user_datawriter_, info);
-    }
+    data_writer_->update_publication_matched_status(info);
 }
 
 void DataWriterImpl::InnerDataWriterListener::on_offered_incompatible_qos(
@@ -961,7 +959,8 @@ void DataWriterImpl::InnerDataWriterListener::on_offered_incompatible_qos(
         fastdds::dds::PolicyMask qos)
 {
     data_writer_->update_offered_incompatible_qos(qos);
-    DataWriterListener* listener = data_writer_->get_listener_for(StatusMask::offered_incompatible_qos());
+    StatusMask notify_status = StatusMask::offered_incompatible_qos();
+    DataWriterListener* listener = data_writer_->get_listener_for(notify_status);
     if (listener != nullptr)
     {
         OfferedIncompatibleQosStatus callback_status;
@@ -970,6 +969,7 @@ void DataWriterImpl::InnerDataWriterListener::on_offered_incompatible_qos(
             listener->on_offered_incompatible_qos(data_writer_->user_datawriter_, callback_status);
         }
     }
+    data_writer_->user_datawriter_->get_statuscondition().get_impl()->set_status(notify_status, true);
 }
 
 void DataWriterImpl::InnerDataWriterListener::onWriterChangeReceivedByAll(
@@ -992,12 +992,14 @@ void DataWriterImpl::InnerDataWriterListener::on_liveliness_lost(
         fastrtps::rtps::RTPSWriter* /*writer*/,
         const fastrtps::LivelinessLostStatus& status)
 {
-    DataWriterListener* listener = data_writer_->get_listener_for(StatusMask::liveliness_lost());
+    StatusMask notify_status = StatusMask::liveliness_lost();
+    DataWriterListener* listener = data_writer_->get_listener_for(notify_status);
     if (listener != nullptr)
     {
         listener->on_liveliness_lost(
             data_writer_->user_datawriter_, status);
     }
+    data_writer_->user_datawriter_->get_statuscondition().get_impl()->set_status(notify_status, true);
 }
 
 ReturnCode_t DataWriterImpl::wait_for_acknowledgments(
@@ -1013,6 +1015,50 @@ ReturnCode_t DataWriterImpl::wait_for_acknowledgments(
         return ReturnCode_t::RETCODE_OK;
     }
     return ReturnCode_t::RETCODE_ERROR;
+}
+
+void DataWriterImpl::update_publication_matched_status(
+        const PublicationMatchedStatus& status)
+{
+    auto count_change = status.current_count_change;
+    publication_matched_status_.current_count += count_change;
+    publication_matched_status_.current_count_change += count_change;
+    if (count_change > 0)
+    {
+        publication_matched_status_.total_count += count_change;
+        publication_matched_status_.total_count_change += count_change;
+        publication_matched_status_.last_subscription_handle = status.last_subscription_handle;
+    }
+
+    StatusMask notify_status = StatusMask::publication_matched();
+    DataWriterListener* listener = get_listener_for(notify_status);
+    if (listener != nullptr)
+    {
+        listener->on_publication_matched(user_datawriter_, publication_matched_status_);
+        publication_matched_status_.current_count_change = 0;
+        publication_matched_status_.total_count_change = 0;
+    }
+    user_datawriter_->get_statuscondition().get_impl()->set_status(notify_status, true);
+}
+
+ReturnCode_t DataWriterImpl::get_publication_matched_status(
+        PublicationMatchedStatus& status)
+{
+    if (writer_ == nullptr)
+    {
+        return ReturnCode_t::RETCODE_NOT_ENABLED;
+    }
+
+    {
+        std::unique_lock<RecursiveTimedMutex> lock(writer_->getMutex());
+
+        status = publication_matched_status_;
+        publication_matched_status_.current_count_change = 0;
+        publication_matched_status_.total_count_change = 0;
+    }
+
+    user_datawriter_->get_statuscondition().get_impl()->set_status(StatusMask::publication_matched(), false);
+    return ReturnCode_t::RETCODE_OK;
 }
 
 bool DataWriterImpl::deadline_timer_reschedule()
@@ -1042,12 +1088,14 @@ bool DataWriterImpl::deadline_missed()
     deadline_missed_status_.total_count++;
     deadline_missed_status_.total_count_change++;
     deadline_missed_status_.last_instance_handle = timer_owner_;
-    if (listener_ != nullptr)
+    StatusMask notify_status = StatusMask::offered_deadline_missed();
+    auto listener = get_listener_for(notify_status);
+    if (nullptr != listener)
     {
         listener_->on_offered_deadline_missed(user_datawriter_, deadline_missed_status_);
+        deadline_missed_status_.total_count_change = 0;
     }
-    publisher_->publisher_listener_.on_offered_deadline_missed(user_datawriter_, deadline_missed_status_);
-    deadline_missed_status_.total_count_change = 0;
+    user_datawriter_->get_statuscondition().get_impl()->set_status(notify_status, true);
 
     if (!history_.set_next_deadline(
                 timer_owner_,
@@ -1067,10 +1115,14 @@ ReturnCode_t DataWriterImpl::get_offered_deadline_missed_status(
         return ReturnCode_t::RETCODE_NOT_ENABLED;
     }
 
-    std::unique_lock<RecursiveTimedMutex> lock(writer_->getMutex());
+    {
+        std::unique_lock<RecursiveTimedMutex> lock(writer_->getMutex());
 
-    status = deadline_missed_status_;
-    deadline_missed_status_.total_count_change = 0;
+        status = deadline_missed_status_;
+        deadline_missed_status_.total_count_change = 0;
+    }
+
+    user_datawriter_->get_statuscondition().get_impl()->set_status(StatusMask::offered_deadline_missed(), false);
     return ReturnCode_t::RETCODE_OK;
 }
 
@@ -1082,10 +1134,14 @@ ReturnCode_t DataWriterImpl::get_offered_incompatible_qos_status(
         return ReturnCode_t::RETCODE_NOT_ENABLED;
     }
 
-    std::unique_lock<RecursiveTimedMutex> lock(writer_->getMutex());
+    {
+        std::unique_lock<RecursiveTimedMutex> lock(writer_->getMutex());
 
-    status = offered_incompatible_qos_status_;
-    offered_incompatible_qos_status_.total_count_change = 0u;
+        status = offered_incompatible_qos_status_;
+        offered_incompatible_qos_status_.total_count_change = 0u;
+    }
+
+    user_datawriter_->get_statuscondition().get_impl()->set_status(StatusMask::offered_incompatible_qos(), false);
     return ReturnCode_t::RETCODE_OK;
 }
 
@@ -1139,13 +1195,16 @@ ReturnCode_t DataWriterImpl::get_liveliness_lost_status(
         return ReturnCode_t::RETCODE_NOT_ENABLED;
     }
 
-    std::unique_lock<RecursiveTimedMutex> lock(writer_->getMutex());
+    {
+        std::unique_lock<RecursiveTimedMutex> lock(writer_->getMutex());
 
-    status.total_count = writer_->liveliness_lost_status_.total_count;
-    status.total_count_change = writer_->liveliness_lost_status_.total_count_change;
+        status.total_count = writer_->liveliness_lost_status_.total_count;
+        status.total_count_change = writer_->liveliness_lost_status_.total_count_change;
 
-    writer_->liveliness_lost_status_.total_count_change = 0u;
+        writer_->liveliness_lost_status_.total_count_change = 0u;
+    }
 
+    user_datawriter_->get_statuscondition().get_impl()->set_status(StatusMask::liveliness_lost(), false);
     return ReturnCode_t::RETCODE_OK;
 }
 

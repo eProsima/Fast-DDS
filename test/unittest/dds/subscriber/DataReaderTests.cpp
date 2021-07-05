@@ -1759,17 +1759,15 @@ public:
  * ReturnCode_t::RETCODE_UNSUPPORTED. The following methods are checked:
  * 1. get_sample_lost_status
  * 2. get_sample_rejected_status
- * 3. get_subscription_matched_status
- * 4. get_subscription_matched_status
- * 5. get_matched_publication_data
- * 6. create_readcondition
- * 7. create_querycondition
- * 8. delete_readcondition
- * 9. delete_contained_entities
- * 10. get_matched_publications
- * 11. get_key_value
- * 12. lookup_instance
- * 13. wait_for_historical_data
+ * 3. get_matched_publication_data
+ * 4. create_readcondition
+ * 5. create_querycondition
+ * 6. delete_readcondition
+ * 7. delete_contained_entities
+ * 8. get_matched_publications
+ * 9. get_key_value
+ * 10. lookup_instance
+ * 11. wait_for_historical_data
  */
 TEST_F(DataReaderUnsupportedTests, UnsupportedDataReaderMethods)
 {
@@ -1797,16 +1795,6 @@ TEST_F(DataReaderUnsupportedTests, UnsupportedDataReaderMethods)
     {
         SampleRejectedStatus status;
         EXPECT_EQ(ReturnCode_t::RETCODE_UNSUPPORTED, data_reader->get_sample_rejected_status(status));
-    }
-
-    {
-        SubscriptionMatchedStatus status;
-        EXPECT_EQ(ReturnCode_t::RETCODE_UNSUPPORTED, data_reader->get_subscription_matched_status(status));
-    }
-
-    {
-        SubscriptionMatchedStatus status;
-        EXPECT_EQ(ReturnCode_t::RETCODE_UNSUPPORTED, data_reader->get_subscription_matched_status(status));
     }
 
     builtin::PublicationBuiltinTopicData publication_data;

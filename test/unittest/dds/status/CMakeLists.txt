@@ -17,6 +17,7 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
         find_package(Threads REQUIRED)
 
         set(LISTENERTESTS_SOURCE ListenerTests.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/core/Entity.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/core/condition/Condition.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/core/condition/ConditionNotifier.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/core/condition/StatusCondition.cpp

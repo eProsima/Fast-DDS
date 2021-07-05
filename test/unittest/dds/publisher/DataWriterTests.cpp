@@ -845,14 +845,13 @@ public:
 /*
  * This test checks that the DataWriter methods defined in the standard not yet implemented in FastDDS return
  * ReturnCode_t::RETCODE_UNSUPPORTED. The following methods are checked:
- * 1. get_publication_matched_status
- * 2. get_matched_subscription_data
- * 3. write_w_timestamp
- * 4. register_instance_w_timestamp
- * 5. unregister_instance_w_timestamp
- * 6. get_matched_subscriptions
- * 7. get_key_value
- * 8. lookup_instance
+ * 1. get_matched_subscription_data
+ * 2. write_w_timestamp
+ * 3. register_instance_w_timestamp
+ * 4. unregister_instance_w_timestamp
+ * 5. get_matched_subscriptions
+ * 6. get_key_value
+ * 7. lookup_instance
  */
 TEST_F(DataWriterUnsupportedTests, UnsupportedDataWriterMethods)
 {
@@ -871,11 +870,6 @@ TEST_F(DataWriterUnsupportedTests, UnsupportedDataWriterMethods)
 
     DataWriter* data_writer = publisher->create_datawriter(topic, DATAWRITER_QOS_DEFAULT);
     ASSERT_NE(publisher, nullptr);
-
-    PublicationMatchedStatus status;
-    EXPECT_EQ(
-        ReturnCode_t::RETCODE_UNSUPPORTED,
-        data_writer->get_publication_matched_status(status));
 
     builtin::SubscriptionBuiltinTopicData subscription_data;
     fastrtps::rtps::InstanceHandle_t subscription_handle;
