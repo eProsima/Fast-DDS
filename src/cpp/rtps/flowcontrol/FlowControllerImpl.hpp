@@ -900,7 +900,7 @@ struct FlowControllerPriorityWithReservationSchedule
                             size_to_check = change->getFragmentSize();
                         }
 
-                        if (std::get<2>(writer->second) > std::get<3>(writer->second))
+                        if (std::get<2>(writer->second) > (std::get<3>(writer->second) + size_to_check))
                         {
                             ret_change = change;
                             writer_being_processed_ = writer_it;
@@ -1428,14 +1428,14 @@ private:
     }
 
     template<typename PubMode = PublishMode>
-    typename std::enable_if<std::is_same<FlowControllerLimitedAsyncPublishMode, PubMode>::value, uint32_t>::type
+    typename std::enable_if<std::is_base_of<FlowControllerLimitedAsyncPublishMode, PubMode>::value, uint32_t>::type
     get_max_payload_impl()
     {
         return async_mode.max_bytes_per_period;
     }
 
     template<typename PubMode = PublishMode>
-    typename std::enable_if<!std::is_same<FlowControllerLimitedAsyncPublishMode, PubMode>::value, uint32_t>::type
+    typename std::enable_if<!std::is_base_of<FlowControllerLimitedAsyncPublishMode, PubMode>::value, uint32_t>::type
     constexpr get_max_payload_impl() const
     {
         return std::numeric_limits<uint32_t>::max();

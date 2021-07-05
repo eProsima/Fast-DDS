@@ -77,5 +77,29 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
                 )
         endif()
         add_gtest(FlowControllerPublishModesTests SOURCES ${FLOWCONTROLLERPUBLISHMODESTESTS_SOURCE})
+
+        set(FLOWCONTROLLERSCHEDULERSTESTS_SOURCE
+            ${FLOWCONTROLLER_COMMON_SOURCE}
+            FlowControllerSchedulersTests.cpp
+            )
+
+        add_executable(FlowControllerSchedulersTests ${FLOWCONTROLLERSCHEDULERSTESTS_SOURCE})
+        target_compile_definitions(FlowControllerSchedulersTests PRIVATE FASTRTPS_NO_LIB
+            $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
+            $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
+            )
+        target_include_directories(FlowControllerSchedulersTests PRIVATE ${GTEST_INCLUDE_DIRS}
+            ${PROJECT_SOURCE_DIR}/test/mock/rtps/RTPSWriter
+            ${PROJECT_SOURCE_DIR}/test/mock/rtps/RTPSMessageGroup
+            ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include
+            ${PROJECT_SOURCE_DIR}/src/cpp
+            )
+        target_link_libraries(FlowControllerSchedulersTests ${GTEST_LIBRARIES} ${GMOCK_LIBRARIES})
+        if(MSVC OR MSVC_IDE)
+            target_link_libraries(FlowControllerSchedulersTests ${PRIVACY}
+                iphlpapi Shlwapi
+                )
+        endif()
+        add_gtest(FlowControllerSchedulersTests SOURCES ${FLOWCONTROLLERSCHEDULERSTESTS_SOURCE})
     endif()
 endif()

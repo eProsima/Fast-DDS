@@ -141,9 +141,14 @@ public:
 
     // *INDENT-ON*
 
-    const GUID_t& getGuid()
+    const GUID_t& getGuid() const
     {
         return m_guid;
+    }
+
+    EndpointAttributes& getAttributes()
+    {
+        return m_att.endpoint;
     }
 
     virtual void updateAttributes(
@@ -237,6 +242,8 @@ public:
     WriterListener* listener_;
 
     GUID_t m_guid;
+
+    WriterAttributes m_att;
 
     LivelinessLostStatus liveliness_lost_status_;
 

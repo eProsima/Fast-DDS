@@ -50,6 +50,8 @@ public:
 
     MOCK_METHOD0(get_current_bytes_processed, uint32_t());
 
+    MOCK_METHOD0(reset_current_bytes_processed, void());
+
     void change_transmitter(
             Endpoint*,
             const RTPSMessageSenderInterface*) const
@@ -58,10 +60,6 @@ public:
 
     void set_sent_bytes_limitation(
             uint32_t) const
-    {
-    }
-
-    void reset_current_bytes_processed()
     {
     }
 
