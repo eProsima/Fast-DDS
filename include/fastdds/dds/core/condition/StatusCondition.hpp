@@ -90,7 +90,7 @@ public:
      */
     RTPS_DllAPI Entity* get_entity() const;
 
-    detail::StatusConditionImpl* get_impl()
+    detail::StatusConditionImpl* get_impl() const
     {
         return impl_.get();
     }

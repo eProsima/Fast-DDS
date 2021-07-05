@@ -104,6 +104,7 @@ if (SQLITE3_SUPPORT AND FASTDDS_STATISTICS)
         ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/builtin/typelookup/TypeLookupReplyListener.cpp
         ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/builtin/typelookup/TypeLookupRequestListener.cpp
         ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/builtin/typelookup/common/TypeLookupTypes.cpp
+        ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/core/Entity.cpp
         ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/core/condition/Condition.cpp
         ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/core/condition/ConditionNotifier.cpp
         ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/core/condition/StatusCondition.cpp

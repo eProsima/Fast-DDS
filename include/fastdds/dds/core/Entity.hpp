@@ -45,7 +45,6 @@ public:
     RTPS_DllAPI Entity(
             const StatusMask& mask = StatusMask::all())
         : status_mask_(mask)
-        , status_changes_(StatusMask::none())
         , status_condition_(this)
         , enable_(false)
     {
@@ -92,10 +91,7 @@ public:
      *
      * @return const reference to the StatusMask with the triggered statuses set to 1
      */
-    RTPS_DllAPI const StatusMask& get_status_changes() const
-    {
-        return status_changes_;
-    }
+    RTPS_DllAPI const StatusMask& get_status_changes() const;
 
     /**
      * @brief Retrieves the instance handler that represents the Entity
@@ -144,9 +140,6 @@ protected:
 
     //! StatusMask with relevant statuses set to 1
     StatusMask status_mask_;
-
-    //! StatusMask with triggered statuses set to 1
-    StatusMask status_changes_;
 
     //! Condition associated to the Entity
     StatusCondition status_condition_;
