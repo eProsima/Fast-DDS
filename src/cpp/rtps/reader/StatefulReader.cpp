@@ -834,6 +834,8 @@ bool StatefulReader::change_received(
     // inside the call to mp_history->received_change
     if (mp_history->received_change(a_change, unknown_missing_changes_up_to))
     {
+        auto payload_length = a_change->serializedPayload.length;
+
         Time_t::now(a_change->receptionTimestamp);
         GUID_t proxGUID = prox->guid();
 
@@ -854,7 +856,7 @@ bool StatefulReader::change_received(
         NotifyChanges(prox);
 
         // statistics callback
-        on_subscribe_throughput(a_change->serializedPayload.length);
+        on_subscribe_throughput(payload_length);
 
         return ret;
     }
