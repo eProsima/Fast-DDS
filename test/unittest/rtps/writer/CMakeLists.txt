@@ -25,6 +25,8 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/StdoutErrConsumer.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/Time_t.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/rtps/writer/LocatorSelectorSender.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/rtps/flowcontrol/FlowControllerConsts.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/rtps/flowcontrol/ThroughputControllerDescriptor.cpp
             )
 
         if(WIN32)
