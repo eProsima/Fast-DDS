@@ -65,7 +65,7 @@ TEST(StatusConditionImplTests, notify_trigger)
     EXPECT_EQ(mask_none.to_string(), uut.get_raw_status().to_string());
 
     // Triggering other_mask should trigger
-    auto& call1 = EXPECT_CALL(notifier, notify).Times(1);
+    auto& call1 = EXPECT_CALL(notifier, notify()).Times(1);
     uut.set_status(other_mask, true);
     EXPECT_EQ(other_mask.to_string(), uut.get_raw_status().to_string());
     EXPECT_TRUE(uut.get_trigger_value());
@@ -76,7 +76,7 @@ TEST(StatusConditionImplTests, notify_trigger)
     EXPECT_FALSE(uut.get_trigger_value());
 
     // Triggering one_mask should trigger
-    auto& call2 = EXPECT_CALL(notifier, notify).Times(1).After(call1);
+    auto& call2 = EXPECT_CALL(notifier, notify()).Times(1).After(call1);
     uut.set_status(one_mask, true);
     EXPECT_EQ(both_mask.to_string(), uut.get_raw_status().to_string());
     EXPECT_TRUE(uut.get_trigger_value());
@@ -112,7 +112,7 @@ TEST(StatusConditionImplTests, notify_trigger)
     EXPECT_FALSE(uut.get_trigger_value());
 
     // Setting mask to other_mask should trigger
-    auto& call3 = EXPECT_CALL(notifier, notify).Times(1).After(call2);
+    auto& call3 = EXPECT_CALL(notifier, notify()).Times(1).After(call2);
     EXPECT_EQ(ReturnCode_t::RETCODE_OK, uut.set_enabled_statuses(other_mask));
     EXPECT_EQ(other_mask.to_string(), uut.get_enabled_statuses().to_string());
 
@@ -137,7 +137,7 @@ TEST(StatusConditionImplTests, notify_trigger)
     EXPECT_FALSE(uut.get_trigger_value());
 
     // Setting mask to one_mask should trigger
-    EXPECT_CALL(notifier, notify).Times(1).After(call3);
+    EXPECT_CALL(notifier, notify()).Times(1).After(call3);
     EXPECT_EQ(ReturnCode_t::RETCODE_OK, uut.set_enabled_statuses(one_mask));
     EXPECT_EQ(one_mask.to_string(), uut.get_enabled_statuses().to_string());
     EXPECT_TRUE(uut.get_trigger_value());

@@ -25,6 +25,7 @@
 
 using namespace eprosima::fastdds::dds;
 using namespace eprosima::fastdds::dds::detail;
+using ::testing::_;
 
 class TestCondition : public Condition
 {
@@ -73,18 +74,18 @@ TEST(ConditionNotifierTests, basic_test)
                 notifier.will_be_deleted(condition);
             };
 
-    EXPECT_CALL(wait_set, wake_up).Times(4);
-    EXPECT_CALL(wait_set, will_be_deleted).Times(4);
+    EXPECT_CALL(wait_set, wake_up()).Times(4);
+    EXPECT_CALL(wait_set, will_be_deleted(_)).Times(4);
     test_steps();
     testing::Mock::VerifyAndClearExpectations(&wait_set);
 
     WaitSetImpl other_waitset;
     notifier.attach_to(&other_waitset);
 
-    EXPECT_CALL(wait_set, wake_up).Times(4);
-    EXPECT_CALL(wait_set, will_be_deleted).Times(4);
-    EXPECT_CALL(other_waitset, wake_up).Times(7);
-    EXPECT_CALL(other_waitset, will_be_deleted).Times(7);
+    EXPECT_CALL(wait_set, wake_up()).Times(4);
+    EXPECT_CALL(wait_set, will_be_deleted(_)).Times(4);
+    EXPECT_CALL(other_waitset, wake_up()).Times(7);
+    EXPECT_CALL(other_waitset, will_be_deleted(_)).Times(7);
     test_steps();
 }
 
