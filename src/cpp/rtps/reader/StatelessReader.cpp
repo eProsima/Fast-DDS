@@ -255,6 +255,7 @@ bool StatelessReader::change_received(
 
             if (getListener() != nullptr)
             {
+                // WARNING! This method could destroy the change
                 getListener()->onNewCacheChangeAdded(this, change);
             }
 

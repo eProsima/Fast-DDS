@@ -853,6 +853,7 @@ bool StatefulReader::change_received(
             ret = prox->received_change_set(a_change->sequenceNumber);
         }
 
+        // WARNING! This method could destroy a_change
         NotifyChanges(prox);
 
         // statistics callback
