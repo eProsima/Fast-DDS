@@ -49,7 +49,7 @@ bool ThroughputDataType::serialize(
     ThroughputType* lt = (ThroughputType*)data;
 
     memcpy(payload->data, encapsulation, SerializedPayload_t::representation_header_size);
-    memcpy(payload->data + 4, &lt->seqnum, sizeof(lt->seqnum));
+    memcpy(payload->data +  SerializedPayload_t::representation_header_size, &lt->seqnum, sizeof(lt->seqnum));
     memcpy(payload->data + 8, lt->data, buffer_size_);
     payload->length = m_typeSize;
     return true;
@@ -63,7 +63,7 @@ bool ThroughputDataType::deserialize(
     {
         // payload members endiannes matches local machine
         ThroughputType* lt = (ThroughputType*)data;
-        lt->seqnum = *reinterpret_cast<uint32_t*>(payload->data + 4);
+        lt->seqnum = *reinterpret_cast<uint32_t*>(payload->data + SerializedPayload_t::representation_header_size);
         std::copy(payload->data + 8, payload->data + 8 + buffer_size_, lt->data);
     }
     return true;

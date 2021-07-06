@@ -60,7 +60,7 @@ bool LatencyDataType::serialize(
     LatencyType* lt = (LatencyType*)data;
 
     memcpy(payload->data, encapsulation, SerializedPayload_t::representation_header_size);
-    memcpy(payload->data + 4, &lt->seqnum, sizeof(lt->seqnum));
+    memcpy(payload->data + SerializedPayload_t::representation_header_size, &lt->seqnum, sizeof(lt->seqnum));
     memcpy(payload->data + 8, &lt->bounce, sizeof(lt->bounce));
     memcpy(payload->data + 12, lt->data, buffer_size_);
     payload->length = m_typeSize;
@@ -73,7 +73,7 @@ bool LatencyDataType::deserialize(
 {
     // Payload members endianness matches local machine
     LatencyType* lt = (LatencyType*)data;
-    lt->seqnum = *reinterpret_cast<uint32_t*>(payload->data + 4);
+    lt->seqnum = *reinterpret_cast<uint32_t*>(payload->data + SerializedPayload_t::representation_header_size);
     lt->bounce = *reinterpret_cast<uint32_t*>(payload->data + 8);
     std::copy(payload->data + 12, payload->data + 12 + buffer_size_, lt->data);
     return true;
