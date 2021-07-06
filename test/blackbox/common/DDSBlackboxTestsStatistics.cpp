@@ -156,20 +156,32 @@ TEST(DDSStatistics, simple_statistics_datareaders)
     auto r_statistics_participant = statistics::dds::DomainParticipant::narrow(r_participant);
     ASSERT_NE(nullptr, r_statistics_participant);
 
+    // TODO: some topics get stuck in infinite loop in an error:
+    // [SUBSCRIBER Error] Change not found on this key, something is wrong -> Function remove_change_sub
+    // These topics are commented in test params
+    // TODO: some topics could be used in both participants, but they lead to the same error
+
     // Create parameters to iterate over every Statistics kind
     // The test is separated between the statistics retrieved by a DataWriter or a DataReader
     std::vector<std::tuple<std::string, std::string, std::size_t>> writer_statistics_kinds = {
         {"DATA_COUNT_TOPIC",                statistics::DATA_COUNT_TOPIC,               num_samples},
         {"RTPS_SENT_TOPIC",                 statistics::RTPS_SENT_TOPIC,                num_samples},
+        {"NETWORK_LATENCY_TOPIC",           statistics::NETWORK_LATENCY_TOPIC,          num_samples},
+        {"PUBLICATION_THROUGHPUT_TOPIC",    statistics::PUBLICATION_THROUGHPUT_TOPIC,   num_samples},
+        {"HEARTBEAT_COUNT_TOPIC",           statistics::HEARTBEAT_COUNT_TOPIC,          num_samples},
+        // {"RTPS_SENT_TOPIC",                 statistics::RTPS_SENT_TOPIC,                num_samples},
+        // {"DATA_COUNT_TOPIC",                statistics::DATA_COUNT_TOPIC,               num_samples},
+        {"SAMPLE_DATAS_TOPIC",              statistics::SAMPLE_DATAS_TOPIC,             num_samples},
+        {"DISCOVERY_TOPIC",                 statistics::DISCOVERY_TOPIC,                1},
+        {"PDP_PACKETS_TOPIC",               statistics::PDP_PACKETS_TOPIC,              1},
+        {"EDP_PACKETS_TOPIC",               statistics::EDP_PACKETS_TOPIC,              1},
         {"PHYSICAL_DATA_TOPIC",             statistics::PHYSICAL_DATA_TOPIC,            1}
     };
 
-    // TODO: PHYSICAL_DATA_TOPIC should be reported by both. But if topic is repetead an error occured
-    // and execution get stuck in infinite loop:
-    // [SUBSCRIBER Error] Change not found on this key, something is wrong -> Function remove_change_sub
     std::vector<std::tuple<std::string, std::string, std::size_t>> reader_statistics_kinds = {
+        {"HISTORY_LATENCY_TOPIC",           statistics::HISTORY_LATENCY_TOPIC,          num_samples},
+        {"SUBSCRIPTION_THROUGHPUT_TOPIC",   statistics::SUBSCRIPTION_THROUGHPUT_TOPIC,  num_samples},
         {"ACKNACK_COUNT_TOPIC",             statistics::ACKNACK_COUNT_TOPIC,            1},
-        {"SUBSCRIPTION_THROUGHPUT_TOPIC",   statistics::SUBSCRIPTION_THROUGHPUT_TOPIC,  num_samples}
         // {"PHYSICAL_DATA_TOPIC",             statistics::PHYSICAL_DATA_TOPIC,            1}
     };
 
