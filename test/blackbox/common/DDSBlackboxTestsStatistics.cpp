@@ -211,7 +211,7 @@ TEST(DDSStatistics, simple_statistics_datareaders)
     EXPECT_TRUE(data_writer.waitForAllAcked(std::chrono::seconds(10)));
 
     // Check that messages have been received
-    for (std::size_t i=0; i < readers_datawriter.size(); ++i)
+    for (std::size_t i = 0; i < readers_datawriter.size(); ++i)
     {
         wait_statistics(
             readers_datawriter[i],
@@ -225,7 +225,7 @@ TEST(DDSStatistics, simple_statistics_datareaders)
             std::get<1>(writer_statistics_kinds[i]));
     }
 
-    for (std::size_t i=0; i < readers_datareader.size(); ++i)
+    for (std::size_t i = 0; i < readers_datareader.size(); ++i)
     {
         wait_statistics(
             readers_datareader[i],
