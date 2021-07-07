@@ -621,10 +621,14 @@ TEST_P(DDSStatus, DataAvailableConditions)
     PubSubWriterWithWaitsets<HelloWorldType> writer(TEST_TOPIC_NAME);
     PubSubReaderWithWaitsets<HelloWorldType> subscriber_reader(TEST_TOPIC_NAME);
 
+    // Waitset timeout in seconds
+    uint32_t timeout_s = 2;
+
     // This reader will receive the data notification on the reader
     reader.history_depth(100).
             reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).
-            deactivate_status_listener(eprosima::fastdds::dds::StatusMask::data_on_readers()).init();
+            deactivate_status_listener(eprosima::fastdds::dds::StatusMask::data_on_readers());
+    reader.waitset_timeout(timeout_s).init();
     ASSERT_TRUE(reader.isInitialized());
 
     writer.history_depth(100).init();
@@ -633,7 +637,8 @@ TEST_P(DDSStatus, DataAvailableConditions)
     // This reader will receive the data notification on the subscriber
     subscriber_reader.history_depth(100).
             reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).
-            deactivate_status_listener(eprosima::fastdds::dds::StatusMask::data_available()).init();
+            deactivate_status_listener(eprosima::fastdds::dds::StatusMask::data_available());
+    subscriber_reader.waitset_timeout(timeout_s).init();
     ASSERT_TRUE(reader.isInitialized());
 
     // Because its volatile the durability
@@ -654,6 +659,14 @@ TEST_P(DDSStatus, DataAvailableConditions)
     // Block reader until reception finished or timeout.
     reader.block_for_all();
     subscriber_reader.block_for_all();
+
+    // No timeouts until this point
+    ASSERT_EQ(0, reader.times_waitset_timeout());
+    ASSERT_EQ(0, subscriber_reader.times_waitset_timeout());
+
+    // Now wait until at least one timeout occurs
+    reader.wait_waitset_timeout();
+    subscriber_reader.wait_waitset_timeout();
 }
 
 #ifdef INSTANTIATE_TEST_SUITE_P
