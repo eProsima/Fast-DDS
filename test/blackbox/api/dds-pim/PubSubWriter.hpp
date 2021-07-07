@@ -1719,7 +1719,8 @@ protected:
             stop();
         }
 
-        void start()
+        void start(
+                const eprosima::fastrtps::Duration_t& timeout)
         {
             waitset_.attach_condition(writer_.datawriter_->get_statuscondition());
             waitset_.attach_condition(guard_condition_);
@@ -1729,6 +1730,7 @@ protected:
             {
                 running_ = true;
                 guard_condition_.set_trigger_value(false);
+                timeout_ = timeout;
                 thread_ = new std::thread(&WaitsetThread::run, this);
             }
         }
@@ -1756,13 +1758,20 @@ protected:
             while (running_)
             {
                 lock.unlock();
-                waitset_.wait(active_conditions_, eprosima::fastrtps::c_TimeInfinite);
-                for (auto condition : active_conditions_)
+                auto wait_result = waitset_.wait(active_conditions_, timeout_);
+                if (wait_result == ReturnCode_t::RETCODE_TIMEOUT)
                 {
-                    // did we wake up for some reason other than calling stop?
-                    if (condition != &guard_condition_)
+                    writer_.on_waitset_timeout();
+                }
+                else
+                {
+                    for (auto condition : active_conditions_)
                     {
-                        process(dynamic_cast<eprosima::fastdds::dds::StatusCondition*>(condition));
+                        // did we wake up for some reason other than calling stop?
+                        if (condition != &guard_condition_)
+                        {
+                            process(dynamic_cast<eprosima::fastdds::dds::StatusCondition*>(condition));
+                        }
                     }
                 }
                 lock.lock();
@@ -1855,6 +1864,8 @@ protected:
         //! The number of times liveliness was lost
         unsigned int times_liveliness_lost_;
 
+        //! The timeout for the wait operation
+        eprosima::fastrtps::Duration_t timeout_;
     }
     waitset_thread_;
 
@@ -1866,6 +1877,8 @@ public:
             const std::string& topic_name)
         : PubSubWriter<TypeSupport>(topic_name)
         , waitset_thread_(*this)
+        , timeout_(eprosima::fastrtps::c_TimeInfinite)
+        , times_waitset_timeout_(0)
     {
     }
 
@@ -1906,7 +1919,7 @@ public:
 
                     // Set the desired status condition mask and start the waitset thread
                     datawriter_->get_statuscondition().set_enabled_statuses(status_mask_);
-                    waitset_thread_.start();
+                    waitset_thread_.start(timeout_);
                 }
             }
         }
@@ -1920,7 +1933,7 @@ public:
             waitset_thread_.stop();
         }
 
-        PubSubWriterWithWaitsets::destroy();
+        PubSubWriter<TypeSupport>::destroy();
     }
 
     unsigned int missed_deadlines() const
@@ -1933,7 +1946,48 @@ public:
         return waitset_thread_.times_liveliness_lost();
     }
 
+    void wait_waitset_timeout(
+            unsigned int times = 1)
+    {
+        std::unique_lock<std::mutex> lock(waitset_timeout_mutex_);
+
+        waitset_timeout_cv_.wait(lock, [&]()
+                {
+                    return times_waitset_timeout_ >= times;
+                });
+    }
+
+    unsigned int times_waitset_timeout()
+    {
+        std::unique_lock<std::mutex> lock(waitset_timeout_mutex_);
+        return times_waitset_timeout_;
+    }
+
+    PubSubWriterWithWaitsets& waitset_timeout(
+            const eprosima::fastrtps::Duration_t& timeout)
+    {
+        timeout_ = timeout;
+        return *this;
+    }
+
 protected:
+
+    void on_waitset_timeout()
+    {
+        std::unique_lock<std::mutex> lock(waitset_timeout_mutex_);
+        ++times_waitset_timeout_;
+        waitset_timeout_cv_.notify_one();
+    }
+
+    //! The timeout for the waitset
+    eprosima::fastrtps::Duration_t timeout_;
+
+    //! A mutex for waitset timeout
+    std::mutex waitset_timeout_mutex_;
+    //! A condition variable to notify when the waitset has timed out
+    std::condition_variable waitset_timeout_cv_;
+    //! Number of times the waitset has timed out
+    unsigned int times_waitset_timeout_;
 
     using PubSubWriter<TypeSupport>::xml_file_;
     using PubSubWriter<TypeSupport>::participant_;
