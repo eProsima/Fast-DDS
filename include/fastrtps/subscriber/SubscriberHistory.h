@@ -61,7 +61,7 @@ public:
             uint32_t payloadMax,
             rtps::MemoryManagementPolicy_t mempolicy);
 
-    virtual ~SubscriberHistory();
+    ~SubscriberHistory() override;
 
     /**
      * Called when a change is received by the Subscriber. Will add the change to the history.
@@ -72,7 +72,7 @@ public:
      */
     bool received_change(
             rtps::CacheChange_t* change,
-            size_t unknown_missing_changes_up_to);
+            size_t unknown_missing_changes_up_to) override;
 
     /** @name Read or take data methods.
      * Methods to read or take data from the History.
