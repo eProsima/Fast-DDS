@@ -59,10 +59,14 @@ bool LatencyDataType::serialize(
     static uint8_t encapsulation[4] = { 0x0, 0x1, 0x0, 0x0 };
     LatencyType* lt = (LatencyType*)data;
 
-    memcpy(payload->data, encapsulation, SerializedPayload_t::representation_header_size);
-    memcpy(payload->data + SerializedPayload_t::representation_header_size, &lt->seqnum, sizeof(lt->seqnum));
-    memcpy(payload->data + 8, &lt->bounce, sizeof(lt->bounce));
-    memcpy(payload->data + 12, lt->data, buffer_size_);
+    auto ser_data = payload->data;
+    memcpy(ser_data, encapsulation, SerializedPayload_t::representation_header_size);
+    ser_data += SerializedPayload_t::representation_header_size;
+    memcpy(ser_data, &lt->seqnum, sizeof(lt->seqnum));
+    ser_data += sizeof(lt->seqnum);
+    memcpy(ser_data, &lt->bounce, sizeof(lt->bounce));
+    ser_data += sizeof(lt->bounce);
+    memcpy(ser_data, lt->data, buffer_size_);
     payload->length = m_typeSize;
     return true;
 }
