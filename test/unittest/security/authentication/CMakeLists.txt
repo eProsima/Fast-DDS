@@ -16,7 +16,7 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
     include(${PROJECT_SOURCE_DIR}/cmake/common/gtest.cmake)
     check_gtest()
 
-    if(GTEST_FOUND)
+    if(GTest_FOUND)
         if(WIN32)
             add_definitions(
                 -D_WIN32_WINNT=0x0601

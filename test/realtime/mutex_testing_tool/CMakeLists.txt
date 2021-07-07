@@ -15,7 +15,7 @@
 include(${PROJECT_SOURCE_DIR}/cmake/common/gtest.cmake)
 check_gtest()
 
-if(GTEST_FOUND)
+if(GTest_FOUND)
     add_library(mutex_testing_tool SHARED TMutex.cpp)
 
     add_library(mutex_testing_tool_preload SHARED Mutex.cpp)
@@ -31,4 +31,4 @@ if(GTEST_FOUND)
         "LD_PRELOAD=$<TARGET_FILE_NAME:mutex_testing_tool_preload>"
         LABELS "NoMemoryCheck"
         )
-endif(GTEST_FOUND)
+endif(GTest_FOUND)

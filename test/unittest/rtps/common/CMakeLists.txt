@@ -13,10 +13,7 @@
 # limitations under the License.
 
 if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
-    include(${PROJECT_SOURCE_DIR}/cmake/common/gtest.cmake)
-    check_gtest()
-
-    if(GTEST_FOUND)
+    if(GTest_FOUND)
         set(CACHECHANGETESTS_SOURCE CacheChangeTests.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/Time_t.cpp)
         set(GUID_UTILS_TESTS_SOURCE GuidUtilsTests.cpp
@@ -39,9 +36,9 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
             $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
             )
-        target_include_directories(CacheChangeTests PRIVATE ${GTEST_INCLUDE_DIRS}
+        target_include_directories(CacheChangeTests PRIVATE
             ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include)
-        target_link_libraries(CacheChangeTests ${GTEST_LIBRARIES})
+        target_link_libraries(CacheChangeTests GTest::gtest)
         add_gtest(CacheChangeTests SOURCES ${CACHECHANGETESTS_SOURCE})
 
         add_executable(GuidUtilsTests ${GUID_UTILS_TESTS_SOURCE})
@@ -50,10 +47,9 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
             )
         target_include_directories(GuidUtilsTests PRIVATE
-            ${GTEST_INCLUDE_DIRS}
             ${PROJECT_SOURCE_DIR}/src/cpp
             ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include)
-        target_link_libraries(GuidUtilsTests ${GTEST_LIBRARIES})
+        target_link_libraries(GuidUtilsTests GTest::gtest)
         if(MSVC OR MSVC_IDE)
             target_link_libraries(GuidUtilsTests ws2_32)
         endif()
@@ -64,9 +60,9 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
             $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
             )
-        target_include_directories(SequenceNumberTests PRIVATE ${GTEST_INCLUDE_DIRS}
+        target_include_directories(SequenceNumberTests PRIVATE
             ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include)
-        target_link_libraries(SequenceNumberTests ${GTEST_LIBRARIES})
+        target_link_libraries(SequenceNumberTests GTest::gtest)
         add_gtest(SequenceNumberTests SOURCES ${SEQUENCENUMBERTESTS_SOURCE})
 
         add_executable(PortParametersTests ${PORTPARAMETERSTESTS_SOURCE})
@@ -74,9 +70,9 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
             $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
             )
-        target_include_directories(PortParametersTests PRIVATE ${GTEST_INCLUDE_DIRS}
+        target_include_directories(PortParametersTests PRIVATE
             ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include)
-        target_link_libraries(PortParametersTests ${GTEST_LIBRARIES})
+        target_link_libraries(PortParametersTests GTest::gtest)
         add_gtest(PortParametersTests SOURCES ${PORTPARAMETERSTESTS_SOURCE} LABELS "NoMemoryCheck")
     endif()
 endif()

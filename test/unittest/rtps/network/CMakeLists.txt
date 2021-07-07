@@ -13,10 +13,7 @@
 # limitations under the License.
 
 if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
-    include(${PROJECT_SOURCE_DIR}/cmake/common/gtest.cmake)
-    check_gtest()
-
-    if(GTEST_FOUND)
+    if(GTest_FOUND)
         find_package(Threads REQUIRED)
 
         include_directories(${Asio_INCLUDE_DIR})
@@ -80,7 +77,6 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
             )
         target_include_directories(NetworkFactoryTests PRIVATE
-            ${GTEST_INCLUDE_DIRS} ${GMOCK_INCLUDE_DIRS}
             ${PROJECT_SOURCE_DIR}/test/mock/rtps/ParticipantProxyData
             ${PROJECT_SOURCE_DIR}/test/mock/dds/QosPolicies
             ${PROJECT_SOURCE_DIR}/test/mock/rtps/MessageReceiver
@@ -89,7 +85,7 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             ${PROJECT_SOURCE_DIR}/src/cpp
             )
         target_link_libraries(NetworkFactoryTests fastcdr foonathan_memory
-            ${GTEST_LIBRARIES} ${MOCKS}
+            GTest::gtest ${MOCKS}
             $<$<BOOL:${TLS_FOUND}>:OpenSSL::SSL$<SEMICOLON>OpenSSL::Crypto>
             ${CMAKE_THREAD_LIBS_INIT} ${CMAKE_DL_LIBS})
 

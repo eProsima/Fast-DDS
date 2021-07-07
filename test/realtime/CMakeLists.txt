@@ -1,7 +1,7 @@
 add_subdirectory(mutex_testing_tool)
 
 
-if(GTEST_FOUND)
+if(GTest_FOUND)
     set(USER_THREAD_NONBLOCKED_TEST UserThreadNonBlockedTest.cpp)
 
     add_executable(user_thread_nonblocked_test ${USER_THREAD_NONBLOCKED_TEST})

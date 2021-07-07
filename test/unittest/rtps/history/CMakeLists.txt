@@ -13,11 +13,7 @@
 # limitations under the License.
 
 if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
-    include(${PROJECT_SOURCE_DIR}/cmake/common/gtest.cmake)
-    check_gtest()
-    check_gmock()
-
-    if(GTEST_FOUND AND GMOCK_FOUND)
+    if(GTest_FOUND)
         find_package(Threads REQUIRED)
 
         set(READERHISTORYTESTS_SOURCE ReaderHistoryTests.cpp
@@ -66,14 +62,13 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
             )
         target_include_directories(ReaderHistoryTests PRIVATE
-            ${GTEST_INCLUDE_DIRS} ${GMOCK_INCLUDE_DIRS}
             ${PROJECT_SOURCE_DIR}/test/mock/rtps/Endpoint
             ${PROJECT_SOURCE_DIR}/test/mock/rtps/RTPSReader
             ${PROJECT_SOURCE_DIR}/test/mock/rtps/StatefulReader
             ${PROJECT_SOURCE_DIR}/src/cpp
             ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include)
         target_link_libraries(ReaderHistoryTests
-            ${GTEST_LIBRARIES} ${GMOCK_LIBRARIES}
+            GTest::gtest GTest::gmock
             ${CMAKE_THREAD_LIBS_INIT} ${CMAKE_DL_LIBS})
         add_gtest(ReaderHistoryTests SOURCES ${READERHISTORYTESTS_SOURCE})
 
@@ -83,11 +78,10 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
             )
         target_include_directories(BasicPoolsTests PRIVATE
-            ${GTEST_INCLUDE_DIRS}
             ${PROJECT_SOURCE_DIR}/src/cpp
             ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include)
         target_link_libraries(BasicPoolsTests
-            ${GTEST_LIBRARIES}
+            GTest::gtest
             ${CMAKE_THREAD_LIBS_INIT} ${CMAKE_DL_LIBS})
         add_gtest(BasicPoolsTests SOURCES ${BASICPOOLSTESTS_SOURCE})
 
@@ -97,11 +91,10 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
             )
         target_include_directories(CacheChangePoolTests PRIVATE
-            ${GTEST_INCLUDE_DIRS}
             ${PROJECT_SOURCE_DIR}/src/cpp
             ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include)
         target_link_libraries(CacheChangePoolTests
-            ${GTEST_LIBRARIES}
+            GTest::gtest
             ${CMAKE_THREAD_LIBS_INIT} ${CMAKE_DL_LIBS})
         add_gtest(CacheChangePoolTests SOURCES ${CACHECHANGEPOOLTESTS_SOURCE})
 
@@ -111,12 +104,11 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
             )
         target_include_directories(TopicPayloadPoolTests PRIVATE
-            ${GTEST_INCLUDE_DIRS}
             ${PROJECT_SOURCE_DIR}/test/mock/rtps/TopicPayloadPoolProxy
             ${PROJECT_SOURCE_DIR}/src/cpp
             ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include)
         target_link_libraries(TopicPayloadPoolTests
-            ${GTEST_LIBRARIES}
+            GTest::gtest
             ${CMAKE_THREAD_LIBS_INIT} ${CMAKE_DL_LIBS})
         add_gtest(TopicPayloadPoolTests SOURCES ${TOPICPAYLOADPOOLTESTS_SOURCE})
 

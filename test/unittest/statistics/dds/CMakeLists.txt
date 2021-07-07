@@ -13,10 +13,7 @@
 # limitations under the License.
 
 if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
-    include(${PROJECT_SOURCE_DIR}/cmake/common/gtest.cmake)
-    check_gtest()
-
-    if (GTEST_FOUND)
+    if (GTest_FOUND)
         if(WIN32)
             add_definitions(-D_WIN32_WINNT=0x0601)
             add_definitions(-DNOMINMAX)
@@ -33,9 +30,9 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
             $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNAL_DEBUG> # Internal debug activated.
             )
-        target_include_directories(StatisticsDomainParticipantTests PRIVATE ${GTEST_INCLUDE_DIRS}
+        target_include_directories(StatisticsDomainParticipantTests PRIVATE
             ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include ${PROJECT_SOURCE_DIR}/src/cpp)
-        target_link_libraries(StatisticsDomainParticipantTests fastrtps fastcdr ${GTEST_LIBRARIES})
+        target_link_libraries(StatisticsDomainParticipantTests fastrtps fastcdr GTest::gtest)
         add_gtest(StatisticsDomainParticipantTests SOURCES ${STATISTICS_DOMAINPARTICIPANT_TESTS_SOURCE})
 
         ## StatisticsQosTests
@@ -47,9 +44,9 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
             $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNAL_DEBUG> # Internal debug activated.
             )
-        target_include_directories(StatisticsQosTests PRIVATE ${GTEST_INCLUDE_DIRS}
+        target_include_directories(StatisticsQosTests PRIVATE
             ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include ${PROJECT_SOURCE_DIR}/src/cpp)
-        target_link_libraries(StatisticsQosTests fastrtps fastcdr ${GTEST_LIBRARIES})
+        target_link_libraries(StatisticsQosTests fastrtps fastcdr GTest::gtest)
         add_gtest(StatisticsQosTests SOURCES ${STATISTICS_QOS_TESTS_SOURCE})
 
         ## StatisticsDomainParticipantListenerTests
@@ -69,13 +66,12 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
                 $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNAL_DEBUG> # Internal debug activated.
                 )
             target_include_directories(DomainParticipantStatisticsListenerTests PRIVATE
-                ${GTEST_INCLUDE_DIRS}
                 DomainParticipantStatisticsListenerTests/mock
                 ${PROJECT_SOURCE_DIR}/include
                 ${PROJECT_BINARY_DIR}/include
                 ${PROJECT_SOURCE_DIR}/src/cpp)
             target_link_libraries(DomainParticipantStatisticsListenerTests
-                fastcdr ${GTEST_LIBRARIES} ${GMOCK_LIBRARIES} )
+                fastcdr GTest::gtest GTest::gmock )
             add_gtest(DomainParticipantStatisticsListenerTests
                 SOURCES ${DOMAINPARTICIPANTSTATISTICSLISTENER_TESTS_SOURCE})
         endif()
@@ -322,8 +318,6 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
                 $<$<BOOL:${STDOUTERR_LOG_CONSUMER}>:STDOUTERR_LOG_CONSUMER> # Enable StdoutErrConsumer as default LogConsumer
                 )
             target_include_directories(StatisticsDomainParticipantMockTests PRIVATE
-                ${GTEST_INCLUDE_DIRS}
-                ${GMOCK_INCLUDE_DIRS}
                 ${OPENSSL_INCLUDE_DIR}
                 StatisticsDomainParticipantMockTests/mock/
                 ${PROJECT_SOURCE_DIR}/test/mock/dds/Publisher/
@@ -336,8 +330,8 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             target_link_libraries(StatisticsDomainParticipantMockTests ${PRIVACY}
                 fastcdr
                 foonathan_memory 
-                ${GTEST_LIBRARIES}
-                ${GMOCK_LIBRARIES}
+                GTest::gtest
+                GTest::gmock
                 ${CMAKE_THREAD_LIBS_INIT} ${CMAKE_DL_LIBS}
                 ${TINYXML2_LIBRARY}
                 $<$<BOOL:${LINK_SSL}>:OpenSSL::SSL$<SEMICOLON>OpenSSL::Crypto>

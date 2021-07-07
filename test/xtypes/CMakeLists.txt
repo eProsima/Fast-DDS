@@ -76,10 +76,7 @@ macro(add_xtypes_gtest test)
 endmacro()
 
 if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER) AND fastcdr_FOUND)
-    include(${PROJECT_SOURCE_DIR}/cmake/common/gtest.cmake)
-    check_gtest()
-
-    if(GTEST_FOUND)
+    if(GTest_FOUND)
         if(WIN32)
             add_definitions(
                 -D_WIN32_WINNT=0x0601
@@ -112,8 +109,7 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER) AND fastcdr_FOUND)
             $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
             $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
             )
-        target_include_directories(XTypesBlackBoxTests PRIVATE ${GTEST_INCLUDE_DIRS})
-        target_link_libraries(XTypesBlackBoxTests fastrtps fastcdr ${GTEST_LIBRARIES})
+        target_link_libraries(XTypesBlackBoxTests fastrtps fastcdr GTest::gtest)
         add_xtypes_gtest(XTypesBlackBoxTests SOURCES ${XTYPES_TESTS_SOURCE})
     endif()
 endif()

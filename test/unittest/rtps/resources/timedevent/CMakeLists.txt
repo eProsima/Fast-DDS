@@ -13,10 +13,7 @@
 # limitations under the License.
 
 if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
-    include(${PROJECT_SOURCE_DIR}/cmake/common/gtest.cmake)
-    check_gtest()
-
-    if(GTEST_FOUND)
+    if(GTest_FOUND)
         find_package(Threads REQUIRED)
 
         include_directories(${Asio_INCLUDE_DIR})
@@ -44,12 +41,11 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
             )
         target_include_directories(TimedEventTests PRIVATE
-            ${GTEST_INCLUDE_DIRS}
             ${PROJECT_SOURCE_DIR}/include
             ${PROJECT_BINARY_DIR}/include
             ${PROJECT_SOURCE_DIR}/src/cpp
             )
-        target_link_libraries(TimedEventTests ${GTEST_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT} ${CMAKE_DL_LIBS})
+        target_link_libraries(TimedEventTests GTest::gtest ${CMAKE_THREAD_LIBS_INIT} ${CMAKE_DL_LIBS})
         add_gtest(TimedEventTests SOURCES ${TIMEDEVENTTESTS_SOURCE})
     endif()
 endif()

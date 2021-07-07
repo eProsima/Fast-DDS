@@ -158,10 +158,7 @@ option(FASTRTPS_API_TESTS "Enable tests using FastRTPS API" ON)
 option(FASTDDS_PIM_API_TESTS "Enable tests using FastDDS API" OFF)
 
 if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER) AND fastcdr_FOUND)
-    include(${PROJECT_SOURCE_DIR}/cmake/common/gtest.cmake)
-    check_gtest()
-
-    if(GTEST_FOUND)
+    if(GTest_FOUND)
         if(WIN32)
             add_definitions(
                 -D_WIN32_WINNT=0x0601
@@ -204,9 +201,7 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER) AND fastcdr_FOUND)
             $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
             $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
             )
-        target_include_directories(BlackboxTests_RTPS PRIVATE
-            ${GTEST_INCLUDE_DIRS})
-        target_link_libraries(BlackboxTests_RTPS fastrtps fastcdr foonathan_memory ${GTEST_LIBRARIES})
+        target_link_libraries(BlackboxTests_RTPS fastrtps fastcdr foonathan_memory GTest::gtest)
         add_blackbox_gtest(BlackboxTests_RTPS SOURCES ${RTPS_BLACKBOXTESTS_TEST_SOURCE})
 
         file(GLOB BLACKBOXTESTS_TEST_SOURCE "common/BlackboxTests*.cpp")
@@ -275,9 +270,8 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER) AND fastcdr_FOUND)
                 $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
                 )
             target_include_directories(BlackboxTests_FastRTPS PRIVATE
-                api/fastrtps_deprecated
-                ${GTEST_INCLUDE_DIRS})
-            target_link_libraries(BlackboxTests_FastRTPS fastrtps fastcdr foonathan_memory ${GTEST_LIBRARIES})
+                api/fastrtps_deprecated)
+            target_link_libraries(BlackboxTests_FastRTPS fastrtps fastcdr foonathan_memory GTest::gtest)
             add_blackbox_gtest(BlackboxTests_FastRTPS SOURCES ${BLACKBOXTESTS_TEST_SOURCE}
                 ENVIRONMENTS "CERTS_PATH=${PROJECT_SOURCE_DIR}/test/certs"
                 "TOPIC_RANDOM_NUMBER=${TOPIC_RANDOM_NUMBER}"
@@ -312,9 +306,8 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER) AND fastcdr_FOUND)
                 $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
                 )
             target_include_directories(BlackboxTests_DDS_PIM PRIVATE
-                api/dds-pim
-                ${GTEST_INCLUDE_DIRS})
-            target_link_libraries(BlackboxTests_DDS_PIM fastrtps fastcdr foonathan_memory ${GTEST_LIBRARIES})
+                api/dds-pim)
+            target_link_libraries(BlackboxTests_DDS_PIM fastrtps fastcdr foonathan_memory GTest::gtest)
             add_blackbox_gtest(BlackboxTests_DDS_PIM SOURCES ${DDS_BLACKBOXTESTS_SOURCE}
                 ENVIRONMENTS "CERTS_PATH=${PROJECT_SOURCE_DIR}/test/certs"
                 "TOPIC_RANDOM_NUMBER=${TOPIC_RANDOM_NUMBER}"

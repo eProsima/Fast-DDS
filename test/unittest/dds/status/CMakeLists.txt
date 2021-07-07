@@ -13,11 +13,7 @@
 # limitations under the License.
 
 if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
-    include(${PROJECT_SOURCE_DIR}/cmake/common/gtest.cmake)
-    check_gtest()
-    check_gmock()
-
-    if(GTEST_FOUND AND GMOCK_FOUND)
+    if(GTest_FOUND)
         find_package(Threads REQUIRED)
 
         set(LISTENERTESTS_SOURCE ListenerTests.cpp
@@ -131,7 +127,6 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
             )
         target_include_directories(ListenerTests PRIVATE
-            ${GTEST_INCLUDE_DIRS} ${GMOCK_INCLUDE_DIRS}
             ${Asio_INCLUDE_DIR}
             ${PROJECT_SOURCE_DIR}/test/mock/rtps/DataSharingPayloadPool
             ${PROJECT_SOURCE_DIR}/test/mock/rtps/RTPSReader
@@ -166,7 +161,7 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
 
         target_link_libraries(ListenerTests fastcdr foonathan_memory
             ${TINYXML2_LIBRARY}
-            ${GTEST_LIBRARIES} ${GMOCK_LIBRARIES}
+            GTest::gtest GTest::gmock
             ${CMAKE_THREAD_LIBS_INIT} ${CMAKE_DL_LIBS})
         if(MSVC OR MSVC_IDE)
             target_link_libraries(ListenerTests iphlpapi Shlwapi ws2_32)

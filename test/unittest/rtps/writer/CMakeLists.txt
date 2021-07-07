@@ -13,11 +13,7 @@
 # limitations under the License.
 
 if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
-    include(${PROJECT_SOURCE_DIR}/cmake/common/gtest.cmake)
-    check_gtest()
-    check_gmock()
-
-    if(GTEST_FOUND AND GMOCK_FOUND)
+    if(GTest_FOUND)
         find_package(Threads REQUIRED)
 
     # ReaderProxy
@@ -61,7 +57,7 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             ${THIRDPARTY_BOOST_INCLUDE_DIR}
             )
         target_link_libraries(ReaderProxyTests
-            ${GTEST_LIBRARIES} ${GMOCK_LIBRARIES} foonathan_memory
+            GTest::gtest GTest::gmock foonathan_memory
             ${CMAKE_THREAD_LIBS_INIT} ${CMAKE_DL_LIBS}
             ${THIRDPARTY_BOOST_LINK_LIBS})
         add_gtest(ReaderProxyTests SOURCES ${WRITERPROXYTESTS_SOURCE})
@@ -86,15 +82,13 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
             )
         target_include_directories(LivelinessManagerTests PRIVATE
-            ${GTEST_INCLUDE_DIRS}
-            ${GMOCK_INCLUDE_DIRS}
             ${PROJECT_SOURCE_DIR}/include
             ${PROJECT_BINARY_DIR}/include
             ${PROJECT_SOURCE_DIR}/src/cpp
             )
         target_link_libraries(LivelinessManagerTests PRIVATE
-            ${GTEST_LIBRARIES}
-            ${GMOCK_LIBRARIES})
+            GTest::gtest
+            GTest::gmock)
         add_gtest(LivelinessManagerTests SOURCES ${LIVELINESSMANAGERTESTS_SOURCE})
 
     # RTPSWriter
@@ -107,10 +101,9 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
             )
         target_include_directories(RTPSWriterTests PRIVATE
-            ${GTEST_INCLUDE_DIRS} ${GMOCK_INCLUDE_DIRS}
             )
         target_link_libraries(RTPSWriterTests fastrtps foonathan_memory
-            ${GTEST_LIBRARIES} ${GMOCK_LIBRARIES}
+            GTest::gtest GTest::gmock
             ${CMAKE_THREAD_LIBS_INIT} ${CMAKE_DL_LIBS})
         add_gtest(RTPSWriterTests SOURCES ${RTPSWRITERTESTS_SOURCE})
 

@@ -12,9 +12,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-include(${PROJECT_SOURCE_DIR}/cmake/common/gtest.cmake)
-check_gtest()
-check_gmock()
+find_package(GTest CONFIG)
+if (GTest_FOUND)
+    include(${PROJECT_SOURCE_DIR}/cmake/common/gtest.cmake)
+    find_package(Threads REQUIRED)
+endif()
 
 option(PERFORMANCE_TESTS "Activate the building and execution of performance tests" OFF)
 option(SYSTEM_TESTS "Activate the building and execution of system tests" OFF)

@@ -17,7 +17,7 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
     check_gtest()
     check_gmock()
 
-    if(GTEST_FOUND AND GMOCK_FOUND)
+    if(GTest_FOUND)
         if(WIN32)
             add_definitions(-D_WIN32_WINNT=0x0601)
         endif()
