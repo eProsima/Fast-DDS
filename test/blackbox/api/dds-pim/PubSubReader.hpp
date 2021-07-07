@@ -30,6 +30,9 @@
 #if _MSC_VER
 #include <Windows.h>
 #endif // _MSC_VER
+#include <fastdds/dds/core/condition/StatusCondition.hpp>
+#include <fastdds/dds/core/condition/GuardCondition.hpp>
+#include <fastdds/dds/core/condition/WaitSet.hpp>
 #include <fastdds/dds/core/UserAllocatedSequence.hpp>
 #include <fastdds/dds/core/policy/QosPolicies.hpp>
 #include <fastdds/dds/domain/DomainParticipant.hpp>
@@ -63,7 +66,7 @@ public:
     typedef TypeSupport type_support;
     typedef typename type_support::type type;
 
-private:
+protected:
 
     class ParticipantListener : public eprosima::fastdds::dds::DomainParticipantListener
     {
@@ -310,7 +313,7 @@ public:
         datareader_qos_.reliable_reader_qos().times.heartbeatResponseDelay.nanosec = 100000000;
     }
 
-    ~PubSubReader()
+    virtual ~PubSubReader()
     {
         destroy();
     }
@@ -356,36 +359,44 @@ public:
         // Register type
         ASSERT_EQ(participant_->register_type(type_), ReturnCode_t::RETCODE_OK);
 
-        // Create subscriber
-        subscriber_ = participant_->create_subscriber(subscriber_qos_);
-        ASSERT_NE(subscriber_, nullptr);
-        ASSERT_TRUE(subscriber_->is_enabled());
-
         // Create topic
         topic_ = participant_->create_topic(topic_name_, type_->getName(), eprosima::fastdds::dds::TOPIC_QOS_DEFAULT);
         ASSERT_NE(topic_, nullptr);
         ASSERT_TRUE(topic_->is_enabled());
 
-        if (!xml_file_.empty())
-        {
-            if (!datareader_profile_.empty())
-            {
-                datareader_ = subscriber_->create_datareader_with_profile(topic_, datareader_profile_, &listener_,
-                                status_mask_);
-                ASSERT_NE(datareader_, nullptr);
-                ASSERT_TRUE(datareader_->is_enabled());
-            }
-        }
-        if (datareader_ == nullptr)
-        {
-            datareader_ = subscriber_->create_datareader(topic_, datareader_qos_, &listener_, status_mask_);
-        }
+        // Create publisher
+        createSubscriber();
+    }
 
-        if (datareader_ != nullptr)
+    virtual void createSubscriber()
+    {
+        if (participant_ != nullptr)
         {
-            std::cout << "Created datareader " << datareader_->guid() << " for topic " <<
-                topic_name_ << std::endl;
-            initialized_ = true;
+            subscriber_ = participant_->create_subscriber(subscriber_qos_);
+            ASSERT_NE(subscriber_, nullptr);
+            ASSERT_TRUE(subscriber_->is_enabled());
+
+            if (!xml_file_.empty())
+            {
+                if (!datareader_profile_.empty())
+                {
+                    datareader_ = subscriber_->create_datareader_with_profile(topic_, datareader_profile_, &listener_,
+                                    status_mask_);
+                    ASSERT_NE(datareader_, nullptr);
+                    ASSERT_TRUE(datareader_->is_enabled());
+                }
+            }
+            if (datareader_ == nullptr)
+            {
+                datareader_ = subscriber_->create_datareader(topic_, datareader_qos_, &listener_, status_mask_);
+            }
+
+            if (datareader_ != nullptr)
+            {
+                std::cout << "Created datareader " << datareader_->guid() << " for topic " <<
+                    topic_name_ << std::endl;
+                initialized_ = true;
+            }
         }
     }
 
@@ -394,7 +405,7 @@ public:
         return initialized_;
     }
 
-    void destroy()
+    virtual void destroy()
     {
         if (participant_ != nullptr)
         {
@@ -1484,7 +1495,12 @@ public:
         datareader_profile_ = profile;
     }
 
-private:
+    eprosima::fastdds::dds::StatusCondition& get_statuscondition() const
+    {
+        return datareader_->get_statuscondition();
+    }
+
+protected:
 
     const eprosima::fastrtps::rtps::GUID_t& participant_guid() const
     {
@@ -1645,6 +1661,299 @@ private:
     std::condition_variable message_receive_cv_;
     //! Number of messages received but not yet processed by the application
     std::atomic<size_t> message_receive_count_;
+};
+
+template<class TypeSupport>
+class PubSubReaderWithWaitsets : public PubSubReader<TypeSupport>
+{
+public:
+
+    typedef TypeSupport type_support;
+    typedef typename type_support::type type;
+
+protected:
+
+    class WaitsetThread
+    {
+    public:
+        WaitsetThread(
+            PubSubReaderWithWaitsets& reader)
+                : reader_(reader)
+                , times_deadline_missed_(0)
+        {
+        }
+
+        ~WaitsetThread()
+        {
+            stop();
+        }
+
+        void start()
+        {
+            waitset_.attach_condition(reader_.datareader_->get_statuscondition());
+            waitset_.attach_condition(reader_.subscriber_->get_statuscondition());
+            waitset_.attach_condition(guard_condition_);
+
+            std::unique_lock<std::mutex> lock(mutex_);
+            if (nullptr == thread_)
+            {
+                running_ = true;
+                guard_condition_.set_trigger_value(false);
+                thread_ = new std::thread(&WaitsetThread::run, this);
+            }
+        }
+
+        void stop()
+        {
+            std::unique_lock<std::mutex> lock(mutex_);
+            running_ = false;
+            if (nullptr != thread_)
+            {
+                lock.unlock();
+
+                // We need to trigger the wake up
+                guard_condition_.set_trigger_value(true);
+                thread_->join();
+                lock.lock();
+                delete thread_;
+                thread_ = nullptr;
+            }
+        }
+
+        void run()
+        {
+            std::unique_lock<std::mutex> lock(mutex_);
+            while(running_)
+            {
+                lock.unlock();
+                waitset_.wait(active_conditions_, eprosima::fastrtps::c_TimeInfinite);
+                for (auto condition : active_conditions_)
+                {
+                    // did we wake up for some reason other than calling stop?
+                    if (condition != &guard_condition_)
+                    {
+                        process(dynamic_cast<eprosima::fastdds::dds::StatusCondition*>(condition));
+                    }
+                }
+                lock.lock();
+            }
+        }
+
+        void process(
+                eprosima::fastdds::dds::StatusCondition* condition)
+        {
+            eprosima::fastdds::dds::StatusMask triggered_statuses = reader_.datareader_->get_status_changes();
+            triggered_statuses &= condition->get_enabled_statuses();
+
+            if (triggered_statuses.is_active(eprosima::fastdds::dds::StatusMask::subscription_matched()))
+            {
+                eprosima::fastdds::dds::SubscriptionMatchedStatus status;
+                reader_.datareader_->get_subscription_matched_status(status);
+
+                if (0 < status.current_count_change)
+                {
+                    std::cout << "Subscriber matched publisher " << status.last_publication_handle << std::endl;
+                    reader_.matched();
+                }
+                else if (0 > status.current_count_change)
+                {
+                    std::cout << "Subscriber unmatched publisher " << status.last_publication_handle << std::endl;
+                    reader_.unmatched();
+                }
+            }
+
+            if (triggered_statuses.is_active(eprosima::fastdds::dds::StatusMask::requested_deadline_missed()))
+            {
+                eprosima::fastdds::dds::RequestedDeadlineMissedStatus status;
+                reader_.datareader_->get_requested_deadline_missed_status(status);
+                times_deadline_missed_ = status.total_count;
+            }
+
+            if (triggered_statuses.is_active(eprosima::fastdds::dds::StatusMask::requested_incompatible_qos()))
+            {
+                eprosima::fastdds::dds::RequestedIncompatibleQosStatus status;
+                reader_.datareader_->get_requested_incompatible_qos_status(status);
+                reader_.incompatible_qos(status);
+            }
+
+            if (triggered_statuses.is_active(eprosima::fastdds::dds::StatusMask::liveliness_changed()))
+            {
+                eprosima::fastdds::dds::LivelinessChangedStatus status;
+                reader_.datareader_->get_liveliness_changed_status(status);
+
+                reader_.set_liveliness_changed_status(status);
+                if (status.alive_count_change == 1)
+                {
+                    reader_.liveliness_recovered();
+
+                }
+                else if (status.not_alive_count_change == 1)
+                {
+                    reader_.liveliness_lost();
+
+                }
+            }
+
+            if (triggered_statuses.is_active(eprosima::fastdds::dds::StatusMask::data_available()))
+            {
+                {
+                    std::lock_guard<std::mutex> guard(reader_.message_receive_mutex_);
+                    reader_.message_receive_count_.fetch_add(1);
+                }
+                reader_.message_receive_cv_.notify_one();
+
+                if (reader_.receiving_.load())
+                {
+                    bool ret = false;
+                    do
+                    {
+                        reader_.receive_one(reader_.datareader_, ret);
+                    } while (ret);
+                }
+            }
+
+            // We also have to process the subscriber
+            triggered_statuses = reader_.subscriber_->get_status_changes();
+            triggered_statuses &= condition->get_enabled_statuses();
+
+            if (triggered_statuses.is_active(eprosima::fastdds::dds::StatusMask::data_on_readers()))
+            {
+                {
+                    std::lock_guard<std::mutex> guard(reader_.message_receive_mutex_);
+                    reader_.message_receive_count_.fetch_add(1);
+                }
+                reader_.message_receive_cv_.notify_one();
+
+                if (reader_.receiving_.load())
+                {
+                    bool ret = false;
+                    do
+                    {
+                        reader_.receive_one(reader_.datareader_, ret);
+                    } while (ret);
+                }
+            }
+        }
+
+        unsigned int missed_deadlines() const
+        {
+            return times_deadline_missed_;
+        }
+
+    protected:
+
+        // The reader this waitset thread serves
+        PubSubReaderWithWaitsets& reader_;
+
+        // The waitset where the thread will be blocked
+        eprosima::fastdds::dds::WaitSet waitset_;
+        
+        // The active conditions that triggered the wake up
+        eprosima::fastdds::dds::ConditionSeq active_conditions_;
+
+        // The thread that does the job
+        std::thread* thread_ = nullptr;
+
+        // Whether the thread is running or not
+        bool running_;
+
+        // A Mutex to guard the thread start/stop
+        std::mutex mutex_;
+
+        // A user-triggered condition used to signal the thread to stop
+        eprosima::fastdds::dds::GuardCondition guard_condition_;
+
+        //! Number of times deadline was missed
+        unsigned int times_deadline_missed_;
+
+    } waitset_thread_;
+
+    friend class WaitsetThread;
+
+public:
+
+    PubSubReaderWithWaitsets(
+            const std::string& topic_name,
+            bool take = true,
+            bool statistics = false)
+        : PubSubReader<TypeSupport>(topic_name, take, statistics)
+        , waitset_thread_(*this)
+    {
+    }
+
+    ~PubSubReaderWithWaitsets() override
+    {
+    }
+
+    void createSubscriber() override
+    {
+        if (participant_ != nullptr)
+        {
+            // Create subscriber
+            subscriber_ = participant_->create_subscriber(subscriber_qos_);
+            ASSERT_NE(subscriber_, nullptr);
+            ASSERT_TRUE(subscriber_->is_enabled());
+
+            if (!xml_file_.empty())
+            {
+                if (!datareader_profile_.empty())
+                {
+                    datareader_ = subscriber_->create_datareader_with_profile(topic_, datareader_profile_, nullptr);
+                    ASSERT_NE(datareader_, nullptr);
+                    ASSERT_TRUE(datareader_->is_enabled());
+                }
+            }
+            if (datareader_ == nullptr)
+            {
+                datareader_ = subscriber_->create_datareader(topic_, datareader_qos_, nullptr);
+            }
+
+            if (datareader_ != nullptr)
+            {
+                initialized_ = datareader_->is_enabled();
+                if (initialized_)
+                {
+                    std::cout << "Created datareader " << datareader_->guid() << " for topic " <<
+                        topic_name_ << std::endl;
+                }
+    
+                // Set the desired status condition mask and start the waitset thread
+                datareader_->get_statuscondition().set_enabled_statuses(status_mask_);
+                subscriber_->get_statuscondition().set_enabled_statuses(status_mask_);
+                waitset_thread_.start();
+            }
+        }
+    }
+
+    void destroy() override
+    {
+        if (initialized_)
+        {
+            waitset_thread_.stop();
+        }
+
+        PubSubReaderWithWaitsets::destroy();
+    }
+
+    unsigned int missed_deadlines() const
+    {
+        return waitset_thread_.missed_deadlines();
+    }
+
+
+protected:
+
+    using PubSubReader<TypeSupport>::xml_file_;
+    using PubSubReader<TypeSupport>::participant_;
+    using PubSubReader<TypeSupport>::topic_name_;
+    using PubSubReader<TypeSupport>::topic_;
+    using PubSubReader<TypeSupport>::subscriber_;
+    using PubSubReader<TypeSupport>::subscriber_qos_;
+    using PubSubReader<TypeSupport>::datareader_;
+    using PubSubReader<TypeSupport>::datareader_qos_;
+    using PubSubReader<TypeSupport>::datareader_profile_;
+    using PubSubReader<TypeSupport>::initialized_;
+    using PubSubReader<TypeSupport>::status_mask_;
 };
 
 #endif // _TEST_BLACKBOX_PUBSUBREADER_HPP_
