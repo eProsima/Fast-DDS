@@ -25,7 +25,8 @@
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
 
-const size_t LatencyType::overhead = offsetof(LatencyType, data);
+const size_t LatencyType::overhead = offsetof(LatencyType, data) +
+        SerializedPayload_t::representation_header_size;
 const std::string LatencyDataType::type_name_ = "LatencyType";
 
 bool LatencyDataType::compare_data(
