@@ -518,12 +518,12 @@ bool SubscriberHistory::remove_changes_with_guid(
     std::lock_guard<RecursiveTimedMutex> guard(*mp_mutex);
 
     // clean this class related data
-    for( auto mit = keyed_changes_.begin(); mit != keyed_changes_.end();)
+    for ( auto mit = keyed_changes_.begin(); mit != keyed_changes_.end();)
     {
-        auto & caches = mit->second.cache_changes;
+        auto& caches = mit->second.cache_changes;
         for ( auto vit = caches.begin(); vit != caches.end();)
         {
-            if ( (*vit)->writerGUID == a_guid )
+            if ((*vit)->writerGUID == a_guid )
             {
                 vit = caches.erase(vit);
             }
@@ -533,7 +533,7 @@ bool SubscriberHistory::remove_changes_with_guid(
             }
         }
 
-        if ( caches.empty() )
+        if ( caches.empty())
         {
             mit = keyed_changes_.erase(mit);
         }
