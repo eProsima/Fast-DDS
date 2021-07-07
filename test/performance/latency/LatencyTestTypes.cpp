@@ -25,7 +25,8 @@
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
 
-const size_t LatencyType::overhead = offsetof(LatencyType, data);
+const size_t LatencyType::overhead = offsetof(LatencyType, data) +
+        SerializedPayload_t::representation_header_size;
 const std::string LatencyDataType::type_name_ = "LatencyType";
 
 bool LatencyDataType::compare_data(
@@ -56,11 +57,17 @@ bool LatencyDataType::serialize(
         void* data,
         SerializedPayload_t* payload)
 {
+    static uint8_t encapsulation[4] = { 0x0, 0x1, 0x0, 0x0 };
     LatencyType* lt = (LatencyType*)data;
 
-    memcpy(payload->data, &lt->seqnum, sizeof(lt->seqnum));
-    memcpy(payload->data + 4, &lt->bounce, sizeof(lt->bounce));
-    memcpy(payload->data + 8, lt->data, buffer_size_);
+    auto ser_data = payload->data;
+    memcpy(ser_data, encapsulation, SerializedPayload_t::representation_header_size);
+    ser_data += SerializedPayload_t::representation_header_size;
+    memcpy(ser_data, &lt->seqnum, sizeof(lt->seqnum));
+    ser_data += sizeof(lt->seqnum);
+    memcpy(ser_data, &lt->bounce, sizeof(lt->bounce));
+    ser_data += sizeof(lt->bounce);
+    memcpy(ser_data, lt->data, buffer_size_);
     payload->length = m_typeSize;
     return true;
 }
@@ -71,9 +78,12 @@ bool LatencyDataType::deserialize(
 {
     // Payload members endianness matches local machine
     LatencyType* lt = (LatencyType*)data;
-    lt->seqnum = *reinterpret_cast<uint32_t*>(payload->data);
-    lt->bounce = *reinterpret_cast<uint32_t*>(payload->data + 4);
-    std::copy(payload->data + 8, payload->data + 8 + buffer_size_, lt->data);
+    auto ser_data = payload->data + SerializedPayload_t::representation_header_size;
+    lt->seqnum = *reinterpret_cast<uint32_t*>(ser_data);
+    ser_data += sizeof(lt->seqnum);
+    lt->bounce = *reinterpret_cast<uint32_t*>(ser_data);
+    ser_data += sizeof(lt->bounce);
+    std::copy(ser_data, ser_data + buffer_size_, lt->data);
     return true;
 }
 
