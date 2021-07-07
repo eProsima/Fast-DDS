@@ -90,7 +90,7 @@ public:
     {
         setName("LatencyType");
         m_typeSize = 8 + ((size + 3) & ~3) +
-            eprosima::fastrtps::rtps::SerializedPayload_t::representation_header_size;
+                eprosima::fastrtps::rtps::SerializedPayload_t::representation_header_size;
         m_isGetKeyDefined = false;
     }
 
