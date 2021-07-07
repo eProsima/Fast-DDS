@@ -238,7 +238,7 @@ bool StatelessReader::matched_writer_is_matched(
 bool StatelessReader::change_received(
         CacheChange_t* change)
 {
-    // Only make visible the change if there is change_received other with bigger sequence number.
+    // Only make the change visible if there is not another with a bigger sequence number.
     // TODO Revisar si no hay que incluirlo.
     if (!thereIsUpperRecordOf(change->writerGUID, change->sequenceNumber))
     {
