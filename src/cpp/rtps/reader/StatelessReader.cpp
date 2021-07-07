@@ -238,7 +238,6 @@ bool StatelessReader::matched_writer_is_matched(
 bool StatelessReader::change_received(
         CacheChange_t* change)
 {
-    // std::cout << "[FAST STATELESS READER] change_received" << std::endl;
     // Only make visible the change if there is change_received other with bigger sequence number.
     // TODO Revisar si no hay que incluirlo.
     if (!thereIsUpperRecordOf(change->writerGUID, change->sequenceNumber))
@@ -262,7 +261,6 @@ bool StatelessReader::change_received(
             new_notification_cv_.notify_all();
 
             // statistics callback
-            // std::cout << "[FAST STATELESS READER] on_subscribe_throughput sending thr" << std::endl;
             on_subscribe_throughput(payload_length);
 
             return true;

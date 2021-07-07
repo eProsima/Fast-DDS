@@ -156,7 +156,7 @@ TEST(DDSStatistics, simple_statistics_datareaders)
     auto r_statistics_participant = statistics::dds::DomainParticipant::narrow(r_participant);
     ASSERT_NE(nullptr, r_statistics_participant);
 
-    // TODO: some topics get stuck in infinite loop in an error:
+    // TODO: some topics get stuck in infinite loop in an error (generally if they are included twice):
     // [SUBSCRIBER Error] Change not found on this key, something is wrong -> Function remove_change_sub
     // These topics are commented in test params
     // TODO: some topics could be used in both participants, but they lead to the same error
@@ -169,8 +169,6 @@ TEST(DDSStatistics, simple_statistics_datareaders)
         {"NETWORK_LATENCY_TOPIC",           statistics::NETWORK_LATENCY_TOPIC,          num_samples},
         {"PUBLICATION_THROUGHPUT_TOPIC",    statistics::PUBLICATION_THROUGHPUT_TOPIC,   num_samples},
         {"HEARTBEAT_COUNT_TOPIC",           statistics::HEARTBEAT_COUNT_TOPIC,          num_samples},
-        // {"RTPS_SENT_TOPIC",                 statistics::RTPS_SENT_TOPIC,                num_samples},
-        // {"DATA_COUNT_TOPIC",                statistics::DATA_COUNT_TOPIC,               num_samples},
         {"SAMPLE_DATAS_TOPIC",              statistics::SAMPLE_DATAS_TOPIC,             num_samples},
         {"DISCOVERY_TOPIC",                 statistics::DISCOVERY_TOPIC,                1},
         {"PDP_PACKETS_TOPIC",               statistics::PDP_PACKETS_TOPIC,              1},
