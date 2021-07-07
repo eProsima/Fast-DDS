@@ -89,7 +89,9 @@ public:
         : buffer_size_(size)
     {
         setName("LatencyType");
-        m_typeSize = 8 + ((size + 3) & ~3) +
+        m_typeSize = sizeof(decltype(LatencyType::seqnum)) +
+                sizeof(decltype(LatencyType::bounce)) +
+                ((size + 3) & ~3) +
                 eprosima::fastrtps::rtps::SerializedPayload_t::representation_header_size;
         m_isGetKeyDefined = false;
     }
