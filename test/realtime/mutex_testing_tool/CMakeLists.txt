@@ -12,9 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-include(${PROJECT_SOURCE_DIR}/cmake/common/gtest.cmake)
-check_gtest()
-
 if(GTest_FOUND)
     add_library(mutex_testing_tool SHARED TMutex.cpp)
 
@@ -22,8 +19,7 @@ if(GTest_FOUND)
     target_link_libraries(mutex_testing_tool_preload PRIVATE mutex_testing_tool ${CMAKE_DL_LIBS})
 
     add_executable(TMutexTests TMutexTests.cpp)
-    target_include_directories(TMutexTests PRIVATE ${GTEST_INCLUDE_DIRS})
-    target_link_libraries(TMutexTests mutex_testing_tool ${GTEST_LIBRARIES})
+    target_link_libraries(TMutexTests mutex_testing_tool GTest::gtest)
     STRING(REPLACE " " "\\ " MUTEX_PRELOAD_LIBRARY_FILE "$<TARGET_FILE:mutex_testing_tool_preload>")
     add_gtest(TMutexTests SOURCES TMutexTests.cpp
         ENVIRONMENTS

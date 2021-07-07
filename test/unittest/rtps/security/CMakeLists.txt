@@ -13,10 +13,6 @@
 # limitations under the License.
 
 if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
-    include(${PROJECT_SOURCE_DIR}/cmake/common/gtest.cmake)
-    check_gtest()
-    check_gmock()
-
     if(GTest_FOUND)
         if(WIN32)
             add_definitions(-D_WIN32_WINNT=0x0601)
@@ -66,7 +62,6 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
             )
         target_include_directories(SecurityAuthentication PRIVATE
-            ${GTEST_INCLUDE_DIRS} ${GMOCK_INCLUDE_DIRS}
             ${OPENSSL_INCLUDE_DIR}
             ${PROJECT_SOURCE_DIR}/test/mock/rtps/SecurityPluginFactory
             ${PROJECT_SOURCE_DIR}/test/mock/rtps/Endpoint
@@ -90,8 +85,8 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             ${PROJECT_SOURCE_DIR}/src/cpp
             )
         target_link_libraries(SecurityAuthentication fastcdr
-            ${GTEST_LIBRARIES}
-            ${GMOCK_LIBRARIES}
+            GTest::gtest
+            GTest::gmock
             ${OPENSSL_LIBRARIES}
             )
         add_gtest(SecurityAuthentication

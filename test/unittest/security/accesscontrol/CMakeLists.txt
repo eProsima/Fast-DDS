@@ -13,9 +13,6 @@
 # limitations under the License.
 
 if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
-    include(${PROJECT_SOURCE_DIR}/cmake/common/gtest.cmake)
-    check_gtest()
-
     if(GTest_FOUND)
         if(WIN32)
             add_definitions(
@@ -76,7 +73,6 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             )
 
         target_include_directories(AccessControlTests PRIVATE
-            ${GTEST_INCLUDE_DIRS} ${GMOCK_INCLUDE_DIRS}
             ${PROJECT_SOURCE_DIR}/test/mock/rtps/NetworkFactory/
             ${PROJECT_SOURCE_DIR}/test/mock/rtps/PDPSimple
             ${PROJECT_SOURCE_DIR}/test/mock/rtps/EDP
@@ -90,7 +86,8 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             )
 
         target_link_libraries(AccessControlTests
-            ${GTEST_LIBRARIES} ${OPENSSL_LIBRARIES}
+            GTest::gtest
+            GTest::gmock
             fastcdr
             foonathan_memory
             $<$<BOOL:${WIN32}>:ws2_32>

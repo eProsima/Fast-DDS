@@ -13,9 +13,6 @@
 # limitations under the License.
 
 if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
-    include(${PROJECT_SOURCE_DIR}/cmake/common/gtest.cmake)
-    check_gtest()
-
     if(GTest_FOUND)
         if(WIN32)
             add_definitions(-D_WIN32_WINNT=0x0601)
@@ -49,12 +46,10 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
             )
         target_include_directories(BuiltinAESGCMGMAC PRIVATE
-            ${GTEST_INCLUDE_DIRS}
-            ${OPENSSL_INCLUDE_DIR}
             ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include
             ${PROJECT_SOURCE_DIR}/src/cpp
             )
-        target_link_libraries(BuiltinAESGCMGMAC fastcdr ${GTEST_LIBRARIES} ${OPENSSL_LIBRARIES})
+        target_link_libraries(BuiltinAESGCMGMAC fastcdr GTest::gtest GTest::gmock)
         add_gtest(BuiltinAESGCMGMAC SOURCES ${COMMON_SOURCES_CRYPTO_PLUGIN_TEST_SOURCE}
             ${PROJECT_SOURCE_DIR}/src/cpp/security/cryptography/AESGCMGMAC.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/security/cryptography/AESGCMGMAC_KeyExchange.cpp
