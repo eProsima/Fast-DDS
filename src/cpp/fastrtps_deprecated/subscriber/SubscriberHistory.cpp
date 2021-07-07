@@ -512,6 +512,41 @@ bool SubscriberHistory::remove_change_sub(
     return false;
 }
 
+bool SubscriberHistory::remove_changes_with_guid(
+        const GUID_t& a_guid)
+{
+    std::lock_guard<RecursiveTimedMutex> guard(*mp_mutex);
+
+    // clean this class related data
+    for( auto mit = keyed_changes_.begin(); mit != keyed_changes_.end();)
+    {
+        auto & caches = mit->second.cache_changes;
+        for ( auto vit = caches.begin(); vit != caches.end();)
+        {
+            if ( (*vit)->writerGUID == a_guid )
+            {
+                vit = caches.erase(vit);
+            }
+            else
+            {
+                ++vit;
+            }
+        }
+
+        if ( caches.empty() )
+        {
+            mit = keyed_changes_.erase(mit);
+        }
+        else
+        {
+            ++mit;
+        }
+    }
+
+    // clean base class related data
+    return ReaderHistory::remove_changes_with_guid(a_guid);
+}
+
 bool SubscriberHistory::remove_change_sub(
         CacheChange_t* change,
         iterator& it)

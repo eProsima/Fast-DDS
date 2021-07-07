@@ -102,6 +102,14 @@ public:
             SampleInfo_t* info);
 
     /**
+     * Remove all changes from the History that have a certain guid.
+     * @param a_guid Pointer to the target guid to search for.
+     * @return True if successful, even if no changes have been removed.
+     * */
+    bool remove_changes_with_guid(
+            const fastrtps::rtps::GUID_t& a_guid) override;
+
+    /**
      * This method is called to remove a change from the SubscriberHistory.
      * @param change Pointer to the CacheChange_t.
      * @return True if removed.
