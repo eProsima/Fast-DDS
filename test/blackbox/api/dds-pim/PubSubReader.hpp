@@ -1676,10 +1676,11 @@ protected:
     class WaitsetThread
     {
     public:
+
         WaitsetThread(
-            PubSubReaderWithWaitsets& reader)
-                : reader_(reader)
-                , times_deadline_missed_(0)
+                PubSubReaderWithWaitsets& reader)
+            : reader_(reader)
+            , times_deadline_missed_(0)
         {
         }
 
@@ -1723,7 +1724,7 @@ protected:
         void run()
         {
             std::unique_lock<std::mutex> lock(mutex_);
-            while(running_)
+            while (running_)
             {
                 lock.unlock();
                 waitset_.wait(active_conditions_, eprosima::fastrtps::c_TimeInfinite);
@@ -1847,7 +1848,7 @@ protected:
 
         // The waitset where the thread will be blocked
         eprosima::fastdds::dds::WaitSet waitset_;
-        
+
         // The active conditions that triggered the wake up
         eprosima::fastdds::dds::ConditionSeq active_conditions_;
 
@@ -1866,7 +1867,8 @@ protected:
         //! Number of times deadline was missed
         unsigned int times_deadline_missed_;
 
-    } waitset_thread_;
+    }
+    waitset_thread_;
 
     friend class WaitsetThread;
 
@@ -1916,7 +1918,7 @@ public:
                     std::cout << "Created datareader " << datareader_->guid() << " for topic " <<
                         topic_name_ << std::endl;
                 }
-    
+
                 // Set the desired status condition mask and start the waitset thread
                 datareader_->get_statuscondition().set_enabled_statuses(status_mask_);
                 subscriber_->get_statuscondition().set_enabled_statuses(status_mask_);
@@ -1939,7 +1941,6 @@ public:
     {
         return waitset_thread_.missed_deadlines();
     }
-
 
 protected:
 

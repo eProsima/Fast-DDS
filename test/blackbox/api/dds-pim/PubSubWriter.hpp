@@ -1705,11 +1705,12 @@ protected:
     class WaitsetThread
     {
     public:
+
         WaitsetThread(
-            PubSubWriterWithWaitsets& writer)
-                : writer_(writer)
-                , times_deadline_missed_(0)
-                , times_liveliness_lost_(0)
+                PubSubWriterWithWaitsets& writer)
+            : writer_(writer)
+            , times_deadline_missed_(0)
+            , times_liveliness_lost_(0)
         {
         }
 
@@ -1752,7 +1753,7 @@ protected:
         void run()
         {
             std::unique_lock<std::mutex> lock(mutex_);
-            while(running_)
+            while (running_)
             {
                 lock.unlock();
                 waitset_.wait(active_conditions_, eprosima::fastrtps::c_TimeInfinite);
@@ -1832,7 +1833,7 @@ protected:
 
         // The waitset where the thread will be blocked
         eprosima::fastdds::dds::WaitSet waitset_;
-        
+
         // The active conditions that triggered the wake up
         eprosima::fastdds::dds::ConditionSeq active_conditions_;
 
@@ -1854,7 +1855,8 @@ protected:
         //! The number of times liveliness was lost
         unsigned int times_liveliness_lost_;
 
-    } waitset_thread_;
+    }
+    waitset_thread_;
 
     friend class WaitsetThread;
 
