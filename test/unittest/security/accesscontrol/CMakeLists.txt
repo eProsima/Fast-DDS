@@ -87,7 +87,6 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             )
 
         target_link_libraries(AccessControlTests
-            GTest::gtest
             GTest::gmock
             fastcdr
             foonathan_memory

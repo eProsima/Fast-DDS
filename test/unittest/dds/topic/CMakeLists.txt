@@ -21,7 +21,7 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             COPYONLY)
 
         set(TOPICTESTS_SOURCE TopicTests.cpp)
-        
+
         if(WIN32)
             add_definitions(-D_WIN32_WINNT=0x0601)
         endif()
@@ -36,8 +36,8 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             ${PROJECT_SOURCE_DIR}/src/cpp
             )
         target_link_libraries(TopicTests fastrtps fastcdr foonathan_memory
-            GTest::gtest GTest::gmock
-            ${CMAKE_THREAD_LIBS_INIT} ${CMAKE_DL_LIBS})
+            GTest::gmock
+            ${CMAKE_DL_LIBS})
         add_gtest(TopicTests SOURCES ${TOPICTESTS_SOURCE})
 
     endif()

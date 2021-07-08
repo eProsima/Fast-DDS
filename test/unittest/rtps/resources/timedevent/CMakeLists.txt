@@ -46,7 +46,7 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             ${PROJECT_BINARY_DIR}/include
             ${PROJECT_SOURCE_DIR}/src/cpp
             )
-        target_link_libraries(TimedEventTests GTest::gtest ${CMAKE_THREAD_LIBS_INIT} ${CMAKE_DL_LIBS})
+        target_link_libraries(TimedEventTests GTest::gtest ${CMAKE_DL_LIBS})
         add_gtest(TimedEventTests SOURCES ${TIMEDEVENTTESTS_SOURCE})
     endif()
 endif()

@@ -50,7 +50,7 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
         add_gtest(StatisticsQosTests SOURCES ${STATISTICS_QOS_TESTS_SOURCE})
 
         ## StatisticsDomainParticipantListenerTests
-        if (GMOCK_FOUND AND FASTDDS_STATISTICS)
+        if (FASTDDS_STATISTICS)
             set(DOMAINPARTICIPANTSTATISTICSLISTENER_TESTS_SOURCE
                 DomainParticipantStatisticsListenerTests.cpp)
 
@@ -71,13 +71,13 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
                 ${PROJECT_BINARY_DIR}/include
                 ${PROJECT_SOURCE_DIR}/src/cpp)
             target_link_libraries(DomainParticipantStatisticsListenerTests
-                fastcdr GTest::gtest GTest::gmock )
+                fastcdr GTest::gmock )
             add_gtest(DomainParticipantStatisticsListenerTests
                 SOURCES ${DOMAINPARTICIPANTSTATISTICSLISTENER_TESTS_SOURCE})
         endif()
 
         ## StatisticsDomainParticipantMockTests
-        if (GMOCK_FOUND AND SQLITE3_SUPPORT AND FASTDDS_STATISTICS)
+        if (SQLITE3_SUPPORT AND FASTDDS_STATISTICS)
             set(STATISTICS_DOMAINPARTICIPANT_MOCK_TESTS_SOURCE
                 StatisticsDomainParticipantMockTests.cpp
                 ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/AnnotationDescriptor.cpp
@@ -329,10 +329,9 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
                 ${THIRDPARTY_BOOST_INCLUDE_DIR})
             target_link_libraries(StatisticsDomainParticipantMockTests ${PRIVACY}
                 fastcdr
-                foonathan_memory 
-                GTest::gtest
+                foonathan_memory
                 GTest::gmock
-                ${CMAKE_THREAD_LIBS_INIT} ${CMAKE_DL_LIBS}
+                ${CMAKE_DL_LIBS}
                 ${TINYXML2_LIBRARY}
                 $<$<BOOL:${LINK_SSL}>:OpenSSL::SSL$<SEMICOLON>OpenSSL::Crypto>
                 $<$<BOOL:${WIN32}>:iphlpapi$<SEMICOLON>Shlwapi>

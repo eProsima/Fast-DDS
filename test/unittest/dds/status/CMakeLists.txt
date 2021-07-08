@@ -161,8 +161,8 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
 
         target_link_libraries(ListenerTests fastcdr foonathan_memory
             ${TINYXML2_LIBRARY}
-            GTest::gtest GTest::gmock
-            ${CMAKE_THREAD_LIBS_INIT} ${CMAKE_DL_LIBS})
+            GTest::gmock
+            ${CMAKE_DL_LIBS})
         if(MSVC OR MSVC_IDE)
             target_link_libraries(ListenerTests iphlpapi Shlwapi ws2_32)
         endif()

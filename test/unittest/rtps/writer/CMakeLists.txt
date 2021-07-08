@@ -59,8 +59,8 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             ${THIRDPARTY_BOOST_INCLUDE_DIR}
             )
         target_link_libraries(ReaderProxyTests
-            GTest::gtest GTest::gmock foonathan_memory
-            ${CMAKE_THREAD_LIBS_INIT} ${CMAKE_DL_LIBS}
+            GTest::gmock foonathan_memory
+            ${CMAKE_DL_LIBS}
             ${THIRDPARTY_BOOST_LINK_LIBS})
         add_gtest(ReaderProxyTests SOURCES ${WRITERPROXYTESTS_SOURCE})
 
@@ -92,7 +92,6 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             ${PROJECT_SOURCE_DIR}/src/cpp
             )
         target_link_libraries(LivelinessManagerTests PRIVATE
-            GTest::gtest
             GTest::gmock)
         add_gtest(LivelinessManagerTests SOURCES ${LIVELINESSMANAGERTESTS_SOURCE})
 
@@ -108,8 +107,8 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
             )
         target_link_libraries(RTPSWriterTests fastrtps foonathan_memory
-            GTest::gtest GTest::gmock
-            ${CMAKE_THREAD_LIBS_INIT} ${CMAKE_DL_LIBS})
+            GTest::gmock
+            ${CMAKE_DL_LIBS})
         add_gtest(RTPSWriterTests SOURCES ${RTPSWRITERTESTS_SOURCE})
 
     endif()

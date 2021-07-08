@@ -133,7 +133,7 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             ${PROJECT_SOURCE_DIR}/test/mock/rtps/SharedMemTransportDescriptor
             ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include)
 
-        target_link_libraries(XMLProfileParserTests GTest::gtest GTest::gmock
+        target_link_libraries(XMLProfileParserTests GTest::gmock
             $<$<BOOL:${WIN32}>:iphlpapi$<SEMICOLON>Shlwapi>
             $<$<BOOL:${WIN32}>:ws2_32>
             ${TINYXML2_LIBRARY}

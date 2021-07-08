@@ -50,8 +50,8 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             ${PROJECT_SOURCE_DIR}/src/cpp
             )
         target_link_libraries(WriterProxyTests foonathan_memory
-            GTest::gtest GTest::gmock
-            ${CMAKE_THREAD_LIBS_INIT} ${CMAKE_DL_LIBS})
+            GTest::gmock
+            ${CMAKE_DL_LIBS})
         add_gtest(WriterProxyTests SOURCES ${WRITERPROXYTESTS_SOURCE})
     endif()
 endif()

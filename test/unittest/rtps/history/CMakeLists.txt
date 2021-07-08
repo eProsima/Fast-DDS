@@ -68,8 +68,8 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             ${PROJECT_SOURCE_DIR}/src/cpp
             ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include)
         target_link_libraries(ReaderHistoryTests
-            GTest::gtest GTest::gmock
-            ${CMAKE_THREAD_LIBS_INIT} ${CMAKE_DL_LIBS})
+            GTest::gmock
+            ${CMAKE_DL_LIBS})
         add_gtest(ReaderHistoryTests SOURCES ${READERHISTORYTESTS_SOURCE})
 
         add_executable(BasicPoolsTests ${BASICPOOLSTESTS_SOURCE})
@@ -82,7 +82,7 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include)
         target_link_libraries(BasicPoolsTests
             GTest::gtest
-            ${CMAKE_THREAD_LIBS_INIT} ${CMAKE_DL_LIBS})
+            ${CMAKE_DL_LIBS})
         add_gtest(BasicPoolsTests SOURCES ${BASICPOOLSTESTS_SOURCE})
 
         add_executable(CacheChangePoolTests ${CACHECHANGEPOOLTESTS_SOURCE})
@@ -95,7 +95,7 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include)
         target_link_libraries(CacheChangePoolTests
             GTest::gtest
-            ${CMAKE_THREAD_LIBS_INIT} ${CMAKE_DL_LIBS})
+            ${CMAKE_DL_LIBS})
         add_gtest(CacheChangePoolTests SOURCES ${CACHECHANGEPOOLTESTS_SOURCE})
 
         add_executable(TopicPayloadPoolTests ${TOPICPAYLOADPOOLTESTS_SOURCE})
@@ -109,7 +109,7 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include)
         target_link_libraries(TopicPayloadPoolTests
             GTest::gtest
-            ${CMAKE_THREAD_LIBS_INIT} ${CMAKE_DL_LIBS})
+            ${CMAKE_DL_LIBS})
         add_gtest(TopicPayloadPoolTests SOURCES ${TOPICPAYLOADPOOLTESTS_SOURCE})
 
     endif()

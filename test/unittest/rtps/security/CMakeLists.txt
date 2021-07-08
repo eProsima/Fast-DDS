@@ -86,7 +86,6 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             ${PROJECT_SOURCE_DIR}/src/cpp
             )
         target_link_libraries(SecurityAuthentication fastcdr
-            GTest::gtest
             GTest::gmock
             ${OPENSSL_LIBRARIES}
             )

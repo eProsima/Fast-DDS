@@ -1,6 +1,5 @@
 add_subdirectory(mutex_testing_tool)
 
-
 if(GTest_FOUND)
     set(USER_THREAD_NONBLOCKED_TEST UserThreadNonBlockedTest.cpp)
 
@@ -9,8 +8,7 @@ if(GTest_FOUND)
         $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
         $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
         )
-    target_include_directories(user_thread_nonblocked_test PRIVATE ${GTEST_INCLUDE_DIRS})
-    target_link_libraries(user_thread_nonblocked_test mutex_testing_tool fastrtps fastcdr ${GTEST_LIBRARIES})
+    target_link_libraries(user_thread_nonblocked_test mutex_testing_tool fastrtps fastcdr GTest::gtest)
 
     STRING(REPLACE " " "\\ " MUTEX_PRELOAD_LIBRARY_FILE "$<TARGET_FILE:mutex_testing_tool_preload>")
     add_gtest(NAME UserThreadNonBlockedTest COMMAND user_thread_nonblocked_test SOURCES ${USER_THREAD_NONBLOCKED_TEST}
