@@ -14,10 +14,8 @@
 
 if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
     if(GTest_FOUND)
-        find_package(Threads REQUIRED)
 
-    # ReaderProxy
-
+        # ReaderProxy
         set(WRITERPROXYTESTS_SOURCE ReaderProxyTests.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/rtps/writer/ReaderProxy.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/subscriber/qos/ReaderQos.cpp
@@ -104,6 +102,8 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
             $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
             )
+        target_include_directories(RTPSWriterTests PRIVATE
+            ${Asio_INCLUDE_DIR})
         target_link_libraries(RTPSWriterTests fastrtps foonathan_memory
             GTest::gmock
             ${CMAKE_DL_LIBS})
