@@ -88,6 +88,7 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
 
         target_link_libraries(AccessControlTests
             GTest::gmock
+            ${OPENSSL_LIBRARIES}
             fastcdr
             foonathan_memory
             $<$<BOOL:${WIN32}>:ws2_32>
