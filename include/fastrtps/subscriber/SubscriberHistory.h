@@ -64,6 +64,17 @@ public:
     virtual ~SubscriberHistory();
 
     /**
+     * Remove a specific change from the history.
+     * No Thread Safe
+     * @param removal iterator to the CacheChange_t to remove.
+     * @param release defaults to true and hints if the CacheChange_t should return to the pool
+     * @return iterator to the next CacheChange_t or end iterator.
+     */
+    RTPS_DllAPI iterator remove_change_nts(
+            const_iterator removal,
+            bool release = true) override;
+
+    /**
      * Called when a change is received by the Subscriber. Will add the change to the history.
      * @pre Change should not be already present in the history.
      * @param[in] change The received change
