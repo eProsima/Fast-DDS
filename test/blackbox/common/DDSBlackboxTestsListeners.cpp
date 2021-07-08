@@ -661,8 +661,8 @@ TEST_P(DDSStatus, DataAvailableConditions)
     subscriber_reader.block_for_all();
 
     // No timeouts until this point
-    ASSERT_EQ(0, reader.times_waitset_timeout());
-    ASSERT_EQ(0, subscriber_reader.times_waitset_timeout());
+    ASSERT_EQ(0u, reader.times_waitset_timeout());
+    ASSERT_EQ(0u, subscriber_reader.times_waitset_timeout());
 
     // Now wait until at least one timeout occurs
     reader.wait_waitset_timeout();
