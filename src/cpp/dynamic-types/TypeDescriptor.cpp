@@ -25,6 +25,32 @@ namespace eprosima {
 namespace fastrtps {
 namespace types {
 
+enum FSM_INPUTS
+{
+    LETTER = 1,
+    NUMBER,
+    UNDERSCORE,
+    COLON,
+    OTHER
+};
+
+enum FSM_STATES
+{
+    INVALID = 0,
+    SINGLECOLON,
+    DOUBLECOLON,
+    VALID
+};
+
+static const int stateTable[4][6] =
+{
+    /* Input:     letter,  number,  underscore, colon,       other */
+    {INVALID,     VALID,   INVALID, INVALID,    INVALID,     INVALID},
+    {SINGLECOLON, INVALID, INVALID, INVALID,    DOUBLECOLON, INVALID},
+    {DOUBLECOLON, VALID,   INVALID, INVALID,    INVALID,     INVALID},
+    {VALID,       VALID,   VALID,   VALID,      SINGLECOLON, INVALID}
+};
+
 TypeDescriptor::TypeDescriptor()
     : kind_(0)
     , name_("")
