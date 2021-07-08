@@ -77,8 +77,10 @@ if(GST_FOUND)
         main_VideoTest.cpp
     )
     add_executable(VideoTest ${VIDEOTEST_SOURCE})
-    
+
     target_compile_definitions(VideoTest PRIVATE
+        BOOST_ASIO_STANDALONE
+        ASIO_STANDALONE
         $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
         $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
         )
@@ -88,12 +90,14 @@ if(GST_FOUND)
         target_include_directories(
             VideoTest
             PUBLIC
+            ${Asio_INCLUDE_DIR}
             ${GST_INCLUDE_DIRS}
         )
     else()
         target_include_directories(
             VideoTest
             PUBLIC
+            ${Asio_INCLUDE_DIR}
             $ENV{GSTREAMER_1_0_ROOT_X86_64}/include
             $ENV{GSTREAMER_1_0_ROOT_X86_64}/include/glib-2.0
             $ENV{GSTREAMER_1_0_ROOT_X86_64}/include/gstreamer-1.0

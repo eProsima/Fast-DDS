@@ -16,8 +16,6 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
     if(GTest_FOUND)
         find_package(Threads REQUIRED)
 
-        include_directories(${Asio_INCLUDE_DIR})
-
         set(NETWORKFACTORYTESTS_SOURCE
             NetworkFactoryTests.cpp
             mock/MockTransport.cpp
@@ -73,10 +71,13 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
 
         add_executable(NetworkFactoryTests ${NETWORKFACTORYTESTS_SOURCE})
         target_compile_definitions(NetworkFactoryTests PRIVATE FASTRTPS_NO_LIB
+            BOOST_ASIO_STANDALONE
+            ASIO_STANDALONE
             $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
             $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
             )
         target_include_directories(NetworkFactoryTests PRIVATE
+            ${Asio_INCLUDE_DIR}
             ${PROJECT_SOURCE_DIR}/test/mock/rtps/ParticipantProxyData
             ${PROJECT_SOURCE_DIR}/test/mock/dds/QosPolicies
             ${PROJECT_SOURCE_DIR}/test/mock/rtps/MessageReceiver

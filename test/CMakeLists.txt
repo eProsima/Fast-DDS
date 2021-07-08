@@ -12,12 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-find_package(GTest CONFIG)
-if (GTest_FOUND)
-    include(${PROJECT_SOURCE_DIR}/cmake/common/gtest.cmake)
-    find_package(Threads REQUIRED)
-endif()
-
 option(PERFORMANCE_TESTS "Activate the building and execution of performance tests" OFF)
 option(SYSTEM_TESTS "Activate the building and execution of system tests" OFF)
 option(PROFILING_TESTS "Activate the building and execution of profiling tests" OFF)
@@ -35,6 +29,11 @@ set(MEMORYCHECK_SUPPRESSIONS_FILE ${MEMORYCHECK_SUPPRESSIONS_FILE_TMP} CACHE FIL
 # Testing
 ###############################################################################
 if(EPROSIMA_BUILD_TESTS AND IS_TOP_LEVEL AND NOT EPROSIMA_INSTALLER)
+    find_package(GTest CONFIG REQUIRED)
+    if (GTest_FOUND)
+        include(${PROJECT_SOURCE_DIR}/cmake/common/gtest.cmake)
+    endif()
+
     add_subdirectory(blackbox)
     add_subdirectory(communication)
     add_subdirectory(unittest)

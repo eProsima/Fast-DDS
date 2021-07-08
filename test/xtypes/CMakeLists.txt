@@ -84,15 +84,6 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER) AND fastcdr_FOUND)
                 )
         endif()
 
-        add_definitions(
-          -DEPROSIMA_SHAPES_DLL_EXPORT
-          -DBUILD_SHARED_LIBS
-          -DBOOST_ASIO_STANDALONE
-          -DASIO_STANDALONE
-        )
-
-        include_directories(${Asio_INCLUDE_DIR})
-
         ###############################################################################
         # Unit tests
         ###############################################################################
@@ -106,9 +97,14 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER) AND fastcdr_FOUND)
 
         add_executable(XTypesBlackBoxTests ${XTYPES_TESTS_SOURCE})
         target_compile_definitions(XTypesBlackBoxTests PRIVATE
+            EPROSIMA_SHAPES_DLL_EXPORT
+            BUILD_SHARED_LIBS
+            BOOST_ASIO_STANDALONE
+            ASIO_STANDALONE
             $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
             $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
             )
+        target_include_directories(XTypesBlackBoxTests PRIVATE ${Asio_INCLUDE_DIR})
         target_link_libraries(XTypesBlackBoxTests fastrtps fastcdr GTest::gtest)
         add_xtypes_gtest(XTypesBlackBoxTests SOURCES ${XTYPES_TESTS_SOURCE})
     endif()

@@ -17,6 +17,8 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
 
     if(WIN32)
         target_compile_definitions(${PROJECT_NAME} PRIVATE
+            BOOST_ASIO_STANDALONE
+            ASIO_STANDALONE
             $<$<AND:$<BOOL:${WIN32}>,$<STREQUAL:"${CMAKE_SYSTEM_NAME}","WindowsStore">>:_WIN32_WINNT=0x0603>
             $<$<AND:$<BOOL:${WIN32}>,$<NOT:$<STREQUAL:"${CMAKE_SYSTEM_NAME}","WindowsStore">>>:_WIN32_WINNT=0x0601>
             $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
@@ -24,17 +26,12 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             )
     else()
         target_compile_definitions(${PROJECT_NAME} PRIVATE
+            BOOST_ASIO_STANDALONE
+            ASIO_STANDALONE
             $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
             $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
             )
     endif()
-
-    add_definitions(
-        -DBOOST_ASIO_STANDALONE
-        -DASIO_STANDALONE
-        )
-
-    include_directories(${Asio_INCLUDE_DIR})
 
     ###############################################################################
     # Binaries
@@ -45,6 +42,7 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
         main_MemoryTest.cpp
         )
     add_executable(MemoryTest ${MEMORYTEST_SOURCE})
+    target_include_directories(MemoryTest PRIVATE ${Asio_INCLUDE_DIR})
     target_link_libraries(MemoryTest fastrtps foonathan_memory ${CMAKE_THREAD_LIBS_INIT} ${CMAKE_DL_LIBS})
 
     configure_file("cycles_tests.py" "cycles_tests.py")
