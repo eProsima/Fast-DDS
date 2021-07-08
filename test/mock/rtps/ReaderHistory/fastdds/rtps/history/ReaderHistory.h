@@ -46,6 +46,10 @@ public:
     {
     }
 
+    virtual ~ReaderHistory()
+    {
+    }
+
     // *INDENT-OFF* Uncrustify makes a mess with MOCK_METHOD macros
     MOCK_METHOD1(remove_change_mock, bool(CacheChange_t*));
 
@@ -66,6 +70,13 @@ public:
         change->sequenceNumber = ++last_sequence_number_;
         samples_number_mutex_.unlock();
         return ret;
+    }
+
+    virtual bool received_change(
+            CacheChange_t*,
+            size_t)
+    {
+        return true;
     }
 
     bool remove_change(
@@ -97,7 +108,7 @@ public:
         return m_changes.cend();
     }
 
-    iterator remove_change_nts(
+    virtual iterator remove_change_nts(
             const_iterator removal)
     {
         return m_changes.erase(removal);
