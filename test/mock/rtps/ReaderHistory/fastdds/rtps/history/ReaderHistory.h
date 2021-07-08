@@ -46,7 +46,9 @@ public:
     {
     }
 
-    virtual ~ReaderHistory() {}
+    virtual ~ReaderHistory()
+    {
+    }
 
     // *INDENT-OFF* Uncrustify makes a mess with MOCK_METHOD macros
     MOCK_METHOD1(remove_change_mock, bool(CacheChange_t*));

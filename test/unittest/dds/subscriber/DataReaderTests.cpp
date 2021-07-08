@@ -1771,10 +1771,10 @@ TEST_F(DataReaderTests, check_key_history_wholesomeness_on_unmatch)
 
     // defaults to footopic using type FooType
     create_entities(
-            nullptr,
-            reader_qos,
-            SUBSCRIBER_QOS_DEFAULT,
-            writer_qos);
+        nullptr,
+        reader_qos,
+        SUBSCRIBER_QOS_DEFAULT,
+        writer_qos);
 
     // add a key sample
     FooType sample;
@@ -1786,7 +1786,7 @@ TEST_F(DataReaderTests, check_key_history_wholesomeness_on_unmatch)
     ASSERT_TRUE(data_writer_->write(&sample));
 
     // wait till the DataReader receives the data
-    ASSERT_TRUE(data_reader_->wait_for_unread_message(Duration_t(3,0)));
+    ASSERT_TRUE(data_reader_->wait_for_unread_message(Duration_t(3, 0)));
 
     // now the writer is removed
     ASSERT_EQ(publisher_->delete_datawriter(data_writer_), ReturnCode_t::RETCODE_OK);
@@ -1794,12 +1794,13 @@ TEST_F(DataReaderTests, check_key_history_wholesomeness_on_unmatch)
 
     // here the DataReader History state must be coherent and don't loop endlessly
     ReturnCode_t res;
-    std::thread query([this, &res]() {
-        FooSeq samples;
-        SampleInfoSeq infos;
+    std::thread query([this, &res]()
+            {
+                FooSeq samples;
+                SampleInfoSeq infos;
 
-        res = data_reader_->take_instance(samples, infos, LENGTH_UNLIMITED, handle_ok_);
-    });
+                res = data_reader_->take_instance(samples, infos, LENGTH_UNLIMITED, handle_ok_);
+            });
 
     // Check if the thread hangs
     // wait for termination
