@@ -684,24 +684,24 @@ History::iterator SubscriberHistory::remove_change_nts(
         History::const_iterator removal,
         bool release)
 {
-    if ( removal != changesEnd())
+    CacheChange_t* p_sample = nullptr;
+
+    if ( removal != changesEnd()
+            && (p_sample = *removal)->instanceHandle.isDefined()
+            && topic_att_.getTopicKind() == WITH_KEY)
     {
-        CacheChange_t* const p_sample = *removal;
-
         // clean any references to this CacheChange in the key state collection
-        for ( auto mit = keyed_changes_.begin(); mit != keyed_changes_.end();)
-        {
-            auto& c = mit->second.cache_changes;
-            c.erase(std::remove(c.begin(), c.end(), p_sample), c.end());
+        auto it = keyed_changes_.find(p_sample->instanceHandle);
 
-            if (c.empty())
-            {
-                mit = keyed_changes_.erase(mit);
-            }
-            else
-            {
-                ++mit;
-            }
+        // if keyed and in history must be in the map
+        assert(it != keyed_changes_.end());
+
+        auto& c = it->second.cache_changes;
+        c.erase(std::remove(c.begin(), c.end(), p_sample), c.end());
+
+        if (c.empty())
+        {
+            keyed_changes_.erase(it);
         }
     }
 

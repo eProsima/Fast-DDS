@@ -61,7 +61,7 @@ public:
             uint32_t payloadMax,
             rtps::MemoryManagementPolicy_t mempolicy);
 
-    virtual ~SubscriberHistory();
+    ~SubscriberHistory() override;
 
     /**
      * Remove a specific change from the history.
@@ -70,7 +70,7 @@ public:
      * @param release defaults to true and hints if the CacheChange_t should return to the pool
      * @return iterator to the next CacheChange_t or end iterator.
      */
-    RTPS_DllAPI iterator remove_change_nts(
+    iterator remove_change_nts(
             const_iterator removal,
             bool release = true) override;
 
