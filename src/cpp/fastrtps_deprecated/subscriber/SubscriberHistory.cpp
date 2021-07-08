@@ -523,14 +523,14 @@ bool SubscriberHistory::remove_changes_with_guid(
     {
         auto& caches = mit->second.cache_changes;
         caches.erase(
-                std::remove_if(
-                    caches.begin(),
-                    caches.end(),
-                    [&a_guid](CacheChange_t const* const pSample) -> bool
-                    {
-                        return pSample->writerGUID == a_guid;
-                    }),
-                caches.end());
+            std::remove_if(
+                caches.begin(),
+                caches.end(),
+                [&a_guid](CacheChange_t const* const pSample) -> bool
+                {
+                    return pSample->writerGUID == a_guid;
+                }),
+            caches.end());
 
         if ( caches.empty())
         {
