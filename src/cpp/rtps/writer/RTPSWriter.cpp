@@ -139,7 +139,7 @@ RTPSWriter::~RTPSWriter()
     logInfo(RTPS_WRITER, "RTPSWriter destructor");
 
     // Deletion of the events has to be made in child destructor.
-    // Also at this point all CacheChange_t must be released by child destructor
+    // Also at this point all CacheChange_t must have been released by the child destructor
 
     mp_history->mp_writer = nullptr;
     mp_history->mp_mutex = nullptr;

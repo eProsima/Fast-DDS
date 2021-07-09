@@ -273,7 +273,7 @@ void WriterHistory::set_fragments(
 
     uint32_t final_high_mark_for_frag = high_mark_for_frag_;
 
-    // If needed inlineqos for related_sample_identity, then remove the inlinqos size from final fragment size.
+    // If inlineqos for related_sample_identity is required, then remove its size from the final fragment size.
     if (change->write_params.related_sample_identity() != SampleIdentity::unknown())
     {
         final_high_mark_for_frag -= (

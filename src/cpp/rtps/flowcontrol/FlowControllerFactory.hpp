@@ -67,7 +67,7 @@ private:
     fastrtps::rtps::RTPSParticipantImpl* participant_ = nullptr;
 
     //! Stores the created flow controllers.
-    std::map<std::string, FlowController*> flow_controllers_;
+    std::map<std::string, std::unique_ptr<FlowController>> flow_controllers_;
 
 };
 

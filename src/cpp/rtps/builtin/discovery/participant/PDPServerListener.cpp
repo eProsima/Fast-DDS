@@ -111,7 +111,6 @@ void PDPServerListener::onNewCacheChangeAdded(
     change->writer_info.previous = nullptr;
     change->writer_info.num_sent_submessages = 0;
 
-
     // DATA(p) case
     if (change->kind == ALIVE)
     {

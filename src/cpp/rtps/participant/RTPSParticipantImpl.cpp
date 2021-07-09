@@ -372,7 +372,7 @@ RTPSParticipantImpl::RTPSParticipantImpl(
     size_t num_send_buffers = m_att.allocation.send_buffers.preallocated_number;
     if (num_send_buffers == 0)
     {
-        // Three buffers (user, events)
+        // Two buffers (user, events)
         num_send_buffers = 2;
         // Add one buffer per reception thread
         num_send_buffers += m_receiverResourcelist.size();
@@ -681,7 +681,7 @@ bool RTPSParticipantImpl::create_writer(
         }
         else
         {
-            logError(RTPS_PARTICIPANT, "Cannot create the writer. Not find flow controller "
+            logError(RTPS_PARTICIPANT, "Cannot create the writer. Couldn't find flow controller "
                     << flow_controller_name << " for writer.");
         }
         return false;

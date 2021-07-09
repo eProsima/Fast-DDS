@@ -1,7 +1,7 @@
 #ifndef _FASTDDS_RTPS_WRITER_DELIVERYRETCODE_HPP_
 #define _FASTDDS_RTPS_WRITER_DELIVERYRETCODE_HPP_
 
-#include <cinttypes>
+#include <cstdint>
 
 namespace eprosima {
 namespace fastrtps {
