@@ -33,7 +33,7 @@ public:
 
     /*!
      * Registers a writer.
-     * This object is only be able to manage a CacheChante_t if its writer was registered previously with this function.
+     * This object will only manage a CacheChange_t if the corresponding writer was previously registered with this method.
      *
      * @param writer Pointer to the writer to be registered. Cannot be nullptr.
      */
@@ -49,14 +49,14 @@ public:
             fastrtps::rtps::RTPSWriter* writer) = 0;
 
     /*!
-     * Adds the CacheChange_t to be managed by this object.
-     * The CacheChange_t has to be a new one, that is, it has to be added to the writer's history before this call.
-     * This function should be called by RTPSWriter::unsent_change_added_to_history().
+     * Adds a CacheChange_t to be managed by this object.
+     * The CacheChange_t has to be a new one, that is, it should have just been added to the writer's history before this call.
+     * This method should be called by RTPSWriter::unsent_change_added_to_history().
      *
-     * @param Pointer to the writer that is responsable of the added CacheChante_t. Cannot be nullptr.
+     * @param Pointer to the writer that owns the added CacheChange_t. Cannot be nullptr.
      * @param change Pointer to the new CacheChange_t to be managed by this object. Cannot be nullptr.
-     * @param max_blocking_time Maximum time the funcion has to complete the task.
-     * @return true if sample could be added. false in other case.
+     * @param max_blocking_time Maximum time this method has to complete the task.
+     * @return true if the sample could be added. false otherwise.
      */
     virtual bool add_new_sample(
             fastrtps::rtps::RTPSWriter* writer,
@@ -64,21 +64,21 @@ public:
             const std::chrono::time_point<std::chrono::steady_clock>& max_blocking_time) = 0;
 
     /*!
-     * Adds the CacheChante_t to be managed by this object.
-     * The CacheChange_t has to be an old one, that is, it is already in the writer's history and for some reason has to
+     * Adds a CacheChange_t to be managed by this object.
+     * The CacheChange_t has to be an old one, that is, it was already in the writer's history and for some reason has to
      * be sent again.
      *
-     * @param Pointer to the writer that is responsible of the added change. Cannot be nullptr.
+     * @param Pointer to the writer that owns the added change. Cannot be nullptr.
      * @param change Pointer to the old change to be managed by this object. Cannot be nullptr.
-     * @return true if sample could be added. false in other case.
+     * @return true if the sample could be added. false otherwise.
      */
     virtual bool add_old_sample(
             fastrtps::rtps::RTPSWriter* writer,
             fastrtps::rtps::CacheChange_t* change) = 0;
 
     /*!
-     * If currently the CacheChange_t is managed by this object, remove it.
-     * This funcion should be called when a CacheChange_t is removed from the writer's history.
+     * If the CacheChange_t is currently managed by this object, remove it.
+     * This method should be called whenever a CacheChange_t is removed from the writer's history.
      *
      * @param Pointer to the change which should be removed if it is currently managed by this object.
      */
