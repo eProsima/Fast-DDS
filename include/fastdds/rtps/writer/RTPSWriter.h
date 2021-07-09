@@ -29,7 +29,6 @@
 #include <fastdds/rtps/attributes/HistoryAttributes.h>
 #include <fastdds/rtps/attributes/WriterAttributes.h>
 #include <fastdds/rtps/messages/RTPSMessageGroup.h>
-#include <fastdds/rtps/flowcontrol/FlowController.hpp>
 #include "DeliveryRetCode.hpp"
 #include "LocatorSelectorSender.hpp"
 #include <fastrtps/qos/LivelinessLostStatus.h>
@@ -37,12 +36,20 @@
 #include <fastdds/statistics/rtps/StatisticsCommon.hpp>
 
 namespace eprosima {
+
+namespace  fastdds {
+namespace rtps {
+
+class FlowController;
+
+} // namespace rtps
+} // namespace fastdds
+
 namespace fastrtps {
 namespace rtps {
 
 class WriterListener;
 class WriterHistory;
-class FlowController;
 class DataSharingNotifier;
 struct CacheChange_t;
 

@@ -50,6 +50,8 @@
 
 #include "../builtin/discovery/database/DiscoveryDataBase.hpp"
 
+#include "../flowcontrol/FlowController.hpp"
+
 #include <mutex>
 #include <vector>
 #include <stdexcept>

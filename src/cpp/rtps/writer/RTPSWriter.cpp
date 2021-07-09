@@ -38,6 +38,8 @@
 #include <statistics/rtps/StatisticsBase.hpp>
 #include <statistics/rtps/messages/RTPSStatisticsMessages.hpp>
 
+#include "../flowcontrol/FlowController.hpp"
+
 namespace eprosima {
 namespace fastrtps {
 namespace rtps {

@@ -2,7 +2,6 @@
 #define _RTPS_FLOWCONTROL_FLOWCONTROLLERFACTORY_HPP_
 
 #include <fastdds/rtps/flowcontrol/FlowControllerDescriptor.hpp>
-#include <fastdds/rtps/flowcontrol/FlowController.hpp>
 #include <fastdds/rtps/attributes/WriterAttributes.h>
 
 #include <string>
@@ -18,6 +17,8 @@ class RTPSParticipantImpl;
 
 namespace fastdds {
 namespace rtps {
+
+class FlowController;
 
 /*!
  * Factory of flow controllers.

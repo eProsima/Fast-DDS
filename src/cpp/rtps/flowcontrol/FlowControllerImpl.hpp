@@ -1,7 +1,7 @@
 #ifndef _RTPS_FLOWCONTROL_FLOWCONTROLLERIMPL_HPP_
 #define _RTPS_FLOWCONTROL_FLOWCONTROLLERIMPL_HPP_
 
-#include <fastdds/rtps/flowcontrol/FlowController.hpp>
+#include "FlowController.hpp"
 #include <fastdds/rtps/common/Guid.h>
 #include <fastdds/rtps/writer/RTPSWriter.h>
 

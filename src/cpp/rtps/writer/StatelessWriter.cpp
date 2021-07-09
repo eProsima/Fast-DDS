@@ -38,6 +38,8 @@
 #include <rtps/history/CacheChangePool.h>
 #include <rtps/RTPSDomainImpl.hpp>
 
+#include "../flowcontrol/FlowController.hpp"
+
 namespace eprosima {
 namespace fastrtps {
 namespace rtps {
