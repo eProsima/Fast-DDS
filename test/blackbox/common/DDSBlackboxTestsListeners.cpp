@@ -172,8 +172,8 @@ TEST_P(DDSStatus, IncompatibleQosConditions)
     EXPECT_EQ(writer2.times_incompatible_qos(), 2u);
     EXPECT_FALSE(writer2.is_matched());
 
-    EXPECT_EQ(writer2.times_incompatible_qos(), 2u);
-    EXPECT_FALSE(writer2.is_matched());
+    EXPECT_EQ(writer3.times_incompatible_qos(), 2u);
+    EXPECT_FALSE(writer3.is_matched());
 
     EXPECT_EQ(incompatible_reliability_reader.times_incompatible_qos(), 3u);
     EXPECT_EQ(incompatible_reliability_reader.last_incompatible_qos(),

@@ -1680,7 +1680,6 @@ protected:
         WaitsetThread(
                 PubSubReaderWithWaitsets& reader)
             : reader_(reader)
-            , times_deadline_missed_(0)
         {
         }
 
@@ -1736,10 +1735,9 @@ protected:
                 }
                 else
                 {
-                    for (auto condition : active_conditions_)
+                    if (!guard_condition_.get_trigger_value())
                     {
-                        // did we wake up for some reason other than calling stop?
-                        if (condition != &guard_condition_)
+                        for (auto condition : active_conditions_)
                         {
                             process(dynamic_cast<eprosima::fastdds::dds::StatusCondition*>(condition));
                         }
@@ -1865,7 +1863,7 @@ protected:
         std::thread* thread_ = nullptr;
 
         // Whether the thread is running or not
-        bool running_;
+        bool running_ = false;
 
         // A Mutex to guard the thread start/stop
         std::mutex mutex_;
@@ -1874,7 +1872,7 @@ protected:
         eprosima::fastdds::dds::GuardCondition guard_condition_;
 
         //! Number of times deadline was missed
-        unsigned int times_deadline_missed_;
+        unsigned int times_deadline_missed_ = 0;
 
         //! The timeout for the wait operation
         eprosima::fastrtps::Duration_t timeout_;

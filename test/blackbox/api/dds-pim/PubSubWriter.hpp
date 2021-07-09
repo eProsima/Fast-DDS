@@ -1709,8 +1709,6 @@ protected:
         WaitsetThread(
                 PubSubWriterWithWaitsets& writer)
             : writer_(writer)
-            , times_deadline_missed_(0)
-            , times_liveliness_lost_(0)
         {
         }
 
@@ -1765,13 +1763,11 @@ protected:
                 }
                 else
                 {
-                    for (auto condition : active_conditions_)
+                    if (!guard_condition_.get_trigger_value())
                     {
-                        // did we wake up for some reason other than calling stop?
-                        if (condition != &guard_condition_)
-                        {
-                            process(dynamic_cast<eprosima::fastdds::dds::StatusCondition*>(condition));
-                        }
+                        ASSERT_FALSE(active_conditions_.empty());
+                        EXPECT_EQ(active_conditions_[0], &writer_.datawriter_->get_statuscondition());
+                        process(&writer_.datawriter_->get_statuscondition());
                     }
                 }
                 lock.lock();
@@ -1850,7 +1846,7 @@ protected:
         std::thread* thread_ = nullptr;
 
         // Whether the thread is running or not
-        bool running_;
+        bool running_ = false;
 
         // A Mutex to guard the thread start/stop
         std::mutex mutex_;
@@ -1859,10 +1855,10 @@ protected:
         eprosima::fastdds::dds::GuardCondition guard_condition_;
 
         //! The number of times deadline was missed
-        unsigned int times_deadline_missed_;
+        unsigned int times_deadline_missed_ = 0;
 
         //! The number of times liveliness was lost
-        unsigned int times_liveliness_lost_;
+        unsigned int times_liveliness_lost_ = 0;
 
         //! The timeout for the wait operation
         eprosima::fastrtps::Duration_t timeout_;
