@@ -76,25 +76,13 @@ macro(add_xtypes_gtest test)
 endmacro()
 
 if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER) AND fastcdr_FOUND)
-    include(${PROJECT_SOURCE_DIR}/cmake/common/gtest.cmake)
-    check_gtest()
-
-    if(GTEST_FOUND)
+    if(GTest_FOUND)
         if(WIN32)
             add_definitions(
                 -D_WIN32_WINNT=0x0601
                 -D_CRT_SECURE_NO_WARNINGS
                 )
         endif()
-
-        add_definitions(
-          -DEPROSIMA_SHAPES_DLL_EXPORT
-          -DBUILD_SHARED_LIBS
-          -DBOOST_ASIO_STANDALONE
-          -DASIO_STANDALONE
-        )
-
-        include_directories(${Asio_INCLUDE_DIR})
 
         ###############################################################################
         # Unit tests
@@ -109,11 +97,15 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER) AND fastcdr_FOUND)
 
         add_executable(XTypesBlackBoxTests ${XTYPES_TESTS_SOURCE})
         target_compile_definitions(XTypesBlackBoxTests PRIVATE
+            EPROSIMA_SHAPES_DLL_EXPORT
+            BUILD_SHARED_LIBS
+            BOOST_ASIO_STANDALONE
+            ASIO_STANDALONE
             $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
             $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
             )
-        target_include_directories(XTypesBlackBoxTests PRIVATE ${GTEST_INCLUDE_DIRS})
-        target_link_libraries(XTypesBlackBoxTests fastrtps fastcdr ${GTEST_LIBRARIES})
+        target_include_directories(XTypesBlackBoxTests PRIVATE ${Asio_INCLUDE_DIR})
+        target_link_libraries(XTypesBlackBoxTests fastrtps fastcdr GTest::gtest)
         add_xtypes_gtest(XTypesBlackBoxTests SOURCES ${XTYPES_TESTS_SOURCE})
     endif()
 endif()

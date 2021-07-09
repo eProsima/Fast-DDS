@@ -24,9 +24,13 @@ set(
 add_executable(LatencyTest ${LATENCYTEST_SOURCE})
 
 target_compile_definitions(LatencyTest PRIVATE
+    BOOST_ASIO_STANDALONE
+    ASIO_STANDALONE
     $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
     $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
     )
+
+target_include_directories(LatencyTest PRIVATE ${Asio_INCLUDE_DIR})
 
 target_link_libraries(
     LatencyTest

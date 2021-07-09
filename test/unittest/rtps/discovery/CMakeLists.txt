@@ -13,11 +13,7 @@
 # limitations under the License.
 
 if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
-    include(${PROJECT_SOURCE_DIR}/cmake/common/gtest.cmake)
-    check_gtest()
-    check_gmock()
-
-    if(GTEST_FOUND AND GMOCK_FOUND)
+    if(GTest_FOUND)
         find_package(Threads REQUIRED)
 
         set(EDPTESTS_SOURCE EdpTests.cpp
@@ -69,7 +65,6 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
             )
         target_include_directories(EdpTests PRIVATE
-            ${GTEST_INCLUDE_DIRS} ${GMOCK_INCLUDE_DIRS}
             ${PROJECT_SOURCE_DIR}/test/mock/rtps/PDP
             ${PROJECT_SOURCE_DIR}/test/mock/rtps/RTPSParticipantImpl
             ${PROJECT_SOURCE_DIR}/test/mock/rtps/Endpoint
@@ -88,8 +83,8 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             ${PROJECT_SOURCE_DIR}/src/cpp
             )
         target_link_libraries(EdpTests foonathan_memory
-            ${GTEST_LIBRARIES} ${GMOCK_LIBRARIES}
-            ${CMAKE_THREAD_LIBS_INIT} ${CMAKE_DL_LIBS})
+            GTest::gmock
+            ${CMAKE_DL_LIBS})
         if(MSVC OR MSVC_IDE)
             target_link_libraries(EdpTests ${PRIVACY} fastcdr iphlpapi Shlwapi ws2_32)
         else()

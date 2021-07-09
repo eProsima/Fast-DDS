@@ -13,10 +13,7 @@
 # limitations under the License.
 
 if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
-    include(${PROJECT_SOURCE_DIR}/cmake/common/gtest.cmake)
-    check_gtest()
-
-    if(GTEST_FOUND)
+    if(GTest_FOUND)
         if(WIN32)
             add_definitions(-D_WIN32_WINNT=0x0601)
         endif()
@@ -40,9 +37,9 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
             $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
             )
-        target_include_directories(LogMacrosAllActiveTests PRIVATE ${GTEST_INCLUDE_DIRS}
+        target_include_directories(LogMacrosAllActiveTests PRIVATE
             ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include)
-        target_link_libraries(LogMacrosAllActiveTests ${GTEST_LIBRARIES} ${MOCKS}
+        target_link_libraries(LogMacrosAllActiveTests GTest::gtest ${MOCKS}
             $<$<BOOL:${WIN32}>:iphlpapi$<SEMICOLON>Shlwapi>
             )
         add_gtest(LogMacrosAllActiveTests SOURCES ${LOGMACROS_ALL_TEST_SOURCE})
@@ -60,9 +57,9 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
             $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
             )
-        target_include_directories(LogMacrosNoInfoTests PRIVATE ${GTEST_INCLUDE_DIRS}
+        target_include_directories(LogMacrosNoInfoTests PRIVATE
             ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include)
-        target_link_libraries(LogMacrosNoInfoTests ${GTEST_LIBRARIES} ${MOCKS}
+        target_link_libraries(LogMacrosNoInfoTests GTest::gtest ${MOCKS}
             $<$<BOOL:${WIN32}>:iphlpapi$<SEMICOLON>Shlwapi>
             )
         add_gtest(LogMacrosNoInfoTests SOURCES ${LOGMACROS_NOINFO_TEST_SOURCE})
@@ -80,9 +77,9 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
             $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
             )
-        target_include_directories(LogMacrosNoWarningTests PRIVATE ${GTEST_INCLUDE_DIRS}
+        target_include_directories(LogMacrosNoWarningTests PRIVATE
             ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include)
-        target_link_libraries(LogMacrosNoWarningTests ${GTEST_LIBRARIES} ${MOCKS}
+        target_link_libraries(LogMacrosNoWarningTests GTest::gtest ${MOCKS}
             $<$<BOOL:${WIN32}>:iphlpapi$<SEMICOLON>Shlwapi>
             )
         add_gtest(LogMacrosNoWarningTests SOURCES ${LOGMACROS_NOWARNING_TEST_SOURCE})
@@ -100,9 +97,9 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
             $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
             )
-        target_include_directories(LogMacrosNoErrorTests PRIVATE ${GTEST_INCLUDE_DIRS}
+        target_include_directories(LogMacrosNoErrorTests PRIVATE
             ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include)
-        target_link_libraries(LogMacrosNoErrorTests ${GTEST_LIBRARIES} ${MOCKS}
+        target_link_libraries(LogMacrosNoErrorTests GTest::gtest ${MOCKS}
             $<$<BOOL:${WIN32}>:iphlpapi$<SEMICOLON>Shlwapi>
             )
         add_gtest(LogMacrosNoErrorTests SOURCES ${LOGMACROS_NOERROR_TEST_SOURCE})
@@ -120,9 +117,9 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
             $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
             )
-        target_include_directories(LogMacrosDefaultTests PRIVATE ${GTEST_INCLUDE_DIRS}
+        target_include_directories(LogMacrosDefaultTests PRIVATE
             ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include)
-        target_link_libraries(LogMacrosDefaultTests ${GTEST_LIBRARIES} ${MOCKS}
+        target_link_libraries(LogMacrosDefaultTests GTest::gtest ${MOCKS}
             $<$<BOOL:${WIN32}>:iphlpapi$<SEMICOLON>Shlwapi>
             )
         add_gtest(LogMacrosDefaultTests SOURCES ${LOGMACROS_DEFAULT_TEST_SOURCE})
@@ -142,9 +139,9 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
             $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
             )
-        target_include_directories(LogMacrosInternalDebugOffTests PRIVATE ${GTEST_INCLUDE_DIRS}
+        target_include_directories(LogMacrosInternalDebugOffTests PRIVATE
             ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include)
-        target_link_libraries(LogMacrosInternalDebugOffTests ${GTEST_LIBRARIES} ${MOCKS}
+        target_link_libraries(LogMacrosInternalDebugOffTests GTest::gtest ${MOCKS}
             $<$<BOOL:${WIN32}>:iphlpapi$<SEMICOLON>Shlwapi>
             )
         add_gtest(LogMacrosInternalDebugOffTests SOURCES ${LOGMACROS_INTERNALDEBUG_TEST_SOURCE})

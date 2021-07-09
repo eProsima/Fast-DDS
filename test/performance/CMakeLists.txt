@@ -23,13 +23,6 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER) AND fastcdr_FOUND)
     endif()
     endif()
 
-    add_definitions(
-        -DBOOST_ASIO_STANDALONE
-        -DASIO_STANDALONE
-        )
-
-        include_directories(${Asio_INCLUDE_DIR})
-
     option(VIDEO_TESTS "Activate the building and execution of performance tests" OFF)
     add_subdirectory(latency)
     add_subdirectory(throughput)

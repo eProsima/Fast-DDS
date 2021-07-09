@@ -13,18 +13,13 @@
 # limitations under the License.
 
 if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
-    include(${PROJECT_SOURCE_DIR}/cmake/common/gtest.cmake)
-    check_gtest()
-
-    if(GTEST_FOUND)
+    if(GTest_FOUND)
         if(WIN32)
             add_definitions(
                 -D_WIN32_WINNT=0x0601
                 -D_CRT_SECURE_NO_WARNINGS
                 )
         endif()
-
-        include_directories(${Asio_INCLUDE_DIR})
 
         set(DYNAMIC_TYPES_SOURCE
             ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/AnnotationDescriptor.cpp
@@ -106,11 +101,13 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
 
         add_executable(DynamicTypesTests ${DYNAMIC_TYPES_TEST_SOURCE})
         target_compile_definitions(DynamicTypesTests PRIVATE FASTRTPS_NO_LIB
+            BOOST_ASIO_STANDALONE
+            ASIO_STANDALONE
             $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
             $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
             )
         target_include_directories(DynamicTypesTests PRIVATE
-            ${GTEST_INCLUDE_DIRS} ${GMOCK_INCLUDE_DIRS}
+            ${Asio_INCLUDE_DIR}
             ${PROJECT_SOURCE_DIR}/test/mock/rtps/TCPTransportDescriptor
             ${PROJECT_SOURCE_DIR}/test/mock/rtps/TCPv4TransportDescriptor
             ${PROJECT_SOURCE_DIR}/test/mock/rtps/TCPv6TransportDescriptor
@@ -121,7 +118,7 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             ${TINYXML2_INCLUDE_DIR}
             ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include
             )
-        target_link_libraries(DynamicTypesTests ${GTEST_LIBRARIES}
+        target_link_libraries(DynamicTypesTests GTest::gtest
             $<$<BOOL:${WIN32}>:iphlpapi$<SEMICOLON>Shlwapi>
             $<$<BOOL:${WIN32}>:ws2_32>
             ${TINYXML2_LIBRARY}
@@ -132,13 +129,15 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
 
         add_executable(DynamicComplexTypesTests ${DYNAMIC_COMPLEX_TYPES_TEST_SOURCE})
         target_compile_definitions(DynamicComplexTypesTests PRIVATE FASTRTPS_NO_LIB
+            BOOST_ASIO_STANDALONE
+            ASIO_STANDALONE
             $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
             $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
             )
         target_include_directories(DynamicComplexTypesTests PRIVATE
-            ${GTEST_INCLUDE_DIRS} ${GMOCK_INCLUDE_DIRS}
+            ${Asio_INCLUDE_DIR}
             ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include)
-        target_link_libraries(DynamicComplexTypesTests ${GTEST_LIBRARIES}
+        target_link_libraries(DynamicComplexTypesTests GTest::gtest
             $<$<BOOL:${WIN32}>:iphlpapi$<SEMICOLON>Shlwapi>
             $<$<BOOL:${WIN32}>:ws2_32>
             ${TINYXML2_LIBRARY}
@@ -149,13 +148,15 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
 
         add_executable(DynamicTypes_4_2_Tests ${DYNAMIC_TYPES_4_2_TEST_SOURCE})
         target_compile_definitions(DynamicTypes_4_2_Tests PRIVATE FASTRTPS_NO_LIB
+            BOOST_ASIO_STANDALONE
+            ASIO_STANDALONE
             $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
             $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
             )
         target_include_directories(DynamicTypes_4_2_Tests PRIVATE
-            ${GTEST_INCLUDE_DIRS} ${GMOCK_INCLUDE_DIRS}
+            ${Asio_INCLUDE_DIR}
             ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include)
-        target_link_libraries(DynamicTypes_4_2_Tests ${GTEST_LIBRARIES}
+        target_link_libraries(DynamicTypes_4_2_Tests GTest::gtest
             $<$<BOOL:${WIN32}>:iphlpapi$<SEMICOLON>Shlwapi>
             $<$<BOOL:${WIN32}>:ws2_32>
             ${TINYXML2_LIBRARY}
