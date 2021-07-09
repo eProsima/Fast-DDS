@@ -388,6 +388,10 @@ public:
      * This function should be used by a fastdds::rtps::FlowController.
      *
      * @param cache_change Pointer to the CacheChange_t that represents the sample which can be sent.
+     * @param group RTPSMessageGroup reference uses for generating the RTPS message.
+     * @param locator_selector RTPSMessageSenderInterface reference uses for selecting locators. The reference has to
+     * be a member of this RTPSWriter object.
+     * @param max_blocking_time_point Future timepoint where blocking send should end.
      * @return Return code.
      * @note Must be non-thread safe.
      */
@@ -436,7 +440,6 @@ private:
      */
     bool ack_timer_expired();
 
-    // TODO Document and tell it send gap of history
     void send_heartbeat_to_all_readers();
 
     void deliver_sample_to_intraprocesses(

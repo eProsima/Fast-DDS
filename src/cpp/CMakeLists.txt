@@ -44,12 +44,12 @@ set(${PROJECT_NAME}_source_files
     rtps/resources/TimedEvent.cpp
     rtps/resources/TimedEventImpl.cpp
     rtps/writer/LivelinessManager.cpp
+    rtps/writer/LocatorSelectorSender.cpp
     rtps/writer/RTPSWriter.cpp
     rtps/writer/StatefulWriter.cpp
     rtps/writer/ReaderProxy.cpp
     rtps/writer/StatelessWriter.cpp
     rtps/writer/ReaderLocator.cpp
-    rtps/writer/LocatorSelectorSender.cpp
     rtps/history/CacheChangePool.cpp
     rtps/history/History.cpp
     rtps/history/WriterHistory.cpp

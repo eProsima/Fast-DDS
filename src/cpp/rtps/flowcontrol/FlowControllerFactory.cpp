@@ -11,16 +11,6 @@ const char* const pure_sync_flow_controller_name = "PureSyncFlowController";
 const char* const sync_flow_controller_name = "SyncFlowController";
 const char* const async_flow_controller_name = "AsyncFlowController";
 
-FlowControllerFactory::~FlowControllerFactory()
-{
-    std::for_each(flow_controllers_.begin(), flow_controllers_.end(),
-            [](const std::pair<std::string, FlowController*>& flow_controller)
-            {
-                delete flow_controller.second;
-            });
-    flow_controllers_.clear();
-}
-
 void FlowControllerFactory::init(
         fastrtps::rtps::RTPSParticipantImpl* participant)
 {
@@ -29,16 +19,19 @@ void FlowControllerFactory::init(
 
     // PureSyncFlowController -> used by volatile besteffort writers.
     flow_controllers_.insert({pure_sync_flow_controller_name,
-                              new FlowControllerImpl<FlowControllerPureSyncPublishMode,
-                              FlowControllerFifoSchedule>(participant_, nullptr)});
+                              std::unique_ptr<FlowController>(
+                                  new FlowControllerImpl<FlowControllerPureSyncPublishMode,
+                                  FlowControllerFifoSchedule>(participant_, nullptr))});
     // SyncFlowController -> used by rest of besteffort writers.
     flow_controllers_.insert({sync_flow_controller_name,
-                              new FlowControllerImpl<FlowControllerSyncPublishMode,
-                              FlowControllerFifoSchedule>(participant_, nullptr)});
+                              std::unique_ptr<FlowController>(
+                                  new FlowControllerImpl<FlowControllerSyncPublishMode,
+                                  FlowControllerFifoSchedule>(participant_, nullptr))});
     // AsyncFlowController
     flow_controllers_.insert({async_flow_controller_name,
-                              new FlowControllerImpl<FlowControllerAsyncPublishMode,
-                              FlowControllerFifoSchedule>(participant_, nullptr)});
+                              std::unique_ptr<FlowController>(
+                                  new FlowControllerImpl<FlowControllerAsyncPublishMode,
+                                  FlowControllerFifoSchedule>(participant_, nullptr))});
 }
 
 void FlowControllerFactory::register_flow_controller (
@@ -53,58 +46,72 @@ void FlowControllerFactory::register_flow_controller (
 
     if (0 < flow_controller_descr.max_bytes_per_period)
     {
-        if (FlowControllerSchedulerPolicy::FIFO == flow_controller_descr.scheduler)
+        switch (flow_controller_descr.scheduler)
         {
-            flow_controllers_.insert({flow_controller_descr.name,
-                                      new FlowControllerImpl<FlowControllerLimitedAsyncPublishMode,
-                                      FlowControllerFifoSchedule>(participant_, &flow_controller_descr)});
-        }
-        else if (FlowControllerSchedulerPolicy::ROUND_ROBIN == flow_controller_descr.scheduler)
-        {
-            flow_controllers_.insert({flow_controller_descr.name,
-                                      new FlowControllerImpl<FlowControllerLimitedAsyncPublishMode,
-                                      FlowControllerRoundRobinSchedule>(participant_, &flow_controller_descr)});
-        }
-        else if (FlowControllerSchedulerPolicy::HIGH_PRIORITY == flow_controller_descr.scheduler)
-        {
-            flow_controllers_.insert({flow_controller_descr.name,
-                                      new FlowControllerImpl<FlowControllerLimitedAsyncPublishMode,
-                                      FlowControllerHighPrioritySchedule>(participant_, &flow_controller_descr)});
-        }
-        else if (FlowControllerSchedulerPolicy::PRIORITY_WITH_RESERVATION == flow_controller_descr.scheduler)
-        {
-            flow_controllers_.insert({flow_controller_descr.name,
-                                      new FlowControllerImpl<FlowControllerLimitedAsyncPublishMode,
-                                      FlowControllerPriorityWithReservationSchedule>(participant_,
-                                      &flow_controller_descr)});
+            case FlowControllerSchedulerPolicy::FIFO:
+                flow_controllers_.insert({flow_controller_descr.name,
+                                          std::unique_ptr<FlowController>(
+                                              new FlowControllerImpl<FlowControllerLimitedAsyncPublishMode,
+                                              FlowControllerFifoSchedule>(participant_, &flow_controller_descr))});
+                break;
+            case FlowControllerSchedulerPolicy::ROUND_ROBIN:
+                flow_controllers_.insert({flow_controller_descr.name,
+                                          std::unique_ptr<FlowController>(
+                                              new FlowControllerImpl<FlowControllerLimitedAsyncPublishMode,
+                                              FlowControllerRoundRobinSchedule>(participant_,
+                                              &flow_controller_descr))});
+                break;
+            case FlowControllerSchedulerPolicy::HIGH_PRIORITY:
+                flow_controllers_.insert({flow_controller_descr.name,
+                                          std::unique_ptr<FlowController>(
+                                              new FlowControllerImpl<FlowControllerLimitedAsyncPublishMode,
+                                              FlowControllerHighPrioritySchedule>(participant_,
+                                              &flow_controller_descr))});
+                break;
+            case FlowControllerSchedulerPolicy::PRIORITY_WITH_RESERVATION:
+                flow_controllers_.insert({flow_controller_descr.name,
+                                          std::unique_ptr<FlowController>(
+                                              new FlowControllerImpl<FlowControllerLimitedAsyncPublishMode,
+                                              FlowControllerPriorityWithReservationSchedule>(participant_,
+                                              &flow_controller_descr))});
+                break;
+            default:
+                assert(false);
         }
     }
     else
     {
-        if (FlowControllerSchedulerPolicy::FIFO == flow_controller_descr.scheduler)
+        switch (flow_controller_descr.scheduler)
         {
-            flow_controllers_.insert({flow_controller_descr.name,
-                                      new FlowControllerImpl<FlowControllerAsyncPublishMode,
-                                      FlowControllerFifoSchedule>(participant_, &flow_controller_descr)});
-        }
-        else if (FlowControllerSchedulerPolicy::ROUND_ROBIN == flow_controller_descr.scheduler)
-        {
-            flow_controllers_.insert({flow_controller_descr.name,
-                                      new FlowControllerImpl<FlowControllerAsyncPublishMode,
-                                      FlowControllerRoundRobinSchedule>(participant_, &flow_controller_descr)});
-        }
-        else if (FlowControllerSchedulerPolicy::HIGH_PRIORITY == flow_controller_descr.scheduler)
-        {
-            flow_controllers_.insert({flow_controller_descr.name,
-                                      new FlowControllerImpl<FlowControllerAsyncPublishMode,
-                                      FlowControllerHighPrioritySchedule>(participant_, &flow_controller_descr)});
-        }
-        else if (FlowControllerSchedulerPolicy::PRIORITY_WITH_RESERVATION == flow_controller_descr.scheduler)
-        {
-            flow_controllers_.insert({flow_controller_descr.name,
-                                      new FlowControllerImpl<FlowControllerAsyncPublishMode,
-                                      FlowControllerPriorityWithReservationSchedule>(participant_,
-                                      &flow_controller_descr)});
+            case FlowControllerSchedulerPolicy::FIFO:
+                flow_controllers_.insert({flow_controller_descr.name,
+                                          std::unique_ptr<FlowController>(
+                                              new FlowControllerImpl<FlowControllerAsyncPublishMode,
+                                              FlowControllerFifoSchedule>(participant_, &flow_controller_descr))});
+                break;
+            case FlowControllerSchedulerPolicy::ROUND_ROBIN:
+                flow_controllers_.insert({flow_controller_descr.name,
+                                          std::unique_ptr<FlowController>(
+                                              new FlowControllerImpl<FlowControllerAsyncPublishMode,
+                                              FlowControllerRoundRobinSchedule>(participant_,
+                                              &flow_controller_descr))});
+                break;
+            case FlowControllerSchedulerPolicy::HIGH_PRIORITY:
+                flow_controllers_.insert({flow_controller_descr.name,
+                                          std::unique_ptr<FlowController>(
+                                              new FlowControllerImpl<FlowControllerAsyncPublishMode,
+                                              FlowControllerHighPrioritySchedule>(participant_,
+                                              &flow_controller_descr))});
+                break;
+            case FlowControllerSchedulerPolicy::PRIORITY_WITH_RESERVATION:
+                flow_controllers_.insert({flow_controller_descr.name,
+                                          std::unique_ptr<FlowController>(
+                                              new FlowControllerImpl<FlowControllerAsyncPublishMode,
+                                              FlowControllerPriorityWithReservationSchedule>(participant_,
+                                              &flow_controller_descr))});
+                break;
+            default:
+                assert(false);
         }
     }
 }
@@ -128,16 +135,16 @@ FlowController* FlowControllerFactory::retrieve_flow_controller(
         {
             if (fastrtps::rtps::BEST_EFFORT == writer_attributes.endpoint.reliabilityKind)
             {
-                returned_flow = flow_controllers_[pure_sync_flow_controller_name];
+                returned_flow = flow_controllers_[pure_sync_flow_controller_name].get();
             }
             else
             {
-                returned_flow = flow_controllers_[sync_flow_controller_name];
+                returned_flow = flow_controllers_[sync_flow_controller_name].get();
             }
         }
         else
         {
-            returned_flow = flow_controllers_[async_flow_controller_name];
+            returned_flow = flow_controllers_[async_flow_controller_name].get();
         }
     }
     else
@@ -146,7 +153,7 @@ FlowController* FlowControllerFactory::retrieve_flow_controller(
 
         if (flow_controllers_.end() != it)
         {
-            returned_flow = it->second;
+            returned_flow = it->second.get();
         }
     }
 

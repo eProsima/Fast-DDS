@@ -129,8 +129,10 @@ public:
      * Check if a specific change is marked to be sent to this reader.
      *
      * @param[in]  seq_num Sequence number of the change to be checked.
+     * @param[out] next_unsent_frag,Returns next fragment to be sent.
      * @param[out] gap_seq Return, when it is its first delivery (should be relevant seq_num), the sequence number of
      * the first sequence of the gap [first, seq_num). Otherwise return SequenceNumber_t::unknown().
+     * @param[in] need_reactivate_periodic_heartbeat Indicates if the heartbeat period event has to be restarted.
      */
     bool change_is_unsent(
             const SequenceNumber_t& seq_num,
@@ -149,6 +151,8 @@ public:
     /**
      * Mark all changes in the vector as requested.
      * @param seq_num_set Bitmap of sequence numbers.
+     * @parm gap_builder RTPSGapBuilder reference uses for adding  each requested change that is irrelevant for the
+     * requester.
      * @return true if at least one change has been marked as REQUESTED, false otherwise.
      */
     bool requested_changes_set(
@@ -157,16 +161,18 @@ public:
 
     /**
      * Performs processing of preemptive acknack
+     * @func functor called, if the requester is a local reader, for each changes moved to UNSENT status.
      * @return true if a heartbeat should be sent, false otherwise.
      */
     bool process_initial_acknack(
-            std::function<void(ChangeForReader_t& change)> func);
+            const std::function<void(ChangeForReader_t& change)>& func);
 
     /*!
      * @brief Sets a change to a particular status (if present in the ReaderProxy)
      * @param seq_num Sequence number of the change to update.
      * @param status Status to apply.
      * @param restart_nack_supression Whether nack supression event should be restarted or not.
+     * @param delivered true if change was able to be delivered to its addressees. false otherwise.
      */
     void from_unsent_to_status(
             const SequenceNumber_t& seq_num,
@@ -200,7 +206,7 @@ public:
      * @return the number of changes that changed its status.
      */
     uint32_t perform_acknack_response(
-            std::function<void(ChangeForReader_t& change)> func);
+            const std::function<void(ChangeForReader_t& change)>& func);
 
     /**
      * Call this to inform a change was removed from history.
@@ -346,7 +352,6 @@ public:
 
     /**
      * Check if there are gaps in the list of ChangeForReader_t.
-     * If it is first
      * @return True if there are gaps, else false.
      */
     bool are_there_gaps();
@@ -454,7 +459,7 @@ private:
     uint32_t convert_status_on_all_changes(
             ChangeForReaderStatus_t previous,
             ChangeForReaderStatus_t next,
-            std::function<void(ChangeForReader_t& change)> func = {});
+            const std::function<void(ChangeForReader_t& change)>& func = {});
 
     /*!
      * @brief Adds requested fragments. These fragments will be sent in next NackResponseDelay.

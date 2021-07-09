@@ -430,7 +430,7 @@ bool ReaderProxy::requested_changes_set(
 }
 
 bool ReaderProxy::process_initial_acknack(
-        std::function<void(ChangeForReader_t& change)> func)
+        const std::function<void(ChangeForReader_t& change)>& func)
 {
     if (is_local_reader())
     {
@@ -517,7 +517,7 @@ bool ReaderProxy::perform_nack_supression()
 }
 
 uint32_t ReaderProxy::perform_acknack_response(
-        std::function<void(ChangeForReader_t& change)> func)
+        const std::function<void(ChangeForReader_t& change)>& func)
 {
     return convert_status_on_all_changes(REQUESTED, UNSENT, func);
 }
@@ -525,7 +525,7 @@ uint32_t ReaderProxy::perform_acknack_response(
 uint32_t ReaderProxy::convert_status_on_all_changes(
         ChangeForReaderStatus_t previous,
         ChangeForReaderStatus_t next,
-        std::function<void(ChangeForReader_t& change)> func)
+        const std::function<void(ChangeForReader_t& change)>& func)
 {
     assert(previous > next);
 

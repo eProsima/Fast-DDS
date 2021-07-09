@@ -11,6 +11,10 @@ namespace rtps {
 
 class RTPSWriter;
 
+/*!
+ * Class used by writers to inform a RTPSMessageGroup object which remote participants will be addressees of next RTPS
+ * submessages.
+ */
 class LocatorSelectorSender : public RTPSMessageSenderInterface
 {
 public:
@@ -31,21 +35,42 @@ public:
         return false;
     }
 
+    /*!
+     * Get a GUID prefix representing all destinations.
+     *
+     * @return If only one remote participant is an addressee, return its GUIDPrefix_t. c_GuidPrefix_Unknown otherwise.
+     */
     GuidPrefix_t destination_guid_prefix() const override
     {
         return all_remote_participants.size() == 1 ? all_remote_participants.at(0) : c_GuidPrefix_Unknown;
     }
 
+    /*!
+     * Get the GUID prefix of all the destination participants.
+     *
+     * @return a const reference to a vector with the GUID prefix of all destination participants.
+     */
     const std::vector<GuidPrefix_t>& remote_participants() const override
     {
         return all_remote_participants;
     }
 
+    /*!
+     * Get the GUID of all destinations.
+     *
+     * @return a const reference to a vector with the GUID of all destinations.
+     */
     const std::vector<GUID_t>& remote_guids() const override
     {
         return all_remote_readers;
     }
 
+    /*!
+     * Send a message through this interface.
+     *
+     * @param message Pointer to the buffer with the message already serialized.
+     * @param max_blocking_time_point Future timepoint where blocking send should end.
+     */
     bool send(
             CDRMessage_t* message,
             std::chrono::steady_clock::time_point max_blocking_time_point) const override;

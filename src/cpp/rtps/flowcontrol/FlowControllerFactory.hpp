@@ -3,6 +3,7 @@
 
 #include <fastdds/rtps/flowcontrol/FlowControllerDescriptor.hpp>
 #include <fastdds/rtps/attributes/WriterAttributes.h>
+#include "FlowController.hpp"
 
 #include <string>
 #include <map>
@@ -30,15 +31,11 @@ class FlowControllerFactory
 public:
 
     /*!
-     * Destructor
-     * In charge of deleting all flow controllers.
-     */
-    ~FlowControllerFactory();
-
-    /*!
      * Initialize the factory.
      * In charge of creating default flow controllers.
      * Call always before use it.
+     *
+     * @param participant Pointer to the participant owner of this object.
      */
     void init(
             fastrtps::rtps::RTPSParticipantImpl* participant);
