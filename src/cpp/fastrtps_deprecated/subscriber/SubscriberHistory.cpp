@@ -680,8 +680,8 @@ std::pair<bool, SubscriberHistory::instance_info> SubscriberHistory::lookup_inst
     return { false, {InstanceHandle_t(), nullptr} };
 }
 
-History::iterator SubscriberHistory::remove_change_nts(
-        History::const_iterator removal,
+ReaderHistory::iterator SubscriberHistory::remove_change_nts(
+        ReaderHistory::const_iterator removal,
         bool release)
 {
     CacheChange_t* p_sample = nullptr;

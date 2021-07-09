@@ -109,8 +109,10 @@ public:
     }
 
     virtual iterator remove_change_nts(
-            const_iterator removal)
+            const_iterator removal,
+            bool release = true)
     {
+        (void)release;
         return m_changes.erase(removal);
     }
 
