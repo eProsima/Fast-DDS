@@ -13,10 +13,7 @@
 # limitations under the License.
 
 if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
-    include(${PROJECT_SOURCE_DIR}/cmake/common/gtest.cmake)
-    check_gtest()
-
-    if (GTEST_FOUND)
+    if (GTest_FOUND)
         if(WIN32)
             add_definitions(-D_WIN32_WINNT=0x0601)
         endif()
@@ -29,18 +26,20 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
         add_executable(RTPSStatisticsTests ${STATISTICS_RTPS_TESTS_SOURCE})
 
         target_compile_definitions(RTPSStatisticsTests PRIVATE FASTRTPS_NO_LIB
+            BOOST_ASIO_STANDALONE
+            ASIO_STANDALONE
             $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
             $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNAL_DEBUG> # Internal debug activated.
             )
 
-        target_include_directories(RTPSStatisticsTests PRIVATE ${GTEST_INCLUDE_DIRS}
+        target_include_directories(RTPSStatisticsTests PRIVATE
             ${PROJECT_SOURCE_DIR}/include
             ${PROJECT_BINARY_DIR}/include
             ${PROJECT_SOURCE_DIR}/src/cpp
             ${Asio_INCLUDE_DIR}
             )
 
-        target_link_libraries(RTPSStatisticsTests fastrtps fastcdr ${GTEST_LIBRARIES} ${GMOCK_LIBRARIES})
+        target_link_libraries(RTPSStatisticsTests fastrtps fastcdr GTest::gtest GTest::gmock)
         add_gtest(RTPSStatisticsTests SOURCES ${STATISTICS_RTPS_TESTS_SOURCE})
 
     endif()

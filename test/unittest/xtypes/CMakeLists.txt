@@ -13,18 +13,13 @@
 # limitations under the License.
 
 if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
-    include(${PROJECT_SOURCE_DIR}/cmake/common/gtest.cmake)
-    check_gtest()
-
-    if(GTEST_FOUND)
+    if(GTest_FOUND)
         if(WIN32)
             add_definitions(
                 -D_WIN32_WINNT=0x0601
                 -D_CRT_SECURE_NO_WARNINGS
                 )
         endif()
-
-        include_directories(${Asio_INCLUDE_DIR})
 
         set(XTYPES_SOURCE
             ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/AnnotationDescriptor.cpp
@@ -71,14 +66,16 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
 
         add_executable(XTypesTests ${XTYPES_TEST_SOURCE})
         target_compile_definitions(XTypesTests PRIVATE FASTRTPS_NO_LIB
+            BOOST_ASIO_STANDALONE
+            ASIO_STANDALONE
             $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
             $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
             )
         target_include_directories(XTypesTests PRIVATE
-            ${GTEST_INCLUDE_DIRS} ${GMOCK_INCLUDE_DIRS}
+            ${Asio_INCLUDE_DIR}
             ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include
             )
-        target_link_libraries(XTypesTests ${GTEST_LIBRARIES} ${MOCKS})
+        target_link_libraries(XTypesTests GTest::gtest ${MOCKS})
         if(MSVC OR MSVC_IDE)
             target_link_libraries(XTypesTests ${PRIVACY} fastcdr iphlpapi Shlwapi ws2_32)
         else()
