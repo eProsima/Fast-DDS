@@ -15,6 +15,7 @@
 if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER) AND fastcdr_FOUND)
     find_package(PythonInterp 3)
 
+<<<<<<< HEAD
     add_definitions(
         -DBOOST_ASIO_STANDALONE
         -DASIO_STANDALONE
@@ -22,6 +23,8 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER) AND fastcdr_FOUND)
 
     include_directories(${ASIO_INCLUDE_DIR})
 
+=======
+>>>>>>> 4f9f7e98e (Support of googletest using colcon [12009] (#2054))
     ###############################################################################
     # Binaries
     ###############################################################################
@@ -34,7 +37,19 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER) AND fastcdr_FOUND)
         PublisherMain.cpp
         )
     add_executable(SimpleCommunicationPublisher ${PUBLISHER_SOURCE})
+<<<<<<< HEAD
     target_include_directories(SimpleCommunicationPublisher PRIVATE ${PROJECT_SOURCE_DIR}/test/blackbox)
+=======
+    target_compile_definitions(SimpleCommunicationPublisher PRIVATE
+        BOOST_ASIO_STANDALONE
+        ASIO_STANDALONE
+        $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
+        $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
+        )
+    target_include_directories(SimpleCommunicationPublisher PRIVATE
+        ${Asio_INCLUDE_DIR}
+        ${PROJECT_SOURCE_DIR}/test/blackbox)
+>>>>>>> 4f9f7e98e (Support of googletest using colcon [12009] (#2054))
     target_link_libraries(SimpleCommunicationPublisher fastrtps fastcdr foonathan_memory ${CMAKE_DL_LIBS})
 
     set(SUBSCRIBER_SOURCE ${COMMON_SOURCE}
@@ -42,7 +57,19 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER) AND fastcdr_FOUND)
         SubscriberMain.cpp
         )
     add_executable(SimpleCommunicationSubscriber ${SUBSCRIBER_SOURCE})
+<<<<<<< HEAD
     target_include_directories(SimpleCommunicationSubscriber PRIVATE ${PROJECT_SOURCE_DIR}/test/blackbox)
+=======
+    target_compile_definitions(SimpleCommunicationSubscriber PRIVATE
+        BOOST_ASIO_STANDALONE
+        ASIO_STANDALONE
+        $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
+        $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
+        )
+    target_include_directories(SimpleCommunicationSubscriber PRIVATE
+        ${Asio_INCLUDE_DIR}
+        ${PROJECT_SOURCE_DIR}/test/blackbox)
+>>>>>>> 4f9f7e98e (Support of googletest using colcon [12009] (#2054))
     target_link_libraries(SimpleCommunicationSubscriber fastrtps fastcdr foonathan_memory ${CMAKE_DL_LIBS})
 
     set(PUBSUB_SOURCE ${COMMON_SOURCE}
@@ -52,7 +79,19 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER) AND fastcdr_FOUND)
         )
 
     add_executable(SimpleCommunicationPubSub ${PUBSUB_SOURCE})
+<<<<<<< HEAD
     target_include_directories(SimpleCommunicationPubSub PRIVATE ${PROJECT_SOURCE_DIR}/test/blackbox)
+=======
+    target_compile_definitions(SimpleCommunicationPubSub PRIVATE
+        BOOST_ASIO_STANDALONE
+        ASIO_STANDALONE
+        $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
+        $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
+        )
+    target_include_directories(SimpleCommunicationPubSub PRIVATE
+        ${Asio_INCLUDE_DIR}
+        ${PROJECT_SOURCE_DIR}/test/blackbox)
+>>>>>>> 4f9f7e98e (Support of googletest using colcon [12009] (#2054))
     target_link_libraries(SimpleCommunicationPubSub fastrtps fastcdr foonathan_memory ${CMAKE_DL_LIBS})
 
     ###############################################################################

@@ -61,6 +61,7 @@ endif()
 message(STATUS "Configuring DDSDeadlineQoS example...")
 file(GLOB DDS_DEADLINEQOS_EXAMPLE_SOURCES "*.cxx")
 
+<<<<<<< HEAD
 add_definitions(
   -DBOOST_ASIO_STANDALONE
   -DASIO_STANDALONE
@@ -69,6 +70,16 @@ add_definitions(
 include_directories(${ASIO_INCLUDE_DIR})
 
 add_executable(DDSDeadlineQoSExample ${DDS_DEADLINEQOS_EXAMPLE_SOURCES})
+=======
+add_executable(DDSDeadlineQoSExample ${DDS_DEADLINEQOS_EXAMPLE_SOURCES})
+target_compile_definitions(DDSDeadlineQoSExample PRIVATE
+    BOOST_ASIO_STANDALONE
+    ASIO_STANDALONE
+    $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
+    $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
+    )
+target_include_directories(DDSDeadlineQoSExample PRIVATE ${Asio_INCLUDE_DIR})
+>>>>>>> 4f9f7e98e (Support of googletest using colcon [12009] (#2054))
 target_link_libraries(DDSDeadlineQoSExample fastrtps fastcdr foonathan_memory)
 if(UNIX)
   target_link_libraries(DDSDeadlineQoSExample pthread)

@@ -23,6 +23,7 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER) AND fastcdr_FOUND)
     endif()
     endif()
 
+<<<<<<< HEAD
     add_definitions(
         -DBOOST_ASIO_STANDALONE
         -DASIO_STANDALONE
@@ -30,6 +31,8 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER) AND fastcdr_FOUND)
 
         include_directories(${ASIO_INCLUDE_DIR})
 
+=======
+>>>>>>> 4f9f7e98e (Support of googletest using colcon [12009] (#2054))
     option(VIDEO_TESTS "Activate the building and execution of performance tests" OFF)
     add_subdirectory(latency)
     add_subdirectory(throughput)

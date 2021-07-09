@@ -13,16 +13,16 @@
 # limitations under the License.
 
 if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
-    include(${PROJECT_SOURCE_DIR}/cmake/common/gtest.cmake)
-    check_gtest()
-
-    if(GTEST_FOUND)
+    if(GTest_FOUND)
         if(WIN32)
             add_definitions(-D_WIN32_WINNT=0x0601)
         endif()
 
+<<<<<<< HEAD
         include_directories(${ASIO_INCLUDE_DIR})
 
+=======
+>>>>>>> 4f9f7e98e (Support of googletest using colcon [12009] (#2054))
         set(THROUGHPUTCONTROLLERTESTS_SOURCE
             ThroughputControllerTests.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/rtps/flowcontrol/FlowController.cpp
@@ -31,8 +31,19 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/Time_t.cpp)
 
         add_executable(ThroughputControllerTests ${THROUGHPUTCONTROLLERTESTS_SOURCE})
+<<<<<<< HEAD
         target_compile_definitions(ThroughputControllerTests PRIVATE FASTRTPS_NO_LIB)
         target_include_directories(ThroughputControllerTests PRIVATE ${GTEST_INCLUDE_DIRS}
+=======
+        target_compile_definitions(ThroughputControllerTests PRIVATE FASTRTPS_NO_LIB
+            BOOST_ASIO_STANDALONE
+            ASIO_STANDALONE
+            $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
+            $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
+            )
+        target_include_directories(ThroughputControllerTests PRIVATE
+            ${Asio_INCLUDE_DIR}
+>>>>>>> 4f9f7e98e (Support of googletest using colcon [12009] (#2054))
             ${PROJECT_SOURCE_DIR}/test/mock/rtps/Endpoint
             ${PROJECT_SOURCE_DIR}/test/mock/rtps/AsyncWriterThread
             ${PROJECT_SOURCE_DIR}/test/mock/rtps/RTPSParticipantImpl
@@ -41,7 +52,7 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include
             ${PROJECT_SOURCE_DIR}/src/cpp
             )
-        target_link_libraries(ThroughputControllerTests ${GTEST_LIBRARIES} ${GTEST_LIBRARIES} ${GMOCK_LIBRARIES})
+        target_link_libraries(ThroughputControllerTests GTest::gtest GTest::gmock)
         if(MSVC OR MSVC_IDE)
             target_link_libraries(ThroughputControllerTests ${PRIVACY}
                 iphlpapi Shlwapi

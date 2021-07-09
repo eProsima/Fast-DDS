@@ -13,10 +13,7 @@
 # limitations under the License.
 
 if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
-    include(${PROJECT_SOURCE_DIR}/cmake/common/gtest.cmake)
-    check_gtest()
-
-    if(GTEST_FOUND AND SQLITE3_SUPPORT)
+    if(GTest_FOUND AND SQLITE3_SUPPORT)
         set(PERSISTENCETESTS_SOURCE
             PersistenceTests.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/rtps/persistence/PersistenceFactory.cpp
@@ -31,12 +28,28 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/Time_t.cpp)
 
         add_executable(PersistenceTests ${PERSISTENCETESTS_SOURCE})
+<<<<<<< HEAD
         target_compile_definitions(PersistenceTests PRIVATE FASTRTPS_NO_LIB)
         target_include_directories(PersistenceTests PRIVATE ${GTEST_INCLUDE_DIRS}
             ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include
             ${PROJECT_SOURCE_DIR}/src/cpp
             )
         target_link_libraries(PersistenceTests foonathan_memory ${GTEST_LIBRARIES} ${CMAKE_DL_LIBS})
+=======
+        target_compile_definitions(PersistenceTests PRIVATE FASTRTPS_NO_LIB
+            $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
+            $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
+            )
+        target_include_directories(PersistenceTests PRIVATE
+            ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include
+            ${PROJECT_SOURCE_DIR}/src/cpp
+            )
+        target_link_libraries(PersistenceTests
+            foonathan_memory
+            GTest::gtest
+            ${CMAKE_DL_LIBS} 
+            )
+>>>>>>> 4f9f7e98e (Support of googletest using colcon [12009] (#2054))
         if(MSVC OR MSVC_IDE)
             target_link_libraries(PersistenceTests ${PRIVACY}
                 iphlpapi Shlwapi

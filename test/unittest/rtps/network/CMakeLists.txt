@@ -13,6 +13,7 @@
 # limitations under the License.
 
 if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
+<<<<<<< HEAD
     include(${PROJECT_SOURCE_DIR}/cmake/common/gtest.cmake)
     check_gtest()
 
@@ -23,6 +24,11 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
 
         include_directories(${ASIO_INCLUDE_DIR})
 
+=======
+    if(GTest_FOUND)
+        find_package(Threads REQUIRED)
+
+>>>>>>> 4f9f7e98e (Support of googletest using colcon [12009] (#2054))
         set(NETWORKFACTORYTESTS_SOURCE
             NetworkFactoryTests.cpp
             mock/MockTransport.cpp
@@ -77,9 +83,18 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
         include_directories(mock/)
 
         add_executable(NetworkFactoryTests ${NETWORKFACTORYTESTS_SOURCE})
+<<<<<<< HEAD
         target_compile_definitions(NetworkFactoryTests PRIVATE FASTRTPS_NO_LIB)
+=======
+        target_compile_definitions(NetworkFactoryTests PRIVATE FASTRTPS_NO_LIB
+            BOOST_ASIO_STANDALONE
+            ASIO_STANDALONE
+            $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
+            $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
+            )
+>>>>>>> 4f9f7e98e (Support of googletest using colcon [12009] (#2054))
         target_include_directories(NetworkFactoryTests PRIVATE
-            ${GTEST_INCLUDE_DIRS} ${GMOCK_INCLUDE_DIRS}
+            ${Asio_INCLUDE_DIR}
             ${PROJECT_SOURCE_DIR}/test/mock/rtps/ParticipantProxyData
             ${PROJECT_SOURCE_DIR}/test/mock/dds/QosPolicies
             ${PROJECT_SOURCE_DIR}/test/mock/rtps/MessageReceiver
@@ -88,7 +103,7 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             ${PROJECT_SOURCE_DIR}/src/cpp
             )
         target_link_libraries(NetworkFactoryTests fastcdr foonathan_memory
-            ${GTEST_LIBRARIES} ${MOCKS}
+            GTest::gtest ${MOCKS}
             $<$<BOOL:${TLS_FOUND}>:OpenSSL::SSL$<SEMICOLON>OpenSSL::Crypto>
             ${CMAKE_THREAD_LIBS_INIT} ${CMAKE_DL_LIBS})
 

@@ -13,10 +13,7 @@
 # limitations under the License.
 
 if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
-    include(${PROJECT_SOURCE_DIR}/cmake/common/gtest.cmake)
-    check_gtest()
-
-    if(GTEST_FOUND)
+    if(GTest_FOUND)
         if(WIN32)
             add_definitions(
                 -D_WIN32_WINNT=0x0601
@@ -24,8 +21,11 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
                 )
         endif()
 
+<<<<<<< HEAD
         include_directories(${ASIO_INCLUDE_DIR})
 
+=======
+>>>>>>> 4f9f7e98e (Support of googletest using colcon [12009] (#2054))
         set(COMMON_SOURCES_AUTH_PLUGIN_TEST_SOURCE
             ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/Log.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/OStreamConsumer.cpp
@@ -55,15 +55,24 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             ${PROJECT_SOURCE_DIR}/src/cpp/utils/IPFinder.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/utils/IPLocator.cpp
             ${CMAKE_CURRENT_SOURCE_DIR}/BuiltinPKIDHTests.cpp)
+<<<<<<< HEAD
         target_compile_definitions(BuiltinPKIDH PRIVATE FASTRTPS_NO_LIB)
+=======
+        target_compile_definitions(BuiltinPKIDH PRIVATE FASTRTPS_NO_LIB
+            BOOST_ASIO_STANDALONE
+            ASIO_STANDALONE
+            $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
+            $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
+            )
+>>>>>>> 4f9f7e98e (Support of googletest using colcon [12009] (#2054))
         target_include_directories(BuiltinPKIDH PRIVATE
-            ${GTEST_INCLUDE_DIRS} ${GMOCK_INCLUDE_DIRS}
+            ${Asio_INCLUDE_DIR}
             ${PROJECT_SOURCE_DIR}/test/mock/rtps/NetworkFactory/
             ${OPENSSL_INCLUDE_DIR}
             ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include
             ${PROJECT_SOURCE_DIR}/src/cpp
             )
-        target_link_libraries(BuiltinPKIDH ${GTEST_LIBRARIES} ${OPENSSL_LIBRARIES} fastcdr foonathan_memory $<$<BOOL:${WIN32}>:ws2_32>)
+        target_link_libraries(BuiltinPKIDH GTest::gtest ${OPENSSL_LIBRARIES} fastcdr foonathan_memory $<$<BOOL:${WIN32}>:ws2_32>)
         add_gtest(BuiltinPKIDH
             SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/BuiltinPKIDHTests.cpp
             ${CMAKE_CURRENT_SOURCE_DIR}/AuthenticationPluginTests.hpp

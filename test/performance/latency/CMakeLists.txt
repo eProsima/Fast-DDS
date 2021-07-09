@@ -23,6 +23,18 @@ set(
 )
 add_executable(LatencyTest ${LATENCYTEST_SOURCE})
 
+<<<<<<< HEAD
+=======
+target_compile_definitions(LatencyTest PRIVATE
+    BOOST_ASIO_STANDALONE
+    ASIO_STANDALONE
+    $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
+    $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
+    )
+
+target_include_directories(LatencyTest PRIVATE ${Asio_INCLUDE_DIR})
+
+>>>>>>> 4f9f7e98e (Support of googletest using colcon [12009] (#2054))
 target_link_libraries(
     LatencyTest
     fastrtps
