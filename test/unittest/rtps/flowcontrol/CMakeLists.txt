@@ -46,7 +46,7 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include
             ${PROJECT_SOURCE_DIR}/src/cpp
             )
-        target_link_libraries(ThroughputControllerTests GTest::gtest GTest::gmock)
+        target_link_libraries(FlowControllerFactoryTests GTest::gmock)
         if(MSVC OR MSVC_IDE)
             target_link_libraries(FlowControllerFactoryTests ${PRIVACY}
                 iphlpapi Shlwapi
@@ -64,13 +64,13 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
             $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
             )
-        target_include_directories(FlowControllerPublishModesTests PRIVATE ${GTEST_INCLUDE_DIRS}
+        target_include_directories(FlowControllerPublishModesTests PRIVATE
             ${PROJECT_SOURCE_DIR}/test/mock/rtps/RTPSWriter
             ${PROJECT_SOURCE_DIR}/test/mock/rtps/RTPSMessageGroup
             ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include
             ${PROJECT_SOURCE_DIR}/src/cpp
             )
-        target_link_libraries(FlowControllerPublishModesTests ${GTEST_LIBRARIES} ${GMOCK_LIBRARIES})
+        target_link_libraries(FlowControllerPublishModesTests GTest::gmock)
         if(MSVC OR MSVC_IDE)
             target_link_libraries(FlowControllerPublishModesTests ${PRIVACY}
                 iphlpapi Shlwapi
@@ -88,13 +88,13 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
             $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
             )
-        target_include_directories(FlowControllerSchedulersTests PRIVATE ${GTEST_INCLUDE_DIRS}
+        target_include_directories(FlowControllerSchedulersTests PRIVATE
             ${PROJECT_SOURCE_DIR}/test/mock/rtps/RTPSWriter
             ${PROJECT_SOURCE_DIR}/test/mock/rtps/RTPSMessageGroup
             ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include
             ${PROJECT_SOURCE_DIR}/src/cpp
             )
-        target_link_libraries(FlowControllerSchedulersTests ${GTEST_LIBRARIES} ${GMOCK_LIBRARIES})
+        target_link_libraries(FlowControllerSchedulersTests GTest::gmock)
         if(MSVC OR MSVC_IDE)
             target_link_libraries(FlowControllerSchedulersTests ${PRIVACY}
                 iphlpapi Shlwapi

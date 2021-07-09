@@ -39,7 +39,7 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             )
         target_link_libraries(PersistenceTests
             foonathan_memory
-            GTest::gtest
+            GTest::gmock
             ${CMAKE_DL_LIBS} 
             )
         if(MSVC OR MSVC_IDE)
