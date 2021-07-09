@@ -47,6 +47,9 @@ class RTPSMessageGroup
 {
 public:
 
+    /*!
+     * Exception thrown when a operation exceeds the maximum blocking time.
+     */
     class timeout : public std::runtime_error
     {
     public:
@@ -59,6 +62,10 @@ public:
         virtual ~timeout() = default;
     };
 
+    /*!
+     * Exception thrown when a operation exceeds the maximum bytes this object can process in the current period of
+     * time.
+     */
     class limit_exceeded : public std::runtime_error
     {
     public:
@@ -73,10 +80,9 @@ public:
 
     /**
      * Basic constructor.
-     * Constructs a RTPSMessageGroup allowing the destination endpoints to change.
-     * @param participant Pointer to the participant sending data.
-     * @param endpoint Pointer to the endpoint sending data.
-     * @param max_blocking_time_point Future time point where blocking send should end.
+     * Constructs a RTPSMessageGroup allowing to allocate its own buffer.
+     * @param internal_buffer true indicates this object to allocate its own buffer. false indicates to get a buffer
+     * from the participant.
      */
     RTPSMessageGroup(
             RTPSParticipantImpl* participant,
@@ -200,7 +206,15 @@ public:
      */
     void flush_and_reset();
 
-    void change_transmitter(
+    /*!
+     * Change dynamically the sender of next RTPS submessages.
+     *
+     * @param endpoint Pointer to next Endpoint sender. nullptr resets object to initial state.
+     * @param msg_sender Pointer to the RTPSMessageSenderInterface will be used to send next RTPS messages..
+     * nullptr resets object to initial state.
+     * @post (endpoint != nullptr && msg_sender != nullptr) || (endpoint == nullptr && msg_sender == nullptr)
+     */
+    void sender(
             Endpoint* endpoint,
             const RTPSMessageSenderInterface* msg_sender)
     {
@@ -289,11 +303,11 @@ private:
 
     RTPSParticipantImpl* participant_ = nullptr;
 
-#if HAVE_SECURITY
+     #if HAVE_SECURITY
 
     CDRMessage_t* encrypt_msg_ = nullptr;
 
-#endif // if HAVE_SECURITY
+     #endif // if HAVE_SECURITY
 
     std::chrono::steady_clock::time_point max_blocking_time_point_;
 
@@ -308,7 +322,7 @@ private:
     uint32_t current_sent_bytes_ = 0;
 };
 
-} /* namespace rtps */
+}        /* namespace rtps */
 } /* namespace fastrtps */
 } /* namespace eprosima */
 

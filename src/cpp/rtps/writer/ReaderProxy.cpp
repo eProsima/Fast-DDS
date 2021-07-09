@@ -301,7 +301,7 @@ bool ReaderProxy::change_is_unsent(
         next_unsent_frag = chit->get_next_unsent_fragment();
         gap_seq = SequenceNumber_t::unknown();
 
-        if (is_reliable_ && !chit->delivered())
+        if (is_reliable_ && !chit->has_been_delivered())
         {
             need_reactivate_periodic_heartbeat |= true;
             SequenceNumber_t prev =

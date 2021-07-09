@@ -43,6 +43,7 @@ public:
     /*!
      * Unregister a writer.
      *
+     * @pre Writer must have removed all its CacheChange_t from this object.
      * @param writer Pointer to the writer to be unregistered. Cannot be nullptr.
      */
     virtual void unregister_writer(
@@ -85,6 +86,11 @@ public:
     virtual void remove_change(
             fastrtps::rtps::CacheChange_t* change) = 0;
 
+    /*!
+     * Return the maximum number of bytes can be used by the flow controller to generate a RTPS message.
+     *
+     * @return Maximum number of bytes of a RTPS message.
+     */
     virtual uint32_t get_max_payload() = 0;
 };
 

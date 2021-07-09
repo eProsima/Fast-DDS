@@ -52,7 +52,7 @@ public:
 
     MOCK_METHOD0(reset_current_bytes_processed, void());
 
-    void change_transmitter(
+    void sender(
             Endpoint*,
             const RTPSMessageSenderInterface*) const
     {

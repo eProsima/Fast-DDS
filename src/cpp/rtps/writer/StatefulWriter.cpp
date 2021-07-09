@@ -736,10 +736,10 @@ DeliveryRetCode StatefulWriter::deliver_sample_to_network(
                 // send it a personal GAP.
                 if (SequenceNumber_t::unknown() != gap_seq)
                 {
-                    group.change_transmitter(this, (*remote_reader)->message_sender());
+                    group.sender(this, (*remote_reader)->message_sender());
                     group.add_gap(gap_seq, SequenceNumberSet_t(change->sequenceNumber), (*remote_reader)->guid());
                     send_heartbeat_nts_(1u, group, disable_positive_acks_);
-                    group.change_transmitter(this, &locator_selector); // This makes the flush_and_reset().
+                    group.sender(this, &locator_selector); // This makes the flush_and_reset().
                 }
             }
             else
@@ -845,7 +845,7 @@ DeliveryRetCode StatefulWriter::deliver_sample_to_network(
                     {
                         if ((*remote_reader)->active())
                         {
-                            group.change_transmitter(this, (*remote_reader)->message_sender());
+                            group.sender(this, (*remote_reader)->message_sender());
 
                             if (0 < n_fragments)
                             {
@@ -930,7 +930,7 @@ DeliveryRetCode StatefulWriter::deliver_sample_to_network(
         }
 
         // Restore in case a exception was launched by RTPSMessageGroup.
-        group.change_transmitter(this, &locator_selector);
+        group.sender(this, &locator_selector);
 
     }
 

@@ -1373,7 +1373,7 @@ private:
 
                 fastrtps::rtps::LocatorSelectorSender& locator_selector =
                         current_writer->get_async_locator_selector();
-                async_mode.group.change_transmitter(current_writer, &locator_selector);
+                async_mode.group.sender(current_writer, &locator_selector);
 
                 // Remove previously from queue, because deliver_sample_nts could call FlowController::remove_sample()
                 // provoking a deadlock.
@@ -1423,7 +1423,7 @@ private:
                 change_to_process = sched.get_next_change_nts();
             }
 
-            async_mode.group.change_transmitter(nullptr, nullptr);
+            async_mode.group.sender(nullptr, nullptr);
         }
     }
 

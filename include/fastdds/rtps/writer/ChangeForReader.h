@@ -181,7 +181,7 @@ public:
             });
     }
 
-    bool delivered() const
+    bool has_been_delivered() const
     {
         return delivered_;
     }
