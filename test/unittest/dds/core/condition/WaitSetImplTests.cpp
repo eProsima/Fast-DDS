@@ -27,6 +27,7 @@
 
 using namespace eprosima::fastdds::dds;
 using namespace eprosima::fastdds::dds::detail;
+using ::testing::_;
 
 class TestCondition : public Condition
 {
@@ -50,9 +51,9 @@ TEST(WaitSetImplTests, condition_management)
     // The condition is attached, detached, attached again and then deleted.
     // The following calls to the notifier are expected
     auto notifier = condition.get_notifier();
-    EXPECT_CALL(*notifier, attach_to).Times(2);
-    EXPECT_CALL(*notifier, detach_from).Times(1);
-    EXPECT_CALL(*notifier, will_be_deleted).Times(1);
+    EXPECT_CALL(*notifier, attach_to(_)).Times(2);
+    EXPECT_CALL(*notifier, detach_from(_)).Times(1);
+    EXPECT_CALL(*notifier, will_be_deleted(_)).Times(1);
 
     // WaitSetImpl should be created without conditions
     EXPECT_EQ(ReturnCode_t::RETCODE_OK, wait_set.get_conditions(conditions));
@@ -104,8 +105,8 @@ TEST(WaitSetImplTests, wait)
 
         // Expecting calls on the notifier of triggered_condition
         auto notifier = condition.get_notifier();
-        EXPECT_CALL(*notifier, attach_to).Times(1);
-        EXPECT_CALL(*notifier, will_be_deleted).Times(1);
+        EXPECT_CALL(*notifier, attach_to(_)).Times(1);
+        EXPECT_CALL(*notifier, will_be_deleted(_)).Times(1);
 
         // Waiting on empty wait set should timeout
         EXPECT_EQ(ReturnCode_t::RETCODE_TIMEOUT, wait_set.wait(conditions, timeout));
@@ -174,8 +175,8 @@ TEST(WaitSetImplTests, wait)
 
             // Expecting calls on the notifier of triggered_condition
             notifier = triggered_condition.get_notifier();
-            EXPECT_CALL(*notifier, attach_to).Times(1);
-            EXPECT_CALL(*notifier, will_be_deleted).Times(1);
+            EXPECT_CALL(*notifier, attach_to(_)).Times(1);
+            EXPECT_CALL(*notifier, will_be_deleted(_)).Times(1);
 
             std::thread add_triggered_condition([&]()
                     {
