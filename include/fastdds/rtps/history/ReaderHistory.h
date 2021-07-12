@@ -50,7 +50,7 @@ public:
      */
     RTPS_DllAPI ReaderHistory(
             const HistoryAttributes& att);
-    RTPS_DllAPI virtual ~ReaderHistory() override;
+    RTPS_DllAPI ~ReaderHistory() override;
 
     /**
      * Virtual method that is called when a new change is received.
