@@ -176,6 +176,11 @@ RTPSParticipantImpl::RTPSParticipantImpl(
         m_persistence_guid = m_guid;
     }
 
+    // Store the Guid in string format.
+    std::stringstream guid_sstr;
+    guid_sstr << m_guid;
+    guid_str_ = guid_sstr.str();
+
     // Client-server discovery protocol requires that every TCP transport has a listening port
     switch (PParam.builtin.discovery_config.discoveryProtocol)
     {
@@ -389,11 +394,8 @@ RTPSParticipantImpl::RTPSParticipantImpl(
     // Support old API
     if (PParam.throughputController.bytesPerPeriod != UINT32_MAX && PParam.throughputController.periodMillisecs != 0)
     {
-        std::stringstream guid_sstr;
-        guid_sstr << m_guid;
-        std::string guid_str = guid_sstr.str();
         fastdds::rtps::FlowControllerDescriptor old_descriptor;
-        old_descriptor.name = guid_str.c_str();
+        old_descriptor.name = guid_str_.c_str();
         old_descriptor.max_bytes_per_period = PParam.throughputController.bytesPerPeriod;
         old_descriptor.period_ms = PParam.throughputController.periodMillisecs;
         flow_controller_factory_.register_flow_controller(old_descriptor);
@@ -618,24 +620,20 @@ bool RTPSParticipantImpl::create_writer(
 
     GUID_t guid(m_guid.guidPrefix, entId);
     fastdds::rtps::FlowController* flow_controller = nullptr;
-    std::string guid_str;
     const char* flow_controller_name = param.flow_controller_name;
 
     // Support of old flow controller style.
     if (param.throughputController.bytesPerPeriod != UINT32_MAX && param.throughputController.periodMillisecs != 0)
     {
-        std::stringstream guid_sstr;
-        guid_sstr << guid;
-        guid_str = guid_sstr.str();
-        flow_controller_name = guid_str.c_str();
+        flow_controller_name = guid_str_.c_str();
         if (ASYNCHRONOUS_WRITER == param.mode)
         {
             fastdds::rtps::FlowControllerDescriptor old_descriptor;
-            old_descriptor.name = guid_str.c_str();
+            old_descriptor.name = guid_str_.c_str();
             old_descriptor.max_bytes_per_period = param.throughputController.bytesPerPeriod;
             old_descriptor.period_ms = param.throughputController.periodMillisecs;
             flow_controller_factory_.register_flow_controller(old_descriptor);
-            flow_controller =  flow_controller_factory_.retrieve_flow_controller(guid_str.c_str(), param);
+            flow_controller =  flow_controller_factory_.retrieve_flow_controller(guid_str_.c_str(), param);
         }
         else
         {
@@ -649,11 +647,8 @@ bool RTPSParticipantImpl::create_writer(
     {
         if (ASYNCHRONOUS_WRITER == param.mode && nullptr == flow_controller)
         {
-            std::stringstream guid_sstr;
-            guid_sstr << m_guid;
-            guid_str = guid_sstr.str();
-            flow_controller_name = guid_str.c_str();
-            flow_controller = flow_controller_factory_.retrieve_flow_controller(guid_sstr.str(), param);
+            flow_controller_name = guid_str_.c_str();
+            flow_controller = flow_controller_factory_.retrieve_flow_controller(guid_str_, param);
         }
         else
         {

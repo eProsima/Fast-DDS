@@ -488,6 +488,8 @@ private:
     RTPSParticipantAttributes m_att;
     //!Guid of the RTPSParticipant.
     GUID_t m_guid;
+    //! String containing the RTPSParticipant Guid.
+    std::string guid_str_;
     //!Persistence guid of the RTPSParticipant
     GUID_t m_persistence_guid;
     //! Sending resources. - DEPRECATED -Stays commented for reference purposes
