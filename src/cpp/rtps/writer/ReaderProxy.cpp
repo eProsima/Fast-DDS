@@ -265,16 +265,6 @@ bool ReaderProxy::change_is_acked(
     return chit->getStatus() == ACKNOWLEDGED;
 }
 
-SequenceNumber_t ReaderProxy::first_relevant_sequence_number() const
-{
-    if (changes_for_reader_.empty())
-    {
-        return changes_low_mark_ + 1;
-    }
-
-    return changes_for_reader_.front().getSequenceNumber();
-}
-
 bool ReaderProxy::change_is_unsent(
         const SequenceNumber_t& seq_num,
         FragmentNumber_t& next_unsent_frag,
@@ -665,54 +655,6 @@ ReaderProxy::ChangeConstIterator ReaderProxy::find_change(
     return it == end
            ? it
            : it->getSequenceNumber() == seq_num ? it : end;
-}
-
-// TODO Maybe remove
-bool ReaderProxy::are_there_gaps()
-{
-    return (0 < changes_for_reader_.size() &&
-           changes_low_mark_ + uint32_t(changes_for_reader_.size()) !=
-           changes_for_reader_.rbegin()->getSequenceNumber());
-}
-
-void ReaderProxy::send_gaps(
-        RTPSMessageGroup& group,
-        SequenceNumber_t next_seq)
-{
-    if (is_remote_and_reliable())
-    {
-        try
-        {
-            if (are_there_gaps() ||
-                    (0 < changes_for_reader_.size() && next_seq != changes_for_reader_.rbegin()->getSequenceNumber()))
-            {
-                RTPSGapBuilder gap_builder(group);
-                SequenceNumber_t current_seq = changes_low_mark_ + 1;
-
-                for (ReaderProxy::ChangeConstIterator cit = changes_for_reader_.begin();
-                        cit != changes_for_reader_.end(); ++cit)
-                {
-                    SequenceNumber_t seq_num = cit->getSequenceNumber();
-                    while (current_seq != seq_num)
-                    {
-                        gap_builder.add(current_seq);
-                        ++current_seq;
-                    }
-                    ++current_seq;
-                }
-
-                while (current_seq < next_seq)
-                {
-                    gap_builder.add(current_seq);
-                    ++current_seq;
-                }
-            }
-        }
-        catch (const RTPSMessageGroup::timeout&)
-        {
-            logError(RTPS_READER_PROXY, "Max blocking time reached");
-        }
-    }
 }
 
 }   // namespace rtps

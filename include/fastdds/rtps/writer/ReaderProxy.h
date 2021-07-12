@@ -338,33 +338,11 @@ public:
     }
 
     /**
-     * Get the first relevant sequence number of the changes for this reader.
-     * @return the first relevant sequence number of the changes for this reader.
-     */
-    SequenceNumber_t first_relevant_sequence_number() const;
-
-    /**
      * Change the interval of nack-supression event.
      * @param interval Time from data sending to acknack processing.
      */
     void update_nack_supression_interval(
             const Duration_t& interval);
-
-    /**
-     * Check if there are gaps in the list of ChangeForReader_t.
-     * @return True if there are gaps, else false.
-     */
-    bool are_there_gaps();
-
-    /**
-     * Adds gaps to message group if there are holes / irrelevant changes on this proxy.
-
-     * @param group Message group where gaps will be added.
-     * @param next_seq Sequence number of next sample to be added to history.
-     */
-    void send_gaps(
-            RTPSMessageGroup& group,
-            SequenceNumber_t next_seq);
 
     LocatorSelectorEntry* locator_selector_entry()
     {

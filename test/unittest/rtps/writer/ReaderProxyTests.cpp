@@ -111,37 +111,6 @@ TEST(ReaderProxyTests, find_change_removed_test)
     ASSERT_FALSE(rproxy.change_is_acked(SequenceNumber_t(0, 4)));
 }
 
-/*
- * Regression test
- * Error because async thread is not wake up for sending a GAP.
- * This is because requested_changes_set and perform_acknack_response functions only return true when some change is
- * change. Now we added are_there_gaps function to check when there are gaps in the places are needed.
- */
-TEST(ReaderProxyTests, are_there_gaps)
-{
-    StatefulWriter writerMock;
-    WriterTimes wTimes;
-    RemoteLocatorsAllocationAttributes alloc;
-    ReaderProxy rproxy(wTimes, alloc, &writerMock);
-    CacheChange_t seq1; seq1.sequenceNumber = {0, 1};
-    CacheChange_t seq2; seq2.sequenceNumber = {0, 2};
-    CacheChange_t seq3; seq3.sequenceNumber = {0, 3};
-
-    ASSERT_FALSE(rproxy.are_there_gaps());
-    rproxy.add_change(ChangeForReader_t(&seq1), true, false);
-    ASSERT_FALSE(rproxy.are_there_gaps());
-    rproxy.add_change(ChangeForReader_t(&seq2), true, false);
-    ASSERT_FALSE(rproxy.are_there_gaps());
-    rproxy.add_change(ChangeForReader_t(&seq3), true, false);
-    ASSERT_FALSE(rproxy.are_there_gaps());
-    rproxy.change_has_been_removed(SequenceNumber_t(0, 2));
-    ASSERT_TRUE(rproxy.are_there_gaps());
-    rproxy.change_has_been_removed(SequenceNumber_t(0, 1));
-    ASSERT_TRUE(rproxy.are_there_gaps());
-    rproxy.change_has_been_removed(SequenceNumber_t(0, 3));
-    ASSERT_FALSE(rproxy.are_there_gaps());
-}
-
 } // namespace rtps
 } // namespace fastrtps
 } // namespace eprosima
