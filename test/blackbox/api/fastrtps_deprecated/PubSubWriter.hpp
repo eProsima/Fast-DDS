@@ -314,10 +314,7 @@ public:
                 std::cout << "Created publisher " << publisher_guid_ << " for topic " <<
                     publisher_attr_.topic.topicName << std::endl;
                 initialized_ = true;
-                return;
             }
-
-            eprosima::fastrtps::Domain::removeParticipant(participant_);
         }
     }
 
