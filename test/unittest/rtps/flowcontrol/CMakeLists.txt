@@ -56,6 +56,10 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
 
         set(FLOWCONTROLLERPUBLISHMODESTESTS_SOURCE
             ${FLOWCONTROLLER_COMMON_SOURCE}
+            FlowControllerPublishModesOnPureSyncTests.cpp
+            FlowControllerPublishModesOnSyncTests.cpp
+            FlowControllerPublishModesOnAsyncTests.cpp
+            FlowControllerPublishModesOnLimitedAsyncTests.cpp
             FlowControllerPublishModesTests.cpp
             )
 
