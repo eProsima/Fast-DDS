@@ -333,13 +333,14 @@ void StatisticsParticipantImpl::on_network_statistics(
         const rtps::StatisticsSubmessageData& data,
         uint64_t datagram_size)
 {
+    static_cast<void>(source_locator);
     static_cast<void>(reception_locator);
-    process_network_timestamp(source_locator, data.destination, data.ts);
+    process_network_timestamp(source_participant, data.destination, data.ts);
     process_network_sequence(source_participant, data.destination, data.seq, datagram_size);
 }
 
 void StatisticsParticipantImpl::process_network_timestamp(
-        const fastrtps::rtps::Locator_t& source_locator,
+        const fastrtps::rtps::GuidPrefix_t& source_participant,
         const fastrtps::rtps::Locator_t& reception_locator,
         const rtps::StatisticsSubmessageData::TimeStamp& ts)
 {
@@ -351,7 +352,13 @@ void StatisticsParticipantImpl::process_network_timestamp(
     auto latency = static_cast<float>((current_ts - source_ts).to_ns());
 
     Locator2LocatorData notification;
-    notification.src_locator(to_statistics_type(source_locator));
+    notification.src_locator().port(0);
+    notification.src_locator().kind(reception_locator.kind);
+    auto locator_addr = notification.src_locator().address().data();
+    std::copy(source_participant.value, source_participant.value + source_participant.size, locator_addr);
+    locator_addr += source_participant.size;
+    std::copy(c_EntityId_RTPSParticipant.value, c_EntityId_RTPSParticipant.value + EntityId_t::size, locator_addr);
+
     notification.dst_locator(to_statistics_type(reception_locator));
     notification.data(latency);
 
