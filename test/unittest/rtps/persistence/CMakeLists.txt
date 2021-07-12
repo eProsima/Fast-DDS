@@ -13,7 +13,7 @@
 # limitations under the License.
 
 if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
-    if(GTest_FOUND AND SQLITE3_SUPPORT)
+    if(SQLITE3_SUPPORT)
         set(PERSISTENCETESTS_SOURCE
             PersistenceTests.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/rtps/persistence/PersistenceFactory.cpp
