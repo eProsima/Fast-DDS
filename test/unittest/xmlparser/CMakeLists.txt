@@ -318,6 +318,7 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
         ${PROJECT_SOURCE_DIR}/test/mock/rtps/WriterProxyData
         ${PROJECT_SOURCE_DIR}/include
         ${PROJECT_BINARY_DIR}/include
+        ${Asio_INCLUDE_DIR}
         )
 
     target_link_libraries(XMLEndpointParserTests GTest::gtest
