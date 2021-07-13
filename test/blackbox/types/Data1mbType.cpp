@@ -48,31 +48,49 @@ bool Data1mbType::serialize(
         void* data,
         SerializedPayload_t* payload)
 {
+    bool ret_value = false;
     Data1mb* p_type = (Data1mb*) data;
-    eprosima::fastcdr::FastBuffer fastbuffer((char*)payload->data, payload->max_size); // Object that manages the raw buffer.
-    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN,
-            eprosima::fastcdr::Cdr::DDS_CDR);
-    payload->encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
-    // Serialize encapsulation
-    ser.serialize_encapsulation();
-    p_type->serialize(ser); // Serialize the object:
-    payload->length = (uint32_t)ser.getSerializedDataLength();  //Get the serialized length
-    return true;
+
+    try
+    {
+        eprosima::fastcdr::FastBuffer fastbuffer((char*)payload->data, payload->max_size); // Object that manages the raw buffer.
+        eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN,
+                eprosima::fastcdr::Cdr::DDS_CDR);
+        payload->encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
+        // Serialize encapsulation
+        ser.serialize_encapsulation();
+        p_type->serialize(ser); // Serialize the object:
+        payload->length = (uint32_t)ser.getSerializedDataLength(); //Get the serialized length
+        ret_value = true;
+    }
+    catch (eprosima::fastcdr::exception::Exception&)
+    {
+    }
+    return ret_value;
 }
 
 bool Data1mbType::deserialize(
         SerializedPayload_t* payload,
         void* data)
 {
+    bool ret_value = false;
     Data1mb* p_type = (Data1mb*) data;  //Convert DATA to pointer of your type
-    eprosima::fastcdr::FastBuffer fastbuffer((char*)payload->data, payload->length);    // Object that manages the raw buffer.
-    eprosima::fastcdr::Cdr deser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN,
-            eprosima::fastcdr::Cdr::DDS_CDR); // Object that deserializes the data.
-    // Deserialize encapsulation.
-    deser.read_encapsulation();
-    payload->encapsulation = deser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
-    p_type->deserialize(deser);//Deserialize the object:
-    return true;
+
+    try
+    {
+        eprosima::fastcdr::FastBuffer fastbuffer((char*)payload->data, payload->length); // Object that manages the raw buffer.
+        eprosima::fastcdr::Cdr deser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN,
+                eprosima::fastcdr::Cdr::DDS_CDR); // Object that deserializes the data.
+        // Deserialize encapsulation.
+        deser.read_encapsulation();
+        payload->encapsulation = deser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
+        p_type->deserialize(deser);//Deserialize the object:
+        ret_value = true;
+    }
+    catch (eprosima::fastcdr::exception::Exception&)
+    {
+    }
+    return ret_value;
 }
 
 void* Data1mbType::createData()

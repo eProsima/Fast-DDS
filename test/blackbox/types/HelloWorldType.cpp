@@ -41,37 +41,54 @@ bool HelloWorldType::serialize(
         void* data,
         SerializedPayload_t* payload)
 {
+    bool ret_value = false;
     HelloWorld* hw = (HelloWorld*) data;
-    // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer((char*)payload->data, payload->max_size);
-    // Object that serializes the data.
-    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN,
-            eprosima::fastcdr::Cdr::DDS_CDR);
-    payload->encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
-    // Serialize encapsulation
-    ser.serialize_encapsulation();
-    //serialize the object:
-    hw->serialize(ser);
-    payload->length = (uint32_t)ser.getSerializedDataLength();
-    return true;
+
+    try
+    {
+        // Object that manages the raw buffer.
+        eprosima::fastcdr::FastBuffer fastbuffer((char*)payload->data, payload->max_size);
+        // Object that serializes the data.
+        eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN,
+                eprosima::fastcdr::Cdr::DDS_CDR);
+        payload->encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
+        // Serialize encapsulation
+        ser.serialize_encapsulation();
+        //serialize the object:
+        hw->serialize(ser);
+        payload->length = (uint32_t)ser.getSerializedDataLength();
+        ret_value = true;
+    }
+    catch (eprosima::fastcdr::exception::Exception&)
+    {
+    }
+    return ret_value;
 }
 
 bool HelloWorldType::deserialize(
         SerializedPayload_t* payload,
         void* data)
 {
+    bool ret_value = false;
     HelloWorld* hw = (HelloWorld*) data;
-    // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer((char*)payload->data, payload->length);
-    // Object that serializes the data.
-    eprosima::fastcdr::Cdr deser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN,
-            eprosima::fastcdr::Cdr::DDS_CDR); // Object that deserializes the data.
-    // Deserialize encapsulation.
-    deser.read_encapsulation();
-    payload->encapsulation = deser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
-    //serialize the object:
-    hw->deserialize(deser);
-    return true;
+    try
+    {
+        // Object that manages the raw buffer.
+        eprosima::fastcdr::FastBuffer fastbuffer((char*)payload->data, payload->length);
+        // Object that serializes the data.
+        eprosima::fastcdr::Cdr deser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN,
+                eprosima::fastcdr::Cdr::DDS_CDR); // Object that deserializes the data.
+        // Deserialize encapsulation.
+        deser.read_encapsulation();
+        payload->encapsulation = deser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
+        //serialize the object:
+        hw->deserialize(deser);
+        ret_value = true;
+    }
+    catch (eprosima::fastcdr::exception::Exception&)
+    {
+    }
+    return ret_value;
 }
 
 std::function<uint32_t()> HelloWorldType::getSerializedSizeProvider(

@@ -275,7 +275,6 @@ private:
             bool& deserialization_error)
     {
         // Mark that some data is available
-        return_value_ = ReturnCode_t::RETCODE_OK;
         bool ret_val = false;
         deserialization_error = false;
 
@@ -298,6 +297,8 @@ private:
                     deserialization_error = true;
                     return false;
                 }
+
+                return_value_ = ReturnCode_t::RETCODE_OK;
             }
 
             ++current_slot_;
@@ -349,7 +350,7 @@ private:
         info.generation_rank = 0;
         info.absoulte_generation_rank = 0;
         info.source_timestamp = change->sourceTimestamp;
-        info.reception_timestamp = change->receptionTimestamp;
+        info.reception_timestamp = change->reader_info.receptionTimestamp;
         info.instance_handle = handle_;
         info.publication_handle = InstanceHandle_t(change->writerGUID);
         info.sample_identity.writer_guid(change->writerGUID);
