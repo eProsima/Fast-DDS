@@ -276,12 +276,12 @@ protected:
 
     /*
      * Process a received statistics submessage timestamp, informing of network latency.
-     * @param [in] source_locator Locator indicating the sending address.
+     * @param [in] source_participant GUID prefix of the participant sending the message.
      * @param [in] reception_locator Locator indicating the listening address.
      * @param [in] ts The timestamp of the statistics submessage received.
      */
     void process_network_timestamp(
-            const fastrtps::rtps::Locator_t& source_locator,
+            const fastrtps::rtps::GuidPrefix_t& source_participant,
             const fastrtps::rtps::Locator_t& reception_locator,
             const rtps::StatisticsSubmessageData::TimeStamp& ts);
 
