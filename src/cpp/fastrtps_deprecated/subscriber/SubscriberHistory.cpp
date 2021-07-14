@@ -698,11 +698,6 @@ ReaderHistory::iterator SubscriberHistory::remove_change_nts(
 
         auto& c = it->second.cache_changes;
         c.erase(std::remove(c.begin(), c.end(), p_sample), c.end());
-
-        if (c.empty())
-        {
-            keyed_changes_.erase(it);
-        }
     }
 
     // call the base class
