@@ -535,6 +535,18 @@ bool SubscriberHistory::find_key(
     return false;
 }
 
+void SubscriberHistory::writer_unmatched(
+        const GUID_t& writer_guid,
+        const SequenceNumber_t& last_notified_seq)
+{
+    // Remove all future changes from the unmatched writer
+    remove_changes_with_pred(
+        [&writer_guid, &last_notified_seq](CacheChange_t* ch)
+        {
+            return (writer_guid == ch->writerGUID) && (last_notified_seq < ch->sequenceNumber);
+        });
+}
+
 bool SubscriberHistory::remove_change_sub(
         CacheChange_t* change)
 {

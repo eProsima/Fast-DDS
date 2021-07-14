@@ -158,6 +158,19 @@ public:
             iterator& it);
 
     /**
+     * Called when a writer is unmatched from the reader holding this history.
+     *
+     * This method will remove all the changes on the history that came from the writer being unmatched and which have
+     * not yet been notified to the user.
+     *
+     * @param writer_guid        GUID of the writer being unmatched.
+     * @param last_notified_seq  Last sequence number from the specified writer that was notified to the user.
+     */
+    void writer_unmatched(
+            const rtps::GUID_t& writer_guid,
+            const rtps::SequenceNumber_t& last_notified_seq) override;
+
+    /**
      * @brief A method to set the next deadline for the given instance
      * @param handle The handle to the instance
      * @param next_deadline_us The time point when the deadline will occur
