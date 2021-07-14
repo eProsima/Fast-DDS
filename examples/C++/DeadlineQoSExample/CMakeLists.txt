@@ -59,7 +59,7 @@ target_compile_definitions(DeadlineQoSExample PRIVATE
 )
 target_include_directories(DeadlineQoSExample PRIVATE ${Asio_INCLUDE_DIR})
 target_link_libraries(DeadlineQoSExample fastrtps fastcdr foonathan_memory)
-if(UNIX)
+if(UNIX AND NOT(QNXNTO))
   target_link_libraries(DeadlineQoSExample pthread)
 endif()
 
