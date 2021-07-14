@@ -542,6 +542,73 @@ TEST(Discovery, EndpointRediscoveryWithTransientLocalData)
     std::this_thread::sleep_for(std::chrono::seconds(1));
 }
 
+// Regression for bug #12127
+TEST(Discovery, EndpointRediscoveryWithTransientLocalData_2)
+{
+    // Both writer and reader will be RELIABLE, TRANSIENT_LOCAL, KEEP_LAST 10
+    // Partcipant lease duration will be small on both
+    // Writer will send 2 samples, but the reader will not take them
+    // Then the cable will be unplugged and we wait for participant drop
+    // The writer will then send another 8 samples
+    // The cable is plugged again, and the reader expects the reception of all (10) samples
+
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME, false, false, false);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+
+    auto testTransport = std::make_shared<test_UDPv4TransportDescriptor>();
+
+    reader.disable_builtin_transport();
+    reader.add_user_transport_to_pparams(testTransport);
+
+    reader
+        .lease_duration({ 2, 0 }, { 1, 0 })
+        .history_depth(10)
+        .reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS)
+        .durability_kind(eprosima::fastrtps::TRANSIENT_LOCAL_DURABILITY_QOS)
+        .init();
+
+    ASSERT_TRUE(reader.isInitialized());
+
+    writer.disable_builtin_transport();
+    writer.add_user_transport_to_pparams(testTransport);
+
+    writer
+        .lease_duration({ 2, 0 }, { 1, 0 })
+        .history_depth(10)
+        .reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS)
+        .durability_kind(eprosima::fastrtps::TRANSIENT_LOCAL_DURABILITY_QOS)
+        .init();
+
+    ASSERT_TRUE(writer.isInitialized());
+
+    // Wait for discovery.
+    writer.wait_discovery();
+    reader.wait_discovery();
+
+    auto data = default_helloworld_data_generator(10);
+    reader.startReception(data);
+
+    for (int i = 0; i < 2; ++i)
+    {
+        HelloWorld& item = data.front();
+        default_send_print(item);
+        writer.send_sample(item);
+        data.pop_front();
+    }
+
+    test_UDPv4Transport::test_UDPv4Transport_ShutdownAllNetwork = true;
+
+    reader.wait_participant_undiscovery();
+    writer.wait_participant_undiscovery();
+    writer.send(data);
+
+    test_UDPv4Transport::test_UDPv4Transport_ShutdownAllNetwork = false;
+
+    reader.block_for_unread_count_of(10);
+
+    EXPECT_TRUE(writer.waitForAllAcked(std::chrono::seconds(1)));
+}
+
 /*!
  * @test Checks that although DATA(p) are not received, but other kind of RTPS submessages, it keeps the participant
  * liveliness from the remote participant.
