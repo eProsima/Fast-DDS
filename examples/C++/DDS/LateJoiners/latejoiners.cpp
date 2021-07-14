@@ -156,6 +156,14 @@ void latejoiners()
         return;
     }
 
+    // Wait for volatile reader to match with writer, otherwise it may consider the new samples as historical
+    std::vector<InstanceHandle_t> matched_writers;
+    while (ReturnCode_t::RETCODE_OK == myReader2->get_matched_publications(matched_writers) &&
+            matched_writers.empty() )
+    {
+        std::this_thread::sleep_for(std::chrono::milliseconds(100));
+    }
+
     //Send 20 samples
     std::cout << "Publishing 20 samples on the topic..." << std::endl;
     for (uint8_t j = 0; j < 20; j++)
