@@ -81,6 +81,7 @@ public:
     /**
      * Basic constructor.
      * Constructs a RTPSMessageGroup allowing to allocate its own buffer.
+     * @param participant Pointer to the participant sending data.
      * @param internal_buffer true indicates this object to allocate its own buffer. false indicates to get a buffer
      * from the participant.
      */
@@ -212,12 +213,13 @@ public:
      * @param endpoint Pointer to next Endpoint sender. nullptr resets object to initial state.
      * @param msg_sender Pointer to the RTPSMessageSenderInterface will be used to send next RTPS messages..
      * nullptr resets object to initial state.
-     * @post (endpoint != nullptr && msg_sender != nullptr) || (endpoint == nullptr && msg_sender == nullptr)
+     * @pre (endpoint != nullptr && msg_sender != nullptr) || (endpoint == nullptr && msg_sender == nullptr)
      */
     void sender(
             Endpoint* endpoint,
             const RTPSMessageSenderInterface* msg_sender)
     {
+        assert((endpoint != nullptr && msg_sender != nullptr) || (endpoint == nullptr && msg_sender == nullptr));
         if (endpoint != endpoint_ || msg_sender != sender_)
         {
             flush_and_reset();
