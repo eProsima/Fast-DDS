@@ -372,9 +372,8 @@ bool StatelessWriter::change_removed_by_history(
     }
 
     const uint64_t sequence_number = change->sequenceNumber.to64long();
-    if (sequence_number == last_sequence_number_sent_ + 1)
+    if (sequence_number > last_sequence_number_sent_)
     {
-        ++last_sequence_number_sent_;
         unsent_changes_cond_.notify_one();
     }
 
@@ -753,12 +752,14 @@ DeliveryRetCode StatelessWriter::deliver_sample_nts(
     if (DeliveryRetCode::DELIVERED == ret_code &&
             change_sequence_number > last_sequence_number_sent_)
     {
+        // This update must be done before calling the callback.
+        last_sequence_number_sent_ = change_sequence_number;
+        unsent_changes_cond_.notify_one();
+
         if (nullptr != mp_listener)
         {
             mp_listener->onWriterChangeReceivedByAll(this, cache_change);
         }
-
-        last_sequence_number_sent_ = change_sequence_number;
     }
 
     return ret_code;
