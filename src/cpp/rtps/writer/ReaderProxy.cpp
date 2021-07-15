@@ -456,7 +456,7 @@ void ReaderProxy::from_unsent_to_status(
         assert(UNSENT == it->getStatus());
 
         // Otherwise change status
-        if (UNSENT != status)
+        assert (UNSENT != status);
         {
             if (ACKNOWLEDGED == status && seq_num == changes_low_mark_ + 1)
             {

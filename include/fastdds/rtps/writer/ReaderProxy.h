@@ -132,7 +132,7 @@ public:
      * @param[out] next_unsent_frag,Returns next fragment to be sent.
      * @param[out] gap_seq Return, when it is its first delivery (should be relevant seq_num), the sequence number of
      * the first sequence of the gap [first, seq_num). Otherwise return SequenceNumber_t::unknown().
-     * @param[in] need_reactivate_periodic_heartbeat Indicates if the heartbeat period event has to be restarted.
+     * @param[out] need_reactivate_periodic_heartbeat Indicates if the heartbeat period event has to be restarted.
      */
     bool change_is_unsent(
             const SequenceNumber_t& seq_num,
