@@ -450,29 +450,22 @@ void ReaderProxy::from_unsent_to_status(
     assert(seq_num > changes_low_mark_);
     ChangeIterator it = find_change(seq_num, true);
     assert(changes_for_reader_.end() != it);
+    assert(UNSENT == it->getStatus());
+    assert(UNSENT != status);
 
-    if (it != changes_for_reader_.end())
+    if (ACKNOWLEDGED == status && seq_num == changes_low_mark_ + 1)
     {
-        assert(UNSENT == it->getStatus());
+        assert(changes_for_reader_.begin() == it);
+        changes_for_reader_.erase(it);
+        changes_low_mark_ = seq_num;
+        return;
+    }
 
-        // Otherwise change status
-        assert (UNSENT != status);
-        {
-            if (ACKNOWLEDGED == status && seq_num == changes_low_mark_ + 1)
-            {
-                assert(changes_for_reader_.begin() == it);
-                changes_for_reader_.erase(it);
-                changes_low_mark_ = seq_num;
-                return;
-            }
+    it->setStatus(status);
 
-            it->setStatus(status);
-
-            if (delivered)
-            {
-                it->set_delivered();
-            }
-        }
+    if (delivered)
+    {
+        it->set_delivered();
     }
 }
 
