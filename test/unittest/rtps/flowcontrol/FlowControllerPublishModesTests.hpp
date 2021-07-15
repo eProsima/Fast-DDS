@@ -53,12 +53,12 @@ protected:
     uint32_t current_bytes_processed = 0;
 };
 
-using Schedulers = testing::Types<eprosima::fastdds::rtps::FlowControllerFifoSchedule,
+using Schedulers = ::testing::Types<eprosima::fastdds::rtps::FlowControllerFifoSchedule,
                 eprosima::fastdds::rtps::FlowControllerRoundRobinSchedule,
                 eprosima::fastdds::rtps::FlowControllerHighPrioritySchedule,
                 eprosima::fastdds::rtps::FlowControllerPriorityWithReservationSchedule>;
 
-TYPED_TEST_SUITE(FlowControllerPublishModes, Schedulers);
+TYPED_TEST_SUITE(FlowControllerPublishModes, Schedulers, );
 
 #define INIT_CACHE_CHANGE(change, writer, seq) \
     change.writerGUID = writer.getGuid(); \
