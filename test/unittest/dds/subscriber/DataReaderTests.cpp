@@ -999,6 +999,7 @@ TEST_F(DataReaderTests, resource_limits)
 
     const ReturnCode_t& ok_code = ReturnCode_t::RETCODE_OK;
     const ReturnCode_t& resources_code = ReturnCode_t::RETCODE_OUT_OF_RESOURCES;
+    const ReturnCode_t& no_data_code = ReturnCode_t::RETCODE_NO_DATA;
 
     DataWriterQos writer_qos = DATAWRITER_QOS_DEFAULT;
     writer_qos.history().kind = KEEP_LAST_HISTORY_QOS;
@@ -1068,12 +1069,11 @@ TEST_F(DataReaderTests, resource_limits)
         FooSeq data_seq;
         SampleInfoSeq info_seq;
 
-        // The standard is not clear on what shold be done if max_samples is 0. NO_DATA? OK with length = 0?
-        // We have assumed the correct interpretation is the second one, so the following loop starts at 0.
-        // This test should change whenever this interpretation becomes invalid.
+        // With length == 0 the returned code should be okNO_DATA
+        EXPECT_EQ(no_data_code, data_reader_->read(data_seq, info_seq, 0));
 
         // Up to max_samples_per_read, max_samples will be returned
-        for (int32_t i = 0; i <= 10; ++i)
+        for (int32_t i = 1; i <= 10; ++i)
         {
             EXPECT_EQ(ok_code, data_reader_->read(data_seq, info_seq, i));
             check_collection(data_seq, false, i, i);
