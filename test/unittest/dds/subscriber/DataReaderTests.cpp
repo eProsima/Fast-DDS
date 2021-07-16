@@ -57,7 +57,7 @@
 
 #include "../../logging/mock/MockConsumer.h"
 
-#include <rtps/transport/test_UDPv4Transport.h>
+#include <fastdds/rtps/transport/test_UDPv4TransportDescriptor.h>
 #include <fastrtps/xmlparser/XMLProfileManager.h>
 
 namespace eprosima {
@@ -1927,13 +1927,18 @@ TEST_F(DataReaderTests, read_samples_with_future_changes)
     static constexpr int32_t num_samples = 8;
     static constexpr int32_t expected_samples = 4;
     const ReturnCode_t& ok_code = ReturnCode_t::RETCODE_OK;
-    bool start_dropping = false;
+    bool start_dropping_acks = false;
+    bool start_dropping_datas = false;
     static const Duration_t time_to_wait(0, 100 * 1000 * 1000);
     std::shared_ptr<rtps::test_UDPv4TransportDescriptor> test_descriptor =
             std::make_shared<rtps::test_UDPv4TransportDescriptor>();
     test_descriptor->drop_ack_nack_messages_filter_ = [&](fastrtps::rtps::CDRMessage_t&) -> bool
             {
-                return start_dropping;
+                return start_dropping_acks;
+            };
+    test_descriptor->drop_data_messages_filter_ = [&](fastrtps::rtps::CDRMessage_t&) -> bool
+            {
+                return start_dropping_datas;
             };
 
     DomainParticipantQos participant_qos = PARTICIPANT_QOS_DEFAULT;
@@ -1971,16 +1976,15 @@ TEST_F(DataReaderTests, read_samples_with_future_changes)
         data_writer_->write(&data, handle_ok_);
     }
 
-    rtps::test_UDPv4Transport::test_UDPv4Transport_ShutdownAllNetwork = true;
+    start_dropping_datas = true;
+    start_dropping_acks = true;
 
     for (int i = 0; i < 2; ++i)
     {
         data_writer2->write(&data, handle_ok_);
     }
 
-    start_dropping = true;
-
-    rtps::test_UDPv4Transport::test_UDPv4Transport_ShutdownAllNetwork = false;
+    start_dropping_datas = false;
 
     for (int i = 0; i < 2; ++i)
     {
