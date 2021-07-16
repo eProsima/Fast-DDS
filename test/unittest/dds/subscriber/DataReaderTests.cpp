@@ -1632,13 +1632,11 @@ TEST_F(DataReaderTests, Deserialization_errors)
         EXPECT_TRUE(data_reader_->wait_for_unread_message(time_to_wait));
 
         {
-            FooType data;
             SampleInfo info;
             EXPECT_EQ(no_data_code, data_reader_->take_next_sample(&data, &info));
         }
 
         {
-            FooType data;
             SampleInfo info;
             EXPECT_EQ(no_data_code, data_reader_->read_next_sample(&data, &info));
         }
