@@ -57,6 +57,9 @@
 
 #include "../../logging/mock/MockConsumer.h"
 
+#include <rtps/transport/test_UDPv4Transport.h>
+#include <fastrtps/xmlparser/XMLProfileManager.h>
+
 namespace eprosima {
 namespace fastdds {
 namespace dds {
@@ -141,7 +144,7 @@ protected:
         ASSERT_NE(data_reader_, nullptr);
 
         data_writer_ = publisher_->create_datawriter(topic_, wqos);
-        ASSERT_NE(data_reader_, nullptr);
+        ASSERT_NE(data_writer_, nullptr);
     }
 
     void create_instance_handles()
@@ -1913,6 +1916,91 @@ TEST_F(DataReaderUnsupportedTests, UnsupportedDataReaderMethods)
     ASSERT_EQ(participant->delete_subscriber(subscriber), ReturnCode_t::RETCODE_OK);
     ASSERT_EQ(participant->delete_topic(topic), ReturnCode_t::RETCODE_OK);
     ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), ReturnCode_t::RETCODE_OK);
+}
+
+// Regression test for #12133.
+TEST_F(DataReaderTests, read_samples_with_future_changes)
+{
+    fastrtps::LibrarySettingsAttributes att;
+    att.intraprocess_delivery = fastrtps::INTRAPROCESS_OFF;
+    eprosima::fastrtps::xmlparser::XMLProfileManager::library_settings(att);
+    static constexpr int32_t num_samples = 8;
+    static constexpr int32_t expected_samples = 4;
+    const ReturnCode_t& ok_code = ReturnCode_t::RETCODE_OK;
+    bool start_dropping = false;
+    static const Duration_t time_to_wait(0, 100 * 1000 * 1000);
+    std::shared_ptr<rtps::test_UDPv4TransportDescriptor> test_descriptor =
+            std::make_shared<rtps::test_UDPv4TransportDescriptor>();
+    test_descriptor->drop_ack_nack_messages_filter_ = [&](fastrtps::rtps::CDRMessage_t&) -> bool
+            {
+                return start_dropping;
+            };
+
+    DomainParticipantQos participant_qos = PARTICIPANT_QOS_DEFAULT;
+    participant_qos.transport().use_builtin_transports = false;
+    participant_qos.transport().user_transports.push_back(test_descriptor);
+
+    DataReaderQos reader_qos = DATAREADER_QOS_DEFAULT;
+    reader_qos.reliability().kind = RELIABLE_RELIABILITY_QOS;
+    reader_qos.history().kind = KEEP_ALL_HISTORY_QOS;
+
+    DataWriterQos writer_qos = DATAWRITER_QOS_DEFAULT;
+    writer_qos.history().kind = KEEP_ALL_HISTORY_QOS;
+
+    create_entities(
+        nullptr,
+        reader_qos,
+        SUBSCRIBER_QOS_DEFAULT,
+        writer_qos,
+        PUBLISHER_QOS_DEFAULT,
+        TOPIC_QOS_DEFAULT,
+        participant_qos);
+
+    DataWriter* data_writer2 = publisher_->create_datawriter(topic_, writer_qos);
+
+    create_instance_handles();
+    std::this_thread::sleep_for(std::chrono::milliseconds(100)); // Wait discovery
+
+    FooType data;
+    data.index(1);
+    data.message()[0] = '\0';
+    data.message()[1] = '\0';
+
+    for (int i = 0; i < 2; ++i)
+    {
+        data_writer_->write(&data, handle_ok_);
+    }
+
+    rtps::test_UDPv4Transport::test_UDPv4Transport_ShutdownAllNetwork = true;
+
+    for (int i = 0; i < 2; ++i)
+    {
+        data_writer2->write(&data, handle_ok_);
+    }
+
+    start_dropping = true;
+
+    rtps::test_UDPv4Transport::test_UDPv4Transport_ShutdownAllNetwork = false;
+
+    for (int i = 0; i < 2; ++i)
+    {
+        data_writer2->write(&data, handle_ok_);
+    }
+
+    for (int i = 0; i < 2; ++i)
+    {
+        data_writer_->write(&data, handle_ok_);
+    }
+
+    std::this_thread::sleep_for(std::chrono::milliseconds(100)); // Wait all received
+
+    FooSeq data_seq(num_samples);
+    SampleInfoSeq info_seq(num_samples);
+
+    EXPECT_EQ(ok_code, data_reader_->take(data_seq, info_seq, num_samples, NOT_READ_SAMPLE_STATE));
+    check_collection(data_seq, true, num_samples, expected_samples);
+
+    ASSERT_EQ(publisher_->delete_datawriter(data_writer2), ReturnCode_t::RETCODE_OK);
 }
 
 
