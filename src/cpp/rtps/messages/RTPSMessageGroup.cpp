@@ -189,7 +189,7 @@ RTPSMessageGroup::RTPSMessageGroup(
     endpoint_ = endpoint;
     sender_ = msg_sender;
     max_blocking_time_point_ = max_blocking_time_point;
-    max_blocking_time_is_set = true;
+    max_blocking_time_is_set_ = true;
 }
 
 RTPSMessageGroup::~RTPSMessageGroup() noexcept(false)
