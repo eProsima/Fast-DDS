@@ -22,7 +22,7 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
 
         set(SUBSCRIBERTESTS_SOURCE SubscriberTests.cpp)
         set(DATAREADERTESTS_SOURCE DataReaderTests.cpp)
-        
+
         if(WIN32)
             add_definitions(-D_WIN32_WINNT=0x0601)
         endif()
@@ -43,8 +43,6 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
 
         add_executable(DataReaderTests ${DATAREADERTESTS_SOURCE})
         target_compile_definitions(DataReaderTests PRIVATE FASTRTPS_NO_LIB
-            BOOST_ASIO_STANDALONE
-            ASIO_STANDALONE
             $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
             $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
             )
