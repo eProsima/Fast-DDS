@@ -1069,7 +1069,7 @@ TEST_F(DataReaderTests, resource_limits)
         FooSeq data_seq;
         SampleInfoSeq info_seq;
 
-        // With length == 0 the returned code should be okNO_DATA
+        // With length == 0 the returned code should be NO_DATA
         EXPECT_EQ(no_data_code, data_reader_->read(data_seq, info_seq, 0));
 
         // Up to max_samples_per_read, max_samples will be returned

@@ -297,6 +297,7 @@ private:
                     return false;
                 }
 
+                // Mark that some data is available
                 return_value_ = ReturnCode_t::RETCODE_OK;
             }
 
