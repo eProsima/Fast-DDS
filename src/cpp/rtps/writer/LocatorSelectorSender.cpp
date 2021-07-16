@@ -9,7 +9,7 @@ bool LocatorSelectorSender::send(
         CDRMessage_t* message,
         std::chrono::steady_clock::time_point max_blocking_time_point) const
 {
-    return writer.send(message, *this, max_blocking_time_point);
+    return writer.send_nts(message, *this, max_blocking_time_point);
 }
 
 } // namespace rtps

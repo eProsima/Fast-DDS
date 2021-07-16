@@ -1177,7 +1177,7 @@ private:
     /*!
      * This function tries to send the sample synchronously.
      * That is, it uses the user's thread, which is the one calling this function, to send the sample.
-     * It calls new function `RTPSWriter::deliver_sample()` for sending the sample.
+     * It calls new function `RTPSWriter::deliver_sample_nts()` for sending the sample.
      * If this function fails (for example because non-blocking socket is full), this function stores internally the sample to
      * try sending it again asynchronously.
      */

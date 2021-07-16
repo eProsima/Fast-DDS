@@ -429,7 +429,7 @@ public:
      * be a member of this RTPSWriter object.
      * @param max_blocking_time_point Future timepoint where blocking send should end.
      */
-    virtual bool send(
+    virtual bool send_nts(
             CDRMessage_t* message,
             const LocatorSelectorSender& locator_selector,
             std::chrono::steady_clock::time_point& max_blocking_time_point) const;

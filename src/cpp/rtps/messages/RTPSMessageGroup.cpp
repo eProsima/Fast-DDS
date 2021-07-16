@@ -236,6 +236,8 @@ void RTPSMessageGroup::send()
 
         if (full_msg_->length > RTPSMESSAGE_HEADER_SIZE)
         {
+            std::unique_lock<RecursiveTimedMutex> lock(endpoint_->getMutex());
+
 #if HAVE_SECURITY
             // TODO(Ricardo) Control message size if it will be encrypted.
             if (participant_->security_attributes().is_rtps_protected && endpoint_->supports_rtps_protection())

@@ -134,7 +134,7 @@ public:
             LocatorSelectorSender&,
             const std::chrono::time_point<std::chrono::steady_clock>&));
 
-    MOCK_METHOD3(send, bool(
+    MOCK_METHOD3(send_nts, bool(
             CDRMessage_t*,
             const LocatorSelectorSender&,
             std::chrono::steady_clock::time_point&));

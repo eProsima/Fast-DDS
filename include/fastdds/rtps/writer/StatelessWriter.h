@@ -155,7 +155,7 @@ public:
      * @param message Pointer to the buffer with the message already serialized.
      * @param max_blocking_time_point Future timepoint where blocking send should end.
      */
-    bool send(
+    bool send_nts(
             CDRMessage_t* message,
             const LocatorSelectorSender& locator_selector,
             std::chrono::steady_clock::time_point& max_blocking_time_point) const override;

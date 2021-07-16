@@ -429,12 +429,11 @@ bool RTPSWriter::is_pool_initialized() const
     return true;
 }
 
-bool RTPSWriter::send(
+bool RTPSWriter::send_nts(
         CDRMessage_t* message,
         const LocatorSelectorSender& locator_selector,
         std::chrono::steady_clock::time_point& max_blocking_time_point) const
 {
-    std::unique_lock<RecursiveTimedMutex> lock(mp_mutex);
     RTPSParticipantImpl* participant = getRTPSParticipant();
 
     return locator_selector.locator_selector.selected_size() == 0 ||
