@@ -273,7 +273,6 @@ private:
             CacheChange_t* change,
             bool& deserialization_error)
     {
-        // Mark that some data is available
         bool ret_val = false;
         deserialization_error = false;
 
