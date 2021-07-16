@@ -260,7 +260,7 @@ void RTPSMessageGroup::send()
             eprosima::fastdds::statistics::rtps::add_statistics_submessage(msgToSend);
 
             if (!sender_->send(msgToSend,
-                    max_blocking_time_is_set ? max_blocking_time_point_ : (std::chrono::steady_clock::now() +
+                    max_blocking_time_is_set_ ? max_blocking_time_point_ : (std::chrono::steady_clock::now() +
                     std::chrono::hours(24))))
             {
                 throw timeout();
@@ -502,8 +502,6 @@ bool RTPSMessageGroup::add_data_frag(
     // Calculate fragment size. If last fragment, size may be smaller
     uint32_t fragment_size = fragment_number < change.getFragmentCount() ? change.getFragmentSize() :
             change.serializedPayload.length - fragment_start;
-
-
     // Check limitation
     if (0 < sent_bytes_limitation_ &&
             (fragment_size > (sent_bytes_limitation_ - (current_sent_bytes_ + full_msg_->length))))

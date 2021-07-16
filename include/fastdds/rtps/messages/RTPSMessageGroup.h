@@ -313,7 +313,7 @@ private:
 
     std::chrono::steady_clock::time_point max_blocking_time_point_;
 
-    bool max_blocking_time_is_set = false;
+    bool max_blocking_time_is_set_ = false;
 
     std::unique_ptr<RTPSMessageGroup_t> send_buffer_;
 
