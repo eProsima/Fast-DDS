@@ -49,11 +49,11 @@
 #include <fastdds/rtps/common/Locator.h>
 #include <fastrtps/utils/IPLocator.h>
 
-#include "./FooBoundedType.hpp"
-#include "./FooBoundedTypeSupport.hpp"
+#include "FooBoundedType.hpp"
+#include "FooBoundedTypeSupport.hpp"
 
-#include "./FooType.hpp"
-#include "./FooTypeSupport.hpp"
+#include "FooType.hpp"
+#include "FooTypeSupport.hpp"
 
 #include "../../logging/mock/MockConsumer.h"
 
@@ -1600,6 +1600,46 @@ TEST_F(DataReaderTests, Deserialization_errors)
             check_sample_values(data_seq, "0123456789");
             EXPECT_EQ(ok_code, data_reader_->return_loan(data_seq, info_seq));
         }
+
+        {
+            FooSeq data_seq;
+            SampleInfoSeq info_seq;
+
+            // Reader should have 10 samples with the following states (R = read, N = not-read, / = removed from history)
+            // {N, N, N, N, N, N, N, N, N, N}
+
+            // This should return samples 0 to 9
+            EXPECT_EQ(ok_code, data_reader_->take(data_seq, info_seq, num_samples, READ_SAMPLE_STATE));
+            check_collection(data_seq, false, num_samples, num_samples);
+            check_sample_values(data_seq, "0123456789");
+            EXPECT_EQ(ok_code, data_reader_->return_loan(data_seq, info_seq));
+        }
+    }
+
+    // Check deserialization errors for read_next_sample and take_next_sample.
+    // Regression test for #12129
+    {
+        // Send two samples
+        for (char i = 0; i < 2; ++i)
+        {
+            data.message()[0] = 1;
+            EXPECT_EQ(ok_code, data_writer_->write(&data, handle_ok_));
+        }
+
+        // There are unread samples, so wait_for_unread should be ok
+        EXPECT_TRUE(data_reader_->wait_for_unread_message(time_to_wait));
+
+        {
+            FooType data;
+            SampleInfo info;
+            EXPECT_EQ(no_data_code, data_reader_->take_next_sample(&data, &info));
+        }
+
+        {
+            FooType data;
+            SampleInfo info;
+            EXPECT_EQ(no_data_code, data_reader_->read_next_sample(&data, &info));
+        }
     }
 
 }
@@ -2006,8 +2046,6 @@ TEST_F(DataReaderTests, read_samples_with_future_changes)
 
     ASSERT_EQ(publisher_->delete_datawriter(data_writer2), ReturnCode_t::RETCODE_OK);
 }
-
-
 
 } // namespace dds
 } // namespace fastdds
