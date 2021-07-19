@@ -273,8 +273,6 @@ private:
             CacheChange_t* change,
             bool& deserialization_error)
     {
-        // Mark that some data is available
-        return_value_ = ReturnCode_t::RETCODE_OK;
         bool ret_val = false;
         deserialization_error = false;
 
@@ -297,6 +295,9 @@ private:
                     deserialization_error = true;
                     return false;
                 }
+
+                // Mark that some data is available
+                return_value_ = ReturnCode_t::RETCODE_OK;
             }
 
             ++current_slot_;
