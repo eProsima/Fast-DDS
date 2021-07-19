@@ -23,6 +23,7 @@
 #include <fastdds/rtps/common/EntityId_t.hpp>
 #include <fastdds/rtps/common/GuidPrefix_t.hpp>
 #include <fastdds/rtps/common/RemoteLocators.hpp>
+#include <statistics/rtps/GuidUtils.hpp>
 
 #include <rtps/builtin/discovery/database/DiscoveryDataBase.hpp>
 
@@ -1528,13 +1529,15 @@ bool DiscoveryDataBase::is_writer(
         const eprosima::fastrtps::rtps::GUID_t& guid)
 {
     // RTPS Specification v2.3
-    // For writers: NO_KEY = 0x03, WITH_KEY = 0x02
-    // For built-in writers: NO_KEY = 0xc3, WITH_KEY = 0xc2
+    //    - For writers: NO_KEY = 0x03, WITH_KEY = 0x02
+    //    - For built-in writers: NO_KEY = 0xc3, WITH_KEY = 0xc2
+    // Furthermore, the Fast DDS Statistics Module defines an Entity ID for Statistics DataWriters
     const eprosima::fastrtps::rtps::octet identifier = guid.entityId.value[3];
     return ((identifier == 0x02) ||
            (identifier == 0xc2) ||
            (identifier == 0x03) ||
-           (identifier == 0xc3));
+           (identifier == 0xc3) ||
+           eprosima::fastdds::statistics::is_statistics_builtin(guid.entityId));
 }
 
 bool DiscoveryDataBase::is_reader(
