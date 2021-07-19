@@ -1806,7 +1806,7 @@ TEST_F(DataReaderTests, check_key_history_wholesomeness_on_unmatch)
     // wait for termination
     std::this_thread::sleep_for(std::chrono::milliseconds(500));
     // check expected result, if query thread hangs res = ReturnCode_t::RETCODE_OK
-    ASSERT_EQ(res, ReturnCode_t::RETCODE_BAD_PARAMETER);
+    ASSERT_NE(res, ReturnCode_t::RETCODE_OK);
     query.join();
 }
 
