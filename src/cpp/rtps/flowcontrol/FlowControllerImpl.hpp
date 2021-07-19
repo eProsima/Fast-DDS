@@ -6,6 +6,7 @@
 #include <fastdds/rtps/writer/RTPSWriter.h>
 
 #include <map>
+#include <unordered_map>
 #include <thread>
 #include <mutex>
 #include <cassert>
@@ -33,6 +34,25 @@ struct FlowQueue
     }
 
     FlowQueue(
+            FlowQueue&& old)
+    {
+        swap(std::move(old));
+    }
+
+    ~FlowQueue()
+    {
+        assert(&tail_new_interested == head_new_interested.writer_info.next);
+        assert(&tail_old_interested == head_old_interested.writer_info.next);
+    }
+
+    FlowQueue& operator =(
+            FlowQueue&& old)
+    {
+        swap(std::move(old));
+        return *this;
+    }
+
+    void swap(
             FlowQueue&& old)
     {
         if (old.head_new_interested.writer_info.next == &old.tail_new_interested)
@@ -104,12 +124,6 @@ struct FlowQueue
             head_old_ones.writer_info.next->writer_info.previous = &head_old_ones;
             tail_old_ones.writer_info.previous->writer_info.next = &tail_old_ones;
         }
-    }
-
-    ~FlowQueue()
-    {
-        assert(&tail_new_interested == head_new_interested.writer_info.next);
-        assert(&tail_old_interested == head_old_interested.writer_info.next);
     }
 
     bool is_empty() const
@@ -506,6 +520,10 @@ private:
 //! Round Robin scheduling
 struct FlowControllerRoundRobinSchedule
 {
+    using element = std::tuple<fastrtps::rtps::RTPSWriter*, FlowQueue>;
+    using container = std::vector<element>;
+    using iterator = container::iterator;
+
     FlowControllerRoundRobinSchedule()
     {
         next_writer_ = writers_queue_.begin();
@@ -518,11 +536,11 @@ struct FlowControllerRoundRobinSchedule
 
         if (writers_queue_.end() != next_writer_)
         {
-            current_writer = next_writer_->first;
+            current_writer = std::get<0>(*next_writer_);
         }
 
-        assert(writers_queue_.end() == writers_queue_.find(writer));
-        writers_queue_.emplace(writer, FlowQueue());
+        assert(writers_queue_.end() == find(writer));
+        writers_queue_.emplace_back(writer, FlowQueue());
 
         if (nullptr == current_writer)
         {
@@ -530,7 +548,7 @@ struct FlowControllerRoundRobinSchedule
         }
         else
         {
-            next_writer_ = writers_queue_.find(current_writer);
+            next_writer_ = find(current_writer);
         }
     }
 
@@ -541,12 +559,12 @@ struct FlowControllerRoundRobinSchedule
 
         if (writers_queue_.end() != next_writer_)
         {
-            current_writer = next_writer_->first;
+            current_writer = std::get<0>(*next_writer_);
         }
 
-        auto it = writers_queue_.find(writer);
+        auto it = find(writer);
         assert(it != writers_queue_.end());
-        assert(it->second.is_empty());
+        assert(std::get<1>(*it).is_empty());
         writers_queue_.erase(it);
 
         if (nullptr == current_writer ||
@@ -556,7 +574,7 @@ struct FlowControllerRoundRobinSchedule
         }
         else
         {
-            next_writer_ = writers_queue_.find(current_writer);
+            next_writer_ = find(current_writer);
         }
     }
 
@@ -572,18 +590,18 @@ struct FlowControllerRoundRobinSchedule
             fastrtps::rtps::RTPSWriter* writer,
             fastrtps::rtps::CacheChange_t* change)
     {
-        auto it = writers_queue_.find(writer);
+        auto it = find(writer);
         assert(it != writers_queue_.end());
-        it->second.add_new_sample(change);
+        std::get<1>(*it).add_new_sample(change);
     }
 
     void add_old_sample(
             fastrtps::rtps::RTPSWriter* writer,
             fastrtps::rtps::CacheChange_t* change)
     {
-        auto it = writers_queue_.find(writer);
+        auto it = find(writer);
         assert(it != writers_queue_.end());
-        it->second.add_old_sample(change);
+        std::get<1>(*it).add_old_sample(change);
     }
 
     fastrtps::rtps::CacheChange_t* get_next_change_nts()
@@ -596,7 +614,7 @@ struct FlowControllerRoundRobinSchedule
 
             do
             {
-                ret_change = next_writer_->second.get_next_change();
+                ret_change = std::get<1>(*next_writer_).get_next_change();
             } while (nullptr == ret_change && starting_it != (next_writer_ =
             writers_queue_.end() == std::next(next_writer_) ? writers_queue_.begin() :std::next(next_writer_)));
         }
@@ -609,7 +627,7 @@ struct FlowControllerRoundRobinSchedule
         // This function should be called with mutex_  and interested_lock locked, because the queue is changed.
         for (auto& queue : writers_queue_)
         {
-            queue.second.add_interested_changes_to_queue();
+            std::get<1>(queue).add_interested_changes_to_queue();
         }
     }
 
@@ -624,8 +642,18 @@ struct FlowControllerRoundRobinSchedule
 
 private:
 
-    std::map<fastrtps::rtps::RTPSWriter*, FlowQueue> writers_queue_;
-    std::map<fastrtps::rtps::RTPSWriter*, FlowQueue>::iterator next_writer_;
+    iterator find(
+            const fastrtps::rtps::RTPSWriter* writer)
+    {
+        return std::find_if(writers_queue_.begin(), writers_queue_.end(),
+                       [writer](const element& current_writer) -> bool
+                       {
+                           return writer == std::get<0>(current_writer);
+                       });
+    }
+
+    container writers_queue_;
+    iterator next_writer_;
 
 };
 
@@ -747,7 +775,7 @@ private:
 
     std::map<int32_t, FlowQueue> writers_queue_;
 
-    std::map<fastrtps::rtps::RTPSWriter*, int32_t> priorities_;
+    std::unordered_map<fastrtps::rtps::RTPSWriter*, int32_t> priorities_;
 };
 
 //! Priority with reservation scheduling
@@ -945,7 +973,8 @@ struct FlowControllerPriorityWithReservationSchedule
 
 private:
 
-    using map_writers = std::map<fastrtps::rtps::RTPSWriter*, std::tuple<FlowQueue, int32_t, uint32_t, uint32_t>>;
+    using map_writers = std::unordered_map<fastrtps::rtps::RTPSWriter*, std::tuple<FlowQueue, int32_t, uint32_t,
+                    uint32_t>>;
 
     using map_priorities = std::map<int32_t, std::vector<fastrtps::rtps::RTPSWriter*>>;
 
