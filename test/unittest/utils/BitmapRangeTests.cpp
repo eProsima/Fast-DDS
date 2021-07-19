@@ -431,6 +431,8 @@ TEST_F(BitmapRangeTests, full_range)
 
 TEST_F(BitmapRangeTests, serialization)
 {
+    using value_type = TestType::bitmap_type::value_type;
+
     uint32_t num_bits;
     uint32_t num_longs;
     TestType::bitmap_type bitmap;
@@ -455,6 +457,25 @@ TEST_F(BitmapRangeTests, serialization)
     EXPECT_EQ(num_bits, 20u);
     EXPECT_EQ(num_longs, 1u);
     EXPECT_EQ(bitmap[0], 0xFFFFF000u);
+
+    // Case when whole bitmap elements are used
+    uint32_t test_longs = 1;
+
+    do
+    {
+        uint32_t test_bits = test_longs * sizeof(value_type) * 8;
+        bitmap.fill(std::numeric_limits<uint32_t>::max());
+        uut.bitmap_set(test_bits, bitmap.data());
+        uut.bitmap_get(num_bits, bitmap, num_longs);
+        EXPECT_EQ(num_bits, test_bits);
+        EXPECT_EQ(num_longs, test_longs);
+
+        // use a vector as result pattern
+        std::vector<value_type> pattern(test_longs, std::numeric_limits<uint32_t>::max());
+        pattern.resize(bitmap.max_size(), 0);
+        EXPECT_TRUE(std::equal(bitmap.begin(), bitmap.end(), pattern.begin()));
+    }
+    while ( ++test_longs <= bitmap.max_size());
 }
 
 TEST_F(BitmapRangeTests, traversal)
