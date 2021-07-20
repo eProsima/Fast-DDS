@@ -140,39 +140,38 @@ struct ReadTakeCommand
 
                 // If the change is in the future we can skip the remaining changes in the history, as they will be
                 // in the future also
-                if (is_future_change)
+                if (!is_future_change)
                 {
-                    break;
-                }
 
-                // Add sample and info to collections
-                ReturnCode_t previous_return_value = return_value_;
-                bool added = add_sample(change, remove_change);
-                reader_->end_sample_access_nts(change, wp, added);
+                    // Add sample and info to collections
+                    ReturnCode_t previous_return_value = return_value_;
+                    bool added = add_sample(change, remove_change);
+                    reader_->end_sample_access_nts(change, wp, added);
 
-                // Check if the payload is dirty
-                if (added && !check_datasharing_validity(change, data_values_.has_ownership(), wp))
-                {
-                    // Decrement length of collections
-                    --current_slot_;
-                    ++remaining_samples_;
-                    data_values_.length(current_slot_);
-                    sample_infos_.length(current_slot_);
+                    // Check if the payload is dirty
+                    if (added && !check_datasharing_validity(change, data_values_.has_ownership(), wp))
+                    {
+                        // Decrement length of collections
+                        --current_slot_;
+                        ++remaining_samples_;
+                        data_values_.length(current_slot_);
+                        sample_infos_.length(current_slot_);
 
-                    return_value_ = previous_return_value;
-                    finished_ = false;
+                        return_value_ = previous_return_value;
+                        finished_ = false;
 
-                    remove_change = true;
-                    added = false;
-                }
+                        remove_change = true;
+                        added = false;
+                    }
 
-                if (remove_change || (added && take_samples))
-                {
-                    // Remove from history
-                    history_.remove_change_sub(change, it);
+                    if (remove_change || (added && take_samples))
+                    {
+                        // Remove from history
+                        history_.remove_change_sub(change, it);
 
-                    // Current iterator will point to change next to the one removed. Avoid incrementing.
-                    continue;
+                        // Current iterator will point to change next to the one removed. Avoid incrementing.
+                        continue;
+                    }
                 }
             }
 
@@ -274,8 +273,6 @@ private:
             CacheChange_t* change,
             bool& deserialization_error)
     {
-        // Mark that some data is available
-        return_value_ = ReturnCode_t::RETCODE_OK;
         bool ret_val = false;
         deserialization_error = false;
 
@@ -298,6 +295,9 @@ private:
                     deserialization_error = true;
                     return false;
                 }
+
+                // Mark that some data is available
+                return_value_ = ReturnCode_t::RETCODE_OK;
             }
 
             ++current_slot_;

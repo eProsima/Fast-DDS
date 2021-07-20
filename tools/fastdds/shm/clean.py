@@ -111,7 +111,7 @@ class Clean:
                 f = [segment_file, lock_file]
                 zombie_files += f
             else:
-                self.segments_in_use += 1
+                self.__segments_in_use += 1
 
         return zombie_files
 
@@ -146,7 +146,7 @@ class Clean:
                 zombie_files += [
                     port_lock_file, port_segment_file, port_mutex_file]
             else:
-                self.ports_in_use += 1
+                self.__ports_in_use += 1
 
         return [self.__shm_dir() / file_name for file_name in zombie_files]
 
