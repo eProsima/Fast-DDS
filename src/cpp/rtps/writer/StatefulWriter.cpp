@@ -731,7 +731,6 @@ DeliveryRetCode StatefulWriter::deliver_sample_to_network(
                 should_be_sent = true;
                 inline_qos |= (*remote_reader)->expects_inline_qos();
 
-                // TODO Comprobar si el hueco esta en el history, y enviar uno gap a todos.
                 // If there is a hole (removed from history or not relevants) between previous sample and this one,
                 // send it a personal GAP.
                 if (SequenceNumber_t::unknown() != gap_seq)
@@ -1055,7 +1054,7 @@ bool StatefulWriter::matched_reader_add(
     update_reader_info(locator_selector_general_, true);
     update_reader_info(locator_selector_async_, true);
 
-    if (rp->is_datasharing_reader()) //TODO Review why we are not storing ChangeForReader_t for this remotes
+    if (rp->is_datasharing_reader())
     {
         return true;
     }
