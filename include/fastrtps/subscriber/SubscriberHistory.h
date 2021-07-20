@@ -61,7 +61,18 @@ public:
             uint32_t payloadMax,
             rtps::MemoryManagementPolicy_t mempolicy);
 
-    virtual ~SubscriberHistory();
+    ~SubscriberHistory() override;
+
+    /**
+     * Remove a specific change from the history.
+     * No Thread Safe
+     * @param removal iterator to the CacheChange_t to remove.
+     * @param release defaults to true and hints if the CacheChange_t should return to the pool
+     * @return iterator to the next CacheChange_t or end iterator.
+     */
+    iterator remove_change_nts(
+            const_iterator removal,
+            bool release = true) override;
 
     /**
      * Called when a change is received by the Subscriber. Will add the change to the history.
@@ -72,7 +83,7 @@ public:
      */
     bool received_change(
             rtps::CacheChange_t* change,
-            size_t unknown_missing_changes_up_to);
+            size_t unknown_missing_changes_up_to) override;
 
     /** @name Read or take data methods.
      * Methods to read or take data from the History.

@@ -680,5 +680,29 @@ std::pair<bool, SubscriberHistory::instance_info> SubscriberHistory::lookup_inst
     return { false, {InstanceHandle_t(), nullptr} };
 }
 
+ReaderHistory::iterator SubscriberHistory::remove_change_nts(
+        ReaderHistory::const_iterator removal,
+        bool release)
+{
+    CacheChange_t* p_sample = nullptr;
+
+    if ( removal != changesEnd()
+            && (p_sample = *removal)->instanceHandle.isDefined()
+            && topic_att_.getTopicKind() == WITH_KEY)
+    {
+        // clean any references to this CacheChange in the key state collection
+        auto it = keyed_changes_.find(p_sample->instanceHandle);
+
+        // if keyed and in history must be in the map
+        assert(it != keyed_changes_.end());
+
+        auto& c = it->second.cache_changes;
+        c.erase(std::remove(c.begin(), c.end(), p_sample), c.end());
+    }
+
+    // call the base class
+    return ReaderHistory::remove_change_nts(removal, release);
+}
+
 } // namespace fastrtps
 } // namsepace eprosima
