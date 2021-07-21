@@ -21,231 +21,156 @@ namespace rtps {
 
 struct FlowQueue
 {
-    FlowQueue()
+    FlowQueue() noexcept = default;
+
+    ~FlowQueue() noexcept
     {
-        head_new_interested.writer_info.next = &tail_new_interested;
-        tail_new_interested.writer_info.previous = &head_new_interested;
-        head_old_interested.writer_info.next = &tail_old_interested;
-        tail_old_interested.writer_info.previous = &head_old_interested;
-        head_new_ones.writer_info.next = &tail_new_ones;
-        tail_new_ones.writer_info.previous = &head_new_ones;
-        head_old_ones.writer_info.next = &tail_old_ones;
-        tail_old_ones.writer_info.previous = &head_old_ones;
+        assert(new_interested_.is_empty());
+        assert(old_interested_.is_empty());
     }
 
     FlowQueue(
-            FlowQueue&& old)
+            FlowQueue&& old) noexcept
     {
         swap(std::move(old));
     }
 
-    ~FlowQueue()
-    {
-        assert(&tail_new_interested == head_new_interested.writer_info.next);
-        assert(&tail_old_interested == head_old_interested.writer_info.next);
-    }
-
     FlowQueue& operator =(
-            FlowQueue&& old)
+            FlowQueue&& old) noexcept
     {
         swap(std::move(old));
         return *this;
     }
 
     void swap(
-            FlowQueue&& old)
+            FlowQueue&& old) noexcept
     {
-        if (old.head_new_interested.writer_info.next == &old.tail_new_interested)
-        {
-            assert(old.tail_new_interested.writer_info.previous == &old.head_new_interested);
-            head_new_interested.writer_info.next = &tail_new_interested;
-            tail_new_interested.writer_info.previous = &head_new_interested;
-        }
-        else
-        {
-            assert(old.tail_new_interested.writer_info.previous != &old.head_new_interested);
-            head_new_interested.writer_info.next = old.head_new_interested.writer_info.next;
-            tail_new_interested.writer_info.previous = old.tail_new_interested.writer_info.previous;
-            old.head_new_interested.writer_info.next = &old.tail_new_interested;
-            old.tail_new_interested.writer_info.previous = &old.head_new_interested;
-            head_new_interested.writer_info.next->writer_info.previous = &head_new_interested;
-            tail_new_interested.writer_info.previous->writer_info.next = &tail_new_interested;
-        }
+        new_interested_.swap(old.new_interested_);
+        old_interested_.swap(old.old_interested_);
 
-        if (old.head_old_interested.writer_info.next == &old.tail_old_interested)
-        {
-            assert(old.tail_old_interested.writer_info.previous == &old.head_old_interested);
-            head_old_interested.writer_info.next = &tail_old_interested;
-            tail_old_interested.writer_info.previous = &head_old_interested;
-        }
-        else
-        {
-            assert(old.tail_old_interested.writer_info.previous != &old.head_old_interested);
-            head_old_interested.writer_info.next = old.head_old_interested.writer_info.next;
-            tail_old_interested.writer_info.previous = old.tail_old_interested.writer_info.previous;
-            old.head_old_interested.writer_info.next = &old.tail_old_interested;
-            old.tail_old_interested.writer_info.previous = &old.head_old_interested;
-            head_old_interested.writer_info.next->writer_info.previous = &head_old_interested;
-            tail_old_interested.writer_info.previous->writer_info.next = &tail_old_interested;
-        }
-
-
-        if (old.head_new_ones.writer_info.next == &old.tail_new_ones)
-        {
-            assert(old.tail_new_ones.writer_info.previous == &old.head_new_ones);
-            head_new_ones.writer_info.next = &tail_new_ones;
-            tail_new_ones.writer_info.previous = &head_new_ones;
-        }
-        else
-        {
-            assert(old.tail_new_ones.writer_info.previous != &old.head_new_ones);
-            head_new_ones.writer_info.next = old.head_new_ones.writer_info.next;
-            tail_new_ones.writer_info.previous = old.tail_new_ones.writer_info.previous;
-            old.head_new_ones.writer_info.next = &old.tail_new_ones;
-            old.tail_new_ones.writer_info.previous = &old.head_new_ones;
-            head_new_ones.writer_info.next->writer_info.previous = &head_new_ones;
-            tail_new_ones.writer_info.previous->writer_info.next = &tail_new_ones;
-        }
-
-
-        if (old.head_old_ones.writer_info.next == &old.tail_old_ones)
-        {
-            assert(old.tail_old_ones.writer_info.previous == &old.head_old_ones);
-            head_old_ones.writer_info.next = &tail_old_ones;
-            tail_old_ones.writer_info.previous = &head_old_ones;
-        }
-        else
-        {
-            assert(old.tail_old_ones.writer_info.previous != &old.head_old_ones);
-            head_old_ones.writer_info.next = old.head_old_ones.writer_info.next;
-            tail_old_ones.writer_info.previous = old.tail_old_ones.writer_info.previous;
-            old.head_old_ones.writer_info.next = &old.tail_old_ones;
-            old.tail_old_ones.writer_info.previous = &old.head_old_ones;
-            head_old_ones.writer_info.next->writer_info.previous = &head_old_ones;
-            tail_old_ones.writer_info.previous->writer_info.next = &tail_old_ones;
-        }
+        new_ones_.swap(old.new_ones_);
+        old_ones_.swap(old.old_ones_);
     }
 
-    bool is_empty() const
+    bool is_empty() const noexcept
     {
-        assert(((&tail_new_ones == head_new_ones.writer_info.next &&
-                &head_new_ones == tail_new_ones.writer_info.previous) ||
-                (&tail_new_ones != head_new_ones.writer_info.next &&
-                &head_new_ones != tail_new_ones.writer_info.previous)) &&
-                ((&tail_old_ones == head_old_ones.writer_info.next &&
-                &head_old_ones == tail_old_ones.writer_info.previous) ||
-                (&tail_old_ones != head_old_ones.writer_info.next &&
-                &head_old_ones != tail_old_ones.writer_info.previous)));
-
-        return &tail_new_ones == head_new_ones.writer_info.next &&
-               &tail_old_ones == head_old_ones.writer_info.next;
+        return new_ones_.is_empty() && old_ones_.is_empty();
     }
 
     void add_new_sample(
-            fastrtps::rtps::CacheChange_t* change)
+            fastrtps::rtps::CacheChange_t* change) noexcept
     {
-        change->writer_info.previous = tail_new_interested.writer_info.previous;
-        change->writer_info.previous->writer_info.next = change;
-        tail_new_interested.writer_info.previous = change;
-        change->writer_info.next = &tail_new_interested;
-
+        new_interested_.add_change(change);
     }
 
     void add_old_sample(
-            fastrtps::rtps::CacheChange_t* change)
+            fastrtps::rtps::CacheChange_t* change) noexcept
     {
-        change->writer_info.previous = tail_old_interested.writer_info.previous;
-        change->writer_info.previous->writer_info.next = change;
-        tail_old_interested.writer_info.previous = change;
-        change->writer_info.next = &tail_old_interested;
+        old_interested_.add_change(change);
     }
 
-    fastrtps::rtps::CacheChange_t* get_next_change()
+    fastrtps::rtps::CacheChange_t* get_next_change() noexcept
     {
         if (!is_empty())
         {
-            return &tail_new_ones !=
-                   head_new_ones.writer_info.next ?
-                   head_new_ones.writer_info.next : head_old_ones.writer_info.next;
+            return !new_ones_.is_empty() ?
+                   new_ones_.head.writer_info.next : old_ones_.head.writer_info.next;
         }
 
         return nullptr;
     }
 
-    void add_interested_changes_to_queue()
+    void add_interested_changes_to_queue() noexcept
     {
         // This function should be called with mutex_  and interested_lock locked, because the queue is changed.
-        assert(((&tail_new_interested == head_new_interested.writer_info.next &&
-                &head_new_interested == tail_new_interested.writer_info.previous) ||
-                (&tail_new_interested != head_new_interested.writer_info.next &&
-                &head_new_interested != tail_new_interested.writer_info.previous)) &&
-                ((&tail_old_interested == head_old_interested.writer_info.next &&
-                &head_old_interested == tail_old_interested.writer_info.previous) ||
-                (&tail_old_interested != head_old_interested.writer_info.next &&
-                &head_old_interested != tail_old_interested.writer_info.previous)));
-
-        fastrtps::rtps::CacheChange_t* interested_it = head_new_interested.writer_info.next;
-        fastrtps::rtps::CacheChange_t* next_it = nullptr;
-        while (&tail_new_interested != interested_it)
-        {
-            next_it = interested_it->writer_info.next;
-            interested_it->writer_info.previous->writer_info.next = interested_it->writer_info.next;
-            interested_it->writer_info.next->writer_info.previous = interested_it->writer_info.previous;
-            interested_it->writer_info.previous = tail_new_ones.writer_info.previous;
-            interested_it->writer_info.previous->writer_info.next = interested_it;
-            tail_new_ones.writer_info.previous = interested_it;
-            interested_it->writer_info.next = &tail_new_ones;
-
-            interested_it = next_it;
-        }
-
-        interested_it = head_old_interested.writer_info.next;
-        next_it = nullptr;
-        while (&tail_old_interested != interested_it)
-        {
-            next_it = interested_it->writer_info.next;
-            interested_it->writer_info.previous->writer_info.next = interested_it->writer_info.next;
-            interested_it->writer_info.next->writer_info.previous = interested_it->writer_info.previous;
-            interested_it->writer_info.previous = tail_old_ones.writer_info.previous;
-            interested_it->writer_info.previous->writer_info.next = interested_it;
-            tail_old_ones.writer_info.previous = interested_it;
-            interested_it->writer_info.next = &tail_old_ones;
-
-            interested_it = next_it;
-        }
+        new_ones_.add_list(new_interested_);
+        old_ones_.add_list(old_interested_);
     }
 
-    //! Head element of interested new changes list to be included.
+private:
+
+    struct ListInfo
+    {
+        ListInfo() noexcept
+        {
+            clear();
+        }
+
+        void swap(
+                ListInfo& other) noexcept
+        {
+            if (other.is_empty())
+            {
+                clear();
+            }
+            else
+            {
+                head.writer_info.next = other.head.writer_info.next;
+                tail.writer_info.previous = other.tail.writer_info.previous;
+                other.clear();
+                head.writer_info.next->writer_info.previous = &head;
+                tail.writer_info.previous->writer_info.next = &tail;
+            }
+        }
+
+        void clear() noexcept
+        {
+            head.writer_info.next = &tail;
+            tail.writer_info.previous = &head;
+        }
+
+        bool is_empty() const noexcept
+        {
+            assert((&tail == head.writer_info.next && &head == tail.writer_info.previous) ||
+                    (&tail != head.writer_info.next && &head != tail.writer_info.previous));
+            return &tail == head.writer_info.next;
+        }
+
+        void add_change(
+                fastrtps::rtps::CacheChange_t* change) noexcept
+        {
+            change->writer_info.previous = tail.writer_info.previous;
+            change->writer_info.previous->writer_info.next = change;
+            tail.writer_info.previous = change;
+            change->writer_info.next = &tail;
+        }
+
+        void add_list(
+                ListInfo& list) noexcept
+        {
+            if (!list.is_empty())
+            {
+                fastrtps::rtps::CacheChange_t* first = list.head.writer_info.next;
+                fastrtps::rtps::CacheChange_t* last = list.tail.writer_info.previous;
+
+                first->writer_info.previous = tail.writer_info.previous;
+                first->writer_info.previous->writer_info.next = first;
+                last->writer_info.next = &tail;
+                tail.writer_info.previous = last;
+
+                list.clear();
+            }
+        }
+
+        fastrtps::rtps::CacheChange_t head;
+        fastrtps::rtps::CacheChange_t tail;
+    };
+
+    //! List of interested new changes to be included.
     //! Should be protected with changes_interested_mutex.
-    fastrtps::rtps::CacheChange_t head_new_interested;
+    ListInfo new_interested_;
 
-    //! Tail element of interested new changes list to be included.
+    //! List of interested old changes to be included.
     //! Should be protected with changes_interested_mutex.
-    fastrtps::rtps::CacheChange_t tail_new_interested;
+    ListInfo old_interested_;
 
-    //! Head element of interested old changes list to be included.
-    //! Should be protected with changes_interested_mutex.
-    fastrtps::rtps::CacheChange_t head_old_interested;
-
-    //! Tail element of interested changes list to be included.
-    //! Should be protected with old changes_interested_mutex.
-    fastrtps::rtps::CacheChange_t tail_old_interested;
-
-    //! Head element on the queue.
+    //! List of new changes
     //! Should be protected with mutex_.
-    fastrtps::rtps::CacheChange_t head_new_ones;
+    ListInfo new_ones_;
 
-    //! Tail element on the queue.
+    //! List of old changes
     //! Should be protected with mutex_.
-    fastrtps::rtps::CacheChange_t tail_new_ones;
-
-    //! Head element on the queue.
-    //! Should be protected with mutex_.
-    fastrtps::rtps::CacheChange_t head_old_ones;
-
-    //! Tail element on the queue.
-    //! Should be protected with mutex_.
-    fastrtps::rtps::CacheChange_t tail_old_ones;
+    ListInfo old_ones_;
 };
 
 /** Classes used to specify FlowController's publication model **/
