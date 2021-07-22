@@ -526,7 +526,7 @@ TEST_P(PubSubHistory, PubSubAsReliableKeepLastReaderSmallDepthTwoPublishers)
     // Wait for discovery.
     writer.wait_discovery();
     writer2.wait_discovery();
-    reader.wait_discovery();
+    reader.wait_discovery(std::chrono::seconds::zero(), 2);
 
     HelloWorld data;
     data.message("Hello world!");
