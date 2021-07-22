@@ -391,6 +391,8 @@ ReturnCode_t DataWriterImpl::loan_sample(
         return ReturnCode_t::RETCODE_NOT_ENABLED;
     }
 
+    std::lock_guard<RecursiveTimedMutex> lock(writer_->getMutex());
+
     // Get one payload from the pool
     PayloadInfo_t payload;
     uint32_t size = type_->m_typeSize;
@@ -465,6 +467,8 @@ ReturnCode_t DataWriterImpl::discard_loan(
     {
         return ReturnCode_t::RETCODE_NOT_ENABLED;
     }
+
+    std::lock_guard<RecursiveTimedMutex> lock(writer_->getMutex());
 
     // Remove sample from loans collection
     PayloadInfo_t payload;
