@@ -673,7 +673,6 @@ void StatefulWriter::deliver_sample_to_datasharing(
         bool dumb = false;
         if (remoteReader->change_is_unsent(change->sequenceNumber, dummy, gap_seq, dumb))
         {
-            remoteReader->datasharing_notify();
             if (!remoteReader->is_reliable())
             {
                 remoteReader->acked_changes_set(change->sequenceNumber + 1);
@@ -685,6 +684,7 @@ void StatefulWriter::deliver_sample_to_datasharing(
                     UNACKNOWLEDGED,
                     false);
             }
+            remoteReader->datasharing_notify();
         }
     }
 }
