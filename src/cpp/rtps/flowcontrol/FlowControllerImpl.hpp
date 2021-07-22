@@ -249,7 +249,7 @@ struct FlowControllerAsyncPublishMode
 };
 
 //! Sends new samples synchronously. Old samples are sent asynchronously */
-struct FlowControllerSyncPublishMode : public FlowControllerPureSyncPublishMode, FlowControllerAsyncPublishMode
+struct FlowControllerSyncPublishMode : public FlowControllerPureSyncPublishMode, public FlowControllerAsyncPublishMode
 {
 
     FlowControllerSyncPublishMode(
@@ -258,12 +258,6 @@ struct FlowControllerSyncPublishMode : public FlowControllerPureSyncPublishMode,
         : FlowControllerPureSyncPublishMode(participant, descriptor)
         , FlowControllerAsyncPublishMode(participant, descriptor)
     {
-    }
-
-    bool fast_check_is_there_slot_for_change(
-            fastrtps::rtps::CacheChange_t*) const
-    {
-        return true;
     }
 
 };
