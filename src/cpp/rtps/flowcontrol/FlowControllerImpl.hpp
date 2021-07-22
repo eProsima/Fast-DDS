@@ -725,12 +725,14 @@ struct FlowControllerPriorityWithReservationSchedule
             {
                 if (-10 > priority || 10 < priority)
                 {
+                    priority = 10;
                     logError(RTPS_WRITER,
                             "Wrong value for fastdds.sfc.priority property. Range is [-10, 10]. Priority set to lowest (10)");
                 }
             }
             else
             {
+                priority = 10;
                 logError(RTPS_WRITER,
                         "Not numerical value for fastdds.sfc.priority property. Priority set to lowest (10)");
             }
@@ -749,12 +751,14 @@ struct FlowControllerPriorityWithReservationSchedule
             {
                 if (100 < reservation)
                 {
+                    reservation = 0;
                     logError(RTPS_WRITER,
                             "Wrong value for fastdds.sfc.bandwidth_reservation property. Range is [0, 100]. Reservation set to lowest (0)");
                 }
             }
             else
             {
+                reservation = 0;
                 logError(RTPS_WRITER,
                         "Not numerical value for fastdds.sfc.bandwidth_reservation property. Reservation set to lowest (0)");
             }
@@ -768,16 +772,7 @@ struct FlowControllerPriorityWithReservationSchedule
         (void)ret;
         assert(ret.second);
 
-        auto priority_it = priorities_.find(priority);
-
-        if (priority_it == priorities_.end())
-        {
-            priorities_.insert({priority, {writer}});
-        }
-        else
-        {
-            priority_it->second.push_back(writer);
-        }
+        priorities_[priority].push_back(writer);
     }
 
     void unregister_writer(
