@@ -622,13 +622,9 @@ struct FlowControllerHighPrioritySchedule
         (void)ret;
         assert(ret.second);
 
-        // Check the priority was created.
-        auto priority_it = writers_queue_.find(priority);
-
-        if (priority_it == writers_queue_.end())
-        {
-            writers_queue_.emplace(priority, FlowQueue());
-        }
+        // Ensure the priority is created.
+        FlowQueue& queue = writers_queue_[priority];
+        (void)queue;
     }
 
     void unregister_writer(
@@ -648,24 +644,14 @@ struct FlowControllerHighPrioritySchedule
             fastrtps::rtps::RTPSWriter* writer,
             fastrtps::rtps::CacheChange_t* change)
     {
-        // Find priority.
-        auto priority_it = priorities_.find(writer);
-        assert(priority_it != priorities_.end());
-        auto queue_it = writers_queue_.find(priority_it->second);
-        assert(queue_it != writers_queue_.end());
-        queue_it->second.add_new_sample(change);
+        find_queue(writer).add_new_sample(change);
     }
 
     void add_old_sample(
             fastrtps::rtps::RTPSWriter* writer,
             fastrtps::rtps::CacheChange_t* change)
     {
-        // Find priority.
-        auto priority_it = priorities_.find(writer);
-        assert(priority_it != priorities_.end());
-        auto queue_it = writers_queue_.find(priority_it->second);
-        assert(queue_it != writers_queue_.end());
-        queue_it->second.add_old_sample(change);
+        find_queue(writer).add_old_sample(change);
     }
 
     fastrtps::rtps::CacheChange_t* get_next_change_nts()
@@ -702,6 +688,17 @@ struct FlowControllerHighPrioritySchedule
     }
 
 private:
+
+    FlowQueue& find_queue(
+            fastrtps::rtps::RTPSWriter* writer)
+    {
+        // Find priority.
+        auto priority_it = priorities_.find(writer);
+        assert(priority_it != priorities_.end());
+        auto queue_it = writers_queue_.find(priority_it->second);
+        assert(queue_it != writers_queue_.end());
+        return queue_it->second;
+    }
 
     std::map<int32_t, FlowQueue> writers_queue_;
 
