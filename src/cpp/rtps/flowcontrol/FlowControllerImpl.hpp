@@ -605,12 +605,14 @@ struct FlowControllerHighPrioritySchedule
             {
                 if (-10 > priority || 10 < priority)
                 {
+                    priority = 10;
                     logError(RTPS_WRITER,
                             "Wrong value for fastdds.sfc.priority property. Range is [-10, 10]. Priority set to lowest (10)");
                 }
             }
             else
             {
+                priority = 10;
                 logError(RTPS_WRITER,
                         "Not numerical value for fastdds.sfc.priority property. Priority set to lowest (10)");
             }
