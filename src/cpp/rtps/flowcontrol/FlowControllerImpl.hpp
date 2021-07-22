@@ -474,20 +474,24 @@ struct FlowControllerRoundRobinSchedule
     void unregister_writer(
             fastrtps::rtps::RTPSWriter* writer)
     {
-        fastrtps::rtps::RTPSWriter* current_writer = nullptr;
-
-        if (writers_queue_.end() != next_writer_)
-        {
-            current_writer = std::get<0>(*next_writer_);
-        }
+        // Queue cannot be empty, as writer should be present
+        assert(writers_queue_.end() != next_writer_);
+        fastrtps::rtps::RTPSWriter* current_writer = std::get<0>(*next_writer_);
+        assert(nullptr != current_writer);
 
         auto it = find(writer);
         assert(it != writers_queue_.end());
         assert(std::get<1>(*it).is_empty());
-        writers_queue_.erase(it);
 
-        if (nullptr == current_writer ||
-                writer == current_writer)
+        // Go to the next writer when unregistering the current one
+        if (it == next_writer_)
+        {
+            set_next_writer();
+            current_writer = std::get<0>(*next_writer_);
+        }
+
+        writers_queue_.erase(it);
+        if (writer == current_writer)
         {
             next_writer_ = writers_queue_.begin();
         }
@@ -500,9 +504,15 @@ struct FlowControllerRoundRobinSchedule
     void work_done()
     {
         assert(0 < writers_queue_.size());
-        assert(writers_queue_.end()  != next_writer_);
-        next_writer_ = writers_queue_.end() ==
-                std::next(next_writer_) ? writers_queue_.begin() :std::next(next_writer_);
+        assert(writers_queue_.end() != next_writer_);
+        set_next_writer();
+    }
+
+    iterator set_next_writer()
+    {
+        iterator next = std::next(next_writer_);
+        next_writer_ = writers_queue_.end() == next ? writers_queue_.begin() : next;
+        return next_writer_;
     }
 
     void add_new_sample(
@@ -534,8 +544,7 @@ struct FlowControllerRoundRobinSchedule
             do
             {
                 ret_change = std::get<1>(*next_writer_).get_next_change();
-            } while (nullptr == ret_change && starting_it != (next_writer_ =
-            writers_queue_.end() == std::next(next_writer_) ? writers_queue_.begin() :std::next(next_writer_)));
+            } while (nullptr == ret_change && starting_it != set_next_writer());
         }
 
         return ret_change;
