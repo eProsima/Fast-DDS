@@ -1103,7 +1103,7 @@ private:
     {
         assert(nullptr == change->writer_info.previous &&
                 nullptr == change->writer_info.next);
-        // Sync delivery failes. Try to store for asynchronous delivery.
+        // Sync delivery failed. Try to store for asynchronous delivery.
         std::unique_lock<std::mutex> lock(async_mode.changes_interested_mutex);
         sched.add_new_sample(writer, change);
         async_mode.cv.notify_one();
@@ -1261,13 +1261,13 @@ private:
     }
 
     /*!
-     * Function ran by asynchronous thread.
+     * Function run by the asynchronous thread.
      */
     void run()
     {
         while (async_mode.running)
         {
-            // There is writers interested in remove a sample.
+            // There are writers interested in removing a sample.
             if (0 != async_mode.writers_interested_in_remove)
             {
                 continue;
