@@ -1069,7 +1069,7 @@ private:
     register_writer_impl(
             fastrtps::rtps::RTPSWriter*)
     {
-        // Do nothing. Fail.
+        // Do nothing.
     }
 
     template<typename PubMode = PublishMode>
@@ -1086,7 +1086,7 @@ private:
     unregister_writer_impl(
             fastrtps::rtps::RTPSWriter*)
     {
-        // Do nothing. Fail.
+        // Do nothing.
     }
 
     /*!
@@ -1121,7 +1121,7 @@ private:
             fastrtps::rtps::CacheChange_t*,
             const std::chrono::time_point<std::chrono::steady_clock>&) const
     {
-        // Do nothing. Fail.
+        // Do nothing. Return false.
         return false;
     }
 
@@ -1204,7 +1204,7 @@ private:
             fastrtps::rtps::CacheChange_t*,
             const std::chrono::time_point<std::chrono::steady_clock>&) const
     {
-        // Do nothing. Fail.
+        assert(false);
         return false;
     }
 
@@ -1257,7 +1257,7 @@ private:
     remove_change_impl(
             fastrtps::rtps::CacheChange_t*) const
     {
-        // Do nothing. Fail.
+        // Do nothing.
     }
 
     /*!
@@ -1285,6 +1285,7 @@ private:
                 while (async_mode.running &&
                         (async_mode.force_wait() || nullptr == (change_to_process = sched.get_next_change_nts())))
                 {
+                    // Release main mutex to allow registering/unregistering writers while this thread is waiting.
                     lock.unlock();
                     bool ret = async_mode.wait(in_lock);
 
@@ -1366,7 +1367,6 @@ private:
 
                 // Add interested changes into the queue.
                 {
-                    // TODO estudy
                     std::unique_lock<std::mutex> in_lock(async_mode.changes_interested_mutex);
                     sched.add_interested_changes_to_queue_nts();
                 }
