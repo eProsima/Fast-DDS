@@ -60,10 +60,8 @@ public:
         switch (mem_policy_)
         {
             case rtps::PREALLOCATED_MEMORY_MODE:
-                will_use_datasharing = true;
-                break;
             case rtps::PREALLOCATED_WITH_REALLOC_MEMORY_MODE:
-                will_use_datasharing = true;
+                will_use_datasharing = enable_datasharing;
                 break;
             default:
                 break;
@@ -1204,7 +1202,7 @@ TEST_P(PubSubHistory, KeepAllWriterContinueSendingAfterReaderMatched)
     data.index(2u);
     uint32_t expected_value = data.index();
 
-    if (enable_datasharing && will_use_datasharing)
+    if (will_use_datasharing)
     {
         if (reader.wait_for_all_received(std::chrono::seconds(3), 1))
         {
@@ -1221,7 +1219,7 @@ TEST_P(PubSubHistory, KeepAllWriterContinueSendingAfterReaderMatched)
         ASSERT_TRUE(writer.send_sample(data));
     }
 
-    if (enable_datasharing && will_use_datasharing)
+    if (will_use_datasharing)
     {
         reader.wait_for_all_received(std::chrono::seconds(3), expected_value);
     }
