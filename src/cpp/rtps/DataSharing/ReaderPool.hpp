@@ -131,11 +131,12 @@ public:
             CacheChange_t ch;
             SequenceNumber_t last_sequence = c_SequenceNumber_Unknown;
             get_next_unread_payload(ch, last_sequence);
-            while (ch.sequenceNumber != c_SequenceNumber_Unknown)
+            while (ch.sequenceNumber != SequenceNumber_t::unknown())
             {
                 advance(next_payload_);
                 get_next_unread_payload(ch, last_sequence);
             }
+            assert(next_payload_ == end());
         }
 
         segment_ = std::move(local_segment);
