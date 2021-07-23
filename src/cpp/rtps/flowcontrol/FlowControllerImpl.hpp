@@ -1382,7 +1382,7 @@ private:
     typename std::enable_if<std::is_base_of<FlowControllerLimitedAsyncPublishMode, PubMode>::value, uint32_t>::type
     get_max_payload_impl()
     {
-        return async_mode.max_bytes_per_period;
+        return static_cast<uint32_t>(async_mode.max_bytes_per_period);
     }
 
     template<typename PubMode = PublishMode>
