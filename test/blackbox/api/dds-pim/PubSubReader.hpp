@@ -471,7 +471,7 @@ public:
     template<class _Rep,
             class _Period
             >
-    void wait_for_all_received(
+    bool wait_for_all_received(
             const std::chrono::duration<_Rep, _Period>& max_wait,
             size_t num_messages = 0)
     {
@@ -480,10 +480,10 @@ public:
             num_messages = number_samples_expected_;
         }
         std::unique_lock<std::mutex> lock(message_receive_mutex_);
-        message_receive_cv_.wait_for(lock, max_wait, [this, num_messages]() -> bool
-                {
-                    return num_messages == message_receive_count_;
-                });
+        return message_receive_cv_.wait_for(lock, max_wait, [this, num_messages]() -> bool
+                       {
+                           return num_messages == message_receive_count_;
+                       });
     }
 
     void block_for_all()
