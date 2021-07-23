@@ -1204,7 +1204,6 @@ private:
             fastrtps::rtps::CacheChange_t*,
             const std::chrono::time_point<std::chrono::steady_clock>&) const
     {
-        assert(false);
         return false;
     }
 
