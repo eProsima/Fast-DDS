@@ -53,7 +53,10 @@ public:
 
         // We cannot destroy the objects in the SHM, as the Reader may still be using them.
         // We just remove the segment, and when the Reader closes it, it will be removed from the system.
-        segment_->remove(segment_name_);
+        if (segment_)
+        {
+            segment_->remove();
+        }
     }
 
     bool get_payload(
@@ -179,7 +182,7 @@ public:
         }
 
         //Open the segment
-        fastdds::rtps::SharedMemSegment::remove(segment_name_);
+        T::remove(segment_name_);
         std::unique_ptr<T> local_segment;
         try
         {
@@ -231,7 +234,7 @@ public:
         }
         catch (std::exception& e)
         {
-            Segment::remove(segment_name_);
+            T::remove(segment_name_);
 
             logError(DATASHARING_PAYLOADPOOL, "Failed to initialize segment " << segment_name_
                                                                               << ": " << e.what());

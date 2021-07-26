@@ -76,7 +76,7 @@ void DataSharingNotification::destroy()
     {
         // We cannot destroy the objects in the SHM, as the Writer may still be using them.
         // We just remove the segment, and when the Writer closes it, it will be removed from the system.
-        segment_->remove(segment_name_);
+        segment_->remove();
 
         owned_ = false;
     }

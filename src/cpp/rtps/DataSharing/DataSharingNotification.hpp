@@ -132,7 +132,7 @@ protected:
         uint32_t segment_size = static_cast<uint32_t>(sizeof(Notification)) + per_allocation_extra_size;
 
         //Open the segment
-        remove(segment_name_);
+        T::remove(segment_name_);
         std::unique_ptr<T> local_segment;
         try
         {
@@ -156,7 +156,7 @@ protected:
         }
         catch (std::exception& e)
         {
-            remove(segment_name_);
+            T::remove(segment_name_);
 
             logError(HISTORY_DATASHARING_LISTENER, "Failed to create listener queue " << segment_name_
                                                                                     << ": " << e.what());

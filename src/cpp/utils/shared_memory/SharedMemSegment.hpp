@@ -88,11 +88,7 @@ public:
     {
     }
 
-    static void remove(
-            const std::string& name)
-    {
-        boost::interprocess::shared_memory_object::remove(name.c_str());
-    }
+    virtual void remove() = 0;
 
     std::string name()
     {
@@ -247,12 +243,13 @@ private:
     std::string name_;
 };
 
-template<typename T>
+template<typename T, typename U>
 class SharedSegment : public SharedSegmentBase
 {
 public:
 
     typedef T managed_shared_memory_type;
+    typedef U managed_shared_object_type;
 
     SharedSegment(
             boost::interprocess::create_only_t,
@@ -288,6 +285,17 @@ public:
     {
         // no need of exception handling cause never throws
         segment_.reset();
+    }
+
+    static void remove(
+            const std::string& name)
+    {
+        managed_shared_object_type::remove(name.c_str());
+    }
+
+    void remove() override
+    {
+        managed_shared_object_type::remove(name().c_str());
     }
 
     void* get_address_from_offset(
@@ -339,7 +347,7 @@ public:
                     extra_size = static_cast<uint32_t>(m1 - m2);
                 }
 
-                remove(name.c_str());
+                managed_shared_object_type::remove(name.c_str());
             }
 
             return extra_size;
@@ -381,14 +389,16 @@ using SharedMemSegment = SharedSegment<
                 char,
                 boost::interprocess::rbtree_best_fit<boost::interprocess::mutex_family,
                 boost::interprocess::offset_ptr<void, SharedSegmentBase::Offset, std::uint64_t>>,
-                boost::interprocess::iset_index>>;
+                boost::interprocess::iset_index>,
+        boost::interprocess::shared_memory_object>;
 
 using SharedFileSegment = SharedSegment<
         boost::interprocess::basic_managed_mapped_file<
                 char,
                 boost::interprocess::rbtree_best_fit<boost::interprocess::mutex_family,
                 boost::interprocess::offset_ptr<void, SharedSegmentBase::Offset, std::uint64_t>>,
-                boost::interprocess::iset_index>>;
+                boost::interprocess::iset_index>,
+        boost::interprocess::file_mapping>;
 
 } // namespace rtps
 } // namespace fastdds
