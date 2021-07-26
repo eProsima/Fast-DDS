@@ -144,7 +144,7 @@ protected:
         catch (const std::exception& e)
         {
             logError(HISTORY_DATASHARING_LISTENER, "Failed to create segment " << segment_name_
-                                                                            << ": " << e.what());
+                                                                               << ": " << e.what());
             return false;
         }
 
@@ -159,7 +159,7 @@ protected:
             T::remove(segment_name_);
 
             logError(HISTORY_DATASHARING_LISTENER, "Failed to create listener queue " << segment_name_
-                                                                                    << ": " << e.what());
+                                                                                      << ": " << e.what());
             return false;
         }
 
@@ -187,13 +187,13 @@ protected:
         catch (const std::exception& e)
         {
             logError(HISTORY_DATASHARING_LISTENER, "Failed to open segment " << segment_name_
-                                                                            << ": " << e.what());
+                                                                             << ": " << e.what());
             return false;
         }
 
         // Initialize values from the segment
         notification_ = (local_segment->get().template find<Notification>(
-            "notification_node")).first;
+                    "notification_node")).first;
         if (!notification_)
         {
             local_segment.reset();
@@ -205,7 +205,6 @@ protected:
         segment_ = std::move(local_segment);
         return true;
     }
-
 
     GUID_t segment_id_;         //< The ID of the segment is the GUID of the reader
     std::string segment_name_;  //< Segment name

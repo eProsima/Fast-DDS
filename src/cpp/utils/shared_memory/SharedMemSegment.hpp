@@ -385,20 +385,20 @@ private:
 };
 
 using SharedMemSegment = SharedSegment<
-        boost::interprocess::basic_managed_shared_memory<
-                char,
-                boost::interprocess::rbtree_best_fit<boost::interprocess::mutex_family,
-                boost::interprocess::offset_ptr<void, SharedSegmentBase::Offset, std::uint64_t>>,
-                boost::interprocess::iset_index>,
-        boost::interprocess::shared_memory_object>;
+    boost::interprocess::basic_managed_shared_memory<
+        char,
+        boost::interprocess::rbtree_best_fit<boost::interprocess::mutex_family,
+        boost::interprocess::offset_ptr<void, SharedSegmentBase::Offset, std::uint64_t>>,
+        boost::interprocess::iset_index>,
+    boost::interprocess::shared_memory_object>;
 
 using SharedFileSegment = SharedSegment<
-        boost::interprocess::basic_managed_mapped_file<
-                char,
-                boost::interprocess::rbtree_best_fit<boost::interprocess::mutex_family,
-                boost::interprocess::offset_ptr<void, SharedSegmentBase::Offset, std::uint64_t>>,
-                boost::interprocess::iset_index>,
-        boost::interprocess::file_mapping>;
+    boost::interprocess::basic_managed_mapped_file<
+        char,
+        boost::interprocess::rbtree_best_fit<boost::interprocess::mutex_family,
+        boost::interprocess::offset_ptr<void, SharedSegmentBase::Offset, std::uint64_t>>,
+        boost::interprocess::iset_index>,
+    boost::interprocess::file_mapping>;
 
 } // namespace rtps
 } // namespace fastdds

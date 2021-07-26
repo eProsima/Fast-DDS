@@ -139,7 +139,6 @@ public:
         return DataSharingPayloadPool::release_payload(cache_change);
     }
 
-
     template <typename T>
     bool init_shared_segment(
             const RTPSWriter* writer,
@@ -245,7 +244,7 @@ public:
         is_initialized_ = true;
         return true;
     }
-    
+
     bool init_shared_memory(
             const RTPSWriter* writer,
             const std::string& shared_dir) override

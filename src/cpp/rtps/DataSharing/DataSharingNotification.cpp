@@ -34,11 +34,13 @@ std::shared_ptr<DataSharingNotification> DataSharingNotification::create_notific
     bool create_result = false;
     if (shared_dir.empty())
     {
-        create_result = notification->create_and_init_notification<fastdds::rtps::SharedMemSegment>(reader_guid, shared_dir);
+        create_result = notification->create_and_init_notification<fastdds::rtps::SharedMemSegment>(reader_guid,
+                        shared_dir);
     }
     else
     {
-        create_result = notification->create_and_init_notification<fastdds::rtps::SharedFileSegment>(reader_guid, shared_dir);
+        create_result = notification->create_and_init_notification<fastdds::rtps::SharedFileSegment>(reader_guid,
+                        shared_dir);
     }
 
     if (!create_result)
@@ -56,11 +58,14 @@ std::shared_ptr<DataSharingNotification> DataSharingNotification::open_notificat
     bool open_result = false;
     if (shared_dir.empty())
     {
-        open_result = notification->open_and_init_notification<fastdds::rtps::SharedMemSegment>(writer_guid, shared_dir);
+        open_result =
+                notification->open_and_init_notification<fastdds::rtps::SharedMemSegment>(writer_guid, shared_dir);
     }
     else
     {
-        open_result = notification->open_and_init_notification<fastdds::rtps::SharedFileSegment>(writer_guid, shared_dir);
+        open_result =
+                notification->open_and_init_notification<fastdds::rtps::SharedFileSegment>(writer_guid,
+                        shared_dir);
     }
 
     if (!open_result)
