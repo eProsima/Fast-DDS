@@ -43,7 +43,7 @@ protected:
 
 public:
 
-    using Segment = fastdds::rtps::SharedMemSegment;
+    using Segment = fastdds::rtps::SharedSegmentBase;
     using sharable_mutex = Segment::sharable_mutex;
     template <class M>
     using sharable_lock = Segment::sharable_lock<M>;
@@ -348,10 +348,15 @@ protected:
 #pragma warning(pop)
 
     static std::string generate_segment_name(
-            const std::string& /*shared_dir*/,
+            const std::string& shared_dir,
             const GUID_t& writer_guid)
     {
         std::stringstream ss;
+        if (!shared_dir.empty())
+        {
+            ss << shared_dir << "/";
+        }
+
         ss << DataSharingPayloadPool::domain_name() << "_" << writer_guid.guidPrefix << "_" << writer_guid.entityId;
         return ss.str();
     }

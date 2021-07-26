@@ -81,18 +81,20 @@ public:
         return DataSharingPayloadPool::release_payload(cache_change);
     }
 
-    bool init_shared_memory(
+    template <typename T>
+    bool init_shared_segment(
             const GUID_t& writer_guid,
-            const std::string& shared_dir) override
+            const std::string& shared_dir)
     {
         segment_id_ = writer_guid;
         segment_name_ = generate_segment_name(shared_dir, writer_guid);
 
+        std::unique_ptr<T> local_segment;
         // Open the segment
         try
         {
-            segment_ = std::unique_ptr<fastdds::rtps::SharedMemSegment>(
-                new fastdds::rtps::SharedMemSegment(boost::interprocess::open_only,
+            local_segment = std::unique_ptr<T>(
+                new T(boost::interprocess::open_only,
                 segment_name_.c_str()));
         }
         catch (const std::exception& e)
@@ -103,20 +105,20 @@ public:
         }
 
         // Get the pool description
-        descriptor_ = segment_->get().find<PoolDescriptor>(descriptor_chunk_name()).first;
+        descriptor_ = local_segment->get().template find<PoolDescriptor>(descriptor_chunk_name()).first;
         if (!descriptor_)
         {
-            segment_.reset();
+            local_segment.reset();
 
             logError(HISTORY_DATASHARING_PAYLOADPOOL, "Failed to open payload pool descriptor " << segment_name_);
             return false;
         }
 
         // Get the history
-        history_ = segment_->get().find<Segment::Offset>(history_chunk_name()).first;
+        history_ = local_segment->get().template find<Segment::Offset>(history_chunk_name()).first;
         if (!history_)
         {
-            segment_.reset();
+            local_segment.reset();
 
             logError(HISTORY_DATASHARING_PAYLOADPOOL, "Failed to open payload history " << segment_name_);
             return false;
@@ -132,7 +134,22 @@ public:
             next_payload_ = begin();
         }
 
+        segment_ = std::move(local_segment);
         return true;
+    }
+
+    bool init_shared_memory(
+            const GUID_t& writer_guid,
+            const std::string& shared_dir) override
+    {
+        if (shared_dir.empty())
+        {
+            return init_shared_segment<fastdds::rtps::SharedMemSegment>(writer_guid, shared_dir);
+        }
+        else
+        {
+            return init_shared_segment<fastdds::rtps::SharedFileSegment>(writer_guid, shared_dir);
+        }
     }
 
     void get_next_unread_payload(

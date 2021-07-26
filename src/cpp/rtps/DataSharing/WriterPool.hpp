@@ -136,9 +136,11 @@ public:
         return DataSharingPayloadPool::release_payload(cache_change);
     }
 
-    bool init_shared_memory(
+
+    template <typename T>
+    bool init_shared_segment(
             const RTPSWriter* writer,
-            const std::string& shared_dir) override
+            const std::string& shared_dir)
     {
         writer_ = writer;
         segment_id_ = writer_->getGuid();
@@ -147,8 +149,7 @@ public:
         // We need to reserve the whole segment at once, and the underlying classes use uint32_t as size type.
         // In order to avoid overflows, we will calculate using uint64 and check the casting
         bool overflow = false;
-
-        size_t per_allocation_extra_size = fastdds::rtps::SharedMemSegment::compute_per_allocation_extra_size(
+        size_t per_allocation_extra_size = T::compute_per_allocation_extra_size(
             alignof(PayloadNode), DataSharingPayloadPool::domain_name());
         size_t payload_size = DataSharingPayloadPool::node_size(max_data_size_);
 
@@ -179,12 +180,13 @@ public:
 
         //Open the segment
         fastdds::rtps::SharedMemSegment::remove(segment_name_);
+        std::unique_ptr<T> local_segment;
         try
         {
-            segment_ = std::unique_ptr<Segment>(
-                new Segment(boost::interprocess::create_only,
+            local_segment = std::unique_ptr<T>(
+                new T(boost::interprocess::create_only,
                 segment_name_,
-                segment_size + fastdds::rtps::SharedMemSegment::EXTRA_SEGMENT_SIZE));
+                segment_size + T::EXTRA_SEGMENT_SIZE));
         }
         catch (const std::exception& e)
         {
@@ -198,7 +200,7 @@ public:
             // Alloc the memory for the pool
             // Cannot use 'construct' because we need to reserve extra space for the data,
             // which is not considered in sizeof(PayloadNode).
-            payloads_pool_ = static_cast<octet*>(segment_->get().allocate(size_for_payloads_pool));
+            payloads_pool_ = static_cast<octet*>(local_segment->get().allocate(size_for_payloads_pool));
 
             // Initialize each node in the pool
             free_payloads_.init(pool_size_);
@@ -214,10 +216,10 @@ public:
             }
 
             //Alloc the memory for the history
-            history_ = segment_->get().construct<Segment::Offset>(history_chunk_name())[pool_size_ + 1]();
+            history_ = local_segment->get().template construct<Segment::Offset>(history_chunk_name())[pool_size_ + 1]();
 
             //Alloc the memory for the descriptor
-            descriptor_ = segment_->get().construct<PoolDescriptor>(descriptor_chunk_name())();
+            descriptor_ = local_segment->get().template construct<PoolDescriptor>(descriptor_chunk_name())();
 
             // Initialize the data in the descriptor
             descriptor_->history_size = pool_size_ + 1;
@@ -236,8 +238,23 @@ public:
             return false;
         }
 
+        segment_ = std::move(local_segment);
         is_initialized_ = true;
         return true;
+    }
+    
+    bool init_shared_memory(
+            const RTPSWriter* writer,
+            const std::string& shared_dir) override
+    {
+        if (shared_dir.empty())
+        {
+            return init_shared_segment<fastdds::rtps::SharedMemSegment>(writer, shared_dir);
+        }
+        else
+        {
+            return init_shared_segment<fastdds::rtps::SharedFileSegment>(writer, shared_dir);
+        }
     }
 
     /**

@@ -42,7 +42,7 @@ class DataSharingNotification
 
 public:
 
-    typedef fastdds::rtps::SharedMemSegment Segment;
+    typedef fastdds::rtps::SharedSegmentBase Segment;
 
     DataSharingNotification() = default;
 
@@ -107,22 +107,104 @@ protected:
 #pragma warning(pop)
 
     static std::string generate_segment_name(
-            const std::string& /*shared_dir*/,
+            const std::string& shared_dir,
             const GUID_t& reader_guid)
     {
         std::stringstream ss;
+        if (!shared_dir.empty())
+        {
+            ss << shared_dir << "/";
+        }
         ss << DataSharingNotification::domain_name() << "_" << reader_guid.guidPrefix << "_" << reader_guid.entityId;
         return ss.str();
     }
 
+    template <typename T>
     bool create_and_init_notification(
             const GUID_t& reader_guid,
-            const std::string& shared_dir = std::string());
+            const std::string& shared_dir)
+    {
+        segment_id_ = reader_guid;
+        segment_name_ = generate_segment_name(shared_dir, reader_guid);
 
+        size_t per_allocation_extra_size = T::compute_per_allocation_extra_size(
+            alignof(Notification), DataSharingNotification::domain_name());
+        uint32_t segment_size = static_cast<uint32_t>(sizeof(Notification)) + per_allocation_extra_size;
 
+        //Open the segment
+        remove(segment_name_);
+        std::unique_ptr<T> local_segment;
+        try
+        {
+            local_segment = std::unique_ptr<T>(
+                new T(boost::interprocess::create_only,
+                segment_name_,
+                segment_size + T::EXTRA_SEGMENT_SIZE));
+        }
+        catch (const std::exception& e)
+        {
+            logError(HISTORY_DATASHARING_LISTENER, "Failed to create segment " << segment_name_
+                                                                            << ": " << e.what());
+            return false;
+        }
+
+        try
+        {
+            // Alloc and initialize the Node
+            notification_ = local_segment->get().template construct<Notification>("notification_node")();
+            notification_->new_data.store(false);
+        }
+        catch (std::exception& e)
+        {
+            remove(segment_name_);
+
+            logError(HISTORY_DATASHARING_LISTENER, "Failed to create listener queue " << segment_name_
+                                                                                    << ": " << e.what());
+            return false;
+        }
+
+        segment_ = std::move(local_segment);
+        owned_ = true;
+        return true;
+    }
+
+    template <typename T>
     bool open_and_init_notification(
             const GUID_t& reader_guid,
-            const std::string& shared_dir = std::string());
+            const std::string& shared_dir)
+    {
+        segment_id_ = reader_guid;
+        segment_name_ = generate_segment_name(shared_dir, reader_guid);
+
+        //Open the segment
+        std::unique_ptr<T> local_segment;
+        try
+        {
+            local_segment = std::unique_ptr<T>(
+                new T(boost::interprocess::open_only,
+                segment_name_.c_str()));
+        }
+        catch (const std::exception& e)
+        {
+            logError(HISTORY_DATASHARING_LISTENER, "Failed to open segment " << segment_name_
+                                                                            << ": " << e.what());
+            return false;
+        }
+
+        // Initialize values from the segment
+        notification_ = (local_segment->get().template find<Notification>(
+            "notification_node")).first;
+        if (!notification_)
+        {
+            local_segment.reset();
+
+            logError(HISTORY_DATASHARING_LISTENER, "Failed to open listener queue " << segment_name_);
+            return false;
+        }
+
+        segment_ = std::move(local_segment);
+        return true;
+    }
 
 
     GUID_t segment_id_;         //< The ID of the segment is the GUID of the reader
