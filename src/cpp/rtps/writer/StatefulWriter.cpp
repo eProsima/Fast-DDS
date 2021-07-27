@@ -603,6 +603,7 @@ void StatefulWriter::unsent_change_added_to_history(
         const std::chrono::time_point<std::chrono::steady_clock>& max_blocking_time)
 {
     bool should_notify_data_sent = false;
+    auto payload_length = change->serializedPayload.length;
 
     {
         std::lock_guard<RecursiveTimedMutex> guard(mp_mutex);
@@ -659,7 +660,7 @@ void StatefulWriter::unsent_change_added_to_history(
     }
 
     // Throughput should be notified even if no matches are available
-    on_publish_throughput(change->serializedPayload.length);
+    on_publish_throughput(payload_length);
 }
 
 bool StatefulWriter::intraprocess_delivery(
