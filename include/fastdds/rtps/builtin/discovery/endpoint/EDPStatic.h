@@ -24,10 +24,12 @@
 #include <fastdds/rtps/builtin/discovery/endpoint/EDP.h>
 
 namespace eprosima {
+
 namespace fastrtps {
 namespace xmlparser {
 class XMLEndpointParser;
-}
+} // namespace xmlparser
+
 namespace rtps {
 
 
@@ -192,9 +194,9 @@ private:
     BuiltinAttributes m_attributes;
 };
 
-}
+} // namespace rtps
 } /* namespace rtps */
 } /* namespace eprosima */
 
-#endif
+#endif // ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 #endif /* _FASTDDS_RTPS_EDPSTATIC_H_ */

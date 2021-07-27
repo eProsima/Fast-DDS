@@ -1,0 +1,23 @@
+<staticdiscovery>
+	<participant>
+		<name>RTPSParticipant</name>
+		<reader>
+			<userId>3</userId>
+			<entityID>4</entityID>
+			<expectsInlineQos>false</expectsInlineQos>
+			<topicName>BlackBox_StaticDiscovery_@TOPIC_RANDOM_NUMBER@</topicName>
+			<topicDataType>HelloWorldType</topicDataType>
+			<topicKind>NO_KEY</topicKind>
+			<reliabilityQos>RELIABLE_RELIABILITY_QOS</reliabilityQos>
+			<unicastLocator
+				address="127.0.0.1"
+				port="@R_UNICAST_PORT_RANDOM_NUMBER@">	
+			</unicastLocator>
+			<multicastLocator
+				address="127.0.0.1"
+				port="@MULTICAST_PORT_RANDOM_NUMBER@">	
+			</multicastLocator>
+			<durabilityQos>TRANSIENT_DURABILITY_QOS</durabilityQos>
+		</reader>
+	</participant>
+</staticdiscovery>
