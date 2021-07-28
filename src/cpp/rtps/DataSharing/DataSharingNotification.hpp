@@ -127,7 +127,7 @@ protected:
         segment_id_ = reader_guid;
         segment_name_ = generate_segment_name(shared_dir, reader_guid);
 
-        size_t per_allocation_extra_size = T::compute_per_allocation_extra_size(
+        uint32_t per_allocation_extra_size = T::compute_per_allocation_extra_size(
             alignof(Notification), DataSharingNotification::domain_name());
         uint32_t segment_size = static_cast<uint32_t>(sizeof(Notification)) + per_allocation_extra_size;
 

@@ -339,10 +339,10 @@ public:
                 {
                     managed_shared_memory_type
                             test_segment(boost::interprocess::create_only, name.c_str(),
-                            (std::max)((size_t)1024, allocation_alignment * 4));
+                            (std::max)((uint32_t)1024, static_cast<uint32_t>(allocation_alignment * 4)));
 
                     auto m1 = test_segment.get_free_memory();
-                    test_segment.allocate_aligned(1, allocation_alignment);
+                    test_segment.allocate_aligned(1, static_cast<uint32_t>(allocation_alignment));
                     auto m2 = test_segment.get_free_memory();
                     extra_size = static_cast<uint32_t>(m1 - m2);
                 }
