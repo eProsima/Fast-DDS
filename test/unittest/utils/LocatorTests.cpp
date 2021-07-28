@@ -1785,13 +1785,13 @@ TEST(LocatorListComparisonTests, locatorList_comparison)
 ************/
 
 static const std::map<std::string, std::pair<std::set<std::string>, std::set<std::string>>> addresses =
-    {
-        {"localhost.test", {{"127.0.0.1"}, {"::1"}}},
-        {"www.eprosima.com.test", {{"154.56.134.194"}, {}}},     // Only IPv4
-        {"www.acme.com.test", {{"216.58.215.164"}, {"2a00:1450:400e:803::2004"}}},
-        {"www.foo.com.test", {{"140.82.121.4", "140.82.121.3"}, {}}},
-        {"acme.org.test", {{}, {"2605:bc80:3010:104::8cd3:962"}}}     // Only IPv6
-    };
+{
+    {"localhost.test", {{"127.0.0.1"}, {"::1"}}},
+    {"www.eprosima.com.test", {{"154.56.134.194"}, {}}},         // Only IPv4
+    {"www.acme.com.test", {{"216.58.215.164"}, {"2a00:1450:400e:803::2004"}}},
+    {"www.foo.com.test", {{"140.82.121.4", "140.82.121.3"}, {}}},
+    {"acme.org.test", {{}, {"2605:bc80:3010:104::8cd3:962"}}}         // Only IPv6
+};
 
 /*
  * Check DNS name resolve function
@@ -1842,43 +1842,43 @@ TEST(LocatorDNSTests, resolve_name)
 TEST(LocatorDNSTests, dns_locator)
 {
     auto checker = [](
-            int32_t kind,
-            const std::string& dns,
-            const std::string& ip)
-        {
-            std::string type;
-            if (kind == LOCATOR_KIND_TCPv4)
+        int32_t kind,
+        const std::string& dns,
+        const std::string& ip)
             {
-                type = "TCPv4";
-            }
-            else if (kind == LOCATOR_KIND_TCPv6)
-            {
-                type = "TCPv6";
-            }
-            else
-            {
-                FAIL() << "Unsupported locator kind for this tests";
-            }
+                std::string type;
+                if (kind == LOCATOR_KIND_TCPv4)
+                {
+                    type = "TCPv4";
+                }
+                else if (kind == LOCATOR_KIND_TCPv6)
+                {
+                    type = "TCPv6";
+                }
+                else
+                {
+                    FAIL() << "Unsupported locator kind for this tests";
+                }
 
-            std::stringstream ss_dns;
-            ss_dns << type << ":[" << dns << "]:1024";
-            Locator_t locator;
-            ss_dns >> locator;
-            if (ip.empty())
-            {
-                EXPECT_EQ(LOCATOR_KIND_INVALID, locator.kind) << "Invalid kind " << locator.kind
-                        << " for locator " << ss_dns.str();
-            }
-            else
-            {
-                std::stringstream ss_address;
-                ss_address << type << ":[" << ip << "]:1024";
-                std::stringstream ss_locator;
-                ss_locator << locator;
-                EXPECT_EQ(ss_address.str(), ss_locator.str()) << "Wrong translation " << ss_locator.str()
-                        << " for locator " << ss_dns.str();
-            }
-        };
+                std::stringstream ss_dns;
+                ss_dns << type << ":[" << dns << "]:1024";
+                Locator_t locator;
+                ss_dns >> locator;
+                if (ip.empty())
+                {
+                    EXPECT_EQ(LOCATOR_KIND_INVALID, locator.kind) << "Invalid kind " << locator.kind
+                                                                  << " for locator " << ss_dns.str();
+                }
+                else
+                {
+                    std::stringstream ss_address;
+                    ss_address << type << ":[" << ip << "]:1024";
+                    std::stringstream ss_locator;
+                    ss_locator << locator;
+                    EXPECT_EQ(ss_address.str(), ss_locator.str()) << "Wrong translation " << ss_locator.str()
+                                                                  << " for locator " << ss_dns.str();
+                }
+            };
 
     for (auto const& address : addresses)
     {
