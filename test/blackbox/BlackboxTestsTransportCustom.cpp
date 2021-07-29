@@ -81,7 +81,7 @@ TEST(CustomTransport, PubSubSrcTimestampHelloworld)
     auto trDesc = std::make_shared<SourceTimestampTransportDescriptor>(udpTr);
     int callback_num = 0;
     trDesc->callback_parameter = &callback_num;
-    trDesc->callback = [] (void* p, int32_t /*s_time*/, int32_t /*r_time*/, uint32_t /*len*/)
+    trDesc->callback = [](void* p, int32_t /*s_time*/, int32_t /*r_time*/, uint32_t /*len*/)
             {
                 int* pp = (int*)p;
                 *pp = *pp + 1;
@@ -148,7 +148,7 @@ TEST(CustomTransport, PubSubCompressZLibHelloworld)
     // Block reader until reception finished or timeout.
     reader.block_for_at_least(2);
 }
-#endif
+#endif // if HAVE_ZLIB
 
 #if HAVE_BZIP2
 TEST(CustomTransport, PubSubCompressBZip2Helloworld)
@@ -185,7 +185,7 @@ TEST(CustomTransport, PubSubCompressBZip2Helloworld)
     // Block reader until reception finished or timeout.
     reader.block_for_at_least(2);
 }
-#endif
+#endif // if HAVE_BZIP2
 
 #if HAVE_ZLIB || HAVE_BZIP2
 TEST(CustomTransport, PubSubCompressAutoHelloworld)
@@ -222,7 +222,7 @@ TEST(CustomTransport, PubSubCompressAutoHelloworld)
     // Block reader until reception finished or timeout.
     reader.block_for_at_least(2);
 }
-#endif
+#endif // if HAVE_ZLIB || HAVE_BZIP2
 
 TEST(CustomTransport, PubSubChainReductionsHelloworld)
 {
@@ -248,14 +248,14 @@ TEST(CustomTransport, PubSubChainReductionsHelloworld)
     auto zDesc = std::make_shared<PayloadCompressionTransportDescriptor>(tsDesc);
     policies.properties().emplace_back(fastrtps::rtps::Property("rtps.payload_compression.compression_library",
             "AUTOMATIC"));
-#endif
+#endif // if HAVE_ZLIB || HAVE_BZIP2
 
     // Header reduction on top of compression (or timestamp if compression not available)
 #if HAVE_ZLIB || HAVE_BZIP2
     auto hrDesc = std::make_shared<HeaderReductionTransportDescriptor>(zDesc);
 #else
     auto hrDesc = std::make_shared<HeaderReductionTransportDescriptor>(tsDesc);
-#endif
+#endif // if HAVE_ZLIB || HAVE_BZIP2
     policies.properties().emplace_back(fastrtps::rtps::Property("rtps.header_reduction.remove_protocol", "true"));
     policies.properties().emplace_back(fastrtps::rtps::Property("rtps.header_reduction.remove_version", "true"));
     policies.properties().emplace_back(fastrtps::rtps::Property("rtps.header_reduction.remove_vendor_id", "true"));

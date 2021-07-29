@@ -67,8 +67,9 @@ public:
             int base = 10);
 };
 
-}
+} // namespace rtps
 } /* namespace rtps */
 } /* namespace eprosima */
+
 #endif // ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
-#endif /* STRINGMATCHING_H_ */
+#endif // ifndef STRINGMATCHING_H_

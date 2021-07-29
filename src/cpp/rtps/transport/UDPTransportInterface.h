@@ -169,7 +169,7 @@ protected:
     std::vector<fastrtps::rtps::IPFinder::info_IP> currentInterfaces;
 
     mutable std::recursive_mutex mInputMapMutex;
-    std::map<uint16_t, std::vector<UDPChannelResource*> > mInputSockets;
+    std::map<uint16_t, std::vector<UDPChannelResource*>> mInputSockets;
 
     uint32_t mSendBufferSize;
     uint32_t mReceiveBufferSize;

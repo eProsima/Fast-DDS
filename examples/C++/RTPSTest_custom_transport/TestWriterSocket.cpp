@@ -43,8 +43,6 @@ TestWriterSocket::TestWriterSocket()
     , mp_writer(nullptr)
     , mp_history(nullptr)
 {
-
-
 }
 
 TestWriterSocket::~TestWriterSocket()
@@ -89,7 +87,7 @@ bool TestWriterSocket::init(
 #else
     // Header reduction on top of timestamp
     auto hrDesc = std::make_shared<HeaderReductionTransportDescriptor>(tsDesc);
-#endif
+#endif // if HAVE_ZLIB || HAVE_BZIP2
     PParam.properties.properties().emplace_back(fastrtps::rtps::Property("rtps.header_reduction.remove_version",
             "true"));
     PParam.properties.properties().emplace_back(fastrtps::rtps::Property("rtps.header_reduction.remove_vendor_id",
@@ -142,16 +140,17 @@ void TestWriterSocket::run(
 {
     for (int i = 0; i < nmsgs; ++i )
     {
-        fastrtps::rtps::CacheChange_t* ch = mp_writer->new_change([]() -> uint32_t {
-            return 255;
-        }, fastrtps::rtps::ALIVE);
+        fastrtps::rtps::CacheChange_t* ch = mp_writer->new_change([]() -> uint32_t
+                        {
+                            return 255;
+                        }, fastrtps::rtps::ALIVE);
 #if defined(_WIN32)
         ch->serializedPayload.length =
                 sprintf_s((char*)ch->serializedPayload.data, 255, "My example string %d", i) + 1;
 #else
         ch->serializedPayload.length =
                 sprintf((char*)ch->serializedPayload.data, "My example string %d", i) + 1;
-#endif
+#endif // if defined(_WIN32)
         printf("Sending: %s\n", (char*)ch->serializedPayload.data);
         mp_history->add_change(ch);
     }

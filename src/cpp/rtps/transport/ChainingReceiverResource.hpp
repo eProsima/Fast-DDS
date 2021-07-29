@@ -46,8 +46,8 @@ private:
 };
 
 
-}
-}
-}
+} // namespace rtps
+} // namespace fastdds
+} // namespace eprosima
 
 #endif // TRANSPORT_CHAININGRECEIVERRESOURCE_HPP

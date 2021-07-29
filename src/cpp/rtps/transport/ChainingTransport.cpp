@@ -44,6 +44,6 @@ bool ChainingTransport::OpenOutputChannel(
     return returned_value;
 }
 
-}
-}
-}
+} // namespace rtps
+} // namespace fastdds
+} // namespace eprosima

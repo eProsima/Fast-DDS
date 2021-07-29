@@ -231,4 +231,4 @@ private:
 } // namespace fastrtps
 } // namespace eprosima
 
-#endif
+#endif // ifndef CHAINING_TRANSPORT_H

@@ -37,4 +37,4 @@ static const std::string s_IPv6AddressAny = fastdds::rtps::s_IPv6AddressAny;
 } // namespace fastrtps
 } // namespace eprosima
 
-#endif
+#endif // ifndef TRANSPORT_INTERFACE_H

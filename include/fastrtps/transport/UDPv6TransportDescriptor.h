@@ -29,4 +29,4 @@ using UDPv6TransportDescriptor = fastdds::rtps::UDPv6TransportDescriptor;
 } // namespace fastrtps
 } // namespace eprosima
 
-#endif
+#endif // ifndef UDPV6_TRANSPORT_DESCRIPTOR

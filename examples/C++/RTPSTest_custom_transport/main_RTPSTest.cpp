@@ -32,20 +32,27 @@ using namespace rtps;
 using namespace std;
 
 
-int main(int argc, char** argv){
+int main(
+        int argc,
+        char** argv)
+{
 
     std::cout << "Starting" << std::endl;
     int type;
     uint32_t port = 7000;
-    if(argc > 1)
+    if (argc > 1)
     {
-        if(strcmp(argv[1],"writer")==0)
+        if (strcmp(argv[1], "writer") == 0)
+        {
             type = 1;
-        else if(strcmp(argv[1],"reader")==0)
+        }
+        else if (strcmp(argv[1], "reader") == 0)
+        {
             type = 2;
+        }
         else
         {
-            std::cout << "NEEDS writer OR reader as first argument"<<std::endl;
+            std::cout << "NEEDS writer OR reader as first argument" << std::endl;
             return 0;
         }
 
@@ -56,34 +63,35 @@ int main(int argc, char** argv){
     }
     else
     {
-        std::cout << "NEEDS writer OR reader ARGUMENT"<<std::endl;
-        std::cout << "RTPSTest writer"<<std::endl;
-        std::cout << "RTPSTest reader" <<std::endl;
+        std::cout << "NEEDS writer OR reader ARGUMENT" << std::endl;
+        std::cout << "RTPSTest writer" << std::endl;
+        std::cout << "RTPSTest reader" << std::endl;
         return 0;
     }
     switch (type)
     {
         case 1:
+        {
+            TestWriterSocket TW;
+            if (TW.init("239.255.1.5", port))
             {
-                TestWriterSocket TW;
-                if(TW.init("239.255.1.5",port))
-                    TW.run(10);
-                break;
+                TW.run(10);
             }
+            break;
+        }
         case 2:
+        {
+            TestReaderSocket TR;
+            if (TR.init("239.255.1.5", port))
             {
-                TestReaderSocket TR;
-                if(TR.init("239.255.1.5",port))
-                    TR.run();
-                break;
+                TR.run();
             }
+            break;
+        }
     }
 
     RTPSDomain::stopAll();
-    std::cout << "EVERYTHING STOPPED FINE"<<std::endl;
+    std::cout << "EVERYTHING STOPPED FINE" << std::endl;
 
     return 0;
 }
-
-
-

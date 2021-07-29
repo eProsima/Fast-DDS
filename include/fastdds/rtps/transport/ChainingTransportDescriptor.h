@@ -74,4 +74,4 @@ typedef struct RTPS_DllAPI ChainingTransportDescriptor : public TransportDescrip
 } // namespace fastrtps
 } // namespace eprosima
 
-#endif
+#endif // ifndef CHAINING_TRANSPORT_DESCRIPTOR

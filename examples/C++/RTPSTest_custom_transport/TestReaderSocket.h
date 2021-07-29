@@ -39,7 +39,7 @@ public:
     void run();
     class MyListener : public eprosima::fastrtps::rtps::ReaderListener
     {
-public:
+    public:
 
         MyListener()
             : m_received(0)
@@ -54,8 +54,9 @@ public:
                 eprosima::fastrtps::rtps::RTPSReader* reader,
                 const eprosima::fastrtps::rtps::CacheChange_t* const change);
         uint32_t m_received;
-    } m_listener;
+    }
+    m_listener;
 
 };
 
-#endif /* TESTREADER_H_ */
+#endif // ifndef TESTREADERSOCKET_H_

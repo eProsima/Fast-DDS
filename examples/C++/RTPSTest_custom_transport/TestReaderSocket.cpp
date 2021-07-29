@@ -45,8 +45,6 @@ TestReaderSocket::TestReaderSocket()
     , mp_reader(nullptr)
     , mp_history(nullptr)
 {
-
-
 }
 
 TestReaderSocket::~TestReaderSocket()
@@ -91,7 +89,7 @@ bool TestReaderSocket::init(
 #else
     // Header reduction on top of timestamp
     auto hrDesc = std::make_shared<HeaderReductionTransportDescriptor>(tsDesc);
-#endif
+#endif // if HAVE_ZLIB || HAVE_BZIP2
     PParam.properties.properties().emplace_back(fastrtps::rtps::Property("rtps.header_reduction.remove_version",
             "true"));
     PParam.properties.properties().emplace_back(fastrtps::rtps::Property("rtps.header_reduction.remove_vendor_id",

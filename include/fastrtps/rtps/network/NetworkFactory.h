@@ -17,4 +17,4 @@
 
 #include <fastdds/rtps/network/NetworkFactory.h>
 
-#endif
+#endif // ifndef NETWORK_FACTORY_HPP

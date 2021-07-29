@@ -70,9 +70,9 @@ public:
             const Locator_t&) override;
 
     virtual bool OpenInputChannel(
-        const Locator_t&,
-        TransportReceiverInterface*,
-        uint32_t) override;
+            const Locator_t&,
+            TransportReceiverInterface*,
+            uint32_t) override;
 
     virtual bool CloseInputChannel(
             const Locator_t&) override;
@@ -231,4 +231,4 @@ public:
 } // namespace fastrtps
 } // namespace eprosima
 
-#endif
+#endif // ifndef MOCK_TRANSPORT_H
