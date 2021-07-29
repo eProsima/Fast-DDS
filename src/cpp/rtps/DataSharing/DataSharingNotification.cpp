@@ -31,19 +31,7 @@ std::shared_ptr<DataSharingNotification> DataSharingNotification::create_notific
         const std::string& shared_dir)
 {
     std::shared_ptr<DataSharingNotification> notification = std::make_shared<DataSharingNotification>();
-    bool create_result = false;
-    if (shared_dir.empty())
-    {
-        create_result = notification->create_and_init_notification<fastdds::rtps::SharedMemSegment>(reader_guid,
-                        shared_dir);
-    }
-    else
-    {
-        create_result = notification->create_and_init_notification<fastdds::rtps::SharedFileSegment>(reader_guid,
-                        shared_dir);
-    }
-
-    if (!create_result)
+    if (!notification->create_and_init_notification(reader_guid, shared_dir));
     {
         notification.reset();
     }
@@ -55,24 +43,27 @@ std::shared_ptr<DataSharingNotification> DataSharingNotification::open_notificat
         const std::string& shared_dir)
 {
     std::shared_ptr<DataSharingNotification> notification = std::make_shared<DataSharingNotification>();
-    bool open_result = false;
-    if (shared_dir.empty())
-    {
-        open_result =
-                notification->open_and_init_notification<fastdds::rtps::SharedMemSegment>(writer_guid, shared_dir);
-    }
-    else
-    {
-        open_result =
-                notification->open_and_init_notification<fastdds::rtps::SharedFileSegment>(writer_guid,
-                        shared_dir);
-    }
-
-    if (!open_result)
+    if (!notification->open_and_init_notification(writer_guid, shared_dir))
     {
         notification.reset();
     }
     return notification;
+}
+
+bool DataSharingNotification::create_and_init_notification(
+        const GUID_t& reader_guid,
+        const std::string& shared_dir)
+{
+    return create_and_init_shared_segment_notification<fastdds::rtps::SharedMemSegment>(reader_guid,
+                        shared_dir);
+}
+
+bool DataSharingNotification::open_and_init_notification(
+        const GUID_t& reader_guid,
+        const std::string& shared_dir)
+{
+    return open_and_init_shared_segment_notification<fastdds::rtps::SharedMemSegment>(reader_guid,
+                        shared_dir);
 }
 
 void DataSharingNotification::destroy()

@@ -119,8 +119,16 @@ protected:
         return ss.str();
     }
 
-    template <typename T>
     bool create_and_init_notification(
+            const GUID_t& reader_guid,
+            const std::string& shared_dir = std::string());
+
+    bool open_and_init_notification(
+            const GUID_t& reader_guid,
+            const std::string& shared_dir = std::string());
+
+    template <typename T>
+    bool create_and_init_shared_segment_notification(
             const GUID_t& reader_guid,
             const std::string& shared_dir)
     {
@@ -144,7 +152,7 @@ protected:
         catch (const std::exception& e)
         {
             logError(HISTORY_DATASHARING_LISTENER, "Failed to create segment " << segment_name_
-                                                                               << ": " << e.what());
+                                                                                << ": " << e.what());
             return false;
         }
 
@@ -159,7 +167,7 @@ protected:
             T::remove(segment_name_);
 
             logError(HISTORY_DATASHARING_LISTENER, "Failed to create listener queue " << segment_name_
-                                                                                      << ": " << e.what());
+                                                                                        << ": " << e.what());
             return false;
         }
 
@@ -169,7 +177,7 @@ protected:
     }
 
     template <typename T>
-    bool open_and_init_notification(
+    bool open_and_init_shared_segment_notification(
             const GUID_t& reader_guid,
             const std::string& shared_dir)
     {
@@ -187,7 +195,7 @@ protected:
         catch (const std::exception& e)
         {
             logError(HISTORY_DATASHARING_LISTENER, "Failed to open segment " << segment_name_
-                                                                             << ": " << e.what());
+                                                                                << ": " << e.what());
             return false;
         }
 
