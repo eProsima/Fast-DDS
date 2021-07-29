@@ -177,6 +177,11 @@ InstanceHandle_t DataWriter::get_instance_handle() const
     return impl_->get_instance_handle();
 }
 
+TypeSupport DataWriter::get_type() const
+{
+    return impl_->get_type();
+}
+
 ReturnCode_t DataWriter::set_qos(
         const DataWriterQos& qos)
 {
