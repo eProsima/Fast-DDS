@@ -34,7 +34,6 @@
 #         1.1. This step is not taken if THIRDPARTY_${package} is set to FORCE. This happens when the user specifically
 #              sets THIRDPARTY_${package} to FORCE, or when THIRDPARTY is set to FORCE and THIRDPARTY_${package} is
 #              unspecified (which means it takes the value of THIRDPARTY).
-#         1.2. This step is not taken for the case of windows installer. That is if EPROSIMA_INSTALLER is set to ON.
 #   2. If the package is not found in 1), and at least one of THIRDPARTY, THIRDPARTY_${package} is set
 #      to ON or FORCE, use the thirdparty version.
 #         2.1. If THIRDPARTY_UPDATE is set to ON, then update the corresponding git submodule.
@@ -80,7 +79,7 @@ macro(eprosima_find_package package)
     # 1. If THIRDPARTY_${package} is set to FORCE, don't try to find the library outside thirdparty.
     # 2. For the case of Windows installer, we don't want to look for the package outside thirdparty. This way we
     #    use thirdparty, meaning we have more control over what is built.
-    if((NOT (THIRDPARTY_${package} STREQUAL "FORCE")) AND NOT EPROSIMA_INSTALLER)
+    if(NOT (THIRDPARTY_${package} STREQUAL "FORCE"))
         # Try to quietly find the package outside thridparty first.
         find_package(${package} QUIET)
 
@@ -121,9 +120,6 @@ macro(eprosima_find_package package)
             endforeach()
             add_subdirectory(${PROJECT_SOURCE_DIR}/thirdparty/${package})
             set(${package}_FOUND TRUE)
-            if(NOT IS_TOP_LEVEL)
-                set(${package}_FOUND TRUE PARENT_SCOPE)
-            endif()
             message(STATUS "Found ${package}: ${PROJECT_SOURCE_DIR}/thirdparty/${package}")
         endif()
     endif()
@@ -163,8 +159,6 @@ endmacro()
 #         1.1. This step is not taken if THIRDPARTY_${package} is set to FORCE. This happens when the user specifically
 #              sets THIRDPARTY_${package} to FORCE, or when THIRDPARTY is set to FORCE and THIRDPARTY_${package} is
 #              unspecified (which means it takes the value of THIRDPARTY).
-#         1.2. This step is not taken for the case of windows installer. That is if EPROSIMA_INSTALLER is set to ON and
-#              at least one of MSVC, MSVC_IDE is set to ON at the same time.
 #   2. If the package is not found in 1), and at least one of THIRDPARTY, THIRDPARTY_${package} is set
 #      to ON or FORCE, use the thirdparty version.
 #         2.1. If THIRDPARTY_UPDATE is set to ON, then update the corresponding git submodule.
@@ -207,7 +201,7 @@ macro(eprosima_find_thirdparty package thirdparty_name)
     # 1. If THIRDPARTY_${package} is set to FORCE, don't try to find the library outside thirdparty.
     # 2. For the case of Windows installer, we don't want to look for the package outside thirdparty. This way we
     #    use thirdparty, meaning we have more control over what is built.
-    if((NOT (THIRDPARTY_${package} STREQUAL "FORCE")) AND (NOT (EPROSIMA_INSTALLER AND (MSVC OR MSVC_IDE))))
+    if(NOT (THIRDPARTY_${package} STREQUAL "FORCE"))
         # Try to quietly find the package outside thridparty first.
         find_package(${package} QUIET)
 

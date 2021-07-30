@@ -12,9 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-include(${PROJECT_SOURCE_DIR}/cmake/dev/set_sources.cmake)
-include(${PROJECT_SOURCE_DIR}/cmake/dev/generate_msvc_libraries.cmake)
-
 # Set source files
 
 if(WIN32)
@@ -269,10 +266,6 @@ if(TLS_FOUND)
         )
 endif()
 
-# Add sources to Makefile.am
-set_sources(${${PROJECT_NAME}_source_files})
-
-
 # Security sources
 set(${PROJECT_NAME}_security_source_files
     rtps/security/exceptions/SecurityException.cpp
@@ -296,11 +289,6 @@ set(${PROJECT_NAME}_security_source_files
     security/logging/LogTopic.cpp
     )
 
-# Add sources to Makefile.am
-set_sources(SECTION SECURITY)
-set_sources(${${PROJECT_NAME}_security_source_files})
-set_sources(ENDSECTION)
-
 if(SECURITY)
     list(APPEND ${PROJECT_NAME}_source_files
         ${${PROJECT_NAME}_security_source_files}
@@ -323,11 +311,6 @@ set(${PROJECT_NAME}_sqlite3_source_files
     rtps/persistence/sqlite3.c
     )
 
-# Add sources to Makefile.am
-set_sources(SECTION SQLITE3)
-set_sources(${${PROJECT_NAME}_sqlite3_source_files})
-set_sources(ENDSECTION)
-
 if(SQLITE3_SUPPORT)
     list(APPEND ${PROJECT_NAME}_source_files
         ${${PROJECT_NAME}_sqlite3_source_files}
@@ -341,13 +324,9 @@ endif()
 # External sources
 if(TINYXML2_SOURCE_DIR)
     set(TINYXML2_SOURCE_DIR_ ${TINYXML2_SOURCE_DIR})
-    if(UNIX AND EPROSIMA_INSTALLER)
-        file(RELATIVE_PATH TINYXML2_SOURCE_DIR_ ${CMAKE_CURRENT_SOURCE_DIR} ${TINYXML2_SOURCE_DIR})
-    endif()
     list(APPEND ${PROJECT_NAME}_source_files
         ${TINYXML2_SOURCE_DIR_}/tinyxml2.cpp
         )
-    set_sources(${TINYXML2_SOURCE_DIR_}/tinyxml2.cpp)
 endif()
 
 if(ANDROID)
@@ -382,162 +361,140 @@ if(APPLE)
     set(CMAKE_INSTALL_RPATH_USE_LINK_PATH FALSE)
 endif()
 
-# Create libraries
-if((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER AND IS_TOP_LEVEL)
-    generate_msvc_libraries(i86Win32VS2015)
-    generate_msvc_libraries(x64Win64VS2015)
-    generate_msvc_libraries(i86Win32VS2017)
-    generate_msvc_libraries(x64Win64VS2017)
-elseif(NOT EPROSIMA_INSTALLER)
+#Create library
+add_library(${PROJECT_NAME} ${${PROJECT_NAME}_source_files})
+set_target_properties(${PROJECT_NAME} PROPERTIES VERSION ${PROJECT_VERSION})
+set_target_properties(${PROJECT_NAME} PROPERTIES SOVERSION ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR})
 
-    #Create library
-    add_library(${PROJECT_NAME} ${${PROJECT_NAME}_source_files})
-    set_target_properties(${PROJECT_NAME} PROPERTIES VERSION ${PROJECT_VERSION})
-    set_target_properties(${PROJECT_NAME} PROPERTIES SOVERSION ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR})
+option(INTERNAL_DEBUG "Activate developer debug messages" OFF)
 
-    option(INTERNAL_DEBUG "Activate developer debug messages" OFF)
+# make visual studio more gcc and clang like. Propagated to dependent targets.
+if(MSVC)
+    # C4101 'identifier' : unreferenced local variable 
+    # C4189 'identifier' : local variable is initialized but not referenced
+    # C4555  expression has no effect; expected expression with side-effect
+    # C4715: 'Test': not all control paths return a value
+    # C5038 data member 'member1' will be initialized after data member 'member2'
+    target_compile_options(${PROJECT_NAME} PUBLIC /w34101 /w34555 /w34189 /w35038 /w34715)
+endif(MSVC)
 
-    # make visual studio more gcc and clang like. Propagated to dependent targets.
-    if(MSVC)
-        # C4101 'identifier' : unreferenced local variable 
-        # C4189 'identifier' : local variable is initialized but not referenced
-        # C4555  expression has no effect; expected expression with side-effect
-        # C4715: 'Test': not all control paths return a value
-        # C5038 data member 'member1' will be initialized after data member 'member2'
-        target_compile_options(${PROJECT_NAME} PUBLIC /w34101 /w34555 /w34189 /w35038 /w34715)
-    endif(MSVC)
+target_compile_definitions(${PROJECT_NAME} PRIVATE
+    ${PROJECT_NAME_UPPER}_SOURCE
+    BOOST_ASIO_STANDALONE
+    ASIO_STANDALONE
+    ASIO_DISABLE_VISIBILITY
+    SQLITE_WIN32_GETVERSIONEX=0
+    $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
+    $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
+    $<$<AND:$<BOOL:${WIN32}>,$<STREQUAL:"${CMAKE_SYSTEM_NAME}","WindowsStore">>:_WIN32_WINNT=0x0603>
+    $<$<AND:$<BOOL:${WIN32}>,$<NOT:$<STREQUAL:"${CMAKE_SYSTEM_NAME}","WindowsStore">>>:_WIN32_WINNT=0x0601>
+    $<$<AND:$<BOOL:${WIN32}>,$<STREQUAL:"${CMAKE_SYSTEM_NAME}","WindowsStore">>:SQLITE_OS_WINRT>
+    $<$<AND:$<BOOL:${ANDROID}>,$<NOT:$<BOOL:${HAVE_CXX14}>>,$<NOT:$<BOOL:${HAVE_CXX1Y}>>>:ASIO_DISABLE_STD_STRING_VIEW>
+    $<$<BOOL:${WIN32}>:_ENABLE_ATOMIC_ALIGNMENT_FIX>
+    $<$<NOT:$<BOOL:${IS_THIRDPARTY_BOOST_SUPPORTED}>>:FASTDDS_SHM_TRANSPORT_DISABLED> # Do not compile SHM Transport
+    $<$<BOOL:${SHM_TRANSPORT_DEFAULT}>:SHM_TRANSPORT_BUILTIN> # Enable SHM as built-in transport
+    $<$<BOOL:${STDOUTERR_LOG_CONSUMER}>:STDOUTERR_LOG_CONSUMER> # Enable StdoutErrConsumer as default LogConsumer
+    )
 
-    target_compile_definitions(${PROJECT_NAME} PRIVATE
-        ${PROJECT_NAME_UPPER}_SOURCE
-        BOOST_ASIO_STANDALONE
-        ASIO_STANDALONE
-        ASIO_DISABLE_VISIBILITY
-        SQLITE_WIN32_GETVERSIONEX=0
-        $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
-        $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
-        $<$<AND:$<BOOL:${WIN32}>,$<STREQUAL:"${CMAKE_SYSTEM_NAME}","WindowsStore">>:_WIN32_WINNT=0x0603>
-        $<$<AND:$<BOOL:${WIN32}>,$<NOT:$<STREQUAL:"${CMAKE_SYSTEM_NAME}","WindowsStore">>>:_WIN32_WINNT=0x0601>
-        $<$<AND:$<BOOL:${WIN32}>,$<STREQUAL:"${CMAKE_SYSTEM_NAME}","WindowsStore">>:SQLITE_OS_WINRT>
-        $<$<AND:$<BOOL:${ANDROID}>,$<NOT:$<BOOL:${HAVE_CXX14}>>,$<NOT:$<BOOL:${HAVE_CXX1Y}>>>:ASIO_DISABLE_STD_STRING_VIEW>
-        $<$<BOOL:${WIN32}>:_ENABLE_ATOMIC_ALIGNMENT_FIX>
-        $<$<NOT:$<BOOL:${IS_THIRDPARTY_BOOST_SUPPORTED}>>:FASTDDS_SHM_TRANSPORT_DISABLED> # Do not compile SHM Transport
-        $<$<BOOL:${SHM_TRANSPORT_DEFAULT}>:SHM_TRANSPORT_BUILTIN> # Enable SHM as built-in transport
-        $<$<BOOL:${STDOUTERR_LOG_CONSUMER}>:STDOUTERR_LOG_CONSUMER> # Enable StdoutErrConsumer as default LogConsumer
-        )
+# Define public headers
+target_include_directories(${PROJECT_NAME} PUBLIC
+    $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
+    $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/include>
+    $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/include/${PROJECT_NAME}>
+    $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/src/cpp>
+    $<INSTALL_INTERFACE:include>
+    PRIVATE
+    ${Asio_INCLUDE_DIR}
+    ${TINYXML2_INCLUDE_DIR}
+    $<$<BOOL:${ANDROID}>:${ANDROID_IFADDRS_INCLUDE_DIR}>
+    ${THIRDPARTY_BOOST_INCLUDE_DIR}
+    )
 
-    # Define public headers
-    target_include_directories(${PROJECT_NAME} PUBLIC
-        $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
-        $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/include>
-        $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/include/${PROJECT_NAME}>
-        $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/src/cpp>
-        $<INSTALL_INTERFACE:include>
-        PRIVATE
-        ${Asio_INCLUDE_DIR}
-        ${TINYXML2_INCLUDE_DIR}
-        $<$<BOOL:${ANDROID}>:${ANDROID_IFADDRS_INCLUDE_DIR}>
-        ${THIRDPARTY_BOOST_INCLUDE_DIR}
-        )
+# No need to expose linked libs when target is a shared library on MSVC.
+if(BUILD_SHARED_LIBS AND MSVC)
+    set(PRIVACY "PRIVATE")
+else()
+    set(PRIVACY "PUBLIC")
+endif()
 
-    # Made linked libraries PRIVATE to prevent local directories in Windows installer.
-    if(EPROSIMA_INSTALLER_MINION
-        # No need to expose linked libs when target is a shared library on MSVC.
-            OR (BUILD_SHARED_LIBS AND MSVC))
-        set(PRIVACY "PRIVATE")
-    else()
-        set(PRIVACY "PUBLIC")
+# Find out if libatomic link is required in this platform
+find_package(Atomic MODULE)
+
+# Link library to external libraries.
+target_link_libraries(${PROJECT_NAME} ${PRIVACY} fastcdr foonathan_memory
+    ${CMAKE_THREAD_LIBS_INIT} ${CMAKE_DL_LIBS}
+    ${TINYXML2_LIBRARY}
+    $<$<BOOL:${LINK_SSL}>:OpenSSL::SSL$<SEMICOLON>OpenSSL::Crypto$<$<BOOL:${WIN32}>:$<SEMICOLON>crypt32.lib>>
+    $<$<BOOL:${WIN32}>:iphlpapi$<SEMICOLON>Shlwapi>
+    ${THIRDPARTY_BOOST_LINK_LIBS}
+    PRIVATE eProsima_atomic
+    )
+
+if(MSVC OR MSVC_IDE)
+    # On installed binaries use manifest to specify dependencies
+    if(INSTALLER_PLATFORM AND OPENSSL_FOUND)
+
+        # Get Fast-DDS version suitable manifest format
+        set(FASTDDS_CANONICAL_VERSION ${fastrtps_VERSION})
+
+        if( NOT FASTDDS_CANONICAL_VERSION MATCHES "^[0-9]+\\.[0-9]+\\.[0-9]+$")
+            message(FATAL_ERROR "Fast-DDS version number ${fastrtps_VERSION} must include major, minor and patch.")
+        endif()
+
+        if( NOT fastrtps_VERSION_TWEAK)
+            set(FASTDDS_CANONICAL_VERSION "${FASTDDS_CANONICAL_VERSION}.0")
+        endif()
+
+        # Get OpenSSL version suitable manifest format
+        execute_process( COMMAND PowerShell -NoLogo -Command "&{ param([string]$original) 
+        if ($original -notmatch '\\d+$')
+            { $res = $original.Substring(0,$original.length-1) + '.' +
+            ([int]$original[$original.length-1]-[int][char]'a'+1); }
+            else { while(($original -split '\\.').count -le 3)
+            { $original += '.0'; } $res = $original; } $res }" -original ${OPENSSL_VERSION}
+            OUTPUT_VARIABLE OPENSSL_CANONICAL_VERSION
+            )
+        string(STRIP ${OPENSSL_CANONICAL_VERSION} OPENSSL_CANONICAL_VERSION)
+
+        # replace the values in the manifest template
+        configure_file(
+            "${CMAKE_SOURCE_DIR}/cmake/packaging/windows/fastrtps.manifest.in"
+            "${CMAKE_CURRENT_BINARY_DIR}/fastrtps.manifest"
+            @ONLY
+            )
+
+        file(TO_NATIVE_PATH "${CMAKE_CURRENT_BINARY_DIR}/fastrtps.manifest" MANIFEST_FILE_PATH)
+        target_link_options(${PROJECT_NAME} PRIVATE "/MANIFEST:EMBED" "/MANIFESTINPUT:${MANIFEST_FILE_PATH}")
+
+        unset(WINDOWS_SOURCE_DIR)
+        unset(FASTDDS_CANONICAL_VERSION)
+        unset(OPENSSL_CANONICAL_VERSION)
+        unset(MANIFEST_FILE_PATH)
     endif()
 
-    # Find out if libatomic link is required in this platform
-    find_package(Atomic MODULE)
+    set_target_properties(${PROJECT_NAME} PROPERTIES RELEASE_POSTFIX -${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR})
+    set_target_properties(${PROJECT_NAME} PROPERTIES RELWITHDEBINFO_POSTFIX -${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR})
+    set_target_properties(${PROJECT_NAME} PROPERTIES DEBUG_POSTFIX d-${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR})
 
-    # Link library to external libraries.
-    target_link_libraries(${PROJECT_NAME} ${PRIVACY} fastcdr foonathan_memory
-        ${CMAKE_THREAD_LIBS_INIT} ${CMAKE_DL_LIBS}
-        ${TINYXML2_LIBRARY}
-        $<$<BOOL:${LINK_SSL}>:OpenSSL::SSL$<SEMICOLON>OpenSSL::Crypto$<$<BOOL:${WIN32}>:$<SEMICOLON>crypt32.lib>>
-        $<$<BOOL:${WIN32}>:iphlpapi$<SEMICOLON>Shlwapi>
-        ${THIRDPARTY_BOOST_LINK_LIBS}
-        PRIVATE eProsima_atomic
-        )
-
-    if(MSVC OR MSVC_IDE)
-
-        # On installed binaries use manifest to specify dependencies
-        if(INSTALLER_PLATFORM AND OPENSSL_FOUND)
-
-            # Get Fast-DDS version suitable manifest format
-            set(FASTDDS_CANONICAL_VERSION ${fastrtps_VERSION})
-            
-            if( NOT FASTDDS_CANONICAL_VERSION MATCHES "^[0-9]+\\.[0-9]+\\.[0-9]+$")
-                message(FATAL_ERROR "Fast-DDS version number ${fastrtps_VERSION} must include major, minor and patch.")
-            endif()
-
-            if( NOT fastrtps_VERSION_TWEAK)
-                set(FASTDDS_CANONICAL_VERSION "${FASTDDS_CANONICAL_VERSION}.0")
-            endif()
-
-            # Get OpenSSL version suitable manifest format
-            execute_process( COMMAND PowerShell -NoLogo -Command "&{ param([string]$original) 
-                    if ($original -notmatch '\\d+$')
-                    { $res = $original.Substring(0,$original.length-1) + '.' +
-                            ([int]$original[$original.length-1]-[int][char]'a'+1); }
-                    else { while(($original -split '\\.').count -le 3)
-                        { $original += '.0'; } $res = $original; } $res }" -original ${OPENSSL_VERSION}
-                OUTPUT_VARIABLE OPENSSL_CANONICAL_VERSION
-                )
-            string(STRIP ${OPENSSL_CANONICAL_VERSION} OPENSSL_CANONICAL_VERSION)
-
-            # replace the values in the manifest template
-            configure_file(
-                "${CMAKE_SOURCE_DIR}/cmake/packaging/windows/fastrtps.manifest.in"
-                "${CMAKE_CURRENT_BINARY_DIR}/fastrtps.manifest"
-                @ONLY
-                )
-
-            file(TO_NATIVE_PATH "${CMAKE_CURRENT_BINARY_DIR}/fastrtps.manifest" MANIFEST_FILE_PATH)
-            target_link_options(${PROJECT_NAME} PRIVATE "/MANIFEST:EMBED" "/MANIFESTINPUT:${MANIFEST_FILE_PATH}")
-
-            unset(WINDOWS_SOURCE_DIR)
-            unset(FASTDDS_CANONICAL_VERSION)
-            unset(OPENSSL_CANONICAL_VERSION)
-            unset(MANIFEST_FILE_PATH)
-        endif()
-
-        set_target_properties(${PROJECT_NAME} PROPERTIES RELEASE_POSTFIX -${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR})
-        set_target_properties(${PROJECT_NAME} PROPERTIES RELWITHDEBINFO_POSTFIX -${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR})
-        set_target_properties(${PROJECT_NAME} PROPERTIES DEBUG_POSTFIX d-${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR})
-
-        get_target_property(TARGET_TYPE ${PROJECT_NAME} TYPE)
-        if(TARGET_TYPE STREQUAL "SHARED_LIBRARY")
-            # Export symbols in DLL library
-            target_compile_definitions(${PROJECT_NAME} PUBLIC ${PROJECT_NAME_UPPER}_DYN_LINK)
-            set_target_properties(${PROJECT_NAME} PROPERTIES
-                PDB_NAME_DEBUG "${PROJECT_NAME}d-${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}"
-                PDB_OUTPUT_DIRECTORY_DEBUG "${CMAKE_CURRENT_BINARY_DIR}/symbols"
+    get_target_property(TARGET_TYPE ${PROJECT_NAME} TYPE)
+    if(TARGET_TYPE STREQUAL "SHARED_LIBRARY")
+        # Export symbols in DLL library
+        target_compile_definitions(${PROJECT_NAME} PUBLIC ${PROJECT_NAME_UPPER}_DYN_LINK)
+        set_target_properties(${PROJECT_NAME} PROPERTIES
+            PDB_NAME_DEBUG "${PROJECT_NAME}d-${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}"
+            PDB_OUTPUT_DIRECTORY_DEBUG "${CMAKE_CURRENT_BINARY_DIR}/symbols"
             )
-        else()
-            # Rename the library to have a "lib" before.
-            set_target_properties(${PROJECT_NAME} PROPERTIES OUTPUT_NAME lib${PROJECT_NAME})
-            set_target_properties(${PROJECT_NAME} PROPERTIES
-                COMPILE_PDB_NAME_DEBUG "lib${PROJECT_NAME}d-${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}"
-                COMPILE_PDB_OUTPUT_DIRECTORY_DEBUG "${CMAKE_CURRENT_BINARY_DIR}/symbols"
+    else()
+        # Rename the library to have a "lib" before.
+        set_target_properties(${PROJECT_NAME} PROPERTIES OUTPUT_NAME lib${PROJECT_NAME})
+        set_target_properties(${PROJECT_NAME} PROPERTIES
+            COMPILE_PDB_NAME_DEBUG "lib${PROJECT_NAME}d-${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}"
+            COMPILE_PDB_OUTPUT_DIRECTORY_DEBUG "${CMAKE_CURRENT_BINARY_DIR}/symbols"
             )
-        endif()
+    endif()
 
-        if("${CMAKE_SYSTEM_NAME}" STREQUAL "WindowsStore")
-            set_target_properties(${PROJECT_NAME} PROPERTIES VS_WINRT_COMPONENT "true")
-        endif()
-
-        # For installing purpose.
-        if(EPROSIMA_INSTALLER_MINION)
-            set(MSVCARCH_EXTENSION "_${MSVC_ARCH}")
-            set(MSVCARCH_DIR_EXTENSION "/${MSVC_ARCH}")
-            set(MSVCARCH_DIR_EXTENSION_EXT "/${MSVC_ARCH}")
-            if(NOT TARGET_TYPE STREQUAL "SHARED_LIBRARY")
-                set(MSVCARCH_DIR_EXTENSION_EXT "${MSVCARCH_DIR_EXTENSION_EXT}_static")
-            endif()
-        endif()
+    if("${CMAKE_SYSTEM_NAME}" STREQUAL "WindowsStore")
+        set_target_properties(${PROJECT_NAME} PROPERTIES VS_WINRT_COMPONENT "true")
     endif()
 endif()
 
@@ -551,68 +508,30 @@ endif()
 ###############################################################################
 
 # Install public headers
-set_public_headers_directory(${PROJECT_SOURCE_DIR}/include ${PROJECT_NAME}
+
+install(DIRECTORY ${PROJECT_SOURCE_DIR}/include/${PROJECT_NAME}
     DESTINATION ${INCLUDE_INSTALL_DIR}
     COMPONENT headers
-    INSTALL
+    FILES_MATCHING
+    PATTERN "*.h"
+    PATTERN "*.hpp"
+    PATTERN "*.ipp"
     )
-set_public_headers_directory(${PROJECT_SOURCE_DIR}/include fastdds
+
+install(DIRECTORY ${PROJECT_SOURCE_DIR}/include/fastdds
     DESTINATION ${INCLUDE_INSTALL_DIR}
     COMPONENT headers
-    INSTALL
+    FILES_MATCHING
+    PATTERN "*.h"
+    PATTERN "*.hpp"
+    PATTERN "*.ipp"
     )
 
 # Install config.h header
-set_public_header(${PROJECT_BINARY_DIR}/include ${PROJECT_NAME} config.h
+install(FILES ${PROJECT_BINARY_DIR}/include/${PROJECT_NAME}/config.h
     DESTINATION ${INCLUDE_INSTALL_DIR}/${PROJECT_NAME}
     COMPONENT headers
-    INSTALL
     )
-
-
-# Install external sources
-if(UNIX AND EPROSIMA_INSTALLER)
-    set_public_header(${TINYXML2_INCLUDE_DIR} "" tinyxml2.h
-        DESTINATION thirdparty/tinyxml2
-        COMPONENT headers
-        )
-
-    set_public_headers_directory(${Asio_INCLUDE_DIR} ""
-        DESTINATION thirdparty/asio
-        COMPONENT headers
-        )
-endif()
-
-set(CPACK_COMPONENT_HEADERS_DISPLAY_NAME "C++ Headers" PARENT_SCOPE)
-set(CPACK_COMPONENT_HEADERS_DESCRIPTION "eProsima ${PROJECT_NAME_LARGE} C++ Headers" PARENT_SCOPE)
-
-# Install sources
-
-if(UNIX AND EPROSIMA_INSTALLER)
-    install(DIRECTORY ${PROJECT_SOURCE_DIR}/src/cpp
-        DESTINATION src
-        COMPONENT sources
-        FILES_MATCHING
-        PATTERN "*.c"
-        PATTERN "*.cpp"
-        PATTERN "*.h"
-        PATTERN "*.hpp"
-        )
-
-    # Install external sources
-    install(FILES ${TINYXML2_SOURCE_DIR}/tinyxml2.cpp
-        ${TINYXML2_SOURCE_DIR}/tinyxml2.h
-        DESTINATION thirdparty/tinyxml2
-        COMPONENT sources
-        )
-
-    install(DIRECTORY ${PROJECT_BINARY_DIR}/autotools/
-        DESTINATION .
-        USE_SOURCE_PERMISSIONS
-        OPTIONAL
-        COMPONENT sources
-        )
-endif()
 
 # Install libraries
 
@@ -624,148 +543,104 @@ else()
     set(FASTDDS_LINKING static)
 endif()
 
-if((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER)
-    if(IS_TOP_LEVEL)
-        install_msvc_libraries(i86Win32VS2015)
-        install_msvc_libraries(x64Win64VS2015)
-        install_msvc_libraries(i86Win32VS2017)
-        install_msvc_libraries(x64Win64VS2017)
-    endif()
+install(TARGETS ${PROJECT_NAME} eProsima_atomic
+    EXPORT ${PROJECT_NAME}-${FASTDDS_LINKING}-targets
+    RUNTIME DESTINATION ${BIN_INSTALL_DIR}${MSVCARCH_DIR_EXTENSION}
+    LIBRARY DESTINATION ${LIB_INSTALL_DIR}${MSVCARCH_DIR_EXTENSION}
+    ARCHIVE DESTINATION ${LIB_INSTALL_DIR}${MSVCARCH_DIR_EXTENSION}
+    COMPONENT libraries
+    )
 
-    install(FILES ${PROJECT_SOURCE_DIR}/cmake/packaging/windows/${PROJECT_NAME}-config.cmake
-        DESTINATION ${DATA_INSTALL_DIR}/${PROJECT_NAME}/cmake
-        COMPONENT cmake
-        )
-elseif(NOT EPROSIMA_INSTALLER)
-    install(TARGETS ${PROJECT_NAME} eProsima_atomic
-        EXPORT ${PROJECT_NAME}-${FASTDDS_LINKING}-targets
-        RUNTIME DESTINATION ${BIN_INSTALL_DIR}${MSVCARCH_DIR_EXTENSION}
-        LIBRARY DESTINATION ${LIB_INSTALL_DIR}${MSVCARCH_DIR_EXTENSION}
-        ARCHIVE DESTINATION ${LIB_INSTALL_DIR}${MSVCARCH_DIR_EXTENSION}
-        COMPONENT libraries${MSVCARCH_EXTENSION}
-        )
+export(TARGETS ${PROJECT_NAME} eProsima_atomic FILE ${PROJECT_BINARY_DIR}/cmake/config/${PROJECT_NAME}-${FASTDDS_LINKING}-targets.cmake)
 
-    export(TARGETS ${PROJECT_NAME} eProsima_atomic FILE ${PROJECT_BINARY_DIR}/cmake/config/${PROJECT_NAME}-${FASTDDS_LINKING}-targets.cmake)
+if(INSTALLER_PLATFORM)
+    set(INSTALL_DESTINATION_PATH ${DATA_INSTALL_DIR}/${PROJECT_NAME}-${INSTALLER_PLATFORM}/cmake)
+else()
+    set(INSTALL_DESTINATION_PATH ${DATA_INSTALL_DIR}/${PROJECT_NAME}/cmake${MSVCARCH_DIR_EXTENSION_EXT})
+endif()
 
-    if(INSTALLER_PLATFORM)
-        set(INSTALL_DESTINATION_PATH ${DATA_INSTALL_DIR}/${PROJECT_NAME}-${INSTALLER_PLATFORM}/cmake)
+install(EXPORT ${PROJECT_NAME}-${FASTDDS_LINKING}-targets
+    DESTINATION ${INSTALL_DESTINATION_PATH}
+    COMPONENT cmake
+    )
+
+if(MSVC OR MSVC_IDE)
+
+    # first try dll symbols
+    get_target_property(PDB_FILE ${PROJECT_NAME} PDB_NAME_DEBUG)
+    if(PDB_FILE)
+        get_target_property(PDB_DIR ${PROJECT_NAME} PDB_OUTPUT_DIRECTORY_DEBUG)
+        set(PDB_FILE "${PDB_DIR}/${PDB_FILE}.pdb")
     else()
-        set(INSTALL_DESTINATION_PATH ${DATA_INSTALL_DIR}/${PROJECT_NAME}/cmake${MSVCARCH_DIR_EXTENSION_EXT})
-    endif()
-
-    install(EXPORT ${PROJECT_NAME}-${FASTDDS_LINKING}-targets
-        DESTINATION ${INSTALL_DESTINATION_PATH}
-        COMPONENT cmake
-        )
-
-    if(MSVC OR MSVC_IDE)
-
-        # first try dll symbols
-        get_target_property(PDB_FILE ${PROJECT_NAME} PDB_NAME_DEBUG)
+        # fallback to static lib symbols
+        get_target_property(PDB_FILE ${PROJECT_NAME} COMPILE_PDB_NAME_DEBUG)
         if(PDB_FILE)
-            get_target_property(PDB_DIR ${PROJECT_NAME} PDB_OUTPUT_DIRECTORY_DEBUG)
+            get_target_property(PDB_DIR ${PROJECT_NAME} COMPILE_PDB_OUTPUT_DIRECTORY_DEBUG)
             set(PDB_FILE "${PDB_DIR}/${PDB_FILE}.pdb")
-        else()
-            # fallback to static lib symbols
-            get_target_property(PDB_FILE ${PROJECT_NAME} COMPILE_PDB_NAME_DEBUG)
-            if(PDB_FILE)
-                get_target_property(PDB_DIR ${PROJECT_NAME} COMPILE_PDB_OUTPUT_DIRECTORY_DEBUG)
-                set(PDB_FILE "${PDB_DIR}/${PDB_FILE}.pdb")
-            endif()
-        endif()
-
-        # install symbols if any
-        if(PDB_FILE)
-            install(FILES ${PDB_FILE}
-                DESTINATION ${LIB_INSTALL_DIR}${MSVCARCH_DIR_EXTENSION}
-                COMPONENT symbols
-                CONFIGURATIONS Debug
-                )
-        endif()
-
-        if(EPROSIMA_INSTALLER_MINION AND LINK_SSL)
-            # Libraries from https://www.npcglib.org/~stathis/blog/precompiled-openssl/
-            install(FILES ${OPENSSL_ROOT_DIR}/bin/libeay32MD.dll
-                ${OPENSSL_ROOT_DIR}/bin/libeay32MDd.dll
-                ${OPENSSL_ROOT_DIR}/bin/ssleay32MD.dll
-                ${OPENSSL_ROOT_DIR}/bin/ssleay32MDd.dll
-                DESTINATION ${BIN_INSTALL_DIR}${MSVCARCH_DIR_EXTENSION}
-                COMPONENT libraries${MSVCARCH_EXTENSION}
-                )
-
-            install(FILES ${OPENSSL_ROOT_DIR}/lib/libeay32MD.lib
-                ${OPENSSL_ROOT_DIR}/lib/libeay32MDd.lib
-                ${OPENSSL_ROOT_DIR}/lib/ssleay32MD.lib
-                ${OPENSSL_ROOT_DIR}/lib/ssleay32MDd.lib
-                DESTINATION ${LIB_INSTALL_DIR}${MSVCARCH_DIR_EXTENSION}
-                COMPONENT libraries${MSVCARCH_EXTENSION}
-                )
         endif()
     endif()
 
-    ###############################################################################
-    # Create CMake package config file
-    ###############################################################################
-    include(CMakePackageConfigHelpers)
-
-    if(BUILD_SHARED_LIBS)
-        set(FASTRTPS_PACKAGE_OPT_BIN_DIR_CONDITION "if(MSVC OR MSVC_IDE)")
-    else()
-        set(FASTRTPS_PACKAGE_OPT_BIN_DIR_CONDITION "if(0)")
-    endif()
-
-    if(COMPILE_TOOLS)
-        set(INCLUDE_FASTDS_TARGETS "include(\${CMAKE_CURRENT_LIST_DIR}/fast-discovery-server-targets.cmake)")
-    endif()
-
-    # Add fastrtps dependencies in its CMake config file.
-    if(LINK_SSL)
-        if(INSTALLER_PLATFORM)
-            # OpenSSL dependency is only propagated on static linking
-            # We must use the deployed OpenSSL binaries to prevent compatibility issues
-            set(FASTRTPS_INSTALLER_DEPS_ANCILLARY "\
-function(find_fastdds_deployed_openssl)\n\
-    if(OPENSSL_FOUND AND NOT(OPENSSL_VERSION STREQUAL \"${OPENSSL_VERSION}\") )\n\
-        message(WARNING \"OpenSSL already loaded. Version \${OPENSSL_VERSION} differs from version ${OPENSSL_VERSION}, used in Fast-DDS binaries building, ABI issues may arise\")\n\
-    endif()\n\
-    set(OPENSSL_USE_STATIC_LIBS TRUE)\n\
-    set(OPENSSL_ROOT_DIR  \"\${PACKAGE_PREFIX_DIR}/lib/${INSTALLER_PLATFORM}\")\n\
-    find_package(OpenSSL REQUIRED)\n\
-endfunction()"
+    # install symbols if any
+    if(PDB_FILE)
+        install(FILES ${PDB_FILE}
+            DESTINATION ${LIB_INSTALL_DIR}${MSVCARCH_DIR_EXTENSION}
+            COMPONENT symbols
+            CONFIGURATIONS Debug
             )
-            set(FASTRTPS_INSTALLER_OPT_DEPS "find_fastdds_deployed_openssl()")
-        elseif(WIN32)
-            # windows from sources only requires OpenSSL on static libraries
-            set(FASTRTPS_PACKAGE_WIN32_OPT_DEPS "find_package(OpenSSL REQUIRED)")
-        else()
-            # linux from sources requires OpenSSL always
-            set(FASTRTPS_PACKAGE_UNIX_OPT_DEPS "find_package(OpenSSL REQUIRED)")
-        endif()
-    endif()
-
-    configure_package_config_file(${PROJECT_SOURCE_DIR}/cmake/packaging/Config.cmake.in
-        ${PROJECT_BINARY_DIR}/cmake/config/${PROJECT_NAME}-config.cmake
-        INSTALL_DESTINATION ${INSTALL_DESTINATION_PATH}
-        PATH_VARS BIN_INSTALL_DIR INCLUDE_INSTALL_DIR LIB_INSTALL_DIR
-        )
-    write_basic_package_version_file(${PROJECT_BINARY_DIR}/cmake/config/${PROJECT_NAME}-config-version.cmake
-        VERSION ${PROJECT_VERSION}
-        COMPATIBILITY SameMajorVersion
-        )
-    install(FILES ${PROJECT_BINARY_DIR}/cmake/config/${PROJECT_NAME}-config.cmake
-        ${PROJECT_BINARY_DIR}/cmake/config/${PROJECT_NAME}-config-version.cmake
-        DESTINATION ${INSTALL_DESTINATION_PATH}
-        COMPONENT cmake
-        )
-
-    if(MSVCARCH_EXTENSION)
-        string(TOUPPER "${MSVC_ARCH}" MSVC_ARCH_UPPER)
-        set(CPACK_COMPONENT_LIBRARIES_${MSVC_ARCH_UPPER}_DISPLAY_NAME "${MSVC_ARCH}" PARENT_SCOPE)
-        set(CPACK_COMPONENT_LIBRARIES_${MSVC_ARCH_UPPER}_DESCRIPTION "eProsima ${PROJECT_NAME_LARGE} libraries for platform ${MSVC_ARCH}" PARENT_SCOPE)
-        set(CPACK_COMPONENT_LIBRARIES_${MSVC_ARCH_UPPER}_GROUP "Libraries" PARENT_SCOPE)
-        set(CPACK_COMPONENT_GROUP_LIBRARIES_DESCRIPTION "eProsima ${PROJECT_NAME_LARGE} libraries" PARENT_SCOPE)
-    else()
-        set(CPACK_COMPONENT_LIBRARIES_DISPLAY_NAME "Libraries" PARENT_SCOPE)
-        set(CPACK_COMPONENT_LIBRARIES_DESCRIPTION "eProsima ${PROJECT_NAME_LARGE} libraries" PARENT_SCOPE)
     endif()
 endif()
+
+###############################################################################
+# Create CMake package config file
+###############################################################################
+include(CMakePackageConfigHelpers)
+
+if(BUILD_SHARED_LIBS)
+    set(FASTRTPS_PACKAGE_OPT_BIN_DIR_CONDITION "if(MSVC OR MSVC_IDE)")
+else()
+    set(FASTRTPS_PACKAGE_OPT_BIN_DIR_CONDITION "if(0)")
+endif()
+
+if(COMPILE_TOOLS)
+    set(INCLUDE_FASTDS_TARGETS "include(\${CMAKE_CURRENT_LIST_DIR}/fast-discovery-server-targets.cmake)")
+endif()
+
+# Add fastrtps dependencies in its CMake config file.
+if(LINK_SSL)
+    if(INSTALLER_PLATFORM)
+        # OpenSSL dependency is only propagated on static linking
+        # We must use the deployed OpenSSL binaries to prevent compatibility issues
+        set(FASTRTPS_INSTALLER_DEPS_ANCILLARY "\
+        function(find_fastdds_deployed_openssl)\n\
+            if(OPENSSL_FOUND AND NOT(OPENSSL_VERSION STREQUAL \"${OPENSSL_VERSION}\") )\n\
+                message(WARNING \"OpenSSL already loaded. Version \${OPENSSL_VERSION} differs from version ${OPENSSL_VERSION}, used in Fast-DDS binaries building, ABI issues may arise\")\n\
+            endif()\n\
+            set(OPENSSL_USE_STATIC_LIBS TRUE)\n\
+            set(OPENSSL_ROOT_DIR  \"\${PACKAGE_PREFIX_DIR}/lib/${INSTALLER_PLATFORM}\")\n\
+            find_package(OpenSSL REQUIRED)\n\
+        endfunction()"
+        )
+        set(FASTRTPS_INSTALLER_OPT_DEPS "find_fastdds_deployed_openssl()")
+    elseif(WIN32)
+        # windows from sources only requires OpenSSL on static libraries
+        set(FASTRTPS_PACKAGE_WIN32_OPT_DEPS "find_package(OpenSSL REQUIRED)")
+    else()
+        # linux from sources requires OpenSSL always
+        set(FASTRTPS_PACKAGE_UNIX_OPT_DEPS "find_package(OpenSSL REQUIRED)")
+    endif()
+endif()
+
+configure_package_config_file(${PROJECT_SOURCE_DIR}/cmake/packaging/Config.cmake.in
+    ${PROJECT_BINARY_DIR}/cmake/config/${PROJECT_NAME}-config.cmake
+    INSTALL_DESTINATION ${INSTALL_DESTINATION_PATH}
+    PATH_VARS BIN_INSTALL_DIR INCLUDE_INSTALL_DIR LIB_INSTALL_DIR
+    )
+write_basic_package_version_file(${PROJECT_BINARY_DIR}/cmake/config/${PROJECT_NAME}-config-version.cmake
+    VERSION ${PROJECT_VERSION}
+    COMPATIBILITY SameMajorVersion
+    )
+install(FILES ${PROJECT_BINARY_DIR}/cmake/config/${PROJECT_NAME}-config.cmake
+    ${PROJECT_BINARY_DIR}/cmake/config/${PROJECT_NAME}-config-version.cmake
+    DESTINATION ${INSTALL_DESTINATION_PATH}
+    COMPONENT cmake
+    )
