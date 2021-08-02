@@ -1790,7 +1790,7 @@ static const std::map<std::string, std::pair<std::set<std::string>, std::set<std
     {"www.eprosima.com.test", {{"154.56.134.194"}, {}}},         // Only IPv4
     {"www.acme.com.test", {{"216.58.215.164"}, {"2a00:1450:400e:803::2004"}}},
     {"www.foo.com.test", {{"140.82.121.4", "140.82.121.3"}, {}}},
-    {"acme.org.test", {{}, {"2605:bc80:3010:104::8cd3:962"}}}         // Only IPv6
+    {"acme.org.test", {{}, {"ff1e::ffff:efff:1"}}}               // Only IPv6
 };
 
 /*
