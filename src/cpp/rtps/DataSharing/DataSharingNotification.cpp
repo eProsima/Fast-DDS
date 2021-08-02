@@ -31,7 +31,7 @@ std::shared_ptr<DataSharingNotification> DataSharingNotification::create_notific
         const std::string& shared_dir)
 {
     std::shared_ptr<DataSharingNotification> notification = std::make_shared<DataSharingNotification>();
-    if (!notification->create_and_init_notification(reader_guid, shared_dir));
+    if (!notification->create_and_init_notification(reader_guid, shared_dir))
     {
         notification.reset();
     }
