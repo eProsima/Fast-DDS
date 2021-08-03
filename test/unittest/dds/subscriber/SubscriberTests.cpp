@@ -541,7 +541,7 @@ TEST(SubscriberTests, UpdatePartitions)
     ASSERT_NE(participant, nullptr);
     Subscriber* subscriber = participant->create_subscriber(SUBSCRIBER_QOS_DEFAULT);
     ASSERT_NE(subscriber, nullptr);
-    ASSERT_EQ(subscriber->get_qos().partition().size(), 0);
+    ASSERT_EQ(subscriber->get_qos().partition().size(), 0u);
 
     // Add 1 partition to subscriber
     SubscriberQos sub_qos;
@@ -549,7 +549,7 @@ TEST(SubscriberTests, UpdatePartitions)
     partitions.push_back("partition_1");
     sub_qos.partition() = partitions;
     subscriber->set_qos(sub_qos);
-    ASSERT_EQ(subscriber->get_qos().partition().size(), 1);
+    ASSERT_EQ(subscriber->get_qos().partition().size(), 1u);
     ASSERT_EQ(partitions, subscriber->get_qos().partition());
 
     // Add 3 more partitions to subscriber
@@ -558,18 +558,18 @@ TEST(SubscriberTests, UpdatePartitions)
     partitions.push_back("partition_4");
     sub_qos.partition() = partitions;
     subscriber->set_qos(sub_qos);
-    ASSERT_EQ(subscriber->get_qos().partition().size(), 4);
+    ASSERT_EQ(subscriber->get_qos().partition().size(), 4u);
     ASSERT_EQ(partitions, subscriber->get_qos().partition());
 
     // Remove 1 partition from subscriber
     partitions.clear();
-    ASSERT_TRUE(partitions.empty());
+    ASSERT_TRUE(static_cast<bool>(partitions.empty()));
     partitions.push_back("partition_1");
     partitions.push_back("partition_2");
     partitions.push_back("partition_3");
     sub_qos.partition() = partitions;
     subscriber->set_qos(sub_qos);
-    ASSERT_EQ(subscriber->get_qos().partition().size(), 3);
+    ASSERT_EQ(subscriber->get_qos().partition().size(), 3u);
     ASSERT_EQ(partitions, subscriber->get_qos().partition());
 
     // Remove 2 more partitions from the subscriber
@@ -578,7 +578,7 @@ TEST(SubscriberTests, UpdatePartitions)
     partitions.push_back("partition_1");
     sub_qos.partition() = partitions;
     subscriber->set_qos(sub_qos);
-    ASSERT_EQ(subscriber->get_qos().partition().size(), 1);
+    ASSERT_EQ(subscriber->get_qos().partition().size(), 1u);
     ASSERT_EQ(partitions, subscriber->get_qos().partition());
 
     // Remove all partitions from the subscriber
@@ -586,7 +586,7 @@ TEST(SubscriberTests, UpdatePartitions)
     ASSERT_TRUE(partitions.empty());
     sub_qos.partition() = partitions;
     subscriber->set_qos(sub_qos);
-    ASSERT_EQ(subscriber->get_qos().partition().size(), 0);
+    ASSERT_EQ(subscriber->get_qos().partition().size(), 0u);
     ASSERT_EQ(partitions, subscriber->get_qos().partition());
 }
 
