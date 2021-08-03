@@ -164,6 +164,11 @@ public:
      */
     bool server_update_routine();
 
+    /*
+     * Update the list of remote servers
+     */
+    void update_remote_servers_list();
+
     fastdds::rtps::ddb::DiscoveryDataBase& discovery_db();
 
     const RemoteServerList_t& servers();

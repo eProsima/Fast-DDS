@@ -890,6 +890,11 @@ bool PDPServer::server_update_routine()
     return pending_work && discovery_db_.is_enabled();
 }
 
+void PDPServer::update_remote_servers_list()
+{
+    return;
+}
+
 bool PDPServer::process_writers_acknowledgements()
 {
     logInfo(RTPS_PDP_SERVER, "process_writers_acknowledgements start");

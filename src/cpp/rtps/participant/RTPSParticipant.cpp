@@ -91,6 +91,12 @@ bool RTPSParticipant::registerReader(
     return mp_impl->registerReader(Reader, topicAtt, rqos);
 }
 
+bool RTPSParticipant::update_attributes(
+        const RTPSParticipantAttributes& patt)
+{
+    return mp_impl->update_attributes(patt);
+}
+
 bool RTPSParticipant::updateWriter(
         RTPSWriter* Writer,
         const TopicAttributes& topicAtt,
