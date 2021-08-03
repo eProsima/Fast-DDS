@@ -345,7 +345,7 @@ ReturnCode_t DomainParticipantImpl::set_qos(
     }
     set_qos(qos_, qos_to_set, !enabled);
 
-    if (qos_.user_data().hasChanged)
+    if (enabled && qos_.user_data().hasChanged)
     {
         // Notify the participant that there is a QoS update
         fastrtps::rtps::RTPSParticipantAttributes patt;
