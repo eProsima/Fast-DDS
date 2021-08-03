@@ -1170,6 +1170,13 @@ bool RTPSParticipantImpl::registerReader(
     return this->mp_builtinProtocols->addLocalReader(reader, topicAtt, rqos);
 }
 
+bool RTPSParticipantImpl::update_attributes(
+        const RTPSParticipantAttributes& patt)
+{
+    static_cast<void>(patt);
+    return false;
+}
+
 bool RTPSParticipantImpl::updateLocalWriter(
         RTPSWriter* Writer,
         const TopicAttributes& topicAtt,
