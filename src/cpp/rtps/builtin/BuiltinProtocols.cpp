@@ -79,9 +79,6 @@ bool BuiltinProtocols::initBuiltinProtocols(
     m_metatrafficUnicastLocatorList = m_att.metatrafficUnicastLocatorList;
     m_metatrafficMulticastLocatorList = m_att.metatrafficMulticastLocatorList;
     m_initialPeersList = m_att.initialPeersList;
-    m_DiscoveryServers = m_att.discovery_config.m_DiscoveryServers;
-
-    transform_server_remote_locators(p_part->network_factory());
 
     const RTPSParticipantAllocationAttributes& allocation = p_part->getRTPSParticipantAttributes().allocation;
 
@@ -129,6 +126,13 @@ bool BuiltinProtocols::initBuiltinProtocols(
         return false;
     }
 
+    {
+        std::unique_lock<std::recursive_mutex> lock(*mp_PDP->getMutex());
+        m_DiscoveryServers = m_att.discovery_config.m_DiscoveryServers;
+    }
+
+    transform_server_remote_locators(p_part->network_factory());
+
     // WLP
     if (m_att.use_WriterLivelinessProtocol)
     {
@@ -160,6 +164,7 @@ bool BuiltinProtocols::updateMetatrafficLocators(
 void BuiltinProtocols::transform_server_remote_locators(
         NetworkFactory& nf)
 {
+    std::unique_lock<std::recursive_mutex> lock(*mp_PDP->getMutex());
     for (eprosima::fastdds::rtps::RemoteServerAttributes& rs : m_DiscoveryServers)
     {
         for (Locator_t& loc : rs.metatrafficUnicastLocatorList)

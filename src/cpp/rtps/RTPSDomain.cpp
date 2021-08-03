@@ -394,6 +394,7 @@ RTPSParticipant* RTPSDomain::clientServerEnvironmentCreationOverride(
     RTPSParticipantAttributes client_att(att);
 
     // Retrieve the info from the environment variable
+    // TODO(jlbueno) This should be protected with the PDP mutex.
     if (!load_environment_server_info(client_att.builtin.discovery_config.m_DiscoveryServers))
     {
         // it's not an error, the environment variable may not be set. Any issue with environment

@@ -1108,16 +1108,18 @@ bool RTPSParticipantImpl::update_attributes(
 {
     // Update user data
     auto pdp = mp_builtinProtocols->mp_PDP;
-    pdp->getMutex()->lock();
-    auto local_participant_proxy_data = pdp->getLocalParticipantProxyData();
-    local_participant_proxy_data->m_userData.data_vec(patt.userData);
-    pdp->getMutex()->unlock();
+    {
+        std::unique_lock<std::recursive_mutex> lock(*pdp->getMutex());
+        auto local_participant_proxy_data = pdp->getLocalParticipantProxyData();
+        local_participant_proxy_data->m_userData.data_vec(patt.userData);
 
-    // Update remote servers list
-    mp_builtinProtocols->m_DiscoveryServers = patt.builtin.discovery_config.m_DiscoveryServers;
-    mp_builtinProtocols->m_att.discovery_config.m_DiscoveryServers = patt.builtin.discovery_config.m_DiscoveryServers;
-    fastdds::rtps::PDPServer* pdp_server = static_cast<fastdds::rtps::PDPServer*>(pdp);
-    pdp_server->update_remote_servers_list(); 
+        // Update remote servers list
+        mp_builtinProtocols->m_DiscoveryServers = patt.builtin.discovery_config.m_DiscoveryServers;
+        mp_builtinProtocols->m_att.discovery_config.m_DiscoveryServers =
+            patt.builtin.discovery_config.m_DiscoveryServers;
+        fastdds::rtps::PDPServer* pdp_server = static_cast<fastdds::rtps::PDPServer*>(pdp);
+        pdp_server->update_remote_servers_list();
+    }
 
     // Send DATA(P)
     pdp->announceParticipantState(true);
