@@ -1104,8 +1104,17 @@ bool RTPSParticipantImpl::registerReader(
 bool RTPSParticipantImpl::update_attributes(
         const RTPSParticipantAttributes& patt)
 {
-    static_cast<void>(patt);
-    return false;
+    // Update user data
+    auto pdp = mp_builtinProtocols->mp_PDP;
+    pdp->getMutex()->lock();
+    auto local_participant_proxy_data = pdp->getLocalParticipantProxyData();
+    local_participant_proxy_data->m_userData.data_vec(patt.userData);
+    pdp->getMutex()->unlock();
+
+    // Send DATA(P)
+    pdp->announceParticipantState(true);
+
+    return true;
 }
 
 bool RTPSParticipantImpl::updateLocalWriter(
