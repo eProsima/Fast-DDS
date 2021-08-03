@@ -1104,7 +1104,7 @@ bool RTPSParticipantImpl::registerReader(
 bool RTPSParticipantImpl::update_attributes(
         const RTPSParticipantAttributes& patt)
 {
-    (void)patt;
+    static_cast<void>(patt);
     return false;
 }
 

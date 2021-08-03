@@ -890,7 +890,7 @@ bool PDPServer::server_update_routine()
     return pending_work && discovery_db_.is_enabled();
 }
 
-void PDPServer::reload_server()
+void PDPServer::update_remote_servers_list()
 {
     return;
 }

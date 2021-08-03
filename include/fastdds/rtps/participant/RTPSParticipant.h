@@ -150,8 +150,8 @@ public:
 
     /**
      * Update participant attributes.
-     * @param pqos New participant attributes.
-     * @return True on success.
+     * @param patt New participant attributes.
+     * @return True on success, false otherwise.
      */
     bool update_attributes(
             const RTPSParticipantAttributes& patt);

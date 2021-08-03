@@ -809,9 +809,9 @@ public:
             const ReaderQos& rqos);
 
     /**
-     * Update participant attributes
-     * @param patt New participant attributes
-     * @return True on success
+     * Update participant attributes.
+     * @param patt New participant attributes.
+     * @return True on success, false otherwise.
      */
     bool update_attributes(
             const RTPSParticipantAttributes& patt);
