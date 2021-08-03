@@ -63,6 +63,8 @@
 #include <fastdds/rtps/builtin/data/ParticipantProxyData.h>
 #include <fastdds/rtps/builtin/liveliness/WLP.h>
 
+#include <rtps/builtin/discovery/participant/PDPServer.hpp>
+
 #include <statistics/rtps/GuidUtils.hpp>
 
 namespace eprosima {
@@ -1110,6 +1112,12 @@ bool RTPSParticipantImpl::update_attributes(
     auto local_participant_proxy_data = pdp->getLocalParticipantProxyData();
     local_participant_proxy_data->m_userData.data_vec(patt.userData);
     pdp->getMutex()->unlock();
+
+    // Update remote servers list
+    mp_builtinProtocols->m_DiscoveryServers = patt.builtin.discovery_config.m_DiscoveryServers;
+    mp_builtinProtocols->m_att.discovery_config.m_DiscoveryServers = patt.builtin.discovery_config.m_DiscoveryServers;
+    fastdds::rtps::PDPServer* pdp_server = static_cast<fastdds::rtps::PDPServer*>(pdp);
+    pdp_server->update_remote_servers_list(); 
 
     // Send DATA(P)
     pdp->announceParticipantState(true);
