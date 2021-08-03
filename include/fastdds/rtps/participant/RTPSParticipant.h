@@ -149,6 +149,14 @@ public:
             const ReaderQos& rqos);
 
     /**
+     * Update participant attributes.
+     * @param pqos New participant attributes.
+     * @return True on success.
+     */
+    bool update_attributes(
+            const RTPSParticipantAttributes& patt);
+
+    /**
      * Update writer QOS
      * @param Writer to update
      * @param topicAtt Topic Attributes where you want to register it.
