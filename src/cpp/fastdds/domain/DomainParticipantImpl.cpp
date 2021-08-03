@@ -29,6 +29,7 @@
 #include <fastdds/dds/subscriber/DataReader.hpp>
 #include <fastdds/dds/publisher/DataWriter.hpp>
 
+#include <fastdds/rtps/attributes/RTPSParticipantAttributes.h>
 #include <fastdds/rtps/RTPSDomain.h>
 #include <fastdds/rtps/builtin/liveliness/WLP.h>
 #include <fastdds/rtps/participant/ParticipantDiscoveryInfo.h>
@@ -343,6 +344,15 @@ ReturnCode_t DomainParticipantImpl::set_qos(
         return ReturnCode_t::RETCODE_IMMUTABLE_POLICY;
     }
     set_qos(qos_, qos_to_set, !enabled);
+
+    if (qos_.user_data().hasChanged)
+    {
+        // Notify the participant that there is a QoS update
+        fastrtps::rtps::RTPSParticipantAttributes patt;
+        set_attributes_from_qos(patt, qos_);
+        rtps_participant_->update_attributes(patt);
+    }
+
     return ReturnCode_t::RETCODE_OK;
 }
 
