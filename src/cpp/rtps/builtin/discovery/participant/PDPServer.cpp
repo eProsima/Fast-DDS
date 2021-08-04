@@ -1236,7 +1236,6 @@ fastdds::rtps::ddb::DiscoveryDataBase& PDPServer::discovery_db()
 
 const RemoteServerList_t& PDPServer::servers()
 {
-    std::lock_guard<std::recursive_mutex> lock(*getMutex());
     return mp_builtin->m_DiscoveryServers;
 }
 

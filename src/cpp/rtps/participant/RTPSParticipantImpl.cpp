@@ -1114,11 +1114,21 @@ bool RTPSParticipantImpl::update_attributes(
         local_participant_proxy_data->m_userData.data_vec(patt.userData);
 
         // Update remote servers list
-        mp_builtinProtocols->m_DiscoveryServers = patt.builtin.discovery_config.m_DiscoveryServers;
-        mp_builtinProtocols->m_att.discovery_config.m_DiscoveryServers =
-            patt.builtin.discovery_config.m_DiscoveryServers;
-        fastdds::rtps::PDPServer* pdp_server = static_cast<fastdds::rtps::PDPServer*>(pdp);
-        pdp_server->update_remote_servers_list();
+        if (patt.builtin.discovery_config.discoveryProtocol == DiscoveryProtocol::CLIENT ||
+                patt.builtin.discovery_config.discoveryProtocol == DiscoveryProtocol::SUPER_CLIENT ||
+                patt.builtin.discovery_config.discoveryProtocol == DiscoveryProtocol::SERVER ||
+                patt.builtin.discovery_config.discoveryProtocol == DiscoveryProtocol::BACKUP)
+        {
+            mp_builtinProtocols->m_DiscoveryServers = patt.builtin.discovery_config.m_DiscoveryServers;
+            mp_builtinProtocols->m_att.discovery_config.m_DiscoveryServers =
+                patt.builtin.discovery_config.m_DiscoveryServers;
+            if (patt.builtin.discovery_config.discoveryProtocol == DiscoveryProtocol::SERVER ||
+                    patt.builtin.discovery_config.discoveryProtocol == DiscoveryProtocol::BACKUP)
+            {
+                fastdds::rtps::PDPServer* pdp_server = static_cast<fastdds::rtps::PDPServer*>(pdp);
+                pdp_server->update_remote_servers_list();
+            }
+        }
     }
 
     // Send DATA(P)
