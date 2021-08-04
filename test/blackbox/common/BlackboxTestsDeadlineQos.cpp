@@ -267,7 +267,7 @@ TEST_P(DeadlineQos, KeyedTopicNoReaderVolatileWriterSetDeadline)
 
     writer.durability_kind(VOLATILE_DURABILITY_QOS);
 
-    uint32_t deadline_period_ms = 10;
+    uint32_t deadline_period_ms = 50;
 
     writer.deadline_period(deadline_period_ms * 1e-3).init();
     ASSERT_TRUE(writer.isInitialized());
@@ -275,7 +275,7 @@ TEST_P(DeadlineQos, KeyedTopicNoReaderVolatileWriterSetDeadline)
     auto data = default_keyedhelloworld_data_generator(1);
 
     writer.send_sample(data.front());
-    std::this_thread::sleep_for(std::chrono::milliseconds(deadline_period_ms));
+    std::this_thread::sleep_for(std::chrono::milliseconds(deadline_period_ms * 2));
 
     EXPECT_EQ(writer.missed_deadlines(), 1u);
 }
@@ -292,7 +292,7 @@ TEST_P(DeadlineQos, KeyedTopicBestEffortReaderVolatileWriterSetDeadline)
 
     writer.durability_kind(VOLATILE_DURABILITY_QOS);
 
-    uint32_t deadline_period_ms = 10;
+    uint32_t deadline_period_ms = 50;
 
     writer.deadline_period(deadline_period_ms * 1e-3).init();
     reader.init();
@@ -306,7 +306,7 @@ TEST_P(DeadlineQos, KeyedTopicBestEffortReaderVolatileWriterSetDeadline)
     auto data = default_keyedhelloworld_data_generator(1);
 
     writer.send_sample(data.front());
-    std::this_thread::sleep_for(std::chrono::milliseconds(deadline_period_ms));
+    std::this_thread::sleep_for(std::chrono::milliseconds(deadline_period_ms * 2));
 
     EXPECT_EQ(writer.missed_deadlines(), 1u);
 }
