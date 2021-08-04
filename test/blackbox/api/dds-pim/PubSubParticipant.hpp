@@ -512,6 +512,20 @@ public:
         return *this;
     }
 
+    PubSubParticipant& user_data(
+            const std::vector<eprosima::fastrtps::rtps::octet>& user_data)
+    {
+        participant_qos_.user_data().data_vec(user_data);
+        return *this;
+    }
+
+    bool update_user_data(
+            const std::vector<eprosima::fastrtps::rtps::octet>& user_data)
+    {
+        participant_qos_.user_data().data_vec(user_data);
+        return ReturnCode_t::RETCODE_OK == participant_->set_qos(participant_qos_);
+    }
+
     PubSubParticipant& pub_property_policy(
             const eprosima::fastrtps::rtps::PropertyPolicy property_policy)
     {
