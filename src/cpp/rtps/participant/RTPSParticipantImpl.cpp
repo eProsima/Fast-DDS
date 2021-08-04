@@ -1121,7 +1121,7 @@ bool RTPSParticipantImpl::update_attributes(
         {
             mp_builtinProtocols->m_DiscoveryServers = patt.builtin.discovery_config.m_DiscoveryServers;
             mp_builtinProtocols->m_att.discovery_config.m_DiscoveryServers =
-                patt.builtin.discovery_config.m_DiscoveryServers;
+                    patt.builtin.discovery_config.m_DiscoveryServers;
             if (patt.builtin.discovery_config.discoveryProtocol == DiscoveryProtocol::SERVER ||
                     patt.builtin.discovery_config.discoveryProtocol == DiscoveryProtocol::BACKUP)
             {
