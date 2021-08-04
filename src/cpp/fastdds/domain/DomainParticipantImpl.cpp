@@ -351,6 +351,9 @@ ReturnCode_t DomainParticipantImpl::set_qos(
         fastrtps::rtps::RTPSParticipantAttributes patt;
         set_attributes_from_qos(patt, qos_);
         rtps_participant_->update_attributes(patt);
+
+        // Reset flag
+        qos_.user_data().hasChanged = false;
     }
 
     return ReturnCode_t::RETCODE_OK;
@@ -1754,7 +1757,10 @@ void DomainParticipantImpl::set_qos(
     if (!(to.user_data() == from.user_data()))
     {
         to.user_data() = from.user_data();
-        to.user_data().hasChanged = true;
+        if (!first_time)
+        {
+            to.user_data().hasChanged = true;
+        }
     }
     if (first_time && !(to.allocation() == from.allocation()))
     {
