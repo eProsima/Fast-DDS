@@ -469,17 +469,9 @@ bool DataWriterImpl::perform_create_new_change(
                 }
             }
 
-<<<<<<< HEAD
             set_fragment_size_on_change(wparams, ch, high_mark_for_frag_);
 
             if (!this->history_.add_pub_change(ch, wparams, lock, max_blocking_time))
-=======
-        if (qos_.deadline().period != c_TimeInfinite)
-        {
-            if (!history_.set_next_deadline(
-                        handle,
-                        steady_clock::now() + duration_cast<system_clock::duration>(deadline_duration_us_)))
->>>>>>> e357fe85f (Deadline error when no Reliable DataReaders in VOLATILE DataWriters (#2112))
             {
                 writer_->release_change(ch);
                 return false;
@@ -488,7 +480,7 @@ bool DataWriterImpl::perform_create_new_change(
             if (qos_.deadline().period != c_TimeInfinite)
             {
                 if (!history_.set_next_deadline(
-                            ch->instanceHandle,
+                            handle,
                             steady_clock::now() + duration_cast<system_clock::duration>(deadline_duration_us_)))
                 {
                     logError(PUBLISHER, "Could not set the next deadline in the history");
