@@ -1103,27 +1103,39 @@ bool RTPSParticipantImpl::registerReader(
     return this->mp_builtinProtocols->addLocalReader(reader, topicAtt, rqos);
 }
 
-bool RTPSParticipantImpl::update_attributes(
+void RTPSParticipantImpl::update_attributes(
         const RTPSParticipantAttributes& patt)
 {
-    // Update user data
+    // Check if there are changes
+    if (patt.builtin.discovery_config.m_DiscoveryServers == m_att.builtin.discovery_config.m_DiscoveryServers
+            || patt.userData == m_att.userData)
+    {
+        return;
+    }
+
+    // Update RTPSParticipantAttributes member
+    m_att.builtin.discovery_config.m_DiscoveryServers = patt.builtin.discovery_config.m_DiscoveryServers;
+    m_att.userData = m_att.userData;
+
     auto pdp = mp_builtinProtocols->mp_PDP;
     {
         std::unique_lock<std::recursive_mutex> lock(*pdp->getMutex());
+
+        // Update user data
         auto local_participant_proxy_data = pdp->getLocalParticipantProxyData();
         local_participant_proxy_data->m_userData.data_vec(patt.userData);
 
         // Update remote servers list
-        if (patt.builtin.discovery_config.discoveryProtocol == DiscoveryProtocol::CLIENT ||
-                patt.builtin.discovery_config.discoveryProtocol == DiscoveryProtocol::SUPER_CLIENT ||
-                patt.builtin.discovery_config.discoveryProtocol == DiscoveryProtocol::SERVER ||
-                patt.builtin.discovery_config.discoveryProtocol == DiscoveryProtocol::BACKUP)
+        if (m_att.builtin.discovery_config.discoveryProtocol == DiscoveryProtocol::CLIENT ||
+                m_att.builtin.discovery_config.discoveryProtocol == DiscoveryProtocol::SUPER_CLIENT ||
+                m_att.builtin.discovery_config.discoveryProtocol == DiscoveryProtocol::SERVER ||
+                m_att.builtin.discovery_config.discoveryProtocol == DiscoveryProtocol::BACKUP)
         {
             mp_builtinProtocols->m_DiscoveryServers = patt.builtin.discovery_config.m_DiscoveryServers;
             mp_builtinProtocols->m_att.discovery_config.m_DiscoveryServers =
                     patt.builtin.discovery_config.m_DiscoveryServers;
-            if (patt.builtin.discovery_config.discoveryProtocol == DiscoveryProtocol::SERVER ||
-                    patt.builtin.discovery_config.discoveryProtocol == DiscoveryProtocol::BACKUP)
+            if (m_att.builtin.discovery_config.discoveryProtocol == DiscoveryProtocol::SERVER ||
+                    m_att.builtin.discovery_config.discoveryProtocol == DiscoveryProtocol::BACKUP)
             {
                 fastdds::rtps::PDPServer* pdp_server = static_cast<fastdds::rtps::PDPServer*>(pdp);
                 pdp_server->update_remote_servers_list();
@@ -1133,8 +1145,6 @@ bool RTPSParticipantImpl::update_attributes(
 
     // Send DATA(P)
     pdp->announceParticipantState(true);
-
-    return true;
 }
 
 bool RTPSParticipantImpl::updateLocalWriter(

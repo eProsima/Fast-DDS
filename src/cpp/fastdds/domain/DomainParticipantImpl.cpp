@@ -343,17 +343,13 @@ ReturnCode_t DomainParticipantImpl::set_qos(
     {
         return ReturnCode_t::RETCODE_IMMUTABLE_POLICY;
     }
-    set_qos(qos_, qos_to_set, !enabled);
 
-    if (enabled && qos_.user_data().hasChanged)
+    if (enabled && set_qos(qos_, qos_to_set, !enabled))
     {
         // Notify the participant that there is a QoS update
         fastrtps::rtps::RTPSParticipantAttributes patt;
         set_attributes_from_qos(patt, qos_);
         rtps_participant_->update_attributes(patt);
-
-        // Reset flag
-        qos_.user_data().hasChanged = false;
     }
 
     return ReturnCode_t::RETCODE_OK;
@@ -1745,11 +1741,13 @@ bool DomainParticipantImpl::has_active_entities()
     return false;
 }
 
-void DomainParticipantImpl::set_qos(
+bool DomainParticipantImpl::set_qos(
         DomainParticipantQos& to,
         const DomainParticipantQos& from,
         bool first_time)
 {
+    bool qos_has_changed = false;
+
     if (!(to.entity_factory() == from.entity_factory()))
     {
         to.entity_factory() = from.entity_factory();
@@ -1757,9 +1755,10 @@ void DomainParticipantImpl::set_qos(
     if (!(to.user_data() == from.user_data()))
     {
         to.user_data() = from.user_data();
+        to.user_data().hasChanged = true;
         if (!first_time)
         {
-            to.user_data().hasChanged = true;
+            qos_has_changed = true;
         }
     }
     if (first_time && !(to.allocation() == from.allocation()))
@@ -1782,6 +1781,8 @@ void DomainParticipantImpl::set_qos(
     {
         to.name() = from.name();
     }
+
+    return qos_has_changed;
 }
 
 fastrtps::types::ReturnCode_t DomainParticipantImpl::check_qos(

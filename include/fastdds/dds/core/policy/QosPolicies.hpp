@@ -105,7 +105,7 @@ class QosPolicy
 {
 public:
 
-    //! Boolean that indicates if the Qos has been changed
+    //! Boolean that indicates if the Qos has been changed with respect to the default Qos.
     bool hasChanged;
 
     /**

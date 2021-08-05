@@ -153,7 +153,7 @@ public:
      * @param patt New participant attributes.
      * @return True on success, false otherwise.
      */
-    bool update_attributes(
+    void update_attributes(
             const RTPSParticipantAttributes& patt);
 
     /**

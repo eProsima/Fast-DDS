@@ -559,7 +559,7 @@ protected:
     std::string get_inner_type_name(
             const fastrtps::rtps::SampleIdentity& id) const;
 
-    static void set_qos(
+    static bool set_qos(
             DomainParticipantQos& to,
             const DomainParticipantQos& from,
             bool first_time);
