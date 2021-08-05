@@ -32,8 +32,6 @@
 #include <fastdds/rtps/builtin/discovery/endpoint/EDPSimple.h>
 #include <fastdds/rtps/builtin/discovery/endpoint/EDPStatic.h>
 
-#include <fastdds/rtps/resources/AsyncWriterThread.h>
-
 #include <rtps/participant/RTPSParticipantImpl.h>
 
 #include <fastdds/rtps/writer/StatelessWriter.h>
@@ -347,8 +345,8 @@ void PDP::initializeParticipantProxyData(
     // Set participant type property
     std::stringstream participant_type;
     participant_type << mp_RTPSParticipant->getAttributes().builtin.discovery_config.discoveryProtocol;
-    participant_data->m_properties.push_back(std::pair<std::string,
-            std::string>({fastdds::dds::parameter_property_participant_type, participant_type.str()}));
+    auto ptype = participant_type.str();
+    participant_data->m_properties.push_back(fastdds::dds::parameter_property_participant_type, ptype);
 }
 
 bool PDP::initPDP(

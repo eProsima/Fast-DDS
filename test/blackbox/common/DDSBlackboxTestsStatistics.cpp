@@ -16,6 +16,7 @@
 #include <list>
 #include <string>
 #include <thread>
+#include <tuple>
 
 #include <gtest/gtest.h>
 
@@ -136,6 +137,7 @@ TEST(DDSStatistics, simple_statistics_datareaders)
     data_reader.wait_discovery();
     data_writer.wait_discovery();
 
+    // Get Participants and Subscribers from pub and sub
     auto w_participant = data_writer.getParticipant();
     ASSERT_NE(nullptr, w_participant);
 
@@ -144,18 +146,6 @@ TEST(DDSStatistics, simple_statistics_datareaders)
 
     auto w_subscriber = w_participant->create_subscriber(SUBSCRIBER_QOS_DEFAULT);
     ASSERT_NE(nullptr, w_subscriber);
-
-    // Enable DataWriter related statistics
-    auto data_stats_reader = enable_statistics(w_statistics_participant, w_subscriber, statistics::DATA_COUNT_TOPIC);
-    ASSERT_NE(nullptr, data_stats_reader);
-
-    // Enable DomainParticipant related statistics
-    auto rtps_stats_reader = enable_statistics(w_statistics_participant, w_subscriber, statistics::RTPS_SENT_TOPIC);
-    ASSERT_NE(nullptr, rtps_stats_reader);
-
-    auto physical_data_reader = enable_statistics(w_statistics_participant, w_subscriber,
-                    statistics::PHYSICAL_DATA_TOPIC);
-    ASSERT_NE(nullptr, physical_data_reader);
 
     auto r_subscriber = const_cast<Subscriber*>(data_reader.get_native_reader().get_subscriber());
     ASSERT_NE(nullptr, r_subscriber);
@@ -166,9 +156,50 @@ TEST(DDSStatistics, simple_statistics_datareaders)
     auto r_statistics_participant = statistics::dds::DomainParticipant::narrow(r_participant);
     ASSERT_NE(nullptr, r_statistics_participant);
 
-    // Enable DataReader related statistics
-    auto ack_stats_reader = enable_statistics(r_statistics_participant, r_subscriber, statistics::ACKNACK_COUNT_TOPIC);
-    ASSERT_NE(nullptr, ack_stats_reader);
+    // TODO: some topics get stuck in infinite loop in an error (generally if they are included twice):
+    // [SUBSCRIBER Error] Change not found on this key, something is wrong -> Function remove_change_sub
+    // These topics are commented in test params
+    // TODO: some topics could be used in both participants, but they lead to the same error
+
+    // Create parameters to iterate over every Statistics kind
+    // The test is separated between the statistics retrieved by a DataWriter or a DataReader
+    std::vector<std::tuple<std::string, std::string, std::size_t>> writer_statistics_kinds = {
+        {"DATA_COUNT_TOPIC",                statistics::DATA_COUNT_TOPIC,               num_samples},
+        {"RTPS_SENT_TOPIC",                 statistics::RTPS_SENT_TOPIC,                num_samples},
+        {"NETWORK_LATENCY_TOPIC",           statistics::NETWORK_LATENCY_TOPIC,          num_samples},
+        {"PUBLICATION_THROUGHPUT_TOPIC",    statistics::PUBLICATION_THROUGHPUT_TOPIC,   num_samples},
+        {"HEARTBEAT_COUNT_TOPIC",           statistics::HEARTBEAT_COUNT_TOPIC,          num_samples},
+        {"SAMPLE_DATAS_TOPIC",              statistics::SAMPLE_DATAS_TOPIC,             num_samples},
+        {"DISCOVERY_TOPIC",                 statistics::DISCOVERY_TOPIC,                1},
+        {"PDP_PACKETS_TOPIC",               statistics::PDP_PACKETS_TOPIC,              1},
+        {"EDP_PACKETS_TOPIC",               statistics::EDP_PACKETS_TOPIC,              1},
+        {"PHYSICAL_DATA_TOPIC",             statistics::PHYSICAL_DATA_TOPIC,            1}
+    };
+
+    std::vector<std::tuple<std::string, std::string, std::size_t>> reader_statistics_kinds = {
+        {"HISTORY_LATENCY_TOPIC",           statistics::HISTORY_LATENCY_TOPIC,          num_samples},
+        {"SUBSCRIPTION_THROUGHPUT_TOPIC",   statistics::SUBSCRIPTION_THROUGHPUT_TOPIC,  num_samples},
+        {"ACKNACK_COUNT_TOPIC",             statistics::ACKNACK_COUNT_TOPIC,            1},
+        // {"PHYSICAL_DATA_TOPIC",             statistics::PHYSICAL_DATA_TOPIC,            1}
+    };
+
+    std::vector<DataReader*> readers_datawriter;
+    std::vector<DataReader*> readers_datareader;
+
+    // Enable Statistics Readers
+    for (auto kind : writer_statistics_kinds)
+    {
+        auto new_reader = enable_statistics(w_statistics_participant, w_subscriber, std::get<1>(kind));
+        ASSERT_NE(nullptr, new_reader);
+        readers_datawriter.push_back(new_reader);
+    }
+
+    for (auto kind : reader_statistics_kinds)
+    {
+        auto new_reader = enable_statistics(r_statistics_participant, r_subscriber, std::get<1>(kind));
+        ASSERT_NE(nullptr, new_reader);
+        readers_datareader.push_back(new_reader);
+    }
 
     // Perform communication
     data_reader.startReception(data);
@@ -177,19 +208,91 @@ TEST(DDSStatistics, simple_statistics_datareaders)
     data_reader.block_for_all();
     EXPECT_TRUE(data_writer.waitForAllAcked(std::chrono::seconds(10)));
 
-    wait_statistics(data_stats_reader, num_samples, "DATA_COUNT_TOPIC", 10u);
-    disable_statistics(w_statistics_participant, w_subscriber, data_stats_reader, statistics::DATA_COUNT_TOPIC);
+    // Check that messages have been received
+    for (std::size_t i = 0; i < readers_datawriter.size(); ++i)
+    {
+        wait_statistics(
+            readers_datawriter[i],
+            std::get<2>(writer_statistics_kinds[i]),
+            std::get<0>(writer_statistics_kinds[i]).c_str(),
+            10u);
+        disable_statistics(
+            w_statistics_participant,
+            w_subscriber,
+            readers_datawriter[i],
+            std::get<1>(writer_statistics_kinds[i]));
+    }
 
-    wait_statistics(ack_stats_reader, 1, "ACKNACK_COUNT_TOPIC", 10u);
-    disable_statistics(r_statistics_participant, r_subscriber, ack_stats_reader, statistics::ACKNACK_COUNT_TOPIC);
-
-    wait_statistics(rtps_stats_reader, num_samples, "RTPS_SENT_TOPIC", 10u);
-    disable_statistics(w_statistics_participant, w_subscriber, rtps_stats_reader, statistics::RTPS_SENT_TOPIC);
-
-    wait_statistics(physical_data_reader, 1, "PHYSICAL_DATA_TOPIC", 10u);
-    disable_statistics(w_statistics_participant, w_subscriber, physical_data_reader, statistics::PHYSICAL_DATA_TOPIC);
+    for (std::size_t i = 0; i < readers_datareader.size(); ++i)
+    {
+        wait_statistics(
+            readers_datareader[i],
+            std::get<2>(reader_statistics_kinds[i]),
+            std::get<0>(reader_statistics_kinds[i]).c_str(),
+            10u);
+        disable_statistics(
+            r_statistics_participant,
+            r_subscriber,
+            readers_datareader[i],
+            std::get<1>(reader_statistics_kinds[i]));
+    }
 
     w_participant->delete_subscriber(w_subscriber);
+    w_participant->delete_subscriber(r_subscriber);
+
+#endif // FASTDDS_STATISTICS
+}
+
+TEST(DDSStatistics, simple_statistics_second_writer)
+{
+#ifdef FASTDDS_STATISTICS
+
+    auto transport = std::make_shared<UDPv4TransportDescriptor>();
+    auto domain_id = GET_PID() % 100;
+
+    DomainParticipantQos p_qos = PARTICIPANT_QOS_DEFAULT;
+    p_qos.transport().use_builtin_transports = false;
+    p_qos.transport().user_transports.push_back(transport);
+
+    auto participant_factory = DomainParticipantFactory::get_instance();
+    DomainParticipant* p1 = participant_factory->create_participant(domain_id, p_qos);
+    DomainParticipant* p2 = participant_factory->create_participant(domain_id, p_qos);
+
+    ASSERT_NE(nullptr, p1);
+    ASSERT_NE(nullptr, p2);
+
+    auto statistics_p1 = statistics::dds::DomainParticipant::narrow(p1);
+    auto statistics_p2 = statistics::dds::DomainParticipant::narrow(p2);
+    ASSERT_NE(nullptr, statistics_p1);
+    ASSERT_NE(nullptr, statistics_p2);
+
+    auto subscriber_p1 = p1->create_subscriber(SUBSCRIBER_QOS_DEFAULT);
+    auto subscriber_p2 = p2->create_subscriber(SUBSCRIBER_QOS_DEFAULT);
+    ASSERT_NE(nullptr, subscriber_p1);
+    ASSERT_NE(nullptr, subscriber_p2);
+
+    auto physical_data_reader_1 = enable_statistics(statistics_p1, subscriber_p1, statistics::PHYSICAL_DATA_TOPIC);
+    auto physical_data_reader_2 = enable_statistics(statistics_p2, subscriber_p2, statistics::PHYSICAL_DATA_TOPIC);
+    ASSERT_NE(nullptr, physical_data_reader_1);
+    ASSERT_NE(nullptr, physical_data_reader_2);
+
+    wait_statistics(physical_data_reader_1, 2, "PHYSICAL_DATA_TOPIC", 10u);
+    wait_statistics(physical_data_reader_2, 2, "PHYSICAL_DATA_TOPIC", 10u);
+
+    disable_statistics(statistics_p1, subscriber_p1, physical_data_reader_1, statistics::PHYSICAL_DATA_TOPIC);
+    physical_data_reader_1 = enable_statistics(statistics_p1, subscriber_p1, statistics::PHYSICAL_DATA_TOPIC);
+
+    wait_statistics(physical_data_reader_1, 2, "PHYSICAL_DATA_TOPIC", 10u);
+    wait_statistics(physical_data_reader_2, 1, "PHYSICAL_DATA_TOPIC", 10u);
+
+    disable_statistics(statistics_p1, subscriber_p1, physical_data_reader_1, statistics::PHYSICAL_DATA_TOPIC);
+    disable_statistics(statistics_p2, subscriber_p2, physical_data_reader_2, statistics::PHYSICAL_DATA_TOPIC);
+
+    p2->delete_subscriber(subscriber_p2);
+    p1->delete_subscriber(subscriber_p1);
+
+    participant_factory->delete_participant(p2);
+    participant_factory->delete_participant(p1);
 
 #endif // FASTDDS_STATISTICS
 }

@@ -22,7 +22,6 @@
 #include <cstdint>
 
 #include <fastdds/rtps/common/CDRMessage_t.h>
-#include <fastdds/rtps/common/Locator.h>
 #include <fastdds/rtps/common/Types.h>
 #include <fastdds/rtps/messages/CDRMessage.h>
 #include <fastdds/rtps/messages/RTPSMessageCreator.h>
@@ -148,15 +147,21 @@ inline uint32_t get_statistics_message_pos(
         const eprosima::fastrtps::rtps::octet* send_buffer,
         uint32_t send_buffer_size)
 {
-    // Only used on an assert
-    static_cast<void>(send_buffer);
+    // zero can be use as an error value because the minimum valid value
+    // is RTPSMESSAGE_HEADER_SIZE
+    uint32_t statistics_pos = 0;
 
     // Message should contain RTPS header and statistic submessage
-    assert(statistics_submessage_length + RTPSMESSAGE_HEADER_SIZE <= send_buffer_size);
-
-    // The last submessage should be the statistics submessage
-    uint32_t statistics_pos = send_buffer_size - statistics_submessage_length;
-    assert(FASTDDS_STATISTICS_NETWORK_SUBMESSAGE == send_buffer[statistics_pos]);
+    if (statistics_submessage_length + RTPSMESSAGE_HEADER_SIZE <= send_buffer_size)
+    {
+        // The last submessage should be the statistics submessage
+        uint32_t pos = send_buffer_size - statistics_submessage_length;
+        if (FASTDDS_STATISTICS_NETWORK_SUBMESSAGE == send_buffer[pos])
+        {
+            // only succeed if the message is properly formatted
+            statistics_pos = pos;
+        }
+    }
 
     return statistics_pos;
 }
@@ -179,23 +184,26 @@ inline void set_statistics_submessage_from_transport(
 
     uint32_t statistics_pos = get_statistics_message_pos(send_buffer, send_buffer_size);
 
-    // Accumulate bytes on sequence
-    sequence.add_message(send_buffer_size);
+    if ( 0 != statistics_pos )
+    {
+        // Accumulate bytes on sequence
+        sequence.add_message(send_buffer_size);
 
-    // Skip the submessage header
-    statistics_pos += RTPSMESSAGE_SUBMESSAGEHEADER_SIZE;
+        // Skip the submessage header
+        statistics_pos += RTPSMESSAGE_SUBMESSAGEHEADER_SIZE;
 
-    // Set current timestamp and sequence
-    auto submessage = (StatisticsSubmessageData*)(&send_buffer[statistics_pos]);
-    Time_t ts;
-    Time_t::now(ts);
+        // Set current timestamp and sequence
+        auto submessage = (StatisticsSubmessageData*)(&send_buffer[statistics_pos]);
+        Time_t ts;
+        Time_t::now(ts);
 
-    submessage->destination = destination;
-    submessage->ts.seconds = ts.seconds();
-    submessage->ts.fraction = ts.fraction();
-    submessage->seq.sequence = sequence.sequence;
-    submessage->seq.bytes = sequence.bytes;
-    submessage->seq.bytes_high = sequence.bytes_high;
+        submessage->destination = destination;
+        submessage->ts.seconds = ts.seconds();
+        submessage->ts.fraction = ts.fraction();
+        submessage->seq.sequence = sequence.sequence;
+        submessage->seq.bytes = sequence.bytes;
+        submessage->seq.bytes_high = sequence.bytes_high;
+    }
 #endif // FASTDDS_STATISTICS
 }
 
@@ -207,7 +215,11 @@ inline void remove_statistics_submessage(
     static_cast<void>(send_buffer_size);
 
 #ifdef FASTDDS_STATISTICS
-    send_buffer_size = get_statistics_message_pos(send_buffer, send_buffer_size);
+    uint32_t statistics_pos = get_statistics_message_pos(send_buffer, send_buffer_size);
+    if ( 0 != statistics_pos )
+    {
+        send_buffer_size = statistics_pos;
+    }
 #endif // FASTDDS_STATISTICS
 }
 

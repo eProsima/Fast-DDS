@@ -113,7 +113,8 @@ bool StatelessReader::matched_writer_add(
     if (is_datasharing)
     {
         if (datasharing_listener_->add_datasharing_writer(wdata.guid(),
-                m_att.durabilityKind == VOLATILE))
+                m_att.durabilityKind == VOLATILE,
+                mp_history->m_att.maximumReservedCaches))
         {
             logInfo(RTPS_READER, "Writer Proxy " << wdata.guid() << " added to " << this->m_guid.entityId
                                                  << " with data sharing");
@@ -237,13 +238,15 @@ bool StatelessReader::matched_writer_is_matched(
 bool StatelessReader::change_received(
         CacheChange_t* change)
 {
-    // Only make visible the change if there is not other with bigger sequence number.
+    // Only make the change visible if there is not another with a bigger sequence number.
     // TODO Revisar si no hay que incluirlo.
     if (!thereIsUpperRecordOf(change->writerGUID, change->sequenceNumber))
     {
         if (mp_history->received_change(change, 0))
         {
-            Time_t::now(change->receptionTimestamp);
+            auto payload_length = change->serializedPayload.length;
+
+            Time_t::now(change->reader_info.receptionTimestamp);
             update_last_notified(change->writerGUID, change->sequenceNumber);
             ++total_unread_;
 
@@ -251,13 +254,14 @@ bool StatelessReader::change_received(
 
             if (getListener() != nullptr)
             {
+                // WARNING! This method could destroy the change
                 getListener()->onNewCacheChangeAdded(this, change);
             }
 
             new_notification_cv_.notify_all();
 
             // statistics callback
-            on_subscribe_throughput(change->serializedPayload.length);
+            on_subscribe_throughput(payload_length);
 
             return true;
         }
@@ -394,8 +398,6 @@ bool StatelessReader::processDataMsg(
     {
         logInfo(RTPS_MSG_IN, IDSTRING "Trying to add change " << change->sequenceNumber << " TO reader: " << m_guid);
 
-        assert_writer_liveliness(change->writerGUID);
-
         // Ask the pool for a cache change
         CacheChange_t* change_to_add = nullptr;
         if (!change_pool_->reserve_cache(change_to_add))
@@ -456,6 +458,9 @@ bool StatelessReader::processDataMsg(
             change_pool_->release_cache(change_to_add);
             return false;
         }
+
+        lock.unlock(); // Avoid deadlock with LivelinessManager.
+        assert_writer_liveliness(change->writerGUID);
     }
 
     return true;
@@ -478,7 +483,6 @@ bool StatelessReader::processDataFragMsg(
         {
             // Datasharing communication will never send fragments
             assert(!writer.is_datasharing);
-            assert_writer_liveliness(writer_guid);
 
             // Check if CacheChange was received.
             if (!thereIsUpperRecordOf(writer_guid, incomingChange->sequenceNumber))
@@ -564,6 +568,10 @@ bool StatelessReader::processDataFragMsg(
                     }
                 }
             }
+
+            lock.unlock(); // Avoid deadlock with LivelinessManager.
+            assert_writer_liveliness(writer_guid);
+
             return true;
         }
     }

@@ -20,17 +20,16 @@
 #ifndef _TEST_BLACKBOX_PUBSUBREADER_HPP_
 #define _TEST_BLACKBOX_PUBSUBREADER_HPP_
 
-#include <string>
-#include <list>
 #include <atomic>
 #include <condition_variable>
+#include <list>
+#include <string>
+
 #include <asio.hpp>
 #include <gtest/gtest.h>
-
 #if _MSC_VER
 #include <Windows.h>
 #endif // _MSC_VER
-
 #include <fastdds/dds/core/UserAllocatedSequence.hpp>
 #include <fastdds/dds/core/policy/QosPolicies.hpp>
 #include <fastdds/dds/domain/DomainParticipant.hpp>
@@ -43,15 +42,18 @@
 #include <fastdds/dds/subscriber/Subscriber.hpp>
 #include <fastdds/dds/subscriber/qos/DataReaderQos.hpp>
 #include <fastdds/dds/topic/Topic.hpp>
-#include <fastrtps/subscriber/SampleInfo.h>
+#include <fastdds/rtps/transport/UDPTransportDescriptor.h>
+#include <fastdds/rtps/transport/UDPv4TransportDescriptor.h>
+#include <fastdds/rtps/transport/UDPv6TransportDescriptor.h>
 #include <fastrtps/xmlparser/XMLParser.h>
 #include <fastrtps/xmlparser/XMLTree.h>
 #include <fastrtps/utils/IPLocator.h>
-#include <fastrtps/transport/UDPv4TransportDescriptor.h>
 
 using DomainParticipantFactory = eprosima::fastdds::dds::DomainParticipantFactory;
 using eprosima::fastrtps::rtps::IPLocator;
-using eprosima::fastrtps::rtps::UDPv4TransportDescriptor;
+using eprosima::fastdds::rtps::UDPTransportDescriptor;
+using eprosima::fastdds::rtps::UDPv4TransportDescriptor;
+using eprosima::fastdds::rtps::UDPv6TransportDescriptor;
 
 template<class TypeSupport>
 class PubSubReader
@@ -157,7 +159,10 @@ private:
                 eprosima::fastdds::dds::DataReader* datareader) override
         {
             ASSERT_NE(datareader, nullptr);
-            reader_.message_receive_count_.fetch_add(1);
+            {
+                std::lock_guard<std::mutex> guard(reader_.message_receive_mutex_);
+                reader_.message_receive_count_.fetch_add(1);
+            }
             reader_.message_receive_cv_.notify_one();
 
             if (reader_.receiving_.load())
@@ -317,6 +322,9 @@ public:
 
     void init()
     {
+        ASSERT_FALSE(initialized_);
+        matched_ = 0;
+
         if (!xml_file_.empty())
         {
             DomainParticipantFactory::get_instance()->load_XML_profiles_file(xml_file_);
@@ -355,7 +363,9 @@ public:
         ASSERT_TRUE(subscriber_->is_enabled());
 
         // Create topic
-        topic_ = participant_->create_topic(topic_name_, type_->getName(), eprosima::fastdds::dds::TOPIC_QOS_DEFAULT);
+        topic_ =
+                participant_->create_topic(topic_name_, type_->getName(),
+                        eprosima::fastdds::dds::TOPIC_QOS_DEFAULT);
         ASSERT_NE(topic_, nullptr);
         ASSERT_TRUE(topic_->is_enabled());
 
@@ -380,6 +390,7 @@ public:
                 topic_name_ << std::endl;
             initialized_ = true;
         }
+
     }
 
     bool isInitialized() const
@@ -409,6 +420,8 @@ public:
             eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->delete_participant(participant_);
             participant_ = nullptr;
         }
+
+        initialized_ = false;
     }
 
     std::list<type> data_not_received()
@@ -566,13 +579,52 @@ public:
         std::cout << "Reader discovery finished..." << std::endl;
     }
 
+    bool wait_participant_discovery(
+            unsigned int min_participants = 1,
+            std::chrono::seconds timeout = std::chrono::seconds::zero())
+    {
+        bool ret_value = true;
+        std::unique_lock<std::mutex> lock(mutexDiscovery_);
+
+        std::cout << "Reader is waiting discovery of at least " << min_participants << " participants..." << std::endl;
+
+        if (timeout == std::chrono::seconds::zero())
+        {
+            cvDiscovery_.wait(lock, [&]()
+                    {
+                        return participant_matched_ >= min_participants;
+                    });
+        }
+        else
+        {
+            if (!cvDiscovery_.wait_for(lock, timeout, [&]()
+                    {
+                        return participant_matched_ >= min_participants;
+                    }))
+            {
+                ret_value = false;
+            }
+        }
+
+        if (ret_value)
+        {
+            std::cout << "Reader participant discovery finished successfully..." << std::endl;
+        }
+        else
+        {
+            std::cout << "Reader participant discovery finished unsuccessfully..." << std::endl;
+        }
+
+        return ret_value;
+    }
+
     bool wait_participant_undiscovery(
             std::chrono::seconds timeout = std::chrono::seconds::zero())
     {
         bool ret_value = true;
         std::unique_lock<std::mutex> lock(mutexDiscovery_);
 
-        std::cout << "Reader is waiting undiscovery..." << std::endl;
+        std::cout << "Reader is waiting participant undiscovery..." << std::endl;
 
         if (timeout == std::chrono::seconds::zero())
         {
@@ -594,11 +646,11 @@ public:
 
         if (ret_value)
         {
-            std::cout << "Reader undiscovery finished successfully..." << std::endl;
+            std::cout << "Reader participant undiscovery finished successfully..." << std::endl;
         }
         else
         {
-            std::cout << "Reader undiscovery finished unsuccessfully..." << std::endl;
+            std::cout << "Reader participant undiscovery finished unsuccessfully..." << std::endl;
         }
 
         return ret_value;
@@ -825,7 +877,7 @@ public:
     }
 
     PubSubReader& add_user_transport_to_pparams(
-            std::shared_ptr<eprosima::fastrtps::rtps::TransportDescriptorInterface> userTransportDescriptor)
+            std::shared_ptr<eprosima::fastdds::rtps::TransportDescriptorInterface> userTransportDescriptor)
     {
         participant_qos_.transport().user_transports.push_back(userTransportDescriptor);
         return *this;
@@ -1051,6 +1103,13 @@ public:
         return *this;
     }
 
+    PubSubReader& ignore_participant_flags(
+            eprosima::fastrtps::rtps::ParticipantFilteringFlags_t flags)
+    {
+        participant_qos_.wire_protocol().builtin.discovery_config.ignoreParticipantFlags = flags;
+        return *this;
+    }
+
     PubSubReader& socket_buffer_size(
             uint32_t sockerBufferSize)
     {
@@ -1098,12 +1157,20 @@ public:
 
         eprosima::fastdds::rtps::LocatorList default_unicast_locators;
         eprosima::fastdds::rtps::Locator default_unicast_locator;
+        eprosima::fastdds::rtps::Locator loopback_locator;
+        if (!use_udpv4)
+        {
+            default_unicast_locator.kind = LOCATOR_KIND_UDPv6;
+            loopback_locator.kind = LOCATOR_KIND_UDPv6;
+        }
 
         default_unicast_locators.push_back(default_unicast_locator);
         participant_qos_.wire_protocol().builtin.metatrafficUnicastLocatorList = default_unicast_locators;
 
-        eprosima::fastdds::rtps::Locator loopback_locator;
-        IPLocator::setIPv4(loopback_locator, 127, 0, 0, 1);
+        if (!IPLocator::setIPv4(loopback_locator, 127, 0, 0, 1))
+        {
+            IPLocator::setIPv6(loopback_locator, "::1");
+        }
         participant_qos_.wire_protocol().builtin.initialPeersList.push_back(loopback_locator);
         return *this;
     }
@@ -1216,7 +1283,15 @@ public:
             uint32_t maxInitialPeerRange)
     {
         participant_qos_.transport().use_builtin_transports = false;
-        std::shared_ptr<UDPv4TransportDescriptor> descriptor = std::make_shared<UDPv4TransportDescriptor>();
+        std::shared_ptr<UDPTransportDescriptor> descriptor;
+        if (use_udpv4)
+        {
+            descriptor = std::make_shared<UDPv4TransportDescriptor>();
+        }
+        else
+        {
+            descriptor = std::make_shared<UDPv6TransportDescriptor>();
+        }
         descriptor->maxInitialPeersRange = maxInitialPeerRange;
         participant_qos_.transport().user_transports.push_back(descriptor);
         return *this;

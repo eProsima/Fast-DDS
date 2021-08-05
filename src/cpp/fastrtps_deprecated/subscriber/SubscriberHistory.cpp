@@ -45,7 +45,7 @@ static void get_sample_info(
     info->sample_identity.writer_guid(change->writerGUID);
     info->sample_identity.sequence_number(change->sequenceNumber);
     info->sourceTimestamp = change->sourceTimestamp;
-    info->receptionTimestamp = change->receptionTimestamp;
+    info->receptionTimestamp = change->reader_info.receptionTimestamp;
     info->ownershipStrength = ownership_strength;
     info->iHandle = change->instanceHandle;
     info->related_sample_identity = change->write_params.sample_identity();
@@ -678,6 +678,30 @@ std::pair<bool, SubscriberHistory::instance_info> SubscriberHistory::lookup_inst
         return { true, {it->first, &(it->second.cache_changes)} };
     }
     return { false, {InstanceHandle_t(), nullptr} };
+}
+
+ReaderHistory::iterator SubscriberHistory::remove_change_nts(
+        ReaderHistory::const_iterator removal,
+        bool release)
+{
+    CacheChange_t* p_sample = nullptr;
+
+    if ( removal != changesEnd()
+            && (p_sample = *removal)->instanceHandle.isDefined()
+            && topic_att_.getTopicKind() == WITH_KEY)
+    {
+        // clean any references to this CacheChange in the key state collection
+        auto it = keyed_changes_.find(p_sample->instanceHandle);
+
+        // if keyed and in history must be in the map
+        assert(it != keyed_changes_.end());
+
+        auto& c = it->second.cache_changes;
+        c.erase(std::remove(c.begin(), c.end(), p_sample), c.end());
+    }
+
+    // call the base class
+    return ReaderHistory::remove_change_nts(removal, release);
 }
 
 } // namespace fastrtps

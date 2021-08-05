@@ -13,43 +13,36 @@
 # limitations under the License.
 
 if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
-    include(${PROJECT_SOURCE_DIR}/cmake/common/gtest.cmake)
-    check_gtest()
+    set(TIMEDEVENTTESTS_SOURCE mock/MockEvent.cpp
+        TimedEventTests.cpp
+        ${PROJECT_SOURCE_DIR}/src/cpp/rtps/resources/TimedEventImpl.cpp
+        ${PROJECT_SOURCE_DIR}/src/cpp/rtps/resources/TimedEvent.cpp
+        ${PROJECT_SOURCE_DIR}/src/cpp/rtps/resources/ResourceEvent.cpp
+        ${PROJECT_SOURCE_DIR}/src/cpp/utils/TimedConditionVariable.cpp
+        ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/Log.cpp
+        ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/OStreamConsumer.cpp
+        ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/StdoutConsumer.cpp
+        ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/StdoutErrConsumer.cpp
+        ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/Time_t.cpp
+        )
 
-    if(GTEST_FOUND)
-        find_package(Threads REQUIRED)
-
-        include_directories(${Asio_INCLUDE_DIR})
-
-        set(TIMEDEVENTTESTS_SOURCE mock/MockEvent.cpp
-            TimedEventTests.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/rtps/resources/TimedEventImpl.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/rtps/resources/TimedEvent.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/rtps/resources/ResourceEvent.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/utils/TimedConditionVariable.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/Log.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/OStreamConsumer.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/StdoutConsumer.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/StdoutErrConsumer.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/Time_t.cpp
-            )
-
-        if(WIN32)
-            add_definitions(-D_WIN32_WINNT=0x0601)
-        endif()
-
-        add_executable(TimedEventTests ${TIMEDEVENTTESTS_SOURCE})
-        target_compile_definitions(TimedEventTests PRIVATE FASTRTPS_NO_LIB
-            $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
-            $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
-            )
-        target_include_directories(TimedEventTests PRIVATE
-            ${GTEST_INCLUDE_DIRS}
-            ${PROJECT_SOURCE_DIR}/include
-            ${PROJECT_BINARY_DIR}/include
-            ${PROJECT_SOURCE_DIR}/src/cpp
-            )
-        target_link_libraries(TimedEventTests ${GTEST_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT} ${CMAKE_DL_LIBS})
-        add_gtest(TimedEventTests SOURCES ${TIMEDEVENTTESTS_SOURCE})
+    if(WIN32)
+        add_definitions(-D_WIN32_WINNT=0x0601)
     endif()
+
+    add_executable(TimedEventTests ${TIMEDEVENTTESTS_SOURCE})
+    target_compile_definitions(TimedEventTests PRIVATE FASTRTPS_NO_LIB
+        BOOST_ASIO_STANDALONE
+        ASIO_STANDALONE
+        $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
+        $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
+        )
+    target_include_directories(TimedEventTests PRIVATE
+        ${Asio_INCLUDE_DIR}
+        ${PROJECT_SOURCE_DIR}/include
+        ${PROJECT_BINARY_DIR}/include
+        ${PROJECT_SOURCE_DIR}/src/cpp
+        )
+    target_link_libraries(TimedEventTests GTest::gtest ${CMAKE_DL_LIBS})
+    add_gtest(TimedEventTests SOURCES ${TIMEDEVENTTESTS_SOURCE})
 endif()

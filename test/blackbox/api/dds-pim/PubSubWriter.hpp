@@ -42,14 +42,20 @@
 #include <fastdds/dds/publisher/DataWriterListener.hpp>
 #include <fastdds/dds/publisher/qos/DataWriterQos.hpp>
 #include <fastdds/dds/core/policy/QosPolicies.hpp>
+#include <fastdds/rtps/transport/UDPTransportDescriptor.h>
+#include <fastdds/rtps/transport/UDPv4TransportDescriptor.h>
+#include <fastdds/rtps/transport/UDPv6TransportDescriptor.h>
 #include <fastrtps/xmlparser/XMLParser.h>
 #include <fastrtps/xmlparser/XMLTree.h>
 #include <fastrtps/utils/IPLocator.h>
-#include <fastrtps/transport/UDPv4TransportDescriptor.h>
+#include <fastdds/rtps/flowcontrol/FlowControllerSchedulerPolicy.hpp>
+
 
 using DomainParticipantFactory = eprosima::fastdds::dds::DomainParticipantFactory;
 using eprosima::fastrtps::rtps::IPLocator;
-using eprosima::fastrtps::rtps::UDPv4TransportDescriptor;
+using eprosima::fastdds::rtps::UDPTransportDescriptor;
+using eprosima::fastdds::rtps::UDPv4TransportDescriptor;
+using eprosima::fastdds::rtps::UDPv6TransportDescriptor;
 
 template<class TypeSupport>
 class PubSubWriter
@@ -309,6 +315,9 @@ public:
 
     void init()
     {
+        ASSERT_FALSE(initialized_);
+        matched_ = 0;
+
         if (!xml_file_.empty())
         {
             DomainParticipantFactory::get_instance()->load_XML_profiles_file(xml_file_);
@@ -350,6 +359,7 @@ public:
             // Create publisher
             createPublisher();
         }
+
         return;
     }
 
@@ -402,6 +412,7 @@ public:
             participant_->delete_publisher(publisher_);
         }
         publisher_ = nullptr;
+        matched_ = 0;
         return;
     }
 
@@ -437,6 +448,8 @@ public:
             DomainParticipantFactory::get_instance()->delete_participant(participant_);
             participant_ = nullptr;
         }
+
+        initialized_ = false;
     }
 
     void send(
@@ -798,20 +811,18 @@ public:
     }
 
     PubSubWriter& add_throughput_controller_descriptor_to_pparams(
+            eprosima::fastdds::rtps::FlowControllerSchedulerPolicy scheduler_policy,
             uint32_t bytesPerPeriod,
             uint32_t periodInMs)
     {
         static const std::string flow_controller_name("MyFlowController");
         auto new_flow_controller = std::make_shared<eprosima::fastdds::rtps::FlowControllerDescriptor>();
         new_flow_controller->name = flow_controller_name.c_str();
+        new_flow_controller->scheduler = scheduler_policy;
         new_flow_controller->max_bytes_per_period = bytesPerPeriod;
         new_flow_controller->period_ms = static_cast<uint64_t>(periodInMs);
         participant_qos_.flow_controllers().push_back(new_flow_controller);
         datawriter_qos_.publish_mode().flow_controller_name = flow_controller_name.c_str();
-
-
-        eprosima::fastrtps::rtps::ThroughputControllerDescriptor descriptor {bytesPerPeriod, periodInMs};
-        datawriter_qos_.throughput_controller() = descriptor;
 
         return *this;
     }
@@ -844,7 +855,7 @@ public:
     }
 
     PubSubWriter& add_user_transport_to_pparams(
-            std::shared_ptr<eprosima::fastrtps::rtps::TransportDescriptorInterface> userTransportDescriptor)
+            std::shared_ptr<eprosima::fastdds::rtps::TransportDescriptorInterface> userTransportDescriptor)
     {
         participant_qos_.transport().user_transports.push_back(userTransportDescriptor);
         return *this;
@@ -1136,12 +1147,20 @@ public:
 
         eprosima::fastdds::rtps::LocatorList default_unicast_locators;
         eprosima::fastdds::rtps::Locator default_unicast_locator;
+        eprosima::fastdds::rtps::Locator loopback_locator;
+        if (!use_udpv4)
+        {
+            default_unicast_locator.kind = LOCATOR_KIND_UDPv6;
+            loopback_locator.kind = LOCATOR_KIND_UDPv6;
+        }
 
         default_unicast_locators.push_back(default_unicast_locator);
         participant_qos_.wire_protocol().builtin.metatrafficUnicastLocatorList = default_unicast_locators;
 
-        eprosima::fastdds::rtps::Locator loopback_locator;
-        IPLocator::setIPv4(loopback_locator, 127, 0, 0, 1);
+        if (!IPLocator::setIPv4(loopback_locator, 127, 0, 0, 1))
+        {
+            IPLocator::setIPv6(loopback_locator, "::1");
+        }
         participant_qos_.wire_protocol().builtin.initialPeersList.push_back(loopback_locator);
         return *this;
     }
@@ -1225,7 +1244,15 @@ public:
             uint32_t maxInitialPeerRange)
     {
         participant_qos_.transport().use_builtin_transports = false;
-        std::shared_ptr<UDPv4TransportDescriptor> descriptor = std::make_shared<UDPv4TransportDescriptor>();
+        std::shared_ptr<UDPTransportDescriptor> descriptor;
+        if (use_udpv4)
+        {
+            descriptor = std::make_shared<UDPv4TransportDescriptor>();
+        }
+        else
+        {
+            descriptor = std::make_shared<UDPv6TransportDescriptor>();
+        }
         descriptor->maxInitialPeersRange = maxInitialPeerRange;
         participant_qos_.transport().user_transports.push_back(descriptor);
         return *this;

@@ -455,6 +455,10 @@ void SecurityManager::destroy()
 
         SecurityException exception;
 
+        // AuthUniquePtr must be removed after unlock SecurityManager's mutex.
+        // This is to avoid a deadlock with TimedEvents.
+        std::vector<DiscoveredParticipantInfo::AuthUniquePtr> auths_to_remove;
+
         for (auto& dp_it : discovered_participants_)
         {
             ParticipantCryptoHandle* participant_crypto_handle = dp_it.second.get_participant_crypto();
@@ -475,7 +479,9 @@ void SecurityManager::destroy()
                 authentication_plugin_->return_sharedsecret_handle(shared_secret_handle, exception);
             }
 
-            remove_discovered_participant_info(dp_it.second.get_auth());
+            DiscoveredParticipantInfo::AuthUniquePtr remote_participant_info = dp_it.second.get_auth();
+            remove_discovered_participant_info(remote_participant_info);
+            auths_to_remove.push_back(std::move(remote_participant_info));
         }
 
         discovered_participants_.clear();
@@ -499,6 +505,8 @@ void SecurityManager::destroy()
         }
 
         mutex_.unlock();
+
+        auths_to_remove.clear(); // AuthUniquePtr must be destroyed without SecurityManager's mutex locked.
 
         delete_entities();
 
@@ -528,7 +536,7 @@ void SecurityManager::destroy()
 }
 
 void SecurityManager::remove_discovered_participant_info(
-        DiscoveredParticipantInfo::AuthUniquePtr&& auth_ptr)
+        const DiscoveredParticipantInfo::AuthUniquePtr& auth_ptr)
 {
     SecurityException exception;
 
@@ -562,7 +570,11 @@ bool SecurityManager::restore_discovered_participant_info(
     }
     else
     {
-        remove_discovered_participant_info(std::move(auth_ptr));
+        // AuthUniquePtr must be removed after unlock SecurityManager's mutex.
+        // This is to avoid a deadlock with TimedEvents.
+        DiscoveredParticipantInfo::AuthUniquePtr remote_participant_info = std::move(auth_ptr);
+        remove_discovered_participant_info(remote_participant_info);
+        lock.unlock(); // AuthUniquePtr must be destroyed without SecurityManager's mutex locked.
     }
 
     return returned_value;
@@ -736,9 +748,13 @@ void SecurityManager::remove_participant(
             authentication_plugin_->return_sharedsecret_handle(shared_secret_handle, exception);
         }
 
-        remove_discovered_participant_info(dp_it->second.get_auth());
+        // AuthUniquePtr must be removed after unlock SecurityManager's mutex.
+        // This is to avoid a deadlock with TimedEvents.
+        DiscoveredParticipantInfo::AuthUniquePtr remote_participant_info = dp_it->second.get_auth();
+        remove_discovered_participant_info(remote_participant_info);
 
         discovered_participants_.erase(dp_it);
+        lock.unlock(); // AuthUniquePtr must be destroyed without SecurityManager's mutex locked.
     }
 }
 
@@ -1033,12 +1049,6 @@ bool SecurityManager::create_participant_stateless_message_writer()
     watt.endpoint.topicKind = NO_KEY;
     watt.matched_readers_allocation = participant_->getRTPSParticipantAttributes().allocation.participants;
 
-    if (participant_->getRTPSParticipantAttributes().throughputController.bytesPerPeriod != UINT32_MAX &&
-            participant_->getRTPSParticipantAttributes().throughputController.periodMillisecs != 0)
-    {
-        watt.mode = ASYNCHRONOUS_WRITER;
-    }
-
     RTPSWriter* wout = nullptr;
     if (participant_->createWriter(&wout, watt, participant_stateless_message_pool_,
             participant_stateless_message_writer_history_, nullptr,
@@ -1188,13 +1198,6 @@ bool SecurityManager::create_participant_volatile_message_secure_writer()
     watt.endpoint.security_attributes().plugin_endpoint_attributes =
             PLUGIN_ENDPOINT_SECURITY_ATTRIBUTES_FLAG_IS_SUBMESSAGE_ENCRYPTED;
     watt.matched_readers_allocation = participant_->getRTPSParticipantAttributes().allocation.participants;
-    // TODO(Ricardo) Study keep_all
-
-    if (participant_->getRTPSParticipantAttributes().throughputController.bytesPerPeriod != UINT32_MAX &&
-            participant_->getRTPSParticipantAttributes().throughputController.periodMillisecs != 0)
-    {
-        watt.mode = ASYNCHRONOUS_WRITER;
-    }
 
     RTPSWriter* wout = nullptr;
     if (participant_->createWriter(&wout, watt, participant_volatile_message_secure_pool_,

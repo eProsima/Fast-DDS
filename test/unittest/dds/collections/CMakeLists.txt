@@ -13,29 +13,24 @@
 # limitations under the License.
 
 if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
-    include(${PROJECT_SOURCE_DIR}/cmake/common/gtest.cmake)
-    check_gtest()
-
-    if(GTEST_FOUND)
-        if(WIN32)
-            add_definitions(-D_WIN32_WINNT=0x0601)
-        endif()
-
-        set(LOANABLE_SEQUENCE_TESTS_SOURCE
-            ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/Log.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/OStreamConsumer.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/StdoutConsumer.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/StdoutErrConsumer.cpp
-            LoanableSequenceTests.cpp)
-
-        add_executable(LoanableSequenceTests ${LOANABLE_SEQUENCE_TESTS_SOURCE})
-        target_compile_definitions(LoanableSequenceTests PRIVATE FASTRTPS_NO_LIB
-            $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
-            $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
-            )
-        target_include_directories(LoanableSequenceTests PRIVATE ${GTEST_INCLUDE_DIRS}
-            ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include)
-        target_link_libraries(LoanableSequenceTests ${GTEST_LIBRARIES})
-        add_gtest(LoanableSequenceTests SOURCES ${LOANABLE_SEQUENCE_TESTS_SOURCE})
+    if(WIN32)
+        add_definitions(-D_WIN32_WINNT=0x0601)
     endif()
+
+    set(LOANABLE_SEQUENCE_TESTS_SOURCE
+        ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/Log.cpp
+        ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/OStreamConsumer.cpp
+        ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/StdoutConsumer.cpp
+        ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/StdoutErrConsumer.cpp
+        LoanableSequenceTests.cpp)
+
+    add_executable(LoanableSequenceTests ${LOANABLE_SEQUENCE_TESTS_SOURCE})
+    target_compile_definitions(LoanableSequenceTests PRIVATE FASTRTPS_NO_LIB
+        $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
+        $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
+        )
+    target_include_directories(LoanableSequenceTests PRIVATE
+        ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include)
+    target_link_libraries(LoanableSequenceTests GTest::gtest)
+    add_gtest(LoanableSequenceTests SOURCES ${LOANABLE_SEQUENCE_TESTS_SOURCE})
 endif()

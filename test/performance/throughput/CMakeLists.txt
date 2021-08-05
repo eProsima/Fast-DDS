@@ -24,11 +24,14 @@ set(
 add_executable(ThroughputTest ${THROUGHPUTTEST_SOURCE})
 
 target_compile_definitions(ThroughputTest PRIVATE
+    BOOST_ASIO_STANDALONE
+    ASIO_STANDALONE
     $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
     $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
     )
 
-target_include_directories(ThroughputTest PRIVATE)
+target_include_directories(ThroughputTest PRIVATE ${Asio_INCLUDE_DIR})
+
 target_link_libraries(
     ThroughputTest
     fastrtps
@@ -198,7 +201,7 @@ if(PYTHONINTERP_FOUND)
                 --xml_file ${CMAKE_CURRENT_SOURCE_DIR}/xml/${throughput_test_name}.xml
                 --recoveries_file ${CMAKE_CURRENT_SOURCE_DIR}/recoveries.csv
                 --demands_file ${CMAKE_CURRENT_SOURCE_DIR}/payloads_demands.csv
-                --data_sharing
+                --data_sharing=on
                 ${interproces_flag}
                 ${reliability_flag}
             )
@@ -265,7 +268,7 @@ if(PYTHONINTERP_FOUND)
                 --recoveries_file ${CMAKE_CURRENT_SOURCE_DIR}/recoveries.csv
                 --demands_file ${CMAKE_CURRENT_SOURCE_DIR}/payloads_demands.csv
                 --data_loans
-                --data_sharing
+                --data_sharing=on
                 ${interproces_flag}
                 ${reliability_flag}
             )

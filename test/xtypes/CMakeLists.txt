@@ -76,49 +76,34 @@ macro(add_xtypes_gtest test)
 endmacro()
 
 if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER) AND fastcdr_FOUND)
-    include(${PROJECT_SOURCE_DIR}/cmake/common/gtest.cmake)
-    check_gtest()
-
-    if(GTEST_FOUND)
-        if(WIN32)
-            add_definitions(
-                -D_WIN32_WINNT=0x0601
-                -D_CRT_SECURE_NO_WARNINGS
-                )
-        endif()
-
+    if(WIN32)
         add_definitions(
-          -DEPROSIMA_SHAPES_DLL_EXPORT
-          -DBUILD_SHARED_LIBS
-          -DBOOST_ASIO_STANDALONE
-          -DASIO_STANDALONE
+            -D_WIN32_WINNT=0x0601
+            -D_CRT_SECURE_NO_WARNINGS
+            )
+    endif()
+
+    ###############################################################################
+    # Unit tests
+    ###############################################################################
+    set(XTYPES_TESTS_SOURCE XTypesTests.cpp
+        idl/Types.cxx
+        idl/TypesPubSubTypes.cxx
+        idl/TypesTypeObject.cxx
+        TestPublisher.cpp
+        TestSubscriber.cpp
         )
 
-        include_directories(${Asio_INCLUDE_DIR})
-
-        ###############################################################################
-        # Unit tests
-        ###############################################################################
-        set(XTYPES_TESTS_SOURCE XTypesTests.cpp
-            idl/Types.cxx
-            idl/TypesPubSubTypes.cxx
-            idl/TypesTypeObject.cxx
-            TestPublisher.cpp
-            TestSubscriber.cpp
-            )
-
-        add_executable(XTypesBlackBoxTests ${XTYPES_TESTS_SOURCE})
-        target_compile_definitions(XTypesBlackBoxTests PRIVATE
-            $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
-            $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
-            )
-        target_include_directories(XTypesBlackBoxTests PRIVATE ${GTEST_INCLUDE_DIRS})
-        target_link_libraries(XTypesBlackBoxTests fastrtps fastcdr ${GTEST_LIBRARIES})
-        add_xtypes_gtest(XTypesBlackBoxTests SOURCES ${XTYPES_TESTS_SOURCE})
-    endif()
+    add_executable(XTypesBlackBoxTests ${XTYPES_TESTS_SOURCE})
+    target_compile_definitions(XTypesBlackBoxTests PRIVATE
+        EPROSIMA_SHAPES_DLL_EXPORT
+        BUILD_SHARED_LIBS
+        BOOST_ASIO_STANDALONE
+        ASIO_STANDALONE
+        $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
+        $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
+        )
+    target_include_directories(XTypesBlackBoxTests PRIVATE ${Asio_INCLUDE_DIR})
+    target_link_libraries(XTypesBlackBoxTests fastrtps fastcdr GTest::gtest)
+    add_xtypes_gtest(XTypesBlackBoxTests SOURCES ${XTYPES_TESTS_SOURCE})
 endif()
-
-# DYNAMIC -> DYNAMIC TRANSFORM
-#file(GLOB TYPES_LIB_SOURCE "typeslib.cpp")
-#add_library(Types SHARED ${TYPES_LIB_SOURCE})
-#target_link_libraries(Types fastrtps fastcdr ${CMAKE_DL_LIBS})

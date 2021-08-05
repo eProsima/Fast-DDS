@@ -120,21 +120,24 @@ void RTPSReader::init(
 
     if (att.endpoint.data_sharing_configuration().kind() != OFF)
     {
-        is_datasharing_compatible_ = true;
         using std::placeholders::_1;
         std::shared_ptr<DataSharingNotification> notification =
                 DataSharingNotification::create_notification(
             getGuid(), att.endpoint.data_sharing_configuration().shm_directory());
-        datasharing_listener_.reset(new DataSharingListener(
-                    notification,
-                    att.endpoint.data_sharing_configuration().shm_directory(),
-                    att.matched_writers_allocation,
-                    this));
+        if (notification)
+        {
+            is_datasharing_compatible_ = true;
+            datasharing_listener_.reset(new DataSharingListener(
+                        notification,
+                        att.endpoint.data_sharing_configuration().shm_directory(),
+                        att.matched_writers_allocation,
+                        this));
 
-        // We can start the listener here, as no writer can be matched already,
-        // so no notification will occur until the non-virtual instance is constructed.
-        // But we need to stop the listener in the non-virtual instance destructor.
-        datasharing_listener_->start();
+            // We can start the listener here, as no writer can be matched already,
+            // so no notification will occur until the non-virtual instance is constructed.
+            // But we need to stop the listener in the non-virtual instance destructor.
+            datasharing_listener_->start();
+        }
     }
 
     mp_history->mp_reader = this;

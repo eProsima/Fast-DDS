@@ -389,8 +389,12 @@ public:
     }
 
     bool create_additional_topics(
-            size_t num_topics)
+            size_t num_topics,
+            const char* suffix,
+            const eprosima::fastrtps::rtps::PropertySeq& writer_properties = eprosima::fastrtps::rtps::PropertySeq())
     {
+        (void)writer_properties;
+
         bool ret_val = initialized_;
         if (ret_val)
         {
@@ -398,7 +402,7 @@ public:
 
             for (size_t i = 0; ret_val && (i < num_topics); i++)
             {
-                topic_name += "/";
+                topic_name += suffix;
                 publisher_attr_.topic.topicName = topic_name;
                 ret_val &=
                         nullptr != eprosima::fastrtps::Domain::createPublisher(participant_, publisher_attr_,
@@ -409,7 +413,7 @@ public:
 
             for (size_t i = 0; ret_val && (i < num_topics); i++)
             {
-                topic_name += "/";
+                topic_name += suffix;
                 subscriber_attr_.topic.topicName = topic_name;
                 ret_val &=
                         nullptr != eprosima::fastrtps::Domain::createSubscriber(participant_, subscriber_attr_,
@@ -678,6 +682,24 @@ public:
     {
         std::lock_guard<std::mutex> guard(mutexDiscovery_);
         return matched_readers_.size();
+    }
+
+    PubSubWriterReader& add_throughput_controller_descriptor_to_pparams(
+            eprosima::fastdds::rtps::FlowControllerSchedulerPolicy,
+            uint32_t bytesPerPeriod,
+            uint32_t periodInMs)
+    {
+        eprosima::fastrtps::rtps::ThroughputControllerDescriptor descriptor {bytesPerPeriod, periodInMs};
+        publisher_attr_.throughputController = descriptor;
+
+        return *this;
+    }
+
+    PubSubWriterReader& asynchronously(
+            const eprosima::fastrtps::PublishModeQosPolicyKind kind)
+    {
+        publisher_attr_.qos.m_publishMode.kind = kind;
+        return *this;
     }
 
 private:

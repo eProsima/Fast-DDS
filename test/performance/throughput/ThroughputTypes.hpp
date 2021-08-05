@@ -126,7 +126,9 @@ public:
         : buffer_size_(size)
     {
         setName(type_name_.c_str());
-        m_typeSize = 4 + ((size + 3) & ~3);
+        m_typeSize = sizeof(decltype(ThroughputType::seqnum)) +
+                ((size + 3) & ~3) +
+                eprosima::fastrtps::rtps::SerializedPayload_t::representation_header_size;
         m_isGetKeyDefined = false;
     }
 

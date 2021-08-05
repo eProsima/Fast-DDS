@@ -49,13 +49,16 @@
 #include <fastdds/rtps/common/Locator.h>
 #include <fastrtps/utils/IPLocator.h>
 
-#include "./FooBoundedType.hpp"
-#include "./FooBoundedTypeSupport.hpp"
+#include "FooBoundedType.hpp"
+#include "FooBoundedTypeSupport.hpp"
 
-#include "./FooType.hpp"
-#include "./FooTypeSupport.hpp"
+#include "FooType.hpp"
+#include "FooTypeSupport.hpp"
 
 #include "../../logging/mock/MockConsumer.h"
+
+#include <fastdds/rtps/transport/test_UDPv4TransportDescriptor.h>
+#include <fastrtps/xmlparser/XMLProfileManager.h>
 
 namespace eprosima {
 namespace fastdds {
@@ -141,7 +144,7 @@ protected:
         ASSERT_NE(data_reader_, nullptr);
 
         data_writer_ = publisher_->create_datawriter(topic_, wqos);
-        ASSERT_NE(data_reader_, nullptr);
+        ASSERT_NE(data_writer_, nullptr);
     }
 
     void create_instance_handles()
@@ -996,6 +999,7 @@ TEST_F(DataReaderTests, resource_limits)
 
     const ReturnCode_t& ok_code = ReturnCode_t::RETCODE_OK;
     const ReturnCode_t& resources_code = ReturnCode_t::RETCODE_OUT_OF_RESOURCES;
+    const ReturnCode_t& no_data_code = ReturnCode_t::RETCODE_NO_DATA;
 
     DataWriterQos writer_qos = DATAWRITER_QOS_DEFAULT;
     writer_qos.history().kind = KEEP_LAST_HISTORY_QOS;
@@ -1065,12 +1069,13 @@ TEST_F(DataReaderTests, resource_limits)
         FooSeq data_seq;
         SampleInfoSeq info_seq;
 
-        // The standard is not clear on what shold be done if max_samples is 0. NO_DATA? OK with length = 0?
-        // We have assumed the correct interpretation is the second one, so the following loop starts at 0.
+        //  The standard is not clear on what should be done if max_samples is 0. NO_DATA? OK with length = 0?
+        // We have assumed the correct interpretation is the first one.
         // This test should change whenever this interpretation becomes invalid.
+        EXPECT_EQ(no_data_code, data_reader_->read(data_seq, info_seq, 0));
 
         // Up to max_samples_per_read, max_samples will be returned
-        for (int32_t i = 0; i <= 10; ++i)
+        for (int32_t i = 1; i <= 10; ++i)
         {
             EXPECT_EQ(ok_code, data_reader_->read(data_seq, info_seq, i));
             check_collection(data_seq, false, i, i);
@@ -1597,6 +1602,44 @@ TEST_F(DataReaderTests, Deserialization_errors)
             check_sample_values(data_seq, "0123456789");
             EXPECT_EQ(ok_code, data_reader_->return_loan(data_seq, info_seq));
         }
+
+        {
+            FooSeq data_seq;
+            SampleInfoSeq info_seq;
+
+            // Reader should have 10 samples with the following states (R = read, N = not-read, / = removed from history)
+            // {N, N, N, N, N, N, N, N, N, N}
+
+            // This should return samples 0 to 9
+            EXPECT_EQ(ok_code, data_reader_->take(data_seq, info_seq, num_samples, READ_SAMPLE_STATE));
+            check_collection(data_seq, false, num_samples, num_samples);
+            check_sample_values(data_seq, "0123456789");
+            EXPECT_EQ(ok_code, data_reader_->return_loan(data_seq, info_seq));
+        }
+    }
+
+    // Check deserialization errors for read_next_sample and take_next_sample.
+    // Regression test for #12129
+    {
+        // Send two samples
+        for (char i = 0; i < 2; ++i)
+        {
+            data.message()[0] = 1;
+            EXPECT_EQ(ok_code, data_writer_->write(&data, handle_ok_));
+        }
+
+        // There are unread samples, so wait_for_unread should be ok
+        EXPECT_TRUE(data_reader_->wait_for_unread_message(time_to_wait));
+
+        {
+            SampleInfo info;
+            EXPECT_EQ(no_data_code, data_reader_->take_next_sample(&data, &info));
+        }
+
+        {
+            SampleInfo info;
+            EXPECT_EQ(no_data_code, data_reader_->read_next_sample(&data, &info));
+        }
     }
 
 }
@@ -1704,6 +1747,67 @@ TEST_F(DataReaderTests, get_listening_locators)
     }
     EXPECT_TRUE(unicast_found);
     EXPECT_TRUE(multicast_found);
+}
+
+/*
+ * Issue https://github.com/eProsima/Fast-DDS/issues/2044 highlighted that a DataWriter removal may left DataReaders
+ * Histories in an invalid state. DataWriter removal triggers the clean up of any related sample in DataReader's
+ * History. Because the key related internal state was not updated and kept sample dangling references.
+ * */
+
+TEST_F(DataReaderTests, check_key_history_wholesomeness_on_unmatch)
+{
+    // handle_ok_ (1)
+    create_instance_handles();
+
+    // Set up entities
+    DataReaderQos reader_qos = DATAREADER_QOS_DEFAULT;
+    reader_qos.reliability().kind = RELIABLE_RELIABILITY_QOS;
+    reader_qos.history().kind = KEEP_ALL_HISTORY_QOS;
+
+    DataWriterQos writer_qos = DATAWRITER_QOS_DEFAULT;
+    writer_qos.reliability().kind = RELIABLE_RELIABILITY_QOS;
+    writer_qos.history().kind = KEEP_ALL_HISTORY_QOS;
+
+    // defaults to footopic using type FooType
+    create_entities(
+        nullptr,
+        reader_qos,
+        SUBSCRIBER_QOS_DEFAULT,
+        writer_qos);
+
+    // add a key sample
+    FooType sample;
+    std::array<char, 256> msg = {"checking robustness"};
+
+    sample.index(1);
+    sample.message(msg);
+
+    ASSERT_TRUE(data_writer_->write(&sample));
+
+    // wait till the DataReader receives the data
+    ASSERT_TRUE(data_reader_->wait_for_unread_message(Duration_t(3, 0)));
+
+    // now the writer is removed
+    ASSERT_EQ(publisher_->delete_datawriter(data_writer_), ReturnCode_t::RETCODE_OK);
+    data_writer_ = nullptr;
+
+    // here the DataReader History state must be coherent and don't loop endlessly
+    ReturnCode_t res;
+    std::thread query([this, &res]()
+            {
+                FooSeq samples;
+                SampleInfoSeq infos;
+
+                res = data_reader_->take_instance(samples, infos, LENGTH_UNLIMITED, handle_ok_);
+            });
+
+    // Check if the thread hangs
+    // wait for termination
+    std::this_thread::sleep_for(std::chrono::milliseconds(500));
+    // check expected result, if query thread hangs res = ReturnCode_t::RETCODE_OK
+    ASSERT_NE(res, ReturnCode_t::RETCODE_OK);
+    query.join();
 }
 
 class DataReaderUnsupportedTests : public ::testing::Test
@@ -1915,7 +2019,94 @@ TEST_F(DataReaderUnsupportedTests, UnsupportedDataReaderMethods)
     ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), ReturnCode_t::RETCODE_OK);
 }
 
+// Regression test for #12133.
+TEST_F(DataReaderTests, read_samples_with_future_changes)
+{
+    fastrtps::LibrarySettingsAttributes att;
+    att.intraprocess_delivery = fastrtps::INTRAPROCESS_OFF;
+    eprosima::fastrtps::xmlparser::XMLProfileManager::library_settings(att);
+    static constexpr int32_t num_samples = 8;
+    static constexpr int32_t expected_samples = 4;
+    const ReturnCode_t& ok_code = ReturnCode_t::RETCODE_OK;
+    bool start_dropping_acks = false;
+    bool start_dropping_datas = false;
+    static const Duration_t time_to_wait(0, 100 * 1000 * 1000);
+    std::shared_ptr<rtps::test_UDPv4TransportDescriptor> test_descriptor =
+            std::make_shared<rtps::test_UDPv4TransportDescriptor>();
+    test_descriptor->drop_ack_nack_messages_filter_ = [&](fastrtps::rtps::CDRMessage_t&) -> bool
+            {
+                return start_dropping_acks;
+            };
+    test_descriptor->drop_data_messages_filter_ = [&](fastrtps::rtps::CDRMessage_t&) -> bool
+            {
+                return start_dropping_datas;
+            };
 
+    DomainParticipantQos participant_qos = PARTICIPANT_QOS_DEFAULT;
+    participant_qos.transport().use_builtin_transports = false;
+    participant_qos.transport().user_transports.push_back(test_descriptor);
+
+    DataReaderQos reader_qos = DATAREADER_QOS_DEFAULT;
+    reader_qos.reliability().kind = RELIABLE_RELIABILITY_QOS;
+    reader_qos.history().kind = KEEP_ALL_HISTORY_QOS;
+
+    DataWriterQos writer_qos = DATAWRITER_QOS_DEFAULT;
+    writer_qos.history().kind = KEEP_ALL_HISTORY_QOS;
+
+    create_entities(
+        nullptr,
+        reader_qos,
+        SUBSCRIBER_QOS_DEFAULT,
+        writer_qos,
+        PUBLISHER_QOS_DEFAULT,
+        TOPIC_QOS_DEFAULT,
+        participant_qos);
+
+    DataWriter* data_writer2 = publisher_->create_datawriter(topic_, writer_qos);
+
+    create_instance_handles();
+    std::this_thread::sleep_for(std::chrono::milliseconds(100)); // Wait discovery
+
+    FooType data;
+    data.index(1);
+    data.message()[0] = '\0';
+    data.message()[1] = '\0';
+
+    for (int i = 0; i < 2; ++i)
+    {
+        data_writer_->write(&data, handle_ok_);
+    }
+
+    start_dropping_datas = true;
+    start_dropping_acks = true;
+
+    for (int i = 0; i < 2; ++i)
+    {
+        data_writer2->write(&data, handle_ok_);
+    }
+
+    start_dropping_datas = false;
+
+    for (int i = 0; i < 2; ++i)
+    {
+        data_writer2->write(&data, handle_ok_);
+    }
+
+    for (int i = 0; i < 2; ++i)
+    {
+        data_writer_->write(&data, handle_ok_);
+    }
+
+    std::this_thread::sleep_for(std::chrono::milliseconds(100)); // Wait all received
+
+    FooSeq data_seq(num_samples);
+    SampleInfoSeq info_seq(num_samples);
+
+    EXPECT_EQ(ok_code, data_reader_->take(data_seq, info_seq, num_samples, NOT_READ_SAMPLE_STATE));
+    check_collection(data_seq, true, num_samples, expected_samples);
+
+    ASSERT_EQ(publisher_->delete_datawriter(data_writer2), ReturnCode_t::RETCODE_OK);
+}
 
 } // namespace dds
 } // namespace fastdds

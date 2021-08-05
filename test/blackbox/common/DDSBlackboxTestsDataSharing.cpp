@@ -201,23 +201,14 @@ TEST(DDSDataSharing, ReliableDirtyPayloads)
     std::advance(data_it, writer_sent_data - writer_history_depth - 1);
     std::copy(data_it, data.end(), std::back_inserter(valid_data));
 
+    writer.send(data, 100);
+    ASSERT_TRUE(data.empty());
+
     // Send the data to fill the history and overwrite old changes
     // The reader will receive and process all changes so that the writer can reuse them,
     // but will keep them in the history.
-    read_reader.startReception(data);
-    writer.send(data, 100);
-    ASSERT_TRUE(data.empty());
+    read_reader.startReception(valid_data);
     read_reader.block_for_all();
-
-    // Doing a second read on the same history, the application will see only the last samples
-    while (!valid_data.empty())
-    {
-        FixedSized value;
-        ASSERT_TRUE(read_reader.take_first_data(&value));
-        ASSERT_EQ(valid_data.front(), value);
-        valid_data.pop_front();
-    }
-    ASSERT_TRUE(valid_data.empty());
 }
 
 TEST(DDSDataSharing, DataSharingWriter_DifferentDomainReaders)

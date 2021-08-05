@@ -20,25 +20,25 @@
 #ifndef _TEST_BLACKBOX_PUBSUBPARTICIPANT_HPP_
 #define _TEST_BLACKBOX_PUBSUBPARTICIPANT_HPP_
 
-#include <fastdds/dds/domain/DomainParticipantFactory.hpp>
-#include <fastdds/dds/domain/DomainParticipant.hpp>
-#include <fastdds/dds/domain/DomainParticipantListener.hpp>
-#include <fastdds/dds/domain/qos/DomainParticipantQos.hpp>
-#include <fastdds/dds/publisher/Publisher.hpp>
-#include <fastdds/dds/publisher/DataWriter.hpp>
-#include <fastdds/dds/publisher/qos/DataWriterQos.hpp>
-#include <fastdds/dds/publisher/DataWriterListener.hpp>
-#include <fastdds/dds/subscriber/Subscriber.hpp>
-#include <fastdds/dds/subscriber/DataReader.hpp>
-#include <fastdds/dds/subscriber/qos/DataReaderQos.hpp>
-#include <fastdds/dds/subscriber/DataReaderListener.hpp>
+#include <condition_variable>
+#include <thread>
+#include <tuple>
+#include <vector>
 
 #include <asio.hpp>
-#include <condition_variable>
 #include <gtest/gtest.h>
-#include <thread>
-#include <vector>
-#include <tuple>
+#include <fastdds/dds/domain/DomainParticipant.hpp>
+#include <fastdds/dds/domain/DomainParticipantFactory.hpp>
+#include <fastdds/dds/domain/DomainParticipantListener.hpp>
+#include <fastdds/dds/domain/qos/DomainParticipantQos.hpp>
+#include <fastdds/dds/publisher/DataWriter.hpp>
+#include <fastdds/dds/publisher/DataWriterListener.hpp>
+#include <fastdds/dds/publisher/Publisher.hpp>
+#include <fastdds/dds/publisher/qos/DataWriterQos.hpp>
+#include <fastdds/dds/subscriber/DataReader.hpp>
+#include <fastdds/dds/subscriber/DataReaderListener.hpp>
+#include <fastdds/dds/subscriber/Subscriber.hpp>
+#include <fastdds/dds/subscriber/qos/DataReaderQos.hpp>
 
 /**
  * @brief A class with one participant that can have multiple publishers and subscribers
@@ -496,6 +496,19 @@ public:
             const eprosima::fastrtps::rtps::PropertyPolicy property_policy)
     {
         participant_qos_.properties() = property_policy;
+        return *this;
+    }
+
+    PubSubParticipant& disable_builtin_transport()
+    {
+        participant_qos_.transport().use_builtin_transports = false;
+        return *this;
+    }
+
+    PubSubParticipant& add_user_transport_to_pparams(
+            std::shared_ptr<eprosima::fastdds::rtps::TransportDescriptorInterface> userTransportDescriptor)
+    {
+        participant_qos_.transport().user_transports.push_back(userTransportDescriptor);
         return *this;
     }
 

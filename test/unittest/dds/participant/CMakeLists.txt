@@ -13,37 +13,28 @@
 # limitations under the License.
 
 if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
-    include(${PROJECT_SOURCE_DIR}/cmake/common/gtest.cmake)
-    check_gtest()
-    check_gmock()
+    configure_file(${CMAKE_CURRENT_SOURCE_DIR}/../profiles/test_xml_profiles.xml
+        ${CMAKE_CURRENT_BINARY_DIR}/test_xml_profiles.xml
+        COPYONLY)
 
-    if(GTEST_FOUND AND GMOCK_FOUND)
-        find_package(Threads REQUIRED)
+    set(PARTICIPANTTESTS_SOURCE ParticipantTests.cpp
+        )
 
-        configure_file(${CMAKE_CURRENT_SOURCE_DIR}/../profiles/test_xml_profiles.xml
-            ${CMAKE_CURRENT_BINARY_DIR}/test_xml_profiles.xml
-            COPYONLY)
-
-        set(PARTICIPANTTESTS_SOURCE ParticipantTests.cpp
-            )
-
-        if(WIN32)
-            add_definitions(-D_WIN32_WINNT=0x0601)
-        endif()
-
-        add_executable(ParticipantTests ${PARTICIPANTTESTS_SOURCE})
-        target_compile_definitions(ParticipantTests PRIVATE FASTRTPS_NO_LIB
-            $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
-            $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
-            )
-        target_include_directories(ParticipantTests PRIVATE
-            ${GTEST_INCLUDE_DIRS} ${GMOCK_INCLUDE_DIRS}
-            ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include
-            ${PROJECT_SOURCE_DIR}/src/cpp
-            )
-        target_link_libraries(ParticipantTests fastrtps fastcdr foonathan_memory
-            ${GTEST_LIBRARIES} ${GMOCK_LIBRARIES}
-            ${CMAKE_THREAD_LIBS_INIT} ${CMAKE_DL_LIBS})
-        add_gtest(ParticipantTests SOURCES ${PARTICIPANTTESTS_SOURCE})
+    if(WIN32)
+        add_definitions(-D_WIN32_WINNT=0x0601)
     endif()
+
+    add_executable(ParticipantTests ${PARTICIPANTTESTS_SOURCE})
+    target_compile_definitions(ParticipantTests PRIVATE FASTRTPS_NO_LIB
+        $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
+        $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
+        )
+    target_include_directories(ParticipantTests PRIVATE
+        ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include
+        ${PROJECT_SOURCE_DIR}/src/cpp
+        )
+    target_link_libraries(ParticipantTests fastrtps fastcdr foonathan_memory
+        GTest::gmock
+        ${CMAKE_DL_LIBS})
+    add_gtest(ParticipantTests SOURCES ${PARTICIPANTTESTS_SOURCE})
 endif()

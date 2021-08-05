@@ -108,8 +108,8 @@ struct RTPS_DllAPI ProtocolVersion_t
     octet m_minor;
     ProtocolVersion_t():
 #if HAVE_SECURITY
-    // As imposed by DDSSEC11-93
-    ProtocolVersion_t(2, 3)
+        // As imposed by DDSSEC11-93
+        ProtocolVersion_t(2, 3)
 #else
         ProtocolVersion_t(2, 2)
 #endif // if HAVE_SECURITY
@@ -153,10 +153,10 @@ inline std::ostream& operator <<(
     return output << static_cast<int>(pv.m_major) << "." << static_cast<int>(pv.m_minor);
 }
 
-const ProtocolVersion_t c_ProtocolVersion_2_0(2, 0);
-const ProtocolVersion_t c_ProtocolVersion_2_1(2, 1);
-const ProtocolVersion_t c_ProtocolVersion_2_2(2, 2);
-const ProtocolVersion_t c_ProtocolVersion_2_3(2, 3);
+const ProtocolVersion_t c_ProtocolVersion_2_0{2, 0};
+const ProtocolVersion_t c_ProtocolVersion_2_1{2, 1};
+const ProtocolVersion_t c_ProtocolVersion_2_2{2, 2};
+const ProtocolVersion_t c_ProtocolVersion_2_3{2, 3};
 
 const ProtocolVersion_t c_ProtocolVersion;
 

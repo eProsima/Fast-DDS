@@ -801,7 +801,7 @@ void ParticipantProxyData::set_persistence_guid(
     else
     {
         // if not exists add
-        m_properties.push_back(persistent_guid);
+        m_properties.push_back(persistent_guid.first, persistent_guid.second);
     }
 }
 

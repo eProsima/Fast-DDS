@@ -58,6 +58,7 @@ bool DSClientEvent::event()
 
     // Iterate over remote servers to check for new unmatched servers
     ParticipantProxyData* part_proxy_data;
+    std::unique_lock<std::recursive_mutex> lock(*mp_PDP->getMutex());
     for (auto server: mp_PDP->remote_server_attributes())
     {
         // Get the participant proxy data of the server

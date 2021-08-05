@@ -20,22 +20,23 @@
 #ifndef _TEST_BLACKBOX_PUBSUBPARTICIPANT_HPP_
 #define _TEST_BLACKBOX_PUBSUBPARTICIPANT_HPP_
 
-#include <fastrtps/fastrtps_fwd.h>
+#include <condition_variable>
+#include <thread>
+#include <vector>
+
+#include <asio.hpp>
+#include <gtest/gtest.h>
 #include <fastrtps/Domain.h>
+#include <fastrtps/fastrtps_fwd.h>
+#include <fastrtps/attributes/ParticipantAttributes.h>
+#include <fastrtps/attributes/PublisherAttributes.h>
 #include <fastrtps/participant/Participant.h>
 #include <fastrtps/participant/ParticipantListener.h>
-#include <fastrtps/attributes/ParticipantAttributes.h>
 #include <fastrtps/publisher/Publisher.h>
 #include <fastrtps/publisher/PublisherListener.h>
 #include <fastrtps/subscriber/Subscriber.h>
 #include <fastrtps/subscriber/SubscriberListener.h>
-#include <fastrtps/attributes/PublisherAttributes.h>
-
-#include <asio.hpp>
-#include <condition_variable>
-#include <gtest/gtest.h>
-#include <thread>
-#include <vector>
+#include <fastrtps/transport/TransportDescriptorInterface.h>
 
 namespace eprosima {
 namespace fastrtps {
@@ -404,6 +405,19 @@ public:
             const eprosima::fastrtps::rtps::PropertyPolicy property_policy)
     {
         participant_attr_.rtps.properties = property_policy;
+        return *this;
+    }
+
+    PubSubParticipant& disable_builtin_transport()
+    {
+        participant_attr_.rtps.useBuiltinTransports = false;
+        return *this;
+    }
+
+    PubSubParticipant& add_user_transport_to_pparams(
+            std::shared_ptr<eprosima::fastrtps::rtps::TransportDescriptorInterface> userTransportDescriptor)
+    {
+        participant_attr_.rtps.userTransports.push_back(userTransportDescriptor);
         return *this;
     }
 

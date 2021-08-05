@@ -357,7 +357,15 @@ XMLP_ret XMLEndpointParser::loadXMLReaderEndpoint(
         else if (key == DURABILITY_QOS)
         {
             std::string auxstring(element->GetText());
-            if (auxstring == _TRANSIENT_LOCAL_DURABILITY_QOS)
+            if (auxstring == _PERSISTENT_DURABILITY_QOS)
+            {
+                rdata->m_qos.m_durability.kind = PERSISTENT_DURABILITY_QOS;
+            }
+            else if (auxstring == _TRANSIENT_DURABILITY_QOS)
+            {
+                rdata->m_qos.m_durability.kind = TRANSIENT_DURABILITY_QOS;
+            }
+            else if (auxstring == _TRANSIENT_LOCAL_DURABILITY_QOS)
             {
                 rdata->m_qos.m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
             }
@@ -629,7 +637,15 @@ XMLP_ret XMLEndpointParser::loadXMLWriterEndpoint(
         else if (key == DURABILITY_QOS)
         {
             std::string auxstring = std::string(element->GetText());
-            if (auxstring == _TRANSIENT_LOCAL_DURABILITY_QOS)
+            if (auxstring == _PERSISTENT_DURABILITY_QOS)
+            {
+                wdata->m_qos.m_durability.kind = PERSISTENT_DURABILITY_QOS;
+            }
+            else if (auxstring == _TRANSIENT_DURABILITY_QOS)
+            {
+                wdata->m_qos.m_durability.kind = TRANSIENT_DURABILITY_QOS;
+            }
+            else if (auxstring == _TRANSIENT_LOCAL_DURABILITY_QOS)
             {
                 wdata->m_qos.m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
             }

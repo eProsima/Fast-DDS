@@ -141,10 +141,6 @@ protected:
     virtual bool is_interface_allowed(
             const std::string& interface) const override;
 
-    //! Checks if the given interface is allowed by the white list.
-    bool is_interface_allowed(
-            const asio::ip::address_v6& ip) const;
-
     //! Checks if the interfaces white list is empty.
     virtual bool is_interface_whitelist_empty() const override;
     std::vector<asio::ip::address_v6> interface_whitelist_;
@@ -156,6 +152,11 @@ protected:
     virtual void SetSocketOutboundInterface(
             eProsimaUDPSocket&,
             const std::string&) override;
+
+    //! Checks if the IP address is the same without taking into account the scope of the IPv6 address
+    bool compare_ips(
+            const std::string& ip1,
+            const std::string& ip2) const;
 };
 
 } // namespace rtps

@@ -215,7 +215,8 @@ bool StatefulReader::matched_writer_add(
     if (is_datasharing)
     {
         if (datasharing_listener_->add_datasharing_writer(wdata.guid(),
-                m_att.durabilityKind == VOLATILE))
+                m_att.durabilityKind == VOLATILE,
+                mp_history->m_att.maximumReservedCaches))
         {
             matched_writers_.push_back(wp);
             logInfo(RTPS_READER, "Writer Proxy " << wdata.guid() << " added to " << this->m_guid.entityId
@@ -420,7 +421,7 @@ bool StatefulReader::processDataMsg(
 
     assert(change);
 
-    std::lock_guard<RecursiveTimedMutex> lock(mp_mutex);
+    std::unique_lock<RecursiveTimedMutex> lock(mp_mutex);
     if (!is_alive_)
     {
         return false;
@@ -428,8 +429,6 @@ bool StatefulReader::processDataMsg(
 
     if (acceptMsgFrom(change->writerGUID, &pWP))
     {
-        assert_writer_liveliness(change->writerGUID);
-
         // Check if CacheChange was received or is framework data
         if (!pWP || !pWP->change_was_received(change->sequenceNumber))
         {
@@ -490,6 +489,10 @@ bool StatefulReader::processDataMsg(
                 return false;
             }
         }
+
+        lock.unlock(); // Avoid deadlock with LivelinessManager.
+        assert_writer_liveliness(change->writerGUID);
+
         return true;
     }
 
@@ -515,8 +518,6 @@ bool StatefulReader::processDataFragMsg(
     // TODO: see if we need manage framework fragmented DATA message
     if (acceptMsgFrom(incomingChange->writerGUID, &pWP) && pWP)
     {
-        assert_writer_liveliness(incomingChange->writerGUID);
-
         // Check if CacheChange was received.
         if (!pWP->change_was_received(incomingChange->sequenceNumber))
         {
@@ -575,6 +576,10 @@ bool StatefulReader::processDataFragMsg(
                 NotifyChanges(pWP);
             }
         }
+
+        lock.unlock(); // Avoid deadlock with LivelinessManager;
+        assert_writer_liveliness(incomingChange->writerGUID);
+
     }
 
     return true;
@@ -604,6 +609,9 @@ bool StatefulReader::processHeartbeatMsg(
         {
             mp_history->remove_fragmented_changes_until(firstSN, writerGUID);
 
+            // Maybe now we have to notify user from new CacheChanges.
+            NotifyChanges(writer);
+
             // Try to assert liveliness if requested by proxy's logic
             if (assert_liveliness)
             {
@@ -615,6 +623,7 @@ bool StatefulReader::processHeartbeatMsg(
                         auto wlp = this->mp_RTPSParticipant->wlp();
                         if ( wlp != nullptr)
                         {
+                            lock.unlock(); // Avoid deadlock with LivelinessManager.
                             wlp->sub_liveliness_manager_->assert_liveliness(
                                 writerGUID,
                                 liveliness_kind_,
@@ -627,10 +636,8 @@ bool StatefulReader::processHeartbeatMsg(
                     }
                 }
             }
-
-            // Maybe now we have to notify user from new CacheChanges.
-            NotifyChanges(writer);
         }
+
         return true;
     }
 
@@ -799,7 +806,7 @@ bool StatefulReader::change_received(
                 {
                     if (mp_history->received_change(a_change, 0))
                     {
-                        Time_t::now(a_change->receptionTimestamp);
+                        Time_t::now(a_change->reader_info.receptionTimestamp);
 
                         // If we use the real a_change->sequenceNumber no DATA(p) with a lower one will ever be received.
                         // That happens because the WriterProxy created when the listener matches the PDP endpoints is
@@ -827,7 +834,9 @@ bool StatefulReader::change_received(
     // inside the call to mp_history->received_change
     if (mp_history->received_change(a_change, unknown_missing_changes_up_to))
     {
-        Time_t::now(a_change->receptionTimestamp);
+        auto payload_length = a_change->serializedPayload.length;
+
+        Time_t::now(a_change->reader_info.receptionTimestamp);
         GUID_t proxGUID = prox->guid();
 
         // If KEEP_LAST and history full, make older changes as lost.
@@ -844,10 +853,11 @@ bool StatefulReader::change_received(
             ret = prox->received_change_set(a_change->sequenceNumber);
         }
 
+        // WARNING! This method could destroy a_change
         NotifyChanges(prox);
 
         // statistics callback
-        on_subscribe_throughput(a_change->serializedPayload.length);
+        on_subscribe_throughput(payload_length);
 
         return ret;
     }
@@ -1141,7 +1151,7 @@ void StatefulReader::change_read_by_user(
                         return;
                     }
                     SequenceNumberSet_t sns((*it)->sequenceNumber);
-                    send_acknack(writer, sns, *writer, false);
+                    send_acknack(writer, sns, writer, false);
                     return;
                 }
             }
@@ -1149,14 +1159,14 @@ void StatefulReader::change_read_by_user(
 
         // Must ACK all in the writer
         SequenceNumberSet_t sns(writer->available_changes_max() + 1);
-        send_acknack(writer, sns, *writer, false);
+        send_acknack(writer, sns, writer, false);
     }
 }
 
 void StatefulReader::send_acknack(
         const WriterProxy* writer,
         const SequenceNumberSet_t& sns,
-        const RTPSMessageSenderInterface& sender,
+        const RTPSMessageSenderInterface* sender,
         bool is_final)
 {
 
@@ -1167,35 +1177,23 @@ void StatefulReader::send_acknack(
         return;
     }
 
+    if (writer->is_on_same_process())
+    {
+        return;
+    }
+
     acknack_count_++;
 
 
     logInfo(RTPS_READER, "Sending ACKNACK: " << sns);
 
-    if (!writer->is_on_same_process())
-    {
-        RTPSMessageGroup group(getRTPSParticipant(), this, sender);
-        group.add_acknack(sns, acknack_count_, is_final);
-    }
-    else
-    {
-        GUID_t reader_guid = m_guid;
-        uint32_t acknack_count = acknack_count_;
-        lock.unlock(); //For local writers only call when initial ack, and we have to avoid deadlock with common
-                       //calls writer -> reader
-        RTPSWriter* writer_ptr = RTPSDomainImpl::find_local_writer(writer->guid());
-
-        if (writer_ptr)
-        {
-            bool result;
-            writer_ptr->process_acknack(writer->guid(), reader_guid, acknack_count, sns, is_final, result);
-        }
-    }
+    RTPSMessageGroup group(getRTPSParticipant(), this, sender);
+    group.add_acknack(sns, acknack_count_, is_final);
 }
 
 void StatefulReader::send_acknack(
         const WriterProxy* writer,
-        const RTPSMessageSenderInterface& sender,
+        const RTPSMessageSenderInterface* sender,
         bool heartbeat_was_final)
 {
     // Protect reader
@@ -1220,7 +1218,7 @@ void StatefulReader::send_acknack(
         RTPSMessageGroup group(getRTPSParticipant(), this, sender);
         if (!missing_changes.empty() || !heartbeat_was_final)
         {
-            GUID_t guid = sender.remote_guids().at(0);
+            GUID_t guid = sender->remote_guids().at(0);
             SequenceNumberSet_t sns(writer->available_changes_max() + 1);
             History::const_iterator history_iterator = mp_history->changesBegin();
 

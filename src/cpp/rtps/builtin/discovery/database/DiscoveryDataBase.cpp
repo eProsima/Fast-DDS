@@ -23,6 +23,7 @@
 #include <fastdds/rtps/common/EntityId_t.hpp>
 #include <fastdds/rtps/common/GuidPrefix_t.hpp>
 #include <fastdds/rtps/common/RemoteLocators.hpp>
+#include <statistics/rtps/GuidUtils.hpp>
 
 #include <rtps/builtin/discovery/database/DiscoveryDataBase.hpp>
 
@@ -337,7 +338,7 @@ bool DiscoveryDataBase::update(
         return false;
     }
     logInfo(DISCOVERY_DATABASE, "Adding DATA(p|Up) to the queue: " << change->instanceHandle);
-    //  Add the DATA(p|Up) to the PDP queue to process
+    // Add the DATA(p|Up) to the PDP queue to process
     pdp_data_queue_.Push(eprosima::fastdds::rtps::ddb::DiscoveryPDPDataQueueInfo(change, participant_change_data));
     return true;
 }
@@ -618,6 +619,9 @@ void DiscoveryDataBase::create_virtual_endpoints_(
     virtual_writer_writer_params.sample_identity(virtual_writer_sample_id);
     virtual_writer_writer_params.related_sample_identity(virtual_writer_sample_id);
     virtual_writer_change->write_params = std::move(virtual_writer_writer_params);
+    virtual_writer_change->writer_info.previous = nullptr;
+    virtual_writer_change->writer_info.next = nullptr;
+    virtual_writer_change->writer_info.num_sent_submessages = 0;
     // Create the virtual writer
     create_writers_from_change_(virtual_writer_change, virtual_topic_);
 
@@ -641,6 +645,9 @@ void DiscoveryDataBase::create_virtual_endpoints_(
     virtual_reader_writer_params.sample_identity(virtual_reader_sample_id);
     virtual_reader_writer_params.related_sample_identity(virtual_reader_sample_id);
     virtual_reader_change->write_params = std::move(virtual_reader_writer_params);
+    virtual_reader_change->writer_info.previous = nullptr;
+    virtual_reader_change->writer_info.next = nullptr;
+    virtual_reader_change->writer_info.num_sent_submessages = 0;
     // Create the virtual reader
     create_readers_from_change_(virtual_reader_change, virtual_topic_);
 }
@@ -1528,13 +1535,15 @@ bool DiscoveryDataBase::is_writer(
         const eprosima::fastrtps::rtps::GUID_t& guid)
 {
     // RTPS Specification v2.3
-    // For writers: NO_KEY = 0x03, WITH_KEY = 0x02
-    // For built-in writers: NO_KEY = 0xc3, WITH_KEY = 0xc2
+    //    - For writers: NO_KEY = 0x03, WITH_KEY = 0x02
+    //    - For built-in writers: NO_KEY = 0xc3, WITH_KEY = 0xc2
+    // Furthermore, the Fast DDS Statistics Module defines an Entity ID for Statistics DataWriters
     const eprosima::fastrtps::rtps::octet identifier = guid.entityId.value[3];
     return ((identifier == 0x02) ||
            (identifier == 0xc2) ||
            (identifier == 0x03) ||
-           (identifier == 0xc3));
+           (identifier == 0xc3) ||
+           eprosima::fastdds::statistics::is_statistics_builtin(guid.entityId));
 }
 
 bool DiscoveryDataBase::is_reader(

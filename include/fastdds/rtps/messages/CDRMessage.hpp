@@ -22,6 +22,7 @@
 #include <cassert>
 #include <cstring>
 #include <algorithm>
+#include <limits>
 #include <vector>
 
 #include <fastdds/dds/core/policy/ParameterTypes.hpp>
@@ -248,13 +249,17 @@ inline SequenceNumberSet_t CDRMessage::readSequenceNumberSet(
         CDRMessage_t* msg)
 {
     bool valid = true;
-    SequenceNumberSet_t sns(c_SequenceNumber_Unknown);
 
     SequenceNumber_t seqNum;
     valid &= CDRMessage::readSequenceNumber(msg, &seqNum);
     uint32_t numBits = 0;
     valid &= CDRMessage::readUInt32(msg, &numBits);
     valid &= (numBits <= 256u);
+    valid &= (seqNum.high >= 0);
+    if (valid && std::numeric_limits<int32_t>::max() == seqNum.high)
+    {
+        numBits = (std::min)(numBits, std::numeric_limits<uint32_t>::max() - seqNum.low);
+    }
 
     uint32_t n_longs = (numBits + 31u) / 32u;
     uint32_t bitmap[8];
@@ -265,11 +270,12 @@ inline SequenceNumberSet_t CDRMessage::readSequenceNumberSet(
 
     if (valid)
     {
-        sns.base(seqNum);
+        SequenceNumberSet_t sns(seqNum, numBits);
         sns.bitmap_set(numBits, bitmap);
+        return sns;
     }
 
-    return sns;
+    return SequenceNumberSet_t (c_SequenceNumber_Unknown);
 }
 
 inline bool CDRMessage::readFragmentNumberSet(

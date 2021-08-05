@@ -126,6 +126,10 @@ int main (
             return 1;
         }
 
+        // Clear the stringstream state and reset it to an empty string
+        is.clear();
+        is.str("");
+
         // Set Participant Name
         is << "eProsima Default Server number " << server_id;
         rtps.setName(is.str().c_str());

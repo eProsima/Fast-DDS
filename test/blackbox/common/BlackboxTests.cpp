@@ -33,6 +33,7 @@ using namespace eprosima::fastrtps::rtps;
 uint16_t global_port = 0;
 bool enable_datasharing;
 bool use_pull_mode;
+bool use_udpv4;
 
 uint16_t get_port()
 {
@@ -66,6 +67,7 @@ public:
         eprosima::fastrtps::xmlparser::XMLProfileManager::library_settings(att);
         enable_datasharing = false;
         use_pull_mode = false;
+        use_udpv4 = true;
 
         //Log::SetVerbosity(eprosima::fastdds::dds::Log::Info);
         //Log::SetCategoryFilter(std::regex("(SECURITY)"));

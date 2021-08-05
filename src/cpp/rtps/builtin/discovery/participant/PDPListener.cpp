@@ -125,11 +125,12 @@ void PDPListener::onNewCacheChangeAdded(
             {
                 // Create a new one when not found
                 pdata = parent_pdp_->createParticipantProxyData(temp_participant_data_, writer_guid);
+
+                reader->getMutex().unlock();
+                lock.unlock();
+
                 if (pdata != nullptr)
                 {
-                    reader->getMutex().unlock();
-                    lock.unlock();
-
                     logInfo(RTPS_PDP_DISCOVERY, "New participant "
                             << pdata->m_guid << " at "
                             << "MTTLoc: " << pdata->metatraffic_locators

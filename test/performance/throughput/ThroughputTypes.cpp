@@ -45,9 +45,15 @@ bool ThroughputDataType::serialize(
         void* data,
         SerializedPayload_t* payload)
 {
+    static uint8_t encapsulation[4] = { 0x0, 0x1, 0x0, 0x0 };
     ThroughputType* lt = (ThroughputType*)data;
-    memcpy(payload->data, &lt->seqnum, sizeof(lt->seqnum));
-    memcpy(payload->data + 4, lt->data, buffer_size_);
+
+    auto ser_data = payload->data;
+    memcpy(ser_data, encapsulation, SerializedPayload_t::representation_header_size);
+    ser_data += SerializedPayload_t::representation_header_size;
+    memcpy(ser_data, &lt->seqnum, sizeof(lt->seqnum));
+    ser_data += sizeof(lt->seqnum);
+    memcpy(ser_data, lt->data, buffer_size_);
     payload->length = m_typeSize;
     return true;
 }
@@ -60,8 +66,10 @@ bool ThroughputDataType::deserialize(
     {
         // payload members endiannes matches local machine
         ThroughputType* lt = (ThroughputType*)data;
-        lt->seqnum = *reinterpret_cast<uint32_t*>(payload->data);
-        std::copy(payload->data + 4, payload->data + 4 + buffer_size_, lt->data);
+        auto ser_data = payload->data + SerializedPayload_t::representation_header_size;
+        lt->seqnum = *reinterpret_cast<uint32_t*>(ser_data);
+        ser_data += sizeof(lt->seqnum);
+        std::copy(ser_data, ser_data + buffer_size_, lt->data);
     }
     return true;
 }

@@ -24,9 +24,13 @@ set(
 add_executable(LatencyTest ${LATENCYTEST_SOURCE})
 
 target_compile_definitions(LatencyTest PRIVATE
+    BOOST_ASIO_STANDALONE
+    ASIO_STANDALONE
     $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
     $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
     )
+
+target_include_directories(LatencyTest PRIVATE ${Asio_INCLUDE_DIR})
 
 target_link_libraries(
     LatencyTest
@@ -199,7 +203,7 @@ if(PYTHONINTERP_FOUND)
                 --xml_file ${CMAKE_CURRENT_SOURCE_DIR}/xml/${latency_test_name}.xml
                 --demands_file ${CMAKE_CURRENT_SOURCE_DIR}/payloads_demands.csv
                 ${interproces_flag}
-                --data_sharing
+                --data_sharing=on
                 ${reliability_flag}
             )
 
@@ -267,7 +271,7 @@ if(PYTHONINTERP_FOUND)
                 --demands_file ${CMAKE_CURRENT_SOURCE_DIR}/payloads_demands.csv
                 ${interproces_flag}
                 --data_loans
-                --data_sharing
+                --data_sharing=on
                 ${reliability_flag}
             )
 
