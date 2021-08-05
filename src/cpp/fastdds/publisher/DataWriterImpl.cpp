@@ -480,7 +480,7 @@ bool DataWriterImpl::perform_create_new_change(
             if (qos_.deadline().period != c_TimeInfinite)
             {
                 if (!history_.set_next_deadline(
-                            ch->instanceHandle,
+                            handle,
                             steady_clock::now() + duration_cast<system_clock::duration>(deadline_duration_us_)))
                 {
                     logError(PUBLISHER, "Could not set the next deadline in the history");
