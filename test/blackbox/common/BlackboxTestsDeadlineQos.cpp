@@ -277,7 +277,7 @@ TEST_P(DeadlineQos, KeyedTopicNoReaderVolatileWriterSetDeadline)
     writer.send_sample(data.front());
     std::this_thread::sleep_for(std::chrono::milliseconds(deadline_period_ms * 2));
 
-    EXPECT_EQ(writer.missed_deadlines(), 1u);
+    EXPECT_GE(writer.missed_deadlines(), 1u);
 }
 
 /**
@@ -308,7 +308,7 @@ TEST_P(DeadlineQos, KeyedTopicBestEffortReaderVolatileWriterSetDeadline)
     writer.send_sample(data.front());
     std::this_thread::sleep_for(std::chrono::milliseconds(deadline_period_ms * 2));
 
-    EXPECT_EQ(writer.missed_deadlines(), 1u);
+    EXPECT_GE(writer.missed_deadlines(), 1u);
 }
 
 #ifdef INSTANTIATE_TEST_SUITE_P
