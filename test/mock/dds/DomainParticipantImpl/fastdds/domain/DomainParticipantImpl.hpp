@@ -597,6 +597,7 @@ protected:
             const DomainParticipantQos& /*from*/,
             bool /*first_time*/)
     {
+        return false;
     }
 
     static ReturnCode_t check_qos(
