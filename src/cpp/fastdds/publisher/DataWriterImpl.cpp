@@ -456,8 +456,16 @@ bool DataWriterImpl::perform_create_new_change(
                 final_high_mark_for_frag -= 32;
             }
 
+<<<<<<< HEAD
             // If it is big data, fragment it.
             if (ch->serializedPayload.length > final_high_mark_for_frag)
+=======
+        if (qos_.deadline().period != c_TimeInfinite)
+        {
+            if (!history_.set_next_deadline(
+                        handle,
+                        steady_clock::now() + duration_cast<system_clock::duration>(deadline_duration_us_)))
+>>>>>>> e357fe85f (Deadline error when no Reliable DataReaders in VOLATILE DataWriters (#2112))
             {
                 // Fragment the data.
                 // Set the fragment size to the cachechange.
