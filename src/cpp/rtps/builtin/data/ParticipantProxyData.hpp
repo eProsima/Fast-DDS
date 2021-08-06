@@ -111,6 +111,9 @@ public:
 
     SampleIdentity m_sample_identity;
 
+    //! Source timestamp when this information was created.
+    Time_t source_timestamp;
+
     /**
      * Update the data.
      * @param pdata Object to copy the data from

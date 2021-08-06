@@ -27,6 +27,7 @@
 #include <fastdds/rtps/builtin/data/BuiltinTopicKey.hpp>
 #include <fastdds/rtps/common/ProductVersion_t.hpp>
 #include <fastdds/rtps/common/RemoteLocators.hpp>
+#include <fastdds/rtps/common/Time_t.hpp>
 
 namespace eprosima {
 namespace fastdds {
@@ -78,6 +79,9 @@ struct ParticipantBuiltinTopicData
 
     /// Wire Protocol Qos
     fastcdr::optional<dds::WireProtocolConfigQos> wire_protocol;
+
+    //! Source timestamp when this information was created.
+    Time_t source_timestamp;
 };
 
 } // rtps
