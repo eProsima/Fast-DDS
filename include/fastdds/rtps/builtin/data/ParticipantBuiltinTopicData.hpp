@@ -24,6 +24,7 @@
 #include <fastdds/rtps/builtin/data/BuiltinTopicKey.hpp>
 #include <fastdds/rtps/common/ProductVersion_t.hpp>
 #include <fastdds/rtps/common/RemoteLocators.hpp>
+#include <fastdds/rtps/common/Time_t.hpp>
 
 namespace eprosima {
 namespace fastdds {
@@ -63,6 +64,9 @@ struct ParticipantBuiltinTopicData
 
     /// Participant domain id
     dds::DomainId_t domain_id;
+
+    //! Source timestamp when this information was created.
+    Time_t source_timestamp;
 };
 
 } // rtps

@@ -116,6 +116,7 @@ void from_proxy_to_builtin(
     builtin_data.vendor_id = proxy_data.m_VendorId;
     builtin_data.product_version = proxy_data.product_version;
     builtin_data.domain_id = proxy_data.m_domain_id;
+    builtin_data.source_timestamp = proxy_data.source_timestamp;
 }
 
 void from_proxy_to_builtin(
