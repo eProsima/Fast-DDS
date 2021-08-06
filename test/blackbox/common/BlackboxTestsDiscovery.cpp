@@ -493,7 +493,8 @@ TEST(Discovery, LocalInitialPeers)
     reader.block_for_all();
 }
 
-// Test created to check bug #2010 (Github #90)
+// Test created to check bug #2010 (Github #90).
+// It also checks https://github.com/eProsima/Fast-DDS/issues/2107
 TEST_P(Discovery, PubSubAsReliableHelloworldPartitions)
 {
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
@@ -526,11 +527,26 @@ TEST_P(Discovery, PubSubAsReliableHelloworldPartitions)
     // Block reader until reception finished or timeout.
     reader.block_for_all();
 
+    // Change reader to different partition to check un-matching
     ASSERT_TRUE(reader.update_partition("OtherPartition"));
 
     reader.wait_writer_undiscovery();
     writer.wait_reader_undiscovery();
 
+    // Reset partition and wait for discovery to check that emptying the list triggers un-matching.
+    // This is to check Github #2107
+    ASSERT_TRUE(reader.update_partition("PartitionTests"));
+
+    writer.wait_discovery();
+    reader.wait_discovery();
+
+    ASSERT_TRUE(reader.clear_partitions());
+
+    reader.wait_writer_undiscovery();
+    writer.wait_reader_undiscovery();
+
+    // Set reader and writer in compatible partitions
+    ASSERT_TRUE(reader.update_partition("OtherPartition"));
     ASSERT_TRUE(writer.update_partition("OtherPart*"));
 
     writer.wait_discovery();
