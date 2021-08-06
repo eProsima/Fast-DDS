@@ -132,7 +132,9 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
         ${PROJECT_SOURCE_DIR}/test/mock/rtps/UDPv4TransportDescriptor
         ${PROJECT_SOURCE_DIR}/test/mock/rtps/UDPv6TransportDescriptor
         ${PROJECT_SOURCE_DIR}/test/mock/rtps/SharedMemTransportDescriptor
-        ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include)
+        ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include
+        ${Asio_INCLUDE_DIR}
+        )
 
     target_link_libraries(XMLProfileParserTests GTest::gmock
         $<$<BOOL:${WIN32}>:iphlpapi$<SEMICOLON>Shlwapi>
@@ -219,6 +221,7 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
         ${PROJECT_SOURCE_DIR}/test/mock/rtps/SharedMemTransportDescriptor
         ${PROJECT_SOURCE_DIR}/include
         ${PROJECT_BINARY_DIR}/include
+        ${Asio_INCLUDE_DIR}
         )
 
     target_link_libraries(XMLParserTests GTest::gtest
