@@ -152,8 +152,10 @@ if(ANDROID)
     eprosima_find_thirdparty(android-ifaddrs android-ifaddrs)
 endif()
 
-include_directories(thirdparty/nlohmann-json)
+# Include external header-only projects
 include_directories(thirdparty/filewatch)
+include_directories(thirdparty/nlohmann-json)
+include_directories(thirdparty/optionparser)
 
 ###############################################################################
 # Options

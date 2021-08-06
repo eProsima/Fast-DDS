@@ -65,7 +65,6 @@ jobs:
           --exclude='.*thirdparty/.*' \
           --exclude='.*test/.*' \
           --exclude='.*/sqlite3.c' \
-          --exclude='.*/optionparser.h' \
           --exclude-unreachable-branches
 
       - name: Upload coverage

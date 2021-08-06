@@ -59,7 +59,7 @@ if (MSVC)
     endif()
 
     # add project headers to enable class view on visual studio IDE
-    set(FAST_SERVER_HEADERS server.h optionparser.h)
+    set(FAST_SERVER_HEADERS server.h)
 
 endif(MSVC)
 

@@ -15,7 +15,7 @@
 #include "MemoryTestPublisher.h"
 #include "MemoryTestSubscriber.h"
 
-#include "optionparser.h"
+#include <optionparser.h>
 
 #include <stdio.h>
 #include <string>
