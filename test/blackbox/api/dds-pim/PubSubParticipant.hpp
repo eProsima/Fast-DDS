@@ -39,6 +39,7 @@
 #include <fastdds/dds/subscriber/DataReaderListener.hpp>
 #include <fastdds/dds/subscriber/Subscriber.hpp>
 #include <fastdds/dds/subscriber/qos/DataReaderQos.hpp>
+#include <fastdds/rtps/participant/ParticipantDiscoveryInfo.h>
 
 /**
  * @brief A class with one participant that can have multiple publishers and subscribers
@@ -144,6 +145,57 @@ private:
         PubSubParticipant* participant_;
     };
 
+    class ParticipantListener : public eprosima::fastdds::dds::DomainParticipantListener
+    {
+        friend class PubSubParticipant;
+
+    public:
+
+        ParticipantListener(
+                PubSubParticipant* participant)
+            : participant_(participant)
+        {
+        }
+
+        ~ParticipantListener() = default;
+
+        void on_participant_discovery(
+                eprosima::fastdds::dds::DomainParticipant*,
+                eprosima::fastrtps::rtps::ParticipantDiscoveryInfo&& info)
+        {
+            if (participant_->on_discovery_ != nullptr)
+            {
+                std::unique_lock<std::mutex> lock(participant_->mutex_discovery_);
+                participant_->discovery_result_ |= participant_->on_discovery_(info);
+                participant_->cv_discovery_.notify_one();
+            }
+
+            if (participant_->on_participant_qos_update_ != nullptr)
+            {
+                std::unique_lock<std::mutex> lock(participant_->mutex_discovery_);
+                participant_->participant_qos_updated_ |= participant_->on_participant_qos_update_(info);
+                participant_->cv_discovery_.notify_one();
+            }
+
+            if (info.status == eprosima::fastrtps::rtps::ParticipantDiscoveryInfo::DISCOVERED_PARTICIPANT)
+            {
+                participant_->participant_matched();
+            }
+            else if (info.status == eprosima::fastrtps::rtps::ParticipantDiscoveryInfo::REMOVED_PARTICIPANT ||
+                    info.status == eprosima::fastrtps::rtps::ParticipantDiscoveryInfo::DROPPED_PARTICIPANT)
+            {
+                participant_->participant_unmatched();
+            }
+        }
+
+    private:
+
+        ParticipantListener& operator=(
+                const ParticipantListener&) = delete;
+        PubSubParticipant* participant_;
+
+    };
+
 public:
 
     PubSubParticipant(
@@ -158,8 +210,14 @@ public:
         , num_expected_publishers_(num_expected_publishers)
         , publishers_(num_publishers)
         , subscribers_(num_subscribers)
+        , participant_listener_(this)
         , pub_listener_(this)
         , sub_listener_(this)
+        , matched_(0)
+        , on_discovery_(nullptr)
+        , on_participant_qos_update_(nullptr)
+        , discovery_result_(false)
+        , participant_qos_updated_(false)
         , pub_matched_(0)
         , sub_matched_(0)
         , pub_times_liveliness_lost_(0)
@@ -242,9 +300,13 @@ public:
 
     bool init_participant()
     {
+        matched_ = 0;
+
         participant_ = eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->create_participant(
             (uint32_t)GET_PID() % 230,
-            participant_qos_);
+            participant_qos_,
+            &participant_listener_,
+            eprosima::fastdds::dds::StatusMask::none());
 
         if (participant_ != nullptr)
         {
@@ -358,6 +420,44 @@ public:
             unsigned int index = 0)
     {
         std::get<2>(publishers_[index])->assert_liveliness();
+    }
+
+    bool wait_discovery(
+            std::chrono::seconds timeout = std::chrono::seconds::zero())
+    {
+        bool ret_value = true;
+        std::unique_lock<std::mutex> lock(mutex_discovery_);
+
+        std::cout << "Participant is waiting discovery..." << std::endl;
+
+        if (timeout == std::chrono::seconds::zero())
+        {
+            cv_discovery_.wait(lock, [&]()
+                     {
+                         return matched_ != 0;
+                     });
+        }
+        else
+        {
+            if(!cv_discovery_.wait_for(lock, timeout, [&]()
+                     {
+                         return matched_ != 0;
+                     }))
+            {
+                ret_value = false;
+            }
+        }
+
+        if (ret_value)
+        {
+            std::cout << "Participant discovery finished successfully..." << std::endl;
+        }
+        else
+        {
+            std::cout << "Participant discovery finished unsuccessfully..." << std::endl;
+        }
+
+        return ret_value;
     }
 
     void pub_wait_discovery(
@@ -683,10 +783,64 @@ public:
         return sub_times_liveliness_recovered_;
     }
 
+    void wait_discovery_result()
+    {
+        std::unique_lock<std::mutex> lock(mutex_discovery_);
+
+        std::cout << "Participant is waiting discovery result..." << std::endl;
+
+        cv_discovery_.wait(lock, [&]() ->  bool
+                {
+                    return discovery_result_;
+                });
+
+        std::cout << "Participant gets discovery result..." << std::endl;
+    }
+
+    void wait_qos_update()
+    {
+        std::unique_lock<std::mutex> lock(mutex_discovery_);
+
+        std::cout << "Participant is waiting QoS update..." << std::endl;
+
+        cv_discovery_.wait(lock, [&]() -> bool
+                {
+                    return participant_qos_updated_;
+                });
+
+        std::cout << "Participant gets QoS update..." << std::endl;
+    }
+
+    void set_on_discovery_function(
+            std::function<bool(const eprosima::fastrtps::rtps::ParticipantDiscoveryInfo&)> f)
+    {
+        on_discovery_ = f;
+    }
+
+    void set_on_participant_qos_update_function(
+            std::function<bool(const eprosima::fastrtps::rtps::ParticipantDiscoveryInfo&)> f)
+    {
+        on_participant_qos_update_ = f;
+    }
+
 private:
 
     PubSubParticipant& operator =(
             const PubSubParticipant&) = delete;
+
+    void participant_matched()
+    {
+        std::unique_lock<std::mutex> lock(mutex_discovery_);
+        ++matched_;
+        cv_discovery_.notify_one();
+    }
+
+    void participant_unmatched()
+    {
+        std::unique_lock<std::mutex> lock(mutex_discovery_);
+        --matched_;
+        cv_discovery_.notify_one();
+    }
 
     void pub_matched()
     {
@@ -742,12 +896,23 @@ private:
     eprosima::fastdds::dds::DataWriterQos datawriter_qos_;
     //! Subscriber attributes
     eprosima::fastdds::dds::DataReaderQos datareader_qos_;
+    //! A listener for participants
+    ParticipantListener participant_listener_;
     //! A listener for publishers
     PubListener pub_listener_;
     //! A listener for subscribers
     SubListener sub_listener_;
     std::string publisher_topicname_;
     std::string subscriber_topicname_;
+
+    //! Discovery
+    std::mutex mutex_discovery_;
+    std::condition_variable cv_discovery_;
+    std::atomic<unsigned int> matched_;
+    std::function<bool(const eprosima::fastrtps::rtps::ParticipantDiscoveryInfo& info)> on_discovery_;
+    std::function<bool(const eprosima::fastrtps::rtps::ParticipantDiscoveryInfo& info)> on_participant_qos_update_;
+    bool discovery_result_;
+    bool participant_qos_updated_;
 
     std::mutex pub_mutex_;
     std::mutex sub_mutex_;
