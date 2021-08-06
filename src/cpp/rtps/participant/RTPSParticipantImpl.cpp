@@ -1108,7 +1108,7 @@ void RTPSParticipantImpl::update_attributes(
 {
     // Check if there are changes
     if (patt.builtin.discovery_config.m_DiscoveryServers == m_att.builtin.discovery_config.m_DiscoveryServers
-            || patt.userData == m_att.userData)
+            && patt.userData == m_att.userData)
     {
         return;
     }
