@@ -1746,7 +1746,7 @@ bool DomainParticipantImpl::set_qos(
         const DomainParticipantQos& from,
         bool first_time)
 {
-    bool qos_has_changed = false;
+    bool qos_should_be_updated = false;
 
     if (!(to.entity_factory() == from.entity_factory()))
     {
@@ -1758,7 +1758,7 @@ bool DomainParticipantImpl::set_qos(
         to.user_data().hasChanged = true;
         if (!first_time)
         {
-            qos_has_changed = true;
+            qos_should_be_updated = true;
         }
     }
     if (first_time && !(to.allocation() == from.allocation()))
@@ -1782,7 +1782,7 @@ bool DomainParticipantImpl::set_qos(
         to.name() = from.name();
     }
 
-    return qos_has_changed;
+    return qos_should_be_updated;
 }
 
 fastrtps::types::ReturnCode_t DomainParticipantImpl::check_qos(

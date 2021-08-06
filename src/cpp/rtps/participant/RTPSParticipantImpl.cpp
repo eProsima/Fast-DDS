@@ -1115,7 +1115,7 @@ void RTPSParticipantImpl::update_attributes(
 
     // Update RTPSParticipantAttributes member
     m_att.builtin.discovery_config.m_DiscoveryServers = patt.builtin.discovery_config.m_DiscoveryServers;
-    m_att.userData = m_att.userData;
+    m_att.userData = patt.userData;
 
     auto pdp = mp_builtinProtocols->mp_PDP;
     {
@@ -1123,7 +1123,7 @@ void RTPSParticipantImpl::update_attributes(
 
         // Update user data
         auto local_participant_proxy_data = pdp->getLocalParticipantProxyData();
-        local_participant_proxy_data->m_userData.data_vec(patt.userData);
+        local_participant_proxy_data->m_userData.data_vec(m_att.userData);
 
         // Update remote servers list
         if (m_att.builtin.discovery_config.discoveryProtocol == DiscoveryProtocol::CLIENT ||
@@ -1131,9 +1131,7 @@ void RTPSParticipantImpl::update_attributes(
                 m_att.builtin.discovery_config.discoveryProtocol == DiscoveryProtocol::SERVER ||
                 m_att.builtin.discovery_config.discoveryProtocol == DiscoveryProtocol::BACKUP)
         {
-            mp_builtinProtocols->m_DiscoveryServers = patt.builtin.discovery_config.m_DiscoveryServers;
-            mp_builtinProtocols->m_att.discovery_config.m_DiscoveryServers =
-                    patt.builtin.discovery_config.m_DiscoveryServers;
+            mp_builtinProtocols->m_DiscoveryServers = m_att.builtin.discovery_config.m_DiscoveryServers;
             if (m_att.builtin.discovery_config.discoveryProtocol == DiscoveryProtocol::SERVER ||
                     m_att.builtin.discovery_config.discoveryProtocol == DiscoveryProtocol::BACKUP)
             {
