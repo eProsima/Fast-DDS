@@ -946,6 +946,12 @@ public:
         return subscriber_->updateAttributes(subscriber_attr_);
     }
 
+    bool clear_partitions()
+    {
+        subscriber_attr_.qos.m_partition.clear();
+        return subscriber_->updateAttributes(subscriber_attr_);
+    }
+
     /*** Function for discovery callback ***/
 
     void wait_discovery_result()

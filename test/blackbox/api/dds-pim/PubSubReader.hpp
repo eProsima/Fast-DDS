@@ -1016,6 +1016,12 @@ public:
         return (ReturnCode_t::RETCODE_OK == subscriber_->set_qos(subscriber_qos_));
     }
 
+    bool clear_partitions()
+    {
+        subscriber_qos_.partition().clear();
+        return (ReturnCode_t::RETCODE_OK == subscriber_->set_qos(subscriber_qos_));
+    }
+
     /*** Function for discovery callback ***/
 
     void wait_discovery_result()

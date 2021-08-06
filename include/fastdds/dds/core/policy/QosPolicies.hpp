@@ -1406,7 +1406,7 @@ public:
     }
 
     /**
-     * @brief Setter for the maximum size
+     * @brief Setter for the maximum size reserved for partitions (in bytes)
      * @param size Size to be set
      */
     void set_max_size (
@@ -1417,7 +1417,7 @@ public:
     }
 
     /**
-     * @brief Getter for the maximum size
+     * @brief Getter for the maximum size (in bytes)
      * @return uint32_t with the maximum size
      */
     uint32_t max_size () const
