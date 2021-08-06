@@ -484,8 +484,6 @@ TEST(SubscriberTests, SetListener)
     ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), ReturnCode_t::RETCODE_OK);
 }
 
-<<<<<<< HEAD
-=======
 /*
  * This test checks that the Subscriber methods defined in the standard not yet implemented in FastDDS return
  * ReturnCode_t::RETCODE_UNSUPPORTED. The following methods are checked:
@@ -592,7 +590,6 @@ TEST(SubscriberTests, UpdatePartitions)
     ASSERT_EQ(partitions, subscriber->get_qos().partition());
 }
 
->>>>>>> 331f1cab3 (Apply setting subscriber's partition to empty set (#2108))
 } // namespace dds
 } // namespace fastdds
 } // namespace eprosima
