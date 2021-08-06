@@ -376,6 +376,237 @@ TEST(ParticipantTests, ChangePSMDomainParticipantQos)
 
 }
 
+// This test checks that the only mutable element in WireProtocolQosPolicy is the list of remote servers
+TEST(ParticipantTests, ChangeWireProtocolQos)
+{
+    DomainParticipant* participant =
+            DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
+    DomainParticipantQos qos;
+    participant->get_qos(qos);
+
+    ASSERT_EQ(qos, PARTICIPANT_QOS_DEFAULT);
+
+    // Check that just adding one server is OK
+    rtps::RemoteServerAttributes server;
+    server.ReadguidPrefix("44.53.00.5f.45.50.52.4f.53.49.4d.41");
+    fastrtps::rtps::Locator_t locator;
+    fastrtps::rtps::IPLocator::setIPv4(locator, 192, 168, 1, 133);
+    locator.port = 64863;
+    server.metatrafficUnicastLocatorList.push_back(locator);
+    qos.wire_protocol().builtin.discovery_config.m_DiscoveryServers.push_back(server);
+    ASSERT_TRUE(participant->set_qos(qos) == ReturnCode_t::RETCODE_OK);
+    DomainParticipantQos set_qos;
+    participant->get_qos(set_qos);
+    ASSERT_EQ(set_qos, qos);
+
+    // Check that removing one server is OK
+    qos.wire_protocol().builtin.discovery_config.m_DiscoveryServers.pop_front();
+    ASSERT_TRUE(participant->set_qos(qos) == ReturnCode_t::RETCODE_OK);
+    participant->get_qos(set_qos);
+    ASSERT_EQ(set_qos, qos);
+
+    // Check that removing all servers is OK
+    fastdds::rtps::RemoteServerList_t servers;
+    qos.wire_protocol().builtin.discovery_config.m_DiscoveryServers = servers;
+    ASSERT_TRUE(participant->set_qos(qos) == ReturnCode_t::RETCODE_OK);
+    participant->get_qos(set_qos);
+    ASSERT_EQ(set_qos, qos);
+
+    // Check changing wire_protocol().prefix is NOT OK
+    participant->get_qos(qos);
+    std::istringstream("44.53.00.5f.45.50.52.4f.53.49.4d.41") >> qos.wire_protocol().prefix;
+    ASSERT_TRUE(participant->set_qos(qos) == ReturnCode_t::RETCODE_IMMUTABLE_POLICY);
+    participant->get_qos(set_qos);
+    ASSERT_FALSE(set_qos == qos);
+
+    // Check changing wire_protocol().participant_id is NOT OK
+    participant->get_qos(qos);
+    qos.wire_protocol().participant_id = 7;
+    ASSERT_TRUE(participant->set_qos(qos) == ReturnCode_t::RETCODE_IMMUTABLE_POLICY);
+    participant->get_qos(set_qos);
+    ASSERT_FALSE(set_qos == qos);
+
+    // Check changing wire_protocol().throughput_controller is NOT OK
+    participant->get_qos(qos);
+    fastrtps::rtps::ThroughputControllerDescriptor controller{300000, 1000};
+    qos.wire_protocol().throughput_controller = controller;
+    ASSERT_TRUE(participant->set_qos(qos) == ReturnCode_t::RETCODE_IMMUTABLE_POLICY);
+    participant->get_qos(set_qos);
+    ASSERT_FALSE(set_qos == qos);
+
+    // Check changing wire_protocol().default_unicast_locator_list is NOT OK
+    participant->get_qos(qos);
+    fastrtps::rtps::Locator_t loc;
+    fastrtps::rtps::IPLocator::setIPv4(loc, "192.0.0.0");
+    loc.port = static_cast<uint16_t>(12);
+    qos.wire_protocol().default_unicast_locator_list.push_back(loc);
+    ASSERT_TRUE(participant->set_qos(qos) == ReturnCode_t::RETCODE_IMMUTABLE_POLICY);
+    participant->get_qos(set_qos);
+    ASSERT_FALSE(set_qos == qos);
+
+    // Check changing wire_protocol().default_multicast_locator_list is NOT OK
+    participant->get_qos(qos);
+    qos.wire_protocol().default_multicast_locator_list.push_back(loc);
+    ASSERT_TRUE(participant->set_qos(qos) == ReturnCode_t::RETCODE_IMMUTABLE_POLICY);
+    participant->get_qos(set_qos);
+    ASSERT_FALSE(set_qos == qos);
+
+    // Check changing wire_protocol().builtin.use_WriterLivelinessProtocol is NOT OK
+    participant->get_qos(qos);
+    qos.wire_protocol().builtin.use_WriterLivelinessProtocol ^= true;
+    ASSERT_TRUE(participant->set_qos(qos) == ReturnCode_t::RETCODE_IMMUTABLE_POLICY);
+    participant->get_qos(set_qos);
+    ASSERT_FALSE(set_qos == qos);
+
+    // Check changing wire_protocol().builtin.typelookup_config.use_client is NOT OK
+    participant->get_qos(qos);
+    qos.wire_protocol().builtin.typelookup_config.use_client ^= true;
+    ASSERT_TRUE(participant->set_qos(qos) == ReturnCode_t::RETCODE_IMMUTABLE_POLICY);
+    participant->get_qos(set_qos);
+    ASSERT_FALSE(set_qos == qos);
+
+    // Check changing wire_protocol().builtin.typelookup_config.use_server is NOT OK
+    participant->get_qos(qos);
+    qos.wire_protocol().builtin.typelookup_config.use_server ^= true;
+    ASSERT_TRUE(participant->set_qos(qos) == ReturnCode_t::RETCODE_IMMUTABLE_POLICY);
+    participant->get_qos(set_qos);
+    ASSERT_FALSE(set_qos == qos);
+
+    // Check changing wire_protocol().builtin.metatrafficUnicastLocatorList is NOT OK
+    participant->get_qos(qos);
+    qos.wire_protocol().builtin.metatrafficUnicastLocatorList.push_back(loc);
+    ASSERT_TRUE(participant->set_qos(qos) == ReturnCode_t::RETCODE_IMMUTABLE_POLICY);
+    participant->get_qos(set_qos);
+    ASSERT_FALSE(set_qos == qos);
+
+    // Check changing wire_protocol().builtin.metatrafficMulticastLocatorList is NOT OK
+    participant->get_qos(qos);
+    qos.wire_protocol().builtin.metatrafficMulticastLocatorList.push_back(loc);
+    ASSERT_TRUE(participant->set_qos(qos) == ReturnCode_t::RETCODE_IMMUTABLE_POLICY);
+    participant->get_qos(set_qos);
+    ASSERT_FALSE(set_qos == qos);
+
+    // Check changing wire_protocol().builtin.initialPeersList is NOT OK
+    participant->get_qos(qos);
+    qos.wire_protocol().builtin.initialPeersList.push_back(loc);
+    ASSERT_TRUE(participant->set_qos(qos) == ReturnCode_t::RETCODE_IMMUTABLE_POLICY);
+    participant->get_qos(set_qos);
+    ASSERT_FALSE(set_qos == qos);
+
+    // Check changing wire_protocol().builtin.readerHistoryMemoryPolicy is NOT OK
+    participant->get_qos(qos);
+    qos.wire_protocol().builtin.readerHistoryMemoryPolicy = fastrtps::rtps::MemoryManagementPolicy_t::DYNAMIC_RESERVE_MEMORY_MODE;
+    ASSERT_TRUE(participant->set_qos(qos) == ReturnCode_t::RETCODE_IMMUTABLE_POLICY);
+    participant->get_qos(set_qos);
+    ASSERT_FALSE(set_qos == qos);
+
+    // Check changing wire_protocol().builtin.readerPayloadSize is NOT OK
+    participant->get_qos(qos);
+    qos.wire_protocol().builtin.readerPayloadSize = 27;
+    ASSERT_TRUE(participant->set_qos(qos) == ReturnCode_t::RETCODE_IMMUTABLE_POLICY);
+    participant->get_qos(set_qos);
+    ASSERT_FALSE(set_qos == qos);
+
+    // Check changing wire_protocol().builtin.writerHistoryMemoryPolicy is NOT OK
+    participant->get_qos(qos);
+    qos.wire_protocol().builtin.writerHistoryMemoryPolicy = fastrtps::rtps::MemoryManagementPolicy_t::DYNAMIC_RESERVE_MEMORY_MODE;
+    ASSERT_TRUE(participant->set_qos(qos) == ReturnCode_t::RETCODE_IMMUTABLE_POLICY);
+    participant->get_qos(set_qos);
+    ASSERT_FALSE(set_qos == qos);
+
+    // Check changing wire_protocol().builtin.writerPayloadSize is NOT OK
+    participant->get_qos(qos);
+    qos.wire_protocol().builtin.writerPayloadSize = 27;
+    ASSERT_TRUE(participant->set_qos(qos) == ReturnCode_t::RETCODE_IMMUTABLE_POLICY);
+    participant->get_qos(set_qos);
+    ASSERT_FALSE(set_qos == qos);
+
+    // Check changing wire_protocol().builtin.mutation_tries is NOT OK
+    participant->get_qos(qos);
+    qos.wire_protocol().builtin.mutation_tries = 27;
+    ASSERT_TRUE(participant->set_qos(qos) == ReturnCode_t::RETCODE_IMMUTABLE_POLICY);
+    participant->get_qos(set_qos);
+    ASSERT_FALSE(set_qos == qos);
+
+    // Check changing wire_protocol().builtin.avoid_builtin_multicast is NOT OK
+    participant->get_qos(qos);
+    qos.wire_protocol().builtin.avoid_builtin_multicast ^= true;
+    ASSERT_TRUE(participant->set_qos(qos) == ReturnCode_t::RETCODE_IMMUTABLE_POLICY);
+    participant->get_qos(set_qos);
+    ASSERT_FALSE(set_qos == qos);
+
+    // Check changing wire_protocol().builtin.discovery_config.discoveryProtocol is NOT OK
+    participant->get_qos(qos);
+    qos.wire_protocol().builtin.discovery_config.discoveryProtocol = fastrtps::rtps::DiscoveryProtocol_t::NONE;
+    ASSERT_TRUE(participant->set_qos(qos) == ReturnCode_t::RETCODE_IMMUTABLE_POLICY);
+    participant->get_qos(set_qos);
+    ASSERT_FALSE(set_qos == qos);
+
+    // Check changing wire_protocol().builtin.discovery_config.use_SIMPLE_EndpointDiscoveryProtocol is NOT OK
+    participant->get_qos(qos);
+    qos.wire_protocol().builtin.discovery_config.use_SIMPLE_EndpointDiscoveryProtocol ^= true;
+    ASSERT_TRUE(participant->set_qos(qos) == ReturnCode_t::RETCODE_IMMUTABLE_POLICY);
+    participant->get_qos(set_qos);
+    ASSERT_FALSE(set_qos == qos);
+
+    // Check changing wire_protocol().builtin.discovery_config.use_STATIC_EndpointDiscoveryProtocol is NOT OK
+    participant->get_qos(qos);
+    qos.wire_protocol().builtin.discovery_config.use_STATIC_EndpointDiscoveryProtocol ^= true;
+    ASSERT_TRUE(participant->set_qos(qos) == ReturnCode_t::RETCODE_IMMUTABLE_POLICY);
+    participant->get_qos(set_qos);
+    ASSERT_FALSE(set_qos == qos);
+
+    // Check changing wire_protocol().builtin.discovery_config.discoveryServer_client_syncperiod is NOT OK
+    participant->get_qos(qos);
+    qos.wire_protocol().builtin.discovery_config.discoveryServer_client_syncperiod = { 27, 27};
+    ASSERT_TRUE(participant->set_qos(qos) == ReturnCode_t::RETCODE_IMMUTABLE_POLICY);
+    participant->get_qos(set_qos);
+    ASSERT_FALSE(set_qos == qos);
+
+    // Check changing wire_protocol().builtin.discovery_config.leaseDuration is NOT OK
+    participant->get_qos(qos);
+    qos.wire_protocol().builtin.discovery_config.leaseDuration = { 27, 27};
+    ASSERT_TRUE(participant->set_qos(qos) == ReturnCode_t::RETCODE_IMMUTABLE_POLICY);
+    participant->get_qos(set_qos);
+    ASSERT_FALSE(set_qos == qos);
+
+    // Check changing wire_protocol().builtin.discovery_config.leaseDuration_announcementperiod is NOT OK
+    participant->get_qos(qos);
+    qos.wire_protocol().builtin.discovery_config.leaseDuration_announcementperiod = { 27, 27};
+    ASSERT_TRUE(participant->set_qos(qos) == ReturnCode_t::RETCODE_IMMUTABLE_POLICY);
+    participant->get_qos(set_qos);
+    ASSERT_FALSE(set_qos == qos);
+
+    // Check changing wire_protocol().builtin.discovery_config.initial_announcements is NOT OK
+    participant->get_qos(qos);
+    qos.wire_protocol().builtin.discovery_config.initial_announcements.count = 27;
+    qos.wire_protocol().builtin.discovery_config.initial_announcements.period = {27, 27};
+    ASSERT_TRUE(participant->set_qos(qos) == ReturnCode_t::RETCODE_IMMUTABLE_POLICY);
+    participant->get_qos(set_qos);
+    ASSERT_FALSE(set_qos == qos);
+
+    // Check changing wire_protocol().builtin.discovery_config.m_simpleEDP is NOT OK
+    participant->get_qos(qos);
+    qos.wire_protocol().builtin.discovery_config.m_simpleEDP.use_PublicationWriterANDSubscriptionReader ^= true;
+    qos.wire_protocol().builtin.discovery_config.m_simpleEDP.use_PublicationReaderANDSubscriptionWriter ^= true;
+#if HAVE_SECURITY
+    qos.wire_protocol().builtin.discovery_config.m_simpleEDP.enable_builtin_secure_publications_writer_and_subscriptions_reader ^= true;
+    qos.wire_protocol().builtin.discovery_config.m_simpleEDP.enable_builtin_secure_subscriptions_writer_and_publications_reader ^= true;
+#endif // if HAVE_SECURITY
+    ASSERT_TRUE(participant->set_qos(qos) == ReturnCode_t::RETCODE_IMMUTABLE_POLICY);
+    participant->get_qos(set_qos);
+    ASSERT_FALSE(set_qos == qos);
+
+    // Check changing wire_protocol().builtin.discovery_config.ignoreParticipantFlags is NOT OK
+    participant->get_qos(qos);
+    qos.wire_protocol().builtin.discovery_config.ignoreParticipantFlags = fastrtps::rtps::ParticipantFilteringFlags::FILTER_DIFFERENT_HOST;
+    ASSERT_TRUE(participant->set_qos(qos) == ReturnCode_t::RETCODE_IMMUTABLE_POLICY);
+    participant->get_qos(set_qos);
+    ASSERT_FALSE(set_qos == qos);
+
+    ASSERT_TRUE(DomainParticipantFactory::get_instance()->delete_participant(participant) == ReturnCode_t::RETCODE_OK);
+}
+
 TEST(ParticipantTests, EntityFactoryBehavior)
 {
     DomainParticipantFactory* factory = DomainParticipantFactory::get_instance();
