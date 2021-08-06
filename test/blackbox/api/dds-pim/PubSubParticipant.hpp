@@ -190,7 +190,7 @@ private:
 
     private:
 
-        ParticipantListener& operator=(
+        ParticipantListener& operator =(
                 const ParticipantListener&) = delete;
         PubSubParticipant* participant_;
 
@@ -433,16 +433,16 @@ public:
         if (timeout == std::chrono::seconds::zero())
         {
             cv_discovery_.wait(lock, [&]()
-                     {
-                         return matched_ != 0;
-                     });
+                    {
+                        return matched_ != 0;
+                    });
         }
         else
         {
-            if(!cv_discovery_.wait_for(lock, timeout, [&]()
-                     {
-                         return matched_ != 0;
-                     }))
+            if (!cv_discovery_.wait_for(lock, timeout, [&]()
+                    {
+                        return matched_ != 0;
+                    }))
             {
                 ret_value = false;
             }
