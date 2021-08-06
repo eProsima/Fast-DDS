@@ -593,7 +593,7 @@ void SubscriberImpl::set_qos(
         to.presentation() = from.presentation();
         to.presentation().hasChanged = true;
     }
-    if (from.partition().names().size() > 0)
+    if (!(to.partition() == from.partition()))
     {
         to.partition() = from.partition();
         to.partition().hasChanged = true;
