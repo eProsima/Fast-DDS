@@ -344,7 +344,7 @@ ReturnCode_t DomainParticipantImpl::set_qos(
         return ReturnCode_t::RETCODE_IMMUTABLE_POLICY;
     }
 
-    if (enabled && set_qos(qos_, qos_to_set, !enabled))
+    if (set_qos(qos_, qos_to_set, !enabled) && enabled)
     {
         // Notify the participant that there is a QoS update
         fastrtps::rtps::RTPSParticipantAttributes patt;
