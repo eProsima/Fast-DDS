@@ -151,6 +151,7 @@ void PDPListener::onNewCacheChangeAdded(
             {
                 temp_participant_data_.m_sample_identity.writer_guid(change->writerGUID);
                 temp_participant_data_.m_sample_identity.sequence_number(change->sequenceNumber);
+                temp_participant_data_.source_timestamp = change->sourceTimestamp;
                 process_alive_data(pdata, temp_participant_data_, writer_guid, reader, lock);
             }
         }
