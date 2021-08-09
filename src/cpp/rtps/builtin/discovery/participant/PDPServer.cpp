@@ -904,7 +904,10 @@ bool PDPServer::server_update_routine()
 
 void PDPServer::update_remote_servers_list()
 {
-    return;
+    for (auto server : mp_builtin->m_DiscoveryServers)
+    {
+        discovery_db_.add_server(server.guidPrefix);
+    }
 }
 
 bool PDPServer::process_writers_acknowledgements()
@@ -1348,13 +1351,13 @@ bool PDPServer::pending_ack()
     return ret;
 }
 
-std::vector<fastrtps::rtps::GuidPrefix_t> PDPServer::servers_prefixes()
+std::set<fastrtps::rtps::GuidPrefix_t> PDPServer::servers_prefixes()
 {
     std::lock_guard<std::recursive_mutex> lock(*getMutex());
-    std::vector<GuidPrefix_t> servers;
+    std::set<GuidPrefix_t> servers;
     for (const eprosima::fastdds::rtps::RemoteServerAttributes& it : mp_builtin->m_DiscoveryServers)
     {
-        servers.push_back(it.guidPrefix);
+        servers.insert(it.guidPrefix);
     }
     return servers;
 }

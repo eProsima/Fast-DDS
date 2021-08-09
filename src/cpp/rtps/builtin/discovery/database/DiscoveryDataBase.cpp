@@ -37,7 +37,7 @@ namespace ddb {
 
 DiscoveryDataBase::DiscoveryDataBase(
         fastrtps::rtps::GuidPrefix_t server_guid_prefix,
-        std::vector<fastrtps::rtps::GuidPrefix_t> servers)
+        std::set<fastrtps::rtps::GuidPrefix_t> servers)
     : server_guid_prefix_(server_guid_prefix)
     , server_acked_by_all_(servers.size() == 0)
     , servers_(servers)
@@ -65,7 +65,7 @@ void DiscoveryDataBase::add_server(
         fastrtps::rtps::GuidPrefix_t server)
 {
     logInfo(DISCOVERY_DATABASE, "Server " << server << " added");
-    servers_.push_back(server);
+    servers_.insert(server);
 }
 
 std::vector<fastrtps::rtps::CacheChange_t*> DiscoveryDataBase::clear()
@@ -1710,7 +1710,7 @@ void DiscoveryDataBase::AckedFunctor::operator () (
         {
             // If the reader proxy is from a server that we are pinging, we may not want to wait
             // for it to be acked as the routine will not stop
-            for (auto it = db_->servers_.begin(); it < db_->servers_.end(); ++it)
+            for (auto it = db_->servers_.begin(); it != db_->servers_.end(); ++it)
             {
                 if (reader_proxy->guid().guidPrefix == *it)
                 {
