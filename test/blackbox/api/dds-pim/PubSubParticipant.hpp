@@ -20,6 +20,7 @@
 #ifndef _TEST_BLACKBOX_PUBSUBPARTICIPANT_HPP_
 #define _TEST_BLACKBOX_PUBSUBPARTICIPANT_HPP_
 
+#include <atomic>
 #include <condition_variable>
 #include <thread>
 #include <tuple>
@@ -163,17 +164,20 @@ private:
                 eprosima::fastdds::dds::DomainParticipant*,
                 eprosima::fastrtps::rtps::ParticipantDiscoveryInfo&& info)
         {
-            if (participant_->on_discovery_ != nullptr)
+            if (participant_->on_discovery_ != nullptr &&
+                    info.status == eprosima::fastrtps::rtps::ParticipantDiscoveryInfo::DISCOVERED_PARTICIPANT)
             {
                 std::unique_lock<std::mutex> lock(participant_->mutex_discovery_);
                 participant_->discovery_result_ |= participant_->on_discovery_(info);
                 participant_->cv_discovery_.notify_one();
             }
 
-            if (participant_->on_participant_qos_update_ != nullptr)
+            if (participant_->on_participant_qos_update_ != nullptr &&
+                    info.status == eprosima::fastrtps::rtps::ParticipantDiscoveryInfo::CHANGED_QOS_PARTICIPANT)
             {
-                std::unique_lock<std::mutex> lock(participant_->mutex_discovery_);
-                participant_->participant_qos_updated_ |= participant_->on_participant_qos_update_(info);
+                bool expected = false;
+                participant_->participant_qos_updated_.compare_exchange_strong(expected,
+                        participant_->on_participant_qos_update_(info));
                 participant_->cv_discovery_.notify_one();
             }
 
@@ -912,7 +916,7 @@ private:
     std::function<bool(const eprosima::fastrtps::rtps::ParticipantDiscoveryInfo& info)> on_discovery_;
     std::function<bool(const eprosima::fastrtps::rtps::ParticipantDiscoveryInfo& info)> on_participant_qos_update_;
     bool discovery_result_;
-    bool participant_qos_updated_;
+    std::atomic_bool participant_qos_updated_;
 
     std::mutex pub_mutex_;
     std::mutex sub_mutex_;

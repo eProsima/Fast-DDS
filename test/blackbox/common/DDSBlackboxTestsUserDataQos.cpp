@@ -97,6 +97,16 @@ TEST_P(UserDataQos, update_user_data_qos)
                 std::cout << std::endl;
                 return info.info.m_userData == std::vector<rtps::octet>({'a', 'b', 'c', 'd', 'e'});
             });
+    participant_2.set_on_participant_qos_update_function([&](const rtps::ParticipantDiscoveryInfo& info) -> bool
+            {
+                std::cout << "Received USER_DATA: ";
+                for (auto i : info.info.m_userData)
+                {
+                    std::cout << i << ' ';
+                }
+                std::cout << std::endl;
+                return info.info.m_userData == std::vector<rtps::octet>({'f', 'g'});
+            });
 
     participant_1.wait_discovery();
     participant_2.wait_discovery();
@@ -105,10 +115,6 @@ TEST_P(UserDataQos, update_user_data_qos)
     // Update user data
     ASSERT_TRUE(participant_1.update_user_data({'f', 'g'}));
 
-    participant_2.set_on_participant_qos_update_function([&](const rtps::ParticipantDiscoveryInfo& info) -> bool
-            {
-                return info.info.m_userData == std::vector<rtps::octet>({'f', 'g'});
-            });
     participant_2.wait_qos_update();
 }
 
