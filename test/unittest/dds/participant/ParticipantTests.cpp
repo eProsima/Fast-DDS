@@ -509,7 +509,8 @@ TEST(ParticipantTests, ChangeWireProtocolQos)
 
     // Check changing wire_protocol().builtin.readerHistoryMemoryPolicy is NOT OK
     participant->get_qos(qos);
-    qos.wire_protocol().builtin.readerHistoryMemoryPolicy = fastrtps::rtps::MemoryManagementPolicy_t::DYNAMIC_RESERVE_MEMORY_MODE;
+    qos.wire_protocol().builtin.readerHistoryMemoryPolicy =
+            fastrtps::rtps::MemoryManagementPolicy_t::DYNAMIC_RESERVE_MEMORY_MODE;
     ASSERT_TRUE(participant->set_qos(qos) == ReturnCode_t::RETCODE_IMMUTABLE_POLICY);
     participant->get_qos(set_qos);
     ASSERT_FALSE(set_qos == qos);
@@ -523,7 +524,8 @@ TEST(ParticipantTests, ChangeWireProtocolQos)
 
     // Check changing wire_protocol().builtin.writerHistoryMemoryPolicy is NOT OK
     participant->get_qos(qos);
-    qos.wire_protocol().builtin.writerHistoryMemoryPolicy = fastrtps::rtps::MemoryManagementPolicy_t::DYNAMIC_RESERVE_MEMORY_MODE;
+    qos.wire_protocol().builtin.writerHistoryMemoryPolicy =
+            fastrtps::rtps::MemoryManagementPolicy_t::DYNAMIC_RESERVE_MEMORY_MODE;
     ASSERT_TRUE(participant->set_qos(qos) == ReturnCode_t::RETCODE_IMMUTABLE_POLICY);
     participant->get_qos(set_qos);
     ASSERT_FALSE(set_qos == qos);
@@ -604,8 +606,10 @@ TEST(ParticipantTests, ChangeWireProtocolQos)
     qos.wire_protocol().builtin.discovery_config.m_simpleEDP.use_PublicationWriterANDSubscriptionReader ^= true;
     qos.wire_protocol().builtin.discovery_config.m_simpleEDP.use_PublicationReaderANDSubscriptionWriter ^= true;
 #if HAVE_SECURITY
-    qos.wire_protocol().builtin.discovery_config.m_simpleEDP.enable_builtin_secure_publications_writer_and_subscriptions_reader ^= true;
-    qos.wire_protocol().builtin.discovery_config.m_simpleEDP.enable_builtin_secure_subscriptions_writer_and_publications_reader ^= true;
+    qos.wire_protocol().builtin.discovery_config.m_simpleEDP.
+            enable_builtin_secure_publications_writer_and_subscriptions_reader ^= true;
+    qos.wire_protocol().builtin.discovery_config.m_simpleEDP.
+            enable_builtin_secure_subscriptions_writer_and_publications_reader ^= true;
 #endif // if HAVE_SECURITY
     ASSERT_TRUE(participant->set_qos(qos) == ReturnCode_t::RETCODE_IMMUTABLE_POLICY);
     participant->get_qos(set_qos);
@@ -614,17 +618,17 @@ TEST(ParticipantTests, ChangeWireProtocolQos)
     // Check changing wire_protocol().builtin.discovery_config.static_edp_xml_config() is NOT OK
     participant->get_qos(qos);
     std::string static_xml = "data://<?xml version=\"1.0\" encoding=\"utf-8\"?>" \
-        "<staticdiscovery>" \
+            "<staticdiscovery>" \
             "<participant profile_name=\"participant_profile_static_edp\">" \
-                "<rtps>" \
-                    "<builtin>" \
-                        "<discovery_config>" \
-                            "<EDP>STATIC</EDP>" \
-                        "</discovery_config>" \
-                    "</builtin>" \
-                "</rtps>" \
+            "<rtps>" \
+            "<builtin>" \
+            "<discovery_config>" \
+            "<EDP>STATIC</EDP>" \
+            "</discovery_config>" \
+            "</builtin>" \
+            "</rtps>" \
             "</participant>" \
-        "</staticdiscovery>";
+            "</staticdiscovery>";
     qos.wire_protocol().builtin.discovery_config.static_edp_xml_config(static_xml.c_str());
     ASSERT_TRUE(participant->set_qos(qos) == ReturnCode_t::RETCODE_IMMUTABLE_POLICY);
     participant->get_qos(set_qos);
@@ -632,7 +636,8 @@ TEST(ParticipantTests, ChangeWireProtocolQos)
 
     // Check changing wire_protocol().builtin.discovery_config.ignoreParticipantFlags is NOT OK
     participant->get_qos(qos);
-    qos.wire_protocol().builtin.discovery_config.ignoreParticipantFlags = fastrtps::rtps::ParticipantFilteringFlags::FILTER_DIFFERENT_HOST;
+    qos.wire_protocol().builtin.discovery_config.ignoreParticipantFlags =
+            fastrtps::rtps::ParticipantFilteringFlags::FILTER_DIFFERENT_HOST;
     ASSERT_TRUE(participant->set_qos(qos) == ReturnCode_t::RETCODE_IMMUTABLE_POLICY);
     participant->get_qos(set_qos);
     ASSERT_FALSE(set_qos == qos);

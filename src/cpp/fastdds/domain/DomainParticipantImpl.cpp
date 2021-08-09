@@ -1819,41 +1819,64 @@ bool DomainParticipantImpl::can_qos_be_updated(
     if (!(to.wire_protocol() == from.wire_protocol()))
     {
         // Check that the only modification was in wire_protocol().discovery_config.m_DiscoveryServers
-        if ((to.wire_protocol().builtin.discovery_config.m_DiscoveryServers == from.wire_protocol().builtin.discovery_config.m_DiscoveryServers) ||
-            (!(to.wire_protocol().builtin.discovery_config.m_DiscoveryServers == from.wire_protocol().builtin.discovery_config.m_DiscoveryServers) &&
-            (!(to.wire_protocol().prefix == from.wire_protocol().prefix) ||
-            !(to.wire_protocol().participant_id == from.wire_protocol().participant_id) ||
-            !(to.wire_protocol().port == from.wire_protocol().port) ||
-            !(to.wire_protocol().throughput_controller == from.wire_protocol().throughput_controller) ||
-            !(to.wire_protocol().default_unicast_locator_list == from.wire_protocol().default_unicast_locator_list) ||
-            !(to.wire_protocol().default_multicast_locator_list == from.wire_protocol().default_multicast_locator_list) ||
-            !(to.wire_protocol().builtin.use_WriterLivelinessProtocol == from.wire_protocol().builtin.use_WriterLivelinessProtocol) ||
-            !(to.wire_protocol().builtin.typelookup_config.use_client == from.wire_protocol().builtin.typelookup_config.use_client) ||
-            !(to.wire_protocol().builtin.typelookup_config.use_server == from.wire_protocol().builtin.typelookup_config.use_server) ||
-            !(to.wire_protocol().builtin.metatrafficUnicastLocatorList == from.wire_protocol().builtin.metatrafficUnicastLocatorList) ||
-            !(to.wire_protocol().builtin.metatrafficMulticastLocatorList == from.wire_protocol().builtin.metatrafficMulticastLocatorList) ||
-            !(to.wire_protocol().builtin.initialPeersList == from.wire_protocol().builtin.initialPeersList) ||
-            !(to.wire_protocol().builtin.readerHistoryMemoryPolicy == from.wire_protocol().builtin.readerHistoryMemoryPolicy) ||
-            !(to.wire_protocol().builtin.readerPayloadSize == from.wire_protocol().builtin.readerPayloadSize) ||
-            !(to.wire_protocol().builtin.writerHistoryMemoryPolicy == from.wire_protocol().builtin.writerHistoryMemoryPolicy) ||
-            !(to.wire_protocol().builtin.writerPayloadSize == from.wire_protocol().builtin.writerPayloadSize) ||
-            !(to.wire_protocol().builtin.mutation_tries == from.wire_protocol().builtin.mutation_tries) ||
-            !(to.wire_protocol().builtin.avoid_builtin_multicast == from.wire_protocol().builtin.avoid_builtin_multicast) ||
-            !(to.wire_protocol().builtin.discovery_config.discoveryProtocol == from.wire_protocol().builtin.discovery_config.discoveryProtocol) ||
-            !(to.wire_protocol().builtin.discovery_config.use_SIMPLE_EndpointDiscoveryProtocol == from.wire_protocol().builtin.discovery_config.use_SIMPLE_EndpointDiscoveryProtocol) ||
-            !(to.wire_protocol().builtin.discovery_config.use_STATIC_EndpointDiscoveryProtocol == from.wire_protocol().builtin.discovery_config.use_STATIC_EndpointDiscoveryProtocol) ||
-            !(to.wire_protocol().builtin.discovery_config.discoveryServer_client_syncperiod == from.wire_protocol().builtin.discovery_config.discoveryServer_client_syncperiod) ||
-            !(to.wire_protocol().builtin.discovery_config.m_PDPfactory == from.wire_protocol().builtin.discovery_config.m_PDPfactory) ||
-            !(to.wire_protocol().builtin.discovery_config.leaseDuration == from.wire_protocol().builtin.discovery_config.leaseDuration) ||
-            !(to.wire_protocol().builtin.discovery_config.leaseDuration_announcementperiod == from.wire_protocol().builtin.discovery_config.leaseDuration_announcementperiod) ||
-            !(to.wire_protocol().builtin.discovery_config.initial_announcements == from.wire_protocol().builtin.discovery_config.initial_announcements) ||
-            !(to.wire_protocol().builtin.discovery_config.m_simpleEDP == from.wire_protocol().builtin.discovery_config.m_simpleEDP) ||
-            !(strcmp(to.wire_protocol().builtin.discovery_config.static_edp_xml_config(), from.wire_protocol().builtin.discovery_config.static_edp_xml_config()) == 0) ||
-            !(to.wire_protocol().builtin.discovery_config.ignoreParticipantFlags == from.wire_protocol().builtin.discovery_config.ignoreParticipantFlags))))
+        if ((to.wire_protocol().builtin.discovery_config.m_DiscoveryServers ==
+                from.wire_protocol().builtin.discovery_config.m_DiscoveryServers) ||
+                (!(to.wire_protocol().builtin.discovery_config.m_DiscoveryServers ==
+                from.wire_protocol().builtin.discovery_config.m_DiscoveryServers) &&
+                (!(to.wire_protocol().prefix == from.wire_protocol().prefix) ||
+                !(to.wire_protocol().participant_id == from.wire_protocol().participant_id) ||
+                !(to.wire_protocol().port == from.wire_protocol().port) ||
+                !(to.wire_protocol().throughput_controller == from.wire_protocol().throughput_controller) ||
+                !(to.wire_protocol().default_unicast_locator_list ==
+                from.wire_protocol().default_unicast_locator_list) ||
+                !(to.wire_protocol().default_multicast_locator_list ==
+                from.wire_protocol().default_multicast_locator_list) ||
+                !(to.wire_protocol().builtin.use_WriterLivelinessProtocol ==
+                from.wire_protocol().builtin.use_WriterLivelinessProtocol) ||
+                !(to.wire_protocol().builtin.typelookup_config.use_client ==
+                from.wire_protocol().builtin.typelookup_config.use_client) ||
+                !(to.wire_protocol().builtin.typelookup_config.use_server ==
+                from.wire_protocol().builtin.typelookup_config.use_server) ||
+                !(to.wire_protocol().builtin.metatrafficUnicastLocatorList ==
+                from.wire_protocol().builtin.metatrafficUnicastLocatorList) ||
+                !(to.wire_protocol().builtin.metatrafficMulticastLocatorList ==
+                from.wire_protocol().builtin.metatrafficMulticastLocatorList) ||
+                !(to.wire_protocol().builtin.initialPeersList == from.wire_protocol().builtin.initialPeersList) ||
+                !(to.wire_protocol().builtin.readerHistoryMemoryPolicy ==
+                from.wire_protocol().builtin.readerHistoryMemoryPolicy) ||
+                !(to.wire_protocol().builtin.readerPayloadSize == from.wire_protocol().builtin.readerPayloadSize) ||
+                !(to.wire_protocol().builtin.writerHistoryMemoryPolicy ==
+                from.wire_protocol().builtin.writerHistoryMemoryPolicy) ||
+                !(to.wire_protocol().builtin.writerPayloadSize == from.wire_protocol().builtin.writerPayloadSize) ||
+                !(to.wire_protocol().builtin.mutation_tries == from.wire_protocol().builtin.mutation_tries) ||
+                !(to.wire_protocol().builtin.avoid_builtin_multicast ==
+                from.wire_protocol().builtin.avoid_builtin_multicast) ||
+                !(to.wire_protocol().builtin.discovery_config.discoveryProtocol ==
+                from.wire_protocol().builtin.discovery_config.discoveryProtocol) ||
+                !(to.wire_protocol().builtin.discovery_config.use_SIMPLE_EndpointDiscoveryProtocol ==
+                from.wire_protocol().builtin.discovery_config.use_SIMPLE_EndpointDiscoveryProtocol) ||
+                !(to.wire_protocol().builtin.discovery_config.use_STATIC_EndpointDiscoveryProtocol ==
+                from.wire_protocol().builtin.discovery_config.use_STATIC_EndpointDiscoveryProtocol) ||
+                !(to.wire_protocol().builtin.discovery_config.discoveryServer_client_syncperiod ==
+                from.wire_protocol().builtin.discovery_config.discoveryServer_client_syncperiod) ||
+                !(to.wire_protocol().builtin.discovery_config.m_PDPfactory ==
+                from.wire_protocol().builtin.discovery_config.m_PDPfactory) ||
+                !(to.wire_protocol().builtin.discovery_config.leaseDuration ==
+                from.wire_protocol().builtin.discovery_config.leaseDuration) ||
+                !(to.wire_protocol().builtin.discovery_config.leaseDuration_announcementperiod ==
+                from.wire_protocol().builtin.discovery_config.leaseDuration_announcementperiod) ||
+                !(to.wire_protocol().builtin.discovery_config.initial_announcements ==
+                from.wire_protocol().builtin.discovery_config.initial_announcements) ||
+                !(to.wire_protocol().builtin.discovery_config.m_simpleEDP ==
+                from.wire_protocol().builtin.discovery_config.m_simpleEDP) ||
+                !(strcmp(to.wire_protocol().builtin.discovery_config.static_edp_xml_config(),
+                from.wire_protocol().builtin.discovery_config.static_edp_xml_config()) == 0) ||
+                !(to.wire_protocol().builtin.discovery_config.ignoreParticipantFlags ==
+                from.wire_protocol().builtin.discovery_config.ignoreParticipantFlags))))
         {
             updatable = false;
             logWarning(RTPS_QOS_CHECK, "WireProtocolConfigQos cannot be changed after the participant is enabled, "
-                      << "with the exception of builtin.discovery_config.m_DiscoveryServers");
+                    << "with the exception of builtin.discovery_config.m_DiscoveryServers");
         }
 
     }
