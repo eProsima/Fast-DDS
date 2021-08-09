@@ -2451,7 +2451,7 @@ bool RTPSParticipantImpl::get_persistence_service(
     const char* debug_label = (param.endpointKind == WRITER ? "writer" : "reader");
 
     // Check if also support persistence with TRANSIENT_LOCAL.
-    DurabilityKind_t durability_red_line = get_persistence_durability_red_line(is_builtin);
+    DurabilityKind_t durability_red_line = get_persistence_durability_red_line(is_builtin, param);
     if (param.durabilityKind >= durability_red_line)
     {
         if (param.persistence_guid == c_Guid_Unknown)
@@ -2685,13 +2685,21 @@ bool RTPSParticipantImpl::did_mutation_took_place_on_meta(
 }
 
 DurabilityKind_t RTPSParticipantImpl::get_persistence_durability_red_line(
-        bool is_builtin_endpoint)
+        bool is_builtin_endpoint,
+        const EndpointAttributes& endpoint_attr) const
 {
     DurabilityKind_t durability_red_line = TRANSIENT;
     if (!is_builtin_endpoint)
     {
-        std::string* persistence_support_transient_local_property = PropertyPolicyHelper::find_property(
+        const std::string* persistence_support_transient_local_property = PropertyPolicyHelper::find_property(
             m_att.properties, "dds.persistence.also-support-transient-local");
+        if (nullptr != persistence_support_transient_local_property &&
+                0 == persistence_support_transient_local_property->compare("true"))
+        {
+            durability_red_line = TRANSIENT_LOCAL;
+        }
+        persistence_support_transient_local_property = PropertyPolicyHelper::find_property(
+            endpoint_attr.properties, "dds.persistence.also-support-transient-local");
         if (nullptr != persistence_support_transient_local_property &&
                 0 == persistence_support_transient_local_property->compare("true"))
         {
