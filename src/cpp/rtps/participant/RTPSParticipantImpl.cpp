@@ -1114,7 +1114,6 @@ void RTPSParticipantImpl::update_attributes(
     }
 
     // Update RTPSParticipantAttributes member
-    m_att.builtin.discovery_config.m_DiscoveryServers = patt.builtin.discovery_config.m_DiscoveryServers;
     m_att.userData = patt.userData;
 
     auto pdp = mp_builtinProtocols->mp_PDP;
@@ -1131,7 +1130,27 @@ void RTPSParticipantImpl::update_attributes(
                 m_att.builtin.discovery_config.discoveryProtocol == DiscoveryProtocol::SERVER ||
                 m_att.builtin.discovery_config.discoveryProtocol == DiscoveryProtocol::BACKUP)
         {
+            // Add incoming servers iff we don't know about them already
+            for (auto incoming_server : patt.builtin.discovery_config.m_DiscoveryServers)
+            {
+                eprosima::fastdds::rtps::RemoteServerList_t::iterator server_it;
+                for (server_it = m_att.builtin.discovery_config.m_DiscoveryServers.begin(); server_it != m_att.builtin.discovery_config.m_DiscoveryServers.end(); server_it++)
+                {
+                    if (server_it->guidPrefix == incoming_server.guidPrefix)
+                    {
+                        break;
+                    }
+                }
+                if (server_it == m_att.builtin.discovery_config.m_DiscoveryServers.end())
+                {
+                    m_att.builtin.discovery_config.m_DiscoveryServers.push_back(incoming_server);
+                }
+            }
+
+            // Update the servers list in builtin protocols
             mp_builtinProtocols->m_DiscoveryServers = m_att.builtin.discovery_config.m_DiscoveryServers;
+
+            // Notify PDPServer
             if (m_att.builtin.discovery_config.discoveryProtocol == DiscoveryProtocol::SERVER ||
                     m_att.builtin.discovery_config.discoveryProtocol == DiscoveryProtocol::BACKUP)
             {
