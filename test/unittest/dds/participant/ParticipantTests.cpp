@@ -376,7 +376,12 @@ TEST(ParticipantTests, ChangePSMDomainParticipantQos)
 
 }
 
-// This test checks that the only mutable element in WireProtocolQosPolicy is the list of remote servers
+/** This test checks that the only mutable element in WireProtocolQosPolicy is the list of remote servers.
+ * The checks exclude:
+ *    1. wire_protocol().port since its data member cannot be neither initialized nor get
+ *    2. wire_protocol().builtin.discovery_config.m_PDPFactory since it is a deprecated interface for RTPS
+ *       applications to implement a different discovery mechanism.
+ */
 TEST(ParticipantTests, ChangeWireProtocolQos)
 {
     DomainParticipant* participant =
@@ -386,7 +391,7 @@ TEST(ParticipantTests, ChangeWireProtocolQos)
 
     ASSERT_EQ(qos, PARTICIPANT_QOS_DEFAULT);
 
-    // Check that just adding one server is OK
+    // Check that just adding two servers is OK
     rtps::RemoteServerAttributes server;
     server.ReadguidPrefix("44.53.00.5f.45.50.52.4f.53.49.4d.41");
     fastrtps::rtps::Locator_t locator;
@@ -394,6 +399,15 @@ TEST(ParticipantTests, ChangeWireProtocolQos)
     locator.port = 64863;
     server.metatrafficUnicastLocatorList.push_back(locator);
     qos.wire_protocol().builtin.discovery_config.m_DiscoveryServers.push_back(server);
+
+    rtps::RemoteServerAttributes server_2;
+    server_2.ReadguidPrefix("44.53.00.5f.45.50.52.4f.53.49.4d.42");
+    fastrtps::rtps::Locator_t locator_2;
+    fastrtps::rtps::IPLocator::setIPv4(locator_2, 192, 168, 1, 134);
+    locator_2.port = 64862;
+    server_2.metatrafficUnicastLocatorList.push_back(locator_2);
+    qos.wire_protocol().builtin.discovery_config.m_DiscoveryServers.push_back(server_2);
+
     ASSERT_TRUE(participant->set_qos(qos) == ReturnCode_t::RETCODE_OK);
     DomainParticipantQos set_qos;
     participant->get_qos(set_qos);
@@ -593,6 +607,25 @@ TEST(ParticipantTests, ChangeWireProtocolQos)
     qos.wire_protocol().builtin.discovery_config.m_simpleEDP.enable_builtin_secure_publications_writer_and_subscriptions_reader ^= true;
     qos.wire_protocol().builtin.discovery_config.m_simpleEDP.enable_builtin_secure_subscriptions_writer_and_publications_reader ^= true;
 #endif // if HAVE_SECURITY
+    ASSERT_TRUE(participant->set_qos(qos) == ReturnCode_t::RETCODE_IMMUTABLE_POLICY);
+    participant->get_qos(set_qos);
+    ASSERT_FALSE(set_qos == qos);
+
+    // Check changing wire_protocol().builtin.discovery_config.static_edp_xml_config() is NOT OK
+    participant->get_qos(qos);
+    std::string static_xml = "data://<?xml version=\"1.0\" encoding=\"utf-8\"?>" \
+        "<staticdiscovery>" \
+            "<participant profile_name=\"participant_profile_static_edp\">" \
+                "<rtps>" \
+                    "<builtin>" \
+                        "<discovery_config>" \
+                            "<EDP>STATIC</EDP>" \
+                        "</discovery_config>" \
+                    "</builtin>" \
+                "</rtps>" \
+            "</participant>" \
+        "</staticdiscovery>";
+    qos.wire_protocol().builtin.discovery_config.static_edp_xml_config(static_xml.c_str());
     ASSERT_TRUE(participant->set_qos(qos) == ReturnCode_t::RETCODE_IMMUTABLE_POLICY);
     participant->get_qos(set_qos);
     ASSERT_FALSE(set_qos == qos);

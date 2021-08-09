@@ -1848,6 +1848,7 @@ bool DomainParticipantImpl::can_qos_be_updated(
             !(to.wire_protocol().builtin.discovery_config.leaseDuration_announcementperiod == from.wire_protocol().builtin.discovery_config.leaseDuration_announcementperiod) ||
             !(to.wire_protocol().builtin.discovery_config.initial_announcements == from.wire_protocol().builtin.discovery_config.initial_announcements) ||
             !(to.wire_protocol().builtin.discovery_config.m_simpleEDP == from.wire_protocol().builtin.discovery_config.m_simpleEDP) ||
+            !(strcmp(to.wire_protocol().builtin.discovery_config.static_edp_xml_config(), from.wire_protocol().builtin.discovery_config.static_edp_xml_config()) == 0) ||
             !(to.wire_protocol().builtin.discovery_config.ignoreParticipantFlags == from.wire_protocol().builtin.discovery_config.ignoreParticipantFlags))))
         {
             updatable = false;
