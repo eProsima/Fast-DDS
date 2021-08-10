@@ -85,7 +85,6 @@ TEST_P(UserDataQos, update_user_data_qos)
     ASSERT_TRUE(participant_1.user_data({'a', 'b', 'c', 'd', 'e'}).init_participant());
 
     PubSubParticipant<HelloWorldType> participant_2(0u, 0u, 0u, 0u);
-    ASSERT_TRUE(participant_2.init_participant());
 
     participant_2.set_on_discovery_function([&](const rtps::ParticipantDiscoveryInfo& info) -> bool
             {
@@ -108,8 +107,9 @@ TEST_P(UserDataQos, update_user_data_qos)
                 return info.info.m_userData == std::vector<rtps::octet>({'f', 'g'});
             });
 
+    ASSERT_TRUE(participant_2.init_participant());
+
     participant_1.wait_discovery();
-    participant_2.wait_discovery();
     participant_2.wait_discovery_result();
 
     // Update user data

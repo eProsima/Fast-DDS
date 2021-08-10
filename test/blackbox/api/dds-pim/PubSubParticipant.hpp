@@ -164,31 +164,29 @@ private:
                 eprosima::fastdds::dds::DomainParticipant*,
                 eprosima::fastrtps::rtps::ParticipantDiscoveryInfo&& info)
         {
-            if (participant_->on_discovery_ != nullptr &&
-                    info.status == eprosima::fastrtps::rtps::ParticipantDiscoveryInfo::DISCOVERED_PARTICIPANT)
+            bool expected = false;
+            if (info.status == eprosima::fastrtps::rtps::ParticipantDiscoveryInfo::DISCOVERED_PARTICIPANT)
             {
-                std::unique_lock<std::mutex> lock(participant_->mutex_discovery_);
-                participant_->discovery_result_ |= participant_->on_discovery_(info);
+                ++participant_->matched_;
+                if (nullptr !=  participant_->on_discovery_)
+                {
+                    participant_->discovery_result_.compare_exchange_strong(expected,
+                            participant_->on_discovery_(info));
+                }
                 participant_->cv_discovery_.notify_one();
             }
-
-            if (participant_->on_participant_qos_update_ != nullptr &&
+            else if (participant_->on_participant_qos_update_ != nullptr &&
                     info.status == eprosima::fastrtps::rtps::ParticipantDiscoveryInfo::CHANGED_QOS_PARTICIPANT)
             {
-                bool expected = false;
                 participant_->participant_qos_updated_.compare_exchange_strong(expected,
                         participant_->on_participant_qos_update_(info));
                 participant_->cv_discovery_.notify_one();
             }
-
-            if (info.status == eprosima::fastrtps::rtps::ParticipantDiscoveryInfo::DISCOVERED_PARTICIPANT)
-            {
-                participant_->participant_matched();
-            }
             else if (info.status == eprosima::fastrtps::rtps::ParticipantDiscoveryInfo::REMOVED_PARTICIPANT ||
                     info.status == eprosima::fastrtps::rtps::ParticipantDiscoveryInfo::DROPPED_PARTICIPANT)
             {
-                participant_->participant_unmatched();
+                --participant_->matched_;
+                participant_->cv_discovery_.notify_one();
             }
         }
 
@@ -832,20 +830,6 @@ private:
     PubSubParticipant& operator =(
             const PubSubParticipant&) = delete;
 
-    void participant_matched()
-    {
-        std::unique_lock<std::mutex> lock(mutex_discovery_);
-        ++matched_;
-        cv_discovery_.notify_one();
-    }
-
-    void participant_unmatched()
-    {
-        std::unique_lock<std::mutex> lock(mutex_discovery_);
-        --matched_;
-        cv_discovery_.notify_one();
-    }
-
     void pub_matched()
     {
         std::unique_lock<std::mutex> lock(pub_mutex_);
@@ -915,7 +899,7 @@ private:
     std::atomic<unsigned int> matched_;
     std::function<bool(const eprosima::fastrtps::rtps::ParticipantDiscoveryInfo& info)> on_discovery_;
     std::function<bool(const eprosima::fastrtps::rtps::ParticipantDiscoveryInfo& info)> on_participant_qos_update_;
-    bool discovery_result_;
+    std::atomic_bool discovery_result_;
     std::atomic_bool participant_qos_updated_;
 
     std::mutex pub_mutex_;
