@@ -413,18 +413,18 @@ TEST(ParticipantTests, ChangeWireProtocolQos)
     participant->get_qos(set_qos);
     ASSERT_EQ(set_qos, qos);
 
-    // Check that removing one server is OK
+    // Check that removing one server is NOT OK
     qos.wire_protocol().builtin.discovery_config.m_DiscoveryServers.pop_front();
-    ASSERT_TRUE(participant->set_qos(qos) == ReturnCode_t::RETCODE_OK);
+    ASSERT_FALSE(participant->set_qos(qos) == ReturnCode_t::RETCODE_OK);
     participant->get_qos(set_qos);
-    ASSERT_EQ(set_qos, qos);
+    ASSERT_FALSE(set_qos == qos);
 
-    // Check that removing all servers is OK
+    // Check that removing all servers is NOT OK
     fastdds::rtps::RemoteServerList_t servers;
     qos.wire_protocol().builtin.discovery_config.m_DiscoveryServers = servers;
-    ASSERT_TRUE(participant->set_qos(qos) == ReturnCode_t::RETCODE_OK);
+    ASSERT_FALSE(participant->set_qos(qos) == ReturnCode_t::RETCODE_OK);
     participant->get_qos(set_qos);
-    ASSERT_EQ(set_qos, qos);
+    ASSERT_FALSE(set_qos == qos);
 
     // Check changing wire_protocol().prefix is NOT OK
     participant->get_qos(qos);
