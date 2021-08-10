@@ -64,6 +64,7 @@
 #include <fastdds/rtps/builtin/liveliness/WLP.h>
 
 #include <rtps/builtin/discovery/participant/PDPServer.hpp>
+#include <rtps/builtin/discovery/participant/PDPClient.h>
 
 #include <statistics/rtps/GuidUtils.hpp>
 
@@ -1156,6 +1157,13 @@ void RTPSParticipantImpl::update_attributes(
             {
                 fastdds::rtps::PDPServer* pdp_server = static_cast<fastdds::rtps::PDPServer*>(pdp);
                 pdp_server->update_remote_servers_list();
+            }
+            // Notify PDPClient
+            else if (m_att.builtin.discovery_config.discoveryProtocol == DiscoveryProtocol::CLIENT ||
+                    m_att.builtin.discovery_config.discoveryProtocol == DiscoveryProtocol::SUPER_CLIENT)
+            {
+                fastdds::rtps::PDPClient* pdp_client = static_cast<fastdds::rtps::PDPClient*>(pdp);
+                pdp_client->update_remote_servers_list();
             }
         }
     }

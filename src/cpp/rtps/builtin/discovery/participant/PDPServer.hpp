@@ -272,6 +272,18 @@ protected:
     // from DDB must be called during this process
     void process_backup_store();
 
+    /**
+     * Manually match PDP writer endpoint of a given server. The function is not thread safe (nts) in
+     * the sense that it does not take the PDP mutex. It does however take temp_data_lock_
+     */
+    void match_pdp_writer_nts_(const eprosima::fastdds::rtps::RemoteServerAttributes& server_att);
+
+    /**
+     * Manually match PDP reader endpoint of a given server. The function is not thread safe (nts) in
+     * the sense that it does not take the PDP mutex. It does however take temp_data_lock_
+     */
+    void match_pdp_reader_nts_(const eprosima::fastdds::rtps::RemoteServerAttributes& server_att);
+
 private:
 
     //! Server thread
