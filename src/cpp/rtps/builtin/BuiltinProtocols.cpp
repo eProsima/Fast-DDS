@@ -79,6 +79,9 @@ bool BuiltinProtocols::initBuiltinProtocols(
     m_metatrafficUnicastLocatorList = m_att.metatrafficUnicastLocatorList;
     m_metatrafficMulticastLocatorList = m_att.metatrafficMulticastLocatorList;
     m_initialPeersList = m_att.initialPeersList;
+
+    // TODO(jlbueno) The access to the list should be protected with the PDP mutex but requires a refactor on PDPClient
+    // and PDPServer: read the remote servers list after the initialization of PDP.
     m_DiscoveryServers = m_att.discovery_config.m_DiscoveryServers;
 
     transform_server_remote_locators(p_part->network_factory());
@@ -160,6 +163,8 @@ bool BuiltinProtocols::updateMetatrafficLocators(
 void BuiltinProtocols::transform_server_remote_locators(
         NetworkFactory& nf)
 {
+    // TODO(jlbueno) The access to the list should be protected with the PDP mutex but requires a refactor on PDPClient
+    // and PDPServer: read the remote servers list after the initialization of PDP.
     for (eprosima::fastdds::rtps::RemoteServerAttributes& rs : m_DiscoveryServers)
     {
         for (Locator_t& loc : rs.metatrafficUnicastLocatorList)

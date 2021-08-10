@@ -215,19 +215,22 @@ bool PDPClient::createPDPEndpoints()
         //        mp_RTPSParticipant->set_endpoint_rtps_protection_supports(rout, false);
         //#endif
         // Initial peer list doesn't make sense in server scenario. Client should match its server list
-        for (const eprosima::fastdds::rtps::RemoteServerAttributes& it : mp_builtin->m_DiscoveryServers)
         {
-            std::lock_guard<std::mutex> data_guard(temp_data_lock_);
-            temp_writer_data_.clear();
-            temp_writer_data_.guid(it.GetPDPWriter());
-            temp_writer_data_.set_multicast_locators(it.metatrafficMulticastLocatorList, network);
-            temp_writer_data_.set_remote_unicast_locators(it.metatrafficUnicastLocatorList, network);
-            temp_writer_data_.m_qos.m_durability.kind = TRANSIENT_DURABILITY_QOS;  // Server Information must be persistent
-            temp_writer_data_.m_qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
+            std::lock_guard<std::recursive_mutex> lock(*getMutex());
 
-            mp_PDPReader->matched_writer_add(temp_writer_data_);
+            for (const eprosima::fastdds::rtps::RemoteServerAttributes& it : mp_builtin->m_DiscoveryServers)
+            {
+                std::lock_guard<std::mutex> data_guard(temp_data_lock_);
+                temp_writer_data_.clear();
+                temp_writer_data_.guid(it.GetPDPWriter());
+                temp_writer_data_.set_multicast_locators(it.metatrafficMulticastLocatorList, network);
+                temp_writer_data_.set_remote_unicast_locators(it.metatrafficUnicastLocatorList, network);
+                temp_writer_data_.m_qos.m_durability.kind = TRANSIENT_DURABILITY_QOS;  // Server Information must be persistent
+                temp_writer_data_.m_qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
+
+                mp_PDPReader->matched_writer_add(temp_writer_data_);
+            }
         }
-
     }
     else
     {
@@ -267,19 +270,22 @@ bool PDPClient::createPDPEndpoints()
         //#if HAVE_SECURITY
         //        mp_RTPSParticipant->set_endpoint_rtps_protection_supports(wout, false);
         //#endif
-        for (const eprosima::fastdds::rtps::RemoteServerAttributes& it : mp_builtin->m_DiscoveryServers)
         {
-            std::lock_guard<std::mutex> data_guard(temp_data_lock_);
-            temp_reader_data_.clear();
-            temp_reader_data_.guid(it.GetPDPReader());
-            temp_reader_data_.set_multicast_locators(it.metatrafficMulticastLocatorList, network);
-            temp_reader_data_.set_remote_unicast_locators(it.metatrafficUnicastLocatorList, network);
-            temp_reader_data_.m_qos.m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
-            temp_reader_data_.m_qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
+            std::lock_guard<std::recursive_mutex> lock(*getMutex());
 
-            mp_PDPWriter->matched_reader_add(temp_reader_data_);
+            for (const eprosima::fastdds::rtps::RemoteServerAttributes& it : mp_builtin->m_DiscoveryServers)
+            {
+                std::lock_guard<std::mutex> data_guard(temp_data_lock_);
+                temp_reader_data_.clear();
+                temp_reader_data_.guid(it.GetPDPReader());
+                temp_reader_data_.set_multicast_locators(it.metatrafficMulticastLocatorList, network);
+                temp_reader_data_.set_remote_unicast_locators(it.metatrafficUnicastLocatorList, network);
+                temp_reader_data_.m_qos.m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
+                temp_reader_data_.m_qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
+
+                mp_PDPWriter->matched_reader_add(temp_reader_data_);
+            }
         }
-
     }
     else
     {

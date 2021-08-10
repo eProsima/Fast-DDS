@@ -63,6 +63,8 @@
 #include <fastdds/rtps/builtin/data/ParticipantProxyData.h>
 #include <fastdds/rtps/builtin/liveliness/WLP.h>
 
+#include <rtps/builtin/discovery/participant/PDPServer.hpp>
+
 #include <statistics/rtps/GuidUtils.hpp>
 
 namespace eprosima {
@@ -1101,11 +1103,46 @@ bool RTPSParticipantImpl::registerReader(
     return this->mp_builtinProtocols->addLocalReader(reader, topicAtt, rqos);
 }
 
-bool RTPSParticipantImpl::update_attributes(
+void RTPSParticipantImpl::update_attributes(
         const RTPSParticipantAttributes& patt)
 {
-    static_cast<void>(patt);
-    return false;
+    // Check if there are changes
+    if (patt.builtin.discovery_config.m_DiscoveryServers == m_att.builtin.discovery_config.m_DiscoveryServers
+            && patt.userData == m_att.userData)
+    {
+        return;
+    }
+
+    // Update RTPSParticipantAttributes member
+    m_att.builtin.discovery_config.m_DiscoveryServers = patt.builtin.discovery_config.m_DiscoveryServers;
+    m_att.userData = patt.userData;
+
+    auto pdp = mp_builtinProtocols->mp_PDP;
+    {
+        std::unique_lock<std::recursive_mutex> lock(*pdp->getMutex());
+
+        // Update user data
+        auto local_participant_proxy_data = pdp->getLocalParticipantProxyData();
+        local_participant_proxy_data->m_userData.data_vec(m_att.userData);
+
+        // Update remote servers list
+        if (m_att.builtin.discovery_config.discoveryProtocol == DiscoveryProtocol::CLIENT ||
+                m_att.builtin.discovery_config.discoveryProtocol == DiscoveryProtocol::SUPER_CLIENT ||
+                m_att.builtin.discovery_config.discoveryProtocol == DiscoveryProtocol::SERVER ||
+                m_att.builtin.discovery_config.discoveryProtocol == DiscoveryProtocol::BACKUP)
+        {
+            mp_builtinProtocols->m_DiscoveryServers = m_att.builtin.discovery_config.m_DiscoveryServers;
+            if (m_att.builtin.discovery_config.discoveryProtocol == DiscoveryProtocol::SERVER ||
+                    m_att.builtin.discovery_config.discoveryProtocol == DiscoveryProtocol::BACKUP)
+            {
+                fastdds::rtps::PDPServer* pdp_server = static_cast<fastdds::rtps::PDPServer*>(pdp);
+                pdp_server->update_remote_servers_list();
+            }
+        }
+    }
+
+    // Send DATA(P)
+    pdp->announceParticipantState(true);
 }
 
 bool RTPSParticipantImpl::updateLocalWriter(

@@ -69,13 +69,17 @@ PDPServer::PDPServer(
 {
     // Add remote servers from environment variable
     RemoteServerList_t env_servers;
-    if (load_environment_server_info(env_servers))
     {
-        for (auto server : env_servers)
+        std::lock_guard<std::recursive_mutex> lock(*getMutex());
+
+        if (load_environment_server_info(env_servers))
         {
-            mp_builtin->m_DiscoveryServers.push_back(server);
-            m_discovery.discovery_config.m_DiscoveryServers.push_back(server);
-            discovery_db_.add_server(server.guidPrefix);
+            for (auto server : env_servers)
+            {
+                mp_builtin->m_DiscoveryServers.push_back(server);
+                m_discovery.discovery_config.m_DiscoveryServers.push_back(server);
+                discovery_db_.add_server(server.guidPrefix);
+            }
         }
     }
 }
@@ -260,20 +264,24 @@ bool PDPServer::createPDPEndpoints()
         // Enable unknown clients to reach this reader
         mp_PDPReader->enableMessagesFromUnkownWriters(true);
 
-        // Initial peer list doesn't make sense in server scenario. Client should match its server list
-        for (const eprosima::fastdds::rtps::RemoteServerAttributes& it : mp_builtin->m_DiscoveryServers)
         {
-            std::lock_guard<std::mutex> data_guard(temp_data_lock_);
-            temp_writer_data_.clear();
-            temp_writer_data_.guid(it.GetPDPWriter());
-            temp_writer_data_.set_multicast_locators(it.metatrafficMulticastLocatorList, network);
-            temp_writer_data_.set_remote_unicast_locators(it.metatrafficUnicastLocatorList, network);
-            // TODO check if this is correct, it is equal as PDPServer, but we do not know like this the durKind of the
-            // other server
-            temp_writer_data_.m_qos.m_durability.durabilityKind(durability_);
-            temp_writer_data_.m_qos.m_reliability.kind = fastrtps::RELIABLE_RELIABILITY_QOS;
+            std::lock_guard<std::recursive_mutex> lock(*getMutex());
 
-            mp_PDPReader->matched_writer_add(temp_writer_data_);
+            // Initial peer list doesn't make sense in server scenario. Client should match its server list
+            for (const eprosima::fastdds::rtps::RemoteServerAttributes& it : mp_builtin->m_DiscoveryServers)
+            {
+                std::lock_guard<std::mutex> data_guard(temp_data_lock_);
+                temp_writer_data_.clear();
+                temp_writer_data_.guid(it.GetPDPWriter());
+                temp_writer_data_.set_multicast_locators(it.metatrafficMulticastLocatorList, network);
+                temp_writer_data_.set_remote_unicast_locators(it.metatrafficUnicastLocatorList, network);
+                // TODO check if this is correct, it is equal as PDPServer, but we do not know like this the durKind of the
+                // other server
+                temp_writer_data_.m_qos.m_durability.durabilityKind(durability_);
+                temp_writer_data_.m_qos.m_reliability.kind = fastrtps::RELIABLE_RELIABILITY_QOS;
+
+                mp_PDPReader->matched_writer_add(temp_writer_data_);
+            }
         }
     }
     // Could not create PDP Reader, so return false
@@ -330,17 +338,21 @@ bool PDPServer::createPDPEndpoints()
         // Enable separate sending so the filter can be called for each change and reader proxy
         mp_PDPWriter->set_separate_sending(true);
 
-        for (const eprosima::fastdds::rtps::RemoteServerAttributes& it : mp_builtin->m_DiscoveryServers)
         {
-            std::lock_guard<std::mutex> data_guard(temp_data_lock_);
-            temp_reader_data_.clear();
-            temp_reader_data_.guid(it.GetPDPReader());
-            temp_reader_data_.set_multicast_locators(it.metatrafficMulticastLocatorList, network);
-            temp_reader_data_.set_remote_unicast_locators(it.metatrafficUnicastLocatorList, network);
-            temp_reader_data_.m_qos.m_durability.kind = fastrtps::TRANSIENT_LOCAL_DURABILITY_QOS;
-            temp_reader_data_.m_qos.m_reliability.kind = fastrtps::RELIABLE_RELIABILITY_QOS;
+            std::lock_guard<std::recursive_mutex> lock(*getMutex());
 
-            mp_PDPWriter->matched_reader_add(temp_reader_data_);
+            for (const eprosima::fastdds::rtps::RemoteServerAttributes& it : mp_builtin->m_DiscoveryServers)
+            {
+                std::lock_guard<std::mutex> data_guard(temp_data_lock_);
+                temp_reader_data_.clear();
+                temp_reader_data_.guid(it.GetPDPReader());
+                temp_reader_data_.set_multicast_locators(it.metatrafficMulticastLocatorList, network);
+                temp_reader_data_.set_remote_unicast_locators(it.metatrafficUnicastLocatorList, network);
+                temp_reader_data_.m_qos.m_durability.kind = fastrtps::TRANSIENT_LOCAL_DURABILITY_QOS;
+                temp_reader_data_.m_qos.m_reliability.kind = fastrtps::RELIABLE_RELIABILITY_QOS;
+
+                mp_PDPWriter->matched_reader_add(temp_reader_data_);
+            }
         }
     }
     // Could not create PDP Writer, so return false
@@ -1338,6 +1350,7 @@ bool PDPServer::pending_ack()
 
 std::vector<fastrtps::rtps::GuidPrefix_t> PDPServer::servers_prefixes()
 {
+    std::lock_guard<std::recursive_mutex> lock(*getMutex());
     std::vector<GuidPrefix_t> servers;
     for (const eprosima::fastdds::rtps::RemoteServerAttributes& it : mp_builtin->m_DiscoveryServers)
     {
@@ -1367,16 +1380,20 @@ void PDPServer::ping_remote_servers()
     LocatorList locators;
 
     // Iterate over the list of servers
-    for (auto& server : mp_builtin->m_DiscoveryServers)
     {
+        std::lock_guard<std::recursive_mutex> lock(*getMutex());
 
-        // If the server is the the ack_pending list, then add its GUID and locator to send the announcement
-        auto server_it = std::find(ack_pending_servers.begin(), ack_pending_servers.end(), server.guidPrefix);
-        if (server_it != ack_pending_servers.end())
+        for (auto& server : mp_builtin->m_DiscoveryServers)
         {
-            // get the info to send to this already known locators
-            remote_readers.push_back(GUID_t(server.guidPrefix, c_EntityId_SPDPReader));
-            locators.push_back(server.metatrafficUnicastLocatorList);
+
+            // If the server is the the ack_pending list, then add its GUID and locator to send the announcement
+            auto server_it = std::find(ack_pending_servers.begin(), ack_pending_servers.end(), server.guidPrefix);
+            if (server_it != ack_pending_servers.end())
+            {
+                // get the info to send to this already known locators
+                remote_readers.push_back(GUID_t(server.guidPrefix, c_EntityId_SPDPReader));
+                locators.push_back(server.metatrafficUnicastLocatorList);
+            }
         }
     }
     send_announcement(discovery_db().cache_change_own_participant(), remote_readers, locators);
