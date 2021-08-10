@@ -559,7 +559,17 @@ protected:
     std::string get_inner_type_name(
             const fastrtps::rtps::SampleIdentity& id) const;
 
-    static void set_qos(
+    /**
+     * Set the DomainParticipantQos checking if the Qos can be updated or not
+     *
+     * @param to DomainParticipantQos to be updated
+     * @param from DomainParticipantQos desired
+     * @param first_time Whether the DomainParticipant has been already initialized or not
+     *
+     * @return true if there has been a changed in one of the attributes that can be updated.
+     * false otherwise.
+     */
+    static bool set_qos(
             DomainParticipantQos& to,
             const DomainParticipantQos& from,
             bool first_time);

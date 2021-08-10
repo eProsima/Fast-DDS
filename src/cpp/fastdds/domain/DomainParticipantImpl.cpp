@@ -29,6 +29,7 @@
 #include <fastdds/dds/subscriber/DataReader.hpp>
 #include <fastdds/dds/publisher/DataWriter.hpp>
 
+#include <fastdds/rtps/attributes/RTPSParticipantAttributes.h>
 #include <fastdds/rtps/RTPSDomain.h>
 #include <fastdds/rtps/builtin/liveliness/WLP.h>
 #include <fastdds/rtps/participant/ParticipantDiscoveryInfo.h>
@@ -343,7 +344,15 @@ ReturnCode_t DomainParticipantImpl::set_qos(
     {
         return ReturnCode_t::RETCODE_IMMUTABLE_POLICY;
     }
-    set_qos(qos_, qos_to_set, !enabled);
+
+    if (set_qos(qos_, qos_to_set, !enabled) && enabled)
+    {
+        // Notify the participant that there is a QoS update
+        fastrtps::rtps::RTPSParticipantAttributes patt;
+        set_attributes_from_qos(patt, qos_);
+        rtps_participant_->update_attributes(patt);
+    }
+
     return ReturnCode_t::RETCODE_OK;
 }
 
@@ -1733,11 +1742,13 @@ bool DomainParticipantImpl::has_active_entities()
     return false;
 }
 
-void DomainParticipantImpl::set_qos(
+bool DomainParticipantImpl::set_qos(
         DomainParticipantQos& to,
         const DomainParticipantQos& from,
         bool first_time)
 {
+    bool qos_should_be_updated = false;
+
     if (!(to.entity_factory() == from.entity_factory()))
     {
         to.entity_factory() = from.entity_factory();
@@ -1746,6 +1757,10 @@ void DomainParticipantImpl::set_qos(
     {
         to.user_data() = from.user_data();
         to.user_data().hasChanged = true;
+        if (!first_time)
+        {
+            qos_should_be_updated = true;
+        }
     }
     if (first_time && !(to.allocation() == from.allocation()))
     {
@@ -1767,6 +1782,8 @@ void DomainParticipantImpl::set_qos(
     {
         to.name() = from.name();
     }
+
+    return qos_should_be_updated;
 }
 
 fastrtps::types::ReturnCode_t DomainParticipantImpl::check_qos(
