@@ -23,6 +23,9 @@
 #include <fastdds/rtps/common/Locator.h>
 
 #include <chrono>
+#include <stdlib.h>
+#include <string>
+#include <time.h>
 
 // Regression test for redmine issue 11857
 TEST(DDSDiscovery, IgnoreParticipantFlags)
@@ -73,63 +76,93 @@ TEST(DDSDiscovery, AddDiscoveryServerToList)
     using namespace eprosima::fastdds::dds;
     using namespace eprosima::fastrtps::rtps;
 
-    // Create first server
+    /* Get random port from the environment */
+    char* value = nullptr;
+    value = std::getenv("W_UNICAST_PORT_RANDOM_NUMBER");
+    if (nullptr == value)
+    {
+        value = &std::string("11811")[0];
+    }
+
+    /* Create first server */
     PubSubParticipant<HelloWorldType> server_1(0u, 0u, 0u, 0u);
+    // Set participant as server
     WireProtocolConfigQos server_1_qos;
     server_1_qos.builtin.discovery_config.discoveryProtocol = DiscoveryProtocol_t::SERVER;
-    std::string server_1_prefix = "44.53.00.5f.45.50.52.4f.53.49.4d.41";
-    std::istringstream(server_1_prefix) >> server_1_qos.prefix;
+    // Generate random GUID prefix
+    srand (time(NULL));
+    GuidPrefix_t server_1_prefix;
+    for (auto i = 0; i < 12; i++)
+    {
+        server_1_prefix.value[i] = eprosima::fastrtps::rtps::octet(rand() % 254);
+    }
+    server_1_qos.prefix = server_1_prefix;
+    // Generate server's listening locator
     Locator_t locator_server_1;
     IPLocator::setIPv4(locator_server_1, 127, 0, 0, 1);
-    locator_server_1.port = 64863;
+    uint32_t server_1_port = atol(value);
+    locator_server_1.port = server_1_port;
     server_1_qos.builtin.metatrafficUnicastLocatorList.push_back(locator_server_1);
+    // Init server
     ASSERT_TRUE(server_1.wire_protocol(server_1_qos).init_participant());
 
-    // Create second server
+    /* Create second server */
     PubSubParticipant<HelloWorldType> server_2(0u, 0u, 0u, 0u);
+    // Set participant as server
     WireProtocolConfigQos server_2_qos;
     server_2_qos.builtin.discovery_config.discoveryProtocol = DiscoveryProtocol_t::SERVER;
-    std::string server_2_prefix = "44.53.00.5f.45.50.52.4f.53.49.4d.42";
-    std::istringstream(server_2_prefix) >> server_2_qos.prefix;
+    // Generate random GUID prefix
+    GuidPrefix_t server_2_prefix = server_1_prefix;
+    server_2_prefix.value[11]++;
+    server_2_qos.prefix = server_2_prefix;
+    // Generate server's listening locator
     Locator_t locator_server_2;
     IPLocator::setIPv4(locator_server_2, 127, 0, 0, 1);
-    locator_server_2.port = 64862;
+    uint32_t server_2_port = atol(value) + 1;
+    locator_server_2.port = server_2_port;
     server_2_qos.builtin.metatrafficUnicastLocatorList.push_back(locator_server_2);
+    // Init server
     ASSERT_TRUE(server_2.wire_protocol(server_2_qos).init_participant());
 
-    // Create a client that connects to the first server from the beginning
+    /* Create a client that connects to the first server from the beginning */
     PubSubParticipant<HelloWorldType> client(0u, 0u, 0u, 0u);
+    // Set participant as client
     WireProtocolConfigQos client_qos;
     client_qos.builtin.discovery_config.discoveryProtocol = DiscoveryProtocol_t::CLIENT;
+    // Connect to first server
     RemoteServerAttributes server_1_att;
-    server_1_att.ReadguidPrefix(server_1_prefix.c_str());
+    server_1_att.guidPrefix = server_1_prefix;
     server_1_att.metatrafficUnicastLocatorList.push_back(Locator_t(locator_server_1));
     client_qos.builtin.discovery_config.m_DiscoveryServers.push_back(server_1_att);
+    // Init client
     ASSERT_TRUE(client.wire_protocol(client_qos).init_participant());
 
-    // Check that server_1 and client_1 only know each other, and that server_2 does has not
-    // discovered anyone
+    /**
+     * Check that server_1 and client_1 only know each other, and that server_2 does has not
+     * discovered anyone
+     */
     server_1.wait_discovery(std::chrono::seconds::zero(), 1, true);
     client.wait_discovery(std::chrono::seconds::zero(), 1, true);
     server_2.wait_discovery(std::chrono::seconds::zero(), 0, true);
 
-    // Add server_2 to client
+    /* Add server_2 to client */
     RemoteServerAttributes server_2_att;
-    server_2_att.ReadguidPrefix(server_2_prefix.c_str());
+    server_2_att.guidPrefix = server_2_prefix;
     server_2_att.metatrafficUnicastLocatorList.push_back(Locator_t(locator_server_2));
     client_qos.builtin.discovery_config.m_DiscoveryServers.push_back(server_2_att);
+    // Update client's servers list
     ASSERT_TRUE(client.update_wire_protocol(client_qos));
 
-    // Check that the servers only know about the client, and that the client known about both servers
+    /* Check that the servers only know about the client, and that the client known about both servers */
     server_1.wait_discovery(std::chrono::seconds::zero(), 1, true);
     client.wait_discovery(std::chrono::seconds::zero(), 2, true);
     server_2.wait_discovery(std::chrono::seconds::zero(), 1, true);
 
-    // Add server_2 to server_1
+    /* Add server_2 to server_1 */
     server_1_qos.builtin.discovery_config.m_DiscoveryServers.push_back(server_2_att);
     ASSERT_TRUE(server_1.update_wire_protocol(server_1_qos));
 
-    // Check that they all know each other
+    /* Check that they all know each other */
     server_1.wait_discovery(std::chrono::seconds::zero(), 2, true);
     client.wait_discovery(std::chrono::seconds::zero(), 2, true);
     server_2.wait_discovery(std::chrono::seconds::zero(), 2, true);
