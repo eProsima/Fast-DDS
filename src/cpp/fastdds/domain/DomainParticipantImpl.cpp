@@ -1897,7 +1897,8 @@ bool DomainParticipantImpl::can_qos_be_updated(
                 if (!contained)
                 {
                     updatable = false;
-                    logWarning(RTPS_QOS_CHECK, "Discovery Servers cannot be removed from the list; they can only be added");
+                    logWarning(RTPS_QOS_CHECK,
+                            "Discovery Servers cannot be removed from the list; they can only be added");
                     break;
                 }
             }

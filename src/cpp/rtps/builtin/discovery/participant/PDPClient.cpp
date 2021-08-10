@@ -597,7 +597,8 @@ void PDPClient::update_remote_servers_list()
     }
 }
 
-void PDPClient::match_pdp_writer_nts_(const eprosima::fastdds::rtps::RemoteServerAttributes& server_att)
+void PDPClient::match_pdp_writer_nts_(
+        const eprosima::fastdds::rtps::RemoteServerAttributes& server_att)
 {
     std::lock_guard<std::mutex> data_guard(temp_data_lock_);
     const NetworkFactory& network = mp_RTPSParticipant->network_factory();
@@ -610,7 +611,8 @@ void PDPClient::match_pdp_writer_nts_(const eprosima::fastdds::rtps::RemoteServe
     mp_PDPReader->matched_writer_add(temp_writer_data_);
 }
 
-void PDPClient::match_pdp_reader_nts_(const eprosima::fastdds::rtps::RemoteServerAttributes& server_att)
+void PDPClient::match_pdp_reader_nts_(
+        const eprosima::fastdds::rtps::RemoteServerAttributes& server_att)
 {
     std::lock_guard<std::mutex> data_guard(temp_data_lock_);
     const NetworkFactory& network = mp_RTPSParticipant->network_factory();

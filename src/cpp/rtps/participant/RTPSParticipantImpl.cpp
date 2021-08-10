@@ -1135,7 +1135,8 @@ void RTPSParticipantImpl::update_attributes(
             for (auto incoming_server : patt.builtin.discovery_config.m_DiscoveryServers)
             {
                 eprosima::fastdds::rtps::RemoteServerList_t::iterator server_it;
-                for (server_it = m_att.builtin.discovery_config.m_DiscoveryServers.begin(); server_it != m_att.builtin.discovery_config.m_DiscoveryServers.end(); server_it++)
+                for (server_it = m_att.builtin.discovery_config.m_DiscoveryServers.begin();
+                        server_it != m_att.builtin.discovery_config.m_DiscoveryServers.end(); server_it++)
                 {
                     if (server_it->guidPrefix == incoming_server.guidPrefix)
                     {
