@@ -17,31 +17,25 @@
  *
  */
 
-#include <fastdds/rtps/builtin/BuiltinProtocols.h>
-#include <fastdds/rtps/builtin/liveliness/WLP.h>
-
-#include <fastdds/rtps/participant/RTPSParticipantListener.h>
-#include <fastdds/rtps/reader/StatefulReader.h>
-#include <fastdds/rtps/writer/StatefulWriter.h>
-
-#include <fastdds/rtps/attributes/RTPSParticipantAttributes.h>
-
-#include <fastdds/rtps/writer/ReaderProxy.h>
-
-#include <fastdds/rtps/history/WriterHistory.h>
-#include <fastdds/rtps/history/ReaderHistory.h>
-
-#include <fastrtps/utils/TimeConversion.h>
-
-#include <rtps/builtin/discovery/participant/DirectMessageSender.hpp>
-#include <rtps/participant/RTPSParticipantImpl.h>
-#include <fastdds/rtps/builtin/discovery/participant/PDPListener.h>
+#include <rtps/builtin/discovery/participant/PDPClient.h>
 
 #include <fastdds/dds/log/Log.hpp>
-
-#include <rtps/builtin/discovery/participant/PDPClient.h>
-#include <rtps/builtin/discovery/participant/timedevent/DSClientEvent.h>
+#include <fastdds/rtps/attributes/RTPSParticipantAttributes.h>
+#include <fastdds/rtps/builtin/BuiltinProtocols.h>
+#include <fastdds/rtps/builtin/discovery/participant/PDPListener.h>
+#include <fastdds/rtps/builtin/liveliness/WLP.h>
+#include <fastdds/rtps/history/ReaderHistory.h>
+#include <fastdds/rtps/history/WriterHistory.h>
+#include <fastdds/rtps/participant/RTPSParticipantListener.h>
+#include <fastdds/rtps/reader/StatefulReader.h>
+#include <fastdds/rtps/writer/ReaderProxy.h>
+#include <fastdds/rtps/writer/StatefulWriter.h>
+#include <fastrtps/utils/TimeConversion.h>
 #include <rtps/builtin/discovery/endpoint/EDPClient.h>
+#include <rtps/builtin/discovery/participant/DirectMessageSender.hpp>
+#include <rtps/builtin/discovery/participant/timedevent/DSClientEvent.h>
+#include <rtps/participant/RTPSParticipantImpl.h>
+#include <utils/SystemInfo.hpp>
 
 using namespace eprosima::fastrtps;
 
@@ -629,9 +623,8 @@ const std::string& ros_discovery_server_env()
 {
     static std::string servers;
     {
-#pragma warning(suppress:4996)
         const char* data = std::getenv(DEFAULT_ROS2_MASTER_URI);
-        if (nullptr != data)
+        if (eprosima::ReturnCode_t::RETCODE_OK == SystemInfo::instance().get_env(DEFAULT_ROS2_MASTER_URI, &data))
         {
             servers = data;
         }
