@@ -647,8 +647,10 @@ bool load_environment_server_info(
         return false;
     }
 
-    // parsing ancillary regex
-    const std::regex ROS2_IPV4_PATTERN(R"(^((?:[0-9]{1,3}\.){3}[0-9]{1,3})?:?(?:(\d+))?$)");
+    /* Parsing ancillary regex */
+    // Address should be <letter,numbers,dots>:<number>. We do not need to verify that the first part
+    // is an IPv4 address, as it is done latter.
+    const std::regex ROS2_ADDRESS_PATTERN(R"(^([A-Za-z0-9-.]+)?:?(?:(\d+))?$)");
     const std::regex ROS2_SERVER_LIST_PATTERN(R"(([^;]*);?)");
 
     try
@@ -674,16 +676,30 @@ bool load_environment_server_info(
                 // now we must parse the inner expression
                 std::smatch mr;
                 std::string locator(sm);
-                if (std::regex_match(locator, mr, ROS2_IPV4_PATTERN, std::regex_constants::match_not_null))
+                if (std::regex_match(locator, mr, ROS2_ADDRESS_PATTERN, std::regex_constants::match_not_null))
                 {
                     std::smatch::iterator it = mr.cbegin();
 
                     while (++it != mr.cend())
                     {
-                        if (!IPLocator::setIPv4(server_locator, it->str()))
+                        std::string address = it->str();
+
+                        // Check whether the address is IPv4
+                        if (!IPLocator::isIPv4(address))
+                        {
+                            auto response = rtps::IPLocator::resolveNameDNS(address);
+
+                            // Add the first valid IPv4 address that we can find
+                            if (response.first.size() > 0)
+                            {
+                                address = response.first.begin()->data();
+                            }
+                        }
+
+                        if (!IPLocator::setIPv4(server_locator, address))
                         {
                             std::stringstream ss;
-                            ss << "Wrong ipv4 address passed into the server's list " << it->str();
+                            ss << "Wrong ipv4 address passed into the server's list " << address;
                             throw std::invalid_argument(ss.str());
                         }
 
@@ -698,17 +714,17 @@ bool load_environment_server_info(
                             // reset the locator to default
                             IPLocator::setPhysicalPort(server_locator, DEFAULT_ROS2_SERVER_PORT);
 
-                            if ( it->matched)
+                            if (it->matched)
                             {
                                 // note stoi throws also an invalid_argument
                                 int port = stoi(it->str());
 
-                                if ( port > std::numeric_limits<uint16_t>::max())
+                                if (port > std::numeric_limits<uint16_t>::max())
                                 {
-                                    throw std::out_of_range("Too larget udp port passed into the server's list");
+                                    throw std::out_of_range("Too large udp port passed into the server's list");
                                 }
 
-                                if ( !IPLocator::setPhysicalPort(server_locator, static_cast<uint16_t>(port)))
+                                if (!IPLocator::setPhysicalPort(server_locator, static_cast<uint16_t>(port)))
                                 {
                                     std::stringstream ss;
                                     ss << "Wrong udp port passed into the server's list " << it->str();
@@ -721,7 +737,7 @@ bool load_environment_server_info(
                     // add the server to the list
                     if (!get_server_client_default_guidPrefix(server_id, server_att.guidPrefix))
                     {
-                        throw std::invalid_argument("The maximum number of default discovery servers have been reached");
+                        throw std::invalid_argument("The maximum number of default discovery servers has been reached");
                     }
 
                     server_att.metatrafficUnicastLocatorList.clear();
@@ -750,7 +766,7 @@ bool load_environment_server_info(
             throw std::invalid_argument("No default server locators were provided.");
         }
     }
-    catch ( std::exception& e )
+    catch (std::exception& e)
     {
         logError(SERVER_CLIENT_DISCOVERY, e.what());
         attributes.clear();
