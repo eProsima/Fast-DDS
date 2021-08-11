@@ -42,12 +42,15 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
 
     add_executable(GuidUtilsTests ${GUID_UTILS_TESTS_SOURCE})
     target_compile_definitions(GuidUtilsTests PRIVATE FASTRTPS_NO_LIB
+        BOOST_ASIO_STANDALONE
+        ASIO_STANDALONE
         $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
         $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
         )
     target_include_directories(GuidUtilsTests PRIVATE
         ${PROJECT_SOURCE_DIR}/src/cpp
-        ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include)
+        ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include
+        ${Asio_INCLUDE_DIR})
     target_link_libraries(GuidUtilsTests GTest::gtest)
     if(MSVC OR MSVC_IDE)
         target_link_libraries(GuidUtilsTests ws2_32)
