@@ -90,7 +90,7 @@ TEST(DDSDiscovery, AddDiscoveryServerToList)
     WireProtocolConfigQos server_1_qos;
     server_1_qos.builtin.discovery_config.discoveryProtocol = DiscoveryProtocol_t::SERVER;
     // Generate random GUID prefix
-    srand(static_cast<unsigned>(time(NULL)));
+    srand(static_cast<unsigned>(time(nullptr)));
     GuidPrefix_t server_1_prefix;
     for (auto i = 0; i < 12; i++)
     {

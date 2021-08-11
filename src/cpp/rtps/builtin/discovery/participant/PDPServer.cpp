@@ -17,9 +17,10 @@
  *
  */
 
-#include <iostream>
 #include <fstream>
+#include <iostream>
 #include <mutex>
+#include <set>
 
 #include <fastrtps/utils/TimedMutex.hpp>
 

@@ -20,11 +20,12 @@
 #ifndef _FASTDDS_RTPS_DISCOVERY_DATABASE_H_
 #define _FASTDDS_RTPS_DISCOVERY_DATABASE_H_
 
-#include <vector>
+#include <fstream>
+#include <iostream>
 #include <map>
 #include <mutex>
-#include <iostream>
-#include <fstream>
+#include <set>
+#include <vector>
 
 #include <fastrtps/utils/fixed_size_string.hpp>
 #include <fastdds/rtps/writer/ReaderProxy.h>
