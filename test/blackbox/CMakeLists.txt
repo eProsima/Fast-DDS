@@ -228,6 +228,7 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER) AND fastcdr_FOUND)
         set(DDS_BLACKBOXTESTS_SOURCE
             ${DDS_BLACKBOXTESTS_TEST_SOURCE}
             ${BLACKBOXTESTS_SOURCE}
+            ${PROJECT_SOURCE_DIR}/src/cpp/utils/SystemInfo.cpp
             )
 
         # Prepare static discovery xml file for blackbox tests.
