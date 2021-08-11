@@ -12,20 +12,20 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include <chrono>
+#include <cstdlib>
+#include <ctime>
+#include <string>
+
 #include <gtest/gtest.h>
 
 #include "BlackboxTests.hpp"
-
 #include "PubSubParticipant.hpp"
 #include "PubSubReader.hpp"
 
 #include <fastdds/dds/core/policy/QosPolicies.hpp>
 #include <fastdds/rtps/common/Locator.h>
-
-#include <chrono>
-#include <stdlib.h>
-#include <string>
-#include <time.h>
+#include <utils/SystemInfo.hpp>
 
 // Regression test for redmine issue 11857
 TEST(DDSDiscovery, IgnoreParticipantFlags)
@@ -73,13 +73,13 @@ TEST(DDSDiscovery, IgnoreParticipantFlags)
  */
 TEST(DDSDiscovery, AddDiscoveryServerToList)
 {
+    using namespace eprosima;
     using namespace eprosima::fastdds::dds;
     using namespace eprosima::fastrtps::rtps;
 
     /* Get random port from the environment */
-    char* value = nullptr;
-    value = std::getenv("W_UNICAST_PORT_RANDOM_NUMBER");
-    if (nullptr == value)
+    const char* value;
+    if (eprosima::ReturnCode_t::RETCODE_OK != SystemInfo::instance().get_env("W_UNICAST_PORT_RANDOM_NUMBER", &value))
     {
         value = &std::string("11811")[0];
     }
@@ -90,7 +90,7 @@ TEST(DDSDiscovery, AddDiscoveryServerToList)
     WireProtocolConfigQos server_1_qos;
     server_1_qos.builtin.discovery_config.discoveryProtocol = DiscoveryProtocol_t::SERVER;
     // Generate random GUID prefix
-    srand((unsigned)time(NULL));
+    srand(static_cast<unsigned>(time(NULL)));
     GuidPrefix_t server_1_prefix;
     for (auto i = 0; i < 12; i++)
     {

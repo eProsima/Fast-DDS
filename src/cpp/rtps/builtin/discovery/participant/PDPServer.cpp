@@ -886,7 +886,7 @@ void PDPServer::update_remote_servers_list()
 {
     if (!mp_PDPReader || !mp_PDPWriter)
     {
-        logError(RTPS_PDP_SERVER, "Cannot update server list within an uninitialized Client");
+        logError(RTPS_PDP_SERVER, "Cannot update server list within an uninitialized Server");
         return;
     }
 

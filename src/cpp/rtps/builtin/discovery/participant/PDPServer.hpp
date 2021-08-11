@@ -22,11 +22,17 @@
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
 #include <fastdds/rtps/builtin/discovery/participant/PDP.h>
+
+#include <set>
+#include <sstream>
+#include <string>
+#include <vector>
+
+#include <fastdds/rtps/attributes/ServerAttributes.h>
 #include <fastdds/rtps/history/History.h>
 #include <fastdds/rtps/resources/ResourceEvent.h>
-
-#include <rtps/builtin/discovery/database/DiscoveryDataFilter.hpp>
 #include <rtps/builtin/discovery/database/DiscoveryDataBase.hpp>
+#include <rtps/builtin/discovery/database/DiscoveryDataFilter.hpp>
 #include <rtps/builtin/discovery/participant/timedevent/DServerEvent.hpp>
 
 namespace eprosima {
@@ -273,15 +279,17 @@ protected:
     void process_backup_store();
 
     /**
-     * Manually match PDP writer endpoint of a given server. The function is not thread safe (nts) in
-     * the sense that it does not take the PDP mutex. It does however take temp_data_lock_
+     * Manually match the local PDP reader with the PDP writer of a given server. The function is
+     * not thread safe (nts) in the sense that it does not take the PDP mutex. It does however take
+     * temp_data_lock_
      */
     void match_pdp_writer_nts_(
             const eprosima::fastdds::rtps::RemoteServerAttributes& server_att);
 
     /**
-     * Manually match PDP reader endpoint of a given server. The function is not thread safe (nts) in
-     * the sense that it does not take the PDP mutex. It does however take temp_data_lock_
+     * Manually match the local PDP writer with the PDP reader of a given server. The function is
+     * not thread safe (nts) in the sense that it does not take the PDP mutex. It does however take
+     * temp_data_lock_
      */
     void match_pdp_reader_nts_(
             const eprosima::fastdds::rtps::RemoteServerAttributes& server_att);
