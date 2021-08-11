@@ -58,6 +58,8 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
 
     add_executable(EdpTests ${EDPTESTS_SOURCE})
     target_compile_definitions(EdpTests PRIVATE FASTRTPS_NO_LIB
+        BOOST_ASIO_STANDALONE
+        ASIO_STANDALONE
         $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
         $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
         )
@@ -78,6 +80,7 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
         ${PROJECT_SOURCE_DIR}/test/mock/rtps/SecurityManager
         ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include
         ${PROJECT_SOURCE_DIR}/src/cpp
+        ${Asio_INCLUDE_DIR}
         )
     target_link_libraries(EdpTests foonathan_memory
         GTest::gmock

@@ -100,13 +100,23 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
 
     add_executable(LocatorTests ${LOCATORTESTS_SOURCE})
     target_compile_definitions(LocatorTests PRIVATE FASTRTPS_NO_LIB
+        BOOST_ASIO_STANDALONE
+        ASIO_STANDALONE
         $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
         $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
         )
     target_include_directories(LocatorTests PRIVATE
-        ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include)
+        ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include ${Asio_INCLUDE_DIR})
     target_link_libraries(LocatorTests GTest::gtest ${MOCKS})
     add_gtest(LocatorTests SOURCES ${LOCATORTESTS_SOURCE})
+    # Skip DNS related tests when not running on our CI
+    if(NOT(EPROSIMA_BUILD))
+        message(STATUS "Ignoring DNS tests")
+        set(CTEST_CUSTOM_TESTS_IGNORE
+            ${CTEST_CUSTOM_TESTS_IGNORE}
+            LocatorDNSTests
+            )
+    endif()
 
 
     add_executable(FixedSizeQueueTests ${FIXEDSIZEQUEUETESTS_SOURCE})

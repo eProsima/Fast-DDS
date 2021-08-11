@@ -118,6 +118,8 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
 
     add_executable(XMLProfileParserTests ${XMLPROFILEPARSER_SOURCE})
     target_compile_definitions(XMLProfileParserTests PRIVATE FASTRTPS_NO_LIB
+        BOOST_ASIO_STANDALONE
+        ASIO_STANDALONE
         $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
         $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
         )
@@ -130,7 +132,9 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
         ${PROJECT_SOURCE_DIR}/test/mock/rtps/UDPv4TransportDescriptor
         ${PROJECT_SOURCE_DIR}/test/mock/rtps/UDPv6TransportDescriptor
         ${PROJECT_SOURCE_DIR}/test/mock/rtps/SharedMemTransportDescriptor
-        ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include)
+        ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include
+        ${Asio_INCLUDE_DIR}
+        )
 
     target_link_libraries(XMLProfileParserTests GTest::gmock
         $<$<BOOL:${WIN32}>:iphlpapi$<SEMICOLON>Shlwapi>
@@ -202,6 +206,8 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
 
     add_executable(XMLParserTests ${XMLPARSER_SOURCE})
     target_compile_definitions(XMLParserTests PRIVATE FASTRTPS_NO_LIB
+        BOOST_ASIO_STANDALONE
+        ASIO_STANDALONE
         $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
         $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
         )
@@ -215,6 +221,7 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
         ${PROJECT_SOURCE_DIR}/test/mock/rtps/SharedMemTransportDescriptor
         ${PROJECT_SOURCE_DIR}/include
         ${PROJECT_BINARY_DIR}/include
+        ${Asio_INCLUDE_DIR}
         )
 
     target_link_libraries(XMLParserTests GTest::gtest
@@ -312,12 +319,16 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
     include_directories(${TINYXML2_INCLUDE_DIR})
 
     add_executable(XMLEndpointParserTests ${XMLENDPOINTPARSERTESTS_SOURCE})
-    target_compile_definitions(XMLEndpointParserTests PRIVATE FASTRTPS_NO_LIB)
+    target_compile_definitions(XMLEndpointParserTests PRIVATE FASTRTPS_NO_LIB
+        BOOST_ASIO_STANDALONE
+        ASIO_STANDALONE
+        )
     target_include_directories(XMLEndpointParserTests PRIVATE
         ${PROJECT_SOURCE_DIR}/test/mock/rtps/ReaderProxyData
         ${PROJECT_SOURCE_DIR}/test/mock/rtps/WriterProxyData
         ${PROJECT_SOURCE_DIR}/include
         ${PROJECT_BINARY_DIR}/include
+        ${Asio_INCLUDE_DIR}
         )
 
     target_link_libraries(XMLEndpointParserTests GTest::gtest
