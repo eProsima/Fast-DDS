@@ -17,9 +17,10 @@
  *
  */
 
-#include <iostream>
 #include <fstream>
+#include <iostream>
 #include <mutex>
+#include <set>
 
 #include <fastrtps/utils/TimedMutex.hpp>
 
@@ -224,8 +225,6 @@ bool PDPServer::createPDPEndpoints()
 {
     logInfo(RTPS_PDP_SERVER, "Beginning PDPServer Endpoints creation");
 
-    const NetworkFactory& network = mp_RTPSParticipant->network_factory();
-
     /***********************************
     * PDP READER
     ***********************************/
@@ -270,17 +269,7 @@ bool PDPServer::createPDPEndpoints()
             // Initial peer list doesn't make sense in server scenario. Client should match its server list
             for (const eprosima::fastdds::rtps::RemoteServerAttributes& it : mp_builtin->m_DiscoveryServers)
             {
-                std::lock_guard<std::mutex> data_guard(temp_data_lock_);
-                temp_writer_data_.clear();
-                temp_writer_data_.guid(it.GetPDPWriter());
-                temp_writer_data_.set_multicast_locators(it.metatrafficMulticastLocatorList, network);
-                temp_writer_data_.set_remote_unicast_locators(it.metatrafficUnicastLocatorList, network);
-                // TODO check if this is correct, it is equal as PDPServer, but we do not know like this the durKind of the
-                // other server
-                temp_writer_data_.m_qos.m_durability.durabilityKind(durability_);
-                temp_writer_data_.m_qos.m_reliability.kind = fastrtps::RELIABLE_RELIABILITY_QOS;
-
-                mp_PDPReader->matched_writer_add(temp_writer_data_);
+                match_pdp_writer_nts_(it);
             }
         }
     }
@@ -343,15 +332,7 @@ bool PDPServer::createPDPEndpoints()
 
             for (const eprosima::fastdds::rtps::RemoteServerAttributes& it : mp_builtin->m_DiscoveryServers)
             {
-                std::lock_guard<std::mutex> data_guard(temp_data_lock_);
-                temp_reader_data_.clear();
-                temp_reader_data_.guid(it.GetPDPReader());
-                temp_reader_data_.set_multicast_locators(it.metatrafficMulticastLocatorList, network);
-                temp_reader_data_.set_remote_unicast_locators(it.metatrafficUnicastLocatorList, network);
-                temp_reader_data_.m_qos.m_durability.kind = fastrtps::TRANSIENT_LOCAL_DURABILITY_QOS;
-                temp_reader_data_.m_qos.m_reliability.kind = fastrtps::RELIABLE_RELIABILITY_QOS;
-
-                mp_PDPWriter->matched_reader_add(temp_reader_data_);
+                match_pdp_reader_nts_(it);
             }
         }
     }
@@ -905,7 +886,35 @@ bool PDPServer::server_update_routine()
 
 void PDPServer::update_remote_servers_list()
 {
-    return;
+    if (!mp_PDPReader || !mp_PDPWriter)
+    {
+        logError(RTPS_PDP_SERVER, "Cannot update server list within an uninitialized Server");
+        return;
+    }
+
+    std::lock_guard<std::recursive_mutex> lock(*getMutex());
+
+    for (const eprosima::fastdds::rtps::RemoteServerAttributes& it : mp_builtin->m_DiscoveryServers)
+    {
+        if (mp_PDPReader->matched_writer_is_matched(it.GetPDPWriter()))
+        {
+            continue;
+        }
+
+        match_pdp_writer_nts_(it);
+
+        if (mp_PDPWriter->matched_reader_is_matched(it.GetPDPReader()))
+        {
+            continue;
+        }
+
+        match_pdp_reader_nts_(it);
+    }
+
+    for (auto server : mp_builtin->m_DiscoveryServers)
+    {
+        discovery_db_.add_server(server.guidPrefix);
+    }
 }
 
 bool PDPServer::process_writers_acknowledgements()
@@ -1349,13 +1358,13 @@ bool PDPServer::pending_ack()
     return ret;
 }
 
-std::vector<fastrtps::rtps::GuidPrefix_t> PDPServer::servers_prefixes()
+std::set<fastrtps::rtps::GuidPrefix_t> PDPServer::servers_prefixes()
 {
     std::lock_guard<std::recursive_mutex> lock(*getMutex());
-    std::vector<GuidPrefix_t> servers;
+    std::set<GuidPrefix_t> servers;
     for (const eprosima::fastdds::rtps::RemoteServerAttributes& it : mp_builtin->m_DiscoveryServers)
     {
-        servers.push_back(it.guidPrefix);
+        servers.insert(it.guidPrefix);
     }
     return servers;
 }
@@ -1766,6 +1775,34 @@ void PDPServer::process_backup_store()
 
     // Clear queue ddb backup
     discovery_db_.clean_backup();
+}
+
+void PDPServer::match_pdp_writer_nts_(
+        const eprosima::fastdds::rtps::RemoteServerAttributes& server_att)
+{
+    std::lock_guard<std::mutex> data_guard(temp_data_lock_);
+    const NetworkFactory& network = mp_RTPSParticipant->network_factory();
+    temp_writer_data_.clear();
+    temp_writer_data_.guid(server_att.GetPDPWriter());
+    temp_writer_data_.set_multicast_locators(server_att.metatrafficMulticastLocatorList, network);
+    temp_writer_data_.set_remote_unicast_locators(server_att.metatrafficUnicastLocatorList, network);
+    temp_writer_data_.m_qos.m_durability.durabilityKind(durability_);
+    temp_writer_data_.m_qos.m_reliability.kind = dds::RELIABLE_RELIABILITY_QOS;
+    mp_PDPReader->matched_writer_add(temp_writer_data_);
+}
+
+void PDPServer::match_pdp_reader_nts_(
+        const eprosima::fastdds::rtps::RemoteServerAttributes& server_att)
+{
+    std::lock_guard<std::mutex> data_guard(temp_data_lock_);
+    const NetworkFactory& network = mp_RTPSParticipant->network_factory();
+    temp_reader_data_.clear();
+    temp_reader_data_.guid(server_att.GetPDPReader());
+    temp_reader_data_.set_multicast_locators(server_att.metatrafficMulticastLocatorList, network);
+    temp_reader_data_.set_remote_unicast_locators(server_att.metatrafficUnicastLocatorList, network);
+    temp_reader_data_.m_qos.m_durability.kind = dds::TRANSIENT_LOCAL_DURABILITY_QOS;
+    temp_reader_data_.m_qos.m_reliability.kind = dds::RELIABLE_RELIABILITY_QOS;
+    mp_PDPWriter->matched_reader_add(temp_reader_data_);
 }
 
 } // namespace rtps

@@ -425,25 +425,40 @@ public:
     }
 
     bool wait_discovery(
-            std::chrono::seconds timeout = std::chrono::seconds::zero())
+            std::chrono::seconds timeout = std::chrono::seconds::zero(),
+            uint8_t matched = 0,
+            bool exact = false)
     {
-        bool ret_value = true;
-        std::unique_lock<std::mutex> lock(mutex_discovery_);
+        // No need to wait in this case
+        if (exact && matched == matched_)
+        {
+            return true;
+        }
 
+        std::unique_lock<std::mutex> lock(mutex_discovery_);
+        bool ret_value = true;
         std::cout << "Participant is waiting discovery..." << std::endl;
 
         if (timeout == std::chrono::seconds::zero())
         {
             cv_discovery_.wait(lock, [&]()
                     {
-                        return matched_ != 0;
+                        if (exact)
+                        {
+                            return matched_ == matched;
+                        }
+                        return matched_ >= matched;
                     });
         }
         else
         {
             if (!cv_discovery_.wait_for(lock, timeout, [&]()
                     {
-                        return matched_ != 0;
+                        if (exact)
+                        {
+                            return matched_ == matched;
+                        }
+                        return matched_ >= matched;
                     }))
             {
                 ret_value = false;
@@ -626,6 +641,26 @@ public:
     {
         participant_qos_.user_data().data_vec(user_data);
         return ReturnCode_t::RETCODE_OK == participant_->set_qos(participant_qos_);
+    }
+
+    PubSubParticipant& wire_protocol(
+            const eprosima::fastdds::dds::WireProtocolConfigQos& wire_protocol)
+    {
+        participant_qos_.wire_protocol() = wire_protocol;
+        return *this;
+    }
+
+    bool update_wire_protocol(
+            const eprosima::fastdds::dds::WireProtocolConfigQos& wire_protocol)
+    {
+        eprosima::fastdds::dds::DomainParticipantQos participant_qos = participant_qos_;
+        participant_qos.wire_protocol() = wire_protocol;
+        if (ReturnCode_t::RETCODE_OK == participant_->set_qos(participant_qos))
+        {
+            participant_qos_ = participant_qos;
+            return true;
+        }
+        return false;
     }
 
     PubSubParticipant& pub_property_policy(

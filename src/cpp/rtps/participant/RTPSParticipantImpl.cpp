@@ -64,6 +64,7 @@
 #include <fastdds/rtps/builtin/liveliness/WLP.h>
 
 #include <rtps/builtin/discovery/participant/PDPServer.hpp>
+#include <rtps/builtin/discovery/participant/PDPClient.h>
 
 #include <statistics/rtps/GuidUtils.hpp>
 
@@ -1183,7 +1184,6 @@ void RTPSParticipantImpl::update_attributes(
     }
 
     // Update RTPSParticipantAttributes member
-    m_att.builtin.discovery_config.m_DiscoveryServers = patt.builtin.discovery_config.m_DiscoveryServers;
     m_att.userData = patt.userData;
 
     auto pdp = mp_builtinProtocols->mp_PDP;
@@ -1200,12 +1200,40 @@ void RTPSParticipantImpl::update_attributes(
                 m_att.builtin.discovery_config.discoveryProtocol == DiscoveryProtocol::SERVER ||
                 m_att.builtin.discovery_config.discoveryProtocol == DiscoveryProtocol::BACKUP)
         {
+            // Add incoming servers iff we don't know about them already
+            for (auto incoming_server : patt.builtin.discovery_config.m_DiscoveryServers)
+            {
+                eprosima::fastdds::rtps::RemoteServerList_t::iterator server_it;
+                for (server_it = m_att.builtin.discovery_config.m_DiscoveryServers.begin();
+                        server_it != m_att.builtin.discovery_config.m_DiscoveryServers.end(); server_it++)
+                {
+                    if (server_it->guidPrefix == incoming_server.guidPrefix)
+                    {
+                        break;
+                    }
+                }
+                if (server_it == m_att.builtin.discovery_config.m_DiscoveryServers.end())
+                {
+                    m_att.builtin.discovery_config.m_DiscoveryServers.push_back(incoming_server);
+                }
+            }
+
+            // Update the servers list in builtin protocols
             mp_builtinProtocols->m_DiscoveryServers = m_att.builtin.discovery_config.m_DiscoveryServers;
+
+            // Notify PDPServer
             if (m_att.builtin.discovery_config.discoveryProtocol == DiscoveryProtocol::SERVER ||
                     m_att.builtin.discovery_config.discoveryProtocol == DiscoveryProtocol::BACKUP)
             {
                 fastdds::rtps::PDPServer* pdp_server = static_cast<fastdds::rtps::PDPServer*>(pdp);
                 pdp_server->update_remote_servers_list();
+            }
+            // Notify PDPClient
+            else if (m_att.builtin.discovery_config.discoveryProtocol == DiscoveryProtocol::CLIENT ||
+                    m_att.builtin.discovery_config.discoveryProtocol == DiscoveryProtocol::SUPER_CLIENT)
+            {
+                fastdds::rtps::PDPClient* pdp_client = static_cast<fastdds::rtps::PDPClient*>(pdp);
+                pdp_client->update_remote_servers_list();
             }
         }
     }

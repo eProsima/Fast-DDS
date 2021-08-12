@@ -1879,7 +1879,32 @@ bool DomainParticipantImpl::can_qos_be_updated(
             logWarning(RTPS_QOS_CHECK, "WireProtocolConfigQos cannot be changed after the participant is enabled, "
                     << "with the exception of builtin.discovery_config.m_DiscoveryServers");
         }
-
+        else
+        {
+            // This means that the only change is in wire_protocol().builtin.discovery_config.m_DiscoveryServers
+            // In that case, we need to ensure that the current list (to) is strictly contained in the incoming
+            // list (from). For that, we check that every server in the current list (to) is also in the incoming one
+            // (from)
+            for (auto existing_server : to.wire_protocol().builtin.discovery_config.m_DiscoveryServers)
+            {
+                bool contained = false;
+                for (auto incoming_server : from.wire_protocol().builtin.discovery_config.m_DiscoveryServers)
+                {
+                    if (existing_server.guidPrefix == incoming_server.guidPrefix)
+                    {
+                        contained = true;
+                        break;
+                    }
+                }
+                if (!contained)
+                {
+                    updatable = false;
+                    logWarning(RTPS_QOS_CHECK,
+                            "Discovery Servers cannot be removed from the list; they can only be added");
+                    break;
+                }
+            }
+        }
     }
     if (!(to.transport() == from.transport()))
     {
