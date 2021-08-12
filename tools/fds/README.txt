@@ -7,8 +7,9 @@ General options:
   -i  --server-id  Mandatory unique server identifier. Specifies zero based
                    server position in ROS_DISCOVERY_SERVER environment variable.
 
-  -l  --ip-address Server interface chosen to listen the clients. Defaults
-                   to any (0.0.0.0)
+  -l  --ip-address IPv4 address chosen to listen the clients. Defaults
+                   to any (0.0.0.0). Instead of an address, a name can
+                   be specified.
 
   -p  --port       UDP port chosen to listen the clients. Defaults to 11811
 
@@ -41,3 +42,8 @@ Examples:
 
       $ fast-discovery-server -i 1 -l 172.30.144.1 -p 12345 -b
 
+      5. Launch a default server with id 0 (first on ``ROS_DISCOVERY_SERVER``)
+         listening on localhost with UDP port 14520. Only localhost clients
+         can reach the server defining as `ROS_DISCOVERY_SERVER=localhost:14520`.
+
+      $ fastdds discovery -i 0 -l localhost -p 14520
