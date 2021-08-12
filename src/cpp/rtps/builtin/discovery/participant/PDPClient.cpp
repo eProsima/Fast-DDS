@@ -623,7 +623,7 @@ const std::string& ros_discovery_server_env()
 {
     static std::string servers;
     {
-        const char* data = std::getenv(DEFAULT_ROS2_MASTER_URI);
+        const char* data;
         if (eprosima::ReturnCode_t::RETCODE_OK == SystemInfo::instance().get_env(DEFAULT_ROS2_MASTER_URI, &data))
         {
             servers = data;

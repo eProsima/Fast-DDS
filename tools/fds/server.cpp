@@ -310,7 +310,7 @@ option::ArgStatus Arg::check_server_id(
 }
 
 /*static*/
-option::ArgStatus Arg::check_server_address(
+option::ArgStatus Arg::required(
         const option::Option& option,
         bool msg)
 {

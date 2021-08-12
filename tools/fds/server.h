@@ -34,7 +34,7 @@ struct Arg : public option::Arg
             const option::Option& option,
             bool msg);
 
-    static option::ArgStatus check_server_address(
+    static option::ArgStatus required(
             const option::Option& option,
             bool msg);
 
@@ -56,7 +56,7 @@ const option::Descriptor usage[] = {
       "  -i \t--server-id  Mandatory unique server identifier. Specifies zero based\n"
       "\t             server position in ROS_DISCOVERY_SERVER environment variable.\n" },
 
-    { IPADDRESS, 0, "l", "ip-address",   Arg::check_server_address,
+    { IPADDRESS, 0, "l", "ip-address",   Arg::required,
       "  -l \t--ip-address Server interface chosen to listen the clients. Defaults\n"
       "\t             to any (0.0.0.0)\n" },
 
