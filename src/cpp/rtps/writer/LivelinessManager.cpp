@@ -65,7 +65,7 @@ bool LivelinessManager::add_writer(
     if (!calculate_next())
     {
         timer_.cancel_timer();
-        return false;
+        return true;
     }
 
     // Some times the interval could be negative if a writer expired during the call to this function
