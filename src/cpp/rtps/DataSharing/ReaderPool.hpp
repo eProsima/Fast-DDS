@@ -233,14 +233,18 @@ protected:
 
     bool ensure_reading_reference_is_in_bounds()
     {
-        if ((next_payload_ >> 32) < (descriptor_->notified_end >> 32) &&
-                static_cast<uint32_t>(next_payload_) <= static_cast<uint32_t>(descriptor_->notified_end))
+        auto notified_end = end();
+        auto notified_end_high = notified_end >> 32;
+        auto next_payload_high = next_payload_ >> 32;
+        if (next_payload_high + 1 < notified_end_high ||
+                (next_payload_high < notified_end_high &&
+                static_cast<uint32_t>(next_payload_) <= static_cast<uint32_t>(notified_end)))
         {
             logWarning(RTPS_READER, "Writer " << writer() << " overtook reader in datasharing pool."
                                               << " Some changes will be missing.");
 
             // lower part is the index, upper part is the loop counter
-            next_payload_ = ((next_payload_ >> 32) << 32) + static_cast<uint32_t>(descriptor_->notified_end);
+            next_payload_ = ((notified_end_high - 1) << 32) + static_cast<uint32_t>(notified_end);
             advance(next_payload_);
             return false;
         }
