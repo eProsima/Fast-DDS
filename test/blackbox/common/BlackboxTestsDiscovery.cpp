@@ -1274,10 +1274,25 @@ TEST(Discovery, ServerClientEnvironmentSetUp)
 
     ASSERT_FALSE(load_environment_server_info(text, output));
 
-    // 8. check non-consistent addresses scenario
+    // 8. Check addresses as dns name
+    text = "localhost:12345";
+
+    output.clear();
+    standard.clear();
+
+    att.clear();
+    IPLocator::setIPv4(loc, string("127.0.0.1"));
+    IPLocator::setPhysicalPort(loc, 12345);
+    att.metatrafficUnicastLocatorList.push_back(loc);
+    get_server_client_default_guidPrefix(0, att.guidPrefix);
+    standard.push_back(att);
+
+    ASSERT_TRUE(load_environment_server_info(text, output));
+    ASSERT_EQ(output, standard);
+
+    // 9. Check mixed scenario with addresses and dns
     text = "192.168.36.34:14520;localhost:12345;172.30.80.1:31090;";
 
     output.clear();
-    ASSERT_FALSE(load_environment_server_info(text, output));
-
+    ASSERT_TRUE(load_environment_server_info(text, output));
 }
