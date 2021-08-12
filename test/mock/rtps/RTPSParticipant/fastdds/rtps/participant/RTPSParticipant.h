@@ -163,6 +163,13 @@ public:
         return attributes_;
     }
 
+    bool update_attributes(
+            const RTPSParticipantAttributes& patt)
+    {
+        static_cast<void>(patt);
+        return true;
+    }
+
 #if HAVE_SECURITY
 
     MOCK_METHOD1(is_security_enabled_for_writer, bool(
