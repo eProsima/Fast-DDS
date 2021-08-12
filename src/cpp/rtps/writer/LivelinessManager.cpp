@@ -61,6 +61,19 @@ bool LivelinessManager::add_writer(
         }
     }
     writers_.emplace_back(guid, kind, lease_duration);
+
+    if (!calculate_next())
+    {
+        timer_.cancel_timer();
+        return false;
+    }
+
+    // Some times the interval could be negative if a writer expired during the call to this function
+    // Once in this situation there is not much we can do but let asio timers expire inmediately
+    auto interval = timer_owner_->time - steady_clock::now();
+    timer_.update_interval_millisec((double)duration_cast<milliseconds>(interval).count());
+    timer_.restart_timer();
+
     return true;
 }
 
@@ -95,9 +108,8 @@ bool LivelinessManager::remove_writer(
                     }
                 }
 
-                if (timer_owner_ != nullptr && timer_owner_->guid == guid)
+                if (timer_owner_ != nullptr)
                 {
-                    timer_owner_ = nullptr;
                     if (!calculate_next())
                     {
                         timer_.cancel_timer();
