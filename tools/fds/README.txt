@@ -28,21 +28,21 @@ Examples:
 
       $ fast-discovery-server -i 1 -l 127.0.0.1 -p 14520
 
-      3. Launch a default server with id 3 (third on ROS_DISCOVERY_SERVER)
+      3. Launch a default server with id 2 (third on ROS_DISCOVERY_SERVER)
          listening on Wi-Fi (192.168.36.34) and Ethernet (172.20.96.1) local
          interfaces with UDP ports 8783 and 51083 respectively
          (addresses and ports are made up for the example).
 
-      $ fast-discovery-server -i 1 -l 192.168.36.34 -p 14520 -l 172.20.96.1 -p 51083
+      $ fast-discovery-server -i 2 -l 192.168.36.34 -p 8783 -l 172.20.96.1 -p 51083
 
-      4. Launch a default server with id 4 (fourth on ROS_DISCOVERY_SERVER)
+      4. Launch a default server with id 3 (fourth on ROS_DISCOVERY_SERVER)
          listening on 172.30.144.1 with UDP port 12345 and provided with a
          backup file. If the server crashes it will automatically restore its
          previous state when reenacted.
 
-      $ fast-discovery-server -i 1 -l 172.30.144.1 -p 12345 -b
+      $ fast-discovery-server -i 3 -l 172.30.144.1 -p 12345 -b
 
-      5. Launch a default server with id 0 (first on ``ROS_DISCOVERY_SERVER``)
+      5. Launch a default server with id 0 (first on ROS_DISCOVERY_SERVER)
          listening on localhost with UDP port 14520. Only localhost clients
          can reach the server defining as `ROS_DISCOVERY_SERVER=localhost:14520`.
 
