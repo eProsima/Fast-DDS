@@ -69,7 +69,7 @@ bool LivelinessManager::add_writer(
     }
 
     // Some times the interval could be negative if a writer expired during the call to this function
-    // Once in this situation there is not much we can do but let asio timers expire inmediately
+    // Once in this situation there is not much we can do but let asio timers expire immediately
     auto interval = timer_owner_->time - steady_clock::now();
     timer_.update_interval_millisec((double)duration_cast<milliseconds>(interval).count());
     timer_.restart_timer();
