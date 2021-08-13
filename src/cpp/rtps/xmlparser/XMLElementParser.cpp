@@ -2729,6 +2729,23 @@ XMLP_ret XMLParser::getXMLLocatorUDPv4(
             {
                 return XMLP_ret::XML_ERROR;
             }
+            // Check whether the address is IPv4
+            if (!IPLocator::isIPv4(s))
+            {
+                auto response = rtps::IPLocator::resolveNameDNS(s);
+
+                // Add the first valid IPv4 address that we can find
+                if (response.first.size() > 0)
+                {
+                    s = response.first.begin()->data();
+                }
+                else
+                {
+                    logError(XMLPARSER,
+                            "DNS server did not return any IPv4 address for: '" << s << "'. Name: " << name);
+                    return XMLP_ret::XML_ERROR;
+                }
+            }
             IPLocator::setIPv4(locator, s);
         }
         else
@@ -2775,6 +2792,23 @@ XMLP_ret XMLParser::getXMLLocatorUDPv6(
             if (XMLP_ret::XML_OK != getXMLString(p_aux0, &s, ident + 1))
             {
                 return XMLP_ret::XML_ERROR;
+            }
+            // Check whether the address is IPv6
+            if (!IPLocator::isIPv6(s))
+            {
+                auto response = rtps::IPLocator::resolveNameDNS(s);
+
+                // Add the first valid IPv6 address that we can find
+                if (response.second.size() > 0)
+                {
+                    s = response.second.begin()->data();
+                }
+                else
+                {
+                    logError(XMLPARSER,
+                            "DNS server did not return any IPv6 address for: '" << s << "'. Name: " << name);
+                    return XMLP_ret::XML_ERROR;
+                }
             }
             IPLocator::setIPv6(locator, s);
         }

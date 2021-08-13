@@ -174,10 +174,25 @@ int main (
     {
         while ( pOp )
         {
-            // Update locator address
-            if (!rtps::IPLocator::setIPv4(locator, string(pOp->arg)))
+            // Get next address
+            std::string address = string(pOp->arg);
+
+            // Check whether the address is IPv4
+            if (!rtps::IPLocator::isIPv4(address))
             {
-                cout << "Invalid listening locator address specified:" << pOp->arg << endl;
+                auto response = rtps::IPLocator::resolveNameDNS(address);
+
+                // Add the first valid IPv4 address that we can find
+                if (response.first.size() > 0)
+                {
+                    address = response.first.begin()->data();
+                }
+            }
+
+            // Update locator address
+            if (!rtps::IPLocator::setIPv4(locator, address))
+            {
+                cout << "Invalid listening locator address specified:" << address << endl;
                 return 1;
             }
 
@@ -288,35 +303,26 @@ option::ArgStatus Arg::check_server_id(
     if (msg)
     {
         cout << "Option '" << option.name
-             << "' is mandatory. Should be a key indentifier between 0 and 255." << endl;
+             << "' is mandatory. Should be a key identifier between 0 and 255." << endl;
     }
 
     return option::ARG_ILLEGAL;
 }
 
 /*static*/
-option::ArgStatus Arg::check_server_ipv4(
+option::ArgStatus Arg::required(
         const option::Option& option,
         bool msg)
 {
-    static const std::regex ipv4(R"(^(?:[0-9]{1,3}\.){3}[0-9]{1,3}$)");
-
-    // the argument is required
-    if ( nullptr != option.arg )
+    if (nullptr != option.arg)
     {
-        // we must check if its a proper ip address
-        if ( std::regex_match(option.arg, ipv4))
-        {
-            return option::ARG_OK;
-        }
+        return option::ARG_OK;
     }
 
     if (msg)
     {
-        cout << "Option '" << option.name
-             << "' should be a proper IPv4 address." << endl;
+        cout << "Option '" << option << "' requires an argument" << endl;
     }
-
     return option::ARG_ILLEGAL;
 }
 
