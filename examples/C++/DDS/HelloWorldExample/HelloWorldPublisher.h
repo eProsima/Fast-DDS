@@ -35,16 +35,23 @@ public:
     virtual ~HelloWorldPublisher();
 
     //!Initialize
-    bool init();
+    bool init(
+            const std::string& topic_name,
+            uint32_t domain,
+            bool async,
+            const std::string& transport,
+            bool reliable,
+            bool transient);
 
     //!Publish a sample
     bool publish(
-            bool waitForListener = true);
+            uint32_t numWaitMatched);
 
     //!Run for number samples
     void run(
             uint32_t number,
-            uint32_t sleep);
+            uint32_t sleep,
+            uint32_t numWaitMatched);
 
 private:
 
@@ -58,15 +65,12 @@ private:
 
     eprosima::fastdds::dds::DataWriter* writer_;
 
-    bool stop_;
-
     class PubListener : public eprosima::fastdds::dds::DataWriterListener
     {
 public:
 
         PubListener()
             : matched_(0)
-            , firstConnected_(false)
         {
         }
 
@@ -78,14 +82,14 @@ public:
                 eprosima::fastdds::dds::DataWriter* writer,
                 const eprosima::fastdds::dds::PublicationMatchedStatus& info) override;
 
-        int matched_;
+        uint32_t matched_;
 
-        bool firstConnected_;
     } listener_;
 
     void runThread(
             uint32_t number,
-            uint32_t sleep);
+            uint32_t sleep,
+            uint32_t numWaitMatched);
 
     eprosima::fastdds::dds::TypeSupport type_;
 };

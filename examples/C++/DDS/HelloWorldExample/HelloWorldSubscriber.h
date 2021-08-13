@@ -36,14 +36,20 @@ public:
     virtual ~HelloWorldSubscriber();
 
     //!Initialize the subscriber
-    bool init();
+    bool init(
+            const std::string& topic_name,
+            uint32_t threshold,
+            uint32_t domain,
+            const std::string& transport,
+            bool reliable,
+            bool transient);
 
     //!RUN the subscriber
-    void run();
-
-    //!Run the subscriber until number samples have been received.
     void run(
             uint32_t number);
+
+    void set_listener_threshold(
+            uint32_t threshold);
 
 private:
 
@@ -64,6 +70,7 @@ private:
         SubListener()
             : matched_(0)
             , samples_(0)
+            , threshold_(0)
         {
         }
 
@@ -83,6 +90,8 @@ private:
         int matched_;
 
         uint32_t samples_;
+
+        uint32_t threshold_;
     }
     listener_;
 };

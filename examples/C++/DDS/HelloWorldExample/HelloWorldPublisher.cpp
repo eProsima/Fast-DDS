@@ -25,10 +25,21 @@
 #include <fastdds/dds/publisher/qos/PublisherQos.hpp>
 #include <fastdds/dds/publisher/DataWriter.hpp>
 #include <fastdds/dds/publisher/qos/DataWriterQos.hpp>
+#include <fastdds/rtps/transport/shared_mem/SharedMemTransportDescriptor.h>
+#include <fastdds/rtps/transport/UDPv4TransportDescriptor.h>
 
 #include <thread>
+#include <csignal>
 
 using namespace eprosima::fastdds::dds;
+using namespace eprosima::fastdds::rtps;
+
+namespace pub_ns
+{
+    bool stop;
+}
+
+using namespace pub_ns;
 
 HelloWorldPublisher::HelloWorldPublisher()
     : participant_(nullptr)
@@ -39,13 +50,33 @@ HelloWorldPublisher::HelloWorldPublisher()
 {
 }
 
-bool HelloWorldPublisher::init()
+bool HelloWorldPublisher::init(
+        const std::string& topic_name,
+        uint32_t domain,
+        bool async,
+        const std::string& transport,
+        bool reliable,
+        bool transient)
 {
     hello_.index(0);
     hello_.message("HelloWorld");
     DomainParticipantQos pqos;
     pqos.name("Participant_pub");
-    participant_ = DomainParticipantFactory::get_instance()->create_participant(0, pqos);
+    if (!transport.empty())
+    {
+        pqos.transport().use_builtin_transports = false;
+        if (transport == "shm")
+        {
+            auto shm_transport = std::make_shared<SharedMemTransportDescriptor>();
+            pqos.transport().user_transports.push_back(shm_transport);
+        }
+        else
+        {
+            auto udp_transport = std::make_shared<UDPv4TransportDescriptor>();
+            pqos.transport().user_transports.push_back(udp_transport);
+        }
+    }
+    participant_ = DomainParticipantFactory::get_instance()->create_participant(domain, pqos);
 
     if (participant_ == nullptr)
     {
@@ -63,7 +94,7 @@ bool HelloWorldPublisher::init()
         return false;
     }
 
-    topic_ = participant_->create_topic("HelloWorldTopic", "HelloWorld", TOPIC_QOS_DEFAULT);
+    topic_ = participant_->create_topic(topic_name, "HelloWorld", TOPIC_QOS_DEFAULT);
 
     if (topic_ == nullptr)
     {
@@ -71,7 +102,24 @@ bool HelloWorldPublisher::init()
     }
 
     // CREATE THE WRITER
-    writer_ = publisher_->create_datawriter(topic_, DATAWRITER_QOS_DEFAULT, &listener_);
+    DataWriterQos wqos = DATAWRITER_QOS_DEFAULT;
+    if (!transport.empty())
+        wqos.data_sharing().off();
+
+    if (async)
+        wqos.publish_mode().kind = ASYNCHRONOUS_PUBLISH_MODE;
+
+    if (reliable)
+        wqos.reliability().kind = RELIABLE_RELIABILITY_QOS;
+    else
+        wqos.reliability().kind = BEST_EFFORT_RELIABILITY_QOS;
+
+    if (transient)
+        wqos.durability().kind = TRANSIENT_LOCAL_DURABILITY_QOS;
+    else
+        wqos.durability().kind = VOLATILE_DURABILITY_QOS;
+
+    writer_ = publisher_->create_datawriter(topic_, wqos, &listener_);
 
     if (writer_ == nullptr)
     {
@@ -104,7 +152,6 @@ void HelloWorldPublisher::PubListener::on_publication_matched(
     if (info.current_count_change == 1)
     {
         matched_ = info.total_count;
-        firstConnected_ = true;
         std::cout << "Publisher matched." << std::endl;
     }
     else if (info.current_count_change == -1)
@@ -121,13 +168,14 @@ void HelloWorldPublisher::PubListener::on_publication_matched(
 
 void HelloWorldPublisher::runThread(
         uint32_t samples,
-        uint32_t sleep)
+        uint32_t sleep,
+        uint32_t numWaitMatched)
 {
     if (samples == 0)
     {
-        while (!stop_)
+        while (!stop)
         {
-            if (publish(false))
+            if (publish(numWaitMatched))
             {
                 std::cout << "Message: " << hello_.message() << " with index: " << hello_.index()
                           << " SENT" << std::endl;
@@ -139,7 +187,9 @@ void HelloWorldPublisher::runThread(
     {
         for (uint32_t i = 0; i < samples; ++i)
         {
-            if (!publish())
+            if (stop)
+                break;
+            if (!publish(numWaitMatched))
             {
                 --i;
             }
@@ -155,27 +205,27 @@ void HelloWorldPublisher::runThread(
 
 void HelloWorldPublisher::run(
         uint32_t samples,
-        uint32_t sleep)
+        uint32_t sleep,
+        uint32_t numWaitMatched)
 {
-    stop_ = false;
-    std::thread thread(&HelloWorldPublisher::runThread, this, samples, sleep);
+    stop = false;
+    std::thread thread(&HelloWorldPublisher::runThread, this, samples, sleep, numWaitMatched);
     if (samples == 0)
     {
-        std::cout << "Publisher running. Please press enter to stop the Publisher at any time." << std::endl;
-        std::cin.ignore();
-        stop_ = true;
+        std::cout << "Publisher running. Please press CTRL+C to stop the Publisher at any time." << std::endl;
     }
     else
     {
         std::cout << "Publisher running " << samples << " samples." << std::endl;
     }
+    signal(SIGINT, [](int signum){static_cast<void>(signum); stop=true;});
     thread.join();
 }
 
 bool HelloWorldPublisher::publish(
-        bool waitForListener)
+        uint32_t numWaitMatched)
 {
-    if (listener_.firstConnected_ || !waitForListener || listener_.matched_ > 0)
+    if (listener_.matched_ >= numWaitMatched)
     {
         hello_.index(hello_.index() + 1);
         writer_->write(&hello_);
