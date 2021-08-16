@@ -79,6 +79,7 @@ bool SystemInfo::file_exists(
         const std::string& filename)
 {
     struct stat s;
+    // Check existence and that it is a regular file (and not a folder)
     return (stat(filename.c_str(), &s) == 0 && s.st_mode & S_IFREG);
 }
 

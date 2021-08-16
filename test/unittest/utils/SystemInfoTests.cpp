@@ -14,9 +14,18 @@
 
 #include <stdlib.h>
 
+#ifdef _WIN32
+#include <direct.h>
+#define getcwd _getcwd
+#else
+#include <unistd.h>
+#endif // _WIN32
+
 #include <gtest/gtest.h>
 #include <fastrtps/types/TypesBase.h>
 #include <utils/SystemInfo.hpp>
+
+#define SIZE 512
 
 using ReturnCode_t = eprosima::fastrtps::types::ReturnCode_t;
 
@@ -65,6 +74,44 @@ TEST(SystemInfoTests, GetUsernameTest)
     std::string username;
     EXPECT_EQ(ReturnCode_t::RETCODE_OK, eprosima::SystemInfo::get_username(username));
     EXPECT_FALSE(username.empty());
+}
+
+/**
+ * This test checks the file_exists static method of the SystemInfo class
+ */
+TEST(SystemInfoTests, FileExistsTest)
+{
+    // 1. Check that a valid file in the current directory exists
+    std::string filename = "environment_test_file.json";
+    EXPECT_TRUE(eprosima::SystemInfo::file_exists(filename));
+
+    // 2. Check that a valid path and filename returns correctly
+    char buffer[SIZE];
+    char* current_dir = getcwd(buffer, SIZE);
+    if (current_dir)
+    {
+        filename = current_dir;
+        filename += "/environment_test_file.json";
+    }
+    EXPECT_TRUE(eprosima::SystemInfo::file_exists(filename));
+
+    // 3. Check that a non valid filename fails
+    filename = "non_existent.txt";
+    EXPECT_FALSE(eprosima::SystemInfo::file_exists(filename));
+
+    // 4. Check that a path to a non-existent file fails
+    if (current_dir)
+    {
+        std::cout << current_dir << std::endl;
+        filename = current_dir;
+        EXPECT_FALSE(eprosima::SystemInfo::file_exists(filename + "/non_existent.txt"));
+    }
+
+    // 5. Check that an incomplete path (not including an existing file) fails
+    if (current_dir)
+    {
+        EXPECT_FALSE(eprosima::SystemInfo::file_exists(current_dir));
+    }
 }
 
 int main(

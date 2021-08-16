@@ -132,4 +132,11 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
         ${PROJECT_SOURCE_DIR}/include ${PROJECT_SOURCE_DIR}/src/cpp ${PROJECT_BINARY_DIR}/include)
     target_link_libraries(SystemInfoTests GTest::gtest)
     add_gtest(SystemInfoTests SOURCES ${SYSTEMINFOTESTS_SOURCE})
+
+    ###############################################################################
+    # Necessary files
+    ###############################################################################
+    configure_file(${CMAKE_CURRENT_SOURCE_DIR}/environment_test_file.json
+        ${CMAKE_CURRENT_BINARY_DIR}/environment_test_file.json COPYONLY)
+
 endif()
