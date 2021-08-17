@@ -12,6 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#ifdef _WIN32
+#include <windows.h>
+#else
+#include <stdlib.h>
+#endif // _WIN32
+
 #include "BlackboxTests.hpp"
 
 #include "PubSubWriterReader.hpp"
@@ -1319,4 +1325,38 @@ TEST(Discovery, ServerClientEnvironmentSetUp)
 
     ASSERT_TRUE(load_environment_server_info(text, output));
     ASSERT_EQ(output, standard);
+
+    // 11. Check loading from environment file
+    std::string filename = "../unittest/utils/environment_test_file.json";
+
+    // Set environment variable
+#ifdef _WIN32
+    _putenv_s(FASTDDS_ENVIRONMENT_FILE_ENV_VAR, filename.c_str());
+#else
+    setenv(FASTDDS_ENVIRONMENT_FILE_ENV_VAR, filename.c_str(), 1);
+#endif // _WIN32
+
+    output.clear();
+    standard.clear();
+
+    att.clear();
+    IPLocator::setIPv4(loc, string("127.0.0.1"));
+    IPLocator::setPhysicalPort(loc, 11811);
+    att.metatrafficUnicastLocatorList.push_back(loc);
+    get_server_client_default_guidPrefix(0, att.guidPrefix);
+    standard.push_back(att);
+
+    EXPECT_TRUE(load_environment_server_info(output));
+    EXPECT_EQ(output, standard);
+
+    // 12. Setting also the environment variable gets overriden by the environment file
+    output.clear();
+#ifdef _WIN32
+    _putenv_s(DEFAULT_ROS2_MASTER_URI, text.c_str());
+#else
+    setenv(DEFAULT_ROS2_MASTER_URI, text.c_str(), 1);
+#endif // _WIN32
+
+    EXPECT_TRUE(load_environment_server_info(output));
+    EXPECT_EQ(output, standard);
 }
