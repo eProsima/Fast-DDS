@@ -110,7 +110,7 @@ ReturnCode_t SystemInfo::load_environment_file(
             return ReturnCode_t::RETCODE_NO_DATA;
         }
     }
-    catch(const std::exception&)
+    catch (const std::exception&)
     {
         return ReturnCode_t::RETCODE_NO_DATA;
     }
