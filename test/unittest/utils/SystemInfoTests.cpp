@@ -22,6 +22,7 @@
 #endif // _WIN32
 
 #include <gtest/gtest.h>
+#include <fastdds/rtps/attributes/ServerAttributes.h>
 #include <fastrtps/types/TypesBase.h>
 #include <utils/SystemInfo.hpp>
 
@@ -112,6 +113,38 @@ TEST(SystemInfoTests, FileExistsTest)
     {
         EXPECT_FALSE(eprosima::SystemInfo::file_exists(current_dir));
     }
+}
+
+/**
+ * This test checks the load_environment_file method of the SystemInfo class
+ */
+TEST(SystemInfoTests, LoadEnvironmentFileTest)
+{
+    // 1. Check that reading the environment variable ROS_DISCOVERY_SERVER returns the correct information
+    std::string filename = "environment_test_file.json";
+    std::string environment_value;
+    ASSERT_EQ(ReturnCode_t::RETCODE_OK, eprosima::SystemInfo::load_environment_file(filename,
+            eprosima::fastdds::rtps::DEFAULT_ROS2_MASTER_URI, environment_value));
+    EXPECT_EQ("localhost:11811", environment_value);
+
+    // 2. Check that a non-existent tag returns RETCODE_NO_DATA
+    std::string non_existent_env_variable = "NON_EXISTENT_ENV_VARIBLE";
+    environment_value.clear();
+    EXPECT_EQ(ReturnCode_t::RETCODE_NO_DATA, eprosima::SystemInfo::load_environment_file(filename,
+            non_existent_env_variable, environment_value));
+    EXPECT_TRUE(environment_value.empty());
+
+    // 3. Check that an empty environment variable returns RETCODE_NO_DATA
+    std::string empty_environment_variable = "EMPTY_ENV_VAR";
+    EXPECT_EQ(ReturnCode_t::RETCODE_NO_DATA, eprosima::SystemInfo::load_environment_file(filename,
+            empty_environment_variable, environment_value));
+    EXPECT_TRUE(environment_value.empty());
+
+    // 4. Check that a non-existent file returns RETCODE_BAD_PARAMETER
+    filename = "non_existent.json";
+    EXPECT_EQ(ReturnCode_t::RETCODE_BAD_PARAMETER, eprosima::SystemInfo::load_environment_file(filename,
+            eprosima::fastdds::rtps::DEFAULT_ROS2_MASTER_URI, environment_value));
+    EXPECT_TRUE(environment_value.empty());
 }
 
 int main(
