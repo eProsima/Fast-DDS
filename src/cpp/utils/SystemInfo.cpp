@@ -22,6 +22,9 @@
 #include <unistd.h>
 #endif // _WIN32
 
+#include <fstream>
+
+#include <json.hpp>
 #include <fastrtps/types/TypesBase.h>
 
 namespace eprosima {
@@ -81,6 +84,37 @@ bool SystemInfo::file_exists(
     struct stat s;
     // Check existence and that it is a regular file (and not a folder)
     return (stat(filename.c_str(), &s) == 0 && s.st_mode & S_IFREG);
+}
+
+ReturnCode_t SystemInfo::load_environment_file(
+        const std::string& filename,
+        const std::string& env_name,
+        std::string& env_value)
+{
+    // Check that the file exists
+    if (!SystemInfo::file_exists(filename))
+    {
+        return ReturnCode_t::RETCODE_BAD_PARAMETER;
+    }
+
+    // Read json file
+    std::ifstream file(filename);
+    nlohmann::json file_content;
+    file >> file_content;
+
+    try
+    {
+        env_value = file_content.at(env_name);
+        if (env_value.empty() || env_value.compare("") == 0)
+        {
+            return ReturnCode_t::RETCODE_NO_DATA;
+        }
+    }
+    catch(const std::exception&)
+    {
+        return ReturnCode_t::RETCODE_NO_DATA;
+    }
+    return ReturnCode_t::RETCODE_OK;
 }
 
 } // eprosima
