@@ -119,7 +119,7 @@ public:
     /**
      * Check if the file wiht name \c filename exists.
      * \c filename can also include the path to the file.
-     * 
+     *
      * \param [in] filename path and name of the file to check
      * @return True if the file exists. False otherwise.
      */
