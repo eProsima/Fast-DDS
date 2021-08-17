@@ -237,6 +237,7 @@ if(ANDROID)
 endif()
 
 include_directories(thirdparty/nlohmann-json)
+include_directories(thirdparty/filewatch)
 
 ###############################################################################
 # Options

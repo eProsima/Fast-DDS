@@ -19,6 +19,10 @@
 
 #include <rtps/builtin/discovery/participant/PDPClient.h>
 
+#include <string>
+
+#include <FileWatch.hpp>
+
 #include <fastdds/dds/log/Log.hpp>
 #include <fastdds/rtps/attributes/RTPSParticipantAttributes.h>
 #include <fastdds/rtps/builtin/BuiltinProtocols.h>
@@ -644,6 +648,21 @@ bool load_environment_server_info(
         if (eprosima::ReturnCode_t::RETCODE_OK == SystemInfo::get_env(FASTDDS_ENVIRONMENT_FILE_ENV_VAR, &data))
         {
             filename = data;
+            // Create filewatch
+            filewatch::FileWatch<std::string> watch(filename, [](const std::string& path,
+                    const filewatch::Event change_type)
+                        {
+                            std::cout << path << " : ";
+                            switch (change_type)
+                            {
+                                case filewatch::Event::modified:
+                                    std::cout << "The file was modified\n";
+                                    break;
+                                default:
+                                    std::cout << "FileWatch default case\n";
+                                    break;
+                            }
+                        });
         }
     }
 
