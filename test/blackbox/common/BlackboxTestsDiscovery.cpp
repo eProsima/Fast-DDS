@@ -12,9 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifdef _WIN32
-#include <windows.h>
-#else
+#ifndef _WIN32
 #include <stdlib.h>
 #endif // _WIN32
 
@@ -1359,4 +1357,5 @@ TEST(Discovery, ServerClientEnvironmentSetUp)
 
     EXPECT_TRUE(load_environment_server_info(output));
     EXPECT_EQ(output, standard);
+
 }
