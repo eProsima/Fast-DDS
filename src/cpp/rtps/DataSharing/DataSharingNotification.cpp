@@ -54,16 +54,32 @@ bool DataSharingNotification::create_and_init_notification(
         const GUID_t& reader_guid,
         const std::string& shared_dir)
 {
-    return create_and_init_shared_segment_notification<fastdds::rtps::SharedMemSegment>(reader_guid,
-                        shared_dir);
+    if (shared_dir.empty())
+    {
+        return create_and_init_shared_segment_notification<fastdds::rtps::SharedMemSegment>(reader_guid,
+                       shared_dir);
+    }
+    else
+    {
+        return create_and_init_shared_segment_notification<fastdds::rtps::SharedFileSegment>(reader_guid,
+                       shared_dir);
+    }
 }
 
 bool DataSharingNotification::open_and_init_notification(
         const GUID_t& reader_guid,
         const std::string& shared_dir)
 {
-    return open_and_init_shared_segment_notification<fastdds::rtps::SharedMemSegment>(reader_guid,
-                        shared_dir);
+    if (shared_dir.empty())
+    {
+        return open_and_init_shared_segment_notification<fastdds::rtps::SharedMemSegment>(reader_guid,
+                       shared_dir);
+    }
+    else
+    {
+        return open_and_init_shared_segment_notification<fastdds::rtps::SharedFileSegment>(reader_guid,
+                       shared_dir);
+    }
 }
 
 void DataSharingNotification::destroy()
