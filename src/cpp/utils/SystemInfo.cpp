@@ -132,11 +132,9 @@ FileWatchHandle SystemInfo::watch_file(
     return std::unique_ptr<filewatch::FileWatch<std::string>> (new filewatch::FileWatch<std::string>(filename,
                    [callback](const std::string& path, const filewatch::Event change_type)
                    {
-                       std::cerr << path << " : ";
                        switch (change_type)
                        {
                            case filewatch::Event::modified:
-                               std::cerr << "The file was modified\n";
                                callback(path);
                                break;
                            default:
@@ -149,7 +147,6 @@ FileWatchHandle SystemInfo::watch_file(
 void SystemInfo::stop_watching_file(
         FileWatchHandle& handle)
 {
-    std::cerr << "Removing file from watch\n";
     handle.reset();
 }
 
