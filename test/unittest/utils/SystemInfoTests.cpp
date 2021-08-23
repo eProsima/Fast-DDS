@@ -12,7 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include <chrono>
+#include <fstream>
+#include <functional>
 #include <stdlib.h>
+#include <thread>
 
 #ifdef _WIN32
 #include <direct.h>
@@ -24,6 +28,7 @@
 #include <gtest/gtest.h>
 #include <fastdds/rtps/attributes/ServerAttributes.h>
 #include <fastrtps/types/TypesBase.h>
+#include <json.hpp>
 #include <utils/SystemInfo.hpp>
 
 #define SIZE 512
@@ -151,6 +156,64 @@ TEST(SystemInfoTests, LoadEnvironmentFileTest)
     EXPECT_EQ(ReturnCode_t::RETCODE_ERROR, eprosima::SystemInfo::load_environment_file(filename,
             eprosima::fastdds::rtps::DEFAULT_ROS2_MASTER_URI, environment_value));
     EXPECT_TRUE(environment_value.empty());
+}
+
+struct FileWatchTestCallback
+{
+    void callback(const std::string& /*path*/)
+    {
+        ++times_called;
+    }
+
+    int times_called = 0;
+};
+
+/**
+ * This test checks the file watchers
+ */
+TEST(SystemInfoTests, FileWatchTest)
+{
+    std::string filename = "environment_test_file.json";
+    nlohmann::json file_content;
+
+    // Create filewatch
+    FileWatchTestCallback callback;
+    using std::placeholders::_1;
+    eprosima::FileWatchHandle watch = eprosima::SystemInfo::watch_file(filename, std::bind(&FileWatchTestCallback::callback, &callback, _1));
+
+    // Read contents
+    {
+        std::ifstream file(filename);
+        file >> file_content;
+    }
+
+    file_content["EMPTY_ENV_VAR"] = "not_empty";
+
+    // Write new content
+    {
+        std::ofstream file(filename);
+        file << file_content;
+    }
+
+    // Check modifications. The callback is called two times due to FileWatch implementation
+    // see https://github.com/ThomasMonkman/filewatch/issues/27
+    std::this_thread::sleep_for(std::chrono::seconds(1));
+    int times_called = callback.times_called;
+    EXPECT_LT(0, times_called);
+
+    // Remove the watcher
+    eprosima::SystemInfo::stop_watching_file(watch);
+
+    // Restore content of file
+    file_content["EMPTY_ENV_VAR"] = "";
+    {
+        std::ofstream file(filename);
+        file << file_content;
+    }
+
+    // Check no modifications were notified
+    std::this_thread::sleep_for(std::chrono::seconds(1));
+    EXPECT_EQ(times_called, callback.times_called);
 }
 
 int main(
