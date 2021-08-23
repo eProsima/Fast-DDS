@@ -160,7 +160,8 @@ TEST(SystemInfoTests, LoadEnvironmentFileTest)
 
 struct FileWatchTestCallback
 {
-    void callback(const std::string& /*path*/)
+    void callback(
+            const std::string& /*path*/)
     {
         ++times_called;
     }
@@ -179,7 +180,8 @@ TEST(SystemInfoTests, FileWatchTest)
     // Create filewatch
     FileWatchTestCallback callback;
     using std::placeholders::_1;
-    eprosima::FileWatchHandle watch = eprosima::SystemInfo::watch_file(filename, std::bind(&FileWatchTestCallback::callback, &callback, _1));
+    eprosima::FileWatchHandle watch =
+            eprosima::SystemInfo::watch_file(filename, std::bind(&FileWatchTestCallback::callback, &callback, _1));
 
     // Read contents
     {

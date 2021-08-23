@@ -153,25 +153,28 @@ public:
      * The method returns a handle to the object that implements the watcher containing the thred.
      * The scope of the listening thread is the same as the wathing object, so when the object
      * goes out of scope, the thread is terminated.
-     * 
+     *
      * The thread can be terminated earlier with stop_watching_file(FileWatchHandle)
-     * 
+     *
      * @param [in] filename Path/name of the file to watch.
      * @param [in] callback Callback to execute when the file changes.
      *
      * @return The handle that represents the watcher object.
      */
-    static FileWatchHandle watch_file(std::string filename, std::function<void(const std::string&)> callback);
+    static FileWatchHandle watch_file(
+            std::string filename,
+            std::function<void(const std::string&)> callback);
 
     /**
      * Stop a file watcher.
-     * 
+     *
      * This method effectively destroys the file watcher and the thread that were created with watch_file.
      * Once this method returns, the handle is no longer valid.
-     * 
+     *
      * @param [in] handle The watcher handle as returned by watch_file.
      */
-    static void stop_watching_file(FileWatchHandle& handle);
+    static void stop_watching_file(
+            FileWatchHandle& handle);
 
 private:
 
