@@ -145,6 +145,12 @@ TEST(SystemInfoTests, LoadEnvironmentFileTest)
     EXPECT_EQ(ReturnCode_t::RETCODE_BAD_PARAMETER, eprosima::SystemInfo::load_environment_file(filename,
             eprosima::fastdds::rtps::DEFAULT_ROS2_MASTER_URI, environment_value));
     EXPECT_TRUE(environment_value.empty());
+
+    // 5. Check that a wrong formatted file returns RETCODE_ERROR
+    filename = "empty_environment_test_file.json";
+    EXPECT_EQ(ReturnCode_t::RETCODE_ERROR, eprosima::SystemInfo::load_environment_file(filename,
+            eprosima::fastdds::rtps::DEFAULT_ROS2_MASTER_URI, environment_value));
+    EXPECT_TRUE(environment_value.empty());
 }
 
 int main(

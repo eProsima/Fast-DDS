@@ -100,7 +100,15 @@ ReturnCode_t SystemInfo::load_environment_file(
     // Read json file
     std::ifstream file(filename);
     nlohmann::json file_content;
-    file >> file_content;
+
+    try
+    {
+        file >> file_content;
+    }
+    catch (const nlohmann::json::exception&)
+    {
+        return ReturnCode_t::RETCODE_ERROR;
+    }
 
     try
     {
@@ -110,7 +118,7 @@ ReturnCode_t SystemInfo::load_environment_file(
             return ReturnCode_t::RETCODE_NO_DATA;
         }
     }
-    catch (const std::exception&)
+    catch (const nlohmann::json::exception&)
     {
         return ReturnCode_t::RETCODE_NO_DATA;
     }
