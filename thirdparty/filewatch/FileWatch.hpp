@@ -248,6 +248,8 @@ namespace filewatch {
 #elif __unix__
 				return character == C('/');
 #endif // __unix__
+                (void) character;
+                return false;
 			};
 
 			UnderpinningString path_string = path;
@@ -438,7 +440,7 @@ namespace filewatch {
 			{
 				throw std::system_error(errno, std::system_category());
 			}
-			const auto listen_filters = _listen_filters;
+			//const auto listen_filters = _listen_filters;
 
 			_watching_single_file = is_file(path);
 
