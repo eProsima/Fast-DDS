@@ -399,11 +399,11 @@ private:
 
     using ChangeIterator = decltype(changes_received_)::iterator;
 
-#if !defined(NDEBUG) && defined(FASTRTPS_SOURCE) && defined(__linux__)
+#if !defined(NDEBUG) && defined(FASTRTPS_SOURCE) && defined(__unix__)
     int get_mutex_owner() const;
 
     int get_thread_id() const;
-#endif // if !defined(NDEBUG) && defined(FASTRTPS_SOURCE) && defined(__linux__)
+#endif // if !defined(NDEBUG) && defined(FASTRTPS_SOURCE) && defined(__unix__)
 };
 
 } /* namespace rtps */
