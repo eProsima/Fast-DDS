@@ -129,7 +129,8 @@ FileWatchHandle SystemInfo::watch_file(
         std::string filename,
         std::function<void(const std::string&)> callback)
 {
-    return std::unique_ptr<filewatch::FileWatch<std::string>> (new filewatch::FileWatch<std::string>(filename,
+#if defined(_WIN32) || defined(__unix__)
+    return FileWatchHandle (new filewatch::FileWatch<std::string>(filename,
                    [callback](const std::string& path, const filewatch::Event change_type)
                    {
                        switch (change_type)
@@ -142,12 +143,19 @@ FileWatchHandle SystemInfo::watch_file(
                                break;
                        }
                    }));
+#endif // defined(_WIN32) || defined(__unix__)
+    (void)filename;
+    (void)callback;
+    return FileWatchHandle();
 }
 
 void SystemInfo::stop_watching_file(
         FileWatchHandle& handle)
 {
+#if defined(_WIN32) || defined(__unix__)
     handle.reset();
+#endif
+    (void)handle;
 }
 
 } // eprosima

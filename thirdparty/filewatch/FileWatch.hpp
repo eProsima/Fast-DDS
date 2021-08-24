@@ -248,8 +248,6 @@ namespace filewatch {
 #elif __unix__
 				return character == C('/');
 #endif // __unix__
-                (void) character;
-                return false;
 			};
 
 			UnderpinningString path_string = path;

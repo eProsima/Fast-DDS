@@ -27,12 +27,19 @@
 
 #include <fastrtps/types/TypesBase.h>
 #include <utils/Host.hpp>
+
+#if defined(_WIN32) || defined(__unix__)
 #include <FileWatch.hpp>
+#endif // defined(_WIN32) || defined(__unix__)
 
 namespace eprosima {
 
 using ReturnCode_t = fastrtps::types::ReturnCode_t;
+#if defined(_WIN32) || defined(__unix__)
 using FileWatchHandle = std::unique_ptr<filewatch::FileWatch<std::string>>;
+#else
+using FileWatchHandle = void*;
+#endif // defined(_WIN32) || defined(__unix__)
 
 /**
  * This singleton serves as a centralized point from where to obtain platform dependent system information.

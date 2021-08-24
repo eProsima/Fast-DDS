@@ -197,11 +197,18 @@ TEST(SystemInfoTests, FileWatchTest)
         file << file_content;
     }
 
-    // Check modifications. The callback is called two times due to FileWatch implementation
-    // see https://github.com/ThomasMonkman/filewatch/issues/27
+    // Check modifications.
     std::this_thread::sleep_for(std::chrono::seconds(1));
     int times_called = callback.times_called;
-    EXPECT_LT(0, times_called);
+#if defined(_WIN32) || defined(__unix__)
+    // The callback is called two times due to FileWatch implementation
+    // see https://github.com/ThomasMonkman/filewatch/issues/27
+    EXPECT_LE(0, times_called);
+
+#else
+    // Unsupported platforms will not call the callback
+    EXPECT_EQ(0, times_called);
+#endif // defined(_WIN32) || defined(__unix__)
 
     // Remove the watcher
     eprosima::SystemInfo::stop_watching_file(watch);
