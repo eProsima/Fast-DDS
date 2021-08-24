@@ -92,8 +92,8 @@ TEST(SystemInfoTests, FileExistsTest)
     {
         filename = current_dir;
         filename += "/environment_test_file.json";
+        EXPECT_TRUE(eprosima::SystemInfo::file_exists(filename));
     }
-    EXPECT_TRUE(eprosima::SystemInfo::file_exists(filename));
 
     // 3. Check that a non valid filename fails
     filename = "non_existent.txt";
