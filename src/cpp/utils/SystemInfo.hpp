@@ -116,6 +116,16 @@ public:
     static ReturnCode_t get_username(
             std::string& username);
 
+    /**
+     * Check if the file wiht name \c filename exists.
+     * \c filename can also include the path to the file.
+     *
+     * \param [in] filename path and name of the file to check
+     * @return True if the file exists. False otherwise.
+     */
+    static bool file_exists(
+            const std::string& filename);
+
 private:
 
     SystemInfo() = default;
