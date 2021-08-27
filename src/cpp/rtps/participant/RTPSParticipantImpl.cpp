@@ -129,6 +129,7 @@ RTPSParticipantImpl::RTPSParticipantImpl(
     , mp_ResourceSemaphore(new Semaphore(0))
     , IdCounter(0)
     , type_check_fn_(nullptr)
+    , enabled_(false)
     , client_override_(false)
     , internal_metatraffic_locators_(false)
     , internal_default_locators_(false)
@@ -429,52 +430,62 @@ RTPSParticipantImpl::RTPSParticipantImpl(
 
 void RTPSParticipantImpl::enable()
 {
-    // Start builtin protocols
-    if (!mp_builtinProtocols->initBuiltinProtocols(this, m_att.builtin))
+    if (!enabled_)
     {
-        logError(RTPS_PARTICIPANT, "The builtin protocols were not correctly initialized");
-    }
+        // Start builtin protocols
+        if (!mp_builtinProtocols->initBuiltinProtocols(this, m_att.builtin))
+        {
+            logError(RTPS_PARTICIPANT, "The builtin protocols were not correctly initialized");
+        }
 
-    //Start reception
-    for (auto& receiver : m_receiverResourcelist)
-    {
-        receiver.Receiver->RegisterReceiver(receiver.mp_receiver);
+        //Start reception
+        for (auto& receiver : m_receiverResourcelist)
+        {
+            receiver.Receiver->RegisterReceiver(receiver.mp_receiver);
+        }
+
+        enabled_ = true;
     }
 }
 
 void RTPSParticipantImpl::disable()
 {
-    // Ensure that other participants will not accidentally discover this one
-    if (mp_builtinProtocols && mp_builtinProtocols->mp_PDP)
+    if (enabled_)
     {
-        mp_builtinProtocols->stopRTPSParticipantAnnouncement();
-    }
-
-    // Disable Retries on Transports
-    m_network_Factory.Shutdown();
-
-    // Safely abort threads.
-    for (auto& block : m_receiverResourcelist)
-    {
-        block.Receiver->UnregisterReceiver(block.mp_receiver);
-        block.disable();
-    }
-
-    {
-        std::lock_guard<std::recursive_mutex> lock(*mp_mutex);
-        while (m_userReaderList.size() > 0)
+        // Ensure that other participants will not accidentally discover this one
+        if (mp_builtinProtocols && mp_builtinProtocols->mp_PDP)
         {
-            deleteUserEndpoint(static_cast<Endpoint*>(*m_userReaderList.begin()));
+            mp_builtinProtocols->stopRTPSParticipantAnnouncement();
         }
 
-        while (m_userWriterList.size() > 0)
-        {
-            deleteUserEndpoint(static_cast<Endpoint*>(*m_userWriterList.begin()));
-        }
-    }
+        // Disable Retries on Transports
+        m_network_Factory.Shutdown();
 
-    delete(mp_builtinProtocols);
-    mp_builtinProtocols = nullptr;
+        // Safely abort threads.
+        for (auto& block : m_receiverResourcelist)
+        {
+            block.Receiver->UnregisterReceiver(block.mp_receiver);
+            block.disable();
+        }
+
+        {
+            std::lock_guard<std::recursive_mutex> lock(*mp_mutex);
+            while (m_userReaderList.size() > 0)
+            {
+                deleteUserEndpoint(static_cast<Endpoint*>(*m_userReaderList.begin()));
+            }
+
+            while (m_userWriterList.size() > 0)
+            {
+                deleteUserEndpoint(static_cast<Endpoint*>(*m_userWriterList.begin()));
+            }
+        }
+
+        delete(mp_builtinProtocols);
+        mp_builtinProtocols = nullptr;
+
+        enabled_ = false;
+    }
 }
 
 const std::vector<RTPSWriter*>& RTPSParticipantImpl::getAllWriters() const

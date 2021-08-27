@@ -538,6 +538,8 @@ private:
     std::function<bool(const std::string&)> type_check_fn_;
     //!Pool of send buffers
     std::unique_ptr<SendBuffersManager> send_buffers_;
+    //! Whether the Participant has been enabled
+    bool enabled_;
 
     /**
      * Client override flag: SIMPLE participant that has been overriden with the environment variable and transformed
