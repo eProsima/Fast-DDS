@@ -86,7 +86,6 @@ macro(add_gtest)
                 set_property(TEST ${GTEST_GROUP_NAME}.${GTEST_TEST_NAME} PROPERTY LABELS "${GTEST_LABELS}")
 
             endforeach()
-
         endforeach()
     else()
         add_test(NAME ${test} COMMAND ${command})

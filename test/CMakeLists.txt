@@ -17,7 +17,7 @@ option(SYSTEM_TESTS "Activate the building and execution of system tests" OFF)
 option(PROFILING_TESTS "Activate the building and execution of profiling tests" OFF)
 option(EPROSIMA_BUILD_TESTS "Activate the building and execution unit tests and integral tests" OFF)
 
-if(EPROSIMA_BUILD AND NOT EPROSIMA_INSTALLER AND NOT EPROSIMA_INSTALLER_MINION)
+if(EPROSIMA_BUILD)
     set(EPROSIMA_BUILD_TESTS ON)
     set(SYSTEM_TESTS ON)
 endif()
@@ -28,7 +28,7 @@ set(MEMORYCHECK_SUPPRESSIONS_FILE ${MEMORYCHECK_SUPPRESSIONS_FILE_TMP} CACHE FIL
 ###############################################################################
 # Testing
 ###############################################################################
-if(EPROSIMA_BUILD_TESTS AND IS_TOP_LEVEL AND NOT EPROSIMA_INSTALLER)
+if(EPROSIMA_BUILD_TESTS)
     find_package(GTest CONFIG REQUIRED)
     include(${PROJECT_SOURCE_DIR}/cmake/common/gtest.cmake)
 
