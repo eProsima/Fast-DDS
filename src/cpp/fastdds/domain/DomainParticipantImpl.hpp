@@ -121,6 +121,20 @@ public:
 
     /**
      * Create a Publisher in this Participant.
+     * @param qos QoS of the Publisher.
+     * @param[out] impl Return a pointer to the created Publisher's implementation.
+     * @param listenerer Pointer to the listener.
+     * @param mask StatusMask
+     * @return Pointer to the created Publisher.
+     */
+    Publisher* create_publisher(
+            const PublisherQos& qos,
+            PublisherImpl** impl,
+            PublisherListener* listener = nullptr,
+            const StatusMask& mask = StatusMask::all());
+
+    /**
+     * Create a Publisher in this Participant.
      * @param profile_name Publisher profile name.
      * @param listener Pointer to the listener.
      * @param mask StatusMask
