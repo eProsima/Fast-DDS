@@ -351,6 +351,11 @@ public:
      */
     std::list<eprosima::fastdds::rtps::RemoteServerAttributes>& remote_server_attributes();
 
+    bool is_enable()
+    {
+        return enable_;
+    }
+
 protected:
 
     //!Pointer to the builtin protocols object.
@@ -401,6 +406,8 @@ protected:
     std::recursive_mutex* mp_mutex;
     //!To protect callbacks (ParticipantProxyData&)
     std::mutex callback_mtx_;
+    //!Tell if object is enable
+    bool enable_ = false;
 
     /**
      * Adds an entry to the collection of participant proxy information.

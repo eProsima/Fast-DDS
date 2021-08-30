@@ -138,7 +138,10 @@ bool EDPStatic::processLocalReaderProxyData(
     localpdata->m_properties.push_back(EDPStaticProperty::toProperty("Reader", "ALIVE", rdata->userDefinedId(),
             rdata->guid().entityId));
     mp_PDP->getMutex()->unlock();
-    this->mp_PDP->announceParticipantState(true);
+    if (this->mp_PDP->is_enable())
+    {
+        this->mp_PDP->announceParticipantState(true);
+    }
     return true;
 }
 
@@ -153,7 +156,10 @@ bool EDPStatic::processLocalWriterProxyData(
     localpdata->m_properties.push_back(EDPStaticProperty::toProperty("Writer", "ALIVE",
             wdata->userDefinedId(), wdata->guid().entityId));
     mp_PDP->getMutex()->unlock();
-    this->mp_PDP->announceParticipantState(true);
+    if (this->mp_PDP->is_enable())
+    {
+        this->mp_PDP->announceParticipantState(true);
+    }
     return true;
 }
 

@@ -373,7 +373,7 @@ bool PDP::initPDP(
     mp_builtin->updateMetatrafficLocators(this->mp_PDPReader->getAttributes().unicastLocatorList);
 
     mp_mutex->lock();
-    ParticipantProxyData* pdata = add_participant_proxy_data(part->getGuid(), false);
+    ParticipantProxyData* pdata = add_participant_proxy_data(mp_RTPSParticipant->getGuid(), false);
     mp_mutex->unlock();
 
     if (pdata == nullptr)
@@ -382,6 +382,11 @@ bool PDP::initPDP(
     }
     initializeParticipantProxyData(pdata);
 
+    return true;
+}
+
+bool PDP::enable()
+{
     // Create lease events on already created proxy data objects
     for (ParticipantProxyData* pool_item : participant_proxies_pool_)
     {
@@ -404,11 +409,6 @@ bool PDP::initPDP(
 
     set_initial_announcement_interval();
 
-    return true;
-}
-
-bool PDP::enable()
-{
     return mp_RTPSParticipant->enableReader(mp_PDPReader);
 }
 

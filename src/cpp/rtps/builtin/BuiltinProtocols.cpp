@@ -146,11 +146,14 @@ bool BuiltinProtocols::initBuiltinProtocols(
         tlm_->init_typelookup_service(mp_participantImpl);
     }
 
+    return true;
+}
+
+void BuiltinProtocols::enable()
+{
+    mp_PDP->enable();
     mp_PDP->announceParticipantState(true);
     mp_PDP->resetParticipantAnnouncement();
-    mp_PDP->enable();
-
-    return true;
 }
 
 bool BuiltinProtocols::updateMetatrafficLocators(
