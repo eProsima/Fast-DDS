@@ -151,9 +151,12 @@ bool BuiltinProtocols::initBuiltinProtocols(
 
 void BuiltinProtocols::enable()
 {
-    mp_PDP->enable();
-    mp_PDP->announceParticipantState(true);
-    mp_PDP->resetParticipantAnnouncement();
+    if (nullptr != mp_PDP)
+    {
+        mp_PDP->enable();
+        mp_PDP->announceParticipantState(true);
+        mp_PDP->resetParticipantAnnouncement();
+    }
 }
 
 bool BuiltinProtocols::updateMetatrafficLocators(
