@@ -113,7 +113,6 @@ TEST_P(Discovery, ParticipantRemoval)
 
 TEST(Discovery, StaticDiscovery)
 {
-    //Log::SetVerbosity(eprosima::fastdds::dds::Log::Info);
     char* value = nullptr;
     std::string TOPIC_RANDOM_NUMBER;
     std::string W_UNICAST_PORT_RANDOM_NUMBER_STR;
