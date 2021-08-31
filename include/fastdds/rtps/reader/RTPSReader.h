@@ -315,7 +315,7 @@ public:
      */
     virtual void change_read_by_user(
             CacheChange_t* change,
-            const WriterProxy* writer,
+            WriterProxy* writer,
             bool mark_as_read = true) = 0;
 
     /**

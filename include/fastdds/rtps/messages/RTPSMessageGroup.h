@@ -100,7 +100,7 @@ public:
     RTPSMessageGroup(
             RTPSParticipantImpl* participant,
             Endpoint* endpoint,
-            const RTPSMessageSenderInterface* msg_sender,
+            RTPSMessageSenderInterface* msg_sender,
             std::chrono::steady_clock::time_point max_blocking_time_point =
             std::chrono::steady_clock::now() + std::chrono::hours(24));
 
@@ -217,7 +217,7 @@ public:
      */
     void sender(
             Endpoint* endpoint,
-            const RTPSMessageSenderInterface* msg_sender)
+            RTPSMessageSenderInterface* msg_sender)
     {
         assert((endpoint != nullptr && msg_sender != nullptr) || (endpoint == nullptr && msg_sender == nullptr));
         if (endpoint != endpoint_ || msg_sender != sender_)
@@ -293,7 +293,7 @@ private:
             const SequenceNumberSet_t& gap_bitmap,
             const EntityId_t& reader_id);
 
-    const RTPSMessageSenderInterface* sender_ = nullptr;
+    RTPSMessageSenderInterface* sender_ = nullptr;
 
     Endpoint* endpoint_ = nullptr;
 

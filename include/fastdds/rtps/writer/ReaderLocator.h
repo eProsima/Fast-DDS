@@ -231,6 +231,22 @@ public:
 
     }
 
+    /*
+     * Do nothing.
+     * This object always is protected by writer's mutex.
+     */
+    void lock() override
+    {
+    }
+
+    /*
+     * Do nothing.
+     * This object always is protected by writer's mutex.
+     */
+    void unlock() override
+    {
+    }
+
 private:
 
     RTPSWriter* owner_;

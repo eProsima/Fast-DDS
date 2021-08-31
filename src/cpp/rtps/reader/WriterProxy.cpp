@@ -487,7 +487,7 @@ SequenceNumber_t WriterProxy::next_cache_change_to_be_notified()
     return SequenceNumber_t::unknown();
 }
 
-void WriterProxy::perform_initial_ack_nack() const
+void WriterProxy::perform_initial_ack_nack()
 {
     // Send initial NACK.
     SequenceNumberSet_t sns(SequenceNumber_t(0, 0));
@@ -506,7 +506,7 @@ void WriterProxy::perform_initial_ack_nack() const
     }
 }
 
-void WriterProxy::perform_heartbeat_response() const
+void WriterProxy::perform_heartbeat_response()
 {
     reader_->send_acknack(this, this, heartbeat_final_flag_.load());
 }
