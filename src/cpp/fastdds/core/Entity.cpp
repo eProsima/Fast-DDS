@@ -13,12 +13,11 @@
 // limitations under the License.
 
 /**
- * @file StatusCondition.cpp
+ * @file Entity.cpp
  *
  */
 
-#include <fastdds/dds/core/condition/StatusCondition.hpp>
-#include <fastrtps/types/TypesBase.h>
+#include <fastdds/dds/core/Entity.hpp>
 
 #include <fastdds/core/condition/StatusConditionImpl.hpp>
 
@@ -26,39 +25,9 @@ namespace eprosima {
 namespace fastdds {
 namespace dds {
 
-using eprosima::fastrtps::types::ReturnCode_t;
-
-StatusCondition::StatusCondition(
-        Entity* parent)
-    : Condition()
-    , entity_(parent)
-    , impl_(new detail::StatusConditionImpl(notifier_.get()))
+const StatusMask& Entity::get_status_changes() const
 {
-}
-
-StatusCondition::~StatusCondition()
-{
-}
-
-bool StatusCondition::get_trigger_value() const
-{
-    return impl_->get_trigger_value();
-}
-
-ReturnCode_t StatusCondition::set_enabled_statuses(
-        const StatusMask& mask)
-{
-    return impl_->set_enabled_statuses(mask);
-}
-
-const StatusMask& StatusCondition::get_enabled_statuses() const
-{
-    return impl_->get_enabled_statuses();
-}
-
-Entity* StatusCondition::get_entity() const
-{
-    return entity_;
+    return status_condition_.get_impl()->get_raw_status();
 }
 
 }  // namespace dds

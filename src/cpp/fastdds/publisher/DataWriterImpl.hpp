@@ -221,6 +221,9 @@ public:
     ReturnCode_t wait_for_acknowledgments(
             const fastrtps::Duration_t& max_wait);
 
+    ReturnCode_t get_publication_matched_status(
+            PublicationMatchedStatus& status);
+
     ReturnCode_t get_offered_deadline_missed_status(
             fastrtps::OfferedDeadlineMissedStatus& status);
 
@@ -341,6 +344,9 @@ protected:
     //! The current timer owner, i.e. the instance which started the deadline timer
     InstanceHandle_t timer_owner_;
 
+    //! The publication matched status
+    PublicationMatchedStatus publication_matched_status_;
+
     //! The offered deadline missed status
     fastrtps::OfferedDeadlineMissedStatus deadline_missed_status_;
 
@@ -411,6 +417,9 @@ protected:
      * @return True if correct.
      */
     bool remove_min_seq_change();
+
+    void update_publication_matched_status(
+            const PublicationMatchedStatus& status);
 
     /**
      * @brief A method called when an instance misses the deadline

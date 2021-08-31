@@ -31,6 +31,12 @@ namespace eprosima {
 namespace fastdds {
 namespace dds {
 
+namespace detail {
+
+struct StatusConditionImpl;
+
+} // namespace detail
+
 class Entity;
 
 /**
@@ -41,7 +47,28 @@ class StatusCondition : public Condition
 {
 public:
 
-    // StatusCondition not implemented.
+    StatusCondition(
+            Entity* parent);
+
+    ~StatusCondition() final;
+
+    // Non-copyable
+    StatusCondition(
+            const StatusCondition&) = delete;
+    StatusCondition& operator =(
+            const StatusCondition&) = delete;
+
+    // Non-movable
+    StatusCondition(
+            StatusCondition&&) = delete;
+    StatusCondition& operator =(
+            StatusCondition&&) = delete;
+
+    /**
+     * @brief Retrieves the trigger_value of the Condition
+     * @return true if trigger_value is set to 'true', 'false' otherwise
+     */
+    RTPS_DllAPI bool get_trigger_value() const override;
 
     /**
      * @brief Defines the list of communication statuses that are taken into account to determine the trigger_value
@@ -63,10 +90,18 @@ public:
      */
     RTPS_DllAPI Entity* get_entity() const;
 
+    detail::StatusConditionImpl* get_impl() const
+    {
+        return impl_.get();
+    }
+
 protected:
 
-    //! StatusMask with relevant statuses set to 1
-    StatusMask status_mask;
+    //! DDS Entity for which this condition is monitoring the status
+    Entity* entity_ = nullptr;
+
+    //! Class implementation
+    std::unique_ptr<detail::StatusConditionImpl> impl_;
 
 };
 
