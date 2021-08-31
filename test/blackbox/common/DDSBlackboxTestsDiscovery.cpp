@@ -78,7 +78,7 @@ TEST(DDSDiscovery, AddDiscoveryServerToList)
     using namespace eprosima::fastrtps::rtps;
 
     /* Get random port from the environment */
-    const char* value;
+    const char* value = nullptr;
     if (eprosima::ReturnCode_t::RETCODE_OK != SystemInfo::instance().get_env("W_UNICAST_PORT_RANDOM_NUMBER", &value))
     {
         value = &std::string("11811")[0];
