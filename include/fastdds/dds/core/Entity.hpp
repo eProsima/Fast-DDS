@@ -45,7 +45,7 @@ public:
     RTPS_DllAPI Entity(
             const StatusMask& mask = StatusMask::all())
         : status_mask_(mask)
-        , status_changes_(StatusMask::none())
+        , status_condition_(this)
         , enable_(false)
     {
     }
@@ -91,10 +91,7 @@ public:
      *
      * @return const reference to the StatusMask with the triggered statuses set to 1
      */
-    RTPS_DllAPI const StatusMask& get_status_changes() const
-    {
-        return status_changes_;
-    }
+    RTPS_DllAPI const StatusMask& get_status_changes() const;
 
     /**
      * @brief Retrieves the instance handler that represents the Entity
@@ -124,9 +121,8 @@ public:
      * @brief Allows access to the StatusCondition associated with the Entity
      * @return Reference to StatusCondition object
      */
-    RTPS_DllAPI const StatusCondition& get_statuscondition() const
+    RTPS_DllAPI StatusCondition& get_statuscondition()
     {
-        logWarning(CONDITION, "get_statuscondition method not implemented");
         return status_condition_;
     }
 
@@ -144,9 +140,6 @@ protected:
 
     //! StatusMask with relevant statuses set to 1
     StatusMask status_mask_;
-
-    //! StatusMask with triggered statuses set to 1
-    StatusMask status_changes_;
 
     //! Condition associated to the Entity
     StatusCondition status_condition_;
