@@ -61,16 +61,16 @@ static void get_sample_info(
 
     switch (change->kind)
     {
-    case eprosima::fastrtps::rtps::ALIVE:
-        info.instance_state = ALIVE_INSTANCE_STATE;
-        break;
-    case eprosima::fastrtps::rtps::NOT_ALIVE_DISPOSED:
-        info.instance_state = NOT_ALIVE_DISPOSED_INSTANCE_STATE;
-        break;
-    default:
-        //TODO [ILG] change this if the other kinds ever get implemented
-        info.instance_state = ALIVE_INSTANCE_STATE;
-        break;
+        case eprosima::fastrtps::rtps::ALIVE:
+            info.instance_state = ALIVE_INSTANCE_STATE;
+            break;
+        case eprosima::fastrtps::rtps::NOT_ALIVE_DISPOSED:
+            info.instance_state = NOT_ALIVE_DISPOSED_INSTANCE_STATE;
+            break;
+        default:
+            //TODO [ILG] change this if the other kinds ever get implemented
+            info.instance_state = ALIVE_INSTANCE_STATE;
+            break;
     }
 }
 
