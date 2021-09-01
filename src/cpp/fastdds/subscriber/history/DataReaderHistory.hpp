@@ -19,24 +19,27 @@
 #ifndef _FASTDDS_SUBSCRIBER_HISTORY_DATAREADERHISTORY_HPP_
 #define _FASTDDS_SUBSCRIBER_HISTORY_DATAREADERHISTORY_HPP_
 
+#include <chrono>
+#include <functional>
+#include <map>
+#include <utility>
+#include <vector>
+
+#include <fastdds/dds/core/policy/QosPolicies.hpp>
+#include <fastdds/dds/subscriber/qos/DataReaderQos.hpp>
+
 #include <fastdds/dds/topic/TopicDataType.hpp>
 #include <fastdds/dds/topic/TopicDescription.hpp>
 #include <fastdds/dds/topic/TypeSupport.hpp>
 
-#include <fastdds/rtps/resources/ResourceManagement.h>
+#include <fastdds/rtps/common/CacheChange.h>
+#include <fastdds/rtps/common/InstanceHandle.h>
 #include <fastdds/rtps/history/ReaderHistory.h>
-#include <fastrtps/qos/ReaderQos.h>
-#include <fastrtps/qos/QosPolicies.h>
+#include <fastdds/rtps/resources/ResourceManagement.h>
+
 #include <fastrtps/common/KeyedChanges.h>
 #include <fastrtps/subscriber/SampleInfo.h>
-#include <fastrtps/attributes/TopicAttributes.h>
-
-#include <fastdds/dds/subscriber/qos/DataReaderQos.hpp>
-#include <fastdds/dds/subscriber/qos/SubscriberQos.hpp>
-
-#include <chrono>
-#include <functional>
-#include <vector>
+#include <fastrtps/utils/fixed_size_string.hpp>
 
 namespace eprosima {
 namespace fastdds {
@@ -178,8 +181,6 @@ private:
     bool has_keys_;
     //!TopicDataType
     fastdds::dds::TopicDataType* type_;
-    //!ReaderQos
-    OwnershipQosPolicy ownership_;
 
     //!Type object to deserialize Key
     void* get_key_object_;
@@ -238,12 +239,6 @@ private:
     bool add_received_change_with_key(
             CacheChange_t* a_change,
             std::vector<CacheChange_t*>& instance_changes);
-
-    bool deserialize_change(
-            CacheChange_t* change,
-            uint32_t ownership_strength,
-            void* data,
-            fastrtps::SampleInfo_t* info);
 };
 
 } // namespace detail

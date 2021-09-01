@@ -39,7 +39,6 @@ using namespace eprosima::fastrtps::rtps;
 using eprosima::fastrtps::KeyedChanges;
 using eprosima::fastrtps::RecursiveTimedMutex;
 using eprosima::fastrtps::SampleInfo_t;
-using eprosima::fastrtps::TopicAttributes;
 
 static void get_sample_info(
         SampleInfo_t* info,
@@ -91,7 +90,6 @@ DataReaderHistory::DataReaderHistory(
     , type_name_(topic.get_type_name())
     , has_keys_(type->m_isGetKeyDefined)
     , type_(type.get())
-    , ownership_(qos.ownership())
     , get_key_object_(nullptr)
 {
     if (type_->m_isGetKeyDefined)
@@ -330,40 +328,6 @@ bool DataReaderHistory::find_key_for_change(
     return find_key(a_change, &map_it);
 }
 
-bool DataReaderHistory::deserialize_change(
-        CacheChange_t* change,
-        uint32_t ownership_strength,
-        void* data,
-        SampleInfo_t* info)
-{
-    if (change->kind == ALIVE)
-    {
-        if (!type_->deserialize(&change->serializedPayload, data))
-        {
-            logError(SUBSCRIBER, "Deserialization of data failed");
-            return false;
-        }
-    }
-
-    if (info != nullptr)
-    {
-        if (has_keys_ &&
-                change->instanceHandle == c_InstanceHandle_Unknown &&
-                change->kind == ALIVE)
-        {
-            bool is_key_protected = false;
-#if HAVE_SECURITY
-            is_key_protected = mp_reader->getAttributes().security_attributes().is_key_protected;
-#endif // if HAVE_SECURITY
-            type_->getKey(data, &change->instanceHandle, is_key_protected);
-        }
-
-        get_sample_info(info, change, ownership_strength);
-    }
-
-    return true;
-}
-
 bool DataReaderHistory::get_first_untaken_info(
         SampleInfo_t* info)
 {
@@ -373,8 +337,7 @@ bool DataReaderHistory::get_first_untaken_info(
     WriterProxy* wp = nullptr;
     if (mp_reader->nextUntakenCache(&change, &wp))
     {
-        uint32_t ownership = wp && ownership_.kind == EXCLUSIVE_OWNERSHIP_QOS ? wp->ownership_strength() : 0;
-        get_sample_info(info, change, ownership);
+        get_sample_info(info, change, 0);
         mp_reader->change_read_by_user(change, wp, false);
         return true;
     }
