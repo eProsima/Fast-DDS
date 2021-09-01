@@ -1288,6 +1288,14 @@ public:
         return *this;
     }
 
+    PubSubWriter& datasharing_auto(
+            const std::string directory,
+            std::vector<uint16_t> domain_id = std::vector<uint16_t>())
+    {
+        datawriter_qos_.data_sharing().automatic(directory, domain_id);
+        return *this;
+    }
+
     PubSubWriter& datasharing_on(
             const std::string directory,
             std::vector<uint16_t> domain_id = std::vector<uint16_t>())

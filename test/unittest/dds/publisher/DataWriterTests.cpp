@@ -277,7 +277,7 @@ TEST(DataWriterTests, ForcedDataSharing)
     // DataSharing enabled, unbounded topic data type
     qos = DATAWRITER_QOS_DEFAULT;
     qos.endpoint().history_memory_policy = fastrtps::rtps::PREALLOCATED_MEMORY_MODE;
-    qos.data_sharing().on("path");
+    qos.data_sharing().on(".");
     datawriter = publisher->create_datawriter(topic, qos);
     ASSERT_EQ(datawriter, nullptr);
 
@@ -288,7 +288,7 @@ TEST(DataWriterTests, ForcedDataSharing)
 
     // DataSharing enabled, bounded topic data type, Dynamic memory policy
     qos = DATAWRITER_QOS_DEFAULT;
-    qos.data_sharing().on("path");
+    qos.data_sharing().on(".");
     qos.endpoint().history_memory_policy = fastrtps::rtps::DYNAMIC_RESERVE_MEMORY_MODE;
     datawriter = publisher->create_datawriter(bounded_topic, qos);
     ASSERT_EQ(datawriter, nullptr);
@@ -338,7 +338,7 @@ TEST(DataWriterTests, ForcedDataSharing)
     ASSERT_NE(bounded_topic, nullptr);
 
     qos = DATAWRITER_QOS_DEFAULT;
-    qos.data_sharing().on("path");
+    qos.data_sharing().on(".");
     qos.endpoint().history_memory_policy = fastrtps::rtps::PREALLOCATED_MEMORY_MODE;
 
 
