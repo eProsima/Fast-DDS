@@ -21,7 +21,9 @@
 
 #include "DataReaderHistory.hpp"
 
-#include <fastdds/dds/topic/TopicDataType.hpp>
+#include <fastdds/dds/topic/TopicDescription.hpp>
+#include <fastdds/dds/topic/TypeSupport.hpp>
+
 #include <fastdds/dds/log/Log.hpp>
 #include <fastdds/rtps/reader/RTPSReader.h>
 
@@ -55,39 +57,41 @@ static void get_sample_info(
 }
 
 static HistoryAttributes to_history_attributes(
-        const TopicAttributes& topic_att,
-        uint32_t payloadMaxSize,
-        MemoryManagementPolicy_t mempolicy)
+        const TypeSupport& type,
+        const DataReaderQos& qos)
 {
-    auto initial_samples = topic_att.resourceLimitsQos.allocated_samples;
-    auto max_samples = topic_att.resourceLimitsQos.max_samples;
+    auto initial_samples = qos.resource_limits().allocated_samples;
+    auto max_samples = qos.resource_limits().max_samples;
 
-    if (topic_att.historyQos.kind != KEEP_ALL_HISTORY_QOS)
+    if (qos.history().kind != KEEP_ALL_HISTORY_QOS)
     {
-        max_samples = topic_att.historyQos.depth;
-        if (topic_att.getTopicKind() != NO_KEY)
+        max_samples = qos.history().depth;
+        if (type->m_isGetKeyDefined)
         {
-            max_samples *= topic_att.resourceLimitsQos.max_instances;
+            max_samples *= qos.resource_limits().max_instances;
         }
 
         initial_samples = std::min(initial_samples, max_samples);
     }
 
+    auto mempolicy = qos.endpoint().history_memory_policy;
+    auto payloadMaxSize = type->m_typeSize + 3; // possible alignment
+
     return HistoryAttributes(mempolicy, payloadMaxSize, initial_samples, max_samples);
 }
 
 DataReaderHistory::DataReaderHistory(
-        const TopicAttributes& topic_att,
-        TopicDataType* type,
-        const ReaderQos& qos,
-        uint32_t payloadMaxSize,
-        MemoryManagementPolicy_t mempolicy)
-    : ReaderHistory(to_history_attributes(topic_att, payloadMaxSize, mempolicy))
-    , history_qos_(topic_att.historyQos)
-    , resource_limited_qos_(topic_att.resourceLimitsQos)
-    , topic_att_(topic_att)
-    , type_(type)
-    , qos_(qos)
+        const TypeSupport& type,
+        const TopicDescription& topic,
+        const DataReaderQos& qos)
+    : ReaderHistory(to_history_attributes(type, qos))
+    , history_qos_(qos.history())
+    , resource_limited_qos_(qos.resource_limits())
+    , topic_name_(topic.get_name())
+    , type_name_(topic.get_type_name())
+    , has_keys_(type->m_isGetKeyDefined)
+    , type_(type.get())
+    , ownership_(qos.ownership())
     , get_key_object_(nullptr)
 {
     if (type_->m_isGetKeyDefined)
@@ -113,15 +117,15 @@ DataReaderHistory::DataReaderHistory(
     using std::placeholders::_1;
     using std::placeholders::_2;
 
-    if (topic_att.getTopicKind() == NO_KEY)
+    if (!has_keys_)
     {
-        receive_fn_ = topic_att.historyQos.kind == KEEP_ALL_HISTORY_QOS ?
+        receive_fn_ = qos.history().kind == KEEP_ALL_HISTORY_QOS ?
                 std::bind(&DataReaderHistory::received_change_keep_all_no_key, this, _1, _2) :
                 std::bind(&DataReaderHistory::received_change_keep_last_no_key, this, _1, _2);
     }
     else
     {
-        receive_fn_ = topic_att.historyQos.kind == KEEP_ALL_HISTORY_QOS ?
+        receive_fn_ = qos.history().kind == KEEP_ALL_HISTORY_QOS ?
                 std::bind(&DataReaderHistory::received_change_keep_all_with_key, this, _1, _2) :
                 std::bind(&DataReaderHistory::received_change_keep_last_with_key, this, _1, _2);
     }
@@ -244,7 +248,7 @@ bool DataReaderHistory::add_received_change(
     if (m_isHistoryFull)
     {
         // Discarding the sample.
-        logWarning(SUBSCRIBER, "Attempting to add Data to Full ReaderHistory: " << topic_att_.getTopicDataType());
+        logWarning(SUBSCRIBER, "Attempting to add Data to Full ReaderHistory: " << type_name_);
         return false;
     }
 
@@ -255,7 +259,7 @@ bool DataReaderHistory::add_received_change(
             m_isHistoryFull = true;
         }
 
-        logInfo(SUBSCRIBER, topic_att_.getTopicDataType()
+        logInfo(SUBSCRIBER, type_name_
                 << ": Change " << a_change->sequenceNumber << " added from: "
                 << a_change->writerGUID; );
 
@@ -272,7 +276,7 @@ bool DataReaderHistory::add_received_change_with_key(
     if (m_isHistoryFull)
     {
         // Discarting the sample.
-        logWarning(SUBSCRIBER, "Attempting to add Data to Full ReaderHistory: " << topic_att_.getTopicDataType());
+        logWarning(SUBSCRIBER, "Attempting to add Data to Full ReaderHistory: " << type_name_);
         return false;
     }
 
@@ -318,7 +322,7 @@ bool DataReaderHistory::find_key_for_change(
     }
     else if (!a_change->instanceHandle.isDefined())
     {
-        logWarning(SUBSCRIBER, "NO KEY in topic: " << topic_att_.topicName
+        logWarning(SUBSCRIBER, "NO KEY in topic: " << topic_name_
                                                    << " and no method to obtain it"; );
         return false;
     }
@@ -343,7 +347,7 @@ bool DataReaderHistory::deserialize_change(
 
     if (info != nullptr)
     {
-        if (topic_att_.topicKind == WITH_KEY &&
+        if (has_keys_ &&
                 change->instanceHandle == c_InstanceHandle_Unknown &&
                 change->kind == ALIVE)
         {
@@ -369,7 +373,7 @@ bool DataReaderHistory::get_first_untaken_info(
     WriterProxy* wp = nullptr;
     if (mp_reader->nextUntakenCache(&change, &wp))
     {
-        uint32_t ownership = wp && qos_.m_ownership.kind == EXCLUSIVE_OWNERSHIP_QOS ? wp->ownership_strength() : 0;
+        uint32_t ownership = wp && ownership_.kind == EXCLUSIVE_OWNERSHIP_QOS ? wp->ownership_strength() : 0;
         get_sample_info(info, change, ownership);
         mp_reader->change_read_by_user(change, wp, false);
         return true;
@@ -421,7 +425,7 @@ bool DataReaderHistory::remove_change_sub(
     }
 
     std::lock_guard<RecursiveTimedMutex> guard(*mp_mutex);
-    if (topic_att_.getTopicKind() == WITH_KEY)
+    if (has_keys_)
     {
         bool found = false;
         t_m_Inst_Caches::iterator vit;
@@ -463,7 +467,7 @@ bool DataReaderHistory::remove_change_sub(
     }
 
     std::lock_guard<RecursiveTimedMutex> guard(*mp_mutex);
-    if (topic_att_.getTopicKind() == WITH_KEY)
+    if (has_keys_)
     {
         bool found = false;
         t_m_Inst_Caches::iterator vit;
@@ -496,7 +500,7 @@ bool DataReaderHistory::remove_change_sub(
     m_isHistoryFull = false;
     iterator ret_it = remove_change_nts(chit);
 
-    if (topic_att_.getTopicKind() != WITH_KEY)
+    if (!has_keys_)
     {
         it = ret_it;
     }
@@ -515,23 +519,19 @@ bool DataReaderHistory::set_next_deadline(
     }
     std::lock_guard<RecursiveTimedMutex> guard(*mp_mutex);
 
-    if (topic_att_.getTopicKind() == NO_KEY)
+    if (!has_keys_)
     {
         next_deadline_us_ = next_deadline_us;
         return true;
     }
-    else if (topic_att_.getTopicKind() == WITH_KEY)
-    {
-        if (keyed_changes_.find(handle) == keyed_changes_.end())
-        {
-            return false;
-        }
 
-        keyed_changes_[handle].next_deadline_us = next_deadline_us;
-        return true;
+    if (keyed_changes_.find(handle) == keyed_changes_.end())
+    {
+        return false;
     }
 
-    return false;
+    keyed_changes_[handle].next_deadline_us = next_deadline_us;
+    return true;
 }
 
 bool DataReaderHistory::get_next_deadline(
@@ -545,34 +545,30 @@ bool DataReaderHistory::get_next_deadline(
     }
     std::lock_guard<RecursiveTimedMutex> guard(*mp_mutex);
 
-    if (topic_att_.getTopicKind() == NO_KEY)
+    if (!has_keys_)
     {
         next_deadline_us = next_deadline_us_;
         return true;
     }
-    else if (topic_att_.getTopicKind() == WITH_KEY)
-    {
-        auto min = std::min_element(keyed_changes_.begin(),
-                        keyed_changes_.end(),
-                        [](
-                            const std::pair<InstanceHandle_t, KeyedChanges>& lhs,
-                            const std::pair<InstanceHandle_t, KeyedChanges>& rhs)
-                        {
-                            return lhs.second.next_deadline_us < rhs.second.next_deadline_us;
-                        });
-        handle = min->first;
-        next_deadline_us = min->second.next_deadline_us;
-        return true;
-    }
 
-    return false;
+    auto min = std::min_element(keyed_changes_.begin(),
+                    keyed_changes_.end(),
+                    [](
+                        const std::pair<InstanceHandle_t, KeyedChanges>& lhs,
+                        const std::pair<InstanceHandle_t, KeyedChanges>& rhs)
+                    {
+                        return lhs.second.next_deadline_us < rhs.second.next_deadline_us;
+                    });
+    handle = min->first;
+    next_deadline_us = min->second.next_deadline_us;
+    return true;
 }
 
 std::pair<bool, DataReaderHistory::instance_info> DataReaderHistory::lookup_instance(
         const InstanceHandle_t& handle,
         bool exact)
 {
-    if (topic_att_.getTopicKind() == NO_KEY)
+    if (!has_keys_)
     {
         if (handle.isDefined())
         {
@@ -583,19 +579,17 @@ std::pair<bool, DataReaderHistory::instance_info> DataReaderHistory::lookup_inst
             // In both cases, no instance should be returned
             return { false, {InstanceHandle_t(), nullptr} };
         }
-        else
-        {
-            if (exact)
-            {
-                // Looking for HANDLE_NIL, nothing to return
-                return { false, {InstanceHandle_t(), nullptr} };
-            }
 
-            // Looking for the first instance, return the ficticious one containing all changes
-            InstanceHandle_t tmp;
-            tmp.value[0] = 1;
-            return { true, {tmp, &m_changes} };
+        if (exact)
+        {
+            // Looking for HANDLE_NIL, nothing to return
+            return { false, {InstanceHandle_t(), nullptr} };
         }
+
+        // Looking for the first instance, return the ficticious one containing all changes
+        InstanceHandle_t tmp;
+        tmp.value[0] = 1;
+        return { true, {tmp, &m_changes} };
     }
 
     t_m_Inst_Caches::iterator it;
@@ -628,7 +622,7 @@ ReaderHistory::iterator DataReaderHistory::remove_change_nts(
 
     if ( removal != changesEnd()
             && (p_sample = *removal)->instanceHandle.isDefined()
-            && topic_att_.getTopicKind() == WITH_KEY)
+            && has_keys_)
     {
         // clean any references to this CacheChange in the key state collection
         auto it = keyed_changes_.find(p_sample->instanceHandle);

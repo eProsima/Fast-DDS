@@ -20,13 +20,19 @@
 #define _FASTDDS_SUBSCRIBER_HISTORY_DATAREADERHISTORY_HPP_
 
 #include <fastdds/dds/topic/TopicDataType.hpp>
+#include <fastdds/dds/topic/TopicDescription.hpp>
+#include <fastdds/dds/topic/TypeSupport.hpp>
+
 #include <fastdds/rtps/resources/ResourceManagement.h>
-#include <fastrtps/qos/ReaderQos.h>
 #include <fastdds/rtps/history/ReaderHistory.h>
+#include <fastrtps/qos/ReaderQos.h>
 #include <fastrtps/qos/QosPolicies.h>
 #include <fastrtps/common/KeyedChanges.h>
 #include <fastrtps/subscriber/SampleInfo.h>
 #include <fastrtps/attributes/TopicAttributes.h>
+
+#include <fastdds/dds/subscriber/qos/DataReaderQos.hpp>
+#include <fastdds/dds/subscriber/qos/SubscriberQos.hpp>
 
 #include <chrono>
 #include <functional>
@@ -59,11 +65,9 @@ public:
      * @param mempolicy Set whether the payloads ccan dynamically resized or not.
      */
     DataReaderHistory(
-            const fastrtps::TopicAttributes& topic_att,
-            TopicDataType* type,
-            const fastrtps::ReaderQos& qos,
-            uint32_t payloadMax,
-            MemoryManagementPolicy_t mempolicy);
+            const TypeSupport& type,
+            const TopicDescription& topic,
+            const DataReaderQos& qos);
 
     ~DataReaderHistory() override;
 
@@ -166,12 +170,16 @@ private:
     HistoryQosPolicy history_qos_;
     //!ResourceLimitsQosPolicy values.
     ResourceLimitsQosPolicy resource_limited_qos_;
-    //!Topic Attributes
-    fastrtps::TopicAttributes topic_att_;
+    //!Topic name
+    fastrtps::string_255 topic_name_;
+    //!Type name
+    fastrtps::string_255 type_name_;
+    //!Whether the type has keys
+    bool has_keys_;
     //!TopicDataType
     fastdds::dds::TopicDataType* type_;
     //!ReaderQos
-    fastrtps::ReaderQos qos_;
+    OwnershipQosPolicy ownership_;
 
     //!Type object to deserialize Key
     void* get_key_object_;

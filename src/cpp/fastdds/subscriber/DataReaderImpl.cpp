@@ -126,11 +126,7 @@ DataReaderImpl::DataReaderImpl(
     , topic_(topic)
     , qos_(&qos == &DATAREADER_QOS_DEFAULT ? subscriber_->get_default_datareader_qos() : qos)
 #pragma warning (disable : 4355 )
-    , history_(topic_attributes(),
-            type_.get(),
-            qos_.get_readerqos(subscriber_->get_qos()),
-            type_->m_typeSize + 3,    /* Possible alignment */
-            qos_.endpoint().history_memory_policy)
+    , history_(type, *topic, qos_)
     , listener_(listener)
     , reader_listener_(this)
     , deadline_duration_us_(qos_.deadline().period.to_ns() * 1e-3)
