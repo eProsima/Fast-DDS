@@ -32,10 +32,9 @@
 using namespace eprosima::fastdds::dds;
 using namespace eprosima::fastdds::rtps;
 
-namespace pub_ns
-{
-    bool stop;
-}
+namespace pub_ns {
+bool stop;
+} // namespace pub_ns
 
 using namespace pub_ns;
 
@@ -59,7 +58,7 @@ bool HelloWorldPublisher::init(
 
     // Set participant as DS CLIENT
     pqos.wire_protocol().builtin.discovery_config.discoveryProtocol =
-        eprosima::fastrtps::rtps::DiscoveryProtocol_t::CLIENT;
+            eprosima::fastrtps::rtps::DiscoveryProtocol_t::CLIENT;
 
     // Set SERVER's GUID prefix
     RemoteServerAttributes remote_server_att;
@@ -167,7 +166,9 @@ void HelloWorldPublisher::runThread(
         for (uint32_t i = 0; i < samples; ++i)
         {
             if (stop)
+            {
                 break;
+            }
             if (!publish(numWaitMatched))
             {
                 --i;
@@ -197,7 +198,10 @@ void HelloWorldPublisher::run(
     {
         std::cout << "Publisher running " << samples << " samples." << std::endl;
     }
-    signal(SIGINT, [](int signum){static_cast<void>(signum); stop=true;});
+    signal(SIGINT, [](int signum)
+            {
+                static_cast<void>(signum); stop = true;
+            });
     thread.join();
 }
 
