@@ -78,6 +78,28 @@ struct Arg: public option::Arg
         }
         return option::ARG_ILLEGAL;
     }
+
+    static option::ArgStatus Transport(const option::Option& option, bool msg)
+    {
+        if (option.arg != 0)
+        {
+            std::string transport = std::string(option.arg);
+            if (transport != "shm" && transport != "udp")
+            {
+                if (msg)
+                {
+                    print_error("Option '", option, "' only accepts <shm|udp> values\n");
+                }
+                return option::ARG_ILLEGAL;
+            }
+            return option::ARG_OK;
+        }
+        if (msg)
+        {
+            print_error("Option '", option, "' requires a string argument\n");
+        }
+        return option::ARG_ILLEGAL;
+    }
 };
 
 enum  optionIndex {
@@ -113,9 +135,9 @@ const option::Descriptor usage[] = {
         "  -i <num> \t--interval=<num>  \tTime between samples in milliseconds (Default: 100)." },
     { ASYNC, 0, "a", "async",               Arg::None,
         "  -a \t--async \tAsynchronous publish mode (synchronous by default)." },
-    { TRANSPORT, 0, "", "transport",        Arg::String,
-        "  \t--transport=<shm|udp> \tUse shared-memory|UDP transport (Default: intra-process > data-sharing > "
-        "shared-memory > UDP in this order of priority depending on execution context)." },
+    { TRANSPORT, 0, "", "transport",        Arg::Transport,
+        "  \t--transport=<shm|udp> \tUse shared-memory|UDP transport (Default: data-sharing > shared-memory > UDP "
+        "in this order of priority depending on execution context)." },
 
     { UNKNOWN_OPT, 0,"", "",                Arg::None,      "\nSubscriber options:"},
     { TOPIC,0,"t","topic",                  Arg::String,
@@ -124,9 +146,9 @@ const option::Descriptor usage[] = {
         "  -d <id> \t--domain=<id>  \tDDS domain ID (Default: 0)." },
     { SAMPLES,0,"s","samples",              Arg::Numeric,
         "  -s <num> \t--samples=<num>  \tNumber of samples to wait for (Default: 0 => infinite samples)." },
-    { TRANSPORT, 0, "", "transport",        Arg::String,
-        "  \t--transport=<shm|udp> \tUse shared-memory|UDP transport (Default: intra-process > data-sharing > "
-        "shared-memory > UDP in this order of priority depending on execution context)." },
+    { TRANSPORT, 0, "", "transport",        Arg::Transport,
+        "  \t--transport=<shm|udp> \tUse shared-memory|UDP transport (Default: data-sharing > shared-memory > UDP "
+        "in this order of priority depending on execution context)." },
 
     { UNKNOWN_OPT, 0,"", "",                Arg::None,      "\nQoS options:"},
     { RELIABLE, 0, "r", "reliable",         Arg::None,
@@ -138,12 +160,9 @@ const option::Descriptor usage[] = {
     { 0, 0, 0, 0, 0, 0 }
 };
 
-void print_warning(int type, const char* opt)
+void print_warning(std::string type, const char* opt)
 {
-    if (type == 1)
-        std::cerr << "WARNING: " << opt << " is a subscriber option, ignoring argument." << std::endl;
-    else
-        std::cerr << "WARNING: " << opt << " is a publisher option, ignoring argument." << std::endl;
+    std::cerr << "WARNING: " << opt << " is a " << type << " option, ignoring argument." << std::endl;
 }
 
 int main(int argc, char** argv)
@@ -204,6 +223,7 @@ int main(int argc, char** argv)
 
         if (parse.error())
         {
+            option::printUsage(fwrite, stdout, usage, columns);
             return 1;
         }
 
@@ -216,7 +236,6 @@ int main(int argc, char** argv)
         for (int i = 0; i < parse.optionsCount(); ++i)
         {
             option::Option& opt = buffer[i];
-            // TODO if type
             switch (opt.index())
             {
                 case HELP:
@@ -224,15 +243,7 @@ int main(int argc, char** argv)
                     break;
 
                 case TOPIC:
-                    if (opt.arg != nullptr)
-                    {
-                        topic_name = std::string(opt.arg);
-                    }
-                    else
-                    {
-                        option::printUsage(fwrite, stdout, usage, columns);
-                        return 1;
-                    }
+                    topic_name = std::string(opt.arg);
                     break;
 
                 case DOMAIN:
@@ -247,39 +258,25 @@ int main(int argc, char** argv)
                     if (type == 1)
                         sleep = strtol(opt.arg, nullptr, 10);
                     else
-                        print_warning(type, opt.name);
+                        print_warning("publisher", opt.name);
                     break;
 
                 case WAIT:
                     if (type == 1)
                         numWaitMatched = strtol(opt.arg, nullptr, 10);
                     else
-                        print_warning(type, opt.name);
+                        print_warning("publisher", opt.name);
                     break;
 
                 case ASYNC:
                     if (type == 1)
                         async = true;
                     else
-                        print_warning(type, opt.name);
+                        print_warning("publisher", opt.name);
                     break;
 
                 case TRANSPORT:
-                    if (opt.arg != nullptr)
-                    {
-                        transport = std::string(opt.arg);
-                        if (transport != "shm" && transport != "udp")
-                        {
-                            std::cerr << "ERROR: transport valid options are <shm|udp>" << std::endl;
-                            option::printUsage(fwrite, stdout, usage, columns);
-                            return 1;
-                        }
-                    }
-                    else
-                    {
-                        option::printUsage(fwrite, stdout, usage, columns);
-                        return 1;
-                    }
+                    transport = std::string(opt.arg);
                     break;
 
                 case RELIABLE:
