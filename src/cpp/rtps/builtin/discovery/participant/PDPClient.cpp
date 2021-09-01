@@ -624,7 +624,7 @@ const std::string& ros_discovery_server_env()
     static std::string servers;
     {
         const char* data;
-        if (eprosima::ReturnCode_t::RETCODE_OK == SystemInfo::instance().get_env(DEFAULT_ROS2_MASTER_URI, &data))
+        if (eprosima::ReturnCode_t::RETCODE_OK == SystemInfo::get_env(DEFAULT_ROS2_MASTER_URI, &data))
         {
             servers = data;
         }
@@ -635,7 +635,31 @@ const std::string& ros_discovery_server_env()
 bool load_environment_server_info(
         RemoteServerList_t& attributes)
 {
-    return load_environment_server_info(ros_discovery_server_env(), attributes);
+    static std::string filename;
+    std::string remote_servers_list;
+    // Try to load environment file
+    if (filename.empty())
+    {
+        const char* data;
+        if (eprosima::ReturnCode_t::RETCODE_OK == SystemInfo::get_env(FASTDDS_ENVIRONMENT_FILE_ENV_VAR, &data))
+        {
+            filename = data;
+        }
+    }
+
+    bool result = false;
+    if (!filename.empty() && ReturnCode_t::RETCODE_OK == SystemInfo::load_environment_file(filename,
+            DEFAULT_ROS2_MASTER_URI, remote_servers_list))
+    {
+        result = load_environment_server_info(remote_servers_list, attributes);
+    }
+    else
+    {
+        // If there is no environment file or if the file does not contain the DEFAULT_ROS2_MASTER_URI environment variable
+        // try to find if the variable has been set directly in the environment.
+        result = load_environment_server_info(ros_discovery_server_env(), attributes);
+    }
+    return result;
 }
 
 bool load_environment_server_info(
