@@ -144,8 +144,8 @@ FileWatchHandle SystemInfo::watch_file(
                        }
                    }));
 #endif // defined(_WIN32) || defined(__unix__)
-    (void)filename;
-    (void)callback;
+    static_cast<void>(filename);
+    static_cast<void>(callback);
     return FileWatchHandle();
 }
 
@@ -155,7 +155,7 @@ void SystemInfo::stop_watching_file(
 #if defined(_WIN32) || defined(__unix__)
     handle.reset();
 #endif // if defined(_WIN32) || defined(__unix__)
-    (void)handle;
+    static_cast<void>(handle);
 }
 
 } // eprosima

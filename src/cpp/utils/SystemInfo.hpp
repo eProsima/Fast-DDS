@@ -157,8 +157,8 @@ public:
     /**
      * Start a thread that watches for changes in the given file and executes a callback when the file changes.
      *
-     * The method returns a handle to the object that implements the watcher containing the thred.
-     * The scope of the listening thread is the same as the wathing object, so when the object
+     * The method returns a handle to the object that implements the watcher containing the thread.
+     * The scope of the listening thread is the same as the watching object, so when the object
      * goes out of scope, the thread is terminated.
      *
      * The thread can be terminated earlier with stop_watching_file(FileWatchHandle)
