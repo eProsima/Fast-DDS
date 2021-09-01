@@ -27,6 +27,7 @@
 
 #include <fastdds/dds/core/policy/QosPolicies.hpp>
 #include <fastdds/dds/subscriber/qos/DataReaderQos.hpp>
+#include <fastdds/dds/subscriber/SampleInfo.hpp>
 
 #include <fastdds/dds/topic/TopicDataType.hpp>
 #include <fastdds/dds/topic/TopicDescription.hpp>
@@ -38,7 +39,6 @@
 #include <fastdds/rtps/resources/ResourceManagement.h>
 
 #include <fastrtps/common/KeyedChanges.h>
-#include <fastrtps/subscriber/SampleInfo.h>
 #include <fastrtps/utils/fixed_size_string.hpp>
 
 namespace eprosima {
@@ -98,11 +98,11 @@ public:
 
     /**
      * @brief Returns information about the first untaken sample.
-     * @param [out] info Pointer to a SampleInfo_t structure to store first untaken sample information.
+     * @param [out] info SampleInfo structure to store first untaken sample information.
      * @return true if sample info was returned. false if there is no sample to take.
      */
     bool get_first_untaken_info(
-            fastrtps::SampleInfo_t* info);
+            SampleInfo& info);
 
     /**
      * This method is called to remove a change from the SubscriberHistory.

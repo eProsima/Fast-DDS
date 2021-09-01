@@ -38,21 +38,40 @@ using namespace eprosima::fastrtps::rtps;
 
 using eprosima::fastrtps::KeyedChanges;
 using eprosima::fastrtps::RecursiveTimedMutex;
-using eprosima::fastrtps::SampleInfo_t;
 
 static void get_sample_info(
-        SampleInfo_t* info,
-        CacheChange_t* change,
-        uint32_t ownership_strength)
+        SampleInfo& info,
+        CacheChange_t* change)
 {
-    info->sampleKind = change->kind;
-    info->sample_identity.writer_guid(change->writerGUID);
-    info->sample_identity.sequence_number(change->sequenceNumber);
-    info->sourceTimestamp = change->sourceTimestamp;
-    info->receptionTimestamp = change->reader_info.receptionTimestamp;
-    info->ownershipStrength = ownership_strength;
-    info->iHandle = change->instanceHandle;
-    info->related_sample_identity = change->write_params.sample_identity();
+    info.sample_state = NOT_READ_SAMPLE_STATE;
+    info.view_state = NOT_NEW_VIEW_STATE;
+    info.disposed_generation_count = 0;
+    info.no_writers_generation_count = 1;
+    info.sample_rank = 0;
+    info.generation_rank = 0;
+    info.absoulte_generation_rank = 0;
+    info.source_timestamp = change->sourceTimestamp;
+    info.reception_timestamp = change->reader_info.receptionTimestamp;
+    info.instance_handle = change->instanceHandle;
+    info.publication_handle = fastrtps::rtps::InstanceHandle_t(change->writerGUID);
+    info.sample_identity.writer_guid(change->writerGUID);
+    info.sample_identity.sequence_number(change->sequenceNumber);
+    info.related_sample_identity = change->write_params.sample_identity();
+    info.valid_data = change->kind == eprosima::fastrtps::rtps::ALIVE;
+
+    switch (change->kind)
+    {
+    case eprosima::fastrtps::rtps::ALIVE:
+        info.instance_state = ALIVE_INSTANCE_STATE;
+        break;
+    case eprosima::fastrtps::rtps::NOT_ALIVE_DISPOSED:
+        info.instance_state = NOT_ALIVE_DISPOSED_INSTANCE_STATE;
+        break;
+    default:
+        //TODO [ILG] change this if the other kinds ever get implemented
+        info.instance_state = ALIVE_INSTANCE_STATE;
+        break;
+    }
 }
 
 static HistoryAttributes to_history_attributes(
@@ -329,7 +348,7 @@ bool DataReaderHistory::find_key_for_change(
 }
 
 bool DataReaderHistory::get_first_untaken_info(
-        SampleInfo_t* info)
+        SampleInfo& info)
 {
     std::lock_guard<RecursiveTimedMutex> lock(*mp_mutex);
 
@@ -337,7 +356,7 @@ bool DataReaderHistory::get_first_untaken_info(
     WriterProxy* wp = nullptr;
     if (mp_reader->nextUntakenCache(&change, &wp))
     {
-        get_sample_info(info, change, 0);
+        get_sample_info(info, change);
         mp_reader->change_read_by_user(change, wp, false);
         return true;
     }
