@@ -33,12 +33,11 @@
 using namespace eprosima::fastdds::dds;
 using namespace eprosima::fastdds::rtps;
 
-namespace sub_ns
-{
-    bool stop;
-    std::mutex mtx;
-    std::condition_variable terminate_cv;
-}
+namespace sub_ns {
+bool stop;
+std::mutex mtx;
+std::condition_variable terminate_cv;
+} // namespace sub_ns
 
 using namespace sub_ns;
 
@@ -61,7 +60,7 @@ bool HelloWorldSubscriber::init(
 
     // Set participant as DS CLIENT
     pqos.wire_protocol().builtin.discovery_config.discoveryProtocol =
-        eprosima::fastrtps::rtps::DiscoveryProtocol_t::CLIENT;
+            eprosima::fastrtps::rtps::DiscoveryProtocol_t::CLIENT;
 
     // Set SERVER's GUID prefix
     RemoteServerAttributes remote_server_att;
@@ -104,7 +103,9 @@ bool HelloWorldSubscriber::init(
 
     // CREATE THE READER
     if (threshold > 0)
+    {
         set_listener_threshold(threshold);
+    }
     DataReaderQos rqos = DATAREADER_QOS_DEFAULT;
     reader_ = subscriber_->create_datareader(topic_, rqos, &listener_);
 
@@ -133,7 +134,8 @@ HelloWorldSubscriber::~HelloWorldSubscriber()
     DomainParticipantFactory::get_instance()->delete_participant(participant_);
 }
 
-void HelloWorldSubscriber::set_listener_threshold(uint32_t threshold)
+void HelloWorldSubscriber::set_listener_threshold(
+        uint32_t threshold)
 {
     listener_.threshold_ = threshold;
 }
@@ -183,11 +185,21 @@ void HelloWorldSubscriber::run(
         uint32_t samples)
 {
     if (samples > 0)
+    {
         std::cout << "Subscriber running until " << samples << " samples have been received" << std::endl;
+    }
     else
+    {
         std::cout << "Subscriber running. Please press CTRL+C to stop the Subscriber" << std::endl;
+    }
     stop = false;
-    signal(SIGINT, [](int signum){static_cast<void>(signum); stop=true; terminate_cv.notify_one();});
+    signal(SIGINT, [](int signum)
+            {
+                static_cast<void>(signum); stop = true; terminate_cv.notify_one();
+            });
     std::unique_lock<std::mutex> lck(mtx);
-    terminate_cv.wait(lck, []{return stop;});
+    terminate_cv.wait(lck, []
+            {
+                return stop;
+            });
 }

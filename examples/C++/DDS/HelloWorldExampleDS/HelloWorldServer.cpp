@@ -28,12 +28,11 @@
 using namespace eprosima::fastdds::dds;
 using namespace eprosima::fastdds::rtps;
 
-namespace server_ns
-{
-    bool stop;
-    std::mutex mtx;
-    std::condition_variable terminate_cv;
-}
+namespace server_ns {
+bool stop;
+std::mutex mtx;
+std::condition_variable terminate_cv;
+} // namespace server_ns
 
 using namespace server_ns;
 
@@ -50,7 +49,7 @@ bool HelloWorldServer::init(
 
     // Set participant as SERVER
     pqos.wire_protocol().builtin.discovery_config.discoveryProtocol =
-        eprosima::fastrtps::rtps::DiscoveryProtocol_t::SERVER;
+            eprosima::fastrtps::rtps::DiscoveryProtocol_t::SERVER;
 
     // Set SERVER's GUID prefix
     std::istringstream("44.53.00.5f.45.50.52.4f.53.49.4d.41") >> pqos.wire_protocol().prefix;
@@ -77,7 +76,13 @@ void HelloWorldServer::run()
 {
     std::cout << "Server running. Please press CTRL+C to stop the Server at any time." << std::endl;
     stop = false;
-    signal(SIGINT, [](int signum){static_cast<void>(signum); stop=true; terminate_cv.notify_one();});
+    signal(SIGINT, [](int signum)
+            {
+                static_cast<void>(signum); stop = true; terminate_cv.notify_one();
+            });
     std::unique_lock<std::mutex> lck(mtx);
-    terminate_cv.wait(lck, []{return stop;});
+    terminate_cv.wait(lck, []
+            {
+                return stop;
+            });
 }
