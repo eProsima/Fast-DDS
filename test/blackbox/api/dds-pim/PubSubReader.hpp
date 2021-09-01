@@ -399,6 +399,7 @@ public:
                 std::cout << "Created datareader " << datareader_->guid() << " for topic " <<
                     topic_name_ << std::endl;
                 initialized_ = true;
+                datareader_guid_ = datareader_->guid();
             }
         }
 
@@ -1328,6 +1329,14 @@ public:
         return *this;
     }
 
+    PubSubReader& datasharing_auto(
+            const std::string directory,
+            std::vector<uint16_t> domain_id = std::vector<uint16_t>())
+    {
+        datareader_qos_.data_sharing().automatic(directory, domain_id);
+        return *this;
+    }
+
     PubSubReader& datasharing_on(
             const std::string directory,
             std::vector<uint16_t> domain_id = std::vector<uint16_t>())
@@ -1527,6 +1536,11 @@ public:
         return datareader_->get_statuscondition();
     }
 
+    const eprosima::fastrtps::rtps::GUID_t& datareader_guid() const
+    {
+        return datareader_guid_;
+    }
+
 protected:
 
     const eprosima::fastrtps::rtps::GUID_t& participant_guid() const
@@ -1627,6 +1641,7 @@ protected:
     eprosima::fastdds::dds::StatusMask status_mask_;
     std::string topic_name_;
     eprosima::fastrtps::rtps::GUID_t participant_guid_;
+    eprosima::fastrtps::rtps::GUID_t datareader_guid_;
     bool initialized_;
     std::list<type> total_msgs_;
     std::mutex mutex_;
