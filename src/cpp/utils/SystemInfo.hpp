@@ -127,7 +127,7 @@ public:
             const std::string& filename);
 
     /**
-     * Read environment vairable contained in the environment file.
+     * Read environment variable contained in the environment file.
      *
      * @param [in] filename path/name of the environment file.
      * @param [in] env_name environment variable name to read from the file.
@@ -135,7 +135,8 @@ public:
      *
      * @return RETCODE_OK if succesful.
      * RETCODE_BAD_PARAMETER if the file does not exist.
-     * RETCODE_NO_DATA if the file exists but there is no information about the environment variable
+     * RETCODE_NO_DATA if the file exists but there is no information about the environment variable.
+     * RETCODE_ERROR if the file is empty or malformed.
      */
     static ReturnCode_t load_environment_file(
             const std::string& filename,
