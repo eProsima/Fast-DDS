@@ -34,10 +34,9 @@
 using namespace eprosima::fastdds::dds;
 using namespace eprosima::fastdds::rtps;
 
-namespace pub_ns
-{
-    bool stop;
-}
+namespace pub_ns {
+bool stop;
+} // namespace pub_ns
 
 using namespace pub_ns;
 
@@ -104,20 +103,32 @@ bool HelloWorldPublisher::init(
     // CREATE THE WRITER
     DataWriterQos wqos = DATAWRITER_QOS_DEFAULT;
     if (!transport.empty())
+    {
         wqos.data_sharing().off();
+    }
 
     if (async)
+    {
         wqos.publish_mode().kind = ASYNCHRONOUS_PUBLISH_MODE;
+    }
 
     if (reliable)
+    {
         wqos.reliability().kind = RELIABLE_RELIABILITY_QOS;
+    }
     else
+    {
         wqos.reliability().kind = BEST_EFFORT_RELIABILITY_QOS;
+    }
 
     if (transient)
+    {
         wqos.durability().kind = TRANSIENT_LOCAL_DURABILITY_QOS;
+    }
     else
+    {
         wqos.durability().kind = VOLATILE_DURABILITY_QOS;
+    }
 
     writer_ = publisher_->create_datawriter(topic_, wqos, &listener_);
 
@@ -188,7 +199,9 @@ void HelloWorldPublisher::runThread(
         for (uint32_t i = 0; i < samples; ++i)
         {
             if (stop)
+            {
                 break;
+            }
             if (!publish(numWaitMatched))
             {
                 --i;
@@ -218,7 +231,10 @@ void HelloWorldPublisher::run(
     {
         std::cout << "Publisher running " << samples << " samples." << std::endl;
     }
-    signal(SIGINT, [](int signum){static_cast<void>(signum); stop=true;});
+    signal(SIGINT, [](int signum)
+            {
+                static_cast<void>(signum); stop = true;
+            });
     thread.join();
 }
 

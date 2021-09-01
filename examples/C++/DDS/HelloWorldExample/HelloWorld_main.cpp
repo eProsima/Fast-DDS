@@ -24,31 +24,48 @@
 
 #include <optionparser.h>
 
-struct Arg: public option::Arg
+struct Arg : public option::Arg
 {
-    static void print_error(const char* msg1, const option::Option& opt, const char* msg2)
+    static void print_error(
+            const char* msg1,
+            const option::Option& opt,
+            const char* msg2)
     {
         fprintf(stderr, "%s", msg1);
         fwrite(opt.name, opt.namelen, 1, stderr);
         fprintf(stderr, "%s", msg2);
     }
 
-    static option::ArgStatus Unknown(const option::Option& option, bool msg)
+    static option::ArgStatus Unknown(
+            const option::Option& option,
+            bool msg)
     {
-        if (msg) print_error("Unknown option '", option, "'\n");
+        if (msg)
+        {
+            print_error("Unknown option '", option, "'\n");
+        }
         return option::ARG_ILLEGAL;
     }
 
-    static option::ArgStatus Required(const option::Option& option, bool msg)
+    static option::ArgStatus Required(
+            const option::Option& option,
+            bool msg)
     {
         if (option.arg != 0 && option.arg[0] != 0)
-        return option::ARG_OK;
+        {
+            return option::ARG_OK;
+        }
 
-        if (msg) print_error("Option '", option, "' requires an argument\n");
+        if (msg)
+        {
+            print_error("Option '", option, "' requires an argument\n");
+        }
         return option::ARG_ILLEGAL;
     }
 
-    static option::ArgStatus Numeric(const option::Option& option, bool msg)
+    static option::ArgStatus Numeric(
+            const option::Option& option,
+            bool msg)
     {
         char* endptr = 0;
         if (option.arg != 0 && strtol(option.arg, &endptr, 10))
@@ -66,7 +83,9 @@ struct Arg: public option::Arg
         return option::ARG_ILLEGAL;
     }
 
-    static option::ArgStatus String(const option::Option& option, bool msg)
+    static option::ArgStatus String(
+            const option::Option& option,
+            bool msg)
     {
         if (option.arg != 0)
         {
@@ -79,7 +98,9 @@ struct Arg: public option::Arg
         return option::ARG_ILLEGAL;
     }
 
-    static option::ArgStatus Transport(const option::Option& option, bool msg)
+    static option::ArgStatus Transport(
+            const option::Option& option,
+            bool msg)
     {
         if (option.arg != 0)
         {
@@ -100,9 +121,11 @@ struct Arg: public option::Arg
         }
         return option::ARG_ILLEGAL;
     }
+
 };
 
-enum  optionIndex {
+enum  optionIndex
+{
     UNKNOWN_OPT,
     HELP,
     TOPIC,
@@ -117,55 +140,59 @@ enum  optionIndex {
 };
 
 const option::Descriptor usage[] = {
-    { UNKNOWN_OPT, 0,"", "",                Arg::None,
-        "Usage: HelloWorldExample <publisher|subscriber>\n\nGeneral options:" },
-    { HELP,    0,"h", "help",               Arg::None,      "  -h \t--help  \tProduce help message." },
+    { UNKNOWN_OPT, 0, "", "",                Arg::None,
+      "Usage: HelloWorldExample <publisher|subscriber>\n\nGeneral options:" },
+    { HELP,    0, "h", "help",               Arg::None,      "  -h \t--help  \tProduce help message." },
 
-    { UNKNOWN_OPT, 0,"", "",                Arg::None,      "\nPublisher options:"},
-    { TOPIC,0,"t","topic",                  Arg::String,
-        "  -t <topic_name> \t--topic=<topic_name>  \tTopic name (Default: HelloWorldTopic)." },
-    { DOMAIN,0,"d","domain",                Arg::Numeric,
-        "  -d <id> \t--domain=<id>  \tDDS domain ID (Default: 0)." },
+    { UNKNOWN_OPT, 0, "", "",                Arg::None,      "\nPublisher options:"},
+    { TOPIC, 0, "t", "topic",                  Arg::String,
+      "  -t <topic_name> \t--topic=<topic_name>  \tTopic name (Default: HelloWorldTopic)." },
+    { DOMAIN, 0, "d", "domain",                Arg::Numeric,
+      "  -d <id> \t--domain=<id>  \tDDS domain ID (Default: 0)." },
     { WAIT, 0, "w", "wait",                 Arg::Numeric,
-        "  -w <num> \t--wait=<num> \tNumber of matched subscribers required to publish"
-        "(Default: 0 => does not wait)." },
-    { SAMPLES,0,"s","samples",              Arg::Numeric,
-        "  -s <num> \t--samples=<num>  \tNumber of samples to send (Default: 0 => infinite samples)." },
-    { INTERVAL,0,"i","interval",            Arg::Numeric,
-        "  -i <num> \t--interval=<num>  \tTime between samples in milliseconds (Default: 100)." },
+      "  -w <num> \t--wait=<num> \tNumber of matched subscribers required to publish"
+      "(Default: 0 => does not wait)." },
+    { SAMPLES, 0, "s", "samples",              Arg::Numeric,
+      "  -s <num> \t--samples=<num>  \tNumber of samples to send (Default: 0 => infinite samples)." },
+    { INTERVAL, 0, "i", "interval",            Arg::Numeric,
+      "  -i <num> \t--interval=<num>  \tTime between samples in milliseconds (Default: 100)." },
     { ASYNC, 0, "a", "async",               Arg::None,
-        "  -a \t--async \tAsynchronous publish mode (synchronous by default)." },
+      "  -a \t--async \tAsynchronous publish mode (synchronous by default)." },
     { TRANSPORT, 0, "", "transport",        Arg::Transport,
-        "  \t--transport=<shm|udp> \tUse shared-memory|UDP transport (Default: data-sharing > shared-memory > UDP "
-        "in this order of priority depending on execution context)." },
+      "  \t--transport=<shm|udp> \tUse shared-memory|UDP transport (Default: data-sharing > shared-memory > UDP "
+      "in this order of priority depending on execution context)." },
 
-    { UNKNOWN_OPT, 0,"", "",                Arg::None,      "\nSubscriber options:"},
-    { TOPIC,0,"t","topic",                  Arg::String,
-        "  -t <topic_name> \t--topic=<topic_name>  \tTopic name (Default: HelloWorldTopic)." },
-    { DOMAIN,0,"d","domain",                Arg::Numeric,
-        "  -d <id> \t--domain=<id>  \tDDS domain ID (Default: 0)." },
-    { SAMPLES,0,"s","samples",              Arg::Numeric,
-        "  -s <num> \t--samples=<num>  \tNumber of samples to wait for (Default: 0 => infinite samples)." },
+    { UNKNOWN_OPT, 0, "", "",                Arg::None,      "\nSubscriber options:"},
+    { TOPIC, 0, "t", "topic",                  Arg::String,
+      "  -t <topic_name> \t--topic=<topic_name>  \tTopic name (Default: HelloWorldTopic)." },
+    { DOMAIN, 0, "d", "domain",                Arg::Numeric,
+      "  -d <id> \t--domain=<id>  \tDDS domain ID (Default: 0)." },
+    { SAMPLES, 0, "s", "samples",              Arg::Numeric,
+      "  -s <num> \t--samples=<num>  \tNumber of samples to wait for (Default: 0 => infinite samples)." },
     { TRANSPORT, 0, "", "transport",        Arg::Transport,
-        "  \t--transport=<shm|udp> \tUse shared-memory|UDP transport (Default: data-sharing > shared-memory > UDP "
-        "in this order of priority depending on execution context)." },
+      "  \t--transport=<shm|udp> \tUse shared-memory|UDP transport (Default: data-sharing > shared-memory > UDP "
+      "in this order of priority depending on execution context)." },
 
-    { UNKNOWN_OPT, 0,"", "",                Arg::None,      "\nQoS options:"},
+    { UNKNOWN_OPT, 0, "", "",                Arg::None,      "\nQoS options:"},
     { RELIABLE, 0, "r", "reliable",         Arg::None,
-        "  -r \t--reliable \tSet reliability to reliable (best-effort by default)." },
+      "  -r \t--reliable \tSet reliability to reliable (best-effort by default)." },
     { TRANSIENT, 0, "", "transient",        Arg::None,
-        "  \t--transient \tSet durability to transient local (volatile by default)." },
+      "  \t--transient \tSet durability to transient local (volatile by default)." },
 
 
     { 0, 0, 0, 0, 0, 0 }
 };
 
-void print_warning(std::string type, const char* opt)
+void print_warning(
+        std::string type,
+        const char* opt)
 {
     std::cerr << "WARNING: " << opt << " is a " << type << " option, ignoring argument." << std::endl;
 }
 
-int main(int argc, char** argv)
+int main(
+        int argc,
+        char** argv)
 {
     int columns;
 
@@ -183,7 +210,7 @@ int main(int argc, char** argv)
     }
 #else
     columns = getenv("COLUMNS") ? atoi(getenv("COLUMNS")) : 80;
-#endif
+#endif // if defined(_WIN32)
 
     std::cout << "Starting " << std::endl;
     int type = 1;
@@ -256,23 +283,35 @@ int main(int argc, char** argv)
 
                 case INTERVAL:
                     if (type == 1)
+                    {
                         sleep = strtol(opt.arg, nullptr, 10);
+                    }
                     else
+                    {
                         print_warning("publisher", opt.name);
+                    }
                     break;
 
                 case WAIT:
                     if (type == 1)
+                    {
                         numWaitMatched = strtol(opt.arg, nullptr, 10);
+                    }
                     else
+                    {
                         print_warning("publisher", opt.name);
+                    }
                     break;
 
                 case ASYNC:
                     if (type == 1)
+                    {
                         async = true;
+                    }
                     else
+                    {
                         print_warning("publisher", opt.name);
+                    }
                     break;
 
                 case TRANSPORT:
@@ -302,28 +341,28 @@ int main(int argc, char** argv)
         return 1;
     }
 
-    switch(type)
+    switch (type)
     {
         case 1:
+        {
+            HelloWorldPublisher mypub;
+            if (mypub.init(topic_name, static_cast<uint32_t>(domain), async, transport, reliable, transient))
             {
-                HelloWorldPublisher mypub;
-                if(mypub.init(topic_name, static_cast<uint32_t>(domain), async, transport, reliable, transient))
-                {
-                    mypub.run(static_cast<uint32_t>(count), static_cast<uint32_t>(sleep),
-                            static_cast<uint32_t>(numWaitMatched));
-                }
-                break;
+                mypub.run(static_cast<uint32_t>(count), static_cast<uint32_t>(sleep),
+                        static_cast<uint32_t>(numWaitMatched));
             }
+            break;
+        }
         case 2:
+        {
+            HelloWorldSubscriber mysub;
+            if (mysub.init(topic_name, static_cast<uint32_t>(count), static_cast<uint32_t>(domain), transport,
+                    reliable, transient))
             {
-                HelloWorldSubscriber mysub;
-                if(mysub.init(topic_name, static_cast<uint32_t>(count), static_cast<uint32_t>(domain), transport,
-                        reliable, transient))
-                {
-                    mysub.run(static_cast<uint32_t>(count));
-                }
-                break;
+                mysub.run(static_cast<uint32_t>(count));
             }
+            break;
+        }
     }
     return 0;
 }
