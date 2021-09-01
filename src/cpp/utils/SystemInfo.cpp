@@ -154,7 +154,7 @@ void SystemInfo::stop_watching_file(
 {
 #if defined(_WIN32) || defined(__unix__)
     handle.reset();
-#endif
+#endif // if defined(_WIN32) || defined(__unix__)
     (void)handle;
 }
 
