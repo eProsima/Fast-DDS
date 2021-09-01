@@ -120,11 +120,28 @@ public:
      * Check if the file wiht name \c filename exists.
      * \c filename can also include the path to the file.
      *
-     * \param [in] filename path and name of the file to check
+     * \param [in] filename path/name of the file to check.
      * @return True if the file exists. False otherwise.
      */
     static bool file_exists(
             const std::string& filename);
+
+    /**
+     * Read environment variable contained in the environment file.
+     *
+     * @param [in] filename path/name of the environment file.
+     * @param [in] env_name environment variable name to read from the file.
+     * @param [out] env_value environment variable value read from the file.
+     *
+     * @return RETCODE_OK if succesful.
+     * RETCODE_BAD_PARAMETER if the file does not exist.
+     * RETCODE_NO_DATA if the file exists but there is no information about the environment variable.
+     * RETCODE_ERROR if the file is empty or malformed.
+     */
+    static ReturnCode_t load_environment_file(
+            const std::string& filename,
+            const std::string& env_name,
+            std::string& env_value);
 
 private:
 

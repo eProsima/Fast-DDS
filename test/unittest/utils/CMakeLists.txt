@@ -138,5 +138,7 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
     ###############################################################################
     configure_file(${CMAKE_CURRENT_SOURCE_DIR}/environment_test_file.json
         ${CMAKE_CURRENT_BINARY_DIR}/environment_test_file.json COPYONLY)
+    configure_file(${CMAKE_CURRENT_SOURCE_DIR}/empty_environment_test_file.json
+        ${CMAKE_CURRENT_BINARY_DIR}/empty_environment_test_file.json COPYONLY)
 
 endif()
