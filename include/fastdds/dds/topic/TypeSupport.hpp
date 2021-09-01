@@ -54,9 +54,6 @@ public:
     using ReturnCode_t = eprosima::fastrtps::types::ReturnCode_t;
 
     using Base = std::shared_ptr<fastdds::dds::TopicDataType>;
-    using Base::operator ->;
-    using Base::operator *;
-    using Base::operator bool;
 
     /**
      * @brief Constructor
