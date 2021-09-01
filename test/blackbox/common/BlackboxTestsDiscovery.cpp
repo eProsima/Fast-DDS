@@ -1325,7 +1325,7 @@ TEST(Discovery, ServerClientEnvironmentSetUp)
     ASSERT_EQ(output, standard);
 
     // 11. Check loading from environment file
-    std::string filename = "../unittest/utils/environment_test_file.json";
+    std::string filename = "environment_file.json";
 
     // Set environment variable
 #ifdef _WIN32
@@ -1342,6 +1342,13 @@ TEST(Discovery, ServerClientEnvironmentSetUp)
     IPLocator::setPhysicalPort(loc, 11811);
     att.metatrafficUnicastLocatorList.push_back(loc);
     get_server_client_default_guidPrefix(0, att.guidPrefix);
+    standard.push_back(att);
+
+    att.clear();
+    IPLocator::setIPv4(loc, string("192.168.36.34"));
+    IPLocator::setPhysicalPort(loc, 14520);
+    att.metatrafficUnicastLocatorList.push_back(loc);
+    get_server_client_default_guidPrefix(2, att.guidPrefix);
     standard.push_back(att);
 
     EXPECT_TRUE(load_environment_server_info(output));

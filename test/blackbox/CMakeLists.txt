@@ -335,4 +335,9 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER) AND fastcdr_FOUND)
             add_xfail_label(${CMAKE_CURRENT_SOURCE_DIR}/${BLACKBOX_XFAIL_TEST}_SECURITY.list)
         endif()
     endforeach()
+
+    # Necessary files
+    configure_file(${CMAKE_CURRENT_SOURCE_DIR}/environment_file.json
+        ${CMAKE_CURRENT_BINARY_DIR}/environment_file.json COPYONLY)
+
 endif()
