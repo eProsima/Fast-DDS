@@ -124,7 +124,7 @@ struct Arg : public option::Arg
 
 };
 
-enum  optionIndex
+enum optionIndex
 {
     UNKNOWN_OPT,
     HELP,
@@ -254,7 +254,7 @@ int main(
             return 1;
         }
 
-        if (options[HELP])
+        if (options[optionIndex::HELP])
         {
             option::printUsage(fwrite, stdout, usage, columns);
             return 0;
@@ -265,23 +265,23 @@ int main(
             option::Option& opt = buffer[i];
             switch (opt.index())
             {
-                case HELP:
+                case optionIndex::HELP:
                     // not possible, because handled further above and exits the program
                     break;
 
-                case TOPIC:
+                case optionIndex::TOPIC:
                     topic_name = std::string(opt.arg);
                     break;
 
-                case DOMAIN:
+                case optionIndex::DOMAIN:
                     domain = strtol(opt.arg, nullptr, 10);
                     break;
 
-                case SAMPLES:
+                case optionIndex::SAMPLES:
                     count = strtol(opt.arg, nullptr, 10);
                     break;
 
-                case INTERVAL:
+                case optionIndex::INTERVAL:
                     if (type == 1)
                     {
                         sleep = strtol(opt.arg, nullptr, 10);
@@ -292,7 +292,7 @@ int main(
                     }
                     break;
 
-                case WAIT:
+                case optionIndex::WAIT:
                     if (type == 1)
                     {
                         numWaitMatched = strtol(opt.arg, nullptr, 10);
@@ -303,7 +303,7 @@ int main(
                     }
                     break;
 
-                case ASYNC:
+                case optionIndex::ASYNC:
                     if (type == 1)
                     {
                         async = true;
@@ -314,19 +314,19 @@ int main(
                     }
                     break;
 
-                case TRANSPORT:
+                case optionIndex::TRANSPORT:
                     transport = std::string(opt.arg);
                     break;
 
-                case RELIABLE:
+                case optionIndex::RELIABLE:
                     reliable = true;
                     break;
 
-                case TRANSIENT:
+                case optionIndex::TRANSIENT:
                     transient = true;
                     break;
 
-                case UNKNOWN_OPT:
+                case optionIndex::UNKNOWN_OPT:
                     std::cerr << "ERROR: " << opt.name << " is not a valid argument." << std::endl;
                     option::printUsage(fwrite, stdout, usage, columns);
                     return 1;
