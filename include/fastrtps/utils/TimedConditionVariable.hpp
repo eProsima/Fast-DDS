@@ -37,9 +37,9 @@
  #define CV_T_ _Cnd_t
 
    extern int clock_gettime(int, struct timespec* tv);
- #elif HAVE_STRICT_REALTIME && defined(__linux__)
+ #elif HAVE_STRICT_REALTIME && defined(__unix__)
  */
-#if HAVE_STRICT_REALTIME && defined(__linux__)
+#if HAVE_STRICT_REALTIME && defined(__unix__)
 #include <pthread.h>
 
 #define CV_INIT_(x) pthread_cond_init(x, NULL);
@@ -50,7 +50,7 @@
 #define CV_T_ pthread_cond_t
 #else
 #include <condition_variable>
-#endif // if HAVE_STRICT_REALTIME && defined(__linux__)
+#endif // if HAVE_STRICT_REALTIME && defined(__unix__)
 
 #include <mutex>
 #include <chrono>
@@ -59,7 +59,7 @@
 namespace eprosima {
 namespace fastrtps {
 
-#if HAVE_STRICT_REALTIME && (/*defined(_WIN32) ||*/ defined(__linux__))
+#if HAVE_STRICT_REALTIME && (/*defined(_WIN32) ||*/ defined(__unix__))
 
 class TimedConditionVariable
 {
@@ -164,7 +164,7 @@ private:
 };
 #else
 using TimedConditionVariable = std::condition_variable_any;
-#endif // HAVE_STRICT_REALTIME && (/*defined(_WIN32)*/ || defined(__linux__))
+#endif // HAVE_STRICT_REALTIME && (/*defined(_WIN32)*/ || defined(__unix__))
 
 }  // namespace fastrtps
 }  // namespace eprosima

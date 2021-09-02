@@ -33,7 +33,7 @@
 #include "rtps/RTPSDomainImpl.hpp"
 #include "utils/collections/node_size_helpers.hpp"
 
-#if !defined(NDEBUG) && defined(FASTRTPS_SOURCE) && defined(__linux__)
+#if !defined(NDEBUG) && defined(FASTRTPS_SOURCE) && defined(__unix__)
 #define SHOULD_DEBUG_LINUX
 #endif // SHOULD_DEBUG_LINUX
 
