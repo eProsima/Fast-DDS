@@ -1,0 +1,14 @@
+# Configuration file for CA request
+
+[ req ]
+distinguished_name     = req_distinguished_name
+prompt                 = no
+
+[ req_distinguished_name ]
+countryName            = ES
+stateOrProvinceName    = MA
+localityName           = Madrid
+organizationName       = eProsima
+organizationalUnitName = eProsima
+commonName             = HelloWorldExampleTCP
+emailAddress           = ca@eprosima.com

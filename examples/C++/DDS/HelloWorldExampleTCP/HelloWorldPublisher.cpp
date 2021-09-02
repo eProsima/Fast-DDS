@@ -68,8 +68,8 @@ bool HelloWorldPublisher::init(
         using TLSOptions = TCPTransportDescriptor::TLSConfig::TLSOptions;
         descriptor->apply_security = true;
         descriptor->tls_config.password = "test";
-        descriptor->tls_config.cert_chain_file = "ca.pem";
-        descriptor->tls_config.private_key_file = "server.pem";
+        descriptor->tls_config.cert_chain_file = "servercert.pem";
+        descriptor->tls_config.private_key_file = "serverkey.pem";
         descriptor->tls_config.tmp_dh_file = "dh2048.pem";
         descriptor->tls_config.add_option(TLSOptions::DEFAULT_WORKAROUNDS);
         descriptor->tls_config.add_option(TLSOptions::SINGLE_DH_USE);
