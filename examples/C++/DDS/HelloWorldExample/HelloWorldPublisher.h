@@ -20,12 +20,18 @@
 #ifndef HELLOWORLDPUBLISHER_H_
 #define HELLOWORLDPUBLISHER_H_
 
+#include <atomic>
+
 #include "HelloWorldPubSubTypes.h"
 
-#include <fastdds/dds/publisher/DataWriterListener.hpp>
-#include <fastdds/dds/topic/TypeSupport.hpp>
 #include <fastdds/dds/domain/DomainParticipant.hpp>
+#include <fastdds/dds/publisher/DataWriter.hpp>
+#include <fastdds/dds/publisher/DataWriterListener.hpp>
+#include <fastdds/dds/publisher/Publisher.hpp>
+#include <fastdds/dds/topic/Topic.hpp>
+#include <fastdds/dds/topic/TypeSupport.hpp>
 
+#define SLEEP_TIME 1000
 class HelloWorldPublisher
 {
 public:
@@ -34,19 +40,16 @@ public:
 
     virtual ~HelloWorldPublisher();
 
-    //!Initialize
+    //! Initialize publisher
     bool init();
 
-    //!Publish a sample
-    bool publish(
-            bool waitForListener = true);
-
-    //!Run for number samples
-    void run(
-            uint32_t number,
-            uint32_t sleep);
+    //! Run publisher
+    void run();
 
 private:
+
+    //! Run the publication thread until \c stop_ has changed
+    void runThread();
 
     HelloWorld hello_;
 
@@ -58,15 +61,17 @@ private:
 
     eprosima::fastdds::dds::DataWriter* writer_;
 
-    bool stop_;
+    eprosima::fastdds::dds::TypeSupport type_;
 
+    // Variable to handle the stop of the publish thread
+    std::atomic<bool> stop_;
+
+    // DataWriter Listener class to handle callback of matching
     class PubListener : public eprosima::fastdds::dds::DataWriterListener
     {
-public:
+    public:
 
         PubListener()
-            : matched_(0)
-            , firstConnected_(false)
         {
         }
 
@@ -74,20 +79,11 @@ public:
         {
         }
 
+        // Callback called when a subscriber has matched or unmatched
         void on_publication_matched(
                 eprosima::fastdds::dds::DataWriter* writer,
                 const eprosima::fastdds::dds::PublicationMatchedStatus& info) override;
-
-        int matched_;
-
-        bool firstConnected_;
     } listener_;
-
-    void runThread(
-            uint32_t number,
-            uint32_t sleep);
-
-    eprosima::fastdds::dds::TypeSupport type_;
 };
 
 

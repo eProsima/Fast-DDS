@@ -35,15 +35,11 @@ public:
 
     virtual ~HelloWorldSubscriber();
 
-    //!Initialize the subscriber
+    //! Initialize subscriber
     bool init();
 
-    //!RUN the subscriber
+    //! Run subscriber
     void run();
-
-    //!Run the subscriber until number samples have been received.
-    void run(
-            uint32_t number);
 
 private:
 
@@ -57,13 +53,12 @@ private:
 
     eprosima::fastdds::dds::TypeSupport type_;
 
+    // DataReader Listener class to handle callbacks of matching and new data received
     class SubListener : public eprosima::fastdds::dds::DataReaderListener
     {
     public:
 
         SubListener()
-            : matched_(0)
-            , samples_(0)
         {
         }
 
@@ -71,18 +66,16 @@ private:
         {
         }
 
+        // Callback called when a new data has been received
         void on_data_available(
                 eprosima::fastdds::dds::DataReader* reader) override;
 
+        // Callback called when a subscriber has matched or unmatched
         void on_subscription_matched(
                 eprosima::fastdds::dds::DataReader* reader,
                 const eprosima::fastdds::dds::SubscriptionMatchedStatus& info) override;
 
         HelloWorld hello_;
-
-        int matched_;
-
-        uint32_t samples_;
     }
     listener_;
 };

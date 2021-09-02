@@ -39,6 +39,7 @@ HelloWorldSubscriber::HelloWorldSubscriber()
 
 bool HelloWorldSubscriber::init()
 {
+    // CREATE PARTICIPANT
     DomainParticipantQos pqos;
     pqos.name("Participant_sub");
     participant_ = DomainParticipantFactory::get_instance()->create_participant(0, pqos);
@@ -48,10 +49,13 @@ bool HelloWorldSubscriber::init()
         return false;
     }
 
-    //REGISTER THE TYPE
-    type_.register_type(participant_);
+    //REGISTER TYPE
+    if (ReturnCode_t::RETCODE_OK != type_.register_type(participant_))
+    {
+        return false;
+    }
 
-    //CREATE THE SUBSCRIBER
+    //CREATE SUBSCRIBER
     subscriber_ = participant_->create_subscriber(SUBSCRIBER_QOS_DEFAULT, nullptr);
 
     if (subscriber_ == nullptr)
@@ -59,10 +63,10 @@ bool HelloWorldSubscriber::init()
         return false;
     }
 
-    //CREATE THE TOPIC
+    //CREATE TOPIC
     topic_ = participant_->create_topic(
         "HelloWorldTopic",
-        "HelloWorld",
+        type_.get_type_name(),
         TOPIC_QOS_DEFAULT);
 
     if (topic_ == nullptr)
@@ -70,10 +74,8 @@ bool HelloWorldSubscriber::init()
         return false;
     }
 
-    // CREATE THE READER
-    DataReaderQos rqos = DATAREADER_QOS_DEFAULT;
-    rqos.reliability().kind = RELIABLE_RELIABILITY_QOS;
-    reader_ = subscriber_->create_datareader(topic_, rqos, &listener_);
+    // CREATE READER
+    reader_ = subscriber_->create_datareader(topic_, DATAREADER_QOS_DEFAULT, &listener_);
 
     if (reader_ == nullptr)
     {
@@ -97,7 +99,10 @@ HelloWorldSubscriber::~HelloWorldSubscriber()
     {
         participant_->delete_subscriber(subscriber_);
     }
-    DomainParticipantFactory::get_instance()->delete_participant(participant_);
+    if (participant_)
+    {
+        DomainParticipantFactory::get_instance()->delete_participant(participant_);
+    }
 }
 
 void HelloWorldSubscriber::SubListener::on_subscription_matched(
@@ -106,12 +111,10 @@ void HelloWorldSubscriber::SubListener::on_subscription_matched(
 {
     if (info.current_count_change == 1)
     {
-        matched_ = info.total_count;
         std::cout << "Subscriber matched." << std::endl;
     }
     else if (info.current_count_change == -1)
     {
-        matched_ = info.total_count;
         std::cout << "Subscriber unmatched." << std::endl;
     }
     else
@@ -129,7 +132,6 @@ void HelloWorldSubscriber::SubListener::on_data_available(
     {
         if (info.instance_state == ALIVE_INSTANCE_STATE)
         {
-            samples_++;
             // Print your structure data here.
             std::cout << "Message " << hello_.message() << " " << hello_.index() << " RECEIVED" << std::endl;
         }
@@ -140,14 +142,4 @@ void HelloWorldSubscriber::run()
 {
     std::cout << "Subscriber running. Please press enter to stop the Subscriber" << std::endl;
     std::cin.ignore();
-}
-
-void HelloWorldSubscriber::run(
-        uint32_t number)
-{
-    std::cout << "Subscriber running until " << number << "samples have been received" << std::endl;
-    while (number > listener_.samples_)
-    {
-        std::this_thread::sleep_for(std::chrono::milliseconds(500));
-    }
 }
