@@ -175,8 +175,10 @@ protected:
 
     /**
      * Applies TLS configuration to ssl_context
+     *
+     * @return true if everything worked fine, false otherwise.
      */
-    void apply_tls_config();
+    bool apply_tls_config();
 
     /**
      * Aux method to retrieve cert password as a callback
