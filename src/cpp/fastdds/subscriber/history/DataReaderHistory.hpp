@@ -38,8 +38,9 @@
 #include <fastdds/rtps/history/ReaderHistory.h>
 #include <fastdds/rtps/resources/ResourceManagement.h>
 
-#include <fastrtps/common/KeyedChanges.h>
 #include <fastrtps/utils/fixed_size_string.hpp>
+
+#include "DataReaderInstance.hpp"
 
 namespace eprosima {
 namespace fastdds {
@@ -57,7 +58,7 @@ public:
     using InstanceHandle_t = eprosima::fastrtps::rtps::InstanceHandle_t;
     using CacheChange_t = eprosima::fastrtps::rtps::CacheChange_t;
 
-    using instance_info = std::pair<InstanceHandle_t, std::vector<CacheChange_t*>*>;
+    using instance_info = std::pair<InstanceHandle_t, DataReaderInstance::ChangeCollection*>;
 
     /**
      * Constructor. Requires information about the subscriber.
@@ -120,7 +121,7 @@ public:
      */
     bool remove_change_sub(
             CacheChange_t* change,
-            iterator& it);
+            DataReaderInstance::ChangeCollection::iterator& it);
 
     /**
      * @brief A method to set the next deadline for the given instance
@@ -163,12 +164,10 @@ public:
 
 private:
 
-    using t_m_Inst_Caches = std::map<InstanceHandle_t, fastrtps::KeyedChanges>;
+    using InstanceCollection = std::map<InstanceHandle_t, DataReaderInstance>;
 
     //!Map where keys are instance handles and values vectors of cache changes
-    t_m_Inst_Caches keyed_changes_;
-    //!Time point when the next deadline will occur (only used for topics with no key)
-    std::chrono::steady_clock::time_point next_deadline_us_;
+    InstanceCollection keyed_changes_;
     //!HistoryQosPolicy values.
     HistoryQosPolicy history_qos_;
     //!ResourceLimitsQosPolicy values.
@@ -196,7 +195,7 @@ private:
      */
     bool find_key(
             CacheChange_t* a_change,
-            t_m_Inst_Caches::iterator* map_it);
+            InstanceCollection::iterator* map_it);
 
     /**
      * @brief Method that finds a key in m_keyedChanges or tries to add it if not found
@@ -206,7 +205,7 @@ private:
      */
     bool find_key_for_change(
             CacheChange_t* a_change,
-            t_m_Inst_Caches::iterator& map_it);
+            InstanceCollection::iterator& map_it);
 
     /**
      * @name Variants of incoming change processing.
@@ -238,7 +237,7 @@ private:
 
     bool add_received_change_with_key(
             CacheChange_t* a_change,
-            std::vector<CacheChange_t*>& instance_changes);
+            DataReaderInstance& instance);
 };
 
 } // namespace detail

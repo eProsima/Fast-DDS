@@ -111,7 +111,7 @@ struct ReadTakeCommand
         auto it = instance_.second->begin();
         while (!finished_ && it != instance_.second->end())
         {
-            CacheChange_t* change = *it;
+            CacheChange_t* change = it->change;
             SampleStateKind check;
             check = change->isRead ? SampleStateKind::READ_SAMPLE_STATE : SampleStateKind::NOT_READ_SAMPLE_STATE;
             if ((check & states_.sample_states) != 0)
