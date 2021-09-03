@@ -201,9 +201,7 @@ TEST(SystemInfoTests, FileWatchTest)
     std::this_thread::sleep_for(std::chrono::seconds(1));
     int times_called = callback.times_called;
 #if defined(_WIN32) || defined(__unix__)
-    // The callback is called two times due to FileWatch implementation
-    // see https://github.com/ThomasMonkman/filewatch/issues/27
-    EXPECT_LE(1, times_called);
+    EXPECT_EQ(1, times_called);
 
 #else
     // Unsupported platforms will not call the callback
