@@ -23,6 +23,7 @@
 #endif // _WIN32
 
 #include <fstream>
+#include <string>
 
 #include <json.hpp>
 #include <fastrtps/types/TypesBase.h>
@@ -32,17 +33,22 @@ namespace eprosima {
 using ReturnCode_t = fastrtps::types::ReturnCode_t;
 
 ReturnCode_t SystemInfo::get_env(
-        const char* env_name,
-        const char** env_value)
+        const std::string& env_name,
+        std::string& env_value)
 {
-    if (env_name == nullptr || env_value == nullptr || *env_name == '\0')
+    if (env_name.empty())
     {
         return ReturnCode_t::RETCODE_BAD_PARAMETER;
     }
 
 #pragma warning(suppress:4996)
-    *env_value = getenv(env_name);
-    if (*env_value == nullptr)
+    char* data;
+    data = getenv(env_name.c_str());
+    if (nullptr != data)
+    {
+        env_value = data;
+    }
+    else
     {
         return ReturnCode_t::RETCODE_NO_DATA;
     }

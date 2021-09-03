@@ -86,24 +86,22 @@ public:
     }
 
     /**
-     * Retrieve the value of a given environment variable if it exists, or nullptr.
-     * The c-string which is returned in the env_value output parameter is only valid until the next time this function
-     * is called, because it is a direct pointer to the static storage.
-     * Modifying the string returned in env_value invokes undefined behavior.
-     * If the environment variable is not set, a nullptr will be returned.
+     * Retrieve the value of a given environment variable if it exists.
+     * The string which is returned in the env_value output parameter is not modified
+     * if the environment variable is not set.
      *
      * This function is thread-safe as long as no other function modifies the host environment (in particular, POSIX
      * functions setenv, unsetenv and putenv would introduce a data race if called without synchronization.)
      *
-     * \param [in] env_name the name of the environment variable
-     * \param [out] env_value pointer to the value c-string
+     * \param [in] env_name name of the environment variable.
+     * \param [out] env_value value of the environment variable.
      * @return RETCODE_OK if the environment variable is set.
      * RETCODE_NO_DATA if the environment variable is unset.
      * RETCODE_BAD_PARAMETER if the provided parameters are not valid.
      */
     static ReturnCode_t get_env(
-            const char* env_name,
-            const char** env_value);
+            const std::string& env_name,
+            std::string& env_value);
 
     /**
      * Get the effective username of the person that launched the application

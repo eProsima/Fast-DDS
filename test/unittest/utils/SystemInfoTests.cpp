@@ -19,6 +19,7 @@
 #include <functional>
 #include <mutex>
 #include <stdlib.h>
+#include <string>
 #include <thread>
 
 #ifdef _WIN32
@@ -82,30 +83,28 @@ protected:
  */
 TEST_F(SystemInfoTests, GetEnvTest)
 {
-    const char* env_var_name = "TEST_ENVIRONMENT_VARIABLE";
-    const char* value = "TESTING";
-    const char* env_value;
+    const std::string env_var_name("TEST_ENVIRONMENT_VARIABLE");
+    const std::string value("TESTING");
+    std::string env_value;
 
     // 1. Set the testing environment variable
 #ifdef _WIN32
-    ASSERT_EQ(0, _putenv_s(env_var_name, value));
+    ASSERT_EQ(0, _putenv_s(env_var_name.c_str(), value.c_str()));
 #else
-    ASSERT_EQ(0, setenv(env_var_name, value, 1));
+    ASSERT_EQ(0, setenv(env_var_name.c_str(), value.c_str(), 1));
 #endif // _WIN32
 
     // 2. Read environment variable
-    EXPECT_EQ(eprosima::SystemInfo::get_env(env_var_name, &env_value), ReturnCode_t::RETCODE_OK);
-    EXPECT_EQ(strcmp(env_value, value), 0);
+    EXPECT_EQ(eprosima::SystemInfo::get_env(env_var_name, env_value), ReturnCode_t::RETCODE_OK);
+    EXPECT_EQ(env_value.compare(value), 0);
 
-    // 3. Bad parameters
-    EXPECT_EQ(eprosima::SystemInfo::get_env(nullptr, &env_value), ReturnCode_t::RETCODE_BAD_PARAMETER);
-    EXPECT_EQ(eprosima::SystemInfo::get_env(env_var_name, nullptr), ReturnCode_t::RETCODE_BAD_PARAMETER);
+    // 3. Bad parameters: empty environment name
+    std::string non_init_string;
+    EXPECT_EQ(eprosima::SystemInfo::get_env("", env_value), ReturnCode_t::RETCODE_BAD_PARAMETER);
+    EXPECT_EQ(eprosima::SystemInfo::get_env(non_init_string, env_value), ReturnCode_t::RETCODE_BAD_PARAMETER);
 
-    // 4. Empty environment name
-    EXPECT_EQ(eprosima::SystemInfo::get_env("", &env_value), ReturnCode_t::RETCODE_BAD_PARAMETER);
-
-    // 5. Invalid environment name
-    EXPECT_EQ(eprosima::SystemInfo::get_env("INVALID_NAME", &env_value), ReturnCode_t::RETCODE_NO_DATA);
+    // 4. Invalid environment name
+    EXPECT_EQ(eprosima::SystemInfo::get_env("INVALID_NAME", env_value), ReturnCode_t::RETCODE_NO_DATA);
 }
 
 /*

@@ -624,13 +624,7 @@ void PDPClient::match_pdp_reader_nts_(
 const std::string& ros_discovery_server_env()
 {
     static std::string servers;
-    {
-        const char* data;
-        if (eprosima::ReturnCode_t::RETCODE_OK == SystemInfo::get_env(DEFAULT_ROS2_MASTER_URI, &data))
-        {
-            servers = data;
-        }
-    }
+    SystemInfo::get_env(DEFAULT_ROS2_MASTER_URI, servers);
     return servers;
 }
 
@@ -642,11 +636,7 @@ bool load_environment_server_info(
     // Try to load environment file
     if (filename.empty())
     {
-        const char* data;
-        if (eprosima::ReturnCode_t::RETCODE_OK == SystemInfo::get_env(FASTDDS_ENVIRONMENT_FILE_ENV_VAR, &data))
-        {
-            filename = data;
-        }
+        SystemInfo::get_env(FASTDDS_ENVIRONMENT_FILE_ENV_VAR, filename);
     }
 
     bool result = false;
