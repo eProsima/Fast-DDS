@@ -304,7 +304,7 @@ int main(
                     break;
 
                 case LOCATOR:
-                    port = server_address.port;
+                    port = static_cast<uint16_t>(server_address.port);
 
                     if (regex_match(opt.arg, mr, Arg::ipv4))
                     {
@@ -313,7 +313,7 @@ int main(
 
                         if ((++it)->matched)
                         {
-                            port = std::stoi(it->str());
+                            port = static_cast<uint16_t>(std::stoi(it->str()));
                         }
                     }
 
