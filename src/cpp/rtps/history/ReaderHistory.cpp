@@ -24,6 +24,8 @@
 #include <fastdds/rtps/reader/RTPSReader.h>
 #include <fastdds/rtps/reader/ReaderListener.h>
 
+#include <utils/collections/sorted_vector_insert.hpp>
+
 #include <mutex>
 
 namespace eprosima {
@@ -71,9 +73,11 @@ bool ReaderHistory::add_change(
         logError(RTPS_READER_HISTORY, "The Writer GUID_t must be defined");
     }
 
-    auto it = get_first_change_with_minimum_ts(a_change->sourceTimestamp);
-    m_changes.insert(it, a_change);
-
+    sorted_vector_insert(m_changes, a_change,
+            [](const CacheChange_t* lhs, const CacheChange_t* rhs)
+            {
+                return lhs->sourceTimestamp < rhs->sourceTimestamp;
+            });
     logInfo(RTPS_READER_HISTORY,
             "Change " << a_change->sequenceNumber << " added with " << a_change->serializedPayload.length << " bytes");
 
@@ -229,22 +233,6 @@ void ReaderHistory::do_release_cache(
         CacheChange_t* ch)
 {
     mp_reader->releaseCache(ch);
-}
-
-History::iterator ReaderHistory::get_first_change_with_minimum_ts(
-        const Time_t timestamp)
-{
-    if (!m_changes.empty() && timestamp < (*m_changes.rbegin())->sourceTimestamp)
-    {
-        iterator it = std::lower_bound(m_changes.begin(), m_changes.end(), timestamp,
-                        [](const CacheChange_t* c1, const Time_t& ts) -> bool
-                        {
-                            return c1->sourceTimestamp < ts;
-                        });
-        return it;
-    }
-
-    return m_changes.end();
 }
 
 } /* namespace rtps */
