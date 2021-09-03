@@ -69,6 +69,7 @@ protected:
         delete mutex_;
         mutex_ = nullptr;
     }
+
 };
 
 /*
