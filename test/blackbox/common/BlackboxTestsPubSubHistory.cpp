@@ -946,9 +946,9 @@ TEST_P(PubSubHistory, PubSubAsReliableKeepLastWithKeyUnorderedReception)
     uint32_t depth = 10;
 
     reader.resource_limits_max_instances(keys).
-        reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).
-        history_kind(eprosima::fastrtps::KEEP_LAST_HISTORY_QOS).
-        history_depth(depth).mem_policy(mem_policy_).init();
+            reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).
+            history_kind(eprosima::fastrtps::KEEP_LAST_HISTORY_QOS).
+            history_depth(depth).mem_policy(mem_policy_).init();
 
     ASSERT_TRUE(reader.isInitialized());
 
@@ -956,11 +956,11 @@ TEST_P(PubSubHistory, PubSubAsReliableKeepLastWithKeyUnorderedReception)
     testTransport->dropDataMessagesPercentage = 25;
 
     writer.resource_limits_max_instances(keys).
-        reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).
-        history_kind(eprosima::fastrtps::KEEP_LAST_HISTORY_QOS).
-        history_depth(depth).mem_policy(mem_policy_).
-        disable_builtin_transport().add_user_transport_to_pparams(testTransport).
-        init();
+            reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).
+            history_kind(eprosima::fastrtps::KEEP_LAST_HISTORY_QOS).
+            history_depth(depth).mem_policy(mem_policy_).
+            disable_builtin_transport().add_user_transport_to_pparams(testTransport).
+            init();
 
     ASSERT_TRUE(writer.isInitialized());
 
