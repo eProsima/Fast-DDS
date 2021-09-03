@@ -457,7 +457,7 @@ namespace filewatch {
 				}
 			}();
 
-			const auto watch = inotify_add_watch(folder, watch_path.c_str(), IN_MODIFY | IN_CREATE | IN_DELETE);
+			const auto watch = inotify_add_watch(folder, watch_path.c_str(), IN_CLOSE_WRITE | IN_CREATE | IN_DELETE );
 			if (watch < 0) 
 			{
 				throw std::system_error(errno, std::system_category());
@@ -493,7 +493,7 @@ namespace filewatch {
 								{
 									parsed_information.emplace_back(T{ changed_file }, Event::removed);
 								}
-								else if (event->mask & IN_MODIFY) 
+								else if (event->mask & IN_CLOSE_WRITE) 
 								{
 									parsed_information.emplace_back(T{ changed_file }, Event::modified);
 								}
