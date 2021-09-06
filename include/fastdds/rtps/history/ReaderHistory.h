@@ -119,6 +119,16 @@ public:
 
 protected:
 
+<<<<<<< HEAD
+=======
+    RTPS_DllAPI bool do_reserve_cache(
+            CacheChange_t** change,
+            uint32_t size) override;
+
+    RTPS_DllAPI void do_release_cache(
+            CacheChange_t* ch) override;
+
+>>>>>>> 38e8d0fb7 (Keep changes inside instances sorted by source timestamp (#2182))
     //!Pointer to the reader
     RTPSReader* mp_reader;
 };
