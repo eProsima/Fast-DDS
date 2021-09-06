@@ -34,8 +34,9 @@ namespace rtps {
  * - low_level_descriptor: Descriptor for lower level transport.
  * @ingroup TRANSPORT_MODULE
  */
-typedef struct RTPS_DllAPI ChainingTransportDescriptor : public TransportDescriptorInterface
+typedef struct ChainingTransportDescriptor : public TransportDescriptorInterface
 {
+    RTPS_DllAPI
     ChainingTransportDescriptor(
             std::shared_ptr<TransportDescriptorInterface> low_level)
         : TransportDescriptorInterface(low_level->maxMessageSize, low_level->maxInitialPeersRange)
@@ -43,6 +44,7 @@ typedef struct RTPS_DllAPI ChainingTransportDescriptor : public TransportDescrip
     {
     }
 
+    RTPS_DllAPI
     ChainingTransportDescriptor(
             const ChainingTransportDescriptor& t)
         : TransportDescriptorInterface(t)
@@ -51,17 +53,20 @@ typedef struct RTPS_DllAPI ChainingTransportDescriptor : public TransportDescrip
     }
 
     //! Returns the minimum size required for a send operation.
+    RTPS_DllAPI
     virtual uint32_t min_send_buffer_size() const override
     {
         return low_level_descriptor->min_send_buffer_size();
     }
 
     //! Returns the maximum size expected for received messages.
+    RTPS_DllAPI
     virtual uint32_t max_message_size() const override
     {
         return low_level_descriptor->max_message_size();
     }
 
+    RTPS_DllAPI
     virtual ~ChainingTransportDescriptor()
     {
     }
