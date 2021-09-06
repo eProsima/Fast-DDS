@@ -73,7 +73,7 @@ bool ReaderHistory::add_change(
         logError(RTPS_READER_HISTORY, "The Writer GUID_t must be defined");
     }
 
-    sorted_vector_insert(m_changes, a_change,
+    eprosima::utilities::collections::sorted_vector_insert(m_changes, a_change,
             [](const CacheChange_t* lhs, const CacheChange_t* rhs)
             {
                 return lhs->sourceTimestamp < rhs->sourceTimestamp;

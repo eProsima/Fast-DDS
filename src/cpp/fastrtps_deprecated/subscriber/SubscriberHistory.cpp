@@ -283,7 +283,7 @@ bool SubscriberHistory::add_received_change_with_key(
         }
 
         //ADD TO KEY VECTOR
-        sorted_vector_insert(instance_changes, a_change,
+        eprosima::utilities::collections::sorted_vector_insert(instance_changes, a_change,
                 [](const CacheChange_t* lhs, const CacheChange_t* rhs)
                 {
                     return lhs->sourceTimestamp < rhs->sourceTimestamp;

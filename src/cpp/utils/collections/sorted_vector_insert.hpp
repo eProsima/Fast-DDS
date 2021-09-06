@@ -23,6 +23,8 @@
 #include <functional>
 
 namespace eprosima {
+namespace utilities {
+namespace collections {
 
 /**
  * @brief Insert item into sorted vector-like collection
@@ -55,6 +57,8 @@ void sorted_vector_insert(
     collection.insert(it, item);
 }
 
+} // namespace collections
+} // namespace utilities
 } // namespace eprosima
 
 #endif // SRC_CPP_UTILS_COLLECTIONS_SORTED_VECTOR_INSERT_HPP_
