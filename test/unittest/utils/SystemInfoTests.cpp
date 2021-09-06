@@ -225,15 +225,15 @@ TEST_F(SystemInfoTests, FileWatchTest)
         file << file_content;
     }
 
+#if defined(_WIN32) || defined(__unix__)
     // Check modifications.
     block_for_at_least_N_callbacks(1);
-    int times_called = times_called_;
-#if defined(_WIN32) || defined(__unix__)
-    EXPECT_EQ(1, times_called);
-
+    uint32_t times_called = times_called_;
+    EXPECT_LE(1u, times_called);
 #else
     // Unsupported platforms will not call the callback
-    EXPECT_EQ(0, times_called);
+    uint32_t times_called = times_called_;
+    EXPECT_EQ(0u, times_called);
 #endif // defined(_WIN32) || defined(__unix__)
 
     // Remove the watcher
