@@ -126,9 +126,6 @@ protected:
     RTPS_DllAPI void do_release_cache(
             CacheChange_t* ch) override;
 
-    iterator get_first_change_with_minimum_ts(
-            const Time_t timestamp);
-
     //!Pointer to the reader
     RTPSReader* mp_reader;
 
