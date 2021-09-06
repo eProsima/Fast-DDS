@@ -1467,6 +1467,197 @@ TEST_F(DataReaderTests, read_unread)
     }
 }
 
+TEST_F(DataReaderTests, sample_info)
+{
+    DataReaderQos reader_qos = DATAREADER_QOS_DEFAULT;
+    reader_qos.reliability().kind = RELIABLE_RELIABILITY_QOS;
+    reader_qos.durability().kind = TRANSIENT_LOCAL_DURABILITY_QOS;
+    reader_qos.history().kind = KEEP_LAST_HISTORY_QOS;
+    reader_qos.history().depth = 1;
+    reader_qos.resource_limits().max_instances = 2;
+    reader_qos.resource_limits().max_samples_per_instance = 1;
+    reader_qos.resource_limits().max_samples = 2;
+
+    create_entities(nullptr, reader_qos);
+    publisher_->delete_datawriter(data_writer_);
+    data_writer_ = nullptr;
+
+    struct TestCmd
+    {
+        enum Operation
+        {
+            WRITE, UNREGISTER, DISPOSE, CLOSE
+        };
+
+        size_t writer_index;
+        Operation operation;
+        size_t instance_index;
+    };
+
+    struct TestInstanceResult
+    {
+        ReturnCode_t ret_code;
+        ViewStateKind view_state;
+        InstanceStateKind instance_state;
+        int32_t disposed_generation_count;
+        int32_t no_writers_generation_count;
+    };
+
+    struct TestStep
+    {
+        std::vector<TestCmd> operations;
+        TestInstanceResult instance_state[2];
+    };
+
+    struct TestState
+    {
+        TestState(
+                TypeSupport& type,
+                Topic* topic,
+                Publisher* publisher)
+            : topic_(topic)
+            , publisher_(publisher)
+        {
+            writer_qos_ = DATAWRITER_QOS_DEFAULT;
+            writer_qos_.publish_mode().kind = SYNCHRONOUS_PUBLISH_MODE;
+            writer_qos_.reliability().kind = RELIABLE_RELIABILITY_QOS;
+            writer_qos_.durability().kind = TRANSIENT_LOCAL_DURABILITY_QOS;
+            writer_qos_.history().kind = KEEP_LAST_HISTORY_QOS;
+            writer_qos_.history().depth = 1;
+            writer_qos_.resource_limits().max_instances = 2;
+            writer_qos_.resource_limits().max_samples_per_instance = 1;
+            writer_qos_.resource_limits().max_samples = 2;
+
+            data_[0].index(1);
+            data_[1].index(2);
+
+            type.get_key(&data_[0], &handles_[0]);
+            type.get_key(&data_[1], &handles_[1]);
+        }
+
+        ~TestState()
+        {
+            close_writer(0);
+            close_writer(1);
+        }
+
+        void execute(
+                const TestCmd& cmd)
+        {
+            DataWriter* writer = nullptr;
+            ReturnCode_t ret_code;
+
+            switch (cmd.operation)
+            {
+                case TestCmd::CLOSE:
+                    close_writer(cmd.writer_index);
+                    break;
+
+                case TestCmd::DISPOSE:
+                    writer = open_writer(cmd.writer_index);
+                    ret_code = writer->dispose(&data_[cmd.instance_index], handles_[cmd.instance_index]);
+                    EXPECT_EQ(ReturnCode_t::RETCODE_OK, ret_code);
+                    break;
+
+                case TestCmd::UNREGISTER:
+                    writer = open_writer(cmd.writer_index);
+                    ret_code = writer->unregister_instance(&data_[cmd.instance_index], handles_[cmd.instance_index]);
+                    EXPECT_EQ(ReturnCode_t::RETCODE_OK, ret_code);
+                    break;
+
+                case TestCmd::WRITE:
+                    writer = open_writer(cmd.writer_index);
+                    ret_code = writer->write(&data_[cmd.instance_index], handles_[cmd.instance_index]);
+                    EXPECT_EQ(ReturnCode_t::RETCODE_OK, ret_code);
+                    break;
+            }
+        }
+
+        void check(
+                DataReader* reader,
+                size_t instance_index,
+                const TestInstanceResult& instance_result)
+        {
+            FooSeq values;
+            SampleInfoSeq infos;
+            ReturnCode_t ret_code;
+
+            ret_code = reader->read_instance(values, infos, LENGTH_UNLIMITED, handles_[instance_index]);
+            EXPECT_EQ(ret_code, instance_result.ret_code);
+            if (ReturnCode_t::RETCODE_OK == ret_code)
+            {
+                EXPECT_EQ(instance_result.instance_state, infos[0].instance_state);
+                EXPECT_EQ(instance_result.view_state, infos[0].view_state);
+                EXPECT_EQ(instance_result.disposed_generation_count, infos[0].disposed_generation_count);
+                EXPECT_EQ(instance_result.no_writers_generation_count, infos[0].no_writers_generation_count);
+                EXPECT_EQ(ReturnCode_t::RETCODE_OK, reader->return_loan(values, infos));
+            }
+        }
+
+    private:
+
+        Topic* topic_;
+        Publisher* publisher_;
+        DataWriterQos writer_qos_;
+        DataWriter* writers_[2] = { nullptr, nullptr };
+
+        InstanceHandle_t handles_[2];
+        FooType data_[2];
+
+        void close_writer(
+                size_t index)
+        {
+            DataWriter*& writer = writers_[index];
+            if (writer != nullptr)
+            {
+                publisher_->delete_datawriter(writer);
+                writer = nullptr;
+            }
+        }
+
+        DataWriter* open_writer(
+                size_t index)
+        {
+            DataWriter*& writer = writers_[index];
+            if (writer == nullptr)
+            {
+                writer = publisher_->create_datawriter(topic_, writer_qos_);
+            }
+            return writer;
+        }
+
+    };
+
+    static const TestStep steps[] =
+    {
+        {
+            {},
+            {
+                {ReturnCode_t::RETCODE_BAD_PARAMETER, {}},
+                {ReturnCode_t::RETCODE_BAD_PARAMETER, {}},
+            }
+        },
+        {
+            { {0, TestCmd::WRITE, 0} },
+            {
+                {ReturnCode_t::RETCODE_OK, NEW_VIEW_STATE, ALIVE_INSTANCE_STATE, 0, 0},
+                {ReturnCode_t::RETCODE_BAD_PARAMETER, {}},
+            }
+        },
+    };
+
+    TestState state(type_, topic_, publisher_);
+    for (const TestStep& step : steps)
+    {
+        for (const TestCmd& cmd : step.operations)
+        {
+            state.execute(cmd);
+        }
+        state.check(data_reader_, 0, step.instance_state[0]);
+        state.check(data_reader_, 1, step.instance_state[1]);
+    }
+}
+
 /*
  * This type fails deserialization on odd samples
  */
