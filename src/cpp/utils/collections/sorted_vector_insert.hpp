@@ -20,6 +20,7 @@
 #define SRC_CPP_UTILS_COLLECTIONS_SORTED_VECTOR_INSERT_HPP_
 
 #include <algorithm>
+#include <functional>
 
 namespace eprosima {
 
@@ -37,11 +38,11 @@ namespace eprosima {
 template<
     typename CollectionType,
     typename ValueType,
-    typename LessThanPredicate>
+    typename LessThanPredicate = std::less<ValueType>>
 void sorted_vector_insert(
         CollectionType& collection,
         const ValueType& item,
-        const LessThanPredicate& pred)
+        const LessThanPredicate& pred = LessThanPredicate())
 {
     // Insert at the end by default
     auto it = collection.end();
