@@ -409,6 +409,8 @@ bool PDP::enable()
 
     set_initial_announcement_interval();
 
+    enable_  = true;
+
     return mp_RTPSParticipant->enableReader(mp_PDPReader);
 }
 
