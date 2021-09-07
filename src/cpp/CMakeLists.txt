@@ -86,6 +86,7 @@ set(${PROJECT_NAME}_source_files
     fastrtps_deprecated/subscriber/SubscriberImpl.cpp
     fastrtps_deprecated/subscriber/SubscriberHistory.cpp
     fastdds/subscriber/DataReader.cpp
+    fastdds/subscriber/history/DataReaderHistory.cpp
     fastdds/publisher/DataWriter.cpp
     fastdds/subscriber/DataReaderImpl.cpp
     fastdds/publisher/DataWriterImpl.cpp
