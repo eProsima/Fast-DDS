@@ -1651,8 +1651,8 @@ TEST_F(DataReaderTests, sample_info)
             // Instances have never been written
             {},
             {
-                {ReturnCode_t::RETCODE_BAD_PARAMETER, {}},
-                {ReturnCode_t::RETCODE_BAD_PARAMETER, {}},
+                {ReturnCode_t::RETCODE_BAD_PARAMETER, NEW_VIEW_STATE, ALIVE_INSTANCE_STATE, 0, 0},
+                {ReturnCode_t::RETCODE_BAD_PARAMETER, NEW_VIEW_STATE, ALIVE_INSTANCE_STATE, 0, 0},
             }
         },
         {
@@ -1660,7 +1660,7 @@ TEST_F(DataReaderTests, sample_info)
             { {0, TestCmd::WRITE, 0} },
             {
                 {ReturnCode_t::RETCODE_OK, NEW_VIEW_STATE, ALIVE_INSTANCE_STATE, 0, 0},
-                {ReturnCode_t::RETCODE_BAD_PARAMETER, {}},
+                {ReturnCode_t::RETCODE_BAD_PARAMETER, NEW_VIEW_STATE, ALIVE_INSTANCE_STATE, 0, 0},
             }
         },
         {
@@ -1668,7 +1668,7 @@ TEST_F(DataReaderTests, sample_info)
             { {0, TestCmd::WRITE, 0} },
             {
                 {ReturnCode_t::RETCODE_OK, NOT_NEW_VIEW_STATE, ALIVE_INSTANCE_STATE, 0, 0},
-                {ReturnCode_t::RETCODE_BAD_PARAMETER, {}},
+                {ReturnCode_t::RETCODE_BAD_PARAMETER, NEW_VIEW_STATE, ALIVE_INSTANCE_STATE, 0, 0},
             }
         },
         {
@@ -1676,7 +1676,7 @@ TEST_F(DataReaderTests, sample_info)
             { {0, TestCmd::DISPOSE, 0} },
             {
                 {ReturnCode_t::RETCODE_OK, NOT_NEW_VIEW_STATE, NOT_ALIVE_DISPOSED_INSTANCE_STATE, 0, 0},
-                {ReturnCode_t::RETCODE_BAD_PARAMETER, {}},
+                {ReturnCode_t::RETCODE_BAD_PARAMETER, NEW_VIEW_STATE, ALIVE_INSTANCE_STATE, 0, 0},
             }
         },
         {
