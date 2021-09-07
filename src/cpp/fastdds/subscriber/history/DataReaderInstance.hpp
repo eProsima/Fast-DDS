@@ -37,7 +37,7 @@ namespace detail {
 /// Book-keeping information for an instance
 struct DataReaderInstance
 {
-    using ChangeCollection = std::vector<DataReaderCacheChange>;
+    using ChangeCollection = eprosima::fastrtps::ResourceLimitedVector<DataReaderCacheChange, std::true_type>;
 
     //! A vector of DataReader changes belonging to the same instance
     ChangeCollection cache_changes;
