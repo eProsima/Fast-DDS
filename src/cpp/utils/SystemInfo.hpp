@@ -104,6 +104,23 @@ public:
             std::string& env_value);
 
     /**
+     * Read environment variable contained in the environment file.
+     *
+     * @param [in] filename path/name of the environment file.
+     * @param [in] env_name environment variable name to read from the file.
+     * @param [out] env_value environment variable value read from the file.
+     *
+     * @return RETCODE_OK if succesful.
+     * RETCODE_BAD_PARAMETER if the file does not exist.
+     * RETCODE_NO_DATA if the file exists but there is no information about the environment variable.
+     * RETCODE_ERROR if the file is empty or malformed.
+     */
+    static ReturnCode_t get_env(
+            const std::string& filename,
+            const std::string& env_name,
+            std::string& env_value);
+
+    /**
      * Get the effective username of the person that launched the application
      * This implementation follows the whoami implementation for POSIX
      * (https://github.com/coreutils/coreutils/blob/master/src/whoami.c)
@@ -151,23 +168,6 @@ public:
      * @return Path/filename contained in the environment variable.
      */
     static const std::string& get_environment_file();
-
-    /**
-     * Read environment variable contained in the environment file.
-     *
-     * @param [in] filename path/name of the environment file.
-     * @param [in] env_name environment variable name to read from the file.
-     * @param [out] env_value environment variable value read from the file.
-     *
-     * @return RETCODE_OK if succesful.
-     * RETCODE_BAD_PARAMETER if the file does not exist.
-     * RETCODE_NO_DATA if the file exists but there is no information about the environment variable.
-     * RETCODE_ERROR if the file is empty or malformed.
-     */
-    static ReturnCode_t load_environment_file(
-            const std::string& filename,
-            const std::string& env_name,
-            std::string& env_value);
 
     /**
      * Start a thread that watches for changes in the given file and executes a callback when the file changes.

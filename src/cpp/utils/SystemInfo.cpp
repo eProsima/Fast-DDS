@@ -41,6 +41,12 @@ ReturnCode_t SystemInfo::get_env(
         return ReturnCode_t::RETCODE_BAD_PARAMETER;
     }
 
+    // Try to read environment variable from file
+    if (!environment_file_.empty() && ReturnCode_t::RETCODE_OK == get_env(environment_file_, env_name, env_value))
+    {
+        return ReturnCode_t::RETCODE_OK;
+    }
+
 #pragma warning(suppress:4996)
     char* data;
     data = getenv(env_name.c_str());
@@ -53,6 +59,41 @@ ReturnCode_t SystemInfo::get_env(
         return ReturnCode_t::RETCODE_NO_DATA;
     }
 
+    return ReturnCode_t::RETCODE_OK;
+}
+
+ReturnCode_t SystemInfo::get_env(
+        const std::string& filename,
+        const std::string& env_name,
+        std::string& env_value)
+{
+    // Check that the file exists
+    if (!SystemInfo::file_exists(filename))
+    {
+        return ReturnCode_t::RETCODE_BAD_PARAMETER;
+    }
+
+    // Read json file
+    std::ifstream file(filename);
+    nlohmann::json file_content;
+
+    try
+    {
+        file >> file_content;
+    }
+    catch (const nlohmann::json::exception&)
+    {
+        return ReturnCode_t::RETCODE_ERROR;
+    }
+
+    try
+    {
+        env_value = file_content.at(env_name);
+    }
+    catch (const nlohmann::json::exception&)
+    {
+        return ReturnCode_t::RETCODE_NO_DATA;
+    }
     return ReturnCode_t::RETCODE_OK;
 }
 
@@ -100,45 +141,6 @@ ReturnCode_t SystemInfo::set_environment_file()
 const std::string& SystemInfo::get_environment_file()
 {
     return SystemInfo::environment_file_;
-}
-
-ReturnCode_t SystemInfo::load_environment_file(
-        const std::string& filename,
-        const std::string& env_name,
-        std::string& env_value)
-{
-    // Check that the file exists
-    if (!SystemInfo::file_exists(filename))
-    {
-        return ReturnCode_t::RETCODE_BAD_PARAMETER;
-    }
-
-    // Read json file
-    std::ifstream file(filename);
-    nlohmann::json file_content;
-
-    try
-    {
-        file >> file_content;
-    }
-    catch (const nlohmann::json::exception&)
-    {
-        return ReturnCode_t::RETCODE_ERROR;
-    }
-
-    try
-    {
-        env_value = file_content.at(env_name);
-        if (env_value.empty() || env_value.compare("") == 0)
-        {
-            return ReturnCode_t::RETCODE_NO_DATA;
-        }
-    }
-    catch (const nlohmann::json::exception&)
-    {
-        return ReturnCode_t::RETCODE_NO_DATA;
-    }
-    return ReturnCode_t::RETCODE_OK;
 }
 
 FileWatchHandle SystemInfo::watch_file(

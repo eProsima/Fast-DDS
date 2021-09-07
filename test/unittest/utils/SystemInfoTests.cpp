@@ -74,37 +74,80 @@ protected:
 };
 
 /*
- * This test checks the get_env static method of the SystemInfo class
- * 1. Set an environment variable
- * 2. Use get_env to read the environment variable
- * 3. Call get_env with nullptr parameters
- * 4. Call get_env with empty environment name
- * 5. Call get_env with an invalid environment variable
+ * This test checks both get_env static methods of the SystemInfo class
  */
 TEST_F(SystemInfoTests, GetEnvTest)
 {
     const std::string env_var_name("TEST_ENVIRONMENT_VARIABLE");
+    const std::string empty_var_name("EMPTY_ENV_VAR");
     const std::string value("TESTING");
+    std::string filename("environment_test_file.json");
     std::string env_value;
 
     // 1. Set the testing environment variable
 #ifdef _WIN32
     ASSERT_EQ(0, _putenv_s(env_var_name.c_str(), value.c_str()));
+    ASSERT_EQ(0, _putenv_s(eprosima::FASTDDS_ENVIRONMENT_FILE_ENV_VAR, filename.c_str()));
+    ASSERT_EQ(0, _putenv_s(eprosima::fastdds::rtps::DEFAULT_ROS_MASTER_URI, value.c_str()));
+    ASSERT_EQ(0, _putenv_s("EMPTY_ENV_VAR", value.c_str()));
 #else
     ASSERT_EQ(0, setenv(env_var_name.c_str(), value.c_str(), 1));
+    ASSERT_EQ(0, setenv(eprosima::FASTDDS_ENVIRONMENT_FILE_ENV_VAR, filename.c_str(), 1));
+    ASSERT_EQ(0, setenv(eprosima::fastdds::rtps::DEFAULT_ROS2_MASTER_URI, value.c_str(), 1));
+    ASSERT_EQ(0, setenv(empty_var_name.c_str(), value.c_str(), 1));
 #endif // _WIN32
+    ASSERT_EQ(ReturnCode_t::RETCODE_OK, eprosima::SystemInfo::set_environment_file());
 
-    // 2. Read environment variable
-    EXPECT_EQ(eprosima::SystemInfo::get_env(env_var_name, env_value), ReturnCode_t::RETCODE_OK);
-    EXPECT_EQ(env_value.compare(value), 0);
+    // 2. Read environment variable not contained in the file but set in the environment
+    EXPECT_EQ(ReturnCode_t::RETCODE_OK, eprosima::SystemInfo::get_env(env_var_name, env_value));
+    EXPECT_EQ(env_value, value);
 
-    // 3. Bad parameters: empty environment name
+    // 3. Read environment variable contained in the file and in the environment: file has priority
+    EXPECT_EQ(ReturnCode_t::RETCODE_OK, eprosima::SystemInfo::get_env(eprosima::fastdds::rtps::DEFAULT_ROS2_MASTER_URI,
+            env_value));
+    EXPECT_EQ("localhost:11811", env_value);
+
+    // 4. Read variable set empty in the file but with a valid value in the environment: file has priority
+    EXPECT_EQ(ReturnCode_t::RETCODE_OK, eprosima::SystemInfo::get_env(empty_var_name, env_value));
+    EXPECT_TRUE(env_value.empty());
+
+    // 5. Invalid environment name: neither in the file nor in the environment
+    EXPECT_EQ(eprosima::SystemInfo::get_env("INVALID_NAME", env_value), ReturnCode_t::RETCODE_NO_DATA);
+
+    // 6. Bad parameters: empty environment name
     std::string non_init_string;
     EXPECT_EQ(eprosima::SystemInfo::get_env("", env_value), ReturnCode_t::RETCODE_BAD_PARAMETER);
     EXPECT_EQ(eprosima::SystemInfo::get_env(non_init_string, env_value), ReturnCode_t::RETCODE_BAD_PARAMETER);
 
-    // 4. Invalid environment name
-    EXPECT_EQ(eprosima::SystemInfo::get_env("INVALID_NAME", env_value), ReturnCode_t::RETCODE_NO_DATA);
+    // 7. Check that reading the environment variable directly from file returns correctly
+    ASSERT_EQ(ReturnCode_t::RETCODE_OK, eprosima::SystemInfo::get_env(filename,
+            eprosima::fastdds::rtps::DEFAULT_ROS2_MASTER_URI, env_value));
+    EXPECT_EQ("localhost:11811", env_value);
+
+    // 8. Check that an empty environment variable returns correctly
+    std::string empty_environment_variable = "EMPTY_ENV_VAR";
+    EXPECT_EQ(ReturnCode_t::RETCODE_OK, eprosima::SystemInfo::get_env(filename,
+            empty_environment_variable, env_value));
+    EXPECT_TRUE(env_value.empty());
+
+    // 9. Check that a non-existent tag returns RETCODE_NO_DATA
+    std::string non_existent_env_variable = "NON_EXISTENT_ENV_VARIBLE";
+    env_value.clear();
+    EXPECT_EQ(ReturnCode_t::RETCODE_NO_DATA, eprosima::SystemInfo::get_env(filename,
+            non_existent_env_variable, env_value));
+    EXPECT_TRUE(env_value.empty());
+
+    // 10. Check that a non-existent file returns RETCODE_BAD_PARAMETER
+    filename = "non_existent.json";
+    EXPECT_EQ(ReturnCode_t::RETCODE_BAD_PARAMETER, eprosima::SystemInfo::get_env(filename,
+            eprosima::fastdds::rtps::DEFAULT_ROS2_MASTER_URI, env_value));
+    EXPECT_TRUE(env_value.empty());
+
+    // 11. Check that a wrong formatted file returns RETCODE_ERROR
+    filename = "empty_environment_test_file.json";
+    EXPECT_EQ(ReturnCode_t::RETCODE_ERROR, eprosima::SystemInfo::get_env(filename,
+            eprosima::fastdds::rtps::DEFAULT_ROS2_MASTER_URI, env_value));
+    EXPECT_TRUE(env_value.empty());
 }
 
 /*
@@ -175,44 +218,6 @@ TEST(SystemInfoTests, EnvironmentFileTest)
 #endif // _WIN32
     EXPECT_EQ(ReturnCode_t::RETCODE_OK, eprosima::SystemInfo::set_environment_file());
     EXPECT_EQ(0, eprosima::SystemInfo::get_environment_file().compare(value));
-}
-
-/**
- * This test checks the load_environment_file method of the SystemInfo class
- */
-TEST_F(SystemInfoTests, LoadEnvironmentFileTest)
-{
-    // 1. Check that reading the environment variable ROS_DISCOVERY_SERVER returns the correct information
-    std::string filename = "environment_test_file.json";
-    std::string environment_value;
-    ASSERT_EQ(ReturnCode_t::RETCODE_OK, eprosima::SystemInfo::load_environment_file(filename,
-            eprosima::fastdds::rtps::DEFAULT_ROS2_MASTER_URI, environment_value));
-    EXPECT_EQ("localhost:11811", environment_value);
-
-    // 2. Check that a non-existent tag returns RETCODE_NO_DATA
-    std::string non_existent_env_variable = "NON_EXISTENT_ENV_VARIBLE";
-    environment_value.clear();
-    EXPECT_EQ(ReturnCode_t::RETCODE_NO_DATA, eprosima::SystemInfo::load_environment_file(filename,
-            non_existent_env_variable, environment_value));
-    EXPECT_TRUE(environment_value.empty());
-
-    // 3. Check that an empty environment variable returns RETCODE_NO_DATA
-    std::string empty_environment_variable = "EMPTY_ENV_VAR";
-    EXPECT_EQ(ReturnCode_t::RETCODE_NO_DATA, eprosima::SystemInfo::load_environment_file(filename,
-            empty_environment_variable, environment_value));
-    EXPECT_TRUE(environment_value.empty());
-
-    // 4. Check that a non-existent file returns RETCODE_BAD_PARAMETER
-    filename = "non_existent.json";
-    EXPECT_EQ(ReturnCode_t::RETCODE_BAD_PARAMETER, eprosima::SystemInfo::load_environment_file(filename,
-            eprosima::fastdds::rtps::DEFAULT_ROS2_MASTER_URI, environment_value));
-    EXPECT_TRUE(environment_value.empty());
-
-    // 5. Check that a wrong formatted file returns RETCODE_ERROR
-    filename = "empty_environment_test_file.json";
-    EXPECT_EQ(ReturnCode_t::RETCODE_ERROR, eprosima::SystemInfo::load_environment_file(filename,
-            eprosima::fastdds::rtps::DEFAULT_ROS2_MASTER_URI, environment_value));
-    EXPECT_TRUE(environment_value.empty());
 }
 
 /**
