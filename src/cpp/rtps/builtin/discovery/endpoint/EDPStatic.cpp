@@ -801,7 +801,9 @@ bool EDPStatic::newRemoteReader(
     ReaderProxyData* rpd = NULL;
     uint32_t position {0};
 
-    if (xmlparser::XMLP_ret::XML_OK == mp_edpXML->lookforReader(participant_name, user_id, &rpd, position))
+    if ((0x67 != ent_id.value[3] && // Check the endpoint is a builtin statistic endpoint.
+            xmlparser::XMLP_ret::XML_OK == mp_edpXML->lookforReader(participant_name, user_id, &rpd, position)) ||
+            nullptr != (rpd = generate_statistics_builtin_reader(ent_id)))
     {
         EPROSIMA_LOG_INFO(RTPS_EDP, "Activating: " << rpd->guid.entityId << " in topic " << rpd->topic_name);
         GUID_t reader_guid(participant_guid.guidPrefix, ent_id != c_EntityId_Unknown ? ent_id : rpd->guid.entityId);
@@ -856,7 +858,9 @@ bool EDPStatic::newRemoteWriter(
     WriterProxyData* wpd = NULL;
     uint32_t position {0};
 
-    if (xmlparser::XMLP_ret::XML_OK == mp_edpXML->lookforWriter(participant_name, user_id, &wpd, position))
+    if ((0x62 != ent_id.value[3] && // Check the endpoint is a builtin statistic endpoint.
+            xmlparser::XMLP_ret::XML_OK == mp_edpXML->lookforWriter(participant_name, user_id, &wpd, position)) ||
+            nullptr != (wpd = generate_statistics_builtin_writer(ent_id)))
     {
         EPROSIMA_LOG_INFO(RTPS_EDP, "Activating: " << wpd->guid.entityId << " in topic " << wpd->topic_name);
         GUID_t writer_guid(participant_guid.guidPrefix, ent_id != c_EntityId_Unknown ? ent_id : wpd->guid.entityId);
@@ -886,47 +890,192 @@ bool EDPStatic::newRemoteWriter(
                         newWPD->set_remote_locators(participant_data.default_locators, network, true,
                                 participant_data.is_from_this_host());
                     }
-                    newWPD->persistence_guid = persistence_guid;
+
+                    if (0x62 != writer_guid.entityId.value[3])
+                    {
+                        newWPD->persistence_guid = persistence_guid;
+                    }
 
                     return true;
                 };
         GUID_t temp_participant_guid;
-        WriterProxyData* writer_data = this->mp_PDP->addWriterProxyData(writer_guid, temp_participant_guid, init_fun);
+        WriterProxyData* writer_data =
+                this->mp_PDP->addWriterProxyData(writer_guid, temp_participant_guid, init_fun);
         if (writer_data != nullptr)
         {
             this->pairing_writer_proxy_with_any_local_reader(participant_guid, writer_data);
             return true;
         }
     }
+#ifdef FASTDDS_STATISTICS
+#endif // ifdef FASTDDS_STATISTICS
+
     return false;
 }
 
 bool EDPStatic::checkEntityId(
         ReaderProxyData* rdata)
 {
-    if (rdata->topic_kind == WITH_KEY && rdata->guid.entityId.value[3] == 0x07)
+    bool ret_value = false;
+    if (rdata->topic_kind == WITH_KEY && 0x07 == (0x07 & rdata->guid.entityId.value[3]))
     {
-        return true;
+        ret_value = true;
     }
-    if (rdata->topic_kind == NO_KEY && rdata->guid.entityId.value[3] == 0x04)
+    else if (rdata->topic_kind == NO_KEY && 0x04 == (0x04 & rdata->guid.entityId.value[3]))
     {
-        return true;
+        ret_value = true;
     }
-    return false;
+    return ret_value;
 }
 
 bool EDPStatic::checkEntityId(
         WriterProxyData* wdata)
 {
-    if (wdata->topic_kind == WITH_KEY && wdata->guid.entityId.value[3] == 0x02)
+    bool ret_value = false;
+    if (wdata->topic_kind == WITH_KEY && 0x02 == (0x02 & wdata->guid.entityId.value[3]))
     {
-        return true;
+        ret_value = true;
     }
-    if (wdata->topic_kind == NO_KEY && wdata->guid.entityId.value[3] == 0x03)
+    if (wdata->topic_kind == NO_KEY && 0x03 == (0x03 & wdata->guid.entityId.value[3]))
     {
-        return true;
+        ret_value = true;
     }
-    return false;
+    return ret_value;
+}
+
+WriterProxyData* EDPStatic::generate_statistics_builtin_writer(
+        const EntityId_t& entity_id)
+{
+    WriterProxyData* writer_data = nullptr;
+    const char* topic_name = nullptr;
+    const char* type_name = nullptr;
+    retrieve_statistics_builtin_topic(entity_id, topic_name, type_name);
+
+    if (nullptr != topic_name && nullptr != type_name)
+    {
+        writer_data = new WriterProxyData(4, 4); // TODO Review numbers
+        writer_data->topic_name = topic_name;
+        writer_data->type_name = type_name;
+        writer_data->topic_kind = WITH_KEY;
+        writer_data->reliability.kind = eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS;
+        writer_data->durability.kind = eprosima::fastdds::dds::TRANSIENT_LOCAL_DURABILITY_QOS;
+    }
+
+    return writer_data;
+}
+
+ReaderProxyData* EDPStatic::generate_statistics_builtin_reader(
+        const EntityId_t& entity_id)
+{
+    ReaderProxyData* reader_data = nullptr;
+    const char* topic_name = nullptr;
+    const char* type_name = nullptr;
+    retrieve_statistics_builtin_topic(entity_id, topic_name, type_name);
+
+    if (nullptr != topic_name && nullptr != type_name)
+    {
+        reader_data = new ReaderProxyData(4, 4); // TODO Review numbers
+        reader_data->topic_name = topic_name;
+        reader_data->type_name = type_name;
+        reader_data->topic_kind = WITH_KEY;
+        reader_data->reliability.kind = eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS;
+        reader_data->durability.kind = eprosima::fastdds::dds::TRANSIENT_LOCAL_DURABILITY_QOS;
+    }
+
+    return reader_data;
+}
+
+void EDPStatic::retrieve_statistics_builtin_topic(
+        const EntityId_t& entity_id,
+        const char*& topic_name,
+        const char*& type_name)
+{
+    if (0 < entity_id.value[2])
+    {
+        switch (entity_id.value[2])
+        {
+            case 1:
+                topic_name = "_fastdds_statistics_history2history_latency";
+                type_name = "eprosima::fastdds::statistics::WriterReaderData";
+                break;
+            case 2:
+                topic_name = "_fastdds_statistics_network_latency";
+                type_name = "eprosima::fastdds::statistics::Locator2LocatorData";
+                break;
+            case 4:
+                topic_name = "_fastdds_statistics_publication_throughput";
+                type_name = "eprosima::fastdds::statistics::EntityData";
+                break;
+            case 8:
+                topic_name = "_fastdds_statistics_subscription_throughput";
+                type_name = "eprosima::fastdds::statistics::EntityData";
+                break;
+            case 16:
+                topic_name = "_fastdds_statistics_rtps_sent";
+                type_name = "eprosima::fastdds::statistics::Entity2LocatorTraffic";
+                break;
+            case 32:
+                topic_name = "_fastdds_statistics_rtps_lost";
+                type_name = "eprosima::fastdds::statistics::Entity2LocatorTraffic";
+                break;
+            case 64:
+                topic_name = "_fastdds_statistics_resent_datas";
+                type_name = "eprosima::fastdds::statistics::EntityCount";
+                break;
+            case 128:
+                topic_name = "_fastdds_statistics_heartbeat_count";
+                type_name = "eprosima::fastdds::statistics::EntityCount";
+                break;
+        }
+    }
+    else if (0 < entity_id.value[1])
+    {
+        switch (entity_id.value[1])
+        {
+            case 1:
+                topic_name = "_fastdds_statistics_acknack_count";
+                type_name = "eprosima::fastdds::statistics::EntityCount";
+                break;
+            case 2:
+                topic_name = "_fastdds_statistics_nackfrag_count";
+                type_name = "eprosima::fastdds::statistics::EntityCount";
+                break;
+            case 4:
+                topic_name = "_fastdds_statistics_gap_count";
+                type_name = "eprosima::fastdds::statistics::EntityCount";
+                break;
+            case 8:
+                topic_name = "_fastdds_statistics_data_count";
+                type_name = "eprosima::fastdds::statistics::EntityCount";
+                break;
+            case 16:
+                topic_name = "_fastdds_statistics_pdp_packets";
+                type_name = "eprosima::fastdds::statistics::EntityCount";
+                break;
+            case 32:
+                topic_name = "_fastdds_statistics_edp_packets";
+                type_name = "eprosima::fastdds::statistics::EntityCount";
+                break;
+            case 64:
+                topic_name = "_fastdds_statistics_discovered_entity";
+                type_name = "eprosima::fastdds::statistics::DiscoveryTime";
+                break;
+            case 128:
+                topic_name = "_fastdds_statistics_sample_datas";
+                type_name = "eprosima::fastdds::statistics::SampleIdentityCount";
+                break;
+        }
+    }
+    else if (0 < entity_id.value[0])
+    {
+        switch (entity_id.value[0])
+        {
+            case 1:
+                topic_name = "_fastdds_statistics_physical_data";
+                type_name = "eprosima::fastdds::statistics::PhysicalData";
+                break;
+        }
+    }
 }
 
 } /* namespace rtps */
