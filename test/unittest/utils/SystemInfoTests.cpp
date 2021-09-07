@@ -207,7 +207,10 @@ TEST_F(SystemInfoTests, FileWatchTest)
     eprosima::FileWatchHandle watch =
             eprosima::SystemInfo::watch_file(filename, [&](const std::string&)
                     {
-                        ++times_called_;
+                        {
+                            std::unique_lock<std::mutex> lck(*mutex_);
+                            times_called_.store(++times_called_, std::memory_order_release);
+                        }
                         cv_.notify_all();
                     });
 
@@ -237,7 +240,7 @@ TEST_F(SystemInfoTests, FileWatchTest)
 #endif // defined(_WIN32) || defined(__unix__)
 
     // Required because the file modification time has resolution of seconds
-    std::this_thread::sleep_for(std::chrono::seconds(1));
+    std::this_thread::sleep_for(std::chrono::seconds(2));
 
     file_content["EMPTY_ENV_VAR"] = "another_value";
 
