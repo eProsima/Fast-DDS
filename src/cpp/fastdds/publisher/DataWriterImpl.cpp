@@ -168,17 +168,8 @@ ReturnCode_t DataWriterImpl::enable()
     w_att.mode = qos_.publish_mode().kind == SYNCHRONOUS_PUBLISH_MODE ? SYNCHRONOUS_WRITER : ASYNCHRONOUS_WRITER;
     w_att.flow_controller_name = qos_.publish_mode().flow_controller_name;
     w_att.endpoint.properties = qos_.properties();
-
-    if (qos_.endpoint().entity_id > 0)
-    {
-        w_att.endpoint.setEntityID(static_cast<uint8_t>(qos_.endpoint().entity_id));
-    }
-
-    if (qos_.endpoint().user_defined_id > 0)
-    {
-        w_att.endpoint.setUserDefinedID(static_cast<uint8_t>(qos_.endpoint().user_defined_id));
-    }
-
+    w_att.endpoint.setEntityID(static_cast<uint8_t>(qos_.endpoint().entity_id));
+    w_att.endpoint.setUserDefinedID(static_cast<uint8_t>(qos_.endpoint().user_defined_id));
     w_att.times = qos_.reliable_writer_qos().times;
     w_att.liveliness_kind = qos_.liveliness().kind;
     w_att.liveliness_lease_duration = qos_.liveliness().lease_duration;
