@@ -243,10 +243,10 @@ private:
 
     bool is_current_instance_valid()
     {
-        // We are not implementing instance_state or view_state yet, so all instances will be considered to have
-        // a valid state. In the future this should check instance_state against states_.instance_states and
-        // view_state against states_.view_states
-        return true;
+        // Check instance_state against states_.instance_states and view_state against states_.view_states
+        auto instance_state = instance_.second->instance_state;
+        auto view_state = instance_.second->view_state;
+        return (0 != (states_.instance_states & instance_state)) && (0 != (states_.view_states & view_state));
     }
 
     bool next_instance()
