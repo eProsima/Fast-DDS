@@ -208,7 +208,7 @@ TEST_F(SystemInfoTests, FileWatchTest)
             eprosima::SystemInfo::watch_file(filename, [&](const std::string&)
                     {
                         ++times_called_;
-                        cv_.notify_one();
+                        cv_.notify_all();
                     });
 
     // Read contents
@@ -229,10 +229,31 @@ TEST_F(SystemInfoTests, FileWatchTest)
     // Check modifications.
     block_for_at_least_N_callbacks(1);
     uint32_t times_called = times_called_;
-    EXPECT_LE(1u, times_called);
+    EXPECT_EQ(1u, times_called);
 #else
     // Unsupported platforms will not call the callback
     uint32_t times_called = times_called_;
+    EXPECT_EQ(0u, times_called);
+#endif // defined(_WIN32) || defined(__unix__)
+
+    // Required because the file modification time has resolution of seconds
+    std::this_thread::sleep_for(std::chrono::seconds(1));
+
+    file_content["EMPTY_ENV_VAR"] = "another_value";
+
+    {
+        std::ofstream file(filename);
+        file << file_content;
+    }
+
+#if defined(_WIN32) || defined(__unix__)
+    // Check modifications.
+    block_for_at_least_N_callbacks(2);
+    times_called = times_called_;
+    EXPECT_EQ(2u, times_called);
+#else
+    // Unsupported platforms will not call the callback
+    times_called = times_called_;
     EXPECT_EQ(0u, times_called);
 #endif // defined(_WIN32) || defined(__unix__)
 

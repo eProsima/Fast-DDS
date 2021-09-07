@@ -25,6 +25,7 @@
 
 #ifdef _WIN32
 #define WIN32_LEAN_AND_MEAN
+#define stat _stat
 #ifndef NOMINMAX
 #define NOMINMAX
 #endif
@@ -154,6 +155,8 @@ namespace filewatch {
 		std::thread _callback_thread;
 
 		std::promise<void> _running;
+
+		time_t last_write_time_;
 #ifdef _WIN32
 		HANDLE _directory = { nullptr };
 		HANDLE _close_event = { nullptr };
@@ -324,6 +327,9 @@ namespace filewatch {
 			{
 				throw std::system_error(GetLastError(), std::system_category());
 			}
+
+			init_last_write_time();
+
 			return directory;
 		}
 
@@ -375,7 +381,14 @@ namespace filewatch {
 					}
 					async_pending = false;
 
-					if (bytes_returned == 0) {
+					struct stat result;
+					static time_t current_time = 0;
+					if (stat(_path.c_str(), &result) == 0)
+					{
+						current_time = result.st_mtime;
+					}
+
+					if (bytes_returned == 0 || current_time == last_write_time_) {
 						break;
 					}
 
@@ -389,6 +402,8 @@ namespace filewatch {
 						{
 							parsed_information.emplace_back(T{ changed_file }, _event_type_mapping.at(file_information->Action));
 						}
+
+						last_write_time_ = current_time;
 
 						if (file_information->NextEntryOffset == 0) {
 							break;
@@ -457,11 +472,14 @@ namespace filewatch {
 				}
 			}();
 
-			const auto watch = inotify_add_watch(folder, watch_path.c_str(), IN_CLOSE_WRITE | IN_CREATE | IN_DELETE );
+			const auto watch = inotify_add_watch(folder, watch_path.c_str(), IN_MODIFY | IN_CREATE | IN_DELETE );
 			if (watch < 0) 
 			{
 				throw std::system_error(errno, std::system_category());
 			}
+
+			init_last_write_time();
+
 			return { folder, watch };
 		}
 
@@ -473,10 +491,20 @@ namespace filewatch {
 			while (_destory == false) 
 			{
 				const auto length = read(_directory.folder, static_cast<void*>(buffer.data()), buffer.size());
-				if (length > 0) 
+
+				struct stat result;
+				static time_t current_time = 0;
+				if (stat(_path.c_str(), &result) == 0)
+				{
+					current_time = result.st_mtime;
+				}
+
+				if (length > 0 && current_time != last_write_time_)
 				{
 					int i = 0;
+					last_write_time_ = current_time;
 					std::vector<std::pair<T, Event>> parsed_information;
+					bool already_modified = false;
 					while (i < length) 
 					{
 						struct inotify_event *event = reinterpret_cast<struct inotify_event *>(&buffer[i]); // NOLINT
@@ -493,8 +521,9 @@ namespace filewatch {
 								{
 									parsed_information.emplace_back(T{ changed_file }, Event::removed);
 								}
-								else if (event->mask & IN_CLOSE_WRITE) 
+								else if (event->mask & IN_MODIFY && !already_modified)
 								{
+									already_modified = true;
 									parsed_information.emplace_back(T{ changed_file }, Event::modified);
 								}
 							}
@@ -534,6 +563,16 @@ namespace filewatch {
 						}
 					}
 				}
+			}
+		}
+
+		void init_last_write_time()
+		{
+			// Initialize last_write_time_
+			struct stat result;
+			if(stat(_path.c_str(), &result) == 0)
+			{
+				last_write_time_ = result.st_mtime;
 			}
 		}
 	};
