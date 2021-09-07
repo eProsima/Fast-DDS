@@ -1541,6 +1541,21 @@ TEST_F(DataReaderTests, sample_info)
             close_writer(1);
         }
 
+        void run_test(DataReader* reader, const std::vector<TestStep>& steps)
+        {
+            for (const TestStep& step : steps)
+            {
+                for (const TestCmd& cmd : step.operations)
+                {
+                    execute(cmd);
+                    std::this_thread::sleep_for(std::chrono::milliseconds(100));
+                }
+                check(reader, 0, step.instance_state[0]);
+                check(reader, 1, step.instance_state[1]);
+            }
+
+        }
+
         void execute(
                 const TestCmd& cmd)
         {
@@ -1628,7 +1643,7 @@ TEST_F(DataReaderTests, sample_info)
 
     };
 
-    static const TestStep steps[] =
+    static const std::vector<TestStep> steps =
     {
         {
             // Instances have never been written
@@ -1734,16 +1749,18 @@ TEST_F(DataReaderTests, sample_info)
         },
     };
 
+    // Run test once
     TestState state(type_, topic_, publisher_);
-    for (const TestStep& step : steps)
-    {
-        for (const TestCmd& cmd : step.operations)
-        {
-            state.execute(cmd);
-        }
-        state.check(data_reader_, 0, step.instance_state[0]);
-        state.check(data_reader_, 1, step.instance_state[1]);
-    }
+    state.run_test(data_reader_, steps);
+
+    // Taking all data should remove instance information
+    FooSeq data;
+    SampleInfoSeq infos;
+    EXPECT_EQ(ReturnCode_t::RETCODE_OK, data_reader_->take(data, infos));
+    EXPECT_EQ(ReturnCode_t::RETCODE_OK, data_reader_->return_loan(data, infos));
+    
+    // Run test again
+    state.run_test(data_reader_, steps);
 }
 
 /*
