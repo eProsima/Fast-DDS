@@ -157,6 +157,27 @@ TEST_F(SystemInfoTests, FileExistsTest)
 }
 
 /**
+ * Test that checks set_environment_file and get_environment_file
+ */
+TEST(SystemInfoTests, EnvironmentFileTest)
+{
+    // 1. Environment variable not set: call to set_environment_variable returns RETCODE_NO_DATA and
+    // get_environment_file returns empty
+    EXPECT_EQ(ReturnCode_t::RETCODE_NO_DATA, eprosima::SystemInfo::set_environment_file());
+    EXPECT_TRUE(eprosima::SystemInfo::get_environment_file().empty());
+
+    // 2. Set environment file variable and see that it returns correctly
+    const std::string value("TESTING");    
+#ifdef _WIN32
+    ASSERT_EQ(0, _putenv_s(eprosima::FASTDDS_ENVIRONMENT_FILE_ENV_VAR, value.c_str()));
+#else
+    ASSERT_EQ(0, setenv(eprosima::FASTDDS_ENVIRONMENT_FILE_ENV_VAR, value.c_str(), 1));
+#endif // _WIN32
+    EXPECT_EQ(ReturnCode_t::RETCODE_OK, eprosima::SystemInfo::set_environment_file());
+    EXPECT_EQ(0, eprosima::SystemInfo::get_environment_file().compare(value));
+}
+
+/**
  * This test checks the load_environment_file method of the SystemInfo class
  */
 TEST_F(SystemInfoTests, LoadEnvironmentFileTest)
