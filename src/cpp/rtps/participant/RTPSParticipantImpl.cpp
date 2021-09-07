@@ -532,11 +532,11 @@ bool RTPSParticipantImpl::preprocess_endpoint_attributes(
     {
         if (att.topicKind == NO_KEY)
         {
-            entId.value[3] = no_key;
+            entId.value[3] = (-2 == att.getUserDefinedID() && 0 < att.getEntityID()) ? (0x60) | no_key : no_key;
         }
         else if (att.topicKind == WITH_KEY)
         {
-            entId.value[3] = with_key;
+            entId.value[3] = (-2 == att.getUserDefinedID() && 0 < att.getEntityID()) ? (0x60) | with_key : with_key;
         }
         uint32_t idnum;
         if (att.getEntityID() > 0)

@@ -108,7 +108,7 @@ public:
      * @param id User defined ID to be set
      */
     inline void setUserDefinedID(
-            uint8_t id)
+            int16_t id)
     {
         m_userDefinedID = id;
     }
@@ -118,7 +118,7 @@ public:
      * @param id Entity ID to be set
      */
     inline void setEntityID(
-            uint8_t id)
+            int16_t id)
     {
         m_entityID = id;
     }
