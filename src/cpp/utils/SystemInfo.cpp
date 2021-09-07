@@ -92,6 +92,16 @@ bool SystemInfo::file_exists(
     return (stat(filename.c_str(), &s) == 0 && s.st_mode & S_IFREG);
 }
 
+ReturnCode_t SystemInfo::set_environment_file()
+{
+    return SystemInfo::get_env(FASTDDS_ENVIRONMENT_FILE_ENV_VAR, SystemInfo::environment_file_);
+}
+
+const std::string& SystemInfo::get_environment_file()
+{
+    return SystemInfo::environment_file_;
+}
+
 ReturnCode_t SystemInfo::load_environment_file(
         const std::string& filename,
         const std::string& env_name,
@@ -163,5 +173,7 @@ void SystemInfo::stop_watching_file(
 #endif // if defined(_WIN32) || defined(__unix__)
     static_cast<void>(handle);
 }
+
+std::string SystemInfo::environment_file_;
 
 } // eprosima

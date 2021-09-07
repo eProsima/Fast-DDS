@@ -136,6 +136,23 @@ public:
             const std::string& filename);
 
     /**
+     * Read FASTDDS_ENVIRONMENT_FILE_ENV_VAR environment value and save its value.
+     * Use get_environment_file to read its value.
+     *
+     * @return RETCODE_OK if the environment variable is set.
+     * RETCODE_NO_DATA if the environment variable is unset.
+     */
+    static ReturnCode_t set_environment_file();
+
+    /**
+     * Getter for the path/filename contained in the FASTDDS_ENVIRONMENT_FILE_ENV_VAR.
+     * The value is set calling set_environment_file().
+     *
+     * @return Path/filename contained in the environment variable.
+     */
+    static const std::string& get_environment_file();
+
+    /**
      * Read environment variable contained in the environment file.
      *
      * @param [in] filename path/name of the environment file.
@@ -185,7 +202,18 @@ private:
 
     SystemInfo() = default;
 
+    static std::string environment_file_;
+
 };
+
+/**
+ * Environment variable to specify the name of a file (including or not the path) where the environment variables
+ * could be defined.
+ * Thus, the user can modify the environment variables' values in runtime.
+ *
+ * TODO(jlbueno) Currently only ROS_DISCOVERY_SERVER environment variable is supported.
+ */
+const char* const FASTDDS_ENVIRONMENT_FILE_ENV_VAR = "FASTDDS_ENVIRONMENT_FILE";
 
 } // namespace eprosima
 

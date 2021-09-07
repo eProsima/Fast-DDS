@@ -29,6 +29,8 @@
 
 #include <fastdds/rtps/attributes/ServerAttributes.h>
 
+#include <utils/SystemInfo.hpp>
+
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
 using test_UDPv4Transport = eprosima::fastdds::rtps::test_UDPv4Transport;
@@ -1328,9 +1330,9 @@ TEST(Discovery, ServerClientEnvironmentSetUp)
 
     // Set environment variable
 #ifdef _WIN32
-    _putenv_s(FASTDDS_ENVIRONMENT_FILE_ENV_VAR, filename.c_str());
+    _putenv_s(eprosima::FASTDDS_ENVIRONMENT_FILE_ENV_VAR, filename.c_str());
 #else
-    setenv(FASTDDS_ENVIRONMENT_FILE_ENV_VAR, filename.c_str(), 1);
+    setenv(eprosima::FASTDDS_ENVIRONMENT_FILE_ENV_VAR, filename.c_str(), 1);
 #endif // _WIN32
 
     output.clear();
