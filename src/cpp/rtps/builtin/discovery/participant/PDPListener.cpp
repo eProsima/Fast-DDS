@@ -140,7 +140,6 @@ void PDPListener::onNewCacheChangeAdded(
                 pdata = parent_pdp_->createParticipantProxyData(temp_participant_data_, writer_guid);
 
                 reader->getMutex().unlock();
-                lock.unlock();
 
                 if (pdata != nullptr)
                 {
@@ -183,6 +182,8 @@ void PDPListener::onNewCacheChangeAdded(
                     // create the first DATA(p) upon finishing, thus triggering the sent to all fixed and matched
                     // readers anyways.
                     parent_pdp_->assignRemoteEndpoints(pdata);
+
+                    lock.unlock();
                 }
             }
             else
@@ -196,13 +197,6 @@ void PDPListener::onNewCacheChangeAdded(
                         << pdata->m_guid << " at "
                         << "MTTLoc: " << pdata->metatraffic_locators
                         << " DefLoc:" << pdata->default_locators);
-
-                if (parent_pdp_->updateInfoMatchesEDP())
-                {
-                    parent_pdp_->mp_EDP->assignRemoteEndpoints(*pdata);
-                }
-
-                lock.unlock();
 
                 RTPSParticipantListener* listener = parent_pdp_->getRTPSParticipant()->getListener();
                 if (listener != nullptr)
@@ -224,6 +218,13 @@ void PDPListener::onNewCacheChangeAdded(
                         parent_pdp_->getRTPSParticipant()->ignore_participant(temp_participant_data_.m_guid.guidPrefix);
                     }
                 }
+
+                if (parent_pdp_->updateInfoMatchesEDP())
+                {
+                    parent_pdp_->mp_EDP->assignRemoteEndpoints(*pdata);
+                }
+
+                lock.unlock();
             }
 
             // Take again the reader lock
