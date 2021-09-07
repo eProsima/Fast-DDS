@@ -1541,7 +1541,9 @@ TEST_F(DataReaderTests, sample_info)
             close_writer(1);
         }
 
-        void run_test(DataReader* reader, const std::vector<TestStep>& steps)
+        void run_test(
+                DataReader* reader,
+                const std::vector<TestStep>& steps)
         {
             for (const TestStep& step : steps)
             {
@@ -1758,7 +1760,7 @@ TEST_F(DataReaderTests, sample_info)
     SampleInfoSeq infos;
     EXPECT_EQ(ReturnCode_t::RETCODE_OK, data_reader_->take(data, infos));
     EXPECT_EQ(ReturnCode_t::RETCODE_OK, data_reader_->return_loan(data, infos));
-    
+
     // Run test again
     state.run_test(data_reader_, steps);
 }
