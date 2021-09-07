@@ -1631,6 +1631,7 @@ TEST_F(DataReaderTests, sample_info)
     static const TestStep steps[] =
     {
         {
+            // Instances have never been written
             {},
             {
                 {ReturnCode_t::RETCODE_BAD_PARAMETER, {}},
@@ -1638,10 +1639,97 @@ TEST_F(DataReaderTests, sample_info)
             }
         },
         {
+            // One writer writes on first instance => that instance should be NEW and ALIVE
             { {0, TestCmd::WRITE, 0} },
             {
                 {ReturnCode_t::RETCODE_OK, NEW_VIEW_STATE, ALIVE_INSTANCE_STATE, 0, 0},
                 {ReturnCode_t::RETCODE_BAD_PARAMETER, {}},
+            }
+        },
+        {
+            // Same writer writes on first instance => instance becomes NOT_NEW
+            { {0, TestCmd::WRITE, 0} },
+            {
+                {ReturnCode_t::RETCODE_OK, NOT_NEW_VIEW_STATE, ALIVE_INSTANCE_STATE, 0, 0},
+                {ReturnCode_t::RETCODE_BAD_PARAMETER, {}},
+            }
+        },
+        {
+            // Same writer disposes first instance => instance becomes NOT_ALIVE_DISPOSED
+            { {0, TestCmd::DISPOSE, 0} },
+            {
+                {ReturnCode_t::RETCODE_OK, NOT_NEW_VIEW_STATE, NOT_ALIVE_DISPOSED_INSTANCE_STATE, 0, 0},
+                {ReturnCode_t::RETCODE_BAD_PARAMETER, {}},
+            }
+        },
+        {
+            // First writer writes second instance => NEW and ALIVE
+            // Second writer writes first instance => NEW and ALIVE
+            { {0, TestCmd::WRITE, 1}, {1, TestCmd::WRITE, 0} },
+            {
+                {ReturnCode_t::RETCODE_OK, NEW_VIEW_STATE, ALIVE_INSTANCE_STATE, 1, 0},
+                {ReturnCode_t::RETCODE_OK, NEW_VIEW_STATE, ALIVE_INSTANCE_STATE, 0, 0},
+            }
+        },
+        {
+            // Both writers write on second instance => NOT_NEW and ALIVE
+            { {0, TestCmd::WRITE, 1}, {1, TestCmd::WRITE, 1} },
+            {
+                {ReturnCode_t::RETCODE_OK, NOT_NEW_VIEW_STATE, ALIVE_INSTANCE_STATE, 1, 0},
+                {ReturnCode_t::RETCODE_OK, NOT_NEW_VIEW_STATE, ALIVE_INSTANCE_STATE, 0, 0},
+            }
+        },
+        {
+            // Second writer closes => first instance becomes NOT_ALIVE_NO_WRITERS
+            { {1, TestCmd::CLOSE, 0} },
+            {
+                {ReturnCode_t::RETCODE_OK, NOT_NEW_VIEW_STATE, NOT_ALIVE_NO_WRITERS_INSTANCE_STATE, 1, 0},
+                {ReturnCode_t::RETCODE_OK, NOT_NEW_VIEW_STATE, ALIVE_INSTANCE_STATE, 0, 0},
+            }
+        },
+        {
+            // First writer unregisters second instance => NOT_ALIVE_NO_WRITERS
+            { {0, TestCmd::UNREGISTER, 1} },
+            {
+                {ReturnCode_t::RETCODE_OK, NOT_NEW_VIEW_STATE, NOT_ALIVE_NO_WRITERS_INSTANCE_STATE, 1, 0},
+                {ReturnCode_t::RETCODE_OK, NOT_NEW_VIEW_STATE, NOT_ALIVE_NO_WRITERS_INSTANCE_STATE, 0, 0},
+            }
+        },
+        {
+            // Both writers write both instances
+            { {0, TestCmd::WRITE, 0}, {1, TestCmd::WRITE, 0}, {0, TestCmd::WRITE, 1}, {1, TestCmd::WRITE, 1} },
+            {
+                {ReturnCode_t::RETCODE_OK, NEW_VIEW_STATE, ALIVE_INSTANCE_STATE, 1, 1},
+                {ReturnCode_t::RETCODE_OK, NEW_VIEW_STATE, ALIVE_INSTANCE_STATE, 0, 1},
+            }
+        },
+        {
+            // Reading twice should return NOT_NEW
+            {},
+            {
+                {ReturnCode_t::RETCODE_OK, NOT_NEW_VIEW_STATE, ALIVE_INSTANCE_STATE, 1, 1},
+                {ReturnCode_t::RETCODE_OK, NOT_NEW_VIEW_STATE, ALIVE_INSTANCE_STATE, 0, 1},
+            }
+        },
+        {
+            { {0, TestCmd::UNREGISTER, 0}, {1, TestCmd::DISPOSE, 1} },
+            {
+                {ReturnCode_t::RETCODE_OK, NOT_NEW_VIEW_STATE, ALIVE_INSTANCE_STATE, 1, 1},
+                {ReturnCode_t::RETCODE_OK, NOT_NEW_VIEW_STATE, NOT_ALIVE_DISPOSED_INSTANCE_STATE, 0, 1},
+            }
+        },
+        {
+            { {0, TestCmd::WRITE, 0}, {0, TestCmd::UNREGISTER, 1}, {1, TestCmd::UNREGISTER, 0} },
+            {
+                {ReturnCode_t::RETCODE_OK, NOT_NEW_VIEW_STATE, ALIVE_INSTANCE_STATE, 1, 1},
+                {ReturnCode_t::RETCODE_OK, NOT_NEW_VIEW_STATE, NOT_ALIVE_DISPOSED_INSTANCE_STATE, 0, 1},
+            }
+        },
+        {
+            { {0, TestCmd::CLOSE, 0}, {1, TestCmd::CLOSE, 0} },
+            {
+                {ReturnCode_t::RETCODE_OK, NOT_NEW_VIEW_STATE, NOT_ALIVE_NO_WRITERS_INSTANCE_STATE, 1, 1},
+                {ReturnCode_t::RETCODE_OK, NOT_NEW_VIEW_STATE, NOT_ALIVE_DISPOSED_INSTANCE_STATE, 0, 1},
             }
         },
     };
