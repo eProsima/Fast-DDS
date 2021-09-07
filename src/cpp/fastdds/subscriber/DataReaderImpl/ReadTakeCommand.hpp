@@ -142,10 +142,9 @@ struct ReadTakeCommand
                 // in the future also
                 if (!is_future_change)
                 {
-
                     // Add sample and info to collections
                     ReturnCode_t previous_return_value = return_value_;
-                    bool added = add_sample(change, remove_change);
+                    bool added = add_sample(*it, remove_change);
                     reader_->end_sample_access_nts(change, wp, added);
 
                     // Check if the payload is dirty
@@ -270,7 +269,7 @@ private:
     }
 
     bool add_sample(
-            CacheChange_t* change,
+            const DataReaderCacheChange& item,
             bool& deserialization_error)
     {
         bool ret_val = false;
@@ -284,10 +283,10 @@ private:
             sample_infos_.length(new_len);
 
             // Add information
-            generate_info(change);
+            generate_info(item);
             if (sample_infos_[current_slot_].valid_data)
             {
-                if (!deserialize_sample(change))
+                if (!deserialize_sample(item.change))
                 {
                     // Decrement length of collections
                     data_values_.length(current_slot_);
@@ -330,46 +329,42 @@ private:
     }
 
     void generate_info(
-            CacheChange_t* change)
+            const DataReaderCacheChange& item)
     {
         // Loan when necessary
         if (!sample_infos_.has_ownership())
         {
-            SampleInfo* item = info_pool_.get_item();
-            assert(item != nullptr);
-            const_cast<void**>(sample_infos_.buffer())[current_slot_] = item;
+            SampleInfo* pool_item = info_pool_.get_item();
+            assert(pool_item != nullptr);
+            const_cast<void**>(sample_infos_.buffer())[current_slot_] = pool_item;
         }
 
         SampleInfo& info = sample_infos_[current_slot_];
-        info.sample_state = change->isRead ? READ_SAMPLE_STATE : NOT_READ_SAMPLE_STATE;
-        info.view_state = NOT_NEW_VIEW_STATE;
-        info.disposed_generation_count = 0;
-        info.no_writers_generation_count = 1;
+        info.sample_state = item.change->isRead ? READ_SAMPLE_STATE : NOT_READ_SAMPLE_STATE;
+        info.instance_state = instance_.second->instance_state;
+        info.view_state = instance_.second->view_state;
+        info.disposed_generation_count = item.disposed_generation_count;
+        info.no_writers_generation_count = item.no_writers_generation_count;
         info.sample_rank = 0;
         info.generation_rank = 0;
         info.absoulte_generation_rank = 0;
-        info.source_timestamp = change->sourceTimestamp;
-        info.reception_timestamp = change->reader_info.receptionTimestamp;
+        info.source_timestamp = item.change->sourceTimestamp;
+        info.reception_timestamp = item.change->reader_info.receptionTimestamp;
         info.instance_handle = handle_;
-        info.publication_handle = InstanceHandle_t(change->writerGUID);
-        info.sample_identity.writer_guid(change->writerGUID);
-        info.sample_identity.sequence_number(change->sequenceNumber);
-        info.related_sample_identity = change->write_params.sample_identity();
+        info.publication_handle = InstanceHandle_t(item.change->writerGUID);
+        info.sample_identity.writer_guid(item.change->writerGUID);
+        info.sample_identity.sequence_number(item.change->sequenceNumber);
+        info.related_sample_identity = item.change->write_params.sample_identity();
         info.valid_data = true;
 
-        switch (change->kind)
+        switch (item.change->kind)
         {
-            case eprosima::fastrtps::rtps::ALIVE:
-                info.instance_state = ALIVE_INSTANCE_STATE;
-                break;
             case eprosima::fastrtps::rtps::NOT_ALIVE_DISPOSED:
             case eprosima::fastrtps::rtps::NOT_ALIVE_DISPOSED_UNREGISTERED:
-                info.instance_state = NOT_ALIVE_DISPOSED_INSTANCE_STATE;
                 info.valid_data = false;
                 break;
+            case eprosima::fastrtps::rtps::ALIVE:
             default:
-                //TODO [ILG] change this if the other kinds ever get implemented
-                info.instance_state = ALIVE_INSTANCE_STATE;
                 break;
         }
     }
