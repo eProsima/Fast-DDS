@@ -27,7 +27,6 @@
 #include <fastdds/dds/topic/TypeSupport.hpp>
 #include <fastdds/dds/subscriber/SampleInfo.hpp>
 
-#include <fastrtps/subscriber/SubscriberHistory.h>
 #include <fastrtps/types/TypesBase.h>
 
 #include <fastdds/subscriber/DataReaderImpl.hpp>
@@ -35,6 +34,7 @@
 #include <fastdds/subscriber/DataReaderImpl/StateFilter.hpp>
 #include <fastdds/subscriber/DataReaderImpl/SampleInfoPool.hpp>
 #include <fastdds/subscriber/DataReaderImpl/SampleLoanManager.hpp>
+#include <fastdds/subscriber/history/DataReaderHistory.hpp>
 
 #include <fastdds/rtps/common/CacheChange.h>
 #include <fastdds/rtps/reader/RTPSReader.h>
@@ -51,7 +51,7 @@ namespace detail {
 struct ReadTakeCommand
 {
     using ReturnCode_t = eprosima::fastrtps::types::ReturnCode_t;
-    using history_type = eprosima::fastrtps::SubscriberHistory;
+    using history_type = eprosima::fastdds::dds::detail::DataReaderHistory;
     using CacheChange_t = eprosima::fastrtps::rtps::CacheChange_t;
     using RTPSReader = eprosima::fastrtps::rtps::RTPSReader;
     using WriterProxy = eprosima::fastrtps::rtps::WriterProxy;

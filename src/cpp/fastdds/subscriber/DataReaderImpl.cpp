@@ -57,40 +57,6 @@ namespace eprosima {
 namespace fastdds {
 namespace dds {
 
-static void sample_info_to_dds (
-        const SampleInfo_t& rtps_info,
-        SampleInfo* dds_info)
-{
-    dds_info->sample_state = NOT_READ_SAMPLE_STATE;
-    dds_info->view_state = NOT_NEW_VIEW_STATE;
-    dds_info->disposed_generation_count = 0;
-    dds_info->no_writers_generation_count = 1;
-    dds_info->sample_rank = 0;
-    dds_info->generation_rank = 0;
-    dds_info->absoulte_generation_rank = 0;
-    dds_info->source_timestamp = rtps_info.sourceTimestamp;
-    dds_info->reception_timestamp = rtps_info.receptionTimestamp;
-    dds_info->instance_handle = rtps_info.iHandle;
-    dds_info->publication_handle = fastrtps::rtps::InstanceHandle_t(rtps_info.sample_identity.writer_guid());
-    dds_info->sample_identity = rtps_info.sample_identity;
-    dds_info->related_sample_identity = rtps_info.related_sample_identity;
-    dds_info->valid_data = rtps_info.sampleKind == eprosima::fastrtps::rtps::ALIVE ? true : false;
-
-    switch (rtps_info.sampleKind)
-    {
-        case eprosima::fastrtps::rtps::ALIVE:
-            dds_info->instance_state = ALIVE_INSTANCE_STATE;
-            break;
-        case eprosima::fastrtps::rtps::NOT_ALIVE_DISPOSED:
-            dds_info->instance_state = NOT_ALIVE_DISPOSED_INSTANCE_STATE;
-            break;
-        default:
-            //TODO [ILG] change this if the other kinds ever get implemented
-            dds_info->instance_state = ALIVE_INSTANCE_STATE;
-            break;
-    }
-}
-
 static bool collections_have_same_properties(
         const LoanableCollection& data_values,
         const SampleInfoSeq& sample_infos)
@@ -126,11 +92,7 @@ DataReaderImpl::DataReaderImpl(
     , topic_(topic)
     , qos_(&qos == &DATAREADER_QOS_DEFAULT ? subscriber_->get_default_datareader_qos() : qos)
 #pragma warning (disable : 4355 )
-    , history_(topic_attributes(),
-            type_.get(),
-            qos_.get_readerqos(subscriber_->get_qos()),
-            type_->m_typeSize + 3,    /* Possible alignment */
-            qos_.endpoint().history_memory_policy)
+    , history_(type, *topic, qos_)
     , listener_(listener)
     , reader_listener_(this)
     , deadline_duration_us_(qos_.deadline().period.to_ns() * 1e-3)
@@ -703,10 +665,8 @@ ReturnCode_t DataReaderImpl::get_first_untaken_info(
         return ReturnCode_t::RETCODE_NOT_ENABLED;
     }
 
-    SampleInfo_t rtps_info;
-    if (history_.get_first_untaken_info(&rtps_info))
+    if (history_.get_first_untaken_info(*info))
     {
-        sample_info_to_dds(rtps_info, info);
         return ReturnCode_t::RETCODE_OK;
     }
     return ReturnCode_t::RETCODE_NO_DATA;
