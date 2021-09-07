@@ -28,6 +28,7 @@
 #include <fastdds/rtps/reader/RTPSReader.h>
 
 #include <rtps/reader/WriterProxy.h>
+#include <utils/collections/sorted_vector_insert.hpp>
 
 namespace eprosima {
 namespace fastdds {
@@ -305,10 +306,11 @@ bool DataReaderHistory::add_received_change_with_key(
         }
 
         //ADD TO KEY VECTOR
-
-        // As the instance should be ordered following the presentation QoS, and
-        // we only support ordering by reception timestamp, we can always add at the end.
-        instance_changes.push_back(a_change);
+        eprosima::utilities::collections::sorted_vector_insert(instance_changes, a_change,
+                [](const CacheChange_t* lhs, const CacheChange_t* rhs)
+                {
+                    return lhs->sourceTimestamp < rhs->sourceTimestamp;
+                });
 
         logInfo(SUBSCRIBER, mp_reader->getGuid().entityId
                 << ": Change " << a_change->sequenceNumber << " added from: "
