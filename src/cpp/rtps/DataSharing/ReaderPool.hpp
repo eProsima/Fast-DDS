@@ -124,7 +124,6 @@ public:
 
         // Set the reading pointer
         next_payload_ = begin();
-        segment_ = std::move(local_segment);
         if (is_volatile_)
         {
             CacheChange_t ch;
