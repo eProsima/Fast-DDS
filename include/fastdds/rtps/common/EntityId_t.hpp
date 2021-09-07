@@ -177,71 +177,66 @@ struct RTPS_DllAPI EntityId_t
         return EntityId_t();
     }
 
-};
-
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
-/**
- * Guid prefix comparison operator
- * @param id1 EntityId to compare
- * @param id2 ID prefix to compare
- * @return True if equal
- */
-inline bool operator ==(
-        EntityId_t& id1,
-        const uint32_t id2)
-{
-#if !FASTDDS_IS_BIG_ENDIAN_TARGET
-    id1.reverse();
-#endif // if !FASTDDS_IS_BIG_ENDIAN_TARGET
-    const bool result = 0 == memcmp(id1.value, &id2, sizeof(id2));
-#if !FASTDDS_IS_BIG_ENDIAN_TARGET
-    id1.reverse();
-#endif // if !FASTDDS_IS_BIG_ENDIAN_TARGET
-    return result;
-}
-
-/**
- * Guid prefix comparison operator
- * @param id1 First EntityId to compare
- * @param id2 Second EntityId to compare
- * @return True if equal
- */
-inline bool operator ==(
-        const EntityId_t& id1,
-        const EntityId_t& id2)
-{
-    for (uint8_t i = 0; i < 4; ++i)
+    /**
+     * Guid prefix comparison operator
+     * @param ID prefix to compare
+     * @return True if equal
+     */
+    inline bool operator ==(
+            const uint32_t other)
     {
-        if (id1.value[i] != id2.value[i])
-        {
-            return false;
-        }
+    #if !FASTDDS_IS_BIG_ENDIAN_TARGET
+        reverse();
+    #endif // if !FASTDDS_IS_BIG_ENDIAN_TARGET
+        const bool result = 0 == memcmp(value, &other, sizeof(other));
+    #if !FASTDDS_IS_BIG_ENDIAN_TARGET
+        reverse();
+    #endif // if !FASTDDS_IS_BIG_ENDIAN_TARGET
+        return result;
     }
-    return true;
-}
 
-/**
- * Guid prefix comparison operator
- * @param id1 First EntityId to compare
- * @param id2 Second EntityId to compare
- * @return True if not equal
- */
-inline bool operator !=(
-        const EntityId_t& id1,
-        const EntityId_t& id2)
-{
-    for (uint8_t i = 0; i < 4; ++i)
+    /**
+     * Guid prefix comparison operator
+     * @param other Second EntityId to compare
+     * @return True if equal
+     */
+    inline bool operator ==(
+            const EntityId_t& other) const
     {
-        if (id1.value[i] != id2.value[i])
+        for (uint8_t i = 0; i < 4; ++i)
         {
-            return true;
+            if (value[i] != other.value[i])
+            {
+                return false;
+            }
         }
+        return true;
     }
-    return false;
-}
+
+    /**
+     * Guid prefix comparison operator
+     * @param other Second EntityId to compare
+     * @return True if not equal
+     */
+    inline bool operator !=(
+            const EntityId_t& other) const
+    {
+        for (uint8_t i = 0; i < 4; ++i)
+        {
+            if (value[i] != other.value[i])
+            {
+                return true;
+            }
+        }
+        return false;
+    }
 
 #endif // ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
+
+};
+
 
 inline std::ostream& operator <<(
         std::ostream& output,

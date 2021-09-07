@@ -20,6 +20,7 @@
 #define _FASTDDS_TYPE_SUPPORT_HPP_
 
 #include <fastdds/dds/topic/TopicDataType.hpp>
+#include <fastdds/rtps/common/InstanceHandle.h>
 #include <fastrtps/types/DynamicPubSubType.h>
 #include <fastrtps/types/TypesBase.h>
 
