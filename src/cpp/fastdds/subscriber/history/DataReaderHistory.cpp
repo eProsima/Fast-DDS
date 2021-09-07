@@ -530,7 +530,7 @@ std::pair<bool, DataReaderHistory::instance_info> DataReaderHistory::lookup_inst
         // Looking for the first instance, return the ficticious one containing all changes
         InstanceHandle_t tmp;
         tmp.value[0] = 1;
-        return { true, {tmp, &keyed_changes_.begin()->second.cache_changes} };
+        return { true, {tmp, &keyed_changes_.begin()->second} };
     }
 
     InstanceCollection::iterator it;
@@ -550,7 +550,7 @@ std::pair<bool, DataReaderHistory::instance_info> DataReaderHistory::lookup_inst
 
     if (it != keyed_changes_.end())
     {
-        return { true, {it->first, &(it->second.cache_changes)} };
+        return { true, {it->first, &(it->second)} };
     }
     return { false, {InstanceHandle_t(), nullptr} };
 }

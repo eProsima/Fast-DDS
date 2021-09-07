@@ -58,7 +58,7 @@ public:
     using InstanceHandle_t = eprosima::fastrtps::rtps::InstanceHandle_t;
     using CacheChange_t = eprosima::fastrtps::rtps::CacheChange_t;
 
-    using instance_info = std::pair<InstanceHandle_t, DataReaderInstance::ChangeCollection*>;
+    using instance_info = std::pair<InstanceHandle_t, DataReaderInstance*>;
 
     /**
      * Constructor. Requires information about the subscriber.
