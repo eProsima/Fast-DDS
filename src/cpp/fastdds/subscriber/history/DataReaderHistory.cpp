@@ -27,6 +27,7 @@
 #include <fastdds/dds/log/Log.hpp>
 #include <fastdds/rtps/reader/RTPSReader.h>
 
+#include <fastdds/subscriber/DataReaderImpl/ReadTakeCommand.hpp>
 #include <rtps/reader/WriterProxy.h>
 #include <utils/collections/sorted_vector_insert.hpp>
 
@@ -38,41 +39,6 @@ namespace detail {
 using namespace eprosima::fastrtps::rtps;
 
 using eprosima::fastrtps::RecursiveTimedMutex;
-
-static void get_sample_info(
-        SampleInfo& info,
-        CacheChange_t* change)
-{
-    info.sample_state = NOT_READ_SAMPLE_STATE;
-    info.view_state = NOT_NEW_VIEW_STATE;
-    info.disposed_generation_count = 0;
-    info.no_writers_generation_count = 1;
-    info.sample_rank = 0;
-    info.generation_rank = 0;
-    info.absoulte_generation_rank = 0;
-    info.source_timestamp = change->sourceTimestamp;
-    info.reception_timestamp = change->reader_info.receptionTimestamp;
-    info.instance_handle = change->instanceHandle;
-    info.publication_handle = fastrtps::rtps::InstanceHandle_t(change->writerGUID);
-    info.sample_identity.writer_guid(change->writerGUID);
-    info.sample_identity.sequence_number(change->sequenceNumber);
-    info.related_sample_identity = change->write_params.sample_identity();
-    info.valid_data = change->kind == eprosima::fastrtps::rtps::ALIVE;
-
-    switch (change->kind)
-    {
-        case eprosima::fastrtps::rtps::ALIVE:
-            info.instance_state = ALIVE_INSTANCE_STATE;
-            break;
-        case eprosima::fastrtps::rtps::NOT_ALIVE_DISPOSED:
-            info.instance_state = NOT_ALIVE_DISPOSED_INSTANCE_STATE;
-            break;
-        default:
-            //TODO [ILG] change this if the other kinds ever get implemented
-            info.instance_state = ALIVE_INSTANCE_STATE;
-            break;
-    }
-}
 
 static HistoryAttributes to_history_attributes(
         const TypeSupport& type,
@@ -338,7 +304,16 @@ bool DataReaderHistory::get_first_untaken_info(
     WriterProxy* wp = nullptr;
     if (mp_reader->nextUntakenCache(&change, &wp))
     {
-        get_sample_info(info, change);
+        auto it = keyed_changes_.find(change->instanceHandle);
+        assert(it != keyed_changes_.end());
+        auto& instance_changes = it->second.cache_changes;
+        auto item =
+                std::find_if(instance_changes.cbegin(), instance_changes.cend(),
+                        [change](const DataReaderCacheChange& v)
+                        {
+                            return v.change == change;
+                        });
+        ReadTakeCommand::generate_info(info, it->second, *item);
         mp_reader->change_read_by_user(change, wp, false);
         return true;
     }

@@ -207,6 +207,40 @@ struct ReadTakeCommand
         return return_value_;
     }
 
+    static void generate_info(
+            SampleInfo& info,
+            const DataReaderInstance& instance,
+            const DataReaderCacheChange& item)
+    {
+        info.sample_state = item.change->isRead ? READ_SAMPLE_STATE : NOT_READ_SAMPLE_STATE;
+        info.instance_state = instance.instance_state;
+        info.view_state = instance.view_state;
+        info.disposed_generation_count = item.disposed_generation_count;
+        info.no_writers_generation_count = item.no_writers_generation_count;
+        info.sample_rank = 0;
+        info.generation_rank = 0;
+        info.absoulte_generation_rank = 0;
+        info.source_timestamp = item.change->sourceTimestamp;
+        info.reception_timestamp = item.change->reader_info.receptionTimestamp;
+        info.instance_handle = item.change->instanceHandle;
+        info.publication_handle = InstanceHandle_t(item.change->writerGUID);
+        info.sample_identity.writer_guid(item.change->writerGUID);
+        info.sample_identity.sequence_number(item.change->sequenceNumber);
+        info.related_sample_identity = item.change->write_params.sample_identity();
+        info.valid_data = true;
+
+        switch (item.change->kind)
+        {
+            case eprosima::fastrtps::rtps::NOT_ALIVE_DISPOSED:
+            case eprosima::fastrtps::rtps::NOT_ALIVE_DISPOSED_UNREGISTERED:
+                info.valid_data = false;
+                break;
+            case eprosima::fastrtps::rtps::ALIVE:
+            default:
+                break;
+        }
+    }
+
 private:
 
     const TypeSupport& type_;
@@ -340,33 +374,7 @@ private:
         }
 
         SampleInfo& info = sample_infos_[current_slot_];
-        info.sample_state = item.change->isRead ? READ_SAMPLE_STATE : NOT_READ_SAMPLE_STATE;
-        info.instance_state = instance_.second->instance_state;
-        info.view_state = instance_.second->view_state;
-        info.disposed_generation_count = item.disposed_generation_count;
-        info.no_writers_generation_count = item.no_writers_generation_count;
-        info.sample_rank = 0;
-        info.generation_rank = 0;
-        info.absoulte_generation_rank = 0;
-        info.source_timestamp = item.change->sourceTimestamp;
-        info.reception_timestamp = item.change->reader_info.receptionTimestamp;
-        info.instance_handle = handle_;
-        info.publication_handle = InstanceHandle_t(item.change->writerGUID);
-        info.sample_identity.writer_guid(item.change->writerGUID);
-        info.sample_identity.sequence_number(item.change->sequenceNumber);
-        info.related_sample_identity = item.change->write_params.sample_identity();
-        info.valid_data = true;
-
-        switch (item.change->kind)
-        {
-            case eprosima::fastrtps::rtps::NOT_ALIVE_DISPOSED:
-            case eprosima::fastrtps::rtps::NOT_ALIVE_DISPOSED_UNREGISTERED:
-                info.valid_data = false;
-                break;
-            case eprosima::fastrtps::rtps::ALIVE:
-            default:
-                break;
-        }
+        generate_info(info, *instance_.second, item);
     }
 
     bool check_datasharing_validity(
