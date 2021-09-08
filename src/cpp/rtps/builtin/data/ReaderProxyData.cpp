@@ -1374,11 +1374,11 @@ bool ReaderProxyData::read_from_cdr_message(
     {
         if (ParameterList::readParameterListfromCDRMsg(*msg, param_process, true, qos_size))
         {
-            if (guid.entityId.value[3] == 0x04)
+            if (0x04 == (0x0F & guid.entityId.value[3]))
             {
                 topic_kind = NO_KEY;
             }
-            else if (guid.entityId.value[3] == 0x07)
+            else if (0x07 == (0x0F & guid.entityId.value[3]))
             {
                 topic_kind = WITH_KEY;
             }
