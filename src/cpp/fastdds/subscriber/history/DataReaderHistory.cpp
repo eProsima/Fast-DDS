@@ -161,9 +161,15 @@ bool DataReaderHistory::received_change_keep_last_no_key(
     else
     {
         // Try to substitute the oldest sample.
+        CacheChange_t* first_change = m_changes.at(0);
+        if (a_change->sourceTimestamp < first_change->sourceTimestamp)
+        {
+            // Received change is older than oldest, and should be discarded
+            return true;
+        }
 
-        // As the history should be ordered following the presentation QoS, we can always remove the first one.
-        add = remove_change_sub(m_changes.at(0));
+        // As the history is ordered by source timestamp, we can always remove the first one.
+        add = remove_change_sub(first_change);
     }
 
     if (add)
@@ -211,9 +217,15 @@ bool DataReaderHistory::received_change_keep_last_with_key(
         else
         {
             // Try to substitute the oldest sample.
+            CacheChange_t* first_change = instance_changes.at(0).change;
+            if (a_change->sourceTimestamp < first_change->sourceTimestamp)
+            {
+                // Received change is older than oldest, and should be discarded
+                return true;
+            }
 
-            // As the instance should be ordered following the presentation QoS, we can always remove the first one.
-            add = remove_change_sub(instance_changes.at(0).change);
+            // As the instance is ordered by source timestamp, we can always remove the first one.
+            add = remove_change_sub(first_change);
         }
 
         if (add)
