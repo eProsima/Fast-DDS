@@ -61,12 +61,10 @@ public:
     using instance_info = std::pair<InstanceHandle_t, DataReaderInstance*>;
 
     /**
-     * Constructor. Requires information about the subscriber.
-     * @param topic_att TopicAttributes.
-     * @param type TopicDataType.
-     * @param qos ReaderQoS policy.
-     * @param payloadMax Maximum payload size per change.
-     * @param mempolicy Set whether the payloads ccan dynamically resized or not.
+     * Constructor. Requires information about the DataReader.
+     * @param type  Type information. Needed to know if the type is keyed, as long as the maximum serialized size.
+     * @param topic Topic description. Topic and type name are used on debug messages.
+     * @param qos   DataReaderQoS policy. History related limits are taken from here.
      */
     DataReaderHistory(
             const TypeSupport& type,
@@ -186,6 +184,8 @@ private:
 
     /// Function processing a received change
     std::function<bool(CacheChange_t*, size_t)> receive_fn_;
+    /// Function to compute the instance handle of a received change
+    std::function<bool(CacheChange_t*)> compute_key_for_change_fn_;
 
     /**
      * @brief Method that finds a key in m_keyedChanges or tries to add it if not found
@@ -194,8 +194,8 @@ private:
      * @return True if it was found or could be added to the map
      */
     bool find_key(
-            CacheChange_t* a_change,
-            InstanceCollection::iterator* map_it);
+            const InstanceHandle_t& handle,
+            InstanceCollection::iterator& map_it);
 
     /**
      * @brief Method that finds a key in m_keyedChanges or tries to add it if not found
@@ -215,19 +215,11 @@ private:
      * @return
      */
     ///@{
-    bool received_change_keep_all_no_key(
+    bool received_change_keep_all(
             CacheChange_t* change,
             size_t unknown_missing_changes_up_to);
 
-    bool received_change_keep_last_no_key(
-            CacheChange_t* change,
-            size_t unknown_missing_changes_up_to);
-
-    bool received_change_keep_all_with_key(
-            CacheChange_t* change,
-            size_t unknown_missing_changes_up_to);
-
-    bool received_change_keep_last_with_key(
+    bool received_change_keep_last(
             CacheChange_t* change,
             size_t unknown_missing_changes_up_to);
     ///@}

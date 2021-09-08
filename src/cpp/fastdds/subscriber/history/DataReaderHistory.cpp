@@ -77,14 +77,19 @@ DataReaderHistory::DataReaderHistory(
     , type_(type.get())
     , get_key_object_(nullptr)
 {
+    if (resource_limited_qos_.max_samples == 0)
+    {
+        resource_limited_qos_.max_samples = std::numeric_limits<int32_t>::max();
+    }
+
     if (type_->m_isGetKeyDefined)
     {
         get_key_object_ = type_->createData();
     }
-
-    if (resource_limited_qos_.max_samples == 0)
+    else
     {
-        resource_limited_qos_.max_samples = std::numeric_limits<int32_t>::max();
+        resource_limited_qos_.max_instances = 1;
+        resource_limited_qos_.max_samples_per_instance = resource_limited_qos_.max_samples;
     }
 
     if (resource_limited_qos_.max_instances == 0)
@@ -100,17 +105,43 @@ DataReaderHistory::DataReaderHistory(
     using std::placeholders::_1;
     using std::placeholders::_2;
 
+    receive_fn_ = qos.history().kind == KEEP_ALL_HISTORY_QOS ?
+            std::bind(&DataReaderHistory::received_change_keep_all, this, _1, _2) :
+            std::bind(&DataReaderHistory::received_change_keep_last, this, _1, _2);
+
     if (!has_keys_)
     {
-        receive_fn_ = qos.history().kind == KEEP_ALL_HISTORY_QOS ?
-                std::bind(&DataReaderHistory::received_change_keep_all_no_key, this, _1, _2) :
-                std::bind(&DataReaderHistory::received_change_keep_last_no_key, this, _1, _2);
+        compute_key_for_change_fn_ = [](CacheChange_t* change)
+                {
+                    change->instanceHandle = c_InstanceHandle_Unknown;
+                    return true;
+                };
     }
     else
     {
-        receive_fn_ = qos.history().kind == KEEP_ALL_HISTORY_QOS ?
-                std::bind(&DataReaderHistory::received_change_keep_all_with_key, this, _1, _2) :
-                std::bind(&DataReaderHistory::received_change_keep_last_with_key, this, _1, _2);
+        compute_key_for_change_fn_ =
+                [this](CacheChange_t* a_change)
+                {
+                    if (a_change->instanceHandle.isDefined())
+                    {
+                        return true;
+                    }
+                    
+                    if (type_ != nullptr)
+                    {
+                        logInfo(SUBSCRIBER, "Getting Key of change with no Key transmitted");
+                        type_->deserialize(&a_change->serializedPayload, get_key_object_);
+                        bool is_key_protected = false;
+#if HAVE_SECURITY
+                        is_key_protected = mp_reader->getAttributes().security_attributes().is_key_protected;
+#endif // if HAVE_SECURITY
+                        return type_->getKey(get_key_object_, &a_change->instanceHandle, is_key_protected);
+                    }
+
+                    logWarning(SUBSCRIBER, "NO KEY in topic: " << topic_name_
+                                                                << " and no method to obtain it"; );
+                    return false;
+                };
     }
 }
 
@@ -136,51 +167,7 @@ bool DataReaderHistory::received_change(
     return receive_fn_(a_change, unknown_missing_changes_up_to);
 }
 
-bool DataReaderHistory::received_change_keep_all_no_key(
-        CacheChange_t* a_change,
-        size_t unknown_missing_changes_up_to)
-{
-    // TODO(Ricardo) Check
-    if (m_changes.size() + unknown_missing_changes_up_to < static_cast<size_t>(resource_limited_qos_.max_samples))
-    {
-        return add_received_change(a_change);
-    }
-
-    return false;
-}
-
-bool DataReaderHistory::received_change_keep_last_no_key(
-        CacheChange_t* a_change,
-        size_t /* unknown_missing_changes_up_to */ )
-{
-    bool add = false;
-    if (m_changes.size() < static_cast<size_t>(history_qos_.depth))
-    {
-        add = true;
-    }
-    else
-    {
-        // Try to substitute the oldest sample.
-        CacheChange_t* first_change = m_changes.at(0);
-        if (a_change->sourceTimestamp < first_change->sourceTimestamp)
-        {
-            // Received change is older than oldest, and should be discarded
-            return true;
-        }
-
-        // As the history is ordered by source timestamp, we can always remove the first one.
-        add = remove_change_sub(first_change);
-    }
-
-    if (add)
-    {
-        return add_received_change(a_change);
-    }
-
-    return false;
-}
-
-bool DataReaderHistory::received_change_keep_all_with_key(
+bool DataReaderHistory::received_change_keep_all(
         CacheChange_t* a_change,
         size_t unknown_missing_changes_up_to)
 {
@@ -200,7 +187,7 @@ bool DataReaderHistory::received_change_keep_all_with_key(
     return false;
 }
 
-bool DataReaderHistory::received_change_keep_last_with_key(
+bool DataReaderHistory::received_change_keep_last(
         CacheChange_t* a_change,
         size_t /* unknown_missing_changes_up_to */)
 {
@@ -283,27 +270,7 @@ bool DataReaderHistory::find_key_for_change(
         CacheChange_t* a_change,
         InstanceCollection::iterator& map_it)
 {
-    if (!a_change->instanceHandle.isDefined() && type_ != nullptr)
-    {
-        logInfo(SUBSCRIBER, "Getting Key of change with no Key transmitted");
-        type_->deserialize(&a_change->serializedPayload, get_key_object_);
-        bool is_key_protected = false;
-#if HAVE_SECURITY
-        is_key_protected = mp_reader->getAttributes().security_attributes().is_key_protected;
-#endif // if HAVE_SECURITY
-        if (!type_->getKey(get_key_object_, &a_change->instanceHandle, is_key_protected))
-        {
-            return false;
-        }
-    }
-    else if (!a_change->instanceHandle.isDefined())
-    {
-        logWarning(SUBSCRIBER, "NO KEY in topic: " << topic_name_
-                                                   << " and no method to obtain it"; );
-        return false;
-    }
-
-    return find_key(a_change, &map_it);
+    return compute_key_for_change_fn_(a_change) && find_key(a_change->instanceHandle, map_it);
 }
 
 bool DataReaderHistory::get_first_untaken_info(
@@ -333,35 +300,34 @@ bool DataReaderHistory::get_first_untaken_info(
 }
 
 bool DataReaderHistory::find_key(
-        CacheChange_t* a_change,
-        InstanceCollection::iterator* vit_out)
+        const InstanceHandle_t& handle,
+        InstanceCollection::iterator& vit_out)
 {
     InstanceCollection::iterator vit;
-    vit = keyed_changes_.find(a_change->instanceHandle);
+    vit = keyed_changes_.find(handle);
     if (vit != keyed_changes_.end())
     {
-        *vit_out = vit;
+        vit_out = vit;
         return true;
     }
 
     if (keyed_changes_.size() < static_cast<size_t>(resource_limited_qos_.max_instances))
     {
-        *vit_out = keyed_changes_.insert(std::make_pair(a_change->instanceHandle, DataReaderInstance())).first;
+        vit_out = keyed_changes_.insert(std::make_pair(handle, DataReaderInstance())).first;
         return true;
     }
-    else
+
+    for (vit = keyed_changes_.begin(); vit != keyed_changes_.end(); ++vit)
     {
-        for (vit = keyed_changes_.begin(); vit != keyed_changes_.end(); ++vit)
+        if (vit->second.cache_changes.size() == 0)
         {
-            if (vit->second.cache_changes.size() == 0)
-            {
-                keyed_changes_.erase(vit);
-                *vit_out = keyed_changes_.insert(std::make_pair(a_change->instanceHandle, DataReaderInstance())).first;
-                return true;
-            }
+            keyed_changes_.erase(vit);
+            vit_out = keyed_changes_.insert(std::make_pair(handle, DataReaderInstance())).first;
+            return true;
         }
-        logWarning(SUBSCRIBER, "History has reached the maximum number of instances");
     }
+
+    logWarning(SUBSCRIBER, "History has reached the maximum number of instances");
     return false;
 }
 
@@ -377,7 +343,7 @@ bool DataReaderHistory::remove_change_sub(
     std::lock_guard<RecursiveTimedMutex> guard(*mp_mutex);
     bool found = false;
     InstanceCollection::iterator vit;
-    if (find_key(change, &vit))
+    if (find_key(change->instanceHandle, vit))
     {
         for (auto chit = vit->second.cache_changes.begin(); chit != vit->second.cache_changes.end(); ++chit)
         {
@@ -417,7 +383,7 @@ bool DataReaderHistory::remove_change_sub(
     std::lock_guard<RecursiveTimedMutex> guard(*mp_mutex);
     bool found = false;
     InstanceCollection::iterator vit;
-    if (find_key(change, &vit))
+    if (find_key(change->instanceHandle, vit))
     {
         for (auto chit = vit->second.cache_changes.begin(); chit != vit->second.cache_changes.end(); ++chit)
         {
