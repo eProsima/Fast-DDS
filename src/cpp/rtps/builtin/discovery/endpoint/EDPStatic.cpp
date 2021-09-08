@@ -413,11 +413,11 @@ bool EDPStatic::checkEntityId(
         ReaderProxyData* rdata)
 {
     bool ret_value = false;
-    if (rdata->topicKind() == WITH_KEY && 0x07 == (0x07 & rdata->guid().entityId.value[3]))
+    if (rdata->topicKind() == WITH_KEY && 0x07 == (0x0F & rdata->guid().entityId.value[3]))
     {
         ret_value = true;
     }
-    else if (rdata->topicKind() == NO_KEY && 0x04 == (0x04 & rdata->guid().entityId.value[3]))
+    else if (rdata->topicKind() == NO_KEY && 0x04 == (0x0F & rdata->guid().entityId.value[3]))
     {
         ret_value = true;
     }
@@ -428,11 +428,11 @@ bool EDPStatic::checkEntityId(
         WriterProxyData* wdata)
 {
     bool ret_value = false;
-    if (wdata->topicKind() == WITH_KEY && 0x02 == (0x02 & wdata->guid().entityId.value[3]))
+    if (wdata->topicKind() == WITH_KEY && 0x02 == (0x0F & wdata->guid().entityId.value[3]))
     {
         ret_value = true;
     }
-    if (wdata->topicKind() == NO_KEY && 0x03 == (0x03 & wdata->guid().entityId.value[3]))
+    if (wdata->topicKind() == NO_KEY && 0x03 == (0x0F & wdata->guid().entityId.value[3]))
     {
         ret_value = true;
     }
@@ -486,91 +486,76 @@ void EDPStatic::retrieve_statistics_builtin_topic(
         const char*& topic_name,
         const char*& type_name)
 {
-    if (0 < entity_id.value[2])
+    switch (entity_id.value[2])
     {
-        switch (entity_id.value[2])
-        {
-            case 1:
-                topic_name = "_fastdds_statistics_history2history_latency";
-                type_name = "eprosima::fastdds::statistics::WriterReaderData";
-                break;
-            case 2:
-                topic_name = "_fastdds_statistics_network_latency";
-                type_name = "eprosima::fastdds::statistics::Locator2LocatorData";
-                break;
-            case 4:
-                topic_name = "_fastdds_statistics_publication_throughput";
-                type_name = "eprosima::fastdds::statistics::EntityData";
-                break;
-            case 8:
-                topic_name = "_fastdds_statistics_subscription_throughput";
-                type_name = "eprosima::fastdds::statistics::EntityData";
-                break;
-            case 16:
-                topic_name = "_fastdds_statistics_rtps_sent";
-                type_name = "eprosima::fastdds::statistics::Entity2LocatorTraffic";
-                break;
-            case 32:
-                topic_name = "_fastdds_statistics_rtps_lost";
-                type_name = "eprosima::fastdds::statistics::Entity2LocatorTraffic";
-                break;
-            case 64:
-                topic_name = "_fastdds_statistics_resent_datas";
-                type_name = "eprosima::fastdds::statistics::EntityCount";
-                break;
-            case 128:
-                topic_name = "_fastdds_statistics_heartbeat_count";
-                type_name = "eprosima::fastdds::statistics::EntityCount";
-                break;
-        }
-    }
-    else if (0 < entity_id.value[1])
-    {
-        switch (entity_id.value[1])
-        {
-            case 1:
-                topic_name = "_fastdds_statistics_acknack_count";
-                type_name = "eprosima::fastdds::statistics::EntityCount";
-                break;
-            case 2:
-                topic_name = "_fastdds_statistics_nackfrag_count";
-                type_name = "eprosima::fastdds::statistics::EntityCount";
-                break;
-            case 4:
-                topic_name = "_fastdds_statistics_gap_count";
-                type_name = "eprosima::fastdds::statistics::EntityCount";
-                break;
-            case 8:
-                topic_name = "_fastdds_statistics_data_count";
-                type_name = "eprosima::fastdds::statistics::EntityCount";
-                break;
-            case 16:
-                topic_name = "_fastdds_statistics_pdp_packets";
-                type_name = "eprosima::fastdds::statistics::EntityCount";
-                break;
-            case 32:
-                topic_name = "_fastdds_statistics_edp_packets";
-                type_name = "eprosima::fastdds::statistics::EntityCount";
-                break;
-            case 64:
-                topic_name = "_fastdds_statistics_discovered_entity";
-                type_name = "eprosima::fastdds::statistics::DiscoveryTime";
-                break;
-            case 128:
-                topic_name = "_fastdds_statistics_sample_datas";
-                type_name = "eprosima::fastdds::statistics::SampleIdentityCount";
-                break;
-        }
-    }
-    else if (0 < entity_id.value[0])
-    {
-        switch (entity_id.value[0])
-        {
-            case 1:
-                topic_name = "_fastdds_statistics_physical_data";
-                type_name = "eprosima::fastdds::statistics::PhysicalData";
-                break;
-        }
+        case 1:
+            topic_name = "_fastdds_statistics_history2history_latency";
+            type_name = "eprosima::fastdds::statistics::WriterReaderData";
+            break;
+        case 2:
+            topic_name = "_fastdds_statistics_network_latency";
+            type_name = "eprosima::fastdds::statistics::Locator2LocatorData";
+            break;
+        case 3:
+            topic_name = "_fastdds_statistics_publication_throughput";
+            type_name = "eprosima::fastdds::statistics::EntityData";
+            break;
+        case 4:
+            topic_name = "_fastdds_statistics_subscription_throughput";
+            type_name = "eprosima::fastdds::statistics::EntityData";
+            break;
+        case 5:
+            topic_name = "_fastdds_statistics_rtps_sent";
+            type_name = "eprosima::fastdds::statistics::Entity2LocatorTraffic";
+            break;
+        case 6:
+            topic_name = "_fastdds_statistics_rtps_lost";
+            type_name = "eprosima::fastdds::statistics::Entity2LocatorTraffic";
+            break;
+        case 7:
+            topic_name = "_fastdds_statistics_resent_datas";
+            type_name = "eprosima::fastdds::statistics::EntityCount";
+            break;
+        case 8:
+            topic_name = "_fastdds_statistics_heartbeat_count";
+            type_name = "eprosima::fastdds::statistics::EntityCount";
+            break;
+        case 9:
+            topic_name = "_fastdds_statistics_acknack_count";
+            type_name = "eprosima::fastdds::statistics::EntityCount";
+            break;
+        case 10:
+            topic_name = "_fastdds_statistics_nackfrag_count";
+            type_name = "eprosima::fastdds::statistics::EntityCount";
+            break;
+        case 11:
+            topic_name = "_fastdds_statistics_gap_count";
+            type_name = "eprosima::fastdds::statistics::EntityCount";
+            break;
+        case 12:
+            topic_name = "_fastdds_statistics_data_count";
+            type_name = "eprosima::fastdds::statistics::EntityCount";
+            break;
+        case 13:
+            topic_name = "_fastdds_statistics_pdp_packets";
+            type_name = "eprosima::fastdds::statistics::EntityCount";
+            break;
+        case 14:
+            topic_name = "_fastdds_statistics_edp_packets";
+            type_name = "eprosima::fastdds::statistics::EntityCount";
+            break;
+        case 15:
+            topic_name = "_fastdds_statistics_discovered_entity";
+            type_name = "eprosima::fastdds::statistics::DiscoveryTime";
+            break;
+        case 16:
+            topic_name = "_fastdds_statistics_sample_datas";
+            type_name = "eprosima::fastdds::statistics::SampleIdentityCount";
+            break;
+        case 17:
+            topic_name = "_fastdds_statistics_physical_data";
+            type_name = "eprosima::fastdds::statistics::PhysicalData";
+            break;
     }
 }
 
