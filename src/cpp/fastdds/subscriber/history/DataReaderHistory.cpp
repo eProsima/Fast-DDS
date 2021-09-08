@@ -182,20 +182,19 @@ bool DataReaderHistory::received_change_keep_last_no_key(
 
 bool DataReaderHistory::received_change_keep_all_with_key(
         CacheChange_t* a_change,
-        size_t /* unknown_missing_changes_up_to */ )
+        size_t unknown_missing_changes_up_to)
 {
-    // TODO(Miguel C): Should we check unknown_missing_changes_up_to as it is done in received_change_keep_all_no_key?
-
     InstanceCollection::iterator vit;
     if (find_key_for_change(a_change, vit))
     {
         DataReaderInstance::ChangeCollection& instance_changes = vit->second.cache_changes;
-        if (instance_changes.size() < static_cast<size_t>(resource_limited_qos_.max_samples_per_instance))
+        size_t total_size = instance_changes.size() + unknown_missing_changes_up_to;
+        if (total_size < static_cast<size_t>(resource_limited_qos_.max_samples_per_instance))
         {
             return add_received_change_with_key(a_change, vit->second);
         }
 
-        logWarning(SUBSCRIBER, "Change not added due to maximum number of samples per instance");
+        logInfo(SUBSCRIBER, "Change not added due to maximum number of samples per instance");
     }
 
     return false;
