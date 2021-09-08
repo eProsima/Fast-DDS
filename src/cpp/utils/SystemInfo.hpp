@@ -185,7 +185,7 @@ public:
      */
     static FileWatchHandle watch_file(
             std::string filename,
-            std::function<void(const std::string&)> callback);
+            std::function<void()> callback);
 
     /**
      * Stop a file watcher.

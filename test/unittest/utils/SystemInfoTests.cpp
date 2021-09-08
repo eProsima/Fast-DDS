@@ -202,7 +202,7 @@ TEST_F(SystemInfoTests, FileExistsTest)
 /**
  * Test that checks set_environment_file and get_environment_file
  */
-TEST(SystemInfoTests, EnvironmentFileTest)
+TEST_F(SystemInfoTests, EnvironmentFileTest)
 {
     // 1. Environment variable not set: call to set_environment_variable returns RETCODE_NO_DATA and
     // get_environment_file returns empty
@@ -230,7 +230,7 @@ TEST_F(SystemInfoTests, FileWatchTest)
 
     // Create filewatch
     eprosima::FileWatchHandle watch =
-            eprosima::SystemInfo::watch_file(filename, [&](const std::string&)
+            eprosima::SystemInfo::watch_file(filename, [&]()
                     {
                         {
                             std::unique_lock<std::mutex> lck(*mutex_);

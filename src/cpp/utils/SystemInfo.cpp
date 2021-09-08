@@ -145,16 +145,16 @@ const std::string& SystemInfo::get_environment_file()
 
 FileWatchHandle SystemInfo::watch_file(
         std::string filename,
-        std::function<void(const std::string&)> callback)
+        std::function<void()> callback)
 {
 #if defined(_WIN32) || defined(__unix__)
     return FileWatchHandle (new filewatch::FileWatch<std::string>(filename,
-                   [callback](const std::string& path, const filewatch::Event change_type)
+                   [callback](const std::string& /*path*/, const filewatch::Event change_type)
                    {
                        switch (change_type)
                        {
                            case filewatch::Event::modified:
-                               callback(path);
+                               callback();
                                break;
                            default:
                                // No-op
