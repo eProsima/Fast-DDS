@@ -312,8 +312,9 @@ bool RTPSDomain::removeRTPSWriter(
             if (it->first->getGuid().guidPrefix == writer->getGuid().guidPrefix)
             {
                 t_p_RTPSParticipant participant = *it;
+                bool result = participant.second->deleteUserEndpoint((Endpoint*)writer);
                 lock.unlock();
-                return participant.second->deleteUserEndpoint((Endpoint*)writer);
+                return result;
             }
         }
     }
@@ -368,8 +369,9 @@ bool RTPSDomain::removeRTPSReader(
             if (it->first->getGuid().guidPrefix == reader->getGuid().guidPrefix)
             {
                 t_p_RTPSParticipant participant = *it;
+                bool result = participant.second->deleteUserEndpoint((Endpoint*)reader);
                 lock.unlock();
-                return participant.second->deleteUserEndpoint((Endpoint*)reader);
+                return result;
             }
         }
     }
