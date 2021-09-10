@@ -90,7 +90,8 @@ private:
                 eprosima::fastdds::dds::DataWriter* writer,
                 const eprosima::fastdds::dds::PublicationMatchedStatus& info) override;
 
-        void set_num_wait_matched(uint32_t num_wait_matched);
+        void set_num_wait_matched(
+                uint32_t num_wait_matched);
 
         bool enough_matched();
 

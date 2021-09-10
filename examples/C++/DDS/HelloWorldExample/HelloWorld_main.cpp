@@ -24,7 +24,8 @@
 #include <string>
 
 enum Type
-{   publisher,
+{
+    publisher,
     subscriber
 };
 

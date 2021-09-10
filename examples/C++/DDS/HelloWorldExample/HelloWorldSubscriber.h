@@ -83,7 +83,7 @@ private:
         }
 
         void set_max_messages(
-            uint32_t max_messages);
+                uint32_t max_messages);
 
         void on_data_available(
                 eprosima::fastdds::dds::DataReader* reader) override;

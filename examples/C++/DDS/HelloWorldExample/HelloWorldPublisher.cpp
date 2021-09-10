@@ -202,7 +202,8 @@ void HelloWorldPublisher::PubListener::on_publication_matched(
     }
 }
 
-void HelloWorldPublisher::PubListener::set_num_wait_matched(uint32_t num_wait_matched)
+void HelloWorldPublisher::PubListener::set_num_wait_matched(
+        uint32_t num_wait_matched)
 {
     num_wait_matched_ = num_wait_matched;
 }
@@ -216,9 +217,9 @@ void HelloWorldPublisher::PubListener::wait()
 {
     std::unique_lock<std::mutex> lck(wait_matched_cv_mtx_);
     wait_matched_cv_.wait(lck, [this]
-    {
-        return enough_matched() || is_stopped();
-    });
+            {
+                return enough_matched() || is_stopped();
+            });
 }
 
 void HelloWorldPublisher::PubListener::awake()
@@ -238,7 +239,7 @@ void HelloWorldPublisher::runThread(
             {
                 publish();
                 std::cout << "Message: " << hello_.message() << " with index: " << hello_.index()
-                        << " SENT" << std::endl;
+                          << " SENT" << std::endl;
                 std::this_thread::sleep_for(std::chrono::milliseconds(sleep));
             }
             else
@@ -259,7 +260,7 @@ void HelloWorldPublisher::runThread(
             {
                 publish();
                 std::cout << "Message: " << hello_.message() << " with index: " << hello_.index()
-                        << " SENT" << std::endl;
+                          << " SENT" << std::endl;
                 std::this_thread::sleep_for(std::chrono::milliseconds(sleep));
             }
             else
