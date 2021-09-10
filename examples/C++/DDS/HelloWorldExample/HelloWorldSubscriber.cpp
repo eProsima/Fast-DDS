@@ -28,20 +28,14 @@
 #include <fastdds/rtps/transport/shared_mem/SharedMemTransportDescriptor.h>
 #include <fastdds/rtps/transport/UDPv4TransportDescriptor.h>
 
-#include <condition_variable>
-#include <mutex>
 #include <csignal>
 
 using namespace eprosima::fastdds::dds;
 using namespace eprosima::fastdds::rtps;
 
-namespace sub_ns {
-bool stop;
-std::mutex mtx;
-std::condition_variable terminate_cv;
-} // namespace sub_ns
-
-using namespace sub_ns;
+std::atomic<bool> HelloWorldSubscriber::stop_(false);
+std::mutex HelloWorldSubscriber::terminate_cv_mtx_;
+std::condition_variable HelloWorldSubscriber::terminate_cv_;
 
 HelloWorldSubscriber::HelloWorldSubscriber()
     : participant_(nullptr)
@@ -52,9 +46,20 @@ HelloWorldSubscriber::HelloWorldSubscriber()
 {
 }
 
+bool HelloWorldSubscriber::is_stopped()
+{
+    return stop_;
+}
+
+void HelloWorldSubscriber::stop()
+{
+    stop_ = true;
+    terminate_cv_.notify_one();
+}
+
 bool HelloWorldSubscriber::init(
         const std::string& topic_name,
-        uint32_t threshold,
+        uint32_t max_messages,
         uint32_t domain,
         const std::string& transport,
         bool reliable,
@@ -106,14 +111,18 @@ bool HelloWorldSubscriber::init(
     }
 
     // CREATE THE READER
-    if (threshold > 0)
+    if (max_messages > 0)
     {
-        set_listener_threshold(threshold);
+        listener_.set_max_messages(max_messages);
     }
     DataReaderQos rqos = DATAREADER_QOS_DEFAULT;
     if (!transport.empty())
     {
         rqos.data_sharing().off();
+    }
+    else
+    {
+        rqos.data_sharing().automatic();    // default
     }
 
     if (reliable)
@@ -122,7 +131,7 @@ bool HelloWorldSubscriber::init(
     }
     else
     {
-        rqos.reliability().kind = BEST_EFFORT_RELIABILITY_QOS;
+        rqos.reliability().kind = BEST_EFFORT_RELIABILITY_QOS;  // default
     }
 
     if (transient)
@@ -131,7 +140,7 @@ bool HelloWorldSubscriber::init(
     }
     else
     {
-        rqos.durability().kind = VOLATILE_DURABILITY_QOS;
+        rqos.durability().kind = VOLATILE_DURABILITY_QOS;   // default
     }
 
     reader_ = subscriber_->create_datareader(topic_, rqos, &listener_);
@@ -161,10 +170,10 @@ HelloWorldSubscriber::~HelloWorldSubscriber()
     DomainParticipantFactory::get_instance()->delete_participant(participant_);
 }
 
-void HelloWorldSubscriber::set_listener_threshold(
-        uint32_t threshold)
+void HelloWorldSubscriber::SubListener::set_max_messages(
+        uint32_t max_messages)
 {
-    listener_.threshold_ = threshold;
+    max_messages_ = max_messages;
 }
 
 void HelloWorldSubscriber::SubListener::on_subscription_matched(
@@ -192,17 +201,16 @@ void HelloWorldSubscriber::SubListener::on_data_available(
         DataReader* reader)
 {
     SampleInfo info;
-    while (reader->take_next_sample(&hello_, &info) == ReturnCode_t::RETCODE_OK)
+    if (reader->take_next_sample(&hello_, &info) == ReturnCode_t::RETCODE_OK)
     {
         if (info.instance_state == ALIVE_INSTANCE_STATE)
         {
             samples_++;
             // Print your structure data here.
             std::cout << "Message " << hello_.message() << " " << hello_.index() << " RECEIVED" << std::endl;
-            if (threshold_ > 0 && (samples_ >= threshold_))
+            if (max_messages_ > 0 && (samples_ >= max_messages_))
             {
-                stop = true;
-                terminate_cv.notify_one();
+                stop();
             }
         }
     }
@@ -211,6 +219,7 @@ void HelloWorldSubscriber::SubListener::on_data_available(
 void HelloWorldSubscriber::run(
         uint32_t samples)
 {
+    stop_ = false;
     if (samples > 0)
     {
         std::cout << "Subscriber running until " << samples << " samples have been received" << std::endl;
@@ -219,14 +228,13 @@ void HelloWorldSubscriber::run(
     {
         std::cout << "Subscriber running. Please press CTRL+C to stop the Subscriber" << std::endl;
     }
-    stop = false;
     signal(SIGINT, [](int signum)
             {
-                static_cast<void>(signum); stop = true; terminate_cv.notify_one();
+                static_cast<void>(signum); HelloWorldSubscriber::stop();
             });
-    std::unique_lock<std::mutex> lck(mtx);
-    terminate_cv.wait(lck, []
+    std::unique_lock<std::mutex> lck(terminate_cv_mtx_);
+    terminate_cv_.wait(lck, []
             {
-                return stop;
+                return is_stopped();
             });
 }
