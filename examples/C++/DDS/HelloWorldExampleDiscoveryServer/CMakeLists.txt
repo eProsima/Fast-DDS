@@ -18,7 +18,7 @@ if(NOT CMAKE_VERSION VERSION_LESS 3.0)
     cmake_policy(SET CMP0048 NEW)
 endif()
 
-project(HelloWorldExampleDS)
+project(HelloWorldExampleDiscoveryServer)
 
 # Find requirements
 if(NOT fastcdr_FOUND)
@@ -39,15 +39,15 @@ if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_COMPILER_IS_CLANG OR
     endif()
 endif()
 
-message(STATUS "Configuring HelloWorldDS example...")
-file(GLOB HELLOWORLD_EXAMPLE_DS_SOURCES_CXX "*.cxx")
-file(GLOB HELLOWORLD_EXAMPLE_DS_SOURCES_CPP "*.cpp")
+message(STATUS "Configuring HelloWorldDiscoveryServer example...")
+file(GLOB HELLOWORLD_EXAMPLE_DISCOVERY_SERVER_SOURCES_CXX "*.cxx")
+file(GLOB HELLOWORLD_EXAMPLE_DISCOVERY_SERVER_SOURCES_CPP "*.cpp")
 
-add_executable(HelloWorldExampleDS ${HELLOWORLD_EXAMPLE_DS_SOURCES_CXX} ${HELLOWORLD_EXAMPLE_DS_SOURCES_CPP})
-target_compile_definitions(HelloWorldExampleDS PRIVATE
+add_executable(HelloWorldExampleDiscoveryServer ${HELLOWORLD_EXAMPLE_DISCOVERY_SERVER_SOURCES_CXX} ${HELLOWORLD_EXAMPLE_DISCOVERY_SERVER_SOURCES_CPP})
+target_compile_definitions(HelloWorldExampleDiscoveryServer PRIVATE
     $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
     $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
 )
-target_link_libraries(HelloWorldExampleDS fastrtps fastcdr)
-install(TARGETS HelloWorldExampleDS
-    RUNTIME DESTINATION examples/C++/DDS/HelloWorldExampleDS/${BIN_INSTALL_DIR})
+target_link_libraries(HelloWorldExampleDiscoveryServer fastrtps fastcdr)
+install(TARGETS HelloWorldExampleDiscoveryServer
+    RUNTIME DESTINATION examples/C++/DDS/HelloWorldExampleDiscoveryServer/${BIN_INSTALL_DIR})
