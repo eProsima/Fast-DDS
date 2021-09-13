@@ -495,9 +495,9 @@ bool EDPStatic::newRemoteReader(
         EntityId_t ent_id)
 {
     ReaderProxyData* rpd = NULL;
-    if ((0x67 != ent_id.value[3] && // Check the endpoint is a builtin statistic endpoint.
-            xmlparser::XMLP_ret::XML_OK == mp_edpXML->lookforReader(participant_name, user_id, &rpd)) ||
-            nullptr != (rpd = generate_statistics_builtin_reader(ent_id)))
+    if ((0x67 == ent_id.value[3] && // Check the endpoint is a builtin statistic endpoint.
+            nullptr != (rpd = generate_statistics_builtin_reader(ent_id))) ||
+            xmlparser::XMLP_ret::XML_OK == mp_edpXML->lookforReader(participant_name, user_id, &rpd))
     {
         EPROSIMA_LOG_INFO(RTPS_EDP, "Activating: " << rpd->guid.entityId << " in topic " << rpd->topic_name);
         GUID_t reader_guid(participant_guid.guidPrefix, ent_id != c_EntityId_Unknown ? ent_id : rpd->guid.entityId);
@@ -551,9 +551,9 @@ bool EDPStatic::newRemoteWriter(
 {
     WriterProxyData* wpd = NULL;
 
-    if ((0x62 != ent_id.value[3] && // Check the endpoint is a builtin statistic endpoint.
-            xmlparser::XMLP_ret::XML_OK == mp_edpXML->lookforWriter(participant_name, user_id, &wpd)) ||
-            nullptr != (wpd = generate_statistics_builtin_writer(ent_id)))
+    if ((0x62 == ent_id.value[3] && // Check the endpoint is a builtin statistic endpoint.
+            nullptr != (wpd = generate_statistics_builtin_writer(ent_id))) ||
+            xmlparser::XMLP_ret::XML_OK == mp_edpXML->lookforWriter(participant_name, user_id, &wpd))
     {
         EPROSIMA_LOG_INFO(RTPS_EDP, "Activating: " << wpd->guid.entityId << " in topic " << wpd->topic_name);
         GUID_t writer_guid(participant_guid.guidPrefix, ent_id != c_EntityId_Unknown ? ent_id : wpd->guid.entityId);
