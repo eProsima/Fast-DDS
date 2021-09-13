@@ -22,13 +22,24 @@
 #endif // if defined(_WIN32)
 
 #include <cstdint>
+#include <memory>
+#include <string>
 
 #include <fastrtps/types/TypesBase.h>
 #include <utils/Host.hpp>
 
+#if defined(_WIN32) || defined(__unix__)
+#include <FileWatch.hpp>
+#endif // defined(_WIN32) || defined(__unix__)
+
 namespace eprosima {
 
 using ReturnCode_t = fastrtps::types::ReturnCode_t;
+#if defined(_WIN32) || defined(__unix__)
+using FileWatchHandle = std::unique_ptr<filewatch::FileWatch<std::string>>;
+#else
+using FileWatchHandle = void*;
+#endif // defined(_WIN32) || defined(__unix__)
 
 /**
  * This singleton serves as a centralized point from where to obtain platform dependent system information.
@@ -142,6 +153,35 @@ public:
             const std::string& filename,
             const std::string& env_name,
             std::string& env_value);
+
+    /**
+     * Start a thread that watches for changes in the given file and executes a callback when the file changes.
+     *
+     * The method returns a handle to the object that implements the watcher containing the thread.
+     * The scope of the listening thread is the same as the watching object, so when the object
+     * goes out of scope, the thread is terminated.
+     *
+     * The thread can be terminated earlier with stop_watching_file(FileWatchHandle)
+     *
+     * @param [in] filename Path/name of the file to watch.
+     * @param [in] callback Callback to execute when the file changes.
+     *
+     * @return The handle that represents the watcher object.
+     */
+    static FileWatchHandle watch_file(
+            std::string filename,
+            std::function<void(const std::string&)> callback);
+
+    /**
+     * Stop a file watcher.
+     *
+     * This method effectively destroys the file watcher and the thread that were created with watch_file.
+     * Once this method returns, the handle is no longer valid.
+     *
+     * @param [in] handle The watcher handle as returned by watch_file.
+     */
+    static void stop_watching_file(
+            FileWatchHandle& handle);
 
 private:
 

@@ -19,6 +19,8 @@
 
 #include <rtps/builtin/discovery/participant/PDPClient.h>
 
+#include <string>
+
 #include <fastdds/dds/log/Log.hpp>
 #include <fastdds/rtps/attributes/RTPSParticipantAttributes.h>
 #include <fastdds/rtps/builtin/BuiltinProtocols.h>

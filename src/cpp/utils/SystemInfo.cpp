@@ -125,4 +125,37 @@ ReturnCode_t SystemInfo::load_environment_file(
     return ReturnCode_t::RETCODE_OK;
 }
 
+FileWatchHandle SystemInfo::watch_file(
+        std::string filename,
+        std::function<void(const std::string&)> callback)
+{
+#if defined(_WIN32) || defined(__unix__)
+    return FileWatchHandle (new filewatch::FileWatch<std::string>(filename,
+                   [callback](const std::string& path, const filewatch::Event change_type)
+                   {
+                       switch (change_type)
+                       {
+                           case filewatch::Event::modified:
+                               callback(path);
+                               break;
+                           default:
+                               // No-op
+                               break;
+                       }
+                   }));
+#endif // defined(_WIN32) || defined(__unix__)
+    static_cast<void>(filename);
+    static_cast<void>(callback);
+    return FileWatchHandle();
+}
+
+void SystemInfo::stop_watching_file(
+        FileWatchHandle& handle)
+{
+#if defined(_WIN32) || defined(__unix__)
+    handle.reset();
+#endif // if defined(_WIN32) || defined(__unix__)
+    static_cast<void>(handle);
+}
+
 } // eprosima
