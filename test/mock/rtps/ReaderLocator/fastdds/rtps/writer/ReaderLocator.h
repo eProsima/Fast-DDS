@@ -233,6 +233,14 @@ public:
         return 0;
     }
 
+    void lock()
+    {
+    }
+
+    void unlock() override
+    {
+    }
+
 private:
 
     GUID_t remote_guid_;
