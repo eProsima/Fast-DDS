@@ -233,7 +233,7 @@ public:
         return 0;
     }
 
-    void lock()
+    void lock() override
     {
     }
 
