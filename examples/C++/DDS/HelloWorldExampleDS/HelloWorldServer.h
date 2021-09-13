@@ -22,6 +22,10 @@
 
 #include <fastdds/dds/domain/DomainParticipant.hpp>
 
+#include <atomic>
+#include <condition_variable>
+#include <mutex>
+
 class HelloWorldServer
 {
 public:
@@ -37,9 +41,19 @@ public:
     //!Run
     void run();
 
+    static bool is_stopped();
+
+    static void stop();
+
 private:
 
     eprosima::fastdds::dds::DomainParticipant* participant_;
+
+    static std::atomic<bool> stop_;
+
+    static std::mutex terminate_cv_mtx_;
+
+    static std::condition_variable terminate_cv_;
 };
 
 

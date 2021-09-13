@@ -20,160 +20,17 @@
 #include "HelloWorldPublisher.h"
 #include "HelloWorldSubscriber.h"
 #include "HelloWorldServer.h"
+#include "arg_configuration.h"
 
 #include <string>
-#include <regex>
 
-#include <optionparser.h>
-
-struct Arg : public option::Arg
+enum Type
 {
-    static void print_error(
-            const char* msg1,
-            const option::Option& opt,
-            const char* msg2)
-    {
-        fprintf(stderr, "%s", msg1);
-        fwrite(opt.name, opt.namelen, 1, stderr);
-        fprintf(stderr, "%s", msg2);
-    }
-
-    static option::ArgStatus Unknown(
-            const option::Option& option,
-            bool msg)
-    {
-        if (msg)
-        {
-            print_error("Unknown option '", option, "'\n");
-        }
-        return option::ARG_ILLEGAL;
-    }
-
-    static option::ArgStatus Required(
-            const option::Option& option,
-            bool msg)
-    {
-        if (option.arg != 0 && option.arg[0] != 0)
-        {
-            return option::ARG_OK;
-        }
-
-        if (msg)
-        {
-            print_error("Option '", option, "' requires an argument\n");
-        }
-        return option::ARG_ILLEGAL;
-    }
-
-    static option::ArgStatus Numeric(
-            const option::Option& option,
-            bool msg)
-    {
-        char* endptr = 0;
-        if (option.arg != 0 && strtol(option.arg, &endptr, 10))
-        {
-        }
-        if (endptr != option.arg && *endptr == 0)
-        {
-            return option::ARG_OK;
-        }
-
-        if (msg)
-        {
-            print_error("Option '", option, "' requires a numeric argument\n");
-        }
-        return option::ARG_ILLEGAL;
-    }
-
-    static option::ArgStatus String(
-            const option::Option& option,
-            bool msg)
-    {
-        if (option.arg != 0)
-        {
-            return option::ARG_OK;
-        }
-        if (msg)
-        {
-            print_error("Option '", option, "' requires a string argument\n");
-        }
-        return option::ARG_ILLEGAL;
-    }
-
-    static option::ArgStatus Locator(
-            const option::Option& option,
-            bool msg)
-    {
-        if (option.arg != 0)
-        {
-            // we must check if it is a correct ip address plus port number
-            if (std::regex_match(option.arg, ipv4))
-            {
-                return option::ARG_OK;
-            }
-        }
-        if (msg)
-        {
-            print_error("Option '", option, "' requires an IPaddress[:portnumber] argument\n");
-        }
-        return option::ARG_ILLEGAL;
-    }
-
-    static const std::regex ipv4;
+    publisher,
+    subscriber,
+    server
 };
 
-enum  optionIndex
-{
-    UNKNOWN_OPT,
-    HELP,
-    TOPIC,
-    WAIT,
-    SAMPLES,
-    INTERVAL,
-    LOCATOR
-};
-
-const option::Descriptor usage[] = {
-    { UNKNOWN_OPT, 0, "", "",                Arg::None,
-      "Usage: HelloWorldExampleDS <publisher|subscriber|server>\n\nGeneral options:" },
-    { HELP,    0, "h", "help",               Arg::None,      "  -h \t--help  \tProduce help message." },
-
-    { UNKNOWN_OPT, 0, "", "",                Arg::None,      "\nPublisher options:"},
-    { TOPIC, 0, "t", "topic",                  Arg::String,
-      "  -t <topic_name> \t--topic=<topic_name>  \tTopic name (Default: HelloWorldTopic)." },
-    { WAIT, 0, "w", "wait",                 Arg::Numeric,
-      "  -w <num> \t--wait=<num> \tNumber of matched subscribers required to publish"
-      "(Default: 0 => does not wait)." },
-    { SAMPLES, 0, "s", "samples",              Arg::Numeric,
-      "  -s <num> \t--samples=<num>  \tNumber of samples to send (Default: 0 => infinite samples)." },
-    { INTERVAL, 0, "i", "interval",            Arg::Numeric,
-      "  -i <num> \t--interval=<num>  \tTime between samples in milliseconds (Default: 100)." },
-    { LOCATOR, 0, "", "ip",                 Arg::Locator,
-      "  \t--ip=<IPaddress[:port number]>  \tServer address (Default address: 127.0.0.1, default port: 60006)." },
-
-    { UNKNOWN_OPT, 0, "", "",                Arg::None,      "\nSubscriber options:"},
-    { TOPIC, 0, "t", "topic",                  Arg::String,
-      "  -t <topic_name> \t--topic=<topic_name>  \tTopic name (Default: HelloWorldTopic)." },
-    { SAMPLES, 0, "s", "samples",              Arg::Numeric,
-      "  -s <num> \t--samples=<num>  \tNumber of samples to wait for (Default: 0 => infinite samples)." },
-    { LOCATOR, 0, "", "ip",                 Arg::Locator,
-      "  \t--ip=<IPaddress[:port number]>  \tServer address (Default address: 127.0.0.1, default port: 60006)." },
-
-    { UNKNOWN_OPT, 0, "", "",                Arg::None,      "\nDiscoveryServer options:"},
-    { LOCATOR, 0, "", "ip",                 Arg::Locator,
-      "  \t--ip=<IPaddress[:port number]>  \tServer address (Default address: 127.0.0.1, default port: 60006)." },
-
-    { 0, 0, 0, 0, 0, 0 }
-};
-
-/*static*/ const std::regex Arg::ipv4(R"(^((?:[0-9]{1,3}\.){3}[0-9]{1,3})?:?(?:(\d+))?$)");
-
-void print_warning(
-        std::string type,
-        const char* opt)
-{
-    std::cerr << "WARNING: " << opt << " is a " << type << " option, ignoring argument." << std::endl;
-}
 
 int main(
         int argc,
@@ -198,11 +55,11 @@ int main(
 #endif // if defined(_WIN32)
 
     std::cout << "Starting " << std::endl;
-    int type = 1;
+    Type type = publisher;
     std::string topic_name = "HelloWorldTopic";
     int count = 0;
     long sleep = 100;
-    int numWaitMatched = 0;
+    int num_wait_matched = 0;
     // Discovery Server
     eprosima::fastdds::rtps::Locator server_address;
     std::cmatch mr;
@@ -211,17 +68,22 @@ int main(
     server_address.port = port;
     if (argc > 1)
     {
-        if (strcmp(argv[1], "publisher") == 0)
+        if (!strcmp(argv[1], "publisher"))
         {
-            type = 1;
+            type = publisher;
         }
-        else if (strcmp(argv[1], "subscriber") == 0)
+        else if (!strcmp(argv[1], "subscriber"))
         {
-            type = 2;
+            type = subscriber;
         }
-        else if (strcmp(argv[1], "server") == 0)
+        else if (!strcmp(argv[1], "server"))
         {
-            type = 3;
+            type = server;
+        }
+        else if (!(strcmp(argv[1], "-h") && strcmp(argv[1], "--help")))
+        {
+            option::printUsage(fwrite, stdout, usage, columns);
+            return 0;
         }
         else
         {
@@ -255,12 +117,12 @@ int main(
             option::Option& opt = buffer[i];
             switch (opt.index())
             {
-                case HELP:
+                case optionIndex::HELP:
                     // not possible, because handled further above and exits the program
                     break;
 
-                case TOPIC:
-                    if (type == 3)
+                case optionIndex::TOPIC:
+                    if (type == server)
                     {
                         print_warning("publisher|subscriber", opt.name);
                     }
@@ -270,8 +132,8 @@ int main(
                     }
                     break;
 
-                case SAMPLES:
-                    if (type == 3)
+                case optionIndex::SAMPLES:
+                    if (type == server)
                     {
                         print_warning("publisher|subscriber", opt.name);
                     }
@@ -281,8 +143,8 @@ int main(
                     }
                     break;
 
-                case INTERVAL:
-                    if (type == 1)
+                case optionIndex::INTERVAL:
+                    if (type == publisher)
                     {
                         sleep = strtol(opt.arg, nullptr, 10);
                     }
@@ -292,10 +154,10 @@ int main(
                     }
                     break;
 
-                case WAIT:
-                    if (type == 1)
+                case optionIndex::WAIT:
+                    if (type == publisher)
                     {
-                        numWaitMatched = strtol(opt.arg, nullptr, 10);
+                        num_wait_matched = strtol(opt.arg, nullptr, 10);
                     }
                     else
                     {
@@ -303,7 +165,7 @@ int main(
                     }
                     break;
 
-                case LOCATOR:
+                case optionIndex::LOCATOR:
                     port = static_cast<uint16_t>(server_address.port);
 
                     if (regex_match(opt.arg, mr, Arg::ipv4))
@@ -313,7 +175,11 @@ int main(
 
                         if ((++it)->matched)
                         {
-                            port = static_cast<uint16_t>(std::stoi(it->str()));
+                            int port_int = std::stoi(it->str());
+                            if (port_int <= 65535)
+                            {
+                                port = static_cast<uint16_t>(port_int);
+                            }
                         }
                     }
 
@@ -324,7 +190,7 @@ int main(
                     }
                     break;
 
-                case UNKNOWN_OPT:
+                case optionIndex::UNKNOWN_OPT:
                     std::cerr << "ERROR: " << opt.name << " is not a valid argument." << std::endl;
                     option::printUsage(fwrite, stdout, usage, columns);
                     return 1;
@@ -347,17 +213,16 @@ int main(
 
     switch (type)
     {
-        case 1:
+        case publisher:
         {
             HelloWorldPublisher mypub;
-            if (mypub.init(topic_name, server_address))
+            if (mypub.init(topic_name, static_cast<uint32_t>(num_wait_matched), server_address))
             {
-                mypub.run(static_cast<uint32_t>(count), static_cast<uint32_t>(sleep),
-                        static_cast<uint32_t>(numWaitMatched));
+                mypub.run(static_cast<uint32_t>(count), static_cast<uint32_t>(sleep));
             }
             break;
         }
-        case 2:
+        case subscriber:
         {
             HelloWorldSubscriber mysub;
             if (mysub.init(topic_name, static_cast<uint32_t>(count), server_address))
@@ -366,7 +231,7 @@ int main(
             }
             break;
         }
-        case 3:
+        case server:
         {
             HelloWorldServer myserver;
             if (myserver.init(server_address))

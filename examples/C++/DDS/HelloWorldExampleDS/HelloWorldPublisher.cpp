@@ -32,11 +32,9 @@
 using namespace eprosima::fastdds::dds;
 using namespace eprosima::fastdds::rtps;
 
-namespace pub_ns {
-bool stop;
-} // namespace pub_ns
-
-using namespace pub_ns;
+std::atomic<bool> HelloWorldPublisher::stop_(false);
+std::mutex HelloWorldPublisher::PubListener::wait_matched_cv_mtx_;
+std::condition_variable HelloWorldPublisher::PubListener::wait_matched_cv_;
 
 HelloWorldPublisher::HelloWorldPublisher()
     : participant_(nullptr)
@@ -47,14 +45,27 @@ HelloWorldPublisher::HelloWorldPublisher()
 {
 }
 
+bool HelloWorldPublisher::is_stopped()
+{
+    return stop_;
+}
+
+void HelloWorldPublisher::stop()
+{
+    stop_ = true;
+    PubListener::awake();
+}
+
 bool HelloWorldPublisher::init(
         const std::string& topic_name,
+        uint32_t num_wait_matched,
         eprosima::fastdds::rtps::Locator server_address)
 {
     hello_.index(0);
     hello_.message("HelloWorld");
     DomainParticipantQos pqos;
     pqos.name("Participant_pub");
+    listener_.set_num_wait_matched(num_wait_matched);
 
     // Set participant as DS CLIENT
     pqos.wire_protocol().builtin.discovery_config.discoveryProtocol =
@@ -131,6 +142,10 @@ void HelloWorldPublisher::PubListener::on_publication_matched(
     {
         matched_ = info.total_count;
         std::cout << "Publisher matched." << std::endl;
+        if (enough_matched())
+        {
+            awake();
+        }
     }
     else if (info.current_count_change == -1)
     {
@@ -144,52 +159,82 @@ void HelloWorldPublisher::PubListener::on_publication_matched(
     }
 }
 
+void HelloWorldPublisher::PubListener::set_num_wait_matched(
+        uint32_t num_wait_matched)
+{
+    num_wait_matched_ = num_wait_matched;
+}
+
+bool HelloWorldPublisher::PubListener::enough_matched()
+{
+    return matched_ >= num_wait_matched_;
+}
+
+void HelloWorldPublisher::PubListener::wait()
+{
+    std::unique_lock<std::mutex> lck(wait_matched_cv_mtx_);
+    wait_matched_cv_.wait(lck, [this]
+            {
+                return enough_matched() || is_stopped();
+            });
+}
+
+void HelloWorldPublisher::PubListener::awake()
+{
+    wait_matched_cv_.notify_one();
+}
+
 void HelloWorldPublisher::runThread(
         uint32_t samples,
-        uint32_t sleep,
-        uint32_t numWaitMatched)
+        uint32_t sleep)
 {
     if (samples == 0)
     {
-        while (!stop)
+        while (!is_stopped())
         {
-            if (publish(numWaitMatched))
+            if (listener_.enough_matched())
             {
+                publish();
                 std::cout << "Message: " << hello_.message() << " with index: " << hello_.index()
                           << " SENT" << std::endl;
+                std::this_thread::sleep_for(std::chrono::milliseconds(sleep));
             }
-            std::this_thread::sleep_for(std::chrono::milliseconds(sleep));
+            else
+            {
+                listener_.wait();
+            }
         }
     }
     else
     {
         for (uint32_t i = 0; i < samples; ++i)
         {
-            if (stop)
+            if (is_stopped())
             {
                 break;
             }
-            if (!publish(numWaitMatched))
+            if (listener_.enough_matched())
             {
-                --i;
+                publish();
+                std::cout << "Message: " << hello_.message() << " with index: " << hello_.index()
+                          << " SENT" << std::endl;
+                std::this_thread::sleep_for(std::chrono::milliseconds(sleep));
             }
             else
             {
-                std::cout << "Message: " << hello_.message() << " with index: " << hello_.index()
-                          << " SENT" << std::endl;
+                --i;
+                listener_.wait();
             }
-            std::this_thread::sleep_for(std::chrono::milliseconds(sleep));
         }
     }
 }
 
 void HelloWorldPublisher::run(
         uint32_t samples,
-        uint32_t sleep,
-        uint32_t numWaitMatched)
+        uint32_t sleep)
 {
-    stop = false;
-    std::thread thread(&HelloWorldPublisher::runThread, this, samples, sleep, numWaitMatched);
+    stop_ = false;
+    std::thread thread(&HelloWorldPublisher::runThread, this, samples, sleep);
     if (samples == 0)
     {
         std::cout << "Publisher running. Please press CTRL+C to stop the Publisher at any time." << std::endl;
@@ -200,19 +245,13 @@ void HelloWorldPublisher::run(
     }
     signal(SIGINT, [](int signum)
             {
-                static_cast<void>(signum); stop = true;
+                static_cast<void>(signum); HelloWorldPublisher::stop();
             });
     thread.join();
 }
 
-bool HelloWorldPublisher::publish(
-        uint32_t numWaitMatched)
+void HelloWorldPublisher::publish()
 {
-    if (listener_.matched_ >= numWaitMatched)
-    {
-        hello_.index(hello_.index() + 1);
-        writer_->write(&hello_);
-        return true;
-    }
-    return false;
+    hello_.index(hello_.index() + 1);
+    writer_->write(&hello_);
 }

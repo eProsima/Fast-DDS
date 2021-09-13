@@ -28,17 +28,24 @@
 using namespace eprosima::fastdds::dds;
 using namespace eprosima::fastdds::rtps;
 
-namespace server_ns {
-bool stop;
-std::mutex mtx;
-std::condition_variable terminate_cv;
-} // namespace server_ns
-
-using namespace server_ns;
+std::atomic<bool> HelloWorldServer::stop_(false);
+std::mutex HelloWorldServer::terminate_cv_mtx_;
+std::condition_variable HelloWorldServer::terminate_cv_;
 
 HelloWorldServer::HelloWorldServer()
     : participant_(nullptr)
 {
+}
+
+bool HelloWorldServer::is_stopped()
+{
+    return stop_;
+}
+
+void HelloWorldServer::stop()
+{
+    stop_ = true;
+    terminate_cv_.notify_one();
 }
 
 bool HelloWorldServer::init(
@@ -74,15 +81,15 @@ HelloWorldServer::~HelloWorldServer()
 
 void HelloWorldServer::run()
 {
-    std::cout << "Server running. Please press CTRL+C to stop the Server at any time." << std::endl;
-    stop = false;
+    stop_ = false;
+    std::cout << "Server running. Please press CTRL+C to stop the Server" << std::endl;
     signal(SIGINT, [](int signum)
             {
-                static_cast<void>(signum); stop = true; terminate_cv.notify_one();
+                static_cast<void>(signum); HelloWorldServer::stop();
             });
-    std::unique_lock<std::mutex> lck(mtx);
-    terminate_cv.wait(lck, []
+    std::unique_lock<std::mutex> lck(terminate_cv_mtx_);
+    terminate_cv_.wait(lck, []
             {
-                return stop;
+                return is_stopped();
             });
 }
