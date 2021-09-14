@@ -155,8 +155,8 @@ bool StatefulReader::matched_writer_add(
         return false;
     }
 
-    bool is_datasharing = is_datasharing_compatible_with(wdata);
     bool is_same_process = RTPSDomainImpl::should_intraprocess_between(m_guid, wdata.guid());
+    bool is_datasharing = !is_same_process && is_datasharing_compatible_with(wdata);
 
     for (WriterProxy* it : matched_writers_)
     {

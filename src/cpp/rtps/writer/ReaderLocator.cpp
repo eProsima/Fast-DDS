@@ -77,6 +77,7 @@ bool ReaderLocator::start(
         locator_info_.remote_guid = remote_guid;
 
         is_local_reader_ = RTPSDomainImpl::should_intraprocess_between(owner_->getGuid(), remote_guid);
+        is_datasharing &= !is_local_reader_;
         local_reader_ = nullptr;
 
         if (!is_local_reader_ && !is_datasharing)
