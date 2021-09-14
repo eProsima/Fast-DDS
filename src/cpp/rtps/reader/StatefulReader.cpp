@@ -1123,7 +1123,7 @@ void StatefulReader::end_sample_access_nts(
 
 void StatefulReader::change_read_by_user(
         CacheChange_t* change,
-        const WriterProxy* writer,
+        WriterProxy* writer,
         bool mark_as_read)
 {
     assert(writer != nullptr);
@@ -1177,7 +1177,7 @@ void StatefulReader::change_read_by_user(
 void StatefulReader::send_acknack(
         const WriterProxy* writer,
         const SequenceNumberSet_t& sns,
-        const RTPSMessageSenderInterface* sender,
+        RTPSMessageSenderInterface* sender,
         bool is_final)
 {
 
@@ -1204,7 +1204,7 @@ void StatefulReader::send_acknack(
 
 void StatefulReader::send_acknack(
         const WriterProxy* writer,
-        const RTPSMessageSenderInterface* sender,
+        RTPSMessageSenderInterface* sender,
         bool heartbeat_was_final)
 {
     // Protect reader

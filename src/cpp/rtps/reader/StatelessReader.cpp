@@ -372,7 +372,7 @@ void StatelessReader::end_sample_access_nts(
 
 void StatelessReader::change_read_by_user(
         CacheChange_t* change,
-        const WriterProxy* /*writer*/,
+        WriterProxy* /*writer*/,
         bool mark_as_read)
 {
     // Mark change as read

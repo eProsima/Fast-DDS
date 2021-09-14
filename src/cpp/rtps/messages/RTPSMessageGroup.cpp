@@ -180,7 +180,7 @@ RTPSMessageGroup::RTPSMessageGroup(
 RTPSMessageGroup::RTPSMessageGroup(
         RTPSParticipantImpl* participant,
         Endpoint* endpoint,
-        const RTPSMessageSenderInterface* msg_sender,
+        RTPSMessageSenderInterface* msg_sender,
         std::chrono::steady_clock::time_point max_blocking_time_point)
     : RTPSMessageGroup(participant)
 {
@@ -236,7 +236,7 @@ void RTPSMessageGroup::send()
 
         if (full_msg_->length > RTPSMESSAGE_HEADER_SIZE)
         {
-            std::unique_lock<RecursiveTimedMutex> lock(endpoint_->getMutex());
+            std::lock_guard<RTPSMessageSenderInterface> lock(*sender_);
 
 #if HAVE_SECURITY
             // TODO(Ricardo) Control message size if it will be encrypted.

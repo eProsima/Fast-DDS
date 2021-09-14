@@ -351,7 +351,7 @@ public:
         return locator_info_.locator_selector_entry();
     }
 
-    const RTPSMessageSenderInterface* message_sender() const
+    RTPSMessageSenderInterface* message_sender()
     {
         return &locator_info_;
     }

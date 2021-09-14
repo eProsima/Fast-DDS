@@ -80,6 +80,18 @@ public:
     virtual bool send(
             CDRMessage_t* message,
             std::chrono::steady_clock::time_point max_blocking_time_point) const = 0;
+
+    /*!
+     * Lock the object.
+     */
+    virtual void lock() = 0;
+
+    /*!
+     * Lock the object.
+     */
+    virtual void unlock() = 0;
+
+
 };
 
 } /* namespace rtps */
