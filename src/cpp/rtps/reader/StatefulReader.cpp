@@ -240,7 +240,7 @@ bool StatefulReader::matched_writer_add(
             if (SequenceNumber_t::unknown() != last_seq)
             {
                 SequenceNumberSet_t sns(last_seq + 1);
-                send_acknack(wp, sns, wp, false);
+                send_acknack(wp, sns, *wp, false);
                 wp->lost_changes_update(last_seq + 1);
             }
         }
