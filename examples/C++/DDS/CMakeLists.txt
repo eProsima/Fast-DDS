@@ -14,6 +14,7 @@
 
 set(fastrtps_FOUND TRUE)
 
+add_subdirectory(BasicConfigurationExample)
 add_subdirectory(Benchmark)
 add_subdirectory(ClientServerTest)
 add_subdirectory(Configurability)
@@ -23,7 +24,6 @@ add_subdirectory(DisablePositiveACKs)
 add_subdirectory(DynamicHelloWorldExample)
 add_subdirectory(Filtering)
 add_subdirectory(FlowControlExample)
-add_subdirectory(HelloWorldExample)
 add_subdirectory(HelloWorldExampleDataSharing)
 add_subdirectory(HelloWorldExampleSharedMem)
 add_subdirectory(HelloWorldExampleTCP)
