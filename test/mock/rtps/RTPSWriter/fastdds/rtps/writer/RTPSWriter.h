@@ -42,6 +42,8 @@ class RTPSWriter : public Endpoint
 public:
 
     RTPSWriter()
+        : general_locator_selector_(*this, ResourceLimitedContainerConfig())
+        , async_locator_selector_(*this, ResourceLimitedContainerConfig())
     {
         static uint8_t entity_id = 0;
         // Generate a guid.
@@ -247,9 +249,9 @@ public:
 
     LivelinessLostStatus liveliness_lost_status_;
 
-    LocatorSelectorSender general_locator_selector_ = LocatorSelectorSender(*this, ResourceLimitedContainerConfig());
+    LocatorSelectorSender general_locator_selector_;
 
-    LocatorSelectorSender async_locator_selector_ = LocatorSelectorSender(*this, ResourceLimitedContainerConfig());
+    LocatorSelectorSender async_locator_selector_;
 };
 
 } // namespace rtps

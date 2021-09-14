@@ -692,7 +692,7 @@ void StatefulWriter::deliver_sample_to_datasharing(
 DeliveryRetCode StatefulWriter::deliver_sample_to_network(
         CacheChange_t* change,
         RTPSMessageGroup& group,
-        LocatorSelectorSender& locator_selector,
+        LocatorSelectorSender& locator_selector, // Object locked by FlowControllerImpl
         const std::chrono::time_point<std::chrono::steady_clock>& max_blocking_time)
 {
     NetworkFactory& network = mp_RTPSParticipant->network_factory();
@@ -980,6 +980,8 @@ bool StatefulWriter::matched_reader_add(
     }
 
     std::lock_guard<RecursiveTimedMutex> guard(mp_mutex);
+    std::lock_guard<LocatorSelectorSender> guard_locator_selector_general(locator_selector_general_);
+    std::lock_guard<LocatorSelectorSender> guard_locator_selector_async(locator_selector_async_);
 
     // Check if it is already matched.
     if (for_matched_readers(matched_local_readers_, matched_datasharing_readers_, matched_remote_readers_,
@@ -1153,6 +1155,8 @@ bool StatefulWriter::matched_reader_remove(
 {
     ReaderProxy* rproxy = nullptr;
     std::unique_lock<RecursiveTimedMutex> lock(mp_mutex);
+    std::lock_guard<LocatorSelectorSender> guard_locator_selector_general(locator_selector_general_);
+    std::lock_guard<LocatorSelectorSender> guard_locator_selector_async(locator_selector_async_);
 
     for (ReaderProxyIterator it = matched_local_readers_.begin();
             it != matched_local_readers_.end(); ++it)
@@ -1211,7 +1215,6 @@ bool StatefulWriter::matched_reader_remove(
         rproxy->stop();
         matched_readers_pool_.push_back(rproxy);
 
-        lock.unlock();
         check_acked_status();
 
         return true;
@@ -1550,6 +1553,7 @@ bool StatefulWriter::send_periodic_heartbeat(
         bool liveliness)
 {
     std::lock_guard<RecursiveTimedMutex> guardW(mp_mutex);
+    std::lock_guard<LocatorSelectorSender> guard_locator_selector_general(locator_selector_general_);
 
     bool unacked_changes = false;
     if (!liveliness)
@@ -1985,7 +1989,7 @@ const fastdds::rtps::IReaderDataFilter* StatefulWriter::reader_data_filter() con
 DeliveryRetCode StatefulWriter::deliver_sample_nts(
         CacheChange_t* cache_change,
         RTPSMessageGroup& group,
-        LocatorSelectorSender& locator_selector,
+        LocatorSelectorSender& locator_selector, // Object locked by FlowControllerImpl
         const std::chrono::time_point<std::chrono::steady_clock>& max_blocking_time)
 {
     DeliveryRetCode ret_code = DeliveryRetCode::DELIVERED;

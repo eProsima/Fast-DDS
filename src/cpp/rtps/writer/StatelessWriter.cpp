@@ -414,6 +414,7 @@ bool StatelessWriter::matched_reader_add(
         const ReaderProxyData& data)
 {
     std::lock_guard<RecursiveTimedMutex> guard(mp_mutex);
+    std::lock_guard<LocatorSelectorSender> locator_selector_guard(locator_selector_);
 
     assert(data.guid() != c_Guid_Unknown);
 
@@ -522,6 +523,7 @@ bool StatelessWriter::matched_reader_remove(
         const GUID_t& reader_guid)
 {
     std::lock_guard<RecursiveTimedMutex> guard(mp_mutex);
+    std::lock_guard<LocatorSelectorSender> locator_selector_guard(locator_selector_);
 
     if (locator_selector_.locator_selector.remove_entry(reader_guid))
     {
@@ -619,7 +621,7 @@ bool StatelessWriter::send_nts(
 DeliveryRetCode StatelessWriter::deliver_sample_nts(
         CacheChange_t* cache_change,
         RTPSMessageGroup& group,
-        LocatorSelectorSender& locator_selector,
+        LocatorSelectorSender& locator_selector, // Object locked by FlowControllerImpl
         const std::chrono::time_point<std::chrono::steady_clock>& /*TODO max_blocking_time*/)
 {
     size_t num_locators = locator_selector.locator_selector.selected_size() + fixed_locators_.size();
