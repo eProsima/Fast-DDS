@@ -132,14 +132,7 @@ struct RTPS_DllAPI GUID_t
     inline bool operator ==(
             const GUID_t& other) const
     {
-        if (guidPrefix == other.guidPrefix && entityId == other.entityId)
-        {
-            return true;
-        }
-        else
-        {
-            return false;
-        }
+        return (guidPrefix == other.guidPrefix && entityId == other.entityId);
     }
 
     /**
@@ -150,14 +143,7 @@ struct RTPS_DllAPI GUID_t
     inline bool operator !=(
             const GUID_t& other) const
     {
-        if (guidPrefix != other.guidPrefix || entityId != other.entityId)
-        {
-            return true;
-        }
-        else
-        {
-            return false;
-        }
+        return (guidPrefix != other.guidPrefix || entityId != other.entityId);
     }
 
     inline bool operator <(

@@ -78,7 +78,7 @@ struct RTPS_DllAPI Time_t
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
     /**
-     * Comparison assignment
+     * Comparison operator
      * @param other Second Time_t to compare
      * @return True if equal
      */

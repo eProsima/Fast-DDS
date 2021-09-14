@@ -20,7 +20,7 @@
 #define _FASTDDS_TYPE_SUPPORT_HPP_
 
 #include <fastdds/dds/topic/TopicDataType.hpp>
-#include <fastdds/rtps/common/InstanceHandle.h>
+#include <fastdds/dds/topic/InstanceHandle.hpp>
 #include <fastrtps/types/DynamicPubSubType.h>
 #include <fastrtps/types/TypesBase.h>
 
@@ -31,12 +31,6 @@
 namespace eprosima {
 namespace fastdds {
 namespace dds {
-
-//! Handle to identiy different instances of the same Topic of a certain type.
-using InstanceHandle_t = eprosima::fastrtps::rtps::InstanceHandle_t;
-
-//! The NIL instance handle.
-extern RTPS_DllAPI const InstanceHandle_t HANDLE_NIL;
 
 class DomainParticipant;
 
