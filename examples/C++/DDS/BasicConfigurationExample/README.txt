@@ -1,5 +1,5 @@
 To launch this test open two different consoles:
 
-In the first one launch: ./DDSHelloWorldExample publisher (or DDSHelloWorldExample.exe publisher on windows).
-In the second one: ./DDSHelloWorldExample subscriber (or DDSHelloWorldExample.exe subscriber on windows).
+In the first one launch: ./BasicConfigurationExample publisher (or BasicConfigurationExample.exe publisher on windows).
+In the second one: ./BasicConfigurationExample subscriber (or BasicConfigurationExample.exe subscriber on windows).
 
