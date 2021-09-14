@@ -40,6 +40,7 @@
 
 #include <chrono>
 #include <thread>
+#include <iostream>
 
 using namespace eprosima::fastrtps::rtps;
 using namespace eprosima::fastrtps::xmlparser;
@@ -410,6 +411,22 @@ bool Domain::loadXMLProfilesFile(
     if ( XMLP_ret::XML_ERROR == XMLProfileManager::loadXMLFile(xml_profile_file))
     {
         logError(DOMAIN, "Problem loading XML file '" << xml_profile_file << "'");
+        return false;
+    }
+    return true;
+}
+
+bool Domain::loadXMLProfilesString(const char *data, size_t length)
+{
+    if (false == default_xml_profiles_loaded)
+    {
+        XMLProfileManager::loadDefaultXMLFile();
+        default_xml_profiles_loaded = true;
+    }
+
+    if ( XMLP_ret::XML_ERROR == XMLProfileManager::loadXMLString(data, length))
+    {
+        logError(DOMAIN, "Problem loading XML string");
         return false;
     }
     return true;

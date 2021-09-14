@@ -326,6 +326,37 @@ XMLP_ret XMLProfileManager::loadXMLFile(
     return loaded_ret;
 }
 
+XMLP_ret XMLProfileManager::loadXMLString(const char* data, size_t length)
+{
+    up_base_node_t root_node;
+    XMLP_ret loaded_ret = XMLParser::loadXML(data, length, root_node);
+    if (!root_node || loaded_ret != XMLP_ret::XML_OK)
+    {
+        logError(XMLPARSER, "Error parsing string");
+        return XMLP_ret::XML_ERROR;
+    }
+
+    logInfo(XMLPARSER, "String parsed successfully");
+
+    if (NodeType::ROOT == root_node->getType())
+    {
+        for (auto&& child: root_node->getChildren())
+        {
+            if (NodeType::PROFILES == child.get()->getType())
+            {
+                return XMLProfileManager::extractProfiles(std::move(child), "inmem");
+            }
+        }
+        return loaded_ret;
+    }
+    else if (NodeType::PROFILES == root_node->getType())
+    {
+        return XMLProfileManager::extractProfiles(std::move(root_node), "inmem");
+    }
+
+    return loaded_ret;
+}
+
 XMLP_ret XMLProfileManager::extractProfiles(
         up_base_node_t profiles,
         const std::string& filename)

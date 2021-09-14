@@ -187,6 +187,15 @@ public:
             const std::string& xml_profile_file);
 
     /**
+     * Load profiles from XML string.
+     * @param data buffer containing xml data.
+     * @param length length of data
+     * @return RETCODE_OK if it is correctly loaded, RETCODE_ERROR otherwise.
+     */
+    RTPS_DllAPI ReturnCode_t load_XML_profiles_string(
+            const char* data, size_t length);
+
+    /**
      * This operation returns the value of the DomainParticipantFactory QoS policies.
      * @param qos DomaParticipantFactoryQos reference where the qos is returned
      * @return RETCODE_OK
