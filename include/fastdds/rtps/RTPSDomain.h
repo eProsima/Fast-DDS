@@ -28,7 +28,6 @@
 #include <fastdds/rtps/history/IPayloadPool.h>
 
 namespace eprosima {
-
 namespace fastrtps {
 namespace rtps {
 

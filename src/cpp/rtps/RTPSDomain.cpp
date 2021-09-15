@@ -119,7 +119,7 @@ RTPSParticipant* RTPSDomain::createParticipant(
         {
             // Create filewatch
             RTPSDomainImpl::file_watch_handle_ = SystemInfo::watch_file(SystemInfo::get_environment_file(),
-                RTPSDomainImpl::file_watch_callback);
+                            RTPSDomainImpl::file_watch_callback);
         }
     }
 
