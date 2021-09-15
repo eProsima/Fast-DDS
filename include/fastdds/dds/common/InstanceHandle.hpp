@@ -17,8 +17,8 @@
  *
  */
 
-#ifndef _FASTDDS_DDS_INSTANCE_HANDLE_HPP_
-#define _FASTDDS_DDS_INSTANCE_HANDLE_HPP_
+#ifndef _FASTDDS_DDS_COMMON_INSTANCEHANDLE_HPP_
+#define _FASTDDS_DDS_COMMON_INSTANCEHANDLE_HPP_
 
 #include <fastdds/rtps/common/InstanceHandle.h>
 #include <fastrtps/fastrtps_dll.h>
@@ -36,4 +36,4 @@ extern RTPS_DllAPI const InstanceHandle_t HANDLE_NIL;
 } // namespace fastdds
 } // namespace eprosima
 
-#endif // _FASTDDS_DDS_INSTANCE_HANDLE_HPP_
+#endif // _FASTDDS_DDS_COMMON_INSTANCEHANDLE_HPP_
