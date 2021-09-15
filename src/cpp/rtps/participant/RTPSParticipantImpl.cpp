@@ -2173,10 +2173,10 @@ void RTPSParticipantImpl::environment_file_has_changed()
     RTPSParticipantAttributes patt;
     // Only if it is a server/backup or a client override
     if (DiscoveryProtocol_t::SERVER == m_att.builtin.discovery_config.discoveryProtocol ||
-        DiscoveryProtocol_t::BACKUP == m_att.builtin.discovery_config.discoveryProtocol ||
-        mp_userParticipant->client_override_)
+            DiscoveryProtocol_t::BACKUP == m_att.builtin.discovery_config.discoveryProtocol ||
+            mp_userParticipant->client_override_)
     {
-        if(load_environment_server_info(patt.builtin.discovery_config.m_DiscoveryServers))
+        if (load_environment_server_info(patt.builtin.discovery_config.m_DiscoveryServers))
         {
             update_attributes(patt);
         }
@@ -2184,7 +2184,7 @@ void RTPSParticipantImpl::environment_file_has_changed()
     else
     {
         logWarning(RTPS_QOS_CHECK, "Trying to add Discovery Servers to a participant which is not a SERVER, BACKUP " <<
-            "or an overriden CLIENT (SIMPLE participant transformed into CLIENT with the environment variable)");
+                "or an overriden CLIENT (SIMPLE participant transformed into CLIENT with the environment variable)");
     }
 }
 

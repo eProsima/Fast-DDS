@@ -63,7 +63,7 @@ int main(
 
     while (arg_count < argc)
     {
-        if(strcmp(argv[arg_count], "--guid_prefix") == 0)
+        if (strcmp(argv[arg_count], "--guid_prefix") == 0)
         {
             if (++arg_count >= argc)
             {

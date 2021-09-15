@@ -210,7 +210,7 @@ TEST_F(SystemInfoTests, EnvironmentFileTest)
     EXPECT_TRUE(eprosima::SystemInfo::get_environment_file().empty());
 
     // 2. Set environment file variable and see that it returns correctly
-    const std::string value("TESTING");    
+    const std::string value("TESTING");
 #ifdef _WIN32
     ASSERT_EQ(0, _putenv_s(eprosima::FASTDDS_ENVIRONMENT_FILE_ENV_VAR, value.c_str()));
 #else

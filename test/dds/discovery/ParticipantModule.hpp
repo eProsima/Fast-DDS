@@ -47,7 +47,7 @@ public:
     void on_participant_discovery(
             DomainParticipant* participant,
             ParticipantDiscoveryInfo&& info) override;
-    
+
     bool init();
 
 private:
