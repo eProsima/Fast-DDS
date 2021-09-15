@@ -27,18 +27,7 @@
 #include <fastdds/rtps/common/Types.h>
 #include <fastdds/rtps/history/IPayloadPool.h>
 
-namespace filewatch {
-template<class T>
-class FileWatch;
-} // filewatch
-
 namespace eprosima {
-
-#if defined(_WIN32) || defined(__unix__)
-using FileWatchHandle = std::unique_ptr<filewatch::FileWatch<std::string>>;
-#else
-using FileWatchHandle = void*;
-#endif // defined(_WIN32) || defined(__unix__)
 
 namespace fastrtps {
 namespace rtps {
@@ -277,11 +266,6 @@ private:
     static void removeRTPSParticipant_nts(
             t_p_RTPSParticipant&);
 
-    /**
-     * Callback run when the monitored environment file is modified
-     */
-    static void file_watch_callback();
-
     static std::mutex m_mutex;
 
     static std::atomic<uint32_t> m_maxRTPSParticipantID;
@@ -289,8 +273,6 @@ private:
     static std::vector<t_p_RTPSParticipant> m_RTPSParticipants;
 
     static std::set<uint32_t> m_RTPSParticipantIDs;
-
-    static FileWatchHandle file_watch_handle_;
 };
 
 } // namespace rtps

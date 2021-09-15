@@ -12,13 +12,19 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include <fastrtps/rtps/RTPSDomain.h>
-
-#include <fastrtps/rtps/reader/RTPSReader.h>
-#include <fastrtps/rtps/writer/RTPSWriter.h>
 
 #include <chrono>
 #include <thread>
+
+#if defined(_WIN32) || defined(__unix__)
+#include <FileWatch.hpp>
+#endif // defined(_WIN32) || defined(__unix__)
+
+#include <fastrtps/rtps/reader/RTPSReader.h>
+#include <fastrtps/rtps/RTPSDomain.h>
+#include <fastrtps/rtps/writer/RTPSWriter.h>
+
+#include <utils/SystemInfo.hpp>
 
 namespace eprosima {
 namespace fastrtps {
@@ -108,6 +114,13 @@ public:
     static bool should_intraprocess_between(
             const GUID_t& local_guid,
             const GUID_t& matched_guid);
+
+    /**
+     * Callback run when the monitored environment file is modified
+     */
+    static void file_watch_callback();
+
+    static FileWatchHandle file_watch_handle_;
 };
 
 } // namespace rtps

@@ -61,7 +61,7 @@ std::mutex RTPSDomain::m_mutex;
 std::atomic<uint32_t> RTPSDomain::m_maxRTPSParticipantID(1);
 std::vector<RTPSDomain::t_p_RTPSParticipant> RTPSDomain::m_RTPSParticipants;
 std::set<uint32_t> RTPSDomain::m_RTPSParticipantIDs;
-FileWatchHandle RTPSDomain::file_watch_handle_;
+FileWatchHandle RTPSDomainImpl::file_watch_handle_;
 
 void RTPSDomain::stopAll()
 {
@@ -69,7 +69,7 @@ void RTPSDomain::stopAll()
     logInfo(RTPS_PARTICIPANT, "DELETING ALL ENDPOINTS IN THIS DOMAIN");
 
     // Stop monitoring environment file
-    SystemInfo::stop_watching_file(file_watch_handle_);
+    SystemInfo::stop_watching_file(RTPSDomainImpl::file_watch_handle_);
 
     while (m_RTPSParticipants.size() > 0)
     {
@@ -118,7 +118,8 @@ RTPSParticipant* RTPSDomain::createParticipant(
         if (!SystemInfo::get_environment_file().empty())
         {
             // Create filewatch
-            file_watch_handle_ = SystemInfo::watch_file(SystemInfo::get_environment_file(), file_watch_callback);
+            RTPSDomainImpl::file_watch_handle_ = SystemInfo::watch_file(SystemInfo::get_environment_file(),
+                RTPSDomainImpl::file_watch_callback);
         }
     }
 
@@ -543,12 +544,12 @@ bool RTPSDomainImpl::should_intraprocess_between(
     return false;
 }
 
-void RTPSDomain::file_watch_callback()
+void RTPSDomainImpl::file_watch_callback()
 {
     // Ensure that all changes have been saved by the OS
     std::this_thread::sleep_for(std::chrono::seconds(1));
     // For all RTPSParticipantImpl registered in the RTPSDomain, call RTPSParticipantImpl::environment_file_has_changed
-    for (auto participant : m_RTPSParticipants)
+    for (auto participant : RTPSDomain::m_RTPSParticipants)
     {
         participant.second->environment_file_has_changed();
     }
