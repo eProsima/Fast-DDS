@@ -88,7 +88,7 @@ TEST_F(SystemInfoTests, GetEnvTest)
 #ifdef _WIN32
     ASSERT_EQ(0, _putenv_s(env_var_name.c_str(), value.c_str()));
     ASSERT_EQ(0, _putenv_s(eprosima::FASTDDS_ENVIRONMENT_FILE_ENV_VAR, filename.c_str()));
-    ASSERT_EQ(0, _putenv_s(eprosima::fastdds::rtps::DEFAULT_ROS_MASTER_URI, value.c_str()));
+    ASSERT_EQ(0, _putenv_s(eprosima::fastdds::rtps::DEFAULT_ROS2_MASTER_URI, value.c_str()));
     ASSERT_EQ(0, _putenv_s("EMPTY_ENV_VAR", value.c_str()));
 #else
     ASSERT_EQ(0, setenv(env_var_name.c_str(), value.c_str(), 1));

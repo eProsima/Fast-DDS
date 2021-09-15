@@ -47,8 +47,8 @@ ReturnCode_t SystemInfo::get_env(
         return ReturnCode_t::RETCODE_OK;
     }
 
-#pragma warning(suppress:4996)
     char* data;
+#pragma warning(suppress:4996)
     data = getenv(env_name.c_str());
     if (nullptr != data)
     {

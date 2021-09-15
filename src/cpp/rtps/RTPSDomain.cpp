@@ -23,10 +23,6 @@
 #include <cstdlib>
 #include <regex>
 
-#if defined(_WIN32) || defined(__unix__)
-#include <FileWatch.hpp>
-#endif // defined(_WIN32) || defined(__unix__)
-
 #include <fastdds/dds/log/Log.hpp>
 #include <fastdds/rtps/history/WriterHistory.h>
 #include <fastdds/rtps/participant/RTPSParticipant.h>

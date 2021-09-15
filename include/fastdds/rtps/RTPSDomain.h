@@ -23,13 +23,14 @@
 #include <mutex>
 #include <set>
 
-#if defined(_WIN32) || defined(__unix__)
-#include <FileWatch.hpp>
-#endif // defined(_WIN32) || defined(__unix__)
-
 #include <fastdds/rtps/attributes/RTPSParticipantAttributes.h>
 #include <fastdds/rtps/common/Types.h>
 #include <fastdds/rtps/history/IPayloadPool.h>
+
+namespace filewatch {
+template<class T>
+class FileWatch;
+} // filewatch
 
 namespace eprosima {
 
