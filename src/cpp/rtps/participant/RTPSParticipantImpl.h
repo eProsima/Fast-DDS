@@ -899,6 +899,11 @@ public:
 
     bool networkFactoryHasRegisteredTransports() const;
 
+    /**
+     * Function run when the RTPSDomain is notified that the environment file has changed.
+     */
+    void environment_file_has_changed();
+
 #if HAVE_SECURITY
     void set_endpoint_rtps_protection_supports(
             Endpoint* endpoint,

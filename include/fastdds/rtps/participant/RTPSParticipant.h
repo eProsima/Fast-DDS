@@ -296,6 +296,12 @@ private:
 
     //!Pointer to the implementation.
     RTPSParticipantImpl* mp_impl;
+
+    /**
+     * Client override flag: SIMPLE participant that has been overriden with the environment variable and transform
+     * into a client.
+     */
+    bool client_override_;
 };
 
 } // namespace rtps

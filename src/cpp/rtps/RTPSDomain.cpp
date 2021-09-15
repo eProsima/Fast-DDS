@@ -23,6 +23,10 @@
 #include <cstdlib>
 #include <regex>
 
+#if defined(_WIN32) || defined(__unix__)
+#include <FileWatch.hpp>
+#endif // defined(_WIN32) || defined(__unix__)
+
 #include <fastdds/dds/log/Log.hpp>
 #include <fastdds/rtps/history/WriterHistory.h>
 #include <fastdds/rtps/participant/RTPSParticipant.h>
@@ -43,6 +47,7 @@
 
 #include <rtps/common/GuidUtils.hpp>
 #include <utils/Host.hpp>
+#include <utils/SystemInfo.hpp>
 
 
 namespace eprosima {
@@ -60,11 +65,15 @@ std::mutex RTPSDomain::m_mutex;
 std::atomic<uint32_t> RTPSDomain::m_maxRTPSParticipantID(1);
 std::vector<RTPSDomain::t_p_RTPSParticipant> RTPSDomain::m_RTPSParticipants;
 std::set<uint32_t> RTPSDomain::m_RTPSParticipantIDs;
+FileWatchHandle RTPSDomain::file_watch_handle_;
 
 void RTPSDomain::stopAll()
 {
     std::unique_lock<std::mutex> lock(m_mutex);
     logInfo(RTPS_PARTICIPANT, "DELETING ALL ENDPOINTS IN THIS DOMAIN");
+
+    // Stop monitoring environment file
+    SystemInfo::stop_watching_file(file_watch_handle_);
 
     while (m_RTPSParticipants.size() > 0)
     {
@@ -105,6 +114,16 @@ RTPSParticipant* RTPSDomain::createParticipant(
         logError(RTPS_PARTICIPANT,
                 "RTPSParticipant Attributes: LeaseDuration should be >= leaseDuration announcement period");
         return nullptr;
+    }
+
+    // Only the first time, initialize environment file watch if the corresponding environment variable is set
+    if (m_RTPSParticipantIDs.empty())
+    {
+        if (!SystemInfo::get_environment_file().empty())
+        {
+            // Create filewatch
+            file_watch_handle_ = SystemInfo::watch_file(SystemInfo::get_environment_file(), file_watch_callback);
+        }
     }
 
     uint32_t ID;
@@ -395,7 +414,8 @@ RTPSParticipant* RTPSDomain::clientServerEnvironmentCreationOverride(
 
     // Retrieve the info from the environment variable
     // TODO(jlbueno) This should be protected with the PDP mutex.
-    if (!load_environment_server_info(client_att.builtin.discovery_config.m_DiscoveryServers))
+    if (load_environment_server_info(client_att.builtin.discovery_config.m_DiscoveryServers) &&
+            client_att.builtin.discovery_config.m_DiscoveryServers.empty())
     {
         // it's not an error, the environment variable may not be set. Any issue with environment
         // variable syntax is logError already
@@ -413,6 +433,7 @@ RTPSParticipant* RTPSDomain::clientServerEnvironmentCreationOverride(
     {
         // client successfully created
         logInfo(DOMAIN, "Auto default server-client setup. Default client created.");
+        part->client_override_ = true;
         return part;
     }
 
@@ -524,6 +545,17 @@ bool RTPSDomainImpl::should_intraprocess_between(
     }
 
     return false;
+}
+
+void RTPSDomain::file_watch_callback()
+{
+    // Ensure that all changes have been saved by the OS
+    std::this_thread::sleep_for(std::chrono::seconds(1));
+    // For all RTPSParticipantImpl registered in the RTPSDomain, call RTPSParticipantImpl::environment_file_has_changed
+    for (auto participant : m_RTPSParticipants)
+    {
+        participant.second->environment_file_has_changed();
+    }
 }
 
 } // namespace rtps

@@ -29,6 +29,7 @@ RTPSParticipant::RTPSParticipant(
         RTPSParticipantImpl* pimpl)
     : mp_impl(pimpl)
 {
+    client_override_ = false;
 }
 
 RTPSParticipant::~RTPSParticipant()

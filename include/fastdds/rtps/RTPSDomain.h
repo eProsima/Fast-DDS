@@ -19,16 +19,26 @@
 #ifndef _FASTDDS_RTPS_DOMAIN_H_
 #define _FASTDDS_RTPS_DOMAIN_H_
 
-#include <fastdds/rtps/common/Types.h>
-#include <fastdds/rtps/history/IPayloadPool.h>
-
-#include <fastdds/rtps/attributes/RTPSParticipantAttributes.h>
-
 #include <atomic>
 #include <mutex>
 #include <set>
 
+#if defined(_WIN32) || defined(__unix__)
+#include <FileWatch.hpp>
+#endif // defined(_WIN32) || defined(__unix__)
+
+#include <fastdds/rtps/attributes/RTPSParticipantAttributes.h>
+#include <fastdds/rtps/common/Types.h>
+#include <fastdds/rtps/history/IPayloadPool.h>
+
 namespace eprosima {
+
+#if defined(_WIN32) || defined(__unix__)
+using FileWatchHandle = std::unique_ptr<filewatch::FileWatch<std::string>>;
+#else
+using FileWatchHandle = void*;
+#endif // defined(_WIN32) || defined(__unix__)
+
 namespace fastrtps {
 namespace rtps {
 
@@ -47,7 +57,7 @@ class RTPSDomainImpl;
 
 /**
  * Class RTPSDomain,it manages the creation and destruction of RTPSParticipant RTPSWriter and RTPSReader. It stores
- * a list of all created RTPSParticipant. Is has only static methods.
+ * a list of all created RTPSParticipant. It has only static methods.
  * @ingroup RTPS_MODULE
  */
 class RTPSDomain
@@ -266,6 +276,11 @@ private:
     static void removeRTPSParticipant_nts(
             t_p_RTPSParticipant&);
 
+    /**
+     * Callback run when the monitored environment file is modified
+     */
+    static void file_watch_callback();
+
     static std::mutex m_mutex;
 
     static std::atomic<uint32_t> m_maxRTPSParticipantID;
@@ -273,6 +288,8 @@ private:
     static std::vector<t_p_RTPSParticipant> m_RTPSParticipants;
 
     static std::set<uint32_t> m_RTPSParticipantIDs;
+
+    static FileWatchHandle file_watch_handle_;
 };
 
 } // namespace rtps

@@ -638,9 +638,10 @@ bool load_environment_server_info(
         std::string list,
         RemoteServerList_t& attributes)
 {
+    attributes.clear();
     if (list.empty())
     {
-        return false;
+        return true;
     }
 
     /* Parsing ancillary regex */
@@ -652,7 +653,6 @@ bool load_environment_server_info(
     try
     {
         // Do the parsing and populate the list
-        attributes.clear();
         RemoteServerAttributes server_att;
         Locator_t server_locator(LOCATOR_KIND_UDPv4, DEFAULT_ROS2_SERVER_PORT);
         int server_id = 0;
