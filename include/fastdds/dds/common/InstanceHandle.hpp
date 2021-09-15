@@ -1,4 +1,4 @@
-// Copyright 2019 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+// Copyright 2021 Proyectos y Sistemas de Mantenimiento SL (eProsima).
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -21,6 +21,8 @@
 #define _FASTDDS_DDS_INSTANCE_HANDLE_HPP_
 
 #include <fastdds/rtps/common/InstanceHandle.h>
+#include <fastrtps/fastrtps_dll.h>
+
 
 namespace eprosima {
 namespace fastdds {
