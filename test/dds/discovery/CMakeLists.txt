@@ -48,7 +48,12 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER) AND fastcdr_FOUND)
 
         set_property(TEST AddDiscoveryServerToListFromEnvironmentFile PROPERTY ENVIRONMENT
             "CLIENT_SERVER_DYNAMIC_DISCOVERY_BIN=$<TARGET_FILE:DDSParticipantDiscovery>")
-        set_property(TEST AddDiscoveryServerToListFromEnvironmentFile PROPERTY ENVIRONMENT
+        set_property(TEST AddDiscoveryServerToListFromEnvironmentFile APPEND PROPERTY ENVIRONMENT
             "W_UNICAST_PORT_RANDOM_NUMBER=${W_UNICAST_PORT_RANDOM_NUMBER}")
+        if(WIN32)
+            string(REPLACE ";" "\\;" WIN_PATH "$ENV{PATH}")
+            set_property(TEST AddDiscoveryServerToListFromEnvironmentFile APPEND PROPERTY ENVIRONMENT
+                "PATH=$<TARGET_FILE_DIR:${PROJECT_NAME}>\\;$<TARGET_FILE_DIR:fastcdr>\\;${WIN_PATH}")
+        endif()
     endif()
 endif()

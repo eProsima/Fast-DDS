@@ -44,8 +44,6 @@ assert(process_command)
 def output_reader(proc, outq):
     for line in iter(proc.stdout.readline, b''):
         outq.put(line.decode('utf-8'))
-    for line in iter(proc.stderr.readline, b''):
-        outq.put(line.decode('utf-8'))
 
 def first_step(outq):
     first_step_fulfilled = False
@@ -411,22 +409,22 @@ server_1_process = subprocess.Popen([process_command,
     "--guid_prefix", "44.53.00.5F.45.50.52.4F.53.49.4D.41",
     "--unicast_metatraffic_locator", random_port_server_1],
     env={"FASTDDS_ENVIRONMENT_FILE": server_1_env_file},
-    stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
 server_2_process = subprocess.Popen([process_command,
     "--discovery_protocol", "SERVER",
     "--guid_prefix", "44.53.01.5F.45.50.52.4F.53.49.4D.41",
     "--unicast_metatraffic_locator", random_port_server_2],
     env={"FASTDDS_ENVIRONMENT_FILE": server_2_env_file},
-    stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
 # The client must be DiscoveryProtocol::SIMPLE to use the environment variable
 client_override_process = subprocess.Popen(process_command,
     env={"FASTDDS_ENVIRONMENT_FILE": client_env_file},
-    stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
 # DiscoveryProtocol::CLIENT, environment variable does not apply either initializing as updating
 client_process = subprocess.Popen([process_command,
     "--discovery_protocol", "CLIENT"],
     env={"FASTDDS_ENVIRONMENT_FILE": client_env_file},
-    stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
 
 stop_threads = False
 t_0 = threading.Thread(target=communication, args=(server_1_process,outq,outt,cv))
