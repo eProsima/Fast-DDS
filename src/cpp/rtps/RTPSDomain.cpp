@@ -317,7 +317,7 @@ RTPSWriter* RTPSDomain::createRTPSWriter(
         WriterHistory* hist,
         WriterListener* listen)
 {
-    RTPSParticipantImpl* impl = RTPSDomainImpl::find_local_participant(p->getGuid());
+    RTPSParticipantImpl* impl = p->mp_impl;
     if (impl)
     {
         RTPSWriter* ret_val = nullptr;
@@ -337,7 +337,7 @@ RTPSWriter* RTPSDomain::createRTPSWriter(
         WriterHistory* hist,
         WriterListener* listen)
 {
-    RTPSParticipantImpl* impl = RTPSDomainImpl::find_local_participant(p->getGuid());
+    RTPSParticipantImpl* impl = p->mp_impl;
     if (impl)
     {
         RTPSWriter* ret_val = nullptr;
@@ -391,7 +391,7 @@ RTPSWriter* RTPSDomain::createRTPSWriter(
         WriterHistory* hist,
         WriterListener* listen)
 {
-    RTPSParticipantImpl* impl = RTPSDomainImpl::find_local_participant(p->getGuid());
+    RTPSParticipantImpl* impl = p->mp_impl;
     if (impl)
     {
         RTPSWriter* ret_val = nullptr;
@@ -458,7 +458,7 @@ RTPSReader* RTPSDomain::createRTPSReader(
         ReaderHistory* rhist,
         ReaderListener* rlisten)
 {
-    RTPSParticipantImpl* impl = RTPSDomainImpl::find_local_participant(p->getGuid());
+    RTPSParticipantImpl* impl = p->mp_impl;
     if (impl)
     {
         RTPSReader* reader;
@@ -477,7 +477,7 @@ RTPSReader* RTPSDomain::createRTPSReader(
         ReaderHistory* rhist,
         ReaderListener* rlisten)
 {
-    RTPSParticipantImpl* impl = RTPSDomainImpl::find_local_participant(p->getGuid());
+    RTPSParticipantImpl* impl = p->mp_impl;
     if (impl)
     {
         RTPSReader* reader;
