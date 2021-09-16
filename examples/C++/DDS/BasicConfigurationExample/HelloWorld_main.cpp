@@ -117,7 +117,7 @@ int main(
                     topic_name = std::string(opt.arg);
                     break;
 
-                case optionIndex::DOMAIN:
+                case optionIndex::DOMAIN_ID:
                     domain = strtol(opt.arg, nullptr, 10);
                     break;
 

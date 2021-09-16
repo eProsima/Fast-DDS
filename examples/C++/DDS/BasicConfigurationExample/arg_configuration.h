@@ -134,7 +134,7 @@ enum optionIndex
     SAMPLES,
     INTERVAL,
     ASYNC,
-    DOMAIN,
+    DOMAIN_ID,
     TRANSPORT,
     RELIABLE,
     TRANSIENT_LOCAL
@@ -148,7 +148,7 @@ const option::Descriptor usage[] = {
     { UNKNOWN_OPT, 0, "", "",                Arg::None,      "\nPublisher options:"},
     { TOPIC, 0, "t", "topic",                  Arg::String,
       "  -t <topic_name> \t--topic=<topic_name>  \tTopic name (Default: HelloWorldTopic)." },
-    { DOMAIN, 0, "d", "domain",                Arg::Numeric,
+    { DOMAIN_ID, 0, "d", "domain",                Arg::Numeric,
       "  -d <id> \t--domain=<id>  \tDDS domain ID (Default: 0)." },
     { WAIT, 0, "w", "wait",                 Arg::Numeric,
       "  -w <num> \t--wait=<num> \tNumber of matched subscribers required to publish"
@@ -166,7 +166,7 @@ const option::Descriptor usage[] = {
     { UNKNOWN_OPT, 0, "", "",                Arg::None,      "\nSubscriber options:"},
     { TOPIC, 0, "t", "topic",                  Arg::String,
       "  -t <topic_name> \t--topic=<topic_name>  \tTopic name (Default: HelloWorldTopic)." },
-    { DOMAIN, 0, "d", "domain",                Arg::Numeric,
+    { DOMAIN_ID, 0, "d", "domain",                Arg::Numeric,
       "  -d <id> \t--domain=<id>  \tDDS domain ID (Default: 0)." },
     { SAMPLES, 0, "s", "samples",              Arg::Numeric,
       "  -s <num> \t--samples=<num>  \tNumber of samples to wait for (Default: 0 => infinite samples)." },
