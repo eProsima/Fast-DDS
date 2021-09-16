@@ -31,6 +31,11 @@ using eprosima::fastrtps::types::ReturnCode_t;
 
 namespace eprosima {
 namespace fastdds {
+
+namespace dds {
+class DataWriter;
+} // namespace dds
+
 namespace statistics {
 namespace dds {
 
@@ -59,6 +64,14 @@ public:
     RTPS_DllAPI ReturnCode_t enable_statistics_datawriter(
             const std::string& topic_name,
             const eprosima::fastdds::dds::DataWriterQos& dwqos);
+
+    RTPS_DllAPI ReturnCode_t enable_statistics_datawriter(
+            const std::string& topic_name,
+            const eprosima::fastdds::dds::DataWriterQos& dwqos,
+            eprosima::fastdds::dds::DataWriter*& writer);
+
+    RTPS_DllAPI ReturnCode_t enable_statistics_datawriter(
+            eprosima::fastdds::dds::DataWriter* writer);
 
     /**
      * @brief This operation enables a Statistics DataWriter from a given profile

@@ -60,6 +60,34 @@ ReturnCode_t DomainParticipant::enable_statistics_datawriter_with_profile(
 #endif // FASTDDS_STATISTICS
 }
 
+ReturnCode_t DomainParticipant::enable_statistics_datawriter(
+        const std::string& topic_name,
+        const eprosima::fastdds::dds::DataWriterQos& dwqos,
+        eprosima::fastdds::dds::DataWriter*& writer)
+{
+#ifndef FASTDDS_STATISTICS
+    (void) topic_name;
+    (void) dwqos;
+    (void) writer;
+
+    return ReturnCode_t::RETCODE_UNSUPPORTED;
+#else
+    return static_cast<DomainParticipantImpl*>(impl_)->enable_statistics_datawriter(topic_name, dwqos, writer);
+#endif // FASTDDS_STATISTICS
+}
+
+ReturnCode_t DomainParticipant::enable_statistics_datawriter(
+        eprosima::fastdds::dds::DataWriter* writer)
+{
+#ifndef FASTDDS_STATISTICS
+    (void) writer;
+
+    return ReturnCode_t::RETCODE_UNSUPPORTED;
+#else
+    return static_cast<DomainParticipantImpl*>(impl_)->enable_statistics_datawriter(writer);
+#endif // FASTDDS_STATISTICS
+}
+
 ReturnCode_t DomainParticipant::disable_statistics_datawriter(
         const std::string& topic_name)
 {
