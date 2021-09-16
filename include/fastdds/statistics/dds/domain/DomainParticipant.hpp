@@ -38,6 +38,11 @@ class WriterProxyData;
 } // namespace rtps
 } // namespace fastrtps
 namespace fastdds {
+
+namespace dds {
+class DataWriter;
+} // namespace dds
+
 namespace statistics {
 
 class MonitorServiceStatusData;
@@ -69,6 +74,14 @@ public:
     RTPS_DllAPI ReturnCode_t enable_statistics_datawriter(
             const std::string& topic_name,
             const eprosima::fastdds::dds::DataWriterQos& dwqos);
+
+    RTPS_DllAPI ReturnCode_t enable_statistics_datawriter(
+            const std::string& topic_name,
+            const eprosima::fastdds::dds::DataWriterQos& dwqos,
+            eprosima::fastdds::dds::DataWriter*& writer);
+
+    RTPS_DllAPI ReturnCode_t enable_statistics_datawriter(
+            eprosima::fastdds::dds::DataWriter* writer);
 
     /**
      * @brief This operation enables a Statistics DataWriter from a given profile

@@ -74,6 +74,15 @@ public:
             const std::string& topic_name,
             const efd::DataWriterQos& dwqos);
 
+    ReturnCode_t enable_statistics_datawriter(
+            const std::string& topic_name,
+            const eprosima::fastdds::dds::DataWriterQos& dwqos,
+            efd::DataWriter*& writer,
+            bool specific_statistics_participant = true);
+
+    ReturnCode_t enable_statistics_datawriter(
+            efd::DataWriter* writer);
+
     /**
      * @brief This operation enables a Statistics DataWriter from a provided XML defined profile
      *
