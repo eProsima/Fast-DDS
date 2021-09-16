@@ -32,6 +32,11 @@
 
 namespace eprosima {
 namespace fastdds {
+
+namespace dds {
+class DataWriter;
+} // namespace dds
+
 namespace statistics {
 
 class MonitorServiceStatusData;
@@ -63,6 +68,14 @@ public:
     FASTDDS_EXPORTED_API fastdds::dds::ReturnCode_t enable_statistics_datawriter(
             const std::string& topic_name,
             const eprosima::fastdds::dds::DataWriterQos& dwqos);
+
+    FASTDDS_EXPORTED_API fastdds::dds::ReturnCode_t enable_statistics_datawriter(
+            const std::string& topic_name,
+            const eprosima::fastdds::dds::DataWriterQos& dwqos,
+            eprosima::fastdds::dds::DataWriter*& writer);
+
+    FASTDDS_EXPORTED_API fastdds::dds::ReturnCode_t enable_statistics_datawriter(
+            eprosima::fastdds::dds::DataWriter* writer);
 
     /**
      * @brief This operation enables a Statistics DataWriter from a given profile
