@@ -2010,6 +2010,55 @@ TEST(ParticipantTests, RegisterDynamicTypeToFactoriesNotTypeIdentifier)
 }
 
 /*
+ * TODO
+ */
+TEST(ParticipantTests, RegisterComplexDynamicType)
+{
+    // Do not enable entities on creation
+    DomainParticipantFactoryQos factory_qos;
+    factory_qos.entity_factory().autoenable_created_entities = false;
+    DomainParticipantFactory::get_instance()->set_qos(factory_qos);
+
+    // Create a disabled participant
+    DomainParticipant* participant =
+            DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
+
+    // Create basic builders
+    DynamicTypeBuilder_ptr builder(DynamicTypeBuilderFactory::get_instance()->create_struct_builder());
+
+    // Add members to the struct.
+    builder->add_member(0, "index", DynamicTypeBuilderFactory::get_instance()->create_uint32_type());
+    builder->add_member(1, "message", DynamicTypeBuilderFactory::get_instance()->create_string_type());
+    DynamicType_ptr struct_type = builder->build();
+
+    DynamicTypeBuilder_ptr parent_builder = DynamicTypeBuilderFactory::get_instance()->create_struct_builder();
+    parent_builder->add_member(0, "child_struct", struct_type);
+    parent_builder->add_member(1, "second", DynamicTypeBuilderFactory::get_instance()->create_int32_type());
+
+    std::vector<uint32_t> lengths = {2};
+    DynamicTypeBuilder_ptr array = DynamicTypeBuilderFactory::get_instance()->create_array_builder(&(*parent_builder),
+                    lengths);
+    array->set_name("HelloWorld");
+
+    DynamicType_ptr dynType = array->build();
+
+    // eprosima::fastrtps::types::DynamicPubSubType m_DynType;
+    // eprosima::fastrtps::types::DynamicData* m_DynHello;
+
+    // m_DynType.SetDynamicType(dynType);
+    // m_DynHello = DynamicDataFactory::get_instance()->create_data(dynType);
+
+    // Register the type
+    TypeSupport type(new eprosima::fastrtps::types::DynamicPubSubType(dynType));
+    type->auto_fill_type_information(false);
+    type->auto_fill_type_object(true);
+    ASSERT_EQ(type.register_type(participant), ReturnCode_t::RETCODE_OK);
+
+    // Remove the participant
+    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), ReturnCode_t::RETCODE_OK);
+}
+
+/*
  * This test create a sequence of TypeIdentifiers to call the get_types() DomainParticipant function. It should return
  * the TypeObjects associated with the TypeIdentifiers. Finally, the test checks that the writer guid prefix given by
  * the TypeObject is the same as the DomainPartipant guid prefix.
