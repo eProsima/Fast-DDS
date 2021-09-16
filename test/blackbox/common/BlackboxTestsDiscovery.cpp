@@ -1203,7 +1203,8 @@ TEST(Discovery, ServerClientEnvironmentSetUp)
     text = "";
     output.clear();
 
-    ASSERT_FALSE(load_environment_server_info(text, output));
+    ASSERT_TRUE(load_environment_server_info(text, output));
+    ASSERT_TRUE(output.empty());
 
     // 5. check at least one server be present scenario is hadled
     text = ";;;;";
@@ -1334,6 +1335,7 @@ TEST(Discovery, ServerClientEnvironmentSetUp)
 #else
     setenv(eprosima::FASTDDS_ENVIRONMENT_FILE_ENV_VAR, filename.c_str(), 1);
 #endif // _WIN32
+    eprosima::SystemInfo::set_environment_file();
 
     output.clear();
     standard.clear();
