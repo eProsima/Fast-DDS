@@ -116,6 +116,16 @@ ReturnCode_t DomainParticipantImpl::enable_statistics_datawriter(
         const std::string& topic_name,
         const efd::DataWriterQos& dwqos)
 {
+    efd::DataWriter* writer = nullptr;
+    return enable_statistics_datawriter(topic_name, dwqos, writer, false);
+}
+
+ReturnCode_t DomainParticipantImpl::enable_statistics_datawriter(
+        const std::string& topic_name,
+        const eprosima::fastdds::dds::DataWriterQos& dwqos,
+        efd::DataWriter*& writer,
+        bool specific_statistics_participant)
+{
     std::string use_topic_name;
     uint32_t event_kind;
     if (!transform_and_check_topic_name(topic_name, use_topic_name, event_kind))
@@ -139,8 +149,8 @@ ReturnCode_t DomainParticipantImpl::enable_statistics_datawriter(
             set_statistics_entity_id(event_kind, entity_id);
             efd::TypeSupport type = participant_->find_type(topic->get_type_name());
             auto writer_impl = builtin_publisher_impl_->create_datawriter_impl(type, topic, dwqos, entity_id);
-            auto data_writer = builtin_publisher_impl_->create_datawriter(topic, writer_impl, efd::StatusMask::all());
-            if (nullptr == data_writer)
+            writer = builtin_publisher_impl_->create_datawriter(topic, writer_impl, efd::StatusMask::all());
+            if (nullptr == writer)
             {
                 // Remove already created Impl
                 delete writer_impl;
@@ -150,27 +160,30 @@ ReturnCode_t DomainParticipantImpl::enable_statistics_datawriter(
                 return efd::RETCODE_ERROR;
             }
 
-            if (PHYSICAL_DATA_TOPIC == use_topic_name)
+            if (!specific_statistics_participant)
             {
-                PhysicalData notification;
-                notification.participant_guid(*reinterpret_cast<const detail::GUID_s*>(&guid()));
-                notification.host(asio::ip::host_name() + ":" + std::to_string(efd::utils::default_domain_id()));
-                std::string username;
-                if (efd::RETCODE_OK == SystemInfo::get_username(username))
+                if (PHYSICAL_DATA_TOPIC == use_topic_name)
                 {
-                    notification.user(username);
+                    PhysicalData notification;
+                    notification.participant_guid(*reinterpret_cast<const detail::GUID_s*>(&guid()));
+                    notification.host(asio::ip::host_name() + ":" + std::to_string(efd::utils::default_domain_id()));
+                    std::string username;
+                    if (efd::RETCODE_OK == SystemInfo::get_username(username))
+                    {
+                        notification.user(username);
+                    }
+                    notification.process(std::to_string(SystemInfo::instance().process_id()));
+
+                    const void* data_sample = nullptr;
+                    data_sample = &notification;
+
+                    writer->write(const_cast<void*>(data_sample));
                 }
-                notification.process(std::to_string(SystemInfo::instance().process_id()));
-
-                const void* data_sample = nullptr;
-                data_sample = &notification;
-
-                data_writer->write(const_cast<void*>(data_sample));
-            }
-            else
-            {
-                statistics_listener_->set_datawriter(event_kind, data_writer);
-                rtps_participant_->set_enabled_statistics_writers_mask(statistics_listener_->enabled_writers_mask());
+                else
+                {
+                    statistics_listener_->set_datawriter(event_kind, writer);
+                    rtps_participant_->set_enabled_statistics_writers_mask(statistics_listener_->enabled_writers_mask());
+                }
             }
         }
         return efd::RETCODE_OK;
@@ -209,6 +222,42 @@ ReturnCode_t DomainParticipantImpl::enable_statistics_datawriter_with_profile(
     EPROSIMA_LOG_ERROR(STATISTICS_DOMAIN_PARTICIPANT,
             "Profile name " << profile_name << " has not been found");
     return efd::RETCODE_ERROR;
+}
+
+ReturnCode_t DomainParticipantImpl::enable_statistics_datawriter(
+        efd::DataWriter* writer)
+{
+    std::string use_topic_name;
+    uint32_t event_kind;
+    if (!transform_and_check_topic_name(writer->get_topic()->get_name(), use_topic_name, event_kind))
+    {
+        return efd::RETCODE_BAD_PARAMETER;
+    }
+
+    if (PHYSICAL_DATA_TOPIC == use_topic_name)
+    {
+        PhysicalData notification;
+        notification.participant_guid(*reinterpret_cast<const detail::GUID_s*>(&guid()));
+        notification.host(asio::ip::host_name() + ":" + std::to_string(efd::utils::default_domain_id()));
+        std::string username;
+        if (efd::RETCODE_OK == SystemInfo::get_username(username))
+        {
+            notification.user(username);
+        }
+        notification.process(std::to_string(SystemInfo::instance().process_id()));
+
+        const void* data_sample = nullptr;
+        data_sample = &notification;
+
+        writer->write(const_cast<void*>(data_sample));
+    }
+    else
+    {
+        statistics_listener_->set_datawriter(event_kind, writer);
+        rtps_participant_->set_enabled_statistics_writers_mask(statistics_listener_->enabled_writers_mask());
+    }
+
+    return efd::RETCODE_OK;
 }
 
 ReturnCode_t DomainParticipantImpl::disable_statistics_datawriter(
