@@ -296,7 +296,7 @@ private:
     fastrtps::string_255 name_ = "RTPSParticipant";
 
     //! User defined flow controller to use alongside.
-    //! @since Functionality not implemented yet. Coming soon.
+    //! @since 2.4.0
     FlowControllerDescriptorList flow_controllers_;
 
 };
