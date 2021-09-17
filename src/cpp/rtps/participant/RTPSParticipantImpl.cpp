@@ -2171,7 +2171,7 @@ DurabilityKind_t RTPSParticipantImpl::get_persistence_durability_red_line(
 
 void RTPSParticipantImpl::environment_file_has_changed()
 {
-    RTPSParticipantAttributes patt;
+    RTPSParticipantAttributes patt = m_att;
     // Only if it is a server/backup or a client override
     if (DiscoveryProtocol_t::SERVER == m_att.builtin.discovery_config.discoveryProtocol ||
             DiscoveryProtocol_t::BACKUP == m_att.builtin.discovery_config.discoveryProtocol ||

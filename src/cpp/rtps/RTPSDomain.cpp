@@ -113,7 +113,7 @@ RTPSParticipant* RTPSDomain::createParticipant(
     }
 
     // Only the first time, initialize environment file watch if the corresponding environment variable is set
-    if (m_RTPSParticipantIDs.empty())
+    if (!RTPSDomainImpl::file_watch_handle_)
     {
         if (!SystemInfo::get_environment_file().empty())
         {
@@ -549,6 +549,7 @@ void RTPSDomainImpl::file_watch_callback()
     // Ensure that all changes have been saved by the OS
     std::this_thread::sleep_for(std::chrono::seconds(1));
     // For all RTPSParticipantImpl registered in the RTPSDomain, call RTPSParticipantImpl::environment_file_has_changed
+    std::lock_guard<std::mutex> guard(RTPSDomain::m_mutex);
     for (auto participant : RTPSDomain::m_RTPSParticipants)
     {
         participant.second->environment_file_has_changed();
