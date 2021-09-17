@@ -262,11 +262,19 @@ public:
         name_ = value;
     }
 
+    /**
+     * Getter for FlowControllerDescriptorList
+     * @return FlowControllerDescriptorList reference
+     */
     FlowControllerDescriptorList& flow_controllers()
     {
         return flow_controllers_;
     }
 
+    /**
+     * Getter for FlowControllerDescriptorList
+     * @return FlowControllerDescriptorList reference
+     */
     const FlowControllerDescriptorList& flow_controllers() const
     {
         return flow_controllers_;
