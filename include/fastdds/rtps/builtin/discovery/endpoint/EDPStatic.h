@@ -151,6 +151,7 @@ public:
      * @param participant_name  Name of the participant.
      * @param user_id           User Id.
      * @param ent_id            Entity Id.
+     * @param persistence_guid  GUID used for persistence.
      * @return True if correct.
      */
     bool newRemoteWriter(
