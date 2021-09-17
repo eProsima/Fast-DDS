@@ -33,7 +33,7 @@ DataWriterQos::DataWriterQos()
     publish_mode().kind = eprosima::fastdds::dds::ASYNCHRONOUS_PUBLISH_MODE;
     publish_mode().flow_controller_name = eprosima::fastdds::rtps::FASTDDS_STATISTICS_FLOW_CONTROLLER_DEFAULT;
     history().kind = eprosima::fastdds::dds::KEEP_LAST_HISTORY_QOS;
-    history().depth = 100;
+    history().depth = 1;
     properties().properties().emplace_back("fastdds.push_mode", "false");
 }
 
