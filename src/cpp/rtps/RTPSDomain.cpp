@@ -430,7 +430,7 @@ RTPSParticipant* RTPSDomain::clientServerEnvironmentCreationOverride(
     {
         // client successfully created
         logInfo(DOMAIN, "Auto default server-client setup. Default client created.");
-        part->client_override_ = true;
+        part->mp_impl->client_override(true);
         return part;
     }
 

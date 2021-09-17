@@ -427,6 +427,7 @@ RTPSParticipantImpl::RTPSParticipantImpl(
         RTPSParticipantListener* plisten)
     : RTPSParticipantImpl(domain_id, PParam, guidP, c_GuidPrefix_Unknown, par, plisten)
 {
+    client_override_ = false;
 }
 
 void RTPSParticipantImpl::enable()
@@ -2174,7 +2175,7 @@ void RTPSParticipantImpl::environment_file_has_changed()
     // Only if it is a server/backup or a client override
     if (DiscoveryProtocol_t::SERVER == m_att.builtin.discovery_config.discoveryProtocol ||
             DiscoveryProtocol_t::BACKUP == m_att.builtin.discovery_config.discoveryProtocol ||
-            mp_userParticipant->client_override_)
+            client_override_)
     {
         if (load_environment_server_info(patt.builtin.discovery_config.m_DiscoveryServers))
         {

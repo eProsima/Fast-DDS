@@ -480,6 +480,18 @@ public:
             const LocatorList_t& MulticastLocatorList,
             const LocatorList_t& UnicastLocatorList) const;
 
+    //! Getter client_override flag
+    bool client_override()
+    {
+            return client_override_;
+    }
+
+    //! Setter client_override flag
+    void client_override(bool value)
+    {
+            client_override_ = value;
+    }
+
 private:
 
     //! DomainId
@@ -517,6 +529,12 @@ private:
     std::function<bool(const std::string&)> type_check_fn_;
     //!Pool of send buffers
     std::unique_ptr<SendBuffersManager> send_buffers_;
+
+    /**
+     * Client override flag: SIMPLE participant that has been overriden with the environment variable and transformed
+     * into a client.
+     */
+    bool client_override_;
 
 #if HAVE_SECURITY
     // Security manager
