@@ -624,53 +624,24 @@ void PDPClient::match_pdp_reader_nts_(
 const std::string& ros_discovery_server_env()
 {
     static std::string servers;
-    {
-        const char* data;
-        if (eprosima::ReturnCode_t::RETCODE_OK == SystemInfo::get_env(DEFAULT_ROS2_MASTER_URI, &data))
-        {
-            servers = data;
-        }
-    }
+    SystemInfo::get_env(DEFAULT_ROS2_MASTER_URI, servers);
     return servers;
 }
 
 bool load_environment_server_info(
         RemoteServerList_t& attributes)
 {
-    static std::string filename;
-    std::string remote_servers_list;
-    // Try to load environment file
-    if (filename.empty())
-    {
-        const char* data;
-        if (eprosima::ReturnCode_t::RETCODE_OK == SystemInfo::get_env(FASTDDS_ENVIRONMENT_FILE_ENV_VAR, &data))
-        {
-            filename = data;
-        }
-    }
-
-    bool result = false;
-    if (!filename.empty() && ReturnCode_t::RETCODE_OK == SystemInfo::load_environment_file(filename,
-            DEFAULT_ROS2_MASTER_URI, remote_servers_list))
-    {
-        result = load_environment_server_info(remote_servers_list, attributes);
-    }
-    else
-    {
-        // If there is no environment file or if the file does not contain the DEFAULT_ROS2_MASTER_URI environment variable
-        // try to find if the variable has been set directly in the environment.
-        result = load_environment_server_info(ros_discovery_server_env(), attributes);
-    }
-    return result;
+    return load_environment_server_info(ros_discovery_server_env(), attributes);
 }
 
 bool load_environment_server_info(
         std::string list,
         RemoteServerList_t& attributes)
 {
+    attributes.clear();
     if (list.empty())
     {
-        return false;
+        return true;
     }
 
     /* Parsing ancillary regex */
@@ -682,7 +653,6 @@ bool load_environment_server_info(
     try
     {
         // Do the parsing and populate the list
-        attributes.clear();
         RemoteServerAttributes server_att;
         Locator_t server_locator(LOCATOR_KIND_UDPv4, DEFAULT_ROS2_SERVER_PORT);
         int server_id = 0;

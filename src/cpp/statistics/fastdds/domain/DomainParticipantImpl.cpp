@@ -258,11 +258,7 @@ void DomainParticipantImpl::create_statistics_builtin_entities()
 
     // 2. FASTDDS_STATISTICS environment variable
     std::string env_topic_list;
-    const char* data;
-    if (ReturnCode_t::RETCODE_OK == SystemInfo::get_env(FASTDDS_STATISTICS_ENVIRONMENT_VARIABLE, &data))
-    {
-        env_topic_list = data;
-    }
+    SystemInfo::get_env(FASTDDS_STATISTICS_ENVIRONMENT_VARIABLE, env_topic_list);
 
     if (!env_topic_list.empty())
     {

@@ -296,6 +296,7 @@ private:
 
     //!Pointer to the implementation.
     RTPSParticipantImpl* mp_impl;
+
 };
 
 } // namespace rtps

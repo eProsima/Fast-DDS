@@ -86,24 +86,39 @@ public:
     }
 
     /**
-     * Retrieve the value of a given environment variable if it exists, or nullptr.
-     * The c-string which is returned in the env_value output parameter is only valid until the next time this function
-     * is called, because it is a direct pointer to the static storage.
-     * Modifying the string returned in env_value invokes undefined behavior.
-     * If the environment variable is not set, a nullptr will be returned.
+     * Retrieve the value of a given environment variable if it exists.
+     * The string which is returned in the env_value output parameter is not modified
+     * if the environment variable is not set.
      *
      * This function is thread-safe as long as no other function modifies the host environment (in particular, POSIX
      * functions setenv, unsetenv and putenv would introduce a data race if called without synchronization.)
      *
-     * \param [in] env_name the name of the environment variable
-     * \param [out] env_value pointer to the value c-string
+     * \param [in] env_name name of the environment variable.
+     * \param [out] env_value value of the environment variable.
      * @return RETCODE_OK if the environment variable is set.
      * RETCODE_NO_DATA if the environment variable is unset.
      * RETCODE_BAD_PARAMETER if the provided parameters are not valid.
      */
     static ReturnCode_t get_env(
-            const char* env_name,
-            const char** env_value);
+            const std::string& env_name,
+            std::string& env_value);
+
+    /**
+     * Read environment variable contained in the environment file.
+     *
+     * @param [in] filename path/name of the environment file.
+     * @param [in] env_name environment variable name to read from the file.
+     * @param [out] env_value environment variable value read from the file.
+     *
+     * @return RETCODE_OK if succesful.
+     * RETCODE_BAD_PARAMETER if the file does not exist.
+     * RETCODE_NO_DATA if the file exists but there is no information about the environment variable.
+     * RETCODE_ERROR if the file is empty or malformed.
+     */
+    static ReturnCode_t get_env(
+            const std::string& filename,
+            const std::string& env_name,
+            std::string& env_value);
 
     /**
      * Get the effective username of the person that launched the application
@@ -138,21 +153,21 @@ public:
             const std::string& filename);
 
     /**
-     * Read environment variable contained in the environment file.
+     * Read FASTDDS_ENVIRONMENT_FILE_ENV_VAR environment value and save its value.
+     * Use get_environment_file to read its value.
      *
-     * @param [in] filename path/name of the environment file.
-     * @param [in] env_name environment variable name to read from the file.
-     * @param [out] env_value environment variable value read from the file.
-     *
-     * @return RETCODE_OK if succesful.
-     * RETCODE_BAD_PARAMETER if the file does not exist.
-     * RETCODE_NO_DATA if the file exists but there is no information about the environment variable.
-     * RETCODE_ERROR if the file is empty or malformed.
+     * @return RETCODE_OK if the environment variable is set.
+     * RETCODE_NO_DATA if the environment variable is unset.
      */
-    static ReturnCode_t load_environment_file(
-            const std::string& filename,
-            const std::string& env_name,
-            std::string& env_value);
+    static ReturnCode_t set_environment_file();
+
+    /**
+     * Getter for the path/filename contained in the FASTDDS_ENVIRONMENT_FILE_ENV_VAR.
+     * The value is set calling set_environment_file().
+     *
+     * @return Path/filename contained in the environment variable.
+     */
+    static const std::string& get_environment_file();
 
     /**
      * Start a thread that watches for changes in the given file and executes a callback when the file changes.
@@ -170,7 +185,7 @@ public:
      */
     static FileWatchHandle watch_file(
             std::string filename,
-            std::function<void(const std::string&)> callback);
+            std::function<void()> callback);
 
     /**
      * Stop a file watcher.
@@ -187,7 +202,18 @@ private:
 
     SystemInfo() = default;
 
+    static std::string environment_file_;
+
 };
+
+/**
+ * Environment variable to specify the name of a file (including or not the path) where the environment variables
+ * could be defined.
+ * Thus, the user can modify the environment variables' values in runtime.
+ *
+ * TODO(jlbueno) Currently only ROS_DISCOVERY_SERVER environment variable is supported.
+ */
+const char* const FASTDDS_ENVIRONMENT_FILE_ENV_VAR = "FASTDDS_ENVIRONMENT_FILE";
 
 } // namespace eprosima
 

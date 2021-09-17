@@ -123,15 +123,6 @@ const char* const DEFAULT_ROS2_SERVER_GUIDPREFIX = "44.53.00.5f.45.50.52.4f.53.4
 const char* const DEFAULT_ROS2_MASTER_URI = "ROS_DISCOVERY_SERVER";
 
 /**
- * Environment variable to specify the name of a file (including or not the path) where the environment variables
- * could be defined.
- * Thus, the user can modify the environment variables' values in runtime.
- *
- * TODO(jlbueno) Currently only ROS_DISCOVERY_SERVER environment variable is supported.
- */
-const char* const FASTDDS_ENVIRONMENT_FILE_ENV_VAR = "FASTDDS_ENVIRONMENT_FILE";
-
-/**
  * Retrieves a semicolon-separated list of locators from a string, and
  * populates a RemoteServerList_t mapping list position to default guid.
  * @param[in] list servers listening locator list.
