@@ -42,7 +42,7 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER) AND fastcdr_FOUND)
         math(EXPR W_UNICAST_PORT_RANDOM_NUMBER "${W_UNICAST_PORT_RANDOM_NUMBER} + 1024")
     endif()
 
-    if(PYTHONINTERP_FOUND AND NOT APPLE)
+    if(PYTHONINTERP_FOUND AND NOT APPLE AND NOT WIN32)
         add_test(NAME AddDiscoveryServerToListFromEnvironmentFile
             COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/client_server_dynamic_discovery.py)
 
