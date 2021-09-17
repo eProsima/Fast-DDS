@@ -53,7 +53,6 @@ public:
 private:
 
     unsigned int matched_ = 0;
-    bool run_ = true;
     DomainParticipant* participant_ = nullptr;
     DiscoveryProtocol_t discovery_protocol_;
     GuidPrefix_t server_guid_prefix_;
