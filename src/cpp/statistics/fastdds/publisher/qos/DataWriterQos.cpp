@@ -31,6 +31,7 @@ DataWriterQos::DataWriterQos()
     reliability().kind = eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS;
     durability().kind = eprosima::fastdds::dds::TRANSIENT_LOCAL_DURABILITY_QOS;
     publish_mode().kind = eprosima::fastdds::dds::ASYNCHRONOUS_PUBLISH_MODE;
+    publish_mode().flow_controller_name = eprosima::fastdds::rtps::FASTDDS_STATISTICS_FLOW_CONTROLLER_DEFAULT;
     history().kind = eprosima::fastdds::dds::KEEP_LAST_HISTORY_QOS;
     history().depth = 100;
     properties().properties().emplace_back("fastdds.push_mode", "false");

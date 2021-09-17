@@ -10,6 +10,9 @@ namespace rtps {
 const char* const pure_sync_flow_controller_name = "PureSyncFlowController";
 const char* const sync_flow_controller_name = "SyncFlowController";
 const char* const async_flow_controller_name = "AsyncFlowController";
+#ifdef FASTDDS_STATISTICS
+const char* const async_statistics_flow_controller_name = "AsyncStatisticsFlowController";
+#endif // ifndef FASTDDS_STATISTICS
 
 void FlowControllerFactory::init(
         fastrtps::rtps::RTPSParticipantImpl* participant)
@@ -32,6 +35,13 @@ void FlowControllerFactory::init(
                               std::unique_ptr<FlowController>(
                                   new FlowControllerImpl<FlowControllerAsyncPublishMode,
                                   FlowControllerFifoSchedule>(participant_, nullptr))});
+
+#ifdef FASTDDS_STATISTICS
+    flow_controllers_.insert({async_statistics_flow_controller_name,
+                              std::unique_ptr<FlowController>(
+                                  new FlowControllerImpl<FlowControllerAsyncPublishMode,
+                                  FlowControllerFifoSchedule>(participant_, nullptr))});
+#endif // ifndef FASTDDS_STATISTICS
 }
 
 void FlowControllerFactory::register_flow_controller (
@@ -147,6 +157,13 @@ FlowController* FlowControllerFactory::retrieve_flow_controller(
             returned_flow = flow_controllers_[async_flow_controller_name].get();
         }
     }
+#ifdef FASTDDS_STATISTICS
+    else if (0 == flow_controller_name.compare(FASTDDS_STATISTICS_FLOW_CONTROLLER_DEFAULT))
+    {
+        assert(fastrtps::rtps::ASYNCHRONOUS_WRITER == writer_attributes.mode);
+        returned_flow = flow_controllers_[async_statistics_flow_controller_name].get();
+    }
+#endif // ifdef FASTDDS_STATISTICS
     else
     {
         auto it = flow_controllers_.find(flow_controller_name);
