@@ -73,158 +73,9 @@ struct RTPS_DllAPI Time_t
      */
     static void now(
             Time_t& ret);
-
-
-#ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
-
-    /**
-     * Comparison operator
-     * @param other Second Time_t to compare
-     * @return True if equal
-     */
-    inline bool operator ==(
-            const Time_t& other) const
-    {
-        if (seconds != other.seconds)
-        {
-            return false;
-        }
-        if (nanosec != other.nanosec)
-        {
-            return false;
-        }
-        return true;
-    }
-
-    /**
-     * Comparison operator
-     * @param other Second Time_t to compare
-     * @return True if not equal
-     */
-    inline bool operator !=(
-            const Time_t& other) const
-    {
-        return !(*this == other);
-    }
-
-    /**
-     * Checks if a Time_t is less than other.
-     * @param other Second Time_t to compare
-     * @return True if the first Time_t is less than the second
-     */
-    inline bool operator <(
-            const Time_t& other) const
-    {
-        if (seconds < other.seconds)
-        {
-            return true;
-        }
-        else if (seconds > other.seconds)
-        {
-            return false;
-        }
-        else
-        {
-            if (nanosec < other.nanosec)
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
-        }
-    }
-
-    /**
-     * Checks if a Time_t is greater than other.
-     * @param other Second Time_t to compare
-     * @return True if the first Time_t is greater than the second
-     */
-    inline bool operator >(
-            const Time_t& other) const
-    {
-        return other < *this;
-    }
-
-    /**
-     * Checks if a Time_t is less or equal than other.
-     * @param other Second Time_t to compare
-     * @return True if the first Time_t is less or equal than the second
-     */
-    inline bool operator <=(
-            const Time_t& other) const
-    {
-        return !(*this > other);
-    }
-
-    /**
-     * Checks if a Time_t is greater or equal than other.
-     * @param other Second Time_t to compare
-     * @return True if the first Time_t is greater or equal than the second
-     */
-    inline bool operator >=(
-            const Time_t& other) const
-    {
-        return !(*this < other);
-    }
-
-    /**
-     * Adds two Time_t.
-     * @param other Second Time_t to add
-     * @return A new Time_t with the result.
-     */
-    inline Time_t operator +(
-            const Time_t& other) const
-    {
-        Time_t result(seconds + other.seconds, nanosec + other.nanosec);
-        if (result.nanosec < nanosec) // Overflow is detected by any of them
-        {
-            ++result.seconds;
-        }
-        return result;
-    }
-
-    /**
-     * Subtracts two Time_t.
-     * @param other Second Time_t to subtract
-     * @return A new Time_t with the result.
-     */
-    inline Time_t operator -(
-            const Time_t& other) const
-    {
-        Time_t result(seconds - other.seconds, nanosec - other.nanosec);
-        if (result.nanosec > nanosec) // Overflow is detected by ta
-        {
-            --result.seconds;
-        }
-        return result;
-    }
-
-#endif // ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
-
 };
 
 using Duration_t = Time_t;
-
-#ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
-
-inline std::ostream& operator <<(
-        std::ostream& output,
-        const Time_t& t)
-{
-    long double t_aux = t.seconds + (((long double)t.nanosec) / 1000000000ULL);
-    return output << t_aux;
-}
-
-#endif // ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
-
-//! Time_t (Duration_t) representing an infinite time. DONT USE IT IN CONSTRUCTORS
-const Time_t c_TimeInfinite{TIME_T_INFINITE_SECONDS, TIME_T_INFINITE_NANOSECONDS};
-//! Time_t (Duration_t) representing a zero time. DONT USE IT IN CONSTRUCTORS
-const Time_t c_TimeZero{0, 0};
-//! Time_t (Duration_t) representing an invalid time. DONT USE IT IN CONSTRUCTORS
-const Time_t c_TimeInvalid{-1, TIME_T_INFINITE_NANOSECONDS};
 
 namespace rtps {
 
@@ -321,134 +172,6 @@ public:
     static void now(
             Time_t& ret);
 
-#ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
-
-    /**
-     * Comparison operator
-     * @param other Second Time_t to compare
-     * @return True if equal
-     */
-    inline bool operator ==(
-            const Time_t& other) const
-    {
-        if (seconds() != other.seconds())
-        {
-            return false;
-        }
-        if (fraction() != other.fraction())
-        {
-            return false;
-        }
-        return true;
-    }
-
-    /**
-     * Comparison operator
-     * @param other Second Time_t to compare
-     * @return True if not equal
-     */
-    inline bool operator !=(
-            const Time_t& other) const
-    {
-        return !(*this == other);
-    }
-
-    /**
-     * Checks if a Time_t is less than other.
-     * @param other Second Time_t to compare
-     * @return True if the first Time_t is less than the second
-     */
-    inline bool operator <(
-            const Time_t& other) const
-    {
-        if (seconds() < other.seconds())
-        {
-            return true;
-        }
-        else if (seconds() > other.seconds())
-        {
-            return false;
-        }
-        else
-        {
-            if (fraction() < other.fraction())
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
-        }
-    }
-
-    /**
-     * Checks if a Time_t is greater than other.
-     * @param other Second Time_t to compare
-     * @return True if the first Time_t is greater than the second
-     */
-    inline bool operator >(
-            const Time_t& other) const
-    {
-        return other < *this;
-    }
-
-    /**
-     * Checks if a Time_t is less or equal than other.
-     * @param other Second Time_t to compare
-     * @return True if the first Time_t is less or equal than the second
-     */
-    inline bool operator <=(
-            const Time_t& other) const
-    {
-        return !(*this > other);
-    }
-
-    /**
-     * Checks if a Time_t is greater or equal than other.
-     * @param other Second Time_t to compare
-     * @return True if the first Time_t is greater or equal than the second
-     */
-    inline bool operator >=(
-            const Time_t& other) const
-    {
-        return !(*this < other);
-    }
-
-    /**
-     * Adds two Time_t.
-     * @param other Second Time_t to add
-     * @return A new Time_t with the result.
-     */
-    inline Time_t operator +(
-            const Time_t& other) const
-    {
-        Time_t result(seconds() + other.seconds(), fraction() + other.fraction());
-        if (result.fraction() < fraction()) // Overflow is detected by any of them
-        {
-            ++result.seconds();
-        }
-        return result;
-    }
-
-    /**
-     * Subtracts two Time_t.
-     * @param other Second Time_t to subtract
-     * @return A new Time_t with the result.
-     */
-    inline Time_t operator -(
-            const Time_t& other) const
-    {
-        Time_t result(seconds() - other.seconds(), fraction() - other.fraction());
-        if (result.fraction() > fraction()) // Overflow is detected by ta
-        {
-            --result.seconds();
-        }
-        return result;
-    }
-
-#endif // ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
-
 private:
 
     //!Seconds
@@ -468,6 +191,172 @@ private:
 };
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
+
+/**
+ * Comparison assignment
+ * @param t1 First Time_t to compare
+ * @param t2 Second Time_t to compare
+ * @return True if equal
+ */
+static inline bool operator ==(
+        const Time_t& t1,
+        const Time_t& t2)
+{
+    if (t1.seconds() != t2.seconds())
+    {
+        return false;
+    }
+    if (t1.fraction() != t2.fraction())
+    {
+        return false;
+    }
+    return true;
+}
+
+/**
+ * Comparison assignment
+ * @param t1 First Time_t to compare
+ * @param t2 Second Time_t to compare
+ * @return True if not equal
+ */
+static inline bool operator !=(
+        const Time_t& t1,
+        const Time_t& t2)
+{
+    if (t1.seconds() != t2.seconds())
+    {
+        return true;
+    }
+    if (t1.fraction() != t2.fraction())
+    {
+        return true;
+    }
+    return false;
+}
+
+/**
+ * Checks if a Time_t is less than other.
+ * @param t1 First Time_t to compare
+ * @param t2 Second Time_t to compare
+ * @return True if the first Time_t is less than the second
+ */
+static inline bool operator <(
+        const Time_t& t1,
+        const Time_t& t2)
+{
+    if (t1.seconds() < t2.seconds())
+    {
+        return true;
+    }
+    else if (t1.seconds() > t2.seconds())
+    {
+        return false;
+    }
+    else
+    {
+        if (t1.fraction() < t2.fraction())
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+}
+
+/**
+ * Checks if a Time_t is greater than other.
+ * @param t1 First Time_t to compare
+ * @param t2 Second Time_t to compare
+ * @return True if the first Time_t is greater than the second
+ */
+static inline bool operator >(
+        const Time_t& t1,
+        const Time_t& t2)
+{
+    if (t1.seconds() > t2.seconds())
+    {
+        return true;
+    }
+    else if (t1.seconds() < t2.seconds())
+    {
+        return false;
+    }
+    else
+    {
+        if (t1.fraction() > t2.fraction())
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+}
+
+/**
+ * Checks if a Time_t is less or equal than other.
+ * @param t1 First Time_t to compare
+ * @param t2 Second Time_t to compare
+ * @return True if the first Time_t is less or equal than the second
+ */
+static inline bool operator <=(
+        const Time_t& t1,
+        const Time_t& t2)
+{
+    if (t1.seconds() < t2.seconds())
+    {
+        return true;
+    }
+    else if (t1.seconds() > t2.seconds())
+    {
+        return false;
+    }
+    else
+    {
+        if (t1.fraction() <= t2.fraction())
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+}
+
+/**
+ * Checks if a Time_t is greater or equal than other.
+ * @param t1 First Time_t to compare
+ * @param t2 Second Time_t to compare
+ * @return True if the first Time_t is greater or equal than the second
+ */
+static inline bool operator >=(
+        const Time_t& t1,
+        const Time_t& t2)
+{
+    if (t1.seconds() > t2.seconds())
+    {
+        return true;
+    }
+    else if (t1.seconds() < t2.seconds())
+    {
+        return false;
+    }
+    else
+    {
+        if (t1.fraction() >= t2.fraction())
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+}
 
 inline std::ostream& operator <<(
         std::ostream& output,
@@ -514,6 +403,42 @@ inline std::istream& operator >>(
     return input;
 }
 
+/**
+ * Adds two Time_t.
+ * @param ta First Time_t to add
+ * @param tb Second Time_t to add
+ * @return A new Time_t with the result.
+ */
+static inline Time_t operator +(
+        const Time_t& ta,
+        const Time_t& tb)
+{
+    Time_t result(ta.seconds() + tb.seconds(), ta.fraction() + tb.fraction());
+    if (result.fraction() < ta.fraction()) // Overflow is detected by any of them
+    {
+        ++result.seconds();
+    }
+    return result;
+}
+
+/**
+ * Subtracts two Time_t.
+ * @param ta First Time_t to subtract
+ * @param tb Second Time_t to subtract
+ * @return A new Time_t with the result.
+ */
+static inline Time_t operator -(
+        const Time_t& ta,
+        const Time_t& tb)
+{
+    Time_t result(ta.seconds() - tb.seconds(), ta.fraction() - tb.fraction());
+    if (result.fraction() > ta.fraction()) // Overflow is detected by ta
+    {
+        --result.seconds();
+    }
+    return result;
+}
+
 #endif // ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
 const Time_t c_RTPSTimeInfinite{0x7fffffff, 0xffffffff};
@@ -521,6 +446,227 @@ const Time_t c_RTPSTimeZero{0, 0};
 const Time_t c_RTPSTimeInvalid{-1, 0xffffffff};
 
 } // namespace rtps
+
+#ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
+
+/**
+ * Comparison assignment
+ * @param t1 First Time_t to compare
+ * @param t2 Second Time_t to compare
+ * @return True if equal
+ */
+static inline bool operator ==(
+        const Time_t& t1,
+        const Time_t& t2)
+{
+    if (t1.seconds != t2.seconds)
+    {
+        return false;
+    }
+    if (t1.nanosec != t2.nanosec)
+    {
+        return false;
+    }
+    return true;
+}
+
+/**
+ * Comparison assignment
+ * @param t1 First Time_t to compare
+ * @param t2 Second Time_t to compare
+ * @return True if not equal
+ */
+static inline bool operator !=(
+        const Time_t& t1,
+        const Time_t& t2)
+{
+    if (t1.seconds != t2.seconds)
+    {
+        return true;
+    }
+    if (t1.nanosec != t2.nanosec)
+    {
+        return true;
+    }
+    return false;
+}
+
+/**
+ * Checks if a Time_t is less than other.
+ * @param t1 First Time_t to compare
+ * @param t2 Second Time_t to compare
+ * @return True if the first Time_t is less than the second
+ */
+static inline bool operator <(
+        const Time_t& t1,
+        const Time_t& t2)
+{
+    if (t1.seconds < t2.seconds)
+    {
+        return true;
+    }
+    else if (t1.seconds > t2.seconds)
+    {
+        return false;
+    }
+    else
+    {
+        if (t1.nanosec < t2.nanosec)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+}
+
+/**
+ * Checks if a Time_t is greater than other.
+ * @param t1 First Time_t to compare
+ * @param t2 Second Time_t to compare
+ * @return True if the first Time_t is greater than the second
+ */
+static inline bool operator >(
+        const Time_t& t1,
+        const Time_t& t2)
+{
+    if (t1.seconds > t2.seconds)
+    {
+        return true;
+    }
+    else if (t1.seconds < t2.seconds)
+    {
+        return false;
+    }
+    else
+    {
+        if (t1.nanosec > t2.nanosec)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+}
+
+/**
+ * Checks if a Time_t is less or equal than other.
+ * @param t1 First Time_t to compare
+ * @param t2 Second Time_t to compare
+ * @return True if the first Time_t is less or equal than the second
+ */
+static inline bool operator <=(
+        const Time_t& t1,
+        const Time_t& t2)
+{
+    if (t1.seconds < t2.seconds)
+    {
+        return true;
+    }
+    else if (t1.seconds > t2.seconds)
+    {
+        return false;
+    }
+    else
+    {
+        if (t1.nanosec <= t2.nanosec)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+}
+
+/**
+ * Checks if a Time_t is greater or equal than other.
+ * @param t1 First Time_t to compare
+ * @param t2 Second Time_t to compare
+ * @return True if the first Time_t is greater or equal than the second
+ */
+static inline bool operator >=(
+        const Time_t& t1,
+        const Time_t& t2)
+{
+    if (t1.seconds > t2.seconds)
+    {
+        return true;
+    }
+    else if (t1.seconds < t2.seconds)
+    {
+        return false;
+    }
+    else
+    {
+        if (t1.nanosec >= t2.nanosec)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+}
+
+inline std::ostream& operator <<(
+        std::ostream& output,
+        const Time_t& t)
+{
+    long double t_aux = t.seconds + (((long double)t.nanosec) / 1000000000ULL);
+    return output << t_aux;
+}
+
+/**
+ * Adds two Time_t.
+ * @param ta First Time_t to add
+ * @param tb Second Time_t to add
+ * @return A new Time_t with the result.
+ */
+static inline Time_t operator +(
+        const Time_t& ta,
+        const Time_t& tb)
+{
+    Time_t result(ta.seconds + tb.seconds, ta.nanosec + tb.nanosec);
+    if (result.nanosec < ta.nanosec) // Overflow is detected by any of them
+    {
+        ++result.seconds;
+    }
+    return result;
+}
+
+/**
+ * Subtracts two Time_t.
+ * @param ta First Time_t to subtract
+ * @param tb Second Time_t to subtract
+ * @return A new Time_t with the result.
+ */
+static inline Time_t operator -(
+        const Time_t& ta,
+        const Time_t& tb)
+{
+    Time_t result(ta.seconds - tb.seconds, ta.nanosec - tb.nanosec);
+    if (result.nanosec > ta.nanosec) // Overflow is detected by ta
+    {
+        --result.seconds;
+    }
+    return result;
+}
+
+#endif // ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
+
+//! Time_t (Duration_t) representing an infinite time. DONT USE IT IN CONSTRUCTORS
+const Time_t c_TimeInfinite{TIME_T_INFINITE_SECONDS, TIME_T_INFINITE_NANOSECONDS};
+//! Time_t (Duration_t) representing a zero time. DONT USE IT IN CONSTRUCTORS
+const Time_t c_TimeZero{0, 0};
+//! Time_t (Duration_t) representing an invalid time. DONT USE IT IN CONSTRUCTORS
+const Time_t c_TimeInvalid{-1, TIME_T_INFINITE_NANOSECONDS};
 
 } // namespace fastrtps
 } // namespace eprosima

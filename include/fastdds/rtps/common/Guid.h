@@ -122,61 +122,80 @@ struct RTPS_DllAPI GUID_t
         return *reinterpret_cast<const InstanceHandle_t*>(this);
     }
 
+};
+
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
-    /**
-     * GUID comparison operator
-     * @param other Second GUID to compare
-     * @return True if equal
-     */
-    inline bool operator ==(
-            const GUID_t& other) const
+/**
+ * GUID comparison operator
+ * @param g1 First GUID to compare
+ * @param g2 Second GUID to compare
+ * @return True if equal
+ */
+inline bool operator ==(
+        const GUID_t& g1,
+        const GUID_t& g2)
+{
+    if (g1.guidPrefix == g2.guidPrefix && g1.entityId == g2.entityId)
     {
-        return (guidPrefix == other.guidPrefix && entityId == other.entityId);
+        return true;
     }
-
-    /**
-     * GUID comparison operator
-     * @param other Second GUID to compare
-     * @return True if not equal
-     */
-    inline bool operator !=(
-            const GUID_t& other) const
+    else
     {
-        return (guidPrefix != other.guidPrefix || entityId != other.entityId);
-    }
-
-    inline bool operator <(
-            const GUID_t& other) const
-    {
-        for (uint8_t i = 0; i < 12; ++i)
-        {
-            if (guidPrefix.value[i] < other.guidPrefix.value[i])
-            {
-                return true;
-            }
-            else if (guidPrefix.value[i] > other.guidPrefix.value[i])
-            {
-                return false;
-            }
-        }
-        for (uint8_t i = 0; i < 4; ++i)
-        {
-            if (entityId.value[i] < other.entityId.value[i])
-            {
-                return true;
-            }
-            else if (entityId.value[i] > other.entityId.value[i])
-            {
-                return false;
-            }
-        }
         return false;
     }
+}
+
+/**
+ * GUID comparison operator
+ * @param g1 First GUID to compare
+ * @param g2 Second GUID to compare
+ * @return True if not equal
+ */
+inline bool operator !=(
+        const GUID_t& g1,
+        const GUID_t& g2)
+{
+    if (g1.guidPrefix != g2.guidPrefix || g1.entityId != g2.entityId)
+    {
+        return true;
+    }
+    else
+    {
+        return false;
+    }
+}
+
+inline bool operator <(
+        const GUID_t& g1,
+        const GUID_t& g2)
+{
+    for (uint8_t i = 0; i < 12; ++i)
+    {
+        if (g1.guidPrefix.value[i] < g2.guidPrefix.value[i])
+        {
+            return true;
+        }
+        else if (g1.guidPrefix.value[i] > g2.guidPrefix.value[i])
+        {
+            return false;
+        }
+    }
+    for (uint8_t i = 0; i < 4; ++i)
+    {
+        if (g1.entityId.value[i] < g2.entityId.value[i])
+        {
+            return true;
+        }
+        else if (g1.entityId.value[i] > g2.entityId.value[i])
+        {
+            return false;
+        }
+    }
+    return false;
+}
 
 #endif // ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
-
-};
 
 const GUID_t c_Guid_Unknown;
 

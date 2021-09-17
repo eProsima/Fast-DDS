@@ -231,7 +231,14 @@ inline bool operator !=(
         const EntityId_t& id1,
         const EntityId_t& id2)
 {
-    return !(id1 == id2);
+    for (uint8_t i = 0; i < 4; ++i)
+    {
+        if (id1.value[i] != id2.value[i])
+        {
+            return true;
+        }
+    }
+    return false;
 }
 
 #endif // ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC

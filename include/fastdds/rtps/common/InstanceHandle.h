@@ -126,49 +126,40 @@ struct RTPS_DllAPI InstanceHandle_t
         return *reinterpret_cast<const GUID_t*>(this);
     }
 
-    /**
-     * Strictly less than operator
-     * @param other The other InstanceHandle_t to compare
-     * @return True if the value of this handle lexicographically preceeds that of \p other
-     */
-    inline bool operator <(
-            const InstanceHandle_t& other) const
-    {
-        return memcmp(value, other.value, 16) < 0;
-    }
-
-#ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
-
-    /**
-     * Comparison operator
-     * @param other Second InstanceHandle_t to compare
-     * @return True if equal
-     */
-    inline bool operator ==(
-            const InstanceHandle_t& other) const
-    {
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            if (value[i] != other.value[i])
-            {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    inline bool operator !=(
-            const InstanceHandle_t& other) const
-    {
-        return !(*this == other);
-    }
-
-#endif // ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
-
 };
 
 const InstanceHandle_t c_InstanceHandle_Unknown;
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
+
+/**
+ * Comparison operator
+ * @param ihandle1 First InstanceHandle_t to compare
+ * @param ihandle2 Second InstanceHandle_t to compare
+ * @return True if equal
+ */
+inline bool operator ==(
+        const InstanceHandle_t& ihandle1,
+        const InstanceHandle_t& ihandle2)
+{
+    for (uint8_t i = 0; i < 16; ++i)
+    {
+        if (ihandle1.value[i] != ihandle2.value[i])
+        {
+            return false;
+        }
+    }
+    return true;
+}
+
+inline bool operator !=(
+        const InstanceHandle_t& ihandle1,
+        const InstanceHandle_t& ihandle2)
+{
+    return !(ihandle1 == ihandle2);
+}
+
+#endif // ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
 /**
  * Convert InstanceHandle_t to GUID
@@ -214,6 +205,13 @@ inline GUID_t iHandle2GUID(
         }
     }
     return guid;
+}
+
+inline bool operator <(
+        const InstanceHandle_t& h1,
+        const InstanceHandle_t& h2)
+{
+    return memcmp(h1.value, h2.value, 16) < 0;
 }
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
