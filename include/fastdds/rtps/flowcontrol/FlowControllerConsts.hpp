@@ -23,6 +23,7 @@ namespace rtps {
 
 //! Name of the default flow controller.
 extern RTPS_DllAPI const char* const FASTDDS_FLOW_CONTROLLER_DEFAULT;
+//! Name of the default flow controller for statistics writers.
 extern RTPS_DllAPI const char* const FASTDDS_STATISTICS_FLOW_CONTROLLER_DEFAULT;
 
 } // namespace rtps
