@@ -35,6 +35,8 @@ namespace dds {
  */
 class DomainParticipantQos
 {
+    //! User defined flow controllers to use alongside.
+    //! @since 2.4.0
     using FlowControllerDescriptorList = std::vector<std::shared_ptr<fastdds::rtps::FlowControllerDescriptor>>;
 
 public:
