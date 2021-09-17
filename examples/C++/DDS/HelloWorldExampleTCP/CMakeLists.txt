@@ -51,9 +51,9 @@ file(GLOB DDS_TCP_HELLOWORLD_EXAMPLE_SOURCES_CPP "*.cpp")
 configure_file("HelloWorldSubscriber.xml" "HelloWorldSubscriber.xml" COPYONLY)
 configure_file("HelloWorldPublisher.xml" "HelloWorldPublisher.xml" COPYONLY)
 configure_file("dh2048.pem" "dh2048.pem" COPYONLY)
-configure_file("server.pem" "server.pem" COPYONLY)
-configure_file("ca.pem" "ca.pem" COPYONLY)
-
+configure_file("serverkey.pem" "serverkey.pem" COPYONLY)
+configure_file("servercert.pem" "servercert.pem" COPYONLY)
+configure_file("cacert.pem" "cacert.pem" COPYONLY)
 
 add_executable(DDSHelloWorldExampleTCP ${DDS_TCP_HELLOWORLD_EXAMPLE_SOURCES_CXX} ${DDS_TCP_HELLOWORLD_EXAMPLE_SOURCES_CPP})
 target_compile_definitions(DDSHelloWorldExampleTCP PRIVATE
