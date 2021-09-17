@@ -439,7 +439,8 @@ bool RTPSDomainImpl::removeRTPSWriter(
         std::unique_lock<std::mutex> lock(instance->m_mutex);
         for (auto it = instance->m_RTPSParticipants.begin(); it != instance->m_RTPSParticipants.end(); ++it)
         {
-            if (it->first->getGuid().guidPrefix == writer->getGuid().guidPrefix)
+            if (it->first->getGuid().guidPrefix == writer->getGuid().guidPrefix &&
+                    nullptr != it->second->find_local_writer(writer->getGuid()))
             {
                 t_p_RTPSParticipant participant = *it;
                 lock.unlock();
@@ -522,7 +523,8 @@ bool RTPSDomainImpl::removeRTPSReader(
         std::unique_lock<std::mutex> lock(instance->m_mutex);
         for (auto it = instance->m_RTPSParticipants.begin(); it != instance->m_RTPSParticipants.end(); ++it)
         {
-            if (it->first->getGuid().guidPrefix == reader->getGuid().guidPrefix)
+            if (it->first->getGuid().guidPrefix == reader->getGuid().guidPrefix &&
+                    nullptr != it->second->find_local_reader(reader->getGuid()))
             {
                 t_p_RTPSParticipant participant = *it;
                 lock.unlock();
