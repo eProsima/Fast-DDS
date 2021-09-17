@@ -483,13 +483,14 @@ public:
     //! Getter client_override flag
     bool client_override()
     {
-            return client_override_;
+        return client_override_;
     }
 
     //! Setter client_override flag
-    void client_override(bool value)
+    void client_override(
+            bool value)
     {
-            client_override_ = value;
+        client_override_ = value;
     }
 
 private:
