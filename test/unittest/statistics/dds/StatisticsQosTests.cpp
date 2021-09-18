@@ -19,6 +19,7 @@
 #include <fastdds/dds/core/policy/QosPolicies.hpp>
 #include <fastdds/dds/log/Log.hpp>
 #include <fastdds/rtps/attributes/PropertyPolicy.h>
+#include <fastdds/rtps/flowcontrol/FlowControllerConsts.hpp>
 #include <fastdds/statistics/dds/publisher/qos/DataWriterQos.hpp>
 #include <fastdds/statistics/dds/subscriber/qos/DataReaderQos.hpp>
 
@@ -32,21 +33,23 @@ namespace dds {
  * 1. Reliability RELIABLE
  * 2. Durability TRANSIENT LOCAL
  * 3. Pull mode enabled
- * 4. Publication mode ASYNCHRONOUS
+ * 4. Publication mode ASYNCHRONOUS with custom flow controller
  * 5. History kind KEEP LAST
- * 6. History depth 100
+ * 6. History depth 1
  */
 TEST(StatisticsQosTests, StatisticsDataWriterQosTest)
 {
-    EXPECT_TRUE(STATISTICS_DATAWRITER_QOS.reliability().kind == eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS);
-    EXPECT_TRUE(STATISTICS_DATAWRITER_QOS.durability().kind == eprosima::fastdds::dds::TRANSIENT_LOCAL_DURABILITY_QOS);
+    EXPECT_EQ(STATISTICS_DATAWRITER_QOS.reliability().kind, eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS);
+    EXPECT_EQ(STATISTICS_DATAWRITER_QOS.durability().kind, eprosima::fastdds::dds::TRANSIENT_LOCAL_DURABILITY_QOS);
     const std::string* pushMode_property = eprosima::fastrtps::rtps::PropertyPolicyHelper::find_property(
         STATISTICS_DATAWRITER_QOS.properties(), "fastdds.push_mode");
     ASSERT_NE(pushMode_property, nullptr);
     EXPECT_EQ(pushMode_property->compare("false"), 0);
-    EXPECT_TRUE(STATISTICS_DATAWRITER_QOS.publish_mode().kind == eprosima::fastdds::dds::ASYNCHRONOUS_PUBLISH_MODE);
-    EXPECT_TRUE(STATISTICS_DATAWRITER_QOS.history().kind == eprosima::fastdds::dds::KEEP_LAST_HISTORY_QOS);
-    EXPECT_TRUE(STATISTICS_DATAWRITER_QOS.history().depth == 100);
+    EXPECT_EQ(STATISTICS_DATAWRITER_QOS.publish_mode().kind, eprosima::fastdds::dds::ASYNCHRONOUS_PUBLISH_MODE);
+    EXPECT_EQ(STATISTICS_DATAWRITER_QOS.publish_mode().flow_controller_name,
+            eprosima::fastdds::rtps::FASTDDS_STATISTICS_FLOW_CONTROLLER_DEFAULT);
+    EXPECT_EQ(STATISTICS_DATAWRITER_QOS.history().kind, eprosima::fastdds::dds::KEEP_LAST_HISTORY_QOS);
+    EXPECT_EQ(STATISTICS_DATAWRITER_QOS.history().depth, 1);
 }
 
 /*
