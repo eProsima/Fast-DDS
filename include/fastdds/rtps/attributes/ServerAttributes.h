@@ -136,6 +136,13 @@ RTPS_DllAPI bool load_environment_server_info(
 /**
  * Retrieves a semicolon-separated list of locators from DEFAULT_ROS2_MASTER_URI environment variable, and
  * populates a RemoteServerList_t mapping list position to default guid.
+ *
+ * The environment variable can be read from an environment file (which allows runtime modification of the remote
+ * servers list) or directly from the environment.
+ * The value contained in the file takes precedence over the environment value (if both are set).
+ * This is to avoid conflicts because only new servers can be added to the list (containing thus all the previously
+ * known servers).
+ *
  * @param[out] attributes reference to a RemoteServerList_t to populate.
  * @return true if parsing succeeds, false otherwise
  */
