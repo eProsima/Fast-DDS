@@ -131,3 +131,11 @@ target_include_directories(SystemInfoTests PRIVATE
     ${PROJECT_SOURCE_DIR}/include ${PROJECT_SOURCE_DIR}/src/cpp ${PROJECT_BINARY_DIR}/include)
 target_link_libraries(SystemInfoTests GTest::gtest)
 add_gtest(SystemInfoTests SOURCES ${SYSTEMINFOTESTS_SOURCE})
+
+###############################################################################
+# Necessary files
+###############################################################################
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/environment_test_file.json
+    ${CMAKE_CURRENT_BINARY_DIR}/environment_test_file.json COPYONLY)
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/empty_environment_test_file.json
+    ${CMAKE_CURRENT_BINARY_DIR}/empty_environment_test_file.json COPYONLY)

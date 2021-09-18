@@ -12,6 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#ifndef _WIN32
+#include <stdlib.h>
+#endif // _WIN32
+
 #include "BlackboxTests.hpp"
 
 #include "PubSubWriterReader.hpp"
@@ -24,6 +28,8 @@
 #include <rtps/transport/test_UDPv4Transport.h>
 
 #include <fastdds/rtps/attributes/ServerAttributes.h>
+
+#include <utils/SystemInfo.hpp>
 
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
@@ -1197,7 +1203,8 @@ TEST(Discovery, ServerClientEnvironmentSetUp)
     text = "";
     output.clear();
 
-    ASSERT_FALSE(load_environment_server_info(text, output));
+    ASSERT_TRUE(load_environment_server_info(text, output));
+    ASSERT_TRUE(output.empty());
 
     // 5. check at least one server be present scenario is hadled
     text = ";;;;";

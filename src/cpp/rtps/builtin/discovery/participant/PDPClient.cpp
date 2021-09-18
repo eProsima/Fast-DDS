@@ -19,6 +19,8 @@
 
 #include <rtps/builtin/discovery/participant/PDPClient.h>
 
+#include <string>
+
 #include <fastdds/dds/log/Log.hpp>
 #include <fastdds/rtps/attributes/RTPSParticipantAttributes.h>
 #include <fastdds/rtps/builtin/BuiltinProtocols.h>
@@ -622,13 +624,7 @@ void PDPClient::match_pdp_reader_nts_(
 const std::string& ros_discovery_server_env()
 {
     static std::string servers;
-    {
-        const char* data;
-        if (eprosima::ReturnCode_t::RETCODE_OK == SystemInfo::instance().get_env(DEFAULT_ROS2_MASTER_URI, &data))
-        {
-            servers = data;
-        }
-    }
+    SystemInfo::get_env(DEFAULT_ROS2_MASTER_URI, servers);
     return servers;
 }
 
@@ -642,9 +638,10 @@ bool load_environment_server_info(
         std::string list,
         RemoteServerList_t& attributes)
 {
+    attributes.clear();
     if (list.empty())
     {
-        return false;
+        return true;
     }
 
     /* Parsing ancillary regex */
@@ -656,7 +653,6 @@ bool load_environment_server_info(
     try
     {
         // Do the parsing and populate the list
-        attributes.clear();
         RemoteServerAttributes server_att;
         Locator_t server_locator(LOCATOR_KIND_UDPv4, DEFAULT_ROS2_SERVER_PORT);
         int server_id = 0;
