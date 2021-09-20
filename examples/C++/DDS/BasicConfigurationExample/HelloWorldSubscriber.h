@@ -1,4 +1,4 @@
-// Copyright 2019 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+// Copyright 2021 Proyectos y Sistemas de Mantenimiento SL (eProsima).
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,18 +17,17 @@
  *
  */
 
-#ifndef HELLOWORLDSUBSCRIBER_H_
-#define HELLOWORLDSUBSCRIBER_H_
-
-#include "HelloWorldPubSubTypes.h"
-
-#include <fastdds/dds/domain/DomainParticipant.hpp>
-#include <fastdds/dds/subscriber/DataReaderListener.hpp>
-#include <fastdds/dds/core/status/SubscriptionMatchedStatus.hpp>
+#ifndef _EPROSIMA_FASTDDS_EXAMPLES_CPP_DDS_BASICCONFIGURATIONEXAMPLE_HELLOWORLDSUBSCRIBER_H_
+#define _EPROSIMA_FASTDDS_EXAMPLES_CPP_DDS_BASICCONFIGURATIONEXAMPLE_HELLOWORLDSUBSCRIBER_H_
 
 #include <atomic>
 #include <condition_variable>
 #include <mutex>
+
+#include "HelloWorldPubSubTypes.h"
+#include <fastdds/dds/core/status/SubscriptionMatchedStatus.hpp>
+#include <fastdds/dds/domain/DomainParticipant.hpp>
+#include <fastdds/dds/subscriber/DataReaderListener.hpp>
 
 class HelloWorldSubscriber
 {
@@ -111,4 +110,4 @@ private:
     static std::condition_variable terminate_cv_;
 };
 
-#endif /* HELLOWORLDSUBSCRIBER_H_ */
+#endif /* _EPROSIMA_FASTDDS_EXAMPLES_CPP_DDS_BASICCONFIGURATIONEXAMPLE_HELLOWORLDSUBSCRIBER_H_ */

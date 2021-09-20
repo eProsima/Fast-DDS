@@ -1,4 +1,4 @@
-// Copyright 2019 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+// Copyright 2021 Proyectos y Sistemas de Mantenimiento SL (eProsima).
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,16 +17,16 @@
  *
  */
 
-#include "HelloWorldPublisher.h"
-#include "HelloWorldSubscriber.h"
-#include "arg_configuration.h"
-
 #include <string>
 
-enum Type
+#include "arg_configuration.h"
+#include "HelloWorldPublisher.h"
+#include "HelloWorldSubscriber.h"
+
+enum EntityType
 {
-    publisher,
-    subscriber
+    PUBLISHER,
+    SUBSCRIBER
 };
 
 int main(
@@ -52,7 +52,7 @@ int main(
 #endif // if defined(_WIN32)
 
     std::cout << "Starting " << std::endl;
-    Type type = publisher;
+    EntityType type = PUBLISHER;
     std::string topic_name = "HelloWorldTopic";
     int count = 0;
     long sleep = 100;
@@ -66,11 +66,11 @@ int main(
     {
         if (!strcmp(argv[1], "publisher"))
         {
-            type = publisher;
+            type = PUBLISHER;
         }
         else if (!strcmp(argv[1], "subscriber"))
         {
-            type = subscriber;
+            type = SUBSCRIBER;
         }
         else if (!(strcmp(argv[1], "-h") && strcmp(argv[1], "--help")))
         {
@@ -126,7 +126,7 @@ int main(
                     break;
 
                 case optionIndex::INTERVAL:
-                    if (type == publisher)
+                    if (type == PUBLISHER)
                     {
                         sleep = strtol(opt.arg, nullptr, 10);
                     }
@@ -137,7 +137,7 @@ int main(
                     break;
 
                 case optionIndex::WAIT:
-                    if (type == publisher)
+                    if (type == PUBLISHER)
                     {
                         num_wait_matched = strtol(opt.arg, nullptr, 10);
                     }
@@ -148,7 +148,7 @@ int main(
                     break;
 
                 case optionIndex::ASYNC:
-                    if (type == publisher)
+                    if (type == PUBLISHER)
                     {
                         async = true;
                     }
@@ -187,7 +187,7 @@ int main(
 
     switch (type)
     {
-        case publisher:
+        case PUBLISHER:
         {
             HelloWorldPublisher mypub;
             if (mypub.init(topic_name, static_cast<uint32_t>(domain), static_cast<uint32_t>(num_wait_matched), async,
@@ -197,7 +197,7 @@ int main(
             }
             break;
         }
-        case subscriber:
+        case SUBSCRIBER:
         {
             HelloWorldSubscriber mysub;
             if (mysub.init(topic_name, static_cast<uint32_t>(count), static_cast<uint32_t>(domain), transport,

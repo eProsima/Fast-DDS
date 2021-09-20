@@ -1,4 +1,4 @@
-// Copyright 2016 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+// Copyright 2021 Proyectos y Sistemas de Mantenimiento SL (eProsima).
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,19 +17,20 @@
  *
  */
 
+#include <csignal>
+#include <thread>
+
 #include "HelloWorldPublisher.h"
-#include <fastrtps/attributes/ParticipantAttributes.h>
-#include <fastrtps/attributes/PublisherAttributes.h>
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
-#include <fastdds/dds/publisher/Publisher.hpp>
-#include <fastdds/dds/publisher/qos/PublisherQos.hpp>
 #include <fastdds/dds/publisher/DataWriter.hpp>
+#include <fastdds/dds/publisher/Publisher.hpp>
 #include <fastdds/dds/publisher/qos/DataWriterQos.hpp>
+#include <fastdds/dds/publisher/qos/PublisherQos.hpp>
 #include <fastdds/rtps/transport/shared_mem/SharedMemTransportDescriptor.h>
 #include <fastdds/rtps/transport/UDPv4TransportDescriptor.h>
+#include <fastrtps/attributes/ParticipantAttributes.h>
+#include <fastrtps/attributes/PublisherAttributes.h>
 
-#include <thread>
-#include <csignal>
 
 using namespace eprosima::fastdds::dds;
 using namespace eprosima::fastdds::rtps;
@@ -183,7 +184,7 @@ void HelloWorldPublisher::PubListener::on_publication_matched(
 {
     if (info.current_count_change == 1)
     {
-        matched_ = info.total_count;
+        matched_ = info.current_count;
         std::cout << "Publisher matched." << std::endl;
         if (enough_matched())
         {
@@ -192,7 +193,7 @@ void HelloWorldPublisher::PubListener::on_publication_matched(
     }
     else if (info.current_count_change == -1)
     {
-        matched_ = info.total_count;
+        matched_ = info.current_count;
         std::cout << "Publisher unmatched." << std::endl;
     }
     else
@@ -231,43 +232,18 @@ void HelloWorldPublisher::runThread(
         uint32_t samples,
         uint32_t sleep)
 {
-    if (samples == 0)
+    while (!is_stopped() && (samples == 0 || hello_.index() < samples))
     {
-        while (!is_stopped())
+        if (listener_.enough_matched())
         {
-            if (listener_.enough_matched())
-            {
-                publish();
-                std::cout << "Message: " << hello_.message() << " with index: " << hello_.index()
-                          << " SENT" << std::endl;
-                std::this_thread::sleep_for(std::chrono::milliseconds(sleep));
-            }
-            else
-            {
-                listener_.wait();
-            }
+            publish();
+            std::cout << "Message: " << hello_.message() << " with index: " << hello_.index()
+                        << " SENT" << std::endl;
+            std::this_thread::sleep_for(std::chrono::milliseconds(sleep));
         }
-    }
-    else
-    {
-        for (uint32_t i = 0; i < samples; ++i)
+        else
         {
-            if (is_stopped())
-            {
-                break;
-            }
-            if (listener_.enough_matched())
-            {
-                publish();
-                std::cout << "Message: " << hello_.message() << " with index: " << hello_.index()
-                          << " SENT" << std::endl;
-                std::this_thread::sleep_for(std::chrono::milliseconds(sleep));
-            }
-            else
-            {
-                --i;
-                listener_.wait();
-            }
+            listener_.wait();
         }
     }
 }
