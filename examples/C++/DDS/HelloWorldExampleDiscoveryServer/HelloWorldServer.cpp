@@ -17,13 +17,13 @@
  *
  */
 
-#include "HelloWorldServer.h"
-#include <fastrtps/attributes/ParticipantAttributes.h>
-#include <fastdds/dds/domain/DomainParticipantFactory.hpp>
-
 #include <condition_variable>
-#include <mutex>
 #include <csignal>
+#include <mutex>
+
+#include "HelloWorldServer.h"
+#include <fastdds/dds/domain/DomainParticipantFactory.hpp>
+#include <fastrtps/attributes/ParticipantAttributes.h>
 
 using namespace eprosima::fastdds::dds;
 using namespace eprosima::fastdds::rtps;
