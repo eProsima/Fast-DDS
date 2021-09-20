@@ -17,20 +17,19 @@
  *
  */
 
-#include "HelloWorldPublisher.h"
-#include "HelloWorldSubscriber.h"
-#include "HelloWorldServer.h"
-#include "arg_configuration.h"
-
 #include <string>
 
-enum Type
-{
-    publisher,
-    subscriber,
-    server
-};
+#include "arg_configuration.h"
+#include "HelloWorldPublisher.h"
+#include "HelloWorldServer.h"
+#include "HelloWorldSubscriber.h"
 
+enum EntityType
+{
+    PUBLISHER,
+    SUBSCRIBER,
+    SERVER
+};
 
 int main(
         int argc,
@@ -55,7 +54,7 @@ int main(
 #endif // if defined(_WIN32)
 
     std::cout << "Starting " << std::endl;
-    Type type = publisher;
+    EntityType type = PUBLISHER;
     std::string topic_name = "HelloWorldTopic";
     int count = 0;
     long sleep = 100;
@@ -70,15 +69,15 @@ int main(
     {
         if (!strcmp(argv[1], "publisher"))
         {
-            type = publisher;
+            type = PUBLISHER;
         }
         else if (!strcmp(argv[1], "subscriber"))
         {
-            type = subscriber;
+            type = SUBSCRIBER;
         }
         else if (!strcmp(argv[1], "server"))
         {
-            type = server;
+            type = SERVER;
         }
         else if (!(strcmp(argv[1], "-h") && strcmp(argv[1], "--help")))
         {
@@ -122,7 +121,7 @@ int main(
                     break;
 
                 case optionIndex::TOPIC:
-                    if (type == server)
+                    if (type == SERVER)
                     {
                         print_warning("publisher|subscriber", opt.name);
                     }
@@ -133,7 +132,7 @@ int main(
                     break;
 
                 case optionIndex::SAMPLES:
-                    if (type == server)
+                    if (type == SERVER)
                     {
                         print_warning("publisher|subscriber", opt.name);
                     }
@@ -144,7 +143,7 @@ int main(
                     break;
 
                 case optionIndex::INTERVAL:
-                    if (type == publisher)
+                    if (type == PUBLISHER)
                     {
                         sleep = strtol(opt.arg, nullptr, 10);
                     }
@@ -155,7 +154,7 @@ int main(
                     break;
 
                 case optionIndex::WAIT:
-                    if (type == publisher)
+                    if (type == PUBLISHER)
                     {
                         num_wait_matched = strtol(opt.arg, nullptr, 10);
                     }
@@ -213,7 +212,7 @@ int main(
 
     switch (type)
     {
-        case publisher:
+        case PUBLISHER:
         {
             HelloWorldPublisher mypub;
             if (mypub.init(topic_name, static_cast<uint32_t>(num_wait_matched), server_address))
@@ -222,7 +221,7 @@ int main(
             }
             break;
         }
-        case subscriber:
+        case SUBSCRIBER:
         {
             HelloWorldSubscriber mysub;
             if (mysub.init(topic_name, static_cast<uint32_t>(count), server_address))
@@ -231,7 +230,7 @@ int main(
             }
             break;
         }
-        case server:
+        case SERVER:
         {
             HelloWorldServer myserver;
             if (myserver.init(server_address))

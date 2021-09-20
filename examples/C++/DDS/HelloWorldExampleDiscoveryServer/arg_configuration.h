@@ -17,14 +17,14 @@
  *
  */
 
-#ifndef ARG_CONFIGURATION_H_
-#define ARG_CONFIGURATION_H_
-
-#include <string>
-#include <iostream>
-#include <regex>
+#ifndef _EPROSIMA_FASTDDS_EXAMPLES_CPP_DDS_HELLOWORLDEXAMPLEDISCOVERYSERVER_ARG_CONFIGURATION_H_
+#define _EPROSIMA_FASTDDS_EXAMPLES_CPP_DDS_HELLOWORLDEXAMPLEDISCOVERYSERVER_ARG_CONFIGURATION_H_
 
 #include "optionparser.h"
+
+#include <iostream>
+#include <regex>
+#include <string>
 
 struct Arg : public option::Arg
 {
@@ -175,4 +175,4 @@ void print_warning(
     std::cerr << "WARNING: " << opt << " is a " << type << " option, ignoring argument." << std::endl;
 }
 
-#endif /* ARG_CONFIGURATION_H_ */
+#endif /* _EPROSIMA_FASTDDS_EXAMPLES_CPP_DDS_HELLOWORLDEXAMPLEDISCOVERYSERVER_ARG_CONFIGURATION_H_ */

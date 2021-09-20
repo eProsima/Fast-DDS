@@ -17,18 +17,17 @@
  *
  */
 
-#ifndef HELLOWORLDPUBLISHER_H_
-#define HELLOWORLDPUBLISHER_H_
-
-#include "HelloWorldPubSubTypes.h"
-
-#include <fastdds/dds/publisher/DataWriterListener.hpp>
-#include <fastdds/dds/topic/TypeSupport.hpp>
-#include <fastdds/dds/domain/DomainParticipant.hpp>
+#ifndef _EPROSIMA_FASTDDS_EXAMPLES_CPP_DDS_HELLOWORLDEXAMPLEDISCOVERYSERVER_HELLOWORLDPUBLISHER_H_
+#define _EPROSIMA_FASTDDS_EXAMPLES_CPP_DDS_HELLOWORLDEXAMPLEDISCOVERYSERVER_HELLOWORLDPUBLISHER_H_
 
 #include <atomic>
 #include <condition_variable>
 #include <mutex>
+
+#include "HelloWorldPubSubTypes.h"
+#include <fastdds/dds/domain/DomainParticipant.hpp>
+#include <fastdds/dds/publisher/DataWriterListener.hpp>
+#include <fastdds/dds/topic/TypeSupport.hpp>
 
 class HelloWorldPublisher
 {
@@ -118,4 +117,4 @@ private:
 
 
 
-#endif /* HELLOWORLDPUBLISHER_H_ */
+#endif /* _EPROSIMA_FASTDDS_EXAMPLES_CPP_DDS_HELLOWORLDEXAMPLEDISCOVERYSERVER_HELLOWORLDPUBLISHER_H_ */
