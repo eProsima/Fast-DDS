@@ -45,7 +45,7 @@ bool HelloWorldServer::is_stopped()
 void HelloWorldServer::stop()
 {
     stop_ = true;
-    terminate_cv_.notify_one();
+    terminate_cv_.notify_all();
 }
 
 bool HelloWorldServer::init(
@@ -64,6 +64,7 @@ bool HelloWorldServer::init(
     // Set SERVER's listening locator for PDP
     pqos.wire_protocol().builtin.metatrafficUnicastLocatorList.push_back(server_address);
 
+    // CREATE THE PARTICIPANT
     participant_ = DomainParticipantFactory::get_instance()->create_participant(0, pqos);
 
     if (participant_ == nullptr)
@@ -76,7 +77,10 @@ bool HelloWorldServer::init(
 
 HelloWorldServer::~HelloWorldServer()
 {
-    DomainParticipantFactory::get_instance()->delete_participant(participant_);
+    if (participant_ != nullptr)
+    {
+        DomainParticipantFactory::get_instance()->delete_participant(participant_);
+    }
 }
 
 void HelloWorldServer::run()
