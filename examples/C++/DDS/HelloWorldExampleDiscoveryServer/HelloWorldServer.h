@@ -17,14 +17,14 @@
  *
  */
 
-#ifndef HELLOWORLDSERVER_H_
-#define HELLOWORLDSERVER_H_
-
-#include <fastdds/dds/domain/DomainParticipant.hpp>
+#ifndef _EPROSIMA_FASTDDS_EXAMPLES_CPP_DDS_HELLOWORLDEXAMPLEDISCOVERYSERVER_HELLOWORLDSERVER_H_
+#define _EPROSIMA_FASTDDS_EXAMPLES_CPP_DDS_HELLOWORLDEXAMPLEDISCOVERYSERVER_HELLOWORLDSERVER_H_
 
 #include <atomic>
 #include <condition_variable>
 #include <mutex>
+
+#include <fastdds/dds/domain/DomainParticipant.hpp>
 
 class HelloWorldServer
 {
@@ -58,4 +58,4 @@ private:
 
 
 
-#endif /* HELLOWORLDSERVER_H_ */
+#endif /* _EPROSIMA_FASTDDS_EXAMPLES_CPP_DDS_HELLOWORLDEXAMPLEDISCOVERYSERVER_HELLOWORLDSERVER_H_ */

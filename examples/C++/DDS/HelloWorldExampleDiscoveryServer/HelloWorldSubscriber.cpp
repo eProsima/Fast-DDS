@@ -17,18 +17,18 @@
  *
  */
 
+#include <condition_variable>
+#include <csignal>
+#include <mutex>
+
 #include "HelloWorldSubscriber.h"
+#include <fastdds/dds/domain/DomainParticipantFactory.hpp>
+#include <fastdds/dds/subscriber/DataReader.hpp>
+#include <fastdds/dds/subscriber/qos/DataReaderQos.hpp>
+#include <fastdds/dds/subscriber/SampleInfo.hpp>
+#include <fastdds/dds/subscriber/Subscriber.hpp>
 #include <fastrtps/attributes/ParticipantAttributes.h>
 #include <fastrtps/attributes/SubscriberAttributes.h>
-#include <fastdds/dds/domain/DomainParticipantFactory.hpp>
-#include <fastdds/dds/subscriber/Subscriber.hpp>
-#include <fastdds/dds/subscriber/DataReader.hpp>
-#include <fastdds/dds/subscriber/SampleInfo.hpp>
-#include <fastdds/dds/subscriber/qos/DataReaderQos.hpp>
-
-#include <condition_variable>
-#include <mutex>
-#include <csignal>
 
 using namespace eprosima::fastdds::dds;
 using namespace eprosima::fastdds::rtps;
@@ -153,12 +153,12 @@ void HelloWorldSubscriber::SubListener::on_subscription_matched(
 {
     if (info.current_count_change == 1)
     {
-        matched_ = info.total_count;
+        matched_ = info.current_count;
         std::cout << "Subscriber matched." << std::endl;
     }
     else if (info.current_count_change == -1)
     {
-        matched_ = info.total_count;
+        matched_ = info.current_count;
         std::cout << "Subscriber unmatched." << std::endl;
     }
     else
@@ -172,7 +172,7 @@ void HelloWorldSubscriber::SubListener::on_data_available(
         DataReader* reader)
 {
     SampleInfo info;
-    if (reader->take_next_sample(&hello_, &info) == ReturnCode_t::RETCODE_OK)
+    while (reader->take_next_sample(&hello_, &info) == ReturnCode_t::RETCODE_OK)
     {
         if (info.instance_state == ALIVE_INSTANCE_STATE)
         {
