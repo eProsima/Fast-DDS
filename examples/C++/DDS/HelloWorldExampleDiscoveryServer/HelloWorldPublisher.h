@@ -67,6 +67,8 @@ private:
 
     eprosima::fastdds::dds::DataWriter* writer_;
 
+    eprosima::fastdds::dds::TypeSupport type_;
+
     class PubListener : public eprosima::fastdds::dds::DataWriterListener
     {
     public:
@@ -109,8 +111,6 @@ private:
     void runThread(
             uint32_t number,
             uint32_t sleep);
-
-    eprosima::fastdds::dds::TypeSupport type_;
 
     static std::atomic<bool> stop_;
 };

@@ -54,7 +54,7 @@ bool HelloWorldSubscriber::is_stopped()
 void HelloWorldSubscriber::stop()
 {
     stop_ = true;
-    terminate_cv_.notify_one();
+    terminate_cv_.notify_all();
 }
 
 bool HelloWorldSubscriber::init(
@@ -79,6 +79,7 @@ bool HelloWorldSubscriber::init(
     // Add remote SERVER to CLIENT's list of SERVERs
     pqos.wire_protocol().builtin.discovery_config.m_DiscoveryServers.push_back(remote_server_att);
 
+    // CREATE THE PARTICIPANT
     participant_ = DomainParticipantFactory::get_instance()->create_participant(0, pqos);
 
     if (participant_ == nullptr)
@@ -86,10 +87,10 @@ bool HelloWorldSubscriber::init(
         return false;
     }
 
-    //REGISTER THE TYPE
+    // REGISTER THE TYPE
     type_.register_type(participant_);
 
-    //CREATE THE SUBSCRIBER
+    // CREATE THE SUBSCRIBER
     subscriber_ = participant_->create_subscriber(SUBSCRIBER_QOS_DEFAULT, nullptr);
 
     if (subscriber_ == nullptr)
@@ -97,7 +98,7 @@ bool HelloWorldSubscriber::init(
         return false;
     }
 
-    //CREATE THE TOPIC
+    // CREATE THE TOPIC
     topic_ = participant_->create_topic(
         topic_name,
         "HelloWorld",
@@ -126,19 +127,22 @@ bool HelloWorldSubscriber::init(
 
 HelloWorldSubscriber::~HelloWorldSubscriber()
 {
-    if (reader_ != nullptr)
+    if (participant_ != nullptr)
     {
-        subscriber_->delete_datareader(reader_);
+        if (topic_ != nullptr)
+        {
+            participant_->delete_topic(topic_);
+        }
+        if (subscriber_ != nullptr)
+        {
+            if (reader_ != nullptr)
+            {
+                subscriber_->delete_datareader(reader_);
+            }
+            participant_->delete_subscriber(subscriber_);
+        }
+        DomainParticipantFactory::get_instance()->delete_participant(participant_);
     }
-    if (topic_ != nullptr)
-    {
-        participant_->delete_topic(topic_);
-    }
-    if (subscriber_ != nullptr)
-    {
-        participant_->delete_subscriber(subscriber_);
-    }
-    DomainParticipantFactory::get_instance()->delete_participant(participant_);
 }
 
 void HelloWorldSubscriber::SubListener::set_max_messages(

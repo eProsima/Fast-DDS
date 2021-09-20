@@ -53,7 +53,6 @@ int main(
     columns = getenv("COLUMNS") ? atoi(getenv("COLUMNS")) : 80;
 #endif // if defined(_WIN32)
 
-    std::cout << "Starting " << std::endl;
     EntityType type = PUBLISHER;
     std::string topic_name = "HelloWorldTopic";
     int count = 0;
@@ -79,6 +78,7 @@ int main(
         {
             type = SERVER;
         }
+        // check if first argument is help, needed because we skip it when parsing
         else if (!(strcmp(argv[1], "-h") && strcmp(argv[1], "--help")))
         {
             option::printUsage(fwrite, stdout, usage, columns);
