@@ -73,6 +73,8 @@ bool HelloWorldPublisher::init(
     DomainParticipantQos pqos;
     pqos.name("Participant_pub");
     listener_.set_num_wait_matched(num_wait_matched);
+
+    // TRANSPORT CONFIG
     if (!transport.empty())
     {
         pqos.transport().use_builtin_transports = false;
@@ -87,6 +89,8 @@ bool HelloWorldPublisher::init(
             pqos.transport().user_transports.push_back(udp_transport);
         }
     }
+
+    // CREATE THE PARTICIPANT
     participant_ = DomainParticipantFactory::get_instance()->create_participant(domain, pqos);
 
     if (participant_ == nullptr)
@@ -94,10 +98,10 @@ bool HelloWorldPublisher::init(
         return false;
     }
 
-    //REGISTER THE TYPE
+    // REGISTER THE TYPE
     type_.register_type(participant_);
 
-    //CREATE THE PUBLISHER
+    // CREATE THE PUBLISHER
     publisher_ = participant_->create_publisher(PUBLISHER_QOS_DEFAULT, nullptr);
 
     if (publisher_ == nullptr)
@@ -105,6 +109,7 @@ bool HelloWorldPublisher::init(
         return false;
     }
 
+    // CREATE THE TOPIC
     topic_ = participant_->create_topic(topic_name, "HelloWorld", TOPIC_QOS_DEFAULT);
 
     if (topic_ == nullptr)
@@ -163,19 +168,22 @@ bool HelloWorldPublisher::init(
 
 HelloWorldPublisher::~HelloWorldPublisher()
 {
-    if (writer_ != nullptr)
+    if (participant_ != nullptr)
     {
-        publisher_->delete_datawriter(writer_);
+        if (publisher_ != nullptr)
+        {
+            if (writer_ != nullptr)
+            {
+                publisher_->delete_datawriter(writer_);
+            }
+            participant_->delete_publisher(publisher_);
+        }
+        if (topic_ != nullptr)
+        {
+            participant_->delete_topic(topic_);
+        }
+        DomainParticipantFactory::get_instance()->delete_participant(participant_);
     }
-    if (publisher_ != nullptr)
-    {
-        participant_->delete_publisher(publisher_);
-    }
-    if (topic_ != nullptr)
-    {
-        participant_->delete_topic(topic_);
-    }
-    DomainParticipantFactory::get_instance()->delete_participant(participant_);
 }
 
 void HelloWorldPublisher::PubListener::on_publication_matched(
@@ -225,7 +233,7 @@ void HelloWorldPublisher::PubListener::wait()
 
 void HelloWorldPublisher::PubListener::awake()
 {
-    wait_matched_cv_.notify_one();
+    wait_matched_cv_.notify_all();
 }
 
 void HelloWorldPublisher::runThread(
