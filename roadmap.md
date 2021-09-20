@@ -15,23 +15,27 @@ at any time.
 
 Disclaimer:
 
-* This section has been last updated in May 2020.
+* This section has been last updated in Sep 2021.
   Please take into account its content could be obsolete.
 
 ## Short term
 
-The following list of features are planned to be addressed in the short term, and incorporated into the coming
-release(s) of the product:
+The following list of features are planned to be addressed in the short term, and incorporated into the following
+minor release of the product:
 
-* Full compliance with DDS minimum-profile
-* Support of DDS-RPC Enhanced Discovery Mechanism
+* Content filtered topic support on DataReader
+* PKCS#11 support for private keys
+* Python binding
+* Support for dynamic network interfaces
+* ReadCondition implementation
 
 ## Medium term
 
 The following list of features are planned to be addressed in the medium term, typically within the subsequent
 release(s) generated in the next **9 months** after next planned release:
 
-* Localhost zero-copy delivery
+* Service aware DataWriter
+* Partition QoS on DataReader and DataWriter
 * DDS x-types 1.2
 
 ## Long term
