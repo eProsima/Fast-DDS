@@ -246,7 +246,7 @@ void HelloWorldPublisher::runThread(
         {
             publish();
             std::cout << "Message: " << hello_.message() << " with index: " << hello_.index()
-                        << " SENT" << std::endl;
+                      << " SENT" << std::endl;
             std::this_thread::sleep_for(std::chrono::milliseconds(sleep));
         }
         else
