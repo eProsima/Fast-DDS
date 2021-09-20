@@ -157,13 +157,10 @@ void latejoiners()
     }
 
     // Wait for volatile reader to match with writer, otherwise it may consider the new samples as historical
-    std::vector<InstanceHandle_t> matched_writers;
-    do
-    {
-        std::this_thread::sleep_for(std::chrono::milliseconds(100));
-        myReader2->get_matched_publications(matched_writers);
-    } while (matched_writers.empty());
-
+    // TODO(jlbueno) A condition variable that is notified when the reader has matched would be great
+    // Previously the example used not implemented API DataReader::get_matched_publications which is always returning
+    // RETCODE_UNSUPPORTED.
+    std::this_thread::sleep_for(std::chrono::milliseconds(500));
 
     //Send 20 samples
     std::cout << "Publishing 20 samples on the topic..." << std::endl;
