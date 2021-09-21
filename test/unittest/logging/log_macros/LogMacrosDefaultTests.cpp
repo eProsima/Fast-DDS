@@ -26,11 +26,11 @@ TEST_F(LogMacrosTests, default_macros_test)
     logWarning(SampleCategory, "Sample warning message");
     logInfo(SampleCategory, "Sample info message");
 
-    unsigned int expected_result = 3;
-
-#if !(__DEBUG || _DEBUG)
-    --expected_result;
-#endif // CMAKE_BUILD_TYPE == DEBUG_TYPE
+#if defined(_DEBUG) || defined(__DEBUG) || !defined(NDEBUG)
+    static constexpr unsigned int expected_result = 3;
+#else
+    static constexpr unsigned int expected_result = 2;
+#endif // debug macros check
 
     auto consumedEntries = HELPER_WaitForEntries(expected_result);
     ASSERT_EQ(expected_result, consumedEntries.size());
