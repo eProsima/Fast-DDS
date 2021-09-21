@@ -293,6 +293,7 @@ set(${PROJECT_NAME}_security_source_files
     security/accesscontrol/GovernanceParser.cpp
     security/accesscontrol/PermissionsParser.cpp
     security/logging/LogTopic.cpp
+    security/artifact_providers/FileProvider.cpp
     )
 
 if(SECURITY)
