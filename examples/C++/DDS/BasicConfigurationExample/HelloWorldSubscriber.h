@@ -24,10 +24,11 @@
 #include <condition_variable>
 #include <mutex>
 
-#include "HelloWorldPubSubTypes.h"
 #include <fastdds/dds/core/status/SubscriptionMatchedStatus.hpp>
 #include <fastdds/dds/domain/DomainParticipant.hpp>
 #include <fastdds/dds/subscriber/DataReaderListener.hpp>
+
+#include "HelloWorldPubSubTypes.h"
 
 class HelloWorldSubscriber
 {
