@@ -396,7 +396,7 @@ void RTPSMessageGroup::send()
                     static_cast<uint32_t>(std::numeric_limits<uint16_t>::max() - RTPSMESSAGE_DATA_MIN_LENGTH))
             {
                 // Avoid sending the data message for DATA that are not fragmented and exceed the 65 kB limit
-                add_stats_submsg();
+                //add_stats_submsg();
             }
 #endif // FASTDDS_STATISTICS
 
