@@ -297,7 +297,7 @@ void RTPSMessageGroup::send()
             }
 #endif // if HAVE_SECURITY
 
-            eprosima::fastdds::statistics::rtps::add_statistics_submessage(msgToSend);
+            //eprosima::fastdds::statistics::rtps::add_statistics_submessage(msgToSend);
 
             if (!sender_->send(msgToSend,
                     max_blocking_time_is_set_ ? max_blocking_time_point_ : (std::chrono::steady_clock::now() +
