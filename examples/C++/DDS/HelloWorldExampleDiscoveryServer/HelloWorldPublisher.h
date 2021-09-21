@@ -24,10 +24,11 @@
 #include <condition_variable>
 #include <mutex>
 
-#include "HelloWorldPubSubTypes.h"
 #include <fastdds/dds/domain/DomainParticipant.hpp>
 #include <fastdds/dds/publisher/DataWriterListener.hpp>
 #include <fastdds/dds/topic/TypeSupport.hpp>
+
+#include "HelloWorldPubSubTypes.h"
 
 class HelloWorldPublisher
 {

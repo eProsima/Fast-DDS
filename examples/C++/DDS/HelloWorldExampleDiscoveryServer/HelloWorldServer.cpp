@@ -21,9 +21,10 @@
 #include <csignal>
 #include <mutex>
 
-#include "HelloWorldServer.h"
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
 #include <fastrtps/attributes/ParticipantAttributes.h>
+
+#include "HelloWorldServer.h"
 
 using namespace eprosima::fastdds::dds;
 using namespace eprosima::fastdds::rtps;
