@@ -191,6 +191,7 @@ const char* TOPIC_DATA = "topicData";
 const char* GROUP_DATA = "groupData";
 const char* PUB_MODE = "publishMode";
 const char* DISABLE_POSITIVE_ACKS = "disablePositiveAcks";
+const char* DISABLE_HEARTBEAT_PIGGYBACK = "disable_heartbeat_piggyback";
 const char* DATA_SHARING = "data_sharing";
 
 const char* SYNCHRONOUS = "SYNCHRONOUS";

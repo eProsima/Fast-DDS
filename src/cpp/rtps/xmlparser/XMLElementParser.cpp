@@ -3768,6 +3768,14 @@ XMLP_ret XMLParser::getXMLPublisherAttributes(
                 return XMLP_ret::XML_ERROR;
             }
         }
+        else if (strcmp(name, DISABLE_HEARTBEAT_PIGGYBACK) == 0)
+        {
+            // Disable heartbeat piggyback
+            if (XMLP_ret::XML_OK != getXMLBool(p_aux0, &publisher.disable_heartbeat_piggyback, ident))
+            {
+                return XMLP_ret::XML_ERROR;
+            }
+        }
         else
         {
             logError(XMLPARSER, "Invalid element found into 'publisherProfileType'. Name: " << name);

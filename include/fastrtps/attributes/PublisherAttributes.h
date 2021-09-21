@@ -89,6 +89,9 @@ public:
     rtps::PropertyPolicy properties;
     ResourceLimitedContainerConfig matched_subscriber_allocation;
 
+    //! Disable heartbeat piggyback mechanism.
+    bool disable_heartbeat_piggyback = false;
+
     /**
      * Get the user defined ID
      * @return User defined ID

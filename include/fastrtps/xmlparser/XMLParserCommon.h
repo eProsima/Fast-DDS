@@ -204,6 +204,7 @@ extern const char* TOPIC_DATA;
 extern const char* GROUP_DATA;
 extern const char* PUB_MODE;
 extern const char* DISABLE_POSITIVE_ACKS;
+extern const char* DISABLE_HEARTBEAT_PIGGYBACK;
 extern const char* DATA_SHARING;
 
 extern const char* SYNCHRONOUS;

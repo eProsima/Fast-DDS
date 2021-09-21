@@ -184,6 +184,7 @@ ReturnCode_t DataWriterImpl::enable()
     w_att.liveliness_lease_duration = qos_.liveliness().lease_duration;
     w_att.liveliness_announcement_period = qos_.liveliness().announcement_period;
     w_att.matched_readers_allocation = qos_.writer_resource_limits().matched_subscriber_allocation;
+    w_att.disable_heartbeat_piggyback = qos_.reliable_writer_qos().disable_heartbeat_piggyback;
 
     // TODO(Ricardo) Remove in future
     // Insert topic_name and partitions
