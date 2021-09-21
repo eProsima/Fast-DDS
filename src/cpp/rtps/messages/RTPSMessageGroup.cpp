@@ -386,7 +386,7 @@ void RTPSMessageGroup::send()
 #endif // if HAVE_SECURITY
 
 #ifdef FASTDDS_STATISTICS
-            add_stats_submsg();
+            //add_stats_submsg();
 #endif // FASTDDS_STATISTICS
 
             if (!sender_->send(*buffers_to_send_,
