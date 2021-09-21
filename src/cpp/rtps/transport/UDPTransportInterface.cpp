@@ -578,7 +578,7 @@ bool UDPTransportInterface::send(
 
             asio::error_code ec;
             // Statistics submessage is always the last buffer to be added
-            statistics_info_.set_statistics_message_data(remote_locator, buffers.back(), total_bytes);
+            //statistics_info_.set_statistics_message_data(remote_locator, buffers.back(), total_bytes);
             bytesSent = getSocketPtr(socket)->send_to(buffers, destinationEndpoint, 0, ec);
             if (!!ec)
             {
