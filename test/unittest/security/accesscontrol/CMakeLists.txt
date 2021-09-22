@@ -57,10 +57,12 @@ add_executable(AccessControlTests ${COMMON_SOURCES_ACCESS_CONTROL_TEST_SOURCE}
     ${PROJECT_SOURCE_DIR}/src/cpp/security/accesscontrol/Permissions.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/security/accesscontrol/PermissionsParser.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/security/artifact_providers/FileProvider.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/security/artifact_providers/Pkcs11Provider.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/utils/md5.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/utils/IPFinder.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/utils/IPLocator.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/utils/StringMatching.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/utils/SystemInfo.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/publisher/qos/WriterQos.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/AccessControlTests.cpp)
 

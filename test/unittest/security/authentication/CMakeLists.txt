@@ -45,9 +45,11 @@ add_executable(BuiltinPKIDH ${COMMON_SOURCES_AUTH_PLUGIN_TEST_SOURCE}
     ${PROJECT_SOURCE_DIR}/src/cpp/security/authentication/PKIIdentityHandle.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/security/authentication/PKIHandshakeHandle.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/security/artifact_providers/FileProvider.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/security/artifact_providers/Pkcs11Provider.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/utils/md5.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/utils/IPFinder.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/utils/IPLocator.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/utils/SystemInfo.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/BuiltinPKIDHTests.cpp)
 target_compile_definitions(BuiltinPKIDH PRIVATE FASTRTPS_NO_LIB
     BOOST_ASIO_STANDALONE
