@@ -162,11 +162,10 @@ option(SECURITY "Activate security" OFF)
 
 if(SECURITY)
     find_package(OpenSSL REQUIRED)
-    find_package(LibP11 REQUIRED)
 else()
     find_package(OpenSSL)
-    find_package(LibP11)
 endif()
+find_package(LibP11)
 
 if(OPENSSL_FOUND)
     message(STATUS "OpenSSL library ${OPENSSL_VERSION} found...")
