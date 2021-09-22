@@ -221,6 +221,10 @@ public:
     ReturnCode_t wait_for_acknowledgments(
             const fastrtps::Duration_t& max_wait);
 
+    ReturnCode_t wait_for_acknowledgments(
+            const InstanceHandle_t& handle,
+            const fastrtps::Duration_t& max_wait);
+
     ReturnCode_t get_publication_matched_status(
             PublicationMatchedStatus& status);
 

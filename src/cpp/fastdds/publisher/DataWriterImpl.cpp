@@ -1013,6 +1013,34 @@ ReturnCode_t DataWriterImpl::wait_for_acknowledgments(
     return ReturnCode_t::RETCODE_ERROR;
 }
 
+ReturnCode_t DataWriterImpl::wait_for_acknowledgments(
+        const InstanceHandle_t& handle,
+        const Duration_t& max_wait)
+{
+    /// Preconditions
+    if (writer_ == nullptr)
+    {
+        return ReturnCode_t::RETCODE_NOT_ENABLED;
+    }
+
+    if (!type_->m_isGetKeyDefined)
+    {
+        logError(PUBLISHER, "Topic is NO_KEY, operation not permitted");
+        return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
+    }
+
+    if (history_.is_key_registered(handle))
+    {
+        return ReturnCode_t::RETCODE_OK;
+    }
+    else
+    {
+        return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
+    }
+
+    return ReturnCode_t::RETCODE_ERROR;
+}
+
 void DataWriterImpl::update_publication_matched_status(
         const PublicationMatchedStatus& status)
 {

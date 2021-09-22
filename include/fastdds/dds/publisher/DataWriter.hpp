@@ -543,9 +543,11 @@ public:
 
     /**
      * Waits the current thread until the writer have received the acknowledgment corresponding to the given instance.
-     * @param handle Instance handle of the data
-     * @param max_wait Maximum blocking time for this operation
-     * @return RETCODE_OK if the DataWriter receive the acknowledgments before the time expires and RETCODE_ERROR otherwise
+     * @param handle Instance handle of the data.
+     * @param max_wait Maximum blocking time for this operation.
+     * @return RETCODE_NOT_ENABLED if the writer has not been enabled.
+     * RETCODE_PRECONDITION_NOT_MET if the topic does not have a key or the key is unkown to the writer.
+     * RETCODE_OK if the DataWriter receive the acknowledgments before the time expires and RETCODE_ERROR otherwise.
      */
     RTPS_DllAPI ReturnCode_t wait_for_acknowledgments(
             const InstanceHandle_t& handle,
