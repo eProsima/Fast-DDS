@@ -541,6 +541,16 @@ public:
     RTPS_DllAPI ReturnCode_t get_sending_locators(
             rtps::LocatorList& locators) const;
 
+    /**
+     * Waits the current thread until the writer have received the acknowledgment corresponding to the given instance.
+     * @param handle Instance handle of the data
+     * @param max_wait Maximum blocking time for this operation
+     * @return RETCODE_OK if the DataWriter receive the acknowledgments before the time expires and RETCODE_ERROR otherwise
+     */
+    RTPS_DllAPI ReturnCode_t wait_for_acknowledgments(
+            const InstanceHandle_t& handle,
+            const fastrtps::Duration_t& max_wait);
+
 protected:
 
     DataWriterImpl* impl_;
