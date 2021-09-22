@@ -39,10 +39,10 @@ class Pkcs11Provider
 public:
 
     static EVP_PKEY* load_private_key(
-        X509* certificate,
-        const std::string& file,
-        const std::string& password,
-        SecurityException& exception);
+            X509* certificate,
+            const std::string& file,
+            const std::string& password,
+            SecurityException& exception);
 
     ~Pkcs11Provider();
 
@@ -58,10 +58,10 @@ private:
     Pkcs11Provider();
 
     EVP_PKEY* load_private_key_impl(
-        X509* certificate,
-        const std::string& file,
-        const std::string& password,
-        SecurityException& exception);
+            X509* certificate,
+            const std::string& file,
+            const std::string& password,
+            SecurityException& exception);
 
     SecurityException initialization_exception_;
     bool has_initialization_error_ = false;

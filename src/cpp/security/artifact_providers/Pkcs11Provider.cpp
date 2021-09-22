@@ -40,22 +40,25 @@ namespace detail {
 constexpr const char* FASTDDS_PKCS11_PIN = "FASTDDS_PKCS11_PIN";
 constexpr const char* PKCS11_ENGINE_ID = "pkcs11";
 
-static int ui_open(UI *ui)
+static int ui_open(
+        UI* ui)
 {
     return UI_method_get_opener(UI_OpenSSL())(ui);
 }
 
-static int ui_read(UI *ui, UI_STRING *uis)
+static int ui_read(
+        UI* ui,
+        UI_STRING* uis)
 {
-    switch(UI_get_string_type(uis))
+    switch (UI_get_string_type(uis))
     {
         case UIT_PROMPT:
         case UIT_VERIFY:
         {
-                logWarning(PKCS11_PROVIDER, "PKCS#11 engine is asking: " << UI_get0_output_string(uis));
-                // Return an empty password without asking the user
-                UI_set_result(ui, uis, "");
-                return 1;
+            logWarning(PKCS11_PROVIDER, "PKCS#11 engine is asking: " << UI_get0_output_string(uis));
+            // Return an empty password without asking the user
+            UI_set_result(ui, uis, "");
+            return 1;
         }
         default:
             break;
@@ -65,8 +68,8 @@ static int ui_read(UI *ui, UI_STRING *uis)
     return UI_method_get_reader(UI_OpenSSL())(ui, uis);
 }
 
-
-static int ui_close(UI *ui)
+static int ui_close(
+        UI* ui)
 {
     return UI_method_get_closer(UI_OpenSSL())(ui);
 }
@@ -99,13 +102,14 @@ Pkcs11Provider::Pkcs11Provider()
         if (!ENGINE_ctrl_cmd_string( pkcs11_, "PIN", pin.c_str(), 0))
         {
             has_initialization_error_ = true;
-            initialization_exception_ = _SecurityException_(std::string("Error setting the PIN in the 'pkcs11' engine"));
+            initialization_exception_ =
+                    _SecurityException_(std::string("Error setting the PIN in the 'pkcs11' engine"));
             ENGINE_free(pkcs11_);
         }
     }
 
     // Init the engine with the PIN (if any)
-    if(!ENGINE_init(pkcs11_))
+    if (!ENGINE_init(pkcs11_))
     {
         has_initialization_error_ = true;
         initialization_exception_ = _SecurityException_(std::string("Error initializeing the HSM provider library"));
@@ -118,7 +122,7 @@ Pkcs11Provider::~Pkcs11Provider()
     ENGINE_finish(pkcs11_);
     ENGINE_free(pkcs11_);
 
-    if(ui_method_)
+    if (ui_method_)
     {
         UI_destroy_method(ui_method_);
     }
@@ -156,7 +160,7 @@ EVP_PKEY* Pkcs11Provider::load_private_key_impl(
     if (!X509_check_private_key(certificate, returnedValue))
     {
         exception = _SecurityException_(std::string("Error verifying private key ") + pkey.substr(7)
-                + "\n ERROR: " + ERR_error_string(ERR_get_error(), nullptr));
+                        + "\n ERROR: " + ERR_error_string(ERR_get_error(), nullptr));
         EVP_PKEY_free(returnedValue);
         returnedValue = nullptr;
     }
