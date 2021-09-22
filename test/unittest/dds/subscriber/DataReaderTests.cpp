@@ -1795,12 +1795,12 @@ TEST_F(DataReaderTests, check_key_history_wholesomeness_on_unmatch)
     // here the DataReader History state must be coherent and don't loop endlessly
     ReturnCode_t res;
     std::thread query([this, &res]()
-            {
-                FooSeq samples;
-                SampleInfoSeq infos;
+        {
+            FooSeq samples;
+            SampleInfoSeq infos;
 
-                res = data_reader_->take_instance(samples, infos, LENGTH_UNLIMITED, handle_ok_);
-            });
+            res = data_reader_->take_instance(samples, infos, LENGTH_UNLIMITED, handle_ok_);
+        });
 
     // Check if the thread hangs
     // wait for termination
@@ -1889,7 +1889,7 @@ TEST_F(DataReaderUnsupportedTests, UnsupportedDataReaderMethods)
     ASSERT_NE(topic, nullptr);
 
     DataReader* data_reader = subscriber->create_datareader(topic, DATAREADER_QOS_DEFAULT);
-    ASSERT_NE(subscriber, nullptr);
+    ASSERT_NE(data_reader, nullptr);
 
     {
         SampleLostStatus status;
@@ -1986,7 +1986,7 @@ TEST_F(DataReaderUnsupportedTests, UnsupportedDataReaderMethods)
                     nullptr));
     }
 
-    EXPECT_EQ(ReturnCode_t::RETCODE_UNSUPPORTED, data_reader->delete_contained_entities());
+    //EXPECT_EQ(ReturnCode_t::RETCODE_UNSUPPORTED, data_reader->delete_contained_entities());
 
     std::vector<fastrtps::rtps::InstanceHandle_t> publication_handles;
     EXPECT_EQ(ReturnCode_t::RETCODE_UNSUPPORTED, data_reader->get_matched_publications(publication_handles));
@@ -2022,13 +2022,13 @@ TEST_F(DataReaderTests, read_samples_with_future_changes)
     std::shared_ptr<rtps::test_UDPv4TransportDescriptor> test_descriptor =
             std::make_shared<rtps::test_UDPv4TransportDescriptor>();
     test_descriptor->drop_ack_nack_messages_filter_ = [&](fastrtps::rtps::CDRMessage_t&) -> bool
-            {
-                return start_dropping_acks;
-            };
+        {
+            return start_dropping_acks;
+        };
     test_descriptor->drop_data_messages_filter_ = [&](fastrtps::rtps::CDRMessage_t&) -> bool
-            {
-                return start_dropping_datas;
-            };
+        {
+            return start_dropping_datas;
+        };
 
     DomainParticipantQos participant_qos = PARTICIPANT_QOS_DEFAULT;
     participant_qos.transport().use_builtin_transports = false;
@@ -2094,6 +2094,43 @@ TEST_F(DataReaderTests, read_samples_with_future_changes)
     check_collection(data_seq, true, num_samples, expected_samples);
 
     ASSERT_EQ(publisher_->delete_datawriter(data_writer2), ReturnCode_t::RETCODE_OK);
+}
+
+// Delete contained entities test
+TEST_F(DataReaderTests, delete_contained_entities)
+{
+    DomainParticipant* participant =
+            DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
+    ASSERT_NE(participant, nullptr);
+
+    Subscriber* subscriber = participant->create_subscriber(SUBSCRIBER_QOS_DEFAULT);
+    ASSERT_NE(subscriber, nullptr);
+
+    TypeSupport type(new FooTypeSupport());
+    type.register_type(participant);
+
+    Topic* topic = participant->create_topic("footopic", type.get_type_name(), TOPIC_QOS_DEFAULT);
+    ASSERT_NE(topic, nullptr);
+
+    DataReader* data_reader = subscriber->create_datareader(topic, DATAREADER_QOS_DEFAULT);
+    ASSERT_NE(data_reader, nullptr);
+
+    const std::vector<SampleStateKind> mock_sample_state_kind;
+    const std::vector<ViewStateKind> mock_view_state_kind;
+    const std::vector<InstanceStateKind> mock_instance_states;
+    const std::string mock_query_expression;
+    const std::vector<std::string> mock_query_parameters;
+
+    QueryCondition* query_condition = data_reader->create_querycondition(
+        mock_sample_state_kind,
+        mock_view_state_kind,
+        mock_instance_states,
+        mock_query_expression,
+        mock_query_parameters
+        );
+    ASSERT_EQ(query_condition, nullptr);
+
+    ASSERT_EQ(data_reader->delete_contained_entities(), ReturnCode_t::RETCODE_OK);
 }
 
 } // namespace dds
