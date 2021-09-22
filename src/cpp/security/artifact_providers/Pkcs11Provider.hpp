@@ -65,7 +65,8 @@ private:
 
     SecurityException initialization_exception_;
     bool has_initialization_error_ = false;
-    ENGINE* pkcs11_;
+    ENGINE* pkcs11_ = nullptr;
+    UI_METHOD* ui_method_ = nullptr;
 };
 
 } // namespace detail
