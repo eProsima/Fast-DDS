@@ -434,7 +434,7 @@ find_package(Atomic MODULE)
 target_link_libraries(${PROJECT_NAME} ${PRIVACY} fastcdr foonathan_memory
     ${CMAKE_THREAD_LIBS_INIT} ${CMAKE_DL_LIBS}
     ${TINYXML2_LIBRARY}
-    $<$<BOOL:${LINK_SSL}>:OpenSSL::SSL$<SEMICOLON>OpenSSL::Crypto$<$<BOOL:${WIN32}>:$<SEMICOLON>crypt32.lib>>
+        $<$<BOOL:${LINK_SSL}>:OpenSSL::SSL$<SEMICOLON>OpenSSL::Crypto$<$<BOOL:${LINK_P11}>:$<SEMICOLON>p11>$<$<BOOL:${WIN32}>:$<SEMICOLON>crypt32.lib>>
     $<$<BOOL:${WIN32}>:iphlpapi$<SEMICOLON>Shlwapi>
     ${THIRDPARTY_BOOST_LINK_LIBS}
     PRIVATE eProsima_atomic
