@@ -21,20 +21,23 @@ void FlowControllerFactory::init(
     // Create default flow controllers.
 
     // PureSyncFlowController -> used by volatile besteffort writers.
-    flow_controllers_.insert({pure_sync_flow_controller_name,
-                              std::unique_ptr<FlowController>(
-                                  new FlowControllerImpl<FlowControllerPureSyncPublishMode,
-                                  FlowControllerFifoSchedule>(participant_, nullptr))});
+    flow_controllers_.insert(std::make_pair<std::string, std::unique_ptr<FlowController>>(
+                pure_sync_flow_controller_name,
+                std::unique_ptr<FlowController>(
+                    new FlowControllerImpl<FlowControllerPureSyncPublishMode,
+                    FlowControllerFifoSchedule>(participant_, nullptr))));
     // SyncFlowController -> used by rest of besteffort writers.
-    flow_controllers_.insert({sync_flow_controller_name,
-                              std::unique_ptr<FlowController>(
-                                  new FlowControllerImpl<FlowControllerSyncPublishMode,
-                                  FlowControllerFifoSchedule>(participant_, nullptr))});
+    flow_controllers_.insert(std::make_pair<std::string, std::unique_ptr<FlowController>>(
+                sync_flow_controller_name,
+                std::unique_ptr<FlowController>(
+                    new FlowControllerImpl<FlowControllerSyncPublishMode,
+                    FlowControllerFifoSchedule>(participant_, nullptr))));
     // AsyncFlowController
-    flow_controllers_.insert({async_flow_controller_name,
-                              std::unique_ptr<FlowController>(
-                                  new FlowControllerImpl<FlowControllerAsyncPublishMode,
-                                  FlowControllerFifoSchedule>(participant_, nullptr))});
+    flow_controllers_.insert(std::make_pair<std::string, std::unique_ptr<FlowController>>(
+                async_flow_controller_name,
+                std::unique_ptr<FlowController>(
+                    new FlowControllerImpl<FlowControllerAsyncPublishMode,
+                    FlowControllerFifoSchedule>(participant_, nullptr))));
 
 #ifdef FASTDDS_STATISTICS
     flow_controllers_.insert({async_statistics_flow_controller_name,
