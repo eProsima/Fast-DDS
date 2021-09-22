@@ -40,26 +40,26 @@ class FileProvider
 public:
 
     static X509_STORE* load_ca(
-        const std::string& ca,
-        bool& there_are_crls,
-        std::string& ca_sn,
-        std::string& ca_algo,
-        std::function<bool(X509*, std::string&, SecurityException&)> get_signature_algorithm,
-        SecurityException& exception);
+            const std::string& ca,
+            bool& there_are_crls,
+            std::string& ca_sn,
+            std::string& ca_algo,
+            std::function<bool(X509*, std::string&, SecurityException&)> get_signature_algorithm,
+            SecurityException& exception);
 
     static EVP_PKEY* load_private_key(
-        X509* certificate,
-        const std::string& file,
-        const std::string& password,
-        SecurityException& exception);
+            X509* certificate,
+            const std::string& file,
+            const std::string& password,
+            SecurityException& exception);
 
     static X509* load_certificate(
-        const std::string& identity_cert,
-        SecurityException& exception);
+            const std::string& identity_cert,
+            SecurityException& exception);
 
     static X509_CRL* load_crl(
-        const std::string& identity_crl,
-        SecurityException& exception);
+            const std::string& identity_crl,
+            SecurityException& exception);
 
 };
 

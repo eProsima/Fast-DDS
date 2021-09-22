@@ -163,7 +163,8 @@ static X509_STORE* load_identity_ca(
 {
     if (identity_ca.size() >= 7 && identity_ca.compare(0, 7, "file://") == 0)
     {
-        return detail::FileProvider::load_ca(identity_ca, there_are_crls, ca_sn, ca_algo, get_signature_algorithm, exception);
+        return detail::FileProvider::load_ca(identity_ca, there_are_crls, ca_sn, ca_algo, get_signature_algorithm,
+                       exception);
     }
 
     exception = _SecurityException_(std::string("Unsupported URI format ") + identity_ca);

@@ -355,7 +355,8 @@ static X509_STORE* load_permissions_ca(
 {
     if (permissions_ca.size() >= 7 && permissions_ca.compare(0, 7, "file://") == 0)
     {
-        return detail::FileProvider::load_ca(permissions_ca, there_are_crls, ca_sn, ca_algo, get_signature_algorithm, exception);
+        return detail::FileProvider::load_ca(permissions_ca, there_are_crls, ca_sn, ca_algo, get_signature_algorithm,
+                       exception);
     }
 
     exception = _SecurityException_(std::string("Unsupported URI format ") + permissions_ca);
