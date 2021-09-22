@@ -253,7 +253,7 @@ public:
 
     DomainId_t get_domain_id() const;
 
-    // TODO bool delete_contained_entities();
+    ReturnCode_t delete_contained_entities();
 
     ReturnCode_t assert_liveliness();
 

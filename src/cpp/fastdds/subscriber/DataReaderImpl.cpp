@@ -1580,6 +1580,12 @@ ReturnCode_t DataReaderImpl::get_listening_locators(
     return ReturnCode_t::RETCODE_OK;
 }
 
+ReturnCode_t DataReaderImpl::delete_contained_entities()
+{
+    // Until Query Conditions are implemented, there are no contained entities to destroy, so return OK.
+    return ReturnCode_t::RETCODE_OK;
+}
+
 } /* namespace dds */
 } /* namespace fastdds */
 } /* namespace eprosima */

@@ -183,10 +183,7 @@ const DomainParticipant* Publisher::get_participant() const
 
 ReturnCode_t Publisher::delete_contained_entities()
 {
-    return ReturnCode_t::RETCODE_UNSUPPORTED;
-    /*
-       return impl_->delete_contained_entities();
-     */
+    return impl_->delete_contained_entities();
 }
 
 ReturnCode_t Publisher::set_default_datawriter_qos(

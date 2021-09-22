@@ -587,13 +587,95 @@ DomainId_t DomainParticipantImpl::get_domain_id() const
     return domain_id_;
 }
 
-/* TODO
-   bool DomainParticipantImpl::delete_contained_entities()
-   {
-    logError(PARTICIPANT, "Not implemented.");
-    return false;
-   }
- */
+ReturnCode_t DomainParticipantImpl::delete_contained_entities()
+{
+    bool can_be_deleted = true;
+    {
+        std::lock_guard<std::mutex> lock(mtx_subs_);
+
+        for (auto subscriber : subscribers_)
+        {
+            can_be_deleted = can_be_deleted && subscriber.second->can_be_deleted();
+        }
+    }
+    {
+        std::lock_guard<std::mutex> lock(mtx_pubs_);
+
+        for (auto publisher : publishers_)
+        {
+            can_be_deleted = can_be_deleted && publisher.second->can_be_deleted();
+        }
+
+    }
+    /*
+       {
+        std::lock_guard<std::mutex> lock(mtx_topics_);
+
+        for (auto topic : topics_)
+        {
+            can_be_deleted = can_be_deleted && !topic.second->is_referenced();
+        }
+
+       }*/
+    if (!can_be_deleted)
+    {
+        return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
+    }
+    else
+    {
+        {
+            std::lock_guard<std::mutex> lock(mtx_subs_);
+
+            for (auto& subscriber : subscribers_)
+            {
+                subscriber.first->delete_contained_entities();
+            }
+
+            auto it = subscribers_.begin();
+            while (it != subscribers_.end())
+            {
+                it->second->set_listener(nullptr);
+                subscribers_by_handle_.erase(it->second->get_subscriber()->get_instance_handle());
+                delete it->second;
+                it = subscribers_.erase(it);
+            }
+        }
+
+        {
+            std::lock_guard<std::mutex> lock(mtx_pubs_);
+
+            for (auto& publisher : publishers_)
+            {
+                publisher.first->delete_contained_entities();
+            }
+
+            auto it = publishers_.begin();
+            while (it != publishers_.end())
+            {
+                it->second->set_listener(nullptr);
+                publishers_by_handle_.erase(it->second->get_publisher()->get_instance_handle());
+                delete it->second;
+                it = publishers_.erase(it);
+            }
+        }
+
+        {
+            std::lock_guard<std::mutex> lock(mtx_topics_);
+
+            auto it = topics_.begin();
+
+            while (it != topics_.end())
+            {
+                it->second->set_listener(nullptr);
+                topics_by_handle_.erase(it->second->get_topic()->get_instance_handle());
+                delete it->second;
+                it = topics_.erase(it);
+            }
+        }
+    }
+
+    return ReturnCode_t::RETCODE_OK;
+}
 
 ReturnCode_t DomainParticipantImpl::assert_liveliness()
 {

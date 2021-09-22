@@ -220,6 +220,10 @@ public:
     SubscriberListener* get_listener_for(
             const StatusMask& status);
 
+    ReturnCode_t delete_contained_entities();
+
+    bool can_be_deleted() const;
+
 protected:
 
     //!Participant
