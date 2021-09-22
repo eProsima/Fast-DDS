@@ -46,6 +46,7 @@
 #include <openssl/obj_mac.h>
 
 #include <security/artifact_providers/FileProvider.hpp>
+#include <security/artifact_providers/Pkcs11Provider.hpp>
 
 #include <cassert>
 #include <algorithm>
@@ -258,6 +259,10 @@ static EVP_PKEY* load_private_key(
     if (file.size() >= 7 && file.compare(0, 7, "file://") == 0)
     {
         return detail::FileProvider::load_private_key(certificate, file, password, exception);
+    }
+    else if (file.size() >= 7 && file.compare(0, 7, "pkcs11:") == 0)
+    {
+        return detail::Pkcs11Provider::load_private_key(certificate, file, password, exception);
     }
 
     exception = _SecurityException_(std::string("Unsupported URI format ") + file);

@@ -297,6 +297,7 @@ set(${PROJECT_NAME}_security_source_files
     security/accesscontrol/PermissionsParser.cpp
     security/logging/LogTopic.cpp
     security/artifact_providers/FileProvider.cpp
+    security/artifact_providers/Pkcs11Provider.cpp
     )
 
 if(SECURITY)
