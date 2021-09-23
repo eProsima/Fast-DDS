@@ -1031,7 +1031,10 @@ ReturnCode_t DataWriterImpl::wait_for_acknowledgments(
 
     if (history_.is_key_registered(handle))
     {
-        return ReturnCode_t::RETCODE_OK;
+        if (history_.wait_for_acknowledgement_last_change(handle, max_wait))
+        {
+            return ReturnCode_t::RETCODE_OK;
+        }
     }
     else
     {

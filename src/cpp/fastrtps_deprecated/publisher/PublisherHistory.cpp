@@ -16,20 +16,19 @@
  * @file PublisherHistory.cpp
  *
  */
-#include <fastrtps/config.h>
-
-#include <mutex>
-
 #include <fastrtps/publisher/PublisherHistory.h>
 
-#include <fastrtps_deprecated/publisher/PublisherImpl.h>
-
-#include <fastdds/rtps/writer/RTPSWriter.h>
-
-#include <fastdds/dds/log/Log.hpp>
-
+#include <chrono>
 #include <limits>
 #include <mutex>
+
+#include <fastdds/rtps/common/InstanceHandle.h>
+#include <fastdds/rtps/common/Time_t.h>
+#include <fastdds/dds/log/Log.hpp>
+#include <fastdds/rtps/writer/RTPSWriter.h>
+#include <fastrtps/config.h>
+#include <fastrtps/utils/TimeConversion.h>
+#include <fastrtps_deprecated/publisher/PublisherImpl.h>
 
 namespace eprosima {
 namespace fastrtps {
@@ -476,6 +475,34 @@ bool PublisherHistory::is_key_registered(
            )
            )
            );
+}
+
+bool PublisherHistory::wait_for_acknowledgement_last_change(
+        const InstanceHandle_t& handle,
+        const Duration_t& max_wait)
+{
+    if (WITH_KEY == topic_att_.getTopicKind())
+    {
+        t_m_Inst_Caches::iterator vit;
+        // Find the instance
+        if (find_or_add_key(handle, &vit))
+        {
+            SequenceNumber_t seq = vit->second.cache_changes.back()->sequenceNumber;
+            auto max_blocking_time = std::chrono::steady_clock::now() +
+                std::chrono::microseconds(TimeConv::Time_t2MicroSecondsInt64(max_wait));
+#if HAVE_STRICT_REALTIME
+            std::unique_lock<RecursiveTimedMutex> lock(mp_writer->getMutex(), std::defer_lock);
+            if(!lock.try_lock_until(max_blocking_time))
+            {
+                return false;
+            }
+#else
+            std::unique_lock<RecursiveTimedMutex> lock(mp_writer->getMutex());
+#endif // HAVE_STRICT_REALTIME
+            return mp_writer->wait_for_acknowledgement(seq, max_blocking_time, lock);
+        }
+    }
+    return false;
 }
 
 }  // namespace fastrtps
