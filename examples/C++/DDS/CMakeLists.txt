@@ -41,3 +41,14 @@ add_subdirectory(StaticHelloWorldExample)
 add_subdirectory(TypeLookupService)
 add_subdirectory(WriterLoansExample)
 add_subdirectory(ZeroCopyExample)
+
+# EXTERNAL REQUIREMENTS EXAMPLES
+
+# xtypes dependent
+if(NOT xtypes_FOUND)
+    find_package(xtypes QUIET)
+endif()
+if(xtypes_FOUND)
+    message(STATUS "Compiling xTypes dependent examples")
+    add_subdirectory(xTypesExample)
+endif()

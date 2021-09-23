@@ -169,6 +169,8 @@ int main(int argc, char** argv)
     columns = getenv("COLUMNS") ? atoi(getenv("COLUMNS")) : 80;
 #endif
 
+    eprosima::fastdds::dds::Log::SetVerbosity(eprosima::fastdds::dds::Log::Info);
+
     std::cout << "Starting " << std::endl;
     int type = 1;
     int count = 0;

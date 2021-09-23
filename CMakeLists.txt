@@ -154,6 +154,11 @@ endif()
 
 include_directories(thirdparty/nlohmann-json)
 
+# Not required packages
+# These packages are needed in not required sub-projects (i.e. examples). It is needed to load it
+# here in order to keep colcon dependencies correctly. If it fails the compilation continues correctly.
+find_package(xtypes QUIET)
+
 ###############################################################################
 # Options
 ###############################################################################
