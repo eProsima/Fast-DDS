@@ -18,13 +18,28 @@
 #include "LogMacros.hpp"
 #include <gtest/gtest.h>
 
+#define log_str(x) #x
+#define macro_print(mname) std::cout << #mname << " = " << \
+            (std::string(#mname) == log_str(mname) ? "" : log_str(mname)) << std::endl
+
 /* WARNING - This test will fail with any LOG_NO_ CMake option set different than default configuration
  * Check all log levels are active in debug mode, or INFO is not active in Release mode */
 TEST_F(LogMacrosTests, default_macros_test)
 {
+    std::cout << std::endl << "logInfo #define'd related constants:" << std::endl;
+    macro_print(HAVE_LOG_NO_INFO);
+    macro_print(FASTDDS_ENFORCE_LOG_INFO);
+    macro_print(__INTERNALDEBUG);
+    macro_print(_INTERNALDEBUG);
+    macro_print(_DEBUG);
+    macro_print(__DEBUG);
+    macro_print(NDEBUG);
+    std::cout << std::endl;
+
     logError(SampleCategory, "Sample error message");
     logWarning(SampleCategory, "Sample warning message");
     logInfo(SampleCategory, "Sample info message");
+
 
 #if defined(_DEBUG) || defined(__DEBUG) || !defined(NDEBUG)
     static constexpr unsigned int expected_result = 3;
