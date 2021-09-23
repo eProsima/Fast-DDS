@@ -40,8 +40,11 @@ TEST_F(LogMacrosTests, default_macros_test)
     logWarning(SampleCategory, "Sample warning message");
     logInfo(SampleCategory, "Sample info message");
 
+#if defined(NDEBUG) && !HAVE_LOG_NO_INFO
+#error "Unexpected default values for NDEBUG and HAVE_LOG_NO_INFO"
+#endif  // Check default macro values
 
-#if defined(_DEBUG) || defined(__DEBUG) || !defined(NDEBUG)
+#if !HAVE_LOG_NO_INFO && (defined(_DEBUG) || defined(__DEBUG) || !defined(NDEBUG))
     static constexpr unsigned int expected_result = 3;
 #else
     static constexpr unsigned int expected_result = 2;
