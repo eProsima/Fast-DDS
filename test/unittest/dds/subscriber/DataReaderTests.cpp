@@ -1795,12 +1795,12 @@ TEST_F(DataReaderTests, check_key_history_wholesomeness_on_unmatch)
     // here the DataReader History state must be coherent and don't loop endlessly
     ReturnCode_t res;
     std::thread query([this, &res]()
-        {
-            FooSeq samples;
-            SampleInfoSeq infos;
+            {
+                FooSeq samples;
+                SampleInfoSeq infos;
 
-            res = data_reader_->take_instance(samples, infos, LENGTH_UNLIMITED, handle_ok_);
-        });
+                res = data_reader_->take_instance(samples, infos, LENGTH_UNLIMITED, handle_ok_);
+            });
 
     // Check if the thread hangs
     // wait for termination
@@ -1867,11 +1867,10 @@ public:
  * 4. create_readcondition
  * 5. create_querycondition
  * 6. delete_readcondition
- * 7. delete_contained_entities
- * 8. get_matched_publications
- * 9. get_key_value
- * 10. lookup_instance
- * 11. wait_for_historical_data
+ * 7. get_matched_publications
+ * 8. get_key_value
+ * 9. lookup_instance
+ * 10. wait_for_historical_data
  */
 TEST_F(DataReaderUnsupportedTests, UnsupportedDataReaderMethods)
 {
@@ -1986,8 +1985,6 @@ TEST_F(DataReaderUnsupportedTests, UnsupportedDataReaderMethods)
                     nullptr));
     }
 
-    //EXPECT_EQ(ReturnCode_t::RETCODE_UNSUPPORTED, data_reader->delete_contained_entities());
-
     std::vector<fastrtps::rtps::InstanceHandle_t> publication_handles;
     EXPECT_EQ(ReturnCode_t::RETCODE_UNSUPPORTED, data_reader->get_matched_publications(publication_handles));
 
@@ -2022,13 +2019,13 @@ TEST_F(DataReaderTests, read_samples_with_future_changes)
     std::shared_ptr<rtps::test_UDPv4TransportDescriptor> test_descriptor =
             std::make_shared<rtps::test_UDPv4TransportDescriptor>();
     test_descriptor->drop_ack_nack_messages_filter_ = [&](fastrtps::rtps::CDRMessage_t&) -> bool
-        {
-            return start_dropping_acks;
-        };
+            {
+                return start_dropping_acks;
+            };
     test_descriptor->drop_data_messages_filter_ = [&](fastrtps::rtps::CDRMessage_t&) -> bool
-        {
-            return start_dropping_datas;
-        };
+            {
+                return start_dropping_datas;
+            };
 
     DomainParticipantQos participant_qos = PARTICIPANT_QOS_DEFAULT;
     participant_qos.transport().use_builtin_transports = false;

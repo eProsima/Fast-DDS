@@ -528,11 +528,10 @@ TEST(Publisher, DeleteContainedEntities)
  * This test checks that the Publisher methods defined in the standard not yet implemented in FastDDS return
  * ReturnCode_t::RETCODE_UNSUPPORTED. The following methods are checked:
  * 1. copy_from_topic_qos
- * 2. delete_contained_entities
- * 3. suspend_publications
- * 4. resume_publications
- * 5. begin_coherent_changes
- * 6. end_coherent_changes
+ * 2. suspend_publications
+ * 3. resume_publications
+ * 4. begin_coherent_changes
+ * 5. end_coherent_changes
  */
 TEST(PublisherTests, UnsupportedPublisherMethods)
 {
@@ -545,7 +544,6 @@ TEST(PublisherTests, UnsupportedPublisherMethods)
     fastdds::dds::DataWriterQos writer_qos;
     fastdds::dds::TopicQos topic_qos;
     EXPECT_EQ(ReturnCode_t::RETCODE_UNSUPPORTED, publisher->copy_from_topic_qos(writer_qos, topic_qos));
-    //EXPECT_EQ(ReturnCode_t::RETCODE_UNSUPPORTED, publisher->delete_contained_entities());
     EXPECT_EQ(ReturnCode_t::RETCODE_UNSUPPORTED, publisher->suspend_publications());
     EXPECT_EQ(ReturnCode_t::RETCODE_UNSUPPORTED, publisher->resume_publications());
     EXPECT_EQ(ReturnCode_t::RETCODE_UNSUPPORTED, publisher->begin_coherent_changes());

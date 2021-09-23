@@ -375,14 +375,6 @@ ReturnCode_t SubscriberImpl::notify_datareaders() const
     return ReturnCode_t::RETCODE_OK;
 }
 
-/* TODO
-   bool SubscriberImpl::delete_contained_entities()
-   {
-    logError(PUBLISHER, "Operation not implemented");
-    return false;
-   }
- */
-
 ReturnCode_t SubscriberImpl::set_default_datareader_qos(
         const DataReaderQos& qos)
 {
@@ -641,7 +633,6 @@ ReturnCode_t SubscriberImpl::delete_contained_entities()
     // Let's be optimistic
     ReturnCode_t result = ReturnCode_t::RETCODE_OK;
 
-    // Be optimistic
     bool can_be_deleted = true;
 
     std::vector<DataReader*> reader_vector;

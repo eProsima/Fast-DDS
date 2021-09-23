@@ -2444,7 +2444,6 @@ TEST(ParticipantTests, DeleteContainedEntities)
     ASSERT_NE(participant, nullptr);
 
     TypeSupport type(new TopicDataTypeMock());
-    //TypeSupport type;
     type.register_type(participant);
 
     Subscriber* subscriber = participant->create_subscriber(SUBSCRIBER_QOS_DEFAULT);
@@ -2485,7 +2484,7 @@ TEST(ParticipantTests, DeleteContainedEntities)
     LoanableSequence<BarType> mock_coll;
     SampleInfoSeq mock_seq;
 
-    // Setup done, start the actual testing
+    // We test that the readers/writers are properly created
 
     std::vector<DataWriter*> data_writer_list;
     publisher->get_datawriters(data_writer_list);
@@ -2498,12 +2497,13 @@ TEST(ParticipantTests, DeleteContainedEntities)
     data_reader_list.clear();
     data_writer_list.clear();
 
-    // We test that the readers/writers are properly created
+    // Setup done, start the actual testing
 
     void* loan_data;
     ASSERT_EQ(data_writer_foo->loan_sample(loan_data), ReturnCode_t::RETCODE_OK);
 
     // Writer with active loans. Fail and keep everything as is
+
     ASSERT_EQ(participant->delete_contained_entities(), ReturnCode_t::RETCODE_PRECONDITION_NOT_MET);
     ASSERT_TRUE(participant->has_active_entities());
     publisher->get_datawriters(data_writer_list);
@@ -2517,6 +2517,7 @@ TEST(ParticipantTests, DeleteContainedEntities)
     data_writer_foo->discard_loan(loan_data);
 
     // Reader with active loans. Fail and keep everything as is
+
     EXPECT_EQ(ReturnCode_t::RETCODE_OK, data_writer_bar->write(&data, HANDLE_NIL));
     Duration_t wait_time(1, 0);
     EXPECT_TRUE(data_reader_bar->wait_for_unread_message(wait_time));
@@ -2545,6 +2546,8 @@ TEST(ParticipantTests, DeleteContainedEntities)
         );
     ASSERT_EQ(query_condition, nullptr);
 
+    // Try again with all preconditions met. This should succeed
+
     ASSERT_EQ(participant->delete_contained_entities(), ReturnCode_t::RETCODE_OK);
     ASSERT_FALSE(participant->has_active_entities());
 
@@ -2563,7 +2566,6 @@ TEST(ParticipantTests, DeleteContainedEntities)
  *  ignore_topic
  *  ignore_publication
  *  ignore_subscription
- *  delete_contained_entities
  *  get_discovered_participants
  *  get_discovered_topics
  *
@@ -2614,8 +2616,6 @@ TEST(ParticipantTests, UnsupportedMethods)
     ASSERT_EQ(participant->ignore_topic(InstanceHandle_t()), ReturnCode_t::RETCODE_UNSUPPORTED);
     ASSERT_EQ(participant->ignore_publication(InstanceHandle_t()), ReturnCode_t::RETCODE_UNSUPPORTED);
     ASSERT_EQ(participant->ignore_subscription(InstanceHandle_t()), ReturnCode_t::RETCODE_UNSUPPORTED);
-
-    //ASSERT_EQ(participant->delete_contained_entities(), ReturnCode_t::RETCODE_UNSUPPORTED);
 
     // Discovery methods
     std::vector<InstanceHandle_t> handle_vector({InstanceHandle_t()});

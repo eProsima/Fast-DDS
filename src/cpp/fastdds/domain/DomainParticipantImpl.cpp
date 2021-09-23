@@ -607,16 +607,6 @@ ReturnCode_t DomainParticipantImpl::delete_contained_entities()
         }
 
     }
-    /*
-       {
-        std::lock_guard<std::mutex> lock(mtx_topics_);
-
-        for (auto topic : topics_)
-        {
-            can_be_deleted = can_be_deleted && !topic.second->is_referenced();
-        }
-
-       }*/
     if (!can_be_deleted)
     {
         return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;

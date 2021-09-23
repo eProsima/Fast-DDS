@@ -565,8 +565,7 @@ TEST(SubscriberTests, SetListener)
  * This test checks that the Subscriber methods defined in the standard not yet implemented in FastDDS return
  * ReturnCode_t::RETCODE_UNSUPPORTED. The following methods are checked:
  * 1. copy_from_topic_qos
- * 2. delete_contained_entities
- * 3. begin_access
+ * 2. begin_access
  * 3. end_access
  * 4. get_datareaders (all parameters)
  */
@@ -586,7 +585,6 @@ TEST(SubscriberTests, UnsupportedPublisherMethods)
     fastdds::dds::DataReaderQos reader_qos;
     fastdds::dds::TopicQos topic_qos;
     EXPECT_EQ(ReturnCode_t::RETCODE_UNSUPPORTED, subscriber->copy_from_topic_qos(reader_qos, topic_qos));
-    //EXPECT_EQ(ReturnCode_t::RETCODE_UNSUPPORTED, subscriber->delete_contained_entities());
     EXPECT_EQ(ReturnCode_t::RETCODE_UNSUPPORTED, subscriber->begin_access());
     EXPECT_EQ(ReturnCode_t::RETCODE_UNSUPPORTED, subscriber->end_access());
     EXPECT_EQ(ReturnCode_t::RETCODE_UNSUPPORTED, subscriber->get_datareaders(
