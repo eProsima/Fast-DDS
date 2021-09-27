@@ -233,7 +233,18 @@ bool StatefulReader::matched_writer_add(
         }
 
         // Intraprocess manages durability itself
-        if (!is_same_process && m_att.durabilityKind != VOLATILE)
+        if (VOLATILE == m_att.durabilityKind)
+        {
+            std::shared_ptr<ReaderPool> pool = datasharing_listener_->get_pool_for_writer(wp->guid());
+            SequenceNumber_t last_seq = pool->get_last_read_sequence_number();
+            if (SequenceNumber_t::unknown() != last_seq)
+            {
+                SequenceNumberSet_t sns(last_seq + 1);
+                send_acknack(wp, sns, *wp, false);
+                wp->lost_changes_update(last_seq + 1);
+            }
+        }
+        else if (!is_same_process)
         {
             // simulate a notification to force reading of transient changes
             datasharing_listener_->notify(false);
