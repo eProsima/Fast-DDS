@@ -690,6 +690,18 @@ public:
                datawriter_->wait_for_acknowledgments(eprosima::fastrtps::Time_t((int32_t)max_wait.count(), 0)));
     }
 
+    template<class _Rep,
+            class _Period
+            >
+    bool waitForInstanceAcked(
+            const eprosima::fastrtps::rtps::InstanceHandle_t& instance_handle,
+            const std::chrono::duration<_Rep, _Period>& max_wait)
+    {
+        return (ReturnCode_t::RETCODE_OK ==
+               datawriter_->wait_for_acknowledgments(instance_handle, eprosima::fastrtps::Time_t(static_cast<int32_t>(
+               max_wait.count()), 0)));
+    }
+
     void block_until_discover_topic(
             const std::string& topicName,
             int repeatedTimes)
