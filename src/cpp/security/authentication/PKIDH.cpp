@@ -819,7 +819,7 @@ static bool store_dh_public_key(
 
     if (type == EVP_PKEY_DH)
     {
-        DH* dh =
+        const DH* dh =
 #if IS_OPENSSL_1_1
                 EVP_PKEY_get0_DH(dhkey);
 #else
@@ -856,7 +856,7 @@ static bool store_dh_public_key(
     }
     else if (type == EVP_PKEY_EC)
     {
-        EC_KEY* ec =
+        const EC_KEY* ec =
 #if IS_OPENSSL_1_1
                 EVP_PKEY_get0_EC_KEY(dhkey);
 #else
