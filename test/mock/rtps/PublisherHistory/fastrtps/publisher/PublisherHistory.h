@@ -34,7 +34,7 @@
 #include <fastrtps/utils/TimedMutex.hpp>
 
 namespace eprosima {
-namespace fastrtps{
+namespace fastrtps {
 
 using namespace eprosima::fastrtps::rtps;
 
@@ -51,7 +51,8 @@ public:
     {
     }
 
-    PublisherHistory(const PublisherHistory&)
+    PublisherHistory(
+            const PublisherHistory&)
         : WriterHistory(HistoryAttributes())
     {
     }
@@ -59,8 +60,8 @@ public:
     ~PublisherHistory() = default;
 
     MOCK_METHOD2(wait_for_acknowledgement_last_change, bool(
-            const InstanceHandle_t&,
-            const Duration_t&));
+                const InstanceHandle_t&,
+                const Duration_t&));
 
     void rebuild_instances()
     {
@@ -93,12 +94,12 @@ public:
         t_m_Inst_Caches::iterator vit;
         vit = keyed_changes_.find(handle);
         return (vit != keyed_changes_.end() &&
-            (vit->second.cache_changes.empty() ||
-            (NOT_ALIVE_UNREGISTERED != vit->second.cache_changes.back()->kind &&
-            NOT_ALIVE_DISPOSED_UNREGISTERED != vit->second.cache_changes.back()->kind
-            )
-            )
-            );
+               (vit->second.cache_changes.empty() ||
+               (NOT_ALIVE_UNREGISTERED != vit->second.cache_changes.back()->kind &&
+               NOT_ALIVE_DISPOSED_UNREGISTERED != vit->second.cache_changes.back()->kind
+               )
+               )
+               );
     }
 
     bool add_pub_change(

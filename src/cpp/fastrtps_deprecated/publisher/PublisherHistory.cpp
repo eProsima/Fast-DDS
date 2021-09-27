@@ -489,10 +489,10 @@ bool PublisherHistory::wait_for_acknowledgement_last_change(
         {
             SequenceNumber_t seq = vit->second.cache_changes.back()->sequenceNumber;
             auto max_blocking_time = std::chrono::steady_clock::now() +
-                std::chrono::microseconds(TimeConv::Time_t2MicroSecondsInt64(max_wait));
+                    std::chrono::microseconds(TimeConv::Time_t2MicroSecondsInt64(max_wait));
 #if HAVE_STRICT_REALTIME
             std::unique_lock<RecursiveTimedMutex> lock(mp_writer->getMutex(), std::defer_lock);
-            if(!lock.try_lock_until(max_blocking_time))
+            if (!lock.try_lock_until(max_blocking_time))
             {
                 return false;
             }

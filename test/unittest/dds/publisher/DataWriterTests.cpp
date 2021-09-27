@@ -1062,6 +1062,7 @@ public:
     {
         return impl_;
     }
+
 };
 
 class DataWriterImplTest : public DataWriterImpl
@@ -1072,6 +1073,7 @@ public:
     {
         return &history_;
     }
+
 };
 
 /**
@@ -1080,7 +1082,7 @@ public:
 TEST(DataWriterTests, InstanceWaitForAcknowledgement)
 {
     // Test parameters
-    Duration_t max_wait(2,0);
+    Duration_t max_wait(2, 0);
     InstanceHandle_t handle;
 
     // Create participant
@@ -1103,7 +1105,7 @@ TEST(DataWriterTests, InstanceWaitForAcknowledgement)
     Topic* topic = participant->create_topic("footopic", type.get_type_name(), TOPIC_QOS_DEFAULT);
     ASSERT_NE(topic, nullptr);
     Topic* instance_topic = participant->create_topic("instancefootopic", instance_type.get_type_name(),
-        TOPIC_QOS_DEFAULT);
+                    TOPIC_QOS_DEFAULT);
     ASSERT_NE(instance_topic, nullptr);
 
     // Create disabled DataWriters
@@ -1123,7 +1125,7 @@ TEST(DataWriterTests, InstanceWaitForAcknowledgement)
     // RETCODE_PRECONDITION_NOT_MET
     ASSERT_EQ(ReturnCode_t::RETCODE_OK, instance_datawriter->enable());
     EXPECT_EQ(ReturnCode_t::RETCODE_PRECONDITION_NOT_MET, instance_datawriter->wait_for_acknowledgments(handle,
-        max_wait));
+            max_wait));
 
     // Access PublisherHistory
     DataWriterTest* instance_datawriter_test = static_cast<DataWriterTest*>(instance_datawriter);
@@ -1136,7 +1138,7 @@ TEST(DataWriterTests, InstanceWaitForAcknowledgement)
 
     // 4. Calling wait_for_acknowledgments in a keyed topic with a known handle returns RETCODE_OK (no matched readers)
     // Expectations
-    EXPECT_CALL(*history, wait_for_acknowledgement_last_change(_,_)).WillOnce(testing::Return(true));
+    EXPECT_CALL(*history, wait_for_acknowledgement_last_change(_, _)).WillOnce(testing::Return(true));
 
     InstanceFooType data;
     data.message("HelloWorld");
@@ -1147,7 +1149,7 @@ TEST(DataWriterTests, InstanceWaitForAcknowledgement)
     // 5. Calling wait_for_acknowledgments in a keyed topic with a known handle timeouts if some reader has not
     // acknowledged before max_wait time (mock) returns RETCODE_ERROR
     // Expectations
-    EXPECT_CALL(*history, wait_for_acknowledgement_last_change(_,_)).WillOnce(testing::Return(false));
+    EXPECT_CALL(*history, wait_for_acknowledgement_last_change(_, _)).WillOnce(testing::Return(false));
     EXPECT_EQ(ReturnCode_t::RETCODE_ERROR, instance_datawriter->wait_for_acknowledgments(handle, max_wait));
 }
 
