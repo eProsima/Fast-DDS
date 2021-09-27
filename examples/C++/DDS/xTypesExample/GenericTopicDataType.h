@@ -20,6 +20,7 @@
 #ifndef _EPROSIMA_FASTDDS_EXAMPLES_CPP_DDS_XTYPESEXAMPLE_GENERICTYPESUPPORTNOKEYS_H_
 #define _EPROSIMA_FASTDDS_EXAMPLES_CPP_DDS_XTYPESEXAMPLE_GENERICTYPESUPPORTNOKEYS_H_
 
+#include <xtypes/idl/idl.hpp>
 #include <xtypes/StructType.hpp>
 #include <fastdds/dds/topic/TopicDataType.hpp>
 
@@ -30,17 +31,22 @@ class GenericTopicDataType : public eprosima::fastdds::dds::TopicDataType
 {
 public:
 
-    GenericTopicDataType(const std::string& type_name);
+    GenericTopicDataType(const std::string& filename, const std::string& type_name);
     virtual ~GenericTopicDataType();
-    virtual bool serialize(void *data, eprosima::fastrtps::rtps::SerializedPayload_t *payload) override;
-    virtual bool deserialize(eprosima::fastrtps::rtps::SerializedPayload_t *payload, void *data) override;
     virtual std::function<uint32_t()> getSerializedSizeProvider(void* data) override;
     virtual bool getKey(void *data, eprosima::fastrtps::rtps::InstanceHandle_t *ihandle,
         bool force_md5 = false) override;
     virtual void* createData() override;
     virtual void deleteData(void * data) override;
 
+    // WARNING
+    // These funciona must be implemented depending on the type that will be written
+    // TODO: write a generic function for xtypes objects
+    virtual bool serialize(void *data, eprosima::fastrtps::rtps::SerializedPayload_t *payload) override;
+    virtual bool deserialize(eprosima::fastrtps::rtps::SerializedPayload_t *payload, void *data) override;
+
 private:
+    eprosima::xtypes::idl::Context context_;
     eprosima::xtypes::StructType* type_struct_;
 };
 

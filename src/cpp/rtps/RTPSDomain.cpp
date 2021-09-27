@@ -154,6 +154,7 @@ RTPSParticipant* RTPSDomain::createParticipant(
     // would ensure builtin endpoints are able to differentiate between a communication loss and a participant recovery
     if (PParam.prefix != c_GuidPrefix_Unknown)
     {
+        logError(DEBUG, "Creating participant with guid " << PParam.prefix << " and Persistence: " << guidP);
         pimpl = new RTPSParticipantImpl(domain_id, PParam, PParam.prefix, guidP, p, listen);
     }
     else

@@ -494,7 +494,7 @@ bool StatefulReader::processDataMsg(
             // Perform reception of cache change
             if (!change_received(change_to_add, pWP))
             {
-                logInfo(RTPS_MSG_IN, IDSTRING "Change " << change_to_add->sequenceNumber << " not added to history");
+                logWarning(RTPS_MSG_IN, IDSTRING "Change " << change_to_add->sequenceNumber << " not added to history");
                 change_to_add->payload_owner()->release_payload(*change_to_add);
                 change_pool_->release_cache(change_to_add);
                 return false;
@@ -572,8 +572,8 @@ bool StatefulReader::processDataFragMsg(
                 if (!change_received(change_created, pWP))
                 {
 
-                    logInfo(RTPS_MSG_IN,
-                            IDSTRING "MessageReceiver not add change " << change_created->sequenceNumber.to64long());
+                    logWarning(RTPS_MSG_IN,
+                            IDSTRING "MessageReceiver not add change 1" << change_created->sequenceNumber.to64long());
 
                     releaseCache(change_created);
                     work_change = nullptr;
@@ -829,6 +829,8 @@ bool StatefulReader::change_received(
                             getListener()->onNewCacheChangeAdded((RTPSReader*)this, a_change);
                         }
 
+                        logWarning(DEBUG, "Already have this sequence number from this writer " << a_change->sequenceNumber);
+
                         return true;
                     }
                 }
@@ -869,6 +871,7 @@ bool StatefulReader::change_received(
 
         // statistics callback
         on_subscribe_throughput(payload_length);
+
 
         return ret;
     }

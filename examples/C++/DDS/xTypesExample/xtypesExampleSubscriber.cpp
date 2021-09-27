@@ -43,7 +43,7 @@ bool xtypesExampleSubscriber::init()
 {
     // CREATE PARTICIPANT
     DomainParticipantQos pqos;
-    pqos.name("Participant_sub");
+    pqos.name("xTypesExampleSubscriber");
     participant_ = DomainParticipantFactory::get_instance()->create_participant(0, pqos);
 
     if (participant_ == nullptr)
@@ -129,22 +129,24 @@ void xtypesExampleSubscriber::SubListener::on_subscription_matched(
 void xtypesExampleSubscriber::SubListener::on_data_available(
         DataReader* reader)
 {
-    eprosima::xtypes::DynamicData* data = reinterpret_cast<eprosima::xtypes::DynamicData*>(type.create_data());
+    eprosima::xtypes::DynamicData* data = static_cast<eprosima::xtypes::DynamicData*>(type.create_data());
 
     SampleInfo info;
-    if (reader->take_next_sample(&data, &info) == ReturnCode_t::RETCODE_OK)
+    if (reader->take_next_sample(data, &info) == ReturnCode_t::RETCODE_OK)
     {
         if (info.instance_state == ALIVE_INSTANCE_STATE)
         {
-            // Print your structure data here.
-            std::cout << "Message '" << data->value<std::string>() << "' " << data->value<uint32_t>()
-                << " RECEIVED" << std::endl;
+            std::cout << "Message: '" << (*data)["message"].value<std::string>() << "' with index: "
+                << (*data)["index"].value<uint32_t>() << " RECEIVED" << std::endl;
         }
     }
+
+    type.delete_data(data);
 }
 
 void xtypesExampleSubscriber::run()
 {
     std::cout << "Subscriber running. Please press enter to stop the Subscriber" << std::endl;
     std::cin.ignore();
+    std::cout << "Subscriber finishing." << std::endl;
 }

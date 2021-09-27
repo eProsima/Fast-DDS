@@ -27,8 +27,9 @@
 
 #include "GenericTopicDataType.h"
 
-#define TYPE_NAME "xTypesExampleType"
+#define TYPE_NAME_SUB "xTypesExampleType"
 #define TOPIC_NAME "xtypesExampleTopic"
+#define IDL_FILE_NAME "xtypesExample.idl"
 
 class xtypesExampleSubscriber
 {
@@ -60,7 +61,7 @@ private:
     public:
 
         SubListener()
-            : type(new GenericTopicDataType(TYPE_NAME))
+            : type(new GenericTopicDataType(IDL_FILE_NAME, TYPE_NAME_SUB))
         {
         }
 
@@ -77,6 +78,7 @@ private:
                 eprosima::fastdds::dds::DataReader* reader,
                 const eprosima::fastdds::dds::SubscriptionMatchedStatus& info) override;
 
+        // Type is on Listener and not on Subscriber so it can be used in on_data_available
         eprosima::fastdds::dds::TypeSupport type;
     }
     listener_;

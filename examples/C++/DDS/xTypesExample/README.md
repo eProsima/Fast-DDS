@@ -13,7 +13,7 @@ Download the xTypes repository using the following command:
 git clone https://github.com/eProsima/xtypes.git --recursive
 ```
 
-If this repository is downloaded in `src` with the other Fast DDS dependencies, using colcon to compile Fast DDS
+If this repository is downloaded in `src` with other Fast DDS dependencies, using colcon to compile Fast DDS
 will automatically compile and install xtypes.
 (Add it to fastrtps.repos in order to download it as another dependency)
 
@@ -32,3 +32,5 @@ To launch this test open two different consoles:
 ```
 
 The Publisher and Subscriber will use xTypes to dynamically create the type using the `xtypesExample.idl` file.
+So far, the `serialize` and `deserialize` methods are not implemented generically, so the `.idl` file cannot
+be modified.

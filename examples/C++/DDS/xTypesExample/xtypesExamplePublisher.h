@@ -30,8 +30,9 @@
 #include <fastdds/dds/topic/TypeSupport.hpp>
 
 #define SLEEP_TIME 1000
-#define TYPE_NAME "xTypesExampleType"
 #define TOPIC_NAME "xtypesExampleTopic"
+#define TYPE_NAME_PUB "xTypesExampleType"
+#define IDL_FILE_NAME "xtypesExample.idl"
 
 class xtypesExamplePublisher
 {

@@ -54,3 +54,6 @@ target_compile_definitions(DDSxTypesExample PRIVATE
 target_link_libraries(DDSxTypesExample fastrtps fastcdr xtypes)
 install(TARGETS DDSxTypesExample
     RUNTIME DESTINATION examples/C++/DDS/xTypesExample/${BIN_INSTALL_DIR})
+
+# Copy idl file
+file(COPY xtypesExample.idl DESTINATION ${PROJECT_BINARY_DIR})

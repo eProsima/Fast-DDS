@@ -19,11 +19,13 @@
 
 #include "xtypesExamplePublisher.h"
 #include "xtypesExampleSubscriber.h"
+#include <fastdds/dds/log/Log.hpp>
 
 int main(
         int argc,
         char** argv)
 {
+    // eprosima::fastdds::dds::Log::SetVerbosity(eprosima::fastdds::dds::Log::Kind::Info);
     bool publisher = true;
 
     // PARSE ARGUMENTS

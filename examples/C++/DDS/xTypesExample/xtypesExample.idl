@@ -1,4 +1,5 @@
 struct xTypesExampleType
 {
 	unsigned long index;
+    string message;
 };

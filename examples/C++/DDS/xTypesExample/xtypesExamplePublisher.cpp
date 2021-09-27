@@ -41,7 +41,7 @@ xtypesExamplePublisher::xtypesExamplePublisher()
     , writer_(nullptr)
         // Create a Type Support with type xTypesExampleType
         // Type describred in xTypesExample.idl
-    , type_(new GenericTopicDataType(TYPE_NAME))
+    , type_(new GenericTopicDataType(IDL_FILE_NAME, TYPE_NAME_PUB))
     , samples_sent_(0)
     , stop_(false)
 {
@@ -51,7 +51,7 @@ bool xtypesExamplePublisher::init()
 {
     // CREATE PARTICIPANT
     DomainParticipantQos pqos;
-    pqos.name("Participant_pub");
+    pqos.name("xTypesExamplePublisher");
     participant_ = DomainParticipantFactory::get_instance()->create_participant(0, pqos);
 
     if (participant_ == nullptr)
@@ -74,7 +74,7 @@ bool xtypesExamplePublisher::init()
     }
 
     //CREATE TOPIC
-    topic_ = participant_->create_topic(TOPIC_NAME, TYPE_NAME, TOPIC_QOS_DEFAULT);
+    topic_ = participant_->create_topic(TOPIC_NAME, TYPE_NAME_PUB, TOPIC_QOS_DEFAULT);
 
     if (topic_ == nullptr)
     {
@@ -94,20 +94,20 @@ bool xtypesExamplePublisher::init()
 
 xtypesExamplePublisher::~xtypesExamplePublisher()
 {
-    if (writer_ != nullptr)
-    {
-        publisher_->delete_datawriter(writer_);
-    }
-    if (publisher_ != nullptr)
-    {
-        participant_->delete_publisher(publisher_);
-    }
-    if (topic_ != nullptr)
-    {
-        participant_->delete_topic(topic_);
-    }
     if (participant_)
     {
+        if (publisher_ != nullptr)
+        {
+            if (writer_ != nullptr)
+            {
+                publisher_->delete_datawriter(writer_);
+            }
+            participant_->delete_publisher(publisher_);
+        }
+        if (topic_ != nullptr)
+        {
+            participant_->delete_topic(topic_);
+        }
         DomainParticipantFactory::get_instance()->delete_participant(participant_);
     }
 }
@@ -135,21 +135,24 @@ void xtypesExamplePublisher::runThread()
 {
     eprosima::xtypes::DynamicData* data = reinterpret_cast<eprosima::xtypes::DynamicData*>(type_.create_data());
 
-    (*data)["message"] = "xTypes Hello World message with type: " TYPE_NAME;
+    (*data)["message"] = "xTypes Hello World message with type: " TYPE_NAME_PUB;
 
     while (!stop_)
     {
         // Set new index to data
-        (*data)["index"] = data->value<uint32_t>() + 1;
+        uint32_t current_index = (*data)["index"].value<uint32_t>();
+        (*data)["index"] = current_index + 1;
 
         // Publish data
         writer_->write(data);
-        std::cout << "Message: " << data->value<std::string>() << " with index: " << data->value<uint32_t>()
-                << " SENT" << std::endl;
+        std::cout << "Message: '" << (*data)["message"].value<std::string>()
+            << "' with index: " << (*data)["index"].value<uint32_t> ()<< " SENT" << std::endl;
 
         // Sleep
         std::this_thread::sleep_for(std::chrono::milliseconds(SLEEP_TIME));
     }
+
+    type_.delete_data(data);
 }
 
 void xtypesExamplePublisher::run()
@@ -159,6 +162,8 @@ void xtypesExamplePublisher::run()
 
     std::cout << "Publisher running. Please press enter to stop the Publisher at any time." << std::endl;
     std::cin.ignore();
+    std::cout << "Publisher finishing." << std::endl;
+
     stop_ = true;
 
     thread.join();
