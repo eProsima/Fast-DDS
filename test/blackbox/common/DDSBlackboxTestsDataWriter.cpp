@@ -21,8 +21,11 @@
 
 #include <fastrtps/attributes/LibrarySettingsAttributes.h>
 #include <fastrtps/xmlparser/XMLProfileManager.h>
+#include <rtps/transport/test_UDPv4Transport.h>
 
 using namespace eprosima::fastrtps;
+using test_UDPv4Transport = eprosima::fastdds::rtps::test_UDPv4Transport;
+using test_UDPv4TransportDescriptor = eprosima::fastdds::rtps::test_UDPv4TransportDescriptor;
 
 enum communication_type
 {
@@ -81,7 +84,9 @@ TEST_P(DDSDataWriter, WaitForAcknowledgmentInstance)
     PubSubWriter<KeyedHelloWorldType> writer(TEST_TOPIC_NAME);
     PubSubReader<KeyedHelloWorldType> reader(TEST_TOPIC_NAME);
 
-    writer.init();
+    auto testTransport = std::make_shared<test_UDPv4TransportDescriptor>();
+
+    writer.disable_builtin_transport().add_user_transport_to_pparams(testTransport).init();
     ASSERT_TRUE(writer.isInitialized());
 
     reader.reliability(RELIABLE_RELIABILITY_QOS).init();
@@ -89,6 +94,9 @@ TEST_P(DDSDataWriter, WaitForAcknowledgmentInstance)
 
     writer.wait_discovery();
     reader.wait_discovery();
+
+    // Disable communication to prevent reception of ACKs
+    test_UDPv4Transport::test_UDPv4Transport_ShutdownAllNetwork = true;
 
     auto data = default_keyedhelloworld_data_generator(2);
 
@@ -103,8 +111,18 @@ TEST_P(DDSDataWriter, WaitForAcknowledgmentInstance)
     writer.send(data);
     EXPECT_TRUE(data.empty());
 
-    EXPECT_TRUE(writer.waitForInstanceAcked(instance_handle_1, std::chrono::seconds(10)));
-    EXPECT_TRUE(writer.waitForInstanceAcked(instance_handle_2, std::chrono::seconds(10)));
+    // Intraprocess does not use transport layer. The ACKs cannot be disabled.
+    if (INTRAPROCESS != GetParam())
+    {
+        EXPECT_FALSE(writer.waitForInstanceAcked(instance_handle_1, std::chrono::seconds(1)));
+        EXPECT_FALSE(writer.waitForInstanceAcked(instance_handle_2, std::chrono::seconds(1)));
+    }
+
+    // Enable communication and wait for acknowledgment
+    test_UDPv4Transport::test_UDPv4Transport_ShutdownAllNetwork = false;
+
+    EXPECT_TRUE(writer.waitForInstanceAcked(instance_handle_1, std::chrono::seconds(1)));
+    EXPECT_TRUE(writer.waitForInstanceAcked(instance_handle_2, std::chrono::seconds(1)));
 
 }
 
