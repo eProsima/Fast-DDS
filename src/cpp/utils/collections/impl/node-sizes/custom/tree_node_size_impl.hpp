@@ -23,7 +23,14 @@
 template<typename T>
 struct my_tree_node_type
 {
-    // There is an enum rb_tree_colo {false, true} here on libstdc++, it has been included below on other_info
+    // There is an enum tree_color {false, true} here on libstdc++, we should include it here to
+    // ensure there are no alignment issues
+    enum color_t
+    {
+        RED = false,
+        BLACK = true
+    }
+    color;
 
     // Three pointers on MSVC and libstdc++, two on libc++
     my_tree_node_type* parent;
