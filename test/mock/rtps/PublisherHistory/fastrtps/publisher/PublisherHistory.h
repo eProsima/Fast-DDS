@@ -38,17 +38,51 @@ namespace fastrtps {
 
 using namespace eprosima::fastrtps::rtps;
 
+static HistoryAttributes to_history_attributes(
+        const TopicAttributes& topic_att,
+        uint32_t payloadMaxSize,
+        MemoryManagementPolicy_t mempolicy)
+{
+    auto initial_samples = topic_att.resourceLimitsQos.allocated_samples;
+    auto max_samples = topic_att.resourceLimitsQos.max_samples;
+    auto extra_samples = topic_att.resourceLimitsQos.extra_samples;
+
+    if (topic_att.historyQos.kind != KEEP_ALL_HISTORY_QOS)
+    {
+        max_samples = topic_att.historyQos.depth;
+        if (topic_att.getTopicKind() != NO_KEY)
+        {
+            max_samples *= topic_att.resourceLimitsQos.max_instances;
+        }
+
+        initial_samples = std::min(initial_samples, max_samples);
+    }
+
+    return HistoryAttributes(mempolicy, payloadMaxSize, initial_samples, max_samples, extra_samples);
+}
+
 class PublisherHistory : public WriterHistory
 {
 public:
 
     PublisherHistory(
             const TopicAttributes& topic_att,
-            uint32_t,
-            MemoryManagementPolicy_t)
-        : WriterHistory(HistoryAttributes())
+            uint32_t payloadMaxSize,
+            MemoryManagementPolicy_t mempolicy)
+        : WriterHistory(to_history_attributes(topic_att, payloadMaxSize, mempolicy))
+        , history_qos_(topic_att.historyQos)
+        , resource_limited_qos_(topic_att.resourceLimitsQos)
         , topic_att_(topic_att)
     {
+        if (resource_limited_qos_.max_instances == 0)
+        {
+            resource_limited_qos_.max_instances = std::numeric_limits<int32_t>::max();
+        }
+
+        if (resource_limited_qos_.max_samples_per_instance == 0)
+        {
+            resource_limited_qos_.max_samples_per_instance = std::numeric_limits<int32_t>::max();
+        }
     }
 
     PublisherHistory(
@@ -108,6 +142,14 @@ public:
             std::unique_lock<RecursiveTimedMutex>&,
             const std::chrono::time_point<std::chrono::steady_clock>&)
     {
+        if (m_isHistoryFull)
+        {
+            if(!this->remove_min_change())
+            {
+                return false;
+            }
+        }
+
         bool returnedValue = false;
 
         // For NO_KEY we can directly add the change
@@ -166,9 +208,46 @@ public:
     }
 
     bool remove_change_pub(
-            CacheChange_t*)
+            CacheChange_t* change)
     {
-        return true;
+        if (mp_writer == nullptr || mp_mutex == nullptr)
+        {
+            return false;
+        }
+
+        std::lock_guard<RecursiveTimedMutex> guard(*this->mp_mutex);
+        if (topic_att_.getTopicKind() == NO_KEY)
+        {
+            if (remove_change(change))
+            {
+                m_isHistoryFull = false;
+                return true;
+            }
+
+            return false;
+        }
+        else
+        {
+            t_m_Inst_Caches::iterator vit;
+            if (!this->find_or_add_key(change->instanceHandle, &vit))
+            {
+                return false;
+            }
+
+            for (auto chit = vit->second.cache_changes.begin(); chit != vit->second.cache_changes.end(); ++chit)
+            {
+                if (((*chit)->sequenceNumber == change->sequenceNumber) && ((*chit)->writerGUID == change->writerGUID))
+                {
+                    if (remove_change(change))
+                    {
+                        vit->second.cache_changes.erase(chit);
+                        m_isHistoryFull = false;
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
     }
 
 private:
@@ -177,6 +256,10 @@ private:
 
     //!Map where keys are instance handles and values are vectors of cache changes associated
     t_m_Inst_Caches keyed_changes_;
+    //!HistoryQosPolicy values.
+    HistoryQosPolicy history_qos_;
+    //!ResourceLimitsQosPolicy values.
+    ResourceLimitsQosPolicy resource_limited_qos_;
     //!Topic Attributes
     TopicAttributes topic_att_;
 
