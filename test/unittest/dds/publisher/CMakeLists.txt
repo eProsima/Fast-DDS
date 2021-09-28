@@ -12,6 +12,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+if(WIN32)
+    add_definitions(-D_WIN32_WINNT=0x0601)
+    add_definitions(-DNOMINMAX)
+endif()
+
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/../profiles/test_xml_profiles.xml
     ${CMAKE_CURRENT_BINARY_DIR}/test_xml_profiles.xml
     COPYONLY)
