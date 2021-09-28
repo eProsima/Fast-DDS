@@ -144,7 +144,7 @@ public:
     {
         if (m_isHistoryFull)
         {
-            if(!this->remove_min_change())
+            if (!this->remove_min_change())
             {
                 return false;
             }
