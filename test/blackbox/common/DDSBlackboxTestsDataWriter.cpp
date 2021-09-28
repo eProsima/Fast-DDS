@@ -117,6 +117,10 @@ TEST_P(DDSDataWriter, WaitForAcknowledgmentInstance)
         EXPECT_FALSE(writer.waitForInstanceAcked(instance_handle_1, std::chrono::seconds(1)));
         EXPECT_FALSE(writer.waitForInstanceAcked(instance_handle_2, std::chrono::seconds(1)));
     }
+    else
+    {
+        std::cout << "INTRAPROCESS does not use transport layer. Therefore ACKs cannot be disabled" << std::endl;
+    }
 
     // Enable communication and wait for acknowledgment
     test_UDPv4Transport::test_UDPv4Transport_ShutdownAllNetwork = false;
