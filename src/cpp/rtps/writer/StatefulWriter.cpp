@@ -704,6 +704,7 @@ DeliveryRetCode StatefulWriter::deliver_sample_to_network(
     while (DeliveryRetCode::DELIVERED == ret_code &&
             min_unsent_fragment != n_fragments + 1)
     {
+        SequenceNumber_t gap_seq_for_all = SequenceNumber_t::unknown();
         locator_selector.locator_selector.reset(false);
         auto first_relevant_reader = matched_remote_readers_.begin();
         bool inline_qos = false;
@@ -735,16 +736,43 @@ DeliveryRetCode StatefulWriter::deliver_sample_to_network(
                 // send it a personal GAP.
                 if (SequenceNumber_t::unknown() != gap_seq)
                 {
-                    group.sender(this, (*remote_reader)->message_sender());
-                    group.add_gap(gap_seq, SequenceNumberSet_t(change->sequenceNumber), (*remote_reader)->guid());
-                    send_heartbeat_nts_(1u, group, disable_positive_acks_);
-                    group.sender(this, &locator_selector); // This makes the flush_and_reset().
+                    if (SequenceNumber_t::unknown() == gap_seq_for_all) // Calculate if the hole is for all readers
+                    {
+                        History::const_iterator chit = mp_history->find_change_nts(change);
+
+                        if (chit == mp_history->changesBegin())
+                        {
+                            gap_seq_for_all = gap_seq;
+                        }
+                        else
+                        {
+                            SequenceNumber_t prev = (*std::prev(chit))->sequenceNumber + 1;
+
+                            if (prev == gap_seq)
+                            {
+                                gap_seq_for_all = gap_seq;
+                            }
+                        }
+                    }
+
+                    if (gap_seq_for_all != gap_seq) // If it is an individual GAP, sent it to repective reader.
+                    {
+                        group.sender(this, (*remote_reader)->message_sender());
+                        group.add_gap(gap_seq, SequenceNumberSet_t(change->sequenceNumber), (*remote_reader)->guid());
+                        send_heartbeat_nts_(1u, group, disable_positive_acks_);
+                        group.sender(this, &locator_selector); // This makes the flush_and_reset().
+                    }
                 }
             }
             else
             {
                 (*remote_reader)->active(false);
             }
+        }
+
+        if (SequenceNumber_t::unknown() != gap_seq_for_all) // Send GAP for all readers
+        {
+            group.add_gap(gap_seq_for_all, SequenceNumberSet_t(change->sequenceNumber));
         }
 
         try
