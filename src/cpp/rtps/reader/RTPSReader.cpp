@@ -285,8 +285,8 @@ void RTPSReader::add_persistence_guid(
             history_state_->history_record.erase(guid);
         }
     }
-    // logInfo(DEBUG, "add_persistence_guid: " << guid << " persistence " << persistence_guid);
-    // print_state("add_persistence_guid", history_state_);
+    logInfo(DEBUG, "add_persistence_guid: " << guid << " persistence " << persistence_guid);
+    print_state("add_persistence_guid", history_state_);
 }
 
 bool RTPSReader::may_remove_history_record(
@@ -315,8 +315,8 @@ void RTPSReader::remove_persistence_guid(
         // history_state_->persistence_guid_count.erase(guid);
     }
 
-    // logInfo(DEBUG, "remove_persistence_guid: " << guid << " persistence " << persistence_guid);
-    // print_state("remove_persistence_guid", history_state_);
+    logInfo(DEBUG, "remove_persistence_guid: " << guid << " persistence " << persistence_guid);
+    print_state("remove_persistence_guid", history_state_);
 }
 
 SequenceNumber_t RTPSReader::update_last_notified(
@@ -365,8 +365,8 @@ SequenceNumber_t RTPSReader::get_last_notified(
         ret_val = p_seq->second;
     }
 
-    // logInfo(DEBUG, "get_last_notified: " << guid << " value " << ret_val);
-    // print_state("get_last_notified", history_state_);
+    logInfo(DEBUG, "get_last_notified: " << guid << " value " << ret_val);
+    print_state("get_last_notified", history_state_);
     return ret_val;
 }
 
@@ -376,8 +376,8 @@ void RTPSReader::set_last_notified(
 {
     history_state_->history_record[peristence_guid] = seq;
 
-    // logInfo(DEBUG, "set_last_notified: " << peristence_guid << " value " << seq);
-    // print_state("get_last_notified", history_state_);
+    logInfo(DEBUG, "set_last_notified: " << peristence_guid << " value " << seq);
+    print_state("get_last_notified", history_state_);
 }
 
 bool RTPSReader::wait_for_unread_cache(

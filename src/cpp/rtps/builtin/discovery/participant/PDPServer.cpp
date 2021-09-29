@@ -1259,6 +1259,10 @@ bool PDPServer::process_to_send_lists()
         logInfo(RTPS_PDP_SERVER, "Processing pdp_to_send");
         process_to_send_list(discovery_db_.pdp_to_send(), mp_PDPWriter, mp_PDPWriterHistory);
     }
+    else if(!discovery_db_.server_acked_by_all())
+    {
+        announceParticipantState(false);
+    }
     else
     {
         logInfo(RTPS_PDP_SERVER, "Skiping sending PDP data because no entities have been discovered or updated");
