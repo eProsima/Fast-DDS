@@ -228,6 +228,40 @@ History::const_iterator RTPSReader::findCacheInFragmentedProcess(
     return ret_val;
 }
 
+void print_state(const std::string text, const eprosima::fastrtps::rtps::ReaderHistoryState * state)
+{
+    std::stringstream ss;
+    ss << text << " : MAP [";
+    for (auto it : state->persistence_guid_map)
+    {
+        ss << "  " << it.first << " : " << it.second << " ;";
+    }
+    ss << " ] RECORD [";
+    for (auto it : state->history_record)
+    {
+        ss << "  " << it.first << " : " << it.second << " ;";
+    }
+    ss << " ]";
+    logInfo(DEBUG, "" << ss.str());
+
+    // logError(DEBUG, "update_last_notified: status after update");
+    // logError(DEBUG, "MAP");
+    // for (auto it : history_state_->persistence_guid_map)
+    // {
+    //     logError(DEBUG, "  " << it.first << " : " << it.second);
+    // }
+    // logError(DEBUG, "RECORD");
+    // for (auto it : history_state_->history_record)
+    // {
+    //     logError(DEBUG, "  " << it.first << " : " << it.second);
+    // }
+    // // logError(DEBUG, "COUNT");
+    // // for (auto it : history_state_->persistence_guid_count)
+    // // {
+    // //     logError(DEBUG, "  " << it.first << " : " << it.second);
+    // // }
+}
+
 void RTPSReader::add_persistence_guid(
         const GUID_t& guid,
         const GUID_t& persistence_guid)
@@ -236,6 +270,23 @@ void RTPSReader::add_persistence_guid(
     std::lock_guard<RecursiveTimedMutex> guard(mp_mutex);
     history_state_->persistence_guid_map[guid] = persistence_guid_to_store;
     history_state_->persistence_guid_count[persistence_guid_to_store]++;
+
+    // Could happen that a value has already been stored in the record with the guid and not the persistence guid
+    // This is because received_change is called before Proxy is created
+    // In this case, we substitute the guid for the persistence (in case they are not equal)
+    if (persistence_guid != guid)
+    {
+        auto spourious_record = history_state_->history_record.find(guid);
+        if (spourious_record != history_state_->history_record.end())
+        {
+            logInfo(RTPS_READER, "Sporious record found, changing guid "
+                    << guid << " for persistence guid " << persistence_guid);
+            history_state_->history_record[persistence_guid] = spourious_record->second;
+            history_state_->history_record.erase(guid);
+        }
+    }
+    // logInfo(DEBUG, "add_persistence_guid: " << guid << " persistence " << persistence_guid);
+    // print_state("add_persistence_guid", history_state_);
 }
 
 bool RTPSReader::may_remove_history_record(
@@ -257,7 +308,15 @@ void RTPSReader::remove_persistence_guid(
     {
         history_state_->history_record.erase(persistence_guid_stored);
         history_state_->persistence_guid_count.erase(persistence_guid_stored);
+
+        // It could happen that the history contains also the guid (change added before proxy exist)
+        // This occurs also in SERVER because proxy for remote servers are created before knowing persistence
+        // history_state_->history_record.erase(guid);
+        // history_state_->persistence_guid_count.erase(guid);
     }
+
+    // logInfo(DEBUG, "remove_persistence_guid: " << guid << " persistence " << persistence_guid);
+    // print_state("remove_persistence_guid", history_state_);
 }
 
 SequenceNumber_t RTPSReader::update_last_notified(
@@ -306,6 +365,8 @@ SequenceNumber_t RTPSReader::get_last_notified(
         ret_val = p_seq->second;
     }
 
+    // logInfo(DEBUG, "get_last_notified: " << guid << " value " << ret_val);
+    // print_state("get_last_notified", history_state_);
     return ret_val;
 }
 
@@ -314,6 +375,9 @@ void RTPSReader::set_last_notified(
         const SequenceNumber_t& seq)
 {
     history_state_->history_record[peristence_guid] = seq;
+
+    // logInfo(DEBUG, "set_last_notified: " << peristence_guid << " value " << seq);
+    // print_state("get_last_notified", history_state_);
 }
 
 bool RTPSReader::wait_for_unread_cache(

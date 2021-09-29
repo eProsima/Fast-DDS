@@ -416,7 +416,8 @@ RTPSParticipantImpl::RTPSParticipantImpl(
 
     mp_builtinProtocols = new BuiltinProtocols();
 
-    logInfo(RTPS_PARTICIPANT, "RTPSParticipant \"" << m_att.getName() << "\" with guidPrefix: " << m_guid.guidPrefix);
+    logInfo(RTPS_PARTICIPANT, "RTPSParticipant \"" << m_att.getName() << "\" with guidPrefix: " << m_guid.guidPrefix
+            << " and persistence guid: " << persistence_guid);
 }
 
 RTPSParticipantImpl::RTPSParticipantImpl(
