@@ -12,11 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-if(WIN32)
-    add_definitions(-D_WIN32_WINNT=0x0601)
-    add_definitions(-DNOMINMAX)
-endif()
-
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/../profiles/test_xml_profiles.xml
     ${CMAKE_CURRENT_BINARY_DIR}/test_xml_profiles.xml
     COPYONLY)
@@ -265,6 +260,7 @@ if(WIN32)
     add_definitions(
         -D_WIN32_WINNT=0x0601
         -D_CRT_SECURE_NO_WARNINGS
+        -DNOMINMAX
         )
 endif()
 
@@ -286,6 +282,7 @@ add_executable(DataWriterTests ${DATAWRITERTESTS_SOURCE})
 target_compile_definitions(DataWriterTests PRIVATE FASTRTPS_NO_LIB
     BOOST_ASIO_STANDALONE
     ASIO_STANDALONE
+    SQLITE_WIN32_GETVERSIONEX=0
     $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
     $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
     $<$<AND:$<BOOL:${WIN32}>,$<STREQUAL:"${CMAKE_SYSTEM_NAME}","WindowsStore">>:_WIN32_WINNT=0x0603>
