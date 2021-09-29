@@ -185,9 +185,7 @@ bool ReaderHistory::remove_fragmented_changes_until(
                 if (item->is_fully_assembled() == false)
                 {
                     logInfo(RTPS_READER_HISTORY, "Removing change " << item->sequenceNumber);
-                    mp_reader->change_removed_by_history(item);
-                    mp_reader->releaseCache(item);
-                    chit = m_changes.erase(chit);
+                    chit = remove_change_nts(chit);
                     continue;
                 }
             }
