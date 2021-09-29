@@ -13,7 +13,7 @@
 // limitations under the License.
 
 /**
- * @file HelloWorldPublisher.cpp
+ * @file BasicConfigurationHelloWorldPublisher.cpp
  *
  */
 
@@ -30,7 +30,7 @@
 #include <fastrtps/attributes/ParticipantAttributes.h>
 #include <fastrtps/attributes/PublisherAttributes.h>
 
-#include "HelloWorldPublisher.h"
+#include "BasicConfigurationHelloWorldPublisher.h"
 
 using namespace eprosima::fastdds::dds;
 using namespace eprosima::fastdds::rtps;
