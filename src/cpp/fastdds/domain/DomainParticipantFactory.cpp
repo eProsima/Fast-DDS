@@ -165,61 +165,49 @@ DomainParticipant* DomainParticipantFactory::create_participant(
         DomainParticipantListener* listen,
         const StatusMask& mask)
 {
-    std::cout << "I'm in create_participant 1" << std::endl;
     load_profiles();
-    std::cout << "I'm in create_participant 2" << std::endl;
 
     const DomainParticipantQos& pqos = (&qos == &PARTICIPANT_QOS_DEFAULT) ? default_participant_qos_ : qos;
 
-    std::cout << "I'm in create_participant 3" << std::endl;
     DomainParticipant* dom_part = new DomainParticipant(mask);
-    std::cout << "I'm in create_participant 4" << std::endl;
 #ifndef FASTDDS_STATISTICS
     DomainParticipantImpl* dom_part_impl = new DomainParticipantImpl(dom_part, did, pqos, listen);
-    std::cout << "I'm in create_participant 5" << std::endl;
 #else
     eprosima::fastdds::statistics::dds::DomainParticipantImpl* dom_part_impl =
             new eprosima::fastdds::statistics::dds::DomainParticipantImpl(dom_part, did, pqos, listen);
-    std::cout << "I'm in create_participant 6" << std::endl;
 #endif // FASTDDS_STATISTICS
 
-    {
-        std::cout << "I'm in create_participant 6" << std::endl;
+    std::cout << "I'm in create_participant 1" << std::endl;
+    // {
         std::lock_guard<std::mutex> guard(mtx_participants_);
-        std::cout << "I'm in create_participant 7" << std::endl;
         using VectorIt = std::map<DomainId_t, std::vector<DomainParticipantImpl*>>::iterator;
-        std::cout << "I'm in create_participant 8" << std::endl;
         VectorIt vector_it = participants_.find(did);
-        std::cout << "I'm in create_participant 9" << std::endl;
 
         if (vector_it == participants_.end())
         {
             // Insert the vector
-            std::cout << "I'm in create_participant 10" << std::endl;
             std::vector<DomainParticipantImpl*> new_vector;
-            std::cout << "I'm in create_participant 11" << std::endl;
             auto pair_it = participants_.insert(std::make_pair(did, std::move(new_vector)));
-            std::cout << "I'm in create_participant 12" << std::endl;
             vector_it = pair_it.first;
-            std::cout << "I'm in create_participant 13" << std::endl;
         }
 
-        std::cout << "I'm in create_participant 14" << std::endl;
         vector_it->second.push_back(dom_part_impl);
-        std::cout << "I'm in create_participant 15" << std::endl;
-    }
+    // }
+    std::cout << "I'm in create_participant 2" << std::endl;
 
     if (factory_qos_.entity_factory().autoenable_created_entities)
     {
+        std::cout << "I'm in create_participant 3" << std::endl;
         if (ReturnCode_t::RETCODE_OK != dom_part->enable())
         {
-            std::cout << "I'm in create_participant 16" << std::endl;
+            std::cout << "I'm in create_participant 4" << std::endl;
             delete_participant(dom_part);
-            std::cout << "I'm in create_participant 17" << std::endl;
+            std::cout << "I'm in create_participant 5" << std::endl;
             return nullptr;
         }
+        std::cout << "I'm in create_participant 6" << std::endl;
     }
-    std::cout << "I'm in create_participant 18" << std::endl;
+    std::cout << "I'm in create_participant 7" << std::endl;
 
     return dom_part;
 }
