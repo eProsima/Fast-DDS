@@ -21,6 +21,9 @@
 #define PUBLISHERHISTORY_H_
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
+#include <chrono>
+#include <mutex>
+
 #include <fastdds/rtps/common/InstanceHandle.h>
 #include <fastdds/rtps/common/Time_t.h>
 #include <fastdds/rtps/history/WriterHistory.h>
@@ -145,12 +148,14 @@ public:
     /**
      * Waits till the last change in the instance history has been acknowledged.
      * @param handle Instance's handle.
-     * @param max_wait Maximum time to wait for.
+     * @param lock Lock which should be unlock in case the operation has to wait.
+     * @param max_blocking_time Maximum time the operation should be waiting.
      * @return true when the last change of the instance history is acknowleged, false when timeout is reached.
      */
     bool wait_for_acknowledgement_last_change(
             const rtps::InstanceHandle_t& handle,
-            const Duration_t& max_wait);
+            std::unique_lock<RecursiveTimedMutex>& lock,
+            const std::chrono::time_point<std::chrono::steady_clock>& max_blocking_time);
 
 private:
 

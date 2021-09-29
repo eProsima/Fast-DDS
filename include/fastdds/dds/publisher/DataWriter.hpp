@@ -542,14 +542,22 @@ public:
             rtps::LocatorList& locators) const;
 
     /**
-     * Waits the current thread until the writer have received the acknowledgment corresponding to the given instance.
+     * Block the current thread until the writer has received the acknowledgment corresponding to the given instance.
+     * Operations performed on the same instance while the current thread is waiting will not be taken into
+     * consideration, i.e. this method may return `RETCODE_OK` with those operations unacknowledged.
+     *
+     * @param instance Sample used to deduce instance's key in case of `handle` parameter is HANDLE_NIL.
      * @param handle Instance handle of the data.
      * @param max_wait Maximum blocking time for this operation.
+     *
      * @return RETCODE_NOT_ENABLED if the writer has not been enabled.
-     * RETCODE_PRECONDITION_NOT_MET if the topic does not have a key or the key is unkown to the writer.
-     * RETCODE_OK if the DataWriter receive the acknowledgments before the time expires and RETCODE_ERROR otherwise.
+     * @return RETCODE_BAD_PARAMETER if `instance` is not a valid pointer or the key is not consistent with `handle`.
+     * @return RETCODE_PRECONDITION_NOT_MET if the topic does not have a key or the key is unkown to the writer.
+     * @return RETCODE_OK if the DataWriter receive the acknowledgments before the time expires.
+     * @return RETCODE_ERROR otherwise.
      */
     RTPS_DllAPI ReturnCode_t wait_for_acknowledgments(
+            void* instance,
             const InstanceHandle_t& handle,
             const fastrtps::Duration_t& max_wait);
 

@@ -93,9 +93,10 @@ public:
 
     ~PublisherHistory() = default;
 
-    MOCK_METHOD2(wait_for_acknowledgement_last_change, bool(
+    MOCK_METHOD3(wait_for_acknowledgement_last_change, bool(
                 const InstanceHandle_t&,
-                const Duration_t&));
+                std::unique_lock<RecursiveTimedMutex>& lock,
+                const std::chrono::time_point<std::chrono::steady_clock>& max_blocking_time));
 
     void rebuild_instances()
     {

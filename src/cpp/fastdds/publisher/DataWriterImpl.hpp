@@ -222,6 +222,7 @@ public:
             const fastrtps::Duration_t& max_wait);
 
     ReturnCode_t wait_for_acknowledgments(
+            void* instance,
             const InstanceHandle_t& handle,
             const fastrtps::Duration_t& max_wait);
 

@@ -108,14 +108,17 @@ TEST_P(DDSDataWriter, WaitForAcknowledgmentInstance)
 
     reader.startReception(data);
 
+    KeyedHelloWorld sample_1 = data.front();
+    KeyedHelloWorld sample_2 = data.back();
+
     writer.send(data);
     EXPECT_TRUE(data.empty());
 
     // Intraprocess does not use transport layer. The ACKs cannot be disabled.
     if (INTRAPROCESS != GetParam())
     {
-        EXPECT_FALSE(writer.waitForInstanceAcked(instance_handle_1, std::chrono::seconds(1)));
-        EXPECT_FALSE(writer.waitForInstanceAcked(instance_handle_2, std::chrono::seconds(1)));
+        EXPECT_FALSE(writer.waitForInstanceAcked(&sample_1, rtps::c_InstanceHandle_Unknown, std::chrono::seconds(1)));
+        EXPECT_FALSE(writer.waitForInstanceAcked(&sample_2, instance_handle_2, std::chrono::seconds(1)));
     }
     else
     {
@@ -125,8 +128,8 @@ TEST_P(DDSDataWriter, WaitForAcknowledgmentInstance)
     // Enable communication and wait for acknowledgment
     test_UDPv4Transport::test_UDPv4Transport_ShutdownAllNetwork = false;
 
-    EXPECT_TRUE(writer.waitForInstanceAcked(instance_handle_1, std::chrono::seconds(1)));
-    EXPECT_TRUE(writer.waitForInstanceAcked(instance_handle_2, std::chrono::seconds(1)));
+    EXPECT_TRUE(writer.waitForInstanceAcked(&sample_1, instance_handle_1, std::chrono::seconds(1)));
+    EXPECT_TRUE(writer.waitForInstanceAcked(&sample_2, rtps::c_InstanceHandle_Unknown, std::chrono::seconds(1)));
 
 }
 

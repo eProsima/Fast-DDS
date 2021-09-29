@@ -1084,6 +1084,8 @@ TEST(DataWriterTests, InstanceWaitForAcknowledgement)
     // Test parameters
     Duration_t max_wait(2, 0);
     InstanceHandle_t handle;
+    InstanceFooType data;
+    data.message("HelloWorld");
 
     // Create participant
     DomainParticipant* participant =
@@ -1115,17 +1117,21 @@ TEST(DataWriterTests, InstanceWaitForAcknowledgement)
     ASSERT_NE(nullptr, instance_datawriter);
 
     // 1. Calling wait_for_acknowledgments in a disable writer returns RETCODE_NOT_ENABLED
-    EXPECT_EQ(ReturnCode_t::RETCODE_NOT_ENABLED, datawriter->wait_for_acknowledgments(handle, max_wait));
+    EXPECT_EQ(ReturnCode_t::RETCODE_NOT_ENABLED, datawriter->wait_for_acknowledgments(&data, handle, max_wait));
 
     // 2. Calling wait_for_acknowledgments in a non keyed topic returns RETCODE_PRECONDITION_NOT MET
     ASSERT_EQ(ReturnCode_t::RETCODE_OK, datawriter->enable());
-    EXPECT_EQ(ReturnCode_t::RETCODE_PRECONDITION_NOT_MET, datawriter->wait_for_acknowledgments(handle, max_wait));
-
-    // 3. Calling wait_for_acknowledgments in a keyed topic with c_InstanceHandle_Unknown returns
-    // RETCODE_PRECONDITION_NOT_MET
-    ASSERT_EQ(ReturnCode_t::RETCODE_OK, instance_datawriter->enable());
-    EXPECT_EQ(ReturnCode_t::RETCODE_PRECONDITION_NOT_MET, instance_datawriter->wait_for_acknowledgments(handle,
+    EXPECT_EQ(ReturnCode_t::RETCODE_PRECONDITION_NOT_MET, datawriter->wait_for_acknowledgments(&data, handle,
             max_wait));
+
+    // 3. Calling wait_for_acknowledgments with an invalid sample returns RETCODE_BAD_PARAMETER
+    ASSERT_EQ(ReturnCode_t::RETCODE_OK, instance_datawriter->enable());
+    EXPECT_EQ(ReturnCode_t::RETCODE_BAD_PARAMETER, instance_datawriter->wait_for_acknowledgments(nullptr, handle,
+            max_wait));
+
+    // 4. Calling wait_for_acknowledgments with an inconsistent handle returns RETCODE_BAD_PARAMETER
+    EXPECT_EQ(ReturnCode_t::RETCODE_BAD_PARAMETER, instance_datawriter->wait_for_acknowledgments(&data,
+            datawriter->get_instance_handle(), max_wait));
 
     // Access PublisherHistory
     DataWriterTest* instance_datawriter_test = static_cast<DataWriterTest*>(instance_datawriter);
@@ -1136,21 +1142,25 @@ TEST(DataWriterTests, InstanceWaitForAcknowledgement)
     ASSERT_NE(nullptr, datawriter_impl_test);
     fastrtps::PublisherHistory* history = datawriter_impl_test->get_history();
 
-    // 4. Calling wait_for_acknowledgments in a keyed topic with a known handle returns RETCODE_OK (no matched readers)
-    // Expectations
-    EXPECT_CALL(*history, wait_for_acknowledgement_last_change(_, _)).WillOnce(testing::Return(true));
-
-    InstanceFooType data;
-    data.message("HelloWorld");
+    // 5. Calling wait_for_acknowledgments in a keyed topic with c_InstanceHandle_Unknown returns
+    // RETCODE_OK
+    EXPECT_CALL(*history, wait_for_acknowledgement_last_change(_, _, _)).WillOnce(testing::Return(true));
     ASSERT_EQ(ReturnCode_t::RETCODE_OK, instance_datawriter->write(&data, c_InstanceHandle_Unknown));
-    instance_type.get_key(&data, &handle);
-    EXPECT_EQ(ReturnCode_t::RETCODE_OK, instance_datawriter->wait_for_acknowledgments(handle, max_wait));
+    EXPECT_EQ(ReturnCode_t::RETCODE_OK, instance_datawriter->wait_for_acknowledgments(&data, handle,
+            max_wait));
 
-    // 5. Calling wait_for_acknowledgments in a keyed topic with a known handle timeouts if some reader has not
+    // 6. Calling wait_for_acknowledgments in a keyed topic with a known handle returns RETCODE_OK (no matched readers)
+    // Expectations
+    EXPECT_CALL(*history, wait_for_acknowledgement_last_change(_, _, _)).WillOnce(testing::Return(true));
+
+    instance_type.get_key(&data, &handle);
+    EXPECT_EQ(ReturnCode_t::RETCODE_OK, instance_datawriter->wait_for_acknowledgments(&data, handle, max_wait));
+
+    // 7. Calling wait_for_acknowledgments in a keyed topic with a known handle timeouts if some reader has not
     // acknowledged before max_wait time (mock) returns RETCODE_ERROR
     // Expectations
-    EXPECT_CALL(*history, wait_for_acknowledgement_last_change(_, _)).WillOnce(testing::Return(false));
-    EXPECT_EQ(ReturnCode_t::RETCODE_ERROR, instance_datawriter->wait_for_acknowledgments(handle, max_wait));
+    EXPECT_CALL(*history, wait_for_acknowledgement_last_change(_, _, _)).WillOnce(testing::Return(false));
+    EXPECT_EQ(ReturnCode_t::RETCODE_ERROR, instance_datawriter->wait_for_acknowledgments(&data, handle, max_wait));
 }
 
 class DataWriterUnsupportedTests : public ::testing::Test
