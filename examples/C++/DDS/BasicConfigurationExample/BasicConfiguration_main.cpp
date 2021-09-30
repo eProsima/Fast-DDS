@@ -13,15 +13,15 @@
 // limitations under the License.
 
 /**
- * @file BasicConfigurationHelloWorld_main.cpp
+ * @file BasicConfiguration_main.cpp
  *
  */
 
 #include <string>
 
 #include "arg_configuration.h"
-#include "BasicConfigurationHelloWorldPublisher.h"
-#include "BasicConfigurationHelloWorldSubscriber.h"
+#include "BasicConfigurationPublisher.h"
+#include "BasicConfigurationSubscriber.h"
 
 enum EntityType
 {

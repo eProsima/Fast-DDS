@@ -13,7 +13,7 @@
 // limitations under the License.
 
 /**
- * @file BasicConfigurationHelloWorldSubscriber.cpp
+ * @file BasicConfigurationSubscriber.cpp
  *
  */
 
@@ -29,7 +29,7 @@
 #include <fastrtps/attributes/ParticipantAttributes.h>
 #include <fastrtps/attributes/SubscriberAttributes.h>
 
-#include "BasicConfigurationHelloWorldSubscriber.h"
+#include "BasicConfigurationSubscriber.h"
 
 using namespace eprosima::fastdds::dds;
 using namespace eprosima::fastdds::rtps;
