@@ -42,7 +42,7 @@ public:
 
     virtual ~HelloWorldSubscriber();
 
-    //!Initialize the subscriber
+    //! Initialize the subscriber
     bool init(
             const std::string& topic_name,
             uint32_t max_messages,
@@ -51,14 +51,14 @@ public:
             bool reliable,
             bool transient);
 
-    //!RUN the subscriber until number samples are received
+    //! RUN the subscriber until number samples are received
     void run(
             uint32_t number);
 
-    // returns the current state of execution
+    //! Return the current state of execution
     static bool is_stopped();
 
-    // triggers the end of execution
+    //! Trigger the end of execution
     static void stop();
 
 private:
@@ -91,15 +91,15 @@ private:
         {
         }
 
-        // sets the maximum number of messages to receive before exiting
+        //! Set the maximum number of messages to receive before exiting
         void set_max_messages(
                 uint32_t max_messages);
 
-        // callback executed when a new sample is received
+        //! Callback executed when a new sample is received
         void on_data_available(
                 eprosima::fastdds::dds::DataReader* reader) override;
 
-        // callback executed when a DataWriter is matched or unmatched
+        //! Callback executed when a DataWriter is matched or unmatched
         void on_subscription_matched(
                 eprosima::fastdds::dds::DataReader* reader,
                 const eprosima::fastdds::dds::SubscriptionMatchedStatus& info) override;
@@ -108,24 +108,24 @@ private:
 
         HelloWorld hello_;
 
-        // number of DataWriters matched to the associated DataReader
+        //! Number of DataWriters matched to the associated DataReader
         int matched_;
 
-        // number of samples received
+        //! Number of samples received
         uint32_t samples_;
 
-        // number of messages to be received before triggering termination of execution
+        //! Number of messages to be received before triggering termination of execution
         uint32_t max_messages_;
     }
     listener_;
 
-    // member used for control flow purposes
+    //! Member used for control flow purposes
     static std::atomic<bool> stop_;
 
-    // protects terminate condition variable
+    //! Protects terminate condition variable
     static std::mutex terminate_cv_mtx_;
 
-    // waits during execution until SIGINT or max_messages_ samples are received
+    //! Waits during execution until SIGINT or max_messages_ samples are received
     static std::condition_variable terminate_cv_;
 };
 
