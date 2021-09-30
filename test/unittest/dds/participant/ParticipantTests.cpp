@@ -2449,8 +2449,12 @@ TEST(ParticipantTests, DeleteContainedEntities)
     Subscriber* subscriber = participant->create_subscriber(SUBSCRIBER_QOS_DEFAULT);
     ASSERT_NE(subscriber, nullptr);
 
+    InstanceHandle_t subscriber_handle = subscriber->get_instance_handle();
+
     Publisher* publisher = participant->create_publisher(PUBLISHER_QOS_DEFAULT);
     ASSERT_NE(subscriber, nullptr);
+
+    InstanceHandle_t publisher_handle = publisher->get_instance_handle();
 
     Topic* topic_bar = participant->create_topic("bartopic", type.get_type_name(), TOPIC_QOS_DEFAULT);
     ASSERT_NE(topic_bar, nullptr);
@@ -2471,6 +2475,9 @@ TEST(ParticipantTests, DeleteContainedEntities)
 
     Topic* topic_foo = participant->create_topic("footopic", loanable_type.get_type_name(), TOPIC_QOS_DEFAULT);
     ASSERT_NE(topic_foo, nullptr);
+
+    InstanceHandle_t topic_foo_handle = topic_foo->get_instance_handle();
+    InstanceHandle_t topic_bar_handle = topic_bar->get_instance_handle();
 
     DataWriter* data_writer_foo = publisher->create_datawriter(topic_foo, DATAWRITER_QOS_DEFAULT);
     ASSERT_NE(data_writer_foo, nullptr);
@@ -2505,7 +2512,7 @@ TEST(ParticipantTests, DeleteContainedEntities)
     // Writer with active loans. Fail and keep everything as is
 
     ASSERT_EQ(participant->delete_contained_entities(), ReturnCode_t::RETCODE_PRECONDITION_NOT_MET);
-    ASSERT_TRUE(participant->has_active_entities());
+    ASSERT_TRUE(participant->contains_entity(publisher_handle));
     publisher->get_datawriters(data_writer_list);
     ASSERT_EQ(data_writer_list.size(), 2);
     subscriber->get_datareaders(data_reader_list);
@@ -2526,7 +2533,7 @@ TEST(ParticipantTests, DeleteContainedEntities)
 
     ASSERT_EQ(participant->delete_contained_entities(), ReturnCode_t::RETCODE_PRECONDITION_NOT_MET);
 
-    ASSERT_TRUE(participant->has_active_entities());
+    ASSERT_TRUE(participant->contains_entity(subscriber_handle));
     publisher->get_datawriters(data_writer_list);
     ASSERT_EQ(data_writer_list.size(), 2);
     subscriber->get_datareaders(data_reader_list);
@@ -2549,7 +2556,11 @@ TEST(ParticipantTests, DeleteContainedEntities)
     // Try again with all preconditions met. This should succeed
 
     ASSERT_EQ(participant->delete_contained_entities(), ReturnCode_t::RETCODE_OK);
-    ASSERT_FALSE(participant->has_active_entities());
+    ASSERT_FALSE(participant->contains_entity(publisher_handle));
+    ASSERT_FALSE(participant->contains_entity(subscriber_handle));
+    ASSERT_FALSE(participant->contains_entity(topic_foo_handle));
+    ASSERT_FALSE(participant->contains_entity(topic_bar_handle));
+
 
 }
 
