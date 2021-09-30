@@ -551,8 +551,9 @@ public:
      * @param max_wait Maximum blocking time for this operation.
      *
      * @return RETCODE_NOT_ENABLED if the writer has not been enabled.
-     * @return RETCODE_BAD_PARAMETER if `instance` is not a valid pointer or the key is not consistent with `handle`.
-     * @return RETCODE_PRECONDITION_NOT_MET if the topic does not have a key or the key is unkown to the writer.
+     * @return RETCODE_BAD_PARAMETER if `instance` is not a valid pointer.
+     * @return RETCODE_PRECONDITION_NOT_MET if the topic does not have a key, the key is unknown to the writer,
+     *         or the key is not consistent with `handle`.
      * @return RETCODE_OK if the DataWriter receive the acknowledgments before the time expires.
      * @return RETCODE_ERROR otherwise.
      */

@@ -1036,19 +1036,24 @@ ReturnCode_t DataWriterImpl::wait_for_acknowledgments(
         return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
     }
 
-    InstanceHandle_t ih = c_InstanceHandle_Unknown;
+    InstanceHandle_t ih = handle;
 
-    bool is_key_protected = false;
+#if defined(NDEBUG)
+    if (c_InstanceHandle_Unknown == ih)
+#endif // NDEBUG
+    {
+        bool is_key_protected = false;
 #if HAVE_SECURITY
-    is_key_protected = writer_->getAttributes().security_attributes().is_key_protected;
+        is_key_protected = writer_->getAttributes().security_attributes().is_key_protected;
 #endif // HAVE_SECURITY
-    type_->getKey(instance, &ih, is_key_protected);
+        type_->getKey(instance, &ih, is_key_protected);
+    }
 
 #if !defined(NDEBUG)
     if (c_InstanceHandle_Unknown != handle && ih != handle)
     {
         logError(PUBLISHER, "handle differs from data's key");
-        return ReturnCode_t::RETCODE_BAD_PARAMETER;
+        return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
     }
 #endif // NDEBUG */
 
