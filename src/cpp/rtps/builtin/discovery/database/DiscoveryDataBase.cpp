@@ -476,14 +476,14 @@ void DiscoveryDataBase::process_pdp_data_queue()
         {
             // Update participants map
             logInfo(DISCOVERY_DATABASE, "DATA(p) of entity " << data_queue_info.change()->instanceHandle <<
-                    " received from: " << data_queue_info.change()->writerGUID);
+                    " received from: " << data_queue_info.change()->writerGUID << " in: " << server_guid_prefix_);
             create_participant_from_change_(data_queue_info.change(), data_queue_info.participant_change_data());
         }
         // If the change is a DATA(Up)
         else
         {
             logInfo(DISCOVERY_DATABASE, "DATA(Up) of entity " << data_queue_info.change()->instanceHandle <<
-                    " received from: " << data_queue_info.change()->writerGUID);
+                    " received from: " << data_queue_info.change()->writerGUID << " in: " << server_guid_prefix_);
             process_dispose_participant_(data_queue_info.change());
         }
 
@@ -527,14 +527,14 @@ bool DiscoveryDataBase::process_edp_data_queue()
             if (is_writer(change))
             {
                 logInfo(DISCOVERY_DATABASE, "DATA(w) in topic " << topic_name << " received from: "
-                                                                << change->instanceHandle);
+                        << change->instanceHandle << " in: " << server_guid_prefix_);
                 create_writers_from_change_(change, topic_name);
             }
             // DATA(r) case
             else if (is_reader(change))
             {
                 logInfo(DISCOVERY_DATABASE, "DATA(r) in topic " << topic_name << " received from: "
-                                                                << change->instanceHandle);
+                        << change->instanceHandle << " in: " << server_guid_prefix_);
                 create_readers_from_change_(change, topic_name);
             }
         }
@@ -544,13 +544,15 @@ bool DiscoveryDataBase::process_edp_data_queue()
             // DATA(Uw) case
             if (is_writer(change))
             {
-                logInfo(DISCOVERY_DATABASE, "DATA(Uw) received from: " << change->instanceHandle);
+                logInfo(DISCOVERY_DATABASE, "DATA(Uw) received from: " << change->instanceHandle
+                        << " in: " << server_guid_prefix_);
                 process_dispose_writer_(change);
             }
             // DATA(Ur) case
             else if (is_reader(change))
             {
-                logInfo(DISCOVERY_DATABASE, "DATA(Ur) received from: " << change->instanceHandle);
+                logInfo(DISCOVERY_DATABASE, "DATA(Ur) received from: " << change->instanceHandle
+                        << " in: " << server_guid_prefix_);
                 process_dispose_reader_(change);
             }
         }
@@ -987,7 +989,7 @@ void DiscoveryDataBase::create_readers_from_change_(
         }
         else
         {
-            logError(DISCOVERY_DATABASE, "Writer " << reader_guid << " as no associated participant. Skipping");
+            logError(DISCOVERY_DATABASE, "Reader " << reader_guid << " as no associated participant. Skipping");
             return;
         }
 
@@ -1726,10 +1728,10 @@ void DiscoveryDataBase::AckedFunctor::operator () (
                     // If neither of both has happenned we should not wait for it to ack this data, so we
                     // skip it and leave it as acked
                     auto remote_server_it = db_->participants_.find(*it);
-                    if (remote_server_it == db_->participants_.end())
+                    if (remote_server_it != db_->participants_.end())
                     {
                         logInfo(DISCOVERY_DATABASE, "Change " << change_->instanceHandle <<
-                                "check as acked for " << reader_proxy->guid() << " as it has not answered pinging yet");
+                                "check as acked for " << reader_proxy->guid() << " as it is already in DB");
                         return;
                     }
                 }
@@ -1746,7 +1748,7 @@ void DiscoveryDataBase::AckedFunctor::operator () (
 void DiscoveryDataBase::unmatch_participant_(
         const eprosima::fastrtps::rtps::GuidPrefix_t& guid_prefix)
 {
-    logInfo(DISCOVERY_DATABASE, "unmatching participant: " << guid_prefix);
+    logInfo(DISCOVERY_DATABASE, "unmatching participant: " << guid_prefix << " in server: " << server_guid_prefix_);
 
     auto pit = participants_.find(guid_prefix);
     if (pit == participants_.end())
@@ -1755,25 +1757,24 @@ void DiscoveryDataBase::unmatch_participant_(
                 "Attempting to unmatch an unexisting participant: " << guid_prefix);
     }
 
-    // For each relevant participant make not relevant
-    for (eprosima::fastrtps::rtps::GuidPrefix_t relevant_participant : pit->second.relevant_participants())
+    // For each participant remove it
+    // IMPORTANT: This is not for every relevant participant, as participant A could be in other participant's B info
+    // and B not be relevant for A
+    // Using for with a map does copy the values, do not give references
+    for (auto participant_it : participants_)
     {
-        if (relevant_participant != guid_prefix)
-        {
-            auto rpit = participants_.find(relevant_participant);
-            if (rpit == participants_.end())
-            {
-                // This is not an error. Remote participants will try to unmatch with participants even
-                // when the match is not reciprocal
-                logInfo(DISCOVERY_DATABASE,
-                        "Participant " << relevant_participant << " matched with an unexisting participant: " <<
-                        guid_prefix);
-            }
-            else
-            {
-                rpit->second.remove_participant(guid_prefix);
-            }
-        }
+        auto it = participants_.find(participant_it.first);
+        it->second.remove_participant(guid_prefix);
+    }
+    for (auto writer_it : writers_)
+    {
+        auto it = writers_.find(writer_it.first);
+        it->second.remove_participant(guid_prefix);
+    }
+    for (auto reader_it : readers_)
+    {
+        auto it = readers_.find(reader_it.first);
+        it->second.remove_participant(guid_prefix);
     }
 }
 

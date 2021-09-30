@@ -1005,9 +1005,12 @@ History::iterator PDPServer::process_change_acknowledgement(
     // cases where kind is NOT_ALIVE_UNREGISTERED or NOT_ALIVE_DISPOSED_UNREGISTERED.
     else
     {
+        logInfo(RTPS_PDP_SERVER, "Processing ack data not alive " << c->instanceHandle);
+
         // If `StatefulWriter::is_acked_by_all()`:
         if (writer->is_acked_by_all(c))
         {
+            logInfo(RTPS_PDP_SERVER, "Data acked by all. Erasing entity " << c->instanceHandle);
             // Remove entry from `participants_|writers_|readers_`
             // AND put the change in changes_release
             discovery_db_.delete_entity_of_change(c);
