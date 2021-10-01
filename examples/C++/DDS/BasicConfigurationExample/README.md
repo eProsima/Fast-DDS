@@ -51,5 +51,6 @@ QoS options:
   -r              --reliable            Set reliability to reliable (best-effort
                                         by default).
                   --transient           Set durability to transient local
-                                        (volatile by default).
+                                        (volatile by default, ineffective when
+                                        not reliable).
 ```

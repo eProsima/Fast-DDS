@@ -232,14 +232,15 @@ void HelloWorldSubscriber::run(
     stop_ = false;
     if (samples > 0)
     {
-        std::cout << "Subscriber running until " << samples << " samples have been received" << std::endl;
+        std::cout << "Subscriber running until " << samples << " samples have been received. Please press CTRL+C to stop the Subscriber at any time." << std::endl;
     }
     else
     {
-        std::cout << "Subscriber running. Please press CTRL+C to stop the Subscriber" << std::endl;
+        std::cout << "Subscriber running. Please press CTRL+C to stop the Subscriber." << std::endl;
     }
     signal(SIGINT, [](int signum)
             {
+                std::cout << "SIGINT received, stopping Subscriber execution." << std::endl;
                 static_cast<void>(signum); HelloWorldSubscriber::stop();
             });
     std::unique_lock<std::mutex> lck(terminate_cv_mtx_);

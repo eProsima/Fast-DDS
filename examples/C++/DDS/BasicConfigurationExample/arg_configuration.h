@@ -178,7 +178,7 @@ const option::Descriptor usage[] = {
     { RELIABLE, 0, "r", "reliable",         Arg::None,
       "  -r \t--reliable \tSet reliability to reliable (best-effort by default)." },
     { TRANSIENT_LOCAL, 0, "", "transient",        Arg::None,
-      "  \t--transient \tSet durability to transient local (volatile by default)." },
+      "  \t--transient \tSet durability to transient local (volatile by default, ineffective when not reliable)." },
 
 
     { 0, 0, 0, 0, 0, 0 }

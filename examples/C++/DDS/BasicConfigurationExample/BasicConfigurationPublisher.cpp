@@ -140,6 +140,7 @@ bool HelloWorldPublisher::init(
     if (reliable)
     {
         wqos.reliability().kind = RELIABLE_RELIABILITY_QOS;
+        wqos.history().kind = KEEP_ALL_HISTORY_QOS;
     }
     else
     {
@@ -150,6 +151,8 @@ bool HelloWorldPublisher::init(
     if (transient)
     {
         wqos.durability().kind = TRANSIENT_LOCAL_DURABILITY_QOS;
+        wqos.history().kind = KEEP_ALL_HISTORY_QOS;     // store previously sent samples so they can be resent to newly
+                                                        // matched DataReaders
     }
     else
     {
@@ -268,10 +271,11 @@ void HelloWorldPublisher::run(
     }
     else
     {
-        std::cout << "Publisher running " << samples << " samples." << std::endl;
+        std::cout << "Publisher running " << samples << " samples. Please press CTRL+C to stop the Publisher at any time." << std::endl;
     }
     signal(SIGINT, [](int signum)
             {
+                std::cout << "SIGINT received, stopping Publisher execution." << std::endl;
                 static_cast<void>(signum); HelloWorldPublisher::stop();
             });
     thread.join();
