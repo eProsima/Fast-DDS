@@ -177,8 +177,7 @@ DomainParticipant* DomainParticipantFactory::create_participant(
             new eprosima::fastdds::statistics::dds::DomainParticipantImpl(dom_part, did, pqos, listen);
 #endif // FASTDDS_STATISTICS
 
-    std::cout << "I'm in create_participant 1" << std::endl;
-    // {
+    {
         std::lock_guard<std::mutex> guard(mtx_participants_);
         using VectorIt = std::map<DomainId_t, std::vector<DomainParticipantImpl*>>::iterator;
         VectorIt vector_it = participants_.find(did);
@@ -192,22 +191,16 @@ DomainParticipant* DomainParticipantFactory::create_participant(
         }
 
         vector_it->second.push_back(dom_part_impl);
-    // }
-    std::cout << "I'm in create_participant 2" << std::endl;
+    }
 
     if (factory_qos_.entity_factory().autoenable_created_entities)
     {
-        std::cout << "I'm in create_participant 3" << std::endl;
         if (ReturnCode_t::RETCODE_OK != dom_part->enable())
         {
-            std::cout << "I'm in create_participant 4" << std::endl;
             delete_participant(dom_part);
-            std::cout << "I'm in create_participant 5" << std::endl;
             return nullptr;
         }
-        std::cout << "I'm in create_participant 6" << std::endl;
     }
-    std::cout << "I'm in create_participant 7" << std::endl;
 
     return dom_part;
 }
@@ -333,7 +326,7 @@ ReturnCode_t DomainParticipantFactory::load_profiles()
 {
     if (false == default_xml_profiles_loaded)
     {
-        // SystemInfo::set_environment_file();
+        SystemInfo::set_environment_file();
         XMLProfileManager::loadDefaultXMLFile();
         // Only load profile once
         default_xml_profiles_loaded = true;
