@@ -232,7 +232,8 @@ void HelloWorldSubscriber::run(
     stop_ = false;
     if (samples > 0)
     {
-        std::cout << "Subscriber running until " << samples << " samples have been received. Please press CTRL+C to stop the Subscriber at any time." << std::endl;
+        std::cout << "Subscriber running until " << samples <<
+                " samples have been received. Please press CTRL+C to stop the Subscriber at any time." << std::endl;
     }
     else
     {

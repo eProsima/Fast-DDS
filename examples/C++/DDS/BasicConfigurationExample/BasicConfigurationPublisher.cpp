@@ -271,7 +271,8 @@ void HelloWorldPublisher::run(
     }
     else
     {
-        std::cout << "Publisher running " << samples << " samples. Please press CTRL+C to stop the Publisher at any time." << std::endl;
+        std::cout << "Publisher running " << samples <<
+                " samples. Please press CTRL+C to stop the Publisher at any time." << std::endl;
     }
     signal(SIGINT, [](int signum)
             {
