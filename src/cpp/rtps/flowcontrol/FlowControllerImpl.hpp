@@ -193,7 +193,7 @@ struct FlowControllerAsyncPublishMode
     FlowControllerAsyncPublishMode(
             fastrtps::rtps::RTPSParticipantImpl* participant,
             const FlowControllerDescriptor*)
-        : group(participant)
+        : group(participant, true)
     {
     }
 

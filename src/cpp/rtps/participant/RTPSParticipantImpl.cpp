@@ -370,13 +370,8 @@ RTPSParticipantImpl::RTPSParticipantImpl(
     size_t num_send_buffers = m_att.allocation.send_buffers.preallocated_number;
     if (num_send_buffers == 0)
     {
-#ifndef FASTDDS_STATISTICS
         // Two buffers (user, events)
         num_send_buffers = 2;
-#else
-        // Three buffers (user, events, statistics flow controller)
-        num_send_buffers = 3;
-#endif // FASTDDS_STATISTICS
         // Add one buffer per reception thread
         num_send_buffers += m_receiverResourcelist.size();
     }
