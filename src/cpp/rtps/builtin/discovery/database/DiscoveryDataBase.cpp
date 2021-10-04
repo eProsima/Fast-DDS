@@ -870,7 +870,7 @@ void DiscoveryDataBase::create_writers_from_change_(
         }
         else
         {
-            logError(DISCOVERY_DATABASE, "Writer " << writer_guid << " as no associated participant. Skipping");
+            logError(DISCOVERY_DATABASE, "Writer " << writer_guid << " has no associated participant. Skipping");
             return;
         }
 
@@ -987,7 +987,7 @@ void DiscoveryDataBase::create_readers_from_change_(
         }
         else
         {
-            logError(DISCOVERY_DATABASE, "Writer " << reader_guid << " as no associated participant. Skipping");
+            logError(DISCOVERY_DATABASE, "Reader " << reader_guid << " has no associated participant. Skipping");
             return;
         }
 
@@ -1723,14 +1723,14 @@ void DiscoveryDataBase::AckedFunctor::operator () (
                 {
                     // If the participant is already in the DB it means it has answered to the pinging
                     // or that is pinging us and we have already received its DATA(p)
-                    // If neither of both has happenned we should not wait for it to ack this data, so we
+                    // If either of both has happenned we should not wait for it to ack this data, so we
                     // skip it and leave it as acked
                     auto remote_server_it = db_->participants_.find(*it);
                     if (remote_server_it == db_->participants_.end())
                     {
                         logInfo(DISCOVERY_DATABASE, "Change " << change_->instanceHandle <<
                                 "check as acked for " << reader_proxy->guid() << " as it has not answered pinging yet");
-                        return;
+                        remote_server_it->second.add_or_update_ack_participant(db_->server_guid_prefix_, true);
                     }
                 }
             }
@@ -1755,25 +1755,24 @@ void DiscoveryDataBase::unmatch_participant_(
                 "Attempting to unmatch an unexisting participant: " << guid_prefix);
     }
 
-    // For each relevant participant make not relevant
-    for (eprosima::fastrtps::rtps::GuidPrefix_t relevant_participant : pit->second.relevant_participants())
+    // For each participant remove it
+    // IMPORTANT: This is not for every relevant participant, as participant A could be in other participant's B info
+    // and B not be relevant for A
+    // Using for with a map does copy the values, do not give references. Find is needed.
+    for (auto participant_it : participants_)
     {
-        if (relevant_participant != guid_prefix)
-        {
-            auto rpit = participants_.find(relevant_participant);
-            if (rpit == participants_.end())
-            {
-                // This is not an error. Remote participants will try to unmatch with participants even
-                // when the match is not reciprocal
-                logInfo(DISCOVERY_DATABASE,
-                        "Participant " << relevant_participant << " matched with an unexisting participant: " <<
-                        guid_prefix);
-            }
-            else
-            {
-                rpit->second.remove_participant(guid_prefix);
-            }
-        }
+        auto it = participants_.find(participant_it.first);
+        it->second.remove_participant(guid_prefix);
+    }
+    for (auto writer_it : writers_)
+    {
+        auto it = writers_.find(writer_it.first);
+        it->second.remove_participant(guid_prefix);
+    }
+    for (auto reader_it : readers_)
+    {
+        auto it = readers_.find(reader_it.first);
+        it->second.remove_participant(guid_prefix);
     }
 }
 
