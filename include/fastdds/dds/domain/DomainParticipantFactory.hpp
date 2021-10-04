@@ -193,7 +193,8 @@ public:
      * @return RETCODE_OK if it is correctly loaded, RETCODE_ERROR otherwise.
      */
     RTPS_DllAPI ReturnCode_t load_XML_profiles_string(
-            const char* data, size_t length);
+            const char* data,
+            size_t length);
 
     /**
      * This operation returns the value of the DomainParticipantFactory QoS policies.

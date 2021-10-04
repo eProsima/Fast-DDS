@@ -415,7 +415,9 @@ bool Domain::loadXMLProfilesFile(
     return true;
 }
 
-bool Domain::loadXMLProfilesString(const char *data, size_t length)
+bool Domain::loadXMLProfilesString(
+        const char *data,
+        size_t length)
 {
     if (false == default_xml_profiles_loaded)
     {

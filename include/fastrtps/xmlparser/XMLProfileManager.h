@@ -78,7 +78,8 @@ public:
      *         XMLP_ret::XML_ERROR in other case.
      */
     RTPS_DllAPI static XMLP_ret loadXMLString(
-            const char* data, size_t length);
+            const char* data,
+            size_t length);
 
     /**
      * Load a profiles XML node.

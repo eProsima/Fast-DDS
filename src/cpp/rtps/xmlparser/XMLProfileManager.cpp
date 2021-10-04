@@ -326,7 +326,9 @@ XMLP_ret XMLProfileManager::loadXMLFile(
     return loaded_ret;
 }
 
-XMLP_ret XMLProfileManager::loadXMLString(const char* data, size_t length)
+XMLP_ret XMLProfileManager::loadXMLString(
+        const char* data,
+        size_t length)
 {
     up_base_node_t root_node;
     XMLP_ret loaded_ret = XMLParser::loadXML(data, length, root_node);

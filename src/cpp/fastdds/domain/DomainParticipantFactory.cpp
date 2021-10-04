@@ -352,7 +352,9 @@ ReturnCode_t DomainParticipantFactory::load_XML_profiles_file(
     return ReturnCode_t::RETCODE_OK;
 }
 
-ReturnCode_t DomainParticipantFactory::load_XML_profiles_string(const char* data, size_t length)
+ReturnCode_t DomainParticipantFactory::load_XML_profiles_string(
+        const char* data,
+        size_t length)
 {
     if (XMLP_ret::XML_ERROR == XMLProfileManager::loadXMLString(data, length))
     {
