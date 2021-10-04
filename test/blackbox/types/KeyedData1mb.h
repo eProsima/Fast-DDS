@@ -107,7 +107,8 @@ public:
     eProsima_user_DllExport KeyedData1mb& operator =(
             KeyedData1mb&& x);
 
-    bool operator==(const KeyedData1mb &x) const;
+    bool operator ==(
+            const KeyedData1mb& x) const;
 
     /*!
      * @brief This function sets a value in member key

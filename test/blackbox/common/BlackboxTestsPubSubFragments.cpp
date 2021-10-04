@@ -92,15 +92,15 @@ protected:
         PubSubWriter<Data1mbType> writer(topic_name);
 
         reader
-        .socket_buffer_size(1048576)         // accomodate large and fast fragments
-        .history_depth(static_cast<int32_t>(data.size()))
-        .reliability(reliable ?
+                .socket_buffer_size(1048576) // accomodate large and fast fragments
+                .history_depth(static_cast<int32_t>(data.size()))
+                .reliability(reliable ?
                 eprosima::fastrtps::RELIABLE_RELIABILITY_QOS :
                 eprosima::fastrtps::BEST_EFFORT_RELIABILITY_QOS)
-        .durability_kind(volatile_reader ?
+                .durability_kind(volatile_reader ?
                 eprosima::fastrtps::VOLATILE_DURABILITY_QOS :
                 eprosima::fastrtps::TRANSIENT_LOCAL_DURABILITY_QOS)
-        .init();
+                .init();
 
         ASSERT_TRUE(reader.isInitialized());
 
@@ -117,18 +117,18 @@ protected:
         if (asynchronous)
         {
             writer.asynchronously(eprosima::fastrtps::ASYNCHRONOUS_PUBLISH_MODE).
-            add_throughput_controller_descriptor_to_pparams(scheduler_policy_, 0, 0);
+                    add_throughput_controller_descriptor_to_pparams(scheduler_policy_, 0, 0);
         }
 
         writer
-        .history_depth(static_cast<int32_t>(data.size()))
-        .reliability(reliable ?
+                .history_depth(static_cast<int32_t>(data.size()))
+                .reliability(reliable ?
                 eprosima::fastrtps::RELIABLE_RELIABILITY_QOS :
                 eprosima::fastrtps::BEST_EFFORT_RELIABILITY_QOS)
-        .durability_kind(volatile_writer ?
+                .durability_kind(volatile_writer ?
                 eprosima::fastrtps::VOLATILE_DURABILITY_QOS :
                 eprosima::fastrtps::TRANSIENT_LOCAL_DURABILITY_QOS)
-        .init();
+                .init();
 
         ASSERT_TRUE(writer.isInitialized());
 
@@ -333,9 +333,9 @@ TEST_P(PubSubFragmentsLimited, AsyncPubSubAsNonReliableData300kbWithFlowControl)
     uint32_t periodInMs = 50;
 
     writer.history_depth(10).
-    reliability(eprosima::fastrtps::BEST_EFFORT_RELIABILITY_QOS).
-    asynchronously(eprosima::fastrtps::ASYNCHRONOUS_PUBLISH_MODE).
-    add_throughput_controller_descriptor_to_pparams(scheduler_policy_, bytesPerPeriod, periodInMs).init();
+            reliability(eprosima::fastrtps::BEST_EFFORT_RELIABILITY_QOS).
+            asynchronously(eprosima::fastrtps::ASYNCHRONOUS_PUBLISH_MODE).
+            add_throughput_controller_descriptor_to_pparams(scheduler_policy_, bytesPerPeriod, periodInMs).init();
 
     ASSERT_TRUE(writer.isInitialized());
 
@@ -361,7 +361,7 @@ TEST_P(PubSubFragmentsLimited, AsyncPubSubAsReliableData300kbWithFlowControl)
     PubSubWriter<Data1mbType> writer(TEST_TOPIC_NAME);
 
     reader.history_depth(5).
-    reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).init();
+            reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).init();
 
     ASSERT_TRUE(reader.isInitialized());
 
@@ -371,8 +371,8 @@ TEST_P(PubSubFragmentsLimited, AsyncPubSubAsReliableData300kbWithFlowControl)
     uint32_t periodInMs = 50;
 
     writer.history_depth(5).
-    asynchronously(eprosima::fastrtps::ASYNCHRONOUS_PUBLISH_MODE).
-    add_throughput_controller_descriptor_to_pparams(scheduler_policy_, bytesPerPeriod, periodInMs).init();
+            asynchronously(eprosima::fastrtps::ASYNCHRONOUS_PUBLISH_MODE).
+            add_throughput_controller_descriptor_to_pparams(scheduler_policy_, bytesPerPeriod, periodInMs).init();
 
     ASSERT_TRUE(writer.isInitialized());
 
@@ -399,7 +399,7 @@ TEST_P(PubSubFragmentsLimited, AsyncPubSubAsReliableData300kbInLossyConditions)
     PubSubWriter<Data1mbType> writer(TEST_TOPIC_NAME);
 
     reader.history_depth(5).
-    reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).init();
+            reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).init();
 
     ASSERT_TRUE(reader.isInitialized());
 
@@ -421,7 +421,7 @@ TEST_P(PubSubFragmentsLimited, AsyncPubSubAsReliableData300kbInLossyConditions)
     writer.add_user_transport_to_pparams(testTransport);
 
     writer.history_depth(5).
-    asynchronously(eprosima::fastrtps::ASYNCHRONOUS_PUBLISH_MODE).init();
+            asynchronously(eprosima::fastrtps::ASYNCHRONOUS_PUBLISH_MODE).init();
 
     ASSERT_TRUE(writer.isInitialized());
 
@@ -453,7 +453,7 @@ TEST_P(PubSubFragmentsLimited, AsyncPubSubAsReliableVolatileData300kbInLossyCond
     PubSubWriter<Data1mbType> writer(TEST_TOPIC_NAME);
 
     reader.history_depth(5).
-    reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).init();
+            reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).init();
 
     ASSERT_TRUE(reader.isInitialized());
 
@@ -475,8 +475,8 @@ TEST_P(PubSubFragmentsLimited, AsyncPubSubAsReliableVolatileData300kbInLossyCond
     writer.add_user_transport_to_pparams(testTransport);
 
     writer.history_depth(5).
-    durability_kind(eprosima::fastrtps::VOLATILE_DURABILITY_QOS).
-    asynchronously(eprosima::fastrtps::ASYNCHRONOUS_PUBLISH_MODE).init();
+            durability_kind(eprosima::fastrtps::VOLATILE_DURABILITY_QOS).
+            asynchronously(eprosima::fastrtps::ASYNCHRONOUS_PUBLISH_MODE).init();
 
     ASSERT_TRUE(writer.isInitialized());
 
@@ -508,7 +508,7 @@ TEST_P(PubSubFragmentsLimited, AsyncPubSubAsReliableData300kbInLossyConditionsSm
     PubSubWriter<Data1mbType> writer(TEST_TOPIC_NAME);
 
     reader.history_depth(5).
-    reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).init();
+            reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).init();
 
     ASSERT_TRUE(reader.isInitialized());
 
@@ -532,7 +532,7 @@ TEST_P(PubSubFragmentsLimited, AsyncPubSubAsReliableData300kbInLossyConditionsSm
     writer.add_user_transport_to_pparams(testTransport);
 
     writer.history_depth(5).
-    asynchronously(eprosima::fastrtps::ASYNCHRONOUS_PUBLISH_MODE).init();
+            asynchronously(eprosima::fastrtps::ASYNCHRONOUS_PUBLISH_MODE).init();
 
     ASSERT_TRUE(writer.isInitialized());
 
@@ -564,8 +564,8 @@ TEST_P(PubSubFragmentsLimited, AsyncPubSubAsReliableKeyedData300kbKeepLast1InLos
     PubSubWriter<KeyedData1mbType> writer(TEST_TOPIC_NAME);
 
     reader.history_depth(2)
-    .reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS)
-    .init();
+            .reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS)
+            .init();
 
     ASSERT_TRUE(reader.isInitialized());
 
@@ -584,10 +584,10 @@ TEST_P(PubSubFragmentsLimited, AsyncPubSubAsReliableKeyedData300kbKeepLast1InLos
     uint32_t bytesPerPeriod = 153601;
     uint32_t periodInMs = 100;
     writer.add_throughput_controller_descriptor_to_pparams(scheduler_policy_, bytesPerPeriod, periodInMs)
-    .heartbeat_period_seconds(0)
-    .heartbeat_period_nanosec(1000000)
-    .history_depth(1)
-    .asynchronously(eprosima::fastrtps::ASYNCHRONOUS_PUBLISH_MODE).init();
+            .heartbeat_period_seconds(0)
+            .heartbeat_period_nanosec(1000000)
+            .history_depth(1)
+            .asynchronously(eprosima::fastrtps::ASYNCHRONOUS_PUBLISH_MODE).init();
 
     ASSERT_TRUE(writer.isInitialized());
 
@@ -619,7 +619,7 @@ TEST_P(PubSubFragmentsLimited, AsyncPubSubAsReliableVolatileData300kbInLossyCond
     PubSubWriter<Data1mbType> writer(TEST_TOPIC_NAME);
 
     reader.history_depth(5).
-    reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).init();
+            reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).init();
 
     ASSERT_TRUE(reader.isInitialized());
 
@@ -643,8 +643,8 @@ TEST_P(PubSubFragmentsLimited, AsyncPubSubAsReliableVolatileData300kbInLossyCond
     writer.add_user_transport_to_pparams(testTransport);
 
     writer.history_depth(5).
-    durability_kind(eprosima::fastrtps::VOLATILE_DURABILITY_QOS).
-    asynchronously(eprosima::fastrtps::ASYNCHRONOUS_PUBLISH_MODE).init();
+            durability_kind(eprosima::fastrtps::VOLATILE_DURABILITY_QOS).
+            asynchronously(eprosima::fastrtps::ASYNCHRONOUS_PUBLISH_MODE).init();
 
     ASSERT_TRUE(writer.isInitialized());
 
@@ -678,7 +678,7 @@ TEST_P(PubSubFragmentsLimited, AsyncFragmentSizeTest)
         PubSubWriter<Data64kbType> writer(TEST_TOPIC_NAME);
 
         reader.history_depth(10).
-        reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).init();
+                reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).init();
 
         ASSERT_TRUE(reader.isInitialized());
 
@@ -724,7 +724,7 @@ TEST_P(PubSubFragmentsLimited, AsyncFragmentSizeTest)
         PubSubWriter<Data64kbType> writer(TEST_TOPIC_NAME);
 
         reader.history_depth(10).
-        reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).init();
+                reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).init();
 
         ASSERT_TRUE(reader.isInitialized());
 
@@ -741,7 +741,7 @@ TEST_P(PubSubFragmentsLimited, AsyncFragmentSizeTest)
         writer.disable_builtin_transport();
         writer.add_user_transport_to_pparams(testTransport);
         writer.history_depth(10).
-        asynchronously(eprosima::fastrtps::ASYNCHRONOUS_PUBLISH_MODE).init();
+                asynchronously(eprosima::fastrtps::ASYNCHRONOUS_PUBLISH_MODE).init();
 
         ASSERT_TRUE(writer.isInitialized());
 

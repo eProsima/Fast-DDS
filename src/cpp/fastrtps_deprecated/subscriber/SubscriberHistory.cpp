@@ -212,7 +212,7 @@ bool SubscriberHistory::received_change_keep_all_with_key(
             }
         }
     }
-    else // Store the sample temporally in the special instance handle NULL.
+    else // Store the sample temporally only in ReaderHistory. When completed it will be stored in SubscriberHistory too.
     {
         if (!m_isHistoryFull)
         {
@@ -263,7 +263,7 @@ bool SubscriberHistory::received_change_keep_last_with_key(
             }
         }
     }
-    else // Store the sample temporally in the special instance handle NULL.
+    else // Store the sample temporally only in ReaderHistory. When completed it will be stored in SubscriberHistory too.
     {
         if (!m_isHistoryFull)
         {
