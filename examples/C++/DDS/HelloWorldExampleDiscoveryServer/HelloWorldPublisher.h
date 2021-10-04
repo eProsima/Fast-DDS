@@ -30,6 +30,10 @@
 
 #include "HelloWorldPubSubTypes.h"
 
+/**
+ * Class used to group into a single working unit a Publisher with a DataWriter, its listener, and a TypeSupport member
+ * corresponding to the HelloWorld datatype
+ */
 class HelloWorldPublisher
 {
 public:
@@ -38,22 +42,24 @@ public:
 
     virtual ~HelloWorldPublisher();
 
-    //!Initialize
+    //! Initialize the publisher
     bool init(
             const std::string& topic_name,
             uint32_t num_wait_matched,
             eprosima::fastdds::rtps::Locator server_address);
 
-    //!Publish a sample
+    //! Publish a sample
     void publish();
 
-    //!Run for number samples
+    //! Run for number samples, publish every sleep seconds
     void run(
             uint32_t number,
             uint32_t sleep);
 
+    //! Return the current state of execution
     static bool is_stopped();
 
+    //! Trigger the end of execution
     static void stop();
 
 private:
@@ -70,6 +76,9 @@ private:
 
     eprosima::fastdds::dds::TypeSupport type_;
 
+    /**
+     * Class handling discovery events and dataflow
+     */
     class PubListener : public eprosima::fastdds::dds::DataWriterListener
     {
     public:
@@ -84,35 +93,46 @@ private:
         {
         }
 
+        //! Callback executed when a DataReader is matched or unmatched
         void on_publication_matched(
                 eprosima::fastdds::dds::DataWriter* writer,
                 const eprosima::fastdds::dds::PublicationMatchedStatus& info) override;
 
+        //! Set the number of matched DataReaders required for publishing
         void set_num_wait_matched(
                 uint32_t num_wait_matched);
 
+        //! Return true if there are at least num_wait_matched_ matched DataReaders
         bool enough_matched();
 
+        //! Block the thread until enough DataReaders are matched
         void wait();
 
+        //! Unblock the thread so publication of samples begins/resumes
         static void awake();
 
     private:
 
+        //! Number of DataReaders matched to the associated DataWriter
         std::atomic<std::uint32_t> matched_;
 
+        //! Number of matched DataReaders required for publishing
         uint32_t num_wait_matched_;
 
+        //! Protects wait_matched condition variable
         static std::mutex wait_matched_cv_mtx_;
 
+        //! Waits until enough DataReaders are matched
         static std::condition_variable wait_matched_cv_;
     }
     listener_;
 
+    //! Run thread for number samples, publish every sleep seconds
     void runThread(
             uint32_t number,
             uint32_t sleep);
 
+    //! Member used for control flow purposes
     static std::atomic<bool> stop_;
 };
 
