@@ -1726,7 +1726,7 @@ void DiscoveryDataBase::AckedFunctor::operator () (
                     // If either of both has happenned we should not wait for it to ack this data, so we
                     // skip it and leave it as acked
                     auto remote_server_it = db_->participants_.find(*it);
-                    if (remote_server_it == db_->participants_.end())
+                    if (remote_server_it != db_->participants_.end())
                     {
                         logInfo(DISCOVERY_DATABASE, "Change " << change_->instanceHandle <<
                                 "check as acked for " << reader_proxy->guid() << " as it has not answered pinging yet");
