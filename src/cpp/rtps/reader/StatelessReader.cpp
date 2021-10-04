@@ -96,7 +96,8 @@ bool StatelessReader::matched_writer_add(
     {
         if (writer.guid == wdata.guid())
         {
-            logWarning(RTPS_READER, "Attempting to add existing writer");
+            logWarning(RTPS_READER, "Attempting to add existing writer: " << writer.guid <<
+                    " to StatelessReader reader: " << this->getGuid());
             return false;
         }
     }

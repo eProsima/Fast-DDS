@@ -291,10 +291,13 @@ void PDP::initializeParticipantProxyData(
             persistent = mp_RTPSParticipant->getAttributes().prefix;
         }
 
-        participant_data->set_persistence_guid(
-            GUID_t(
-                persistent,
-                c_EntityId_RTPSParticipant));
+        if (persistent != c_GuidPrefix_Unknown)
+        {
+            participant_data->set_persistence_guid(
+                GUID_t(
+                    persistent,
+                    c_EntityId_RTPSParticipant));
+        }
     }
 
     participant_data->metatraffic_locators.unicast.clear();

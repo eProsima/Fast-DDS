@@ -1732,7 +1732,7 @@ void DiscoveryDataBase::AckedFunctor::operator () (
                     {
                         logInfo(DISCOVERY_DATABASE, "Change " << change_->instanceHandle <<
                                 "check as acked for " << reader_proxy->guid() << " as it is already in DB");
-                        return;
+                        remote_server_it->second.add_or_update_ack_participant(db_->server_guid_prefix_, true);
                     }
                 }
             }
