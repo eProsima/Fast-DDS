@@ -181,11 +181,6 @@ int main(
         {
             std::cerr << "WARNING: --transient will take no effect since not reliable." << std::endl;
         }
-        if (type == SUBSCRIBER && count > 0 && transient && reliable)
-        {
-            count = 0;
-            std::cerr << "WARNING: -s | --samples will take no effect when transient local durability." << std::endl;
-        }
     }
     else
     {
