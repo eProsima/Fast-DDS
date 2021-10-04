@@ -87,9 +87,10 @@ HelloWorldServer::~HelloWorldServer()
 void HelloWorldServer::run()
 {
     stop_ = false;
-    std::cout << "Server running. Please press CTRL+C to stop the Server" << std::endl;
+    std::cout << "Server running. Please press CTRL+C to stop the Server." << std::endl;
     signal(SIGINT, [](int signum)
             {
+                std::cout << "SIGINT received, stopping Server execution." << std::endl;
                 static_cast<void>(signum); HelloWorldServer::stop();
             });
     std::unique_lock<std::mutex> lck(terminate_cv_mtx_);
