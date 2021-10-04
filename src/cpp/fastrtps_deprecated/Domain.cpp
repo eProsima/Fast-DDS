@@ -415,5 +415,21 @@ bool Domain::loadXMLProfilesFile(
     return true;
 }
 
+bool Domain::loadXMLProfilesString(const char *data, size_t length)
+{
+    if (false == default_xml_profiles_loaded)
+    {
+        XMLProfileManager::loadDefaultXMLFile();
+        default_xml_profiles_loaded = true;
+    }
+
+    if ( XMLP_ret::XML_ERROR == XMLProfileManager::loadXMLString(data, length))
+    {
+        logError(DOMAIN, "Problem loading XML string");
+        return false;
+    }
+    return true;
+}
+
 } // namespace fastrtps
 } // namespace eprosima

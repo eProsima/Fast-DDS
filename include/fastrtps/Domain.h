@@ -212,6 +212,14 @@ class Domain
          */
         RTPS_DllAPI static bool loadXMLProfilesFile(const std::string& xml_profile_file);
 
+        /**
+         * Load profiles from XML string.
+         * @param data buffer containing XML data.
+         * @param length length of data.
+         * @return True if correctly loaded.
+         */
+        RTPS_DllAPI static bool loadXMLProfilesString(const char* data, size_t length);
+
     private:
 
         typedef std::pair<Participant*,ParticipantImpl*> t_p_Participant;
