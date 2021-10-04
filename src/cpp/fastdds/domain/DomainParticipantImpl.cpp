@@ -590,77 +590,66 @@ DomainId_t DomainParticipantImpl::get_domain_id() const
 ReturnCode_t DomainParticipantImpl::delete_contained_entities()
 {
     bool can_be_deleted = true;
+
+    std::lock_guard<std::mutex> lock_subscribers(mtx_subs_);
+
+    for (auto subscriber : subscribers_)
     {
-        std::lock_guard<std::mutex> lock(mtx_subs_);
-
-        for (auto subscriber : subscribers_)
-        {
-            can_be_deleted = can_be_deleted && subscriber.second->can_be_deleted();
-        }
+        can_be_deleted = can_be_deleted && subscriber.second->can_be_deleted();
     }
+
+    std::lock_guard<std::mutex> lock_publishers(mtx_pubs_);
+
+    for (auto publisher : publishers_)
     {
-        std::lock_guard<std::mutex> lock(mtx_pubs_);
-
-        for (auto publisher : publishers_)
-        {
-            can_be_deleted = can_be_deleted && publisher.second->can_be_deleted();
-        }
-
+        can_be_deleted = can_be_deleted && publisher.second->can_be_deleted();
     }
+
     if (!can_be_deleted)
     {
         return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
     }
     else
     {
+
+        for (auto& subscriber : subscribers_)
         {
-            std::lock_guard<std::mutex> lock(mtx_subs_);
-
-            for (auto& subscriber : subscribers_)
-            {
-                subscriber.first->delete_contained_entities();
-            }
-
-            auto it = subscribers_.begin();
-            while (it != subscribers_.end())
-            {
-                it->second->set_listener(nullptr);
-                subscribers_by_handle_.erase(it->second->get_subscriber()->get_instance_handle());
-                delete it->second;
-                it = subscribers_.erase(it);
-            }
+            subscriber.first->delete_contained_entities();
         }
 
+        auto it_subs = subscribers_.begin();
+        while (it_subs != subscribers_.end())
         {
-            std::lock_guard<std::mutex> lock(mtx_pubs_);
-
-            for (auto& publisher : publishers_)
-            {
-                publisher.first->delete_contained_entities();
-            }
-
-            auto it = publishers_.begin();
-            while (it != publishers_.end())
-            {
-                it->second->set_listener(nullptr);
-                publishers_by_handle_.erase(it->second->get_publisher()->get_instance_handle());
-                delete it->second;
-                it = publishers_.erase(it);
-            }
+            it_subs->second->set_listener(nullptr);
+            subscribers_by_handle_.erase(it_subs->second->get_subscriber()->get_instance_handle());
+            delete it_subs->second;
+            it_subs = subscribers_.erase(it_subs);
         }
 
+        for (auto& publisher : publishers_)
         {
-            std::lock_guard<std::mutex> lock(mtx_topics_);
+            publisher.first->delete_contained_entities();
+        }
 
-            auto it = topics_.begin();
+        auto it_pubs = publishers_.begin();
+        while (it_pubs != publishers_.end())
+        {
+            it_pubs->second->set_listener(nullptr);
+            publishers_by_handle_.erase(it_pubs->second->get_publisher()->get_instance_handle());
+            delete it_pubs->second;
+            it_pubs = publishers_.erase(it_pubs);
+        }
 
-            while (it != topics_.end())
-            {
-                it->second->set_listener(nullptr);
-                topics_by_handle_.erase(it->second->get_topic()->get_instance_handle());
-                delete it->second;
-                it = topics_.erase(it);
-            }
+        std::lock_guard<std::mutex> lock_topics(mtx_topics_);
+
+        auto it_topics = topics_.begin();
+
+        while (it_topics != topics_.end())
+        {
+            it_topics->second->set_listener(nullptr);
+            topics_by_handle_.erase(it_topics->second->get_topic()->get_instance_handle());
+            delete it_topics->second;
+            it_topics = topics_.erase(it_topics);
         }
     }
 

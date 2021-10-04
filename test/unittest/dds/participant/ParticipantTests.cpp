@@ -2511,12 +2511,14 @@ TEST(ParticipantTests, DeleteContainedEntities)
 
     // Writer with active loans. Fail and keep everything as is
 
-    ASSERT_EQ(participant->delete_contained_entities(), ReturnCode_t::RETCODE_PRECONDITION_NOT_MET);
-    ASSERT_TRUE(participant->contains_entity(publisher_handle));
+    ReturnCode_t retcode = participant->delete_contained_entities();
+
+    EXPECT_TRUE(participant->contains_entity(publisher_handle));
     publisher->get_datawriters(data_writer_list);
-    ASSERT_EQ(data_writer_list.size(), 2);
+    EXPECT_EQ(data_writer_list.size(), 2);
     subscriber->get_datareaders(data_reader_list);
-    ASSERT_EQ(data_reader_list.size(), 1);
+    EXPECT_EQ(data_reader_list.size(), 1);
+    ASSERT_EQ(retcode, ReturnCode_t::RETCODE_PRECONDITION_NOT_MET);
 
     data_writer_list.clear();
     data_reader_list.clear();
@@ -2531,13 +2533,15 @@ TEST(ParticipantTests, DeleteContainedEntities)
 
     ASSERT_EQ(data_reader_bar->take(mock_coll, mock_seq), ReturnCode_t::RETCODE_OK);
 
-    ASSERT_EQ(participant->delete_contained_entities(), ReturnCode_t::RETCODE_PRECONDITION_NOT_MET);
+    retcode = participant->delete_contained_entities();
 
-    ASSERT_TRUE(participant->contains_entity(subscriber_handle));
+    EXPECT_TRUE(participant->contains_entity(subscriber_handle));
     publisher->get_datawriters(data_writer_list);
-    ASSERT_EQ(data_writer_list.size(), 2);
+    EXPECT_EQ(data_writer_list.size(), 2);
     subscriber->get_datareaders(data_reader_list);
-    ASSERT_EQ(data_reader_list.size(), 1);
+    EXPECT_EQ(data_reader_list.size(), 1);
+
+    ASSERT_EQ(retcode, ReturnCode_t::RETCODE_PRECONDITION_NOT_MET);
 
     data_writer_list.clear();
     data_reader_list.clear();
@@ -2555,12 +2559,14 @@ TEST(ParticipantTests, DeleteContainedEntities)
 
     // Try again with all preconditions met. This should succeed
 
-    ASSERT_EQ(participant->delete_contained_entities(), ReturnCode_t::RETCODE_OK);
-    ASSERT_FALSE(participant->contains_entity(publisher_handle));
-    ASSERT_FALSE(participant->contains_entity(subscriber_handle));
-    ASSERT_FALSE(participant->contains_entity(topic_foo_handle));
-    ASSERT_FALSE(participant->contains_entity(topic_bar_handle));
+    retcode = participant->delete_contained_entities();
 
+    EXPECT_FALSE(participant->contains_entity(publisher_handle));
+    EXPECT_FALSE(participant->contains_entity(subscriber_handle));
+    EXPECT_FALSE(participant->contains_entity(topic_foo_handle));
+    EXPECT_FALSE(participant->contains_entity(topic_bar_handle));
+
+    ASSERT_EQ(retcode, ReturnCode_t::RETCODE_OK);
 
 }
 
