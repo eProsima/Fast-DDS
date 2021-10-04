@@ -135,7 +135,7 @@ enum  optionIndex
 
 const option::Descriptor usage[] = {
     { UNKNOWN_OPT, 0, "", "",                Arg::None,
-      "Usage: HelloWorldExampleDS <publisher|subscriber|server>\n\nGeneral options:" },
+      "Usage: HelloWorldExampleDiscoveryServer <publisher|subscriber|server>\n\nGeneral options:" },
     { HELP,    0, "h", "help",               Arg::None,      "  -h \t--help  \tProduce help message." },
 
     { UNKNOWN_OPT, 0, "", "",                Arg::None,      "\nPublisher options:"},
@@ -143,7 +143,7 @@ const option::Descriptor usage[] = {
       "  -t <topic_name> \t--topic=<topic_name>  \tTopic name (Default: HelloWorldTopic)." },
     { WAIT, 0, "w", "wait",                 Arg::Numeric,
       "  -w <num> \t--wait=<num> \tNumber of matched subscribers required to publish"
-      "(Default: 0 => does not wait)." },
+      " (Default: 0 => does not wait)." },
     { SAMPLES, 0, "s", "samples",              Arg::Numeric,
       "  -s <num> \t--samples=<num>  \tNumber of samples to send (Default: 0 => infinite samples)." },
     { INTERVAL, 0, "i", "interval",            Arg::Numeric,

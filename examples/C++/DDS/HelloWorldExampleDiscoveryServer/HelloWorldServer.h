@@ -26,6 +26,9 @@
 
 #include <fastdds/dds/domain/DomainParticipant.hpp>
 
+/**
+ * Class with a partipant configured to function as server in the Discovery Server mechanism
+ */
 class HelloWorldServer
 {
 public:
@@ -34,25 +37,30 @@ public:
 
     virtual ~HelloWorldServer();
 
-    //!Initialize
+    //! Initialize the server
     bool init(
             eprosima::fastdds::rtps::Locator server_address);
 
-    //!Run
+    //! Run
     void run();
 
+    //! Return the current state of execution
     static bool is_stopped();
 
+    //! Trigger the end of execution
     static void stop();
 
 private:
 
     eprosima::fastdds::dds::DomainParticipant* participant_;
 
+    //! Member used for control flow purposes
     static std::atomic<bool> stop_;
 
+    //! Protects terminate condition variable
     static std::mutex terminate_cv_mtx_;
 
+    //! Waits during execution until SIGINT or max_messages_ samples are received
     static std::condition_variable terminate_cv_;
 };
 

@@ -222,10 +222,12 @@ void HelloWorldPublisher::run(
     }
     else
     {
-        std::cout << "Publisher running " << samples << " samples." << std::endl;
+        std::cout << "Publisher running " << samples <<
+            " samples. Please press CTRL+C to stop the Publisher at any time." << std::endl;
     }
     signal(SIGINT, [](int signum)
             {
+                std::cout << "SIGINT received, stopping Publisher execution." << std::endl;
                 static_cast<void>(signum); HelloWorldPublisher::stop();
             });
     thread.join();
