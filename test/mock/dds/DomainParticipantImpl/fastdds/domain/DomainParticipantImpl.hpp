@@ -535,6 +535,83 @@ public:
         return false;
     }
 
+    ReturnCode_t delete_contained_entities()
+    {
+        bool can_be_deleted = true;
+        {
+            std::lock_guard<std::mutex> lock(mtx_subs_);
+
+            for (auto subscriber : subscribers_)
+            {
+                can_be_deleted = can_be_deleted && subscriber.second->can_be_deleted();
+            }
+        }
+        {
+            std::lock_guard<std::mutex> lock(mtx_pubs_);
+
+            for (auto publisher : publishers_)
+            {
+                can_be_deleted = can_be_deleted && publisher.second->can_be_deleted();
+            }
+
+        }
+        if (!can_be_deleted)
+        {
+            return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
+        }
+        else
+        {
+            {
+                std::lock_guard<std::mutex> lock(mtx_subs_);
+
+                for (auto& subscriber : subscribers_)
+                {
+                    subscriber.first->delete_contained_entities();
+                }
+
+                auto it = subscribers_.begin();
+                while (it != subscribers_.end())
+                {
+                    it->second->set_listener(nullptr);
+                    delete it->second;
+                    it = subscribers_.erase(it);
+                }
+            }
+
+            {
+                std::lock_guard<std::mutex> lock(mtx_pubs_);
+
+                for (auto& publisher : publishers_)
+                {
+                    publisher.first->delete_contained_entities();
+                }
+
+                auto it = publishers_.begin();
+                while (it != publishers_.end())
+                {
+                    it->second->set_listener(nullptr);
+                    delete it->second;
+                    it = publishers_.erase(it);
+                }
+            }
+
+            {
+                std::lock_guard<std::mutex> lock(mtx_topics_);
+
+                auto it = topics_.begin();
+
+                while (it != topics_.end())
+                {
+                    it->second->set_listener(nullptr);
+                    delete it->second;
+                    it = topics_.erase(it);
+                }
+            }
+        }
+
+        return ReturnCode_t::RETCODE_OK;
+    }
+
     DomainParticipantListener* get_listener_for(
             const StatusMask& /*status*/)
     {
