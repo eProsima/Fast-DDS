@@ -283,9 +283,11 @@ struct FlowControllerLimitedAsyncPublishMode : public FlowControllerAsyncPublish
         assert(nullptr != descriptor);
         assert(0 < descriptor->max_bytes_per_period);
 
-        max_bytes_per_period = descriptor->max_bytes_per_period;
+        max_bytes_per_period_ = descriptor->max_bytes_per_period;
+        current_accumulated_bytes = max_accumulated_bytes;
+        max_accumulated_bytes = descriptor->max_accumulated_bytes;
         period_ms = std::chrono::milliseconds(descriptor->period_ms);
-        group.set_sent_bytes_limitation(static_cast<uint32_t>(max_bytes_per_period));
+        group.set_sent_bytes_limitation(static_cast<uint32_t>(current_accumulated_bytes));
     }
 
     bool fast_check_is_there_slot_for_change(
@@ -307,7 +309,8 @@ struct FlowControllerLimitedAsyncPublishMode : public FlowControllerAsyncPublish
 
         }
 
-        bool ret = (max_bytes_per_period - group.get_current_bytes_processed()) > size_to_check;
+        bool ret = (current_accumulated_bytes - static_cast<int32_t>(group.get_current_bytes_processed())) >
+                static_cast<int32_t>(size_to_check);
 
         if (!ret)
         {
@@ -337,10 +340,18 @@ struct FlowControllerLimitedAsyncPublishMode : public FlowControllerAsyncPublish
             }
         }
 
+        force_wait_ = false;
+
         if (reset_limit)
         {
             last_period_ = std::chrono::steady_clock::now();
-            force_wait_ = false;
+            int32_t current_processed_bytes = static_cast<int32_t>(group.get_current_bytes_processed());
+            current_accumulated_bytes = max_bytes_per_period_ + (current_accumulated_bytes - current_processed_bytes);
+            if (0 > current_accumulated_bytes)
+            {
+                current_accumulated_bytes = 0;
+            }
+            group.set_sent_bytes_limitation(static_cast<uint32_t>(current_accumulated_bytes));
             group.reset_current_bytes_processed();
         }
 
@@ -361,13 +372,17 @@ struct FlowControllerLimitedAsyncPublishMode : public FlowControllerAsyncPublish
         }
     }
 
-    int32_t max_bytes_per_period = 0;
-
     std::chrono::milliseconds period_ms;
+
+    int32_t max_accumulated_bytes = 0;
 
 private:
 
     bool force_wait_ = false;
+
+    int32_t max_bytes_per_period_ = 0;
+
+    int32_t current_accumulated_bytes = 0;
 
     std::chrono::steady_clock::time_point last_period_ = std::chrono::steady_clock::now();
 };
@@ -1467,7 +1482,7 @@ private:
     typename std::enable_if<std::is_base_of<FlowControllerLimitedAsyncPublishMode, PubMode>::value, uint32_t>::type
     get_max_payload_impl()
     {
-        return static_cast<uint32_t>(async_mode.max_bytes_per_period);
+        return static_cast<uint32_t>(async_mode.max_accumulated_bytes);
     }
 
     template<typename PubMode = PublishMode>
