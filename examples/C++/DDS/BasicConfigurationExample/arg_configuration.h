@@ -152,7 +152,7 @@ const option::Descriptor usage[] = {
       "  -d <id> \t--domain=<id>  \tDDS domain ID (Default: 0)." },
     { WAIT, 0, "w", "wait",                 Arg::Numeric,
       "  -w <num> \t--wait=<num> \tNumber of matched subscribers required to publish"
-      "(Default: 0 => does not wait)." },
+      " (Default: 0 => does not wait)." },
     { SAMPLES, 0, "s", "samples",              Arg::Numeric,
       "  -s <num> \t--samples=<num>  \tNumber of samples to send (Default: 0 => infinite samples)." },
     { INTERVAL, 0, "i", "interval",            Arg::Numeric,

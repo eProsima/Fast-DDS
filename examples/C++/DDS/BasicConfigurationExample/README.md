@@ -25,7 +25,8 @@ Publisher options:
   -t <topic_name> --topic=<topic_name>  Topic name (Default: HelloWorldTopic).
   -d <id>         --domain=<id>         DDS domain ID (Default: 0).
   -w <num>        --wait=<num>          Number of matched subscribers required
-                                        to publish(Default: 0 => does not wait).
+                                        to publish (Default: 0 => does not
+                                        wait).
   -s <num>        --samples=<num>       Number of samples to send (Default: 0 =>
                                         infinite samples).
   -i <num>        --interval=<num>      Time between samples in milliseconds
