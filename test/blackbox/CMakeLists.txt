@@ -179,6 +179,8 @@ set(RTPS_BLACKBOXTESTS_SOURCE ${RTPS_BLACKBOXTESTS_TEST_SOURCE}
     types/Data64kbType.cpp
     types/Data1mb.cpp
     types/Data1mbType.cpp
+    types/KeyedData1mb.cpp
+    types/KeyedData1mbType.cpp
     types/FixedSized.cpp
     types/FixedSizedType.cpp
 
@@ -211,6 +213,8 @@ set(BLACKBOXTESTS_SOURCE ${BLACKBOXTESTS_TEST_SOURCE}
     types/Data64kbType.cpp
     types/Data1mb.cpp
     types/Data1mbType.cpp
+    types/KeyedData1mb.cpp
+    types/KeyedData1mbType.cpp
     types/FixedSized.cpp
     types/FixedSizedType.cpp
 
