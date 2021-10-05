@@ -23,6 +23,8 @@
 #include <fastrtps/Domain.h>
 #include <fastrtps/log/Log.h>
 
+#include <iostream>
+#include <regex>
 #include <string>
 
 #include "optionparser.h"
@@ -81,6 +83,27 @@ struct Arg: public option::Arg
         }
         return option::ARG_ILLEGAL;
     }
+
+    static option::ArgStatus Locator(
+            const option::Option& option,
+            bool msg)
+    {
+        if (option.arg != 0)
+        {
+            // we must check if it is a correct ip address plus port number
+            if (std::regex_match(option.arg, ipv4))
+            {
+                return option::ARG_OK;
+            }
+        }
+        if (msg)
+        {
+            print_error("Option '", option, "' requires an IPaddress[:portnumber] argument\n");
+        }
+        return option::ARG_ILLEGAL;
+    }
+
+    static const std::regex ipv4;
 };
 
 
@@ -90,8 +113,8 @@ enum  optionIndex {
     HELP,
     SAMPLES,
     INTERVAL,
-    IP,
-    PORT,
+    SERVER_LOCATOR,
+    REMOTE_LOCATOR,
     TLS,
     WHITELIST
 };
@@ -132,19 +155,20 @@ const option::Descriptor usage[] = {
         "  -s <num>, \t--samples=<num>  \tNumber of samples (0, default, infinite)." },
     { INTERVAL,0,"i","interval",            Arg::Numeric,
         "  -i <num>, \t--interval=<num>  \tTime between samples in milliseconds (Default: 100)." },
-    { IP,0,"a","address",                   Arg::String,
-        "  -a <address>, \t--address=<address> \tPublic IP Address of the publisher (Default: None)." },
-    { PORT, 0, "p", "port",                 Arg::Numeric,
-        "  -p <num>, \t--port=<num>  \tPhysical Port to listening incoming connections (Default: 5100)." },
+    { SERVER_LOCATOR, 0, "", "server",      Arg::Locator,
+      "  \t--server=<IPaddress[:port number]>  \tTCP server address." },
+    { REMOTE_LOCATOR, 0, "", "remote",      Arg::Locator,
+      "  \t--remote=<IPaddress[:port number]>  \tAddress of remote TCP server." },
 
     { UNKNOWN_OPT, 0,"", "",                Arg::None,      "\nSubscriber options:"},
-    { IP,0,"a","address",                   Arg::String,
-        "  -a <address>, \t--address=<address> \tIP Address of the publisher (Default: 127.0.0.1)." },
-    { PORT, 0, "p", "port",                 Arg::Numeric,
-        "  -p <num>, \t--port=<num>  \tPhysical Port where the publisher is listening for connections (Default: 5100)." },
-
+    { SERVER_LOCATOR, 0, "", "server",      Arg::Locator,
+      "  \t--server=<IPaddress[:port number]>  \tTCP server address." },
+    { REMOTE_LOCATOR, 0, "", "remote",      Arg::Locator,
+      "  \t--remote=<IPaddress[:port number]>  \tAddress of remote TCP server." },
     { 0, 0, 0, 0, 0, 0 }
 };
+
+/*static*/ const std::regex Arg::ipv4(R"(^((?:[0-9]{1,3}\.){3}[0-9]{1,3})?:?(?:(\d+))?$)");
 
 using namespace eprosima;
 using namespace fastrtps;
@@ -169,14 +193,23 @@ int main(int argc, char** argv)
     columns = getenv("COLUMNS") ? atoi(getenv("COLUMNS")) : 80;
 #endif
 
-    std::cout << "Starting " << std::endl;
     int type = 1;
     int count = 0;
     long sleep = 100;
-    std::string wan_ip;
-    int port = 5100;
     bool use_tls = false;
     std::vector<std::string> whitelist;
+
+    // TCP server
+    bool server = false;
+    std::cmatch server_mr;
+    std::string server_ip_address;
+    uint16_t server_port = 5100;
+
+    // Remote TCP server
+    bool client = false;
+    std::cmatch remote_mr;
+    std::string remote_ip_address;
+    uint16_t remote_port = 5100;
 
     if (argc > 1)
     {
@@ -225,22 +258,40 @@ int main(int argc, char** argv)
                     sleep = strtol(opt.arg, nullptr, 10);
                     break;
 
-                case IP:
-                {
-                    if (opt.arg != nullptr)
+                case SERVER_LOCATOR:
+                    server = true;
+                    if (regex_match(opt.arg, server_mr, Arg::ipv4))
                     {
-                        wan_ip = std::string(opt.arg);
-                    }
-                    else
-                    {
-                        option::printUsage(fwrite, stdout, usage, columns);
-                        return 0;
+                        std::cmatch::iterator it = server_mr.cbegin();
+                        server_ip_address = (++it)->str();
+
+                        if ((++it)->matched)
+                        {
+                            int port_int = std::stoi(it->str());
+                            if (port_int <= 65535)
+                            {
+                                server_port = static_cast<uint16_t>(port_int);
+                            }
+                        }
                     }
                     break;
-                }
 
-                case PORT:
-                    port = strtol(opt.arg, nullptr, 10);
+                case REMOTE_LOCATOR:
+                    client = true;
+                    if (regex_match(opt.arg, remote_mr, Arg::ipv4))
+                    {
+                        std::cmatch::iterator it = remote_mr.cbegin();
+                        remote_ip_address = (++it)->str();
+
+                        if ((++it)->matched)
+                        {
+                            int port_int = std::stoi(it->str());
+                            if (port_int <= 65535)
+                            {
+                                remote_port = static_cast<uint16_t>(port_int);
+                            }
+                        }
+                    }
                     break;
 
                 case TLS:
@@ -264,13 +315,21 @@ int main(int argc, char** argv)
         return 0;
     }
 
+    if (!server && !client)
+    {
+        std::cerr << "ERROR: at least one (remote) server address is required." << std::endl;
+        option::printUsage(fwrite, stdout, usage, columns);
+        return 1;
+    }
 
+    std::cout << "Starting " << std::endl;
     switch (type)
     {
         case 1:
             {
                 HelloWorldPublisher mypub;
-                if (mypub.init(wan_ip, static_cast<uint16_t>(port), use_tls, whitelist))
+                if (mypub.init(server, server_ip_address, static_cast<uint16_t>(server_port), client, remote_ip_address,
+                    static_cast<uint16_t>(remote_port), use_tls, whitelist))
                 {
                     mypub.run(count, sleep);
                 }
@@ -279,7 +338,8 @@ int main(int argc, char** argv)
         case 2:
             {
                 HelloWorldSubscriber mysub;
-                if (mysub.init(wan_ip, static_cast<uint16_t>(port), use_tls, whitelist))
+                if (mysub.init(server, server_ip_address, static_cast<uint16_t>(server_port), client, remote_ip_address,
+                    static_cast<uint16_t>(remote_port), use_tls, whitelist))
                 {
                     mysub.run();
                 }

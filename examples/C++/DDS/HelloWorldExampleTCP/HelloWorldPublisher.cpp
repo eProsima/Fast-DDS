@@ -27,6 +27,8 @@
 using namespace eprosima::fastdds::dds;
 using namespace eprosima::fastdds::rtps;
 
+using IPLocator = eprosima::fastrtps::rtps::IPLocator;
+
 HelloWorldPublisher::HelloWorldPublisher()
     : participant_(nullptr)
     , publisher_(nullptr)
@@ -37,8 +39,12 @@ HelloWorldPublisher::HelloWorldPublisher()
 }
 
 bool HelloWorldPublisher::init(
-        const std::string& wan_ip,
-        unsigned short port,
+        bool server,
+        const std::string& server_ip,
+        unsigned short server_port,
+        bool client,
+        const std::string& remote_ip,
+        unsigned short remote_port,
         bool use_tls,
         const std::vector<std::string>& whitelist)
 {
@@ -47,6 +53,10 @@ bool HelloWorldPublisher::init(
     hello_.message("HelloWorld");
 
     //CREATE THE PARTICIPANT
+    int32_t kind = LOCATOR_KIND_TCPv4;
+    Locator initial_peer_locator;
+    initial_peer_locator.kind = kind;
+
     DomainParticipantQos pqos;
     pqos.wire_protocol().builtin.discovery_config.leaseDuration = eprosima::fastrtps::c_TimeInfinite;
     pqos.wire_protocol().builtin.discovery_config.leaseDuration_announcementperiod =
@@ -63,7 +73,15 @@ bool HelloWorldPublisher::init(
         std::cout << "Whitelisted " << ip << std::endl;
     }
 
-    if (use_tls)
+    if (client && !remote_ip.empty())
+    {
+        IPLocator::setIPv4(initial_peer_locator, remote_ip);
+        initial_peer_locator.port = remote_port;
+        pqos.wire_protocol().builtin.initialPeersList.push_back(initial_peer_locator);
+        std::cout << "remote server address -> " << remote_ip << ":" << remote_port << std::endl;
+    }
+
+    if (server && !client && use_tls)
     {
         using TLSOptions = TCPTransportDescriptor::TLSConfig::TLSOptions;
         descriptor->apply_security = true;
@@ -76,15 +94,18 @@ bool HelloWorldPublisher::init(
         descriptor->tls_config.add_option(TLSOptions::NO_SSLV2);
     }
 
-    descriptor->sendBufferSize = 0;
-    descriptor->receiveBufferSize = 0;
-
-    if (!wan_ip.empty())
+    if (server)
     {
-        descriptor->set_WAN_address(wan_ip);
-        std::cout << wan_ip << ":" << port << std::endl;
+        descriptor->sendBufferSize = 0;
+        descriptor->receiveBufferSize = 0;
     }
-    descriptor->add_listener_port(port);
+
+    if (server && !server_ip.empty())
+    {
+        descriptor->set_WAN_address(server_ip);
+        descriptor->add_listener_port(server_port);
+        std::cout << "server address -> " << server_ip << ":" << server_port << std::endl;
+    }
     pqos.transport().user_transports.push_back(descriptor);
 
     participant_ = DomainParticipantFactory::get_instance()->create_participant(0, pqos);

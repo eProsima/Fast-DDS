@@ -84,8 +84,12 @@ public:
 
     //!Initialize
     bool init(
-            const std::string& wan_ip,
-            unsigned short port,
+            bool server,
+            const std::string& server_ip,
+            unsigned short server_port,
+            bool client,
+            const std::string& remote_ip,
+            unsigned short remote_port,
             bool use_tls,
             const std::vector<std::string>& whitelist);
 
