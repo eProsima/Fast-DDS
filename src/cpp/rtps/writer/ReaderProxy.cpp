@@ -371,18 +371,26 @@ void ReaderProxy::acked_changes_set(
 }
 
 bool ReaderProxy::requested_changes_set(
-        const SequenceNumberSet_t& seq_num_set)
+        const SequenceNumberSet_t& seq_num_set,
+        RTPSGapBuilder& gap_builder)
 {
     bool isSomeoneWasSetRequested = false;
 
     seq_num_set.for_each([&](SequenceNumber_t sit)
             {
                 ChangeIterator chit = find_change(sit, true);
-                if (chit != changes_for_reader_.end() && UNACKNOWLEDGED == chit->getStatus())
+                if (chit != changes_for_reader_.end())
                 {
-                    chit->setStatus(REQUESTED);
-                    chit->markAllFragmentsAsUnsent();
-                    isSomeoneWasSetRequested = true;
+                    if (UNACKNOWLEDGED == chit->getStatus())
+                    {
+                        chit->setStatus(REQUESTED);
+                        chit->markAllFragmentsAsUnsent();
+                        isSomeoneWasSetRequested = true;
+                    }
+                }
+                else if (sit > changes_low_mark_)
+                {
+                    gap_builder.add(sit);
                 }
             });
 

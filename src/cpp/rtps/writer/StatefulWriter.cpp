@@ -2080,7 +2080,12 @@ bool StatefulWriter::process_acknack(
                         remote_reader->acked_changes_set(sn_set.base());
                         if (sn_set.base() > SequenceNumber_t(0, 0))
                         {
-                            if (remote_reader->requested_changes_set(sn_set) || remote_reader->are_there_gaps())
+                            // Prepare GAP for requested  samples that are not in history or are irrelevants.
+                            RTPSMessageGroup group(mp_RTPSParticipant, this, remote_reader->message_sender());
+                            RTPSGapBuilder gap_builder(group);
+
+                            if (remote_reader->requested_changes_set(sn_set,
+                                    gap_builder) || remote_reader->are_there_gaps())
                             {
                                 nack_response_event_->restart_timer();
                             }
@@ -2088,6 +2093,7 @@ bool StatefulWriter::process_acknack(
                             {
                                 periodic_hb_event_->restart_timer();
                             }
+                            gap_builder.flush();
                         }
                         else if (sn_set.empty() && !final_flag)
                         {
